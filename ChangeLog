@@ -1,10 +1,15 @@
+2006-11-25  Quentin Mathe <qmathe@club-internet.fr>	
+
+	* Source/NSImage+NiceScaling.m (-scaledSize:toFitSize:): Fixed ratio 
+	computation bug that translated in a slight image distorsion.
+
 2006-10-31  Quentin Mathe <qmathe@club-internet.fr>
 	
 	* Headers/Cocoa/Cocoa.h:
 	* Headers/NSBezierPathCappedBoxes.h:
 	* Headers/NSImage+NiceScaling.h:
-	* Source/NSBezierPathCappedBoxes.h:
-	* Source/NSImage+NiceScaling.h:
+	* Source/NSBezierPathCappedBoxes.m:
+	* Source/NSImage+NiceScaling.m:
     * Source/GNUmakefile:
     * Source/GNUmakefile.postamble:
 	* README:

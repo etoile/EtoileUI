@@ -171,7 +171,7 @@
 +(NSSize)   scaledSize: (NSSize)imgSize toFitSize: (NSSize)size
 { 
 	NSSize  finalSize = imgSize;
-	float   ratio = imgSize.height / imgSize.width;
+	float   ratio = size.width / imgSize.width;
 
 	//if( imgSize.width > size.width || imgSize.height > size.height )
 	{
@@ -179,16 +179,16 @@
         if( imgSize.height == imgSize.width )
             finalSize.height = finalSize.width;
         else
-            finalSize.height = size.height * ratio;
+            finalSize.height = imgSize.height * ratio;
 		
 		if( finalSize.height > size.height )
 		{
-			ratio = imgSize.width / imgSize.height;
+			ratio = size.height / imgSize.height;
 			finalSize.height = size.height;
             if( imgSize.height == imgSize.width )
                 finalSize.width = finalSize.height;
             else
-                finalSize.width = size.width * ratio;
+                finalSize.width = imgSize.width * ratio;
 		}
 	}
 	
