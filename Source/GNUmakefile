@@ -33,7 +33,8 @@ $(LIBRARY_NAME)_LANGUAGES = \
 #
 $(LIBRARY_NAME)_OBJC_FILES = \
 	NSBezierPathCappedBoxes.m \
-	NSImage+NiceScaling.m
+	NSImage+NiceScaling.m \
+	UKNibOwner.m
 
 #
 # Header files to be installed
@@ -46,7 +47,8 @@ $(LIBRARY_NAME)_HEADER_FILES = \
 	Cocoa.h \
 	EtoileCompatibility.h \
 	NSBezierPathCappedBoxes.h \
-	NSImage+NiceScaling.h
+	NSImage+NiceScaling.h \
+	UKNibOwner.h
 
 #
 # C files
