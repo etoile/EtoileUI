@@ -1,0 +1,14 @@
+{
+    IBClasses = (
+        {
+            ACTIONS = {choosePicturesAndLayout = id; }; 
+            CLASS = ContainerController; 
+            LANGUAGE = ObjC; 
+            OUTLETS = {viewContainer = id; }; 
+            SUPERCLASS = NSObject; 
+        }, 
+        {CLASS = ETContainer; LANGUAGE = ObjC; SUPERCLASS = NSView; }, 
+        {CLASS = FirstResponder; LANGUAGE = ObjC; SUPERCLASS = NSObject; }
+    ); 
+    IBVersion = 1; 
+}
