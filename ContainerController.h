@@ -17,7 +17,9 @@
 }
 
 - (IBAction)choosePicturesAndLayout:(id)sender;
+- (IBAction) changeLayout: (id)sender;
 - (NSArray *) imageViewsForImages: (NSArray *)images;
+- (NSImageView *) imageViewForImage: (NSImage *)image;
 - (void)selectPicturesPanelDidEnd:(NSOpenPanel *)panel returnCode:(int)returnCode  contextInfo:(void  *)contextInfo;
 
 @end

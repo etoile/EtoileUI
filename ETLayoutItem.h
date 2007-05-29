@@ -15,6 +15,7 @@
 	id _value;
 	id _repObject;
 	NSView *_view;
+	NSMutableDictionary *_properties;
 	BOOL _selected;
 }
 
@@ -33,7 +34,7 @@
 - (NSView *) view;
 - (void) setView: (NSView *)view;
 
-- (NSDictionary *) properties;
+- (NSMutableDictionary *) properties;
 
 //- (ETContainer *) container;
 - (NSView *) displayView;

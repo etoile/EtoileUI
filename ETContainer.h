@@ -61,6 +61,9 @@
 - (void) removeViewForIdentifier:(NSString *)identifier;
 - (NSView *) viewForIdentifier: (NSString *)identifier;*/
 
+//Private use
+- (void) setDisplayView: (NSView *)view;
+
 @end
 
 @interface ETContainer (ETContainerSource)

@@ -18,13 +18,14 @@
 		606B99260C0B134B000AAA85 /* CocoaCompatibility.m in Sources */ = {isa = PBXBuildFile; fileRef = 606B99250C0B134B000AAA85 /* CocoaCompatibility.m */; };
 		606B9C490C0B17D6000AAA85 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 29B97316FDCFA39411CA2CEA /* main.m */; };
 		606B9C540C0B180A000AAA85 /* ContainerExample-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 606B98CB0C0AF831000AAA85 /* ContainerExample-Info.plist */; };
-		606B9C550C0B180F000AAA85 /* Container-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 606B98C10C0AF81A000AAA85 /* Container-Info.plist */; };
 		606B9C5E0C0B18A3000AAA85 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1058C7A1FEA54F0111CA2CBB /* Cocoa.framework */; };
 		606B9DEC0C0B351A000AAA85 /* ETFlowView.m in Sources */ = {isa = PBXBuildFile; fileRef = 609F46400B414C3800AD2209 /* ETFlowView.m */; };
 		606B9DEE0C0B351A000AAA85 /* ETFlowLayout.m in Sources */ = {isa = PBXBuildFile; fileRef = 609F465D0B41642900AD2209 /* ETFlowLayout.m */; };
 		606B9F400C0B5848000AAA85 /* ETLineView.m in Sources */ = {isa = PBXBuildFile; fileRef = 609F464A0B414CB500AD2209 /* ETLineView.m */; };
 		606B9F410C0B5848000AAA85 /* ETLineLayout.m in Sources */ = {isa = PBXBuildFile; fileRef = 609F46630B41644700AD2209 /* ETLineLayout.m */; };
 		60B2AF6B0C0B745A008C008A /* ContainerExample.nib in Resources */ = {isa = PBXBuildFile; fileRef = 60B2AF690C0B745A008C008A /* ContainerExample.nib */; };
+		60EABCBD0C0C284000341BD8 /* ETTableView.m in Sources */ = {isa = PBXBuildFile; fileRef = 60EABCBC0C0C284000341BD8 /* ETTableView.m */; };
+		60EABCC00C0C289900341BD8 /* ETTableLayout.m in Sources */ = {isa = PBXBuildFile; fileRef = 60EABCBE0C0C289900341BD8 /* ETTableLayout.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -35,7 +36,6 @@
 		29B97325FDCFA39411CA2CEA /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = /System/Library/Frameworks/Foundation.framework; sourceTree = "<absolute>"; };
 		606B97480C0AF283000AAA85 /* ContainerController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ContainerController.h; sourceTree = "<group>"; };
 		606B97490C0AF283000AAA85 /* ContainerController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ContainerController.m; sourceTree = "<group>"; };
-		606B98C10C0AF81A000AAA85 /* Container-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = "Container-Info.plist"; sourceTree = "<group>"; };
 		606B98C90C0AF831000AAA85 /* ContainerExample.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = ContainerExample.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		606B98CB0C0AF831000AAA85 /* ContainerExample-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = "ContainerExample-Info.plist"; sourceTree = "<group>"; };
 		606B99240C0B1336000AAA85 /* CocoaCompatibility.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CocoaCompatibility.h; sourceTree = "<group>"; };
@@ -64,6 +64,10 @@
 		609F46A20B42049D00AD2209 /* ETLayoutItem.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ETLayoutItem.m; sourceTree = "<group>"; };
 		60A563E70A16266900329EE6 /* GNUstep.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GNUstep.h; sourceTree = "<group>"; };
 		60B2AF6A0C0B745A008C008A /* English */ = {isa = PBXFileReference; lastKnownFileType = wrapper.nib; name = English; path = English.lproj/ContainerExample.nib; sourceTree = "<group>"; };
+		60EABCBB0C0C284000341BD8 /* ETTableLayout.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ETTableLayout.h; sourceTree = "<group>"; };
+		60EABCBC0C0C284000341BD8 /* ETTableView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ETTableView.m; sourceTree = "<group>"; };
+		60EABCBE0C0C289900341BD8 /* ETTableLayout.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ETTableLayout.m; sourceTree = "<group>"; };
+		60EABCBF0C0C289900341BD8 /* ETTableView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ETTableView.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -82,6 +86,10 @@
 			isa = PBXGroup;
 			children = (
 				606B98A40C0AF669000AAA85 /* Not Ready Yet */,
+				60EABCBB0C0C284000341BD8 /* ETTableLayout.h */,
+				60EABCBE0C0C289900341BD8 /* ETTableLayout.m */,
+				60EABCBF0C0C289900341BD8 /* ETTableView.h */,
+				60EABCBC0C0C284000341BD8 /* ETTableView.m */,
 				609F46490B414CB500AD2209 /* ETLineView.h */,
 				609F464A0B414CB500AD2209 /* ETLineView.m */,
 				609F46620B41644700AD2209 /* ETLineLayout.h */,
@@ -145,7 +153,6 @@
 				29B97317FDCFA39411CA2CEA /* Resources */,
 				29B97323FDCFA39411CA2CEA /* Frameworks */,
 				19C28FACFE9D520D11CA2CBB /* Products */,
-				606B98C10C0AF81A000AAA85 /* Container-Info.plist */,
 				606B98CB0C0AF831000AAA85 /* ContainerExample-Info.plist */,
 			);
 			name = FlowAutolayoutExample;
@@ -225,7 +232,6 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				606B9C550C0B180F000AAA85 /* Container-Info.plist in Resources */,
 				606B9C540C0B180A000AAA85 /* ContainerExample-Info.plist in Resources */,
 				60B2AF6B0C0B745A008C008A /* ContainerExample.nib in Resources */,
 			);
@@ -252,6 +258,8 @@
 				606B98CF0C0AF898000AAA85 /* ContainerController.m in Sources */,
 				606B99260C0B134B000AAA85 /* CocoaCompatibility.m in Sources */,
 				606B9C490C0B17D6000AAA85 /* main.m in Sources */,
+				60EABCBD0C0C284000341BD8 /* ETTableView.m in Sources */,
+				60EABCC00C0C289900341BD8 /* ETTableLayout.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -273,6 +281,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				COPY_PHASE_STRIP = NO;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_ENABLE_FIX_AND_CONTINUE = YES;
 				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
@@ -300,6 +309,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				COPY_PHASE_STRIP = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_ENABLE_FIX_AND_CONTINUE = NO;
 				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
 				GCC_MODEL_TUNING = "";

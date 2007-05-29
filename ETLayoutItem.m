@@ -45,6 +45,8 @@
 		ASSIGN(_view, view);
 		ASSIGN(_value, value);
 		ASSIGN(_repObject, repObject);
+		
+		_properties = [[NSMutableDictionary alloc] init];
     }
     
     return self;
@@ -55,6 +57,7 @@
     DESTROY(_view);
 	DESTROY(_value);
 	DESTROY(_repObject);
+	DESTROY(_properties);
     
     [super dealloc];
 }
@@ -94,9 +97,9 @@
 	return _container;
 }*/
 
-- (NSDictionary *) properties
+- (NSMutableDictionary *) properties
 {
-	return nil;
+	return _properties;
 }
 
 - (NSView *) displayView

@@ -12,6 +12,14 @@
 #import "CocoaCompatibility.h"
 #import "GNUstep.h"
 
+@interface ETContainer (Private)
+- (int) checkSourceProtocolConformance;
+- (NSArray *) layoutItemsFromSource;
+- (NSArray *) layoutItemsFromFlatSource;
+- (NSArray *) layoutItemsFromTreeSource;
+- (void) updateLayoutWithItems: (NSArray *)itemsToLayout;
+@end
+
 
 @implementation ETContainer
 
@@ -56,14 +64,119 @@
 
 - (void) updateLayout
 {
-	NSArray *itemDisplayViews = [_layoutItems valueForKey: @"displayView"];
+	if ([self source] != nil) /* Make layout with items provided by source */
+	{
+		NSArray *itemsFromSource = nil;
+		
+		if ([_layoutItems count] > 0)
+		{
+			NSLog(@"Update layout from source, yet %d items owned by the "
+				@"container already exists, it may be better to remove them "
+				@"before setting source.", [_layoutItems count]);
+		}
+		itemsFromSource = [self layoutItemsFromSource];
+		[self updateLayoutWithItems: itemsFromSource];
+	}
+	else /* Make layout with items directly provided by container */
+	{
+		[self updateLayoutWithItems: _layoutItems];
+	}	
+	
+	[self setNeedsDisplay: YES];
+}
+
+/** Returns 0 when source doesn't conform to any parts of ETContainerSource informal protocol.
+    Returns 1 when source conform to protocol for flat collections and display of items in a linear style.
+	Returns 2 when source conform to protocol for tree collections and display of items in a hiearchical style.
+	If flat collection part of the protocol is implemented through 
+	-numberOfItemsInContainer, ETContainer by default ignores tree collections
+	part of protocol like numberOfItemsAtPath:inContainer: unless it is needed 
+	by the current layout. In some cases, it is useful to implement both parts
+	of the protocol if you want a lot of flexibility in term of layout. */
+- (int) checkSourceProtocolConformance
+{
+	if ([[self source] respondsToSelector: @selector(numberOfItemsInContainer:)])
+	{
+		if ([[self source] respondsToSelector: @selector(itemAtIndex:inContainer:)])
+		{
+			return 1;
+		}
+		else
+		{
+			NSLog(@"%@ implements numberOfItemsInContainer: but misses "
+				  @"itemAtIndex:inContainer: as  requested by "
+				  @"ETContainerSource protocol.", [self source]);
+			return 0;
+		}
+	}
+	else if ([[self source] respondsToSelector: @selector(numberOfItemsAtPath:inContainer:)])
+	{
+		if ([[self source] respondsToSelector: @selector(itemAtPath:inContainer:)])
+		{
+			return 2;
+		}
+		else
+		{
+			NSLog(@"%@ implements numberOfItemsAtPath:inContainer: but misses "
+				  @"itemAtPath:inContainer: as requested by ETContainerSource "
+				  @"protocol.", [self source]);
+			return 0;
+		}
+	}
+	else
+	{
+		NSLog(@"%@ implements neither numberOfItemsInContainer: nor "
+			  @"numberOfItemsAtPath:inContainer: as requested by "
+			  @"ETContainerSource protocol.", [self source]);
+		return 0;
+	}
+}
+
+- (NSArray *) layoutItemsFromSource
+{
+	switch ([self checkSourceProtocolConformance])
+	{
+		case 1:
+			return [self layoutItemsFromFlatSource];
+			break;
+		case 2:
+			return [self layoutItemsFromTreeSource];
+			break;
+		default:
+			NSLog(@"WARNING: source protocol is incorrectly supported by %@.", [self source]);
+	}
+	
+	return nil;
+}
+
+- (NSArray *) layoutItemsFromFlatSource
+{
+	NSMutableArray *itemsFromSource = [NSMutableArray array];
+	ETLayoutItem *layoutItem = nil;
+	int nbOfItems = [[self source] numberOfItemsInContainer: self];
+	
+	for (int i = 0; i++; i < nbOfItems)
+	{
+		layoutItem = [[self source] itemAtIndex: i inContainer: self];
+		[itemsFromSource addObject: layoutItem];
+	}
+	
+	return itemsFromSource;
+}
+
+- (NSArray *) layoutItemsFromTreeSource
+{
+	return nil;
+}
+
+- (void) updateLayoutWithItems: (NSArray *)itemsToLayout
+{
+	NSArray *itemDisplayViews = [itemsToLayout valueForKey: @"displayView"];
 	
 	[itemDisplayViews makeObjectsPerformSelector: @selector(removeFromSuperview)];
 	
 	/* Delegate layout rendering to custom layout object */
-	[_containerLayout renderWithLayoutItems: _layoutItems inContainer: self];
-
-	[self setNeedsDisplay: YES];
+	[_containerLayout renderWithLayoutItems: itemsToLayout inContainer: self];
 }
 
 - (ETViewLayout *) layout
@@ -94,6 +207,17 @@
 - (NSView *) displayView
 {
 	return _displayView;
+}
+
+- (void) setDisplayView: (NSView *)view
+{
+	[_displayView removeFromSuperview];
+	
+	_displayView = view;
+	[view removeFromSuperview];
+	[view setFrameSize: [self frame].size];
+	[view setFrameOrigin: NSZeroPoint];
+	[self addSubview: view];
 }
 
 /*

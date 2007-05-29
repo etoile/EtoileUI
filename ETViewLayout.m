@@ -31,7 +31,7 @@
 
 @implementation ETViewLayout
 
-- (id) initWithContainer: (ETContainer *)viewContainer
+- (id) init
 {
 	self = [super init];
     
@@ -67,6 +67,10 @@
 	/* Now computes the location of every views by relying on the line by line 
 	   decomposition already made. */
 	[self computeViewLocationsForLayoutModel: layoutModel inContainer: container];
+	
+	/* Don't forget to remove existing display view if we switch from a layout 
+	   which reuses a native AppKit control like table layout. */
+	[container setDisplayView: nil];
 	
 	// TODO: Optimize by computing set intersection of visible and unvisible item display views
 	[itemViews makeObjectsPerformSelector: @selector(removeFromSuperview)];

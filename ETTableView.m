@@ -1,17 +1,17 @@
 //
-//  ETLineView.m
+//  ETTableView.m
 //  FlowAutolayoutExample
 //
 //  Created by Quentin Mathé on 26/12/06.
 //  Copyright 2006 __MyCompanyName__. All rights reserved.
 //
 
-#import "ETLineView.h"
-#import "ETLineLayout.h"
+#import "ETTableView.h"
+#import "ETTableLayout.h"
 #import "GNUstep.h"
 
 
-@implementation ETLineView
+@implementation ETTableView
 
 - (id) initWithFrame: (NSRect)frame 
 {
@@ -19,7 +19,7 @@
 	
     if (self != nil) 
 	{
-		[self setLayout: (ETLineLayout *)AUTORELEASE([[ETLineLayout alloc] init])];
+		[self setLayout: (ETViewLayout *)AUTORELEASE([[ETTableLayout alloc] init])];
     }
 	
     return self;

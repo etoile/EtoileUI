@@ -1,7 +1,7 @@
 {
     IBClasses = (
         {
-            ACTIONS = {choosePicturesAndLayout = id; }; 
+            ACTIONS = {changeLayout = id; choosePicturesAndLayout = id; }; 
             CLASS = ContainerController; 
             LANGUAGE = ObjC; 
             OUTLETS = {viewContainer = id; }; 
