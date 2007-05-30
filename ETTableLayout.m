@@ -144,11 +144,10 @@
 {
 	NSArray *layoutItems = [_layoutItemCacheByTableView objectForUncopiedKey: tv];
 	ETLayoutItem *item = [layoutItems objectAtIndex: rowIndex];
-	NSDictionary *properties = [item properties];
 	
-	//NSLog(@"Returns %@ as object value in table view %@", [properties objectForKey: [column identifier]], tv);
+	//NSLog(@"Returns %@ as object value in table view %@", [item valueForProperty: [column identifier]], tv);
 	
-	return [properties objectForKey: [column identifier]];
+	return [item valueForProperty: [column identifier]];
 }
 
 @end

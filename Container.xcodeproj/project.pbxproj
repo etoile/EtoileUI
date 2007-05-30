@@ -40,6 +40,8 @@
 		606B98CB0C0AF831000AAA85 /* ContainerExample-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = "ContainerExample-Info.plist"; sourceTree = "<group>"; };
 		606B99240C0B1336000AAA85 /* CocoaCompatibility.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CocoaCompatibility.h; sourceTree = "<group>"; };
 		606B99250C0B134B000AAA85 /* CocoaCompatibility.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CocoaCompatibility.m; sourceTree = "<group>"; };
+		609544AA0C0CE24D00068CBB /* ETBrowserLayout.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ETBrowserLayout.h; sourceTree = "<group>"; };
+		609544AB0C0CE24D00068CBB /* ETBrowserLayout.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ETBrowserLayout.m; sourceTree = "<group>"; };
 		609F463C0B414C0A00AD2209 /* ETContainer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ETContainer.h; sourceTree = "<group>"; };
 		609F463D0B414C0A00AD2209 /* ETContainer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ETContainer.m; sourceTree = "<group>"; };
 		609F463F0B414C3800AD2209 /* ETFlowView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ETFlowView.h; sourceTree = "<group>"; };
@@ -188,6 +190,8 @@
 		606B98A40C0AF669000AAA85 /* Not Ready Yet */ = {
 			isa = PBXGroup;
 			children = (
+				609544AA0C0CE24D00068CBB /* ETBrowserLayout.h */,
+				609544AB0C0CE24D00068CBB /* ETBrowserLayout.m */,
 			);
 			name = "Not Ready Yet";
 			sourceTree = "<group>";

@@ -1,7 +1,13 @@
 {
     IBClasses = (
         {
-            ACTIONS = {changeLayout = id; choosePicturesAndLayout = id; }; 
+            ACTIONS = {
+                changeLayout = id; 
+                choosePicturesAndLayout = id; 
+                scale = id; 
+                switchUsesScrollView = id; 
+                switchUsesSource = id; 
+            }; 
             CLASS = ContainerController; 
             LANGUAGE = ObjC; 
             OUTLETS = {viewContainer = id; }; 

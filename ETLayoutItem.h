@@ -13,9 +13,8 @@
 @interface ETLayoutItem : NSObject 
 {
 	id _value;
-	id _repObject;
+	id _modelObject;
 	NSView *_view;
-	NSMutableDictionary *_properties;
 	BOOL _selected;
 }
 
@@ -29,12 +28,13 @@
 - (void) setValue: (id)value;
 
 - (id) representedObject;
-- (void) setRepresentedObject: (id)object;
+- (void) setRepresentedObject: (id)modelObject;
 
 - (NSView *) view;
 - (void) setView: (NSView *)view;
 
-- (NSMutableDictionary *) properties;
+- (id) valueForProperty: (NSString *)key;
+- (BOOL) setValue: (id)value forProperty: (NSString *)key;
 
 //- (ETContainer *) container;
 - (NSView *) displayView;

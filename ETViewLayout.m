@@ -56,6 +56,44 @@
 }
 */
 
+- (void) adjustLayoutSizeToSizeOfContainer: (ETContainer *)container
+{
+
+}
+
+- (void) adjustLayoutSizeToContentSize
+{
+
+}
+
+/** By default layout size is equal to container frame size. When the container 
+	uses a scroll view, layout size is set to the max size computed for the 
+	content. Whether the size is computed in horizontal, vertical direction
+	or both depends of the container scroller settings, the layout kind and 
+	finally layout settings. 
+	If you call -setUsesCustomLayoutSize:, the layout size won't be adjusted anymore by
+	layout and container together until you delegate it again by calling
+	-setUsesCustomLayoutSize: with NO as parameter. */ 
+- (void) setUsesCustomLayoutSize: (BOOL)flag
+{
+	_userManagedLayoutSize = flag;
+}
+
+- (BOOL) usesCustomLayoutSize
+{
+	return _userManagedLayoutSize;
+}
+
+- (void) setLayoutSize: (NSSize)size
+{
+	_layoutSize = size;
+}
+
+- (NSSize) layoutSize
+{
+	return _layoutSize;
+}
+
 /** Run the layout computation which assigns a location in the view container
     to each view added to the flow layout manager. */
 - (void) renderWithLayoutItems: (NSArray *)items inContainer: (ETContainer *)container
@@ -95,16 +133,47 @@
 	}
 }
 
+/** Renders a collection of items by requesting lazily to source a subset of 
+	them to be displayed. Parameter source must implement ETContainerSource
+	informal protocol in a valid way as described in -[ETContainer setSource:].
+	Take note you can pass nil for container as a mean to compute the whole
+	layout size which can be then be retrieved by calling -layoutSize.
+	This method is usually called by ETContainer and you should rarely need to
+	do it by yourself. If you want to update the layout, just uses 
+	-[ETContainer updateLayout]. */
+- (void) renderWithSource: (id)source inContainer: (ETContainer *)container
+{
+
+}
+
+/* 
+ * Line-based layouts methods 
+ */
+
+/** Overrides this method to generate a layout line based on the container 
+    constraints. Usual container constraints are size, vertical and horizontal 
+	scrollers visibility. */
 - (ETViewLayoutLine *) layoutLineForViews: (NSArray *)views inContainer: (ETContainer *)viewContainer
 {
 	return nil;
 }
 
+/** Overrides this method to generate a layout model based on the container 
+    constraints. Usual container constraints are size, vertical and horizontal 
+	scrollers visibility.
+	A layout model is commonly an array of layouts lines where their position 
+	indicates in which order these layout lines should be displayed. It's up to 
+	you if you want to create a layout model with a more elaborated ordering 
+	and rendering semantic. Finally the layout model is interpreted by 
+	-computeViewLocationsForLayoutModel:inContainer:. */
 - (NSArray *) layoutModelForViews: (NSArray *)views inContainer: (ETContainer *)viewContainer
 {
 	return nil;
 }
 
+/** Overrides this method to interpretate the layout model and compute view 
+	locations accordingly. Most of the work of layout process happens in this
+	method. */
 - (void) computeViewLocationsForLayoutModel: (NSArray *)layoutModel inContainer: (ETContainer *)container
 {
 

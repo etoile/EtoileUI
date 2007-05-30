@@ -201,6 +201,79 @@
 	[self updateLayout];
 }
 
+- (BOOL) letsLayoutControlsScrollerVisibility
+{
+	return NO;
+}
+
+- (void) setLetsLayoutControlsScrollerVisibility: (BOOL)layoutControl
+{
+
+}
+
+- (BOOL) hasVerticalScroller
+{
+	return NO;
+}
+
+- (void) setHasVerticalScroller: (BOOL)scroll
+{
+
+}
+
+- (BOOL) hasHorizontalScroller
+{
+	return NO;
+}
+
+- (void) setHasHorizontalScroller: (BOOL)scroll
+{
+
+}
+
+- (BOOL) hasScrollView
+{
+	if (_scrollView != nil)
+		return YES;
+
+	return NO;
+}
+
+- (void) setHasScrollView: (BOOL)scroll
+{
+	// FIXME: Asks layout whether it handles scroll view itself or not. If 
+	// needed like with table layout, delegate scroll view handling.
+	if (scroll)
+	{
+		_scrollView = [[NSScrollView alloc] initWithFrame: [self frame]];
+		
+		RETAIN(self);
+		[self removeFromSuperview];
+		[_containerLayout adjustLayoutSizeToContentSize];
+		[self setFrameSize: [_containerLayout layoutSize]];
+		[_scrollView setDocumentView: self];
+		RELEASE(self);
+	}
+	else
+	{
+		RETAIN(self);
+		[self removeFromSuperview];
+		//[_scrollView setDocumentView: nil];
+		[self setFrame: [_scrollView frame]];
+		[[_scrollView superview] addSubview: self];
+		[_scrollView removeFromSuperview];
+		RELEASE(self);
+		
+		DESTROY(_scrollView);
+	}
+}
+
+// FIXME: Implement or remove
+- (NSSize) contentSize
+{
+	return NSZeroSize;
+}
+
 /** Returns the view that takes care of the display. Most of time it is equal
     to the container itself. But for some layout like ETTableLayout, the 
 	returned view would be an NSTableView instance. */

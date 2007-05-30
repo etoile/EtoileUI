@@ -18,6 +18,7 @@
 	NSMutableArray *_layoutItems;
 	ETViewLayout *_containerLayout;
 	NSView *_displayView;
+	NSScrollView *_scrollView;
 	
 	id _dataSource;
 }
@@ -33,6 +34,13 @@
 
 - (id) source;
 - (void) setSource: (id)source;
+
+- (BOOL) letsLayoutControlsScrollerVisibility;
+- (void) setLetsLayoutControlsScrollerVisibility: (BOOL)layoutControl;
+- (BOOL) hasVerticalScroller;
+- (void) setHasVerticalScroller: (BOOL)scroll;
+- (BOOL) hasHorizontalScroller;
+- (void) setHasHorizontalScroller: (BOOL)scroll;
 
 /*
 - (ETLayoutAlignment) layoutAlignment;
@@ -61,8 +69,10 @@
 - (void) removeViewForIdentifier:(NSString *)identifier;
 - (NSView *) viewForIdentifier: (NSString *)identifier;*/
 
-//Private use
+// Private use
 - (void) setDisplayView: (NSView *)view;
+- (BOOL) hasScrollView;
+- (void) setHasScrollView: (BOOL)scroll;
 
 @end
 
@@ -76,6 +86,8 @@
 - (int) numberOfItemsAtPath: (NSString *)keyPath inContainer: (ETContainer *)container;
 - (ETLayoutItem *) itemAtPath: (NSString *)keyPath inContainer: (ETContainer *)container;
 
+/* Extra infos */
+- (NSArray *) displayedItemPropertiesInContainer: (ETContainer *)container;
 - (int) firstVisibleItemInContainer: (ETContainer *)container;
 - (int) lastVisibleItemInContainer: (ETContainer *)container;
 

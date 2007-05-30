@@ -44,9 +44,9 @@
     {
 		ASSIGN(_view, view);
 		ASSIGN(_value, value);
-		ASSIGN(_repObject, repObject);
+		ASSIGN(_modelObject, repObject);
 		
-		_properties = [[NSMutableDictionary alloc] init];
+		_modelObject = [[NSMutableDictionary alloc] init];
     }
     
     return self;
@@ -56,8 +56,7 @@
 {
     DESTROY(_view);
 	DESTROY(_value);
-	DESTROY(_repObject);
-	DESTROY(_properties);
+	DESTROY(_modelObject);
     
     [super dealloc];
 }
@@ -72,14 +71,22 @@
 	ASSIGN(_value, value);
 }
 
+/** Returns model object which embeds the representation of what the layout 
+	item displays. When a new layout item is created, by default it uses a
+	dictionary as a rudimentary model object. */
 - (id) representedObject
 {
-	return _repObject;
+	return _modelObject;
 }
 
-- (void) setRepresentedObject: (id)object
+/** Sets model object which embeds the representation of what the layout 
+	item displays. 
+	If you want to restore default model object initally set, pass a mutable 
+	dictionary instance as parameter to this method.
+	See -representedObject for more details. */
+- (void) setRepresentedObject: (id)modelObject
 {
-	ASSIGN(_repObject, object);
+	ASSIGN(_modelObject, modelObject);
 }
 
 - (NSView *) view
@@ -97,9 +104,39 @@
 	return _container;
 }*/
 
-- (NSMutableDictionary *) properties
+/** Returns a value of the model object -representedObject, usually by 
+	calling -valueForProperty: else -valueForKey: with key parameter. By default 
+	the model object is a simple dictionary which gets returned by both this 
+	method and -representedObject method.
+	When the model object is a custom one, it must implement -valueForProperty:
+	and -setValue:forProperty: or conform to NSKeyValueCoding protocol. */
+- (id) valueForProperty: (NSString *)key
 {
-	return _properties;
+	if ([_modelObject respondsToSelector: @selector(valueForProperty:)])
+	{
+		return [_modelObject valueForProperty: key];
+	}
+	else
+	{
+		return [_modelObject valueForKey: key];
+	}
+}
+
+/** Sets a value identified by key of the model object returned by 
+	-representedObject. 
+	See -valueForProperty: for more details. */
+- (BOOL) setValue: (id)value forProperty: (NSString *)key
+{
+	if ([_modelObject respondsToSelector: @selector(setValue:forProperty:)])
+	{
+		return [_modelObject setValue: value forProperty: key];
+	}
+	else
+	{
+		// FIXME: Catch key value coding exception here
+		[_modelObject setValue: value forKey: key];
+		return YES;
+	}
 }
 
 - (NSView *) displayView
