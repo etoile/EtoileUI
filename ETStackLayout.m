@@ -9,7 +9,6 @@
 #import "ETStackLayout.h"
 #import "ETContainer.h"
 #import "ETLayoutItem.h"
-#import "ETViewLayout.h"
 #import "ETViewLayoutLine.h"
 #import "NSView+Etoile.h"
 #import "GNUstep.h"

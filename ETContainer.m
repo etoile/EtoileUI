@@ -9,15 +9,23 @@
 #import "ETContainer.h"
 #import "ETLayoutItem.h"
 #import "ETViewLayout.h"
+#import "ETLayer.h"
 #import "CocoaCompatibility.h"
 #import "GNUstep.h"
 
-@interface ETContainer (Private)
+@interface ETContainer (PackageVisibility)
+- (NSArray *) layoutItems;
+- (void) cacheLayoutItems: (NSArray *)layoutItems;
+- (NSArray *) layoutItemCache;
 - (int) checkSourceProtocolConformance;
+@end
+
+@interface ETContainer (Private)
 - (NSArray *) layoutItemsFromSource;
 - (NSArray *) layoutItemsFromFlatSource;
 - (NSArray *) layoutItemsFromTreeSource;
 - (void) updateLayoutWithItems: (NSArray *)itemsToLayout;
+- (void) fixOwnerIfNeededForItem: (ETLayoutItem *)item;
 @end
 
 
@@ -62,25 +70,26 @@
     [super dealloc];
 }
 
+- (NSArray *) layoutItems
+{
+	return _layoutItems;
+}
+
+
+- (void) cacheLayoutItems: (NSArray *)layoutItems
+{
+	ASSIGN(_layoutItemCache, layoutItems);
+}
+
+- (NSArray *) layoutItemCache
+{
+	return _layoutItemCache;
+}
+
 - (void) updateLayout
 {
-	if ([self source] != nil) /* Make layout with items provided by source */
-	{
-		NSArray *itemsFromSource = nil;
-		
-		if ([_layoutItems count] > 0)
-		{
-			NSLog(@"Update layout from source, yet %d items owned by the "
-				@"container already exists, it may be better to remove them "
-				@"before setting source.", [_layoutItems count]);
-		}
-		itemsFromSource = [self layoutItemsFromSource];
-		[self updateLayoutWithItems: itemsFromSource];
-	}
-	else /* Make layout with items directly provided by container */
-	{
-		[self updateLayoutWithItems: _layoutItems];
-	}	
+	/* Delegate layout rendering to custom layout object */
+	[[self layout] render];
 	
 	[self setNeedsDisplay: YES];
 }
@@ -132,53 +141,6 @@
 	}
 }
 
-- (NSArray *) layoutItemsFromSource
-{
-	switch ([self checkSourceProtocolConformance])
-	{
-		case 1:
-			return [self layoutItemsFromFlatSource];
-			break;
-		case 2:
-			return [self layoutItemsFromTreeSource];
-			break;
-		default:
-			NSLog(@"WARNING: source protocol is incorrectly supported by %@.", [self source]);
-	}
-	
-	return nil;
-}
-
-- (NSArray *) layoutItemsFromFlatSource
-{
-	NSMutableArray *itemsFromSource = [NSMutableArray array];
-	ETLayoutItem *layoutItem = nil;
-	int nbOfItems = [[self source] numberOfItemsInContainer: self];
-	
-	for (int i = 0; i++; i < nbOfItems)
-	{
-		layoutItem = [[self source] itemAtIndex: i inContainer: self];
-		[itemsFromSource addObject: layoutItem];
-	}
-	
-	return itemsFromSource;
-}
-
-- (NSArray *) layoutItemsFromTreeSource
-{
-	return nil;
-}
-
-- (void) updateLayoutWithItems: (NSArray *)itemsToLayout
-{
-	NSArray *itemDisplayViews = [itemsToLayout valueForKey: @"displayView"];
-	
-	[itemDisplayViews makeObjectsPerformSelector: @selector(removeFromSuperview)];
-	
-	/* Delegate layout rendering to custom layout object */
-	[_containerLayout renderWithLayoutItems: itemsToLayout inContainer: self];
-}
-
 - (ETViewLayout *) layout
 {
 	return _containerLayout;
@@ -186,7 +148,9 @@
 
 - (void) setLayout: (ETViewLayout *)layout
 {
+	[_containerLayout setContainer: nil];
 	ASSIGN(_containerLayout, layout);
+	[layout setContainer: self];
 	[self updateLayout];
 }
 
@@ -311,6 +275,12 @@
 	[self updateLayout];
 }
 
+- (void) insertItem: (ETLayoutItem *)item atIndex: (int)index
+{
+	[_layoutItems insertObject: item atIndex: index];
+	[self updateLayout];
+}
+
 - (void) removeItem: (ETLayoutItem *)item
 {
 	[[item displayView] removeFromSuperview];
@@ -409,6 +379,87 @@
 	{
 		[self removeView: view];
 	}
+}
+
+/* Layers */
+
+- (void) fixOwnerIfNeededForItem: (ETLayoutItem *)item
+{
+	/* Check the item to be now embedded in a new container (owned by the new 
+	   layer) isn't already owned by current container */
+	if ([_layoutItems containsObject: item])
+		[_layoutItems removeObject: item];
+}
+
+- (void) addLayer: (ETLayoutItem *)item
+{
+	ETLayer *layer = [ETLayer layerWithLayoutItem: item];
+	
+	/* Insert layer on top of the layout item stack */
+	if (layer != nil)
+		[self addItem: (ETLayoutItem *)layer];
+}
+
+- (void) insertLayer: (ETLayoutItem *)item atIndex: (int)layerIndex
+{
+	[self fixOwnerIfNeededForItem: item];
+	
+	ETLayer *layer = [ETLayer layerWithLayoutItem: item];
+	
+	// FIXME: the insertion code is truly unefficient, it could prove to be
+	// a bottleneck when we have few hundreds of layout items.
+	if (layer != nil)
+	{
+		NSArray *layers = nil;
+		ETLayer *layerToMoveUp = nil;
+		int realIndex = 0;
+		
+		/*
+		           _layoutItems            by index (or z order)
+		     
+		               *****  <-- layer 2      4  <-- higher
+		   item          -                     3
+		   item          -                     2
+		               *****  <-- layer 1      1
+		   item          -                     0  <-- lower visual element (background)
+		   
+		   Take note that layout items embedded inside a layer have a 
+		   distinct z order. Rendering isn't impacted by this point.
+		   
+		  */
+		
+		/* Retrieve layers spread in _layoutItems */
+		layers = [_layoutItems objectsWithValue: [ETLayer class] forKey: @"class"];
+		/* Find the layer to be replaced in layers array */
+		layerToMoveUp = [layers objectAtIndex: layerIndex];
+		/* Retrieve the index in layoutItems array for this particular layer */
+		realIndex = [_layoutItems indexOfObject: layerToMoveUp];
+		
+		/* Insertion will move replaced layer at index + 1 (to top) */
+		[self insertItem: layer atIndex: realIndex];
+	}
+}
+
+- (void) insertLayer: (ETLayoutItem *)item atZIndex: (int)z
+{
+
+}
+
+- (void) removeLayer: (ETLayoutItem *)item
+{
+
+}
+
+- (void) removeLayerAtIndex: (int)layerIndex
+{
+
+}
+
+/* Rendering Chain */
+
+- (void) render
+{
+	[_layoutItems makeObjectsPerformSelector: @selector(render)];
 }
 
 /*

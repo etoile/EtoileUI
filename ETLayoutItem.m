@@ -7,6 +7,7 @@
 //
 
 #import "ETLayoutItem.h"
+#import "ETStyleRenderer.h"
 #import "GNUstep.h"
 
 @interface ETLayoutItem (Private)
@@ -61,11 +62,21 @@
     [super dealloc];
 }
 
+/** Returns a value which is used when only one value can be displayed like in
+	a table view with a single column or an icon view with a rudimentary icon 
+	unit cell. */
 - (id) value
 {
 	return _value;
 }
 
+/** Sets a value to be used when only one value can be displayed like in
+	a table view with a single column or an icon view with a rudimentary icon 
+	unit cell.
+	Most of time this method can be used as a conveniency which allows to 
+	bypass -valueForProperty: and -setValue:forProperty: when the layout item
+	is used by combox box, single column table view, line view made of simple
+	images etc. */
 - (void) setValue: (id)value
 {
 	ASSIGN(_value, value);
@@ -98,11 +109,6 @@
 {
 	ASSIGN(_view, view);
 }
-
-/*- (ETContainer *) container
-{
-	return _container;
-}*/
 
 /** Returns a value of the model object -representedObject, usually by 
 	calling -valueForProperty: else -valueForKey: with key parameter. By default 
@@ -154,10 +160,24 @@
 	return _selected;
 }
 
-/** Override */
+/** Forwards rendering along the container tree. 
+    Override */
 - (void) render
 {
+	[_renderer render];
 
+	if ([[self view] respondsToSelector: @selector(render)])
+		[(id)[self view] render];
+}
+
+- (ETStyleRenderer *) renderer
+{
+	return _renderer;
+}
+
+- (void) setStyleRenderer: (ETStyleRenderer *)renderer
+{
+	ASSIGN(_renderer, renderer);
 }
 
 @end

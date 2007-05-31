@@ -11,11 +11,22 @@
 #import "ETContainer.h"
 #import "GNUstep.h"
 
+@interface ETContainer (PackageVisibility)
+- (NSArray *) layoutItems;
+- (void) cacheLayoutItems: (NSArray *)cache;
+- (NSArray *) layoutItemCache;
+- (int) checkSourceProtocolConformance;
+@end
+
 /*
  * Private methods
  */
 
 @interface ETViewLayout (Private)
+
+- (void) renderInContainer: (ETContainer *)container;
+- (NSArray *) layoutItemsFromFlatSource;
+- (NSArray *) layoutItemsFromTreeSource;
 
 /* Utility methods */
 - (NSRect) lineLayoutRectForViewAtIndex: (int)index;
@@ -37,7 +48,9 @@
     
 	if (self != nil)
 	{
-
+		_container = nil;
+		_layoutSizeCustomized = NO;
+		_maxSizeLayout = NO;
     }
     
 	return self;
@@ -48,13 +61,24 @@
 	[super dealloc];
 }
 
+- (void) setContainer: (ETContainer *)newContainer
+{
+	// NOTE: The container is our owner and retains us... A simple assignement 
+	// allows to avoid retain cycle.
+	_container = newContainer;
+}
+
 /** Returns the view where the layout happens (by computing location of a subview series). */
-/*
 - (ETContainer *) container;
 {
 	return _container;
 }
-*/
+
+
+- (BOOL) isAllContentVisible
+{
+	return NO;
+}
 
 - (void) adjustLayoutSizeToSizeOfContainer: (ETContainer *)container
 {
@@ -63,7 +87,19 @@
 
 - (void) adjustLayoutSizeToContentSize
 {
-
+	if ([self isAllContentVisible])
+		return;
+	
+	if (_maxSizeLayout == NO)
+	{
+		_maxSizeLayout = YES;
+		[self render];
+		_maxSizeLayout = NO;
+	}
+	else
+	{
+		[self render];
+	}
 }
 
 /** By default layout size is equal to container frame size. When the container 
@@ -76,12 +112,12 @@
 	-setUsesCustomLayoutSize: with NO as parameter. */ 
 - (void) setUsesCustomLayoutSize: (BOOL)flag
 {
-	_userManagedLayoutSize = flag;
+	_layoutSizeCustomized = flag;
 }
 
 - (BOOL) usesCustomLayoutSize
 {
-	return _userManagedLayoutSize;
+	return _layoutSizeCustomized;
 }
 
 - (void) setLayoutSize: (NSSize)size
@@ -93,6 +129,91 @@
 {
 	return _layoutSize;
 }
+
+- (void) setContentSizeLayout: (BOOL)flag
+{
+	_maxSizeLayout = flag;
+}
+
+- (BOOL) isContentSizeLayout
+{
+	return _maxSizeLayout;
+}
+
+- (NSArray *) layoutItemsFromSource
+{
+	switch ([[self container] checkSourceProtocolConformance])
+	{
+		case 1:
+			NSLog(@"Will -layoutItemsFromFlatSource");
+			return [self layoutItemsFromFlatSource];
+			break;
+		case 2:
+			NSLog(@"Will -layoutItemsFromTreeSource");
+			return [self layoutItemsFromTreeSource];
+			break;
+		default:
+			NSLog(@"WARNING: source protocol is incorrectly supported by %@.", [[self container] source]);
+	}
+	
+	return nil;
+}
+
+- (NSArray *) layoutItemsFromFlatSource
+{
+	NSMutableArray *itemsFromSource = [NSMutableArray array];
+	ETLayoutItem *layoutItem = nil;
+	int nbOfItems = [[[self container] source] numberOfItemsInContainer: [self container]];
+	
+	for (int i = 0; i < nbOfItems; i++)
+	{
+		layoutItem = [[[self container] source] itemAtIndex: i inContainer: [self container]];
+		[itemsFromSource addObject: layoutItem];
+	}
+	
+	return itemsFromSource;
+}
+
+- (NSArray *) layoutItemsFromTreeSource
+{
+	return nil;
+}
+
+- (void) render
+{
+	NSArray *itemDisplayViews = [[[self container] layoutItemCache] valueForKey: @"displayView"];
+	NSArray *itemsForRendering = nil;
+
+	/* We remove the display views of cached layout items (they are in current
+	   in current implementation the displayed layout items). Note they may be 
+	   invisible by being located outside of container bounds. */
+	NSLog(@"Remove views of layout items currently displayed from their container");
+	[itemDisplayViews makeObjectsPerformSelector: @selector(removeFromSuperview)];
+	
+	if ([[self container] source] != nil) /* Make layout with items provided by source */
+	{
+		if ([[[self container] layoutItems] count] > 0)
+		{
+			NSLog(@"Update layout from source, yet %d items owned by the "
+				@"container already exists, it may be better to remove them "
+				@"before setting source.", [[[self container] layoutItems] count]);
+		}
+		itemsForRendering= [self layoutItemsFromSource];
+	}
+	else /* Make layout with items directly provided by container */
+	{
+		NSLog(@"No source avaible, will make layout directly");
+		itemsForRendering = [[self container] layoutItems];
+	}	
+	
+	[[self container] cacheLayoutItems: itemsForRendering];
+	[self renderWithLayoutItems: itemsForRendering inContainer: [self container]];
+}
+
+/** You can adjust the layout size by passing a different container than the one 
+	were the layout will be ultimately rendered. Also by passing nil, you can 
+	let the layout computes its maximum size associated with current container 
+	content. */
 
 /** Run the layout computation which assigns a location in the view container
     to each view added to the flow layout manager. */
@@ -111,6 +232,7 @@
 	[container setDisplayView: nil];
 	
 	// TODO: Optimize by computing set intersection of visible and unvisible item display views
+	NSLog(@"Remove views of next layout items to be displayed from their superview");
 	[itemViews makeObjectsPerformSelector: @selector(removeFromSuperview)];
 	
 	NSMutableArray *visibleItemViews = [NSMutableArray array];

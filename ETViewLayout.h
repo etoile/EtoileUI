@@ -14,9 +14,16 @@
 
 @interface ETViewLayout : NSObject
 {
+	ETContainer *_container;
 	NSSize _layoutSize;
-	BOOL _userManagedLayoutSize;
+	BOOL _layoutSizeCustomized;
+	BOOL _maxSizeLayout;
 }
+
+- (void) setContainer: (ETContainer *)newContainer;
+- (ETContainer *) container;
+
+- (BOOL) isAllContentVisible;
 
 - (void) adjustLayoutSizeToContentSize;
 
@@ -24,7 +31,10 @@
 - (BOOL) usesCustomLayoutSize;
 - (void) setLayoutSize: (NSSize)size;
 - (NSSize) layoutSize;
+- (void) setContentSizeLayout: (BOOL)flag;
+- (BOOL) isContentSizeLayout;
 
+- (void) render;
 - (void) renderWithLayoutItems: (NSArray *)items inContainer: (ETContainer *)container;
 - (void) renderWithSource: (id)source inContainer: (ETContainer *)container;
 

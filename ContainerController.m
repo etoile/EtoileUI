@@ -24,7 +24,8 @@
            selector: @selector(viewContainerDidResize:) 
                name: NSViewFrameDidChangeNotification 
              object: viewContainer];
-			 
+	
+	[viewContainer setSource: self];
 	[viewContainer setLayout: AUTORELEASE([[ETStackLayout alloc] init])];
 }
 
@@ -123,7 +124,7 @@
 		}
     }        
 	
-	[self setUpLayoutItemsDirectly];
+	//[self setUpLayoutItemsDirectly];
     [viewContainer updateLayout];
     
     /* Flow autolayout manager doesn't take care of trigerring or updating the display. */
@@ -189,6 +190,8 @@
 
 - (int) numberOfItemsInContainer: (ETContainer *)container
 {
+	NSLog(@"Returns %d as number of items in container %@", [images count], container);
+	
 	return [images count];
 }
 
@@ -206,8 +209,10 @@
 	//[imageItem setValue: [wk iconForFile: [image name]] forProperty: @"icon"];
 	[imageItem setValue: sizeStr forProperty: @"size"];
 	[imageItem setValue: type forProperty: @"type"];
-	//[imageItem setValue: date forProperty: @"modificationdate"];
+	//[imageItem setValue: date forProperty	: @"modificationdate"];
 	
+	NSLog(@"Returns %@ as layout item in container %@", imageItem, container);
+
 	return imageItem;
 }
 

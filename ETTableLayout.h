@@ -8,11 +8,12 @@
 
 #import <Foundation/Foundation.h>
 #import <AppKit/AppKit.h>
+#import "ETViewLayout.h"
 
 @class ETViewLayoutLine, ETContainer;
 
 
-@interface ETTableLayout : NSObject 
+@interface ETTableLayout : ETViewLayout
 {
 	NSMutableDictionary *_layoutItemCacheByContainer;
 	NSMutableDictionary *_layoutItemCacheByTableView;

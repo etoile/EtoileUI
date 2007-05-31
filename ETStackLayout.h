@@ -8,11 +8,12 @@
 
 #import <Foundation/Foundation.h>
 #import <AppKit/AppKit.h>
+#import "ETViewLayout.h"
 
 @class ETViewLayoutLine, ETContainer;
 
 
-@interface ETStackLayout : NSObject 
+@interface ETStackLayout : ETViewLayout
 {
 
 }
