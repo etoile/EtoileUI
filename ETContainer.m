@@ -21,6 +21,7 @@
 @end
 
 @interface ETContainer (Private)
+- (void) syncDisplayViewWithContainer;
 - (NSArray *) layoutItemsFromSource;
 - (NSArray *) layoutItemsFromFlatSource;
 - (NSArray *) layoutItemsFromTreeSource;
@@ -75,12 +76,18 @@
 	return _layoutItems;
 }
 
-
+/* Uses to know which layout items the container takes care to display when
+   a source is in use and layout items are thereby retrieved and managed by the 
+   layout object itself. */
 - (void) cacheLayoutItems: (NSArray *)layoutItems
 {
 	ASSIGN(_layoutItemCache, layoutItems);
 }
 
+/* Returns layout items currently displayed in the container unlike 
+   -layoutItems which returns items displayed only when no source is used. Uses
+   this method only for internal purpose when you need know layout items no 
+   matter of how they have come into this container. */
 - (NSArray *) layoutItemCache
 {
 	return _layoutItemCache;
@@ -151,7 +158,22 @@
 	[_containerLayout setContainer: nil];
 	ASSIGN(_containerLayout, layout);
 	[layout setContainer: self];
+	
+	[self syncDisplayViewWithContainer];
+	
 	[self updateLayout];
+}
+
+/* Various adjustements necessary when layout object is a wrapper around an 
+   AppKit view. This method is called on a regular basis each time a setting of
+   the container is modified and needs to be mirrored on the display view. */
+- (void) syncDisplayViewWithContainer
+{
+	if (_displayView != nil)
+	{
+		if ([_displayView respondsToSelector: @selector(setDoubleAction:)])
+			[(id)_displayView setDoubleAction: [self doubleAction]];
+	}
 }
 
 - (id) source
@@ -460,6 +482,106 @@
 - (void) render
 {
 	[_layoutItems makeObjectsPerformSelector: @selector(render)];
+}
+
+/* Actions */
+
+/** Hit test is disabled by default in container to eliminate potential issues
+	you may encounter by using subclasses of NSControl like NSImageView as 
+	layout item view. 
+	If you want to layout controls which should support direct interaction like
+	checkbox or popup menu, you can turn hit test on by calling 
+	-setEnablesHitTest: with YES. */
+- (NSView *) hitTest: (NSPoint)location
+{
+	if (_subviewHitTest)
+	{
+		NSEnumerator *e = [[self subviews] objectEnumerator];
+		NSView *subview = nil;
+		NSView *hitView = nil;
+		/* Convert the location according to -hitTest: doc. It should be
+		   expressed in superview coordinates. */
+		NSPoint localLoc = [[[self window] contentView] 
+			convertPoint: location toView: self];
+		
+		while (hitView == nil && (subview = [e nextObject]) != nil)
+			hitView = [subview hitTest: localLoc];
+		
+		return hitView;
+	}
+	
+	if (NSPointInRect(location, [self frame]))
+		return self;
+
+	return nil;
+}
+
+- (void) setEnablesSubviewHitTest: (BOOL)passHitTest
+{ 
+	_subviewHitTest = passHitTest; 
+}
+
+- (BOOL) isSubviewHitTestEnabled { return _subviewHitTest; }
+
+- (void) mouseDown: (NSEvent *)event
+{
+	//NSLog(@"Mouse down in %@", self);
+	
+	if ([self displayView] != nil) /* Layout object is wrapping an AppKit control */
+	{
+		NSLog(@"WARNING: %@ should have catch mouse down %@", [self displayView], event);
+		return;
+	}
+
+	if ([event clickCount] > 1) /* Double click */
+	{
+		NSView *hitView = nil;
+		NSPoint location = [[[self window] contentView] 
+			convertPoint: [event locationInWindow] toView: [self superview]];
+		
+		/* Find whether hitView is a layout item view */
+		_subviewHitTest = YES; /* Allow us to make a hit test on our subview */
+		hitView = [self hitTest: location];
+		_subviewHitTest = NO;
+		DESTROY(_clickedItem);
+		_clickedItem = [[self layoutItemCache] objectWithValue: hitView forKey: @"displayView"];
+		RETAIN(_clickedItem);
+		NSLog(@"Double click detected on view %@ and layout item %@", hitView, _clickedItem);
+		
+		[self sendAction: [self doubleAction] to: [self target]];
+	}
+}
+
+- (void) setTarget: (id)target
+{
+	_target = target;
+	
+	/* If a display view is used, sync its settings with container */
+	[self syncDisplayViewWithContainer];
+}
+
+- (id) target
+{
+	return _target;
+}
+
+
+- (void) setDoubleAction: (SEL)selector
+{
+	_doubleClickAction = selector;
+	
+	/* If a display view is used, sync its settings with container */
+	[self syncDisplayViewWithContainer];
+}
+
+- (SEL) doubleAction
+{
+	return _doubleClickAction;
+}
+
+- (ETLayoutItem *) doubleClickedItem
+{
+	return _clickedItem;
 }
 
 /*

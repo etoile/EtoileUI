@@ -7,6 +7,29 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		605F0D790C0F403B003AE3E6 /* ObjectManager.nib in Resources */ = {isa = PBXBuildFile; fileRef = 605F0CD00C0F4034003AE3E6 /* ObjectManager.nib */; };
+		605F0D7A0C0F4049003AE3E6 /* ETLineView.m in Sources */ = {isa = PBXBuildFile; fileRef = 609F464A0B414CB500AD2209 /* ETLineView.m */; };
+		605F0D7B0C0F4049003AE3E6 /* ETLineLayout.m in Sources */ = {isa = PBXBuildFile; fileRef = 609F46630B41644700AD2209 /* ETLineLayout.m */; };
+		605F0D7C0C0F4049003AE3E6 /* ETLayoutItem.m in Sources */ = {isa = PBXBuildFile; fileRef = 609F46A20B42049D00AD2209 /* ETLayoutItem.m */; };
+		605F0D7D0C0F4049003AE3E6 /* NSView+Etoile.m in Sources */ = {isa = PBXBuildFile; fileRef = 609F467A0B41FC6200AD2209 /* NSView+Etoile.m */; };
+		605F0D7E0C0F4049003AE3E6 /* ETStackLayout.m in Sources */ = {isa = PBXBuildFile; fileRef = 609F46600B41643900AD2209 /* ETStackLayout.m */; };
+		605F0D7F0C0F4049003AE3E6 /* ETFlowView.m in Sources */ = {isa = PBXBuildFile; fileRef = 609F46400B414C3800AD2209 /* ETFlowView.m */; };
+		605F0D800C0F4049003AE3E6 /* ETFlowLayout.m in Sources */ = {isa = PBXBuildFile; fileRef = 609F465D0B41642900AD2209 /* ETFlowLayout.m */; };
+		605F0D810C0F4049003AE3E6 /* ETViewLayout.m in Sources */ = {isa = PBXBuildFile; fileRef = 609F465A0B41641400AD2209 /* ETViewLayout.m */; };
+		605F0D820C0F4049003AE3E6 /* ETViewLayoutLine.m in Sources */ = {isa = PBXBuildFile; fileRef = 609F46850B41FDAF00AD2209 /* ETViewLayoutLine.m */; };
+		605F0D830C0F4049003AE3E6 /* ETContainer.m in Sources */ = {isa = PBXBuildFile; fileRef = 609F463D0B414C0A00AD2209 /* ETContainer.m */; };
+		605F0D840C0F4049003AE3E6 /* ETStackView.m in Sources */ = {isa = PBXBuildFile; fileRef = 609F46450B414C6A00AD2209 /* ETStackView.m */; };
+		605F0D860C0F4049003AE3E6 /* CocoaCompatibility.m in Sources */ = {isa = PBXBuildFile; fileRef = 606B99250C0B134B000AAA85 /* CocoaCompatibility.m */; };
+		605F0D870C0F4049003AE3E6 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 29B97316FDCFA39411CA2CEA /* main.m */; };
+		605F0D880C0F4049003AE3E6 /* ETTableView.m in Sources */ = {isa = PBXBuildFile; fileRef = 60EABCBC0C0C284000341BD8 /* ETTableView.m */; };
+		605F0D890C0F4049003AE3E6 /* ETTableLayout.m in Sources */ = {isa = PBXBuildFile; fileRef = 60EABCBE0C0C289900341BD8 /* ETTableLayout.m */; };
+		605F0D8A0C0F4049003AE3E6 /* ETLayer.m in Sources */ = {isa = PBXBuildFile; fileRef = 609547B80C0E032E00068CBB /* ETLayer.m */; };
+		605F0D8B0C0F4049003AE3E6 /* ETStyleRenderer.m in Sources */ = {isa = PBXBuildFile; fileRef = 609547DB0C0E0FB000068CBB /* ETStyleRenderer.m */; };
+		605F0D8C0C0F4049003AE3E6 /* ETLayoutItemGroup.m in Sources */ = {isa = PBXBuildFile; fileRef = 609548CF0C0E300500068CBB /* ETLayoutItemGroup.m */; };
+		605F0D8D0C0F4049003AE3E6 /* ETOutlineLayout.m in Sources */ = {isa = PBXBuildFile; fileRef = 609549820C0E462500068CBB /* ETOutlineLayout.m */; };
+		605F0D8E0C0F4049003AE3E6 /* ObjectManagerController.m in Sources */ = {isa = PBXBuildFile; fileRef = 605F0CC30C0F3F8F003AE3E6 /* ObjectManagerController.m */; };
+		605F0D8F0C0F4066003AE3E6 /* ObjectManagerExample-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 605F0CCC0C0F400D003AE3E6 /* ObjectManagerExample-Info.plist */; };
+		605F0E360C0F5310003AE3E6 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1058C7A1FEA54F0111CA2CBB /* Cocoa.framework */; };
 		606B98CF0C0AF898000AAA85 /* ContainerController.m in Sources */ = {isa = PBXBuildFile; fileRef = 606B97490C0AF283000AAA85 /* ContainerController.m */; };
 		606B98D00C0AF89C000AAA85 /* ETStackView.m in Sources */ = {isa = PBXBuildFile; fileRef = 609F46450B414C6A00AD2209 /* ETStackView.m */; };
 		606B98D10C0AF8A7000AAA85 /* ETLayoutItem.m in Sources */ = {isa = PBXBuildFile; fileRef = 609F46A20B42049D00AD2209 /* ETLayoutItem.m */; };
@@ -38,6 +61,11 @@
 		29B97316FDCFA39411CA2CEA /* main.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
 		29B97324FDCFA39411CA2CEA /* AppKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AppKit.framework; path = /System/Library/Frameworks/AppKit.framework; sourceTree = "<absolute>"; };
 		29B97325FDCFA39411CA2CEA /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = /System/Library/Frameworks/Foundation.framework; sourceTree = "<absolute>"; };
+		605F0CC20C0F3F8F003AE3E6 /* ObjectManagerController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ObjectManagerController.h; sourceTree = "<group>"; };
+		605F0CC30C0F3F8F003AE3E6 /* ObjectManagerController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ObjectManagerController.m; sourceTree = "<group>"; };
+		605F0CCA0C0F400D003AE3E6 /* ObjectManagerExample.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = ObjectManagerExample.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		605F0CCC0C0F400D003AE3E6 /* ObjectManagerExample-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = "ObjectManagerExample-Info.plist"; sourceTree = "<group>"; };
+		605F0CD10C0F4034003AE3E6 /* English */ = {isa = PBXFileReference; lastKnownFileType = wrapper.nib; name = English; path = English.lproj/ObjectManager.nib; sourceTree = "<group>"; };
 		606B97480C0AF283000AAA85 /* ContainerController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ContainerController.h; sourceTree = "<group>"; };
 		606B97490C0AF283000AAA85 /* ContainerController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ContainerController.m; sourceTree = "<group>"; };
 		606B98C90C0AF831000AAA85 /* ContainerExample.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = ContainerExample.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -85,6 +113,14 @@
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
+		605F0CC80C0F400D003AE3E6 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				605F0E360C0F5310003AE3E6 /* Cocoa.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		606B98C70C0AF831000AAA85 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
@@ -137,6 +173,7 @@
 			isa = PBXGroup;
 			children = (
 				606B98C90C0AF831000AAA85 /* ContainerExample.app */,
+				605F0CCA0C0F400D003AE3E6 /* ObjectManagerExample.app */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -150,6 +187,7 @@
 				29B97323FDCFA39411CA2CEA /* Frameworks */,
 				19C28FACFE9D520D11CA2CBB /* Products */,
 				606B98CB0C0AF831000AAA85 /* ContainerExample-Info.plist */,
+				605F0CCC0C0F400D003AE3E6 /* ObjectManagerExample-Info.plist */,
 			);
 			name = FlowAutolayoutExample;
 			sourceTree = "<group>";
@@ -168,6 +206,7 @@
 		29B97317FDCFA39411CA2CEA /* Resources */ = {
 			isa = PBXGroup;
 			children = (
+				605F0CD00C0F4034003AE3E6 /* ObjectManager.nib */,
 				60B2AF690C0B745A008C008A /* ContainerExample.nib */,
 			);
 			name = Resources;
@@ -250,8 +289,10 @@
 		609548D50C0E317400068CBB /* Examples */ = {
 			isa = PBXGroup;
 			children = (
-				606B97490C0AF283000AAA85 /* ContainerController.m */,
 				606B97480C0AF283000AAA85 /* ContainerController.h */,
+				606B97490C0AF283000AAA85 /* ContainerController.m */,
+				605F0CC20C0F3F8F003AE3E6 /* ObjectManagerController.h */,
+				605F0CC30C0F3F8F003AE3E6 /* ObjectManagerController.m */,
 			);
 			name = Examples;
 			sourceTree = "<group>";
@@ -259,6 +300,23 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
+		605F0CC90C0F400D003AE3E6 /* ObjectManagerExample */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 605F0CCD0C0F400E003AE3E6 /* Build configuration list for PBXNativeTarget "ObjectManagerExample" */;
+			buildPhases = (
+				605F0CC60C0F400D003AE3E6 /* Resources */,
+				605F0CC70C0F400D003AE3E6 /* Sources */,
+				605F0CC80C0F400D003AE3E6 /* Frameworks */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = ObjectManagerExample;
+			productName = ObjectManagerExample;
+			productReference = 605F0CCA0C0F400D003AE3E6 /* ObjectManagerExample.app */;
+			productType = "com.apple.product-type.application";
+		};
 		606B98C80C0AF831000AAA85 /* ContainerExample */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = 606B98CC0C0AF832000AAA85 /* Build configuration list for PBXNativeTarget "ContainerExample" */;
@@ -287,11 +345,21 @@
 			projectDirPath = "";
 			targets = (
 				606B98C80C0AF831000AAA85 /* ContainerExample */,
+				605F0CC90C0F400D003AE3E6 /* ObjectManagerExample */,
 			);
 		};
 /* End PBXProject section */
 
 /* Begin PBXResourcesBuildPhase section */
+		605F0CC60C0F400D003AE3E6 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				605F0D8F0C0F4066003AE3E6 /* ObjectManagerExample-Info.plist in Resources */,
+				605F0D790C0F403B003AE3E6 /* ObjectManager.nib in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		606B98C50C0AF831000AAA85 /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -304,6 +372,33 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
+		605F0CC70C0F400D003AE3E6 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				605F0D7A0C0F4049003AE3E6 /* ETLineView.m in Sources */,
+				605F0D7B0C0F4049003AE3E6 /* ETLineLayout.m in Sources */,
+				605F0D7C0C0F4049003AE3E6 /* ETLayoutItem.m in Sources */,
+				605F0D7D0C0F4049003AE3E6 /* NSView+Etoile.m in Sources */,
+				605F0D7E0C0F4049003AE3E6 /* ETStackLayout.m in Sources */,
+				605F0D7F0C0F4049003AE3E6 /* ETFlowView.m in Sources */,
+				605F0D800C0F4049003AE3E6 /* ETFlowLayout.m in Sources */,
+				605F0D810C0F4049003AE3E6 /* ETViewLayout.m in Sources */,
+				605F0D820C0F4049003AE3E6 /* ETViewLayoutLine.m in Sources */,
+				605F0D830C0F4049003AE3E6 /* ETContainer.m in Sources */,
+				605F0D840C0F4049003AE3E6 /* ETStackView.m in Sources */,
+				605F0D860C0F4049003AE3E6 /* CocoaCompatibility.m in Sources */,
+				605F0D870C0F4049003AE3E6 /* main.m in Sources */,
+				605F0D880C0F4049003AE3E6 /* ETTableView.m in Sources */,
+				605F0D890C0F4049003AE3E6 /* ETTableLayout.m in Sources */,
+				605F0D8A0C0F4049003AE3E6 /* ETLayer.m in Sources */,
+				605F0D8B0C0F4049003AE3E6 /* ETStyleRenderer.m in Sources */,
+				605F0D8C0C0F4049003AE3E6 /* ETLayoutItemGroup.m in Sources */,
+				605F0D8D0C0F4049003AE3E6 /* ETOutlineLayout.m in Sources */,
+				605F0D8E0C0F4049003AE3E6 /* ObjectManagerController.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		606B98C60C0AF831000AAA85 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -334,6 +429,14 @@
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXVariantGroup section */
+		605F0CD00C0F4034003AE3E6 /* ObjectManager.nib */ = {
+			isa = PBXVariantGroup;
+			children = (
+				605F0CD10C0F4034003AE3E6 /* English */,
+			);
+			name = ObjectManager.nib;
+			sourceTree = "<group>";
+		};
 		60B2AF690C0B745A008C008A /* ContainerExample.nib */ = {
 			isa = PBXVariantGroup;
 			children = (
@@ -345,6 +448,58 @@
 /* End PBXVariantGroup section */
 
 /* Begin XCBuildConfiguration section */
+		605F0CCE0C0F400E003AE3E6 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COPY_PHASE_STRIP = NO;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_ENABLE_FIX_AND_CONTINUE = YES;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_MODEL_TUNING = G5;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "$(SYSTEM_LIBRARY_DIR)/Frameworks/AppKit.framework/Headers/AppKit.h";
+				INFOPLIST_FILE = "ObjectManagerExample-Info.plist";
+				INSTALL_PATH = "$(HOME)/Applications";
+				OTHER_LDFLAGS = (
+					"-framework",
+					Foundation,
+					"-framework",
+					AppKit,
+				);
+				PREBINDING = NO;
+				PRODUCT_NAME = ObjectManagerExample;
+				WRAPPER_EXTENSION = app;
+				ZERO_LINK = YES;
+			};
+			name = Debug;
+		};
+		605F0CCF0C0F400E003AE3E6 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COPY_PHASE_STRIP = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_ENABLE_FIX_AND_CONTINUE = NO;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
+				GCC_MODEL_TUNING = G5;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "$(SYSTEM_LIBRARY_DIR)/Frameworks/AppKit.framework/Headers/AppKit.h";
+				INFOPLIST_FILE = "ObjectManagerExample-Info.plist";
+				INSTALL_PATH = "$(HOME)/Applications";
+				OTHER_LDFLAGS = (
+					"-framework",
+					Foundation,
+					"-framework",
+					AppKit,
+				);
+				PREBINDING = NO;
+				PRODUCT_NAME = ObjectManagerExample;
+				WRAPPER_EXTENSION = app;
+				ZERO_LINK = NO;
+			};
+			name = Release;
+		};
 		606B98CD0C0AF832000AAA85 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -422,6 +577,15 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
+		605F0CCD0C0F400E003AE3E6 /* Build configuration list for PBXNativeTarget "ObjectManagerExample" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				605F0CCE0C0F400E003AE3E6 /* Debug */,
+				605F0CCF0C0F400E003AE3E6 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
 		606B98CC0C0AF832000AAA85 /* Build configuration list for PBXNativeTarget "ContainerExample" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (

@@ -31,7 +31,7 @@
 
 
 // ETComponentView
-@interface ETContainer : NSView 
+@interface ETContainer : NSControl
 {
 	/* Stores items when no source is used. May stores layers when no source is 
 	   used, this is not yet decided. */
@@ -41,6 +41,11 @@
 	NSScrollView *_scrollView;
 	
 	id _dataSource;
+	
+	BOOL _subviewHitTest;
+	SEL _doubleClickAction;
+	id _target;
+	ETLayoutItem *_clickedItem;
 
 	/* Used by ETViewLayout to know which items are displayed whether the 
 	   container uses a source or simple provides items directly. */
@@ -128,6 +133,12 @@
 
 - (void) render;
 
+/* Actions */
+
+- (void) setDoubleAction: (SEL)selector;
+- (SEL) doubleAction;
+- (ETLayoutItem *) doubleClickedItem;
+
 @end
 
 @interface ETContainer (ETContainerSource)
@@ -147,5 +158,25 @@
 
 // TODO: Extend the informal protocol to propogate group/ungroup actions in 
 // they can be properly reflected on model side.
+
+@end
+
+@interface ETContainer (ETContainerDelegate)
+
+- (void) containerSelectionDidChange: (NSNotification *)notif;
+- (void) containerShouldStackItem: (NSNotification *)notif;
+- (void) containerDidStackItem: (NSNotification *)notif;
+- (void) containerShouldGroupItem: (NSNotification *)notif;
+- (void) containerDidGroupItem: (NSNotification *)notif;
+//- (void) containerDoubleClickedItem: (NSNotification *)notif;
+
+@end
+
+@interface ETContainer (WindowServerMetamodel)
+
++ rootContainer;
++ screenRootContainer;
++ localRootContainer;
++ windowRootContainer;
 
 @end

@@ -49,6 +49,7 @@
 	if (self != nil)
 	{
 		_container = nil;
+		_delegate = nil;
 		_layoutSizeCustomized = NO;
 		_maxSizeLayout = NO;
     }
@@ -140,6 +141,16 @@
 	return _maxSizeLayout;
 }
 
+- (void) setDelegate: (id)delegate
+{
+	_delegate = delegate;
+}
+
+- (id) delegate
+{
+	return _delegate;
+}
+
 - (NSArray *) layoutItemsFromSource
 {
 	switch ([[self container] checkSourceProtocolConformance])
@@ -198,7 +209,7 @@
 				@"container already exists, it may be better to remove them "
 				@"before setting source.", [[[self container] layoutItems] count]);
 		}
-		itemsForRendering= [self layoutItemsFromSource];
+		itemsForRendering = [self layoutItemsFromSource];
 	}
 	else /* Make layout with items directly provided by container */
 	{
@@ -207,6 +218,23 @@
 	}	
 	
 	[[self container] cacheLayoutItems: itemsForRendering];
+	
+	/* Let layout delegate overrides default layout items rendering */
+	if ([_delegate respondsToSelector: @selector(layout:renderLayoutItem:)])
+	{
+		NSEnumerator *e = [itemsForRendering objectEnumerator];
+		ETLayoutItem *item = nil;
+		
+		while ((item = [e nextObject]) != nil)
+		{
+			[_delegate layout: self renderLayoutItem: item];
+		}
+	}
+	else
+	{
+		[itemsForRendering makeObjectsPerformSelector: @selector(render)];
+	}
+	
 	[self renderWithLayoutItems: itemsForRendering inContainer: [self container]];
 }
 

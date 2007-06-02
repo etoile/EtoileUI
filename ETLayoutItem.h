@@ -85,6 +85,10 @@
 - (ETStyleRenderer *) renderer;
 - (void) setStyleRenderer: (ETStyleRenderer *)renderer;
 
+/* Actions */
+
+- (void) doubleClick;
+
 @end
 
 /*

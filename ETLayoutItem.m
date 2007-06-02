@@ -14,6 +14,32 @@
 - (ETLayoutItem *) initWithView: (NSView *)view value: (id)value representedObject: (id)repObject;
 @end
 
+/** Various approaches exists to customize layout items look rendering. 
+
+	If you don't plan to rely on your object model, you can simply add to each 
+	layout item a custom view  that already knows how to render/display itself.
+	Usually you want something which allows to uses the object model properties
+	and enables less crude or low-level rendering than an NSView subclass.
+	
+	If you want to render a layout item in a specific way, you can subclass
+	ETLayoutItem and override -render method. This works pretty well if you are
+	for example creating a photo collection display system. By combining 
+	ETPhotoLayoutItem and ETFlowLayout plugged in a container, you can get a 
+	full-featured photo view very easily. By subclassing ETFlowLayout in a new
+	ETPhotoLayout class you would even gain more finer control on the layout 
+	process itself if you think it's necessary.
+	
+	If you want to share the look of the rendering between several layout item
+	kinds and desires the possibility to save it as a style or edit this render 
+	process in a textual/script form, the best solution is to implement a 
+	distinct ETRendererStyle sublass.
+	
+	Most of time, you want a quick yet quite flexible solution without any 
+	subclassing, that's why the common solution is to implemente ETViewLayout
+	delegate method called -layout:renderLayoutItem:. With this method you will
+	be able to customize the rendering of layout items on the fly depending on
+	the layout settings which may change between each rendering. */
+
 
 @implementation ETLayoutItem
 
@@ -178,6 +204,14 @@
 - (void) setStyleRenderer: (ETStyleRenderer *)renderer
 {
 	ASSIGN(_renderer, renderer);
+}
+
+/* Actions */
+
+/* You can override this method for your own custom layout item */
+- (void) doubleClick
+{
+
 }
 
 @end
