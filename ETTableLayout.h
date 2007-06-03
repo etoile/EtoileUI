@@ -15,13 +15,8 @@
 
 @interface ETTableLayout : ETViewLayout
 {
-	NSMutableDictionary *_layoutItemCacheByContainer;
-	NSMutableDictionary *_layoutItemCacheByTableView;
-	NSMutableDictionary *_scrollingTableViewsByContainer;
-}
 
-- (NSScrollView *) scrollingTableViewForContainer: (ETContainer *)container;
-- (NSScrollView *) prebuiltTableView;
+}
 
 @end
 

@@ -42,6 +42,13 @@
 
 @implementation ETViewLayout
 
+/* Factory Method */
+
+- (id) layoutPrototype
+{
+	return [self copy];
+}
+
 - (id) init
 {
 	self = [super init];
@@ -59,7 +66,25 @@
 
 - (void) dealloc
 {
+	/* Neither container and delegate have to be retained. For container, only
+	   because it retains us and is in charge of us
+	   For _displayViewPrototype, it's up to subclasses to manage it. */
 	[super dealloc];
+}
+
+- (id) copyWithZone: (NSZone *)zone
+{
+	ETViewLayout *proto = [[[self class] alloc] init];
+	
+	proto->_container = nil;
+	proto->_delegate = nil;
+	proto->_displayViewPrototype = [_displayViewPrototype copy];
+	
+	proto->_layoutSize = _layoutSize;
+	proto->_layoutSizeCustomized = _layoutSizeCustomized;
+	proto->_maxSizeLayout  = _maxSizeLayout;
+	
+	return AUTORELEASE(proto);
 }
 
 - (void) setContainer: (ETContainer *)newContainer
@@ -74,7 +99,6 @@
 {
 	return _container;
 }
-
 
 - (BOOL) isAllContentVisible
 {
@@ -327,6 +351,18 @@
 - (void) computeViewLocationsForLayoutModel: (NSArray *)layoutModel inContainer: (ETContainer *)container
 {
 
+}
+
+/* Wrapping Existing View */
+
+- (void) setDisplayViewPrototype: (NSView *)protoView
+{
+	ASSIGN(_displayViewPrototype, protoView);
+}
+
+- (NSView *) displayViewPrototype
+{
+	return _displayViewPrototype;
 }
 
 /* 

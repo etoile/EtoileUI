@@ -13,6 +13,12 @@
 #import "NSView+Etoile.h"
 #import "GNUstep.h"
 
+@interface ETContainer (PackageVisibility)
+- (NSArray *) layoutItemCache;
+@end
+
+/* Private Extensions */
+
 @interface NSDictionary (EtoileHorribleHack)
 - (id) objectForUncopiedKey: (id)key;
 - (void) setObject: (id)object forUncopiedKey: (id)key;
@@ -22,16 +28,21 @@
 @implementation NSMutableDictionary (EtoileHorribleHack)
 - (id) objectForUncopiedKey: (id)key
 {
-	NSLog(@"Returning object for hash %d of key %@", [key hash], key);
+	//NSLog(@"Returning object for hash %d of key %@", [key hash], key);
 	return [self objectForKey: [NSNumber numberWithInt: [key hash]]];
 }
 
 - (void) setObject: (id)object forUncopiedKey: (id)key
 {
-	NSLog(@"Setting object for hash %d of key %@", [key hash], key);
+	//NSLog(@"Setting object for hash %d of key %@", [key hash], key);
 	[self setObject: object forKey: [NSNumber numberWithInt: [key hash]]];
 }
+@end
 
+/* Private Interface */
+
+@interface ETTableLayout (ETableLayoutDisplayViewGeneration)
+- (NSScrollView *) scrollingTableView;
 @end
 
 
@@ -43,9 +54,14 @@
     
 	if (self != nil)
 	{
-		_layoutItemCacheByContainer = [[NSMutableDictionary alloc] init];
-		_layoutItemCacheByTableView = [[NSMutableDictionary alloc] init];
-		_scrollingTableViewsByContainer = [[NSMutableDictionary alloc] init];
+		BOOL nibLoaded = [NSBundle loadNibNamed: @"TablePrototype" owner: self];
+		
+		if (nibLoaded == NO)
+		{
+			NSLog(@"Failed to load nib TablePrototype");
+			RELEASE(self);
+			return nil;
+		}
     }
     
 	return self;
@@ -53,35 +69,100 @@
 
 - (void) dealloc
 {
-	DESTROY(_layoutItemCacheByContainer);
-	DESTROY(_layoutItemCacheByTableView);
-	DESTROY(_scrollingTableViewsByContainer);
+	DESTROY(_displayViewPrototype);
 	
 	[super dealloc];
 }
 
-/** Build a table view enclosed in a scroll view from scratch, set its data 
-	source and delegate, finally register its association with container parameter
-	and return it. */
-- (NSScrollView *) scrollingTableViewForContainer: (ETContainer *)container
+- (void) awakeFromNib
 {
-	NSScrollView *scrollView = [_scrollingTableViewsByContainer objectForUncopiedKey: container];
-	
-	if (scrollView == nil)
-	{
-		NSScrollView *scrollView = [self prebuiltTableView];
-		NSTableView *tv = [scrollView documentView];
-	
-		[tv setDataSource: self];
-		[tv setDelegate: self];
-		
-		[_scrollingTableViewsByContainer setObject: scrollView forUncopiedKey: container];
-	}
-	
-	return scrollView;
+	NSLog(@"Awaking from nib for %@", self);
+	RETAIN(_displayViewPrototype);
+	[_displayViewPrototype removeFromSuperview];
 }
 
-- (NSScrollView *) prebuiltTableView
+- (void) renderWithLayoutItems: (NSArray *)items inContainer: (ETContainer *)container
+{
+	NSScrollView *scrollView = nil;
+	NSTableView *tv = nil;
+	
+	/* No display view proto available, a table view needs needs to be created 
+	   in code */
+	if ([self displayViewPrototype] == nil)
+	{
+		scrollView = [self scrollingTableView];
+	}
+	else
+	{
+		NSView *proto = [self displayViewPrototype];
+		
+		if ([proto isKindOfClass: [NSScrollView class]])
+		{
+			scrollView = (NSScrollView *)[self displayViewPrototype];
+		}
+		else
+		{
+			NSLog(@"WARNING: %@ display view prototype %@ isn't an NSScrollView instance", self, proto);
+		}
+	}
+	
+	NSLog(@"%@ scroll view has %@ as document view", self, [scrollView documentView]);
+	tv = [scrollView documentView];
+	
+	if ([scrollView superview] == nil)
+	{
+		[container setDisplayView: scrollView];
+	}
+	else if ([[scrollView superview] isEqual: container] == NO)
+	{
+		NSLog(@"WARNING: Table view of table layout should never have another "
+			  @"superview than container parameter or nil.");
+	}
+	
+	if ([tv dataSource] == nil)
+		[tv setDataSource: self];
+	if ([tv delegate] == nil)
+		[tv setDelegate: self];
+		
+	[tv reloadData];
+}
+
+- (int) numberOfRowsInTableView: (NSTableView *)tv
+{
+	NSArray *layoutItems = [[self container] layoutItemCache];
+	
+	//NSLog(@"Returns %d as number of items in table view %@", [layoutItems count], tv);
+	
+	return [layoutItems count];
+}
+
+- (id) tableView: (NSTableView *)tv objectValueForTableColumn: (NSTableColumn *)column row: (int)rowIndex
+{
+	NSArray *layoutItems = [[self container] layoutItemCache];
+	ETLayoutItem *item = [layoutItems objectAtIndex: rowIndex];
+	
+	//NSLog(@"Returns %@ as object value in table view %@", [item valueForProperty: [column identifier]], tv);
+	
+	return [item valueForProperty: [column identifier]];
+}
+
+- (ETLayoutItem *) clickedItem
+{
+	NSTableView *tv = [(NSScrollView *)_displayViewPrototype documentView];
+	NSArray *layoutItems = [[self container] layoutItemCache];
+	ETLayoutItem *item = [layoutItems objectAtIndex: [tv clickedRow]];
+	
+	return item;
+}
+
+@end
+
+/* Private Helper Methods */
+
+@implementation ETTableLayout (ETableLayoutDisplayViewGeneration)
+
+/** Build a table view enclosed in a scroll view from scratch. */
+- (NSScrollView *) scrollingTableView
 {
 	NSTableView *tv = nil;
 	NSScrollView *prebuiltTableView = nil;
@@ -108,45 +189,6 @@
 	[tv setHeaderView: nil];
 	
 	return prebuiltTableView;
-}
-
-- (void) renderWithLayoutItems: (NSArray *)items inContainer: (ETContainer *)container
-{
-	NSScrollView *scrollView = [self scrollingTableViewForContainer: container];
-	NSTableView *tv = [scrollView documentView];
-	
-	if ([scrollView superview] == nil)
-	{
-		[container setDisplayView: scrollView];
-	}
-	else if ([[scrollView superview] isEqual: container] == NO)
-	{
-		NSLog(@"WARNING: Table view of table layout should never have another "
-			  @"superview than container parameter or nil.");
-	}
-	
-	[_layoutItemCacheByContainer setObject: items forUncopiedKey: container];
-	[_layoutItemCacheByTableView setObject: items forUncopiedKey: tv];
-	[tv reloadData];
-}
-
-- (int) numberOfRowsInTableView: (NSTableView *)tv
-{
-	NSArray *layoutItems = [_layoutItemCacheByTableView objectForUncopiedKey: tv];
-	
-	//NSLog(@"Returns %d as number of items in table view %@", [layoutItems count], tv);
-	
-	return [layoutItems count];
-}
-
-- (id) tableView: (NSTableView *)tv objectValueForTableColumn: (NSTableColumn *)column row: (int)rowIndex
-{
-	NSArray *layoutItems = [_layoutItemCacheByTableView objectForUncopiedKey: tv];
-	ETLayoutItem *item = [layoutItems objectAtIndex: rowIndex];
-	
-	//NSLog(@"Returns %@ as object value in table view %@", [item valueForProperty: [column identifier]], tv);
-	
-	return [item valueForProperty: [column identifier]];
 }
 
 @end

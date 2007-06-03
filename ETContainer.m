@@ -22,6 +22,8 @@
 
 @interface ETContainer (Private)
 - (void) syncDisplayViewWithContainer;
+- (NSInvocation *) invocationForSelector: (SEL)selector;
+- (id) sendInvocationToDisplayView: (NSInvocation *)inv;
 - (NSArray *) layoutItemsFromSource;
 - (NSArray *) layoutItemsFromFlatSource;
 - (NSArray *) layoutItemsFromTreeSource;
@@ -169,11 +171,68 @@
    the container is modified and needs to be mirrored on the display view. */
 - (void) syncDisplayViewWithContainer
 {
+	NSInvocation *inv = nil;
+	
 	if (_displayView != nil)
 	{
-		if ([_displayView respondsToSelector: @selector(setDoubleAction:)])
-			[(id)_displayView setDoubleAction: [self doubleAction]];
+		SEL doubleAction = [self doubleAction];
+		id target = [self target];
+		
+		inv = RETAIN([self invocationForSelector: @selector(setDoubleAction:)]);
+		[inv setArgument: &doubleAction atIndex: 2];
+		//[self sendInvocationToDisplayView: inv];
+		
+		// FIXME: Hack to work around invocation vanishing when we call -sendInvocationToDisplayView:
+		id enclosedDisplayView = [(NSScrollView *)_displayView documentView];
+		
+		if ([enclosedDisplayView respondsToSelector: [inv selector]]);
+			[inv invokeWithTarget: enclosedDisplayView];
+		
+		inv = RETAIN([self invocationForSelector: @selector(setTarget:)]);
+		[inv setArgument: &target atIndex: 2];
+		//[self sendInvocationToDisplayView: inv];
+		
+		// FIXME: Hack to work around invocation vanishing when we call -sendInvocationToDisplayView:
+		enclosedDisplayView = [(NSScrollView *)_displayView documentView];
+		
+		if ([enclosedDisplayView respondsToSelector: [inv selector]]);
+			[inv invokeWithTarget: enclosedDisplayView];
 	}
+}
+
+- (NSInvocation *) invocationForSelector: (SEL)selector
+{
+	NSInvocation *inv = [NSInvocation invocationWithMethodSignature: 
+		[self methodSignatureForSelector: selector]];
+	
+	/* Method signature doesn't embed the selector, but only type infos related to it */
+	[inv setSelector: selector];
+	
+	return inv;
+}
+
+- (id) sendInvocationToDisplayView: (NSInvocation *)inv
+{
+	id result = nil;
+	
+	if ([_displayView respondsToSelector: [inv selector]])
+			[inv invokeWithTarget: _displayView];
+			
+	/* May be the display view is packaged inside a scroll view */
+	if ([_displayView isKindOfClass: [NSScrollView class]])
+	{
+		id enclosedDisplayView = [(NSScrollView *)_displayView documentView];
+		
+		if ([enclosedDisplayView respondsToSelector: [inv selector]]);
+			[inv invokeWithTarget: enclosedDisplayView];
+	}
+	
+	if (inv != nil)
+		[inv getReturnValue: &result];
+		
+	RELEASE(inv); /* Retained in -syncDisplayViewWithContainer otherwise it gets released too soon */
+	
+	return result;
 }
 
 - (id) source
@@ -277,6 +336,8 @@
 	[view setFrameSize: [self frame].size];
 	[view setFrameOrigin: NSZeroPoint];
 	[self addSubview: view];
+	
+	[self syncDisplayViewWithContainer];
 }
 
 /*
@@ -491,29 +552,25 @@
 	layout item view. 
 	If you want to layout controls which should support direct interaction like
 	checkbox or popup menu, you can turn hit test on by calling 
-	-setEnablesHitTest: with YES. */
+	-setEnablesHitTest: with YES. 
+	*/
 - (NSView *) hitTest: (NSPoint)location
 {
-	if (_subviewHitTest)
+	/* If we use an AppKit control as a display view, everything should be
+	   handled as usual. Ditto if we have no display view but subview hit test 
+	   is turned on. */
+	if ([self displayView] || _subviewHitTest)
 	{
-		NSEnumerator *e = [[self subviews] objectEnumerator];
-		NSView *subview = nil;
-		NSView *hitView = nil;
-		/* Convert the location according to -hitTest: doc. It should be
-		   expressed in superview coordinates. */
-		NSPoint localLoc = [[[self window] contentView] 
-			convertPoint: location toView: self];
-		
-		while (hitView == nil && (subview = [e nextObject]) != nil)
-			hitView = [subview hitTest: localLoc];
-		
-		return hitView;
+		return [super hitTest: location];
 	}
-	
-	if (NSPointInRect(location, [self frame]))
+	else if (NSPointInRect(location, [self frame]))
+	{
 		return self;
-
-	return nil;
+	}
+	else
+	{
+		return nil;
+	}
 }
 
 - (void) setEnablesSubviewHitTest: (BOOL)passHitTest
@@ -579,10 +636,26 @@
 	return _doubleClickAction;
 }
 
-- (ETLayoutItem *) doubleClickedItem
+- (ETLayoutItem *) clickedItem
 {
+	if (_displayView != nil)
+	{
+		if ([[self layout] respondsToSelector: @selector(clickedItem)])
+		{
+			DESTROY(_clickedItem);
+			_clickedItem = [(id)[self layout] clickedItem];
+			RETAIN(_clickedItem);
+		}
+		else
+		{
+			NSLog(@"WARNING: Layout %@ based on a display view must implement -clickedItem", [self layout]);
+		}
+	}
+	
 	return _clickedItem;
 }
+
+@end
 
 /*
 - (void) addView: (NSView *)view withIdentifier: (NSString *)identifier
@@ -613,4 +686,3 @@
   return [_layoutedViewIdentifiers objectForKey: identifier];
 }
 */
-@end

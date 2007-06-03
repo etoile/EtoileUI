@@ -14,19 +14,25 @@
 
 @interface ETViewLayout : NSObject
 {
-	ETContainer *_container;
-	id _delegate;
+	IBOutlet ETContainer *_container;
+	IBOutlet id _delegate;
+	IBOutlet NSView *_displayViewPrototype;
+	
 	NSSize _layoutSize;
 	BOOL _layoutSizeCustomized;
 	BOOL _maxSizeLayout;
 }
 
+/* Factory  Method */
+
+- (id) layoutPrototype;
+
+/* Main Accessors */
+
 - (void) setContainer: (ETContainer *)newContainer;
 - (ETContainer *) container;
 
-- (BOOL) isAllContentVisible;
-
-- (void) adjustLayoutSizeToContentSize;
+/* Size And Utility Accessors */
 
 - (void) setUsesCustomLayoutSize: (BOOL)flag;
 - (BOOL) usesCustomLayoutSize;
@@ -38,6 +44,13 @@
 - (void) setDelegate: (id)delegate;
 - (id) delegate;
 
+/* Sizing Methods */
+
+- (BOOL) isAllContentVisible;
+- (void) adjustLayoutSizeToContentSize;
+
+/* Layouting */
+
 - (void) render;
 - (void) renderWithLayoutItems: (NSArray *)items inContainer: (ETContainer *)container;
 - (void) renderWithSource: (id)source inContainer: (ETContainer *)container;
@@ -48,6 +61,11 @@
 
 // Private use
 - (void) adjustLayoutSizeToSizeOfContainer: (ETContainer *)container;
+
+/* Wrapping Existing View */
+
+- (void) setDisplayViewPrototype: (NSView *)protoView;
+- (NSView *) displayViewPrototype;
 
 @end
 

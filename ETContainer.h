@@ -137,7 +137,7 @@
 
 - (void) setDoubleAction: (SEL)selector;
 - (SEL) doubleAction;
-- (ETLayoutItem *) doubleClickedItem;
+- (ETLayoutItem *) clickedItem;
 
 @end
 

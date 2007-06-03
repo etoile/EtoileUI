@@ -12,6 +12,7 @@
 #import "ETFlowLayout.h"
 #import "ETLineLayout.h"
 #import "ETTableLayout.h"
+#import "ETOutlineLayout.h"
 #import "ETContainer.h"
 #import "GNUstep.h"
 
@@ -41,12 +42,12 @@ static NSFileManager *objectManager = nil;
 	
 	[viewContainer setSource: self];
 	[viewContainer setTarget: self];
-	[viewContainer setDoubleAction: @selector(doubleClickInContainer:)];
+	[viewContainer setDoubleAction: @selector(doubleClickInViewContainer:)];
 	[viewContainer setLayout: AUTORELEASE([[ETStackLayout alloc] init])];
 	
 	[pathContainer setSource: self];
 	[pathContainer setTarget: self];
-	[pathContainer setDoubleAction: @selector(doubleClickInContainer:)];
+	[pathContainer setDoubleAction: @selector(doubleClickInPathContainer:)];
 }
 
 - (void) viewContainerDidResize: (NSNotification *)notif
@@ -71,6 +72,9 @@ static NSFileManager *objectManager = nil;
 			break;
 		case 3:
 			layoutClass = [ETTableLayout class];
+			break;
+		case 4:
+			layoutClass = [ETOutlineLayout class];
 			break;
 		default:
 			NSLog(@"Unsupported layout or unknown popup menu selection");
@@ -106,9 +110,25 @@ static NSFileManager *objectManager = nil;
 
 }
 
-- (void) doubleClickInContainer: (id)sender
+- (void) doubleClickInViewContainer: (id)sender
 {
-	ETLayoutItem *item = [sender doubleClickedItem];
+	// NOTE: 'sender' isn't always ETContainer instance. For ETTableLayout it 
+	// is the NSTableView instance in use.
+	ETLayoutItem *item = [viewContainer clickedItem];
+	NSString *newPath = [item valueForProperty: @"path"];
+	
+	NSLog(@"Moving from path %@ to %@", path, newPath);
+	ASSIGN(path, newPath);
+	
+	[viewContainer updateLayout];
+	[pathContainer updateLayout];
+}
+
+- (void) doubleClickInPathContainer: (id)sender
+{
+	// NOTE: 'sender' isn't always ETContainer instance. For ETTableLayout it 
+	// is the NSTableView instance in use.
+	ETLayoutItem *item = [pathContainer clickedItem];
 	NSString *newPath = [item valueForProperty: @"path"];
 	
 	NSLog(@"Moving from path %@ to %@", path, newPath);
@@ -172,7 +192,7 @@ static NSFileManager *objectManager = nil;
 		
 		[fileItem setValue: [filePath lastPathComponent] forProperty: @"name"];
 		[fileItem setValue: filePath forProperty: @"path"];
-		//[fileItem setValue: [wk iconForFile: [image name]] forProperty: @"icon"];
+		[fileItem setValue: icon forProperty: @"icon"];
 		[fileItem setValue: [NSNumber numberWithInt: [attributes fileSize]] forProperty: @"size"];
 		[fileItem setValue: [attributes fileType] forProperty: @"type"];
 		//[fileItem setValue: date forProperty	: @"modificationdate"];
@@ -188,7 +208,7 @@ static NSFileManager *objectManager = nil;
 		for (int i = 0; i < index; i++)
 			filePath = [filePath stringByAppendingPathComponent: [pathComponents objectAtIndex: i + 1]];
 		
-		NSLog(@"Built path is %@ with components %@", filePath, pathComponents);
+		//NSLog(@"Built path is %@ with components %@", filePath, pathComponents);
 		
 		icon = [wk iconForFile: filePath];
 		fileItem = [ETLayoutItem layoutItemWithView: [self imageViewForImage: icon]];	
@@ -196,7 +216,7 @@ static NSFileManager *objectManager = nil;
 		[fileItem setValue: [filePath lastPathComponent] forProperty: @"name"];
 		[fileItem setValue: filePath forProperty: @"path"];
 		
-		NSLog(@"Returns %@ as layout item in container %@", fileItem, container);
+		//NSLog(@"Returns %@ as layout item in container %@", fileItem, container);
 	}
 	
 	return fileItem;

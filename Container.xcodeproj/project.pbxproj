@@ -50,6 +50,10 @@
 		609547DC0C0E0FB000068CBB /* ETStyleRenderer.m in Sources */ = {isa = PBXBuildFile; fileRef = 609547DB0C0E0FB000068CBB /* ETStyleRenderer.m */; };
 		609548D00C0E300500068CBB /* ETLayoutItemGroup.m in Sources */ = {isa = PBXBuildFile; fileRef = 609548CF0C0E300500068CBB /* ETLayoutItemGroup.m */; };
 		609549830C0E462500068CBB /* ETOutlineLayout.m in Sources */ = {isa = PBXBuildFile; fileRef = 609549820C0E462500068CBB /* ETOutlineLayout.m */; };
+		60B144990C11BFB400B4613B /* TablePrototype.nib in Resources */ = {isa = PBXBuildFile; fileRef = 60B144970C11BFB400B4613B /* TablePrototype.nib */; };
+		60B1449A0C11BFB400B4613B /* TablePrototype.nib in Resources */ = {isa = PBXBuildFile; fileRef = 60B144970C11BFB400B4613B /* TablePrototype.nib */; };
+		60B144EC0C11C52900B4613B /* OutlinePrototype.nib in Resources */ = {isa = PBXBuildFile; fileRef = 60B144EA0C11C52900B4613B /* OutlinePrototype.nib */; };
+		60B144ED0C11C52900B4613B /* OutlinePrototype.nib in Resources */ = {isa = PBXBuildFile; fileRef = 60B144EA0C11C52900B4613B /* OutlinePrototype.nib */; };
 		60B2AF6B0C0B745A008C008A /* ContainerExample.nib in Resources */ = {isa = PBXBuildFile; fileRef = 60B2AF690C0B745A008C008A /* ContainerExample.nib */; };
 		60EABCBD0C0C284000341BD8 /* ETTableView.m in Sources */ = {isa = PBXBuildFile; fileRef = 60EABCBC0C0C284000341BD8 /* ETTableView.m */; };
 		60EABCC00C0C289900341BD8 /* ETTableLayout.m in Sources */ = {isa = PBXBuildFile; fileRef = 60EABCBE0C0C289900341BD8 /* ETTableLayout.m */; };
@@ -105,6 +109,8 @@
 		609F46A10B42049D00AD2209 /* ETLayoutItem.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ETLayoutItem.h; sourceTree = "<group>"; };
 		609F46A20B42049D00AD2209 /* ETLayoutItem.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ETLayoutItem.m; sourceTree = "<group>"; };
 		60A563E70A16266900329EE6 /* GNUstep.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GNUstep.h; sourceTree = "<group>"; };
+		60B144980C11BFB400B4613B /* English */ = {isa = PBXFileReference; lastKnownFileType = wrapper.nib; name = English; path = English.lproj/TablePrototype.nib; sourceTree = "<group>"; };
+		60B144EB0C11C52900B4613B /* English */ = {isa = PBXFileReference; lastKnownFileType = wrapper.nib; name = English; path = English.lproj/OutlinePrototype.nib; sourceTree = "<group>"; };
 		60B2AF6A0C0B745A008C008A /* English */ = {isa = PBXFileReference; lastKnownFileType = wrapper.nib; name = English; path = English.lproj/ContainerExample.nib; sourceTree = "<group>"; };
 		60EABCBB0C0C284000341BD8 /* ETTableLayout.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ETTableLayout.h; sourceTree = "<group>"; };
 		60EABCBC0C0C284000341BD8 /* ETTableView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ETTableView.m; sourceTree = "<group>"; };
@@ -208,6 +214,8 @@
 			children = (
 				605F0CD00C0F4034003AE3E6 /* ObjectManager.nib */,
 				60B2AF690C0B745A008C008A /* ContainerExample.nib */,
+				60B144970C11BFB400B4613B /* TablePrototype.nib */,
+				60B144EA0C11C52900B4613B /* OutlinePrototype.nib */,
 			);
 			name = Resources;
 			sourceTree = "<group>";
@@ -357,6 +365,8 @@
 			files = (
 				605F0D8F0C0F4066003AE3E6 /* ObjectManagerExample-Info.plist in Resources */,
 				605F0D790C0F403B003AE3E6 /* ObjectManager.nib in Resources */,
+				60B1449A0C11BFB400B4613B /* TablePrototype.nib in Resources */,
+				60B144ED0C11C52900B4613B /* OutlinePrototype.nib in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -366,6 +376,8 @@
 			files = (
 				606B9C540C0B180A000AAA85 /* ContainerExample-Info.plist in Resources */,
 				60B2AF6B0C0B745A008C008A /* ContainerExample.nib in Resources */,
+				60B144990C11BFB400B4613B /* TablePrototype.nib in Resources */,
+				60B144EC0C11C52900B4613B /* OutlinePrototype.nib in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -435,6 +447,22 @@
 				605F0CD10C0F4034003AE3E6 /* English */,
 			);
 			name = ObjectManager.nib;
+			sourceTree = "<group>";
+		};
+		60B144970C11BFB400B4613B /* TablePrototype.nib */ = {
+			isa = PBXVariantGroup;
+			children = (
+				60B144980C11BFB400B4613B /* English */,
+			);
+			name = TablePrototype.nib;
+			sourceTree = "<group>";
+		};
+		60B144EA0C11C52900B4613B /* OutlinePrototype.nib */ = {
+			isa = PBXVariantGroup;
+			children = (
+				60B144EB0C11C52900B4613B /* English */,
+			);
+			name = OutlinePrototype.nib;
 			sourceTree = "<group>";
 		};
 		60B2AF690C0B745A008C008A /* ContainerExample.nib */ = {
