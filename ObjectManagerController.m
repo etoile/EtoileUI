@@ -8,6 +8,7 @@
 
 #import "ObjectManagerController.h"
 #import "ETLayoutItem.h"
+#import "ETLayoutItemGroup.h"
 #import "ETStackLayout.h"
 #import "ETFlowLayout.h"
 #import "ETLineLayout.h"
@@ -39,7 +40,28 @@ static NSFileManager *objectManager = nil;
            selector: @selector(viewContainerDidResize:) 
                name: NSViewFrameDidChangeNotification 
              object: viewContainer];
+			 
+	NSString *testPath = nil;
+	NSString *fixedPath = nil;
 	
+	testPath = @"/2";;
+	fixedPath = [self textualPathForMixedPath: testPath];
+	NSLog(@"Mixed path test: %@ -> %@", testPath, fixedPath);
+	testPath = @"/Developer/3";
+	fixedPath = [self textualPathForMixedPath: testPath];
+	NSLog(@"Mixed path test: %@ -> %@", testPath, fixedPath);
+	testPath = @"/Developer/3/Audio/1";
+	fixedPath = [self textualPathForMixedPath: testPath];
+	NSLog(@"Mixed path test: %@ -> %@", testPath, fixedPath);
+	testPath = @"/10/3/Audio/1";
+	fixedPath = [self textualPathForMixedPath: testPath];
+	if (fixedPath)
+		NSLog(@"Mixed path test: %@ -> %@", testPath, fixedPath);
+	testPath = @"/1/1";
+	fixedPath = [self textualPathForMixedPath: testPath];
+	if (fixedPath)
+		NSLog(@"Mixed path test: %@ -> %@", testPath, fixedPath);
+			
 	[viewContainer setSource: self];
 	[viewContainer setTarget: self];
 	[viewContainer setDoubleAction: @selector(doubleClickInViewContainer:)];
@@ -48,6 +70,7 @@ static NSFileManager *objectManager = nil;
 	[pathContainer setSource: self];
 	[pathContainer setTarget: self];
 	[pathContainer setDoubleAction: @selector(doubleClickInPathContainer:)];
+	[pathContainer updateLayout];
 }
 
 - (void) viewContainerDidResize: (NSNotification *)notif
@@ -114,25 +137,23 @@ static NSFileManager *objectManager = nil;
 {
 	// NOTE: 'sender' isn't always ETContainer instance. For ETTableLayout it 
 	// is the NSTableView instance in use.
-	ETLayoutItem *item = [viewContainer clickedItem];
-	NSString *newPath = [item valueForProperty: @"path"];
-	
-	NSLog(@"Moving from path %@ to %@", path, newPath);
-	ASSIGN(path, newPath);
-	
-	[viewContainer updateLayout];
-	[pathContainer updateLayout];
+	return [self moveToItem: [viewContainer clickedItem]];
 }
 
 - (void) doubleClickInPathContainer: (id)sender
 {
-	// NOTE: 'sender' isn't always ETContainer instance. For ETTableLayout it 
-	// is the NSTableView instance in use.
-	ETLayoutItem *item = [pathContainer clickedItem];
+	return [self moveToItem: [pathContainer clickedItem]];
+}
+
+- (void) moveToItem: (ETLayoutItem *)item
+{
 	NSString *newPath = [item valueForProperty: @"path"];
 	
 	NSLog(@"Moving from path %@ to %@", path, newPath);
 	ASSIGN(path, newPath);
+	// NOTE: The following is mandatory if you use tree source protocol unlike 
+	// with flat source protocol.
+	[viewContainer setPath: path];
 	
 	[viewContainer updateLayout];
 	[pathContainer updateLayout];
@@ -152,7 +173,134 @@ static NSFileManager *objectManager = nil;
     return nil;
 }
 
+/* Example with path /2/Applications/3 
+
+   We use recursivity to retrieve the head and moves back to the tail component
+   by component.
+   We process /2, /<filename>/Applications and /<filename>/Applications/3 and 
+   we expect /<filename>/Applications/<filename> */
+- (NSString *) textualPathForMixedPath: (NSString *)mixedPath
+{
+	NSString *pathGettingFixed = nil;
+	
+	/* '/2' is made of two path components */
+	if ([[mixedPath pathComponents] count] > 2)
+	{
+		NSString *beginningOfPath = nil;
+		
+		beginningOfPath = [self textualPathForMixedPath: [mixedPath stringByDeletingLastPathComponent]];
+		if (beginningOfPath == nil)
+			return nil;
+		pathGettingFixed = [beginningOfPath stringByAppendingPathComponent: [mixedPath lastPathComponent]];
+	}
+	else
+	{
+		pathGettingFixed = mixedPath;
+	}
+
+	/* -> means moving up in the call stack… lastcall -> lastcall -1 -> lastcall - 2 */
+	NSString *componentToCheck = [pathGettingFixed lastPathComponent]; // 2 -> Applications -> 3
+	NSCharacterSet *charSet = [NSCharacterSet characterSetWithCharactersInString: componentToCheck];
+	
+	/* componentToCheck is a number, we have to modify the path */
+	if ([[NSCharacterSet decimalDigitCharacterSet] isSupersetOfSet: charSet])
+	{
+		NSString *pathBase = [pathGettingFixed stringByDeletingLastPathComponent];	// / -> /<filename>/Applications 
+		NSArray *files = [[NSFileManager defaultManager] directoryContentsAtPath: pathBase];
+		
+		if (files != nil && [files count] > 0)
+		{
+			NSString *file = [files objectAtIndex: [componentToCheck intValue]];
+			NSMutableArray *components = [[pathGettingFixed pathComponents] mutableCopy];
+			
+			[components removeLastObject]; // 2 -> 3
+			[components addObject: [file lastPathComponent]]; // <filename> -> <filename>
+			
+			pathGettingFixed = [NSString pathWithComponents: components];
+		}
+		else
+		{
+			pathGettingFixed = nil; /* Path is invalid */
+		}
+	}
+	
+	return pathGettingFixed;
+}
+
 /* ETContainerSource informal protocol */
+
+/* Tree protocol used by TreeContainer */
+
+- (int) numberOfItemsAtPath: (NSString *)newPath inContainer: (ETContainer *)container
+{
+	NSString *textualPath = [self textualPathForMixedPath: newPath];
+	
+	if ([container isEqual: viewContainer]) /* Browsing Container */
+	{
+		NSArray *fileObjects = [objectManager directoryContentsAtPath: textualPath];
+
+		//NSLog(@"Returns %d as number of items in container %@", [fileObjects count], container);
+		
+		return [fileObjects count];
+	}
+	else if ([container isEqual: pathContainer]) /* Path Container */
+	{
+		return [self numberOfItemsInContainer: container];
+	}
+	
+	return 0;
+}
+
+- (ETLayoutItem *) itemAtPath: (NSString *)newPath inContainer: (ETContainer *)container
+{
+	NSWorkspace *wk = [NSWorkspace sharedWorkspace];
+	ETLayoutItem *fileItem = nil;
+	
+	if ([container isEqual: viewContainer]) /* Browsing Container */
+	{
+		NSString *filePath = [self textualPathForMixedPath: newPath];
+		NSDictionary *attributes = [objectManager fileAttributesAtPath: filePath traverseLink: NO];
+		NSImage *icon = [wk iconForFile: filePath];
+		BOOL isDir = NO;
+		
+		//NSLog(@"Found path %@ with %@", filePath, newPath);
+		
+		if ([[NSFileManager defaultManager] fileExistsAtPath: filePath isDirectory: &isDir] && isDir)
+		{
+			fileItem = [ETLayoutItemGroup layoutItemWithView: [self imageViewForImage: icon]];
+		}
+		else
+		{
+			fileItem = [ETLayoutItem layoutItemWithView: [self imageViewForImage: icon]];
+		}
+		
+		[fileItem setValue: [filePath lastPathComponent] forProperty: @"name"];
+		[fileItem setValue: filePath forProperty: @"path"];
+		[fileItem setValue: icon forProperty: @"icon"];
+		[fileItem setValue: [NSNumber numberWithInt: [attributes fileSize]] forProperty: @"size"];
+		[fileItem setValue: [attributes fileType] forProperty: @"type"];
+		//[fileItem setValue: date forProperty	: @"modificationdate"];
+		
+		//NSLog(@"Returns %@ as layout item in container %@", fileItem, container);
+	}
+	else if ([container isEqual: pathContainer]) /* Path Container */
+	{
+		int flatIndex = [[newPath lastPathComponent] intValue];
+		return [self itemAtIndex: flatIndex inContainer: container];
+	}
+
+	return RETAIN(fileItem);
+}
+
+- (NSArray *) displayedItemPropertiesInContainer: (ETContainer *)container
+{
+	return [NSArray arrayWithObjects: @"name", @"size", @"type", @"modificationdate", nil];
+}
+
+/* Flat protocol used by PathContainer
+
+   NOTE: only present for demonstrating purpose. It could be rewritten as part
+   of tree protocol methods implemented above. */
 
 - (int) numberOfItemsInContainer: (ETContainer *)container
 {
@@ -168,7 +316,7 @@ static NSFileManager *objectManager = nil;
 	{
 		NSArray *pathComponents = [path pathComponents];
 
-		NSLog(@"Returns %d as number of items in container %@", [pathComponents count], container);
+		//NSLog(@"Returns %d as number of items in container %@", [pathComponents count], container);
 		
 		return [pathComponents count];
 	}
@@ -220,11 +368,6 @@ static NSFileManager *objectManager = nil;
 	}
 	
 	return fileItem;
-}
-
-- (NSArray *) displayedItemPropertiesInContainer: (ETContainer *)container
-{
-	return [NSArray arrayWithObjects: @"name", @"size", @"type", @"modificationdate", nil];
 }
 
 @end

@@ -9,6 +9,7 @@
 #import "ETViewLayout.h"
 #import "ETViewLayoutLine.h"
 #import "ETContainer.h"
+#import "ETLayoutItemGroup.h"
 #import "GNUstep.h"
 
 @interface ETContainer (PackageVisibility)
@@ -211,7 +212,29 @@
 
 - (NSArray *) layoutItemsFromTreeSource
 {
-	return nil;
+	NSMutableArray *itemsFromSource = [NSMutableArray array];
+	ETLayoutItem *layoutItem = nil;
+	ETContainer *container = [self container];
+	NSString *path = [container path];
+	int nbOfItems = [[container source] numberOfItemsAtPath: path inContainer: container];
+	
+	NSLog(@"-layoutItemsFromTreeSource in %@", self);
+
+	for (int i = 0; i < nbOfItems; i++)
+	{
+		NSString *subpath = nil;
+		
+		subpath = [path stringByAppendingPathComponent: [NSString stringWithFormat: @"%d", i]];
+		layoutItem = [[container source] itemAtPath: subpath inContainer: container];
+		if ([layoutItem isKindOfClass: [ETLayoutItemGroup class]])
+		{
+			//[[layoutItem container] setSource: [container source]];
+			[(ETContainer *)[layoutItem view] setPath: subpath];
+		}
+		[itemsFromSource addObject: layoutItem];
+	}
+	
+	return itemsFromSource;
 }
 
 - (void) render
@@ -342,6 +365,11 @@
 	-computeViewLocationsForLayoutModel:inContainer:. */
 - (NSArray *) layoutModelForViews: (NSArray *)views inContainer: (ETContainer *)viewContainer
 {
+	ETViewLayoutLine *line = [self layoutLineForViews: views inContainer: viewContainer];
+	
+	if (line != nil)
+		return [NSArray arrayWithObject: line];
+
 	return nil;
 }
 

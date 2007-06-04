@@ -40,6 +40,10 @@
 	NSView *_displayView;
 	NSScrollView *_scrollView;
 	
+	// NOTE: path ivar may move to ETLayoutItem later, it could make more sense
+	// in this way. Then we would have a method -owner or -layoutItemOwner on
+	// ETContainer that returns an ETLayoutItemGroup (generated on the fly if needed).
+	NSString *_path; /* A path type will replace NSString later */
 	id _dataSource;
 	
 	BOOL _subviewHitTest;
@@ -53,6 +57,10 @@
 }
 
 - (id) initWithFrame: (NSRect)rect views: (NSArray *)views;
+
+- (NSString *) path;
+- (void) setPath: (NSString *)path;
+//- (ETLayoutItem *) layoutItemAtPath: (NSString *)path;
 
 - (void) updateLayout;
 

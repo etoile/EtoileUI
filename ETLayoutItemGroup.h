@@ -20,6 +20,8 @@
 + (ETLayoutItemGroup *) layoutItemGroupWithLayoutItem: (ETLayoutItem *)item;
 + (ETLayoutItemGroup *) layoutItemGroupWithLayoutItems: (NSArray *)items;
 
+- (id) initWithLayoutItems: (NSArray *)layoutItems view: (NSView *)view;
+
 // NOTE: Note sure it's really doable to provide such methods. May only work in
 // a safe way if we provide it as part of ETContainer API
 - (NSArray *) ungroup;

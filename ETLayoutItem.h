@@ -56,6 +56,26 @@
 - (ETLayoutItem *) initWithRepresentedObject: (id)object;
 - (ETLayoutItem *) initWithView: (NSView *)view;
 
+/** Facility methods to store a name acting like a last fallback property for 
+	display. Name is also used as a path component to build 
+	paths passed through tree source protocol to the container source. If no 
+	name is available, the layout item is referenced in the path by its index 
+	in layout item group which owns it. Name have the advantage to be more 
+	stable than index in some cases, you can also store id or uuid in this
+	field.
+	You can retrieve a layout item bound a know path by simply passing this 
+	path as a parameter to -[ETContainer layoutItemForPath:]. Layout items
+	tree structure are managed by container archictecture so you never need
+	to worry about releasing/retaining items. Only your wrapped model if you
+	need/have one must be memory-managed by your code. 
+	NOTE: the feature described below isn't yet supported by container
+	architecture and could never be.
+	If you use no container source, and you call -[ETContainer addItem:] with
+	a layout item group referencing other items, in this case the management
+	of the tree structure is up to you.*/
+- (NSString *) name;
+- (void) setName: (NSString *)name;
+
 /* Display Element */
 
 - (id) value;

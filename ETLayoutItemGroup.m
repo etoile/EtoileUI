@@ -10,7 +10,7 @@
 #import "ETContainer.h"
 #import "GNUstep.h"
 
-#define DEFAULT_FRAME NSMakeRect(0, 0, 200, 200)
+#define DEFAULT_FRAME NSMakeRect(0, 0, 50, 50)
 
 
 @implementation ETLayoutItemGroup
@@ -27,17 +27,16 @@
 
 + (ETLayoutItemGroup *) layoutItemGroupWithLayoutItems: (NSArray *)items
 {
-	ETLayoutItemGroup *layoutItemGroup = [[self alloc] init];
-	
-	if (layoutItemGroup != nil)
-	{
-		[(ETContainer *)[layoutItemGroup view] addItems: items];
-	}
-	
-	return AUTORELEASE(layoutItemGroup);
+	return AUTORELEASE([[self alloc] initWithLayoutItems: items view: nil]);
 }
 
-- (id) init
++ (ETLayoutItem *) layoutItemWithView: (NSView *)view
+{
+	return AUTORELEASE([[self alloc] initWithLayoutItems: nil view: view]);
+}
+
+/** Designated initialize */
+- (id) initWithLayoutItems: (NSArray *)layoutItems view: (NSView *)view
 {
 	ETContainer *containerAsLayoutItemGroup = 
 		[[ETContainer alloc] initWithFrame: DEFAULT_FRAME];
@@ -47,10 +46,35 @@
     
     if (self != nil)
     {
-
+		if ([[self view] isKindOfClass: [ETContainer class]] == NO)
+		{
+			if ([self view] == nil)
+			{
+				NSLog(@"WARNING: New %@ must have a container as view and not nil", self);
+			}
+			else
+			{
+				NSLog(@"WARNING: New %@ must embed a container and not another view %@", self, [self view]);
+			}
+			return nil;
+		}
+		
+		if (layoutItems != nil)
+			[(ETContainer *)[self view] addItems: layoutItems];
+		if (view != nil)
+		{
+			[view removeFromSuperview]; // Note sure we should pay heed to such case
+			[view setFrame: [[self view] frame]];
+			[(ETContainer *)[self view] addSubview: view];
+		}
     }
     
     return self;
+}
+
+- (id) init
+{
+	return [self initWithLayoutItems: nil view: nil];
 }
 
 - (NSArray *) ungroup

@@ -16,27 +16,6 @@
 
 @implementation ETStackLayout
 
-- (void) renderWithLayoutItems: (NSArray *) items inContainer: (ETContainer *)container
-{
-	NSArray *itemViews = [items valueForKey: @"displayView"];
-	ETViewLayoutLine *layoutLine = nil;
-	
-	layoutLine = [self layoutLineForViews: itemViews inContainer: container];
-	[self computeViewLocationsForLayoutLine: layoutLine inContainer: container];
-	
-	NSEnumerator  *e = [[layoutLine views] objectEnumerator];
-	NSView *visibleItemView = nil;
-	
-	// TODO: Optimize by computing set intersection of visible and unvisible item display views
-	[itemViews makeObjectsPerformSelector: @selector(removeFromSuperview)];
-	
-	while ((visibleItemView = [e nextObject]) != nil)
-	{
-		if ([[container subviews] containsObject: visibleItemView] == NO)
-			[container addSubview: visibleItemView];
-	}
-}
-
 /** Returns a line filled with views to layout (stored in an array). */
 - (ETViewLayoutLine *) layoutLineForViews: (NSArray *)views inContainer: (ETContainer *)viewContainer
 {
@@ -67,6 +46,19 @@
 	[line setVerticallyOriented: YES];
 
 	return line;
+}
+
+// Must override unless you use a display view
+- (void) computeViewLocationsForLayoutModel: (NSArray *)layoutModel inContainer: (ETContainer *)container
+{
+	if ([layoutModel count] > 1)
+	{
+		NSLog(@"%@ -computeViewLocationsForLayoutModel: receives a model with "
+			  @"%d objects and not one, this usually means "
+			  @"-layoutLineForViews: isn't overriden as it should.", self, 
+			  [layoutModel count]);
+	}
+	[self computeViewLocationsForLayoutLine: [layoutModel lastObject] inContainer: container];
 }
 
 - (void) computeViewLocationsForLayoutLine: (ETViewLayoutLine *)line inContainer: (ETContainer *)container

@@ -56,13 +56,14 @@
 - (void) renderWithLayoutItems: (NSArray *)items inContainer: (ETContainer *)container
 {
 	NSScrollView *scrollView = nil;
-	NSOutlineView *tv = nil;
+	NSOutlineView *outlineView = nil;
 	
-	/* No display view proto available, a table view needs needs to be created 
+	/* No display view proto available, an outline view needs needs to be created 
 	   in code */
 	if ([self displayViewPrototype] == nil)
 	{
-		//scrollView = [self scrollingTableView];
+		// NOTE: No support for building outline view in code as now.
+		//scrollView = [self scrollingOutlineView];
 	}
 	else
 	{
@@ -79,7 +80,7 @@
 	}
 	
 	NSLog(@"%@ scroll view has %@ as document view", self, [scrollView documentView]);
-	tv = [scrollView documentView];
+	outlineView = [scrollView documentView];
 	
 	if ([scrollView superview] == nil)
 	{
@@ -87,58 +88,79 @@
 	}
 	else if ([[scrollView superview] isEqual: container] == NO)
 	{
-		NSLog(@"WARNING: Table view of table layout should never have another "
-			  @"superview than container parameter or nil.");
+		NSLog(@"WARNING: %@ of %& should never have another superview than "
+			 @"container parameter or nil.", outlineView, self);
 	}
 	
-	if ([tv dataSource] == nil)
-		[tv setDataSource: self];
-	if ([tv delegate] == nil)
-		[tv setDelegate: self];
+	if ([outlineView dataSource] == nil)
+		[outlineView setDataSource: self];
+	if ([outlineView delegate] == nil)
+		[outlineView setDelegate: self];
 		
-	[tv reloadData];
+	[outlineView reloadData];
 }
 
 - (int) outlineView: (NSOutlineView *)outlineView numberOfChildrenOfItem: (id)item
 {
 	NSArray *childLayoutItems = nil;
-	ETContainer *container = nil;
+	ETContainer *container =  [self container];
 	
 	if (item == nil)
 	{
-		container = [self container];
+		childLayoutItems = [container layoutItemCache];
+		
+		return [childLayoutItems count];
 	}
 	else if ([item isKindOfClass: [ETLayoutItemGroup class]])
 	{
 		/* -view must always return a container for ETLayoutItemGroup */
-		container = (ETContainer *)[item view]; 
+		ETContainer *itemContainer = (ETContainer *)[item view];
+		NSString *itemPath = [itemContainer path];
+			
+		/* 'item' path and source have been set in -[ETViewLayout layoutItemsFromTreeSource] */
+		//childItem = [[itemContainer source] itemAtPath: childItemPath inContainer: [self container]];
+		return [[container source] numberOfItemsAtPath: itemPath inContainer: container];
 	}
 	
-	childLayoutItems = [[self container] layoutItemCache];
-	NSLog(@"Returns %d as number of items in outline view %@", [childLayoutItems count], outlineView);
+	//NSLog(@"Returns %d as number of items in %@", [childLayoutItems count], outlineView);
 	
-	return [childLayoutItems count];
+	return 0;
 }
 
 - (id) outlineView: (NSOutlineView *)outlineView child: (int)rowIndex ofItem: (id)item
 {
 	NSArray *childLayoutItems = nil;
-	ETContainer *container = nil;
-	ETLayoutItem *childItem = nil;
+	ETContainer *container = [self container];
+	ETLayoutItem *childItem = nil; /* Leaf by default */
 	
-	if (item == nil)
+	if (item == nil) /* Root */
 	{
-		container = [self container];
+		childLayoutItems = [container layoutItemCache];
+		childItem = [childLayoutItems objectAtIndex: rowIndex];
 	}
-	else if ([item isKindOfClass: [ETLayoutItemGroup class]])
+	else if ([item isKindOfClass: [ETLayoutItemGroup class]]) /* Node */
 	{
+		ETContainer *itemContainer = nil;
+		ETContainer *childContainer = nil;
+		NSString *childPath = nil;
+
 		/* -view must always return a container for ETLayoutItemGroup */
-		container = (ETContainer *)[item view]; 
+		itemContainer = (ETContainer *)[item view]; 
+		childPath = [[itemContainer path] stringByAppendingPathComponent: 
+			[NSString stringWithFormat: @"%d", rowIndex]];
+			
+		/* 'item' path and source have been set in -[ETViewLayout layoutItemsFromTreeSource] */
+		//childItem = [[itemContainer source] itemAtPath: childItemPath inContainer: [self container]];
+		childItem = [[container source] itemAtPath: childPath inContainer: container];
+		//[[childItem container] setSource: [[self container] source]];
+		if ([childItem isKindOfClass: [ETLayoutItemGroup class]])
+		{
+			childContainer = (ETContainer *)[childItem view];
+			[childContainer setPath: childPath];
+		}
 	}
-	
-	childLayoutItems = [container layoutItemCache];
-	childItem = [childLayoutItems objectAtIndex: rowIndex];
-	NSLog(@"Returns % child item in outline view %@", childItem, outlineView);
+
+	//NSLog(@"Returns % child item in outline view %@", childItem, outlineView);
 	
 	return childItem;
 }
@@ -147,7 +169,7 @@
 {
 	if ([item isKindOfClass: [ETLayoutItemGroup class]])
 	{
-		NSLog(@"Returns item is expandable in outline view %@", outlineView);
+		//NSLog(@"Returns item is expandable in outline view %@", outlineView);
 		return YES;
 	}
 	
@@ -163,17 +185,18 @@
 		return nil;
 	}
 
-	NSLog(@"Returns %@ as object value in outline view %@", 
-		[item valueForProperty: [column identifier]], outlineView);
+	//NSLog(@"Returns %@ as object value in outline view %@", 
+	//	[item valueForProperty: [column identifier]], outlineView);
 	
 	return [item valueForProperty: [column identifier]];
 }
 
 - (ETLayoutItem *) clickedItem
 {
-	NSTableView *tv = [(NSScrollView *)_displayViewPrototype documentView];
-	NSArray *layoutItems = [[self container] layoutItemCache];
-	ETLayoutItem *item = [layoutItems objectAtIndex: [tv clickedRow]];
+	NSOutlineView *outlineView = [(NSScrollView *)_displayViewPrototype documentView];
+	ETLayoutItem *item = [outlineView itemAtRow: [outlineView clickedRow]];
+	
+	NSLog(@"-clickedItem in %@", self);
 	
 	return item;
 }

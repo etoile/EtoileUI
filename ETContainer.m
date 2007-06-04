@@ -42,6 +42,7 @@
     if (self != nil)
     {
 		_layoutItems = [[NSMutableArray alloc] init];
+		_path = @"";
 		
 		if (views != nil)
 		{
@@ -68,11 +69,63 @@
     DESTROY(_layoutItems);
 	DESTROY(_containerLayout);
 	DESTROY(_displayView);
+	DESTROY(_path);
 	_dataSource = nil;
     
     [super dealloc];
 }
 
+- (NSString *) path
+{
+	return _path;
+}
+
+/** Returns path value which is altered when the user navigates inside a tree 
+	structure of a layout items. Path is only critical when a source is used,
+	otherwise it's up to the developer to track the level of navigation inside
+	the tree structure. You can use -setPath as a conveniency to memorize your
+	location inside a layout item tree. In this case, each time the user enters
+	a new level, you are in charge of removing then adding the proper layout
+	items which are associated with the level requested by the user. That's
+	why it's advised to always use a source when you want to display a 
+	layout item tree inside a container. */
+- (void) setPath: (NSString *)path
+{
+	ASSIGN(_path, path);
+	[self updateLayout];
+}
+#if 0
+- (ETLayoutItem *) layoutItemAncestorWithPath: (NSString *)path matchingPath: (NSString **)ancestorPath
+
+- (ETLayoutItem *) layoutItemAtPath: (NSString *)path
+{
+	NSArray *pathComponents = [path pathComponents];
+	ETLayoutItem *item = nil
+	NSArray *layoutItemsBylevel = [self layoutItemCache];
+	
+	for (int i = 0; i < [pathComponents count]; i++)
+	{
+		NSArray *itemViews = [layoutItemsBylevel valueForKey: @"view"];
+		NSView *view = nil;
+		NSString *comp = [pathComponents objectAtIndex: i];
+		
+		view = [itemViews objectWithValue: comp forKey: @"path"];
+		item = [layoutItemsBylevel objectWithValue: view forKey: @"view"];
+		if (item == nil)
+		{
+			// FIXME: -intValue returns 0 on failure.
+			[layoutItemsBylevel objectAtIndex: [comp intValue]];
+		}
+		if (item != nil)
+		{
+			NSView *itemView = [item view];
+			
+			if ([itemView isKindOfClass: [ETContainer class]])
+				layoutItemsBylevel = [(ETContainer *)itemView layoutItemCache];
+		}
+	}
+}
+#endif
 - (NSArray *) layoutItems
 {
 	return _layoutItems;
@@ -106,28 +159,12 @@
 /** Returns 0 when source doesn't conform to any parts of ETContainerSource informal protocol.
     Returns 1 when source conform to protocol for flat collections and display of items in a linear style.
 	Returns 2 when source conform to protocol for tree collections and display of items in a hiearchical style.
-	If flat collection part of the protocol is implemented through 
-	-numberOfItemsInContainer, ETContainer by default ignores tree collections
-	part of protocol like numberOfItemsAtPath:inContainer: unless it is needed 
-	by the current layout. In some cases, it is useful to implement both parts
-	of the protocol if you want a lot of flexibility in term of layout. */
+	If tree collection part of the protocol is implemented through 
+	-numberOfItemsAtPath:inContainer: , ETContainer by default ignores flat collection
+	part of protocol like -numberOfItemsInContainer. */
 - (int) checkSourceProtocolConformance
 {
-	if ([[self source] respondsToSelector: @selector(numberOfItemsInContainer:)])
-	{
-		if ([[self source] respondsToSelector: @selector(itemAtIndex:inContainer:)])
-		{
-			return 1;
-		}
-		else
-		{
-			NSLog(@"%@ implements numberOfItemsInContainer: but misses "
-				  @"itemAtIndex:inContainer: as  requested by "
-				  @"ETContainerSource protocol.", [self source]);
-			return 0;
-		}
-	}
-	else if ([[self source] respondsToSelector: @selector(numberOfItemsAtPath:inContainer:)])
+	if ([[self source] respondsToSelector: @selector(numberOfItemsAtPath:inContainer:)])
 	{
 		if ([[self source] respondsToSelector: @selector(itemAtPath:inContainer:)])
 		{
@@ -141,6 +178,21 @@
 			return 0;
 		}
 	}
+	else if ([[self source] respondsToSelector: @selector(numberOfItemsInContainer:)])
+	{
+		if ([[self source] respondsToSelector: @selector(itemAtIndex:inContainer:)])
+		{
+			return 1;
+		}
+		else
+		{
+			NSLog(@"%@ implements numberOfItemsInContainer: but misses "
+				  @"itemAtIndex:inContainer: as  requested by "
+				  @"ETContainerSource protocol.", [self source]);
+			return 0;
+		}
+	}
+
 	else
 	{
 		NSLog(@"%@ implements neither numberOfItemsInContainer: nor "
@@ -243,6 +295,14 @@
 - (void) setSource: (id)source
 {
 	_dataSource = source;
+	if (source != nil && [[self path] isEqual: @""])
+	{
+		[self setPath: @"/"];
+	}
+	else if (source == nil)
+	{
+		[self setPath: @""];
+	}
 	[self updateLayout];
 }
 
