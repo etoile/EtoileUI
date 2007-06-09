@@ -39,66 +39,7 @@
 	return self;
 }
 
-- (void) dealloc
-{
-	DESTROY(_displayViewPrototype);
-	
-	[super dealloc];
-}
-
-- (void) awakeFromNib
-{
-	NSLog(@"%@ awakes from nib", self);
-	RETAIN(_displayViewPrototype);
-	[_displayViewPrototype removeFromSuperview];
-}
-
-- (void) renderWithLayoutItems: (NSArray *)items inContainer: (ETContainer *)container
-{
-	NSScrollView *scrollView = nil;
-	NSOutlineView *outlineView = nil;
-	
-	/* No display view proto available, an outline view needs needs to be created 
-	   in code */
-	if ([self displayViewPrototype] == nil)
-	{
-		// NOTE: No support for building outline view in code as now.
-		//scrollView = [self scrollingOutlineView];
-	}
-	else
-	{
-		NSView *proto = [self displayViewPrototype];
-		
-		if ([proto isKindOfClass: [NSScrollView class]])
-		{
-			scrollView = (NSScrollView *)[self displayViewPrototype];
-		}
-		else
-		{
-			NSLog(@"WARNING: %@ display view prototype %@ isn't an NSScrollView instance", self, proto);
-		}
-	}
-	
-	NSLog(@"%@ scroll view has %@ as document view", self, [scrollView documentView]);
-	outlineView = [scrollView documentView];
-	
-	if ([scrollView superview] == nil)
-	{
-		[container setDisplayView: scrollView];
-	}
-	else if ([[scrollView superview] isEqual: container] == NO)
-	{
-		NSLog(@"WARNING: %@ of %& should never have another superview than "
-			 @"container parameter or nil.", outlineView, self);
-	}
-	
-	if ([outlineView dataSource] == nil)
-		[outlineView setDataSource: self];
-	if ([outlineView delegate] == nil)
-		[outlineView setDelegate: self];
-		
-	[outlineView reloadData];
-}
+// NOTE: Dealloc and Awaking from nib handled by ETTableLayout superview.
 
 - (int) outlineView: (NSOutlineView *)outlineView numberOfChildrenOfItem: (id)item
 {

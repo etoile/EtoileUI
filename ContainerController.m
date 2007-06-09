@@ -71,7 +71,37 @@
 			NSLog(@"Unsupported layout or unknown popup menu selection");
 	}
 	
-	[viewContainer setLayout: (ETViewLayout *)AUTORELEASE([[layoutClass alloc] init])];
+	id layoutObject = AUTORELEASE([[layoutClass alloc] init]);
+	
+	if ([layoutObject isKindOfClass: [ETTableLayout class]])
+	{
+		NSTableColumn *column = [[NSTableColumn alloc] initWithIdentifier: @"size"];
+		NSImageCell *dataCell = [[NSCell alloc] initTextCell: @""];
+		NSTableHeaderCell *headerCell = [[NSTableHeaderCell alloc] initTextCell: @"Size"];
+		
+		[column setHeaderCell: headerCell];
+		RELEASE(headerCell);
+		[column setDataCell: dataCell];
+		RELEASE(dataCell);
+		[column setEditable: NO];
+		[[[layoutObject displayViewPrototype] documentView] addTableColumn: column];
+		RELEASE(column);
+		
+		column = [[NSTableColumn alloc] initWithIdentifier: @"type"];
+		dataCell = [[NSCell alloc] initTextCell: @""];
+		headerCell = [[NSTableHeaderCell alloc] initTextCell: @"Type"];
+		
+		[column setHeaderCell: headerCell];
+		RELEASE(headerCell);
+		[column setDataCell: dataCell];
+		RELEASE(dataCell);
+		[column setEditable: NO];
+		[[[layoutObject displayViewPrototype] documentView] addTableColumn: column];
+		RELEASE(column);
+		[[[layoutObject displayViewPrototype] documentView] moveColumn: 3 toColumn: 2];
+	}
+	
+	[viewContainer setLayout: layoutObject];
 }
 
 - (IBAction) switchUsesSource: (id)sender
@@ -98,7 +128,7 @@
 
 - (IBAction) scale: (id)sender
 {
-
+	[viewContainer setItemScaleFactor: [sender floatValue] / 100];
 }
 
 - (void)selectPicturesPanelDidEnd:(NSOpenPanel *)panel returnCode:(int)returnCode  contextInfo:(void  *)contextInfo
@@ -143,8 +173,9 @@
 	{
 		NSImageView *imgView = [self imageViewForImage: img];
 		ETLayoutItem *item = [ETLayoutItem layoutItemWithView: imgView];
-				
+
 		[item setValue: [img name] forProperty: @"name"];
+		[item setValue: img forProperty: @"image"];				
 		[imageLayoutItems addObject: item];
 	}
 	
@@ -206,7 +237,8 @@
 	[wk getInfoForFile: [img name] application: NULL type: &type];
 	
 	[imageItem setValue: [[img name] lastPathComponent] forProperty: @"name"];
-	//[imageItem setValue: [wk iconForFile: [image name]] forProperty: @"icon"];
+	[imageItem setValue: img forProperty: @"icon"];
+	//[imageItem setValue: [wk iconForFile: [img name]] forProperty: @"icon"];
 	[imageItem setValue: sizeStr forProperty: @"size"];
 	[imageItem setValue: type forProperty: @"type"];
 	//[imageItem setValue: date forProperty	: @"modificationdate"];

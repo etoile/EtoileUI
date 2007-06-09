@@ -43,6 +43,7 @@
     {
 		_layoutItems = [[NSMutableArray alloc] init];
 		_path = @"";
+		_itemScale = 1.0;
 		
 		if (views != nil)
 		{
@@ -596,6 +597,19 @@
 - (void) removeLayerAtIndex: (int)layerIndex
 {
 
+}
+
+/* Item scaling */
+
+- (float) itemScaleFactor
+{
+	return _itemScale;
+}
+
+- (void) setItemScaleFactor: (float)factor
+{
+	_itemScale = factor;
+	[self updateLayout];
 }
 
 /* Rendering Chain */

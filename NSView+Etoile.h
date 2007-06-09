@@ -24,3 +24,5 @@
 @end
 
 
+NSRect ETScaleRect(NSRect frame, float factor);
+NSSize ETScaleSize(NSSize size, float factor);

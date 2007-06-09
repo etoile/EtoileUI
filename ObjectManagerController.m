@@ -14,6 +14,7 @@
 #import "ETLineLayout.h"
 #import "ETTableLayout.h"
 #import "ETOutlineLayout.h"
+#import "ETBrowserLayout.h"
 #import "ETContainer.h"
 #import "GNUstep.h"
 
@@ -99,6 +100,9 @@ static NSFileManager *objectManager = nil;
 		case 4:
 			layoutClass = [ETOutlineLayout class];
 			break;
+		case 5:
+			layoutClass = [ETBrowserLayout class];
+			break;
 		default:
 			NSLog(@"Unsupported layout or unknown popup menu selection");
 	}
@@ -130,7 +134,7 @@ static NSFileManager *objectManager = nil;
 
 - (IBAction) scale: (id)sender
 {
-
+	[viewContainer setItemScaleFactor: [sender floatValue] / 100];
 }
 
 - (void) doubleClickInViewContainer: (id)sender
@@ -166,6 +170,8 @@ static NSFileManager *objectManager = nil;
         NSImageView *view = [[NSImageView alloc] 
             initWithFrame: NSMakeRect(0, 0, [image size].width, [image size].height)];
         
+		[image setScalesWhenResized: YES];
+		[view setImageScaling: NSScaleProportionally];
         [view setImage: image];
 		return (NSImageView *)AUTORELEASE(view);
     }

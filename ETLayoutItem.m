@@ -69,7 +69,7 @@
     
     if (self != nil)
     {
-		ASSIGN(_view, view);
+		[self setView: view];
 		ASSIGN(_value, value);
 		ASSIGN(_modelObject, repObject);
 		
@@ -134,6 +134,7 @@
 - (void) setView: (NSView *)view
 {
 	ASSIGN(_view, view);
+	_defaultFrame = [view frame];
 }
 
 /** Returns a value of the model object -representedObject, usually by 
@@ -204,6 +205,13 @@
 - (void) setStyleRenderer: (ETStyleRenderer *)renderer
 {
 	ASSIGN(_renderer, renderer);
+}
+
+- (NSRect) defaultFrame { return _defaultFrame; }
+
+- (void) restoreDefaultFrame 
+{ 
+	[[self view] setFrame: [self defaultFrame]]; 
 }
 
 /* Actions */

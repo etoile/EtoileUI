@@ -8,11 +8,11 @@
 
 #import <Foundation/Foundation.h>
 #import <AppKit/AppKit.h>
-#import "ETViewLayout.h"
+#import "ETTableLayout.h"
 
 @class ETViewLayoutLine, ETContainer;
 
-@interface ETOutlineLayout : ETViewLayout 
+@interface ETOutlineLayout : ETTableLayout 
 {
 
 }

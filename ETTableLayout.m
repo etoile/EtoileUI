@@ -45,6 +45,8 @@
 - (NSScrollView *) scrollingTableView;
 @end
 
+#define DEFAULT_ROW_HEIGHT 16
+
 
 @implementation ETTableLayout
 
@@ -119,12 +121,27 @@
 			  @"superview than container parameter or nil.");
 	}
 	
+	[self resizeLayoutItems: items toScaleFactor: [container itemScaleFactor]];
+	
 	if ([tv dataSource] == nil)
 		[tv setDataSource: self];
 	if ([tv delegate] == nil)
 		[tv setDelegate: self];
 		
 	[tv reloadData];
+}
+
+- (void) resizeLayoutItems: (NSArray *)items toScaleFactor: (float)factor
+{
+	NSTableView *tv = [(NSScrollView *)_displayViewPrototype documentView];
+	// NOTE: Always recompute row height from the original one to avoid really
+	// value shifting quickly because of rounding.
+	float rowHeight = DEFAULT_ROW_HEIGHT * factor;
+	
+	/* Enforce a minimal row height to avoid redisplay crashes especially */
+	if (rowHeight < 1.0)
+		rowHeight = 1.0;
+	[tv setRowHeight: rowHeight];
 }
 
 - (int) numberOfRowsInTableView: (NSTableView *)tv

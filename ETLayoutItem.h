@@ -48,6 +48,7 @@
 	NSView *_view;
 	ETStyleRenderer *_renderer;
 	BOOL _selected;
+	NSRect _defaultFrame;
 }
 
 + (ETLayoutItem *) layoutItemWithView: (NSView *)view;
@@ -104,6 +105,9 @@
 - (void) render;
 - (ETStyleRenderer *) renderer;
 - (void) setStyleRenderer: (ETStyleRenderer *)renderer;
+
+- (NSRect) defaultFrame;
+- (void) restoreDefaultFrame;
 
 /* Actions */
 

@@ -59,6 +59,8 @@
 - (NSArray *) layoutModelForViews: (NSArray *)views inContainer: (ETContainer *)viewContainer;
 - (void) computeViewLocationsForLayoutModel: (NSArray *)layoutModel inContainer: (ETContainer *)container;
 
+- (void) resizeLayoutItems: (NSArray *)items toScaleFactor: (float)factor;
+
 // Private use
 - (void) adjustLayoutSizeToSizeOfContainer: (ETContainer *)container;
 

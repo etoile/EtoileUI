@@ -10,6 +10,7 @@
 #import "ETViewLayoutLine.h"
 #import "ETContainer.h"
 #import "ETLayoutItemGroup.h"
+#import "NSView+Etoile.h"
 #import "GNUstep.h"
 
 @interface ETContainer (PackageVisibility)
@@ -297,11 +298,14 @@
 	NSArray *itemViews = [items valueForKey: @"displayView"];
 	NSArray *layoutModel = nil;
 	
+	float scale = [container itemScaleFactor];
+	[self resizeLayoutItems: items toScaleFactor: scale];
+	
 	layoutModel = [self layoutModelForViews: itemViews inContainer: container];
 	/* Now computes the location of every views by relying on the line by line 
 	   decomposition already made. */
 	[self computeViewLocationsForLayoutModel: layoutModel inContainer: container];
-	
+		
 	/* Don't forget to remove existing display view if we switch from a layout 
 	   which reuses a native AppKit control like table layout. */
 	[container setDisplayView: nil];
@@ -327,6 +331,27 @@
 	{
 		if ([[container subviews] containsObject: visibleItemView] == NO)
 			[container addSubview: visibleItemView];
+	}
+}
+
+- (void) resizeLayoutItems: (NSArray *)items toScaleFactor: (float)factor
+{
+	NSEnumerator *e = [items objectEnumerator];
+	ETLayoutItem *item = nil;
+	
+	while ((item = [e nextObject]) != nil)
+	{
+		NSRect unscaledFrame = [item defaultFrame];
+		
+		if ([item view] != nil)
+		{
+			[[item view] setFrame: ETScaleRect(unscaledFrame, factor)];
+			//NSLog(@"Scale %@ to %@", NSStringFromRect(unscaledFrame), 
+			//	NSStringFromRect(ETScaleRect(unscaledFrame, factor)));
+		}
+
+		if ([item view] == nil)
+			NSLog(@"% can't be rescaled because it has no view");
 	}
 }
 

@@ -50,6 +50,8 @@
 	SEL _doubleClickAction;
 	id _target;
 	ETLayoutItem *_clickedItem;
+	
+	float _itemScale;
 
 	/* Used by ETViewLayout to know which items are displayed whether the 
 	   container uses a source or simple provides items directly. */
@@ -128,6 +130,11 @@
 /*- (ETLayoutGroupItem *) stackAllItems;
 - (ETLayoutGroupItem *) stackItems: (NSArray *)items;
 - (ETLayoutGroupItem *) unstackItems: (ETLayoutGroupItem *)itemGroup;*/
+
+/* Item scaling */
+
+- (float) itemScaleFactor;
+- (void) setItemScaleFactor: (float)factor;
 
 /* Layers */
 

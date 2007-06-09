@@ -7,6 +7,12 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		6051502D0C1738D600B5E0E5 /* BrowserPrototype.nib in Resources */ = {isa = PBXBuildFile; fileRef = 6051502B0C1738D600B5E0E5 /* BrowserPrototype.nib */; };
+		6051502E0C1738D600B5E0E5 /* BrowserPrototype.nib in Resources */ = {isa = PBXBuildFile; fileRef = 6051502B0C1738D600B5E0E5 /* BrowserPrototype.nib */; };
+		605151610C17411100B5E0E5 /* ETBrowserLayout.m in Sources */ = {isa = PBXBuildFile; fileRef = 609544AB0C0CE24D00068CBB /* ETBrowserLayout.m */; };
+		605151620C17412D00B5E0E5 /* ETBrowserLayout.m in Sources */ = {isa = PBXBuildFile; fileRef = 609544AB0C0CE24D00068CBB /* ETBrowserLayout.m */; };
+		605153BA0C1993F900B5E0E5 /* FSBrowserCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 605153B90C1993F900B5E0E5 /* FSBrowserCell.m */; };
+		605153BB0C1993F900B5E0E5 /* FSBrowserCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 605153B90C1993F900B5E0E5 /* FSBrowserCell.m */; };
 		605F0D790C0F403B003AE3E6 /* ObjectManager.nib in Resources */ = {isa = PBXBuildFile; fileRef = 605F0CD00C0F4034003AE3E6 /* ObjectManager.nib */; };
 		605F0D7A0C0F4049003AE3E6 /* ETLineView.m in Sources */ = {isa = PBXBuildFile; fileRef = 609F464A0B414CB500AD2209 /* ETLineView.m */; };
 		605F0D7B0C0F4049003AE3E6 /* ETLineLayout.m in Sources */ = {isa = PBXBuildFile; fileRef = 609F46630B41644700AD2209 /* ETLineLayout.m */; };
@@ -65,6 +71,15 @@
 		29B97316FDCFA39411CA2CEA /* main.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
 		29B97324FDCFA39411CA2CEA /* AppKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AppKit.framework; path = /System/Library/Frameworks/AppKit.framework; sourceTree = "<absolute>"; };
 		29B97325FDCFA39411CA2CEA /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = /System/Library/Frameworks/Foundation.framework; sourceTree = "<absolute>"; };
+		605150190C1733B500B5E0E5 /* ETPaneView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ETPaneView.h; sourceTree = "<group>"; };
+		6051501A0C1733B500B5E0E5 /* ETPaneView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ETPaneView.m; sourceTree = "<group>"; };
+		6051502C0C1738D600B5E0E5 /* English */ = {isa = PBXFileReference; lastKnownFileType = wrapper.nib; name = English; path = English.lproj/BrowserPrototype.nib; sourceTree = "<group>"; };
+		605152E60C18B43E00B5E0E5 /* ETPaneSwitcherLayout.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ETPaneSwitcherLayout.h; sourceTree = "<group>"; };
+		605152E70C18B43E00B5E0E5 /* ETPaneSwitcherLayout.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ETPaneSwitcherLayout.m; sourceTree = "<group>"; };
+		605152EA0C18B45B00B5E0E5 /* ETPaneLayout.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ETPaneLayout.h; sourceTree = "<group>"; };
+		605152EB0C18B45B00B5E0E5 /* ETPaneLayout.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ETPaneLayout.m; sourceTree = "<group>"; };
+		605153B80C1993F900B5E0E5 /* FSBrowserCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FSBrowserCell.h; sourceTree = "<group>"; };
+		605153B90C1993F900B5E0E5 /* FSBrowserCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FSBrowserCell.m; sourceTree = "<group>"; };
 		605F0CC20C0F3F8F003AE3E6 /* ObjectManagerController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ObjectManagerController.h; sourceTree = "<group>"; };
 		605F0CC30C0F3F8F003AE3E6 /* ObjectManagerController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ObjectManagerController.m; sourceTree = "<group>"; };
 		605F0CCA0C0F400D003AE3E6 /* ObjectManagerExample.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = ObjectManagerExample.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -216,6 +231,7 @@
 				60B2AF690C0B745A008C008A /* ContainerExample.nib */,
 				60B144970C11BFB400B4613B /* TablePrototype.nib */,
 				60B144EA0C11C52900B4613B /* OutlinePrototype.nib */,
+				6051502B0C1738D600B5E0E5 /* BrowserPrototype.nib */,
 			);
 			name = Resources;
 			sourceTree = "<group>";
@@ -232,10 +248,16 @@
 		606B98A40C0AF669000AAA85 /* Not Ready Yet */ = {
 			isa = PBXGroup;
 			children = (
+				605153B80C1993F900B5E0E5 /* FSBrowserCell.h */,
+				605153B90C1993F900B5E0E5 /* FSBrowserCell.m */,
+				605150190C1733B500B5E0E5 /* ETPaneView.h */,
+				6051501A0C1733B500B5E0E5 /* ETPaneView.m */,
 				609544AA0C0CE24D00068CBB /* ETBrowserLayout.h */,
 				609544AB0C0CE24D00068CBB /* ETBrowserLayout.m */,
-				609549810C0E462500068CBB /* ETOutlineLayout.h */,
-				609549820C0E462500068CBB /* ETOutlineLayout.m */,
+				605152E60C18B43E00B5E0E5 /* ETPaneSwitcherLayout.h */,
+				605152E70C18B43E00B5E0E5 /* ETPaneSwitcherLayout.m */,
+				605152EA0C18B45B00B5E0E5 /* ETPaneLayout.h */,
+				605152EB0C18B45B00B5E0E5 /* ETPaneLayout.m */,
 			);
 			name = "Not Ready Yet";
 			sourceTree = "<group>";
@@ -260,6 +282,8 @@
 				60EABCBE0C0C289900341BD8 /* ETTableLayout.m */,
 				60EABCBF0C0C289900341BD8 /* ETTableView.h */,
 				60EABCBC0C0C284000341BD8 /* ETTableView.m */,
+				609549810C0E462500068CBB /* ETOutlineLayout.h */,
+				609549820C0E462500068CBB /* ETOutlineLayout.m */,
 			);
 			name = "Wrapper Layouts";
 			sourceTree = "<group>";
@@ -367,6 +391,7 @@
 				605F0D790C0F403B003AE3E6 /* ObjectManager.nib in Resources */,
 				60B1449A0C11BFB400B4613B /* TablePrototype.nib in Resources */,
 				60B144ED0C11C52900B4613B /* OutlinePrototype.nib in Resources */,
+				6051502E0C1738D600B5E0E5 /* BrowserPrototype.nib in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -378,6 +403,7 @@
 				60B2AF6B0C0B745A008C008A /* ContainerExample.nib in Resources */,
 				60B144990C11BFB400B4613B /* TablePrototype.nib in Resources */,
 				60B144EC0C11C52900B4613B /* OutlinePrototype.nib in Resources */,
+				6051502D0C1738D600B5E0E5 /* BrowserPrototype.nib in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -388,6 +414,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				605151610C17411100B5E0E5 /* ETBrowserLayout.m in Sources */,
 				605F0D7A0C0F4049003AE3E6 /* ETLineView.m in Sources */,
 				605F0D7B0C0F4049003AE3E6 /* ETLineLayout.m in Sources */,
 				605F0D7C0C0F4049003AE3E6 /* ETLayoutItem.m in Sources */,
@@ -408,6 +435,7 @@
 				605F0D8C0C0F4049003AE3E6 /* ETLayoutItemGroup.m in Sources */,
 				605F0D8D0C0F4049003AE3E6 /* ETOutlineLayout.m in Sources */,
 				605F0D8E0C0F4049003AE3E6 /* ObjectManagerController.m in Sources */,
+				605153BA0C1993F900B5E0E5 /* FSBrowserCell.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -415,6 +443,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				605151620C17412D00B5E0E5 /* ETBrowserLayout.m in Sources */,
 				606B9F400C0B5848000AAA85 /* ETLineView.m in Sources */,
 				606B9F410C0B5848000AAA85 /* ETLineLayout.m in Sources */,
 				606B98D10C0AF8A7000AAA85 /* ETLayoutItem.m in Sources */,
@@ -435,12 +464,21 @@
 				609547DC0C0E0FB000068CBB /* ETStyleRenderer.m in Sources */,
 				609548D00C0E300500068CBB /* ETLayoutItemGroup.m in Sources */,
 				609549830C0E462500068CBB /* ETOutlineLayout.m in Sources */,
+				605153BB0C1993F900B5E0E5 /* FSBrowserCell.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXVariantGroup section */
+		6051502B0C1738D600B5E0E5 /* BrowserPrototype.nib */ = {
+			isa = PBXVariantGroup;
+			children = (
+				6051502C0C1738D600B5E0E5 /* English */,
+			);
+			name = BrowserPrototype.nib;
+			sourceTree = "<group>";
+		};
 		605F0CD00C0F4034003AE3E6 /* ObjectManager.nib */ = {
 			isa = PBXVariantGroup;
 			children = (
