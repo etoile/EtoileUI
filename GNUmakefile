@@ -16,6 +16,6 @@ EtoileUI_HEADER_FILES = \
         UKNibOwner.h
 
 include $(GNUSTEP_MAKEFILES)/aggregate.make
-include ../../etoile.make
+-include ../../etoile.make
 include $(GNUSTEP_MAKEFILES)/framework.make
 
