@@ -137,7 +137,7 @@
 	//float rowHeight = DEFAULT_ROW_HEIGHT * factor;
 	int numberOfCols = [browserView numberOfVisibleColumns];
 	NSMatrix *columnMatrix = nil;
-	NSString *path = [browserView path];
+
 	for (int i = 0; i < numberOfCols; i++)
 	{
 		NSSize newCellSize = NSZeroSize;

@@ -246,9 +246,11 @@
 	/* We remove the display views of cached layout items (they are in current
 	   in current implementation the displayed layout items). Note they may be 
 	   invisible by being located outside of container bounds. */
+#ifdef REMOVE_FROM_SUPERVIEW_BEFORE_LAYOUT
 	NSLog(@"Remove views of layout items currently displayed from their container");
 	[itemDisplayViews makeObjectsPerformSelector: @selector(removeFromSuperview)];
-	
+#endif
+
 	if ([[self container] source] != nil) /* Make layout with items provided by source */
 	{
 		if ([[[self container] layoutItems] count] > 0)

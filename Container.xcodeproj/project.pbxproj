@@ -13,6 +13,7 @@
 		605151620C17412D00B5E0E5 /* ETBrowserLayout.m in Sources */ = {isa = PBXBuildFile; fileRef = 609544AB0C0CE24D00068CBB /* ETBrowserLayout.m */; };
 		605153BA0C1993F900B5E0E5 /* FSBrowserCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 605153B90C1993F900B5E0E5 /* FSBrowserCell.m */; };
 		605153BB0C1993F900B5E0E5 /* FSBrowserCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 605153B90C1993F900B5E0E5 /* FSBrowserCell.m */; };
+		60539D9E0C242065006C57EC /* PaneContainerExample.nib in Resources */ = {isa = PBXBuildFile; fileRef = 60539D9C0C242065006C57EC /* PaneContainerExample.nib */; };
 		605F0D790C0F403B003AE3E6 /* ObjectManager.nib in Resources */ = {isa = PBXBuildFile; fileRef = 605F0CD00C0F4034003AE3E6 /* ObjectManager.nib */; };
 		605F0D7A0C0F4049003AE3E6 /* ETLineView.m in Sources */ = {isa = PBXBuildFile; fileRef = 609F464A0B414CB500AD2209 /* ETLineView.m */; };
 		605F0D7B0C0F4049003AE3E6 /* ETLineLayout.m in Sources */ = {isa = PBXBuildFile; fileRef = 609F46630B41644700AD2209 /* ETLineLayout.m */; };
@@ -61,6 +62,37 @@
 		60B144EC0C11C52900B4613B /* OutlinePrototype.nib in Resources */ = {isa = PBXBuildFile; fileRef = 60B144EA0C11C52900B4613B /* OutlinePrototype.nib */; };
 		60B144ED0C11C52900B4613B /* OutlinePrototype.nib in Resources */ = {isa = PBXBuildFile; fileRef = 60B144EA0C11C52900B4613B /* OutlinePrototype.nib */; };
 		60B2AF6B0C0B745A008C008A /* ContainerExample.nib in Resources */ = {isa = PBXBuildFile; fileRef = 60B2AF690C0B745A008C008A /* ContainerExample.nib */; };
+		60C1D8AD0C2569D500E00A2E /* PaneController.m in Sources */ = {isa = PBXBuildFile; fileRef = 60C1D8AC0C2569D500E00A2E /* PaneController.m */; };
+		60C1DA090C25714300E00A2E /* ETLayoutItemGroup.m in Sources */ = {isa = PBXBuildFile; fileRef = 609548CF0C0E300500068CBB /* ETLayoutItemGroup.m */; };
+		60C1DA0A0C25714300E00A2E /* ETStackLayout.m in Sources */ = {isa = PBXBuildFile; fileRef = 609F46600B41643900AD2209 /* ETStackLayout.m */; };
+		60C1DA0B0C25714300E00A2E /* ETLayer.m in Sources */ = {isa = PBXBuildFile; fileRef = 609547B80C0E032E00068CBB /* ETLayer.m */; };
+		60C1DA0C0C25714300E00A2E /* ETStyleRenderer.m in Sources */ = {isa = PBXBuildFile; fileRef = 609547DB0C0E0FB000068CBB /* ETStyleRenderer.m */; };
+		60C1DA0E0C25714300E00A2E /* ETViewLayoutLine.m in Sources */ = {isa = PBXBuildFile; fileRef = 609F46850B41FDAF00AD2209 /* ETViewLayoutLine.m */; };
+		60C1DA0F0C25714300E00A2E /* ETTableLayout.m in Sources */ = {isa = PBXBuildFile; fileRef = 60EABCBE0C0C289900341BD8 /* ETTableLayout.m */; };
+		60C1DA100C25714300E00A2E /* ETViewLayout.m in Sources */ = {isa = PBXBuildFile; fileRef = 609F465A0B41641400AD2209 /* ETViewLayout.m */; };
+		60C1DA110C25714300E00A2E /* NSView+Etoile.m in Sources */ = {isa = PBXBuildFile; fileRef = 609F467A0B41FC6200AD2209 /* NSView+Etoile.m */; };
+		60C1DA120C25714300E00A2E /* ETLayoutItem.m in Sources */ = {isa = PBXBuildFile; fileRef = 609F46A20B42049D00AD2209 /* ETLayoutItem.m */; };
+		60C1DA130C25714300E00A2E /* ETTableView.m in Sources */ = {isa = PBXBuildFile; fileRef = 60EABCBC0C0C284000341BD8 /* ETTableView.m */; };
+		60C1DA140C25714300E00A2E /* ETPaneLayout.m in Sources */ = {isa = PBXBuildFile; fileRef = 605152EB0C18B45B00B5E0E5 /* ETPaneLayout.m */; };
+		60C1DA150C25714300E00A2E /* ETBrowserLayout.m in Sources */ = {isa = PBXBuildFile; fileRef = 609544AB0C0CE24D00068CBB /* ETBrowserLayout.m */; };
+		60C1DA160C25714300E00A2E /* ETLineLayout.m in Sources */ = {isa = PBXBuildFile; fileRef = 609F46630B41644700AD2209 /* ETLineLayout.m */; };
+		60C1DA170C25714300E00A2E /* FSBrowserCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 605153B90C1993F900B5E0E5 /* FSBrowserCell.m */; };
+		60C1DA180C25714300E00A2E /* ETFlowLayout.m in Sources */ = {isa = PBXBuildFile; fileRef = 609F465D0B41642900AD2209 /* ETFlowLayout.m */; };
+		60C1DA190C25714300E00A2E /* ETContainer.m in Sources */ = {isa = PBXBuildFile; fileRef = 609F463D0B414C0A00AD2209 /* ETContainer.m */; };
+		60C1DA1A0C25714300E00A2E /* ETLineView.m in Sources */ = {isa = PBXBuildFile; fileRef = 609F464A0B414CB500AD2209 /* ETLineView.m */; };
+		60C1DA1B0C25714300E00A2E /* ETStackView.m in Sources */ = {isa = PBXBuildFile; fileRef = 609F46450B414C6A00AD2209 /* ETStackView.m */; };
+		60C1DA1C0C25714300E00A2E /* ETOutlineLayout.m in Sources */ = {isa = PBXBuildFile; fileRef = 609549820C0E462500068CBB /* ETOutlineLayout.m */; };
+		60C1DA1D0C25714300E00A2E /* ETFlowView.m in Sources */ = {isa = PBXBuildFile; fileRef = 609F46400B414C3800AD2209 /* ETFlowView.m */; };
+		60C1DA1E0C25714300E00A2E /* ETPaneSwitcherLayout.m in Sources */ = {isa = PBXBuildFile; fileRef = 605152E70C18B43E00B5E0E5 /* ETPaneSwitcherLayout.m */; };
+		60C1DA1F0C25714D00E00A2E /* PaneContainerExample-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 60539D960C240A7B006C57EC /* PaneContainerExample-Info.plist */; };
+		60C1DA200C25715900E00A2E /* TablePrototype.nib in Resources */ = {isa = PBXBuildFile; fileRef = 60B144970C11BFB400B4613B /* TablePrototype.nib */; };
+		60C1DA210C25715900E00A2E /* OutlinePrototype.nib in Resources */ = {isa = PBXBuildFile; fileRef = 60B144EA0C11C52900B4613B /* OutlinePrototype.nib */; };
+		60C1DA220C25715900E00A2E /* BrowserPrototype.nib in Resources */ = {isa = PBXBuildFile; fileRef = 6051502B0C1738D600B5E0E5 /* BrowserPrototype.nib */; };
+		60C1DA230C25715F00E00A2E /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1058C7A1FEA54F0111CA2CBB /* Cocoa.framework */; };
+		60C1DA3C0C2571EE00E00A2E /* CocoaCompatibility.m in Sources */ = {isa = PBXBuildFile; fileRef = 606B99250C0B134B000AAA85 /* CocoaCompatibility.m */; };
+		60C1DA3D0C2571EE00E00A2E /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 29B97316FDCFA39411CA2CEA /* main.m */; };
+		60D9BDDD0C21FFDE00E23EA5 /* ETPaneSwitcherLayout.m in Sources */ = {isa = PBXBuildFile; fileRef = 605152E70C18B43E00B5E0E5 /* ETPaneSwitcherLayout.m */; };
+		60D9BDDF0C21FFDE00E23EA5 /* ETPaneLayout.m in Sources */ = {isa = PBXBuildFile; fileRef = 605152EB0C18B45B00B5E0E5 /* ETPaneLayout.m */; };
 		60EABCBD0C0C284000341BD8 /* ETTableView.m in Sources */ = {isa = PBXBuildFile; fileRef = 60EABCBC0C0C284000341BD8 /* ETTableView.m */; };
 		60EABCC00C0C289900341BD8 /* ETTableLayout.m in Sources */ = {isa = PBXBuildFile; fileRef = 60EABCBE0C0C289900341BD8 /* ETTableLayout.m */; };
 /* End PBXBuildFile section */
@@ -80,6 +112,9 @@
 		605152EB0C18B45B00B5E0E5 /* ETPaneLayout.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ETPaneLayout.m; sourceTree = "<group>"; };
 		605153B80C1993F900B5E0E5 /* FSBrowserCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FSBrowserCell.h; sourceTree = "<group>"; };
 		605153B90C1993F900B5E0E5 /* FSBrowserCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FSBrowserCell.m; sourceTree = "<group>"; };
+		60539D940C240A7B006C57EC /* PaneContainerExample.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = PaneContainerExample.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		60539D960C240A7B006C57EC /* PaneContainerExample-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = "PaneContainerExample-Info.plist"; sourceTree = "<group>"; };
+		60539D9D0C242065006C57EC /* English */ = {isa = PBXFileReference; lastKnownFileType = wrapper.nib; name = English; path = English.lproj/PaneContainerExample.nib; sourceTree = "<group>"; };
 		605F0CC20C0F3F8F003AE3E6 /* ObjectManagerController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ObjectManagerController.h; sourceTree = "<group>"; };
 		605F0CC30C0F3F8F003AE3E6 /* ObjectManagerController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ObjectManagerController.m; sourceTree = "<group>"; };
 		605F0CCA0C0F400D003AE3E6 /* ObjectManagerExample.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = ObjectManagerExample.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -127,6 +162,8 @@
 		60B144980C11BFB400B4613B /* English */ = {isa = PBXFileReference; lastKnownFileType = wrapper.nib; name = English; path = English.lproj/TablePrototype.nib; sourceTree = "<group>"; };
 		60B144EB0C11C52900B4613B /* English */ = {isa = PBXFileReference; lastKnownFileType = wrapper.nib; name = English; path = English.lproj/OutlinePrototype.nib; sourceTree = "<group>"; };
 		60B2AF6A0C0B745A008C008A /* English */ = {isa = PBXFileReference; lastKnownFileType = wrapper.nib; name = English; path = English.lproj/ContainerExample.nib; sourceTree = "<group>"; };
+		60C1D8AB0C2569D500E00A2E /* PaneController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PaneController.h; sourceTree = "<group>"; };
+		60C1D8AC0C2569D500E00A2E /* PaneController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PaneController.m; sourceTree = "<group>"; };
 		60EABCBB0C0C284000341BD8 /* ETTableLayout.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ETTableLayout.h; sourceTree = "<group>"; };
 		60EABCBC0C0C284000341BD8 /* ETTableView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ETTableView.m; sourceTree = "<group>"; };
 		60EABCBE0C0C289900341BD8 /* ETTableLayout.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ETTableLayout.m; sourceTree = "<group>"; };
@@ -134,6 +171,14 @@
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
+		60539D920C240A7B006C57EC /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				60C1DA230C25715F00E00A2E /* Cocoa.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		605F0CC80C0F400D003AE3E6 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
@@ -195,6 +240,7 @@
 			children = (
 				606B98C90C0AF831000AAA85 /* ContainerExample.app */,
 				605F0CCA0C0F400D003AE3E6 /* ObjectManagerExample.app */,
+				60539D940C240A7B006C57EC /* PaneContainerExample.app */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -209,6 +255,7 @@
 				19C28FACFE9D520D11CA2CBB /* Products */,
 				606B98CB0C0AF831000AAA85 /* ContainerExample-Info.plist */,
 				605F0CCC0C0F400D003AE3E6 /* ObjectManagerExample-Info.plist */,
+				60539D960C240A7B006C57EC /* PaneContainerExample-Info.plist */,
 			);
 			name = FlowAutolayoutExample;
 			sourceTree = "<group>";
@@ -229,6 +276,7 @@
 			children = (
 				605F0CD00C0F4034003AE3E6 /* ObjectManager.nib */,
 				60B2AF690C0B745A008C008A /* ContainerExample.nib */,
+				60539D9C0C242065006C57EC /* PaneContainerExample.nib */,
 				60B144970C11BFB400B4613B /* TablePrototype.nib */,
 				60B144EA0C11C52900B4613B /* OutlinePrototype.nib */,
 				6051502B0C1738D600B5E0E5 /* BrowserPrototype.nib */,
@@ -325,6 +373,8 @@
 				606B97490C0AF283000AAA85 /* ContainerController.m */,
 				605F0CC20C0F3F8F003AE3E6 /* ObjectManagerController.h */,
 				605F0CC30C0F3F8F003AE3E6 /* ObjectManagerController.m */,
+				60C1D8AB0C2569D500E00A2E /* PaneController.h */,
+				60C1D8AC0C2569D500E00A2E /* PaneController.m */,
 			);
 			name = Examples;
 			sourceTree = "<group>";
@@ -332,6 +382,23 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
+		60539D930C240A7B006C57EC /* PaneContainerExample */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 60539D970C240A7D006C57EC /* Build configuration list for PBXNativeTarget "PaneContainerExample" */;
+			buildPhases = (
+				60539D900C240A7B006C57EC /* Resources */,
+				60539D910C240A7B006C57EC /* Sources */,
+				60539D920C240A7B006C57EC /* Frameworks */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = PaneContainerExample;
+			productName = PaneContainerExample;
+			productReference = 60539D940C240A7B006C57EC /* PaneContainerExample.app */;
+			productType = "com.apple.product-type.application";
+		};
 		605F0CC90C0F400D003AE3E6 /* ObjectManagerExample */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = 605F0CCD0C0F400E003AE3E6 /* Build configuration list for PBXNativeTarget "ObjectManagerExample" */;
@@ -378,11 +445,24 @@
 			targets = (
 				606B98C80C0AF831000AAA85 /* ContainerExample */,
 				605F0CC90C0F400D003AE3E6 /* ObjectManagerExample */,
+				60539D930C240A7B006C57EC /* PaneContainerExample */,
 			);
 		};
 /* End PBXProject section */
 
 /* Begin PBXResourcesBuildPhase section */
+		60539D900C240A7B006C57EC /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				60C1DA200C25715900E00A2E /* TablePrototype.nib in Resources */,
+				60C1DA210C25715900E00A2E /* OutlinePrototype.nib in Resources */,
+				60C1DA220C25715900E00A2E /* BrowserPrototype.nib in Resources */,
+				60C1DA1F0C25714D00E00A2E /* PaneContainerExample-Info.plist in Resources */,
+				60539D9E0C242065006C57EC /* PaneContainerExample.nib in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		605F0CC60C0F400D003AE3E6 /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -410,6 +490,37 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
+		60539D910C240A7B006C57EC /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				60C1DA3C0C2571EE00E00A2E /* CocoaCompatibility.m in Sources */,
+				60C1DA3D0C2571EE00E00A2E /* main.m in Sources */,
+				60C1DA090C25714300E00A2E /* ETLayoutItemGroup.m in Sources */,
+				60C1DA0A0C25714300E00A2E /* ETStackLayout.m in Sources */,
+				60C1DA0B0C25714300E00A2E /* ETLayer.m in Sources */,
+				60C1DA0C0C25714300E00A2E /* ETStyleRenderer.m in Sources */,
+				60C1DA0E0C25714300E00A2E /* ETViewLayoutLine.m in Sources */,
+				60C1DA0F0C25714300E00A2E /* ETTableLayout.m in Sources */,
+				60C1DA100C25714300E00A2E /* ETViewLayout.m in Sources */,
+				60C1D8AD0C2569D500E00A2E /* PaneController.m in Sources */,
+				60C1DA110C25714300E00A2E /* NSView+Etoile.m in Sources */,
+				60C1DA120C25714300E00A2E /* ETLayoutItem.m in Sources */,
+				60C1DA130C25714300E00A2E /* ETTableView.m in Sources */,
+				60C1DA140C25714300E00A2E /* ETPaneLayout.m in Sources */,
+				60C1DA150C25714300E00A2E /* ETBrowserLayout.m in Sources */,
+				60C1DA160C25714300E00A2E /* ETLineLayout.m in Sources */,
+				60C1DA170C25714300E00A2E /* FSBrowserCell.m in Sources */,
+				60C1DA180C25714300E00A2E /* ETFlowLayout.m in Sources */,
+				60C1DA190C25714300E00A2E /* ETContainer.m in Sources */,
+				60C1DA1A0C25714300E00A2E /* ETLineView.m in Sources */,
+				60C1DA1B0C25714300E00A2E /* ETStackView.m in Sources */,
+				60C1DA1C0C25714300E00A2E /* ETOutlineLayout.m in Sources */,
+				60C1DA1D0C25714300E00A2E /* ETFlowView.m in Sources */,
+				60C1DA1E0C25714300E00A2E /* ETPaneSwitcherLayout.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		605F0CC70C0F400D003AE3E6 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -443,6 +554,8 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				60D9BDDD0C21FFDE00E23EA5 /* ETPaneSwitcherLayout.m in Sources */,
+				60D9BDDF0C21FFDE00E23EA5 /* ETPaneLayout.m in Sources */,
 				605151620C17412D00B5E0E5 /* ETBrowserLayout.m in Sources */,
 				606B9F400C0B5848000AAA85 /* ETLineView.m in Sources */,
 				606B9F410C0B5848000AAA85 /* ETLineLayout.m in Sources */,
@@ -477,6 +590,14 @@
 				6051502C0C1738D600B5E0E5 /* English */,
 			);
 			name = BrowserPrototype.nib;
+			sourceTree = "<group>";
+		};
+		60539D9C0C242065006C57EC /* PaneContainerExample.nib */ = {
+			isa = PBXVariantGroup;
+			children = (
+				60539D9D0C242065006C57EC /* English */,
+			);
+			name = PaneContainerExample.nib;
 			sourceTree = "<group>";
 		};
 		605F0CD00C0F4034003AE3E6 /* ObjectManager.nib */ = {
@@ -514,6 +635,58 @@
 /* End PBXVariantGroup section */
 
 /* Begin XCBuildConfiguration section */
+		60539D980C240A7D006C57EC /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COPY_PHASE_STRIP = NO;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_ENABLE_FIX_AND_CONTINUE = YES;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_MODEL_TUNING = G5;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "$(SYSTEM_LIBRARY_DIR)/Frameworks/AppKit.framework/Headers/AppKit.h";
+				INFOPLIST_FILE = "PaneContainerExample-Info.plist";
+				INSTALL_PATH = "$(HOME)/Applications";
+				OTHER_LDFLAGS = (
+					"-framework",
+					Foundation,
+					"-framework",
+					AppKit,
+				);
+				PREBINDING = NO;
+				PRODUCT_NAME = PaneContainerExample;
+				WRAPPER_EXTENSION = app;
+				ZERO_LINK = YES;
+			};
+			name = Debug;
+		};
+		60539D990C240A7D006C57EC /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COPY_PHASE_STRIP = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_ENABLE_FIX_AND_CONTINUE = NO;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
+				GCC_MODEL_TUNING = G5;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "$(SYSTEM_LIBRARY_DIR)/Frameworks/AppKit.framework/Headers/AppKit.h";
+				INFOPLIST_FILE = "PaneContainerExample-Info.plist";
+				INSTALL_PATH = "$(HOME)/Applications";
+				OTHER_LDFLAGS = (
+					"-framework",
+					Foundation,
+					"-framework",
+					AppKit,
+				);
+				PREBINDING = NO;
+				PRODUCT_NAME = PaneContainerExample;
+				WRAPPER_EXTENSION = app;
+				ZERO_LINK = NO;
+			};
+			name = Release;
+		};
 		605F0CCE0C0F400E003AE3E6 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -643,6 +816,15 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
+		60539D970C240A7D006C57EC /* Build configuration list for PBXNativeTarget "PaneContainerExample" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				60539D980C240A7D006C57EC /* Debug */,
+				60539D990C240A7D006C57EC /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
 		605F0CCD0C0F400E003AE3E6 /* Build configuration list for PBXNativeTarget "ObjectManagerExample" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (

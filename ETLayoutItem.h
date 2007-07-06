@@ -49,6 +49,7 @@
 	ETStyleRenderer *_renderer;
 	BOOL _selected;
 	NSRect _defaultFrame;
+	NSString *_name;
 }
 
 + (ETLayoutItem *) layoutItemWithView: (NSView *)view;

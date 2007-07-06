@@ -71,9 +71,14 @@
     {
 		[self setView: view];
 		ASSIGN(_value, value);
-		ASSIGN(_modelObject, repObject);
-		
-		_modelObject = [[NSMutableDictionary alloc] init];
+		if (repObject != nil)
+		{
+			ASSIGN(_modelObject, repObject);
+		}
+		else
+		{
+			_modelObject = [[NSMutableDictionary alloc] init];
+		}
     }
     
     return self;
@@ -86,6 +91,32 @@
 	DESTROY(_modelObject);
     
     [super dealloc];
+}
+
+- (id) copyWithZone: (NSZone *)zone
+{
+	ETLayoutItem *item = [[ETLayoutItem alloc] initWithView: nil 
+	                                                  value: [self value] 
+										  representedObject: [self representedObject]];
+										  
+	if ([[self view] respondsToSelector: @selector(copyWithZone)])
+	{
+		[item setView: [[self view] copy]];
+	}
+	[item setName: [self name]];
+	[item setStyleRenderer: [self renderer]];
+	
+	return item;
+}
+
+- (NSString *) name
+{
+	return _name;
+}
+
+- (void) setName: (NSString *)name
+{
+	ASSIGN(_name, name);
 }
 
 /** Returns a value which is used when only one value can be displayed like in

@@ -474,6 +474,16 @@
 	[self updateLayout];
 }
 
+- (int) indexOfItem: (ETLayoutItem *)item
+{
+	return [_layoutItems indexOfObject: item];
+}
+
+- (NSArray *) items
+{
+	return _layoutItems;
+}
+
 /** Add a view to layout as a subview of the view container. */
 - (void) addView: (NSView *)view
 {
