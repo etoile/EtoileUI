@@ -1,0 +1,34 @@
+{
+    IBClasses = (
+        {
+            ACTIONS = {
+                changeLayout = id; 
+                choosePicturesAndLayout = id; 
+                scale = id; 
+                switchUsesScrollView = id; 
+                switchUsesSource = id; 
+            }; 
+            CLASS = ContainerController; 
+            LANGUAGE = ObjC; 
+            OUTLETS = {viewContainer = id; }; 
+            SUPERCLASS = NSObject; 
+        }, 
+        {CLASS = ETContainer; LANGUAGE = ObjC; SUPERCLASS = NSView; }, 
+        {CLASS = ETFlowView; LANGUAGE = ObjC; SUPERCLASS = ETContainer; }, 
+        {CLASS = ETLineView; LANGUAGE = ObjC; SUPERCLASS = ETContainer; }, 
+        {CLASS = FirstResponder; LANGUAGE = ObjC; SUPERCLASS = NSObject; }, 
+        {
+            ACTIONS = {
+                changeLayout = id; 
+                scale = id; 
+                switchUsesScrollView = id; 
+                switchUsesSource = id; 
+            }; 
+            CLASS = ObjectManagerController; 
+            LANGUAGE = ObjC; 
+            OUTLETS = {pathContainer = id; viewContainer = id; }; 
+            SUPERCLASS = NSObject; 
+        }
+    ); 
+    IBVersion = 1; 
+}
