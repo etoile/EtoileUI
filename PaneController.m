@@ -25,6 +25,7 @@
 	paneItems = [[NSMutableArray alloc] init];
 	
 	paneItem = [ETLayoutItem layoutItemWithView: paneView1];
+	[paneItem setAppliesResizingToBounds: YES];
 	[paneItem setRepresentedObject: [NSMutableDictionary dictionary]];
 	//[paneItem setName: @"Funky"];
 	[paneItem setValue: @"Funky" forProperty: @"name"];
@@ -33,6 +34,7 @@
 	[paneItems addObject: paneItem];
 	
 	paneItem = [ETLayoutItem layoutItemWithView: paneView2];
+	[paneItem setAppliesResizingToBounds: YES];
 	[paneItem setRepresentedObject: [NSMutableDictionary dictionary]];
 	//[paneItem setName: @"Edgy"];
 	[paneItem setValue: @"Edgy" forProperty: @"name"];
@@ -41,6 +43,7 @@
 	[paneItems addObject: paneItem];
 	
 	paneItem = [ETLayoutItem layoutItemWithView: paneView3];
+	[paneItem setAppliesResizingToBounds: YES];
 	[paneItem setRepresentedObject: [NSMutableDictionary dictionary]];
 	//[paneItem setName: @"Groovy"];
 	[paneItem setValue: @"Groovy" forProperty: @"name"];
@@ -92,6 +95,8 @@
 	
 	id layoutObject = AUTORELEASE([[layoutClass alloc] init]);
 	
+	/*[layoutObject setUsesConstrainedItemSize: YES];
+	[layoutObject setConstrainedItemSize: NSMakeSize(150, 150)];*/
 	[viewContainer setLayout: layoutObject];
 }
 
@@ -122,7 +127,7 @@
 	
 	id layoutObject = AUTORELEASE([[layoutClass alloc] init]);
 	
-	[[viewContainer layout] setContentLayout: layoutObject];
+	[(ETPaneSwitcherLayout *)[viewContainer layout] setContentLayout: layoutObject];
 }
 
 - (IBAction) changeSwitcherLayout: (id)sender
@@ -149,7 +154,7 @@
 	
 	id layoutObject = AUTORELEASE([[layoutClass alloc] init]);
 	
-	[[viewContainer layout] setSwitcherLayout: layoutObject];
+	[(ETPaneSwitcherLayout *)[viewContainer layout] setSwitcherLayout: layoutObject];
 }
 
 - (IBAction) changeSwitcherPosition: (id)sender
@@ -174,7 +179,7 @@
 			NSLog(@"Unsupported switcher position or unknown popup menu selection");
 	}
 	
-	[[viewContainer layout] setSwitcherPosition: position];
+	[(ETPaneSwitcherLayout *)[viewContainer layout] setSwitcherPosition: position];
 }
 
 - (IBAction) switchUsesSource: (id)sender
@@ -213,6 +218,8 @@
 	ETLayoutItem *paneItem = [paneItems objectAtIndex: index];
 	
 	NSLog(@"Returns %@ as layout item in container %@", paneItem, container);
+	
+	[paneItem setAppliesResizingToBounds: YES];
 
 	return paneItem;
 }

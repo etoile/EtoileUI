@@ -23,6 +23,6 @@
 
 @end
 
-
+NSRect ETMakeRect(NSPoint origin, NSSize size);
 NSRect ETScaleRect(NSRect frame, float factor);
 NSSize ETScaleSize(NSSize size, float factor);

@@ -61,6 +61,11 @@
 
 @end
 
+NSRect ETMakeRect(NSPoint origin, NSSize size)
+{
+	return NSMakeRect(origin.x, origin.y, size.width, size.height);
+}
+
 NSRect ETScaleRect(NSRect frame, float factor)
 {
 	NSSize prevSize = frame.size;

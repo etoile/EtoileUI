@@ -131,7 +131,7 @@
 
 - (void) resizeLayoutItems: (NSArray *)items toScaleFactor: (float)factor
 {
-	NSBrowser *browserView = _displayViewPrototype;
+	NSBrowser *browserView = (NSBrowser *)_displayViewPrototype;
 	// NOTE: Always recompute row height from the original one to avoid really
 	// value shifting quickly because of rounding.
 	//float rowHeight = DEFAULT_ROW_HEIGHT * factor;

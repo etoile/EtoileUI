@@ -45,6 +45,7 @@
 	// ETContainer that returns an ETLayoutItemGroup (generated on the fly if needed).
 	NSString *_path; /* A path type will replace NSString later */
 	id _dataSource;
+	id _delegate; // TODO: check this ivar doesn't overshadow a superclass ivar
 	
 	BOOL _subviewHitTest;
 	SEL _doubleClickAction;
@@ -52,6 +53,11 @@
 	ETLayoutItem *_clickedItem;
 	
 	float _itemScale;
+	
+	/* Acts as a cache, selection state is stored in layout item by default */
+	NSMutableIndexSet *_selection;
+	BOOL _multipleSelectionAllowed;
+	BOOL _emptySelectionAllowed;
 
 	/* Used by ETViewLayout to know which items are displayed whether the 
 	   container uses a source or simple provides items directly. */
@@ -73,6 +79,9 @@
 
 - (id) source;
 - (void) setSource: (id)source;
+
+- (id) delegate;
+- (void) setDelegate: (id) delegate;
 
 - (BOOL) letsLayoutControlsScrollerVisibility;
 - (void) setLetsLayoutControlsScrollerVisibility: (BOOL)layoutControl;
@@ -121,6 +130,17 @@
 - (BOOL) hasScrollView;
 - (void) setHasScrollView: (BOOL)scroll;
 
+/* Selection */
+
+- (void) setSelectionIndexes: (NSIndexSet *)selection;
+- (NSMutableIndexSet *) selectionIndexes;
+- (void) setSelectionIndex: (int)index;
+- (int) selectionIndex;
+- (BOOL) allowsMultipleSelection;
+- (void) setAllowsMultipleSelection: (BOOL)multiple;
+- (BOOL) allowsEmptySelection;
+- (void) setAllowsEmptySelection: (BOOL)empty;
+
 /* Groups and Stacks */
 
 /*- (ETLayoutGroupItem *) groupAllItems;
@@ -156,6 +176,9 @@
 - (SEL) doubleAction;
 - (ETLayoutItem *) clickedItem;
 
+- (BOOL) enablesSubviewHitTest;
+- (void) setEnablesSubviewHitTest: (BOOL)hit;
+
 @end
 
 @interface ETContainer (ETContainerSource)
@@ -173,10 +196,37 @@
 - (int) firstVisibleItemInContainer: (ETContainer *)container;
 - (int) lastVisibleItemInContainer: (ETContainer *)container;
 
+/* Basic drag and drop support by index */
+- (BOOL) container: (ETContainer *)container writeItemsWithIndexes: (NSIndexSet *)indexes toPasteboard: (NSPasteboard *)pboard;
+- (BOOL) container: (ETContainer *)container acceptDrop: (id <NSDraggingInfo>)info atIndex: (int)index;
+- (NSDragOperation) container: (ETContainer *)container validateDrop: (id <NSDraggingInfo>)info atIndex: (int)index;
+
+/* Drag and drop support by key and index path */
+// FIXME: Create new set structure NSPathSet rather than using NSArray
+- (BOOL) container: (ETContainer *)container writeItemsWithPaths: (NSArray *)paths toPasteboard: (NSPasteboard *)pboard;
+- (BOOL) container: (ETContainer *)container acceptDrop: (id <NSDraggingInfo>)info atPath: (NSString *)path;
+- (NSDragOperation) container: (ETContainer *)container validateDrop: (id <NSDraggingInfo>)info atPath: (NSString *)path;
+
+- (BOOL) container: (ETContainer *)container writeItemsWithPaths: (NSArray *)paths toPasteboard: (NSPasteboard *)pboard;
+- (BOOL) container: (ETContainer *)container acceptDrop: (id <NSDraggingInfo>)info atPath: (NSString *)path;
+- (NSDragOperation) container: (ETContainer *)container validateDrop: (id <NSDraggingInfo>)info atPath: (NSString *)path;
+
+/*- (BOOL) container: (ETContainer *)container writeDraggedItems: (NSArray *)items toPasteboard: (NSPasteboard *)pboard;
+- (BOOL) container: (ETContainer *)container acceptDroppedItem: (ETLayoutItem *)item atPath: (NSString *)path draggingInfo: (id <NSDraggingInfo>)info;
+- (NSDragOperation) container: (ETContainer *)container validateDroppedItem: (ETLayoutItem *)item atPath: (NSString *)path draggingInfo:(id <NSDraggingInfo>)info;*/
+
 // TODO: Extend the informal protocol to propogate group/ungroup actions in 
 // they can be properly reflected on model side.
 
 @end
+
+/*- (BOOL) container: (ETContainer *)container writeRowsWithIndexes: (NSIndexSet *)indexes toPasteboard: (NSPasteboard *)pboard;
+- (BOOL) container: (ETContainer *)container acceptDrop: (id <NSDraggingInfo>)info atIndex: (int)index inParentItem: (ETLayoutItem *)targetItem;
+- (NSDragOperation) container: (ETContainer *)container validateDrop: (id <NSDraggingInfo>)info atProposedIndex: (int)selection inParentItem: (ETLayoutItem *)targetItem;*/
+
+/*- (BOOL) container: (ETContainer *)container writeRowsWithIndexes: (NSIndexSet *)indexes toPasteboard: (NSPasteboard *)pboard
+- (BOOL) container: (ETContainer *)container acceptDrop: (id <NSDraggingInfo>)info index: (int)index dropOperation :(ETContainerDropOperation)operation
+- (NSDragOperation) container: (ETContainer *)container validateDrop: (id <NSDraggingInfo>)info proposedIndex: (int)selection proposedDropOperation: (ETContainerDropOperation)operation*/
 
 @interface ETContainer (ETContainerDelegate)
 
@@ -197,3 +247,6 @@
 + windowRootContainer;
 
 @end
+
+
+extern NSString *ETContainerSelectionDidChangeNotification;

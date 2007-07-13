@@ -8,10 +8,14 @@
 
 #import "ETLayoutItem.h"
 #import "ETStyleRenderer.h"
+#import "NSView+Etoile.h"
 #import "GNUstep.h"
+
+#define ETLog NSLog
 
 @interface ETLayoutItem (Private)
 - (ETLayoutItem *) initWithView: (NSView *)view value: (id)value representedObject: (id)repObject;
+- (void) layoutItemViewFrameDidChange: (NSNotification *)notif;
 @end
 
 /** Various approaches exists to customize layout items look rendering. 
@@ -105,6 +109,7 @@
 	}
 	[item setName: [self name]];
 	[item setStyleRenderer: [self renderer]];
+	[item setAppliesResizingToBounds: [self appliesResizingToBounds]];
 	
 	return item;
 }
@@ -164,8 +169,20 @@
 
 - (void) setView: (NSView *)view
 {
+	BOOL resizeBoundsActive = [self appliesResizingToBounds];
+	
+	_defaultFrame = NSZeroRect;
+	/* Stop to observe notifications on current view and reset bounds size */
+	[self setAppliesResizingToBounds: NO];
+	
 	ASSIGN(_view, view);
-	_defaultFrame = [view frame];
+	
+	if (_view != nil)
+	{
+		_defaultFrame = [_view frame];
+		if (resizeBoundsActive)
+			[self setAppliesResizingToBounds: YES];
+	}
 }
 
 /** Returns a value of the model object -representedObject, usually by 
@@ -238,11 +255,64 @@
 	ASSIGN(_renderer, renderer);
 }
 
+// FIXME: This doesn't take in account when view frame is modified afterwards
+// by calling -[NSView setFrame:]
 - (NSRect) defaultFrame { return _defaultFrame; }
 
-- (void) restoreDefaultFrame 
+/** Modifies the item view frame when the item has a view. Default frame won't
+	be touched by container transforms (like item scaling) unlike frame value
+	returned by NSView. 
+	Initiliazed with view frame passed in argument on ETLayoutItem instance
+	initialization, else set to NSZeroRet. */
+- (void) setDefaultFrame: (NSRect)frame
+{ 
+	_defaultFrame = frame;
+	[self restoreDefaultFrame];
+}
+
+- (void) restoreDefaultFrame
 { 
 	[[self view] setFrame: [self defaultFrame]]; 
+}
+
+- (void) setAppliesResizingToBounds: (BOOL)flag
+{
+	_resizeBounds = flag;
+	if (_resizeBounds && [self view] != nil)
+	{
+		[[NSNotificationCenter defaultCenter] addObserver: self 
+		                                         selector: @selector(layoutItemViewFrameDidChange:) 
+												     name: NSViewFrameDidChangeNotification
+												   object: [self view]];
+		/* Fake notification to update bounds size */
+		[self layoutItemViewFrameDidChange: nil];
+	}
+	else
+	{
+		[[NSNotificationCenter defaultCenter] removeObserver: self];
+		/* Restore bounds size */
+		[[self view] setBoundsSize: [[self view] frame].size];
+		[[self view] setNeedsDisplay: YES];
+	}
+}
+
+- (BOOL) appliesResizingToBounds
+{
+	return _resizeBounds;
+}
+
+- (void) layoutItemViewFrameDidChange: (NSNotification *)notif
+{
+	NSAssert1([self view] != nil, @"View of %@ cannot be nil on view notification", self);
+	NSAssert1([self appliesResizingToBounds] == YES, @"Bounds resizing must be set on view notification in %@", self);
+	
+	ETLog(@"Receives NSViewFrameDidChangeNotification in %@", self);
+	
+	// FIXME: the proper way to handle such scaling is to use an 
+	// NSAffineTransform and applies to item view in 
+	// -resizeLayoutItems:scaleFactor: when -appliesResizingToBounds returns YES
+	[[self view] setBoundsSize: [self defaultFrame].size];
+	[[self view] setNeedsDisplay: YES];
 }
 
 /* Actions */

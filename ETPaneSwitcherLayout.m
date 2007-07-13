@@ -18,13 +18,15 @@
 
 /* For debugging, it might be practical to comment the following lines */
 #define USE_INTERNAL_LAYOUT
-#define USE_SWITCHER
+//#define USE_SWITCHER
 
 @interface ETPaneSwitcherLayout (Private)
 - (ETViewLayout *) internalLayout;
 - (void) setInternalLayout: (ETViewLayout *)layout;
 - (NSImageView *) imageViewForImage: (NSImage *)image;
-- (NSArray *) switcherTabItems;
+- (NSArray *) switcherTabItemsForPaneItems: (NSArray *)items;
+- (void) syncItemsOfDisplayContainersWithItems: (NSArray *)items;
+- (IBAction) switchPane: (id)sender;
 //- (void) syncItemsOfInternalContainer;
 @end
 
@@ -37,13 +39,15 @@
 	if (self != nil)
 	{
 		_internalContainer = [[ETContainer alloc] initWithFrame: NSMakeRect(0, 0, 400, 400)];
+		/* Let content view and switcher view handles mouse click on their own */
+		[_internalContainer setEnablesSubviewHitTest: YES];
 		
 		/* We cannot yet know container/view related to both content and 
 		   switcher layout, that's why we create placeholder items waiting for 
 		   a view. */
 		[self resetSwitcherContainer];
 		[self resetContentContainer];
-
+		
 		[self setSwitcherPosition: 1]; /* Will set internal layout */
 	}
 	
@@ -52,10 +56,38 @@
 
 - (void) dealloc
 {
+	[[NSNotificationCenter defaultCenter] removeObserver: self];
+		
 	DESTROY(_internalContainer);
 	DESTROY(_switcherItem);
 	DESTROY(_contentItem);
 	[super dealloc];
+}
+
+// FIXME: When a new container is bound to the layout, undo any modifications 
+// made on previous container on which was set the layout.
+- (void) setContainer: (ETContainer *)container
+{
+	/* Disconnect layout from container */
+	if ([self container] != nil)
+	{
+		[[NSNotificationCenter defaultCenter] 
+			removeObserver: self 
+					  name: ETContainerSelectionDidChangeNotification 
+					object: [self container]];
+		[_internalContainer removeFromSuperview];
+	}	
+
+	/* Connect layout to container */
+	[super setContainer: container];
+	
+	[[NSNotificationCenter defaultCenter] 
+		addObserver: self 
+		   selector: @selector(containerSelectionDidChange:) 
+		       name: ETContainerSelectionDidChangeNotification 
+			 object: [self container]];
+	/* Let content view and switcher view handles mouse click on their own */
+	[[self container] setEnablesSubviewHitTest: YES];
 }
 
 - (ETViewLayout *) switcherLayout
@@ -67,8 +99,18 @@
 {
 	if ([self switcherContainer] == nil)
 		[self resetSwitcherContainer];
+
+	NSArray *items = [[self container] items];
 	
+	NSLog(@"-setSwitcherLayout: with items %@", items);
+
+	/* Sync items of the switcher with items of container using 
+	   ETPaneSwitcherLayout. */
+	[[self switcherContainer] removeAllItems];
+	[[self switcherContainer] addItems: [self switcherTabItemsForPaneItems: items]];
 	[[self switcherContainer] setLayout: layout];
+	/*[[self switcherLayout] renderWithLayoutItems: [self switcherTabItemsForPaneItems: items] 
+							         inContainer: switcherView];*/
 }
 
 /** By default the content layout is of style pane layout. */
@@ -81,7 +123,15 @@
 {
 	if ([self contentContainer] == nil)
 		[self resetContentContainer];
-		
+
+	NSArray *items = [[self container] items];
+			
+	NSLog(@"-setContentLayout: with items %@", items);
+
+	/* Sync items of the content with items of container using 
+	   ETPaneSwitcherLayout. */
+	[[self contentContainer] removeAllItems];
+	[[self contentContainer] addItems: items];
 	[[self contentContainer] setLayout: layout];
 }
 
@@ -98,6 +148,11 @@
 		NSLog(@"For -setSwitcherContainer: in %@, container must not be nil", self); // FIXME: Throw exception
 		
 	[_switcherItem setView: (NSView *)container];
+	[[NSNotificationCenter defaultCenter] 
+		addObserver: self 
+		   selector: @selector(containerSelectionDidChange:) 
+		       name: ETContainerSelectionDidChangeNotification 
+			 object: container];
 }
 
 - (ETContainer *) contentContainer
@@ -111,6 +166,11 @@
 		NSLog(@"For -setContentContainer: in %@,  container must not be nil", self); // FIXME: Throw exception
 		
 	[_contentItem setView: (NSView *)container];
+	[[NSNotificationCenter defaultCenter] 
+		addObserver: self 
+		   selector: @selector(containerSelectionDidChange:) 
+		       name: ETContainerSelectionDidChangeNotification 
+			 object: container];
 }
 
 /** O means hidden switcher
@@ -118,24 +178,26 @@
 	2 top content, bottom switcher 
 	3 left switcher, right content
 	4 right switcher, left content */
-- (int) switcherPosition
+- (ETPaneSwitcherPosition) switcherPosition
 {
-	return 0;
+	return _switcherPosition;
 }
 
-- (void) setSwitcherPosition: (int)position
+- (void) setSwitcherPosition: (ETPaneSwitcherPosition)position
 {
 	Class layoutClass = nil;
+	
+	_switcherPosition = position;
 	
 	switch (position)
 	{
 		case 0:
-		case 1:
-		case 2:
+		case ETPaneSwitcherPositionTop:
+		case ETPaneSwitcherPositionBottom:
 			layoutClass = [ETStackLayout class];
 			break;
-		case 3:
-		case 4:
+		case ETPaneSwitcherPositionLeft:
+		case ETPaneSwitcherPositionRight:
 			layoutClass = [ETLineLayout class];
 			break;
 		default:
@@ -146,6 +208,9 @@
 	//layoutClass = [ETStackLayout class];
 	[self setInternalLayout: [[layoutClass alloc] init]];
 	NSAssert1([_internalContainer layout] != nil, @"Internal layout cannot be nil in %@", self);
+	
+	/* -[self updateLayout] -> -[self computeViewLocationsForLayoutModel:] 
+	   -> -[_internalContainer updateLayout] */
 	[[self container] updateLayout];
 }
 
@@ -161,8 +226,22 @@
 
 - (void ) resetSwitcherContainer
 {
-	ETContainer *switcherView = [[ETContainer alloc] initWithFrame: NSMakeRect(0, 0, 400, 50)];
+	ETContainer *switcherView = [[ETContainer alloc] initWithFrame: NSMakeRect(0, 0, 400, 100)];
+	ETContainer *prevSwitcherView = (ETContainer *)[_switcherItem view];
 	
+	if (prevSwitcherView != nil)
+	{
+		[[NSNotificationCenter defaultCenter] 
+			removeObserver: self 
+					  name: ETContainerSelectionDidChangeNotification 
+					object: prevSwitcherView];
+	}	
+	[[NSNotificationCenter defaultCenter] 
+		addObserver: self 
+		   selector: @selector(containerSelectionDidChange:) 
+		       name: ETContainerSelectionDidChangeNotification 
+			 object: switcherView];
+			 
 	if ([[_internalContainer items] containsObject: _switcherItem])
 		[_internalContainer removeItem: _switcherItem];
 	ASSIGN(_switcherItem, [ETLayoutItem layoutItemWithView: switcherView]);
@@ -181,8 +260,22 @@
 
 - (void ) resetContentContainer
 {
-	ETContainer *contentView = [[ETContainer alloc] initWithFrame: NSMakeRect(0, 0, 400, 350)];
-
+	ETContainer *contentView = [[ETContainer alloc] initWithFrame: NSMakeRect(0, 0, 400, 300)];
+	ETContainer *prevContentView = (ETContainer *)[_contentItem view];
+	
+	if (prevContentView != nil)
+	{
+		[[NSNotificationCenter defaultCenter] 
+			removeObserver: self 
+					  name: ETContainerSelectionDidChangeNotification 
+					object: prevContentView];
+	}	
+	[[NSNotificationCenter defaultCenter] 
+		addObserver: self 
+		   selector: @selector(containerSelectionDidChange:) 
+		       name: ETContainerSelectionDidChangeNotification 
+			 object: contentView];
+			 
 	if ([[_internalContainer items] containsObject: _contentItem])
 		[_internalContainer removeItem: _contentItem];
 	ASSIGN(_contentItem, [ETLayoutItem layoutItemWithView: contentView]);
@@ -206,11 +299,12 @@
 	if (image != nil)
     {
         NSImageView *view = [[NSImageView alloc] 
-            initWithFrame: NSMakeRect(0, 0, [image size].width, [image size].height)];
+            initWithFrame: NSMakeRect(0, 0, 48, 48)];
         
 		[image setScalesWhenResized: YES];
 		[view setImageScaling: NSScaleProportionally];
         [view setImage: image];
+
 		return (NSImageView *)AUTORELEASE(view);
     }
 
@@ -246,7 +340,76 @@
 	return tabItems;
 }
 
+/* Propagate pane switch from switcher to content, and additionaly from 
+   immediate container to switcher when selection is done in code through 
+   methods like -[ETPaneSwitcherLayout setSelectionIndex:] */
+- (void) containerSelectionDidChange: (NSNotification *)notif
+{
+	NSLog(@"Propagate selection change from %@ in %@", [notif object], [self container]);
+	
+	// NOTE: Not really proud of the following code, but right now I'm unable
+	// to work out a solution which is as safe and simple as the one below.
+	
+	if ([[notif object] isEqual: [self switcherContainer]]) /* User clicks inside pane switcher view */
+	{
+		int index = [[self switcherContainer] selectionIndex];
+		
+		if ([[self container] selectionIndex] != index)
+		{
+			[[self container] setSelectionIndex: index];
+		}
+		else
+		{
+			NSLog(@"WARNING: Encounter incorrect selection sync in switcher subcontainer of %@", self);
+		}
+	}
+	else if ([[notif object] isEqual: [self container]]) /* Selection is set in code or triggered by previous branch statement */
+	{
+		int index = [[self container] selectionIndex];
+		 
+		if ([[self contentContainer] selectionIndex] != index)
+		{
+			[[self contentContainer] setSelectionIndex: index];
+		}
+		else
+		{
+			NSLog(@"WARNING: Encounter incorrect selection sync in content subcontainer of %@", self);
+		}
+		
+		/* Update switcher container only if needed to avoid an infinite loop */
+		if ([[self switcherContainer] selectionIndex] != index)
+			[[self switcherContainer] setSelectionIndex: index];
+	}
+}
+
 - (void) testRenderWithLayoutItems { }
+
+- (void) syncItemsOfDisplayContainersWithItems: (NSArray *)items;
+{
+	[[self contentContainer] removeAllItems];
+	[[self contentContainer] addItems: items];
+	[[self switcherContainer] removeAllItems];
+	[[self switcherContainer] addItems: [self switcherTabItemsForPaneItems: items]];
+	
+	/* Select an item if none is already and keep display containers in sync */
+	if ([[[self container] items] count] > 0)
+	{
+		int index = [[self container] selectionIndex];
+		
+		if (index == NSNotFound)
+			index = 0;
+		
+		/* Will propagate to switcher container and content container through 
+		    containerSelectionDidChange: */
+		[[self container] setSelectionIndex: index];
+		
+		NSAssert1([[self container] selectionIndex] != NSNotFound, 
+			@"Selection index (%d) must be different from NSNotFound", [[self container] selectionIndex]);
+	}
+	NSAssert2([[self container] selectionIndex] == [[self contentContainer] selectionIndex], 
+		@"Selection index mismatch between pane switcher container (%d) and related content container (%d)",
+		[[self container] selectionIndex], [[self contentContainer] selectionIndex]);
+}
 
 - (void) renderWithLayoutItems: (NSArray *)items inContainer: (ETContainer *)container
 {
@@ -279,6 +442,8 @@
 		NSLog(@"Found nil container of switcher layout in %@", self);
 		[self resetSwitcherContainer];
 	}
+	
+	[self syncItemsOfDisplayContainersWithItems: items];
 
 #ifdef USE_INTERNAL_LAYOUT		
 	/* First renders myself always made of two containers packed in a wrapper 
@@ -296,6 +461,7 @@
 	   image, icon, name. Eventually it makes a copy of the item view as an
 	   image which can be easily displayed. */
 #ifdef USE_SWITCHER
+	[switcherView setItemScaleFactor: [[self container] itemScaleFactor]];
 	[[self switcherLayout] renderWithLayoutItems: [self switcherTabItemsForPaneItems: items] 
 	                                 inContainer: switcherView];
 #endif
@@ -373,7 +539,7 @@
 		{
 			case 0:
 				break;
-			case 1:
+			case ETPaneSwitcherPositionTop:
 				NSAssert1(_switcherItem != nil, @"Missing item matching PaneSwitcher in %@", _internalContainer);
 				
 				if ([_internalContainer indexOfItem: _switcherItem] > 0)
@@ -382,7 +548,7 @@
 					[_internalContainer insertItem: _switcherItem atIndex: 0];
 				}
 				break;
-			case 2:
+			case ETPaneSwitcherPositionBottom:
 				NSAssert1(_contentItem != nil, @"Missing item matching PaneContent in %@", _internalContainer);
 				
 				if ([_internalContainer indexOfItem: _contentItem] > 0)
@@ -394,6 +560,11 @@
 			default:
 				NSLog(@"Invalid switcher position with stack layout %@", self);
 		}
+		/*[[self switcherContainer] setFrame: NSMakeRect(0, 0, 400, 100)];
+		[[self contentContainer] setFrame: NSMakeRect(0, 0, 400, 300)];*/
+		NSLog(@"Resize for top or bottom");
+		[_switcherItem setDefaultFrame: NSMakeRect(0, 0, 400, 100)];
+		[_contentItem setDefaultFrame: NSMakeRect(0, 0, 400, 300)];
 	}
 	else if ([[_internalContainer layout] isMemberOfClass: [ETLineLayout class]])
 	{
@@ -401,13 +572,32 @@
 		{
 			case 0:
 				break;
-			case 3:
+			case ETPaneSwitcherPositionLeft:
+				NSAssert1(_switcherItem != nil, @"Missing item matching PaneSwitcher in %@", _internalContainer);
+				
+				if ([_internalContainer indexOfItem: _switcherItem] > 0)
+				{
+					[_internalContainer removeItem: _switcherItem];
+					[_internalContainer insertItem: _switcherItem atIndex: 0];
+				}
 				break;
-			case 4:
+			case ETPaneSwitcherPositionRight:
+				NSAssert1(_contentItem != nil, @"Missing item matching PaneContent in %@", _internalContainer);
+				
+				if ([_internalContainer indexOfItem: _contentItem] > 0)
+				{
+					[_internalContainer removeItem: _contentItem];
+					[_internalContainer insertItem: _contentItem atIndex: 0];
+				}
 				break;
 			default:
 				NSLog(@"Invalid switcher position with line layout for %@", self);
 		}
+		/*[[self switcherContainer] setFrame: NSMakeRect(0, 0, 100, 400)];
+		[[self contentContainer] setFrame: NSMakeRect(0, 0, 300, 400)];*/
+		NSLog(@"Resize for left or right");
+		[_switcherItem setDefaultFrame: NSMakeRect(0, 0, 100, 400)];
+		[_contentItem setDefaultFrame: NSMakeRect(0, 0, 300, 400)];
 	}
 	else
 	{

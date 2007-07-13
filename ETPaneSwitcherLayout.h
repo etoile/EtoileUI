@@ -10,8 +10,18 @@
 #import <AppKit/AppKit.h>
 #import "ETViewLayout.h"
 
+typedef enum {
+	ETPaneSwitcherPositionNone,
+	ETPaneSwitcherPositionTop,
+	ETPaneSwitcherPositionBottom,
+	ETPaneSwitcherPositionLeft,
+	ETPaneSwitcherPositionRight
+} ETPaneSwitcherPosition;
+
+
 
 // ETSwitcherLayout may be a better name?
+// Probably going to rename this class ETTwoPaneLayout and introduces ETThreePaneLayout class thereafter
 /** Not a subclass of ETPaneLayout since we can use other layout to display 
 	panes than ETPaneLayout. For example, we can display panes inline by 
 	setting content layout to ETLineLayout. */
@@ -27,6 +37,8 @@
 	/* Facility ivars redundant with _internalContainer */
 	ETLayoutItem *_switcherItem;
 	ETLayoutItem *_contentItem;
+	
+	ETPaneSwitcherPosition _switcherPosition;
 }
 
 - (ETViewLayout *) switcherLayout;
@@ -43,8 +55,8 @@
 - (void ) resetSwitcherContainer;
 - (void ) resetContentContainer;
 
-- (int) switcherPosition;
-- (void) setSwitcherPosition: (int)position;
+- (ETPaneSwitcherPosition) switcherPosition;
+- (void) setSwitcherPosition: (ETPaneSwitcherPosition)position;
 
 // Adds an accessor to control item view size always adjusted to content size (or content container size)
 

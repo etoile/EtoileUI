@@ -91,9 +91,14 @@
 
 - (void) setContainer: (ETContainer *)newContainer
 {
+	/* Disconnect layout from existing container */
+	// Nothing 
+	
+	/* Connect layout to new container */
 	// NOTE: The container is our owner and retains us... A simple assignement 
 	// allows to avoid retain cycle.
 	_container = newContainer;
+	[[_container layoutItemCache] makeObjectsPerformSelector: @selector(restoreDefaultFrame)];
 }
 
 /** Returns the view where the layout happens (by computing location of a subview series). */
@@ -177,6 +182,54 @@
 	return _delegate;
 }
 
+/* Item Sizing Accessors */
+
+- (void) setUsesConstrainedItemSize: (BOOL)flag
+{
+	_itemSizeConstrained = flag;
+	if ([self verticallyConstrainedItemSize] == NO
+	 && [self horizontallyConstrainedItemSize] == NO)
+	{
+		[self setVerticallyConstrainedItemSize: YES];
+		[self setHorizontallyConstrainedItemSize: YES];
+	}
+}
+
+- (BOOL) usesContrainedItemSize
+{
+	return _itemSizeConstrained;
+}
+
+- (void) setConstrainedItemSize: (NSSize)size
+{
+	_itemSize = size;
+}
+
+- (NSSize) constrainedItemSize
+{
+	return _itemSize;
+}
+
+- (void) setVerticallyConstrainedItemSize: (BOOL)flag
+{
+	_itemSizeConstrainedV = flag;
+}
+
+- (BOOL) verticallyConstrainedItemSize
+{
+	return _itemSizeConstrainedV;
+}
+
+- (void) setHorizontallyConstrainedItemSize: (BOOL)flag
+{
+	_itemSizeConstrainedH = flag;
+}
+
+- (BOOL) horizontallyConstrainedItemSize
+{
+	return _itemSizeConstrainedH;
+}
+
 - (NSArray *) layoutItemsFromSource
 {
 	switch ([[self container] checkSourceProtocolConformance])
@@ -246,10 +299,10 @@
 	/* We remove the display views of cached layout items (they are in current
 	   in current implementation the displayed layout items). Note they may be 
 	   invisible by being located outside of container bounds. */
-#ifdef REMOVE_FROM_SUPERVIEW_BEFORE_LAYOUT
-	NSLog(@"Remove views of layout items currently displayed from their container");
+//#ifdef REMOVE_FROM_SUPERVIEW_BEFORE_LAYOUT
+	//NSLog(@"Remove views of layout items currently displayed from their container");
 	[itemDisplayViews makeObjectsPerformSelector: @selector(removeFromSuperview)];
-#endif
+//#endif
 
 	if ([[self container] source] != nil) /* Make layout with items provided by source */
 	{
@@ -263,7 +316,7 @@
 	}
 	else /* Make layout with items directly provided by container */
 	{
-		NSLog(@"No source avaible, will make layout directly");
+		//NSLog(@"No source avaible, will make layout directly");
 		itemsForRendering = [[self container] layoutItems];
 	}	
 	
@@ -277,7 +330,7 @@
 		
 		while ((item = [e nextObject]) != nil)
 		{
-			[_delegate layout: self renderLayoutItem: item];
+			[_delegate layout: self renderLayoutItem: item]; // FIXME: Use proper delegate syntax
 		}
 	}
 	else
@@ -313,7 +366,7 @@
 	[container setDisplayView: nil];
 	
 	// TODO: Optimize by computing set intersection of visible and unvisible item display views
-	NSLog(@"Remove views of next layout items to be displayed from their superview");
+	//NSLog(@"Remove views of next layout items to be displayed from their superview");
 	[itemViews makeObjectsPerformSelector: @selector(removeFromSuperview)];
 	
 	NSMutableArray *visibleItemViews = [NSMutableArray array];
@@ -345,6 +398,26 @@
 	{
 		NSRect unscaledFrame = [item defaultFrame];
 		
+		/* Apply item size constraint */
+		if ([self usesContrainedItemSize])
+		{
+			if ([self verticallyConstrainedItemSize] 
+			 && [self horizontallyConstrainedItemSize])
+			{
+				unscaledFrame.size = [self constrainedItemSize];
+			}
+			else if ([self verticallyConstrainedItemSize])
+			{
+				//unscaledFrame.size.height = [self constrainedItemSize];
+				
+			}
+			else if ([self horizontallyConstrainedItemSize])
+			{
+			
+			}
+		}
+		
+		/* Rescale */
 		if ([item view] != nil)
 		{
 			[[item view] setFrame: ETScaleRect(unscaledFrame, factor)];

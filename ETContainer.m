@@ -13,6 +13,8 @@
 #import "CocoaCompatibility.h"
 #import "GNUstep.h"
 
+NSString *ETContainerSelectionDidChangeNotification = @"ETContainerSelectionDidChangeNotification";
+
 @interface ETContainer (PackageVisibility)
 - (NSArray *) layoutItems;
 - (void) cacheLayoutItems: (NSArray *)layoutItems;
@@ -44,6 +46,7 @@
 		_layoutItems = [[NSMutableArray alloc] init];
 		_path = @"";
 		_itemScale = 1.0;
+		_selection = [[NSMutableIndexSet alloc] init];
 		
 		if (views != nil)
 		{
@@ -71,9 +74,19 @@
 	DESTROY(_containerLayout);
 	DESTROY(_displayView);
 	DESTROY(_path);
+	DESTROY(_selection);
 	_dataSource = nil;
     
     [super dealloc];
+}
+
+- (NSString *) description
+{
+	NSString *desc = [super description];
+	
+	desc = [@"<" stringByAppendingString: desc];
+	desc = [desc stringByAppendingFormat: @" + %@>", [self layout], nil];
+	return desc;
 }
 
 - (NSString *) path
@@ -307,6 +320,16 @@
 	[self updateLayout];
 }
 
+- (id) delegate
+{
+	return _delegate;
+}
+
+- (void) setDelegate: (id)delegate
+{
+	_delegate = delegate;
+}
+
 - (BOOL) letsLayoutControlsScrollerVisibility
 {
 	return NO;
@@ -415,18 +438,23 @@
 
 - (void) addItem: (ETLayoutItem *)item
 {
+	//NSLog(@"Add item in %@", self);
 	[_layoutItems addObject: item];
 	[self updateLayout];
 }
 
 - (void) insertItem: (ETLayoutItem *)item atIndex: (int)index
 {
+	//NSLog(@"Insert item in %@", self);
 	[_layoutItems insertObject: item atIndex: index];
 	[self updateLayout];
 }
 
 - (void) removeItem: (ETLayoutItem *)item
 {
+	//NSLog(@"Remove item in %@", self);
+	if ([_selection containsIndex: [self indexOfItem: item]])
+		[_selection removeIndex: [self indexOfItem: item]];
 	[[item displayView] removeFromSuperview];
 	[_layoutItems removeObject: item];
 	[self updateLayout];
@@ -448,6 +476,8 @@
 	NSEnumerator *e = [items objectEnumerator];
 	ETLayoutItem *layoutItem = nil;
 	
+	//NSLog(@"Add items in %@", self);
+	
 	while ((layoutItem = [e nextObject]) != nil)
 	{
 		[self addItem: layoutItem];
@@ -459,6 +489,8 @@
 	NSEnumerator *e = [items objectEnumerator];
 	ETLayoutItem *layoutItem = nil;
 	
+	//NSLog(@"Remove items in %@", self);
+	
 	while ((layoutItem = [e nextObject]) != nil)
 	{
 		[self removeItem: layoutItem];
@@ -469,6 +501,9 @@
 {
 	NSArray *itemDisplayViews = [_layoutItems valueForKey: @"displayView"];
 	
+	//NSLog(@"Remove all items in %@", self);
+	
+	[_selection removeAllIndexes];
 	[itemDisplayViews makeObjectsPerformSelector: @selector(removeFromSuperview)];
 	[_layoutItems removeAllObjects];
 	[self updateLayout];
@@ -533,6 +568,116 @@
 	{
 		[self removeView: view];
 	}
+}
+
+/* Selection */
+
+- (void) setSelectionIndexes: (NSIndexSet *)indexes
+{
+	int numberOfItems = [[self items] count];
+	int lastSelectionIndex = [indexes lastIndex];
+	NSLog(@"Set selection indexes to %@ in %@", indexes, self);
+	if (lastSelectionIndex > (numberOfItems - 1))
+	{
+		NSLog(@"WARNING: Try to set selection index %d when container %@ only contains %d items",
+			lastSelectionIndex, self, numberOfItems);
+		return;
+	}
+	
+	/* First unset selected state in layout items directly */
+	NSArray *selectedItems = [_layoutItems objectsAtIndexes: _selection];
+	NSEnumerator *e = [selectedItems objectEnumerator];
+	ETLayoutItem *item = nil;
+		
+	while ((item = [e nextObject]) != nil)
+	{
+		[item setSelected: NO];
+	}
+	
+	ASSIGN(_selection, indexes); // cache
+	
+	/* Update selection state in layout items directly */
+	selectedItems = [_layoutItems objectsAtIndexes: _selection];
+	e = [selectedItems objectEnumerator];
+	item = nil;
+		
+	while ((item = [e nextObject]) != nil)
+	{
+		[item setSelected: NO];
+	}
+	
+	[self setNeedsDisplay: YES];
+}
+
+- (NSMutableIndexSet *) selectionIndexes
+{
+	return AUTORELEASE([_selection mutableCopy]);
+}
+
+- (void) setSelectionIndex: (int)index
+{
+	int numberOfItems = [[self items] count];
+	
+	NSLog(@"Modify selected item from %d to %d of %@", [self selectionIndex], index, self);
+	
+	if (index > (numberOfItems - 1))
+	{
+		NSLog(@"WARNING: Try to set selection index %d when container %@ only contains %d items",
+			index, self, numberOfItems);
+		return;
+	}
+
+	if ([_selection count] > 0)
+	{
+		NSArray *selectedItems = [_layoutItems objectsAtIndexes: _selection];
+		NSEnumerator *e = [selectedItems objectEnumerator];
+		ETLayoutItem *item = nil;
+		
+		while ((item = [e nextObject]) != nil)
+		{
+			[item setSelected: NO];
+		}
+		[_selection removeAllIndexes];
+	}
+	
+	[_selection addIndex: index]; // cache
+	[[self itemAtIndex: index] setSelected: YES];
+	
+	NSAssert([_selection count] == 1, @"-setSelectionIndex: must result in a single index and not more");
+	
+	/* Finally propagate changes by posting notification */
+	NSNotification *notif = [NSNotification 
+		notificationWithName: ETContainerSelectionDidChangeNotification object: self];
+	
+	if ([[self delegate] respondsToSelector: @selector(containerSelectionDidChange:)])
+		[[self delegate] containerSelectionDidChange: notif];
+
+	[[NSNotificationCenter defaultCenter] postNotification: notif];
+}
+
+- (int) selectionIndex
+{
+	return [_selection firstIndex];
+}
+
+- (BOOL) allowsMultipleSelection
+{
+	return _multipleSelectionAllowed;
+}
+
+- (void) setAllowsMultipleSelection: (BOOL)multiple
+{
+	_multipleSelectionAllowed = multiple;
+}
+
+- (BOOL) allowsEmptySelection
+{
+	return _emptySelectionAllowed;
+}
+
+- (void) setAllowsEmptySelection: (BOOL)empty
+{
+	_emptySelectionAllowed = empty;
 }
 
 /* Layers */
@@ -689,6 +834,16 @@
 		RETAIN(_clickedItem);
 		NSLog(@"Double click detected on view %@ and layout item %@", hitView, _clickedItem);
 		
+		/* Update selection if needed */
+		if ([[self selectionIndexes] containsIndex: [self indexOfItem: _clickedItem]] == NO)
+		{
+			[self setSelectionIndex: [self indexOfItem: _clickedItem]];
+			/*NSMutableIndexSet *selection = [self selectionIndexes];
+			
+			[selection addIndex: [self indexOfItem: _clickedItem]];
+			[self setSelectionIndexes: selection];*/
+		}
+		
 		[self sendAction: [self doubleAction] to: [self target]];
 	}
 }
@@ -737,6 +892,14 @@
 	}
 	
 	return _clickedItem;
+}
+
+- (void) setFrame: (NSRect)frame
+{
+	//NSLog(@"-setFrame to %@", NSStringFromRect(frame));
+	if (_displayView != nil)
+		[_displayView setFrame: frame];
+	[super setFrame: frame];
 }
 
 @end

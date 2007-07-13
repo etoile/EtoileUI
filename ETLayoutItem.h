@@ -50,6 +50,7 @@
 	BOOL _selected;
 	NSRect _defaultFrame;
 	NSString *_name;
+	BOOL _resizeBounds;
 }
 
 + (ETLayoutItem *) layoutItemWithView: (NSView *)view;
@@ -108,7 +109,10 @@
 - (void) setStyleRenderer: (ETStyleRenderer *)renderer;
 
 - (NSRect) defaultFrame;
+- (void) setDefaultFrame: (NSRect)frame;
 - (void) restoreDefaultFrame;
+- (void) setAppliesResizingToBounds: (BOOL)flag;
+- (BOOL) appliesResizingToBounds;
 
 /* Actions */
 

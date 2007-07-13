@@ -16,5 +16,17 @@
 
 }
 
+/*- (ETLayoutItem *) selectedItem;
+- (int) indexOfSelectedItem;
+- (void) selectItem: (ETLayoutItem *)item;
+- (void) selectItemAtIndex: (int)index;
+- (void) selectPreviousItem;
+- (void) selectNextItem;
+
+- (void) setSelectionIndexes: (NSIndexSet *)selection;
+- (NSIndexSet *) selectionIndexes;*/
+
+/*- (void) setVisibleItemIndex:
+- indexOfVisibleItem*/
 
 @end

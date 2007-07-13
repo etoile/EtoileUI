@@ -18,9 +18,16 @@
 	IBOutlet id _delegate;
 	IBOutlet NSView *_displayViewPrototype;
 	
+	/* Layout and Content Size in Scrollview */
 	NSSize _layoutSize;
 	BOOL _layoutSizeCustomized;
 	BOOL _maxSizeLayout;
+	
+	/* Items Sizing */
+	NSSize _itemSize;
+	BOOL _itemSizeConstrained;
+	BOOL _itemSizeConstrainedV;
+	BOOL _itemSizeConstrainedH;
 }
 
 /* Factory  Method */
@@ -43,6 +50,20 @@
 
 - (void) setDelegate: (id)delegate;
 - (id) delegate;
+
+/* Item Sizing Accessors */
+
+// FIXME: Would be better to use -setItemSizeConstraintStyle: rather than
+// distinct methods for horizontal, vertical and double constraints.
+
+- (void) setUsesConstrainedItemSize: (BOOL)flag;
+- (BOOL) usesContrainedItemSize;
+- (void) setConstrainedItemSize: (NSSize)size;
+- (NSSize) constrainedItemSize;
+- (void) setVerticallyConstrainedItemSize: (BOOL)flag;
+- (BOOL) verticallyConstrainedItemSize;
+- (void) setHorizontallyConstrainedItemSize: (BOOL)flag;
+- (BOOL) horizontallyConstrainedItemSize;
 
 /* Sizing Methods */
 
