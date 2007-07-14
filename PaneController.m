@@ -184,16 +184,15 @@
 
 - (IBAction) switchUsesSource: (id)sender
 {
-	if ([sender boolValue])
+	if ([sender state] == NSOnState)
 	{
 		[viewContainer setSource: self];
 	}
-	else
+	else if ([sender state] == NSOffState)
 	{
 		[viewContainer setSource: nil];
+		[viewContainer addItems: paneItems];
 	}
-	
-	[viewContainer updateLayout];
     
     /* Flow autolayout manager doesn't take care of trigerring or updating the display. */
     [viewContainer setNeedsDisplay: YES];  

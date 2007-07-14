@@ -263,11 +263,11 @@
 	switch ([[self container] checkSourceProtocolConformance])
 	{
 		case 1:
-			NSLog(@"Will -layoutItemsFromFlatSource");
+			//NSLog(@"Will -layoutItemsFromFlatSource");
 			return [self layoutItemsFromFlatSource];
 			break;
 		case 2:
-			NSLog(@"Will -layoutItemsFromTreeSource");
+			//NSLog(@"Will -layoutItemsFromTreeSource");
 			return [self layoutItemsFromTreeSource];
 			break;
 		default:

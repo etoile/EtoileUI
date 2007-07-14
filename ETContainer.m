@@ -145,8 +145,14 @@ NSString *ETLayoutItemPboardType = @"ETLayoutItemPboardType"; // FIXME: replace 
 - (void) setPath: (NSString *)path
 {
 	ASSIGN(_path, path);
+	
+	// FIXME: May be it would be even better to keep selected any items still 
+	// visible with updated layout at new path. Think of outline view or 
+	// expanded stacks.
+	[_selection removeAllIndexes]; /* Unset any selection */
 	[self updateLayout];
 }
+
 #if 0
 - (ETLayoutItem *) layoutItemAncestorWithPath: (NSString *)path matchingPath: (NSString **)ancestorPath
 
@@ -179,6 +185,7 @@ NSString *ETLayoutItemPboardType = @"ETLayoutItemPboardType"; // FIXME: replace 
 	}
 }
 #endif
+
 - (NSArray *) layoutItems
 {
 	return _layoutItems;
@@ -186,16 +193,21 @@ NSString *ETLayoutItemPboardType = @"ETLayoutItemPboardType"; // FIXME: replace 
 
 /* Uses to know which layout items the container takes care to display when
    a source is in use and layout items are thereby retrieved and managed by the 
-   layout object itself. */
+   layout object itself. 
+   WARNING: Before calling this method, you must ensure no views of currently 
+   cached items are currently use as subviews in this container. */
 - (void) cacheLayoutItems: (NSArray *)layoutItems
 {
+	// TODO: Write a debug assertion checking every _layoutItemCache item views
+	// aren't used in present container anymore.
 	ASSIGN(_layoutItemCache, layoutItems);
 }
 
 /* Returns layout items currently displayed in the container unlike 
    -layoutItems which returns items displayed only when no source is used. Uses
    this method only for internal purpose when you need know layout items no 
-   matter of how they have come into this container. */
+   matter of how they have come into this container.
+   Must only be modified through -cacheLayoutItems:, never directly. */
 - (NSArray *) layoutItemCache
 {
 	return _layoutItemCache;
@@ -357,7 +369,16 @@ NSString *ETLayoutItemPboardType = @"ETLayoutItemPboardType"; // FIXME: replace 
 
 - (void) setSource: (id)source
 {
+	/* By safety, avoids to trigger extra updates */
+	if (_dataSource == source)
+		return;
+	
+	// NOTE: Resetting layout item cache is ETViewLayout responsability. We
+	// only refresh the container display when the new source is set up.
+	
 	_dataSource = source;
+	
+	// NOTE: -setPath: takes care of calling -updateLayout
 	if (source != nil && [[self path] isEqual: @""])
 	{
 		[self setPath: @"/"];
@@ -366,7 +387,6 @@ NSString *ETLayoutItemPboardType = @"ETLayoutItemPboardType"; // FIXME: replace 
 	{
 		[self setPath: @""];
 	}
-	[self updateLayout];
 }
 
 - (id) delegate
@@ -643,7 +663,15 @@ NSString *ETLayoutItemPboardType = @"ETLayoutItemPboardType"; // FIXME: replace 
 		[item setSelected: NO];
 	}
 	
-	ASSIGN(_selection, indexes); // cache
+	/* Cache selection locally in this container */
+	if ([indexes isKindOfClass: [NSMutableIndexSet class]])
+	{
+		ASSIGN(_selection, indexes);
+	}
+	else
+	{
+		ASSIGN(_selection, [indexes mutableCopy]);
+	}
 	
 	/* Update selection state in layout items directly */
 	selectedItems = [[self layoutItemCache] objectsAtIndexes: _selection];

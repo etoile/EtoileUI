@@ -93,7 +93,9 @@
 	NSRect _prevInsertionIndicatorRect; 
 
 	/* Used by ETViewLayout to know which items are displayed whether the 
-	   container uses a source or simple provides items directly. */
+	   container uses a source or simple provides items directly. 
+	   Read -cacheLayoutItems: documentation to know how modify the cache 
+	   without corrupting it. */
 	NSMutableArray *_layoutItemCache;
 }
 

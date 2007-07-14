@@ -232,7 +232,7 @@
 		[cell setLeaf: YES];
 	}
 	
-	NSLog(@"Returns %@ as object value in table view %@", [item valueForProperty: @"name"], sender);
+	//NSLog(@"Returns %@ as object value in browser view %@", [item valueForProperty: @"name"], sender);
 	
 	[cell setStringValue: [item valueForProperty: @"name"]];
 
