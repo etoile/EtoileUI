@@ -504,9 +504,42 @@
     return NSZeroPoint;
 }
 
-- (NSView *) viewIndexAtPoint: (NSPoint)location
+/** Returns item for which location is inside its display area. location must 
+	be expressed in the coordinates of the container presently associated with 
+	layout. */
+- (ETLayoutItem *) itemAtLocation: (NSPoint)location
 {
-    return nil;
+	NSArray *layoutItems = [[self container] layoutItemCache];
+	NSEnumerator *e = [layoutItems objectEnumerator];
+	ETLayoutItem *item = nil;
+	
+	while ((item = [e nextObject]) != nil)
+	{
+		if ([item displayView] != nil)
+		{
+			if (NSPointInRect(location, [[item displayView] frame]))
+				return item;
+		}
+		else /* Layout items uses no display view */
+		{
+			// FIXME: Implement
+		}
+	}
+	
+	return nil;
+}
+
+- (NSRect) displayRectOfItem: (ETLayoutItem *)item
+{
+	if ([item displayView] != nil)
+	{
+		return [[item displayView] frame];
+	}
+	else
+	{
+		// FIXME: Take in account any item decorations drawn by layout directly
+		return NSZeroRect;
+	}
 }
 
 //- (NSRange) viewRangeForLineLayout:

@@ -13,7 +13,10 @@
 #import "CocoaCompatibility.h"
 #import "GNUstep.h"
 
+#define ETLog NSLog
+
 NSString *ETContainerSelectionDidChangeNotification = @"ETContainerSelectionDidChangeNotification";
+NSString *ETLayoutItemPboardType = @"ETLayoutItemPboardType"; // FIXME: replace by UTI
 
 @interface ETContainer (PackageVisibility)
 - (NSArray *) layoutItems;
@@ -30,6 +33,7 @@ NSString *ETContainerSelectionDidChangeNotification = @"ETContainerSelectionDidC
 - (NSArray *) layoutItemsFromFlatSource;
 - (NSArray *) layoutItemsFromTreeSource;
 - (void) updateLayoutWithItems: (NSArray *)itemsToLayout;
+- (BOOL) doesSelectionContainsPoint: (NSPoint)point;
 - (void) fixOwnerIfNeededForItem: (ETLayoutItem *)item;
 @end
 
@@ -47,6 +51,13 @@ NSString *ETContainerSelectionDidChangeNotification = @"ETContainerSelectionDidC
 		_path = @"";
 		_itemScale = 1.0;
 		_selection = [[NSMutableIndexSet alloc] init];
+		_internalDragAllowed = YES;
+		_prevInsertionIndicatorRect = NSZeroRect;
+		
+		[self registerForDraggedTypes: [NSArray arrayWithObjects:
+			ETLayoutItemPboardType, nil]];
+			
+
 		
 		if (views != nil)
 		{
@@ -160,6 +171,16 @@ NSString *ETContainerSelectionDidChangeNotification = @"ETContainerSelectionDidC
 - (NSArray *) layoutItemCache
 {
 	return _layoutItemCache;
+}
+
+- (BOOL) isAutolayout
+{
+	return _autolayout;
+}
+
+- (void) setAutolayout: (BOOL)flag
+{
+	_autolayout = flag;
 }
 
 - (void) updateLayout
@@ -574,7 +595,7 @@ NSString *ETContainerSelectionDidChangeNotification = @"ETContainerSelectionDidC
 
 - (void) setSelectionIndexes: (NSIndexSet *)indexes
 {
-	int numberOfItems = [[self items] count];
+	int numberOfItems = [[self layoutItemCache] count];
 	int lastSelectionIndex = [indexes lastIndex];
 	NSLog(@"Set selection indexes to %@ in %@", indexes, self);
 	if (lastSelectionIndex > (numberOfItems - 1))
@@ -585,7 +606,7 @@ NSString *ETContainerSelectionDidChangeNotification = @"ETContainerSelectionDidC
 	}
 	
 	/* First unset selected state in layout items directly */
-	NSArray *selectedItems = [_layoutItems objectsAtIndexes: _selection];
+	NSArray *selectedItems = [[self layoutItemCache] objectsAtIndexes: _selection];
 	NSEnumerator *e = [selectedItems objectEnumerator];
 	ETLayoutItem *item = nil;
 		
@@ -597,7 +618,7 @@ NSString *ETContainerSelectionDidChangeNotification = @"ETContainerSelectionDidC
 	ASSIGN(_selection, indexes); // cache
 	
 	/* Update selection state in layout items directly */
-	selectedItems = [_layoutItems objectsAtIndexes: _selection];
+	selectedItems = [[self layoutItemCache] objectsAtIndexes: _selection];
 	e = [selectedItems objectEnumerator];
 	item = nil;
 		
@@ -616,7 +637,7 @@ NSString *ETContainerSelectionDidChangeNotification = @"ETContainerSelectionDidC
 
 - (void) setSelectionIndex: (int)index
 {
-	int numberOfItems = [[self items] count];
+	int numberOfItems = [[self layoutItemCache] count];
 	
 	NSLog(@"Modify selected item from %d to %d of %@", [self selectionIndex], index, self);
 	
@@ -629,7 +650,7 @@ NSString *ETContainerSelectionDidChangeNotification = @"ETContainerSelectionDidC
 
 	if ([_selection count] > 0)
 	{
-		NSArray *selectedItems = [_layoutItems objectsAtIndexes: _selection];
+		NSArray *selectedItems = [[self layoutItemCache] objectsAtIndexes: _selection];
 		NSEnumerator *e = [selectedItems objectEnumerator];
 		ETLayoutItem *item = nil;
 		
@@ -641,7 +662,7 @@ NSString *ETContainerSelectionDidChangeNotification = @"ETContainerSelectionDidC
 	}
 	
 	[_selection addIndex: index]; // cache
-	[[self itemAtIndex: index] setSelected: YES];
+	[[[self layoutItemCache] objectAtIndex: index] setSelected: YES];
 	
 	NSAssert([_selection count] == 1, @"-setSelectionIndex: must result in a single index and not more");
 	
@@ -678,6 +699,66 @@ NSString *ETContainerSelectionDidChangeNotification = @"ETContainerSelectionDidC
 - (void) setAllowsEmptySelection: (BOOL)empty
 {
 	_emptySelectionAllowed = empty;
+}
+
+- (BOOL) doesSelectionContainsPoint: (NSPoint)point
+{
+	ETLayoutItem *item = [[self layout] itemAtLocation: point];
+
+	if ([item isSelected])
+	{
+		NSAssert2([[self selectionIndexes] containsIndex: [[self layoutItemCache] indexOfObject: item]],
+			@"Mismatch between selection indexes and item %@ selected state in %@", 
+			item, self);
+		return YES;
+	}
+		
+	return NO;
+
+// NOTE: The code below could be significantly faster on large set of items
+#if 0
+	NSArray *selectedItems = [[self layoutItemCache] objectsAtIndexes: [self selectionIndexes]];
+	NSEnumerator *e = [selectedItems objectEnumerator];
+	ETLayoutItem *item = nil;
+	BOOL hitSelection = NO;
+	
+	while ((item = [nextObject]) != nil)
+	{
+		if ([item displayView] != nil)
+		{
+			hitSelection = NSPointInRect(point, [[item displayView] frame]);
+		}
+		else /* Layout items uses no display view */
+		{
+			// FIXME: Implement
+		}
+	}
+	
+	return hitSelection;
+#endif
+}
+
+/*
+- (ETSelection *) selection
+{
+	return _selection;
+}
+
+- (void) setSelection: (ETSelection *)
+{
+	_selection;
+} */
+
+/* Dragging */
+
+- (void) setAllowsInternalDragging: (BOOL)flag
+{
+	_internalDragAllowed = flag;
+}
+
+- (BOOL) allowsInternalDragging
+{
+	return _internalDragAllowed;
 }
 
 /* Layers */
@@ -818,6 +899,28 @@ NSString *ETContainerSelectionDidChangeNotification = @"ETContainerSelectionDidC
 		NSLog(@"WARNING: %@ should have catch mouse down %@", [self displayView], event);
 		return;
 	}
+	
+	NSPoint localPosition = [self convertPoint: [event locationInWindow] fromView: nil];
+	ETLayoutItem *newlyClickedItem = [[self layout] itemAtLocation: localPosition];
+	int newIndex = NSNotFound;
+	
+	/* If no item has been clicked, we exit by default (may change in future) */
+	if (newlyClickedItem == nil)
+		return;
+		
+	newIndex = [[self layoutItemCache] indexOfObject: newlyClickedItem];
+	
+	/* Update selection if needed */
+	if ([[self selectionIndexes] containsIndex: newIndex] == NO)
+	{
+		ETLog(@"Update selection on mouse down");
+		[self setSelectionIndex: newIndex];
+		
+		/*NSMutableIndexSet *selection = [self selectionIndexes];
+			
+		[selection addIndex: [[self layoutItemCache] indexOfObject: _clickedItem]];
+		[self setSelectionIndexes: selection];*/
+	}
 
 	if ([event clickCount] > 1) /* Double click */
 	{
@@ -833,16 +936,6 @@ NSString *ETContainerSelectionDidChangeNotification = @"ETContainerSelectionDidC
 		_clickedItem = [[self layoutItemCache] objectWithValue: hitView forKey: @"displayView"];
 		RETAIN(_clickedItem);
 		NSLog(@"Double click detected on view %@ and layout item %@", hitView, _clickedItem);
-		
-		/* Update selection if needed */
-		if ([[self selectionIndexes] containsIndex: [self indexOfItem: _clickedItem]] == NO)
-		{
-			[self setSelectionIndex: [self indexOfItem: _clickedItem]];
-			/*NSMutableIndexSet *selection = [self selectionIndexes];
-			
-			[selection addIndex: [self indexOfItem: _clickedItem]];
-			[self setSelectionIndexes: selection];*/
-		}
 		
 		[self sendAction: [self doubleAction] to: [self target]];
 	}
@@ -904,32 +997,260 @@ NSString *ETContainerSelectionDidChangeNotification = @"ETContainerSelectionDidC
 
 @end
 
-/*
-- (void) addView: (NSView *)view withIdentifier: (NSString *)identifier
+/* Dragging Support */
+
+@interface ETContainer (ETContainerDraggingSupport)
+- (BOOL) container: (ETContainer *)container acceptDrop: (id <NSDraggingInfo>)drag atIndex: (int)index;
+- (NSDragOperation) container: (ETContainer *)container validateDrop: (id <NSDraggingInfo>)drag atIndex: (int)index;
+@end
+
+/* By default ETContainer implements data source methods related to drag and 
+   drop. This is a convenience you can override by implementing drag and
+   drop related methods in your own data source. DefaultDragDataSource is
+   typically used when -allowsInternalDragging: returns YES. */
+@implementation ETContainer (ETContainerDraggingSupport)
+
+/* Default Dragging-specific Implementation of Data Source */
+
+/* Dragging Source */
+
+// NOTE: this method isn't part of NSDraggingSource protocol but of NSResponder
+- (void) mouseDragged: (NSEvent *)event
 {
-	if ([[_layoutItems valueForKey: @"view"] containsObject: view] == NO)
+	/* Only handles event when it is located inside selection */
+	if ([self doesSelectionContainsPoint: [event locationInWindow]])
 	{
-		[_layoutItems addObject: view];
-		[_layoutedViewIdentifiers setObject: view forKey: identifier];
+		ETLog(@"Mouse dragged on selection");
+		//[_layoutItems objectsAtIndexes: indexes];
+		ETLayoutItem *item = [[self layoutItemCache] objectAtIndex: [self selectionIndex]];
+		NSPasteboard *pboard = [NSPasteboard pasteboardWithName: NSDragPboard];
+		NSPoint dragPosition = [self convertPoint: [event locationInWindow]
+										 fromView: nil];
+						
+		[pboard declareTypes: [NSArray arrayWithObject: ETLayoutItemPboardType]
+			owner: nil];
+		// NOTE: If we implement an unified layout item tree shared by 
+		// applications through CoreObject, we could eventually just put simple
+		// path on the pasteboard rather than archived object or index.
+		//[pboard setString: forType: ETLayoutItemPboardType];
+		/*[pboard setData: forType: ETLayoutItemPboardType];*/
+		[pboard setString: [NSString stringWithFormat: @"%d", [self selectionIndex]] 
+		          forType: ETLayoutItemPboardType];
+ 
+		//dragPosition.x -= 32;
+		//dragPosition.y -= 32;
+		
+		[self dragImage: [item image]
+					 at: dragPosition
+				 offset: NSZeroSize
+				  event: event 
+			 pasteboard: [NSPasteboard pasteboardWithName: NSDragPboard]
+				 source: self 
+			  slideBack: YES];
 	}
 }
 
-- (void) removeViewForIdentifier:(NSString *)identifier
+- (unsigned int) draggingSourceOperationMaskForLocal: (BOOL)isLocal
 {
-  NSView *view = [_layoutedViewIdentifiers objectForKey: identifier];
-*/
-    
-  /* We try to remove view by its identifier first, then if it fails we won't
-     remove a view which could be properly part of layouted views. */
-    
-/*
-  [_layoutedViewIdentifiers removeObjectForKey: identifier];
-  [_layoutedViews removeObject: view];
+	if (isLocal)
+	{
+		return NSDragOperationPrivate; //Move
+	}
+	else
+	{
+		return NSDragOperationNone;
+	}
+}
+
+- (void) draggedImage: (NSImage *)anImage beganAt: (NSPoint)aPoint
+{
+#if 0
+	if ([self source] != nil 
+	 && [[self source] respondsToSelector: @selector(container:writeItemsWithIndexes:toPasteboard:)])
+	{
+		[[self source] container: self 
+		   writeItemsWithIndexes: [self selectionIndexes] 
+		            toPasteboard: [NSPasteboard pasteboardWithName: NSDragPboard]];
+	}
+	else if ([self source] == nil && [self allowsInternalDragging]) /* Handles drag by ourself when allowed */
+	{
+		[self container: self 
+		   writeItemsWithIndexes: [self selectionIndexes] 
+		            toPasteboard: [NSPasteboard pasteboardWithName: NSDragPboard]];
+	}
+#endif
+}
+
+- (void) draggedImage: (NSImage *)draggedImage movedTo: (NSPoint)screenPoint
+{
+	ETLog(@"Drag move receives in dragging source %@", self);
+}
+
+- (void) draggedImage: (NSImage *)anImage endedAt: (NSPoint)aPoint operation: (NSDragOperation)operation
+{
+	ETLog(@"Drag end receives in dragging source %@", self);
+}
+
+/* Dragging Destination */
+
+- (NSDragOperation) draggingEntered: (id <NSDraggingInfo>)sender
+{
+	ETLog(@"Drag enter receives in dragging destination %@", self);
+	return NSDragOperationPrivate;
+}
+
+- (NSDragOperation) draggingUpdated: (id <NSDraggingInfo>)drag
+{
+	ETLog(@"Drag update receives in dragging destination %@", self);
+	
+	NSPoint localDropPosition = [self convertPoint: [drag draggingLocation] fromView: nil];
+	ETLayoutItem *hoveredItem = [[self layout] itemAtLocation: localDropPosition];
+	NSRect hoveredRect = [[self layout] displayRectOfItem: hoveredItem];
+	float itemMiddleWidth = hoveredRect.origin.x + hoveredRect.size.width / 2;
+	float indicatorWidth = 4.0;
+	float indicatorLineX = 0.0;
+	NSRect indicatorRect = NSZeroRect;
+	
+	[self lockFocus];
+	[[NSColor magentaColor] setStroke];
+	[NSBezierPath setDefaultLineCapStyle: NSButtLineCapStyle];
+	[NSBezierPath setDefaultLineWidth: indicatorWidth];
+	
+	/* Decides whether to draw on left or right border of hovered item */
+	if (localDropPosition.x >= itemMiddleWidth)
+	{
+		indicatorLineX = NSMaxX(hoveredRect);
+		ETLog(@"Draw right insertion bar");
+	}
+	else if (localDropPosition.x < itemMiddleWidth)
+	{
+		indicatorLineX = NSMinX(hoveredRect);
+		ETLog(@"Draw left insertion bar");
+	}
+	else
+	{
+	
+	}
+	/* Computes indicator rect */
+	indicatorRect = NSMakeRect(indicatorLineX - indicatorWidth / 2.0, 
+		NSMinY(hoveredRect), indicatorWidth, NSHeight(hoveredRect));
+		
+	/* Insertion indicator has moved */
+	if (NSEqualRects(indicatorRect, _prevInsertionIndicatorRect) == NO)
+	{
+		[self setNeedsDisplayInRect: NSIntegralRect(_prevInsertionIndicatorRect)];
+		[self displayIfNeeded];
+		//[self displayIfNeededInRectIgnoringOpacity: _prevInsertionIndicatorRect];
+	}
+	
+	/* Draws indicator */
+	[NSBezierPath strokeLineFromPoint: NSMakePoint(indicatorLineX, NSMinY(hoveredRect))
+							  toPoint: NSMakePoint(indicatorLineX, NSMaxY(hoveredRect))];
+	[[self window] flushWindow];
+	[self unlockFocus];
+	
+	_prevInsertionIndicatorRect = indicatorRect;
+	
+	return NSDragOperationPrivate;
+}
+
+- (void) draggingExited: (id <NSDraggingInfo>)sender
+{
+	ETLog(@"Drag exit receives in dragging destination %@", self);
+	
+	/* Erases insertion indicator */
+	[self setNeedsDisplayInRect: NSIntegralRect(_prevInsertionIndicatorRect)];
+	[self displayIfNeeded];
+	//[self displayIfNeededInRectIgnoringOpacity: _prevInsertionIndicatorRect];
 }
 
 
-- (NSView *) viewForIdentifier: (NSString *)identifier
+- (void) draggingEnded: (id <NSDraggingInfo>)sender
 {
-  return [_layoutedViewIdentifiers objectForKey: identifier];
+	ETLog(@"Drag end receives in dragging destination %@", self);
+	
+	/* Erases insertion indicator */
+	[self setNeedsDisplayInRect: NSIntegralRect(_prevInsertionIndicatorRect)];
+	[self displayIfNeeded];
+	//[self displayIfNeededInRectIgnoringOpacity: _prevInsertionIndicatorRect];
 }
-*/
+
+- (BOOL) prepareForDragOperation: (id <NSDraggingInfo>)sender
+{
+	ETLayoutItem *item = [[self layout] itemAtLocation: [sender draggingLocation]];
+	int index = [[self layoutItemCache] indexOfObject: item];
+	
+	ETLog(@"Prepare drag receives in dragging destination %@", self);
+	
+	if ([self source] != nil && [[self source] respondsToSelector: @selector(container:acceptDrop:atIndex:)])
+	{
+		return [[self source] container: self 
+			                 acceptDrop: sender
+					            atIndex: index];
+	}
+	else if ([self source] == nil && [self allowsInternalDragging]) /* Handles drag by ourself when allowed */
+	{
+		return [self container: self acceptDrop: sender atIndex: index];
+	}
+	
+	return NO;
+}
+
+- (BOOL) container: (ETContainer *)container acceptDrop: (id <NSDraggingInfo>)drag atIndex: (int)index
+{
+	return YES;
+}
+
+- (BOOL) performDragOperation: (id <NSDraggingInfo>)sender
+{
+	ETLayoutItem *item = [[self layout] itemAtLocation: [sender draggingLocation]];
+	int index = [[self layoutItemCache] indexOfObject: item];
+	
+	ETLog(@"Perform drag receives in dragging destination %@", self);
+	
+	if ([self source] != nil && [[self source] respondsToSelector: @selector(container:validateDrop:atIndex:)])
+	{
+		[[self source] container: self 
+					validateDrop: sender
+					     atIndex: index];
+	}
+	else if ([self source] == nil && [self allowsInternalDragging]) /* Handles drag by ourself when allowed */
+	{
+		[self container: self 
+		   validateDrop: sender
+				atIndex: index];
+	}
+	
+	return YES;
+}
+
+- (NSDragOperation) container: (ETContainer *)container validateDrop: (id <NSDraggingInfo>)drag atIndex: (int)index
+{
+	int movedIndex = [[[drag draggingPasteboard] stringForType: ETLayoutItemPboardType] intValue];
+	ETLayoutItem *movedItem = [self itemAtIndex: movedIndex];
+	NSPoint localDropPosition = [self convertPoint: [drag draggingLocation] fromView: nil];
+	int dropIndex = [self indexOfItem: [[self layout] itemAtLocation: localDropPosition]];
+	
+	[self setAutolayout: NO];
+	RETAIN(movedItem);
+	[self removeItem: movedItem];
+	[self insertItem: movedItem atIndex: dropIndex];
+	[self setAutolayout: YES];
+	
+	return NSDragOperationPrivate;
+}
+
+/* This method is called in replacement of -draggingEnded: when a drop has 
+   occured. That's why it's not enough to clean insertion indicator in
+   -draggingEnded: */
+- (void) concludeDragOperation: (id <NSDraggingInfo>)sender
+{
+	ETLog(@"Conclude drag receives in dragging destination %@", self);
+	
+	/* Erases insertion indicator */
+	[self setNeedsDisplayInRect: NSIntegralRect(_prevInsertionIndicatorRect)];
+	[self displayIfNeeded];
+	//[self displayIfNeededInRectIgnoringOpacity: _prevInsertionIndicatorRect];
+}
+
+@end

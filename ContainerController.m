@@ -106,13 +106,14 @@
 
 - (IBAction) switchUsesSource: (id)sender
 {
-	if ([sender boolValue])
+	if ([sender state] == NSOnState)
 	{
 		[viewContainer setSource: self];
 	}
-	else
+	else if ([sender state] == NSOffState)
 	{
 		[viewContainer setSource: nil];
+		[self setUpLayoutItemsDirectly];
 	}
 	
 	[viewContainer updateLayout];
@@ -154,7 +155,8 @@
 		}
     }        
 	
-	//[self setUpLayoutItemsDirectly];
+	if ([viewContainer source] == nil)
+		[self setUpLayoutItemsDirectly];
     [viewContainer updateLayout];
     
     /* Flow autolayout manager doesn't take care of trigerring or updating the display. */
@@ -169,18 +171,19 @@
 	NSEnumerator *e = [images objectEnumerator];
 	NSImage *img = nil;
 	
+	NSLog(@"Set up layout items directly");
+	
 	while ((img = [e nextObject]) != nil)
 	{
 		NSImageView *imgView = [self imageViewForImage: img];
 		ETLayoutItem *item = [ETLayoutItem layoutItemWithView: imgView];
 
-		[item setValue: [img name] forProperty: @"name"];
-		[item setValue: img forProperty: @"image"];				
+		[item setValue: [[img name] lastPathComponent] forProperty: @"name"];
+		[item setValue: img forProperty: @"icon"];		
 		[imageLayoutItems addObject: item];
 	}
 	
-	[viewContainer removeAllItems]; // Remove all views added the last time
-	/* We could have added views directly with [viewContainer addViews: views] */
+	[viewContainer removeAllItems]; // Remove all views added the last time	
 	[viewContainer addItems: imageLayoutItems];
 }
 

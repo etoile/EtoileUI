@@ -82,6 +82,11 @@
 
 - (void) resizeLayoutItems: (NSArray *)items toScaleFactor: (float)factor;
 
+/* Utility Methods */
+
+- (ETLayoutItem *) itemAtLocation: (NSPoint)location;
+- (NSRect) displayRectOfItem: (ETLayoutItem *)item;
+
 // Private use
 - (void) adjustLayoutSizeToSizeOfContainer: (ETContainer *)container;
 

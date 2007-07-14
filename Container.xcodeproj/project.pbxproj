@@ -164,6 +164,9 @@
 		60B2AF6A0C0B745A008C008A /* English */ = {isa = PBXFileReference; lastKnownFileType = wrapper.nib; name = English; path = English.lproj/ContainerExample.nib; sourceTree = "<group>"; };
 		60C1D8AB0C2569D500E00A2E /* PaneController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PaneController.h; sourceTree = "<group>"; };
 		60C1D8AC0C2569D500E00A2E /* PaneController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PaneController.m; sourceTree = "<group>"; };
+		60CA70890C481BC9009D9B02 /* ETLog.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ETLog.h; sourceTree = "<group>"; };
+		60CA708A0C481BC9009D9B02 /* ETLog.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ETLog.m; sourceTree = "<group>"; };
+		60CA73860C494B22009D9B02 /* COPYING */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = COPYING; sourceTree = "<group>"; };
 		60EABCBB0C0C284000341BD8 /* ETTableLayout.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ETTableLayout.h; sourceTree = "<group>"; };
 		60EABCBC0C0C284000341BD8 /* ETTableView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ETTableView.m; sourceTree = "<group>"; };
 		60EABCBE0C0C289900341BD8 /* ETTableLayout.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ETTableLayout.m; sourceTree = "<group>"; };
@@ -358,8 +361,11 @@
 		609548D40C0E313A00068CBB /* Utility */ = {
 			isa = PBXGroup;
 			children = (
+				60CA70890C481BC9009D9B02 /* ETLog.h */,
+				60CA708A0C481BC9009D9B02 /* ETLog.m */,
 				609F46790B41FC6200AD2209 /* NSView+Etoile.h */,
 				609F467A0B41FC6200AD2209 /* NSView+Etoile.m */,
+				60CA73860C494B22009D9B02 /* COPYING */,
 				609F46840B41FDAF00AD2209 /* ETViewLayoutLine.h */,
 				609F46850B41FDAF00AD2209 /* ETViewLayoutLine.m */,
 			);

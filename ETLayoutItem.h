@@ -89,6 +89,8 @@
 
 - (NSView *) displayView;
 
+- (NSImage *) image;
+
 /* Model Access */
 
 - (id) representedObject;
@@ -108,6 +110,8 @@
 - (ETStyleRenderer *) renderer;
 - (void) setStyleRenderer: (ETStyleRenderer *)renderer;
 
+/* Sizing */
+
 - (NSRect) defaultFrame;
 - (void) setDefaultFrame: (NSRect)frame;
 - (void) restoreDefaultFrame;
@@ -118,6 +122,11 @@
 
 - (void) doubleClick;
 
+@end
+
+
+@interface NSImage (ETLayoutItem)
+- (NSImage *) initWithView: (NSView *)view;
 @end
 
 /*
