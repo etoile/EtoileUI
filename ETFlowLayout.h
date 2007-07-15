@@ -43,7 +43,14 @@
 @interface ETFlowLayout : ETViewLayout 
 {
 	BOOL _grid;
+	BOOL _width;
 }
+
+
+/*- (BOOL) hasHorizontalConstraint;
+- (void) setHasHorizontalConstraint: (BOOL)flag;
+- (BOOL) hasVerticalConstraint;
+- (void) setHasVerticalConstraint: (BOOL)flag;*/
 
 - (BOOL) usesGrid;
 - (void) setUsesGrid: (BOOL)constraint;

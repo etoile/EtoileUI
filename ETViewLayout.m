@@ -142,19 +142,29 @@
 
 - (void) adjustLayoutSizeToSizeOfContainer: (ETContainer *)container
 {
-
+	BOOL needsRender = YES;
+	
+	if ([self isAllContentVisible])
+		needsRender = NO;
+	
+	[self setLayoutSize: [container frame].size];
+	
+	if (needsRender)
+		[self render];
 }
 
 - (void) adjustLayoutSizeToContentSize
 {
+	/* May be the layout size is already sufficient to display all items */
 	if ([self isAllContentVisible])
 		return;
 	
-	if (_maxSizeLayout == NO)
+	// FIXME: Evaluate the interest of the first branch...
+	if ([self isContentSizeLayout] == NO)
 	{
-		_maxSizeLayout = YES;
+		[self setContentSizeLayout: YES];
 		[self render];
-		_maxSizeLayout = NO;
+		[self setContentSizeLayout: NO];
 	}
 	else
 	{
@@ -187,6 +197,9 @@
 
 - (NSSize) layoutSize
 {
+	if ([self isContentSizeLayout] == NO)
+		_layoutSize = [[self container] frame].size;
+
 	return _layoutSize;
 }
 
@@ -319,8 +332,32 @@
 	return itemsFromSource;
 }
 
+/** Returns whether the layout object is currently computing and rendering its 
+	layout right now or not.
+	You must call this method in your code before calling any Layouting section
+	methods. If YES is returned, don't call the method you want to and wait a 
+	bit to give another try to -isRendering. When NO is returned, you are free
+	to call any Layouting related methods. */
+- (BOOL) isRendering
+{
+	return _isLayouting;
+}
+
 - (void) render
 {
+	/* Prevent reentrancy. In a threaded environment, it isn't perfectly safe 
+	   because _isLayouting test and _isLayouting assignement doesn't occur in
+	   an atomic way. */
+	if (_isLayouting)
+	{
+		NSLog(@"WARNING: Trying to reenter -render when the layout is already getting updated.");
+		return;
+	}
+	else
+	{
+		_isLayouting = YES;
+	}
+	
 	NSArray *itemDisplayViews = [[[self container] layoutItemCache] valueForKey: @"displayView"];
 	NSArray *itemsForRendering = nil;
 
@@ -366,6 +403,7 @@
 		[itemsForRendering makeObjectsPerformSelector: @selector(render)];
 	}
 	
+	_isLayouting = NO;
 	[self renderWithLayoutItems: itemsForRendering inContainer: [self container]];
 }
 
@@ -377,7 +415,20 @@
 /** Run the layout computation which assigns a location in the view container
     to each view added to the flow layout manager. */
 - (void) renderWithLayoutItems: (NSArray *)items inContainer: (ETContainer *)container
-{
+{	
+	/* Prevent reentrancy. In a threaded environment, it isn't perfectly safe 
+	   because _isLayouting test and _isLayouting assignement doesn't occur in
+	   an atomic way. */
+	if (_isLayouting)
+	{
+		NSLog(@"WARNING: Trying to reenter -renderWithLayoutItems: when the layout is already getting updated.");
+		return;
+	}
+	else
+	{
+		_isLayouting = YES;
+	}
+	
 	NSArray *itemViews = [items valueForKey: @"displayView"];
 	NSArray *layoutModel = nil;
 	
@@ -397,6 +448,10 @@
 	//NSLog(@"Remove views of next layout items to be displayed from their superview");
 	[itemViews makeObjectsPerformSelector: @selector(removeFromSuperview)];
 	
+	/* Adjust container size when it is embedded in a scroll view */
+	if ([[self container] hasScrollView])
+		[[self container] setFrameSize: [self layoutSize]];
+	
 	NSMutableArray *visibleItemViews = [NSMutableArray array];
 	NSEnumerator  *e = [layoutModel objectEnumerator];
 	ETViewLayoutLine *line = nil;
@@ -415,6 +470,8 @@
 		if ([[container subviews] containsObject: visibleItemView] == NO)
 			[container addSubview: visibleItemView];
 	}
+	
+	_isLayouting = NO;
 }
 
 - (void) resizeLayoutItems: (NSArray *)items toScaleFactor: (float)factor

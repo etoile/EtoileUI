@@ -63,6 +63,8 @@ NSString *ETLayoutItemPboardType = @"ETLayoutItemPboardType"; // FIXME: replace 
 - (void) updateLayoutWithItems: (NSArray *)itemsToLayout;
 - (BOOL) doesSelectionContainsPoint: (NSPoint)point;
 - (void) fixOwnerIfNeededForItem: (ETLayoutItem *)item;
+- (BOOL) isScrollViewShown;
+- (void) setShowsScrollView: (BOOL)scroll;
 @end
 
 
@@ -81,11 +83,10 @@ NSString *ETLayoutItemPboardType = @"ETLayoutItemPboardType"; // FIXME: replace 
 		_selection = [[NSMutableIndexSet alloc] init];
 		_internalDragAllowed = YES;
 		_prevInsertionIndicatorRect = NSZeroRect;
+		_scrollView = nil; /* First instance created by calling private method -setShowsScrollView: */
 		
 		[self registerForDraggedTypes: [NSArray arrayWithObjects:
 			ETLayoutItemPboardType, nil]];
-			
-
 		
 		if (views != nil)
 		{
@@ -439,30 +440,77 @@ NSString *ETLayoutItemPboardType = @"ETLayoutItemPboardType"; // FIXME: replace 
 
 - (void) setHasScrollView: (BOOL)scroll
 {
-	// FIXME: Asks layout whether it handles scroll view itself or not. If 
-	// needed like with table layout, delegate scroll view handling.
-	if (scroll)
+	if (scroll == YES && _scrollView == nil)
 	{
 		_scrollView = [[NSScrollView alloc] initWithFrame: [self frame]];
+		[self setShowsScrollView: YES];
+
+	}
+	else if (scroll == NO)
+	{
+		[self setShowsScrollView: NO];
+		DESTROY(_scrollView);
+	}
+}
+
+/* Returns whether the scroll view of the current container is really used. If
+   the container shows currently an AppKit control like NSTableView as display 
+   view, the built-in scroll view of the table view is used instead of the one
+   provided by the container. 
+   It implies you can never have -hasScrollView returns NO and -isScrollViewShown 
+   returns YES. There is no such exception with all other boolean combinations. */
+- (BOOL) isScrollViewShown
+{
+	if ([_scrollView superview] != nil)
+		return YES;
+	
+	return NO;
+}
+
+- (void) setShowsScrollView: (BOOL)scroll
+{
+	NSAssert(_scrollView != nil, @"For -setShowsScrollView:, scroll view must not be nil");
+	if ([_scrollView superview] != nil)
+		NSAssert([_scrollView documentView] == self, @"When scroll view superview is not nil, it must use self as document view");
+
+	// FIXME: Asks layout whether it handles scroll view itself or not. If 
+	// needed like with table layout, delegate scroll view handling.
+	if (scroll && [_scrollView superview] == nil)
+	{
+		NSView *superview = [self superview];
+				
+		[_scrollView setAutohidesScrollers: NO];
+		[_scrollView setHasHorizontalScroller: YES];
+		[_scrollView setHasVerticalScroller: YES];
+		[_scrollView setAutoresizingMask: [self autoresizingMask]];
 		
 		RETAIN(self);
 		[self removeFromSuperview];
-		[_containerLayout adjustLayoutSizeToContentSize];
-		[self setFrameSize: [_containerLayout layoutSize]];
+		
+		[[self layout] setContentSizeLayout: YES];
+		[[self layout] adjustLayoutSizeToContentSize];
+		/*[self setFrameSize: [[self layout] layoutSize]];*/
+		
 		[_scrollView setDocumentView: self];
+		[superview addSubview: _scrollView];
 		RELEASE(self);
 	}
-	else
+	else if (scroll == NO && [_scrollView superview] != nil)
 	{
-		RETAIN(self);
-		[self removeFromSuperview];
-		//[_scrollView setDocumentView: nil];
-		[self setFrame: [_scrollView frame]];
-		[[_scrollView superview] addSubview: self];
-		[_scrollView removeFromSuperview];
-		RELEASE(self);
+		NSView *superview = [_scrollView superview];
 		
-		DESTROY(_scrollView);
+		NSAssert(superview != nil, @"For -setShowsScrollView: NO, scroll view must have a superview");
+		
+		RETAIN(self);
+		[self removeFromSuperview]; //[_scrollView setDocumentView: nil];
+		[_scrollView removeFromSuperview];
+		
+		[self setFrame: [_scrollView frame]];
+		[[self layout] setContentSizeLayout: NO];
+		[[self layout] adjustLayoutSizeToSizeOfContainer: self];
+		
+		[superview addSubview: self];
+		RELEASE(self);
 	}
 }
 
@@ -480,8 +528,21 @@ NSString *ETLayoutItemPboardType = @"ETLayoutItemPboardType"; // FIXME: replace 
 	return _displayView;
 }
 
+/* Method called when we switch between layouts. Currently called by 
+   -renderWithLayoutItems: but this is probably going to change. */
 - (void) setDisplayView: (NSView *)view
 {
+	if (view != nil && [self hasScrollView])
+	{
+		if ([self isScrollViewShown])
+			[self setShowsScrollView: NO];
+	}
+	else if (view == nil && [self hasScrollView])
+	{
+		if ([self isScrollViewShown] == NO)
+			[self setShowsScrollView: YES];		
+	}
+
 	[_displayView removeFromSuperview];
 	
 	_displayView = view;

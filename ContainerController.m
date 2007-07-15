@@ -27,6 +27,7 @@
 	
 	[viewContainer setSource: self];
 	[viewContainer setLayout: AUTORELEASE([[ETStackLayout alloc] init])];
+	[viewContainer setHasScrollView: YES];
 }
 
 - (void) viewContainerDidResize: (NSNotification *)notif

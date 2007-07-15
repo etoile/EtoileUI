@@ -29,7 +29,7 @@
 	{
 		vAccumulator += [viewToLayout height];
 		
-		if (vAccumulator < [viewContainer height])
+		if ([self isContentSizeLayout] || vAccumulator < [self layoutSize].height)
 		{
 			[layoutedViews addObject: viewToLayout];
 		}
@@ -38,6 +38,10 @@
 			break;
 		}
 	}
+	
+	/* Update layout size, useful when related container is embedded in a scroll view */
+	if ([self isContentSizeLayout])
+		[self setLayoutSize: NSMakeSize([self layoutSize].width, vAccumulator)];
 	
 	if ([layoutedViews count] == 0)
 		return nil;
@@ -58,6 +62,7 @@
 			  @"-layoutLineForViews: isn't overriden as it should.", self, 
 			  [layoutModel count]);
 	}
+	
 	[self computeViewLocationsForLayoutLine: [layoutModel lastObject] inContainer: container];
 }
 
@@ -65,7 +70,7 @@
 {
 	NSEnumerator *lineWalker = nil;
 	NSView *view = nil;
-	NSPoint viewLocation = NSMakePoint(0, [container height]);
+	NSPoint viewLocation = NSMakePoint(0, [self layoutSize].height);
 	
 	lineWalker = [[line views] objectEnumerator];
 	

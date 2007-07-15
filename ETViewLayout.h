@@ -45,6 +45,8 @@
 	IBOutlet id _delegate;
 	IBOutlet NSView *_displayViewPrototype;
 	
+	BOOL _isLayouting; /* -isRendering */
+	
 	/* Layout and Content Size in Scrollview */
 	NSSize _layoutSize;
 	BOOL _layoutSizeCustomized;
@@ -98,6 +100,8 @@
 - (void) adjustLayoutSizeToContentSize;
 
 /* Layouting */
+
+- (BOOL) isRendering;
 
 - (void) render;
 - (void) renderWithLayoutItems: (NSArray *)items inContainer: (ETContainer *)container;

@@ -51,7 +51,7 @@
 	ETViewLayoutLine *line;
 	NSEnumerator *lineWalker = nil;
 	NSView *view;
-	NSPoint viewLocation = NSMakePoint(0, [container height]);
+	NSPoint viewLocation = NSMakePoint(0, [self layoutSize].height);
   
 	while ((line = [layoutWalker nextObject]) != nil)
 	{
@@ -143,7 +143,7 @@
 	{
 		hAccumulator += [viewToLayout width];
 		
-		if (hAccumulator < [container width])
+		if (hAccumulator < [self layoutSize].width)
 		{
 			[layoutedViews addObject: viewToLayout];
 		}

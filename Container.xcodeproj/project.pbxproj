@@ -126,6 +126,8 @@
 		606B98CB0C0AF831000AAA85 /* ContainerExample-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = "ContainerExample-Info.plist"; sourceTree = "<group>"; };
 		606B99240C0B1336000AAA85 /* CocoaCompatibility.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CocoaCompatibility.h; sourceTree = "<group>"; };
 		606B99250C0B134B000AAA85 /* CocoaCompatibility.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CocoaCompatibility.m; sourceTree = "<group>"; };
+		6082FE750C49947F00FFF659 /* ETBinding.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ETBinding.h; sourceTree = "<group>"; };
+		6082FE760C49947F00FFF659 /* ETBinding.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ETBinding.m; sourceTree = "<group>"; };
 		609544AA0C0CE24D00068CBB /* ETBrowserLayout.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ETBrowserLayout.h; sourceTree = "<group>"; };
 		609544AB0C0CE24D00068CBB /* ETBrowserLayout.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ETBrowserLayout.m; sourceTree = "<group>"; };
 		609547B70C0E032E00068CBB /* ETLayer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ETLayer.h; sourceTree = "<group>"; };
@@ -375,6 +377,8 @@
 		609548D50C0E317400068CBB /* Examples */ = {
 			isa = PBXGroup;
 			children = (
+				6082FE750C49947F00FFF659 /* ETBinding.h */,
+				6082FE760C49947F00FFF659 /* ETBinding.m */,
 				606B97480C0AF283000AAA85 /* ContainerController.h */,
 				606B97490C0AF283000AAA85 /* ContainerController.m */,
 				605F0CC20C0F3F8F003AE3E6 /* ObjectManagerController.h */,
