@@ -140,6 +140,14 @@
 	return NO;
 }
 
+/** This methods triggers layout render, so you must not call it inside any
+	rendering methods to avoid any reentrancy issues. 
+	There is no need to use -updateLayout or -render, the method does any 
+	necessary rendering and avoids it when possible. 
+	You can use this method to get an idea of the size of a layout even when
+	no container is bound to this layout, just pass an arbitrary container in 
+	parameter. Passing nil is equivalent to calling 
+	-adjustLayoutSizeToContentSize. */
 - (void) adjustLayoutSizeToSizeOfContainer: (ETContainer *)container
 {
 	BOOL needsRender = YES;
@@ -153,6 +161,10 @@
 		[self render];
 }
 
+/** This methods triggers layout render, so you must not call it inside any
+	rendering methods to avoid any reentrancy issues. 
+	There is no need to use -updateLayout or -render, the method does any 
+	necessary rendering and avoids it when possible.*/
 - (void) adjustLayoutSizeToContentSize
 {
 	/* May be the layout size is already sufficient to display all items */
@@ -439,17 +451,13 @@
 	/* Now computes the location of every views by relying on the line by line 
 	   decomposition already made. */
 	[self computeViewLocationsForLayoutModel: layoutModel inContainer: container];
-		
-	/* Don't forget to remove existing display view if we switch from a layout 
-	   which reuses a native AppKit control like table layout. */
-	[container setDisplayView: nil];
 	
 	// TODO: Optimize by computing set intersection of visible and unvisible item display views
 	//NSLog(@"Remove views of next layout items to be displayed from their superview");
 	[itemViews makeObjectsPerformSelector: @selector(removeFromSuperview)];
 	
 	/* Adjust container size when it is embedded in a scroll view */
-	if ([[self container] hasScrollView])
+	if ([[self container] scrollView] != nil)
 		[[self container] setFrameSize: [self layoutSize]];
 	
 	NSMutableArray *visibleItemViews = [NSMutableArray array];

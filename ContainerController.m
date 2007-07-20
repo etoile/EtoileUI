@@ -20,14 +20,15 @@
 {
     NSNotificationCenter *nc = [NSNotificationCenter defaultCenter];
     
-    [nc addObserver: self 
+    /*[nc addObserver: self 
            selector: @selector(viewContainerDidResize:) 
                name: NSViewFrameDidChangeNotification 
-             object: viewContainer];
+             object: viewContainer];*/
 	
 	[viewContainer setSource: self];
 	[viewContainer setLayout: AUTORELEASE([[ETStackLayout alloc] init])];
-	[viewContainer setHasScrollView: YES];
+	[viewContainer setHasVerticalScroller: YES];
+	[viewContainer setHasHorizontalScroller: YES];
 }
 
 - (void) viewContainerDidResize: (NSNotification *)notif
@@ -125,7 +126,23 @@
 
 - (IBAction) switchUsesScrollView: (id)sender
 {
-
+	if ([sender state] == NSOnState)
+	{
+		[viewContainer setHasVerticalScroller: YES];
+		[viewContainer setHasHorizontalScroller: YES];
+	}
+	else if ([sender state] == NSOffState)
+	{
+		[viewContainer setScrollView: nil];
+		// NOTE: Testing related lines
+		//[viewContainer setHasVerticalScroller: NO];
+		//[viewContainer setHasHorizontalScroller: NO];
+	}
+	
+	//[viewContainer updateLayout];
+    
+    /* Flow autolayout manager doesn't take care of trigerring or updating the display. */
+    [viewContainer setNeedsDisplay: YES];  
 }
 
 - (IBAction) scale: (id)sender
@@ -256,5 +273,7 @@
 {
 	return [NSArray arrayWithObjects: @"name", @"size", @"type", @"modificationdate", nil];
 }
+
+//- (NSFormatter *) container: (ETContainer *)container formaterForDisplayItemProperty:
 
 @end

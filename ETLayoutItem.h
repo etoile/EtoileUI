@@ -139,6 +139,11 @@
 
 /* Sizing */
 
+- (NSPoint) origin;
+- (void) setOrigin: (NSPoint)origin;
+- (NSSize) size;
+- (void) setSize: (NSSize)size;
+
 - (NSRect) defaultFrame;
 - (void) setDefaultFrame: (NSRect)frame;
 - (void) restoreDefaultFrame;

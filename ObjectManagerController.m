@@ -66,6 +66,8 @@ static NSFileManager *objectManager = nil;
 	[viewContainer setSource: self];
 	[viewContainer setTarget: self];
 	[viewContainer setDoubleAction: @selector(doubleClickInViewContainer:)];
+	[viewContainer setHasVerticalScroller: YES];
+	[viewContainer setHasHorizontalScroller: YES];
 	[viewContainer setLayout: AUTORELEASE([[ETStackLayout alloc] init])];
 	
 	[pathContainer setSource: self];
@@ -110,26 +112,22 @@ static NSFileManager *objectManager = nil;
 	[viewContainer setLayout: (ETViewLayout *)AUTORELEASE([[layoutClass alloc] init])];
 }
 
-- (IBAction) switchUsesSource: (id)sender
+- (IBAction) switchUsesScrollView: (id)sender
 {
-	if ([sender boolValue])
+	if ([sender state] == NSOnState)
 	{
-		[viewContainer setSource: self];
+		[viewContainer setHasVerticalScroller: YES];
+		[viewContainer setHasHorizontalScroller: YES];
 	}
-	else
+	else if ([sender state] == NSOffState)
 	{
-		[viewContainer setSource: nil];
+		[viewContainer setScrollView: nil];
 	}
 	
-	[viewContainer updateLayout];
+	//[viewContainer updateLayout];
     
     /* Flow autolayout manager doesn't take care of trigerring or updating the display. */
     [viewContainer setNeedsDisplay: YES];  
-}
-
-- (IBAction) switchUsesScrollView: (id)sender
-{
-
 }
 
 - (IBAction) scale: (id)sender

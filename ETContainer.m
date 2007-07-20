@@ -81,7 +81,8 @@ NSString *ETLayoutItemPboardType = @"ETLayoutItemPboardType"; // FIXME: replace 
 		_path = @"";
 		_itemScale = 1.0;
 		_selection = [[NSMutableIndexSet alloc] init];
-		_internalDragAllowed = YES;
+		_dragAllowed = YES;
+		_dropAllowed = YES;
 		_prevInsertionIndicatorRect = NSZeroRect;
 		_scrollView = nil; /* First instance created by calling private method -setShowsScrollView: */
 		
@@ -285,10 +286,27 @@ NSString *ETLayoutItemPboardType = @"ETLayoutItemPboardType"; // FIXME: replace 
 
 - (void) setLayout: (ETViewLayout *)layout
 {
+	if (_containerLayout == layout)
+		return;
+	
 	[_containerLayout setContainer: nil];
+	/* Don't forget to remove existing display view if we switch from a layout 
+	   which reuses a native AppKit control like table layout. */
+	// NOTE: Be careful of layout objects which can share a common class but 
+	// all differs by their unique display view prototype.
+	// May be we should move it into -[layout setContainer:]...
+	// Triggers scroll view display which triggers layout render in turn to 
+	// compute the content size
+	[self setDisplayView: nil]; 
 	ASSIGN(_containerLayout, layout);
 	[layout setContainer: self];
-	
+
+	// FIXME: We should move code to set display view when necessary here. By
+	// calling -setDisplayView: [_container displayViewPrototype] we wouldn't
+	// need anymore to call -syncDisplayViewWithContainer here.
+	// All display view set up code is currently in -renderWithLayoutItems:
+	// of AppKit-based layouts. Part of this code should be put inside 
+	// overidden -displayViewPrototype method in each ETViewLayout suclasses.
 	[self syncDisplayViewWithContainer];
 	
 	[self updateLayout];
@@ -325,6 +343,25 @@ NSString *ETLayoutItemPboardType = @"ETLayoutItemPboardType"; // FIXME: replace 
 		
 		if ([enclosedDisplayView respondsToSelector: [inv selector]]);
 			[inv invokeWithTarget: enclosedDisplayView];
+		
+		BOOL hasVScroller = [self hasVerticalScroller];
+		BOOL hasHScroller = [self hasHorizontalScroller];
+		
+		if ([self scrollView] == nil)
+		{
+			hasVScroller = NO;
+			hasHScroller = NO;
+		}
+		
+		inv = RETAIN([self invocationForSelector: @selector(setHasHorizontalScroller:)]);
+		[inv setArgument: &hasHScroller atIndex: 2];
+		if ([_displayView respondsToSelector: [inv selector]]);
+			[inv invokeWithTarget: _displayView];
+		
+		inv = RETAIN([self invocationForSelector: @selector(setHasVerticalScroller:)]);
+		[inv setArgument: &hasVScroller atIndex: 2];
+		if ([_displayView respondsToSelector: [inv selector]])
+			[inv invokeWithTarget: _displayView];
 	}
 }
 
@@ -410,47 +447,73 @@ NSString *ETLayoutItemPboardType = @"ETLayoutItemPboardType"; // FIXME: replace 
 
 }
 
+/* From API viewpoint, it makes little sense to keep these scroller methods 
+   if we offert direct access to the underlying scroll view. However a class
+   like NSBrowser has a method like -setHasHorizontalScroller. We cannot 
+   forward -[NSScrollView setHasHorizontalScroller:] unless we create a 
+   subclass ETScrollView to override this method. Creating a subclass like that
+   for almost no reasons is dubious. In future, a better way to achieve the
+   same result would be to swizzle -[NSScrollView setHasHorizontalScroller:]
+   method with a decorator method. 
+   That means, these following methods will probably be deprecated at some 
+   points. */
+
 - (BOOL) hasVerticalScroller
 {
-	return NO;
+	return [_scrollView hasVerticalScroller];
 }
 
 - (void) setHasVerticalScroller: (BOOL)scroll
 {
-
+	if ([self scrollView] == nil)
+		[self setShowsScrollView: YES];
+	
+	[_scrollView setHasVerticalScroller: scroll];
+	
+	/* Updated NSBrowser, NSOutlineView enclosing scroll view etc. */
+	[self syncDisplayViewWithContainer];
 }
 
 - (BOOL) hasHorizontalScroller
 {
-	return NO;
+	return [_scrollView hasHorizontalScroller];
 }
 
 - (void) setHasHorizontalScroller: (BOOL)scroll
 {
-
-}
-
-- (BOOL) hasScrollView
-{
-	if (_scrollView != nil)
-		return YES;
-
-	return NO;
-}
-
-- (void) setHasScrollView: (BOOL)scroll
-{
-	if (scroll == YES && _scrollView == nil)
-	{
-		_scrollView = [[NSScrollView alloc] initWithFrame: [self frame]];
+	if ([self scrollView] == nil)
 		[self setShowsScrollView: YES];
+		
+	[_scrollView setHasHorizontalScroller: scroll];
+	
+	/* Updated NSBrowser, NSOutlineView enclosing scroll view etc. */
+	[self syncDisplayViewWithContainer];
+}
 
-	}
-	else if (scroll == NO)
+- (NSScrollView *) scrollView
+{
+	return _scrollView;
+}
+
+- (void) setScrollView: (NSScrollView *)scrollView
+{
+	if ([_scrollView isEqual: scrollView])
+		return;
+
+	if (_scrollView != nil)
 	{
+		/* Dismantle current scroll view and move container outside of it */
 		[self setShowsScrollView: NO];
-		DESTROY(_scrollView);
 	}
+
+	ASSIGN(_scrollView, scrollView);
+	
+	/* If a new scroll view has been provided and no display view is in use */
+	if (_scrollView != nil && [self displayView] == nil)
+		[self setShowsScrollView: YES];
+	
+	/* Updated NSBrowser, NSOutlineView enclosing scroll view etc. */
+	[self syncDisplayViewWithContainer];
 }
 
 /* Returns whether the scroll view of the current container is really used. If
@@ -469,45 +532,74 @@ NSString *ETLayoutItemPboardType = @"ETLayoutItemPboardType"; // FIXME: replace 
 
 - (void) setShowsScrollView: (BOOL)scroll
 {
-	NSAssert(_scrollView != nil, @"For -setShowsScrollView:, scroll view must not be nil");
-	if ([_scrollView superview] != nil)
-		NSAssert([_scrollView documentView] == self, @"When scroll view superview is not nil, it must use self as document view");
+	/* If no scroll view exists we create one even when a display view is in use
+	   simply because we use the container scroll view instance to store all
+	   scroller settings. We update any scroller settings defined in a display
+	   view with that of the newly created scroll view.  */
 
-	// FIXME: Asks layout whether it handles scroll view itself or not. If 
-	// needed like with table layout, delegate scroll view handling.
-	if (scroll && [_scrollView superview] == nil)
+	if (_scrollView == nil)
 	{
-		NSView *superview = [self superview];
-				
+		_scrollView = [[NSScrollView alloc] initWithFrame: [self frame]];
 		[_scrollView setAutohidesScrollers: NO];
 		[_scrollView setHasHorizontalScroller: YES];
 		[_scrollView setHasVerticalScroller: YES];
-		[_scrollView setAutoresizingMask: [self autoresizingMask]];
+	}
+		
+	/*if ([self displayView] == nil)
+		return;*/
+
+	//NSAssert(_scrollView != nil, @"For -setShowsScrollView:, scroll view must not be nil");
+	//if ([_scrollView superview] != nil)
+	//	NSAssert([_scrollView documentView] == self, @"When scroll view superview is not nil, it must use self as document view");
+		
+	NSView *superview = nil;
+
+	// FIXME: Asks layout whether it handles scroll view itself or not. If 
+	// needed like with table layout, delegate scroll view handling.
+	if ([_scrollView superview] == nil && [self displayView] == nil)
+	{
+		superview = [self superview];
 		
 		RETAIN(self);
 		[self removeFromSuperview];
 		
+		[_scrollView setAutoresizingMask: [self autoresizingMask]];
+		
 		[[self layout] setContentSizeLayout: YES];
-		[[self layout] adjustLayoutSizeToContentSize];
+		// Updating layout here is a source of complication for no visible benefits
+		//[[self layout] adjustLayoutSizeToContentSize];
 		/*[self setFrameSize: [[self layout] layoutSize]];*/
 		
 		[_scrollView setDocumentView: self];
 		[superview addSubview: _scrollView];
 		RELEASE(self);
 	}
-	else if (scroll == NO && [_scrollView superview] != nil)
+	else if ([_scrollView superview] != nil) /* -isScrollViewShown */
 	{
-		NSView *superview = [_scrollView superview];
-		
+		superview = [_scrollView superview];
 		NSAssert(superview != nil, @"For -setShowsScrollView: NO, scroll view must have a superview");
 		
 		RETAIN(self);
-		[self removeFromSuperview]; //[_scrollView setDocumentView: nil];
+		[_scrollView setDocumentView: nil];
+		[self removeFromSuperview]; 
 		[_scrollView removeFromSuperview];
 		
+		[self setAutoresizingMask: [_scrollView autoresizingMask]];
+		
 		[self setFrame: [_scrollView frame]];
+		// WARNING: More about next line and following assertion can be read here: 
+		// <http://www.cocoabuilder.com/archive/message/cocoa/2006/9/29/172021>
+		// Stop also to receive any view/window notifications in ETContainer code 
+		// before turning scroll view on or off.
+		NSAssert1(NSEqualRects([self frame], [_scrollView frame]), 
+			@"Unable to update the frame of container %@, you must stop watch "
+			@"any notifications posted by container before hiding or showing "
+			@"its scroll view (Cocoa bug)", self);
+
+		
 		[[self layout] setContentSizeLayout: NO];
-		[[self layout] adjustLayoutSizeToSizeOfContainer: self];
+		// Updating layout here is a source of complication for no visible benefits
+		//[[self layout] adjustLayoutSizeToSizeOfContainer: self];
 		
 		[superview addSubview: self];
 		RELEASE(self);
@@ -528,24 +620,34 @@ NSString *ETLayoutItemPboardType = @"ETLayoutItemPboardType"; // FIXME: replace 
 	return _displayView;
 }
 
-/* Method called when we switch between layouts. Currently called by 
-   -renderWithLayoutItems: but this is probably going to change. */
+/* Method called when we switch between layouts. Manipulating the display view
+   is the job of ETContainer, ETViewLayout instances may provide display view
+   prototype but they never never manipulate it as a subview in view hierachy. */
 - (void) setDisplayView: (NSView *)view
 {
-	if (view != nil && [self hasScrollView])
+	if (_displayView == view)
+	{
+		NSLog(@"WARNING: Trying to assing a identical display view to container %@", self);
+		return;
+	}
+	
+	[_displayView removeFromSuperview];
+	
+	_displayView = view;
+	
+	/* Be careful with scroll view code, it will call -displayView and thereby
+	   needs up-to-date _displayView */
+	if (view != nil && [self scrollView] != nil)
 	{
 		if ([self isScrollViewShown])
 			[self setShowsScrollView: NO];
 	}
-	else if (view == nil && [self hasScrollView])
+	else if (view == nil && [self scrollView] != nil)
 	{
 		if ([self isScrollViewShown] == NO)
 			[self setShowsScrollView: YES];		
 	}
-
-	[_displayView removeFromSuperview];
 	
-	_displayView = view;
 	[view removeFromSuperview];
 	[view setFrameSize: [self frame].size];
 	[view setFrameOrigin: NSZeroPoint];
@@ -868,14 +970,29 @@ NSString *ETLayoutItemPboardType = @"ETLayoutItemPboardType"; // FIXME: replace 
 
 /* Dragging */
 
-- (void) setAllowsInternalDragging: (BOOL)flag
+- (void) setAllowsDragging: (BOOL)flag
 {
-	_internalDragAllowed = flag;
+	_dragAllowed = flag;
 }
 
-- (BOOL) allowsInternalDragging
+- (BOOL) allowsDragging
 {
-	return _internalDragAllowed;
+	return _dragAllowed;
+}
+
+- (void) setAllowsDropping: (BOOL)flag
+{
+	_dropAllowed = flag;
+}
+
+- (BOOL) allowsDropping
+{
+	// FIXME: We should rather check whether source implement dragging data
+	// source methods.
+	if ([self source] != nil)
+		return NO;
+	
+	return _dropAllowed;
 }
 
 /* Layers */
@@ -1103,7 +1220,7 @@ NSString *ETLayoutItemPboardType = @"ETLayoutItemPboardType"; // FIXME: replace 
 	
 	return _clickedItem;
 }
-
+#if 0
 - (void) setFrame: (NSRect)frame
 {
 	//NSLog(@"-setFrame to %@", NSStringFromRect(frame));
@@ -1111,12 +1228,14 @@ NSString *ETLayoutItemPboardType = @"ETLayoutItemPboardType"; // FIXME: replace 
 		[_displayView setFrame: frame];
 	[super setFrame: frame];
 }
-
+#endif
 @end
 
 /* Dragging Support */
 
 @interface ETContainer (ETContainerDraggingSupport)
+- (void) beginDragWithEvent: (NSEvent *)event;
+- (BOOL) container: (ETContainer *)container writeItemsAtIndexes: (NSIndexSet *)indexes toPasteboard: (NSPasteboard *)pboard;
 - (BOOL) container: (ETContainer *)container acceptDrop: (id <NSDraggingInfo>)drag atIndex: (int)index;
 - (NSDragOperation) container: (ETContainer *)container validateDrop: (id <NSDraggingInfo>)drag atIndex: (int)index;
 @end
@@ -1135,29 +1254,40 @@ NSString *ETLayoutItemPboardType = @"ETLayoutItemPboardType"; // FIXME: replace 
 - (void) mouseDragged: (NSEvent *)event
 {
 	/* Only handles event when it is located inside selection */
-	if ([self doesSelectionContainsPoint: [event locationInWindow]])
+	if ([self allowsDragging] && [self doesSelectionContainsPoint: [event locationInWindow]])
 	{
 		ETLog(@"Mouse dragged on selection");
-		//[_layoutItems objectsAtIndexes: indexes];
-		ETLayoutItem *item = [[self layoutItemCache] objectAtIndex: [self selectionIndex]];
-		NSPasteboard *pboard = [NSPasteboard pasteboardWithName: NSDragPboard];
-		NSPoint dragPosition = [self convertPoint: [event locationInWindow]
-										 fromView: nil];
-						
-		[pboard declareTypes: [NSArray arrayWithObject: ETLayoutItemPboardType]
-			owner: nil];
-		// NOTE: If we implement an unified layout item tree shared by 
-		// applications through CoreObject, we could eventually just put simple
-		// path on the pasteboard rather than archived object or index.
-		//[pboard setString: forType: ETLayoutItemPboardType];
-		/*[pboard setData: forType: ETLayoutItemPboardType];*/
-		[pboard setString: [NSString stringWithFormat: @"%d", [self selectionIndex]] 
-		          forType: ETLayoutItemPboardType];
- 
-		//dragPosition.x -= 32;
-		//dragPosition.y -= 32;
-		
-		[self dragImage: [item image]
+		[self beginDragWithEvent: event]; 
+	}
+}
+
+/* ETContainer specific method to create a new drag and passing the request to data source */
+- (void) beginDragWithEvent: (NSEvent *)event
+{
+	NSPasteboard *pboard = [NSPasteboard pasteboardWithName: NSDragPboard];
+	NSPoint dragPosition = [self convertPoint: [event locationInWindow]
+									 fromView: nil];
+	BOOL dragDataProvided = NO;
+	
+	if ([self source] != nil 
+	 && [[self source] respondsToSelector: @selector(container:writeItemsWithIndexes:toPasteboard:)])
+	{
+		dragDataProvided = [[self source] container: self writeItemAtIndexes: [self selectionIndexes]
+			toPasteboard: pboard];
+	}
+	else if ([self source] == nil) /* Handles drag by ourself when allowed */
+	{
+		dragDataProvided = [self container: self writeItemsAtIndexes: [self selectionIndexes]
+			toPasteboard: pboard];
+	}
+	
+	//dragPosition.x -= 32;
+	//dragPosition.y -= 32;
+	
+	// FIXME: Draw drag image made of all dragged items and not just first one
+	if (dragDataProvided)
+	{
+		[self dragImage: [[self itemAtIndex: [self selectionIndex]] image]
 					 at: dragPosition
 				 offset: NSZeroSize
 				  event: event 
@@ -1165,6 +1295,23 @@ NSString *ETLayoutItemPboardType = @"ETLayoutItemPboardType"; // FIXME: replace 
 				 source: self 
 			  slideBack: YES];
 	}
+}
+
+- (BOOL) container: (ETContainer *)container writeItemsAtIndexes: (NSIndexSet *)indexes toPasteboard: (NSPasteboard *)pboard
+{
+	NSData *data = [NSKeyedArchiver archivedDataWithRootObject: indexes];
+	
+	[pboard declareTypes: [NSArray arrayWithObject: ETLayoutItemPboardType]
+		owner: nil];
+		
+	// NOTE: If we implement an unified layout item tree shared by 
+	// applications through CoreObject, we could eventually just put simple
+	// path on the pasteboard rather than archived object or index.
+	//[pboard setString: forType: ETLayoutItemPboardType];
+	/*[pboard setData: forType: ETLayoutItemPboardType];*/
+	[pboard setData: data forType: ETLayoutItemPboardType];
+	
+	return YES;
 }
 
 - (unsigned int) draggingSourceOperationMaskForLocal: (BOOL)isLocal
@@ -1181,21 +1328,7 @@ NSString *ETLayoutItemPboardType = @"ETLayoutItemPboardType"; // FIXME: replace 
 
 - (void) draggedImage: (NSImage *)anImage beganAt: (NSPoint)aPoint
 {
-#if 0
-	if ([self source] != nil 
-	 && [[self source] respondsToSelector: @selector(container:writeItemsWithIndexes:toPasteboard:)])
-	{
-		[[self source] container: self 
-		   writeItemsWithIndexes: [self selectionIndexes] 
-		            toPasteboard: [NSPasteboard pasteboardWithName: NSDragPboard]];
-	}
-	else if ([self source] == nil && [self allowsInternalDragging]) /* Handles drag by ourself when allowed */
-	{
-		[self container: self 
-		   writeItemsWithIndexes: [self selectionIndexes] 
-		            toPasteboard: [NSPasteboard pasteboardWithName: NSDragPboard]];
-	}
-#endif
+
 }
 
 - (void) draggedImage: (NSImage *)draggedImage movedTo: (NSPoint)screenPoint
@@ -1213,6 +1346,10 @@ NSString *ETLayoutItemPboardType = @"ETLayoutItemPboardType"; // FIXME: replace 
 - (NSDragOperation) draggingEntered: (id <NSDraggingInfo>)sender
 {
 	ETLog(@"Drag enter receives in dragging destination %@", self);
+	
+	if ([self allowsDropping] == NO)
+		return NSDragOperationNone;
+	
 	return NSDragOperationPrivate;
 }
 
@@ -1220,6 +1357,9 @@ NSString *ETLayoutItemPboardType = @"ETLayoutItemPboardType"; // FIXME: replace 
 {
 	ETLog(@"Drag update receives in dragging destination %@", self);
 	
+	if ([self allowsDropping] == NO)
+		return NSDragOperationNone;
+		
 	NSPoint localDropPosition = [self convertPoint: [drag draggingLocation] fromView: nil];
 	ETLayoutItem *hoveredItem = [[self layout] itemAtLocation: localDropPosition];
 	NSRect hoveredRect = [[self layout] displayRectOfItem: hoveredItem];
@@ -1257,6 +1397,7 @@ NSString *ETLayoutItemPboardType = @"ETLayoutItemPboardType"; // FIXME: replace 
 	{
 		[self setNeedsDisplayInRect: NSIntegralRect(_prevInsertionIndicatorRect)];
 		[self displayIfNeeded];
+		// NOTE: Following code doesn't work...
 		//[self displayIfNeededInRectIgnoringOpacity: _prevInsertionIndicatorRect];
 	}
 	
@@ -1278,6 +1419,7 @@ NSString *ETLayoutItemPboardType = @"ETLayoutItemPboardType"; // FIXME: replace 
 	/* Erases insertion indicator */
 	[self setNeedsDisplayInRect: NSIntegralRect(_prevInsertionIndicatorRect)];
 	[self displayIfNeeded];
+	// NOTE: Following code doesn't work...
 	//[self displayIfNeededInRectIgnoringOpacity: _prevInsertionIndicatorRect];
 }
 
@@ -1289,27 +1431,32 @@ NSString *ETLayoutItemPboardType = @"ETLayoutItemPboardType"; // FIXME: replace 
 	/* Erases insertion indicator */
 	[self setNeedsDisplayInRect: NSIntegralRect(_prevInsertionIndicatorRect)];
 	[self displayIfNeeded];
+	// NOTE: Following code doesn't work...
 	//[self displayIfNeededInRectIgnoringOpacity: _prevInsertionIndicatorRect];
 }
 
+/* Will be called when -draggingEntered and -draggingUpdated have validated the drag
+   This method is equivalent to -validateDropXXX data source method.  */
 - (BOOL) prepareForDragOperation: (id <NSDraggingInfo>)sender
 {
-	ETLayoutItem *item = [[self layout] itemAtLocation: [sender draggingLocation]];
-	int index = [[self layoutItemCache] indexOfObject: item];
-	
 	ETLog(@"Prepare drag receives in dragging destination %@", self);
 	
+	NSPoint localDropPosition = [self convertPoint: [sender draggingLocation] fromView: nil];
+	int dropIndex = [self indexOfItem: [[self layout] itemAtLocation: localDropPosition]];
+	
+	// FIXME: Test all possible drag methods supported by data source
 	if ([self source] != nil && [[self source] respondsToSelector: @selector(container:acceptDrop:atIndex:)])
 	{
 		return [[self source] container: self 
 			                 acceptDrop: sender
-					            atIndex: index];
+					            atIndex: dropIndex];
 	}
-	else if ([self source] == nil && [self allowsInternalDragging]) /* Handles drag by ourself when allowed */
+	else if ([self source] == nil) /* Handles drag by ourself when allowed */
 	{
-		return [self container: self acceptDrop: sender atIndex: index];
+		return [self container: self acceptDrop: sender atIndex: dropIndex];
 	}
 	
+	/* Don't handle drag when a source is set and doesn't implement drag data source methods */
 	return NO;
 }
 
@@ -1318,40 +1465,46 @@ NSString *ETLayoutItemPboardType = @"ETLayoutItemPboardType"; // FIXME: replace 
 	return YES;
 }
 
+/* Will be called when -draggingEntered and -draggingUpdated have validated the drag
+   This method is equivalent to -acceptDropXXX data source method.  */
 - (BOOL) performDragOperation: (id <NSDraggingInfo>)sender
 {
-	ETLayoutItem *item = [[self layout] itemAtLocation: [sender draggingLocation]];
-	int index = [[self layoutItemCache] indexOfObject: item];
-	
 	ETLog(@"Perform drag receives in dragging destination %@", self);
 	
+	NSPoint localDropPosition = [self convertPoint: [sender draggingLocation] fromView: nil];
+	int dropIndex = [self indexOfItem: [[self layout] itemAtLocation: localDropPosition]];
+
+	// FIXME: Test all possible drag methods supported by data source	
 	if ([self source] != nil && [[self source] respondsToSelector: @selector(container:validateDrop:atIndex:)])
 	{
 		[[self source] container: self 
 					validateDrop: sender
-					     atIndex: index];
+					     atIndex: dropIndex];
 	}
-	else if ([self source] == nil && [self allowsInternalDragging]) /* Handles drag by ourself when allowed */
+	else if ([self source] == nil) /* Handles drag by ourself when allowed */
 	{
 		[self container: self 
 		   validateDrop: sender
-				atIndex: index];
+				atIndex: dropIndex];
 	}
-	
+
+	/* Don't handle drag when a source is set and doesn't implement drag data source methods */	
 	return YES;
 }
 
-- (NSDragOperation) container: (ETContainer *)container validateDrop: (id <NSDraggingInfo>)drag atIndex: (int)index
+- (NSDragOperation) container: (ETContainer *)container validateDrop: (id <NSDraggingInfo>)drag atIndex: (int)dropIndex
 {
-	int movedIndex = [[[drag draggingPasteboard] stringForType: ETLayoutItemPboardType] intValue];
+    NSPasteboard *pboard = [drag draggingPasteboard];
+    NSData *data = [pboard dataForType: ETLayoutItemPboardType];
+	NSIndexSet *indexes = [NSKeyedUnarchiver unarchiveObjectWithData: data];
+	int movedIndex = [indexes firstIndex];
 	ETLayoutItem *movedItem = [self itemAtIndex: movedIndex];
-	NSPoint localDropPosition = [self convertPoint: [drag draggingLocation] fromView: nil];
-	int dropIndex = [self indexOfItem: [[self layout] itemAtLocation: localDropPosition]];
 	
 	[self setAutolayout: NO];
 	RETAIN(movedItem);
 	[self removeItem: movedItem];
 	[self insertItem: movedItem atIndex: dropIndex];
+	RELEASE(movedItem);
 	[self setAutolayout: YES];
 	
 	return NSDragOperationPrivate;
@@ -1367,6 +1520,7 @@ NSString *ETLayoutItemPboardType = @"ETLayoutItemPboardType"; // FIXME: replace 
 	/* Erases insertion indicator */
 	[self setNeedsDisplayInRect: NSIntegralRect(_prevInsertionIndicatorRect)];
 	[self displayIfNeeded];
+	// NOTE: Following code doesn't work...
 	//[self displayIfNeededInRectIgnoringOpacity: _prevInsertionIndicatorRect];
 }
 

@@ -60,12 +60,13 @@
 // ETComponentView
 @interface ETContainer : NSControl
 {
+	IBOutlet NSScrollView *_scrollView;
+
 	/* Stores items when no source is used. May stores layers when no source is 
 	   used, this is not yet decided. */
 	NSMutableArray *_layoutItems;
 	ETViewLayout *_containerLayout;
 	NSView *_displayView;
-	NSScrollView *_scrollView;
 	
 	BOOL _autolayout;
 	
@@ -88,7 +89,8 @@
 	NSRect _selectionRect;
 	BOOL _multipleSelectionAllowed;
 	BOOL _emptySelectionAllowed;
-	BOOL _internalDragAllowed;
+	BOOL _dragAllowed;
+	BOOL _dropAllowed;
 	/* Insertion indicator to erase on next mouse move event in a drag */
 	NSRect _prevInsertionIndicatorRect; 
 
@@ -120,12 +122,16 @@
 - (id) delegate;
 - (void) setDelegate: (id) delegate;
 
+/* Scrolling */
+
 - (BOOL) letsLayoutControlsScrollerVisibility;
 - (void) setLetsLayoutControlsScrollerVisibility: (BOOL)layoutControl;
 - (BOOL) hasVerticalScroller;
 - (void) setHasVerticalScroller: (BOOL)scroll;
 - (BOOL) hasHorizontalScroller;
 - (void) setHasHorizontalScroller: (BOOL)scroll;
+- (NSScrollView *) scrollView;
+- (void) setScrollView: (NSScrollView *)scrollView;
 
 /*
 - (ETLayoutAlignment) layoutAlignment;
@@ -180,8 +186,10 @@
 
 /* Dragging */
 
-- (void) setAllowsInternalDragging: (BOOL)flag;
-- (BOOL) allowsInternalDragging;
+- (void) setAllowsDragging: (BOOL)flag;
+- (BOOL) allowsDragging;
+- (void) setAllowsDropping: (BOOL)flag;
+- (BOOL) allowsDropping;
 
 /* Groups and Stacks */
 
@@ -256,13 +264,13 @@
 
 /* Custom drag and drop support by index (only needed if you want to override 
    pick and drop support to get a more precise control over drag and drop) */
-- (BOOL) container: (ETContainer *)container writeItems: (NSArray *)layoutItems toPasteboard: (NSPasteboard *)pboard;
+- (BOOL) container: (ETContainer *)container writeItemsAtIndexes: (NSIndexSet *)indexes toPasteboard: (NSPasteboard *)pboard;
 - (BOOL) container: (ETContainer *)container acceptDrop: (id <NSDraggingInfo>)info atIndex: (int)index;
 - (NSDragOperation) container: (ETContainer *)container validateDrop: (id <NSDraggingInfo>)info atIndex: (int)index;
 
 /* Custom Drag and drop support by key and index path */
 // FIXME: Create new set structure NSPathSet rather than using NSArray
-- (BOOL) container: (ETContainer *)container writeItems: (NSArray *)items toPasteboard: (NSPasteboard *)pboard;
+- (BOOL) container: (ETContainer *)container writeItemsAtPaths: (NSArray *)paths toPasteboard: (NSPasteboard *)pboard;
 - (BOOL) container: (ETContainer *)container acceptDrop: (id <NSDraggingInfo>)info atPath: (NSString *)path;
 - (NSDragOperation) container: (ETContainer *)container validateDrop: (id <NSDraggingInfo>)info atPath: (NSString *)path;
 
@@ -300,3 +308,4 @@
 
 
 extern NSString *ETContainerSelectionDidChangeNotification;
+extern NSString *ETLayoutItemPboardType;

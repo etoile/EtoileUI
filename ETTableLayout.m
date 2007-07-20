@@ -41,6 +41,8 @@
 #import "NSView+Etoile.h"
 #import "GNUstep.h"
 
+#define ETLog NSLog
+
 @interface ETContainer (PackageVisibility)
 - (NSArray *) layoutItemCache;
 @end
@@ -85,6 +87,9 @@
 	if (self != nil)
 	{
 		BOOL nibLoaded = [NSBundle loadNibNamed: @"TablePrototype" owner: self];
+		
+		[[_displayViewPrototype documentView] registerForDraggedTypes: 
+			[NSArray arrayWithObject: ETLayoutItemPboardType]];
 		
 		if (nibLoaded == NO)
 		{
@@ -190,6 +195,56 @@
 	
 	return [item valueForProperty: [column identifier]];
 }
+
+- (BOOL) tableView: (NSTableView *)tv writeRowsWithIndexes: (NSIndexSet *)rowIndexes 
+	toPasteboard: (NSPasteboard*)pboard 
+{
+	if ([[self container] allowsDragging] == NO)
+		return NO;
+
+    NSData *data = [NSKeyedArchiver archivedDataWithRootObject: rowIndexes];
+    [pboard declareTypes: [NSArray arrayWithObject: ETLayoutItemPboardType] owner: self];
+    [pboard setData: data forType: ETLayoutItemPboardType];
+	
+    return YES;
+}
+
+- (NSDragOperation) tableView:(NSTableView*)tv 
+                 validateDrop: (id <NSDraggingInfo>)info 
+				  proposedRow: (int)row 
+	    proposedDropOperation: (NSTableViewDropOperation)op 
+{
+    ETLog(@"Validate drop with dragging source %@ in %@", [info draggingSource], [self container]);
+	
+	if ([[self container] allowsDropping] == NO)
+		return NSDragOperationNone;
+		
+	return NSDragOperationEvery;
+}
+
+- (BOOL) tableView: (NSTableView *)aTableView 
+        acceptDrop: (id <NSDraggingInfo>)info 
+               row: (int)row 
+	 dropOperation: (NSTableViewDropOperation)operation
+{
+    ETLog(@"Accept drop in %@", [self container]);
+
+    NSPasteboard *pboard = [info draggingPasteboard];
+    NSData *rowData = [pboard dataForType: ETLayoutItemPboardType];
+    NSIndexSet *rowIndexes = [NSKeyedUnarchiver unarchiveObjectWithData: rowData];
+    int dragRow = [rowIndexes firstIndex];
+	ETLayoutItem *item = [[self container] itemAtIndex: dragRow];
+	
+	RETAIN(item);
+	[[self container] removeItem: item];
+	[[self container] insertItem: item atIndex: row];
+	RELEASE(item);
+	return YES;
+
+	/*ETLog(@"Impossible to insert dropped item when %@ uses a source", [self container]);
+	return NO;*/
+}
+
 
 - (ETLayoutItem *) clickedItem
 {
