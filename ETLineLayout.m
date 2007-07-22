@@ -13,6 +13,15 @@
 
 @implementation ETLineLayout
 
+- (ETSizeConstraintStyle) layoutSizeConstraintStyle
+{
+	// NOTE: We use this constrain value to express our needs because
+	// ETFlowLayout doesn't use it.
+	return ETSizeConstraintStyleNone;
+}
+
+
+#if 0
 /** Run the layout computation which assigns a location in the view container
     to each view added to the flow layout manager. */
 - (NSArray *) layoutModelForViews: (NSArray *)views inContainer: (ETContainer *)container;
@@ -37,8 +46,8 @@
 
 	if ([unlayoutedViews count] > 0)
 		NSLog(@"Not enough space to layout all the views. Views remaining unlayouted: %@", unlayoutedViews);
-
+NSLog(@"bip bip bip");
 	return layoutModel;
 }
-
+#endif
 @end

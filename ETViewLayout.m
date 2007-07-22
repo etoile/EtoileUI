@@ -87,8 +87,12 @@
 	{
 		_container = nil;
 		_delegate = nil;
+		_layoutSize = NSMakeSize(200, 200); /* Dummy value */
 		_layoutSizeCustomized = NO;
 		_maxSizeLayout = NO;
+		_itemSize = NSMakeSize(256, 256); /* Default max item size */
+		/* By default both width and height must be equal or inferior to related _itemSize values */
+		_itemSizeConstraintStyle = ETSizeConstraintStyleVerticalHorizontal;
     }
     
 	return self;
@@ -202,26 +206,32 @@
 	return _layoutSizeCustomized;
 }
 
+/** Layout size can be set directly only if -usesCustomLayoutSize returns
+	YES.
+	In this case, you can restrict layout size to your personal needs by 
+	calling -setLayoutSize: and only then -render. */
 - (void) setLayoutSize: (NSSize)size
 {
+	NSLog(@"-setLayoutSize");
 	_layoutSize = size;
 }
 
 - (NSSize) layoutSize
 {
-	if ([self isContentSizeLayout] == NO)
-		_layoutSize = [[self container] frame].size;
-
 	return _layoutSize;
 }
 
 - (void) setContentSizeLayout: (BOOL)flag
 {
+	NSLog(@"-setContentSizeLayout");
 	_maxSizeLayout = flag;
 }
 
 - (BOOL) isContentSizeLayout
 {
+	if ([[self container] isScrollViewShown])
+		return YES;
+
 	return _maxSizeLayout;
 }
 
@@ -237,20 +247,14 @@
 
 /* Item Sizing Accessors */
 
-- (void) setUsesConstrainedItemSize: (BOOL)flag
+- (void) setItemSizeConstraintStyle: (ETSizeConstraintStyle)constraint
 {
-	_itemSizeConstrained = flag;
-	if ([self verticallyConstrainedItemSize] == NO
-	 && [self horizontallyConstrainedItemSize] == NO)
-	{
-		[self setVerticallyConstrainedItemSize: YES];
-		[self setHorizontallyConstrainedItemSize: YES];
-	}
+	_itemSizeConstraintStyle = constraint;
 }
 
-- (BOOL) usesContrainedItemSize
+- (BOOL) itemSizeConstraintStyle
 {
-	return _itemSizeConstrained;
+	return _itemSizeConstraintStyle;
 }
 
 - (void) setConstrainedItemSize: (NSSize)size
@@ -261,26 +265,6 @@
 - (NSSize) constrainedItemSize
 {
 	return _itemSize;
-}
-
-- (void) setVerticallyConstrainedItemSize: (BOOL)flag
-{
-	_itemSizeConstrainedV = flag;
-}
-
-- (BOOL) verticallyConstrainedItemSize
-{
-	return _itemSizeConstrainedV;
-}
-
-- (void) setHorizontallyConstrainedItemSize: (BOOL)flag
-{
-	_itemSizeConstrainedH = flag;
-}
-
-- (BOOL) horizontallyConstrainedItemSize
-{
-	return _itemSizeConstrainedH;
 }
 
 - (NSArray *) layoutItemsFromSource
@@ -416,6 +400,22 @@
 	}
 	
 	_isLayouting = NO;
+	/* We always set the layout size which should be used to compute the 
+	   layout unless a custom layout has been set by calling -setLayoutSize:
+	   before -render. */
+	if ([self usesCustomLayoutSize] == NO)
+	{
+		if ([[self container] isScrollViewShown])
+		{
+			/* Better to request the visible rect than the container frame 
+			   which might be severely altered by the previouly set layout. */
+			[self setLayoutSize: [[[self container] scrollView] documentVisibleRect].size];
+		}
+		else /* Using content layout size without scroll view is supported */
+		{
+			[self setLayoutSize: [[self container] frame].size];
+		}
+	}
 	[self renderWithLayoutItems: itemsForRendering inContainer: [self container]];
 }
 
@@ -453,12 +453,21 @@
 	[self computeViewLocationsForLayoutModel: layoutModel inContainer: container];
 	
 	// TODO: Optimize by computing set intersection of visible and unvisible item display views
-	//NSLog(@"Remove views of next layout items to be displayed from their superview");
+	NSLog(@"Remove views %@ of next layout items to be displayed from their superview", itemViews);
 	[itemViews makeObjectsPerformSelector: @selector(removeFromSuperview)];
-	
+			NSLog(@"Before %@", NSStringFromRect([[self container] frame]));
 	/* Adjust container size when it is embedded in a scroll view */
-	if ([[self container] scrollView] != nil)
+	if ([[self container] isScrollViewShown])
+	{
+		// NOTE: For this assertion check -[ETContainer setScrollView:] 
+		NSAssert([self isContentSizeLayout] == YES, 
+			@"Any layout done in a scroll view must be based on content size");
+			
 		[[self container] setFrameSize: [self layoutSize]];
+NSLog(@"After %@ and layoutSize %@", NSStringFromRect([[self container] frame]), NSStringFromSize([self layoutSize]));
+		
+		//[[[self container] scrollView] reflectScrolledClipView: [[[self container] scrollView] clipView]];
+	}
 	
 	NSMutableArray *visibleItemViews = [NSMutableArray array];
 	NSEnumerator  *e = [layoutModel objectEnumerator];
@@ -477,6 +486,7 @@
 	{
 		if ([[container subviews] containsObject: visibleItemView] == NO)
 			[container addSubview: visibleItemView];
+		NSLog(@"Inserted view at %@", NSStringFromRect([visibleItemView frame]));
 	}
 	
 	_isLayouting = NO;
@@ -489,37 +499,71 @@
 	
 	while ((item = [e nextObject]) != nil)
 	{
-		NSRect unscaledFrame = [item defaultFrame];
+		/* Scaling is always computed from item default frame rather than
+		   current item view size (or  item display area size) in order to
+		   avoid rounding error that would increase on each scale change 
+		   because of size width and height expressed as float. */
+		NSRect itemFrame = ETScaleRect([item defaultFrame], factor);
 		
 		/* Apply item size constraint */
-		if ([self usesContrainedItemSize])
-		{
-			if ([self verticallyConstrainedItemSize] 
-			 && [self horizontallyConstrainedItemSize])
-			{
-				unscaledFrame.size = [self constrainedItemSize];
-			}
-			else if ([self verticallyConstrainedItemSize])
-			{
-				//unscaledFrame.size.height = [self constrainedItemSize];
-				
-			}
-			else if ([self horizontallyConstrainedItemSize])
-			{
+		if (itemFrame.size.width > [self constrainedItemSize].width
+		 || itemFrame.size.height > [self constrainedItemSize].height)
+		{ 
+			BOOL isVerticalResize = NO;
 			
+			if ([self itemSizeConstraintStyle] == ETSizeConstraintStyleVerticalHorizontal)
+			{
+				if (itemFrame.size.height > itemFrame.size.width)
+				{
+					isVerticalResize = YES;
+				}
+				else /* Horizontal resize */
+				{
+					isVerticalResize = NO;
+				}
+			}
+			else if ([self itemSizeConstraintStyle] == ETSizeConstraintStyleVertical
+			      && itemFrame.size.height > [self constrainedItemSize].height)
+			{
+				isVerticalResize = YES;	
+			}
+			else if ([self itemSizeConstraintStyle] == ETSizeConstraintStyleHorizontal
+			      && itemFrame.size.width > [self constrainedItemSize].width)
+			{
+				isVerticalResize = NO; /* Horizontal resize */
+			}
+			
+			if (isVerticalResize)
+			{
+				float maxItemHeight = [self constrainedItemSize].height;
+				float heightDifferenceRatio = maxItemHeight / itemFrame.size.height;
+				
+				itemFrame.size.height = maxItemHeight;
+				itemFrame.size.width *= heightDifferenceRatio;
+					
+			}
+			else /* Horizontal resize */
+			{
+				float maxItemWidth = [self constrainedItemSize].width;
+				float widthDifferenceRatio = maxItemWidth / itemFrame.size.width;
+				
+				itemFrame.size.width = maxItemWidth;
+				itemFrame.size.height *= widthDifferenceRatio;				
 			}
 		}
 		
-		/* Rescale */
+		/* Apply Scaling */
 		if ([item view] != nil)
 		{
-			[[item view] setFrame: ETScaleRect(unscaledFrame, factor)];
+
+			[[item view] setFrame: itemFrame];
 			//NSLog(@"Scale %@ to %@", NSStringFromRect(unscaledFrame), 
 			//	NSStringFromRect(ETScaleRect(unscaledFrame, factor)));
 		}
-
-		if ([item view] == nil)
+		else
+		{
 			NSLog(@"% can't be rescaled because it has no view");
+		}
 	}
 }
 

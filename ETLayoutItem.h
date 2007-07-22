@@ -36,6 +36,8 @@
 #import <Foundation/Foundation.h>
 #import <AppKit/AppKit.h>
 
+#define ETUTI NSString
+
 @class ETStyleRenderer;
 
 /** WARNING: Personal notes that are vague and may change, move or become part
@@ -130,6 +132,9 @@
 
 - (void) setSelected: (BOOL)selected;
 - (BOOL) isSelected;
+
+/** Used to select items which can be dragged or dropped in a dragging operation */
+- (ETUTI *) type;
 
 /* Rendering Chain */
 

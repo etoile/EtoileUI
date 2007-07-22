@@ -38,6 +38,15 @@
 
 @class ETContainer, ETViewLayoutLine, ETLayoutItem;
 
+// NOTE: May be this should be turned into a mask
+typedef enum _ETSizeConstraintStyle 
+{
+	ETSizeConstraintStyleNone,
+	ETSizeConstraintStyleVertical,
+	ETSizeConstraintStyleHorizontal,
+	ETSizeConstraintStyleVerticalHorizontal
+} ETSizeConstraintStyle;
+
 
 @interface ETViewLayout : NSObject
 {
@@ -54,9 +63,7 @@
 	
 	/* Items Sizing */
 	NSSize _itemSize;
-	BOOL _itemSizeConstrained;
-	BOOL _itemSizeConstrainedV;
-	BOOL _itemSizeConstrainedH;
+	ETSizeConstraintStyle _itemSizeConstraintStyle;
 }
 
 /* Factory  Method */
@@ -74,6 +81,7 @@
 - (BOOL) usesCustomLayoutSize;
 - (void) setLayoutSize: (NSSize)size;
 - (NSSize) layoutSize;
+// Not sure the next method will be kept public
 - (void) setContentSizeLayout: (BOOL)flag;
 - (BOOL) isContentSizeLayout;
 
@@ -82,17 +90,10 @@
 
 /* Item Sizing Accessors */
 
-// FIXME: Would be better to use -setItemSizeConstraintStyle: rather than
-// distinct methods for horizontal, vertical and double constraints.
-
-- (void) setUsesConstrainedItemSize: (BOOL)flag;
-- (BOOL) usesContrainedItemSize;
+- (void) setItemSizeConstraintStyle: (ETSizeConstraintStyle)constraint;
+- (ETSizeConstraintStyle) itemSizeConstraintStyle;
 - (void) setConstrainedItemSize: (NSSize)size;
 - (NSSize) constrainedItemSize;
-- (void) setVerticallyConstrainedItemSize: (BOOL)flag;
-- (BOOL) verticallyConstrainedItemSize;
-- (void) setHorizontallyConstrainedItemSize: (BOOL)flag;
-- (BOOL) horizontallyConstrainedItemSize;
 
 /* Sizing Methods */
 

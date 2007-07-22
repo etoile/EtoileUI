@@ -42,15 +42,17 @@
 
 @interface ETFlowLayout : ETViewLayout 
 {
+	ETSizeConstraintStyle _layoutConstraint;
 	BOOL _grid;
 	BOOL _width;
 }
 
+/* Flow Constraining and Streching */
 
-/*- (BOOL) hasHorizontalConstraint;
-- (void) setHasHorizontalConstraint: (BOOL)flag;
-- (BOOL) hasVerticalConstraint;
-- (void) setHasVerticalConstraint: (BOOL)flag;*/
+- (void) setLayoutSizeConstraintStyle: (ETSizeConstraintStyle)constraint;
+- (ETSizeConstraintStyle) layoutSizeConstraintStyle;
+
+/* Additions */
 
 - (BOOL) usesGrid;
 - (void) setUsesGrid: (BOOL)constraint;

@@ -45,13 +45,32 @@
 
 @implementation ETFlowLayout
 
+- (id) init
+{
+	self = [super init];
+	
+	if (self != nil)
+	{
+		_layoutConstraint = ETSizeConstraintStyleHorizontal;
+	}
+	
+	return self;
+}
+
 - (void) computeViewLocationsForLayoutModel: (NSArray *)layoutModel inContainer: (ETContainer *)container
 {
 	NSEnumerator *layoutWalker = [layoutModel objectEnumerator];
 	ETViewLayoutLine *line;
 	NSEnumerator *lineWalker = nil;
 	NSView *view;
-	NSPoint viewLocation = NSMakePoint(0, [self layoutSize].height);
+	NSPoint viewLocation = NSMakePoint(0, 0);
+	float newLayoutHeight = 0;
+	
+	if ([[self container] isFlipped] == NO)
+	{
+		NSLog(@"WARNING: Flow layout doesn't non-flipped coordinates inside scroll view");
+		viewLocation = NSMakePoint(0, [self layoutSize].height);
+	}
   
 	while ((line = [layoutWalker nextObject]) != nil)
 	{
@@ -84,14 +103,28 @@
 		/* Before computing the following views location in 'x' on the next line, we have 
 		   to reset the 'x' accumulator and take in account the end of the current 
 		   line, by substracting to 'y' the last layout line height. */
-		[line setBaseLineLocation: 
-			NSMakePoint([line baseLineLocation].x, viewLocation.y - [line height])];
+		if ([[self container] isFlipped])
+		{
+			[line setBaseLineLocation: 
+				NSMakePoint([line baseLineLocation].x, viewLocation.y)];
+			viewLocation.y = [line baseLineLocation].y + [line height];
+		}
+		else
+		{
+			[line setBaseLineLocation: 
+				NSMakePoint([line baseLineLocation].x, viewLocation.y - [line height])];
+			viewLocation.y = [line baseLineLocation].y;		
+		}
 		viewLocation.x = 0;
-		viewLocation.y = [line baseLineLocation].y;
+		
+		/* Increase height of the content size. Used to adjust the document 
+		   view size in scroll view */
+		newLayoutHeight += [line height];
        
 		//NSLog(@"View locations computed by layout line :%@", line);
 	}
-
+	
+	[self setLayoutSize: NSMakeSize([self layoutSize].width, newLayoutHeight)];
 }
 
 /* A layout is decomposed in lines. A line is decomposed in views. Finally a layout is displayed in a view container. */
@@ -137,13 +170,14 @@
 	NSView *viewToLayout = nil;
 	NSMutableArray *layoutedViews = [NSMutableArray array];
 	ETViewLayoutLine *line = nil;
-	float hAccumulator = 0;
+	float widthAccumulator = 0;
     
 	while ((viewToLayout = [e nextObject]) != nil)
 	{
-		hAccumulator += [viewToLayout width];
+		widthAccumulator += [viewToLayout width];
 		
-		if (hAccumulator < [self layoutSize].width)
+		if ([self layoutSizeConstraintStyle] != ETSizeConstraintStyleHorizontal
+		 || widthAccumulator < [self layoutSize].width)
 		{
 			[layoutedViews addObject: viewToLayout];
 		}
@@ -153,6 +187,12 @@
 		}
 	}
 	
+	// NOTE: Not really useful for now because we don't support filling the 
+	// layout horizontally, only vertical filling is in place.
+	// We only touch the layout size height in -computeViewLocationsForLayoutModel:
+	if ([self isContentSizeLayout] && [self layoutSize].width < widthAccumulator)
+		[self setLayoutSize: NSMakeSize(widthAccumulator, [self layoutSize].height)];
+	
 	if ([layoutedViews count] == 0)
 		return nil;
 		
@@ -160,6 +200,39 @@
 	[line setVerticallyOriented: NO];
 
 	return line;
+}
+
+/** Lets you control the constraint applied on the layout 
+    when -isContentSizeLayout returns YES. The most common case is when the 
+	layout is set on a container embbeded in a scroll view. 
+	By passing ETSizeConstraintStyleVertical, the layout will try to fill the
+	limited height (provided by -layoutSize) with as many lines of equal 
+	width as possible. In this case, layout width and line width are stretched.
+	By passing ETSizeConstraintStyleHorizontal, the layout will try to fill 
+	the unlimited height with as many lines of equally limited width (returned
+	by -layoutSize) as needed. In this case, only layout height is stretched. 
+	ETSizeConstraintStyleNone and ETSizeConstraintStyleVerticalHorizontal are
+	not supported. If you use them, the receiver resets 
+	ETSizeConstraintStyleHorizontal default value. */
+- (void) setLayoutSizeConstraintStyle: (ETSizeConstraintStyle)constraint
+{
+	if (constraint == ETSizeConstraintStyleHorizontal 
+	 || constraint == ETSizeConstraintStyleVertical)
+	{ 
+		_layoutConstraint = constraint;
+	}
+	else
+	{
+		_layoutConstraint = ETSizeConstraintStyleHorizontal;
+	}
+}
+
+/** Returns the constraint applied on the layout which are only valid when 
+	 -isContentSizeLayout returns YES. 
+	 Default value is ETSizeConstraintStyleHorizontal. */
+- (ETSizeConstraintStyle) layoutSizeConstraintStyle
+{
+	return _layoutConstraint;
 }
 
 - (BOOL) usesGrid

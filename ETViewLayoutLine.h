@@ -9,17 +9,19 @@
 #import <Foundation/Foundation.h>
 #import <AppKit/AppKit.h>
 
-
+// NOTE: May be rename it ETViewLayoutBox
 @interface ETViewLayoutLine : NSObject
 {
 	NSMutableArray *_views;
 	NSPoint _baseLineLocation;
+	NSPoint _topLineLocation;
 	BOOL _vertical;
 }
 
 + (id) layoutLineWithViews: (NSArray *)views;
 
 - (NSPoint) baseLineLocation;
+/** In flipped layout, top line location is rather than base line location. */ 
 - (float) height;
 
 - (BOOL) isVerticallyOriented;
@@ -28,6 +30,7 @@
 
 // Personal use
 - (void) setBaseLineLocation: (NSPoint)location;
+/** Any changes to top line location is reflected on base line location */
 - (NSArray *) views;
 
 @end

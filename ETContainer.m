@@ -79,6 +79,7 @@ NSString *ETLayoutItemPboardType = @"ETLayoutItemPboardType"; // FIXME: replace 
     {
 		_layoutItems = [[NSMutableArray alloc] init];
 		_path = @"";
+		_flipped = YES;
 		_itemScale = 1.0;
 		_selection = [[NSMutableIndexSet alloc] init];
 		_dragAllowed = YES;
@@ -437,6 +438,21 @@ NSString *ETLayoutItemPboardType = @"ETLayoutItemPboardType"; // FIXME: replace 
 	_delegate = delegate;
 }
 
+/** Returns whether the receiver uses flipped coordinates or not. 
+	Default returned value is YES. */
+- (BOOL) isFlipped
+{
+	return _flipped;
+}
+
+/** Unlike NSView, ETContainer uses flipped coordinates by default in order to 
+	simplify layout computation.
+	You can revert to non-flipped coordinates by passing NO to this method. */
+- (void) setFlipped: (BOOL)flag
+{
+	_flipped = flag;
+}
+
 - (BOOL) letsLayoutControlsScrollerVisibility
 {
 	return NO;
@@ -625,7 +641,7 @@ NSString *ETLayoutItemPboardType = @"ETLayoutItemPboardType"; // FIXME: replace 
    prototype but they never never manipulate it as a subview in view hierachy. */
 - (void) setDisplayView: (NSView *)view
 {
-	if (_displayView == view)
+	if (_displayView == view && (_displayView != nil || view != nil))
 	{
 		NSLog(@"WARNING: Trying to assing a identical display view to container %@", self);
 		return;
@@ -752,55 +768,9 @@ NSString *ETLayoutItemPboardType = @"ETLayoutItemPboardType"; // FIXME: replace 
 }
 
 /** Add a view to layout as a subview of the view container. */
-- (void) addView: (NSView *)view
-{
-	if ([[_layoutItems valueForKey: @"view"] containsObject: view] == NO)
-		[self addItem: [ETLayoutItem layoutItemWithView: view]];
-}
-
 /** Remove a view which was layouted as a subview of the view container. */
-- (void) removeView: (NSView *)view
-{
-	ETLayoutItem *viewOwnerItem = [(NSArray *)_layoutItems objectWithValue: view forKey: @"view"];
-	
-	if (viewOwnerItem != nil)
-		[_layoutItems removeObject: viewOwnerItem];
-}
-
 /** Remove the view located at index in the series of views (which were layouted as subviews of the view container). */
-- (void) removeViewAtIndex: (int)index
-{
-	[_layoutItems removeObjectAtIndex: index];
-	[self updateLayout];
-}
-
 /** Return the view located at index in the series of views (which are layouted as subviews of the view container). */
-- (NSView *) viewAtIndex: (int)index
-{
-	return [[_layoutItems objectAtIndex: index] view];
-}
-
-- (void) addViews: (NSArray *)views
-{
-	NSEnumerator *e = [views objectEnumerator];
-	NSView *view = nil;
-	
-	while ((view = [e nextObject]) != nil)
-	{
-		[self addView: view];
-	}
-}
-
-- (void) removeViews: (NSArray *)views
-{
-	NSEnumerator *e = [views objectEnumerator];
-	NSView *view = nil;
-	
-	while ((view = [e nextObject]) != nil)
-	{
-		[self removeView: view];
-	}
-}
 
 /* Selection */
 
@@ -1126,7 +1096,7 @@ NSString *ETLayoutItemPboardType = @"ETLayoutItemPboardType"; // FIXME: replace 
 
 - (void) mouseDown: (NSEvent *)event
 {
-	//NSLog(@"Mouse down in %@", self);
+	NSLog(@"Mouse down in %@", self);
 	
 	if ([self displayView] != nil) /* Layout object is wrapping an AppKit control */
 	{
@@ -1253,10 +1223,12 @@ NSString *ETLayoutItemPboardType = @"ETLayoutItemPboardType"; // FIXME: replace 
 // NOTE: this method isn't part of NSDraggingSource protocol but of NSResponder
 - (void) mouseDragged: (NSEvent *)event
 {
+	ETLog(@"Mouse dragged");
+
 	/* Only handles event when it is located inside selection */
 	if ([self allowsDragging] && [self doesSelectionContainsPoint: [event locationInWindow]])
 	{
-		ETLog(@"Mouse dragged on selection");
+		ETLog(@"Allowed dragging on selection");
 		[self beginDragWithEvent: event]; 
 	}
 }
@@ -1442,7 +1414,17 @@ NSString *ETLayoutItemPboardType = @"ETLayoutItemPboardType"; // FIXME: replace 
 	ETLog(@"Prepare drag receives in dragging destination %@", self);
 	
 	NSPoint localDropPosition = [self convertPoint: [sender draggingLocation] fromView: nil];
-	int dropIndex = [self indexOfItem: [[self layout] itemAtLocation: localDropPosition]];
+	ETLayoutItem *dropTargetItem = [[self layout] itemAtLocation: localDropPosition];
+	int dropIndex = NSNotFound;
+	
+	ETLog(@"Found item %@ as drop target", dropTargetItem);
+	
+	/* Found no drop target */
+	if (dropTargetItem == nil)
+		return NO;
+	
+	/* Found a drop target at dropIndex */
+	dropIndex = [self indexOfItem: dropTargetItem];
 	
 	// FIXME: Test all possible drag methods supported by data source
 	if ([self source] != nil && [[self source] respondsToSelector: @selector(container:acceptDrop:atIndex:)])

@@ -67,7 +67,7 @@
 	NSMutableArray *_layoutItems;
 	ETViewLayout *_containerLayout;
 	NSView *_displayView;
-	
+	BOOL _flipped;
 	BOOL _autolayout;
 	
 	// NOTE: path ivar may move to ETLayoutItem later, it could make more sense
@@ -120,7 +120,10 @@
 - (void) setSource: (id)source;
 
 - (id) delegate;
-- (void) setDelegate: (id) delegate;
+- (void) setDelegate: (id)delegate;
+
+- (BOOL) isFlipped;
+- (void) setFlipped: (BOOL)flag;
 
 /* Scrolling */
 
@@ -155,15 +158,6 @@
 - (void) removeItems: (NSArray *)items;
 - (void) removeAllItems;
 
-/* Facility Methods For View-based Layout Items
-   NOTE: Throw an exception when a source is used */
-- (void) addView: (NSView *)view;
-- (void) removeView: (NSView *)view;
-- (void) removeViewAtIndex: (int)index;
-- (NSView *) viewAtIndex: (int)index;
-- (void) addViews: (NSArray *)views;
-- (void) removeViews: (NSArray *)views;
-
 /*- (void) addView: (NSView *)view withIdentifier: (NSString *)identifier;
 - (void) removeViewForIdentifier:(NSString *)identifier;
 - (NSView *) viewForIdentifier: (NSString *)identifier;*/
@@ -186,6 +180,14 @@
 
 /* Dragging */
 
+- (void) setDraggingAllowedForTypes: (NSArray *)types;
+- (NSArray *) allowedDraggingTypes;
+- (void) setDroppingAllowedForTypes: (NSArray *)types;
+- (NSArray *) allowedDroppingTypes;
+- (void) setDropTargetTypes: (NSArray *)types;
+- (NSArray *)dropTargetTypes;
+
+// NOTE: Following methods are deprecated
 - (void) setAllowsDragging: (BOOL)flag;
 - (BOOL) allowsDragging;
 - (void) setAllowsDropping: (BOOL)flag;

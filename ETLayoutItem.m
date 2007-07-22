@@ -40,6 +40,7 @@
 #import "GNUstep.h"
 
 #define ETLog NSLog
+#define ETUTIAttribute @"uti"
 
 @interface ETLayoutItem (Private)
 - (ETLayoutItem *) initWithView: (NSView *)view value: (id)value representedObject: (id)repObject;
@@ -263,6 +264,26 @@
 	return _selected;
 }
 
+/** Commonly used to select items which can be dragged or dropped in a dragging operation */
+- (ETUTI *) type
+{
+	if ([self representedObject] == nil
+	 && [[self representedObject] isKindOfClass: [NSDictionary class]] == NO)
+	{
+		// FIXME: Replace by [ETUTI typeForClass: [self class]]
+		return NSStringFromClass([self class]);
+	}	
+	else if ([[self representedObject] valueForProperty: ETUTIAttribute] != nil)
+	{
+		return [[self representedObject] valueForProperty: ETUTIAttribute];
+	}
+	else
+	{
+		// FIXME: Replace by [ETUTI typeForClass: [self class]]
+		return NSStringFromClass([[self representedObject] class]);
+	}
+}
+
 /** Forwards rendering along the container tree. 
     Override */
 - (void) render
@@ -283,9 +304,10 @@
 	ASSIGN(_renderer, renderer);
 }
 
-// FIXME: This doesn't take in account when view frame is modified afterwards
-// by calling -[NSView setFrame:]
-- (NSRect) defaultFrame { return _defaultFrame; }
+- (NSRect) defaultFrame 
+{ 
+	return _defaultFrame; 
+}
 
 /** Modifies the item view frame when the item has a view. Default frame won't
 	be touched by container transforms (like item scaling) unlike frame value
@@ -303,6 +325,11 @@
 	[[self view] setFrame: [self defaultFrame]]; 
 }
 
+/** When the layout item uses a view, pass YES to this method to have the 
+	content resize when the view itself is resized (by modifying frame).
+	Resizing content in a view is possible by simply updating bounds size to 
+	match the view frame. 
+	Presently uses in ETPaneSwitcherLayout. */
 - (void) setAppliesResizingToBounds: (BOOL)flag
 {
 	_resizeBounds = flag;

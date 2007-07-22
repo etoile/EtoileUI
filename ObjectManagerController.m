@@ -70,6 +70,7 @@ static NSFileManager *objectManager = nil;
 	[viewContainer setHasHorizontalScroller: YES];
 	[viewContainer setLayout: AUTORELEASE([[ETStackLayout alloc] init])];
 	
+	[[pathContainer layout] setConstrainedItemSize: NSMakeSize(64, 64)];
 	[pathContainer setSource: self];
 	[pathContainer setTarget: self];
 	[pathContainer setDoubleAction: @selector(doubleClickInPathContainer:)];
@@ -166,9 +167,9 @@ static NSFileManager *objectManager = nil;
 	if (image != nil)
     {
         NSImageView *view = [[NSImageView alloc] 
-            initWithFrame: NSMakeRect(0, 0, [image size].width, [image size].height)];
-        
-		[image setScalesWhenResized: YES];
+            initWithFrame: NSMakeRect(0, 0, 48, 48)];
+	
+		[image setScalesWhenResized: YES]; 
 		[view setImageScaling: NSScaleProportionally];
         [view setImage: image];
 		return (NSImageView *)AUTORELEASE(view);
