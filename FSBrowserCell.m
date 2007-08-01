@@ -42,7 +42,8 @@
  OTHERWISE, EVEN IF APPLE HAS BEEN ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
-#import "FSBrowserCell.h"
+#import <EtoileUI/FSBrowserCell.h>
+
 
 #define ICON_INSET_VERT		2.0	/* The size of empty space between the icon end the top/bottom of the cell */ 
 #define ICON_SIZE 		16.0	/* Our Icons are ICON_SIZE x ICON_SIZE */

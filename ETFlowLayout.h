@@ -35,7 +35,7 @@
 
 #import <Foundation/Foundation.h>
 #import <AppKit/AppKit.h>
-#import "ETViewLayout.h"
+#import <EtoileUI/ETViewLayout.h>
 
 @class ETViewLayoutLine, ETContainer;
 

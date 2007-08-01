@@ -6,7 +6,7 @@
 //  Copyright 2006 __MyCompanyName__. All rights reserved.
 //
 
-#import "NSView+Etoile.h"
+#import <EtoileUI/NSView+Etoile.h>
 
 
 @implementation NSView (Etoile)

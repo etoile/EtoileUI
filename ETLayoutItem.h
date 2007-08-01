@@ -118,7 +118,14 @@
 
 - (NSView *) displayView;
 
+//-displayObject
+
 - (NSImage *) image;
+
+/* If you have a shape set, it's always inserted after image renderer in the
+	rendering chain. */
+/*setShape
+shape*/
 
 /* Model Access */
 
@@ -130,6 +137,16 @@
 
 /* Utility Accessors */
 
+/** When selection is enabled on -render call, the layout item checks a
+	selection renderer (ETSelection class or subclasses) is part of its 
+	rendering chain. When none is found, it inserts default selection
+	renderer at the end of the chain.
+	[ETRenderer rendererForName: kETStyleSelection
+	If selection is disabled, it does nothing. If you call 
+	-setEnablesSelection: with NO, it removes all selection renderers part
+	of the rendering chain. */
+/*- setEnablesSelection:
+- isSelectionEnabled;*/
 - (void) setSelected: (BOOL)selected;
 - (BOOL) isSelected;
 
@@ -137,6 +154,8 @@
 - (ETUTI *) type;
 
 /* Rendering Chain */
+
+//- renderLayout
 
 - (void) render;
 - (ETStyleRenderer *) renderer;

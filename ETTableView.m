@@ -34,9 +34,9 @@
 	THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import "ETTableView.h"
-#import "ETTableLayout.h"
-#import "GNUstep.h"
+#import <EtoileUI/ETTableView.h>
+#import <EtoileUI/ETTableLayout.h>
+#import <EtoileUI/GNUstep.h>
 
 
 @implementation ETTableView

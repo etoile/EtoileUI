@@ -35,7 +35,7 @@
 
 #import <Foundation/Foundation.h>
 #import <AppKit/AppKit.h>
-#import "ETContainer.h"
+#import <EtoileUI/ETContainer.h>
 
 
 @interface ETTableView : ETContainer 

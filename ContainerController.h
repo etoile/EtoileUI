@@ -8,7 +8,7 @@
 
 #import <Foundation/Foundation.h>
 #import <AppKit/AppKit.h>
-#import "ETContainer.h"
+#import <EtoileUI/EtoileUI.h>
 
 
 @interface ContainerController : NSObject

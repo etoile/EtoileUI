@@ -1,9 +1,9 @@
 /*  <title>ETFlowLayout</title>
 
 	ETFlowLayout.m
-	
+
 	<abstract>Description forthcoming.</abstract>
- 
+
 	Copyright (C) 2007 Quentin Mathe
  
 	Author:  Quentin Mathe <qmathe@club-internet.fr>
@@ -34,13 +34,13 @@
 	THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import "ETFlowLayout.h"
-#import "ETContainer.h"
-#import "ETLayoutItem.h"
-#import "ETViewLayout.h"
-#import "ETViewLayoutLine.h"
-#import "NSView+Etoile.h"
-#import "GNUstep.h"
+#import <EtoileUI/ETFlowLayout.h>
+#import <EtoileUI/ETContainer.h>
+#import <EtoileUI/ETLayoutItem.h>
+#import <EtoileUI/ETViewLayout.h>
+#import <EtoileUI/ETViewLayoutLine.h>
+#import <EtoileUI/NSView+Etoile.h>
+#import <EtoileUI/GNUstep.h>
 
 
 @implementation ETFlowLayout

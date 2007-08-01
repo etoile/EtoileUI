@@ -36,7 +36,7 @@
 #import <Foundation/Foundation.h>
 #import <AppKit/AppKit.h>
 
-@class ETLayoutItem, ETViewLayout, ETLayer, ETLayoutGroupItem;
+@class ETLayoutItem, ETViewLayout, ETLayer, ETLayoutGroupItem, ETSelection;
 
 /** Forwarding Chain 
 
@@ -86,6 +86,7 @@
 	
 	/* Acts as a cache, selection state is stored in layout item by default */
 	NSMutableIndexSet *_selection;
+	ETSelection *_selectionShape;
 	NSRect _selectionRect;
 	BOOL _multipleSelectionAllowed;
 	BOOL _emptySelectionAllowed;
@@ -177,6 +178,9 @@
 - (void) setAllowsMultipleSelection: (BOOL)multiple;
 - (BOOL) allowsEmptySelection;
 - (void) setAllowsEmptySelection: (BOOL)empty;
+
+- (void) setSelectionShape: (ETSelection *)shape;
+- (ETSelection *) selectionShape;
 
 /* Dragging */
 

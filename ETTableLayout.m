@@ -34,12 +34,12 @@
 	THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import "ETTableLayout.h"
-#import "ETContainer.h"
-#import "ETLayoutItem.h"
-#import "ETViewLayoutLine.h"
-#import "NSView+Etoile.h"
-#import "GNUstep.h"
+#import <EtoileUI/ETTableLayout.h>
+#import <EtoileUI/ETContainer.h>
+#import <EtoileUI/ETLayoutItem.h>
+#import <EtoileUI/ETViewLayoutLine.h>
+#import <EtoileUI/NSView+Etoile.h>
+#import <EtoileUI/GNUstep.h>
 
 #define ETLog NSLog
 

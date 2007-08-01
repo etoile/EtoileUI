@@ -35,9 +35,9 @@
 	THE POSSIBILITY OF SUCH DAMAGE.
  */
  
-#import "ETLayer.h"
-#import "ETContainer.h"
-#import "GNUstep.h"
+#import <EtoileUI/ETLayer.h>
+#import <EtoileUI/ETContainer.h>
+#import <EtoileUI/GNUstep.h>
 
 #define DEFAULT_FRAME NSMakeRect(0, 0, 200, 200)
 

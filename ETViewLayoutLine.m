@@ -6,9 +6,9 @@
 //  Copyright 2006 __MyCompanyName__. All rights reserved.
 //
 
-#import "ETViewLayoutLine.h"
-#import "NSView+Etoile.h"
-#import "GNUstep.h"
+#import <EtoileUI/ETViewLayoutLine.h>
+#import <EtoileUI/NSView+Etoile.h>
+#import <EtoileUI/GNUstep.h>
 
 
 @implementation ETViewLayoutLine

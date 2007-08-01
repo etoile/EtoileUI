@@ -7,16 +7,6 @@
 //
 
 #import "ObjectManagerController.h"
-#import "ETLayoutItem.h"
-#import "ETLayoutItemGroup.h"
-#import "ETStackLayout.h"
-#import "ETFlowLayout.h"
-#import "ETLineLayout.h"
-#import "ETTableLayout.h"
-#import "ETOutlineLayout.h"
-#import "ETBrowserLayout.h"
-#import "ETContainer.h"
-#import "GNUstep.h"
 
 
 @implementation ObjectManagerController

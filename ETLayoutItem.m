@@ -34,10 +34,10 @@
 	THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import "ETLayoutItem.h"
-#import "ETStyleRenderer.h"
-#import "NSView+Etoile.h"
-#import "GNUstep.h"
+#import <EtoileUI/ETLayoutItem.h>
+#import <EtoileUI/ETStyleRenderer.h>
+#import <EtoileUI/NSView+Etoile.h>
+#import <EtoileUI/GNUstep.h>
 
 #define ETLog NSLog
 #define ETUTIAttribute @"uti"
@@ -288,10 +288,23 @@
     Override */
 - (void) render
 {
-	[_renderer render];
+	// FIXME: Finds the first layout item ancestor with a view and asks it to
+	// redraw itself at our rect location, this will flow back to us.
+	[_renderer renderLayoutItem: self];
 
 	if ([[self view] respondsToSelector: @selector(render)])
 		[(id)[self view] render];
+}
+
+// Private
+- (void) renderLayoutItem: (ETLayoutItem *)item inView: (NSView *)inView
+{
+	/* When we have a view, we wait to be asked to draw directly by our view 
+	   before rendering anything. If a parent layout item asks us to draw, we
+	   decline and wait the control return to the view who initiated the 
+	   drawing and this view asks our view to draw itself as a subview. */
+	if ([self view] != nil && [[self view] isEqual: inView])
+		[_renderer renderLayoutItem: self];
 }
 
 - (ETStyleRenderer *) renderer

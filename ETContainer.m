@@ -34,12 +34,12 @@
 	THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import "ETContainer.h"
-#import "ETLayoutItem.h"
-#import "ETViewLayout.h"
-#import "ETLayer.h"
-#import "CocoaCompatibility.h"
-#import "GNUstep.h"
+#import <EtoileUI/ETContainer.h>
+#import <EtoileUI/ETLayoutItem.h>
+#import <EtoileUI/ETViewLayout.h>
+#import <EtoileUI/ETLayer.h>
+#import <EtoileUI/CocoaCompatibility.h>
+#import <EtoileUI/GNUstep.h>
 
 #define ETLog NSLog
 
@@ -890,6 +890,11 @@ NSString *ETLayoutItemPboardType = @"ETLayoutItemPboardType"; // FIXME: replace 
 	_emptySelectionAllowed = empty;
 }
 
+- (ETSelection *) selectionShape
+{
+	return _selectionShape;
+}
+
 - (BOOL) doesSelectionContainsPoint: (NSPoint)point
 {
 	ETLayoutItem *item = [[self layout] itemAtLocation: point];
@@ -1057,6 +1062,17 @@ NSString *ETLayoutItemPboardType = @"ETLayoutItemPboardType"; // FIXME: replace 
 - (void) render
 {
 	[_layoutItems makeObjectsPerformSelector: @selector(render)];
+}
+
+- (void) drawRect: (NSRect)rect
+{
+	/* Takes care of drawing layout items with a view */
+	[super drawRect: rect];
+	
+	/* Now we must draw layout items without view... using either a cell or 
+	   their own renderer. Layout item are smart enough to avoid drawing their
+	   view when they have one. */
+	[[self layoutItemCache] makeObjectsPerformSelector: @selector(render)];
 }
 
 /* Actions */

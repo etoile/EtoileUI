@@ -34,13 +34,13 @@
 	THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import "ETOutlineLayout.h"
-#import "ETContainer.h"
-#import "ETLayoutItem.h"
-#import "ETLayoutItemGroup.h"
-#import "ETViewLayoutLine.h"
-#import "NSView+Etoile.h"
-#import "GNUstep.h"
+#import <EtoileUI/ETOutlineLayout.h>
+#import <EtoileUI/ETContainer.h>
+#import <EtoileUI/ETLayoutItem.h>
+#import <EtoileUI/ETLayoutItemGroup.h>
+#import <EtoileUI/ETViewLayoutLine.h>
+#import <EtoileUI/NSView+Etoile.h>
+#import <EtoileUI/GNUstep.h>
 
 @interface ETContainer (PackageVisibility)
 - (NSArray *) layoutItemCache;

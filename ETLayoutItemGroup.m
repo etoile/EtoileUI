@@ -34,9 +34,9 @@
 	THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import "ETLayoutItemGroup.h"
-#import "ETContainer.h"
-#import "GNUstep.h"
+#import <EtoileUI/ETLayoutItemGroup.h>
+#import <EtoileUI/ETContainer.h>
+#import <EtoileUI/GNUstep.h>
 
 #define DEFAULT_FRAME NSMakeRect(0, 0, 50, 50)
 
