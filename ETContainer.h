@@ -35,6 +35,7 @@
  
 #import <Foundation/Foundation.h>
 #import <AppKit/AppKit.h>
+#import <EtoileUI/ETView.h>
 
 @class ETLayoutItem, ETViewLayout, ETLayer, ETLayoutGroupItem, ETSelection;
 
@@ -58,7 +59,7 @@
 
 
 // ETComponentView
-@interface ETContainer : NSControl
+@interface ETContainer : ETView
 {
 	IBOutlet NSScrollView *_scrollView;
 

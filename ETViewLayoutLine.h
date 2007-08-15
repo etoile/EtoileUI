@@ -12,13 +12,16 @@
 // NOTE: May be rename it ETViewLayoutBox
 @interface ETViewLayoutLine : NSObject
 {
-	NSMutableArray *_views;
+	NSMutableArray *_items;
 	NSPoint _baseLineLocation;
 	NSPoint _topLineLocation;
 	BOOL _vertical;
 }
 
 + (id) layoutLineWithViews: (NSArray *)views;
++ (id) layoutLineWithLayoutItems: (NSArray *)items;
+
+- (NSArray *) items;
 
 - (NSPoint) baseLineLocation;
 /** In flipped layout, top line location is rather than base line location. */ 

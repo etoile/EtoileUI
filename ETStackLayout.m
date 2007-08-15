@@ -45,21 +45,21 @@
 @implementation ETStackLayout
 
 /** Returns a line filled with views to layout (stored in an array). */
-- (ETViewLayoutLine *) layoutLineForViews: (NSArray *)views inContainer: (ETContainer *)viewContainer
+- (ETViewLayoutLine *) layoutLineForLayoutItems: (NSArray *)items inContainer: (ETContainer *)viewContainer
 {
-	NSEnumerator *e = [views objectEnumerator];
-	NSView *viewToLayout = nil;
-	NSMutableArray *layoutedViews = [NSMutableArray array];
+	NSEnumerator *e = [items objectEnumerator];
+	ETLayoutItem *itemToLayout = nil;
+	NSMutableArray *layoutedItems = [NSMutableArray array];
 	ETViewLayoutLine *line = nil;
 	float vAccumulator = 0;
     
-	while ((viewToLayout = [e nextObject]) != nil)
+	while ((itemToLayout = [e nextObject]) != nil)
 	{
-		vAccumulator += [viewToLayout height];
+		vAccumulator += [itemToLayout height];
 		
 		if ([self isContentSizeLayout] || vAccumulator < [self layoutSize].height)
 		{
-			[layoutedViews addObject: viewToLayout];
+			[layoutedItems addObject: itemToLayout];
 		}
 		else
 		{
@@ -71,17 +71,17 @@
 	if ([self isContentSizeLayout])
 		[self setLayoutSize: NSMakeSize([self layoutSize].width, vAccumulator)];
 	
-	if ([layoutedViews count] == 0)
+	if ([layoutedItems count] == 0)
 		return nil;
 		
-	line = [ETViewLayoutLine layoutLineWithViews: layoutedViews];
+	line = [ETViewLayoutLine layoutLineWithLayoutItems: layoutedItems];
 	[line setVerticallyOriented: YES];
 
 	return line;
 }
 
 // Must override unless you use a display view
-- (void) computeViewLocationsForLayoutModel: (NSArray *)layoutModel inContainer: (ETContainer *)container
+- (void) computeLayoutItemLocationsForLayoutModel: (NSArray *)layoutModel inContainer: (ETContainer *)container
 {
 	if ([layoutModel count] > 1)
 	{
@@ -91,28 +91,44 @@
 			  [layoutModel count]);
 	}
 	
-	[self computeViewLocationsForLayoutLine: [layoutModel lastObject] inContainer: container];
+	[self computeLayoutItemLocationsForLayoutLine: [layoutModel lastObject] inContainer: container];
 }
 
-- (void) computeViewLocationsForLayoutLine: (ETViewLayoutLine *)line inContainer: (ETContainer *)container
+- (void) computeLayoutItemLocationsForLayoutLine: (ETViewLayoutLine *)line inContainer: (ETContainer *)container
 {
 	NSEnumerator *lineWalker = nil;
-	NSView *view = nil;
-	NSPoint viewLocation = NSMakePoint(0, [self layoutSize].height);
+	ETLayoutItem *item = nil;
+	NSPoint itemLocation = NSMakePoint(0, 0);
 	
-	lineWalker = [[line views] objectEnumerator];
-	
-	while ((view = [lineWalker nextObject]) != nil)
+	if ([[self container] isFlipped])
 	{
-		[view setX: viewLocation.x];
-		viewLocation.y -= [view height];
-		[view setY: viewLocation.y];
+		lineWalker = [[line items] objectEnumerator];
+	}
+	else
+	{
+		/* Don't reverse the item order or selection and sorting will be messed */
+		lineWalker = [[line items] reverseObjectEnumerator];
+		itemLocation = NSMakePoint(0, [self layoutSize].height);	
+	}
+		
+	while ((item = [lineWalker nextObject]) != nil)
+	{
+		[item setX: itemLocation.x];
+		[item setY: itemLocation.y];
+		if ([[self container] isFlipped])
+		{
+			itemLocation.y += [item height];
+		}
+		else
+		{
+			itemLocation.y -= [item height];
+		}
 	}
 	
 	/* NOTE: to avoid computing view locations when they are outside of the
 		frame, think to add an exit condition here. */
 	
-	//NSLog(@"View locations computed by layout line :%@", line);
+	NSLog(@"View locations computed by layout line :%@", line);
 }
 
 @end

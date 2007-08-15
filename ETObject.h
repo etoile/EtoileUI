@@ -1,13 +1,12 @@
 /*
-	ETLayer.h
+	ETObject.h
 	
-	Layer class models the traditional layer element, very common in Computer
-	Graphics applications.
+	Description forthcoming.
  
 	Copyright (C) 2007 Quentin Mathe
  
 	Author:  Quentin Mathe <qmathe@club-internet.fr>
-	Date:  May 2007
+	Date:  August 2007
  
 	Redistribution and use in source and binary forms, with or without
 	modification, are permitted provided that the following conditions are met:
@@ -35,28 +34,41 @@
  */
  
 #import <Foundation/Foundation.h>
-#import <AppKit/AppKit.h>
-#import "ETLayoutItem.h"
 
-/** Each layer instance is basically a special node of the layout item tree. */
-
-
-@interface ETLayer : ETLayoutItem 
+id myself(id object)
 {
-	//BOOL _visible;
-	BOOL _outOfFlow;
+	return object;
 }
 
-+ (ETLayer *) layer;
-+ (ETLayer *) layerWithLayoutItem: (ETLayoutItem *)item;
-+ (ETLayer *) layerWithLayoutItems: (NSArray *)items;
-+ (ETLayer *) guideLayer;
-+ (ETLayer *) gridLayer;
+//#define self self[-1]
 
-- (void) setMovesOutOfLayoutFlow: (BOOL)floating;
-- (BOOL) movesOutOfLayoutFlow;
+#define REPLACE_SELF_BY_CONTEXT_IVAR
+//#define REPLACE_SELF_BY_SELF_MSG
 
-/*- (void) setVisible;
-- (BOOL) isVisible;*/
+#ifdef REPLACE_SELF_BY_CONTEXT_IVAR
+//#define self _context_
+//#define self (self->isa == [ETObject class]) ? _context_ : self
+#else
+#ifdef REPLACE_SELF_BY_SELF_MSG
+#define self [self self]
+#endif
+#endif
+
+#define me self
+
+
+@interface ETObject : NSObject 
+{
+	id _proto_;
+	id _context_;
+}
+
+//- (id) self;
+- (void) setSelf: (id)context;
+
+- (void) setPrototype: (id)proto;
+- (id) prototype;
+
+- (void) handleInvocation: (NSInvocation *)inv inContext: (id)context;
 
 @end

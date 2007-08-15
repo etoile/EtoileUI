@@ -1,13 +1,12 @@
 /*
-	ETLayer.h
+	ETView.h
 	
-	Layer class models the traditional layer element, very common in Computer
-	Graphics applications.
+	NSView replacement class with extra facilities like delegated drawing.
  
 	Copyright (C) 2007 Quentin Mathe
  
 	Author:  Quentin Mathe <qmathe@club-internet.fr>
-	Date:  May 2007
+	Date:  August 2007
  
 	Redistribution and use in source and binary forms, with or without
 	modification, are permitted provided that the following conditions are met:
@@ -33,30 +32,21 @@
 	ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
 	THE POSSIBILITY OF SUCH DAMAGE.
  */
- 
+
 #import <Foundation/Foundation.h>
 #import <AppKit/AppKit.h>
-#import "ETLayoutItem.h"
-
-/** Each layer instance is basically a special node of the layout item tree. */
 
 
-@interface ETLayer : ETLayoutItem 
+@interface ETView : NSView
 {
-	//BOOL _visible;
-	BOOL _outOfFlow;
+	id _renderer;
+	NSView *_wrappedView;
 }
 
-+ (ETLayer *) layer;
-+ (ETLayer *) layerWithLayoutItem: (ETLayoutItem *)item;
-+ (ETLayer *) layerWithLayoutItems: (NSArray *)items;
-+ (ETLayer *) guideLayer;
-+ (ETLayer *) gridLayer;
+- (void) setRenderer: (id)renderer;
+- (id) renderer;
 
-- (void) setMovesOutOfLayoutFlow: (BOOL)floating;
-- (BOOL) movesOutOfLayoutFlow;
-
-/*- (void) setVisible;
-- (BOOL) isVisible;*/
+- (void) setWrappedView: (NSView *)subview;
+- (NSView *) wrappedView;
 
 @end

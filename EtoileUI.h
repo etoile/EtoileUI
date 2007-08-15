@@ -1,13 +1,13 @@
 /*
-	ETLayer.h
+	EtoileUI.h
 	
-	Layer class models the traditional layer element, very common in Computer
-	Graphics applications.
+	Umbrella header for EtoileUI framework.
  
 	Copyright (C) 2007 Quentin Mathe
  
-	Author:  Quentin Mathe <qmathe@club-internet.fr>
-	Date:  May 2007
+	Authors:  Quentin Mathe <qmathe@club-internet.fr>
+
+	Date:  July 2007
  
 	Redistribution and use in source and binary forms, with or without
 	modification, are permitted provided that the following conditions are met:
@@ -34,29 +34,34 @@
 	THE POSSIBILITY OF SUCH DAMAGE.
  */
  
-#import <Foundation/Foundation.h>
-#import <AppKit/AppKit.h>
-#import "ETLayoutItem.h"
+#import <EtoileUI/CocoaCompatibility.h>
 
-/** Each layer instance is basically a special node of the layout item tree. */
+#import <EtoileUI/ETContainer.h>
+#import <EtoileUI/ETLayoutItem.h>
+#import <EtoileUI/ETLayoutItemGroup.h>
+#import <EtoileUI/ETLayer.h>
+#import <EtoileUI/ETViewLayout.h>
+#import <EtoileUI/ETViewLayoutLine.h>
 
+#import <EtoileUI/ETFlowLayout.h>
+#import <EtoileUI/ETFlowView.h>
+#import <EtoileUI/ETLineLayout.h>
+#import <EtoileUI/ETLineView.h>
+#import <EtoileUI/ETStackLayout.h>
+#import <EtoileUI/ETStackView.h>
 
-@interface ETLayer : ETLayoutItem 
-{
-	//BOOL _visible;
-	BOOL _outOfFlow;
-}
+#import <EtoileUI/ETTableLayout.h>
+#import <EtoileUI/ETTableView.h>
+#import <EtoileUI/ETOutlineLayout.h>
+#import <EtoileUI/ETBrowserLayout.h>
+#import <EtoileUI/FSBrowserCell.h>
 
-+ (ETLayer *) layer;
-+ (ETLayer *) layerWithLayoutItem: (ETLayoutItem *)item;
-+ (ETLayer *) layerWithLayoutItems: (NSArray *)items;
-+ (ETLayer *) guideLayer;
-+ (ETLayer *) gridLayer;
+#import <EtoileUI/ETPaneLayout.h>
+//#import <EtoileUI/ETPaneView.h>
+#import <EtoileUI/ETPaneSwitcherLayout.h>
 
-- (void) setMovesOutOfLayoutFlow: (BOOL)floating;
-- (BOOL) movesOutOfLayoutFlow;
+#import <EtoileUI/ETStyleRenderer.h>
 
-/*- (void) setVisible;
-- (BOOL) isVisible;*/
-
-@end
+#import <EtoileUI/GNUstep.h>
+#import <EtoileUI/NSView+Etoile.h>
+#import <EtoileUI/NSIndexSet+Etoile.h>

@@ -1,13 +1,12 @@
 /*
-	ETLayer.h
+	NSIndexSet+Etoile.h
 	
-	Layer class models the traditional layer element, very common in Computer
-	Graphics applications.
+	Additions to index set classes.
  
 	Copyright (C) 2007 Quentin Mathe
  
 	Author:  Quentin Mathe <qmathe@club-internet.fr>
-	Date:  May 2007
+	Date:  August 2007
  
 	Redistribution and use in source and binary forms, with or without
 	modification, are permitted provided that the following conditions are met:
@@ -34,29 +33,21 @@
 	THE POSSIBILITY OF SUCH DAMAGE.
  */
  
-#import <Foundation/Foundation.h>
-#import <AppKit/AppKit.h>
-#import "ETLayoutItem.h"
-
-/** Each layer instance is basically a special node of the layout item tree. */
+#import <EtoileUI/NSIndexSet+Etoile.h>
 
 
-@interface ETLayer : ETLayoutItem 
+@implementation NSMutableIndexSet (Etoile)
+
+- (void) invertIndex: (unsigned int)index
 {
-	//BOOL _visible;
-	BOOL _outOfFlow;
+	if ([self containsIndex: index])
+	{
+		[self removeIndex: index];
+	}
+	else
+	{
+		[self addIndex: index];
+	}
 }
-
-+ (ETLayer *) layer;
-+ (ETLayer *) layerWithLayoutItem: (ETLayoutItem *)item;
-+ (ETLayer *) layerWithLayoutItems: (NSArray *)items;
-+ (ETLayer *) guideLayer;
-+ (ETLayer *) gridLayer;
-
-- (void) setMovesOutOfLayoutFlow: (BOOL)floating;
-- (BOOL) movesOutOfLayoutFlow;
-
-/*- (void) setVisible;
-- (BOOL) isVisible;*/
 
 @end

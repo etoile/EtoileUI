@@ -19,6 +19,8 @@
                name: NSViewFrameDidChangeNotification 
              object: viewContainer];*/
 	
+	[viewContainer setAllowsMultipleSelection: YES];
+	[viewContainer setAllowsEmptySelection: YES];
 	[viewContainer setSource: self];
 	[viewContainer setLayout: AUTORELEASE([[ETStackLayout alloc] init])];
 	[viewContainer setHasVerticalScroller: YES];
@@ -245,6 +247,7 @@
 {
 	NSImage *img = [images objectAtIndex: index];
 	ETLayoutItem *imageItem = [ETLayoutItem layoutItemWithView: [self imageViewForImage: img]];
+	//ETLayoutItem *imageItem = [[ETLayoutItem alloc] initWithValue: img];
 	NSWorkspace *wk = [NSWorkspace sharedWorkspace];
 	NSString *sizeStr = NSStringFromSize([img size]);
 	NSString *type = nil;
@@ -259,6 +262,8 @@
 	//[imageItem setValue: date forProperty	: @"modificationdate"];
 	
 	NSLog(@"Returns %@ as layout item in container %@", imageItem, container);
+	
+	//AUTORELEASE(imageItem);
 
 	return imageItem;
 }

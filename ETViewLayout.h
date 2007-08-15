@@ -47,6 +47,7 @@ typedef enum _ETSizeConstraintStyle
 	ETSizeConstraintStyleVerticalHorizontal
 } ETSizeConstraintStyle;
 
+/* Don't reverse the item order or selection and sorting will be messed */
 
 @interface ETViewLayout : NSObject
 {
@@ -108,9 +109,9 @@ typedef enum _ETSizeConstraintStyle
 - (void) renderWithLayoutItems: (NSArray *)items inContainer: (ETContainer *)container;
 - (void) renderWithSource: (id)source inContainer: (ETContainer *)container;
 
-- (ETViewLayoutLine *) layoutLineForViews: (NSArray *)views inContainer: (ETContainer *)viewContainer;
-- (NSArray *) layoutModelForViews: (NSArray *)views inContainer: (ETContainer *)viewContainer;
-- (void) computeViewLocationsForLayoutModel: (NSArray *)layoutModel inContainer: (ETContainer *)container;
+- (ETViewLayoutLine *) layoutLineForLayoutItems: (NSArray *)items inContainer: (ETContainer *)viewContainer;
+- (NSArray *) layoutModelForLayoutItems: (NSArray *)items inContainer: (ETContainer *)viewContainer;
+- (void) computeLayoutItemLocationsForLayoutModel: (NSArray *)layoutModel inContainer: (ETContainer *)container;
 
 - (void) resizeLayoutItems: (NSArray *)items toScaleFactor: (float)factor;
 

@@ -42,7 +42,41 @@
 
 @implementation ETStyleRenderer
 
-//- (void) render { }
+- (void) render: (NSMutableDictionary *)inputValues
+{
+	ETLayoutItem *layoutItem = [inputValues objectForKey: @"kETLayoutItemObject"];
+	
+	if (layoutItem != nil)
+		[self renderLayoutItem: layoutItem];
+}
+
+- (void) renderLayoutItem: (ETLayoutItem *)item
+{ 
+	NSRect itemRect = ETMakeRect([item origin], [item size]);
+	
+	[self drawInRect: itemRect];
+}
+
+- (void) drawInRect: (NSRect)rect
+{
+
+}
+
+@end
+
+@implementation ETImageStyle
+
+- (void) renderLayoutItem: (ETLayoutItem *)item
+{ 
+	if ([[item value] isKindOfClass: [NSImage class]] == NO)
+	{
+		NSLog(@"WARNING: Layout item %@ value isn't of type NSImage as expected", item);
+	}
+	
+	NSImage *img = (NSImage *)[item value];
+	
+	[img compositeToPoint: [item origin] operation: NSCompositeSourceOver];
+}
 
 @end
 
@@ -76,42 +110,42 @@
 
 - (NSBezierPath *) drawingShape
 {
-    return AUTORELEASE([_drawingShape mutableCopy]); 
+    return AUTORELEASE([_drawingShape copy]); 
 }
 
 - (void) setDrawingShape: (NSBezierPath *)shape
 {
-    ASSIGN(_drawingShape, [shape mutableCopy]); 
+    ASSIGN(_drawingShape, [shape copy]); 
 }
 
 - (NSBezierPath *) editingShape
 {
-    return AUTORELEASE([_editingShape mutableCopy]); 
+    return AUTORELEASE([_editingShape copy]); 
 }
 
 - (void) setEditingShape: (NSBezierPath *)shape
 {
-    ASSIGN(_editingShape, [shape mutableCopy]); 
+    ASSIGN(_editingShape, [shape copy]); 
 }
 
 - (NSColor *) outlineColor
 {
-    return AUTORELEASE([_outlineColor mutableCopy]); 
+    return AUTORELEASE([_outlineColor copy]); 
 }
 
 - (void) setOutlineColor: (NSColor *)color
 {
-	ASSIGN(_outlineColor, [color mutableCopy]);
+	ASSIGN(_outlineColor, [color copy]);
 }
 
 - (NSColor *) interiorColor
 {
-    return AUTORELEASE([_interiorColor mutableCopy]); 
+    return AUTORELEASE([_interiorColor copy]); 
 }
 
 - (void) setInteriorColor: (NSColor *)color
 {
-	ASSIGN(_interiorColor, [color mutableCopy]);
+	ASSIGN(_interiorColor, [color copy]);
 }
 
 - (float) alphaValue
@@ -134,11 +168,14 @@
     _hidden = flag;
 }
 
-- (void) renderWithLayoutItem: (ETLayoutItem *)item
+- (void) renderLayoutItem: (ETLayoutItem *)item
 {
 	NSRect itemRect = ETMakeRect([item origin], [item size]);
-	
-	[self drawInRect: NSInsetRect(itemRect, 5, 5)];
+	if ([item isSelected])
+	{
+		NSLog(@"Draw selection for %@", item);
+		[self drawInRect: NSInsetRect(itemRect, 30, 30)];
+	}
 }
 
 - (void) drawInRect: (NSRect)rect

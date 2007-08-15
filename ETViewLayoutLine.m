@@ -7,6 +7,7 @@
 //
 
 #import <EtoileUI/ETViewLayoutLine.h>
+#import <EtoileUI/ETLayoutItem.h>
 #import <EtoileUI/NSView+Etoile.h>
 #import <EtoileUI/GNUstep.h>
 
@@ -15,28 +16,47 @@
 
 + (id) layoutLineWithViews: (NSArray *)views
 {
+	NSMutableArray *items = [NSMutableArray array];
+	NSEnumerator *e = [views objectEnumerator];
+	NSView *view = nil; 
+	
+	while ((view = [e nextObject]) != nil)
+	{
+		[items addObject: [ETLayoutItem layoutItemWithView: view]];
+	}
+    
+	return [ETViewLayoutLine layoutLineWithLayoutItems: items];
+}
+
++ (id) layoutLineWithLayoutItems: (NSArray *)items
+{
 	ETViewLayoutLine *layoutLine = [[ETViewLayoutLine alloc] init];
     
-	ASSIGN(layoutLine->_views, views);
+	ASSIGN(layoutLine->_items, items);
     
 	return (id)AUTORELEASE(layoutLine);
 }
 
 - (NSArray *) views
 {
-	return _views;
+	return [_items valueForKey: @"view"];
+}
+
+- (NSArray *) items
+{
+	return _items;
 }
 
 - (void) setBaseLineLocation: (NSPoint)location
 {
 	_baseLineLocation = location;
 	
-	NSEnumerator *e = [_views objectEnumerator];
-	NSView *view = nil;
+	NSEnumerator *e = [_items objectEnumerator];
+	ETLayoutItem *item = nil;
 	
-	while ((view = [e nextObject]) != nil)
+	while ((item = [e nextObject]) != nil)
 	{
-		[view setY: _baseLineLocation.y];
+		[item setY: _baseLineLocation.y];
 	}
 }
 
@@ -47,17 +67,17 @@
 
 - (float) height
 {
-	NSEnumerator *e = [_views objectEnumerator];
-	NSView *view = nil;
+	NSEnumerator *e = [_items objectEnumerator];
+	ETLayoutItem *item = nil;
 	float height = 0;
 	
 	/* We must look for the tallest layouted view (by line). Useful 
 		once we get out of -computeViewLocationsForLayoutModel: view walking loop. */
 	
-	while ((view = [e nextObject]) != nil)
+	while ((item = [e nextObject]) != nil)
 	{
-		if ([view height] > height)
-			height = [view height];
+		if ([item height] > height)
+			height = [item height];
 	}
 	
 	return height;
@@ -76,12 +96,12 @@
 - (NSString *) description
 {
     NSString *desc = [super description];
-    NSEnumerator *e = [_views objectEnumerator];
-    id view = nil;
+    NSEnumerator *e = [_items objectEnumerator];
+    id item = nil;
     
-    while ((view = [e nextObject]) != nil)
+    while ((item = [e nextObject]) != nil)
     {
-		desc = [desc stringByAppendingFormat: @", %@", NSStringFromRect([view frame])];
+		desc = [desc stringByAppendingFormat: @", %@", NSStringFromRect([item frame])];
     }
     
     return desc;

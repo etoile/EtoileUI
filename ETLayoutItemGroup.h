@@ -49,6 +49,11 @@
 
 - (id) initWithLayoutItems: (NSArray *)layoutItems view: (NSView *)view;
 
+- (NSArray *) visibleLayoutItems;
+- (void) setVisibleLayoutItems: (NSArray *)items;
+
+//- isContainer
+
 // NOTE: Note sure it's really doable to provide such methods. May only work in
 // a safe way if we provide it as part of ETContainer API
 - (NSArray *) ungroup;

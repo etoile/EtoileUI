@@ -38,10 +38,15 @@
 #import <EtoileUI/ETLayoutItem.h>
 #import <EtoileUI/ETViewLayout.h>
 #import <EtoileUI/ETLayer.h>
+#import <EtoileUI/NSView+Etoile.h>
+#import <EtoileUI/NSIndexSet+Etoile.h>
 #import <EtoileUI/CocoaCompatibility.h>
 #import <EtoileUI/GNUstep.h>
 
 #define ETLog NSLog
+
+#define SELECTION_BY_RANGE_KEY_MASK NSShiftKeyMask
+#define SELECTION_BY_ONE_KEY_MASK NSCommandKeyMask
 
 NSString *ETContainerSelectionDidChangeNotification = @"ETContainerSelectionDidChangeNotification";
 NSString *ETLayoutItemPboardType = @"ETLayoutItemPboardType"; // FIXME: replace by UTI
@@ -65,6 +70,7 @@ NSString *ETLayoutItemPboardType = @"ETLayoutItemPboardType"; // FIXME: replace 
 - (void) fixOwnerIfNeededForItem: (ETLayoutItem *)item;
 - (BOOL) isScrollViewShown;
 - (void) setShowsScrollView: (BOOL)scroll;
+- (void) mouseDoubleClick: (NSEvent *)event;
 @end
 
 
@@ -189,6 +195,57 @@ NSString *ETLayoutItemPboardType = @"ETLayoutItemPboardType"; // FIXME: replace 
 }
 #endif
 
+- (NSArray *) visibleItems
+{
+	ETContainer *container = self;
+	NSMutableArray *visibleItems = [NSMutableArray array];
+	NSEnumerator  *e = [[container layoutItemCache] objectEnumerator];
+	//NSEnumerator  *e = [[container items] objectEnumerator];
+	ETLayoutItem *item = nil;
+	
+	while ((item = [e nextObject]) != nil)
+	{
+		if ([item isVisible])
+			[visibleItems addObject: item];
+	}
+	
+	return visibleItems;
+}
+
+// FIXME: Make a bottom top traversal to find the first view which can be used 
+// as superview for the visible layout item views. Actually this isn't needed
+// or supported because all ETLayoutItemGroup instances must embed a container.
+// This last point is going to become purely optional.
+- (void) setVisibleItems: (NSArray *)visibleItems
+{
+	ETContainer *container = self;
+	NSEnumerator  *e = [[container layoutItemCache] objectEnumerator];
+	//NSEnumerator  *e = [[container items] objectEnumerator];
+	ETLayoutItem *item = nil;
+	
+	while ((item = [e nextObject]) != nil)
+	{
+		if ([visibleItems containsObject: item])
+		{
+			[item setVisible: YES];
+			if ([[container subviews] containsObject: [item displayView]] == NO)
+			{
+				[container addSubview: [item displayView]];
+				NSLog(@"Inserted view at %@", NSStringFromRect([[item displayView] frame]));
+			}
+		}
+		else
+		{
+			[item setVisible: NO];
+			if ([[container subviews] containsObject: [item displayView]] == NO)
+			{
+				[[item displayView] removeFromSuperview];
+				NSLog(@"Removed view at %@", NSStringFromRect([[item displayView] frame]));
+			}
+		}
+	}
+}
+
 - (NSArray *) layoutItems
 {
 	return _layoutItems;
@@ -204,6 +261,21 @@ NSString *ETLayoutItemPboardType = @"ETLayoutItemPboardType"; // FIXME: replace 
 	// TODO: Write a debug assertion checking every _layoutItemCache item views
 	// aren't used in present container anymore.
 	ASSIGN(_layoutItemCache, layoutItems);
+	
+	/* Sync selection state which needs to be cached in layout items 
+	   NOTE: only necessary when the layout items are provided by a source, 
+	   when they aren't, selection related methods are sufficient to keep
+	   the selection state cached in each layout item. */
+	NSIndexSet *selection = [self selectionIndexes];
+	int c = [_layoutItemCache count];
+	
+	for (int i = 0; i < c; i++)
+	{
+		ETLayoutItem *item = [_layoutItemCache objectAtIndex: i];
+		
+		if ([selection containsIndex: i])
+			[item setSelected: YES];
+	}
 }
 
 /* Returns layout items currently displayed in the container unlike 
@@ -412,10 +484,22 @@ NSString *ETLayoutItemPboardType = @"ETLayoutItemPboardType"; // FIXME: replace 
 	if (_dataSource == source)
 		return;
 	
-	// NOTE: Resetting layout item cache is ETViewLayout responsability. We
-	// only refresh the container display when the new source is set up.
+	if (_dataSource == nil)
+	{
+		/* Also resets any particular state associated with the container like
+	       selection */
+		[self removeAllItems];
+	}
+	else
+	{
+		NSAssert([[self items] count] == 0, @"A container must own no items "
+			@"when a source is set");
+	}
 	
 	_dataSource = source;
+	
+	// NOTE: Resetting layout item cache is ETViewLayout responsability. We
+	// only refresh the container display when the new source is set up.
 	
 	// NOTE: -setPath: takes care of calling -updateLayout
 	if (source != nil && [[self path] isEqual: @""])
@@ -813,10 +897,11 @@ NSString *ETLayoutItemPboardType = @"ETLayoutItemPboardType"; // FIXME: replace 
 		
 	while ((item = [e nextObject]) != nil)
 	{
-		[item setSelected: NO];
+		[item setSelected: YES];
 	}
 	
-	[self setNeedsDisplay: YES];
+	[self display];
+	//[self setNeedsDisplay: YES];
 }
 
 - (NSMutableIndexSet *) selectionIndexes
@@ -830,13 +915,16 @@ NSString *ETLayoutItemPboardType = @"ETLayoutItemPboardType"; // FIXME: replace 
 	
 	NSLog(@"Modify selected item from %d to %d of %@", [self selectionIndex], index, self);
 	
-	if (index > (numberOfItems - 1))
+	/* Check new selection validity */
+	NSAssert1(index >= 0, @"-setSelectionIndex: parameter must not be a negative value like %d", index);
+	if (index > (numberOfItems - 1) && index != NSNotFound) /* NSNotFound is a big value and not -1 */
 	{
 		NSLog(@"WARNING: Try to set selection index %d when container %@ only contains %d items",
 			index, self, numberOfItems);
 		return;
 	}
 
+	/* Discard previous selection */
 	if ([_selection count] > 0)
 	{
 		NSArray *selectedItems = [[self layoutItemCache] objectsAtIndexes: _selection];
@@ -850,10 +938,14 @@ NSString *ETLayoutItemPboardType = @"ETLayoutItemPboardType"; // FIXME: replace 
 		[_selection removeAllIndexes];
 	}
 	
-	[_selection addIndex: index]; // cache
-	[[[self layoutItemCache] objectAtIndex: index] setSelected: YES];
+	/* Update selection */
+	if (index != NSNotFound)
+	{
+		[_selection addIndex: index]; // cache
+		[[[self layoutItemCache] objectAtIndex: index] setSelected: YES];
+	}
 	
-	NSAssert([_selection count] == 1, @"-setSelectionIndex: must result in a single index and not more");
+	NSAssert([_selection count] == 0 || [_selection count] == 1, @"-setSelectionIndex: must result in either no index or a single index but not more");
 	
 	/* Finally propagate changes by posting notification */
 	NSNotification *notif = [NSNotification 
@@ -863,6 +955,9 @@ NSString *ETLayoutItemPboardType = @"ETLayoutItemPboardType"; // FIXME: replace 
 		[[self delegate] containerSelectionDidChange: notif];
 
 	[[NSNotificationCenter defaultCenter] postNotification: notif];
+	
+	/* Reflect selection change immediately */
+	[self display];
 }
 
 - (int) selectionIndex
@@ -895,6 +990,7 @@ NSString *ETLayoutItemPboardType = @"ETLayoutItemPboardType"; // FIXME: replace 
 	return _selectionShape;
 }
 
+/** point parameter must be expressed in receiver coordinates */
 - (BOOL) doesSelectionContainsPoint: (NSPoint)point
 {
 	ETLayoutItem *item = [[self layout] itemAtLocation: point];
@@ -1061,7 +1157,12 @@ NSString *ETLayoutItemPboardType = @"ETLayoutItemPboardType"; // FIXME: replace 
 
 - (void) render
 {
-	[_layoutItems makeObjectsPerformSelector: @selector(render)];
+	//[_layoutItems makeObjectsPerformSelector: @selector(render)];
+}
+
+- (void) render: (NSMutableDictionary *)inputValues
+{
+	[_layoutItems makeObjectsPerformSelector: @selector(render:) withObject: nil];
 }
 
 - (void) drawRect: (NSRect)rect
@@ -1072,7 +1173,7 @@ NSString *ETLayoutItemPboardType = @"ETLayoutItemPboardType"; // FIXME: replace 
 	/* Now we must draw layout items without view... using either a cell or 
 	   their own renderer. Layout item are smart enough to avoid drawing their
 	   view when they have one. */
-	[[self layoutItemCache] makeObjectsPerformSelector: @selector(render)];
+	//[[self layoutItemCache] makeObjectsPerformSelector: @selector(render:) withObject: nil];
 }
 
 /* Actions */
@@ -1125,40 +1226,59 @@ NSString *ETLayoutItemPboardType = @"ETLayoutItemPboardType"; // FIXME: replace 
 	int newIndex = NSNotFound;
 	
 	/* If no item has been clicked, we exit by default (may change in future) */
-	if (newlyClickedItem == nil)
-		return;
-		
-	newIndex = [[self layoutItemCache] indexOfObject: newlyClickedItem];
+	if (newlyClickedItem != nil)
+		newIndex = [[self layoutItemCache] indexOfObject: newlyClickedItem];
 	
 	/* Update selection if needed */
-	if ([[self selectionIndexes] containsIndex: newIndex] == NO)
+	ETLog(@"Update selection on mouse down");
+	
+	if (newIndex == NSNotFound && [self allowsEmptySelection])
 	{
-		ETLog(@"Update selection on mouse down");
-		[self setSelectionIndex: newIndex];
-		
-		/*NSMutableIndexSet *selection = [self selectionIndexes];
+			[self setSelectionIndex: newIndex];
+	}
+	else if (newIndex != NSNotFound)
+	{
+		if (([event modifierFlags] & SELECTION_BY_ONE_KEY_MASK
+		  || [event modifierFlags] & SELECTION_BY_RANGE_KEY_MASK)
+		  && ([self allowsMultipleSelection]))
+		{
+			NSMutableIndexSet *indexes = [self selectionIndexes];
 			
-		[selection addIndex: [[self layoutItemCache] indexOfObject: _clickedItem]];
-		[self setSelectionIndexes: selection];*/
+			[indexes invertIndex: newIndex];
+			[self setSelectionIndexes: indexes];
+		}
+		else /* Only single selection has to be handled */
+		{
+			[self setSelectionIndex: newIndex];
+		}
 	}
+	
+	/*NSMutableIndexSet *selection = [self selectionIndexes];
+		
+	[selection addIndex: [[self layoutItemCache] indexOfObject: _clickedItem]];
+	[self setSelectionIndexes: selection];*/
 
-	if ([event clickCount] > 1) /* Double click */
-	{
-		NSView *hitView = nil;
-		NSPoint location = [[[self window] contentView] 
-			convertPoint: [event locationInWindow] toView: [self superview]];
-		
-		/* Find whether hitView is a layout item view */
-		_subviewHitTest = YES; /* Allow us to make a hit test on our subview */
-		hitView = [self hitTest: location];
-		_subviewHitTest = NO;
-		DESTROY(_clickedItem);
-		_clickedItem = [[self layoutItemCache] objectWithValue: hitView forKey: @"displayView"];
-		RETAIN(_clickedItem);
-		NSLog(@"Double click detected on view %@ and layout item %@", hitView, _clickedItem);
-		
-		[self sendAction: [self doubleAction] to: [self target]];
-	}
+	/* Handle possible double click */
+	if ([event clickCount] > 1) 
+		[self mouseDoubleClick: event];
+}
+
+- (void) mouseDoubleClick: (NSEvent *)event
+{
+	NSView *hitView = nil;
+	NSPoint location = [[[self window] contentView] 
+		convertPoint: [event locationInWindow] toView: [self superview]];
+	
+	/* Find whether hitView is a layout item view */
+	_subviewHitTest = YES; /* Allow us to make a hit test on our subview */
+	hitView = [self hitTest: location];
+	_subviewHitTest = NO;
+	DESTROY(_clickedItem);
+	_clickedItem = [[self layoutItemCache] objectWithValue: hitView forKey: @"displayView"];
+	RETAIN(_clickedItem);
+	NSLog(@"Double click detected on view %@ and layout item %@", hitView, _clickedItem);
+	
+	[self sendAction: [self doubleAction] to: [self target]];
 }
 
 - (void) setTarget: (id)target
@@ -1206,15 +1326,50 @@ NSString *ETLayoutItemPboardType = @"ETLayoutItemPboardType"; // FIXME: replace 
 	
 	return _clickedItem;
 }
-#if 0
+
+/* GNUstep doesn't rely on -setFrameSize: in -setFrame: unlike Cocoa, so we 
+   patch frame parameter in -setFrame: too */
+#ifdef GNUSTEP
 - (void) setFrame: (NSRect)frame
 {
-	//NSLog(@"-setFrame to %@", NSStringFromRect(frame));
-	if (_displayView != nil)
-		[_displayView setFrame: frame];
-	[super setFrame: frame];
+
+	NSRect patchedFrame = frame;
+	NSSize clipViewSize = [[self scrollView] contentSize];
+	
+	NSLog(@"-setFrame to %@", NSStringFromRect(frame));
+		
+	if ([self isScrollViewShown])
+	{
+		if (clipViewSize.width < frame.size.width || clipViewSize.height < frame.size.height)
+		{
+			patchedFrame.size = clipViewSize;
+		}
+	}
+	
+	[super setFrame: patchedFrame];
 }
 #endif
+
+/* We override this method to patch the size in case we are located in a scroll 
+   view. -setFrame: calls -setFrameSize: on Cocoa but not on GNUstep. */
+- (void) setFrameSize: (NSSize)size
+{
+	NSSize patchedSize = size;
+	NSSize clipViewSize = [[self scrollView] contentSize];
+	
+	NSLog(@"-setFrameSize: to %@", NSStringFromSize(size));
+
+	if ([self isScrollViewShown])
+	{
+		if (clipViewSize.width < size.width || clipViewSize.height < size.height)
+		{
+			patchedSize = clipViewSize;
+		}
+	}
+	
+	[super setFrameSize: patchedSize];
+}
+
 @end
 
 /* Dragging Support */
@@ -1240,9 +1395,12 @@ NSString *ETLayoutItemPboardType = @"ETLayoutItemPboardType"; // FIXME: replace 
 - (void) mouseDragged: (NSEvent *)event
 {
 	ETLog(@"Mouse dragged");
+	
+	/* Convert drag location from window coordinates to the receiver coordinates */
+	NSPoint localPoint = [self convertPoint: [event locationInWindow] fromView: nil];
 
 	/* Only handles event when it is located inside selection */
-	if ([self allowsDragging] && [self doesSelectionContainsPoint: [event locationInWindow]])
+	if ([self allowsDragging] && [self doesSelectionContainsPoint: localPoint])
 	{
 		ETLog(@"Allowed dragging on selection");
 		[self beginDragWithEvent: event]; 

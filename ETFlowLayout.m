@@ -57,19 +57,19 @@
 	return self;
 }
 
-- (void) computeViewLocationsForLayoutModel: (NSArray *)layoutModel inContainer: (ETContainer *)container
+- (void) computeLayoutItemLocationsForLayoutModel: (NSArray *)layoutModel inContainer: (ETContainer *)container
 {
 	NSEnumerator *layoutWalker = [layoutModel objectEnumerator];
 	ETViewLayoutLine *line;
 	NSEnumerator *lineWalker = nil;
-	NSView *view;
-	NSPoint viewLocation = NSMakePoint(0, 0);
+	ETLayoutItem *item = nil;
+	NSPoint itemLocation = NSMakePoint(0, 0);
 	float newLayoutHeight = 0;
 	
 	if ([[self container] isFlipped] == NO)
 	{
 		NSLog(@"WARNING: Flow layout doesn't non-flipped coordinates inside scroll view");
-		viewLocation = NSMakePoint(0, [self layoutSize].height);
+		itemLocation = NSMakePoint(0, [self layoutSize].height);
 	}
   
 	while ((line = [layoutWalker nextObject]) != nil)
@@ -79,7 +79,7 @@
            |          ----------------
            |----------|              |    Layout
            | Layouted |   Layouted   |    Line
-           |  View 1  |   View 2     |
+           |  Item 1  |   Item 2     |
          --+--------------------------------------- <-- here is the baseline
            B
        
@@ -88,73 +88,73 @@
        
      */
     
-		[line setBaseLineLocation: viewLocation];
-		lineWalker = [[line views] objectEnumerator];
+		[line setBaseLineLocation: itemLocation];
+		lineWalker = [[line items] objectEnumerator];
     
-		while ((view = [lineWalker nextObject]) != nil)
+		while ((item = [lineWalker nextObject]) != nil)
 		{
-			[view setX: viewLocation.x];
-			viewLocation.x += [view width];
+			[item setX: itemLocation.x];
+			itemLocation.x += [item width];
 		}
     
-		/* NOTE: to avoid computing view locations when they are outside of the
+		/* NOTE: to avoid computing item locations when they are outside of the
 		   frame, think to add an exit condition here. */
     
-		/* Before computing the following views location in 'x' on the next line, we have 
+		/* Before computing the following items location in 'x' on the next line, we have 
 		   to reset the 'x' accumulator and take in account the end of the current 
 		   line, by substracting to 'y' the last layout line height. */
 		if ([[self container] isFlipped])
 		{
 			[line setBaseLineLocation: 
-				NSMakePoint([line baseLineLocation].x, viewLocation.y)];
-			viewLocation.y = [line baseLineLocation].y + [line height];
+				NSMakePoint([line baseLineLocation].x, itemLocation.y)];
+			itemLocation.y = [line baseLineLocation].y + [line height];
 		}
 		else
 		{
 			[line setBaseLineLocation: 
-				NSMakePoint([line baseLineLocation].x, viewLocation.y - [line height])];
-			viewLocation.y = [line baseLineLocation].y;		
+				NSMakePoint([line baseLineLocation].x, itemLocation.y - [line height])];
+			itemLocation.y = [line baseLineLocation].y;		
 		}
-		viewLocation.x = 0;
+		itemLocation.x = 0;
 		
 		/* Increase height of the content size. Used to adjust the document 
 		   view size in scroll view */
 		newLayoutHeight += [line height];
        
-		//NSLog(@"View locations computed by layout line :%@", line);
+		//NSLog(@"Item locations computed by layout line :%@", line);
 	}
 	
 	[self setLayoutSize: NSMakeSize([self layoutSize].width, newLayoutHeight)];
 }
 
-/* A layout is decomposed in lines. A line is decomposed in views. Finally a layout is displayed in a view container. */
+/* A layout is decomposed in lines. A line is decomposed in items. Finally a layout is displayed in a view container. */
 
 /** Run the layout computation which assigns a location in the view container
-    to each view added to the flow layout manager. */
-- (NSArray *) layoutModelForViews: (NSArray *)views inContainer: (ETContainer *)container;
+    to each item added to the flow layout manager. */
+- (NSArray *) layoutModelForLayoutItems: (NSArray *)items inContainer: (ETContainer *)container;
 {
-	NSMutableArray *unlayoutedViews = 
-		[NSMutableArray arrayWithArray: views];
+	NSMutableArray *unlayoutedItems = 
+		[NSMutableArray arrayWithArray: items];
 	ETViewLayoutLine *line = nil;
 	NSMutableArray *layoutModel = [NSMutableArray array];
 	
-	/* First start by breaking views to layout by lines. We have to fill the layout
-	   line (layoutLineList) until a view is crossing the right boundary which
+	/* First start by breaking items to layout by lines. We have to fill the layout
+	   line (layoutLineList) until a item is crossing the right boundary which
 	   happens when -layoutedViewForNextLineInViews: returns nil. */
-	while ([unlayoutedViews count] > 0)
+	while ([unlayoutedItems count] > 0)
 	{
-		line = [self layoutLineForViews: unlayoutedViews inContainer: container];
+		line = [self layoutLineForLayoutItems: unlayoutedItems inContainer: container];
 		
-		if ([[line views] count] > 0)
+		if ([[line items] count] > 0)
 		{
 			[layoutModel addObject: line];    
 				
-			/* In unlayoutedViews, remove the views which have just been layouted on the previous line. */
-			[unlayoutedViews removeObjectsInArray: [line views]];
+			/* In unlayoutedItems, remove the items which have just been layouted on the previous line. */
+			[unlayoutedItems removeObjectsInArray: [line items]];
 		}
 		else
 		{
-			NSLog(@"Not enough space to layout all the views. Views remaining unlayouted: %@", unlayoutedViews);
+			NSLog(@"Not enough space to layout all the items. Items remaining unlayouted: %@", unlayoutedItems);
 			break;
 		}
 	}
@@ -162,24 +162,24 @@
 	return layoutModel;
 }
 
-/** Returns a line filled with views to layout (stored in a layout line). */
-- (ETViewLayoutLine *) layoutLineForViews: (NSArray *)views inContainer: container
+/** Returns a line filled with items to layout (stored in a layout line). */
+- (ETViewLayoutLine *) layoutLineForLayoutItems: (NSArray *)items inContainer: container
 {
 	//int maxViewHeightInLayoutLine = 0;
-	NSEnumerator *e = [views objectEnumerator];
-	NSView *viewToLayout = nil;
-	NSMutableArray *layoutedViews = [NSMutableArray array];
+	NSEnumerator *e = [items objectEnumerator];
+	ETLayoutItem *itemToLayout = nil;
+	NSMutableArray *layoutedItems = [NSMutableArray array];
 	ETViewLayoutLine *line = nil;
 	float widthAccumulator = 0;
     
-	while ((viewToLayout = [e nextObject]) != nil)
+	while ((itemToLayout = [e nextObject]) != nil)
 	{
-		widthAccumulator += [viewToLayout width];
+		widthAccumulator += [itemToLayout width];
 		
 		if ([self layoutSizeConstraintStyle] != ETSizeConstraintStyleHorizontal
 		 || widthAccumulator < [self layoutSize].width)
 		{
-			[layoutedViews addObject: viewToLayout];
+			[layoutedItems addObject: itemToLayout];
 		}
 		else
 		{
@@ -189,14 +189,14 @@
 	
 	// NOTE: Not really useful for now because we don't support filling the 
 	// layout horizontally, only vertical filling is in place.
-	// We only touch the layout size height in -computeViewLocationsForLayoutModel:
+	// We only touch the layout size height in -computeitemLocationsForLayoutModel:
 	if ([self isContentSizeLayout] && [self layoutSize].width < widthAccumulator)
 		[self setLayoutSize: NSMakeSize(widthAccumulator, [self layoutSize].height)];
 	
-	if ([layoutedViews count] == 0)
+	if ([layoutedItems count] == 0)
 		return nil;
 		
-	line = [ETViewLayoutLine layoutLineWithViews: layoutedViews];
+	line = [ETViewLayoutLine layoutLineWithLayoutItems: layoutedItems];
 	[line setVerticallyOriented: NO];
 
 	return line;

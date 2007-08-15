@@ -35,10 +35,11 @@
 
 #import <Foundation/Foundation.h>
 #import <AppKit/AppKit.h>
+#import <EtoileUI/ETStyleRenderer.h>
 
 #define ETUTI NSString
 
-@class ETStyleRenderer;
+@class ETView;
 
 /** WARNING: Personal notes that are vague and may change, move or become part
 	of another framework.
@@ -70,14 +71,16 @@
  */
 
 
-@interface ETLayoutItem : NSObject 
+@interface ETLayoutItem : ETStyleRenderer 
 {
 	id _value;
 	id _modelObject;
-	NSView *_view;
+	ETView *_view;
 	ETStyleRenderer *_renderer;
 	BOOL _selected;
+	BOOL _visible;
 	NSRect _defaultFrame;
+	NSRect _frame;
 	NSString *_name;
 	BOOL _resizeBounds;
 }
@@ -149,24 +152,36 @@ shape*/
 - isSelectionEnabled;*/
 - (void) setSelected: (BOOL)selected;
 - (BOOL) isSelected;
+- (void) setVisible: (BOOL)visible;
+- (BOOL) isVisible;
 
 /** Used to select items which can be dragged or dropped in a dragging operation */
 - (ETUTI *) type;
 
-/* Rendering Chain */
+/* Layouting & Rendering Chain */
 
-//- renderLayout
-
+- (void) apply: (NSMutableDictionary *)inputValues;
+- (void) render: (NSMutableDictionary *)inputValues;
 - (void) render;
 - (ETStyleRenderer *) renderer;
 - (void) setStyleRenderer: (ETStyleRenderer *)renderer;
 
 /* Sizing */
 
+- (NSRect) frame;
+- (void) setFrame: (NSRect)rect;
 - (NSPoint) origin;
 - (void) setOrigin: (NSPoint)origin;
 - (NSSize) size;
 - (void) setSize: (NSSize)size;
+- (float) x;
+- (void) setX: (float)x;
+- (float) y;
+- (void) setY: (float)y;
+- (float) height;
+- (void) setHeight: (float)height;
+- (float) width;
+- (void) setWidth: (float)width;
 
 - (NSRect) defaultFrame;
 - (void) setDefaultFrame: (NSRect)frame;

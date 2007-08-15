@@ -105,6 +105,64 @@
 	return [self initWithLayoutItems: nil view: nil];
 }
 
+- (void) render: (NSMutableDictionary *)inputValues
+{
+	[super render: nil];
+	// FIXME: Handled in ETContainer currently
+	//[[(ETContainer *)[self view] layoutItemCache] makeObjectsPerformSelector: @selector(render:) withObject: nil];
+}
+
+#if 0
+- (NSArray *) visibleLayoutItems
+{
+	ETContainer *container = (ETContainer *)[self view];
+	NSMutableArray *visibleItems = [NSMutableArray array];
+	NSEnumerator  *e = [[container items] objectEnumerator];
+	ETLayoutItem *item = nil;
+	
+	while ((item = [e nextObject]) != nil)
+	{
+		if ([item isVisible])
+			[visibleItems addObject: item];
+	}
+	
+	return visibleItems;
+}
+
+// FIXME: Make a bottom top traversal to find the first view which can be used 
+// as superview for the visible layout item views. Actually this isn't needed
+// or supported because all ETLayoutItemGroup instances must embed a container.
+// This last point is going to become purely optional.
+- (void) setVisibleLayoutItems: (NSArray *)visibleItems
+{
+	ETContainer *container = (ETContainer *)[self view];
+	NSEnumerator  *e = [[container items] objectEnumerator];
+	ETLayoutItem *item = nil;
+	
+	while ((item = [e nextObject]) != nil)
+	{
+		if ([visibleItems containsObject: item])
+		{
+			[item setVisible: YES];
+			if ([[container subviews] containsObject: [item displayView]] == NO)
+			{
+				[container addSubview: [item displayView]];
+				NSLog(@"Inserted view at %@", NSStringFromRect([[item displayView] frame]));
+			}
+		}
+		else
+		{
+			[item setVisible: NO];
+			if ([[container subviews] containsObject: [item displayView]] == NO)
+			{
+				[[item displayView] removeFromSuperview];
+				NSLog(@"Removed view at %@", NSStringFromRect([[item displayView] frame]));
+			}
+		}
+	}
+}
+#endif
+
 - (NSArray *) ungroup
 {
 	return nil;

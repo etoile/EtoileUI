@@ -41,6 +41,8 @@
 #import <EtoileUI/NSView+Etoile.h>
 #import <EtoileUI/GNUstep.h>
 
+#define ETLog NSLog
+
 @interface ETContainer (PackageVisibility)
 - (NSArray *) layoutItems;
 - (void) cacheLayoutItems: (NSArray *)cache;
@@ -212,7 +214,7 @@
 	calling -setLayoutSize: and only then -render. */
 - (void) setLayoutSize: (NSSize)size
 {
-	NSLog(@"-setLayoutSize");
+	//NSLog(@"-setLayoutSize");
 	_layoutSize = size;
 }
 
@@ -223,7 +225,7 @@
 
 - (void) setContentSizeLayout: (BOOL)flag
 {
-	NSLog(@"-setContentSizeLayout");
+	//NSLog(@"-setContentSizeLayout");
 	_maxSizeLayout = flag;
 }
 
@@ -441,53 +443,48 @@
 		_isLayouting = YES;
 	}
 	
+	ETLog(@"Render layout items: %@", items);
+	
 	NSArray *itemViews = [items valueForKey: @"displayView"];
 	NSArray *layoutModel = nil;
 	
 	float scale = [container itemScaleFactor];
 	[self resizeLayoutItems: items toScaleFactor: scale];
 	
-	layoutModel = [self layoutModelForViews: itemViews inContainer: container];
+	layoutModel = [self layoutModelForLayoutItems: items inContainer: container];
 	/* Now computes the location of every views by relying on the line by line 
 	   decomposition already made. */
-	[self computeViewLocationsForLayoutModel: layoutModel inContainer: container];
+	[self computeLayoutItemLocationsForLayoutModel: layoutModel inContainer: container];
 	
 	// TODO: Optimize by computing set intersection of visible and unvisible item display views
-	NSLog(@"Remove views %@ of next layout items to be displayed from their superview", itemViews);
+	/*NSLog(@"Remove views %@ of next layout items to be displayed from their superview", itemViews);
 	[itemViews makeObjectsPerformSelector: @selector(removeFromSuperview)];
-			NSLog(@"Before %@", NSStringFromRect([[self container] frame]));
+			NSLog(@"Before %@", NSStringFromRect([[self container] frame]));*/
+	[[self container] setVisibleItems: [NSArray array]];
 	/* Adjust container size when it is embedded in a scroll view */
 	if ([[self container] isScrollViewShown])
 	{
 		// NOTE: For this assertion check -[ETContainer setScrollView:] 
 		NSAssert([self isContentSizeLayout] == YES, 
 			@"Any layout done in a scroll view must be based on content size");
-			
+		
 		[[self container] setFrameSize: [self layoutSize]];
 NSLog(@"After %@ and layoutSize %@", NSStringFromRect([[self container] frame]), NSStringFromSize([self layoutSize]));
 		
 		//[[[self container] scrollView] reflectScrolledClipView: [[[self container] scrollView] clipView]];
 	}
 	
-	NSMutableArray *visibleItemViews = [NSMutableArray array];
+	NSMutableArray *visibleItems = [NSMutableArray array];
 	NSEnumerator  *e = [layoutModel objectEnumerator];
 	ETViewLayoutLine *line = nil;
 	
 	/* Flatten layout model by putting all views in a single array */
 	while ((line = [e nextObject]) != nil)
 	{
-		[visibleItemViews addObjectsFromArray: [line views]];
+		[visibleItems addObjectsFromArray: [line items]];
 	}
 	
-	e = [visibleItemViews objectEnumerator];
-	NSView *visibleItemView = nil;
-	
-	while ((visibleItemView = [e nextObject]) != nil)
-	{
-		if ([[container subviews] containsObject: visibleItemView] == NO)
-			[container addSubview: visibleItemView];
-		NSLog(@"Inserted view at %@", NSStringFromRect([visibleItemView frame]));
-	}
+	[[self container] setVisibleItems: visibleItems];
 	
 	_isLayouting = NO;
 }
@@ -556,7 +553,7 @@ NSLog(@"After %@ and layoutSize %@", NSStringFromRect([[self container] frame]),
 		if ([item view] != nil)
 		{
 
-			[[item view] setFrame: itemFrame];
+			[item setFrame: itemFrame];
 			//NSLog(@"Scale %@ to %@", NSStringFromRect(unscaledFrame), 
 			//	NSStringFromRect(ETScaleRect(unscaledFrame, factor)));
 		}
@@ -587,7 +584,7 @@ NSLog(@"After %@ and layoutSize %@", NSStringFromRect([[self container] frame]),
 /** Overrides this method to generate a layout line based on the container 
     constraints. Usual container constraints are size, vertical and horizontal 
 	scrollers visibility. */
-- (ETViewLayoutLine *) layoutLineForViews: (NSArray *)views inContainer: (ETContainer *)viewContainer
+- (ETViewLayoutLine *) layoutLineForLayoutItems: (NSArray *)items inContainer: (ETContainer *)viewContainer
 {
 	return nil;
 }
@@ -600,9 +597,9 @@ NSLog(@"After %@ and layoutSize %@", NSStringFromRect([[self container] frame]),
 	you if you want to create a layout model with a more elaborated ordering 
 	and rendering semantic. Finally the layout model is interpreted by 
 	-computeViewLocationsForLayoutModel:inContainer:. */
-- (NSArray *) layoutModelForViews: (NSArray *)views inContainer: (ETContainer *)viewContainer
+- (NSArray *) layoutModelForLayoutItems: (NSArray *)items inContainer: (ETContainer *)viewContainer
 {
-	ETViewLayoutLine *line = [self layoutLineForViews: views inContainer: viewContainer];
+	ETViewLayoutLine *line = [self layoutLineForLayoutItems: items inContainer: viewContainer];
 	
 	if (line != nil)
 		return [NSArray arrayWithObject: line];
@@ -613,7 +610,7 @@ NSLog(@"After %@ and layoutSize %@", NSStringFromRect([[self container] frame]),
 /** Overrides this method to interpretate the layout model and compute view 
 	locations accordingly. Most of the work of layout process happens in this
 	method. */
-- (void) computeViewLocationsForLayoutModel: (NSArray *)layoutModel inContainer: (ETContainer *)container
+- (void) computeLayoutItemLocationsForLayoutModel: (NSArray *)layoutModel inContainer: (ETContainer *)container
 {
 
 }
@@ -654,12 +651,19 @@ NSLog(@"After %@ and layoutSize %@", NSStringFromRect([[self container] frame]),
 	{
 		if ([item displayView] != nil)
 		{
+			/* Item display view must be a direct subview of our container, 
+			   otherwise NSPointInRect test is going to be meaningless. */
+			NSAssert1([[[self container] subviews] containsObject: [item displayView]],
+				@"Item display view must be a direct subview of %@ to know "
+				@"whether it matches given location", [self container]);
+		
 			if (NSPointInRect(location, [[item displayView] frame]))
 				return item;
 		}
 		else /* Layout items uses no display view */
 		{
 			// FIXME: Implement
+			NSLog(@"WARNING: -itemAtLocation: not implemented when item uses no display view");
 		}
 	}
 	

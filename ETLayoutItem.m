@@ -36,6 +36,7 @@
 
 #import <EtoileUI/ETLayoutItem.h>
 #import <EtoileUI/ETStyleRenderer.h>
+#import <EtoileUI/ETView.h>
 #import <EtoileUI/NSView+Etoile.h>
 #import <EtoileUI/GNUstep.h>
 
@@ -103,6 +104,8 @@
     if (self != nil)
     {
 		[self setView: view];
+		[self setVisible: NO];
+		[self setStyleRenderer: AUTORELEASE([[ETSelection alloc] init])];
 		ASSIGN(_value, value);
 		if (repObject != nil)
 		{
@@ -138,9 +141,19 @@
 	}
 	[item setName: [self name]];
 	[item setStyleRenderer: [self renderer]];
+	[item setFrame: [self frame]];
 	[item setAppliesResizingToBounds: [self appliesResizingToBounds]];
 	
 	return item;
+}
+
+- (NSString *) description
+{
+	NSString *desc = [super description];
+	
+	desc = [@"<" stringByAppendingFormat: @"%@ selected:%d>", desc, [self isSelected]];
+	
+	return desc;
 }
 
 - (NSString *) name
@@ -171,6 +184,21 @@
 - (void) setValue: (id)value
 {
 	ASSIGN(_value, value);
+	if ([_value isKindOfClass: [NSImage class]])
+	{
+		ETImageStyle *imgStyle = [ETImageStyle styleWithImage: (NSImage *)_value];
+		
+		[self setDefaultFrame: ETMakeRect(NSZeroPoint, [_value size])];
+		[self setStyleRenderer: imgStyle];
+	}
+	else if ([_value isKindOfClass: [NSString class]])
+	{
+	
+	}
+	else if ([_value isKindOfClass: [NSAttributedString class]])
+	{
+	
+	}
 }
 
 /** Returns model object which embeds the representation of what the layout 
@@ -193,22 +221,51 @@
 
 - (NSView *) view
 {
-	return _view;
+	if ([_view isKindOfClass: [ETView class]] && [_view wrappedView] != nil)
+	{
+		return [_view wrappedView];
+	}
+	else
+	{
+		return _view;
+	}
 }
 
 - (void) setView: (NSView *)view
 {
 	BOOL resizeBoundsActive = [self appliesResizingToBounds];
-	
-	_defaultFrame = NSZeroRect;
-	/* Stop to observe notifications on current view and reset bounds size */
-	[self setAppliesResizingToBounds: NO];
-	
-	ASSIGN(_view, view);
+	ETView *wrapperView = nil;
 	
 	if (_view != nil)
 	{
-		_defaultFrame = [_view frame];
+		[_view setFrame: [self defaultFrame]];
+		[_view setRenderer: nil];
+		/* Stop to observe notifications on current view and reset bounds size */
+		[self setAppliesResizingToBounds: NO];
+	}
+	
+	_defaultFrame = NSZeroRect;
+	
+	/* When the view isn't an ETView instance, we wrap it inside a new ETView 
+	   instance to have -drawRect: asking the layout item to render by itself. */
+	if ([view isKindOfClass: [ETView class]])
+	{
+		wrapperView = (ETView *)view;
+	}
+	else if ([view isKindOfClass: [NSView class]])
+	{
+		NSAssert1(view != nil, @"A nil view must not be wrapped in -setView: of %@", self);
+		wrapperView = [[ETView alloc] initWithFrame: [view frame]];
+		[wrapperView setWrappedView: view];
+		AUTORELEASE(wrapperView);
+	}
+	
+	ASSIGN(_view, wrapperView);
+	
+	if (_view != nil)
+	{
+		[_view setRenderer: self];
+		[self setDefaultFrame: [_view frame]];
 		if (resizeBoundsActive)
 			[self setAppliesResizingToBounds: YES];
 	}
@@ -256,12 +313,23 @@
 
 - (void) setSelected: (BOOL)selected
 {
+	NSLog(@"Set layout item selection state %@", self);
 	_selected = selected;
 }
 
 - (BOOL) isSelected
 {
 	return _selected;
+}
+
+- (void) setVisible: (BOOL)visible
+{
+	_visible = visible;
+}
+
+- (BOOL) isVisible
+{
+	return _visible;
 }
 
 /** Commonly used to select items which can be dragged or dropped in a dragging operation */
@@ -284,29 +352,52 @@
 	}
 }
 
-/** Forwards rendering along the container tree. 
-    Override */
-- (void) render
+/** Allows to compute the layout of the whole layout item tree without any 
+	rendering/drawing. The layout begins with layout item leaves which can 
+	simply returns their size, then moves up to layout item node which can 
+	compute their layout and by side-effect their size. The process is 
+	continued until the root layout item associated with a container is 
+	reached.
+	inputValues is usually nil. */
+- (void) apply: (NSMutableDictionary *)inputValues
 {
-	// FIXME: Finds the first layout item ancestor with a view and asks it to
-	// redraw itself at our rect location, this will flow back to us.
-	[_renderer renderLayoutItem: self];
-
-	if ([[self view] respondsToSelector: @selector(render)])
-		[(id)[self view] render];
+	
 }
 
-// Private
-- (void) renderLayoutItem: (ETLayoutItem *)item inView: (NSView *)inView
+/** Propagates rendering/drawing in the layout item tree.
+	This method doesn't involve any layout and size computation of the layout 
+	items. If you need to do layout or size computation, implement the method
+	-apply: in addition to this one.
+    Override */
+- (void) render: (NSMutableDictionary *)inputValues
 {
 	/* When we have a view, we wait to be asked to draw directly by our view 
 	   before rendering anything. If a parent layout item asks us to draw, we
 	   decline and wait the control return to the view who initiated the 
 	   drawing and this view asks our view to draw itself as a subview. */
-	if ([self view] != nil && [[self view] isEqual: inView])
+	//if ([self view] == nil || [[NSView focusView] isEqual: [[self displayView] superview]])
+	{
 		[_renderer renderLayoutItem: self];
+	}
 }
 
+- (void) render
+{
+	[self render: nil];
+}
+
+- (void) lockFocus
+{
+	// FIXME: Finds the first layout item ancestor with a view and asks it to
+	// redraw itself at our rect location, this will flow back to us.
+}
+
+- (void) unlockFocus
+{
+
+}
+
+// NOTE: Will probably become - (ETService *) renderer;
 - (ETStyleRenderer *) renderer
 {
 	return _renderer;
@@ -315,6 +406,84 @@
 - (void) setStyleRenderer: (ETStyleRenderer *)renderer
 {
 	ASSIGN(_renderer, renderer);
+}
+
+- (NSRect) frame
+{
+	return _frame;
+}
+
+- (void) setFrame: (NSRect)rect
+{
+	_frame = rect;
+	if ([self displayView] != nil)
+		[[self displayView] setFrame: rect];
+}
+
+- (NSPoint) origin
+{
+	return [self frame].origin;
+}
+
+- (void) setOrigin: (NSPoint)origin
+{
+	NSRect newFrame = [self frame];
+	
+	newFrame.origin = origin;
+	[self setFrame: newFrame];
+}
+
+- (NSSize) size
+{
+	return [self frame].size;
+}
+
+- (void) setSize: (NSSize)size
+{
+	NSRect newFrame = [self frame];
+	
+	newFrame.size = size;
+	[self setFrame: newFrame];
+}
+
+- (float) x
+{
+	return [self frame].origin.x;
+}
+
+- (void) setX: (float)x
+{
+	[self setOrigin: NSMakePoint(x, [self y])];
+}
+
+- (float) y
+{
+	return [self frame].origin.y;
+}
+
+- (void) setY: (float)y
+{
+	[self setOrigin: NSMakePoint([self x], y)];
+}
+
+- (float) height
+{
+	return [self size].height;
+}
+
+- (void) setHeight: (float)height
+{
+	[self setSize: NSMakeSize([self width], height)];
+}
+
+- (float) width
+{
+	return [self size].width;
+}
+
+- (void) setWidth: (float)width
+{
+	[self setSize: NSMakeSize(width, [self height])];
 }
 
 - (NSRect) defaultFrame 
@@ -335,7 +504,7 @@
 
 - (void) restoreDefaultFrame
 { 
-	[[self view] setFrame: [self defaultFrame]]; 
+	[self setFrame: [self defaultFrame]]; 
 }
 
 /** When the layout item uses a view, pass YES to this method to have the 
@@ -346,12 +515,19 @@
 - (void) setAppliesResizingToBounds: (BOOL)flag
 {
 	_resizeBounds = flag;
-	if (_resizeBounds && [self view] != nil)
+	
+	if ([self displayView] == nil)
+	{
+		NSLog(@"WARNING: -setAppliesResizingToBounds: called with no view for %@", self);
+		return;
+	}
+	
+	if (_resizeBounds && [self displayView] != nil)
 	{
 		[[NSNotificationCenter defaultCenter] addObserver: self 
 		                                         selector: @selector(layoutItemViewFrameDidChange:) 
 												     name: NSViewFrameDidChangeNotification
-												   object: [self view]];
+												   object: [self displayView]];
 		/* Fake notification to update bounds size */
 		[self layoutItemViewFrameDidChange: nil];
 	}
@@ -359,8 +535,8 @@
 	{
 		[[NSNotificationCenter defaultCenter] removeObserver: self];
 		/* Restore bounds size */
-		[[self view] setBoundsSize: [[self view] frame].size];
-		[[self view] setNeedsDisplay: YES];
+		[[self displayView] setBoundsSize: [[self displayView] frame].size];
+		[[self displayView] setNeedsDisplay: YES];
 	}
 }
 
@@ -371,7 +547,7 @@
 
 - (void) layoutItemViewFrameDidChange: (NSNotification *)notif
 {
-	NSAssert1([self view] != nil, @"View of %@ cannot be nil on view notification", self);
+	NSAssert1([self displayView] != nil, @"View of %@ cannot be nil on view notification", self);
 	NSAssert1([self appliesResizingToBounds] == YES, @"Bounds resizing must be set on view notification in %@", self);
 	
 	ETLog(@"Receives NSViewFrameDidChangeNotification in %@", self);
@@ -379,8 +555,8 @@
 	// FIXME: the proper way to handle such scaling is to use an 
 	// NSAffineTransform and applies to item view in 
 	// -resizeLayoutItems:scaleFactor: when -appliesResizingToBounds returns YES
-	[[self view] setBoundsSize: [self defaultFrame].size];
-	[[self view] setNeedsDisplay: YES];
+	[[self displayView] setBoundsSize: [self defaultFrame].size];
+	[[self displayView] setNeedsDisplay: YES];
 }
 
 /** Returns a default image representation of the layout item. 
