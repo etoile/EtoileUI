@@ -65,6 +65,7 @@ NSString *ETLayoutItemPboardType = @"ETLayoutItemPboardType"; // FIXME: replace 
 - (NSArray *) layoutItemsFromSource;
 - (NSArray *) layoutItemsFromFlatSource;
 - (NSArray *) layoutItemsFromTreeSource;
+- (BOOL) canUpdateLayout;
 - (void) updateLayoutWithItems: (NSArray *)itemsToLayout;
 - (BOOL) doesSelectionContainsPoint: (NSPoint)point;
 - (void) fixOwnerIfNeededForItem: (ETLayoutItem *)item;
@@ -299,6 +300,11 @@ NSString *ETLayoutItemPboardType = @"ETLayoutItemPboardType"; // FIXME: replace 
 	_autolayout = flag;
 }
 
+- (BOOL) canUpdateLayout
+{
+	return [self isAutolayout] && ![[self layout] isRendering];
+}
+
 - (void) updateLayout
 {
 	/* Delegate layout rendering to custom layout object */
@@ -383,7 +389,8 @@ NSString *ETLayoutItemPboardType = @"ETLayoutItemPboardType"; // FIXME: replace 
 	// overidden -displayViewPrototype method in each ETViewLayout suclasses.
 	[self syncDisplayViewWithContainer];
 	
-	[self updateLayout];
+	if ([self canUpdateLayout])
+		[self updateLayout];
 }
 
 /* Various adjustements necessary when layout object is a wrapper around an 
@@ -773,14 +780,16 @@ NSString *ETLayoutItemPboardType = @"ETLayoutItemPboardType"; // FIXME: replace 
 {
 	//NSLog(@"Add item in %@", self);
 	[_layoutItems addObject: item];
-	[self updateLayout];
+	if ([self canUpdateLayout])
+		[self updateLayout];
 }
 
 - (void) insertItem: (ETLayoutItem *)item atIndex: (int)index
 {
 	//NSLog(@"Insert item in %@", self);
 	[_layoutItems insertObject: item atIndex: index];
-	[self updateLayout];
+	if ([self canUpdateLayout])
+		[self updateLayout];
 }
 
 - (void) removeItem: (ETLayoutItem *)item
@@ -790,7 +799,8 @@ NSString *ETLayoutItemPboardType = @"ETLayoutItemPboardType"; // FIXME: replace 
 		[_selection removeIndex: [self indexOfItem: item]];
 	[[item displayView] removeFromSuperview];
 	[_layoutItems removeObject: item];
-	[self updateLayout];
+	if ([self canUpdateLayout])
+		[self updateLayout];
 }
 
 - (void) removeItemAtIndex: (int)index
@@ -839,7 +849,8 @@ NSString *ETLayoutItemPboardType = @"ETLayoutItemPboardType"; // FIXME: replace 
 	[_selection removeAllIndexes];
 	[itemDisplayViews makeObjectsPerformSelector: @selector(removeFromSuperview)];
 	[_layoutItems removeAllObjects];
-	[self updateLayout];
+	if ([self canUpdateLayout])
+		[self updateLayout];
 }
 
 - (int) indexOfItem: (ETLayoutItem *)item
@@ -1350,7 +1361,7 @@ NSString *ETLayoutItemPboardType = @"ETLayoutItemPboardType"; // FIXME: replace 
 	[super setFrame: patchedFrame];
 	
 	// FIXME: reentrancy issue in -renderLayoutItems:
-	if ([self isAutolayout])
+	if ([self canUpdateLayout])
 		[self updateLayout];
 }
 #endif
@@ -1374,8 +1385,7 @@ NSString *ETLayoutItemPboardType = @"ETLayoutItemPboardType"; // FIXME: replace 
 	
 	[super setFrameSize: patchedSize];
 	
-	// FIXME: reentrancy issue in -renderLayoutItems:
-	if ([self isAutolayout])
+	if ([self canUpdateLayout])
 		[self updateLayout];
 }
 

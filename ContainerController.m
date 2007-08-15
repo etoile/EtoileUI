@@ -152,7 +152,7 @@
     NSEnumerator *e = [paths objectEnumerator];
     NSString *path = nil;
     
-    NSLog(@"Pictures selected: %@\n", paths);
+    //NSLog(@"Pictures selected: %@\n", paths);
 	
 	ASSIGN(images, [NSMutableArray array]);
     
@@ -162,7 +162,7 @@
 		
 		if (image != nil)
 		{
-			NSLog(@"New image loaded: %@\n", image);
+			//NSLog(@"New image loaded: %@\n", image);
 			
 			[image setName: path];
 			[images addObject: image];
@@ -261,7 +261,7 @@
 	[imageItem setValue: type forProperty: @"type"];
 	//[imageItem setValue: date forProperty	: @"modificationdate"];
 	
-	NSLog(@"Returns %@ as layout item in container %@", imageItem, container);
+	//NSLog(@"Returns %@ as layout item in container %@", imageItem, container);
 	
 	//AUTORELEASE(imageItem);
 

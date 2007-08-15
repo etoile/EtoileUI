@@ -383,6 +383,14 @@
 		itemsForRendering = [[self container] layoutItems];
 	}	
 	
+	/* When the number of layout items is zero and doesn't vary, no layout 
+	   update is necessary */
+	if ([[[self container] layoutItemCache] count] == 0 && [itemsForRendering count] == 0)
+	{
+		_isLayouting = NO;
+		return;
+	}
+	
 	[[self container] cacheLayoutItems: itemsForRendering];
 	
 	/* Let layout delegate overrides default layout items rendering */
