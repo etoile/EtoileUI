@@ -71,7 +71,6 @@ NSString *ETLayoutItemPboardType = @"ETLayoutItemPboardType"; // FIXME: replace 
 - (BOOL) isScrollViewShown;
 - (void) setShowsScrollView: (BOOL)scroll;
 - (void) mouseDoubleClick: (NSEvent *)event;
-- (void) frameDidChange: (NSNotification *)notif;
 @end
 
 
@@ -97,11 +96,6 @@ NSString *ETLayoutItemPboardType = @"ETLayoutItemPboardType"; // FIXME: replace 
 		
 		[self registerForDraggedTypes: [NSArray arrayWithObjects:
 			ETLayoutItemPboardType, nil]];
-			
-		[[NSNotificationCenter defaultCenter] addObserver: self 
-												 selector: @selector(frameDidChange:) 
-												     name: NSViewFrameDidChangeNotification 
-												   object: self];
 		
 		if (views != nil)
 		{
@@ -125,8 +119,6 @@ NSString *ETLayoutItemPboardType = @"ETLayoutItemPboardType"; // FIXME: replace 
 
 - (void) dealloc
 {
-	[[NSNotificationCenter defaultCenter] removeObserver: self];
-
     DESTROY(_layoutItems);
 	DESTROY(_containerLayout);
 	DESTROY(_displayView);
@@ -1287,7 +1279,7 @@ NSString *ETLayoutItemPboardType = @"ETLayoutItemPboardType"; // FIXME: replace 
 	RETAIN(_clickedItem);
 	NSLog(@"Double click detected on view %@ and layout item %@", hitView, _clickedItem);
 	
-	[self sendAction: [self doubleAction] to: [self target]];
+	[[NSApplication sharedApplication] sendAction: [self doubleAction] to: [self target] from: self];
 }
 
 - (void) setTarget: (id)target
@@ -1370,7 +1362,7 @@ NSString *ETLayoutItemPboardType = @"ETLayoutItemPboardType"; // FIXME: replace 
 	NSSize patchedSize = size;
 	NSSize clipViewSize = [[self scrollView] contentSize];
 	
-	NSLog(@"-setFrameSize: to %@", NSStringFromSize(size));
+	//NSLog(@"-setFrameSize: to %@", NSStringFromSize(size));
 
 	if ([self isScrollViewShown])
 	{

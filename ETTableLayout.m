@@ -116,7 +116,7 @@
 	[_displayViewPrototype removeFromSuperview];
 }
 
-- (void) renderWithLayoutItems: (NSArray *)items inContainer: (ETContainer *)container
+- (void) renderWithLayoutItems: (NSArray *)items
 {
 	NSScrollView *scrollView = nil;
 	NSTableView *tv = nil;
@@ -146,15 +146,15 @@
 	
 	if ([scrollView superview] == nil)
 	{
-		[container setDisplayView: scrollView];
+		[[self container] setDisplayView: scrollView];
 	}
-	else if ([[scrollView superview] isEqual: container] == NO)
+	else if ([[scrollView superview] isEqual: [self container]] == NO)
 	{
 		NSLog(@"WARNING: Table view of table layout should never have another "
 			  @"superview than container parameter or nil.");
 	}
 	
-	[self resizeLayoutItems: items toScaleFactor: [container itemScaleFactor]];
+	[self resizeLayoutItems: items toScaleFactor: [[self container] itemScaleFactor]];
 	
 	if ([tv dataSource] == nil)
 		[tv setDataSource: self];

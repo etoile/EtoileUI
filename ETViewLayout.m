@@ -418,7 +418,7 @@
 			[self setLayoutSize: [[self container] frame].size];
 		}
 	}
-	[self renderWithLayoutItems: itemsForRendering inContainer: [self container]];
+	[self renderWithLayoutItems: itemsForRendering];
 }
 
 /** You can adjust the layout size by passing a different container than the one 
@@ -428,7 +428,7 @@
 
 /** Run the layout computation which assigns a location in the view container
     to each view added to the flow layout manager. */
-- (void) renderWithLayoutItems: (NSArray *)items inContainer: (ETContainer *)container
+- (void) renderWithLayoutItems: (NSArray *)items
 {	
 	/* Prevent reentrancy. In a threaded environment, it isn't perfectly safe 
 	   because _isLayouting test and _isLayouting assignement doesn't occur in
@@ -448,13 +448,13 @@
 	NSArray *itemViews = [items valueForKey: @"displayView"];
 	NSArray *layoutModel = nil;
 	
-	float scale = [container itemScaleFactor];
+	float scale = [[self container] itemScaleFactor];
 	[self resizeLayoutItems: items toScaleFactor: scale];
 	
-	layoutModel = [self layoutModelForLayoutItems: items inContainer: container];
+	layoutModel = [self layoutModelForLayoutItems: items inContainer: [self container]];
 	/* Now computes the location of every views by relying on the line by line 
 	   decomposition already made. */
-	[self computeLayoutItemLocationsForLayoutModel: layoutModel inContainer: container];
+	[self computeLayoutItemLocationsForLayoutModel: layoutModel inContainer: [self container]];
 	
 	// TODO: Optimize by computing set intersection of visible and unvisible item display views
 	/*NSLog(@"Remove views %@ of next layout items to be displayed from their superview", itemViews);

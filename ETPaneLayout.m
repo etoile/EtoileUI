@@ -100,9 +100,8 @@
 
 /* Layouting */
 
-- (void) renderWithLayoutItems: (NSArray *)items inContainer: (ETContainer *)container
+- (void) renderWithLayoutItems: (NSArray *)items
 {
-	NSArray *itemViews = [items valueForKey: @"displayView"];
 	NSArray *layoutModel = nil;
 	
 	/* By safety, we correct container style in case it got modified between
@@ -113,41 +112,29 @@
 	//float scale = [container itemScaleFactor];
 	//[self resizeLayoutItems: items toScaleFactor: scale];
 	
-	layoutModel = [self layoutModelForViews: itemViews inContainer: container];
+	layoutModel = [self layoutModelForLayoutItems: items inContainer: [self container]];
 	/* Now computes the location of every views by relying on the line by line 
 	   decomposition already made. */
-	[self computeViewLocationsForLayoutModel: layoutModel inContainer: container];
+	[self computeLayoutItemLocationsForLayoutModel: layoutModel inContainer: [self container]];
 		
 	/* Don't forget to remove existing display view if we switch from a layout 
 	   which reuses a native AppKit control like table layout. */
-	[container setDisplayView: nil];
+	[[self container] setDisplayView: nil];
 	
-	// TODO: Optimize by computing set intersection of visible and unvisible item display views
-	//NSLog(@"Remove views of next layout items to be displayed from their superview");
-	[itemViews makeObjectsPerformSelector: @selector(removeFromSuperview)];
-	
-	NSMutableArray *visibleItemViews = [NSMutableArray arrayWithArray: layoutModel];
-	NSEnumerator *e = [visibleItemViews objectEnumerator];
-	NSView *visibleItemView = nil;
-	
-	while ((visibleItemView = [e nextObject]) != nil)
-	{
-		if ([[container subviews] containsObject: visibleItemView] == NO)
-			[container addSubview: visibleItemView];
-	}
+	[[self container] setVisibleItems: layoutModel];
 }
 
 /* Only returns selected item view */
-- (NSArray *) layoutModelForViews: (NSArray *)views inContainer: (ETContainer *)viewContainer
+- (NSArray *) layoutModelForLayoutItems: (NSArray *)items inContainer: (ETContainer *)viewContainer
 {
 	int selectedPaneIndex = [[self container] selectionIndex];
 	
 	NSLog(@"Layout selected pane %d in container %@", selectedPaneIndex, [self container]);
 	
 	if (selectedPaneIndex == NSNotFound)
-		return views; // return nil;
+		return items; // return nil;
 		
-	return [NSArray arrayWithObject: [views objectAtIndex: selectedPaneIndex]];
+	return [NSArray arrayWithObject: [items objectAtIndex: selectedPaneIndex]];
 	/*@try 
 	{ 
 		return [views objectAtIndex: selectedPaneIndex];
@@ -159,19 +146,19 @@
 	@finally { return nil; }*/
 }
 
-- (void) computeViewLocationsForLayoutModel: (NSArray *)layoutModel inContainer: (ETContainer *)container
+- (void) computeLayoutItemLocationsForLayoutModel: (NSArray *)layoutModel inContainer: (ETContainer *)container
 {
 	//NSPoint viewLocation = NSMakePoint([container width] / 2.0, [container height] / 2.0);
-	NSPoint viewLocation = NSZeroPoint;
-	NSEnumerator *viewWalker = [layoutModel objectEnumerator];
-	NSView *view = nil;
+	NSPoint itemLocation = NSZeroPoint;
+	NSEnumerator *itemWalker = [layoutModel objectEnumerator];
+	ETLayoutItem *item = nil;
 	
-	while ((view = [viewWalker nextObject]) != nil)
+	while ((item = [itemWalker nextObject]) != nil)
 	{
-		[view setFrameOrigin: viewLocation];
+		[item setOrigin: itemLocation];
 	}
 	
-	NSLog(@"View locations computed by layout model %@", layoutModel);
+	NSLog(@"Layout item locations computed by layout model %@", layoutModel);
 }
 
 // Private use

@@ -106,7 +106,7 @@ typedef enum _ETSizeConstraintStyle
 - (BOOL) isRendering;
 
 - (void) render;
-- (void) renderWithLayoutItems: (NSArray *)items inContainer: (ETContainer *)container;
+- (void) renderWithLayoutItems: (NSArray *)items;
 - (void) renderWithSource: (id)source inContainer: (ETContainer *)container;
 
 - (ETViewLayoutLine *) layoutLineForLayoutItems: (NSArray *)items inContainer: (ETContainer *)viewContainer;

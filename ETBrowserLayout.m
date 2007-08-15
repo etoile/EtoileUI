@@ -110,9 +110,8 @@
 	[_displayViewPrototype removeFromSuperview];
 }
 
-- (void) renderWithLayoutItems: (NSArray *)items inContainer: (ETContainer *)container
+- (void) renderWithLayoutItems: (NSArray *)items
 {
-
 	NSBrowser *browserView = nil;
 	
 	/* No display view proto available, a browser view needs needs to be created 
@@ -138,9 +137,9 @@
 	
 	if ([browserView superview] == nil)
 	{
-		[container setDisplayView: browserView];
+		[[self container] setDisplayView: browserView];
 	}
-	else if ([[browserView superview] isEqual: container] == NO)
+	else if ([[browserView superview] isEqual: [self container]] == NO)
 	{
 		NSLog(@"WARNING: %@ of %@ should never have another "
 			  @"superview than container parameter or nil.", browserView, self);

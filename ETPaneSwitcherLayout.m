@@ -439,7 +439,7 @@
 		[[self container] selectionIndex], [[self contentContainer] selectionIndex]);
 }
 
-- (void) renderWithLayoutItems: (NSArray *)items inContainer: (ETContainer *)container
+- (void) renderWithLayoutItems: (NSArray *)items
 {
 	if ([self contentLayout] == nil)
 	{	
@@ -476,26 +476,25 @@
 #ifdef USE_INTERNAL_LAYOUT		
 	/* First renders myself always made of two containers packed in a wrapper 
 	   container. */
-	[_internalContainer setFrame: [container frame]];
+	[_internalContainer setFrame: [[self container] frame]];
 	[_internalContainer setFrameOrigin: NSZeroPoint];
 	// NOTE: Following line is roughly close to [_internalContainer updateLayout] */
-	[self computeViewLocationsForLayoutModel: nil inContainer: _internalContainer];
+	[self computeLayoutItemLocationsForLayoutModel: nil inContainer: _internalContainer];
 #endif
 
 	/* Update layout in a way equivalent to [[layoutObject container] updateLayout] */
-	[[self contentLayout] renderWithLayoutItems: items inContainer: contentView];
+	[[self contentLayout] renderWithLayoutItems: items];
 	/* Content layout preempts item views over switcher layout. To eliminate 
 	   this issue, first switcher layout tries to use properties like value, 
 	   image, icon, name. Eventually it makes a copy of the item view as an
 	   image which can be easily displayed. */
 #ifdef USE_SWITCHER
 	[switcherView setItemScaleFactor: [[self container] itemScaleFactor]];
-	[[self switcherLayout] renderWithLayoutItems: [self switcherTabItemsForPaneItems: items] 
-	                                 inContainer: switcherView];
+	[[self switcherLayout] renderWithLayoutItems: [self switcherTabItemsForPaneItems: items]];
 #endif
 	/* Don't forget to remove existing display view if we switch from a layout 
 	   which reuses a native AppKit control like table layout. */
-	[container setDisplayView: nil];
+	[[self container] setDisplayView: nil];
 	
 	/* Move internal item switcher and content container into enclosing container */
 	// NOTE: Done by [_internalContainer updateLayout]
@@ -508,16 +507,16 @@
 
 #ifdef USE_INTERNAL_LAYOUT	
 	/* Put wrapper container in the container which delegates its layout to us */
-	if ([[container subviews] containsObject: _internalContainer] == NO)
-		[container addSubview: _internalContainer];
+	if ([[[self container] subviews] containsObject: _internalContainer] == NO)
+		[[self container] addSubview: _internalContainer];
 #else
 	[switcherView removeFromSuperview];
-	[container addSubview: switcherView];
+	[[self container] addSubview: switcherView];
 	[contentView removeFromSuperview];
-	[container addSubview: contentView];
+	[[self container] addSubview: contentView];
 	NSLog(@"Add view %@ at %@", contentView, NSStringFromRect([contentView frame]));
-	NSAssert2([[container subviews] containsObject: contentView], 
-		@"View %@ must be a subview of container %@", contentView, container);
+	NSAssert2([[[self container] subviews] containsObject: contentView], 
+		@"View %@ must be a subview of container %@", contentView, [self container]);
 #endif
 	
 	// FIXME: Write post conditions code checking everything is properly wired up.
@@ -548,18 +547,18 @@
 #endif
 
 /* Not necessary to override, but better to be sure it returns nil */
-- (ETViewLayoutLine *) layoutLineForViews: (NSArray *)views inContainer: (ETContainer *)viewContainer
+- (ETViewLayoutLine *) layoutLineForLayoutItems: (NSArray *)items inContainer: (ETContainer *)viewContainer
 {
 	return nil;
 }
 
 /* Not necessary to override, but better to be sure it returns nil */
-- (NSArray *) layoutModelForViews: (NSArray *)views inContainer: (ETContainer *)viewContainer
+- (NSArray *) layoutModelForLayoutItems: (NSArray *)items inContainer: (ETContainer *)viewContainer
 {
 	return nil;
 }
 
-- (void) computeViewLocationsForLayoutModel: (NSArray *)layoutModel inContainer: (ETContainer *)container
+- (void) computeLayoutItemLocationsForLayoutModel: (NSArray *)layoutModel inContainer: (ETContainer *)container
 {
 	if ([[_internalContainer layout] isMemberOfClass: [ETStackLayout class]])
 	{
