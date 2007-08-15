@@ -677,7 +677,7 @@ NSString *ETLayoutItemPboardType = @"ETLayoutItemPboardType"; // FIXME: replace 
 		[[self layout] setContentSizeLayout: YES];
 		// Updating layout here is a source of complication for no visible benefits
 		//[[self layout] adjustLayoutSizeToContentSize];
-		/*[self setFrameSize: [[self layout] layoutSize]];*/
+		[self setFrameSize: [_scrollView contentSize]];
 		
 		[_scrollView setDocumentView: self];
 		[superview addSubview: _scrollView];
