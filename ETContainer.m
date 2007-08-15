@@ -1361,10 +1361,10 @@ NSString *ETLayoutItemPboardType = @"ETLayoutItemPboardType"; // FIXME: replace 
 
 	if ([self isScrollViewShown])
 	{
-		if (clipViewSize.width < size.width || clipViewSize.height < size.height)
-		{
-			patchedSize = clipViewSize;
-		}
+		if (size.width < clipViewSize.width)
+			patchedSize.width = clipViewSize.width;
+		if (size.height < clipViewSize.height)
+			patchedSize.height = clipViewSize.height;
 	}
 	
 	[super setFrameSize: patchedSize];
