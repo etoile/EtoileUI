@@ -26,6 +26,7 @@
 - (NSPoint) baseLineLocation;
 /** In flipped layout, top line location is rather than base line location. */ 
 - (float) height;
+- (float) width;
 
 - (BOOL) isVerticallyOriented;
 - (void) setVerticallyOriented: (BOOL)vertical;

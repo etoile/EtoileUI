@@ -71,6 +71,7 @@ NSString *ETLayoutItemPboardType = @"ETLayoutItemPboardType"; // FIXME: replace 
 - (BOOL) isScrollViewShown;
 - (void) setShowsScrollView: (BOOL)scroll;
 - (void) mouseDoubleClick: (NSEvent *)event;
+- (void) frameDidChange: (NSNotification *)notif;
 @end
 
 
@@ -86,6 +87,7 @@ NSString *ETLayoutItemPboardType = @"ETLayoutItemPboardType"; // FIXME: replace 
 		_layoutItems = [[NSMutableArray alloc] init];
 		_path = @"";
 		_flipped = YES;
+		_autolayout = YES;
 		_itemScale = 1.0;
 		_selection = [[NSMutableIndexSet alloc] init];
 		_dragAllowed = YES;
@@ -95,6 +97,11 @@ NSString *ETLayoutItemPboardType = @"ETLayoutItemPboardType"; // FIXME: replace 
 		
 		[self registerForDraggedTypes: [NSArray arrayWithObjects:
 			ETLayoutItemPboardType, nil]];
+			
+		[[NSNotificationCenter defaultCenter] addObserver: self 
+												 selector: @selector(frameDidChange:) 
+												     name: NSViewFrameDidChangeNotification 
+												   object: self];
 		
 		if (views != nil)
 		{
@@ -118,6 +125,8 @@ NSString *ETLayoutItemPboardType = @"ETLayoutItemPboardType"; // FIXME: replace 
 
 - (void) dealloc
 {
+	[[NSNotificationCenter defaultCenter] removeObserver: self];
+
     DESTROY(_layoutItems);
 	DESTROY(_containerLayout);
 	DESTROY(_displayView);
@@ -1347,6 +1356,10 @@ NSString *ETLayoutItemPboardType = @"ETLayoutItemPboardType"; // FIXME: replace 
 	}
 	
 	[super setFrame: patchedFrame];
+	
+	// FIXME: reentrancy issue in -renderLayoutItems:
+	if ([self isAutolayout])
+		[self updateLayout];
 }
 #endif
 
@@ -1368,6 +1381,10 @@ NSString *ETLayoutItemPboardType = @"ETLayoutItemPboardType"; // FIXME: replace 
 	}
 	
 	[super setFrameSize: patchedSize];
+	
+	// FIXME: reentrancy issue in -renderLayoutItems:
+	if ([self isAutolayout])
+		[self updateLayout];
 }
 
 @end

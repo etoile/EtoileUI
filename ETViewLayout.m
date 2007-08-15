@@ -469,7 +469,10 @@
 			@"Any layout done in a scroll view must be based on content size");
 		
 		[[self container] setFrameSize: [self layoutSize]];
-NSLog(@"After %@ and layoutSize %@", NSStringFromRect([[self container] frame]), NSStringFromSize([self layoutSize]));
+		NSLog(@"Layout size is %@ with container size %@ and clip view size %@", 
+			NSStringFromSize([self layoutSize]), 
+			NSStringFromSize([[self container] frame].size), 
+			NSStringFromSize([[[self container] scrollView] contentSize]));
 		
 		//[[[self container] scrollView] reflectScrolledClipView: [[[self container] scrollView] clipView]];
 	}

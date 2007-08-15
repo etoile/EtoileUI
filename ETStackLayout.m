@@ -67,15 +67,15 @@
 		}
 	}
 	
-	/* Update layout size, useful when related container is embedded in a scroll view */
-	if ([self isContentSizeLayout])
-		[self setLayoutSize: NSMakeSize([self layoutSize].width, vAccumulator)];
-	
 	if ([layoutedItems count] == 0)
 		return nil;
 		
 	line = [ETViewLayoutLine layoutLineWithLayoutItems: layoutedItems];
 	[line setVerticallyOriented: YES];
+	
+	/* Update layout size, useful when related container is embedded in a scroll view */
+	if ([self isContentSizeLayout])
+		[self setLayoutSize: NSMakeSize([line width], vAccumulator)];
 
 	return line;
 }

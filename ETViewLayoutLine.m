@@ -71,16 +71,57 @@
 	ETLayoutItem *item = nil;
 	float height = 0;
 	
-	/* We must look for the tallest layouted view (by line). Useful 
-		once we get out of -computeViewLocationsForLayoutModel: view walking loop. */
+	/* We must look for the tallest layouted item (by line) when we are
+	   horizontally oriented. When vertically oriented, we must compute the sum 
+	   of layout item height. */
 	
-	while ((item = [e nextObject]) != nil)
+	if ([self isVerticallyOriented])
 	{
-		if ([item height] > height)
-			height = [item height];
+		height = [[_items valueForKey: @"@sum.height"] floatValue];
+	}
+	else
+	{
+		// FIXME: Try to make the next line works
+		// height = [[_items valueForKey: @"@max.height"] floatValue];
+		
+		while ((item = [e nextObject]) != nil)
+		{
+			if ([item height] > height)
+				height = [item height];
+		}
 	}
 	
 	return height;
+}
+
+- (float) width
+{
+	NSEnumerator *e = [_items objectEnumerator];
+	ETLayoutItem *item = nil;
+	float width = 0;
+	
+	/* We must look for the widest layouted item (by line) when we are
+	   vertically oriented. When horizontally riented, we must compute the sum 
+	   of layout item width. */
+
+	if ([self isVerticallyOriented])
+	{
+		// FIXME: Try to make the next line works
+		// width = [[_items valueForKey: @"@max.width"] floatValue];
+		
+		while ((item = [e nextObject]) != nil)
+		{
+			if ([item width] > width)
+				width = [item width];
+		}
+	}
+	else
+	{
+		width = [[_items valueForKey: @"@sum.width"] floatValue];
+	}
+
+	
+	return width;
 }
 
 - (BOOL) isVerticallyOriented
