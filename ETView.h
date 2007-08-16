@@ -36,6 +36,10 @@
 #import <Foundation/Foundation.h>
 #import <AppKit/AppKit.h>
 
+/** Display Tree Description
+
+ */
+
 
 @interface ETView : NSView
 {

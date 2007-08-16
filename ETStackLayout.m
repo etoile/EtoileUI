@@ -45,7 +45,7 @@
 @implementation ETStackLayout
 
 /** Returns a line filled with views to layout (stored in an array). */
-- (ETViewLayoutLine *) layoutLineForLayoutItems: (NSArray *)items inContainer: (ETContainer *)viewContainer
+- (ETViewLayoutLine *) layoutLineForLayoutItems: (NSArray *)items
 {
 	NSEnumerator *e = [items objectEnumerator];
 	ETLayoutItem *itemToLayout = nil;

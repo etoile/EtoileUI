@@ -478,7 +478,6 @@
 	   container. */
 	[_internalContainer setFrame: [[self container] frame]];
 	[_internalContainer setFrameOrigin: NSZeroPoint];
-	// NOTE: Following line is roughly close to [_internalContainer updateLayout] */
 	[self computeLayoutItemLocationsForLayoutModel: nil inContainer: _internalContainer];
 #endif
 
@@ -547,13 +546,13 @@
 #endif
 
 /* Not necessary to override, but better to be sure it returns nil */
-- (ETViewLayoutLine *) layoutLineForLayoutItems: (NSArray *)items inContainer: (ETContainer *)viewContainer
+- (ETViewLayoutLine *) layoutLineForLayoutItems: (NSArray *)items
 {
 	return nil;
 }
 
 /* Not necessary to override, but better to be sure it returns nil */
-- (NSArray *) layoutModelForLayoutItems: (NSArray *)items inContainer: (ETContainer *)viewContainer
+- (NSArray *) layoutModelForLayoutItems: (NSArray *)items
 {
 	return nil;
 }

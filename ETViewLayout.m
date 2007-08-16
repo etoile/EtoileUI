@@ -48,6 +48,10 @@
 - (void) cacheLayoutItems: (NSArray *)cache;
 - (NSArray *) layoutItemCache;
 - (int) checkSourceProtocolConformance;
+- (NSArray *) visibleItems;
+- (void) setVisibleItems: (NSArray *)visibleItems;
+- (BOOL) isScrollViewShown;
+- (void) setShowsScrollView: (BOOL)scroll;
 @end
 
 /*
@@ -56,15 +60,12 @@
 
 @interface ETViewLayout (Private)
 
-- (void) renderInContainer: (ETContainer *)container;
 - (NSArray *) layoutItemsFromFlatSource;
 - (NSArray *) layoutItemsFromTreeSource;
 
 /* Utility methods */
-- (NSRect) lineLayoutRectForViewAtIndex: (int)index;
-- (NSPoint) locationForViewAtIndex: (int)index;
-- (NSView *) viewIndexAtPoint: (NSPoint)location;
-- (NSRange) viewRangeForLineLayoutWithIndex: (int)lineIndex;
+- (NSRect) lineLayoutRectForItemAtIndex: (int)index;
+- (ETLayoutItem *) itemAtLocation: (NSPoint)location;
 
 @end
 
@@ -254,7 +255,7 @@
 	_itemSizeConstraintStyle = constraint;
 }
 
-- (BOOL) itemSizeConstraintStyle
+- (ETSizeConstraintStyle) itemSizeConstraintStyle
 {
 	return _itemSizeConstraintStyle;
 }
@@ -394,19 +395,20 @@
 	[[self container] cacheLayoutItems: itemsForRendering];
 	
 	/* Let layout delegate overrides default layout items rendering */
-	if ([_delegate respondsToSelector: @selector(layout:renderLayoutItem:)])
+	if ([_delegate respondsToSelector: @selector(layout:applyLayoutItem:)])
 	{
 		NSEnumerator *e = [itemsForRendering objectEnumerator];
 		ETLayoutItem *item = nil;
 		
 		while ((item = [e nextObject]) != nil)
 		{
-			[_delegate layout: self renderLayoutItem: item]; // FIXME: Use proper delegate syntax
+			//[_delegate layout: self applyLayoutItem: item];
+			//[_delegate layout: self renderLayoutItem: item]; // FIXME: Use proper delegate syntax
 		}
 	}
 	else
 	{
-		[itemsForRendering makeObjectsPerformSelector: @selector(render)];
+		[itemsForRendering makeObjectsPerformSelector: @selector(apply:) withObject: nil];
 	}
 	
 	_isLayouting = NO;
@@ -453,13 +455,12 @@
 	
 	ETLog(@"Render layout items: %@", items);
 	
-	NSArray *itemViews = [items valueForKey: @"displayView"];
 	NSArray *layoutModel = nil;
 	
 	float scale = [[self container] itemScaleFactor];
 	[self resizeLayoutItems: items toScaleFactor: scale];
 	
-	layoutModel = [self layoutModelForLayoutItems: items inContainer: [self container]];
+	layoutModel = [self layoutModelForLayoutItems: items];
 	/* Now computes the location of every views by relying on the line by line 
 	   decomposition already made. */
 	[self computeLayoutItemLocationsForLayoutModel: layoutModel inContainer: [self container]];
@@ -595,7 +596,7 @@
 /** Overrides this method to generate a layout line based on the container 
     constraints. Usual container constraints are size, vertical and horizontal 
 	scrollers visibility. */
-- (ETViewLayoutLine *) layoutLineForLayoutItems: (NSArray *)items inContainer: (ETContainer *)viewContainer
+- (ETViewLayoutLine *) layoutLineForLayoutItems: (NSArray *)items
 {
 	return nil;
 }
@@ -608,9 +609,9 @@
 	you if you want to create a layout model with a more elaborated ordering 
 	and rendering semantic. Finally the layout model is interpreted by 
 	-computeViewLocationsForLayoutModel:inContainer:. */
-- (NSArray *) layoutModelForLayoutItems: (NSArray *)items inContainer: (ETContainer *)viewContainer
+- (NSArray *) layoutModelForLayoutItems: (NSArray *)items
 {
-	ETViewLayoutLine *line = [self layoutLineForLayoutItems: items inContainer: viewContainer];
+	ETViewLayoutLine *line = [self layoutLineForLayoutItems: items];
 	
 	if (line != nil)
 		return [NSArray arrayWithObject: line];
@@ -642,11 +643,12 @@
  * Utility methods
  */
  
-- (NSRect) lineLayoutRectForViewAtIndex: (int)index { return NSZeroRect; }
-
-- (NSPoint) locationForViewAtIndex: (int)index
-{
-    return NSZeroPoint;
+// FIXME: Implement or remove
+// - (NSRect) lineLayoutRectForItem:
+// - (NSRect) lineLayoutRectAtLocation:
+- (NSRect) lineLayoutRectForItemIndex: (int)index 
+{ 
+	return NSZeroRect; 
 }
 
 /** Returns item for which location is inside its display area. location must 
@@ -694,10 +696,8 @@
 	}
 }
 
-//- (NSRange) viewRangeForLineLayout:
-- (NSRange) viewRangeForLineLayoutWithIndex: (int)lineIndex
-{
-    return NSMakeRange(0, 0);
-}
+// NOTE: Extensions probably not really interesting...
+//- (NSRange) layoutItemRangeForLineLayout:
+//- (NSRange) layoutItemForLineLayoutWithIndex: (int)lineIndex
 
 @end

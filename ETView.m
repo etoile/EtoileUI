@@ -62,8 +62,11 @@
 	/* Now we must draw layout items without view... using either a cell or 
 	   their own renderer. Layout item are smart enough to avoid drawing their
 	   view when they have one. */
-	if ([[self renderer] respondsToSelector: @selector(render:)])
-		[[self renderer] render: nil];
+	// FIXME: Turned off this invocation of the rendering chain to avoid drawing
+	// selection out of bounds because the selected view doesn't receive 
+	// -lockFocus
+	//if ([[self renderer] respondsToSelector: @selector(render:)])
+		//[[self renderer] render: nil];
 }
 
 - (void) setWrappedView: (NSView *)view
@@ -137,11 +140,18 @@
 		[[self renderer] render: nil];
 }
 #else
+
 // FIXME: This isn't really safe because Cocoa may use other specialized 
 // methods to update the display. They are named _recursiveDisplayXXX.
+// NOTE: Very often NSView instance which has been sent a display message will 
+// call this method on its subviews. These subviews will do the same with their own 
+// subviews. Here is the other method often used in the same way:
+//_recursiveDisplayRectIfNeededIgnoringOpacity:isVisibleRect:rectIsVisibleRectForView:topView:
+// The previous method usually follows the message on next line:
+//_displayRectIgnoringOpacity:isVisibleRect:rectIsVisibleRectForView:
 - (void) _recursiveDisplayAllDirtyWithLockFocus: (BOOL)lockFocus visRect: (NSRect)aRect
 {
-	//NSLog(@"-_recursiveDisplayAllDirtyWithLockFocus:visRect:");
+	NSLog(@"-_recursiveDisplayAllDirtyWithLockFocus:visRect:");
 	[super _recursiveDisplayAllDirtyWithLockFocus: lockFocus visRect: aRect];
 	
 	/* We always composite the rendering chain on top of each view -drawRect: 

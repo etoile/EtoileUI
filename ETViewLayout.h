@@ -82,7 +82,7 @@ typedef enum _ETSizeConstraintStyle
 - (BOOL) usesCustomLayoutSize;
 - (void) setLayoutSize: (NSSize)size;
 - (NSSize) layoutSize;
-// Not sure the next method will be kept public
+// Not sure the next methods will be kept public
 - (void) setContentSizeLayout: (BOOL)flag;
 - (BOOL) isContentSizeLayout;
 
@@ -109,8 +109,8 @@ typedef enum _ETSizeConstraintStyle
 - (void) renderWithLayoutItems: (NSArray *)items;
 - (void) renderWithSource: (id)source inContainer: (ETContainer *)container;
 
-- (ETViewLayoutLine *) layoutLineForLayoutItems: (NSArray *)items inContainer: (ETContainer *)viewContainer;
-- (NSArray *) layoutModelForLayoutItems: (NSArray *)items inContainer: (ETContainer *)viewContainer;
+- (ETViewLayoutLine *) layoutLineForLayoutItems: (NSArray *)items;
+- (NSArray *) layoutModelForLayoutItems: (NSArray *)items;
 - (void) computeLayoutItemLocationsForLayoutModel: (NSArray *)layoutModel inContainer: (ETContainer *)container;
 
 - (void) resizeLayoutItems: (NSArray *)items toScaleFactor: (float)factor;

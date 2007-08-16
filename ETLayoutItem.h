@@ -162,6 +162,7 @@ shape*/
 
 - (void) apply: (NSMutableDictionary *)inputValues;
 - (void) render: (NSMutableDictionary *)inputValues;
+- (void) render: (NSMutableDictionary *)inputValues dirtyRect: (NSRect)dirtyRect inView: (NSView *)view;
 - (void) render;
 - (ETStyleRenderer *) renderer;
 - (void) setStyleRenderer: (ETStyleRenderer *)renderer;

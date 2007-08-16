@@ -112,7 +112,7 @@
 	//float scale = [container itemScaleFactor];
 	//[self resizeLayoutItems: items toScaleFactor: scale];
 	
-	layoutModel = [self layoutModelForLayoutItems: items inContainer: [self container]];
+	layoutModel = [self layoutModelForLayoutItems: items];
 	/* Now computes the location of every views by relying on the line by line 
 	   decomposition already made. */
 	[self computeLayoutItemLocationsForLayoutModel: layoutModel inContainer: [self container]];
@@ -125,7 +125,7 @@
 }
 
 /* Only returns selected item view */
-- (NSArray *) layoutModelForLayoutItems: (NSArray *)items inContainer: (ETContainer *)viewContainer
+- (NSArray *) layoutModelForLayoutItems: (NSArray *)items
 {
 	int selectedPaneIndex = [[self container] selectionIndex];
 	

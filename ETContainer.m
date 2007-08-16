@@ -56,6 +56,10 @@ NSString *ETLayoutItemPboardType = @"ETLayoutItemPboardType"; // FIXME: replace 
 - (void) cacheLayoutItems: (NSArray *)layoutItems;
 - (NSArray *) layoutItemCache;
 - (int) checkSourceProtocolConformance;
+- (NSArray *) visibleItems;
+- (void) setVisibleItems: (NSArray *)visibleItems;
+- (BOOL) isScrollViewShown;
+- (void) setShowsScrollView: (BOOL)scroll;
 @end
 
 @interface ETContainer (Private)
@@ -69,8 +73,6 @@ NSString *ETLayoutItemPboardType = @"ETLayoutItemPboardType"; // FIXME: replace 
 - (void) updateLayoutWithItems: (NSArray *)itemsToLayout;
 - (BOOL) doesSelectionContainsPoint: (NSPoint)point;
 - (void) fixOwnerIfNeededForItem: (ETLayoutItem *)item;
-- (BOOL) isScrollViewShown;
-- (void) setShowsScrollView: (BOOL)scroll;
 - (void) mouseDoubleClick: (NSEvent *)event;
 @end
 
@@ -1371,7 +1373,6 @@ NSString *ETLayoutItemPboardType = @"ETLayoutItemPboardType"; // FIXME: replace 
 	
 	[super setFrame: patchedFrame];
 	
-	// FIXME: reentrancy issue in -renderLayoutItems:
 	if ([self canUpdateLayout])
 		[self updateLayout];
 }

@@ -131,7 +131,7 @@
 
 /** Run the layout computation which assigns a location in the view container
     to each item added to the flow layout manager. */
-- (NSArray *) layoutModelForLayoutItems: (NSArray *)items inContainer: (ETContainer *)container;
+- (NSArray *) layoutModelForLayoutItems: (NSArray *)items
 {
 	NSMutableArray *unlayoutedItems = 
 		[NSMutableArray arrayWithArray: items];
@@ -143,7 +143,7 @@
 	   happens when -layoutedViewForNextLineInViews: returns nil. */
 	while ([unlayoutedItems count] > 0)
 	{
-		line = [self layoutLineForLayoutItems: unlayoutedItems inContainer: container];
+		line = [self layoutLineForLayoutItems: unlayoutedItems];
 		
 		if ([[line items] count] > 0)
 		{
@@ -163,7 +163,7 @@
 }
 
 /** Returns a line filled with items to layout (stored in a layout line). */
-- (ETViewLayoutLine *) layoutLineForLayoutItems: (NSArray *)items inContainer: container
+- (ETViewLayoutLine *) layoutLineForLayoutItems: (NSArray *)items
 {
 	//int maxViewHeightInLayoutLine = 0;
 	NSEnumerator *e = [items objectEnumerator];

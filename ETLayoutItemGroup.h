@@ -40,7 +40,7 @@
 
 @interface ETLayoutItemGroup : ETLayoutItem
 {
-
+	BOOL _usesLayoutBasedFrame;
 }
 
 + (ETLayoutItemGroup *) layoutItemGroup;
@@ -49,8 +49,15 @@
 
 - (id) initWithLayoutItems: (NSArray *)layoutItems view: (NSView *)view;
 
+- (NSArray *) items;
+
+- (BOOL) usesLayoutBasedFrame;
+- (void) setUsesLayoutBasedFrame: (BOOL)flag;
+
 - (NSArray *) visibleLayoutItems;
 - (void) setVisibleLayoutItems: (NSArray *)items;
+
+- (void) render: (NSMutableDictionary *)inputValues dirtyRect: (NSRect)dirtyRect inView: (NSView *)view;
 
 //- isContainer
 

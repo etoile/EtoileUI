@@ -57,7 +57,6 @@
 	
  */
 
-
 // ETComponentView
 @interface ETContainer : ETView
 {
@@ -229,6 +228,8 @@
 
 /* Actions */
 
+- (void) setTarget: (id)target;
+- (id) target;
 - (void) setDoubleAction: (SEL)selector;
 - (SEL) doubleAction;
 - (ETLayoutItem *) clickedItem;

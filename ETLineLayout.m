@@ -62,7 +62,7 @@
 	/* First start by breaking views to layout by lines. We have to fill the layout
 	   line (layoutLineList) until a view is crossing the right boundary which
 	   happens when -layoutedViewForNextLineInViews: returns nil. */
-	line = [self layoutLineForViews: unlayoutedViews inContainer: container];
+	line = [self layoutLineForViews: unlayoutedViews];
 		
 	if ([[line views] count] > 0)
 	{
@@ -74,8 +74,9 @@
 
 	if ([unlayoutedViews count] > 0)
 		NSLog(@"Not enough space to layout all the views. Views remaining unlayouted: %@", unlayoutedViews);
-NSLog(@"bip bip bip");
+
 	return layoutModel;
 }
 #endif
+
 @end

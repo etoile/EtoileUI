@@ -304,6 +304,12 @@
 		[_modelObject setValue: value forKey: key];
 		return YES;
 	}
+	[self didChangeValueForKey: key];
+}
+
+- (void) didChangeValueForKey: (NSString *)key
+{
+
 }
 
 - (NSView *) displayView
@@ -375,9 +381,35 @@
 	   before rendering anything. If a parent layout item asks us to draw, we
 	   decline and wait the control return to the view who initiated the 
 	   drawing and this view asks our view to draw itself as a subview. */
-	//if ([self view] == nil || [[NSView focusView] isEqual: [[self displayView] superview]])
+	//if ([self view] == nil) // || [[NSView focusView] isEqual: [[self displayView] superview]]
 	{
 		[_renderer renderLayoutItem: self];
+	}
+}
+
+- (void) render: (NSMutableDictionary *)inputValues dirtyRect: (NSRect)dirtyRect inView: (NSView *)view 
+{
+	if (NSIntersectsRect(dirtyRect, [self frame]))
+	{
+		if ([[NSView focusView] isEqual: view] == NO)
+			[view lockFocus];
+			
+		NSAffineTransform *transform = [NSAffineTransform transform];
+		
+		/* Modify coordinate matrix when the layout item doesn't use a view for 
+		   drawing. */
+		if ([self displayView] == nil)
+		{
+			[transform translateXBy: [self x] yBy: [self y]];
+			[transform concat];
+		}
+		
+		[[self renderer] renderLayoutItem: self];
+		
+		[transform invert];
+		[transform concat];
+			
+		[view unlockFocus];
 	}
 }
 

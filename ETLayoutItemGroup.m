@@ -105,16 +105,77 @@
 	return [self initWithLayoutItems: nil view: nil];
 }
 
-- (void) render: (NSMutableDictionary *)inputValues
+// FIXME: Move layout item collection from ETContainer to ETLayoutItemGroup
+- (NSArray *) items
 {
-	[super render: nil];
-	// FIXME: Handled in ETContainer currently
-	//[[(ETContainer *)[self view] layoutItemCache] makeObjectsPerformSelector: @selector(render:) withObject: nil];
+	return nil;
 }
 
-#if 0
+- (BOOL) usesLayoutBasedFrame
+{
+	return _usesLayoutBasedFrame;
+}
+
+- (void) setUsesLayoutBasedFrame: (BOOL)flag
+{
+	_usesLayoutBasedFrame = flag;
+}
+
+- (void) render: (NSMutableDictionary *)inputValues dirtyRect: (NSRect)dirtyRect inView: (NSView *)view 
+{
+	if ([self usesLayoutBasedFrame] || NSIntersectsRect(dirtyRect, [self frame]))
+	{
+		NSView *renderView = view;
+		
+		if ([self displayView] != nil)
+			renderView = [self displayView];
+		
+		if ([[NSView focusView] isEqual: renderView] == NO)
+			[renderView lockFocus];
+			
+		NSAffineTransform *transform = [NSAffineTransform transform];
+		
+		/* Modify coordinate matrix when the layout item doesn't use a view for 
+		   drawing. */
+		if ([self displayView] == nil)
+		{
+			[transform translateXBy: [self x] yBy: [self y]];
+			[transform concat];
+		}
+		
+		[[self renderer] renderLayoutItem: self];
+		
+		if ([self displayView] == nil)
+		{
+			[transform invert];
+			[transform concat];
+		}
+			
+		[view unlockFocus];
+		
+		/* Render child items */
+		
+		NSEnumerator *e = [[self items] reverseObjectEnumerator];
+		ETLayoutItem *item = nil;
+		NSRect newDirtyRect = NSZeroRect;
+		
+		if ([self displayView] != nil)
+		{
+			newDirtyRect = NSIntersectionRect(dirtyRect, [[self displayView] frame]);
+			[view convertRect: newDirtyRect toView: [self displayView]];
+		}
+		
+		while ((item = [e nextObject]) != nil)
+		{
+			[item render: inputValues dirtyRect: newDirtyRect inView: renderView];
+		}
+	}
+}
+
+
 - (NSArray *) visibleLayoutItems
 {
+#if 0
 	ETContainer *container = (ETContainer *)[self view];
 	NSMutableArray *visibleItems = [NSMutableArray array];
 	NSEnumerator  *e = [[container items] objectEnumerator];
@@ -127,6 +188,8 @@
 	}
 	
 	return visibleItems;
+#endif
+	return nil;
 }
 
 // FIXME: Make a bottom top traversal to find the first view which can be used 
@@ -135,6 +198,7 @@
 // This last point is going to become purely optional.
 - (void) setVisibleLayoutItems: (NSArray *)visibleItems
 {
+#if 0
 	ETContainer *container = (ETContainer *)[self view];
 	NSEnumerator  *e = [[container items] objectEnumerator];
 	ETLayoutItem *item = nil;
@@ -160,8 +224,8 @@
 			}
 		}
 	}
-}
 #endif
+}
 
 - (NSArray *) ungroup
 {
