@@ -787,7 +787,12 @@ NSString *ETLayoutItemPboardType = @"ETLayoutItemPboardType"; // FIXME: replace 
 - (void) insertItem: (ETLayoutItem *)item atIndex: (int)index
 {
 	//NSLog(@"Insert item in %@", self);
+	
+	NSMutableIndexSet *indexes = [self selectionIndexes];
+	
 	[_layoutItems insertObject: item atIndex: index];
+	[indexes shiftIndexesStartingAtIndex: index by: 1];
+	[self setSelectionIndexes: indexes];
 	if ([self canUpdateLayout])
 		[self updateLayout];
 }
@@ -795,8 +800,14 @@ NSString *ETLayoutItemPboardType = @"ETLayoutItemPboardType"; // FIXME: replace 
 - (void) removeItem: (ETLayoutItem *)item
 {
 	//NSLog(@"Remove item in %@", self);
-	if ([_selection containsIndex: [self indexOfItem: item]])
-		[_selection removeIndex: [self indexOfItem: item]];
+	
+	NSMutableIndexSet *indexes = [self selectionIndexes];
+	
+	if ([indexes containsIndex: [self indexOfItem: item]])
+	{
+		[indexes removeIndex: [self indexOfItem: item]];
+		[self setSelectionIndexes: indexes];
+	}
 	[[item displayView] removeFromSuperview];
 	[_layoutItems removeObject: item];
 	if ([self canUpdateLayout])
@@ -1675,12 +1686,13 @@ NSString *ETLayoutItemPboardType = @"ETLayoutItemPboardType"; // FIXME: replace 
 	int movedIndex = [indexes firstIndex];
 	ETLayoutItem *movedItem = [self itemAtIndex: movedIndex];
 	
-	[self setAutolayout: NO];
+	//[self setAutolayout: NO];
 	RETAIN(movedItem);
 	[self removeItem: movedItem];
+	//[self setAutolayout: YES];
 	[self insertItem: movedItem atIndex: dropIndex];
+	[self setSelectionIndex: dropIndex];
 	RELEASE(movedItem);
-	[self setAutolayout: YES];
 	
 	return NSDragOperationPrivate;
 }
