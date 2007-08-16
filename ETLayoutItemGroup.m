@@ -217,7 +217,7 @@
 		else
 		{
 			[item setVisible: NO];
-			if ([[container subviews] containsObject: [item displayView]] == NO)
+			if ([[container subviews] containsObject: [item displayView]])
 			{
 				[[item displayView] removeFromSuperview];
 				NSLog(@"Removed view at %@", NSStringFromRect([[item displayView] frame]));

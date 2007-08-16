@@ -61,8 +61,6 @@
 - (NSArray *) layoutItemsFromFlatSource;
 - (NSArray *) layoutItemsFromTreeSource;
 
-- (void) adjustLayoutSizeToSizeOfContainer: (ETContainer *)container;
-
 /* Utility methods */
 - (NSRect) lineLayoutRectForItemAtIndex: (int)index;
 - (ETLayoutItem *) itemAtLocation: (NSPoint)location;
@@ -168,57 +166,17 @@
 	return [[[self container] visibleItems] count] == nbOfItems;
 }
 
-/** This methods triggers layout render, so you must not call it inside any
-	rendering methods to avoid any reentrancy issues. 
-	There is no need to use -updateLayout or -render, the method does any 
-	necessary rendering and avoids it when possible. 
-	You can use this method to get an idea of the size of a layout even when
-	no container is bound to this layout, just pass an arbitrary container in 
-	parameter. Passing nil is equivalent to calling 
-	-adjustLayoutSizeToContentSize. */
-- (void) adjustLayoutSizeToSizeOfContainer: (ETContainer *)container
-{
-	BOOL needsRender = YES;
-	
-	if ([self isAllContentVisible])
-		needsRender = NO;
-	
-	[self setLayoutSize: [container frame].size];
-	
-	if (needsRender)
-		[self render];
-}
-
-/** This methods triggers layout render, so you must not call it inside any
-	rendering methods to avoid any reentrancy issues. 
-	There is no need to use -updateLayout or -render, the method does any 
-	necessary rendering and avoids it when possible.*/
-- (void) adjustLayoutSizeToContentSize
-{
-	/* May be the layout size is already sufficient to display all items */
-	if ([self isAllContentVisible])
-		return;
-	
-	// FIXME: Evaluate the interest of the first branch...
-	if ([self isContentSizeLayout] == NO)
-	{
-		[self setContentSizeLayout: YES];
-		[self render];
-		[self setContentSizeLayout: NO];
-	}
-	else
-	{
-		[self render];
-	}
-}
-
-/** By default layout size is equal to container frame size. When the container 
-	uses a scroll view, layout size is set to the max size computed for the 
-	content. Whether the size is computed in horizontal, vertical direction
-	or both depends of the container scroller settings, the layout kind and 
-	finally layout settings. 
+/** By default layout size is precisely matching frame size of the container to 
+	which the receiver is bound to.
+	When the container uses a scroll view, layout size is set the mininal size 
+	which encloses all the layout item frames once they have been layouted. 
+	This size is the maximal layout size you can compute for the receiver with 
+	the content provided by the container.
+	Whether the layout size is computed in horizontal, vertical direction or 
+	both depends of layout kind, settings of the layout and finally scroller 
+	visibility in related container.
 	If you call -setUsesCustomLayoutSize:, the layout size won't be adjusted anymore by
-	layout and container together until you delegate it again by calling
+	the layout and container together until you delegate it again by calling
 	-setUsesCustomLayoutSize: with NO as parameter. */ 
 - (void) setUsesCustomLayoutSize: (BOOL)flag
 {
@@ -291,6 +249,7 @@
 	return _itemSize;
 }
 
+
 - (NSArray *) layoutItemsFromSource
 {
 	switch ([[self container] checkSourceProtocolConformance])
@@ -333,7 +292,7 @@
 	NSString *path = [container path];
 	int nbOfItems = [[container source] numberOfItemsAtPath: path inContainer: container];
 	
-	NSLog(@"-layoutItemsFromTreeSource in %@", self);
+	//NSLog(@"-layoutItemsFromTreeSource in %@", self);
 
 	for (int i = 0; i < nbOfItems; i++)
 	{
@@ -343,7 +302,11 @@
 		layoutItem = [[container source] itemAtPath: subpath inContainer: container];
 		if ([layoutItem isKindOfClass: [ETLayoutItemGroup class]])
 		{
-			//[[layoutItem container] setSource: [container source]];
+			// FIXME: To allow arbitrary nesting of containers, we probably 
+			// need [[layoutItem container] setSource: [container source]];
+			// unless we decided to let the user handling this before returning
+			// layout item group in data source methods.
+			// Another way to do it would be differential inheritance lookup.
 			[(ETContainer *)[layoutItem view] setPath: subpath];
 		}
 		[itemsFromSource addObject: layoutItem];
@@ -352,17 +315,26 @@
 	return itemsFromSource;
 }
 
-/** Returns whether the layout object is currently computing and rendering its 
+/** Returns whether the receiver is currently computing and rendering its 
 	layout right now or not.
-	You must call this method in your code before calling any Layouting section
+	You must call this method in your code before calling any Layouting related
 	methods. If YES is returned, don't call the method you want to and wait a 
-	bit to give another try to -isRendering. When NO is returned, you are free
-	to call any Layouting related methods. */
+	bit before giving another try to -isRendering. When NO is returned, you are 
+	free to call any Layouting related methods. */
 - (BOOL) isRendering
 {
 	return _isLayouting;
 }
 
+/** Renders a collection of items by requesting them to the container to which
+	the receiver is bound to.
+	Layout items can be requested in two styles: to the container itself or
+	indirectly to a data source provided by the container. When the layout 
+	items are provided through a data source, the layout will only request 
+	lazily the subset of them to be displayed (not currently true). 
+	This method is usually called by ETContainer and you should rarely need to
+	do it by yourself. If you want to update the layout, just uses 
+	-[ETContainer updateLayout]. */
 - (void) render
 {
 	/* Prevent reentrancy. In a threaded environment, it isn't perfectly safe 
@@ -378,16 +350,12 @@
 		_isLayouting = YES;
 	}
 	
-	NSArray *itemDisplayViews = [[[self container] layoutItemCache] valueForKey: @"displayView"];
 	NSArray *itemsForRendering = nil;
 
-	/* We remove the display views of cached layout items (they are in current
-	   in current implementation the displayed layout items). Note they may be 
-	   invisible by being located outside of container bounds. */
-//#ifdef REMOVE_FROM_SUPERVIEW_BEFORE_LAYOUT
+	/* We remove the display views of layout items. Note they may be invisible 
+	   by being located outside of container bounds. */
 	//NSLog(@"Remove views of layout items currently displayed from their container");
-	[itemDisplayViews makeObjectsPerformSelector: @selector(removeFromSuperview)];
-//#endif
+	[[self container] setVisibleItems: [NSArray array]];
 
 	if ([[self container] source] != nil) /* Make layout with items provided by source */
 	{
@@ -416,6 +384,8 @@
 	[[self container] cacheLayoutItems: itemsForRendering];
 	
 	/* Let layout delegate overrides default layout items rendering */
+	// FIXME: This delegate stuff isn't really useful. Remove it or make it
+	// useful.
 	if ([_delegate respondsToSelector: @selector(layout:applyLayoutItem:)])
 	{
 		NSEnumerator *e = [itemsForRendering objectEnumerator];
@@ -432,7 +402,6 @@
 		[itemsForRendering makeObjectsPerformSelector: @selector(apply:) withObject: nil];
 	}
 	
-	_isLayouting = NO;
 	/* We always set the layout size which should be used to compute the 
 	   layout unless a custom layout has been set by calling -setLayoutSize:
 	   before -render. */
@@ -449,16 +418,24 @@
 			[self setLayoutSize: [[self container] frame].size];
 		}
 	}
+	
+	_isLayouting = NO;
 	[self renderWithLayoutItems: itemsForRendering];
 }
 
-/** You can adjust the layout size by passing a different container than the one 
-	were the layout will be ultimately rendered. Also by passing nil, you can 
-	let the layout computes its maximum size associated with current container 
-	content. */
-
-/** Run the layout computation which assigns a location in the view container
-    to each view added to the flow layout manager. */
+/** Runs the layout computation which finds a location in the view container
+    to all layout items passed in parameter. 
+	This method is usually called by -render and you should rarely need to
+	do it by yourself. If you want to update the layout, just uses 
+	-[ETContainer updateLayout]. 
+	You may need to override this method in your layout subclasses if you want
+	to create very special layout style. In this cases, it's important to know
+	this method is in charge of calling -resizeLayoutItems, 
+	-layoutModelForLayoutItems:, -computeLayoutItemLocationsForLayoutModel:.
+	Finally once the layout is done, this method set the layout item visibility 
+	by calling -setVisibleItems: on the related container. Actually it takes 
+	care of the scroll view visibility but this may change a little bit in 
+	future. */
 - (void) renderWithLayoutItems: (NSArray *)items
 {	
 	/* Prevent reentrancy. In a threaded environment, it isn't perfectly safe 
@@ -477,8 +454,8 @@
 	ETLog(@"Render layout items: %@", items);
 	
 	NSArray *layoutModel = nil;
-	
 	float scale = [[self container] itemScaleFactor];
+	
 	[self resizeLayoutItems: items toScaleFactor: scale];
 	
 	layoutModel = [self layoutModelForLayoutItems: items];
@@ -486,11 +463,10 @@
 	   decomposition already made. */
 	[self computeLayoutItemLocationsForLayoutModel: layoutModel inContainer: [self container]];
 	
-	// TODO: Optimize by computing set intersection of visible and unvisible item display views
-	/*NSLog(@"Remove views %@ of next layout items to be displayed from their superview", itemViews);
-	[itemViews makeObjectsPerformSelector: @selector(removeFromSuperview)];
-			NSLog(@"Before %@", NSStringFromRect([[self container] frame]));*/
+	// TODO: May be worth to optimize by computing set intersection of visible and unvisible layout items
+	// NSLog(@"Remove views %@ of next layout items to be displayed from their superview", itemViews);
 	[[self container] setVisibleItems: [NSArray array]];
+	
 	/* Adjust container size when it is embedded in a scroll view */
 	if ([[self container] isScrollViewShown])
 	{
@@ -503,8 +479,6 @@
 			NSStringFromSize([self layoutSize]), 
 			NSStringFromSize([[self container] frame].size), 
 			NSStringFromSize([[[self container] scrollView] contentSize]));
-		
-		//[[[self container] scrollView] reflectScrolledClipView: [[[self container] scrollView] clipView]];
 	}
 	
 	NSMutableArray *visibleItems = [NSMutableArray array];
@@ -597,26 +571,13 @@
 	}
 }
 
-/** Renders a collection of items by requesting lazily to source a subset of 
-	them to be displayed. Parameter source must implement ETContainerSource
-	informal protocol in a valid way as described in -[ETContainer setSource:].
-	Take note you can pass nil for container as a mean to compute the whole
-	layout size which can be then be retrieved by calling -layoutSize.
-	This method is usually called by ETContainer and you should rarely need to
-	do it by yourself. If you want to update the layout, just uses 
-	-[ETContainer updateLayout]. */
-- (void) renderWithSource: (id)source inContainer: (ETContainer *)container
-{
-
-}
-
 /* 
  * Line-based layouts methods 
  */
 
 /** Overrides this method to generate a layout line based on the container 
     constraints. Usual container constraints are size, vertical and horizontal 
-	scrollers visibility. */
+	scroller visibility. */
 - (ETViewLayoutLine *) layoutLineForLayoutItems: (NSArray *)items
 {
 	return nil;
@@ -625,11 +586,11 @@
 /** Overrides this method to generate a layout model based on the container 
     constraints. Usual container constraints are size, vertical and horizontal 
 	scrollers visibility.
-	A layout model is commonly an array of layouts lines where their position 
-	indicates in which order these layout lines should be displayed. It's up to 
-	you if you want to create a layout model with a more elaborated ordering 
-	and rendering semantic. Finally the layout model is interpreted by 
-	-computeViewLocationsForLayoutModel:inContainer:. */
+	A layout model is commonly made of several layouts lines inside an array
+	where indexes indicates in which order these layout lines should be 
+	displayed. It's up to you if you want to create a layout model with a more 
+	elaborated ordering and rendering semantic. Finally the layout model is 
+	interpreted by -computeViewLocationsForLayoutModel:. */
 - (NSArray *) layoutModelForLayoutItems: (NSArray *)items
 {
 	ETViewLayoutLine *line = [self layoutLineForLayoutItems: items];
@@ -640,9 +601,9 @@
 	return nil;
 }
 
-/** Overrides this method to interpretate the layout model and compute view 
-	locations accordingly. Most of the work of layout process happens in this
-	method. */
+/** Overrides this method to interpretate the layout model and compute layout 
+	item locations accordingly. Most of the work of layout process happens in 
+	this method. */
 - (void) computeLayoutItemLocationsForLayoutModel: (NSArray *)layoutModel inContainer: (ETContainer *)container
 {
 
@@ -672,9 +633,10 @@
 	return NSZeroRect; 
 }
 
-/** Returns item for which location is inside its display area. location must 
-	be expressed in the coordinates of the container presently associated with 
-	layout. */
+/** Returns the layout item for which location is inside its display area (the
+	layout item frame). 
+	Location must be expressed in the coordinates of the container presently 
+	associated with the receiver. */
 - (ETLayoutItem *) itemAtLocation: (NSPoint)location
 {
 	NSArray *layoutItems = [[self container] layoutItemCache];
@@ -704,6 +666,9 @@
 	return nil;
 }
 
+/** Returns the display area of the layout item passed in parameter. 
+	Returned rect is expressed in the coordinates of the container presently 
+	associated with the receiver.*/
 - (NSRect) displayRectOfItem: (ETLayoutItem *)item
 {
 	if ([item displayView] != nil)
