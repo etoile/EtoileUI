@@ -47,7 +47,10 @@ typedef enum _ETSizeConstraintStyle
 	ETSizeConstraintStyleVerticalHorizontal
 } ETSizeConstraintStyle;
 
-/* Don't reverse the item order or selection and sorting will be messed */
+/** When you compute your layout in methods -layoutLineForLayoutItems:, 
+	-layoutModelForLayoutItems: and -computeLayoutItemLocationsForLayoutModel:
+	be careful not to reverse the item order, else selection and sorting will 
+	be messed. */
 
 @interface ETViewLayout : NSObject
 {
@@ -82,7 +85,7 @@ typedef enum _ETSizeConstraintStyle
 - (BOOL) usesCustomLayoutSize;
 - (void) setLayoutSize: (NSSize)size;
 - (NSSize) layoutSize;
-// Not sure the next methods will be kept public
+// Not sure the two next methods will be kept public
 - (void) setContentSizeLayout: (BOOL)flag;
 - (BOOL) isContentSizeLayout;
 
@@ -107,11 +110,10 @@ typedef enum _ETSizeConstraintStyle
 
 - (void) render;
 - (void) renderWithLayoutItems: (NSArray *)items;
-- (void) renderWithSource: (id)source inContainer: (ETContainer *)container;
 
 - (ETViewLayoutLine *) layoutLineForLayoutItems: (NSArray *)items;
 - (NSArray *) layoutModelForLayoutItems: (NSArray *)items;
-- (void) computeLayoutItemLocationsForLayoutModel: (NSArray *)layoutModel inContainer: (ETContainer *)container;
+- (void) computeLayoutItemLocationsForLayoutModel: (NSArray *)layoutModel;
 
 - (void) resizeLayoutItems: (NSArray *)items toScaleFactor: (float)factor;
 
@@ -119,9 +121,6 @@ typedef enum _ETSizeConstraintStyle
 
 - (ETLayoutItem *) itemAtLocation: (NSPoint)location;
 - (NSRect) displayRectOfItem: (ETLayoutItem *)item;
-
-// Private use
-- (void) adjustLayoutSizeToSizeOfContainer: (ETContainer *)container;
 
 /* Wrapping Existing View */
 

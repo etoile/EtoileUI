@@ -41,8 +41,6 @@
 #import <EtoileUI/NSView+Etoile.h>
 #import <EtoileUI/GNUstep.h>
 
-#define ETLog NSLog
-
 @interface ETContainer (PackageVisibility)
 - (NSArray *) layoutItems;
 - (void) cacheLayoutItems: (NSArray *)cache;
@@ -63,6 +61,8 @@
 - (NSArray *) layoutItemsFromFlatSource;
 - (NSArray *) layoutItemsFromTreeSource;
 
+- (void) adjustLayoutSizeToSizeOfContainer: (ETContainer *)container;
+
 /* Utility methods */
 - (NSRect) lineLayoutRectForItemAtIndex: (int)index;
 - (ETLayoutItem *) itemAtLocation: (NSPoint)location;
@@ -77,6 +77,11 @@
 
 /* Factory Method */
 
+/** Returns a prototype which is a receiver copy you can freely assign to 
+	another container. Because a layout can be bound to only one container, 
+	this method is useful for sharing a customized layout between several 
+	containers without having to recreate a new instance from scratch each
+	time. */
 - (id) layoutPrototype
 {
 	return [self copy];
@@ -90,6 +95,8 @@
 	{
 		_container = nil;
 		_delegate = nil;
+		_displayViewPrototype = nil;
+		_isLayouting = NO;
 		_layoutSize = NSMakeSize(200, 200); /* Dummy value */
 		_layoutSizeCustomized = NO;
 		_maxSizeLayout = NO;
@@ -104,7 +111,7 @@
 - (void) dealloc
 {
 	/* Neither container and delegate have to be retained. For container, only
-	   because it retains us and is in charge of us
+	   because it retains us and is in charge of us.
 	   For _displayViewPrototype, it's up to subclasses to manage it. */
 	[super dealloc];
 }
@@ -121,30 +128,44 @@
 	proto->_layoutSizeCustomized = _layoutSizeCustomized;
 	proto->_maxSizeLayout  = _maxSizeLayout;
 	
+	proto->_itemSizeConstraintStyle = _itemSizeConstraintStyle;
+	
 	return AUTORELEASE(proto);
 }
 
+/** Sets the view where the layout should happen. 
+	When a container is set, on next layout update the receiver will 
+	arrange container layout items in a specific style and order.
+	newContainer isn't retained, but it is expected newContainer has already
+	retained the receiver. */
 - (void) setContainer: (ETContainer *)newContainer
 {
 	/* Disconnect layout from existing container */
 	// Nothing 
 	
 	/* Connect layout to new container */
-	// NOTE: The container is our owner and retains us... A simple assignement 
-	// allows to avoid retain cycle.
+	// NOTE: Avoids retain cycle by weak referencing the container.
 	_container = newContainer;
 	[[_container layoutItemCache] makeObjectsPerformSelector: @selector(restoreDefaultFrame)];
 }
 
-/** Returns the view where the layout happens (by computing location of a subview series). */
+/** Returns the view where the layout happens (by computing locations of a layout item series). */
 - (ETContainer *) container;
 {
 	return _container;
 }
 
+/** Returns YES if all layout items are visible in the bounds of the related 
+	container once the layout has been computed, otherwise returns NO when
+	the layout has run out of space.
+	Whether all items are visible depends of the layout itself and also whether
+	the container is embedded in a scroll view because in such case the 
+	container size is altered. */
 - (BOOL) isAllContentVisible
 {
-	return NO;
+	int nbOfItems = [[[self container] layoutItemCache] count];
+	
+	return [[[self container] visibleItems] count] == nbOfItems;
 }
 
 /** This methods triggers layout render, so you must not call it inside any
