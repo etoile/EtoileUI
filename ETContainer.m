@@ -1449,7 +1449,7 @@ NSString *ETLayoutItemPboardType = @"ETLayoutItemPboardType"; // FIXME: replace 
 	if ([self source] != nil 
 	 && [[self source] respondsToSelector: @selector(container:writeItemsWithIndexes:toPasteboard:)])
 	{
-		dragDataProvided = [[self source] container: self writeItemAtIndexes: [self selectionIndexes]
+		dragDataProvided = [[self source] container: self writeItemsAtIndexes: [self selectionIndexes]
 			toPasteboard: pboard];
 	}
 	else if ([self source] == nil) /* Handles drag by ourself when allowed */
