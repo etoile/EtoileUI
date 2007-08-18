@@ -151,7 +151,7 @@
 //_displayRectIgnoringOpacity:isVisibleRect:rectIsVisibleRectForView:
 - (void) _recursiveDisplayAllDirtyWithLockFocus: (BOOL)lockFocus visRect: (NSRect)aRect
 {
-	NSLog(@"-_recursiveDisplayAllDirtyWithLockFocus:visRect:");
+	//NSLog(@"-_recursiveDisplayAllDirtyWithLockFocus:visRect:");
 	[super _recursiveDisplayAllDirtyWithLockFocus: lockFocus visRect: aRect];
 	
 	/* We always composite the rendering chain on top of each view -drawRect: 

@@ -49,6 +49,7 @@
 
 /* Private Extensions */
 
+// NOTE: This hack is now merely here for the record. Think to remove it later.
 @interface NSDictionary (EtoileHorribleHack)
 - (id) objectForUncopiedKey: (id)key;
 - (void) setObject: (id)object forUncopiedKey: (id)key;
@@ -88,9 +89,6 @@
 	{
 		BOOL nibLoaded = [NSBundle loadNibNamed: @"TablePrototype" owner: self];
 		
-		[[_displayViewPrototype documentView] registerForDraggedTypes: 
-			[NSArray arrayWithObject: ETLayoutItemPboardType]];
-		
 		if (nibLoaded == NO)
 		{
 			NSLog(@"Failed to load nib TablePrototype");
@@ -104,7 +102,7 @@
 
 - (void) dealloc
 {
-	DESTROY(_displayViewPrototype);
+	DESTROY(_allTableColumns);
 	
 	[super dealloc];
 }
@@ -112,8 +110,42 @@
 - (void) awakeFromNib
 {
 	NSLog(@"Awaking from nib for %@", self);
+	
+	/* Because this outlet will be removed from its superview, it must be 
+	   retained like any other to-one relationship ivars. 
+	   If this proto view is later replaced by calling 
+	   -setDisplayViewPrototype:, this retain will be balanced by the release
+	   in ASSIGN. */ 
 	RETAIN(_displayViewPrototype);
-	[_displayViewPrototype removeFromSuperview];
+
+	/* Adjust _displayViewPrototype outlet */
+	[self setDisplayViewPrototype: _displayViewPrototype];
+}
+
+- (void) setDisplayViewPrototype: (NSView *)protoView
+{
+	[super setDisplayViewPrototype: protoView];
+
+	NSTableView *tv = [[self displayViewPrototype] documentView];
+
+	[self setAllTableColumns: [tv tableColumns]];	
+	[tv registerForDraggedTypes: [NSArray arrayWithObject: @"ETLayoutItemPboardType"]];
+	
+	if ([tv dataSource] == nil)
+		[tv setDataSource: self];
+	if ([tv delegate] == nil)
+		[tv setDelegate: self];
+}
+
+- (NSArray *) allTableColumns
+{
+	// FIXME: return copy or not? I don't think so.
+	return _allTableColumns;
+}
+
+- (void) setAllTableColumns: (NSArray *)columns
+{
+	ASSIGN(_allTableColumns, columns);
 }
 
 - (void) renderWithLayoutItems: (NSArray *)items
@@ -156,10 +188,27 @@
 	
 	[self resizeLayoutItems: items toScaleFactor: [[self container] itemScaleFactor]];
 	
-	if ([tv dataSource] == nil)
-		[tv setDataSource: self];
-	if ([tv delegate] == nil)
-		[tv setDelegate: self];
+	/* Update column visibility */
+	if ([[tv dataSource] respondsToSelector: @selector(displayedItemPropertiesInContainer:)])
+	{
+		NSArray *displayedProperties = [[tv dataSource] 
+			displayedItemPropertiesInContainer: [self container]];
+		NSEnumerator *e = [[self allTableColumns] objectEnumerator];
+		NSTableColumn *column = nil;
+		
+		while ((column = [e nextObject]) != nil)
+		{
+			if ([displayedProperties containsObject: [column identifier]] 
+			 && [column tableView] == nil)
+			{
+				[tv addTableColumn: column];
+			}
+			else if ([[column tableView] isEqual: tv])
+			{
+				[tv removeTableColumn: column];
+			}
+		}
+	}
 		
 	[tv reloadData];
 }
@@ -198,15 +247,10 @@
 
 - (BOOL) tableView: (NSTableView *)tv writeRowsWithIndexes: (NSIndexSet *)rowIndexes 
 	toPasteboard: (NSPasteboard*)pboard 
-{
-	if ([[self container] allowsDragging] == NO)
-		return NO;
-
-    NSData *data = [NSKeyedArchiver archivedDataWithRootObject: rowIndexes];
-    [pboard declareTypes: [NSArray arrayWithObject: ETLayoutItemPboardType] owner: self];
-    [pboard setData: data forType: ETLayoutItemPboardType];
-	
-    return YES;
+{	
+	return [[self container] container: [self container] 
+	               writeItemsAtIndexes: rowIndexes 
+				          toPasteboard: pboard];
 }
 
 - (NSDragOperation) tableView:(NSTableView*)tv 
@@ -214,12 +258,11 @@
 				  proposedRow: (int)row 
 	    proposedDropOperation: (NSTableViewDropOperation)op 
 {
-    ETLog(@"Validate drop with dragging source %@ in %@", [info draggingSource], [self container]);
-	
-	if ([[self container] allowsDropping] == NO)
-		return NSDragOperationNone;
+    //ETLog(@"Validate drop with dragging source %@ in %@", [info draggingSource], [self container]);
 		
-	return NSDragOperationEvery;
+	return [[self container] container: [self container] 
+	                      validateDrop: info 
+						       atIndex: row];
 }
 
 - (BOOL) tableView: (NSTableView *)aTableView 
@@ -227,22 +270,11 @@
                row: (int)row 
 	 dropOperation: (NSTableViewDropOperation)operation
 {
-    ETLog(@"Accept drop in %@", [self container]);
+    //ETLog(@"Accept drop in %@", [self container]);
 
-    NSPasteboard *pboard = [info draggingPasteboard];
-    NSData *rowData = [pboard dataForType: ETLayoutItemPboardType];
-    NSIndexSet *rowIndexes = [NSKeyedUnarchiver unarchiveObjectWithData: rowData];
-    int dragRow = [rowIndexes firstIndex];
-	ETLayoutItem *item = [[self container] itemAtIndex: dragRow];
-	
-	RETAIN(item);
-	[[self container] removeItem: item];
-	[[self container] insertItem: item atIndex: row];
-	RELEASE(item);
-	return YES;
-
-	/*ETLog(@"Impossible to insert dropped item when %@ uses a source", [self container]);
-	return NO;*/
+	return [[self container] container: [self container] 
+	                        acceptDrop: info 
+							   atIndex: row];
 }
 
 

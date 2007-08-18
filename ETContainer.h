@@ -251,6 +251,8 @@
 
 /* Extra infos */
 - (NSArray *) displayedItemPropertiesInContainer: (ETContainer *)container;
+- (NSArray *) editableItemPropertiesInContainer: (ETContainer *)container;
+- (NSView *) container: (ETContainer *)container editorObjectForProperty: (NSString *)property ;
 - (int) firstVisibleItemInContainer: (ETContainer *)container;
 - (int) lastVisibleItemInContainer: (ETContainer *)container;
 

@@ -614,6 +614,8 @@
 - (void) setDisplayViewPrototype: (NSView *)protoView
 {
 	ASSIGN(_displayViewPrototype, protoView);
+
+	[_displayViewPrototype removeFromSuperview];
 }
 
 - (NSView *) displayViewPrototype

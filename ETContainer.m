@@ -43,8 +43,6 @@
 #import <EtoileUI/CocoaCompatibility.h>
 #import <EtoileUI/GNUstep.h>
 
-#define ETLog NSLog
-
 #define SELECTION_BY_RANGE_KEY_MASK NSShiftKeyMask
 #define SELECTION_BY_ONE_KEY_MASK NSCommandKeyMask
 
@@ -792,6 +790,22 @@ NSString *ETLayoutItemPboardType = @"ETLayoutItemPboardType"; // FIXME: replace 
 	
 	NSMutableIndexSet *indexes = [self selectionIndexes];
 	
+	/* In this example, 1 means selected and 0 unselected.
+       () represents old item index shifted by insertion
+	   
+       Item index      0   1   2   3   4
+       Item selected   0   1   0   1   0
+   
+       When you call shiftIndexesStartingAtIndex: 2 by: 1, you get:
+       Item index      0   1   2   3   4
+       Item selected   0   1   0   0   1  0
+       Now by inserting an item at 2:
+       Item index      0   1   2  (2) (3) (4)
+       Item selected   0   1   0   0   1   0
+		   
+       That's precisely the selections state we expect once item at index 2
+       has been removed. */
+	
 	[_layoutItems insertObject: item atIndex: index];
 	[indexes shiftIndexesStartingAtIndex: index by: 1];
 	[self setSelectionIndexes: indexes];
@@ -804,10 +818,47 @@ NSString *ETLayoutItemPboardType = @"ETLayoutItemPboardType"; // FIXME: replace 
 	//NSLog(@"Remove item in %@", self);
 	
 	NSMutableIndexSet *indexes = [self selectionIndexes];
+	int removedIndex = [self indexOfItem: item];
 	
-	if ([indexes containsIndex: [self indexOfItem: item]])
+	if ([indexes containsIndex: removedIndex])
 	{
-		[indexes removeIndex: [self indexOfItem: item]];
+		/* In this example, 1 means selected and 0 unselected.
+		
+		   Item index      0   1   2   3   4
+		   Item selected   0   1   0   1   0
+		   
+		   When you call shiftIndexesStartingAtIndex: 3 by: -1, you get:
+		   Item index      0   1   2   3   4
+		   Item selected   0   1   1   0   0
+		   Now by removing item 2:
+		   Item index      0   1   3   4
+		   Item selected   0   1   1   0   0
+		   		   
+		   That's precisely the selections state we expect once item at index 2
+		   has been removed. */
+		[indexes shiftIndexesStartingAtIndex: removedIndex + 1 by: -1];
+		
+		/* Verify basic shitfing errors before really updating the selection */
+		if ([[self selectionIndexes] containsIndex: removedIndex + 1])
+		{
+			NSAssert([indexes containsIndex: removedIndex], 
+				@"Item at the index of the removal must remain selected because it was previously");
+		}
+		if ([[self selectionIndexes] containsIndex: removedIndex - 1])
+		{
+			NSAssert([indexes containsIndex: removedIndex - 1], 
+				@"Item before the index of the removal must remain selected because it was previously");
+		}
+		if ([[self selectionIndexes] containsIndex: removedIndex + 1] == NO)
+		{
+			NSAssert([indexes containsIndex: removedIndex] == NO, 
+				@"Item at the index of the removal must not be selected because it wasn't previously");
+		}
+		if ([[self selectionIndexes] containsIndex: removedIndex - 1] == NO)
+		{
+			NSAssert([indexes containsIndex: removedIndex - 1] == NO, 
+				@"Item before the index of the removal must not be selected because it wasn't previously");
+		}
 		[self setSelectionIndexes: indexes];
 	}
 	[[item displayView] removeFromSuperview];
@@ -887,46 +938,65 @@ NSString *ETLayoutItemPboardType = @"ETLayoutItemPboardType"; // FIXME: replace 
 {
 	int numberOfItems = [[self layoutItemCache] count];
 	int lastSelectionIndex = [indexes lastIndex];
+	
 	NSLog(@"Set selection indexes to %@ in %@", indexes, self);
-	if (lastSelectionIndex > (numberOfItems - 1))
+	
+	if (lastSelectionIndex > (numberOfItems - 1) && index != NSNotFound) /* NSNotFound is a big value and not -1 */
 	{
 		NSLog(@"WARNING: Try to set selection index %d when container %@ only contains %d items",
 			lastSelectionIndex, self, numberOfItems);
 		return;
 	}
 	
-	/* First unset selected state in layout items directly */
-	NSArray *selectedItems = [[self layoutItemCache] objectsAtIndexes: _selection];
-	NSEnumerator *e = [selectedItems objectEnumerator];
-	ETLayoutItem *item = nil;
+	/* Discard previous selection */
+	if ([_selection count] > 0)
+	{
+		NSArray *selectedItems = [[self layoutItemCache] objectsAtIndexes: _selection];
+		NSEnumerator *e = [selectedItems objectEnumerator];
+		ETLayoutItem *item = nil;
 		
-	while ((item = [e nextObject]) != nil)
+		while ((item = [e nextObject]) != nil)
+		{
+			[item setSelected: NO];
+		}
+		[_selection removeAllIndexes];
+	}
+
+	/* Update selection */
+	if (index != NSNotFound)
 	{
-		[item setSelected: NO];
+		/* Cache selection locally in this container */
+		if ([indexes isKindOfClass: [NSMutableIndexSet class]])
+		{
+			ASSIGN(_selection, indexes);
+		}
+		else
+		{
+			ASSIGN(_selection, [indexes mutableCopy]);
+		}
+	
+		/* Update selection state in layout items directly */
+		NSArray *selectedItems = [[self layoutItemCache] objectsAtIndexes: _selection];
+		NSEnumerator *e = [selectedItems objectEnumerator];
+		ETLayoutItem *item = nil;
+			
+		while ((item = [e nextObject]) != nil)
+		{
+			[item setSelected: YES];
+		}
 	}
 	
-	/* Cache selection locally in this container */
-	if ([indexes isKindOfClass: [NSMutableIndexSet class]])
-	{
-		ASSIGN(_selection, indexes);
-	}
-	else
-	{
-		ASSIGN(_selection, [indexes mutableCopy]);
-	}
+	/* Finally propagate changes by posting notification */
+	NSNotification *notif = [NSNotification 
+		notificationWithName: ETContainerSelectionDidChangeNotification object: self];
 	
-	/* Update selection state in layout items directly */
-	selectedItems = [[self layoutItemCache] objectsAtIndexes: _selection];
-	e = [selectedItems objectEnumerator];
-	item = nil;
-		
-	while ((item = [e nextObject]) != nil)
-	{
-		[item setSelected: YES];
-	}
+	if ([[self delegate] respondsToSelector: @selector(containerSelectionDidChange:)])
+		[[self delegate] containerSelectionDidChange: notif];
+
+	[[NSNotificationCenter defaultCenter] postNotification: notif];
 	
+	/* Reflect selection change immediately */
 	[self display];
-	//[self setNeedsDisplay: YES];
 }
 
 - (NSMutableIndexSet *) selectionIndexes
@@ -1445,18 +1515,9 @@ NSString *ETLayoutItemPboardType = @"ETLayoutItemPboardType"; // FIXME: replace 
 	NSPoint dragPosition = [self convertPoint: [event locationInWindow]
 									 fromView: nil];
 	BOOL dragDataProvided = NO;
-	
-	if ([self source] != nil 
-	 && [[self source] respondsToSelector: @selector(container:writeItemsWithIndexes:toPasteboard:)])
-	{
-		dragDataProvided = [[self source] container: self writeItemsAtIndexes: [self selectionIndexes]
-			toPasteboard: pboard];
-	}
-	else if ([self source] == nil) /* Handles drag by ourself when allowed */
-	{
-		dragDataProvided = [self container: self writeItemsAtIndexes: [self selectionIndexes]
-			toPasteboard: pboard];
-	}
+
+	dragDataProvided = [self container: self writeItemsAtIndexes: [self selectionIndexes]
+		toPasteboard: pboard];	
 	
 	//dragPosition.x -= 32;
 	//dragPosition.y -= 32;
@@ -1476,19 +1537,34 @@ NSString *ETLayoutItemPboardType = @"ETLayoutItemPboardType"; // FIXME: replace 
 
 - (BOOL) container: (ETContainer *)container writeItemsAtIndexes: (NSIndexSet *)indexes toPasteboard: (NSPasteboard *)pboard
 {
-	NSData *data = [NSKeyedArchiver archivedDataWithRootObject: indexes];
+	BOOL dragDataProvided = NO;
 	
-	[pboard declareTypes: [NSArray arrayWithObject: ETLayoutItemPboardType]
-		owner: nil];
+	/* Verify if the drag is allowed now for AppKit-based layout */
+	if ([self allowsDragging] == NO)
+		return NO;
+	
+	if ([self source] != nil 
+	 && [[self source] respondsToSelector: @selector(container:writeItemsWithIndexes:toPasteboard:)])
+	{
+		dragDataProvided = [[self source] container: self writeItemsAtIndexes: [self selectionIndexes]
+			toPasteboard: pboard];
+	}
+	else if ([self source] == nil) /* Handles drag by ourself when allowed */
+	{
+		NSData *data = [NSKeyedArchiver archivedDataWithRootObject: indexes];
 		
-	// NOTE: If we implement an unified layout item tree shared by 
-	// applications through CoreObject, we could eventually just put simple
-	// path on the pasteboard rather than archived object or index.
-	//[pboard setString: forType: ETLayoutItemPboardType];
-	/*[pboard setData: forType: ETLayoutItemPboardType];*/
-	[pboard setData: data forType: ETLayoutItemPboardType];
-	
-	return YES;
+		[pboard declareTypes: [NSArray arrayWithObject: ETLayoutItemPboardType]
+			owner: nil];
+			
+		// NOTE: If we implement an unified layout item tree shared by 
+		// applications through CoreObject, we could eventually just put simple
+		// path on the pasteboard rather than archived object or index.
+		//[pboard setString: forType: ETLayoutItemPboardType];
+		/*[pboard setData: forType: ETLayoutItemPboardType];*/
+		dragDataProvided = [pboard setData: data forType: ETLayoutItemPboardType];
+	}
+
+	return dragDataProvided;
 }
 
 - (unsigned int) draggingSourceOperationMaskForLocal: (BOOL)isLocal
@@ -1530,6 +1606,8 @@ NSString *ETLayoutItemPboardType = @"ETLayoutItemPboardType"; // FIXME: replace 
 	return NSDragOperationPrivate;
 }
 
+// FIXME: Handle layout orientation, only works with horizontal layout
+// currently, in other words the insertion indicator is always vertical.
 - (NSDragOperation) draggingUpdated: (id <NSDraggingInfo>)drag
 {
 	ETLog(@"Drag update receives in dragging destination %@", self);
@@ -1621,6 +1699,7 @@ NSString *ETLayoutItemPboardType = @"ETLayoutItemPboardType"; // FIXME: replace 
 	NSPoint localDropPosition = [self convertPoint: [sender draggingLocation] fromView: nil];
 	ETLayoutItem *dropTargetItem = [[self layout] itemAtLocation: localDropPosition];
 	int dropIndex = NSNotFound;
+	NSRect itemRect = NSZeroRect;
 	
 	ETLog(@"Found item %@ as drop target", dropTargetItem);
 	
@@ -1631,25 +1710,61 @@ NSString *ETLayoutItemPboardType = @"ETLayoutItemPboardType"; // FIXME: replace 
 	/* Found a drop target at dropIndex */
 	dropIndex = [self indexOfItem: dropTargetItem];
 	
-	// FIXME: Test all possible drag methods supported by data source
-	if ([self source] != nil && [[self source] respondsToSelector: @selector(container:acceptDrop:atIndex:)])
-	{
-		return [[self source] container: self 
-			                 acceptDrop: sender
-					            atIndex: dropIndex];
-	}
-	else if ([self source] == nil) /* Handles drag by ourself when allowed */
-	{
-		return [self container: self acceptDrop: sender atIndex: dropIndex];
-	}
+	/* Increase index if the insertion is located on the right of dropTargetItem */
+	// FIXME: Handle layout orientation, only works with horizontal layout
+	// currently.
+	itemRect = [[self layout] displayRectOfItem: dropTargetItem];
+	if (localDropPosition.x > NSMidX(itemRect))
+		dropIndex++;
 	
-	/* Don't handle drag when a source is set and doesn't implement drag data source methods */
-	return NO;
+	return [self container: self validateDrop: sender atIndex: dropIndex];
 }
 
 - (BOOL) container: (ETContainer *)container acceptDrop: (id <NSDraggingInfo>)drag atIndex: (int)index
 {
-	return YES;
+	// FIXME: Test all possible drag methods supported by data source
+	if ([self source] != nil && [[self source] respondsToSelector: @selector(container:acceptDrop:atIndex:)])
+	{
+		return [[self source] container: self 
+			                 acceptDrop: drag
+					            atIndex: index];
+	}
+	else if ([self source] == nil) /* Handles drag by ourself when allowed */
+	{
+		NSPasteboard *pboard = [drag draggingPasteboard];
+		NSData *data = [pboard dataForType: ETLayoutItemPboardType];
+		NSIndexSet *indexes = [NSKeyedUnarchiver unarchiveObjectWithData: data];
+		int movedIndex = [indexes firstIndex];
+		ETLayoutItem *movedItem = [self itemAtIndex: movedIndex];
+		int insertionIndex = index;
+		BOOL itemAlreadyRemoved = NO; // NOTE: Feature to be implemented
+		
+		RETAIN(movedItem);
+		
+		//[self setAutolayout: NO];
+		 /* Dropped item is visible where it was initially located.
+		    If the flag is YES, dropped item is currently invisible. */
+		if (itemAlreadyRemoved == NO)
+		{
+			ETLog(@"For drop, removes item at index %d", movedIndex);
+			[self removeItem: movedItem];
+			if (insertionIndex > movedIndex)
+				insertionIndex--;
+		}
+		//[self setAutolayout: YES];
+		
+		ETLog(@"For drop, insert item at index %d", insertionIndex);
+		[self insertItem: movedItem atIndex: insertionIndex];
+		[self setSelectionIndex: insertionIndex];
+		
+		RELEASE(movedItem);
+		
+		return YES;
+	}
+
+	/* Don't handle drag when a source is set and doesn't implement this 
+	   mandatory drag data source method. */		
+	return NO;
 }
 
 /* Will be called when -draggingEntered and -draggingUpdated have validated the drag
@@ -1659,42 +1774,45 @@ NSString *ETLayoutItemPboardType = @"ETLayoutItemPboardType"; // FIXME: replace 
 	ETLog(@"Perform drag receives in dragging destination %@", self);
 	
 	NSPoint localDropPosition = [self convertPoint: [sender draggingLocation] fromView: nil];
-	int dropIndex = [self indexOfItem: [[self layout] itemAtLocation: localDropPosition]];
+	ETLayoutItem *dropTargetItem = [[self layout] itemAtLocation: localDropPosition];
+	int dropIndex = NSNotFound;
+	NSRect itemRect = NSZeroRect;
+	
+	ETLog(@"Found item %@ as drop target", dropTargetItem);
+	
+	/* Found no drop target */
+	if (dropTargetItem == nil)
+		return NO;
+	
+	/* Found a drop target at dropIndex */
+	dropIndex = [self indexOfItem: dropTargetItem];
+	
+	/* Increase index if the insertion is located on the right of dropTargetItem */
+	// FIXME: Handle layout orientation, only works with horizontal layout
+	// currently.
+	itemRect = [[self layout] displayRectOfItem: dropTargetItem];
+	if (localDropPosition.x > NSMidX(itemRect))
+		dropIndex++;
 
-	// FIXME: Test all possible drag methods supported by data source	
-	if ([self source] != nil && [[self source] respondsToSelector: @selector(container:validateDrop:atIndex:)])
-	{
-		[[self source] container: self 
-					validateDrop: sender
-					     atIndex: dropIndex];
-	}
-	else if ([self source] == nil) /* Handles drag by ourself when allowed */
-	{
-		[self container: self 
-		   validateDrop: sender
-				atIndex: dropIndex];
-	}
-
-	/* Don't handle drag when a source is set and doesn't implement drag data source methods */	
-	return YES;
+	return [self container: self acceptDrop: sender atIndex: dropIndex];
 }
 
 - (NSDragOperation) container: (ETContainer *)container validateDrop: (id <NSDraggingInfo>)drag atIndex: (int)dropIndex
 {
-    NSPasteboard *pboard = [drag draggingPasteboard];
-    NSData *data = [pboard dataForType: ETLayoutItemPboardType];
-	NSIndexSet *indexes = [NSKeyedUnarchiver unarchiveObjectWithData: data];
-	int movedIndex = [indexes firstIndex];
-	ETLayoutItem *movedItem = [self itemAtIndex: movedIndex];
-	
-	//[self setAutolayout: NO];
-	RETAIN(movedItem);
-	[self removeItem: movedItem];
-	//[self setAutolayout: YES];
-	[self insertItem: movedItem atIndex: dropIndex];
-	[self setSelectionIndex: dropIndex];
-	RELEASE(movedItem);
-	
+	// FIXME: Test all possible drag methods supported by data source	
+	if ([self source] != nil && [[self source] respondsToSelector: @selector(container:validateDrop:atIndex:)])
+	{
+		return [[self source] container: self 
+		                   validateDrop: drag
+		                        atIndex: dropIndex];
+	}
+	else if ([self source] == nil) /* Handles drag by ourself when allowed */
+	{
+		return YES;
+	}
+
+	/* Implementation -container:validateDrop:atIndex: is optional thereby we don't
+	   disallow dragging. */
 	return NSDragOperationPrivate;
 }
 

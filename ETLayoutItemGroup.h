@@ -68,6 +68,11 @@
 
 /* Stacking */
 
+/*- (ETViewLayout *) stackedItemLayout;
+- (void) setStackedItemLayout: (ETViewLayout *)layout;
+- (ETViewLayout *) unstackedItemLayout;
+- (void) setUnstackedItemLayout: (ETViewLayout *)layout;*/
+
 - (void) stack;
 - (void) unstack;
 

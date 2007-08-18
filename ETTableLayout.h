@@ -42,12 +42,10 @@
 
 @interface ETTableLayout : ETViewLayout
 {
-
+	NSArray *_allTableColumns;
 }
 
-@end
+- (NSArray *) allTableColumns;
+- (void) setAllTableColumns: (NSArray *)columns;
 
-// Finally I do it in an other way
-// TODO: Write a new two way dictionary data structure (would be safer and reusable)
-//NSMutableDictionary *_tableViewsByContainer;
-//NSMutableDictionary *_containersByTableView;
+@end
