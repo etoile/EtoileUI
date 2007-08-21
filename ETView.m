@@ -91,6 +91,26 @@
 	return _wrappedView;
 }
 
+- (void) setDisclosable: (BOOL)flag
+{
+	_disclosable = flag;
+}
+
+- (BOOL) isDisclosable
+{
+	return _disclosable;
+}
+
+- (void) collapse: (id)sender
+{
+
+}
+
+- (void) expand: (id)sender
+{
+
+}
+
 - (void) displayIfNeeded
 {
 	NSLog(@"-displayIfNeeded");

@@ -1,13 +1,13 @@
 /*
-	EtoileUI.h
+	ETInspector.h
 	
-	Umbrella header for EtoileUI framework.
+	Inspector protocol and related Inspector representation class which can be
+	used as an inspector view wrapper.
  
 	Copyright (C) 2007 Quentin Mathe
  
-	Authors:  Quentin Mathe <qmathe@club-internet.fr>
-
-	Date:  July 2007
+	Author:  Quentin Mathe <qmathe@club-internet.fr>
+	Date:  August 2007
  
 	Redistribution and use in source and binary forms, with or without
 	modification, are permitted provided that the following conditions are met:
@@ -33,39 +33,53 @@
 	ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
 	THE POSSIBILITY OF SUCH DAMAGE.
  */
- 
-#import <EtoileUI/CocoaCompatibility.h>
 
-#import <EtoileUI/ETContainer.h>
+#import <Foundation/Foundation.h>
+#import <AppKit/AppKit.h>
 #import <EtoileUI/ETLayoutItem.h>
-#import <EtoileUI/ETLayoutItemGroup.h>
-#import <EtoileUI/ETLayer.h>
-#import <EtoileUI/ETViewLayout.h>
-#import <EtoileUI/ETViewLayoutLine.h>
 
-#import <EtoileUI/ETFlowLayout.h>
-#import <EtoileUI/ETFlowView.h>
-#import <EtoileUI/ETLineLayout.h>
-#import <EtoileUI/ETLineView.h>
-#import <EtoileUI/ETStackLayout.h>
-#import <EtoileUI/ETStackView.h>
+@class ETView, ETContainer;
 
-#import <EtoileUI/ETTableLayout.h>
-#import <EtoileUI/ETTableView.h>
-#import <EtoileUI/ETOutlineLayout.h>
-#import <EtoileUI/ETBrowserLayout.h>
-#import <EtoileUI/FSBrowserCell.h>
+@protocol ETInspector
+- (ETView *) view;
+- (NSWindow *) window;
+- (NSPanel *) panel;
+/*- (NSArray *) inspectedItems;
+- (void) setInspectedItems: (NSArray *)items;*/
+@end
 
-#import <EtoileUI/ETPaneLayout.h>
-//#import <EtoileUI/ETPaneView.h>
-#import <EtoileUI/ETPaneSwitcherLayout.h>
+@protocol ETObjectInspection
+- (id <ETInspector>) inspector;
+@end
 
-#import <EtoileUI/ETFreeLayout.h>
 
-#import <EtoileUI/ETInspector.h>
+@interface ETInspector : ETLayoutItem <ETInspector>
+{
+	IBOutlet ETContainer *propertyView;
+	IBOutlet ETContainer *itemGroupView;
+	IBOutlet NSWindow *window;
 
-#import <EtoileUI/ETLineLayout.h>
+	NSArray *_inspectorViews;
+	NSArray *_inspectedItems;
+}
 
-#import <EtoileUI/GNUstep.h>
-#import <EtoileUI/NSView+Etoile.h>
-#import <EtoileUI/NSIndexSet+Etoile.h>
+- (NSArray *) inspectedItems;
+- (void) setInspectedItems: (NSArray *)items;
+
+- (ETView *) view;
+- (void) setView: (NSView *)view;
+
+- (NSWindow *) window;
+- (NSPanel *) panel;
+
+- (IBAction) inspect: (id)sender;
+
+@end
+
+@interface ETLayoutItem (ETInspector)
+/** A basic meta model which inspects layout items by wrapping each one in a 
+	new meta layout item. Achieved by setting the base layout item as the
+	represented object of the new meta layout item. */
++ (ETLayoutItem *) layoutItemOfLayoutItem: (ETLayoutItem *)item;
+- (ETView *) buildInspectorView;
+@end

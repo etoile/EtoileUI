@@ -37,6 +37,7 @@
 #import <EtoileUI/ETLayoutItem.h>
 #import <EtoileUI/ETStyleRenderer.h>
 #import <EtoileUI/ETView.h>
+#import <EtoileUI/ETInspector.h>
 #import <EtoileUI/NSView+Etoile.h>
 #import <EtoileUI/GNUstep.h>
 
@@ -80,6 +81,11 @@
 + (ETLayoutItem *) layoutItemWithView: (NSView *)view
 {
 	return (ETLayoutItem *)AUTORELEASE([[self alloc] initWithView: view]);
+}
+
+- (ETLayoutItem *) init
+{
+	return [self initWithView: nil value: nil representedObject: nil];
 }
 
 - (ETLayoutItem *) initWithValue: (id)value
@@ -279,14 +285,23 @@
 	and -setValue:forProperty: or conform to NSKeyValueCoding protocol. */
 - (id) valueForProperty: (NSString *)key
 {
+	id value = nil;
+	
 	if ([_modelObject respondsToSelector: @selector(valueForProperty:)])
 	{
-		return [_modelObject valueForProperty: key];
+		value = [_modelObject valueForProperty: key];
+	}
+	else if ([_modelObject respondsToSelector: @selector(objectForKey:)])
+	{
+		/* Useful for dictionary objects */
+		value = [_modelObject objectForKey: key];
 	}
 	else
 	{
-		return [_modelObject valueForKey: key];
+		value = [_modelObject valueForKey: key];
 	}
+	
+	return value;
 }
 
 /** Sets a value identified by key of the model object returned by 
@@ -294,17 +309,70 @@
 	See -valueForProperty: for more details. */
 - (BOOL) setValue: (id)value forProperty: (NSString *)key
 {
+	BOOL result = YES;
+	
 	if ([_modelObject respondsToSelector: @selector(setValue:forProperty:)])
 	{
-		return [_modelObject setValue: value forProperty: key];
+		result = [_modelObject setValue: value forProperty: key];
+	}
+	else if ([_modelObject respondsToSelector: @selector(setObject:forKey:)])
+	{
+		/* Useful for dictionary objects */
+		[_modelObject setObject: value forKey:key];
 	}
 	else
 	{
 		// FIXME: Catch key value coding exception here
 		[_modelObject setValue: value forKey: key];
-		return YES;
 	}
+	
 	[self didChangeValueForKey: key];
+	
+	return result;
+}
+
+- (NSArray *) properties
+{
+	NSArray *properties = nil;
+
+	/* Meta layout item responds to -properties because their represented
+	   object is a layout item. Model objects may implement this method too. 
+	   For example OrganizeKit objects responds to it. */
+	if ([_modelObject respondsToSelector: @selector(properties)])
+	{
+		properties = [_modelObject properties];
+	}
+	else if ([_modelObject respondsToSelector: @selector(entity)]
+	 && [[_modelObject entity] respondsToSelector: @selector(properties)])
+	{
+		/* Managed Objects have an entity which describes them */
+		properties = [[_modelObject entity] properties];
+	}
+	else if ([_modelObject respondsToSelector: @selector(allKeys)])
+	{
+		/* Useful for dictionary objects */
+		properties = [_modelObject allKeys];
+	}
+	else if ([_modelObject respondsToSelector: @selector(classDescription)])
+	{
+		/* Any objects can declare a class description, so we try to use it */
+		NSClassDescription *desc = [_modelObject classDescription];
+		
+		properties = [NSMutableArray arrayWithObjects: [desc attributeKeys]];
+		// NOTE: Not really sure we should include relationship keys
+		[properties addObjects: [desc toManyRelationshipKeys]];
+		[properties addObjects: [desc toOneRelationshipKeys]];
+	}
+	
+	if (properties != nil && [properties count] == 0)
+		properties = nil;
+		
+	return [properties copy];;
+}
+
+- (BOOL) isMetaLayoutItem
+{
+	return [_modelObject isKindOfClass: [ETLayoutItem class]];
 }
 
 - (void) didChangeValueForKey: (NSString *)key
@@ -317,6 +385,7 @@
 	return _view;
 }
 
+// TODO: Modify to lookup for the selection state in the closest container ancestor
 - (void) setSelected: (BOOL)selected
 {
 	NSLog(@"Set layout item selection state %@", self);
@@ -618,6 +687,16 @@
 - (void) doubleClick
 {
 
+}
+
+- (void) showInspectorPanel
+{
+	[[[self inspector] panel] makeKeyAndOrderFront: self];
+}
+
+- (id <ETInspector>) inspector
+{
+	return nil;
 }
 
 @end

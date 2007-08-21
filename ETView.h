@@ -45,12 +45,20 @@
 {
 	id _renderer;
 	NSView *_wrappedView;
+	BOOL _disclosable;
 }
 
 - (void) setRenderer: (id)renderer;
 - (id) renderer;
 
+// NOTE: setEnclosedView: may sound better
 - (void) setWrappedView: (NSView *)subview;
 - (NSView *) wrappedView;
+
+- (void) setDisclosable: (BOOL)flag;
+- (BOOL) isDisclosable;
+
+- (void) collapse: (id)sender;
+- (void) expand: (id)sender;
 
 @end

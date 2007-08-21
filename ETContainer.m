@@ -38,6 +38,7 @@
 #import <EtoileUI/ETLayoutItem.h>
 #import <EtoileUI/ETViewLayout.h>
 #import <EtoileUI/ETLayer.h>
+#import <EtoileUI/ETInspector.h>
 #import <EtoileUI/NSView+Etoile.h>
 #import <EtoileUI/NSIndexSet+Etoile.h>
 #import <EtoileUI/CocoaCompatibility.h>
@@ -94,6 +95,7 @@ NSString *ETLayoutItemPboardType = @"ETLayoutItemPboardType"; // FIXME: replace 
 		_dropAllowed = YES;
 		_prevInsertionIndicatorRect = NSZeroRect;
 		_scrollView = nil; /* First instance created by calling private method -setShowsScrollView: */
+		_inspector = nil; /* Instantiated lazily in -inspector if needed */
 		
 		[self registerForDraggedTypes: [NSArray arrayWithObjects:
 			ETLayoutItemPboardType, nil]];
@@ -125,6 +127,7 @@ NSString *ETLayoutItemPboardType = @"ETLayoutItemPboardType"; // FIXME: replace 
 	DESTROY(_displayView);
 	DESTROY(_path);
 	DESTROY(_selection);
+	DESTROY(_inspector);
 	_dataSource = nil;
     
     [super dealloc];
@@ -528,6 +531,37 @@ NSString *ETLayoutItemPboardType = @"ETLayoutItemPboardType"; // FIXME: replace 
 - (void) setDelegate: (id)delegate
 {
 	_delegate = delegate;
+}
+
+/* Inspecting */
+
+- (IBAction) inspect: (id)sender
+{
+	NSLog(@"inspect %@", self);
+	[[[self inspector] panel] makeKeyAndOrderFront: self];
+}
+
+- (void) setInspector: (id <ETInspector>)inspector
+{
+	ASSIGN(_inspector, inspector);
+}
+
+/** Returns inspector based on selection.
+	If the inspector hasn't been set by calling -setInspector:, it gets lazily
+	instantiated when this accessors is called. */
+- (id <ETInspector>) inspector
+{
+	if (_inspector == nil)
+		_inspector = [[ETInspector alloc] init];
+
+	return [self inspectorForItems: [self layoutItemCache]];
+}
+
+- (id <ETInspector>) inspectorForItems: (NSArray *)items
+{
+	[_inspector setInspectedItems: items];
+	
+	return _inspector;
 }
 
 /** Returns whether the receiver uses flipped coordinates or not. 

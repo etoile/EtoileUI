@@ -1,13 +1,13 @@
 /*
-	EtoileUI.h
+	ETFreeLayout.h
 	
-	Umbrella header for EtoileUI framework.
+	Free layout class which let the user position the layout items by direct 
+	manipulation
  
 	Copyright (C) 2007 Quentin Mathe
  
-	Authors:  Quentin Mathe <qmathe@club-internet.fr>
-
-	Date:  July 2007
+	Author:  Quentin Mathe <qmathe@club-internet.fr>
+	Date:  August 2007
  
 	Redistribution and use in source and binary forms, with or without
 	modification, are permitted provided that the following conditions are met:
@@ -34,38 +34,18 @@
 	THE POSSIBILITY OF SUCH DAMAGE.
  */
  
-#import <EtoileUI/CocoaCompatibility.h>
-
-#import <EtoileUI/ETContainer.h>
-#import <EtoileUI/ETLayoutItem.h>
-#import <EtoileUI/ETLayoutItemGroup.h>
-#import <EtoileUI/ETLayer.h>
+#import <Foundation/Foundation.h>
+#import <AppKit/AppKit.h>
 #import <EtoileUI/ETViewLayout.h>
-#import <EtoileUI/ETViewLayoutLine.h>
 
-#import <EtoileUI/ETFlowLayout.h>
-#import <EtoileUI/ETFlowView.h>
-#import <EtoileUI/ETLineLayout.h>
-#import <EtoileUI/ETLineView.h>
-#import <EtoileUI/ETStackLayout.h>
-#import <EtoileUI/ETStackView.h>
+#define ETLayout ETViewLayout
 
-#import <EtoileUI/ETTableLayout.h>
-#import <EtoileUI/ETTableView.h>
-#import <EtoileUI/ETOutlineLayout.h>
-#import <EtoileUI/ETBrowserLayout.h>
-#import <EtoileUI/FSBrowserCell.h>
 
-#import <EtoileUI/ETPaneLayout.h>
-//#import <EtoileUI/ETPaneView.h>
-#import <EtoileUI/ETPaneSwitcherLayout.h>
+@interface ETFreeLayout : ETLayout
+{
 
-#import <EtoileUI/ETFreeLayout.h>
+}
 
-#import <EtoileUI/ETInspector.h>
+- (void) resetItemLocationsWithLayout: (ETLayout *)layout;
 
-#import <EtoileUI/ETLineLayout.h>
-
-#import <EtoileUI/GNUstep.h>
-#import <EtoileUI/NSView+Etoile.h>
-#import <EtoileUI/NSIndexSet+Etoile.h>
+@end

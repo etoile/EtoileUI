@@ -40,6 +40,7 @@
 #define ETUTI NSString
 
 @class ETView;
+@protocol ETObjectInspection, ETInspector;
 
 /** WARNING: Personal notes that are vague and may change, move or become part
 	of another framework.
@@ -70,19 +71,27 @@
 	- it quits the layout item
  */
 
-
-@interface ETLayoutItem : ETStyleRenderer 
+// FIXME: Use less memory per instance. Name and value are somehow duplicates.
+// _cells and _view could be moved in a helper object. Pack booleans in a struct.
+@interface ETLayoutItem : ETStyleRenderer <ETObjectInspection>
 {
 	id _value;
 	id _modelObject;
-	ETView *_view;
+	NSString *_name;
 	ETStyleRenderer *_renderer;
+
+	IBOutlet ETView *_view;
+	NSArray *_cells; /* NSCell compatibility */
+	
+	/* Model object stores a persistent frame when the layout is non-computed */
+	NSRect _defaultFrame; /* Frame without item scaling */
+	NSRect _frame; /* Frame with item scaling */
+	
 	BOOL _selected;
 	BOOL _visible;
-	NSRect _defaultFrame;
-	NSRect _frame;
-	NSString *_name;
-	BOOL _resizeBounds;
+	BOOL _resizeBounds; /* Scale view content by resizing bounds */
+	
+	id _reserved;
 }
 
 + (ETLayoutItem *) layoutItemWithView: (NSView *)view;
@@ -90,6 +99,7 @@
 - (ETLayoutItem *) initWithValue: (id)value;
 - (ETLayoutItem *) initWithRepresentedObject: (id)object;
 - (ETLayoutItem *) initWithView: (NSView *)view;
+- (ETLayoutItem *) initWithView: (NSView *)view value: (id)value representedObject: (id)repObject;
 
 /** Facility methods to store a name acting like a last fallback property for 
 	display. Name is also used as a path component to build 
@@ -137,6 +147,9 @@ shape*/
 
 - (id) valueForProperty: (NSString *)key;
 - (BOOL) setValue: (id)value forProperty: (NSString *)key;
+- (NSArray *) properties;
+
+- (BOOL) isMetaLayoutItem;
 
 /* Utility Accessors */
 
@@ -169,7 +182,26 @@ shape*/
 
 /* Sizing */
 
+// No need for the following
+/** The following method locks the layout item to prevent modifying the 
+    property kETVectorLocation which stores the layout item location in
+	non-computed layout like ETFreeLayout */
+/*- (void) beginLayoutComputation;
+- (void) endLayoutComputation;*/
+
+/** The persistent frame is only valid and used in non-computed layout like
+	ETFreeLayout. */
+- (NSRect) persistentFrame;
+- (void) setPersistentFrame: (NSRect) frame;
+
+/** Returns always the current frame. This value is always in sync with 
+	persistent frame in non-computed layout but is usually different when
+	the layout is computed */
 - (NSRect) frame;
+/** Sets the current frame and also the persistent frame if the layout
+	is a non-computed one. 
+	The layout is found by looking up in the layout tree for the closest
+	layout item group which has a layout defined. */
 - (void) setFrame: (NSRect)rect;
 - (NSPoint) origin;
 - (void) setOrigin: (NSPoint)origin;
@@ -194,6 +226,28 @@ shape*/
 
 - (void) doubleClick;
 
+- (void) showInspectorPanel;
+- (id <ETInspector>) inspector;
+
+@end
+
+/** ETlayoutItem has no delegate but rather used the delegate of the closest 
+	container ancestor.
+	Implements this method if you set values in aggregate views or cells. For
+	example, when you have a mixed icon text cell, you would write:
+	if ([property isEqual: kPropertyName])
+	{
+		[[item cell] setText: value];
+		[[item cell] setImage: [item valueForProperty: @"icon"];
+	}
+	Be careful with property because it can be a key path so you may better 
+	to always retrieve the last component.
+	Binding can be used instead of this method if you prefer.
+	An other alternative is to subclass ETLayoutItem and overrides method
+	-setValue:forProperty:. But the purpose of this delegate is precisely to 
+	avoid subclassing burden. */
+@interface ETLayoutItem (ETLayoutItemDelegate)
+- (void) layoutItem: (ETLayoutItem *)item setValue: (id)value forProperty: (NSString *)property;
 @end
 
 
@@ -203,7 +257,7 @@ shape*/
 
 /*
 @interface ETLayoutItem (NSCellCompatibility)
-- (NSCell *) cell;
-- (void) setCell: (NSCell *)cell;
+- (NSCell *) cellForProperty: (NSString *)property;
+- (void) setCellForProperty: (NSCell *)cell;
 @end
 */

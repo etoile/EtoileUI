@@ -1,0 +1,42 @@
+{
+    IBClasses = (
+        {
+            ACTIONS = {inspect = id; }; 
+            CLASS = ETContainer; 
+            LANGUAGE = ObjC; 
+            OUTLETS = {"_scrollView" = NSScrollView; }; 
+            SUPERCLASS = ETView; 
+        }, 
+        {CLASS = ETImageStyle; LANGUAGE = ObjC; SUPERCLASS = ETStyleRenderer; }, 
+        {
+            ACTIONS = {changeLayout = id; inspect = id; }; 
+            CLASS = ETInspector; 
+            LANGUAGE = ObjC; 
+            OUTLETS = {itemGroupView = ETContainer; propertyView = ETContainer; window = id; }; 
+            SUPERCLASS = ETLayoutItem; 
+        }, 
+        {
+            CLASS = ETLayoutItem; 
+            LANGUAGE = ObjC; 
+            OUTLETS = {"_view" = ETView; }; 
+            SUPERCLASS = ETStyleRenderer; 
+        }, 
+        {CLASS = ETSelection; LANGUAGE = ObjC; SUPERCLASS = NSObject; }, 
+        {CLASS = ETStyleRenderer; LANGUAGE = ObjC; SUPERCLASS = NSObject; }, 
+        {
+            ACTIONS = {collapse = id; expand = id; }; 
+            CLASS = ETView; 
+            LANGUAGE = ObjC; 
+            SUPERCLASS = NSView; 
+        }, 
+        {CLASS = FirstResponder; LANGUAGE = ObjC; SUPERCLASS = NSObject; }, 
+        {CLASS = NSImage; LANGUAGE = ObjC; SUPERCLASS = NSObject; }, 
+        {
+            ACTIONS = {inspect = id; }; 
+            CLASS = NSResponder; 
+            LANGUAGE = ObjC; 
+            SUPERCLASS = NSObject; 
+        }
+    ); 
+    IBVersion = 1; 
+}

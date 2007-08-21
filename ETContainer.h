@@ -38,6 +38,7 @@
 #import <EtoileUI/ETView.h>
 
 @class ETLayoutItem, ETViewLayout, ETLayer, ETLayoutGroupItem, ETSelection;
+@protocol ETInspector;
 
 /** Forwarding Chain 
 
@@ -58,7 +59,7 @@
  */
 
 // ETComponentView
-@interface ETContainer : ETView
+@interface ETContainer : ETView <ETInspector>
 {
 	IBOutlet NSScrollView *_scrollView;
 
@@ -100,6 +101,8 @@
 	   Read -cacheLayoutItems: documentation to know how modify the cache 
 	   without corrupting it. */
 	NSMutableArray *_layoutItemCache;
+	
+	id <ETInspector> _inspector;
 }
 
 - (id) initWithFrame: (NSRect)rect views: (NSArray *)views;
@@ -125,6 +128,14 @@
 
 - (BOOL) isFlipped;
 - (void) setFlipped: (BOOL)flag;
+
+/* Inspecting */
+
+- (IBAction) inspect: (id)sender;
+- (void) setInspector: (id <ETInspector>)inspector;
+/** Returns inspector based on selection */
+- (id <ETInspector>) inspector;
+- (id <ETInspector>) inspectorForItems: (NSArray *)items;
 
 /* Scrolling */
 
@@ -248,6 +259,10 @@
 /* Key and index path retrieval useful with containers displaying tree structure */
 - (int) numberOfItemsAtPath: (NSString *)keyPath inContainer: (ETContainer *)container;
 - (ETLayoutItem *) itemAtPath: (NSString *)keyPath inContainer: (ETContainer *)container;
+
+/* Coordinates retrieval useful with containers oriented towards graphics and spreadsheet */
+/*- (ETVector *) container: (ETContainer *)container locationForItem: (ETLayoutItem *)item;
+- (void) container: (ETContainer *)container setLocation: (ETVector *)vectorLoc forItem: (ETLayoutItem *)item;*/
 
 /* Extra infos */
 - (NSArray *) displayedItemPropertiesInContainer: (ETContainer *)container;

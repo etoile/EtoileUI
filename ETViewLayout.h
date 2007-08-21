@@ -79,6 +79,8 @@ typedef enum _ETSizeConstraintStyle
 - (void) setContainer: (ETContainer *)newContainer;
 - (ETContainer *) container;
 
+- (BOOL) isComputedLayout;
+
 /* Size And Utility Accessors */
 
 - (void) setUsesCustomLayoutSize: (BOOL)flag;

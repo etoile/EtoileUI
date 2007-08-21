@@ -189,24 +189,48 @@
 	[self resizeLayoutItems: items toScaleFactor: [[self container] itemScaleFactor]];
 	
 	/* Update column visibility */
-	if ([[tv dataSource] respondsToSelector: @selector(displayedItemPropertiesInContainer:)])
+	if ([[[self container] source] respondsToSelector: @selector(displayedItemPropertiesInContainer:)])
 	{
-		NSArray *displayedProperties = [[tv dataSource] 
-			displayedItemPropertiesInContainer: [self container]];
+		NSMutableArray *displayedProperties = [[[[self container] source] 
+			displayedItemPropertiesInContainer: [self container]] mutableCopy];
 		NSEnumerator *e = [[self allTableColumns] objectEnumerator];
 		NSTableColumn *column = nil;
+		NSString *property = nil;
 		
+		/* Hide or show already existing columns */
 		while ((column = [e nextObject]) != nil)
 		{
-			if ([displayedProperties containsObject: [column identifier]] 
+			if ([displayedProperties containsObject: [column identifier]]
 			 && [column tableView] == nil)
 			{
 				[tv addTableColumn: column];
 			}
-			else if ([[column tableView] isEqual: tv])
+			else if ([displayedProperties containsObject: [column identifier]] == NO
+			      && [[column tableView] isEqual: tv])
 			{
 				[tv removeTableColumn: column];
 			}
+			[displayedProperties removeObject: [column identifier]];
+		}
+		
+		/* Automatically create and insert new columns */
+		e = [displayedProperties objectEnumerator];
+		column = nil;
+		
+		while ((property = [e nextObject]) != nil)
+		{
+			NSCell *dataCell = [[NSCell alloc] initTextCell: @""];
+			NSTableHeaderCell *headerCell = [[NSTableHeaderCell alloc] initTextCell: property]; // FIXME: Use display name
+
+			column = [[NSTableColumn alloc] initWithIdentifier: property];
+			
+			[column setHeaderCell: headerCell];
+			RELEASE(headerCell);
+			[column setDataCell: dataCell];
+			RELEASE(dataCell);
+			[column setEditable: NO];
+			[tv addTableColumn: column];
+			RELEASE(column);
 		}
 	}
 		
@@ -224,6 +248,50 @@
 	if (rowHeight < 1.0)
 		rowHeight = 1.0;
 	[tv setRowHeight: rowHeight];
+}
+
+- (void) tableViewSelectionDidChange: (NSNotification *)notif
+{
+	id delegate = [[self container] delegate];
+	NSTableView *tv = [[self displayViewPrototype] documentView];
+	
+	// NOTE: Not really sure that's the best way to do it
+	[[self container] setSelectionIndexes: [tv selectedRowIndexes]];
+
+	if ([delegate respondsToSelector: @selector(tableViewSelectionDidChange:)])
+	{
+		[delegate tableViewSelectionDidChange: notif];
+	}
+	/*if ([delegate respondsToSelector: @selector(containerSelectionDidChange:)])
+	{
+		NSNotification *containerNotif =
+			[NSNotification notificationWithName: [notif name] 
+			                              object: [self container] 
+										userInfo: [notif userInfo]];
+		
+		[delegate containerSelectionDidChange: containerNotif];
+	}*/
+}
+
+// TODO: Implement forwarding of all delegate methods to ETContainer delegate by
+// overriding -respondsToSelector: and forwardInvocation:
+// Put this forward code into ETViewLayout
+- (void) tableView: (NSTableView *)tv willDisplayCell: (id)cell
+    forTableColumn: (NSTableColumn *)col row: (int)row
+{
+	ETLayoutItem *item = [[[self container] layoutItemCache] objectAtIndex: row];
+	NSString *colIdentifier = [col identifier];
+	id delegate = [[self container] delegate];
+
+	if ([delegate respondsToSelector: @selector(layoutItem:setValue:forProperty:)])
+	{
+		// NOTE: May we do this only on reload
+		[delegate layoutItem: item setValue: [item valueForProperty: colIdentifier] forProperty: colIdentifier];
+	}
+	if ([delegate respondsToSelector: @selector(tableView:willDisplayCell:forTableColumn:row:)])
+	{
+		[delegate tableView: tv willDisplayCell: cell forTableColumn: col row: row];
+	}
 }
 
 - (int) numberOfRowsInTableView: (NSTableView *)tv

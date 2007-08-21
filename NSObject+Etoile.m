@@ -1,13 +1,12 @@
 /*
-	EtoileUI.h
+	NSObject+Etoile.m
 	
-	Umbrella header for EtoileUI framework.
+	NSObject additions like basic metamodel.
  
 	Copyright (C) 2007 Quentin Mathe
  
-	Authors:  Quentin Mathe <qmathe@club-internet.fr>
-
-	Date:  July 2007
+	Author:  Quentin Mathe <qmathe@club-internet.fr>
+	Date:  August 2007
  
 	Redistribution and use in source and binary forms, with or without
 	modification, are permitted provided that the following conditions are met:
@@ -33,39 +32,10 @@
 	ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
 	THE POSSIBILITY OF SUCH DAMAGE.
  */
- 
-#import <EtoileUI/CocoaCompatibility.h>
 
-#import <EtoileUI/ETContainer.h>
-#import <EtoileUI/ETLayoutItem.h>
-#import <EtoileUI/ETLayoutItemGroup.h>
-#import <EtoileUI/ETLayer.h>
-#import <EtoileUI/ETViewLayout.h>
-#import <EtoileUI/ETViewLayoutLine.h>
+#import "NSObject+Etoile.h"
 
-#import <EtoileUI/ETFlowLayout.h>
-#import <EtoileUI/ETFlowView.h>
-#import <EtoileUI/ETLineLayout.h>
-#import <EtoileUI/ETLineView.h>
-#import <EtoileUI/ETStackLayout.h>
-#import <EtoileUI/ETStackView.h>
 
-#import <EtoileUI/ETTableLayout.h>
-#import <EtoileUI/ETTableView.h>
-#import <EtoileUI/ETOutlineLayout.h>
-#import <EtoileUI/ETBrowserLayout.h>
-#import <EtoileUI/FSBrowserCell.h>
+@implementation NSObject (Etoile)
 
-#import <EtoileUI/ETPaneLayout.h>
-//#import <EtoileUI/ETPaneView.h>
-#import <EtoileUI/ETPaneSwitcherLayout.h>
-
-#import <EtoileUI/ETFreeLayout.h>
-
-#import <EtoileUI/ETInspector.h>
-
-#import <EtoileUI/ETLineLayout.h>
-
-#import <EtoileUI/GNUstep.h>
-#import <EtoileUI/NSView+Etoile.h>
-#import <EtoileUI/NSIndexSet+Etoile.h>
+@end

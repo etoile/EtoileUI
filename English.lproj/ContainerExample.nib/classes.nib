@@ -13,7 +13,19 @@
             OUTLETS = {viewContainer = id; }; 
             SUPERCLASS = NSObject; 
         }, 
-        {CLASS = ETContainer; LANGUAGE = ObjC; SUPERCLASS = NSView; }, 
+        {
+            ACTIONS = {inspect = id; }; 
+            CLASS = ETContainer; 
+            LANGUAGE = ObjC; 
+            OUTLETS = {"_scrollView" = NSScrollView; }; 
+            SUPERCLASS = NSView; 
+        }, 
+        {
+            ACTIONS = {collapse = id; expand = id; }; 
+            CLASS = ETView; 
+            LANGUAGE = ObjC; 
+            SUPERCLASS = NSView; 
+        }, 
         {CLASS = FirstResponder; LANGUAGE = ObjC; SUPERCLASS = NSObject; }
     ); 
     IBVersion = 1; 

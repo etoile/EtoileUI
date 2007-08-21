@@ -153,6 +153,17 @@
 	return _container;
 }
 
+/** Returns YES when the layout computes the location of the layout items and
+	updates these locations as necessary by itself. 
+	By default returns YES, overrides to return NO when the layout subclass let
+	the user sets the layout item locations. 
+	The returned value alters the order in which ETContainer data source 
+	methods are called. */
+- (BOOL) isComputedLayout
+{
+	return YES;
+}
+
 /** Returns YES if all layout items are visible in the bounds of the related 
 	container once the layout has been computed, otherwise returns NO when
 	the layout has run out of space.
