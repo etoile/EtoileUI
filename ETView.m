@@ -33,17 +33,49 @@
  */
 
 #import <EtoileUI/ETView.h>
+#import <EtoileUI/ETLayoutItem.h>
 #import <EtoileUI/GNUstep.h>
+
+@interface ETView (SubclassVisibility)
+- (void) setLayoutItem: (ETLayoutItem *)item;
+@end
 
 
 @implementation ETView
 
+- (id) initWithFrame: (NSRect)frame
+{
+	self = [super initWithFrame: frame];
+	
+	if (self != nil)
+	{
+		_layoutItem = [[ETLayoutItem alloc] initWithView: self];
+	}
+	
+	return self;
+}
+
 - (void) dealloc
 {
+	DESTROY(_layoutItem);
 	DESTROY(_renderer);
 	
 	[super dealloc];
 }
+
+- (ETLayoutItem *) layoutItem
+{
+	return _layoutItem;
+}
+
+/* WARNING: This method must be only called by subclasses. If you call in other
+   cases, the layout item tree would be messed and following that anything can 
+   become weird in term of UI elements (the application may even crash). */
+- (void) setLayoutItem: (ETLayoutItem *)item
+{
+	ASSIGN(_layoutItem, item);
+}
+
 
 - (void) setRenderer: (id)renderer
 {

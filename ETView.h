@@ -36,6 +36,8 @@
 #import <Foundation/Foundation.h>
 #import <AppKit/AppKit.h>
 
+@class ETLayoutItem;
+
 /** Display Tree Description
 
  */
@@ -43,10 +45,16 @@
 
 @interface ETView : NSView
 {
+	ETLayoutItem *_layoutItem;
 	id _renderer;
 	NSView *_wrappedView;
 	BOOL _disclosable;
 }
+
+/*+ (BOOL) isEditingUI;
+- (BOOL) isEditingUI;*/
+
+- (ETLayoutItem *) layoutItem;
 
 - (void) setRenderer: (id)renderer;
 - (id) renderer;

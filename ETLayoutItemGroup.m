@@ -34,11 +34,17 @@
 	THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#import <EtoileUI/ETViewLayout.h>
+
 #import <EtoileUI/ETLayoutItemGroup.h>
 #import <EtoileUI/ETContainer.h>
 #import <EtoileUI/GNUstep.h>
 
 #define DEFAULT_FRAME NSMakeRect(0, 0, 50, 50)
+
+@interface ETLayoutItem (SubclassVisibility)
+- (void) setDisplayView: (ETView *)view;
+@end
 
 
 @implementation ETLayoutItemGroup
@@ -105,10 +111,233 @@
 	return [self initWithLayoutItems: nil view: nil];
 }
 
+- (void) dealloc
+{
+	DESTROY(_parentLayoutItem);
+	DESTROY(_layout);
+	DESTROY(_layoutItems);
+	
+	[super dealloc];
+}
+
+- (BOOL) isContainer
+{
+	return [[self view] isKindOfClass: [ETContainer class]];
+}
+
 // FIXME: Move layout item collection from ETContainer to ETLayoutItemGroup
+- (void) addItem: (ETLayoutItem *)item
+{
+	//NSLog(@"Add item in %@", self);
+	[item setParentLayoutItem: self];
+	[_layoutItems addObject: item];
+	if ([self canUpdateLayout])
+		[self updateLayout];
+}
+
+- (void) insertItem: (ETLayoutItem *)item atIndex: (int)index
+{
+	//NSLog(@"Insert item in %@", self);
+	
+	//FIXME: NSMutableIndexSet *indexes = [self selectionIndexes];
+	
+	/* In this example, 1 means selected and 0 unselected.
+       () represents old item index shifted by insertion
+	   
+       Item index      0   1   2   3   4
+       Item selected   0   1   0   1   0
+   
+       When you call shiftIndexesStartingAtIndex: 2 by: 1, you get:
+       Item index      0   1   2   3   4
+       Item selected   0   1   0   0   1  0
+       Now by inserting an item at 2:
+       Item index      0   1   2  (2) (3) (4)
+       Item selected   0   1   0   0   1   0
+		   
+       That's precisely the selections state we expect once item at index 2
+       has been removed. */
+	
+	[item setParentLayoutItem: nil];
+	[_layoutItems insertObject: item atIndex: index];
+	//[indexes shiftIndexesStartingAtIndex: index by: 1];
+	//[self setSelectionIndexes: indexes];
+	if ([self canUpdateLayout])
+		[self updateLayout];
+}
+
+- (void) removeItem: (ETLayoutItem *)item
+{
+	//NSLog(@"Remove item in %@", self);
+
+// FIXME
+#if 0	
+	NSMutableIndexSet *indexes = [self selectionIndexes];
+	int removedIndex = [self indexOfItem: item];
+	
+	if ([indexes containsIndex: removedIndex])
+	{
+		/* In this example, 1 means selected and 0 unselected.
+		
+		   Item index      0   1   2   3   4
+		   Item selected   0   1   0   1   0
+		   
+		   When you call shiftIndexesStartingAtIndex: 3 by: -1, you get:
+		   Item index      0   1   2   3   4
+		   Item selected   0   1   1   0   0
+		   Now by removing item 2:
+		   Item index      0   1   3   4
+		   Item selected   0   1   1   0   0
+		   		   
+		   That's precisely the selections state we expect once item at index 2
+		   has been removed. */
+		[indexes shiftIndexesStartingAtIndex: removedIndex + 1 by: -1];
+		
+		/* Verify basic shitfing errors before really updating the selection */
+		if ([[self selectionIndexes] containsIndex: removedIndex + 1])
+		{
+			NSAssert([indexes containsIndex: removedIndex], 
+				@"Item at the index of the removal must remain selected because it was previously");
+		}
+		if ([[self selectionIndexes] containsIndex: removedIndex - 1])
+		{
+			NSAssert([indexes containsIndex: removedIndex - 1], 
+				@"Item before the index of the removal must remain selected because it was previously");
+		}
+		if ([[self selectionIndexes] containsIndex: removedIndex + 1] == NO)
+		{
+			NSAssert([indexes containsIndex: removedIndex] == NO, 
+				@"Item at the index of the removal must not be selected because it wasn't previously");
+		}
+		if ([[self selectionIndexes] containsIndex: removedIndex - 1] == NO)
+		{
+			NSAssert([indexes containsIndex: removedIndex - 1] == NO, 
+				@"Item before the index of the removal must not be selected because it wasn't previously");
+		}
+		[self setSelectionIndexes: indexes];
+	}
+#endif
+	[item setParentLayoutItem: nil];
+	[_layoutItems removeObject: item];
+	if ([self canUpdateLayout])
+		[self updateLayout];
+}
+
+- (void) removeItemAtIndex: (int)index
+{
+	ETLayoutItem *item = [_layoutItems objectAtIndex: index];
+	[self removeItem: item];
+}
+
+- (ETLayoutItem *) itemAtIndex: (int)index
+{
+	return [_layoutItems objectAtIndex: index];
+}
+
+- (void) addItems: (NSArray *)items
+{
+	NSEnumerator *e = [items objectEnumerator];
+	ETLayoutItem *layoutItem = nil;
+	
+	//NSLog(@"Add items in %@", self);
+	
+	while ((layoutItem = [e nextObject]) != nil)
+	{
+		[self addItem: layoutItem];
+	}
+}
+
+- (void) removeItems: (NSArray *)items
+{
+	NSEnumerator *e = [items objectEnumerator];
+	ETLayoutItem *layoutItem = nil;
+	
+	//NSLog(@"Remove items in %@", self);
+	
+	while ((layoutItem = [e nextObject]) != nil)
+	{
+		[self removeItem: layoutItem];
+	}
+}
+
+- (void) removeAllItems
+{
+	//NSLog(@"Remove all items in %@", self);
+	
+	// FIXME: [_selection removeAllIndexes];
+	[_layoutItems makeObjectsPerformSelector: @selector(setParentLayoutItem:) withObject: nil];
+	[_layoutItems removeAllObjects];
+	if ([self canUpdateLayout])
+		[self updateLayout];
+}
+
+- (int) indexOfItem: (ETLayoutItem *)item
+{
+	return [_layoutItems indexOfObject: item];
+}
+
 - (NSArray *) items
 {
-	return nil;
+	return _layoutItems;
+}
+
+/* Layout */
+
+- (ETLayout *) layout
+{
+	return _layout;
+}
+
+- (void) setLayout: (ETLayout *)layout
+{
+	if (_layout == layout)
+		return;
+	
+	[_layout setLayoutContext: nil];
+	/* Don't forget to remove existing display view if we switch from a layout 
+	   which reuses a native AppKit control like table layout. */
+	// NOTE: Be careful of layout objects which can share a common class but 
+	// all differs by their unique display view prototype.
+	// May be we should move it into -[layout setContainer:]...
+	// Triggers scroll view display which triggers layout render in turn to 
+	// compute the content size
+	[self setDisplayView: nil]; 
+	ASSIGN(_layout, layout);
+	[layout setLayoutContext: self];
+
+	// FIXME: We should move code to set display view when necessary here. By
+	// calling -setDisplayView: [_container displayViewPrototype] we wouldn't
+	// need anymore to call -syncDisplayViewWithContainer here.
+	// All display view set up code is currently in -renderWithLayoutItems:
+	// of AppKit-based layouts. Part of this code should be put inside 
+	// overidden -displayViewPrototype method in each ETViewLayout suclasses.
+	if ([self isContainer])
+		[(ETContainer *)[self displayView] syncDisplayViewWithContainer];
+	
+	if ([self canUpdateLayout])
+		[self updateLayout];
+}
+
+- (void) updateLayout
+{
+	/* Delegate layout rendering to custom layout object */
+	[[self layout] render];
+	
+	[self setNeedsDisplay: YES];
+}
+
+- (BOOL) canUpdateLayout
+{
+	return [self isAutolayout] && ![[self layout] isRendering];
+}
+
+- (BOOL) isAutolayout
+{
+	return _autolayout;
+}
+
+- (void) setAutolayout: (BOOL)flag
+{
+	_autolayout = flag;
 }
 
 - (BOOL) usesLayoutBasedFrame

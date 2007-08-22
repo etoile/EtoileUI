@@ -36,6 +36,7 @@
 
 #import <EtoileUI/ETContainer.h>
 #import <EtoileUI/ETLayoutItem.h>
+#import <EtoileUI/ETLayoutItemGroup.h>
 #import <EtoileUI/ETViewLayout.h>
 #import <EtoileUI/ETLayer.h>
 #import <EtoileUI/ETInspector.h>
@@ -85,6 +86,10 @@ NSString *ETLayoutItemPboardType = @"ETLayoutItemPboardType"; // FIXME: replace 
     
     if (self != nil)
     {
+		ETLayoutItemGroup *itemGroup = [[ETLayoutItemGroup alloc] initWithView: self];
+		
+		 /* Before all, bind layout item group representing the container */
+		[self setLayoutItem: AUTORELEASE(itemGroup)];
 		_layoutItems = [[NSMutableArray alloc] init];
 		_path = @"";
 		_flipped = YES;

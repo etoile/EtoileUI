@@ -34,10 +34,11 @@
 	THE POSSIBILITY OF SUCH DAMAGE.
  */
  
+#import <EtoileUI/ETLayoutItemGroup.h>
+
 #import <EtoileUI/ETViewLayout.h>
 #import <EtoileUI/ETViewLayoutLine.h>
 #import <EtoileUI/ETContainer.h>
-#import <EtoileUI/ETLayoutItemGroup.h>
 #import <EtoileUI/NSView+Etoile.h>
 #import <EtoileUI/GNUstep.h>
 
@@ -151,6 +152,17 @@
 - (ETContainer *) container;
 {
 	return _container;
+}
+
+- (void) setLayoutContext: (id <ETLayoutingContext>)context
+{
+	// NOTE: Avoids retain cycle by weak referencing the context
+	_layoutContext = context;
+}
+
+- (id <ETLayoutingContext>) layoutContext
+{
+	return _layoutContext;
 }
 
 /** Returns YES when the layout computes the location of the layout items and

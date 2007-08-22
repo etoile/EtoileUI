@@ -39,7 +39,7 @@
 
 #define ETUTI NSString
 
-@class ETView;
+@class ETView, ETContainer, ETLayoutItemGroup;
 @protocol ETObjectInspection, ETInspector;
 
 /** WARNING: Personal notes that are vague and may change, move or become part
@@ -75,6 +75,8 @@
 // _cells and _view could be moved in a helper object. Pack booleans in a struct.
 @interface ETLayoutItem : ETStyleRenderer <ETObjectInspection>
 {
+	ETLayoutItemGroup *_parentLayoutItem;
+	
 	id _value;
 	id _modelObject;
 	NSString *_name;
@@ -100,6 +102,11 @@
 - (ETLayoutItem *) initWithRepresentedObject: (id)object;
 - (ETLayoutItem *) initWithView: (NSView *)view;
 - (ETLayoutItem *) initWithView: (NSView *)view value: (id)value representedObject: (id)repObject;
+
+- (ETLayoutItemGroup *) parentLayoutItem;
+- (void) setParentLayoutItem: (ETLayoutItemGroup *)parent;
+- (ETContainer *) closedAncestorContainer;
+- (ETView *) closestAncestorDisplayView;
 
 /** Facility methods to store a name acting like a last fallback property for 
 	display. Name is also used as a path component to build 
@@ -179,6 +186,8 @@ shape*/
 - (void) render;
 - (ETStyleRenderer *) renderer;
 - (void) setStyleRenderer: (ETStyleRenderer *)renderer;
+
+- (void) setNeedsDisplay: (BOOL)now;
 
 /* Sizing */
 

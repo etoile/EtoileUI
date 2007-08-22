@@ -36,29 +36,53 @@
 #import <Foundation/Foundation.h>
 #import <AppKit/AppKit.h>
 
-@protocol ETInspectableObject
+/** Protocol usually adopted by model objects */
+@protocol ETPropertyValueCoding
+- (NSArray *) properties;
 - (id) valueForProperty: (NSString *)key;
 - (void) setValue: (id)value forProperty: (NSString *)key;
 @end
 
+/** Protocol which can be adopted by other object hierachy than NSObject rooted hierarchy */
+@protocol ETInspectableObject
+
+@end
+
 /** Utility metamodel for GNUstep/Cocoa Objective-C */
 
-@interface NSObject (Etoile)
+@interface NSObject (Etoile) //<ETInspectableObject>
 {
 
 }
 
+/** Returns a object representing the receiver. Useful when sucblasses override
+    root class methods and make them unavailable to introspection. For example,
+	ETProtocol represents a protocol but overrides methods like -type, typeName
+	-name, -protocols and -protocolNames of NSObject, thereby you can know the 
+	properties of the represented protocol, but you cannot access the 
+	identically named properties which describes ETProtocol instance itself. */
+- (id) metaObject;
+
+- (ETUTI *) type;
+- (NSString *) typeName;
+
 /** Returns both methods and instance variables for the receiver by default */
-- (NSArray *) properties;
-- (id) valueForProperty: (NSString *)key;
-- (void) setValue: (id)value forProperty: (NSString *)key;
+/*- (NSArray *) slotNames;
+- (id) valueForSlot: (NSString *)slot;
+- (void) setValue: (id)value forSlot: (NSString *)slot;*/
+- (id) valueForInstanceVariable: (NSString *)ivar;
+- (void) setValue: (id)value forInstanceVariable: (NSString *)ivar;
+- (id) methodForName: (NSString *)name;
+- (void) setMethod: (id)value forName: (NSString *)namme;
 
 - (NSArray *) instanceVariables;
 - (NSArray *) instanceVariableNames;
 - (NSDictionary *) instancesVariableValues;
 - (NSDictionary *) instancesVariableTypes;
-- (id) valueForInstanceVariable: (NSString *)ivar;
 - (id) typeForInstanceVariable: (NSString *)ivar;
+
+- (NSArray *) protocolNames;
+- (NSArray *) protocols;
 
 - (NSArray *) methods;
 - (NSArray *) methodNames;
@@ -85,7 +109,8 @@
 
 - (NSString *) name;
 // FIXME: Replace by ETUTI class later
-- (NSString *) type;
+- (ETUTI *) type;
+- (NSString *) typeName;
 - (id) value;
 /** Pass NSValue to set primitive types */
 - (void) setValue: (id)value;
@@ -103,5 +128,21 @@
 - (NSString *) name;
 - (SEL) selector;
 - (NSMethodSignature *) methodSignature;
+
+@end
+
+@interface ETProtocol : NSObject 
+{
+
+}
+
+- (NSString *) name;
+- (ETUTI *) type;
+- (NSString *) typeName;
+
+/* Overriden NSObject methods to return eventual protocols adopted by the 
+   represented protcol */
+- (NSArray *) protocolNames;
+- (NSArray *) protocols;
 
 @end

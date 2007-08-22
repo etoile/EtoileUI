@@ -45,8 +45,11 @@
 #define ETUTIAttribute @"uti"
 
 @interface ETLayoutItem (Private)
-- (ETLayoutItem *) initWithView: (NSView *)view value: (id)value representedObject: (id)repObject;
 - (void) layoutItemViewFrameDidChange: (NSNotification *)notif;
+@end
+
+@interface ETLayoutItem (SubclassVisibility)
+- (void) setDisplayView: (ETView *)view;
 @end
 
 /** Various approaches exists to customize layout items look rendering. 
@@ -160,6 +163,49 @@
 	desc = [@"<" stringByAppendingFormat: @"%@ selected:%d>", desc, [self isSelected]];
 	
 	return desc;
+}
+
+- (ETLayoutItemGroup *) parentLayoutItem
+{
+	return _parentLayoutItem;
+}
+
+- (void) setParentLayoutItem: (ETLayoutItemGroup *)parent
+{
+	[[self displayView] removeFromSuperview];
+	ASSIGN(_parentLayoutItem, parent);
+}
+
+- (ETContainer *) closedAncestorContainer
+{
+	if ([[self displayView] isKindOfClass: [ETContainer class]])
+		return [self displayView];
+		
+	if ([self parentLayoutItem] != nil)
+	{
+		return [[self parentLayoutItem] closedAncestorContainer];
+	}
+	else
+	{
+		ETLog(@"WARNING: Found no ancestor container by ending lookup on %@", self);
+		return nil;
+	}
+}
+
+- (ETView *) closestAncestorDisplayView
+{
+	if ([self displayView] != nil)
+		return [self displayView];
+
+	if ([self parentLayoutItem] != nil)
+	{
+		return [[self parentLayoutItem] closestAncestorDisplayView];
+	}
+	else
+	{
+		ETLog(@"WARNING: Found no ancestor display view by ending lookup on %@", self);
+		return nil;
+	}
 }
 
 - (NSString *) name
@@ -385,6 +431,11 @@
 	return _view;
 }
 
+- (void) setDisplayView: (ETView *)view
+{
+	NSView *enclosedView = nil;
+}
+
 // TODO: Modify to lookup for the selection state in the closest container ancestor
 - (void) setSelected: (BOOL)selected
 {
@@ -485,6 +536,19 @@
 - (void) render
 {
 	[self render: nil];
+}
+
+- (void) setNeedsDisplay: (BOOL)now
+{
+	NSRect displayRect = [self frame];
+	
+	/* If the layout item has a display view, this view will be asked to draw
+	   by itself, so the rect to refresh must be expressed in display view
+	   coordinates system and not the one of its superview. */
+	if ([self displayView] != nil)
+		displayRect.origin = NSZeroPoint;
+		
+	[[self closestAncestorDisplayView] setNeedsDisplayInRect: displayRect];
 }
 
 - (void) lockFocus

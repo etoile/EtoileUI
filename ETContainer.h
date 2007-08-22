@@ -38,7 +38,7 @@
 #import <EtoileUI/ETView.h>
 
 @class ETLayoutItem, ETViewLayout, ETLayer, ETLayoutGroupItem, ETSelection;
-@protocol ETInspector;
+@protocol ETLayoutingContext, ETInspector;
 
 /** Forwarding Chain 
 
@@ -59,7 +59,7 @@
  */
 
 // ETComponentView
-@interface ETContainer : ETView <ETInspector>
+@interface ETContainer : ETView <ETLayoutingContext, ETInspector>
 {
 	IBOutlet NSScrollView *_scrollView;
 
@@ -106,6 +106,8 @@
 }
 
 - (id) initWithFrame: (NSRect)rect views: (NSArray *)views;
+
+- (ETLayoutItem *) layoutItem;
 
 - (NSString *) path;
 - (void) setPath: (NSString *)path;

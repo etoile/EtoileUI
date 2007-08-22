@@ -37,9 +37,18 @@
 #import <AppKit/AppKit.h>
 #import "ETLayoutItem.h"
 
+#define ETLayout ETViewLayout
 
-@interface ETLayoutItemGroup : ETLayoutItem
+@class ETLayout;
+@protocol ETLayoutingContext;
+
+
+@interface ETLayoutItemGroup : ETLayoutItem <ETLayoutingContext>
 {
+	NSMutableArray *_layoutItems;
+	ETLayout *_layout;
+
+	BOOL _autolayout;
 	BOOL _usesLayoutBasedFrame;
 }
 
@@ -49,17 +58,39 @@
 
 - (id) initWithLayoutItems: (NSArray *)layoutItems view: (NSView *)view;
 
-- (NSArray *) items;
+- (BOOL) isContainer;
 
+/*  Manipulating children layout items */
+
+- (void) addItem: (ETLayoutItem *)item;
+- (void) insertItem: (ETLayoutItem *)item atIndex: (int)index;
+- (void) removeItem: (ETLayoutItem *)item;
+- (void) removeItemAtIndex: (int)index;
+- (ETLayoutItem *) itemAtIndex: (int)index;
+- (int) indexOfItem: (ETLayoutItem *)item;
+- (NSArray *) items;
+- (void) addItems: (NSArray *)items;
+- (void) removeItems: (NSArray *)items;
+- (void) removeAllItems;
+
+/* Layout */
+
+- (ETLayout *) layout;
+- (void) setLayout: (ETLayout *)layout;
+
+- (void) updateLayout;
+- (BOOL) canUpdateLayout;
+
+- (BOOL) isAutolayout;
+- (void) setAutolayout: (BOOL)flag;
 - (BOOL) usesLayoutBasedFrame;
 - (void) setUsesLayoutBasedFrame: (BOOL)flag;
-
 - (NSArray *) visibleLayoutItems;
 - (void) setVisibleLayoutItems: (NSArray *)items;
 
-- (void) render: (NSMutableDictionary *)inputValues dirtyRect: (NSRect)dirtyRect inView: (NSView *)view;
+/* Rendering */
 
-//- isContainer
+- (void) render: (NSMutableDictionary *)inputValues dirtyRect: (NSRect)dirtyRect inView: (NSView *)view;
 
 // NOTE: Note sure it's really doable to provide such methods. May only work in
 // a safe way if we provide it as part of ETContainer API

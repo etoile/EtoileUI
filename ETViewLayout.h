@@ -38,6 +38,15 @@
 
 @class ETContainer, ETViewLayoutLine, ETLayoutItem;
 
+/** Methods which must be implemented by an object to be layouted by any
+	ETLayout subclasses. The object whose layout items are layouted is the
+	layout context (plays a role analog to the graphic context) 
+	- layout context is where the layouting occurs
+	- graphic context is where the drawing occurs */
+@protocol ETLayoutingContext
+
+@end
+
 // NOTE: May be this should be turned into a mask
 typedef enum _ETSizeConstraintStyle 
 {
@@ -55,6 +64,7 @@ typedef enum _ETSizeConstraintStyle
 @interface ETViewLayout : NSObject
 {
 	IBOutlet ETContainer *_container;
+	IBOutlet id _layoutContext;
 	IBOutlet id _delegate;
 	IBOutlet NSView *_displayViewPrototype;
 	
@@ -78,6 +88,9 @@ typedef enum _ETSizeConstraintStyle
 
 - (void) setContainer: (ETContainer *)newContainer;
 - (ETContainer *) container;
+
+- (void) setLayoutContext: (id <ETLayoutingContext>)context;
+- (id <ETLayoutingContext>) layoutContext;
 
 - (BOOL) isComputedLayout;
 
