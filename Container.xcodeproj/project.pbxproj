@@ -56,7 +56,6 @@
 		60EF8EA30C5E4D5900C97C41 /* AppKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 29B97324FDCFA39411CA2CEA /* AppKit.framework */; };
 		60EF8EA40C5E4D8500C97C41 /* ETContainer.h in Headers */ = {isa = PBXBuildFile; fileRef = 609F463C0B414C0A00AD2209 /* ETContainer.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		60EF8EA50C5E4D8500C97C41 /* ETViewLayout.h in Headers */ = {isa = PBXBuildFile; fileRef = 609F46590B41641400AD2209 /* ETViewLayout.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		60EF8EA60C5E4D8500C97C41 /* ETRenderer.h in Headers */ = {isa = PBXBuildFile; fileRef = 60E584EE0C54A52000905ED8 /* ETRenderer.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		60EF8EA70C5E4D8500C97C41 /* ETStyleRenderer.h in Headers */ = {isa = PBXBuildFile; fileRef = 609547DA0C0E0FB000068CBB /* ETStyleRenderer.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		60EF8EA80C5E4D8500C97C41 /* ETLayoutItem.h in Headers */ = {isa = PBXBuildFile; fileRef = 609F46A10B42049D00AD2209 /* ETLayoutItem.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		60EF8EA90C5E4D8500C97C41 /* ETLayoutItemGroup.h in Headers */ = {isa = PBXBuildFile; fileRef = 609548CE0C0E300500068CBB /* ETLayoutItemGroup.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -517,7 +516,6 @@
 				6064848F0C7D3BD00000338D /* NSObject+Etoile.h in Headers */,
 				60EF8EA40C5E4D8500C97C41 /* ETContainer.h in Headers */,
 				60EF8EA50C5E4D8500C97C41 /* ETViewLayout.h in Headers */,
-				60EF8EA60C5E4D8500C97C41 /* ETRenderer.h in Headers */,
 				60EF8EA70C5E4D8500C97C41 /* ETStyleRenderer.h in Headers */,
 				60EF8EA80C5E4D8500C97C41 /* ETLayoutItem.h in Headers */,
 				60EF8EA90C5E4D8500C97C41 /* ETLayoutItemGroup.h in Headers */,
