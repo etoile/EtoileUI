@@ -80,6 +80,11 @@
     
     if (self != nil)
     {
+		_layoutItems = [[NSMutableArray alloc] init];
+		_layout = nil;
+		_autolayout = YES;
+		_usesLayoutBasedFrame = NO;
+		
 		if ([[self view] isKindOfClass: [ETContainer class]] == NO)
 		{
 			if ([self view] == nil)
@@ -92,7 +97,6 @@
 			}
 			return nil;
 		}
-		
 		if (layoutItems != nil)
 			[(ETContainer *)[self view] addItems: layoutItems];
 		if (view != nil)

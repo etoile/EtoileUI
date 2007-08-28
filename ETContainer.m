@@ -258,7 +258,10 @@ NSString *ETLayoutItemPboardType = @"ETLayoutItemPboardType"; // FIXME: replace 
 
 - (NSArray *) layoutItems
 {
+	return [(ETLayoutItemGroup *)[self layoutItem] items];
+#if 0
 	return _layoutItems;
+#endif
 }
 
 /* Uses to know which layout items the container takes care to display when
@@ -819,15 +822,20 @@ NSString *ETLayoutItemPboardType = @"ETLayoutItemPboardType"; // FIXME: replace 
 
 - (void) addItem: (ETLayoutItem *)item
 {
+	[(ETLayoutItemGroup *)[self layoutItem] addItem: item];
+#if 0
 	//NSLog(@"Add item in %@", self);
 	[_layoutItems addObject: item];
 	[item setParentLayoutItem: [self layoutItem]];
 	if ([self canUpdateLayout])
 		[self updateLayout];
+#endif
 }
 
 - (void) insertItem: (ETLayoutItem *)item atIndex: (int)index
 {
+	[(ETLayoutItemGroup *)[self layoutItem] insertItem: item atIndex: index];
+#if 0
 	//NSLog(@"Insert item in %@", self);
 	
 	NSMutableIndexSet *indexes = [self selectionIndexes];
@@ -854,10 +862,13 @@ NSString *ETLayoutItemPboardType = @"ETLayoutItemPboardType"; // FIXME: replace 
 	[self setSelectionIndexes: indexes];
 	if ([self canUpdateLayout])
 		[self updateLayout];
+#endif
 }
 
 - (void) removeItem: (ETLayoutItem *)item
 {
+	[(ETLayoutItemGroup *)[self layoutItem] removeItem: item];
+#if 0
 	//NSLog(@"Remove item in %@", self);
 	
 	NSMutableIndexSet *indexes = [self selectionIndexes];
@@ -908,21 +919,30 @@ NSString *ETLayoutItemPboardType = @"ETLayoutItemPboardType"; // FIXME: replace 
 	[_layoutItems removeObject: item];
 	if ([self canUpdateLayout])
 		[self updateLayout];
+#endif
 }
 
 - (void) removeItemAtIndex: (int)index
 {
+	[(ETLayoutItemGroup *)[self layoutItem] removeItemAtIndex: index];
+#if 0
 	ETLayoutItem *item = [_layoutItems objectAtIndex: index];
 	[self removeItem: item];
+#endif
 }
 
 - (ETLayoutItem *) itemAtIndex: (int)index
 {
+	return [(ETLayoutItemGroup *)[self layoutItem] itemAtIndex: index];
+#if 0
 	return [_layoutItems objectAtIndex: index];
+#endif
 }
 
 - (void) addItems: (NSArray *)items
 {
+	[(ETLayoutItemGroup *)[self layoutItem] addItems: items];
+#if 0
 	NSEnumerator *e = [items objectEnumerator];
 	ETLayoutItem *layoutItem = nil;
 	
@@ -932,6 +952,7 @@ NSString *ETLayoutItemPboardType = @"ETLayoutItemPboardType"; // FIXME: replace 
 	{
 		[self addItem: layoutItem];
 	}
+#endif
 }
 
 - (void) removeItems: (NSArray *)items
