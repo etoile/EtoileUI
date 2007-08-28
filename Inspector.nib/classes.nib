@@ -12,7 +12,12 @@
             ACTIONS = {changeLayout = id; inspect = id; }; 
             CLASS = ETInspector; 
             LANGUAGE = ObjC; 
-            OUTLETS = {itemGroupView = ETContainer; propertyView = ETContainer; window = id; }; 
+            OUTLETS = {
+                itemGroupView = ETContainer; 
+                propertyView = ETContainer; 
+                viewModelLayout = id; 
+                window = id; 
+            }; 
             SUPERCLASS = ETLayoutItem; 
         }, 
         {
@@ -29,7 +34,25 @@
             LANGUAGE = ObjC; 
             SUPERCLASS = NSView; 
         }, 
+        {
+            CLASS = ETViewLayout; 
+            LANGUAGE = ObjC; 
+            OUTLETS = {
+                "_container" = ETContainer; 
+                "_delegate" = id; 
+                "_displayViewPrototype" = NSView; 
+                "_layoutContext" = id; 
+            }; 
+            SUPERCLASS = NSObject; 
+        }, 
+        {
+            CLASS = ETViewModelLayout; 
+            LANGUAGE = ObjC; 
+            OUTLETS = {enclosingView = id; propertyView = ETContainer; }; 
+            SUPERCLASS = ETViewLayout; 
+        }, 
         {CLASS = FirstResponder; LANGUAGE = ObjC; SUPERCLASS = NSObject; }, 
+        {CLASS = MyObject; LANGUAGE = ObjC; SUPERCLASS = NSObject; }, 
         {CLASS = NSImage; LANGUAGE = ObjC; SUPERCLASS = NSObject; }, 
         {
             ACTIONS = {inspect = id; }; 

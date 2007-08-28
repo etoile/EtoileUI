@@ -45,6 +45,7 @@
 #import <EtoileUI/ETBrowserLayout.h>
 #import <EtoileUI/ETPaneLayout.h>
 #import <EtoileUI/ETFreeLayout.h>
+#import <EtoileUI/NSObject+Etoile.h>
 #import <EtoileUI/GNUstep.h>
 
 @interface ETInspector (EtoilePrivate)
@@ -101,6 +102,7 @@
 	[propertyView setLayout: AUTORELEASE([[ETTableLayout alloc] init])];
 	[propertyView setSource: self];
 	[propertyView setDelegate: self];
+	[propertyView setDoubleAction: @selector(doubleClickInPropertyView:)];
 	[propertyView setTarget: self];
 }
 
@@ -111,6 +113,13 @@
 	ETLog(@"Selection did change for %@ received in %@", [notif object], self);
 	
 	[propertyView updateLayout];
+}
+
+- (void) doubleClickInPropertyView: (id)sender
+{
+	ETLayoutItem *item = [[propertyView layoutItemCache] objectAtIndex: [propertyView selectionIndex]];
+	
+	[[[item inspector] window] makeKeyAndOrderFront: self];
 }
 
 - (int) numberOfItemsInContainer: (ETContainer *)container
@@ -177,8 +186,17 @@
 		ETLayoutItem *item = [[itemGroupView layoutItemCache] objectAtIndex: selection];
 		
 		NSAssert([item properties] != nil, @"Represented object of a layout item should never be nil");
-		
+		#if 1
 		nbOfPropertyItems = [[item properties] count];
+		#else
+		
+		NSArray *ivars = [[item representedObject] instanceVariables];
+		NSArray *methods = [[item representedObject] methods];
+		NSArray *slots = [[NSArray arrayWithArray: ivars] 
+	                arrayByAddingObjectsFromArray: methods];
+		
+		nbOfPropertyItems = [slots count];
+		#endif
 	}
 	
 	//ETLog(@"Returns %d as number of property items in %@", nbOfPropertyItems, container);
@@ -190,11 +208,36 @@
 {
 	ETLayoutItem *item = [[itemGroupView layoutItemCache] objectAtIndex: [itemGroupView selectionIndex]];
 	ETLayoutItem *propertyItem = [[ETLayoutItem alloc] init];
+	
+#if 1
 	NSString *property = [[item properties] objectAtIndex: index];
 
 	[propertyItem setValue: property forProperty: @"property"];
 	[propertyItem setValue: [item valueForProperty: property] forProperty: @"value"];
+#else
+
+	NSArray *ivars = [[item representedObject] instanceVariables];
+	NSArray *methods = [[item representedObject] methods];
+	NSArray *slots = [[NSArray arrayWithArray: ivars] 
+	            arrayByAddingObjectsFromArray: methods];
+	id slot = [slots objectAtIndex: index];
 	
+	[propertyItem setValue: [slot name] forProperty: @"property"];
+	if ([slot isKindOfClass: [ETInstanceVariable class]])
+	{
+		id ivarValue = [slot value];
+		
+		if (ivarValue == nil)
+		{
+			ivarValue = @"nil";
+		}
+		[propertyItem setValue: [ivarValue description] forProperty: @"value"];
+	}
+	else if ([slot isKindOfClass: [ETMethod class]])
+	{
+		[propertyItem setValue: @"method (objc)" forProperty: @"value"];
+	}
+#endif	
 	//ETLog(@"Returns property item %@ at index %d in %@", item, index, container);
 	
 	AUTORELEASE(propertyItem);
@@ -245,11 +288,19 @@
 		case 6:
 			layoutClass = [ETFreeLayout class];
 			break;
+		case 7:
+			layoutClass = [ETViewModelLayout class];
+			break;
 		default:
 			NSLog(@"Unsupported layout or unknown popup menu selection");
 	}
 	
-	//[viewContainer setLayout: (ETViewLayout *)AUTORELEASE([[layoutClass alloc] init])];
+	ETLayoutItem *representedItem = [[itemGroupView layoutItemCache] objectAtIndex: 0];
+	
+	representedItem = (ETLayoutItem *)[representedItem representedObject];
+	
+	if ([[representedItem closestAncestorContainer] respondsToSelector: @selector(setLayout:)])
+		[[representedItem closestAncestorContainer] setLayout: (ETViewLayout *)AUTORELEASE([[layoutClass alloc] init])];
 }
 
 - (NSArray *) inspectedItems
@@ -288,6 +339,37 @@
 @end
 
 @implementation ETLayoutItem (ETInspector)
+/*
++ (ETLayoutItem *) layoutItemWithInspectedObject: (id)object
+{
+	ETLayoutItem *item = [[ETLayoutItem alloc] initWithRepresentedObject: object];
+	NSArray *ivars = [[item representedObject] instanceVariables];
+	NSArray *methods = [[item representedObject] methods];
+	NSArray *slots = [[NSArray arrayWithArray: ivars] 
+	            arrayByAddingObjectsFromArray: methods];
+	NSEnumerator *e = [slots objectEnumerator];
+	id slot = nil;
+	
+	while ((slot = [e nextObject]) != nil)
+	{
+		if ([slot isKindOfClass: [ETInstanceVariable class]])
+		{
+			id ivarValue = [slot value];
+			
+			if (ivarValue == nil)
+			{
+				ivarValue = @"nil";
+			}
+			[item setValue: [ivarValue description] forProperty: @"value"];
+		}
+		else if ([slot isKindOfClass: [ETMethod class]])
+		{
+			[propertyItem setValue: @"method (objc)" forProperty: @"value"];
+		}
+	}
+	
+	return AUTORELEASE(item);
+}*/
 
 + (ETLayoutItem *) layoutItemOfLayoutItem: (ETLayoutItem *)item
 {
@@ -330,6 +412,232 @@
 		if (
 	}*/
 	return nil;
+}
+
+@end
+
+@implementation NSObject (ETInspector)
+
+- (id <ETInspector>) inspector
+{
+	ETInspector *inspector = [[ETInspector alloc] init];
+
+	return AUTORELEASE(inspector);
+}
+
+@end
+
+@implementation ETViewModelLayout
+
+- (id) init
+{
+	self = [super init];
+    
+	if (self != nil)
+	{
+		BOOL nibLoaded = [NSBundle loadNibNamed: @"ViewModelPrototype" owner: self];
+		
+		if (nibLoaded == NO)
+		{
+			NSLog(@"Failed to load nib ViewModelPrototype");
+			RELEASE(self);
+			return nil;
+		}
+		
+		_displayMode = ETLayoutDisplayModeView;
+    }
+    
+	return self;
+}
+
+- (void) awakeFromNib
+{
+	NSLog(@"Awaking from nib for %@", self);
+	
+	[propertyView setLayout: AUTORELEASE([[ETTableLayout alloc] init])];
+	[propertyView setSource: self];
+	[propertyView setDelegate: self];
+	[propertyView setDoubleAction: @selector(doubleClickInPropertyView:)];
+	[propertyView setTarget: self];
+
+	/* Because this outlet will be removed from its superview, it must be 
+	   retained like any other to-one relationship ivars. 
+	   If this proto view is later replaced by calling 
+	   -setDisplayViewPrototype:, this retain will be balanced by the release
+	   in ASSIGN. */ 
+	RETAIN(_displayViewPrototype);
+
+	/* Adjust _displayViewPrototype outlet */
+	//[self setDisplayViewPrototype: _displayViewPrototype];
+}
+
+- (void) setDisplayViewPrototype: (NSView *)protoView
+{
+	[super setDisplayViewPrototype: protoView];
+
+	//[tv registerForDraggedTypes: [NSArray arrayWithObject: @"ETLayoutItemPboardType"]];
+	
+	/*if ([tv dataSource] == nil)
+		[tv setDataSource: self];
+	if ([tv delegate] == nil)
+		[tv setDelegate: self];*/
+}
+
+
+- (ETLayoutDisplayMode) displayMode
+{
+	return _displayMode;
+}
+
+- (void) setDisplayMode: (ETLayoutDisplayMode)mode
+{
+	_displayMode = mode;
+}
+
+- (void) switchDisplayMode: (id)sender
+{
+	if ([self displayMode] == ETLayoutDisplayModeView)
+	{
+		[self setDisplayMode: ETLayoutDisplayModeModel];
+	}
+	else
+	{
+		[self setDisplayMode: ETLayoutDisplayModeView];
+	}
+	[propertyView updateLayout]; // [self render];
+}
+
+- (void) renderWithLayoutItems: (NSArray *)items;
+{
+	[[self container] setDisplayView: [self displayViewPrototype]];
+	[propertyView updateLayout];
+}
+
+- (void) doubleClickInPropertyView: (id)sender
+{
+	ETLayoutItem *item = [[[self container] layoutItemCache] objectAtIndex: [propertyView selectionIndex]];
+	
+	[[[item inspector] window] makeKeyAndOrderFront: self];
+}
+
+- (int) numberOfItemsInContainer: (ETContainer *)container
+{
+	id 	inspectedObject = [self layoutContext];
+	int nbOfItems = 0;
+	
+	/* Verify the layout is currently bound to a layout context like a container */
+	if ([self layoutContext] == nil)
+		return 0;
+	
+	if ([self displayMode] == ETLayoutDisplayModeView)
+	{
+		//NSAssert([inspectedObject properties] != nil, @"Represented object of a layout item should never be nil");
+		ETLog(@"Found no properties for inspected object %@", inspectedObject);
+		nbOfItems = [[inspectedObject properties] count];
+	}
+	else
+	{
+		if ([[self layoutContext] isKindOfClass: [ETLayoutItem class]])
+		{
+			inspectedObject = [inspectedObject representedObject];
+		}
+		else if ([[self layoutContext] isKindOfClass: [ETContainer class]])
+		{
+			// FIXME: Remove this branch when represented object and source have 
+			// been unified at layout item level for ETContainer
+			inspectedObject = [inspectedObject source];	
+		}
+		
+		if (inspectedObject != nil)
+		{
+			NSArray *ivars = [inspectedObject instanceVariables];
+			NSArray *methods = [inspectedObject methods];
+			NSArray *slots = [[NSArray arrayWithArray: ivars] 
+	                    arrayByAddingObjectsFromArray: methods];
+		
+			nbOfItems = [slots count];
+		}
+	}
+	
+	ETLog(@"Returns %d as number of property or slot items in %@", nbOfItems, container);
+	
+	return nbOfItems;
+}
+
+- (ETLayoutItem *) itemAtIndex: (int)index inContainer: (ETContainer *)container
+{
+	id inspectedObject = [self layoutContext];
+	ETLayoutItem *propertyItem = [[ETLayoutItem alloc] init];
+	
+	NSAssert1(inspectedObject != nil, @"Layout context of % must not be nil.", self);
+	
+	if ([self displayMode] == ETLayoutDisplayModeView)
+	{
+		NSString *property = [[inspectedObject properties] objectAtIndex: index];
+
+		[propertyItem setValue: property forProperty: @"property"];
+		[propertyItem setValue: [inspectedObject valueForProperty: property] forProperty: @"value"];
+	}
+	else
+	{
+		if ([[self layoutContext] isKindOfClass: [ETLayoutItem class]])
+		{
+			inspectedObject = [inspectedObject representedObject];
+		}
+		else if ([[self layoutContext] isKindOfClass: [ETContainer class]])
+		{
+			// FIXME: Remove this branch when represented object and source have 
+			// been unified at layout item level for ETContainer
+			inspectedObject = [inspectedObject source];	
+		}
+		
+		if (inspectedObject != nil)
+		{
+			NSArray *ivars = [inspectedObject instanceVariables];
+			NSArray *methods = [inspectedObject methods];
+			NSArray *slots = [[NSArray arrayWithArray: ivars] 
+	                    arrayByAddingObjectsFromArray: methods];
+			id slot = [slots objectAtIndex: index];
+		
+			[propertyItem setValue: [slot name] forProperty: @"slot"];
+			if ([slot isKindOfClass: [ETInstanceVariable class]])
+			{
+				id ivarValue = [slot value];
+				NSString *ivarType = [ivarValue typeName];
+				
+				if (ivarValue == nil)
+					ivarValue = @"nil";
+				[propertyItem setValue: [ivarValue description] forProperty: @"value"];
+				if (ivarType == nil)
+					ivarType = @"";
+				[propertyItem setValue: ivarType forProperty: @"type"];
+			}
+			else if ([slot isKindOfClass: [ETMethod class]])
+			{
+				[propertyItem setValue: @"method (objc)" forProperty: @"value"];
+			}
+		}
+	}
+	
+	ETLog(@"Returns property or slot item %@ at index %d in %@", inspectedObject, index, container);
+	
+	return AUTORELEASE(propertyItem);
+}
+
+- (NSArray *) displayedItemPropertiesInContainer: (ETContainer *)container
+{
+	NSArray *displayedProperties = nil;
+
+	if ([self displayMode] == ETLayoutDisplayModeView)
+	{
+		displayedProperties = [NSArray arrayWithObjects: @"property", @"value", nil];
+	}	
+	else
+	{
+		displayedProperties = [NSArray arrayWithObjects: @"slot", @"type", @"value", nil];
+	}
+	
+	return displayedProperties;
 }
 
 @end

@@ -92,6 +92,8 @@ typedef enum _ETSizeConstraintStyle
 - (void) setLayoutContext: (id <ETLayoutingContext>)context;
 - (id <ETLayoutingContext>) layoutContext;
 
+/* -isSemantic is initially defined by superclass ETStyle */
+- (BOOL) isSemantic;
 - (BOOL) isComputedLayout;
 
 /* Size And Utility Accessors */

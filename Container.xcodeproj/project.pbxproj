@@ -20,16 +20,23 @@
 		605F0D8F0C0F4066003AE3E6 /* ObjectManagerExample-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 605F0CCC0C0F400D003AE3E6 /* ObjectManagerExample-Info.plist */; };
 		605F0E360C0F5310003AE3E6 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1058C7A1FEA54F0111CA2CBB /* Cocoa.framework */; };
 		60647D940C7879EC0000338D /* Inspector.nib in Resources */ = {isa = PBXBuildFile; fileRef = 60647D930C7879EC0000338D /* Inspector.nib */; };
+		6064848E0C7D3BC60000338D /* NSObject+Etoile.m in Sources */ = {isa = PBXBuildFile; fileRef = 606481520C7A6CAC0000338D /* NSObject+Etoile.m */; };
+		6064848F0C7D3BD00000338D /* NSObject+Etoile.h in Headers */ = {isa = PBXBuildFile; fileRef = 606481510C7A6CAC0000338D /* NSObject+Etoile.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		606B98CF0C0AF898000AAA85 /* ContainerController.m in Sources */ = {isa = PBXBuildFile; fileRef = 606B97490C0AF283000AAA85 /* ContainerController.m */; };
 		606B9C490C0B17D6000AAA85 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 29B97316FDCFA39411CA2CEA /* main.m */; };
 		606B9C540C0B180A000AAA85 /* ContainerExample-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 606B98CB0C0AF831000AAA85 /* ContainerExample-Info.plist */; };
 		606B9C5E0C0B18A3000AAA85 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1058C7A1FEA54F0111CA2CBB /* Cocoa.framework */; };
+		6087EA950C81AB7900A1263E /* libgnustep-baseadd.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 6087EA940C81AB7900A1263E /* libgnustep-baseadd.dylib */; };
+		6087EAF50C81CD3D00A1263E /* libgnustep-baseadd.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 6087EA940C81AB7900A1263E /* libgnustep-baseadd.dylib */; };
+		6087EDF30C824CE100A1263E /* ViewModelPrototype.nib in Resources */ = {isa = PBXBuildFile; fileRef = 6087EDF10C824CE100A1263E /* ViewModelPrototype.nib */; };
+		6087EE9F0C82FC7A00A1263E /* libgnustep-baseadd.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 6087EA940C81AB7900A1263E /* libgnustep-baseadd.dylib */; };
+		6087EEA00C82FC8000A1263E /* libgnustep-baseadd.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 6087EA940C81AB7900A1263E /* libgnustep-baseadd.dylib */; };
 		60B144990C11BFB400B4613B /* TablePrototype.nib in Resources */ = {isa = PBXBuildFile; fileRef = 60B144970C11BFB400B4613B /* TablePrototype.nib */; };
 		60B1449A0C11BFB400B4613B /* TablePrototype.nib in Resources */ = {isa = PBXBuildFile; fileRef = 60B144970C11BFB400B4613B /* TablePrototype.nib */; };
 		60B144EC0C11C52900B4613B /* OutlinePrototype.nib in Resources */ = {isa = PBXBuildFile; fileRef = 60B144EA0C11C52900B4613B /* OutlinePrototype.nib */; };
 		60B144ED0C11C52900B4613B /* OutlinePrototype.nib in Resources */ = {isa = PBXBuildFile; fileRef = 60B144EA0C11C52900B4613B /* OutlinePrototype.nib */; };
 		60B2AF6B0C0B745A008C008A /* ContainerExample.nib in Resources */ = {isa = PBXBuildFile; fileRef = 60B2AF690C0B745A008C008A /* ContainerExample.nib */; };
-		60C09F240C6A749700A4458D /* ETObject.h in Headers */ = {isa = PBXBuildFile; fileRef = 60C09F220C6A749700A4458D /* ETObject.h */; };
+		60C09F240C6A749700A4458D /* ETObject.h in Headers */ = {isa = PBXBuildFile; fileRef = 60C09F220C6A749700A4458D /* ETObject.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		60C09F250C6A749700A4458D /* ETObject.m in Sources */ = {isa = PBXBuildFile; fileRef = 60C09F230C6A749700A4458D /* ETObject.m */; };
 		60C09F5C0C6A8FCD00A4458D /* test_ETObject.m in Sources */ = {isa = PBXBuildFile; fileRef = 60C09F400C6A860900A4458D /* test_ETObject.m */; };
 		60C09F5D0C6A8FCD00A4458D /* ETObject.m in Sources */ = {isa = PBXBuildFile; fileRef = 60C09F230C6A749700A4458D /* ETObject.m */; };
@@ -168,6 +175,8 @@
 		606B99250C0B134B000AAA85 /* CocoaCompatibility.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CocoaCompatibility.m; sourceTree = "<group>"; };
 		6082FE750C49947F00FFF659 /* ETBinding.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ETBinding.h; sourceTree = "<group>"; };
 		6082FE760C49947F00FFF659 /* ETBinding.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ETBinding.m; sourceTree = "<group>"; };
+		6087EA940C81AB7900A1263E /* libgnustep-baseadd.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = "libgnustep-baseadd.dylib"; path = "/usr/GNUstep/System/Library/Libraries/libgnustep-baseadd.dylib"; sourceTree = "<absolute>"; };
+		6087EDF20C824CE100A1263E /* English */ = {isa = PBXFileReference; lastKnownFileType = wrapper.nib; name = English; path = English.lproj/ViewModelPrototype.nib; sourceTree = "<group>"; };
 		609544AA0C0CE24D00068CBB /* ETBrowserLayout.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ETBrowserLayout.h; sourceTree = "<group>"; };
 		609544AB0C0CE24D00068CBB /* ETBrowserLayout.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ETBrowserLayout.m; sourceTree = "<group>"; };
 		609547B70C0E032E00068CBB /* ETLayer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ETLayer.h; sourceTree = "<group>"; };
@@ -236,6 +245,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				6087EE9F0C82FC7A00A1263E /* libgnustep-baseadd.dylib in Frameworks */,
 				60F7145B0C5E7EA1002CA8AA /* EtoileUI.framework in Frameworks */,
 				60C1DA230C25715F00E00A2E /* Cocoa.framework in Frameworks */,
 			);
@@ -245,6 +255,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				6087EEA00C82FC8000A1263E /* libgnustep-baseadd.dylib in Frameworks */,
 				60F714470C5E7E43002CA8AA /* EtoileUI.framework in Frameworks */,
 				605F0E360C0F5310003AE3E6 /* Cocoa.framework in Frameworks */,
 			);
@@ -254,6 +265,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				6087EAF50C81CD3D00A1263E /* libgnustep-baseadd.dylib in Frameworks */,
 				60F714130C5E7DA8002CA8AA /* EtoileUI.framework in Frameworks */,
 				606B9C5E0C0B18A3000AAA85 /* Cocoa.framework in Frameworks */,
 			);
@@ -273,6 +285,7 @@
 			files = (
 				60EF8EA30C5E4D5900C97C41 /* AppKit.framework in Frameworks */,
 				60EF8EA20C5E4D5600C97C41 /* Foundation.framework in Frameworks */,
+				6087EA950C81AB7900A1263E /* libgnustep-baseadd.dylib in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -334,6 +347,7 @@
 		29B97314FDCFA39411CA2CEA /* FlowAutolayoutExample */ = {
 			isa = PBXGroup;
 			children = (
+				6087EA940C81AB7900A1263E /* libgnustep-baseadd.dylib */,
 				60C09F3F0C6A860900A4458D /* test_ETObject.h */,
 				60C09F400C6A860900A4458D /* test_ETObject.m */,
 				60C09F220C6A749700A4458D /* ETObject.h */,
@@ -384,6 +398,7 @@
 				60B144970C11BFB400B4613B /* TablePrototype.nib */,
 				60B144EA0C11C52900B4613B /* OutlinePrototype.nib */,
 				6051502B0C1738D600B5E0E5 /* BrowserPrototype.nib */,
+				6087EDF10C824CE100A1263E /* ViewModelPrototype.nib */,
 			);
 			name = Resources;
 			sourceTree = "<group>";
@@ -499,6 +514,7 @@
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				6064848F0C7D3BD00000338D /* NSObject+Etoile.h in Headers */,
 				60EF8EA40C5E4D8500C97C41 /* ETContainer.h in Headers */,
 				60EF8EA50C5E4D8500C97C41 /* ETViewLayout.h in Headers */,
 				60EF8EA60C5E4D8500C97C41 /* ETRenderer.h in Headers */,
@@ -687,6 +703,7 @@
 				60EF8ED60C5E4E0400C97C41 /* OutlinePrototype.nib in Resources */,
 				60EF8ED70C5E4E0400C97C41 /* BrowserPrototype.nib in Resources */,
 				60647D940C7879EC0000338D /* Inspector.nib in Resources */,
+				6087EDF30C824CE100A1263E /* ViewModelPrototype.nib in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -733,6 +750,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				6064848E0C7D3BC60000338D /* NSObject+Etoile.m in Sources */,
 				60EF8ED80C5E4E1900C97C41 /* CocoaCompatibility.m in Sources */,
 				60EF8EBE0C5E4DD900C97C41 /* ETLayoutItemGroup.m in Sources */,
 				60EF8EBF0C5E4DD900C97C41 /* ETStackLayout.m in Sources */,
@@ -808,6 +826,14 @@
 			name = ObjectManager.nib;
 			sourceTree = "<group>";
 		};
+		6087EDF10C824CE100A1263E /* ViewModelPrototype.nib */ = {
+			isa = PBXVariantGroup;
+			children = (
+				6087EDF20C824CE100A1263E /* English */,
+			);
+			name = ViewModelPrototype.nib;
+			sourceTree = "<group>";
+		};
 		60B144970C11BFB400B4613B /* TablePrototype.nib */ = {
 			isa = PBXVariantGroup;
 			children = (
@@ -848,8 +874,13 @@
 				GCC_OPTIMIZATION_LEVEL = 0;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "$(SYSTEM_LIBRARY_DIR)/Frameworks/AppKit.framework/Headers/AppKit.h";
+				GCC_PREPROCESSOR_DEFINITIONS = NeXT_RUNTIME;
 				INFOPLIST_FILE = "PaneContainerExample-Info.plist";
 				INSTALL_PATH = "$(HOME)/Applications";
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					/usr/GNUstep/System/Library/Libraries,
+				);
 				OTHER_LDFLAGS = (
 					"-framework",
 					Foundation,
@@ -874,8 +905,13 @@
 				GCC_MODEL_TUNING = G5;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "$(SYSTEM_LIBRARY_DIR)/Frameworks/AppKit.framework/Headers/AppKit.h";
+				GCC_PREPROCESSOR_DEFINITIONS = NeXT_RUNTIME;
 				INFOPLIST_FILE = "PaneContainerExample-Info.plist";
 				INSTALL_PATH = "$(HOME)/Applications";
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					/usr/GNUstep/System/Library/Libraries,
+				);
 				OTHER_LDFLAGS = (
 					"-framework",
 					Foundation,
@@ -902,8 +938,14 @@
 				GCC_OPTIMIZATION_LEVEL = 0;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "$(SYSTEM_LIBRARY_DIR)/Frameworks/AppKit.framework/Headers/AppKit.h";
+				GCC_PREPROCESSOR_DEFINITIONS = NeXT_RUNTIME;
+				HEADER_SEARCH_PATHS = /usr/GNUstep/System/Library/Headers/;
 				INFOPLIST_FILE = "ObjectManagerExample-Info.plist";
 				INSTALL_PATH = "$(HOME)/Applications";
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					/usr/GNUstep/System/Library/Libraries,
+				);
 				OTHER_LDFLAGS = (
 					"-framework",
 					Foundation,
@@ -928,8 +970,14 @@
 				GCC_MODEL_TUNING = G5;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "$(SYSTEM_LIBRARY_DIR)/Frameworks/AppKit.framework/Headers/AppKit.h";
+				GCC_PREPROCESSOR_DEFINITIONS = NeXT_RUNTIME;
+				HEADER_SEARCH_PATHS = /usr/GNUstep/System/Library/Headers/;
 				INFOPLIST_FILE = "ObjectManagerExample-Info.plist";
 				INSTALL_PATH = "$(HOME)/Applications";
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					/usr/GNUstep/System/Library/Libraries,
+				);
 				OTHER_LDFLAGS = (
 					"-framework",
 					Foundation,
@@ -956,8 +1004,11 @@
 				GCC_OPTIMIZATION_LEVEL = 0;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "$(SYSTEM_LIBRARY_DIR)/Frameworks/AppKit.framework/Headers/AppKit.h";
+				GCC_PREPROCESSOR_DEFINITIONS = NeXT_RUNTIME;
+				HEADER_SEARCH_PATHS = /usr/GNUstep/System/Library/Headers/;
 				INFOPLIST_FILE = "ContainerExample-Info.plist";
 				INSTALL_PATH = "$(HOME)/Applications";
+				LIBRARY_SEARCH_PATHS = /usr/GNUstep/System/Library/Libraries/;
 				OTHER_LDFLAGS = (
 					"-framework",
 					Foundation,
@@ -966,7 +1017,7 @@
 				);
 				PREBINDING = NO;
 				PRODUCT_NAME = ContainerExample;
-				USER_HEADER_SEARCH_PATHS = "$(PROJECT_DIR)";
+				USER_HEADER_SEARCH_PATHS = "$(PROJECT_DIR) /usr/GNUstep/System/Library/Headers/";
 				WRAPPER_EXTENSION = app;
 				ZERO_LINK = YES;
 			};
@@ -983,8 +1034,11 @@
 				GCC_MODEL_TUNING = "";
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "$(SYSTEM_LIBRARY_DIR)/Frameworks/AppKit.framework/Headers/AppKit.h";
+				GCC_PREPROCESSOR_DEFINITIONS = NeXT_RUNTIME;
+				HEADER_SEARCH_PATHS = /usr/GNUstep/System/Library/Headers/;
 				INFOPLIST_FILE = "ContainerExample-Info.plist";
 				INSTALL_PATH = "$(HOME)/Applications";
+				LIBRARY_SEARCH_PATHS = /usr/GNUstep/System/Library/Libraries/;
 				OTHER_LDFLAGS = (
 					"-framework",
 					Foundation,
@@ -993,7 +1047,7 @@
 				);
 				PREBINDING = NO;
 				PRODUCT_NAME = ContainerExample;
-				USER_HEADER_SEARCH_PATHS = "$(PROJECT_DIR)";
+				USER_HEADER_SEARCH_PATHS = "$(PROJECT_DIR) /usr/GNUstep/System/Library/Headers/";
 				WRAPPER_EXTENSION = app;
 				ZERO_LINK = NO;
 			};
@@ -1060,12 +1114,14 @@
 				GCC_OPTIMIZATION_LEVEL = 0;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "$(SYSTEM_LIBRARY_DIR)/Frameworks/AppKit.framework/Headers/AppKit.h";
+				GCC_PREPROCESSOR_DEFINITIONS = NeXT_RUNTIME;
 				HEADER_SEARCH_PATHS = (
-					"-l",
 					$SRCROOT,
+					/usr/GNUstep/System/Library/Headers/,
 				);
 				INFOPLIST_FILE = "EtoileUI-Info.plist";
 				INSTALL_PATH = "$(HOME)/Library/Frameworks";
+				LIBRARY_SEARCH_PATHS = /usr/GNUstep/System/Library/Libraries/;
 				OTHER_LDFLAGS = (
 					"-framework",
 					Foundation,
@@ -1074,6 +1130,7 @@
 				);
 				PREBINDING = NO;
 				PRODUCT_NAME = EtoileUI;
+				USER_HEADER_SEARCH_PATHS = /usr/GNUstep/System/Library/Headers/;
 				ZERO_LINK = YES;
 			};
 			name = Debug;
@@ -1091,12 +1148,14 @@
 				GCC_MODEL_TUNING = G5;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "$(SYSTEM_LIBRARY_DIR)/Frameworks/AppKit.framework/Headers/AppKit.h";
+				GCC_PREPROCESSOR_DEFINITIONS = NeXT_RUNTIME;
 				HEADER_SEARCH_PATHS = (
-					"-l",
 					$SRCROOT,
+					/usr/GNUstep/System/Library/Headers/,
 				);
 				INFOPLIST_FILE = "EtoileUI-Info.plist";
 				INSTALL_PATH = "$(HOME)/Library/Frameworks";
+				LIBRARY_SEARCH_PATHS = /usr/GNUstep/System/Library/Libraries/;
 				OTHER_LDFLAGS = (
 					"-framework",
 					Foundation,
@@ -1105,6 +1164,7 @@
 				);
 				PREBINDING = NO;
 				PRODUCT_NAME = EtoileUI;
+				USER_HEADER_SEARCH_PATHS = /usr/GNUstep/System/Library/Headers/;
 				ZERO_LINK = NO;
 			};
 			name = Release;

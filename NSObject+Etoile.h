@@ -35,6 +35,10 @@
 
 #import <Foundation/Foundation.h>
 #import <AppKit/AppKit.h>
+#import <GNUstepBase/GSObjCRuntime.h>
+#define ETUTI NSString
+
+@class ETMethod;
 
 /** Protocol usually adopted by model objects */
 @protocol ETPropertyValueCoding
@@ -51,9 +55,6 @@
 /** Utility metamodel for GNUstep/Cocoa Objective-C */
 
 @interface NSObject (Etoile) //<ETInspectableObject>
-{
-
-}
 
 /** Returns a object representing the receiver. Useful when sucblasses override
     root class methods and make them unavailable to introspection. For example,
@@ -72,7 +73,7 @@
 - (void) setValue: (id)value forSlot: (NSString *)slot;*/
 - (id) valueForInstanceVariable: (NSString *)ivar;
 - (void) setValue: (id)value forInstanceVariable: (NSString *)ivar;
-- (id) methodForName: (NSString *)name;
+- (ETMethod *) methodForName: (NSString *)name;
 - (void) setMethod: (id)value forName: (NSString *)namme;
 
 - (NSArray *) instanceVariables;
@@ -82,30 +83,34 @@
 - (id) typeForInstanceVariable: (NSString *)ivar;
 
 - (NSArray *) protocolNames;
-- (NSArray *) protocols;
+//- (NSArray *) protocols;
 
 - (NSArray *) methods;
 - (NSArray *) methodNames;
-- (NSArray *) instanceMethods;
+/*- (NSArray *) instanceMethods;
 - (NSArray *) instanceMethodNames;
 - (NSArray *) classMethods;
 - (NSArray *) classMethodNames;
 
 - (void) addMethod: (ETMethod *)method;
-- (void) removeMethod: (ETMethod *)method;
+- (void) removeMethod: (ETMethod *)method;*/
 /** Method swizzling */
-- (void) replaceMethod: (ETMethod *)method byMethod: (ETMethod *)method;
+/*- (void) replaceMethod: (ETMethod *)method byMethod: (ETMethod *)method;*/
 
 /** Low level methods used to implement method list edition */
-- (void) bindMethod: (ETMethod *) toSelector: (SEL)selector;
-- (void) bindSelector: (SEL) toMethod: (ETMethod *)method;
+/*- (void) bindMethod: (ETMethod *) toSelector: (SEL)selector;
+- (void) bindSelector: (SEL) toMethod: (ETMethod *)method;*/
 
 @end
 
 @interface ETInstanceVariable : NSObject 
 {
-
+	@public
+	id _possessor;
+	GSIVar _ivar;
 }
+
+- (id) possessor;
 
 - (NSString *) name;
 // FIXME: Replace by ETUTI class later
@@ -119,11 +124,12 @@
 
 @interface ETMethod : NSObject 
 {
-
+	@public
+	GSMethod _method;
 }
 
-- (BOOL) isInstanceMethod;
-- (BOOL) isClassMethod;
+/*- (BOOL) isInstanceMethod;
+- (BOOL) isClassMethod;*/
 
 - (NSString *) name;
 - (SEL) selector;
@@ -131,9 +137,11 @@
 
 @end
 
+/** A Protocol counterpart for Foundation and NSObject root class */
 @interface ETProtocol : NSObject 
 {
-
+	@public
+	Protocol *_protocol;
 }
 
 - (NSString *) name;

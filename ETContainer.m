@@ -417,6 +417,8 @@ NSString *ETLayoutItemPboardType = @"ETLayoutItemPboardType"; // FIXME: replace 
 		[inv setArgument: &doubleAction atIndex: 2];
 		//[self sendInvocationToDisplayView: inv];
 		
+		if ([_displayView isKindOfClass: [NSScrollView class]] == NO)
+			return;
 		// FIXME: Hack to work around invocation vanishing when we call -sendInvocationToDisplayView:
 		id enclosedDisplayView = [(NSScrollView *)_displayView documentView];
 		
@@ -819,6 +821,7 @@ NSString *ETLayoutItemPboardType = @"ETLayoutItemPboardType"; // FIXME: replace 
 {
 	//NSLog(@"Add item in %@", self);
 	[_layoutItems addObject: item];
+	[item setParentLayoutItem: [self layoutItem]];
 	if ([self canUpdateLayout])
 		[self updateLayout];
 }
@@ -846,6 +849,7 @@ NSString *ETLayoutItemPboardType = @"ETLayoutItemPboardType"; // FIXME: replace 
        has been removed. */
 	
 	[_layoutItems insertObject: item atIndex: index];
+	[item setParentLayoutItem: [self layoutItem]];
 	[indexes shiftIndexesStartingAtIndex: index by: 1];
 	[self setSelectionIndexes: indexes];
 	if ([self canUpdateLayout])

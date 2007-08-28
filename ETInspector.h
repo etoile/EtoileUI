@@ -37,6 +37,9 @@
 #import <Foundation/Foundation.h>
 #import <AppKit/AppKit.h>
 #import <EtoileUI/ETLayoutItem.h>
+#import <EtoileUI/ETViewLayout.h>
+
+#define ETLayout ETViewLayout
 
 @class ETView, ETContainer;
 
@@ -55,9 +58,10 @@
 
 @interface ETInspector : ETLayoutItem <ETInspector>
 {
-	IBOutlet ETContainer *propertyView;
 	IBOutlet ETContainer *itemGroupView;
+	IBOutlet ETContainer *propertyView;
 	IBOutlet NSWindow *window;
+	IBOutlet id viewModelLayout;
 
 	NSArray *_inspectorViews;
 	NSArray *_inspectedItems;
@@ -77,9 +81,39 @@
 @end
 
 @interface ETLayoutItem (ETInspector)
++ (ETLayoutItem *) layoutItemWithInspectedObject: (id)object;
 /** A basic meta model which inspects layout items by wrapping each one in a 
 	new meta layout item. Achieved by setting the base layout item as the
 	represented object of the new meta layout item. */
 + (ETLayoutItem *) layoutItemOfLayoutItem: (ETLayoutItem *)item;
 - (ETView *) buildInspectorView;
+@end
+
+@interface NSObject (ETInspector) <ETObjectInspection>
+- (id <ETInspector>) inspector;
+@end
+
+/*@interface ETInspectorLayout
+{
+	IBOutlet ETContainer *itemGroupView;
+}
+
+@end*/
+
+typedef enum _ETLayoutDisplayMode {
+	ETLayoutDisplayModeView,
+	ETLayoutDisplayModeModel,
+} ETLayoutDisplayMode;
+
+@interface ETViewModelLayout : ETLayout
+{
+	IBOutlet id enclosingView;
+	IBOutlet ETContainer *propertyView;
+	ETLayoutDisplayMode _displayMode;
+}
+
+- (ETLayoutDisplayMode) displayMode;
+- (void) setDisplayMode: (ETLayoutDisplayMode)mode;
+- (void) switchDisplayMode: (id)sender;
+
 @end

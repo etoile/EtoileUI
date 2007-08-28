@@ -146,6 +146,8 @@
 	// NOTE: Avoids retain cycle by weak referencing the container.
 	_container = newContainer;
 	[[_container layoutItemCache] makeObjectsPerformSelector: @selector(restoreDefaultFrame)];
+	// FIXME: Implement context layout accessors properly
+	[self setLayoutContext: (id)[_container layoutItem]];
 }
 
 /** Returns the view where the layout happens (by computing locations of a layout item series). */
@@ -163,6 +165,18 @@
 - (id <ETLayoutingContext>) layoutContext
 {
 	return _layoutContext;
+}
+
+/** Overrides in subclasses to indicate whether the layout is a semantic layout
+	or not. Returns NO by default.
+	ETTableLayout is a normal layout but ETPropertyLayout (which displays a 
+	list of properties) is semantic, the latter works by delegating everything 
+	to an existing normal layout and may eventually replace this layout by 
+	another one. If you overrides this method to return YES, forwarding of all
+	non-overidden methods to the delegate will be handled automatically. */
+- (BOOL) isSemantic
+{
+	return NO;
 }
 
 /** Returns YES when the layout computes the location of the layout items and
@@ -302,6 +316,8 @@
 	{
 		layoutItem = [[[self container] source] itemAtIndex: i inContainer: [self container]];
 		[itemsFromSource addObject: layoutItem];
+		//[[self layoutContext] addItem: layoutItem];
+		[layoutItem setParentLayoutItem: [self layoutContext]];
 	}
 	
 	return itemsFromSource;
@@ -333,6 +349,7 @@
 			[(ETContainer *)[layoutItem view] setPath: subpath];
 		}
 		[itemsFromSource addObject: layoutItem];
+		//[[self layoutContext] addItem: layoutItem];
 	}
 	
 	return itemsFromSource;

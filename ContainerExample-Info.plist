@@ -20,5 +20,7 @@
 	<string>ContainerExample</string>
 	<key>NSPrincipalClass</key>
 	<string>NSApplication</string>
+	<key>DYLD_LIBRARY_PATH</key>
+	<string>/usr/GNUstep/System/Library/Libraries/</string>
 </dict>
 </plist>

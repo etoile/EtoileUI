@@ -16,5 +16,7 @@
 	<string>????</string>
 	<key>CFBundleVersion</key>
 	<string>1.0</string>
+	<key>DYLD_LIBRARY_PATH</key>
+	<string>/usr/GNUstep/System/Library/Libraries/</string>
 </dict>
 </plist>

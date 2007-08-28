@@ -105,7 +105,7 @@
 
 - (ETLayoutItemGroup *) parentLayoutItem;
 - (void) setParentLayoutItem: (ETLayoutItemGroup *)parent;
-- (ETContainer *) closedAncestorContainer;
+- (ETContainer *) closestAncestorContainer;
 - (ETView *) closestAncestorDisplayView;
 
 /** Facility methods to store a name acting like a last fallback property for 

@@ -176,14 +176,14 @@
 	ASSIGN(_parentLayoutItem, parent);
 }
 
-- (ETContainer *) closedAncestorContainer
+- (ETContainer *) closestAncestorContainer
 {
 	if ([[self displayView] isKindOfClass: [ETContainer class]])
-		return [self displayView];
+		return (ETContainer *)[self displayView];
 		
 	if ([self parentLayoutItem] != nil)
 	{
-		return [[self parentLayoutItem] closedAncestorContainer];
+		return [[self parentLayoutItem] closestAncestorContainer];
 	}
 	else
 	{
@@ -195,7 +195,7 @@
 - (ETView *) closestAncestorDisplayView
 {
 	if ([self displayView] != nil)
-		return [self displayView];
+		return (ETContainer *)[self displayView];
 
 	if ([self parentLayoutItem] != nil)
 	{
@@ -386,13 +386,13 @@
 	   For example OrganizeKit objects responds to it. */
 	if ([_modelObject respondsToSelector: @selector(properties)])
 	{
-		properties = [_modelObject properties];
+		properties = (NSArray *)[_modelObject properties];
 	}
 	else if ([_modelObject respondsToSelector: @selector(entity)]
 	 && [[_modelObject entity] respondsToSelector: @selector(properties)])
 	{
 		/* Managed Objects have an entity which describes them */
-		properties = [[_modelObject entity] properties];
+		properties = (NSArray *)[[_modelObject entity] properties];
 	}
 	else if ([_modelObject respondsToSelector: @selector(allKeys)])
 	{
@@ -406,8 +406,8 @@
 		
 		properties = [NSMutableArray arrayWithObjects: [desc attributeKeys]];
 		// NOTE: Not really sure we should include relationship keys
-		[properties addObjects: [desc toManyRelationshipKeys]];
-		[properties addObjects: [desc toOneRelationshipKeys]];
+		[(NSMutableArray *)properties addObjects: (NSArray *)[desc toManyRelationshipKeys]];
+		[(NSMutableArray *)properties addObjects: (NSArray *)[desc toOneRelationshipKeys]];
 	}
 	
 	if (properties != nil && [properties count] == 0)
@@ -760,7 +760,16 @@
 
 - (id <ETInspector>) inspector
 {
-	return nil;
+	ETContainer *container = [self closestAncestorContainer];
+	id <ETInspector> inspector = nil;
+	
+	if (container != nil)
+		inspector = [container inspector];
+		
+	if (inspector != nil)
+		[inspector setInspectedItems: [NSArray arrayWithObject: self]];
+		
+	return inspector;
 }
 
 @end
