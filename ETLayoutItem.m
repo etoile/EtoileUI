@@ -86,27 +86,27 @@
 	return (ETLayoutItem *)AUTORELEASE([[self alloc] initWithView: view]);
 }
 
-- (ETLayoutItem *) init
+- (id) init
 {
 	return [self initWithView: nil value: nil representedObject: nil];
 }
 
-- (ETLayoutItem *) initWithValue: (id)value
+- (id) initWithValue: (id)value
 {
 	return [self initWithView: nil value: value representedObject: nil];
 }
 
-- (ETLayoutItem *) initWithRepresentedObject: (id)object
+- (id) initWithRepresentedObject: (id)object
 {
 	return [self initWithView: nil value: nil representedObject: object];
 }
 
-- (ETLayoutItem *) initWithView: (NSView *)view
+- (id) initWithView: (NSView *)view
 {
 	return [self initWithView: view value: nil representedObject: nil];
 }
 
-- (ETLayoutItem *) initWithView: (NSView *)view value: (id)value representedObject: (id)repObject
+- (id) initWithView: (NSView *)view value: (id)value representedObject: (id)repObject
 {
     self = [super init];
     
@@ -433,6 +433,7 @@
 
 - (void) setDisplayView: (ETView *)view
 {
+	// FIXME
 	NSView *enclosedView = nil;
 }
 
@@ -664,7 +665,9 @@
 - (void) setDefaultFrame: (NSRect)frame
 { 
 	_defaultFrame = frame;
-	[self restoreDefaultFrame];
+	/* Update display view frame only if needed */
+	if (NSEqualRects(_defaultFrame, [[self displayView] frame]) == NO)
+		[self restoreDefaultFrame];
 }
 
 - (void) restoreDefaultFrame

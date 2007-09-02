@@ -13,6 +13,8 @@
 - (void) awakeFromNib
 {
     NSNotificationCenter *nc = [NSNotificationCenter defaultCenter];
+	
+	images = [[NSMutableArray alloc] init];
     
     /*[nc addObserver: self 
            selector: @selector(viewContainerDidResize:) 
@@ -154,18 +156,33 @@
     
     //NSLog(@"Pictures selected: %@\n", paths);
 	
-	ASSIGN(images, [NSMutableArray array]);
+	[images removeAllObjects];
     
     while ((path = [e nextObject]) != nil)
     {
-        NSImage *image = [[NSImage alloc] initWithContentsOfFile: path];
+        NSImage *image = AUTORELEASE([[NSImage alloc] initWithContentsOfFile: path]);
 		
 		if (image != nil)
 		{
 			//NSLog(@"New image loaded: %@\n", image);
 			
-			[image setName: path];
-			[images addObject: image];
+			// NOTE: NSImage retains image on -setName:
+			if ([NSImage imageNamed: path] != nil)
+			{
+				/* Reuse already registered image */
+				[images addObject: [NSImage imageNamed: path]];
+			}
+			else 
+			{
+				if ([image setName: path])
+				{
+					[images addObject: image];
+				}
+				else
+				{
+					NSLog(@"Impossible to register image for name %@", path);
+				}
+			}
 		}
     }        
 	
@@ -191,7 +208,7 @@
 	{
 		NSImageView *imgView = [self imageViewForImage: img];
 		ETLayoutItem *item = [ETLayoutItem layoutItemWithView: imgView];
-
+		
 		[item setValue: [[img name] lastPathComponent] forProperty: @"name"];
 		[item setValue: img forProperty: @"icon"];		
 		[imageLayoutItems addObject: item];
@@ -254,11 +271,11 @@
 	
 	[wk getInfoForFile: [img name] application: NULL type: &type];
 	
-	[imageItem setValue: [[img name] lastPathComponent] forProperty: @"name"];
 	[imageItem setValue: img forProperty: @"icon"];
 	//[imageItem setValue: [wk iconForFile: [img name]] forProperty: @"icon"];
-	[imageItem setValue: sizeStr forProperty: @"size"];
+	[imageItem setValue: [[img name] lastPathComponent] forProperty: @"name"];
 	[imageItem setValue: type forProperty: @"type"];
+	[imageItem setValue: sizeStr forProperty: @"size"];
 	//[imageItem setValue: date forProperty	: @"modificationdate"];
 	
 	//NSLog(@"Returns %@ as layout item in container %@", imageItem, container);

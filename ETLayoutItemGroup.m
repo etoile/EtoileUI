@@ -72,42 +72,25 @@
 /** Designated initialize */
 - (id) initWithLayoutItems: (NSArray *)layoutItems view: (NSView *)view
 {
-	ETContainer *containerAsLayoutItemGroup = 
-		[[ETContainer alloc] initWithFrame: DEFAULT_FRAME];
-		
-	AUTORELEASE(containerAsLayoutItemGroup);
-    self = (ETLayoutItemGroup *)[super initWithView: (NSView *)containerAsLayoutItemGroup];
+    self = [super initWithView: view];
     
     if (self != nil)
     {
 		_layoutItems = [[NSMutableArray alloc] init];
+		if (layoutItems != nil)
+			[self addItems: layoutItems];
 		_layout = nil;
+		_path = nil;
 		_autolayout = YES;
 		_usesLayoutBasedFrame = NO;
-		
-		if ([[self view] isKindOfClass: [ETContainer class]] == NO)
-		{
-			if ([self view] == nil)
-			{
-				NSLog(@"WARNING: New %@ must have a container as view and not nil", self);
-			}
-			else
-			{
-				NSLog(@"WARNING: New %@ must embed a container and not another view %@", self, [self view]);
-			}
-			return nil;
-		}
-		if (layoutItems != nil)
-			[(ETContainer *)[self view] addItems: layoutItems];
-		if (view != nil)
-		{
-			[view removeFromSuperview]; // Note sure we should pay heed to such case
-			[view setFrame: [[self view] frame]];
-			[(ETContainer *)[self view] addSubview: view];
-		}
     }
     
     return self;
+}
+
+- (id) initWithView: (NSView *)view
+{
+	return [self initWithLayoutItems: nil view: view];
 }
 
 - (id) init
@@ -129,10 +112,28 @@
 	return [[self view] isKindOfClass: [ETContainer class]];
 }
 
+/* Overriden method */
+/*- (void) setDisplayView: (ETView *)view
+{
+
+}*/
+
+- (NSString *) path
+{
+	/* We cache path which could be rebuilt by chaining names of a layout
+	   item branch. */
+	return _path;
+}
+
+- (void) setPath: (NSString *)path
+{
+	ASSIGN(_path, path);
+}
+
 // FIXME: Move layout item collection from ETContainer to ETLayoutItemGroup
 - (void) addItem: (ETLayoutItem *)item
 {
-	//NSLog(@"Add item in %@", self);
+	NSLog(@"Add item in %@", self);
 	[item setParentLayoutItem: self];
 	[_layoutItems addObject: item];
 	if ([self canUpdateLayout])
@@ -141,7 +142,7 @@
 
 - (void) insertItem: (ETLayoutItem *)item atIndex: (int)index
 {
-	//NSLog(@"Insert item in %@", self);
+	NSLog(@"Insert item in %@", self);
 	
 	//FIXME: NSMutableIndexSet *indexes = [self selectionIndexes];
 	
@@ -171,7 +172,7 @@
 
 - (void) removeItem: (ETLayoutItem *)item
 {
-	//NSLog(@"Remove item in %@", self);
+	NSLog(@"Remove item in %@", self);
 
 // FIXME
 #if 0	
@@ -242,7 +243,7 @@
 	NSEnumerator *e = [items objectEnumerator];
 	ETLayoutItem *layoutItem = nil;
 	
-	//NSLog(@"Add items in %@", self);
+	NSLog(@"Add items in %@", self);
 	
 	while ((layoutItem = [e nextObject]) != nil)
 	{
@@ -255,7 +256,7 @@
 	NSEnumerator *e = [items objectEnumerator];
 	ETLayoutItem *layoutItem = nil;
 	
-	//NSLog(@"Remove items in %@", self);
+	NSLog(@"Remove items in %@", self);
 	
 	while ((layoutItem = [e nextObject]) != nil)
 	{
@@ -265,7 +266,7 @@
 
 - (void) removeAllItems
 {
-	//NSLog(@"Remove all items in %@", self);
+	NSLog(@"Remove all items in %@", self);
 	
 	// FIXME: [_selection removeAllIndexes];
 	[_layoutItems makeObjectsPerformSelector: @selector(setParentLayoutItem:) withObject: nil];
@@ -304,7 +305,8 @@
 	// May be we should move it into -[layout setContainer:]...
 	// Triggers scroll view display which triggers layout render in turn to 
 	// compute the content size
-	[self setDisplayView: nil]; 
+	if ([self isContainer])
+		[[self displayView] setDisplayView: nil]; 
 	ASSIGN(_layout, layout);
 	[layout setLayoutContext: self];
 
@@ -323,10 +325,25 @@
 
 - (void) updateLayout
 {
+	if ([self layout] == nil)
+		return;
+
 	/* Delegate layout rendering to custom layout object */
 	[[self layout] render];
 	
-	[self setNeedsDisplay: YES];
+	[[self closestAncestorContainer] setNeedsDisplay: YES];
+	// FIXME: Redisplay closestAncestorContainer with our rect
+	/*ETContainer *closestContainer = [self closestAncestorContainer];
+	NSRect closestViewInsideRect = [closestContainer frame];
+	NSRect dirtyRect = [self frame];
+	
+	closestViewInsideRect.origin = NSZeroPoint;
+	if ([self displayView] != nil)
+	{
+		dirtyRect = [[self displayView] convertRect: dirtyRect toView: closestContainer];
+	}
+	dirtyRect = NSIntersectionRect(dirtyRect, closestViewInsideRect);
+	[closestContainer setNeedsDisplayInRect: dirtyRect];*/
 }
 
 - (BOOL) canUpdateLayout
@@ -406,13 +423,15 @@
 }
 
 
-- (NSArray *) visibleLayoutItems
+- (NSArray *) visibleItems
 {
-#if 0
-	ETContainer *container = (ETContainer *)[self view];
+	ETContainer *container = nil;
 	NSMutableArray *visibleItems = [NSMutableArray array];
-	NSEnumerator  *e = [[container items] objectEnumerator];
+	NSEnumerator  *e = [[self items] objectEnumerator];
 	ETLayoutItem *item = nil;
+	
+	if ([self isContainer])
+		container = (ETContainer *)[self view];
 	
 	while ((item = [e nextObject]) != nil)
 	{
@@ -421,27 +440,27 @@
 	}
 	
 	return visibleItems;
-#endif
-	return nil;
 }
 
 // FIXME: Make a bottom top traversal to find the first view which can be used 
 // as superview for the visible layout item views. Actually this isn't needed
 // or supported because all ETLayoutItemGroup instances must embed a container.
 // This last point is going to become purely optional.
-- (void) setVisibleLayoutItems: (NSArray *)visibleItems
+- (void) setVisibleItems: (NSArray *)visibleItems
 {
-#if 0
-	ETContainer *container = (ETContainer *)[self view];
-	NSEnumerator  *e = [[container items] objectEnumerator];
+	ETContainer *container = nil;
+	NSEnumerator  *e = [[self items] objectEnumerator];
 	ETLayoutItem *item = nil;
+	
+	if ([self isContainer])
+		container = (ETContainer *)[self view];
 	
 	while ((item = [e nextObject]) != nil)
 	{
 		if ([visibleItems containsObject: item])
 		{
 			[item setVisible: YES];
-			if ([[container subviews] containsObject: [item displayView]] == NO)
+			if (container != nil && [[container subviews] containsObject: [item displayView]] == NO)
 			{
 				[container addSubview: [item displayView]];
 				NSLog(@"Inserted view at %@", NSStringFromRect([[item displayView] frame]));
@@ -450,14 +469,13 @@
 		else
 		{
 			[item setVisible: NO];
-			if ([[container subviews] containsObject: [item displayView]])
+			if (container != nil && [[container subviews] containsObject: [item displayView]])
 			{
 				[[item displayView] removeFromSuperview];
 				NSLog(@"Removed view at %@", NSStringFromRect([[item displayView] frame]));
 			}
 		}
 	}
-#endif
 }
 
 - (NSArray *) ungroup

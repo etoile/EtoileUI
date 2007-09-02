@@ -98,10 +98,10 @@
 
 + (ETLayoutItem *) layoutItemWithView: (NSView *)view;
 
-- (ETLayoutItem *) initWithValue: (id)value;
-- (ETLayoutItem *) initWithRepresentedObject: (id)object;
-- (ETLayoutItem *) initWithView: (NSView *)view;
-- (ETLayoutItem *) initWithView: (NSView *)view value: (id)value representedObject: (id)repObject;
+- (id) initWithValue: (id)value;
+- (id) initWithRepresentedObject: (id)object;
+- (id) initWithView: (NSView *)view;
+- (id) initWithView: (NSView *)view value: (id)value representedObject: (id)repObject;
 
 - (ETLayoutItemGroup *) parentLayoutItem;
 - (void) setParentLayoutItem: (ETLayoutItemGroup *)parent;

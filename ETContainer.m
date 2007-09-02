@@ -86,6 +86,16 @@ NSString *ETLayoutItemPboardType = @"ETLayoutItemPboardType"; // FIXME: replace 
     
     if (self != nil)
     {
+		// NOTE: Very important to destroy ETView layout item to avoid any 
+		// layout update in ETLayoutItem
+		// -setView: -> -setDefaultFrame: -> -restoreDefaultFrame -> -setFrame:
+		// then reentering ETContainer
+		// -setFrameSize: -> -canUpdateLayout
+		// and failing because [self layoutItem] returns ETLayoutItem instance
+		// and not ETLayoutItemGroup instance; ETLayoutItem doesn't respond to
+		// -canUpdateLayout...
+		[self setLayoutItem: nil];
+	
 		ETLayoutItemGroup *itemGroup = [[ETLayoutItemGroup alloc] initWithView: self];
 		
 		 /* Before all, bind layout item group representing the container */
@@ -147,9 +157,20 @@ NSString *ETLayoutItemPboardType = @"ETLayoutItemPboardType"; // FIXME: replace 
 	return desc;
 }
 
+- (ETLayoutItem *) layoutItem
+{
+	NSAssert([[super layoutItem] isKindOfClass: [ETLayoutItemGroup class]], 
+		@"Layout item in a container must of ETLayoutItemGroup type");
+	return [super layoutItem];
+}
+
 - (NSString *) path
 {
+#if 0
 	return _path;
+#else
+	return [[self layoutItem] path];
+#endif
 }
 
 /** Returns path value which is altered when the user navigates inside a tree 
@@ -163,7 +184,11 @@ NSString *ETLayoutItemPboardType = @"ETLayoutItemPboardType"; // FIXME: replace 
 	layout item tree inside a container. */
 - (void) setPath: (NSString *)path
 {
+#if 0
 	ASSIGN(_path, path);
+#else
+	[[self layoutItem] setPath: path];
+#endif
 	
 	// FIXME: May be it would be even better to keep selected any items still 
 	// visible with updated layout at new path. Think of outline view or 
@@ -207,6 +232,8 @@ NSString *ETLayoutItemPboardType = @"ETLayoutItemPboardType"; // FIXME: replace 
 
 - (NSArray *) visibleItems
 {
+	return [[self layoutItem] visibleItems];
+#if 0
 	ETContainer *container = self;
 	NSMutableArray *visibleItems = [NSMutableArray array];
 	NSEnumerator  *e = [[container layoutItemCache] objectEnumerator];
@@ -220,6 +247,7 @@ NSString *ETLayoutItemPboardType = @"ETLayoutItemPboardType"; // FIXME: replace 
 	}
 	
 	return visibleItems;
+#endif
 }
 
 // FIXME: Make a bottom top traversal to find the first view which can be used 
@@ -228,6 +256,8 @@ NSString *ETLayoutItemPboardType = @"ETLayoutItemPboardType"; // FIXME: replace 
 // This last point is going to become purely optional.
 - (void) setVisibleItems: (NSArray *)visibleItems
 {
+	[[self layoutItem] setVisibleItems: visibleItems];
+#if 0
 	ETContainer *container = self;
 	NSEnumerator  *e = [[container layoutItemCache] objectEnumerator];
 	//NSEnumerator  *e = [[container items] objectEnumerator];
@@ -254,6 +284,7 @@ NSString *ETLayoutItemPboardType = @"ETLayoutItemPboardType"; // FIXME: replace 
 			}
 		}
 	}
+#endif
 }
 
 - (NSArray *) layoutItems
@@ -273,6 +304,7 @@ NSString *ETLayoutItemPboardType = @"ETLayoutItemPboardType"; // FIXME: replace 
 {
 	// TODO: Write a debug assertion checking every _layoutItemCache item views
 	// aren't used in present container anymore.
+#if 0
 	ASSIGN(_layoutItemCache, layoutItems);
 	
 	/* Sync selection state which needs to be cached in layout items 
@@ -289,6 +321,25 @@ NSString *ETLayoutItemPboardType = @"ETLayoutItemPboardType"; // FIXME: replace 
 		if ([selection containsIndex: i])
 			[item setSelected: YES];
 	}
+	
+#else
+	/* Sync selection state which needs to be cached in layout items 
+	   NOTE: only necessary when the layout items are provided by a source, 
+	   when they aren't, selection related methods are sufficient to keep
+	   the selection state cached in each layout item. */
+	NSIndexSet *selection = [self selectionIndexes];
+	int c = [layoutItems count];
+	
+	for (int i = 0; i < c; i++)
+	{
+		ETLayoutItem *item = [layoutItems objectAtIndex: i];
+		
+		if ([selection containsIndex: i])
+			[item setSelected: YES];
+	}
+	[[self layoutItem] removeAllItems];
+	[[self layoutItem] addItems: layoutItems];	
+#endif	
 }
 
 /* Returns layout items currently displayed in the container unlike 
@@ -298,30 +349,49 @@ NSString *ETLayoutItemPboardType = @"ETLayoutItemPboardType"; // FIXME: replace 
    Must only be modified through -cacheLayoutItems:, never directly. */
 - (NSArray *) layoutItemCache
 {
+#if 0
 	return _layoutItemCache;
+#else
+	return [[self layoutItem] items];
+#endif
 }
 
 - (BOOL) isAutolayout
 {
+#if 0
 	return _autolayout;
+#else
+	return [[self layoutItem] isAutolayout];
+#endif
 }
 
 - (void) setAutolayout: (BOOL)flag
 {
+#if 0
 	_autolayout = flag;
+#else
+	[[self layoutItem] setAutolayout: flag];
+#endif
 }
 
 - (BOOL) canUpdateLayout
 {
+#if 0
 	return [self isAutolayout] && ![[self layout] isRendering];
+#else
+	return [[self layoutItem] canUpdateLayout];
+#endif
 }
 
 - (void) updateLayout
 {
+	[[self layoutItem] updateLayout];
+#if 0
 	/* Delegate layout rendering to custom layout object */
 	[[self layout] render];
 	
 	[self setNeedsDisplay: YES];
+#endif
 }
 
 /** Returns 0 when source doesn't conform to any parts of ETContainerSource informal protocol.
@@ -372,11 +442,17 @@ NSString *ETLayoutItemPboardType = @"ETLayoutItemPboardType"; // FIXME: replace 
 
 - (ETViewLayout *) layout
 {
+	return [[self layoutItem] layout];
+#if 0
 	return _containerLayout;
+#endif
 }
 
 - (void) setLayout: (ETViewLayout *)layout
 {
+	[[self layoutItem] setLayout: layout];
+
+#if 0
 	if (_containerLayout == layout)
 		return;
 	
@@ -402,6 +478,7 @@ NSString *ETLayoutItemPboardType = @"ETLayoutItemPboardType"; // FIXME: replace 
 	
 	if ([self canUpdateLayout])
 		[self updateLayout];
+#endif
 }
 
 /* Various adjustements necessary when layout object is a wrapper around an 
@@ -505,17 +582,9 @@ NSString *ETLayoutItemPboardType = @"ETLayoutItemPboardType"; // FIXME: replace 
 	if (_dataSource == source)
 		return;
 	
-	if (_dataSource == nil)
-	{
-		/* Also resets any particular state associated with the container like
-	       selection */
-		[self removeAllItems];
-	}
-	else
-	{
-		NSAssert([[self items] count] == 0, @"A container must own no items "
-			@"when a source is set");
-	}
+	/* Also resets any particular state associated with the container like
+	   selection */
+	[self removeAllItems];
 	
 	_dataSource = source;
 	
@@ -523,7 +592,7 @@ NSString *ETLayoutItemPboardType = @"ETLayoutItemPboardType"; // FIXME: replace 
 	// only refresh the container display when the new source is set up.
 	
 	// NOTE: -setPath: takes care of calling -updateLayout
-	if (source != nil && [[self path] isEqual: @""])
+	if (source != nil && ([self path] == nil || [[self path] isEqual: @""]))
 	{
 		[self setPath: @"/"];
 	}
@@ -777,6 +846,8 @@ NSString *ETLayoutItemPboardType = @"ETLayoutItemPboardType"; // FIXME: replace 
    prototype but they never never manipulate it as a subview in view hierachy. */
 - (void) setDisplayView: (NSView *)view
 {
+	if (_displayView == nil && view == nil)
+		return;
 	if (_displayView == view && (_displayView != nil || view != nil))
 	{
 		NSLog(@"WARNING: Trying to assing a identical display view to container %@", self);
@@ -799,13 +870,16 @@ NSString *ETLayoutItemPboardType = @"ETLayoutItemPboardType"; // FIXME: replace 
 		if ([self isScrollViewShown] == NO)
 			[self setShowsScrollView: YES];		
 	}
-	
-	[view removeFromSuperview];
-	[view setFrameSize: [self frame].size];
-	[view setFrameOrigin: NSZeroPoint];
-	[self addSubview: view];
-	
-	[self syncDisplayViewWithContainer];
+
+	if (view != nil)
+	{	
+		[view removeFromSuperview];
+		[view setFrameSize: [self frame].size];
+		[view setFrameOrigin: NSZeroPoint];
+		[self addSubview: view];
+		
+		[self syncDisplayViewWithContainer];
+	}
 }
 
 /*
@@ -957,6 +1031,8 @@ NSString *ETLayoutItemPboardType = @"ETLayoutItemPboardType"; // FIXME: replace 
 
 - (void) removeItems: (NSArray *)items
 {
+	[(ETLayoutItemGroup *)[self layoutItem] removeItems: items];
+#if 0
 	NSEnumerator *e = [items objectEnumerator];
 	ETLayoutItem *layoutItem = nil;
 	
@@ -966,10 +1042,13 @@ NSString *ETLayoutItemPboardType = @"ETLayoutItemPboardType"; // FIXME: replace 
 	{
 		[self removeItem: layoutItem];
 	}
+#endif
 }
 
 - (void) removeAllItems
 {
+	[(ETLayoutItemGroup *)[self layoutItem] removeAllItems];
+#if 0
 	NSArray *itemDisplayViews = [_layoutItems valueForKey: @"displayView"];
 	
 	//NSLog(@"Remove all items in %@", self);
@@ -979,16 +1058,23 @@ NSString *ETLayoutItemPboardType = @"ETLayoutItemPboardType"; // FIXME: replace 
 	[_layoutItems removeAllObjects];
 	if ([self canUpdateLayout])
 		[self updateLayout];
+#endif
 }
 
 - (int) indexOfItem: (ETLayoutItem *)item
 {
+	[(ETLayoutItemGroup *)[self layoutItem] indexOfItem: item];
+#if 0
 	return [_layoutItems indexOfObject: item];
+#endif
 }
 
 - (NSArray *) items
 {
+	[(ETLayoutItemGroup *)[self layoutItem] items];
+#if 0
 	return _layoutItems;
+#endif
 }
 
 /** Add a view to layout as a subview of the view container. */
@@ -1433,7 +1519,11 @@ NSString *ETLayoutItemPboardType = @"ETLayoutItemPboardType"; // FIXME: replace 
 	hitView = [self hitTest: location];
 	_subviewHitTest = NO;
 	DESTROY(_clickedItem);
+#if 0
 	_clickedItem = [[self layoutItemCache] objectWithValue: hitView forKey: @"displayView"];
+#else
+	_clickedItem = [[self layoutItemCache] objectWithValue: hitView forKey: @"view"];
+#endif
 	RETAIN(_clickedItem);
 	NSLog(@"Double click detected on view %@ and layout item %@", hitView, _clickedItem);
 	

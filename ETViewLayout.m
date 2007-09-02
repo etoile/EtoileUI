@@ -147,19 +147,24 @@
 	_container = newContainer;
 	[[_container layoutItemCache] makeObjectsPerformSelector: @selector(restoreDefaultFrame)];
 	// FIXME: Implement context layout accessors properly
-	[self setLayoutContext: (id)[_container layoutItem]];
+	//[self setLayoutContext: (id)[_container layoutItem]];
 }
 
 /** Returns the view where the layout happens (by computing locations of a layout item series). */
 - (ETContainer *) container;
 {
+	return [[self layoutContext] displayView];
+#if 0
 	return _container;
+#endif
 }
 
 - (void) setLayoutContext: (id <ETLayoutingContext>)context
 {
 	// NOTE: Avoids retain cycle by weak referencing the context
 	_layoutContext = context;
+	if ([[context displayView] isKindOfClass: [ETContainer class]])
+		[self setContainer: [context displayView]];
 }
 
 - (id <ETLayoutingContext>) layoutContext
@@ -346,7 +351,11 @@
 			// unless we decided to let the user handling this before returning
 			// layout item group in data source methods.
 			// Another way to do it would be differential inheritance lookup.
+			#if 0
 			[(ETContainer *)[layoutItem view] setPath: subpath];
+			#else
+			[layoutItem setPath: subpath];
+			#endif
 		}
 		[itemsFromSource addObject: layoutItem];
 		//[[self layoutContext] addItem: layoutItem];
@@ -377,6 +386,12 @@
 	-[ETContainer updateLayout]. */
 - (void) render
 {
+	if ([self container] == nil)
+	{
+		NSLog(@"WARNING: No container layout context available");	
+		return;
+	}
+
 	/* Prevent reentrancy. In a threaded environment, it isn't perfectly safe 
 	   because _isLayouting test and _isLayouting assignement doesn't occur in
 	   an atomic way. */
@@ -406,6 +421,8 @@
 				@"before setting source.", [[[self container] layoutItems] count]);
 		}
 		itemsForRendering = [self layoutItemsFromSource];
+		[[self container] removeAllItems];
+		[[self container] addItems: itemsForRendering];
 	}
 	else /* Make layout with items directly provided by container */
 	{
@@ -420,8 +437,8 @@
 		_isLayouting = NO;
 		return;
 	}
-	
-	[[self container] cacheLayoutItems: itemsForRendering];
+
+	//[[self container] cacheLayoutItems: itemsForRendering];
 	
 	/* Let layout delegate overrides default layout items rendering */
 	// FIXME: This delegate stuff isn't really useful. Remove it or make it

@@ -47,7 +47,7 @@
 {
 	NSMutableArray *_layoutItems;
 	ETLayout *_layout;
-
+	NSString *_path; /* Path caching */
 	BOOL _autolayout;
 	BOOL _usesLayoutBasedFrame;
 }
@@ -59,6 +59,9 @@
 - (id) initWithLayoutItems: (NSArray *)layoutItems view: (NSView *)view;
 
 - (BOOL) isContainer;
+
+- (NSString *) path;
+- (void) setPath: (NSString *)path;
 
 /*  Manipulating children layout items */
 
@@ -85,8 +88,8 @@
 - (void) setAutolayout: (BOOL)flag;
 - (BOOL) usesLayoutBasedFrame;
 - (void) setUsesLayoutBasedFrame: (BOOL)flag;
-- (NSArray *) visibleLayoutItems;
-- (void) setVisibleLayoutItems: (NSArray *)items;
+- (NSArray *) visibleItems;
+- (void) setVisibleItems: (NSArray *)items;
 
 /* Rendering */
 
