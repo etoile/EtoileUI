@@ -463,7 +463,7 @@
 			if (container != nil && [[container subviews] containsObject: [item displayView]] == NO)
 			{
 				[container addSubview: [item displayView]];
-				NSLog(@"Inserted view at %@", NSStringFromRect([[item displayView] frame]));
+				//NSLog(@"Inserted view at %@", NSStringFromRect([[item displayView] frame]));
 			}
 		}
 		else
@@ -472,7 +472,7 @@
 			if (container != nil && [[container subviews] containsObject: [item displayView]])
 			{
 				[[item displayView] removeFromSuperview];
-				NSLog(@"Removed view at %@", NSStringFromRect([[item displayView] frame]));
+				//NSLog(@"Removed view at %@", NSStringFromRect([[item displayView] frame]));
 			}
 		}
 	}

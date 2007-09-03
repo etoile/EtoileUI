@@ -287,7 +287,7 @@
 
 - (NSArray *) displayedItemPropertiesInContainer: (ETContainer *)container
 {
-	return [NSArray arrayWithObjects: @"name", @"size", @"type", @"modificationdate", nil];
+	return [NSArray arrayWithObjects: @"icon", @"name", @"size", @"type", @"modificationdate", nil];
 }
 
 //- (NSFormatter *) container: (ETContainer *)container formaterForDisplayItemProperty:

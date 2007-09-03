@@ -289,7 +289,7 @@ static NSFileManager *objectManager = nil;
 
 - (NSArray *) displayedItemPropertiesInContainer: (ETContainer *)container
 {
-	return [NSArray arrayWithObjects: @"name", @"size", @"type", @"modificationdate", nil];
+	return [NSArray arrayWithObjects: @"icon", @"name", @"size", @"type", @"modificationdate", nil];
 }
 
 /* Flat protocol used by PathContainer

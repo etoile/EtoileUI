@@ -497,8 +497,6 @@ NSString *ETLayoutItemPboardType = @"ETLayoutItemPboardType"; // FIXME: replace 
 		[inv setArgument: &doubleAction atIndex: 2];
 		//[self sendInvocationToDisplayView: inv];
 		
-		if ([_displayView isKindOfClass: [NSScrollView class]] == NO)
-			return;
 		// FIXME: Hack to work around invocation vanishing when we call -sendInvocationToDisplayView:
 		id enclosedDisplayView = [(NSScrollView *)_displayView documentView];
 		

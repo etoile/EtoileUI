@@ -82,13 +82,9 @@
 	}
 	else if ([item isKindOfClass: [ETLayoutItemGroup class]])
 	{
-		/* -view must always return a container for ETLayoutItemGroup */
-		ETContainer *itemContainer = (ETContainer *)[item view];
-		NSString *itemPath = [itemContainer path];
-			
 		/* 'item' path and source have been set in -[ETViewLayout layoutItemsFromTreeSource] */
 		//childItem = [[itemContainer source] itemAtPath: childItemPath inContainer: [self container]];
-		return [[container source] numberOfItemsAtPath: itemPath inContainer: container];
+		return [[container source] numberOfItemsAtPath: [item path] inContainer: container];
 	}
 	
 	//NSLog(@"Returns %d as number of items in %@", [childLayoutItems count], outlineView);
@@ -109,13 +105,10 @@
 	}
 	else if ([item isKindOfClass: [ETLayoutItemGroup class]]) /* Node */
 	{
-		ETContainer *itemContainer = nil;
-		ETContainer *childContainer = nil;
 		NSString *childPath = nil;
 
 		/* -view must always return a container for ETLayoutItemGroup */
-		itemContainer = (ETContainer *)[item view]; 
-		childPath = [[itemContainer path] stringByAppendingPathComponent: 
+		childPath = [[item path] stringByAppendingPathComponent: 
 			[NSString stringWithFormat: @"%d", rowIndex]];
 			
 		/* 'item' path and source have been set in -[ETViewLayout layoutItemsFromTreeSource] */
@@ -124,8 +117,7 @@
 		//[[childItem container] setSource: [[self container] source]];
 		if ([childItem isKindOfClass: [ETLayoutItemGroup class]])
 		{
-			childContainer = (ETContainer *)[childItem view];
-			[childContainer setPath: childPath];
+			[childItem setPath: childPath];
 		}
 	}
 
