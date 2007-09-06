@@ -121,7 +121,55 @@
 	
 	[[[item inspector] window] makeKeyAndOrderFront: self];
 }
+#if 0
+- (int) numberOfItemsAtPath: (NSString *)keyPath inContainer: (ETContainer *)container
+{
+	int nbOfItems = 0;
 
+	NSAssert(keyPath != nil, @"Key path %@ passed to "
+		@"data source must not be nil");	
+	NSAssert1([keyPath characterAtIndex: 0] == '/', @"First character of key "
+		@"path %@ passed to data source must be /", keyPath);
+	
+	if ([keyPath isEqual: @"/"])
+	{
+		nbOfItems = [[self inspectedItems] count];
+	}
+	else
+	{
+		NSString *pathComp = [keyPath firstPathComponent];
+		NSString *subpath = [keyPath stringByDeletingFirstPathComponent];
+		int index = [pathComp intValue];
+		
+		NSAssert1(index == 0 && [pathComp isEqual: @"0"] == NO,
+			@"Path components must be indexes for key path %@", keyPath);
+		NSAssert3(index < [[self inspectedItems] count], @"Index %d in key "
+			@"path %@ position %d must be inferior to inspected item number", 
+			index, 0, keyPath);
+	
+		ETLayoutItem *item = [[[self inspectedItems] objectAtIndex: index] 
+			layoutItemAtPath: subpath];
+		
+		if (item != nil)
+		{
+			nbOfItems = [[item items] count];
+		}
+		else
+		{
+			ETLog(@"WARNING: Found no item at subpath %@ for inspector %@", subpath, self);
+		}
+	}
+	
+	//ETLog(@"Returns %d as number of items in %@", nbOfItems, container);
+	
+	return nbOfItems;
+}
+
+- (ETLayoutItem *) itemAtPath: (NSString *)keyPath inContainer: (ETContainer *)container
+{
+
+}
+#endif
 - (int) numberOfItemsInContainer: (ETContainer *)container
 {
 	int nbOfItems = 0;

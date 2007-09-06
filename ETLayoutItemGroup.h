@@ -59,9 +59,19 @@
 - (id) initWithLayoutItems: (NSArray *)layoutItems view: (NSView *)view;
 
 - (BOOL) isContainer;
+- (ETContainer *) ancestorContainerProvidingRepresentedPath;
 
+/* Path traversal of layout item tree */
+
+- (NSString *) pathForIndexPath: (NSIndexPath *)path;
+- (NSIndexPath *) indexPathForPath: (NSString *)path;
+- (ETLayoutItem *) itemAtIndexPath: (NSIndexPath *)path;
+- (ETLayoutItem *) itemAtPath: (NSString *)path;
+- (NSIndexPath *) indexPathForItem: (ETLayoutItem *)item;
+
+- (NSIndexPath *) indexPath;
 - (NSString *) path;
-- (void) setPath: (NSString *)path;
+//- (void) setPath: (NSString *)path;
 
 /*  Manipulating children layout items */
 
@@ -81,6 +91,7 @@
 - (ETLayout *) layout;
 - (void) setLayout: (ETLayout *)layout;
 
+//- (void) reloadAndUpdateLayout;
 - (void) updateLayout;
 - (BOOL) canUpdateLayout;
 

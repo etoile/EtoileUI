@@ -332,8 +332,12 @@
 {
 	NSMutableArray *itemsFromSource = [NSMutableArray array];
 	ETLayoutItem *layoutItem = nil;
+#if 1
 	ETContainer *container = [self container];
-	NSString *path = [container path];
+#else
+	ETContainer *container = [[self layoutContext] ancestorContainerProvidingRepresentedPath];
+#endif
+	NSString *path = [container representedPath];
 	int nbOfItems = [[container source] numberOfItemsAtPath: path inContainer: container];
 	
 	//NSLog(@"-layoutItemsFromTreeSource in %@", self);
@@ -354,11 +358,12 @@
 			#if 0
 			[(ETContainer *)[layoutItem view] setPath: subpath];
 			#else
-			[layoutItem setPath: subpath];
+			//[layoutItem setPath: subpath];
 			#endif
 		}
 		[itemsFromSource addObject: layoutItem];
 		//[[self layoutContext] addItem: layoutItem];
+		//[layoutItem setParentLayoutItem: [self layoutContext]];
 	}
 	
 	return itemsFromSource;

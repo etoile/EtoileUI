@@ -54,6 +54,8 @@
     
 	if (self != nil)
 	{
+		_treatsGroupsAsStacks = YES;
+	
 		BOOL nibLoaded = [NSBundle loadNibNamed: @"OutlinePrototype" owner: self];
 		
 		if (nibLoaded == NO)
@@ -69,6 +71,23 @@
 
 // NOTE: Dealloc and Awaking from nib handled by ETTableLayout superview.
 
+/** Returns YES when every groups are displayed as stacks which can be expanded
+	and collapsed by clicking on their related outline arrows. 
+	When only stacks can be expanded and collapsed (in other words when 
+	only stack-related rows have an outline arrow), returns NO. 
+	By default, returns YES. */
+- (BOOL) treatsGroupsAsStacks
+{
+	return _treatsGroupsAsStacks;
+}
+
+/** Sets whether the receiver handles every groups as stacks which can be 
+	expanded and collapsed by getting automatically a related outline arrow. */
+- (void) setTreatsGroupsAsStacks: (BOOL)flag
+{
+	_treatsGroupsAsStacks = flag;
+}
+
 - (int) outlineView: (NSOutlineView *)outlineView numberOfChildrenOfItem: (id)item
 {
 	NSArray *childLayoutItems = nil;
@@ -82,9 +101,20 @@
 	}
 	else if ([item isKindOfClass: [ETLayoutItemGroup class]])
 	{
+		ETContainer *subcontainer = nil;
+		
+		if ([(ETLayoutItemGroup *)item isContainer])
+			subcontainer = (ETContainer *)[item view];
 		/* 'item' path and source have been set in -[ETViewLayout layoutItemsFromTreeSource] */
 		//childItem = [[itemContainer source] itemAtPath: childItemPath inContainer: [self container]];
-		return [[container source] numberOfItemsAtPath: [item path] inContainer: container];
+		if ([subcontainer source] == nil) /* Usual case */
+		{
+			return [[container source] numberOfItemsAtPath: [item representedPath] inContainer: container];
+		}
+		else
+		{
+			return [[subcontainer source] numberOfItemsAtPath: [item representedPath] inContainer: subcontainer];		
+		}
 	}
 	
 	//NSLog(@"Returns %d as number of items in %@", [childLayoutItems count], outlineView);
@@ -104,21 +134,28 @@
 		childItem = [childLayoutItems objectAtIndex: rowIndex];
 	}
 	else if ([item isKindOfClass: [ETLayoutItemGroup class]]) /* Node */
-	{
+	{		
 		NSString *childPath = nil;
+		ETContainer *subcontainer = nil;
+		
+		if ([(ETLayoutItemGroup *)item isContainer])
+			subcontainer = (ETContainer *)[item view];
 
 		/* -view must always return a container for ETLayoutItemGroup */
-		childPath = [[item path] stringByAppendingPathComponent: 
+		childPath = [[item representedPath] stringByAppendingPathComponent: 
 			[NSString stringWithFormat: @"%d", rowIndex]];
 			
 		/* 'item' path and source have been set in -[ETViewLayout layoutItemsFromTreeSource] */
 		//childItem = [[itemContainer source] itemAtPath: childItemPath inContainer: [self container]];
-		childItem = [[container source] itemAtPath: childPath inContainer: container];
-		//[[childItem container] setSource: [[self container] source]];
-		if ([childItem isKindOfClass: [ETLayoutItemGroup class]])
+		if ([subcontainer source] == nil) /* Usual case */
 		{
-			[childItem setPath: childPath];
+			childItem = [[container source] itemAtPath: childPath inContainer: container];
 		}
+		else
+		{
+			childItem = [[subcontainer source] itemAtPath: childPath inContainer: subcontainer];
+		}
+		[item addItem: childItem];
 	}
 
 	//NSLog(@"Returns % child item in outline view %@", childItem, outlineView);

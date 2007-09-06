@@ -1,12 +1,12 @@
 /*
-	ETOutlineLayout.h
+	NSString+Etoile.h
 	
 	Description forthcoming.
  
 	Copyright (C) 2007 Quentin Mathe
  
 	Author:  Quentin Mathe <qmathe@club-internet.fr>
-	Date:  May 2007
+	Date:  September 2007
  
 	Redistribution and use in source and binary forms, with or without
 	modification, are permitted provided that the following conditions are met:
@@ -35,17 +35,10 @@
 
 #import <Foundation/Foundation.h>
 #import <AppKit/AppKit.h>
-#import <EtoileUI/ETTableLayout.h>
 
 
-@class ETViewLayoutLine, ETContainer;
-
-@interface ETOutlineLayout : ETTableLayout 
-{
-	BOOL _treatsGroupsAsStacks;
-}
-
-- (BOOL) treatsGroupsAsStacks;
-- (void) setTreatsGroupsAsStacks: (BOOL)flag;
-
+@interface NSString (Etoile)
+- (NSString *) firstPathComponent;
+- (NSString *) stringByDeletingFirstPathComponent;
+- (NSIndexPath *) indexPathBySplittingPathWithSeparator: (NSString *)seperator;
 @end

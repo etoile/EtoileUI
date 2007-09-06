@@ -100,7 +100,6 @@
 
 - (void) dealloc
 {
-	DESTROY(_parentLayoutItem);
 	DESTROY(_layout);
 	DESTROY(_layoutItems);
 	
@@ -112,22 +111,168 @@
 	return [[self view] isKindOfClass: [ETContainer class]];
 }
 
+- (ETContainer *) ancestorContainerProvidingRepresentedPath
+{
+	if ([self isContainer] && [self representedPathBase] != nil)
+	{
+		return (ETContainer *)[self view];
+	}
+	else
+	{
+		return [[self parentLayoutItem] ancestorContainerProvidingRepresentedPath];
+	}
+}
+
 /* Overriden method */
 /*- (void) setDisplayView: (ETView *)view
 {
 
 }*/
 
-- (NSString *) path
+/** Returns a normal path relative to the receiver by translating index path 
+	into a layout item sequence and concatenating the names of all layout items 
+	in the sequence. Each index in the index path references a child item by 
+	its index in the parent layout item. 
+	Resulting path uses '/' as path separator and always begins by '/'. If an 
+	item has no name (-name returns nil or an empty string), its index is used 
+	instead of the name as a path component.
+	For index path 3.4.8.0, a valid translation would be:
+	      3     .4 .8   .0
+	/BlackCircle/4/Tulip/Zone */
+- (NSString *) pathForIndexPath: (NSIndexPath *)indexPath
 {
-	/* We cache path which could be rebuilt by chaining names of a layout
-	   item branch. */
-	return _path;
+	NSString *path = @"/";
+	ETLayoutItem *item = self;
+	unsigned int index = NSNotFound;
+	
+	for (unsigned int i = 0; i < [indexPath length]; i++)
+	{
+		index = [indexPath indexAtPosition: i];
+		
+		if (index == NSNotFound)
+			return nil;
+
+		NSAssert2([item isKindOfClass: [ETLayoutItemGroup class]], @"Item %@ "
+			@"must be layout item group to resolve the index path %@", 
+			item, indexPath);
+		NSAssert3(index < [[(ETLayoutItemGroup *)item items] count], @"Index "
+			@"%d in path %@ position %d must be inferior to children item "
+			@"number", index + 1, indexPath, i);
+			
+		item = [(ETLayoutItemGroup *)item itemAtIndex: index];
+		if ([item name] != nil && [item isEqual: @""] == NO)
+		{
+			path = [path stringByAppendingPathComponent: [item name]];
+		}
+		else
+		{
+			path = [path stringByAppendingPathComponent: 
+				[NSString stringWithFormat: @"%d", index]];	
+		}
+	}
+	
+	return path;
 }
 
-- (void) setPath: (NSString *)path
+/** Returns an index path relative to the receiver by translating normal path 
+	into a layout item sequence and pushing parent relative index of each 
+	layout item in the sequence into an index path. Each index in the index 
+	path references a child item by its index in the parent layout item. 
+	Resulting path uses internally '.' as path seperator and internally always 
+	begins by an index number and not a path seperator. 
+	For the translation, empty path component or component made of path 
+	separator '/' are skipped in path parameter.
+	For index path /BlackCircle/4/Tulip/Zone, a valid translation would be:
+	/BlackCircle/4/Tulip/Zone
+	      3     .4 .8   .0
+	Take note 3.5.8.0 could be a valid translation too because a name could be 
+	a number which is unrelated to the item index used by its parent layout 
+	item to reference it. */
+- (NSIndexPath *) indexPathForPath: (NSString *)path
 {
-	ASSIGN(_path, path);
+	NSIndexPath *indexPath = AUTORELEASE([[NSIndexPath alloc] init]);
+	NSArray *pathComponents = [path pathComponents];
+	NSString *pathComp = nil;
+	ETLayoutItem *item = self;
+	int index = [pathComp intValue];
+		
+	for (int position = 0; position < [pathComponents count]; position++)
+	{
+		if ([pathComp isEqual: @"/"] || [pathComp isEqual: @" "])
+			continue;
+
+		index = [pathComp intValue];
+		
+		NSAssert1(index == 0 && [pathComp isEqual: @"0"] == NO,
+			@"Path components must be indexes for path %@", path);
+		NSAssert2([item isKindOfClass: [ETLayoutItemGroup class]], @"Item %@ "
+			@"must be layout item group to resolve the index path %@", 
+			item, indexPath);	
+		NSAssert3(index < [[(ETLayoutItemGroup *)item items] count], @"Index "
+			@"%d in path %@ position %d must be inferior to children item "
+			@"number", index + 1, position, path);	
+				
+		item = [(ETLayoutItemGroup *)item itemAtIndex: index];
+		
+		indexPath = [indexPath indexPathByAddingIndex: index];
+	}	
+	
+	return indexPath;
+}
+
+/** Returns the layout item child identified by the index path paremeter 
+	interpreted as relative to the receiver. */
+- (ETLayoutItem *) itemAtIndexPath: (NSIndexPath *)path
+{
+	int length = [path length];
+	ETLayoutItem *item = self;
+	
+	for (unsigned int i = 0; i < length; i++)
+	{
+		if ([item isKindOfClass: [ETLayoutItemGroup class]])
+		{		
+			item = [(ETLayoutItemGroup *)item itemAtIndex: [path indexAtPosition: i]];
+		}
+		else
+		{
+			item = nil;
+			break;
+		}
+	}
+	
+	return item;
+}
+
+/** Returns the layout item child identified by the path paremeter interpreted 
+	as relative to the receiver. 
+	Whether the path begins by '/' or not doesn't modify the result. */
+- (ETLayoutItem *) itemAtPath: (NSString *)path
+{
+	NSArray *pathComponents = [path pathComponents];
+	NSEnumerator *e = [pathComponents objectEnumerator];
+	NSString *pathComp = nil;
+	ETLayoutItem *item = self;
+	
+	while ((pathComp = [e nextObject]) != nil)
+	{
+		if ([item isKindOfClass: [ETLayoutItemGroup class]])
+		{
+			item = [[(ETLayoutItemGroup *)self items] objectWithValue: pathComp forKey: @"name"];
+		}
+		else
+		{
+			item = nil;
+			break;
+		}
+	}
+	
+	return item;
+}
+
+- (NSString *) representedPathBase
+{
+	if ([self isContainer])
+		return [(ETContainer *)[self view] representedPath];
 }
 
 // FIXME: Move layout item collection from ETContainer to ETLayoutItemGroup
@@ -327,7 +472,14 @@
 {
 	if ([self layout] == nil)
 		return;
-
+	
+	/* Update layout of descendant items before all because our own layout 
+	   depends on the layout of the descendant items. Layout update may modify
+	   number and frame of descendant items, thereby producing different layout
+	   conditions higher in the hierarchy (like ourself). */
+	if ([[self items] count] > 0)
+		[[self items] makeObjectsPerformSelector: @selector(updateLayout)];
+	
 	/* Delegate layout rendering to custom layout object */
 	[[self layout] render];
 	

@@ -164,31 +164,30 @@ NSString *ETLayoutItemPboardType = @"ETLayoutItemPboardType"; // FIXME: replace 
 	return [super layoutItem];
 }
 
-- (NSString *) path
+/** Returns the represented path which is the model path whose content is 
+	currently displayed in the receiver. It is useful to keep track of your 
+	location inside the model currently browsed. Tree-related methods 
+	implemented by a data source are passed paths which are subpaths of the 
+	represented path.
+	This path is unrelated to the layout item path like 
+	[[self layoutItem] path]. */
+- (NSString *) representedPath
 {
-#if 0
 	return _path;
-#else
-	return [[self layoutItem] path];
-#endif
 }
 
-/** Returns path value which is altered when the user navigates inside a tree 
-	structure of a layout items. Path is only critical when a source is used,
+/** Sets the represented path, automatically altered when the user navigates inside a 
+	tree structure of layout items. Path is only critical when a source is used,
 	otherwise it's up to the developer to track the level of navigation inside
-	the tree structure. You can use -setPath as a conveniency to memorize your
+	the tree structure. You can use -setRepresentedPath: as a conveniency to memorize your
 	location inside a layout item tree. In this case, each time the user enters
 	a new level, you are in charge of removing then adding the proper layout
 	items which are associated with the level requested by the user. That's
 	why it's advised to always use a source when you want to display a 
 	layout item tree inside a container. */
-- (void) setPath: (NSString *)path
+- (void) setRepresentedPath: (NSString *)path
 {
-#if 0
 	ASSIGN(_path, path);
-#else
-	[[self layoutItem] setPath: path];
-#endif
 	
 	// FIXME: May be it would be even better to keep selected any items still 
 	// visible with updated layout at new path. Think of outline view or 
@@ -196,39 +195,6 @@ NSString *ETLayoutItemPboardType = @"ETLayoutItemPboardType"; // FIXME: replace 
 	[_selection removeAllIndexes]; /* Unset any selection */
 	[self updateLayout];
 }
-
-#if 0
-- (ETLayoutItem *) layoutItemAncestorWithPath: (NSString *)path matchingPath: (NSString **)ancestorPath
-
-- (ETLayoutItem *) layoutItemAtPath: (NSString *)path
-{
-	NSArray *pathComponents = [path pathComponents];
-	ETLayoutItem *item = nil
-	NSArray *layoutItemsBylevel = [self layoutItemCache];
-	
-	for (int i = 0; i < [pathComponents count]; i++)
-	{
-		NSArray *itemViews = [layoutItemsBylevel valueForKey: @"view"];
-		NSView *view = nil;
-		NSString *comp = [pathComponents objectAtIndex: i];
-		
-		view = [itemViews objectWithValue: comp forKey: @"path"];
-		item = [layoutItemsBylevel objectWithValue: view forKey: @"view"];
-		if (item == nil)
-		{
-			// FIXME: -intValue returns 0 on failure.
-			[layoutItemsBylevel objectAtIndex: [comp intValue]];
-		}
-		if (item != nil)
-		{
-			NSView *itemView = [item view];
-			
-			if ([itemView isKindOfClass: [ETContainer class]])
-				layoutItemsBylevel = [(ETContainer *)itemView layoutItemCache];
-		}
-	}
-}
-#endif
 
 - (NSArray *) visibleItems
 {
@@ -590,13 +556,13 @@ NSString *ETLayoutItemPboardType = @"ETLayoutItemPboardType"; // FIXME: replace 
 	// only refresh the container display when the new source is set up.
 	
 	// NOTE: -setPath: takes care of calling -updateLayout
-	if (source != nil && ([self path] == nil || [[self path] isEqual: @""]))
+	if (source != nil && ([self representedPath] == nil || [[self representedPath] isEqual: @""]))
 	{
-		[self setPath: @"/"];
+		[self setRepresentedPath: @"/"];
 	}
 	else if (source == nil)
 	{
-		[self setPath: @""];
+		[self setRepresentedPath: @""];
 	}
 }
 

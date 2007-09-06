@@ -134,6 +134,7 @@
     DESTROY(_view);
 	DESTROY(_value);
 	DESTROY(_modelObject);
+	DESTROY(_parentLayoutItem);
     
     [super dealloc];
 }
@@ -163,6 +164,18 @@
 	desc = [@"<" stringByAppendingFormat: @"%@ selected:%d>", desc, [self isSelected]];
 	
 	return desc;
+}
+
+- (ETLayoutItemGroup *) rootItem
+{
+	if ([self parentLayoutItem] == nil)
+	{
+		return [self parentLayoutItem];
+	}
+	else
+	{
+		return [self rootItem];
+	}
 }
 
 - (ETLayoutItemGroup *) parentLayoutItem
@@ -208,11 +221,132 @@
 	}
 }
 
+/** Returns an index path relative to the receiver by traversing our layout 
+	item subtree until we find item parameter and pushing parent relative index
+	of each layout item in the sequence into an index path. 
+	Resulting path uses internally '.' as path seperator and internally always 
+	begins by an index number and not a path seperator. */
+- (NSIndexPath *) indexPathForItem: (ETLayoutItem *)item
+{
+	if ([item isEqual: self])
+		return [self indexPath];
+
+	NSIndexPath *indexPath = [item indexPath];
+	NSIndexPath *parentIndexPath = nil;
+	NSIndexPath *receiverIndexPath = [self indexPath];
+	unsigned int *indexPathIndexes; 
+	
+	if ([indexPath length] < [receiverIndexPath length])
+		return nil;
+	
+	[indexPath getIndexes: indexPathIndexes];
+	parentIndexPath = [NSIndexPath indexPathWithIndexes: indexPathIndexes length: [receiverIndexPath length]];
+	
+	if ([parentIndexPath isEqual: receiverIndexPath] == NO)
+		return nil;
+	
+
+	unsigned int lengthDifference = [indexPath length] - [receiverIndexPath length];
+	unsigned int receiverPosition = lengthDifference - 1; 
+	
+	[indexPath getIndexes: indexPathIndexes];
+	indexPath = [NSIndexPath indexPathWithIndexes: &indexPathIndexes[receiverPosition] 
+										   length: lengthDifference];
+										   
+	return indexPath;
+}
+
+/** Returns absolute index path of the receiver by collecting index of each
+	parent layout item until the root layout item is reached (when -parentItem
+	returns nil). 
+	This method is equivalent to [[self rootItem] indexPathForItem: self]. */
+- (NSIndexPath *) indexPath
+{
+	// TODO: Test whether it is worth to optimize or not
+	return [[self rootItem] indexPathForItem: self];
+}
+
+/** Returns absolute path of the receiver by collecting the name of each
+	parent layout item until the root layout item is reached (when -parentItem
+	returns nil). 
+	This method is equivalent to [[self rootItem] pathForIndexPath: 
+	[[self rootItem] indexPathForItem: self]]. */
+- (NSString *) path
+{
+	/* We rebuild the path by chaining names of the layout item tree to which 
+	   we belong. */
+	NSString *path = @"/";
+	
+	if ([self parentLayoutItem] != nil)
+	{
+		path = [[[self parentLayoutItem] path] 
+			stringByAppendingPath: [self identifier]];
+	}
+	
+	return path;
+}
+
+/** Returns the represented path. */
+- (NSString *) representedPath
+{
+	NSString *path = [self representedPathBase];
+	
+	if (path == nil)
+	{
+		if ([self parentLayoutItem] != nil)
+		{
+			path = [[self parentLayoutItem] representedPath];
+			path = [path stringByAppendingPathComponent: [self identifier]];
+		}
+		else
+		{
+			path = [self identifier];
+		}
+	}
+	
+	return path;
+}
+
+/** Returns the represented path base which is nil by default. This represented
+	path base can be provided by a container, then allowing to build 
+	represented paths for every descendant layout items which don't specify 
+	their own custom represented path base (in other words when this method 
+	returns nil). 
+	By setting the represented path of a container, the related layout item 
+	group is able to provide a represented path base automatically used by 
+	descendant items. This represented path base is valid until a descendant 
+	provides a new represented path base. */
+- (NSString *) representedPathBase
+{
+	return nil;
+}
+
+/** Returns the identifier associated with the layout item. By default, the
+	returned value is the name. If -name returns nil or an empty string, the
+	identifier is a string made of the index used by the parent item to 
+	reference the receiver. */
+- (NSString *) identifier
+{
+	NSString *identifier = [self name];
+	
+	if (identifier == nil || [identifier isEqual: @""])
+	{
+		identifier = [NSString stringWithFormat: @"%d", 
+			[[self parentLayoutItem] indexOfItem: self]];
+	}
+	
+	return identifier;
+}
+
+/** Returns the name associated with the layout item.
+	Take note the returned value can be nil or an empty string. */
 - (NSString *) name
 {
 	return _name;
 }
 
+/** Sets the name associated with the layout item.
+	Take note the returned value can be nil or an empty string. */
 - (void) setName: (NSString *)name
 {
 	ASSIGN(_name, name);
@@ -479,6 +613,11 @@
 	}
 }
 
+- (void) updateLayout
+{
+	/* See -apply: */
+}
+
 /** Allows to compute the layout of the whole layout item tree without any 
 	rendering/drawing. The layout begins with layout item leaves which can 
 	simply returns their size, then moves up to layout item node which can 
@@ -488,7 +627,7 @@
 	inputValues is usually nil. */
 - (void) apply: (NSMutableDictionary *)inputValues
 {
-	
+	[self updateLayout];
 }
 
 /** Propagates rendering/drawing in the layout item tree.

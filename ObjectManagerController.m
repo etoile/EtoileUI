@@ -146,7 +146,8 @@ static NSFileManager *objectManager = nil;
 	ASSIGN(path, newPath);
 	// NOTE: The following is mandatory if you use tree source protocol unlike 
 	// with flat source protocol.
-	[viewContainer setPath: path];
+
+	[viewContainer setRepresentedPath: path];
 	
 	[viewContainer updateLayout];
 	[pathContainer updateLayout];
@@ -269,6 +270,8 @@ static NSFileManager *objectManager = nil;
 			fileItem = [ETLayoutItem layoutItemWithView: [self imageViewForImage: icon]];
 		}
 		
+		// FIXME: better to have a method -setIdentifier: different from -setName:
+		[fileItem setName: [filePath lastPathComponent]];
 		[fileItem setValue: [filePath lastPathComponent] forProperty: @"name"];
 		[fileItem setValue: filePath forProperty: @"path"];
 		[fileItem setValue: icon forProperty: @"icon"];
@@ -284,7 +287,7 @@ static NSFileManager *objectManager = nil;
 		return [self itemAtIndex: flatIndex inContainer: container];
 	}
 
-	return RETAIN(fileItem);
+	return fileItem;//RETAIN(fileItem);
 }
 
 - (NSArray *) displayedItemPropertiesInContainer: (ETContainer *)container

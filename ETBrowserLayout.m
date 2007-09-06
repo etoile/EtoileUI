@@ -191,7 +191,7 @@
 	if (path == nil || [path isEqual: @""])
 		path = @"/";
 	
-	path = [[[container path] stringByAppendingPathComponent: path] stringByStandardizingPath];
+	path = [[[container representedPath] stringByAppendingPathComponent: path] stringByStandardizingPath];
 		
 	count = [[container source] numberOfItemsAtPath: path inContainer: container];
 	
@@ -210,7 +210,7 @@
 	if (path == nil || [path isEqual: @""])
 		path = @"/";
 	
-	path = [[[container path] stringByAppendingPathComponent: path] stringByStandardizingPath];
+	path = [[[container representedPath] stringByAppendingPathComponent: path] stringByStandardizingPath];
 		
 	count = [[container source] numberOfItemsAtPath: path inContainer: container];
 	
@@ -245,7 +245,7 @@
 	if (path == nil || [path isEqual: @""])
 		path = @"/";
 	
-	path = [[[container path] stringByAppendingPathComponent: path] stringByStandardizingPath];
+	path = [[[container representedPath] stringByAppendingPathComponent: path] stringByStandardizingPath];
 	
 	path = [path stringByAppendingPathComponent: [NSString stringWithFormat: @"%d", row]];
 	item = [[container source] itemAtPath: path inContainer: container];
@@ -289,7 +289,7 @@
 {
 	NSBrowser *browserView = (NSBrowser *)_displayViewPrototype;
 	ETContainer *container = [self container];
-	NSString *path = [container path];
+	NSString *path = [container representedPath];
 	ETLayoutItem *item = nil;
 	
 	//selectedCell selectedColumn pathToColumn: selectedRowInColumn:

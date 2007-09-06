@@ -109,9 +109,8 @@
 
 - (ETLayoutItem *) layoutItem;
 
-- (NSString *) path;
-- (void) setPath: (NSString *)path;
-//- (ETLayoutItem *) layoutItemAtPath: (NSString *)path;
+- (NSString *) representedPath;
+- (void) setRepresentedPath: (NSString *)path;
 
 - (BOOL) isAutolayout;
 - (void) setAutolayout: (BOOL)flag;

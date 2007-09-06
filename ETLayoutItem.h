@@ -92,6 +92,7 @@
 	BOOL _selected;
 	BOOL _visible;
 	BOOL _resizeBounds; /* Scale view content by resizing bounds */
+	BOOL _needsUpdateLayout;
 	
 	id _reserved;
 }
@@ -103,10 +104,20 @@
 - (id) initWithView: (NSView *)view;
 - (id) initWithView: (NSView *)view value: (id)value representedObject: (id)repObject;
 
+- (ETLayoutItemGroup *) rootItem;
 - (ETLayoutItemGroup *) parentLayoutItem;
 - (void) setParentLayoutItem: (ETLayoutItemGroup *)parent;
 - (ETContainer *) closestAncestorContainer;
 - (ETView *) closestAncestorDisplayView;
+
+- (NSIndexPath *) indexPathForItem: (ETLayoutItem *)item;
+- (NSIndexPath *) indexPath;
+- (NSString *) path;
+//- (void) setPath: (NSString *)path;
+- (NSString *) representedPath;
+- (NSString *) representedPathBase;
+
+- (NSString *) identifier;
 
 /** Facility methods to store a name acting like a last fallback property for 
 	display. Name is also used as a path component to build 
@@ -180,6 +191,7 @@ shape*/
 
 /* Layouting & Rendering Chain */
 
+- (void) updateLayout;
 - (void) apply: (NSMutableDictionary *)inputValues;
 - (void) render: (NSMutableDictionary *)inputValues;
 - (void) render: (NSMutableDictionary *)inputValues dirtyRect: (NSRect)dirtyRect inView: (NSView *)view;
