@@ -43,11 +43,6 @@
 #import <EtoileUI/GNUstep.h>
 
 @interface ETContainer (PackageVisibility)
-- (NSArray *) layoutItems;
-- (void) cacheLayoutItems: (NSArray *)cache;
-- (NSArray *) layoutItemCache;
-- (NSArray *) visibleItems;
-- (void) setVisibleItems: (NSArray *)visibleItems;
 - (BOOL) isScrollViewShown;
 - (void) setShowsScrollView: (BOOL)scroll;
 @end
@@ -86,7 +81,7 @@
     
 	if (self != nil)
 	{
-		_container = nil;
+		_layoutContext = nil;
 		_delegate = nil;
 		_displayViewPrototype = nil;
 		_isLayouting = NO;
@@ -113,7 +108,7 @@
 {
 	ETLayout *proto = [[[self class] alloc] init];
 	
-	proto->_container = nil;
+	proto->_layoutContext = nil;
 	proto->_delegate = nil;
 	proto->_displayViewPrototype = [_displayViewPrototype copy];
 	
@@ -126,39 +121,22 @@
 	return AUTORELEASE(proto);
 }
 
-/** Sets the view where the layout should happen. 
-	When a container is set, on next layout update the receiver will 
-	arrange container layout items in a specific style and order.
-	newContainer isn't retained, but it is expected newContainer has already
-	retained the receiver. */
-- (void) setContainer: (ETContainer *)newContainer
-{
-	/* Disconnect layout from existing container */
-	// Nothing 
-	
-	/* Connect layout to new container */
-	// NOTE: Avoids retain cycle by weak referencing the container.
-	_container = newContainer;
-	[[_container layoutItemCache] makeObjectsPerformSelector: @selector(restoreDefaultFrame)];
-	// FIXME: Implement context layout accessors properly
-	//[self setLayoutContext: (id)[_container layoutItem]];
-}
-
 /** Returns the view where the layout happens (by computing locations of a layout item series). */
 - (ETContainer *) container;
 {
-	return [[self layoutContext] displayView];
-#if 0
-	return _container;
-#endif
+	return (ETContainer *)[[self layoutContext] view];
 }
 
+/** Sets the context where the layout should happen. 
+	When a layout context is set, on next layout update the receiver will 
+	arrange the layout items in a specific style and order.
+	context isn't retained, but it is expected context has already
+	retained the receiver. */
 - (void) setLayoutContext: (id <ETLayoutingContext>)context
 {
 	// NOTE: Avoids retain cycle by weak referencing the context
 	_layoutContext = context;
-	if ([[context displayView] isKindOfClass: [ETContainer class]])
-		[self setContainer: [context displayView]];
+	[[_layoutContext items] makeObjectsPerformSelector: @selector(restoreDefaultFrame)];
 }
 
 - (id <ETLayoutingContext>) layoutContext
@@ -197,9 +175,9 @@
 	container size is altered. */
 - (BOOL) isAllContentVisible
 {
-	int nbOfItems = [[[self container] layoutItemCache] count];
+	int nbOfItems = [[[self layoutContext] items] count];
 	
-	return [[[self container] visibleItems] count] == nbOfItems;
+	return [[[self layoutContext] visibleItems] count] == nbOfItems;
 }
 
 /** By default layout size is precisely matching frame size of the container to 
@@ -307,9 +285,9 @@
 	-[ETContainer updateLayout]. */
 - (void) render
 {
-	if ([self container] == nil)
+	if ([self layoutContext] == nil)
 	{
-		NSLog(@"WARNING: No container layout context available");	
+		NSLog(@"WARNING: No layout context available");	
 		return;
 	}
 
@@ -329,26 +307,22 @@
 	/* We remove the display views of layout items. Note they may be invisible 
 	   by being located outside of container bounds. */
 	//NSLog(@"Remove views of layout items currently displayed from their container");
-	[[self container] setVisibleItems: [NSArray array]];
-
-	NSArray *itemsForRendering = [[self container] layoutItems];
+	[[self layoutContext] setVisibleItems: [NSArray array]];
 	
 	/* When the number of layout items is zero and doesn't vary, no layout 
 	   update is necessary */
-	if ([[[self container] layoutItemCache] count] == 0 && [itemsForRendering count] == 0)
+	if ([[[self layoutContext] items] count] == 0)
 	{
 		_isLayouting = NO;
 		return;
 	}
-
-	//[[self container] cacheLayoutItems: itemsForRendering];
 	
 	/* Let layout delegate overrides default layout items rendering */
 	// FIXME: This delegate stuff isn't really useful. Remove it or make it
 	// useful.
 	if ([_delegate respondsToSelector: @selector(layout:applyLayoutItem:)])
 	{
-		NSEnumerator *e = [itemsForRendering objectEnumerator];
+		NSEnumerator *e = [[[self layoutContext] items] objectEnumerator];
 		ETLayoutItem *item = nil;
 		
 		while ((item = [e nextObject]) != nil)
@@ -359,7 +333,7 @@
 	}
 	else
 	{
-		[itemsForRendering makeObjectsPerformSelector: @selector(apply:) withObject: nil];
+		[[[self layoutContext] items] makeObjectsPerformSelector: @selector(apply:) withObject: nil];
 	}
 	
 	/* We always set the layout size which should be used to compute the 
@@ -380,7 +354,7 @@
 	}
 	
 	_isLayouting = NO;
-	[self renderWithLayoutItems: itemsForRendering];
+	[self renderWithLayoutItems: [[self layoutContext] items]];
 }
 
 /** Runs the layout computation which finds a location in the view container
@@ -451,7 +425,7 @@
 		[visibleItems addObjectsFromArray: [line items]];
 	}
 	
-	[[self container] setVisibleItems: visibleItems];
+	[[self layoutContext] setVisibleItems: visibleItems];
 	
 	_isLayouting = NO;
 }
@@ -601,7 +575,7 @@
 	associated with the receiver. */
 - (ETLayoutItem *) itemAtLocation: (NSPoint)location
 {
-	NSArray *layoutItems = [[self container] layoutItemCache];
+	NSArray *layoutItems = [[self layoutContext] items];
 	NSEnumerator *e = [layoutItems objectEnumerator];
 	ETLayoutItem *item = nil;
 	

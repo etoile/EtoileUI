@@ -44,7 +44,10 @@
 	- layout context is where the layouting occurs
 	- graphic context is where the drawing occurs */
 @protocol ETLayoutingContext
-
+- (NSArray *) items;
+- (NSArray *) visibleItems;
+- (void) setVisibleItems: (NSArray *)items;
+- (NSView *) view;
 @end
 
 // NOTE: May be this should be turned into a mask
@@ -63,7 +66,6 @@ typedef enum _ETSizeConstraintStyle
 
 @interface ETLayout : NSObject
 {
-	IBOutlet ETContainer *_container;
 	IBOutlet id _layoutContext;
 	IBOutlet id _delegate;
 	IBOutlet NSView *_displayViewPrototype;
