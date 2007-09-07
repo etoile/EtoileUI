@@ -101,7 +101,7 @@ static NSFileManager *objectManager = nil;
 			NSLog(@"Unsupported layout or unknown popup menu selection");
 	}
 	
-	[viewContainer setLayout: (ETViewLayout *)AUTORELEASE([[layoutClass alloc] init])];
+	[viewContainer setLayout: (ETLayout *)AUTORELEASE([[layoutClass alloc] init])];
 }
 
 - (IBAction) switchUsesScrollView: (id)sender

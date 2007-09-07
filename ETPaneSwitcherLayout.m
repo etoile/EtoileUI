@@ -49,8 +49,8 @@
 //#define USE_SWITCHER
 
 @interface ETPaneSwitcherLayout (Private)
-- (ETViewLayout *) internalLayout;
-- (void) setInternalLayout: (ETViewLayout *)layout;
+- (ETLayout *) internalLayout;
+- (void) setInternalLayout: (ETLayout *)layout;
 - (NSImageView *) imageViewForImage: (NSImage *)image;
 - (NSArray *) switcherTabItemsForPaneItems: (NSArray *)items;
 - (void) syncItemsOfDisplayContainersWithItems: (NSArray *)items;
@@ -118,12 +118,12 @@
 	[[self container] setEnablesSubviewHitTest: YES];
 }
 
-- (ETViewLayout *) switcherLayout
+- (ETLayout *) switcherLayout
 {
 	return [[self switcherContainer] layout];
 }
 
-- (void) setSwitcherLayout: (ETViewLayout *)layout
+- (void) setSwitcherLayout: (ETLayout *)layout
 {
 	if ([self switcherContainer] == nil)
 		[self resetSwitcherContainer];
@@ -142,12 +142,12 @@
 }
 
 /** By default the content layout is of style pane layout. */
-- (ETViewLayout *) contentLayout
+- (ETLayout *) contentLayout
 {
 	return [[self contentContainer] layout];
 }
 
-- (void) setContentLayout: (ETViewLayout *)layout
+- (void) setContentLayout: (ETLayout *)layout
 {
 	if ([self contentContainer] == nil)
 		[self resetContentContainer];
@@ -242,12 +242,12 @@
 	[[self container] updateLayout];
 }
 
-- (ETViewLayout *) internalLayout
+- (ETLayout *) internalLayout
 {
 	return [_internalContainer layout];
 }
 
-- (void) setInternalLayout: (ETViewLayout *)layout
+- (void) setInternalLayout: (ETLayout *)layout
 {
 	[_internalContainer setLayout: layout];
 }

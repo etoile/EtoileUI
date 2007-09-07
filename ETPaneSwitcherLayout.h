@@ -52,14 +52,14 @@ typedef enum {
 /** Not a subclass of ETPaneLayout since we can use other layout to display 
 	panes than ETPaneLayout. For example, we can display panes inline by 
 	setting content layout to ETLineLayout. */
-@interface ETPaneSwitcherLayout : ETViewLayout
+@interface ETPaneSwitcherLayout : ETLayout
 {
 	/* Children layouts */
-	//ETViewLayout *_switcherLayout;
-	//ETViewLayout *_contentLayout;
+	//ETLayout *_switcherLayout;
+	//ETLayout *_contentLayout;
 	/* Internal layout acting on containers of previous layouts, mostly depends
 	   of switcher position */
-	ETViewLayout *_internalLayout;
+	ETLayout *_internalLayout;
 	ETContainer *_internalContainer;
 	/* Facility ivars redundant with _internalContainer */
 	ETLayoutItem *_switcherItem;
@@ -68,14 +68,14 @@ typedef enum {
 	ETPaneSwitcherPosition _switcherPosition;
 }
 
-- (ETViewLayout *) switcherLayout;
-- (void) setSwitcherLayout: (ETViewLayout *)layout;
+- (ETLayout *) switcherLayout;
+- (void) setSwitcherLayout: (ETLayout *)layout;
 - (ETContainer *) switcherContainer;
 - (void) setSwitcherContainer: (ETContainer *)container;
 
 /** By default the content layout is of style pane layout. */
-- (ETViewLayout *) contentLayout;
-- (void) setContentLayout: (ETViewLayout *)layout;
+- (ETLayout *) contentLayout;
+- (void) setContentLayout: (ETLayout *)layout;
 - (ETContainer *) contentContainer;
 - (void) setContentContainer: (ETContainer *)container;
 

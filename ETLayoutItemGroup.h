@@ -37,7 +37,7 @@
 #import <AppKit/AppKit.h>
 #import "ETLayoutItem.h"
 
-#define ETLayout ETViewLayout
+#define ETLayout ETLayout
 
 @class ETLayout;
 @protocol ETLayoutingContext;
@@ -114,10 +114,10 @@
 
 /* Stacking */
 
-/*- (ETViewLayout *) stackedItemLayout;
-- (void) setStackedItemLayout: (ETViewLayout *)layout;
-- (ETViewLayout *) unstackedItemLayout;
-- (void) setUnstackedItemLayout: (ETViewLayout *)layout;*/
+/*- (ETLayout *) stackedItemLayout;
+- (void) setStackedItemLayout: (ETLayout *)layout;
+- (ETLayout *) unstackedItemLayout;
+- (void) setUnstackedItemLayout: (ETLayout *)layout;*/
 
 - (void) stack;
 - (void) unstack;

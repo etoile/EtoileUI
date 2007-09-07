@@ -1,4 +1,4 @@
-/*  <title>ETViewLayout</title>
+/*  <title>ETLayout</title>
 
 	ETViewLayout.m
 	
@@ -57,7 +57,7 @@
  * Private methods
  */
 
-@interface ETViewLayout (Private)
+@interface ETLayout (Private)
 /* Utility methods */
 - (NSRect) lineLayoutRectForItemAtIndex: (int)index;
 - (ETLayoutItem *) itemAtLocation: (NSPoint)location;
@@ -67,7 +67,7 @@
  * Main implementation
  */
 
-@implementation ETViewLayout
+@implementation ETLayout
 
 /* Factory Method */
 
@@ -112,7 +112,7 @@
 
 - (id) copyWithZone: (NSZone *)zone
 {
-	ETViewLayout *proto = [[[self class] alloc] init];
+	ETLayout *proto = [[[self class] alloc] init];
 	
 	proto->_container = nil;
 	proto->_delegate = nil;

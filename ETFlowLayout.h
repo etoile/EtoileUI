@@ -40,7 +40,7 @@
 @class ETViewLayoutLine, ETContainer;
 
 
-@interface ETFlowLayout : ETViewLayout 
+@interface ETFlowLayout : ETLayout 
 {
 	ETSizeConstraintStyle _layoutConstraint;
 	BOOL _grid;

@@ -61,7 +61,7 @@ typedef enum _ETSizeConstraintStyle
 	be careful not to reverse the item order, else selection and sorting will 
 	be messed. */
 
-@interface ETViewLayout : NSObject
+@interface ETLayout : NSObject
 {
 	IBOutlet ETContainer *_container;
 	IBOutlet id _layoutContext;
@@ -147,12 +147,12 @@ typedef enum _ETSizeConstraintStyle
 @end
 
 
-@interface ETViewLayout (Delegate)
+@interface ETLayout (Delegate)
 
 /** If you want to render layout items in different ways depending on the layout
 	settings, you can implement this delegate method. When implemented in a
 	delegate object, -[ETLayoutItem render] isn't called automatically anymore
 	and you are in charge of calling it in this delegate method if you want to. */
-- (void) layout: (ETViewLayout *) renderLayoutItem: (ETLayoutItem *)item;
+- (void) layout: (ETLayout *) renderLayoutItem: (ETLayoutItem *)item;
 
 @end

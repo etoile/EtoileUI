@@ -472,7 +472,7 @@
 	// need anymore to call -syncDisplayViewWithContainer here.
 	// All display view set up code is currently in -renderWithLayoutItems:
 	// of AppKit-based layouts. Part of this code should be put inside 
-	// overidden -displayViewPrototype method in each ETViewLayout suclasses.
+	// overidden -displayViewPrototype method in each ETLayout suclasses.
 	if ([self isContainer])
 		[(ETContainer *)[self displayView] syncDisplayViewWithContainer];
 	

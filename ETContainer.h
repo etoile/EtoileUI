@@ -37,7 +37,7 @@
 #import <AppKit/AppKit.h>
 #import <EtoileUI/ETView.h>
 
-@class ETLayoutItem, ETViewLayout, ETLayer, ETLayoutGroupItem, ETSelection;
+@class ETLayoutItem, ETLayout, ETLayer, ETLayoutGroupItem, ETSelection;
 @protocol ETLayoutingContext, ETInspector;
 
 /** Forwarding Chain 
@@ -66,7 +66,7 @@
 	/* Stores items when no source is used. May stores layers when no source is 
 	   used, this is not yet decided. */
 	NSMutableArray *_layoutItems;
-	//ETViewLayout *_containerLayout;
+	//ETLayout *_containerLayout;
 	NSView *_displayView;
 	BOOL _flipped;
 	BOOL _autolayout;
@@ -96,7 +96,7 @@
 	/* Insertion indicator to erase on next mouse move event in a drag */
 	NSRect _prevInsertionIndicatorRect; 
 
-	/* Used by ETViewLayout to know which items are displayed whether the 
+	/* Used by ETLayout to know which items are displayed whether the 
 	   container uses a source or simple provides items directly. 
 	   Read -cacheLayoutItems: documentation to know how modify the cache 
 	   without corrupting it. */
@@ -117,8 +117,8 @@
 - (void) updateLayout;
 - (void) reloadAndUpdateLayout;
 
-- (ETViewLayout *) layout;
-- (void) setLayout: (ETViewLayout *)layout;
+- (ETLayout *) layout;
+- (void) setLayout: (ETLayout *)layout;
 
 - (NSView *) displayView;
 

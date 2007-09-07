@@ -105,7 +105,7 @@
 		
 		if ([(ETLayoutItemGroup *)item isContainer])
 			subcontainer = (ETContainer *)[item view];
-		/* 'item' path and source have been set in -[ETViewLayout layoutItemsFromTreeSource] */
+		/* 'item' path and source have been set in -[ETLayout layoutItemsFromTreeSource] */
 		//childItem = [[itemContainer source] itemAtPath: childItemPath inContainer: [self container]];
 		if ([subcontainer source] == nil) /* Usual case */
 		{
@@ -145,7 +145,7 @@
 		childPath = [[item representedPath] stringByAppendingPathComponent: 
 			[NSString stringWithFormat: @"%d", rowIndex]];
 			
-		/* 'item' path and source have been set in -[ETViewLayout layoutItemsFromTreeSource] */
+		/* 'item' path and source have been set in -[ETLayout layoutItemsFromTreeSource] */
 		//childItem = [[itemContainer source] itemAtPath: childItemPath inContainer: [self container]];
 		if ([subcontainer source] == nil) /* Usual case */
 		{

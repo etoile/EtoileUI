@@ -40,7 +40,7 @@
 @class ETViewLayoutLine, ETContainer;
 
 
-@interface ETTableLayout : ETViewLayout
+@interface ETTableLayout : ETLayout
 {
 	NSArray *_allTableColumns;
 }

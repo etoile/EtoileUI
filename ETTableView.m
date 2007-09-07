@@ -47,7 +47,7 @@
 	
     if (self != nil) 
 	{
-		[self setLayout: (ETViewLayout *)AUTORELEASE([[ETTableLayout alloc] init])];
+		[self setLayout: (ETLayout *)AUTORELEASE([[ETTableLayout alloc] init])];
     }
 	
     return self;

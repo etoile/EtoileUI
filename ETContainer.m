@@ -346,12 +346,12 @@ NSString *ETLayoutItemPboardType = @"ETLayoutItemPboardType"; // FIXME: replace 
 	}
 }
 
-- (ETViewLayout *) layout
+- (ETLayout *) layout
 {
 	return [[self layoutItem] layout];
 }
 
-- (void) setLayout: (ETViewLayout *)layout
+- (void) setLayout: (ETLayout *)layout
 {
 	[[self layoutItem] setLayout: layout];
 
@@ -376,7 +376,7 @@ NSString *ETLayoutItemPboardType = @"ETLayoutItemPboardType"; // FIXME: replace 
 	// need anymore to call -syncDisplayViewWithContainer here.
 	// All display view set up code is currently in -renderWithLayoutItems:
 	// of AppKit-based layouts. Part of this code should be put inside 
-	// overidden -displayViewPrototype method in each ETViewLayout suclasses.
+	// overidden -displayViewPrototype method in each ETLayout suclasses.
 	[self syncDisplayViewWithContainer];
 	
 	if ([self canUpdateLayout])
@@ -489,7 +489,7 @@ NSString *ETLayoutItemPboardType = @"ETLayoutItemPboardType"; // FIXME: replace 
 	
 	_dataSource = source;
 	
-	// NOTE: Resetting layout item cache is ETViewLayout responsability. We
+	// NOTE: Resetting layout item cache is ETLayout responsability. We
 	// only refresh the container display when the new source is set up.
 	
 	// NOTE: -setPath: takes care of calling -updateLayout
@@ -743,7 +743,7 @@ NSString *ETLayoutItemPboardType = @"ETLayoutItemPboardType"; // FIXME: replace 
 }
 
 /* Method called when we switch between layouts. Manipulating the display view
-   is the job of ETContainer, ETViewLayout instances may provide display view
+   is the job of ETContainer, ETLayout instances may provide display view
    prototype but they never never manipulate it as a subview in view hierachy. */
 - (void) setDisplayView: (NSView *)view
 {

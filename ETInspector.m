@@ -348,7 +348,7 @@
 	representedItem = (ETLayoutItem *)[representedItem representedObject];
 	
 	if ([[representedItem closestAncestorContainer] respondsToSelector: @selector(setLayout:)])
-		[[representedItem closestAncestorContainer] setLayout: (ETViewLayout *)AUTORELEASE([[layoutClass alloc] init])];
+		[[representedItem closestAncestorContainer] setLayout: (ETLayout *)AUTORELEASE([[layoutClass alloc] init])];
 }
 
 - (NSArray *) inspectedItems

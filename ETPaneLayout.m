@@ -58,7 +58,7 @@
 		@"Notification object %@ doesn't match container of layout %@", [notif object], self);
 	
 	NSLog(@"Pane layout %@ receives selection change from %@", self, [self container]);
-	[[self container] updateLayout]; /* Will trigger -[ETViewLayout render] */
+	[[self container] updateLayout]; /* Will trigger -[ETLayout render] */
 
 }
 

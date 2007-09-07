@@ -45,8 +45,8 @@
 
 /** Returns the container where pane view are displayed */
 - (NSView *) contentView;
-- (ETViewLayout *) contentLayout;
-- (void) setContentLayout: (ETViewLayout *)layout;
+- (ETLayout *) contentLayout;
+- (void) setContentLayout: (ETLayout *)layout;
 - (void) restoreDefaultContentLayout;
 
 - setSourceView: (

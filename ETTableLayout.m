@@ -275,7 +275,7 @@
 
 // TODO: Implement forwarding of all delegate methods to ETContainer delegate by
 // overriding -respondsToSelector: and forwardInvocation:
-// Put this forward code into ETViewLayout
+// Put this forward code into ETLayout
 - (void) tableView: (NSTableView *)tv willDisplayCell: (id)cell
     forTableColumn: (NSTableColumn *)col row: (int)row
 {

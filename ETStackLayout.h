@@ -40,7 +40,7 @@
 @class ETViewLayoutLine, ETContainer;
 
 
-@interface ETStackLayout : ETViewLayout
+@interface ETStackLayout : ETLayout
 {
 
 }

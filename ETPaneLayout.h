@@ -38,7 +38,7 @@
 #import <EtoileUI/ETViewLayout.h>
 
 
-@interface ETPaneLayout : ETViewLayout
+@interface ETPaneLayout : ETLayout
 {
 
 }

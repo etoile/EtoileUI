@@ -73,7 +73,7 @@
 	distinct ETRendererStyle sublass.
 	
 	Most of time, you want a quick yet quite flexible solution without any 
-	subclassing, that's why the common solution is to implemente ETViewLayout
+	subclassing, that's why the common solution is to implemente ETLayout
 	delegate method called -layout:renderLayoutItem:. With this method you will
 	be able to customize the rendering of layout items on the fly depending on
 	the layout settings which may change between each rendering. */
