@@ -197,59 +197,13 @@ NSString *ETLayoutItemPboardType = @"ETLayoutItemPboardType"; // FIXME: replace 
 
 - (NSArray *) visibleItems
 {
-	return [[self layoutItem] visibleItems];
-#if 0
-	ETContainer *container = self;
-	NSMutableArray *visibleItems = [NSMutableArray array];
-	NSEnumerator  *e = [[container layoutItemCache] objectEnumerator];
-	//NSEnumerator  *e = [[container items] objectEnumerator];
-	ETLayoutItem *item = nil;
-	
-	while ((item = [e nextObject]) != nil)
-	{
-		if ([item isVisible])
-			[visibleItems addObject: item];
-	}
-	
-	return visibleItems;
-#endif
+	return [(ETLayoutItemGroup *)[self layoutItem] visibleItems];
 }
 
-// FIXME: Make a bottom top traversal to find the first view which can be used 
-// as superview for the visible layout item views. Actually this isn't needed
-// or supported because all ETLayoutItemGroup instances must embed a container.
-// This last point is going to become purely optional.
+
 - (void) setVisibleItems: (NSArray *)visibleItems
 {
-	[[self layoutItem] setVisibleItems: visibleItems];
-#if 0
-	ETContainer *container = self;
-	NSEnumerator  *e = [[container layoutItemCache] objectEnumerator];
-	//NSEnumerator  *e = [[container items] objectEnumerator];
-	ETLayoutItem *item = nil;
-	
-	while ((item = [e nextObject]) != nil)
-	{
-		if ([visibleItems containsObject: item])
-		{
-			[item setVisible: YES];
-			if ([[container subviews] containsObject: [item displayView]] == NO)
-			{
-				[container addSubview: [item displayView]];
-				NSLog(@"Inserted view at %@", NSStringFromRect([[item displayView] frame]));
-			}
-		}
-		else
-		{
-			[item setVisible: NO];
-			if ([[container subviews] containsObject: [item displayView]])
-			{
-				[[item displayView] removeFromSuperview];
-				NSLog(@"Removed view at %@", NSStringFromRect([[item displayView] frame]));
-			}
-		}
-	}
-#endif
+	[(ETLayoutItemGroup *)[self layoutItem] setVisibleItems: visibleItems];
 }
 
 - (NSArray *) layoutItems
