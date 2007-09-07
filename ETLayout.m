@@ -1,6 +1,6 @@
 /*  <title>ETLayout</title>
 
-	ETViewLayout.m
+	ETLayout.m
 	
 	<abstract>Description forthcoming.</abstract>
  
@@ -36,7 +36,7 @@
  
 #import <EtoileUI/ETLayoutItemGroup.h>
 
-#import <EtoileUI/ETViewLayout.h>
+#import <EtoileUI/ETLayout.h>
 #import <EtoileUI/ETViewLayoutLine.h>
 #import <EtoileUI/ETContainer.h>
 #import <EtoileUI/NSView+Etoile.h>

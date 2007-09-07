@@ -34,7 +34,7 @@
 	THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import <EtoileUI/ETViewLayout.h>
+#import <EtoileUI/ETLayout.h>
 
 #import <EtoileUI/ETLayoutItemGroup.h>
 #import <EtoileUI/ETContainer.h>

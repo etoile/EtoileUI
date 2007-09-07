@@ -40,7 +40,7 @@
 #import <EtoileUI/ETLayoutItem.h>
 #import <EtoileUI/ETLayoutItemGroup.h>
 #import <EtoileUI/ETLayer.h>
-#import <EtoileUI/ETViewLayout.h>
+#import <EtoileUI/ETLayout.h>
 #import <EtoileUI/ETViewLayoutLine.h>
 
 #import <EtoileUI/ETFlowLayout.h>

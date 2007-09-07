@@ -35,7 +35,7 @@
 
 #import <Foundation/Foundation.h>
 #import <AppKit/AppKit.h>
-#import <EtoileUI/ETViewLayout.h>
+#import <EtoileUI/ETLayout.h>
 
 
 @interface ETPaneLayout : ETLayout

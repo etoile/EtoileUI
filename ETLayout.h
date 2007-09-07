@@ -1,5 +1,5 @@
 /*
-	ETViewLayout.h
+	ETLayout.h
 	
 	Description forthcoming.
  

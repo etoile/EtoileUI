@@ -37,7 +37,7 @@
 #import <EtoileUI/ETFlowLayout.h>
 #import <EtoileUI/ETContainer.h>
 #import <EtoileUI/ETLayoutItem.h>
-#import <EtoileUI/ETViewLayout.h>
+#import <EtoileUI/ETLayout.h>
 #import <EtoileUI/ETViewLayoutLine.h>
 #import <EtoileUI/NSView+Etoile.h>
 #import <EtoileUI/GNUstep.h>
