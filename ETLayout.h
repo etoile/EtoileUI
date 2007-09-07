@@ -119,7 +119,7 @@ typedef enum _ETSizeConstraintStyle
 /* Sizing Methods */
 
 - (BOOL) isAllContentVisible;
-- (void) adjustLayoutSizeToContentSize;
+//- (void) adjustLayoutSizeToContentSize;
 
 /* Layouting */
 

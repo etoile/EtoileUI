@@ -115,7 +115,7 @@
 	layoutModel = [self layoutModelForLayoutItems: items];
 	/* Now computes the location of every views by relying on the line by line 
 	   decomposition already made. */
-	[self computeLayoutItemLocationsForLayoutModel: layoutModel inContainer: [self container]];
+	[self computeLayoutItemLocationsForLayoutModel: layoutModel];
 		
 	/* Don't forget to remove existing display view if we switch from a layout 
 	   which reuses a native AppKit control like table layout. */
@@ -146,7 +146,7 @@
 	@finally { return nil; }*/
 }
 
-- (void) computeLayoutItemLocationsForLayoutModel: (NSArray *)layoutModel inContainer: (ETContainer *)container
+- (void) computeLayoutItemLocationsForLayoutModel: (NSArray *)layoutModel
 {
 	//NSPoint viewLocation = NSMakePoint([container width] / 2.0, [container height] / 2.0);
 	NSPoint itemLocation = NSZeroPoint;

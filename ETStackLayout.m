@@ -81,7 +81,7 @@
 }
 
 // Must override unless you use a display view
-- (void) computeLayoutItemLocationsForLayoutModel: (NSArray *)layoutModel inContainer: (ETContainer *)container
+- (void) computeLayoutItemLocationsForLayoutModel: (NSArray *)layoutModel
 {
 	if ([layoutModel count] > 1)
 	{
@@ -91,10 +91,10 @@
 			  [layoutModel count]);
 	}
 	
-	[self computeLayoutItemLocationsForLayoutLine: [layoutModel lastObject] inContainer: container];
+	[self computeLayoutItemLocationsForLayoutLine: [layoutModel lastObject]];
 }
 
-- (void) computeLayoutItemLocationsForLayoutLine: (ETViewLayoutLine *)line inContainer: (ETContainer *)container
+- (void) computeLayoutItemLocationsForLayoutLine: (ETViewLayoutLine *)line
 {
 	NSEnumerator *lineWalker = nil;
 	ETLayoutItem *item = nil;

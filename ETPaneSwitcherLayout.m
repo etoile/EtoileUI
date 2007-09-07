@@ -478,7 +478,7 @@
 	   container. */
 	[_internalContainer setFrame: [[self container] frame]];
 	[_internalContainer setFrameOrigin: NSZeroPoint];
-	[self computeLayoutItemLocationsForLayoutModel: nil inContainer: _internalContainer];
+	[self computeLayoutItemLocationsForLayoutModel: nil];
 #endif
 
 	/* Update layout in a way equivalent to [[layoutObject container] updateLayout] */
@@ -557,7 +557,7 @@
 	return nil;
 }
 
-- (void) computeLayoutItemLocationsForLayoutModel: (NSArray *)layoutModel inContainer: (ETContainer *)container
+- (void) computeLayoutItemLocationsForLayoutModel: (NSArray *)layoutModel
 {
 	if ([[_internalContainer layout] isMemberOfClass: [ETStackLayout class]])
 	{

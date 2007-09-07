@@ -46,7 +46,6 @@
 - (NSArray *) layoutItems;
 - (void) cacheLayoutItems: (NSArray *)cache;
 - (NSArray *) layoutItemCache;
-- (int) checkSourceProtocolConformance;
 - (NSArray *) visibleItems;
 - (void) setVisibleItems: (NSArray *)visibleItems;
 - (BOOL) isScrollViewShown;
@@ -422,7 +421,7 @@
 	layoutModel = [self layoutModelForLayoutItems: items];
 	/* Now computes the location of every views by relying on the line by line 
 	   decomposition already made. */
-	[self computeLayoutItemLocationsForLayoutModel: layoutModel inContainer: [self container]];
+	[self computeLayoutItemLocationsForLayoutModel: layoutModel];
 	
 	// TODO: May be worth to optimize by computing set intersection of visible and unvisible layout items
 	// NSLog(@"Remove views %@ of next layout items to be displayed from their superview", itemViews);
@@ -565,7 +564,7 @@
 /** Overrides this method to interpretate the layout model and compute layout 
 	item locations accordingly. Most of the work of layout process happens in 
 	this method. */
-- (void) computeLayoutItemLocationsForLayoutModel: (NSArray *)layoutModel inContainer: (ETContainer *)container
+- (void) computeLayoutItemLocationsForLayoutModel: (NSArray *)layoutModel
 {
 
 }

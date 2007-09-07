@@ -57,7 +57,7 @@
 	return self;
 }
 
-- (void) computeLayoutItemLocationsForLayoutModel: (NSArray *)layoutModel inContainer: (ETContainer *)container
+- (void) computeLayoutItemLocationsForLayoutModel: (NSArray *)layoutModel
 {
 	NSEnumerator *layoutWalker = [layoutModel objectEnumerator];
 	ETViewLayoutLine *line;
