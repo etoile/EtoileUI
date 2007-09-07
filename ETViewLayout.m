@@ -58,14 +58,9 @@
  */
 
 @interface ETViewLayout (Private)
-
-- (NSArray *) layoutItemsFromFlatSource;
-- (NSArray *) layoutItemsFromTreeSource;
-
 /* Utility methods */
 - (NSRect) lineLayoutRectForItemAtIndex: (int)index;
 - (ETLayoutItem *) itemAtLocation: (NSPoint)location;
-
 @end
 
 /*
@@ -291,84 +286,6 @@
 	return _itemSize;
 }
 
-
-- (NSArray *) layoutItemsFromSource
-{
-	switch ([[self container] checkSourceProtocolConformance])
-	{
-		case 1:
-			//NSLog(@"Will -layoutItemsFromFlatSource");
-			return [self layoutItemsFromFlatSource];
-			break;
-		case 2:
-			//NSLog(@"Will -layoutItemsFromTreeSource");
-			return [self layoutItemsFromTreeSource];
-			break;
-		default:
-			NSLog(@"WARNING: source protocol is incorrectly supported by %@.", [[self container] source]);
-	}
-	
-	return nil;
-}
-
-- (NSArray *) layoutItemsFromFlatSource
-{
-	NSMutableArray *itemsFromSource = [NSMutableArray array];
-	ETLayoutItem *layoutItem = nil;
-	int nbOfItems = [[[self container] source] numberOfItemsInContainer: [self container]];
-	
-	for (int i = 0; i < nbOfItems; i++)
-	{
-		layoutItem = [[[self container] source] itemAtIndex: i inContainer: [self container]];
-		[itemsFromSource addObject: layoutItem];
-		//[[self layoutContext] addItem: layoutItem];
-		[layoutItem setParentLayoutItem: [self layoutContext]];
-	}
-	
-	return itemsFromSource;
-}
-
-- (NSArray *) layoutItemsFromTreeSource
-{
-	NSMutableArray *itemsFromSource = [NSMutableArray array];
-	ETLayoutItem *layoutItem = nil;
-#if 1
-	ETContainer *container = [self container];
-#else
-	ETContainer *container = [[self layoutContext] ancestorContainerProvidingRepresentedPath];
-#endif
-	NSString *path = [container representedPath];
-	int nbOfItems = [[container source] numberOfItemsAtPath: path inContainer: container];
-	
-	//NSLog(@"-layoutItemsFromTreeSource in %@", self);
-
-	for (int i = 0; i < nbOfItems; i++)
-	{
-		NSString *subpath = nil;
-		
-		subpath = [path stringByAppendingPathComponent: [NSString stringWithFormat: @"%d", i]];
-		layoutItem = [[container source] itemAtPath: subpath inContainer: container];
-		if ([layoutItem isKindOfClass: [ETLayoutItemGroup class]])
-		{
-			// FIXME: To allow arbitrary nesting of containers, we probably 
-			// need [[layoutItem container] setSource: [container source]];
-			// unless we decided to let the user handling this before returning
-			// layout item group in data source methods.
-			// Another way to do it would be differential inheritance lookup.
-			#if 0
-			[(ETContainer *)[layoutItem view] setPath: subpath];
-			#else
-			//[layoutItem setPath: subpath];
-			#endif
-		}
-		[itemsFromSource addObject: layoutItem];
-		//[[self layoutContext] addItem: layoutItem];
-		//[layoutItem setParentLayoutItem: [self layoutContext]];
-	}
-	
-	return itemsFromSource;
-}
-
 /** Returns whether the receiver is currently computing and rendering its 
 	layout right now or not.
 	You must call this method in your code before calling any Layouting related
@@ -409,31 +326,13 @@
 	{
 		_isLayouting = YES;
 	}
-	
-	NSArray *itemsForRendering = nil;
 
 	/* We remove the display views of layout items. Note they may be invisible 
 	   by being located outside of container bounds. */
 	//NSLog(@"Remove views of layout items currently displayed from their container");
 	[[self container] setVisibleItems: [NSArray array]];
 
-	if ([[self container] source] != nil) /* Make layout with items provided by source */
-	{
-		if ([[[self container] layoutItems] count] > 0)
-		{
-			NSLog(@"Update layout from source, yet %d items owned by the "
-				@"container already exists, it may be better to remove them "
-				@"before setting source.", [[[self container] layoutItems] count]);
-		}
-		itemsForRendering = [self layoutItemsFromSource];
-		[[self container] removeAllItems];
-		[[self container] addItems: itemsForRendering];
-	}
-	else /* Make layout with items directly provided by container */
-	{
-		//NSLog(@"No source avaible, will make layout directly");
-		itemsForRendering = [[self container] layoutItems];
-	}	
+	NSArray *itemsForRendering = [[self container] layoutItems];
 	
 	/* When the number of layout items is zero and doesn't vary, no layout 
 	   update is necessary */

@@ -66,7 +66,7 @@
 	/* Stores items when no source is used. May stores layers when no source is 
 	   used, this is not yet decided. */
 	NSMutableArray *_layoutItems;
-	ETViewLayout *_containerLayout;
+	//ETViewLayout *_containerLayout;
 	NSView *_displayView;
 	BOOL _flipped;
 	BOOL _autolayout;
@@ -115,6 +115,7 @@
 - (BOOL) isAutolayout;
 - (void) setAutolayout: (BOOL)flag;
 - (void) updateLayout;
+- (void) reloadAndUpdateLayout;
 
 - (ETViewLayout *) layout;
 - (void) setLayout: (ETViewLayout *)layout;

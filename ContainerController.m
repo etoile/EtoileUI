@@ -116,7 +116,7 @@
 		[self setUpLayoutItemsDirectly];
 	}
 	
-	[viewContainer updateLayout];
+	[viewContainer reloadAndUpdateLayout];
     
     /* Flow autolayout manager doesn't take care of trigerring or updating the display. */
     [viewContainer setNeedsDisplay: YES];  
@@ -188,7 +188,7 @@
 	
 	if ([viewContainer source] == nil)
 		[self setUpLayoutItemsDirectly];
-    [viewContainer updateLayout];
+    [viewContainer reloadAndUpdateLayout];
     
     /* Flow autolayout manager doesn't take care of trigerring or updating the display. */
     [viewContainer setNeedsDisplay: YES];  

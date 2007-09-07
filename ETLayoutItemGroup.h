@@ -50,6 +50,7 @@
 	NSString *_path; /* Path caching */
 	BOOL _autolayout;
 	BOOL _usesLayoutBasedFrame;
+	BOOL _reloading; /* ivar used by ETSource category */
 }
 
 + (ETLayoutItemGroup *) layoutItemGroup;
@@ -91,7 +92,7 @@
 - (ETLayout *) layout;
 - (void) setLayout: (ETLayout *)layout;
 
-//- (void) reloadAndUpdateLayout;
+- (void) reloadAndUpdateLayout;
 - (void) updateLayout;
 - (BOOL) canUpdateLayout;
 

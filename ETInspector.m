@@ -112,7 +112,7 @@
 	[itemGroupView setDelegate: self];*/
 	ETLog(@"Selection did change for %@ received in %@", [notif object], self);
 	
-	[propertyView updateLayout];
+	[propertyView reloadAndUpdateLayout];
 }
 
 - (void) doubleClickInPropertyView: (id)sender
@@ -365,7 +365,7 @@
 	else
 	{
 		ASSIGN(_inspectedItems, items);
-		[itemGroupView updateLayout];
+		[itemGroupView reloadAndUpdateLayout];
 	}
 }
 

@@ -59,12 +59,13 @@ static NSFileManager *objectManager = nil;
 	[viewContainer setHasVerticalScroller: YES];
 	[viewContainer setHasHorizontalScroller: YES];
 	[viewContainer setLayout: AUTORELEASE([[ETStackLayout alloc] init])];
+	[viewContainer reloadAndUpdateLayout];
 	
 	[[pathContainer layout] setConstrainedItemSize: NSMakeSize(64, 64)];
 	[pathContainer setSource: self];
 	[pathContainer setTarget: self];
 	[pathContainer setDoubleAction: @selector(doubleClickInPathContainer:)];
-	[pathContainer updateLayout];
+	[pathContainer reloadAndUpdateLayout];
 }
 
 - (void) viewContainerDidResize: (NSNotification *)notif
@@ -149,8 +150,8 @@ static NSFileManager *objectManager = nil;
 
 	[viewContainer setRepresentedPath: path];
 	
-	[viewContainer updateLayout];
-	[pathContainer updateLayout];
+	[viewContainer reloadAndUpdateLayout];
+	[pathContainer reloadAndUpdateLayout];
 }
 
 - (NSImageView *) imageViewForImage: (NSImage *)image

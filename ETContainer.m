@@ -138,7 +138,6 @@ NSString *ETLayoutItemPboardType = @"ETLayoutItemPboardType"; // FIXME: replace 
 - (void) dealloc
 {
     DESTROY(_layoutItems);
-	DESTROY(_containerLayout);
 	DESTROY(_displayView);
 	DESTROY(_path);
 	DESTROY(_selection);
@@ -318,46 +317,33 @@ NSString *ETLayoutItemPboardType = @"ETLayoutItemPboardType"; // FIXME: replace 
 #if 0
 	return _layoutItemCache;
 #else
-	return [[self layoutItem] items];
+	return [(ETLayoutItemGroup *)[self layoutItem] items];
 #endif
 }
 
 - (BOOL) isAutolayout
 {
-#if 0
-	return _autolayout;
-#else
-	return [[self layoutItem] isAutolayout];
-#endif
+	return [(ETLayoutItemGroup *)[self layoutItem] isAutolayout];
 }
 
 - (void) setAutolayout: (BOOL)flag
 {
-#if 0
-	_autolayout = flag;
-#else
-	[[self layoutItem] setAutolayout: flag];
-#endif
+	[(ETLayoutItemGroup *)[self layoutItem] setAutolayout: flag];
 }
 
 - (BOOL) canUpdateLayout
 {
-#if 0
-	return [self isAutolayout] && ![[self layout] isRendering];
-#else
-	return [[self layoutItem] canUpdateLayout];
-#endif
+	return [(ETLayoutItemGroup *)[self layoutItem] canUpdateLayout];
 }
 
 - (void) updateLayout
 {
 	[[self layoutItem] updateLayout];
-#if 0
-	/* Delegate layout rendering to custom layout object */
-	[[self layout] render];
-	
-	[self setNeedsDisplay: YES];
-#endif
+}
+
+- (void) reloadAndUpdateLayout
+{
+	[(ETLayoutItemGroup *)[self layoutItem] reloadAndUpdateLayout];
 }
 
 /** Returns 0 when source doesn't conform to any parts of ETContainerSource informal protocol.
@@ -409,9 +395,6 @@ NSString *ETLayoutItemPboardType = @"ETLayoutItemPboardType"; // FIXME: replace 
 - (ETViewLayout *) layout
 {
 	return [[self layoutItem] layout];
-#if 0
-	return _containerLayout;
-#endif
 }
 
 - (void) setLayout: (ETViewLayout *)layout

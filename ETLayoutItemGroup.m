@@ -46,6 +46,18 @@
 - (void) setDisplayView: (ETView *)view;
 @end
 
+@interface ETLayoutItemGroup (ETSource)
+- (ETContainer *) container;
+- (void) reload;
+- (NSArray *) itemsFromSource;
+- (NSArray *) itemsFromFlatSource;
+- (NSArray *) itemsFromTreeSource;
+@end
+
+@interface ETContainer (PackageVisibility)
+- (int) checkSourceProtocolConformance;
+@end
+
 
 @implementation ETLayoutItemGroup
 
@@ -468,6 +480,12 @@
 		[self updateLayout];
 }
 
+- (void) reloadAndUpdateLayout
+{
+	[self reload];
+	[self updateLayout];
+}
+
 - (void) updateLayout
 {
 	if ([self layout] == nil)
@@ -500,7 +518,7 @@
 
 - (BOOL) canUpdateLayout
 {
-	return [self isAutolayout] && ![[self layout] isRendering];
+	return [self isAutolayout] && ![self isReloading] && ![[self layout] isRendering];
 }
 
 - (BOOL) isAutolayout
@@ -645,6 +663,105 @@
 - (void) unstack
 {
 
+}
+
+@end
+
+/* Helper methods to retrieve layout items provided by data sources */
+
+@implementation ETLayoutItemGroup (ETSource)
+
+- (ETContainer *) container
+{
+	if ([self isContainer])
+	{
+		return (ETContainer *)[self view];
+	}
+	else
+	{
+		return nil;
+	}
+}
+
+- (BOOL) isReloading
+{
+	return _reloading;
+}
+
+- (void) reload
+{
+	_reloading = YES;
+
+	/* Retrieve layout items provided by source */
+	if ([self isContainer] && [[self container] source] != nil)
+	{
+		NSArray *itemsFromSource = [self itemsFromSource];
+		[self removeAllItems];
+		[self addItems: itemsFromSource];
+	}
+	else
+	{
+		ETLog(@"Impossible to reload %@ because the layout item miss either "
+			@"a container or a source", self);
+	}
+	
+	_reloading = NO;
+}
+
+- (NSArray *) itemsFromSource
+{
+	switch ([[self container] checkSourceProtocolConformance])
+	{
+		case 1:
+			//NSLog(@"Will -reloadFromFlatSource");
+			return [self itemsFromFlatSource];
+			break;
+		case 2:
+			//NSLog(@"Will -reloadFromTreeSource");
+			return [self itemsFromTreeSource];
+			break;
+		default:
+			NSLog(@"WARNING: source protocol is incorrectly supported by %@.", [[self container] source]);
+	}
+	
+	return nil;
+}
+
+- (NSArray *) itemsFromFlatSource
+{
+	NSMutableArray *itemsFromSource = [NSMutableArray array];
+	ETLayoutItem *layoutItem = nil;
+	int nbOfItems = [[[self container] source] numberOfItemsInContainer: [self container]];
+	
+	for (int i = 0; i < nbOfItems; i++)
+	{
+		layoutItem = [[[self container] source] itemAtIndex: i inContainer: [self container]];
+		[itemsFromSource addObject: layoutItem];
+	}
+	
+	return itemsFromSource;
+}
+
+- (NSArray *) itemsFromTreeSource
+{
+	NSMutableArray *itemsFromSource = [NSMutableArray array];
+	ETLayoutItem *layoutItem = nil;
+	ETContainer *container = [self ancestorContainerProvidingRepresentedPath];
+	NSString *path = [container representedPath];
+	int nbOfItems = [[container source] numberOfItemsAtPath: path inContainer: container];
+	
+	//NSLog(@"-itemsFromTreeSource in %@", self);
+
+	for (int i = 0; i < nbOfItems; i++)
+	{
+		NSString *subpath = nil;
+		
+		subpath = [path stringByAppendingPathComponent: [NSString stringWithFormat: @"%d", i]];
+		layoutItem = [[container source] itemAtPath: subpath inContainer: container];
+		[itemsFromSource addObject: layoutItem];
+	}
+	
+	return itemsFromSource;
 }
 
 @end
