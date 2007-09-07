@@ -37,8 +37,6 @@
 #import <AppKit/AppKit.h>
 #import "ETLayoutItem.h"
 
-#define ETLayout ETLayout
-
 @class ETLayout;
 @protocol ETLayoutingContext;
 

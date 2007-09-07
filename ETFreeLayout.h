@@ -38,8 +38,6 @@
 #import <AppKit/AppKit.h>
 #import <EtoileUI/ETViewLayout.h>
 
-#define ETLayout ETLayout
-
 
 @interface ETFreeLayout : ETLayout
 {

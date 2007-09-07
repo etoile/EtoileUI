@@ -39,8 +39,6 @@
 #import <EtoileUI/ETLayoutItem.h>
 #import <EtoileUI/ETViewLayout.h>
 
-#define ETLayout ETLayout
-
 @class ETView, ETContainer;
 
 @protocol ETInspector
