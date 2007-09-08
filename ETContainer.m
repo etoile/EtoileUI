@@ -1290,7 +1290,8 @@ NSString *ETLayoutItemPboardType = @"ETLayoutItemPboardType"; // FIXME: replace 
 - (void) setItemScaleFactor: (float)factor
 {
 	_itemScale = factor;
-	[self updateLayout];
+	if ([self canUpdateLayout])
+		[self updateLayout];
 }
 
 /* Rendering Chain */

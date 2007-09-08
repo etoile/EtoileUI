@@ -225,7 +225,7 @@
 
 - (BOOL) isContentSizeLayout
 {
-	if ([[self container] isScrollViewShown])
+	if ([[self layoutContext] isScrollViewShown])
 		return YES;
 
 	return _maxSizeLayout;
@@ -388,7 +388,7 @@
 	ETLog(@"Render layout items: %@", items);
 	
 	NSArray *layoutModel = nil;
-	float scale = [[self container] itemScaleFactor];
+	float scale = [[self layoutContext] itemScaleFactor];
 	
 	[self resizeLayoutItems: items toScaleFactor: scale];
 	
@@ -399,7 +399,7 @@
 	
 	// TODO: May be worth to optimize by computing set intersection of visible and unvisible layout items
 	// NSLog(@"Remove views %@ of next layout items to be displayed from their superview", itemViews);
-	[[self container] setVisibleItems: [NSArray array]];
+	[[self layoutContext] setVisibleItems: [NSArray array]];
 	
 	/* Adjust container size when it is embedded in a scroll view */
 	if ([[self layoutContext] isScrollViewShown])

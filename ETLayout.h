@@ -52,6 +52,7 @@
 - (void) setSize: (NSSize)size;
 - (NSView *) view;
 /* May be next methods should be optional */
+- (float) itemScaleFactor;
 - (NSSize) visibleContentSize; /* -documentVisibleRect size */
 - (void) setContentSize: (NSSize)size;
 - (BOOL) isScrollViewShown;

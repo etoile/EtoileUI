@@ -665,6 +665,21 @@
 
 }
 
+/* ETLayoutingContext */
+
+- (float) itemScaleFactor
+{
+	if ([[self view] respondsToSelector: @selector(itemScaleFactor)])
+	{
+		return	[(id)[self view] itemScaleFactor];
+	}
+	else
+	{
+		ETLog(@"WARNING: Layout item %@ doesn't respond to -itemScaleFactor", self);
+		return 0;
+	}
+}
+
 /* ETLayoutingContext scroll view related methods */
 
 /* -documentVisibleRect size */
