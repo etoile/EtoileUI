@@ -728,12 +728,6 @@ NSString *ETLayoutItemPboardType = @"ETLayoutItemPboardType"; // FIXME: replace 
 	}
 }
 
-// FIXME: Implement or remove
-- (NSSize) contentSize
-{
-	return NSZeroSize;
-}
-
 /** Returns the view that takes care of the display. Most of time it is equal
     to the container itself. But for some layout like ETTableLayout, the 
 	returned view would be an NSTableView instance. */

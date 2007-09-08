@@ -137,7 +137,7 @@
 		//[viewContainer setHasHorizontalScroller: NO];
 	}
 	
-	//[viewContainer updateLayout];
+	[viewContainer updateLayout];
     
     /* Flow autolayout manager doesn't take care of trigerring or updating the display. */
     [viewContainer setNeedsDisplay: YES];  

@@ -424,6 +424,9 @@
 	
 	if (_view != nil)
 	{
+		/* Sync layout item frame with display view frame (see -setFrame:) */
+		_frame = [_view frame];
+		/* Restore view initial state */
 		[_view setFrame: [self defaultFrame]];
 		[_view setRenderer: nil];
 		/* Stop to observe notifications on current view and reset bounds size */
@@ -715,14 +718,26 @@
 
 - (NSRect) frame
 {
-	return _frame;
+	if ([self displayView] != nil)
+	{
+		return [[self displayView] frame];
+	}
+	else
+	{
+		return _frame;
+	}
 }
 
 - (void) setFrame: (NSRect)rect
 {
-	_frame = rect;
 	if ([self displayView] != nil)
+	{
 		[[self displayView] setFrame: rect];
+	}
+	else
+	{
+		_frame = rect;
+	}
 }
 
 - (NSPoint) origin

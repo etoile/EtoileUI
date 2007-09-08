@@ -665,6 +665,62 @@
 
 }
 
+/* ETLayoutingContext scroll view related methods */
+
+/* -documentVisibleRect size */
+- (NSSize) visibleContentSize
+{
+	if ([[self view] respondsToSelector: @selector(contentSize)])
+	{
+		return	[(id)[self view] contentSize];
+	}
+	else if ([[self view] respondsToSelector: @selector(scrollView)]
+	 && [[(id)[self view] scrollView] respondsToSelector: @selector(contentSize)])
+	{
+		return [[(id)[self view] scrollView] contentSize];
+	}
+	else
+	{
+		ETLog(@"WARNING: Layout item %@ doesn't respond to -contentSize", self);
+		return NSZeroSize;
+	}
+}
+
+- (BOOL) isScrollViewShown
+{
+	if ([[self view] respondsToSelector: @selector(isScrollViewShown)])
+	{
+		return	[(id)[self view] isScrollViewShown];
+	}
+	else
+	{
+		ETLog(@"WARNING: Layout item %@ doesn't respond to -isScrollViewShown", self);
+		return NO;
+	}
+}
+
+		/* The frame may be patched by the display view, that's why 
+		   _frame = rect would be incorrect. When the display view is embedded
+		   inside a scroll view, the display view is the document view of the
+		   scroll view and must fit perfectly into it.
+		   For more details, see -[ETContainer setFrameSize:] */
+- (void) setContentSize: (NSSize)size
+{
+	if ([[self view] respondsToSelector: @selector(setContentSize:)])
+	{
+		[(id)[self view] setContentSize: size];
+	}
+	else if ([[self view] respondsToSelector: @selector(scrollView)]
+	 && [[(id)[self view] scrollView] isKindOfClass: [NSScrollView class]])
+	{
+		[[[(id)[self view] scrollView] documentView] setFrameSize: size];		
+	}
+	else
+	{
+		ETLog(@"WARNING: Layout item %@ doesn't respond to -setContentSize:", self);
+	}
+}
+
 @end
 
 /* Helper methods to retrieve layout items provided by data sources */

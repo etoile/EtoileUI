@@ -341,15 +341,15 @@
 	   before -render. */
 	if ([self usesCustomLayoutSize] == NO)
 	{
-		if ([[self container] isScrollViewShown])
+		if ([[self layoutContext] isScrollViewShown])
 		{
 			/* Better to request the visible rect than the container frame 
 			   which might be severely altered by the previouly set layout. */
-			[self setLayoutSize: [[[self container] scrollView] documentVisibleRect].size];
+			[self setLayoutSize: [[self layoutContext] visibleContentSize]];
 		}
 		else /* Using content layout size without scroll view is supported */
 		{
-			[self setLayoutSize: [[self container] frame].size];
+			[self setLayoutSize: [[self layoutContext] size]];
 		}
 	}
 	
@@ -402,17 +402,18 @@
 	[[self container] setVisibleItems: [NSArray array]];
 	
 	/* Adjust container size when it is embedded in a scroll view */
-	if ([[self container] isScrollViewShown])
+	if ([[self layoutContext] isScrollViewShown])
 	{
 		// NOTE: For this assertion check -[ETContainer setScrollView:] 
 		NSAssert([self isContentSizeLayout] == YES, 
 			@"Any layout done in a scroll view must be based on content size");
-		
-		[[self container] setFrameSize: [self layoutSize]];
+			
+		//[[self layoutContext] setContentSize: [self layoutSize]];
+		[[[self layoutContext] container] setFrameSize: [self layoutSize]];
 		NSLog(@"Layout size is %@ with container size %@ and clip view size %@", 
 			NSStringFromSize([self layoutSize]), 
-			NSStringFromSize([[self container] frame].size), 
-			NSStringFromSize([[[self container] scrollView] contentSize]));
+			NSStringFromSize([[self layoutContext] size]), 
+			NSStringFromSize([[self layoutContext] visibleContentSize]));
 	}
 	
 	NSMutableArray *visibleItems = [NSMutableArray array];

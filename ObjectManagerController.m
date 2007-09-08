@@ -116,7 +116,7 @@ static NSFileManager *objectManager = nil;
 		[viewContainer setScrollView: nil];
 	}
 	
-	//[viewContainer updateLayout];
+	[viewContainer updateLayout];
     
     /* Flow autolayout manager doesn't take care of trigerring or updating the display. */
     [viewContainer setNeedsDisplay: YES];  

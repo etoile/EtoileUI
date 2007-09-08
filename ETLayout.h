@@ -44,10 +44,19 @@
 	- layout context is where the layouting occurs
 	- graphic context is where the drawing occurs */
 @protocol ETLayoutingContext
+/* Required */
 - (NSArray *) items;
 - (NSArray *) visibleItems;
 - (void) setVisibleItems: (NSArray *)items;
+- (NSSize) size;
+- (void) setSize: (NSSize)size;
 - (NSView *) view;
+/* May be next methods should be optional */
+- (NSSize) visibleContentSize; /* -documentVisibleRect size */
+- (void) setContentSize: (NSSize)size;
+- (BOOL) isScrollViewShown;
+/* Not sure the protocol needs to include the next method */
+//- (void) setShowsScrollView: (BOOL)scroll;
 @end
 
 // NOTE: May be this should be turned into a mask
