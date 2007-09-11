@@ -37,7 +37,7 @@
 #import <AppKit/AppKit.h>
 #import <EtoileUI/ETView.h>
 
-@class ETLayoutItem, ETLayout, ETLayer, ETLayoutGroupItem, ETSelection;
+@class ETLayoutItem, ETLayout, ETLayer, ETLayoutItemGroup, ETSelection;
 @protocol ETLayoutingContext, ETInspector;
 
 /** Forwarding Chain 
@@ -105,7 +105,7 @@
 	id <ETInspector> _inspector;
 }
 
-- (id) initWithFrame: (NSRect)rect views: (NSArray *)views;
+- (id) initWithFrame: (NSRect)rect layoutItem: (ETLayoutItemGroup *)item;
 
 - (ETLayoutItem *) layoutItem;
 
@@ -183,6 +183,8 @@
 
 /* Selection */
 
+- (NSArray *) selectionIndexPaths;
+- (void) setSelectionIndexPaths: (NSArray *)indexPaths;
 - (void) setSelectionIndexes: (NSIndexSet *)selection;
 - (NSMutableIndexSet *) selectionIndexes;
 - (void) setSelectionIndex: (int)index;
@@ -212,15 +214,15 @@
 
 /* Groups and Stacks */
 
+- (void) stack: (id)sender;
+
 /*- (ETLayoutGroupItem *) groupAllItems;
 - (ETLayoutGroupItem *) groupItems: (NSArray *)items;
 - (ETLayoutGroupItem *) ungroupItems: (ETLayoutGroupItem *)itemGroup;*/
 
 // NOTE: Not sure it is worth to have these methods since we can stack a group
 // by using ETLayoutGroupItem API
-/*- (ETLayoutGroupItem *) stackAllItems;
-- (ETLayoutGroupItem *) stackItems: (NSArray *)items;
-- (ETLayoutGroupItem *) unstackItems: (ETLayoutGroupItem *)itemGroup;*/
+
 
 /* Item scaling */
 
@@ -247,8 +249,8 @@
 - (SEL) doubleAction;
 - (ETLayoutItem *) clickedItem;
 
-- (BOOL) enablesSubviewHitTest;
-- (void) setEnablesSubviewHitTest: (BOOL)hit;
+- (BOOL) isHitTestEnabled;
+- (void) setEnablesHitTest: (BOOL)hit;
 
 @end
 

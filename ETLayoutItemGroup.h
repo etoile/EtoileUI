@@ -45,7 +45,10 @@
 {
 	NSMutableArray *_layoutItems;
 	ETLayout *_layout;
-	NSString *_path; /* Path caching */
+	ETLayout *_stackedLayout;
+	ETLayout *_unstackedLayout;
+	//NSString *_path; /* Path caching */
+	BOOL _isStack;
 	BOOL _autolayout;
 	BOOL _usesLayoutBasedFrame;
 	BOOL _reloading; /* ivar used by ETSource category */
@@ -85,6 +88,9 @@
 - (void) removeItems: (NSArray *)items;
 - (void) removeAllItems;
 
+//- (NSArray *) itemsIncludingRelatedDescendents;
+//- (NSArray *) itemsIncludingAllDescendents;
+
 /* Layout */
 
 - (ETLayout *) layout;
@@ -105,19 +111,32 @@
 
 - (void) render: (NSMutableDictionary *)inputValues dirtyRect: (NSRect)dirtyRect inView: (NSView *)view;
 
-// NOTE: Note sure it's really doable to provide such methods. May only work in
-// a safe way if we provide it as part of ETContainer API
-- (NSArray *) ungroup;
-/* Take a note +group: is +layoutItemGroupWithLayoutItems: */
+/* Grouping */
+
+- (ETLayoutItemGroup *) makeGroupWithItems: (NSArray *)items;
+- (NSArray *) unmakeGroup;
 
 /* Stacking */
 
-/*- (ETLayout *) stackedItemLayout;
+- (ETLayout *) stackedItemLayout;
 - (void) setStackedItemLayout: (ETLayout *)layout;
 - (ETLayout *) unstackedItemLayout;
-- (void) setUnstackedItemLayout: (ETLayout *)layout;*/
+- (void) setUnstackedItemLayout: (ETLayout *)layout;
+
+- (void) setIsStack: (BOOL)flag;
+- (BOOL) isStack;
+- (BOOL) isStacked;
 
 - (void) stack;
 - (void) unstack;
+
+/* Selection */
+
+- (NSArray *) selectionIndexPaths;
+- (void) setSelectionIndexPaths: (NSArray *)indexPaths;
+
+//- (NSArray *) selectedItems;
+//- (NSArray *) selectedItemsIncludingRelatedDescendents;
+//- (NSArray *) selectedItemsIncludingAllDescendents;
 
 @end

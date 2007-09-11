@@ -76,6 +76,8 @@
 
 - (IBAction) inspect: (id)sender;
 
+- (IBAction) stack: (id)sender;
+
 @end
 
 @interface ETLayoutItem (ETInspector)

@@ -34,10 +34,12 @@
 	THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import <EtoileUI/ETLayout.h>
-
 #import <EtoileUI/ETLayoutItemGroup.h>
+#import <EtoileUI/ETLayout.h>
+#import <EtoileUI/ETFlowLayout.h>
+#import <EtoileUI/ETLineLayout.h>
 #import <EtoileUI/ETContainer.h>
+#import <EtoileUI/NSView+Etoile.h>
 #import <EtoileUI/GNUstep.h>
 
 #define DEFAULT_FRAME NSMakeRect(0, 0, 50, 50)
@@ -92,7 +94,9 @@
 		if (layoutItems != nil)
 			[self addItems: layoutItems];
 		_layout = nil;
-		_path = nil;
+		[self setStackedItemLayout: AUTORELEASE([[ETFlowLayout alloc] init])];
+		[self setUnstackedItemLayout: AUTORELEASE([[ETLineLayout alloc] init])];
+		_isStack = NO;
 		_autolayout = YES;
 		_usesLayoutBasedFrame = NO;
     }
@@ -113,6 +117,8 @@
 - (void) dealloc
 {
 	DESTROY(_layout);
+	DESTROY(_stackedLayout);
+	DESTROY(_unstackedLayout);
 	DESTROY(_layoutItems);
 	
 	[super dealloc];
@@ -125,7 +131,8 @@
 
 - (ETContainer *) ancestorContainerProvidingRepresentedPath
 {
-	if ([self isContainer] && [self representedPathBase] != nil)
+	if ([self isContainer] && [self representedPathBase] != nil
+	 && [[self representedPathBase] isEqual: @""] == NO)
 	{
 		return (ETContainer *)[self view];
 	}
@@ -150,7 +157,8 @@
 	instead of the name as a path component.
 	For index path 3.4.8.0, a valid translation would be:
 	      3     .4 .8   .0
-	/BlackCircle/4/Tulip/Zone */
+	/BlackCircle/4/Tulip/Zone
+	Returns '/' if indexPath is nil or empty. */
 - (NSString *) pathForIndexPath: (NSIndexPath *)indexPath
 {
 	NSString *path = @"/";
@@ -290,8 +298,13 @@
 // FIXME: Move layout item collection from ETContainer to ETLayoutItemGroup
 - (void) addItem: (ETLayoutItem *)item
 {
-	NSLog(@"Add item in %@", self);
+	//NSLog(@"Add item in %@", self);
+	
+	RETAIN(item);
+	if ([item parentLayoutItem] != nil)
+		[[item parentLayoutItem] removeItem: item];
 	[item setParentLayoutItem: self];
+	RELEASE(item);
 	[_layoutItems addObject: item];
 	if ([self canUpdateLayout])
 		[self updateLayout];
@@ -299,7 +312,7 @@
 
 - (void) insertItem: (ETLayoutItem *)item atIndex: (int)index
 {
-	NSLog(@"Insert item in %@", self);
+	//NSLog(@"Insert item in %@", self);
 	
 	//FIXME: NSMutableIndexSet *indexes = [self selectionIndexes];
 	
@@ -329,7 +342,7 @@
 
 - (void) removeItem: (ETLayoutItem *)item
 {
-	NSLog(@"Remove item in %@", self);
+	//NSLog(@"Remove item in %@", self);
 
 // FIXME
 #if 0	
@@ -400,7 +413,7 @@
 	NSEnumerator *e = [items objectEnumerator];
 	ETLayoutItem *layoutItem = nil;
 	
-	NSLog(@"Add items in %@", self);
+	//NSLog(@"Add items in %@", self);
 	
 	while ((layoutItem = [e nextObject]) != nil)
 	{
@@ -413,7 +426,7 @@
 	NSEnumerator *e = [items objectEnumerator];
 	ETLayoutItem *layoutItem = nil;
 	
-	NSLog(@"Remove items in %@", self);
+	//NSLog(@"Remove items in %@", self);
 	
 	while ((layoutItem = [e nextObject]) != nil)
 	{
@@ -423,7 +436,7 @@
 
 - (void) removeAllItems
 {
-	NSLog(@"Remove all items in %@", self);
+	//NSLog(@"Remove all items in %@", self);
 	
 	// FIXME: [_selection removeAllIndexes];
 	[_layoutItems makeObjectsPerformSelector: @selector(setParentLayoutItem:) withObject: nil];
@@ -439,7 +452,7 @@
 
 - (NSArray *) items
 {
-	return _layoutItems;
+	return [NSArray arrayWithArray: _layoutItems];
 }
 
 /* Layout */
@@ -648,21 +661,182 @@
 	}
 }
 
-- (NSArray *) ungroup
+/* Grouping */
+
+- (ETLayoutItemGroup *) makeGroupWithItems: (NSArray *)items
 {
-	return nil;
+	ETLayoutItemGroup *itemGroup = nil;
+	ETLayoutItemGroup *prevParent = nil;
+	int firstItemIndex = NSNotFound;
+	
+	if (items != nil && [items count] > 0)
+	{
+		NSEnumerator *e = [[self items] objectEnumerator];
+		ETLayoutItem *item = [e nextObject];
+		
+		prevParent = [item parentLayoutItem];
+		firstItemIndex = [prevParent indexOfItem: item];
+		
+		/* Try to find a common parent shared by all items */
+		while ((item = [e nextObject]) != nil)
+		{
+			if ([[item parentLayoutItem] isEqual: prevParent] == NO)
+			{
+				prevParent = nil;
+				break;
+			}
+		}
+	}
+		
+	/* Will reparent each layout item to itemGroup */
+	itemGroup = [ETLayoutItemGroup layoutItemGroupWithLayoutItems: items];
+	/* When a parent shared by all items exists, inserts new item group where
+	   its first item was previously located */
+	if (prevParent != nil)
+		[prevParent insertItem: itemGroup atIndex: firstItemIndex];
+	
+	return itemGroup;
+}
+
+/** Dismantles the receiver layout item group. If all items owned by the item */
+- (NSArray *) unmakeGroup
+{
+	ETLayoutItemGroup *parent = [self parentLayoutItem];
+	NSArray *items = [self items];
+	int itemGroupIndex = [parent indexOfItem: self];
+	
+	RETAIN(self);
+	[parent removeItem: self];
+	/* Delay release the receiver until we fully step out of receiver's 
+	   instance methods (like this method). */
+	AUTORELEASE(self);
+
+	[parent insertItems: items atIndex: itemGroupIndex];		
+	
+	return items;
 }
 
 /* Stacking */
 
++ (NSSize) stackSize
+{
+	return NSMakeSize(200, 200);
+}
+
+- (ETLayout *) stackedItemLayout
+{
+	return _stackedLayout;
+}
+
+- (void) setStackedItemLayout: (ETLayout *)layout
+{
+	ASSIGN(_stackedLayout, layout);
+}
+
+- (ETLayout *) unstackedItemLayout
+{
+	return _unstackedLayout;
+}
+
+- (void) setUnstackedItemLayout: (ETLayout *)layout
+{
+	ASSIGN(_unstackedLayout, layout);
+}
+
+- (void) setIsStack: (BOOL)flag
+{
+	if (_isStack == NO)
+	{
+		if ([[self view] isKindOfClass: [ETContainer class]] == NO)
+		{
+			NSRect stackFrame = ETMakeRect(NSZeroPoint, [ETLayoutItemGroup stackSize]);
+			ETContainer *container = [[ETContainer alloc] 
+				initWithFrame: stackFrame layoutItem: self];
+			[self setView: AUTORELEASE(container)];
+		}
+		[[self container] setItemScaleFactor: 0.7];
+		[self setSize: [ETLayoutItemGroup stackSize]];
+	}
+		
+	_isStack = flag;
+}
+
+- (BOOL) isStack
+{
+	return _isStack;
+}
+
+- (BOOL) isStacked
+{
+	return [self isStack] && [[self layout] isEqual: [self stackedItemLayout]];
+}
+
 - (void) stack
 {
-
+	/* Turn item group into stack if necessary */
+	[self setIsStack: YES];
+	[self reload];
+	[self setLayout: [self stackedItemLayout]];
 }
 
 - (void) unstack
 {
+	/* Turn item group into stack if necessary */
+	[self setIsStack: YES];
+	[self reload];
+	[self setLayout: [self unstackedItemLayout]];
+}
 
+/* Selection */
+
+- (void) collectSelectionIndexPaths: (NSMutableArray *)indexPaths
+{
+	NSEnumerator *e = [[self items] objectEnumerator];
+	ETLayoutItem *item = nil;
+		
+	while (item != nil)
+	{
+		if ([item isSelected])
+			[indexPaths addObject: [item indexPath]];
+		if ([item isKindOfClass: [self class]])
+			[item collectSelectionIndexPaths: indexPaths];
+	}
+}
+
+- (NSArray *) selectionIndexPaths
+{
+	NSMutableArray *indexPaths = [NSMutableArray array];
+	
+	[self collectSelectionIndexPaths: indexPaths];
+	
+	return indexPaths;
+}
+
+- (void) applySelectionIndexPaths: (NSMutableArray *)indexPaths
+{
+	NSEnumerator *e = [[self items] objectEnumerator];
+	ETLayoutItem *item = nil;
+		
+	while (item != nil)
+	{
+		NSIndexPath *itemIndexPath = [item indexPath];
+		if ([indexPaths containsObject: itemIndexPath])
+		{
+			[item setSelected: YES];
+			[indexPaths removeObject: itemIndexPath];
+		}
+		else
+		{
+			[item setSelected: NO];
+		}
+		if ([item isKindOfClass: [self class]])
+			[item applySelectionIndexPaths: indexPaths];
+	}
+}
+
+- (void) setSelectionIndexPaths: (NSArray *)indexPaths
+{
+	[self applySelectionIndexPaths: [NSMutableArray arrayWithArray: indexPaths]];
 }
 
 /* ETLayoutingContext */
@@ -762,9 +936,11 @@
 - (void) reload
 {
 	_reloading = YES;
+	
+	ETContainer *container = [self ancestorContainerProvidingRepresentedPath];
 
 	/* Retrieve layout items provided by source */
-	if ([self isContainer] && [[self container] source] != nil)
+	if (container != nil && [container source] != nil)
 	{
 		NSArray *itemsFromSource = [self itemsFromSource];
 		[self removeAllItems];
@@ -781,7 +957,9 @@
 
 - (NSArray *) itemsFromSource
 {
-	switch ([[self container] checkSourceProtocolConformance])
+	ETContainer *container = [self ancestorContainerProvidingRepresentedPath];
+
+	switch ([container checkSourceProtocolConformance])
 	{
 		case 1:
 			//NSLog(@"Will -reloadFromFlatSource");
@@ -802,11 +980,12 @@
 {
 	NSMutableArray *itemsFromSource = [NSMutableArray array];
 	ETLayoutItem *layoutItem = nil;
-	int nbOfItems = [[[self container] source] numberOfItemsInContainer: [self container]];
+	ETContainer *container = [self ancestorContainerProvidingRepresentedPath];
+	int nbOfItems = [[container source] numberOfItemsInContainer: container];
 	
 	for (int i = 0; i < nbOfItems; i++)
 	{
-		layoutItem = [[[self container] source] itemAtIndex: i inContainer: [self container]];
+		layoutItem = [[container source] itemAtIndex: i inContainer: container];
 		[itemsFromSource addObject: layoutItem];
 	}
 	
@@ -818,10 +997,16 @@
 	NSMutableArray *itemsFromSource = [NSMutableArray array];
 	ETLayoutItem *layoutItem = nil;
 	ETContainer *container = [self ancestorContainerProvidingRepresentedPath];
-	NSString *path = [container representedPath];
-	int nbOfItems = [[container source] numberOfItemsAtPath: path inContainer: container];
+	NSIndexPath *indexPathFromSource = [self indexPathFromItem: [container layoutItem]];
+	NSString *path = [[container layoutItem] pathForIndexPath: indexPathFromSource];
+	int nbOfItems = 0;
 	
 	//NSLog(@"-itemsFromTreeSource in %@", self);
+	
+	/* Turn the relative path into a represented path */
+	path = [[container representedPath] stringByAppendingPathComponent: path];
+	
+	nbOfItems = [[container source] numberOfItemsAtPath: path inContainer: container];
 
 	for (int i = 0; i < nbOfItems; i++)
 	{
@@ -829,6 +1014,7 @@
 		
 		subpath = [path stringByAppendingPathComponent: [NSString stringWithFormat: @"%d", i]];
 		layoutItem = [[container source] itemAtPath: subpath inContainer: container];
+		NSLog(@"Retrieved item %@ known by path %@", layoutItem, subpath);
 		[itemsFromSource addObject: layoutItem];
 	}
 	

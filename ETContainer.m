@@ -80,12 +80,14 @@ NSString *ETLayoutItemPboardType = @"ETLayoutItemPboardType"; // FIXME: replace 
 @implementation ETContainer
 
 /** <init /> */
-- (id) initWithFrame: (NSRect)rect views: (NSArray *)views
+- (id) initWithFrame: (NSRect)rect layoutItem: (ETLayoutItem *)item
 {
 	self = [super initWithFrame: rect];
     
-    if (self != nil)
+	if (self != nil)
     {
+		ETLayoutItemGroup *itemGroup = item;
+	
 		// NOTE: Very important to destroy ETView layout item to avoid any 
 		// layout update in ETLayoutItem
 		// -setView: -> -setDefaultFrame: -> -restoreDefaultFrame -> -setFrame:
@@ -96,12 +98,14 @@ NSString *ETLayoutItemPboardType = @"ETLayoutItemPboardType"; // FIXME: replace 
 		// -canUpdateLayout...
 		[self setLayoutItem: nil];
 	
-		ETLayoutItemGroup *itemGroup = [[ETLayoutItemGroup alloc] initWithView: self];
+		if (itemGroup == nil)
+			itemGroup = AUTORELEASE([[ETLayoutItemGroup alloc] initWithView: self]);
 		
 		 /* Before all, bind layout item group representing the container */
-		[self setLayoutItem: AUTORELEASE(itemGroup)];
+		[self setLayoutItem: itemGroup];
 		_layoutItems = [[NSMutableArray alloc] init];
-		_path = @"";
+		_path = nil;
+		_subviewHitTest = NO;
 		_flipped = YES;
 		_autolayout = YES;
 		_itemScale = 1.0;
@@ -115,7 +119,7 @@ NSString *ETLayoutItemPboardType = @"ETLayoutItemPboardType"; // FIXME: replace 
 		[self registerForDraggedTypes: [NSArray arrayWithObjects:
 			ETLayoutItemPboardType, nil]];
 		
-		if (views != nil)
+		/*if (views != nil)
 		{
 			NSEnumerator *e = [views objectEnumerator];
 			NSView *view = nil;
@@ -124,7 +128,7 @@ NSString *ETLayoutItemPboardType = @"ETLayoutItemPboardType"; // FIXME: replace 
 			{
 				[_layoutItems addObject: [ETLayoutItem layoutItemWithView: view]];
 			}
-		}
+		}*/
     }
     
     return self;
@@ -132,7 +136,7 @@ NSString *ETLayoutItemPboardType = @"ETLayoutItemPboardType"; // FIXME: replace 
 
 - (id) initWithFrame: (NSRect)rect
 {
-	return [self initWithFrame: rect views: nil];
+	return [self initWithFrame: rect layoutItem: nil];
 }
 
 - (void) dealloc
@@ -979,6 +983,16 @@ NSString *ETLayoutItemPboardType = @"ETLayoutItemPboardType"; // FIXME: replace 
 
 /* Selection */
 
+- (NSArray *) selectionIndexPaths
+{
+	return [(ETLayoutItemGroup *)[self layoutItem] selectionIndexPaths];
+}
+
+- (void) setSelectionIndexPaths: (NSArray *)indexPaths
+{
+	[(ETLayoutItemGroup *)[self layoutItem] setSelectionIndexPaths: indexPaths];
+}
+
 - (void) setSelectionIndexes: (NSIndexSet *)indexes
 {
 	int numberOfItems = [[self layoutItemCache] count];
@@ -1280,6 +1294,42 @@ NSString *ETLayoutItemPboardType = @"ETLayoutItemPboardType"; // FIXME: replace 
 
 }
 
+/* Grouping and Stacking */
+
+- (void) group: (id)sender
+{
+	/*ETLayoutItem *item = [self itemAtIndex: [self selectionIndex]]; 
+	
+	if ([item isKindOfClass: [ETLayoutItemGroup class]])
+	{
+		[(ETLayoutItemGroup *)item make];
+	}
+	else
+	{
+		ETLog(@"WARNING: Layout item %@ must be an item group to be stacked", self);
+	}
+	
+	if ([self canUpdateLayout])
+		[self updateLayout];*/	
+}
+
+- (void) stack: (id)sender
+{
+	ETLayoutItem *item = [self itemAtIndex: [self selectionIndex]]; 
+	
+	if ([item isKindOfClass: [ETLayoutItemGroup class]])
+	{
+		[(ETLayoutItemGroup *)item stack];
+	}
+	else
+	{
+		ETLog(@"WARNING: Layout item %@ must be an item group to be stacked", self);
+	}
+	
+	if ([self canUpdateLayout])
+		[self updateLayout];	
+}
+
 /* Item scaling */
 
 - (float) itemScaleFactor
@@ -1319,21 +1369,30 @@ NSString *ETLayoutItemPboardType = @"ETLayoutItemPboardType"; // FIXME: replace 
 
 /* Actions */
 
-/** Hit test is disabled by default in container to eliminate potential issues
-	you may encounter by using subclasses of NSControl like NSImageView as 
-	layout item view. 
+/** Returns usually the lowest subcontainer of the receiver which contains 
+    location point in the view hierarchy. For any other kind of subviews, hit 
+	test doesn't succeed by default to eliminate potential issues you may 
+	encounter by using subclasses of NSControl like NSImageView as layout item 
+	view.
 	If you want to layout controls which should support direct interaction like
 	checkbox or popup menu, you can turn hit test on by calling 
-	-setEnablesHitTest: with YES. 
+	-setEnablesHitTest: with YES.
+	If the point is located in the receiver itself but outside of any 
+	subcontainers, returns self. When no subcontainer can be found, returns 
+	nil. 
 	*/
 - (NSView *) hitTest: (NSPoint)location
 {
-	/* If we use an AppKit control as a display view, everything should be
-	   handled as usual. Ditto if we have no display view but subview hit test 
-	   is turned on. */
-	if ([self displayView] || _subviewHitTest)
+	NSView *subview = [super hitTest: location];
+	
+	/* If -[NSView hitTest:] returns a container or if we use an AppKit control 
+	   as a display view, we simply return the subview provided by 
+	   -[NSView hitTest:]
+	   If hit test is turned on, everything should be handled as usual. */
+	if ([self displayView] || [self isHitTestEnabled] 
+	 || [subview isKindOfClass: [self class]])
 	{
-		return [super hitTest: location];
+		return subview;
 	}
 	else if (NSPointInRect(location, [self frame]))
 	{
@@ -1345,12 +1404,12 @@ NSString *ETLayoutItemPboardType = @"ETLayoutItemPboardType"; // FIXME: replace 
 	}
 }
 
-- (void) setEnablesSubviewHitTest: (BOOL)passHitTest
+- (void) setEnablesHitTest: (BOOL)passHitTest
 { 
 	_subviewHitTest = passHitTest; 
 }
 
-- (BOOL) isSubviewHitTestEnabled { return _subviewHitTest; }
+- (BOOL) isHitTestEnabled { return _subviewHitTest; }
 
 - (void) mouseDown: (NSEvent *)event
 {
@@ -1366,9 +1425,8 @@ NSString *ETLayoutItemPboardType = @"ETLayoutItemPboardType"; // FIXME: replace 
 	ETLayoutItem *newlyClickedItem = [[self layout] itemAtLocation: localPosition];
 	int newIndex = NSNotFound;
 	
-	/* If no item has been clicked, we exit by default (may change in future) */
 	if (newlyClickedItem != nil)
-		newIndex = [[self layoutItemCache] indexOfObject: newlyClickedItem];
+		newIndex = [self indexOfItem: newlyClickedItem];
 	
 	/* Update selection if needed */
 	ETLog(@"Update selection on mouse down");

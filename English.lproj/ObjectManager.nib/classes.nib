@@ -14,7 +14,7 @@
             SUPERCLASS = NSObject; 
         }, 
         {
-            ACTIONS = {inspect = id; }; 
+            ACTIONS = {inspect = id; stack = id; }; 
             CLASS = ETContainer; 
             LANGUAGE = ObjC; 
             OUTLETS = {"_scrollView" = NSScrollView; }; 

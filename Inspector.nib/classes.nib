@@ -1,7 +1,7 @@
 {
     IBClasses = (
         {
-            ACTIONS = {inspect = id; }; 
+            ACTIONS = {group = id; inspect = id; stack = id; ungroup = id; unstack = id; }; 
             CLASS = ETContainer; 
             LANGUAGE = ObjC; 
             OUTLETS = {"_scrollView" = NSScrollView; }; 
@@ -9,7 +9,7 @@
         }, 
         {CLASS = ETImageStyle; LANGUAGE = ObjC; SUPERCLASS = ETStyleRenderer; }, 
         {
-            ACTIONS = {changeLayout = id; inspect = id; }; 
+            ACTIONS = {changeLayout = id; inspect = id; stack = id; }; 
             CLASS = ETInspector; 
             LANGUAGE = ObjC; 
             OUTLETS = {

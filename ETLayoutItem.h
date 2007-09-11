@@ -110,6 +110,7 @@
 - (ETContainer *) closestAncestorContainer;
 - (ETView *) closestAncestorDisplayView;
 
+- (NSIndexPath *) indexPathFromItem: (ETLayoutItem *)item;
 - (NSIndexPath *) indexPathForItem: (ETLayoutItem *)item;
 - (NSIndexPath *) indexPath;
 - (NSString *) path;

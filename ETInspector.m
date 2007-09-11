@@ -121,6 +121,7 @@
 	
 	[[[item inspector] window] makeKeyAndOrderFront: self];
 }
+
 #if 0
 - (int) numberOfItemsAtPath: (NSString *)keyPath inContainer: (ETContainer *)container
 {
@@ -167,7 +168,7 @@
 
 - (ETLayoutItem *) itemAtPath: (NSString *)keyPath inContainer: (ETContainer *)container
 {
-
+	return [
 }
 #endif
 - (int) numberOfItemsInContainer: (ETContainer *)container
@@ -382,6 +383,35 @@
 - (IBAction) inspect: (id)sender
 {
 	[[NSApplication sharedApplication] sendAction: @selector(inspect:) to: nil from: sender];
+}
+
+- (IBAction) stack: (id)sender
+{
+	NSIndexSet *selection = [itemGroupView selectionIndexes];
+	NSEnumerator *e = [[[itemGroupView layoutItem] items] objectEnumerator];
+	ETLayoutItem *item = nil;
+	
+	while ((item = [e nextObject]) != nil)
+	{
+		int itemIndex = [itemGroupView indexOfItem: item];
+		
+		if ([selection containsIndex: itemIndex] && [item isMetaLayoutItem])
+		{
+			ETLayoutItem *inspectedItem = (ETLayoutItem *)[item representedObject];
+		
+			if ([inspectedItem isKindOfClass: [ETLayoutItemGroup class]])
+			{
+				if ([inspectedItem isStacked])
+				{
+					[inspectedItem stack];
+				}
+				else
+				{
+					[inspectedItem unstack];
+				}
+			}
+		}
+	}
 }
 
 @end

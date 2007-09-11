@@ -161,7 +161,8 @@
 {
 	NSString *desc = [super description];
 	
-	desc = [@"<" stringByAppendingFormat: @"%@ selected:%d>", desc, [self isSelected]];
+	desc = [@"<" stringByAppendingFormat: @"%@ id: %@, selected:%d>", 
+		desc, [self identifier], [self isSelected]];
 	
 	return desc;
 }
@@ -219,6 +220,24 @@
 		ETLog(@"WARNING: Found no ancestor display view by ending lookup on %@", self);
 		return nil;
 	}
+}
+
+- (NSIndexPath *) indexPathFromItem: (ETLayoutItem *)item
+{
+	NSIndexPath *indexPath = nil;
+	
+	if ([self parentLayoutItem] != nil && (item == nil || [self isEqual: item] == NO))
+	{
+		indexPath = [[self parentLayoutItem] indexPathFromItem: item];
+		indexPath = [indexPath indexPathByAddingIndex: 
+			[(ETLayoutItemGroup *)[self parentLayoutItem] indexOfItem: self]];
+	}
+	else
+	{
+		indexPath = AUTORELEASE([[NSIndexPath alloc] init]);
+	}
+	
+	return indexPath;
 }
 
 /** Returns an index path relative to the receiver by traversing our layout 
