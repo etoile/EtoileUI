@@ -54,7 +54,10 @@
 /*+ (BOOL) isEditingUI;
 - (BOOL) isEditingUI;*/
 
+- (id) initWithFrame: (NSRect)rect layoutItem: (ETLayoutItem *)item;
+
 - (ETLayoutItem *) layoutItem;
+- (void) setLayoutItem: (ETLayoutItem *)item;
 
 - (void) setRenderer: (id)renderer;
 - (id) renderer;

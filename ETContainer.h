@@ -63,13 +63,8 @@
 {
 	IBOutlet NSScrollView *_scrollView;
 
-	/* Stores items when no source is used. May stores layers when no source is 
-	   used, this is not yet decided. */
-	NSMutableArray *_layoutItems;
-	//ETLayout *_containerLayout;
 	NSView *_displayView;
 	BOOL _flipped;
-	BOOL _autolayout;
 	
 	// NOTE: path ivar may move to ETLayoutItem later, it could make more sense
 	// in this way. Then we would have a method -owner or -layoutItemOwner on
@@ -95,22 +90,25 @@
 	BOOL _dropAllowed;
 	/* Insertion indicator to erase on next mouse move event in a drag */
 	NSRect _prevInsertionIndicatorRect; 
-
-	/* Used by ETLayout to know which items are displayed whether the 
-	   container uses a source or simple provides items directly. 
-	   Read -cacheLayoutItems: documentation to know how modify the cache 
-	   without corrupting it. */
-	NSMutableArray *_layoutItemCache;
 	
 	id <ETInspector> _inspector;
 }
 
-- (id) initWithFrame: (NSRect)rect layoutItem: (ETLayoutItemGroup *)item;
-
 - (ETLayoutItem *) layoutItem;
+
+/* Basic Accessors */
 
 - (NSString *) representedPath;
 - (void) setRepresentedPath: (NSString *)path;
+- (id) source;
+- (void) setSource: (id)source;
+- (id) delegate;
+- (void) setDelegate: (id)delegate;
+
+- (BOOL) isFlipped;
+- (void) setFlipped: (BOOL)flag;
+
+/* Layout */
 
 - (BOOL) isAutolayout;
 - (void) setAutolayout: (BOOL)flag;
@@ -122,14 +120,11 @@
 
 - (NSView *) displayView;
 
-- (id) source;
-- (void) setSource: (id)source;
+/* - (ETLayoutAlignment) layoutAlignment;
+- (void) setLayoutAlignment: (ETLayoutAlignment)alignment;
 
-- (id) delegate;
-- (void) setDelegate: (id)delegate;
-
-- (BOOL) isFlipped;
-- (void) setFlipped: (BOOL)flag;
+- (ETLayoutOverflowStyle) overflowStyle;
+- (void) setOverflowStyle: (ETLayoutOverflowStyle); */
 
 /* Inspecting */
 
@@ -149,17 +144,8 @@
 - (void) setHasHorizontalScroller: (BOOL)scroll;
 - (NSScrollView *) scrollView;
 - (void) setScrollView: (NSScrollView *)scrollView;
-
-/*
-- (ETLayoutAlignment) layoutAlignment;
-- (void) setLayoutAlignment: (ETLayoutAlignment)alignment;
-
-- (ETLayoutOverflowStyle) overflowStyle;
-- (void) setOverflowStyle: (ETLayoutOverflowStyle);
-*/
-
-/* Primary methods to interact with layout item and container
-   NOTE: Throw an exception when a source is used */
+   
+/* Layout Item Tree */
 
 - (void) addItem: (ETLayoutItem *)item;
 - (void) insertItem: (ETLayoutItem *)item atIndex: (int)index;
@@ -171,15 +157,6 @@
 - (void) addItems: (NSArray *)items;
 - (void) removeItems: (NSArray *)items;
 - (void) removeAllItems;
-
-/*- (void) addView: (NSView *)view withIdentifier: (NSString *)identifier;
-- (void) removeViewForIdentifier:(NSString *)identifier;
-- (NSView *) viewForIdentifier: (NSString *)identifier;*/
-
-// Private use
-- (void) setDisplayView: (NSView *)view;
-- (BOOL) hasScrollView;
-- (void) setHasScrollView: (BOOL)scroll;
 
 /* Selection */
 
@@ -215,14 +192,6 @@
 /* Groups and Stacks */
 
 - (void) stack: (id)sender;
-
-/*- (ETLayoutGroupItem *) groupAllItems;
-- (ETLayoutGroupItem *) groupItems: (NSArray *)items;
-- (ETLayoutGroupItem *) ungroupItems: (ETLayoutGroupItem *)itemGroup;*/
-
-// NOTE: Not sure it is worth to have these methods since we can stack a group
-// by using ETLayoutGroupItem API
-
 
 /* Item scaling */
 

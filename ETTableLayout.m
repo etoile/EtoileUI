@@ -43,9 +43,6 @@
 
 #define ETLog NSLog
 
-@interface ETContainer (PackageVisibility)
-- (NSArray *) layoutItemCache;
-@end
 
 /* Private Extensions */
 
@@ -279,7 +276,7 @@
 - (void) tableView: (NSTableView *)tv willDisplayCell: (id)cell
     forTableColumn: (NSTableColumn *)col row: (int)row
 {
-	ETLayoutItem *item = [[[self container] layoutItemCache] objectAtIndex: row];
+	ETLayoutItem *item = [[[self container] items] objectAtIndex: row];
 	NSString *colIdentifier = [col identifier];
 	id delegate = [[self container] delegate];
 
@@ -296,7 +293,7 @@
 
 - (int) numberOfRowsInTableView: (NSTableView *)tv
 {
-	NSArray *layoutItems = [[self container] layoutItemCache];
+	NSArray *layoutItems = [[self container] items];
 	
 	//NSLog(@"Returns %d as number of items in table view %@", [layoutItems count], tv);
 	
@@ -305,7 +302,7 @@
 
 - (id) tableView: (NSTableView *)tv objectValueForTableColumn: (NSTableColumn *)column row: (int)rowIndex
 {
-	NSArray *layoutItems = [[self container] layoutItemCache];
+	NSArray *layoutItems = [[self container] items];
 	ETLayoutItem *item = [layoutItems objectAtIndex: rowIndex];
 	
 	//NSLog(@"Returns %@ as object value in table view %@", [item valueForProperty: [column identifier]], tv);
@@ -349,7 +346,7 @@
 - (ETLayoutItem *) clickedItem
 {
 	NSTableView *tv = [(NSScrollView *)_displayViewPrototype documentView];
-	NSArray *layoutItems = [[self container] layoutItemCache];
+	NSArray *layoutItems = [[self container] items];
 	ETLayoutItem *item = [layoutItems objectAtIndex: [tv clickedRow]];
 	
 	return item;

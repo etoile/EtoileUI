@@ -298,8 +298,8 @@
 		080E96DDFE201D6D7F000001 /* Classes */ = {
 			isa = PBXGroup;
 			children = (
-				60C0A3DD0C71D6FB00A4458D /* NSIndexSet+Etoile.h */,
 				60C0A3DE0C71D6FB00A4458D /* NSIndexSet+Etoile.m */,
+				60C0A3DD0C71D6FB00A4458D /* NSIndexSet+Etoile.h */,
 				609F463C0B414C0A00AD2209 /* ETContainer.h */,
 				609F463D0B414C0A00AD2209 /* ETContainer.m */,
 				609F46590B41641400AD2209 /* ETLayout.h */,

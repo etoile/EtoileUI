@@ -117,7 +117,7 @@
 
 - (void) doubleClickInPropertyView: (id)sender
 {
-	ETLayoutItem *item = [[propertyView layoutItemCache] objectAtIndex: [propertyView selectionIndex]];
+	ETLayoutItem *item = [[propertyView items] objectAtIndex: [propertyView selectionIndex]];
 	
 	[[[item inspector] window] makeKeyAndOrderFront: self];
 }
@@ -232,7 +232,7 @@
 	if (selection != NSNotFound)
 	{
 		// FIXME: Don't access layout item cache here. May be add -selectedItems?
-		ETLayoutItem *item = [[itemGroupView layoutItemCache] objectAtIndex: selection];
+		ETLayoutItem *item = [[itemGroupView items] objectAtIndex: selection];
 		
 		NSAssert([item properties] != nil, @"Represented object of a layout item should never be nil");
 		#if 1
@@ -255,7 +255,7 @@
 
 - (ETLayoutItem *) itemAtIndex: (int)index inPropertyView: (ETContainer *)container
 {
-	ETLayoutItem *item = [[itemGroupView layoutItemCache] objectAtIndex: [itemGroupView selectionIndex]];
+	ETLayoutItem *item = [[itemGroupView items] objectAtIndex: [itemGroupView selectionIndex]];
 	ETLayoutItem *propertyItem = [[ETLayoutItem alloc] init];
 	
 #if 1
@@ -344,7 +344,7 @@
 			NSLog(@"Unsupported layout or unknown popup menu selection");
 	}
 	
-	ETLayoutItem *representedItem = [[itemGroupView layoutItemCache] objectAtIndex: 0];
+	ETLayoutItem *representedItem = [[itemGroupView items] objectAtIndex: 0];
 	
 	representedItem = (ETLayoutItem *)[representedItem representedObject];
 	
@@ -593,7 +593,7 @@
 
 - (void) doubleClickInPropertyView: (id)sender
 {
-	ETLayoutItem *item = [[[self container] layoutItemCache] objectAtIndex: [propertyView selectionIndex]];
+	ETLayoutItem *item = [[[self container] items] objectAtIndex: [propertyView selectionIndex]];
 	
 	[[[item inspector] window] makeKeyAndOrderFront: self];
 }

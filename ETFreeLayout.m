@@ -79,7 +79,7 @@
 	
 	// TODO: May be worth to optimize by computing set intersection of visible and unvisible layout items
 	// NSLog(@"Remove views %@ of next layout items to be displayed from their superview", itemViews);
-	[[self container] setVisibleItems: [NSArray array]];
+	[[self layoutContext] setVisibleItems: [NSArray array]];
 	
 	/* Adjust container size when it is embedded in a scroll view */
 	if ([[self container] isScrollViewShown])
@@ -97,7 +97,7 @@
 	
 	NSMutableArray *visibleItems = items;
 	
-	[[self container] setVisibleItems: visibleItems];
+	[[self layoutContext] setVisibleItems: visibleItems];
 	
 	_isLayouting = NO;	
 }

@@ -36,20 +36,29 @@
 #import <EtoileUI/ETLayoutItem.h>
 #import <EtoileUI/GNUstep.h>
 
-@interface ETView (SubclassVisibility)
-- (void) setLayoutItem: (ETLayoutItem *)item;
-@end
-
 
 @implementation ETView
 
 - (id) initWithFrame: (NSRect)frame
 {
+	return [self initWithFrame: frame layoutItem: nil];
+}
+
+/* <init /> */
+- (id) initWithFrame: (NSRect)frame layoutItem: (ETLayoutItem *)item
+{
 	self = [super initWithFrame: frame];
 	
 	if (self != nil)
 	{
-		_layoutItem = [[ETLayoutItem alloc] initWithView: self];
+		if (item != nil)
+		{
+			[self setLayoutItem: item];
+		}
+		else
+		{
+			_layoutItem = [[ETLayoutItem alloc] initWithView: self];
+		}
 	}
 	
 	return self;
@@ -63,17 +72,30 @@
 	[super dealloc];
 }
 
+/** Returns the layout item representing the receiver in the layout item 
+	tree. 
+	Never returns nil. */
 - (ETLayoutItem *) layoutItem
 {
+	NSAssert1(_layoutItem != nil, @"Layout item of %@ must never be nil", self);
 	return _layoutItem;
 }
 
-/* WARNING: This method must be only called by subclasses. If you call in other
-   cases, the layout item tree would be messed and following that anything can 
-   become weird in term of UI elements (the application may even crash). */
+/** Sets the layout item representing the receiver view in the layout item
+	tree. When the layout item has an ancestor layout item which represents a
+	view, then the receiver is added as a subview to this view. So by binding 
+	a new layout item to a view, you may move the view to a different place in
+	the view hierarchy.
+	Throws an exception when item parameter is nil. */
 - (void) setLayoutItem: (ETLayoutItem *)item
 {
+	if (item == nil)
+	{
+		[NSException raise: NSInvalidArgumentException format: @"For ETView, "
+			@"-setLayoutItem: parameter %@ must be never be nil", item];
+	}
 	ASSIGN(_layoutItem, item);
+	[_layoutItem setView: self];
 }
 
 

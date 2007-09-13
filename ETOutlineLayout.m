@@ -42,9 +42,6 @@
 #import <EtoileUI/NSView+Etoile.h>
 #import <EtoileUI/GNUstep.h>
 
-@interface ETContainer (PackageVisibility)
-- (NSArray *) layoutItemCache;
-@end
 
 @implementation ETOutlineLayout
 
@@ -95,7 +92,7 @@
 	
 	if (item == nil)
 	{
-		childLayoutItems = [container layoutItemCache];
+		childLayoutItems = [container items];
 		
 		return [childLayoutItems count];
 	}
@@ -130,7 +127,7 @@
 	
 	if (item == nil) /* Root */
 	{
-		childLayoutItems = [container layoutItemCache];
+		childLayoutItems = [container items];
 		childItem = [childLayoutItems objectAtIndex: rowIndex];
 	}
 	else if ([item isKindOfClass: [ETLayoutItemGroup class]]) /* Node */

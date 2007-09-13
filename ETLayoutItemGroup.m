@@ -752,7 +752,6 @@
 			NSRect stackFrame = ETMakeRect(NSZeroPoint, [ETLayoutItemGroup stackSize]);
 			ETContainer *container = [[ETContainer alloc] 
 				initWithFrame: stackFrame layoutItem: self];
-			[self setView: AUTORELEASE(container)];
 		}
 		[[self container] setItemScaleFactor: 0.7];
 		[self setSize: [ETLayoutItemGroup stackSize]];
