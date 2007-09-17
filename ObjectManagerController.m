@@ -35,7 +35,7 @@ static NSFileManager *objectManager = nil;
 	NSString *testPath = nil;
 	NSString *fixedPath = nil;
 	
-	testPath = @"/2";;
+	testPath = @"/2";
 	fixedPath = [self textualPathForMixedPath: testPath];
 	NSLog(@"Mixed path test: %@ -> %@", testPath, fixedPath);
 	testPath = @"/Developer/3";
@@ -131,12 +131,12 @@ static NSFileManager *objectManager = nil;
 {
 	// NOTE: 'sender' isn't always ETContainer instance. For ETTableLayout it 
 	// is the NSTableView instance in use.
-	return [self moveToItem: [viewContainer clickedItem]];
+	[self moveToItem: [viewContainer clickedItem]];
 }
 
 - (void) doubleClickInPathContainer: (id)sender
 {
-	return [self moveToItem: [pathContainer clickedItem]];
+	[self moveToItem: [pathContainer clickedItem]];
 }
 
 - (void) moveToItem: (ETLayoutItem *)item
@@ -228,13 +228,21 @@ static NSFileManager *objectManager = nil;
 
 /* Tree protocol used by TreeContainer */
 
-- (int) numberOfItemsAtPath: (NSString *)newPath inContainer: (ETContainer *)container
+- (int) container: (ETContainer *)container numberOfItemsAtPath: (NSIndexPath *)indexPath
 {
-	NSString *textualPath = [self textualPathForMixedPath: newPath];
+	//NSString *textualPath = [self textualPathForMixedPath: newPath];
+	/* Next line is equal to [[[container layoutItem] representedPath] 
+	   stringByAppendingPath: [[container layoutItem] pathForIndexPath: indexPath]]; */
+	//NSString *subpath = [[container layoutItem] pathForIndexPath: indexPath];
+	NSString *subpath = [indexPath stringByJoiningIndexPathWithSeparator: @"/"];
+	NSString *filePath = [[[container layoutItem] representedPath] stringByAppendingPathComponent: subpath];
+	
+	/* Standardize path by replacing indexes by file names */
+	filePath = [self textualPathForMixedPath: filePath];
 	
 	if ([container isEqual: viewContainer]) /* Browsing Container */
 	{
-		NSArray *fileObjects = [objectManager directoryContentsAtPath: textualPath];
+		NSArray *fileObjects = [objectManager directoryContentsAtPath: filePath];
 
 		//NSLog(@"Returns %d as number of items in container %@", [fileObjects count], container);
 		
@@ -248,14 +256,19 @@ static NSFileManager *objectManager = nil;
 	return 0;
 }
 
-- (ETLayoutItem *) itemAtPath: (NSString *)newPath inContainer: (ETContainer *)container
+- (ETLayoutItem *) container: (ETContainer *)container itemAtPath: (NSIndexPath *)indexPath
 {
 	NSWorkspace *wk = [NSWorkspace sharedWorkspace];
 	ETLayoutItem *fileItem = nil;
 	
 	if ([container isEqual: viewContainer]) /* Browsing Container */
 	{
-		NSString *filePath = [self textualPathForMixedPath: newPath];
+		NSString *subpath = [indexPath stringByJoiningIndexPathWithSeparator: @"/"];
+		NSString *filePath = [[[container layoutItem] representedPath] stringByAppendingPathComponent: subpath];
+	
+		/* Standardize path by replacing indexes by file names */
+		filePath = [self textualPathForMixedPath: filePath];
+		
 		NSDictionary *attributes = [objectManager fileAttributesAtPath: filePath traverseLink: NO];
 		NSImage *icon = [wk iconForFile: filePath];
 		BOOL isDir = NO;
@@ -284,7 +297,7 @@ static NSFileManager *objectManager = nil;
 	}
 	else if ([container isEqual: pathContainer]) /* Path Container */
 	{
-		int flatIndex = [[newPath lastPathComponent] intValue];
+		int flatIndex = [indexPath indexAtPosition: [indexPath length] - 1];
 		return [self itemAtIndex: flatIndex inContainer: container];
 	}
 

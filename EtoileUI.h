@@ -68,5 +68,7 @@
 
 #import <EtoileUI/NSView+Etoile.h>
 #import <EtoileUI/NSIndexSet+Etoile.h>
+#import <EtoileUI/NSIndexPath+Etoile.h>
+#import <EtoileUI/NSString+Etoile.h>
 #import <EtoileUI/NSObject+Etoile.h>
 #import <EtoileUI/GNUstep.h>

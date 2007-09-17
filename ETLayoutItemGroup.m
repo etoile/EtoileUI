@@ -124,6 +124,21 @@
 	[super dealloc];
 }
 
+- (id) copyWithZone: (NSZone *)zone
+{
+	ETLayoutItemGroup *item = (ETLayoutItemGroup *)[(id)super copyWithZone: zone];
+	
+	item->_layoutItems = [[NSMutableArray alloc] init];
+	[item setLayout: [self layout]];
+	[item setStackedItemLayout: [self stackedItemLayout]];
+	[item setUnstackedItemLayout: [self unstackedItemLayout]];
+	item->_isStack = [self isStack];
+	item->_autolayout = [self isAutolayout];
+	item->_usesLayoutBasedFrame = [self usesLayoutBasedFrame];
+			
+	return item;
+}
+
 - (BOOL) isContainer
 {
 	return [[self view] isKindOfClass: [ETContainer class]];
@@ -214,25 +229,44 @@
 	NSArray *pathComponents = [path pathComponents];
 	NSString *pathComp = nil;
 	ETLayoutItem *item = self;
-	int index = [pathComp intValue];
+	int index = -1;
 		
 	for (int position = 0; position < [pathComponents count]; position++)
 	{
-		if ([pathComp isEqual: @"/"] || [pathComp isEqual: @" "])
+		pathComp = [pathComponents objectAtIndex: position];
+	
+		if ([pathComp isEqual: @"/"] || [pathComp isEqual: @""])
 			continue;
 
-		index = [pathComp intValue];
+		item = [item itemAtPath: pathComp];
+		/* If no item can be found by interpreting pathComp as an identifier, 
+		   try to interpret pathComp as a number */
+		if (item == nil)
+		{
+			index = [pathComp intValue];
+			/* -intValue returns 0 when no numeric value is present to be 
+			   converted */
+			if (index == 0 && [pathComp isEqual: @"0"] == NO)
+			{
+				/* path is invalid */
+				return nil;
+			}
+		}
+		else
+		{
+			index = [[item parentLayoutItem] indexOfItem: item];
+		}
 		
-		NSAssert1(index == 0 && [pathComp isEqual: @"0"] == NO,
+		/*NSAssert1(index == 0 && [pathComp isEqual: @"0"] == NO,
 			@"Path components must be indexes for path %@", path);
 		NSAssert2([item isKindOfClass: [ETLayoutItemGroup class]], @"Item %@ "
 			@"must be layout item group to resolve the index path %@", 
-			item, indexPath);	
+			item, indexPath);
 		NSAssert3(index < [[(ETLayoutItemGroup *)item items] count], @"Index "
 			@"%d in path %@ position %d must be inferior to children item "
 			@"number", index + 1, position, path);	
 				
-		item = [(ETLayoutItemGroup *)item itemAtIndex: index];
+		item = [(ETLayoutItemGroup *)item itemAtIndex: index];*/
 		
 		indexPath = [indexPath indexPathByAddingIndex: index];
 	}	
@@ -275,9 +309,12 @@
 	
 	while ((pathComp = [e nextObject]) != nil)
 	{
+		if (pathComp == nil || [pathComp isEqual: @"/"] || [pathComp isEqual: @""])
+			continue;
+	
 		if ([item isKindOfClass: [ETLayoutItemGroup class]])
 		{
-			item = [[(ETLayoutItemGroup *)self items] objectWithValue: pathComp forKey: @"name"];
+			item = [[(ETLayoutItemGroup *)item items] objectWithValue: pathComp forKey: @"name"];
 		}
 		else
 		{
@@ -300,6 +337,13 @@
 {
 	//NSLog(@"Add item in %@", self);
 	
+	if ([_layoutItems containsObject: item])
+	{
+		ETLog(@"WARNING: Trying to add item %@ to the item group %@ it "
+			@"already belongs to", item, self);
+		return;
+	}
+		
 	RETAIN(item);
 	if ([item parentLayoutItem] != nil)
 		[[item parentLayoutItem] removeItem: item];
@@ -313,6 +357,13 @@
 - (void) insertItem: (ETLayoutItem *)item atIndex: (int)index
 {
 	//NSLog(@"Insert item in %@", self);
+	
+	if ([_layoutItems containsObject: item])
+	{
+		ETLog(@"WARNING: Trying to insert item %@ in the item group %@ it "
+			@"already belongs to", item, self);
+		return;
+	}
 	
 	//FIXME: NSMutableIndexSet *indexes = [self selectionIndexes];
 	
@@ -426,7 +477,7 @@
 	NSEnumerator *e = [items objectEnumerator];
 	ETLayoutItem *layoutItem = nil;
 	
-	//NSLog(@"Remove items in %@", self);
+	NSLog(@"Remove items in %@", self);
 	
 	while ((layoutItem = [e nextObject]) != nil)
 	{
@@ -436,7 +487,7 @@
 
 - (void) removeAllItems
 {
-	//NSLog(@"Remove all items in %@", self);
+	NSLog(@"Remove all items in %@", self);
 	
 	// FIXME: [_selection removeAllIndexes];
 	[_layoutItems makeObjectsPerformSelector: @selector(setParentLayoutItem:) withObject: nil];
@@ -995,25 +1046,26 @@
 {
 	NSMutableArray *itemsFromSource = [NSMutableArray array];
 	ETLayoutItem *layoutItem = nil;
-	ETContainer *container = [self ancestorContainerProvidingRepresentedPath];
-	NSIndexPath *indexPathFromSource = [self indexPathFromItem: [container layoutItem]];
-	NSString *path = [[container layoutItem] pathForIndexPath: indexPathFromSource];
+	ETContainer *baseContainer = [self ancestorContainerProvidingRepresentedPath];
+	// NOTE: [self indexPathFromItem: [container layoutItem]] is equal to [[container layoutItem] indexPathFortem: self]
+	NSIndexPath *indexPath = [self indexPathFromItem: [baseContainer layoutItem]];
 	int nbOfItems = 0;
 	
 	//NSLog(@"-itemsFromTreeSource in %@", self);
 	
-	/* Turn the relative path into a represented path */
-	path = [[container representedPath] stringByAppendingPathComponent: path];
-	
-	nbOfItems = [[container source] numberOfItemsAtPath: path inContainer: container];
+	/* Request number of items to the source by passing receiver index path 
+	   expressed in a way relative to the base container */
+	nbOfItems = [[baseContainer source] container: baseContainer numberOfItemsAtPath: indexPath];
 
 	for (int i = 0; i < nbOfItems; i++)
 	{
-		NSString *subpath = nil;
+		NSString *indexSubpath = nil;
 		
-		subpath = [path stringByAppendingPathComponent: [NSString stringWithFormat: @"%d", i]];
-		layoutItem = [[container source] itemAtPath: subpath inContainer: container];
-		NSLog(@"Retrieved item %@ known by path %@", layoutItem, subpath);
+		indexSubpath = [indexPath indexPathByAddingIndex: i];
+		/* Request item to the source by passing item index path expressed in a
+		   way relative to the base container */
+		layoutItem = [[baseContainer source] container: baseContainer itemAtPath: indexSubpath];
+		NSLog(@"Retrieved item %@ known by path %@", layoutItem, indexSubpath);
 		[itemsFromSource addObject: layoutItem];
 	}
 	

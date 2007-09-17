@@ -7,7 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		603D4D0C0C8D1E10003DFD51 /* NSString+Etoile.h in Headers */ = {isa = PBXBuildFile; fileRef = 603D4D0A0C8D1E10003DFD51 /* NSString+Etoile.h */; };
+		603D4D0C0C8D1E10003DFD51 /* NSString+Etoile.h in Headers */ = {isa = PBXBuildFile; fileRef = 603D4D0A0C8D1E10003DFD51 /* NSString+Etoile.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		603D4D0D0C8D1E10003DFD51 /* NSString+Etoile.m in Sources */ = {isa = PBXBuildFile; fileRef = 603D4D0B0C8D1E10003DFD51 /* NSString+Etoile.m */; };
 		6051502D0C1738D600B5E0E5 /* BrowserPrototype.nib in Resources */ = {isa = PBXBuildFile; fileRef = 6051502B0C1738D600B5E0E5 /* BrowserPrototype.nib */; };
 		6051502E0C1738D600B5E0E5 /* BrowserPrototype.nib in Resources */ = {isa = PBXBuildFile; fileRef = 6051502B0C1738D600B5E0E5 /* BrowserPrototype.nib */; };
@@ -33,6 +33,8 @@
 		6087EDF30C824CE100A1263E /* ViewModelPrototype.nib in Resources */ = {isa = PBXBuildFile; fileRef = 6087EDF10C824CE100A1263E /* ViewModelPrototype.nib */; };
 		6087EE9F0C82FC7A00A1263E /* libgnustep-baseadd.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 6087EA940C81AB7900A1263E /* libgnustep-baseadd.dylib */; };
 		6087EEA00C82FC8000A1263E /* libgnustep-baseadd.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 6087EA940C81AB7900A1263E /* libgnustep-baseadd.dylib */; };
+		6097F21F0C99F487003A74CE /* NSIndexPath+Etoile.h in Headers */ = {isa = PBXBuildFile; fileRef = 6097F21D0C99F487003A74CE /* NSIndexPath+Etoile.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		6097F2200C99F487003A74CE /* NSIndexPath+Etoile.m in Sources */ = {isa = PBXBuildFile; fileRef = 6097F21E0C99F487003A74CE /* NSIndexPath+Etoile.m */; };
 		60B144990C11BFB400B4613B /* TablePrototype.nib in Resources */ = {isa = PBXBuildFile; fileRef = 60B144970C11BFB400B4613B /* TablePrototype.nib */; };
 		60B1449A0C11BFB400B4613B /* TablePrototype.nib in Resources */ = {isa = PBXBuildFile; fileRef = 60B144970C11BFB400B4613B /* TablePrototype.nib */; };
 		60B144EC0C11C52900B4613B /* OutlinePrototype.nib in Resources */ = {isa = PBXBuildFile; fileRef = 60B144EA0C11C52900B4613B /* OutlinePrototype.nib */; };
@@ -190,6 +192,8 @@
 		609548CF0C0E300500068CBB /* ETLayoutItemGroup.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ETLayoutItemGroup.m; sourceTree = "<group>"; };
 		609549810C0E462500068CBB /* ETOutlineLayout.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ETOutlineLayout.h; sourceTree = "<group>"; };
 		609549820C0E462500068CBB /* ETOutlineLayout.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ETOutlineLayout.m; sourceTree = "<group>"; };
+		6097F21D0C99F487003A74CE /* NSIndexPath+Etoile.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSIndexPath+Etoile.h"; sourceTree = "<group>"; };
+		6097F21E0C99F487003A74CE /* NSIndexPath+Etoile.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSIndexPath+Etoile.m"; sourceTree = "<group>"; };
 		609F463C0B414C0A00AD2209 /* ETContainer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ETContainer.h; sourceTree = "<group>"; };
 		609F463D0B414C0A00AD2209 /* ETContainer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ETContainer.m; sourceTree = "<group>"; };
 		609F463F0B414C3800AD2209 /* ETFlowView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ETFlowView.h; sourceTree = "<group>"; };
@@ -431,6 +435,8 @@
 		609548D10C0E300F00068CBB /* Layout Items */ = {
 			isa = PBXGroup;
 			children = (
+				6097F21D0C99F487003A74CE /* NSIndexPath+Etoile.h */,
+				6097F21E0C99F487003A74CE /* NSIndexPath+Etoile.m */,
 				603D4D0A0C8D1E10003DFD51 /* NSString+Etoile.h */,
 				603D4D0B0C8D1E10003DFD51 /* NSString+Etoile.m */,
 				609F46A10B42049D00AD2209 /* ETLayoutItem.h */,
@@ -550,6 +556,7 @@
 				60599A760C772129007F225E /* ETInspector.h in Headers */,
 				60599AD90C772EA0007F225E /* ETFreeLayout.h in Headers */,
 				603D4D0C0C8D1E10003DFD51 /* NSString+Etoile.h in Headers */,
+				6097F21F0C99F487003A74CE /* NSIndexPath+Etoile.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -784,6 +791,7 @@
 				60599A770C772129007F225E /* ETInspector.m in Sources */,
 				60599ADA0C772EA0007F225E /* ETFreeLayout.m in Sources */,
 				603D4D0D0C8D1E10003DFD51 /* NSString+Etoile.m in Sources */,
+				6097F2200C99F487003A74CE /* NSIndexPath+Etoile.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

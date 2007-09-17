@@ -230,8 +230,8 @@
 - (ETLayoutItem *) itemAtIndex: (int)index inContainer: (ETContainer *)container;
 
 /* Key and index path retrieval useful with containers displaying tree structure */
-- (int) numberOfItemsAtPath: (NSString *)keyPath inContainer: (ETContainer *)container;
-- (ETLayoutItem *) itemAtPath: (NSString *)keyPath inContainer: (ETContainer *)container;
+- (int) container: (ETContainer *)container numberOfItemsAtPath: (NSIndexPath *)indexPath;
+- (ETLayoutItem *) container: (ETContainer *)container itemAtPath: (NSIndexPath *)indexPath;
 
 /* Coordinates retrieval useful with containers oriented towards graphics and spreadsheet */
 /*- (ETVector *) container: (ETContainer *)container locationForItem: (ETLayoutItem *)item;

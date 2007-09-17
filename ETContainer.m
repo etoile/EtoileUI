@@ -274,20 +274,20 @@ NSString *ETLayoutItemPboardType = @"ETLayoutItemPboardType"; // FIXME: replace 
     Returns 1 when source conform to protocol for flat collections and display of items in a linear style.
 	Returns 2 when source conform to protocol for tree collections and display of items in a hiearchical style.
 	If tree collection part of the protocol is implemented through 
-	-numberOfItemsAtPath:inContainer: , ETContainer by default ignores flat collection
+	-container:numberOfItemsAtPath: , ETContainer by default ignores flat collection
 	part of protocol like -numberOfItemsInContainer. */
 - (int) checkSourceProtocolConformance
 {
-	if ([[self source] respondsToSelector: @selector(numberOfItemsAtPath:inContainer:)])
+	if ([[self source] respondsToSelector: @selector(container:numberOfItemsAtPath:)])
 	{
-		if ([[self source] respondsToSelector: @selector(itemAtPath:inContainer:)])
+		if ([[self source] respondsToSelector: @selector(container:itemAtPath:)])
 		{
 			return 2;
 		}
 		else
 		{
-			NSLog(@"%@ implements numberOfItemsAtPath:inContainer: but misses "
-				  @"itemAtPath:inContainer: as requested by ETContainerSource "
+			NSLog(@"%@ implements container:numberOfItemsAtPath: but misses "
+				  @"container:itemAtPath: as requested by ETContainerSource "
 				  @"protocol.", [self source]);
 			return 0;
 		}
@@ -306,11 +306,10 @@ NSString *ETLayoutItemPboardType = @"ETLayoutItemPboardType"; // FIXME: replace 
 			return 0;
 		}
 	}
-
 	else
 	{
 		NSLog(@"%@ implements neither numberOfItemsInContainer: nor "
-			  @"numberOfItemsAtPath:inContainer: as requested by "
+			  @"container:numberOfItemsAtPath: as requested by "
 			  @"ETContainerSource protocol.", [self source]);
 		return 0;
 	}
@@ -736,12 +735,12 @@ NSString *ETLayoutItemPboardType = @"ETLayoutItemPboardType"; // FIXME: replace 
 
 - (int) indexOfItem: (ETLayoutItem *)item
 {
-	[(ETLayoutItemGroup *)[self layoutItem] indexOfItem: item];
+	return [(ETLayoutItemGroup *)[self layoutItem] indexOfItem: item];
 }
 
 - (NSArray *) items
 {
-	[(ETLayoutItemGroup *)[self layoutItem] items];
+	return [(ETLayoutItemGroup *)[self layoutItem] items];
 }
 
 /** Add a view to layout as a subview of the view container. */

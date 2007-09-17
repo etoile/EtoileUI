@@ -33,7 +33,6 @@
 	THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-
 #import "NSString+Etoile.h"
 
 

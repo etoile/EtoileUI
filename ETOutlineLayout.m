@@ -87,18 +87,26 @@
 
 - (int) outlineView: (NSOutlineView *)outlineView numberOfChildrenOfItem: (id)item
 {
-	NSArray *childLayoutItems = nil;
 	ETContainer *container =  [self container];
+	int nbOfItems = 0;
 	
 	if (item == nil)
 	{
-		childLayoutItems = [container items];
-		
-		return [childLayoutItems count];
+		nbOfItems = [[container items] count];
 	}
-	else if ([item isKindOfClass: [ETLayoutItemGroup class]])
+	else if ([item isKindOfClass: [ETLayoutItemGroup class]]) 
 	{
+		nbOfItems = [[item items] count];
+		
+		/* First time */
+		if (nbOfItems == 0)
+		{
+			[item reload];
+			nbOfItems = [[item items] count];
+		}
+#if 0
 		ETContainer *subcontainer = nil;
+		NSIndexPath *indexPath = nil;
 		
 		if ([(ETLayoutItemGroup *)item isContainer])
 			subcontainer = (ETContainer *)[item view];
@@ -106,53 +114,59 @@
 		//childItem = [[itemContainer source] itemAtPath: childItemPath inContainer: [self container]];
 		if ([subcontainer source] == nil) /* Usual case */
 		{
-			return [[container source] numberOfItemsAtPath: [item representedPath] inContainer: container];
+			indexPath = [item indexPathFromItem: [container layoutItem]];
+			return [[container source] container: container numberOfItemsAtPath: indexPath];
 		}
 		else
 		{
-			return [[subcontainer source] numberOfItemsAtPath: [item representedPath] inContainer: subcontainer];		
+			indexPath = [item indexPathFromItem: [subcontainer layoutItem]];
+			return [[subcontainer source] container: subcontainer numberOfItemsAtPath: indexPath];		
 		}
+#endif
 	}
 	
 	//NSLog(@"Returns %d as number of items in %@", [childLayoutItems count], outlineView);
 	
-	return 0;
+	return nbOfItems;
 }
 
 - (id) outlineView: (NSOutlineView *)outlineView child: (int)rowIndex ofItem: (id)item
 {
-	NSArray *childLayoutItems = nil;
 	ETContainer *container = [self container];
 	ETLayoutItem *childItem = nil; /* Leaf by default */
 	
 	if (item == nil) /* Root */
 	{
-		childLayoutItems = [container items];
-		childItem = [childLayoutItems objectAtIndex: rowIndex];
+		childItem = [[container items] objectAtIndex: rowIndex];
 	}
 	else if ([item isKindOfClass: [ETLayoutItemGroup class]]) /* Node */
-	{		
-		NSString *childPath = nil;
+	{
+		childItem = [item itemAtIndex: rowIndex];
+#if 0
+		NSIndexPath *indexPath = nil;
+		NSIndexPath *indexSubpath = nil;
 		ETContainer *subcontainer = nil;
-		
+
+		/* -view must always return a container for ETLayoutItemGroup */		
 		if ([(ETLayoutItemGroup *)item isContainer])
 			subcontainer = (ETContainer *)[item view];
-
-		/* -view must always return a container for ETLayoutItemGroup */
-		childPath = [[item representedPath] stringByAppendingPathComponent: 
-			[NSString stringWithFormat: @"%d", rowIndex]];
 			
 		/* 'item' path and source have been set in -[ETLayout layoutItemsFromTreeSource] */
 		//childItem = [[itemContainer source] itemAtPath: childItemPath inContainer: [self container]];
 		if ([subcontainer source] == nil) /* Usual case */
 		{
-			childItem = [[container source] itemAtPath: childPath inContainer: container];
+			indexPath = [item indexPathFromItem: [container layoutItem]];
+			indexSubpath = [indexPath indexPathByAddingIndex: rowIndex];
+			childItem = [[container source] container: container itemAtPath: indexSubpath];
 		}
 		else
 		{
-			childItem = [[subcontainer source] itemAtPath: childPath inContainer: subcontainer];
+			indexPath = [item indexPathFromItem: [subcontainer layoutItem]];
+			indexSubpath = [indexPath indexPathByAddingIndex: rowIndex];
+			childItem = [[subcontainer source] container: subcontainer itemAtPath: indexSubpath];
 		}
 		[item addItem: childItem];
+#endif
 	}
 
 	//NSLog(@"Returns % child item in outline view %@", childItem, outlineView);

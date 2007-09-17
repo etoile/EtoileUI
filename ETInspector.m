@@ -46,6 +46,7 @@
 #import <EtoileUI/ETPaneLayout.h>
 #import <EtoileUI/ETFreeLayout.h>
 #import <EtoileUI/NSObject+Etoile.h>
+#import <EtoileUI/NSIndexPath+Etoile.h>
 #import <EtoileUI/GNUstep.h>
 
 @interface ETInspector (EtoilePrivate)
@@ -93,7 +94,7 @@
 
 - (void) awakeFromNib
 {
-	[itemGroupView setLayout: AUTORELEASE([[ETTableLayout alloc] init])];
+	[itemGroupView setLayout: AUTORELEASE([[ETOutlineLayout alloc] init])];
 	[itemGroupView setSource: self];
 	[itemGroupView setDelegate: self];
 	[itemGroupView setDoubleAction: @selector(doubleClickInItemGroupView:)];
@@ -122,42 +123,46 @@
 	[[[item inspector] window] makeKeyAndOrderFront: self];
 }
 
-#if 0
-- (int) numberOfItemsAtPath: (NSString *)keyPath inContainer: (ETContainer *)container
+- (int) container: (ETContainer *)container numberOfItemsAtPath: (NSIndexPath *)indexPath 
 {
 	int nbOfItems = 0;
 
-	NSAssert(keyPath != nil, @"Key path %@ passed to "
+	NSAssert(indexPath != nil, @"Index path %@ passed to "
 		@"data source must not be nil");	
-	NSAssert1([keyPath characterAtIndex: 0] == '/', @"First character of key "
-		@"path %@ passed to data source must be /", keyPath);
+	/*NSAssert1([keyPath characterAtIndex: 0] == '/', @"First character of key "
+		@"path %@ passed to data source must be /", keyPath);*/
 	
-	if ([keyPath isEqual: @"/"])
+	if ([indexPath length] == 0)
 	{
 		nbOfItems = [[self inspectedItems] count];
 	}
 	else
 	{
-		NSString *pathComp = [keyPath firstPathComponent];
-		NSString *subpath = [keyPath stringByDeletingFirstPathComponent];
-		int index = [pathComp intValue];
+		unsigned int index = [indexPath firstIndex];
+		NSIndexPath *indexSubpath = [indexPath indexPathByRemovingFirstIndex];
 		
-		NSAssert1(index == 0 && [pathComp isEqual: @"0"] == NO,
-			@"Path components must be indexes for key path %@", keyPath);
-		NSAssert3(index < [[self inspectedItems] count], @"Index %d in key "
-			@"path %@ position %d must be inferior to inspected item number", 
-			index, 0, keyPath);
+		/*NSAssert1(index == 0 && [pathComp isEqual: @"0"] == NO,
+			@"Path components must be indexes for key path %@", keyPath);*/
+		NSAssert2(index < [[self inspectedItems] count], @"First index %d in "
+			@"index path %@ must be inferior to inspected item number", 
+			index, indexPath);
 	
-		ETLayoutItem *item = [[[self inspectedItems] objectAtIndex: index] 
-			layoutItemAtPath: subpath];
+		ETLayoutItem *item = [[self inspectedItems] objectAtIndex: index];
+		
+		NSAssert1([item isKindOfClass: [ETLayoutItemGroup class]], @"For "
+			@"-numberOfItemsAtPath:, path %@ must reference an instance of "
+			@"ETLayoutItemGroup kind", indexPath);
+		
+		if ([indexSubpath length] > 0)
+			item = [(ETLayoutItemGroup *)item itemAtIndexPath: indexSubpath];
 		
 		if (item != nil)
 		{
-			nbOfItems = [[item items] count];
+			nbOfItems = [[(ETLayoutItemGroup *)item items] count];
 		}
 		else
 		{
-			ETLog(@"WARNING: Found no item at subpath %@ for inspector %@", subpath, self);
+			ETLog(@"WARNING: Found no item at subpath %@ for inspector %@", indexSubpath, self);
 		}
 	}
 	
@@ -166,11 +171,40 @@
 	return nbOfItems;
 }
 
-- (ETLayoutItem *) itemAtPath: (NSString *)keyPath inContainer: (ETContainer *)container
+- (ETLayoutItem *) container: (ETContainer *)container itemAtPath: (NSIndexPath *)indexPath
 {
-	return [
+	unsigned int index = [indexPath firstIndex];
+	NSIndexPath *indexSubpath = [indexPath indexPathByRemovingFirstIndex];
+	
+	/*NSAssert1(index == 0 && [pathComp isEqual: @"0"] == NO,
+		@"Path components must be indexes for key path %@", keyPath);*/
+	
+	NSAssert3(index < [[self inspectedItems] count], @"Index %d in key "
+		@"path %@ position %d must be inferior to inspected item number", 
+		index, 0, indexPath);
+
+	ETLayoutItem *item = [[self inspectedItems] objectAtIndex: index];
+	
+	if ([indexSubpath length] > 0)
+		item = [item itemAtIndexPath: indexSubpath];
+	if (item == nil)
+		ETLog(@"WARNING: Found no item at subpath %@ for inspector %@", indexSubpath, self);
+
+	/* Create a meta layout item */
+	if ([item isKindOfClass: [ETLayoutItemGroup class]])
+	{
+		item = [ETLayoutItemGroup layoutItemOfLayoutItem: item];
+	}
+	else
+	{
+		item = [ETLayoutItem layoutItemOfLayoutItem: item];
+	}
+	
+	ETLog(@"Returns item %@ at path %@ in %@", item, indexSubpath, container);
+
+	return item;
 }
-#endif
+
 - (int) numberOfItemsInContainer: (ETContainer *)container
 {
 	int nbOfItems = 0;

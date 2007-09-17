@@ -112,6 +112,7 @@
     
     if (self != nil)
     {
+		_parentLayoutItem = nil;
 		[self setView: view];
 		[self setVisible: NO];
 		[self setStyleRenderer: AUTORELEASE([[ETSelection alloc] init])];
@@ -141,11 +142,11 @@
 
 - (id) copyWithZone: (NSZone *)zone
 {
-	ETLayoutItem *item = [[ETLayoutItem alloc] initWithView: nil 
+	ETLayoutItem *item = [[[self class] alloc] initWithView: nil 
 	                                                  value: [self value] 
 										  representedObject: [self representedObject]];
 										  
-	if ([[self view] respondsToSelector: @selector(copyWithZone)])
+	if ([[self view] respondsToSelector: @selector(copyWithZone:)])
 	{
 		[item setView: [[self view] copy]];
 	}

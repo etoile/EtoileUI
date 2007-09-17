@@ -1,13 +1,12 @@
-/*  <title>ETRenderer</title>
-
-	ETRenderer.m
+/*
+	NSIndexPath+Etoile.h
 	
-	<abstract>Description forthcoming.</abstract>
+	Description forthcoming.
  
 	Copyright (C) 2007 Quentin Mathe
  
 	Author:  Quentin Mathe <qmathe@club-internet.fr>
-	Date:  July 2007
+	Date:  September 2007
  
 	Redistribution and use in source and binary forms, with or without
 	modification, are permitted provided that the following conditions are met:
@@ -33,38 +32,49 @@
 	ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
 	THE POSSIBILITY OF SUCH DAMAGE.
  */
+ 
+#import "NSIndexPath+Etoile.h"
 
-#import "ETRenderer.h"
 
-/* 
-   ETComponent : ETFilter
-   ETRenderer : ETFilter
+@implementation NSIndexPath (Etoile)
 
-   ETEtoileUIRender: ETRenderer
-   ETMetaRender : ETRenderer
-   SSWebRender (Render as Seaside components)
-   ETPropertyListRender
-   ETDocumentRender : ETPropertyListRender
-   Probably better to have ETDocumentRender not a subclass of ETPropertyListRender
-   but rather the first element of a render chain where ETPropertyListRender is
-   the second one. ETDocumentRender would eliminate all nodes which are children 
-   document parts and produces a document part tree it pass to ETPropertyListRender.
-   ETHTMLRender
-   ETPDFRender 
-   
-   ETStyle : ETRenderer
-   ETBrush : ETStyle (or ETRenderer don't yet know)
-*/
-
-/* [style renderContentOn: webRender]
-
-- renderContentOn: 
+- (unsigned int) firstIndex
 {
-	webTable = [webRender styleForIdentifier: kTableLayout]
-	
-	[web render: inputValue]; // input values or context object
-} */
+	return [self indexAtPosition: 0];
+}
 
-@implementation ETRenderer
+- (unsigned int) lastIndex
+{
+	return [self indexAtPosition: [self length] - 1];
+}
+
+- (NSIndexPath *) indexPathByRemovingFirstIndex
+{
+	/*unsigned int *indexes = NSZoneMalloc(NSDefaultMallocZone(), sizeof(unsigned int) * [self length]);
+	unsigned int *buffer = NSZoneMalloc(NSDefaultMallocZone(), sizeof(unsigned int) * ([self length] - 1));*/
+	unsigned int *indexes = calloc(sizeof(unsigned int), [self length]);
+	unsigned int *buffer = calloc(sizeof(unsigned int), [self length] - 1);
+	
+	[self getIndexes: indexes];
+	buffer = memcpy(buffer, &indexes[1], sizeof(unsigned int) * ([self length] -1));
+	//NSZoneFree(NSDefaultMallocZone(), indexes);
+	free(indexes);
+	
+	return [NSIndexPath indexPathWithIndexes: buffer length: [self length] - 1];
+}
+
+- (NSString *) stringByJoiningIndexPathWithSeparator: (NSString *)separator
+{
+	NSString *path = @"/";
+	int indexCount = [self length];
+	
+	for (int i = 0; i < indexCount; i++)
+	{
+		path = [path stringByAppendingPathComponent: 
+			[NSString stringWithFormat: @"%d", [self indexAtPosition: i]]];
+	}
+	
+	return path;
+}
 
 @end

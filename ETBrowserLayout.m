@@ -185,34 +185,45 @@
 - (int) browser: (NSBrowser *)sender numberOfRowsInColumn: (int)column
 {
 	NSString *path = [sender pathToColumn: column];
-	ETContainer *container = [self container];
-	int count = 0;
+	ETLayoutItemGroup *item = nil;
+	int nbOfItems = 0;
 	
 	if (path == nil || [path isEqual: @""])
 		path = @"/";
+
+	item = [[[self container] layoutItem] itemAtPath: path];
+	NSAssert(item != nil, @"Parent item must never be nil in -browser:numberOfRowsInColumn:");
+	NSAssert([item isKindOfClass: [ETLayoutItemGroup class]], @"Parent item "
+		@"must always be of ETLayoutItemGroup class kind");
 	
-	path = [[[container representedPath] stringByAppendingPathComponent: path] stringByStandardizingPath];
-		
-	count = [[container source] numberOfItemsAtPath: path inContainer: container];
+	nbOfItems = [[item items] count];	
+	/* First time */
+	if (nbOfItems == 0)
+	{
+		[item reload];
+		nbOfItems = [[item items] count];	
+	}
 	
-	//NSLog(@"Returns %d as number of items in browser view %@", count, sender);
+	//NSLog(@"Returns %d as number of items in browser view %@", nbOfItems, sender);
 	
-	return count;
+	return nbOfItems;
 }
 
 #if 0
 - (void) browser:(NSBrowser *)sender createRowsForColumn: (int)column inMatrix: (NSMatrix *)matrix
 {
 	NSString *path = [sender pathToColumn: column];
+	NSIndexPath *indexPath = nil;
 	ETContainer *container = [self container];
 	int count = 0;
 	
 	if (path == nil || [path isEqual: @""])
 		path = @"/";
 	
-	path = [[[container representedPath] stringByAppendingPathComponent: path] stringByStandardizingPath];
-		
-	count = [[container source] numberOfItemsAtPath: path inContainer: container];
+	indexPath = [[container layoutItem] indexPathForPath: path];
+	NSAssert(indexPath != nil, @"Index path must never be nil in -browser:numberOfRowsInColumn:");
+	
+	count = [[container source] container: container numberOfItemsAtPath: indexPath];
 	
 	NSLog(@"Returns %d as number of items in browser view %@", count, sender);
 	
@@ -239,18 +250,19 @@
 - (void) browser: (NSBrowser *)sender willDisplayCell: (id)cell atRow: (int)row column: (int)column
 {
 	NSString *path = [sender pathToColumn: column];
-	ETLayoutItem *item = nil;
-	ETContainer *container = [self container];
+	ETLayoutItemGroup *item = nil;
+	ETLayoutItem *childItem = nil;
 	
 	if (path == nil || [path isEqual: @""])
 		path = @"/";
-	
-	path = [[[container representedPath] stringByAppendingPathComponent: path] stringByStandardizingPath];
-	
-	path = [path stringByAppendingPathComponent: [NSString stringWithFormat: @"%d", row]];
-	item = [[container source] itemAtPath: path inContainer: container];
-	
-	if ([item isKindOfClass: [ETLayoutItemGroup class]])
+
+	item = [[[self container] layoutItem] itemAtPath: path];
+	NSAssert(item != nil, @"Parent item must never be nil in -browser:numberOfRowsInColumn:");
+	NSAssert([item isKindOfClass: [ETLayoutItemGroup class]], @"Parent item "
+		@"must always be of ETLayoutItemGroup class kind");
+
+	childItem = [item itemAtIndex: row];
+	if ([childItem isKindOfClass: [ETLayoutItemGroup class]])
 	{
 		[cell setLeaf: NO];
 	}
@@ -261,11 +273,11 @@
 	
 	//NSLog(@"Returns %@ as object value in browser view %@", [item valueForProperty: @"name"], sender);
 	
-	[cell setStringValue: [item valueForProperty: @"name"]];
+	[cell setStringValue: [childItem valueForProperty: @"name"]];
 
 	if ([cell isKindOfClass: [NSBrowserCell class]])
 	{
-		NSImage *icon = [item valueForProperty: @"icon"];
+		NSImage *icon = [childItem valueForProperty: @"icon"];
 		NSSize cellSize = [[sender matrixInColumn: column] cellSize];
 		NSSize updatedIconSize = [icon size];
 		
@@ -289,13 +301,13 @@
 {
 	NSBrowser *browserView = (NSBrowser *)_displayViewPrototype;
 	ETContainer *container = [self container];
-	NSString *path = [container representedPath];
+	NSIndexPath *indexPath = nil;
 	ETLayoutItem *item = nil;
 	
 	//selectedCell selectedColumn pathToColumn: selectedRowInColumn:
 	//int rowIndex = [browserView selectedRowInColumn: [browserView selectedColumn]];
-	path = [[path stringByAppendingPathComponent: [browserView path]] stringByStandardizingPath];
-	item = [[container source] itemAtPath: path inContainer: container];
+	indexPath = [[container layoutItem] indexPathForPath: [browserView path]];
+	item = [[container source] container: container itemAtPath: indexPath];
 	
 	//NSLog(@"-clickedItem in %@ with browser path %@", self, path);
 	

@@ -72,7 +72,7 @@
 	[super setContainer: container];
 	// FIXME: Memorize container selection style and restore it when the layout
 	// is unset.
-	[[self container] setEnablesSubviewHitTest: YES];
+	[[self container] setEnablesHitTest: YES];
 	[[self container] setAllowsMultipleSelection: NO];
 	[[self container] setAllowsEmptySelection: NO];
 	[[NSNotificationCenter defaultCenter] 
