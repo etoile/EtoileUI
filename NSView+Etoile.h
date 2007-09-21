@@ -8,9 +8,17 @@
 
 #import <Foundation/Foundation.h>
 #import <AppKit/AppKit.h>
+#import <EtoileUI/ETCollection.h>
 
 
-@interface NSView (Etoile)
+@interface NSView (Etoile) <ETCollection>
+
+/* Collection Protocol */
+
+- (id) content;
+- (NSArray *) contentArray;
+
+/* Utility Methods */
 
 - (float) height;
 - (float) width;
@@ -22,6 +30,8 @@
 - (void) setY: (float)y;
 
 @end
+
+/* Utility Functions */
 
 NSRect ETMakeRect(NSPoint origin, NSSize size);
 NSRect ETScaleRect(NSRect frame, float factor);

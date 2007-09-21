@@ -1,13 +1,12 @@
 /*
-	EtoileUI.h
+	ETCollection.h
 	
-	Umbrella header for EtoileUI framework.
+	NSObject and collection class additions like a collection protocol.
  
 	Copyright (C) 2007 Quentin Mathe
  
-	Authors:  Quentin Mathe <qmathe@club-internet.fr>
-
-	Date:  July 2007
+	Author:  Quentin Mathe <qmathe@club-internet.fr>
+	Date:  September 2007
  
 	Redistribution and use in source and binary forms, with or without
 	modification, are permitted provided that the following conditions are met:
@@ -33,43 +32,48 @@
 	ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
 	THE POSSIBILITY OF SUCH DAMAGE.
  */
- 
-#import <EtoileUI/CocoaCompatibility.h>
 
-#import <EtoileUI/ETContainer.h>
-#import <EtoileUI/ETLayoutItem.h>
-#import <EtoileUI/ETLayoutItemGroup.h>
-#import <EtoileUI/ETLayer.h>
-#import <EtoileUI/ETLayout.h>
-#import <EtoileUI/ETViewLayoutLine.h>
+#import "ETCollection.h"
 
-#import <EtoileUI/ETFlowLayout.h>
-#import <EtoileUI/ETFlowView.h>
-#import <EtoileUI/ETLineLayout.h>
-#import <EtoileUI/ETLineView.h>
-#import <EtoileUI/ETStackLayout.h>
-#import <EtoileUI/ETStackView.h>
 
-#import <EtoileUI/ETTableLayout.h>
-#import <EtoileUI/ETTableView.h>
-#import <EtoileUI/ETOutlineLayout.h>
-#import <EtoileUI/ETBrowserLayout.h>
-#import <EtoileUI/FSBrowserCell.h>
+@implementation NSArray (ETCollection)
 
-#import <EtoileUI/ETPaneLayout.h>
-//#import <EtoileUI/ETPaneView.h>
-#import <EtoileUI/ETPaneSwitcherLayout.h>
+- (id) content
+{
+	return self;
+}
 
-#import <EtoileUI/ETFreeLayout.h>
+- (NSArray *) contentArray
+{
+	return self;
+}
 
-#import <EtoileUI/ETInspector.h>
+@end
 
-#import <EtoileUI/ETLineLayout.h>
+@implementation NSDictionary (ETCollection)
 
-#import <EtoileUI/NSView+Etoile.h>
-#import <EtoileUI/NSIndexSet+Etoile.h>
-#import <EtoileUI/NSIndexPath+Etoile.h>
-#import <EtoileUI/NSString+Etoile.h>
-#import <EtoileUI/NSObject+Etoile.h>
-#import <EtoileUI/ETCollection.h>
-#import <EtoileUI/GNUstep.h>
+- (id) content
+{
+	return self;
+}
+
+- (NSArray *) contentArray
+{
+	return [self allValues];
+}
+
+@end
+
+@implementation NSSet (ETCollection)
+
+- (id) content
+{
+	return self;
+}
+
+- (NSArray *) contentArray
+{
+	return [self allObjects];
+}
+
+@end

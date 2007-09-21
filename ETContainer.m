@@ -63,7 +63,7 @@ NSString *ETLayoutItemPboardType = @"ETLayoutItemPboardType"; // FIXME: replace 
 @interface ETContainer (Private)
 - (void) syncDisplayViewWithContainer;
 - (NSInvocation *) invocationForSelector: (SEL)selector;
-- (id) sendInvocationToDisplayView: (NSInvocation *)inv;
+- (void) sendInvocationToDisplayView: (NSInvocation *)inv;
 - (BOOL) canUpdateLayout;
 - (BOOL) doesSelectionContainsPoint: (NSPoint)point;
 - (void) fixOwnerIfNeededForItem: (ETLayoutItem *)item;
@@ -341,23 +341,11 @@ NSString *ETLayoutItemPboardType = @"ETLayoutItemPboardType"; // FIXME: replace 
 		
 		inv = RETAIN([self invocationForSelector: @selector(setDoubleAction:)]);
 		[inv setArgument: &doubleAction atIndex: 2];
-		//[self sendInvocationToDisplayView: inv];
-		
-		// FIXME: Hack to work around invocation vanishing when we call -sendInvocationToDisplayView:
-		id enclosedDisplayView = [(NSScrollView *)_displayView documentView];
-		
-		if ([enclosedDisplayView respondsToSelector: [inv selector]]);
-			[inv invokeWithTarget: enclosedDisplayView];
+		[self sendInvocationToDisplayView: inv];
 		
 		inv = RETAIN([self invocationForSelector: @selector(setTarget:)]);
 		[inv setArgument: &target atIndex: 2];
-		//[self sendInvocationToDisplayView: inv];
-		
-		// FIXME: Hack to work around invocation vanishing when we call -sendInvocationToDisplayView:
-		enclosedDisplayView = [(NSScrollView *)_displayView documentView];
-		
-		if ([enclosedDisplayView respondsToSelector: [inv selector]]);
-			[inv invokeWithTarget: enclosedDisplayView];
+		[self sendInvocationToDisplayView: inv];
 		
 		BOOL hasVScroller = [self hasVerticalScroller];
 		BOOL hasHScroller = [self hasHorizontalScroller];
@@ -370,13 +358,11 @@ NSString *ETLayoutItemPboardType = @"ETLayoutItemPboardType"; // FIXME: replace 
 		
 		inv = RETAIN([self invocationForSelector: @selector(setHasHorizontalScroller:)]);
 		[inv setArgument: &hasHScroller atIndex: 2];
-		if ([_displayView respondsToSelector: [inv selector]]);
-			[inv invokeWithTarget: _displayView];
+		[self sendInvocationToDisplayView: inv];
 		
 		inv = RETAIN([self invocationForSelector: @selector(setHasVerticalScroller:)]);
 		[inv setArgument: &hasVScroller atIndex: 2];
-		if ([_displayView respondsToSelector: [inv selector]])
-			[inv invokeWithTarget: _displayView];
+		[self sendInvocationToDisplayView: inv];
 	}
 }
 
@@ -391,28 +377,29 @@ NSString *ETLayoutItemPboardType = @"ETLayoutItemPboardType"; // FIXME: replace 
 	return inv;
 }
 
-- (id) sendInvocationToDisplayView: (NSInvocation *)inv
+- (void) sendInvocationToDisplayView: (NSInvocation *)inv
 {
-	id result = nil;
+	//id result = [[inv methodSignature] methodReturnLength];
 	
 	if ([_displayView respondsToSelector: [inv selector]])
-			[inv invokeWithTarget: _displayView];
-			
-	/* May be the display view is packaged inside a scroll view */
-	if ([_displayView isKindOfClass: [NSScrollView class]])
 	{
+			[inv invokeWithTarget: _displayView];
+	}
+	else if ([_displayView isKindOfClass: [NSScrollView class]])
+	{
+		/* May be the display view is packaged inside a scroll view */
 		id enclosedDisplayView = [(NSScrollView *)_displayView documentView];
 		
 		if ([enclosedDisplayView respondsToSelector: [inv selector]]);
 			[inv invokeWithTarget: enclosedDisplayView];
 	}
 	
-	if (inv != nil)
-		[inv getReturnValue: &result];
+	//if (inv != nil)
+	//	[inv getReturnValue: &result];
 		
 	RELEASE(inv); /* Retained in -syncDisplayViewWithContainer otherwise it gets released too soon */
 	
-	return result;
+	//return result;
 }
 
 /* Inspecting */
@@ -647,7 +634,7 @@ NSString *ETLayoutItemPboardType = @"ETLayoutItemPboardType"; // FIXME: replace 
 		return;
 	if (_displayView == view && (_displayView != nil || view != nil))
 	{
-		NSLog(@"WARNING: Trying to assing a identical display view to container %@", self);
+		NSLog(@"WARNING: Trying to assign an identical display view to container %@", self);
 		return;
 	}
 	

@@ -40,6 +40,7 @@
 #import <EtoileUI/ETLineLayout.h>
 #import <EtoileUI/ETContainer.h>
 #import <EtoileUI/NSView+Etoile.h>
+#import <EtoileUI/ETCollection.h>
 #import <EtoileUI/GNUstep.h>
 
 #define DEFAULT_FRAME NSMakeRect(0, 0, 50, 50)
@@ -129,9 +130,16 @@
 	ETLayoutItemGroup *item = (ETLayoutItemGroup *)[(id)super copyWithZone: zone];
 	
 	item->_layoutItems = [[NSMutableArray alloc] init];
-	[item setLayout: [self layout]];
-	[item setStackedItemLayout: [self stackedItemLayout]];
-	[item setUnstackedItemLayout: [self unstackedItemLayout]];
+	
+	// NOTE: Layout objects must be copied because they support only one layout 
+	// context. If you share a layout like that: 
+	// [item setLayout: [self layout]];
+	// -[ETLayoutItemGroup setLayout:] will set the item copy as the layout 
+	// context replacing the current value of -[[self layout] layoutContext].
+	// This latter value is precisely self.
+	/*[item setLayout: [[self layout] layoutPrototype]];
+	[item setStackedItemLayout: [[self stackedItemLayout] layoutPrototype]];
+	[item setUnstackedItemLayout: [[self unstackedItemLayout] layoutPrototype]];*/
 	item->_isStack = [self isStack];
 	item->_autolayout = [self isAutolayout];
 	item->_usesLayoutBasedFrame = [self usesLayoutBasedFrame];
@@ -517,6 +525,8 @@
 {
 	if (_layout == layout)
 		return;
+
+	//ETLog(@"Modify layout from %@ to %@ in %@", _layout, layout, self);
 	
 	[_layout setLayoutContext: nil];
 	/* Don't forget to remove existing display view if we switch from a layout 
@@ -887,6 +897,18 @@
 - (void) setSelectionIndexPaths: (NSArray *)indexPaths
 {
 	[self applySelectionIndexPaths: [NSMutableArray arrayWithArray: indexPaths]];
+}
+
+/* Collection Protocol */
+
+- (id) content
+{
+	return [self items];
+}
+
+- (NSArray *) contentArray
+{
+	return [self items];
 }
 
 /* ETLayoutingContext */

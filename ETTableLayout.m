@@ -295,7 +295,7 @@
 {
 	NSArray *layoutItems = [[self container] items];
 	
-	//NSLog(@"Returns %d as number of items in table view %@", [layoutItems count], tv);
+	NSLog(@"Returns %d as number of items in table view %@", [layoutItems count], tv);
 	
 	return [layoutItems count];
 }
@@ -303,7 +303,15 @@
 - (id) tableView: (NSTableView *)tv objectValueForTableColumn: (NSTableColumn *)column row: (int)rowIndex
 {
 	NSArray *layoutItems = [[self container] items];
-	ETLayoutItem *item = [layoutItems objectAtIndex: rowIndex];
+	ETLayoutItem *item = nil;
+	
+	if (rowIndex >= [layoutItems count])
+	{
+		ETLog(@"WARNING: Row index %d uncoherent with number of items %d in %@", rowIndex, [layoutItems count], self);
+		return nil;
+	}
+	
+	item = [layoutItems objectAtIndex: rowIndex];
 	
 	//NSLog(@"Returns %@ as object value in table view %@", [item valueForProperty: [column identifier]], tv);
 	

@@ -1,13 +1,12 @@
 /*
-	EtoileUI.h
+	ETCollection.h
 	
-	Umbrella header for EtoileUI framework.
+	NSObject and collection class additions like a collection protocol.
  
 	Copyright (C) 2007 Quentin Mathe
  
-	Authors:  Quentin Mathe <qmathe@club-internet.fr>
-
-	Date:  July 2007
+	Author:  Quentin Mathe <qmathe@club-internet.fr>
+	Date:  September 2007
  
 	Redistribution and use in source and binary forms, with or without
 	modification, are permitted provided that the following conditions are met:
@@ -33,43 +32,42 @@
 	ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
 	THE POSSIBILITY OF SUCH DAMAGE.
  */
- 
-#import <EtoileUI/CocoaCompatibility.h>
 
-#import <EtoileUI/ETContainer.h>
-#import <EtoileUI/ETLayoutItem.h>
-#import <EtoileUI/ETLayoutItemGroup.h>
-#import <EtoileUI/ETLayer.h>
-#import <EtoileUI/ETLayout.h>
-#import <EtoileUI/ETViewLayoutLine.h>
+#import <Foundation/Foundation.h>
+#import <AppKit/AppKit.h>
 
-#import <EtoileUI/ETFlowLayout.h>
-#import <EtoileUI/ETFlowView.h>
-#import <EtoileUI/ETLineLayout.h>
-#import <EtoileUI/ETLineView.h>
-#import <EtoileUI/ETStackLayout.h>
-#import <EtoileUI/ETStackView.h>
+@protocol ETCollection
+/** Returns the underlying data structure object holding the content or self 
+	when the protocol is adopted by a class which is a content data structure 
+	by itself (like NSArray, NSDictionary, NSSet etc.). 
+	Content by its very nature is always a collection of other objects. As 
+	such, content may hold one or no objects (empty collection).
+	When adopted, this method must never return nil. */
+- (id) content;
+/** Returns the content as an NSArray-based collection of objects. 
+	When adopted, this method must never return nil, you should generally 
+	return an empty NSArray instead. */
+- (NSArray *) contentArray;
+@end
 
-#import <EtoileUI/ETTableLayout.h>
-#import <EtoileUI/ETTableView.h>
-#import <EtoileUI/ETOutlineLayout.h>
-#import <EtoileUI/ETBrowserLayout.h>
-#import <EtoileUI/FSBrowserCell.h>
+/* Adopted by the following Foundation classes  */
 
-#import <EtoileUI/ETPaneLayout.h>
-//#import <EtoileUI/ETPaneView.h>
-#import <EtoileUI/ETPaneSwitcherLayout.h>
+@interface NSArray (ETCollection) <ETCollection>
+- (id) content;
+- (NSArray *) contentArray;
+@end
 
-#import <EtoileUI/ETFreeLayout.h>
+@interface NSDictionary (ETCollection) <ETCollection>
+- (id) content;
+- (NSArray *) contentArray;
+@end
 
-#import <EtoileUI/ETInspector.h>
+@interface NSSet (ETCollection) <ETCollection>
+- (id) content;
+- (NSArray *) contentArray;
+@end
 
-#import <EtoileUI/ETLineLayout.h>
-
-#import <EtoileUI/NSView+Etoile.h>
-#import <EtoileUI/NSIndexSet+Etoile.h>
-#import <EtoileUI/NSIndexPath+Etoile.h>
-#import <EtoileUI/NSString+Etoile.h>
-#import <EtoileUI/NSObject+Etoile.h>
-#import <EtoileUI/ETCollection.h>
-#import <EtoileUI/GNUstep.h>
+@interface NSSet (ETCollection) <ETCollection>
+- (id) content;
+- (NSArray *) contentArray;
+@end

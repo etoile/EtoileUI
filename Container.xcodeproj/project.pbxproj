@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		603463AC0C9FBF6A006DFCD1 /* ETCollection.h in Headers */ = {isa = PBXBuildFile; fileRef = 603463AA0C9FBF6A006DFCD1 /* ETCollection.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		603463AD0C9FBF6A006DFCD1 /* ETCollection.m in Sources */ = {isa = PBXBuildFile; fileRef = 603463AB0C9FBF6A006DFCD1 /* ETCollection.m */; };
 		603D4D0C0C8D1E10003DFD51 /* NSString+Etoile.h in Headers */ = {isa = PBXBuildFile; fileRef = 603D4D0A0C8D1E10003DFD51 /* NSString+Etoile.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		603D4D0D0C8D1E10003DFD51 /* NSString+Etoile.m in Sources */ = {isa = PBXBuildFile; fileRef = 603D4D0B0C8D1E10003DFD51 /* NSString+Etoile.m */; };
 		6051502D0C1738D600B5E0E5 /* BrowserPrototype.nib in Resources */ = {isa = PBXBuildFile; fileRef = 6051502B0C1738D600B5E0E5 /* BrowserPrototype.nib */; };
@@ -144,6 +146,8 @@
 		29B97325FDCFA39411CA2CEA /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = /System/Library/Frameworks/Foundation.framework; sourceTree = "<absolute>"; };
 		600EAE280C4C2B830074FA3E /* ETComponent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ETComponent.h; sourceTree = "<group>"; };
 		600EAE290C4C2B830074FA3E /* ETComponent.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ETComponent.m; sourceTree = "<group>"; };
+		603463AA0C9FBF6A006DFCD1 /* ETCollection.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ETCollection.h; sourceTree = "<group>"; };
+		603463AB0C9FBF6A006DFCD1 /* ETCollection.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ETCollection.m; sourceTree = "<group>"; };
 		603D4D0A0C8D1E10003DFD51 /* NSString+Etoile.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSString+Etoile.h"; sourceTree = "<group>"; };
 		603D4D0B0C8D1E10003DFD51 /* NSString+Etoile.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSString+Etoile.m"; sourceTree = "<group>"; };
 		6045610A0C514439006FC975 /* ETFilter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ETFilter.h; sourceTree = "<group>"; };
@@ -389,6 +393,8 @@
 				606B99250C0B134B000AAA85 /* CocoaCompatibility.m */,
 				606481510C7A6CAC0000338D /* NSObject+Etoile.h */,
 				606481520C7A6CAC0000338D /* NSObject+Etoile.m */,
+				603463AA0C9FBF6A006DFCD1 /* ETCollection.h */,
+				603463AB0C9FBF6A006DFCD1 /* ETCollection.m */,
 				29B97316FDCFA39411CA2CEA /* main.m */,
 			);
 			name = "Other Sources";
@@ -557,6 +563,7 @@
 				60599AD90C772EA0007F225E /* ETFreeLayout.h in Headers */,
 				603D4D0C0C8D1E10003DFD51 /* NSString+Etoile.h in Headers */,
 				6097F21F0C99F487003A74CE /* NSIndexPath+Etoile.h in Headers */,
+				603463AC0C9FBF6A006DFCD1 /* ETCollection.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -792,6 +799,7 @@
 				60599ADA0C772EA0007F225E /* ETFreeLayout.m in Sources */,
 				603D4D0D0C8D1E10003DFD51 /* NSString+Etoile.m in Sources */,
 				6097F2200C99F487003A74CE /* NSIndexPath+Etoile.m in Sources */,
+				603463AD0C9FBF6A006DFCD1 /* ETCollection.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

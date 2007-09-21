@@ -42,6 +42,10 @@
 #import <EtoileUI/NSView+Etoile.h>
 #import <EtoileUI/GNUstep.h>
 
+@interface ETTableLayout (PackageVisibility)
+- (void) tableViewSelectionDidChange: (NSNotification *)notif;
+@end
+
 
 @implementation ETOutlineLayout
 
@@ -83,6 +87,18 @@
 - (void) setTreatsGroupsAsStacks: (BOOL)flag
 {
 	_treatsGroupsAsStacks = flag;
+}
+
+- (void) outlineViewSelectionDidChange: (NSNotification *)notif
+{
+	id delegate = [[self container] delegate];
+	
+	[self tableViewSelectionDidChange: notif];
+
+	if ([delegate respondsToSelector: @selector(outlineViewSelectionDidChange:)])
+	{
+		[delegate outlineViewSelectionDidChange: notif];
+	}
 }
 
 - (int) outlineView: (NSOutlineView *)outlineView numberOfChildrenOfItem: (id)item

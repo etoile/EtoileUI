@@ -101,8 +101,12 @@
 @end*/
 
 typedef enum _ETLayoutDisplayMode {
-	ETLayoutDisplayModeView,
-	ETLayoutDisplayModeModel,
+	ETLayoutDisplayModeViewProperties = 1,
+	ETLayoutDisplayModeViewContent = 2,
+	ETLayoutDisplayModeViewObject = 3,
+	ETLayoutDisplayModeModelProperties = 4,
+	ETLayoutDisplayModeModelContent = 5,
+	ETLayoutDisplayModeModelObject = 6
 } ETLayoutDisplayMode;
 
 @interface ETViewModelLayout : ETLayout

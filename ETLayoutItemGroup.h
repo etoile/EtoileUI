@@ -35,13 +35,13 @@
 
 #import <Foundation/Foundation.h>
 #import <AppKit/AppKit.h>
-#import "ETLayoutItem.h"
+#import <EtoileUI/ETLayoutItem.h>
 
 @class ETLayout;
-@protocol ETLayoutingContext;
+@protocol ETLayoutingContext, ETCollection;
 
 
-@interface ETLayoutItemGroup : ETLayoutItem <ETLayoutingContext>
+@interface ETLayoutItemGroup : ETLayoutItem <ETLayoutingContext, ETCollection>
 {
 	NSMutableArray *_layoutItems;
 	ETLayout *_layout;
@@ -138,5 +138,10 @@
 //- (NSArray *) selectedItems;
 //- (NSArray *) selectedItemsIncludingRelatedDescendents;
 //- (NSArray *) selectedItemsIncludingAllDescendents;
+
+/* Collection Protocol */
+
+- (id) content;
+- (NSArray *) contentArray;
 
 @end

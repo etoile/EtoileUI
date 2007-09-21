@@ -107,8 +107,12 @@
 	RETAIN(_displayViewPrototype);
 	[(NSBrowser *)_displayViewPrototype setCellClass: [FSBrowserCell class]];
 	[(NSBrowser *)_displayViewPrototype setCellPrototype: AUTORELEASE([[FSBrowserCell alloc] init])];
+	//[_displayViewPrototype setAction: @selector(click:)];
+	//[_displayViewPrototype setTarget: self];
 	[_displayViewPrototype removeFromSuperview];
 }
+
+/* Layouting */
 
 - (void) renderWithLayoutItems: (NSArray *)items
 {
@@ -149,7 +153,8 @@
 	
 	if ([browserView delegate] == nil)
 		[browserView setDelegate: self];
-		
+	[browserView setAction: @selector(click:)];
+	[browserView setTarget: self];		
 	//[browserView setPathSeparator: @"/"];
 	//[browserView setPath: @"/"]; //[[self container] path]];
 	[browserView loadColumnZero];
@@ -181,6 +186,54 @@
 		}
 	}
 }
+
+/* Selection */
+
+// FIXME: Implements multiple selection support and sets selection by calling
+// -setSelectionIndexPaths:. 
+- (BOOL) browser: (NSBrowser *)sender selectCellWithString: (NSString *)title inColumn: (int)column
+{
+	id delegate = [[self container] delegate];
+	BOOL selected = YES;
+	NSString *path = [[sender pathToColumn: column] stringByAppendingPathComponent: title];
+	ETLayoutItem *item = [(ETLayoutItemGroup *)[[self container] layoutItem] itemAtPath: path];
+	
+	if ([delegate respondsToSelector: @selector(browser:selectCellWithString:inColumn:)])
+	{
+		selected = [delegate browser: sender selectCellWithString: title inColumn: column];
+	}
+	
+	if (selected)
+	{
+		int row = [[self container] indexOfItem: item];
+
+		// NOTE: Not really sure that's the best way to do it		
+		[[self container] setSelectionIndex: row];
+	}
+	
+	return selected;
+}
+
+// FIXME: Implements multiple selection support and sets selection by calling
+// -setSelectionIndexPaths:. 
+// [sender selectedCells]; is probably helpful.
+- (BOOL) browser: (NSBrowser *)sender selectRow: (int)row inColumn: (int)column
+{
+	id delegate = [[self container] delegate];
+	BOOL selected = YES;
+	
+	if ([delegate respondsToSelector: @selector(browser:selectRow:inColumn:)])
+	{
+		selected = [delegate browser: sender selectRow: row inColumn: column];
+	}
+	
+	// NOTE: Not really sure that's the best way to do it
+	[[self container] setSelectionIndex: row];
+	
+	return selected;
+}
+
+/* Data Source */
 
 - (int) browser: (NSBrowser *)sender numberOfRowsInColumn: (int)column
 {
@@ -295,6 +348,18 @@
 			[cell setImage: icon];
 		}
 	}
+}
+
+/* Actions */
+
+/* NSBrowser action */
+- (IBAction) click: (id)sender
+{
+	int row = [sender selectedRowInColumn: [sender selectedColumn]];
+	
+	ETLog(@"-click: row %d and column %d in %@", row, [sender selectedColumn], self);
+	
+	[[self container] setSelectionIndex: row];
 }
 
 - (ETLayoutItem *) clickedItem

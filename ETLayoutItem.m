@@ -480,6 +480,21 @@
 	}
 }
 
+/* Key Value Coding */
+
+- (id) valueForUndefinedKey: (NSString *)key
+{
+	ETLog(@"WARNING: -valueForUndefinedKey: %@ called in %@", key, self);
+	return nil;
+}
+
+- (id) setValue: (id)value forUndefinedKey: (NSString *)key
+{
+	ETLog(@"WARNING: -setValue:forUndefinedKey: %@ called in %@", key, self);
+}
+
+/* Value Property Coding */
+
 /** Returns a value of the model object -representedObject, usually by 
 	calling -valueForProperty: else -valueForKey: with key parameter. By default 
 	the model object is a simple dictionary which gets returned by both this 
@@ -490,7 +505,18 @@
 {
 	id value = nil;
 	
-	if ([_modelObject respondsToSelector: @selector(valueForProperty:)])
+	if ([self isMetaLayoutItem])
+	{
+		/* Try to access the value provided by the root model object which 
+		   is owned by first layout item which isn't a meta layout item */
+		value = [_modelObject valueForProperty: key];
+		/* If the root model object doesn't define this property, it is surely
+		   an ETLayoutItem specific property we can find in the layout item
+		   we represent */
+		if (value == nil)
+			value = [_modelObject valueForKey: key];
+	}	
+	else if ([_modelObject respondsToSelector: @selector(valueForProperty:)])
 	{
 		value = [_modelObject valueForProperty: key];
 	}
@@ -513,15 +539,26 @@
 - (BOOL) setValue: (id)value forProperty: (NSString *)key
 {
 	BOOL result = YES;
-	
-	if ([_modelObject respondsToSelector: @selector(setValue:forProperty:)])
+
+	if ([self isMetaLayoutItem])
+	{
+		[_modelObject setValue: value forKey: key];
+	}	
+	else if ([_modelObject respondsToSelector: @selector(setValue:forProperty:)])
 	{
 		result = [_modelObject setValue: value forProperty: key];
 	}
 	else if ([_modelObject respondsToSelector: @selector(setObject:forKey:)])
 	{
 		/* Useful for dictionary objects */
-		[_modelObject setObject: value forKey:key];
+		if (value != nil)
+		{
+			[_modelObject setObject: value forKey: key];
+		}
+		else
+		{
+			[_modelObject setObject: [NSNull null] forKey: key];
+		}
 	}
 	else
 	{
@@ -541,7 +578,14 @@
 	/* Meta layout item responds to -properties because their represented
 	   object is a layout item. Model objects may implement this method too. 
 	   For example OrganizeKit objects responds to it. */
-	if ([_modelObject respondsToSelector: @selector(properties)])
+	if ([self isMetaLayoutItem])
+	{
+		// FIXME: Add image and value when existing naming conflicts are solved.
+		properties = [NSArray arrayWithObjects: @"identifier", @"name", @"x", 
+			@"y", @"width", @"height", @"view", @"layout", 
+			@"selected", @"visible", nil];
+	}
+	else if ([_modelObject respondsToSelector: @selector(properties)])
 	{
 		properties = (NSArray *)[_modelObject properties];
 	}

@@ -11,6 +11,20 @@
 
 @implementation NSView (Etoile)
 
+/* Collection Protocol */
+
+- (id) content
+{
+	return [self subviews];
+}
+
+- (NSArray *) contentArray
+{
+	return [self subviews];
+}
+
+/* Utility Methods */
+
 - (float) height
 {
 	return [self frame].size.height;
@@ -60,6 +74,8 @@
 }
 
 @end
+
+/* Utility Functions */
 
 NSRect ETMakeRect(NSPoint origin, NSSize size)
 {

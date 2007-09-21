@@ -110,7 +110,8 @@
 	
 	proto->_layoutContext = nil;
 	proto->_delegate = nil;
-	proto->_displayViewPrototype = [_displayViewPrototype copy];
+	// FIXME: Probably replace copy by a fake copy (archive/unarchive)
+	//proto->_displayViewPrototype = [_displayViewPrototype copy];
 	
 	proto->_layoutSize = _layoutSize;
 	proto->_layoutSizeCustomized = _layoutSizeCustomized;
@@ -134,6 +135,8 @@
 	retained the receiver. */
 - (void) setLayoutContext: (id <ETLayoutingContext>)context
 {
+	//ETLog(@"Modify layout context from %@ to %@ in %@", _layoutContext, context, self);
+	
 	// NOTE: Avoids retain cycle by weak referencing the context
 	_layoutContext = context;
 	[[_layoutContext items] makeObjectsPerformSelector: @selector(restoreDefaultFrame)];
@@ -311,11 +314,11 @@
 	
 	/* When the number of layout items is zero and doesn't vary, no layout 
 	   update is necessary */
-	if ([[[self layoutContext] items] count] == 0)
+	/*if ([[[self layoutContext] items] count] == 0 && _nbOfItemCache != [[[self layoutContext] items] count])
 	{
 		_isLayouting = NO;
 		return;
-	}
+	}*/
 	
 	/* Let layout delegate overrides default layout items rendering */
 	// FIXME: This delegate stuff isn't really useful. Remove it or make it
@@ -544,6 +547,20 @@
 }
 
 /* Wrapping Existing View */
+
+/** Returns a layout item when the receiver is an aggregate layout which 
+	doesn't truly layout items but rather wraps a predefined view (aka layout 
+	view) or layout item. By default, returns nil.
+	When a layout is such an aggregate, layout items passed to the receiver are
+	handled by the layout item descendants of -layoutItem. These layout item 
+	descendents are commonly subviews. 
+	See ETUIComponent to understand how an aggregate layout can be wrapped in
+	standalone and self-sufficient component which may act as live filter in 
+	the continous model object flows. */
+- (ETLayoutItem *) layoutItem
+{
+	return nil;
+}
 
 - (void) setDisplayViewPrototype: (NSView *)protoView
 {
