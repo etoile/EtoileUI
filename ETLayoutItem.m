@@ -210,7 +210,7 @@
 - (ETView *) closestAncestorDisplayView
 {
 	if ([self displayView] != nil)
-		return (ETContainer *)[self displayView];
+		return [self displayView];
 
 	if ([self parentLayoutItem] != nil)
 	{
@@ -300,7 +300,7 @@
 	if ([self parentLayoutItem] != nil)
 	{
 		path = [[[self parentLayoutItem] path] 
-			stringByAppendingPath: [self identifier]];
+			stringByAppendingPathComponent: [self identifier]];
 	}
 	
 	return path;
@@ -392,10 +392,10 @@
 	ASSIGN(_value, value);
 	if ([_value isKindOfClass: [NSImage class]])
 	{
-		ETImageStyle *imgStyle = [ETImageStyle styleWithImage: (NSImage *)_value];
+		/*ETImageStyle *imgStyle = [ETImageStyle styleWithImage: (NSImage *)_value];
 		
 		[self setDefaultFrame: ETMakeRect(NSZeroPoint, [_value size])];
-		[self setStyleRenderer: imgStyle];
+		[self setStyleRenderer: imgStyle];*/
 	}
 	else if ([_value isKindOfClass: [NSString class]])
 	{
@@ -488,7 +488,7 @@
 	return nil;
 }
 
-- (id) setValue: (id)value forUndefinedKey: (NSString *)key
+- (void) setValue: (id)value forUndefinedKey: (NSString *)key
 {
 	ETLog(@"WARNING: -setValue:forUndefinedKey: %@ called in %@", key, self);
 }
@@ -607,8 +607,8 @@
 		
 		properties = [NSMutableArray arrayWithObjects: [desc attributeKeys]];
 		// NOTE: Not really sure we should include relationship keys
-		[(NSMutableArray *)properties addObjects: (NSArray *)[desc toManyRelationshipKeys]];
-		[(NSMutableArray *)properties addObjects: (NSArray *)[desc toOneRelationshipKeys]];
+		[(NSMutableArray *)properties addObjectsFromArray: (NSArray *)[desc toManyRelationshipKeys]];
+		[(NSMutableArray *)properties addObjectsFromArray: (NSArray *)[desc toOneRelationshipKeys]];
 	}
 	
 	if (properties != nil && [properties count] == 0)
@@ -627,7 +627,7 @@
 
 }
 
-- (NSView *) displayView
+- (ETView *) displayView
 {
 	return _view;
 }
@@ -635,7 +635,7 @@
 - (void) setDisplayView: (ETView *)view
 {
 	// FIXME
-	NSView *enclosedView = nil;
+	//NSView *enclosedView = nil;
 }
 
 // TODO: Modify to lookup for the selection state in the closest container ancestor

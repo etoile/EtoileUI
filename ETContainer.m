@@ -57,7 +57,6 @@ NSString *ETLayoutItemPboardType = @"ETLayoutItemPboardType"; // FIXME: replace 
 - (void) setShowsScrollView: (BOOL)scroll;
 - (BOOL) hasScrollView;
 - (void) setHasScrollView: (BOOL)scroll;
-- (void) setDisplayView: (NSView *)view;
 @end
 
 @interface ETContainer (Private)
@@ -625,9 +624,10 @@ NSString *ETLayoutItemPboardType = @"ETLayoutItemPboardType"; // FIXME: replace 
 	return _displayView;
 }
 
-/* Method called when we switch between layouts. Manipulating the display view
-   is the job of ETContainer, ETLayout instances may provide display view
-   prototype but they never never manipulate it as a subview in view hierachy. */
+/** Never calls this method unless you write an ETLayout subclass.
+	Method called when we switch between layouts. Manipulating the display view
+	is the job of ETContainer, ETLayout instances may provide display view
+	prototype but they never never manipulate it as a subview in view hierachy. */
 - (void) setDisplayView: (NSView *)view
 {
 	if (_displayView == nil && view == nil)
@@ -754,7 +754,7 @@ NSString *ETLayoutItemPboardType = @"ETLayoutItemPboardType"; // FIXME: replace 
 	
 	NSLog(@"Set selection indexes to %@ in %@", indexes, self);
 	
-	if (lastSelectionIndex > (numberOfItems - 1) && index != NSNotFound) /* NSNotFound is a big value and not -1 */
+	if (lastSelectionIndex > (numberOfItems - 1) && lastSelectionIndex != NSNotFound) /* NSNotFound is a big value and not -1 */
 	{
 		NSLog(@"WARNING: Try to set selection index %d when container %@ only contains %d items",
 			lastSelectionIndex, self, numberOfItems);
@@ -776,7 +776,7 @@ NSString *ETLayoutItemPboardType = @"ETLayoutItemPboardType"; // FIXME: replace 
 	}
 
 	/* Update selection */
-	if (index != NSNotFound)
+	if (lastSelectionIndex != NSNotFound)
 	{
 		/* Cache selection locally in this container */
 		if ([indexes isKindOfClass: [NSMutableIndexSet class]])

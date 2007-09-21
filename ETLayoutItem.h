@@ -148,7 +148,7 @@
 - (NSView *) view;
 - (void) setView: (NSView *)view;
 
-- (NSView *) displayView;
+- (ETView *) displayView;
 
 //-displayObject
 
@@ -213,8 +213,8 @@ shape*/
 
 /** The persistent frame is only valid and used in non-computed layout like
 	ETFreeLayout. */
-- (NSRect) persistentFrame;
-- (void) setPersistentFrame: (NSRect) frame;
+/*- (NSRect) persistentFrame;
+- (void) setPersistentFrame: (NSRect) frame;*/
 
 /** Returns always the current frame. This value is always in sync with 
 	persistent frame in non-computed layout but is usually different when

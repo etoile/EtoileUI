@@ -38,7 +38,7 @@
 #import <EtoileUI/ETView.h>
 
 @class ETLayoutItem, ETLayout, ETLayer, ETLayoutItemGroup, ETSelection;
-@protocol ETLayoutingContext, ETInspector;
+@protocol ETLayoutingContext, ETObjectInspection, ETInspector;
 
 /** Forwarding Chain 
 
@@ -59,7 +59,7 @@
  */
 
 // ETComponentView
-@interface ETContainer : ETView <ETLayoutingContext, ETInspector>
+@interface ETContainer : ETView <ETObjectInspection> //ETLayoutingContext
 {
 	IBOutlet NSScrollView *_scrollView;
 
@@ -119,6 +119,7 @@
 - (void) setLayout: (ETLayout *)layout;
 
 - (NSView *) displayView;
+- (void) setDisplayView: (NSView *)view;
 
 /* - (ETLayoutAlignment) layoutAlignment;
 - (void) setLayoutAlignment: (ETLayoutAlignment)alignment;
@@ -171,17 +172,17 @@
 - (BOOL) allowsEmptySelection;
 - (void) setAllowsEmptySelection: (BOOL)empty;
 
-- (void) setSelectionShape: (ETSelection *)shape;
-- (ETSelection *) selectionShape;
+/*- (void) setSelectionShape: (ETSelection *)shape;
+- (ETSelection *) selectionShape;*/
 
 /* Dragging */
 
-- (void) setDraggingAllowedForTypes: (NSArray *)types;
+/*- (void) setDraggingAllowedForTypes: (NSArray *)types;
 - (NSArray *) allowedDraggingTypes;
 - (void) setDroppingAllowedForTypes: (NSArray *)types;
 - (NSArray *) allowedDroppingTypes;
 - (void) setDropTargetTypes: (NSArray *)types;
-- (NSArray *)dropTargetTypes;
+- (NSArray *)dropTargetTypes;*/
 
 // NOTE: Following methods are deprecated
 - (void) setAllowsDragging: (BOOL)flag;

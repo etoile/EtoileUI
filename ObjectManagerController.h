@@ -19,7 +19,6 @@
 }
 
 - (IBAction) changeLayout: (id)sender;
-- (IBAction) switchUsesSource: (id)sender;
 - (IBAction) switchUsesScrollView: (id)sender;
 - (IBAction) scale: (id)sender;
 

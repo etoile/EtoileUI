@@ -98,7 +98,7 @@ typedef enum _ETSizeConstraintStyle
 
 /* Main Accessors */
 
-- (void) setContainer: (ETContainer *)newContainer;
+//- (void) setContainer: (ETContainer *)newContainer;
 - (ETContainer *) container;
 
 - (void) setLayoutContext: (id <ETLayoutingContext>)context;

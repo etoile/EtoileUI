@@ -40,6 +40,7 @@
 #import "ETLineLayout.h"
 #import "ETLayoutItem.h"
 #import "ETContainer.h"
+#import "CocoaCompatibility.h"
 #import "GNUstep.h"
 
 #import "ETTableLayout.h"
@@ -68,7 +69,7 @@
 	{
 		_internalContainer = [[ETContainer alloc] initWithFrame: NSMakeRect(0, 0, 400, 400)];
 		/* Let content view and switcher view handles mouse click on their own */
-		[_internalContainer setEnablesSubviewHitTest: YES];
+		[_internalContainer setEnablesHitTest: YES];
 		
 		/* We cannot yet know container/view related to both content and 
 		   switcher layout, that's why we create placeholder items waiting for 
@@ -107,7 +108,8 @@
 	}	
 
 	/* Connect layout to container */
-	[super setContainer: container];
+	// FIXME: Use layout context
+	//[super setContainer: container];
 	
 	[[NSNotificationCenter defaultCenter] 
 		addObserver: self 
@@ -115,7 +117,7 @@
 		       name: ETContainerSelectionDidChangeNotification 
 			 object: [self container]];
 	/* Let content view and switcher view handles mouse click on their own */
-	[[self container] setEnablesSubviewHitTest: YES];
+	[[self container] setEnablesHitTest: YES];
 }
 
 - (ETLayout *) switcherLayout

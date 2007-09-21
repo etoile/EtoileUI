@@ -123,7 +123,7 @@
 {
 	[super setDisplayViewPrototype: protoView];
 
-	NSTableView *tv = [[self displayViewPrototype] documentView];
+	NSTableView *tv = [(NSScrollView *)[self displayViewPrototype] documentView];
 
 	[self setAllTableColumns: [tv tableColumns]];	
 	[tv registerForDraggedTypes: [NSArray arrayWithObject: @"ETLayoutItemPboardType"]];
@@ -250,7 +250,7 @@
 - (void) tableViewSelectionDidChange: (NSNotification *)notif
 {
 	id delegate = [[self container] delegate];
-	NSTableView *tv = [[self displayViewPrototype] documentView];
+	NSTableView *tv = [(NSScrollView *)[self displayViewPrototype] documentView];
 	
 	// NOTE: Not really sure that's the best way to do it
 	[[self container] setSelectionIndexes: [tv selectedRowIndexes]];

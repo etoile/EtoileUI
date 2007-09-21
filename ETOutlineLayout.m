@@ -117,7 +117,7 @@
 		/* First time */
 		if (nbOfItems == 0)
 		{
-			[item reload];
+			[(ETLayoutItemGroup *)item reload];
 			nbOfItems = [[item items] count];
 		}
 #if 0
@@ -157,7 +157,7 @@
 	}
 	else if ([item isKindOfClass: [ETLayoutItemGroup class]]) /* Node */
 	{
-		childItem = [item itemAtIndex: rowIndex];
+		childItem = [(ETLayoutItemGroup *)item itemAtIndex: rowIndex];
 #if 0
 		NSIndexPath *indexPath = nil;
 		NSIndexPath *indexSubpath = nil;

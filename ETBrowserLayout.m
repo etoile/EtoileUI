@@ -244,7 +244,7 @@
 	if (path == nil || [path isEqual: @""])
 		path = @"/";
 
-	item = [[[self container] layoutItem] itemAtPath: path];
+	item = (ETLayoutItemGroup *)[(ETLayoutItemGroup *)[[self container] layoutItem] itemAtPath: path];
 	NSAssert(item != nil, @"Parent item must never be nil in -browser:numberOfRowsInColumn:");
 	NSAssert([item isKindOfClass: [ETLayoutItemGroup class]], @"Parent item "
 		@"must always be of ETLayoutItemGroup class kind");
@@ -309,7 +309,7 @@
 	if (path == nil || [path isEqual: @""])
 		path = @"/";
 
-	item = [[[self container] layoutItem] itemAtPath: path];
+	item = (ETLayoutItemGroup *)[(ETLayoutItemGroup *)[[self container] layoutItem] itemAtPath: path];
 	NSAssert(item != nil, @"Parent item must never be nil in -browser:numberOfRowsInColumn:");
 	NSAssert([item isKindOfClass: [ETLayoutItemGroup class]], @"Parent item "
 		@"must always be of ETLayoutItemGroup class kind");
@@ -371,7 +371,7 @@
 	
 	//selectedCell selectedColumn pathToColumn: selectedRowInColumn:
 	//int rowIndex = [browserView selectedRowInColumn: [browserView selectedColumn]];
-	indexPath = [[container layoutItem] indexPathForPath: [browserView path]];
+	indexPath = [(ETLayoutItemGroup *)[container layoutItem] indexPathForPath: [browserView path]];
 	item = [[container source] container: container itemAtPath: indexPath];
 	
 	//NSLog(@"-clickedItem in %@ with browser path %@", self, path);

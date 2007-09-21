@@ -36,6 +36,7 @@
  
 #import <EtoileUI/ETInspector.h>
 #import <EtoileUI/ETContainer.h>
+#import <EtoileUI/ETLayoutItemGroup.h>
 #import <EtoileUI/ETTableLayout.h>
 #import <EtoileUI/ETFlowLayout.h>
 #import <EtoileUI/ETLineLayout.h>
@@ -219,7 +220,7 @@
 	ETLayoutItem *item = [[self inspectedItems] objectAtIndex: index];
 	
 	if ([indexSubpath length] > 0)
-		item = [item itemAtIndexPath: indexSubpath];
+		item = [(ETLayoutItemGroup *)item itemAtIndexPath: indexSubpath];
 	if (item == nil)
 		ETLog(@"WARNING: Found no item at subpath %@ for inspector %@", indexSubpath, self);
 
@@ -393,7 +394,7 @@
 
 - (NSPanel *) panel
 {
-	return window;
+	return (NSPanel *)window;
 }
 
 - (IBAction) inspect: (id)sender
@@ -404,7 +405,7 @@
 - (IBAction) stack: (id)sender
 {
 	NSIndexSet *selection = [itemGroupView selectionIndexes];
-	NSEnumerator *e = [[[itemGroupView layoutItem] items] objectEnumerator];
+	NSEnumerator *e = [[(ETLayoutItemGroup *)[itemGroupView layoutItem] items] objectEnumerator];
 	ETLayoutItem *item = nil;
 	
 	while ((item = [e nextObject]) != nil)
@@ -417,13 +418,13 @@
 		
 			if ([inspectedItem isKindOfClass: [ETLayoutItemGroup class]])
 			{
-				if ([inspectedItem isStacked])
+				if ([(ETLayoutItemGroup *)inspectedItem isStacked])
 				{
-					[inspectedItem stack];
+					[(ETLayoutItemGroup *)inspectedItem stack];
 				}
 				else
 				{
-					[inspectedItem unstack];
+					[(ETLayoutItemGroup *)inspectedItem unstack];
 				}
 			}
 		}
@@ -785,14 +786,14 @@
 			"of %@", [self displayMode], self);
 	}
 	
-	ETLog(@"Returns %d as number of property or slot items in %@", nbOfItems, container);
+	//ETLog(@"Returns %d as number of property or slot items in %@", nbOfItems, container);
 	
 	return nbOfItems;
 }
 
 - (ETLayoutItem *) itemAtIndex: (int)index inContainer: (ETContainer *)container
 {
-	ETLayoutItem *inspectedItem = [self layoutContext];
+	ETLayoutItem *inspectedItem = (ETLayoutItem *)[self layoutContext];
 	id inspectedModel = [inspectedItem representedObject];
 	/* Always generate a meta layout item to simplify introspection code */
 	// FIXME: Regenerating a meta layout item for the same layout context/item 
@@ -831,14 +832,24 @@
 	}
 	else if ([self displayMode] == ETLayoutDisplayModeViewContent)
 	{
-		ETLayoutItem *child = [[inspectedItem contentArray] objectAtIndex: index];
+		NSAssert2([inspectedItem conformsToProtocol: @protocol(ETCollection)], 
+			@"Inspected item %@ must conform to protocol ETCollection "
+			@"since -numberOfItemsInContainer: returned a non-zero value in %@",
+			inspectedItem, self);
+
+		ETLayoutItem *child = [[(id <ETCollection>)inspectedItem contentArray] objectAtIndex: index];
 
 		[propertyItem setValue: [NSNumber numberWithInt: index] forProperty: @"content"];
 		[propertyItem setValue: child forProperty: @"value"];
 	}
 	else if ([self displayMode] == ETLayoutDisplayModeModelContent)
 	{
-		id child = [[inspectedModel contentArray] objectAtIndex: index];
+		NSAssert2([inspectedModel conformsToProtocol: @protocol(ETCollection)], 
+			@"Inspected model %@ must conform to protocol ETCollection "
+			@"since -numberOfItemsInContainer: returned a non-zero value in %@",
+			inspectedModel, self);
+			
+		id child = [[(id <ETCollection>)inspectedModel contentArray] objectAtIndex: index];
 
 		[propertyItem setValue: [NSNumber numberWithInt: index] forProperty: @"content"];
 		[propertyItem setValue: child forProperty: @"value"];
@@ -857,8 +868,7 @@
 			"of %@", [self displayMode], self);
 	}
 
-	
-	ETLog(@"Returns property or slot item %@ at index %d in %@", propertyItem, index, container);
+	//ETLog(@"Returns property or slot item %@ at index %d in %@", propertyItem, index, container);
 	
 	return propertyItem;
 }

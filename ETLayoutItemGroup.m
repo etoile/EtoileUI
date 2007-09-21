@@ -51,7 +51,7 @@
 
 @interface ETLayoutItemGroup (ETSource)
 - (ETContainer *) container;
-- (void) reload;
+- (BOOL) isReloading;
 - (NSArray *) itemsFromSource;
 - (NSArray *) itemsFromFlatSource;
 - (NSArray *) itemsFromTreeSource;
@@ -59,6 +59,12 @@
 
 @interface ETContainer (PackageVisibility)
 - (int) checkSourceProtocolConformance;
+- (void) syncDisplayViewWithContainer;
+@end
+
+@interface ETLayoutItemGroup (Private)
+- (void) collectSelectionIndexPaths: (NSMutableArray *)indexPaths;
+- (void) applySelectionIndexPaths: (NSMutableArray *)indexPaths;
 @end
 
 
@@ -246,7 +252,14 @@
 		if ([pathComp isEqual: @"/"] || [pathComp isEqual: @""])
 			continue;
 
-		item = [item itemAtPath: pathComp];
+		if ([item isKindOfClass: [ETLayoutItemGroup class]] == NO)
+		{
+			/* path is invalid */
+			indexPath = nil;
+			break;
+		}
+		item = [(ETLayoutItemGroup *)item itemAtPath: pathComp];
+		
 		/* If no item can be found by interpreting pathComp as an identifier, 
 		   try to interpret pathComp as a number */
 		if (item == nil)
@@ -257,8 +270,18 @@
 			if (index == 0 && [pathComp isEqual: @"0"] == NO)
 			{
 				/* path is invalid */
-				return nil;
+				indexPath = nil;
+				break;
 			}
+			
+			/* Verify the index truly references a child item */
+			if (index >= [[(ETLayoutItemGroup *)item items] count])
+			{
+				/* path is invalid */
+				indexPath = nil;
+				break;			
+			}
+			item = [(ETLayoutItemGroup *)item itemAtIndex: index];
 		}
 		else
 		{
@@ -272,9 +295,7 @@
 			item, indexPath);
 		NSAssert3(index < [[(ETLayoutItemGroup *)item items] count], @"Index "
 			@"%d in path %@ position %d must be inferior to children item "
-			@"number", index + 1, position, path);	
-				
-		item = [(ETLayoutItemGroup *)item itemAtIndex: index];*/
+			@"number", index + 1, position, path);*/
 		
 		indexPath = [indexPath indexPathByAddingIndex: index];
 	}	
@@ -336,8 +357,12 @@
 
 - (NSString *) representedPathBase
 {
+	NSString *pathBase = nil;
+	
 	if ([self isContainer])
-		return [(ETContainer *)[self view] representedPath];
+		pathBase = [(ETContainer *)[self view] representedPath];
+		
+	return pathBase;
 }
 
 // FIXME: Move layout item collection from ETContainer to ETLayoutItemGroup
@@ -514,6 +539,28 @@
 	return [NSArray arrayWithArray: _layoutItems];
 }
 
+- (void) reload
+{
+	_reloading = YES;
+	
+	ETContainer *container = [self ancestorContainerProvidingRepresentedPath];
+
+	/* Retrieve layout items provided by source */
+	if (container != nil && [container source] != nil)
+	{
+		NSArray *itemsFromSource = [self itemsFromSource];
+		[self removeAllItems];
+		[self addItems: itemsFromSource];
+	}
+	else
+	{
+		ETLog(@"Impossible to reload %@ because the layout item miss either "
+			@"a container or a source", self);
+	}
+	
+	_reloading = NO;
+}
+
 /* Layout */
 
 - (ETLayout *) layout
@@ -537,7 +584,7 @@
 	// Triggers scroll view display which triggers layout render in turn to 
 	// compute the content size
 	if ([self isContainer])
-		[[self displayView] setDisplayView: nil]; 
+		[(ETContainer *)[self displayView] setDisplayView: nil]; 
 	ASSIGN(_layout, layout);
 	[layout setLayoutContext: self];
 
@@ -764,7 +811,7 @@
 {
 	ETLayoutItemGroup *parent = [self parentLayoutItem];
 	NSArray *items = [self items];
-	int itemGroupIndex = [parent indexOfItem: self];
+	//int itemGroupIndex = [parent indexOfItem: self];
 	
 	RETAIN(self);
 	[parent removeItem: self];
@@ -772,7 +819,8 @@
 	   instance methods (like this method). */
 	AUTORELEASE(self);
 
-	[parent insertItems: items atIndex: itemGroupIndex];		
+	// FIXME: Implement -insertItems:atIndex:
+	//[parent insertItems: items atIndex: itemGroupIndex];		
 	
 	return items;
 }
@@ -810,9 +858,10 @@
 	{
 		if ([[self view] isKindOfClass: [ETContainer class]] == NO)
 		{
-			NSRect stackFrame = ETMakeRect(NSZeroPoint, [ETLayoutItemGroup stackSize]);
+			/*NSRect stackFrame = ETMakeRect(NSZeroPoint, [ETLayoutItemGroup stackSize]);
 			ETContainer *container = [[ETContainer alloc] 
-				initWithFrame: stackFrame layoutItem: self];
+				initWithFrame: stackFrame layoutItem: self];*/
+			// FIXME: Insert the container on the fly
 		}
 		[[self container] setItemScaleFactor: 0.7];
 		[self setSize: [ETLayoutItemGroup stackSize]];
@@ -854,12 +903,12 @@
 	NSEnumerator *e = [[self items] objectEnumerator];
 	ETLayoutItem *item = nil;
 		
-	while (item != nil)
+	while ((item = [e nextObject]) != nil)
 	{
 		if ([item isSelected])
 			[indexPaths addObject: [item indexPath]];
 		if ([item isKindOfClass: [self class]])
-			[item collectSelectionIndexPaths: indexPaths];
+			[(ETLayoutItemGroup *)item collectSelectionIndexPaths: indexPaths];
 	}
 }
 
@@ -877,7 +926,7 @@
 	NSEnumerator *e = [[self items] objectEnumerator];
 	ETLayoutItem *item = nil;
 		
-	while (item != nil)
+	while ((item = [e nextObject]) != nil)
 	{
 		NSIndexPath *itemIndexPath = [item indexPath];
 		if ([indexPaths containsObject: itemIndexPath])
@@ -890,7 +939,7 @@
 			[item setSelected: NO];
 		}
 		if ([item isKindOfClass: [self class]])
-			[item applySelectionIndexPaths: indexPaths];
+			[(ETLayoutItemGroup *)item applySelectionIndexPaths: indexPaths];
 	}
 }
 
@@ -982,6 +1031,24 @@
 	}
 }
 
+/* Dummy methods to shut down compiler warning about ETLayoutingContext not 
+   fully implemented */
+
+- (NSSize) size
+{
+	return [super size];
+}
+
+- (void) setSize: (NSSize)size
+{
+	[super setSize: size];
+}
+
+- (NSView *) view
+{
+	return [super view];
+}
+
 @end
 
 /* Helper methods to retrieve layout items provided by data sources */
@@ -1003,28 +1070,6 @@
 - (BOOL) isReloading
 {
 	return _reloading;
-}
-
-- (void) reload
-{
-	_reloading = YES;
-	
-	ETContainer *container = [self ancestorContainerProvidingRepresentedPath];
-
-	/* Retrieve layout items provided by source */
-	if (container != nil && [container source] != nil)
-	{
-		NSArray *itemsFromSource = [self itemsFromSource];
-		[self removeAllItems];
-		[self addItems: itemsFromSource];
-	}
-	else
-	{
-		ETLog(@"Impossible to reload %@ because the layout item miss either "
-			@"a container or a source", self);
-	}
-	
-	_reloading = NO;
 }
 
 - (NSArray *) itemsFromSource
@@ -1081,7 +1126,7 @@
 
 	for (int i = 0; i < nbOfItems; i++)
 	{
-		NSString *indexSubpath = nil;
+		NSIndexPath *indexSubpath = nil;
 		
 		indexSubpath = [indexPath indexPathByAddingIndex: i];
 		/* Request item to the source by passing item index path expressed in a

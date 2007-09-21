@@ -82,7 +82,7 @@
 - (ETMethod *) methodForName: (NSString *)name
 {
 	// BOOL searchInstanceMethods, BOOL searchSuperClasses
-	GSMethod *method = GSGetMethod([self class], NSSelectorFromString(name), YES, YES);
+	GSMethod method = GSGetMethod([self class], NSSelectorFromString(name), YES, YES);
 	ETMethod *methodObject = [[ETMethod alloc] init];
 	
 	methodObject->_method = method;

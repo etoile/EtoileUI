@@ -45,7 +45,6 @@
 
 }
 
-- (ETViewLayoutLine *) layoutLineForLayoutItems: (NSArray *)items;
-- (void) computeLayoutItemLocationsForLayoutLine: (ETViewLayoutLine *)line inContainer: (ETContainer *)container;
+- (void) computeLayoutItemLocationsForLayoutLine: (ETViewLayoutLine *)line;
 
 @end

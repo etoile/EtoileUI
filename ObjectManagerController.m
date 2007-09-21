@@ -8,6 +8,13 @@
 
 #import "ObjectManagerController.h"
 
+@interface ObjectManagerController (Private)
+- (void) moveToItem: (ETLayoutItem *)item;
+- (NSString *) textualPathForMixedPath: (NSString *)mixedPath;
+- (int) numberOfItemsInContainer: (ETContainer *)container;
+- (ETLayoutItem *) itemAtIndex: (int)index inContainer: (ETContainer *)container;
+@end
+
 
 @implementation ObjectManagerController
 
@@ -301,7 +308,7 @@ static NSFileManager *objectManager = nil;
 		return [self itemAtIndex: flatIndex inContainer: container];
 	}
 
-	return fileItem;//RETAIN(fileItem);
+	return fileItem;
 }
 
 - (NSArray *) displayedItemPropertiesInContainer: (ETContainer *)container

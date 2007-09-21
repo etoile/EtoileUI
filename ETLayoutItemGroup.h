@@ -69,10 +69,7 @@
 - (NSIndexPath *) indexPathForPath: (NSString *)path;
 - (ETLayoutItem *) itemAtIndexPath: (NSIndexPath *)path;
 - (ETLayoutItem *) itemAtPath: (NSString *)path;
-- (NSIndexPath *) indexPathForItem: (ETLayoutItem *)item;
 
-- (NSIndexPath *) indexPath;
-- (NSString *) path;
 //- (void) setPath: (NSString *)path;
 
 /*  Manipulating children layout items */
@@ -91,6 +88,8 @@
 //- (NSArray *) itemsIncludingRelatedDescendents;
 //- (NSArray *) itemsIncludingAllDescendents;
 
+- (void) reload;
+
 /* Layout */
 
 - (ETLayout *) layout;
@@ -104,8 +103,18 @@
 - (void) setAutolayout: (BOOL)flag;
 - (BOOL) usesLayoutBasedFrame;
 - (void) setUsesLayoutBasedFrame: (BOOL)flag;
+
+/* Layouting Context Protocol */
+
 - (NSArray *) visibleItems;
 - (void) setVisibleItems: (NSArray *)items;
+- (NSSize) size;
+- (void) setSize: (NSSize)size;
+- (NSView *) view;
+- (float) itemScaleFactor;
+- (NSSize) visibleContentSize;
+- (void) setContentSize: (NSSize)size;
+- (BOOL) isScrollViewShown;
 
 /* Rendering */
 

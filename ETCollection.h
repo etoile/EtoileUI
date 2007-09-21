@@ -66,8 +66,3 @@
 - (id) content;
 - (NSArray *) contentArray;
 @end
-
-@interface NSSet (ETCollection) <ETCollection>
-- (id) content;
-- (NSArray *) contentArray;
-@end

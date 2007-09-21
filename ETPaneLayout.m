@@ -37,7 +37,7 @@
 #import "ETPaneLayout.h"
 #import "ETPaneLayout.h"
 #import "NSView+Etoile.h"
-//#import "ETLayoutItem.h"
+#import "ETLayoutItem.h"
 #import "ETContainer.h"
 
 @implementation ETPaneLayout
@@ -69,7 +69,8 @@
 
 - (void) setContainer: (ETContainer *)container
 {
-	[super setContainer: container];
+	// FIXME: Use layout context
+	//[super setContainer: container];
 	// FIXME: Memorize container selection style and restore it when the layout
 	// is unset.
 	[[self container] setEnablesHitTest: YES];
@@ -121,7 +122,8 @@
 	   which reuses a native AppKit control like table layout. */
 	[[self container] setDisplayView: nil];
 	
-	[[self container] setVisibleItems: layoutModel];
+	// FIXME: Use layout item group and not the container directly
+	//[[self container] setVisibleItems: layoutModel];
 }
 
 /* Only returns selected item view */

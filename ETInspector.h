@@ -41,14 +41,21 @@
 
 @class ETView, ETContainer;
 
+/** If you want to write your own inspector class from scratch instead of using
+	ETInspector, you must adopt this protocol. This ensures the inspector can
+	be passed through EtoileUI and managed by it transparently. */
 @protocol ETInspector
-- (ETView *) view;
+//- (ETView *) view;
 - (NSWindow *) window;
 - (NSPanel *) panel;
-/*- (NSArray *) inspectedItems;
-- (void) setInspectedItems: (NSArray *)items;*/
+- (NSArray *) inspectedItems;
+- (void) setInspectedItems: (NSArray *)items;
 @end
 
+/** All classes that want to provide inspectors tailored to their needs should
+	adopt this protocol. The typical way to implement a new inspector is to 
+	instantiate an ETInspector object and modify it, then return the new 
+	inspector resulting from the customization. */
 @protocol ETObjectInspection
 - (id <ETInspector>) inspector;
 @end
@@ -68,8 +75,8 @@
 - (NSArray *) inspectedItems;
 - (void) setInspectedItems: (NSArray *)items;
 
-- (ETView *) view;
-- (void) setView: (NSView *)view;
+/*- (ETView *) view;
+- (void) setView: (NSView *)view;*/
 
 - (NSWindow *) window;
 - (NSPanel *) panel;
@@ -81,7 +88,7 @@
 @end
 
 @interface ETLayoutItem (ETInspector)
-+ (ETLayoutItem *) layoutItemWithInspectedObject: (id)object;
+//+ (ETLayoutItem *) layoutItemWithInspectedObject: (id)object;
 /** A basic meta model which inspects layout items by wrapping each one in a 
 	new meta layout item. Achieved by setting the base layout item as the
 	represented object of the new meta layout item. */

@@ -36,6 +36,12 @@
 #import <EtoileUI/ETLayoutItem.h>
 #import <EtoileUI/GNUstep.h>
 
+#ifndef GNUSTEP
+@interface NSView (CocoaPrivate)
+- (void) _recursiveDisplayAllDirtyWithLockFocus: (BOOL)lockFocus visRect: (NSRect)aRect;
+@end
+#endif
+
 
 @implementation ETView
 
