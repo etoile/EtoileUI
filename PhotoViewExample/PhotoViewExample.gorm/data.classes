@@ -1,0 +1,34 @@
+{
+    "## Comment" = "Do NOT change this file, Gorm maintains it";
+    ContainerController = {
+	Actions = (
+	    "choosePicturesAndLayout:"
+	);
+	Outlets = (
+	    viewContainer
+	);
+	Super = NSObject;
+    };
+    ETContainer = {
+	Actions = (
+	    "inspect:"
+	);
+	Outlets = (
+	);
+	Super = ETView;
+    };
+    ETView = {
+	Actions = (
+	);
+	Outlets = (
+	);
+	Super = NSView;
+    };
+    FirstResponder = {
+	Actions = (
+	    "choosePicturesAndLayout:",
+	    "inspect:"
+	);
+	Super = NSObject;
+    };
+}

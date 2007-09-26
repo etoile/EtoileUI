@@ -5,12 +5,15 @@ ADDITIONAL_OBJCFLAGS += -I.
 
 APP_NAME = PhotoViewExample
 
-$(APP_NAME)_OBJC_FILES = \
+PhotoViewExample_OBJC_FILES = \
 	ContainerController.m \
 	../main.m
 
-$(APP_NAME)_RESOURCE_FILES = ContainerExample.nib
+PhotoViewExample_MAIN_MODEL_FILE = \
+	PhotoViewExample.gorm
 
-$(APP_NAME)_GUI_LIBS = -lEtoileUI
+PhotoViewExample_RESOURCE_FILES = PhotoViewExample.gorm
+
+PhotoViewExample_GUI_LIBS = -lEtoileUI
 
 include $(GNUSTEP_MAKEFILES)/application.make
