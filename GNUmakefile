@@ -82,7 +82,13 @@ EtoileUI_HEADER_FILES = \
 	NSString+Etoile.h \
 	NSView+Etoile.h
 
-EtoileUI_RESOURCE_FILES += 
+EtoileUI_RESOURCE_FILES = \
+	Inspector.nib \
+	English.lproj/BrowserPrototype.nib \
+	English.lproj/OutlinePrototype.nib \
+	English.lproj/TablePrototype.nib \
+	English.lproj/ViewModelPrototype.nib
+
 
 ifeq ($(FOUNDATION_LIB), apple)
 ifeq ($(test), yes)
