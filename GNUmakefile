@@ -37,6 +37,7 @@ EtoileUI_OBJC_FILES = \
 	ETTableView.m \
 	ETViewLayoutLine.m \
 	FSBrowserCell.m \
+	ETCollection.m \
 	NSIndexPath+Etoile.m \
 	NSIndexSet+Etoile.m \
 	NSObject+Etoile.m \
@@ -49,6 +50,7 @@ endif
 
 EtoileUI_HEADER_FILES_DIR += .
 EtoileUI_HEADER_FILES = \
+	GNUstep.h \
 	EtoileUI.h \
 	ETStyleRenderer.h \
 	ETView.h \
@@ -73,6 +75,7 @@ EtoileUI_HEADER_FILES = \
 	ETTableView.h \
 	ETViewLayoutLine.h \
 	FSBrowserCell.h \
+	ETCollection.h \
 	NSIndexPath+Etoile.h \
 	NSIndexSet+Etoile.h \
 	NSObject+Etoile.h \
