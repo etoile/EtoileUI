@@ -268,8 +268,9 @@
 	NSWorkspace *wk = [NSWorkspace sharedWorkspace];
 	NSString *sizeStr = NSStringFromSize([img size]);
 	NSString *type = nil;
-	
-	[wk getInfoForFile: [img name] application: NULL type: &type];
+	NSString *appName = nil;
+
+	[wk getInfoForFile: [img name] application: &appName type: &type];
 	
 	[imageItem setValue: img forProperty: @"icon"];
 	//[imageItem setValue: [wk iconForFile: [img name]] forProperty: @"icon"];
