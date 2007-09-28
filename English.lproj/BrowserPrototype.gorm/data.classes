@@ -1,0 +1,27 @@
+{
+    "## Comment" = "Do NOT change this file, Gorm maintains it";
+    ETBrowserLayout = {
+	Actions = (
+	);
+	Outlets = (
+	);
+	Super = ETLayout;
+    };
+    ETLayout = {
+	Actions = (
+	    "setDelegate:"
+	);
+	Outlets = (
+	    _layoutContext,
+	    _delegate,
+	    _displayViewPrototype
+	);
+	Super = NSObject;
+    };
+    FirstResponder = {
+	Actions = (
+	    "setDelegate:"
+	);
+	Super = NSObject;
+    };
+}

@@ -219,6 +219,7 @@
 	if ([[self renderer] respondsToSelector: @selector(render:)])
 		[[self renderer] render: nil];
 }
+
 #else
 
 // FIXME: This isn't really safe because Cocoa may use other specialized 

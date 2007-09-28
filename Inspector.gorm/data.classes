@@ -1,0 +1,114 @@
+{
+    "## Comment" = "Do NOT change this file, Gorm maintains it";
+    ETContainer = {
+	Actions = (
+	    "inspect:",
+	    "ungroup:",
+	    "unstack:",
+	    "group:",
+	    "stack:"
+	);
+	Outlets = (
+	    _scrollView
+	);
+	Super = ETView;
+    };
+    ETImageStyle = {
+	Actions = (
+	);
+	Outlets = (
+	);
+	Super = ETStyleRenderer;
+    };
+    ETInspector = {
+	Actions = (
+	    "changeLayout:",
+	    "inspect:",
+	    "stack:"
+	);
+	Outlets = (
+	    window,
+	    propertyView,
+	    viewModelLayout,
+	    itemGroupView
+	);
+	Super = ETLayoutItem;
+    };
+    ETLayoutItem = {
+	Actions = (
+	);
+	Outlets = (
+	    _view
+	);
+	Super = ETStyleRenderer;
+    };
+    ETSelection = {
+	Actions = (
+	);
+	Outlets = (
+	);
+	Super = NSObject;
+    };
+    ETStyleRenderer = {
+	Actions = (
+	);
+	Outlets = (
+	);
+	Super = NSObject;
+    };
+    ETView = {
+	Actions = (
+	    "expand:",
+	    "collapse:"
+	);
+	Outlets = (
+	);
+	Super = NSView;
+    };
+    ETViewLayout = {
+	Actions = (
+	);
+	Outlets = (
+	    _layoutContext,
+	    _container,
+	    _displayViewPrototype,
+	    _delegate
+	);
+	Super = NSObject;
+    };
+    ETViewModelLayout = {
+	Actions = (
+	);
+	Outlets = (
+	    propertyView,
+	    enclosingView
+	);
+	Super = ETViewLayout;
+    };
+    FirstResponder = {
+	Actions = (
+	    "changeLayout:",
+	    "collapse:",
+	    "expand:",
+	    "group:",
+	    "inspect:",
+	    "stack:",
+	    "ungroup:",
+	    "unstack:"
+	);
+	Super = NSObject;
+    };
+    MyObject = {
+	Actions = (
+	);
+	Outlets = (
+	);
+	Super = NSObject;
+    };
+    NSResponder = {
+	Actions = (
+	    "inspect:"
+	);
+	Super = NSObject;
+    };
+}

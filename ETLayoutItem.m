@@ -44,6 +44,12 @@
 #define ETLog NSLog
 #define ETUTIAttribute @"uti"
 
+#ifdef GNUSTEP
+@interface NSObject (CoreDataLike)
+- (id) entity;
+@end
+#endif
+
 @interface ETLayoutItem (Private)
 - (void) layoutItemViewFrameDidChange: (NSNotification *)notif;
 @end
@@ -231,7 +237,7 @@
 	{
 		indexPath = [[self parentLayoutItem] indexPathFromItem: item];
 		indexPath = [indexPath indexPathByAddingIndex: 
-			[(ETLayoutItemGroup *)[self parentLayoutItem] indexOfItem: self]];
+			[(ETLayoutItemGroup *)[self parentLayoutItem] indexOfItem: (id)self]];
 	}
 	else
 	{
@@ -352,7 +358,7 @@
 	if (identifier == nil || [identifier isEqual: @""])
 	{
 		identifier = [NSString stringWithFormat: @"%d", 
-			[[self parentLayoutItem] indexOfItem: self]];
+			[(ETLayoutItemGroup *)[self parentLayoutItem] indexOfItem: (id)self]];
 	}
 	
 	return identifier;
@@ -566,7 +572,8 @@
 		[_modelObject setValue: value forKey: key];
 	}
 	
-	[self didChangeValueForKey: key];
+	// FIXME: Implement
+	//[self didChangeValueForKey: key];
 	
 	return result;
 }
@@ -590,7 +597,7 @@
 		properties = (NSArray *)[_modelObject properties];
 	}
 	else if ([_modelObject respondsToSelector: @selector(entity)]
-	 && [[_modelObject entity] respondsToSelector: @selector(properties)])
+	 && [[(id)_modelObject entity] respondsToSelector: @selector(properties)])
 	{
 		/* Managed Objects have an entity which describes them */
 		properties = (NSArray *)[[_modelObject entity] properties];

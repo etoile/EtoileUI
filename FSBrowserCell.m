@@ -43,6 +43,7 @@
 */
 
 #import <EtoileUI/FSBrowserCell.h>
+#import <math.h>
 
 
 #define ICON_INSET_VERT		2.0	/* The size of empty space between the icon end the top/bottom of the cell */ 

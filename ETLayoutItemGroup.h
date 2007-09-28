@@ -79,7 +79,8 @@
 - (void) removeItem: (ETLayoutItem *)item;
 - (void) removeItemAtIndex: (int)index;
 - (ETLayoutItem *) itemAtIndex: (int)index;
-- (int) indexOfItem: (ETLayoutItem *)item;
+- (int) indexOfItem: (id)item;
+//- (int) indexOfItem: (ETLayoutItem *)item;
 - (NSArray *) items;
 - (void) addItems: (NSArray *)items;
 - (void) removeItems: (NSArray *)items;

@@ -11,6 +11,8 @@ else
 FRAMEWORK_NAME = EtoileUI
 endif
 
+EtoileUI_LIBRARIES_DEPEND_UPON += -lm
+
 EtoileUI_SUBPROJECTS = 
 
 EtoileUI_OBJC_FILES = \
@@ -83,10 +85,10 @@ EtoileUI_HEADER_FILES = \
 	NSView+Etoile.h
 
 EtoileUI_RESOURCE_FILES = \
-	Inspector.nib \
-	English.lproj/BrowserPrototype.nib \
-	English.lproj/OutlinePrototype.nib \
-	English.lproj/TablePrototype.nib \
+	Inspector.gorm \
+	English.lproj/BrowserPrototype.gorm \
+	English.lproj/OutlinePrototype.gorm \
+	English.lproj/TablePrototype.gorm \
 	English.lproj/ViewModelPrototype.nib
 
 
@@ -105,5 +107,4 @@ ifeq ($(test), yes)
 include $(GNUSTEP_MAKEFILES)/bundle.make
 else
 include $(GNUSTEP_MAKEFILES)/framework.make
--include GNUmakefile.postamble
 endif

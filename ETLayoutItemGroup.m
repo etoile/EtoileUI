@@ -529,7 +529,10 @@
 		[self updateLayout];
 }
 
-- (int) indexOfItem: (ETLayoutItem *)item
+// FIXME: (id) parameter rather than (ETLayoutItem *) turns off compiler 
+// conflicts with menu item protocol which also implements this method. 
+// Fix compiler.
+- (int) indexOfItem: (id)item
 {
 	return [_layoutItems indexOfObject: item];
 }
