@@ -158,6 +158,16 @@ typedef enum _ETSizeConstraintStyle
 - (void) setDisplayViewPrototype: (NSView *)protoView;
 - (NSView *) displayViewPrototype;
 
+/* ETDecoratorLayout
+
+//- (BOOL) isDecorator;
+
+/** Returns the decorated item
+	Overrides this method in your subclasses to implement a decorator layout */
+//-representedItem
+/** Sets the decorated item */
+//-setRepresentedItem*/
+
 @end
 
 

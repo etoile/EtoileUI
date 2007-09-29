@@ -40,7 +40,7 @@
 #import "ETLineLayout.h"
 #import "ETLayoutItem.h"
 #import "ETContainer.h"
-#import "CocoaCompatibility.h"
+#import "ETCollection.h"
 #import "GNUstep.h"
 
 #import "ETTableLayout.h"
@@ -281,7 +281,7 @@
 	[self setSwitcherLayout: AUTORELEASE([[ETLineLayout alloc] init])];
 			
 	/* Post condition tests */
-	ETLayoutItem *item = [[_internalContainer items] objectWithValue: @"PaneSwitcher" forKey: @"name"];
+	ETLayoutItem *item = [[_internalContainer items] firstObjectMatchingValue: @"PaneSwitcher" forKey: @"name"];
 	NSAssert1(item != nil, @"Found nil item matching PaneSwitcher in %@", _internalContainer);
 	NSAssert1([item view] != nil, @"Found nil item matching PaneSwitcher in %@", _internalContainer);
 	// -isEqual: ETLineLayout
@@ -315,7 +315,7 @@
 	[self setContentLayout: AUTORELEASE([[ETPaneLayout alloc] init])];
 	
 	/* Post condition tests */
-	ETLayoutItem *item = [[_internalContainer items] objectWithValue: @"PaneContent" forKey: @"name"];
+	ETLayoutItem *item = [[_internalContainer items] firstObjectMatchingValue: @"PaneContent" forKey: @"name"];
 	NSAssert1(item != nil, @"Found nil item matching PaneContent in %@", _internalContainer);
 	NSAssert1([item view] != nil, @"Found nil item matching PaneContent in %@", _internalContainer);
 	// -isEqual: ETLineLayout

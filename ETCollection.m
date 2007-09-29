@@ -33,7 +33,7 @@
 	THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import "ETCollection.h"
+#import <EtoileUI/ETCollection.h>
 
 
 @implementation NSArray (ETCollection)
@@ -74,6 +74,60 @@
 - (NSArray *) contentArray
 {
 	return [self allObjects];
+}
+
+@end
+
+/* Collection Matching 
+
+   NOTE: Quite useful until we have a better HOM-like API...
+   In future, we should have object filtering like select, detect, map etc. 
+   declared by an ETFilteringCollection protocol which adopts ETCollection. */
+
+@implementation NSArray (CollectionMatching)
+
+// FIXME: Optimize a bit probably
+- (NSArray *) objectsMatchingValue: (id)value forKey: (NSString *)key
+{
+    NSMutableArray *result = [NSMutableArray array];
+    NSArray *values = [self valueForKey: key];
+    int i, n = 0;
+    
+    if (values == nil)
+        return nil;
+    
+    n = [values count];
+    
+    for (i = 0; i < n; i++)
+    {
+        if ([[values objectAtIndex: i] isEqual: value])
+        {
+            [result addObject: [self objectAtIndex: i]];
+        }
+    }
+    
+    if ([result count] == 0)
+        return nil;
+    
+    return result;
+}
+
+- (id) firstObjectMatchingValue: (id)value forKey: (NSString *)key
+{
+    return [[self objectsMatchingValue: value forKey: key] objectAtIndex: 0];
+}
+
+// NOTE: Not sure the next two methods are really interesting but it makes API
+// a bit more consistent.
+
+- (NSArray *) objectsMatchingPredicate: (NSPredicate *)predicate;
+{
+	return [self filteredArrayUsingPredicate: predicate];
+}
+
+- (id) firstObjectMatchingPredicate: (NSPredicate *)predicate
+{
+	return [[self filteredArrayUsingPredicate: predicate] objectAtIndex: 0];	
 }
 
 @end

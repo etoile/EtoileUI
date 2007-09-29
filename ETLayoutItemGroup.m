@@ -343,7 +343,7 @@
 	
 		if ([item isKindOfClass: [ETLayoutItemGroup class]])
 		{
-			item = [[(ETLayoutItemGroup *)item items] objectWithValue: pathComp forKey: @"name"];
+			item = [[(ETLayoutItemGroup *)item items] firstObjectMatchingValue: pathComp forKey: @"name"];
 		}
 		else
 		{

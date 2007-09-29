@@ -48,6 +48,9 @@
 	When adopted, this method must never return nil, you should generally 
 	return an empty NSArray instead. */
 - (NSArray *) contentArray;
+/** Returns an enumerator which can be used as a conveniency to iterate over 
+	the elements of the content one-by-one. */
+//- (NSEnumerator *) objectEnumerator;
 @end
 
 /* Adopted by the following Foundation classes  */
@@ -66,3 +69,20 @@
 - (id) content;
 - (NSArray *) contentArray;
 @end
+
+/* Collection Matching */
+
+@interface NSArray (CollectionMatching)
+
+/* Key Value Matching */
+
+- (NSArray *) objectsMatchingValue: (id)value forKey: (NSString *)key;
+- (id) firstObjectMatchingValue: (id)value forKey: (NSString *)key;
+
+/* Predicate Matching */
+
+- (NSArray *) objectsMatchingPredicate: (NSPredicate *)predicate;
+- (id) firstObjectMatchingPredicate: (NSPredicate *)predicate;
+
+@end
+

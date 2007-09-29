@@ -42,7 +42,7 @@
 #import <EtoileUI/ETInspector.h>
 #import <EtoileUI/NSView+Etoile.h>
 #import <EtoileUI/NSIndexSet+Etoile.h>
-#import <EtoileUI/CocoaCompatibility.h>
+#import <EtoileUI/ETCollection.h>
 #import <EtoileUI/GNUstep.h>
 
 #define SELECTION_BY_RANGE_KEY_MASK NSShiftKeyMask
@@ -206,6 +206,29 @@ NSString *ETLayoutItemPboardType = @"ETLayoutItemPboardType"; // FIXME: replace 
 	return _dataSource;
 }
 
+/** Sets the source which provides the content displayed by the receiver. 
+	A source can be any objects conforming to ETIndexSource or ETPathSource
+	protocol, both are variants of ETSource abstract protocol.
+	So you can write you own data source object by implementing either:
+	1) numberOfItemsInContainer:
+	   container:itemAtIndex:
+	2) container:numberOfItemsAtPath:
+	   container:itemAtPath:
+	Another common solution is to use an off-the-shelf controller object like
+	ETController, ETTreeController etc. which implements the source protocol
+	for you. This works well for basic stuff and brings extra flexibility at
+	runtime: you can edit how the controller access the model or simply 
+	replaces it by a different one.
+	A third solution is to use a component. EtoileUI implements a category on 
+	ETComponent (EtoileFoundation class) and this category conforms to 
+	ETPathSource protocol. Then every components can be used as a content 
+	provider for the receiver.
+	By calling -setComponent:, the input source of the component parameter will
+	automatically be set as the source of the receiver, replacing any 
+	previously set source. Usually you create a new component with 
+	-initWithContainer: or -initWithLayoutItem: which handles -setComponent:
+	call. */
+//- (void) setSource: (id <ETSource>)source
 - (void) setSource: (id)source
 {
 	/* By safety, avoids to trigger extra updates */
@@ -1022,7 +1045,7 @@ NSString *ETLayoutItemPboardType = @"ETLayoutItemPboardType"; // FIXME: replace 
 		  */
 		
 		/* Retrieve layers spread in _layoutItems */
-		layers = [[self items] objectsWithValue: [ETLayer class] forKey: @"class"];
+		layers = [[self items] objectsMatchingValue: [ETLayer class] forKey: @"class"];
 		/* Find the layer to be replaced in layers array */
 		layerToMoveUp = [layers objectAtIndex: layerIndex];
 		/* Retrieve the index in layoutItems array for this particular layer */
@@ -1228,9 +1251,9 @@ NSString *ETLayoutItemPboardType = @"ETLayoutItemPboardType"; // FIXME: replace 
 	_subviewHitTest = NO;
 	DESTROY(_clickedItem);
 #if 0
-	_clickedItem = [[self items] objectWithValue: hitView forKey: @"displayView"];
+	_clickedItem = [[self items] firstObjectMatchingValue: hitView forKey: @"displayView"];
 #else
-	_clickedItem = [[self items] objectWithValue: hitView forKey: @"view"];
+	_clickedItem = [[self items] firstObjectMatchingValue: hitView forKey: @"view"];
 #endif
 	RETAIN(_clickedItem);
 	NSLog(@"Double click detected on view %@ and layout item %@", hitView, _clickedItem);
