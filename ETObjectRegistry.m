@@ -35,6 +35,7 @@
  */
  
 #import <EtoileUI/ETObjectRegistry.h>
+#import <EtoileUI/ETCollection.h>
 #ifndef GNUSTEP
 #import <EtoileUI/GNUstep.h>
 #endif
@@ -74,6 +75,7 @@ static ETObjectRegistry *rootObjectRegistry = nil;
 	return [self initWithRegistry: nil];
 }
 
+/** Returns a new object registry derivated from registry prototype. */
 - (id) initWithRegistry: (ETObjectRegistry *)registry
 {
 	return [self initWithPrototype: (id)registry];
@@ -93,11 +95,22 @@ static ETObjectRegistry *rootObjectRegistry = nil;
 	return self;
 }
 
+/** Returns the prototype object of the receiver. The prototype is the parent
+	registry in the object registry tree. 
+	This method is identical to -prototype, it is mostly useful for type 
+	checking and code readability (since ETObjectRegistry tends to be widely 
+	used). */
 - (ETObjectRegistry *) parentRegistry
 {
 	return (ETObjectRegistry *)[self prototype];
 }
 
+/** Sets the prototype object on which the receiver is based, thereby results 
+	in completely new inherited properties. The prototype is the parent
+	registry in the object registry tree. 
+	This method is identical to -setPrototype:, it is mostly useful for type 
+	checking and code readability (since ETObjectRegistry tends to be widely 
+	used). */
 - (void) setParentRegistry: (ETObjectRegistry *)registry
 {
 	[self setPrototype: (id)registry];
@@ -142,7 +155,8 @@ static ETObjectRegistry *rootObjectRegistry = nil;
 
 /** Returns a clone object of the receiver. The receiver plays the role of
 	prototype for the new instance. 
-	Instance clones are mutable by default unlike instance copies. */
+	Instance clones are mutable by default unlike instance copies. 
+	Resulting clone object is retained exactly like an object copy. */
 - (id) clone
 {
 	return [self cloneWithZone: NSDefaultMallocZone()];
@@ -152,7 +166,7 @@ static ETObjectRegistry *rootObjectRegistry = nil;
 {
 	ETObjectRegistry *reg = [[ETObjectRegistry alloc] initWithRegistry: self];
 	
-	return AUTORELEASE(reg);
+	return reg;
 }
 
 /** Returns the object registry known by key. If the receiver isn't a registry 
@@ -173,12 +187,16 @@ static ETObjectRegistry *rootObjectRegistry = nil;
 
 /* Runtime Type Checking */
 
-/** Returns the class to which every value/property stored in the receiver must. */
+/** Returns the class from which every values/properties stored in the receiver 
+	must be derivated. */
 - (Class) propertyClass
 {
 	return _propertyClass;
 }
 
+/** Sets the class from which every values/properties stored in the receiver 
+	must be derivated. In other words, to be valid values must be instances of 
+	class or one of its subclasses. */
 - (void) setPropertyClass: (Class)class
 {
 	ASSIGN(_propertyClass, class);
@@ -193,9 +211,12 @@ static ETObjectRegistry *rootObjectRegistry = nil;
 	return [_properties allKeys];
 }
 
-/** Returns the propertie specific to the receiver, excluding all properties 
-	which are inherited through the object registry chain.
-	 */
+/** Returns the value associated to the property key. If no such property can be 
+	found in the receiver, the lookup continues in the parent registry and the 
+	whole object registry tree. If this property exists in a parent registry, 
+	the value associated with it in this registry is returned. 
+	When the root registry is reached by the lookup and the lookup doesn't 
+	succeed in this last object registry, the method returns nil. */
 - (id) valueForProperty: (NSString *)key
 {
 	id value = [_properties objectForKey: key];
@@ -208,6 +229,11 @@ static ETObjectRegistry *rootObjectRegistry = nil;
 	return value;
 }
 
+/** Sets the value to be bound to the property key. If the property already
+	exists in the receiver, value replaces the value previously associated to
+	key. If value is nil, the related property is removed in the receiver. 
+	When you want to set an empty, blank or undefined value, you must use an
+	NSNull instance and not nil. */
 - (void) setValue: (id)value forProperty: (NSString *)key
 {
 	if (value != nil)
@@ -259,11 +285,14 @@ static ETObjectRegistry *rootObjectRegistry = nil;
 
 /* Collection Protocol */
 
+/** Returns the underlying dictionary object used to store properties within
+	each object registry. */
 - (id) content
 {
 	return _properties;
 }
 
+/** Returns an array containing all values stored in the receiver. */
 - (NSArray *) contentArray
 {
 	return [_properties contentArray];
