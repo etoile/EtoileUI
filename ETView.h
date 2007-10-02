@@ -36,40 +36,111 @@
 #import <Foundation/Foundation.h>
 #import <AppKit/AppKit.h>
 
+@protocol ETPropertyValueCoding;
 @class ETLayoutItem;
 
 /** Display Tree Description
 
  */
 
+/** ETView is the generic view class extensively used by EtoileUI. It 
+	implements several facilities in addition to the ones already provided by
+	NSView. If you want to write Etoile-native UI code, you should always use
+	or subclass ETView and not NSView when you need a custom view and you don't
+	rely an AppKit-specific NSView subclasses.
+	Take note that if you want to add subviews (or child items) you should use
+	ETContainer and not ETView which throws exceptions if you try to call 
+	-addSubview: directly.
+	
+	A key feature is additional control and flexibility over the 
+	drawing process. It lets you sets a render delegate by calling 
+	-setRenderer:. This delegate can implement -render:  method to avoid the 
+	tedious subclassing involved by -drawRect:. 
+	More importantly, -render: isn't truly a delegated version of -drawRect:. 
+	This new method enables the possibility to draw directly over the subviews 
+	by offering another drawing path. This drawing option is widely used in 
+	EtoileUI and is the entry point of every renderer chains when they are 
+	asked to render themselves on screen. See Display Tree Description if you
+	want to know more. 
+	
+	An ETView instance is also always bound to a layout item unlike NSView 
+	instances. When a view is set on a layout item, when this view isn't an
+	ETView class or subclass instance, ETLayoutItem automatically wraps the
+	view in an ETView making possible to apply renderers, styles etc. over the
+	real view.
+	
+	ETView also offers a customizable title bar. The title bar visibility can
+	always be turned on or off. By default, it's turned off. If you are in 
+	Live Development mode, most view title bars are usually visible and are 
+	tuned for live UI editing with various buttons to switch between available
+	edition modes like view, model, object, component etc. By clicking and 
+	dragging a title bar in Live Development you can edit your UI layout. 
+	Outside of Live Development mode, title bars support collapse and expand
+	operations (think of it as window shading at view level) which is useful
+	to build complex inspectors or very flexible UI based on disclosable views.
+	Title bar support also means an ETContainer embedding ETView instances and 
+	using a layout of type ETFreeLayout will give you a built-in window manager.
+	Title bar views can be customized at application-level by setting a title
+	bar view prototype to be reused by all instances. Instance-by-instance 
+	customization is also possible by calling -setTitleBarView:, in this case
+	calling +setTitleBarViewPrototype: will never be reflected at instance 
+	level until you call -setTitleBarView: nil which resets the title bar to 
+	the class-shared prototype.
+*/
+	
 
-@interface ETView : NSView
+@interface ETView : NSView <ETPropertyValueCoding>
 {
 	ETLayoutItem *_layoutItem;
 	id _renderer;
+	ETView *_titleBarView;
 	NSView *_wrappedView;
 	BOOL _disclosable;
+	BOOL _usesCustomTitleBar;
 }
 
-/*+ (BOOL) isEditingUI;
-- (BOOL) isEditingUI;*/
+/* Title Bar */
+
++ (void) setTitleBarViewPrototype: (ETView *)barView;
++ (ETView *) titleBarViewPrototype;
 
 - (id) initWithFrame: (NSRect)rect layoutItem: (ETLayoutItem *)item;
 
+/* Basic Accessors */
+
 - (ETLayoutItem *) layoutItem;
 - (void) setLayoutItem: (ETLayoutItem *)item;
-
 - (void) setRenderer: (id)renderer;
 - (id) renderer;
 
+/* Embbeded Views */
+
+- (BOOL) usesCustomTitleBar;
+- (void) setTitleBarView: (ETView *)barView;
+- (ETView *) titleBarView;
 // NOTE: setEnclosedView: may sound better
 - (void) setWrappedView: (NSView *)subview;
 - (NSView *) wrappedView;
-
 - (void) setDisclosable: (BOOL)flag;
 - (BOOL) isDisclosable;
+
+/* Actions */
 
 - (void) collapse: (id)sender;
 - (void) expand: (id)sender;
 
+/* Property Value Coding */
+
+- (id) valueForProperty: (NSString *)key;
+- (BOOL) setValue: (id)value forProperty: (NSString *)key;
+- (NSArray *) properties;
+
+/* Live Development */
+
+//- (BOOL) isEditingUI;
+
 @end
+
+/* Notifications */
+
+extern NSString *ETViewTitleBarViewPrototypeDidChangeNotification;

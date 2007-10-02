@@ -38,6 +38,7 @@
 #import <EtoileUI/ETStyleRenderer.h>
 
 #define ETUTI NSString
+#define ITEM(x) [ETLayoutItem layoutItemWithValue: x]
 
 @class ETView, ETContainer, ETLayoutItemGroup;
 @protocol ETObjectInspection, ETInspector;
@@ -250,6 +251,12 @@ shape*/
 
 - (void) showInspectorPanel;
 - (id <ETInspector>) inspector;
+
+/* Live Development */
+
+/*- (BOOL) isEditingUI;
+- (void) beginEditingUI;
+- (void) commitEditingUI;*/
 
 @end
 

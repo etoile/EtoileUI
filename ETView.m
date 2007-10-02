@@ -34,7 +34,12 @@
 
 #import <EtoileUI/ETView.h>
 #import <EtoileUI/ETLayoutItem.h>
+#import <EtoileUI/NSView+Etoile.h>
 #import <EtoileUI/GNUstep.h>
+
+#define NC [NSNotificationCenter defaultCenter]
+
+NSString *ETViewTitleBarViewPrototypeDidChangeNotification = @"ETViewTitleBarViewPrototypeDidChangeNotification";
 
 #ifndef GNUSTEP
 @interface NSView (CocoaPrivate)
@@ -42,8 +47,29 @@
 @end
 #endif
 
+@interface ETView (Private)
+- (void) titleBarViewPrototypeDidChange: (NSNotification *)notif;
+@end
+
 
 @implementation ETView
+
+/* Title bar */
+
+static ETView *barViewPrototype = nil;
+
++ (void) setTitleBarViewPrototype: (ETView *)barView
+{
+	ASSIGN(barViewPrototype, barView);
+	[NC postNotificationName: ETViewTitleBarViewPrototypeDidChangeNotification
+		              object: self
+					userInfo: nil];
+}
+
++ (ETView *) titleBarViewPrototype
+{
+	return barViewPrototype;
+}
 
 - (id) initWithFrame: (NSRect)frame
 {
@@ -65,6 +91,14 @@
 		{
 			_layoutItem = [[ETLayoutItem alloc] initWithView: self];
 		}
+		[self setRenderer: nil];
+		[self setTitleBarView: [ETView titleBarViewPrototype]];
+		[self setDisclosable: NO];
+		
+		[NC addObserver: self 
+		       selector: @selector(titleBarViewPrototypeDidChange:) 
+			       name: ETViewTitleBarViewPrototypeDidChangeNotification
+				 object: nil];
 	}
 	
 	return self;
@@ -72,11 +106,17 @@
 
 - (void) dealloc
 {
+	[NC removeObserver: self];
+
 	DESTROY(_layoutItem);
 	DESTROY(_renderer);
+	DESTROY(_wrappedView);
+	DESTROY(_titleBarView);
 	
 	[super dealloc];
 }
+
+/* Basic Accessors */
 
 /** Returns the layout item representing the receiver in the layout item 
 	tree. 
@@ -104,7 +144,6 @@
 	[_layoutItem setView: self];
 }
 
-
 - (void) setRenderer: (id)renderer
 {
 	ASSIGN(_renderer, renderer);
@@ -129,6 +168,47 @@
 		//[[self renderer] render: nil];
 }
 
+/* Embbeded Views */
+
+- (BOOL) usesCustomTitleBar
+{
+	return _usesCustomTitleBar;
+}
+
+- (void) titleBarViewPrototypeDidChange: (NSNotification *)notif
+{
+	[self setTitleBarView: nil];
+}
+
+- (void) setTitleBarView: (ETView *)barView
+{
+	NSRect titleBarFrame = [_titleBarView frame];
+	
+	[_titleBarView removeFromSuperview];
+	
+	if (barView != nil)
+	{
+		ASSIGN(_titleBarView, barView);
+		_usesCustomTitleBar = YES;
+	}
+	else
+	{
+		ASSIGN(_titleBarView, [[ETView titleBarViewPrototype] copy]);
+		RELEASE(_titleBarView);
+		_usesCustomTitleBar = NO;
+	}
+	
+	/* Don't sync the height of the new bar view */
+	titleBarFrame.size.height = [_titleBarView height];
+	[_titleBarView setFrame: titleBarFrame];
+	[self addSubview: _titleBarView];
+}
+
+- (ETView *) titleBarView
+{
+	return _titleBarView;
+}
+
 - (void) setWrappedView: (NSView *)view
 {
 	[self setAutoresizesSubviews: YES];
@@ -137,12 +217,12 @@
 	{
 		[view setAutoresizingMask: NSViewWidthSizable | NSViewHeightSizable];
 		[self addSubview: view];
-		_wrappedView = view;
+		ASSIGN(_wrappedView, view);
 	}
 	else
 	{
 		[_wrappedView removeFromSuperview];
-		_wrappedView = nil;
+		ASSIGN(_wrappedView, nil);
 	}
 }
 
@@ -151,25 +231,100 @@
 	return _wrappedView;
 }
 
+/** Sets whether the title bar should be visible or not. 
+	When the title bar view is displayed, the receiver becomes disclosable 
+	usually by clicking on disclosure indicator. */
 - (void) setDisclosable: (BOOL)flag
 {
 	_disclosable = flag;
+	
+	if (_disclosable)
+	{
+		if ([[self titleBarView] superview] == nil)
+		{
+			[self addSubview: [self titleBarView]];
+		}
+	}
+	else
+	{
+	
+	}
 }
 
+/** Returns whether the title bar is visible, thereby disclosable or not. */
 - (BOOL) isDisclosable
 {
 	return _disclosable;
 }
 
+/* Actions */
+
 - (void) collapse: (id)sender
 {
-
+	if ([self isDisclosable])
+	{
+		[[self wrappedView] removeFromSuperview];
+		[self setFrame: [[self titleBarView] frame]];
+	}
 }
 
 - (void) expand: (id)sender
 {
-
+	NSRect prevFrame = [[self titleBarView] frame];
+	
+	if ([self isDisclosable] == NO)
+		ETLog(@"WARNING: View %@ isn't disclosable, yet it is presently collapsed", self);
+	
+	prevFrame.size.height += [[self wrappedView] height];
+	prevFrame.size.width = [[self wrappedView] width];
+	[self setFrame: prevFrame];
+	[self addSubview: [self wrappedView]];
 }
+
+/* Property Value Coding */
+
+- (id) valueForProperty: (NSString *)key
+{
+	id value = nil;
+
+	if ([[self properties] containsObject: key])
+		value = [self valueForKey: key];
+		
+	if (value == nil)
+		ETLog(@"WARNING: Found no value for property %@ in view %@", key, self);
+		
+	return value;
+}
+
+- (BOOL) setValue: (id)value forProperty: (NSString *)key
+{
+	if ([[self properties] containsObject: key])
+	{
+		[self setValue: value forKey: key];
+		return YES;
+	}
+	else
+	{
+		ETLog(@"WARNING: Trying to set value %@ for property %@ missing in "
+			@"immutable property collection of view %@", value, key, self);
+		return NO;
+	}
+}
+
+- (NSArray *) properties
+{
+	// NOTE: We may expose other properties in future
+	return [NSArray arrayWithObjects: @"disclosable"];
+}
+
+/* Live Development */
+
+/*- (BOOL) isEditingUI
+{
+	return _isEditingUI;
+}*/
+
+/* Rendering Tree */
 
 - (void) displayIfNeeded
 {

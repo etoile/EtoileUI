@@ -365,6 +365,23 @@
 	return pathBase;
 }
 
+/* Layout Item Tree */
+
+/** Returns existing subviews of the receiver as layout items. 
+	First checks whether the receiver responds to -layoutItem and in such case 
+	doesn't already include child items for these subviews. 
+	If no, either the subview is an ETView or an NSView 
+	instance. When the subview is NSView-based, a new layout item is 
+	instantiated by calling +layoutItemWithView: with subview as parameter. 
+	Then the new item is automatically inserted as a child item in the layout 
+	item representing the receiver. If the subview is ETView-based, the item
+	reprensenting the subview is immediately inserted in the receiver item. */
+- (NSArray *) itemsWithSubviewsOfView: (NSView *)view
+{
+	// FIXME: Implement
+	return nil;
+}
+
 // FIXME: Move layout item collection from ETContainer to ETLayoutItemGroup
 - (void) addItem: (ETLayoutItem *)item
 {

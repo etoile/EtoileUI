@@ -34,6 +34,8 @@
 	THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+//#import <EtoileUI/ETRenderer.h>
+//#import <EtoileUI/ETStyle.h>
 #import <EtoileUI/ETContainer.h>
 #import <EtoileUI/ETLayoutItem.h>
 #import <EtoileUI/ETLayoutItemGroup.h>
@@ -62,12 +64,12 @@
 
 #import <EtoileUI/ETInspector.h>
 
-#import <EtoileUI/ETLineLayout.h>
-
 #import <EtoileUI/NSView+Etoile.h>
 #import <EtoileUI/NSIndexSet+Etoile.h>
 #import <EtoileUI/NSIndexPath+Etoile.h>
 #import <EtoileUI/NSString+Etoile.h>
 #import <EtoileUI/NSObject+Etoile.h>
+#import <EtoileUI/ETObjectRegistry.h>
+#import <EtoileUI/ETObjectRegistry+EtoileUI.h>
 #import <EtoileUI/ETCollection.h>
 #import <EtoileUI/GNUstep.h>
