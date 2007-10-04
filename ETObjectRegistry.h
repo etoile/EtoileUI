@@ -100,7 +100,7 @@
 /* Registry Tracking */
 
 - (BOOL) isRegistryGroup;
-- (id) registryForKey: (NSString *)property propertyClass: (Class)class
+- (id) registryForKey: (NSString *)property propertyClass: (Class)class;
 
 /* Runtime Type Checking */
 
