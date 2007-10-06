@@ -94,6 +94,8 @@
 	id <ETInspector> _inspector;
 }
 
+- (id) initWithLayoutView: (NSView *)layoutView;
+
 - (ETLayoutItem *) layoutItem;
 
 /* Basic Accessors */

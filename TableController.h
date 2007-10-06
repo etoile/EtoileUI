@@ -1,12 +1,12 @@
 /*
-	ETTableLayout.h
+	TableController.h
 	
 	Description forthcoming.
  
 	Copyright (C) 2007 Quentin Mathe
  
 	Author:  Quentin Mathe <qmathe@club-internet.fr>
-	Date:  May 2007
+	Date:  September 2007
  
 	Redistribution and use in source and binary forms, with or without
 	modification, are permitted provided that the following conditions are met:
@@ -35,20 +35,14 @@
 
 #import <Foundation/Foundation.h>
 #import <AppKit/AppKit.h>
-#import <EtoileUI/ETLayout.h>
-
-@class ETViewLayoutLine, ETContainer;
+#import <EtoileUI/EtoileUI.h>
 
 
-@interface ETTableLayout : ETLayout
+@interface TableController : NSObject 
 {
-	NSArray *_allTableColumns;
+	IBOutlet ETContainer *tableContainer;
+	IBOutlet ETContainer *tableContainer2;
+	IBOutlet NSScrollView *outlineView;
 }
-
-- (NSArray *) allTableColumns;
-- (void) setAllTableColumns: (NSArray *)columns;
-
-- (id) listStyle;
-- (void) setListStyle: (id)style;
 
 @end

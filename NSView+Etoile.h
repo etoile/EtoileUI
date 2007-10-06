@@ -29,6 +29,8 @@
 - (void) setX: (float)x;
 - (void) setY: (float)y;
 
+- (BOOL) isContainer;
+
 @end
 
 /* Utility Functions */

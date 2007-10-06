@@ -73,7 +73,7 @@
 	
 	id layoutObject = AUTORELEASE([[layoutClass alloc] init]);
 	
-	if ([layoutObject isKindOfClass: [ETTableLayout class]])
+	/*if ([layoutObject isKindOfClass: [ETTableLayout class]])
 	{
 		NSTableColumn *column = [[NSTableColumn alloc] initWithIdentifier: @"size"];
 		NSImageCell *dataCell = [[NSCell alloc] initTextCell: @""];
@@ -99,7 +99,7 @@
 		[[[layoutObject displayViewPrototype] documentView] addTableColumn: column];
 		RELEASE(column);
 		[[[layoutObject displayViewPrototype] documentView] moveColumn: 3 toColumn: 2];
-	}
+	}*/
 	
 	[viewContainer setLayout: layoutObject];
 }

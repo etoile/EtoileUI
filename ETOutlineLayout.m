@@ -49,28 +49,78 @@
 
 @implementation ETOutlineLayout
 
-- (id) init
+- (id) initWithLayoutView: (NSView *)layoutView
 {
-	self = [super init];
+	self = [super initWithLayoutView: layoutView];
     
 	if (self != nil)
 	{
 		_treatsGroupsAsStacks = YES;
-	
-		BOOL nibLoaded = [NSBundle loadNibNamed: @"OutlinePrototype" owner: self];
-		
-		if (nibLoaded == NO)
-		{
-			NSLog(@"Failed to load nib OutlinePrototype");
-			RELEASE(self);
-			return nil;
-		}
     }
     
 	return self;
 }
 
+- (NSString *) nibName
+{
+	return @"OutlinePrototype";
+}
+
 // NOTE: Dealloc and Awaking from nib handled by ETTableLayout superview.
+
+/* Update column visibility */
+- (void) setDisplayedProperties: (NSArray *)properties
+{
+	NSMutableArray *displayedProperties = [properties mutableCopy];
+	NSTableView *tv = [self tableView];
+	NSEnumerator *e = [[self allTableColumns] objectEnumerator];
+	NSTableColumn *column = nil;
+	NSString *property = nil;
+	
+	NSTableColumn *outlineColumn = [[self tableView] outlineTableColumn];
+		
+	[outlineColumn setIdentifier: [displayedProperties objectAtIndex: 0]];
+	[displayedProperties removeObjectAtIndex: 0];
+	
+	/* Hide or show already existing columns */
+	while ((column = [e nextObject]) != nil)
+	{
+		if ([column isEqual: [[self tableView] outlineTableColumn]])
+			continue;
+	
+		if ([displayedProperties containsObject: [column identifier]]
+		 && [column tableView] == nil)
+		{
+			[tv addTableColumn: column];
+		}
+		else if ([displayedProperties containsObject: [column identifier]] == NO
+			  && [[column tableView] isEqual: tv])
+		{
+			[tv removeTableColumn: column];
+		}
+		[displayedProperties removeObject: [column identifier]];
+	}
+		
+	/* Automatically create and insert new columns */
+	e = [displayedProperties objectEnumerator];
+	column = nil;
+	
+	while ((property = [e nextObject]) != nil)
+	{
+		NSCell *dataCell = [[NSCell alloc] initTextCell: @""];
+		NSTableHeaderCell *headerCell = [[NSTableHeaderCell alloc] initTextCell: property]; // FIXME: Use display name
+
+		column = [[NSTableColumn alloc] initWithIdentifier: property];
+		
+		[column setHeaderCell: headerCell];
+		RELEASE(headerCell);
+		[column setDataCell: dataCell];
+		RELEASE(dataCell);
+		[column setEditable: NO];
+		[tv addTableColumn: column];
+		RELEASE(column);
+	}
+}
 
 /** Returns YES when every groups are displayed as stacks which can be expanded
 	and collapsed by clicking on their related outline arrows. 

@@ -7,6 +7,7 @@
 //
 
 #import <EtoileUI/NSView+Etoile.h>
+#import <EtoileUI/ETContainer.h>
 
 
 @implementation NSView (Etoile)
@@ -71,6 +72,11 @@
 	float x = [self x];
 	
 	[self setFrameOrigin: NSMakePoint(x, y)];
+}
+
+- (BOOL) isContainer
+{
+	return [self isKindOfClass: [ETContainer class]];
 }
 
 @end

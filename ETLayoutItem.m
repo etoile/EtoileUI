@@ -52,6 +52,8 @@
 
 @interface ETLayoutItem (Private)
 - (void) layoutItemViewFrameDidChange: (NSNotification *)notif;
+- (ETView *) _innerDisplayView;
+- (void) _setInnerDisplayView: (ETView *)innerDisplayView;
 @end
 
 @interface ETLayoutItem (SubclassVisibility)
@@ -87,9 +89,19 @@
 
 @implementation ETLayoutItem
 
++ (ETLayoutItem *) layoutItem
+{
+	return (ETLayoutItem *)AUTORELEASE([[self alloc] init]);
+}
+
 + (ETLayoutItem *) layoutItemWithView: (NSView *)view
 {
 	return (ETLayoutItem *)AUTORELEASE([[self alloc] initWithView: view]);
+}
+
++ (ETLayoutItem *) layoutItemWithValue: (id)value
+{
+	return (ETLayoutItem *)AUTORELEASE([[self alloc] initWithValue: value]);
 }
 
 - (id) init
@@ -119,6 +131,7 @@
     if (self != nil)
     {
 		_parentLayoutItem = nil;
+		//_decoratorItem = nil;
 		[self setView: view];
 		[self setVisible: NO];
 		[self setStyleRenderer: AUTORELEASE([[ETSelection alloc] init])];
@@ -138,6 +151,8 @@
 
 - (void) dealloc
 {
+	if (_decoratorItem != self)
+		DESTROY(_decoratorItem);
     DESTROY(_view);
 	DESTROY(_value);
 	DESTROY(_modelObject);
@@ -431,56 +446,112 @@
 	ASSIGN(_modelObject, modelObject);
 }
 
-- (NSView *) view
+- (ETView *) _innerDisplayView
 {
-	if ([_view isKindOfClass: [ETView class]] && [_view wrappedView] != nil)
+	if ([self decoratorItem] != nil)
 	{
-		return [_view wrappedView];
+		/* Next line is equal to [[self displayView] wrappedView] */
+		return (ETView *)[[[self decoratorItem] displayView] wrappedView]; 
 	}
 	else
-	{
-		return _view;
+	{	
+		return [self displayView];
 	}
 }
 
-- (void) setView: (NSView *)view
+- (void) _setInnerDisplayView: (ETView *)innerDisplayView
+{
+	if ([self decoratorItem] != nil)
+	{
+		ETView *displayView = [[self decoratorItem] displayView];
+		
+		/* Verify that item display view is now the decorator view */
+		NSAssert3([displayView isEqual: [self displayView]], @"Display view "
+			"%@ of item %@ must be the decorator display view %@", 
+			[self displayView], self, displayView);
+			
+		/* Move inner display view into the decorator */
+		RETAIN(innerDisplayView);
+		[innerDisplayView removeFromSuperview];
+		[displayView setWrappedView: innerDisplayView];
+		RELEASE(innerDisplayView);
+	}
+	else
+	{	
+		[self setDisplayView: innerDisplayView];
+	}
+}
+
+- (NSView *) view
+{
+	ETView *innerDisplayView = [self _innerDisplayView];
+	id wrappedView = [innerDisplayView wrappedView];
+	
+	if (wrappedView != nil)
+	{
+		// FIXME: Simplify by hiding these details
+		if ([wrappedView isKindOfClass: [NSScrollView class]])
+		{
+			return [wrappedView documentView];
+		}
+		else if ([wrappedView isKindOfClass: [NSBox class]])
+		{
+			return [wrappedView contentView];
+		}
+		else
+		{
+			return wrappedView;
+		}
+	}
+	else
+	{
+		return innerDisplayView;
+	}
+}
+
+- (void) setView: (NSView *)newView
 {
 	BOOL resizeBoundsActive = [self appliesResizingToBounds];
-	ETView *wrapperView = nil;
+	id view = [[self _innerDisplayView] wrappedView];
 	
-	if (_view != nil)
+	/* Tear down the current view */
+	if (view != nil)
 	{
-		/* Sync layout item frame with display view frame (see -setFrame:) */
-		_frame = [_view frame];
 		/* Restore view initial state */
-		[_view setFrame: [self defaultFrame]];
-		[_view setRenderer: nil];
+		[view setFrame: [self defaultFrame]];
+		//[view setRenderer: nil];
 		/* Stop to observe notifications on current view and reset bounds size */
 		[self setAppliesResizingToBounds: NO];
 	}
-	
 	_defaultFrame = NSZeroRect;
 	
+	/* Inserts the new view */
+	
 	/* When the view isn't an ETView instance, we wrap it inside a new ETView 
-	   instance to have -drawRect: asking the layout item to render by itself. */
-	if ([view isKindOfClass: [ETView class]])
+	   instance to have -drawRect: asking the layout item to render by itself.
+	   Retrieving the display view automatically returns the innermost display
+	   view in the decorator item chain. */
+	if ([newView isKindOfClass: [ETView class]])
 	{
-		wrapperView = (ETView *)view;
+		[self _setInnerDisplayView: (ETView *)newView];
 	}
-	else if ([view isKindOfClass: [NSView class]])
+	else if ([newView isKindOfClass: [NSView class]])
 	{
-		NSAssert1(view != nil, @"A nil view must not be wrapped in -setView: of %@", self);
-		wrapperView = [[ETView alloc] initWithFrame: [view frame]];
-		[wrapperView setWrappedView: view];
-		AUTORELEASE(wrapperView);
+		if ([self _innerDisplayView] == nil)
+		{
+			ETView *wrapperView = [[ETView alloc] initWithFrame: [newView frame] 
+													 layoutItem: self];
+			[self _setInnerDisplayView: wrapperView];
+			RELEASE(wrapperView);
+		}
+		[[self _innerDisplayView] setWrappedView: newView];
 	}
 	
-	ASSIGN(_view, wrapperView);
-	
-	if (_view != nil)
+	/* Set up the new view */
+	if (newView != nil)
 	{
-		[_view setRenderer: self];
-		[self setDefaultFrame: [_view frame]];
+		//[newView setRenderer: self];
+		[self setDefaultFrame: [newView frame]];
 		if (resizeBoundsActive)
 			[self setAppliesResizingToBounds: YES];
 	}
@@ -634,15 +705,53 @@
 
 }
 
+/** Returns the display view of the receiver. The display view is the last
+	display view of the decorator item chain. Display view is an instance of 
+	ETView class or subclasses.
+	You can retrieve the outermost decorator of decorator item chain by calling
+	-decoratorItem. Getting the next one would be 
+	[[self decoratorItem] decoratorItem].
+	Take note there is usually only one decorator which is commonly used to 
+	support scroll view. 
+	See -setDecoratorItem: to know more. */
+#if 0
+- (ETView *) _lastDecoratorItemDisplayView
+{
+	ETLayoutItem *decorator = self;
+	
+	/* Find the last decorator in the decorator item chain */
+	while ([decorator decoratorItem] != nil)
+	{
+		decorator = [decorator decoratorItem];
+	}
+	
+	return [decorator displayView];
+}
+#endif
+
+/** Returns the display view of the receiver. The display view is the last
+	display view of the decorator item chain. Display view is an instance of 
+	ETView class or subclasses.
+	You can retrieve the outermost decorator of decorator item chain by calling
+	-decoratorItem. Getting the next one would be 
+	[[self decoratorItem] decoratorItem].
+	Take note there is usually only one decorator which is commonly used to 
+	support scroll view. 
+	See -setDecoratorItem: to know more. */
 - (ETView *) displayView
 {
 	return _view;
 }
 
+/** Sets the display view of the receiver. Never calls this method directly 
+	unless you write an ETLayoutItem subclass. 
+	You must use -setDecoratorItem: if you want to modify the display view of 
+	the receiver. */
 - (void) setDisplayView: (ETView *)view
 {
-	// FIXME
-	//NSView *enclosedView = nil;
+	if ([self decoratorItem] == nil)
+		[view setLayoutItemWithoutInsertingView: self];
+	ASSIGN(_view, view);
 }
 
 // TODO: Modify to lookup for the selection state in the closest container ancestor
@@ -685,6 +794,108 @@
 		// FIXME: Replace by [ETUTI typeForClass: [self class]]
 		return NSStringFromClass([[self representedObject] class]);
 	}
+}
+
+/** Returns the decorator item when the receiver uses a view. The decorator 
+	item is the receiver itself by default. 
+	The decorator item is in charge of managing the item view and must not 
+	break the following rules:
+	- [self displayView] must return [[self decoratorItem] view]
+	- [self view] must return [[[self decoratorItem] view] wrappedView] */
+- (ETLayoutItem *) decoratorItem
+{
+	return _decoratorItem;
+}
+
+/** Sets the decorator item in order to customize the item view border. The 
+	decorator item is typically used to display a title bar making possible to
+	manipulate the item directly (by drag and drop). The other common use is 
+	putting the item view inside a scroll view. 
+	By default, the decorator item is nil. */
+- (void) setDecoratorItem: (ETLayoutItem *)decorator
+{
+	ETView *innerDisplayView = [self _innerDisplayView];
+	
+	// TODO: Rewrite several assertions as unit tests
+
+	/* Verify the proper set up of the current display view */
+	if ([self displayView] != nil)
+	{
+		NSAssert2([[self displayView] isKindOfClass: [ETView class]], @"Item "
+			"%@ must have a display view %@ of type ETView", [self decoratorItem], 
+			[self displayView]);
+		
+		if ([[self view] isKindOfClass: [ETView class]] == NO)
+		{
+			NSAssert3([[self view] isEqual: [[self displayView] wrappedView]], @"View %@ of "
+				@"item %@ must be the decorator wrapped view %@", [self view], self, 
+				[[self displayView] wrappedView]);
+		}
+	}
+
+	/* Verify the proper set up of the current decorator */
+	if (_decoratorItem != nil)
+	{
+		NSAssert1([self displayView] != nil, @"Display view must no be nil "
+			@"when a decorator is set on item %@", self);		
+		NSAssert2([[_decoratorItem displayView] isKindOfClass: [ETView class]], 
+			@"Decorator %@ must have display view %@ of type ETView", 
+			_decoratorItem, [_decoratorItem displayView]);
+		NSAssert2([_decoratorItem displayView] == [self displayView], 
+			@"Decorator display view %@ must be decorated item display view %@", 
+			[_decoratorItem displayView], [self displayView]);
+		NSAssert2([_decoratorItem parentLayoutItem] == nil, @"Decorator %@ "
+			@"must have no parent %@ set", _decoratorItem, 
+			[_decoratorItem parentLayoutItem]);
+	}
+		
+	/* Verify the new decorator */
+	if (decorator != nil)
+	{
+		NSAssert2([[decorator displayView] isKindOfClass: [ETView class]], 
+			@"Decorator %@ must have display view %@ of type ETView", 
+			decorator, [decorator displayView]);
+		if ([decorator parentLayoutItem] != nil)
+		{
+			ETLog(@"WARNING: Decorator item %@ must have no parent to be used", 
+				decorator);
+			[[decorator parentLayoutItem] removeItem: decorator];
+		}
+	}
+	
+	// NOTE: New decorator must be set before updating display view because
+	// display view related methods rely on -decoratorItem accessor
+	ASSIGN(_decoratorItem, decorator);
+	
+	/* Finally updated the view tree */
+	
+	NSView *superview = [innerDisplayView superview];
+	ETView *newDisplayView = nil;
+	
+	[self _setInnerDisplayView: innerDisplayView];
+	// NOTE: Now innerDisplayView and [self displayView] doesn't match, the 
+	// the latter has become [decorator displayView]
+	newDisplayView = [self displayView];
+
+	/* Verify new decorator has been correctly inserted */
+	if (_decoratorItem != nil)
+	{
+		NSAssert3([newDisplayView isEqual: [self displayView]], @"Display "
+			@" view %@ of item %@ must be the decorator display view %@", 
+			[self displayView], self, newDisplayView);
+	}
+	
+	/* If the previous display view was part of view tree, inserts the new
+	   display view into the existing superview */
+	if (superview != nil)
+	{
+		NSAssert2([newDisplayView superview] == nil, @"New display view %@ of "
+			@"item %@ must have no superview at this point", 
+			newDisplayView, self);
+		[superview addSubview: newDisplayView];
+	}
+
+	// FIXME: Update layout if needed
 }
 
 - (void) updateLayout

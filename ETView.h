@@ -110,6 +110,7 @@
 
 - (ETLayoutItem *) layoutItem;
 - (void) setLayoutItem: (ETLayoutItem *)item;
+- (void) setLayoutItemWithoutInsertingView: (ETLayoutItem *)item;
 - (void) setRenderer: (id)renderer;
 - (id) renderer;
 
@@ -144,3 +145,15 @@
 /* Notifications */
 
 extern NSString *ETViewTitleBarViewPrototypeDidChangeNotification;
+
+/* Private stuff */
+
+@interface ETScrollView : ETView
+{
+
+}
+
+- (void) setWrappedView: (NSView *)subview;
+- (NSView *) wrappedView;
+
+@end

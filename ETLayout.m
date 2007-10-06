@@ -39,6 +39,9 @@
 #import <EtoileUI/ETLayout.h>
 #import <EtoileUI/ETViewLayoutLine.h>
 #import <EtoileUI/ETContainer.h>
+#import <EtoileUI/ETTableLayout.h>
+#import <EtoileUI/ETOutlineLayout.h>
+#import <EtoileUI/ETBrowserLayout.h>
 #import <EtoileUI/NSView+Etoile.h>
 #import <EtoileUI/GNUstep.h>
 
@@ -65,6 +68,47 @@
 
 /* Factory Method */
 
++ (id) layout
+{
+	return AUTORELEASE([[[self class] alloc] init]);
+}
+
++ (id) layoutWithLayoutView: (NSView *)layoutView
+{
+	return AUTORELEASE([[[self  class] alloc] initWithLayoutView: layoutView]);
+}
+
+- (Class) layoutClassForLayoutView: (NSView *)layoutView
+{
+	Class layoutClass = nil;
+	NSView *view = layoutView;
+	
+	if ([layoutView isKindOfClass: [NSScrollView class]])
+		view = [(NSScrollView *)layoutView documentView];
+	
+	// NOTE: Outline test must be done before table test, otherwise table 
+	// layout is returned in both cases (NSOutlineView is subclass of 
+	// NSTableView)
+	if ([view isKindOfClass: [NSOutlineView class]])
+	{
+		layoutClass = [ETOutlineLayout class];
+	}
+	else if ([view isKindOfClass: [NSTableView class]])
+	{
+		layoutClass = [ETTableLayout class];
+	}
+	else if ([view isKindOfClass: [NSBrowser class]])
+	{
+		layoutClass = [ETBrowserLayout class];	
+	}
+	else
+	{
+		layoutClass = [ETLayout class];
+	}
+	
+	return layoutClass;
+}
+
 /** Returns a prototype which is a receiver copy you can freely assign to 
 	another container. Because a layout can be bound to only one container, 
 	this method is useful for sharing a customized layout between several 
@@ -75,15 +119,46 @@
 	return [self copy];
 }
 
-- (id) init
+/** <init /> Returns ETLayout instance when layoutView is nil, otherwise 
+	returns a concrete subclass with class cluster style initialization. */
+- (id) initWithLayoutView: (NSView *)layoutView
 {
 	self = [super init];
-    
+	
+	/* Class cluster initialization */
+	
+	/* ETLayout itself takes the placeholder object role. By removing the 
+	   following if statement, concrete subclass would have the possibility
+	   to override the concrete subclass... No utility right now. */
+	if (layoutView != nil && [self isMemberOfClass: [ETLayout class]])
+	{
+		/* Find the concrete layout class to instantiate */
+		Class layoutClass = [self layoutClassForLayoutView: layoutView];
+		
+		/* Eventually replaces the receiver by a new concrete instance */
+		if (layoutClass != nil)
+		{
+			if ([self isMemberOfClass: layoutClass] == NO)
+			{
+				NSZone *zone = [self zone];
+				RELEASE(self);
+				self = [[layoutClass allocWithZone: zone] initWithLayoutView: layoutView];
+			}
+		}
+		else /* No matching layout class */
+		{
+			self = nil;
+		}
+		
+		return self; /* Instance already initialized */
+	}
+  
+	/* Concrete instance initialization */
+	
 	if (self != nil)
 	{
 		_layoutContext = nil;
 		_delegate = nil;
-		_displayViewPrototype = nil;
 		_isLayouting = NO;
 		_layoutSize = NSMakeSize(200, 200); /* Dummy value */
 		_layoutSizeCustomized = NO;
@@ -91,9 +166,41 @@
 		_itemSize = NSMakeSize(256, 256); /* Default max item size */
 		/* By default both width and height must be equal or inferior to related _itemSize values */
 		_itemSizeConstraintStyle = ETSizeConstraintStyleVerticalHorizontal;
-    }
-    
+	
+		if ([self nibName] == nil) /* Use layout view parameter */
+		{
+			[self setDisplayViewPrototype: layoutView];
+		}
+		else /* Use layout view in nib */
+		{
+			if ([self loadNibNamed: [self nibName]] == NO)
+				self = nil;
+		}
+	}
+	
 	return self;
+}
+
+- (NSString *) nibName
+{
+	return nil;
+}
+
+- (BOOL) loadNibNamed: (NSString *)nibName
+{
+	BOOL nibLoaded = [NSBundle loadNibNamed: nibName owner: self];
+	
+	if (nibLoaded == NO)
+	{
+		NSLog(@"Failed to load nib %@", nibName);
+		RELEASE(self);
+	}
+	return nibLoaded;
+}
+
+- (id) init
+{
+	return [self initWithLayoutView: nil];
 }
 
 - (void) dealloc
@@ -633,6 +740,32 @@
 		// FIXME: Take in account any item decorations drawn by layout directly
 		return NSZeroRect;
 	}
+}
+
+/* Item Property Display */
+
+/** Override */
+- (NSArray *) displayedProperties
+{
+	return nil;
+}
+
+/** Override */
+- (void) setDisplayedProperties: (NSArray *)properties
+{
+	
+}
+
+/** Override */
+- (id) styleForProperty: (NSString *)property
+{
+	return nil;
+}
+
+/** Override */
+- (void) setStyle: (id)style forProperty: (NSString *)property
+{
+
 }
 
 // NOTE: Extensions probably not really interesting...

@@ -90,10 +90,10 @@
 	return AUTORELEASE([[self alloc] initWithLayoutItems: nil view: view]);
 }
 
-/** Designated initialize */
-- (id) initWithLayoutItems: (NSArray *)layoutItems view: (NSView *)view
+/** Designated initializer */
+- (id) initWithLayoutItems: (NSArray *)layoutItems view: (NSView *)view value: (id)value representedObject: (id)repObject
 {
-    self = [super initWithView: view];
+    self = [super initWithView: view value: value representedObject: repObject];
     
     if (self != nil)
     {
@@ -111,9 +111,15 @@
     return self;
 }
 
-- (id) initWithView: (NSView *)view
+/* Overriden ETLayoutItem designated initializer */
+- (id) initWithView: (NSView *)view value: (id)value representedObject: (id)repObject
 {
-	return [self initWithLayoutItems: nil view: view];
+	return [self initWithLayoutItems: nil view: view value: value representedObject: repObject];
+}
+
+- (id) initWithLayoutItems: (NSArray *)layoutItems view: (NSView *)view
+{
+	return [self initWithLayoutItems: layoutItems view: view value: nil representedObject: nil];
 }
 
 - (id) init
@@ -607,6 +613,9 @@
 		[(ETContainer *)[self displayView] setDisplayView: nil]; 
 	ASSIGN(_layout, layout);
 	[layout setLayoutContext: self];
+	
+	/* if ([_layout representedItem] != nil)
+		[[_layoutItem setDecoratorItem: self]; */
 
 	// FIXME: We should move code to set display view when necessary here. By
 	// calling -setDisplayView: [_container displayViewPrototype] we wouldn't

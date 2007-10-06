@@ -1,0 +1,34 @@
+{
+    IBClasses = (
+        {
+            ACTIONS = {inspect = id; stack = id; }; 
+            CLASS = ETContainer; 
+            LANGUAGE = ObjC; 
+            OUTLETS = {"_scrollView" = NSScrollView; }; 
+            SUPERCLASS = ETView; 
+        }, 
+        {
+            ACTIONS = {collapse = id; expand = id; }; 
+            CLASS = ETView; 
+            LANGUAGE = ObjC; 
+            SUPERCLASS = NSView; 
+        }, 
+        {
+            ACTIONS = {inspect = id; }; 
+            CLASS = FirstResponder; 
+            LANGUAGE = ObjC; 
+            SUPERCLASS = NSObject; 
+        }, 
+        {
+            CLASS = TableController; 
+            LANGUAGE = ObjC; 
+            OUTLETS = {
+                outlineView = NSScrollView; 
+                tableContainer = ETContainer; 
+                tableContainer2 = ETContainer; 
+            }; 
+            SUPERCLASS = NSObject; 
+        }
+    ); 
+    IBVersion = 1; 
+}

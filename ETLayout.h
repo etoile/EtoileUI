@@ -94,6 +94,8 @@ typedef enum _ETSizeConstraintStyle
 
 /* Factory  Method */
 
++ (id) layout;
++ (id) layoutWithLayoutView: (NSView *)view;
 - (id) layoutPrototype;
 
 /* Main Accessors */
@@ -167,6 +169,13 @@ typedef enum _ETSizeConstraintStyle
 //-representedItem
 /** Sets the decorated item */
 //-setRepresentedItem*/
+
+/* Item Property Display */
+
+- (NSArray *) displayedProperties;
+- (void) setDisplayedProperties: (NSArray *)properties;
+- (id) styleForProperty: (NSString *)property;
+- (void) setStyle: (id)style forProperty: (NSString *)property;
 
 @end
 

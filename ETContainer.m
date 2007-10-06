@@ -72,6 +72,30 @@ NSString *ETLayoutItemPboardType = @"ETLayoutItemPboardType"; // FIXME: replace 
 
 @implementation ETContainer
 
+- (id) initWithLayoutView: (NSView *)layoutView
+{
+	self = [self initWithFrame: [layoutView frame]];
+
+	if (self != nil)
+	{
+		id existingSuperview = [layoutView superview];
+		ETLayout *layout = [ETLayout layoutWithLayoutView: layoutView];
+		
+		if ([existingSuperview isContainer]) // existingSuperview must respond to -layoutItem
+		{
+		   [(ETContainer *)existingSuperview addItem: [self layoutItem]];
+		}
+		else // existingSuperview isn't a view-based node in a layout item tree
+		{
+		   [existingSuperview replaceSubview: layoutView with: self];
+		}
+
+		[self setLayout: layout]; // inject the initial view as a layout
+	}
+	
+	return self;
+}
+
 /** <init /> */
 - (id) initWithFrame: (NSRect)rect layoutItem: (ETLayoutItem *)item
 {

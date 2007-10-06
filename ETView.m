@@ -135,13 +135,19 @@ static ETView *barViewPrototype = nil;
 	Throws an exception when item parameter is nil. */
 - (void) setLayoutItem: (ETLayoutItem *)item
 {
+	[self setLayoutItemWithoutInsertingView: item];
+	[_layoutItem setView: self];
+}
+
+/** You should never need to call this method. */
+- (void) setLayoutItemWithoutInsertingView: (ETLayoutItem *)item
+{	
 	if (item == nil)
 	{
 		[NSException raise: NSInvalidArgumentException format: @"For ETView, "
 			@"-setLayoutItem: parameter %@ must be never be nil", item];
-	}
+	}	
 	ASSIGN(_layoutItem, item);
-	[_layoutItem setView: self];
 }
 
 - (void) setRenderer: (id)renderer
@@ -396,5 +402,38 @@ static ETView *barViewPrototype = nil;
 		[[self renderer] render: nil];
 }
 #endif
+
+@end
+
+@implementation ETScrollView : ETView
+
+- (NSView *) wrappedView
+{
+	return [(NSScrollView *)_wrappedView documentView]; 
+}
+
+- (void) setWrappedView: (NSView *)view
+{
+	NSAssert2([_wrappedView isKindOfClass: [NSScrollView class]], 
+		@"_wrappedView %@ of %@ must be an NSScrollView instance", 
+		_wrappedView, self);
+
+	/* Retain the view in case it must be removed from a superview and nobody
+	   else retains it */
+	RETAIN(view);
+
+	/* Ensure the view has no superview set */
+	if ([view superview] != nil)
+	{
+		ETLog(@"WARNING: New wrapped view %@ of %@ should have no superview",
+			view, self);
+		[view removeFromSuperview];
+	}
+	
+	/* Embed the wrapped view inside the receiver scroll view */
+	[(NSScrollView *)_wrappedView setDocumentView: view];
+	
+	RELEASE(view);
+}
 
 @end

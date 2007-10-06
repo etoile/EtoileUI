@@ -82,6 +82,7 @@
 	id _modelObject;
 	NSString *_name;
 	ETStyleRenderer *_renderer;
+	ETLayoutItem *_decoratorItem;
 
 	IBOutlet ETView *_view;
 	NSArray *_cells; /* NSCell compatibility */
@@ -98,7 +99,9 @@
 	id _reserved;
 }
 
++ (ETLayoutItem *) layoutItem;
 + (ETLayoutItem *) layoutItemWithView: (NSView *)view;
++ (ETLayoutItem *) layoutItemWithValue: (id)value;
 
 - (id) initWithValue: (id)value;
 - (id) initWithRepresentedObject: (id)object;
@@ -147,7 +150,7 @@
 - (void) setValue: (id)value;
 
 - (NSView *) view;
-- (void) setView: (NSView *)view;
+- (void) setView: (NSView *)newView;
 
 - (ETView *) displayView;
 
@@ -192,6 +195,10 @@ shape*/
 - (ETUTI *) type;
 
 /* Layouting & Rendering Chain */
+
+- (ETLayoutItem *) decoratorItem;
+- (void) setDecoratorItem: (ETLayoutItem *)decorator;
+//-setShowsDecorator:
 
 - (void) updateLayout;
 - (void) apply: (NSMutableDictionary *)inputValues;

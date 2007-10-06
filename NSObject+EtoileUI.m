@@ -1,12 +1,12 @@
 /*
-	ETTableLayout.h
+	NSObject+EtoileUI.m
 	
 	Description forthcoming.
  
 	Copyright (C) 2007 Quentin Mathe
  
 	Author:  Quentin Mathe <qmathe@club-internet.fr>
-	Date:  May 2007
+	Date:  September 2007
  
 	Redistribution and use in source and binary forms, with or without
 	modification, are permitted provided that the following conditions are met:
@@ -33,22 +33,9 @@
 	THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import <Foundation/Foundation.h>
-#import <AppKit/AppKit.h>
-#import <EtoileUI/ETLayout.h>
-
-@class ETViewLayoutLine, ETContainer;
+#import "NSObject+EtoileUI.h"
 
 
-@interface ETTableLayout : ETLayout
-{
-	NSArray *_allTableColumns;
-}
-
-- (NSArray *) allTableColumns;
-- (void) setAllTableColumns: (NSArray *)columns;
-
-- (id) listStyle;
-- (void) setListStyle: (id)style;
+@implementation NSObject (EtoileUI)
 
 @end
