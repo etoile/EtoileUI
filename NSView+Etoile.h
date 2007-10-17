@@ -11,7 +11,11 @@
 #import <EtoileUI/ETCollection.h>
 
 
-@interface NSView (Etoile) <ETCollection>
+@interface NSView (Etoile) <NSCopying, ETCollection>
+
+/* Copying */
+
+- (id) copyWithZone: (NSZone *)zone;
 
 /* Collection Protocol */
 

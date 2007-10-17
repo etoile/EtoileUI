@@ -12,6 +12,20 @@
 
 @implementation NSView (Etoile)
 
+/* Copying */
+
+/** Returns a view copy of the receiver. The superview of the resulting copy is
+	always nil. The whole subview tree is also copied, in other words the new
+	object is a deep copy of the receiver.*/
+- (id) copyWithZone: (NSZone *)zone
+{
+	NSData *viewData = [NSKeyedArchiver archivedDataWithRootObject: self];
+	NSView *viewCopy = [NSKeyedUnarchiver unarchiveObjectWithData: viewData];
+
+	RETAIN(viewCopy);
+	return viewCopy;
+}
+
 /* Collection Protocol */
 
 - (id) content
