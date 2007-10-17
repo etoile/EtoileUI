@@ -153,6 +153,7 @@
 	
 	if ([browserView delegate] == nil)
 		[browserView setDelegate: self];
+	[browserView setDoubleAction: @selector(doubleClick:)];
 	[browserView setAction: @selector(click:)];
 	[browserView setTarget: self];		
 	//[browserView setPathSeparator: @"/"];
@@ -360,6 +361,20 @@
 	ETLog(@"-click: row %d and column %d in %@", row, [sender selectedColumn], self);
 	
 	[[self container] setSelectionIndex: row];
+	[[NSApplication sharedApplication] sendAction: [[self container] action] 
+	                                           to: [[self container] target] 
+											  from: sender];
+}
+
+- (IBAction) doubleClick: (id)sender
+{
+	int row = [sender selectedRowInColumn: [sender selectedColumn]];
+	
+	ETLog(@"-doubleClick: row %d and column %d in %@", row, [sender selectedColumn], self);
+	
+	[[NSApplication sharedApplication] sendAction: [[self container] doubleAction] 
+	                                           to: [[self container] target] 
+											  from: sender];
 }
 
 - (ETLayoutItem *) doubleClickedItem
@@ -374,7 +389,7 @@
 	indexPath = [(ETLayoutItemGroup *)[container layoutItem] indexPathForPath: [browserView path]];
 	item = [[container source] container: container itemAtPath: indexPath];
 	
-	//NSLog(@"-doubleClickedItem in %@ with browser path %@", self, path);
+	NSLog(@"-doubleClickedItem %@ in %@ with browser path %@", item, self, indexPath);
 	
 	return item;
 }
