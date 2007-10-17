@@ -13,7 +13,7 @@ endif
 
 EtoileUI_LIBRARIES_DEPEND_UPON += -lm
 
-EtoileUI_SUBPROJECTS = 
+#EtoileUI_SUBPROJECTS = 
 
 EtoileUI_OBJC_FILES = \
 	ETStyleRenderer.m \
@@ -40,6 +40,7 @@ EtoileUI_OBJC_FILES = \
 	ETViewLayoutLine.m \
 	FSBrowserCell.m \
 	ETCollection.m \
+	ETObjectRegistry.m \
 	NSIndexPath+Etoile.m \
 	NSIndexSet+Etoile.m \
 	NSObject+Etoile.m \
@@ -78,6 +79,7 @@ EtoileUI_HEADER_FILES = \
 	ETViewLayoutLine.h \
 	FSBrowserCell.h \
 	ETCollection.h \
+	ETObjectRegistry.h \
 	NSIndexPath+Etoile.h \
 	NSIndexSet+Etoile.h \
 	NSObject+Etoile.h \
