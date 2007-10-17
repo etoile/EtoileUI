@@ -164,6 +164,7 @@ NSString *ETLayoutItemPboardType = @"ETLayoutItemPboardType"; // FIXME: replace 
 - (void) dealloc
 {
 	// FIXME: Clarify memory management of _displayView and _scrollView
+	DESTROY(_clickedItem);
 	DESTROY(_displayView);
 	DESTROY(_path);
 	DESTROY(_selection);
@@ -1216,7 +1217,7 @@ NSString *ETLayoutItemPboardType = @"ETLayoutItemPboardType"; // FIXME: replace 
 
 - (void) mouseDown: (NSEvent *)event
 {
-	NSLog(@"Mouse down in %@", self);
+	ETLog(@"Mouse down in %@", self);
 	
 	if ([self displayView] != nil) /* Layout object is wrapping an AppKit control */
 	{
@@ -1262,28 +1263,14 @@ NSString *ETLayoutItemPboardType = @"ETLayoutItemPboardType"; // FIXME: replace 
 
 	/* Handle possible double click */
 	if ([event clickCount] > 1) 
-		[self mouseDoubleClick: event];
+		[self mouseDoubleClick: event item: newlyClickedItem];
 }
 
-- (void) mouseDoubleClick: (NSEvent *)event
+- (void) mouseDoubleClick: (NSEvent *)event item: (ETLayoutItem *)item
 {
-	NSView *hitView = nil;
-	NSPoint location = [[[self window] contentView] 
-		convertPoint: [event locationInWindow] toView: [self superview]];
+	ETLog(@"Double click detected on item %@ in %@", item, self);
 	
-	/* Find whether hitView is a layout item view */
-	_subviewHitTest = YES; /* Allow us to make a hit test on our subview */
-	hitView = [self hitTest: location];
-	_subviewHitTest = NO;
-	DESTROY(_clickedItem);
-#if 0
-	_clickedItem = [[self items] firstObjectMatchingValue: hitView forKey: @"displayView"];
-#else
-	_clickedItem = [[self items] firstObjectMatchingValue: hitView forKey: @"view"];
-#endif
-	RETAIN(_clickedItem);
-	NSLog(@"Double click detected on view %@ and layout item %@", hitView, _clickedItem);
-	
+	ASSIGN(_clickedItem, item);
 	[[NSApplication sharedApplication] sendAction: [self doubleAction] to: [self target] from: self];
 }
 
