@@ -682,6 +682,23 @@
 	return _displayViewPrototype;
 }
 
+- (void) setUpLayoutView
+{
+	id layoutView = [self displayViewPrototype];
+	
+	NSAssert1(layoutView != nil, @"Layout view to set up must not be nil in %@", self);
+	
+	if ([layoutView superview] == nil)
+	{
+		[[self container] setDisplayView: layoutView];
+	}
+	else if ([[layoutView superview] isEqual: [self container]] == NO)
+	{
+		ETLog(@"WARNING: Table view of table layout should never have another "
+			  @"superview than container parameter or nil.");
+	}
+}
+
 /* 
  * Utility methods
  */

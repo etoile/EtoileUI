@@ -120,50 +120,25 @@
 
 - (void) renderWithLayoutItems: (NSArray *)items
 {
-	NSBrowser *browserView = nil;
+	NSBrowser *browserView = [self browser];
 	
-	/* No display view proto available, a browser view needs needs to be created 
-	   in code */
-	if ([self displayViewPrototype] == nil)
-	{
-		//scrollView = [self scrollingBrowserView];
-	}
-	else
-	{
-		NSView *proto = [self displayViewPrototype];
-		
-		/* NSBrowser isn't enclosed in an NScrollView unlike NSTableView and NSOutlineView */
-		if ([proto isKindOfClass: [NSBrowser class]])
-		{
-			browserView = (NSBrowser *)[self displayViewPrototype];
-		}
-		else
-		{
-			NSLog(@"WARNING: %@ display view prototype %@ isn't an NSBrowser instance", self, proto);
-		}
-	}
+	[self setUpLayoutView];
 	
-	if ([browserView superview] == nil)
-	{
-		[[self container] setDisplayView: browserView];
-	}
-	else if ([[browserView superview] isEqual: [self container]] == NO)
-	{
-		NSLog(@"WARNING: %@ of %@ should never have another "
-			  @"superview than container parameter or nil.", browserView, self);
-	}
-	
+	// FIXME: Implement browser cell scaling to get 
+	// -resizeLayoutItems:toScaleFactor: works as expected
 	//[self resizeLayoutItems: items toScaleFactor: [container itemScaleFactor]];
 	
 	if ([browserView delegate] == nil)
 		[browserView setDelegate: self];
+	// FIXME: The next lines shouldn't be needed but
+	// -[ETContainer syncDisplayViewWithContainer] regularly overwrites what have
+	// been set in -setDisplayViewPrototype:
 	[browserView setDoubleAction: @selector(doubleClick:)];
 	[browserView setAction: @selector(click:)];
 	[browserView setTarget: self];		
-	//[browserView setPathSeparator: @"/"];
-	//[browserView setPath: @"/"]; //[[self container] path]];
+
+	// NOTE: -loadColumnZero reloads browser context unlike -setPath: @"/"
 	[browserView loadColumnZero];
-	//[self resizeLayoutItems: items toScaleFactor: [container itemScaleFactor]];
 }
 
 - (void) resizeLayoutItems: (NSArray *)items toScaleFactor: (float)factor
