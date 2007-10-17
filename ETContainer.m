@@ -42,8 +42,10 @@
 #import <EtoileUI/ETInspector.h>
 #import <EtoileUI/NSView+Etoile.h>
 #import <EtoileUI/NSIndexSet+Etoile.h>
-#import <EtoileUI/ETCollection.h>
+// FIXME: ETLog is currently defined in GNUstep.h
+//#ifndef GNUSTEP
 #import <EtoileUI/GNUstep.h>
+//#endif
 
 #define SELECTION_BY_RANGE_KEY_MASK NSShiftKeyMask
 #define SELECTION_BY_ONE_KEY_MASK NSCommandKeyMask

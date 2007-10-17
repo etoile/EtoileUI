@@ -34,6 +34,11 @@
 	THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+// FIXME: ETLog is currently defined in GNUstep.h
+//#ifndef GNUSTEP
+#import <EtoileUI/GNUstep.h>
+//#endif
+
 //#import <EtoileUI/ETRenderer.h>
 //#import <EtoileUI/ETStyle.h>
 #import <EtoileUI/ETContainer.h>
@@ -72,4 +77,3 @@
 #import <EtoileUI/ETObjectRegistry.h>
 #import <EtoileUI/ETObjectRegistry+EtoileUI.h>
 #import <EtoileUI/ETCollection.h>
-#import <EtoileUI/GNUstep.h>
