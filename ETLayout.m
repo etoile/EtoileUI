@@ -205,9 +205,10 @@
 
 - (void) dealloc
 {
-	/* Neither container and delegate have to be retained. For container, only
-	   because it retains us and is in charge of us.
-	   For _displayViewPrototype, it's up to subclasses to manage it. */
+	/* Neither layout context and delegate have to be retained. For layout 
+	   context, only because it retains us and is in charge of us. */
+	DESTROY(_displayViewPrototype);
+	
 	[super dealloc];
 }
 

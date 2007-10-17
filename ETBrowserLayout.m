@@ -75,23 +75,9 @@
 
 @implementation ETBrowserLayout
 
-- (id) init
+- (NSString *) nibName
 {
-	self = [super init];
-    
-	if (self != nil)
-	{
-		BOOL nibLoaded = [NSBundle loadNibNamed: @"BrowserPrototype" owner: self];
-		
-		if (nibLoaded == NO)
-		{
-			NSLog(@"Failed to load nib BrowserPrototype");
-			RELEASE(self);
-			return nil;
-		}
-    }
-    
-	return self;
+	return @"BrowserPrototype";
 }
 
 - (void) dealloc
@@ -361,9 +347,6 @@
 	ETLog(@"-click: row %d and column %d in %@", row, [sender selectedColumn], self);
 	
 	[[self container] setSelectionIndex: row];
-	[[NSApplication sharedApplication] sendAction: [[self container] action] 
-	                                           to: [[self container] target] 
-											  from: sender];
 }
 
 - (IBAction) doubleClick: (id)sender
