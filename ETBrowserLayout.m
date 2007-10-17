@@ -80,22 +80,35 @@
 	return @"BrowserPrototype";
 }
 
-- (void) dealloc
-{
-	DESTROY(_displayViewPrototype);
-	
-	[super dealloc];
-}
-
 - (void) awakeFromNib
 {
-	//NSLog(@"Awaking from nib for %@", self);
+	//ETLog(@"Awaking from nib for %@", self);
+	
+	/* Because this outlet will be removed from its superview, it must be 
+	   retained like any other to-one relationship ivars. 
+	   If this proto view is later replaced by calling 
+	   -setDisplayViewPrototype:, this retain will be balanced by the release
+	   in ASSIGN. */ 
 	RETAIN(_displayViewPrototype);
-	[(NSBrowser *)_displayViewPrototype setCellClass: [FSBrowserCell class]];
-	[(NSBrowser *)_displayViewPrototype setCellPrototype: AUTORELEASE([[FSBrowserCell alloc] init])];
-	//[_displayViewPrototype setAction: @selector(click:)];
-	//[_displayViewPrototype setTarget: self];
-	[_displayViewPrototype removeFromSuperview];
+
+	/* Adjust _displayViewPrototype outlet */
+	[self setDisplayViewPrototype: _displayViewPrototype];
+}
+
+- (void) setDisplayViewPrototype: (NSView *)protoView
+{
+	[super setDisplayViewPrototype: protoView];
+
+	NSBrowser *browser = (NSBrowser *)[self displayViewPrototype];
+	
+	[browser setCellClass: [FSBrowserCell class]];
+	[browser setCellPrototype: AUTORELEASE([[FSBrowserCell alloc] init])];
+	[browser setAction: @selector(click:)];
+	[browser setDoubleAction: @selector(doubleClick:)];
+	[browser setTarget: self];
+	
+	if ([browser delegate] == nil)
+		[browser setDelegate: self];
 }
 
 /* Layouting */
