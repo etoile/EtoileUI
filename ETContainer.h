@@ -76,7 +76,7 @@
 	BOOL _subviewHitTest;
 	SEL _doubleClickAction;
 	id _target;
-	ETLayoutItem *_clickedItem;
+	ETLayoutItem *_doubleClickedItem;
 	
 	float _itemScale;
 	
@@ -219,7 +219,7 @@
 - (id) target;
 - (void) setDoubleAction: (SEL)selector;
 - (SEL) doubleAction;
-- (ETLayoutItem *) clickedItem;
+- (ETLayoutItem *) doubleClickedItem;
 
 - (BOOL) isHitTestEnabled;
 - (void) setEnablesHitTest: (BOOL)hit;

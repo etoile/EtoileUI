@@ -164,7 +164,7 @@ NSString *ETLayoutItemPboardType = @"ETLayoutItemPboardType"; // FIXME: replace 
 - (void) dealloc
 {
 	// FIXME: Clarify memory management of _displayView and _scrollView
-	DESTROY(_clickedItem);
+	DESTROY(_doubleClickedItem);
 	DESTROY(_displayView);
 	DESTROY(_path);
 	DESTROY(_selection);
@@ -1258,7 +1258,7 @@ NSString *ETLayoutItemPboardType = @"ETLayoutItemPboardType"; // FIXME: replace 
 	
 	/*NSMutableIndexSet *selection = [self selectionIndexes];
 		
-	[selection addIndex: [self indexOfItem: _clickedItem]];
+	[selection addIndex: [self indexOfItem: _doubleClickedItem]];
 	[self setSelectionIndexes: selection];*/
 
 	/* Handle possible double click */
@@ -1270,7 +1270,7 @@ NSString *ETLayoutItemPboardType = @"ETLayoutItemPboardType"; // FIXME: replace 
 {
 	ETLog(@"Double click detected on item %@ in %@", item, self);
 	
-	ASSIGN(_clickedItem, item);
+	ASSIGN(_doubleClickedItem, item);
 	[[NSApplication sharedApplication] sendAction: [self doubleAction] to: [self target] from: self];
 }
 
@@ -1301,23 +1301,21 @@ NSString *ETLayoutItemPboardType = @"ETLayoutItemPboardType"; // FIXME: replace 
 	return _doubleClickAction;
 }
 
-- (ETLayoutItem *) clickedItem
+- (ETLayoutItem *) doubleClickedItem
 {
 	if (_displayView != nil)
 	{
-		if ([[self layout] respondsToSelector: @selector(clickedItem)])
+		if ([[self layout] respondsToSelector: @selector(doubleClickedItem)])
 		{
-			DESTROY(_clickedItem);
-			_clickedItem = [(id)[self layout] clickedItem];
-			RETAIN(_clickedItem);
+			ASSIGN(_doubleClickedItem, [(id)[self layout] doubleClickedItem]);
 		}
 		else
 		{
-			NSLog(@"WARNING: Layout %@ based on a display view must implement -clickedItem", [self layout]);
+			NSLog(@"WARNING: Layout %@ based on a display view must implement -doubleClickedItem", [self layout]);
 		}
 	}
 	
-	return _clickedItem;
+	return _doubleClickedItem;
 }
 
 /* Overriden NSView methods */
