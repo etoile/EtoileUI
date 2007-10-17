@@ -126,7 +126,7 @@
 	
 	// FIXME: Implement browser cell scaling to get 
 	// -resizeLayoutItems:toScaleFactor: works as expected
-	//[self resizeLayoutItems: items toScaleFactor: [container itemScaleFactor]];
+	//[self resizeLayoutItems: items toScaleFactor: [[self layoutContext] itemScaleFactor]];
 	
 	if ([browserView delegate] == nil)
 		[browserView setDelegate: self];
@@ -143,18 +143,17 @@
 
 - (void) resizeLayoutItems: (NSArray *)items toScaleFactor: (float)factor
 {
-	NSBrowser *browserView = [self browser];
 	// NOTE: Always recompute row height from the original one to avoid really
 	// value shifting quickly because of rounding.
 	//float rowHeight = DEFAULT_ROW_HEIGHT * factor;
-	int numberOfCols = [browserView numberOfVisibleColumns];
+	int numberOfCols = [[self browser] numberOfVisibleColumns];
 	NSMatrix *columnMatrix = nil;
 
 	for (int i = 0; i < numberOfCols; i++)
 	{
 		NSSize newCellSize = NSZeroSize;
 		
-		columnMatrix = [browserView matrixInColumn: i];
+		columnMatrix = [[self browser] matrixInColumn: i];
 		if (columnMatrix != nil)
 		{
 			newCellSize = [columnMatrix cellSize];
@@ -176,7 +175,7 @@
 	id delegate = [[self container] delegate];
 	BOOL selected = YES;
 	NSString *path = [[sender pathToColumn: column] stringByAppendingPathComponent: title];
-	ETLayoutItem *item = [(ETLayoutItemGroup *)[[self container] layoutItem] itemAtPath: path];
+	ETLayoutItem *item = [[self layoutContext] itemAtPath: path];
 	
 	if ([delegate respondsToSelector: @selector(browser:selectCellWithString:inColumn:)])
 	{
@@ -224,7 +223,7 @@
 	if (path == nil || [path isEqual: @""])
 		path = @"/";
 
-	item = (ETLayoutItemGroup *)[(ETLayoutItemGroup *)[[self container] layoutItem] itemAtPath: path];
+	item = (ETLayoutItemGroup *)[[self layoutContext] itemAtPath: path];
 	NSAssert(item != nil, @"Parent item must never be nil in -browser:numberOfRowsInColumn:");
 	NSAssert([item isKindOfClass: [ETLayoutItemGroup class]], @"Parent item "
 		@"must always be of ETLayoutItemGroup class kind");
@@ -237,48 +236,10 @@
 		nbOfItems = [[item items] count];	
 	}
 	
-	//NSLog(@"Returns %d as number of items in browser view %@", nbOfItems, sender);
+	//ETLog(@"Returns %d as number of items in browser view %@", nbOfItems, sender);
 	
 	return nbOfItems;
 }
-
-#if 0
-- (void) browser:(NSBrowser *)sender createRowsForColumn: (int)column inMatrix: (NSMatrix *)matrix
-{
-	NSString *path = [sender pathToColumn: column];
-	NSIndexPath *indexPath = nil;
-	ETContainer *container = [self container];
-	int count = 0;
-	
-	if (path == nil || [path isEqual: @""])
-		path = @"/";
-	
-	indexPath = [[container layoutItem] indexPathForPath: path];
-	NSAssert(indexPath != nil, @"Index path must never be nil in -browser:numberOfRowsInColumn:");
-	
-	count = [[container source] container: container numberOfItemsAtPath: indexPath];
-	
-	NSLog(@"Returns %d as number of items in browser view %@", count, sender);
-	
-	//NSMutableArray *columnCells = [NSMutableArray array];
-	NSSize newCellSize = [matrix cellSize];
-	
-	for (int i = 0; i < count; i ++)
-		[matrix putCell: [[sender cellPrototype] copy] atRow: i column: column];
-	
-	//NSLog(@"Adds column cells %@ based on %@", columnCells, [[sender cellPrototype] copy]);
-	
-	// NOTE: Unable to make -addColumnWithCells: work so -putCell:atRow:column 
-	// is used instead
-	//[matrix addColumnWithCells: columnCells];
-	
-	newCellSize.height = DEFAULT_ROW_HEIGHT * [container itemScaleFactor];
-	NSLog(@"Resize %@ cell size from %@ to %@", matrix, 
-				NSStringFromSize([matrix cellSize]), 
-				NSStringFromSize(newCellSize));
-	[matrix setCellSize: newCellSize];
-}
-#endif
 
 - (void) browser: (NSBrowser *)sender willDisplayCell: (id)cell atRow: (int)row column: (int)column
 {
@@ -289,7 +250,7 @@
 	if (path == nil || [path isEqual: @""])
 		path = @"/";
 
-	item = (ETLayoutItemGroup *)[(ETLayoutItemGroup *)[[self container] layoutItem] itemAtPath: path];
+	item = (ETLayoutItemGroup *)[[self layoutContext] itemAtPath: path];
 	NSAssert(item != nil, @"Parent item must never be nil in -browser:numberOfRowsInColumn:");
 	NSAssert([item isKindOfClass: [ETLayoutItemGroup class]], @"Parent item "
 		@"must always be of ETLayoutItemGroup class kind");
@@ -355,17 +316,10 @@
 
 - (ETLayoutItem *) doubleClickedItem
 {
-	NSBrowser *browserView = [self browser];
-	ETContainer *container = [self container];
-	NSIndexPath *indexPath = nil;
-	ETLayoutItem *item = nil;
+	NSString *path = [[self browser] path];
+	ETLayoutItem *item = [[self layoutContext] itemAtPath: path];
 	
-	//selectedCell selectedColumn pathToColumn: selectedRowInColumn:
-	//int rowIndex = [browserView selectedRowInColumn: [browserView selectedColumn]];
-	indexPath = [(ETLayoutItemGroup *)[container layoutItem] indexPathForPath: [browserView path]];
-	item = [[container source] container: container itemAtPath: indexPath];
-	
-	NSLog(@"-doubleClickedItem %@ in %@ with browser path %@", item, self, indexPath);
+	NSLog(@"-doubleClickedItem %@ in %@ with browser path %@", item, self, path);
 	
 	return item;
 }
@@ -388,3 +342,45 @@
 }
 
 @end
+
+//
+// Unused NSBrowser data source implementation
+//
+
+#if 0
+- (void) browser:(NSBrowser *)sender createRowsForColumn: (int)column inMatrix: (NSMatrix *)matrix
+{
+	NSString *path = [sender pathToColumn: column];
+	NSIndexPath *indexPath = nil;
+	ETContainer *container = [self container];
+	int count = 0;
+	
+	if (path == nil || [path isEqual: @""])
+		path = @"/";
+	
+	indexPath = [[container layoutItem] indexPathForPath: path];
+	NSAssert(indexPath != nil, @"Index path must never be nil in -browser:numberOfRowsInColumn:");
+	
+	count = [[container source] container: container numberOfItemsAtPath: indexPath];
+	
+	NSLog(@"Returns %d as number of items in browser view %@", count, sender);
+	
+	//NSMutableArray *columnCells = [NSMutableArray array];
+	NSSize newCellSize = [matrix cellSize];
+	
+	for (int i = 0; i < count; i ++)
+		[matrix putCell: [[sender cellPrototype] copy] atRow: i column: column];
+	
+	//NSLog(@"Adds column cells %@ based on %@", columnCells, [[sender cellPrototype] copy]);
+	
+	// NOTE: Unable to make -addColumnWithCells: work so -putCell:atRow:column 
+	// is used instead
+	//[matrix addColumnWithCells: columnCells];
+	
+	newCellSize.height = DEFAULT_ROW_HEIGHT * [container itemScaleFactor];
+	NSLog(@"Resize %@ cell size from %@ to %@", matrix, 
+				NSStringFromSize([matrix cellSize]), 
+				NSStringFromSize(newCellSize));
+	[matrix setCellSize: newCellSize];
+}
+#endif

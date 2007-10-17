@@ -43,5 +43,6 @@
 
 }
 
+- (NSBrowser *) browser;
 
 @end
