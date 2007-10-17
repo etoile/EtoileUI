@@ -170,28 +170,9 @@
 			[(ETLayoutItemGroup *)item reload];
 			nbOfItems = [[item items] count];
 		}
-#if 0
-		ETContainer *subcontainer = nil;
-		NSIndexPath *indexPath = nil;
-		
-		if ([(ETLayoutItemGroup *)item isContainer])
-			subcontainer = (ETContainer *)[item view];
-		/* 'item' path and source have been set in -[ETLayout layoutItemsFromTreeSource] */
-		//childItem = [[itemContainer source] itemAtPath: childItemPath inContainer: [self container]];
-		if ([subcontainer source] == nil) /* Usual case */
-		{
-			indexPath = [item indexPathFromItem: [container layoutItem]];
-			return [[container source] container: container numberOfItemsAtPath: indexPath];
-		}
-		else
-		{
-			indexPath = [item indexPathFromItem: [subcontainer layoutItem]];
-			return [[subcontainer source] container: subcontainer numberOfItemsAtPath: indexPath];		
-		}
-#endif
 	}
 	
-	//NSLog(@"Returns %d as number of items in %@", [childLayoutItems count], outlineView);
+	//ETLog(@"Returns %d as number of items in %@", nbOfItems, outlineView);
 	
 	return nbOfItems;
 }
@@ -208,34 +189,9 @@
 	else if ([item isKindOfClass: [ETLayoutItemGroup class]]) /* Node */
 	{
 		childItem = [(ETLayoutItemGroup *)item itemAtIndex: rowIndex];
-#if 0
-		NSIndexPath *indexPath = nil;
-		NSIndexPath *indexSubpath = nil;
-		ETContainer *subcontainer = nil;
-
-		/* -view must always return a container for ETLayoutItemGroup */		
-		if ([(ETLayoutItemGroup *)item isContainer])
-			subcontainer = (ETContainer *)[item view];
-			
-		/* 'item' path and source have been set in -[ETLayout layoutItemsFromTreeSource] */
-		//childItem = [[itemContainer source] itemAtPath: childItemPath inContainer: [self container]];
-		if ([subcontainer source] == nil) /* Usual case */
-		{
-			indexPath = [item indexPathFromItem: [container layoutItem]];
-			indexSubpath = [indexPath indexPathByAddingIndex: rowIndex];
-			childItem = [[container source] container: container itemAtPath: indexSubpath];
-		}
-		else
-		{
-			indexPath = [item indexPathFromItem: [subcontainer layoutItem]];
-			indexSubpath = [indexPath indexPathByAddingIndex: rowIndex];
-			childItem = [[subcontainer source] container: subcontainer itemAtPath: indexSubpath];
-		}
-		[item addItem: childItem];
-#endif
 	}
 
-	//NSLog(@"Returns % child item in outline view %@", childItem, outlineView);
+	//ETLog(@"Returns % child item in outline view %@", childItem, outlineView);
 	
 	return childItem;
 }
@@ -244,7 +200,7 @@
 {
 	if ([item isKindOfClass: [ETLayoutItemGroup class]])
 	{
-		//NSLog(@"Returns item is expandable in outline view %@", outlineView);
+		//ETLog(@"Returns item is expandable in outline view %@", outlineView);
 		return YES;
 	}
 	
@@ -256,11 +212,11 @@
 {
 	if (item == nil)
 	{
-		//NSLog(@"WARNING: Get nil item in -outlineView:objectValueForTableColumn:byItem: of %@", self);
+		//ETLog(@"WARNING: Get nil item in -outlineView:objectValueForTableColumn:byItem: of %@", self);
 		return nil;
 	}
 
-	//NSLog(@"Returns %@ as object value in outline view %@", 
+	//ETLog(@"Returns %@ as object value in outline view %@", 
 	//	[item valueForProperty: [column identifier]], outlineView);
 	
 	return [item valueForProperty: [column identifier]];
@@ -271,7 +227,7 @@
 	NSOutlineView *outlineView = [(NSScrollView *)_displayViewPrototype documentView];
 	ETLayoutItem *item = [outlineView itemAtRow: [outlineView clickedRow]];
 	
-	NSLog(@"-doubleClickedItem in %@", self);
+	//ETLog(@"-doubleClickedItem in %@", self);
 	
 	return item;
 }
