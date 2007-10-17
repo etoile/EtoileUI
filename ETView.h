@@ -87,13 +87,17 @@
 	level until you call -setTitleBarView: nil which resets the title bar to 
 	the class-shared prototype.
 */
-	
+
+ // TODO: Implement ETTitleBarView subclass to handle the title bar as a layout
+// item which can be introspected and edited at runtime. A subclass is 
+// necessary to create the title bar of title bars in a lazy way, otherwise
+// ETView instantiation would lead to infinite recursion on the title bar set up.
 
 @interface ETView : NSView <ETPropertyValueCoding>
 {
 	ETLayoutItem *_layoutItem;
 	id _renderer;
-	ETView *_titleBarView;
+	NSView *_titleBarView;
 	NSView *_wrappedView;
 	BOOL _disclosable;
 	BOOL _usesCustomTitleBar;
@@ -101,8 +105,8 @@
 
 /* Title Bar */
 
-+ (void) setTitleBarViewPrototype: (ETView *)barView;
-+ (ETView *) titleBarViewPrototype;
++ (void) setTitleBarViewPrototype: (NSView *)barView;
++ (NSView *) titleBarViewPrototype;
 
 - (id) initWithFrame: (NSRect)rect layoutItem: (ETLayoutItem *)item;
 
@@ -117,8 +121,8 @@
 /* Embbeded Views */
 
 - (BOOL) usesCustomTitleBar;
-- (void) setTitleBarView: (ETView *)barView;
-- (ETView *) titleBarView;
+- (void) setTitleBarView: (NSView *)barView;
+- (NSView *) titleBarView;
 // NOTE: setEnclosedView: may sound better
 - (void) setWrappedView: (NSView *)subview;
 - (NSView *) wrappedView;

@@ -58,7 +58,17 @@ NSString *ETViewTitleBarViewPrototypeDidChangeNotification = @"ETViewTitleBarVie
 
 static ETView *barViewPrototype = nil;
 
-+ (void) setTitleBarViewPrototype: (ETView *)barView
++ (void) initialize
+{
+	if ([self class] == [ETView class])
+	{
+		barViewPrototype = 
+			[[NSView alloc] initWithFrame: NSMakeRect(0, 0, 100, 50)];
+		[barViewPrototype setAutoresizingMask: NSViewWidthSizable | NSViewHeightSizable];
+	}
+}
+
++ (void) setTitleBarViewPrototype: (NSView *)barView
 {
 	ASSIGN(barViewPrototype, barView);
 	[NC postNotificationName: ETViewTitleBarViewPrototypeDidChangeNotification
@@ -66,7 +76,7 @@ static ETView *barViewPrototype = nil;
 					userInfo: nil];
 }
 
-+ (ETView *) titleBarViewPrototype
++ (NSView *) titleBarViewPrototype
 {
 	return barViewPrototype;
 }
@@ -94,6 +104,7 @@ static ETView *barViewPrototype = nil;
 		[self setRenderer: nil];
 		[self setTitleBarView: [ETView titleBarViewPrototype]];
 		[self setDisclosable: NO];
+		[self setAutoresizesSubviews: YES];	/* NSView set up */
 		
 		[NC addObserver: self 
 		       selector: @selector(titleBarViewPrototypeDidChange:) 
@@ -186,7 +197,7 @@ static ETView *barViewPrototype = nil;
 	[self setTitleBarView: nil];
 }
 
-- (void) setTitleBarView: (ETView *)barView
+- (void) setTitleBarView: (NSView *)barView
 {
 	NSRect titleBarFrame = [_titleBarView frame];
 	
@@ -210,7 +221,7 @@ static ETView *barViewPrototype = nil;
 	[self addSubview: _titleBarView];
 }
 
-- (ETView *) titleBarView
+- (NSView *) titleBarView
 {
 	return _titleBarView;
 }
