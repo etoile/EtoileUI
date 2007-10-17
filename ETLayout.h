@@ -98,6 +98,10 @@ typedef enum _ETSizeConstraintStyle
 + (id) layoutWithLayoutView: (NSView *)view;
 - (id) layoutPrototype;
 
+/* Initialization */
+
+- (id) initWithLayoutView: (NSView *)layoutView;
+
 /* Main Accessors */
 
 //- (void) setContainer: (ETContainer *)newContainer;

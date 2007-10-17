@@ -35,6 +35,7 @@
  */
 
 #import <EtoileUI/ETOutlineLayout.h>
+#import <EtoileUI/ETLayout.h>
 #import <EtoileUI/ETContainer.h>
 #import <EtoileUI/ETLayoutItem.h>
 #import <EtoileUI/ETLayoutItemGroup.h>
@@ -68,7 +69,7 @@
 
 - (NSOutlineView *) outlineView
 {
-	return (NSOutlineView *)[self tableView];
+	return (NSOutlineView *)[super tableView];
 }
 
 // NOTE: Dealloc and Awaking from nib handled by ETTableLayout superview.
@@ -158,12 +159,11 @@
 
 - (int) outlineView: (NSOutlineView *)outlineView numberOfChildrenOfItem: (id)item
 {
-	ETContainer *container =  [self container];
 	int nbOfItems = 0;
 	
 	if (item == nil)
 	{
-		nbOfItems = [[container items] count];
+		nbOfItems = [[[self layoutContext] items] count];
 	}
 	else if ([item isKindOfClass: [ETLayoutItemGroup class]]) 
 	{
@@ -172,7 +172,7 @@
 		/* First time */
 		if (nbOfItems == 0)
 		{
-			[(ETLayoutItemGroup *)item reload];
+			[item reload];
 			nbOfItems = [[item items] count];
 		}
 	}
@@ -184,12 +184,11 @@
 
 - (id) outlineView: (NSOutlineView *)outlineView child: (int)rowIndex ofItem: (id)item
 {
-	ETContainer *container = [self container];
 	ETLayoutItem *childItem = nil; /* Leaf by default */
 	
 	if (item == nil) /* Root */
 	{
-		childItem = [[container items] objectAtIndex: rowIndex];
+		childItem = [[[self layoutContext] items] objectAtIndex: rowIndex];
 	}
 	else if ([item isKindOfClass: [ETLayoutItemGroup class]]) /* Node */
 	{

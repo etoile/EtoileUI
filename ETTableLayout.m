@@ -206,11 +206,12 @@
 	{
 		ETLog(@"WARNING: Layout context %@ must have a container otherwise "
 			@"view-based layout %@ cannot be set", [self layoutContext], self);
+		return;
 	}
 	
 	[self setUpLayoutView];
 	
-	[self resizeLayoutItems: items toScaleFactor: [[self container] itemScaleFactor]];
+	[self resizeLayoutItems: items toScaleFactor: [[self layoutContext] itemScaleFactor]];
 	
 	if ([[self container] source] != nil)
 		[self _updateDisplayedPropertiesFromSource];
@@ -220,7 +221,6 @@
 
 - (void) resizeLayoutItems: (NSArray *)items toScaleFactor: (float)factor
 {
-	NSTableView *tv = [(NSScrollView *)_displayViewPrototype documentView];
 	// NOTE: Always recompute row height from the original one to avoid really
 	// value shifting quickly because of rounding.
 	float rowHeight = DEFAULT_ROW_HEIGHT * factor;
@@ -228,13 +228,13 @@
 	/* Enforce a minimal row height to avoid redisplay crashes especially */
 	if (rowHeight < 1.0)
 		rowHeight = 1.0;
-	[tv setRowHeight: rowHeight];
+	[[self tableView] setRowHeight: rowHeight];
 }
 
 - (void) tableViewSelectionDidChange: (NSNotification *)notif
 {
 	id delegate = [[self container] delegate];
-	NSTableView *tv = [(NSScrollView *)[self displayViewPrototype] documentView];
+	NSTableView *tv = [self tableView];
 	
 	// NOTE: Not really sure that's the best way to do it
 	[[self container] setSelectionIndexes: [tv selectedRowIndexes]];
@@ -277,7 +277,7 @@
 
 - (int) numberOfRowsInTableView: (NSTableView *)tv
 {
-	NSArray *layoutItems = [[self container] items];
+	NSArray *layoutItems = [[self layoutContext] items];
 	
 	NSLog(@"Returns %d as number of items in table view %@", [layoutItems count], tv);
 	
@@ -286,7 +286,7 @@
 
 - (id) tableView: (NSTableView *)tv objectValueForTableColumn: (NSTableColumn *)column row: (int)rowIndex
 {
-	NSArray *layoutItems = [[self container] items];
+	NSArray *layoutItems = [[self layoutContext] items];
 	ETLayoutItem *item = nil;
 	
 	if (rowIndex >= [layoutItems count])
@@ -343,8 +343,8 @@
 
 - (ETLayoutItem *) doubleClickedItem
 {
-	NSTableView *tv = [(NSScrollView *)_displayViewPrototype documentView];
-	NSArray *layoutItems = [[self container] items];
+	NSTableView *tv = [self tableView];
+	NSArray *layoutItems = [[self layoutContext] items];
 	ETLayoutItem *item = [layoutItems objectAtIndex: [tv clickedRow]];
 	
 	return item;

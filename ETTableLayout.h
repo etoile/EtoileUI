@@ -51,4 +51,6 @@
 - (id) listStyle;
 - (void) setListStyle: (id)style;
 
+- (NSTableView *) tableView;
+
 @end
