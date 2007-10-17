@@ -138,12 +138,12 @@ static NSFileManager *objectManager = nil;
 {
 	// NOTE: 'sender' isn't always ETContainer instance. For ETTableLayout it 
 	// is the NSTableView instance in use.
-	[self moveToItem: [viewContainer clickedItem]];
+	[self moveToItem: [viewContainer doubleClickedItem]];
 }
 
 - (void) doubleClickInPathContainer: (id)sender
 {
-	[self moveToItem: [pathContainer clickedItem]];
+	[self moveToItem: [pathContainer doubleClickedItem]];
 }
 
 - (void) moveToItem: (ETLayoutItem *)item

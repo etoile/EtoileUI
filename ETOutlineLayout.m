@@ -266,12 +266,12 @@
 	return [item valueForProperty: [column identifier]];
 }
 
-- (ETLayoutItem *) clickedItem
+- (ETLayoutItem *) doubleClickedItem
 {
 	NSOutlineView *outlineView = [(NSScrollView *)_displayViewPrototype documentView];
 	ETLayoutItem *item = [outlineView itemAtRow: [outlineView clickedRow]];
 	
-	NSLog(@"-clickedItem in %@", self);
+	NSLog(@"-doubleClickedItem in %@", self);
 	
 	return item;
 }

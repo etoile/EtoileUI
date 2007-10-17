@@ -362,7 +362,7 @@
 	[[self container] setSelectionIndex: row];
 }
 
-- (ETLayoutItem *) clickedItem
+- (ETLayoutItem *) doubleClickedItem
 {
 	NSBrowser *browserView = (NSBrowser *)_displayViewPrototype;
 	ETContainer *container = [self container];
@@ -374,7 +374,7 @@
 	indexPath = [(ETLayoutItemGroup *)[container layoutItem] indexPathForPath: [browserView path]];
 	item = [[container source] container: container itemAtPath: indexPath];
 	
-	//NSLog(@"-clickedItem in %@ with browser path %@", self, path);
+	//NSLog(@"-doubleClickedItem in %@ with browser path %@", self, path);
 	
 	return item;
 }

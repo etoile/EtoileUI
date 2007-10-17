@@ -364,7 +364,7 @@
 }
 
 
-- (ETLayoutItem *) clickedItem
+- (ETLayoutItem *) doubleClickedItem
 {
 	NSTableView *tv = [(NSScrollView *)_displayViewPrototype documentView];
 	NSArray *layoutItems = [[self container] items];
