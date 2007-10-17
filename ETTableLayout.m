@@ -105,6 +105,11 @@
 
 - (NSTableView *) tableView
 {
+	id layoutView = [self displayViewPrototype];
+	
+	NSAssert2([layoutView isKindOfClass: [NSScrollView class]], @"Layout view "
+		@" %@ of %@ must be an NSScrollView instance", layoutView, self);
+
 	return [(NSScrollView *)[self displayViewPrototype] documentView];
 }
 
@@ -195,50 +200,39 @@
 
 /* Layouting */
 
-- (void) renderWithLayoutItems: (NSArray *)items
+- (void) setUpLayoutView
 {
-	NSScrollView *scrollView = nil;
-	NSTableView *tv = nil;
+	NSScrollView *layoutView = (NSScrollView *)[self displayViewPrototype];
 	
-	/* No display view proto available, a table view needs needs to be created 
-	   in code */
-	if ([self displayViewPrototype] == nil)
-	{
-		scrollView = [self scrollingTableView];
-	}
-	else
-	{
-		NSView *proto = [self displayViewPrototype];
-		
-		if ([proto isKindOfClass: [NSScrollView class]])
-		{
-			scrollView = (NSScrollView *)[self displayViewPrototype];
-		}
-		else
-		{
-			NSLog(@"WARNING: %@ display view prototype %@ isn't an NSScrollView instance", self, proto);
-		}
-	}
+	NSAssert1(layoutView != nil, @"Layout view to set up must not be nil in %@", self);
 	
-	NSLog(@"%@ scroll view has %@ as document view", self, [scrollView documentView]);
-	tv = [scrollView documentView];
-	
-	if ([scrollView superview] == nil)
+	if ([layoutView superview] == nil)
 	{
-		[[self container] setDisplayView: scrollView];
+		[[self container] setDisplayView: layoutView];
 	}
-	else if ([[scrollView superview] isEqual: [self container]] == NO)
+	else if ([[layoutView superview] isEqual: [self container]] == NO)
 	{
-		NSLog(@"WARNING: Table view of table layout should never have another "
+		ETLog(@"WARNING: Table view of table layout should never have another "
 			  @"superview than container parameter or nil.");
 	}
+}
+
+- (void) renderWithLayoutItems: (NSArray *)items
+{
+	if ([self container] == nil)
+	{
+		ETLog(@"WARNING: Layout context %@ must have a container otherwise "
+			@"view-based layout %@ cannot be set", [self layoutContext], self);
+	}
+	
+	[self setUpLayoutView];
 	
 	[self resizeLayoutItems: items toScaleFactor: [[self container] itemScaleFactor]];
 	
 	if ([[self container] source] != nil)
 		[self _updateDisplayedPropertiesFromSource];
 				
-	[tv reloadData];
+	[[self tableView] reloadData];
 }
 
 - (void) resizeLayoutItems: (NSArray *)items toScaleFactor: (float)factor
@@ -375,7 +369,7 @@
 
 @end
 
-/* Private Helper Methods */
+/* Private Helper Methods (not in use) */
 
 @implementation ETTableLayout (ETableLayoutDisplayViewGeneration)
 

@@ -99,7 +99,7 @@
 {
 	[super setDisplayViewPrototype: protoView];
 
-	NSBrowser *browser = (NSBrowser *)[self displayViewPrototype];
+	NSBrowser *browser = [self browser];
 	
 	[browser setCellClass: [FSBrowserCell class]];
 	[browser setCellPrototype: AUTORELEASE([[FSBrowserCell alloc] init])];
@@ -109,6 +109,11 @@
 	
 	if ([browser delegate] == nil)
 		[browser setDelegate: self];
+}
+
+- (NSBrowser *) browser
+{
+	return (NSBrowser *)[self displayViewPrototype];
 }
 
 /* Layouting */
@@ -163,7 +168,7 @@
 
 - (void) resizeLayoutItems: (NSArray *)items toScaleFactor: (float)factor
 {
-	NSBrowser *browserView = (NSBrowser *)_displayViewPrototype;
+	NSBrowser *browserView = [self browser];
 	// NOTE: Always recompute row height from the original one to avoid really
 	// value shifting quickly because of rounding.
 	//float rowHeight = DEFAULT_ROW_HEIGHT * factor;
@@ -375,7 +380,7 @@
 
 - (ETLayoutItem *) doubleClickedItem
 {
-	NSBrowser *browserView = (NSBrowser *)_displayViewPrototype;
+	NSBrowser *browserView = [self browser];
 	ETContainer *container = [self container];
 	NSIndexPath *indexPath = nil;
 	ETLayoutItem *item = nil;

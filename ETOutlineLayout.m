@@ -66,6 +66,11 @@
 	return @"OutlinePrototype";
 }
 
+- (NSOutlineView *) outlineView
+{
+	return (NSOutlineView *)[self tableView];
+}
+
 // NOTE: Dealloc and Awaking from nib handled by ETTableLayout superview.
 
 /* Update column visibility */
@@ -224,8 +229,8 @@
 
 - (ETLayoutItem *) doubleClickedItem
 {
-	NSOutlineView *outlineView = [(NSScrollView *)_displayViewPrototype documentView];
-	ETLayoutItem *item = [outlineView itemAtRow: [outlineView clickedRow]];
+	ETLayoutItem *item = 
+		[[self outlineView] itemAtRow: [[self outlineView] clickedRow]];
 	
 	//ETLog(@"-doubleClickedItem in %@", self);
 	
