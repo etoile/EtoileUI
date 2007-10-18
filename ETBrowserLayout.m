@@ -87,17 +87,17 @@
 	/* Because this outlet will be removed from its superview, it must be 
 	   retained like any other to-one relationship ivars. 
 	   If this proto view is later replaced by calling 
-	   -setDisplayViewPrototype:, this retain will be balanced by the release
+	   -setLayoutView:, this retain will be balanced by the release
 	   in ASSIGN. */ 
 	RETAIN(_displayViewPrototype);
 
 	/* Adjust _displayViewPrototype outlet */
-	[self setDisplayViewPrototype: _displayViewPrototype];
+	[self setLayoutView: _displayViewPrototype];
 }
 
-- (void) setDisplayViewPrototype: (NSView *)protoView
+- (void) setLayoutView: (NSView *)protoView
 {
-	[super setDisplayViewPrototype: protoView];
+	[super setLayoutView: protoView];
 
 	NSBrowser *browser = [self browser];
 	
@@ -113,7 +113,7 @@
 
 - (NSBrowser *) browser
 {
-	return (NSBrowser *)[self displayViewPrototype];
+	return (NSBrowser *)[self layoutView];
 }
 
 /* Layouting */
@@ -132,7 +132,7 @@
 		[browserView setDelegate: self];
 	// FIXME: The next lines shouldn't be needed but
 	// -[ETContainer syncDisplayViewWithContainer] regularly overwrites what have
-	// been set in -setDisplayViewPrototype:
+	// been set in -setLayoutView:
 	[browserView setDoubleAction: @selector(doubleClick:)];
 	[browserView setAction: @selector(click:)];
 	[browserView setTarget: self];		

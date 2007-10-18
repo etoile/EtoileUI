@@ -77,19 +77,19 @@
 	/* Because this outlet will be removed from its superview, it must be 
 	   retained like any other to-one relationship ivars. 
 	   If this proto view is later replaced by calling 
-	   -setDisplayViewPrototype:, this retain will be balanced by the release
+	   -setLayoutView:, this retain will be balanced by the release
 	   in ASSIGN. */ 
 	RETAIN(_displayViewPrototype);
 
 	/* Adjust _displayViewPrototype outlet */
-	[self setDisplayViewPrototype: _displayViewPrototype];
+	[self setLayoutView: _displayViewPrototype];
 }
 
-- (void) setDisplayViewPrototype: (NSView *)protoView
+- (void) setLayoutView: (NSView *)protoView
 {
-	[super setDisplayViewPrototype: protoView];
+	[super setLayoutView: protoView];
 
-	NSTableView *tv = [(NSScrollView *)[self displayViewPrototype] documentView];
+	NSTableView *tv = [(NSScrollView *)[self layoutView] documentView];
 
 	/* Retain initial columns to be able to restore exactly identical columns later */
 	[self setAllTableColumns: [tv tableColumns]];
@@ -105,12 +105,12 @@
 
 - (NSTableView *) tableView
 {
-	id layoutView = [self displayViewPrototype];
+	id layoutView = [self layoutView];
 	
 	NSAssert2([layoutView isKindOfClass: [NSScrollView class]], @"Layout view "
 		@" %@ of %@ must be an NSScrollView instance", layoutView, self);
 
-	return [(NSScrollView *)[self displayViewPrototype] documentView];
+	return [(NSScrollView *)[self layoutView] documentView];
 }
 
 - (NSArray *) allTableColumns

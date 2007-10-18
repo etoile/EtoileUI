@@ -617,17 +617,17 @@
 	/* Because this outlet will be removed from its superview, it must be 
 	   retained like any other to-one relationship ivars. 
 	   If this proto view is later replaced by calling 
-	   -setDisplayViewPrototype:, this retain will be balanced by the release
+	   -setLayoutView:, this retain will be balanced by the release
 	   in ASSIGN. */ 
 	RETAIN(_displayViewPrototype);
 
 	/* Adjust _displayViewPrototype outlet */
-	//[self setDisplayViewPrototype: _displayViewPrototype];
+	//[self setLayoutView: _displayViewPrototype];
 }
 
-- (void) setDisplayViewPrototype: (NSView *)protoView
+- (void) setLayoutView: (NSView *)protoView
 {
-	[super setDisplayViewPrototype: protoView];
+	[super setLayoutView: protoView];
 
 	//[tv registerForDraggedTypes: [NSArray arrayWithObject: @"ETLayoutItemPboardType"]];
 	
@@ -664,7 +664,7 @@
 
 - (void) renderWithLayoutItems: (NSArray *)items;
 {
-	[[self container] setDisplayView: [self displayViewPrototype]];
+	[[self container] setDisplayView: [self layoutView]];
 	//[propertyView reloadAndUpdateLayout];
 }
 
