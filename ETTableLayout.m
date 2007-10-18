@@ -47,6 +47,7 @@
 
 @interface ETTableLayout (Private)
 - (void) _updateDisplayedPropertiesFromSource;
+- (NSTableColumn *) _createTableColumnWithIdentifier: (NSString *)property;
 @end
 
 @interface ETTableLayout (ETableLayoutDisplayViewGeneration)
@@ -63,10 +64,22 @@
 	return @"TablePrototype";
 }
 
+- (id) initWithLayoutView: (NSView *)layoutView
+{
+	self = [super initWithLayoutView: layoutView];
+	
+	if (self != nil)
+	{
+		_propertyColumns = [[NSMutableDictionary alloc] init];
+	}
+	
+	return self;
+}
+
 - (void) dealloc
 {
-	DESTROY(_allTableColumns);
-	
+	DESTROY(_propertyColumns);
+		
 	[super dealloc];
 }
 
@@ -90,11 +103,17 @@
 	[super setLayoutView: protoView];
 
 	NSTableView *tv = [(NSScrollView *)[self layoutView] documentView];
+	NSEnumerator *e = [[tv tableColumns] objectEnumerator];
+	NSTableColumn *column = nil;
 
-	/* Retain initial columns to be able to restore exactly identical columns later */
-	[self setAllTableColumns: [tv tableColumns]];
+	/* Retain initial columns to be able to restore exactly identical columns later */	
+	while ((column = [e nextObject]) != nil)
+	{
+		// FIXME: Check column identifier validity
+		[_propertyColumns setObject: column forKey: [column identifier]];
+	}
 	/* Set up a list view using a single column without identifier */
-	[self setDisplayedProperties: [NSArray arrayWithObject: @""]];	
+	[self setDisplayedProperties: [self displayedProperties]];	
 	[tv registerForDraggedTypes: [NSArray arrayWithObject: @"ETLayoutItemPboardType"]];
 	
 	if ([tv dataSource] == nil)
@@ -116,12 +135,12 @@
 - (NSArray *) allTableColumns
 {
 	// FIXME: return copy or not? I don't think so.
-	return _allTableColumns;
+	return [_propertyColumns allValues];
 }
 
 - (void) setAllTableColumns: (NSArray *)columns
 {
-	ASSIGN(_allTableColumns, columns);
+	ASSIGN(_propertyColumns, columns);
 }
 
 /* Item Property Display */
@@ -136,44 +155,26 @@
 {
 	NSMutableArray *displayedProperties = [properties mutableCopy];
 	NSTableView *tv = [self tableView];
-	NSEnumerator *e = [[self allTableColumns] objectEnumerator];
+	NSEnumerator *e = [[tv tableColumns] objectEnumerator];
 	NSTableColumn *column = nil;
 	NSString *property = nil;
 	
-	/* Hide or show already existing columns */
+	/* Remove all existing columns */
 	while ((column = [e nextObject]) != nil)
-	{
-		if ([displayedProperties containsObject: [column identifier]]
-		 && [column tableView] == nil)
-		{
-			[tv addTableColumn: column];
-		}
-		else if ([displayedProperties containsObject: [column identifier]] == NO
-			  && [[column tableView] isEqual: tv])
-		{
-			[tv removeTableColumn: column];
-		}
-		[displayedProperties removeObject: [column identifier]];
-	}
+		[tv removeTableColumn: column];
 	
-	/* Automatically create and insert new columns */
+	/* Add all columns to be displayed */
 	e = [displayedProperties objectEnumerator];
 	column = nil;
 	
 	while ((property = [e nextObject]) != nil)
 	{
-		NSCell *dataCell = [[NSCell alloc] initTextCell: @""];
-		NSTableHeaderCell *headerCell = [[NSTableHeaderCell alloc] initTextCell: property]; // FIXME: Use display name
-
-		column = [[NSTableColumn alloc] initWithIdentifier: property];
+		NSTableColumn *column = [_propertyColumns objectForKey: property];
 		
-		[column setHeaderCell: headerCell];
-		RELEASE(headerCell);
-		[column setDataCell: dataCell];
-		RELEASE(dataCell);
-		[column setEditable: NO];
+		if (column == nil)
+			column = [self _createTableColumnWithIdentifier: property];
+		
 		[tv addTableColumn: column];
-		RELEASE(column);
 	}
 }
 
@@ -190,12 +191,39 @@
 
 - (id) styleForProperty: (NSString *)property
 {
-	return [[[self tableView] tableColumnWithIdentifier: property] dataCell];
+	return [[_propertyColumns objectForKey: property] dataCell];
+
+//	return [[[self tableView] tableColumnWithIdentifier: property] dataCell];
 }
 
 - (void) setStyle: (id)style forProperty: (NSString *)property
 {
-	[[[self tableView] tableColumnWithIdentifier: property] setDataCell: style];
+	NSTableColumn *column = [_propertyColumns objectForKey: property];
+	
+	if (column == nil)
+	{
+		column = [self _createTableColumnWithIdentifier: property];
+		[_propertyColumns setObject: column forKey: property];
+	}
+
+	[column setDataCell: style];
+
+//	[[[self tableView] tableColumnWithIdentifier: property] setDataCell: style];
+}
+
+- (NSTableColumn *) _createTableColumnWithIdentifier: (NSString *)property
+{
+	NSTableHeaderCell *headerCell = [[NSTableHeaderCell alloc] initTextCell: property]; // FIXME: Use display name
+	NSCell *dataCell = [[NSCell alloc] initTextCell: @""];
+	NSTableColumn *column = [[NSTableColumn alloc] initWithIdentifier: property];
+
+	[column setHeaderCell: headerCell];
+	RELEASE(headerCell);
+	[column setDataCell: dataCell];
+	RELEASE(dataCell);
+	[column setEditable: NO];
+	
+	return AUTORELEASE(column);
 }
 
 /* Layouting */

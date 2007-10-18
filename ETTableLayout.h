@@ -42,7 +42,7 @@
 
 @interface ETTableLayout : ETLayout
 {
-	NSArray *_allTableColumns;
+	NSMutableDictionary *_propertyColumns;
 }
 
 - (NSArray *) allTableColumns;
