@@ -73,33 +73,12 @@
 	
 	id layoutObject = AUTORELEASE([[layoutClass alloc] init]);
 	
-	/*if ([layoutObject isKindOfClass: [ETTableLayout class]])
+	if ([layoutObject isKindOfClass: [ETTableLayout class]])
 	{
-		NSTableColumn *column = [[NSTableColumn alloc] initWithIdentifier: @"size"];
-		NSImageCell *dataCell = [[NSCell alloc] initTextCell: @""];
-		NSTableHeaderCell *headerCell = [[NSTableHeaderCell alloc] initTextCell: @"Size"];
+		NSCell *iconCell = [[NSImageCell alloc] initImageCell: nil];
 		
-		[column setHeaderCell: headerCell];
-		RELEASE(headerCell);
-		[column setDataCell: dataCell];
-		RELEASE(dataCell);
-		[column setEditable: NO];
-		[[[layoutObject displayViewPrototype] documentView] addTableColumn: column];
-		RELEASE(column);
-		
-		column = [[NSTableColumn alloc] initWithIdentifier: @"type"];
-		dataCell = [[NSCell alloc] initTextCell: @""];
-		headerCell = [[NSTableHeaderCell alloc] initTextCell: @"Type"];
-		
-		[column setHeaderCell: headerCell];
-		RELEASE(headerCell);
-		[column setDataCell: dataCell];
-		RELEASE(dataCell);
-		[column setEditable: NO];
-		[[[layoutObject displayViewPrototype] documentView] addTableColumn: column];
-		RELEASE(column);
-		[[[layoutObject displayViewPrototype] documentView] moveColumn: 3 toColumn: 2];
-	}*/
+		[layoutObject setStyle: AUTORELEASE(iconCell) forProperty: @"icon"];
+	}
 	
 	[viewContainer setLayout: layoutObject];
 }
