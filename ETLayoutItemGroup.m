@@ -1161,7 +1161,7 @@
 		/* Request item to the source by passing item index path expressed in a
 		   way relative to the base container */
 		layoutItem = [[baseContainer source] container: baseContainer itemAtPath: indexSubpath];
-		NSLog(@"Retrieved item %@ known by path %@", layoutItem, indexSubpath);
+		//ETLog(@"Retrieved item %@ known by path %@", layoutItem, indexSubpath);
 		[itemsFromSource addObject: layoutItem];
 	}
 	

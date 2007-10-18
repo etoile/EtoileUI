@@ -399,7 +399,7 @@
 {
 	if ([self layoutContext] == nil)
 	{
-		NSLog(@"WARNING: No layout context available");	
+		ETLog(@"WARNING: No layout context available");	
 		return;
 	}
 
@@ -408,7 +408,7 @@
 	   an atomic way. */
 	if (_isLayouting)
 	{
-		NSLog(@"WARNING: Trying to reenter -render when the layout is already getting updated.");
+		ETLog(@"WARNING: Trying to reenter -render when the layout is already getting updated.");
 		return;
 	}
 	else
@@ -465,8 +465,9 @@
 		}
 	}
 	
-	_isLayouting = NO;
 	[self renderWithLayoutItems: [[self layoutContext] items]];
+	
+	_isLayouting = NO;
 }
 
 /** Runs the layout computation which finds a location in the view container
@@ -484,20 +485,7 @@
 	future. */
 - (void) renderWithLayoutItems: (NSArray *)items
 {	
-	/* Prevent reentrancy. In a threaded environment, it isn't perfectly safe 
-	   because _isLayouting test and _isLayouting assignement doesn't occur in
-	   an atomic way. */
-	if (_isLayouting)
-	{
-		NSLog(@"WARNING: Trying to reenter -renderWithLayoutItems: when the layout is already getting updated.");
-		return;
-	}
-	else
-	{
-		_isLayouting = YES;
-	}
-	
-	ETLog(@"Render layout items: %@", items);
+	//ETLog(@"Render layout items: %@", items);
 	
 	NSArray *layoutModel = nil;
 	float scale = [[self layoutContext] itemScaleFactor];
@@ -538,8 +526,6 @@
 	}
 	
 	[[self layoutContext] setVisibleItems: visibleItems];
-	
-	_isLayouting = NO;
 }
 
 - (void) resizeLayoutItems: (NSArray *)items toScaleFactor: (float)factor

@@ -128,7 +128,7 @@
 	/* NOTE: to avoid computing view locations when they are outside of the
 		frame, think to add an exit condition here. */
 	
-	NSLog(@"View locations computed by layout line :%@", line);
+	//ETLog(@"View locations computed by layout line :%@", line);
 }
 
 @end

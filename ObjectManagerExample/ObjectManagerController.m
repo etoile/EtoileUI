@@ -77,7 +77,8 @@ static NSFileManager *objectManager = nil;
 
 - (void) viewContainerDidResize: (NSNotification *)notif
 {
-    [viewContainer updateLayout];
+	if ([viewContainer canUpdateLayout])
+		[viewContainer updateLayout];
 }
 
 - (IBAction) changeLayout: (id)sender

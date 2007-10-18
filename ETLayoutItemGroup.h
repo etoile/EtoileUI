@@ -99,6 +99,9 @@
 - (void) reloadAndUpdateLayout;
 - (void) updateLayout;
 - (BOOL) canUpdateLayout;
+/*- (BOOL) canApplyLayout; // would replace -canUpdateLayout
+- (void) applyLayout;
+- (void) setNeedsLayout: (BOOL)needsLayout;*/
 
 - (BOOL) isAutolayout;
 - (void) setAutolayout: (BOOL)flag;
