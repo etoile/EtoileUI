@@ -601,6 +601,12 @@
 
 	//ETLog(@"Modify layout from %@ to %@ in %@", _layout, layout, self);
 	
+	BOOL wasAutolayoutEnabled = [self isAutolayout];
+	
+	/* Disable autolayout to avoid spurious updates triggered by stuff like
+	   view/container frame modification on layout view insertion */
+	[self setAutolayout: NO];
+	
 	[_layout setLayoutContext: nil];
 	/* Don't forget to remove existing display view if we switch from a layout 
 	   which reuses a native AppKit control like table layout. */
@@ -626,6 +632,7 @@
 	if ([self isContainer])
 		[(ETContainer *)[self displayView] syncDisplayViewWithContainer];
 	
+	[self setAutolayout: wasAutolayoutEnabled];
 	if ([self canUpdateLayout])
 		[self updateLayout];
 }
