@@ -177,7 +177,7 @@
 		605152EB0C18B45B00B5E0E5 /* ETPaneLayout.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ETPaneLayout.m; sourceTree = "<group>"; };
 		605153B80C1993F900B5E0E5 /* FSBrowserCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FSBrowserCell.h; sourceTree = "<group>"; };
 		605153B90C1993F900B5E0E5 /* FSBrowserCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FSBrowserCell.m; sourceTree = "<group>"; };
-		60539D940C240A7B006C57EC /* PaneContainerExample.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = PaneContainerExample.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		60539D940C240A7B006C57EC /* PaneContainerExample.app */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.application; path = PaneContainerExample.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		60539D960C240A7B006C57EC /* PaneContainerExample-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = "PaneContainerExample-Info.plist"; sourceTree = "<group>"; };
 		60539D9D0C242065006C57EC /* English */ = {isa = PBXFileReference; lastKnownFileType = wrapper.nib; name = English; path = English.lproj/PaneContainerExample.nib; sourceTree = "<group>"; };
 		60599A740C772129007F225E /* ETInspector.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ETInspector.h; sourceTree = "<group>"; };

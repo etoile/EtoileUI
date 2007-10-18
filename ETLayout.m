@@ -169,7 +169,7 @@
 	
 		if ([self nibName] == nil) /* Use layout view parameter */
 		{
-			[self setDisplayViewPrototype: layoutView];
+			[self setLayoutView: layoutView];
 		}
 		else /* Use layout view in nib */
 		{
@@ -667,24 +667,25 @@
 	the continous model object flows. */
 - (ETLayoutItem *) layoutItem
 {
+	// FIXME: Implement
 	return nil;
 }
 
-- (void) setDisplayViewPrototype: (NSView *)protoView
+- (void) setLayoutView: (NSView *)protoView
 {
 	ASSIGN(_displayViewPrototype, protoView);
 
 	[_displayViewPrototype removeFromSuperview];
 }
 
-- (NSView *) displayViewPrototype
+- (NSView *) layoutView
 {
 	return _displayViewPrototype;
 }
 
 - (void) setUpLayoutView
 {
-	id layoutView = [self displayViewPrototype];
+	id layoutView = [self layoutView];
 	
 	NSAssert1(layoutView != nil, @"Layout view to set up must not be nil in %@", self);
 	
