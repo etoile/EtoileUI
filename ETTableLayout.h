@@ -48,8 +48,8 @@
 - (NSArray *) allTableColumns;
 - (void) setAllTableColumns: (NSArray *)columns;
 
-- (id) listStyle;
-- (void) setListStyle: (id)style;
+/*- (id) listStyle;
+- (void) setListStyle: (id)style;*/
 
 - (NSTableView *) tableView;
 

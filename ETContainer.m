@@ -68,7 +68,7 @@ NSString *ETLayoutItemPboardType = @"ETLayoutItemPboardType"; // FIXME: replace 
 - (BOOL) canUpdateLayout;
 - (BOOL) doesSelectionContainsPoint: (NSPoint)point;
 - (void) fixOwnerIfNeededForItem: (ETLayoutItem *)item;
-- (void) mouseDoubleClick: (NSEvent *)event;
+- (void) mouseDoubleClick: (NSEvent *)event item: (ETLayoutItem *)item;
 @end
 
 

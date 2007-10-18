@@ -55,6 +55,7 @@
  */
 
 @interface ETLayout (Private)
+- (BOOL) loadNibNamed: (NSString *)nibName;
 /* Utility methods */
 - (NSRect) lineLayoutRectForItemAtIndex: (int)index;
 - (ETLayoutItem *) itemAtLocation: (NSPoint)location;

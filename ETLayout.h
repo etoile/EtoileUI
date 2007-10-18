@@ -112,6 +112,7 @@ typedef enum _ETSizeConstraintStyle
 /* Initialization */
 
 - (id) initWithLayoutView: (NSView *)layoutView;
+- (NSString *) nibName;
 
 /* Main Accessors */
 
