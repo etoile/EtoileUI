@@ -89,7 +89,7 @@ NSString *ETLayoutItemPboardType = @"ETLayoutItemPboardType"; // FIXME: replace 
 		}
 		else // existingSuperview isn't a view-based node in a layout item tree
 		{
-		   [existingSuperview replaceSubview: layoutView with: self];
+		   [existingSuperview addSubview: self];
 		}
 
 		[self setLayout: layout]; // inject the initial view as a layout

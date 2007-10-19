@@ -168,11 +168,11 @@
 		/* By default both width and height must be equal or inferior to related _itemSize values */
 		_itemSizeConstraintStyle = ETSizeConstraintStyleVerticalHorizontal;
 	
-		if ([self nibName] == nil) /* Use layout view parameter */
+		if (layoutView != nil) /* Use layout view parameter */
 		{
 			[self setLayoutView: layoutView];
 		}
-		else /* Use layout view in nib */
+		else if ([self nibName] != nil) /* Use layout view in nib */
 		{
 			if ([self loadNibNamed: [self nibName]] == NO)
 				self = nil;
