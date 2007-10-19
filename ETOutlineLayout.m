@@ -85,7 +85,10 @@
 	
 	/* Remove all existing columns except the outline column */
 	while ((column = [e nextObject]) != nil)
-		[tv removeTableColumn: column];
+	{
+		if ([column isEqual: [tv outlineTableColumn]] == NO)
+			[tv removeTableColumn: column];
+	}
 	
 	/* Add all columns to be displayed and update the outline column */
 	e = [displayedProperties objectEnumerator];
