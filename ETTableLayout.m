@@ -64,20 +64,9 @@
 	return @"TablePrototype";
 }
 
-- (id) initWithLayoutView: (NSView *)layoutView
-{
-	self = [super initWithLayoutView: layoutView];
-	
-	if (self != nil)
-	{
-		_propertyColumns = [[NSMutableDictionary alloc] init];
-	}
-	
-	return self;
-}
-
 - (void) dealloc
 {
+	/* ivar lazily initialized in -setLayoutView: */
 	DESTROY(_propertyColumns);
 		
 	[super dealloc];
@@ -105,6 +94,11 @@
 	NSTableView *tv = [(NSScrollView *)[self layoutView] documentView];
 	NSEnumerator *e = [[tv tableColumns] objectEnumerator];
 	NSTableColumn *column = nil;
+	
+	/* ivar cannot be initialized by overriding -initWithLayoutView: because 
+	   superclass initializer called -loadNibNamed: before returning, moreover
+	   the ivar must reset for each new layout view. */
+	ASSIGN(_propertyColumns, [NSMutableDictionary dictionary]);
 
 	/* Retain initial columns to be able to restore exactly identical columns later */	
 	while ((column = [e nextObject]) != nil)
@@ -113,7 +107,7 @@
 		[_propertyColumns setObject: column forKey: [column identifier]];
 	}
 	/* Set up a list view using a single column without identifier */
-	[self setDisplayedProperties: [self displayedProperties]];	
+	//[self setDisplayedProperties: [self displayedProperties]];	
 	[tv registerForDraggedTypes: [NSArray arrayWithObject: @"ETLayoutItemPboardType"]];
 	
 	if ([tv dataSource] == nil)
@@ -165,11 +159,12 @@
 	
 	/* Add all columns to be displayed */
 	e = [displayedProperties objectEnumerator];
+	property = nil;
 	column = nil;
 	
 	while ((property = [e nextObject]) != nil)
 	{
-		NSTableColumn *column = [_propertyColumns objectForKey: property];
+		column = [_propertyColumns objectForKey: property];
 		
 		if (column == nil)
 			column = [self _createTableColumnWithIdentifier: property];
@@ -187,6 +182,25 @@
 			
 		[self setDisplayedProperties: properties];
 	}
+}
+
+- (NSString *) displayNameForProperty: (NSString *)property
+{
+	return [[[_propertyColumns objectForKey: property] headerCell] stringValue];
+}
+
+/** Override */
+- (void) setDisplayName: (NSString *)displayName forProperty: (NSString *)property
+{
+	NSTableColumn *column = [_propertyColumns objectForKey: property];
+	
+	if (column == nil)
+	{
+		column = [self _createTableColumnWithIdentifier: property];
+		[_propertyColumns setObject: column forKey: property];
+	}
+
+	[[column headerCell] setStringValue: displayName];
 }
 
 - (id) styleForProperty: (NSString *)property

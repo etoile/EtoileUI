@@ -48,6 +48,9 @@
 - (NSArray *) allTableColumns;
 - (void) setAllTableColumns: (NSArray *)columns;
 
+- (NSString *) displayNameForProperty: (NSString *)property;
+- (void) setDisplayName: (NSString *)displayName forProperty: (NSString *)property;
+
 /*- (id) listStyle;
 - (void) setListStyle: (id)style;*/
 

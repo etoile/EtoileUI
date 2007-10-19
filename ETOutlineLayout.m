@@ -78,53 +78,49 @@
 - (void) setDisplayedProperties: (NSArray *)properties
 {
 	NSMutableArray *displayedProperties = [properties mutableCopy];
-	NSTableView *tv = [self tableView];
-	NSEnumerator *e = [[self allTableColumns] objectEnumerator];
+	NSOutlineView *tv = [self outlineView];
+	NSEnumerator *e = [[tv tableColumns] objectEnumerator];
 	NSTableColumn *column = nil;
 	NSString *property = nil;
 	
-	NSTableColumn *outlineColumn = [[self tableView] outlineTableColumn];
-		
-	[outlineColumn setIdentifier: [displayedProperties objectAtIndex: 0]];
-	[displayedProperties removeObjectAtIndex: 0];
-	
-	/* Hide or show already existing columns */
+	/* Remove all existing columns except the outline column */
 	while ((column = [e nextObject]) != nil)
-	{
-		if ([column isEqual: [[self tableView] outlineTableColumn]])
-			continue;
+		[tv removeTableColumn: column];
 	
-		if ([displayedProperties containsObject: [column identifier]]
-		 && [column tableView] == nil)
-		{
-			[tv addTableColumn: column];
-		}
-		else if ([displayedProperties containsObject: [column identifier]] == NO
-			  && [[column tableView] isEqual: tv])
-		{
-			[tv removeTableColumn: column];
-		}
-		[displayedProperties removeObject: [column identifier]];
-	}
-		
-	/* Automatically create and insert new columns */
+	/* Add all columns to be displayed and update the outline column */
 	e = [displayedProperties objectEnumerator];
-	column = nil;
+	property = nil;
+	BOOL isFirstColumn = YES;
 	
 	while ((property = [e nextObject]) != nil)
 	{
-		NSCell *dataCell = [[NSCell alloc] initTextCell: @""];
-		NSTableHeaderCell *headerCell = [[NSTableHeaderCell alloc] initTextCell: property]; // FIXME: Use display name
-
-		column = [[NSTableColumn alloc] initWithIdentifier: property];
+		NSTableColumn *column = [_propertyColumns objectForKey: property];
 		
-		[column setHeaderCell: headerCell];
-		RELEASE(headerCell);
-		[column setDataCell: dataCell];
-		RELEASE(dataCell);
-		[column setEditable: NO];
-		[tv addTableColumn: column];
-		RELEASE(column);
+		if (column == nil)
+			column = [self _createTableColumnWithIdentifier: property];
+			
+		if (isFirstColumn)
+		{
+			// FIXME: Modifying the outline table column directly leads to the 
+			// loss of the hierarchical indicator, that's why we sync outline
+			// column with first column attribute-by-attribute
+			//[tv setOutlineTableColumn: column];
+			NSTableColumn *tc = [tv outlineTableColumn];
+			
+			[tc setIdentifier: [column identifier]];
+			[tc setDataCell: [column dataCell]];
+			[tc setHeaderCell: [column headerCell]];
+			[tc setWidth: [column width]];
+			[tc setMinWidth: [column minWidth]];
+			[tc setMaxWidth: [column maxWidth]];
+			[tc setResizingMask: [column resizingMask]];
+			[tc setEditable: [column isEditable]];
+			isFirstColumn = NO;
+		}
+		else
+		{
+			[tv addTableColumn: column];
+		}
 	}
 }
 
