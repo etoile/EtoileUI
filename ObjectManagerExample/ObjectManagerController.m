@@ -12,7 +12,7 @@
 - (void) moveToItem: (ETLayoutItem *)item;
 - (NSString *) textualPathForMixedPath: (NSString *)mixedPath;
 - (int) numberOfItemsInContainer: (ETContainer *)container;
-- (ETLayoutItem *) itemAtIndex: (int)index inContainer: (ETContainer *)container;
+- (ETLayoutItem *) container: (ETContainer *)container itemAtIndex: (int)index;
 @end
 
 
@@ -320,7 +320,7 @@ static NSFileManager *objectManager = nil;
 	else if ([container isEqual: pathContainer]) /* Path Container */
 	{
 		int flatIndex = [indexPath indexAtPosition: [indexPath length] - 1];
-		return [self itemAtIndex: flatIndex inContainer: container];
+		return [self container: container itemAtIndex: flatIndex];
 	}
 
 	return fileItem;
@@ -358,7 +358,7 @@ static NSFileManager *objectManager = nil;
 	return 0;
 }
 
-- (ETLayoutItem *) itemAtIndex: (int)index inContainer: (ETContainer *)container
+- (ETLayoutItem *) container: (ETContainer *)container itemAtIndex: (int)index
 {
 	NSWorkspace *wk = [NSWorkspace sharedWorkspace];
 	ETLayoutItem *fileItem = nil;

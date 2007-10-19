@@ -212,7 +212,7 @@
 	return 3;
 }
 
-- (ETLayoutItem *) itemAtIndex: (int)index inContainer: (ETContainer *)container
+- (ETLayoutItem *) container: (ETContainer *)container itemAtIndex: (int)index
 {
 	ETLayoutItem *paneItem = [paneItems objectAtIndex: index];
 	

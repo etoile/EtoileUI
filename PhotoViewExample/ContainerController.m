@@ -244,7 +244,7 @@
 	return [images count];
 }
 
-- (ETLayoutItem *) itemAtIndex: (int)index inContainer: (ETContainer *)container
+- (ETLayoutItem *) container: (ETContainer *)container itemAtIndex: (int)index
 {
 	NSImage *img = [images objectAtIndex: index];
 	ETLayoutItem *imageItem = [ETLayoutItem layoutItemWithView: [self imageViewForImage: img]];
