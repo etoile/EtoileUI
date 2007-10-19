@@ -1138,7 +1138,7 @@
 	
 	for (int i = 0; i < nbOfItems; i++)
 	{
-		layoutItem = [[container source] itemAtIndex: i inContainer: container];
+		layoutItem = [[container source] container: container itemAtIndex: i];
 		[itemsFromSource addObject: layoutItem];
 	}
 	

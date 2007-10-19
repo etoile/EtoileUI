@@ -791,7 +791,7 @@
 	return nbOfItems;
 }
 
-- (ETLayoutItem *) itemAtIndex: (int)index inContainer: (ETContainer *)container
+- (ETLayoutItem *) container: (ETContainer *)container itemAtIndex: (int)index
 {
 	ETLayoutItem *inspectedItem = (ETLayoutItem *)[self layoutContext];
 	id inspectedModel = [inspectedItem representedObject];

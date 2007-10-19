@@ -343,14 +343,14 @@ NSString *ETLayoutItemPboardType = @"ETLayoutItemPboardType"; // FIXME: replace 
 	}
 	else if ([[self source] respondsToSelector: @selector(numberOfItemsInContainer:)])
 	{
-		if ([[self source] respondsToSelector: @selector(itemAtIndex:inContainer:)])
+		if ([[self source] respondsToSelector: @selector(container:itemAtIndex:)])
 		{
 			return 1;
 		}
 		else
 		{
 			NSLog(@"%@ implements numberOfItemsInContainer: but misses "
-				  @"itemAtIndex:inContainer: as  requested by "
+				  @"container:itemAtIndex as  requested by "
 				  @"ETContainerSource protocol.", [self source]);
 			return 0;
 		}

@@ -230,7 +230,7 @@
 
 /* Basic index retrieval */
 - (int) numberOfItemsInContainer: (ETContainer *)container;
-- (ETLayoutItem *) itemAtIndex: (int)index inContainer: (ETContainer *)container;
+- (ETLayoutItem *) container: (ETContainer *)container itemAtIndex: (int)index;
 
 /* Key and index path retrieval useful with containers displaying tree structure */
 - (int) container: (ETContainer *)container numberOfItemsAtPath: (NSIndexPath *)indexPath;
