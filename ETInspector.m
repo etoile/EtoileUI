@@ -104,7 +104,9 @@
 	
 	[propertyView setLayout: AUTORELEASE([[ETTableLayout alloc] init])];
 	[propertyView setSource: self];
-	[propertyView setDelegate: self];
+	// NOTE: If this next line is uncommented, -containerSelectionDidChange:
+	// must be updated to filter out property view related notifications.
+	//[propertyView setDelegate: self];
 	[propertyView setDoubleAction: @selector(doubleClickInPropertyView:)];
 	[propertyView setTarget: self];
 }
@@ -234,7 +236,7 @@
 		item = [ETLayoutItem layoutItemOfLayoutItem: item];
 	}
 	
-	ETLog(@"Returns item %@ at path %@ in %@", item, indexSubpath, container);
+	//ETLog(@"Returns item %@ at path %@ in %@", item, indexSubpath, container);
 
 	return item;
 }
@@ -263,7 +265,7 @@
 		#endif
 	}
 	
-	ETLog(@"Returns %d as number of property items in %@", nbOfPropertyItems, container);
+	//ETLog(@"Returns %d as number of property items in %@", nbOfPropertyItems, container);
 	
 	return nbOfPropertyItems;
 }
