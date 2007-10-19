@@ -108,8 +108,22 @@ static NSFileManager *objectManager = nil;
 		default:
 			NSLog(@"Unsupported layout or unknown popup menu selection");
 	}
+
+	id layoutObject = AUTORELEASE([[layoutClass alloc] init]);
 	
-	[viewContainer setLayout: (ETLayout *)AUTORELEASE([[layoutClass alloc] init])];
+	if ([layoutObject isKindOfClass: [ETTableLayout class]])
+	{
+		NSCell *iconCell = [[NSImageCell alloc] initImageCell: nil];
+		
+		[layoutObject setStyle: AUTORELEASE(iconCell) forProperty: @"icon"];
+		[layoutObject setDisplayName: @"" forProperty: @"icon"];
+		[layoutObject setDisplayName: @"Name" forProperty: @"name"];
+		[layoutObject setDisplayName: @"Type" forProperty: @"type"];
+		[layoutObject setDisplayName: @"Size" forProperty: @"size"];
+		[layoutObject setDisplayName: @"Modification Date" forProperty: @"modificationdate"];
+	}
+	
+	[viewContainer setLayout: layoutObject];
 }
 
 - (IBAction) switchUsesScrollView: (id)sender
