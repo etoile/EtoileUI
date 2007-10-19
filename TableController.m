@@ -58,6 +58,8 @@
 
 	[tableContainer setLayout: [ETTableLayout layout]];
 	
+	[[tableContainer layout] setDisplayedProperties: [NSArray arrayWithObject: @"Name"]];
+	
 	/* ITEM is a macro. 
 	   ITEM(@"Red") is a shortcut for [ETLayoutItem layoutItemWithValue: @"Red"] */
 	[tableContainer addItem: ITEM(@"Red")];
@@ -65,7 +67,7 @@
 	[tableContainer addItem: ITEM(@"Blue")];
 	[tableContainer addItem: ITEM([NSNumber numberWithInt: 3])];
 	/* Value will be image object description */
-	[tableContainer addItem: ITEM([NSImage imageNamed: @"NSApplication"])];
+	//[tableContainer addItem: ITEM([NSImage imageNamed: @"NSApplication"])];
 	
 	/*
 	 * A container using a two columns table layout
@@ -73,9 +75,14 @@
 	 
 	ETLayoutItem *item = nil;
 	ETTableLayout *tableLayout2 = [ETTableLayout layout];
-	 
-	[tableLayout2 setDisplayedProperties: [NSArray arrayWithObjects: @"name", @"intensity", nil]]; 
-	[tableLayout2 setStyle: AUTORELEASE([[NSSliderCell alloc] init]) forProperty: @"intensity"];
+	NSArray *visibleColumnIds = [NSArray arrayWithObjects: @"name", @"intensity", nil];
+	
+	[tableLayout2 setDisplayName: @"Name" forProperty: @"name"]; 
+	[[[tableLayout2 allTableColumns] objectAtIndex: 0] setWidth: 50];
+	[tableLayout2 setDisplayName: @"Intensity" forProperty: @"intensity"]; 	
+	[tableLayout2 setStyle: AUTORELEASE([[NSSliderCell alloc] init])
+	           forProperty: @"intensity"];
+	[tableLayout2 setDisplayedProperties: visibleColumnIds];
 	[tableContainer2 setLayout: tableLayout2];
 	
 	#define NUMBER(x) [NSNumber numberWithInt: x]
@@ -132,20 +139,23 @@
 	// sensible order. For example, outlineView may have no superview set in
 	// -awakeFromNib context.
 	ETContainer *outlineContainer = [[ETContainer alloc] initWithLayoutView: outlineView];
+	NSImage *icon = [NSImage imageNamed: @"NSApplicationIcon"];
+	
+	[[outlineContainer layout] setStyle: AUTORELEASE([[NSImageCell alloc] init])
+	                        forProperty: @""];
 
-	//[outlineContainer setStyle: AUTORELEASE([[NSImageCell alloc] init]) forProperty: @""];
 	/* This line is optional and simply avoids to update outlineContainer on each
 	   -addItem: call */
-	//[outlineContainer setAutolayout: NO];
-	id itemGroup = (id)[ETLayoutItemGroup layoutItemWithValue: @"NSApplicationIcon"];
+	[outlineContainer setAutolayout: NO];
+	id itemGroup = (id)[ETLayoutItemGroup layoutItemWithValue: icon];
 
-	[itemGroup addItem: ITEM([NSImage imageNamed: @"NSApplicationIcon"])];
+	[itemGroup setValue: @"Icon!" forProperty: @"name"];
+	[itemGroup addItem: ITEM(icon)];
+	[itemGroup addItem: ITEM(icon)];
 	[outlineContainer addItem: itemGroup];
-	itemGroup = [outlineContainer itemAtIndex: 0];
-	[itemGroup addItem: ITEM([NSImage imageNamed: @"NSApplicationIcon"])];
-	[outlineContainer addItem: ITEM([NSImage imageNamed: @"NSApplicationIcon"])];
+	[outlineContainer addItem: ITEM(icon)];
 	
-	//[outlineContainer setAutolayout: YES];
+	[outlineContainer setAutolayout: YES];
 	[outlineContainer updateLayout];
 }
 

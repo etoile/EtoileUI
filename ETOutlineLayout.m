@@ -215,11 +215,16 @@
 		//ETLog(@"WARNING: Get nil item in -outlineView:objectValueForTableColumn:byItem: of %@", self);
 		return nil;
 	}
-
-	//ETLog(@"Returns %@ as object value in outline view %@", 
-	//	[item valueForProperty: [column identifier]], outlineView);
 	
-	return [item valueForProperty: [column identifier]];
+	id value = [item valueForProperty: [column identifier]];
+	BOOL blankColumnIdentifier = [column identifier] == nil || [[column identifier] isEqual: @""];
+	
+	if (value == nil && ([[self outlineView] numberOfColumns] == 1 || blankColumnIdentifier))
+		value = [item value];
+	
+	return value;
+
+	//ETLog(@"Returns %@ as object value in outline view %@", value, outlineView);
 }
 
 - (ETLayoutItem *) doubleClickedItem

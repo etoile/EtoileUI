@@ -103,8 +103,14 @@
 	/* Retain initial columns to be able to restore exactly identical columns later */	
 	while ((column = [e nextObject]) != nil)
 	{
-		// FIXME: Check column identifier validity
-		[_propertyColumns setObject: column forKey: [column identifier]];
+		NSString *colId = [column identifier];
+		
+		// NOTE: May be should insert a positional number because the current
+		// blank string limits us to a single column without identifier
+		if (colId == nil)
+			colId = @"";
+		
+		[_propertyColumns setObject: column forKey: colId];
 	}
 	/* Set up a list view using a single column without identifier */
 	//[self setDisplayedProperties: [self displayedProperties]];	
@@ -342,9 +348,9 @@
 	//NSLog(@"Returns %@ as object value in table view %@", [item valueForProperty: [column identifier]], tv);
 	
 	id value = [item valueForProperty: [column identifier]];
-	BOOL blankColumnIdentier = [column identifier] == nil || [[column identifier] isEqual: @""];
+	BOOL blankColumnIdentifier = [column identifier] == nil || [[column identifier] isEqual: @""];
 	
-	if (value == nil && ([tv numberOfColumns] == 1 || blankColumnIdentier))
+	if (value == nil && ([tv numberOfColumns] == 1 || blankColumnIdentifier))
 		value = [item value];
 	
 	return value;
