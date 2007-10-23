@@ -116,7 +116,11 @@
 			[tc setWidth: [column width]];
 			[tc setMinWidth: [column minWidth]];
 			[tc setMaxWidth: [column maxWidth]];
+			#ifdef GNUSTEP
+			[tc setResizable: [column isResizable]];
+			#else
 			[tc setResizingMask: [column resizingMask]];
+			#endif
 			[tc setEditable: [column isEditable]];
 			isFirstColumn = NO;
 		}
