@@ -189,15 +189,15 @@
 	return desc;
 }
 
-- (ETLayoutItemGroup *) rootItem
+- (ETLayoutItem *) rootItem
 {
-	if ([self parentLayoutItem] == nil)
+	if ([self parentLayoutItem] != nil)
 	{
-		return [self parentLayoutItem];
+		return [[self parentLayoutItem] rootItem];	
 	}
 	else
 	{
-		return [self rootItem];
+		return self;
 	}
 }
 

@@ -108,7 +108,7 @@
 - (id) initWithView: (NSView *)view;
 - (id) initWithView: (NSView *)view value: (id)value representedObject: (id)repObject;
 
-- (ETLayoutItemGroup *) rootItem;
+- (ETLayoutItem *) rootItem;
 - (ETLayoutItemGroup *) parentLayoutItem;
 - (void) setParentLayoutItem: (ETLayoutItemGroup *)parent;
 - (ETContainer *) closestAncestorContainer;
