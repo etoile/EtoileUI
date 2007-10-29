@@ -33,10 +33,17 @@
 	THE POSSIBILITY OF SUCH DAMAGE.
  */
  
-#import "NSIndexPath+Etoile.h"
-
+#import <EtoileUI/NSIndexPath+Etoile.h>
+#ifndef GNUSTEP
+#import <GNUstepBase/GNUstep.h>
+#endif
 
 @implementation NSIndexPath (Etoile)
+
++ (NSIndexPath *) indexPath
+{
+	return AUTORELEASE([[NSIndexPath alloc] init]);
+}
 
 - (unsigned int) firstIndex
 {

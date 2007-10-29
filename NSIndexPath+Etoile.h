@@ -38,6 +38,7 @@
 
 
 @interface NSIndexPath (Etoile)
++ (NSIndexPath *) indexPath;
 - (unsigned int) firstIndex;
 - (unsigned int) lastIndex;
 - (NSIndexPath *) indexPathByRemovingFirstIndex;

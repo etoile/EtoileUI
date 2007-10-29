@@ -200,6 +200,13 @@
 
 - (float) itemScaleFactor;
 - (void) setItemScaleFactor: (float)factor;
+/*- (id) scaleItemsToRect: (NSRect)rect;
+- (id) scaleItemsToFit: (id)sender;
+// This method is equivalent to calling -setItemScaleFactor with 1.0 value
+- (id) scaleItemsToActualSize: (id)sender;*/
+// FIXME: Implement the following methods
+/*- (float) itemRotationAngle;
+- (void) setItemRotationAngle: (float)factor;*/
 
 /* Layers */
 
