@@ -159,6 +159,11 @@
 	return item;
 }
 
+- (BOOL) isGroup
+{
+	return YES;
+}
+
 - (BOOL) isContainer
 {
 	return [[self view] isKindOfClass: [ETContainer class]];
@@ -749,7 +754,6 @@
 	}
 }
 
-
 - (NSArray *) visibleItems
 {
 	ETContainer *container = nil;
@@ -937,14 +941,14 @@
 - (void) collectSelectionIndexPaths: (NSMutableArray *)indexPaths
 {
 	NSEnumerator *e = [[self items] objectEnumerator];
-	ETLayoutItem *item = nil;
+	id item = nil;
 		
 	while ((item = [e nextObject]) != nil)
 	{
 		if ([item isSelected])
 			[indexPaths addObject: [item indexPath]];
-		if ([item isKindOfClass: [self class]])
-			[(ETLayoutItemGroup *)item collectSelectionIndexPaths: indexPaths];
+		if ([item isGroup])
+			[item collectSelectionIndexPaths: indexPaths];
 	}
 }
 
@@ -960,7 +964,7 @@
 - (void) applySelectionIndexPaths: (NSMutableArray *)indexPaths
 {
 	NSEnumerator *e = [[self items] objectEnumerator];
-	ETLayoutItem *item = nil;
+	id item = nil;
 		
 	while ((item = [e nextObject]) != nil)
 	{
@@ -974,8 +978,8 @@
 		{
 			[item setSelected: NO];
 		}
-		if ([item isKindOfClass: [self class]])
-			[(ETLayoutItemGroup *)item applySelectionIndexPaths: indexPaths];
+		if ([item isGroup])
+			[item applySelectionIndexPaths: indexPaths];
 	}
 }
 

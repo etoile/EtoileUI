@@ -174,6 +174,8 @@ shape*/
 
 - (BOOL) isMetaLayoutItem;
 
+- (BOOL) isGroup;
+
 /* Utility Accessors */
 
 /** When selection is enabled on -render call, the layout item checks a
@@ -209,6 +211,9 @@ shape*/
 - (void) setStyleRenderer: (ETStyleRenderer *)renderer;
 
 - (void) setNeedsDisplay: (BOOL)now;
+
+- (NSRect) convertRectToParent: (NSRect)rect;
+- (NSRect) convertRectFromParent: (NSRect)rect;
 
 /* Sizing */
 

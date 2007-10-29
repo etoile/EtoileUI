@@ -39,6 +39,7 @@
 #import <EtoileUI/ETView.h>
 #import <EtoileUI/ETInspector.h>
 #import <EtoileUI/NSView+Etoile.h>
+#import <EtoileUI/NSIndexPath+Etoile.h>
 #import <EtoileUI/GNUstep.h>
 
 #define ETLog NSLog
@@ -189,6 +190,10 @@
 	return desc;
 }
 
+/** Returns the root item of the layout item tree to which the receiver
+	belongs to. 
+	This method never returns nil because the returned value is equal to self
+	when the receiver has no parent item. */
 - (ETLayoutItem *) rootItem
 {
 	if ([self parentLayoutItem] != nil)
@@ -201,11 +206,22 @@
 	}
 }
 
+/** Returns the layout item group to which the receiver belongs to. 
+	For the root item as returned by -rootItem, the returned value is always 
+	nil. 
+	This method will return nil when the receiver hasn't yet been added to an
+	item group or has just been removed from an item group. */
 - (ETLayoutItemGroup *) parentLayoutItem
 {
 	return _parentLayoutItem;
 }
 
+/** Returns the layout item group to which the receiver belongs to. 
+	If parent parameter is nil, the receiver becomes a root item. 
+	You must never call this method directly unless your code belongs to a 
+	subclass. If you need to change the parent of a layout item, use -addItem: 
+	and other similar methods provided to manipulate item collection owned by 
+	an item group. */
 - (void) setParentLayoutItem: (ETLayoutItemGroup *)parent
 {
 	[[self displayView] removeFromSuperview];
@@ -244,57 +260,51 @@
 	}
 }
 
+/** Returns receiver index path relative to item parameter. 
+	The index path is computed by climbing up the layout item tree until we 
+	find item parameter and pushing parent relative index of each layout item 
+	sequentially into an index path. 
+	Passing nil is equivalent to passing the root item as returned by 
+	-rootItem. If item is equal to self, the resulting index path is an blank 
+	one (relative to itself). */
 - (NSIndexPath *) indexPathFromItem: (ETLayoutItem *)item
 {
 	NSIndexPath *indexPath = nil;
+	BOOL baseItemReached = (self == item);
+
+	/* Handle nil item case which implies root item is the base item */
+	if (item == nil && self == [self rootItem])
+		baseItemReached = YES;
 	
-	if ([self parentLayoutItem] != nil && (item == nil || [self isEqual: item] == NO))
+	if ([self parentLayoutItem] != nil && item != self)
 	{
 		indexPath = [[self parentLayoutItem] indexPathFromItem: item];
-		indexPath = [indexPath indexPathByAddingIndex: 
-			[(ETLayoutItemGroup *)[self parentLayoutItem] indexOfItem: (id)self]];
+		if (indexPath != nil)
+		{
+			indexPath = [indexPath indexPathByAddingIndex: 
+				[(ETLayoutItemGroup *)[self parentLayoutItem] indexOfItem: (id)self]];
+		}
 	}
-	else
+	else if (baseItemReached)
 	{
-		indexPath = AUTORELEASE([[NSIndexPath alloc] init]);
+		indexPath = [NSIndexPath indexPath];
 	}
-	
+
+	/* We return a nil index path only if we haven't reached the base item */   	
 	return indexPath;
 }
 
-/** Returns an index path relative to the receiver by traversing our layout 
-	item subtree until we find item parameter and pushing parent relative index
-	of each layout item in the sequence into an index path. 
-	Resulting path uses internally '.' as path seperator and internally always 
-	begins by an index number and not a path seperator. */
+/** Returns item index path relative to the receiver.
+	This method is equivalent to [item indexFromItem: self].
+	If item doesn't belong to the layout item subtree of the receiver, nil is
+	returned.
+	Passing nil is equivalent to passing the root item as returned by 
+	-rootItem, the returned value is always nil because the root item can never
+	be a child of the receiver. If item is equal to self, the resulting index 
+	path is an blank one (relative to itself). */
 - (NSIndexPath *) indexPathForItem: (ETLayoutItem *)item
 {
-	if ([item isEqual: self])
-		return [self indexPath];
-
-	NSIndexPath *indexPath = [item indexPath];
-	NSIndexPath *parentIndexPath = nil;
-	NSIndexPath *receiverIndexPath = [self indexPath];
-	unsigned int *indexPathIndexes; 
-	
-	if ([indexPath length] < [receiverIndexPath length])
-		return nil;
-	
-	[indexPath getIndexes: indexPathIndexes];
-	parentIndexPath = [NSIndexPath indexPathWithIndexes: indexPathIndexes length: [receiverIndexPath length]];
-	
-	if ([parentIndexPath isEqual: receiverIndexPath] == NO)
-		return nil;
-	
-
-	unsigned int lengthDifference = [indexPath length] - [receiverIndexPath length];
-	unsigned int receiverPosition = lengthDifference - 1; 
-	
-	[indexPath getIndexes: indexPathIndexes];
-	indexPath = [NSIndexPath indexPathWithIndexes: &indexPathIndexes[receiverPosition] 
-										   length: lengthDifference];
-										   
-	return indexPath;
+	return [item indexPathFromItem: self];
 }
 
 /** Returns absolute index path of the receiver by collecting index of each
@@ -700,6 +710,11 @@
 	return [_modelObject isKindOfClass: [ETLayoutItem class]];
 }
 
+- (BOOL) isGroup
+{
+	return NO;
+}
+
 - (void) didChangeValueForKey: (NSString *)key
 {
 
@@ -996,6 +1011,33 @@
 - (void) setStyleRenderer: (ETStyleRenderer *)renderer
 {
 	ASSIGN(_renderer, renderer);
+}
+
+
+/** Returns a rect expressed in parent layout item coordinate space equivalent 
+	to rect parameter expressed in the receiver coordinate space. */
+- (NSRect) convertRectToParent: (NSRect)rect
+{
+	NSAffineTransform *transform = [NSAffineTransform transform];
+	NSRect rectInParent = rect;
+	
+	[transform translateXBy: [self x] yBy: [self y]];
+	rectInParent.origin = [transform transformPoint: rect.origin];
+	
+	return rectInParent;
+}
+
+/** Returns a rect expressed in the receiver coordinate space equivalent to
+	rect parameter expressed in the parent layout item coordinate space. */
+- (NSRect) convertRectFromParent: (NSRect)rect
+{
+	NSAffineTransform *transform = [NSAffineTransform transform];
+	NSRect rectInChild = rect;
+	
+	[transform translateXBy: -([self x]) yBy: -([self y])];
+	rectInChild.origin = [transform transformPoint: rect.origin];
+	
+	return rectInChild;
 }
 
 - (NSRect) frame
