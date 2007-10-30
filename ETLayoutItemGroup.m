@@ -70,6 +70,8 @@
 
 @implementation ETLayoutItemGroup
 
+/* Factory Methods */
+
 + (ETLayoutItemGroup *) layoutItemGroup
 {
 	return AUTORELEASE([[self alloc] init]);
@@ -89,6 +91,8 @@
 {
 	return AUTORELEASE([[self alloc] initWithLayoutItems: nil view: view]);
 }
+
+/* Initialization */
 
 /** Designated initializer */
 - (id) initWithLayoutItems: (NSArray *)layoutItems view: (NSView *)view value: (id)value representedObject: (id)repObject
@@ -159,6 +163,8 @@
 	return item;
 }
 
+/* Finding Container */
+
 - (BOOL) isGroup
 {
 	return YES;
@@ -187,6 +193,8 @@
 {
 
 }*/
+
+/* Traversing Layout Item Tree */
 
 /** Returns a normal path relative to the receiver by translating index path 
 	into a layout item sequence and concatenating the names of all layout items 
@@ -376,7 +384,7 @@
 	return pathBase;
 }
 
-/* Layout Item Tree */
+/* Manipulating Layout Item Tree */
 
 /** Returns existing subviews of the receiver as layout items. 
 	First checks whether the receiver responds to -layoutItem and in such case 
@@ -570,6 +578,66 @@
 	return [NSArray arrayWithArray: _layoutItems];
 }
 
+/** Returns all children items under the control of the receiver. An item is 
+	said to be under the control of an item group when you can traverse the
+	branch leading to the item without crossing a parent item which is declared
+	as a base item.
+	An item group becomes a base item when a represented path base is set, in 
+	other words when -representedPathBase doesn't return nil. 
+	This method collects every items the layout item subtree (excluding the 
+	receiver) by doing a preorder traversal, the resulting collection is a flat
+	list of every items in the tree. 
+	If you are interested by collecting descendant items in another traversal
+	order, you have to implement your own version of this method. */
+- (NSArray *) itemsIncludingRelatedDescendants
+{
+	// TODO: This code is probably quite slow by being written in a recursive 
+	// style and allocating/resizing many arrays instead of using a single 
+	// linked list. Test whether optimization are needed or not really...
+	NSEnumerator *e = [[self items] objectEnumerator];
+	id item = nil;
+	NSMutableArray *collectedItems = [NSMutableArray array];
+	
+	while ((item = [e nextObject]) != nil)
+	{
+		if ([item representedPathBase] == nil)
+		{
+			[collectedItems addObject: item];
+			
+			if ([item isGroup])
+				[collectedItems addObjectsFromArray: [item itemsIncludingRelatedDescendants]];
+		}
+	}
+	
+	return collectedItems;
+}
+
+/** Returns all descendant items of the receiver, including immediate children.
+	This method collects every items the layout item subtree (excluding the 
+	receiver) by doing a preorder traversal, the resulting collection is a flat
+	list of every items in the tree. 
+	If you are interested by collecting descendant items in another traversal
+	order, you have to implement your own version of this method. */
+- (NSArray *) itemsIncludingAllDescendants
+{
+	// TODO: This code is probably quite slow by being written in a recursive 
+	// style and allocating/resizing many arrays instead of using a single 
+	// linked list. Test whether optimization are needed or not really ...
+	NSEnumerator *e = [[self items] objectEnumerator];
+	id item = nil;
+	NSMutableArray *collectedItems = [NSMutableArray array];
+	
+	while ((item = [e nextObject]) != nil)
+	{
+		[collectedItems addObject: item];
+			
+		if ([item isGroup])
+			[collectedItems addObjectsFromArray: [item itemsIncludingAllDescendants]];
+	}
+	
+	return collectedItems;
+}
+
 - (void) reload
 {
 	_reloading = YES;
@@ -702,6 +770,8 @@
 {
 	_usesLayoutBasedFrame = flag;
 }
+
+/* Rendering */
 
 - (void) render: (NSMutableDictionary *)inputValues dirtyRect: (NSRect)dirtyRect inView: (NSView *)view 
 {
@@ -952,6 +1022,7 @@
 	}
 }
 
+/** Returns the index paths of selected items in layout item subtree of the the receiver. */
 - (NSArray *) selectionIndexPaths
 {
 	NSMutableArray *indexPaths = [NSMutableArray array];
@@ -983,9 +1054,33 @@
 	}
 }
 
+/** Sets the selected items in the layout item subtree attached to the receiver. */
 - (void) setSelectionIndexPaths: (NSArray *)indexPaths
 {
 	[self applySelectionIndexPaths: [NSMutableArray arrayWithArray: indexPaths]];
+}
+
+/** Returns the children items belonging to the receiver. 
+	The returned collection only includes immediate children, other selected 
+	descendant items below these childrens in the layout item subtree are 
+	excluded. */
+- (NSArray *) selectedItems
+{
+	return [[self contentArray] objectsMatchingValue: [NSNumber numberWithBool: YES] forKey: @"isSelected"];
+}
+
+- (NSArray *) selectedItemsIncludingRelatedDescendants
+{
+	NSArray *descendantItems = [self itemsIncludingRelatedDescendants];
+	
+	return [descendantItems objectsMatchingValue: [NSNumber numberWithBool: YES] forKey: @"isSelected"];
+}
+
+- (NSArray *) selectedItemsIncludingAllDescendants
+{
+	NSArray *descendantItems = [self itemsIncludingAllDescendants];
+	
+	return [descendantItems objectsMatchingValue: [NSNumber numberWithBool: YES] forKey: @"isSelected"];
 }
 
 /* Collection Protocol */

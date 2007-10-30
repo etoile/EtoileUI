@@ -54,25 +54,29 @@
 	BOOL _reloading; /* ivar used by ETSource category */
 }
 
+/* Factory Methods */
+
 + (ETLayoutItemGroup *) layoutItemGroup;
 + (ETLayoutItemGroup *) layoutItemGroupWithLayoutItem: (ETLayoutItem *)item;
 + (ETLayoutItemGroup *) layoutItemGroupWithLayoutItems: (NSArray *)items;
 
+/* Initialization */
+
 - (id) initWithLayoutItems: (NSArray *)layoutItems view: (NSView *)view;
+
+/* Finding Container */
 
 - (BOOL) isContainer;
 - (ETContainer *) ancestorContainerProvidingRepresentedPath;
 
-/* Path traversal of layout item tree */
+/* Traversing Layout Item Tree */
 
 - (NSString *) pathForIndexPath: (NSIndexPath *)path;
 - (NSIndexPath *) indexPathForPath: (NSString *)path;
 - (ETLayoutItem *) itemAtIndexPath: (NSIndexPath *)path;
 - (ETLayoutItem *) itemAtPath: (NSString *)path;
 
-//- (void) setPath: (NSString *)path;
-
-/*  Manipulating children layout items */
+/*  Manipulating Layout Item Tree */
 
 - (void) addItem: (ETLayoutItem *)item;
 - (void) insertItem: (ETLayoutItem *)item atIndex: (int)index;
@@ -81,13 +85,12 @@
 - (ETLayoutItem *) itemAtIndex: (int)index;
 - (int) indexOfItem: (id)item;
 //- (int) indexOfItem: (ETLayoutItem *)item;
-- (NSArray *) items;
 - (void) addItems: (NSArray *)items;
 - (void) removeItems: (NSArray *)items;
 - (void) removeAllItems;
-
-//- (NSArray *) itemsIncludingRelatedDescendents;
-//- (NSArray *) itemsIncludingAllDescendents;
+- (NSArray *) items;
+- (NSArray *) itemsIncludingRelatedDescendants;
+- (NSArray *) itemsIncludingAllDescendants;
 
 - (void) reload;
 
@@ -99,6 +102,7 @@
 - (void) reloadAndUpdateLayout;
 - (void) updateLayout;
 - (BOOL) canUpdateLayout;
+// FIXME: Implement methods below
 /*- (BOOL) canApplyLayout; // would replace -canUpdateLayout
 - (void) applyLayout;
 - (void) setNeedsLayout: (BOOL)needsLayout;*/
@@ -148,9 +152,9 @@
 - (NSArray *) selectionIndexPaths;
 - (void) setSelectionIndexPaths: (NSArray *)indexPaths;
 
-//- (NSArray *) selectedItems;
-//- (NSArray *) selectedItemsIncludingRelatedDescendents;
-//- (NSArray *) selectedItemsIncludingAllDescendents;
+- (NSArray *) selectedItems;
+- (NSArray *) selectedItemsIncludingRelatedDescendants;
+- (NSArray *) selectedItemsIncludingAllDescendants;
 
 /* Collection Protocol */
 

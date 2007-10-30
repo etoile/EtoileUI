@@ -99,14 +99,20 @@
 	id _reserved;
 }
 
+/* Factory Methods */
+
 + (ETLayoutItem *) layoutItem;
 + (ETLayoutItem *) layoutItemWithView: (NSView *)view;
 + (ETLayoutItem *) layoutItemWithValue: (id)value;
+
+/* Initialization */
 
 - (id) initWithValue: (id)value;
 - (id) initWithRepresentedObject: (id)object;
 - (id) initWithView: (NSView *)view;
 - (id) initWithView: (NSView *)view value: (id)value representedObject: (id)repObject;
+
+/* Layout Item Tree */
 
 - (ETLayoutItem *) rootItem;
 - (ETLayoutItemGroup *) parentLayoutItem;
@@ -123,6 +129,8 @@
 - (NSString *) representedPathBase;
 
 - (NSString *) identifier;
+
+/* Main Accessors */
 
 /** Facility methods to store a name acting like a last fallback property for 
 	display. Name is also used as a path component to build 
@@ -173,7 +181,7 @@ shape*/
 - (NSArray *) properties;
 
 - (BOOL) isMetaLayoutItem;
-
+//- (BOOL) isUILayoutItem;
 - (BOOL) isGroup;
 
 /* Utility Accessors */
