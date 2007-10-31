@@ -233,7 +233,7 @@
 		606481520C7A6CAC0000338D /* NSObject+Etoile.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSObject+Etoile.m"; sourceTree = "<group>"; };
 		606B97480C0AF283000AAA85 /* ContainerController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ContainerController.h; path = PhotoViewExample/ContainerController.h; sourceTree = "<group>"; };
 		606B97490C0AF283000AAA85 /* ContainerController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ContainerController.m; path = PhotoViewExample/ContainerController.m; sourceTree = "<group>"; };
-		606B98C90C0AF831000AAA85 /* ContainerExample.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = ContainerExample.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		606B98C90C0AF831000AAA85 /* ContainerExample.app */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.application; path = ContainerExample.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		6082FE750C49947F00FFF659 /* ETBinding.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ETBinding.h; sourceTree = "<group>"; };
 		6082FE760C49947F00FFF659 /* ETBinding.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ETBinding.m; sourceTree = "<group>"; };
 		6087EA940C81AB7900A1263E /* libgnustep-baseadd.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = "libgnustep-baseadd.dylib"; path = "/usr/GNUstep/System/Library/Libraries/libgnustep-baseadd.dylib"; sourceTree = "<absolute>"; };
@@ -245,7 +245,7 @@
 		609097A30CAFFF7A009CAD27 /* ETObjectRegistry.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ETObjectRegistry.m; sourceTree = "<group>"; };
 		609097D20CB00BC2009CAD27 /* ETObjectRegistry+EtoileUI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "ETObjectRegistry+EtoileUI.h"; sourceTree = "<group>"; };
 		609097D30CB00BC2009CAD27 /* ETObjectRegistry+EtoileUI.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "ETObjectRegistry+EtoileUI.m"; sourceTree = "<group>"; };
-		60909CC90CB2DA42009CAD27 /* TableViewExample.app */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.application; path = TableViewExample.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		60909CC90CB2DA42009CAD27 /* TableViewExample.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = TableViewExample.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		60909CCB0CB2DA43009CAD27 /* TableViewExample-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.xml; name = "TableViewExample-Info.plist"; path = "TableViewExample/TableViewExample-Info.plist"; sourceTree = "<group>"; };
 		60909CD70CB2DAB3009CAD27 /* TableController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TableController.h; path = TableViewExample/TableController.h; sourceTree = "<group>"; };
 		60909CD80CB2DAB3009CAD27 /* TableController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = TableController.m; path = TableViewExample/TableController.m; sourceTree = "<group>"; };
@@ -542,10 +542,6 @@
 		609548D10C0E300F00068CBB /* Layout Items */ = {
 			isa = PBXGroup;
 			children = (
-				6097F21D0C99F487003A74CE /* NSIndexPath+Etoile.h */,
-				6097F21E0C99F487003A74CE /* NSIndexPath+Etoile.m */,
-				603D4D0A0C8D1E10003DFD51 /* NSString+Etoile.h */,
-				603D4D0B0C8D1E10003DFD51 /* NSString+Etoile.m */,
 				609F46A10B42049D00AD2209 /* ETLayoutItem.h */,
 				609F46A20B42049D00AD2209 /* ETLayoutItem.m */,
 				609548CE0C0E300500068CBB /* ETLayoutItemGroup.h */,
@@ -606,6 +602,10 @@
 				609F46850B41FDAF00AD2209 /* ETViewLayoutLine.m */,
 				60EB7C660C6155AA0066AC40 /* ETView.h */,
 				60EB7C670C6155AA0066AC40 /* ETView.m */,
+				6097F21D0C99F487003A74CE /* NSIndexPath+Etoile.h */,
+				6097F21E0C99F487003A74CE /* NSIndexPath+Etoile.m */,
+				603D4D0A0C8D1E10003DFD51 /* NSString+Etoile.h */,
+				603D4D0B0C8D1E10003DFD51 /* NSString+Etoile.m */,
 				60EB7BCD0C614ED70066AC40 /* ETPath.h */,
 				60EB7BCE0C614ED70066AC40 /* ETPath.m */,
 			);
@@ -905,7 +905,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/bash;
-			shellScript = "#export DYLD_LIBRARY_PATH=$DYLD_LIBRARY_PATH:$TARGET_BUILD_DIR:/usr/GNUstep/System/Library/Libraries\n#export DYLD_FRAMEWORK_PATH=$LIBRARY_SEARCH_PATHS:$TARGET_BUILD_DIR:/usr/GNUstep/System/Library/Libraries\nexport DYLD_LIBRARY_PATH=$LIBRARY_SEARCH_PATHS:/usr/GNUstep/System/Library/Libraries\n/usr/local/bin/ukrun \"$TARGET_BUILD_DIR/$PRODUCT_NAME.$WRAPPER_EXTENSION\"";
+			shellScript = "#export DYLD_LIBRARY_PATH=$DYLD_LIBRARY_PATH:$TARGET_BUILD_DIR:/usr/GNUstep/System/Library/Libraries\nexport DYLD_FRAMEWORK_PATH=$LIBRARY_SEARCH_PATHS:$TARGET_BUILD_DIR:/usr/GNUstep/System/Library/Libraries\nexport DYLD_LIBRARY_PATH=$LIBRARY_SEARCH_PATHS:/usr/GNUstep/System/Library/Libraries\n/usr/local/bin/ukrun \"$TARGET_BUILD_DIR/$PRODUCT_NAME.$WRAPPER_EXTENSION\"";
 		};
 /* End PBXShellScriptBuildPhase section */
 
@@ -1165,6 +1165,7 @@
 			buildSettings = {
 				COPY_PHASE_STRIP = YES;
 				FRAMEWORK_SEARCH_PATHS = "$(BUILT_PRODUCTS_DIR)";
+				GCC_C_LANGUAGE_STANDARD = c99;
 				GCC_ENABLE_FIX_AND_CONTINUE = NO;
 				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
@@ -1173,7 +1174,7 @@
 				GCC_WARN_FOUR_CHARACTER_CONSTANTS = NO;
 				GCC_WARN_UNKNOWN_PRAGMAS = NO;
 				HEADER_SEARCH_PATHS = /usr/GNUstep/System/Library/Headers/;
-				INFOPLIST_FILE = "EtoileUITests-Info.plist";
+				INFOPLIST_FILE = "Tests/EtoileUITests-Info.plist";
 				INSTALL_PATH = "$(USER_LIBRARY_DIR)/Bundles";
 				LIBRARY_SEARCH_PATHS = /usr/GNUstep/System/Library/Libraries/;
 				OTHER_CFLAGS = "";
