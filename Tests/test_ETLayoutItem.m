@@ -35,6 +35,7 @@
 #import <AppKit/AppKit.h>
 #import <EtoileUI/ETLayoutItem.h>
 #import <EtoileUI/ETLayoutItemGroup.h>
+#import <EtoileUI/ETContainer.h>
 #import <EtoileUI/ETFlowLayout.h>
 #import <EtoileUI/NSIndexPath+Etoile.h>
 #import <UnitKit/UnitKit.h>
@@ -241,58 +242,91 @@
 
 
 @implementation ETLayoutItemGroup (UnitKitTests)
-
-- (void) buildTestSelectionTree
-{
-	//[self buildTestTree];
-	id item0 = [ETLayoutItemGroup layoutItem];
-	id item00 = [ETLayoutItem layoutItem];
-	id item01 = [ETLayoutItem layoutItem];
-	id item1 = [ETLayoutItemGroup layoutItem];
-	id item10 = [ETLayoutItem layoutItem];
-	id item11 = [ETLayoutItemGroup layoutItem];
-	id item110 = [ETLayoutItem layoutItem];
 	
-	[self addItem: item0];
-	[item0 addItem: item00];
-	[item0 addItem: item01];
-	[self addItem: item1];
-	[item1 addItem: item10];	
-	[item1 addItem: item11];
-	[item11 addItem: item110];
+#define BUILD_TEST_TREE \
+	id item0 = [ETLayoutItemGroup layoutItem]; \
+	id item00 = [ETLayoutItem layoutItem]; \
+	id item01 = [ETLayoutItem layoutItem]; \
+	id item1 = [ETLayoutItemGroup layoutItem]; \
+	id item10 = [ETLayoutItem layoutItem]; \
+	id item11 = [ETLayoutItemGroup layoutItem]; \
+	id item110 = [ETLayoutItem layoutItem]; \
+	\
+	[self addItem: item0]; \
+	[item0 addItem: item00]; \
+	[item0 addItem: item01]; \
+	[self addItem: item1]; \
+	[item1 addItem: item10]; \
+	[item1 addItem: item11]; \
+	[item11 addItem: item110]; \
+	
+#define BUILD_SELECTION_TEST_TREE_self_0_10_110 BUILD_TEST_TREE \
+	[self setSelected: YES]; \
+	[item0 setSelected: YES]; \
+	[item10 setSelected: YES]; \
+	[item110 setSelected: YES]; \
+	
+#define DEFINE_BASE_ITEMS_0_10_11 \
+	id container1 = [[ETContainer alloc] initWithFrame: NSMakeRect(0, 0, 50, 100)]; \
+	id container2 = [[ETContainer alloc] initWithFrame: NSMakeRect(0, 0, 50, 100)]; \
+	id container3 = [[ETContainer alloc] initWithFrame: NSMakeRect(0, 0, 50, 100)]; \
+	 \
+	[container1 setRepresentedPath: @"/myModel1"]; \
+	[container2 setRepresentedPath: @"/myModel2"]; \
+	[container3 setRepresentedPath: @"/myModel3"]; \
+	[item0 setView: container1]; \
+	[item10 setView: container2]; \
+	[item11 setView: container3]; \
+	RELEASE(container1); \
+	RELEASE(container2); \
+	RELEASE(container3); \
 
-	[self setSelected: YES];
-	[item0 setSelected: YES];
-	[item10 setSelected: YES];
-	[item110 setSelected: YES];
+- (void) testRepresentedPathBase
+{
+	id container = [[ETContainer alloc] initWithFrame: NSMakeRect(0, 0, 50, 100)];
+	
+	UKNil([self representedPathBase]);
+	
+	[container setRepresentedPath: @"/myModel"];
+	[self setView: container];
+	RELEASE(container);
+	
+	UKNotNil([self representedPathBase]);
+	UKStringsEqual(@"/myModel", [self representedPathBase]);
+}
+
+- (void) testIsContainer
+{
+	id container = [[ETContainer alloc] initWithFrame: NSMakeRect(0, 0, 50, 100)];
+	
+	[self setView: container];
+	RELEASE(container);
+	
+	UKTrue([self isContainer]);
+}
+
+- (void) testItemsIncludingRelatedDescendants
+{
+	BUILD_TEST_TREE
+	DEFINE_BASE_ITEMS_0_10_11
+	
+	NSArray *items = [self itemsIncludingRelatedDescendants];
+
+	UKIntsEqual(4, [items count]);	
+	UKTrue([items containsObject: item0]);
+	UKFalse([items containsObject: item00]);
+	UKFalse([items containsObject: item01]);
+	UKTrue([items containsObject: item1]);
+	UKTrue([items containsObject: item10]);
+	UKTrue([items containsObject: item11]);
+	UKFalse([items containsObject: item110]);
 }
 
 - (void) testSelectionIndexPaths
 {
-	//[self buildTestSelectionTree];
-	id item0 = [ETLayoutItemGroup layoutItem];
-	id item00 = [ETLayoutItem layoutItem];
-	id item01 = [ETLayoutItem layoutItem];
-	id item1 = [ETLayoutItemGroup layoutItem];
-	id item10 = [ETLayoutItem layoutItem];
-	id item11 = [ETLayoutItemGroup layoutItem];
-	id item110 = [ETLayoutItem layoutItem];
-	
-	[self addItem: item0];
-	[item0 addItem: item00];
-	[item0 addItem: item01];
-	[self addItem: item1];
-	[item1 addItem: item10];	
-	[item1 addItem: item11];
-	[item11 addItem: item110];
+	BUILD_SELECTION_TEST_TREE_self_0_10_110
 
-	NSArray *indexPaths = nil;
-	
-	[self setSelected: YES];
-	[item0 setSelected: YES];
-	[item10 setSelected: YES];
-	[item110 setSelected: YES];
-	indexPaths = [self selectionIndexPaths];
+	NSArray *indexPaths = [self selectionIndexPaths];
 	
 	UKIntsEqual(3, [indexPaths count]);
 	UKTrue([indexPaths containsObject: [item0 indexPath]]);
@@ -311,22 +345,7 @@
 
 - (void) testSetSelectionIndexPaths
 {
-	//[self buildTestSelectionTree];
-	id item0 = [ETLayoutItemGroup layoutItem];
-	id item00 = [ETLayoutItem layoutItem];
-	id item01 = [ETLayoutItem layoutItem];
-	id item1 = [ETLayoutItemGroup layoutItem];
-	id item10 = [ETLayoutItem layoutItem];
-	id item11 = [ETLayoutItemGroup layoutItem];
-	id item110 = [ETLayoutItem layoutItem];
-	
-	[self addItem: item0];
-	[item0 addItem: item00];
-	[item0 addItem: item01];
-	[self addItem: item1];
-	[item1 addItem: item10];	
-	[item1 addItem: item11];
-	[item11 addItem: item110];
+	BUILD_TEST_TREE
 	
 	id indexPaths = nil;
 	id indexPath0 = [NSIndexPath indexPathWithIndex: 0];
@@ -356,6 +375,53 @@
 	UKTrue([item11 isSelected]);
 	UKTrue([item110 isSelected]);
 	UKIntsEqual(4, [[self selectionIndexPaths] count]);
+}
+
+- (void) testSelectedItems
+{
+	BUILD_SELECTION_TEST_TREE_self_0_10_110
+	
+	id item2 = [ETLayoutItem layoutItem];
+	
+	[self addItem: item2];
+	[item2 setSelected: YES];
+	
+	NSArray *selectedItems = [self selectedItems];
+
+	UKIntsEqual(2, [selectedItems count]);	
+	UKIntsEqual([[self selectionIndexPaths] count], [selectedItems count] + 2);
+	UKTrue([selectedItems containsObject: item0]);
+	UKFalse([selectedItems containsObject: item10]);
+	UKFalse([selectedItems containsObject: item110]);
+	
+	UKTrue([selectedItems containsObject: item2]);
+}
+
+- (void) testSelectedItemsIncludingAllDescendants
+{
+	BUILD_SELECTION_TEST_TREE_self_0_10_110
+	
+	NSArray *selectedItems = [self selectedItemsIncludingAllDescendants];
+
+	UKIntsEqual(3, [selectedItems count]);	
+	UKIntsEqual([[self selectionIndexPaths] count], [selectedItems count]);
+	UKTrue([selectedItems containsObject: item0]);
+	UKTrue([selectedItems containsObject: item10]);
+	UKTrue([selectedItems containsObject: item110]);
+}
+
+- (void) testSelectedItemsIncludingRelatedDescendants
+{
+	BUILD_SELECTION_TEST_TREE_self_0_10_110
+	DEFINE_BASE_ITEMS_0_10_11
+	
+	NSArray *selectedItems = [self selectedItemsIncludingRelatedDescendants];
+
+	UKIntsEqual(2, [selectedItems count]);	
+	UKIntsEqual([[self selectionIndexPaths] count], [selectedItems count] + 1);
+	UKTrue([selectedItems containsObject: item0]);
+	UKTrue([selectedItems containsObject: item10]);
+	UKFalse([selectedItems containsObject: item110]);
 }
 
 @end

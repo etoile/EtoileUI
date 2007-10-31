@@ -600,13 +600,10 @@
 	
 	while ((item = [e nextObject]) != nil)
 	{
-		if ([item representedPathBase] == nil)
-		{
-			[collectedItems addObject: item];
+		[collectedItems addObject: item];
 			
-			if ([item isGroup])
-				[collectedItems addObjectsFromArray: [item itemsIncludingRelatedDescendants]];
-		}
+		if ([item isGroup] && [item representedPathBase] == nil)
+			[collectedItems addObjectsFromArray: [item itemsIncludingRelatedDescendants]];
 	}
 	
 	return collectedItems;
@@ -1066,7 +1063,7 @@
 	excluded. */
 - (NSArray *) selectedItems
 {
-	return [[self contentArray] objectsMatchingValue: [NSNumber numberWithBool: YES] forKey: @"isSelected"];
+	return [[self items] objectsMatchingValue: [NSNumber numberWithBool: YES] forKey: @"isSelected"];
 }
 
 - (NSArray *) selectedItemsIncludingRelatedDescendants

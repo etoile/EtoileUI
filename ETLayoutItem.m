@@ -42,6 +42,8 @@
 #import <EtoileUI/NSIndexPath+Etoile.h>
 #import <EtoileUI/GNUstep.h>
 
+#define DETAILED_DESCRIPTION
+
 #define ETLog NSLog
 #define ETUTIAttribute @"uti"
 
@@ -183,9 +185,14 @@
 - (NSString *) description
 {
 	NSString *desc = [super description];
-	
+
+#ifdef DETAILED_DESCRIPTION	
+	desc = [@"<" stringByAppendingFormat: @"%@ id: %@, ipath: %@, selected: %d>", 
+		desc, [self identifier], [[self indexPath] keyPath], [self isSelected]];
+#else
 	desc = [@"<" stringByAppendingFormat: @"%@ id: %@, selected:%d>", 
 		desc, [self identifier], [self isSelected]];
+#endif
 	
 	return desc;
 }
