@@ -70,6 +70,10 @@
 	return [NSIndexPath indexPathWithIndexes: buffer length: [self length] - 1];
 }
 
+/** NOTE: This method currently ignores separator paremeter because there is no
+	built-in path separator support in NSString path API. To fix the issue,
+	implements path separator support in NSString or a new clean path API to be
+	named ETPath. The only supported separator is '/'. */
 - (NSString *) stringByJoiningIndexPathWithSeparator: (NSString *)separator
 {
 	NSString *path = @"/";
@@ -82,6 +86,15 @@
 	}
 	
 	return path;
+}
+
+/** Returns a string representation of the receiver which can be used as a key
+	path (with KVC). 
+	NOTE: This method doesn't yet return a key path using dot separator because
+	-stringByJoiningIndexPathWithSeparator isn't fully implemented yet. */
+- (NSString *) keyPath
+{
+	return [self stringByJoiningIndexPathWithSeparator: @"."];
 }
 
 @end

@@ -43,4 +43,5 @@
 - (unsigned int) lastIndex;
 - (NSIndexPath *) indexPathByRemovingFirstIndex;
 - (NSString *) stringByJoiningIndexPathWithSeparator: (NSString *)separator;
+- (NSString *) keyPath;
 @end
