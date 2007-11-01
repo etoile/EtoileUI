@@ -131,7 +131,9 @@ NSString *ETLayoutItemPboardType = @"ETLayoutItemPboardType"; // FIXME: replace 
 		_subviewHitTest = NO;
 		_flipped = YES;
 		_itemScale = 1.0;
-		_selection = [[NSMutableIndexSet alloc] init];
+		// NOTE: Not in use currently (see ivars in the header)
+		//_selection = [[NSMutableIndexSet alloc] init];
+		_selectionShape = nil;
 		_dragAllowed = YES;
 		_dropAllowed = YES;
 		_prevInsertionIndicatorRect = NSZeroRect;
@@ -140,17 +142,6 @@ NSString *ETLayoutItemPboardType = @"ETLayoutItemPboardType"; // FIXME: replace 
 		
 		[self registerForDraggedTypes: [NSArray arrayWithObjects:
 			ETLayoutItemPboardType, nil]];
-		
-		/*if (views != nil)
-		{
-			NSEnumerator *e = [views objectEnumerator];
-			NSView *view = nil;
-			
-			while ((view = [e nextObject]) != nil)
-			{
-				[_layoutItems addObject: [ETLayoutItem layoutItemWithView: view]];
-			}
-		}*/
     }
     
     return self;
@@ -167,7 +158,9 @@ NSString *ETLayoutItemPboardType = @"ETLayoutItemPboardType"; // FIXME: replace 
 	DESTROY(_doubleClickedItem);
 	DESTROY(_displayView);
 	DESTROY(_path);
-	DESTROY(_selection);
+	// NOTE: Not in use currently
+	//DESTROY(_selection);
+	DESTROY(_selectionShape);
 	DESTROY(_inspector);
 	_dataSource = nil;
     

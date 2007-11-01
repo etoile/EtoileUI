@@ -233,7 +233,7 @@
 		606481520C7A6CAC0000338D /* NSObject+Etoile.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSObject+Etoile.m"; sourceTree = "<group>"; };
 		606B97480C0AF283000AAA85 /* ContainerController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ContainerController.h; path = PhotoViewExample/ContainerController.h; sourceTree = "<group>"; };
 		606B97490C0AF283000AAA85 /* ContainerController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ContainerController.m; path = PhotoViewExample/ContainerController.m; sourceTree = "<group>"; };
-		606B98C90C0AF831000AAA85 /* ContainerExample.app */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.application; path = ContainerExample.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		606B98C90C0AF831000AAA85 /* ContainerExample.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = ContainerExample.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		6082FE750C49947F00FFF659 /* ETBinding.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ETBinding.h; sourceTree = "<group>"; };
 		6082FE760C49947F00FFF659 /* ETBinding.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ETBinding.m; sourceTree = "<group>"; };
 		6087EA940C81AB7900A1263E /* libgnustep-baseadd.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = "libgnustep-baseadd.dylib"; path = "/usr/GNUstep/System/Library/Libraries/libgnustep-baseadd.dylib"; sourceTree = "<absolute>"; };
@@ -388,8 +388,6 @@
 		080E96DDFE201D6D7F000001 /* Classes */ = {
 			isa = PBXGroup;
 			children = (
-				60C0A3DE0C71D6FB00A4458D /* NSIndexSet+Etoile.m */,
-				60C0A3DD0C71D6FB00A4458D /* NSIndexSet+Etoile.h */,
 				609F463C0B414C0A00AD2209 /* ETContainer.h */,
 				609F463D0B414C0A00AD2209 /* ETContainer.m */,
 				609F46590B41641400AD2209 /* ETLayout.h */,
@@ -602,6 +600,8 @@
 				609F46850B41FDAF00AD2209 /* ETViewLayoutLine.m */,
 				60EB7C660C6155AA0066AC40 /* ETView.h */,
 				60EB7C670C6155AA0066AC40 /* ETView.m */,
+				60C0A3DE0C71D6FB00A4458D /* NSIndexSet+Etoile.m */,
+				60C0A3DD0C71D6FB00A4458D /* NSIndexSet+Etoile.h */,
 				6097F21D0C99F487003A74CE /* NSIndexPath+Etoile.h */,
 				6097F21E0C99F487003A74CE /* NSIndexPath+Etoile.m */,
 				603D4D0A0C8D1E10003DFD51 /* NSString+Etoile.h */,

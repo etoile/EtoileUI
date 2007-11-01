@@ -80,8 +80,8 @@
 	
 	float _itemScale;
 	
-	/* Acts as a cache, selection state is stored in layout item by default */
-	NSMutableIndexSet *_selection;
+	// NOTE: May be used as a cache, selection state is stored in layout item by default
+	// NSMutableIndexSet *_selection;
 	ETSelection *_selectionShape;
 	NSRect _selectionRect;
 	BOOL _multipleSelectionAllowed;
