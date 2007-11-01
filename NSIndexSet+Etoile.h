@@ -37,6 +37,12 @@
 #import <AppKit/AppKit.h>
 
 
+@interface NSIndexSet (Etoile)
+
+- (NSArray *) indexPaths;
+
+@end
+
 @interface NSMutableIndexSet (Etoile)
 
 - (void) invertIndex: (unsigned int)index;

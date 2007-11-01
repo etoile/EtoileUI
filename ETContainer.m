@@ -728,79 +728,101 @@ NSString *ETLayoutItemPboardType = @"ETLayoutItemPboardType"; // FIXME: replace 
 }
 */
 
-/* Layout Item Tree */
+/*  Manipulating Layout Item Tree */
 
+/** See -[ETLayoutItemGroup addItem:] */
 - (void) addItem: (ETLayoutItem *)item
 {
 	[(ETLayoutItemGroup *)[self layoutItem] addItem: item];
 }
 
+/** See -[ETLayoutItemGroup insertItem:atIndex:] */
 - (void) insertItem: (ETLayoutItem *)item atIndex: (int)index
 {
 	[(ETLayoutItemGroup *)[self layoutItem] insertItem: item atIndex: index];
 }
 
+/** See -[ETLayoutItemGroup removeItem:] */
 - (void) removeItem: (ETLayoutItem *)item
 {
 	[(ETLayoutItemGroup *)[self layoutItem] removeItem: item];
 }
 
+/** See -[ETLayoutItemGroup removeItem:atIndex:] */
 - (void) removeItemAtIndex: (int)index
 {
 	[(ETLayoutItemGroup *)[self layoutItem] removeItemAtIndex: index];
 }
 
+/** See -[ETLayoutItemGroup itemAtIndex:] */
 - (ETLayoutItem *) itemAtIndex: (int)index
 {
 	return [(ETLayoutItemGroup *)[self layoutItem] itemAtIndex: index];
 }
 
+/** See -[ETLayoutItemGroup addItems:] */
 - (void) addItems: (NSArray *)items
 {
 	[(ETLayoutItemGroup *)[self layoutItem] addItems: items];
 }
 
+/** See -[ETLayoutItemGroup removeItems] */
 - (void) removeItems: (NSArray *)items
 {
 	[(ETLayoutItemGroup *)[self layoutItem] removeItems: items];
 }
 
+/** See -[ETLayoutItemGroup removeAllItems] */
 - (void) removeAllItems
 {
 	[(ETLayoutItemGroup *)[self layoutItem] removeAllItems];
 }
 
+/** See -[ETLayoutItemGroup indexOfItem:] */
 - (int) indexOfItem: (ETLayoutItem *)item
 {
 	return [(ETLayoutItemGroup *)[self layoutItem] indexOfItem: item];
 }
 
+/** See -[ETLayoutItemGroup items] */
 - (NSArray *) items
 {
 	return [(ETLayoutItemGroup *)[self layoutItem] items];
 }
 
-/** Add a view to layout as a subview of the view container. */
-/** Remove a view which was layouted as a subview of the view container. */
-/** Remove the view located at index in the series of views (which were layouted as subviews of the view container). */
-/** Return the view located at index in the series of views (which are layouted as subviews of the view container). */
-
 /* Selection */
 
+/** See -[ETLayoutItemGroup selectionIndexPaths] */
 - (NSArray *) selectionIndexPaths
 {
 	return [(ETLayoutItemGroup *)[self layoutItem] selectionIndexPaths];
 }
 
+/** See -[ETLayoutItemGroup setSelectionIndexPaths] */
 - (void) setSelectionIndexPaths: (NSArray *)indexPaths
 {
 	[(ETLayoutItemGroup *)[self layoutItem] setSelectionIndexPaths: indexPaths];
+	
+	// FIXME: Move this code into -[ETLayoutItemGroup setSelectionIndexPaths:]
+	/* Finally propagate changes by posting notification */
+	NSNotification *notif = [NSNotification 
+		notificationWithName: ETContainerSelectionDidChangeNotification object: self];
+	
+	if ([[self delegate] respondsToSelector: @selector(containerSelectionDidChange:)])
+		[[self delegate] containerSelectionDidChange: notif];
+
+	[[NSNotificationCenter defaultCenter] postNotification: notif];
+	
+	/* Reflect selection change immediately */
+	[self display];
 }
 
+/** Sets the selected items identified by indexes in the receiver and discards 
+	any existing selection index paths previously set. */
 - (void) setSelectionIndexes: (NSIndexSet *)indexes
 {
 	int numberOfItems = [[self items] count];
-	int lastSelectionIndex = [indexes lastIndex];
+	int lastSelectionIndex = [[self selectionIndexes] lastIndex];
 	
 	NSLog(@"Set selection indexes to %@ in %@", indexes, self);
 	
@@ -810,117 +832,50 @@ NSString *ETLayoutItemPboardType = @"ETLayoutItemPboardType"; // FIXME: replace 
 			lastSelectionIndex, self, numberOfItems);
 		return;
 	}
-	
-	/* Discard previous selection */
-	if ([_selection count] > 0)
-	{
-		NSArray *selectedItems = [[self items] objectsAtIndexes: _selection];
-		NSEnumerator *e = [selectedItems objectEnumerator];
-		ETLayoutItem *item = nil;
-		
-		while ((item = [e nextObject]) != nil)
-		{
-			[item setSelected: NO];
-		}
-		[_selection removeAllIndexes];
-	}
 
 	/* Update selection */
-	if (lastSelectionIndex != NSNotFound)
-	{
-		/* Cache selection locally in this container */
-		if ([indexes isKindOfClass: [NSMutableIndexSet class]])
-		{
-			ASSIGN(_selection, indexes);
-		}
-		else
-		{
-			ASSIGN(_selection, [indexes mutableCopy]);
-		}
-	
-		/* Update selection state in layout items directly */
-		NSArray *selectedItems = [[self items] objectsAtIndexes: _selection];
-		NSEnumerator *e = [selectedItems objectEnumerator];
-		ETLayoutItem *item = nil;
-			
-		while ((item = [e nextObject]) != nil)
-		{
-			[item setSelected: YES];
-		}
-	}
-	
-	/* Finally propagate changes by posting notification */
-	NSNotification *notif = [NSNotification 
-		notificationWithName: ETContainerSelectionDidChangeNotification object: self];
-	
-	if ([[self delegate] respondsToSelector: @selector(containerSelectionDidChange:)])
-		[[self delegate] containerSelectionDidChange: notif];
-
-	[[NSNotificationCenter defaultCenter] postNotification: notif];
-	
-	/* Reflect selection change immediately */
-	[self display];
+	[self setSelectionIndexPaths: [indexes indexPaths]];
 }
 
+/** Returns all indexes matching selected items which are immediate children of
+	the receiver. 
+	Put in another way, the method returns the first index of all index paths
+	with a length equal one. */
 - (NSMutableIndexSet *) selectionIndexes
 {
-	return AUTORELEASE([_selection mutableCopy]);
+	NSMutableIndexSet *indexes = [NSMutableIndexSet indexSet];
+	NSEnumerator *e = [[self selectionIndexPaths] objectEnumerator];
+	NSIndexPath *indexPath = nil;
+	
+	while ((indexPath = [e nextObject]) != nil)
+	{
+		if ([indexPath length] == 1)
+			[indexes addIndex: [indexPath firstIndex]];
+	}
+	
+	return indexes;
 }
 
+/** Sets the selected item identified by index in the receiver and discards 
+	any existing selection index paths previously set. */
 - (void) setSelectionIndex: (int)index
 {
-	int numberOfItems = [[self items] count];
-	
-	NSLog(@"Modify selected item from %d to %d of %@", [self selectionIndex], index, self);
+	ETLog(@"Modify selection index from %d to %d of %@", [self selectionIndex], index, self);
 	
 	/* Check new selection validity */
 	NSAssert1(index >= 0, @"-setSelectionIndex: parameter must not be a negative value like %d", index);
-	if (index > (numberOfItems - 1) && index != NSNotFound) /* NSNotFound is a big value and not -1 */
-	{
-		NSLog(@"WARNING: Try to set selection index %d when container %@ only contains %d items",
-			index, self, numberOfItems);
-		return;
-	}
-
-	/* Discard previous selection */
-	if ([_selection count] > 0)
-	{
-		NSArray *selectedItems = [[self items] objectsAtIndexes: _selection];
-		NSEnumerator *e = [selectedItems objectEnumerator];
-		ETLayoutItem *item = nil;
-		
-		while ((item = [e nextObject]) != nil)
-		{
-			[item setSelected: NO];
-		}
-		[_selection removeAllIndexes];
-	}
 	
-	/* Update selection */
-	if (index != NSNotFound)
-	{
-		[_selection addIndex: index]; // cache
-		[[self itemAtIndex: index] setSelected: YES];
-	}
-	
-	NSAssert([_selection count] == 0 || [_selection count] == 1, @"-setSelectionIndex: must result in either no index or a single index but not more");
-	
-	/* Finally propagate changes by posting notification */
-	NSNotification *notif = [NSNotification 
-		notificationWithName: ETContainerSelectionDidChangeNotification object: self];
-	
-	if ([[self delegate] respondsToSelector: @selector(containerSelectionDidChange:)])
-		[[self delegate] containerSelectionDidChange: notif];
-
-	[[NSNotificationCenter defaultCenter] postNotification: notif];
-	
-	/* Reflect selection change immediately */
-	[self display];
+	[self setSelectionIndexes: [NSIndexSet indexSetWithIndex: index]];
 }
 
+/** Returns the index of the first selected item which is an immediate child of
+	the receiver. If there is none, returns NSNotFound. 
+	Calling this method is equivalent to [[self selectionIndexes] firstIndex].
+	Take note that -selectionIndexPaths may return one or multiple values when 
+	this method returns NSNotFound. See -selectionIndexes also. */
 - (int) selectionIndex
 {
-	return [_selection firstIndex];
+	return [[self selectionIndexes] firstIndex];
 }
 
 - (BOOL) allowsMultipleSelection
@@ -1729,3 +1684,133 @@ NSString *ETLayoutItemPboardType = @"ETLayoutItemPboardType"; // FIXME: replace 
 }
 
 @end
+
+/* Selection Caching Code (not used currently) */
+
+#if 0
+- (void) setSelectionIndexes: (NSIndexSet *)indexes
+{
+	int numberOfItems = [[self items] count];
+	int lastSelectionIndex = [indexes lastIndex];
+	
+	NSLog(@"Set selection indexes to %@ in %@", indexes, self);
+	
+	if (lastSelectionIndex > (numberOfItems - 1) && lastSelectionIndex != NSNotFound) /* NSNotFound is a big value and not -1 */
+	{
+		NSLog(@"WARNING: Try to set selection index %d when container %@ only contains %d items",
+			lastSelectionIndex, self, numberOfItems);
+		return;
+	}
+	
+	/* Discard previous selection */
+	if ([_selection count] > 0)
+	{
+		NSArray *selectedItems = [[self items] objectsAtIndexes: _selection];
+		NSEnumerator *e = [selectedItems objectEnumerator];
+		ETLayoutItem *item = nil;
+		
+		while ((item = [e nextObject]) != nil)
+		{
+			[item setSelected: NO];
+		}
+		[_selection removeAllIndexes];
+	}
+
+	/* Update selection */
+	if (lastSelectionIndex != NSNotFound)
+	{
+		/* Cache selection locally in this container */
+		if ([indexes isKindOfClass: [NSMutableIndexSet class]])
+		{
+			ASSIGN(_selection, indexes);
+		}
+		else
+		{
+			ASSIGN(_selection, [indexes mutableCopy]);
+		}
+	
+		/* Update selection state in layout items directly */
+		NSArray *selectedItems = [[self items] objectsAtIndexes: _selection];
+		NSEnumerator *e = [selectedItems objectEnumerator];
+		ETLayoutItem *item = nil;
+			
+		while ((item = [e nextObject]) != nil)
+		{
+			[item setSelected: YES];
+		}
+	}
+	
+	/* Finally propagate changes by posting notification */
+	NSNotification *notif = [NSNotification 
+		notificationWithName: ETContainerSelectionDidChangeNotification object: self];
+	
+	if ([[self delegate] respondsToSelector: @selector(containerSelectionDidChange:)])
+		[[self delegate] containerSelectionDidChange: notif];
+
+	[[NSNotificationCenter defaultCenter] postNotification: notif];
+	
+	/* Reflect selection change immediately */
+	[self display];
+}
+
+- (NSMutableIndexSet *) selectionIndexes
+{
+	return AUTORELEASE([_selection mutableCopy]);
+}
+
+- (void) setSelectionIndex: (int)index
+{
+	int numberOfItems = [[self items] count];
+	
+	NSLog(@"Modify selected item from %d to %d of %@", [self selectionIndex], index, self);
+	
+	/* Check new selection validity */
+	NSAssert1(index >= 0, @"-setSelectionIndex: parameter must not be a negative value like %d", index);
+	if (index > (numberOfItems - 1) && index != NSNotFound) /* NSNotFound is a big value and not -1 */
+	{
+		NSLog(@"WARNING: Try to set selection index %d when container %@ only contains %d items",
+			index, self, numberOfItems);
+		return;
+	}
+
+	/* Discard previous selection */
+	if ([_selection count] > 0)
+	{
+		NSArray *selectedItems = [[self items] objectsAtIndexes: _selection];
+		NSEnumerator *e = [selectedItems objectEnumerator];
+		ETLayoutItem *item = nil;
+		
+		while ((item = [e nextObject]) != nil)
+		{
+			[item setSelected: NO];
+		}
+		[_selection removeAllIndexes];
+	}
+	
+	/* Update selection */
+	if (index != NSNotFound)
+	{
+		[_selection addIndex: index]; // cache
+		[[self itemAtIndex: index] setSelected: YES];
+	}
+	
+	NSAssert([_selection count] == 0 || [_selection count] == 1, @"-setSelectionIndex: must result in either no index or a single index but not more");
+	
+	/* Finally propagate changes by posting notification */
+	NSNotification *notif = [NSNotification 
+		notificationWithName: ETContainerSelectionDidChangeNotification object: self];
+	
+	if ([[self delegate] respondsToSelector: @selector(containerSelectionDidChange:)])
+		[[self delegate] containerSelectionDidChange: notif];
+
+	[[NSNotificationCenter defaultCenter] postNotification: notif];
+	
+	/* Reflect selection change immediately */
+	[self display];
+}
+
+- (int) selectionIndex
+{
+	return [_selection firstIndex];
+}
+#endif
