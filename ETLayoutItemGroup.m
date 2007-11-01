@@ -220,7 +220,7 @@
 		if (index == NSNotFound)
 			return nil;
 
-		NSAssert2([item isKindOfClass: [ETLayoutItemGroup class]], @"Item %@ "
+		NSAssert2([item isGroup], @"Item %@ "
 			@"must be layout item group to resolve the index path %@", 
 			item, indexPath);
 		NSAssert3(index < [[(ETLayoutItemGroup *)item items] count], @"Index "
@@ -271,7 +271,7 @@
 		if ([pathComp isEqual: @"/"] || [pathComp isEqual: @""])
 			continue;
 
-		if ([item isKindOfClass: [ETLayoutItemGroup class]] == NO)
+		if ([item isGroup] == NO)
 		{
 			/* path is invalid */
 			indexPath = nil;
@@ -309,7 +309,7 @@
 		
 		/*NSAssert1(index == 0 && [pathComp isEqual: @"0"] == NO,
 			@"Path components must be indexes for path %@", path);
-		NSAssert2([item isKindOfClass: [ETLayoutItemGroup class]], @"Item %@ "
+		NSAssert2([item isGroup], @"Item %@ "
 			@"must be layout item group to resolve the index path %@", 
 			item, indexPath);
 		NSAssert3(index < [[(ETLayoutItemGroup *)item items] count], @"Index "
@@ -331,7 +331,7 @@
 	
 	for (unsigned int i = 0; i < length; i++)
 	{
-		if ([item isKindOfClass: [ETLayoutItemGroup class]])
+		if ([item isGroup])
 		{		
 			item = [(ETLayoutItemGroup *)item itemAtIndex: [path indexAtPosition: i]];
 		}
@@ -360,7 +360,7 @@
 		if (pathComp == nil || [pathComp isEqual: @"/"] || [pathComp isEqual: @""])
 			continue;
 	
-		if ([item isKindOfClass: [ETLayoutItemGroup class]])
+		if ([item isGroup])
 		{
 			item = [[(ETLayoutItemGroup *)item items] firstObjectMatchingValue: pathComp forKey: @"name"];
 		}
@@ -401,10 +401,9 @@
 	return nil;
 }
 
-// FIXME: Move layout item collection from ETContainer to ETLayoutItemGroup
 - (void) addItem: (ETLayoutItem *)item
 {
-	//NSLog(@"Add item in %@", self);
+	//ETLog(@"Add item in %@", self);
 	
 	if ([_layoutItems containsObject: item])
 	{
@@ -425,7 +424,7 @@
 
 - (void) insertItem: (ETLayoutItem *)item atIndex: (int)index
 {
-	//NSLog(@"Insert item in %@", self);
+	//ETLog(@"Insert item in %@", self);
 	
 	if ([_layoutItems containsObject: item])
 	{
@@ -434,7 +433,19 @@
 		return;
 	}
 	
-	//FIXME: NSMutableIndexSet *indexes = [self selectionIndexes];
+	RETAIN(item);
+	if ([item parentLayoutItem] != nil)
+		[[item parentLayoutItem] removeItem: item];
+	[item setParentLayoutItem: self];
+	RELEASE(item);
+	[_layoutItems insertObject: item atIndex: index];
+	if ([self canUpdateLayout])
+		[self updateLayout];
+	
+// NOTE: The code below is kept as an example to implement selection caching 
+// at later time if better performance are necessary.
+#if 0	
+	NSMutableIndexSet *indexes = [self selectionIndexes];
 	
 	/* In this example, 1 means selected and 0 unselected.
        () represents old item index shifted by insertion
@@ -454,17 +465,22 @@
 	
 	[item setParentLayoutItem: nil];
 	[_layoutItems insertObject: item atIndex: index];
-	//[indexes shiftIndexesStartingAtIndex: index by: 1];
-	//[self setSelectionIndexes: indexes];
-	if ([self canUpdateLayout])
-		[self updateLayout];
+	[indexes shiftIndexesStartingAtIndex: index by: 1];
+	[self setSelectionIndexes: indexes];
+#endif
 }
 
 - (void) removeItem: (ETLayoutItem *)item
 {
-	//NSLog(@"Remove item in %@", self);
+	//ETLog(@"Remove item in %@", self);
 
-// FIXME
+	[item setParentLayoutItem: nil];
+	[_layoutItems removeObject: item];
+	if ([self canUpdateLayout])
+		[self updateLayout];
+		
+// NOTE: The code below is kept as an example to implement selection caching 
+// at later time if better performance are necessary.
 #if 0	
 	NSMutableIndexSet *indexes = [self selectionIndexes];
 	int removedIndex = [self indexOfItem: item];
@@ -511,10 +527,6 @@
 		[self setSelectionIndexes: indexes];
 	}
 #endif
-	[item setParentLayoutItem: nil];
-	[_layoutItems removeObject: item];
-	if ([self canUpdateLayout])
-		[self updateLayout];
 }
 
 - (void) removeItemAtIndex: (int)index
@@ -530,10 +542,10 @@
 
 - (void) addItems: (NSArray *)items
 {
+	//ETLog(@"Add items in %@", self);
+	
 	NSEnumerator *e = [items objectEnumerator];
 	ETLayoutItem *layoutItem = nil;
-	
-	//NSLog(@"Add items in %@", self);
 	
 	while ((layoutItem = [e nextObject]) != nil)
 	{
@@ -543,10 +555,10 @@
 
 - (void) removeItems: (NSArray *)items
 {
+	ETLog(@"Remove items in %@", self);
+	
 	NSEnumerator *e = [items objectEnumerator];
 	ETLayoutItem *layoutItem = nil;
-	
-	NSLog(@"Remove items in %@", self);
 	
 	while ((layoutItem = [e nextObject]) != nil)
 	{
@@ -556,9 +568,12 @@
 
 - (void) removeAllItems
 {
-	NSLog(@"Remove all items in %@", self);
+	ETLog(@"Remove all items in %@", self);
 	
-	// FIXME: [_selection removeAllIndexes];
+	// NOTE: If a selection cache is implemented, the cache must be cleared
+	// here because this method doesn't the primitive mutation method 
+	// -removeItem:
+	
 	[_layoutItems makeObjectsPerformSelector: @selector(setParentLayoutItem:) withObject: nil];
 	[_layoutItems removeAllObjects];
 	if ([self canUpdateLayout])

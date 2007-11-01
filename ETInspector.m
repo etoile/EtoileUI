@@ -185,7 +185,7 @@
 	
 		ETLayoutItem *item = [[self inspectedItems] objectAtIndex: index];
 		
-		NSAssert1([item isKindOfClass: [ETLayoutItemGroup class]], @"For "
+		NSAssert1([item isGroup], @"For "
 			@"-numberOfItemsAtPath:, path %@ must reference an instance of "
 			@"ETLayoutItemGroup kind", indexPath);
 		
@@ -227,7 +227,7 @@
 		ETLog(@"WARNING: Found no item at subpath %@ for inspector %@", indexSubpath, self);
 
 	/* Create a meta layout item */
-	if ([item isKindOfClass: [ETLayoutItemGroup class]])
+	if ([item isGroup])
 	{
 		item = [ETLayoutItemGroup layoutItemOfLayoutItem: item];
 	}
@@ -418,7 +418,7 @@
 		{
 			ETLayoutItem *inspectedItem = (ETLayoutItem *)[item representedObject];
 		
-			if ([inspectedItem isKindOfClass: [ETLayoutItemGroup class]])
+			if ([inspectedItem isGroup])
 			{
 				if ([(ETLayoutItemGroup *)inspectedItem isStacked])
 				{

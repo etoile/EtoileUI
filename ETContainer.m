@@ -101,7 +101,7 @@ NSString *ETLayoutItemPboardType = @"ETLayoutItemPboardType"; // FIXME: replace 
 /** <init /> */
 - (id) initWithFrame: (NSRect)rect layoutItem: (ETLayoutItem *)item
 {
-	if (item != nil && [item isKindOfClass: [ETLayoutItemGroup class]] == NO)
+	if (item != nil && [item isGroup] == NO)
 	{
 		[NSException raise: NSInvalidArgumentException format: @"Layout item "
 			@"parameter %@ must be of class ETLayoutItemGroup for initializing "
@@ -189,7 +189,7 @@ NSString *ETLayoutItemPboardType = @"ETLayoutItemPboardType"; // FIXME: replace 
 	Never returns nil. */
 - (ETLayoutItem *) layoutItem
 {
-	NSAssert([[super layoutItem] isKindOfClass: [ETLayoutItemGroup class]], 
+	NSAssert([[super layoutItem] isGroup], 
 		@"Layout item in a container must of ETLayoutItemGroup type");
 	return [super layoutItem];
 }
@@ -1104,7 +1104,7 @@ NSString *ETLayoutItemPboardType = @"ETLayoutItemPboardType"; // FIXME: replace 
 {
 	/*ETLayoutItem *item = [self itemAtIndex: [self selectionIndex]]; 
 	
-	if ([item isKindOfClass: [ETLayoutItemGroup class]])
+	if ([item isGroup])
 	{
 		[(ETLayoutItemGroup *)item make];
 	}
@@ -1121,7 +1121,7 @@ NSString *ETLayoutItemPboardType = @"ETLayoutItemPboardType"; // FIXME: replace 
 {
 	ETLayoutItem *item = [self itemAtIndex: [self selectionIndex]]; 
 	
-	if ([item isKindOfClass: [ETLayoutItemGroup class]])
+	if ([item isGroup])
 	{
 		[(ETLayoutItemGroup *)item stack];
 	}

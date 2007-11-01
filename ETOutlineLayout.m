@@ -168,7 +168,7 @@
 	{
 		nbOfItems = [[[self layoutContext] items] count];
 	}
-	else if ([item isKindOfClass: [ETLayoutItemGroup class]]) 
+	else if ([item isGroup]) 
 	{
 		nbOfItems = [[item items] count];
 		
@@ -193,7 +193,7 @@
 	{
 		childItem = [[[self layoutContext] items] objectAtIndex: rowIndex];
 	}
-	else if ([item isKindOfClass: [ETLayoutItemGroup class]]) /* Node */
+	else if ([item isGroup]) /* Node */
 	{
 		childItem = [(ETLayoutItemGroup *)item itemAtIndex: rowIndex];
 	}
@@ -205,7 +205,7 @@
 
 - (BOOL) outlineView: (NSOutlineView *)outlineView isItemExpandable: (id)item
 {
-	if ([item isKindOfClass: [ETLayoutItemGroup class]])
+	if ([item isGroup])
 	{
 		//ETLog(@"Returns item is expandable in outline view %@", outlineView);
 		return YES;

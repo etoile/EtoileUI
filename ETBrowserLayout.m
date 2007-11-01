@@ -225,7 +225,7 @@
 
 	item = (ETLayoutItemGroup *)[[self layoutContext] itemAtPath: path];
 	NSAssert(item != nil, @"Parent item must never be nil in -browser:numberOfRowsInColumn:");
-	NSAssert([item isKindOfClass: [ETLayoutItemGroup class]], @"Parent item "
+	NSAssert([item isGroup], @"Parent item "
 		@"must always be of ETLayoutItemGroup class kind");
 	
 	nbOfItems = [[item items] count];	
@@ -252,11 +252,11 @@
 
 	item = (ETLayoutItemGroup *)[[self layoutContext] itemAtPath: path];
 	NSAssert(item != nil, @"Parent item must never be nil in -browser:numberOfRowsInColumn:");
-	NSAssert([item isKindOfClass: [ETLayoutItemGroup class]], @"Parent item "
+	NSAssert([item isGroup], @"Parent item "
 		@"must always be of ETLayoutItemGroup class kind");
 
 	childItem = [item itemAtIndex: row];
-	if ([childItem isKindOfClass: [ETLayoutItemGroup class]])
+	if ([childItem isGroup])
 	{
 		[cell setLeaf: NO];
 	}
