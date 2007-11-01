@@ -42,6 +42,7 @@
 #import <EtoileUI/ETInspector.h>
 #import <EtoileUI/NSView+Etoile.h>
 #import <EtoileUI/NSIndexSet+Etoile.h>
+#import <EtoileUI/NSIndexPath+Etoile.h>
 // FIXME: ETLog is currently defined in GNUstep.h
 //#ifndef GNUSTEP
 #import <EtoileUI/GNUstep.h>
@@ -214,10 +215,8 @@ NSString *ETLayoutItemPboardType = @"ETLayoutItemPboardType"; // FIXME: replace 
 {
 	ASSIGN(_path, path);
 	
-	// FIXME: May be it would be even better to keep selected any items still 
-	// visible with updated layout at new path. Think of outline view or 
-	// expanded stacks.
-	[_selection removeAllIndexes]; /* Unset any selection */
+	// NOTE: If the selection is cached, here the cache should be cleared
+	// [_selection removeAllIndexes]; /* Unset any selection */
 	[self updateLayout];
 }
 
