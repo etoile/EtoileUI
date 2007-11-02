@@ -401,6 +401,10 @@
 	return nil;
 }
 
+/*	Alternatively, if you have a relatively small and static tree structure,
+	you can also build the tree by yourself and assigns the root item to the
+	container by calling -addItem:. In this case, the user will have the 
+	possibility to */
 - (void) addItem: (ETLayoutItem *)item
 {
 	//ETLog(@"Add item in %@", self);

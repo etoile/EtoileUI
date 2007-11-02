@@ -130,7 +130,7 @@ NSString *ETLayoutItemPboardType = @"ETLayoutItemPboardType"; // FIXME: replace 
     {
 		_path = nil;
 		_subviewHitTest = NO;
-		_flipped = YES;
+		[self setFlipped: YES];
 		_itemScale = 1.0;
 		// NOTE: Not in use currently (see ivars in the header)
 		//_selection = [[NSMutableIndexSet alloc] init];
@@ -195,22 +195,30 @@ NSString *ETLayoutItemPboardType = @"ETLayoutItemPboardType"; // FIXME: replace 
 	location inside the model currently browsed. Tree-related methods 
 	implemented by a data source are passed paths which are subpaths of the 
 	represented path.
-	This path is unrelated to the layout item path like 
-	[[self layoutItem] path]. */
+	This path is used as the represented path base in the layout item 
+	representing the receiver. [self representedPath] and
+	[[self layoutItem] representedPathBase] are equal and must always be.
+	[[self layoutItem] representedPath] returns a path which is also identical
+	to the previous methods. See ETLayoutItem and ETLayoutItemGroup to know 
+	more about path management and understand the difference between a 
+	represented path base and a represented path.
+	Finally take note represented paths are relative to the container unlike 
+	paths returned by -[ETLayoutItem path] which are absolute paths. */
 - (NSString *) representedPath
 {
 	return _path;
 }
 
-/** Sets the represented path, automatically altered when the user navigates inside a 
-	tree structure of layout items. Path is only critical when a source is used,
-	otherwise it's up to the developer to track the level of navigation inside
-	the tree structure. You can use -setRepresentedPath: as a conveniency to memorize your
-	location inside a layout item tree. In this case, each time the user enters
-	a new level, you are in charge of removing then adding the proper layout
-	items which are associated with the level requested by the user. That's
-	why it's advised to always use a source when you want to display a 
-	layout item tree inside a container. */
+/** Sets the represented path. Path is only critical when a source is used, 
+	otherwise it's up to the developer to track the level of navigation inside 
+	the tree structure. 
+	Without a source, you can use -setRepresentedPath: as a conveniency to 
+	memorize the location currently displayed by the container. In this case, 
+	each time the user enters a new level, you are in charge of removing then 
+	adding the proper items which are associated with the level requested by 
+	the user. Implementing a data source, alleviates you from this task,
+	you simply need to return the items, EtoileUI will build takes care of 
+	building and managing the tree structure. */
 - (void) setRepresentedPath: (NSString *)path
 {
 	ASSIGN(_path, path);
@@ -220,6 +228,10 @@ NSString *ETLayoutItemPboardType = @"ETLayoutItemPboardType"; // FIXME: replace 
 	[self updateLayout];
 }
 
+/** Returns the source which provides the content displayed by the receiver. 
+	A source implements either ETIndexSource or ETPathSource protocols.
+	If the container handles the layout item tree directly without the help of
+	a source object, then this method returns nil.*/
 - (id) source
 {
 	return _dataSource;
@@ -246,7 +258,9 @@ NSString *ETLayoutItemPboardType = @"ETLayoutItemPboardType"; // FIXME: replace 
 	automatically be set as the source of the receiver, replacing any 
 	previously set source. Usually you create a new component with 
 	-initWithContainer: or -initWithLayoutItem: which handles -setComponent:
-	call. */
+	call. 
+	Take note that modifying a source is followed by a layout update, the new 
+	content is immediately loaded and displayed.  */
 //- (void) setSource: (id <ETSource>)source
 - (void) setSource: (id)source
 {
@@ -259,9 +273,6 @@ NSString *ETLayoutItemPboardType = @"ETLayoutItemPboardType"; // FIXME: replace 
 	[self removeAllItems];
 	
 	_dataSource = source;
-	
-	// NOTE: Resetting layout item cache is ETLayout responsability. We
-	// only refresh the container display when the new source is set up.
 	
 	// NOTE: -setPath: takes care of calling -updateLayout
 	if (source != nil && ([self representedPath] == nil || [[self representedPath] isEqual: @""]))
@@ -286,37 +297,45 @@ NSString *ETLayoutItemPboardType = @"ETLayoutItemPboardType"; // FIXME: replace 
 
 /* Layout */
 
+/** See -[ETLayoutItemGroup isAutolayout] */
 - (BOOL) isAutolayout
 {
 	return [(ETLayoutItemGroup *)[self layoutItem] isAutolayout];
 }
 
+/** See -[ETLayoutItemGroup setAutolayout:] */
 - (void) setAutolayout: (BOOL)flag
 {
 	[(ETLayoutItemGroup *)[self layoutItem] setAutolayout: flag];
 }
 
+/** See -[ETLayoutItemGroup canUpdateLayout] */
 - (BOOL) canUpdateLayout
 {
 	return [(ETLayoutItemGroup *)[self layoutItem] canUpdateLayout];
 }
 
+/** See -[ETLayoutItemGroup updateLayout] */
 - (void) updateLayout
 {
 	[[self layoutItem] updateLayout];
 }
 
+/** See -[ETLayoutItemGroup reloadAndUpdateLayout] */
 - (void) reloadAndUpdateLayout
 {
 	[(ETLayoutItemGroup *)[self layoutItem] reloadAndUpdateLayout];
 }
 
-/** Returns 0 when source doesn't conform to any parts of ETContainerSource informal protocol.
-    Returns 1 when source conform to protocol for flat collections and display of items in a linear style.
-	Returns 2 when source conform to protocol for tree collections and display of items in a hiearchical style.
+/** Returns 0 when source doesn't conform to any parts of ETContainerSource 
+	informal protocol.
+    Returns 1 when source conform to protocol for flat collections and display 
+	of items in a linear style.
+	Returns 2 when source conform to protocol for tree collections and display 
+	of items in a hiearchical style.
 	If tree collection part of the protocol is implemented through 
-	-container:numberOfItemsAtPath: , ETContainer by default ignores flat collection
-	part of protocol like -numberOfItemsInContainer. */
+	-container:numberOfItemsAtPath: , ETContainer by default ignores flat 
+	collection part of protocol like -numberOfItemsInContainer. */
 - (int) checkSourceProtocolConformance
 {
 	if ([[self source] respondsToSelector: @selector(container:numberOfItemsAtPath:)])
@@ -356,11 +375,13 @@ NSString *ETLayoutItemPboardType = @"ETLayoutItemPboardType"; // FIXME: replace 
 	}
 }
 
+/** See -[ETLayoutItemGroup layout] */
 - (ETLayout *) layout
 {
 	return [(ETLayoutItemGroup *)[self layoutItem] layout];
 }
 
+/** See -[ETLayoutItemGroup setLayout] */
 - (void) setLayout: (ETLayout *)layout
 {
 	[(ETLayoutItemGroup *)[self layoutItem] setLayout: layout];
@@ -488,6 +509,8 @@ NSString *ETLayoutItemPboardType = @"ETLayoutItemPboardType"; // FIXME: replace 
 {
 	_flipped = flag;
 }
+
+/* Scrollers */
 
 - (BOOL) letsLayoutControlsScrollerVisibility
 {

@@ -68,7 +68,7 @@
 	
 	if ([[self container] isFlipped] == NO)
 	{
-		NSLog(@"WARNING: Flow layout doesn't non-flipped coordinates inside scroll view");
+		NSLog(@"WARNING: Flow layout doesn't handle non-flipped coordinates inside scroll view");
 		itemLocation = NSMakePoint(0, [self layoutSize].height);
 	}
   
