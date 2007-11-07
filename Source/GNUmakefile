@@ -11,6 +11,8 @@ libEtoileUI_OBJC_FILES = \
 	NSImage+NiceScaling.m \
 	UKNibOwner.m
 
+ADDITIONAL_LIB_DIRS += -lEtoileFoundation
+
 -include GNUmakefile.preamble
 
 include $(GNUSTEP_MAKEFILES)/subproject.make
