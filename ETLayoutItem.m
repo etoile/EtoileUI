@@ -37,14 +37,13 @@
 #import <EtoileUI/ETLayoutItem.h>
 #import <EtoileUI/ETStyleRenderer.h>
 #import <EtoileUI/ETView.h>
+#import <EtoileUI/ETContainer.h>
 #import <EtoileUI/ETInspector.h>
-#import <EtoileUI/NSView+Etoile.h>
 #import <EtoileUI/NSIndexPath+Etoile.h>
-#import <EtoileUI/GNUstep.h>
+#import <EtoileUI/ETCompatibility.h>
 
 #define DETAILED_DESCRIPTION
 
-#define ETLog NSLog
 #define ETUTIAttribute @"uti"
 
 #ifdef GNUSTEP

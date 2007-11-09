@@ -36,7 +36,7 @@
 
 #import <EtoileUI/ETStackView.h>
 #import <EtoileUI/ETStackLayout.h>
-#import <EtoileUI/GNUstep.h>
+#import <EtoileUI/ETCompatibility.h>
 
 
 @implementation ETStackView

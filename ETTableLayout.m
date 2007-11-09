@@ -39,7 +39,7 @@
 #import <EtoileUI/ETLayoutItem.h>
 #import <EtoileUI/ETViewLayoutLine.h>
 #import <EtoileUI/NSView+Etoile.h>
-#import <EtoileUI/GNUstep.h>
+#import <EtoileUI/ETCompatibility.h>
 
 #define ETLog NSLog
 
@@ -155,7 +155,8 @@
 {
 	NSMutableArray *displayedProperties = [properties mutableCopy];
 	NSTableView *tv = [self tableView];
-	NSEnumerator *e = [[tv tableColumns] objectEnumerator];
+	/* We cannot enumerate [tv tableColumns] directly because we remove columns */
+	NSEnumerator *e = [[NSArray arrayWithArray: [tv tableColumns]] objectEnumerator];
 	NSTableColumn *column = nil;
 	NSString *property = nil;
 	

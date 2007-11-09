@@ -36,7 +36,7 @@
 
 #import <EtoileUI/ETFlowView.h>
 #import <EtoileUI/ETFlowLayout.h>
-#import <EtoileUI/GNUstep.h>
+#import <EtoileUI/ETCompatibility.h>
 
 
 @implementation ETFlowView

@@ -35,7 +35,18 @@
 
 #import <Foundation/Foundation.h>
 #import <AppKit/AppKit.h>
+
+/* Runtime Checks */
+#if MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_5
+#define NEXT_RUNTIME_2
+#endif
+#ifndef NEXT_RUNTIME_2
+#define GNUSTEP_RUNTIME_COMPATIBILITY
+#endif
+#ifdef GNUSTEP_RUNTIME_COMPATIBILITY
 #import <GNUstepBase/GSObjCRuntime.h>
+#endif
+
 #define ETUTI NSString
 
 @class ETMethod;
@@ -44,7 +55,7 @@
 @protocol ETPropertyValueCoding
 - (NSArray *) properties;
 - (id) valueForProperty: (NSString *)key;
-- (void) setValue: (id)value forProperty: (NSString *)key;
+- (BOOL) setValue: (id)value forProperty: (NSString *)key;
 @end
 
 /** Protocol which can be adopted by other object hierachy than NSObject rooted hierarchy */
@@ -107,7 +118,9 @@
 {
 	@public
 	id _possessor;
+#ifdef GNUSTEP_RUNTIME_COMPATIBILITY
 	GSIVar _ivar;
+#endif
 }
 
 - (id) possessor;
@@ -125,7 +138,9 @@
 @interface ETMethod : NSObject 
 {
 	@public
+#ifdef GNUSTEP_RUNTIME_COMPATIBILITY
 	GSMethod _method;
+#endif
 }
 
 /*- (BOOL) isInstanceMethod;

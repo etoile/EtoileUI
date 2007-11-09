@@ -36,7 +36,7 @@
 
 #import <EtoileUI/ETTableView.h>
 #import <EtoileUI/ETTableLayout.h>
-#import <EtoileUI/GNUstep.h>
+#import <EtoileUI/ETCompatibility.h>
 
 
 @implementation ETTableView

@@ -1,13 +1,13 @@
-/*	<title>ETLineView</title>
-
-	ETLineView.m
-
-	<abstract>Description forthcoming.</abstract>
-
+/*
+	ETCompatibility.h
+	
+	Implementation compatibility (Cocoa, GNUstep etc.) and other utilities like 
+	widely used macros
+ 
 	Copyright (C) 2007 Quentin Mathe
  
 	Author:  Quentin Mathe <qmathe@club-internet.fr>
-	Date:  May 2007
+	Date:  November 2007
  
 	Redistribution and use in source and binary forms, with or without
 	modification, are permitted provided that the following conditions are met:
@@ -33,24 +33,15 @@
 	ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
 	THE POSSIBILITY OF SUCH DAMAGE.
  */
+ 
+#ifndef GNUSTEP
+/* For now, GNUstepBase (Foundation Additions) hasn't been ported to Leopard */
+#if MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_5
+#import <EtoileUI/GNUstep.h>
+#else
+#import <GNUstepBase/GNUstep.h>
+#endif
+#endif
 
-#import <EtoileUI/ETLineView.h>
-#import <EtoileUI/ETLineLayout.h>
-#import <EtoileUI/ETCompatibility.h>
-
-
-@implementation ETLineView
-
-- (id) initWithFrame: (NSRect)frame 
-{
-    self = [super initWithFrame: frame];
-	
-    if (self != nil) 
-	{
-		[self setLayout: (ETLineLayout *)AUTORELEASE([[ETLineLayout alloc] init])];
-    }
-	
-    return self;
-}
-
-@end
+// FIXME: Temporary hack until ETLog class is available
+#define ETLog NSLog

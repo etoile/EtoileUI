@@ -36,12 +36,12 @@
 #import <Foundation/Foundation.h>
 #import <AppKit/AppKit.h>
 #import <EtoileUI/ETStyleRenderer.h>
+#import <EtoileUI/ETInspecting.h>
 
 #define ETUTI NSString
 #define ITEM(x) [ETLayoutItem layoutItemWithValue: x]
 
 @class ETView, ETContainer, ETLayoutItemGroup;
-@protocol ETObjectInspection, ETInspector;
 
 /** WARNING: Personal notes that are vague and may change, move or become part
 	of another framework.

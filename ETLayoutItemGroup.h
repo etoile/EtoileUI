@@ -36,9 +36,10 @@
 #import <Foundation/Foundation.h>
 #import <AppKit/AppKit.h>
 #import <EtoileUI/ETLayoutItem.h>
+#import <EtoileUI/ETLayout.h>
+#import <EtoileUI/ETCollection.h>
 
 @class ETLayout;
-@protocol ETLayoutingContext, ETCollection;
 
 
 @interface ETLayoutItemGroup : ETLayoutItem <ETLayoutingContext, ETCollection>

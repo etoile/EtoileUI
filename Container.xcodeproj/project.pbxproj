@@ -42,6 +42,10 @@
 		6002451D0CD162090023182D /* NSObject+EtoileUI.m in Sources */ = {isa = PBXBuildFile; fileRef = 609097980CAEBC32009CAD27 /* NSObject+EtoileUI.m */; };
 		6002451E0CD162090023182D /* NSString+Etoile.m in Sources */ = {isa = PBXBuildFile; fileRef = 603D4D0B0C8D1E10003DFD51 /* NSString+Etoile.m */; };
 		6002451F0CD162090023182D /* NSView+Etoile.m in Sources */ = {isa = PBXBuildFile; fileRef = 609F467A0B41FC6200AD2209 /* NSView+Etoile.m */; };
+		602F8B270CE1CA3E0042F6C0 /* ETCompatibility.h in Headers */ = {isa = PBXBuildFile; fileRef = 602F8B260CE1CA3E0042F6C0 /* ETCompatibility.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		602F8B280CE1CA3E0042F6C0 /* ETCompatibility.h in Headers */ = {isa = PBXBuildFile; fileRef = 602F8B260CE1CA3E0042F6C0 /* ETCompatibility.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		602F8DE70CE1F9610042F6C0 /* ETInspecting.h in Headers */ = {isa = PBXBuildFile; fileRef = 602F8DE60CE1F9610042F6C0 /* ETInspecting.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		602F8DE80CE1F9610042F6C0 /* ETInspecting.h in Headers */ = {isa = PBXBuildFile; fileRef = 602F8DE60CE1F9610042F6C0 /* ETInspecting.h */; };
 		603463AC0C9FBF6A006DFCD1 /* ETCollection.h in Headers */ = {isa = PBXBuildFile; fileRef = 603463AA0C9FBF6A006DFCD1 /* ETCollection.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		603463AD0C9FBF6A006DFCD1 /* ETCollection.m in Sources */ = {isa = PBXBuildFile; fileRef = 603463AB0C9FBF6A006DFCD1 /* ETCollection.m */; };
 		603D4D0C0C8D1E10003DFD51 /* NSString+Etoile.h in Headers */ = {isa = PBXBuildFile; fileRef = 603D4D0A0C8D1E10003DFD51 /* NSString+Etoile.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -63,13 +67,9 @@
 		606B98CF0C0AF898000AAA85 /* ContainerController.m in Sources */ = {isa = PBXBuildFile; fileRef = 606B97490C0AF283000AAA85 /* ContainerController.m */; };
 		606B9C490C0B17D6000AAA85 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 29B97316FDCFA39411CA2CEA /* main.m */; };
 		606B9C5E0C0B18A3000AAA85 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1058C7A1FEA54F0111CA2CBB /* Cocoa.framework */; };
-		6087EA950C81AB7900A1263E /* libgnustep-baseadd.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 6087EA940C81AB7900A1263E /* libgnustep-baseadd.dylib */; };
-		6087EAF50C81CD3D00A1263E /* libgnustep-baseadd.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 6087EA940C81AB7900A1263E /* libgnustep-baseadd.dylib */; };
 		6087EDF30C824CE100A1263E /* ViewModelPrototype.nib in Resources */ = {isa = PBXBuildFile; fileRef = 6087EDF10C824CE100A1263E /* ViewModelPrototype.nib */; };
-		6087EE9F0C82FC7A00A1263E /* libgnustep-baseadd.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 6087EA940C81AB7900A1263E /* libgnustep-baseadd.dylib */; };
-		6087EEA00C82FC8000A1263E /* libgnustep-baseadd.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 6087EA940C81AB7900A1263E /* libgnustep-baseadd.dylib */; };
 		609097020CADC366009CAD27 /* ContainerExample-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 609097010CADC366009CAD27 /* ContainerExample-Info.plist */; };
-		609097990CAEBC32009CAD27 /* NSObject+EtoileUI.h in Headers */ = {isa = PBXBuildFile; fileRef = 609097970CAEBC32009CAD27 /* NSObject+EtoileUI.h */; };
+		609097990CAEBC32009CAD27 /* NSObject+EtoileUI.h in Headers */ = {isa = PBXBuildFile; fileRef = 609097970CAEBC32009CAD27 /* NSObject+EtoileUI.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		6090979A0CAEBC32009CAD27 /* NSObject+EtoileUI.m in Sources */ = {isa = PBXBuildFile; fileRef = 609097980CAEBC32009CAD27 /* NSObject+EtoileUI.m */; };
 		609097A40CAFFF7A009CAD27 /* ETObjectRegistry.h in Headers */ = {isa = PBXBuildFile; fileRef = 609097A20CAFFF7A009CAD27 /* ETObjectRegistry.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		609097A50CAFFF7B009CAD27 /* ETObjectRegistry.m in Sources */ = {isa = PBXBuildFile; fileRef = 609097A30CAFFF7A009CAD27 /* ETObjectRegistry.m */; };
@@ -78,7 +78,6 @@
 		60909CD90CB2DAB3009CAD27 /* TableController.m in Sources */ = {isa = PBXBuildFile; fileRef = 60909CD80CB2DAB3009CAD27 /* TableController.m */; };
 		60909D370CB30092009CAD27 /* TableExample.nib in Resources */ = {isa = PBXBuildFile; fileRef = 60909D350CB30092009CAD27 /* TableExample.nib */; };
 		60909D380CB30092009CAD27 /* TableExample.nib in Resources */ = {isa = PBXBuildFile; fileRef = 60909D350CB30092009CAD27 /* TableExample.nib */; };
-		60909D610CB304C4009CAD27 /* libgnustep-baseadd.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 6087EA940C81AB7900A1263E /* libgnustep-baseadd.dylib */; };
 		60909D620CB304C7009CAD27 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1058C7A1FEA54F0111CA2CBB /* Cocoa.framework */; };
 		60909D630CB304C9009CAD27 /* EtoileUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 60EF8E9D0C5E4D0600C97C41 /* EtoileUI.framework */; };
 		60909D660CB304D9009CAD27 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 29B97316FDCFA39411CA2CEA /* main.m */; };
@@ -88,8 +87,6 @@
 		60B1449A0C11BFB400B4613B /* TablePrototype.nib in Resources */ = {isa = PBXBuildFile; fileRef = 60B144970C11BFB400B4613B /* TablePrototype.nib */; };
 		60B144ED0C11C52900B4613B /* OutlinePrototype.nib in Resources */ = {isa = PBXBuildFile; fileRef = 60B144EA0C11C52900B4613B /* OutlinePrototype.nib */; };
 		60B2AF6B0C0B745A008C008A /* ContainerExample.nib in Resources */ = {isa = PBXBuildFile; fileRef = 60B2AF690C0B745A008C008A /* ContainerExample.nib */; };
-		60C09F240C6A749700A4458D /* ETObject.h in Headers */ = {isa = PBXBuildFile; fileRef = 60C09F220C6A749700A4458D /* ETObject.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		60C09F250C6A749700A4458D /* ETObject.m in Sources */ = {isa = PBXBuildFile; fileRef = 60C09F230C6A749700A4458D /* ETObject.m */; };
 		60C09F5C0C6A8FCD00A4458D /* test_ETObject.m in Sources */ = {isa = PBXBuildFile; fileRef = 60C09F400C6A860900A4458D /* test_ETObject.m */; };
 		60C09F5D0C6A8FCD00A4458D /* ETObject.m in Sources */ = {isa = PBXBuildFile; fileRef = 60C09F230C6A749700A4458D /* ETObject.m */; };
 		60C09F5E0C6A8FD900A4458D /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 29B97325FDCFA39411CA2CEA /* Foundation.framework */; };
@@ -201,6 +198,8 @@
 		600243C90CD134440023182D /* test_ETLayoutItem.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = test_ETLayoutItem.m; path = Tests/test_ETLayoutItem.m; sourceTree = "<group>"; };
 		600EAE280C4C2B830074FA3E /* ETComponent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ETComponent.h; sourceTree = "<group>"; };
 		600EAE290C4C2B830074FA3E /* ETComponent.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ETComponent.m; sourceTree = "<group>"; };
+		602F8B260CE1CA3E0042F6C0 /* ETCompatibility.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ETCompatibility.h; sourceTree = "<group>"; };
+		602F8DE60CE1F9610042F6C0 /* ETInspecting.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ETInspecting.h; sourceTree = "<group>"; };
 		603463AA0C9FBF6A006DFCD1 /* ETCollection.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ETCollection.h; sourceTree = "<group>"; };
 		603463AB0C9FBF6A006DFCD1 /* ETCollection.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ETCollection.m; sourceTree = "<group>"; };
 		603D4D0A0C8D1E10003DFD51 /* NSString+Etoile.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSString+Etoile.h"; sourceTree = "<group>"; };
@@ -236,7 +235,6 @@
 		606B98C90C0AF831000AAA85 /* ContainerExample.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = ContainerExample.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		6082FE750C49947F00FFF659 /* ETBinding.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ETBinding.h; sourceTree = "<group>"; };
 		6082FE760C49947F00FFF659 /* ETBinding.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ETBinding.m; sourceTree = "<group>"; };
-		6087EA940C81AB7900A1263E /* libgnustep-baseadd.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = "libgnustep-baseadd.dylib"; path = "/usr/GNUstep/System/Library/Libraries/libgnustep-baseadd.dylib"; sourceTree = "<absolute>"; };
 		6087EDF20C824CE100A1263E /* English */ = {isa = PBXFileReference; lastKnownFileType = wrapper.nib; name = English; path = English.lproj/ViewModelPrototype.nib; sourceTree = "<group>"; };
 		609097010CADC366009CAD27 /* ContainerExample-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; name = "ContainerExample-Info.plist"; path = "PhotoViewExample/ContainerExample-Info.plist"; sourceTree = "<group>"; };
 		609097970CAEBC32009CAD27 /* NSObject+EtoileUI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSObject+EtoileUI.h"; sourceTree = "<group>"; };
@@ -328,7 +326,6 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				6087EE9F0C82FC7A00A1263E /* libgnustep-baseadd.dylib in Frameworks */,
 				60F7145B0C5E7EA1002CA8AA /* EtoileUI.framework in Frameworks */,
 				60C1DA230C25715F00E00A2E /* Cocoa.framework in Frameworks */,
 			);
@@ -338,7 +335,6 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				6087EEA00C82FC8000A1263E /* libgnustep-baseadd.dylib in Frameworks */,
 				60F714470C5E7E43002CA8AA /* EtoileUI.framework in Frameworks */,
 				605F0E360C0F5310003AE3E6 /* Cocoa.framework in Frameworks */,
 			);
@@ -348,7 +344,6 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				6087EAF50C81CD3D00A1263E /* libgnustep-baseadd.dylib in Frameworks */,
 				60F714130C5E7DA8002CA8AA /* EtoileUI.framework in Frameworks */,
 				606B9C5E0C0B18A3000AAA85 /* Cocoa.framework in Frameworks */,
 			);
@@ -358,7 +353,6 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				60909D610CB304C4009CAD27 /* libgnustep-baseadd.dylib in Frameworks */,
 				60909D630CB304C9009CAD27 /* EtoileUI.framework in Frameworks */,
 				60909D620CB304C7009CAD27 /* Cocoa.framework in Frameworks */,
 			);
@@ -378,7 +372,6 @@
 			files = (
 				60EF8EA30C5E4D5900C97C41 /* AppKit.framework in Frameworks */,
 				60EF8EA20C5E4D5600C97C41 /* Foundation.framework in Frameworks */,
-				6087EA950C81AB7900A1263E /* libgnustep-baseadd.dylib in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -445,7 +438,6 @@
 			isa = PBXGroup;
 			children = (
 				600243CE0CD134C40023182D /* Tests */,
-				6087EA940C81AB7900A1263E /* libgnustep-baseadd.dylib */,
 				60C09F3F0C6A860900A4458D /* test_ETObject.h */,
 				60C09F400C6A860900A4458D /* test_ETObject.m */,
 				60C09F220C6A749700A4458D /* ETObject.h */,
@@ -478,6 +470,7 @@
 			children = (
 				60EF8D9F0C5E3F1800C97C41 /* EtoileUI.h */,
 				60A563E70A16266900329EE6 /* GNUstep.h */,
+				602F8B260CE1CA3E0042F6C0 /* ETCompatibility.h */,
 				609097970CAEBC32009CAD27 /* NSObject+EtoileUI.h */,
 				609097980CAEBC32009CAD27 /* NSObject+EtoileUI.m */,
 				606481510C7A6CAC0000338D /* NSObject+Etoile.h */,
@@ -548,6 +541,7 @@
 				609547B80C0E032E00068CBB /* ETLayer.m */,
 				60599A740C772129007F225E /* ETInspector.h */,
 				60599A750C772129007F225E /* ETInspector.m */,
+				602F8DE60CE1F9610042F6C0 /* ETInspecting.h */,
 			);
 			name = "Layout Items";
 			sourceTree = "<group>";
@@ -634,6 +628,8 @@
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				602F8B280CE1CA3E0042F6C0 /* ETCompatibility.h in Headers */,
+				602F8DE80CE1F9610042F6C0 /* ETInspecting.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -666,7 +662,6 @@
 				60EF8EB20C5E4D8500C97C41 /* EtoileUI.h in Headers */,
 				60EF8EB30C5E4D8500C97C41 /* GNUstep.h in Headers */,
 				60EB7C680C6155AA0066AC40 /* ETView.h in Headers */,
-				60C09F240C6A749700A4458D /* ETObject.h in Headers */,
 				60C0A3DF0C71D6FB00A4458D /* NSIndexSet+Etoile.h in Headers */,
 				60599A760C772129007F225E /* ETInspector.h in Headers */,
 				60599AD90C772EA0007F225E /* ETFreeLayout.h in Headers */,
@@ -676,6 +671,8 @@
 				609097990CAEBC32009CAD27 /* NSObject+EtoileUI.h in Headers */,
 				609097A40CAFFF7A009CAD27 /* ETObjectRegistry.h in Headers */,
 				609097D40CB00BC2009CAD27 /* ETObjectRegistry+EtoileUI.h in Headers */,
+				602F8B270CE1CA3E0042F6C0 /* ETCompatibility.h in Headers */,
+				602F8DE70CE1F9610042F6C0 /* ETInspecting.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -813,9 +810,11 @@
 		29B97313FDCFA39411CA2CEA /* Project object */ = {
 			isa = PBXProject;
 			buildConfigurationList = C01FCF4E08A954540054247B /* Build configuration list for PBXProject "Container" */;
+			compatibilityVersion = "Xcode 2.4";
 			hasScannedForEncodings = 1;
 			mainGroup = 29B97314FDCFA39411CA2CEA /* FlowAutolayoutExample */;
 			projectDirPath = "";
+			projectRoot = "";
 			targets = (
 				606B98C80C0AF831000AAA85 /* ContainerExample */,
 				605F0CC90C0F400D003AE3E6 /* ObjectManagerExample */,
@@ -1023,7 +1022,6 @@
 				60EF8ED30C5E4DD900C97C41 /* ETFlowView.m in Sources */,
 				60EF8ED40C5E4DD900C97C41 /* ETOutlineLayout.m in Sources */,
 				60EB7C690C6155AA0066AC40 /* ETView.m in Sources */,
-				60C09F250C6A749700A4458D /* ETObject.m in Sources */,
 				60C0A3E00C71D6FB00A4458D /* NSIndexSet+Etoile.m in Sources */,
 				60599A770C772129007F225E /* ETInspector.m in Sources */,
 				60599ADA0C772EA0007F225E /* ETFreeLayout.m in Sources */,
@@ -1571,7 +1569,7 @@
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				PREBINDING = NO;
-				SDKROOT = /Developer/SDKs/MacOSX10.4u.sdk;
+				SDKROOT = /Developer/SDKs/MacOSX10.5.sdk;
 			};
 			name = Debug;
 		};
@@ -1581,7 +1579,7 @@
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				PREBINDING = NO;
-				SDKROOT = /Developer/SDKs/MacOSX10.4u.sdk;
+				SDKROOT = /Developer/SDKs/MacOSX10.5.sdk;
 			};
 			name = Release;
 		};

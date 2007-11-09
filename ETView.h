@@ -35,8 +35,8 @@
 
 #import <Foundation/Foundation.h>
 #import <AppKit/AppKit.h>
+#import <EtoileUI/NSObject+Etoile.h>
 
-@protocol ETPropertyValueCoding;
 @class ETLayoutItem;
 
 /** Display Tree Description
@@ -97,8 +97,10 @@
 {
 	ETLayoutItem *_layoutItem;
 	id _renderer;
+	// NOTE: May be remove the view ivars to make the class more lightweight
 	NSView *_titleBarView;
 	NSView *_wrappedView;
+	NSView *_temporaryView;
 	BOOL _disclosable;
 	BOOL _usesCustomTitleBar;
 }
@@ -123,9 +125,12 @@
 - (BOOL) usesCustomTitleBar;
 - (void) setTitleBarView: (NSView *)barView;
 - (NSView *) titleBarView;
-// NOTE: setEnclosedView: may sound better
 - (void) setWrappedView: (NSView *)subview;
 - (NSView *) wrappedView;
+- (void) setTemporaryView: (NSView *)subview;
+- (NSView *) temporaryView;
+- (void) setContentView: (NSView *)view temporary: (BOOL)temporary;
+- (NSView *) contentView;
 - (void) setDisclosable: (BOOL)flag;
 - (BOOL) isDisclosable;
 

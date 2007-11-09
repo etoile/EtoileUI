@@ -35,12 +35,12 @@
  */
 
 #import <Foundation/Foundation.h>
+#import <EtoileUI/NSObject+Etoile.h>
+#import <EtoileUI/ETCollection.h>
 
 // TODO: Break this class in ETObject root class and ETObjectRegistry subclass
 // to allow reusing the prototype-system support.
 // May be this class would be better named ETAspectRegistry?
-
-@protocol ETPropertyValueCoding, ETCollection;
 
 @protocol ETPrototype
 /** Returns a clone object of the receiver. The receiver plays the role of
@@ -111,7 +111,7 @@
 
 - (NSArray *) properties;
 - (id) valueForProperty: (NSString *)key;
-- (void) setValue: (id)value forProperty: (NSString *)key;
+- (BOOL) setValue: (id)value forProperty: (NSString *)key;
 
 - (NSArray *) parentProperties;
 - (NSArray *) allProperties;

@@ -36,9 +36,10 @@
 #import <Foundation/Foundation.h>
 #import <AppKit/AppKit.h>
 #import <EtoileUI/ETView.h>
+#import <EtoileUI/ETLayout.h>
+#import <EtoileUI/ETInspecting.h>
 
 @class ETLayoutItem, ETLayout, ETLayer, ETLayoutItemGroup, ETSelection;
-@protocol ETLayoutingContext, ETObjectInspection, ETInspector;
 
 /** Forwarding Chain 
 

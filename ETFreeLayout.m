@@ -36,7 +36,7 @@
 
 #import <EtoileUI/ETFreeLayout.h>
 #import <EtoileUI/ETContainer.h>
-#import <EtoileUI/GNUstep.h>
+#import <EtoileUI/ETCompatibility.h>
 
 @implementation ETFreeLayout
 

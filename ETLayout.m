@@ -43,7 +43,7 @@
 #import <EtoileUI/ETOutlineLayout.h>
 #import <EtoileUI/ETBrowserLayout.h>
 #import <EtoileUI/NSView+Etoile.h>
-#import <EtoileUI/GNUstep.h>
+#import <EtoileUI/ETCompatibility.h>
 
 @interface ETContainer (PackageVisibility)
 - (BOOL) isScrollViewShown;

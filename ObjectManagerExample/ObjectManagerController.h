@@ -13,8 +13,8 @@
 
 @interface ObjectManagerController : NSObject 
 {
-    IBOutlet id pathContainer;
-	IBOutlet id viewContainer;
+    IBOutlet ETContainer *pathContainer;
+	IBOutlet ETContainer *viewContainer;
 	NSString *path;
 }
 

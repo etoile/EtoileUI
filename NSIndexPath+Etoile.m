@@ -34,9 +34,7 @@
  */
  
 #import <EtoileUI/NSIndexPath+Etoile.h>
-#ifndef GNUSTEP
-#import <GNUstepBase/GNUstep.h>
-#endif
+#import <EtoileUI/ETCompatibility.h>
 
 @implementation NSIndexPath (Etoile)
 

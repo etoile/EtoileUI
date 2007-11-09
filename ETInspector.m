@@ -49,7 +49,7 @@
 #import <EtoileUI/NSObject+Etoile.h>
 #import <EtoileUI/NSIndexPath+Etoile.h>
 #import <EtoileUI/ETCollection.h>
-#import <EtoileUI/GNUstep.h>
+#import <EtoileUI/ETCompatibility.h>
 
 @interface ETInspector (EtoilePrivate)
 - (int) itemGroupView: (ETContainer *)container numberOfItemsAtPath: (NSIndexPath *)indexPath;

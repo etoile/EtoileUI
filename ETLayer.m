@@ -37,7 +37,7 @@
  
 #import <EtoileUI/ETLayer.h>
 #import <EtoileUI/ETContainer.h>
-#import <EtoileUI/GNUstep.h>
+#import <EtoileUI/ETCompatibility.h>
 
 #define DEFAULT_FRAME NSMakeRect(0, 0, 200, 200)
 

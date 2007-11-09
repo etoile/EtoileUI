@@ -37,7 +37,7 @@
 #import <EtoileUI/ETObjectRegistry.h>
 #import <EtoileUI/ETCollection.h>
 #ifndef GNUSTEP
-#import <EtoileUI/GNUstep.h>
+#import <EtoileUI/ETCompatibility.h>
 #endif
 
 #define PROTO _parent
@@ -234,7 +234,7 @@ static ETObjectRegistry *rootObjectRegistry = nil;
 	key. If value is nil, the related property is removed in the receiver. 
 	When you want to set an empty, blank or undefined value, you must use an
 	NSNull instance and not nil. */
-- (void) setValue: (id)value forProperty: (NSString *)key
+- (BOOL) setValue: (id)value forProperty: (NSString *)key
 {
 	if (value != nil)
 	{
@@ -254,6 +254,8 @@ static ETObjectRegistry *rootObjectRegistry = nil;
 	{
 		[_properties removeObjectForKey: key];
 	}
+	
+	return YES; 
 }
 
 /** Returns inherited properties which are stored in ancestor object 

@@ -41,7 +41,7 @@
 #import <EtoileUI/ETLayoutItemGroup.h>
 #import <EtoileUI/ETViewLayoutLine.h>
 #import <EtoileUI/NSView+Etoile.h>
-#import <EtoileUI/GNUstep.h>
+#import <EtoileUI/ETCompatibility.h>
 
 @interface ETTableLayout (PackageVisibility)
 - (void) tableViewSelectionDidChange: (NSNotification *)notif;
@@ -79,7 +79,8 @@
 {
 	NSMutableArray *displayedProperties = [properties mutableCopy];
 	NSOutlineView *tv = [self outlineView];
-	NSEnumerator *e = [[tv tableColumns] objectEnumerator];
+	/* We cannot enumerate [tv tableColumns] directly because we remove columns */
+	NSEnumerator *e = [[NSArray arrayWithArray: [tv tableColumns]] objectEnumerator];
 	NSTableColumn *column = nil;
 	NSString *property = nil;
 	
@@ -100,7 +101,7 @@
 		NSTableColumn *column = [_propertyColumns objectForKey: property];
 		
 		if (column == nil)
-			column = [self _createTableColumnWithIdentifier: property];
+			column = [self _createTableColumnWithIdentifier: property]; // FIXME: ETTableLayout private method
 			
 		if (isFirstColumn)
 		{

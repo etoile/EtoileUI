@@ -34,7 +34,7 @@
  */
 
 #import <EtoileUI/NSObject+Etoile.h>
-#import <EtoileUI/GNUstep.h>
+#import <EtoileUI/ETCompatibility.h>
 
 @interface NSObject (PrivateEtoile)
 - (ETInstanceVariable *) instanceVariableForName: (NSString *)ivarName;
@@ -82,10 +82,14 @@
 - (ETMethod *) methodForName: (NSString *)name
 {
 	// BOOL searchInstanceMethods, BOOL searchSuperClasses
-	GSMethod method = GSGetMethod([self class], NSSelectorFromString(name), YES, YES);
 	ETMethod *methodObject = [[ETMethod alloc] init];
 	
+	#ifdef GNUSTEP_RUNTIME_COMPATIBILITY
+	GSMethod method = GSGetMethod([self class], NSSelectorFromString(name), YES, YES);
 	methodObject->_method = method;
+	#else
+	
+	#endif
 	
 	return AUTORELEASE(methodObject);
 }
@@ -113,17 +117,25 @@
 - (ETInstanceVariable *) instanceVariableForName: (NSString *)ivarName
 {
 	ETInstanceVariable *ivarObject = [[ETInstanceVariable alloc] init];
-	GSIVar ivar = GSObjCGetInstanceVariableDefinition([self class], ivarName);
 	
+	#ifdef GNUSTEP_RUNTIME_COMPATIBILITY
+	GSIVar ivar = GSObjCGetInstanceVariableDefinition([self class], ivarName);
 	ASSIGN(ivarObject->_possessor, self);
 	ivarObject->_ivar = ivar;
-		
+	#else
+	
+	#endif
+	
 	return AUTORELEASE(ivarObject);
 }
 
 - (NSArray *) instanceVariableNames
 {
+	#ifdef GNUSTEP_RUNTIME_COMPATIBILITY
 	return GSObjCVariableNames(self);
+	#else
+	return nil;
+	#endif
 }
 
 - (NSDictionary *) instancesVariableValues
@@ -188,7 +200,11 @@
 
 - (NSArray *) methodNames
 {
+	#ifdef GNUSTEP_RUNTIME_COMPATIBILITY
 	return GSObjCMethodNames(self);
+	#else
+	return nil;
+	#endif
 }
 
 #if 0
@@ -218,7 +234,13 @@
 
 - (NSString *) name
 {
-	const char *ivarName = _ivar->ivar_name;
+	const char *ivarName = NULL;
+	
+	#ifdef GNUSTEP_RUNTIME_COMPATIBILITY
+	ivarName = _ivar->ivar_name;
+	#else
+	
+	#endif
 		
 	return [NSString stringWithCString: ivarName];
 }
@@ -226,7 +248,13 @@
 // FIXME: Replace by ETUTI class later
 - (ETUTI *) type
 {
-	const char *ivarType = _ivar->ivar_type;
+	const char *ivarType = NULL;
+	
+	#ifdef GNUSTEP_RUNTIME_COMPATIBILITY
+	ivarType = _ivar->ivar_type;
+	#else
+	
+	#endif
 		
 	return [NSString stringWithCString: ivarType];
 }
@@ -239,25 +267,34 @@
 - (id) value
 {
 	id ivarValue = nil;
+	
+	#ifdef GNUSTEP_RUNTIME_COMPATIBILITY
 	const char *ivarType = _ivar->ivar_type;
 	int ivarOffset = _ivar->ivar_offset;
 	
 	// FIXME: More type support
 	if(ivarType[0] == '@')
 		GSObjCGetVariable([self possessor], ivarOffset, sizeof(id), (void **)&ivarValue);
-		
+	#else
+	
+	#endif
+			
 	return ivarValue;
 }
 
 /** Pass NSValue to set primitive types */
 - (void) setValue: (id)value
 {
+	#ifdef GNUSTEP_RUNTIME_COMPATIBILITY
 	const char *ivarType = _ivar->ivar_type;
 	int ivarOffset = _ivar->ivar_offset;
 	
 	// FIXME: More type support
 	if(strcmp(ivarType, "@"))
 		GSObjCSetVariable([self possessor], ivarOffset, sizeof(id), (void **)&value);
+	#else
+	
+	#endif
 }
 
 @end
@@ -281,7 +318,11 @@
 
 - (SEL) selector
 {
+	#ifdef GNUSTEP_RUNTIME_COMPATIBILITY
 	return _method->method_name;
+	#else
+	return NULL;
+	#endif
 }
 
 - (NSMethodSignature *) methodSignature

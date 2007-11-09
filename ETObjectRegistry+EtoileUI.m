@@ -37,6 +37,7 @@
 //#import <EtoileUI/ETRenderer.h>
 //#import <EtoileUI/ETStyle.h>
 #import <EtoileUI/ETLayout.h>
+#import <EtoileUI/ETLayoutItem.h>
 
 
 @implementation ETObjectRegistry (EtoileUI)

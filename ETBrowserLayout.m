@@ -40,7 +40,7 @@
 #import <EtoileUI/ETLayout.h>
 #import <EtoileUI/ETViewLayoutLine.h>
 #import <EtoileUI/NSView+Etoile.h>
-#import <EtoileUI/GNUstep.h>
+#import <EtoileUI/ETCompatibility.h>
 
 #import <EtoileUI/FSBrowserCell.h>
 

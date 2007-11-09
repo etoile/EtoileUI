@@ -24,9 +24,6 @@
 #ifndef __GNUSTEP_GNUSTEP_H_INCLUDED_
 #define __GNUSTEP_GNUSTEP_H_INCLUDED_
 
-// FIXME: Temporary hack until ETLog class is available
-#define ETLog NSLog
-
 #ifndef GNUSTEP
 
 //#define AUTORELEASE(object)      [object autorelease]

@@ -1,13 +1,12 @@
-/*	<title>ETLineView</title>
-
-	ETLineView.m
-
-	<abstract>Description forthcoming.</abstract>
-
+/*
+	ETInspecting.h
+	
+	Inspector and Inspection protocols.
+ 
 	Copyright (C) 2007 Quentin Mathe
  
 	Author:  Quentin Mathe <qmathe@club-internet.fr>
-	Date:  May 2007
+	Date:  November 2007
  
 	Redistribution and use in source and binary forms, with or without
 	modification, are permitted provided that the following conditions are met:
@@ -34,23 +33,21 @@
 	THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import <EtoileUI/ETLineView.h>
-#import <EtoileUI/ETLineLayout.h>
-#import <EtoileUI/ETCompatibility.h>
+/** If you want to write your own inspector class from scratch instead of using
+	ETInspector, you must adopt this protocol. This ensures the inspector can
+	be passed through EtoileUI and managed by it transparently. */
+@protocol ETInspector
+//- (ETView *) view;
+- (NSWindow *) window;
+- (NSPanel *) panel;
+- (NSArray *) inspectedItems;
+- (void) setInspectedItems: (NSArray *)items;
+@end
 
-
-@implementation ETLineView
-
-- (id) initWithFrame: (NSRect)frame 
-{
-    self = [super initWithFrame: frame];
-	
-    if (self != nil) 
-	{
-		[self setLayout: (ETLineLayout *)AUTORELEASE([[ETLineLayout alloc] init])];
-    }
-	
-    return self;
-}
-
+/** All classes that want to provide inspectors tailored to their needs should
+	adopt this protocol. The typical way to implement a new inspector is to 
+	instantiate an ETInspector object and modify it, then return the new 
+	inspector resulting from the customization. */
+@protocol ETObjectInspection
+- (id <ETInspector>) inspector;
 @end

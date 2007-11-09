@@ -8,6 +8,10 @@
 
 #import "ObjectManagerController.h"
 
+@interface NSObject (EtoileUINSAlertWorkaround)
+- (id) layout;
+@end
+
 @interface ObjectManagerController (Private)
 - (void) moveToItem: (ETLayoutItem *)item;
 - (NSString *) textualPathForMixedPath: (NSString *)mixedPath;

@@ -35,13 +35,11 @@
  */
 
 #import <EtoileUI/ETLayoutItemGroup.h>
-#import <EtoileUI/ETLayout.h>
 #import <EtoileUI/ETFlowLayout.h>
 #import <EtoileUI/ETLineLayout.h>
 #import <EtoileUI/ETContainer.h>
 #import <EtoileUI/NSView+Etoile.h>
-#import <EtoileUI/ETCollection.h>
-#import <EtoileUI/GNUstep.h>
+#import <EtoileUI/ETCompatibility.h>
 
 #define DEFAULT_FRAME NSMakeRect(0, 0, 50, 50)
 

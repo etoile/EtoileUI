@@ -35,7 +35,7 @@
 #import <EtoileUI/ETView.h>
 #import <EtoileUI/ETLayoutItem.h>
 #import <EtoileUI/NSView+Etoile.h>
-#import <EtoileUI/GNUstep.h>
+#import <EtoileUI/ETCompatibility.h>
 
 #define NC [NSNotificationCenter defaultCenter]
 
@@ -121,6 +121,7 @@ static ETView *barViewPrototype = nil;
 
 	DESTROY(_layoutItem);
 	DESTROY(_renderer);
+	DESTROY(_temporaryView);
 	DESTROY(_wrappedView);
 	DESTROY(_titleBarView);
 	
@@ -228,24 +229,81 @@ static ETView *barViewPrototype = nil;
 
 - (void) setWrappedView: (NSView *)view
 {
-	[self setAutoresizesSubviews: YES];
-	
-	if (view != nil)
-	{
-		[view setAutoresizingMask: NSViewWidthSizable | NSViewHeightSizable];
-		[self addSubview: view];
-		ASSIGN(_wrappedView, view);
-	}
-	else
-	{
-		[_wrappedView removeFromSuperview];
-		ASSIGN(_wrappedView, nil);
-	}
+	[self setContentView: view temporary: NO];
+	ASSIGN(_wrappedView, view);
 }
 
 - (NSView *) wrappedView
 {
 	return _wrappedView;
+}
+
+/** Sets the view to be used  temporarily as a wrapped view. When such a view 
+	is set, this view is displayed in place of -wrappedView.
+	If you pass nil, the displayed wrapped view is reverted to the view
+	originally set on -setWrappedView: call. */
+- (void) setTemporaryView: (NSView *)subview
+{
+	[self setContentView: subview temporary: YES];
+	ASSIGN(_temporaryView, subview);
+}
+
+/** Returns the wrapped view temporarily overriding the default wrapped view or 
+	nil if there is none. When such a view is set, this view is displayed in 
+	place of -wrappedView. */
+- (NSView *) temporaryView
+{
+	return _temporaryView;
+}
+
+- (void) setContentView: (NSView *)view temporary: (BOOL)temporary
+{
+	/* Ensure the resizing of all subviews is handled automatically */
+	[self setAutoresizesSubviews: YES];
+	
+	if (temporary) /* Temporary view setter */
+	{
+		if (view != nil)
+		{
+			[view setAutoresizingMask: NSViewWidthSizable | NSViewHeightSizable];
+			[self addSubview: view];
+			[[self wrappedView] setHidden: YES];
+		}
+		else
+		{
+			[[self temporaryView] removeFromSuperview];
+			[[self wrappedView] setHidden: NO];
+		}
+	}
+	else /* Wrapped view setter */
+	{
+		if (view != nil)
+		{
+			[view setAutoresizingMask: NSViewWidthSizable | NSViewHeightSizable];
+			[self addSubview: view];
+		}
+		else
+		{
+			[[self wrappedView] removeFromSuperview];
+		}	
+	}
+}
+
+/** Returns the current content view which is either the wrapped view or 
+	the temporary view. The wrapped view is returned when -temporaryView
+	is nil. When a temporary view is set, it overrides the wrapped view
+	in the role of content view. 
+	Take note that as long as -temporaryView returns a non nil value, 
+	calling -setWrappedView: has no effect on -contentView, the method
+	will continue to return the temporary view.  */
+- (NSView *) contentView
+{
+	NSView *contentView = [self temporaryView];
+	
+	if (contentView == nil)
+		contentView = [self wrappedView];
+	
+	return contentView;
 }
 
 /** Sets whether the title bar should be visible or not. 

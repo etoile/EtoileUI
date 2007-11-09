@@ -34,10 +34,23 @@
 	THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-// FIXME: ETLog is currently defined in GNUstep.h
-//#ifndef GNUSTEP
-#import <EtoileUI/GNUstep.h>
-//#endif
+#import <EtoileUI/ETCompatibility.h>
+
+/* EtoileFoundation */
+
+#import <EtoileUI/NSObject+Etoile.h>
+#import <EtoileUI/NSIndexSet+Etoile.h>
+#import <EtoileUI/NSIndexPath+Etoile.h>
+#import <EtoileUI/NSString+Etoile.h>
+#import <EtoileUI/ETCollection.h>
+#import <EtoileUI/ETObjectRegistry.h>
+
+/* EtoileUI */
+
+#import <EtoileUI/NSObject+EtoileUI.h>
+#import <EtoileUI/NSView+Etoile.h>
+#import <EtoileUI/ETObjectRegistry+EtoileUI.h>
+#import <EtoileUI/ETInspecting.h>
 
 //#import <EtoileUI/ETRenderer.h>
 //#import <EtoileUI/ETStyle.h>
@@ -68,12 +81,3 @@
 #import <EtoileUI/ETFreeLayout.h>
 
 #import <EtoileUI/ETInspector.h>
-
-#import <EtoileUI/NSView+Etoile.h>
-#import <EtoileUI/NSIndexSet+Etoile.h>
-#import <EtoileUI/NSIndexPath+Etoile.h>
-#import <EtoileUI/NSString+Etoile.h>
-#import <EtoileUI/NSObject+Etoile.h>
-#import <EtoileUI/ETObjectRegistry.h>
-#import <EtoileUI/ETObjectRegistry+EtoileUI.h>
-#import <EtoileUI/ETCollection.h>

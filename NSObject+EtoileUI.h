@@ -35,6 +35,7 @@
  
 #import <Foundation/Foundation.h>
 #import <AppKit/AppKit.h>
+#import <EtoileUI/ETInspecting.h>
 
 /** EtoileUI binds to all objects a visual representation. In many cases, such
 	representations are created only on demand.
@@ -56,9 +57,14 @@
 	by calling -[ETObjectRegistry(EtoileUI) layoutItemRegistry].
 	*/
 
+
 @interface NSObject (EtoileUI)
 
 - (IBAction) view: (id)sender;
 - (IBAction) inspect: (id)sender;
 
+@end
+
+@interface NSObject (ETInspector) <ETObjectInspection>
+- (id <ETInspector>) inspector;
 @end
