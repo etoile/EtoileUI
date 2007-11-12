@@ -77,6 +77,7 @@
 
 - (ETUTI *) type;
 - (NSString *) typeName;
++ (NSString *) typePrefix;
 
 /** Returns both methods and instance variables for the receiver by default */
 /*- (NSArray *) slotNames;

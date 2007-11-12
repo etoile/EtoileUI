@@ -54,14 +54,36 @@
 	return nil;
 }
 
+/** Returns the uniform type identifier of the object. The UTI object encodes 
+	the type of the object in term of namespaces and multiple inheritance. 
+	By default, the UTI object is shared by all instances by being built from 
+	the class name. If you need to introduce type at instance level, you can
+	do it by overriding this method. */
 - (ETUTI *) type
 {
+	
 	return [self className];
 }
 
+/** Returns the type name which is the last component of type string returned 
+	by the UTI object. This type name doesn't include the class prefix.
+	This method is a shortcut for [[self type] typeName]. */
 - (NSString *) typeName
 {
-	return [self type];
+	unsigned int prefixLength = [[[self class] typePrefix] length];
+	
+	return [[self type] substringFromIndex: prefixLength];
+}
+
+/** Returns the type prefix, usually the prefix part of the type name returned
+	by -className.
+	You must override this method in your subclass to indicate the prefix of 
+	your new class name. Take note the prefix will logically apply to every 
+	subsequent subclasses inheriting from the class that redefines 
+	-typePrefix. */
++ (NSString *) typePrefix
+{
+	return @"NS";
 }
 
 /** Returns both methods and instance variables for the receiver by default */
