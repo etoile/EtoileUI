@@ -38,6 +38,11 @@
 
 @implementation NSString (Etoile)
 
+- (NSString *) append: (NSString *)string
+{
+	return [self stringByAppendingString: string];
+}
+
 - (NSString *) firstPathComponent
 {
 	NSArray *pathComponents = [self pathComponents];
