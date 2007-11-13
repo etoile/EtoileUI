@@ -38,4 +38,16 @@
 
 @implementation NSObject (EtoileUI)
 
+// FIXME: Implement
+- (IBAction) view: (id)sender
+{
+
+}
+
+// FIXME: Implement
+- (IBAction) inspect: (id)sender
+{
+
+}
+
 @end
