@@ -36,12 +36,11 @@
  
 #import <Foundation/Foundation.h>
 #import <AppKit/AppKit.h>
-#import "ETLayoutItem.h"
+#import <EtoileUI/ETLayoutItemGroup.h>
 
 /** Each layer instance is basically a special node of the layout item tree. */
 
-
-@interface ETLayer : ETLayoutItem 
+@interface ETLayer : ETLayoutItemGroup 
 {
 	//BOOL _visible;
 	BOOL _outOfFlow;
