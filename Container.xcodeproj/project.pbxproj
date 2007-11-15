@@ -1243,7 +1243,6 @@
 					Foundation,
 					"-framework",
 					AppKit,
-					"-lgnustep-baseadd",
 				);
 				PRODUCT_NAME = EtoileUITests;
 				WARNING_CFLAGS = "-Wmost";
