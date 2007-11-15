@@ -90,7 +90,7 @@
 /** Returns the object following the receiver in the object chain. */
 - (ETObjectChain *) nextObject
 {
-	return [_nextObject nextObject];
+	return _nextObject;
 }
 
 /** Sets the object following the receiver in the object chain. 
@@ -107,9 +107,11 @@
 	connected to it. */
 - (ETObjectChain *) lastObject
 {
-	if ([self nextObject] != nil)
+	id nextObject = [self nextObject];
+
+	if (nextObject != nil)
 	{
-		return [self nextObject];
+		return [nextObject lastObject];
 	}
 	else
 	{	
@@ -132,7 +134,7 @@
 	while (object != nil)
 	{
 		[objectArray addObject: object];
-		object = [self nextObject];
+		object = [object nextObject];
 	}
 	
 	return objectArray;
