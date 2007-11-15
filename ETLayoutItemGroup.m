@@ -1198,6 +1198,18 @@
 	return [super view];
 }
 
+/* Live Development */
+
+- (void) beginEditingUI
+{
+	/* Notify view and decorator item chain */
+	[super beginEditingUI];
+	
+	/* Notify children */
+	[[self items] makeObjectsPerformSelector: @selector(beginEditingUI)];
+}
+
+
 @end
 
 /* Helper methods to retrieve layout items provided by data sources */

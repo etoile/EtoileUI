@@ -208,6 +208,7 @@ shape*/
 
 - (ETLayoutItem *) decoratorItem;
 - (void) setDecoratorItem: (ETLayoutItem *)decorator;
+- (ETLayoutItem *) lastDecoratorItem;
 //-setShowsDecorator:
 
 - (void) updateLayout;
@@ -274,8 +275,8 @@ shape*/
 
 /* Live Development */
 
-/*- (BOOL) isEditingUI;
 - (void) beginEditingUI;
+/*- (BOOL) isEditingUI;
 - (void) commitEditingUI;*/
 
 @end

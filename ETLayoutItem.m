@@ -919,6 +919,20 @@
 	// FIXME: Update layout if needed
 }
 
+- (ETLayoutItem *) lastDecoratorItem
+{
+	id decorator = [self decoratorItem];
+	
+	if (decorator != nil)
+	{
+		return [decorator lastDecoratorItem];
+	}
+	else
+	{
+		return self;
+	}
+}
+
 - (void) updateLayout
 {
 	/* See -apply: */
@@ -1257,6 +1271,20 @@
 		[inspector setInspectedItems: [NSArray arrayWithObject: self]];
 		
 	return inspector;
+}
+
+/* Live Development */
+
+- (void) beginEditingUI
+{
+	id view = [self view];
+	
+	/* Notify to view */
+	if (view != nil && [view respondsToSelector: @selector(beginEditingUI)])
+		[view beginEditingUI];
+
+	/* Notify decorator item chain */
+	[[self decoratorItem] beginEditingUI];
 }
 
 @end
