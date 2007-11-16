@@ -1,13 +1,12 @@
 /*
-	EtoileUI.h
+	ETApplication.h
 	
-	Umbrella header for EtoileUI framework.
+	NSApplication subclass implementing Etoile specific behavior.
  
 	Copyright (C) 2007 Quentin Mathe
  
-	Authors:  Quentin Mathe <qmathe@club-internet.fr>
-
-	Date:  July 2007
+	Author:  Quentin Mathe <qmathe@club-internet.fr>
+	Date:  November 2007
  
 	Redistribution and use in source and binary forms, with or without
 	modification, are permitted provided that the following conditions are met:
@@ -33,56 +32,21 @@
 	ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
 	THE POSSIBILITY OF SUCH DAMAGE.
  */
-
-#import <EtoileUI/ETCompatibility.h>
-
-/* EtoileFoundation */
-
-#import <EtoileUI/NSObject+Etoile.h>
-#import <EtoileUI/NSIndexSet+Etoile.h>
-#import <EtoileUI/NSIndexPath+Etoile.h>
-#import <EtoileUI/NSString+Etoile.h>
-#import <EtoileUI/ETCollection.h>
-#import <EtoileUI/ETObjectRegistry.h>
-#import <EtoileUI/ETObjectChain.h>
-#import <EtoileUI/ETFilter.h>
-#import <EtoileUI/ETRendering.h>
-
-/* EtoileUI */
-
-#import <EtoileUI/NSObject+EtoileUI.h>
-#import <EtoileUI/NSView+Etoile.h>
-#import <EtoileUI/ETObjectRegistry+EtoileUI.h>
-#import <EtoileUI/ETInspecting.h>
-
-#import <EtoileUI/ETApplication.h>
-#import <EtoileUI/ETLayoutItemBuilder.h>
-
-#import <EtoileUI/ETStyle.h>
-#import <EtoileUI/ETContainer.h>
-#import <EtoileUI/ETLayoutItem.h>
+ 
+#import <Foundation/Foundation.h>
+#import <AppKit/AppKit.h>
 #import <EtoileUI/ETLayoutItemGroup.h>
-#import <EtoileUI/ETLayer.h>
-#import <EtoileUI/ETLayout.h>
-#import <EtoileUI/ETViewLayoutLine.h>
 
-#import <EtoileUI/ETFlowLayout.h>
-#import <EtoileUI/ETFlowView.h>
-#import <EtoileUI/ETLineLayout.h>
-#import <EtoileUI/ETLineView.h>
-#import <EtoileUI/ETStackLayout.h>
-#import <EtoileUI/ETStackView.h>
+/** If you use a custom NSApplication subclass, you must subclass ETApplication 
+	instead of NSApplication to make it Etoile-native.
+	This subclass takes care of enabling live development support at runtime. */
 
-#import <EtoileUI/ETTableLayout.h>
-#import <EtoileUI/ETTableView.h>
-#import <EtoileUI/ETOutlineLayout.h>
-#import <EtoileUI/ETBrowserLayout.h>
-#import <EtoileUI/FSBrowserCell.h>
+@interface ETApplication : NSApplication 
+{
+	ETLayoutItemGroup *_windowLayer;
+}
 
-#import <EtoileUI/ETPaneLayout.h>
-//#import <EtoileUI/ETPaneView.h>
-#import <EtoileUI/ETPaneSwitcherLayout.h>
+- (ETLayoutItemGroup *) layoutItem;
+- (IBAction) toggleLiveDevelopment: (id)sender;
 
-#import <EtoileUI/ETFreeLayout.h>
-
-#import <EtoileUI/ETInspector.h>
+@end

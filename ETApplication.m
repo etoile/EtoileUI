@@ -1,13 +1,12 @@
 /*
-	EtoileUI.h
+	ETApplication.m
 	
-	Umbrella header for EtoileUI framework.
+	NSApplication subclass implementing Etoile specific behavior.
  
 	Copyright (C) 2007 Quentin Mathe
  
-	Authors:  Quentin Mathe <qmathe@club-internet.fr>
-
-	Date:  July 2007
+	Author:  Quentin Mathe <qmathe@club-internet.fr>
+	Date:  November 2007
  
 	Redistribution and use in source and binary forms, with or without
 	modification, are permitted provided that the following conditions are met:
@@ -34,55 +33,63 @@
 	THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#import <EtoileUI/ETApplication.h>
+#import <EtoileUI/ETLayoutItemGroup.h>
+#import <EtoileUI/ETLayoutItemBuilder.h>
 #import <EtoileUI/ETCompatibility.h>
 
-/* EtoileFoundation */
+@interface ETApplication (Private)
+- (void) _buildLayoutItemTree;
+- (void) _setUpMenu;
+@end
 
-#import <EtoileUI/NSObject+Etoile.h>
-#import <EtoileUI/NSIndexSet+Etoile.h>
-#import <EtoileUI/NSIndexPath+Etoile.h>
-#import <EtoileUI/NSString+Etoile.h>
-#import <EtoileUI/ETCollection.h>
-#import <EtoileUI/ETObjectRegistry.h>
-#import <EtoileUI/ETObjectChain.h>
-#import <EtoileUI/ETFilter.h>
-#import <EtoileUI/ETRendering.h>
 
-/* EtoileUI */
+@implementation ETApplication
 
-#import <EtoileUI/NSObject+EtoileUI.h>
-#import <EtoileUI/NSView+Etoile.h>
-#import <EtoileUI/ETObjectRegistry+EtoileUI.h>
-#import <EtoileUI/ETInspecting.h>
+/** Returns the layout item representing the application. 
+	The method returns a local root item which is usually the window group or
+	layer under the application control. */
+- (ETLayoutItemGroup *) layoutItem
+{
+	return _windowLayer;
+}
 
-#import <EtoileUI/ETApplication.h>
-#import <EtoileUI/ETLayoutItemBuilder.h>
+- (void) finishLaunching
+{
+	[self _setUpMenu];
+	[self _buildLayoutItemTree];
+}
 
-#import <EtoileUI/ETStyle.h>
-#import <EtoileUI/ETContainer.h>
-#import <EtoileUI/ETLayoutItem.h>
-#import <EtoileUI/ETLayoutItemGroup.h>
-#import <EtoileUI/ETLayer.h>
-#import <EtoileUI/ETLayout.h>
-#import <EtoileUI/ETViewLayoutLine.h>
+- (void) _buildLayoutItemTree
+{
+	ETEtoileUIBuilder *builder = [ETEtoileUIBuilder builder];
 
-#import <EtoileUI/ETFlowLayout.h>
-#import <EtoileUI/ETFlowView.h>
-#import <EtoileUI/ETLineLayout.h>
-#import <EtoileUI/ETLineView.h>
-#import <EtoileUI/ETStackLayout.h>
-#import <EtoileUI/ETStackView.h>
+	ASSIGN(_windowLayer, [builder render: self]);
+}
 
-#import <EtoileUI/ETTableLayout.h>
-#import <EtoileUI/ETTableView.h>
-#import <EtoileUI/ETOutlineLayout.h>
-#import <EtoileUI/ETBrowserLayout.h>
-#import <EtoileUI/FSBrowserCell.h>
+- (void) _setUpMenu
+{
+	NSMenu *appMenu = [[[self mainMenu] itemAtIndex: 0] submenu];
+	NSMenuItem *liveDevMenuItem = nil;
+	int insertionIndex = 0;
+	
+	liveDevMenuItem = [[NSMenuItem alloc] initWithTitle: _(@"Live Development")
+		action: @selector(toggleLiveDevelopment:) keyEquivalent: nil];
+		
+	#ifndef GNUSTEP
+	insertionIndex = [appMenu indexOfItemWithTitle: _(@"Services")];
+	#else
+	// FIXME: Decide where Live Development menu item must be put, application
+	// menu is probably an valid initial choice. Later Services menu could be better.
+	#endif
+		
+	[appMenu insertItem: liveDevMenuItem atIndex: insertionIndex];
+	RELEASE(liveDevMenuItem);
+}
 
-#import <EtoileUI/ETPaneLayout.h>
-//#import <EtoileUI/ETPaneView.h>
-#import <EtoileUI/ETPaneSwitcherLayout.h>
+- (IBAction) toggleLiveDevelopment: (id)sender
+{
+	
+}
 
-#import <EtoileUI/ETFreeLayout.h>
-
-#import <EtoileUI/ETInspector.h>
+@end

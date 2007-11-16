@@ -83,6 +83,7 @@
 		605D6FB40CE9E7A1009ED244 /* ETTransform.m in Sources */ = {isa = PBXBuildFile; fileRef = 605D6FB20CE9E7A1009ED244 /* ETTransform.m */; };
 		605D6FB50CE9E7A1009ED244 /* ETTransform.h in Headers */ = {isa = PBXBuildFile; fileRef = 605D6FB10CE9E7A1009ED244 /* ETTransform.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		605D6FB60CE9E7A1009ED244 /* ETTransform.m in Sources */ = {isa = PBXBuildFile; fileRef = 605D6FB20CE9E7A1009ED244 /* ETTransform.m */; };
+		605D71B60CEC54A6009ED244 /* test_ETLayoutItemBuilder.m in Sources */ = {isa = PBXBuildFile; fileRef = 605D71B50CEC54A6009ED244 /* test_ETLayoutItemBuilder.m */; };
 		605F0D790C0F403B003AE3E6 /* ObjectManager.nib in Resources */ = {isa = PBXBuildFile; fileRef = 605F0CD00C0F4034003AE3E6 /* ObjectManager.nib */; };
 		605F0D870C0F4049003AE3E6 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 29B97316FDCFA39411CA2CEA /* main.m */; };
 		605F0D8E0C0F4049003AE3E6 /* ObjectManagerController.m in Sources */ = {isa = PBXBuildFile; fileRef = 605F0CC30C0F3F8F003AE3E6 /* ObjectManagerController.m */; };
@@ -231,8 +232,6 @@
 		603463AB0C9FBF6A006DFCD1 /* ETCollection.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ETCollection.m; sourceTree = "<group>"; };
 		603D4D0A0C8D1E10003DFD51 /* NSString+Etoile.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSString+Etoile.h"; sourceTree = "<group>"; };
 		603D4D0B0C8D1E10003DFD51 /* NSString+Etoile.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSString+Etoile.m"; sourceTree = "<group>"; };
-		6045610A0C514439006FC975 /* ETFilter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ETFilter.h; sourceTree = "<group>"; };
-		6045610B0C514439006FC975 /* ETFilter.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ETFilter.m; sourceTree = "<group>"; };
 		605150190C1733B500B5E0E5 /* ETPaneView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ETPaneView.h; sourceTree = "<group>"; };
 		6051501A0C1733B500B5E0E5 /* ETPaneView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ETPaneView.m; sourceTree = "<group>"; };
 		6051502C0C1738D600B5E0E5 /* English */ = {isa = PBXFileReference; lastKnownFileType = wrapper.nib; name = English; path = English.lproj/BrowserPrototype.nib; sourceTree = "<group>"; };
@@ -264,6 +263,7 @@
 		605D6FAD0CE9D436009ED244 /* test_ETObjectChain.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = test_ETObjectChain.m; sourceTree = "<group>"; };
 		605D6FB10CE9E7A1009ED244 /* ETTransform.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ETTransform.h; sourceTree = "<group>"; };
 		605D6FB20CE9E7A1009ED244 /* ETTransform.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ETTransform.m; sourceTree = "<group>"; };
+		605D71B50CEC54A6009ED244 /* test_ETLayoutItemBuilder.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = test_ETLayoutItemBuilder.m; sourceTree = "<group>"; };
 		605F0CC20C0F3F8F003AE3E6 /* ObjectManagerController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ObjectManagerController.h; path = ObjectManagerExample/ObjectManagerController.h; sourceTree = "<group>"; };
 		605F0CC30C0F3F8F003AE3E6 /* ObjectManagerController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ObjectManagerController.m; path = ObjectManagerExample/ObjectManagerController.m; sourceTree = "<group>"; };
 		605F0CCA0C0F400D003AE3E6 /* ObjectManagerExample.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = ObjectManagerExample.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -346,8 +346,6 @@
 		60EABCBC0C0C284000341BD8 /* ETTableView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ETTableView.m; sourceTree = "<group>"; };
 		60EABCBE0C0C289900341BD8 /* ETTableLayout.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ETTableLayout.m; sourceTree = "<group>"; };
 		60EABCBF0C0C289900341BD8 /* ETTableView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ETTableView.h; sourceTree = "<group>"; };
-		60EB7BCD0C614ED70066AC40 /* ETPath.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ETPath.h; sourceTree = "<group>"; };
-		60EB7BCE0C614ED70066AC40 /* ETPath.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ETPath.m; sourceTree = "<group>"; };
 		60EB7C660C6155AA0066AC40 /* ETView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ETView.h; sourceTree = "<group>"; };
 		60EB7C670C6155AA0066AC40 /* ETView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ETView.m; sourceTree = "<group>"; };
 		60EF8D9F0C5E3F1800C97C41 /* EtoileUI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EtoileUI.h; sourceTree = "<group>"; };
@@ -427,8 +425,6 @@
 				609F463D0B414C0A00AD2209 /* ETContainer.m */,
 				609F46590B41641400AD2209 /* ETLayout.h */,
 				609F465A0B41641400AD2209 /* ETLayout.m */,
-				609097A20CAFFF7A009CAD27 /* ETObjectRegistry.h */,
-				609097A30CAFFF7A009CAD27 /* ETObjectRegistry.m */,
 				609097D20CB00BC2009CAD27 /* ETObjectRegistry+EtoileUI.h */,
 				609097D30CB00BC2009CAD27 /* ETObjectRegistry+EtoileUI.m */,
 				60E584EE0C54A52000905ED8 /* ETRenderer.h */,
@@ -441,7 +437,6 @@
 				609548D30C0E30D500068CBB /* New Layouts */,
 				609548D20C0E305600068CBB /* Wrapper Layouts */,
 				609548D40C0E313A00068CBB /* Utility */,
-				609548D50C0E317400068CBB /* Examples */,
 			);
 			name = Classes;
 			sourceTree = "<group>";
@@ -482,21 +477,11 @@
 			isa = PBXGroup;
 			children = (
 				600243CE0CD134C40023182D /* Tests */,
-				60C09F3F0C6A860900A4458D /* test_ETObject.h */,
-				60C09F400C6A860900A4458D /* test_ETObject.m */,
-				60C09F220C6A749700A4458D /* ETObject.h */,
-				60C09F230C6A749700A4458D /* ETObject.m */,
-				080E96DDFE201D6D7F000001 /* Classes */,
+				605D714D0CEC507E009ED244 /* EtoileUI */,
 				605D6D4F0CE94218009ED244 /* EtoileFoundation */,
+				605D71500CEC50C2009ED244 /* Missing */,
+				605D714A0CEC5059009ED244 /* Deprecated */,
 				29B97315FDCFA39411CA2CEA /* Other Sources */,
-				60CA70890C481BC9009D9B02 /* ETLog.h */,
-				60CA708A0C481BC9009D9B02 /* ETLog.m */,
-				600EAE280C4C2B830074FA3E /* ETComponent.h */,
-				600EAE290C4C2B830074FA3E /* ETComponent.m */,
-				6045610A0C514439006FC975 /* ETFilter.h */,
-				6045610B0C514439006FC975 /* ETFilter.m */,
-				6082FE750C49947F00FFF659 /* ETBinding.h */,
-				6082FE760C49947F00FFF659 /* ETBinding.m */,
 				29B97317FDCFA39411CA2CEA /* Resources */,
 				29B97323FDCFA39411CA2CEA /* Frameworks */,
 				19C28FACFE9D520D11CA2CBB /* Products */,
@@ -513,13 +498,8 @@
 		29B97315FDCFA39411CA2CEA /* Other Sources */ = {
 			isa = PBXGroup;
 			children = (
-				60EF8D9F0C5E3F1800C97C41 /* EtoileUI.h */,
 				60A563E70A16266900329EE6 /* GNUstep.h */,
 				602F8B260CE1CA3E0042F6C0 /* ETCompatibility.h */,
-				609097970CAEBC32009CAD27 /* NSObject+EtoileUI.h */,
-				609097980CAEBC32009CAD27 /* NSObject+EtoileUI.m */,
-				605D6BFF0CE7830A009ED244 /* ETApplication.h */,
-				605D6C000CE7830A009ED244 /* ETApplication.m */,
 				29B97316FDCFA39411CA2CEA /* main.m */,
 			);
 			name = "Other Sources";
@@ -558,6 +538,7 @@
 				600243C90CD134440023182D /* test_ETLayoutItem.m */,
 				605D6CB90CE78335009ED244 /* test_ETView.m */,
 				605D6FAD0CE9D436009ED244 /* test_ETObjectChain.m */,
+				605D71B50CEC54A6009ED244 /* test_ETLayoutItemBuilder.m */,
 			);
 			name = Tests;
 			sourceTree = "<group>";
@@ -566,10 +547,14 @@
 			isa = PBXGroup;
 			children = (
 				605D6DEE0CE942E2009ED244 /* ETRendering.h */,
+				609097A20CAFFF7A009CAD27 /* ETObjectRegistry.h */,
+				609097A30CAFFF7A009CAD27 /* ETObjectRegistry.m */,
 				605D6D490CE9420D009ED244 /* ETObjectChain.h */,
 				605D6D4A0CE9420D009ED244 /* ETObjectChain.m */,
 				605D6D350CE895F3009ED244 /* ETFilter.h */,
 				605D6D360CE895F3009ED244 /* ETFilter.m */,
+				605D6FB10CE9E7A1009ED244 /* ETTransform.h */,
+				605D6FB20CE9E7A1009ED244 /* ETTransform.m */,
 				60C0A3DD0C71D6FB00A4458D /* NSIndexSet+Etoile.h */,
 				60C0A3DE0C71D6FB00A4458D /* NSIndexSet+Etoile.m */,
 				6097F21D0C99F487003A74CE /* NSIndexPath+Etoile.h */,
@@ -582,6 +567,44 @@
 				603463AB0C9FBF6A006DFCD1 /* ETCollection.m */,
 			);
 			name = EtoileFoundation;
+			sourceTree = "<group>";
+		};
+		605D714A0CEC5059009ED244 /* Deprecated */ = {
+			isa = PBXGroup;
+			children = (
+				60C09F3F0C6A860900A4458D /* test_ETObject.h */,
+				60C09F400C6A860900A4458D /* test_ETObject.m */,
+				60C09F220C6A749700A4458D /* ETObject.h */,
+				60C09F230C6A749700A4458D /* ETObject.m */,
+			);
+			name = Deprecated;
+			sourceTree = "<group>";
+		};
+		605D714D0CEC507E009ED244 /* EtoileUI */ = {
+			isa = PBXGroup;
+			children = (
+				60EF8D9F0C5E3F1800C97C41 /* EtoileUI.h */,
+				609097970CAEBC32009CAD27 /* NSObject+EtoileUI.h */,
+				609097980CAEBC32009CAD27 /* NSObject+EtoileUI.m */,
+				605D6BFF0CE7830A009ED244 /* ETApplication.h */,
+				605D6C000CE7830A009ED244 /* ETApplication.m */,
+				080E96DDFE201D6D7F000001 /* Classes */,
+				609548D50C0E317400068CBB /* Examples */,
+			);
+			name = EtoileUI;
+			sourceTree = "<group>";
+		};
+		605D71500CEC50C2009ED244 /* Missing */ = {
+			isa = PBXGroup;
+			children = (
+				60CA70890C481BC9009D9B02 /* ETLog.h */,
+				60CA708A0C481BC9009D9B02 /* ETLog.m */,
+				600EAE280C4C2B830074FA3E /* ETComponent.h */,
+				600EAE290C4C2B830074FA3E /* ETComponent.m */,
+				6082FE750C49947F00FFF659 /* ETBinding.h */,
+				6082FE760C49947F00FFF659 /* ETBinding.m */,
+			);
+			name = Missing;
 			sourceTree = "<group>";
 		};
 		606B98A40C0AF669000AAA85 /* Pane Layouts */ = {
@@ -661,12 +684,8 @@
 				609F46850B41FDAF00AD2209 /* ETViewLayoutLine.m */,
 				60EB7C660C6155AA0066AC40 /* ETView.h */,
 				60EB7C670C6155AA0066AC40 /* ETView.m */,
-				605D6FB10CE9E7A1009ED244 /* ETTransform.h */,
-				605D6FB20CE9E7A1009ED244 /* ETTransform.m */,
 				605D6D410CE93732009ED244 /* ETLayoutItemBuilder.h */,
 				605D6D420CE93732009ED244 /* ETLayoutItemBuilder.m */,
-				60EB7BCD0C614ED70066AC40 /* ETPath.h */,
-				60EB7BCE0C614ED70066AC40 /* ETPath.m */,
 			);
 			name = Utility;
 			sourceTree = "<group>";
@@ -1033,6 +1052,7 @@
 				605D6DF90CE946F8009ED244 /* ETStyle.m in Sources */,
 				605D6FAE0CE9D436009ED244 /* test_ETObjectChain.m in Sources */,
 				605D6FB40CE9E7A1009ED244 /* ETTransform.m in Sources */,
+				605D71B60CEC54A6009ED244 /* test_ETLayoutItemBuilder.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
