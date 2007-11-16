@@ -64,10 +64,10 @@
 
 	[window setTitle: @"My Window Title"];
 	
+#if 0	
 	id item = [[ETEtoileUIBuilder builder] renderWindow: window];
 	
 	UKNotNil(item);
-#if 0
 	UKObjectsSame(window, [[item lastDecoratorItem] representedObject]);
 	UKTrue(NSEqualRects([window frame], [item frame]));
 	UKObjectsEqual([window title], [item name]);
