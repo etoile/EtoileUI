@@ -49,6 +49,8 @@ NSString *ETViewTitleBarViewPrototypeDidChangeNotification = @"ETViewTitleBarVie
 
 @interface ETView (Private)
 - (void) titleBarViewPrototypeDidChange: (NSNotification *)notif;
+- (void) setContentView: (NSView *)view temporary: (BOOL)temporary;
+- (void) _setTitleBarView: (NSView *)barView;
 @end
 
 
@@ -60,7 +62,7 @@ static ETView *barViewPrototype = nil;
 
 + (void) initialize
 {
-	if ([self class] == [ETView class])
+	if (self == [ETView class])
 	{
 		barViewPrototype = 
 			[[NSView alloc] initWithFrame: NSMakeRect(0, 0, 100, 50)];
@@ -70,6 +72,11 @@ static ETView *barViewPrototype = nil;
 
 + (void) setTitleBarViewPrototype: (NSView *)barView
 {
+	if (barView == nil)
+	{
+		[NSException raise: NSInvalidArgumentException format: @"For ETView, "
+			@"+setTitleBarViewPrototype: parameter must be never be nil"];
+	}
 	ASSIGN(barViewPrototype, barView);
 	[NC postNotificationName: ETViewTitleBarViewPrototypeDidChangeNotification
 		              object: self
@@ -102,7 +109,7 @@ static ETView *barViewPrototype = nil;
 			_layoutItem = [[ETLayoutItem alloc] initWithView: self];
 		}
 		[self setRenderer: nil];
-		[self setTitleBarView: [ETView titleBarViewPrototype]];
+		[self setTitleBarView: nil]; /* Sets up a +titleBarViewPrototype clone */
 		[self setDisclosable: NO];
 		[self setAutoresizesSubviews: YES];	/* NSView set up */
 		
@@ -188,6 +195,59 @@ static ETView *barViewPrototype = nil;
 
 /* Embbeded Views */
 
+/** Recomputes the positioning of both the main view and the title bar view
+	depending on whether they are visible or not. */
+- (void) tile
+{
+	id mainView = [self mainView];
+	id titleBarView = [self titleBarView];
+	
+	/* Reset main view frame to fill the receiver */
+	[mainView setFrameOrigin: NSZeroPoint];
+	[mainView setFrameSize: [self frame].size];
+	
+	/* Reset autoresizing */
+	[mainView setAutoresizingMask: NSViewHeightSizable | NSViewWidthSizable];
+	[titleBarView setAutoresizingMask: NSViewWidthSizable];
+	[self setAutoresizesSubviews: YES];
+	
+	/* Position and size both title bar view and main view to fill the receiver
+	   in a stack-like layout */
+	if ([self isTitleBarVisible])
+	{
+		if (mainView != nil)
+		{
+			[mainView setHeightFromBottomLeft: [mainView height] - [titleBarView height]];
+			[titleBarView setFrameOrigin: [mainView topLeftPoint]];
+		}
+		else
+		{
+			// TODO: This is a bit convoluted, we may be better getting rid of
+			// this flipping dependent code.
+			if ([self isFlipped])
+			{
+				[titleBarView setFrameOrigin: NSZeroPoint];
+			}
+			else
+			{
+				[titleBarView setFrameOrigin: 
+					NSMakePoint(0, [self height] - [titleBarView height])];
+			}
+		}
+		[titleBarView setWidth: [self width]];
+	}
+	/*else
+	{
+		if (mainView != nil)
+			[mainView setHeightFromBottomLeft: [self height]];
+	}*/
+}
+
+- (BOOL) isTitleBarVisible
+{
+	return ([[self titleBarView] superview] != nil);
+}
+
 - (BOOL) usesCustomTitleBar
 {
 	return _usesCustomTitleBar;
@@ -195,31 +255,53 @@ static ETView *barViewPrototype = nil;
 
 - (void) titleBarViewPrototypeDidChange: (NSNotification *)notif
 {
-	[self setTitleBarView: nil];
+	if ([self usesCustomTitleBar] == NO)
+		[self setTitleBarView: nil];
 }
 
 - (void) setTitleBarView: (NSView *)barView
 {
-	NSRect titleBarFrame = [_titleBarView frame];
-	
-	[_titleBarView removeFromSuperview];
-	
 	if (barView != nil)
 	{
-		ASSIGN(_titleBarView, barView);
+		[self _setTitleBarView: barView];
 		_usesCustomTitleBar = YES;
 	}
 	else
 	{
-		ASSIGN(_titleBarView, [[ETView titleBarViewPrototype] copy]);
-		RELEASE(_titleBarView);
+		id barViewProto = AUTORELEASE([[ETView titleBarViewPrototype] copy]);
+		[self _setTitleBarView: barViewProto];		
 		_usesCustomTitleBar = NO;
 	}
+}
+
+		 /* barView will be the initially inserted title bar view.
+			ETView instance initialization is the most common case. */
+- (void) _setTitleBarView: (NSView *)barView
+{
+	BOOL prevTitleBarVisible = [self isTitleBarVisible];
 	
-	/* Don't sync the height of the new bar view */
-	titleBarFrame.size.height = [_titleBarView height];
-	[_titleBarView setFrame: titleBarFrame];
-	[self addSubview: _titleBarView];
+	if (_titleBarView != nil)
+	{
+		NSRect titleBarFrame = [_titleBarView frame];
+		
+		/* Sync old and new title bar frame except the height of the new bar 
+		   view */
+		titleBarFrame.size.height = [barView height];
+		[barView setFrame: titleBarFrame];
+
+		/* Remove previous title bar when visible */
+		if (prevTitleBarVisible)
+			[_titleBarView removeFromSuperview];
+	}
+	
+	ASSIGN(_titleBarView, barView);
+	
+	/* Inserts possibly the new title bar */
+	if (prevTitleBarVisible)
+	{
+		[self addSubview: _titleBarView];
+		[self tile];
+	}
 }
 
 - (NSView *) titleBarView
@@ -229,8 +311,11 @@ static ETView *barViewPrototype = nil;
 
 - (void) setWrappedView: (NSView *)view
 {
+	// NOTE: Next lines must be kept in this precise order and -tile not moved
+	// into -setContentView:temporary:
 	[self setContentView: view temporary: NO];
 	ASSIGN(_wrappedView, view);
+	[self tile]; /* Update view layout */
 }
 
 - (NSView *) wrappedView
@@ -244,8 +329,11 @@ static ETView *barViewPrototype = nil;
 	originally set on -setWrappedView: call. */
 - (void) setTemporaryView: (NSView *)subview
 {
+	// NOTE: Next lines must be kept in this precise order and -tile not moved
+	// into -setContentView:temporary:
 	[self setContentView: subview temporary: YES];
 	ASSIGN(_temporaryView, subview);
+	[self tile]; /* Update view layout */
 }
 
 /** Returns the wrapped view temporarily overriding the default wrapped view or 
@@ -269,7 +357,7 @@ static ETView *barViewPrototype = nil;
 			[self addSubview: view];
 			[[self wrappedView] setHidden: YES];
 		}
-		else
+		else /* Passed a nil temporary view */
 		{
 			[[self temporaryView] removeFromSuperview];
 			[[self wrappedView] setHidden: NO];
@@ -282,7 +370,7 @@ static ETView *barViewPrototype = nil;
 			[view setAutoresizingMask: NSViewWidthSizable | NSViewHeightSizable];
 			[self addSubview: view];
 		}
-		else
+		else /* Passed a nil wrapped view */
 		{
 			[[self wrappedView] removeFromSuperview];
 		}	
@@ -311,19 +399,20 @@ static ETView *barViewPrototype = nil;
 	usually by clicking on disclosure indicator. */
 - (void) setDisclosable: (BOOL)flag
 {
+	NSView *titleBarView = [self titleBarView];
+
 	_disclosable = flag;
-	
-	if (_disclosable)
+
+	/* Hide or show title bar */
+	if (_disclosable && [self isTitleBarVisible] == NO)
 	{
-		if ([[self titleBarView] superview] == nil)
-		{
-			[self addSubview: [self titleBarView]];
-		}
+		[self addSubview: titleBarView];
 	}
-	else
+	else if (_disclosable == NO && [self isTitleBarVisible])
 	{
-	
+		[titleBarView removeFromSuperview];
 	}
+	[self tile]; /* Update view layout */
 }
 
 /** Returns whether the title bar is visible, thereby disclosable or not. */
@@ -332,28 +421,47 @@ static ETView *barViewPrototype = nil;
 	return _disclosable;
 }
 
+/** Returns whether the content view is visible or not. When the receiver is
+	expanded, only the title bar can remain visible. */
+- (BOOL) isExpanded
+{
+	return ([[self mainView] superview] == nil);
+}
+
 /* Actions */
 
 - (void) collapse: (id)sender
 {
 	if ([self isDisclosable])
 	{
+		NSAssert1([self isTitleBarVisible], @"View %@ cannnot be correctly "
+			@"collapsed because title bar view hasn't been inserted", self);
+		
 		[[self wrappedView] removeFromSuperview];
-		[self setFrame: [[self titleBarView] frame]];
+	}
+	else
+	{
+		ETLog(@"WARNING: View %@ isn't disclosable, yet it is asked to "
+			@"collapse", self);	
 	}
 }
 
 - (void) expand: (id)sender
 {
-	NSRect prevFrame = [[self titleBarView] frame];
-	
-	if ([self isDisclosable] == NO)
-		ETLog(@"WARNING: View %@ isn't disclosable, yet it is presently collapsed", self);
-	
-	prevFrame.size.height += [[self wrappedView] height];
-	prevFrame.size.width = [[self wrappedView] width];
-	[self setFrame: prevFrame];
-	[self addSubview: [self wrappedView]];
+	if ([self isDisclosable])
+	{
+		/* If already expanded, nothing to do */
+		if ([[self subviews] containsObject: [self mainView]])
+			return;
+		
+		[self addSubview: [self mainView]];
+		[self tile]; /* Update view layout */
+	}
+	else
+	{
+		ETLog(@"WARNING: View %@ isn't disclosable, yet it is presently "
+			"collapsed and asked to expand", self);
+	}
 }
 
 /* Property Value Coding */
@@ -389,7 +497,7 @@ static ETView *barViewPrototype = nil;
 - (NSArray *) properties
 {
 	// NOTE: We may expose other properties in future
-	return [NSArray arrayWithObjects: @"disclosable"];
+	return [NSArray arrayWithObjects: @"disclosable", nil];
 }
 
 /* Live Development */
@@ -398,6 +506,20 @@ static ETView *barViewPrototype = nil;
 {
 	return _isEditingUI;
 }*/
+
+/* Subclassing */
+
+/** Returns the direct subview of the receiver which is displayed right under 
+	the title bar. The returned value is identical to -wrappedView. 
+	If you write an ETView subclass where the wrapped view is put inside another
+	view (like a scroll view), you must override this method to return this 
+	superview. 
+	This method should never be called directly, uses -contentView, -wrappedView
+	or -temporaryView instead. */
+- (NSView *) mainView
+{
+	return [self wrappedView];
+}
 
 /* Rendering Tree */
 
