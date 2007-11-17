@@ -1087,7 +1087,7 @@ NSString *ETLayoutItemPboardType = @"ETLayoutItemPboardType"; // FIXME: replace 
 		[self updateLayout];*/	
 }
 
-- (void) stack: (id)sender
+- (IBAction) stack: (id)sender
 {
 	ETLayoutItem *item = [self itemAtIndex: [self selectionIndex]]; 
 	

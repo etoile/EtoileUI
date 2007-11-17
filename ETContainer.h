@@ -195,7 +195,7 @@
 
 /* Groups and Stacks */
 
-- (void) stack: (id)sender;
+- (IBAction) stack: (id)sender;
 
 /* Item scaling */
 

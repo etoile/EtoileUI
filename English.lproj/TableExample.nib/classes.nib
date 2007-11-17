@@ -1,34 +1,100 @@
-{
-    IBClasses = (
-        {
-            ACTIONS = {inspect = id; stack = id; }; 
-            CLASS = ETContainer; 
-            LANGUAGE = ObjC; 
-            OUTLETS = {"_scrollView" = NSScrollView; }; 
-            SUPERCLASS = ETView; 
-        }, 
-        {
-            ACTIONS = {collapse = id; expand = id; }; 
-            CLASS = ETView; 
-            LANGUAGE = ObjC; 
-            SUPERCLASS = NSView; 
-        }, 
-        {
-            ACTIONS = {inspect = id; }; 
-            CLASS = FirstResponder; 
-            LANGUAGE = ObjC; 
-            SUPERCLASS = NSObject; 
-        }, 
-        {
-            CLASS = TableController; 
-            LANGUAGE = ObjC; 
-            OUTLETS = {
-                outlineView = NSScrollView; 
-                tableContainer = ETContainer; 
-                tableContainer2 = ETContainer; 
-            }; 
-            SUPERCLASS = NSObject; 
-        }
-    ); 
-    IBVersion = 1; 
-}
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>IBClasses</key>
+	<array>
+		<dict>
+			<key>ACTIONS</key>
+			<dict>
+				<key>collapse</key>
+				<string>id</string>
+				<key>expand</key>
+				<string>id</string>
+			</dict>
+			<key>CLASS</key>
+			<string>ETView</string>
+			<key>LANGUAGE</key>
+			<string>ObjC</string>
+			<key>SUPERCLASS</key>
+			<string>NSView</string>
+		</dict>
+		<dict>
+			<key>CLASS</key>
+			<string>NSView</string>
+			<key>LANGUAGE</key>
+			<string>ObjC</string>
+			<key>SUPERCLASS</key>
+			<string>NSResponder</string>
+		</dict>
+		<dict>
+			<key>CLASS</key>
+			<string>TableController</string>
+			<key>LANGUAGE</key>
+			<string>ObjC</string>
+			<key>OUTLETS</key>
+			<dict>
+				<key>outlineView</key>
+				<string>NSScrollView</string>
+				<key>tableContainer</key>
+				<string>ETContainer</string>
+				<key>tableContainer2</key>
+				<string>ETContainer</string>
+			</dict>
+			<key>SUPERCLASS</key>
+			<string>NSObject</string>
+		</dict>
+		<dict>
+			<key>ACTIONS</key>
+			<dict>
+				<key>inspect</key>
+				<string>id</string>
+				<key>view</key>
+				<string>id</string>
+			</dict>
+			<key>CLASS</key>
+			<string>NSObject</string>
+			<key>LANGUAGE</key>
+			<string>ObjC</string>
+		</dict>
+		<dict>
+			<key>ACTIONS</key>
+			<dict>
+				<key>inspect</key>
+				<string>id</string>
+			</dict>
+			<key>CLASS</key>
+			<string>FirstResponder</string>
+			<key>LANGUAGE</key>
+			<string>ObjC</string>
+			<key>SUPERCLASS</key>
+			<string>NSObject</string>
+		</dict>
+		<dict>
+			<key>ACTIONS</key>
+			<dict>
+				<key>inspect</key>
+				<string>id</string>
+				<key>view</key>
+				<string>id</string>
+			</dict>
+			<key>CLASS</key>
+			<string>NSResponder</string>
+			<key>LANGUAGE</key>
+			<string>ObjC</string>
+			<key>SUPERCLASS</key>
+			<string>NSObject</string>
+		</dict>
+		<dict>
+			<key>CLASS</key>
+			<string>ETContainer</string>
+			<key>LANGUAGE</key>
+			<string>ObjC</string>
+			<key>SUPERCLASS</key>
+			<string>ETView</string>
+		</dict>
+	</array>
+	<key>IBVersion</key>
+	<string>1</string>
+</dict>
+</plist>

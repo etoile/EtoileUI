@@ -70,26 +70,30 @@
 - (void) _setUpMenu
 {
 	NSMenu *appMenu = [[[self mainMenu] itemAtIndex: 0] submenu];
-	NSMenuItem *liveDevMenuItem = nil;
+	NSMenuItem *menuItem = nil;
 	int insertionIndex = 0;
 	
-	liveDevMenuItem = [[NSMenuItem alloc] initWithTitle: _(@"Live Development")
-		action: @selector(toggleLiveDevelopment:) keyEquivalent: nil];
-		
 	#ifndef GNUSTEP
 	insertionIndex = [appMenu indexOfItemWithTitle: _(@"Services")];
 	#else
 	// FIXME: Decide where Live Development menu item must be put, application
 	// menu is probably an valid initial choice. Later Services menu could be better.
 	#endif
-		
-	[appMenu insertItem: liveDevMenuItem atIndex: insertionIndex];
-	RELEASE(liveDevMenuItem);
+	
+	menuItem = [[NSMenuItem alloc] initWithTitle: _(@"Live Development")
+		action: @selector(toggleLiveDevelopment:) keyEquivalent: nil];
+	[appMenu insertItem: menuItem atIndex: insertionIndex];
+	RELEASE(menuItem);
+	
+	menuItem = [[NSMenuItem alloc] initWithTitle: _(@"Inspect…")
+		action: @selector(inspect:) keyEquivalent: nil];
+	[appMenu insertItem: menuItem atIndex: ++insertionIndex];
+	RELEASE(menuItem);
 }
 
 - (IBAction) toggleLiveDevelopment: (id)sender
 {
-	
+	ETLog(@"Toggle live dev");
 }
 
 @end
