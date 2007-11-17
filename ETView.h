@@ -122,17 +122,20 @@
 
 /* Embbeded Views */
 
-- (BOOL) usesCustomTitleBar;
-- (void) setTitleBarView: (NSView *)barView;
-- (NSView *) titleBarView;
 - (void) setWrappedView: (NSView *)subview;
 - (NSView *) wrappedView;
 - (void) setTemporaryView: (NSView *)subview;
 - (NSView *) temporaryView;
-- (void) setContentView: (NSView *)view temporary: (BOOL)temporary;
 - (NSView *) contentView;
+
 - (void) setDisclosable: (BOOL)flag;
 - (BOOL) isDisclosable;
+- (BOOL) isExpanded;
+
+- (BOOL) isTitleBarVisible;
+- (BOOL) usesCustomTitleBar;
+- (void) setTitleBarView: (NSView *)barView;
+- (NSView *) titleBarView;
 
 /* Actions */
 
@@ -148,6 +151,11 @@
 /* Live Development */
 
 //- (BOOL) isEditingUI;
+
+/* Subclassing */
+
+- (NSView *) mainView;
+- (void) tile;
 
 @end
 
