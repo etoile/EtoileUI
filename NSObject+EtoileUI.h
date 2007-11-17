@@ -60,6 +60,7 @@
 
 @interface NSObject (EtoileUI)
 
+- (IBAction) browse: (id)sender;
 - (IBAction) view: (id)sender;
 - (IBAction) inspect: (id)sender;
 
@@ -74,6 +75,7 @@
 	including responders like NSTableView pretends to respond to -inspect: and
 	-view: (but without doing anything). */
 @interface NSResponder (EtoileUI)
+- (IBAction) browse: (id)sender;
 - (IBAction) view: (id)sender;
 - (IBAction) inspect: (id)sender;
 @end
