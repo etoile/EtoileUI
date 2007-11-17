@@ -51,3 +51,17 @@
 }
 
 @end
+
+@implementation NSResponder (EtoileUI)
+
+- (IBAction) view: (id)sender
+{
+	[[self nextResponder] view: sender];
+}
+
+- (IBAction) inspect: (id)sender
+{
+	[[self nextResponder] inspect: sender];
+}
+
+@end

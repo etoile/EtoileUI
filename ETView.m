@@ -135,6 +135,12 @@ static ETView *barViewPrototype = nil;
 	[super dealloc];
 }
 
+- (BOOL) acceptsFirstResponder
+{
+	//ETLog(@"%@ accepts first responder", self);
+	return YES;
+}
+
 /* Basic Accessors */
 
 /** Returns the layout item representing the receiver in the layout item 
