@@ -13,6 +13,11 @@
 
 @implementation NSView (Etoile)
 
+- (BOOL) isContainer
+{
+	return [self isKindOfClass: [ETContainer class]];
+}
+
 /* Copying */
 
 /** Returns a view copy of the receiver. The superview of the resulting copy is
@@ -89,9 +94,92 @@
 	[self setFrameOrigin: NSMakePoint(x, y)];
 }
 
-- (BOOL) isContainer
+/** Sets the size of the view without moving the top left point.
+	If the receiver has a superview, checks whether this superview is flipped or
+	not. If non-flipped coordinates are used, the frame origin is adjusted 
+	before calling -setFrameSize:, otherwise this method is equivalent to 
+	-setFrameSize:.
+	Be careful that calling this method with no receiver superview results in 
+	the view origin being altered. */
+- (void) setFrameSizeFromTopLeft: (NSSize)size
 {
-	return [self isKindOfClass: [ETContainer class]];
+	NSView *superview = [self superview];
+	float delta = [self height] - size.height;
+	
+	if (superview == nil || [superview isFlipped] == NO)
+		[self setY: [self y] + delta];
+	
+	[self setFrameSize: size];
+}
+
+/** Sets the height of the view without moving the top left point.
+	If the receiver has a superview, checks whether this superview is flipped or
+	not. If non-flipped coordinates are used, the frame origin is adjusted 
+	before calling -setHeight:, otherwise this method is equivalent to 
+	-setHeight:.
+	Be careful that calling this method with no receiver superview results in 
+	the view origin being altered. */
+- (void) setHeightFromTopLeft: (int)height
+{
+	[self setFrameSizeFromTopLeft: NSMakeSize([self width], height)];
+}
+
+/** Returns the top left point of the view.
+	If the receiver has a superview, checks whether this superview is flipped or
+	not. If non-flipped coordinates are used, the frame origin is adjusted 
+	before returning the value, otherwise this method is equivalent to 
+	-frameOrigin.
+	Be careful that calling this method with no receiver superview results in 
+	a view origin different from -frameOrigin. */
+- (NSPoint) topLeftPoint
+{
+	NSPoint topLeftPoint = [self frame].origin;
+	
+	if ([self superview] == nil || [[self superview] isFlipped] == NO)
+		topLeftPoint.y += [self height];
+		
+	return topLeftPoint;
+}
+
+/** Sets the size of the view without moving the bottom left point.
+	If the receiver has a superview, checks whether this superview is flipped or
+	not. If flipped coordinates are used, the frame origin is adjusted 
+	before calling -setFrameSize:, otherwise this method is equivalent to 
+	-setFrameSize:. */
+- (void) setFrameSizeFromBottomLeft: (NSSize)size
+{
+	NSView *superview = [self superview];
+	float delta = [self height] - size.height;
+	
+	if (superview != nil && [superview isFlipped])
+		[self setY: [self y] + delta];
+	
+	[self setFrameSize: size];
+}
+
+/** Sets the height of the view without moving the bottom left point.
+	If the receiver has a superview, checks whether this superview is flipped or
+	not. If flipped coordinates are used, the frame origin is adjusted 
+	before calling -setHeight:, otherwise this method is equivalent to 
+	-setHeight:. */
+- (void) setHeightFromBottomLeft: (int)height
+{
+	[self setFrameSizeFromBottomLeft: NSMakeSize([self width], height)];
+}
+
+/** Returns the bottom left point of the view.
+	If the receiver has a superview, checks whether this superview is flipped or
+	not. If flipped coordinates are used, the frame origin is adjusted before
+	returning the value, otherwise this method is equivalent to 
+	-frameOrigin. */
+- (NSPoint) bottomLeftPoint
+{
+	NSPoint bottomLeftPoint = [self frame].origin;
+	
+	if ([self superview] != nil && [[self superview] isFlipped])
+		bottomLeftPoint.y -= [self height];
+		
+	return bottomLeftPoint;
 }
 
 @end

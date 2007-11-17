@@ -13,6 +13,8 @@
 
 @interface NSView (Etoile) <NSCopying, ETCollection>
 
+- (BOOL) isContainer;
+
 /* Copying */
 
 - (id) copyWithZone: (NSZone *)zone;
@@ -22,7 +24,7 @@
 - (id) content;
 - (NSArray *) contentArray;
 
-/* Utility Methods */
+/* Frame Utility Methods */
 
 - (float) height;
 - (float) width;
@@ -33,7 +35,12 @@
 - (void) setX: (float)x;
 - (void) setY: (float)y;
 
-- (BOOL) isContainer;
+- (void) setFrameSizeFromTopLeft: (NSSize)size;
+- (void) setHeightFromTopLeft: (int)height;
+- (NSPoint) topLeftPoint;
+- (void) setFrameSizeFromBottomLeft: (NSSize)size;
+- (void) setHeightFromBottomLeft: (int)height;
+- (NSPoint) bottomLeftPoint;
 
 @end
 
