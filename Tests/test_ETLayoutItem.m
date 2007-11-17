@@ -39,10 +39,7 @@
 #import <EtoileUI/ETFlowLayout.h>
 #import <EtoileUI/NSIndexPath+Etoile.h>
 #import <UnitKit/UnitKit.h>
-#ifndef GNUSTEP
-#import <GNUstepBase/GNUstep.h>
-#endif
-
+#import <EtoileUI/ETCompatibility.h>
 @interface ETLayoutItem (UnitKitTests) <UKTest>
 @end
 
