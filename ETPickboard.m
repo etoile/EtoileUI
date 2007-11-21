@@ -38,9 +38,7 @@
 #import <EtoileUI/ETContainer.h>
 #import <EtoileUI/ETFlowLayout.h>
 #import <EtoileUI/ETCollection.h>
-#ifndef GNUSTEP
-#import <EtoileUI/GNUstep.h>
-#endif
+#import <EtoileUI/ETCompatibility.h>
 
 #define PALETTE_FRAME NSMakeRect(200, 200, 400, 200) 
 
@@ -49,10 +47,11 @@
 
 /* Factory methods */
 
+// TODO: Must be provided by UIServer (CoreObject backend)
 static ETPickboard *systemPickboard = nil;
 
 /** Returns the system-wide pickboard which is used by default accross Etoile
-    environment. */
+    environment. Also known as Shelf overlay. */
 + (ETPickboard *) systemPickboard
 {
 	if (systemPickboard == nil)
@@ -65,8 +64,11 @@ static ETPickboard *systemPickboard = nil;
     accessible in another project. */
 + (ETPickboard *) projectPickboard
 {
+	// FIXME: Implement
 	return nil;
 }
+
+static ETPickboard *localPickboard = nil;
 
 /** Returns the local pickboard which only exists in the process where it had 
 	been initially requested. This pickboard isn't available externally to other
@@ -75,11 +77,36 @@ static ETPickboard *systemPickboard = nil;
 	owner process ends. */
 + (ETPickboard *) localPickboard
 {
-	return nil;
+	if (localPickboard == nil)
+		localPickboard = [[ETPickboard alloc] init];
+
+	return localPickboard; 
+}
+
+static ETPickboard *activePickboard = nil;
+
+/** Returns the pickboard which should receive or provide objects if you 
+	invoke a pick and drop operation (copy, paste, cut, drag, drop etc.)
+	in the responder chain.
+	If you manipulate the pickboard directly, most of time you shouldn't bother 
+	of deciding whether to use system, project, local or some other pickboards 
+	but simply use the active pickboard. For example, your code will be:
+	[[ETPickboard activePickboard] pushObject: myObject] */
++ (ETPickboard *) activePickboard
+{
+	return activePickboard;
+}
+
+/* Sets the pickboard that should receive or provide objects when a
+   a pick and drop operation in the responder chain. */
++ (void) setActivePickboard: (ETPickboard *)pboard
+{
+	ASSIGN(activePickboard, pboard);
 }
 
 /* Initialization */
 
+/** <init \> Initializes and returns a new pickboard. */
 - (id) init
 {
 	self = [super init];
@@ -118,6 +145,7 @@ static ETPickboard *systemPickboard = nil;
 
 /* Pickboard Interaction */
 
+/** Removes the first element in the pickboard and returns it. */
 - (id) popObject
 {
 	[self checkPickboardValidity];
@@ -152,6 +180,10 @@ static ETPickboard *systemPickboard = nil;
 	return topObject;
 }
 
+/** Inserts an object as the first element in the pickboard and returns a 
+	pickboard transaction reference that uniquely identifies the pick and drop
+	operation underway. You can later retrieve the pushed object by keeping 
+	around the pickboard reference. */
 - (ETPickboardRef *) pushObject: (id)object
 {
 	[self checkPickboardValidity];
@@ -177,6 +209,10 @@ static ETPickboard *systemPickboard = nil;
 	return pickRef;
 }
 
+/** Adds an object as the last element in the pickboard and returns a 
+	pickboard transaction reference that uniquely identifies the pick and drop
+	operation underway. You can later retrieve the added object by keeping 
+	around the pickboard reference. */
 - (ETPickboardRef *) addObject: (id)object
 {
 	[self checkPickboardValidity];
@@ -199,6 +235,9 @@ static ETPickboard *systemPickboard = nil;
 	return pickRef;
 }
 
+/** Removes a previously picked object identified by 'ref' from the pickboard. 
+	Every time you put an object on a pickboard, the target pickboard returns a 
+	reference making later operations on this object more convenient. */
 - (void) removeObjectForPickboardRef: (ETPickboardRef *)ref
 {
 	id object = [_pickedObjects objectForKey: ref];
@@ -216,6 +255,10 @@ static ETPickboard *systemPickboard = nil;
 	}
 }
 
+/** Returns a previously picked object bound to the pickboard transaction
+	reference 'ref'. Every time you put an object on a pickboard, the 
+	target pickboard returns a reference making later retrieval more 
+	convenient. */
 - (id) objectForPickboardRef: (ETPickboardRef *)ref
 {
 	return [_pickedObjects objectForKey: ref];
@@ -223,14 +266,60 @@ static ETPickboard *systemPickboard = nil;
 
 /* Pick & Drop Palette */
 
+/** Returns the window embedding the UI representation of the receiver. */
 - (NSWindow *) pickPalette
 {
 	return _pickPalette;
 }
 
+/** Brings the pickboard window to the front and makes it the first responder. */
 - (void) showPickPalette
 {
 	[[self pickPalette] makeKeyAndOrderFront: self];
+}
+
+@end
+
+/* Picked Object Set */
+
+@implementation ETPickCollection
+
++ (id) pickCollectionWithObjects: (id <ETCollection>)objects
+{
+	return AUTORELEASE([(ETPickCollection *)[[self class] alloc] initWithObjects: objects]);
+}
+
+/** <init \> Initializes and returns a picked object set (known as a pick 
+	collection) with the objects of the collection passed in parameter. */
+- (id) initWithObjects: (id <ETCollection>)objects
+{
+	self = [super init];
+	
+	if (self != nil)
+	{
+		ASSIGN(_pickedObjects, [NSArray arrayWithArray: (id)objects]);
+	}
+	
+	return self;
+}
+
+- (void) dealloc
+{
+	DESTROY(_pickedObjects);
+	
+	[super dealloc];
+}
+
+/* ETCollection protocol */
+
+- (id) content
+{
+	return _pickedObjects;
+}
+
+- (NSArray *) contentArray
+{
+	return [_pickedObjects contentArray];
 }
 
 @end
