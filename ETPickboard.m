@@ -113,6 +113,9 @@ static ETPickboard *activePickboard = nil;
 	
 	if (self != nil)
 	{
+		_pickedObjects = [[NSMutableDictionary alloc] init];
+		
+		/* UI set up */
 		ETContainer *pickView = [[ETContainer alloc] initWithFrame: PALETTE_FRAME layoutItem: self];
 		
 		// FIXME: Update this code when a layout item representation exists for NSWindow instances.
@@ -149,35 +152,31 @@ static ETPickboard *activePickboard = nil;
 - (id) popObject
 {
 	[self checkPickboardValidity];
-
-	ETLayoutItem *topItem = nil;
-	id topObject = nil;
 	
-	if ([self numberOfItems] > 0)
-		topItem = [self itemAtIndex: 0];
-		
-	if ([[_pickedObjects allValues] containsObject: topItem])
-	{
-		RETAIN(topItem);
-		[self removeItemAtIndex: 0];
+	if ([self numberOfItems] == 0)
+		return nil;
 
-		topObject = AUTORELEASE(topItem);
-	}
-	else
-	{
-		id pickedObject = [topItem representedObject];
-		
-		NSAssert3([[_pickedObjects allValues] containsObject: pickedObject], 
-			@"Pickboard %@ is in an invalid state, it should object %@ "
-			@"referenced by item %@", self, pickedObject, topItem);
-		
-		RETAIN(pickedObject);
-		[self removeItemAtIndex: 0];
-			
-		topObject = AUTORELEASE(pickedObject);
-	}
+	// NOTE: pickedObject is represented by topItem in the pickboard. Take note 
+	// that pickedObject can be a layout item.
+	ETLayoutItem *topItem = [self itemAtIndex: 0];
+	id pickedObject = [topItem representedObject];
+	NSArray *pickRefs = nil;
 	
-	return topObject;
+	NSAssert3([[_pickedObjects allValues] containsObject: pickedObject], 
+		@"Pickboard %@ is in an invalid state, it should contain object %@ "
+		@"referenced by item %@", self, pickedObject, topItem);
+		
+	pickRefs = [_pickedObjects allKeysForObject: pickedObject];
+	
+	NSAssert3([pickRefs count] == 1, @"Pickboard %@ is in an invalid state, it "
+		"should have only one pickboard reference %@ for object %@ ", self, 
+		pickedObject, pickRefs);
+	
+	RETAIN(pickedObject);
+	[self removeItemAtIndex: 0];
+	[_pickedObjects removeObjectForKey: [pickRefs objectAtIndex: 0]];
+	
+	return AUTORELEASE(pickedObject);
 }
 
 /** Inserts an object as the first element in the pickboard and returns a 
@@ -187,24 +186,20 @@ static ETPickboard *activePickboard = nil;
 - (ETPickboardRef *) pushObject: (id)object
 {
 	[self checkPickboardValidity];
-		
+	
+	/* Use -addObject: instead of -pushObject: if necessary */
 	if ([_pickedObjects count] == 0)
 		return [self addObject: object];
-
+		
+	/* Push Object */
 	NSString *pickRef = [NSString stringWithFormat: @"%d", ++_pickboardRef];
 	
 	[_pickedObjects setObject: object forKey: pickRef];
-	if ([object isKindOfClass: [ETLayoutItem class]])
-	{
-		[self insertItem: object atIndex: 0];
-	}
-	else
-	{
-		ETLayoutItem *item = [[ETLayoutItem alloc] initWithRepresentedObject: object];
-		
-		AUTORELEASE(item);
-		[self insertItem: item atIndex: 0];	
-	}
+
+	ETLayoutItem *item = [[ETLayoutItem alloc] initWithRepresentedObject: object];
+
+	[self insertItem: item atIndex: 0];
+	RELEASE(item);
 	
 	return pickRef;
 }
@@ -218,19 +213,13 @@ static ETPickboard *activePickboard = nil;
 	[self checkPickboardValidity];
 
 	NSString *pickRef = [NSString stringWithFormat: @"%d", ++_pickboardRef];
-	
+
 	[_pickedObjects setObject: object forKey: pickRef];
-	if ([object isKindOfClass: [ETLayoutItem class]])
-	{
-		[self addItem: object];
-	}
-	else
-	{
-		ETLayoutItem *item = [[ETLayoutItem alloc] initWithRepresentedObject: object];
-		
-		AUTORELEASE(item);
-		[self addItem: item];	
-	}
+
+	ETLayoutItem *item = [[ETLayoutItem alloc] initWithRepresentedObject: object];
+	
+	[self addItem: item];
+	RELEASE(item);
 	
 	return pickRef;
 }
@@ -241,18 +230,11 @@ static ETPickboard *activePickboard = nil;
 - (void) removeObjectForPickboardRef: (ETPickboardRef *)ref
 {
 	id object = [_pickedObjects objectForKey: ref];
-	
-	if ([[self items] containsObject: object])
-	{
-		[self removeItem: object];
-	}
-	else
-	{
-		ETLayoutItem *item = [[self items] 
+	ETLayoutItem *item = [[self items] 
 			firstObjectMatchingValue: object forKey: @"representedObject"];
 		
-		[self removeItem: item];
-	}
+	[self removeItem: item];
+	[_pickedObjects removeObjectForKey: ref];
 }
 
 /** Returns a previously picked object bound to the pickboard transaction

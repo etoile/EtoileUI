@@ -63,6 +63,7 @@
 	owner process ends. */
 + (ETPickboard *) localPickboard;
 + (ETPickboard *) activePickboard;
++ (void) setActivePickboard: (ETPickboard *)pickboard;
 
 /* Pickboard Interaction */
 
