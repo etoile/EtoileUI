@@ -72,6 +72,7 @@
 - (ETPickboardRef *) addObject: (id)object;
 - (void) removeObjectForPickboardRef: (ETPickboardRef *)ref;
 - (id) objectForPickboardRef: (ETPickboardRef *)ref;
+- (NSArray *) allObjects;
 
 /* Pick & Drop Palette */
 

@@ -114,6 +114,7 @@ static ETPickboard *activePickboard = nil;
 	if (self != nil)
 	{
 		_pickedObjects = [[NSMutableDictionary alloc] init];
+		_pickboardRef = 0;
 		
 		/* UI set up */
 		ETContainer *pickView = [[ETContainer alloc] initWithFrame: PALETTE_FRAME layoutItem: self];
@@ -244,6 +245,12 @@ static ETPickboard *activePickboard = nil;
 - (id) objectForPickboardRef: (ETPickboardRef *)ref
 {
 	return [_pickedObjects objectForKey: ref];
+}
+
+/** Returns all picked objects still on the pickboard. */
+- (NSArray *) allObjects
+{
+	return [_pickedObjects allValues];
 }
 
 /* Pick & Drop Palette */
