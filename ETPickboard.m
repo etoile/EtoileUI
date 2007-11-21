@@ -227,13 +227,22 @@ static ETPickboard *activePickboard = nil;
 
 /** Removes a previously picked object identified by 'ref' from the pickboard. 
 	Every time you put an object on a pickboard, the target pickboard returns a 
-	reference making later operations on this object more convenient. */
+	reference making later operations on this object more convenient. 
+	Throws an invalid argument exception when no object is identified by ref in
+	the pickboard. */
 - (void) removeObjectForPickboardRef: (ETPickboardRef *)ref
 {
 	id object = [_pickedObjects objectForKey: ref];
+	
+	if (object == nil)
+	{
+		[NSException raise: NSInvalidArgumentException format: @"Pickboard %@ "
+			"received an invalid pickboard ref %@ to remove an object.", self, ref];
+	}
+	
 	ETLayoutItem *item = [[self items] 
 			firstObjectMatchingValue: object forKey: @"representedObject"];
-		
+			
 	[self removeItem: item];
 	[_pickedObjects removeObjectForKey: ref];
 }
