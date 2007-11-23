@@ -51,11 +51,11 @@
 	item of the layout item matching the view that replies YES to -hitTest. If 
 	the view has no corresponding layout item and returns YES, the event 
 	handling remains on AppKit side (following AppKit event model). If this 
-	view returns NO, then -hitTest is done the superview which may have a 
+	view returns NO, then -hitTest is done on the superview which may have a 
 	matching layout item or not. 
 	ETView class and subclasses replies YES to -hitTest unlike NSView, so the
 	event they received are always routed to their corresponding layout item.
-	Basic vent handling methods in ETLayoutItem reuses the name of their 
+	Basic event handling methods in ETLayoutItem reuses the name of their 
 	equivalent NSResponder methods plus an additional method keywoard 'on:'.
 	Here is an example:
 	- (void) mouseDown: (NSEvent *)event in Responder
@@ -66,7 +66,7 @@
 	to changing event handling at runtime by plugging another event handler.
 	This will help to support multiple interaction modes very easily as needed 
 	by many graphics applications and to implement custom mouse tracking 
-	(radio buttons, menus, custom controls etc.)
+	(radio buttons, menus, custom controls etc.)  without subclassing.
 	
 	When a layout item receives an event, it looks up for the higher ancestor 
 	item that wants to preempt the event. For example, if the root item has an
@@ -102,7 +102,13 @@
 	all the details involved by dealing with a source when one is set. These 
 	methods takes care of finding whether the item is provided by a source or 
 	not by looking up in the layout item tree.
-    */
+	If an item group has a source which doesn't implement mutation methods. The
+	selected and related children items will use another selection color (or
+	visual indicator) than the usual one. This makes clear whether a selected 
+	item will be picked if you try to. Usually unless the user tweaks the UI, he
+	usually won't see two selection colors in a table to take an example. 
+	(see ETLayoutItemGroup which provides detailed explanations about related 
+	items and how a source can be overriden in a layout item subtree). */
 
 @interface ETLayoutItem (Events) <ETEventHandler>
 
