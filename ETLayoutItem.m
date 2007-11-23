@@ -1299,27 +1299,15 @@
 	
 	if (self != nil)
 	{
-		NSRect viewFrameInWindow = NSMakeRect(0, 0, 32, 32); 
-		NSBitmapImageRep *rep = nil;
+		NSRect viewRect = [view frame];
 		
-		if ([view superview] != nil)
-		{
-			viewFrameInWindow = [[view superview] convertRect: [view frame] toView: nil];
-			NSLog(@"Converted view frame %@ to %@ in window coordinates", 
-				NSStringFromRect([view frame]), NSStringFromRect(viewFrameInWindow));
-		}
-		else
-		{
-			NSLog(@"FIXME: Unable to generate snapshot of view not located in a window yet");
-			
-			// FIXME: The following line probably doesn't work. We certainly 
-			// need to put the view in a dummy off-screen window.
-			viewFrameInWindow = [view frame];
-			viewFrameInWindow.origin = NSZeroPoint;
-		}
-		rep = [[NSBitmapImageRep alloc] initWithFocusedViewRect: viewFrameInWindow];
-		
-		[self addRepresentation: rep];
+		viewRect.origin = NSZeroPoint;
+		#ifdef GNUSTEP
+		[self initWithData: [view dataWithEPSInsideRect: viewRect]];
+		#else
+		// NOTE: -dataWithEPSInsideRect: doesn't work on Mac OS X
+		[self initWithData: [view dataWithPDFInsideRect: viewRect]];
+		#endif
 	}
 	
 	ETLog(@"Generated new image with reps %@ based on view %@", [self representations], view);
