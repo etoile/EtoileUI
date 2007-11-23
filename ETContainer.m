@@ -36,6 +36,7 @@
 
 #import <EtoileUI/ETContainer.h>
 #import <EtoileUI/ETLayoutItem.h>
+#import <EtoileUI/ETLayoutItem+Events.h>
 #import <EtoileUI/ETLayoutItemGroup.h>
 #import <EtoileUI/ETLayout.h>
 #import <EtoileUI/ETLayer.h>
@@ -1365,16 +1366,22 @@ NSString *ETLayoutItemPboardType = @"ETLayoutItemPboardType"; // FIXME: replace 
 - (void) mouseDragged: (NSEvent *)event
 {
 	ETLog(@"Mouse dragged");
-	
+
 	/* Convert drag location from window coordinates to the receiver coordinates */
 	NSPoint localPoint = [self convertPoint: [event locationInWindow] fromView: nil];
-
+	
+#if 0
 	/* Only handles event when it is located inside selection */
 	if ([self allowsDragging] && [self doesSelectionContainsPoint: localPoint])
 	{
 		ETLog(@"Allowed dragging on selection");
 		[self beginDragWithEvent: event]; 
 	}
+#endif
+
+	id item = [[self layout] itemAtLocation: localPoint];
+	
+	[item mouseDragged: event on: item];
 }
 
 /* ETContainer specific method to create a new drag and passing the request to data source */

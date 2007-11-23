@@ -55,6 +55,10 @@
 		603113350CF46DE9001A699E /* ETLayoutItemGroup+Factory.m in Sources */ = {isa = PBXBuildFile; fileRef = 603113330CF46DE9001A699E /* ETLayoutItemGroup+Factory.m */; };
 		603113360CF46DE9001A699E /* ETLayoutItemGroup+Factory.h in Headers */ = {isa = PBXBuildFile; fileRef = 603113320CF46DE9001A699E /* ETLayoutItemGroup+Factory.h */; };
 		603113370CF46DE9001A699E /* ETLayoutItemGroup+Factory.m in Sources */ = {isa = PBXBuildFile; fileRef = 603113330CF46DE9001A699E /* ETLayoutItemGroup+Factory.m */; };
+		603116240CF5131D001A699E /* ETLayoutItem+Events.h in Headers */ = {isa = PBXBuildFile; fileRef = 603116220CF5131C001A699E /* ETLayoutItem+Events.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		603116250CF5131D001A699E /* ETLayoutItem+Events.m in Sources */ = {isa = PBXBuildFile; fileRef = 603116230CF5131D001A699E /* ETLayoutItem+Events.m */; };
+		603116260CF5131D001A699E /* ETLayoutItem+Events.h in Headers */ = {isa = PBXBuildFile; fileRef = 603116220CF5131C001A699E /* ETLayoutItem+Events.h */; };
+		603116270CF5131D001A699E /* ETLayoutItem+Events.m in Sources */ = {isa = PBXBuildFile; fileRef = 603116230CF5131D001A699E /* ETLayoutItem+Events.m */; };
 		603463AC0C9FBF6A006DFCD1 /* ETCollection.h in Headers */ = {isa = PBXBuildFile; fileRef = 603463AA0C9FBF6A006DFCD1 /* ETCollection.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		603463AD0C9FBF6A006DFCD1 /* ETCollection.m in Sources */ = {isa = PBXBuildFile; fileRef = 603463AB0C9FBF6A006DFCD1 /* ETCollection.m */; };
 		603D4D0C0C8D1E10003DFD51 /* NSString+Etoile.h in Headers */ = {isa = PBXBuildFile; fileRef = 603D4D0A0C8D1E10003DFD51 /* NSString+Etoile.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -242,6 +246,8 @@
 		603112E70CF448D2001A699E /* ETPickboard.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ETPickboard.m; sourceTree = "<group>"; };
 		603113320CF46DE9001A699E /* ETLayoutItemGroup+Factory.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "ETLayoutItemGroup+Factory.h"; sourceTree = "<group>"; };
 		603113330CF46DE9001A699E /* ETLayoutItemGroup+Factory.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "ETLayoutItemGroup+Factory.m"; sourceTree = "<group>"; };
+		603116220CF5131C001A699E /* ETLayoutItem+Events.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "ETLayoutItem+Events.h"; sourceTree = "<group>"; };
+		603116230CF5131D001A699E /* ETLayoutItem+Events.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "ETLayoutItem+Events.m"; sourceTree = "<group>"; };
 		603463AA0C9FBF6A006DFCD1 /* ETCollection.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ETCollection.h; sourceTree = "<group>"; };
 		603463AB0C9FBF6A006DFCD1 /* ETCollection.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ETCollection.m; sourceTree = "<group>"; };
 		603D4D0A0C8D1E10003DFD51 /* NSString+Etoile.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSString+Etoile.h"; sourceTree = "<group>"; };
@@ -642,6 +648,8 @@
 			children = (
 				609F46A10B42049D00AD2209 /* ETLayoutItem.h */,
 				609F46A20B42049D00AD2209 /* ETLayoutItem.m */,
+				603116220CF5131C001A699E /* ETLayoutItem+Events.h */,
+				603116230CF5131D001A699E /* ETLayoutItem+Events.m */,
 				609548CE0C0E300500068CBB /* ETLayoutItemGroup.h */,
 				609548CF0C0E300500068CBB /* ETLayoutItemGroup.m */,
 				603113320CF46DE9001A699E /* ETLayoutItemGroup+Factory.h */,
@@ -741,6 +749,7 @@
 				605D6FB30CE9E7A1009ED244 /* ETTransform.h in Headers */,
 				603112EA0CF448D2001A699E /* ETPickboard.h in Headers */,
 				603113360CF46DE9001A699E /* ETLayoutItemGroup+Factory.h in Headers */,
+				603116260CF5131D001A699E /* ETLayoutItem+Events.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -793,6 +802,7 @@
 				605D6FB50CE9E7A1009ED244 /* ETTransform.h in Headers */,
 				603112E80CF448D2001A699E /* ETPickboard.h in Headers */,
 				603113340CF46DE9001A699E /* ETLayoutItemGroup+Factory.h in Headers */,
+				603116240CF5131D001A699E /* ETLayoutItem+Events.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1079,6 +1089,7 @@
 				603112DC0CF43D53001A699E /* test_ETPickboard.m in Sources */,
 				603112EB0CF448D2001A699E /* ETPickboard.m in Sources */,
 				603113370CF46DE9001A699E /* ETLayoutItemGroup+Factory.m in Sources */,
+				603116270CF5131D001A699E /* ETLayoutItem+Events.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1171,6 +1182,7 @@
 				605D6FB60CE9E7A1009ED244 /* ETTransform.m in Sources */,
 				603112E90CF448D2001A699E /* ETPickboard.m in Sources */,
 				603113350CF46DE9001A699E /* ETLayoutItemGroup+Factory.m in Sources */,
+				603116250CF5131D001A699E /* ETLayoutItem+Events.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
