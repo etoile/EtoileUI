@@ -306,15 +306,6 @@
 
 @end
 
-@interface ETContainer (WindowServerMetamodel)
-
-+ rootContainer;
-+ screenRootContainer;
-+ localRootContainer;
-+ windowRootContainer;
-
-@end
-
 
 extern NSString *ETContainerSelectionDidChangeNotification;
 extern NSString *ETLayoutItemPboardType;
