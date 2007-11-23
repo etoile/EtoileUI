@@ -1369,47 +1369,9 @@ NSString *ETLayoutItemPboardType = @"ETLayoutItemPboardType"; // FIXME: replace 
 
 	/* Convert drag location from window coordinates to the receiver coordinates */
 	NSPoint localPoint = [self convertPoint: [event locationInWindow] fromView: nil];
-	
-#if 0
-	/* Only handles event when it is located inside selection */
-	if ([self allowsDragging] && [self doesSelectionContainsPoint: localPoint])
-	{
-		ETLog(@"Allowed dragging on selection");
-		[self beginDragWithEvent: event]; 
-	}
-#endif
-
 	id item = [[self layout] itemAtLocation: localPoint];
 	
 	[item mouseDragged: event on: item];
-}
-
-/* ETContainer specific method to create a new drag and passing the request to data source */
-- (void) beginDragWithEvent: (NSEvent *)event
-{
-	NSPasteboard *pboard = [NSPasteboard pasteboardWithName: NSDragPboard];
-	NSPoint dragPosition = [self convertPoint: [event locationInWindow]
-									 fromView: nil];
-	NSImage *image = [[self itemAtIndex: [self selectionIndex]] image];
-	BOOL dragDataProvided = NO;
-
-	dragDataProvided = [self container: self writeItemsAtIndexes: [self selectionIndexes]
-		toPasteboard: pboard];	
-	
-	//dragPosition.x -= 32;
-	//dragPosition.y -= 32;
-	
-	// FIXME: Draw drag image made of all dragged items and not just first one
-	if (dragDataProvided)
-	{
-		[self dragImage: image
-					 at: dragPosition
-				 offset: NSZeroSize
-				  event: event 
-			 pasteboard: [NSPasteboard pasteboardWithName: NSDragPboard]
-				 source: self 
-			  slideBack: YES];
-	}
 }
 
 - (BOOL) container: (ETContainer *)container writeItemsAtIndexes: (NSIndexSet *)indexes toPasteboard: (NSPasteboard *)pboard

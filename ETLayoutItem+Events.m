@@ -36,6 +36,7 @@
 #import <EtoileUI/ETLayoutItem+Events.h>
 #import <EtoileUI/ETLayoutItemGroup.h>
 #import <EtoileUI/ETPickboard.h>
+#import <EtoileUI/ETCompatibility.h>
 
 
 @implementation ETLayoutItem (Events)
@@ -64,6 +65,7 @@
 
 	if ([self representedPathBase] != nil)
 	{
+		ETLog(@"Allowed dragging on selection");
 		[self handleDrag: event forItem: item];
 	}
 	else
