@@ -40,6 +40,7 @@
 #import <EtoileUI/ETLayout.h>
 #import <EtoileUI/ETLayer.h>
 #import <EtoileUI/ETInspector.h>
+#import <EtoileUI/ETPickboard.h>
 #import <EtoileUI/NSView+Etoile.h>
 #import <EtoileUI/NSIndexSet+Etoile.h>
 #import <EtoileUI/NSIndexPath+Etoile.h>
@@ -1382,6 +1383,7 @@ NSString *ETLayoutItemPboardType = @"ETLayoutItemPboardType"; // FIXME: replace 
 	NSPasteboard *pboard = [NSPasteboard pasteboardWithName: NSDragPboard];
 	NSPoint dragPosition = [self convertPoint: [event locationInWindow]
 									 fromView: nil];
+	NSImage *image = [[self itemAtIndex: [self selectionIndex]] image];
 	BOOL dragDataProvided = NO;
 
 	dragDataProvided = [self container: self writeItemsAtIndexes: [self selectionIndexes]
@@ -1393,7 +1395,7 @@ NSString *ETLayoutItemPboardType = @"ETLayoutItemPboardType"; // FIXME: replace 
 	// FIXME: Draw drag image made of all dragged items and not just first one
 	if (dragDataProvided)
 	{
-		[self dragImage: [[self itemAtIndex: [self selectionIndex]] image]
+		[self dragImage: image
 					 at: dragPosition
 				 offset: NSZeroSize
 				  event: event 
@@ -1405,7 +1407,7 @@ NSString *ETLayoutItemPboardType = @"ETLayoutItemPboardType"; // FIXME: replace 
 
 - (BOOL) container: (ETContainer *)container writeItemsAtIndexes: (NSIndexSet *)indexes toPasteboard: (NSPasteboard *)pboard
 {
-	BOOL dragDataProvided = NO;
+	BOOL dragDataProvided = YES;
 	
 	/* Verify if the drag is allowed now for AppKit-based layout */
 	if ([self allowsDragging] == NO)
@@ -1419,17 +1421,19 @@ NSString *ETLayoutItemPboardType = @"ETLayoutItemPboardType"; // FIXME: replace 
 	}
 	else if ([self source] == nil) /* Handles drag by ourself when allowed */
 	{
-		NSData *data = [NSKeyedArchiver archivedDataWithRootObject: indexes];
+		id pboard = [ETPickboard localPickboard];
+
+		[pboard pushObject: [self itemAtIndex: [self selectionIndex]]];
 		
-		[pboard declareTypes: [NSArray arrayWithObject: ETLayoutItemPboardType]
-			owner: nil];
-			
-		// NOTE: If we implement an unified layout item tree shared by 
-		// applications through CoreObject, we could eventually just put simple
-		// path on the pasteboard rather than archived object or index.
-		//[pboard setString: forType: ETLayoutItemPboardType];
-		/*[pboard setData: forType: ETLayoutItemPboardType];*/
-		dragDataProvided = [pboard setData: data forType: ETLayoutItemPboardType];
+		/* We need to put something on the pasteboard otherwise AppKit won't 
+		   allow the drag */
+		pboard = [NSPasteboard pasteboardWithName: NSDragPboard];
+		[pboard declareTypes: [NSArray arrayWithObject: ETLayoutItemPboardType] owner: nil];
+		
+		// TODO: Implements pasteboard compatibility to integrate with 
+		// non-native Etoile code
+		//NSData *data = [NSKeyedArchiver archivedDataWithRootObject: item];
+		//[pboard setData: data forType: ETLayoutItemPboardType];
 	}
 
 	return dragDataProvided;
@@ -1599,12 +1603,10 @@ NSString *ETLayoutItemPboardType = @"ETLayoutItemPboardType"; // FIXME: replace 
 	}
 	else if ([self source] == nil) /* Handles drag by ourself when allowed */
 	{
-		NSPasteboard *pboard = [drag draggingPasteboard];
-		NSData *data = [pboard dataForType: ETLayoutItemPboardType];
-		NSIndexSet *indexes = [NSKeyedUnarchiver unarchiveObjectWithData: data];
-		int movedIndex = [indexes firstIndex];
-		ETLayoutItem *movedItem = [self itemAtIndex: movedIndex];
+		ETPickboard *pboard = [ETPickboard localPickboard];
+		ETLayoutItem *movedItem = (ETLayoutItem *)[pboard popObject];
 		int insertionIndex = index;
+		int movedIndex = [self indexOfItem: movedItem];
 		BOOL itemAlreadyRemoved = NO; // NOTE: Feature to be implemented
 		
 		RETAIN(movedItem);
@@ -1615,6 +1617,8 @@ NSString *ETLayoutItemPboardType = @"ETLayoutItemPboardType"; // FIXME: replace 
 		if (itemAlreadyRemoved == NO)
 		{
 			ETLog(@"For drop, removes item at index %d", movedIndex);
+			/* We remove the item to handle the case where it is moved to another
+		       index within the existing parent. */
 			[self removeItem: movedItem];
 			if (insertionIndex > movedIndex)
 				insertionIndex--;
@@ -1622,6 +1626,7 @@ NSString *ETLayoutItemPboardType = @"ETLayoutItemPboardType"; // FIXME: replace 
 		//[self setAutolayout: YES];
 		
 		ETLog(@"For drop, insert item at index %d", insertionIndex);
+
 		[self insertItem: movedItem atIndex: insertionIndex];
 		[self setSelectionIndex: insertionIndex];
 		

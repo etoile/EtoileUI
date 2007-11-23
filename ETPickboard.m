@@ -37,10 +37,12 @@
 #import <EtoileUI/ETPickboard.h>
 #import <EtoileUI/ETContainer.h>
 #import <EtoileUI/ETFlowLayout.h>
+#import <EtoileUI/ETOutlineLayout.h>
 #import <EtoileUI/ETCollection.h>
 #import <EtoileUI/ETCompatibility.h>
 
-#define PALETTE_FRAME NSMakeRect(200, 200, 400, 200) 
+#define PALETTE_FRAME NSMakeRect(200, 200, 400, 200)
+#define PICKBOARD_LAYOUT ETOutlineLayout
 
 
 @implementation ETPickboard
@@ -124,8 +126,9 @@ static ETPickboard *activePickboard = nil;
 		                                           styleMask: NSTitledWindowMask 
 												     backing: NSBackingStoreBuffered
 													   defer: YES];
-		[pickView setLayout: [ETFlowLayout layout]];
+		[pickView setLayout: [PICKBOARD_LAYOUT layout]];
 		[_pickPalette setContentView: pickView];
+		[_pickPalette setTitle: _(@"Pickboard")];
 		RELEASE(pickView);
 	}
 	

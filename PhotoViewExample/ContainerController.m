@@ -27,6 +27,8 @@
 	[viewContainer setLayout: AUTORELEASE([[ETStackLayout alloc] init])];
 	[viewContainer setHasVerticalScroller: YES];
 	[viewContainer setHasHorizontalScroller: YES];
+	
+	[[ETPickboard localPickboard] showPickPalette];
 }
 
 - (void) viewContainerDidResize: (NSNotification *)notif
