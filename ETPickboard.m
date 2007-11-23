@@ -44,6 +44,10 @@
 #define PALETTE_FRAME NSMakeRect(200, 200, 400, 200)
 #define PICKBOARD_LAYOUT ETOutlineLayout
 
+@interface ETPickboard (Private)
+- (ETLayoutItem *) layoutItemWithObject: (id)object;
+@end
+
 
 @implementation ETPickboard
 
@@ -200,12 +204,38 @@ static ETPickboard *activePickboard = nil;
 	
 	[_pickedObjects setObject: object forKey: pickRef];
 
-	ETLayoutItem *item = [[ETLayoutItem alloc] initWithRepresentedObject: object];
+	ETLayoutItem *item = [self layoutItemWithObject: object];
 
 	[self insertItem: item atIndex: 0];
 	RELEASE(item);
 	
 	return pickRef;
+}
+
+- (ETLayoutItem *) layoutItemWithObject: (id)object
+{
+	id item = nil;
+	
+	if ([object isKindOfClass: [ETPickCollection class]])
+	{
+		NSEnumerator *e = [[object contentArray] objectEnumerator];
+		id pickedItem = nil;
+		
+		item = [[ETLayoutItemGroup alloc] initWithRepresentedObject: object];
+		while ((pickedItem = [e nextObject]) != nil)
+		{
+			id childItem = [[ETLayoutItemGroup alloc] initWithRepresentedObject: pickedItem];
+			
+			[item addItem: childItem];
+			RELEASE(childItem);
+		}
+	}
+	else
+	{
+		item = [[ETLayoutItem alloc] initWithRepresentedObject: object];	
+	}
+	
+	return item;
 }
 
 /** Adds an object as the last element in the pickboard and returns a 
@@ -220,7 +250,7 @@ static ETPickboard *activePickboard = nil;
 
 	[_pickedObjects setObject: object forKey: pickRef];
 
-	ETLayoutItem *item = [[ETLayoutItem alloc] initWithRepresentedObject: object];
+	ETLayoutItem *item = [self layoutItemWithObject: object];
 	
 	[self addItem: item];
 	RELEASE(item);

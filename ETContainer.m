@@ -1408,33 +1408,6 @@ NSString *ETLayoutItemPboardType = @"ETLayoutItemPboardType"; // FIXME: replace 
 	return dragDataProvided;
 }
 
-- (unsigned int) draggingSourceOperationMaskForLocal: (BOOL)isLocal
-{
-	if (isLocal)
-	{
-		return NSDragOperationPrivate; //Move
-	}
-	else
-	{
-		return NSDragOperationNone;
-	}
-}
-
-- (void) draggedImage: (NSImage *)anImage beganAt: (NSPoint)aPoint
-{
-
-}
-
-- (void) draggedImage: (NSImage *)draggedImage movedTo: (NSPoint)screenPoint
-{
-	ETLog(@"Drag move receives in dragging source %@", self);
-}
-
-- (void) draggedImage: (NSImage *)anImage endedAt: (NSPoint)aPoint operation: (NSDragOperation)operation
-{
-	ETLog(@"Drag end receives in dragging source %@", self);
-}
-
 /* Dragging Destination */
 
 - (NSDragOperation) draggingEntered: (id <NSDraggingInfo>)sender

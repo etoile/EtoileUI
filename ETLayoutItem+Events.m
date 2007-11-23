@@ -90,12 +90,24 @@
 	}
 	else
 	{
+		NSArray *selectedItems = [self selectedItems];
 		// TODO: pickboard shouldn't be harcoded but rather customizable
-		[[ETPickboard localPickboard] pushObject: item];
+		id pboard = [ETPickboard localPickboard];
+		
+		/* If the dragged item is part of a selection which includes more than
+		   one item, we put a pick collection on pickboard */
+		if ([selectedItems count] > 1 && [selectedItems containsObject: item])
+		{
+			[pboard pushObject: [ETPickCollection pickCollectionWithObjects: selectedItems]];
+		}
+		else
+		{
+			[pboard pushObject: item];
+		}
 		
 		/* We need to put something on the pasteboard otherwise AppKit won't 
 		   allow the drag */
-		NSPasteboard *pboard = [NSPasteboard pasteboardWithName: NSDragPboard];
+		pboard = [NSPasteboard pasteboardWithName: NSDragPboard];
 		[pboard declareTypes: [NSArray arrayWithObject: ETLayoutItemPboardType] owner: nil];
 		
 		// TODO: Implements pasteboard compatibility to integrate with 
@@ -110,20 +122,67 @@
 /* ETLayoutItem specific method to create a new drag and passing the request to data source */
 - (void) beginDrag: (NSEvent *)event forItem: (id)item image: (NSImage *)customDragImage
 {
-	id dragSource = [event window];
+	id dragSupervisor = [event window];
 	NSImage *dragIcon = customDragImage;
 	
 	if (dragIcon == nil)
 		dragIcon = [item image];
 	
 	// FIXME: Draw drag image made of all dragged items and not just first one
-	[dragSource dragImage: dragIcon
-					   at: [event locationInWindow]
-				   offset: NSZeroSize
-					event: event 
-			   pasteboard: [NSPasteboard pasteboardWithName: NSDragPboard]
-				   source: dragSource
-				slideBack: YES];
+	[dragSupervisor dragImage: dragIcon
+					       at: [event locationInWindow]
+				       offset: NSZeroSize
+				     	event: event 
+			       pasteboard: [NSPasteboard pasteboardWithName: NSDragPboard]
+				       source: self
+			    	slideBack: YES];
+}
+
+/* Dragging Source
+   This protocol is implemented to allow the use of ETLayoutItemGroup instances
+   as drag source. An ancestor item group plays the role of the dragging source 
+   when child items are dragged. */
+
+/** Overrides this method if you want to turn off key modifier actions for 
+	child items dragged from the receiver item group they belong to. */
+- (BOOL) ignoreModifierKeysWhileDragging
+{
+	return NO;
+}
+
+- (unsigned int) draggingSourceOperationMaskForLocal: (BOOL)isLocal
+{
+	if (isLocal)
+	{
+		return NSDragOperationPrivate; //Move
+	}
+	else
+	{
+		return NSDragOperationNone;
+	}
+}
+
+- (void) draggedImage: (NSImage *)anImage beganAt: (NSPoint)aPoint
+{
+	//ETLog(@"DRAG SOURCE - Drag began receives in dragging source %@", self);
+}
+
+- (void) draggedImage: (NSImage *)draggedImage movedTo: (NSPoint)screenPoint
+{
+	//ETLog(@"DRAG SOURCE - Drag move receives in dragging source %@", self);
+}
+
+- (void) draggedImage: (NSImage *)anImage endedAt: (NSPoint)aPoint operation: (NSDragOperation)operation
+{
+	ETLog(@"DRAG SOURCE - Drag end receives in dragging source %@", self);
+	
+	if (operation == NSDragOperationNone)
+	{
+		id draggedObject = [[ETPickboard localPickboard] popObject];
+		
+		ETLog(@"Cancelled drag of %@ receives in dragging source %@", 
+			draggedObject, self);
+	}
 }
 
 #if 0

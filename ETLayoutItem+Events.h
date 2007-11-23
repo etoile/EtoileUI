@@ -108,7 +108,13 @@
 	item will be picked if you try to. Usually unless the user tweaks the UI, he
 	usually won't see two selection colors in a table to take an example. 
 	(see ETLayoutItemGroup which provides detailed explanations about related 
-	items and how a source can be overriden in a layout item subtree). */
+	items and how a source can be overriden in a layout item subtree). 
+	
+	- (NSArray *)namesOfPromisedFilesDroppedAtDestination:(NSURL *)dropDestination 
+	isn't officially supported by EtoileUI, all other methods of NSDraggingSource
+	are implemented in ETGroupEventHandler and can be overriden. 
+	WARNING: ETGroupEventHandler doesn't exist yet and is currently part of 
+	ETLayoutItem (Events). */
 
 @interface ETLayoutItem (Events) <ETEventHandler>
 
