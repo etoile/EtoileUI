@@ -51,7 +51,7 @@
 		603112E90CF448D2001A699E /* ETPickboard.m in Sources */ = {isa = PBXBuildFile; fileRef = 603112E70CF448D2001A699E /* ETPickboard.m */; };
 		603112EA0CF448D2001A699E /* ETPickboard.h in Headers */ = {isa = PBXBuildFile; fileRef = 603112E60CF448D2001A699E /* ETPickboard.h */; };
 		603112EB0CF448D2001A699E /* ETPickboard.m in Sources */ = {isa = PBXBuildFile; fileRef = 603112E70CF448D2001A699E /* ETPickboard.m */; };
-		603113340CF46DE9001A699E /* ETLayoutItemGroup+Factory.h in Headers */ = {isa = PBXBuildFile; fileRef = 603113320CF46DE9001A699E /* ETLayoutItemGroup+Factory.h */; };
+		603113340CF46DE9001A699E /* ETLayoutItemGroup+Factory.h in Headers */ = {isa = PBXBuildFile; fileRef = 603113320CF46DE9001A699E /* ETLayoutItemGroup+Factory.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		603113350CF46DE9001A699E /* ETLayoutItemGroup+Factory.m in Sources */ = {isa = PBXBuildFile; fileRef = 603113330CF46DE9001A699E /* ETLayoutItemGroup+Factory.m */; };
 		603113360CF46DE9001A699E /* ETLayoutItemGroup+Factory.h in Headers */ = {isa = PBXBuildFile; fileRef = 603113320CF46DE9001A699E /* ETLayoutItemGroup+Factory.h */; };
 		603113370CF46DE9001A699E /* ETLayoutItemGroup+Factory.m in Sources */ = {isa = PBXBuildFile; fileRef = 603113330CF46DE9001A699E /* ETLayoutItemGroup+Factory.m */; };
