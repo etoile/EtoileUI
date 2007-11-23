@@ -1211,19 +1211,20 @@ NSString *ETLayoutItemPboardType = @"ETLayoutItemPboardType"; // FIXME: replace 
 	{
 			[self setSelectionIndex: newIndex];
 	}
-	else if (newIndex != NSNotFound)
+	else if (newIndex != NSNotFound && [[self selectionIndexes] containsIndex: newIndex] == NO)
 	{
+		NSMutableIndexSet *indexes = [self selectionIndexes];
+		
 		if (([event modifierFlags] & SELECTION_BY_ONE_KEY_MASK
 		  || [event modifierFlags] & SELECTION_BY_RANGE_KEY_MASK)
 		  && ([self allowsMultipleSelection]))
 		{
-			NSMutableIndexSet *indexes = [self selectionIndexes];
-			
 			[indexes invertIndex: newIndex];
 			[self setSelectionIndexes: indexes];
 		}
 		else /* Only single selection has to be handled */
 		{
+			[indexes addIndex: newIndex];
 			[self setSelectionIndex: newIndex];
 		}
 	}
@@ -1546,33 +1547,20 @@ NSString *ETLayoutItemPboardType = @"ETLayoutItemPboardType"; // FIXME: replace 
 	else if ([self source] == nil) /* Handles drag by ourself when allowed */
 	{
 		ETPickboard *pboard = [ETPickboard localPickboard];
-		ETLayoutItem *movedItem = (ETLayoutItem *)[pboard popObject];
-		int insertionIndex = index;
-		int movedIndex = [self indexOfItem: movedItem];
-		BOOL itemAlreadyRemoved = NO; // NOTE: Feature to be implemented
-		
-		RETAIN(movedItem);
-		
-		//[self setAutolayout: NO];
-		 /* Dropped item is visible where it was initially located.
-		    If the flag is YES, dropped item is currently invisible. */
-		if (itemAlreadyRemoved == NO)
-		{
-			ETLog(@"For drop, removes item at index %d", movedIndex);
-			/* We remove the item to handle the case where it is moved to another
-		       index within the existing parent. */
-			[self removeItem: movedItem];
-			if (insertionIndex > movedIndex)
-				insertionIndex--;
-		}
-		//[self setAutolayout: YES];
-		
-		ETLog(@"For drop, insert item at index %d", insertionIndex);
+		id movedObject = [pboard popObject];
 
-		[self insertItem: movedItem atIndex: insertionIndex];
-		[self setSelectionIndex: insertionIndex];
-		
-		RELEASE(movedItem);
+		if ([movedObject isKindOfClass: [ETPickCollection class]])
+		{
+			NSEnumerator *e = [[movedObject contentArray] objectEnumerator];
+			ETLayoutItem *movedItem = nil;
+			
+			while ((movedItem = [e nextObject]) != nil)
+				[self insertDroppedObject: movedItem atIndex: index];
+		}
+		else
+		{
+			[self insertDroppedObject: movedObject atIndex: index];
+		}
 		
 		return YES;
 	}
@@ -1580,6 +1568,40 @@ NSString *ETLayoutItemPboardType = @"ETLayoutItemPboardType"; // FIXME: replace 
 	/* Don't handle drag when a source is set and doesn't implement this 
 	   mandatory drag data source method. */		
 	return NO;
+}
+
+- (void) insertDroppedObject: (id) movedItem atIndex: (int)index
+{
+	int insertionIndex = index;
+	int pickIndex = [self indexOfItem: movedItem];
+	BOOL isLocalPick = ([movedItem parentLayoutItem] == [self layoutItem]);
+	BOOL itemAlreadyRemoved = NO; // NOTE: Feature to be implemented
+	
+	RETAIN(movedItem);
+
+	//[self setAutolayout: NO];
+	 /* Dropped item is visible where it was initially located.
+		If the flag is YES, dropped item is currently invisible. */
+	if (itemAlreadyRemoved == NO)
+	{
+		ETLog(@"For drop, removes item at index %d", pickIndex);
+		/* We remove the item to handle the case where it is moved to another
+		   index within the existing parent. */
+		if (isLocalPick)
+		{
+			[self removeItem: movedItem];
+			if (insertionIndex > pickIndex)
+				insertionIndex--;
+		}
+	}
+	//[self setAutolayout: YES];
+
+	ETLog(@"For drop, insert item at index %d", insertionIndex);
+
+	[self insertItem: movedItem atIndex: insertionIndex];
+	//[self setSelectionIndex: insertionIndex];
+
+	RELEASE(movedItem);
 }
 
 /* Will be called when -draggingEntered and -draggingUpdated have validated the drag
