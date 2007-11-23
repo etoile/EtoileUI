@@ -590,6 +590,11 @@
 	return [_layoutItems indexOfObject: item];
 }
 
+- (int) numberOfItems
+{
+	return [_layoutItems count];
+}
+
 - (NSArray *) items
 {
 	return [NSArray arrayWithArray: _layoutItems];

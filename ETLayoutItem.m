@@ -699,7 +699,7 @@
 		/* Any objects can declare a class description, so we try to use it */
 		NSClassDescription *desc = [_modelObject classDescription];
 		
-		properties = [NSMutableArray arrayWithObjects: [desc attributeKeys]];
+		properties = [NSMutableArray arrayWithArray: [desc attributeKeys]];
 		// NOTE: Not really sure we should include relationship keys
 		[(NSMutableArray *)properties addObjectsFromArray: (NSArray *)[desc toManyRelationshipKeys]];
 		[(NSMutableArray *)properties addObjectsFromArray: (NSArray *)[desc toOneRelationshipKeys]];
