@@ -1551,7 +1551,9 @@ NSString *ETLayoutItemPboardType = @"ETLayoutItemPboardType"; // FIXME: replace 
 
 		if ([movedObject isKindOfClass: [ETPickCollection class]])
 		{
-			NSEnumerator *e = [[movedObject contentArray] objectEnumerator];
+			// NOTE: To keep the order of picked objects a reverse enumerator 
+			// is needed to balance the shifting of the last inserted object occurring on each insertion
+			NSEnumerator *e = [[movedObject contentArray] reverseObjectEnumerator];
 			ETLayoutItem *movedItem = nil;
 			
 			while ((movedItem = [e nextObject]) != nil)

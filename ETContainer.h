@@ -276,6 +276,9 @@
 - (BOOL) container: (ETContainer *)container writeItemsAtIndexes: (NSIndexSet *)indexes toPasteboard: (NSPasteboard *)pboard;
 - (BOOL) container: (ETContainer *)container acceptDrop: (id <NSDraggingInfo>)info atIndex: (int)index;
 - (NSDragOperation) container: (ETContainer *)container validateDrop: (id <NSDraggingInfo>)info atIndex: (int)index;
+// pickItems:
+// drag:items:atPath:
+// drop:items:atPath:
 
 /* Custom Drag and drop support by key and index path */
 // FIXME: Create new set structure NSPathSet rather than using NSArray
