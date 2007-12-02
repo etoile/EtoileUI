@@ -36,6 +36,7 @@
 
 #import <EtoileUI/ETFreeLayout.h>
 #import <EtoileUI/ETContainer.h>
+#import <EtoileUI/ETLayoutItem.h>
 #import <EtoileUI/ETCompatibility.h>
 
 @implementation ETFreeLayout
@@ -53,6 +54,65 @@
 	[[self container] setLayout: self];
 	RELEASE(self);
 }
+
+- (void) renderWithLayoutItems: (NSArray *)items
+{	
+	//ETLog(@"Render layout items: %@", items);
+	
+	NSArray *layoutModel = nil;
+	float scale = [[self layoutContext] itemScaleFactor];
+	
+	[self resizeLayoutItems: items toScaleFactor: scale];
+	
+	layoutModel = [self layoutModelForLayoutItems: items];
+	/* Now computes the location of every views by relying on the line by line 
+	   decomposition already made. */
+	[self computeLayoutItemLocationsForLayoutModel: layoutModel];
+	
+	// TODO: May be worth to optimize by computing set intersection of visible and unvisible layout items
+	// NSLog(@"Remove views %@ of next layout items to be displayed from their superview", itemViews);
+	[[self layoutContext] setVisibleItems: [NSArray array]];
+	
+	/* Adjust container size when it is embedded in a scroll view */
+	if ([[self layoutContext] isScrollViewShown])
+	{
+		// NOTE: For this assertion check -[ETContainer setScrollView:] 
+		NSAssert([self isContentSizeLayout] == YES, 
+			@"Any layout done in a scroll view must be based on content size");
+			
+		[[self layoutContext] setContentSize: [self layoutSize]];
+		NSLog(@"Layout size is %@ with container size %@ and clip view size %@", 
+			NSStringFromSize([self layoutSize]), 
+			NSStringFromSize([[self layoutContext] size]), 
+			NSStringFromSize([[self layoutContext] visibleContentSize]));
+	}
+	
+	[[self layoutContext] setVisibleItems: items];
+}
+
+- (NSArray *) layoutModelForLayoutItems: (NSArray *)items
+{
+	return [NSArray arrayWithArray: items];
+}
+
+- (void) computeLayoutItemLocationsForLayoutModel: (NSArray *)layoutModel
+{
+	NSEnumerator *e = [layoutModel objectEnumerator];
+	id item = nil;
+	
+	while ((item = [e nextObject]) != nil)
+	{
+		if ([item valueForProperty: @"kPersistentFrame"])
+		{
+			[item setFrame: [item persistentFrame]];
+		}
+		else
+		{
+			[item setPersistentFrame: [item frame]];
+		}
+	}
+}
+
 #if 0
 - (void) renderWithLayoutItems: (NSArray *)items
 {
