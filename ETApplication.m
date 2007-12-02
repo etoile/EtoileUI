@@ -56,6 +56,7 @@
 
 - (void) finishLaunching
 {
+	[super finishLaunching];
 	[self _setUpMenu];
 	[self _buildLayoutItemTree];
 }
@@ -81,12 +82,17 @@
 	#endif
 	
 	menuItem = [[NSMenuItem alloc] initWithTitle: _(@"Live Development")
-		action: @selector(toggleLiveDevelopment:) keyEquivalent: nil];
+		action: @selector(toggleLiveDevelopment:) keyEquivalent:@""];
 	[appMenu insertItem: menuItem atIndex: insertionIndex];
 	RELEASE(menuItem);
 	
 	menuItem = [[NSMenuItem alloc] initWithTitle: _(@"Inspect…")
-		action: @selector(inspect:) keyEquivalent: nil];
+		action: @selector(inspect:) keyEquivalent: @""];
+	[appMenu insertItem: menuItem atIndex: ++insertionIndex];
+	RELEASE(menuItem);
+	
+	menuItem = [[NSMenuItem alloc] initWithTitle: _(@"Browse…")
+		action: @selector(browse:) keyEquivalent: @""];
 	[appMenu insertItem: menuItem atIndex: ++insertionIndex];
 	RELEASE(menuItem);
 }
