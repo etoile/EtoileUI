@@ -138,6 +138,11 @@
 			    	slideBack: YES];
 }
 
+- (void) handleDragMove: (id)dragInfo forItem: (id)item
+{
+
+}
+
 /* Dragging Source
    This protocol is implemented to allow the use of ETLayoutItemGroup instances
    as drag source. An ancestor item group plays the role of the dragging source 

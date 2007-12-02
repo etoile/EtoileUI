@@ -124,6 +124,8 @@
 - (void) mouseDragged: (NSEvent *)event on: (id)item;
 - (void) handleDrag: (NSEvent *)event forItem: (id)item;
 - (void) beginDrag: (NSEvent *)event forItem: (id)item image: (NSImage *)customDragImage;
+- (void) handleDragMove: (id)dragInfo forItem: (id)item;
+- (void) handleDrop: (id)dragInfo forItem: (id)item;
 /*- (void) handlePickForObject: (id)object;
 - (void) handleAcceptDropForObject: (id)object;
 - (void) handleDropForObject: (id)object;*/
