@@ -38,6 +38,7 @@
 #import <EtoileUI/ETLayoutItemGroup.h>
 #import <EtoileUI/ETLayer.h>
 #import <EtoileUI/ETView.h>
+#import <EtoileUI/ETContainer.h>
 #import <EtoileUI/ETCompatibility.h>
 
 
@@ -65,7 +66,7 @@
 
 - (id) renderApplication: (id)app
 {
-	ETLayer *windowLayer = [ETLayer layer];
+	id windowLayer = [ETWindowLayer layer];
 	NSEnumerator *e = [[app windows] objectEnumerator];
 	NSWindow *window = nil;
 	id item = nil;
@@ -78,12 +79,13 @@
 	}
 	
 	/* Build pickboards */
-	[windowLayer addItem: 
-		[self renderPasteboard: [NSPasteboard generalPasteboard]]];
+	/*[windowLayer addItem: 
+		[self renderPasteboard: [NSPasteboard generalPasteboard]]];*/
 
-	return item;	
+	return windowLayer;	
 }
 
+#if 0
 - (id) renderWindow: (id)window
 {
 	id windowDecorator = [ETLayoutItem layoutItem];
@@ -94,6 +96,36 @@
 
 	return item;
 }
+#else
+- (id) renderWindow: (id)window
+{
+	id contentView = [window contentView];
+	id item = nil;
+	
+	RETAIN(contentView);
+	//[window setContentView: nil];
+	item = [self renderView: contentView];
+	[window setContentView: [item displayView]];
+	RELEASE(contentView);
+	
+	//id container = [[ETContainer alloc] initWithFrame: [contentView frame]];
+	//[window setContentView: container];
+	
+	//id childItem = [[[ETContainer alloc] initWithFrame: [contentView frame]] layoutItem];
+	//id childItem = [ETLayoutItemGroup layoutItemWithView: [[NSSlider alloc] initWithFrame: NSMakeRect(0, 0, 100, 100)]];
+	//[window setContentView: [childItem displayView]];
+	
+	//[window setContentView: [item view]];
+	
+	//[[item displayView] addSubview: [[NSSlider alloc] initWithFrame: NSMakeRect(0, 0, 100, 100)]];
+	
+	return item;
+}
+#endif
+
+#if 0
+
+#endif
 
 - (id) renderView: (id)view
 {
@@ -101,20 +133,48 @@
 	{
 		return [view layoutItem];
 	}
-	else
+	else if ([view isMemberOfClass: [NSView class]])
 	{
-		id item = [ETLayoutItemGroup layoutItemWithView: view];
+		id superview = [view superview];
+		id container = [[ETContainer alloc] initWithFrame: [view frame]];
+		id item = [container layoutItem]; //[ETLayoutItemGroup layoutItemWithView: container];
+		//return item;
 		// NOTE: -addItem: moves subview when subviews is enumerated, hence we have
 		// to iterate over a separate collection which isn't mutated.
 		// May be we could avoid moving subviews in -addItem: when they are 
 		// going to be reinserted at the location where they have been removed.
 		NSEnumerator *e = [[NSArray arrayWithArray: [view subviews]] objectEnumerator];
 		NSView *subview = nil;
+		
+		/*[container setAutoresizesSubviews: YES];
+		[container setAutoresizingMask: NSViewHeightSizable | NSViewWidthSizable];*/
+		[container setFlipped: [view isFlipped]];
+		[container setEnablesHitTest: YES];
 
 		while ((subview = [e nextObject]) != nil)
 		{
-			[item addItem: [self renderView: subview]];
+			RETAIN(subview);
+			id childItem = [self renderView: subview];
+			[item addItem: childItem];
+			//[container addSubview: [childItem displayView]];
+			//[container addSubview: subview];
+			RELEASE(subview);
 		}
+		
+		//[superview addSubview: [item displayView]];
+				
+		return item;
+	}
+	else
+	{
+		id superview = [view superview];
+		id item = nil;
+		
+		RETAIN(view);
+		item = [ETLayoutItem layoutItemWithView: view];
+		RELEASE(view);
+		
+		//[superview addSubview: [item displayView]];
 		
 		return item;
 	}

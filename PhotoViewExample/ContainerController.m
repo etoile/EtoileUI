@@ -69,6 +69,9 @@
 		case 3:
 			layoutClass = [ETTableLayout class];
 			break;
+		case 4:
+			layoutClass = [ETFreeLayout class];
+			break;
 		default:
 			NSLog(@"Unsupported layout or unknown popup menu selection");
 	}

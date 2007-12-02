@@ -19,6 +19,6 @@
 	<key>NSMainNibFile</key>
 	<string>ObjectManager</string>
 	<key>NSPrincipalClass</key>
-	<string>NSApplication</string>
+	<string>ETApplication</string>
 </dict>
 </plist>

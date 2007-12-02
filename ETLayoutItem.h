@@ -104,6 +104,7 @@
 + (ETLayoutItem *) layoutItem;
 + (ETLayoutItem *) layoutItemWithView: (NSView *)view;
 + (ETLayoutItem *) layoutItemWithValue: (id)value;
++ (ETLayoutItem *) layoutItemWithRepresentedObject: (id)object;
 
 /* Initialization */
 
@@ -151,6 +152,7 @@
 	of the tree structure is up to you.*/
 - (NSString *) name;
 - (void) setName: (NSString *)name;
+- (NSString *) displayName;
 
 /* Display Element */
 
@@ -235,8 +237,8 @@ shape*/
 
 /** The persistent frame is only valid and used in non-computed layout like
 	ETFreeLayout. */
-/*- (NSRect) persistentFrame;
-- (void) setPersistentFrame: (NSRect) frame;*/
+- (NSRect) persistentFrame;
+- (void) setPersistentFrame: (NSRect) frame;
 
 /** Returns always the current frame. This value is always in sync with 
 	persistent frame in non-computed layout but is usually different when

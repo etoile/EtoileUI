@@ -122,3 +122,21 @@
 }
 
 @end
+
+@implementation ETWindowLayer
+
+- (void) handleAttachItem: (ETLayoutItem *)item
+{
+	RETAIN(item);
+	if ([item parentLayoutItem] != nil)
+		[[item parentLayoutItem] removeItem: item];
+	RELEASE(item);
+	ASSIGN(item->_parentLayoutItem, self);
+}
+
+- (void) handleDetachItem: (ETLayoutItem *)item
+{
+	ASSIGN(item->_parentLayoutItem, nil);
+}
+
+@end

@@ -59,3 +59,10 @@
 - (BOOL) isVisible;*/
 
 @end
+
+@interface ETWindowLayer : ETLayer
+{
+
+}
+
+@end

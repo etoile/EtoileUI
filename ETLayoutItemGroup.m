@@ -399,6 +399,20 @@
 	return nil;
 }
 
+- (void) handleAttachItem: (ETLayoutItem *)item
+{
+	RETAIN(item);
+	if ([item parentLayoutItem] != nil)
+		[[item parentLayoutItem] removeItem: item];
+	[item setParentLayoutItem: self];
+	RELEASE(item);
+}
+
+- (void) handleDetachItem: (ETLayoutItem *)item
+{
+	[item setParentLayoutItem: nil];
+}
+
 /*	Alternatively, if you have a relatively small and static tree structure,
 	you can also build the tree by yourself and assigns the root item to the
 	container by calling -addItem:. In this case, the user will have the 
@@ -414,11 +428,7 @@
 		return;
 	}
 		
-	RETAIN(item);
-	if ([item parentLayoutItem] != nil)
-		[[item parentLayoutItem] removeItem: item];
-	[item setParentLayoutItem: self];
-	RELEASE(item);
+	[self handleAttachItem: item];
 	[_layoutItems addObject: item];
 	if ([self canUpdateLayout])
 		[self updateLayout];
@@ -435,11 +445,7 @@
 		return;
 	}
 	
-	RETAIN(item);
-	if ([item parentLayoutItem] != nil)
-		[[item parentLayoutItem] removeItem: item];
-	[item setParentLayoutItem: self];
-	RELEASE(item);
+	[self handleAttachItem: item];
 	[_layoutItems insertObject: item atIndex: index];
 	if ([self canUpdateLayout])
 		[self updateLayout];
@@ -476,7 +482,7 @@
 {
 	//ETLog(@"Remove item in %@", self);
 
-	[item setParentLayoutItem: nil];
+	[self handleDetachItem: item];
 	[_layoutItems removeObject: item];
 	if ([self canUpdateLayout])
 		[self updateLayout];

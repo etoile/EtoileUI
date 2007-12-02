@@ -96,6 +96,9 @@
 
 - (void) reload;
 
+- (void) handleAttachItem: (ETLayoutItem *)item;
+- (void) handleDetachItem: (ETLayoutItem *)item;
+
 /* Layout */
 
 - (ETLayout *) layout;

@@ -319,7 +319,7 @@
 
 	if ([container isEqual: itemGroupView])
 	{
-		displayedProperties = [NSArray arrayWithObjects: @"icon", @"name", nil];
+		displayedProperties = [NSArray arrayWithObjects: @"icon", @"displayName", nil];
 	}	
 	else if ([container isEqual: propertyView])
 	{

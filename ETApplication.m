@@ -36,6 +36,7 @@
 #import <EtoileUI/ETApplication.h>
 #import <EtoileUI/ETLayoutItemGroup.h>
 #import <EtoileUI/ETLayoutItemBuilder.h>
+#import <EtoileUI/ETObjectbrowserLayout.h>
 #import <EtoileUI/ETCompatibility.h>
 
 @interface ETApplication (Private)
@@ -86,15 +87,28 @@
 	[appMenu insertItem: menuItem atIndex: insertionIndex];
 	RELEASE(menuItem);
 	
-	menuItem = [[NSMenuItem alloc] initWithTitle: _(@"Inspect…")
+	menuItem = [[NSMenuItem alloc] initWithTitle: _(@"Inspect")
 		action: @selector(inspect:) keyEquivalent: @""];
 	[appMenu insertItem: menuItem atIndex: ++insertionIndex];
 	RELEASE(menuItem);
 	
-	menuItem = [[NSMenuItem alloc] initWithTitle: _(@"Browse…")
+	menuItem = [[NSMenuItem alloc] initWithTitle: _(@"Browse")
 		action: @selector(browse:) keyEquivalent: @""];
 	[appMenu insertItem: menuItem atIndex: ++insertionIndex];
 	RELEASE(menuItem);
+
+	menuItem = [[NSMenuItem alloc] initWithTitle: _(@"Browse Layout Item Tree")
+		action: @selector(browseLayoutItemTree:) keyEquivalent: @""];
+	[appMenu insertItem: menuItem atIndex: ++insertionIndex];
+	RELEASE(menuItem);
+}
+
+- (IBAction) browseLayoutItemTree: (id)sender
+{
+	ETObjectBrowser *browser = [[ETObjectBrowser alloc] init];
+
+	[browser setBrowsedObject: [self layoutItem]];
+	[[browser panel] makeKeyAndOrderFront: self];
 }
 
 - (IBAction) toggleLiveDevelopment: (id)sender

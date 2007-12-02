@@ -33,7 +33,9 @@
 	THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import "NSObject+EtoileUI.h"
+#import <EtoileUI/NSObject+EtoileUI.h>
+#import <EtoileUI/ETObjectBrowserLayout.h>
+#import <EtoileUI/ETCompatibility.h>
 
 
 @implementation NSObject (EtoileUI)
@@ -43,7 +45,11 @@
 	application the browsed object is part of). */
 - (IBAction) browse: (id)sender
 {
-	// FIXME: Implement
+	ETObjectBrowser *browser = [[ETObjectBrowser alloc] init];
+
+	ETLog(@"browse %@", self);
+	[browser setBrowsedObject: self];
+	[[browser panel] makeKeyAndOrderFront: self];
 }
 
 /** Shows the layout item representing the receiver by enforcing referential
@@ -78,7 +84,8 @@
 
 - (IBAction) browse: (id)sender
 {
-	[[self nextResponder] browse: sender];
+	[super browse: sender];
+	//[[self nextResponder] browse: sender];
 }
 
 - (IBAction) view: (id)sender

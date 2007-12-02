@@ -52,6 +52,7 @@
 
 #import <EtoileUI/NSObject+EtoileUI.h>
 #import <EtoileUI/NSView+Etoile.h>
+#import <EtoileUI/NSWindow+Etoile.h>
 #import <EtoileUI/ETObjectRegistry+EtoileUI.h>
 #import <EtoileUI/ETInspecting.h>
 
@@ -88,4 +89,5 @@
 
 #import <EtoileUI/ETFreeLayout.h>
 
+#import <EtoileUI/ETObjectBrowserLayout.h>
 #import <EtoileUI/ETInspector.h>

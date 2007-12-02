@@ -28,8 +28,18 @@
 			<string>NSResponder</string>
 		</dict>
 		<dict>
+			<key>CLASS</key>
+			<string>FirstResponder</string>
+			<key>LANGUAGE</key>
+			<string>ObjC</string>
+			<key>SUPERCLASS</key>
+			<string>NSObject</string>
+		</dict>
+		<dict>
 			<key>ACTIONS</key>
 			<dict>
+				<key>browse</key>
+				<string>id</string>
 				<key>inspect</key>
 				<string>id</string>
 				<key>view</key>
@@ -39,14 +49,6 @@
 			<string>NSObject</string>
 			<key>LANGUAGE</key>
 			<string>ObjC</string>
-		</dict>
-		<dict>
-			<key>CLASS</key>
-			<string>FirstResponder</string>
-			<key>LANGUAGE</key>
-			<string>ObjC</string>
-			<key>SUPERCLASS</key>
-			<string>NSObject</string>
 		</dict>
 		<dict>
 			<key>ACTIONS</key>
@@ -77,6 +79,8 @@
 		<dict>
 			<key>ACTIONS</key>
 			<dict>
+				<key>browse</key>
+				<string>id</string>
 				<key>inspect</key>
 				<string>id</string>
 				<key>view</key>

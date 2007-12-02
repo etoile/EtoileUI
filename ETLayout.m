@@ -248,7 +248,7 @@
 	
 	// NOTE: Avoids retain cycle by weak referencing the context
 	_layoutContext = context;
-	[[_layoutContext items] makeObjectsPerformSelector: @selector(restoreDefaultFrame)];
+	//[[_layoutContext items] makeObjectsPerformSelector: @selector(restoreDefaultFrame)];
 }
 
 - (id <ETLayoutingContext>) layoutContext
@@ -591,7 +591,7 @@
 		/* Apply Scaling */
 		if ([item view] != nil)
 		{
-
+			itemFrame.origin = [item origin];
 			[item setFrame: itemFrame];
 			//NSLog(@"Scale %@ to %@", NSStringFromRect(unscaledFrame), 
 			//	NSStringFromRect(ETScaleRect(unscaledFrame, factor)));
@@ -678,6 +678,7 @@
 	
 	if ([layoutView superview] == nil)
 	{
+		[layoutView setAutoresizingMask: NSViewHeightSizable | NSViewWidthSizable];
 		[[self container] setDisplayView: layoutView];
 	}
 	else if ([[layoutView superview] isEqual: [self container]] == NO)

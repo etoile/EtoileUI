@@ -1,7 +1,8 @@
 /*
-	ETApplication.h
+	ETObjectBrowserLayout.h
 	
-	NSApplication subclass implementing Etoile specific behavior.
+	A layout view which implements a reusable object browser supporting 
+	CoreObject and EtoileUI object models
  
 	Copyright (C) 2007 Quentin Mathe
  
@@ -35,19 +36,32 @@
  
 #import <Foundation/Foundation.h>
 #import <AppKit/AppKit.h>
+#import <EtoileUI/ETLayout.h>
 #import <EtoileUI/ETLayoutItemGroup.h>
 
-/** If you use a custom NSApplication subclass, you must subclass ETApplication 
-	instead of NSApplication to make it Etoile-native.
-	This subclass takes care of enabling live development support at runtime. */
 
-@interface ETApplication : NSApplication 
+@interface ETObjectBrowserLayout : ETLayout
 {
-	ETLayoutItemGroup *_windowLayer;
+
 }
 
-- (ETLayoutItemGroup *) layoutItem;
-- (IBAction) browseLayoutItemTree: (id)sender;
-- (IBAction) toggleLiveDevelopment: (id)sender;
+- (id) browsedObject;
+
+@end
+
+
+@interface ETObjectBrowser : ETLayoutItemGroup
+{
+	IBOutlet NSWindow *window;
+	id _browsedObject;
+}
+
+- (id) browsedObject;
+- (void) setBrowsedObject: (id)object;
+
+- (NSWindow *) window;
+- (NSPanel *) panel;
+
+- (IBAction) browse: (id)sender;
 
 @end

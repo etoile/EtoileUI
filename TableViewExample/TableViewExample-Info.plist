@@ -19,6 +19,6 @@
 	<key>NSMainNibFile</key>
 	<string>TableExample</string>
 	<key>NSPrincipalClass</key>
-	<string>NSApplication</string>
+	<string>ETApplication</string>
 </dict>
 </plist>

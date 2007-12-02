@@ -354,6 +354,7 @@ static ETView *barViewPrototype = nil;
 {
 	/* Ensure the resizing of all subviews is handled automatically */
 	[self setAutoresizesSubviews: YES];
+	[self setAutoresizingMask: [view autoresizingMask]];
 	
 	if (temporary) /* Temporary view setter */
 	{

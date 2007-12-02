@@ -35,6 +35,7 @@
  */
 
 #import <EtoileUI/ETLayoutItem.h>
+#import <EtoileUI/ETLayoutItemGroup.h>
 #import <EtoileUI/ETStyleRenderer.h>
 #import <EtoileUI/ETView.h>
 #import <EtoileUI/ETContainer.h>
@@ -106,6 +107,11 @@
 	return (ETLayoutItem *)AUTORELEASE([[self alloc] initWithValue: value]);
 }
 
++ (ETLayoutItem *) layoutItemWithRepresentedObject: (id)object
+{
+	return (ETLayoutItem *)AUTORELEASE([[self alloc] initWithRepresentedObject: object]);
+}
+
 - (id) init
 {
 	return [self initWithView: nil value: nil representedObject: nil];
@@ -168,11 +174,32 @@
 	ETLayoutItem *item = [[[self class] alloc] initWithView: nil 
 	                                                  value: [self value] 
 										  representedObject: [self representedObject]];
-										  
+
+// TODO: The view copy is probably not the best choice since it involves 
+// copying the subview hierarchy and doesn't work with ETContainer because
+// keyed encoding is supported neither by ETView and ETContainer. Making a copy
+// of a container leads to an assertion failure when you call -layoutItem on it
+// because the container hasn't been initialized properly so no layout item is
+// available. In most cases, -[ETLayoutItem copy] is used to create meta layout
+// items which only need a static snapshot of the view and not an interactive
+// view. However when a simple view like a slider is used, it may be 
+// interesting to support true copy in order to clone existing layout items. An 
+// example could be picking a layout item from an UI object palette (in 
+// Gorm-like style development).
+#if 0										  
 	if ([[self view] respondsToSelector: @selector(copyWithZone:)])
 	{
 		[item setView: [[self view] copy]];
 	}
+#else
+	id img = [[NSImage alloc] initWithView: [self view]];
+	id imgView = [[NSImageView alloc] initWithFrame: [[self view] frame]];
+	[imgView setImage: img];
+	[item setView: imgView];
+	RELEASE(img);
+	RELEASE(imgView);
+#endif
+
 	[item setName: [self name]];
 	[item setStyleRenderer: [self renderer]];
 	[item setFrame: [self frame]];
@@ -231,6 +258,8 @@
 - (void) setParentLayoutItem: (ETLayoutItemGroup *)parent
 {
 	[[self displayView] removeFromSuperview];
+	if ([parent layout] == nil && [parent view] != nil)
+		[[parent view] addSubview: [self displayView]];
 	ASSIGN(_parentLayoutItem, parent);
 }
 
@@ -395,6 +424,25 @@
 	return identifier;
 }
 
+- (NSString *) displayName
+{
+	id name = [self name];
+	
+	if (name == nil)
+	{
+		if ([self view] != nil)
+		{
+			name = [[self view] description];
+		}
+		else
+		{
+			name = [self description];
+		}
+	}
+		
+	return name;
+}
+
 /** Returns the name associated with the layout item.
 	Take note the returned value can be nil or an empty string. */
 - (NSString *) name
@@ -529,6 +577,8 @@
 {
 	BOOL resizeBoundsActive = [self appliesResizingToBounds];
 	id view = [[self _innerDisplayView] wrappedView];
+	// NOTE: Frame is lost when newView becomes a subview of an ETView instance
+	NSRect newViewFrame = [newView frame];
 	
 	/* Tear down the current view */
 	if (view != nil)
@@ -567,7 +617,7 @@
 	if (newView != nil)
 	{
 		//[newView setRenderer: self];
-		[self setDefaultFrame: [newView frame]];
+		[self setDefaultFrame: newViewFrame];
 		if (resizeBoundsActive)
 			[self setAppliesResizingToBounds: YES];
 	}
@@ -578,7 +628,7 @@
 - (id) valueForUndefinedKey: (NSString *)key
 {
 	ETLog(@"WARNING: -valueForUndefinedKey: %@ called in %@", key, self);
-	return nil;
+	return nil; //@"<unknown>"
 }
 
 - (void) setValue: (id)value forUndefinedKey: (NSString *)key
@@ -609,16 +659,17 @@
 		if (value == nil)
 			value = [_modelObject valueForKey: key];
 	}	
-	else if ([_modelObject respondsToSelector: @selector(valueForProperty:)])
+	else if ([_modelObject respondsToSelector: @selector(valueForProperty:)]
+	  && [[_modelObject properties] containsObject: key])
 	{
-		value = [_modelObject valueForProperty: key];
+			value = [_modelObject valueForProperty: key];
 	}
 	else if ([_modelObject respondsToSelector: @selector(objectForKey:)])
 	{
 		/* Useful for dictionary objects */
 		value = [_modelObject objectForKey: key];
 	}
-	else
+	else if ([_modelObject respondsToSelector: NSSelectorFromString(key)])
 	{
 		value = [_modelObject valueForKey: key];
 	}
@@ -677,7 +728,7 @@
 		// FIXME: Add image and value when existing naming conflicts are solved.
 		properties = [NSArray arrayWithObjects: @"identifier", @"name", @"x", 
 			@"y", @"width", @"height", @"view", @"layout", 
-			@"selected", @"visible", nil];
+			@"selected", @"visible", @"displayName", nil];
 	}
 	else if ([_modelObject respondsToSelector: @selector(properties)])
 	{
@@ -1060,6 +1111,16 @@
 	return rectInChild;
 }
 
+- (NSRect) persistentFrame
+{
+	return [[self valueForProperty: @"kPersistentFrame"] rectValue] ;
+}
+
+- (void) setPersistentFrame: (NSRect) frame
+{
+	[self setValue: [NSValue valueWithRect: frame] forProperty: @"kPersistentFrame"];
+}
+
 - (NSRect) frame
 {
 	if ([self displayView] != nil)
@@ -1074,6 +1135,7 @@
 
 - (void) setFrame: (NSRect)rect
 {
+	ETLog(@"-setFrame: %@ on %@", NSStringFromRect(rect), self);
 	if ([self displayView] != nil)
 	{
 		[[self displayView] setFrame: rect];
@@ -1082,6 +1144,9 @@
 	{
 		_frame = rect;
 	}
+	// NOTE: the next line introduces ETLayoutItemGroup import 
+	if ([[[self parentLayoutItem] layout] isComputedLayout] == NO)
+		[self setPersistentFrame: rect];
 }
 
 - (NSPoint) origin
@@ -1303,10 +1368,10 @@
 		
 		viewRect.origin = NSZeroPoint;
 		#ifdef GNUSTEP
-		[self initWithData: [view dataWithEPSInsideRect: viewRect]];
+		self = [self initWithData: [view dataWithEPSInsideRect: viewRect]];
 		#else
 		// NOTE: -dataWithEPSInsideRect: doesn't work on Mac OS X
-		[self initWithData: [view dataWithPDFInsideRect: viewRect]];
+		self = [self initWithData: [view dataWithPDFInsideRect: viewRect]];
 		#endif
 	}
 	
