@@ -36,6 +36,16 @@
 #import <EtoileUI/ETCollection.h>
 
 
+@implementation NSObject (ETCollection)
+
+- (BOOL) isCollection
+{
+	return [self conformsToProtocol: @protocol(ETCollection)];
+}
+
+@end
+
+
 @implementation NSArray (ETCollection)
 
 - (id) content

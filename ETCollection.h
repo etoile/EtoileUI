@@ -36,6 +36,11 @@
 #import <Foundation/Foundation.h>
 #import <AppKit/AppKit.h>
 
+
+@interface NSObject (ETCollection)
+- (BOOL) isCollection;
+@end
+
 @protocol ETCollection
 /** Returns the underlying data structure object holding the content or self 
 	when the protocol is adopted by a class which is a content data structure 
