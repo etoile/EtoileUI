@@ -1296,19 +1296,36 @@
 	generates an image by taking a snapshot of the view. */
 - (NSImage *) image
 {
-	NSImage *img = [self valueForProperty: @"image"];
+	NSImage *img = [[self representedObject] valueForProperty: @"image"];
 	
-	if (img == nil)
-		img = [self valueForProperty: @"icon"];
-	
-	// NOTE: -bitmapImageRepForCachingDisplayInRect:(NSRect)aRect on Mac OS 10.4
-	if ([self view] != nil)
-		img = (NSImage *)AUTORELEASE([[NSImage alloc] initWithView: [self view]]);
-	
-	if (img == nil)
-		ETLog(@"Found neither image, icon nor view for %@", self);
+	if (img == nil && [[self value] isKindOfClass: [NSImage class]])
+		img = [self value];
 		
 	return img;
+}
+
+/** Returns the image to be displayed when the receiver must be represented in a 
+	symbolic style. This icon is commonly used by some layouts and also if the 
+	receiver represents another layout item (when -isMetaLayoutItem returns YES).
+	By default this method, returns either -image if the returned value isn't 
+	nil or a view snapshot when -view isn't nil. 
+	-image and -icon can be considered as symetric equivalents of -name and 
+	-displayName methods. */
+- (NSImage *) icon
+{
+	NSImage *icon = [[self representedObject] valueForProperty: @"icon"];
+	
+	if (icon == nil)
+		icon = [self image];
+
+	// NOTE: -bitmapImageRepForCachingDisplayInRect:(NSRect)aRect on Mac OS 10.4
+	if (icon == nil && [self view] != nil)
+		icon = (NSImage *)AUTORELEASE([[NSImage alloc] initWithView: [self view]]);
+		
+	if (icon == nil)
+		ETLog(@"Icon missing for %@", self);
+		
+	return icon;
 }
 
 /* Actions */

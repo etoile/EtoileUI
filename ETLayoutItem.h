@@ -167,6 +167,7 @@
 //-displayObject
 
 - (NSImage *) image;
+- (NSImage *) icon;
 
 /* If you have a shape set, it's always inserted after image renderer in the
 	rendering chain. */
