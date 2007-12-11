@@ -43,6 +43,7 @@
 #import <EtoileUI/NSIndexPath+Etoile.h>
 #import <EtoileUI/NSString+Etoile.h>
 #import <EtoileUI/ETCollection.h>
+#import <EtoileUI/ETPropertyValueCoding.h>
 #import <EtoileUI/ETObjectRegistry.h>
 #import <EtoileUI/ETObjectChain.h>
 #import <EtoileUI/ETFilter.h>

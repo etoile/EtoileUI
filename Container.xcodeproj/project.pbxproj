@@ -77,6 +77,10 @@
 		60599A770C772129007F225E /* ETInspector.m in Sources */ = {isa = PBXBuildFile; fileRef = 60599A750C772129007F225E /* ETInspector.m */; };
 		60599AD90C772EA0007F225E /* ETFreeLayout.h in Headers */ = {isa = PBXBuildFile; fileRef = 60599AD70C772EA0007F225E /* ETFreeLayout.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		60599ADA0C772EA0007F225E /* ETFreeLayout.m in Sources */ = {isa = PBXBuildFile; fileRef = 60599AD80C772EA0007F225E /* ETFreeLayout.m */; };
+		605A31D30D0AF2B9001F7371 /* ETPropertyValueCoding.h in Headers */ = {isa = PBXBuildFile; fileRef = 605A31D10D0AF2B9001F7371 /* ETPropertyValueCoding.h */; };
+		605A31D40D0AF2B9001F7371 /* ETPropertyValueCoding.m in Sources */ = {isa = PBXBuildFile; fileRef = 605A31D20D0AF2B9001F7371 /* ETPropertyValueCoding.m */; };
+		605A31D50D0AF2B9001F7371 /* ETPropertyValueCoding.h in Headers */ = {isa = PBXBuildFile; fileRef = 605A31D10D0AF2B9001F7371 /* ETPropertyValueCoding.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		605A31D60D0AF2B9001F7371 /* ETPropertyValueCoding.m in Sources */ = {isa = PBXBuildFile; fileRef = 605A31D20D0AF2B9001F7371 /* ETPropertyValueCoding.m */; };
 		605D6C010CE7830A009ED244 /* ETApplication.h in Headers */ = {isa = PBXBuildFile; fileRef = 605D6BFF0CE7830A009ED244 /* ETApplication.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		605D6C020CE7830A009ED244 /* ETApplication.m in Sources */ = {isa = PBXBuildFile; fileRef = 605D6C000CE7830A009ED244 /* ETApplication.m */; };
 		605D6C040CE7830A009ED244 /* ETApplication.m in Sources */ = {isa = PBXBuildFile; fileRef = 605D6C000CE7830A009ED244 /* ETApplication.m */; };
@@ -280,6 +284,8 @@
 		60599A750C772129007F225E /* ETInspector.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ETInspector.m; sourceTree = "<group>"; };
 		60599AD70C772EA0007F225E /* ETFreeLayout.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ETFreeLayout.h; sourceTree = "<group>"; };
 		60599AD80C772EA0007F225E /* ETFreeLayout.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ETFreeLayout.m; sourceTree = "<group>"; };
+		605A31D10D0AF2B9001F7371 /* ETPropertyValueCoding.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ETPropertyValueCoding.h; sourceTree = "<group>"; };
+		605A31D20D0AF2B9001F7371 /* ETPropertyValueCoding.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ETPropertyValueCoding.m; sourceTree = "<group>"; };
 		605D6BFF0CE7830A009ED244 /* ETApplication.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ETApplication.h; sourceTree = "<group>"; };
 		605D6C000CE7830A009ED244 /* ETApplication.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ETApplication.m; sourceTree = "<group>"; };
 		605D6CB90CE78335009ED244 /* test_ETView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = test_ETView.m; path = Tests/test_ETView.m; sourceTree = "<group>"; };
@@ -596,6 +602,8 @@
 				603D4D0B0C8D1E10003DFD51 /* NSString+Etoile.m */,
 				606481510C7A6CAC0000338D /* NSObject+Etoile.h */,
 				606481520C7A6CAC0000338D /* NSObject+Etoile.m */,
+				605A31D10D0AF2B9001F7371 /* ETPropertyValueCoding.h */,
+				605A31D20D0AF2B9001F7371 /* ETPropertyValueCoding.m */,
 				603463AA0C9FBF6A006DFCD1 /* ETCollection.h */,
 				603463AB0C9FBF6A006DFCD1 /* ETCollection.m */,
 			);
@@ -768,6 +776,7 @@
 				603116260CF5131D001A699E /* ETLayoutItem+Events.h in Headers */,
 				603119520CF8B993001A699E /* ETObjectBrowserLayout.h in Headers */,
 				60311D650CFB9A84001A699E /* NSWindow+Etoile.h in Headers */,
+				605A31D30D0AF2B9001F7371 /* ETPropertyValueCoding.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -823,6 +832,7 @@
 				603116240CF5131D001A699E /* ETLayoutItem+Events.h in Headers */,
 				603119500CF8B993001A699E /* ETObjectBrowserLayout.h in Headers */,
 				60311D630CFB9A84001A699E /* NSWindow+Etoile.h in Headers */,
+				605A31D50D0AF2B9001F7371 /* ETPropertyValueCoding.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1112,6 +1122,7 @@
 				603116270CF5131D001A699E /* ETLayoutItem+Events.m in Sources */,
 				603119530CF8B993001A699E /* ETObjectBrowserLayout.m in Sources */,
 				60311D660CFB9A84001A699E /* NSWindow+Etoile.m in Sources */,
+				605A31D40D0AF2B9001F7371 /* ETPropertyValueCoding.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1207,6 +1218,7 @@
 				603116250CF5131D001A699E /* ETLayoutItem+Events.m in Sources */,
 				603119510CF8B993001A699E /* ETObjectBrowserLayout.m in Sources */,
 				60311D640CFB9A84001A699E /* NSWindow+Etoile.m in Sources */,
+				605A31D60D0AF2B9001F7371 /* ETPropertyValueCoding.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

@@ -51,13 +51,6 @@
 
 @class ETMethod;
 
-/** Protocol usually adopted by model objects */
-@protocol ETPropertyValueCoding
-- (NSArray *) properties;
-- (id) valueForProperty: (NSString *)key;
-- (BOOL) setValue: (id)value forProperty: (NSString *)key;
-@end
-
 /** Protocol which can be adopted by other object hierachy than NSObject rooted hierarchy */
 @protocol ETInspectableObject
 

@@ -35,7 +35,7 @@
  */
 
 #import <Foundation/Foundation.h>
-#import <EtoileUI/NSObject+Etoile.h>
+#import <EtoileUI/ETPropertyValueCoding.h>
 #import <EtoileUI/ETCollection.h>
 
 // TODO: Break this class in ETObject root class and ETObjectRegistry subclass

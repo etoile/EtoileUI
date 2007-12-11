@@ -35,7 +35,7 @@
 
 #import <Foundation/Foundation.h>
 #import <AppKit/AppKit.h>
-#import <EtoileUI/NSObject+Etoile.h>
+#import <EtoileUI/ETPropertyValueCoding.h>
 
 @class ETLayoutItem;
 
