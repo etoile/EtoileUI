@@ -63,6 +63,15 @@
 @protocol ETCollectionMutation
 - (void) addObject: (id)object;
 - (void) removeObject: (id)object;
+// NOTE: Next method could allow to simplify type checking of added and removed
+// objects and provides -addObject: -removeObject: implementation in a mixin.
+// For example you could declare elementType as ETLayoutItem to ensure proper 
+// type checking. If you check against [self class], in ETLayoutItemGroup you
+// won't be able to accept ETLayoutItem instances. So the valid common supertype
+// of collection objects must be declared in a superclass if you define subtype
+// for collection objects. ETLayer and ETLayoutItemGroup are such subtypes of 
+// ETLayoutItem.
+//- (NSString *) elementType;
 @end
 
 

@@ -701,7 +701,8 @@
 {
 	NSArray *properties = [NSArray arrayWithObjects: @"identifier", @"name", 
 		@"x", @"y", @"width", @"height", @"view", @"selected", 
-		@"visible", @"displayName", @"icon", @"image", nil];
+		@"visible", @"displayName", @"icon", @"image", @"frame", 
+		@"representedObject", nil];
 
 	if (properties != nil && [properties count] == 0)
 		properties = nil;
@@ -713,6 +714,13 @@
 {
 	return [[self representedObject] isKindOfClass: [ETLayoutItem class]];
 }
+
+#if 0
+- (BOOL) isPropertyItem
+{
+	return [[self representedObject] isKindOfClass: [ETProperty class]];
+}
+#endif
 
 - (BOOL) isGroup
 {
