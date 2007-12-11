@@ -11,7 +11,7 @@
 #import <EtoileUI/ETCollection.h>
 
 
-@interface NSView (Etoile) <NSCopying, ETCollection>
+@interface NSView (Etoile) <NSCopying, ETCollection, ETCollectionMutation>
 
 - (BOOL) isContainer;
 
@@ -23,6 +23,8 @@
 
 - (id) content;
 - (NSArray *) contentArray;
+- (void) addObject: (id)view;
+- (void) removeObject: (id)view;
 
 /* Frame Utility Methods */
 

@@ -41,6 +41,8 @@
 - (BOOL) isCollection;
 @end
 
+/* Collection Access and Mutation Protocols */
+
 @protocol ETCollection
 /** Returns the underlying data structure object holding the content or self 
 	when the protocol is adopted by a class which is a content data structure 
@@ -58,6 +60,12 @@
 //- (NSEnumerator *) objectEnumerator;
 @end
 
+@protocol ETCollectionMutation
+- (void) addObject: (id)object;
+- (void) removeObject: (id)object;
+@end
+
+
 /* Adopted by the following Foundation classes  */
 
 @interface NSArray (ETCollection) <ETCollection>
@@ -74,6 +82,15 @@
 - (id) content;
 - (NSArray *) contentArray;
 @end
+
+@interface NSMutableArray (ETCollectionMutation) <ETCollectionMutation>
+
+@end
+
+@interface NSMutableSet (ETCollectionMutation) <ETCollectionMutation>
+
+@end
+
 
 /* Collection Matching */
 

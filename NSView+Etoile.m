@@ -44,6 +44,41 @@
 	return [self subviews];
 }
 
+- (void) addObject: (id)object
+{
+	if ([object isKindOfClass: [NSView class]])
+	{
+		[self addSubview: object];
+	}
+	else
+	{
+		[NSException raise: NSInvalidArgumentException format: @"For %@ "
+			"addObject: parameter %@ must be of type NSView", self, object];
+	}
+}
+
+- (void) removeObject: (id)object
+{
+	if ([object isKindOfClass: [NSView class]])
+	{
+		if ([[object superview] isEqual: self])
+		{
+			[object removeFromSuperview];
+		}
+		else
+		{
+			[NSException raise: NSInvalidArgumentException format: @"For %@ "
+				"removeObject: parameter %@ must be a subview of the receiver", 
+				self, object];
+		}		
+	}
+	else
+	{
+		[NSException raise: NSInvalidArgumentException format: @"For %@ "
+			"removeObject: parameter %@ must be of type NSView", self, object];
+	}	
+}
+
 /* Utility Methods */
 
 - (float) height
