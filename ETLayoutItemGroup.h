@@ -42,7 +42,7 @@
 @class ETLayout;
 
 
-@interface ETLayoutItemGroup : ETLayoutItem <ETLayoutingContext, ETCollection>
+@interface ETLayoutItemGroup : ETLayoutItem <ETLayoutingContext, ETCollection, ETCollectionMutation>
 {
 	NSMutableArray *_layoutItems;
 	ETLayout *_layout;
@@ -165,5 +165,7 @@
 
 - (id) content;
 - (NSArray *) contentArray;
+- (void) addObject: (id)object;
+- (void) removeObject: (id)object;
 
 @end

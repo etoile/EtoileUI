@@ -1131,6 +1131,32 @@
 	return [self items];
 }
 
+- (void) addObject: (id)object
+{
+	if ([object isKindOfClass: [ETLayoutItem class]])
+	{
+		[self addItem: object];
+	}
+	else
+	{
+		[NSException raise: NSInvalidArgumentException format: @"For %@ "
+			"addObject: parameter %@ must be of type ETLayoutItem", self, object];
+	}
+}
+
+- (void) removeObject: (id)object
+{
+	if ([object isKindOfClass: [ETLayoutItem class]])
+	{
+		[self removeItem: object];
+	}
+	else
+	{
+		[NSException raise: NSInvalidArgumentException format: @"For %@ "
+			"removeObject: parameter %@ must be of type ETLayoutItem", self, object];
+	}	
+}
+
 /* ETLayoutingContext */
 
 - (float) itemScaleFactor
