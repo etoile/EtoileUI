@@ -161,6 +161,17 @@
 	return item;
 }
 
+/* Property Value Coding */
+
+- (NSArray *) properties
+{
+	id properties = [NSMutableArray arrayWithObjects: @"layout", nil];
+	
+	[properties addObjectsFromArray: [super properties]];
+	
+	return properties;
+}
+
 /* Finding Container */
 
 - (BOOL) isGroup

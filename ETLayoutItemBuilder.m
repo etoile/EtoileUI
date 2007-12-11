@@ -129,7 +129,17 @@
 
 - (id) renderView: (id)view
 {
-	if ([view isKindOfClass: [ETView class]] || [view isContainer])
+	/*if ([view isKindOfClass: [NSScrollView class]])
+	{
+		id decorator = [ETLayoutItem layoutItem];
+		id item = [self renderView: [view documentView]];
+		
+		[decorator setView: view];
+		[item setDecoratorItem: decorator];
+		
+		return item;
+	}
+	else*/ if ([view isKindOfClass: [ETView class]] || [view isContainer])
 	{
 		return [view layoutItem];
 	}

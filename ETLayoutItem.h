@@ -36,6 +36,7 @@
 #import <Foundation/Foundation.h>
 #import <AppKit/AppKit.h>
 #import <EtoileUI/ETStyleRenderer.h>
+#import <EtoileUI/ETPropertyValueCoding.h>
 #import <EtoileUI/ETInspecting.h>
 
 #define ETUTI NSString
@@ -74,7 +75,7 @@
 
 // FIXME: Use less memory per instance. Name and value are somehow duplicates.
 // _cells and _view could be moved in a helper object. Pack booleans in a struct.
-@interface ETLayoutItem : ETStyleRenderer <ETObjectInspection>
+@interface ETLayoutItem : ETStyleRenderer <ETPropertyValueCoding, ETObjectInspection>
 {
 	ETLayoutItemGroup *_parentLayoutItem;
 	

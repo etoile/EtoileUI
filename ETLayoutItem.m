@@ -54,6 +54,8 @@
 #endif
 
 @interface ETLayoutItem (Private)
+- (void) setImage: (NSImage *)img;
+- (void) setIcon: (NSImage *)img;
 - (void) layoutItemViewFrameDidChange: (NSNotification *)notif;
 - (ETView *) _innerDisplayView;
 - (void) _setInnerDisplayView: (ETView *)innerDisplayView;
@@ -636,7 +638,7 @@
 	ETLog(@"WARNING: -setValue:forUndefinedKey: %@ called in %@", key, self);
 }
 
-/* Value Property Coding */
+/* Property Value Coding */
 
 /** Returns a value of the model object -representedObject, usually by 
 	calling -valueForProperty: else -valueForKey: with key parameter. By default 
@@ -647,31 +649,19 @@
 - (id) valueForProperty: (NSString *)key
 {
 	id value = nil;
+	id modelObject = [self representedObject];
 	
-	if ([self isMetaLayoutItem])
+	if ([self isMetaLayoutItem] && [[modelObject properties] containsObject: key])
 	{
-		/* Try to access the value provided by the root model object which 
-		   is owned by first layout item which isn't a meta layout item */
-		value = [_modelObject valueForProperty: key];
-		/* If the root model object doesn't define this property, it is surely
-		   an ETLayoutItem specific property we can find in the layout item
-		   we represent */
-		if (value == nil)
-			value = [_modelObject valueForKey: key];
+		value = [modelObject valueForKey: key];
 	}	
-	else if ([_modelObject respondsToSelector: @selector(valueForProperty:)]
-	  && [[_modelObject properties] containsObject: key])
+	else if ([[self properties] containsObject: key])
 	{
-			value = [_modelObject valueForProperty: key];
+		value = [self valueForKey: key];
 	}
-	else if ([_modelObject respondsToSelector: @selector(objectForKey:)])
+	else if ([[modelObject properties] containsObject: key])
 	{
-		/* Useful for dictionary objects */
-		value = [_modelObject objectForKey: key];
-	}
-	else if ([_modelObject respondsToSelector: NSSelectorFromString(key)])
-	{
-		value = [_modelObject valueForKey: key];
+		value = [modelObject valueForProperty: key];
 	}
 	
 	return value;
@@ -683,32 +673,23 @@
 - (BOOL) setValue: (id)value forProperty: (NSString *)key
 {
 	BOOL result = YES;
-
-	if ([self isMetaLayoutItem])
+	id modelObject = [self representedObject];
+	
+	if ([self isMetaLayoutItem] && [[modelObject properties] containsObject: key])
 	{
-		[_modelObject setValue: value forKey: key];
+		[modelObject setValue: value forKey: key];
 	}	
-	else if ([_modelObject respondsToSelector: @selector(setValue:forProperty:)])
+	else if ([[self properties] containsObject: key])
 	{
-		result = [_modelObject setValue: value forProperty: key];
-	}
-	else if ([_modelObject respondsToSelector: @selector(setObject:forKey:)])
-	{
-		/* Useful for dictionary objects */
-		if (value != nil)
-		{
-			[_modelObject setObject: value forKey: key];
-		}
-		else
-		{
-			[_modelObject setObject: [NSNull null] forKey: key];
-		}
+		[self setValue: value forKey: key];
 	}
 	else
 	{
-		// FIXME: Catch key value coding exception here
-		[_modelObject setValue: value forKey: key];
+		result = [modelObject setValue: value forProperty: key];
 	}
+	
+	 // Don't check ([[modelObject properties] containsObject: key]) in the 
+	 // last case, otherwise new properties cannot be added.
 	
 	// FIXME: Implement
 	//[self didChangeValueForKey: key];
@@ -718,53 +699,19 @@
 
 - (NSArray *) properties
 {
-	NSArray *properties = nil;
+	NSArray *properties = [NSArray arrayWithObjects: @"identifier", @"name", 
+		@"x", @"y", @"width", @"height", @"view", @"selected", 
+		@"visible", @"displayName", @"icon", @"image", nil];
 
-	/* Meta layout item responds to -properties because their represented
-	   object is a layout item. Model objects may implement this method too. 
-	   For example OrganizeKit objects responds to it. */
-	if ([self isMetaLayoutItem])
-	{
-		// FIXME: Add image and value when existing naming conflicts are solved.
-		properties = [NSArray arrayWithObjects: @"identifier", @"name", @"x", 
-			@"y", @"width", @"height", @"view", @"layout", 
-			@"selected", @"visible", @"displayName", nil];
-	}
-	else if ([_modelObject respondsToSelector: @selector(properties)])
-	{
-		properties = (NSArray *)[_modelObject properties];
-	}
-	else if ([_modelObject respondsToSelector: @selector(entity)]
-	 && [[(id)_modelObject entity] respondsToSelector: @selector(properties)])
-	{
-		/* Managed Objects have an entity which describes them */
-		properties = (NSArray *)[[_modelObject entity] properties];
-	}
-	else if ([_modelObject respondsToSelector: @selector(allKeys)])
-	{
-		/* Useful for dictionary objects */
-		properties = [_modelObject allKeys];
-	}
-	else if ([_modelObject respondsToSelector: @selector(classDescription)])
-	{
-		/* Any objects can declare a class description, so we try to use it */
-		NSClassDescription *desc = [_modelObject classDescription];
-		
-		properties = [NSMutableArray arrayWithArray: [desc attributeKeys]];
-		// NOTE: Not really sure we should include relationship keys
-		[(NSMutableArray *)properties addObjectsFromArray: (NSArray *)[desc toManyRelationshipKeys]];
-		[(NSMutableArray *)properties addObjectsFromArray: (NSArray *)[desc toOneRelationshipKeys]];
-	}
-	
 	if (properties != nil && [properties count] == 0)
 		properties = nil;
 		
-	return [properties copy];;
+	return properties;
 }
 
 - (BOOL) isMetaLayoutItem
 {
-	return [_modelObject isKindOfClass: [ETLayoutItem class]];
+	return [[self representedObject] isKindOfClass: [ETLayoutItem class]];
 }
 
 - (BOOL) isGroup
@@ -1113,12 +1060,12 @@
 
 - (NSRect) persistentFrame
 {
-	return [[self valueForProperty: @"kPersistentFrame"] rectValue] ;
+	return [[[self representedObject] valueForProperty: @"kPersistentFrame"] rectValue] ;
 }
 
 - (void) setPersistentFrame: (NSRect) frame
 {
-	[self setValue: [NSValue valueWithRect: frame] forProperty: @"kPersistentFrame"];
+	[[self representedObject] setValue: [NSValue valueWithRect: frame] forProperty: @"kPersistentFrame"];
 }
 
 - (NSRect) frame
@@ -1304,6 +1251,11 @@
 	return img;
 }
 
+- (void) setImage: (NSImage *)img
+{
+	[[self representedObject] setValue: img forProperty: @"image"];
+}
+
 /** Returns the image to be displayed when the receiver must be represented in a 
 	symbolic style. This icon is commonly used by some layouts and also if the 
 	receiver represents another layout item (when -isMetaLayoutItem returns YES).
@@ -1326,6 +1278,11 @@
 		ETLog(@"Icon missing for %@", self);
 		
 	return icon;
+}
+
+- (void) setIcon: (NSImage *)img
+{
+	[[self representedObject] setValue: img forProperty: @"icon"];
 }
 
 /* Actions */

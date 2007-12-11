@@ -211,7 +211,7 @@
 
 - (NSArray *) displayedItemPropertiesInContainer: (ETContainer *)container
 {
-	return [NSArray arrayWithObjects: @"name", @"description", @"frame", nil]; // @"frame", @"model",
+	return [NSArray arrayWithObjects: @"icon", @"displayName", @"description", @"frame", nil]; // @"frame", @"model",
 }
 
 @end
