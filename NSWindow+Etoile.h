@@ -10,7 +10,7 @@
 #import <AppKit/AppKit.h>
 
 
-@interface NSView (Etoile)
+@interface NSWindow (Etoile)
 
 - (IBAction) browse: (id)sender;
 
