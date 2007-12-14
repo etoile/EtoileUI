@@ -34,6 +34,11 @@
 
 /* Collection Protocol */
 
+- (BOOL) isEmpty
+{
+	return ([[self subviews] count] == 0);
+}
+
 - (id) content
 {
 	return [self subviews];
