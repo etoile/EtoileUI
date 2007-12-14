@@ -39,6 +39,7 @@
 /* EtoileFoundation */
 
 #import <EtoileUI/NSObject+Etoile.h>
+#import <EtoileUI/NSObject+Model.h>
 #import <EtoileUI/NSIndexSet+Etoile.h>
 #import <EtoileUI/NSIndexPath+Etoile.h>
 #import <EtoileUI/NSString+Etoile.h>
