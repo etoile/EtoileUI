@@ -48,6 +48,11 @@
 
 @implementation NSArray (ETCollection)
 
+- (BOOL) isEmpty
+{
+	return ([self count] == 0);
+}
+
 - (id) content
 {
 	return self;
@@ -62,6 +67,11 @@
 
 @implementation NSDictionary (ETCollection)
 
+- (BOOL) isEmpty
+{
+	return ([self count] == 0);
+}
+
 - (id) content
 {
 	return self;
@@ -75,6 +85,11 @@
 @end
 
 @implementation NSSet (ETCollection)
+
+- (BOOL) isEmpty
+{
+	return ([self count] == 0);
+}
 
 - (id) content
 {
