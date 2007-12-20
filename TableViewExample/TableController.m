@@ -103,7 +103,12 @@
 	[tableContainer2 addItem: item];
 }
 
-- (void) applicationDidFinishLaunching: (NSNotification *)notif
+// NOTE: willFinishLaunching must be used instead of didFinishLaunching. 
+// Otherwise outlineView will be wrapped into an ETView by ETEtoileUIBuilder 
+// invoked in -finishLaunching before we took the opportunity to convert it 
+// into an ETContainer instance. In other words, didFinishLaunching works
+// but results in a misconfigured layout item tree.
+- (void) applicationWillFinishLaunching: (NSNotification *)notif
 {
 	/*
 	 * A hierarchical container using a custom outline layout based on an 
