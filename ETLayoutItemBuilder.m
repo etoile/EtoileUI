@@ -1,7 +1,8 @@
-/*
+/*  <title>ETLayoutItemBuilder</title>
+
 	ETLayoutItemBuilder.m
 	
-	Description forthcoming.
+	<abstract>Description forthcoming.</abstract>
  
 	Copyright (C) 2007 Quentin Mathe
  

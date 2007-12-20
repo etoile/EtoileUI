@@ -1,4 +1,6 @@
-/* <title>ETView.m</title>
+/* <title>ETView</title>
+	
+	ETView.m
 	
 	<abstract>NSView replacement class with extra facilities like delegated drawing.</abstract>
  

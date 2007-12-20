@@ -1,7 +1,8 @@
-/*
-	ETViewLayoutLine.h
+/*  <title>ETViewLayoutLine</title>
+
+	ETViewLayoutLine.m
 	
-	Represents an horizontal or vertical line box in a layout.
+	<abstract>Represents an horizontal or vertical line box in a layout.</abstract>
  
 	Copyright (C) 2006 Quentin Mathe
  

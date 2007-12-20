@@ -1,7 +1,8 @@
-/*
+/*  <title>NSImage+Etoile</title>
+
 	NSImage+Etoile.m
 	
-	NSImage additions.
+	<abstract>NSImage additions.</abstract>
  
 	Copyright (C) 2007 Quentin Mathe
  
