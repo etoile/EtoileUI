@@ -304,11 +304,6 @@ shape*/
 - (void) layoutItem: (ETLayoutItem *)item setValue: (id)value forProperty: (NSString *)property;
 @end
 
-
-@interface NSImage (ETLayoutItem)
-- (NSImage *) initWithView: (NSView *)view;
-@end
-
 /*
 @interface ETLayoutItem (NSCellCompatibility)
 - (NSCell *) cellForProperty: (NSString *)property;

@@ -55,6 +55,7 @@
 #import <EtoileUI/NSObject+EtoileUI.h>
 #import <EtoileUI/NSView+Etoile.h>
 #import <EtoileUI/NSWindow+Etoile.h>
+#import <EtoileUI/NSImage+Etoile.h>
 #import <EtoileUI/ETObjectRegistry+EtoileUI.h>
 #import <EtoileUI/ETInspecting.h>
 

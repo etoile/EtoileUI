@@ -1342,31 +1342,3 @@
 }
 
 @end
-
-/* Helper Category */
-
-@implementation NSImage (ETLayoutItem)
-
-- (NSImage *) initWithView: (NSView *)view
-{
-	self = [super init];
-	
-	if (self != nil)
-	{
-		NSRect viewRect = [view frame];
-		
-		viewRect.origin = NSZeroPoint;
-		#ifdef GNUSTEP
-		self = [self initWithData: [view dataWithEPSInsideRect: viewRect]];
-		#else
-		// NOTE: -dataWithEPSInsideRect: doesn't work on Mac OS X
-		self = [self initWithData: [view dataWithPDFInsideRect: viewRect]];
-		#endif
-	}
-	
-	ETLog(@"Generated new image with reps %@ based on view %@", [self representations], view);
-	
-	return self;
-}
-
-@end
