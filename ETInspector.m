@@ -592,23 +592,12 @@
 
 @implementation ETViewModelLayout
 
-- (id) init
+- (id) initWithLayoutView: (NSView *)view
 {
-	self = [super init];
+	self = [super initWithLayoutView: view];
     
 	if (self != nil)
-	{
-		BOOL nibLoaded = [NSBundle loadNibNamed: @"ViewModelPrototype" owner: self];
-		
-		if (nibLoaded == NO)
-		{
-			NSLog(@"Failed to load nib ViewModelPrototype");
-			RELEASE(self);
-			return nil;
-		}
-		
 		_displayMode = ETLayoutDisplayModeViewProperties;
-    }
     
 	return self;
 }
@@ -637,18 +626,10 @@
 	//[self setLayoutView: _displayViewPrototype];
 }
 
-- (void) setLayoutView: (NSView *)protoView
+- (NSString *) nibName
 {
-	[super setLayoutView: protoView];
-
-	//[tv registerForDraggedTypes: [NSArray arrayWithObject: @"ETLayoutItemPboardType"]];
-	
-	/*if ([tv dataSource] == nil)
-		[tv setDataSource: self];
-	if ([tv delegate] == nil)
-		[tv setDelegate: self];*/
+	return @"ViewModelPrototype";
 }
-
 
 - (ETLayoutDisplayMode) displayMode
 {
@@ -674,9 +655,16 @@
 	[super setLayoutContext: context];
 }
 
-- (void) renderWithLayoutItems: (NSArray *)items;
+- (void) renderWithLayoutItems: (NSArray *)items
 {
-	[[self container] setDisplayView: [self layoutView]];
+	if ([self container] == nil)
+	{
+		ETLog(@"WARNING: Layout context %@ must have a container otherwise "
+			@"view-based layout %@ cannot be set", [self layoutContext], self);
+		return;
+	}
+
+	[self setUpLayoutView];
 	//[propertyView reloadAndUpdateLayout];
 }
 
