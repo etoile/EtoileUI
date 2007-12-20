@@ -714,12 +714,17 @@
 	{
 		if ([item displayView] != nil)
 		{
-			/* Item display view must be a direct subview of our container, 
-			   otherwise NSPointInRect test is going to be meaningless. */
-			NSAssert1([[[self container] subviews] containsObject: [item displayView]],
-				@"Item display view must be a direct subview of %@ to know "
-				@"whether it matches given location", [self container]);
-		
+			/* When items are layouted and displayed directly into the layout 
+			   and not routed into some subview part of the layout view. */
+			if ([self layoutView] == nil)
+			{
+				/* Item display view must be a direct subview of our container, 
+				   otherwise NSPointInRect test is going to be meaningless. */
+				NSAssert1([[[self container] subviews] containsObject: [item displayView]],
+					@"Item display view must be a direct subview of %@ to know "
+					@"whether it matches given location", [self container]);
+			}
+			
 			if (NSPointInRect(location, [[item displayView] frame]))
 				return item;
 		}
