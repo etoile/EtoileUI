@@ -1,7 +1,8 @@
-/*
+/*  <title>ETObjectRegistry+EtoileUI</title>
+
 	ETObjectRegistry+EtoileUI.m
 	
-	EtoileUI additions to Cascading Object Registry
+	<abstract>EtoileUI additions to Cascading Object Registry</abstract>
  
 	Copyright (C) 2007 Quentin Mathe
  
