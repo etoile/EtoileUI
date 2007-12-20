@@ -679,6 +679,10 @@
 	if ([layoutView superview] == nil)
 	{
 		[layoutView setAutoresizingMask: NSViewHeightSizable | NSViewWidthSizable];
+		// NOTE: If a container is used as a layout view, we need to enable hit
+		// test on it in order subviews can receive events like mouse click.
+		if ([layoutView respondsToSelector: @selector(setEnablesHitTest:)])
+			[layoutView setEnablesHitTest: YES];
 		[[self container] setDisplayView: layoutView];
 	}
 	else if ([[layoutView superview] isEqual: [self container]] == NO)

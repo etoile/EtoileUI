@@ -221,8 +221,7 @@
 
 - (NSArray *) displayedItemPropertiesInContainer: (ETContainer *)container
 {
-	return [NSArray arrayWithObjects: @"icon", @"displayName", @"parentLayoutItem", @"frame", 
-		@"identifier", @"selected", @"visible", @"value", @"view", @"layout", nil];
+	return [[self browsedObject] properties];
 }
 
 @end

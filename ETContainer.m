@@ -179,6 +179,12 @@ NSString *ETLayoutItemPboardType = @"ETLayoutItemPboardType"; // FIXME: replace 
 	return desc;
 }
 
+- (NSString *) displayName
+{
+	// FIXME: Trim the angle brackets out.
+	return [self description];
+}
+
 /** Returns the layout item representing the receiver container in the layout
 	item tree. Layout item representing a container is always an instance of
 	ETLayoutItemGroup class kind (and not ETLayoutItem unlike ETView).

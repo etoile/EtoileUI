@@ -165,11 +165,9 @@
 
 - (NSArray *) properties
 {
-	id properties = [NSMutableArray arrayWithObjects: @"layout", nil];
+	NSArray *properties = [NSArray arrayWithObjects: @"layout", nil];
 	
-	[properties addObjectsFromArray: [super properties]];
-	
-	return properties;
+	return [[super properties] arrayByAddingObjectsFromArray: properties];
 }
 
 /* Finding Container */

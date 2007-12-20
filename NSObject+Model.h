@@ -52,6 +52,17 @@
 
 - (NSString *) typeForKey: (NSString *)key;
 
+/* Property Value Coding */
+
+- (NSArray *) properties;
+- (id) valueForProperty: (NSString *)key;
+- (BOOL) setValue: (id)value forProperty: (NSString *)key;
+
+/* Basic Properties */
+
+- (NSString *) displayName;
+- (NSImage *) icon;
+
 @end
 
 /* Basic Common Value Classes */

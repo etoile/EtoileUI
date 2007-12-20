@@ -631,6 +631,15 @@
 	return @"ViewModelPrototype";
 }
 
+- (void) setUpLayoutView
+{
+	[super setUpLayoutView];
+	// FIXME: When a container is used as a layout view we usually need to 
+	// unflip the coordinates in order to have subviews positioned as expected
+	// (container coordinates are flipped by default).
+	//[[self layoutView] setFlipped: NO];
+}
+
 - (ETLayoutDisplayMode) displayMode
 {
 	return _displayMode;

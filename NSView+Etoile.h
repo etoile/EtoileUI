@@ -45,6 +45,10 @@
 - (void) setHeightFromBottomLeft: (int)height;
 - (NSPoint) bottomLeftPoint;
 
+/* Basic Properties */
+
+- (NSImage *) icon;
+
 @end
 
 /* Utility Functions */

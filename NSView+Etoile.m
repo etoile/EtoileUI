@@ -222,6 +222,32 @@
 	return bottomLeftPoint;
 }
 
+/* Property Value Coding */
+
+- (NSArray *) properties
+{
+	// TODO: Expose more properties
+	NSArray *properties = [NSArray arrayWithObjects: @"x", @"y", @"width", 
+		@"height", @"superview", @"window", @"tag", @"hidden", 
+		@"autoresizingMask", @"autoresizesSubviews", @"subviews", @"flipped", 
+		@"frame", @"frameRotation", @"bounds", @"boundsRotation", @"isRotatedFromBase", 
+		@"isRotatedOrScaledFromBase", @"postsFrameChangedNotifications", 
+		@"postsBoundsChangedNotifications", @"enclosingScrollView", 
+		@"visibleRect", @"opaque", @"opaqueAncestor", @"needsDisplay", 
+		@"canDraw",  @"shouldDrawColor", @"widthAdjustLimit",
+		@"heightAdjustLimit", @"printJobTitle", @"mouseDownCanMoveWindow", 
+		@"needsPanelToBecomeKey", nil]; 
+	
+	return [[super properties] arrayByAddingObjectsFromArray: properties];
+}
+
+/* Basic Properties */
+
+- (NSImage *) icon
+{
+	return AUTORELEASE([[NSImage alloc] initWithView: self]);
+}
+
 @end
 
 /* Utility Functions */

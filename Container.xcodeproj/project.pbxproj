@@ -139,6 +139,8 @@
 		60909D630CB304C9009CAD27 /* EtoileUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 60EF8E9D0C5E4D0600C97C41 /* EtoileUI.framework */; };
 		60909D660CB304D9009CAD27 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 29B97316FDCFA39411CA2CEA /* main.m */; };
 		60909D680CB304FB009CAD27 /* TableViewExample-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 60909CCB0CB2DA43009CAD27 /* TableViewExample-Info.plist */; };
+		6094B7340D13FB9D008AE728 /* ObjectBrowserPrototype.nib in Resources */ = {isa = PBXBuildFile; fileRef = 6094B7320D13FB9D008AE728 /* ObjectBrowserPrototype.nib */; };
+		6094B7350D13FB9D008AE728 /* ObjectBrowserPrototype.nib in Resources */ = {isa = PBXBuildFile; fileRef = 6094B7320D13FB9D008AE728 /* ObjectBrowserPrototype.nib */; };
 		6097F21F0C99F487003A74CE /* NSIndexPath+Etoile.h in Headers */ = {isa = PBXBuildFile; fileRef = 6097F21D0C99F487003A74CE /* NSIndexPath+Etoile.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		6097F2200C99F487003A74CE /* NSIndexPath+Etoile.m in Sources */ = {isa = PBXBuildFile; fileRef = 6097F21E0C99F487003A74CE /* NSIndexPath+Etoile.m */; };
 		60B1449A0C11BFB400B4613B /* TablePrototype.nib in Resources */ = {isa = PBXBuildFile; fileRef = 60B144970C11BFB400B4613B /* TablePrototype.nib */; };
@@ -334,6 +336,7 @@
 		60909CD70CB2DAB3009CAD27 /* TableController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TableController.h; path = TableViewExample/TableController.h; sourceTree = "<group>"; };
 		60909CD80CB2DAB3009CAD27 /* TableController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = TableController.m; path = TableViewExample/TableController.m; sourceTree = "<group>"; };
 		60909D360CB30092009CAD27 /* English */ = {isa = PBXFileReference; lastKnownFileType = wrapper.nib; name = English; path = English.lproj/TableExample.nib; sourceTree = "<group>"; };
+		6094B7330D13FB9D008AE728 /* English */ = {isa = PBXFileReference; lastKnownFileType = wrapper.nib; name = English; path = English.lproj/ObjectBrowserPrototype.nib; sourceTree = "<group>"; };
 		609544AA0C0CE24D00068CBB /* ETBrowserLayout.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ETBrowserLayout.h; sourceTree = "<group>"; };
 		609544AB0C0CE24D00068CBB /* ETBrowserLayout.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ETBrowserLayout.m; sourceTree = "<group>"; };
 		609547B70C0E032E00068CBB /* ETLayer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ETLayer.h; sourceTree = "<group>"; };
@@ -561,6 +564,7 @@
 				60B144EA0C11C52900B4613B /* OutlinePrototype.nib */,
 				6051502B0C1738D600B5E0E5 /* BrowserPrototype.nib */,
 				6087EDF10C824CE100A1263E /* ViewModelPrototype.nib */,
+				6094B7320D13FB9D008AE728 /* ObjectBrowserPrototype.nib */,
 				60909D350CB30092009CAD27 /* TableExample.nib */,
 			);
 			name = Resources;
@@ -1002,6 +1006,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				6094B7350D13FB9D008AE728 /* ObjectBrowserPrototype.nib in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1057,6 +1062,7 @@
 				60647D940C7879EC0000338D /* Inspector.nib in Resources */,
 				6087EDF30C824CE100A1263E /* ViewModelPrototype.nib in Resources */,
 				60909D380CB30092009CAD27 /* TableExample.nib in Resources */,
+				6094B7340D13FB9D008AE728 /* ObjectBrowserPrototype.nib in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1298,6 +1304,14 @@
 				60909D360CB30092009CAD27 /* English */,
 			);
 			name = TableExample.nib;
+			sourceTree = "<group>";
+		};
+		6094B7320D13FB9D008AE728 /* ObjectBrowserPrototype.nib */ = {
+			isa = PBXVariantGroup;
+			children = (
+				6094B7330D13FB9D008AE728 /* English */,
+			);
+			name = ObjectBrowserPrototype.nib;
 			sourceTree = "<group>";
 		};
 		60B144970C11BFB400B4613B /* TablePrototype.nib */ = {

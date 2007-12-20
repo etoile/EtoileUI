@@ -36,6 +36,8 @@
 #import <EtoileUI/NSObject+Model.h>
 #import <EtoileUI/ETCompatibility.h>
 
+//#define DEBUG_PVC 1
+
 
 @implementation NSObject (EtoileModel)
 
@@ -82,16 +84,23 @@
 	}
 }
 
+/** Returns the description of the receiver by default.
+	Subclasses can override this method to return a string representation that 
+	encodes some basic infos about the receiver. This string representation can
+	then be edited, validated by -validateValue:forKey:error: and used to 
+	instantiate another object by passing it to +objectWithStringValue:. */
 - (id) stringValue
 {
 	return [self description];
 }
 
+/** Returns YES if the receiver is an NSString instance, otherwise, returns NO. */
 - (BOOL) isString
 {
 	return [self isKindOfClass: [NSString class]];
 }
 
+/** Returns YES if the receiver is an NSNumber instance, otherwise, returns NO. */
 - (BOOL) isNumber
 {
 	return [self isKindOfClass: [NSNumber class]];
@@ -123,6 +132,82 @@
 	return nil;
 }
 
+/* Property Value Coding */
+
+- (NSArray *) properties
+{
+	return [NSArray arrayWithObjects: @"icon", @"displayName", nil];
+}
+
+- (id) valueForProperty: (NSString *)key
+{
+	id value = nil;
+	
+	if ([[self properties] containsObject: key])
+	{
+		value = [self valueForKey: key];
+	}
+	else
+	{
+		// TODO: Turn into an ETDebugLog which takes an object (or a class) to
+		// to limit the logging to a particular object or set of instances.
+		#ifdef DEBUG_PVC
+		ETLog(@"WARNING: Found no value for property %@ in %@", key, self);
+		#endif
+	}
+	
+	return value;
+}
+
+- (BOOL) setValue: (id)value forProperty: (NSString *)key
+{
+	BOOL result = NO;
+	
+	if ([[self properties] containsObject: key])
+	{
+		[self setValue: value forKey: key];
+		result = YES;
+	}
+	else
+	{
+		// TODO: Turn into an ETDebugLog which takes an object (or a class) to
+		// to limit the logging to a particular object or set of instances.
+		#ifdef DEBUG_PVC
+		ETLog(@"WARNING: Trying to set value %@ for property %@ missing in "
+			@"immutable property collection of %@", value, key, self);
+		#endif
+	}
+	
+	return result;
+}
+
+/* Basic Properties */
+
+/** Returns the receiver description.
+	Subclasses can override this method to return a more appropriate display
+	name. */
+- (NSString *) displayName
+{
+	return [self description];
+}
+
+/** Returns the icon used to represent unknown object.
+	Subclasses can override this method to return an icon that suits and 
+	describes better their own objects. */
+- (NSImage *) icon
+{
+	// FIXME: Asks Jesse to create an icon representing an unknown object
+	return nil;
+}
+
+/** Returns YES when the receiver is an object which can be passed to 
+	-setObjectValue: or returned by -objectValue. Some common object values
+	like string and number can be displayed and edited transparently (in an 
+	NSCell instance to take an example). If you define additional common object
+	values, you usually have to write related formatters.
+	Returns NO by default.
+	Subclasses can override this method to specify an object can be accepted
+	and used a common object value. */
 - (BOOL) isCommonObjectValue
 {
 	return NO;

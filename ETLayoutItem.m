@@ -656,7 +656,7 @@
 	{
 		value = [modelObject valueForKey: key];
 	}	
-	else if ([[self properties] containsObject: key])
+	else if ([self isMetaLayoutItem] == NO && [[self properties] containsObject: key])
 	{
 		value = [self valueForKey: key];
 	}
@@ -680,7 +680,7 @@
 	{
 		[modelObject setValue: value forKey: key];
 	}	
-	else if ([[self properties] containsObject: key])
+	else if ([self isMetaLayoutItem] == NO && [[self properties] containsObject: key])
 	{
 		[self setValue: value forKey: key];
 	}
@@ -702,13 +702,12 @@
 {
 	NSArray *properties = [NSArray arrayWithObjects: @"identifier", @"name", 
 		@"x", @"y", @"width", @"height", @"view", @"selected", 
-		@"visible", @"displayName", @"icon", @"image", @"frame", 
-		@"representedObject", @"parentLayoutItem", nil];
+		@"visible", @"image", @"frame", @"representedObject", @"parentLayoutItem", nil];
 
 	if (properties != nil && [properties count] == 0)
 		properties = nil;
 		
-	return properties;
+	return [[super properties] arrayByAddingObjectsFromArray: properties];
 }
 
 - (BOOL) isMetaLayoutItem

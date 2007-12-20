@@ -135,6 +135,17 @@ static ETView *barViewPrototype = nil;
 	[super dealloc];
 }
 
+- (NSString *) displayName
+{
+	// FIXME: Trim the angle brackets out.
+	NSString *desc = @"<";
+	
+	if ([self wrappedView] != nil)
+		desc = [desc stringByAppendingFormat: @"%@ in ", [[self wrappedView] className]];
+	desc = [desc stringByAppendingFormat: @"%@>", [super description]];
+	return desc;
+}
+
 - (BOOL) acceptsFirstResponder
 {
 	//ETLog(@"%@ accepts first responder", self);
@@ -504,7 +515,9 @@ static ETView *barViewPrototype = nil;
 - (NSArray *) properties
 {
 	// NOTE: We may expose other properties in future
-	return [NSArray arrayWithObjects: @"disclosable", nil];
+	id properties = [NSArray arrayWithObjects: @"disclosable", nil];
+	
+	return [[super properties] arrayByAddingObjectsFromArray: properties];
 }
 
 /* Live Development */
