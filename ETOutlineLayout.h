@@ -38,7 +38,7 @@
 #import <EtoileUI/ETTableLayout.h>
 
 
-@class ETViewLayoutLine, ETContainer;
+@class ETLayoutLine, ETContainer;
 
 @interface ETOutlineLayout : ETTableLayout 
 {

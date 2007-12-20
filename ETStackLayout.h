@@ -37,7 +37,7 @@
 #import <AppKit/AppKit.h>
 #import <EtoileUI/ETLayout.h>
 
-@class ETViewLayoutLine, ETContainer;
+@class ETLayoutLine, ETContainer;
 
 
 @interface ETStackLayout : ETLayout
@@ -45,6 +45,6 @@
 
 }
 
-- (void) computeLayoutItemLocationsForLayoutLine: (ETViewLayoutLine *)line;
+- (void) computeLayoutItemLocationsForLayoutLine: (ETLayoutLine *)line;
 
 @end

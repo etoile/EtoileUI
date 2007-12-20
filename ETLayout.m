@@ -37,7 +37,7 @@
 #import <EtoileUI/ETLayoutItemGroup.h>
 
 #import <EtoileUI/ETLayout.h>
-#import <EtoileUI/ETViewLayoutLine.h>
+#import <EtoileUI/ETLayoutLine.h>
 #import <EtoileUI/ETContainer.h>
 #import <EtoileUI/ETTableLayout.h>
 #import <EtoileUI/ETOutlineLayout.h>
@@ -517,7 +517,7 @@
 	
 	NSMutableArray *visibleItems = [NSMutableArray array];
 	NSEnumerator  *e = [layoutModel objectEnumerator];
-	ETViewLayoutLine *line = nil;
+	ETLayoutLine *line = nil;
 	
 	/* Flatten layout model by putting all views in a single array */
 	while ((line = [e nextObject]) != nil)
@@ -610,7 +610,7 @@
 /** Overrides this method to generate a layout line based on the container 
     constraints. Usual container constraints are size, vertical and horizontal 
 	scroller visibility. */
-- (ETViewLayoutLine *) layoutLineForLayoutItems: (NSArray *)items
+- (ETLayoutLine *) layoutLineForLayoutItems: (NSArray *)items
 {
 	return nil;
 }
@@ -625,7 +625,7 @@
 	interpreted by -computeViewLocationsForLayoutModel:. */
 - (NSArray *) layoutModelForLayoutItems: (NSArray *)items
 {
-	ETViewLayoutLine *line = [self layoutLineForLayoutItems: items];
+	ETLayoutLine *line = [self layoutLineForLayoutItems: items];
 	
 	if (line != nil)
 		return [NSArray arrayWithObject: line];

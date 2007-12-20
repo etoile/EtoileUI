@@ -548,7 +548,7 @@
 #endif
 
 /* Not necessary to override, but better to be sure it returns nil */
-- (ETViewLayoutLine *) layoutLineForLayoutItems: (NSArray *)items
+- (ETLayoutLine *) layoutLineForLayoutItems: (NSArray *)items
 {
 	return nil;
 }

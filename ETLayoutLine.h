@@ -1,5 +1,5 @@
 /*
-	ETViewLayoutLine.h
+	ETLayoutLine.h
 	
 	Represents an horizontal or vertical line box in a layout.
  
@@ -38,7 +38,7 @@
 #import <AppKit/AppKit.h>
 
 // NOTE: May be rename it ETViewLayoutBox
-@interface ETViewLayoutLine : NSObject
+@interface ETLayoutLine : NSObject
 {
 	NSMutableArray *_items;
 	NSPoint _baseLineLocation;

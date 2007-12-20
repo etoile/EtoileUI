@@ -71,7 +71,7 @@
 #import <EtoileUI/ETLayoutItemGroup+Factory.h>
 #import <EtoileUI/ETLayer.h>
 #import <EtoileUI/ETLayout.h>
-#import <EtoileUI/ETViewLayoutLine.h>
+#import <EtoileUI/ETLayoutLine.h>
 
 #import <EtoileUI/ETFlowLayout.h>
 #import <EtoileUI/ETFlowView.h>

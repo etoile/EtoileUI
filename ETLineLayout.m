@@ -36,7 +36,7 @@
 
 #import <EtoileUI/ETLineLayout.h>
 #import <EtoileUI/ETContainer.h>
-#import <EtoileUI/ETViewLayoutLine.h>
+#import <EtoileUI/ETLayoutLine.h>
 
 
 @implementation ETLineLayout
@@ -56,7 +56,7 @@
 {
 	NSMutableArray *unlayoutedViews = 
 		[NSMutableArray arrayWithArray: views];
-	ETViewLayoutLine *line = nil;
+	ETLayoutLine *line = nil;
 	NSMutableArray *layoutModel = [NSMutableArray array];
 	
 	/* First start by breaking views to layout by lines. We have to fill the layout

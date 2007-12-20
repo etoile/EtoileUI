@@ -1,6 +1,6 @@
-/*  <title>ETViewLayoutLine</title>
+/*  <title>ETLayoutLine</title>
 
-	ETViewLayoutLine.m
+	ETLayoutLine.m
 	
 	<abstract>Represents an horizontal or vertical line box in a layout.</abstract>
  
@@ -34,13 +34,13 @@
 	THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import <EtoileUI/ETViewLayoutLine.h>
+#import <EtoileUI/ETLayoutLine.h>
 #import <EtoileUI/ETLayoutItem.h>
 #import <EtoileUI/NSView+Etoile.h>
 #import <EtoileUI/ETCompatibility.h>
 
 
-@implementation ETViewLayoutLine
+@implementation ETLayoutLine
 
 + (id) layoutLineWithViews: (NSArray *)views
 {
@@ -53,12 +53,12 @@
 		[items addObject: [ETLayoutItem layoutItemWithView: view]];
 	}
     
-	return [ETViewLayoutLine layoutLineWithLayoutItems: items];
+	return [ETLayoutLine layoutLineWithLayoutItems: items];
 }
 
 + (id) layoutLineWithLayoutItems: (NSArray *)items
 {
-	ETViewLayoutLine *layoutLine = [[ETViewLayoutLine alloc] init];
+	ETLayoutLine *layoutLine = [[ETLayoutLine alloc] init];
     
 	ASSIGN(layoutLine->_items, items);
     

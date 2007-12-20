@@ -37,7 +37,7 @@
 #import <EtoileUI/ETStackLayout.h>
 #import <EtoileUI/ETContainer.h>
 #import <EtoileUI/ETLayoutItem.h>
-#import <EtoileUI/ETViewLayoutLine.h>
+#import <EtoileUI/ETLayoutLine.h>
 #import <EtoileUI/NSView+Etoile.h>
 #import <EtoileUI/ETCompatibility.h>
 
@@ -45,12 +45,12 @@
 @implementation ETStackLayout
 
 /** Returns a line filled with views to layout (stored in an array). */
-- (ETViewLayoutLine *) layoutLineForLayoutItems: (NSArray *)items
+- (ETLayoutLine *) layoutLineForLayoutItems: (NSArray *)items
 {
 	NSEnumerator *e = [items objectEnumerator];
 	ETLayoutItem *itemToLayout = nil;
 	NSMutableArray *layoutedItems = [NSMutableArray array];
-	ETViewLayoutLine *line = nil;
+	ETLayoutLine *line = nil;
 	float vAccumulator = 0;
     
 	while ((itemToLayout = [e nextObject]) != nil)
@@ -70,7 +70,7 @@
 	if ([layoutedItems count] == 0)
 		return nil;
 		
-	line = [ETViewLayoutLine layoutLineWithLayoutItems: layoutedItems];
+	line = [ETLayoutLine layoutLineWithLayoutItems: layoutedItems];
 	[line setVerticallyOriented: YES];
 	
 	/* Update layout size, useful when related container is embedded in a scroll view */
@@ -94,7 +94,7 @@
 	[self computeLayoutItemLocationsForLayoutLine: [layoutModel lastObject]];
 }
 
-- (void) computeLayoutItemLocationsForLayoutLine: (ETViewLayoutLine *)line
+- (void) computeLayoutItemLocationsForLayoutLine: (ETLayoutLine *)line
 {
 	NSEnumerator *lineWalker = nil;
 	ETLayoutItem *item = nil;

@@ -36,7 +36,7 @@
 #import <Foundation/Foundation.h>
 #import <AppKit/AppKit.h>
 
-@class ETContainer, ETViewLayoutLine, ETLayoutItem;
+@class ETContainer, ETLayoutLine, ETLayoutItem;
 
 /** Methods which must be implemented by an object to be layouted by any
 	ETLayout subclasses. The object whose layout items are layouted is the
@@ -158,7 +158,7 @@ typedef enum _ETSizeConstraintStyle
 - (void) render;
 - (void) renderWithLayoutItems: (NSArray *)items;
 
-- (ETViewLayoutLine *) layoutLineForLayoutItems: (NSArray *)items;
+- (ETLayoutLine *) layoutLineForLayoutItems: (NSArray *)items;
 - (NSArray *) layoutModelForLayoutItems: (NSArray *)items;
 - (void) computeLayoutItemLocationsForLayoutModel: (NSArray *)layoutModel;
 

@@ -38,7 +38,7 @@
 #import <EtoileUI/ETContainer.h>
 #import <EtoileUI/ETLayoutItem.h>
 #import <EtoileUI/ETLayout.h>
-#import <EtoileUI/ETViewLayoutLine.h>
+#import <EtoileUI/ETLayoutLine.h>
 #import <EtoileUI/NSView+Etoile.h>
 #import <EtoileUI/ETCompatibility.h>
 
@@ -60,7 +60,7 @@
 - (void) computeLayoutItemLocationsForLayoutModel: (NSArray *)layoutModel
 {
 	NSEnumerator *layoutWalker = [layoutModel objectEnumerator];
-	ETViewLayoutLine *line;
+	ETLayoutLine *line;
 	NSEnumerator *lineWalker = nil;
 	ETLayoutItem *item = nil;
 	NSPoint itemLocation = NSMakePoint(0, 0);
@@ -135,7 +135,7 @@
 {
 	NSMutableArray *unlayoutedItems = 
 		[NSMutableArray arrayWithArray: items];
-	ETViewLayoutLine *line = nil;
+	ETLayoutLine *line = nil;
 	NSMutableArray *layoutModel = [NSMutableArray array];
 	
 	/* First start by breaking items to layout by lines. We have to fill the layout
@@ -163,13 +163,13 @@
 }
 
 /** Returns a line filled with items to layout (stored in a layout line). */
-- (ETViewLayoutLine *) layoutLineForLayoutItems: (NSArray *)items
+- (ETLayoutLine *) layoutLineForLayoutItems: (NSArray *)items
 {
 	//int maxViewHeightInLayoutLine = 0;
 	NSEnumerator *e = [items objectEnumerator];
 	ETLayoutItem *itemToLayout = nil;
 	NSMutableArray *layoutedItems = [NSMutableArray array];
-	ETViewLayoutLine *line = nil;
+	ETLayoutLine *line = nil;
 	float widthAccumulator = 0;
     
 	while ((itemToLayout = [e nextObject]) != nil)
@@ -196,7 +196,7 @@
 	if ([layoutedItems count] == 0)
 		return nil;
 		
-	line = [ETViewLayoutLine layoutLineWithLayoutItems: layoutedItems];
+	line = [ETLayoutLine layoutLineWithLayoutItems: layoutedItems];
 	[line setVerticallyOriented: NO];
 
 	return line;
