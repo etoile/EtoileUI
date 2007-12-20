@@ -246,6 +246,7 @@
 	NSString *path = [sender pathToColumn: column];
 	ETLayoutItemGroup *item = nil;
 	ETLayoutItem *childItem = nil;
+	id value = nil;
 	
 	if (path == nil || [path isEqual: @""])
 		path = @"/";
@@ -264,10 +265,20 @@
 	{
 		[cell setLeaf: YES];
 	}
+
+	/* Try to use the value property when the item has no name. If no value is
+	   is provided, use the display name. Item value are objects like numbers,
+	   strings etc. you can set by calling -[ETLayoutItem setValue:], they are
+	   useful for list control (table with a single column). */
+	if ([childItem valueForProperty: @"name"] == nil)
+		value = [childItem value];
+	if (value == nil)
+		value = [childItem valueForProperty: @"displayName"];
+	ETLog(@"Returns %@ as object value in browser view %@", value, sender);
 	
-	//NSLog(@"Returns %@ as object value in browser view %@", [item valueForProperty: @"name"], sender);
-	
-	[cell setStringValue: [childItem valueForProperty: @"name"]];
+	/* See -tableView:objectValueForTableColumn:row: in ETTableLayout to 
+	   understand -objectValue use. */
+	[cell setStringValue: [value objectValue]];
 
 	if ([cell isKindOfClass: [NSBrowserCell class]])
 	{
