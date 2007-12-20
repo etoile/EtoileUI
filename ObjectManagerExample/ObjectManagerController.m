@@ -185,7 +185,7 @@ static NSFileManager *objectManager = nil;
 	if (image != nil)
     {
         NSImageView *view = [[NSImageView alloc] 
-            initWithFrame: NSMakeRect(0, 0, 48, 48)];
+            initWithFrame: NSMakeRect(0, 0, 32, 32)];
 	
 		[image setScalesWhenResized: YES]; 
 		[view setImageScaling: NSScaleProportionally];
@@ -300,7 +300,10 @@ static NSFileManager *objectManager = nil;
 		BOOL isDir = NO;
 		
 		//NSLog(@"Found path %@ with %@", filePath, newPath);
-		
+
+		/* Force the loading of  128 * 128 icon versions otherwise icons cannot
+		   be resized beyond 32 * 32 (when put inside an image view). */
+		[icon setSize: NSMakeSize(128, 128)];
 		if ([[NSFileManager defaultManager] fileExistsAtPath: filePath isDirectory: &isDir] && isDir)
 		{
 			fileItem = [ETLayoutItemGroup layoutItemWithView: [self imageViewForImage: icon]];
@@ -390,6 +393,7 @@ static NSFileManager *objectManager = nil;
 		NSArray *pathComponents = [path pathComponents];
 		NSString *filePath = @"/";
 		NSImage *icon = nil;
+		NSImageView *imgView = nil;
 		
 		for (int i = 0; i < index; i++)
 			filePath = [filePath stringByAppendingPathComponent: [pathComponents objectAtIndex: i + 1]];
@@ -397,7 +401,10 @@ static NSFileManager *objectManager = nil;
 		//NSLog(@"Built path is %@ with components %@", filePath, pathComponents);
 		
 		icon = [wk iconForFile: filePath];
-		fileItem = [ETLayoutItem layoutItemWithView: [self imageViewForImage: icon]];	
+		[icon setSize: NSMakeSize(128, 128)];
+		imgView = [self imageViewForImage: icon];
+		[imgView setFrameSize: NSMakeSize(48, 48)];
+		fileItem = [ETLayoutItem layoutItemWithView: imgView];	
 		
 		[fileItem setValue: [filePath lastPathComponent] forProperty: @"name"];
 		[fileItem setValue: filePath forProperty: @"path"];
