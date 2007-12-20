@@ -1,7 +1,8 @@
-/*
+/*  <title>NSObject+EtoileUI</title>
+
 	NSObject+EtoileUI.m
 	
-	Description forthcoming.
+	<abstract>NSObject EtoileUI specific additions.</abstract>
  
 	Copyright (C) 2007 Quentin Mathe
  

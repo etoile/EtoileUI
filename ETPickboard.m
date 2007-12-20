@@ -1,7 +1,8 @@
-/*
+/*  <title>ETPickboard</title>
+
 	ETPickboard.m
 	
-	Pick & Drop class
+	<abstract>Pick & Drop class</abstract>
  
 	Copyright (C) 2007 Quentin Mathe
  

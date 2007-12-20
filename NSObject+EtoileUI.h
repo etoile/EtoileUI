@@ -1,7 +1,7 @@
 /*
 	NSObject+EtoileUI.h
 	
-	Description forthcoming.
+	NSObject EtoileUI specific additions.
  
 	Copyright (C) 2007 Quentin Mathe
  

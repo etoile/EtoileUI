@@ -1,7 +1,8 @@
-/*
+/*  <title>ETApplication</title>
+
 	ETApplication.m
 	
-	NSApplication subclass implementing Etoile specific behavior.
+	<abstract>NSApplication subclass implementing Etoile specific behavior.</abstract>
  
 	Copyright (C) 2007 Quentin Mathe
  
