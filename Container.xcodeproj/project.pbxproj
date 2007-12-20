@@ -213,6 +213,10 @@
 		60F363FA0D183BB400FCFFDA /* NSImage+Etoile.m in Sources */ = {isa = PBXBuildFile; fileRef = 60F363F80D183BB400FCFFDA /* NSImage+Etoile.m */; };
 		60F363FB0D183BB400FCFFDA /* NSImage+Etoile.h in Headers */ = {isa = PBXBuildFile; fileRef = 60F363F70D183BB400FCFFDA /* NSImage+Etoile.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		60F363FC0D183BB400FCFFDA /* NSImage+Etoile.m in Sources */ = {isa = PBXBuildFile; fileRef = 60F363F80D183BB400FCFFDA /* NSImage+Etoile.m */; };
+		60F365900D18651700FCFFDA /* ETViewModelLayout.h in Headers */ = {isa = PBXBuildFile; fileRef = 60F3658E0D18651700FCFFDA /* ETViewModelLayout.h */; };
+		60F365910D18651700FCFFDA /* ETViewModelLayout.m in Sources */ = {isa = PBXBuildFile; fileRef = 60F3658F0D18651700FCFFDA /* ETViewModelLayout.m */; };
+		60F365920D18651700FCFFDA /* ETViewModelLayout.h in Headers */ = {isa = PBXBuildFile; fileRef = 60F3658E0D18651700FCFFDA /* ETViewModelLayout.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		60F365930D18651700FCFFDA /* ETViewModelLayout.m in Sources */ = {isa = PBXBuildFile; fileRef = 60F3658F0D18651700FCFFDA /* ETViewModelLayout.m */; };
 		60F714130C5E7DA8002CA8AA /* EtoileUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 60EF8E9D0C5E4D0600C97C41 /* EtoileUI.framework */; };
 		60F714470C5E7E43002CA8AA /* EtoileUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 60EF8E9D0C5E4D0600C97C41 /* EtoileUI.framework */; };
 		60F7145B0C5E7EA1002CA8AA /* EtoileUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 60EF8E9D0C5E4D0600C97C41 /* EtoileUI.framework */; };
@@ -404,6 +408,8 @@
 		60EF8E9E0C5E4D0600C97C41 /* EtoileUI-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = "EtoileUI-Info.plist"; sourceTree = "<group>"; };
 		60F363F70D183BB400FCFFDA /* NSImage+Etoile.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSImage+Etoile.h"; sourceTree = "<group>"; };
 		60F363F80D183BB400FCFFDA /* NSImage+Etoile.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSImage+Etoile.m"; sourceTree = "<group>"; };
+		60F3658E0D18651700FCFFDA /* ETViewModelLayout.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ETViewModelLayout.h; sourceTree = "<group>"; };
+		60F3658F0D18651700FCFFDA /* ETViewModelLayout.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ETViewModelLayout.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -738,6 +744,8 @@
 				609F46400B414C3800AD2209 /* ETFlowView.m */,
 				6031194E0CF8B993001A699E /* ETObjectBrowserLayout.h */,
 				6031194F0CF8B993001A699E /* ETObjectBrowserLayout.m */,
+				60F3658E0D18651700FCFFDA /* ETViewModelLayout.h */,
+				60F3658F0D18651700FCFFDA /* ETViewModelLayout.m */,
 			);
 			name = "New Layouts";
 			sourceTree = "<group>";
@@ -799,6 +807,7 @@
 				605A31D30D0AF2B9001F7371 /* ETPropertyValueCoding.h in Headers */,
 				605A34340D0C923E001F7371 /* NSObject+Model.h in Headers */,
 				60F363F90D183BB400FCFFDA /* NSImage+Etoile.h in Headers */,
+				60F365900D18651700FCFFDA /* ETViewModelLayout.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -857,6 +866,7 @@
 				605A31D50D0AF2B9001F7371 /* ETPropertyValueCoding.h in Headers */,
 				605A34360D0C923E001F7371 /* NSObject+Model.h in Headers */,
 				60F363FB0D183BB400FCFFDA /* NSImage+Etoile.h in Headers */,
+				60F365920D18651700FCFFDA /* ETViewModelLayout.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1151,6 +1161,7 @@
 				605A31D40D0AF2B9001F7371 /* ETPropertyValueCoding.m in Sources */,
 				605A34350D0C923E001F7371 /* NSObject+Model.m in Sources */,
 				60F363FA0D183BB400FCFFDA /* NSImage+Etoile.m in Sources */,
+				60F365910D18651700FCFFDA /* ETViewModelLayout.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1249,6 +1260,7 @@
 				605A31D60D0AF2B9001F7371 /* ETPropertyValueCoding.m in Sources */,
 				605A34370D0C923E001F7371 /* NSObject+Model.m in Sources */,
 				60F363FC0D183BB400FCFFDA /* NSImage+Etoile.m in Sources */,
+				60F365930D18651700FCFFDA /* ETViewModelLayout.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

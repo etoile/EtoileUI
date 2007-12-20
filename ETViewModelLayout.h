@@ -1,13 +1,13 @@
 /*
-	ETInspector.h
+	ETViewModelLayout.h
 	
-	Inspector protocol and related Inspector representation class which can be
-	used as an inspector view wrapper.
+	A property inspector implemented as a pluggable layout which supports
+	introspecting an object as both view and model.
  
 	Copyright (C) 2007 Quentin Mathe
  
 	Author:  Quentin Mathe <qmathe@club-internet.fr>
-	Date:  August 2007
+	Date:  December 2007
  
 	Redistribution and use in source and binary forms, with or without
 	modification, are permitted provided that the following conditions are met:
@@ -36,52 +36,28 @@
 
 #import <Foundation/Foundation.h>
 #import <AppKit/AppKit.h>
-#import <EtoileUI/ETLayoutItem.h>
 #import <EtoileUI/ETLayout.h>
-#import <EtoileUI/ETInspecting.h>
 
-@class ETView, ETContainer;
+typedef enum _ETLayoutDisplayMode {
+	ETLayoutDisplayModeViewProperties = 1,
+	ETLayoutDisplayModeViewContent = 2,
+	ETLayoutDisplayModeViewObject = 3,
+	ETLayoutDisplayModeModelProperties = 4,
+	ETLayoutDisplayModeModelContent = 5,
+	ETLayoutDisplayModeModelObject = 6
+} ETLayoutDisplayMode;
 
 
-@interface ETInspector : ETLayoutItem <ETInspector>
+@interface ETViewModelLayout : ETLayout
 {
-	IBOutlet ETContainer *itemGroupView;
+	IBOutlet id enclosingView;
 	IBOutlet ETContainer *propertyView;
-	IBOutlet NSWindow *window;
-	IBOutlet id viewModelLayout;
-
-	NSArray *_inspectorViews;
-	NSArray *_inspectedItems;
+	ETLayoutDisplayMode _displayMode;
 }
 
-- (NSArray *) inspectedItems;
-- (void) setInspectedItems: (NSArray *)items;
-
-/*- (ETView *) view;
-- (void) setView: (NSView *)view;*/
-
-- (NSWindow *) window;
-- (NSPanel *) panel;
-
-- (IBAction) inspect: (id)sender;
-
-- (IBAction) stack: (id)sender;
+- (ETLayoutDisplayMode) displayMode;
+- (void) setDisplayMode: (ETLayoutDisplayMode)mode;
+- (void) switchDisplayMode: (id)sender;
 
 @end
 
-@interface ETLayoutItem (ETInspector)
-//+ (ETLayoutItem *) layoutItemWithInspectedObject: (id)object;
-/** A basic meta model which inspects layout items by wrapping each one in a 
-	new meta layout item. Achieved by setting the base layout item as the
-	represented object of the new meta layout item. */
-+ (ETLayoutItem *) layoutItemOfLayoutItem: (ETLayoutItem *)item;
-- (ETView *) buildInspectorView;
-@end
-
-
-/*@interface ETInspectorLayout
-{
-	IBOutlet ETContainer *itemGroupView;
-}
-
-@end*/

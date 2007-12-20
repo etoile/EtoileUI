@@ -93,4 +93,5 @@
 #import <EtoileUI/ETFreeLayout.h>
 
 #import <EtoileUI/ETObjectBrowserLayout.h>
+#import <EtoileUI/ETViewModelLayout.h>
 #import <EtoileUI/ETInspector.h>
