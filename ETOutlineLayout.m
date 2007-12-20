@@ -225,14 +225,39 @@
 	}
 	
 	id value = [item valueForProperty: [column identifier]];
-	BOOL blankColumnIdentifier = [column identifier] == nil || [[column identifier] isEqual: @""];
+	BOOL blankColumnIdentifier = ([column identifier] == nil || [[column identifier] isEqual: @""]);
 	
 	if (value == nil && ([[self outlineView] numberOfColumns] == 1 || blankColumnIdentifier))
 		value = [item value];
-	
-	return value;
 
-	//ETLog(@"Returns %@ as object value in outline view %@", value, outlineView);
+	ETLog(@"Returns %@ as object value in outline view %@", value, outlineView);
+	
+	// NOTE: 'value' could be any objects at this point and NSCell only accepts
+	// some common object values like string and number or image for 
+	// NSImageCell. Unless a custom formatter has been set on the column or a 
+	// custom cell has been provided, non common object values must be 
+	// converted to a string or number representation, -objectValue precisely 
+	// takes care of converting it to a string value. See -objectValue in 
+	// NSObject+Model for more details.
+	return [value objectValue];
+}
+
+- (void) outlineView: (NSOutlineView *)outlineView 
+	setObjectValue: (id)value forTableColumn: (NSTableColumn *)column byItem: (id)item
+{
+	if (item == nil)
+	{
+		//ETLog(@"WARNING: Get nil item in -outlineView:objectValueForTableColumn:byItem: of %@", self);
+		return;
+	}
+	
+	BOOL result = [item setValue: value forProperty: [column identifier]];
+	BOOL blankColumnIdentifier = [column identifier] == nil || [[column identifier] isEqual: @""];
+	
+	if (result == NO && ([[self outlineView] numberOfColumns] == 1 || blankColumnIdentifier))
+		[item setValue: value];
+
+	//ETLog(@"Sets %@ as object value in outline view %@", value, outlineView);
 }
 
 - (ETLayoutItem *) doubleClickedItem

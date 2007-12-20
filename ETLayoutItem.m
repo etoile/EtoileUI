@@ -426,6 +426,7 @@
 	return identifier;
 }
 
+// FIXME: we should probably define -displayName and may be -name on NSObject
 - (NSString *) displayName
 {
 	id name = [self name];
@@ -438,7 +439,7 @@
 		}
 		else
 		{
-			name = [self description];
+			name = [[self representedObject] description];
 		}
 	}
 		
@@ -702,7 +703,7 @@
 	NSArray *properties = [NSArray arrayWithObjects: @"identifier", @"name", 
 		@"x", @"y", @"width", @"height", @"view", @"selected", 
 		@"visible", @"displayName", @"icon", @"image", @"frame", 
-		@"representedObject", nil];
+		@"representedObject", @"parentLayoutItem", nil];
 
 	if (properties != nil && [properties count] == 0)
 		properties = nil;
@@ -712,7 +713,14 @@
 
 - (BOOL) isMetaLayoutItem
 {
-	return [[self representedObject] isKindOfClass: [ETLayoutItem class]];
+	// NOTE: Defining the item as a meta item when a view is the represented 
+	// object allows to read and write view values when the item is modified
+	// with PVC. If the item is declared as a normal item, PVC will apply to
+	// the item itself for all properties common to NSView and ETLayoutItem 
+	// (mostly frame related properties).
+	// See also -valueForProperty and -setValue:forProperty:
+	return ([[self representedObject] isKindOfClass: [ETLayoutItem class]]
+		|| [[self representedObject] isKindOfClass: [NSView class]]);
 }
 
 #if 0

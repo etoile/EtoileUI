@@ -47,6 +47,7 @@
 #import <EtoileUI/ETPaneLayout.h>
 #import <EtoileUI/ETFreeLayout.h>
 #import <EtoileUI/NSObject+Etoile.h>
+#import <EtoileUI/NSObject+Model.h>
 #import <EtoileUI/NSIndexPath+Etoile.h>
 #import <EtoileUI/ETCollection.h>
 #import <EtoileUI/ETCompatibility.h>
@@ -107,8 +108,10 @@
 	// NOTE: If this next line is uncommented, -containerSelectionDidChange:
 	// must be updated to filter out property view related notifications.
 	//[propertyView setDelegate: self];
-	[propertyView setDoubleAction: @selector(doubleClickInPropertyView:)];
-	[propertyView setTarget: self];
+	// NOTE: The following code is commented out to enable property editing
+	// instead of browsing.
+	//[propertyView setDoubleAction: @selector(doubleClickInPropertyView:)];
+	//[propertyView setTarget: self];
 }
 
 - (void) containerSelectionDidChange: (NSNotification *)notif
@@ -278,11 +281,18 @@
 	
 #if 1
 	NSString *property = [[item properties] objectAtIndex: index];
+	ETProperty *propertyRep = [ETProperty propertyWithName: property representedObject: item];
+	
+	[propertyItem setRepresentedObject: propertyRep];
+#else
+	NSString *property = [[item properties] objectAtIndex: index];
 
 	[propertyItem setValue: property forProperty: @"property"];
 	// FIXME: Instead using -description, write a generic ETObjectFormatter
 	[propertyItem setValue: [[item valueForProperty: property] description] forProperty: @"value"];
-#else
+#endif
+
+#if 0
 
 	NSArray *ivars = [[item representedObject] instanceVariables];
 	NSArray *methods = [[item representedObject] methods];

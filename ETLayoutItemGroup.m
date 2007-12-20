@@ -1121,6 +1121,11 @@
 
 /* Collection Protocol */
 
+- (BOOL) isEmpty
+{
+	return ([self numberOfItems] == 0);
+}
+
 - (id) content
 {
 	return [self items];
@@ -1342,7 +1347,16 @@
 		   way relative to the base container */
 		layoutItem = [[baseContainer source] container: baseContainer itemAtPath: indexSubpath];
 		//ETLog(@"Retrieved item %@ known by path %@", layoutItem, indexSubpath);
-		[itemsFromSource addObject: layoutItem];
+		if (layoutItem != nil)
+		{
+			[itemsFromSource addObject: layoutItem];
+		}
+		else
+		{
+			[NSException raise: @"ETInvalidReturnValueException" 
+				format: @"Item at path %@ returned by source %@ must not be "
+				@"nil", indexSubpath, [baseContainer source]];
+		}
 	}
 	
 	return itemsFromSource;

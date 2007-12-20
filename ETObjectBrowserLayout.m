@@ -42,7 +42,7 @@
 #import <EtoileUI/NSIndexPath+Etoile.h>
 #import <EtoileUI/ETCompatibility.h>
 
-#define PALETTE_FRAME NSMakeRect(200, 200, 400, 200)
+#define PALETTE_FRAME NSMakeRect(200, 200, 600, 300)
 #define itemGroupView (id)[self layoutView]
 
 
@@ -71,6 +71,8 @@
 		[container setDelegate: self];
 		[container setDoubleAction: @selector(doubleClickInItemGroupView:)];
 		[container setTarget: self];
+		//[container setHasVerticalScroller: YES];
+		//[container setHasHorizontalScroller: YES];
 		[container setAutoresizingMask: NSViewHeightSizable | NSViewWidthSizable];
 		[self setLayoutView: container];
 		//[self awakeFromNib];
@@ -141,6 +143,10 @@
 	
 	ETLog(@"Returns %d as number of items in %@", nbOfItems, container);
 	
+	/* Useful to debug data source and property editing
+	if (nbOfItems > 1)	
+		return 1; */
+
 	return nbOfItems;
 }
 
@@ -178,8 +184,12 @@
 	if (contentArray != nil && [contentArray count] > 0)
 	{
 		object = [contentArray objectAtIndex: [path lastIndex]];
-					
-		if ([object isCollection])
+		
+		// FIXME: -isEmpty should removed here, we should always return aa item
+		// group for a collection but disable node visual indicator when the 
+		// collection is empty. Probably involves some changes in 
+		// ETOutlineLayout, ETBrowserLayout etc.
+		if ([object isCollection] && [object isEmpty] == NO)
 		{
 			item = [ETLayoutItemGroup layoutItemWithRepresentedObject: object];
 		}
@@ -211,7 +221,8 @@
 
 - (NSArray *) displayedItemPropertiesInContainer: (ETContainer *)container
 {
-	return [NSArray arrayWithObjects: @"icon", @"displayName", @"description", @"frame", nil]; // @"frame", @"model",
+	return [NSArray arrayWithObjects: @"icon", @"displayName", @"parentLayoutItem", @"frame", 
+		@"identifier", @"selected", @"visible", @"value", @"view", @"layout", nil];
 }
 
 @end
@@ -235,6 +246,8 @@
 											   backing: NSBackingStoreBuffered
 												 defer: YES];
 
+		[browserView setHasVerticalScroller: YES];
+		[browserView setHasHorizontalScroller: YES];
 		[browserView setAutoresizingMask: NSViewWidthSizable | NSViewHeightSizable];
 		[browserView setLayout: [ETObjectBrowserLayout layout]];
 		[window setContentView: browserView];
@@ -263,6 +276,7 @@
 - (void) setBrowsedObject: (id)object
 {
 	[self setRepresentedObject: object];
+	[window setTitle: [NSString stringWithFormat: @"Object browser - %@", object]];
 	[self reloadAndUpdateLayout];
 }
 

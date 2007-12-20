@@ -240,9 +240,10 @@
 
 	[column setHeaderCell: headerCell];
 	RELEASE(headerCell);
+	[dataCell setEditable: YES]; // FIXME: why column setEditable: isn't enough
 	[column setDataCell: dataCell];
 	RELEASE(dataCell);
-	[column setEditable: NO];
+	[column setEditable: YES];
 	
 	return AUTORELEASE(column);
 }
@@ -346,15 +347,44 @@
 	
 	item = [layoutItems objectAtIndex: rowIndex];
 	
-	//NSLog(@"Returns %@ as object value in table view %@", [item valueForProperty: [column identifier]], tv);
+	//ETLog(@"Returns %@ as object value in table view %@", [item valueForProperty: [column identifier]], tv);
 	
 	id value = [item valueForProperty: [column identifier]];
 	BOOL blankColumnIdentifier = [column identifier] == nil || [[column identifier] isEqual: @""];
 	
 	if (value == nil && ([tv numberOfColumns] == 1 || blankColumnIdentifier))
 		value = [item value];
+
+	// NOTE: 'value' could be any objects at this point and NSCell only accepts
+	// some common object values like string and number or image for 
+	// NSImageCell. Unless a custom formatter has been set on the column or a 
+	// custom cell has been provided, non common object values must be 
+	// converted to a string or number representation, -objectValue precisely 
+	// takes care of converting it to a string value. See -objectValue in 
+	// NSObject+Model for more details.	
+	return [value objectValue];
+}
+
+- (void) tableView: (NSTableView *)tv setObjectValue: (id)value forTableColumn: (NSTableColumn *)column row: (int)rowIndex
+{
+	NSArray *layoutItems = [[self layoutContext] items];
+	ETLayoutItem *item = nil;
 	
-	return value;
+	if (rowIndex >= [layoutItems count])
+	{
+		ETLog(@"WARNING: Row index %d uncoherent with number of items %d in %@", rowIndex, [layoutItems count], self);
+		return;
+	}
+	
+	item = [layoutItems objectAtIndex: rowIndex];
+	
+	//ETLog(@"Sets %@ as object value in table view %@", value, tv);
+	
+	BOOL result = [item setValue: value forProperty: [column identifier]];
+	BOOL blankColumnIdentifier = [column identifier] == nil || [[column identifier] isEqual: @""];
+	
+	if (result == NO && ([tv numberOfColumns] == 1 || blankColumnIdentifier))
+		[item setValue: value];
 }
 
 - (BOOL) tableView: (NSTableView *)tv writeRowsWithIndexes: (NSIndexSet *)rowIndexes 
