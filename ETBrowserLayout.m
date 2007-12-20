@@ -47,7 +47,7 @@
 
 #define DEFAULT_ROW_HEIGHT 20
 
-/** ETBrowserLayout wraps AppKit NSBrowser control in term of Container archictecture.
+/** ETBrowserLayout wraps AppKit NSBrowser control in term of EtoileUI architecture.
 	ETBrowserLayout uses by default a custom NSBrowser that displays icon and 
 	text in column rows. If you prefer a different style of row, you can 
 	replace ETBrowserCell by your own subclass of NSBrowserCell.
@@ -63,14 +63,31 @@
 	  this root path is now referencing '/Applications/Fusion.app/Resources' 
 	  and not '/'. In other words, the browser doesn't display the
 	  whole path anymore but only a portion.    
-	  Model encapsulated by ETLayoutItem instances is accessed through the 
+	Model encapsulated by ETLayoutItem instances is accessed through the 
 	properties classified by decreasing priority order:
-	- 'name', 'value' for text part of the row
-	- 'icon', 'image' for icon part of the row
+	- 'name', 'value', 'displayName' for text part of the row
+	- 'icon' for icon part of the row
+	'name' is never looked up directly but through 'displayName'.
 	
 	NOTE: row resizing based on -[ETContainer itemScaleFactor] isn't yet 
 	supported.
 */
+
+/* The browser delegate navigates the layout item tree by associating each cell 
+   to its related item with [cell setRepresentedObject: item].
+   Another way to navigate the layout item tree would to build index paths by
+   using -[NSBrowser selectedCellInColumn:] for every columns and finding the
+   index of each selected cell. The resulting index path could then be used 
+   like that [browserItem itemAtIndexPath: indexPath]. However this method
+   would involve to check the validity of the index path in case the layout 
+   item tree has been modified since the last reload.
+   The browser -path property cannot be used because it isn't always built from
+   'identifier' property of the layout items. It may work in some cases when 
+   'identifier' matches 'name', but never assumes this border case to be true.
+   If no name is set on a layout item, the display name will be used (instead 
+   of the identifier). Finally keep in mind, the 'identifier' property is used 
+   to construct paths in the layout item tree and you should never write 
+   code like [browserItem itemAtPath: [browser path]] in ETBrowserLayout. */
 
 
 @implementation ETBrowserLayout
@@ -159,7 +176,7 @@
 			newCellSize = [columnMatrix cellSize];
 			newCellSize.height = DEFAULT_ROW_HEIGHT * factor;
 			[columnMatrix setCellSize: newCellSize];
-			NSLog(@"Resize %@ cell size from %@ to %@", columnMatrix, 
+			ETLog(@"Resize %@ cell size from %@ to %@", columnMatrix, 
 				NSStringFromSize([columnMatrix cellSize]), 
 				NSStringFromSize(newCellSize));
 		}
@@ -223,7 +240,16 @@
 	if (path == nil || [path isEqual: @""])
 		path = @"/";
 
-	item = (ETLayoutItemGroup *)[[self layoutContext] itemAtPath: path];
+	if ([path isEqual: @"/"])
+	{
+		item = (ETLayoutItemGroup *)[[self layoutContext] itemAtPath: path];
+	}
+	else
+	{
+		// FIXME: Implement some sort of support for multiple selection in the 
+		// right most column
+		item = [[sender selectedCellInColumn: column - 1] representedObject];
+	}
 	NSAssert(item != nil, @"Parent item must never be nil in -browser:numberOfRowsInColumn:");
 	NSAssert([item isGroup], @"Parent item "
 		@"must always be of ETLayoutItemGroup class kind");
@@ -236,7 +262,7 @@
 		nbOfItems = [[item items] count];	
 	}
 	
-	//ETLog(@"Returns %d as number of items in browser view %@", nbOfItems, sender);
+	ETLog(@"Returns %d as number of items in browser view %@", nbOfItems, sender);
 	
 	return nbOfItems;
 }
@@ -250,13 +276,23 @@
 	
 	if (path == nil || [path isEqual: @""])
 		path = @"/";
-
-	item = (ETLayoutItemGroup *)[[self layoutContext] itemAtPath: path];
+		
+	if ([path isEqual: @"/"])
+	{
+		item = (ETLayoutItemGroup *)[[self layoutContext] itemAtPath: path];
+	}
+	else
+	{
+		// FIXME: Implement some sort of support for multiple selection in the 
+		// right most column
+		item = [[sender selectedCell] representedObject];
+	}
 	NSAssert(item != nil, @"Parent item must never be nil in -browser:numberOfRowsInColumn:");
 	NSAssert([item isGroup], @"Parent item "
 		@"must always be of ETLayoutItemGroup class kind");
 
 	childItem = [item itemAtIndex: row];
+	[cell setRepresentedObject: childItem];
 	if ([childItem isGroup])
 	{
 		[cell setLeaf: NO];
@@ -330,7 +366,7 @@
 	NSString *path = [[self browser] path];
 	ETLayoutItem *item = [[self layoutContext] itemAtPath: path];
 	
-	NSLog(@"-doubleClickedItem %@ in %@ with browser path %@", item, self, path);
+	ETLog(@"-doubleClickedItem %@ in %@ with browser path %@", item, self, path);
 	
 	return item;
 }
