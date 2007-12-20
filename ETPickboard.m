@@ -354,4 +354,9 @@ static ETPickboard *activePickboard = nil;
 	return [_pickedObjects contentArray];
 }
 
+- (BOOL) isEmpty
+{
+	return [_pickedObjects isEmpty];
+}
+
 @end
