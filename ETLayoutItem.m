@@ -1295,7 +1295,16 @@
 	[[self representedObject] setValue: img forProperty: @"icon"];
 }
 
-/* Actions */
+/* Events & Actions */
+
+/** Returns the event handler associated with the receiver. The returned object
+	must implement ETEventHandler protocol.
+	By default the receiver returns itself. See ETLayoutItem+Events to know 
+	more about event handling in the layout item tree. */
+- (id <ETEventHandler>) eventHandler
+{
+	return self;
+}
 
 /* You can override this method for your own custom layout item */
 - (void) doubleClick

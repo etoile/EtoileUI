@@ -281,6 +281,20 @@
 	[[self tableView] setRowHeight: rowHeight];
 }
 
+- (ETLayoutItem *) itemAtLocation: (NSPoint)location
+{
+	int row = [[self tableView] rowAtPoint: location];
+	
+	return [[[self layoutContext] items] objectAtIndex: row];
+}
+
+- (NSRect) displayRectOfItem: (ETLayoutItem *)item
+{
+	int row = [[[self layoutContext] items] indexOfObject: item];
+	
+	return [[self tableView] rectOfRow: row];
+}
+
 - (void) tableViewSelectionDidChange: (NSNotification *)notif
 {
 	id delegate = [[self container] delegate];
@@ -387,18 +401,36 @@
 		[item setValue: value];
 }
 
-- (void) handleDrag: (NSEvent *)event forItem: (id)item
+/*- (void) handleDrag: (NSEvent *)event forItem: (id)item
 {
 
+}*/
+
+- (void) beginDrag: (NSEvent *)event forItem: (id)item image: (NSImage *)customDragImage
+{
+	ETLog(@"Overriden -beginDrag:forItem:image: in %@", self);
+	/* Overriden to do nothing and let the table view creates nad manages the 
+	   drag object. This method is called by -handleDrag:forItem:. */
 }
 
 - (BOOL) tableView: (NSTableView *)tv writeRowsWithIndexes: (NSIndexSet *)rowIndexes 
 	toPasteboard: (NSPasteboard*)pboard 
-{	
-	// FIXME: Probably to be removed because -handleDrag:forItem: replaces it
-	return [[self container] container: [self container] 
+{
+	NSEvent *dragEvent = [NSApp currentEvent];
+	
+	NSAssert3([[dragEvent window] isEqual: [tv window]], @"NSApp current "
+		@"event %@ in %@ -tableView:writeRowsWithIndexes:toPasteboard: doesn't "
+		@"belong to the table view %@", dragEvent, self, tv);
+		
+	/* Convert drag location from window coordinates to the receiver coordinates */
+	NSPoint localPoint = [tv convertPoint: [dragEvent locationInWindow] fromView: nil];
+	
+	[[[self container] layoutItem] handleDrag: dragEvent forItem: [self itemAtLocation: localPoint]];
+	
+	return YES;
+	/*return [[self container] container: [self container] 
 	               writeItemsAtIndexes: rowIndexes 
-				          toPasteboard: pboard];
+				          toPasteboard: pboard];*/
 }
 
 - (NSDragOperation) tableView:(NSTableView*)tv 

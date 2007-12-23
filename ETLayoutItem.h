@@ -43,6 +43,7 @@
 #define ITEM(x) [ETLayoutItem layoutItemWithValue: x]
 
 @class ETView, ETContainer, ETLayoutItemGroup;
+@protocol ETEventHandler;
 
 /** WARNING: Personal notes that are vague and may change, move or become part
 	of another framework.
@@ -270,7 +271,9 @@ shape*/
 - (void) setAppliesResizingToBounds: (BOOL)flag;
 - (BOOL) appliesResizingToBounds;
 
-/* Actions */
+/* Events & Actions */
+
+- (id <ETEventHandler>) eventHandler;
 
 - (void) doubleClick;
 
@@ -282,6 +285,8 @@ shape*/
 - (void) beginEditingUI;
 /*- (BOOL) isEditingUI;
 - (void) commitEditingUI;*/
+
+
 
 @end
 

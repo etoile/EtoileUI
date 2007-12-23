@@ -92,7 +92,7 @@
 	if ([self isGroup])
 		layout = [(ETLayoutItemGroup *)self layout];
 	
-	if (layout != nil && [layout respondsToSelector: @selector(handleDragForItem:)])
+	if (layout != nil && [layout respondsToSelector: @selector(handleDrag:forItem:)])
 	{
 		[layout handleDrag: event forItem: item];
 	}
@@ -130,20 +130,32 @@
 /* ETLayoutItem specific method to create a new drag and passing the request to data source */
 - (void) beginDrag: (NSEvent *)event forItem: (id)item image: (NSImage *)customDragImage
 {
-	id dragSupervisor = [event window];
-	NSImage *dragIcon = customDragImage;
+	id layout = nil;
 	
-	if (dragIcon == nil)
-		dragIcon = [item icon];
+	if ([self isGroup])
+		layout = [(ETLayoutItemGroup *)self layout];
 	
-	// FIXME: Draw drag image made of all dragged items and not just first one
-	[dragSupervisor dragImage: dragIcon
-					       at: [event locationInWindow]
-				       offset: NSZeroSize
-				     	event: event 
-			       pasteboard: [NSPasteboard pasteboardWithName: NSDragPboard]
-				       source: self
-			    	slideBack: YES];
+	if (layout != nil && [layout respondsToSelector: @selector(beginDrag:forItem:image:)])
+	{
+		[layout beginDrag: event forItem: item image: customDragImage];
+	}
+	else
+	{
+		id dragSupervisor = [event window];
+		NSImage *dragIcon = customDragImage;
+		
+		if (dragIcon == nil)
+			dragIcon = [item icon];
+		
+		// FIXME: Draw drag image made of all dragged items and not just first one
+		[dragSupervisor dragImage: dragIcon
+							   at: [event locationInWindow]
+						   offset: NSZeroSize
+							event: event 
+					   pasteboard: [NSPasteboard pasteboardWithName: NSDragPboard]
+						   source: self
+						slideBack: YES];
+	}
 }
 
 - (void) handleDragMove: (id)dragInfo forItem: (id)item
