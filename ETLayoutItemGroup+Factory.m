@@ -1,8 +1,9 @@
-/*
+/*  <title>ETLayoutItemGroup+Factory</title>
+
 	ETLayoutItemGroup+Factory.m
 	
-	ETLayoutItemGroup category providing a factory keeping track of special 
-	nodes of the layout item tree.
+	<abstract>ETLayoutItemGroup category providing a factory keeping track of 
+	special nodes of the layout item tree.</abstract>
  
 	Copyright (C) 2007 Quentin Mathe
  

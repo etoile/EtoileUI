@@ -1,8 +1,9 @@
-/*
+/*  <title>ETStyle</title>
+
 	ETStyle.m
 	
-	Generic object chain class to implement late-binding of behavior
-	through delegation.
+	<abstract>Generic object chain class to implement late-binding of behavior
+	through delegation.</abstract>
  
 	Copyright (C) 2007 Quentin Mathe
  

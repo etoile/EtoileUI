@@ -1,8 +1,9 @@
-/*
+/*  <title>ETInspector</title>
+
 	ETInspector.m
 	
-	Inspector protocol and related Inspector representation class which can be
-	used as an inspector view wrapper.
+	<abstract>Inspector protocol and related Inspector representation class 
+	which can be used as an inspector view wrapper.</abstract>
  
 	Copyright (C) 2007 Quentin Mathe
  
