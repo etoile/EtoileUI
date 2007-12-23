@@ -178,7 +178,7 @@
 /*- (void) setSelectionShape: (ETSelection *)shape;
 - (ETSelection *) selectionShape;*/
 
-/* Dragging */
+/* Pick & Drop */
 
 /*- (void) setDraggingAllowedForTypes: (NSArray *)types;
 - (NSArray *) allowedDraggingTypes;
@@ -192,6 +192,16 @@
 - (BOOL) allowsDragging;
 - (void) setAllowsDropping: (BOOL)flag;
 - (BOOL) allowsDropping;
+
+/* Methods to be implemented and used...
+- (IBAction) pick: (id)sender;
+- (IBAction) pickCopy: (id)sender;
+- (IBAction) drop: (id)sender;*/
+
+// For compatibility
+- (IBAction) copy: (id)sender;
+- (IBAction) paste: (id)sender;
+- (IBAction) cut: (id)sender;
 
 /* Groups and Stacks */
 

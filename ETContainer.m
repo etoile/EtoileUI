@@ -975,7 +975,7 @@ NSString *ETLayoutItemPboardType = @"ETLayoutItemPboardType"; // FIXME: replace 
 	_selection;
 } */
 
-/* Dragging */
+/* Pick & Drop */
 
 - (void) setAllowsDragging: (BOOL)flag
 {
@@ -1000,6 +1000,21 @@ NSString *ETLayoutItemPboardType = @"ETLayoutItemPboardType"; // FIXME: replace 
 		return NO;
 	
 	return _dropAllowed;
+}
+
+- (IBAction) copy: (id)sender
+{
+
+}
+
+- (IBAction) paste: (id)sender
+{
+
+}
+
+- (IBAction) cut: (id)sender
+{
+
 }
 
 /* Layers */
