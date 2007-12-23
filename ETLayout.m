@@ -121,7 +121,11 @@
 }
 
 /** <init /> Returns ETLayout instance when layoutView is nil, otherwise 
-	returns a concrete subclass with class cluster style initialization. */
+	returns a concrete subclass with class cluster style initialization.
+	The returned layout has both vertical and horizontal constraint on item
+	size enabled. The size constraint is set to 256 * 256 px. You can customize
+	item size constraint with -setItemSizeConstraint: and 
+	-setConstrainedItemSize:. */
 - (id) initWithLayoutView: (NSView *)layoutView
 {
 	self = [super init];
@@ -530,6 +534,9 @@
 
 - (void) resizeLayoutItems: (NSArray *)items toScaleFactor: (float)factor
 {
+	if ([self itemSizeConstraintStyle] == ETSizeConstraintStyleNone)
+		return;
+
 	NSEnumerator *e = [items objectEnumerator];
 	ETLayoutItem *item = nil;
 	
