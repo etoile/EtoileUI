@@ -387,9 +387,15 @@
 		[item setValue: value];
 }
 
+- (void) handleDrag: (NSEvent *)event forItem: (id)item
+{
+
+}
+
 - (BOOL) tableView: (NSTableView *)tv writeRowsWithIndexes: (NSIndexSet *)rowIndexes 
 	toPasteboard: (NSPasteboard*)pboard 
 {	
+	// FIXME: Probably to be removed because -handleDrag:forItem: replaces it
 	return [[self container] container: [self container] 
 	               writeItemsAtIndexes: rowIndexes 
 				          toPasteboard: pboard];
@@ -401,7 +407,8 @@
 	    proposedDropOperation: (NSTableViewDropOperation)op 
 {
     //ETLog(@"Validate drop with dragging source %@ in %@", [info draggingSource], [self container]);
-		
+	
+	// FIXME: Replaces by [layoutContext handleValidateDropForObject:]
 	return [[self container] container: [self container] 
 	                      validateDrop: info 
 						       atIndex: row];
@@ -414,6 +421,7 @@
 {
     //ETLog(@"Accept drop in %@", [self container]);
 
+	// FIXME: Replaces by [layoutContext handleDropForObject:]
 	return [[self container] container: [self container] 
 	                        acceptDrop: info 
 							   atIndex: row];
