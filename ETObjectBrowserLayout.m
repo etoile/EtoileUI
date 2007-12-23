@@ -40,6 +40,7 @@
 #import <EtoileUI/ETCollection.h>
 #import <EtoileUI/NSObject+EtoileUI.h>
 #import <EtoileUI/NSIndexPath+Etoile.h>
+#import <EtoileUI/NSObject+Model.h>
 #import <EtoileUI/ETCompatibility.h>
 
 #define PALETTE_FRAME NSMakeRect(200, 200, 600, 300)

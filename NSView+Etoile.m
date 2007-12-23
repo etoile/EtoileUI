@@ -37,6 +37,7 @@
 #import <EtoileUI/NSView+Etoile.h>
 #import <EtoileUI/ETContainer.h>
 #import <EtoileUI/NSImage+Etoile.h>
+#import <EtoileUI/NSObject+Model.h>
 #import <EtoileUI/ETCompatibility.h>
 
 

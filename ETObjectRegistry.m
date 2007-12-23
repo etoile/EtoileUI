@@ -287,6 +287,11 @@ static ETObjectRegistry *rootObjectRegistry = nil;
 
 /* Collection Protocol */
 
+- (BOOL) isEmpty
+{
+	return [_properties isEmpty];
+}
+
 /** Returns the underlying dictionary object used to store properties within
 	each object registry. */
 - (id) content

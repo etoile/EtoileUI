@@ -41,17 +41,12 @@
 #import <EtoileUI/ETContainer.h>
 #import <EtoileUI/ETInspector.h>
 #import <EtoileUI/NSIndexPath+Etoile.h>
+#import <EtoileUI/NSObject+Model.h>
 #import <EtoileUI/ETCompatibility.h>
 
 #define DETAILED_DESCRIPTION
 
 #define ETUTIAttribute @"uti"
-
-#ifdef GNUSTEP
-@interface NSObject (CoreDataLike)
-- (id) entity;
-@end
-#endif
 
 @interface ETLayoutItem (Private)
 - (void) setImage: (NSImage *)img;

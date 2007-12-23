@@ -121,6 +121,11 @@
 
 /* Collection Protocol */
 
+- (BOOL) isEmpty
+{
+	return ([self nextObject] == nil);
+}
+
 - (id) content
 {
 	return self;
