@@ -260,6 +260,21 @@
 	//ETLog(@"Sets %@ as object value in outline view %@", value, outlineView);
 }
 
+- (BOOL) outlineView: (NSOutlineView *)outlineView acceptDrop: (id < NSDraggingInfo >)info item: (id)item childIndex: (int)index
+{
+	return YES;
+}
+
+- (NSDragOperation) outlineView: (NSOutlineView *)outlineView validateDrop: (id < NSDraggingInfo >)info proposedItem: (id)item proposedChildIndex: (int)index
+{
+	return NSDragOperationEvery;
+}
+
+- (BOOL) outlineView: (NSOutlineView *)outlineView writeItems: (NSArray *)items toPasteboard: (NSPasteboard *)pboard
+{
+	return YES;
+}
+
 - (ETLayoutItem *) doubleClickedItem
 {
 	ETLayoutItem *item = 
