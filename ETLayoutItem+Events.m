@@ -47,10 +47,17 @@
 	return [[self closestAncestorContainer] allowsDragging];
 }
 
+- (BOOL) allowsDropping
+{
+	return [[self closestAncestorContainer] allowsDropping];
+}
+
 - (void) mouseDown: (NSEvent *)event on: (id)item
 {
 	if ([self representedPathBase] != nil)
 	{
+		 // For example ETFreeLayout could intercept click to disable standard interaction
+		 // unlike ETUILayout. This case would also involve layout preemption of events.
 		//[self handleClickForItem: item];
 	}
 	else
@@ -144,6 +151,110 @@
 
 }
 
+- (NSDragOperation) handleDragEnter: (id)dragInfo forItem: (id)item
+{
+	ETLog(@"Drag enter receives in dragging destination %@", self);
+
+	if ([self allowsDropping] == NO)
+		return NSDragOperationNone;
+	
+	return NSDragOperationPrivate;
+}
+
+- (void) handleDragExit: (id)dragInfo forItem: (id)item
+{
+
+}
+
+- (void) handleDragEnd: (id)dragInfo forItem: (id)item
+{
+
+}
+
+- (int) dropIndexAtLocation: (NSPoint)localDropPosition forItem: (id)item
+{
+	ETLayoutItem *dropTargetItem = [[self layout] itemAtLocation: localDropPosition];
+	int dropIndex = NSNotFound;
+	NSRect dropTargetRect = NSZeroRect;
+	
+	ETLog(@"Found item %@ as drop target", dropTargetItem);
+	
+	if (item != nil)
+	{
+		/* Found a drop target at dropIndex */
+		dropIndex = [self indexOfItem: dropTargetItem];
+		
+		/* Increase index if the insertion is located on the right of dropTargetItem */
+		// FIXME: Handle layout orientation, only works with horizontal layout
+		// currently.
+		dropTargetRect = [[self layout] displayRectOfItem: dropTargetItem];
+		if (localDropPosition.x > NSMidX(dropTargetRect))
+			dropIndex++;
+	}
+		
+	return dropIndex;
+}
+
+- (void) insertDroppedObject: (id) movedItem atIndex: (int)index
+{
+	int insertionIndex = index;
+	int pickIndex = [self indexOfItem: movedItem];
+	BOOL isLocalPick = ([movedItem parentLayoutItem] == self);
+	BOOL itemAlreadyRemoved = NO; // NOTE: Feature to be implemented
+	
+	RETAIN(movedItem);
+
+	//[self setAutolayout: NO];
+	 /* Dropped item is visible where it was initially located.
+		If the flag is YES, dropped item is currently invisible. */
+	if (itemAlreadyRemoved == NO)
+	{
+		ETLog(@"For drop, removes item at index %d", pickIndex);
+		/* We remove the item to handle the case where it is moved to another
+		   index within the existing parent. */
+		if (isLocalPick)
+		{
+			[self removeItem: movedItem];
+			if (insertionIndex > pickIndex)
+				insertionIndex--;
+		}
+	}
+	//[self setAutolayout: YES];
+
+	ETLog(@"For drop, insert item at index %d", insertionIndex);
+
+	[self insertItem: movedItem atIndex: insertionIndex];
+	//[self setSelectionIndex: insertionIndex];
+
+	RELEASE(movedItem);
+}
+
+/** You can override this method to change how drop is handled. The parameter
+	item represents the dragged item which just got dropped on the receiver. */
+- (BOOL) handleDrop: (id)dragInfo forItem: (id)item
+{
+	if ([self representedPathBase] != nil)
+	{
+		NSPoint loc = [[self container] convertPoint: [dragInfo draggingLocation] fromView: nil];
+		int dropIndex = [self dropIndexAtLocation: loc forItem: item];
+
+		// FIXME: Handle pick collection too.
+		if (dropIndex != NSNotFound)
+		{
+			[self insertDroppedObject: item atIndex: dropIndex];
+			return YES;
+		}
+		else
+		{
+			return NO;
+		}
+	}
+	else
+	{
+		return [[self parentLayoutItem] handleDrop: dragInfo forItem: item];
+	}
+}
+
 /* Dragging Source
    This protocol is implemented to allow the use of ETLayoutItemGroup instances
    as drag source. An ancestor item group plays the role of the dragging source 
@@ -190,6 +301,27 @@
 			draggedObject, self);
 	}
 }
+
+/*
+
+- (void) mouseDown: (NSEvent *)e
+{
+	id handlerItem = [self itemPremptsEvent: e];
+	id item = 		itemAtLocation:;
+	
+	if (handlerItem == nil)
+		handlerItem = item;
+	
+	[handlerItem mouseDown: e on: item];
+}
+
+- (id) itemPreemptsEvent:
+
+- (BOOL) doesPreemptEvent
+{
+	[[self layout] doesPreemptsEvent];
+}
+*/
 
 #if 0
 - (void) handleDropForItem: (id)item

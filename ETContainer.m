@@ -1384,15 +1384,26 @@ NSString *ETLayoutItemPboardType = @"ETLayoutItemPboardType"; // FIXME: replace 
 
 /* Dragging Source */
 
+- (id) itemForEvent: (NSEvent *)event
+{
+	return [self itemForLocationInWindow: [event locationInWindow]];
+}
+
+- (id) itemForLocationInWindow: (NSPoint)loc
+{
+	/* Convert drag location from window coordinates to the receiver coordinates */
+	NSPoint localPoint = [self convertPoint: loc fromView: nil];
+	
+	return [[self layout] itemAtLocation: localPoint];
+}
+
 // NOTE: this method isn't part of NSDraggingSource protocol but of NSResponder
 - (void) mouseDragged: (NSEvent *)event
 {
-	ETLog(@"Mouse dragged");
-
-	/* Convert drag location from window coordinates to the receiver coordinates */
-	NSPoint localPoint = [self convertPoint: [event locationInWindow] fromView: nil];
-	id item = [[self layout] itemAtLocation: localPoint];
+	ETLog(@"Mouse dragged in %@", self);
 	
+	id item = [self itemForEvent: event];
+
 	[item mouseDragged: event on: item];
 }
 
@@ -1414,7 +1425,7 @@ NSString *ETLayoutItemPboardType = @"ETLayoutItemPboardType"; // FIXME: replace 
 	{
 		id pboard = [ETPickboard localPickboard];
 
-		[pboard pushObject: [self itemAtIndex: [self selectionIndex]]];
+		[pboard pushObject: [self itemAtIndex: [indexes firstIndex]]];
 		
 		/* We need to put something on the pasteboard otherwise AppKit won't 
 		   allow the drag */
@@ -1436,10 +1447,9 @@ NSString *ETLayoutItemPboardType = @"ETLayoutItemPboardType"; // FIXME: replace 
 {
 	ETLog(@"Drag enter receives in dragging destination %@", self);
 	
-	if ([self allowsDropping] == NO)
-		return NSDragOperationNone;
-	
-	return NSDragOperationPrivate;
+	id item = [self itemForLocationInWindow: [sender draggingLocation]];
+
+	return [item handleDragEnter: sender forItem: item];	
 }
 
 // FIXME: Handle layout orientation, only works with horizontal layout
@@ -1578,11 +1588,11 @@ NSString *ETLayoutItemPboardType = @"ETLayoutItemPboardType"; // FIXME: replace 
 			ETLayoutItem *movedItem = nil;
 			
 			while ((movedItem = [e nextObject]) != nil)
-				[self insertDroppedObject: movedItem atIndex: index];
+				[[self layoutItem] insertDroppedObject: movedItem atIndex: index];
 		}
 		else
 		{
-			[self insertDroppedObject: movedObject atIndex: index];
+			[[self layoutItem] insertDroppedObject: movedObject atIndex: index];
 		}
 		
 		return YES;
@@ -1593,68 +1603,15 @@ NSString *ETLayoutItemPboardType = @"ETLayoutItemPboardType"; // FIXME: replace 
 	return NO;
 }
 
-- (void) insertDroppedObject: (id) movedItem atIndex: (int)index
-{
-	int insertionIndex = index;
-	int pickIndex = [self indexOfItem: movedItem];
-	BOOL isLocalPick = ([movedItem parentLayoutItem] == [self layoutItem]);
-	BOOL itemAlreadyRemoved = NO; // NOTE: Feature to be implemented
-	
-	RETAIN(movedItem);
-
-	//[self setAutolayout: NO];
-	 /* Dropped item is visible where it was initially located.
-		If the flag is YES, dropped item is currently invisible. */
-	if (itemAlreadyRemoved == NO)
-	{
-		ETLog(@"For drop, removes item at index %d", pickIndex);
-		/* We remove the item to handle the case where it is moved to another
-		   index within the existing parent. */
-		if (isLocalPick)
-		{
-			[self removeItem: movedItem];
-			if (insertionIndex > pickIndex)
-				insertionIndex--;
-		}
-	}
-	//[self setAutolayout: YES];
-
-	ETLog(@"For drop, insert item at index %d", insertionIndex);
-
-	[self insertItem: movedItem atIndex: insertionIndex];
-	//[self setSelectionIndex: insertionIndex];
-
-	RELEASE(movedItem);
-}
-
 /* Will be called when -draggingEntered and -draggingUpdated have validated the drag
    This method is equivalent to -acceptDropXXX data source method.  */
 - (BOOL) performDragOperation: (id <NSDraggingInfo>)sender
 {
 	ETLog(@"Perform drag receives in dragging destination %@", self);
 	
-	NSPoint localDropPosition = [self convertPoint: [sender draggingLocation] fromView: nil];
-	ETLayoutItem *dropTargetItem = [[self layout] itemAtLocation: localDropPosition];
-	int dropIndex = NSNotFound;
-	NSRect itemRect = NSZeroRect;
+	id item = [self itemForLocationInWindow: [sender draggingLocation]];
 	
-	ETLog(@"Found item %@ as drop target", dropTargetItem);
-	
-	/* Found no drop target */
-	if (dropTargetItem == nil)
-		return NO;
-	
-	/* Found a drop target at dropIndex */
-	dropIndex = [self indexOfItem: dropTargetItem];
-	
-	/* Increase index if the insertion is located on the right of dropTargetItem */
-	// FIXME: Handle layout orientation, only works with horizontal layout
-	// currently.
-	itemRect = [[self layout] displayRectOfItem: dropTargetItem];
-	if (localDropPosition.x > NSMidX(itemRect))
-		dropIndex++;
-
-	return [self container: self acceptDrop: sender atIndex: dropIndex];
+	return [item handleDrop: sender forItem: [[ETPickboard localPickboard] popObject]];
 }
 
 - (NSDragOperation) container: (ETContainer *)container validateDrop: (id <NSDraggingInfo>)drag atIndex: (int)dropIndex

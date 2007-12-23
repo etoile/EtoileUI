@@ -119,16 +119,25 @@
 @interface ETLayoutItem (Events) <ETEventHandler>
 
 - (BOOL) allowsDragging;
+- (BOOL) allowsDropping;
 
 - (void) mouseDown: (NSEvent *)event on: (id)item;
 - (void) mouseDragged: (NSEvent *)event on: (id)item;
 - (void) handleDrag: (NSEvent *)event forItem: (id)item;
 - (void) beginDrag: (NSEvent *)event forItem: (id)item image: (NSImage *)customDragImage;
+- (NSDragOperation) handleDragEnter: (id)dragInfo forItem: (id)item;
+- (void) handleDragExit: (id)dragInfo forItem: (id)item;
 - (void) handleDragMove: (id)dragInfo forItem: (id)item;
-- (void) handleDrop: (id)dragInfo forItem: (id)item;
+- (void) handleDragEnd: (id)dragInfo forItem: (id)item;
+- (BOOL) handleDrop: (id)dragInfo forItem: (id)item; // on: (id)dropTargetItem;
+//- (BOOL) handleDrop: (id)dragInfo forObject: (id)object; // on: (id)item
 /*- (void) handlePickForObject: (id)object;
 - (void) handleAcceptDropForObject: (id)object;
 - (void) handleDropForObject: (id)object;*/
+
+/* Helper Methods */
+
+- (int) dropIndexAtLocation: (NSPoint)localDropPosition forItem: (id)item;
 
 @end
 
