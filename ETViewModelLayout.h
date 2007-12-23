@@ -1,8 +1,9 @@
-/*
+/*  <title>ETViewModelLayout</title>
+
 	ETViewModelLayout.h
 	
-	A property inspector implemented as a pluggable layout which supports
-	introspecting an object as both view and model.
+	<abstract>A property inspector implemented as a pluggable layout which 
+	supports introspecting an object as both view and model.</abstract>
  
 	Copyright (C) 2007 Quentin Mathe
  

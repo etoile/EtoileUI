@@ -1,8 +1,9 @@
-/*
+/*  <title>ETFreeLayout</title>
+
 	ETFreeLayout.m
 	
-	Free layout class which let the user position the layout items by direct 
-	manipulation
+	<abstract>Free layout class which let the user position the layout items by 
+	direct manipulation</abstract>
  
 	Copyright (C) 2007 Quentin Mathe
  

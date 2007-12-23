@@ -1,8 +1,9 @@
-/*
+/*  <title>ETObjectBrowserLayout</title>
+
 	ETObjectBrowserLayout.m
 	
-	A layout view which implements a reusable object browser supporting 
-	CoreObject and EtoileUI object models
+	<abstract>A layout view which implements a reusable object browser 
+	supporting CoreObject and EtoileUI object models</abstract>
  
 	Copyright (C) 2007 Quentin Mathe
  
