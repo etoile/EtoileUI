@@ -66,7 +66,7 @@
 	to changing event handling at runtime by plugging another event handler.
 	This will help to support multiple interaction modes very easily as needed 
 	by many graphics applications and to implement custom mouse tracking 
-	(radio buttons, menus, custom controls etc.)  without subclassing.
+	(radio buttons, menus, custom controls etc.) without subclassing.
 	
 	When a layout item receives an event, it looks up for the higher ancestor 
 	item that wants to preempt the event. For example, if the root item has an

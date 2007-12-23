@@ -126,7 +126,7 @@
 	NSImage *dragIcon = customDragImage;
 	
 	if (dragIcon == nil)
-		dragIcon = [item image];
+		dragIcon = [item icon];
 	
 	// FIXME: Draw drag image made of all dragged items and not just first one
 	[dragSupervisor dragImage: dragIcon
