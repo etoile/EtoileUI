@@ -106,6 +106,8 @@
 
 @interface NSArray (CollectionMatching)
 
+- (id) firstObject; // FIXME: Move somewhere else
+
 /* Key Value Matching */
 
 - (NSArray *) objectsMatchingValue: (id)value forKey: (NSString *)key;

@@ -111,6 +111,11 @@
 
 @implementation NSArray (CollectionMatching)
 
+- (id) firstObject
+{
+	return [self objectAtIndex: 0];
+}
+
 // FIXME: Optimize a bit probably
 - (NSArray *) objectsMatchingValue: (id)value forKey: (NSString *)key
 {
