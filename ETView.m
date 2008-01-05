@@ -547,7 +547,7 @@ static ETView *barViewPrototype = nil;
 
 - (void) displayIfNeeded
 {
-	NSLog(@"-displayIfNeeded");
+	//NSLog(@"-displayIfNeeded");
 	[super displayIfNeeded];
 }
 
