@@ -10,22 +10,15 @@
 			<key>LANGUAGE</key>
 			<string>ObjC</string>
 			<key>SUPERCLASS</key>
-			<string>ETViewLayout</string>
+			<string>ETTableLayout</string>
 		</dict>
 		<dict>
-			<key>ACTIONS</key>
-			<dict>
-				<key>collapse</key>
-				<string>id</string>
-				<key>expand</key>
-				<string>id</string>
-			</dict>
 			<key>CLASS</key>
-			<string>ETView</string>
+			<string>ETTableLayout</string>
 			<key>LANGUAGE</key>
 			<string>ObjC</string>
 			<key>SUPERCLASS</key>
-			<string>NSView</string>
+			<string>ETLayout</string>
 		</dict>
 		<dict>
 			<key>ACTIONS</key>
@@ -39,23 +32,6 @@
 			<string>ObjC</string>
 			<key>SUPERCLASS</key>
 			<string>NSResponder</string>
-		</dict>
-		<dict>
-			<key>CLASS</key>
-			<string>ETViewLayout</string>
-			<key>LANGUAGE</key>
-			<string>ObjC</string>
-			<key>OUTLETS</key>
-			<dict>
-				<key>_container</key>
-				<string>ETContainer</string>
-				<key>_delegate</key>
-				<string>id</string>
-				<key>_displayViewPrototype</key>
-				<string>NSView</string>
-			</dict>
-			<key>SUPERCLASS</key>
-			<string>NSObject</string>
 		</dict>
 		<dict>
 			<key>CLASS</key>
@@ -81,6 +57,23 @@
 			<string>ObjC</string>
 		</dict>
 		<dict>
+			<key>CLASS</key>
+			<string>ETLayout</string>
+			<key>LANGUAGE</key>
+			<string>ObjC</string>
+			<key>OUTLETS</key>
+			<dict>
+				<key>_delegate</key>
+				<string>id</string>
+				<key>_displayViewPrototype</key>
+				<string>NSView</string>
+				<key>_layoutContext</key>
+				<string>id</string>
+			</dict>
+			<key>SUPERCLASS</key>
+			<string>NSObject</string>
+		</dict>
+		<dict>
 			<key>ACTIONS</key>
 			<dict>
 				<key>browse</key>
@@ -96,26 +89,6 @@
 			<string>ObjC</string>
 			<key>SUPERCLASS</key>
 			<string>NSObject</string>
-		</dict>
-		<dict>
-			<key>ACTIONS</key>
-			<dict>
-				<key>inspect</key>
-				<string>id</string>
-				<key>stack</key>
-				<string>id</string>
-			</dict>
-			<key>CLASS</key>
-			<string>ETContainer</string>
-			<key>LANGUAGE</key>
-			<string>ObjC</string>
-			<key>OUTLETS</key>
-			<dict>
-				<key>_scrollView</key>
-				<string>NSScrollView</string>
-			</dict>
-			<key>SUPERCLASS</key>
-			<string>ETView</string>
 		</dict>
 	</array>
 	<key>IBVersion</key>
