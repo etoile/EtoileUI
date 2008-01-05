@@ -43,6 +43,7 @@
 @interface ETTableLayout : ETLayout
 {
 	NSMutableDictionary *_propertyColumns;
+	int _lastChildDropIndex;
 }
 
 - (NSArray *) allTableColumns;

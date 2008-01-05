@@ -183,32 +183,77 @@
 
 }
 
-- (int) dropIndexAtLocation: (NSPoint)localDropPosition forItem: (id)item
+- (BOOL) acceptsDropAtLocationInWindow: (NSPoint)loc
 {
-	ETLayoutItem *dropTargetItem = [[self layout] itemAtLocation: localDropPosition];
-	int dropIndex = NSNotFound;
-	NSRect dropTargetRect = NSZeroRect;
+	NSPoint itemRelativeLoc = loc; // FIXME: Convert to local coordinates
 	
-	ETLog(@"Found item %@ as drop target", dropTargetItem);
+	return ([self isGroup]
+	     && [self allowsDropping]
+		 && (NSPointInRect(itemRelativeLoc, [self dropOnRect]) == NO));
+}
+
+- (NSRect) dropOnRect
+{
+	return NSZeroRect;
+}
+
+- (int) dropIndexAtLocation: (NSPoint)localDropPosition forItem: (id)item on: (id)dropTargetItem
+{
+	id layout = [self isGroup] ? [(ETLayoutItemGroup *)self layout] : nil;
 	
-	if (item != nil)
+	if (layout != nil && [layout respondsToSelector: @selector(dropIndexAtLocation:forItem:on:)])
 	{
-		/* Found a drop target at dropIndex */
-		dropIndex = [self indexOfItem: dropTargetItem];
-		
-		/* Increase index if the insertion is located on the right of dropTargetItem */
-		// FIXME: Handle layout orientation, only works with horizontal layout
-		// currently.
-		dropTargetRect = [[self layout] displayRectOfItem: dropTargetItem];
-		if (localDropPosition.x > NSMidX(dropTargetRect))
-			dropIndex++;
+		return [layout dropIndexAtLocation: localDropPosition forItem: item on: dropTargetItem];
 	}
+	else
+	{
+		NSAssert2([dropTargetItem isGroup], @"Drop target item %@ must be a group "
+			@"in event handler %@", dropTargetItem, self);
+	
+		id hoveredItem = [[(ETLayoutItemGroup *)dropTargetItem layout] itemAtLocation: localDropPosition];
+		int dropIndex = NSNotFound;
+		NSRect dropTargetRect = NSZeroRect;
 		
-	return dropIndex;
+		ETLog(@"Found item %@ as drop target and %@ as hovered item", 
+			dropTargetItem, hoveredItem);
+			
+		NSAssert2([[dropTargetItem items] containsObject: hoveredItem], 
+			@"Hovered item %@ must be a child of drop target item %@", 
+			hoveredItem, dropTargetItem);
+		
+		/* Drop occured a child item of the receiver. For now the drop is 
+		   automatically retargeted to insert the item to the right or the left
+		   of the hovered item. */
+		if (item != nil && [hoveredItem isEqual: self] == NO)
+		{
+			/* Find where the item should be inserted. Drop target item will
+			   be the item where the dropped item is inserted. Hovered item
+			   is the item which intersects the drop location. */
+			dropIndex = [dropTargetItem indexOfItem: hoveredItem];
+			
+			/* Increase index if the insertion is located on the right of hoveredItem */
+			// FIXME: Handle layout orientation, only works with horizontal layout
+			// currently.
+			dropTargetRect = [[self layout] displayRectOfItem: hoveredItem];
+			if (localDropPosition.x > NSMidX(dropTargetRect))
+				dropIndex++;
+		}
+		else
+		{
+			 /* When drop occurs on the receiver itself which is the item 
+			    handling the drop. For example, this item could be a container 
+				with a flow layout and the drop occured on a empty area where
+				no child items are displayed. */
+			dropIndex = [self numberOfItems] - 1;
+		}
+			
+		return dropIndex;
+	}
 }
 
 - (void) insertDroppedObject: (id) movedItem atIndex: (int)index
 {
+	NSAssert2(index >= 0, @"Insertion index %d must be superior or equal to zero in %@ -insertDroppedObject:atIndex:", index, self);
 	int insertionIndex = index;
 	int pickIndex = [self indexOfItem: movedItem];
 	BOOL isLocalPick = ([movedItem parentLayoutItem] == self);
@@ -243,27 +288,31 @@
 
 /** You can override this method to change how drop is handled. The parameter
 	item represents the dragged item which just got dropped on the receiver. */
-- (BOOL) handleDrop: (id)dragInfo forItem: (id)item
+- (BOOL) handleDrop: (id)dragInfo forItem: (id)item on: (id)dropTargetItem;
 {
 	if ([self representedPathBase] != nil)
 	{
 		NSPoint loc = [[self container] convertPoint: [dragInfo draggingLocation] fromView: nil];
-		int dropIndex = [self dropIndexAtLocation: loc forItem: item];
+		int dropIndex = [self dropIndexAtLocation: loc forItem: item on: dropTargetItem];
 
 		// FIXME: Handle pick collection too.
 		if (dropIndex != NSNotFound)
 		{
-			[self insertDroppedObject: item atIndex: dropIndex];
+			[dropTargetItem insertDroppedObject: item atIndex: dropIndex];
 			return YES;
 		}
 		else
 		{
+			NSAssert2([dropTargetItem isGroup], @"Drop target %@ must be a "
+				@"layout item group to accept dropped item %@ as a child",
+				dropTargetItem, item);
+			[dropTargetItem insertDroppedObject: item atIndex: [dropTargetItem numberOfItems]];
 			return NO;
 		}
 	}
 	else
 	{
-		return [[self parentLayoutItem] handleDrop: dragInfo forItem: item];
+		return [[self parentLayoutItem] handleDrop: dragInfo forItem: item on: dropTargetItem];
 	}
 }
 

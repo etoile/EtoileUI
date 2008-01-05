@@ -37,7 +37,9 @@
 #import <EtoileUI/ETTableLayout.h>
 #import <EtoileUI/ETContainer.h>
 #import <EtoileUI/ETLayoutItem.h>
+#import <EtoileUI/ETLayoutItem+Events.h>
 #import <EtoileUI/ETLayoutLine.h>
+#import <EtoileUI/ETPickboard.h>
 #import <EtoileUI/NSView+Etoile.h>
 #import <EtoileUI/ETCompatibility.h>
 
@@ -284,8 +286,14 @@
 - (ETLayoutItem *) itemAtLocation: (NSPoint)location
 {
 	int row = [[self tableView] rowAtPoint: location];
+	id item = nil;
 	
-	return [[[self layoutContext] items] objectAtIndex: row];
+	// NOTE: Table view returns -1 when no row exists at location (but not 
+	// NSNotFound as we could expect it)
+	if (row != -1 && row != NSNotFound)
+		return [[[self layoutContext] items] objectAtIndex: row];
+	
+	return item;
 }
 
 - (NSRect) displayRectOfItem: (ETLayoutItem *)item
@@ -413,6 +421,14 @@
 	   drag object. This method is called by -handleDrag:forItem:. */
 }
 
+- (int) dropIndexAtLocation: (NSPoint)localDropPosition forItem: (id)item on: (id)dropTargetItem
+{
+	if (_lastChildDropIndex == -1)
+		return NSNotFound;
+	
+	return _lastChildDropIndex;
+}
+
 - (BOOL) tableView: (NSTableView *)tv writeRowsWithIndexes: (NSIndexSet *)rowIndexes 
 	toPasteboard: (NSPasteboard*)pboard 
 {
@@ -425,12 +441,9 @@
 	/* Convert drag location from window coordinates to the receiver coordinates */
 	NSPoint localPoint = [tv convertPoint: [dragEvent locationInWindow] fromView: nil];
 	
-	[[[self container] layoutItem] handleDrag: dragEvent forItem: [self itemAtLocation: localPoint]];
+	[[self layoutContext] handleDrag: dragEvent forItem: [self itemAtLocation: localPoint]];
 	
 	return YES;
-	/*return [[self container] container: [self container] 
-	               writeItemsAtIndexes: rowIndexes 
-				          toPasteboard: pboard];*/
 }
 
 - (NSDragOperation) tableView:(NSTableView*)tv 
@@ -439,24 +452,37 @@
 	    proposedDropOperation: (NSTableViewDropOperation)op 
 {
     //ETLog(@"Validate drop with dragging source %@ in %@", [info draggingSource], [self container]);
+	id dropTargetItem = [self layoutContext];
 	
-	// FIXME: Replaces by [layoutContext handleValidateDropForObject:]
-	return [[self container] container: [self container] 
-	                      validateDrop: info 
-						       atIndex: row];
+	if (op == NSTableViewDropOn)
+		dropTargetItem = [[dropTargetItem items] objectAtIndex: row];
+		
+	// TODO: Replace by [layoutContext handleValidateDropForObject:] and improve
+	if (dropTargetItem == nil || [dropTargetItem isGroup])
+	{
+		return NSDragOperationEvery;
+	}
+	else
+	{
+		return NSDragOperationNone;
+	}
 }
 
 - (BOOL) tableView: (NSTableView *)aTableView 
         acceptDrop: (id <NSDraggingInfo>)info 
                row: (int)row 
-	 dropOperation: (NSTableViewDropOperation)operation
+	 dropOperation: (NSTableViewDropOperation)op
 {
     //ETLog(@"Accept drop in %@", [self container]);
+	id droppedItem = [[ETPickboard localPickboard] popObject];
+	id dropTargetItem = [self layoutContext];
+	
+	if (op == NSTableViewDropOn)
+		dropTargetItem = [[dropTargetItem items] objectAtIndex: row];
 
-	// FIXME: Replaces by [layoutContext handleDropForObject:]
-	return [[self container] container: [self container] 
-	                        acceptDrop: info 
-							   atIndex: row];
+	_lastChildDropIndex = row;
+	[[self layoutContext] handleDrop: info forItem: droppedItem on: dropTargetItem];
+	return YES;
 }
 
 
@@ -467,6 +493,53 @@
 	ETLayoutItem *item = [layoutItems objectAtIndex: [tv clickedRow]];
 	
 	return item;
+}
+
+@end
+
+/* NSTableView overriden methods for dragging 
+
+   NSTableViewDataSource doesn't provide a way to know whether a drag has been 
+   cancelled (validated or moved). ETTableLayout must be aware of dragging 
+   cancellation in order to pop the object just pushed on the pickboard in 
+   -tableView:writeRowsWithIndexes:toPasteboard: and -handleDrag:forItem: 
+   That's why we override dragging source related methods to simply call the
+   default behavior implemented in ETEventHandler (see ETLayoutItem+Events). */
+
+@interface NSTableView (ETTableLayoutDraggingSource)
+- (id) eventHandler;
+- (unsigned int) draggingSourceOperationMaskForLocal: (BOOL)isLocal;
+- (void) draggedImage: (NSImage *)anImage beganAt: (NSPoint)aPoint;
+- (void) draggedImage: (NSImage *)draggedImage movedTo: (NSPoint)screenPoint;
+- (void) draggedImage: (NSImage *)anImage endedAt: (NSPoint)aPoint operation: (NSDragOperation)operation;
+@end
+
+@implementation NSTableView (ETTableLayoutDraggingSource)
+
+- (id) eventHandler
+{
+	// NOTE: Returning the delegate would equivalent.
+	return [[self dataSource] layoutContext];
+}
+
+- (unsigned int) draggingSourceOperationMaskForLocal: (BOOL)isLocal
+{
+	return [[self eventHandler] draggingSourceOperationMaskForLocal: isLocal];
+}
+
+- (void) draggedImage: (NSImage *)anImage beganAt: (NSPoint)aPoint
+{
+	[[self eventHandler] draggedImage: anImage beganAt: aPoint];
+}
+
+- (void) draggedImage: (NSImage *)draggedImage movedTo: (NSPoint)screenPoint
+{
+	[[self eventHandler] draggedImage: draggedImage movedTo: screenPoint];
+}
+
+- (void) draggedImage: (NSImage *)anImage endedAt: (NSPoint)aPoint operation: (NSDragOperation)operation
+{
+	[[self eventHandler] draggedImage: anImage endedAt: aPoint operation: operation];
 }
 
 @end

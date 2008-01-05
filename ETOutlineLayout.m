@@ -40,6 +40,7 @@
 #import <EtoileUI/ETLayoutItem.h>
 #import <EtoileUI/ETLayoutItemGroup.h>
 #import <EtoileUI/ETLayoutLine.h>
+#import <EtoileUI/ETPickboard.h>
 #import <EtoileUI/NSView+Etoile.h>
 #import <EtoileUI/ETCompatibility.h>
 
@@ -149,6 +150,24 @@
 	_treatsGroupsAsStacks = flag;
 }
 
+- (ETLayoutItem *) itemAtLocation: (NSPoint)location
+{
+	int row = [[self outlineView] rowAtPoint: location];
+	id item = nil;
+	
+	if (row != NSNotFound)
+		item = [[self outlineView] itemAtRow: row];
+	
+	return item;
+}
+
+- (NSRect) displayRectOfItem: (ETLayoutItem *)item
+{
+	int row = [[self outlineView] rowForItem: item];
+	
+	return [[self outlineView] rectOfRow: row];
+}
+
 - (void) outlineViewSelectionDidChange: (NSNotification *)notif
 {
 	id delegate = [[self container] delegate];
@@ -230,7 +249,31 @@
 	if (value == nil && ([[self outlineView] numberOfColumns] == 1 || blankColumnIdentifier))
 		value = [item value];
 
-	ETLog(@"Returns %@ as object value in outline view %@", value, outlineView);
+#ifndef GNUSTEP
+	/* Try to convert invalid value into a dummy object value when needed 
+	   (NSImageCell on Mac OS X) */
+	NSCell *dataCell = [column dataCellForRow: [outlineView rowForItem: item]];
+	
+	if ([dataCell isKindOfClass: [NSImageCell class]]
+	 && [value isKindOfClass: [NSImage class]] == NO)
+	{
+		/* Setting an invalid value on an image cell isn't supported. To be
+		   sure, this never occurs we create a dummy image when value is nil. 
+		   It usually happens when no property exists in item for [colum identifier]. */
+		value = AUTORELEASE([[NSImage alloc] init]);
+	}
+#endif
+
+	/* Report nil value for debugging */
+	if (value == nil || [value isEqual: [NSNull null]]
+	 && [[item properties] containsObject: [column identifier]] == NO)
+	{
+		// FIXME: Turn into an ETDebugLog
+		ETLog(@"Item %@ has no property %@ requested by layout %@", item, 
+			[column identifier], self);
+	}
+
+	//ETLog(@"Returns %@ as object value in outline view %@", value, outlineView);
 	
 	// NOTE: 'value' could be any objects at this point and NSCell only accepts
 	// some common object values like string and number or image for 
@@ -260,18 +303,66 @@
 	//ETLog(@"Sets %@ as object value in outline view %@", value, outlineView);
 }
 
+- (int) dropIndexAtLocation: (NSPoint)localDropPosition forItem: (id)item on: (id)dropTargetItem
+{
+	if (_lastChildDropIndex == -1)
+		return NSNotFound;
+	
+	return _lastChildDropIndex;
+
+	id hoveredItem = [self itemAtLocation: localDropPosition];
+	int childDropIndex = NSNotFound;
+	
+	/* hoveredItem is nil when the drop occurs underneath the last row (in the blank area) */
+	if (hoveredItem != nil && [hoveredItem isEqual: dropTargetItem] == NO)
+	{
+		childDropIndex = [dropTargetItem indexOfItem: hoveredItem];
+		
+		NSAssert(childDropIndex != NSNotFound, @"bla");
+	}
+	
+	return childDropIndex;
+}
+
 - (BOOL) outlineView: (NSOutlineView *)outlineView acceptDrop: (id < NSDraggingInfo >)info item: (id)item childIndex: (int)index
 {
+    //ETLog(@"Accept drop in %@", [self container]);
+	id droppedItem = [[ETPickboard localPickboard] popObject];
+	id dropTargetItem = item;
+	
+	if (dropTargetItem == nil) /* Root item */
+		dropTargetItem = [self layoutContext];
+
+	_lastChildDropIndex = index;
+	[[self layoutContext] handleDrop: info forItem: droppedItem on: dropTargetItem];
 	return YES;
 }
 
 - (NSDragOperation) outlineView: (NSOutlineView *)outlineView validateDrop: (id < NSDraggingInfo >)info proposedItem: (id)item proposedChildIndex: (int)index
 {
-	return NSDragOperationEvery;
+    //ETLog(@"Validate drop with dragging source %@ in %@", [info draggingSource], [self container]);
+
+	// TODO: Replace by [layoutContext handleValidateDropForObject:] and improve
+	if (item == nil || [item isGroup])
+	{
+		return NSDragOperationEvery;
+	}
+	else
+	{
+		return NSDragOperationNone;
+	}
 }
 
 - (BOOL) outlineView: (NSOutlineView *)outlineView writeItems: (NSArray *)items toPasteboard: (NSPasteboard *)pboard
 {
+	NSEvent *dragEvent = [NSApp currentEvent];
+	
+	NSAssert3([[dragEvent window] isEqual: [outlineView window]], @"NSApp current "
+		@"event %@ in %@ -tableView:writeRowsWithIndexes:toPasteboard: doesn't "
+		@"belong to the outline view %@", dragEvent, self, outlineView);
+	
+	[[self layoutContext] handleDrag: dragEvent forItem: [items firstObject]];
+	
 	return YES;
 }
 

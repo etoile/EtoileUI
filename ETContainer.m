@@ -485,13 +485,19 @@ NSString *ETLayoutItemPboardType = @"ETLayoutItemPboardType"; // FIXME: replace 
 	ASSIGN(_inspector, inspector);
 }
 
-/** Returns inspector based on selection.
+/** Returns inspector based on selection unlike ETLayoutItem.
 	If the inspector hasn't been set by calling -setInspector:, it gets lazily
 	instantiated when this accessors is called. */
 - (id <ETInspector>) inspector
 {
 	if (_inspector == nil)
 		_inspector = [[ETInspector alloc] init];
+	
+	// FIXME: Introduce the following code	
+	/*NSArray *items = [(ETLayoutItemGroup *)[self layoutItem] selectedItems];
+	
+	if (items == nil || [items isEmpty])
+		items = [NSArray arrayWithObject: [self layoutItem]];*/
 
 	return [self inspectorForItems: [self items]];
 }
@@ -1443,10 +1449,15 @@ NSString *ETLayoutItemPboardType = @"ETLayoutItemPboardType"; // FIXME: replace 
 
 /* Dragging Destination */
 
+/** This method can be called on the receiver when a drag exits. When a 
+	view-based layout is used, existing the layout view results in entering
+	the related container, that's probably a bug because the container should
+	be fully covered by the layout view in all cases. */
 - (NSDragOperation) draggingEntered: (id <NSDraggingInfo>)sender
 {
 	ETLog(@"Drag enter receives in dragging destination %@", self);
 	
+	/* item can be nil, -itemAtLocation: doesn't return the receiver itself */
 	id item = [self itemForLocationInWindow: [sender draggingLocation]];
 
 	return [item handleDragEnter: sender forItem: item];	
@@ -1456,7 +1467,7 @@ NSString *ETLayoutItemPboardType = @"ETLayoutItemPboardType"; // FIXME: replace 
 // currently, in other words the insertion indicator is always vertical.
 - (NSDragOperation) draggingUpdated: (id <NSDraggingInfo>)drag
 {
-	ETLog(@"Drag update receives in dragging destination %@", self);
+	//ETLog(@"Drag update receives in dragging destination %@", self);
 	
 	if ([self allowsDropping] == NO)
 		return NSDragOperationNone;
@@ -1478,12 +1489,12 @@ NSString *ETLayoutItemPboardType = @"ETLayoutItemPboardType"; // FIXME: replace 
 	if (localDropPosition.x >= itemMiddleWidth)
 	{
 		indicatorLineX = NSMaxX(hoveredRect);
-		ETLog(@"Draw right insertion bar");
+		//ETLog(@"Draw right insertion bar");
 	}
 	else if (localDropPosition.x < itemMiddleWidth)
 	{
 		indicatorLineX = NSMinX(hoveredRect);
-		ETLog(@"Draw left insertion bar");
+		//ETLog(@"Draw left insertion bar");
 	}
 	else
 	{
@@ -1605,13 +1616,22 @@ NSString *ETLayoutItemPboardType = @"ETLayoutItemPboardType"; // FIXME: replace 
 
 /* Will be called when -draggingEntered and -draggingUpdated have validated the drag
    This method is equivalent to -acceptDropXXX data source method.  */
-- (BOOL) performDragOperation: (id <NSDraggingInfo>)sender
+- (BOOL) performDragOperation: (id <NSDraggingInfo>)dragInfo
 {
 	ETLog(@"Perform drag receives in dragging destination %@", self);
 	
-	id item = [self itemForLocationInWindow: [sender draggingLocation]];
+	id item = [self itemForLocationInWindow: [dragInfo draggingLocation]];
+	id droppedItem = [[ETPickboard localPickboard] popObject];
+
+	/* When the drop target item doesn't accept the drop we retarget it. It 
+	   commonly occurs in the following cases: 
+	   -isGroup returns NO
+	   -allowsDropping returns NO
+	   location outside of the drop on rect. */
+	if ([item acceptsDropAtLocationInWindow: [dragInfo draggingLocation]] == NO)
+		item = [item parentLayoutItem];	
 	
-	return [item handleDrop: sender forItem: [[ETPickboard localPickboard] popObject]];
+	return [item handleDrop: dragInfo forItem: droppedItem on: item];
 }
 
 - (NSDragOperation) container: (ETContainer *)container validateDrop: (id <NSDraggingInfo>)drag atIndex: (int)dropIndex

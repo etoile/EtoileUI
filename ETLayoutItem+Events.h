@@ -129,7 +129,7 @@
 - (void) handleDragExit: (id)dragInfo forItem: (id)item;
 - (void) handleDragMove: (id)dragInfo forItem: (id)item;
 - (void) handleDragEnd: (id)dragInfo forItem: (id)item;
-- (BOOL) handleDrop: (id)dragInfo forItem: (id)item; // on: (id)dropTargetItem;
+- (BOOL) handleDrop: (id)dragInfo forItem: (id)item on: (id)dropTargetItem;
 //- (BOOL) handleDrop: (id)dragInfo forObject: (id)object; // on: (id)item
 /*- (void) handlePickForObject: (id)object;
 - (void) handleAcceptDropForObject: (id)object;
@@ -137,7 +137,9 @@
 
 /* Helper Methods */
 
-- (int) dropIndexAtLocation: (NSPoint)localDropPosition forItem: (id)item;
+- (int) dropIndexAtLocation: (NSPoint)localDropPosition forItem: (id)item on: (id)dropTargetItem;
+- (BOOL) acceptsDropAtLocationInWindow: (NSPoint)loc;
+- (NSRect) dropOnRect;
 
 @end
 
