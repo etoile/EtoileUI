@@ -432,9 +432,19 @@
 		{
 			name = [[self view] description];
 		}
+		else if ([self value] != nil)
+		{
+			name = [[self value] stringValue];
+		}
+		else if ([[self representedObject] isCollection] 
+		      && [[self representedObject] isEmpty] == NO)
+		{
+			/* Represented object is never nil, a dictionary is set on instantiation */
+			name = [[self representedObject] description];
+		}
 		else
 		{
-			name = [[self representedObject] description];
+			name = @"?";
 		}
 	}
 		
