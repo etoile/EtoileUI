@@ -118,6 +118,7 @@
 /* Layout Item Tree */
 
 - (ETLayoutItem *) rootItem;
+- (ETLayoutItem *) baseItem;
 - (ETLayoutItemGroup *) parentLayoutItem;
 - (void) setParentLayoutItem: (ETLayoutItemGroup *)parent;
 - (ETContainer *) closestAncestorContainer;

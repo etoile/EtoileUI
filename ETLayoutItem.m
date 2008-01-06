@@ -236,6 +236,33 @@
 	}
 }
 
+/** Returns the layout item group which controls the receiver. An item group
+	is said to control descendant items when -representedPathBase returns a non
+	nil or blank value.
+	A base item usually handles events and data source mutation for all 
+	descendant items belonging to it. All child items are controlled by a common 
+	base item until a descendant item is declared as a new base item (by 
+	providing a represented path base). See also -representedPathBase, 
+	-[ETContainer representedPath], -[ETContainer source], -[ETLayoutItemGroup 
+	ancestorContainerProvidingRepresentedPath].
+	If an item group uses a source, it is automatically bound to a represented 
+	path base.
+	This method will return nil when the receiver isn't a base item, hasn't yet 
+	been added as a descendant of a base item or has just been removed as a 
+	descendant of a base item. */
+- (ETLayoutItem *) baseItem
+{
+	if ([self representedPathBase] != nil
+	 && [[self representedPathBase] isEqual: @""] == NO)
+	{
+		return self;
+	}
+	else
+	{
+		return [[self parentLayoutItem] baseItem];
+	}
+}
+
 /** Returns the layout item group to which the receiver belongs to. 
 	For the root item as returned by -rootItem, the returned value is always 
 	nil. 
