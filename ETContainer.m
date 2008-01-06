@@ -1374,10 +1374,10 @@ NSString *ETLayoutItemPboardType = @"ETLayoutItemPboardType"; // FIXME: replace 
 /* Dragging Support */
 
 @interface ETContainer (ETContainerDraggingSupport)
+- (id) itemForEvent: (NSEvent *)event;
+- (id) itemForLocationInWindow: (NSPoint)loc;
 - (void) beginDragWithEvent: (NSEvent *)event;
-- (BOOL) container: (ETContainer *)container writeItemsAtIndexes: (NSIndexSet *)indexes toPasteboard: (NSPasteboard *)pboard;
-- (BOOL) container: (ETContainer *)container acceptDrop: (id <NSDraggingInfo>)drag atIndex: (int)index;
-- (NSDragOperation) container: (ETContainer *)container validateDrop: (id <NSDraggingInfo>)drag atIndex: (int)index;
+- (void) drawDragInsertionIndicator: (id <NSDraggingInfo>)drag;
 @end
 
 /* By default ETContainer implements data source methods related to drag and 
@@ -1388,56 +1388,12 @@ NSString *ETLayoutItemPboardType = @"ETLayoutItemPboardType"; // FIXME: replace 
 
 /* Default Dragging-specific Implementation of Data Source */
 
-/* Dragging Source */
-
-- (id) itemForEvent: (NSEvent *)event
-{
-	return [self itemForLocationInWindow: [event locationInWindow]];
-}
-
-- (id) itemForLocationInWindow: (NSPoint)loc
-{
-	/* Convert drag location from window coordinates to the receiver coordinates */
-	NSPoint localPoint = [self convertPoint: loc fromView: nil];
-	
-	return [[self layout] itemAtLocation: localPoint];
-}
-
-// NOTE: this method isn't part of NSDraggingSource protocol but of NSResponder
-- (void) mouseDragged: (NSEvent *)event
-{
-	ETLog(@"Mouse dragged in %@", self);
-	
-	id item = [self itemForEvent: event];
-
-	[item mouseDragged: event on: item];
-}
-
-/* Dragging Destination */
-
-/** This method can be called on the receiver when a drag exits. When a 
-	view-based layout is used, existing the layout view results in entering
-	the related container, that's probably a bug because the container should
-	be fully covered by the layout view in all cases. */
-- (NSDragOperation) draggingEntered: (id <NSDraggingInfo>)sender
-{
-	ETLog(@"Drag enter receives in dragging destination %@", self);
-	
-	/* item can be nil, -itemAtLocation: doesn't return the receiver itself */
-	id item = [self itemForLocationInWindow: [sender draggingLocation]];
-
-	return [item handleDragEnter: sender forItem: item];	
-}
+/* Drag Utility */
 
 // FIXME: Handle layout orientation, only works with horizontal layout
 // currently, in other words the insertion indicator is always vertical.
-- (NSDragOperation) draggingUpdated: (id <NSDraggingInfo>)drag
+- (void) drawDragInsertionIndicator: (id <NSDraggingInfo>)drag
 {
-	//ETLog(@"Drag update receives in dragging destination %@", self);
-	
-	if ([self allowsDropping] == NO)
-		return NSDragOperationNone;
-		
 	NSPoint localDropPosition = [self convertPoint: [drag draggingLocation] fromView: nil];
 	ETLayoutItem *hoveredItem = [[self layout] itemAtLocation: localDropPosition];
 	NSRect hoveredRect = [[self layout] displayRectOfItem: hoveredItem];
@@ -1486,8 +1442,68 @@ NSString *ETLayoutItemPboardType = @"ETLayoutItemPboardType"; // FIXME: replace 
 	[self unlockFocus];
 	
 	_prevInsertionIndicatorRect = indicatorRect;
+}
+
+- (id) itemForEvent: (NSEvent *)event
+{
+	return [self itemForLocationInWindow: [event locationInWindow]];
+}
+
+- (id) itemForLocationInWindow: (NSPoint)loc
+{
+	/* Convert drag location from window coordinates to the receiver coordinates */
+	NSPoint localPoint = [self convertPoint: loc fromView: nil];
 	
-	return NSDragOperationPrivate;
+	// FIXME: Returned item can be nil when no layout exists (a null layout 
+	// could be implemented) or when the item below the location is the receiver
+	// container itself.
+	return [[self layout] itemAtLocation: localPoint];
+}
+
+/* Dragging Source */
+
+// NOTE: this method isn't part of NSDraggingSource protocol but of NSResponder
+- (void) mouseDragged: (NSEvent *)event
+{
+	ETLog(@"Mouse dragged in %@", self);
+	
+	id item = [self itemForEvent: event];
+
+	[item mouseDragged: event on: item];
+}
+
+/* Dragging Destination */
+
+/** This method can be called on the receiver when a drag exits. When a 
+	view-based layout is used, existing the layout view results in entering
+	the related container, that's probably a bug because the container should
+	be fully covered by the layout view in all cases. */
+- (NSDragOperation) draggingEntered: (id <NSDraggingInfo>)sender
+{
+	ETLog(@"Drag enter receives in dragging destination %@", self);
+	
+	/* item can be nil, -itemAtLocation: doesn't return the receiver itself */
+	id item = [self itemForLocationInWindow: [sender draggingLocation]];
+
+	return [item handleDragEnter: sender forItem: item];	
+}
+
+- (NSDragOperation) draggingUpdated: (id <NSDraggingInfo>)drag
+{
+	//ETLog(@"Drag update receives in dragging destination %@", self);
+	
+	/* item can be nil, -itemAtLocation: doesn't return the receiver itself */
+	id item = [self itemForLocationInWindow: [drag draggingLocation]];
+	NSDragOperation dragOp = NSDragOperationNone;
+	
+	dragOp = [item handleDragMove: drag forItem: item];	
+	
+	// NOTE: Testing non-nil displayView is equivalent to
+	// [[self layout] layoutView] != nil
+	if (dragOp != NSDragOperationNone && [self displayView] == nil)
+		[self drawDragInsertionIndicator: drag];
+		
+	return dragOp;
 }
 
 - (void) draggingExited: (id <NSDraggingInfo>)sender
@@ -1500,7 +1516,6 @@ NSString *ETLayoutItemPboardType = @"ETLayoutItemPboardType"; // FIXME: replace 
 	// NOTE: Following code doesn't work...
 	//[self displayIfNeededInRectIgnoringOpacity: _prevInsertionIndicatorRect];
 }
-
 
 - (void) draggingEnded: (id <NSDraggingInfo>)sender
 {

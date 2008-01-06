@@ -161,9 +161,14 @@
 	}
 }
 
-- (void) handleDragMove: (id)dragInfo forItem: (id)item
+- (NSDragOperation) handleDragMove: (id)dragInfo forItem: (id)item
 {
-
+	//ETLog(@"Drag move receives in dragging destination %@", self);
+	
+	if ([self allowsDropping] == NO)
+		return NSDragOperationNone;
+	
+	return NSDragOperationPrivate;
 }
 
 - (NSDragOperation) handleDragEnter: (id)dragInfo forItem: (id)item
