@@ -39,27 +39,10 @@
 #import <EtoileUI/ETLayout.h>
 #import <EtoileUI/ETInspecting.h>
 
-@class ETLayoutItem, ETLayout, ETLayer, ETLayoutItemGroup, ETSelection;
+@class ETLayoutItem, ETLayout, ETLayer, ETLayoutItemGroup, ETSelection, 
+	ETPickboard;
 
-/** Forwarding Chain 
 
-	View returned by -[ETLayoutItem view] --> ETLayer (optional) -
-	-> ETContainer --> ETLayout --> View returned by -[ETLayout displayView]
-	
-	By default, the forwarding chain is broken is two separate chains:
-	
-	-[ETLayoutItem view] --> ETLayer (optional) -> ETContainer
-	
-	and
-	
-	ETContainer --> ETLayout --> -[ETLayout displayView]
-	
-	The possibility to use the first separate chain and the whole one is still
-	under evaluation.
-	
- */
-
-// ETComponentView
 @interface ETContainer : ETView <ETObjectInspection> //ETLayoutingContext
 {
 	IBOutlet NSScrollView *_scrollView;
@@ -67,10 +50,8 @@
 	NSView *_displayView;
 	BOOL _flipped;
 	
-	// NOTE: path ivar may move to ETLayoutItem later, it could make more sense
-	// in this way. Then we would have a method -owner or -layoutItemOwner on
-	// ETContainer that returns an ETLayoutItemGroup (generated on the fly if needed).
-	NSString *_path; /* A path type will replace NSString later */
+	// NOTE: path ivar may move to ETLayoutItem later
+	NSString *_path; /* A path type could replace NSString later */
 	id _dataSource;
 	id _delegate; // TODO: check this ivar doesn't overshadow a superclass ivar
 	
@@ -81,8 +62,8 @@
 	
 	float _itemScale;
 	
-	// NOTE: May be used as a cache, selection state is stored in layout item by default
-	// NSMutableIndexSet *_selection;
+	// NOTE: May be used as a cache, selection state is stored in ETLayoutItem
+	//NSMutableIndexSet *_selection;
 	ETSelection *_selectionShape;
 	NSRect _selectionRect;
 	BOOL _multipleSelectionAllowed;
@@ -246,62 +227,64 @@
 
 @interface ETContainer (ETContainerSource)
 
+// TODO: Create new set structure NSPathSet rather than using NSArray
+
 /* Basic index retrieval */
 - (int) numberOfItemsInContainer: (ETContainer *)container;
 - (ETLayoutItem *) container: (ETContainer *)container itemAtIndex: (int)index;
 
-/* Key and index path retrieval useful with containers displaying tree structure */
-- (int) container: (ETContainer *)container numberOfItemsAtPath: (NSIndexPath *)indexPath;
-- (ETLayoutItem *) container: (ETContainer *)container itemAtPath: (NSIndexPath *)indexPath;
+/* Index path retrieval useful with containers displaying tree structure */
+- (int) container: (ETContainer *)container 
+	numberOfItemsAtPath: (NSIndexPath *)indexPath;
+- (ETLayoutItem *) container: (ETContainer *)container 
+	itemAtPath: (NSIndexPath *)indexPath;
 
-/* Coordinates retrieval useful with containers oriented towards graphics and spreadsheet */
-/*- (ETVector *) container: (ETContainer *)container locationForItem: (ETLayoutItem *)item;
-- (void) container: (ETContainer *)container setLocation: (ETVector *)vectorLoc forItem: (ETLayoutItem *)item;*/
+/* Coordinates retrieval useful with containers oriented towards graphics and 
+   spreadsheet */
+/*- (ETVector *) container: (ETContainer *)container 
+	locationForItem: (ETLayoutItem *)item;
+- (void) container: (ETContainer *)container setLocation: (ETVector *)vectorLoc 
+	forItem: (ETLayoutItem *)item;*/
 
 /* Extra infos */
 - (NSArray *) displayedItemPropertiesInContainer: (ETContainer *)container;
 - (NSArray *) editableItemPropertiesInContainer: (ETContainer *)container;
-- (NSView *) container: (ETContainer *)container editorObjectForProperty: (NSString *)property ;
+- (NSView *) container: (ETContainer *)container 
+	editorObjectForProperty: (NSString *)property ;
 - (int) firstVisibleItemInContainer: (ETContainer *)container;
 - (int) lastVisibleItemInContainer: (ETContainer *)container;
 
 /* Pick and drop support and Bindings support by index */
 /* When operation is a pick and drop one (either copy/paste or drag/drop), 
    - 'container:addItems:operation:' is called when no selection is set
-   - 'container:insertItems:atIndexes:operation:' is called when a selection exists */
+   - 'container:insertItems:atIndexes:operation:' is called when a selection 
+      exists */
 /* These methods make also possible to use your data source with bindings if 
    you use the specifically designed controller ETSourceController */
-- (BOOL) container: (ETContainer *)container addItems: (NSArray *)items operation: (id)op;
-- (BOOL) container: (ETContainer *)container insertItems: (NSArray *)items atIndexes: (NSIndexSet *)indexes operation: (id)op;
-- (BOOL) container: (ETContainer *)container removeItems: (NSArray *)items atIndexes: (NSIndexSet *)indexes operation: (id)op;
+- (BOOL) container: (ETContainer *)container addItems: (NSArray *)items 
+	operation: (id)op;
+- (BOOL) container: (ETContainer *)container insertItems: (NSArray *)items 
+	atIndexes: (NSIndexSet *)indexes operation: (id)op;
+- (BOOL) container: (ETContainer *)container removeItems: (NSArray *)items 
+	atIndexes: (NSIndexSet *)indexes operation: (id)op;
 
-/* Pick and drop support and Bindings support by key and index path */
-- (BOOL) container: (ETContainer *)container addItems: (NSArray *)items atPath: (NSString *)path operation: (id)op;
-- (BOOL) container: (ETContainer *)container insertItems: (NSArray *)items atPaths: (NSArray *)paths operation: (id)op;
-- (BOOL) container: (ETContainer *)container removeItems: (NSArray *)items atPaths: (NSArray *)paths operation: (id)op;
+/* Pick and drop support and Bindings support by index path */
+- (BOOL) container: (ETContainer *)container addItems: (NSArray *)items 
+	atPath: (NSString *)path operation: (id)op;
+- (BOOL) container: (ETContainer *)container insertItems: (NSArray *)items 
+	atPaths: (NSArray *)paths operation: (id)op;
+- (BOOL) container: (ETContainer *)container removeItems: (NSArray *)items 
+	atPaths: (NSArray *)paths operation: (id)op;
 
-
-/* Custom drag and drop support by index (only needed if you want to override 
-   pick and drop support to get a more precise control over drag and drop) */
-- (BOOL) container: (ETContainer *)container writeItemsAtIndexes: (NSIndexSet *)indexes toPasteboard: (NSPasteboard *)pboard;
-- (BOOL) container: (ETContainer *)container acceptDrop: (id <NSDraggingInfo>)info atIndex: (int)index;
-- (NSDragOperation) container: (ETContainer *)container validateDrop: (id <NSDraggingInfo>)info atIndex: (int)index;
-// pickItems:
-// drag:items:atPath:
-// drop:items:atPath:
-
-/* Custom Drag and drop support by key and index path */
-// FIXME: Create new set structure NSPathSet rather than using NSArray
-- (BOOL) container: (ETContainer *)container writeItemsAtPaths: (NSArray *)paths toPasteboard: (NSPasteboard *)pboard;
-- (BOOL) container: (ETContainer *)container acceptDrop: (id <NSDraggingInfo>)info atPath: (NSString *)path;
-- (NSDragOperation) container: (ETContainer *)container validateDrop: (id <NSDraggingInfo>)info atPath: (NSString *)path;
-
-/*- (BOOL) container: (ETContainer *)container writeDraggedItems: (NSArray *)items toPasteboard: (NSPasteboard *)pboard;
-- (BOOL) container: (ETContainer *)container acceptDroppedItem: (ETLayoutItem *)item atPath: (NSString *)path draggingInfo: (id <NSDraggingInfo>)info;
-- (NSDragOperation) container: (ETContainer *)container validateDroppedItem: (ETLayoutItem *)item atPath: (NSString *)path draggingInfo:(id <NSDraggingInfo>)info;*/
-/*- (BOOL) container: (ETContainer *)container dragItems: ;
-- (BOOL) container: (ETContainer *)container acceptDropItems: atIndex: (int)index;
-- (NSDragOperation) container: (ETContainer *)container dropItems: atIndex: (int)index;*/
+/* Advanced pick and drop support 
+   Only needed if you want to override pick and drop support. Useful to get more
+   control over drag an drop. */
+- (BOOL) container: (ETContainer *)container handlePick: (NSEvent *)event 
+	forItems: (NSArray *)items pickboard: (ETPickboard *)pboard;
+- (BOOL) container: (ETContainer *)container handleAcceptDrop: (id)dragInfo 
+	forItems: (NSArray *)items on: (id)item pickboard: (ETPickboard *)pboard;
+- (BOOL) container: (ETContainer *)container handleDrop: (id)dragInfo 
+	forItems: (NSArray *)items on: (id)item pickboard: (ETPickboard *)pboard;
 
 // TODO: Extend the informal protocol to propogate group/ungroup actions in 
 // they can be properly reflected on model side.
@@ -315,6 +298,7 @@
 - (void) containerDidStackItem: (NSNotification *)notif;
 - (void) containerShouldGroupItem: (NSNotification *)notif;
 - (void) containerDidGroupItem: (NSNotification *)notif;
+// NOTE: We use a double action instead of the delegate to handle double-click
 //- (void) containerDoubleClickedItem: (NSNotification *)notif;
 
 @end
