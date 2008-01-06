@@ -113,6 +113,9 @@
 			[pboard pushObject: item];
 		}
 		
+		// TODO: Call back -handlePick:forItems:pickboard: which takes care of calling
+		// pick and drop source methods when a source exists.
+		
 		/* We need to put something on the pasteboard otherwise AppKit won't 
 		   allow the drag */
 		pboard = [NSPasteboard pasteboardWithName: NSDragPboard];
@@ -314,6 +317,63 @@
 	{
 		return [[self parentLayoutItem] handleDrop: dragInfo forItem: item on: dropTargetItem];
 	}
+}
+
+- (BOOL) handlePick: (NSEvent *)event forItems: (NSArray *)items pickboard: (ETPickboard *)pboard
+{
+	id source = [[self container] source];
+	BOOL pickValidated = YES;
+	
+	if (source != nil 
+	 && [source respondsToSelector: @selector(container:handlePick:forItems:pickboard:)])
+	{
+		pickValidated = [source container: [self container] handlePick: event forItems: items pickboard: pboard];
+	}
+	else
+	{
+		// TODO: Implement removal of the picked items at pick time when the
+		// the developer requests it by calling a method like
+		// -setRemovesItemAtPickTime. For now, items are removed from their  
+		// parent on drop.
+	}
+	
+	return pickValidated;
+}
+
+- (BOOL) handleAcceptDrop: (id)dragInfo forItems: (NSArray *)items on: (id)item pickboard: (ETPickboard *)pboard
+{
+	id source = [[self container] source];
+	BOOL dropAccepted = YES;
+	
+	if (source != nil 
+	 && [source respondsToSelector: @selector(container:handleAcceptDrop:forItems:on:pickboard:)])
+	{
+		dropAccepted = [source container: [self container] handleAcceptDrop: dragInfo forItems: items on: item pickboard: pboard];
+	}
+	else
+	{
+
+	}
+	
+	return dropAccepted;
+}
+
+- (BOOL) handleDrop: (id)dragInfo forItems: (NSArray *)items on: (id)item pickboard: (ETPickboard *)pboard
+{
+	id source = [[self container] source];
+	BOOL dropValidated = YES;
+	
+	if (source != nil 
+	 && [source respondsToSelector: @selector(container:handleDrop:forItems:on:pickboard:)])
+	{
+		dropValidated = [source container: [self container] handleDrop: dragInfo forItems: items on: item pickboard: pboard];
+	}
+	else
+	{
+
+	}
+	
+	return dropValidated;
 }
 
 /* Dragging Source

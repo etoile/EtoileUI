@@ -37,6 +37,8 @@
 #import <AppKit/AppKit.h>
 #import <EtoileUI/ETLayoutItem.h>
 
+@class ETPickboard;
+
 @protocol ETEventHandler
 @end
 
@@ -134,6 +136,9 @@
 /*- (void) handlePickForObject: (id)object;
 - (void) handleAcceptDropForObject: (id)object;
 - (void) handleDropForObject: (id)object;*/
+- (BOOL) handlePick: (NSEvent *)event forItems: (NSArray *)items pickboard: (ETPickboard *)pboard;
+- (BOOL) handleAcceptDrop: (id)dragInfo forItems: (NSArray *)items on: (id)item pickboard: (ETPickboard *)pboard;
+- (BOOL) handleDrop: (id)dragInfo forItems: (NSArray *)items on: (id)item pickboard: (ETPickboard *)pboard;
 
 /* Helper Methods */
 
