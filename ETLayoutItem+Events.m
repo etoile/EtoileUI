@@ -163,7 +163,7 @@
 
 - (NSDragOperation) handleDragMove: (id)dragInfo forItem: (id)item
 {
-	//ETLog(@"Drag move receives in dragging destination %@", self);
+	//ETLog(@"DRAG DEST - Drag move receives in dragging destination %@", self);
 	
 	if ([self allowsDropping] == NO)
 		return NSDragOperationNone;
@@ -173,7 +173,7 @@
 
 - (NSDragOperation) handleDragEnter: (id)dragInfo forItem: (id)item
 {
-	ETLog(@"Drag enter receives in dragging destination %@", self);
+	ETLog(@"DRAG DEST - Drag enter receives in dragging destination %@", self);
 
 	if ([self allowsDropping] == NO)
 		return NSDragOperationNone;
@@ -183,12 +183,12 @@
 
 - (void) handleDragExit: (id)dragInfo forItem: (id)item
 {
-
+	ETLog(@"DRAG DEST - Drag exit receives in dragging destination %@", self);
 }
 
 - (void) handleDragEnd: (id)dragInfo forItem: (id)item
 {
-
+	ETLog(@"DRAG DEST - Drag end receives in dragging destination %@", self);
 }
 
 - (BOOL) acceptsDropAtLocationInWindow: (NSPoint)loc

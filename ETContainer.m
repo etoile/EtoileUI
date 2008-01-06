@@ -1378,6 +1378,7 @@ NSString *ETLayoutItemPboardType = @"ETLayoutItemPboardType"; // FIXME: replace 
 - (id) itemForLocationInWindow: (NSPoint)loc;
 - (void) beginDragWithEvent: (NSEvent *)event;
 - (void) drawDragInsertionIndicator: (id <NSDraggingInfo>)drag;
+- (void) updateDragInsertionIndicator;
 @end
 
 /* By default ETContainer implements data source methods related to drag and 
@@ -1385,8 +1386,6 @@ NSString *ETLayoutItemPboardType = @"ETLayoutItemPboardType"; // FIXME: replace 
    drop related methods in your own data source. DefaultDragDataSource is
    typically used when -allowsInternalDragging: returns YES. */
 @implementation ETContainer (ETContainerDraggingSupport)
-
-/* Default Dragging-specific Implementation of Data Source */
 
 /* Drag Utility */
 
@@ -1444,6 +1443,14 @@ NSString *ETLayoutItemPboardType = @"ETLayoutItemPboardType"; // FIXME: replace 
 	_prevInsertionIndicatorRect = indicatorRect;
 }
 
+- (void) updateDragInsertionIndicator
+{
+	[self setNeedsDisplayInRect: NSIntegralRect(_prevInsertionIndicatorRect)];
+	[self displayIfNeeded];
+	// NOTE: Following code doesn't work...
+	//[self displayIfNeededInRectIgnoringOpacity: _prevInsertionIndicatorRect];
+}
+
 - (id) itemForEvent: (NSEvent *)event
 {
 	return [self itemForLocationInWindow: [event locationInWindow]];
@@ -1460,7 +1467,7 @@ NSString *ETLayoutItemPboardType = @"ETLayoutItemPboardType"; // FIXME: replace 
 	return [[self layout] itemAtLocation: localPoint];
 }
 
-/* Dragging Source */
+/* NSResponder Dragging Event */
 
 // NOTE: this method isn't part of NSDraggingSource protocol but of NSResponder
 - (void) mouseDragged: (NSEvent *)event
@@ -1506,26 +1513,30 @@ NSString *ETLayoutItemPboardType = @"ETLayoutItemPboardType"; // FIXME: replace 
 	return dragOp;
 }
 
-- (void) draggingExited: (id <NSDraggingInfo>)sender
+- (void) draggingExited: (id <NSDraggingInfo>)drag
 {
 	ETLog(@"Drag exit receives in dragging destination %@", self);
 	
+	/* item can be nil, -itemAtLocation: doesn't return the receiver itself */
+	id item = [self itemForLocationInWindow: [drag draggingLocation]];
+	
+	[item handleDragExit: drag forItem: item];
+	
 	/* Erases insertion indicator */
-	[self setNeedsDisplayInRect: NSIntegralRect(_prevInsertionIndicatorRect)];
-	[self displayIfNeeded];
-	// NOTE: Following code doesn't work...
-	//[self displayIfNeededInRectIgnoringOpacity: _prevInsertionIndicatorRect];
+	[self updateDragInsertionIndicator];
 }
 
-- (void) draggingEnded: (id <NSDraggingInfo>)sender
+- (void) draggingEnded: (id <NSDraggingInfo>)drag
 {
 	ETLog(@"Drag end receives in dragging destination %@", self);
 	
+	/* item can be nil, -itemAtLocation: doesn't return the receiver itself */
+	id item = [self itemForLocationInWindow: [drag draggingLocation]];
+	
+	[item handleDragEnd: drag forItem: item];
+	
 	/* Erases insertion indicator */
-	[self setNeedsDisplayInRect: NSIntegralRect(_prevInsertionIndicatorRect)];
-	[self displayIfNeeded];
-	// NOTE: Following code doesn't work...
-	//[self displayIfNeededInRectIgnoringOpacity: _prevInsertionIndicatorRect];
+	[self updateDragInsertionIndicator];
 }
 
 /* Will be called when -draggingEntered and -draggingUpdated have validated the drag
@@ -1636,16 +1647,19 @@ NSString *ETLayoutItemPboardType = @"ETLayoutItemPboardType"; // FIXME: replace 
 
 /* This method is called in replacement of -draggingEnded: when a drop has 
    occured. That's why it's not enough to clean insertion indicator in
-   -draggingEnded: */
-- (void) concludeDragOperation: (id <NSDraggingInfo>)sender
+   -draggingEnded:. Both methods called -handleDragEnd:forItem: on the 
+   drop target item. */
+- (void) concludeDragOperation: (id <NSDraggingInfo>)drag
 {
 	ETLog(@"Conclude drag receives in dragging destination %@", self);
 	
+	/* item can be nil, -itemAtLocation: doesn't return the receiver itself */
+	id item = [self itemForLocationInWindow: [drag draggingLocation]];
+	
+	[item handleDragEnd: drag forItem: item];
+		
 	/* Erases insertion indicator */
-	[self setNeedsDisplayInRect: NSIntegralRect(_prevInsertionIndicatorRect)];
-	[self displayIfNeeded];
-	// NOTE: Following code doesn't work...
-	//[self displayIfNeededInRectIgnoringOpacity: _prevInsertionIndicatorRect];
+	[self updateDragInsertionIndicator];
 }
 
 @end

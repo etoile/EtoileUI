@@ -101,10 +101,10 @@
 			@"Any layout done in a scroll view must be based on content size");
 			
 		[[self layoutContext] setContentSize: [self layoutSize]];
-		NSLog(@"Layout size is %@ with container size %@ and clip view size %@", 
+		/*NSLog(@"Layout size is %@ with container size %@ and clip view size %@", 
 			NSStringFromSize([self layoutSize]), 
 			NSStringFromSize([[self layoutContext] size]), 
-			NSStringFromSize([[self layoutContext] visibleContentSize]));
+			NSStringFromSize([[self layoutContext] visibleContentSize]));*/
 	}
 	
 	[[self layoutContext] setVisibleItems: items];
