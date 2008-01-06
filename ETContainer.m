@@ -1413,40 +1413,6 @@ NSString *ETLayoutItemPboardType = @"ETLayoutItemPboardType"; // FIXME: replace 
 	[item mouseDragged: event on: item];
 }
 
-- (BOOL) container: (ETContainer *)container writeItemsAtIndexes: (NSIndexSet *)indexes toPasteboard: (NSPasteboard *)pboard
-{
-	BOOL dragDataProvided = YES;
-	
-	/* Verify if the drag is allowed now for AppKit-based layout */
-	if ([self allowsDragging] == NO)
-		return NO;
-	
-	if ([self source] != nil 
-	 && [[self source] respondsToSelector: @selector(container:writeItemsWithIndexes:toPasteboard:)])
-	{
-		dragDataProvided = [[self source] container: self writeItemsAtIndexes: [self selectionIndexes]
-			toPasteboard: pboard];
-	}
-	else if ([self source] == nil) /* Handles drag by ourself when allowed */
-	{
-		id pboard = [ETPickboard localPickboard];
-
-		[pboard pushObject: [self itemAtIndex: [indexes firstIndex]]];
-		
-		/* We need to put something on the pasteboard otherwise AppKit won't 
-		   allow the drag */
-		pboard = [NSPasteboard pasteboardWithName: NSDragPboard];
-		[pboard declareTypes: [NSArray arrayWithObject: ETLayoutItemPboardType] owner: nil];
-		
-		// TODO: Implements pasteboard compatibility to integrate with 
-		// non-native Etoile code
-		//NSData *data = [NSKeyedArchiver archivedDataWithRootObject: item];
-		//[pboard setData: data forType: ETLayoutItemPboardType];
-	}
-
-	return dragDataProvided;
-}
-
 /* Dragging Destination */
 
 /** This method can be called on the receiver when a drag exits. When a 
