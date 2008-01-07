@@ -355,11 +355,21 @@
 
 - (BOOL) outlineView: (NSOutlineView *)outlineView writeItems: (NSArray *)items toPasteboard: (NSPasteboard *)pboard
 {
+#if 0
+	// NOTE: On Mac OS X, -currentEvent returns a later event rather than the 
+	// mouse down that began the drag when the user moves the mouse too quickly.
 	NSEvent *dragEvent = [NSApp currentEvent];
-	
-	NSAssert3([[dragEvent window] isEqual: [outlineView window]], @"NSApp current "
-		@"event %@ in %@ -tableView:writeRowsWithIndexes:toPasteboard: doesn't "
+#else
+	NSEvent *dragEvent = [self lastDragEvent];
+#endif
+
+	NSAssert3([[dragEvent window] isEqual: [outlineView window]], @"NSApp "
+		@"current event %@ in %@ -outlineView:writeItems:toPasteboard: doesn't "
 		@"belong to the outline view %@", dragEvent, self, outlineView);
+	
+	NSAssert3([[dragEvent window] isEqual: [outlineView window]], @"NSApp "
+		@"current event %@ in %@ -outlineView:writeRowsWithItems:toPasteboard: "
+		@"doesn't belong to the outline view %@", dragEvent, self, outlineView);
 
 	/* Convert drag location from window coordinates to the receiver coordinates */
 	NSPoint localPoint = [outlineView convertPoint: [dragEvent locationInWindow] fromView: nil];

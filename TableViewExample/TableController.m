@@ -105,6 +105,8 @@
 	[item setValue: @"Blue" forProperty: @"name"];
 	[item setValue: NUMBER(0) forProperty: @"intensity"];	
 	[tableContainer2 addItem: item];
+	
+	[[ETPickboard localPickboard] showPickPalette];
 }
 
 // NOTE: willFinishLaunching must be used instead of didFinishLaunching. 
