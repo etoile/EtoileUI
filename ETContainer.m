@@ -226,9 +226,24 @@ NSString *ETLayoutItemPboardType = @"ETLayoutItemPboardType"; // FIXME: replace 
 	adding the proper items which are associated with the level requested by 
 	the user. Implementing a data source, alleviates you from this task,
 	you simply need to return the items, EtoileUI will build takes care of 
-	building and managing the tree structure. */
+	building and managing the tree structure. 
+	To set a represented path turning the container into an entry point in your
+	model, you should use paths like '/', '/blabla/myModelObjectName'
+	You cannot pass an empty string to this method or it will throw an invalid
+	argument exception. If you want no represented path, use nil.
+	-representedPath is also used by ETLayoutItem as a represented path base, 
+	turning the item group related to the container into a base item which 
+	handles events. See also -representedPath, -[ETLayoutItem baseItem] and 
+	-[ETLayoutItem representedPathBase]. */
 - (void) setRepresentedPath: (NSString *)path
 {
+	if ([path isEqual: @""])
+	{
+		[NSException raise: NSInvalidArgumentException format: @"For %@ "
+			@"-setRepresentedPath argument must never be an empty string"];
+		
+	}
+	
 	ASSIGN(_path, path);
 	
 	// NOTE: If the selection is cached, here the cache should be cleared
@@ -268,7 +283,11 @@ NSString *ETLayoutItemPboardType = @"ETLayoutItemPboardType"; // FIXME: replace 
 	-initWithContainer: or -initWithLayoutItem: which handles -setComponent:
 	call. 
 	Take note that modifying a source is followed by a layout update, the new 
-	content is immediately loaded and displayed.  */
+	content is immediately loaded and displayed. By setting a source, the
+	receiver represented path is automatically set to '/' unless another path 
+	was set previously. If you pass nil to get rid of a source, the represented
+	path isn't reset to nil but keeps its actual value in order to maintain it 
+	as a base item and avoid disturbing the related event handling logic. */
 //- (void) setSource: (id <ETSource>)source
 - (void) setSource: (id)source
 {
@@ -286,10 +305,6 @@ NSString *ETLayoutItemPboardType = @"ETLayoutItemPboardType"; // FIXME: replace 
 	if (source != nil && ([self representedPath] == nil || [[self representedPath] isEqual: @""]))
 	{
 		[self setRepresentedPath: @"/"];
-	}
-	else if (source == nil)
-	{
-		[self setRepresentedPath: @""];
 	}
 }
 
@@ -1506,7 +1521,7 @@ NSString *ETLayoutItemPboardType = @"ETLayoutItemPboardType"; // FIXME: replace 
 	view-based layout is used, existing the layout view results in entering
 	the related container, that's probably a bug because the container should
 	be fully covered by the layout view in all cases. */
-- (NSDragOperation) draggingEntered: (id <NSDraggingInfo>)sender
+- (NSDragOperation) draggingEntered: (id <NSDraggingInfo>)drag
 {
 	ETLog(@"Drag enter receives in dragging destination %@", self);
 	
@@ -1514,7 +1529,7 @@ NSString *ETLayoutItemPboardType = @"ETLayoutItemPboardType"; // FIXME: replace 
 	id item = [self dropTargetForDrag: drag];
 	id draggedItem = [[ETPickboard localPickboard] firstObject];
 
-	return [item handleDragEnter: sender forItem: draggedItem];	
+	return [item handleDragEnter: drag forItem: draggedItem];	
 }
 
 - (NSDragOperation) draggingUpdated: (id <NSDraggingInfo>)drag
@@ -1673,7 +1688,7 @@ NSString *ETLayoutItemPboardType = @"ETLayoutItemPboardType"; // FIXME: replace 
 	id item = [self itemForLocationInWindow: [drag draggingLocation]];
 	id droppedItem = [[ETPickboard localPickboard] firstObject];
 		
-	[item handleDragEnd: drag forItem: droppedtem on: item];
+	[item handleDragEnd: drag forItem: droppedItem on: item];
 		
 	/* Erases insertion indicator */
 	[self updateDragInsertionIndicator];
