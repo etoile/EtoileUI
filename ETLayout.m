@@ -727,13 +727,22 @@
 	return NSZeroRect; 
 }
 
-/** Returns the layout item for which location is inside its display area (the
-	layout item frame). 
+/** Returns the layout item positioned at location point and inside the visible 
+	part of the receiver layout (equals or inferior to the layout context 
+	frame). 
+	If several items overlap at this location, then the topmost item owned by 
+	the layout is returned. This implies a topmost item which isn't an immediate 
+	child of the layout context may not be be matched if it is owned by another 
+	layout object. For example -[ETOutlineLayout itemAtLocation:] can match
+	descendant items unlike ETFlowLayout which only matches immediate child
+	items. Take note topmost item on screen is the deepest descendant item if 
+	you view it in layout item tree perspective.
 	Location must be expressed in the coordinates of the container presently 
-	associated with the receiver. */
+	associated with the receiver. If the point passed in parameter is located
+	beyond the layout size, nil is returned. */
 - (ETLayoutItem *) itemAtLocation: (NSPoint)location
 {
-	NSArray *layoutItems = [[self layoutContext] items];
+	NSArray *layoutItems = [[self layoutContext] visibleItems];
 	NSEnumerator *e = [layoutItems objectEnumerator];
 	ETLayoutItem *item = nil;
 	
