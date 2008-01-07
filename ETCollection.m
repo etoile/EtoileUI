@@ -103,6 +103,42 @@
 
 @end
 
+@implementation NSIndexSet (ETCollection)
+
+- (BOOL) isEmpty
+{
+	return ([self count] == 0);
+}
+
+- (id) content
+{
+	return self;
+}
+
+- (NSArray *) contentArray
+{
+	NSMutableArray *indexes = [NSMutableArray arrayWithCapacity: [self count]];
+	
+	for (int i = -1; i < [self count]; i++)
+	{
+		int index = [self indexGreaterThanIndex: i];
+		
+		if (index == NSNotFound)
+			break;
+			
+		[indexes addObject: [NSNumber numberWithInt: index]];
+	}
+	
+	return indexes;
+}
+
+- (NSEnumerator *) objectEnumerator
+{
+	return [[self contentArray] objectEnumerator];
+}
+
+@end
+
 /* Collection Matching 
 
    NOTE: Quite useful until we have a better HOM-like API...

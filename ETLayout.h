@@ -176,6 +176,8 @@ typedef enum _ETSizeConstraintStyle
 - (NSView *) layoutView;
 - (void) setUpLayoutView;
 
+- (NSArray *) selectedItems;
+
 /* ETDecoratorLayout */
 
 //- (BOOL) isDecorator;

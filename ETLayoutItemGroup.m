@@ -1094,7 +1094,7 @@
 	[self applySelectionIndexPaths: [NSMutableArray arrayWithArray: indexPaths]];
 }
 
-/** Returns the children items belonging to the receiver. 
+/** Returns the selected child items belonging to the receiver. 
 	The returned collection only includes immediate children, other selected 
 	descendant items below these childrens in the layout item subtree are 
 	excluded. */
@@ -1103,6 +1103,25 @@
 	return [[self items] objectsMatchingValue: [NSNumber numberWithBool: YES] forKey: @"isSelected"];
 }
 
+/** Returns selected descendant items reported by the active layout through 
+	-[ETLayout selectedItems]. 
+	You should call this method to obtain the selection in most cases and not
+	-selectedItems. */
+- (NSArray *) selectedItemsInLayout
+{
+	NSArray *layoutSelectedItems = [[self layout] selectedItems];;
+	
+	if (layoutSelectedItems != nil)
+	{
+		return layoutSelectedItems;
+	}
+	else
+	{
+		return [self selectedItems];
+	}
+}
+
+/** You should rarely need to invoke this method. */
 - (NSArray *) selectedItemsIncludingRelatedDescendants
 {
 	NSArray *descendantItems = [self itemsIncludingRelatedDescendants];
@@ -1110,6 +1129,7 @@
 	return [descendantItems objectsMatchingValue: [NSNumber numberWithBool: YES] forKey: @"isSelected"];
 }
 
+/** You should rarely need to invoke this method. */
 - (NSArray *) selectedItemsIncludingAllDescendants
 {
 	NSArray *descendantItems = [self itemsIncludingAllDescendants];

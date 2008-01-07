@@ -699,6 +699,22 @@
 	}
 }
 
+/** <override-dummy />
+	Returns the selected items reported by the layout, which can be different 
+	from selected items of the layout context. For example, an outline layout
+	reports selected items in all expanded items and not only selected items of 
+	the root item (unlike layout context whose selection is restricted to 
+	immediate child items).
+	Returns an empty array when no items are selected.
+	Returns nil when the layout doesn't implement its own set of selected items.
+	You can override this method to implement a layout-based selection in your
+	subclass. This method is called by 
+	-[ETLayoutItemGroup selectedItemsInLayout]. */
+- (NSArray *) selectedItems
+{
+	return nil;
+}
+
 /* 
  * Utility methods
  */

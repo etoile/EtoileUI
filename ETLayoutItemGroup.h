@@ -158,6 +158,7 @@
 - (void) setSelectionIndexPaths: (NSArray *)indexPaths;
 
 - (NSArray *) selectedItems;
+- (NSArray *) selectedItemsInLayout;
 - (NSArray *) selectedItemsIncludingRelatedDescendants;
 - (NSArray *) selectedItemsIncludingAllDescendants;
 

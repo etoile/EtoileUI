@@ -93,6 +93,12 @@
 - (NSArray *) contentArray;
 @end
 
+@interface NSIndexSet (ETCollection) <ETCollection>
+- (id) content;
+- (NSArray *) contentArray;
+- (NSEnumerator *) objectEnumerator;
+@end
+
 @interface NSMutableArray (ETCollectionMutation) <ETCollectionMutation>
 
 @end
@@ -101,6 +107,9 @@
 
 @end
 
+@interface NSMutableIndexSet (ETCollectionMutation) <ETCollectionMutation>
+
+@end
 
 /* Collection Matching */
 

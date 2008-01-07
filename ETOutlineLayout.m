@@ -168,6 +168,24 @@
 	return [[self outlineView] rectOfRow: row];
 }
 
+- (NSArray *) selectedItems
+{
+	NSIndexSet *indexes = [[self outlineView] selectedRowIndexes];
+	NSEnumerator *e = [indexes objectEnumerator];
+	NSNumber *index = nil;
+	NSMutableArray *selectedItems = 
+		[NSMutableArray arrayWithCapacity: [indexes count]];
+	
+	while ((index = [e nextObject]) != nil)
+	{
+		id item = [[self outlineView] itemAtRow: [index intValue]];
+		
+		[selectedItems addObject: item];
+	}
+	
+	return selectedItems;
+}
+
 - (void) outlineViewSelectionDidChange: (NSNotification *)notif
 {
 	id delegate = [[self container] delegate];
