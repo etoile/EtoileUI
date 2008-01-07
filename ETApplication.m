@@ -93,6 +93,11 @@
 	[appMenu insertItem: menuItem atIndex: ++insertionIndex];
 	RELEASE(menuItem);
 	
+	menuItem = [[NSMenuItem alloc] initWithTitle: _(@"Inspect Selection")
+		action: @selector(inspectSelection:) keyEquivalent: @""];
+	[appMenu insertItem: menuItem atIndex: ++insertionIndex];
+	RELEASE(menuItem);
+	
 	menuItem = [[NSMenuItem alloc] initWithTitle: _(@"Browse")
 		action: @selector(browse:) keyEquivalent: @""];
 	[appMenu insertItem: menuItem atIndex: ++insertionIndex];

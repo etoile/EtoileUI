@@ -118,16 +118,26 @@
 - (NSArray *) contentArray
 {
 	NSMutableArray *indexes = [NSMutableArray arrayWithCapacity: [self count]];
+	int nbOfIndexes = [self count];
+	int nbOfCopiedIndexes = -1;
+	unsigned int *copiedIndexes = calloc(sizeof(unsigned int), nbOfIndexes);
 	
-	for (int i = -1; i < [self count]; i++)
+	nbOfCopiedIndexes = [self getIndexes: copiedIndexes maxCount: nbOfIndexes
+		inIndexRange: nil];
+	
+	NSAssert2(nbOfCopiedIndexes > -1, @"Invalid number of copied indexes for "
+		@"%@, expected value is %d", self, nbOfIndexes);
+	
+	// NOTE: i < [self count] prevents the loop to be entered, because negative  
+	// int (i) doesn't appear to be inferior to unsigned int (count)
+	for (int i = 0; i < nbOfIndexes; i++)
 	{
-		int index = [self indexGreaterThanIndex: i];
-		
-		if (index == NSNotFound)
-			break;
+		unsigned int index = copiedIndexes[i];
 			
 		[indexes addObject: [NSNumber numberWithInt: index]];
 	}
+	
+	free(copiedIndexes);
 	
 	return indexes;
 }

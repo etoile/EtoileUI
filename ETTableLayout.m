@@ -303,13 +303,35 @@
 	return [[self tableView] rectOfRow: row];
 }
 
+- (NSArray *) selectedItems
+{
+	NSIndexSet *indexes = [[self tableView] selectedRowIndexes];
+	NSEnumerator *e = [indexes objectEnumerator];
+	NSNumber *index = nil;
+	NSMutableArray *selectedItems = 
+		[NSMutableArray arrayWithCapacity: [indexes count]];
+	
+	while ((index = [e nextObject]) != nil)
+	{
+		id item = [[[self layoutContext] items] objectAtIndex: [index intValue]];
+		
+		[selectedItems addObject: item];
+	}
+	
+	return selectedItems;
+}
+
+/* Keep in mind this method is also used by ETOutlineLayout which overrides
+   -selectedItems. */
 - (void) tableViewSelectionDidChange: (NSNotification *)notif
 {
 	id delegate = [[self container] delegate];
 	NSTableView *tv = [self tableView];
+	NSArray *layoutSelectedItems = [self selectedItems];
+	NSArray *selection = [layoutSelectedItems valueForKey: @"indexPath"];
 	
-	// NOTE: Not really sure that's the best way to do it
-	[[self container] setSelectionIndexes: [tv selectedRowIndexes]];
+	/* Update selection state in the layout item tree */
+	[[self container] setSelectionIndexPaths: selection];
 
 	if ([delegate respondsToSelector: @selector(tableViewSelectionDidChange:)])
 	{

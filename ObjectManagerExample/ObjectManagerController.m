@@ -63,7 +63,8 @@ static NSFileManager *objectManager = nil;
 	fixedPath = [self textualPathForMixedPath: testPath];
 	if (fixedPath)
 		NSLog(@"Mixed path test: %@ -> %@", testPath, fixedPath);
-			
+
+	[viewContainer setAllowsMultipleSelection: YES];			
 	[viewContainer setSource: self];
 	[viewContainer setTarget: self];
 	[viewContainer setDoubleAction: @selector(doubleClickInViewContainer:)];

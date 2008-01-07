@@ -117,7 +117,15 @@
 		<dict>
 			<key>ACTIONS</key>
 			<dict>
+				<key>copy</key>
+				<string>id</string>
+				<key>cut</key>
+				<string>id</string>
 				<key>inspect</key>
+				<string>id</string>
+				<key>inspectSelection</key>
+				<string>id</string>
+				<key>paste</key>
 				<string>id</string>
 				<key>stack</key>
 				<string>id</string>

@@ -448,6 +448,17 @@ NSString *ETLayoutItemPboardType = @"ETLayoutItemPboardType"; // FIXME: replace 
 		inv = RETAIN([self invocationForSelector: @selector(setHasVerticalScroller:)]);
 		[inv setArgument: &hasVScroller atIndex: 2];
 		[self sendInvocationToDisplayView: inv];
+		
+		BOOL allowsEmptySelection = [self allowsEmptySelection];
+		BOOL allowsMultipleSelection = [self allowsMultipleSelection];
+		
+		inv = RETAIN([self invocationForSelector: @selector(setAllowsEmptySelection:)]);
+		[inv setArgument: &allowsEmptySelection atIndex: 2];
+		[self sendInvocationToDisplayView: inv];
+		
+		inv = RETAIN([self invocationForSelector: @selector(setAllowsMultipleSelection:)]);
+		[inv setArgument: &allowsMultipleSelection atIndex: 2];
+		[self sendInvocationToDisplayView: inv];
 	}
 }
 
@@ -491,8 +502,18 @@ NSString *ETLayoutItemPboardType = @"ETLayoutItemPboardType"; // FIXME: replace 
 
 - (IBAction) inspect: (id)sender
 {
-	NSLog(@"inspect %@", self);
+	ETLog(@"Inspect %@", self);
 	[[[self inspector] panel] makeKeyAndOrderFront: self];
+}
+
+- (IBAction) inspectSelection: (id)sender
+{
+	ETLog(@"Inspect %@ selection", self);
+	
+	NSArray *selectedItems = [(id)[self layoutItem] selectedItemsInLayout];
+	id inspector = [self inspectorForItems: selectedItems];
+	
+	[[inspector panel] makeKeyAndOrderFront: self];
 }
 
 - (void) setInspector: (id <ETInspector>)inspector
@@ -505,20 +526,14 @@ NSString *ETLayoutItemPboardType = @"ETLayoutItemPboardType"; // FIXME: replace 
 	instantiated when this accessors is called. */
 - (id <ETInspector>) inspector
 {
-	if (_inspector == nil)
-		_inspector = [[ETInspector alloc] init];
-	
-	// FIXME: Introduce the following code	
-	/*NSArray *items = [(ETLayoutItemGroup *)[self layoutItem] selectedItems];
-	
-	if (items == nil || [items isEmpty])
-		items = [NSArray arrayWithObject: [self layoutItem]];*/
-
 	return [self inspectorForItems: [self items]];
 }
 
 - (id <ETInspector>) inspectorForItems: (NSArray *)items
 {
+	if (_inspector == nil)
+		_inspector = [[ETInspector alloc] init];
+		
 	[_inspector setInspectedItems: items];
 	
 	return _inspector;

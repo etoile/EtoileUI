@@ -114,6 +114,7 @@
 /* Inspecting */
 
 - (IBAction) inspect: (id)sender;
+- (IBAction) inspectSelection: (id)sender;
 - (void) setInspector: (id <ETInspector>)inspector;
 /** Returns inspector based on selection */
 - (id <ETInspector>) inspector;
