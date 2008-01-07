@@ -111,8 +111,13 @@
 
 @implementation NSArray (CollectionMatching)
 
+/** Returns the first object in the array, otherwise returns nil if the array is
+	empty. */
 - (id) firstObject
 {
+	if ([self isEmpty])
+		return nil;
+
 	return [self objectAtIndex: 0];
 }
 
