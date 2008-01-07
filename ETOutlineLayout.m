@@ -395,3 +395,52 @@
 }
 
 @end
+
+@interface NSOutlineView (ETTableLayoutDraggingSource)
+- (unsigned int) draggingSourceOperationMaskForLocal: (BOOL)isLocal;
+- (void) draggedImage: (NSImage *)anImage beganAt: (NSPoint)aPoint;
+- (void) draggedImage: (NSImage *)draggedImage movedTo: (NSPoint)screenPoint;
+- (void) draggedImage: (NSImage *)anImage endedAt: (NSPoint)aPoint operation: (NSDragOperation)operation;
+@end
+
+@implementation NSOutlineView (ETTableLayoutDraggingSource)
+
+/* The next methods are implemented in NSTableView(ETTableLayoutDraggingSource),
+   no need to override them. They are kept here to document the hack below. */
+
+#if 0
+- (unsigned int) draggingSourceOperationMaskForLocal: (BOOL)isLocal
+{
+	return [[self eventHandler] draggingSourceOperationMaskForLocal: isLocal];
+}
+
+- (void) draggedImage: (NSImage *)anImage beganAt: (NSPoint)aPoint
+{
+	[[self eventHandler] draggedImage: anImage beganAt: aPoint];
+}
+#endif
+
+/* However the following two methods are implemented by NSOutlineView by default
+   unlike NSTableView. It means NSTableView(ETTableLayoutDraggingSource)
+   implementation is lost and we need to patch NSOutlineView. 
+   NOTE: It may break NSOutlineView on Mac OS X but everything seems to work
+   well so they could just exist as empty methods in NSOutlineView.The problem
+   shouldn't exist on GNUstep
+   TODO: We should check it is really the case by setting a break point on these
+   methods and steps in the assembly to know whether if they truly do nothing.
+   Well, according to my tests, they seems to be in charge of refreshing 
+   expanded item on a drop (when child items are inserted).
+   In the end, the best solution would be to swizzle the methods, it would avoid
+   posing NSOutlineView. */
+
+- (void) draggedImage: (NSImage *)draggedImage movedTo: (NSPoint)screenPoint
+{
+	[[self eventHandler] draggedImage: draggedImage movedTo: screenPoint];
+}
+
+- (void) draggedImage: (NSImage *)anImage endedAt: (NSPoint)aPoint operation: (NSDragOperation)operation
+{
+	[[self eventHandler] draggedImage: anImage endedAt: aPoint operation: operation];
+}
+
+@end;

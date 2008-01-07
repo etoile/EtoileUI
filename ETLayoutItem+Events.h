@@ -146,6 +146,7 @@
 - (int) dropIndexAtLocation: (NSPoint)localDropPosition forItem: (id)item on: (id)dropTargetItem;
 - (BOOL) acceptsDropAtLocationInWindow: (NSPoint)loc;
 - (NSRect) dropOnRect;
+- (unsigned int) draggingSourceOperationMaskForLocal: (BOOL)isLocal;
 
 @end
 

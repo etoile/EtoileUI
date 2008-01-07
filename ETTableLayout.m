@@ -418,7 +418,7 @@
 	image: (NSImage *)customDragImage layout: (id)layout
 {
 	ETLog(@"Overriden -beginDrag:forItem:image: in %@", self);
-	/* Overriden to do nothing and let the table view creates nad manages the 
+	/* Overriden to do nothing and let the table view creates and manages the 
 	   drag object. This method is called by -handleDrag:forItem:. */
 }
 

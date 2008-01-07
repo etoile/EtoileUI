@@ -402,6 +402,7 @@
 
 - (unsigned int) draggingSourceOperationMaskForLocal: (BOOL)isLocal
 {
+	// FIXME: Allows more operations
 	if (isLocal)
 	{
 		return NSDragOperationPrivate; //Move
