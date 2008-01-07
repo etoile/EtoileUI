@@ -296,6 +296,14 @@ static ETPickboard *activePickboard = nil;
 	return [_pickedObjects allValues];
 }
 
+/** Returns the first element on the pickboard.
+	The first element is the one which will be inserted on the next drop 
+	operation unless another object gets picked in the meantime. */
+- (id) firstObject
+{
+	return [[self allObjects] firstObject];
+}
+
 /* Pick & Drop Palette */
 
 /** Returns the window embedding the UI representation of the receiver. */

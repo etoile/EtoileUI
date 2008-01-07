@@ -66,6 +66,14 @@
 	}
 }
 
+/** This method is short-circuited by view-based layouts that come with their
+	own drag and drop implementation. For example ETTableLayout handles the drag
+	directly by catching the event, calling -[ETLayoutItem handleDrag:forItem:] 
+	on the layout context and getting -[ETTableLayout beginDrag:forItem:image:] 
+	invoked as a call back. 
+	Layouts should -invoke -[ETLayoutItem handleDrag:forItem:] then they will
+	receive -handleDrag:forItem:, -beginDrag:forItem:image: as call backs in
+	case they decide to implement these methods. */
 - (void) mouseDragged: (NSEvent *)event on: (id)item
 {
 	if ([self allowsDragging] == NO)
@@ -186,7 +194,7 @@
 	ETLog(@"DRAG DEST - Drag exit receives in dragging destination %@", self);
 }
 
-- (void) handleDragEnd: (id)dragInfo forItem: (id)item
+- (void) handleDragEnd: (id)dragInfo forItem: (id)item on: (id)dropTargetItem
 {
 	ETLog(@"DRAG DEST - Drag end receives in dragging destination %@", self);
 }

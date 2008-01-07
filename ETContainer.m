@@ -1467,6 +1467,21 @@ NSString *ETLayoutItemPboardType = @"ETLayoutItemPboardType"; // FIXME: replace 
 	return [[self layout] itemAtLocation: localPoint];
 }
 
+- (ETLayoutItem *) dropTargetForDrag: (id <NSDraggingInfo>)dragInfo
+{
+	id item = [self itemForLocationInWindow: [dragInfo draggingLocation]];
+	
+	/* When the drop target item doesn't accept the drop we retarget it. It 
+	   commonly occurs in the following cases: 
+	   -isGroup returns NO
+	   -allowsDropping returns NO
+	   location outside of the drop on rect. */
+	if ([item acceptsDropAtLocationInWindow: [dragInfo draggingLocation]] == NO)
+		item = [item parentLayoutItem];
+	
+	return item;
+}
+
 /* NSResponder Dragging Event */
 
 // NOTE: this method isn't part of NSDraggingSource protocol but of NSResponder
@@ -1479,7 +1494,13 @@ NSString *ETLayoutItemPboardType = @"ETLayoutItemPboardType"; // FIXME: replace 
 	[item mouseDragged: event on: item];
 }
 
-/* Dragging Destination */
+/* Dragging Destination 
+
+   All dragging destination call backs are propagated to the drop target item 
+   and not the hovered item. The drop target item is the dragging destination
+   unlike the hovered item which is the top visible item right under the drag 
+   location. The hovered item is different from the drop target item when the
+   hovered item doesn't accept drop. */
 
 /** This method can be called on the receiver when a drag exits. When a 
 	view-based layout is used, existing the layout view results in entering
@@ -1490,9 +1511,10 @@ NSString *ETLayoutItemPboardType = @"ETLayoutItemPboardType"; // FIXME: replace 
 	ETLog(@"Drag enter receives in dragging destination %@", self);
 	
 	/* item can be nil, -itemAtLocation: doesn't return the receiver itself */
-	id item = [self itemForLocationInWindow: [sender draggingLocation]];
+	id item = [self dropTargetForDrag: drag];
+	id draggedItem = [[ETPickboard localPickboard] firstObject];
 
-	return [item handleDragEnter: sender forItem: item];	
+	return [item handleDragEnter: sender forItem: draggedItem];	
 }
 
 - (NSDragOperation) draggingUpdated: (id <NSDraggingInfo>)drag
@@ -1500,7 +1522,7 @@ NSString *ETLayoutItemPboardType = @"ETLayoutItemPboardType"; // FIXME: replace 
 	//ETLog(@"Drag update receives in dragging destination %@", self);
 	
 	/* item can be nil, -itemAtLocation: doesn't return the receiver itself */
-	id item = [self itemForLocationInWindow: [drag draggingLocation]];
+	id item = [self dropTargetForDrag: drag];
 	NSDragOperation dragOp = NSDragOperationNone;
 	
 	dragOp = [item handleDragMove: drag forItem: item];	
@@ -1518,9 +1540,10 @@ NSString *ETLayoutItemPboardType = @"ETLayoutItemPboardType"; // FIXME: replace 
 	ETLog(@"Drag exit receives in dragging destination %@", self);
 	
 	/* item can be nil, -itemAtLocation: doesn't return the receiver itself */
-	id item = [self itemForLocationInWindow: [drag draggingLocation]];
-	
-	[item handleDragExit: drag forItem: item];
+	id item = [self dropTargetForDrag: drag];
+	id draggedItem = [[ETPickboard localPickboard] firstObject];
+		
+	[item handleDragExit: drag forItem: draggedItem];
 	
 	/* Erases insertion indicator */
 	[self updateDragInsertionIndicator];
@@ -1531,9 +1554,10 @@ NSString *ETLayoutItemPboardType = @"ETLayoutItemPboardType"; // FIXME: replace 
 	ETLog(@"Drag end receives in dragging destination %@", self);
 	
 	/* item can be nil, -itemAtLocation: doesn't return the receiver itself */
-	id item = [self itemForLocationInWindow: [drag draggingLocation]];
+	id item = [self dropTargetForDrag: drag];
+	id draggedItem = [[ETPickboard localPickboard] firstObject];
 	
-	[item handleDragEnd: drag forItem: item];
+	[item handleDragEnd: drag forItem: draggedItem on: nil];
 	
 	/* Erases insertion indicator */
 	[self updateDragInsertionIndicator];
@@ -1612,17 +1636,9 @@ NSString *ETLayoutItemPboardType = @"ETLayoutItemPboardType"; // FIXME: replace 
 {
 	ETLog(@"Perform drag receives in dragging destination %@", self);
 	
-	id item = [self itemForLocationInWindow: [dragInfo draggingLocation]];
 	id droppedItem = [[ETPickboard localPickboard] popObject];
+	id item = [self dropTargetForDrag: dragInfo];
 
-	/* When the drop target item doesn't accept the drop we retarget it. It 
-	   commonly occurs in the following cases: 
-	   -isGroup returns NO
-	   -allowsDropping returns NO
-	   location outside of the drop on rect. */
-	if ([item acceptsDropAtLocationInWindow: [dragInfo draggingLocation]] == NO)
-		item = [item parentLayoutItem];	
-	
 	return [item handleDrop: dragInfo forItem: droppedItem on: item];
 }
 
@@ -1655,8 +1671,9 @@ NSString *ETLayoutItemPboardType = @"ETLayoutItemPboardType"; // FIXME: replace 
 	
 	/* item can be nil, -itemAtLocation: doesn't return the receiver itself */
 	id item = [self itemForLocationInWindow: [drag draggingLocation]];
-	
-	[item handleDragEnd: drag forItem: item];
+	id droppedItem = [[ETPickboard localPickboard] firstObject];
+		
+	[item handleDragEnd: drag forItem: droppedtem on: item];
 		
 	/* Erases insertion indicator */
 	[self updateDragInsertionIndicator];

@@ -130,7 +130,7 @@
 - (NSDragOperation) handleDragEnter: (id)dragInfo forItem: (id)item;
 - (void) handleDragExit: (id)dragInfo forItem: (id)item;
 - (NSDragOperation) handleDragMove: (id)dragInfo forItem: (id)item;
-- (void) handleDragEnd: (id)dragInfo forItem: (id)item;
+- (void) handleDragEnd: (id)dragInfo forItem: (id)item on: (id) dropTargetItem;
 - (BOOL) handleDrop: (id)dragInfo forItem: (id)item on: (id)dropTargetItem;
 //- (BOOL) handleDrop: (id)dragInfo forObject: (id)object; // on: (id)item
 /*- (void) handlePickForObject: (id)object;
