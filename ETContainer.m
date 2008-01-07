@@ -240,7 +240,7 @@ NSString *ETLayoutItemPboardType = @"ETLayoutItemPboardType"; // FIXME: replace 
 	if ([path isEqual: @""])
 	{
 		[NSException raise: NSInvalidArgumentException format: @"For %@ "
-			@"-setRepresentedPath argument must never be an empty string"];
+			@"-setRepresentedPath argument must never be an empty string", self];
 		
 	}
 	

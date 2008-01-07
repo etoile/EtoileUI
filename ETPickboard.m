@@ -191,9 +191,17 @@ static ETPickboard *activePickboard = nil;
 /** Inserts an object as the first element in the pickboard and returns a 
 	pickboard transaction reference that uniquely identifies the pick and drop
 	operation underway. You can later retrieve the pushed object by keeping 
-	around the pickboard reference. */
+	around the pickboard reference. 
+	Don't push a nil value, otherwise an invalid argument exception will be 
+	thrown. */
 - (ETPickboardRef *) pushObject: (id)object
 {
+	if (object == nil)
+	{
+		[NSException raise: NSInvalidArgumentException format: @"For %@ "
+			@"-pushObject argument must never be nil", self];
+		
+	}
 	[self checkPickboardValidity];
 	
 	/* Use -addObject: instead of -pushObject: if necessary */
@@ -242,9 +250,17 @@ static ETPickboard *activePickboard = nil;
 /** Adds an object as the last element in the pickboard and returns a 
 	pickboard transaction reference that uniquely identifies the pick and drop
 	operation underway. You can later retrieve the added object by keeping 
-	around the pickboard reference. */
+	around the pickboard reference. 
+	Don't add a nil value, otherwise an invalid argument exception will be 
+	thrown. */
 - (ETPickboardRef *) addObject: (id)object
 {
+	if (object == nil)
+	{
+		[NSException raise: NSInvalidArgumentException format: @"For %@ "
+			@"-addObject argument must never be nil", self];
+		
+	}
 	[self checkPickboardValidity];
 
 	NSString *pickRef = [NSString stringWithFormat: @"%d", ++_pickboardRef];
@@ -262,10 +278,17 @@ static ETPickboard *activePickboard = nil;
 /** Removes a previously picked object identified by 'ref' from the pickboard. 
 	Every time you put an object on a pickboard, the target pickboard returns a 
 	reference making later operations on this object more convenient. 
-	Throws an invalid argument exception when no object is identified by ref in
-	the pickboard. */
+	Throws an invalid argument exception when ref is nil or no object is 
+	identified by ref in the pickboard. */
 - (void) removeObjectForPickboardRef: (ETPickboardRef *)ref
 {
+	if (ref == nil)
+	{
+		[NSException raise: NSInvalidArgumentException format: @"For %@ "
+			@"-removeObjectForPickboardRef: argument must never be nil", self];
+		
+	}
+	
 	id object = [_pickedObjects objectForKey: ref];
 	
 	if (object == nil)

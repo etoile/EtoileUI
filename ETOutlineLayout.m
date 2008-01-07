@@ -366,7 +366,8 @@
 	id draggedItem = [self itemAtLocation: localPoint];
 	id baseItem = [[self layoutContext] baseItem];
 	
-	//NSAssert2([items containsObject: draggedItem], 
+	NSAssert3([items containsObject: draggedItem], @"Dragged items %@ must "
+		@"contain clicked item %@ in %@", items, draggedItem, self);
 		
 	[baseItem handleDrag: dragEvent forItem: draggedItem layout: self];	
 	

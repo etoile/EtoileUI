@@ -433,12 +433,21 @@
 - (BOOL) tableView: (NSTableView *)tv writeRowsWithIndexes: (NSIndexSet *)rowIndexes 
 	toPasteboard: (NSPasteboard*)pboard 
 {
+#if 0
+	// NOTE: On Mac OS X, -currentEvent returns a later event rather than the 
+	// mouse down that began the drag when the user moves the mouse too quickly.
 	NSEvent *dragEvent = [NSApp currentEvent];
+#else
+	NSEvent *dragEvent = [self lastDragEvent];
+#endif
 
 	NSAssert3([[dragEvent window] isEqual: [tv window]], @"NSApp current "
 		@"event %@ in %@ -tableView:writeRowsWithIndexes:toPasteboard: doesn't "
 		@"belong to the table view %@", dragEvent, self, tv);
-		
+	NSAssert3([dragEvent type] == NSLeftMouseDown, @"NSApp current "
+		@"event %@ in %@ -tableView:writeRowsWithIndexes:toPasteboard: must be "
+		@"of type NSLeftMouseDown", dragEvent, self, tv);
+	
 	/* Convert drag location from window coordinates to the receiver coordinates */
 	NSPoint localPoint = [tv convertPoint: [dragEvent locationInWindow] fromView: nil];
 	id draggedItem = [self itemAtLocation: localPoint];
@@ -498,6 +507,18 @@
 	return item;
 }
 
+/* Subclassing */
+
+- (NSEvent *) lastDragEvent
+{
+	return _lastDragEvent;
+}
+
+- (void) setLastDragEvent: (NSEvent *)event
+{
+	_lastDragEvent = event;
+}
+
 @end
 
 /* NSTableView overriden methods for dragging 
@@ -543,6 +564,26 @@
 - (void) draggedImage: (NSImage *)anImage endedAt: (NSPoint)aPoint operation: (NSDragOperation)operation
 {
 	[[self eventHandler] draggedImage: anImage endedAt: aPoint operation: operation];
+}
+
+/* We implement this method only because [NSApp currentEvent] in 
+   -tableView:writeRowsWithIndexes:toPasteboard: isn't the expected mouse down 
+   event that triggered the drag when the mouse is moved/dragged very quickly. */
+- (BOOL) canDragRowsWithIndexes: (NSIndexSet *)indexes atPoint: (NSPoint)point
+{
+	NSEvent *event = [NSApp currentEvent];
+	NSPoint pointInWindow = [self convertPoint: point toView: nil];
+	
+	/* We check the current event is precisely the mouse down event that 
+	   triggers the present drag request */
+	NSAssert3(NSEqualPoints([event locationInWindow], pointInWindow), @"For "
+		@"%@, current event point %@ must be equal to point %@ passed by "
+		@"-canDragRowsWithIndexes:point:", self, 
+		NSStringFromPoint([event locationInWindow]), 
+		NSStringFromPoint(pointInWindow));
+	
+	[[self dataSource] setLastDragEvent: event];
+	return YES;
 }
 
 @end

@@ -43,6 +43,7 @@
 @interface ETTableLayout : ETLayout
 {
 	NSMutableDictionary *_propertyColumns;
+	NSEvent *_lastDragEvent;
 	int _lastChildDropIndex;
 }
 
@@ -56,5 +57,10 @@
 - (void) setListStyle: (id)style;*/
 
 - (NSTableView *) tableView;
+
+/* Subclassing */
+
+- (NSEvent *) lastDragEvent;
+- (void) setLastDragEvent: (NSEvent *)event;
 
 @end
