@@ -526,7 +526,7 @@ NSString *ETLayoutItemPboardType = @"ETLayoutItemPboardType"; // FIXME: replace 
 	instantiated when this accessors is called. */
 - (id <ETInspector>) inspector
 {
-	return [self inspectorForItems: [self items]];
+	return [self inspectorForItems: [NSArray arrayWithObject: [self layoutItem]]];
 }
 
 - (id <ETInspector>) inspectorForItems: (NSArray *)items
@@ -851,6 +851,12 @@ NSString *ETLayoutItemPboardType = @"ETLayoutItemPboardType"; // FIXME: replace 
 
 /* Selection */
 
+/** See -[ETLayoutItemGroup selectedItemsInLayout] */
+- (NSArray *) selectedItemsInLayout
+{
+	return [(ETLayoutItemGroup *)[self layoutItem] selectedItemsInLayout];
+}
+
 /** See -[ETLayoutItemGroup selectionIndexPaths] */
 - (NSArray *) selectionIndexPaths
 {
@@ -917,14 +923,19 @@ NSString *ETLayoutItemPboardType = @"ETLayoutItemPboardType"; // FIXME: replace 
 
 /** Sets the selected item identified by index in the receiver and discards 
 	any existing selection index paths previously set. */
-- (void) setSelectionIndex: (int)index
+- (void) setSelectionIndex: (unsigned int)index
 {
 	ETLog(@"Modify selection index from %d to %d of %@", [self selectionIndex], index, self);
 	
 	/* Check new selection validity */
 	NSAssert1(index >= 0, @"-setSelectionIndex: parameter must not be a negative value like %d", index);
 	
-	[self setSelectionIndexes: [NSIndexSet indexSetWithIndex: index]];
+	NSMutableIndexSet *indexes = [NSMutableIndexSet indexSet];
+	
+	if (index != NSNotFound)
+		[indexes addIndex: index];
+		
+	[self setSelectionIndexes: indexes];
 }
 
 /** Returns the index of the first selected item which is an immediate child of
@@ -932,7 +943,7 @@ NSString *ETLayoutItemPboardType = @"ETLayoutItemPboardType"; // FIXME: replace 
 	Calling this method is equivalent to [[self selectionIndexes] firstIndex].
 	Take note that -selectionIndexPaths may return one or multiple values when 
 	this method returns NSNotFound. See -selectionIndexes also. */
-- (int) selectionIndex
+- (unsigned int) selectionIndex
 {
 	return [[self selectionIndexes] firstIndex];
 }

@@ -248,13 +248,12 @@
 
 - (int) propertyView: (ETContainer *)container numberOfItemsAtPath: (NSIndexPath *)path
 {
-	int selection = [itemGroupView selectionIndex];
 	int nbOfPropertyItems = 0;
-
-	if (selection != NSNotFound)
+	ETLayoutItem *item = [[itemGroupView selectedItemsInLayout] firstObject];
+	
+	if (item != nil)
 	{
-		// FIXME: Don't access layout item cache here. May be add -selectedItems?
-		ETLayoutItem *item = [[itemGroupView items] objectAtIndex: selection];
+		item = [item representedObject];
 		
 		NSAssert([item properties] != nil, @"Represented object of a layout item should never be nil");
 		#if 1
@@ -277,7 +276,7 @@
 
 - (ETLayoutItem *) propertyView: (ETContainer *)container itemAtPath: (NSIndexPath *)path
 {
-	ETLayoutItem *item = [[itemGroupView items] objectAtIndex: [itemGroupView selectionIndex]];
+	ETLayoutItem *item = [[[itemGroupView selectedItemsInLayout] firstObject] representedObject];
 	ETLayoutItem *propertyItem = [[ETLayoutItem alloc] init];
 	int index = [path lastIndex];
 	
@@ -375,12 +374,11 @@
 			NSLog(@"Unsupported layout or unknown popup menu selection");
 	}
 	
-	ETLayoutItem *representedItem = [[itemGroupView items] objectAtIndex: 0];
+	id firstSelectedItem = [[itemGroupView selectedItemsInLayout] firstObject];
+	id representedItem = [firstSelectedItem representedObject];
 	
-	representedItem = (ETLayoutItem *)[representedItem representedObject];
-	
-	if ([[representedItem closestAncestorContainer] respondsToSelector: @selector(setLayout:)])
-		[[representedItem closestAncestorContainer] setLayout: (ETLayout *)AUTORELEASE([[layoutClass alloc] init])];
+	if ([representedItem respondsToSelector: @selector(setLayout:)])
+		[representedItem setLayout: (ETLayout *)AUTORELEASE([[layoutClass alloc] init])];
 }
 
 - (NSArray *) inspectedItems

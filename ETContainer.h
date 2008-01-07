@@ -146,12 +146,13 @@
 
 /* Selection */
 
+- (NSArray *) selectedItemsInLayout;
 - (NSArray *) selectionIndexPaths;
 - (void) setSelectionIndexPaths: (NSArray *)indexPaths;
 - (void) setSelectionIndexes: (NSIndexSet *)selection;
 - (NSMutableIndexSet *) selectionIndexes;
-- (void) setSelectionIndex: (int)index;
-- (int) selectionIndex;
+- (void) setSelectionIndex: (unsigned int)index;
+- (unsigned int) selectionIndex;
 - (BOOL) allowsMultipleSelection;
 - (void) setAllowsMultipleSelection: (BOOL)multiple;
 - (BOOL) allowsEmptySelection;
