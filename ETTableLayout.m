@@ -414,7 +414,8 @@
 
 }*/
 
-- (void) beginDrag: (NSEvent *)event forItem: (id)item image: (NSImage *)customDragImage
+- (void) beginDrag: (NSEvent *)event forItem: (id)item 
+	image: (NSImage *)customDragImage layout: (id)layout
 {
 	ETLog(@"Overriden -beginDrag:forItem:image: in %@", self);
 	/* Overriden to do nothing and let the table view creates nad manages the 
@@ -433,15 +434,17 @@
 	toPasteboard: (NSPasteboard*)pboard 
 {
 	NSEvent *dragEvent = [NSApp currentEvent];
-	
+
 	NSAssert3([[dragEvent window] isEqual: [tv window]], @"NSApp current "
 		@"event %@ in %@ -tableView:writeRowsWithIndexes:toPasteboard: doesn't "
 		@"belong to the table view %@", dragEvent, self, tv);
 		
 	/* Convert drag location from window coordinates to the receiver coordinates */
 	NSPoint localPoint = [tv convertPoint: [dragEvent locationInWindow] fromView: nil];
-	
-	[[self layoutContext] handleDrag: dragEvent forItem: [self itemAtLocation: localPoint]];
+	id draggedItem = [self itemAtLocation: localPoint];
+	id baseItem = [[self layoutContext] baseItem];
+		
+	[baseItem handleDrag: dragEvent forItem: draggedItem layout: self];
 	
 	return YES;
 }
@@ -451,7 +454,7 @@
 				  proposedRow: (int)row 
 	    proposedDropOperation: (NSTableViewDropOperation)op 
 {
-    //ETLog(@"Validate drop with dragging source %@ in %@", [info draggingSource], [self container]);
+    ETLog(@"Validate drop with dragging source %@ in %@", [info draggingSource], [self container]);
 	id dropTargetItem = [self layoutContext];
 	
 	if (op == NSTableViewDropOn)
@@ -473,7 +476,7 @@
                row: (int)row 
 	 dropOperation: (NSTableViewDropOperation)op
 {
-    //ETLog(@"Accept drop in %@", [self container]);
+    ETLog(@"Accept drop in %@", [self container]);
 	id droppedItem = [[ETPickboard localPickboard] popObject];
 	id dropTargetItem = [self layoutContext];
 	

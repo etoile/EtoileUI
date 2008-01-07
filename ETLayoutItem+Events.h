@@ -125,8 +125,9 @@
 
 - (void) mouseDown: (NSEvent *)event on: (id)item;
 - (void) mouseDragged: (NSEvent *)event on: (id)item;
-- (void) handleDrag: (NSEvent *)event forItem: (id)item;
-- (void) beginDrag: (NSEvent *)event forItem: (id)item image: (NSImage *)customDragImage;
+- (void) handleDrag: (NSEvent *)event forItem: (id)item layout: (id)layout;
+- (void) beginDrag: (NSEvent *)event forItem: (id)item 
+	image: (NSImage *)customDragImage layout: (id)layout;
 - (NSDragOperation) handleDragEnter: (id)dragInfo forItem: (id)item;
 - (void) handleDragExit: (id)dragInfo forItem: (id)item;
 - (NSDragOperation) handleDragMove: (id)dragInfo forItem: (id)item;

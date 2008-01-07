@@ -1391,7 +1391,6 @@ NSString *ETLayoutItemPboardType = @"ETLayoutItemPboardType"; // FIXME: replace 
 @interface ETContainer (ETContainerDraggingSupport)
 - (id) itemForEvent: (NSEvent *)event;
 - (id) itemForLocationInWindow: (NSPoint)loc;
-- (void) beginDragWithEvent: (NSEvent *)event;
 - (void) drawDragInsertionIndicator: (id <NSDraggingInfo>)drag;
 - (void) updateDragInsertionIndicator;
 @end

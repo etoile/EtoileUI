@@ -81,8 +81,15 @@
 
 	if ([self representedPathBase] != nil)
 	{
+		id layout = nil;
+		
 		ETLog(@"Allowed dragging on selection");
-		[self handleDrag: event forItem: item];
+		
+		// NOTE: layout = [[item parentLayoutItem] layout] could make more sense
+		if ([self isGroup])
+			layout = [(ETLayoutItemGroup *)self layout];
+
+		[self handleDrag: event forItem: item layout: layout];
 	}
 	else
 	{
@@ -93,16 +100,11 @@
 // NOTE: ETOutlineLayout would override this method to call 
 // -selectedItemsIncludingRelatedDescendants instead of -selectedItems	
 //[pickboard pushObject: [ETPickCollection pickCollectionWithObjects: [self selectedItems]];
-- (void) handleDrag: (NSEvent *)event forItem: (id)item
+- (void) handleDrag: (NSEvent *)event forItem: (id)item layout: (id)layout
 {
-	id layout = nil;
-	
-	if ([self isGroup])
-		layout = [(ETLayoutItemGroup *)self layout];
-	
-	if (layout != nil && [layout respondsToSelector: @selector(handleDrag:forItem:)])
+	if (layout != nil && [layout respondsToSelector: @selector(handleDrag:forItem:layout:)])
 	{
-		[layout handleDrag: event forItem: item];
+		[layout handleDrag: event forItem: item layout: layout];
 	}
 	else
 	{
@@ -134,21 +136,18 @@
 		//NSData *data = [NSKeyedArchiver archivedDataWithRootObject: item];
 		//[pboard setData: data forType: ETLayoutItemPboardType];
 		
-		[self beginDrag: event forItem: item image: nil];
+		[self beginDrag: event forItem: item image: nil layout: layout];
 	}
 }
 
-/* ETLayoutItem specific method to create a new drag and passing the request to data source */
-- (void) beginDrag: (NSEvent *)event forItem: (id)item image: (NSImage *)customDragImage
+/* ETLayoutItem specific method to create a new drag and passing the request to 
+   data source. */
+- (void) beginDrag: (NSEvent *)event forItem: (id)item 
+	image: (NSImage *)customDragImage layout: (id)layout
 {
-	id layout = nil;
-	
-	if ([self isGroup])
-		layout = [(ETLayoutItemGroup *)self layout];
-	
-	if (layout != nil && [layout respondsToSelector: @selector(beginDrag:forItem:image:)])
+	if (layout != nil && [layout respondsToSelector: @selector(beginDrag:forItem:image:layout:)])
 	{
-		[layout beginDrag: event forItem: item image: customDragImage];
+		[layout beginDrag: event forItem: item image: customDragImage layout: layout];
 	}
 	else
 	{

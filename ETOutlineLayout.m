@@ -360,8 +360,15 @@
 	NSAssert3([[dragEvent window] isEqual: [outlineView window]], @"NSApp current "
 		@"event %@ in %@ -tableView:writeRowsWithIndexes:toPasteboard: doesn't "
 		@"belong to the outline view %@", dragEvent, self, outlineView);
+
+	/* Convert drag location from window coordinates to the receiver coordinates */
+	NSPoint localPoint = [outlineView convertPoint: [dragEvent locationInWindow] fromView: nil];
+	id draggedItem = [self itemAtLocation: localPoint];
+	id baseItem = [[self layoutContext] baseItem];
 	
-	[[self layoutContext] handleDrag: dragEvent forItem: [items firstObject]];
+	//NSAssert2([items containsObject: draggedItem], 
+		
+	[baseItem handleDrag: dragEvent forItem: draggedItem layout: self];	
 	
 	return YES;
 }
