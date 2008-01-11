@@ -792,25 +792,25 @@
 
 /* Item Property Display */
 
-/** Override */
+/** <override-dummy /> */
 - (NSArray *) displayedProperties
 {
 	return nil;
 }
 
-/** Override */
+/** <override-dummy /> */
 - (void) setDisplayedProperties: (NSArray *)properties
 {
 	
 }
 
-/** Override */
+/** <override-dummy /> */
 - (id) styleForProperty: (NSString *)property
 {
 	return nil;
 }
 
-/** Override */
+/** <override-dummy /> */
 - (void) setStyle: (id)style forProperty: (NSString *)property
 {
 
