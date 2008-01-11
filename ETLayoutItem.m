@@ -775,7 +775,12 @@
 {
 	if ([self isMetaLayoutItem])
 	{
-		unsigned int metalevel = [[self representedObject] UIMetalevel];
+		unsigned int metalevel = 0;
+		id repObject = [self representedObject];
+		
+		/* An item can be a meta layout item by using a view as represented object */
+		if ([repObject respondsToSelector: @selector(UIMetalevel)] )
+			metalevel = [repObject UIMetalevel];
 		
 		return ++metalevel;
 	}
@@ -823,10 +828,10 @@
 	int metalayer = [self UIMetalevel];
 	id parent = self;
 	
-	while ([parent parentLayoutItem] != nil)
+	while ((parent = [parent parentLayoutItem]) != nil)
 	{
-		if ([parent UIMetalayer] > metalayer)
-			metalayer = [parent UIMetalayer];
+		if ([parent UIMetalevel] > metalayer)
+			metalayer = [parent UIMetalevel];
 	}
 	
 	return metalayer;

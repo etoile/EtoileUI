@@ -190,6 +190,78 @@
 	UKObjectsEqual(indexPath0, [item110 indexPathFromItem: item11]);
 }
 
+- (void) testUIMetalevel
+{
+	id item = [ETLayoutItem layoutItem];
+	id item1 = [ETLayoutItem layoutItemWithRepresentedObject: nil];
+	id item2 = [ETLayoutItem layoutItemWithRepresentedObject: item1];
+	id item3 = [ETLayoutItem layoutItemWithRepresentedObject: 
+		[NSImage imageNamed: @"NSApplication"]];
+	id item4 = [ETLayoutItem layoutItemWithRepresentedObject: item2];
+	id item5 = [ETLayoutItem layoutItemWithRepresentedObject: 
+		AUTORELEASE([[ETView alloc] initWithFrame: NSMakeRect(0, 0, 100, 50)])];	
+	
+	UKIntsEqual(0, [item UIMetalevel]);
+	UKIntsEqual(0, [item1 UIMetalevel]);
+	UKIntsEqual(1, [item2 UIMetalevel]);
+	UKIntsEqual(0, [item3 UIMetalevel]);
+	UKIntsEqual(2, [item4 UIMetalevel]);
+	UKIntsEqual(1, [item5 UIMetalevel]);
+}
+
+/*  Test tree model:
+
+	- root item					(0)
+		- item 0				(2)
+			- item 00			(1)
+				- item 000		(4)
+					- item 0000	(4)
+					- item 0001	(0)
+				- item 001		(2)
+		- item 1				(0)
+			- item 10			(0)
+		
+	Expected metalayers:
+	- (0) item root, 1, 10
+	- (2) item 0, 00, 001
+	- (4) item 000, 0000, 0001 */
+- (void) testUIMetalayer
+{
+	id itemM0 = [ETLayoutItem layoutItem];
+	id itemM1 = [ETLayoutItem layoutItemWithRepresentedObject: itemM0];
+	id itemM2 = [ETLayoutItem layoutItemWithRepresentedObject: itemM1];
+	id itemM3 = [ETLayoutItem layoutItemWithRepresentedObject: itemM2];
+
+	id item = [ETLayoutItemGroup layoutItem];
+	id item0 = [ETLayoutItemGroup layoutItemWithRepresentedObject: itemM1];
+	id item00 = [ETLayoutItemGroup layoutItemWithRepresentedObject: itemM0];
+	id item000 = [ETLayoutItemGroup layoutItemWithRepresentedObject: itemM3];
+	id item0000 = [ETLayoutItem layoutItemWithRepresentedObject: itemM3];
+	id item0001 = [ETLayoutItem layoutItem];
+	id item001 = [ETLayoutItem layoutItemWithRepresentedObject: itemM1];
+	id item1 = [ETLayoutItemGroup layoutItem];
+	id item10 = [ETLayoutItem layoutItem];
+	
+	[item addItem: item0];
+	[item0 addItem: item00];
+	[item00 addItem: item000];
+	[item000 addItem: item0000];
+	[item000 addItem: item0001];
+	[item00 addItem: item001];
+	[item addItem: item1];
+	[item1 addItem: item10];	
+	
+	UKIntsEqual(0, [item UIMetalayer]);
+	UKIntsEqual(0, [item1 UIMetalayer]);
+	UKIntsEqual(0, [item10 UIMetalayer]);
+	UKIntsEqual(2, [item0 UIMetalayer]);
+	UKIntsEqual(2, [item00 UIMetalayer]);
+	UKIntsEqual(2, [item001 UIMetalayer]);
+	UKIntsEqual(4, [item000 UIMetalayer]);
+	UKIntsEqual(4, [item0000 UIMetalayer]);
+	UKIntsEqual(4, [item0001 UIMetalayer]);
+}
+
 - (void) testConvertRectToParent
 {
 	[self setOrigin: NSMakePoint(5, 2)];
