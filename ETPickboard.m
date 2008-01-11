@@ -44,6 +44,7 @@
 
 #define PALETTE_FRAME NSMakeRect(200, 200, 400, 200)
 #define PICKBOARD_LAYOUT ETOutlineLayout
+#define DEFAULT_PICKBOARD [self localPickboard]
 
 @interface ETPickboard (Private)
 - (ETLayoutItem *) layoutItemWithObject: (id)object;
@@ -101,6 +102,9 @@ static ETPickboard *activePickboard = nil;
 	[[ETPickboard activePickboard] pushObject: myObject] */
 + (ETPickboard *) activePickboard
 {
+	if (activePickboard == nil)
+		[self setActivePickboard: DEFAULT_PICKBOARD];
+
 	return activePickboard;
 }
 
