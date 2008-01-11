@@ -186,6 +186,8 @@ shape*/
 - (BOOL) setValue: (id)value forProperty: (NSString *)key;
 - (NSArray *) properties;
 
+- (unsigned int) UIMetalevel;
+- (unsigned int) UIMetalayer;
 - (BOOL) isMetaLayoutItem;
 //- (BOOL) isUILayoutItem;
 - (BOOL) isGroup;

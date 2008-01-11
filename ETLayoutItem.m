@@ -211,8 +211,10 @@
 	NSString *desc = [super description];
 
 #ifdef DETAILED_DESCRIPTION	
-	desc = [@"<" stringByAppendingFormat: @"%@ id: %@, ipath: %@, selected: %d>", 
-		desc, [self identifier], [[self indexPath] keyPath], [self isSelected]];
+	desc = [@"<" stringByAppendingFormat: @"%@ meta: %d id: %@, ipath: %@, "
+		@"selected: %d, repobject: %@>", desc, [self UIMetalevel], 
+		[self identifier], [[self indexPath] keyPath], [self isSelected], 
+		[[self representedObject] primitiveDescription]];
 #else
 	desc = [@"<" stringByAppendingFormat: @"%@ id: %@, selected:%d>", 
 		desc, [self identifier], [self isSelected]];
@@ -735,7 +737,8 @@
 {
 	NSArray *properties = [NSArray arrayWithObjects: @"identifier", @"name", 
 		@"x", @"y", @"width", @"height", @"view", @"selected", 
-		@"visible", @"image", @"frame", @"representedObject", @"parentLayoutItem", nil];
+		@"visible", @"image", @"frame", @"representedObject", 
+		@"parentLayoutItem", @"UIMetalevel", @"UIMetalayer", nil];
 
 	if (properties != nil && [properties count] == 0)
 		properties = nil;
@@ -743,6 +746,93 @@
 	return [[super properties] arrayByAddingObjectsFromArray: properties];
 }
 
+/** Returns the metalevel in the UI domain.
+	Three metamodel variants exist in Etoile:
+	- Object
+	- Model
+	- UI
+	Each metamodel domain is bound to an arbitrary number of metalevels (0, 1, 
+	3, etc.). Metalevels are expressed as positive integers and are usually 
+	not limited to a max value.
+	A new metalevel is entered, each time -setRepresentedObject: is called with 
+	an object of the same type than the receiver. The type interpretation of 
+	both the receiver and the paremeter varies with the metamodel domain. For UI
+	domain, both must include ETLayoutItem type or subtype in their type.
+	For example:
+	
+	id item1 = [ETLayoutItem layoutItem];
+	
+	item2 = [ETLayoutItem layoutItemWithRepresentedObject: item1];
+	item3 = [ETLayoutItem layoutItemWithRepresentedObject: [NSImage image]];
+	item4 = [ETLayoutItem layoutItemWithRepresentedObject: item2];
+	
+	If we call -metalevel method on each item, the output is the following:
+	- item1 will return 0
+	- item2 will return 1
+	- item3 will return 0
+	- item4 will return 2 */
+- (unsigned int) UIMetalevel
+{
+	if ([self isMetaLayoutItem])
+	{
+		unsigned int metalevel = [[self representedObject] UIMetalevel];
+		
+		return ++metalevel;
+	}
+	else
+	{
+		return 0;
+	}
+}
+
+/** Returns the UI metalayer the receiver belongs to.
+	The metalayer is the metalevel which owns the receiver. For UI metamodel 
+	domain, the ownership to a metalayer results of existing parent/child 
+	relationships in the layout item tree.
+	An item has equal UIMetalevel and UIMetalayer when no parent with superior
+	UIMetalevel value can be found by climbing up the layout item tree until the
+	root item is reached. The root item UI metalevel is 0, thus all descendant
+	items can create metalayers by having a superior UI metalevel. 
+	A child item can introduce a new metalayer by having a UI metalevel 
+	superior to the last parent item defining a UI metalayer. 
+	Finally in a metalayer, objects can have arbitrary metalevel. 
+	For example:
+	
+		Item Tree		Metalevel
+	
+	- root item	0			(0)
+	- item 1				(2)
+		- child item 11		(1)
+			- item 111		(4)
+				- item 1111	(4)
+				- item 1112	(0)
+		- child item 12		(2)
+	- item 2				(0)
+		- item 21			(0)
+		
+	Available metalayers:
+	- (0) item 0, 2, 21
+	- (2) item 1, 11, 12
+	- (4) item 1111, 1111, 1112
+	
+	No metalayer (1) exists with this layout item tree, because the only item
+	bound to this metalevel is preempted by the metalayer (2) introduced with 
+	'item 1'. */
+- (unsigned int) UIMetalayer
+{
+	int metalayer = [self UIMetalevel];
+	id parent = self;
+	
+	while ([parent parentLayoutItem] != nil)
+	{
+		if ([parent UIMetalayer] > metalayer)
+			metalayer = [parent UIMetalayer];
+	}
+	
+	return metalayer;
+}
+
+// TODO: Rename -isMetalevelItem
 - (BOOL) isMetaLayoutItem
 {
 	// NOTE: Defining the item as a meta item when a view is the represented 
@@ -821,10 +911,9 @@
 	ASSIGN(_view, view);
 }
 
-// TODO: Modify to lookup for the selection state in the closest container ancestor
 - (void) setSelected: (BOOL)selected
 {
-	NSLog(@"Set layout item selection state %@", self);
+	//ETLog(@"Set layout item selection state %@", self);
 	_selected = selected;
 }
 

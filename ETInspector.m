@@ -51,6 +51,7 @@
 #import <EtoileUI/NSObject+Etoile.h>
 #import <EtoileUI/NSObject+Model.h>
 #import <EtoileUI/NSIndexPath+Etoile.h>
+#import <EtoileUI/NSString+Etoile.h>
 #import <EtoileUI/ETCollection.h>
 #import <EtoileUI/ETCompatibility.h>
 
@@ -330,7 +331,8 @@
 
 	if ([container isEqual: itemGroupView])
 	{
-		displayedProperties = [NSArray arrayWithObjects: @"icon", @"displayName", nil];
+		displayedProperties = [NSArray arrayWithObjects: @"icon", 
+			@"displayName", @"UIMetalevel", nil];
 	}	
 	else if ([container isEqual: propertyView])
 	{
@@ -396,6 +398,24 @@
 	{
 		ASSIGN(_inspectedItems, items);
 		[itemGroupView reloadAndUpdateLayout];
+	}
+	[self setRepresentedObject: nil];
+	
+	/* Update inspector window title */ 
+	id inspectedItem = [[self inspectedItems] firstObject];
+	
+	if (inspectedItem != nil)
+	{
+		NSString *name = [inspectedItem displayName];
+		NSString *inspectorTitle = nil;
+		
+		[self setRepresentedObject: inspectedItem];
+		
+		if ([name length] > 25)
+			name = [[name substringToIndex: 25] append: @"…"];
+		inspectorTitle = [NSString stringWithFormat: @"%@ (M%d UI)", name,
+			[self UIMetalayer]];
+		[[self window] setTitle: inspectorTitle];
 	}
 }
 
