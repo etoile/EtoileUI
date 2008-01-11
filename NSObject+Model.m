@@ -213,6 +213,31 @@
 	return NO;
 }
 
+/** <override-never />
+	Returns the description as NSObject would. 
+	This method returns the same value as -description if the latter method 
+	isn't overriden in your subclasses, otherwise it returns the value that
+	-description would return if you haven't overriden it.
+	Useful to get consistent short descriptions on all instances and can be
+	used to provide custom description built with other short descriptions. */
+- (NSString *) primitiveDescription
+{
+	if ([self superclass] != nil)
+	{
+		// return [super primitiveDescription]; doesn't compile because super 
+		// is keyword and not a pseudovar like self
+		NSString * (*descIMP)(id, SEL, id) = NULL;
+		
+		descIMP = (NSString * (*)(id, SEL, id))[[NSObject class] 
+			instanceMethodForSelector: @selector(description)];
+		return descIMP(self, @selector(description), nil);
+	}
+	else
+	{
+		return [self description];
+	}
+}
+
 @end
 
 /* Basic Common Value Classes */
