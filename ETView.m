@@ -553,31 +553,31 @@ static ETView *barViewPrototype = nil;
 
 - (void) displayIfNeededInRect:(NSRect)aRect
 {
-	NSLog(@"-displayIfNeededInRect:");
+	ETLog(@"-displayIfNeededInRect:");
 	[super displayIfNeededInRect: aRect];
 }
 
 - (void) displayIfNeededInRectIgnoringOpacity:(NSRect)aRect
 {
-	NSLog(@"-displayIfNeededInRectIgnoringOpacity:");
+	ETLog(@"-displayIfNeededInRectIgnoringOpacity:");
 	[super displayIfNeededInRectIgnoringOpacity: aRect];
 }
 
 - (void) display
 {	
-	NSLog(@"-display");
+	//ETLog(@"-display");
 	[super display];
 }
 
 - (void) displayRect:(NSRect)aRect
 {
-	NSLog(@"-displayRect:");
+	ETLog(@"-displayRect:");
 	[super displayRect: aRect];
 }
 
 - (void) displayRectIgnoringOpacity:(NSRect)aRect
 {
-	NSLog(@"-displayRectIgnoringOpacity:");
+	ETLog(@"-displayRectIgnoringOpacity:");
 	[super displayRectIgnoringOpacity: aRect];
 }
 
