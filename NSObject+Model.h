@@ -63,6 +63,8 @@
 - (NSString *) displayName;
 - (NSImage *) icon;
 
+- (NSString *) primitiveDescription;
+
 @end
 
 /* Basic Common Value Classes */
