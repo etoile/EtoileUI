@@ -266,7 +266,30 @@
 	}
 }
 
-- (void) insertDroppedObject: (id) movedItem atIndex: (int)index
+- (void) insertDroppedObject: (id)movedObject atIndex: (int)index
+{
+	if ([movedObject isKindOfClass: [ETPickCollection class]])
+	{
+		// NOTE: To keep the order of picked objects a reverse enumerator 
+		// is needed to balance the shifting of the last inserted object occurring on each insertion
+		NSEnumerator *e = [[movedObject contentArray] reverseObjectEnumerator];
+		ETLayoutItem *movedItem = nil;
+		
+		while ((movedItem = [e nextObject]) != nil)
+			[self insertDroppedItem: movedItem atIndex: index];
+	}
+	else if ([movedObject isKindOfClass: [ETLayoutItem class]])
+	{
+		[self insertDroppedItem: movedObject atIndex: index];
+	}
+	else
+	{
+		// FIXME: Implement insertion of arbitrary objects. All objects can be
+		// dropped (NSArray, NSString, NSWindow, NSImage, NSObject, Class etc.)
+	}
+}
+
+- (void) insertDroppedItem: (id) movedItem atIndex: (int)index
 {
 	NSAssert2(index >= 0, @"Insertion index %d must be superior or equal to zero in %@ -insertDroppedObject:atIndex:", index, self);
 	int insertionIndex = index;
@@ -309,7 +332,11 @@
 	{
 		NSPoint loc = [[self container] convertPoint: [dragInfo draggingLocation] fromView: nil];
 		int dropIndex = [self dropIndexAtLocation: loc forItem: item on: dropTargetItem];
-
+		
+		NSAssert2([dropTargetItem isGroup], @"Drop target %@ must be a layout "
+			@"item group to accept dropped item %@ as a child", dropTargetItem, 
+			item);
+				
 		// FIXME: Handle pick collection too.
 		if (dropIndex != NSNotFound)
 		{
@@ -318,9 +345,7 @@
 		}
 		else
 		{
-			NSAssert2([dropTargetItem isGroup], @"Drop target %@ must be a "
-				@"layout item group to accept dropped item %@ as a child",
-				dropTargetItem, item);
+
 			[dropTargetItem insertDroppedObject: item atIndex: [dropTargetItem numberOfItems]];
 			return NO;
 		}
@@ -458,6 +483,7 @@
 */
 
 #if 0
+		
 - (void) handleDropForItem: (id)item
 {
 

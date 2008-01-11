@@ -139,6 +139,8 @@ NSString *ETLayoutItemPboardType = @"ETLayoutItemPboardType"; // FIXME: replace 
 		_selectionShape = nil;
 		_dragAllowed = YES;
 		_dropAllowed = YES;
+		[self setAllowsMultipleSelection: YES];
+		[self setAllowsEmptySelection: YES];
 		_prevInsertionIndicatorRect = NSZeroRect;
 		_scrollView = nil; /* First instance created by calling private method -setShowsScrollView: */
 		_inspector = nil; /* Instantiated lazily in -inspector if needed */
@@ -956,6 +958,7 @@ NSString *ETLayoutItemPboardType = @"ETLayoutItemPboardType"; // FIXME: replace 
 - (void) setAllowsMultipleSelection: (BOOL)multiple
 {
 	_multipleSelectionAllowed = multiple;
+	[self syncDisplayViewWithContainer];
 }
 
 - (BOOL) allowsEmptySelection
@@ -966,6 +969,7 @@ NSString *ETLayoutItemPboardType = @"ETLayoutItemPboardType"; // FIXME: replace 
 - (void) setAllowsEmptySelection: (BOOL)empty
 {
 	_emptySelectionAllowed = empty;
+	[self syncDisplayViewWithContainer];
 }
 
 - (ETSelection *) selectionShape
@@ -1621,43 +1625,6 @@ NSString *ETLayoutItemPboardType = @"ETLayoutItemPboardType"; // FIXME: replace 
 	// will be called directly on it, letting no chance to handle it to the 
 	// parent container.
 	return [item handleDrop: drag forItem: droppedItem on: item];
-}
-
-- (BOOL) container: (ETContainer *)container acceptDrop: (id <NSDraggingInfo>)drag atIndex: (int)index
-{
-	// FIXME: Test all possible drag methods supported by data source
-	if ([self source] != nil && [[self source] respondsToSelector: @selector(container:acceptDrop:atIndex:)])
-	{
-		return [[self source] container: self 
-			                 acceptDrop: drag
-					            atIndex: index];
-	}
-	else if ([self source] == nil) /* Handles drag by ourself when allowed */
-	{
-		ETPickboard *pboard = [ETPickboard localPickboard];
-		id movedObject = [pboard popObject];
-
-		if ([movedObject isKindOfClass: [ETPickCollection class]])
-		{
-			// NOTE: To keep the order of picked objects a reverse enumerator 
-			// is needed to balance the shifting of the last inserted object occurring on each insertion
-			NSEnumerator *e = [[movedObject contentArray] reverseObjectEnumerator];
-			ETLayoutItem *movedItem = nil;
-			
-			while ((movedItem = [e nextObject]) != nil)
-				[[self layoutItem] insertDroppedObject: movedItem atIndex: index];
-		}
-		else
-		{
-			[[self layoutItem] insertDroppedObject: movedObject atIndex: index];
-		}
-		
-		return YES;
-	}
-
-	/* Don't handle drag when a source is set and doesn't implement this 
-	   mandatory drag data source method. */		
-	return NO;
 }
 
 /* Will be called when -draggingEntered and -draggingUpdated have validated the drag

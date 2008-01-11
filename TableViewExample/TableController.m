@@ -60,7 +60,6 @@
 	
 	[[tableContainer layout] setDisplayedProperties: [NSArray arrayWithObject: @"displayName"]];
 	[tableContainer setRepresentedPath: @"/"];
-	//[tableContainer setAllowsMultipleSelection: YES];
 	
 	/* ITEM is a macro. 
 	   ITEM(@"Red") is a shortcut for [ETLayoutItem layoutItemWithValue: @"Red"] */
@@ -87,7 +86,6 @@
 	[tableLayout2 setDisplayedProperties: visibleColumnIds];
 	[tableContainer2 setLayout: tableLayout2];
 	[tableContainer2 setRepresentedPath: @"/"];
-	//[tableContainer2 setAllowsMultipleSelection: YES];
 		
 	#define NUMBER(x) [NSNumber numberWithInt: x]
 
@@ -155,7 +153,6 @@
 	[[outlineContainer layout] setStyle: AUTORELEASE([[NSImageCell alloc] init])
 	                        forProperty: @""];
 	[outlineContainer setRepresentedPath: @"/"]; /* Mandatory to handle drop */
-	//[outlineContainer setAllowsMultipleSelection: YES];
 
 	/* This line is optional and simply avoids to update outlineContainer on each
 	   -addItem: call */

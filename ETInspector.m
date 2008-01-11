@@ -48,6 +48,7 @@
 #import <EtoileUI/ETPaneLayout.h>
 #import <EtoileUI/ETFreeLayout.h>
 #import <EtoileUI/ETViewModelLayout.h>
+#import <EtoileUI/ETLayoutItemBuilder.h>
 #import <EtoileUI/NSObject+Etoile.h>
 #import <EtoileUI/NSObject+Model.h>
 #import <EtoileUI/NSIndexPath+Etoile.h>
@@ -100,6 +101,12 @@
 
 - (void) awakeFromNib
 {
+	// TODO: Next line shouldn't be needed, ETEtoileUIBuilder should be invoked 
+	// transparently on nib loading.
+	// FIXME: item implies a memory leak, the container bound to this item must
+	// be assigned to self and this item discarded.
+	id item = [[ETEtoileUIBuilder builder] renderWindow: window];
+	
 	[itemGroupView setLayout: AUTORELEASE([[ETOutlineLayout alloc] init])];
 	[itemGroupView setSource: self];
 	[itemGroupView setDelegate: self];
