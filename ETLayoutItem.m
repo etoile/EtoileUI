@@ -40,6 +40,7 @@
 #import <EtoileUI/ETView.h>
 #import <EtoileUI/ETContainer.h>
 #import <EtoileUI/ETInspector.h>
+#import <EtoileUI/NSView+Etoile.h>
 #import <EtoileUI/NSIndexPath+Etoile.h>
 #import <EtoileUI/NSObject+Model.h>
 #import <EtoileUI/ETCompatibility.h>
@@ -189,8 +190,8 @@
 		[item setView: [[self view] copy]];
 	}
 #else
-	id img = [[NSImage alloc] initWithView: [self view]];
-	id imgView = [[NSImageView alloc] initWithFrame: [[self view] frame]];
+	id img = [[self displayView] snapshot];
+	id imgView = [[NSImageView alloc] initWithFrame: [[self displayView] frame]];
 	[imgView setImage: img];
 	[item setView: imgView];
 	RELEASE(img);
@@ -1318,8 +1319,8 @@
 		icon = [self image];
 
 	// NOTE: -bitmapImageRepForCachingDisplayInRect:(NSRect)aRect on Mac OS 10.4
-	if (icon == nil && [self view] != nil)
-		icon = (NSImage *)AUTORELEASE([[NSImage alloc] initWithView: [self view]]);
+	if (icon == nil && [self displayView] != nil)
+		icon = [[self displayView] snapshot];
 		
 	if (icon == nil)
 		ETLog(@"Icon missing for %@", self);

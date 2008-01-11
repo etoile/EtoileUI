@@ -38,5 +38,5 @@
 
 
 @interface NSImage (Etoile)
-- (NSImage *) initWithView: (NSView *)view;
+- (NSImage *) initWithView: (NSView *)view fromRect: (NSRect)rect;
 @end

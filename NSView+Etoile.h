@@ -74,6 +74,7 @@
 
 /* Basic Properties */
 
+- (NSImage *) snapshot;
 - (NSImage *) icon;
 
 @end

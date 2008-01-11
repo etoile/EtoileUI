@@ -273,9 +273,17 @@
 
 /* Basic Properties */
 
+/** Returns an image snapshot of the receiver view. */
+- (NSImage *) snapshot 
+{
+	NSImage *img = [[NSImage alloc] initWithView: self fromRect: [self bounds]];
+
+	return AUTORELEASE(img); 
+}
+
 - (NSImage *) icon
 {
-	return AUTORELEASE([[NSImage alloc] initWithView: self]);
+	return [self snapshot];
 }
 
 @end
