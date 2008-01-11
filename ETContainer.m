@@ -1672,25 +1672,6 @@ NSString *ETLayoutItemPboardType = @"ETLayoutItemPboardType"; // FIXME: replace 
 	return [item handleDrop: dragInfo forItem: droppedItem on: item];
 }
 
-- (NSDragOperation) container: (ETContainer *)container validateDrop: (id <NSDraggingInfo>)drag atIndex: (int)dropIndex
-{
-	// FIXME: Test all possible drag methods supported by data source	
-	if ([self source] != nil && [[self source] respondsToSelector: @selector(container:validateDrop:atIndex:)])
-	{
-		return [[self source] container: self 
-		                   validateDrop: drag
-		                        atIndex: dropIndex];
-	}
-	else if ([self source] == nil) /* Handles drag by ourself when allowed */
-	{
-		return YES;
-	}
-
-	/* Implementation -container:validateDrop:atIndex: is optional thereby we don't
-	   disallow dragging. */
-	return NSDragOperationPrivate;
-}
-
 /* This method is called in replacement of -draggingEnded: when a drop has 
    occured. That's why it's not enough to clean insertion indicator in
    -draggingEnded:. Both methods called -handleDragEnd:forItem: on the 
