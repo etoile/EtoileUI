@@ -391,7 +391,7 @@
 	
 	item = [layoutItems objectAtIndex: rowIndex];
 	
-	//ETLog(@"Returns %@ as object value in table view %@", [item valueForProperty: [column identifier]], tv);
+	ETLog(@"Returns %@ as object value in table view %@", [item valueForProperty: [column identifier]], tv);
 	
 	id value = [item valueForProperty: [column identifier]];
 	BOOL blankColumnIdentifier = [column identifier] == nil || [[column identifier] isEqual: @""];
@@ -446,10 +446,20 @@
 
 - (int) dropIndexAtLocation: (NSPoint)localDropPosition forItem: (id)item on: (id)dropTargetItem
 {
-	if (_lastChildDropIndex == -1)
-		return NSNotFound;
+	int childDropIndex = _lastChildDropIndex;
+
+	/* Drop index is -1 when the drop occurs on a row (highlighted) or 
+	   underneath the last row (in the blank area) */
+	if (childDropIndex == -1)
+	{
+		childDropIndex = NSNotFound;
+	}
+	else if ([dropTargetItem isEqual: [self layoutContext]] == NO)
+	{
+		childDropIndex = [dropTargetItem numberOfItems] - 1;
+	}
 	
-	return _lastChildDropIndex;
+	return childDropIndex;
 }
 
 - (BOOL) tableView: (NSTableView *)tv writeRowsWithIndexes: (NSIndexSet *)rowIndexes 
@@ -514,8 +524,10 @@
 	if (op == NSTableViewDropOn)
 		dropTargetItem = [[dropTargetItem items] objectAtIndex: row];
 
+	id baseItem = [[self layoutContext] baseItem];
+		
 	_lastChildDropIndex = row;
-	[[self layoutContext] handleDrop: info forItem: droppedItem on: dropTargetItem];
+	[baseItem handleDrop: info forItem: droppedItem on: dropTargetItem];
 	return YES;
 }
 

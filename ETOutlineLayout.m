@@ -38,6 +38,7 @@
 #import <EtoileUI/ETLayout.h>
 #import <EtoileUI/ETContainer.h>
 #import <EtoileUI/ETLayoutItem.h>
+#import <EtoileUI/ETLayoutItem+Events.h>
 #import <EtoileUI/ETLayoutItemGroup.h>
 #import <EtoileUI/ETLayoutLine.h>
 #import <EtoileUI/ETPickboard.h>
@@ -323,21 +324,12 @@
 
 - (int) dropIndexAtLocation: (NSPoint)localDropPosition forItem: (id)item on: (id)dropTargetItem
 {
-	if (_lastChildDropIndex == -1)
-		return NSNotFound;
+	int childDropIndex = _lastChildDropIndex;
 	
-	return _lastChildDropIndex;
-
-	id hoveredItem = [self itemAtLocation: localDropPosition];
-	int childDropIndex = NSNotFound;
-	
-	/* hoveredItem is nil when the drop occurs underneath the last row (in the blank area) */
-	if (hoveredItem != nil && [hoveredItem isEqual: dropTargetItem] == NO)
-	{
-		childDropIndex = [dropTargetItem indexOfItem: hoveredItem];
-		
-		NSAssert(childDropIndex != NSNotFound, @"bla");
-	}
+	/* Drop index is -1 when the drop occurs on a row (highlighted) or 
+	   underneath the last row (in the blank area) */
+	if (childDropIndex == NSOutlineViewDropOnItemIndex)
+		childDropIndex = NSNotFound;
 	
 	return childDropIndex;
 }
@@ -351,8 +343,10 @@
 	if (dropTargetItem == nil) /* Root item */
 		dropTargetItem = [self layoutContext];
 
+	id baseItem = [[self layoutContext] baseItem];
+	
 	_lastChildDropIndex = index;
-	[[self layoutContext] handleDrop: info forItem: droppedItem on: dropTargetItem];
+	[baseItem handleDrop: info forItem: droppedItem on: dropTargetItem];
 	return YES;
 }
 
