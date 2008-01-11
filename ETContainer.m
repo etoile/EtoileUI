@@ -130,7 +130,7 @@ NSString *ETLayoutItemPboardType = @"ETLayoutItemPboardType"; // FIXME: replace 
     
 	if (self != nil)
     {
-		_path = nil;
+		[self setRepresentedPath: @"/"];
 		_subviewHitTest = NO;
 		[self setFlipped: YES];
 		_itemScale = 1.0;
@@ -1605,32 +1605,22 @@ NSString *ETLayoutItemPboardType = @"ETLayoutItemPboardType"; // FIXME: replace 
 
 /* Will be called when -draggingEntered and -draggingUpdated have validated the drag
    This method is equivalent to -validateDropXXX data source method.  */
-- (BOOL) prepareForDragOperation: (id <NSDraggingInfo>)sender
+- (BOOL) prepareForDragOperation: (id <NSDraggingInfo>)drag
 {
 	ETLog(@"Prepare drag receives in dragging destination %@", self);
 	
-	NSPoint localDropPosition = [self convertPoint: [sender draggingLocation] fromView: nil];
-	ETLayoutItem *dropTargetItem = [[self layout] itemAtLocation: localDropPosition];
-	int dropIndex = NSNotFound;
-	NSRect itemRect = NSZeroRect;
+	/* item can be nil, -itemAtLocation: doesn't return the receiver itself */
+	id item = [self dropTargetForDrag: drag];
+	id droppedItem = [[ETPickboard localPickboard] firstObject];
 	
-	ETLog(@"Found item %@ as drop target", dropTargetItem);
-	
-	/* Found no drop target */
-	if (dropTargetItem == nil)
-		return NO;
-	
-	/* Found a drop target at dropIndex */
-	dropIndex = [self indexOfItem: dropTargetItem];
-	
-	/* Increase index if the insertion is located on the right of dropTargetItem */
-	// FIXME: Handle layout orientation, only works with horizontal layout
-	// currently.
-	itemRect = [[self layout] displayRectOfItem: dropTargetItem];
-	if (localDropPosition.x > NSMidX(itemRect))
-		dropIndex++;
-	
-	return [self container: self validateDrop: sender atIndex: dropIndex];
+	// TODO: Drop target item can need to be retargeted when the container 
+	// display item groups which doesn't have an associated container. If child
+	// item group has an associated container, finding this item to pass it as
+	// the drop target item is unecessary because this case never happens. The 
+	// child container will catch the drop event and -prepareForDragOperation: 
+	// will be called directly on it, letting no chance to handle it to the 
+	// parent container.
+	return [item handleDrop: drag forItem: droppedItem on: item];
 }
 
 - (BOOL) container: (ETContainer *)container acceptDrop: (id <NSDraggingInfo>)drag atIndex: (int)index
