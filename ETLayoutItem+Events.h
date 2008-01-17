@@ -120,11 +120,18 @@
 
 @interface ETLayoutItem (Events) <ETEventHandler>
 
-- (BOOL) allowsDragging;
-- (BOOL) allowsDropping;
+/* Event Handling */
 
 - (void) mouseDown: (NSEvent *)event on: (id)item;
 - (void) mouseDragged: (NSEvent *)event on: (id)item;
+
+/* Pick and Drop Filtering */
+
+- (BOOL) allowsDragging;
+- (BOOL) allowsDropping;
+
+/* Pick and Drop Handling */
+
 - (void) handleDrag: (NSEvent *)event forItem: (id)item layout: (id)layout;
 - (void) beginDrag: (NSEvent *)event forItem: (id)item 
 	image: (NSImage *)customDragImage layout: (id)layout;
@@ -147,6 +154,13 @@
 - (BOOL) acceptsDropAtLocationInWindow: (NSPoint)loc;
 - (NSRect) dropOnRect;
 - (unsigned int) draggingSourceOperationMaskForLocal: (BOOL)isLocal;
+- (BOOL) shouldRemoveItemAtPickTime;
+
+/* Cut, Copy and Paste Compatibility */
+
+- (IBAction) copy: (id)sender;
+- (IBAction) paste: (id)sender;
+- (IBAction) cut: (id)sender;
 
 @end
 

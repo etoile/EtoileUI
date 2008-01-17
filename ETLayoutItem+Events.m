@@ -42,6 +42,29 @@
 
 @implementation ETLayoutItem (Events)
 
+- (IBAction) copy: (id)sender
+{
+	ETLog(@"Copy receives in %@", self);
+	
+	[self handlePick: nil forItem: nil layout: [self layout]];
+}
+
+- (IBAction) paste: (id)sender
+{
+	ETLog(@"Paste receives in %@", self);
+	
+	id pastedItem = [[ETPickboard localPickboard] popObject];
+	
+	[self handleDrop: nil forItem: pastedItem on: self];
+}
+
+- (IBAction) cut: (id)sender
+{
+	ETLog(@"Cut receives in %@", self);
+	
+	[self handlePick: nil forItem: nil layout: [self layout]];
+}
+
 - (BOOL) allowsDragging
 {
 	return [[self closestAncestorContainer] allowsDragging];
@@ -50,6 +73,16 @@
 - (BOOL) allowsDropping
 {
 	return [[self closestAncestorContainer] allowsDropping];
+}
+
+- (BOOL) shouldRemoveItemsAtPickTime
+{
+	id container = [[self baseItem] container];
+	
+	if (container != nil)
+		return [container shouldRemoveItemsAtPickTime];
+		
+	return NO;
 }
 
 - (void) mouseDown: (NSEvent *)event on: (id)item
@@ -97,17 +130,17 @@
 	}
 }
 
-// NOTE: ETOutlineLayout would override this method to call 
-// -selectedItemsIncludingRelatedDescendants instead of -selectedItems	
-//[pickboard pushObject: [ETPickCollection pickCollectionWithObjects: [self selectedItems]];
-- (void) handleDrag: (NSEvent *)event forItem: (id)item layout: (id)layout
+- (void) handlePick: (NSEvent *)event forItem: (id)item layout: (id)layout
 {
-	if (layout != nil && [layout respondsToSelector: @selector(handleDrag:forItem:layout:)])
+	if (layout != nil && [layout respondsToSelector: @selector(handlePick:forItem:layout:)])
 	{
-		[layout handleDrag: event forItem: item layout: layout];
+		[layout handlePick: event forItem: item layout: layout];
 	}
 	else
 	{
+		if (item == nil)
+			item = [[self selectedItems] firstObject];
+			
 		NSArray *selectedItems = [self selectedItems];
 		// TODO: pickboard shouldn't be harcoded but rather customizable
 		id pboard = [ETPickboard localPickboard];
@@ -122,13 +155,28 @@
 		{
 			[pboard pushObject: item];
 		}
-		
+	
 		// TODO: Call back -handlePick:forItems:pickboard: which takes care of calling
 		// pick and drop source methods when a source exists.
+	}
+}
+
+// NOTE: ETOutlineLayout would override this method to call 
+// -selectedItemsIncludingRelatedDescendants instead of -selectedItems	
+//[pickboard pushObject: [ETPickCollection pickCollectionWithObjects: [self selectedItems]];
+- (void) handleDrag: (NSEvent *)event forItem: (id)item layout: (id)layout
+{
+	if (layout != nil && [layout respondsToSelector: @selector(handleDrag:forItem:layout:)])
+	{
+		[layout handleDrag: event forItem: item layout: layout];
+	}
+	else
+	{
+		[self handlePick: event forItem: item layout: layout];
 		
 		/* We need to put something on the pasteboard otherwise AppKit won't 
 		   allow the drag */
-		pboard = [NSPasteboard pasteboardWithName: NSDragPboard];
+		NSPasteboard *pboard = [NSPasteboard pasteboardWithName: NSDragPboard];
 		[pboard declareTypes: [NSArray arrayWithObject: ETLayoutItemPboardType] owner: nil];
 		
 		// TODO: Implements pasteboard compatibility to integrate with 
@@ -330,8 +378,13 @@
 {
 	if ([self representedPathBase] != nil)
 	{
-		NSPoint loc = [[self container] convertPoint: [dragInfo draggingLocation] fromView: nil];
-		int dropIndex = [self dropIndexAtLocation: loc forItem: item on: dropTargetItem];
+		int dropIndex = NSNotFound;
+
+		if (dragInfo != nil) /* If the drop isn't a paste */
+		{
+			NSPoint loc = [[self container] convertPoint: [dragInfo draggingLocation] fromView: nil];
+			dropIndex = [self dropIndexAtLocation: loc forItem: item on: dropTargetItem];
+		}
 		
 		NSAssert2([dropTargetItem isGroup], @"Drop target %@ must be a layout "
 			@"item group to accept dropped item %@ as a child", dropTargetItem, 

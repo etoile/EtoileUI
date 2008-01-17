@@ -139,6 +139,7 @@ NSString *ETLayoutItemPboardType = @"ETLayoutItemPboardType"; // FIXME: replace 
 		_selectionShape = nil;
 		_dragAllowed = YES;
 		_dropAllowed = YES;
+		[self setShouldRemoveItemsAtPickTime: NO];
 		[self setAllowsMultipleSelection: YES];
 		[self setAllowsEmptySelection: YES];
 		_prevInsertionIndicatorRect = NSZeroRect;
@@ -1028,6 +1029,16 @@ NSString *ETLayoutItemPboardType = @"ETLayoutItemPboardType"; // FIXME: replace 
 
 /* Pick & Drop */
 
+- (BOOL) shouldRemoveItemsAtPickTime
+{
+	return _removeItemsAtPickTime;
+}
+
+- (void) setShouldRemoveItemsAtPickTime: (BOOL)flag
+{
+	_removeItemsAtPickTime = flag;
+}
+
 - (void) setAllowsDragging: (BOOL)flag
 {
 	_dragAllowed = flag;
@@ -1055,17 +1066,17 @@ NSString *ETLayoutItemPboardType = @"ETLayoutItemPboardType"; // FIXME: replace 
 
 - (IBAction) copy: (id)sender
 {
-
+	[[[self layoutItem] eventHandler] copy: sender];
 }
 
 - (IBAction) paste: (id)sender
 {
-
+	[[[self layoutItem] eventHandler] paste: sender];
 }
 
 - (IBAction) cut: (id)sender
 {
-
+	[[[self layoutItem] eventHandler] cut: sender];
 }
 
 /* Layers */

@@ -70,6 +70,7 @@
 	BOOL _emptySelectionAllowed;
 	BOOL _dragAllowed;
 	BOOL _dropAllowed;
+	BOOL _removeItemsAtPickTime;
 	/* Insertion indicator to erase on next mouse move event in a drag */
 	NSRect _prevInsertionIndicatorRect; 
 	
@@ -169,6 +170,9 @@
 - (NSArray *) allowedDroppingTypes;
 - (void) setDropTargetTypes: (NSArray *)types;
 - (NSArray *)dropTargetTypes;*/
+
+- (BOOL) shouldRemoveItemsAtPickTime;
+- (void) setShouldRemoveItemsAtPickTime: (BOOL)flag;
 
 // NOTE: Following methods are deprecated
 - (void) setAllowsDragging: (BOOL)flag;
