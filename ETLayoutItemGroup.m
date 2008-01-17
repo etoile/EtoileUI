@@ -38,6 +38,7 @@
 #import <EtoileUI/ETFlowLayout.h>
 #import <EtoileUI/ETLineLayout.h>
 #import <EtoileUI/ETContainer.h>
+#import <EtoileUI/ETContainer+Controller.h>
 #import <EtoileUI/NSView+Etoile.h>
 #import <EtoileUI/ETCompatibility.h>
 
@@ -63,6 +64,9 @@
 @interface ETLayoutItemGroup (Private)
 - (void) collectSelectionIndexPaths: (NSMutableArray *)indexPaths;
 - (void) applySelectionIndexPaths: (NSMutableArray *)indexPaths;
+- (id) itemWithObject: (id)object;
+- (id) newItemGroup;
+- (id) newItem;
 @end
 
 
@@ -616,6 +620,11 @@
 - (int) indexOfItem: (id)item
 {
 	return [_layoutItems indexOfObject: item];
+}
+
+- (BOOL) containsItem: (ETLayoutItem *)item
+{
+	return ([self indexOfItem: (id)item] != NSNotFound);
 }
 
 - (int) numberOfItems
@@ -1172,30 +1181,107 @@
 	return [self items];
 }
 
+/** Adds object to the child items of the receiver, eventually autoboxing the 
+	object if needed.
+	If the object is a layout item, it is added directly to the layout items as
+	it would be by calling -addItem:. If the object isn't an instance of some
+	ETLayoutItem subclass, it gets autoboxed into a layout item that is then 
+	added to the child items. 
+	Autoboxing means the object is set as the represented object of the item to 
+	be added. If the object replies YES to -isGroup, an ETLayoutItemGroup 
+	instance is created instead of instantiating a simple ETLayoutItem. Also if
+	the receiver or the base item bound to it has a container, the instantiated
+	item could also be either a deep copy of -templateItem or 
+	-templateItemGroup when such template are available (not nil). -templateItem
+	is retrieved when object returns NO to -isGroup, otherwise 
+	-templateItemGroup is retrieved (-isGroup returns YES). */
 - (void) addObject: (id)object
 {
-	if ([object isKindOfClass: [ETLayoutItem class]])
-	{
-		[self addItem: object];
-	}
-	else
-	{
-		[NSException raise: NSInvalidArgumentException format: @"For %@ "
-			"addObject: parameter %@ must be of type ETLayoutItem", self, object];
-	}
+	id item = [object isLayoutItem] ? object : [self itemWithObject: object];
+	
+	if ([object isLayoutItem] == NO)
+		ETLog(@"Boxed object %@ in item %@ to be added to %@", object, item, self);
+
+	[self addItem: object];
 }
 
+/** Removes object from the child items of the receiver, eventually trying to 
+	remove items with represented objects matching the object. */
 - (void) removeObject: (id)object
 {
-	if ([object isKindOfClass: [ETLayoutItem class]])
+	/* Try to remove object by matching it against child items */
+	if ([object isLayoutItem] && [self containsItem: object])
 	{
 		[self removeItem: object];
 	}
 	else
 	{
-		[NSException raise: NSInvalidArgumentException format: @"For %@ "
-			"removeObject: parameter %@ must be of type ETLayoutItem", self, object];
-	}	
+		/* Remove items with boxed object matching the object to remove */	
+		NSArray *itemsMatchedByRepObject = [[self items] 
+			objectsWithValue: object forKey: @"representedObject"];
+		
+		[self removeItems: itemsMatchedByRepObject];
+	}
+}
+
+- (id) newItem
+{
+	id item = nil;
+
+	if ([self container] != nil)
+	{
+		item = [[self container] templateItem];
+	}
+	else
+	{
+		item = [[[self baseItem] container] templateItem];
+	}
+
+	if (item != nil)
+	{
+		item = AUTORELEASE([item deepCopy]);
+	}
+	else
+	{
+		item = [ETLayoutItem layoutItem];
+	}
+
+	return item;
+}
+
+- (id) newItemGroup
+{
+	id item = nil;
+
+	if ([self container] != nil)
+	{
+		item = [[self container] templateItemGroup];
+	}
+	else
+	{
+		item = [[[self baseItem] container] templateItemGroup];
+	}
+
+	if (item != nil)
+	{
+		item = AUTORELEASE([item deepCopy]);
+	}
+	else
+	{
+		item = [ETLayoutItemGroup layoutItem];
+	}
+
+	return item;
+}
+
+
+- (id) itemWithObject: (id)object
+{
+	id item = [object isGroup] ? [self newItemGroup] : [self newItem];
+	
+	[item  setRepresentedObject: object];
+
+	return item;
 }
 
 /* ETLayoutingContext */

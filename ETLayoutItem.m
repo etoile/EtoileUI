@@ -1491,3 +1491,13 @@
 }
 
 @end
+
+
+@implementation NSObject (ETLayoutItem)
+
+- (BOOL) isLayoutItem
+{
+	return ([self isKindOfClass: [ETLayoutItem class]]);
+}
+
+@end

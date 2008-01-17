@@ -35,6 +35,7 @@
  */
 
 #import <EtoileUI/ETContainer.h>
+#import <EtoileUI/ETContainer+Controller.h>
 #import <EtoileUI/ETLayoutItem.h>
 #import <EtoileUI/ETLayoutItem+Events.h>
 #import <EtoileUI/ETEvent.h>
@@ -132,6 +133,8 @@ NSString *ETLayoutItemPboardType = @"ETLayoutItemPboardType"; // FIXME: replace 
 	if (self != nil)
     {
 		[self setRepresentedPath: @"/"];
+		[self setTemplateItem: nil];
+		[self setTemplateItemGroup: nil];
 		_subviewHitTest = NO;
 		[self setFlipped: YES];
 		_itemScale = 1.0;
@@ -169,6 +172,8 @@ NSString *ETLayoutItemPboardType = @"ETLayoutItemPboardType"; // FIXME: replace 
 	//DESTROY(_selection);
 	DESTROY(_selectionShape);
 	DESTROY(_inspector);
+	DESTROY(_templateItem);
+	DESTROY(_templateItemGroup);
 	_dataSource = nil;
     
     [super dealloc];

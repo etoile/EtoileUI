@@ -291,8 +291,6 @@ shape*/
 /*- (BOOL) isEditingUI;
 - (void) commitEditingUI;*/
 
-
-
 @end
 
 /** ETlayoutItem has no delegate but rather used the delegate of the closest 
@@ -320,3 +318,7 @@ shape*/
 - (void) setCellForProperty: (NSCell *)cell;
 @end
 */
+
+@interface NSObject (ETLayoutItem)
+- (BOOL) isLayoutItem;
+@end

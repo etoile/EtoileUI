@@ -159,6 +159,11 @@
 		60C1DA220C25715900E00A2E /* BrowserPrototype.nib in Resources */ = {isa = PBXBuildFile; fileRef = 6051502B0C1738D600B5E0E5 /* BrowserPrototype.nib */; };
 		60C1DA230C25715F00E00A2E /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1058C7A1FEA54F0111CA2CBB /* Cocoa.framework */; };
 		60C1DA3D0C2571EE00E00A2E /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 29B97316FDCFA39411CA2CEA /* main.m */; };
+		60CF6C7E0D3F6ECF00B4CA3D /* ETWindowItem.h in Headers */ = {isa = PBXBuildFile; fileRef = 60CF6C7A0D3F6ECF00B4CA3D /* ETWindowItem.h */; };
+		60CF6C820D3F739000B4CA3D /* ETContainer+Controller.h in Headers */ = {isa = PBXBuildFile; fileRef = 60CF6C800D3F739000B4CA3D /* ETContainer+Controller.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		60CF6C830D3F739000B4CA3D /* ETContainer+Controller.m in Sources */ = {isa = PBXBuildFile; fileRef = 60CF6C810D3F739000B4CA3D /* ETContainer+Controller.m */; };
+		60CF6C840D3F739000B4CA3D /* ETContainer+Controller.h in Headers */ = {isa = PBXBuildFile; fileRef = 60CF6C800D3F739000B4CA3D /* ETContainer+Controller.h */; };
+		60CF6C850D3F739000B4CA3D /* ETContainer+Controller.m in Sources */ = {isa = PBXBuildFile; fileRef = 60CF6C810D3F739000B4CA3D /* ETContainer+Controller.m */; };
 		60EB7C680C6155AA0066AC40 /* ETView.h in Headers */ = {isa = PBXBuildFile; fileRef = 60EB7C660C6155AA0066AC40 /* ETView.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		60EB7C690C6155AA0066AC40 /* ETView.m in Sources */ = {isa = PBXBuildFile; fileRef = 60EB7C670C6155AA0066AC40 /* ETView.m */; };
 		60EF8EA20C5E4D5600C97C41 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 29B97325FDCFA39411CA2CEA /* Foundation.framework */; };
@@ -401,6 +406,10 @@
 		60CA70890C481BC9009D9B02 /* ETLog.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ETLog.h; sourceTree = "<group>"; };
 		60CA708A0C481BC9009D9B02 /* ETLog.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ETLog.m; sourceTree = "<group>"; };
 		60CA73860C494B22009D9B02 /* COPYING */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = COPYING; sourceTree = "<group>"; };
+		60CF6C7A0D3F6ECF00B4CA3D /* ETWindowItem.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ETWindowItem.h; sourceTree = "<group>"; };
+		60CF6C7B0D3F6ECF00B4CA3D /* ETWindowItem.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ETWindowItem.m; sourceTree = "<group>"; };
+		60CF6C800D3F739000B4CA3D /* ETContainer+Controller.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "ETContainer+Controller.h"; sourceTree = "<group>"; };
+		60CF6C810D3F739000B4CA3D /* ETContainer+Controller.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "ETContainer+Controller.m"; sourceTree = "<group>"; };
 		60E584EE0C54A52000905ED8 /* ETRenderer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ETRenderer.h; sourceTree = "<group>"; };
 		60E584EF0C54A52000905ED8 /* ETRenderer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ETRenderer.m; sourceTree = "<group>"; };
 		60EABCBB0C0C284000341BD8 /* ETTableLayout.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ETTableLayout.h; sourceTree = "<group>"; };
@@ -490,6 +499,8 @@
 			children = (
 				609F463C0B414C0A00AD2209 /* ETContainer.h */,
 				609F463D0B414C0A00AD2209 /* ETContainer.m */,
+				60CF6C800D3F739000B4CA3D /* ETContainer+Controller.h */,
+				60CF6C810D3F739000B4CA3D /* ETContainer+Controller.m */,
 				609F46590B41641400AD2209 /* ETLayout.h */,
 				609F465A0B41641400AD2209 /* ETLayout.m */,
 				609097D20CB00BC2009CAD27 /* ETObjectRegistry+EtoileUI.h */,
@@ -711,6 +722,8 @@
 				603113330CF46DE9001A699E /* ETLayoutItemGroup+Factory.m */,
 				609547B70C0E032E00068CBB /* ETLayer.h */,
 				609547B80C0E032E00068CBB /* ETLayer.m */,
+				60CF6C7A0D3F6ECF00B4CA3D /* ETWindowItem.h */,
+				60CF6C7B0D3F6ECF00B4CA3D /* ETWindowItem.m */,
 				60599A740C772129007F225E /* ETInspector.h */,
 				60599A750C772129007F225E /* ETInspector.m */,
 				602F8DE60CE1F9610042F6C0 /* ETInspecting.h */,
@@ -820,6 +833,8 @@
 				60F363F90D183BB400FCFFDA /* NSImage+Etoile.h in Headers */,
 				60F365900D18651700FCFFDA /* ETViewModelLayout.h in Headers */,
 				60F112BD0D363806003B2EFA /* ETEvent.h in Headers */,
+				60CF6C7E0D3F6ECF00B4CA3D /* ETWindowItem.h in Headers */,
+				60CF6C840D3F739000B4CA3D /* ETContainer+Controller.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -880,6 +895,7 @@
 				60F363FB0D183BB400FCFFDA /* NSImage+Etoile.h in Headers */,
 				60F365920D18651700FCFFDA /* ETViewModelLayout.h in Headers */,
 				60F112BF0D363806003B2EFA /* ETEvent.h in Headers */,
+				60CF6C820D3F739000B4CA3D /* ETContainer+Controller.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1177,6 +1193,7 @@
 				60F365910D18651700FCFFDA /* ETViewModelLayout.m in Sources */,
 				60F112BE0D363806003B2EFA /* ETEvent.m in Sources */,
 				600FC23E0D3AB75800828803 /* test_ETContainer.m in Sources */,
+				60CF6C850D3F739000B4CA3D /* ETContainer+Controller.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1277,6 +1294,7 @@
 				60F363FC0D183BB400FCFFDA /* NSImage+Etoile.m in Sources */,
 				60F365930D18651700FCFFDA /* ETViewModelLayout.m in Sources */,
 				60F112C00D363806003B2EFA /* ETEvent.m in Sources */,
+				60CF6C830D3F739000B4CA3D /* ETContainer+Controller.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
