@@ -79,21 +79,25 @@
 /* Adopted by the following Foundation classes  */
 
 @interface NSArray (ETCollection) <ETCollection>
+- (BOOL) isEmpty;
 - (id) content;
 - (NSArray *) contentArray;
 @end
 
 @interface NSDictionary (ETCollection) <ETCollection>
+- (BOOL) isEmpty;
 - (id) content;
 - (NSArray *) contentArray;
 @end
 
 @interface NSSet (ETCollection) <ETCollection>
+- (BOOL) isEmpty;
 - (id) content;
 - (NSArray *) contentArray;
 @end
 
 @interface NSIndexSet (ETCollection) <ETCollection>
+- (BOOL) isEmpty;
 - (id) content;
 - (NSArray *) contentArray;
 - (NSEnumerator *) objectEnumerator;

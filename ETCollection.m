@@ -175,7 +175,7 @@
     int i, n = 0;
     
     if (values == nil)
-        return nil;
+        return result;
     
     n = [values count];
     
@@ -186,9 +186,6 @@
             [result addObject: [self objectAtIndex: i]];
         }
     }
-    
-    if ([result count] == 0)
-        return nil;
     
     return result;
 }
