@@ -287,6 +287,11 @@ static ETObjectRegistry *rootObjectRegistry = nil;
 
 /* Collection Protocol */
 
+- (BOOL) isOrdered
+{
+	return NO;
+}
+
 - (BOOL) isEmpty
 {
 	return [_properties isEmpty];

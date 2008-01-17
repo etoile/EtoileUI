@@ -64,6 +64,11 @@
 
 /* Collection Protocol */
 
+- (BOOL) isOrdered
+{
+	return YES;
+}
+
 - (BOOL) isEmpty
 {
 	return ([[self subviews] count] == 0);

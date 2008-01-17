@@ -34,6 +34,7 @@
  */
 
 #import <EtoileUI/ETCollection.h>
+#import <EtoileUI/NSObject+Model.h>
 
 
 @implementation NSObject (ETCollection)
@@ -47,6 +48,11 @@
 
 
 @implementation NSArray (ETCollection)
+
+- (BOOL) isOrdered
+{
+	return YES;
+}
 
 - (BOOL) isEmpty
 {
@@ -67,6 +73,11 @@
 
 @implementation NSDictionary (ETCollection)
 
+- (BOOL) isOrdered
+{
+	return NO;
+}
+
 - (BOOL) isEmpty
 {
 	return ([self count] == 0);
@@ -86,6 +97,11 @@
 
 @implementation NSSet (ETCollection)
 
+- (BOOL) isOrdered
+{
+	return NO;
+}
+
 - (BOOL) isEmpty
 {
 	return ([self count] == 0);
@@ -104,6 +120,11 @@
 @end
 
 @implementation NSIndexSet (ETCollection)
+
+- (BOOL) isOrdered
+{
+	return NO;
+}
 
 - (BOOL) isEmpty
 {
@@ -148,6 +169,48 @@
 }
 
 @end
+
+@implementation NSMutableDictionary (ETCollectionMutation)
+
+/** Adds object to the receiver using as key the value returned by 
+	-[object keyForCollection:] if not nil, otherwise falling back on the 
+	highest integer value of all keys incremented by one. */
+- (void) addObject: (id)object
+{
+	id key = [object keyForCollection: self];
+	
+	if (key == nil)
+	{
+		int i = 0;
+		NSNumber *number = nil;
+		id matchedObject = nil;
+
+		do {
+			number = [NSNumber numberWithInt: i];	
+			matchedObject = [self objectForKey: number];
+			i++;			
+		} while (matchedObject != nil);
+
+		key = number;
+	}
+	
+	[self setObject: object forKey: key];
+}
+
+/** Removes all occurrences of an object in  the receiver. */
+- (void) removeObject: (id)object
+{
+	NSEnumerator *e = [self allKeysForObject: object];
+	id key = nil;
+	
+	while ((key = [e nextObject]) != nil)
+	{
+		[self removeObjectForKey: key];
+	}
+}
+
+@end
+
 
 /* Collection Matching 
 

@@ -41,7 +41,7 @@
 	frameworks like EtoileUI to implement pervasive late-binding of behavior
 	or state. Object chains are implemented as a linked lists. */
 
-@interface ETObjectChain : NSObject <ETCollection>
+@interface ETObjectChain : NSObject <ETCollection, ETCollectionMutation>
 {
 	id _nextObject;
 }
@@ -59,8 +59,12 @@
 
 /* Collection Protocol */
 
+- (BOOL) isOrdered;
+- (BOOL) isEmpty;
 - (id) content;
 - (NSArray *) contentArray;
+- (void) addObject: (id)object;
+- (void) removeObject: (id)object;
 
 // TODO: Provides object chain collection access in subclasses that introduces 
 // another main structural collection

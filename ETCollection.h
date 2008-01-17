@@ -44,6 +44,7 @@
 /* Collection Access and Mutation Protocols */
 
 @protocol ETCollection
+- (BOOL) isOrdered;
 - (BOOL) isEmpty;
 /** Returns the underlying data structure object holding the content or self 
 	when the protocol is adopted by a class which is a content data structure 
@@ -79,24 +80,28 @@
 /* Adopted by the following Foundation classes  */
 
 @interface NSArray (ETCollection) <ETCollection>
+- (BOOL) isOrdered;
 - (BOOL) isEmpty;
 - (id) content;
 - (NSArray *) contentArray;
 @end
 
 @interface NSDictionary (ETCollection) <ETCollection>
+- (BOOL) isOrdered;
 - (BOOL) isEmpty;
 - (id) content;
 - (NSArray *) contentArray;
 @end
 
 @interface NSSet (ETCollection) <ETCollection>
+- (BOOL) isOrdered;
 - (BOOL) isEmpty;
 - (id) content;
 - (NSArray *) contentArray;
 @end
 
 @interface NSIndexSet (ETCollection) <ETCollection>
+- (BOOL) isOrdered;
 - (BOOL) isEmpty;
 - (id) content;
 - (NSArray *) contentArray;
@@ -105,6 +110,11 @@
 
 @interface NSMutableArray (ETCollectionMutation) <ETCollectionMutation>
 
+@end
+
+@interface NSMutableDictionary (ETCollectionMutation) <ETCollectionMutation>
+- (void) addObject: (id)object;
+- (void) removeObject: (id)object;
 @end
 
 @interface NSMutableSet (ETCollectionMutation) <ETCollectionMutation>

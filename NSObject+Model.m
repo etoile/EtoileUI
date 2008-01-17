@@ -238,6 +238,20 @@
 	}
 }
 
+/* Collection */
+
+/** <override-dummy /> 
+	Returns a key which can be used on inserting the receiver into a keyed 
+	collection like a dictionary.
+	This key is retrieved by a collection in reply to -addObject: of 
+	ETCollectionMutation protocol. You can return different keys depending on 
+	the type of collection. This parameter is usually the mutated collection 
+	itself. */
+- (id) keyForCollection: (id)collection
+{
+	return nil;
+}
+
 @end
 
 /* Basic Common Value Classes */

@@ -120,6 +120,7 @@
 
 /* ETCollection protocol */
 
+- (BOOL) isEmpty;
 - (id) content;
 - (NSArray *) contentArray;
 

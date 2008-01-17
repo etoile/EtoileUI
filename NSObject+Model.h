@@ -65,6 +65,10 @@
 
 - (NSString *) primitiveDescription;
 
+/* Collection */
+
+- (id) keyForCollection: (id)collection;
+
 @end
 
 /* Basic Common Value Classes */

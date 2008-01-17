@@ -121,6 +121,11 @@
 
 /* Collection Protocol */
 
+- (BOOL) isOrdered
+{
+	return YES;
+}
+
 - (BOOL) isEmpty
 {
 	return ([self nextObject] == nil);
@@ -143,6 +148,33 @@
 	}
 	
 	return objectArray;
+}
+
+- (void) addObject: (id)object
+{
+	[[self lastObject] setNextObject: object];
+}
+
+/** You cannot remove the head of an object chain with this method. If you want
+    to, you must retrieve the object following the head to keep a reference to
+	the object chain and do -[head setNextObject: nil]. */
+- (void) removeObject: (id)object
+{
+	id prevObject = self;
+	id nextObject = [prevObject nextObject];
+	
+	if ([nextObject isEqual: object])
+	{
+		[prevObject setNextObject: [nextObject nextObject]];
+		/* We continue to remove all occurences in a case we have multiple 
+		   instances that reply YES to -isEqual: */
+		[[prevObject nextObject] removeObject: object];
+	}
+	else
+	{
+		[nextObject removeObject: object];	
+	}
+
 }
 
 @end

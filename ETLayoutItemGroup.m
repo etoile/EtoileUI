@@ -1152,6 +1152,11 @@
 
 /* Collection Protocol */
 
+- (BOOL) isOrdered
+{
+	return YES;
+}
+
 - (BOOL) isEmpty
 {
 	return ([self numberOfItems] == 0);

@@ -164,6 +164,8 @@
 
 /* Collection Protocol */
 
+- (BOOL) isOrdered;
+- (BOOL) isEmpty;
 - (id) content;
 - (NSArray *) contentArray;
 - (void) addObject: (id)object;

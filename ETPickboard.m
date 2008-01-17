@@ -394,4 +394,6 @@ static ETPickboard *activePickboard = nil;
 	return [_pickedObjects isEmpty];
 }
 
+// NOTE: -isOrdered is inherited from ETLayoutItemGroup
+
 @end
