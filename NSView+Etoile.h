@@ -72,6 +72,10 @@
 - (void) setHeightFromBottomLeft: (int)height;
 - (NSPoint) bottomLeftPoint;
 
+/* Property Value Coding */
+
+- (NSArray *) properties;
+
 /* Basic Properties */
 
 - (NSImage *) snapshot;
