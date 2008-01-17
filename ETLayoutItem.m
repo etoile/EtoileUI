@@ -190,18 +190,30 @@
 		[item setView: [[self view] copy]];
 	}
 #else
-	id img = [[self displayView] snapshot];
-	id imgView = [[NSImageView alloc] initWithFrame: [[self displayView] frame]];
-	[imgView setImage: img];
-	[item setView: imgView];
-	RELEASE(img);
-	RELEASE(imgView);
+	if ([self displayView] != nil 
+		&& NSEqualRects([[self displayView] frame], NSZeroRect) == NO)
+	{
+		id img = [[self displayView] snapshot];
+		id imgView = [[NSImageView alloc] initWithFrame: [[self displayView] frame]];
+		[imgView setImage: img];
+		[item setView: imgView];
+		RELEASE(imgView);
+	}
 #endif
 
 	[item setName: [self name]];
 	[item setStyleRenderer: [self renderer]];
 	[item setFrame: [self frame]];
 	[item setAppliesResizingToBounds: [self appliesResizingToBounds]];
+	
+	return item;
+}
+
+- (id) deepCopy
+{
+	ETLayoutItem *item = [self copyWithZone: nil];
+	
+	[item setRepresentedObject: AUTORELEASE([[self representedObject] mutableCopy])];
 	
 	return item;
 }
@@ -284,6 +296,7 @@
 	an item group. */
 - (void) setParentLayoutItem: (ETLayoutItemGroup *)parent
 {
+	// TODO: Move the next three lines into -[ETLayoutItemGroup handleAttachItem:]
 	[[self displayView] removeFromSuperview];
 	if ([parent layout] == nil && [parent view] != nil)
 		[[parent view] addSubview: [self displayView]];

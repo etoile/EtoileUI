@@ -37,6 +37,7 @@
 #import <EtoileUI/ETContainer.h>
 #import <EtoileUI/ETLayoutItem.h>
 #import <EtoileUI/ETLayoutItem+Events.h>
+#import <EtoileUI/ETEvent.h>
 #import <EtoileUI/ETLayoutItemGroup.h>
 #import <EtoileUI/ETLayout.h>
 #import <EtoileUI/ETLayer.h>
@@ -173,6 +174,151 @@ NSString *ETLayoutItemPboardType = @"ETLayoutItemPboardType"; // FIXME: replace 
     [super dealloc];
 }
 
+/* Archiving */
+
+- (id) archiver: (NSKeyedArchiver *)archiver willEncodeObject: (id)object
+{
+	ETLog(@"---- Will encode %@", object);
+	
+	/* Don't encode layout view and item views */
+	if ([object isEqual: [self subviews]])
+	{
+		id archivableSubviews = [object mutableCopy];
+		id itemViews = [[self items] valueForKey: @"displayView"];
+
+		ETLog(@"> Won't be encoded");	
+		if ([self displayView] != nil)	
+			[archivableSubviews removeObject: [self displayView]];
+		[itemViews removeObjectsInArray: archivableSubviews];
+		return archivableSubviews;
+	}
+		
+	return object;
+}
+
+// TODO: Probably implement EtoileSerialize-based archiving (on Etoile only)
+- (void) encodeWithCoder: (NSCoder *)coder
+{
+	if ([coder allowsKeyedCoding] == NO)
+	{	
+		[NSException raise: NSInvalidArgumentException format: @"ETContainer "
+			@"only supports keyed archiving"];
+	}
+
+	/* We must disable the encoding of item subviews by catching it on 
+	   -[ETView encodeWithCoder:] with call back -archiver:willEncodeObject: */
+	[(NSKeyedArchiver *)coder setDelegate: self];
+	[super encodeWithCoder: coder];
+
+	/* Don't encode displayView, source, delegate and inspector.
+	   NOTE: It could be useful to encode tham as late-bound objects though
+	   like [coder encodeLateBoundObject: [self source] forKey: @"ETSource"]; */
+	[coder encodeObject: [self scrollView] forKey: @"NSScrollView"];
+	[coder encodeBool: [self isDisclosable] forKey: @"ETFlipped"];
+	[coder encodeObject: [self representedPath] forKey: @"ETRepresentedPath"];
+	[coder encodeBool: [self isHitTestEnabled] forKey: @"ETHitTestEnabled"];	
+	[coder encodeObject: NSStringFromSelector([self doubleAction]) 
+	          forKey: @"ETDoubleAction"];
+	[coder encodeObject: [self target] forKey: @"ETTarget"];
+	[coder encodeFloat: [self itemScaleFactor] forKey: @"ETItemScaleFactor"];
+	// FIXME: selectionShape not yet implemented
+	//[coder encodeObject: [self selectionShape] forKey: @"ETSelectionShape"];
+
+	[coder encodeBool: [self allowsEmptySelection] 
+	           forKey: @"ETAllowsMultipleSelection"];
+	[coder encodeBool: [self allowsEmptySelection] 
+	           forKey: @"ETAllowsEmptySelection"];
+	// FIXME: Replace encoding of allowsDragging and allowsDropping by
+	// allowedDraggingTypes and allowedDroppingTypes
+	[coder encodeBool: [self allowsDragging] forKey: @"ETAllowsDragging"];
+	[coder encodeBool: [self allowsDropping] forKey: @"ETAllowsDropping"];
+	[coder encodeBool: [self shouldRemoveItemsAtPickTime] 
+	           forKey: @"ETShouldRemoveItemAtPickTime"];
+			   
+	[(NSKeyedArchiver *)coder setDelegate: nil];
+}
+
+- (id) initWithCoder: (NSCoder *)coder
+{
+	self = [super initWithCoder: coder];
+	
+	if ([coder allowsKeyedCoding] == NO)
+	{	
+		[NSException raise: NSInvalidArgumentException format: @"ETView only "
+			@"supports keyed unarchiving"];
+		return nil;
+	}
+	
+	[self setScrollView: [coder decodeObjectForKey: @"NSScrollView"]];
+	[self setFlipped: [coder decodeBoolForKey: @"ETFlipped"]];
+	[self setRepresentedPath: [coder decodeObjectForKey: @"ETRepresentedPath"]];
+	[self setEnablesHitTest: [coder decodeBoolForKey: @"ETHitTestEnabled"]];	
+	[self setDoubleAction: 
+		NSSelectorFromString([coder decodeObjectForKey: @"ETDoubleAction"])];
+	[self setTarget: [coder decodeObjectForKey: @"ETTarget"]];
+	[self setItemScaleFactor: [coder decodeFloatForKey: @"ETItemScaleFactor"]];
+	//[self setSelectionShape: [coder decodeObjectForKey: @"ETSelectionShape"]];
+
+	[self setAllowsMultipleSelection: 
+		[coder decodeBoolForKey: @"ETAllowsMultipleSelection"]];
+	[self setAllowsEmptySelection: 
+		[coder decodeBoolForKey: @"ETAllowsEmptySelection"]];
+	[self setAllowsDragging: [coder decodeBoolForKey: @"ETAllowsDragging"]];
+	[self setAllowsDropping: [coder decodeBoolForKey: @"ETAllowsDropping"]];
+	[self setShouldRemoveItemsAtPickTime: 
+		[coder decodeBoolForKey: @"ETShouldRemoveItemAtPickTime"]];
+
+	return self;
+}
+#if 0
+- (void) copyWithZone: (NSZone *)zone
+{
+	#ifndef ETOILE_SERIALIZE
+	id container = [super copyWithZone: zone];
+	
+	/* Copy objects which doesn't support encoding usually or must not be copied
+	   but rather shared by the receiver and the copy. */
+	[container setSource: [self source]];
+	[container setDelegate: [self delegate]];
+	
+	
+	return container;
+	#else
+	
+	#endif
+}
+#endif
+/** Deep copies are never created by the container itself, but they are instead
+	delegated to the item group returned by -layoutItem. When the layout item
+	receives a deep copy request it will call back -copy on each view (including
+	containers) embedded in descendant items. Subview hierarchy will later get 
+	transparently reconstructed when -updateLayout will be called on the 
+	resulting layout item tree copy.
+	
+		View Tree							Layout Item Tree
+	
+	-> [container deepCopy] 
+									-> [containerItem deepCopy] 
+	-> [container copy]
+									-> [childItem deepCopy]
+	-> [subview copy] 
+	
+	For ETView and ETContainer, view copies created by -copy are shallow copies
+	that don't include subviews unlike -copy invoked on NSView and other 
+	related subclasses. Layout/Display view isn't copied either. However title 
+	bar view is copied unlike other subviews (as explained in -[ETView copy]).
+	Remember -[NSView copy] returns a deep copy (view hierachy copy) 
+	but -[ETView copy] doesn't. */
+- (id) deepCopy
+{
+	id item = [[self layoutItem] deepCopy];
+	id container = [item view];
+	
+	//NSAssert3([container isKindOfClass: [ETContainer class]], 
+	
+	return container;
+}
+
 - (NSString *) description
 {
 	NSString *desc = [super description];
@@ -194,8 +340,10 @@ NSString *ETLayoutItemPboardType = @"ETLayoutItemPboardType"; // FIXME: replace 
 	Never returns nil. */
 - (ETLayoutItem *) layoutItem
 {
-	NSAssert([[super layoutItem] isGroup], 
-		@"Layout item in a container must of ETLayoutItemGroup type");
+	/*NSAssert([[super layoutItem] isGroup], 
+		@"Layout item in a container must of ETLayoutItemGroup type");*/
+	if ([[super layoutItem] isGroup] == NO)
+		ETLog(@"Layout item in a container must of ETLayoutItemGroup type");
 	return [super layoutItem];
 }
 
@@ -1546,7 +1694,7 @@ NSString *ETLayoutItemPboardType = @"ETLayoutItemPboardType"; // FIXME: replace 
 	
 	id item = [self itemForEvent: event];
 
-	[item mouseDragged: event on: item];
+	[item mouseDragged: ETEVENT(event, nil, ETDragPickingMask) on: item];
 }
 
 /* Dragging Destination 

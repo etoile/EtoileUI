@@ -39,6 +39,7 @@
 #import <EtoileUI/ETContainer.h>
 #import <EtoileUI/ETLayoutItem.h>
 #import <EtoileUI/ETLayoutItem+Events.h>
+#import <EtoileUI/ETEvent.h>
 #import <EtoileUI/ETLayoutItemGroup.h>
 #import <EtoileUI/ETLayoutLine.h>
 #import <EtoileUI/ETPickboard.h>
@@ -370,9 +371,9 @@
 #if 0
 	// NOTE: On Mac OS X, -currentEvent returns a later event rather than the 
 	// mouse down that began the drag when the user moves the mouse too quickly.
-	NSEvent *dragEvent = [NSApp currentEvent];
+	id dragEvent = ETEVENT([NSApp currentEvent], nil, ETDragPickingMask);
 #else
-	NSEvent *dragEvent = [self lastDragEvent];
+	id dragEvent = ETEVENT([self lastDragEvent], nil, ETDragPickingMask);
 #endif
 
 	NSAssert3([[dragEvent window] isEqual: [outlineView window]], @"NSApp "

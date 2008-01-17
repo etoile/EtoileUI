@@ -40,7 +40,7 @@
 #import <EtoileUI/ETInspecting.h>
 
 @class ETLayoutItem, ETLayout, ETLayer, ETLayoutItemGroup, ETSelection, 
-	ETPickboard;
+	ETPickboard, ETEvent;
 
 
 @interface ETContainer : ETView <ETObjectInspection> //ETLayoutingContext
@@ -80,6 +80,8 @@
 - (id) initWithLayoutView: (NSView *)layoutView;
 
 - (ETLayoutItem *) layoutItem;
+
+- (id) deepCopy;
 
 /* Basic Accessors */
 
@@ -285,7 +287,7 @@
 /* Advanced pick and drop support 
    Only needed if you want to override pick and drop support. Useful to get more
    control over drag an drop. */
-- (BOOL) container: (ETContainer *)container handlePick: (NSEvent *)event 
+- (BOOL) container: (ETContainer *)container handlePick: (ETEvent *)event 
 	forItems: (NSArray *)items pickboard: (ETPickboard *)pboard;
 - (BOOL) container: (ETContainer *)container handleAcceptDrop: (id)dragInfo 
 	forItems: (NSArray *)items on: (id)item pickboard: (ETPickboard *)pboard;

@@ -37,6 +37,7 @@
 #import <EtoileUI/ETLayoutItem+Events.h>
 #import <EtoileUI/ETLayoutItemGroup.h>
 #import <EtoileUI/ETPickboard.h>
+#import <EtoileUI/ETEvent.h>
 #import <EtoileUI/ETCompatibility.h>
 
 
@@ -46,13 +47,16 @@
 {
 	ETLog(@"Copy receives in %@", self);
 	
-	[self handlePick: nil forItem: nil layout: [self layout]];
+	id event = ETEVENT([NSApp currentEvent], nil, ETCopyPickingMask);
+	
+	[self handlePick: event forItem: nil layout: [self layout]];
 }
 
 - (IBAction) paste: (id)sender
 {
 	ETLog(@"Paste receives in %@", self);
-	
+
+	id event = ETEVENT([NSApp currentEvent], nil, ETPastePickingMask);
 	id pastedItem = [[ETPickboard localPickboard] popObject];
 	
 	[self handleDrop: nil forItem: pastedItem on: self];
@@ -61,8 +65,10 @@
 - (IBAction) cut: (id)sender
 {
 	ETLog(@"Cut receives in %@", self);
-	
-	[self handlePick: nil forItem: nil layout: [self layout]];
+
+	id event = ETEVENT([NSApp currentEvent], nil, ETCutPickingMask);
+		
+	[self handlePick: event forItem: nil layout: [self layout]];
 }
 
 - (BOOL) allowsDragging
@@ -85,7 +91,7 @@
 	return NO;
 }
 
-- (void) mouseDown: (NSEvent *)event on: (id)item
+- (void) mouseDown: (ETEvent *)event on: (id)item
 {
 	if ([self representedPathBase] != nil)
 	{
@@ -107,7 +113,7 @@
 	Layouts should -invoke -[ETLayoutItem handleDrag:forItem:] then they will
 	receive -handleDrag:forItem:, -beginDrag:forItem:image: as call backs in
 	case they decide to implement these methods. */
-- (void) mouseDragged: (NSEvent *)event on: (id)item
+- (void) mouseDragged: (ETEvent *)event on: (id)item
 {
 	if ([self allowsDragging] == NO)
 		return;
@@ -130,7 +136,7 @@
 	}
 }
 
-- (void) handlePick: (NSEvent *)event forItem: (id)item layout: (id)layout
+- (void) handlePick: (ETEvent *)event forItem: (id)item layout: (id)layout
 {
 	if (layout != nil && [layout respondsToSelector: @selector(handlePick:forItem:layout:)])
 	{
@@ -138,23 +144,51 @@
 	}
 	else
 	{
-		if (item == nil)
-			item = [[self selectedItems] firstObject];
-			
-		NSArray *selectedItems = [self selectedItems];
+		NSArray *selectedItems = [self selectedItemsInLayout];
 		// TODO: pickboard shouldn't be harcoded but rather customizable
 		id pboard = [ETPickboard localPickboard];
+		id pick = nil;
 		
+		/* No selection exists, we will pick the receiver
+		   NOTE: otherwise we set a picked item when none exists to ensure
+		   [selectedItems containsObject: item] can succeed when the pick isn't
+		   a drag. A better solution could be introduce a ETPointerPickingMask 
+		   (or ETMousePickingMask). */
+		if (item == nil)
+			item = [selectedItems isEmpty] ? self : [selectedItems firstObject];
+
 		/* If the dragged item is part of a selection which includes more than
-		   one item, we put a pick collection on pickboard */
+		   one item, we put a pick collection on pickboard. But if the dragged
+		   item isn't part of the selection, we don't put the selected items on
+		   the pickboard. */
 		if ([selectedItems count] > 1 && [selectedItems containsObject: item])
 		{
-			[pboard pushObject: [ETPickCollection pickCollectionWithObjects: selectedItems]];
+			NSArray *pickedItems = nil;
+			
+			if ([event pickingMask] & ETCopyPickingMask)
+			{
+				pickedItems = [selectedItems valueForKey: @"deepCopy"];
+				[pickedItems makeObjectsPerformSelector: @selector(release)];
+			}
+			else /* ETPickPickingMask or ETCutPickingMask */
+			{
+				pickedItems = selectedItems;
+			}
+			pick = [ETPickCollection pickCollectionWithObjects: pickedItems];
 		}
 		else
 		{
-			[pboard pushObject: item];
+			if ([event pickingMask] & ETCopyPickingMask)
+			{
+				pick = AUTORELEASE([item deepCopy]);
+			}
+			else /* ETPickPickingMask or ETCutPickingMask */
+			{
+				pick = item;
+			}
 		}
+		
+		[pboard pushObject: pick];
 	
 		// TODO: Call back -handlePick:forItems:pickboard: which takes care of calling
 		// pick and drop source methods when a source exists.
@@ -164,7 +198,7 @@
 // NOTE: ETOutlineLayout would override this method to call 
 // -selectedItemsIncludingRelatedDescendants instead of -selectedItems	
 //[pickboard pushObject: [ETPickCollection pickCollectionWithObjects: [self selectedItems]];
-- (void) handleDrag: (NSEvent *)event forItem: (id)item layout: (id)layout
+- (void) handleDrag: (ETEvent *)event forItem: (id)item layout: (id)layout
 {
 	if (layout != nil && [layout respondsToSelector: @selector(handleDrag:forItem:layout:)])
 	{
@@ -190,7 +224,7 @@
 
 /* ETLayoutItem specific method to create a new drag and passing the request to 
    data source. */
-- (void) beginDrag: (NSEvent *)event forItem: (id)item 
+- (void) beginDrag: (ETEvent *)event forItem: (id)item 
 	image: (NSImage *)customDragImage layout: (id)layout
 {
 	if (layout != nil && [layout respondsToSelector: @selector(beginDrag:forItem:image:layout:)])
@@ -409,7 +443,7 @@
 	}
 }
 
-- (BOOL) handlePick: (NSEvent *)event forItems: (NSArray *)items pickboard: (ETPickboard *)pboard
+- (BOOL) handlePick: (ETEvent *)event forItems: (NSArray *)items pickboard: (ETPickboard *)pboard
 {
 	id source = [[self container] source];
 	BOOL pickValidated = YES;

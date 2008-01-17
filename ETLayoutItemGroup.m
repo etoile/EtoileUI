@@ -161,6 +161,19 @@
 	return item;
 }
 
+- (id) deepCopy
+{
+	ETLayoutItemGroup *item = [super deepCopy];
+	NSArray *copiedChildItems = [[self items] valueForKey: @"deepCopy"];
+	
+	[item addItems: copiedChildItems];
+	// TODO: Test if using -autorelease instead of -release results in a quicker 
+	// deep copy (when plenty of items are involved).
+	[copiedChildItems makeObjectsPerformSelector: @selector(release)];
+	
+	return item;
+}
+
 /* Property Value Coding */
 
 - (NSArray *) properties

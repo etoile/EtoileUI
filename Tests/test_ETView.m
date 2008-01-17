@@ -44,6 +44,33 @@
 
 @implementation ETView (UnitKitTests)
 
+- (void) testArchiving
+{
+	id barView = AUTORELEASE([[NSView alloc] initWithFrame: NSMakeRect(-20, 30, 100, 25)]);
+	id mainView = AUTORELEASE([[NSTextView alloc] initWithFrame: NSMakeRect(0, 0, 100, 80)]);
+
+	[self setTitleBarView: barView];
+	[self setWrappedView: mainView];
+	[self setDisclosable: YES];
+
+	id dummyView = AUTORELEASE([[NSView alloc] initWithFrame: NSMakeRect(0, 0, 50, 50)]);
+	
+	[self addSubview: dummyView];
+	
+	NSData *archive = [NSKeyedArchiver archivedDataWithRootObject: self];
+	id view = [NSKeyedUnarchiver unarchiveObjectWithData: archive];
+
+	//UKNil([view layoutItem]);
+	//UKNotNil([view renderer]);	
+	UKNotNil([view wrappedView]);
+	UKObjectsSame(view, [[view wrappedView] superview]);
+	UKNotNil([view titleBarView]);	
+	UKObjectsSame(view, [[view titleBarView] superview]);
+	UKIntsEqual(3, [[view subviews] count]);
+	UKTrue([view isDisclosable]);
+	UKTrue([view usesCustomTitleBar]);
+}
+
 + (void) testTitleBarViewPrototype
 {
 	UKNotNil([self titleBarViewPrototype]);

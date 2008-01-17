@@ -115,6 +115,8 @@
 - (id) initWithView: (NSView *)view;
 - (id) initWithView: (NSView *)view value: (id)value representedObject: (id)repObject;
 
+- (id) deepCopy;
+
 /* Layout Item Tree */
 
 - (ETLayoutItem *) rootItem;

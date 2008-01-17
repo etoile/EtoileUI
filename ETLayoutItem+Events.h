@@ -37,7 +37,7 @@
 #import <AppKit/AppKit.h>
 #import <EtoileUI/ETLayoutItem.h>
 
-@class ETPickboard;
+@class ETPickboard, ETEvent;
 
 @protocol ETEventHandler
 @end
@@ -62,7 +62,7 @@
 	Here is an example:
 	- (void) mouseDown: (NSEvent *)event in Responder
 	becomes
-	- (void) mouseDown: (NSEvent *)event on: (id)item in ETLayoutItem.
+	- (void) mouseDown: (ETEvent *)event on: (id)item in ETLayoutItem.
 	Presently these methods are declared on ETLayoutItem, although in future
 	they will be moved to a separate ETEventHandler class making possible to
 	to changing event handling at runtime by plugging another event handler.
@@ -122,8 +122,8 @@
 
 /* Event Handling */
 
-- (void) mouseDown: (NSEvent *)event on: (id)item;
-- (void) mouseDragged: (NSEvent *)event on: (id)item;
+- (void) mouseDown: (ETEvent *)event on: (id)item;
+- (void) mouseDragged: (ETEvent *)event on: (id)item;
 
 /* Pick and Drop Filtering */
 
@@ -132,8 +132,8 @@
 
 /* Pick and Drop Handling */
 
-- (void) handleDrag: (NSEvent *)event forItem: (id)item layout: (id)layout;
-- (void) beginDrag: (NSEvent *)event forItem: (id)item 
+- (void) handleDrag: (ETEvent *)event forItem: (id)item layout: (id)layout;
+- (void) beginDrag: (ETEvent *)event forItem: (id)item 
 	image: (NSImage *)customDragImage layout: (id)layout;
 - (NSDragOperation) handleDragEnter: (id)dragInfo forItem: (id)item;
 - (void) handleDragExit: (id)dragInfo forItem: (id)item;
@@ -144,7 +144,7 @@
 /*- (void) handlePickForObject: (id)object;
 - (void) handleAcceptDropForObject: (id)object;
 - (void) handleDropForObject: (id)object;*/
-- (BOOL) handlePick: (NSEvent *)event forItems: (NSArray *)items pickboard: (ETPickboard *)pboard;
+- (BOOL) handlePick: (ETEvent *)event forItems: (NSArray *)items pickboard: (ETPickboard *)pboard;
 - (BOOL) handleAcceptDrop: (id)dragInfo forItems: (NSArray *)items on: (id)item pickboard: (ETPickboard *)pboard;
 - (BOOL) handleDrop: (id)dragInfo forItems: (NSArray *)items on: (id)item pickboard: (ETPickboard *)pboard;
 
