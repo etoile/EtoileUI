@@ -53,7 +53,7 @@
 	layer under the application control. */
 - (ETLayoutItemGroup *) layoutItem
 {
-	return _windowLayer;
+	return [ETLayoutItemGroup windowGroup];
 }
 
 - (void) finishLaunching
@@ -67,7 +67,7 @@
 {
 	ETEtoileUIBuilder *builder = [ETEtoileUIBuilder builder];
 
-	ASSIGN(_windowLayer, [builder render: self]);
+	[ETLayoutItemGroup setWindowGroup: [builder render: self]];
 }
 
 - (void) _setUpMenu

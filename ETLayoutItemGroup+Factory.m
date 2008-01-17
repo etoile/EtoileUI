@@ -35,7 +35,9 @@
 	THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import "ETLayoutItemGroup+Factory.h"
+#import <EtoileUI/ETLayoutItemGroup+Factory.h>
+#import <EtoileUI/ETLayer.h>
+#import <EtoileUI/ETCompatibility.h>
 
 
 @implementation ETLayoutItemGroup (ETLayoutItemGroupFactory)
@@ -60,6 +62,8 @@
 	return nil;
 }
 
+static ETLayoutItemGroup *floatingItemGroup = nil;
+
 /** Returns the item group representing floating layout items.
 	Layout items are floating when they have no parent. However layout items 
 	returned by +rootGroup or +localRootGroup don't qualify as floating even
@@ -69,7 +73,13 @@
 	group. */
 + (id) floatingItemGroup
 {
-	return nil;
+	if (floatingItemGroup == nil)
+	{
+		floatingItemGroup = [[ETLayoutItemGroup alloc] init];
+		[floatingItemGroup setName: _(@"Floating Items")];
+	}
+	
+	return floatingItemGroup;
 }
 
 /** Returns the item representing the main screen. */
@@ -97,10 +107,41 @@
 	return nil;
 }
 
+static ETWindowLayer *windowLayer = nil;
+
 /** Returns the item group representing all windows in the current application. */
 + (id) windowGroup
 {
-	return nil;
+	if (windowLayer == nil)
+	{
+		ASSIGN(windowLayer, [[ETWindowLayer alloc] init]);
+		RELEASE(windowLayer);
+		[windowLayer setName: _(@"Windows")];
+	}
+	
+	return windowLayer;
+}
+
+/** Sets the item group representing all windows in the current application. It
+	is usually advised to pass an ETWindowLayer instance in parameter. */
++ (void) setWindowGroup: (ETLayoutItemGroup *)windowGroup
+{
+	ASSIGN(windowLayer, windowGroup);
+}
+
+static ETLayoutItemGroup *pickboardGroup = nil;
+
+/** Returns the item group representing all pickboards including both 
+	system-wide pickboards and those local to the application. */
++ (id) pickboardGroup
+{
+	if (pickboardGroup == nil)
+	{
+		pickboardGroup = [[ETLayoutItemGroup alloc] init];
+		[pickboardGroup setName: _(@"Pickboards")];
+	}
+	
+	return pickboardGroup;
 }
 
 @end
