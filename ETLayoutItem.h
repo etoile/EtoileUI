@@ -84,7 +84,8 @@
 	id _modelObject;
 	NSString *_name;
 	ETStyleRenderer *_renderer;
-	ETLayoutItem *_decoratorItem;
+	ETLayoutItem *_decoratorItem; // previous decorator
+	ETLayoutItem *_decoratedItem; // next decorator
 
 	IBOutlet ETView *_view;
 	NSArray *_cells; /* NSCell compatibility */
@@ -123,6 +124,7 @@
 - (ETLayoutItem *) baseItem;
 - (ETLayoutItemGroup *) parentLayoutItem;
 - (void) setParentLayoutItem: (ETLayoutItemGroup *)parent;
+- (void ) removeFromParent;
 - (ETContainer *) closestAncestorContainer;
 - (ETView *) closestAncestorDisplayView;
 
@@ -216,11 +218,6 @@ shape*/
 
 /* Layouting & Rendering Chain */
 
-- (ETLayoutItem *) decoratorItem;
-- (void) setDecoratorItem: (ETLayoutItem *)decorator;
-- (ETLayoutItem *) lastDecoratorItem;
-//-setShowsDecorator:
-
 - (void) updateLayout;
 - (void) apply: (NSMutableDictionary *)inputValues;
 - (void) render: (NSMutableDictionary *)inputValues;
@@ -233,6 +230,22 @@ shape*/
 
 - (NSRect) convertRectToParent: (NSRect)rect;
 - (NSRect) convertRectFromParent: (NSRect)rect;
+
+/* Decoration */
+
+- (ETLayoutItem *) decoratorItem;
+- (void) setDecoratorItem: (ETLayoutItem *)decorator;
+- (ETLayoutItem *) decoratedItem;
+- (void) setDecoratedItem: (ETLayoutItem *)decorator;
+- (ETLayoutItem *) lastDecoratorItem;
+- (ETLayoutItem *) firstDecoratedItem;
+- (BOOL) canDecorateItem: (ETLayoutItem *)item;
+- (BOOL) acceptsDecoratorItem: (ETLayoutItem *)item;
+- (void) handleDecorateItem: (ETLayoutItem *)item inView: (ETView *)parentView;
+- (id) supervisorView;
+- (void) setSupervisorView: (ETView *)supervisorView;
+
+//-setShowsDecorator:
 
 /* Sizing */
 

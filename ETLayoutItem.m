@@ -53,6 +53,8 @@
 - (void) setImage: (NSImage *)img;
 - (void) setIcon: (NSImage *)img;
 - (void) layoutItemViewFrameDidChange: (NSNotification *)notif;
+- (void) checkDecoration;
+- (void) checkDecorator;
 - (ETView *) _innerDisplayView;
 - (void) _setInnerDisplayView: (ETView *)innerDisplayView;
 @end
@@ -138,6 +140,7 @@
     {
 		_parentLayoutItem = nil;
 		//_decoratorItem = nil;
+		[self setDecoratedItem: nil];
 		[self setView: view];
 		[self setVisible: NO];
 		[self setStyleRenderer: AUTORELEASE([[ETSelection alloc] init])];
@@ -157,6 +160,7 @@
 
 - (void) dealloc
 {
+	/* Don't release decorated item (weak reference) */
 	if (_decoratorItem != self)
 		DESTROY(_decoratorItem);
     DESTROY(_view);
@@ -291,9 +295,9 @@
 /** Returns the layout item group to which the receiver belongs to. 
 	If parent parameter is nil, the receiver becomes a root item. 
 	You must never call this method directly unless your code belongs to a 
-	subclass. If you need to change the parent of a layout item, use -addItem: 
-	and other similar methods provided to manipulate item collection owned by 
-	an item group. */
+	subclass. If you need to change the parent of a layout item, use -addItem:, 
+	-removeFromParent and other similar methods provided to manipulate item 
+	collection owned by an item group. */
 - (void) setParentLayoutItem: (ETLayoutItemGroup *)parent
 {
 	// TODO: Move the next three lines into -[ETLayoutItemGroup handleAttachItem:]
@@ -301,6 +305,21 @@
 	if ([parent layout] == nil && [parent view] != nil)
 		[[parent view] addSubview: [self displayView]];
 	ASSIGN(_parentLayoutItem, parent);
+}
+
+/** Detaches the receiver from the layout item group it belongs to.
+	You are in charge of retaining the receiver, otherwise it could be 
+	deallocated if no other objects retains it. */
+- (void ) removeFromParent
+{
+	if ([self parentLayoutItem] != nil)
+	{
+		/* -removeItem: will release us, so to be sure we won't deallocated 
+		   right now we use retain/autorelease */
+		RETAIN(self);
+		[[self parentLayoutItem] removeItem: self];
+		AUTORELEASE(self);
+	}
 }
 
 - (ETContainer *) closestAncestorContainer
@@ -597,6 +616,7 @@
 	}
 }
 
+#if 0
 - (NSView *) view
 {
 	ETView *innerDisplayView = [self _innerDisplayView];
@@ -623,7 +643,36 @@
 		return innerDisplayView;
 	}
 }
+#else
+- (NSView *) view
+{
+	id wrappedView = [[self supervisorView] wrappedView];
+	
+	if (wrappedView != nil)
+	{
+		// FIXME: Simplify by hiding these details, the next two branches could
+		// be removed now I think...
+		if ([wrappedView isKindOfClass: [NSScrollView class]])
+		{
+			return [wrappedView documentView];
+		}
+		else if ([wrappedView isKindOfClass: [NSBox class]])
+		{
+			return [wrappedView contentView];
+		}
+		else
+		{
+			return wrappedView;
+		}
+	}
+	else
+	{
+		return [self supervisorView];
+	}
+}
+#endif
 
+#if 0
 - (void) setView: (NSView *)newView
 {
 	BOOL resizeBoundsActive = [self appliesResizingToBounds];
@@ -671,6 +720,88 @@
 		[self setDefaultFrame: newViewFrame];
 		if (resizeBoundsActive)
 			[self setAppliesResizingToBounds: YES];
+	}
+}
+#else
+- (void) setView: (NSView *)newView
+{
+	BOOL resizeBoundsActive = [self appliesResizingToBounds];
+	id view = [[self supervisorView] wrappedView];
+	// NOTE: Frame is lost when newView becomes a subview of an ETView instance
+	NSRect newViewFrame = [newView frame];
+	
+	/* Tear down the current view */
+	if (view != nil)
+	{
+		/* Restore view initial state */
+		[view setFrame: [self defaultFrame]];
+		//[view setRenderer: nil];
+		/* Stop to observe notifications on current view and reset bounds size */
+		[self setAppliesResizingToBounds: NO];
+	}
+	_defaultFrame = NSZeroRect;
+	
+	/* Inserts the new view */
+	
+	/* When the view isn't an ETView instance, we wrap it inside a new ETView 
+	   instance to have -drawRect: asking the layout item to render by itself.
+	   Retrieving the display view automatically returns the innermost display
+	   view in the decorator item chain. */
+	if ([newView isKindOfClass: [ETView class]])
+	{
+		[self setSupervisorView: (ETView *)newView];
+	}
+	else if ([newView isKindOfClass: [NSView class]])
+	{
+		if ([self supervisorView] == nil)
+		{
+			ETView *wrapperView = [[ETView alloc] initWithFrame: [newView frame] 
+													 layoutItem: self];
+			[self setSupervisorView: wrapperView];
+			RELEASE(wrapperView);
+		}
+		[[self supervisorView] setWrappedView: newView];
+	}
+	
+	/* Set up the new view */
+	if (newView != nil)
+	{
+		//[newView setRenderer: self];
+		[self setDefaultFrame: newViewFrame];
+		if (resizeBoundsActive)
+			[self setAppliesResizingToBounds: YES];
+	}
+}
+#endif
+
+- (void) setDecoratedView: (NSView *)newView
+{
+	id view = [[self supervisorView] wrappedView];
+	// NOTE: Frame is lost when newView becomes a subview of an ETView instance
+	NSRect newViewFrame = [newView frame];
+	
+	/* Tear down the current view */
+	if (view != nil)
+	{
+		/* Restore view initial state */
+		[view setFrame: [self defaultFrame]];  /* -defaultFrame returns display view frame */
+	}
+	
+	/* Inserts the new view */
+	
+	if ([self supervisorView] == nil)
+	{
+		ETView *wrapperView = [[ETView alloc] initWithFrame: [newView frame] 
+												 layoutItem: self];
+		[self setSupervisorView: wrapperView];
+		RELEASE(wrapperView);
+	}
+	[[self supervisorView] setWrappedView: newView];
+	
+	/* Set up the new view */
+	if (newView != nil)
+	{
+		[self setDefaultFrame: newViewFrame];
 	}
 }
 
@@ -905,18 +1036,24 @@
 #endif
 
 /** Returns the display view of the receiver. The display view is the last
-	display view of the decorator item chain. Display view is an instance of 
+	supervisor view of the decorator item chain. Display view is an instance of 
 	ETView class or subclasses.
 	You can retrieve the outermost decorator of decorator item chain by calling
-	-decoratorItem. Getting the next one would be 
-	[[self decoratorItem] decoratorItem].
+	-lastDecoratorItem.
 	Take note there is usually only one decorator which is commonly used to 
 	support scroll view. 
 	See -setDecoratorItem: to know more. */
+#if 0
 - (ETView *) displayView
 {
 	return _view;
 }
+#else
+- (ETView *) displayView
+{
+	return [[self lastDecoratorItem] supervisorView];
+}
+#endif
 
 /** Sets the display view of the receiver. Never calls this method directly 
 	unless you write an ETLayoutItem subclass. 
@@ -986,6 +1123,7 @@
 	manipulate the item directly (by drag and drop). The other common use is 
 	putting the item view inside a scroll view. 
 	By default, the decorator item is nil. */
+#if 0
 - (void) setDecoratorItem: (ETLayoutItem *)decorator
 {
 	ETView *innerDisplayView = [self _innerDisplayView];
@@ -1071,6 +1209,87 @@
 
 	// FIXME: Update layout if needed
 }
+#else
+
+- (void) checkDecoration
+{
+	id decorator = [self decoratorItem];
+	
+	if (decorator == nil)
+		return;
+	
+	/* Verify the proper set up of the current decorator */
+	[decorator checkDecorator];
+	NSAssert1([self displayView] != nil, @"Display view must no be nil when a "
+		@"decorator is set on item %@", self);
+	NSAssert2([[decorator displayView] isEqual: [self displayView]], 
+		@"Decorator display view %@ must be decorated item display view %@", 
+		[decorator displayView], [self displayView]);
+
+}
+
+- (void) checkDecorator
+{
+	NSAssert2([self parentLayoutItem] == nil, @"Decorator %@ "
+		@"must have no parent %@ set", self, [self parentLayoutItem]);
+	if ([self isMemberOfClass: [ETLayoutItem class]])
+	{
+		/* Assertion invalid with ETWindowItem */
+		NSAssert2([[self displayView] isKindOfClass: [ETView class]], 
+			@"Decorator %@ must have display view %@ of type ETView", 
+			self, [self displayView]);
+	}
+}
+
+- (void) setDecoratorItem: (ETLayoutItem *)decorator
+{
+	[self checkDecoration]; /* Ensure existing decorator is valid */
+
+	if ([decorator isEqual: [self decoratorItem]])
+		return;
+
+	if ([decorator canDecorateItem: self])
+	{
+		/* Memorize our decorator to let the new decorator inserts itself into it */
+		id existingDecorator = [self decoratorItem];
+		/* Item could have a decorator, so [[item supervisorView] superview] would
+	       not give the parent view in this case but the decorator view. */
+		id parentView = [[self displayView] superview];
+		// parentView isEqual: [[item parentLayoutItem] view]
+		
+		RETAIN(existingDecorator);
+		// NOTE: Important to retain decorator before calling 
+		// -setDecoratedItem: which is going to decrease its retain count
+		// by removing it from its parent
+		ASSIGN(_decoratorItem, decorator),
+		[decorator setDecoratedItem: self];
+		[decorator handleDecorateItem: self inView: parentView];
+		RELEASE(existingDecorator);
+		
+		/* Verify new decorator has been correctly inserted */
+		/* Tested by -checkDecoration...
+		NSAssert3([[self displayView] isEqual: [decorator displayView]], @"New "
+			@"display view %@ of item %@ must be the display view of the new "
+			@"decorator %@", [self displayView], self, [decorator displayView]);*/
+		NSAssert3([[[self supervisorView] superview] isEqual: parentView] == NO,
+			@"New parent view %@ of item %@ must not be its old parent view %@", 
+			[[self supervisorView] superview], self, parentView);
+		[self checkDecoration];
+	}
+}
+#endif
+
+- (ETLayoutItem *) decoratedItem
+{
+	return _decoratedItem;
+}
+
+- (void) setDecoratedItem: (ETLayoutItem *)item
+{
+	/* Weak reference because decorator retains us */
+	_decoratedItem = item;
+	[self removeFromParent]; /* Just to be sure the decorator has no parent */
+}
 
 - (ETLayoutItem *) lastDecoratorItem
 {
@@ -1083,6 +1302,99 @@
 	else
 	{
 		return self;
+	}
+}
+
+- (ETLayoutItem *) firstDecoratedItem
+{
+	id decorator = [self decoratedItem];
+	
+	if (decorator != nil)
+	{
+		return [decorator firstDecoratedItem];
+	}
+	else
+	{
+		return self;
+	}
+}
+
+/** <override /> */
+- (BOOL) canDecorateItem: (ETLayoutItem *)item
+{
+	return [item acceptsDecoratorItem: self];
+}
+
+/** <override />
+	ETLayoutItem instances accept all decorator kinds.
+	You can override this method to decide otherwise in your subclasses. For 
+	example, ETWindowItem returns NO because a window unlike a view cannot 
+	be decorated. */
+- (BOOL) acceptsDecoratorItem: (ETLayoutItem *)item
+{
+	return YES;
+}
+
+/** <override-dummy /> 
+    You can manipulate the receiver decorator chain in this method and access 
+	both view and supervisor view of the decorated item, but you must not 
+	manipulate item related decorator chain (by calling -[item displayView], 
+	-[item decoratorItem] etc.) 
+	Take in account that parentView can be nil. */
+- (void) handleDecorateItem: (ETLayoutItem *)item inView: (ETView *)parentView 
+//	oldDecorator: (ETLayoutItem *)existingDecorator
+{
+	/* Inserts decorated view */
+	[self setDecoratedView: [item supervisorView]];
+	
+	/* If the decorated item display view was part of view tree, inserts the 
+	   new display view into the existing parent view.
+	   We don't insert the decorator supervisor view because this decorator 
+	   could be a decorator chain (by being decorated itself too). The new 
+	   display view is thus the supervisor view of the last decorator item. */
+	if (parentView != nil)
+	{
+		/* No need to update the layout since the new display view will have 
+		   the size and location of the previous one. Unlike when you add or
+		   or remove an item which involves to recompute the layout. */
+		//[self handleAttachViewOfItem: item];
+		//NSLog(@"parent %@ parent view %@ item display view %@", [item parentLayoutItem],
+		//	parentView, [item displayView]);
+		[parentView addSubview: [self displayView]]; // More sure than [item displayView]
+	}
+
+// -setDecoratorItem: isn't -insertDecoratorItem: so disabled the code below
+#if 0	
+	/* Inserts decorator view (as decorated view into the old item decorator) */
+	if (existingDecorator != nil) // [[item displayView] isEqual: [item supervisorView]]
+	{
+		[self setDecoratorItem: existingDecorator];
+	}
+#endif
+}
+
+- (id) supervisorView
+{
+	return _view;
+}
+
+- (void) setSupervisorView: (ETView *)supervisorView
+{
+	id parent = [self parentLayoutItem];
+
+	//if ([self decoratorItem] == nil)
+		[supervisorView setLayoutItemWithoutInsertingView: self];
+	ASSIGN(_view, supervisorView);
+	
+	if ([self decoratorItem] != nil)
+	{
+		id parentView = [[self displayView] superview];
+		/* Usually results in [[self decoratorItem] setView: supervisorView] */
+		[[self decoratorItem] handleDecorateItem: self inView: parentView];
+	}
+	else if (parent != nil)
+	{
+		[parent handleAttachViewOfItem: self];
 	}
 }
 

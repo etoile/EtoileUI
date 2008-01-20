@@ -164,6 +164,9 @@
 		60CF6C830D3F739000B4CA3D /* ETContainer+Controller.m in Sources */ = {isa = PBXBuildFile; fileRef = 60CF6C810D3F739000B4CA3D /* ETContainer+Controller.m */; };
 		60CF6C840D3F739000B4CA3D /* ETContainer+Controller.h in Headers */ = {isa = PBXBuildFile; fileRef = 60CF6C800D3F739000B4CA3D /* ETContainer+Controller.h */; };
 		60CF6C850D3F739000B4CA3D /* ETContainer+Controller.m in Sources */ = {isa = PBXBuildFile; fileRef = 60CF6C810D3F739000B4CA3D /* ETContainer+Controller.m */; };
+		60CF709C0D4257DB00B4CA3D /* ETWindowItem.h in Headers */ = {isa = PBXBuildFile; fileRef = 60CF6C7A0D3F6ECF00B4CA3D /* ETWindowItem.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		60CF709D0D4257DB00B4CA3D /* ETWindowItem.m in Sources */ = {isa = PBXBuildFile; fileRef = 60CF6C7B0D3F6ECF00B4CA3D /* ETWindowItem.m */; };
+		60CF70A00D42582A00B4CA3D /* ETWindowItem.m in Sources */ = {isa = PBXBuildFile; fileRef = 60CF6C7B0D3F6ECF00B4CA3D /* ETWindowItem.m */; };
 		60EB7C680C6155AA0066AC40 /* ETView.h in Headers */ = {isa = PBXBuildFile; fileRef = 60EB7C660C6155AA0066AC40 /* ETView.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		60EB7C690C6155AA0066AC40 /* ETView.m in Sources */ = {isa = PBXBuildFile; fileRef = 60EB7C670C6155AA0066AC40 /* ETView.m */; };
 		60EF8EA20C5E4D5600C97C41 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 29B97325FDCFA39411CA2CEA /* Foundation.framework */; };
@@ -842,6 +845,7 @@
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				60CF709C0D4257DB00B4CA3D /* ETWindowItem.h in Headers */,
 				6064848F0C7D3BD00000338D /* NSObject+Etoile.h in Headers */,
 				60EF8EA40C5E4D8500C97C41 /* ETContainer.h in Headers */,
 				60EF8EA50C5E4D8500C97C41 /* ETLayout.h in Headers */,
@@ -1138,6 +1142,8 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				60311D660CFB9A84001A699E /* NSWindow+Etoile.m in Sources */,
+				60CF70A00D42582A00B4CA3D /* ETWindowItem.m in Sources */,
 				600243CB0CD134440023182D /* test_ETLayoutItem.m in Sources */,
 				600244FF0CD162090023182D /* ETBrowserLayout.m in Sources */,
 				600245000CD162090023182D /* ETCollection.m in Sources */,
@@ -1186,7 +1192,6 @@
 				603113370CF46DE9001A699E /* ETLayoutItemGroup+Factory.m in Sources */,
 				603116270CF5131D001A699E /* ETLayoutItem+Events.m in Sources */,
 				603119530CF8B993001A699E /* ETObjectBrowserLayout.m in Sources */,
-				60311D660CFB9A84001A699E /* NSWindow+Etoile.m in Sources */,
 				605A31D40D0AF2B9001F7371 /* ETPropertyValueCoding.m in Sources */,
 				605A34350D0C923E001F7371 /* NSObject+Model.m in Sources */,
 				60F363FA0D183BB400FCFFDA /* NSImage+Etoile.m in Sources */,
@@ -1246,6 +1251,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				60CF709D0D4257DB00B4CA3D /* ETWindowItem.m in Sources */,
 				6064848E0C7D3BC60000338D /* NSObject+Etoile.m in Sources */,
 				60EF8EBE0C5E4DD900C97C41 /* ETLayoutItemGroup.m in Sources */,
 				60EF8EBF0C5E4DD900C97C41 /* ETStackLayout.m in Sources */,

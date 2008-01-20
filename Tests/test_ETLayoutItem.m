@@ -34,6 +34,7 @@
 #import <Foundation/Foundation.h>
 #import <AppKit/AppKit.h>
 #import <EtoileUI/ETLayoutItem.h>
+#import <EtoileUI/ETWindowItem.h>
 #import <EtoileUI/ETLayoutItemGroup.h>
 #import <EtoileUI/ETContainer.h>
 #import <EtoileUI/ETFlowLayout.h>
@@ -305,6 +306,171 @@
 	UKIntsEqual(-180, newRect.origin.y);
 	UKIntsEqual(10, newRect.size.width);
 	UKIntsEqual(20, newRect.size.height);
+}
+
+- (void) testDisplayView
+{
+	//id decorator1 = [ETLayoutItem layoutItem];
+	//id decorator2 = [ETLayoutItem layoutItem];
+}
+
+#if 0
+- (void) testDecoration
+{
+
+	/* Verify the proper set up of the current decorator */
+	if (_decoratorItem != nil)
+	{
+		NSAssert1([self displayView] != nil, @"Display view must no be nil "
+			@"when a decorator is set on item %@", self);		
+		NSAssert2([[_decoratorItem displayView] isKindOfClass: [ETView class]], 
+			@"Decorator %@ must have display view %@ of type ETView", 
+			_decoratorItem, [_decoratorItem displayView]);
+		NSAssert2([_decoratorItem displayView] == [self displayView], 
+			@"Decorator display view %@ must be decorated item display view %@", 
+			[_decoratorItem displayView], [self displayView]);
+		NSAssert2([_decoratorItem parentLayoutItem] == nil, @"Decorator %@ "
+			@"must have no parent %@ set", _decoratorItem, 
+			[_decoratorItem parentLayoutItem]);
+	}
+		
+	/* Verify the new decorator */
+	if (decorator != nil)
+	{
+		NSAssert2([[decorator displayView] isKindOfClass: [ETView class]], 
+			@"Decorator %@ must have display view %@ of type ETView", 
+			decorator, [decorator displayView]);
+		if ([decorator parentLayoutItem] != nil)
+		{
+			ETLog(@"WARNING: Decorator item %@ must have no parent to be used", 
+				decorator);
+			[[decorator parentLayoutItem] removeItem: decorator];
+		}
+	}
+	
+	// NOTE: New decorator must be set before updating display view because
+	// display view related methods rely on -decoratorItem accessor
+	ASSIGN(_decoratorItem, decorator);
+	
+	/* Finally updated the view tree */
+	
+	NSView *superview = [innerDisplayView superview];
+	ETView *newDisplayView = nil;
+	
+	[self _setInnerDisplayView: innerDisplayView];
+	// NOTE: Now innerDisplayView and [self displayView] doesn't match, the 
+	// the latter has become [decorator displayView]
+	newDisplayView = [self displayView];
+
+	/* Verify new decorator has been correctly inserted */
+	if (_decoratorItem != nil)
+	{
+		NSAssert3([newDisplayView isEqual: [self displayView]], @"Display "
+			@" view %@ of item %@ must be the decorator display view %@", 
+			[self displayView], self, newDisplayView);
+	}
+	
+	/* If the previous display view was part of view tree, inserts the new
+	   display view into the existing superview */
+	if (superview != nil)
+	{
+		NSAssert2([newDisplayView superview] == nil, @"New display view %@ of "
+			@"item %@ must have no superview at this point", 
+			newDisplayView, self);
+		[superview addSubview: newDisplayView];
+	}
+}
+#endif
+
+- (void) testSetDecoratorItem
+{
+	id decorator1 = [ETLayoutItem layoutItem];
+	id decorator2 = [ETLayoutItem layoutItem];
+	id decorator3 = [ETWindowItem layoutItem];
+	
+	UKNil([self decoratorItem]);
+	
+	[self setDecoratorItem: decorator1];
+	UKObjectsEqual(decorator1, [self decoratorItem]);
+	
+	[decorator1 setDecoratorItem: decorator2];
+	UKObjectsEqual(decorator2, [decorator1 decoratorItem]);
+	
+	[decorator2 setDecoratorItem: decorator3];
+	UKObjectsEqual(decorator3, [decorator2 decoratorItem]);
+}
+
+- (void) testLastDecoratorItem
+{
+	id decorator1 = [ETLayoutItem layoutItem];
+	id decorator2 = [ETLayoutItem layoutItem];
+	
+	UKObjectsEqual(self, [self lastDecoratorItem]);
+	
+	[self setDecoratorItem: decorator1];
+	UKObjectsEqual(decorator1, [self lastDecoratorItem]);
+	[decorator1 setDecoratorItem: decorator2];
+	UKObjectsEqual(decorator2, [self lastDecoratorItem]);
+	UKObjectsEqual(decorator2, [decorator1 lastDecoratorItem]);
+	UKObjectsEqual(decorator2, [decorator2 lastDecoratorItem]);
+}
+
+- (void) testFirstDecoratedItem
+{
+	id decorator1 = [ETLayoutItem layoutItem];
+	id decorator2 = [ETLayoutItem layoutItem];
+	
+	UKObjectsEqual(self, [self firstDecoratedItem]);
+	
+	[decorator1 setDecoratedItem: self];
+	UKObjectsEqual(self, [decorator1 firstDecoratedItem]);
+	[decorator2 setDecoratedItem: decorator1];
+	UKObjectsEqual(self,  [decorator2 firstDecoratedItem]);
+	UKObjectsEqual(self, [decorator1 firstDecoratedItem]);
+	UKObjectsEqual(self, [self firstDecoratedItem]);
+}
+
+- (void) testSupervisorView
+{
+	id view1 = AUTORELEASE([[NSView alloc] initWithFrame: NSMakeRect(0, 0, 100, 50)]);
+	id view2 = AUTORELEASE([[ETView alloc] initWithFrame: NSMakeRect(0, 0, 100, 50)]);
+	
+	UKNil([self supervisorView]);
+	[self setView: view1];
+	UKNotNil([self supervisorView]);
+	UKTrue([[self supervisorView] isKindOfClass: [ETView class]]);
+	/* Next line only valid if view1 isn't an instance of ETView kind */
+	UKObjectsEqual([[self supervisorView] wrappedView], [self view]);
+	UKObjectsNotEqual(view1, [self supervisorView]);
+	UKObjectsEqual(self, [[self supervisorView] layoutItem]);
+	[self setView: view2];
+	UKNotNil([self supervisorView]);
+	UKObjectsEqual(view2, [self supervisorView]);
+	UKObjectsEqual(self, [[self supervisorView] layoutItem]);
+}
+
+- (void) testHandleDecorateItemInView
+{
+	id parentView = AUTORELEASE([[ETView alloc] initWithFrame: NSMakeRect(0, 0, 100, 50)]);
+	id parent = [ETLayoutItemGroup layoutItemWithView: parentView];
+	id supervisorView = AUTORELEASE([[ETView alloc] initWithFrame: NSMakeRect(0, 0, 100, 50)]);
+	id supervisorView1 = AUTORELEASE([[ETView alloc] initWithFrame: NSMakeRect(0, 0, 100, 50)]);
+	id decorator1 = [ETLayoutItem layoutItem]; //[ETLayoutItem layoutItemWithView: supervisorView1];
+	
+	[parent addItem: self];
+	
+	[self setSupervisorView: supervisorView];
+	[decorator1 setSupervisorView: supervisorView1];
+	[decorator1 handleDecorateItem: self inView: parentView];
+	UKObjectsEqual([self supervisorView], [decorator1 view]);
+	UKNotNil([[self supervisorView] superview]);
+	/* Next line is valid with ETView instance as [decorator supervisorView] but 
+	   might not with ETView subclasses (not valid with ETScrollView instance
+	   to take an example) */
+	UKObjectsEqual([[self supervisorView] superview], [decorator1 supervisorView]);
+	
+	UKObjectsEqual([[decorator1 supervisorView] superview], [parent supervisorView]);
+	UKNil([[parent supervisorView] wrappedView]);
 }
 
 @end

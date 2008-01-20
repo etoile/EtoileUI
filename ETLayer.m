@@ -127,16 +127,24 @@
 
 - (void) handleAttachItem: (ETLayoutItem *)item
 {
+#if 1
 	RETAIN(item);
 	if ([item parentLayoutItem] != nil)
 		[[item parentLayoutItem] removeItem: item];
 	RELEASE(item);
 	ASSIGN(item->_parentLayoutItem, self);
+#else
+	[[item lastDecoratorItem] setDecoratorItem: [ETWindowItem layoutItem]];
+#endif
 }
 
 - (void) handleDetachItem: (ETLayoutItem *)item
 {
+#if 1
 	ASSIGN(item->_parentLayoutItem, nil);
+#else
+	[[item lastDecoratorItem] setDecoratorItem: nil];
+#endif
 }
 
 @end

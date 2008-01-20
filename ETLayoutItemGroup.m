@@ -426,6 +426,14 @@
 	return nil;
 }
 
+// handleAttachItemView:
+- (void) handleAttachViewOfItem: (ETLayoutItem *)item
+{
+	[[item displayView] removeFromSuperview];
+	if ([self layout] == nil && [self view] != nil)
+		[[self view] addSubview: [item displayView]];
+}
+
 - (void) handleAttachItem: (ETLayoutItem *)item
 {
 	RETAIN(item);
