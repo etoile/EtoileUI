@@ -50,6 +50,8 @@
 - (BOOL) isString;
 - (BOOL) isNumber;
 
+- (BOOL) isGroup;
+
 - (NSString *) typeForKey: (NSString *)key;
 
 /* Property Value Coding */

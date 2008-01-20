@@ -65,8 +65,9 @@
 	   ITEM(@"Red") is a shortcut for [ETLayoutItem layoutItemWithValue: @"Red"] */
 	[tableContainer addItem: ITEM(@"Red")];
 	[tableContainer addItem: ITEM(@"Green")];
-	[tableContainer addItem: ITEM(@"Blue")];
-	[tableContainer addItem: ITEM([NSNumber numberWithInt: 3])];
+	/* Illustrate autoboxing of objects into layout items */
+	[tableContainer addObject: @"Blue"];
+	[tableContainer addObject: [NSNumber numberWithInt: 3]];
 	/* Value will be image object description */
 	//[tableContainer addItem: ITEM([NSImage imageNamed: @"NSApplication"])];
 	

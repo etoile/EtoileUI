@@ -1202,7 +1202,7 @@
 	if ([object isLayoutItem] == NO)
 		ETLog(@"Boxed object %@ in item %@ to be added to %@", object, item, self);
 
-	[self addItem: object];
+	[self addItem: item];
 }
 
 /** Removes object from the child items of the receiver, eventually trying to 

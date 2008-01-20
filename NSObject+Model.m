@@ -94,16 +94,25 @@
 	return [self description];
 }
 
-/** Returns YES if the receiver is an NSString instance, otherwise, returns NO. */
+/** Returns YES if the receiver is an NSString instance, otherwise returns NO. */
 - (BOOL) isString
 {
 	return [self isKindOfClass: [NSString class]];
 }
 
-/** Returns YES if the receiver is an NSNumber instance, otherwise, returns NO. */
+/** Returns YES if the receiver is an NSNumber instance, otherwise returns NO. */
 - (BOOL) isNumber
 {
 	return [self isKindOfClass: [NSNumber class]];
+}
+
+/** <override />
+	Returns YES if the receiver is declared as a group, otherwise returns NO. 
+	This method returns NO by default. You can override it to return YES if you
+	want to declare your subclass instances as groups. */
+- (BOOL) isGroup
+{
+	return NO;
 }
 
 - (BOOL) validateValue: (id *)value forKey: (NSString *)key error: (NSError **)err

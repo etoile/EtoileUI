@@ -38,12 +38,13 @@
 #import <EtoileUI/ETView.h>
 #import <EtoileUI/ETLayout.h>
 #import <EtoileUI/ETInspecting.h>
+#import <EtoileUI/ETCollection.h>
 
 @class ETLayoutItem, ETLayout, ETLayer, ETLayoutItemGroup, ETSelection, 
 	ETPickboard, ETEvent;
 
 
-@interface ETContainer : ETView <ETObjectInspection> //ETLayoutingContext
+@interface ETContainer : ETView <ETObjectInspection, ETCollection, ETCollectionMutation> //ETLayoutingContext
 {
 	IBOutlet NSScrollView *_scrollView;
 
@@ -233,6 +234,15 @@
 
 - (BOOL) isHitTestEnabled;
 - (void) setEnablesHitTest: (BOOL)hit;
+
+/* Collection Protocol */
+
+- (BOOL) isOrdered;
+- (BOOL) isEmpty;
+- (id) content;
+- (NSArray *) contentArray;
+- (void) addObject: (id)object;
+- (void) removeObject: (id)object;
 
 @end
 
