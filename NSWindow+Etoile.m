@@ -38,8 +38,41 @@
 #import <EtoileUI/ETObjectBrowserLayout.h>
 #import <EtoileUI/ETCompatibility.h>
 
+#define WINDOW_CONTENT_RECT NSMakeRect(200, 200, 600, 300)
 
 @implementation NSWindow (Etoile)
+
++ (unsigned int) defaultStyleMask
+{
+	return (NSTitledWindowMask | NSClosableWindowMask | NSResizableWindowMask 
+		| NSMiniaturizableWindowMask);
+}
+
+- (id) init
+{
+	return [self initWithContentRect: WINDOW_CONTENT_RECT
+					       styleMask: [NSWindow defaultStyleMask]
+							 backing: NSBackingStoreBuffered
+							   defer: YES];
+}
+
+- (id) initWithFrame: (NSRect)frame styleMask: (unsigned int)windowStyle
+{
+	NSRect contentRect = [NSWindow contentRectForFrameRect: frame 
+	                                             styleMask: windowStyle];
+	return [self initWithContentRect: contentRect
+					       styleMask: windowStyle
+							 backing: NSBackingStoreBuffered
+							   defer: YES];
+}
+
+- (id) initWithContentRect: (NSRect)rect styleMask: (unsigned int)windowStyle
+{
+	return [self initWithContentRect: rect
+					       styleMask: windowStyle
+							 backing: NSBackingStoreBuffered
+							   defer: YES];
+}
 
 - (IBAction) browse: (id)sender
 {

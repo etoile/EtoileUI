@@ -239,13 +239,9 @@
 	{
 		/* UI set up */
 		ETContainer *browserView = [[ETContainer alloc] initWithFrame: PALETTE_FRAME layoutItem: self];
-		int windowStyle = NSTitledWindowMask | NSClosableWindowMask | NSResizableWindowMask;
 
 		// FIXME: Update this code when a layout item representation exists for NSWindow instances.
-		window = [[NSWindow alloc] initWithContentRect: PALETTE_FRAME
-											 styleMask: windowStyle
-											   backing: NSBackingStoreBuffered
-												 defer: YES];
+		window = [[NSWindow alloc] init];
 
 		[browserView setHasVerticalScroller: YES];
 		[browserView setHasHorizontalScroller: YES];

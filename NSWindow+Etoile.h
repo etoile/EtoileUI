@@ -39,6 +39,12 @@
 
 @interface NSWindow (Etoile)
 
++ (unsigned int) defaultStyleMask;
+
+- (id) init;
+- (id) initWithFrame: (NSRect)frame styleMask: (unsigned int)windowStyle;
+- (id) initWithContentRect: (NSRect)frame styleMask: (unsigned int)windowStyle;
+
 - (IBAction) browse: (id)sender;
 
 @end
