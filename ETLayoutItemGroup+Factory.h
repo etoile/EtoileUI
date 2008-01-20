@@ -52,7 +52,7 @@
 + (id) projectGroup;
 
 + (id) windowGroup;
-+ (id) setWindowGroup: (ETLayoutItemGroup *)windowGroup;
++ (void) setWindowGroup: (ETLayoutItemGroup *)windowGroup;
 
 + (id) pickboardGroup;
 
