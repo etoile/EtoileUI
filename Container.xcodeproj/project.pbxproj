@@ -363,7 +363,7 @@
 		609547DA0C0E0FB000068CBB /* ETStyleRenderer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ETStyleRenderer.h; sourceTree = "<group>"; };
 		609547DB0C0E0FB000068CBB /* ETStyleRenderer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ETStyleRenderer.m; sourceTree = "<group>"; };
 		609548CE0C0E300500068CBB /* ETLayoutItemGroup.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ETLayoutItemGroup.h; sourceTree = "<group>"; };
-		609548CF0C0E300500068CBB /* ETLayoutItemGroup.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ETLayoutItemGroup.m; sourceTree = "<group>"; };
+		609548CF0C0E300500068CBB /* ETLayoutItemGroup.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ETLayoutItemGroup.m; sourceTree = "<group>"; wrapsLines = 0; };
 		609549810C0E462500068CBB /* ETOutlineLayout.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ETOutlineLayout.h; sourceTree = "<group>"; };
 		609549820C0E462500068CBB /* ETOutlineLayout.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ETOutlineLayout.m; sourceTree = "<group>"; };
 		6097F21D0C99F487003A74CE /* NSIndexPath+Etoile.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSIndexPath+Etoile.h"; sourceTree = "<group>"; };

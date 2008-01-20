@@ -40,6 +40,7 @@
 #import <EtoileUI/ETContainer.h>
 #import <EtoileUI/ETContainer+Controller.h>
 #import <EtoileUI/NSView+Etoile.h>
+#import <EtoileUI/NSObject+Model.h>
 #import <EtoileUI/ETCompatibility.h>
 
 #define DEFAULT_FRAME NSMakeRect(0, 0, 50, 50)
@@ -1187,11 +1188,12 @@
 	it would be by calling -addItem:. If the object isn't an instance of some
 	ETLayoutItem subclass, it gets autoboxed into a layout item that is then 
 	added to the child items. 
-	Autoboxing means the object is set as the represented object of the item to 
-	be added. If the object replies YES to -isGroup, an ETLayoutItemGroup 
-	instance is created instead of instantiating a simple ETLayoutItem. Also if
-	the receiver or the base item bound to it has a container, the instantiated
-	item could also be either a deep copy of -templateItem or 
+	Autoboxing means the object is set as the represented object (or value) of 
+	the item to be added. If the object replies YES to -isGroup, an 
+	ETLayoutItemGroup instance is created instead of instantiating a simple 
+	ETLayoutItem. 
+	Also if the receiver or the base item bound to it has a container, the 
+	instantiated item could also be either a deep copy of -templateItem or 
 	-templateItemGroup when such template are available (not nil). -templateItem
 	is retrieved when object returns NO to -isGroup, otherwise 
 	-templateItemGroup is retrieved (-isGroup returns YES). */
@@ -1217,9 +1219,14 @@
 	else
 	{
 		/* Remove items with boxed object matching the object to remove */	
-		NSArray *itemsMatchedByRepObject = [[self items] 
-			objectsWithValue: object forKey: @"representedObject"];
+		NSArray *itemsMatchedByRepObject = nil;
 		
+		itemsMatchedByRepObject = [[self items] 
+			objectsMatchingValue: object forKey: @"representedObject"];
+		[self removeItems: itemsMatchedByRepObject];
+		
+		itemsMatchedByRepObject = [[self items] 
+			objectsMatchingValue: object forKey: @"value"];
 		[self removeItems: itemsMatchedByRepObject];
 	}
 }
@@ -1278,8 +1285,17 @@
 - (id) itemWithObject: (id)object
 {
 	id item = [object isGroup] ? [self newItemGroup] : [self newItem];
-	
-	[item  setRepresentedObject: object];
+
+	/* If the object is a simple value object rather than a true model object
+	   we don't set it as represented object but as a value. */
+	if ([object isCommonObjectValue])
+	{
+		[item setValue: object];
+	}
+	else
+	{
+		[item  setRepresentedObject: object];
+	}
 
 	return item;
 }
