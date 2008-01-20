@@ -204,7 +204,8 @@ typedef enum _ETSizeConstraintStyle
 	settings, you can implement this delegate method. When implemented in a
 	delegate object, -[ETLayoutItem render] isn't called automatically anymore
 	and you are in charge of calling it in this delegate method if you want to. */
-- (void) layout: (ETLayout *) renderLayoutItem: (ETLayoutItem *)item;
+- (void) layout: (ETLayout *)layout renderLayoutItem: (ETLayoutItem *)item;
+- (NSView *) layout: (ETLayout *)layout replacementViewForItem: (ETLayoutItem *)item;
 
 @end
 
