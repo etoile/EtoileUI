@@ -234,16 +234,12 @@
 
 - (int) browser: (NSBrowser *)sender numberOfRowsInColumn: (int)column
 {
-	NSString *path = [sender pathToColumn: column];
 	ETLayoutItemGroup *item = nil;
 	int nbOfItems = 0;
-	
-	if (path == nil || [path isEqual: @""])
-		path = @"/";
 
-	if ([path isEqual: @"/"])
+	if (column == 0)
 	{
-		item = (ETLayoutItemGroup *)[[self layoutContext] itemAtPath: path];
+		item = (ETLayoutItemGroup *)[self layoutContext];
 	}
 	else
 	{
@@ -270,23 +266,19 @@
 
 - (void) browser: (NSBrowser *)sender willDisplayCell: (id)cell atRow: (int)row column: (int)column
 {
-	NSString *path = [sender pathToColumn: column];
 	ETLayoutItemGroup *item = nil;
 	ETLayoutItem *childItem = nil;
 	id value = nil;
 	
-	if (path == nil || [path isEqual: @""])
-		path = @"/";
-		
-	if ([path isEqual: @"/"])
+	if (column == 0)
 	{
-		item = (ETLayoutItemGroup *)[[self layoutContext] itemAtPath: path];
+		item = (ETLayoutItemGroup *)[self layoutContext];
 	}
 	else
 	{
 		// FIXME: Implement some sort of support for multiple selection in the 
 		// right most column
-		item = [[sender selectedCell] representedObject];
+		item = [[sender selectedCellInColumn: column - 1] representedObject];
 	}
 	NSAssert(item != nil, @"Parent item must never be nil in -browser:numberOfRowsInColumn:");
 	NSAssert([item isGroup], @"Parent item "
