@@ -80,6 +80,12 @@
 /* Update column visibility */
 - (void) setDisplayedProperties: (NSArray *)properties
 {
+	if (properties == nil)
+	{
+		[NSException raise: NSInvalidArgumentException format: @"For %@ "
+			@"-setDisplayedProperties argument must never be nil", self];
+	}
+
 	NSMutableArray *displayedProperties = [properties mutableCopy];
 	NSOutlineView *tv = [self outlineView];
 	/* We cannot enumerate [tv tableColumns] directly because we remove columns */

@@ -35,6 +35,7 @@
  */
 
 #import <EtoileUI/ETLayoutItemGroup.h>
+#import <EtoileUI/ETLayoutItemGroup+Mutation.h>
 #import <EtoileUI/ETFlowLayout.h>
 #import <EtoileUI/ETLineLayout.h>
 #import <EtoileUI/ETContainer.h>
@@ -496,121 +497,19 @@
 - (void) addItem: (ETLayoutItem *)item
 {
 	//ETLog(@"Add item in %@", self);
-	
-	if ([_layoutItems containsObject: item])
-	{
-		ETLog(@"WARNING: Trying to add item %@ to the item group %@ it "
-			@"already belongs to", item, self);
-		return;
-	}
-
-	[self handleAttachItem: item];
-	[_layoutItems addObject: item];
-	if ([self canUpdateLayout])
-		[self updateLayout];
+	[self handleAdd: nil item: item];
 }
 
 - (void) insertItem: (ETLayoutItem *)item atIndex: (int)index
 {
 	//ETLog(@"Insert item in %@", self);
-	
-	if ([_layoutItems containsObject: item])
-	{
-		ETLog(@"WARNING: Trying to insert item %@ in the item group %@ it "
-			@"already belongs to", item, self);
-		return;
-	}
-	
-	[self handleAttachItem: item];
-	[_layoutItems insertObject: item atIndex: index];
-	if ([self canUpdateLayout])
-		[self updateLayout];
-	
-// NOTE: The code below is kept as an example to implement selection caching 
-// at later time if better performance are necessary.
-#if 0	
-	NSMutableIndexSet *indexes = [self selectionIndexes];
-	
-	/* In this example, 1 means selected and 0 unselected.
-       () represents old item index shifted by insertion
-	   
-       Item index      0   1   2   3   4
-       Item selected   0   1   0   1   0
-   
-       When you call shiftIndexesStartingAtIndex: 2 by: 1, you get:
-       Item index      0   1   2   3   4
-       Item selected   0   1   0   0   1  0
-       Now by inserting an item at 2:
-       Item index      0   1   2  (2) (3) (4)
-       Item selected   0   1   0   0   1   0
-		   
-       That's precisely the selections state we expect once item at index 2
-       has been removed. */
-	
-	[item setParentLayoutItem: nil];
-	[_layoutItems insertObject: item atIndex: index];
-	[indexes shiftIndexesStartingAtIndex: index by: 1];
-	[self setSelectionIndexes: indexes];
-#endif
+	[self handleInsert: nil item: item atIndex: index];
 }
 
 - (void) removeItem: (ETLayoutItem *)item
 {
 	//ETLog(@"Remove item in %@", self);
-
-	[self handleDetachItem: item];
-	[_layoutItems removeObject: item];
-	if ([self canUpdateLayout])
-		[self updateLayout];
-		
-// NOTE: The code below is kept as an example to implement selection caching 
-// at later time if better performance are necessary.
-#if 0	
-	NSMutableIndexSet *indexes = [self selectionIndexes];
-	int removedIndex = [self indexOfItem: item];
-	
-	if ([indexes containsIndex: removedIndex])
-	{
-		/* In this example, 1 means selected and 0 unselected.
-		
-		   Item index      0   1   2   3   4
-		   Item selected   0   1   0   1   0
-		   
-		   When you call shiftIndexesStartingAtIndex: 3 by: -1, you get:
-		   Item index      0   1   2   3   4
-		   Item selected   0   1   1   0   0
-		   Now by removing item 2:
-		   Item index      0   1   3   4
-		   Item selected   0   1   1   0   0
-		   		   
-		   That's precisely the selections state we expect once item at index 2
-		   has been removed. */
-		[indexes shiftIndexesStartingAtIndex: removedIndex + 1 by: -1];
-		
-		/* Verify basic shitfing errors before really updating the selection */
-		if ([[self selectionIndexes] containsIndex: removedIndex + 1])
-		{
-			NSAssert([indexes containsIndex: removedIndex], 
-				@"Item at the index of the removal must remain selected because it was previously");
-		}
-		if ([[self selectionIndexes] containsIndex: removedIndex - 1])
-		{
-			NSAssert([indexes containsIndex: removedIndex - 1], 
-				@"Item before the index of the removal must remain selected because it was previously");
-		}
-		if ([[self selectionIndexes] containsIndex: removedIndex + 1] == NO)
-		{
-			NSAssert([indexes containsIndex: removedIndex] == NO, 
-				@"Item at the index of the removal must not be selected because it wasn't previously");
-		}
-		if ([[self selectionIndexes] containsIndex: removedIndex - 1] == NO)
-		{
-			NSAssert([indexes containsIndex: removedIndex - 1] == NO, 
-				@"Item before the index of the removal must not be selected because it wasn't previously");
-		}
-		[self setSelectionIndexes: indexes];
-	}
-#endif
+	[self handleRemove: nil item: item];
 }
 
 - (void) removeItemAtIndex: (int)index
@@ -627,33 +526,22 @@
 - (void) addItems: (NSArray *)items
 {
 	//ETLog(@"Add items in %@", self);
-	
-	NSEnumerator *e = [items objectEnumerator];
-	ETLayoutItem *layoutItem = nil;
-	
-	while ((layoutItem = [e nextObject]) != nil)
-	{
-		[self addItem: layoutItem];
-	}
+	[self handleAdd: nil items: items];
 }
 
 - (void) removeItems: (NSArray *)items
 {
-	ETLog(@"Remove items in %@", self);
-	
-	NSEnumerator *e = [items objectEnumerator];
-	ETLayoutItem *layoutItem = nil;
-	
-	while ((layoutItem = [e nextObject]) != nil)
-	{
-		[self removeItem: layoutItem];
-	}
+	//ETLog(@"Remove items in %@", self);
+	[self handleRemove: nil items: items];
 }
 
 - (void) removeAllItems
 {
 	ETLog(@"Remove all items in %@", self);
-	
+	// FIXME: Temporary solution which is quite slow
+	[self handleRemove: nil items: [self items]];
+
+#if 0	
 	// NOTE: If a selection cache is implemented, the cache must be cleared
 	// here because this method doesn't the primitive mutation method 
 	// -removeItem:
@@ -662,6 +550,7 @@
 	[_layoutItems removeAllObjects];
 	if ([self canUpdateLayout])
 		[self updateLayout];
+#endif
 }
 
 // FIXME: (id) parameter rather than (ETLayoutItem *) turns off compiler 
@@ -1338,7 +1227,7 @@
 
 - (id) itemWithObject: (id)object
 {
-	id item = [object isGroup] ? [self newItemGroup] : [self newItem];
+	id item = [object isCollection] ? [self newItemGroup] : [self newItem];
 
 	/* If the object is a simple value object rather than a true model object
 	   we don't set it as represented object but as a value. */
@@ -1485,15 +1374,19 @@
 	switch ([container checkSourceProtocolConformance])
 	{
 		case 1:
-			//NSLog(@"Will -reloadFromFlatSource");
+			//ETLog(@"Will -reloadFromFlatSource");
 			return [self itemsFromFlatSource];
 			break;
 		case 2:
-			//NSLog(@"Will -reloadFromTreeSource");
+			//ETLog(@"Will -reloadFromTreeSource");
 			return [self itemsFromTreeSource];
 			break;
+		case 3:
+			ETLog(@"Will -reloadFromRepresentedObject");
+			return [self itemsFromRepresentedObject];
+			break;
 		default:
-			NSLog(@"WARNING: source protocol is incorrectly supported by %@.", [[self container] source]);
+			ETLog(@"WARNING: source protocol is incorrectly supported by %@.", [[self container] source]);
 	}
 	
 	return nil;

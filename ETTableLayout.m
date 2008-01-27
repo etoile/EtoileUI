@@ -156,6 +156,12 @@
 /* Update column visibility */
 - (void) setDisplayedProperties: (NSArray *)properties
 {
+	if (properties == nil)
+	{
+		[NSException raise: NSInvalidArgumentException format: @"For %@ "
+			@"-setDisplayedProperties argument must never be nil", self];
+	}
+
 	NSMutableArray *displayedProperties = [properties mutableCopy];
 	NSTableView *tv = [self tableView];
 	/* We cannot enumerate [tv tableColumns] directly because we remove columns */
@@ -617,7 +623,12 @@
 		NSStringFromPoint([event locationInWindow]), 
 		NSStringFromPoint(pointInWindow));
 	
-	[[self dataSource] setLastDragEvent: event];
+	// NOTE: Present method is called by NSTableView so we must not send 
+	// -setLastDragEvent: in case NSTableView is set up directly. For example, 
+	// otherwise it results in an unknown selector assertion if you drag a row
+	// in NSOpenPanel.
+	if ([[self dataSource] isKindOfClass: [ETTableLayout class]])
+		[[self dataSource] setLastDragEvent: event];
 	return YES;
 }
 

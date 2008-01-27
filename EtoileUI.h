@@ -69,6 +69,7 @@
 #import <EtoileUI/ETLayoutItem+Events.h>
 #import <EtoileUI/ETEvent.h>
 #import <EtoileUI/ETLayoutItemGroup.h>
+#import <EtoileUI/ETLayoutItemGroup+Mutation.h>
 #import <EtoileUI/ETLayoutItemGroup+Factory.h>
 #import <EtoileUI/ETLayer.h>
 #import <EtoileUI/ETWindowItem.h>

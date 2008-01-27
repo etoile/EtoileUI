@@ -517,7 +517,11 @@ NSString *ETLayoutItemPboardType = @"ETLayoutItemPboardType"; // FIXME: replace 
 	collection part of protocol like -numberOfItemsInContainer. */
 - (int) checkSourceProtocolConformance
 {
-	if ([[self source] respondsToSelector: @selector(container:numberOfItemsAtPath:)])
+	if ([[self source] isEqual: [self layoutItem]])
+	{
+		return 3;
+	}
+	else if ([[self source] respondsToSelector: @selector(container:numberOfItemsAtPath:)])
 	{
 		if ([[self source] respondsToSelector: @selector(container:itemAtPath:)])
 		{

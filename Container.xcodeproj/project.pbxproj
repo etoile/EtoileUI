@@ -65,6 +65,7 @@
 		603463AD0C9FBF6A006DFCD1 /* ETCollection.m in Sources */ = {isa = PBXBuildFile; fileRef = 603463AB0C9FBF6A006DFCD1 /* ETCollection.m */; };
 		603D4D0C0C8D1E10003DFD51 /* NSString+Etoile.h in Headers */ = {isa = PBXBuildFile; fileRef = 603D4D0A0C8D1E10003DFD51 /* NSString+Etoile.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		603D4D0D0C8D1E10003DFD51 /* NSString+Etoile.m in Sources */ = {isa = PBXBuildFile; fileRef = 603D4D0B0C8D1E10003DFD51 /* NSString+Etoile.m */; };
+		60417CA90D44F637009E01BC /* MarkupEditor-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 60CF73F00D4496AD00B4CA3D /* MarkupEditor-Info.plist */; };
 		6051502E0C1738D600B5E0E5 /* BrowserPrototype.nib in Resources */ = {isa = PBXBuildFile; fileRef = 6051502B0C1738D600B5E0E5 /* BrowserPrototype.nib */; };
 		60539D9E0C242065006C57EC /* PaneContainerExample.nib in Resources */ = {isa = PBXBuildFile; fileRef = 60539D9C0C242065006C57EC /* PaneContainerExample.nib */; };
 		60599A760C772129007F225E /* ETInspector.h in Headers */ = {isa = PBXBuildFile; fileRef = 60599A740C772129007F225E /* ETInspector.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -149,10 +150,15 @@
 		60CF70A00D42582A00B4CA3D /* ETWindowItem.m in Sources */ = {isa = PBXBuildFile; fileRef = 60CF6C7B0D3F6ECF00B4CA3D /* ETWindowItem.m */; };
 		60CF710D0D42AA8600B4CA3D /* test_ETObjectChain.m in Sources */ = {isa = PBXBuildFile; fileRef = 60CF710C0D42AA8600B4CA3D /* test_ETObjectChain.m */; };
 		60CF71100D42AAC600B4CA3D /* Inspector.nib in Resources */ = {isa = PBXBuildFile; fileRef = 60CF710E0D42AAC600B4CA3D /* Inspector.nib */; };
-		60CF717D0D42E75300B4CA3D /* ETLayoutItemGroup+Mutation.h in Headers */ = {isa = PBXBuildFile; fileRef = 60CF717B0D42E75300B4CA3D /* ETLayoutItemGroup+Mutation.h */; };
+		60CF717D0D42E75300B4CA3D /* ETLayoutItemGroup+Mutation.h in Headers */ = {isa = PBXBuildFile; fileRef = 60CF717B0D42E75300B4CA3D /* ETLayoutItemGroup+Mutation.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		60CF717E0D42E75300B4CA3D /* ETLayoutItemGroup+Mutation.m in Sources */ = {isa = PBXBuildFile; fileRef = 60CF717C0D42E75300B4CA3D /* ETLayoutItemGroup+Mutation.m */; };
 		60CF717F0D42E75300B4CA3D /* ETLayoutItemGroup+Mutation.h in Headers */ = {isa = PBXBuildFile; fileRef = 60CF717B0D42E75300B4CA3D /* ETLayoutItemGroup+Mutation.h */; };
 		60CF71800D42E75300B4CA3D /* ETLayoutItemGroup+Mutation.m in Sources */ = {isa = PBXBuildFile; fileRef = 60CF717C0D42E75300B4CA3D /* ETLayoutItemGroup+Mutation.m */; };
+		60CF743B0D449B9500B4CA3D /* MarkupEditorController.m in Sources */ = {isa = PBXBuildFile; fileRef = 60CF743A0D449B9500B4CA3D /* MarkupEditorController.m */; };
+		60CF744F0D44E42A00B4CA3D /* MarkupEditor.nib in Resources */ = {isa = PBXBuildFile; fileRef = 60CF744E0D44E42A00B4CA3D /* MarkupEditor.nib */; };
+		60CF74930D44E68700B4CA3D /* EtoileUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 60EF8E9D0C5E4D0600C97C41 /* EtoileUI.framework */; };
+		60CF74940D44E68700B4CA3D /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1058C7A1FEA54F0111CA2CBB /* Cocoa.framework */; };
+		60CF749A0D44E69700B4CA3D /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 29B97316FDCFA39411CA2CEA /* main.m */; };
 		60EB7C680C6155AA0066AC40 /* ETView.h in Headers */ = {isa = PBXBuildFile; fileRef = 60EB7C660C6155AA0066AC40 /* ETView.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		60EB7C690C6155AA0066AC40 /* ETView.m in Sources */ = {isa = PBXBuildFile; fileRef = 60EB7C670C6155AA0066AC40 /* ETView.m */; };
 		60EF8EA20C5E4D5600C97C41 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 29B97325FDCFA39411CA2CEA /* Foundation.framework */; };
@@ -220,6 +226,13 @@
 
 /* Begin PBXContainerItemProxy section */
 		60909D5E0CB30484009CAD27 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 29B97313FDCFA39411CA2CEA /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 60EF8E9C0C5E4D0600C97C41;
+			remoteInfo = EtoileUI;
+		};
+		60CF74370D449B6E00B4CA3D /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 29B97313FDCFA39411CA2CEA /* Project object */;
 			proxyType = 1;
@@ -398,6 +411,11 @@
 		60CF710F0D42AAC600B4CA3D /* English */ = {isa = PBXFileReference; lastKnownFileType = wrapper.nib; name = English; path = English.lproj/Inspector.nib; sourceTree = "<group>"; };
 		60CF717B0D42E75300B4CA3D /* ETLayoutItemGroup+Mutation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "ETLayoutItemGroup+Mutation.h"; sourceTree = "<group>"; };
 		60CF717C0D42E75300B4CA3D /* ETLayoutItemGroup+Mutation.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "ETLayoutItemGroup+Mutation.m"; sourceTree = "<group>"; };
+		60CF73F00D4496AD00B4CA3D /* MarkupEditor-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = "MarkupEditor-Info.plist"; path = "MarkupEditor/MarkupEditor-Info.plist"; sourceTree = "<group>"; };
+		60CF742A0D449A8A00B4CA3D /* MarkupEditor.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = MarkupEditor.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		60CF74390D449B9500B4CA3D /* MarkupEditorController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MarkupEditorController.h; path = MarkupEditor/MarkupEditorController.h; sourceTree = "<group>"; };
+		60CF743A0D449B9500B4CA3D /* MarkupEditorController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = MarkupEditorController.m; path = MarkupEditor/MarkupEditorController.m; sourceTree = "<group>"; };
+		60CF744E0D44E42A00B4CA3D /* MarkupEditor.nib */ = {isa = PBXFileReference; lastKnownFileType = wrapper.nib; name = MarkupEditor.nib; path = MarkupEditor/MarkupEditor.nib; sourceTree = "<group>"; };
 		60E584EE0C54A52000905ED8 /* ETRenderer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ETRenderer.h; sourceTree = "<group>"; };
 		60E584EF0C54A52000905ED8 /* ETRenderer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ETRenderer.m; sourceTree = "<group>"; };
 		60EABCBB0C0C284000341BD8 /* ETTableLayout.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ETTableLayout.h; sourceTree = "<group>"; };
@@ -470,6 +488,15 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		60CF74280D449A8A00B4CA3D /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				60CF74930D44E68700B4CA3D /* EtoileUI.framework in Frameworks */,
+				60CF74940D44E68700B4CA3D /* Cocoa.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		60EF8E9B0C5E4D0600C97C41 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
@@ -535,6 +562,7 @@
 				60C09F5A0C6A8FB600A4458D /* ObjectRole */,
 				60909CC90CB2DA42009CAD27 /* TableViewExample.app */,
 				600243B90CD133420023182D /* EtoileUITests.bundle */,
+				60CF742A0D449A8A00B4CA3D /* MarkupEditor.app */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -557,6 +585,7 @@
 				60EF8E9E0C5E4D0600C97C41 /* EtoileUI-Info.plist */,
 				60909CCB0CB2DA43009CAD27 /* TableViewExample-Info.plist */,
 				600243BA0CD133420023182D /* EtoileUITests-Info.plist */,
+				60CF73F00D4496AD00B4CA3D /* MarkupEditor-Info.plist */,
 			);
 			name = FlowAutolayoutExample;
 			sourceTree = "<group>";
@@ -574,6 +603,7 @@
 		29B97317FDCFA39411CA2CEA /* Resources */ = {
 			isa = PBXGroup;
 			children = (
+				60CF744E0D44E42A00B4CA3D /* MarkupEditor.nib */,
 				60CF710E0D42AAC600B4CA3D /* Inspector.nib */,
 				60CA73860C494B22009D9B02 /* COPYING */,
 				605F0CD00C0F4034003AE3E6 /* ObjectManager.nib */,
@@ -794,6 +824,8 @@
 				60C1D8AC0C2569D500E00A2E /* PaneController.m */,
 				60909CD70CB2DAB3009CAD27 /* TableController.h */,
 				60909CD80CB2DAB3009CAD27 /* TableController.m */,
+				60CF74390D449B9500B4CA3D /* MarkupEditorController.h */,
+				60CF743A0D449B9500B4CA3D /* MarkupEditorController.m */,
 			);
 			name = Examples;
 			sourceTree = "<group>";
@@ -982,6 +1014,24 @@
 			productReference = 60C09F5A0C6A8FB600A4458D /* ObjectRole */;
 			productType = "com.apple.product-type.tool";
 		};
+		60CF74290D449A8A00B4CA3D /* MarkupEditor */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 60CF74360D449ABB00B4CA3D /* Build configuration list for PBXNativeTarget "MarkupEditor" */;
+			buildPhases = (
+				60CF74260D449A8A00B4CA3D /* Resources */,
+				60CF74270D449A8A00B4CA3D /* Sources */,
+				60CF74280D449A8A00B4CA3D /* Frameworks */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				60CF74380D449B6E00B4CA3D /* PBXTargetDependency */,
+			);
+			name = MarkupEditor;
+			productName = MarkupEditor;
+			productReference = 60CF742A0D449A8A00B4CA3D /* MarkupEditor.app */;
+			productType = "com.apple.product-type.application";
+		};
 		60EF8E9C0C5E4D0600C97C41 /* EtoileUI */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = 60EF8E9F0C5E4D0800C97C41 /* Build configuration list for PBXNativeTarget "EtoileUI" */;
@@ -1016,6 +1066,7 @@
 				605F0CC90C0F400D003AE3E6 /* ObjectManagerExample */,
 				60539D930C240A7B006C57EC /* PaneContainerExample */,
 				60909CC80CB2DA42009CAD27 /* TableViewExample */,
+				60CF74290D449A8A00B4CA3D /* MarkupEditor */,
 				60EF8E9C0C5E4D0600C97C41 /* EtoileUI */,
 				60C09F590C6A8FB600A4458D /* ObjectRole */,
 				600243B80CD133420023182D /* EtoileUITests */,
@@ -1070,6 +1121,15 @@
 			files = (
 				60909D680CB304FB009CAD27 /* TableViewExample-Info.plist in Resources */,
 				60909D370CB30092009CAD27 /* TableExample.nib in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		60CF74260D449A8A00B4CA3D /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				60417CA90D44F637009E01BC /* MarkupEditor-Info.plist in Resources */,
+				60CF744F0D44E42A00B4CA3D /* MarkupEditor.nib in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1216,6 +1276,15 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		60CF74270D449A8A00B4CA3D /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				60CF749A0D44E69700B4CA3D /* main.m in Sources */,
+				60CF743B0D449B9500B4CA3D /* MarkupEditorController.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		60EF8E9A0C5E4D0600C97C41 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -1281,6 +1350,11 @@
 			isa = PBXTargetDependency;
 			target = 60EF8E9C0C5E4D0600C97C41 /* EtoileUI */;
 			targetProxy = 60909D5E0CB30484009CAD27 /* PBXContainerItemProxy */;
+		};
+		60CF74380D449B6E00B4CA3D /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 60EF8E9C0C5E4D0600C97C41 /* EtoileUI */;
+			targetProxy = 60CF74370D449B6E00B4CA3D /* PBXContainerItemProxy */;
 		};
 		60F714300C5E7DB2002CA8AA /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
@@ -1745,6 +1819,26 @@
 			};
 			name = Release;
 		};
+		60CF742E0D449A8A00B4CA3D /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				INFOPLIST_FILE = "MarkupEditor/MarkupEditor-Info.plist";
+				INSTALL_PATH = "$(HOME)/Applications";
+				PRODUCT_NAME = MarkupEditor;
+				WRAPPER_EXTENSION = app;
+			};
+			name = Debug;
+		};
+		60CF742F0D449A8A00B4CA3D /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				INFOPLIST_FILE = "MarkupEditor/MarkupEditor-Info.plist";
+				INSTALL_PATH = "$(HOME)/Applications";
+				PRODUCT_NAME = MarkupEditor;
+				WRAPPER_EXTENSION = app;
+			};
+			name = Release;
+		};
 		60EF8EA00C5E4D0800C97C41 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -1818,8 +1912,27 @@
 		C01FCF4F08A954540054247B /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				FRAMEWORK_SEARCH_PATHS = $BUILT_PRODUCTS_DIR;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_ENABLE_FIX_AND_CONTINUE = YES;
+				GCC_MODEL_TUNING = G5;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "$(SYSTEM_LIBRARY_DIR)/Frameworks/AppKit.framework/Headers/AppKit.h";
+				GCC_PREPROCESSOR_DEFINITIONS = NeXT_RUNTIME;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
+				HEADER_SEARCH_PATHS = /usr/GNUstep/System/Library/Headers/;
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					/usr/GNUstep/System/Library/Libraries,
+				);
+				OTHER_LDFLAGS = (
+					"-framework",
+					Foundation,
+					"-framework",
+					AppKit,
+				);
 				PREBINDING = NO;
 				SDKROOT = /Developer/SDKs/MacOSX10.5.sdk;
 			};
@@ -1828,10 +1941,31 @@
 		C01FCF5008A954540054247B /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				COPY_PHASE_STRIP = YES;
+				FRAMEWORK_SEARCH_PATHS = $BUILT_PRODUCTS_DIR;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_ENABLE_FIX_AND_CONTINUE = NO;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
+				GCC_MODEL_TUNING = G5;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "$(SYSTEM_LIBRARY_DIR)/Frameworks/AppKit.framework/Headers/AppKit.h";
+				GCC_PREPROCESSOR_DEFINITIONS = NeXT_RUNTIME;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
+				HEADER_SEARCH_PATHS = /usr/GNUstep/System/Library/Headers/;
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					/usr/GNUstep/System/Library/Libraries,
+				);
+				OTHER_LDFLAGS = (
+					"-framework",
+					Foundation,
+					"-framework",
+					AppKit,
+				);
 				PREBINDING = NO;
 				SDKROOT = /Developer/SDKs/MacOSX10.5.sdk;
+				ZERO_LINK = NO;
 			};
 			name = Release;
 		};
@@ -1888,6 +2022,15 @@
 			buildConfigurations = (
 				60C09FDE0C6A8FF800A4458D /* Debug */,
 				60C09FDF0C6A8FF800A4458D /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		60CF74360D449ABB00B4CA3D /* Build configuration list for PBXNativeTarget "MarkupEditor" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				60CF742E0D449A8A00B4CA3D /* Debug */,
+				60CF742F0D449A8A00B4CA3D /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;

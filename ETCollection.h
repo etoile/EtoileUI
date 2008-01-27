@@ -38,8 +38,14 @@
 
 /* Collection Access and Mutation Protocols */
 
+/* NOTE: -isEmpty, -count and -objectEnumerator could be put in a 
+   ETCollectionMixin because their implementation doesn't vary or their value 
+   can be extrapolated from -contentArray. */
+   
 @protocol ETCollection
+/** Returns whether the receiveir stores the elements in a sorted order or not. */
 - (BOOL) isOrdered;
+/** Returns YES when the collection contains no elements, otherwise returns NO. */
 - (BOOL) isEmpty;
 /** Returns the underlying data structure object holding the content or self 
 	when the protocol is adopted by a class which is a content data structure 
@@ -63,8 +69,6 @@
 // unimplemented method when the protocol is adopted by a category on the 
 // collection. I think the compiler should be smart enough to check whether the
 // original class already declares/implements the method or not. 
-// -isEmpty and -objectEnumerator could be put in a ETCollectionMixin because
-// their implementation doesn't vary.
 @end
 
 @protocol ETCollectionMutation

@@ -37,6 +37,27 @@
 #import <EtoileUI/NSObject+Model.h>
 
 
+#if 0
+@implementation ETCollectionMixin
+
+- (unsigned int) count
+{
+	return [[self contentArray] count];
+}
+
+- (BOOL) isEmpty
+{
+	return ([self count] == 0);
+}
+
+- (BOOL) objectEnumerator
+{
+	return [[self contentArray] objectEnumerator];
+}
+
+@end
+#endif
+
 @implementation NSArray (ETCollection)
 
 - (BOOL) isOrdered
@@ -57,6 +78,16 @@
 - (NSArray *) contentArray
 {
 	return self;
+}
+
+- (NSString *) stringValue
+{
+	return [self descriptionWithLocale: nil];
+}
+
+- (NSString *) description
+{
+	return [NSString stringWithFormat: @"Array %d ordered objects", [self count]];
 }
 
 @end
@@ -81,6 +112,23 @@
 - (NSArray *) contentArray
 {
 	return [self allValues];
+}
+
+- (NSString *) identifierAtIndex: (unsigned int)index
+{
+	// FIXME: In theory a bad implementation seeing that the documentation
+	// states -allKeys and -allValues return objects in an undefined order.
+	return [[self allKeys] objectAtIndex: index];
+}
+
+- (NSString *) stringValue
+{
+	return [self descriptionWithLocale: nil];
+}
+
+- (NSString *) description
+{
+	return [NSString stringWithFormat: @"Dictionary %d key/value pairs", [self count]];
 }
 
 @end

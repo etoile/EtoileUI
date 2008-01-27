@@ -309,8 +309,13 @@
 	   useful for list control (table with a single column). */
 	if ([childItem valueForProperty: @"name"] == nil)
 		value = [childItem value];
+
 	if (value == nil)
 		value = [childItem valueForProperty: @"displayName"];
+
+	NSAssert2(value != nil, @"Item %@ returns nil value in browser view %@ "
+		@"and display name must never be nil", childItem, self);
+
 	ETLog(@"Returns %@ as object value in browser view %@", value, sender);
 	
 	/* See -tableView:objectValueForTableColumn:row: in ETTableLayout to 
