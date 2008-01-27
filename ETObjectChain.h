@@ -1,7 +1,7 @@
 /*
 	ETObjectChain.h
 	
-	Generic object chain class based a linked list
+	Generic object chain class based on a linked list
  
 	Copyright (C) 2007 Quentin Mathe
  
