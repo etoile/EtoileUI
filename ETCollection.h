@@ -55,6 +55,16 @@
 /** Returns an enumerator which can be used as a conveniency to iterate over 
 	the elements of the content one-by-one. */
 //- (NSEnumerator *) objectEnumerator;
+/** Returns the number of elements hold by the receiver. */
+//- (unsigned int) count;
+
+// FIXME: Both objectEnumerator and count are problematic because they are 
+// declared on NSArray, NSDictionary etc. therefore the compiler complains about
+// unimplemented method when the protocol is adopted by a category on the 
+// collection. I think the compiler should be smart enough to check whether the
+// original class already declares/implements the method or not. 
+// -isEmpty and -objectEnumerator could be put in a ETCollectionMixin because
+// their implementation doesn't vary.
 @end
 
 @protocol ETCollectionMutation

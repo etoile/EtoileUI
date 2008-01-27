@@ -1221,6 +1221,11 @@
 	return ([self numberOfItems] == 0);
 }
 
+- (unsigned int) count
+{
+	return [self numberOfItems];
+}
+
 - (id) content
 {
 	return [self items];

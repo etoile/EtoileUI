@@ -173,6 +173,7 @@
 
 - (BOOL) isOrdered;
 - (BOOL) isEmpty;
+- (unsigned int) count;
 - (id) content;
 - (NSArray *) contentArray;
 - (void) addObject: (id)object;
