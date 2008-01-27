@@ -36,11 +36,6 @@
 #import <Foundation/Foundation.h>
 #import <AppKit/AppKit.h>
 
-
-@interface NSObject (ETCollection)
-- (BOOL) isCollection;
-@end
-
 /* Collection Access and Mutation Protocols */
 
 @protocol ETCollection

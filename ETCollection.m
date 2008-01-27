@@ -37,16 +37,6 @@
 #import <EtoileUI/NSObject+Model.h>
 
 
-@implementation NSObject (ETCollection)
-
-- (BOOL) isCollection
-{
-	return [self conformsToProtocol: @protocol(ETCollection)];
-}
-
-@end
-
-
 @implementation NSArray (ETCollection)
 
 - (BOOL) isOrdered

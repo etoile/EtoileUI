@@ -50,8 +50,6 @@
 - (BOOL) isString;
 - (BOOL) isNumber;
 
-- (BOOL) isGroup;
-
 - (NSString *) typeForKey: (NSString *)key;
 
 /* Property Value Coding */
@@ -67,7 +65,12 @@
 
 - (NSString *) primitiveDescription;
 
-/* Collection */
+/* Collection & Mutability */
+
+- (BOOL) isMutable;
+- (BOOL) isCollection;
+- (BOOL) isMutableCollection;
+- (BOOL) isGroup;
 
 - (id) keyForCollection: (id)collection;
 

@@ -34,6 +34,7 @@
  */
 
 #import <EtoileUI/NSObject+Model.h>
+#import <EtoileUI/ETCollection.h>
 #import <EtoileUI/ETCompatibility.h>
 
 //#define DEBUG_PVC 1
@@ -109,10 +110,50 @@
 /** <override />
 	Returns YES if the receiver is declared as a group, otherwise returns NO. 
 	This method returns NO by default. You can override it to return YES if you
-	want to declare your subclass instances as groups. */
+	want to declare your subclass instances as groups. 
+	A group is specialized model object which is a composite and can behave 
+	like a mutable collection. A basic collection object (like NSMutableArray, 
+	NSMutableDictionary, NSMutableSet) must never be declared as a group.
+	COGroup in CoreObject or ETLayoutItemGroup in EtoileUI are typical examples.
+	A group should conform to ETCollectionMutation protocol. */
 - (BOOL) isGroup
 {
 	return NO;
+}
+
+/** <override />
+	Returns YES if the receiver is declared as mutable, otherwise returns NO. 
+	This method returns NO by default. You can override it to return YES if you
+	want to declare your subclass instances as mutable objects (which are 
+	collections most of time). 
+	If you adopts ETCollectionMutation in a subclass, you don't need to 
+	override this method to declare your collection objects as mutable. */
+- (BOOL) isMutable
+{
+	if ([self conformsToProtocol: @protocol(ETCollectionMutation)])
+		return YES;
+
+	return NO;
+}
+
+/** <override-never />
+	Returns YES if the receiver is declared as a collection by conforming to 
+	ETCollection protocol, otherwise returns NO. 
+	You must never override this method in your collection classes, you only 
+	need to adopt ETCollection protocol. */
+- (BOOL) isCollection
+{
+	return [self conformsToProtocol: @protocol(ETCollection)];
+}
+
+/** <override-never />
+	Returns YES if the receiver is declared as a collection by conforming to 
+	ETCollection protocol, otherwise returns NO. 
+	You must never override this method in your collection classes, you only 
+	need to adopt ETCollection protocol. */
+- (BOOL) isMutableCollection
+{
+	return [self conformsToProtocol: @protocol(ETCollectionMutation)];
 }
 
 - (BOOL) validateValue: (id *)value forKey: (NSString *)key error: (NSError **)err
