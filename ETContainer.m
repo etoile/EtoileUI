@@ -1645,6 +1645,12 @@ NSString *ETLayoutItemPboardType = @"ETLayoutItemPboardType"; // FIXME: replace 
 	float indicatorLineX = 0.0;
 	NSRect indicatorRect = NSZeroRect;
 	
+	if ([self canDraw] == NO)
+	{
+		ETLog(@"WARNING: Impossible to draw drag insertion indicator in %@", self);
+		return;
+	}
+	
 	[self lockFocus];
 	[[NSColor magentaColor] setStroke];
 	[NSBezierPath setDefaultLineCapStyle: NSButtLineCapStyle];

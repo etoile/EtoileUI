@@ -72,6 +72,12 @@
 - (void) takeSnapshotFromRect: (NSRect)sourceRect inView: (NSView *)view
 {
 	NSBitmapImageRep *rep = nil;
+	
+	if ([view canDraw] == NO)
+	{
+		ETLog(@"WARNING: Impossible to snapshot view %@", view);
+		return;
+	}
 
 	[view lockFocus];
 	rep = [[NSBitmapImageRep alloc] initWithFocusedViewRect: sourceRect];
@@ -86,6 +92,12 @@
 - (void) takeSnapshotFromRect: (NSRect)sourceRect inView: (NSView *)view
 {
 	NSBitmapImageRep *rep = nil;
+	
+	if ([view canDraw] == NO)
+	{
+		ETLog(@"WARNING: Impossible to snapshot view %@", view);
+		return;
+	}
 	
 	[view lockFocus];
 	#ifdef GNUSTEP
