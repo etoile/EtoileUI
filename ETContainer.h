@@ -283,19 +283,19 @@
 /* These methods make also possible to use your data source with bindings if 
    you use the specifically designed controller ETSourceController */
 - (BOOL) container: (ETContainer *)container addItems: (NSArray *)items 
-	operation: (id)op;
+	operation: (ETEvent *)op;
 - (BOOL) container: (ETContainer *)container insertItems: (NSArray *)items 
-	atIndexes: (NSIndexSet *)indexes operation: (id)op;
+	atIndexes: (NSIndexSet *)indexes operation: (ETEvent *)op;
 - (BOOL) container: (ETContainer *)container removeItems: (NSArray *)items 
-	atIndexes: (NSIndexSet *)indexes operation: (id)op;
+	atIndexes: (NSIndexSet *)indexes operation: (ETEvent *)op;
 
 /* Pick and drop support and Bindings support by index path */
 - (BOOL) container: (ETContainer *)container addItems: (NSArray *)items 
-	atPath: (NSString *)path operation: (id)op;
+	atPath: (NSString *)path operation: (ETEvent *)op;
 - (BOOL) container: (ETContainer *)container insertItems: (NSArray *)items 
-	atPaths: (NSArray *)paths operation: (id)op;
-- (BOOL) container: (ETContainer *)container removeItems: (NSArray *)items 
-	atPaths: (NSArray *)paths operation: (id)op;
+	atPaths: (NSArray *)paths operation: (ETEvent *)op;
+- (BOOL) container: (ETContainer *)container 
+	removeItemsAtPaths: (NSArray *)paths operation: (ETEvent *)op;
 
 /* Advanced pick and drop support 
    Only needed if you want to override pick and drop support. Useful to get more

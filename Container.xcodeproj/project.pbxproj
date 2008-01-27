@@ -149,6 +149,10 @@
 		60CF70A00D42582A00B4CA3D /* ETWindowItem.m in Sources */ = {isa = PBXBuildFile; fileRef = 60CF6C7B0D3F6ECF00B4CA3D /* ETWindowItem.m */; };
 		60CF710D0D42AA8600B4CA3D /* test_ETObjectChain.m in Sources */ = {isa = PBXBuildFile; fileRef = 60CF710C0D42AA8600B4CA3D /* test_ETObjectChain.m */; };
 		60CF71100D42AAC600B4CA3D /* Inspector.nib in Resources */ = {isa = PBXBuildFile; fileRef = 60CF710E0D42AAC600B4CA3D /* Inspector.nib */; };
+		60CF717D0D42E75300B4CA3D /* ETLayoutItemGroup+Mutation.h in Headers */ = {isa = PBXBuildFile; fileRef = 60CF717B0D42E75300B4CA3D /* ETLayoutItemGroup+Mutation.h */; };
+		60CF717E0D42E75300B4CA3D /* ETLayoutItemGroup+Mutation.m in Sources */ = {isa = PBXBuildFile; fileRef = 60CF717C0D42E75300B4CA3D /* ETLayoutItemGroup+Mutation.m */; };
+		60CF717F0D42E75300B4CA3D /* ETLayoutItemGroup+Mutation.h in Headers */ = {isa = PBXBuildFile; fileRef = 60CF717B0D42E75300B4CA3D /* ETLayoutItemGroup+Mutation.h */; };
+		60CF71800D42E75300B4CA3D /* ETLayoutItemGroup+Mutation.m in Sources */ = {isa = PBXBuildFile; fileRef = 60CF717C0D42E75300B4CA3D /* ETLayoutItemGroup+Mutation.m */; };
 		60EB7C680C6155AA0066AC40 /* ETView.h in Headers */ = {isa = PBXBuildFile; fileRef = 60EB7C660C6155AA0066AC40 /* ETView.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		60EB7C690C6155AA0066AC40 /* ETView.m in Sources */ = {isa = PBXBuildFile; fileRef = 60EB7C670C6155AA0066AC40 /* ETView.m */; };
 		60EF8EA20C5E4D5600C97C41 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 29B97325FDCFA39411CA2CEA /* Foundation.framework */; };
@@ -319,7 +323,7 @@
 		606481520C7A6CAC0000338D /* NSObject+Etoile.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSObject+Etoile.m"; sourceTree = "<group>"; };
 		606B97480C0AF283000AAA85 /* ContainerController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ContainerController.h; path = PhotoViewExample/ContainerController.h; sourceTree = "<group>"; };
 		606B97490C0AF283000AAA85 /* ContainerController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ContainerController.m; path = PhotoViewExample/ContainerController.m; sourceTree = "<group>"; };
-		606B98C90C0AF831000AAA85 /* ContainerExample.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = ContainerExample.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		606B98C90C0AF831000AAA85 /* PhotoViewExample.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = PhotoViewExample.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		6082FE750C49947F00FFF659 /* ETBinding.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ETBinding.h; sourceTree = "<group>"; };
 		6082FE760C49947F00FFF659 /* ETBinding.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ETBinding.m; sourceTree = "<group>"; };
 		6087EDF20C824CE100A1263E /* English */ = {isa = PBXFileReference; lastKnownFileType = wrapper.nib; name = English; path = English.lproj/ViewModelPrototype.nib; sourceTree = "<group>"; };
@@ -392,6 +396,8 @@
 		60CF6C810D3F739000B4CA3D /* ETContainer+Controller.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "ETContainer+Controller.m"; sourceTree = "<group>"; };
 		60CF710C0D42AA8600B4CA3D /* test_ETObjectChain.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = test_ETObjectChain.m; path = Tests/test_ETObjectChain.m; sourceTree = "<group>"; };
 		60CF710F0D42AAC600B4CA3D /* English */ = {isa = PBXFileReference; lastKnownFileType = wrapper.nib; name = English; path = English.lproj/Inspector.nib; sourceTree = "<group>"; };
+		60CF717B0D42E75300B4CA3D /* ETLayoutItemGroup+Mutation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "ETLayoutItemGroup+Mutation.h"; sourceTree = "<group>"; };
+		60CF717C0D42E75300B4CA3D /* ETLayoutItemGroup+Mutation.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "ETLayoutItemGroup+Mutation.m"; sourceTree = "<group>"; };
 		60E584EE0C54A52000905ED8 /* ETRenderer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ETRenderer.h; sourceTree = "<group>"; };
 		60E584EF0C54A52000905ED8 /* ETRenderer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ETRenderer.m; sourceTree = "<group>"; };
 		60EABCBB0C0C284000341BD8 /* ETTableLayout.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ETTableLayout.h; sourceTree = "<group>"; };
@@ -522,7 +528,7 @@
 		19C28FACFE9D520D11CA2CBB /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				606B98C90C0AF831000AAA85 /* ContainerExample.app */,
+				606B98C90C0AF831000AAA85 /* PhotoViewExample.app */,
 				605F0CCA0C0F400D003AE3E6 /* ObjectManagerExample.app */,
 				60539D940C240A7B006C57EC /* PaneContainerExample.app */,
 				60EF8E9D0C5E4D0600C97C41 /* EtoileUI.framework */,
@@ -700,6 +706,8 @@
 				603116230CF5131D001A699E /* ETLayoutItem+Events.m */,
 				609548CE0C0E300500068CBB /* ETLayoutItemGroup.h */,
 				609548CF0C0E300500068CBB /* ETLayoutItemGroup.m */,
+				60CF717B0D42E75300B4CA3D /* ETLayoutItemGroup+Mutation.h */,
+				60CF717C0D42E75300B4CA3D /* ETLayoutItemGroup+Mutation.m */,
 				603113320CF46DE9001A699E /* ETLayoutItemGroup+Factory.h */,
 				603113330CF46DE9001A699E /* ETLayoutItemGroup+Factory.m */,
 				609547B70C0E032E00068CBB /* ETLayer.h */,
@@ -797,6 +805,7 @@
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				60CF717F0D42E75300B4CA3D /* ETLayoutItemGroup+Mutation.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -859,6 +868,7 @@
 				60F365920D18651700FCFFDA /* ETViewModelLayout.h in Headers */,
 				60F112BF0D363806003B2EFA /* ETEvent.h in Headers */,
 				60CF6C820D3F739000B4CA3D /* ETContainer+Controller.h in Headers */,
+				60CF717D0D42E75300B4CA3D /* ETLayoutItemGroup+Mutation.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -935,7 +945,7 @@
 			);
 			name = ContainerExample;
 			productName = ContainerExample;
-			productReference = 606B98C90C0AF831000AAA85 /* ContainerExample.app */;
+			productReference = 606B98C90C0AF831000AAA85 /* PhotoViewExample.app */;
 			productType = "com.apple.product-type.application";
 		};
 		60909CC80CB2DA42009CAD27 /* TableViewExample */ = {
@@ -1157,6 +1167,7 @@
 				600FC23E0D3AB75800828803 /* test_ETContainer.m in Sources */,
 				60CF6C850D3F739000B4CA3D /* ETContainer+Controller.m in Sources */,
 				60CF710D0D42AA8600B4CA3D /* test_ETObjectChain.m in Sources */,
+				60CF71800D42E75300B4CA3D /* ETLayoutItemGroup+Mutation.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1259,6 +1270,7 @@
 				60F365930D18651700FCFFDA /* ETViewModelLayout.m in Sources */,
 				60F112C00D363806003B2EFA /* ETEvent.m in Sources */,
 				60CF6C830D3F739000B4CA3D /* ETContainer+Controller.m in Sources */,
+				60CF717E0D42E75300B4CA3D /* ETLayoutItemGroup+Mutation.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1510,7 +1522,7 @@
 				GCC_PREFIX_HEADER = "$(SYSTEM_LIBRARY_DIR)/Frameworks/AppKit.framework/Headers/AppKit.h";
 				GCC_PREPROCESSOR_DEFINITIONS = NeXT_RUNTIME;
 				HEADER_SEARCH_PATHS = /usr/GNUstep/System/Library/Headers/;
-				INFOPLIST_FILE = "ObjectManagerExample-Info.plist";
+				INFOPLIST_FILE = "ObjectManagerExample/ObjectManagerExample-Info.plist";
 				INSTALL_PATH = "$(HOME)/Applications";
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
@@ -1542,7 +1554,7 @@
 				GCC_PREFIX_HEADER = "$(SYSTEM_LIBRARY_DIR)/Frameworks/AppKit.framework/Headers/AppKit.h";
 				GCC_PREPROCESSOR_DEFINITIONS = NeXT_RUNTIME;
 				HEADER_SEARCH_PATHS = /usr/GNUstep/System/Library/Headers/;
-				INFOPLIST_FILE = "ObjectManagerExample-Info.plist";
+				INFOPLIST_FILE = "ObjectManagerExample/ObjectManagerExample-Info.plist";
 				INSTALL_PATH = "$(HOME)/Applications";
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
@@ -1586,7 +1598,7 @@
 					AppKit,
 				);
 				PREBINDING = NO;
-				PRODUCT_NAME = ContainerExample;
+				PRODUCT_NAME = PhotoViewExample;
 				USER_HEADER_SEARCH_PATHS = "$(PROJECT_DIR) /usr/GNUstep/System/Library/Headers/";
 				WRAPPER_EXTENSION = app;
 				ZERO_LINK = YES;
@@ -1616,7 +1628,7 @@
 					AppKit,
 				);
 				PREBINDING = NO;
-				PRODUCT_NAME = ContainerExample;
+				PRODUCT_NAME = PhotoViewExample;
 				USER_HEADER_SEARCH_PATHS = "$(PROJECT_DIR) /usr/GNUstep/System/Library/Headers/";
 				WRAPPER_EXTENSION = app;
 				ZERO_LINK = NO;

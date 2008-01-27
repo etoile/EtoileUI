@@ -53,6 +53,7 @@
 	BOOL _autolayout;
 	BOOL _usesLayoutBasedFrame;
 	BOOL _reloading; /* ivar used by ETSource category */
+	BOOL _shouldMutateRepresentedObject;
 }
 
 /* Factory Methods */
@@ -100,6 +101,10 @@
 - (void) handleAttachItem: (ETLayoutItem *)item;
 - (void) handleAttachViewOfItem: (ETLayoutItem *)item;
 - (void) handleDetachItem: (ETLayoutItem *)item;
+
+- (BOOL) shouldMutateRepresentedObject;
+- (void) setShouldMutateRepresentedObject: (BOOL)flag;
+- (BOOL) usesRepresentedObjectAsProvider;
 
 /* Layout */
 
