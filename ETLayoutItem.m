@@ -243,7 +243,7 @@
 	belongs to. 
 	This method never returns nil because the returned value is equal to self
 	when the receiver has no parent item. */
-- (ETLayoutItem *) rootItem
+- (id) rootItem
 {
 	if ([self parentLayoutItem] != nil)
 	{
@@ -269,7 +269,7 @@
 	This method will return nil when the receiver isn't a base item, hasn't yet 
 	been added as a descendant of a base item or has just been removed as a 
 	descendant of a base item. */
-- (ETLayoutItem *) baseItem
+- (id) baseItem
 {
 	if ([self representedPathBase] != nil
 	 && [[self representedPathBase] isEqual: @""] == NO)

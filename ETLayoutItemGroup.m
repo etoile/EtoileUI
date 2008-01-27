@@ -484,7 +484,7 @@
 	WARNING: This value set is meaningful only if the receiver is a base item, 
 	otherwise the value is simply ignored by ETLayoutItem and ETLayoutItemGroup 
 	implementation. */
-- (void) usesRepresentedObjectAsProvider
+- (BOOL) usesRepresentedObjectAsProvider
 {
 	return ([PROVIDER_SOURCE isEqual: [self baseItem]]);
 }

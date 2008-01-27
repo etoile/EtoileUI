@@ -120,8 +120,8 @@
 
 /* Layout Item Tree */
 
-- (ETLayoutItem *) rootItem;
-- (ETLayoutItem *) baseItem;
+- (id) rootItem;
+- (id) baseItem;
 - (ETLayoutItemGroup *) parentLayoutItem;
 - (void) setParentLayoutItem: (ETLayoutItemGroup *)parent;
 - (void ) removeFromParent;

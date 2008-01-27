@@ -291,7 +291,7 @@
 
 /* Pick and drop support and Bindings support by index path */
 - (BOOL) container: (ETContainer *)container addItems: (NSArray *)items 
-	atPath: (NSString *)path operation: (ETEvent *)op;
+	atPath: (NSIndexPath *)path operation: (ETEvent *)op;
 - (BOOL) container: (ETContainer *)container insertItems: (NSArray *)items 
 	atPaths: (NSArray *)paths operation: (ETEvent *)op;
 - (BOOL) container: (ETContainer *)container 
