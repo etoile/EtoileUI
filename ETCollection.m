@@ -238,7 +238,7 @@
 /** Removes all occurrences of an object in  the receiver. */
 - (void) removeObject: (id)object
 {
-	NSEnumerator *e = [self allKeysForObject: object];
+	NSEnumerator *e = [[self allKeysForObject: object] objectEnumerator];
 	id key = nil;
 	
 	while ((key = [e nextObject]) != nil)

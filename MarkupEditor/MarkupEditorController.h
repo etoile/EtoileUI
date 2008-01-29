@@ -40,7 +40,7 @@
 
 @interface MarkupEditorController : NSObject
 {
-    IBOutlet id viewContainer;
+    IBOutlet ETContainer *viewContainer;
 	//NSString *documentPath;
 }
 

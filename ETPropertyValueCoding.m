@@ -37,6 +37,7 @@
 
 
 #import <EtoileUI/ETPropertyValueCoding.h>
+#import <EtoileUI/NSObject+Model.h>
 #import <EtoileUI/ETCompatibility.h>
 
 

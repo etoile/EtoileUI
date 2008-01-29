@@ -244,6 +244,12 @@
 - (void) addObject: (id)object;
 - (void) removeObject: (id)object;
 
+/* Private Use */
+
+// TOOD: Evaluate whether this method wouldn't be better located hidden in
+// ETLayoutItemGroup+Mutation
+- (int) checkSourceProtocolConformance;
+
 @end
 
 @interface ETContainer (ETContainerSource)

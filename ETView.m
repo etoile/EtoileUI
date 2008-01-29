@@ -37,6 +37,7 @@
 #import <EtoileUI/ETView.h>
 #import <EtoileUI/ETLayoutItem.h>
 #import <EtoileUI/NSView+Etoile.h>
+#import <EtoileUI/NSObject+Model.h>
 #import <EtoileUI/ETCompatibility.h>
 
 #define NC [NSNotificationCenter defaultCenter]

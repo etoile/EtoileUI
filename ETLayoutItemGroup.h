@@ -62,6 +62,8 @@
 + (ETLayoutItemGroup *) layoutItemGroupWithLayoutItem: (ETLayoutItem *)item;
 + (ETLayoutItemGroup *) layoutItemGroupWithLayoutItems: (NSArray *)items;
 
+- (id) itemWithObject: (id)object isValue: (BOOL)isValue;
+
 /* Initialization */
 
 - (id) initWithLayoutItems: (NSArray *)layoutItems view: (NSView *)view;

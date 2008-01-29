@@ -69,7 +69,6 @@
 @interface ETLayoutItemGroup (Private)
 - (void) collectSelectionIndexPaths: (NSMutableArray *)indexPaths;
 - (void) applySelectionIndexPaths: (NSMutableArray *)indexPaths;
-- (id) itemWithObject: (id)object;
 - (id) newItemGroup;
 - (id) newItem;
 @end

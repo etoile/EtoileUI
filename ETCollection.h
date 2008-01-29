@@ -100,6 +100,7 @@
 - (BOOL) isEmpty;
 - (id) content;
 - (NSArray *) contentArray;
+- (NSString *) identifierAtIndex: (unsigned int)index;
 @end
 
 @interface NSSet (ETCollection) <ETCollection>

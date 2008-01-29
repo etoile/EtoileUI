@@ -69,7 +69,7 @@
 	return nil;
 }
 
-+ (id) objectWithStringValue: (id)string
++ (id) objectWithStringValue: (NSString *)string
 {
 	id object = nil;
 	Class class = NSClassFromString(string);
@@ -191,7 +191,7 @@
 	
 	/* Validate non common value objects */
 		
-	NSString *type = [self typeForKey: key];
+	//NSString *type = [self typeForKey: key];
 	
 	return validated;
 }

@@ -275,7 +275,7 @@
 
 - (void) handleAdd: (ETEvent *)event object: (id)object
 {
-	id item = [object isLayoutItem] ? object : [self itemWithObject: object];
+	id item = [object isLayoutItem] ? object : [self itemWithObject: object isValue: [object isCommonObjectValue]];
 	
 	if ([object isLayoutItem] == NO)
 		ETLog(@"Boxed object %@ in item %@ to be added to %@", object, item, self);

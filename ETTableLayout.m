@@ -50,7 +50,6 @@
 
 @interface ETTableLayout (Private)
 - (void) _updateDisplayedPropertiesFromSource;
-- (NSTableColumn *) _createTableColumnWithIdentifier: (NSString *)property;
 @end
 
 @interface ETTableLayout (ETableLayoutDisplayViewGeneration)
@@ -333,7 +332,6 @@
 - (void) tableViewSelectionDidChange: (NSNotification *)notif
 {
 	id delegate = [[self container] delegate];
-	NSTableView *tv = [self tableView];
 	NSArray *layoutSelectedItems = [self selectedItems];
 	NSArray *selection = [layoutSelectedItems valueForKey: @"indexPath"];
 	
@@ -483,7 +481,7 @@
 	NSAssert3([[dragEvent window] isEqual: [tv window]], @"NSApp current "
 		@"event %@ in %@ -tableView:writeRowsWithIndexes:toPasteboard: doesn't "
 		@"belong to the table view %@", dragEvent, self, tv);
-	NSAssert3([dragEvent type] == NSLeftMouseDown, @"NSApp current "
+	NSAssert3([(NSEvent *)dragEvent type] == NSLeftMouseDown, @"NSApp current "
 		@"event %@ in %@ -tableView:writeRowsWithIndexes:toPasteboard: must be "
 		@"of type NSLeftMouseDown", dragEvent, self, tv);
 	

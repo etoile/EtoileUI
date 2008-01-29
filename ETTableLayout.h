@@ -60,6 +60,8 @@
 
 /* Subclassing */
 
+// TODO: Moves this method into an NSTableColumn category
+- (NSTableColumn *) _createTableColumnWithIdentifier: (NSString *)property;
 - (NSEvent *) lastDragEvent;
 - (void) setLastDragEvent: (NSEvent *)event;
 
