@@ -135,41 +135,71 @@
 	[self setUpLayoutOfClass: layoutClass];
 }
 
+- (void) handleError: (id)error
+{
+	if (error == nil)
+		return;
+
+	#if 1
+	ETLog(@"Error: %@", error);
+	#else
+	NSAlert *readingAlert = [NSAlert alertWithError: error];
+	int button = [readingAlert runModal];
+	#endif
+	RELEASE(error);
+}
+
+- (id) plistNodeFromURL: (NSURL *)URL
+{
+	NSData *plistData = nil;
+	id plistNode = nil;
+	NSString *error = nil;
+	NSPropertyListFormat format;
+    
+	plistData = [NSData dataWithContentsOfURL: URL];
+	plistNode = [NSPropertyListSerialization propertyListFromData: plistData
+		mutabilityOption: kCFPropertyListMutableContainersAndLeaves 
+		format: &format errorDescription: &error];
+	[self handleError: error]; /* Take care of releasing error object */
+	
+	return plistNode;
+}
+
+- (id) xmlNodeFromURL: (NSURL *)URL
+{
+	id xmlNode = nil;
+	NSError *error = nil;
+
+	xmlNode = [[NSXMLDocument alloc] 
+		initWithContentsOfURL: URL options: NSXMLDocumentTidyXML error: &error];
+	[self handleError: error]; /* Take care of releasing error object */
+	
+	return AUTORELEASE(xmlNode);
+}
+
 - (void) selectDocumentsPanelDidEnd: (NSOpenPanel *)panel 
 	returnCode: (int)returnCode  contextInfo: (void *)contextInfo
 {
-    NSArray *paths = [panel filenames];
-    NSEnumerator *e = [paths objectEnumerator];
-    NSString *path = nil;
-	NSData *plistData = nil;
-	id plist = nil;
-	NSString *error = nil;
-	NSPropertyListFormat format;
-	
+    NSArray *URLs = [panel URLs];
+    NSEnumerator *e = [URLs objectEnumerator];
+    NSURL *URL = nil;
+	id markupNode = nil;
+
 	[viewContainer removeAllItems];
 	//[viewContainer removeAllObjects];
     
-    while ((path = [e nextObject]) != nil)
+    while ((URL = [e nextObject]) != nil)
     {
-		plistData = [NSData dataWithContentsOfFile: path];
-		plist = [NSPropertyListSerialization propertyListFromData: plistData
-			mutabilityOption: kCFPropertyListMutableContainersAndLeaves 
-			format: &format errorDescription: &error];
-			
-		if (error == nil)
+		if ([[[URL path] pathExtension] isEqual: @"plist"])
 		{
-			[viewContainer addObject: plist];	
+			markupNode = [self plistNodeFromURL: URL];
 		}
 		else
 		{
-			#if 1
-			ETLog(@"Error: %@", error);
-			#else
-			NSAlert *readingAlert = [NSAlert alertWithError: error];
-			int button = [readingAlert runModal];
-			#endif
-			RELEASE(error);
+			markupNode = [self xmlNodeFromURL: URL];	
 		}
+			
+		[viewContainer addObject: markupNode];	
 	}        
 	
     //[viewContainer reloadAndUpdateLayout];
@@ -179,3 +209,31 @@
 }
 
 @end
+
+#ifndef GNUSTEP
+
+@interface NSXMLNode (ETCollection) <ETCollection>
+
+- (BOOL) isOrdered;
+- (BOOL) isEmpty;
+- (id) content;
+- (NSArray *) contentArray;
+- (unsigned int) count;
+
+@end
+
+@implementation NSXMLNode (ETCollection)
+
+- (BOOL) isOrdered { return YES; }
+
+- (BOOL) isEmpty { return ([self count] == 0); }
+
+- (id) content { return [self children]; }
+
+- (NSArray *) contentArray { return [self content]; }
+
+- (unsigned int) count { return [self childCount]; }
+
+@end
+
+#endif
