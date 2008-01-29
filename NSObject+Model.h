@@ -41,10 +41,11 @@
 @interface NSObject (EtoileModel)
 
 + (id) objectWithObjectValue: (id)object;
-+ (id) objectWithStringValue: (id)string;
++ (id) objectWithStringValue: (NSString *)string;
 
 - (id) objectValue;
-- (id) stringValue;
+- (NSString *) stringValue;
+- (NSString *) stringValueWithOptions: (NSDictionary *)outputOptions;
 
 - (BOOL) isCommonObjectValue;
 - (BOOL) isString;

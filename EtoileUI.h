@@ -97,4 +97,5 @@
 
 #import <EtoileUI/ETObjectBrowserLayout.h>
 #import <EtoileUI/ETViewModelLayout.h>
+#import <EtoileUI/ETTextEditorLayout.h>
 #import <EtoileUI/ETInspector.h>

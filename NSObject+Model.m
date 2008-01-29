@@ -99,9 +99,25 @@
 	encodes some basic infos about the receiver. This string representation can
 	then be edited, validated by -validateValue:forKey:error: and used to 
 	instantiate another object by passing it to +objectWithStringValue:. */
-- (id) stringValue
+- (NSString *) stringValue
 {
 	return [self description];
+}
+
+/** Returns -stringValue by default.
+	Subclasses can override this method to return a custom string representation  
+	based on the rendering options provided in parameter. Like
+	-stringValue, it should encode some basic infos about the receiver but the 
+	method is typically used to introduce variations in the output format. For 
+	example to handle pretty printing and special formatting rules. Not all 
+	output options have to be handled, you can safely ignore options which you 
+	aren't interested in.
+	The resulting string representation must remain editable, validatable by 
+	-validateValue:forKey:error: and usable to instantiate another object by 
+	passing it to +objectWithStringValue:. */
+- (NSString *) stringValueWithOptions: (NSDictionary *)outputOptions
+{
+	return [self stringValue];
 }
 
 /** Returns YES if the receiver is an NSString instance, otherwise returns NO. */

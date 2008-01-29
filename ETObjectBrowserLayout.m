@@ -55,11 +55,6 @@
 	return [[self layoutContext] representedObject];
 }
 
-- (id) init
-{
-	return [self initWithLayoutView: nil];
-}
-
 - (ETLayout *) initWithLayoutView: (NSView *)view
 {
 	self = [super initWithLayoutView: nil];

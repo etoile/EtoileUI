@@ -159,6 +159,10 @@
 		60CF74930D44E68700B4CA3D /* EtoileUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 60EF8E9D0C5E4D0600C97C41 /* EtoileUI.framework */; };
 		60CF74940D44E68700B4CA3D /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1058C7A1FEA54F0111CA2CBB /* Cocoa.framework */; };
 		60CF749A0D44E69700B4CA3D /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 29B97316FDCFA39411CA2CEA /* main.m */; };
+		60DEFD2A0D4E8482008B1038 /* ETTextEditorLayout.h in Headers */ = {isa = PBXBuildFile; fileRef = 60DEFD280D4E8482008B1038 /* ETTextEditorLayout.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		60DEFD2B0D4E8482008B1038 /* ETTextEditorLayout.m in Sources */ = {isa = PBXBuildFile; fileRef = 60DEFD290D4E8482008B1038 /* ETTextEditorLayout.m */; };
+		60DEFD2C0D4E8482008B1038 /* ETTextEditorLayout.h in Headers */ = {isa = PBXBuildFile; fileRef = 60DEFD280D4E8482008B1038 /* ETTextEditorLayout.h */; };
+		60DEFD2D0D4E8482008B1038 /* ETTextEditorLayout.m in Sources */ = {isa = PBXBuildFile; fileRef = 60DEFD290D4E8482008B1038 /* ETTextEditorLayout.m */; };
 		60EB7C680C6155AA0066AC40 /* ETView.h in Headers */ = {isa = PBXBuildFile; fileRef = 60EB7C660C6155AA0066AC40 /* ETView.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		60EB7C690C6155AA0066AC40 /* ETView.m in Sources */ = {isa = PBXBuildFile; fileRef = 60EB7C670C6155AA0066AC40 /* ETView.m */; };
 		60EF8EA20C5E4D5600C97C41 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 29B97325FDCFA39411CA2CEA /* Foundation.framework */; };
@@ -416,6 +420,8 @@
 		60CF74390D449B9500B4CA3D /* MarkupEditorController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MarkupEditorController.h; path = MarkupEditor/MarkupEditorController.h; sourceTree = "<group>"; };
 		60CF743A0D449B9500B4CA3D /* MarkupEditorController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = MarkupEditorController.m; path = MarkupEditor/MarkupEditorController.m; sourceTree = "<group>"; };
 		60CF744E0D44E42A00B4CA3D /* MarkupEditor.nib */ = {isa = PBXFileReference; lastKnownFileType = wrapper.nib; name = MarkupEditor.nib; path = MarkupEditor/MarkupEditor.nib; sourceTree = "<group>"; };
+		60DEFD280D4E8482008B1038 /* ETTextEditorLayout.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ETTextEditorLayout.h; sourceTree = "<group>"; };
+		60DEFD290D4E8482008B1038 /* ETTextEditorLayout.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ETTextEditorLayout.m; sourceTree = "<group>"; };
 		60E584EE0C54A52000905ED8 /* ETRenderer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ETRenderer.h; sourceTree = "<group>"; };
 		60E584EF0C54A52000905ED8 /* ETRenderer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ETRenderer.m; sourceTree = "<group>"; };
 		60EABCBB0C0C284000341BD8 /* ETTableLayout.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ETTableLayout.h; sourceTree = "<group>"; };
@@ -790,6 +796,8 @@
 				6031194F0CF8B993001A699E /* ETObjectBrowserLayout.m */,
 				60F3658E0D18651700FCFFDA /* ETViewModelLayout.h */,
 				60F3658F0D18651700FCFFDA /* ETViewModelLayout.m */,
+				60DEFD280D4E8482008B1038 /* ETTextEditorLayout.h */,
+				60DEFD290D4E8482008B1038 /* ETTextEditorLayout.m */,
 			);
 			name = "New Layouts";
 			sourceTree = "<group>";
@@ -838,6 +846,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				60CF717F0D42E75300B4CA3D /* ETLayoutItemGroup+Mutation.h in Headers */,
+				60DEFD2C0D4E8482008B1038 /* ETTextEditorLayout.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -901,6 +910,7 @@
 				60F112BF0D363806003B2EFA /* ETEvent.h in Headers */,
 				60CF6C820D3F739000B4CA3D /* ETContainer+Controller.h in Headers */,
 				60CF717D0D42E75300B4CA3D /* ETLayoutItemGroup+Mutation.h in Headers */,
+				60DEFD2A0D4E8482008B1038 /* ETTextEditorLayout.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1228,6 +1238,7 @@
 				60CF6C850D3F739000B4CA3D /* ETContainer+Controller.m in Sources */,
 				60CF710D0D42AA8600B4CA3D /* test_ETObjectChain.m in Sources */,
 				60CF71800D42E75300B4CA3D /* ETLayoutItemGroup+Mutation.m in Sources */,
+				60DEFD2D0D4E8482008B1038 /* ETTextEditorLayout.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1340,6 +1351,7 @@
 				60F112C00D363806003B2EFA /* ETEvent.m in Sources */,
 				60CF6C830D3F739000B4CA3D /* ETContainer+Controller.m in Sources */,
 				60CF717E0D42E75300B4CA3D /* ETLayoutItemGroup+Mutation.m in Sources */,
+				60DEFD2B0D4E8482008B1038 /* ETTextEditorLayout.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

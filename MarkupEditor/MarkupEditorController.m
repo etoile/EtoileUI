@@ -128,6 +128,9 @@
 		case 5:
 			layoutClass = [ETBrowserLayout class];
 			break;
+		case 6:
+			layoutClass = [ETTextEditorLayout class];
+			break;
 		default:
 			NSLog(@"Unsupported layout or unknown popup menu selection");
 	}
@@ -213,13 +216,16 @@
 #ifndef GNUSTEP
 
 @interface NSXMLNode (ETCollection) <ETCollection>
-
 - (BOOL) isOrdered;
 - (BOOL) isEmpty;
 - (id) content;
 - (NSArray *) contentArray;
 - (unsigned int) count;
+@end
 
+@interface NSXMLElement (ETCollectionMutation) <ETCollectionMutation>
+- (void) addObject: (id)object;
+- (void) removeObject: (id)object;
 @end
 
 @implementation NSXMLNode (ETCollection)
@@ -233,6 +239,21 @@
 - (NSArray *) contentArray { return [self content]; }
 
 - (unsigned int) count { return [self childCount]; }
+
+@end
+
+@implementation NSXMLElement (ETCollectionMutation)
+
+- (void) addObject: (id)object 
+{ 
+	[self addChild: object];
+}
+
+- (void) removeObject: (id)object
+{
+	/* Next line is similar to [(NSXMLNode *)object detach] */
+	[self removeChildAtIndex: [(NSXMLNode *)object index]];
+}
 
 @end
 
