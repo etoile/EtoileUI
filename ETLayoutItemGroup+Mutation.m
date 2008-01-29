@@ -336,8 +336,8 @@
 		
 		while ((childRepObject = [e nextObject]) != nil)
 		{
-			[childItems addObject: [self itemWithObject: childRepObject]];
-			//[self handleAdd: nil item: [self itemWithObject: childRepObject]];
+			[childItems addObject: [self itemWithObject: childRepObject isValue: NO]];
+			//[self handleAdd: nil item: [self itemWithObject: childRepObject isValue: NO]];
 		}
 	}
 	else

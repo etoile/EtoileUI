@@ -78,7 +78,7 @@
 		[layoutObject setDisplayName: @"Name" forProperty: @"displayName"];
 		[layoutObject setDisplayName: @"Description" forProperty: @"description"];
 		[layoutObject setDisplayedProperties: [NSArray arrayWithObjects: 
-			@"identifier", @"className", @"stringValue", @"description", @"displayName", nil]];
+			@"className", @"stringValue", @"description", @"displayName", nil]];
 	}
 
 	[viewContainer setLayout: layoutObject];

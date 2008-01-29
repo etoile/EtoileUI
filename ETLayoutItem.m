@@ -46,6 +46,8 @@
 #import <EtoileUI/ETCompatibility.h>
 
 #define DETAILED_DESCRIPTION
+#define PROVIDER_CONTAINER [[self baseItem] container]
+#define PROVIDER_SOURCE [PROVIDER_CONTAINER source]
 
 #define ETUTIAttribute @"uti"
 
@@ -138,21 +140,15 @@
     
     if (self != nil)
     {
+		_variableProperties = nil; /* Lazy init in -variableProperties */
 		_parentLayoutItem = nil;
 		//_decoratorItem = nil;
 		[self setDecoratedItem: nil];
 		[self setView: view];
 		[self setVisible: NO];
 		[self setStyleRenderer: AUTORELEASE([[ETSelection alloc] init])];
-		ASSIGN(_value, value);
-		if (repObject != nil)
-		{
-			ASSIGN(_modelObject, repObject);
-		}
-		else
-		{
-			_modelObject = [[NSMutableDictionary alloc] init];
-		}
+		[self setValue: value];
+		[self setRepresentedObject: repObject];
     }
     
     return self;
@@ -160,6 +156,7 @@
 
 - (void) dealloc
 {
+	DESTROY(_variableProperties);
 	/* Don't release decorated item (weak reference) */
 	if (_decoratorItem != self)
 		DESTROY(_decoratorItem);
@@ -476,6 +473,25 @@
 	
 	if (identifier == nil || [identifier isEqual: @""])
 	{
+		id parentRepObject = [[self parentLayoutItem] representedObject];
+		
+		// TODO: Should try to retrieve -UniqueID, -UUID and -UUIDString
+		/* -identifierAtIndex: is implemented by some classes like NSDictionary */
+		if ([parentRepObject isCollection] && [parentRepObject isEmpty] == NO
+		 && [parentRepObject respondsToSelector: @selector(identifierAtIndex:)]
+		 && [PROVIDER_CONTAINER checkSourceProtocolConformance] == 3)
+		{
+			unsigned int index = [[self parentLayoutItem] indexOfItem: self];
+			identifier = [parentRepObject identifierAtIndex: index];
+		}
+	}
+
+	/*if (identifier == nil || [identifier isEqual: @""])	
+		identifier = [self name];*/
+
+	
+	if (identifier == nil || [identifier isEqual: @""])
+	{
 		identifier = [NSString stringWithFormat: @"%d", 
 			[(ETLayoutItemGroup *)[self parentLayoutItem] indexOfItem: (id)self]];
 	}
@@ -498,15 +514,16 @@
 		{
 			name = [[self value] stringValue];
 		}
-		else if ([[self representedObject] isCollection] 
-		      && [[self representedObject] isEmpty] == NO)
+		else if ([self representedObject] != nil)
 		{
-			/* Represented object is never nil, a dictionary is set on instantiation */
-			name = [[self representedObject] description];
+			/* Makes possible to keep an identical display name between an 
+			   item and all derived meta items (independently of their meta 
+			   levels). */
+			name = [[self representedObject] displayName];
 		}
 		else
 		{
-			name = @"?";
+			name = [super displayName];
 		}
 	}
 		
@@ -544,7 +561,16 @@
 	images etc. */
 - (void) setValue: (id)value
 {
+	/*if ([value isCommonObjectValue] == NO)
+	{
+		[NSException raise: NSInvalidArgumentException format: @"Value %@ must "
+			@"be a common object value to be set in %@", value, self];
+		return;
+	}*/
+	
 	ASSIGN(_value, value);
+	
+#if 0
 	if ([_value isKindOfClass: [NSImage class]])
 	{
 		/*ETImageStyle *imgStyle = [ETImageStyle styleWithImage: (NSImage *)_value];
@@ -560,6 +586,7 @@
 	{
 	
 	}
+#endif
 }
 
 /** Returns model object which embeds the representation of what the layout 
@@ -810,12 +837,13 @@
 - (id) valueForUndefinedKey: (NSString *)key
 {
 	ETLog(@"WARNING: -valueForUndefinedKey: %@ called in %@", key, self);
-	return nil; //@"<unknown>"
+	return [[self variableProperties] objectForKey: key]; /* May return nil */
 }
 
 - (void) setValue: (id)value forUndefinedKey: (NSString *)key
 {
 	ETLog(@"WARNING: -setValue:forUndefinedKey: %@ called in %@", key, self);
+	[[self variableProperties] setObject: value forKey: key];
 }
 
 /* Property Value Coding */
@@ -828,21 +856,27 @@
 	and -setValue:forProperty: or conform to NSKeyValueCoding protocol. */
 - (id) valueForProperty: (NSString *)key
 {
-	id value = nil;
 	id modelObject = [self representedObject];
-	
-	if ([self isMetaLayoutItem] && [[modelObject properties] containsObject: key])
+	id value = nil;
+
+	/* Basic version which doesn't fetch property value beyond the represented 
+	   object, even if this represented object represents another object too. */
+	if (modelObject != nil && [[modelObject properties] containsObject: key])
 	{
-		value = [modelObject valueForKey: key];
-	}	
-	else if ([self isMetaLayoutItem] == NO && [[self properties] containsObject: key])
+		if ([modelObject isLayoutItem])
+		{
+			value = [modelObject valueForKey: key];
+		}
+		else
+		{
+			value = [modelObject valueForProperty: key];
+		}
+		//value = [modelObject valueForKey: key];
+	}
+	else
 	{
 		value = [self valueForKey: key];
-	}
-	else if ([[modelObject properties] containsObject: key])
-	{
-		value = [modelObject valueForProperty: key];
-	}
+	}	
 	
 	return value;
 }
@@ -852,24 +886,27 @@
 	See -valueForProperty: for more details. */
 - (BOOL) setValue: (id)value forProperty: (NSString *)key
 {
-	BOOL result = YES;
 	id modelObject = [self representedObject];
-	
-	if ([self isMetaLayoutItem] && [[modelObject properties] containsObject: key])
+	BOOL result = YES;
+
+	/* Basic version which doesn't propagate property editing beyond the represented 
+	   object, even if this represented object represents another object too. */
+	if (modelObject != nil && [[modelObject properties] containsObject: key])
 	{
-		[modelObject setValue: value forKey: key];
-	}	
-	else if ([self isMetaLayoutItem] == NO && [[self properties] containsObject: key])
-	{
-		[self setValue: value forKey: key];
+		if ([modelObject isLayoutItem])
+		{
+			[modelObject setValue: value forKey: key];
+		}
+		else
+		{
+			result = [modelObject setValue: value forProperty: key];
+		}
+		//[modelObject setValue: value forKey: key];
 	}
 	else
 	{
-		result = [modelObject setValue: value forProperty: key];
+		[self setValue: value forKey: key];
 	}
-	
-	 // Don't check ([[modelObject properties] containsObject: key]) in the 
-	 // last case, otherwise new properties cannot be added.
 	
 	// FIXME: Implement
 	//[self didChangeValueForKey: key];
@@ -884,10 +921,17 @@
 		@"visible", @"image", @"frame", @"representedObject", 
 		@"parentLayoutItem", @"UIMetalevel", @"UIMetalayer", nil];
 
-	if (properties != nil && [properties count] == 0)
-		properties = nil;
+	properties = [[[self variableProperties] allKeys] arrayByAddingObjectsFromArray: properties];
 		
 	return [[super properties] arrayByAddingObjectsFromArray: properties];
+}
+
+- (NSDictionary *) variableProperties
+{
+	if (_variableProperties == nil)
+		ASSIGN(_variableProperties, [NSMutableDictionary dictionary]);
+		
+	return _variableProperties;
 }
 
 /** Returns the metalevel in the UI domain.
@@ -1527,12 +1571,16 @@
 
 - (NSRect) persistentFrame
 {
-	return [[[self representedObject] valueForProperty: @"kPersistentFrame"] rectValue] ;
+	// TODO: Find the best way to allow the represented object to provide and 
+	// store the persistent frame.
+	//[[[self representedObject] valueForProperty: @"kPersistentFrame"] rectValue];
+	return [[[self variableProperties] objectForKey: @"kPersistentFrame"] rectValue];
 }
 
 - (void) setPersistentFrame: (NSRect) frame
 {
-	[[self representedObject] setValue: [NSValue valueWithRect: frame] forProperty: @"kPersistentFrame"];
+	//[[self representedObject] setValue: [NSValue valueWithRect: frame] forProperty: @"kPersistentFrame"];
+	[[self variableProperties] setObject: [NSValue valueWithRect: frame] forKey: @"kPersistentFrame"];
 }
 
 - (NSRect) frame
@@ -1710,7 +1758,7 @@
 	generates an image by taking a snapshot of the view. */
 - (NSImage *) image
 {
-	NSImage *img = [[self representedObject] valueForProperty: @"image"];
+	NSImage *img = [[self variableProperties] objectForKey: @"image"];
 	
 	if (img == nil && [[self value] isKindOfClass: [NSImage class]])
 		img = [self value];
@@ -1720,7 +1768,7 @@
 
 - (void) setImage: (NSImage *)img
 {
-	[[self representedObject] setValue: img forProperty: @"image"];
+	[(NSMutableDictionary *)[self variableProperties] setObject: img forKey: @"image"];
 }
 
 /** Returns the image to be displayed when the receiver must be represented in a 
@@ -1732,7 +1780,7 @@
 	-displayName methods. */
 - (NSImage *) icon
 {
-	NSImage *icon = [[self representedObject] valueForProperty: @"icon"];
+	NSImage *icon = [[self variableProperties] objectForKey: @"icon"];
 	
 	if (icon == nil)
 		icon = [self image];
@@ -1740,6 +1788,9 @@
 	// NOTE: -bitmapImageRepForCachingDisplayInRect:(NSRect)aRect on Mac OS 10.4
 	if (icon == nil && [self displayView] != nil)
 		icon = [[self displayView] snapshot];
+		
+	if (icon != nil && [self representedObject] != nil)
+		icon = [[self representedObject] icon];
 		
 	if (icon == nil)
 		ETLog(@"Icon missing for %@", self);
@@ -1749,7 +1800,7 @@
 
 - (void) setIcon: (NSImage *)img
 {
-	[[self representedObject] setValue: img forProperty: @"icon"];
+	[[self variableProperties] setObject: img forKey: @"icon"];
 }
 
 /* Events & Actions */

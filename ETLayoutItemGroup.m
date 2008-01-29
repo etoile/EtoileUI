@@ -1142,7 +1142,7 @@
 	-templateItemGroup is retrieved (-isGroup returns YES). */
 - (void) addObject: (id)object
 {
-	id item = [object isLayoutItem] ? object : [self itemWithObject: object];
+	id item = [object isLayoutItem] ? object : [self itemWithObject: object isValue: [object isCommonObjectValue]];
 	
 	if ([object isLayoutItem] == NO)
 		ETLog(@"Boxed object %@ in item %@ to be added to %@", object, item, self);
@@ -1225,13 +1225,13 @@
 }
 
 
-- (id) itemWithObject: (id)object
+- (id) itemWithObject: (id)object isValue: (BOOL)isValue
 {
 	id item = [object isCollection] ? [self newItemGroup] : [self newItem];
 
 	/* If the object is a simple value object rather than a true model object
 	   we don't set it as represented object but as a value. */
-	if ([object isCommonObjectValue])
+	if (isValue)
 	{
 		[item setValue: object];
 	}

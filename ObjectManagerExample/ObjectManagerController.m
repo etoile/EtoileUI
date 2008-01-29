@@ -123,9 +123,9 @@ static NSFileManager *objectManager = nil;
 		[layoutObject setStyle: AUTORELEASE(iconCell) forProperty: @"icon"];
 		[layoutObject setDisplayName: @"" forProperty: @"icon"];
 		[layoutObject setDisplayName: @"Name" forProperty: @"name"];
-		[layoutObject setDisplayName: @"Type" forProperty: @"type"];
-		[layoutObject setDisplayName: @"Size" forProperty: @"size"];
-		[layoutObject setDisplayName: @"Modification Date" forProperty: @"modificationdate"];
+		[layoutObject setDisplayName: @"Type" forProperty: @"fileType"];
+		[layoutObject setDisplayName: @"Size" forProperty: @"fileSize"];
+		[layoutObject setDisplayName: @"Modification Date" forProperty: @"fileModificationDate"];
 	}
 	
 	[viewContainer setLayout: layoutObject];
@@ -316,12 +316,11 @@ static NSFileManager *objectManager = nil;
 		
 		// FIXME: better to have a method -setIdentifier: different from -setName:
 		[fileItem setName: [filePath lastPathComponent]];
-		[fileItem setValue: [filePath lastPathComponent] forProperty: @"name"];
-		[fileItem setValue: filePath forProperty: @"path"];
-		[fileItem setValue: icon forProperty: @"icon"];
-		[fileItem setValue: [NSNumber numberWithInt: [attributes fileSize]] forProperty: @"size"];
-		[fileItem setValue: [attributes fileType] forProperty: @"type"];
-		//[fileItem setValue: date forProperty	: @"modificationdate"];
+		[fileItem setIcon: icon];
+		[fileItem setValue: filePath forProperty: @"filePath"];
+		[fileItem setValue: [NSNumber numberWithInt: [attributes fileSize]] forProperty: @"fileSize"];
+		[fileItem setValue: [attributes fileType] forProperty: @"fileType"];
+		//[fileItem setValue: date forProperty: @"fileModificationDate"];
 		
 		//NSLog(@"Returns %@ as layout item in container %@", fileItem, container);
 	}
@@ -336,7 +335,7 @@ static NSFileManager *objectManager = nil;
 
 - (NSArray *) displayedItemPropertiesInContainer: (ETContainer *)container
 {
-	return [NSArray arrayWithObjects: @"icon", @"name", @"size", @"type", @"modificationdate", nil];
+	return [NSArray arrayWithObjects: @"icon", @"name", @"fileSize", @"fileType", @"fileModificationDate", nil];
 }
 
 /* Flat protocol used by PathContainer

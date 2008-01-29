@@ -85,7 +85,7 @@
 		[layoutObject setStyle: AUTORELEASE(iconCell) forProperty: @"icon"];
 		[layoutObject setDisplayName: @"" forProperty: @"icon"];
 		[layoutObject setDisplayName: @"Name" forProperty: @"name"];
-		[layoutObject setDisplayName: @"Type" forProperty: @"type"];
+		[layoutObject setDisplayName: @"Type" forProperty: @"imgType"];
 		[layoutObject setDisplayName: @"Size" forProperty: @"size"];
 		[layoutObject setDisplayName: @"Modification Date" forProperty: @"modificationdate"];
 	}
@@ -255,7 +255,7 @@
 	ETLayoutItem *imageItem = [ETLayoutItem layoutItemWithView: [self imageViewForImage: img]];
 	//ETLayoutItem *imageItem = [[ETLayoutItem alloc] initWithValue: img];
 	NSWorkspace *wk = [NSWorkspace sharedWorkspace];
-	NSString *sizeStr = NSStringFromSize([img size]);
+	NSValue *size = [NSValue valueWithSize: [img size]];
 	NSString *type = nil;
 	NSString *appName = nil;
 
@@ -264,8 +264,14 @@
 	[imageItem setValue: img forProperty: @"icon"];
 	//[imageItem setValue: [wk iconForFile: [img name]] forProperty: @"icon"];
 	[imageItem setValue: [[img name] lastPathComponent] forProperty: @"name"];
-	[imageItem setValue: type forProperty: @"type"];
-	[imageItem setValue: sizeStr forProperty: @"size"];
+	// 'type' is defined by NSObject(Model) so we have to use another property 
+	// name unless we add the possibility to override the inherited property 
+	// instead of updating it with -setValue:forKey:. -addValue:forProperty: 
+	// would add a property or override the inherited value if the property is
+	// already declared in a parent.
+	//[imageItem addValue: type forProperty: @"type"];
+	[imageItem setValue: type forProperty: @"imgType"];
+	[imageItem setValue: size forProperty: @"size"];
 	//[imageItem setValue: date forProperty	: @"modificationdate"];
 	
 	//NSLog(@"Returns %@ as layout item in container %@", imageItem, container);
@@ -277,7 +283,7 @@
 
 - (NSArray *) displayedItemPropertiesInContainer: (ETContainer *)container
 {
-	return [NSArray arrayWithObjects: @"icon", @"name", @"size", @"type", @"modificationdate", nil];
+	return [NSArray arrayWithObjects: @"icon", @"name", @"size", @"imgType", @"modificationdate", nil];
 }
 
 //- (NSFormatter *) container: (ETContainer *)container formaterForDisplayItemProperty:

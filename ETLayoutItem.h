@@ -82,6 +82,7 @@
 	
 	id _value;
 	id _modelObject;
+	NSMutableDictionary *_variableProperties;
 	NSString *_name;
 	ETStyleRenderer *_renderer;
 	ETLayoutItem *_decoratorItem; // previous decorator
@@ -174,7 +175,9 @@
 //-displayObject
 
 - (NSImage *) image;
+- (void) setImage: (NSImage *)img;
 - (NSImage *) icon;
+- (void) setIcon: (NSImage *)icon;
 
 /* If you have a shape set, it's always inserted after image renderer in the
 	rendering chain. */
@@ -189,6 +192,7 @@ shape*/
 - (id) valueForProperty: (NSString *)key;
 - (BOOL) setValue: (id)value forProperty: (NSString *)key;
 - (NSArray *) properties;
+- (NSDictionary *) variableProperties;
 
 - (unsigned int) UIMetalevel;
 - (unsigned int) UIMetalayer;

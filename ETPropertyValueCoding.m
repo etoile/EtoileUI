@@ -41,7 +41,7 @@
 
 
 @implementation NSDictionary (ETPropertyValueCoding)
-
+#if 0
 - (NSArray *) properties
 {
 	return [self allKeys];
@@ -56,11 +56,68 @@
 {
 	return NO;
 }
+#else
 
+- (NSArray *) properties
+{
+	NSArray *properties = [NSArray arrayWithObjects: @"count", @"firstObject", 
+		@"lastObject", nil];
+	
+	return [[super properties] arrayByAddingObjectsFromArray: properties];
+}
+
+- (id) valueForProperty: (NSString *)key
+{
+	id value = nil;
+	
+	if ([[self properties] containsObject: key])
+	{
+		id (*NSObjectValueForKeyIMP)(id, SEL, id) = NULL;
+		
+		NSObjectValueForKeyIMP = (id (*)(id, SEL, id))[[NSObject class] 
+			instanceMethodForSelector: @selector(valueForKey:)];
+		value = NSObjectValueForKeyIMP(self, @selector(valueForKey:), key);
+	}
+	else
+	{
+		// TODO: Turn into an ETDebugLog which takes an object (or a class) to
+		// to limit the logging to a particular object or set of instances.
+		#ifdef DEBUG_PVC
+		ETLog(@"WARNING: Found no value for property %@ in %@", key, self);
+		#endif
+	}
+		
+	return value;
+}
+
+- (BOOL) setValue: (id)value forProperty: (NSString *)key
+{
+	BOOL result = YES;
+	
+	if ([[self properties] containsObject: key])
+	{
+		void (*NSObjectSetValueForKeyIMP)(id, SEL, id, id) = NULL;
+		
+		NSObjectSetValueForKeyIMP = (void (*)(id, SEL, id, id))[[NSObject class] 
+			instanceMethodForSelector: @selector(setValue:forKey:)];
+		NSObjectSetValueForKeyIMP(self, @selector(setValue:forKey:), value, key);
+	}
+	else
+	{
+		// TODO: Turn into an ETDebugLog which takes an object (or a class) to
+		// to limit the logging to a particular object or set of instances.
+		#ifdef DEBUG_PVC
+		ETLog(@"WARNING: Found no value for property %@ in %@", key, self);
+		#endif
+	}
+		
+	return result;
+}
+#endif
 @end
 
 @implementation NSMutableDictionary (ETPropertyValueCoding)
-
+#if 0
 - (BOOL) setValue: (id)value forProperty: (NSString *)key
 {
 	BOOL result = YES;
@@ -76,6 +133,72 @@
 		result = NO;
 		ETLog(@"Failed to set value %@ for property %@ in %@", value, key, self);
 	NS_ENDHANDLER
+	
+	return result;
+}
+#endif
+@end
+
+@implementation NSArray (ETPropertyValueCoding)
+
+- (NSArray *) properties
+{
+	NSArray *properties = [NSArray arrayWithObjects: @"count", @"firstObject", 
+		@"lastObject", nil];
+	
+	return [[super properties] arrayByAddingObjectsFromArray: properties];
+}
+
+- (id) valueForProperty: (NSString *)key
+{
+	if ([[self properties] containsObject: key])
+	{
+		id (*NSObjectValueForKeyIMP)(id, SEL, id) = NULL;
+		
+		NSObjectValueForKeyIMP = (id (*)(id, SEL, id))[[NSObject class] 
+			instanceMethodForSelector: @selector(valueForKey:)];
+		return NSObjectValueForKeyIMP(self, @selector(valueForKey:), key);
+	}
+	else
+	{
+		// TODO: Turn into an ETDebugLog which takes an object (or a class) to
+		// to limit the logging to a particular object or set of instances.
+		#ifdef DEBUG_PVC
+		ETLog(@"WARNING: Found no value for property %@ in %@", key, self);
+		#endif
+		return nil;
+	}
+}
+
+- (BOOL) setValue: (id)value forProperty: (NSString *)key
+{
+	return NO;
+}
+
+@end
+
+@implementation NSMutableArray (ETPropertyValueCoding)
+
+- (BOOL) setValue: (id)value forProperty: (NSString *)key
+{
+	BOOL result = YES;
+
+	if ([[self properties] containsObject: key])
+	{
+		void (*NSObjectSetValueForKeyIMP)(id, SEL, id, id) = NULL;
+		
+		NSObjectSetValueForKeyIMP = (void (*)(id, SEL, id, id))[[NSObject class] 
+			instanceMethodForSelector: @selector(setValue:forKey:)];
+		NSObjectSetValueForKeyIMP(self, @selector(setValue:forKey:), value, key);
+	}
+	else
+	{
+		// TODO: Turn into an ETDebugLog which takes an object (or a class) to
+		// to limit the logging to a particular object or set of instances.
+		#ifdef DEBUG_PVC
+		ETLog(@"WARNING: Found no value for property %@ in %@", key, self);
+		#endif
+	}
 	
 	return result;
 }

@@ -36,11 +36,20 @@
 #import <EtoileUI/NSObject+Model.h>
 #import <EtoileUI/ETCollection.h>
 #import <EtoileUI/ETCompatibility.h>
-
+#ifndef GNUSTEP
+#import <objc/runtime.h>
+#endif
 //#define DEBUG_PVC 1
 
 
 @implementation NSObject (EtoileModel)
+
+#ifndef GNUSTEP
+- (BOOL) isClass
+{
+	return class_isMetaClass([self class]);
+}
+#endif
 
 + (id) objectWithObjectValue: (id)object
 {
@@ -186,7 +195,11 @@
 
 - (NSArray *) properties
 {
-	return [NSArray arrayWithObjects: @"icon", @"displayName", nil];
+	return [NSArray arrayWithObjects: @"icon", @"displayName", @"className", 
+		@"stringValue", @"objectValue", @"isCollection", @"isGroup", 
+		@"isMutable", @"isMutableCollection", @"isCommonObjectValue", 
+		@"isNumber", @"isString", @"isClass", @"description", 
+		@"primtiveDescription", nil];
 }
 
 - (id) valueForProperty: (NSString *)key
@@ -272,20 +285,13 @@
 	used to provide custom description built with other short descriptions. */
 - (NSString *) primitiveDescription
 {
-	if ([self superclass] != nil)
-	{
-		// return [super primitiveDescription]; doesn't compile because super 
-		// is keyword and not a pseudovar like self
-		NSString * (*descIMP)(id, SEL, id) = NULL;
-		
-		descIMP = (NSString * (*)(id, SEL, id))[[NSObject class] 
-			instanceMethodForSelector: @selector(description)];
-		return descIMP(self, @selector(description), nil);
-	}
-	else
-	{
-		return [self description];
-	}
+	// return [super primitiveDescription]; doesn't compile because super 
+	// is keyword and not a pseudovar like self
+	NSString * (*descIMP)(id, SEL, id) = NULL;
+	
+	descIMP = (NSString * (*)(id, SEL, id))[[NSObject class] 
+		instanceMethodForSelector: @selector(description)];
+	return descIMP(self, @selector(description), nil);
 }
 
 /* Collection */

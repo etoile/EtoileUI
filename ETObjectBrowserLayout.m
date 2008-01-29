@@ -223,6 +223,10 @@
 
 - (NSArray *) displayedItemPropertiesInContainer: (ETContainer *)container
 {
+	/* In case, the object browsed is refreshed before the browsed object is set */
+	if ([self browsedObject] == nil)
+		return [NSArray array];
+
 	return [[self browsedObject] properties];
 }
 

@@ -295,15 +295,10 @@
 		[cell setLeaf: YES];
 	}
 
-	/* Try to use the value property when the item has no name. If no value is
-	   is provided, use the display name. Item value are objects like numbers,
-	   strings etc. you can set by calling -[ETLayoutItem setValue:], they are
-	   useful for list control (table with a single column). */
-	if ([childItem valueForProperty: @"name"] == nil)
-		value = [childItem value];
-
-	if (value == nil)
-		value = [childItem valueForProperty: @"displayName"];
+	// TODO: Let the developer customizes what value and icon are bound to and 
+	// also makes use of a custom cell instead of FSBrowserCell. The best 
+	// way is probably to provide a delegate method (and option
+	value = [childItem valueForProperty: @"displayName"];
 
 	NSAssert2(value != nil, @"Item %@ returns nil value in browser view %@ "
 		@"and display name must never be nil", childItem, self);
