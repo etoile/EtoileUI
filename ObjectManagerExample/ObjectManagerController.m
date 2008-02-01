@@ -168,7 +168,7 @@ static NSFileManager *objectManager = nil;
 
 - (void) moveToItem: (ETLayoutItem *)item
 {
-	NSString *newPath = [item valueForProperty: @"path"];
+	NSString *newPath = [item valueForProperty: @"filePath"];
 	
 	NSLog(@"Moving from path %@ to %@", path, newPath);
 	ASSIGN(path, newPath);
@@ -407,7 +407,7 @@ static NSFileManager *objectManager = nil;
 		fileItem = [ETLayoutItem layoutItemWithView: imgView];	
 		
 		[fileItem setValue: [filePath lastPathComponent] forProperty: @"name"];
-		[fileItem setValue: filePath forProperty: @"path"];
+		[fileItem setValue: filePath forProperty: @"filePath"];
 		
 		//NSLog(@"Returns %@ as layout item in container %@", fileItem, container);
 	}
