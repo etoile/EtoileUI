@@ -98,21 +98,6 @@
 	return @"BrowserPrototype";
 }
 
-- (void) awakeFromNib
-{
-	//ETLog(@"Awaking from nib for %@", self);
-	
-	/* Because this outlet will be removed from its superview, it must be 
-	   retained like any other to-one relationship ivars. 
-	   If this proto view is later replaced by calling 
-	   -setLayoutView:, this retain will be balanced by the release
-	   in ASSIGN. */ 
-	RETAIN(_displayViewPrototype);
-
-	/* Adjust _displayViewPrototype outlet */
-	[self setLayoutView: _displayViewPrototype];
-}
-
 - (void) setLayoutView: (NSView *)protoView
 {
 	[super setLayoutView: protoView];

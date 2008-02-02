@@ -67,7 +67,7 @@
 			<key>OUTLETS</key>
 			<dict>
 				<key>viewContainer</key>
-				<string>id</string>
+				<string>ETContainer</string>
 			</dict>
 			<key>SUPERCLASS</key>
 			<string>NSObject</string>

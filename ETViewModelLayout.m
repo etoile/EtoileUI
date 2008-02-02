@@ -46,20 +46,14 @@
 
 @implementation ETViewModelLayout
 
-- (id) initWithLayoutView: (NSView *)view
-{
-	self = [super initWithLayoutView: view];
-    
-	if (self != nil)
-		_displayMode = ETLayoutDisplayModeViewProperties;
-    
-	return self;
-}
-
 - (void) awakeFromNib
 {
-	NSLog(@"Awaking from nib for %@", self);
+	ETLog(@"Awaking from nib for %@", self);
+	
+	/* Finish init */
+	[self setDisplayMode: ETLayoutDisplayModeViewProperties];
 
+	/* Configure propertyView outlet */
 	[propertyView setLayout: AUTORELEASE([[ETTableLayout alloc] init])];	
 	[propertyView setSource: self];
 	[propertyView setDelegate: self];
@@ -68,16 +62,6 @@
 	[propertyView setHasVerticalScroller: YES];
 	[propertyView setHasHorizontalScroller: YES];
 	[propertyView reloadAndUpdateLayout];
-
-	/* Because this outlet will be removed from its superview, it must be 
-	   retained like any other to-one relationship ivars. 
-	   If this proto view is later replaced by calling 
-	   -setLayoutView:, this retain will be balanced by the release
-	   in ASSIGN. */ 
-	RETAIN(_displayViewPrototype);
-
-	/* Adjust _displayViewPrototype outlet */
-	//[self setLayoutView: _displayViewPrototype];
 }
 
 - (NSString *) nibName
@@ -110,7 +94,7 @@
 		@"-switchDisplayMode: must be sent by an instance of NSPopUpButton class "
 		@"kind unlike %@", sender);
 	[self setDisplayMode: [[sender selectedItem] tag]];
-	[propertyView reloadAndUpdateLayout]; // [self render];
+	[propertyView reloadAndUpdateLayout];
 }
 
 - (void) setLayoutContext: (id <ETLayoutingContext>)context
@@ -266,6 +250,10 @@
 	ETLayoutItem *metaItem = [ETLayoutItem layoutItemOfLayoutItem: inspectedItem];
 	ETLayoutItem *propertyItem = AUTORELEASE([[ETLayoutItem alloc] init]);
 	
+	/* Inspected item is used as model */
+	if (inspectedModel == nil)
+		inspectedModel = inspectedItem;
+	
 	NSAssert1(inspectedModel != nil, @"Layout context of % must not be nil.", self);
 	
 	if ([self displayMode] == ETLayoutDisplayModeViewProperties)
@@ -279,7 +267,7 @@
 		// NSView instance doesn't implement -copyWithZone:, it leads to a 
 		// crash. That's why having a generic formatter or always passing the
 		// object description string is critical.
-		[propertyItem setValue: [[metaItem valueForProperty: property] description] forProperty: @"value"];
+		[propertyItem setValue: [[metaItem valueForProperty: property] stringValue] forProperty: @"value"];
 	}
 	else if ([self displayMode] == ETLayoutDisplayModeModelProperties)
 	{

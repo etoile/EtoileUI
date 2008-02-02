@@ -195,10 +195,21 @@
 {
 	BOOL nibLoaded = [NSBundle loadNibNamed: nibName owner: self];
 	
-	if (nibLoaded == NO)
+	if (nibLoaded)
 	{
-		NSLog(@"Failed to load nib %@", nibName);
-		RELEASE(self);
+		// TODO: Remove this branch statement once the outlet has been renamed 
+		// layoutView
+		/* Because this outlet will be removed from its superview, it must be 
+	       retained like any other to-one relationship ivars. If this proto view 
+		   is later replaced by calling -setLayoutView:, this retain will be 
+		   balanced by the release in ASSIGN. */ 
+		RETAIN(_displayViewPrototype);
+		[self setLayoutView: _displayViewPrototype];
+	}
+	else
+	{
+		ETLog(@"Failed to load nib %@", nibName);
+		AUTORELEASE(self);
 	}
 	return nibLoaded;
 }
