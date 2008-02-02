@@ -36,9 +36,12 @@
  */
 
 #import <EtoileUI/ETWindowItem.h>
+#import <EtoileUI/ETLayoutItemGroup.h>
+#import <EtoileUI/ETLayoutItemGroup+Factory.h>
 #import <EtoileUI/NSWindow+Etoile.h>
 #import <EtoileUI/ETCompatibility.h>
 
+#define NC [NSNotificationCenter defaultCenter]
 
 @implementation ETWindowItem
 
@@ -57,6 +60,10 @@
 		{
 			_itemWindow = [[NSWindow alloc] init];
 		}
+		[NC addObserver: self 
+		       selector: @selector(windowWillClose:) 
+			       name: NSWindowWillCloseNotification
+				 object: _itemWindow];
 	}
 	
 	return self;
@@ -71,9 +78,23 @@
 
 - (void) dealloc
 {
-	DESTROY(_itemWindow);
+	[NC removeObserver: self];
+	/* Don't release a window which is in charge of releasing itself.
+	   We are usually in the middle of a window close handling and -dealloc has
+	   been called as a side-effect of removing the decorated item from the 
+	   window layer in -windowWillClose: notification. */
+	if ([_itemWindow isReleasedWhenClosed] == NO)
+		DESTROY(_itemWindow);
 	
 	[super dealloc];
+}
+
+- (void) windowWillClose: (NSNotification *)notif
+{
+	/* If the window doesn' t get hidden on close, we release the item 
+	   we decorate simply by removing it from the window layer */
+	if ([[self window] isReleasedWhenClosed])
+		[[ETLayoutItemGroup windowGroup] removeItem: [self firstDecoratedItem]];
 }
 
 - (NSWindow *) window
@@ -114,17 +135,27 @@
 
 /** Returns NO to refuse decorating an item. This happens when item has already
 	a decorator item since ETWindowItem instance must always be inserted as
-	the last decorator item */
+	the last decorator item. */
 - (void) handleDecorateItem: (ETLayoutItem *)item inView: (ETView *)parentView;
 {
 	id window = [self window];
 
-	/* Will call back -[ETWindowItem setView:] overriden version */
-	[super handleDecorateItem: item inView: parentView]; 
+	/* -handleDecorateItem:inView: will call back 
+	   -[ETWindowItem setDecoratedView:] which overrides ETLayoutItem.
+	   We pass nil instead of parentView because we want to move the decorated
+	   item view into the window and not reinsert it once decorated into its
+	   superview. Reinserting into the existing superview is the usual behavior 
+	   implemented by -handleDecorateItem:inView: that works well when the 
+	   decorator is a view  (box, scroll view etc.). */
+	[super handleDecorateItem: item inView: nil];
+	
+	/* Move decorated item into the window layer */
+	[[ETLayoutItemGroup windowGroup] addItem: item];
+
 	// TODO: Use KVB by default to bind the window title
 	[window setTitle: [[self firstDecoratedItem] displayName]];
 	[window makeKeyAndOrderFront: self];
-	[item updateLayout];
+	//[item updateLayout];
 }
 
 - (NSView *) view

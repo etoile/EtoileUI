@@ -52,7 +52,6 @@
 
 @interface ETObjectBrowser : ETLayoutItemGroup
 {
-	IBOutlet NSWindow *window;
 	id _browsedObject;
 }
 

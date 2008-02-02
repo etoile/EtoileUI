@@ -37,10 +37,12 @@
 
 #import <EtoileUI/ETObjectBrowserLayout.h>
 #import <EtoileUI/ETContainer.h>
+#import <EtoileUI/ETWindowItem.h>
 #import <EtoileUI/ETOutlineLayout.h>
 #import <EtoileUI/ETCollection.h>
 #import <EtoileUI/NSObject+EtoileUI.h>
 #import <EtoileUI/NSIndexPath+Etoile.h>
+#import <EtoileUI/NSString+Etoile.h>
 #import <EtoileUI/NSObject+Model.h>
 #import <EtoileUI/ETCompatibility.h>
 
@@ -88,7 +90,7 @@
 - (void) awakeFromNib
 {
 	[itemGroupView setLayout: AUTORELEASE([[ETOutlineLayout alloc] init])];
-	[itemGroupView setSource: self];
+	//[itemGroupView setSource: self];
 	[itemGroupView setDelegate: self];
 	[itemGroupView setDoubleAction: @selector(doubleClickInItemGroupView:)];
 	[itemGroupView setTarget: self];
@@ -97,6 +99,10 @@
 - (void) renderWithLayoutItems: (NSArray *)items;
 {
 	[self setUpLayoutView];
+	// [itemGroupView setSource: [self browsedObject]];
+	[[(ETContainer *)itemGroupView layout] setDisplayedProperties: [self displayedItemPropertiesInContainer: self]];
+	[[itemGroupView layoutItem] setRepresentedObject: [self browsedObject]];
+	[itemGroupView setSource: [itemGroupView layoutItem]];
 	[itemGroupView reloadAndUpdateLayout];
 }
 
@@ -230,27 +236,32 @@
 
 @implementation ETObjectBrowser
 
+/** Initializes a new object browser and decorates it with a window.
+	If the object browser is later moved outside of the window layer (in some 
+	other part of the layout item tree), the initial window will be lost. */
 - (id) init
 {
 	self = [super init];
 	
 	if (self != nil)
 	{
+		_browsedObject = nil;
+		[self setName: _(@"Object Browser")];
+		
 		/* UI set up */
-		ETContainer *browserView = [[ETContainer alloc] initWithFrame: PALETTE_FRAME layoutItem: self];
-
-		// FIXME: Update this code when a layout item representation exists for NSWindow instances.
-		window = [[NSWindow alloc] init];
+		ETContainer *browserView = [[ETContainer alloc] 
+			initWithFrame: PALETTE_FRAME layoutItem: self];
+		ETWindowItem *windowItem = [[ETWindowItem alloc] init]; //AUTORELEASE([[ETWindowItem alloc] init]);
 
 		[browserView setHasVerticalScroller: YES];
 		[browserView setHasHorizontalScroller: YES];
 		[browserView setAutoresizingMask: NSViewWidthSizable | NSViewHeightSizable];
 		[browserView setLayout: [ETObjectBrowserLayout layout]];
-		[window setContentView: browserView];
-		[window setTitle: _(@"Object Browser")];
-		RELEASE(browserView);
-		
-		_browsedObject = nil;
+		/* Moves the object browser from the floating item group to the window 
+		   layer */
+		[[browserView layoutItem] setDecoratorItem: windowItem];
+
+		RELEASE(browserView); /* Was retained on -initWithFrame:layoutItem: */
 	}
 	
 	return self;
@@ -258,10 +269,23 @@
 
 - (void) dealloc
 {
-	DESTROY(window);
 	DESTROY(_browsedObject);
 	
 	[super dealloc];
+}
+
+/* Overrides -[ETLayoutItem displayName] */
+- (NSString *) displayName
+{
+	NSString *displayName = [self name];
+	
+	if ([self browsedObject] != nil)
+	{
+		displayName = [displayName append: @" - "];
+		displayName = [displayName append: [[self browsedObject] displayName]];
+	}
+	
+	return displayName;
 }
 
 - (id) browsedObject
@@ -272,23 +296,31 @@
 - (void) setBrowsedObject: (id)object
 {
 	[self setRepresentedObject: object];
-	[window setTitle: [NSString stringWithFormat: @"Object browser - %@", object]];
+	[[self window] setTitle: [self displayName]];
 	[self reloadAndUpdateLayout];
 }
 
 - (NSWindow *) window
 {
+	id window = nil;
+	id lastDecorator = [self lastDecoratorItem];
+	
+	if ([lastDecorator isKindOfClass: [ETWindowItem class]])
+		window = [lastDecorator window];
+
 	return window;
 }
 
+// FIXME: Implement or remove
 - (NSPanel *) panel
 {
-	return (NSPanel *)window;
+	return (NSPanel *)[self window];
 }
 
 - (IBAction) browse: (id)sender
 {
-	[[NSApplication sharedApplication] sendAction: @selector(browse:) to: nil from: sender];
+	[[NSApplication sharedApplication] sendAction: @selector(browse:) 
+		to: nil from: sender];
 }
 
 @end
