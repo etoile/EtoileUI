@@ -42,7 +42,7 @@
 #define ETUTI NSString
 #define ITEM(x) [ETLayoutItem layoutItemWithValue: x]
 
-@class ETView, ETContainer, ETLayoutItemGroup;
+@class ETView, ETContainer, ETLayoutItemGroup, ETWindowItem;
 @protocol ETEventHandler;
 
 /** WARNING: Personal notes that are vague and may change, move or become part
@@ -248,6 +248,9 @@ shape*/
 - (void) handleDecorateItem: (ETLayoutItem *)item inView: (ETView *)parentView;
 - (id) supervisorView;
 - (void) setSupervisorView: (ETView *)supervisorView;
+
+- (ETLayoutItem *) firstScrollViewDecoratorItem;
+- (ETWindowItem *) windowDecoratorItem;
 
 //-setShowsDecorator:
 

@@ -36,6 +36,7 @@
 
 #import <EtoileUI/ETLayoutItem.h>
 #import <EtoileUI/ETLayoutItemGroup.h>
+#import <EtoileUI/ETWindowItem.h>
 #import <EtoileUI/ETStyleRenderer.h>
 #import <EtoileUI/ETView.h>
 #import <EtoileUI/ETContainer.h>
@@ -1440,6 +1441,30 @@
 	{
 		[parent handleAttachViewOfItem: self];
 	}
+}
+
+- (ETLayoutItem *) firstScrollViewDecoratorItem
+{
+	id decorator = self;
+	
+	while ((decorator = [decorator decoratorItem]) != nil)
+	{
+		if ([[decorator supervisorView] isKindOfClass: [ETScrollView class]])
+			break;
+	}
+	
+	return decorator;
+}
+
+- (ETWindowItem *) windowDecoratorItem
+{
+	id lastDecorator = [self lastDecoratorItem];
+	id windowDecorator = nil;
+	
+	if ([lastDecorator isKindOfClass: [ETWindowItem class]])
+		windowDecorator = lastDecorator;
+		
+	return windowDecorator;
 }
 
 - (void) updateLayout
