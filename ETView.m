@@ -416,6 +416,7 @@ static ETView *barViewPrototype = nil;
 	return _temporaryView;
 }
 
+/** You must override this method in subclasses. */
 - (void) setContentView: (NSView *)view temporary: (BOOL)temporary
 {
 	/* Ensure the resizing of all subviews is handled automatically */
@@ -673,33 +674,83 @@ static ETView *barViewPrototype = nil;
 
 @implementation ETScrollView : ETView
 
-- (NSView *) wrappedView
+- (id) initWithFrame: (NSRect)frame layoutItem: (ETLayoutItem *)item
 {
-	return [(NSScrollView *)_wrappedView documentView]; 
+	self = [super initWithFrame: frame layoutItem: item];
+	
+	if (self != nil)
+	{
+		/* Will be destroy in -[ETView dealloc] */
+		_mainView = [[NSScrollView alloc] initWithFrame: frame];
+		[_mainView setHasVerticalScroller: YES];
+		[_mainView setHasHorizontalScroller: YES];
+		[_mainView setAutoresizingMask: NSViewWidthSizable | NSViewHeightSizable];
+		[self addSubview: _mainView];
+		[self tile];
+	}
+	
+	return self;
 }
 
-- (void) setWrappedView: (NSView *)view
+- (void) dealloc
 {
-	NSAssert2([_wrappedView isKindOfClass: [NSScrollView class]], 
-		@"_wrappedView %@ of %@ must be an NSScrollView instance", 
-		_wrappedView, self);
+	DESTROY(_mainView);
+	
+	[super dealloc];
+}
+
+- (NSView *) mainView
+{
+	return _mainView;
+}
+
+- (NSView *) wrappedView
+{
+	return [(NSScrollView *)[self mainView] documentView]; 
+}
+
+/* Embed the wrapped view inside the receiver scroll view */
+- (void) setContentView: (NSView *)view temporary: (BOOL)temporary
+{
+	NSAssert2([[self mainView] isKindOfClass: [NSScrollView class]], 
+		@"_mainView %@ of %@ must be an NSScrollView instance", 
+		[self mainView], self);
 
 	/* Retain the view in case it must be removed from a superview and nobody
 	   else retains it */
 	RETAIN(view);
-
-	/* Ensure the view has no superview set */
-	if ([view superview] != nil)
-	{
-		ETLog(@"WARNING: New wrapped view %@ of %@ should have no superview",
-			view, self);
-		[view removeFromSuperview];
-	}
-	
-	/* Embed the wrapped view inside the receiver scroll view */
-	[(NSScrollView *)_wrappedView setDocumentView: view];
-	
+	[(NSScrollView *)[self mainView] setDocumentView: view];
 	RELEASE(view);
+}
+
+- (NSMethodSignature *) methodSignatureForSelector: (SEL)selector
+{
+	return [[self mainView] methodSignatureForSelector: selector];
+}
+
+- (BOOL) respondsToSelector: (SEL)selector
+{
+	BOOL isInstanceMethod = [super respondsToSelector: selector];
+	
+	if (isInstanceMethod == NO)
+		return [[self mainView] respondsToSelector: selector];
+	
+	return isInstanceMethod;
+}
+
+- (void) forwardInvocation: (NSInvocation *)inv
+{
+    SEL selector = [inv selector];
+	id realScrollView = [self mainView];
+ 
+    if ([realScrollView respondsToSelector: selector])
+	{
+        [inv invokeWithTarget: realScrollView];
+	}
+    else
+	{
+        [self doesNotRecognizeSelector: selector];
+	}
 }
 
 @end
