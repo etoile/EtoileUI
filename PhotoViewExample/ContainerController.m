@@ -115,12 +115,13 @@
 {
 	if ([sender state] == NSOnState)
 	{
-		[viewContainer setHasVerticalScroller: YES];
-		[viewContainer setHasHorizontalScroller: YES];
+		[viewContainer setShowsScrollView: YES];
+		//[viewContainer setHasVerticalScroller: YES];
+		//[viewContainer setHasHorizontalScroller: YES];
 	}
 	else if ([sender state] == NSOffState)
 	{
-		[viewContainer setScrollView: nil];
+		[viewContainer setShowsScrollView: NO];
 		// NOTE: Testing related lines
 		//[viewContainer setHasVerticalScroller: NO];
 		//[viewContainer setHasHorizontalScroller: NO];

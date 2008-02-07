@@ -46,7 +46,8 @@
 
 @interface ETContainer : ETView <ETObjectInspection, ETCollection, ETCollectionMutation> //ETLayoutingContext
 {
-	IBOutlet NSScrollView *_scrollView;
+	ETLayoutItem *_scrollViewDecorator;
+	BOOL _scrollViewShown;
 
 	NSView *_displayView;
 	BOOL _flipped;

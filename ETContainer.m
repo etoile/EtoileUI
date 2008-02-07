@@ -147,7 +147,7 @@ NSString *ETLayoutItemPboardType = @"ETLayoutItemPboardType"; // FIXME: replace 
 		[self setAllowsMultipleSelection: YES];
 		[self setAllowsEmptySelection: YES];
 		_prevInsertionIndicatorRect = NSZeroRect;
-		_scrollView = nil; /* First instance created by calling private method -setShowsScrollView: */
+		_scrollViewDecorator = nil; /* First instance created by calling private method -setShowsScrollView: */
 		_inspector = nil; /* Instantiated lazily in -inspector if needed */
 		
 		[self registerForDraggedTypes: [NSArray arrayWithObjects:
@@ -595,7 +595,7 @@ NSString *ETLayoutItemPboardType = @"ETLayoutItemPboardType"; // FIXME: replace 
 		BOOL hasVScroller = [self hasVerticalScroller];
 		BOOL hasHScroller = [self hasHorizontalScroller];
 		
-		if ([self scrollView] == nil)
+		if ([self isScrollViewShown] == NO)
 		{
 			hasVScroller = NO;
 			hasHScroller = NO;
@@ -737,6 +737,7 @@ NSString *ETLayoutItemPboardType = @"ETLayoutItemPboardType"; // FIXME: replace 
    That means, these following methods will probably be deprecated at some 
    points. */
 
+#if 0
 - (BOOL) hasVerticalScroller
 {
 	return [_scrollView hasVerticalScroller];
@@ -884,6 +885,224 @@ NSString *ETLayoutItemPboardType = @"ETLayoutItemPboardType"; // FIXME: replace 
 		RELEASE(self);
 	}
 }
+#else
+- (BOOL) hasVerticalScroller
+{
+	return [[self scrollView] hasVerticalScroller];
+}
+
+- (void) setHasVerticalScroller: (BOOL)scroll
+{
+	[self setShowsScrollView: YES];
+	[[self scrollView] setHasVerticalScroller: scroll];
+	
+	/* Updated NSBrowser, NSOutlineView enclosing scroll view etc. */
+	[self syncDisplayViewWithContainer];
+}
+
+- (BOOL) hasHorizontalScroller
+{
+	return [[self scrollView] hasHorizontalScroller];
+}
+
+- (void) setHasHorizontalScroller: (BOOL)scroll
+{
+	[self setShowsScrollView: YES];
+	[[self scrollView] setHasHorizontalScroller: scroll];
+	
+	/* Updated NSBrowser, NSOutlineView enclosing scroll view etc. */
+	[self syncDisplayViewWithContainer];
+}
+
+// TODO: Evaluates whether we really need to keep public the following methods 
+// exposing NSScrollView directly. Would be cleaner to provide a ready to use 
+// ETScrollView in the UI builder and the related inspector to configure it.
+
+- (NSScrollView *) scrollView
+{
+	/*id decorator = [[self layoutItem] firstScrollViewDecoratorItem];
+	ETScrollView *scrollView = [decorator supervisorView];
+	
+	return (NSScrollView *)[scrollView mainView];*/
+	id cachedDecorator = [self cachedScrollViewDecoratorItem];
+	
+	if (cachedDecorator == nil)
+	{
+		[self cacheScrollViewDecoratorItem: [self createScrollViewDecoratorItem]];
+		cachedDecorator = [self cachedScrollViewDecoratorItem];
+	}
+
+	return (NSScrollView *)[[cachedDecorator supervisorView] mainView];
+}
+
+- (void) cacheScrollViewDecoratorItem: (ETLayoutItem *)decorator
+{
+	ASSIGN(_scrollViewDecorator, decorator);
+}
+
+
+- (ETLayoutItem *) cachedScrollViewDecoratorItem
+{
+	return _scrollViewDecorator;
+}
+
+- (void) didChangeDecoratorOfItem: (ETLayoutItem *)item
+{
+	if ([item firstScrollViewDecoratorItem] != nil)
+		[self cacheScrollViewDecoratorItem: [item firstScrollViewDecoratorItem]];
+		
+	// TODO: We might cache the position of the first scroll decorator in the 
+	// decorator chain in order to be able to reinsert at another position than 
+	// first decorator.
+}
+
+/** Inserts the scroll view as the last decorator item bound to the receiver 
+	layout item if no scroll view decorator can be found. If such a decorator 
+	exists in the decorator item chain, replaces the first scroll view 
+	decorator in the decorator item chain. 
+	Behind the scene, this method builds a decorator item by creating an 
+	ETScrollView instance which is initialized with scrollView parameter. Then 
+	a new decorator item is created by instantiating an ETLayoutItem with the 
+	newly created scroll view wrapper (passed as view parameter). */
+#if 0
+- (void) setScrollView: (NSScrollView *)scrollView
+{
+	if ([[self scrollView] isEqual: scrollView])
+		return;
+
+	if ([self scrollView] != nil)
+	{
+		/* Dismantle current scroll view and move container outside of it */
+		[self setShowsScrollView: NO];
+	}
+
+	ASSIGN(_scrollViewDecorator, [self createDecoratorWithScrollView: scrollView]);
+	
+	/* If a new scroll view has been provided and no layout view is in use */
+	if ([self scrollView] != nil && [self displayView] == nil)
+		[self setShowsScrollView: YES];
+	
+	/* Updated NSBrowser, NSOutlineView enclosing scroll view etc. */
+	[self syncDisplayViewWithContainer];
+}
+#endif
+
+/* Returns whether the scroll view of the current container is really used. If
+   the container shows currently an AppKit control like NSTableView as display 
+   view, the built-in scroll view of the table view is used instead of the one
+   provided by the container. 
+   It implies you can never have -hasScrollView returns NO and -isScrollViewShown 
+   returns YES. There is no such exception with all other boolean combinations. */
+- (BOOL) isScrollViewShown
+{
+	return _scrollViewShown;
+}
+
+- (BOOL) isContainerScrollViewInserted
+{
+	return ([[self layoutItem] firstScrollViewDecoratorItem] != nil);
+}
+
+- (void) unhidesScrollViewDecoratorItem 
+{
+	if ([self isContainerScrollViewInserted])
+		return;
+
+	id scrollDecorator = [self cachedScrollViewDecoratorItem];	
+	
+	/* If no scroll view exists we create one even when a display view is in use
+	   simply because we use the container scroll view instance to store all
+	   scroller settings. We update any scroller settings defined in a display
+	   view with that of the newly created scroll view.  */
+	if (scrollDecorator == nil)
+		scrollDecorator = [self createScrollViewDecoratorItem];
+		
+	/* Will call back -didChangeScrollDecoratorOfItem: which takes care of 
+	   caching the scroll decorator */
+	[[self layoutItem] setDecoratorItem: scrollDecorator];
+	//[_scrollView setAutoresizingMask: [self autoresizingMask]];
+		
+	// TODO: This should be handled rather on scroll view decorator 
+	// insertion and probably in ETLayoutItem itself
+	[[self layout] setContentSizeLayout: YES];
+}
+
+- (void) hidesScrollViewDecoratorItem 
+{
+	if ([self isContainerScrollViewInserted] == NO)
+		return;
+		
+	NSAssert([[self scrollView] superview] != nil, @"A scroll view without "
+		@"superview cannot be hidden");
+
+	id scrollDecorator = [[self layoutItem] firstScrollViewDecoratorItem];
+	id nextDecorator = [scrollDecorator decoratorItem];	
+		
+	[[scrollDecorator decoratedItem] setDecoratorItem: nextDecorator];
+	//[self setAutoresizingMask: [_scrollView autoresizingMask]];
+	
+	// NOTE: The assertion below was added to ensure [self setFrame: 
+	// [_scrollView frame]]; was correctly applied, it may be better to move
+	// it in decorator handling of ETLayoutItem. As it is, it doesn't make 
+	// much sense anymore because it is valid only when the scroll view is 
+	// the first decorator of the layout item bound to the container.
+	// WARNING: More about next line and following assertion can be read here: 
+	// <http://www.cocoabuilder.com/archive/message/cocoa/2006/9/29/172021>
+	// Stop also to receive any view/window notifications in ETContainer code 
+	// before turning scroll view on or off.
+	#if 0
+	// This test will never work unless you retain scrollDecorator before 
+	// removing it
+	NSAssert1(NSEqualRects([self frame], [[scrollDecorator supervisorView] frame]), 
+		@"Unable to update the frame of container %@, you must stop watch "
+		@"any notifications posted by container before hiding or showing "
+		@"its scroll view (Cocoa bug)", self);
+	#endif
+
+	// TODO: This should be handled rather on scroll view decorator 
+	// removal and probably in ETLayoutItem itself
+	[[self layout] setContentSizeLayout: NO];
+}
+
+- (void) setShowsScrollView: (BOOL)show
+{
+	if (_scrollViewShown == show)
+		return;
+
+	// FIXME: Asks layout whether it handles scroll view itself or not. If 
+	// needed like with table layout, delegate scroll view handling.
+	BOOL layoutHandlesScrollView = ([self displayView] != nil);
+	
+	_scrollViewShown = show;
+
+	if (layoutHandlesScrollView)
+	{
+		[self syncDisplayViewWithContainer];	
+	}
+	else
+	{
+		if (show)
+		{
+			[self unhidesScrollViewDecoratorItem];
+		}
+		else
+		{
+			[self hidesScrollViewDecoratorItem];
+		}
+	}
+}
+
+- (ETLayoutItem *) createScrollViewDecoratorItem
+{
+	ETScrollView *scrollViewWrapper = nil;
+	
+	scrollViewWrapper = [[ETScrollView alloc] initWithFrame: [self frame]];
+	AUTORELEASE(scrollViewWrapper);
+
+	return [scrollViewWrapper layoutItem];
+}
+
+#endif
 
 /** Returns the view that takes care of the display. Most of time it is equal
     to the container itself. But for some layout like ETTableLayout, the 
@@ -913,7 +1132,7 @@ NSString *ETLayoutItemPboardType = @"ETLayoutItemPboardType"; // FIXME: replace 
 	
 	/* Be careful with scroll view code, it will call -displayView and thereby
 	   needs up-to-date _displayView */
-	if (view != nil && [self scrollView] != nil)
+	/*if (view != nil && [self scrollView] != nil)
 	{
 		if ([self isScrollViewShown])
 			[self setShowsScrollView: NO];
@@ -922,10 +1141,13 @@ NSString *ETLayoutItemPboardType = @"ETLayoutItemPboardType"; // FIXME: replace 
 	{
 		if ([self isScrollViewShown] == NO)
 			[self setShowsScrollView: YES];		
-	}
-
+	}*/
+	
 	if (view != nil)
-	{	
+	{
+		[self hidesScrollViewDecoratorItem];
+		
+		/* Inserts the layout view */
 		[view removeFromSuperview];
 		[view setFrameSize: [self frame].size];
 		[view setFrameOrigin: NSZeroPoint];
@@ -933,6 +1155,11 @@ NSString *ETLayoutItemPboardType = @"ETLayoutItemPboardType"; // FIXME: replace 
 		
 		[self syncDisplayViewWithContainer];
 	}
+	else
+	{
+		if ([self isScrollViewShown])
+			[self unhidesScrollViewDecoratorItem];		
+	}	
 }
 
 /*

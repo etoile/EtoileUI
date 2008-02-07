@@ -676,20 +676,32 @@ static ETView *barViewPrototype = nil;
 
 - (id) initWithFrame: (NSRect)frame layoutItem: (ETLayoutItem *)item
 {
-	self = [super initWithFrame: frame layoutItem: item];
+	NSScrollView *realScrollView = [[NSScrollView alloc] initWithFrame: frame];
+
+	[realScrollView setHasVerticalScroller: YES];
+	[realScrollView setHasHorizontalScroller: YES];
+	[realScrollView setAutoresizingMask: NSViewWidthSizable | NSViewHeightSizable];
+
+	self = [self initWithMainView: realScrollView layoutItem: item];
+	RELEASE(realScrollView);
+	
+	return self;
+}
+
+/** <init /> */
+- (id) initWithMainView: (id)scrollView layoutItem: (ETLayoutItem *)item
+{
+	self = [super initWithFrame: [scrollView frame] layoutItem: item];
 	
 	if (self != nil)
 	{
 		/* Will be destroy in -[ETView dealloc] */
-		_mainView = [[NSScrollView alloc] initWithFrame: frame];
-		[_mainView setHasVerticalScroller: YES];
-		[_mainView setHasHorizontalScroller: YES];
-		[_mainView setAutoresizingMask: NSViewWidthSizable | NSViewHeightSizable];
+		ASSIGN(_mainView, scrollView);
 		[self addSubview: _mainView];
 		[self tile];
 	}
 	
-	return self;
+	return self;	
 }
 
 - (void) dealloc

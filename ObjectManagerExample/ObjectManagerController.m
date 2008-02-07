@@ -140,7 +140,8 @@ static NSFileManager *objectManager = nil;
 	}
 	else if ([sender state] == NSOffState)
 	{
-		[viewContainer setScrollView: nil];
+		[viewContainer setHasVerticalScroller: NO];
+		[viewContainer setHasHorizontalScroller: NO];
 	}
 	
 	[viewContainer updateLayout];

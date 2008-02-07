@@ -226,9 +226,9 @@
 
 #ifdef DETAILED_DESCRIPTION	
 	desc = [@"<" stringByAppendingFormat: @"%@ meta: %d id: %@, ipath: %@, "
-		@"selected: %d, repobject: %@>", desc, [self UIMetalevel], 
+		@"selected: %d, repobject: %@ view: %@>", desc, [self UIMetalevel], 
 		[self identifier], [[self indexPath] keyPath], [self isSelected], 
-		[[self representedObject] primitiveDescription]];
+		[[self representedObject] primitiveDescription], [self view]];
 #else
 	desc = [@"<" stringByAppendingFormat: @"%@ id: %@, selected:%d>", 
 		desc, [self identifier], [self isSelected]];
@@ -298,6 +298,14 @@
 	collection owned by an item group. */
 - (void) setParentLayoutItem: (ETLayoutItemGroup *)parent
 {
+	ETLog(@"For item %@ with supervisor view %@, modify the parent item from "
+		"%@ to %@", self, [self supervisorView], _parentLayoutItem, parent, self);
+
+	if ([[self supervisorView] isKindOfClass: [ETScrollView class]])
+	{
+	ETLog(@"For item %@ with supervisor view %@, modify the parent item from "
+		"%@ to %@", self, [self supervisorView], _parentLayoutItem, parent, self);		
+	}
 	// TODO: Move the next three lines into -[ETLayoutItemGroup handleAttachItem:]
 	[[self displayView] removeFromSuperview];
 	if ([parent layout] == nil && [parent view] != nil)
@@ -1293,7 +1301,7 @@
 	if ([decorator isEqual: [self decoratorItem]])
 		return;
 
-	if ([decorator canDecorateItem: self])
+	if ([decorator canDecorateItem: self] || decorator == nil)
 	{
 		/* Memorize our decorator to let the new decorator inserts itself into it */
 		id existingDecorator = [self decoratorItem];
@@ -1302,23 +1310,53 @@
 		id parentView = [[self displayView] superview];
 		// parentView isEqual: [[item parentLayoutItem] view]
 		
-		RETAIN(existingDecorator);
+		[[self displayView] removeFromSuperview];
+
 		// NOTE: Important to retain decorator before calling 
 		// -setDecoratedItem: which is going to decrease its retain count
 		// by removing it from its parent
+		RETAIN(existingDecorator);
+		RETAIN(decorator);
+		
+		/* Must be done before dismantling the existing decorator, otherwise 
+		   -handleDecorateItem: nil inView: parentView doesn't remove the 
+		   existing decorator view. More precisely, it doesn't reinserts the
+		   receiver supervisor view but the one currently in use. */
 		ASSIGN(_decoratorItem, decorator),
+
+		/* Dismantle existing decorator */
+		[existingDecorator setDecoratedItem: nil];
+		[existingDecorator handleDecorateItem: nil inView: nil];
+		
+		/* Set up new decorator */
 		[decorator setDecoratedItem: self];
 		[decorator handleDecorateItem: self inView: parentView];
-		RELEASE(existingDecorator);
+		[[self container] didChangeDecoratorOfItem: self];
 		
-		/* Verify new decorator has been correctly inserted */
+		/* Restore supervisor view as display view if no decorator is set */
+		if (decorator == nil) // && [self view] != nil
+		{
+			NSAssert2([[self displayView] superview] == nil, @"If %@ decorator "
+				@"was just removed without being replaced, the display view of "
+				@"%@ must have no superview", existingDecorator, self);
+			[parentView addSubview: [self displayView]];
+		}
+		else
+		{
+				/* Verify new decorator has been correctly inserted */
 		/* Tested by -checkDecoration...
 		NSAssert3([[self displayView] isEqual: [decorator displayView]], @"New "
 			@"display view %@ of item %@ must be the display view of the new "
 			@"decorator %@", [self displayView], self, [decorator displayView]);*/
+			
 		NSAssert3([[[self supervisorView] superview] isEqual: parentView] == NO,
 			@"New parent view %@ of item %@ must not be its old parent view %@", 
 			[[self supervisorView] superview], self, parentView);
+		}
+		
+		RELEASE(existingDecorator);
+		RELEASE(decorator);
+		
 		[self checkDecoration];
 	}
 }

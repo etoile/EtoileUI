@@ -683,7 +683,7 @@
 	// Triggers scroll view display which triggers layout render in turn to 
 	// compute the content size
 	if ([self isContainer])
-		[(ETContainer *)[self displayView] setDisplayView: nil]; 
+		[(ETContainer *)[self supervisorView] setDisplayView: nil]; 
 	ASSIGN(_layout, layout);
 	[layout setLayoutContext: self];
 	
@@ -697,7 +697,7 @@
 	// of AppKit-based layouts. Part of this code should be put inside 
 	// overidden -layoutView method in each ETLayout suclasses.
 	if ([self isContainer])
-		[(ETContainer *)[self displayView] syncDisplayViewWithContainer];
+		[(ETContainer *)[self supervisorView] syncDisplayViewWithContainer];
 	
 	[self setAutolayout: wasAutolayoutEnabled];
 	if ([self canUpdateLayout])

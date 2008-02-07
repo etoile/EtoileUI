@@ -128,19 +128,31 @@
 
 #endif
 
+/* When we encounter an EtoileUI native (ETView subclasses), we only return
+   the proper layout item, either the item bound to the view or the first 
+   decorated item if the view is used as a decorator. We never render 
+   subviews of native views since we expect their content is properly set up 
+   in term of layout item tree. All other views (other NSView subclasses) 
+   are rendered recursively until the end of their view hierachy (-subviews
+   returns an empty arrary). */
 - (id) renderView: (id)view
 {
-	/*if ([view isKindOfClass: [NSScrollView class]])
+
+	if ([view isKindOfClass: [NSScrollView class]])
 	{
-		id decorator = [ETLayoutItem layoutItem];
-		id item = [self renderView: [view documentView]];
+		ETScrollView *scrollViewWrapper = [[ETScrollView alloc] initWithScrollView: view];
+		id scrollDecorator = [scrollViewWrapper layoutItem];
+		id documentViewItem = [self renderView: [view documentView]];
+
+		[documentViewItem setDecoratorItem: scrollDecorator];
 		
-		[decorator setView: view];
-		[item setDecoratorItem: decorator];
-		
-		return item;
+		return documentViewItem;
 	}
-	else*/ if ([view isKindOfClass: [ETView class]] || [view isContainer])
+	else if ([view isKindOfClass: [ETScrollView class]])
+	{
+		return [[view layoutItem] firstDecoratedItem];
+	}
+	else if ([view isKindOfClass: [ETView class]] || [view isContainer])
 	{
 		return [view layoutItem];
 	}
