@@ -2,7 +2,11 @@
     "## Comment" = "Do NOT change this file, Gorm maintains it";
     ContainerController = {
 	Actions = (
-	    "choosePicturesAndLayout:"
+	    "choosePicturesAndLayout:",
+	    "changeLayout:",
+	    "switchUsesSource:",
+	    "switchUsesScrollView:",
+	    "scale:"
 	);
 	Outlets = (
 	    viewContainer
@@ -26,8 +30,12 @@
     };
     FirstResponder = {
 	Actions = (
+	    "changeLayout:",
 	    "choosePicturesAndLayout:",
-	    "inspect:"
+	    "inspect:",
+	    "scale:",
+	    "switchUsesScrollView:",
+	    "switchUsesSource:"
 	);
 	Super = NSObject;
     };
