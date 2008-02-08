@@ -272,7 +272,11 @@
 	// already declared in a parent.
 	//[imageItem addValue: type forProperty: @"type"];
 	[imageItem setValue: type forProperty: @"imgType"];
+// FIXME: GNUstep doesn't handle common structs like NSSize, NSRect etc. which 
+// can be boxed in a NSValue object. GSObjCSetVal() have to be improved.
+#ifndef GNUSTEP
 	[imageItem setValue: size forProperty: @"size"];
+#endif
 	//[imageItem setValue: date forProperty	: @"modificationdate"];
 	
 	//NSLog(@"Returns %@ as layout item in container %@", imageItem, container);
