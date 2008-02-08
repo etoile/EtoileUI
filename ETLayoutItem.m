@@ -49,6 +49,7 @@
 #define DETAILED_DESCRIPTION
 #define PROVIDER_CONTAINER [[self baseItem] container]
 #define PROVIDER_SOURCE [PROVIDER_CONTAINER source]
+#define VARIABLE_PROPERTIES _variableProperties
 
 #define ETUTIAttribute @"uti"
 
@@ -846,13 +847,13 @@
 - (id) valueForUndefinedKey: (NSString *)key
 {
 	ETLog(@"WARNING: -valueForUndefinedKey: %@ called in %@", key, self);
-	return [[self variableProperties] objectForKey: key]; /* May return nil */
+	return [VARIABLE_PROPERTIES objectForKey: key]; /* May return nil */
 }
 
 - (void) setValue: (id)value forUndefinedKey: (NSString *)key
 {
 	ETLog(@"WARNING: -setValue:forUndefinedKey: %@ called in %@", key, self);
-	[[self variableProperties] setObject: value forKey: key];
+	[VARIABLE_PROPERTIES setObject: value forKey: key];
 }
 
 /* Property Value Coding */
@@ -930,7 +931,7 @@
 		@"visible", @"image", @"frame", @"representedObject", 
 		@"parentLayoutItem", @"UIMetalevel", @"UIMetalayer", nil];
 
-	properties = [[[self variableProperties] allKeys] arrayByAddingObjectsFromArray: properties];
+	properties = [[VARIABLE_PROPERTIES allKeys] arrayByAddingObjectsFromArray: properties];
 		
 	return [[super properties] arrayByAddingObjectsFromArray: properties];
 }
@@ -1637,13 +1638,13 @@
 	// TODO: Find the best way to allow the represented object to provide and 
 	// store the persistent frame.
 	//[[[self representedObject] valueForProperty: @"kPersistentFrame"] rectValue];
-	return [[[self variableProperties] objectForKey: @"kPersistentFrame"] rectValue];
+	return [[VARIABLE_PROPERTIES objectForKey: @"kPersistentFrame"] rectValue];
 }
 
 - (void) setPersistentFrame: (NSRect) frame
 {
 	//[[self representedObject] setValue: [NSValue valueWithRect: frame] forProperty: @"kPersistentFrame"];
-	[[self variableProperties] setObject: [NSValue valueWithRect: frame] forKey: @"kPersistentFrame"];
+	[VARIABLE_PROPERTIES setObject: [NSValue valueWithRect: frame] forKey: @"kPersistentFrame"];
 }
 
 - (NSRect) frame
@@ -1821,7 +1822,7 @@
 	generates an image by taking a snapshot of the view. */
 - (NSImage *) image
 {
-	NSImage *img = [[self variableProperties] objectForKey: @"image"];
+	NSImage *img = [VARIABLE_PROPERTIES objectForKey: @"image"];
 	
 	if (img == nil && [[self value] isKindOfClass: [NSImage class]])
 		img = [self value];
@@ -1831,7 +1832,7 @@
 
 - (void) setImage: (NSImage *)img
 {
-	[(NSMutableDictionary *)[self variableProperties] setObject: img forKey: @"image"];
+	[(NSMutableDictionary *)VARIABLE_PROPERTIES setObject: img forKey: @"image"];
 }
 
 /** Returns the image to be displayed when the receiver must be represented in a 
@@ -1843,7 +1844,7 @@
 	-displayName methods. */
 - (NSImage *) icon
 {
-	NSImage *icon = [[self variableProperties] objectForKey: @"icon"];
+	NSImage *icon = [VARIABLE_PROPERTIES objectForKey: @"icon"];
 	
 	if (icon == nil)
 		icon = [self image];
@@ -1863,7 +1864,7 @@
 
 - (void) setIcon: (NSImage *)img
 {
-	[[self variableProperties] setObject: img forKey: @"icon"];
+	[VARIABLE_PROPERTIES setObject: img forKey: @"icon"];
 }
 
 /* Events & Actions */

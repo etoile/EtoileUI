@@ -170,6 +170,8 @@ extern NSString *ETViewTitleBarViewPrototypeDidChangeNotification;
 	NSScrollView *_mainView;
 }
 
+- (id) initWithMainView: (id)scrollView layoutItem: (ETLayoutItem *)item;
+
 - (void) setWrappedView: (NSView *)subview;
 - (NSView *) wrappedView;
 

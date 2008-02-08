@@ -11,80 +11,133 @@ else
 FRAMEWORK_NAME = EtoileUI
 endif
 
+PROJECT_NAME=$(FRAMEWORK_NAME)
+
 EtoileUI_LIBRARIES_DEPEND_UPON += -lm
 
 #EtoileUI_SUBPROJECTS = 
 
 EtoileUI_OBJC_FILES = \
-	ETStyleRenderer.m \
-	ETView.m \
+	ETApplication.m \
+	ETBrowserLayout.m \
+	ETCollection.m \
+	ETContainer+Controller.m \
 	ETContainer.m \
-	ETLayoutItemGroup.m \
-	ETLayoutItem.m \
-	ETLayer.m \
-	ETInspector.m \
-	ETLayout.m \
+	ETEvent.m \
+	ETFilter.m \
 	ETFlowLayout.m \
-	ETLineLayout.m \
-	ETStackLayout.m \
+	ETFlowView.m \
 	ETFreeLayout.m \
+	ETInspector.m \
+	ETLayer.m \
+	ETLayoutItemBuilder.m \
+	ETLayoutItem+Events.m \
+	ETLayoutItemGroup+Factory.m \
+	ETLayoutItemGroup.m \
+	ETLayoutItemGroup+Mutation.m \
+	ETLayoutItem.m \
+	ETLayoutLine.m \
+	ETLayout.m \
+	ETLineLayout.m \
+	ETLineView.m \
+	ETObjectBrowserLayout.m \
+	ETObjectChain.m \
+	ETObject.m \
+	ETObjectRegistry+EtoileUI.m \
+	ETObjectRegistry.m \
+	ETOutlineLayout.m \
 	ETPaneLayout.m \
 	ETPaneSwitcherLayout.m \
-	ETTableLayout.m \
-	ETOutlineLayout.m \
-	ETBrowserLayout.m \
-	ETFlowView.m \
-	ETLineView.m \
+	ETPickboard.m \
+	ETPropertyValueCoding.m \
+	ETStackLayout.m \
 	ETStackView.m \
+	ETStyle.m \
+	ETStyleRenderer.m \
+	ETTableLayout.m \
 	ETTableView.m \
-	ETViewLayoutLine.m \
+	ETTextEditorLayout.m \
+	ETTransform.m \
+	ETView.m \
+	ETViewModelLayout.m \
+	ETWindowItem.m \
 	FSBrowserCell.m \
-	ETCollection.m \
-	ETObjectRegistry.m \
+	NSImage+Etoile.m \
 	NSIndexPath+Etoile.m \
 	NSIndexSet+Etoile.m \
 	NSObject+Etoile.m \
+	NSObject+EtoileUI.m \
+	NSObject+Model.m \
 	NSString+Etoile.m \
-	NSView+Etoile.m
+	NSView+Etoile.m \
+	NSWindow+Etoile.m
+
 
 ifeq ($(test), yes)
-EtoileUI_OBJC_FILES += 
+EtoileUI_OBJC_FILES +=
 endif
 
-EtoileUI_HEADER_FILES_DIR += .
+EtoileUI_HEADER_FILES_DIR +=
 EtoileUI_HEADER_FILES = \
-	GNUstep.h \
-	EtoileUI.h \
-	ETStyleRenderer.h \
-	ETView.h \
+	ETApplication.h \
+	ETBrowserLayout.h \
+	ETCollection.h \
+	ETCompatibility.h \
+	ETContainer+Controller.h \
 	ETContainer.h \
-	ETLayoutItemGroup.h \
-	ETLayoutItem.h \
-	ETLayer.h \
-	ETInspector.h \
-	ETLayout.h \
+	ETEvent.h \
+	ETFilter.h \
 	ETFlowLayout.h \
-	ETLineLayout.h \
-	ETStackLayout.h \
+	ETFlowView.h \
 	ETFreeLayout.h \
+	ETInspecting.h \
+	ETInspector.h \
+	ETLayer.h \
+	ETLayout.h \
+	ETLayoutItemBuilder.h \
+	ETLayoutItem+Events.h \
+	ETLayoutItemGroup+Factory.h \
+	ETLayoutItemGroup.h \
+	ETLayoutItemGroup+Mutation.h \
+	ETLayoutItem.h \
+	ETLayoutLine.h \
+	ETLineLayout.h \
+	ETLineView.h \
+	ETObjectBrowserLayout.h \
+	ETObjectChain.h \
+	ETObject.h \
+	ETObjectRegistry+EtoileUI.h \
+	ETObjectRegistry.h \
+	EtoileUI.h \
+	ETOutlineLayout.h \
 	ETPaneLayout.h \
 	ETPaneSwitcherLayout.h \
-	ETTableLayout.h \
-	ETOutlineLayout.h \
-	ETBrowserLayout.h \
-	ETFlowView.h \
-	ETLineView.h \
+	ETPickboard.h \
+	ETPropertyValueCoding.h \
+	ETRendering.h \
+	ETStackLayout.h \
 	ETStackView.h \
+	ETStyle.h \
+	ETStyleRenderer.h \
+	ETTableLayout.h \
 	ETTableView.h \
-	ETViewLayoutLine.h \
+	ETTextEditorLayout.h \
+	ETTransform.h \
+	ETView.h \
+	ETViewModelLayout.h \
+	ETWindowItem.h \
 	FSBrowserCell.h \
-	ETCollection.h \
-	ETObjectRegistry.h \
+	GNUstep.h \
+	NSImage+Etoile.h \
 	NSIndexPath+Etoile.h \
 	NSIndexSet+Etoile.h \
 	NSObject+Etoile.h \
+	NSObject+EtoileUI.h \
+	NSObject+Model.h \
 	NSString+Etoile.h \
-	NSView+Etoile.h
+	NSView+Etoile.h \
+	NSWindow+Etoile.h
+
 
 EtoileUI_RESOURCE_FILES = \
 	Inspector.gorm \
@@ -104,9 +157,11 @@ ifeq ($(test), yes)
 endif
 endif
 
+#include $(GNUSTEP_MAKEFILES)/aggregate.make
 
 ifeq ($(test), yes)
 include $(GNUSTEP_MAKEFILES)/bundle.make
 else
 include $(GNUSTEP_MAKEFILES)/framework.make
+include etoile.make
 endif

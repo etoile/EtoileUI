@@ -140,7 +140,7 @@
 
 	if ([view isKindOfClass: [NSScrollView class]])
 	{
-		ETScrollView *scrollViewWrapper = [[ETScrollView alloc] initWithScrollView: view];
+		ETScrollView *scrollViewWrapper = [[ETScrollView alloc] initWithMainView: view layoutItem: nil];
 		id scrollDecorator = [scrollViewWrapper layoutItem];
 		id documentViewItem = [self renderView: [view documentView]];
 

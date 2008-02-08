@@ -38,7 +38,7 @@
 #import <EtoileUI/ETEvent.h>
 #import <EtoileUI/ETCompatibility.h>
 
-@implementation ETEvent (Private)
+@interface ETEvent (Private)
 #ifdef GNUSTEP
 + (ETEvent *) _eventWithGSEvent: (NSEvent *)evt;
 #endif
@@ -66,8 +66,6 @@
 	}
 	else if (NSEventMaskFromType([evt type]) & GSKeyEventMask)
 	{
-	keyEventWithType:location:modifierFlags:timestamp:windowNumber:context:characters:
-
 		event = [ETEvent keyEventWithType: [evt type] 
 									  location: [evt locationInWindow]
 								 modifierFlags: [evt modifierFlags] 
@@ -87,7 +85,7 @@
 								     timestamp: [evt timestamp] 
 								  windowNumber: [evt windowNumber] 
 								       context: [evt context] 
-								   subtype: [evtsubtype] 
+								   subtype: [evt subtype] 
 								    data1: [evt data1] 
 									  data2: [evt data2]];	
 	}

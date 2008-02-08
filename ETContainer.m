@@ -71,6 +71,9 @@ NSString *ETLayoutItemPboardType = @"ETLayoutItemPboardType"; // FIXME: replace 
 - (NSInvocation *) invocationForSelector: (SEL)selector;
 - (void) sendInvocationToDisplayView: (NSInvocation *)inv;
 - (BOOL) canUpdateLayout;
+- (void) cacheScrollViewDecoratorItem: (ETLayoutItem *)decorator;
+- (ETLayoutItem *) cachedScrollViewDecoratorItem;
+- (ETLayoutItem *) createScrollViewDecoratorItem;
 - (BOOL) doesSelectionContainsPoint: (NSPoint)point;
 - (void) fixOwnerIfNeededForItem: (ETLayoutItem *)item;
 - (void) mouseDoubleClick: (NSEvent *)event item: (ETLayoutItem *)item;

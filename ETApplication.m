@@ -38,7 +38,7 @@
 #import <EtoileUI/ETLayoutItemGroup.h>
 #import <EtoileUI/ETLayoutItemGroup+Factory.h>
 #import <EtoileUI/ETLayoutItemBuilder.h>
-#import <EtoileUI/ETObjectbrowserLayout.h>
+#import <EtoileUI/ETObjectBrowserLayout.h>
 #import <EtoileUI/ETCompatibility.h>
 
 @interface ETApplication (Private)

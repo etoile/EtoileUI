@@ -137,8 +137,7 @@
 - (BOOL) hasHorizontalScroller;
 - (void) setHasHorizontalScroller: (BOOL)scroll;
 - (NSScrollView *) scrollView;
-- (void) setScrollView: (NSScrollView *)scrollView;
-   
+
 /* Layout Item Tree */
 
 - (void) addItem: (ETLayoutItem *)item;
@@ -247,6 +246,7 @@
 
 /* Private Use */
 
+- (void) didChangeDecoratorOfItem: (ETLayoutItem *)item;
 // TOOD: Evaluate whether this method wouldn't be better located hidden in
 // ETLayoutItemGroup+Mutation
 - (int) checkSourceProtocolConformance;
