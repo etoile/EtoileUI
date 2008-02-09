@@ -5,15 +5,14 @@ ADDITIONAL_OBJCFLAGS += -I.
 
 APP_NAME = PhotoViewExample
 
-PhotoViewExample_OBJC_FILES = \
-	ContainerController.m \
-	../main.m
+$(APP_NAME)_OBJC_FILES = $(wildcard *.m) ../main.m
 
-PhotoViewExample_MAIN_MODEL_FILE = \
-	PhotoViewExample.gorm
+$(APP_NAME)_PRINCIPAL_CLASS = ETApplication
 
-PhotoViewExample_RESOURCE_FILES = PhotoViewExample.gorm
+$(APP_NAME)_MAIN_MODEL_FILE = $(APP_NAME).gorm
 
-PhotoViewExample_GUI_LIBS = -lEtoileUI
+$(APP_NAME)_RESOURCE_FILES = $(APP_NAME).gorm
+
+$(APP_NAME)_GUI_LIBS = -lEtoileUI
 
 include $(GNUSTEP_MAKEFILES)/application.make
