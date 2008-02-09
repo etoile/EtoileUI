@@ -5,15 +5,14 @@ ADDITIONAL_OBJCFLAGS += -I.
 
 APP_NAME = ObjectManagerExample
 
-ObjectManagerExample_OBJC_FILES = \
-	ObjectManagerController.m \
-	../main.m
+$(APP_NAME)_OBJC_FILES = $(wildcard *.m) ../main.m
 
-ObjectManagerExample_MAIN_MODEL_FILE = \
-	ObjectManager.gorm
+$(APP_NAME)_PRINCIPAL_CLASS = ETApplication
 
-ObjectManagerExample_RESOURCE_FILES = ObjectManager.gorm
+$(APP_NAME)_MAIN_MODEL_FILE = $(APP_NAME).gorm
 
-ObjectManagerExample_GUI_LIBS = -lEtoileUI
+$(APP_NAME)_RESOURCE_FILES = $(APP_NAME).gorm
+
+$(APP_NAME)_GUI_LIBS = -lEtoileUI
 
 include $(GNUSTEP_MAKEFILES)/application.make
