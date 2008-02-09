@@ -140,7 +140,7 @@ EtoileUI_HEADER_FILES = \
 
 
 EtoileUI_RESOURCE_FILES = \
-	Inspector.gorm \
+	English.lproj/Inspector.gorm \
 	English.lproj/BrowserPrototype.gorm \
 	English.lproj/OutlinePrototype.gorm \
 	English.lproj/TablePrototype.gorm \
