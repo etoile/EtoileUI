@@ -63,8 +63,8 @@
 - (NSWindow *) window;
 - (NSPanel *) panel;
 
+- (IBAction) changeLayout: (id)sender;
 - (IBAction) inspect: (id)sender;
-
 - (IBAction) stack: (id)sender;
 
 @end

@@ -31,6 +31,7 @@
     };
     ETInspector = {
 	Actions = (
+	    "changeLayout:",
 	    "inspect:",
 	    "stack:"
 	);
@@ -93,6 +94,7 @@
     FirstResponder = {
 	Actions = (
 	    "addObject:",
+	    "changeLayout:",
 	    "collapse:",
 	    "expand:",
 	    "initWithRepresentedObject:",
