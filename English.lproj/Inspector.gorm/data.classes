@@ -2,14 +2,23 @@
     "## Comment" = "Do NOT change this file, Gorm maintains it";
     ETContainer = {
 	Actions = (
+	    "setSource:",
+	    "setDelegate:",
 	    "inspect:",
-	    "ungroup:",
-	    "unstack:",
-	    "group:",
-	    "stack:"
+	    "inspectSelection:",
+	    "copy:",
+	    "paste:",
+	    "cut:",
+	    "stack:",
+	    "setTarget:",
+	    "addObject:",
+	    "removeObject:"
 	);
 	Outlets = (
-	    _scrollView
+	    _dataSource,
+	    _delegate,
+	    _target,
+	    _inspector
 	);
 	Super = ETView;
     };
@@ -22,30 +31,44 @@
     };
     ETInspector = {
 	Actions = (
-	    "changeLayout:",
 	    "inspect:",
 	    "stack:"
 	);
 	Outlets = (
-	    window,
+	    itemGroupView,
 	    propertyView,
-	    viewModelLayout,
-	    itemGroupView
+	    window,
+	    viewModelLayout
 	);
 	Super = ETLayoutItem;
     };
     ETLayoutItem = {
 	Actions = (
+	    "initWithValue:",
+	    "initWithRepresentedObject:",
+	    "setValue:",
+	    "setRepresentedObject:"
 	);
 	Outlets = (
-	    _view
+	    _value,
+	    _modelObject,
+	    _view,
+	    _reserved
 	);
 	Super = ETStyleRenderer;
+    };
+    ETScrollView = {
+	Actions = (
+	);
+	Outlets = (
+	);
+	Super = ETView;
     };
     ETSelection = {
 	Actions = (
 	);
 	Outlets = (
+	    _hidden
 	);
 	Super = NSObject;
     };
@@ -58,56 +81,32 @@
     };
     ETView = {
 	Actions = (
-	    "expand:",
-	    "collapse:"
+	    "setRenderer:",
+	    "collapse:",
+	    "expand:"
 	);
 	Outlets = (
+	    _renderer
 	);
 	Super = NSView;
     };
-    ETViewLayout = {
-	Actions = (
-	);
-	Outlets = (
-	    _layoutContext,
-	    _container,
-	    _displayViewPrototype,
-	    _delegate
-	);
-	Super = NSObject;
-    };
-    ETViewModelLayout = {
-	Actions = (
-	);
-	Outlets = (
-	    propertyView,
-	    enclosingView
-	);
-	Super = ETViewLayout;
-    };
     FirstResponder = {
 	Actions = (
-	    "changeLayout:",
+	    "addObject:",
 	    "collapse:",
 	    "expand:",
-	    "group:",
+	    "initWithRepresentedObject:",
+	    "initWithValue:",
 	    "inspect:",
-	    "stack:",
-	    "ungroup:",
-	    "unstack:"
-	);
-	Super = NSObject;
-    };
-    MyObject = {
-	Actions = (
-	);
-	Outlets = (
-	);
-	Super = NSObject;
-    };
-    NSResponder = {
-	Actions = (
-	    "inspect:"
+	    "inspectSelection:",
+	    "removeObject:",
+	    "setDelegate:",
+	    "setRenderer:",
+	    "setRepresentedObject:",
+	    "setSource:",
+	    "setTarget:",
+	    "setValue:",
+	    "stack:"
 	);
 	Super = NSObject;
     };
