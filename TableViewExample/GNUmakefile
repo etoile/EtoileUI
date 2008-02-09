@@ -7,6 +7,8 @@ APP_NAME = TableViewExample
 
 $(APP_NAME)_OBJC_FILES = $(wildcard *.m) ../main.m
 
+$(APP_NAME)_PRINCIPAL_CLASS = ETApplication
+
 $(APP_NAME)_MAIN_MODEL_FILE = $(APP_NAME).gorm
 
 $(APP_NAME)_RESOURCE_FILES = $(APP_NAME).gorm
