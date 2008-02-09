@@ -415,6 +415,27 @@
 
 @end
 
+// NOTE: Taken from StepChat RosterController.m
+#ifdef GNUSTEP
+/* Ugly hack to fix a GNUstep bug */
+@implementation NSOutlineView (UglyHack)
+- (id)itemAtRow: (int)row
+{
+	if (row >= [_items count])
+	{
+		return [NSNull null];
+	}
+	return [_items objectAtIndex: row];
+}
+// #ifdef GNUSTEP
+// 	//numberOfRows doesn't seem to work correctly on GNUstep.
+// 	size.height = [self rowsUnder:nil] *  ([view rowHeight] + [view intercellSpacing].height);
+// #else
+// 	size.height = [view numberOfRows] * ([view rowHeight] + [view intercellSpacing].height);
+// #endif
+@end
+#endif
+
 @interface NSOutlineView (ETTableLayoutDraggingSource)
 - (unsigned int) draggingSourceOperationMaskForLocal: (BOOL)isLocal;
 - (void) draggedImage: (NSImage *)anImage beganAt: (NSPoint)aPoint;
@@ -462,4 +483,4 @@
 	[[self eventHandler] draggedImage: anImage endedAt: aPoint operation: operation];
 }
 
-@end;
+@end
