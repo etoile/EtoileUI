@@ -155,6 +155,31 @@
 	[[self lastObject] setNextObject: object];
 }
 
+- (void) insertObject: (id)object atIndex: (unsigned int)index
+{
+	if (index == 0)
+	{
+		[object setNextObject: self];
+	}
+	else
+	{
+		id prevObject = self;
+		int i = 1;
+		
+		do {
+			if (i == index)
+			{
+				[prevObject setNextObject: object];
+				break;
+			}
+			else
+			{
+				i++;
+			}
+		} while ((prevObject = [prevObject nextObject]) != nil);
+	}
+}
+
 /** You cannot remove the head of an object chain with this method. If you want
     to, you must retrieve the object following the head to keep a reference to
 	the object chain and do -[head setNextObject: nil]. */

@@ -242,6 +242,7 @@
 - (id) content;
 - (NSArray *) contentArray;
 - (void) addObject: (id)object;
+- (void) insertObject: (id)object atIndex: (unsigned int)index;
 - (void) removeObject: (id)object;
 
 /* Private Use */

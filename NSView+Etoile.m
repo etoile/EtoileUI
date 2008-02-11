@@ -93,7 +93,23 @@
 	else
 	{
 		[NSException raise: NSInvalidArgumentException format: @"For %@ "
-			"addObject: parameter %@ must be of type NSView", self, object];
+			"-addObject: parameter %@ must be of type NSView", self, object];
+	}
+}
+
+- (void) insertObject: (id)object atIndex: (unsigned int)index
+{
+	if ([object isKindOfClass: [NSView class]])
+	{
+		[self addSubview: object 
+		      positioned: NSWindowBelow 
+		      relativeTo: [[self subviews] objectAtIndex: index]];
+	}
+	else
+	{
+		[NSException raise: NSInvalidArgumentException format: @"For %@ "
+			"-insertObject:atIndex: parameter %@ must be of type NSView", self, 
+			object];
 	}
 }
 
@@ -108,14 +124,14 @@
 		else
 		{
 			[NSException raise: NSInvalidArgumentException format: @"For %@ "
-				"removeObject: parameter %@ must be a subview of the receiver", 
+				"-removeObject: parameter %@ must be a subview of the receiver", 
 				self, object];
 		}		
 	}
 	else
 	{
 		[NSException raise: NSInvalidArgumentException format: @"For %@ "
-			"removeObject: parameter %@ must be of type NSView", self, object];
+			"-removeObject: parameter %@ must be of type NSView", self, object];
 	}	
 }
 

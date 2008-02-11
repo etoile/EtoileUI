@@ -35,6 +35,7 @@
 
 #import <EtoileUI/ETCollection.h>
 #import <EtoileUI/NSObject+Model.h>
+#import <EtoileUI/ETCompatibility.h>
 
 
 #if 0
@@ -235,6 +236,11 @@
 	[self setObject: object forKey: key];
 }
 
+- (void) insertObject: (id)object atIndex: (unsigned int)index
+{
+	[self addObject: object];
+}
+
 /** Removes all occurrences of an object in  the receiver. */
 - (void) removeObject: (id)object
 {
@@ -244,6 +250,57 @@
 	while ((key = [e nextObject]) != nil)
 	{
 		[self removeObjectForKey: key];
+	}
+}
+
+@end
+
+@implementation NSMutableSet (ETCollectionMutation)
+
+- (void) insertObject: (id)object atIndex: (unsigned int)index
+{
+	[self addObject: object];
+}
+
+@end
+
+@implementation NSMutableIndexSet (ETCollectionMutation)
+
+- (void) addObject: (id)object
+{
+	if ([object isNumber])
+	{
+		[self addIndex: [object unsignedIntValue]];
+	}
+	else
+	{
+		// TODO: Evaluate whether logging a warning is a better choice than 
+		// raising an exception.
+		ETLog(@"Object %@ must be an NSNumber instance to be added to %@ "
+			@"collection", object, self);
+		return;	
+	}
+}
+
+- (void) insertObject: (id)object atIndex: (unsigned int)index
+{
+	[self addObject: object];
+}
+
+
+- (void) removeObject: (id)object
+{
+	if ([object isNumber])
+	{
+		[self removeIndex: [object unsignedIntValue]];
+	}
+	else
+	{
+		// TODO: Evaluate whether logging a warning is a better choice than 
+		// raising an exception.
+		ETLog(@"Object %@ must be an NSNumber instance to be removed from %@ "
+			@"collection", object, self);
+		return;	
 	}
 }
 

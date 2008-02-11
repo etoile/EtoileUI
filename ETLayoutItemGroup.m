@@ -1149,6 +1149,16 @@
 	[self addItem: item];
 }
 
+- (void) insertObject: (id)object atIndex: (unsigned int)index
+{
+	id item = [object isLayoutItem] ? object : [self itemWithObject: object isValue: [object isCommonObjectValue]];
+	
+	if ([object isLayoutItem] == NO)
+		ETLog(@"Boxed object %@ in item %@ to be inserted in %@", object, item, self);
+
+	[self insertItem: item atIndex: index];
+}
+
 /** Removes object from the child items of the receiver, eventually trying to 
 	remove items with represented objects matching the object. */
 - (void) removeObject: (id)object

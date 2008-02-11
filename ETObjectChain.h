@@ -64,6 +64,7 @@
 - (id) content;
 - (NSArray *) contentArray;
 - (void) addObject: (id)object;
+- (void) insertObject: (id)object atIndex: (unsigned int)index;
 - (void) removeObject: (id)object;
 
 // TODO: Provides object chain collection access in subclasses that introduces 

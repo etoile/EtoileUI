@@ -73,6 +73,7 @@
 
 @protocol ETCollectionMutation
 - (void) addObject: (id)object;
+- (void) insertObject: (id)object atIndex: (unsigned int)index;
 - (void) removeObject: (id)object;
 // NOTE: Next method could allow to simplify type checking of added and removed
 // objects and provides -addObject: -removeObject: implementation in a mixin.
@@ -124,15 +125,19 @@
 
 @interface NSMutableDictionary (ETCollectionMutation) <ETCollectionMutation>
 - (void) addObject: (id)object;
+- (void) insertObject: (id)object atIndex: (unsigned int)index;
 - (void) removeObject: (id)object;
 @end
 
 @interface NSMutableSet (ETCollectionMutation) <ETCollectionMutation>
-
+- (void) addObject: (id)object;
+- (void) insertObject: (id)object atIndex: (unsigned int)index;
 @end
 
 @interface NSMutableIndexSet (ETCollectionMutation) <ETCollectionMutation>
-
+- (void) addObject: (id)object;
+- (void) insertObject: (id)object atIndex: (unsigned int)index;
+- (void) removeObject: (id)object;
 @end
 
 /* Collection Matching */

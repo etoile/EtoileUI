@@ -1839,6 +1839,11 @@ NSString *ETLayoutItemPboardType = @"ETLayoutItemPboardType"; // FIXME: replace 
 	[(ETLayoutItemGroup *)[self layoutItem] addObject: object];
 }
 
+- (void) insertObject: (id)object atIndex: (unsigned int)index
+{
+	[(ETLayoutItemGroup *)[self layoutItem] insertObject: object atIndex: index];
+}
+
 - (void) removeObject: (id)object
 {
 	[(ETLayoutItemGroup *)[self layoutItem] removeObject: object];

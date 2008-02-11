@@ -158,7 +158,7 @@
 	}
 	else if ([view isMemberOfClass: [NSView class]])
 	{
-		id superview = [view superview];
+		//id superview = [view superview];
 		id container = [[ETContainer alloc] initWithFrame: [view frame]];
 		id item = [container layoutItem]; //[ETLayoutItemGroup layoutItemWithView: container];
 		//return item;
@@ -190,7 +190,7 @@
 	}
 	else
 	{
-		id superview = [view superview];
+		//id superview = [view superview];
 		id item = nil;
 		
 		RETAIN(view);

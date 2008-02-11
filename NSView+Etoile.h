@@ -53,6 +53,7 @@
 - (id) content;
 - (NSArray *) contentArray;
 - (void) addObject: (id)view;
+- (void) insertObject: (id)view atIndex: (unsigned int)index;
 - (void) removeObject: (id)view;
 
 /* Frame Utility Methods */

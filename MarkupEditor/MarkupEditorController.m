@@ -225,6 +225,7 @@
 
 @interface NSXMLElement (ETCollectionMutation) <ETCollectionMutation>
 - (void) addObject: (id)object;
+- (void) insertObject: (id)object atIndex: (unsigned int)index;
 - (void) removeObject: (id)object;
 @end
 
@@ -247,6 +248,11 @@
 - (void) addObject: (id)object 
 { 
 	[self addChild: object];
+}
+
+- (void) insertObject: (id)object atIndex: (unsigned int)index
+{ 
+	[self insertChild: object atIndex: index];
 }
 
 - (void) removeObject: (id)object
