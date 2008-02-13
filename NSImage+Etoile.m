@@ -52,8 +52,8 @@
 	
 	if (self != nil)
 	{
-		ETLog(@"Take snapshot %@ in superview %@ and %", view, [view superview], 
-			[view window]);
+		//ETLog(@"Take snapshot %@ in superview %@ and %", view, [view superview], 
+		//	[view window]);
 		
 		/* [view superview] != nil is probably not enough to handle the drawing */
 		if ([view window] != nil)

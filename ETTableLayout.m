@@ -381,7 +381,7 @@
 	
 	item = [layoutItems objectAtIndex: rowIndex];
 	
-	ETLog(@"Returns %@ as object value in table view %@", [item valueForProperty: [column identifier]], tv);
+	//ETLog(@"Returns %@ as object value in table view %@", [item valueForProperty: [column identifier]], tv);
 	
 	id value = [item valueForProperty: [column identifier]];
 	BOOL blankColumnIdentifier = [column identifier] == nil || [[column identifier] isEqual: @""];
