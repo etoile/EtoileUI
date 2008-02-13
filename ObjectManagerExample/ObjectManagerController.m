@@ -381,10 +381,10 @@ static NSFileManager *objectManager = nil;
 		fileItem = [ETLayoutItem layoutItemWithView: [self imageViewForImage: icon]];
 		
 		[fileItem setValue: [filePath lastPathComponent] forProperty: @"name"];
-		[fileItem setValue: filePath forProperty: @"path"];
+		[fileItem setValue: filePath forProperty: @"filePath"];
 		[fileItem setValue: icon forProperty: @"icon"];
-		[fileItem setValue: [NSNumber numberWithInt: [attributes fileSize]] forProperty: @"size"];
-		[fileItem setValue: [attributes fileType] forProperty: @"type"];
+		[fileItem setValue: [NSNumber numberWithInt: [attributes fileSize]] forProperty: @"fileSize"];
+		[fileItem setValue: [attributes fileType] forProperty: @"fileType"];
 		//[fileItem setValue: date forProperty	: @"modificationdate"];
 		
 		//NSLog(@"Returns %@ as layout item in container %@", fileItem, container);
