@@ -37,6 +37,7 @@
 #import <EtoileUI/ETLayoutItemBuilder.h>
 #import <EtoileUI/ETLayoutItem.h>
 #import <EtoileUI/ETLayoutItemGroup.h>
+#import <EtoileUI/ETWindowItem.h>
 #import <EtoileUI/ETLayer.h>
 #import <EtoileUI/ETView.h>
 #import <EtoileUI/ETContainer.h>
@@ -86,14 +87,19 @@
 	return windowLayer;	
 }
 
-#if 0
+#if 1
 - (id) renderWindow: (id)window
 {
-	id windowDecorator = [ETLayoutItem layoutItem];
 	id item = [self renderView: [window contentView]];
+	id windowDecorator = [item windowDecoratorItem];
 
-	[windowDecorator setRepresentedObject: window];
-	[[item lastDecoratorItem] setDecoratorItem: windowDecorator];
+	//[windowDecorator setRepresentedObject: window];
+	/* Decorate only if needed */
+	if (windowDecorator == nil)
+	{
+		windowDecorator = [ETWindowItem layoutItemWithWindow: window];
+		[[item lastDecoratorItem] setDecoratorItem: windowDecorator];
+	}
 
 	return item;
 }

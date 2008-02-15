@@ -103,6 +103,7 @@
 - (void) handleAttachItem: (ETLayoutItem *)item;
 - (void) handleAttachViewOfItem: (ETLayoutItem *)item;
 - (void) handleDetachItem: (ETLayoutItem *)item;
+- (void) handleDetachViewOfItem: (ETLayoutItem *)item;
 
 - (BOOL) shouldMutateRepresentedObject;
 - (void) setShouldMutateRepresentedObject: (BOOL)flag;

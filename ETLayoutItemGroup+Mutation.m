@@ -92,6 +92,8 @@
 	if (validatedMutate && [[self baseItem] shouldMutateRepresentedObject] 
 	 && [repObject isMutableCollection])
 	{
+		ETLog(@"Add %@ in represented object %@", [item representedObject], 
+			repObject);
 		[repObject addObject: [item representedObject]];
 	}
 	
@@ -100,7 +102,6 @@
 
 - (void) handleInsert: (ETEvent *)event item: (ETLayoutItem *)item atIndex: (int)index
 {
-	
 	if ([_layoutItems containsObject: item])
 	{
 		ETLog(@"WARNING: Trying to insert item %@ in the item group %@ it "
@@ -108,11 +109,16 @@
 		return;
 	}
 	
-	[self handleAttachItem: item];
-	[_layoutItems insertObject: item atIndex: index];
-	if ([self canUpdateLayout])
-		[self updateLayout];
+	BOOL validatedInsert = [self handleModelInsert: nil item: item atIndex: index];
 	
+	if (validatedInsert)
+	{
+		[self handleAttachItem: item];
+		[_layoutItems insertObject: item atIndex: index];
+		if ([self canUpdateLayout])
+			[self updateLayout];
+	}
+
 // NOTE: The code below is kept as an example to implement selection caching 
 // at later time if better performance are necessary.
 #if 0	
@@ -160,6 +166,8 @@
 	if (validatedMutate && [[self baseItem] shouldMutateRepresentedObject] 
 	 && [repObject isMutableCollection])
 	{
+		ETLog(@"Insert %@ in represented object %@ at index %d", 
+			[item representedObject], repObject, index);
 		[repObject insertObject: [item representedObject] atIndex: index];
 	}
 	
@@ -168,10 +176,15 @@
 
 - (void) handleRemove: (ETEvent *)event item: (ETLayoutItem *)item
 {
-	[self handleDetachItem: item];
-	[_layoutItems removeObject: item];
-	if ([self canUpdateLayout])
-		[self updateLayout];
+	BOOL validatedRemove = [self handleModelRemove: nil item: item];
+	
+	if (validatedRemove)
+	{
+		[self handleDetachItem: item];
+		[_layoutItems removeObject: item];
+		if ([self canUpdateLayout])
+			[self updateLayout];
+	}
 		
 // NOTE: The code below is kept as an example to implement selection caching 
 // at later time if better performance are necessary.
@@ -241,6 +254,8 @@
 	if (validatedMutate && [[self baseItem] shouldMutateRepresentedObject] 
 	 && [repObject isMutableCollection])
 	{
+		ETLog(@"Remove %@ in represented object %@", [item representedObject], 
+			repObject);
 		[repObject removeObject: [item representedObject]];
 	}
 	

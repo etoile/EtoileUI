@@ -36,6 +36,7 @@
  */
  
 #import <EtoileUI/ETLayer.h>
+#import <EtoileUI/ETWindowItem.h>
 #import <EtoileUI/ETContainer.h>
 #import <EtoileUI/ETCompatibility.h>
 
@@ -123,28 +124,45 @@
 
 @end
 
+
 @implementation ETWindowLayer
+
+- (void) handleAttachViewOfItem: (ETLayoutItem *)item
+{
+	// Disable ETLayoutItemGroup implementation that would remove the display 
+	// view of the item from its superview. If a window decorator is bound to 
+	// the item, the display view is the window view (NSThemeFrame on Mac OS X)
+	// Removing NSThemeFrame results in a very weird behavior: the window 
+	// remains visible but a -lockFocus assertion is thrown on mouse down.
+}
+
+- (void) handleDetachViewOfItem: (ETLayoutItem *)item
+{
+	// Ditto. More explanations in -handleDetachItem:.
+}
 
 - (void) handleAttachItem: (ETLayoutItem *)item
 {
-#if 1
 	RETAIN(item);
-	if ([item parentLayoutItem] != nil)
-		[[item parentLayoutItem] removeItem: item];
-	RELEASE(item);
-	ASSIGN(item->_parentLayoutItem, self);
-#else
+	/* Before setting the decorator, the item must have become a child of the 
+	   window layer, because -handleAttachItem: triggers -handleDetachItem: in 
+	   the eixisting parent of this item. -handleDetachItem removes the display 
+	   view in -handleDetachViewOfItem: and once the decorator is set, the 
+	   display view will be the window view (NSThemeFrame on Mac OS X) */	
+	[super handleAttachItem: item];
 	[[item lastDecoratorItem] setDecoratorItem: [ETWindowItem layoutItem]];
-#endif
+	RELEASE(item);
 }
 
 - (void) handleDetachItem: (ETLayoutItem *)item
 {
-#if 1
-	ASSIGN(item->_parentLayoutItem, nil);
-#else
-	[[item lastDecoratorItem] setDecoratorItem: nil];
-#endif
+	RETAIN(item);
+	/* Detaching the item before removing the window decorator doesn't result 
+	   in removing the window view (NSThemeFrame on Mac OS X) because 
+	   ETWindowLayer overrides -handleDetachViewOfItem:. */
+	[super handleDetachItem: item];
+	[[[item windowDecoratorItem] decoratedItem] setDecoratorItem: nil];
+	RELEASE(item);
 }
 
 @end

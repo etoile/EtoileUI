@@ -116,6 +116,7 @@
 		_isStack = NO;
 		_autolayout = YES;
 		_usesLayoutBasedFrame = NO;
+		[self setShouldMutateRepresentedObject: YES];
     }
     
     return self;
@@ -437,6 +438,11 @@
 		[[self view] addSubview: [item displayView]];
 }
 
+- (void) handleDetachViewOfItem: (ETLayoutItem *)item
+{
+  	[[item displayView] removeFromSuperview];
+}
+
 - (void) handleAttachItem: (ETLayoutItem *)item
 {
 	RETAIN(item);
@@ -444,16 +450,19 @@
 		[[item parentLayoutItem] removeItem: item];
 	[item setParentLayoutItem: self];
 	RELEASE(item);
+	[self handleAttachViewOfItem: item];
 }
 
 - (void) handleDetachItem: (ETLayoutItem *)item
 {
 	[item setParentLayoutItem: nil];
+	[self handleDetachViewOfItem: item];
 }
 
 /** Returns YES when the item tree mutation are propagated to the represented 
 	object, otherwise returns NO if it's up to you to reflect structural changes
-	of the layout item tree onto the model object graph.
+	of the layout item tree onto the model object graph. By default, this method 
+	returns YES.
 	Mutations are triggered by calling children or collection related 
 	methods like -addItem:, -insertItem:atIndex:, removeItem:, addObject: etc. 
 	WARNING: The returned value is meaningful only if the receiver is a base 

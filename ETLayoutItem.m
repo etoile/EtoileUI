@@ -49,7 +49,8 @@
 #define DETAILED_DESCRIPTION
 #define PROVIDER_CONTAINER [[self baseItem] container]
 #define PROVIDER_SOURCE [PROVIDER_CONTAINER source]
-#define VARIABLE_PROPERTIES _variableProperties
+/* Don't forget that -variableProperties creates the property dictionary */
+#define VARIABLE_PROPERTIES ((NSMutableDictionary *)[self variableProperties])
 
 #define ETUTIAttribute @"uti"
 
@@ -299,18 +300,9 @@
 	collection owned by an item group. */
 - (void) setParentLayoutItem: (ETLayoutItemGroup *)parent
 {
-	ETLog(@"For item %@ with supervisor view %@, modify the parent item from "
-		"%@ to %@", self, [self supervisorView], _parentLayoutItem, parent, self);
+	//ETLog(@"For item %@ with supervisor view %@, modify the parent item from "
+	//	"%@ to %@", self, [self supervisorView], _parentLayoutItem, parent, self);
 
-	if ([[self supervisorView] isKindOfClass: [ETScrollView class]])
-	{
-	ETLog(@"For item %@ with supervisor view %@, modify the parent item from "
-		"%@ to %@", self, [self supervisorView], _parentLayoutItem, parent, self);		
-	}
-	// TODO: Move the next three lines into -[ETLayoutItemGroup handleAttachItem:]
-	[[self displayView] removeFromSuperview];
-	if ([parent layout] == nil && [parent view] != nil)
-		[[parent view] addSubview: [self displayView]];
 	ASSIGN(_parentLayoutItem, parent);
 }
 
@@ -846,13 +838,13 @@
 
 - (id) valueForUndefinedKey: (NSString *)key
 {
-	ETLog(@"WARNING: -valueForUndefinedKey: %@ called in %@", key, self);
+	//ETLog(@"WARNING: -valueForUndefinedKey: %@ called in %@", key, self);
 	return [VARIABLE_PROPERTIES objectForKey: key]; /* May return nil */
 }
 
 - (void) setValue: (id)value forUndefinedKey: (NSString *)key
 {
-	ETLog(@"WARNING: -setValue:forUndefinedKey: %@ called in %@", key, self);
+	//ETLog(@"WARNING: -setValue:forUndefinedKey: %@ called in %@", key, self);
 	[VARIABLE_PROPERTIES setObject: value forKey: key];
 }
 
@@ -1332,7 +1324,14 @@
 		/* Set up new decorator */
 		[decorator setDecoratedItem: self];
 		[decorator handleDecorateItem: self inView: parentView];
-		[[self container] didChangeDecoratorOfItem: self];
+		if ([self respondsToSelector: @selector(container)])
+		{
+			[[self container] didChangeDecoratorOfItem: self];
+		}
+		else
+		{
+			ETLog(@"WARNING: Item %@ doesn't use a container", self);
+		}
 		
 		/* Restore supervisor view as display view if no decorator is set */
 		if (decorator == nil) // && [self view] != nil
@@ -1349,10 +1348,14 @@
 		NSAssert3([[self displayView] isEqual: [decorator displayView]], @"New "
 			@"display view %@ of item %@ must be the display view of the new "
 			@"decorator %@", [self displayView], self, [decorator displayView]);*/
-			
-		NSAssert3([[[self supervisorView] superview] isEqual: parentView] == NO,
+		
+		// If window is bound directly to a layout item with a window item, this 
+		// assertion fails because existingDecorator is nil and 
+		// [existingDecorator handleDecorateItem: nil inView: nil]; won't 
+		// dismantle the window
+		/*NSAssert3([[[self supervisorView] superview] isEqual: parentView] == NO,
 			@"New parent view %@ of item %@ must not be its old parent view %@", 
-			[[self supervisorView] superview], self, parentView);
+			[[self supervisorView] superview], self, parentView);*/
 		}
 		
 		RELEASE(existingDecorator);
@@ -1424,7 +1427,7 @@
 	both view and supervisor view of the decorated item, but you must not 
 	manipulate item related decorator chain (by calling -[item displayView], 
 	-[item decoratorItem] etc.) 
-	Take in account that parentView can be nil. */
+	Take in account that parentView and item can be nil. */
 - (void) handleDecorateItem: (ETLayoutItem *)item inView: (ETView *)parentView 
 //	oldDecorator: (ETLayoutItem *)existingDecorator
 {
@@ -1446,6 +1449,10 @@
 		//	parentView, [item displayView]);
 		[parentView addSubview: [self displayView]]; // More sure than [item displayView]
 	}
+	/*else
+	{
+		[[self displayView] removeFromSuperview];
+	}*/
 
 // -setDecoratorItem: isn't -insertDecoratorItem: so disabled the code below
 #if 0	
@@ -1661,7 +1668,7 @@
 
 - (void) setFrame: (NSRect)rect
 {
-	ETLog(@"-setFrame: %@ on %@", NSStringFromRect(rect), self);
+	//ETLog(@"-setFrame: %@ on %@", NSStringFromRect(rect), self);
 	if ([self displayView] != nil)
 	{
 		[[self displayView] setFrame: rect];

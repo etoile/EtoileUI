@@ -41,9 +41,15 @@
 #import <EtoileUI/NSWindow+Etoile.h>
 #import <EtoileUI/ETCompatibility.h>
 
+#define IS_EMPTY_STRING(x) (x == nil || [x isEqual: @""])
 #define NC [NSNotificationCenter defaultCenter]
 
 @implementation ETWindowItem
+
++ (id) layoutItemWithWindow: (NSWindow *)window
+{
+	return AUTORELEASE([[self alloc] initWithWindow: window]);
+}
 
 /** <init /> */
 - (id) initWithWindow: (NSWindow *)window
@@ -60,11 +66,11 @@
 		{
 			_itemWindow = [[NSWindow alloc] init];
 		}
-		[NC addObserver: self 
-		       selector: @selector(windowWillClose:) 
-			       name: NSWindowWillCloseNotification
-				 object: _itemWindow];
+		[_itemWindow setDelegate: self];
+		_usesCustomWindowTitle = (IS_EMPTY_STRING([_itemWindow title]) == NO);
 	}
+	
+	ETLog(@"Init item %@ with window %@", self, _itemWindow);
 	
 	return self;
 }
@@ -78,7 +84,8 @@
 
 - (void) dealloc
 {
-	[NC removeObserver: self];
+	ETLog(@"Dealloc item %@ with window %@", self, _itemWindow);
+	[_itemWindow close];
 	/* Don't release a window which is in charge of releasing itself.
 	   We are usually in the middle of a window close handling and -dealloc has
 	   been called as a side-effect of removing the decorated item from the 
@@ -89,17 +96,26 @@
 	[super dealloc];
 }
 
-- (void) windowWillClose: (NSNotification *)notif
+/* -windowWillClose: ins't appropriate because it would be called when the window 
+   is sent -close on window item release/deallocation (see -dealloc). */
+- (BOOL) windowShouldClose: (NSNotification *)notif
 {
 	/* If the window doesn' t get hidden on close, we release the item 
 	   we decorate simply by removing it from the window layer */
 	if ([[self window] isReleasedWhenClosed])
 		[[ETLayoutItemGroup windowGroup] removeItem: [self firstDecoratedItem]];
+		
+	return YES;
 }
 
 - (NSWindow *) window
 {
 	return _itemWindow;
+}
+
+- (BOOL) usesCustomWindowTitle
+{
+	return _usesCustomWindowTitle;
 }
 
 /* Overriden Methods */
@@ -111,12 +127,12 @@
 	/* Will call back -[item acceptsDecoratorItem: self] */
 	BOOL canDecorate = [super canDecorateItem: item];
 	
-	if (canDecorate && [item decoratorItem] != nil)
+	/*if (canDecorate && [item decoratorItem] != nil)
 	{
 		ETLog(@"To be decorated with a window, item %@ must have no existing "
 			@"decorator item %@", item, [item decoratorItem]);
 		canDecorate = NO;
-	}
+	}*/
 	if (canDecorate && [item isKindOfClass: [ETWindowItem class]])
 	{
 		ETLog(@"To be decorated with a window, item %@ must not be a window "
@@ -149,13 +165,28 @@
 	   decorator is a view  (box, scroll view etc.). */
 	[super handleDecorateItem: item inView: nil];
 	
-	/* Move decorated item into the window layer */
-	[[ETLayoutItemGroup windowGroup] addItem: item];
+	if (item != nil) /* Window decorator is set up */
+	{
+		/* Move decorated item into the window layer
+		   Take note the item might be already part of the window group if the 
+		   decoration was triggered by [ETWindowLayer addItem:] instead of 
+		   calling -setDecoratorItem: directly. */
+		//[[ETLayoutItemGroup windowGroup] addItem: item];
 
-	// TODO: Use KVB by default to bind the window title
-	[window setTitle: [[self firstDecoratedItem] displayName]];
-	[window makeKeyAndOrderFront: self];
-	//[item updateLayout];
+		// TODO: Use KVB by default to bind the window title
+		if ([self usesCustomWindowTitle] == NO)
+			[window setTitle: [[self firstDecoratedItem] displayName]];
+		[window makeKeyAndOrderFront: self];
+		//[item updateLayout];
+	}
+	else /* Window decorator is teared down */
+	{
+		/* Remove decorated item from the window layer
+		   Take note the item might be already removed from the window group if 
+		   the decoration was triggered by [ETWindowLayer removeItem:] */
+		//[[ETLayoutItemGroup windowGroup] removeItem: item];
+		[window orderOut: self];
+	}
 }
 
 - (NSView *) view
@@ -169,7 +200,26 @@
 }*/
 - (void) setDecoratedView: (NSView *)view
 {
-	[[self window] setContentView: view];
+	NSWindow *window = [self window];
+	
+if (view != nil)
+{
+	NSRect rect = [window frame];
+	NSPoint topLeftPoint = NSMakePoint(rect.origin.x, rect.size.height);
+
+	rect = [window frameRectForContentRect: [view frame]];
+	[window setFrame: rect display: NO];
+	[window setFrameTopLeftPoint: topLeftPoint];
+}
+	[window setContentView: view];
+	[window flushWindowIfNeeded];
+	[window display];
+	RETAIN(window);
+}
+
+- (void) setView: (NSView *)view
+{
+
 }
 
 - (id) supervisorView
