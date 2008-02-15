@@ -45,6 +45,9 @@
 - (id) initWithFrame: (NSRect)frame styleMask: (unsigned int)windowStyle;
 - (id) initWithContentRect: (NSRect)frame styleMask: (unsigned int)windowStyle;
 
+- (BOOL) isSystemPrivateWindow;
+- (BOOL) isCacheWindow;
+
 - (IBAction) browse: (id)sender;
 
 @end

@@ -85,14 +85,20 @@
 - (void) dealloc
 {
 	ETLog(@"Dealloc item %@ with window %@", self, _itemWindow);
+
+	/* Retain the window to be sure we can send it -isReleasedWhenClosed. We 
+	   must defer the deallocation in case -close releases it and drops the
+	   retain count to zero. */
+	RETAIN(_itemWindow);
 	[_itemWindow close];
 	/* Don't release a window which is in charge of releasing itself.
 	   We are usually in the middle of a window close handling and -dealloc has
 	   been called as a side-effect of removing the decorated item from the 
 	   window layer in -windowWillClose: notification. */
 	if ([_itemWindow isReleasedWhenClosed] == NO)
-		DESTROY(_itemWindow);
-	
+		RELEASE(_itemWindow);
+	DESTROY(_itemWindow);  /* Balance first retain call */
+
 	[super dealloc];
 }
 

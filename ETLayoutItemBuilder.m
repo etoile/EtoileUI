@@ -76,8 +76,11 @@
 	/* Build window items */
 	while ((window = [e nextObject]) != nil)
 	{
-		item = [self renderWindow: window];
-		[windowLayer addItem: item];
+		if ([window isSystemPrivateWindow] == NO)
+		{
+			item = [self renderWindow: window];
+			[windowLayer addItem: item];
+		}
 	}
 	
 	/* Build pickboards */

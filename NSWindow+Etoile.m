@@ -74,6 +74,27 @@
 							   defer: YES];
 }
 
+- (BOOL) isSystemPrivateWindow
+{
+#ifdef GNUSTEP
+	BOOL isAppIconWindow = [self isKindOfClass: NSClassFromString(@"NSIconWindow")];
+	BOOL isMenuWindow = [self isKindOfClass: NSClassFromString(@"NSMenuPanel")];
+#else
+	BOOL isAppIconWindow = NO;
+	BOOL isMenuWindow = NO;
+#endif
+	return ([self isCacheWindow] || isAppIconWindow || isMenuWindow);
+}
+
+- (BOOL) isCacheWindow
+{
+#ifdef GNUSTEP
+	return ([self isKindOfClass: NSClassFromString(@"GSCacheW")]);
+#else
+	return NO;
+#endif
+}
+
 - (IBAction) browse: (id)sender
 {
 	ETObjectBrowser *browser = [[ETObjectBrowser alloc] init];
