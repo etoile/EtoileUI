@@ -91,7 +91,7 @@
 #ifdef GNUSTEP
 	return ([self isKindOfClass: NSClassFromString(@"GSCacheW")]);
 #else
-	return NO;
+	return ([[self contentView] isKindOfClass: NSClassFromString(@"NSImageCacheView")]);
 #endif
 }
 
