@@ -43,6 +43,7 @@
 		6002451E0CD162090023182D /* NSString+Etoile.m in Sources */ = {isa = PBXBuildFile; fileRef = 603D4D0B0C8D1E10003DFD51 /* NSString+Etoile.m */; };
 		6002451F0CD162090023182D /* NSView+Etoile.m in Sources */ = {isa = PBXBuildFile; fileRef = 609F467A0B41FC6200AD2209 /* NSView+Etoile.m */; };
 		600FC23E0D3AB75800828803 /* test_ETContainer.m in Sources */ = {isa = PBXBuildFile; fileRef = 600FC23D0D3AB75800828803 /* test_ETContainer.m */; };
+		6017849E0D670DED00A54D5A /* PhotoViewExample.nib in Resources */ = {isa = PBXBuildFile; fileRef = 6017849D0D670DED00A54D5A /* PhotoViewExample.nib */; };
 		602F8B270CE1CA3E0042F6C0 /* ETCompatibility.h in Headers */ = {isa = PBXBuildFile; fileRef = 602F8B260CE1CA3E0042F6C0 /* ETCompatibility.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		602F8DE70CE1F9610042F6C0 /* ETInspecting.h in Headers */ = {isa = PBXBuildFile; fileRef = 602F8DE60CE1F9610042F6C0 /* ETInspecting.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		603112DC0CF43D53001A699E /* test_ETPickboard.m in Sources */ = {isa = PBXBuildFile; fileRef = 603112DB0CF43D53001A699E /* test_ETPickboard.m */; };
@@ -110,7 +111,7 @@
 		606B9C490C0B17D6000AAA85 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 29B97316FDCFA39411CA2CEA /* main.m */; };
 		606B9C5E0C0B18A3000AAA85 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1058C7A1FEA54F0111CA2CBB /* Cocoa.framework */; };
 		6087EDF30C824CE100A1263E /* ViewModelPrototype.nib in Resources */ = {isa = PBXBuildFile; fileRef = 6087EDF10C824CE100A1263E /* ViewModelPrototype.nib */; };
-		609097020CADC366009CAD27 /* ContainerExample-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 609097010CADC366009CAD27 /* ContainerExample-Info.plist */; };
+		609097020CADC366009CAD27 /* PhotoViewExample-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 609097010CADC366009CAD27 /* PhotoViewExample-Info.plist */; };
 		609097990CAEBC32009CAD27 /* NSObject+EtoileUI.h in Headers */ = {isa = PBXBuildFile; fileRef = 609097970CAEBC32009CAD27 /* NSObject+EtoileUI.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		6090979A0CAEBC32009CAD27 /* NSObject+EtoileUI.m in Sources */ = {isa = PBXBuildFile; fileRef = 609097980CAEBC32009CAD27 /* NSObject+EtoileUI.m */; };
 		609097A40CAFFF7A009CAD27 /* ETObjectRegistry.h in Headers */ = {isa = PBXBuildFile; fileRef = 609097A20CAFFF7A009CAD27 /* ETObjectRegistry.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -129,7 +130,6 @@
 		6097F2200C99F487003A74CE /* NSIndexPath+Etoile.m in Sources */ = {isa = PBXBuildFile; fileRef = 6097F21E0C99F487003A74CE /* NSIndexPath+Etoile.m */; };
 		60B1449A0C11BFB400B4613B /* TablePrototype.nib in Resources */ = {isa = PBXBuildFile; fileRef = 60B144970C11BFB400B4613B /* TablePrototype.nib */; };
 		60B144ED0C11C52900B4613B /* OutlinePrototype.nib in Resources */ = {isa = PBXBuildFile; fileRef = 60B144EA0C11C52900B4613B /* OutlinePrototype.nib */; };
-		60B2AF6B0C0B745A008C008A /* ContainerExample.nib in Resources */ = {isa = PBXBuildFile; fileRef = 60B2AF690C0B745A008C008A /* ContainerExample.nib */; };
 		60C09F5C0C6A8FCD00A4458D /* test_ETObject.m in Sources */ = {isa = PBXBuildFile; fileRef = 60C09F400C6A860900A4458D /* test_ETObject.m */; };
 		60C09F5D0C6A8FCD00A4458D /* ETObject.m in Sources */ = {isa = PBXBuildFile; fileRef = 60C09F230C6A749700A4458D /* ETObject.m */; };
 		60C09F5E0C6A8FD900A4458D /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 29B97325FDCFA39411CA2CEA /* Foundation.framework */; };
@@ -279,6 +279,7 @@
 		600EAE280C4C2B830074FA3E /* ETComponent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ETComponent.h; sourceTree = "<group>"; };
 		600EAE290C4C2B830074FA3E /* ETComponent.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ETComponent.m; sourceTree = "<group>"; };
 		600FC23D0D3AB75800828803 /* test_ETContainer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = test_ETContainer.m; path = Tests/test_ETContainer.m; sourceTree = "<group>"; };
+		6017849D0D670DED00A54D5A /* PhotoViewExample.nib */ = {isa = PBXFileReference; lastKnownFileType = wrapper.nib; name = PhotoViewExample.nib; path = PhotoViewExample/PhotoViewExample.nib; sourceTree = "<group>"; };
 		602F8B260CE1CA3E0042F6C0 /* ETCompatibility.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ETCompatibility.h; sourceTree = "<group>"; };
 		602F8DE60CE1F9610042F6C0 /* ETInspecting.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ETInspecting.h; sourceTree = "<group>"; };
 		603112DB0CF43D53001A699E /* test_ETPickboard.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = test_ETPickboard.m; path = Tests/test_ETPickboard.m; sourceTree = "<group>"; };
@@ -344,7 +345,7 @@
 		6082FE750C49947F00FFF659 /* ETBinding.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ETBinding.h; sourceTree = "<group>"; };
 		6082FE760C49947F00FFF659 /* ETBinding.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ETBinding.m; sourceTree = "<group>"; };
 		6087EDF20C824CE100A1263E /* English */ = {isa = PBXFileReference; lastKnownFileType = wrapper.nib; name = English; path = English.lproj/ViewModelPrototype.nib; sourceTree = "<group>"; };
-		609097010CADC366009CAD27 /* ContainerExample-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; name = "ContainerExample-Info.plist"; path = "PhotoViewExample/ContainerExample-Info.plist"; sourceTree = "<group>"; };
+		609097010CADC366009CAD27 /* PhotoViewExample-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = "PhotoViewExample-Info.plist"; path = "PhotoViewExample/PhotoViewExample-Info.plist"; sourceTree = "<group>"; };
 		609097970CAEBC32009CAD27 /* NSObject+EtoileUI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSObject+EtoileUI.h"; sourceTree = "<group>"; };
 		609097980CAEBC32009CAD27 /* NSObject+EtoileUI.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSObject+EtoileUI.m"; sourceTree = "<group>"; };
 		609097A20CAFFF7A009CAD27 /* ETObjectRegistry.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ETObjectRegistry.h; sourceTree = "<group>"; };
@@ -394,7 +395,6 @@
 		60A563E70A16266900329EE6 /* GNUstep.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GNUstep.h; sourceTree = "<group>"; };
 		60B144980C11BFB400B4613B /* English */ = {isa = PBXFileReference; lastKnownFileType = wrapper.nib; name = English; path = English.lproj/TablePrototype.nib; sourceTree = "<group>"; };
 		60B144EB0C11C52900B4613B /* English */ = {isa = PBXFileReference; lastKnownFileType = wrapper.nib; name = English; path = English.lproj/OutlinePrototype.nib; sourceTree = "<group>"; };
-		60B2AF6A0C0B745A008C008A /* ContainerExample.nib */ = {isa = PBXFileReference; lastKnownFileType = wrapper.nib; name = ContainerExample.nib; path = PhotoViewExample/ContainerExample.nib; sourceTree = "<group>"; };
 		60C09F220C6A749700A4458D /* ETObject.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ETObject.h; sourceTree = "<group>"; };
 		60C09F230C6A749700A4458D /* ETObject.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ETObject.m; sourceTree = "<group>"; };
 		60C09F3F0C6A860900A4458D /* test_ETObject.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = test_ETObject.h; sourceTree = "<group>"; };
@@ -576,6 +576,7 @@
 		29B97314FDCFA39411CA2CEA /* FlowAutolayoutExample */ = {
 			isa = PBXGroup;
 			children = (
+				6017849D0D670DED00A54D5A /* PhotoViewExample.nib */,
 				600243CE0CD134C40023182D /* Tests */,
 				605D714D0CEC507E009ED244 /* EtoileUI */,
 				605D6D4F0CE94218009ED244 /* EtoileFoundation */,
@@ -585,7 +586,7 @@
 				29B97317FDCFA39411CA2CEA /* Resources */,
 				29B97323FDCFA39411CA2CEA /* Frameworks */,
 				19C28FACFE9D520D11CA2CBB /* Products */,
-				609097010CADC366009CAD27 /* ContainerExample-Info.plist */,
+				609097010CADC366009CAD27 /* PhotoViewExample-Info.plist */,
 				605F0CCC0C0F400D003AE3E6 /* ObjectManagerExample-Info.plist */,
 				60539D960C240A7B006C57EC /* PaneContainerExample-Info.plist */,
 				60EF8E9E0C5E4D0600C97C41 /* EtoileUI-Info.plist */,
@@ -613,7 +614,6 @@
 				60CF710E0D42AAC600B4CA3D /* Inspector.nib */,
 				60CA73860C494B22009D9B02 /* COPYING */,
 				605F0CD00C0F4034003AE3E6 /* ObjectManager.nib */,
-				60B2AF690C0B745A008C008A /* ContainerExample.nib */,
 				60539D9C0C242065006C57EC /* PaneContainerExample.nib */,
 				60B144970C11BFB400B4613B /* TablePrototype.nib */,
 				60B144EA0C11C52900B4613B /* OutlinePrototype.nib */,
@@ -972,9 +972,9 @@
 			productReference = 605F0CCA0C0F400D003AE3E6 /* ObjectManagerExample.app */;
 			productType = "com.apple.product-type.application";
 		};
-		606B98C80C0AF831000AAA85 /* ContainerExample */ = {
+		606B98C80C0AF831000AAA85 /* PhotoViewExample */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 606B98CC0C0AF832000AAA85 /* Build configuration list for PBXNativeTarget "ContainerExample" */;
+			buildConfigurationList = 606B98CC0C0AF832000AAA85 /* Build configuration list for PBXNativeTarget "PhotoViewExample" */;
 			buildPhases = (
 				606B98C50C0AF831000AAA85 /* Resources */,
 				606B98C60C0AF831000AAA85 /* Sources */,
@@ -985,7 +985,7 @@
 			dependencies = (
 				60F714300C5E7DB2002CA8AA /* PBXTargetDependency */,
 			);
-			name = ContainerExample;
+			name = PhotoViewExample;
 			productName = ContainerExample;
 			productReference = 606B98C90C0AF831000AAA85 /* PhotoViewExample.app */;
 			productType = "com.apple.product-type.application";
@@ -1072,7 +1072,7 @@
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				606B98C80C0AF831000AAA85 /* ContainerExample */,
+				606B98C80C0AF831000AAA85 /* PhotoViewExample */,
 				605F0CC90C0F400D003AE3E6 /* ObjectManagerExample */,
 				60539D930C240A7B006C57EC /* PaneContainerExample */,
 				60909CC80CB2DA42009CAD27 /* TableViewExample */,
@@ -1120,8 +1120,8 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				60B2AF6B0C0B745A008C008A /* ContainerExample.nib in Resources */,
-				609097020CADC366009CAD27 /* ContainerExample-Info.plist in Resources */,
+				609097020CADC366009CAD27 /* PhotoViewExample-Info.plist in Resources */,
+				6017849E0D670DED00A54D5A /* PhotoViewExample.nib in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1450,14 +1450,6 @@
 			name = OutlinePrototype.nib;
 			sourceTree = "<group>";
 		};
-		60B2AF690C0B745A008C008A /* ContainerExample.nib */ = {
-			isa = PBXVariantGroup;
-			children = (
-				60B2AF6A0C0B745A008C008A /* ContainerExample.nib */,
-			);
-			name = ContainerExample.nib;
-			sourceTree = "<group>";
-		};
 		60CF710E0D42AAC600B4CA3D /* Inspector.nib */ = {
 			isa = PBXVariantGroup;
 			children = (
@@ -1674,7 +1666,7 @@
 				GCC_PREFIX_HEADER = "$(SYSTEM_LIBRARY_DIR)/Frameworks/AppKit.framework/Headers/AppKit.h";
 				GCC_PREPROCESSOR_DEFINITIONS = NeXT_RUNTIME;
 				HEADER_SEARCH_PATHS = /usr/GNUstep/System/Library/Headers/;
-				INFOPLIST_FILE = "PhotoViewExample/ContainerExample-Info.plist";
+				INFOPLIST_FILE = "PhotoViewExample/PhotoViewExample-Info.plist";
 				INSTALL_PATH = "$(HOME)/Applications";
 				LIBRARY_SEARCH_PATHS = /usr/GNUstep/System/Library/Libraries/;
 				OTHER_LDFLAGS = (
@@ -1704,7 +1696,7 @@
 				GCC_PREFIX_HEADER = "$(SYSTEM_LIBRARY_DIR)/Frameworks/AppKit.framework/Headers/AppKit.h";
 				GCC_PREPROCESSOR_DEFINITIONS = NeXT_RUNTIME;
 				HEADER_SEARCH_PATHS = /usr/GNUstep/System/Library/Headers/;
-				INFOPLIST_FILE = "PhotoViewExample/ContainerExample-Info.plist";
+				INFOPLIST_FILE = "PhotoViewExample/PhotoViewExample-Info.plist";
 				INSTALL_PATH = "$(HOME)/Applications";
 				LIBRARY_SEARCH_PATHS = /usr/GNUstep/System/Library/Libraries/;
 				OTHER_LDFLAGS = (
@@ -2011,7 +2003,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		606B98CC0C0AF832000AAA85 /* Build configuration list for PBXNativeTarget "ContainerExample" */ = {
+		606B98CC0C0AF832000AAA85 /* Build configuration list for PBXNativeTarget "PhotoViewExample" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				606B98CD0C0AF832000AAA85 /* Debug */,
