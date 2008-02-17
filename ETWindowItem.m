@@ -200,27 +200,13 @@
 	return [[self window] contentView];
 }
 
-/*- (void) setView: (NSView *)view
-{
-	[[self window] setContentView: view];
-}*/
 - (void) setDecoratedView: (NSView *)view
 {
 	NSWindow *window = [self window];
-	
-if (view != nil)
-{
-	NSRect rect = [window frame];
-	NSPoint topLeftPoint = NSMakePoint(rect.origin.x, rect.size.height);
-
-	rect = [window frameRectForContentRect: [view frame]];
-	[window setFrame: rect display: NO];
-	[window setFrameTopLeftPoint: topLeftPoint];
-}
+		
+	if (view != nil)
+		[window setContentSizeFromTopLeft: [view frame].size];
 	[window setContentView: view];
-	[window flushWindowIfNeeded];
-	[window display];
-	RETAIN(window);
 }
 
 - (void) setView: (NSView *)view

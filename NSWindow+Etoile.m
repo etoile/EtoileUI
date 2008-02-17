@@ -35,6 +35,7 @@
  */
 
 #import <EtoileUI/NSWindow+Etoile.h>
+#import <EtoileUI/NSView+Etoile.h>
 #import <EtoileUI/ETObjectBrowserLayout.h>
 #import <EtoileUI/ETCompatibility.h>
 
@@ -72,6 +73,28 @@
 					       styleMask: windowStyle
 							 backing: NSBackingStoreBuffered
 							   defer: YES];
+}
+
+- (void) setFrameSizeFromTopLeft: (NSSize)size
+{
+	NSRect frameRect = ETMakeRect([self frame].origin, size);
+	float heightDelta = [self frame].size.height - frameRect.size.height;
+	
+	frameRect.origin.y += heightDelta;
+
+	[self setFrame: frameRect display: NO];
+}
+
+- (void) setContentSizeFromTopLeft: (NSSize)size
+{
+	NSRect frameRect = [self frameRectForContentRect: ETMakeRect(NSZeroPoint, size)];
+	
+	return [self setFrameSizeFromTopLeft: frameRect.size];
+}
+
+- (NSPoint) topLeftPoint
+{
+	return NSMakePoint(NSMinX([self frame]), NSMaxY([self frame]));
 }
 
 - (BOOL) isSystemPrivateWindow

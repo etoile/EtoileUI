@@ -45,6 +45,10 @@
 - (id) initWithFrame: (NSRect)frame styleMask: (unsigned int)windowStyle;
 - (id) initWithContentRect: (NSRect)frame styleMask: (unsigned int)windowStyle;
 
+- (void) setFrameSizeFromTopLeft: (NSSize)size;
+- (void) setContentSizeFromTopLeft: (NSSize)size;
+- (NSPoint) topLeftPoint;
+
 - (BOOL) isSystemPrivateWindow;
 - (BOOL) isCacheWindow;
 
