@@ -433,6 +433,8 @@ static ETView *barViewPrototype = nil;
 		}
 		else /* Passed a nil temporary view */
 		{
+			/* Restore autoresizing mask */
+			[[self temporaryView] setAutoresizingMask: [self autoresizingMask]];
 			[[self temporaryView] removeFromSuperview];
 			[[self wrappedView] setHidden: NO];
 		}
@@ -446,6 +448,8 @@ static ETView *barViewPrototype = nil;
 		}
 		else /* Passed a nil wrapped view */
 		{
+			/* Restore autoresizing mask */
+			[[self wrappedView] setAutoresizingMask: [self autoresizingMask]];
 			[[self wrappedView] removeFromSuperview];
 		}	
 	}
@@ -680,7 +684,7 @@ static ETView *barViewPrototype = nil;
 
 	[realScrollView setHasVerticalScroller: YES];
 	[realScrollView setHasHorizontalScroller: YES];
-	[realScrollView setAutoresizingMask: NSViewWidthSizable | NSViewHeightSizable];
+	//[realScrollView setAutoresizingMask: NSViewWidthSizable | NSViewHeightSizable];
 
 	self = [self initWithMainView: realScrollView layoutItem: item];
 	RELEASE(realScrollView);
@@ -695,6 +699,9 @@ static ETView *barViewPrototype = nil;
 	
 	if (self != nil)
 	{
+		[self setAutoresizingMask: [scrollView autoresizingMask]];
+		[scrollView setAutoresizingMask: NSViewWidthSizable | NSViewHeightSizable];
+		
 		/* Will be destroy in -[ETView dealloc] */
 		ASSIGN(_mainView, scrollView);
 		[self addSubview: _mainView];
@@ -727,6 +734,17 @@ static ETView *barViewPrototype = nil;
 	NSAssert2([[self mainView] isKindOfClass: [NSScrollView class]], 
 		@"_mainView %@ of %@ must be an NSScrollView instance", 
 		[self mainView], self);
+
+	if (view != nil)
+	{
+		[self setAutoresizingMask: [view autoresizingMask]];
+	}
+	else
+	{
+		/* Restore autoresizing mask */
+		[[(NSScrollView *)[self mainView] documentView] 
+			setAutoresizingMask: [self autoresizingMask]];	
+	}
 
 	/* Retain the view in case it must be removed from a superview and nobody
 	   else retains it */
@@ -766,3 +784,13 @@ static ETView *barViewPrototype = nil;
 }
 
 @end
+
+#if 0
+@implementation NSScrollView (EtoileDebug)
+- (void) setAutoresizingMask: (unsigned int)mask
+{
+	ETLog(@"--- Resizing mask from %d to %d %@ %@", [self autoresizingMask], mask, self, [self documentView]);
+	[super setAutoresizingMask: mask];
+}
+@end
+#endif

@@ -1301,6 +1301,7 @@
 		/* Item could have a decorator, so [[item supervisorView] superview] would
 	       not give the parent view in this case but the decorator view. */
 		id parentView = [[self displayView] superview];
+		NSRect frame = [[self displayView] frame];
 		// parentView isEqual: [[item parentLayoutItem] view]
 		
 		[[self displayView] removeFromSuperview];
@@ -1324,6 +1325,7 @@
 		/* Set up new decorator */
 		[decorator setDecoratedItem: self];
 		[decorator handleDecorateItem: self inView: parentView];
+
 		if ([self respondsToSelector: @selector(container)])
 		{
 			[[self container] didChangeDecoratorOfItem: self];
@@ -1340,6 +1342,13 @@
 				@"was just removed without being replaced, the display view of "
 				@"%@ must have no superview", existingDecorator, self);
 			[parentView addSubview: [self displayView]];
+			/* When a decorator view has been resized and/moved, we must reflect 
+			   it on the embedded view which may not have been resized.
+			   Not updating the frame is especially visible when the view is 
+			   used as a document view within a scroll view and this scroll view 
+			   frame is modified. Switching to a layout view reveals the issue
+			   even more clearly. */
+			[self setFrame: frame];
 		}
 		else
 		{
