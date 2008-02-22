@@ -1165,6 +1165,14 @@ NSString *ETLayoutItemPboardType = @"ETLayoutItemPboardType"; // FIXME: replace 
 	}	
 }
 
+#if 0
+- (void) setAutoresizingMask: (unsigned int)mask
+{
+	ETLog(@"--- Resizing mask from %d to %d %@", [self autoresizingMask], mask, self);
+	[super setAutoresizingMask: mask];
+}
+#endif
+
 /*
 - (ETLayoutOverflowStyle) overflowStyle
 {
@@ -1764,18 +1772,19 @@ NSString *ETLayoutItemPboardType = @"ETLayoutItemPboardType"; // FIXME: replace 
 /* Overriden NSView methods */
 
 /* GNUstep doesn't rely on -setFrameSize: in -setFrame: unlike Cocoa, so we 
-   patch frame parameter in -setFrame: too */
+   patch frame parameter in -setFrame: too.
+   See -setFrame: below to understand the reason behind this method. */
 #ifdef GNUSTEP
 - (void) setFrame: (NSRect)frame
 {
-
 	NSRect patchedFrame = frame;
-	NSSize clipViewSize = [[self scrollView] contentSize];
 	
-	NSLog(@"-setFrame to %@", NSStringFromRect(frame));
+	ETLog(@"-setFrame to %@", NSStringFromRect(frame));
 		
-	if ([self isScrollViewShown])
+	if ([self isContainerScrollViewInserted])
 	{
+		NSSize clipViewSize = [[self scrollView] contentSize];
+
 		if (clipViewSize.width < frame.size.width || clipViewSize.height < frame.size.height)
 		{
 			patchedFrame.size = clipViewSize;
@@ -1790,16 +1799,25 @@ NSString *ETLayoutItemPboardType = @"ETLayoutItemPboardType"; // FIXME: replace 
 #endif
 
 /* We override this method to patch the size in case we are located in a scroll 
-   view. -setFrame: calls -setFrameSize: on Cocoa but not on GNUstep. */
+   view owned by the receiver container. We must patch the container size to be 
+   sure it will never be smaller than the clip view size. If both container and 
+   clip view size don't match, you cannot click on the background to unselect 
+   items and the drawing of the container background doesn't fully fill the 
+   visible area of the scroll view.
+   -setFrame: calls -setFrameSize: on Cocoa but not on GNUstep. */
 - (void) setFrameSize: (NSSize)size
 {
 	NSSize patchedSize = size;
-	NSSize clipViewSize = [[self scrollView] contentSize];
-	
-	//NSLog(@"-setFrameSize: to %@", NSStringFromSize(size));
 
-	if ([self isScrollViewShown])
+	//ETLog(@"-setFrameSize: to %@", NSStringFromSize(size));
+
+	// NOTE: Very weird resizing behavior can be observed if the following code 
+	/// is executed when a layout view is in use. The layout view size will be 
+	// constrained to the clip view size of the cached scroll view decorator.
+	if ([self isContainerScrollViewInserted])
 	{
+		NSSize clipViewSize = [[self scrollView] contentSize];
+
 		if (size.width < clipViewSize.width)
 			patchedSize.width = clipViewSize.width;
 		if (size.height < clipViewSize.height)
