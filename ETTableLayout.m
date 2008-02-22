@@ -74,6 +74,17 @@
 	[super dealloc];
 }
 
+- (void) awakeFromNib
+{
+	/* Finish to initialize attributes that cannot be set in the nib/gorm and 
+	   are specific to the builtin table view prototype. As such they cannot 
+	   be set in -setLayoutView: since they could override the settings of a  
+	   custom table view provided as a replacement to the builtin prototype. */
+
+	// NOTE: Gorm doesn't allow to set the table view resizing style unlike IB
+	[[self tableView] setAutoresizesAllColumnsToFit: NO];
+}
+
 - (void) setLayoutView: (NSView *)protoView
 {
 	[super setLayoutView: protoView];
@@ -100,9 +111,8 @@
 		[_propertyColumns setObject: column forKey: colId];
 	}
 	/* Set up a list view using a single column without identifier */
-	//[self setDisplayedProperties: [self displayedProperties]];	
 	[tv registerForDraggedTypes: [NSArray arrayWithObject: @"ETLayoutItemPboardType"]];
-	
+
 	if ([tv dataSource] == nil)
 		[tv setDataSource: self];
 	if ([tv delegate] == nil)
@@ -140,6 +150,8 @@
 /* Update column visibility */
 - (void) setDisplayedProperties: (NSArray *)properties
 {
+	//ETLog(@"Set displayed properties %@ of layout %@", properties, self);
+
 	if (properties == nil)
 	{
 		[NSException raise: NSInvalidArgumentException format: @"For %@ "
