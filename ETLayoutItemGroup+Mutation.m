@@ -41,6 +41,10 @@
 #import <EtoileUI/ETCollection.h>
 #import <EtoileUI/ETCompatibility.h>
 
+@interface ETLayoutItemGroup (ETSource)
+- (BOOL) isReloading;
+@end
+
 
 @implementation ETLayoutItemGroup (ETMutationHandler)
 
@@ -55,7 +59,13 @@
 		return;
 	}
 	
-	BOOL validatedAdd = [self handleModelAdd: nil item: item];
+	BOOL validatedAdd = YES;
+
+	/* Don't touch the model when it is turned into layout items in the reload 
+	   phase. We must be sure we won't trigger model updates that would result 
+	   in a new UI update/reload when it's already underway. */
+	if ([self isReloading] == NO)
+		validatedAdd = [self handleModelAdd: nil item: item];
 	
 	if (validatedAdd)
 	{
@@ -109,7 +119,10 @@
 		return;
 	}
 	
-	BOOL validatedInsert = [self handleModelInsert: nil item: item atIndex: index];
+	BOOL validatedInsert = YES;
+	
+	if ([self isReloading] == NO)
+		validatedInsert = [self handleModelInsert: nil item: item atIndex: index];
 	
 	if (validatedInsert)
 	{
@@ -176,7 +189,12 @@
 
 - (void) handleRemove: (ETEvent *)event item: (ETLayoutItem *)item
 {
-	BOOL validatedRemove = [self handleModelRemove: nil item: item];
+	BOOL validatedRemove = YES;
+
+	/* Take note that -reload calls -removeAllItems. 
+	   See -handleAdd:item: to know more. */	
+	if ([self isReloading] == NO)
+		validatedRemove = [self handleModelRemove: nil item: item];
 	
 	if (validatedRemove)
 	{
