@@ -213,6 +213,16 @@
 	if (item == nil)
 	{
 		nbOfItems = [[[self layoutContext] items] count];
+
+		/* First time. Useful when the layout context is browsed or 
+		   inspected without having been loaded and displayed yet. 
+		   Although most of time the use of -reloadAndUpdateLayout takes 
+		   care of loading the items of the layout context. */
+		if (nbOfItems == 0)
+		{
+			[[self layoutContext] reload];
+			nbOfItems = [[[self layoutContext] items] count];
+		}
 	}
 	else if ([item isGroup]) 
 	{
@@ -244,7 +254,7 @@
 		childItem = [(ETLayoutItemGroup *)item itemAtIndex: rowIndex];
 	}
 
-	//ETLog(@"Returns % child item in outline view %@", childItem, outlineView);
+	//ETLog(@"Returns %@ child item in outline view %@", childItem, outlineView);
 	
 	return childItem;
 }
@@ -299,7 +309,7 @@
 			[column identifier], self);
 	}
 
-	//ETLog(@"Returns %@ as object value in outline view %@", value, outlineView);
+	ETLog(@"Returns %@ as object value in outline view %@", value, outlineView);
 	
 	// NOTE: 'value' could be any objects at this point and NSCell only accepts
 	// some common object values like string and number or image for 
@@ -415,25 +425,166 @@
 
 @end
 
-// NOTE: Taken from StepChat RosterController.m
-#ifdef GNUSTEP
-/* Ugly hack to fix a GNUstep bug */
+#ifdef GNUSTEP /* Ugly hack to fix GNUstep bugs */
+
 @implementation NSOutlineView (UglyHack)
+
 - (id)itemAtRow: (int)row
 {
-	if (row >= [_items count])
-	{
-		return [NSNull null];
-	}
-	return [_items objectAtIndex: row];
+  if (row >= [_items count])
+    {
+      return nil;
+    }
+  return [_items objectAtIndex: row];
 }
-// #ifdef GNUSTEP
-// 	//numberOfRows doesn't seem to work correctly on GNUstep.
-// 	size.height = [self rowsUnder:nil] *  ([view rowHeight] + [view intercellSpacing].height);
-// #else
-// 	size.height = [view numberOfRows] * ([view rowHeight] + [view intercellSpacing].height);
-// #endif
+
+// Collect all of the items under a given element.
+- (void)_collectItemsStartingWith: (id)startitem
+			     into: (NSMutableArray *)allChildren
+{
+  int num;
+  int i;
+  id sitem = (startitem == nil) ? (id)[NSNull null] : (id)startitem;
+  NSMutableArray *anarray;
+
+  anarray = NSMapGet(_itemDict, sitem); 
+  num = [anarray count];
+  for (i = 0; i < num; i++)
+    {
+      id anitem = [anarray objectAtIndex: i];
+
+      // Only collect the children if the item is expanded
+      if ([self isItemExpanded: startitem])
+	{
+	  [allChildren addObject: anitem];
+	}
+
+      [self _collectItemsStartingWith: anitem
+	    into: allChildren];
+    }
+}
+
+- (void) _isItemLoaded: (id)item
+{
+  id sitem = (item == nil) ? (id)[NSNull null] : (id)item;
+  id object = NSMapGet(_itemDict, sitem);
+
+  // FIXME: We should store the loaded items in a map to ensure we only load 
+  // the children of item when it gets expanded for the first time. This would
+  // allow to write: return (NSMapGet(_loadedItemDict, sitem) != nil);
+  // The last line isn't truly correct because it implies an item without 
+  // children will get incorrectly reloaded automatically on each 
+  // expand/collapse.
+  return ([object count] != 0);
+}
+
+- (void)_openItem: (id)item
+{
+  int numchildren = 0;
+  int i = 0;
+  int insertionPoint = 0;
+  id object = nil;
+  id sitem = (item == nil) ? (id)[NSNull null] : (id)item;
+
+  object = NSMapGet(_itemDict, sitem);
+  numchildren = [object count];
+
+  //NSLog(@"-- 1 _openItem: %@ nbOfItems %d isExpanded %d", item, numchildren, 
+  //  [self isItemExpanded: item]);
+
+  // open the item...
+  if (item != nil)
+    {
+      [_expandedItems addObject: item];
+    }
+
+  // load the children of the item if needed
+  // If -autosaveExpandedItems returns YES, we should always reload the children 
+  // of item (even if the item has already been expanded/collapsed).
+  if ([self autosaveExpandedItems] == NO || [self _isLoadedItem: item] == NO)
+    {
+      [self _loadDictionaryStartingWith: item atLevel: [self levelForItem: item]];
+    }
+
+  object = NSMapGet(_itemDict, sitem);
+  numchildren = [object count];
+
+  //NSLog(@"-- 2 _openItem: %@ nbOfItems %d isExpanded %d", item, numchildren, 
+  //  [self isItemExpanded: item]);
+
+  insertionPoint = [_items indexOfObject: item];
+  if (insertionPoint == NSNotFound)
+    {
+      insertionPoint = 0;
+    }
+  else
+    {
+      insertionPoint++;
+    }
+
+  for (i=numchildren-1; i >= 0; i--)
+    {
+      id obj = NSMapGet(_itemDict, sitem);
+      id child = [obj objectAtIndex: i];
+
+      // Add all of the children...
+      if ([self isItemExpanded: child])
+	{
+	  NSMutableArray *insertAll = [NSMutableArray array];
+	  int i = 0, numitems = 0;
+
+	  [self _collectItemsStartingWith: child into: insertAll];
+	  numitems = [insertAll count];
+ 	  for (i = numitems-1; i >= 0; i--)
+	    {
+	      [_items insertObject: [insertAll objectAtIndex: i]
+		      atIndex: insertionPoint];
+	    }
+	}
+      
+      // Add the parent
+      [_items insertObject: child atIndex: insertionPoint];
+    }
+}
+
+- (void) _loadDictionaryStartingWith: (id) startitem
+			     atLevel: (int) level
+{
+  id sitem = (startitem == nil) ? (id)[NSNull null] : (id)startitem;
+	  
+  NSMapInsert(_levelOfItems, sitem, [NSNumber numberWithInt: level]);
+	  
+  if ([self isItemExpanded: startitem])
+  {
+    int num = [_dataSource outlineView: self
+			 numberOfChildrenOfItem: startitem];
+    int i = 0;
+    NSMutableArray *anarray = nil;
+
+    if (num > 0)
+      {
+        anarray = [NSMutableArray array];
+        NSMapInsert(_itemDict, sitem, anarray);
+      }
+
+    //NSLog(@"_loadDictionaryStartingWith: %@ atLevel: %d nbOfItems %d @"isExpanded %d", 
+    //  startitem, level, num, [self isItemExpanded: startitem]);
+
+    for (i = 0; i < num; i++)
+      {
+        id anitem = [_dataSource outlineView: self
+		  	       child: i
+		  	       ofItem: startitem];
+      
+        [anarray addObject: anitem];
+        [self _loadDictionaryStartingWith: anitem
+	      atLevel: level + 1]; 
+      }
+   }
+}
+
 @end
+
 #endif
 
 @interface NSOutlineView (ETTableLayoutDraggingSource)
