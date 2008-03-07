@@ -464,7 +464,7 @@
     }
 }
 
-- (void) _isItemLoaded: (id)item
+- (BOOL) _isItemLoaded: (id)item
 {
   id sitem = (item == nil) ? (id)[NSNull null] : (id)item;
   id object = NSMapGet(_itemDict, sitem);
