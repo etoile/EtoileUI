@@ -724,171 +724,31 @@ NSString *ETLayoutItemPboardType = @"ETLayoutItemPboardType"; // FIXME: replace 
 	return NO;
 }
 
+
 - (void) setLetsLayoutControlsScrollerVisibility: (BOOL)layoutControl
 {
-
+	// FIXME: Implement or remove
 }
 
-/* From API viewpoint, it makes little sense to keep these scroller methods 
-   if we offert direct access to the underlying scroll view. However a class
-   like NSBrowser has a method like -setHasHorizontalScroller. We cannot 
-   forward -[NSScrollView setHasHorizontalScroller:] unless we create a 
-   subclass ETScrollView to override this method. Creating a subclass like that
-   for almost no reasons is dubious. In future, a better way to achieve the
-   same result would be to swizzle -[NSScrollView setHasHorizontalScroller:]
-   method with a decorator method. 
-   That means, these following methods will probably be deprecated at some 
-   points. */
+/* About the container scroll view and layouts
 
-#if 0
-- (BOOL) hasVerticalScroller
-{
-	return [_scrollView hasVerticalScroller];
-}
+   From API viewpoint, it makes little sense to keep these scroller methods if
+   we offer a direct access to the underlying scroll view. However a layout view 
+   may want to heavily alter the scroll view in a way that only works in this 
+   specific layout case. That's why layouts have the choice to use or not the 
+   scroll view set up and cached by the container.
+   It also makes easier to support AppKit views/controls wrapped in a layout. 
+   For example NSBrowser has a method like -setHasHorizontalScroller: but isn't 
+   wrapped inside a scroll view. Setting up and tearing down the container 
+   scroll view to be reused by a NSTableView-based layout or a NSTextView-based 
+   layout would also introduce an extra chunk of non-trivial code.
+   We only keep in sync (with the container scroll view) basic properties like 
+   scroller visibility, when a layout uses its own scroll view. They are the 
+   only scroll view settings which are very commonly altered independently of 
+   the presentation (the layout in EtoileUI case). 
+   NOTE: Another approach would be move this logic into ETScrollView but obvious 
+   benefits have to be found. */
 
-- (void) setHasVerticalScroller: (BOOL)scroll
-{
-	if ([self scrollView] == nil)
-		[self setShowsScrollView: YES];
-	
-	[_scrollView setHasVerticalScroller: scroll];
-	
-	/* Updated NSBrowser, NSOutlineView enclosing scroll view etc. */
-	[self syncDisplayViewWithContainer];
-}
-
-- (BOOL) hasHorizontalScroller
-{
-	return [_scrollView hasHorizontalScroller];
-}
-
-- (void) setHasHorizontalScroller: (BOOL)scroll
-{
-	if ([self scrollView] == nil)
-		[self setShowsScrollView: YES];
-		
-	[_scrollView setHasHorizontalScroller: scroll];
-	
-	/* Updated NSBrowser, NSOutlineView enclosing scroll view etc. */
-	[self syncDisplayViewWithContainer];
-}
-
-- (NSScrollView *) scrollView
-{
-	return _scrollView;
-}
-
-- (void) setScrollView: (NSScrollView *)scrollView
-{
-	if ([_scrollView isEqual: scrollView])
-		return;
-
-	if (_scrollView != nil)
-	{
-		/* Dismantle current scroll view and move container outside of it */
-		[self setShowsScrollView: NO];
-	}
-
-	ASSIGN(_scrollView, scrollView);
-	
-	/* If a new scroll view has been provided and no display view is in use */
-	if (_scrollView != nil && [self displayView] == nil)
-		[self setShowsScrollView: YES];
-	
-	/* Updated NSBrowser, NSOutlineView enclosing scroll view etc. */
-	[self syncDisplayViewWithContainer];
-}
-
-/* Returns whether the scroll view of the current container is really used. If
-   the container shows currently an AppKit control like NSTableView as display 
-   view, the built-in scroll view of the table view is used instead of the one
-   provided by the container. 
-   It implies you can never have -hasScrollView returns NO and -isScrollViewShown 
-   returns YES. There is no such exception with all other boolean combinations. */
-- (BOOL) isScrollViewShown
-{
-	if ([_scrollView superview] != nil)
-		return YES;
-	
-	return NO;
-}
-
-- (void) setShowsScrollView: (BOOL)scroll
-{
-	/* If no scroll view exists we create one even when a display view is in use
-	   simply because we use the container scroll view instance to store all
-	   scroller settings. We update any scroller settings defined in a display
-	   view with that of the newly created scroll view.  */
-
-	if (_scrollView == nil)
-	{
-		_scrollView = [[NSScrollView alloc] initWithFrame: [self frame]];
-		[_scrollView setAutohidesScrollers: NO];
-		[_scrollView setHasHorizontalScroller: YES];
-		[_scrollView setHasVerticalScroller: YES];
-	}
-		
-	/*if ([self displayView] == nil)
-		return;*/
-
-	//NSAssert(_scrollView != nil, @"For -setShowsScrollView:, scroll view must not be nil");
-	//if ([_scrollView superview] != nil)
-	//	NSAssert([_scrollView documentView] == self, @"When scroll view superview is not nil, it must use self as document view");
-		
-	NSView *superview = nil;
-
-	// FIXME: Asks layout whether it handles scroll view itself or not. If 
-	// needed like with table layout, delegate scroll view handling.
-	if ([_scrollView superview] == nil && [self displayView] == nil)
-	{
-		superview = [self superview];
-		
-		RETAIN(self);
-		[self removeFromSuperview];
-		
-		[_scrollView setAutoresizingMask: [self autoresizingMask]];
-		
-		[[self layout] setContentSizeLayout: YES];
-		// Updating layout here is a source of complication for no visible benefits
-		//[[self layout] adjustLayoutSizeToContentSize];
-		[self setFrameSize: [_scrollView contentSize]];
-		
-		[_scrollView setDocumentView: self];
-		[superview addSubview: _scrollView];
-		RELEASE(self);
-	}
-	else if ([_scrollView superview] != nil) /* -isScrollViewShown */
-	{
-		superview = [_scrollView superview];
-		NSAssert(superview != nil, @"For -setShowsScrollView: NO, scroll view must have a superview");
-		
-		RETAIN(self);
-		[_scrollView setDocumentView: nil];
-		[self removeFromSuperview]; 
-		[_scrollView removeFromSuperview];
-		
-		[self setAutoresizingMask: [_scrollView autoresizingMask]];
-		
-		[self setFrame: [_scrollView frame]];
-		// WARNING: More about next line and following assertion can be read here: 
-		// <http://www.cocoabuilder.com/archive/message/cocoa/2006/9/29/172021>
-		// Stop also to receive any view/window notifications in ETContainer code 
-		// before turning scroll view on or off.
-		NSAssert1(NSEqualRects([self frame], [_scrollView frame]), 
-			@"Unable to update the frame of container %@, you must stop watch "
-			@"any notifications posted by container before hiding or showing "
-			@"its scroll view (Cocoa bug)", self);
-
-		
-		[[self layout] setContentSizeLayout: NO];
-		// Updating layout here is a source of complication for no visible benefits
-		//[[self layout] adjustLayoutSizeToSizeOfContainer: self];
-		
-		[superview addSubview: self];
-		RELEASE(self);
-	}
-}
-#else
 - (BOOL) hasVerticalScroller
 {
 	return [[self scrollView] hasVerticalScroller];
@@ -1104,8 +964,6 @@ NSString *ETLayoutItemPboardType = @"ETLayoutItemPboardType"; // FIXME: replace 
 
 	return [scrollViewWrapper layoutItem];
 }
-
-#endif
 
 /** Returns the view that takes care of the display. Most of time it is equal
     to the container itself. But for some layout like ETTableLayout, the 
