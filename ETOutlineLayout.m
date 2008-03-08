@@ -309,7 +309,7 @@
 			[column identifier], self);
 	}
 
-	ETLog(@"Returns %@ as object value in outline view %@", value, outlineView);
+	//ETLog(@"Returns %@ as object value in outline view %@", value, outlineView);
 	
 	// NOTE: 'value' could be any objects at this point and NSCell only accepts
 	// some common object values like string and number or image for 
@@ -469,6 +469,8 @@
   id sitem = (item == nil) ? (id)[NSNull null] : (id)item;
   id object = NSMapGet(_itemDict, sitem);
 
+  //NSLog(@"_isItemLoaded %@ count %d", item, [object count]);
+
   // FIXME: We should store the loaded items in a map to ensure we only load 
   // the children of item when it gets expanded for the first time. This would
   // allow to write: return (NSMapGet(_loadedItemDict, sitem) != nil);
@@ -501,7 +503,7 @@
   // load the children of the item if needed
   // If -autosaveExpandedItems returns YES, we should always reload the children 
   // of item (even if the item has already been expanded/collapsed).
-  if ([self autosaveExpandedItems] == NO || [self _isLoadedItem: item] == NO)
+  if ([self autosaveExpandedItems] == NO || [self _isItemLoaded: item] == NO)
     {
       [self _loadDictionaryStartingWith: item atLevel: [self levelForItem: item]];
     }
