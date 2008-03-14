@@ -40,6 +40,49 @@
 @class ETPickboard, ETEvent;
 
 @protocol ETEventHandler
+
+/* Event Handling */
+
+- (void) mouseDown: (ETEvent *)event on: (id)item;
+- (void) mouseDragged: (ETEvent *)event on: (id)item;
+
+/* Pick and Drop Filtering */
+
+- (BOOL) allowsDragging;
+- (BOOL) allowsDropping;
+
+/* Pick and Drop Handling */
+
+- (void) handleDrag: (ETEvent *)event forItem: (id)item layout: (id)layout;
+- (void) beginDrag: (ETEvent *)event forItem: (id)item 
+	image: (NSImage *)customDragImage layout: (id)layout;
+- (NSDragOperation) handleDragEnter: (id)dragInfo forItem: (id)item;
+- (void) handleDragExit: (id)dragInfo forItem: (id)item;
+- (NSDragOperation) handleDragMove: (id)dragInfo forItem: (id)item;
+- (void) handleDragEnd: (id)dragInfo forItem: (id)item on: (id) dropTargetItem;
+- (BOOL) handleDrop: (id)dragInfo forItem: (id)item on: (id)dropTargetItem;
+//- (BOOL) handleDrop: (id)dragInfo forObject: (id)object; // on: (id)item
+/*- (void) handlePickForObject: (id)object;
+- (void) handleAcceptDropForObject: (id)object;
+- (void) handleDropForObject: (id)object;*/
+- (BOOL) handlePick: (ETEvent *)event forItems: (NSArray *)items pickboard: (ETPickboard *)pboard;
+- (BOOL) handleAcceptDrop: (id)dragInfo forItems: (NSArray *)items on: (id)item pickboard: (ETPickboard *)pboard;
+- (BOOL) handleDrop: (id)dragInfo forItems: (NSArray *)items on: (id)item pickboard: (ETPickboard *)pboard;
+
+/* Helper Methods */
+
+- (int) dropIndexAtLocation: (NSPoint)localDropPosition forItem: (id)item on: (id)dropTargetItem;
+- (BOOL) acceptsDropAtLocationInWindow: (NSPoint)loc;
+- (NSRect) dropOnRect;
+- (unsigned int) draggingSourceOperationMaskForLocal: (BOOL)isLocal;
+- (BOOL) shouldRemoveItemAtPickTime;
+
+/* Cut, Copy and Paste Compatibility */
+
+- (IBAction) copy: (id)sender;
+- (IBAction) paste: (id)sender;
+- (IBAction) cut: (id)sender;
+
 @end
 
 // TODO: Refactor this category in a pluggable event handler object. 
@@ -119,48 +162,6 @@
 	ETLayoutItem (Events). */
 
 @interface ETLayoutItem (Events) <ETEventHandler>
-
-/* Event Handling */
-
-- (void) mouseDown: (ETEvent *)event on: (id)item;
-- (void) mouseDragged: (ETEvent *)event on: (id)item;
-
-/* Pick and Drop Filtering */
-
-- (BOOL) allowsDragging;
-- (BOOL) allowsDropping;
-
-/* Pick and Drop Handling */
-
-- (void) handleDrag: (ETEvent *)event forItem: (id)item layout: (id)layout;
-- (void) beginDrag: (ETEvent *)event forItem: (id)item 
-	image: (NSImage *)customDragImage layout: (id)layout;
-- (NSDragOperation) handleDragEnter: (id)dragInfo forItem: (id)item;
-- (void) handleDragExit: (id)dragInfo forItem: (id)item;
-- (NSDragOperation) handleDragMove: (id)dragInfo forItem: (id)item;
-- (void) handleDragEnd: (id)dragInfo forItem: (id)item on: (id) dropTargetItem;
-- (BOOL) handleDrop: (id)dragInfo forItem: (id)item on: (id)dropTargetItem;
-//- (BOOL) handleDrop: (id)dragInfo forObject: (id)object; // on: (id)item
-/*- (void) handlePickForObject: (id)object;
-- (void) handleAcceptDropForObject: (id)object;
-- (void) handleDropForObject: (id)object;*/
-- (BOOL) handlePick: (ETEvent *)event forItems: (NSArray *)items pickboard: (ETPickboard *)pboard;
-- (BOOL) handleAcceptDrop: (id)dragInfo forItems: (NSArray *)items on: (id)item pickboard: (ETPickboard *)pboard;
-- (BOOL) handleDrop: (id)dragInfo forItems: (NSArray *)items on: (id)item pickboard: (ETPickboard *)pboard;
-
-/* Helper Methods */
-
-- (int) dropIndexAtLocation: (NSPoint)localDropPosition forItem: (id)item on: (id)dropTargetItem;
-- (BOOL) acceptsDropAtLocationInWindow: (NSPoint)loc;
-- (NSRect) dropOnRect;
-- (unsigned int) draggingSourceOperationMaskForLocal: (BOOL)isLocal;
-- (BOOL) shouldRemoveItemAtPickTime;
-
-/* Cut, Copy and Paste Compatibility */
-
-- (IBAction) copy: (id)sender;
-- (IBAction) paste: (id)sender;
-- (IBAction) cut: (id)sender;
 
 @end
 
