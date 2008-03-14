@@ -257,7 +257,9 @@ NSString *ETLayoutItemPboardType = @"ETLayoutItemPboardType"; // FIXME: replace 
 		return nil;
 	}
 	
-	[self setScrollView: [coder decodeObjectForKey: @"NSScrollView"]];
+	// FIXME: We need to write -setScrollView: or may be come up with some other 
+	// way to reconstruct the scroll view decorator
+	//[self setScrollView: [coder decodeObjectForKey: @"NSScrollView"]];
 	[self setFlipped: [coder decodeBoolForKey: @"ETFlipped"]];
 	[self setRepresentedPath: [coder decodeObjectForKey: @"ETRepresentedPath"]];
 	[self setEnablesHitTest: [coder decodeBoolForKey: @"ETHitTestEnabled"]];	
