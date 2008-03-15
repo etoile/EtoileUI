@@ -401,6 +401,11 @@
 	return _isLayouting;
 }
 
+- (void) render: (NSDictionary *)inputValues
+{
+	[self render: inputValues isNewContent: YES];
+}
+
 /** Renders a collection of items by requesting them to the container to which
 	the receiver is bound to.
 	Layout items can be requested in two styles: to the container itself or
@@ -410,7 +415,7 @@
 	This method is usually called by ETContainer and you should rarely need to
 	do it by yourself. If you want to update the layout, just uses 
 	-[ETContainer updateLayout]. */
-- (void) render
+- (void) render: (NSDictionary *)inputValues isNewContent: (BOOL)isNewContent
 {
 	if ([self layoutContext] == nil)
 	{
@@ -480,7 +485,7 @@
 		}
 	}
 	
-	[self renderWithLayoutItems: [[self layoutContext] items]];
+	[self renderWithLayoutItems: [[self layoutContext] items] isNewContent: isNewContent];
 	
 	_isLayouting = NO;
 }
@@ -498,7 +503,7 @@
 	by calling -setVisibleItems: on the related container. Actually it takes 
 	care of the scroll view visibility but this may change a little bit in 
 	future. */
-- (void) renderWithLayoutItems: (NSArray *)items
+- (void) renderWithLayoutItems: (NSArray *)items isNewContent: (BOOL)isNewContent
 {	
 	//ETLog(@"Render layout items: %@", items);
 	

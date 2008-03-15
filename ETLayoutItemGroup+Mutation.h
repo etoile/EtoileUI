@@ -48,6 +48,9 @@
 
 @interface ETLayoutItemGroup (ETMutationHandler)
 
+- (BOOL) hasNewContent;
+- (void) setHasNewContent: (BOOL)flag;
+
 /* Mutation Backend
    Handling of Mutations on Layout Item Tree, Model Graph and Source  */
 

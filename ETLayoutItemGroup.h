@@ -53,6 +53,8 @@
 	BOOL _autolayout;
 	BOOL _usesLayoutBasedFrame;
 	BOOL _reloading; /* ivar used by ETSource category */
+	BOOL _hasNewContent;
+	BOOL _hasNewLayout;
 	BOOL _shouldMutateRepresentedObject;
 }
 
@@ -114,6 +116,7 @@
 - (ETLayout *) layout;
 - (void) setLayout: (ETLayout *)layout;
 
+//-reloadAndUpdateAll;
 - (void) reloadAndUpdateLayout;
 - (void) updateLayout;
 - (BOOL) canUpdateLayout;

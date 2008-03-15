@@ -75,7 +75,7 @@
 	RELEASE(self);
 }
 
-- (void) renderWithLayoutItems: (NSArray *)items
+- (void) renderWithLayoutItems: (NSArray *)items isNewContent: (BOOL)isNewContent
 {	
 	//ETLog(@"Render layout items: %@", items);
 	
@@ -134,14 +134,14 @@
 }
 
 #if 0
-- (void) renderWithLayoutItems: (NSArray *)items
+- (void) renderWithLayoutItems: (NSArray *)items isNewContent: (BOOL)isNewContent
 {
 	/* Prevent reentrancy. In a threaded environment, it isn't perfectly safe 
 	   because _isLayouting test and _isLayouting assignement doesn't occur in
 	   an atomic way. */
 	if (_isLayouting)
 	{
-		NSLog(@"WARNING: Trying to reenter -renderWithLayoutItems: when the layout is already getting updated.");
+		NSLog(@"WARNING: Trying to reenter -renderWithLayoutItems:isNewContent: when the layout is already getting updated.");
 		return;
 	}
 	else

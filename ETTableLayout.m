@@ -255,7 +255,7 @@
 
 /* Layouting */
 
-- (void) renderWithLayoutItems: (NSArray *)items
+- (void) renderWithLayoutItems: (NSArray *)items isNewContent: (BOOL)isNewContent
 {
 	if ([self container] == nil)
 	{
@@ -267,11 +267,16 @@
 	[self setUpLayoutView];
 	
 	[self resizeLayoutItems: items toScaleFactor: [[self layoutContext] itemScaleFactor]];
-	
-	if ([[self container] source] != nil)
-		[self _updateDisplayedPropertiesFromSource];
+
+	/* Only reload from the data source if the layout item tree visible in the 
+	   table/outline view has been mutated */
+	if (isNewContent)
+	{
+		if ([[self container] source] != nil)
+			[self _updateDisplayedPropertiesFromSource];
 				
-	[[self tableView] reloadData];
+		[[self tableView] reloadData];
+	}
 }
 
 - (void) resizeLayoutItems: (NSArray *)items toScaleFactor: (float)factor

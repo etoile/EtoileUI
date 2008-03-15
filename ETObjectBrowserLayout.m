@@ -64,7 +64,7 @@
 	if (self != nil)
 	{
 		id container = [[ETContainer alloc] initWithFrame: PALETTE_FRAME];
-		
+	
 		[container setLayout: AUTORELEASE([[ETOutlineLayout alloc] init])];
 		[container setSource: self];
 		[container setDelegate: self];
@@ -96,14 +96,21 @@
 	[itemGroupView setTarget: self];
 }
 
-- (void) renderWithLayoutItems: (NSArray *)items;
+- (void) renderWithLayoutItems: (NSArray *)items isNewContent: (BOOL)isNewContent
 {
 	[self setUpLayoutView];
 	// [itemGroupView setSource: [self browsedObject]];
 	[[(ETContainer *)itemGroupView layout] setDisplayedProperties: [self displayedItemPropertiesInContainer: self]];
 	[[itemGroupView layoutItem] setRepresentedObject: [self browsedObject]];
 	[itemGroupView setSource: [itemGroupView layoutItem]];
-	[itemGroupView reloadAndUpdateLayout];
+	if (isNewContent)
+	{
+		[itemGroupView reloadAndUpdateLayout];
+	}
+	else
+	{
+		[itemGroupView updateLayout];
+	}
 }
 
 - (void) doubleClickInItemGroupView: (id)sender

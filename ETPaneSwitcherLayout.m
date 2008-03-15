@@ -441,7 +441,7 @@
 		[[self container] selectionIndex], [[self contentContainer] selectionIndex]);
 }
 
-- (void) renderWithLayoutItems: (NSArray *)items
+- (void) renderWithLayoutItems: (NSArray *)items isNewContent: (BOOL)isNewContent
 {
 	if ([self contentLayout] == nil)
 	{	

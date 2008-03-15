@@ -67,6 +67,8 @@
 @end
 
 @interface ETLayoutItemGroup (Private)
+- (BOOL) hasNewLayout;
+- (void) setHasNewLayout: (BOOL)flag;
 - (void) collectSelectionIndexPaths: (NSMutableArray *)indexPaths;
 - (void) applySelectionIndexPaths: (NSMutableArray *)indexPaths;
 - (id) newItemGroup;
@@ -116,6 +118,8 @@
 		_isStack = NO;
 		_autolayout = YES;
 		_usesLayoutBasedFrame = NO;
+		[self setHasNewLayout: NO];
+		[self setHasNewContent: NO];
 		[self setShouldMutateRepresentedObject: YES];
     }
     
@@ -459,6 +463,17 @@
 	[self handleDetachViewOfItem: item];
 }
 
+/* Marks if needed the receiver as having new content to be layouted, otherwise 
+   the layout is told the layout item tree hasn't been mutated. 
+   Only valid when the layout item tree is built directly from the represented 
+   object by the mean of ETCollection protocol. */
+- (void) setRepresentedObject: (id)model
+{
+	[super setRepresentedObject: model];
+	if ([self usesRepresentedObjectAsProvider])
+		[self setHasNewContent: YES];
+}
+
 /** Returns YES when the item tree mutation are propagated to the represented 
 	object, otherwise returns NO if it's up to you to reflect structural changes
 	of the layout item tree onto the model object graph. By default, this method 
@@ -665,6 +680,10 @@
 
 /* Layout */
 
+- (BOOL) hasNewLayout { return _hasNewLayout; }
+
+- (void) setHasNewLayout: (BOOL)flag { _hasNewLayout = flag; }
+
 - (ETLayout *) layout
 {
 	return _layout;
@@ -694,6 +713,7 @@
 	if ([self isContainer])
 		[(ETContainer *)[self supervisorView] setDisplayView: nil]; 
 	ASSIGN(_layout, layout);
+	[self setHasNewLayout: YES];
 	[layout setLayoutContext: self];
 	
 	/* if ([_layout representedItem] != nil)
@@ -724,6 +744,8 @@
 	if ([self layout] == nil)
 		return;
 	
+	BOOL isNewLayoutContent = ([self hasNewContent] || [self hasNewLayout]);
+	
 	/* Update layout of descendant items before all because our own layout 
 	   depends on the layout of the descendant items. Layout update may modify
 	   number and frame of descendant items, thereby producing different layout
@@ -732,9 +754,14 @@
 		[[self items] makeObjectsPerformSelector: @selector(updateLayout)];
 	
 	/* Delegate layout rendering to custom layout object */
-	[[self layout] render];
+	[[self layout] render: nil isNewContent: isNewLayoutContent];
 	
 	[[self closestAncestorContainer] setNeedsDisplay: YES];
+	
+	/* Unset needs layout flags */
+	[self setHasNewContent: NO];
+	[self setHasNewLayout: NO];
+	
 	// FIXME: Redisplay closestAncestorContainer with our rect
 	/*ETContainer *closestContainer = [self closestAncestorContainer];
 	NSRect closestViewInsideRect = [closestContainer frame];

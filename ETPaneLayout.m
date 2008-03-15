@@ -101,7 +101,7 @@
 
 /* Layouting */
 
-- (void) renderWithLayoutItems: (NSArray *)items
+- (void) renderWithLayoutItems: (NSArray *)items isNewContent: (BOOL)isNewContent
 {
 	NSArray *layoutModel = nil;
 	

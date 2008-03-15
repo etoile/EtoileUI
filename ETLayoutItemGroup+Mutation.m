@@ -48,6 +48,25 @@
 
 @implementation ETLayoutItemGroup (ETMutationHandler)
 
+/* Returns whether children have been removed, added or inserted since the last 
+   UI layout. Typically returns YES when the receiver has been reloaded but the 
+   layout hasn't yet been updated. Also returns YES when autolayout is disabled 
+   and the UI needs to be refreshed by calling -updateLayout. */
+- (BOOL) hasNewContent
+{
+	return _hasNewContent;
+}
+
+/* Sets whether children have been removed, added or inserted since the last UI
+   layout. -reload calls this method to indicate the receiver layout needs to be
+   updated in order that the UI reflects the latest receiver content. */
+- (void) setHasNewContent: (BOOL)flag
+{
+	_hasNewContent = flag;
+}
+
+/* Element Mutation Handler */
+
 - (void) handleAdd: (ETEvent *)event item: (ETLayoutItem *)item
 {
 	//ETLog(@"Add item in %@", self);
@@ -71,6 +90,7 @@
 	{
 		[self handleAttachItem: item];
 		[_layoutItems addObject: item];
+		[self setHasNewContent: YES];
 		if ([self canUpdateLayout])
 			[self updateLayout];
 	}
@@ -128,6 +148,7 @@
 	{
 		[self handleAttachItem: item];
 		[_layoutItems insertObject: item atIndex: index];
+		[self setHasNewContent: YES];
 		if ([self canUpdateLayout])
 			[self updateLayout];
 	}
@@ -200,6 +221,7 @@
 	{
 		[self handleDetachItem: item];
 		[_layoutItems removeObject: item];
+		[self setHasNewContent: YES];
 		if ([self canUpdateLayout])
 			[self updateLayout];
 	}
@@ -280,7 +302,7 @@
 	return validatedMutate;
 }
 
-/* Set Mutations */
+/* Set Mutation Handlers */
 
 - (void) handleAdd: (ETEvent *)event items: (NSArray *)items
 {

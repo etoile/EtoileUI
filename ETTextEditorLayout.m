@@ -59,7 +59,7 @@
 	return self;
 }
 
-- (void) renderWithLayoutItems: (NSArray *)items;
+- (void) renderWithLayoutItems: (NSArray *)items isNewContent: (BOOL)isNewContent
 {
 	[self setUpLayoutView];
 	[(NSText *)[self layoutView] setString: [[[items firstObject] representedObject] stringValue]];

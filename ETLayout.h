@@ -151,12 +151,15 @@ typedef enum _ETSizeConstraintStyle
 - (BOOL) isAllContentVisible;
 //- (void) adjustLayoutSizeToContentSize;
 
+//-setStyleTemplate:
+//-styleTemplate // apply to each layouted item (like a border)
+
 /* Layouting */
 
 - (BOOL) isRendering;
-
-- (void) render;
-- (void) renderWithLayoutItems: (NSArray *)items;
+- (void) render: (NSDictionary *)inputValues;
+- (void) render: (NSDictionary *)inputValues isNewContent: (BOOL)isNewContent;
+- (void) renderWithLayoutItems: (NSArray *)items isNewContent: (BOOL)isNewContent;
 
 - (ETLayoutLine *) layoutLineForLayoutItems: (NSArray *)items;
 - (NSArray *) layoutModelForLayoutItems: (NSArray *)items;

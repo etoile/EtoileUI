@@ -121,7 +121,7 @@
 
 /* Layouting */
 
-- (void) renderWithLayoutItems: (NSArray *)items
+- (void) renderWithLayoutItems: (NSArray *)items isNewContent: (BOOL)isNewContent
 {
 	NSBrowser *browserView = [self browser];
 	
@@ -131,17 +131,23 @@
 	// -resizeLayoutItems:toScaleFactor: works as expected
 	//[self resizeLayoutItems: items toScaleFactor: [[self layoutContext] itemScaleFactor]];
 	
-	if ([browserView delegate] == nil)
-		[browserView setDelegate: self];
 	// FIXME: The next lines shouldn't be needed but
 	// -[ETContainer syncDisplayViewWithContainer] regularly overwrites what have
 	// been set in -setLayoutView:
 	[browserView setDoubleAction: @selector(doubleClick:)];
 	[browserView setAction: @selector(click:)];
 	[browserView setTarget: self];		
+	
+	/* Only reload from the delegate if the layout item tree visible in the 
+	   browser has been mutated */
+	if (isNewContent)
+	{
+		if ([browserView delegate] == nil)
+			[browserView setDelegate: self];
 
-	// NOTE: -loadColumnZero reloads browser context unlike -setPath: @"/"
-	[browserView loadColumnZero];
+		// NOTE: -loadColumnZero reloads browser context unlike -setPath: @"/"
+		[browserView loadColumnZero];
+	}
 }
 
 - (void) resizeLayoutItems: (NSArray *)items toScaleFactor: (float)factor

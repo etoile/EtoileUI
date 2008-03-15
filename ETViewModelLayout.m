@@ -102,7 +102,7 @@
 	[super setLayoutContext: context];
 }
 
-- (void) renderWithLayoutItems: (NSArray *)items
+- (void) renderWithLayoutItems: (NSArray *)items isNewContent: (BOOL)isNewContent
 {
 	if ([self container] == nil)
 	{
