@@ -255,7 +255,7 @@
 
 @end
 
-@interface ETContainer (ETContainerSource)
+@interface NSObject (ETContainerSource)
 
 // TODO: Create new set structure NSPathSet rather than using NSArray
 
