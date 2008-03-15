@@ -35,6 +35,7 @@
  */
 
 #import <EtoileUI/ETLayoutItem.h>
+#import <EtoileUI/ETLayoutItem+Events.h>
 #import <EtoileUI/ETLayoutItemGroup.h>
 #import <EtoileUI/ETWindowItem.h>
 #import <EtoileUI/ETStyleRenderer.h>

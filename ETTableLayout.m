@@ -490,7 +490,7 @@
 	/* Convert drag location from window coordinates to the receiver coordinates */
 	NSPoint localPoint = [tv convertPoint: [dragEvent locationInWindow] fromView: nil];
 	id draggedItem = [self itemAtLocation: localPoint];
-	id baseItem = [[self layoutContext] baseItem];
+	id baseItem = [(ETLayoutItem *)[self layoutContext] baseItem];
 		
 	[baseItem handleDrag: dragEvent forItem: draggedItem layout: self];
 	
@@ -531,7 +531,7 @@
 	if (op == NSTableViewDropOn)
 		dropTargetItem = [[dropTargetItem items] objectAtIndex: row];
 
-	id baseItem = [[self layoutContext] baseItem];
+	id baseItem = [(ETLayoutItem *)[self layoutContext] baseItem];
 		
 	_lastChildDropIndex = row;
 	[baseItem handleDrop: info forItem: droppedItem on: dropTargetItem];

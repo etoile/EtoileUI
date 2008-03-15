@@ -75,7 +75,7 @@
 - (BOOL) acceptsDropAtLocationInWindow: (NSPoint)loc;
 - (NSRect) dropOnRect;
 - (unsigned int) draggingSourceOperationMaskForLocal: (BOOL)isLocal;
-- (BOOL) shouldRemoveItemAtPickTime;
+- (BOOL) shouldRemoveItemsAtPickTime;
 
 /* Cut, Copy and Paste Compatibility */
 

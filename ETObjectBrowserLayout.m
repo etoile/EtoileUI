@@ -49,12 +49,16 @@
 #define PALETTE_FRAME NSMakeRect(200, 200, 600, 300)
 #define itemGroupView (id)[self layoutView]
 
+@interface ETObjectBrowserLayout (Private)
+- (NSArray *) displayedItemPropertiesInContainer: (ETContainer *)container;
+@end
+
 
 @implementation ETObjectBrowserLayout
 
 - (id) browsedObject
 {
-	return [[self layoutContext] representedObject];
+	return [(ETLayoutItem *)[self layoutContext] representedObject];
 }
 
 - (ETLayout *) initWithLayoutView: (NSView *)view
@@ -100,7 +104,7 @@
 {
 	[self setUpLayoutView];
 	// [itemGroupView setSource: [self browsedObject]];
-	[[(ETContainer *)itemGroupView layout] setDisplayedProperties: [self displayedItemPropertiesInContainer: self]];
+	[[(ETContainer *)itemGroupView layout] setDisplayedProperties: [self displayedItemPropertiesInContainer: (ETContainer *)[self layoutView]]];
 	[[itemGroupView layoutItem] setRepresentedObject: [self browsedObject]];
 	[itemGroupView setSource: [itemGroupView layoutItem]];
 	if (isNewContent)
@@ -235,7 +239,7 @@
 	if ([self browsedObject] == nil)
 		return [NSArray array];
 
-	return [[self browsedObject] properties];
+	return [(NSObject *)[self browsedObject] properties];
 }
 
 @end

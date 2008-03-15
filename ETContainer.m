@@ -70,7 +70,6 @@ NSString *ETLayoutItemPboardType = @"ETLayoutItemPboardType"; // FIXME: replace 
 - (void) syncDisplayViewWithContainer;
 - (NSInvocation *) invocationForSelector: (SEL)selector;
 - (void) sendInvocationToDisplayView: (NSInvocation *)inv;
-- (BOOL) canUpdateLayout;
 - (void) cacheScrollViewDecoratorItem: (ETLayoutItem *)decorator;
 - (ETLayoutItem *) cachedScrollViewDecoratorItem;
 - (ETLayoutItem *) createScrollViewDecoratorItem;

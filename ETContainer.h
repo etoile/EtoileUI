@@ -104,6 +104,7 @@
 
 - (BOOL) isAutolayout;
 - (void) setAutolayout: (BOOL)flag;
+- (BOOL) canUpdateLayout;
 - (void) updateLayout;
 - (void) reloadAndUpdateLayout;
 

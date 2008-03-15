@@ -220,7 +220,7 @@
 		   care of loading the items of the layout context. */
 		if (nbOfItems == 0)
 		{
-			[[self layoutContext] reload];
+			[(ETLayoutItemGroup *)[self layoutContext] reload];
 			nbOfItems = [[[self layoutContext] items] count];
 		}
 	}
@@ -360,7 +360,7 @@
 	if (dropTargetItem == nil) /* Root item */
 		dropTargetItem = [self layoutContext];
 
-	id baseItem = [[self layoutContext] baseItem];
+	id baseItem = [(ETLayoutItem *)[self layoutContext] baseItem];
 	
 	_lastChildDropIndex = index;
 	[baseItem handleDrop: info forItem: droppedItem on: dropTargetItem];
@@ -403,7 +403,7 @@
 	/* Convert drag location from window coordinates to the receiver coordinates */
 	NSPoint localPoint = [outlineView convertPoint: [dragEvent locationInWindow] fromView: nil];
 	id draggedItem = [self itemAtLocation: localPoint];
-	id baseItem = [[self layoutContext] baseItem];
+	id baseItem = [(ETLayoutItem *)[self layoutContext] baseItem];
 	
 	NSAssert3([items containsObject: draggedItem], @"Dragged items %@ must "
 		@"contain clicked item %@ in %@", items, draggedItem, self);
@@ -589,9 +589,15 @@
 
 #endif
 
+/* Declared in ETTableLayout.m */
+@interface NSTableView (ETTableLayoutDraggingSource)
+- (id) eventHandler;
+@end
+
 @interface NSOutlineView (ETTableLayoutDraggingSource)
-- (unsigned int) draggingSourceOperationMaskForLocal: (BOOL)isLocal;
-- (void) draggedImage: (NSImage *)anImage beganAt: (NSPoint)aPoint;
+// NOTE: Read the next comment.
+//- (unsigned int) draggingSourceOperationMaskForLocal: (BOOL)isLocal;
+//- (void) draggedImage: (NSImage *)anImage beganAt: (NSPoint)aPoint;
 - (void) draggedImage: (NSImage *)draggedImage movedTo: (NSPoint)screenPoint;
 - (void) draggedImage: (NSImage *)anImage endedAt: (NSPoint)aPoint operation: (NSDragOperation)operation;
 @end

@@ -484,7 +484,7 @@
 #endif
 
 	/* Update layout in a way equivalent to [[layoutObject container] updateLayout] */
-	[[self contentLayout] renderWithLayoutItems: items];
+	[[self contentLayout] renderWithLayoutItems: items isNewContent: YES];
 	/* Content layout preempts item views over switcher layout. To eliminate 
 	   this issue, first switcher layout tries to use properties like value, 
 	   image, icon, name. Eventually it makes a copy of the item view as an

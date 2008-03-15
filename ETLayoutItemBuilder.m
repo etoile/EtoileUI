@@ -41,6 +41,7 @@
 #import <EtoileUI/ETLayer.h>
 #import <EtoileUI/ETView.h>
 #import <EtoileUI/ETContainer.h>
+#import <EtoileUI/NSWindow+Etoile.h>
 #import <EtoileUI/ETCompatibility.h>
 
 

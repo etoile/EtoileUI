@@ -36,6 +36,7 @@
  */
 
 #import <EtoileUI/ETWindowItem.h>
+#import <EtoileUI/ETLayoutItem.h>
 #import <EtoileUI/ETLayoutItemGroup.h>
 #import <EtoileUI/ETLayoutItemGroup+Factory.h>
 #import <EtoileUI/NSWindow+Etoile.h>
@@ -109,7 +110,7 @@
 	/* If the window doesn' t get hidden on close, we release the item 
 	   we decorate simply by removing it from the window layer */
 	if ([[self window] isReleasedWhenClosed])
-		[[ETLayoutItemGroup windowGroup] removeItem: [self firstDecoratedItem]];
+		[(ETLayoutItemGroup *)[ETLayoutItemGroup windowGroup] removeItem: [self firstDecoratedItem]];
 		
 	return YES;
 }
