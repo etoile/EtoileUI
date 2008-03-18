@@ -41,6 +41,8 @@
 
 @protocol ETEventHandler
 
+- (ETLayoutItem *) eventForwarder;
+
 /* Event Handling */
 
 - (void) mouseDown: (ETEvent *)event on: (id)item;
@@ -53,6 +55,7 @@
 
 /* Pick and Drop Handling */
 
+- (void) handlePick: (ETEvent *)event forItem: (id)item layout: (id)layout;
 - (void) handleDrag: (ETEvent *)event forItem: (id)item layout: (id)layout;
 - (void) beginDrag: (ETEvent *)event forItem: (id)item 
 	image: (NSImage *)customDragImage layout: (id)layout;
@@ -65,17 +68,22 @@
 /*- (void) handlePickForObject: (id)object;
 - (void) handleAcceptDropForObject: (id)object;
 - (void) handleDropForObject: (id)object;*/
+
 - (BOOL) handlePick: (ETEvent *)event forItems: (NSArray *)items pickboard: (ETPickboard *)pboard;
 - (BOOL) handleAcceptDrop: (id)dragInfo forItems: (NSArray *)items on: (id)item pickboard: (ETPickboard *)pboard;
 - (BOOL) handleDrop: (id)dragInfo forItems: (NSArray *)items on: (id)item pickboard: (ETPickboard *)pboard;
 
 /* Helper Methods */
 
-- (int) dropIndexAtLocation: (NSPoint)localDropPosition forItem: (id)item on: (id)dropTargetItem;
+//-itemGroup:dropIndexAtLocation:forItem:on:
 - (BOOL) acceptsDropAtLocationInWindow: (NSPoint)loc;
 - (NSRect) dropOnRect;
 - (unsigned int) draggingSourceOperationMaskForLocal: (BOOL)isLocal;
 - (BOOL) shouldRemoveItemsAtPickTime;
+- (int) itemGroup: (ETLayoutItemGroup *)itemGroup dropIndexAtLocation: (NSPoint)localDropPosition 
+	forItem: (id)item on: (id)dropTargetItem;
+- (void) itemGroup: (ETLayoutItemGroup *)itemGroup insertDroppedObject: (id)movedObject atIndex: (int)index;
+- (void) itemGroup: (ETLayoutItemGroup *)itemGroup insertDroppedItem: (id)movedObject atIndex: (int)index;
 
 /* Cut, Copy and Paste Compatibility */
 
@@ -85,8 +93,20 @@
 
 @end
 
-// TODO: Refactor this category in a pluggable event handler object. 
-// A new ETInteraction class or class hierachy should be introduced.
+/** Informal Event Handling Protocol that ETLayout subclasses can implement to 
+	override the default event handling implemented by ETEventHandler. 
+	ETEventHandler automatically takes care of checking whether the layout bound 
+	to the item that handles the event, implements one or several of the 
+	following methods and calling these methods on the layout object when the 
+	event handling behavior can be delegated. */
+@interface NSObject (ETLayoutEventHandling)
+- (void) handlePick: (ETEvent *)event forItem: (id)item layout: (id)layout;
+- (void) handleDrag: (ETEvent *)event forItem: (id)item layout: (id)layout;
+- (void) beginDrag: (ETEvent *)event forItem: (id)item 
+	image: (NSImage *)customDragImage layout: (id)layout;
+- (int) dropIndexAtLocation: (NSPoint)localDropPosition forItem: (id)item 
+	on: (id)dropTargetItem;
+@end
 
 /** Event Handling in the Layout Item Tree 
 
@@ -161,6 +181,8 @@
 	WARNING: ETGroupEventHandler doesn't exist yet and is currently part of 
 	ETLayoutItem (Events). */
 
+// TODO: Refactor this category in a pluggable event handler object. 
+// A new ETInteraction class or class hierachy should be introduced.
 @interface ETLayoutItem (Events) <ETEventHandler>
 
 @end

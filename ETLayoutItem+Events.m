@@ -38,10 +38,58 @@
 #import <EtoileUI/ETLayoutItemGroup.h>
 #import <EtoileUI/ETPickboard.h>
 #import <EtoileUI/ETEvent.h>
+#import <EtoileUI/ETContainer.h>
 #import <EtoileUI/ETCompatibility.h>
+
+#define FORWARDER [self eventForwarder]
+
+/* TODO: When factoring out (ETEventHandler) in a standalone class, introduce 
+   -eventForwarder that returns the layout item presently known as 'self' */
+@interface ETLayoutItem (ETEventHandlerPrivate)
+- (NSArray *) selectedItems;
+- (ETContainer *) container;
+@end
 
 
 @implementation ETLayoutItem (Events)
+
+/** Returns the layout item that forwards events to the receiver. */
+- (ETLayoutItem *) eventForwarder { return self; }
+
+/* Returns the layout of the event forwarder when available, otherwise returns 
+   nil. */
+- (ETLayout *) layout
+{
+	if ([FORWARDER isGroup])
+	{
+		return [(ETLayoutItemGroup *)FORWARDER layout];
+	}
+	else
+	{	
+		return nil;
+	}
+}
+
+/* Returns the selected items within the event forwarder when available, 
+   otherwise returns nil. */
+- (NSArray *) selectedItems
+{
+	if ([FORWARDER isGroup])
+	{
+		return [(ETLayoutItemGroup *)FORWARDER selectedItemsInLayout];
+	}
+	else
+	{	
+		return [NSArray array];
+	}
+}
+
+/* Returns the container of the event forwarder when available, otherwise 
+   returns nil. */
+- (ETContainer *) container
+{
+	return ([FORWARDER isGroup] ? [(ETLayoutItemGroup *)FORWARDER container] : nil);
+}
 
 - (IBAction) copy: (id)sender
 {
@@ -49,7 +97,7 @@
 	
 	id event = ETEVENT([NSApp currentEvent], nil, ETCopyPickingMask);
 	
-	[self handlePick: event forItem: nil layout: [self layout]];
+	[self handlePick: event forItem: nil layout: [self  layout]];
 }
 
 - (IBAction) paste: (id)sender
@@ -59,7 +107,7 @@
 	id event = ETEVENT([NSApp currentEvent], nil, ETPastePickingMask);
 	id pastedItem = [[ETPickboard localPickboard] popObject];
 	
-	[self handleDrop: nil forItem: pastedItem on: self];
+	[self handleDrop: event forItem: pastedItem on: self];
 }
 
 - (IBAction) cut: (id)sender
@@ -144,7 +192,7 @@
 	}
 	else
 	{
-		NSArray *selectedItems = [self selectedItemsInLayout];
+		NSArray *selectedItems = [self selectedItems];
 		// TODO: pickboard shouldn't be harcoded but rather customizable
 		id pboard = [ETPickboard localPickboard];
 		id pick = nil;
@@ -294,118 +342,6 @@
 	return NSZeroRect;
 }
 
-- (int) dropIndexAtLocation: (NSPoint)localDropPosition forItem: (id)item on: (id)dropTargetItem
-{
-	id layout = [self isGroup] ? [(ETLayoutItemGroup *)self layout] : nil;
-	
-	if (layout != nil && [layout respondsToSelector: @selector(dropIndexAtLocation:forItem:on:)])
-	{
-		return [layout dropIndexAtLocation: localDropPosition forItem: item on: dropTargetItem];
-	}
-	else
-	{
-		NSAssert2([dropTargetItem isGroup], @"Drop target item %@ must be a group "
-			@"in event handler %@", dropTargetItem, self);
-	
-		id hoveredItem = [[(ETLayoutItemGroup *)dropTargetItem layout] itemAtLocation: localDropPosition];
-		int dropIndex = NSNotFound;
-		NSRect dropTargetRect = NSZeroRect;
-		
-		ETLog(@"Found item %@ as drop target and %@ as hovered item", 
-			dropTargetItem, hoveredItem);
-			
-		NSAssert2([[dropTargetItem items] containsObject: hoveredItem], 
-			@"Hovered item %@ must be a child of drop target item %@", 
-			hoveredItem, dropTargetItem);
-		
-		/* Drop occured a child item of the receiver. For now the drop is 
-		   automatically retargeted to insert the item to the right or the left
-		   of the hovered item. */
-		if (item != nil && [hoveredItem isEqual: self] == NO)
-		{
-			/* Find where the item should be inserted. Drop target item will
-			   be the item where the dropped item is inserted. Hovered item
-			   is the item which intersects the drop location. */
-			dropIndex = [dropTargetItem indexOfItem: hoveredItem];
-			
-			/* Increase index if the insertion is located on the right of hoveredItem */
-			// FIXME: Handle layout orientation, only works with horizontal layout
-			// currently.
-			dropTargetRect = [[self layout] displayRectOfItem: hoveredItem];
-			if (localDropPosition.x > NSMidX(dropTargetRect))
-				dropIndex++;
-		}
-		else
-		{
-			 /* When drop occurs on the receiver itself which is the item 
-			    handling the drop. For example, this item could be a container 
-				with a flow layout and the drop occured on a empty area where
-				no child items are displayed. */
-			dropIndex = [self numberOfItems] - 1;
-		}
-			
-		return dropIndex;
-	}
-}
-
-- (void) insertDroppedObject: (id)movedObject atIndex: (int)index
-{
-	if ([movedObject isKindOfClass: [ETPickCollection class]])
-	{
-		// NOTE: To keep the order of picked objects a reverse enumerator 
-		// is needed to balance the shifting of the last inserted object occurring on each insertion
-		NSEnumerator *e = [[movedObject contentArray] reverseObjectEnumerator];
-		ETLayoutItem *movedItem = nil;
-		
-		while ((movedItem = [e nextObject]) != nil)
-			[self insertDroppedItem: movedItem atIndex: index];
-	}
-	else if ([movedObject isKindOfClass: [ETLayoutItem class]])
-	{
-		[self insertDroppedItem: movedObject atIndex: index];
-	}
-	else
-	{
-		// FIXME: Implement insertion of arbitrary objects. All objects can be
-		// dropped (NSArray, NSString, NSWindow, NSImage, NSObject, Class etc.)
-	}
-}
-
-- (void) insertDroppedItem: (id) movedItem atIndex: (int)index
-{
-	NSAssert2(index >= 0, @"Insertion index %d must be superior or equal to zero in %@ -insertDroppedObject:atIndex:", index, self);
-	int insertionIndex = index;
-	int pickIndex = [self indexOfItem: movedItem];
-	BOOL isLocalPick = ([movedItem parentLayoutItem] == self);
-	BOOL itemAlreadyRemoved = NO; // NOTE: Feature to be implemented
-	
-	RETAIN(movedItem);
-
-	//[self setAutolayout: NO];
-	 /* Dropped item is visible where it was initially located.
-		If the flag is YES, dropped item is currently invisible. */
-	if (itemAlreadyRemoved == NO)
-	{
-		ETLog(@"For drop, removes item at index %d", pickIndex);
-		/* We remove the item to handle the case where it is moved to another
-		   index within the existing parent. */
-		if (isLocalPick)
-		{
-			[self removeItem: movedItem];
-			if (insertionIndex > pickIndex)
-				insertionIndex--;
-		}
-	}
-	//[self setAutolayout: YES];
-
-	ETLog(@"For drop, insert item at index %d", insertionIndex);
-
-	[self insertItem: movedItem atIndex: insertionIndex];
-	//[self setSelectionIndex: insertionIndex];
-
-	RELEASE(movedItem);
-}
-
 /** You can override this method to change how drop is handled. The parameter
 	item represents the dragged item which just got dropped on the receiver. */
 - (BOOL) handleDrop: (id)dragInfo forItem: (id)item on: (id)dropTargetItem;
@@ -417,7 +353,7 @@
 		if (dragInfo != nil) /* If the drop isn't a paste */
 		{
 			NSPoint loc = [[self container] convertPoint: [dragInfo draggingLocation] fromView: nil];
-			dropIndex = [self dropIndexAtLocation: loc forItem: item on: dropTargetItem];
+			dropIndex = [self itemGroup: (ETLayoutItemGroup *)self dropIndexAtLocation: loc forItem: item on: dropTargetItem];
 		}
 		
 		NSAssert2([dropTargetItem isGroup], @"Drop target %@ must be a layout "
@@ -427,13 +363,13 @@
 		// FIXME: Handle pick collection too.
 		if (dropIndex != NSNotFound)
 		{
-			[dropTargetItem insertDroppedObject: item atIndex: dropIndex];
+			[self itemGroup: dropTargetItem insertDroppedObject: item atIndex: dropIndex];
 			return YES;
 		}
 		else
 		{
 
-			[dropTargetItem insertDroppedObject: item atIndex: [dropTargetItem numberOfItems]];
+			[self itemGroup: dropTargetItem insertDroppedObject: item atIndex: [dropTargetItem numberOfItems]];
 			return NO;
 		}
 	}
@@ -548,6 +484,121 @@
 	}
 }
 
+- (int) itemGroup: (ETLayoutItemGroup *)itemGroup dropIndexAtLocation: (NSPoint)localDropPosition 
+	forItem: (id)item on: (id)dropTargetItem
+{
+	id layout = [itemGroup layout];
+	
+	if (layout != nil && [layout respondsToSelector: @selector(dropIndexAtLocation:forItem:on:)])
+	{
+		return [layout dropIndexAtLocation: localDropPosition forItem: item on: dropTargetItem];
+	}
+	else
+	{
+		NSAssert2([dropTargetItem isGroup], @"Drop target item %@ must be a group "
+			@"in event handler %@", dropTargetItem, self);
+	
+		id hoveredItem = [[(ETLayoutItemGroup *)dropTargetItem layout] itemAtLocation: localDropPosition];
+		int dropIndex = NSNotFound;
+		NSRect dropTargetRect = NSZeroRect;
+		
+		ETLog(@"Found item %@ as drop target and %@ as hovered item", 
+			dropTargetItem, hoveredItem);
+			
+		NSAssert2([[dropTargetItem items] containsObject: hoveredItem], 
+			@"Hovered item %@ must be a child of drop target item %@", 
+			hoveredItem, dropTargetItem);
+		
+		/* Drop occured a child item of the receiver. For now the drop is 
+		   automatically retargeted to insert the item to the right or the left
+		   of the hovered item. */
+		if (item != nil && [hoveredItem isEqual: self] == NO)
+		{
+			/* Find where the item should be inserted. Drop target item will
+			   be the item where the dropped item is inserted. Hovered item
+			   is the item which intersects the drop location. */
+			dropIndex = [dropTargetItem indexOfItem: hoveredItem];
+			
+			/* Increase index if the insertion is located on the right of hoveredItem */
+			// FIXME: Handle layout orientation, only works with horizontal layout
+			// currently.
+			dropTargetRect = [layout displayRectOfItem: hoveredItem];
+			if (localDropPosition.x > NSMidX(dropTargetRect))
+				dropIndex++;
+		}
+		else
+		{
+			 /* When drop occurs on the receiver itself which is the item 
+			    handling the drop. For example, this item could be a container 
+				with a flow layout and the drop occured on a empty area where
+				no child items are displayed. */
+			dropIndex = [itemGroup numberOfItems] - 1;
+		}
+			
+		return dropIndex;
+	}
+}
+
+- (void) itemGroup: (ETLayoutItemGroup *)itemGroup insertDroppedObject: (id)movedObject atIndex: (int)index
+{
+	if ([movedObject isKindOfClass: [ETPickCollection class]])
+	{
+		// NOTE: To keep the order of picked objects a reverse enumerator 
+		// is needed to balance the shifting of the last inserted object occurring on each insertion
+		NSEnumerator *e = [[movedObject contentArray] reverseObjectEnumerator];
+		ETLayoutItem *movedItem = nil;
+		
+		while ((movedItem = [e nextObject]) != nil)
+			[self itemGroup: itemGroup insertDroppedItem: movedItem atIndex: index];
+	}
+	else if ([movedObject isKindOfClass: [ETLayoutItem class]])
+	{
+		[self itemGroup: itemGroup insertDroppedItem: movedObject atIndex: index];
+	}
+	else
+	{
+		// FIXME: Implement insertion of arbitrary objects. All objects can be
+		// dropped (NSArray, NSString, NSWindow, NSImage, NSObject, Class etc.)
+	}
+}
+
+- (void) itemGroup: (ETLayoutItemGroup *)itemGroup insertDroppedItem: (id)movedItem atIndex: (int)index
+{
+	NSAssert2(index >= 0, @"Insertion index %d must be superior or equal to zero in %@ -insertDroppedObject:atIndex:", index, self);
+	int insertionIndex = index;
+	int pickIndex = [itemGroup indexOfItem: movedItem];
+	BOOL isLocalPick = ([movedItem parentLayoutItem] == self);
+	BOOL itemAlreadyRemoved = NO; // NOTE: Feature to be implemented
+	
+	RETAIN(movedItem);
+
+	//[self setAutolayout: NO];
+	 /* Dropped item is visible where it was initially located.
+		If the flag is YES, dropped item is currently invisible. */
+	if (itemAlreadyRemoved == NO)
+	{
+		ETLog(@"For drop, removes item at index %d", pickIndex);
+		/* We remove the item to handle the case where it is moved to another
+		   index within the existing parent. */
+		if (isLocalPick)
+		{
+			[itemGroup removeItem: movedItem];
+			if (insertionIndex > pickIndex)
+				insertionIndex--;
+		}
+	}
+	//[self setAutolayout: YES];
+
+	ETLog(@"For drop, insert item at index %d", insertionIndex);
+
+	[itemGroup insertItem: movedItem atIndex: insertionIndex];
+	//[self setSelectionIndex: insertionIndex];
+
+	RELEASE(movedItem);
+}
+
+@end
+
 /*
 
 - (void) mouseDown: (NSEvent *)e
@@ -601,5 +652,5 @@
 		}
 	}
 }
+
 #endif
-@end
