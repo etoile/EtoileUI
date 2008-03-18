@@ -1,0 +1,58 @@
+2007-05-03  Yen-Ju Chen <yjchenx at gmail>
+	
+	* Toplevel GNUmakefile make the frameworks
+	  while Source/GNUmakefile make the subproject
+
+2007-05-01  Yen-Ju Chen <yjchenx at gmail>
+
+	* Move Cocoa.h to one level up. 
+	  I don't see the reason to have it in its own directory.
+	* Turn EtoileFoundation into framework.
+	* Remove Cocoa.h which I don't know why it is necessary
+	  considering AppKit.h should cover everything even on Cocoa.
+
+2007-04-20  Yen-Ju Chen <yjchenx at gmail>
+
+	* Move OSBundleExtensionLoader from OpenSpaceManager.
+	* Try to conform code style.
+
+2007-02-28  Yen-Ju Chen <yjchenx at gmail>
+
+	* Move UKNibOwner to EtoileUI (Bug #8511).
+
+2007-02-19  Yen-Ju Chen <yjchenx at gmail>
+
+	* Format README in reStructuedText
+
+2006-11-07  Quentin Mathe <qmathe@club-internet.fr>
+
+	* Compile on Cocoa.
+
+2006-10-31  Quentin Mathe <qmathe@club-internet.fr>
+
+	* Headers/Cocoa/Cocoa.h:
+	* Headers/EtoileCompatibility.h:
+	* Headers/NSFileManager+NameForTempFile.h:
+	* Headers/UKFileWatcher.h:
+	* Headers/UKKQueue.h:
+	* Headers/UKMainThreadProxy.h:
+	* Headers/UKNibOwner.h:
+	* Headers/UKPushbackMesssenger.h:
+	* Headers/UKThreadMessenger.h:
+	* Headers/UKPluginsRegistry.h:
+	* Source/NSFileManager+NameForTempFile.m:
+	* Source/UKKQueue.m:
+	* Source/UKMainThreadProxy.m:
+	* Source/UKNibOwner.m:
+	* Source/UKPushbackMesssenger.m:
+	* Source/UKThreadMessenger.m:
+	* Source/UKPluginsRegistry.m:
+    * Source/GNUmakefile:
+    * Source/GNUmakefile.postamble:
+	* README:
+	* INSTALL:
+	* GNUmakefile:
+	Imported this new framework resulting from the split of EtoileExtensionsKit
+	in three modules (EtoileUI, EtoileFoundation, DistributedView).
+	The framework has been created with svn cp on EtoileExtensionsKit to keep 
+	files history.
