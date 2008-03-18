@@ -35,7 +35,7 @@
 
 #import <Foundation/Foundation.h>
 #import <AppKit/AppKit.h>
-#import <EtoileUI/ETPropertyValueCoding.h>
+#import <EtoileFoundation/ETPropertyValueCoding.h>
 
 
 @interface NSObject (EtoileModel)

@@ -34,10 +34,10 @@
 	THE POSSIBILITY OF SUCH DAMAGE.
  */
  
-#import <EtoileUI/ETObjectRegistry.h>
-#import <EtoileUI/ETCollection.h>
+#import <EtoileFoundation/ETObjectRegistry.h>
+#import <EtoileFoundation/ETCollection.h>
 #ifndef GNUSTEP
-#import <EtoileUI/ETCompatibility.h>
+#import <EtoileFoundation/EtoileCompatibility.h>
 #endif
 
 #define PROTO _parent

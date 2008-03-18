@@ -33,7 +33,7 @@
 	THE POSSIBILITY OF SUCH DAMAGE.
  */
  
- #import <EtoileUI/ETFilter.h>
+ #import <EtoileFoundation/ETFilter.h>
 
 /** ETTransform provides a visitor which supports double-dispatch on all
 	visited objects without implementing extra methods. Any visited objects 

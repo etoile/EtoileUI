@@ -33,9 +33,9 @@
 	THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import <EtoileUI/NSObject+Model.h>
-#import <EtoileUI/ETCollection.h>
-#import <EtoileUI/ETCompatibility.h>
+#import <EtoileFoundation/NSObject+Model.h>
+#import <EtoileFoundation/ETCollection.h>
+#import <EtoileFoundation/EtoileCompatibility.h>
 #ifndef GNUSTEP
 #import <objc/runtime.h>
 #endif

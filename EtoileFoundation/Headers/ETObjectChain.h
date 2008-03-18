@@ -34,7 +34,7 @@
  */
 
 #import <Foundation/Foundation.h>
-#import <EtoileUI/ETCollection.h>
+#import <EtoileFoundation/ETCollection.h>
 
 
 /** Object chain class is widely used in both EtoileFoundation and higher level 

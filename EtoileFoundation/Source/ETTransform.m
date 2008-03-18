@@ -33,8 +33,8 @@
 	THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import <EtoileUI/ETLayoutItemBuilder.h>
-#import <EtoileUI/NSString+Etoile.h>
+#import <EtoileFoundation/ETLayoutItemBuilder.h>
+#import <EtoileFoundation/NSString+Etoile.h>
 
 
 @implementation ETTransform

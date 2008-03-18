@@ -35,8 +35,8 @@
  */
 
 #import <Foundation/Foundation.h>
-#import <EtoileUI/ETObjectChain.h>
-#import <EtoileUI/ETRendering.h>
+#import <EtoileFoundation/ETObjectChain.h>
+#import <EtoileFoundation/ETRendering.h>
 
 // NOTE: May be define an ETFilterChain formal protocol
 

@@ -33,7 +33,7 @@
 	THE POSSIBILITY OF SUCH DAMAGE.
  */
  
-#import <EtoileUI/NSIndexSet+Etoile.h>
+#import <EtoileFoundation/NSIndexSet+Etoile.h>
 
 @implementation NSIndexSet (Etoile)
 

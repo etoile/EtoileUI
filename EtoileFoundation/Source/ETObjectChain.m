@@ -33,8 +33,8 @@
 	THE POSSIBILITY OF SUCH DAMAGE.
  */
  
-#import <EtoileUI/ETObjectChain.h>
-#import <EtoileUI/ETCompatibility.h>
+#import <EtoileFoundation/ETObjectChain.h>
+#import <EtoileFoundation/EtoileCompatibility.h>
 
 @interface ETObjectChain (Private)
 - (void) _buildLinkedListWithArray: (NSArray *)objects;

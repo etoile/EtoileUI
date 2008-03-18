@@ -1,3 +1,14 @@
+2008-03-17  Quentin Mathe <qmathe@club-internet.fr>
+
+	[branches/qmathe/Container/EtoileFoundation]
+	Merge of Container into EtoileFoundation.
+	* Headers/EtoileCompatibility.h: Merged ETCompatibility.h from Container.
+	* Source/GNUmakefile:
+	* GNUmakefile:
+	Updated to include newly added files.
+	* Replaced EtoileUI by EtoileFoundation in import statements.
+	* Replaced ETCompatibility by EtoileCompatibility in import statements.
+
 2008-03-16  Quentin Mathe <qmathe@club-internet.fr>
 
 	[branches/qmathe/Container/EtoileFoundation]

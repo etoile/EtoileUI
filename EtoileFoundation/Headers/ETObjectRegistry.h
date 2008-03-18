@@ -35,8 +35,8 @@
  */
 
 #import <Foundation/Foundation.h>
-#import <EtoileUI/ETPropertyValueCoding.h>
-#import <EtoileUI/ETCollection.h>
+#import <EtoileFoundation/ETPropertyValueCoding.h>
+#import <EtoileFoundation/ETCollection.h>
 
 // TODO: Break this class in ETObject root class and ETObjectRegistry subclass
 // to allow reusing the prototype-system support.

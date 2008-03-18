@@ -33,8 +33,8 @@
 	THE POSSIBILITY OF SUCH DAMAGE.
  */
  
-#import <EtoileUI/NSIndexPath+Etoile.h>
-#import <EtoileUI/ETCompatibility.h>
+#import <EtoileFoundation/NSIndexPath+Etoile.h>
+#import <EtoileFoundation/EtoileCompatibility.h>
 
 @implementation NSIndexPath (Etoile)
 

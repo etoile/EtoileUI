@@ -34,7 +34,7 @@
 	THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import <EtoileUI/ETFilter.h>
+#import <EtoileFoundation/ETFilter.h>
 
 
 @implementation ETFilter

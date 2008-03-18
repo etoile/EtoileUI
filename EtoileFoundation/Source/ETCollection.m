@@ -33,9 +33,9 @@
 	THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import <EtoileUI/ETCollection.h>
-#import <EtoileUI/NSObject+Model.h>
-#import <EtoileUI/ETCompatibility.h>
+#import <EtoileFoundation/ETCollection.h>
+#import <EtoileFoundation/NSObject+Model.h>
+#import <EtoileFoundation/EtoileCompatibility.h>
 
 
 #if 0

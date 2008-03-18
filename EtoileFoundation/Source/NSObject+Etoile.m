@@ -33,8 +33,8 @@
 	THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import <EtoileUI/NSObject+Etoile.h>
-#import <EtoileUI/ETCompatibility.h>
+#import <EtoileFoundation/NSObject+Etoile.h>
+#import <EtoileFoundation/EtoileCompatibility.h>
 
 @interface NSObject (PrivateEtoile)
 - (ETInstanceVariable *) instanceVariableForName: (NSString *)ivarName;

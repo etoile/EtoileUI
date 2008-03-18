@@ -36,9 +36,9 @@
  */
 
 
-#import <EtoileUI/ETPropertyValueCoding.h>
-#import <EtoileUI/NSObject+Model.h>
-#import <EtoileUI/ETCompatibility.h>
+#import <EtoileFoundation/ETPropertyValueCoding.h>
+#import <EtoileFoundation/NSObject+Model.h>
+#import <EtoileFoundation/EtoileCompatibility.h>
 
 
 @implementation NSDictionary (ETPropertyValueCoding)
