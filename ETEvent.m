@@ -89,6 +89,10 @@
 								    data1: [evt data1] 
 									  data2: [evt data2]];	
 	}
+	else
+	{
+		ETLog(@"WARNING: Cannot turn %@ into an ETEvent instance", evt);
+	}
 	
 	return event;
 }
