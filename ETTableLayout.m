@@ -83,6 +83,8 @@
 
 	// NOTE: Gorm doesn't allow to set the table view resizing style unlike IB
 	[[self tableView] setAutoresizesAllColumnsToFit: NO];
+	 // TODO: Remove next line by modifying GNUstep to match Cocoa behavior
+	[[self tableView] setVerticalMotionCanBeginDrag: YES];
 }
 
 - (void) setLayoutView: (NSView *)protoView
