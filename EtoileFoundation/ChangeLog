@@ -2,7 +2,16 @@
 
 	[branches/qmathe/Container/EtoileFoundation]
 	Merge of Container into EtoileFoundation.
+	* Headers/ETTransform.h:
+	* Source/ETTransform.m:
+	Fixed  incorrect import statements.
+
+2008-03-17  Quentin Mathe <qmathe@club-internet.fr>
+
+	[branches/qmathe/Container/EtoileFoundation]
+	Merge of Container into EtoileFoundation.
 	* Headers/EtoileCompatibility.h: Merged ETCompatibility.h from Container.
+	* Headers/EtoileFoundation.h: Updated to include newly added headers.
 	* Source/GNUmakefile:
 	* GNUmakefile:
 	Updated to include newly added files.
