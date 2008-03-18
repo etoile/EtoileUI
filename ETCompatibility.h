@@ -33,15 +33,6 @@
 	ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
 	THE POSSIBILITY OF SUCH DAMAGE.
  */
- 
-#ifndef GNUSTEP
-/* For now, GNUstepBase (Foundation Additions) hasn't been ported to Leopard */
-#if MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_5
-#import <EtoileUI/GNUstep.h>
-#else
-#import <GNUstepBase/GNUstep.h>
-#endif
-#endif
 
 // FIXME: Temporary hack until ETLog class is available
 #define ETLog NSLog

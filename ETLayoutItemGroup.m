@@ -34,6 +34,7 @@
 	THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#import <EtoileFoundation/NSObject+Model.h>
 #import <EtoileUI/ETLayoutItemGroup.h>
 #import <EtoileUI/ETLayoutItemGroup+Mutation.h>
 #import <EtoileUI/ETFlowLayout.h>
@@ -41,7 +42,6 @@
 #import <EtoileUI/ETContainer.h>
 #import <EtoileUI/ETContainer+Controller.h>
 #import <EtoileUI/NSView+Etoile.h>
-#import <EtoileUI/NSObject+Model.h>
 #import <EtoileUI/ETCompatibility.h>
 
 #define DEFAULT_FRAME NSMakeRect(0, 0, 50, 50)

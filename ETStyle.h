@@ -35,8 +35,8 @@
  */
 
 #import <Foundation/Foundation.h>
-#import <EtoileUI/ETObjectChain.h>
-#import <EtoileUI/ETRendering.h>
+#import <EtoileFoundation/ETObjectChain.h>
+#import <EtoileFoundation/ETRendering.h>
 
 /** Style class is widely used in EtoileUI to implement pervasive late-binding 
 	of state in combination with ETObjectRegistry.

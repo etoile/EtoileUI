@@ -34,8 +34,8 @@
 	THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#import <EtoileFoundation/ETCollection.h>
 #import <EtoileUI/ETTextEditorLayout.h>
-#import <EtoileUI/ETCollection.h>
 #import <EtoileUI/ETCompatibility.h>
 
 #define EDITOR_FRAME NSMakeRect(200, 200, 600, 300)

@@ -34,6 +34,8 @@
 	THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#import <EtoileFondation/NSIndexSet+Etoile.h>
+#import <EtoileFoundation/NSIndexPath+Etoile.h>
 #import <EtoileUI/ETContainer.h>
 #import <EtoileUI/ETContainer+Controller.h>
 #import <EtoileUI/ETLayoutItem.h>
@@ -45,12 +47,7 @@
 #import <EtoileUI/ETInspector.h>
 #import <EtoileUI/ETPickboard.h>
 #import <EtoileUI/NSView+Etoile.h>
-#import <EtoileUI/NSIndexSet+Etoile.h>
-#import <EtoileUI/NSIndexPath+Etoile.h>
-// FIXME: ETLog is currently defined in GNUstep.h
-//#ifndef GNUSTEP
 #import <EtoileUI/ETCompatibility.h>
-//#endif
 
 #define SELECTION_BY_RANGE_KEY_MASK NSShiftKeyMask
 #define SELECTION_BY_ONE_KEY_MASK NSCommandKeyMask

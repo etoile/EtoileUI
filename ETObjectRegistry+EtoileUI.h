@@ -35,7 +35,7 @@
 
 #import <Foundation/Foundation.h>
 #import <AppKit/AppKit.h>
-#import <EtoileUI/ETObjectRegistry.h>
+#import <EtoileFoundation/ETObjectRegistry.h>
 
 
 @interface ETObjectRegistry (EtoileUI)

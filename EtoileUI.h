@@ -36,22 +36,6 @@
 
 #import <EtoileUI/ETCompatibility.h>
 
-/* EtoileFoundation */
-
-#import <EtoileUI/NSObject+Etoile.h>
-#import <EtoileUI/NSObject+Model.h>
-#import <EtoileUI/NSIndexSet+Etoile.h>
-#import <EtoileUI/NSIndexPath+Etoile.h>
-#import <EtoileUI/NSString+Etoile.h>
-#import <EtoileUI/ETCollection.h>
-#import <EtoileUI/ETPropertyValueCoding.h>
-#import <EtoileUI/ETObjectRegistry.h>
-#import <EtoileUI/ETObjectChain.h>
-#import <EtoileUI/ETFilter.h>
-#import <EtoileUI/ETRendering.h>
-
-/* EtoileUI */
-
 #import <EtoileUI/NSObject+EtoileUI.h>
 #import <EtoileUI/NSView+Etoile.h>
 #import <EtoileUI/NSWindow+Etoile.h>

@@ -35,10 +35,11 @@
  
 #import <Foundation/Foundation.h>
 #import <AppKit/AppKit.h>
+#import <EtoileFoundation/ETCollection.h>
 #import <EtoileUI/ETView.h>
 #import <EtoileUI/ETLayout.h>
 #import <EtoileUI/ETInspecting.h>
-#import <EtoileUI/ETCollection.h>
+
 
 @class ETLayoutItem, ETLayout, ETLayer, ETLayoutItemGroup, ETSelection, 
 	ETPickboard, ETEvent;

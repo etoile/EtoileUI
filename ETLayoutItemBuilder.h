@@ -35,7 +35,7 @@
 
 #import <Foundation/Foundation.h>
 #import <AppKit/AppKit.h>
-#import <EtoileUI/ETTransform.h>
+#import <EtoileFoundation/ETTransform.h>
 
 
 @interface ETLayoutItemBuilder : ETTransform

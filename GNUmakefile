@@ -13,18 +13,16 @@ endif
 
 PROJECT_NAME=$(FRAMEWORK_NAME)
 
-EtoileUI_LIBRARIES_DEPEND_UPON += -lm
+EtoileUI_LIBRARIES_DEPEND_UPON += -lm -lEtoileFoundation
 
 #EtoileUI_SUBPROJECTS = 
 
 EtoileUI_OBJC_FILES = \
 	ETApplication.m \
 	ETBrowserLayout.m \
-	ETCollection.m \
 	ETContainer+Controller.m \
 	ETContainer.m \
 	ETEvent.m \
-	ETFilter.m \
 	ETFlowLayout.m \
 	ETFlowView.m \
 	ETFreeLayout.m \
@@ -41,15 +39,11 @@ EtoileUI_OBJC_FILES = \
 	ETLineLayout.m \
 	ETLineView.m \
 	ETObjectBrowserLayout.m \
-	ETObjectChain.m \
-	ETObject.m \
 	ETObjectRegistry+EtoileUI.m \
-	ETObjectRegistry.m \
 	ETOutlineLayout.m \
 	ETPaneLayout.m \
 	ETPaneSwitcherLayout.m \
 	ETPickboard.m \
-	ETPropertyValueCoding.m \
 	ETStackLayout.m \
 	ETStackView.m \
 	ETStyle.m \
@@ -57,18 +51,12 @@ EtoileUI_OBJC_FILES = \
 	ETTableLayout.m \
 	ETTableView.m \
 	ETTextEditorLayout.m \
-	ETTransform.m \
 	ETView.m \
 	ETViewModelLayout.m \
 	ETWindowItem.m \
 	FSBrowserCell.m \
 	NSImage+Etoile.m \
-	NSIndexPath+Etoile.m \
-	NSIndexSet+Etoile.m \
-	NSObject+Etoile.m \
 	NSObject+EtoileUI.m \
-	NSObject+Model.m \
-	NSString+Etoile.m \
 	NSView+Etoile.m \
 	NSWindow+Etoile.m
 
@@ -81,12 +69,10 @@ EtoileUI_HEADER_FILES_DIR +=
 EtoileUI_HEADER_FILES = \
 	ETApplication.h \
 	ETBrowserLayout.h \
-	ETCollection.h \
 	ETCompatibility.h \
 	ETContainer+Controller.h \
 	ETContainer.h \
 	ETEvent.h \
-	ETFilter.h \
 	ETFlowLayout.h \
 	ETFlowView.h \
 	ETFreeLayout.h \
@@ -104,17 +90,12 @@ EtoileUI_HEADER_FILES = \
 	ETLineLayout.h \
 	ETLineView.h \
 	ETObjectBrowserLayout.h \
-	ETObjectChain.h \
-	ETObject.h \
 	ETObjectRegistry+EtoileUI.h \
-	ETObjectRegistry.h \
 	EtoileUI.h \
 	ETOutlineLayout.h \
 	ETPaneLayout.h \
 	ETPaneSwitcherLayout.h \
 	ETPickboard.h \
-	ETPropertyValueCoding.h \
-	ETRendering.h \
 	ETStackLayout.h \
 	ETStackView.h \
 	ETStyle.h \
@@ -122,19 +103,13 @@ EtoileUI_HEADER_FILES = \
 	ETTableLayout.h \
 	ETTableView.h \
 	ETTextEditorLayout.h \
-	ETTransform.h \
 	ETView.h \
 	ETViewModelLayout.h \
 	ETWindowItem.h \
 	FSBrowserCell.h \
 	GNUstep.h \
 	NSImage+Etoile.h \
-	NSIndexPath+Etoile.h \
-	NSIndexSet+Etoile.h \
-	NSObject+Etoile.h \
 	NSObject+EtoileUI.h \
-	NSObject+Model.h \
-	NSString+Etoile.h \
 	NSView+Etoile.h \
 	NSWindow+Etoile.h
 

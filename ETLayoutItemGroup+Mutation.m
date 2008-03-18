@@ -33,12 +33,12 @@
 	ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
 	THE POSSIBILITY OF SUCH DAMAGE.
  */
- 
+
+#import <EtoileFoundation/NSObject+Model.h>
+#import <EtoileFoundation/ETCollection.h>
 #import <EtoileUI/ETLayoutItemGroup+Mutation.h>
 #import <EtoileUI/ETEvent.h>
 #import <EtoileUI/ETContainer.h>
-#import <EtoileUI/NSObject+Model.h>
-#import <EtoileUI/ETCollection.h>
 #import <EtoileUI/ETCompatibility.h>
 
 @interface ETLayoutItemGroup (ETSource)

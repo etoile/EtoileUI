@@ -34,7 +34,12 @@
 	ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
 	THE POSSIBILITY OF SUCH DAMAGE.
  */
- 
+
+#import <EtoileFoundation/NSObject+Etoile.h>
+#import <EtoileFoundation/NSObject+Model.h>
+#import <EtoileFoundation/NSIndexPath+Etoile.h>
+#import <EtoileFoundation/NSString+Etoile.h>
+#import <EtoileFoundation/ETCollection.h>
 #import <EtoileUI/ETInspector.h>
 #import <EtoileUI/ETContainer.h>
 #import <EtoileUI/ETLayoutItemGroup.h>
@@ -49,11 +54,6 @@
 #import <EtoileUI/ETFreeLayout.h>
 #import <EtoileUI/ETViewModelLayout.h>
 #import <EtoileUI/ETLayoutItemBuilder.h>
-#import <EtoileUI/NSObject+Etoile.h>
-#import <EtoileUI/NSObject+Model.h>
-#import <EtoileUI/NSIndexPath+Etoile.h>
-#import <EtoileUI/NSString+Etoile.h>
-#import <EtoileUI/ETCollection.h>
 #import <EtoileUI/ETCompatibility.h>
 
 @interface ETInspector (EtoilePrivate)

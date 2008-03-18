@@ -34,12 +34,11 @@
 	THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-
+#import <EtoileFoundation/ETCollection.h>
 #import <EtoileUI/ETPickboard.h>
 #import <EtoileUI/ETContainer.h>
 #import <EtoileUI/ETFlowLayout.h>
 #import <EtoileUI/ETOutlineLayout.h>
-#import <EtoileUI/ETCollection.h>
 #import <EtoileUI/ETCompatibility.h>
 
 #define PALETTE_FRAME NSMakeRect(200, 200, 400, 200)

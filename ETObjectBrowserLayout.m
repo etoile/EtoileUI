@@ -35,15 +35,15 @@
 	THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#import <EtoileFoundation/ETCollection.h>
+#import <EtoileFoundation/NSIndexPath+Etoile.h>
+#import <EtoileFoundation/NSString+Etoile.h>
+#import <EtoileFoundation/NSObject+Model.h>
 #import <EtoileUI/ETObjectBrowserLayout.h>
 #import <EtoileUI/ETContainer.h>
 #import <EtoileUI/ETWindowItem.h>
 #import <EtoileUI/ETOutlineLayout.h>
-#import <EtoileUI/ETCollection.h>
 #import <EtoileUI/NSObject+EtoileUI.h>
-#import <EtoileUI/NSIndexPath+Etoile.h>
-#import <EtoileUI/NSString+Etoile.h>
-#import <EtoileUI/NSObject+Model.h>
 #import <EtoileUI/ETCompatibility.h>
 
 #define PALETTE_FRAME NSMakeRect(200, 200, 600, 300)

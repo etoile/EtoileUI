@@ -36,8 +36,8 @@
 #import <Foundation/Foundation.h>
 #import <AppKit/AppKit.h>
 #import <EtoileUI/ETStyleRenderer.h>
-#import <EtoileUI/ETPropertyValueCoding.h>
 #import <EtoileUI/ETInspecting.h>
+#import <EtoileFoundation/ETPropertyValueCoding.h>
 
 #define ETUTI NSString
 #define ITEM(x) [ETLayoutItem layoutItemWithValue: x]

@@ -34,13 +34,13 @@
 	THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#import <EtoileFoundation/ETCollection.h>
 #import "ETPaneSwitcherLayout.h"
 #import "ETPaneLayout.h"
 #import "ETStackLayout.h"
 #import "ETLineLayout.h"
 #import "ETLayoutItem.h"
 #import "ETContainer.h"
-#import "ETCollection.h"
 #import "GNUstep.h"
 
 #import "ETTableLayout.h"

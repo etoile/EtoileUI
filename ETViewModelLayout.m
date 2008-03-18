@@ -35,12 +35,12 @@
 	THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#import <EtoileFoundation/ETCollection.h>
+#import <EtoileFoundation/NSObject+Etoile.h>
 #import <EtoileUI/ETViewModelLayout.h>
 #import <EtoileUI/ETLayoutItemGroup.h>
 #import <EtoileUI/ETContainer.h>
 #import <EtoileUI/ETTableLayout.h>
-#import <EtoileUI/ETCollection.h>
-#import <EtoileUI/NSObject+Etoile.h>
 #import <EtoileUI/ETCompatibility.h>
 
 

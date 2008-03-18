@@ -35,7 +35,7 @@
 
 #import <Foundation/Foundation.h>
 #import <AppKit/AppKit.h>
-#import <EtoileUI/ETCollection.h>
+#import <EtoileFoundation/ETCollection.h>
 
 
 @interface NSView (Etoile) <NSCopying, ETCollection, ETCollectionMutation>
