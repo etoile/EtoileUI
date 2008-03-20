@@ -2,6 +2,9 @@
 //Check if a patched GNU libobjc is installed.
 #ifdef CLS_SETOBJECTMESSAGEDISPATCH
 #import "ETPrototype.h"
+//Check if a patched GNU libobjc is installed.
+#ifdef CLS_SETOBJECTMESSAGEDISPATCH
+#import "ETPrototype.h"
 
 typedef struct { @defs(ETPrototype) }* ETPrototype_t;
 @implementation ETPrototype
