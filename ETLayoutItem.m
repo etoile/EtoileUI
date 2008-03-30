@@ -940,30 +940,6 @@
 }
 
 /** Returns the display view of the receiver. The display view is the last
-	display view of the decorator item chain. Display view is an instance of 
-	ETView class or subclasses.
-	You can retrieve the outermost decorator of decorator item chain by calling
-	-decoratorItem. Getting the next one would be 
-	[[self decoratorItem] decoratorItem].
-	Take note there is usually only one decorator which is commonly used to 
-	support scroll view. 
-	See -setDecoratorItem: to know more. */
-#if 0
-- (ETView *) _lastDecoratorItemDisplayView
-{
-	ETLayoutItem *decorator = self;
-	
-	/* Find the last decorator in the decorator item chain */
-	while ([decorator decoratorItem] != nil)
-	{
-		decorator = [decorator decoratorItem];
-	}
-	
-	return [decorator displayView];
-}
-#endif
-
-/** Returns the display view of the receiver. The display view is the last
 	supervisor view of the decorator item chain. Display view is an instance of 
 	ETView class or subclasses.
 	You can retrieve the outermost decorator of decorator item chain by calling
@@ -971,17 +947,10 @@
 	Take note there is usually only one decorator which is commonly used to 
 	support scroll view. 
 	See -setDecoratorItem: to know more. */
-#if 0
-- (ETView *) displayView
-{
-	return _view;
-}
-#else
 - (ETView *) displayView
 {
 	return [[self lastDecoratorItem] supervisorView];
 }
-#endif
 
 /** Sets the display view of the receiver. Never calls this method directly 
 	unless you write an ETLayoutItem subclass. 
@@ -1046,99 +1015,6 @@
 	return _decoratorItem;
 }
 
-/** Sets the decorator item in order to customize the item view border. The 
-	decorator item is typically used to display a title bar making possible to
-	manipulate the item directly (by drag and drop). The other common use is 
-	putting the item view inside a scroll view. 
-	By default, the decorator item is nil. */
-#if 0
-- (void) setDecoratorItem: (ETLayoutItem *)decorator
-{
-	ETView *innerDisplayView = [self _innerDisplayView];
-	
-	// TODO: Rewrite several assertions as unit tests
-
-	/* Verify the proper set up of the current display view */
-	if ([self displayView] != nil)
-	{
-		NSAssert2([[self displayView] isKindOfClass: [ETView class]], @"Item "
-			"%@ must have a display view %@ of type ETView", [self decoratorItem], 
-			[self displayView]);
-		
-		if ([[self view] isKindOfClass: [ETView class]] == NO)
-		{
-			NSAssert3([[self view] isEqual: [[self displayView] wrappedView]], @"View %@ of "
-				@"item %@ must be the decorator wrapped view %@", [self view], self, 
-				[[self displayView] wrappedView]);
-		}
-	}
-
-	/* Verify the proper set up of the current decorator */
-	if (_decoratorItem != nil)
-	{
-		NSAssert1([self displayView] != nil, @"Display view must no be nil "
-			@"when a decorator is set on item %@", self);		
-		NSAssert2([[_decoratorItem displayView] isKindOfClass: [ETView class]], 
-			@"Decorator %@ must have display view %@ of type ETView", 
-			_decoratorItem, [_decoratorItem displayView]);
-		NSAssert2([_decoratorItem displayView] == [self displayView], 
-			@"Decorator display view %@ must be decorated item display view %@", 
-			[_decoratorItem displayView], [self displayView]);
-		NSAssert2([_decoratorItem parentLayoutItem] == nil, @"Decorator %@ "
-			@"must have no parent %@ set", _decoratorItem, 
-			[_decoratorItem parentLayoutItem]);
-	}
-		
-	/* Verify the new decorator */
-	if (decorator != nil)
-	{
-		NSAssert2([[decorator displayView] isKindOfClass: [ETView class]], 
-			@"Decorator %@ must have display view %@ of type ETView", 
-			decorator, [decorator displayView]);
-		if ([decorator parentLayoutItem] != nil)
-		{
-			ETLog(@"WARNING: Decorator item %@ must have no parent to be used", 
-				decorator);
-			[[decorator parentLayoutItem] removeItem: decorator];
-		}
-	}
-	
-	// NOTE: New decorator must be set before updating display view because
-	// display view related methods rely on -decoratorItem accessor
-	ASSIGN(_decoratorItem, decorator);
-	
-	/* Finally updated the view tree */
-	
-	NSView *superview = [innerDisplayView superview];
-	ETView *newDisplayView = nil;
-	
-	[self _setInnerDisplayView: innerDisplayView];
-	// NOTE: Now innerDisplayView and [self displayView] doesn't match, the 
-	// the latter has become [decorator displayView]
-	newDisplayView = [self displayView];
-
-	/* Verify new decorator has been correctly inserted */
-	if (_decoratorItem != nil)
-	{
-		NSAssert3([newDisplayView isEqual: [self displayView]], @"Display "
-			@" view %@ of item %@ must be the decorator display view %@", 
-			[self displayView], self, newDisplayView);
-	}
-	
-	/* If the previous display view was part of view tree, inserts the new
-	   display view into the existing superview */
-	if (superview != nil)
-	{
-		NSAssert2([newDisplayView superview] == nil, @"New display view %@ of "
-			@"item %@ must have no superview at this point", 
-			newDisplayView, self);
-		[superview addSubview: newDisplayView];
-	}
-
-	// FIXME: Update layout if needed
-}
-#else
-
 - (void) checkDecoration
 {
 	id decorator = [self decoratorItem];
@@ -1169,6 +1045,11 @@
 	}
 }
 
+/** Sets the decorator item in order to customize the item view border. The 
+	decorator item is typically used to display a title bar making possible to
+	manipulate the item directly (by drag and drop). The other common use is 
+	putting the item view inside a scroll view. 
+	By default, the decorator item is nil. */
 - (void) setDecoratorItem: (ETLayoutItem *)decorator
 {
 	[self checkDecoration]; /* Ensure existing decorator is valid */
@@ -1255,7 +1136,6 @@
 		[self checkDecoration];
 	}
 }
-#endif
 
 - (ETLayoutItem *) decoratedItem
 {
