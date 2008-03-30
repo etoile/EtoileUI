@@ -61,8 +61,6 @@
 - (void) layoutItemViewFrameDidChange: (NSNotification *)notif;
 - (void) checkDecoration;
 - (void) checkDecorator;
-- (ETView *) _innerDisplayView;
-- (void) _setInnerDisplayView: (ETView *)innerDisplayView;
 @end
 
 @interface ETLayoutItem (SubclassVisibility)
@@ -610,70 +608,6 @@
 	ASSIGN(_modelObject, modelObject);
 }
 
-- (ETView *) _innerDisplayView
-{
-	if ([self decoratorItem] != nil)
-	{
-		/* Next line is equal to [[self displayView] wrappedView] */
-		return (ETView *)[[[self decoratorItem] displayView] wrappedView]; 
-	}
-	else
-	{	
-		return [self displayView];
-	}
-}
-
-- (void) _setInnerDisplayView: (ETView *)innerDisplayView
-{
-	if ([self decoratorItem] != nil)
-	{
-		ETView *displayView = [[self decoratorItem] displayView];
-		
-		/* Verify that item display view is now the decorator view */
-		NSAssert3([displayView isEqual: [self displayView]], @"Display view "
-			"%@ of item %@ must be the decorator display view %@", 
-			[self displayView], self, displayView);
-			
-		/* Move inner display view into the decorator */
-		RETAIN(innerDisplayView);
-		[innerDisplayView removeFromSuperview];
-		[displayView setWrappedView: innerDisplayView];
-		RELEASE(innerDisplayView);
-	}
-	else
-	{	
-		[self setDisplayView: innerDisplayView];
-	}
-}
-
-#if 0
-- (NSView *) view
-{
-	ETView *innerDisplayView = [self _innerDisplayView];
-	id wrappedView = [innerDisplayView wrappedView];
-	
-	if (wrappedView != nil)
-	{
-		// FIXME: Simplify by hiding these details
-		if ([wrappedView isKindOfClass: [NSScrollView class]])
-		{
-			return [wrappedView documentView];
-		}
-		else if ([wrappedView isKindOfClass: [NSBox class]])
-		{
-			return [wrappedView contentView];
-		}
-		else
-		{
-			return wrappedView;
-		}
-	}
-	else
-	{
-		return innerDisplayView;
-	}
-}
-#else
 - (NSView *) view
 {
 	id wrappedView = [[self supervisorView] wrappedView];
@@ -700,59 +634,7 @@
 		return [self supervisorView];
 	}
 }
-#endif
 
-#if 0
-- (void) setView: (NSView *)newView
-{
-	BOOL resizeBoundsActive = [self appliesResizingToBounds];
-	id view = [[self _innerDisplayView] wrappedView];
-	// NOTE: Frame is lost when newView becomes a subview of an ETView instance
-	NSRect newViewFrame = [newView frame];
-	
-	/* Tear down the current view */
-	if (view != nil)
-	{
-		/* Restore view initial state */
-		[view setFrame: [self defaultFrame]];
-		//[view setRenderer: nil];
-		/* Stop to observe notifications on current view and reset bounds size */
-		[self setAppliesResizingToBounds: NO];
-	}
-	_defaultFrame = NSZeroRect;
-	
-	/* Inserts the new view */
-	
-	/* When the view isn't an ETView instance, we wrap it inside a new ETView 
-	   instance to have -drawRect: asking the layout item to render by itself.
-	   Retrieving the display view automatically returns the innermost display
-	   view in the decorator item chain. */
-	if ([newView isKindOfClass: [ETView class]])
-	{
-		[self _setInnerDisplayView: (ETView *)newView];
-	}
-	else if ([newView isKindOfClass: [NSView class]])
-	{
-		if ([self _innerDisplayView] == nil)
-		{
-			ETView *wrapperView = [[ETView alloc] initWithFrame: [newView frame] 
-													 layoutItem: self];
-			[self _setInnerDisplayView: wrapperView];
-			RELEASE(wrapperView);
-		}
-		[[self _innerDisplayView] setWrappedView: newView];
-	}
-	
-	/* Set up the new view */
-	if (newView != nil)
-	{
-		//[newView setRenderer: self];
-		[self setDefaultFrame: newViewFrame];
-		if (resizeBoundsActive)
-			[self setAppliesResizingToBounds: YES];
-	}
-}
-#else
 - (void) setView: (NSView *)newView
 {
 	BOOL resizeBoundsActive = [self appliesResizingToBounds];
@@ -802,7 +684,6 @@
 			[self setAppliesResizingToBounds: YES];
 	}
 }
-#endif
 
 - (void) setDecoratedView: (NSView *)newView
 {
