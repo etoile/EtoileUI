@@ -276,6 +276,7 @@ NSString *ETLayoutItemPboardType = @"ETLayoutItemPboardType"; // FIXME: replace 
 
 	return self;
 }
+
 #if 0
 - (void) copyWithZone: (NSZone *)zone
 {
@@ -704,7 +705,11 @@ NSString *ETLayoutItemPboardType = @"ETLayoutItemPboardType"; // FIXME: replace 
 	Default returned value is YES. */
 - (BOOL) isFlipped
 {
+#ifdef USE_NSVIEW_RFLAGS
+ 	return _rFlags.flipped_view;
+#else
 	return _flipped;
+#endif
 }
 
 /** Unlike NSView, ETContainer uses flipped coordinates by default in order to 
@@ -712,7 +717,11 @@ NSString *ETLayoutItemPboardType = @"ETLayoutItemPboardType"; // FIXME: replace 
 	You can revert to non-flipped coordinates by passing NO to this method. */
 - (void) setFlipped: (BOOL)flag
 {
+#ifdef USE_NSVIEW_RFLAGS
+	_rFlags.flipped_view = flag;
+#else
 	_flipped = flag;
+#endif
 }
 
 /* Scrollers */
