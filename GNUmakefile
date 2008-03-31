@@ -5,6 +5,8 @@ include $(GNUSTEP_MAKEFILES)/common.make
 FRAMEWORK_NAME = EtoileUI
 VERSION = 0.1
 
+LIBRARIES_DEPEND_UPON = -lEtoileFoundation
+
 EtoileUI_SUBPROJECTS = Source
 
 EtoileUI_HEADER_FILES_DIR = Headers
