@@ -41,6 +41,19 @@
 
 @implementation NSObject (EtoileUI)
 
+/* Basic Properties */
+
+/** Returns the icon used to represent unknown object.
+	Subclasses can override this method to return an icon that suits and 
+	describes better their own objects. */
+- (NSImage *) icon
+{
+	// FIXME: Asks Jesse to create an icon representing an unknown object
+	return nil;
+}
+
+/* Lively feeling */
+
 /** Shows the receiver content in the object browser panel and allows to 
 	navigate the whole Étoilé environment object graph (including outside the
 	application the browsed object is part of). */
@@ -99,4 +112,8 @@
 	[[self nextResponder] inspect: sender];
 }
 
+@end
+
+@implementation NSImage (EtoileModel)
+- (BOOL) isCommonObjectValue { return YES; }
 @end

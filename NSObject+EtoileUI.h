@@ -60,6 +60,12 @@
 
 @interface NSObject (EtoileUI)
 
+/* Basic Properties (extends Model category in EtoileFoundation) */
+
+- (NSImage *) icon;
+
+/* Lively feeling */
+
 - (IBAction) browse: (id)sender;
 - (IBAction) view: (id)sender;
 - (IBAction) inspect: (id)sender;
@@ -78,4 +84,9 @@
 - (IBAction) browse: (id)sender;
 - (IBAction) view: (id)sender;
 - (IBAction) inspect: (id)sender;
+@end
+
+/** See NSObject+Model in EtoileFoudation */
+@interface NSImage (EtoileModel)
+- (BOOL) isCommonObjectValue;
 @end
