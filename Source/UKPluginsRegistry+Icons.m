@@ -1,11 +1,11 @@
-#import <AppKit/AppKit.h>
-#import <EtoileFoundation/EtoileFoundation.h>
+#import "UKPluginsRegistry+Icons.h"
 
 #ifdef GNUSTEP
 #define APPLICATION_SUPPORT @"ApplicationSupport"
 #else /* Cocoa */
 #define APPLICATION_SUPPORT @"Application Support"
 #endif
+
 
 @implementation UKPluginsRegistry (Icons)
 
@@ -18,3 +18,4 @@
 	return [[[NSImage alloc] initWithContentsOfFile: iconPath] autorelease];
 }
 @end
+
