@@ -434,16 +434,35 @@
 	return nil;
 }
 
-// handleAttachItemView:
+/** This method handles the view visibility of child items with a role similar 
+	to -setVisibleItems: that is called by layouts. It is used when you insert 
+	an item on an item group without layout, otherwise the view insertion is 
+	managed by requesting a layout update which ultimately calls back 
+	-setVisibleItems:. 
+	Having a null layout class may be a solution to get rid of this. */
 - (void) handleAttachViewOfItem: (ETLayoutItem *)item
 {
+	/* Typically needed if your item has no view and gets added to an item 
+	   group without a layout. Without this check -addSuview: [item displayView]
+	   results in a crash. */
+	if ([item displayView] == nil) /* No view to attach */
+		return;
+
 	[[item displayView] removeFromSuperview];
+	/* Only insert the item view if the layout is a fixed/free layout and the 
+	   receiver has a view itself. 
+	   TODO: Probably make more explicit the nil layout check and improve in a
+	   way or another the handling of the nil view case. */
 	if ([self layout] == nil && [self view] != nil)
 		[[self view] addSubview: [item displayView]];
 }
 
+/** Symetric method to -handleAttachViewOfItem: */
 - (void) handleDetachViewOfItem: (ETLayoutItem *)item
 {
+	if ([item displayView] == nil) /* No view to detach */
+		return;
+
   	[[item displayView] removeFromSuperview];
 }
 
