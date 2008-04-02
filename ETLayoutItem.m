@@ -214,7 +214,7 @@
 
 - (id) deepCopy
 {
-	ETLayoutItem *item = [self copyWithZone: nil];
+	ETLayoutItem *item = [self copyWithZone: NULL];
 	
 	[item setRepresentedObject: AUTORELEASE([[self representedObject] mutableCopy])];
 	
