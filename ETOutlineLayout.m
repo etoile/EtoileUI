@@ -34,6 +34,7 @@
 	THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#import <EtoileFoundation/NSObject+Model.h>
 #import <EtoileUI/ETOutlineLayout.h>
 #import <EtoileUI/ETLayout.h>
 #import <EtoileUI/ETContainer.h>
@@ -301,8 +302,8 @@
 #endif
 
 	/* Report nil value for debugging */
-	if (value == nil || [value isEqual: [NSNull null]]
-	 && [[item properties] containsObject: [column identifier]] == NO)
+	if (value == nil || ([value isEqual: [NSNull null]]
+	 && [[item properties] containsObject: [column identifier]] == NO))
 	{
 		// FIXME: Turn into an ETDebugLog
 		ETLog(@"Item %@ has no property %@ requested by layout %@", item, 
