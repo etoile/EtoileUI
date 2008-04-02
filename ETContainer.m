@@ -34,7 +34,7 @@
 	THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import <EtoileFondation/NSIndexSet+Etoile.h>
+#import <EtoileFoundation/NSIndexSet+Etoile.h>
 #import <EtoileFoundation/NSIndexPath+Etoile.h>
 #import <EtoileUI/ETContainer.h>
 #import <EtoileUI/ETContainer+Controller.h>
