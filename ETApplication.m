@@ -41,9 +41,11 @@
 #import <EtoileUI/ETObjectBrowserLayout.h>
 #import <EtoileUI/ETCompatibility.h>
 
+#define DEVMENU_TAG 999
+
 @interface ETApplication (Private)
 - (void) _buildLayoutItemTree;
-- (void) _setUpMenu;
+- (void) _setUpAppMenu;
 @end
 
 
@@ -60,7 +62,7 @@
 - (void) finishLaunching
 {
 	[super finishLaunching];
-	[self _setUpMenu];
+	[self _setUpAppMenu];
 	[self _buildLayoutItemTree];
 }
 
@@ -71,7 +73,7 @@
 	[ETLayoutItemGroup setWindowGroup: [builder render: self]];
 }
 
-- (void) _setUpMenu
+- (void) _setUpAppMenu
 {
 	NSMenu *appMenu = [[[self mainMenu] itemAtIndex: 0] submenu];
 	NSMenuItem *menuItem = nil;
@@ -80,34 +82,64 @@
 	#ifndef GNUSTEP
 	insertionIndex = [appMenu indexOfItemWithTitle: _(@"Services")];
 	#else
-	// FIXME: Decide where Live Development menu item must be put, application
-	// menu is probably an valid initial choice. Later Services menu could be better.
+	// FIXME: Decide where Show/Hide Development Menu must be put, application
+	// menu is probably an valid initial choice. Later Services menu could be 
+	// better.
+	insertionIndex = [appMenu numberOfItems];
 	#endif
-	
+
+	menuItem = [[NSMenuItem alloc] initWithTitle: _(@"Show Development Menu")
+		action: @selector(toggleDevelopmentMenu:) keyEquivalent:@""];
+	[appMenu insertItem: menuItem atIndex: insertionIndex];
+	RELEASE(menuItem);
+}
+
+/** Returns the visible development menu if there is one already inserted in the 
+	menu bar, otherwise builds a new instance and returns it. */
+- (NSMenuItem *) developmentMenuItem
+{
+	NSMenuItem *devMenuItem = [[self mainMenu] itemWithTag: DEVMENU_TAG];
+	NSMenu *menu = nil;
+
+	if (devMenuItem != nil)
+		return devMenuItem;
+
+	devMenuItem = [[NSMenuItem alloc] initWithTitle: _(@"Development")
+		action: NULL keyEquivalent:@""];
+	[devMenuItem setTag: DEVMENU_TAG];
+	menu = [[NSMenu alloc] initWithTitle: _(@"Development")];
+	[devMenuItem setSubmenu: menu];
+
+	/* Builds and inserts menu items into the new dev menu */
+	NSMenuItem *menuItem = nil;
+
 	menuItem = [[NSMenuItem alloc] initWithTitle: _(@"Live Development")
 		action: @selector(toggleLiveDevelopment:) keyEquivalent:@""];
-	[appMenu insertItem: menuItem atIndex: insertionIndex];
+	[menu addItem: menuItem];
 	RELEASE(menuItem);
 	
 	menuItem = [[NSMenuItem alloc] initWithTitle: _(@"Inspect")
 		action: @selector(inspect:) keyEquivalent: @""];
-	[appMenu insertItem: menuItem atIndex: ++insertionIndex];
+	[menu addItem: menuItem];
 	RELEASE(menuItem);
 	
 	menuItem = [[NSMenuItem alloc] initWithTitle: _(@"Inspect Selection")
 		action: @selector(inspectSelection:) keyEquivalent: @""];
-	[appMenu insertItem: menuItem atIndex: ++insertionIndex];
+	[menu addItem: menuItem];
 	RELEASE(menuItem);
 	
 	menuItem = [[NSMenuItem alloc] initWithTitle: _(@"Browse")
 		action: @selector(browse:) keyEquivalent: @""];
-	[appMenu insertItem: menuItem atIndex: ++insertionIndex];
+	[menu addItem: menuItem];
 	RELEASE(menuItem);
 
 	menuItem = [[NSMenuItem alloc] initWithTitle: _(@"Browse Layout Item Tree")
 		action: @selector(browseLayoutItemTree:) keyEquivalent: @""];
-	[appMenu insertItem: menuItem atIndex: ++insertionIndex];
+	[menu addItem: menuItem];
 	RELEASE(menuItem);
+
+	RELEASE(menu);
+	return AUTORELEASE(devMenuItem);
 }
 
 - (IBAction) browseLayoutItemTree: (id)sender
@@ -116,6 +148,22 @@
 
 	[browser setBrowsedObject: [self layoutItem]];
 	[[browser panel] makeKeyAndOrderFront: self];
+}
+
+- (IBAction) toggleDevelopmentMenu: (id)sender
+{
+	NSMenuItem *devMenuItem = [[self mainMenu] itemWithTag: DEVMENU_TAG];
+
+	if (devMenuItem == nil) /* Show dev menu */
+	{
+		[[self mainMenu] addItem: [self developmentMenuItem]];
+		[sender setTitle: _(@"Hide Development Menu")];
+	}
+	else /* Hide dev menu */
+	{
+		[[self mainMenu] removeItem: devMenuItem];
+		[sender setTitle: _(@"Show Development Menu")];
+	}
 }
 
 - (IBAction) toggleLiveDevelopment: (id)sender

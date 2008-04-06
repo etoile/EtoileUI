@@ -40,14 +40,18 @@
 /** If you use a custom NSApplication subclass, you must subclass ETApplication 
 	instead of NSApplication to make it Etoile-native.
 	This subclass takes care of enabling live development support at runtime. */
-
 @interface ETApplication : NSApplication 
 {
 	ETLayoutItemGroup *_windowLayer;
 }
 
 - (ETLayoutItemGroup *) layoutItem;
+- (NSMenuItem *) developmentMenuItem;
+
+/* Actions */
+
 - (IBAction) browseLayoutItemTree: (id)sender;
+- (IBAction) toggleDevelopmentMenu: (id)sender;
 - (IBAction) toggleLiveDevelopment: (id)sender;
 
 @end
