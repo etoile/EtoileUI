@@ -683,7 +683,19 @@
 
 - (void) setLayoutView: (NSView *)protoView
 {
-	ASSIGN(_displayViewPrototype, protoView);
+	// FIXME: Horrible hack to work around the fact Gorm doesn't support 
+	// connecting an outlet to the content view of a window. Hence we connect 
+	// _displayViewPrototype to the window embedding the view and retrieve the 
+	// layout view when this method is called during the nib awaking.
+	if ([protoView isKindOfClass: [NSWindow class]])
+	{
+		ETLog(@"NOTE: -setLayoutView: received a window as parameter");
+		ASSIGN(_displayViewPrototype, [protoView contentView]);
+	}
+	else
+	{
+		ASSIGN(_displayViewPrototype, protoView);
+	}
 
 	[_displayViewPrototype removeFromSuperview];
 }
@@ -693,6 +705,12 @@
 	return _displayViewPrototype;
 }
 
+/** You should call this method in -renderWithLayoutItems:isNewContent: if you 
+	write a view-based layout subclass.
+	This method may be overriden by subclasses to handle view-specific 
+	configuration before the view gets injected in the layout context. You must  
+	then call the superclass method to have the layout view added as a subview 
+	to the container associated with the layout context. */
 - (void) setUpLayoutView
 {
 	id layoutView = [self layoutView];

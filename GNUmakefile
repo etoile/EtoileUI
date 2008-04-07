@@ -119,7 +119,7 @@ EtoileUI_RESOURCE_FILES = \
 	English.lproj/BrowserPrototype.gorm \
 	English.lproj/OutlinePrototype.gorm \
 	English.lproj/TablePrototype.gorm \
-	English.lproj/ViewModelPrototype.nib
+	English.lproj/ViewModelPrototype.gorm
 
 
 ifeq ($(FOUNDATION_LIB), apple)
