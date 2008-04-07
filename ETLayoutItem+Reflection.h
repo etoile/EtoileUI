@@ -1,13 +1,12 @@
 /*
-	ETInspector.h
+	ETLayoutItem+Reflection.h
 	
-	Inspector protocol and related Inspector representation class which can be
-	used as an inspector view wrapper.
+	Reflection on the layout item tree.
  
-	Copyright (C) 2007 Quentin Mathe
+	Copyright (C) 2008 Quentin Mathe
  
 	Author:  Quentin Mathe <qmathe@club-internet.fr>
-	Date:  August 2007
+	Date:  April 2008
  
 	Redistribution and use in source and binary forms, with or without
 	modification, are permitted provided that the following conditions are met:
@@ -36,43 +35,16 @@
 
 #import <Foundation/Foundation.h>
 #import <AppKit/AppKit.h>
+#import <EtoileUI/ETStyleRenderer.h>
 #import <EtoileUI/ETLayoutItem.h>
-#import <EtoileUI/ETLayout.h>
-#import <EtoileUI/ETInspecting.h>
-
-@class ETView, ETContainer;
 
 
-@interface ETInspector : ETLayoutItem <ETInspector>
-{
-	IBOutlet ETContainer *itemGroupView;
-	IBOutlet ETContainer *propertyView;
-	IBOutlet NSWindow *window;
-	IBOutlet id viewModelLayout;
+@interface ETLayoutItem (ETUIReflection)
 
-	NSArray *_inspectorViews;
-	NSArray *_inspectedItems;
-}
-
-- (NSArray *) inspectedItems;
-- (void) setInspectedItems: (NSArray *)items;
-
-/*- (ETView *) view;
-- (void) setView: (NSView *)view;*/
-
-- (NSWindow *) window;
-- (NSPanel *) panel;
-
-- (IBAction) changeLayout: (id)sender;
-- (IBAction) inspect: (id)sender;
-- (IBAction) stack: (id)sender;
+/** A basic meta model which inspects layout items by wrapping each one in a 
+	new meta layout item. Achieved by setting the base layout item as the
+	represented object of the new meta layout item. */
++ (ETLayoutItem *) layoutItemOfLayoutItem: (ETLayoutItem *)item;
+//+ (ETLayoutItem *) layoutItemWithInspectedObject: (id)object;
 
 @end
-
-
-/*@interface ETInspectorLayout
-{
-	IBOutlet ETContainer *itemGroupView;
-}
-
-@end*/

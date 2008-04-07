@@ -34,6 +34,7 @@ EtoileUI_OBJC_FILES = \
 	ETLayoutItemGroup.m \
 	ETLayoutItemGroup+Mutation.m \
 	ETLayoutItem.m \
+	ETLayoutItem+Reflection.m \
 	ETLayoutLine.m \
 	ETLayout.m \
 	ETLineLayout.m \
@@ -86,6 +87,7 @@ EtoileUI_HEADER_FILES = \
 	ETLayoutItemGroup.h \
 	ETLayoutItemGroup+Mutation.h \
 	ETLayoutItem.h \
+	ETLayoutItem+Reflection.h \
 	ETLayoutLine.h \
 	ETLineLayout.h \
 	ETLineView.h \

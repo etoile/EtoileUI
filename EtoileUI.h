@@ -51,6 +51,7 @@
 #import <EtoileUI/ETContainer.h>
 #import <EtoileUI/ETLayoutItem.h>
 #import <EtoileUI/ETLayoutItem+Events.h>
+#import <EtoileUI/ETLayoutItem+Reflection.h>
 #import <EtoileUI/ETEvent.h>
 #import <EtoileUI/ETLayoutItemGroup.h>
 #import <EtoileUI/ETLayoutItemGroup+Mutation.h>

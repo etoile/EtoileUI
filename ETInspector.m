@@ -40,6 +40,7 @@
 #import <EtoileFoundation/NSIndexPath+Etoile.h>
 #import <EtoileFoundation/NSString+Etoile.h>
 #import <EtoileFoundation/ETCollection.h>
+#import <EtoileUI/ETLayoutItem+Reflection.h>
 #import <EtoileUI/ETInspector.h>
 #import <EtoileUI/ETContainer.h>
 #import <EtoileUI/ETLayoutItemGroup.h>
@@ -472,139 +473,7 @@
 
 @end
 
-@implementation ETLayoutItem (ETInspector)
-/*
-+ (ETLayoutItem *) layoutItemWithInspectedObject: (id)object
-{
-	ETLayoutItem *item = [[ETLayoutItem alloc] initWithRepresentedObject: object];
-	NSArray *ivars = [[item representedObject] instanceVariables];
-	NSArray *methods = [[item representedObject] methods];
-	NSArray *slots = [[NSArray arrayWithArray: ivars] 
-	            arrayByAddingObjectsFromArray: methods];
-	NSEnumerator *e = [slots objectEnumerator];
-	id slot = nil;
-	
-	while ((slot = [e nextObject]) != nil)
-	{
-		if ([slot isKindOfClass: [ETInstanceVariable class]])
-		{
-			id ivarValue = [slot value];
-			
-			if (ivarValue == nil)
-			{
-				ivarValue = @"nil";
-			}
-			[item setValue: [ivarValue description] forProperty: @"value"];
-		}
-		else if ([slot isKindOfClass: [ETMethod class]])
-		{
-			[propertyItem setValue: @"method (objc)" forProperty: @"value"];
-		}
-	}
-	
-	return AUTORELEASE(item);
-}*/
 
-+ (ETLayoutItem *) layoutItemOfLayoutItem: (ETLayoutItem *)item
-{
-	ETLayoutItem *metaLayoutItem = [item copy];
-	id propertyName = nil;
-	
-	[metaLayoutItem setRepresentedObject: item];
-	
-	/* If the item represents a property, the related meta layout item must 
-	   represent the property name as a value of property 'kProperty' and the 
-	   value of the property as a value of property 'kValue'.
-	   
-	   Example:
-	             
-					    Objects and Meta Objects                           Metalevel
-				 
-	   - Inspected item (layout item or model object)                    <- level 0
-	       kPrice = 5 
-		   kPrice is a property and 5 a value
-	   - Meta Inspected item (property view root node)                   <- level 1
-	       kPrice = 5 
-		   kPrice is a property and 5 a value
-	   - Property item (represents a single property of inspected item)  <- level 1
-	       kProperty = kPrice
-		   kValue = 5
-		   kName = kPrice
-	   So every properties of inspected item are represented by a property item
-	   which is created indirectly when a meta layout item is instantiated to 
-	   both play the role of the property view root node and represents the 
-	   inspected item. 
-	   Now if the view displaying the property item list is inspected, we must 
-	   create a new meta layout item for each property item to be inspected.
-	   - Meta Item of Property Item                                      <- level 2
-		   kProperty = kPrice
-		   kValue = 5
-		   kName = kPrice
-	   - Property Items for Meta Property item                           <- level 2
-	     (represents a single property of inspected property item)
-		 Because Meta Property Item has 3 properties, 3 property items will be
-		 created to represent Meta Property Item in a property view:
-	     - property item 1
-	       kProperty = kProperty
-		   kValue = kPrice
-		   kName = KProperty
-		 - property item 2
-		   kProperty = kValue
-		   kValue = 5
-		   kName = kValue
-		 - property item 3
-		   kProperty = kName
-		   kValue = kPrice
-		   kName = kName
-	   etc.
-	   
-	   From here, you can create new Meta Item or Property Items based on 
-	   the layout items mentionned above. There are no limitations to the
-	   introspection depth, but there is rarely an interest to go beyond
-	   meta levels 1 or 2.
-	*/
-	// NOTE: this code may be better located in -[ETLayoutItem valueForProperty:]
-	if ([[item properties] containsObject: @"property"])
-	{
-		propertyName = [metaLayoutItem valueForProperty: @"property"];
-		if (propertyName != nil)
-		{
-			[metaLayoutItem setValue: propertyName forProperty: @"name"];
-			[metaLayoutItem setValue: [metaLayoutItem valueForProperty: @"property"]
-						 forProperty: @"property"];
-		}
-	}
-	
-	return AUTORELEASE(metaLayoutItem);
-}
-
-/** Returns a dictionary mapping value classes to editor object prototypes. 
-	These editor objects are UI elements like NSSlider, NSStepper, NSTextField, 
-	NSButton. */
-- (NSDictionary *) editorObjects
-{
-	/*NSButton *checkBox = [[NSButton alloc] ini
-
-	return [NSDictionary dictionaryWithObjectsAndKeys: 
-		[NS*/
-	return nil;
-}
-
-- (ETView *) buildInspectorView
-{
-	/*NSEnumerator *e = [[self representedObject] objectEnumerator];
-	id modelValue = nil
-	
-	while ((modelValue = [e nextObject]) != nil)
-	{
-		[
-		
-		if (
-	}*/
-	return nil;
-}
-
-@end
 
 @implementation NSObject (ETInspector)
 
