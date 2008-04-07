@@ -36,8 +36,10 @@
  */
 
 #import <EtoileFoundation/ETCollection.h>
+#import <EtoileFoundation/NSObject+Model.h>
 #import <EtoileFoundation/NSObject+Etoile.h>
 #import <EtoileUI/ETViewModelLayout.h>
+#import <EtoileUI/ETLayoutItem+Reflection.h>
 #import <EtoileUI/ETLayoutItemGroup.h>
 #import <EtoileUI/ETContainer.h>
 #import <EtoileUI/ETTableLayout.h>
@@ -49,9 +51,6 @@
 - (void) awakeFromNib
 {
 	ETLog(@"Awaking from nib for %@", self);
-	
-	/* Finish init */
-	[self setDisplayMode: ETLayoutDisplayModeViewProperties];
 
 	/* Configure propertyView outlet */
 	[propertyView setLayout: AUTORELEASE([[ETTableLayout alloc] init])];	
@@ -61,7 +60,9 @@
 	[propertyView setTarget: self];
 	[propertyView setHasVerticalScroller: YES];
 	[propertyView setHasHorizontalScroller: YES];
-	[propertyView reloadAndUpdateLayout];
+
+	/* Finish init */
+	[self setDisplayMode: ETLayoutDisplayModeViewProperties];
 }
 
 - (NSString *) nibName
@@ -86,6 +87,7 @@
 - (void) setDisplayMode: (ETLayoutDisplayMode)mode
 {
 	_displayMode = mode;
+	[propertyView reloadAndUpdateLayout];
 }
 
 - (void) switchDisplayMode: (id)sender
@@ -94,7 +96,6 @@
 		@"-switchDisplayMode: must be sent by an instance of NSPopUpButton class "
 		@"kind unlike %@", sender);
 	[self setDisplayMode: [[sender selectedItem] tag]];
-	[propertyView reloadAndUpdateLayout];
 }
 
 - (void) setLayoutContext: (id <ETLayoutingContext>)context
@@ -112,7 +113,7 @@
 	}
 
 	[self setUpLayoutView];
-	//[propertyView reloadAndUpdateLayout];
+	[propertyView reloadAndUpdateLayout];
 }
 
 - (void) doubleClickInPropertyView: (id)sender
@@ -172,7 +173,7 @@
 		nbOfSlots = [slots count];
 	}
 	
-	return 3; //nbOfSlots;
+	return nbOfSlots;
 }
 
 - (int) numberOfItemsInContainer: (ETContainer *)container
@@ -184,15 +185,13 @@
 		return 0;
 	}
 
-	ETLayoutItem *inspectedItem = (ETLayoutItem *)[self layoutContext];
+	id inspectedItem = [self layoutContext];
 	id inspectedModel = [inspectedItem representedObject];
 	/* Always generate a meta layout item to simplify introspection code */
-	ETLayoutItem *metaItem = [ETLayoutItem layoutItemOfLayoutItem: inspectedItem];
+	ETLayoutItem *metaItem = 
+		[ETLayoutItem layoutItemWithRepresentedItem: inspectedItem snapshot: NO];
 	int nbOfItems = 0;
-	
-	// NOTE: Fails when the inspected model is a dictionary...
-	//NSAssert([inspectedModel properties] != nil, @"Represented object of a layout item should never be nil");
-		
+
 	if ([self displayMode] == ETLayoutDisplayModeViewProperties)
 	{
 		/* By using a meta layout item, the inspected item ivars which are 
@@ -205,18 +204,16 @@
 	}
 	else if ([self displayMode] == ETLayoutDisplayModeModelProperties)
 	{
-		/* See next method -container:itemAtIndex: to understand why we 
-		   use [inspectedItem properties] and not [inspectedModel properties] */
-		nbOfItems = [[inspectedItem properties] count];
+		nbOfItems = [[inspectedModel properties] count];
 	}
 	else if ([self displayMode] == ETLayoutDisplayModeViewContent)
 	{
-		if ([inspectedItem conformsToProtocol: @protocol(ETCollection)])
+		if ([inspectedItem isCollection])
 			nbOfItems = [[(id <ETCollection>)inspectedItem contentArray] count];
 	}
 	else if ([self displayMode] == ETLayoutDisplayModeModelContent)
 	{
-		if ([inspectedModel conformsToProtocol: @protocol(ETCollection)])
+		if ([inspectedModel isCollection])
 			nbOfItems = [[inspectedModel contentArray] count];
 	}
 	else if ([self displayMode] == ETLayoutDisplayModeViewObject)
@@ -240,14 +237,15 @@
 
 - (ETLayoutItem *) container: (ETContainer *)container itemAtIndex: (int)index
 {
-	ETLayoutItem *inspectedItem = (ETLayoutItem *)[self layoutContext];
+	id inspectedItem = [self layoutContext];
 	id inspectedModel = [inspectedItem representedObject];
 	/* Always generate a meta layout item to simplify introspection code */
 	// FIXME: Regenerating a meta layout item for the same layout context/item 
 	// on each -container:itemAtIndex: call is expansive (see 
 	// -[ETLayoutItemGroup copyWithZone:]. ... Caching the meta layout item is
 	// probably worth to do.
-	ETLayoutItem *metaItem = [ETLayoutItem layoutItemOfLayoutItem: inspectedItem];
+	ETLayoutItem *metaItem =
+		[ETLayoutItem layoutItemWithRepresentedItem: inspectedItem snapshot: NO];
 	ETLayoutItem *propertyItem = AUTORELEASE([[ETLayoutItem alloc] init]);
 	
 	/* Inspected item is used as model */
@@ -271,19 +269,14 @@
 	}
 	else if ([self displayMode] == ETLayoutDisplayModeModelProperties)
 	{
-		/* Because [inspectedModel properties] doesn't exist we use 
-		   inspectedItem instead. In this particular case, ETLayoutItem plays 
-		   the role of a meta object representing the model object 
-		   May be we should get rid of that by implementing -properties on 
-		   NSObject (simply returning an empty array or ni by default) */
-		NSString *property = [[inspectedItem properties] objectAtIndex: index];
+		NSString *property = [(NSArray *)[inspectedModel properties] objectAtIndex: index];
 
 		[propertyItem setValue: property forProperty: @"property"];
-		[propertyItem setValue: [inspectedItem valueForProperty: property] forProperty: @"value"];
+		[propertyItem setValue: [inspectedModel valueForProperty: property] forProperty: @"value"];
 	}
 	else if ([self displayMode] == ETLayoutDisplayModeViewContent)
 	{
-		NSAssert2([inspectedItem conformsToProtocol: @protocol(ETCollection)], 
+		NSAssert2([inspectedItem isCollection], 
 			@"Inspected item %@ must conform to protocol ETCollection "
 			@"since -numberOfItemsInContainer: returned a non-zero value in %@",
 			inspectedItem, self);
@@ -295,7 +288,7 @@
 	}
 	else if ([self displayMode] == ETLayoutDisplayModeModelContent)
 	{
-		NSAssert2([inspectedModel conformsToProtocol: @protocol(ETCollection)], 
+		NSAssert2([inspectedModel isCollection], 
 			@"Inspected model %@ must conform to protocol ETCollection "
 			@"since -numberOfItemsInContainer: returned a non-zero value in %@",
 			inspectedModel, self);

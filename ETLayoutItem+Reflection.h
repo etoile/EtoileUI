@@ -44,7 +44,8 @@
 /** A basic meta model which inspects layout items by wrapping each one in a 
 	new meta layout item. Achieved by setting the base layout item as the
 	represented object of the new meta layout item. */
-+ (ETLayoutItem *) layoutItemOfLayoutItem: (ETLayoutItem *)item;
++ (ETLayoutItem *) layoutItemWithRepresentedItem: (ETLayoutItem *)item
+                                        snapshot: (BOOL)snapshot;
 //+ (ETLayoutItem *) layoutItemWithInspectedObject: (id)object;
 
 @end

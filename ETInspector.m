@@ -243,11 +243,11 @@
 	/* Create a meta layout item */
 	if ([item isGroup])
 	{
-		item = [ETLayoutItemGroup layoutItemOfLayoutItem: item];
+		item = [ETLayoutItem layoutItemWithRepresentedItem: item snapshot: YES];
 	}
 	else
 	{
-		item = [ETLayoutItem layoutItemOfLayoutItem: item];
+		item = [ETLayoutItem layoutItemWithRepresentedItem: item snapshot: YES];
 	}
 	
 	//ETLog(@"Returns item %@ at path %@ in %@", item, indexSubpath, container);

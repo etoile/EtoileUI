@@ -35,17 +35,41 @@
  */
 
 #import <EtoileUI/ETLayoutItem+Reflection.h>
+#import <EtoileUI/NSView+Etoile.h>
 
 
 @implementation ETLayoutItem (ETUIReflection)
 
-+ (ETLayoutItem *) layoutItemOfLayoutItem: (ETLayoutItem *)item
+/** Builds and returns a meta layout item representing item.
+	If snapshot is YES and item has a view, a snapshot of this view is going to 
+	be taken and sets a the image/icon of the meta item. Take note that 
+	creating a view snapshot is an expansive operation. */
++ (ETLayoutItem *) layoutItemWithRepresentedItem: (ETLayoutItem *)item 
+                                        snapshot: (BOOL)snapshot
 {
-	ETLayoutItem *metaLayoutItem = [item copy];
+	/* The meta item only need to be a shallow copy of item since the meta 
+	   children will be created by using the children of item as represented 
+	   objects. When -items will be called on the meta item, the collection 
+	   protocol will be used to transparently retrieve the represented children 
+	   items and generates all the necessary meta children items. */
+	ETLayoutItem *metaLayoutItem = [item copy]; 
 	id propertyName = nil;
-	
+
 	[metaLayoutItem setRepresentedObject: item];
-	
+
+	// NOTE: In most cases, -[ETLayoutItem copy] is used to create meta layout
+	// items which only need a static snapshot of the view and not an 
+	// interactive view.
+	if (snapshot && [item displayView] != nil 
+		&& NSEqualRects([[item displayView] frame], NSZeroRect) == NO)
+	{
+		id img = [[item displayView] snapshot];
+		id imgView = [[NSImageView alloc] initWithFrame: [[item displayView] frame]];
+		[imgView setImage: img];
+		[metaLayoutItem setView: imgView];
+		RELEASE(imgView);
+	}
+
 	/* If the item represents a property, the related meta layout item must 
 	   represent the property name as a value of property 'kProperty' and the 
 	   value of the property as a value of property 'kValue'.

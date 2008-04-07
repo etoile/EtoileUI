@@ -170,39 +170,17 @@
     [super dealloc];
 }
 
+/** Returns a shallow copy of the receiver without copying the view, the styles, 
+	the represented object and the children items if the receiver is an 
+	ETLayoutItemGroup related classes. 
+	Take note that a deep copy of the decorators is created and no view 
+	reference is kept, -view will return nil for the copied item.
+	TODO: Implement decorators copying that is currently missing.*/
 - (id) copyWithZone: (NSZone *)zone
 {
 	ETLayoutItem *item = [[[self class] alloc] initWithView: nil 
 	                                                  value: [self value] 
-										  representedObject: [self representedObject]];
-
-// TODO: The view copy is probably not the best choice since it involves 
-// copying the subview hierarchy and doesn't work with ETContainer because
-// keyed encoding is supported neither by ETView and ETContainer. Making a copy
-// of a container leads to an assertion failure when you call -layoutItem on it
-// because the container hasn't been initialized properly so no layout item is
-// available. In most cases, -[ETLayoutItem copy] is used to create meta layout
-// items which only need a static snapshot of the view and not an interactive
-// view. However when a simple view like a slider is used, it may be 
-// interesting to support true copy in order to clone existing layout items. An 
-// example could be picking a layout item from an UI object palette (in 
-// Gorm-like style development).
-#if 0										  
-	if ([[self view] respondsToSelector: @selector(copyWithZone:)])
-	{
-		[item setView: [[self view] copy]];
-	}
-#else
-	if ([self displayView] != nil 
-		&& NSEqualRects([[self displayView] frame], NSZeroRect) == NO)
-	{
-		id img = [[self displayView] snapshot];
-		id imgView = [[NSImageView alloc] initWithFrame: [[self displayView] frame]];
-		[imgView setImage: img];
-		[item setView: imgView];
-		RELEASE(imgView);
-	}
-#endif
+	                                      representedObject: [self representedObject]];
 
 	[item setName: [self name]];
 	[item setStyleRenderer: [self renderer]];
@@ -212,12 +190,42 @@
 	return item;
 }
 
+/** Returns a deep copy of the receiver by copying the view and all its 
+	subview hierarchy, the styles, the decorators, the represented object and 
+	all the descendant children items if the receiver is an ETLayoutItemGroup r
+	elated classes. 
+	All copied collections are mutable (styles, decorators, representedObject, 
+	children items). 
+	TODO: Implement styles copying that is currently missing (decorators too in 
+	-copyWithZone:). */
 - (id) deepCopy
 {
 	ETLayoutItem *item = [self copyWithZone: NULL];
-	
+
+	// TODO: We probably want to handle different kind of copies on the model. 
+	// For example, with values objects a shallow copy of an array is a bad 
+	// idea, so would be a deep copy for an array of entity objects.
+	// A good solution may be to override -copyWithZone: and/or 
+	// -mutableCopyWithZone: in collection classes to map each 
+	// element based on its model description to a particular copy operation:
+	// - value object -> copy
+	// - entity object -> don't copy 
+	// In this way, we could handle copy in a more meaningful way without having 
+	// to decide between only the two crude copy styles deep and shallow. To 
+	// achieve we need a model description (metamodel) framework like Magritte.
+	// We still need to decide what should the default between shallow and deep 
+	// for the represented object (model) when no model description is available.
 	[item setRepresentedObject: AUTORELEASE([[self representedObject] mutableCopy])];
-	
+
+	// NOTE: When a  view like a slider is used, it is interesting to support
+	// true copy in order to clone existing layout items. An example could be
+	// picking a layout item from an UI object palette (in Gorm-like style 
+	// development).
+	if ([[self view] respondsToSelector: @selector(copyWithZone:)])
+	{
+		[item setView: [[self view] copy]];
+	}
+
 	return item;
 }
 
@@ -1024,6 +1032,9 @@
 	
 	/* Verify the proper set up of the current decorator */
 	[decorator checkDecorator];
+	// FIXME: the following code is needed unless we change the assertions
+	//if ([decorator isKindOfClass: [ETWindowItem class]])
+	//	return;
 	NSAssert1([self displayView] != nil, @"Display view must no be nil when a "
 		@"decorator is set on item %@", self);
 	NSAssert2([[decorator displayView] isEqual: [self displayView]], 
