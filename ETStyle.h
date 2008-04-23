@@ -75,7 +75,7 @@
 /* Initialization */
 
 - (id) initWithStyle: (ETStyle *)style;
-- (id) initWithStyles: (NSArray *)style;
+- (id) initWithCollection: (id <ETCollection>)styles;
 
 /* Style Chaining */
 

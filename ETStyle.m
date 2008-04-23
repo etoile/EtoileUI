@@ -47,9 +47,9 @@
 }
 
 /** <init /> Returns a new style by chaining styles passed in parameter. */
-- (id) initWithStyles: (NSArray *)styles
+- (id) initWithCollection: (id <ETCollection>)styles
 {
-	return [self initWithObjects: styles];
+	return [super initWithCollection: styles];
 }
 
 /** Returns the style following the receiver in the style chain. */

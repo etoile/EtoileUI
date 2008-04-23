@@ -111,17 +111,18 @@
 
 @interface ETPickCollection : NSObject <ETCollection>
 {
-	id <ETCollection> _pickedObjects;
+	NSArray *_pickedObjects;
 }
 
-+ (id) pickCollectionWithObjects: (id <ETCollection>)objects;
++ (id) pickCollectionWithCollection: (id <ETCollection>)objects;
 
-- (id) initWithObjects: (id <ETCollection>)objects;
+- (id) initWithCollection: (id <ETCollection>)objects;
 
 /* ETCollection protocol */
 
 - (BOOL) isEmpty;
 - (id) content;
 - (NSArray *) contentArray;
+- (BOOL) isOrdered;
 
 @end

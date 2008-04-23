@@ -222,7 +222,7 @@
 			{
 				pickedItems = selectedItems;
 			}
-			pick = [ETPickCollection pickCollectionWithObjects: pickedItems];
+			pick = [ETPickCollection pickCollectionWithCollection: pickedItems];
 		}
 		else
 		{
@@ -245,7 +245,7 @@
 
 // NOTE: ETOutlineLayout would override this method to call 
 // -selectedItemsIncludingRelatedDescendants instead of -selectedItems	
-//[pickboard pushObject: [ETPickCollection pickCollectionWithObjects: [self selectedItems]];
+//[pickboard pushObject: [ETPickCollection pickCollectionWithCollection: [self selectedItems]];
 - (void) handleDrag: (ETEvent *)event forItem: (id)item layout: (id)layout
 {
 	if (layout != nil && [layout respondsToSelector: @selector(handleDrag:forItem:layout:)])

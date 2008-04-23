@@ -350,20 +350,20 @@ static ETPickboard *activePickboard = nil;
 
 @implementation ETPickCollection
 
-+ (id) pickCollectionWithObjects: (id <ETCollection>)objects
++ (id) pickCollectionWithCollection: (id <ETCollection>)objects
 {
-	return AUTORELEASE([(ETPickCollection *)[[self class] alloc] initWithObjects: objects]);
+	return AUTORELEASE([(ETPickCollection *)[[self class] alloc] initWithCollection: objects]);
 }
 
 /** <init \> Initializes and returns a picked object set (known as a pick 
 	collection) with the objects of the collection passed in parameter. */
-- (id) initWithObjects: (id <ETCollection>)objects
+- (id) initWithCollection: (id <ETCollection>)objects
 {
 	self = [super init];
 	
 	if (self != nil)
 	{
-		ASSIGN(_pickedObjects, [NSArray arrayWithArray: (id)objects]);
+		ASSIGN(_pickedObjects, [objects contentArray]);
 	}
 	
 	return self;
