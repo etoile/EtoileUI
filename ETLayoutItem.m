@@ -1029,12 +1029,12 @@
 	
 	if (decorator == nil)
 		return;
-	
+
 	/* Verify the proper set up of the current decorator */
 	[decorator checkDecorator];
-	// FIXME: the following code is needed unless we change the assertions
-	//if ([decorator isKindOfClass: [ETWindowItem class]])
-	//	return;
+
+	// NOTE: Next assertion would fail if -[NSWindowItem supervisorView] is 
+	// modified to return nil.
 	NSAssert1([self displayView] != nil, @"Display view must no be nil when a "
 		@"decorator is set on item %@", self);
 	NSAssert2([[decorator displayView] isEqual: [self displayView]], 
@@ -1047,9 +1047,19 @@
 {
 	NSAssert2([self parentLayoutItem] == nil, @"Decorator %@ "
 		@"must have no parent %@ set", self, [self parentLayoutItem]);
+
+	// TODO: If there is a window item in the decorator chain, the receiver 
+	// supervisor view or the outermost supervisor view (display view) don't 
+	// match the expectation of the following assertions. Find a way to get rid 
+	// of this special case. See -[ETWindowItem superisorView] too..
 	if ([self isMemberOfClass: [ETLayoutItem class]])
 	{
-		/* Assertion invalid with ETWindowItem */
+		NSAssert2([[self supervisorView] isKindOfClass: [ETView class]], 
+			@"Decorator %@ must have a supervisor view %@ of type ETView", 
+			self, [self supervisorView]);
+	}
+	if ([[self lastDecoratorItem] isMemberOfClass: [ETLayoutItem class]])
+	{
 		NSAssert2([[self displayView] isKindOfClass: [ETView class]], 
 			@"Decorator %@ must have display view %@ of type ETView", 
 			self, [self displayView]);

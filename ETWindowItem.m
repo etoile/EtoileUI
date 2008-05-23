@@ -215,8 +215,15 @@
 
 }
 
+/** Returns the superview of the window content view. The class of the returned 
+	instance will vary with the underlying implementation (GNUstep and Cocoa).
+	In future, we may eventually return [[[self window] contentView] superview] 
+	as a supervisor view but that won't make sense until supervisorView must be 
+	of type ETView and ETLayoutItem code calls methods on it which are only 
+	available in ETView and related classes. */
 - (id) supervisorView
 {
+	// NOTE: We may prefer return nil;
 	return [[[self window] contentView] superview]; // NSThemeFrame on Mac OS X
 }
 
