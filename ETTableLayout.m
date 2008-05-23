@@ -235,6 +235,10 @@
 	}
 
 	[column setDataCell: style];
+	// NOTE: For cell editability, -[NSTableColumn isEditable] takes over the 
+	// the NSCell method of the data cell (at least for GNUstep, may be 
+	// different for Cocoa).
+	[column setEditable: [style isEditable]];
 
 //	[[[self tableView] tableColumnWithIdentifier: property] setDataCell: style];
 }
@@ -377,6 +381,30 @@
 		[delegate tableView: tv willDisplayCell: cell forTableColumn: col row: row];
 	}
 }
+
+// NOTE: Only for Cocoa presently but we'll be probably be used everywhere later.
+#ifndef GNUSTEP
+- (BOOL) tableView: (NSTableView *)tv
+	shouldEditTableColumn: (NSTableColumn *)column row: (int)rowIndex
+{
+	// TODO: If we pose our own NSTableColumn subclass as an NSTableColumn 
+	// replacement class, we could provide multiple custom data cells per 
+	// column. That would useful to enable/disable the cell editing based on 
+	// whether the object owning the property specifies it as read-only or not.
+	// Another approach, probably better is to implement the new 10.5 delegate 
+	// method -tableview:dataCellForTableColumn:row: and then calls 
+	// -preparedCellAtColumn:row:
+	NSCell *dataCell = [column dataCellForRow: rowIndex];
+
+	/* NSTableView only considers if the column is editable by default to allow 
+	   or deny the editing, at least on GNUstep. And...
+	   Cocoa seems to contradict the documentation of -setDoubleAction: by 
+	   always disabling all editing if a double action is set. iirc you can take 
+	   over this behavior by implementing the present method, but that needs to 
+	   be tested since this code is currently written on GNUstep. */
+	return [dataCell isEditable];
+}
+#endif
 
 - (int) numberOfRowsInTableView: (NSTableView *)tv
 {
@@ -552,7 +580,6 @@
 	[baseItem handleDrop: info forItem: droppedItem on: dropTargetItem];
 	return YES;
 }
-
 
 - (ETLayoutItem *) doubleClickedItem
 {
