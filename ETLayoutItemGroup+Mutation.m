@@ -65,6 +65,45 @@
 	_hasNewContent = flag;
 }
 
+/* Would be cleaner if this mutation backend was a singleton object acting as a 
+   mutation coordinator for the layout item tree and the related model graph.
+   May be refactor  it into a class named ETLayoutItemMutationCoordinator...
+   The following methods haven't been turned into class method because of this 
+   future refactoring in perspective. */
+static 	BOOL _coalescingMutation = NO;
+
+/* Returns whether no model mutations should happen on all represented objects 
+   bound to layout items. This is valid for represented objects at every levels 
+   in the layout item tree, in other words model mutations aren't just suspended 
+   for the receiver.
+   If the return value is YES, the mutation handler method
+   -handleInsert:item:atIndex: will skip calling 
+   -handleModelInsert:item:atIndex: until -endCoalescingModelMutation has been 
+   called. This means a node added, removed or inserted into the layout item 
+   tree won't result in a collection change on the model side, for example a 
+   move into another collection for the represented object bound the node. 
+   That's commonly used for preventing the propagation of the implicit removal 
+   from the existing parent item that occurs when a layout item is 
+   inserted/added to a new parent. */
+- (BOOL) isCoalescingModelMutation
+{
+	return _coalescingMutation;
+}
+
+/* Signals model mutations must be discarded until -endCoalescingModelMutation 
+   gets called. */
+- (void) beginCoalescingModelMutation
+{
+	_coalescingMutation = YES;
+}
+
+/* Signals model mutations must be handled normally by creating a model 
+   mutation for each layout item mutation. */
+- (void) endCoalescingModelMutation
+{
+	_coalescingMutation = NO;
+}
+
 /* Element Mutation Handler */
 
 - (void) handleAdd: (ETEvent *)event item: (ETLayoutItem *)item
@@ -88,11 +127,15 @@
 	
 	if (validatedAdd)
 	{
+		[self beginCoalescingModelMutation];
+
 		[self handleAttachItem: item];
 		[_layoutItems addObject: item];
 		[self setHasNewContent: YES];
 		if ([self canUpdateLayout])
 			[self updateLayout];
+
+		[self endCoalescingModelMutation];
 	}
 }
 
@@ -146,11 +189,15 @@
 	
 	if (validatedInsert)
 	{
+		[self beginCoalescingModelMutation];
+
 		[self handleAttachItem: item];
 		[_layoutItems insertObject: item atIndex: index];
 		[self setHasNewContent: YES];
 		if ([self canUpdateLayout])
 			[self updateLayout];
+
+		[self endCoalescingModelMutation];
 	}
 
 // NOTE: The code below is kept as an example to implement selection caching 
@@ -214,18 +261,22 @@
 
 	/* Take note that -reload calls -removeAllItems. 
 	   See -handleAdd:item: to know more. */	
-	if ([self isReloading] == NO)
+	if ([self isReloading] == NO && [self isCoalescingModelMutation] == NO)
 		validatedRemove = [self handleModelRemove: nil item: item];
-	
+
 	if (validatedRemove)
 	{
+		[self beginCoalescingModelMutation];
+
 		[self handleDetachItem: item];
 		[_layoutItems removeObject: item];
 		[self setHasNewContent: YES];
 		if ([self canUpdateLayout])
 			[self updateLayout];
+
+		[self endCoalescingModelMutation];
 	}
-		
+
 // NOTE: The code below is kept as an example to implement selection caching 
 // at later time if better performance are necessary.
 #if 0	
