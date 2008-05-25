@@ -201,6 +201,7 @@
 - (id) deepCopy
 {
 	ETLayoutItem *item = [self copyWithZone: NULL];
+	id repObjectCopy = nil;
 
 	// TODO: We probably want to handle different kind of copies on the model. 
 	// For example, with values objects a shallow copy of an array is a bad 
@@ -215,7 +216,15 @@
 	// achieve we need a model description (metamodel) framework like Magritte.
 	// We still need to decide what should the default between shallow and deep 
 	// for the represented object (model) when no model description is available.
-	[item setRepresentedObject: AUTORELEASE([[self representedObject] mutableCopy])];
+	if ([[self representedObject] conformsToProtocol: @protocol(NSMutableCopying)])
+	{
+		repObjectCopy = [[self representedObject] mutableCopy];
+	}
+	else if ([[self representedObject] conformsToProtocol: @protocol(NSCopying)])
+	{
+		repObjectCopy = [[self representedObject] copy];
+	}
+	[item setRepresentedObject: AUTORELEASE(repObjectCopy)];
 
 	// NOTE: When a  view like a slider is used, it is interesting to support
 	// true copy in order to clone existing layout items. An example could be
