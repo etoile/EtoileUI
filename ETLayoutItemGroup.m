@@ -71,8 +71,6 @@
 - (void) setHasNewLayout: (BOOL)flag;
 - (void) collectSelectionIndexPaths: (NSMutableArray *)indexPaths;
 - (void) applySelectionIndexPaths: (NSMutableArray *)indexPaths;
-- (id) newItemGroup;
-- (id) newItem;
 @end
 
 
@@ -1293,15 +1291,23 @@
 {
 	id item = [object isCollection] ? [self newItemGroup] : [self newItem];
 
-	/* If the object is a simple value object rather than a true model object
-	   we don't set it as represented object but as a value. */
-	if (isValue)
+	/* We don't set the object as model when it is nil, so any existing value 
+	   or represented object already provided with the item template won't be 
+	   overwritten in such case. 
+	   Value and represented object are copied when -deepCopy is called on the 
+	   template items in -newItem and -newItemGroup. */
+	if (object != nil)
 	{
-		[item setValue: object];
-	}
-	else
-	{
-		[item  setRepresentedObject: object];
+		/* If the object is a simple value object rather than a true model object
+		we don't set it as represented object but as a value. */
+		if (isValue)
+		{
+			[item setValue: object];
+		}
+		else
+		{
+			[item  setRepresentedObject: object];
+		}
 	}
 
 	return item;
