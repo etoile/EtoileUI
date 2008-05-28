@@ -1122,7 +1122,7 @@
 	-selectedItems. */
 - (NSArray *) selectedItemsInLayout
 {
-	NSArray *layoutSelectedItems = [[self layout] selectedItems];;
+	NSArray *layoutSelectedItems = [[self layout] selectedItems];
 	
 	if (layoutSelectedItems != nil)
 	{
