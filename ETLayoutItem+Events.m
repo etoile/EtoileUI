@@ -346,6 +346,8 @@
 	item represents the dragged item which just got dropped on the receiver. */
 - (BOOL) handleDrop: (id)dragInfo forItem: (id)item on: (id)dropTargetItem;
 {
+	ETLog(@"DROP - Handle drop %@ for %@ on %@ in %@", dragInfo, item, dropTargetItem, self);
+
 	if ([self representedPathBase] != nil)
 	{
 		int dropIndex = NSNotFound;
@@ -541,6 +543,8 @@
 
 - (void) itemGroup: (ETLayoutItemGroup *)itemGroup insertDroppedObject: (id)movedObject atIndex: (int)index
 {
+	ETLog(@"DROP - Insert dropped object %@ at %d into %@", movedObject, index, itemGroup);
+
 	if ([movedObject isKindOfClass: [ETPickCollection class]])
 	{
 		// NOTE: To keep the order of picked objects a reverse enumerator 
