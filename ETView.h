@@ -114,7 +114,7 @@
 
 /* Basic Accessors */
 
-- (ETLayoutItem *) layoutItem;
+- (id) layoutItem;
 - (void) setLayoutItem: (ETLayoutItem *)item;
 - (void) setLayoutItemWithoutInsertingView: (ETLayoutItem *)item;
 - (void) setRenderer: (id)renderer;

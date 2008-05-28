@@ -345,7 +345,7 @@ NSString *ETLayoutItemPboardType = @"ETLayoutItemPboardType"; // FIXME: replace 
 	item tree. Layout item representing a container is always an instance of
 	ETLayoutItemGroup class kind (and not ETLayoutItem unlike ETView).
 	Never returns nil. */
-- (ETLayoutItem *) layoutItem
+- (id) layoutItem
 {
 	/*NSAssert([[super layoutItem] isGroup], 
 		@"Layout item in a container must of ETLayoutItemGroup type");*/

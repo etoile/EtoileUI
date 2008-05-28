@@ -208,7 +208,7 @@ static ETView *barViewPrototype = nil;
 /** Returns the layout item representing the receiver in the layout item 
 	tree. 
 	Never returns nil. */
-- (ETLayoutItem *) layoutItem
+- (id) layoutItem
 {
 	// NOTE: We must use -primitiveDescription not to enter an infinite loop
 	// with -description calling -layoutItem

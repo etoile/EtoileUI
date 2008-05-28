@@ -93,7 +93,7 @@
 
 - (id) initWithLayoutView: (NSView *)layoutView;
 
-- (ETLayoutItem *) layoutItem;
+- (id) layoutItem;
 
 - (id) deepCopy;
 
