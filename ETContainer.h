@@ -65,9 +65,6 @@
 	NSString *_path; /* A path type could replace NSString later */
 	id _dataSource;
 	id _delegate; // TODO: check this ivar doesn't overshadow a superclass ivar
-	/* Template Items used by ETContainer(ETController) */
-	ETLayoutItem *_templateItem;
-	ETLayoutItemGroup *_templateItemGroup;
 	
 	BOOL _subviewHitTest;
 	SEL _doubleClickAction;
@@ -89,6 +86,12 @@
 	NSRect _prevInsertionIndicatorRect; 
 	
 	id <ETInspector> _inspector;
+
+	/* ETContainer(ETController) ivars, they will be removed later */
+	ETLayoutItem *_templateItem;
+	ETLayoutItemGroup *_templateItemGroup;
+	Class _objectClass;
+	Class _groupClass;
 }
 
 - (id) initWithLayoutView: (NSView *)layoutView;

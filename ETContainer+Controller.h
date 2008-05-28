@@ -37,12 +37,48 @@
 #import <AppKit/AppKit.h>
 #import <EtoileUI/ETContainer.h>
 
+// TODO: Turn this category into a standalone subclass of NSObjectController or
+// NSController.
 
-@interface ETContainer (ETController) 
+/** WARNING: the following overview is work-in-progress and not exactly 
+	accurate.
+	When a controller is set, it's very important to ensure its layout item is 
+	a base item, otherwise the wrong template items may be look up in the 
+	ancestor layout item instead of using the one declared in the controller 
+	bound to the container. 
+	ETController directly sorts object of the content and doesn't maintain 
+	arranged objects as a collection distinct from the content. */
+@interface ETContainer (ETController)
+
+- (id) content;
+
+/** The content must be either an ETContainer or ETLayoutItemGroup instance to 
+	be valid, otherwise an invalid argument exception is raised. */
+//- (void) setContent: (id <ETCollection, ETMutableCollection>)content;
+//- (id) arrangedObjects;
 
 - (ETLayoutItem *) templateItem;
 - (void) setTemplateItem: (ETLayoutItem *)template;
 - (ETLayoutItemGroup *) templateItemGroup;
 - (void) setTemplateItemGroup: (ETLayoutItemGroup *)template;
+- (Class) objectClass;
+- (void) setObjectClass: (Class)modelClass;
+- (Class) groupClass;
+- (void) setGroupClass: (Class)modelClass;
+
+- (id) newObject;
+- (id) newGroup;
+- (void) add: (id)sender;
+- (void) addGroup: (id)sender;
+- (void) insert: (id)sender;
+- (void) insertGroup: (id)sender;
+- (void) remove: (id)sender;
+
+- (unsigned int) insertionIndex;
+
+//- (NSArray *) sortDescriptors;
+//- (void) setSortDescriptors: (NSArray *)sortDescriptors;
+//- (void) rearrangeObjects;
+//- (void) commitEditing;
 
 @end

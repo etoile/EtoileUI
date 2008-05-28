@@ -37,29 +37,204 @@
 
 #import <EtoileUI/ETContainer+Controller.h>
 #import <EtoileUI/ETContainer.h>
+#import <EtoileUI/ETLayoutItemGroup.h>
 #import <EtoileUI/ETCompatibility.h>
 
 
 @implementation ETContainer (Controller)
 
+- (id) content
+{
+	return self;
+}
+
+/** Returns the template item used to create leaf items. This template item
+	is used as a prototype to make new layout items by 
+	-[ETLayoutItemGroup newItem].
+	This method returns nil by default and -[ETLayoutItemGroup newItem] will 
+	simply create a new ETLayoutItem instance in such case. */
 - (ETLayoutItem *) templateItem
 {
 	return _templateItem;
 }
 
+/** Returns the template item used to create branch items. This template item
+	is used as a prototype to make new layout item groups by 
+	-[ETLayoutItemGroup newItemGroup].
+	This method returns nil by default and -[ETLayoutItemGroup newItemGroup] 
+	will simply create a new ETLayoutItemGroup instance in such case. */
 - (ETLayoutItemGroup *) templateItemGroup
 {
 	return _templateItemGroup;
 }
 
+/** Sets the template item used to create leaf items. This template item
+	is used as a prototype to make new layout items by 
+	-[ETLayoutItemGroup newItem].
+	You can pass an instance of any ETLayoutItem class or subclass. */
 - (void) setTemplateItem: (ETLayoutItem *)template
 {
 	ASSIGN(_templateItem, template);
 }
 
+/** Sets the template item used to create branch items. This template item
+	is used as a prototype to make new layout item groups by 
+	-[ETLayoutItemGroup newItemGroup].
+	You can pass an instance of any ETLayoutItemGroup class or subclass. */
 - (void) setTemplateItemGroup: (ETLayoutItemGroup *)template
 {
 	ASSIGN(_templateItemGroup, template);
 }
+
+/** Returns the class used to create model objects for leaf items. */
+- (Class) objectClass
+{
+	return _objectClass;
+}
+
+/** Sets the class used to create model objects for leaf items.
+	See also -newObject. */
+- (void) setObjectClass: (Class)modelClass
+{
+	ASSIGN(_objectClass, modelClass);
+}
+
+/** Returns the group class used to create model objects for branch items.*/
+- (Class) groupClass
+{
+	return _groupClass;
+}
+/** Sets the class used to create model objects for branch items.
+	See also -newGroup. */
+- (void) setGroupClass: (Class)modelClass
+{
+	ASSIGN(_groupClass, modelClass);
+}
+
+/** Creates and returns a new object that can be either a layout item clone of 
+	-templateItem or a fresh instance of -objectClass. 
+	If both a template item and an object class are set, the returned object 
+	is a layout item with a new instance of -objectClass set as its 
+	represented object. 
+	This method is used by -add: and -insert: actions to generate the object 
+	to be inserted into the content of the controller. 
+	Take note that the autoboxing feature of -[ETLayoutItemGroup addObject:] 
+	will take care of wrapping the created object into a layout item if needed. */
+- (id) newObject
+{
+	id object = nil;
+
+	if ([self templateItem] != nil)
+	{
+		object = [[self layoutItem] newItem]; /* Calls -templateItem */
+	}
+
+	if ([self objectClass] != nil)
+	{
+		id modelObject = AUTORELEASE([[[self objectClass] alloc] init]);
+
+		if (object != nil)
+		{
+			[object setRepresentedObject: modelObject];
+		}
+		else
+		{
+			object = modelObject;
+		}
+	}
+
+	return object;
+}
+
+/** Creates and returns a new object group that can be either a layout item 
+	group clone of -templateItemGroup or a fresh instance of -groupClass. 
+	If both a template item group and an group class are set, the returned 
+	object is a layout item group with a new instance of -groupClass set as its 
+	represented object. 
+	This method is used by -addGroup: and -insertGroup: actions to generate the 
+	object to be inserted into the content of the controller. 
+	Take note that the autoboxing feature of -[ETLayoutItemGroup addObject:] 
+	will take care of wrapping the created object into a layout item if needed. */
+- (id) newGroup
+{
+	id object = nil;
+
+	if ([self templateItemGroup] != nil)
+	{
+		object = [[self layoutItem] newItemGroup]; /* Calls -templateItemGroup */
+	}
+
+	if ([self objectClass] != nil)
+	{
+		id modelObject = AUTORELEASE([[[self objectClass] alloc] init]);
+
+		if (object != nil)
+		{
+			[object setRepresentedObject: modelObject];
+		}
+		else
+		{
+			object = modelObject;
+		}
+	}
+
+	return object;
+}
+
+/** Creates a new object by calling -newObject and adds it to the content. */
+- (void) add: (id)sender
+{
+	[[self content] addObject: [self newObject]];
+}
+
+/** Creates a new object group by calling -newGroup and adds it to the content. */
+- (void) addGroup: (id)sender
+{
+	[[self content] addObject: [self newGroup]];
+}
+
+/** Creates a new object by calling -newGroup and inserts it to the content at 
+	-insertionIndex. */
+- (void) insert: (id)sender
+{
+	[[self content] insertObject: [self newObject] 
+	                     atIndex: [self insertionIndex]];
+}
+
+/** Creates a new object group by calling -newGroup and inserts it to the 
+	content at -insertionIndex. */
+- (void) insertGroup: (id)sender
+{
+	[[self content] insertObject: [self newGroup] 
+	                     atIndex: [self insertionIndex]];
+}
+
+/** Removes all selected objects in the content. Selected objects are retrieved 
+	by calling -selectedItemsInLayout on the content. */
+- (void) remove: (id)sender
+{
+	NSArray *selectedItems = [[self content] selectedItemsInLayout];
+
+	/* Removed items are temporarily retained by the array returned by 
+	   -selectedItemsInLayout, therefore we can be sure we won't trigger the 
+	   release of an already deallocated item. The typical case would be 
+	   removing an item from a parent that was also selected and already got 
+	   removed from the layout item tree. */
+	[selectedItems makeObjectsPerformSelector: @selector(removeFromParent)];
+}
+
+/** Returns the position in the content, at which -insert: and -insertGroup: 
+	will insert the object they create. The returned value is the last 
+	selection index in the content. */
+- (unsigned int) insertionIndex
+{
+	return [[[self content] selectionIndexes] lastIndex];
+}
+
+/* Not really needed */
+// - (void) commitEditing
+// {
+// 	[[self content] reloadAndUpdateLayout];
+// }
 
 @end
