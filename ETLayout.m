@@ -33,7 +33,8 @@
 	ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
 	THE POSSIBILITY OF SUCH DAMAGE.
  */
- 
+
+#import <EtoileFoundation/Macros.h>
 #import <EtoileUI/ETLayoutItemGroup.h>
 
 #import <EtoileUI/ETLayout.h>
@@ -747,6 +748,33 @@
 - (NSArray *) selectedItems
 {
 	return nil;
+}
+
+/** Returns the index paths for the selected items by taking account these 
+	index paths must be relative to the layout context.
+	If a layout view is used, this method is useful to synchronize the selection 
+	state of the layout item tree with the selection reported by -selectedItems. 
+	You can synchronize the selection between a layout view and the layout item 
+	tree with the following code: 
+	[[self layoutContext] setSelectionIndexPaths: [self selectionIndexPaths]]
+	TODO: We need more control over the way we set the selection in the layout 
+	item tree. Calling -setSelectionIndexPaths: presently resets the selection 
+	state of all descendent items even the hidden ones in the layout (like the 
+	children of a collapsed row in an outline view). Various new methods could 
+	be introduced like -extendsSelectionIndexPaths: and 
+	-restrictsSelectionIndexPaths: to synchronize the selection by delta for 
+	newly selected and deselected items. Another possibility would be a method 
+	like -setSelectionIndexPathsInLayout:, but its usefulness is more limited. */
+- (NSArray *) selectionIndexPaths
+{
+	NSMutableArray *indexPaths = [NSMutableArray array];
+
+	FOREACH([self selectedItems], item, ETLayoutItem *)
+	{
+		[indexPaths addObject: [item indexPathFromItem: (id)[self layoutContext]]];
+	}
+
+	return indexPaths;
 }
 
 /* 

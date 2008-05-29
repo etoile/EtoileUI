@@ -1101,7 +1101,8 @@
 	}
 }
 
-/** Sets the selected items in the layout item subtree attached to the receiver. */
+/** Sets the selected items in the layout item subtree attached to the receiver. 
+	TODO: See [ETLayout selectionIndexPaths].*/
 - (void) setSelectionIndexPaths: (NSArray *)indexPaths
 {
 	[self applySelectionIndexPaths: [NSMutableArray arrayWithArray: indexPaths]];

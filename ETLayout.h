@@ -180,6 +180,7 @@ typedef enum _ETSizeConstraintStyle
 - (void) setUpLayoutView;
 
 - (NSArray *) selectedItems;
+- (NSArray *) selectionIndexPaths;
 
 /* ETDecoratorLayout */
 

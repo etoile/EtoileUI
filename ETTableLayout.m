@@ -50,6 +50,7 @@
 
 @interface ETTableLayout (Private)
 - (void) _updateDisplayedPropertiesFromSource;
+- (NSArray *) selectionIndexPaths;
 @end
 
 @interface ETTableLayout (ETableLayoutDisplayViewGeneration)
@@ -339,12 +340,13 @@
    -selectedItems. */
 - (void) tableViewSelectionDidChange: (NSNotification *)notif
 {
+	ETLog(@"Selection did change to %@ in layout view %@ of %@", 
+		[self selectionIndexPaths], [self layoutView], [self container]);
+
 	id delegate = [[self container] delegate];
-	NSArray *layoutSelectedItems = [self selectedItems];
-	NSArray *selection = [layoutSelectedItems valueForKey: @"indexPath"];
 	
 	/* Update selection state in the layout item tree */
-	[[self container] setSelectionIndexPaths: selection];
+	[[self container] setSelectionIndexPaths: [self selectionIndexPaths]];
 
 	if ([delegate respondsToSelector: @selector(tableViewSelectionDidChange:)])
 	{
@@ -515,13 +517,10 @@
 - (BOOL) tableView: (NSTableView *)tv writeRowsWithIndexes: (NSIndexSet *)rowIndexes 
 	toPasteboard: (NSPasteboard*)pboard 
 {
-#if 0
-	// NOTE: On Mac OS X, -currentEvent returns a later event rather than the 
-	// mouse down that began the drag when the user moves the mouse too quickly.
-	id dragEvent = ETEVENT([NSApp currentEvent], nil, ETDragPickingMask);
-#else
+	// NOTE: On Mac OS X and GNUstep, -[NSApp currentEvent] returns a later 
+	// event rather than the mouse down that began the drag when the user moves 
+	// the mouse too quickly.
 	id dragEvent = ETEVENT([self lastDragEvent], nil, ETDragPickingMask);
-#endif
 
 	NSAssert3([[dragEvent window] isEqual: [tv window]], @"NSApp current "
 		@"event %@ in %@ -tableView:writeRowsWithIndexes:toPasteboard: doesn't "
@@ -599,6 +598,7 @@
 
 - (void) setLastDragEvent: (NSEvent *)event
 {
+	ETLog(@"Set last drag event to %@", event);
 	_lastDragEvent = event;
 }
 
@@ -649,6 +649,71 @@
 	[[self eventHandler] draggedImage: anImage endedAt: aPoint operation: operation];
 }
 
+
+#ifdef GNUSTEP
+
+// TODO: Remove this ugly hack once -canDragRowsWithIndexes: is implemented on GNUstep
+- (BOOL) _startDragOperationWithEvent: (NSEvent *) theEvent
+{
+  NSPasteboard *pboard;
+
+	// NOTE: The present method is called by NSTableView so we must not send 
+	// -setLastDragEvent: in case the table view is set up directly. For example, 
+	// if you omit the -isKindOfClass: check it results in an unknown selector 
+	// assertion if you drag a row in NSOpenPanel.
+	if ([[self dataSource] isKindOfClass: [ETTableLayout class]])
+		[[self dataSource] setLastDragEvent: theEvent];
+
+  pboard = [NSPasteboard pasteboardWithName: NSDragPboard];
+  if ([self _writeRows: _selectedRows
+            toPasteboard: pboard] == YES)
+    {
+      NSPoint	p = NSZeroPoint;
+      NSImage	*dragImage;
+      NSSize	s;
+      // FIXME
+      NSArray *cols = nil;
+
+      dragImage = [self dragImageForRowsWithIndexes: _selectedRows
+                        tableColumns: cols
+                        event: theEvent
+                        offset: &p];
+
+      /*
+       * Store image offset in s ... the returned
+       * value is the position of the center of
+       * the image, so we adjust to the bottom left
+       * corner.
+       */
+       s = [dragImage size];
+       s.width = p.x - s.width/2;
+       s.height = p.y + s.height/2; // View is flipped
+
+       /*
+	* Find the current mouse location and adjust
+	* it to determine the location of the bottom
+	* left corner of the image in this view's
+	* coordinate system.
+	*/
+       p = [self convertPoint: [theEvent locationInWindow] fromView: nil];
+       p.x += s.width;
+       p.y += s.height;
+	
+
+       [self dragImage: dragImage
+		    at: p
+		offset: NSMakeSize(0, 0)
+		 event: theEvent
+	    pasteboard: pboard
+	        source: self
+	     slideBack: YES];
+      return YES;
+    }
+  return NO;
+}
+
+#else
+
 /* We implement this method only because [NSApp currentEvent] in 
    -tableView:writeRowsWithIndexes:toPasteboard: isn't the expected mouse down 
    event that triggered the drag when the mouse is moved/dragged very quickly. */
@@ -665,14 +730,16 @@
 		NSStringFromPoint([event locationInWindow]), 
 		NSStringFromPoint(pointInWindow));
 	
-	// NOTE: Present method is called by NSTableView so we must not send 
-	// -setLastDragEvent: in case NSTableView is set up directly. For example, 
-	// otherwise it results in an unknown selector assertion if you drag a row
-	// in NSOpenPanel.
+	// NOTE: The present method is called by NSTableView so we must not send 
+	// -setLastDragEvent: in case the table view is set up directly. For example, 
+	// if you omit the -isKindOfClass: check it results in an unknown selector 
+	// assertion if you drag a row in NSOpenPanel.
 	if ([[self dataSource] isKindOfClass: [ETTableLayout class]])
 		[[self dataSource] setLastDragEvent: event];
 	return YES;
 }
+
+#endif
 
 @end
 
