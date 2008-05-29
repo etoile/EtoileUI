@@ -617,7 +617,7 @@ static ETView *barViewPrototype = nil;
 
 - (void) displayIfNeededInRectIgnoringOpacity:(NSRect)aRect
 {
-	ETLog(@"-displayIfNeededInRectIgnoringOpacity:");
+	//ETLog(@"-displayIfNeededInRectIgnoringOpacity:");
 	[super displayIfNeededInRectIgnoringOpacity: aRect];
 }
 
@@ -629,13 +629,13 @@ static ETView *barViewPrototype = nil;
 
 - (void) displayRect:(NSRect)aRect
 {
-	ETLog(@"-displayRect:");
+	//ETLog(@"-displayRect:");
 	[super displayRect: aRect];
 }
 
 - (void) displayRectIgnoringOpacity:(NSRect)aRect
 {
-	ETLog(@"-displayRectIgnoringOpacity:");
+	//ETLog(@"-displayRectIgnoringOpacity:");
 	[super displayRectIgnoringOpacity: aRect];
 }
 
@@ -643,7 +643,7 @@ static ETView *barViewPrototype = nil;
 - (void) displayRectIgnoringOpacity: (NSRect)aRect 
                           inContext: (NSGraphicsContext *)context
 {
-	NSLog(@"-displayRectIgnoringOpacity:inContext:");
+	//ETLog(@"-displayRectIgnoringOpacity:inContext:");
 	[super displayRectIgnoringOpacity: aRect inContext: context];
 
 	/* We always composite the rendering chain on top of each view -drawRect: 
@@ -664,7 +664,7 @@ static ETView *barViewPrototype = nil;
 //_displayRectIgnoringOpacity:isVisibleRect:rectIsVisibleRectForView:
 - (void) _recursiveDisplayAllDirtyWithLockFocus: (BOOL)lockFocus visRect: (NSRect)aRect
 {
-	//NSLog(@"-_recursiveDisplayAllDirtyWithLockFocus:visRect:");
+	//ETLog(@"-_recursiveDisplayAllDirtyWithLockFocus:visRect:");
 	[super _recursiveDisplayAllDirtyWithLockFocus: lockFocus visRect: aRect];
 	
 	/* We always composite the rendering chain on top of each view -drawRect: 
