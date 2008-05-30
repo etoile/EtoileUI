@@ -45,7 +45,6 @@
 {
 	NSMutableDictionary *_pickedObjects;
 	unsigned int _pickboardRef;
-	NSWindow *_pickPalette;
 }
 
 /* Factory Methods */

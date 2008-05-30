@@ -37,6 +37,8 @@
 #import <EtoileFoundation/ETCollection.h>
 #import <EtoileUI/ETPickboard.h>
 #import <EtoileUI/ETContainer.h>
+#import <EtoileUI/ETLayoutItem.h>
+#import <EtoileUI/ETWindowItem.h>
 #import <EtoileUI/ETFlowLayout.h>
 #import <EtoileUI/ETOutlineLayout.h>
 #import <EtoileUI/ETCompatibility.h>
@@ -62,7 +64,10 @@ static ETPickboard *systemPickboard = nil;
 + (ETPickboard *) systemPickboard
 {
 	if (systemPickboard == nil)
+	{
 		systemPickboard = [[ETPickboard alloc] init];
+		[systemPickboard setName: _(@"Shelf")];
+	}
 
 	return systemPickboard; 
 }
@@ -85,7 +90,10 @@ static ETPickboard *localPickboard = nil;
 + (ETPickboard *) localPickboard
 {
 	if (localPickboard == nil)
+	{
 		localPickboard = [[ETPickboard alloc] init];
+		[localPickboard setName: _(@"Local Pickboard")];
+	}
 
 	return localPickboard; 
 }
@@ -125,19 +133,17 @@ static ETPickboard *activePickboard = nil;
 	{
 		_pickedObjects = [[NSMutableDictionary alloc] init];
 		_pickboardRef = 0;
+		[self setName: _(@"Pickboard")];
 		
 		/* UI set up */
 		ETContainer *pickView = [[ETContainer alloc] initWithFrame: PALETTE_FRAME layoutItem: self];
-		
-		// FIXME: Update this code when a layout item representation exists for NSWindow instances.
-		_pickPalette = [[NSWindow alloc] initWithContentRect: PALETTE_FRAME
-		                                           styleMask: NSTitledWindowMask 
-												     backing: NSBackingStoreBuffered
-													   defer: YES];
+		ETWindowItem *windowItem = [[ETWindowItem alloc] init]; /* Will be released on close */
+
 		[pickView setLayout: [PICKBOARD_LAYOUT layout]];
-		[_pickPalette setContentView: pickView];
-		[_pickPalette setTitle: _(@"Pickboard")];
-		RELEASE(pickView);
+		/* Moves the object browser from the floating item group to the window 
+		   layer */
+		[[self lastDecoratorItem] setDecoratorItem: windowItem];
+		RELEASE(pickView); /* Was retained on -initWithFrame:layoutItem: */
 	}
 	
 	return self;
@@ -146,7 +152,6 @@ static ETPickboard *activePickboard = nil;
 - (void) dealloc
 {
 	DESTROY(_pickedObjects);
-	DESTROY(_pickPalette);
 	
 	[super dealloc];
 }
@@ -335,7 +340,7 @@ static ETPickboard *activePickboard = nil;
 /** Returns the window embedding the UI representation of the receiver. */
 - (NSWindow *) pickPalette
 {
-	return _pickPalette;
+	return [[self windowDecoratorItem] window];
 }
 
 /** Brings the pickboard window to the front and makes it the first responder. */
