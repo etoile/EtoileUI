@@ -82,10 +82,7 @@
 	#ifndef GNUSTEP
 	insertionIndex = [appMenu indexOfItemWithTitle: _(@"Services")];
 	#else
-	// FIXME: Decide where Show/Hide Development Menu must be put, application
-	// menu is probably an valid initial choice. Later Services menu could be 
-	// better.
-	insertionIndex = [appMenu numberOfItems];
+	insertionIndex = [appMenu indexOfItemWithTitle: _(@"Hide")];
 	#endif
 
 	menuItem = [[NSMenuItem alloc] initWithTitle: _(@"Show Development Menu")
