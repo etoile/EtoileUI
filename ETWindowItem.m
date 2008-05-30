@@ -42,7 +42,6 @@
 #import <EtoileUI/NSWindow+Etoile.h>
 #import <EtoileUI/ETCompatibility.h>
 
-#define IS_EMPTY_STRING(x) (x == nil || [x isEqual: @""])
 #define NC [NSNotificationCenter defaultCenter]
 
 @implementation ETWindowItem
@@ -68,10 +67,11 @@
 			_itemWindow = [[NSWindow alloc] init];
 		}
 		[_itemWindow setDelegate: self];
-		_usesCustomWindowTitle = (IS_EMPTY_STRING([_itemWindow title]) == NO);
+		_usesCustomWindowTitle = ([self isUntitled] == NO);
 	}
 	
-	ETLog(@"Init item %@ with window %@", self, _itemWindow);
+	ETLog(@"Init item %@ with window %@ %@ at %@", self, [_itemWindow title],
+		_itemWindow, NSStringFromRect([_itemWindow frame]));
 	
 	return self;
 }
@@ -85,7 +85,8 @@
 
 - (void) dealloc
 {
-	ETLog(@"Dealloc item %@ with window %@", self, _itemWindow);
+	ETLog(@"Dealloc item %@ with window %@ %@ at %@", self, [_itemWindow title],
+		_itemWindow, NSStringFromRect([_itemWindow frame]));
 
 	/* Retain the window to be sure we can send it -isReleasedWhenClosed. We 
 	   must defer the deallocation in case -close releases it and drops the
@@ -101,6 +102,12 @@
 	DESTROY(_itemWindow);  /* Balance first retain call */
 
 	[super dealloc];
+}
+
+- (BOOL) isUntitled
+{
+	NSString *title = [[self window] title];
+	return (title == nil || [title isEqual: @""] || [title isEqual: @"Window"]);
 }
 
 /* -windowWillClose: ins't appropriate because it would be called when the window 
