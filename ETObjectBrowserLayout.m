@@ -270,7 +270,7 @@
 		[browserView setLayout: [ETObjectBrowserLayout layout]];
 		/* Moves the object browser from the floating item group to the window 
 		   layer */
-		[[browserView layoutItem] setDecoratorItem: windowItem];
+		[[self lastDecoratorItem] setDecoratorItem: windowItem];
 
 		RELEASE(browserView); /* Was retained on -initWithFrame:layoutItem: */
 	}
@@ -313,13 +313,7 @@
 
 - (NSWindow *) window
 {
-	id window = nil;
-	id lastDecorator = [self lastDecoratorItem];
-	
-	if ([lastDecorator isKindOfClass: [ETWindowItem class]])
-		window = [lastDecorator window];
-
-	return window;
+	return [[self windowDecoratorItem] window];
 }
 
 // FIXME: Implement or remove
