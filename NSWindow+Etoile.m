@@ -49,12 +49,15 @@
 		| NSMiniaturizableWindowMask);
 }
 
+// FIXME: Window closing doesn't work on GNUstep when YES is passed for defer, 
+// the window remains on screen.
+
 - (id) init
 {
 	return [self initWithContentRect: WINDOW_CONTENT_RECT
 					       styleMask: [NSWindow defaultStyleMask]
 							 backing: NSBackingStoreBuffered
-							   defer: YES];
+							   defer: NO];
 }
 
 - (id) initWithFrame: (NSRect)frame styleMask: (unsigned int)windowStyle
@@ -64,7 +67,7 @@
 	return [self initWithContentRect: contentRect
 					       styleMask: windowStyle
 							 backing: NSBackingStoreBuffered
-							   defer: YES];
+							   defer: NO];
 }
 
 - (id) initWithContentRect: (NSRect)rect styleMask: (unsigned int)windowStyle
