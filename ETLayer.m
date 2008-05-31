@@ -145,11 +145,23 @@
 {
 	RETAIN(item);
 	/* Before setting the decorator, the item must have become a child of the 
-	   window layer, because -handleAttachItem: triggers -handleDetachItem: in 
-	   the eixisting parent of this item. -handleDetachItem removes the display 
-	   view in -handleDetachViewOfItem: and once the decorator is set, the 
-	   display view will be the window view (NSThemeFrame on Mac OS X) */	
+	   window layer, because -[super handleAttachItem:] triggers 
+	   -handleDetachItem: in the existing parent of this item. -[previousParent 
+	   handleDetachItem:] then removes the item display view from its superview 
+	   by the mean of -[previousParent handleDetachViewOfItem:], and if 
+	   -setDecoratorItem: has already been called, removing the item display 
+	   view will mean removing the window view returned by 
+	   -[ETWindowItem supervisorView] (NSThemeFrame on Mac OS X).
+	   Hence you can expect problems similar to what is described 
+	   -[ETWindowLayer handleAttachViewOfItem:] if you change the order of the 
+	   code.
+	   Take note that the overriden -handleDetachViewOfItem: in ETWindowLayer 
+	   doesn't help here, because -handleDetachViewOfItem: is called on the old 
+	   parent. */	
 	[super handleAttachItem: item];
+	// NOTE: We could eventually check whether the item to decorate already 
+	// has a window decorator before creating a new one that will be 
+	// refused by -setDecoratorItem: and hence never used. 
 	[[item lastDecoratorItem] setDecoratorItem: [ETWindowItem layoutItem]];
 	RELEASE(item);
 }
