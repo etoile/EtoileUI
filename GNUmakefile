@@ -5,17 +5,18 @@ include $(GNUSTEP_MAKEFILES)/common.make
 ADDITIONAL_CPPFLAGS += -std=c99
 ADDITIONAL_OBJCFLAGS += -I. 
 
-ifeq ($(test), yes)
-BUNDLE_NAME = EtoileUI
-else
 FRAMEWORK_NAME = EtoileUI
-endif
-
-PROJECT_NAME=$(FRAMEWORK_NAME)
+PROJECT_NAME = $(FRAMEWORK_NAME)
 
 EtoileUI_LIBRARIES_DEPEND_UPON += -lm -lEtoileFoundation
 
-#EtoileUI_SUBPROJECTS = 
+ifeq ($(test), yes)
+	BUNDLE_NAME = $(FRAMEWORK_NAME)
+
+	EtoileUI_SUBPROJECTS = Tests
+	EtoileUI_LDFLAGS += -lUnitKit $(EtoileUI_LIBRARIES_DEPEND_UPON)
+endif
+
 
 EtoileUI_OBJC_FILES = \
 	ETApplication.m \
@@ -61,10 +62,6 @@ EtoileUI_OBJC_FILES = \
 	NSView+Etoile.m \
 	NSWindow+Etoile.m
 
-
-ifeq ($(test), yes)
-EtoileUI_OBJC_FILES +=
-endif
 
 EtoileUI_HEADER_FILES_DIR +=
 EtoileUI_HEADER_FILES = \
@@ -123,18 +120,6 @@ EtoileUI_RESOURCE_FILES = \
 	English.lproj/TablePrototype.gorm \
 	English.lproj/ViewModelPrototype.gorm
 
-
-ifeq ($(FOUNDATION_LIB), apple)
-ifeq ($(test), yes)
-	EtoileUI_OBJC_LIBS += -framework UnitKit
-endif
-else
-ifeq ($(test), yes)
-	EtoileUI_LDFLAGS += -lUnitKit
-endif
-endif
-
-#include $(GNUSTEP_MAKEFILES)/aggregate.make
 
 ifeq ($(test), yes)
 include $(GNUSTEP_MAKEFILES)/bundle.make
