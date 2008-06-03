@@ -87,8 +87,10 @@
 	id view = AUTORELEASE([[NSView alloc] initWithFrame: NSMakeRect(0, 0, 100, 50)]);
 	id subview0 = AUTORELEASE([[NSView alloc] initWithFrame: NSMakeRect(0, 0, 100, 50)]);
 	id subview1 = AUTORELEASE([[CustomView alloc] initWithFrame: NSMakeRect(0, 0, 100, 50)]);
+	//id subview10 = AUTORELEASE([[CustomView alloc] initWithFrame: NSMakeRect(0, 0, 100, 50)]);
+	//id subview11 = AUTORELEASE([[NSView alloc] initWithFrame: NSMakeRect(0, 0, 100, 50)]);
 	id subview00 = AUTORELEASE([[NSView alloc] initWithFrame: NSMakeRect(0, 0, 100, 50)]);
-	
+
 	id subview01 = AUTORELEASE([[ETView alloc] initWithFrame: NSMakeRect(0, 0, 100, 50)]);
 	id subview010 = AUTORELEASE([[NSView alloc] initWithFrame: NSMakeRect(0, 0, 100, 50)]);
 	id subview02 = AUTORELEASE([[ETContainer alloc] initWithFrame: NSMakeRect(0, 0, 100, 50)]);
