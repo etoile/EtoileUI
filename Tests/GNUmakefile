@@ -7,6 +7,7 @@ EtoileUITests_OBJC_FILES = \
 	test_ETLayoutItemBuilder.m \
 	test_ETPickboard.m \
 	test_ETContainer.m \
+	test_ETController.m \
 	test_ETView.m
 
 include $(GNUSTEP_MAKEFILES)/subproject.make

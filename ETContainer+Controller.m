@@ -164,9 +164,9 @@
 		object = [[self layoutItem] newItemGroup]; /* Calls -templateItemGroup */
 	}
 
-	if ([self objectClass] != nil)
+	if ([self groupClass] != nil)
 	{
-		id modelObject = AUTORELEASE([[[self objectClass] alloc] init]);
+		id modelObject = AUTORELEASE([[[self groupClass] alloc] init]);
 
 		if (object != nil)
 		{
