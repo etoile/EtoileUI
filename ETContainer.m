@@ -1104,6 +1104,18 @@ NSString *ETLayoutItemPboardType = @"ETLayoutItemPboardType"; // FIXME: replace 
 	return [(ETLayoutItemGroup *)[self layoutItem] indexOfItem: item];
 }
 
+/** See -[ETLayoutItemGroup containsItem:] */
+- (BOOL) containsItem: (ETLayoutItem *)item
+{
+	return [(ETLayoutItemGroup *)[self layoutItem] containsItem: item];
+}
+
+/** See -[ETLayoutItemGroup numberOfItems] */
+- (int) numberOfItems
+{
+	return [(ETLayoutItemGroup *)[self layoutItem] numberOfItems];
+}
+
 /** See -[ETLayoutItemGroup items] */
 - (NSArray *) items
 {

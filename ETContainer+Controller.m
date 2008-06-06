@@ -215,6 +215,7 @@
 {
 	NSArray *selectedItems = [[self content] selectedItemsInLayout];
 
+	//ETLog(@"Will remove selected items %@", selectedItems);
 	/* Removed items are temporarily retained by the array returned by 
 	   -selectedItemsInLayout, therefore we can be sure we won't trigger the 
 	   release of an already deallocated item. The typical case would be 
@@ -228,7 +229,13 @@
 	selection index in the content. */
 - (unsigned int) insertionIndex
 {
-	return [[[self content] selectionIndexes] lastIndex];
+	unsigned int index = [[[self content] selectionIndexes] lastIndex];
+
+	/* No selection or no items */
+	if (index == NSNotFound)
+		index = [[self content] numberOfItems];
+
+	return index;
 }
 
 /* Not really needed */

@@ -159,6 +159,8 @@
 - (void) removeItemAtIndex: (int)index;
 - (ETLayoutItem *) itemAtIndex: (int)index;
 - (int) indexOfItem: (ETLayoutItem *)item;
+- (BOOL) containsItem: (ETLayoutItem *)item;
+- (int) numberOfItems;
 - (NSArray *) items;
 - (void) addItems: (NSArray *)items;
 - (void) removeItems: (NSArray *)items;

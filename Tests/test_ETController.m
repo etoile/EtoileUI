@@ -33,21 +33,28 @@
  
 #import <Foundation/Foundation.h>
 #import <AppKit/AppKit.h>
+#import <EtoileUI/ETContainer.h>
 #import <EtoileUI/ETContainer+Controller.h>
 #import <EtoileUI/ETLayoutItem.h>
 #import <EtoileUI/ETCompatibility.h>
 #import <UnitKit/UnitKit.h>
 
 /* NSView subclass for testing the cloning of item templates */
-@interface CustomView : NSView { }
-// Implementation in test_ETLayoutItemBuilder.m
+@interface DummyView : NSView { }
+@end
+@implementation DummyView
 @end
 
-@interface ETContainer (UnitKitTests) <UKTest>
+@interface ETContainer (ControllerTests) <UKTest>
 @end
 
 
-@implementation ETContainer (UnitKitTests)
+@implementation ETContainer (ControllerTests)
+
+- (void) testInit
+{
+	UKTrue([[self content] isEmpty]);
+}
 
 - (void) testNewObject
 {
@@ -69,7 +76,7 @@
 
 	/* Test item template */
 
-	id view = AUTORELEASE([CustomView new]);
+	id view = AUTORELEASE([DummyView new]);
 	id templateItem = [ETLayoutItem layoutItemWithView: view];
 	[self setTemplateItem: templateItem];
 	newObject = [self newObject];
@@ -77,7 +84,7 @@
 
 	UKObjectKindOf(newObject, ETLayoutItem);
 	UKObjectsNotEqual(templateItem, newObject);
-	UKObjectKindOf([newObject view], CustomView);
+	UKObjectKindOf([newObject view], DummyView);
 	UKObjectsNotEqual(view, [newObject view]);
 	UKObjectsNotEqual(newObject2, newObject);
 	UKObjectsNotEqual([newObject2 view], [newObject view]);
@@ -122,7 +129,7 @@
 
 	/* Test item template */
 
-	id view = AUTORELEASE([CustomView new]);
+	id view = AUTORELEASE([DummyView new]);
 	id templateItem = [ETLayoutItemGroup layoutItemWithView: view];
 	[self setTemplateItemGroup: templateItem];
 	newGroup = [self newGroup];
@@ -130,7 +137,7 @@
 
 	UKObjectKindOf(newGroup, ETLayoutItemGroup);
 	UKObjectsNotEqual(templateItem, newGroup);
-	UKObjectKindOf([newGroup view], CustomView);
+	UKObjectKindOf([newGroup view], DummyView);
 	UKObjectsNotEqual(view, [newGroup view]);
 	UKObjectsNotEqual(newGroup2, newGroup);
 	UKObjectsNotEqual([newGroup2 view], [newGroup view]);
@@ -155,6 +162,81 @@
 	//UKObjectsNotSame([newGroup2 representedObject], [newGroup representedObject]);
 	// newGroup2 created by sending -copy
 	//UKObjectsEqual([newGroup2 representedObject], [newGroup representedObject]);
+}
+
+- (void) testAdd
+{
+	[self setObjectClass: [NSDate class]];
+	[self add: nil];
+	id item = [[self contentArray] lastObject];
+
+	UKIntsEqual(1, [[self contentArray] count]);
+	UKObjectKindOf(item, ETLayoutItem);
+	UKObjectKindOf([item representedObject], NSDate);
+
+	[self add: nil];
+	id item2 = [[self contentArray] lastObject];
+
+	UKIntsEqual(2, [[self contentArray] count]);
+	UKObjectsNotSame(item, item2);
+}
+
+- (void) testInsert
+{
+	[self setObjectClass: [NSDate class]];
+	[self insert: nil];
+	id item = [[self contentArray] lastObject];
+
+	UKIntsEqual(1, [[self contentArray] count]);
+	UKObjectKindOf(item, ETLayoutItem);
+	UKObjectKindOf([item representedObject], NSDate);
+
+	[self insert: nil];
+	id item2 = [[self contentArray] lastObject];
+
+	UKIntsEqual(2, [[self contentArray] count]);
+	UKObjectsNotSame(item, item2);
+
+	[self setSelectionIndex: 1];
+	[self insert: nil];
+	id item3 = [[self contentArray] objectAtIndex: 1];
+
+	UKIntsEqual(3, [[self contentArray] count]);
+	UKObjectsNotSame(item, item3);
+	UKObjectsNotSame(item2, item3);
+}
+
+- (void) testRemove
+{
+	[self setObjectClass: [NSDate class]];
+	[self add: nil];
+	[self add: nil];
+	id item1 = [[self contentArray] firstObject];
+	id item2 = [[self contentArray] lastObject];
+
+	[self remove: nil];
+	UKIntsEqual(2, [[self contentArray] count]);
+
+	[self setSelectionIndex: 1];
+	[self remove: nil];
+	UKIntsEqual(1, [[self contentArray] count]);
+	UKFalse([self containsItem: item2]);
+
+	[self add: nil];
+	item2 = [[self contentArray] objectAtIndex: 1];
+	[self add: nil];
+	id item3 = [[self contentArray] lastObject];
+
+	[self setSelectionIndex: 1];
+	[self remove: nil];
+	UKIntsEqual(2, [[self contentArray] count]);
+	UKFalse([self containsItem: item2]);
+	UKObjectsNotSame(item2, [[self contentArray] firstObject]);
+	UKObjectsNotSame(item2, [[self contentArray] lastObject]);
+
+	[self setSelectionIndexes: [NSIndexSet indexSetWithIndexesInRange: NSMakeRange(0, 2)]];
+	[self remove: nil];
+	UKTrue([[self contentArray] isEmpty]);
 }
 
 @end
