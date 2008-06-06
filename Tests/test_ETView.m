@@ -44,6 +44,11 @@
 
 @implementation ETView (UnitKitTests)
 
+- (id) initForTest
+{
+	return [self initWithFrame: NSMakeRect(0, 0, 10, 10)];
+}
+
 - (void) testArchiving
 {
 	id barView = AUTORELEASE([[NSView alloc] initWithFrame: NSMakeRect(-20, 30, 100, 25)]);
@@ -106,6 +111,9 @@
 	UKObjectsSame(mainView, [self contentView]);
 	UKObjectsSame(mainView, [self mainView]);
 	UKObjectsSame(self, [mainView superview]);
+	// NOTE: Next test will fail if the receiver frame is a zero rect because 
+	// then mainView frame is set to a zero rect too in -tile. -init calls 
+	// -initWithFrame: with a zero rect, hence the need for -initForTest.
 	UKFalse(NSEqualSizes([self frame].size, [mainView frame].size));
 	UKTrue(NSEqualPoints(NSZeroPoint, [mainView frame].origin));
 	

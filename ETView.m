@@ -532,7 +532,8 @@ static ETView *barViewPrototype = nil;
 		if ([[self subviews] containsObject: [self mainView]])
 			return;
 		
-		[self addSubview: [self mainView]];
+		if ([self mainView] != nil) /* No content view is set (init case)*/
+			[self addSubview: [self mainView]];
 		[self tile]; /* Update view layout */
 	}
 	else
