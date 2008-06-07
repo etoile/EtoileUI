@@ -157,6 +157,7 @@ static NSFileManager *objectManager = nil;
 
 - (void) doubleClickInViewContainer: (id)sender
 {
+	ETLog(@"-doubleClickInViewContainer:");
 	// NOTE: 'sender' isn't always ETContainer instance. For ETTableLayout it 
 	// is the NSTableView instance in use.
 	[self moveToItem: [viewContainer doubleClickedItem]];
