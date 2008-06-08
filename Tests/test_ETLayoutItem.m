@@ -98,10 +98,24 @@
 	[parentItem setLayout: [ETFlowLayout layout]];
 	
 	[self setParentLayoutItem: parentItem];
-	UKObjectsNotSame(prevParentView, [[self view] superview]);
-	UKNil([[self displayView] superview]); /* View is lazily inserted on layout update */
+	/* -setParentLayoutItem: doesn't touch the view hierarchy */
+	UKObjectsNotSame(parentView, [[self view] superview]);
+	UKObjectsSame(prevParentView, [[self view] superview]);
+	UKObjectsSame([[self displayView] superview], [[self view] superview]);
 	[self setParentLayoutItem: nil]; /* Revert to initial state */
-	
+
+	// TODO: More tests and move the following tests into standalone methods
+
+	/* View is lazily inserted on layout update, unless -handleAttachViewOfItem: 
+	  is called before the layout update occurs and calls this method. 
+	  This special case occurs with a null layout. */
+
+	[parentItem handleAttachViewOfItem: self];
+	/* For flow layout of parentItem, view insertion is delayed */
+	UKNil([[self view] superview]);
+	UKObjectsSame([[self displayView] superview], [[self view] superview]);
+	[parentItem handleDetachViewOfItem: self]; /* Revert to initial state */
+
 	[parentItem addItem: self]; /* Will set parent layout item and update the layout */
 	UKNotNil([[self displayView] superview]); /* View must be inserted as a subview now */
 	UKObjectsSame([parentItem view], [[self displayView] superview]);	
