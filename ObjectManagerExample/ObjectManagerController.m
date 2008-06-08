@@ -72,7 +72,8 @@ static NSFileManager *objectManager = nil;
 	[viewContainer setHasHorizontalScroller: YES];
 	[viewContainer setLayout: AUTORELEASE([[ETStackLayout alloc] init])];
 	[viewContainer reloadAndUpdateLayout];
-	
+
+	[pathContainer setLayout: [ETLineLayout layout]];
 	[[pathContainer layout] setConstrainedItemSize: NSMakeSize(64, 64)];
 	[pathContainer setSource: self];
 	[pathContainer setTarget: self];
