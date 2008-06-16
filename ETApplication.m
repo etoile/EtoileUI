@@ -107,36 +107,30 @@
 	[devMenuItem setTag: DEVMENU_TAG];
 	menu = [[NSMenu alloc] initWithTitle: _(@"Development")];
 	[devMenuItem setSubmenu: menu];
+	RELEASE(menu);
 
 	/* Builds and inserts menu items into the new dev menu */
-	NSMenuItem *menuItem = nil;
 
-	menuItem = [[NSMenuItem alloc] initWithTitle: _(@"Live Development")
-		action: @selector(toggleLiveDevelopment:) keyEquivalent:@""];
-	[menu addItem: menuItem];
-	RELEASE(menuItem);
-	
-	menuItem = [[NSMenuItem alloc] initWithTitle: _(@"Inspect")
-		action: @selector(inspect:) keyEquivalent: @""];
-	[menu addItem: menuItem];
-	RELEASE(menuItem);
-	
-	menuItem = [[NSMenuItem alloc] initWithTitle: _(@"Inspect Selection")
-		action: @selector(inspectSelection:) keyEquivalent: @""];
-	[menu addItem: menuItem];
-	RELEASE(menuItem);
-	
-	menuItem = [[NSMenuItem alloc] initWithTitle: _(@"Browse")
-		action: @selector(browse:) keyEquivalent: @""];
-	[menu addItem: menuItem];
-	RELEASE(menuItem);
+	[menu addItemWithTitle: _(@"Live Development") 
+	                action: @selector(toggleLiveDevelopment:) 
+	         keyEquivalent:@""];
 
-	menuItem = [[NSMenuItem alloc] initWithTitle: _(@"Browse Layout Item Tree")
-		action: @selector(browseLayoutItemTree:) keyEquivalent: @""];
-	[menu addItem: menuItem];
-	RELEASE(menuItem);
+	[menu addItemWithTitle: _(@"Inspect")
+	                action: @selector(inspect:) 
+	         keyEquivalent: @""];
 
-	RELEASE(menu);
+	[menu addItemWithTitle:  _(@"Inspect Selection")
+	                action: @selector(inspectSelection:) 
+	         keyEquivalent: @""];
+	
+	[menu addItemWithTitle: _(@"Browse")
+	                action: @selector(browse:) 
+	         keyEquivalent: @""];
+
+	[menu addItemWithTitle: _(@"Browse Layout Item Tree")
+	                action: @selector(browseLayoutItemTree:) 
+             keyEquivalent: @""];
+
 	return AUTORELEASE(devMenuItem);
 }
 
