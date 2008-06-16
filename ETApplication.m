@@ -77,13 +77,14 @@
 {
 	NSMenu *appMenu = [[[self mainMenu] itemAtIndex: 0] submenu];
 	NSMenuItem *menuItem = nil;
-	int insertionIndex = 0;
+	int insertionIndex = [appMenu numberOfItems]; /* Vertical menu case */
 	
-	#ifndef GNUSTEP
+#ifndef GNUSTEP
 	insertionIndex = [appMenu indexOfItemWithTitle: _(@"Services")];
-	#else
-	insertionIndex = [appMenu indexOfItemWithTitle: _(@"Hide")];
-	#endif
+#else
+	if ([[appMenu menuRepresentation] isHorizontal])
+		insertionIndex = [appMenu indexOfItemWithTitle: _(@"Hide")];
+#endif
 
 	menuItem = [[NSMenuItem alloc] initWithTitle: _(@"Show Development Menu")
 		action: @selector(toggleDevelopmentMenu:) keyEquivalent:@""];
@@ -153,6 +154,7 @@
 
 	if (devMenuItem == nil) /* Show dev menu */
 	{
+		// TODO: Insert before Hide and Quit for vertical menu
 		[[self mainMenu] addItem: [self developmentMenuItem]];
 		[sender setTitle: _(@"Hide Development Menu")];
 	}
