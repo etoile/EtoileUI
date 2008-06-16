@@ -76,7 +76,6 @@
 - (void) _setUpAppMenu
 {
 	NSMenu *appMenu = [[[self mainMenu] itemAtIndex: 0] submenu];
-	NSMenuItem *menuItem = nil;
 	int insertionIndex = [appMenu numberOfItems]; /* Vertical menu case */
 	
 #ifndef GNUSTEP
@@ -86,10 +85,10 @@
 		insertionIndex = [appMenu indexOfItemWithTitle: _(@"Hide")];
 #endif
 
-	menuItem = [[NSMenuItem alloc] initWithTitle: _(@"Show Development Menu")
-		action: @selector(toggleDevelopmentMenu:) keyEquivalent:@""];
-	[appMenu insertItem: menuItem atIndex: insertionIndex];
-	RELEASE(menuItem);
+	[appMenu insertItemWithTitle: _(@"Show Development Menu") 
+	                      action: @selector(toggleDevelopmentMenu:) 
+	               keyEquivalent: @""
+	                     atIndex: insertionIndex];
 }
 
 /** Returns the visible development menu if there is one already inserted in the 
