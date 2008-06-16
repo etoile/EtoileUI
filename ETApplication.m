@@ -46,6 +46,7 @@
 @interface ETApplication (Private)
 - (void) _buildLayoutItemTree;
 - (void) _setUpAppMenu;
+- (int) _defaultInsertionIndexInAppMenu;
 @end
 
 
@@ -76,19 +77,29 @@
 - (void) _setUpAppMenu
 {
 	NSMenu *appMenu = [[[self mainMenu] itemAtIndex: 0] submenu];
-	int insertionIndex = [appMenu numberOfItems]; /* Vertical menu case */
-	
-#ifndef GNUSTEP
-	insertionIndex = [appMenu indexOfItemWithTitle: _(@"Services")];
-#else
-	if ([[appMenu menuRepresentation] isHorizontal])
-		insertionIndex = [appMenu indexOfItemWithTitle: _(@"Hide")];
-#endif
 
 	[appMenu insertItemWithTitle: _(@"Show Development Menu") 
 	                      action: @selector(toggleDevelopmentMenu:) 
 	               keyEquivalent: @""
-	                     atIndex: insertionIndex];
+	                     atIndex: [self _defaultInsertionIndexInAppMenu]];
+}
+
+- (int) _defaultInsertionIndexInAppMenu
+{
+	int insertionIndex = -1; 
+	
+#ifdef GNUSTEP
+	if ([[appMenu menuRepresentation] isHorizontal])
+		insertionIndex = [appMenu indexOfItemWithTitle: _(@"Hide")];
+#else
+	insertionIndex = [appMenu indexOfItemWithTitle: _(@"Services")];
+#endif
+
+	/* Fall back and vertical menu case on GNUstep */
+	if (insertionIndex == -1)
+		insertionIndex = [appMenu numberOfItems];
+
+	return insertionIndex;
 }
 
 /** Returns the visible development menu if there is one already inserted in the 
