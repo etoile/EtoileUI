@@ -46,6 +46,7 @@
 }
 
 - (ETLayoutItemGroup *) layoutItem;
+- (NSMenu *) applicationMenu;
 - (NSMenuItem *) developmentMenuItem;
 
 /* Actions */
