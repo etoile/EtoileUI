@@ -32,6 +32,7 @@
  */
 
 #import <Foundation/Foundation.h>
+#import <Foundation/NSDebug.h>
 #import <AppKit/AppKit.h>
 #import <EtoileUI/ETLayoutItem.h>
 #import <EtoileUI/ETView.h>
@@ -47,6 +48,157 @@
 - (id) initForTest
 {
 	return [self initWithFrame: NSMakeRect(0, 0, 10, 10)];
+}
+
+- (void) testRelease
+{
+#ifdef GNUSTEP
+	GSDebugAllocationActive(YES);
+	//GSDebugAllocationActiveRecordingObjects([ETView class]);
+
+	int allocCount = GSDebugAllocationCount([ETView class]);
+	id view = [[ETView alloc] init];
+
+	UKIntsEqual(2, [view retainCount]);
+	UKIntsEqual(1, [[view layoutItem] retainCount]);
+	UKIntsEqual(allocCount + 1, GSDebugAllocationCount([ETView class]));
+	RELEASE(view);
+	UKIntsEqual(allocCount, GSDebugAllocationCount([ETView class]));
+
+	//ETLog(@"Recorded object allocation: %@", 
+	//	GSDebugAllocationListRecordedObjects([ETView class]));
+
+	GSDebugAllocationActive(NO);
+#endif
+}
+
+- (void) testReleaseItem
+{
+#ifdef GNUSTEP
+	GSDebugAllocationActive(YES);
+	//GSDebugAllocationActiveRecordingObjects([ETView class]);
+
+	/* Basic retain cycle check */
+
+	int allocCount = GSDebugAllocationCount([ETLayoutItem class]);
+	id view = [[ETView alloc] init];
+	id item = [[ETLayoutItem alloc] initWithView: view];
+
+	UKIntsEqual(2, [item retainCount]);
+	UKIntsEqual(2, [[item supervisorView] retainCount]);
+	RELEASE(view);
+	UKIntsEqual(1, [[item supervisorView] retainCount]);
+	UKIntsEqual(allocCount + 1, GSDebugAllocationCount([ETLayoutItem class]));
+	RELEASE(item);
+	UKIntsEqual(allocCount, GSDebugAllocationCount([ETLayoutItem class]));
+
+	/* Check retain cycle with an autoreleased item */
+
+	CREATE_AUTORELEASE_POOL(pool1);
+
+	view = [[ETView alloc] init];
+	item = [ETLayoutItem layoutItemWithView: view];
+
+	UKIntsEqual(2, [item retainCount]);
+	UKIntsEqual(2, [[item supervisorView] retainCount]);
+	RELEASE(view);
+	UKIntsEqual(1, [[item supervisorView] retainCount]);
+	UKIntsEqual(allocCount + 1, GSDebugAllocationCount([ETLayoutItem class]));
+	DESTROY(pool1);
+	UKIntsEqual(allocCount, GSDebugAllocationCount([ETLayoutItem class]));
+
+	/* Check retain cycle with an item owned by a parent */
+
+	CREATE_AUTORELEASE_POOL(pool2);
+
+	allocCount = GSDebugAllocationCount([ETLayoutItem class])
+		+ GSDebugAllocationCount([ETLayoutItemGroup class]);
+	view = [[ETView alloc] init];
+	item = [[ETLayoutItem alloc] initWithView: view];
+	id parent = [[ETLayoutItemGroup alloc] init];
+
+	[parent addItem: item];
+
+	UKIntsEqual(3, [item retainCount]);
+	UKIntsEqual(2, [[item supervisorView] retainCount]);
+	UKIntsEqual(1, [parent retainCount]); /* Not retained by item */
+	RELEASE(view);
+	UKIntsEqual(1, [[item supervisorView] retainCount]);
+	UKIntsEqual(allocCount + 2, GSDebugAllocationCount([ETLayoutItem class])
+		+ GSDebugAllocationCount([ETLayoutItemGroup class]));
+	RELEASE(parent);
+	RELEASE(item);
+	UKIntsEqual(allocCount, GSDebugAllocationCount([ETLayoutItem class])
+		+ GSDebugAllocationCount([ETLayoutItemGroup class]));
+
+	/* Check release of a complex layout item tree */
+
+	CREATE_AUTORELEASE_POOL(pool3);
+
+	allocCount = GSDebugAllocationCount([ETLayoutItem class])
+		+ GSDebugAllocationCount([ETLayoutItemGroup class])
+		+ GSDebugAllocationCount([ETView class]);
+	id view1 = [[ETView alloc] init];
+	id view2 = AUTORELEASE([[ETView alloc] init]);
+	item = [[ETLayoutItem alloc] initWithView: view2];
+	parent = [[ETLayoutItemGroup alloc] initWithView: view1];
+	id ancestor = AUTORELEASE([[ETLayoutItemGroup alloc] init]);
+
+	[ancestor addItem: parent];	
+	[parent addItem: item]; /* Inserts view2 into view1 */
+
+	UKIntsEqual(3, [item retainCount]); /* Retained by view2 and parent */
+	UKIntsEqual(3, [view2 retainCount]); /* Retained by item and view1 (parent view) */
+	UKIntsEqual(3, [parent retainCount]); /* Retained by view1 ancestor */
+	UKIntsEqual(2, [view1 retainCount]); /* Retained by parent */
+	UKIntsEqual(1, [ancestor retainCount]); /* Retained by nobody */
+
+	RELEASE(view1);
+	UKIntsEqual(1, [view1 retainCount]);
+	UKIntsEqual(3, [item retainCount]);
+
+	RELEASE(item);
+	RELEASE(parent);
+	UKIntsEqual(2, [item retainCount]);
+	UKIntsEqual(3, [view2 retainCount]);
+	UKIntsEqual(2, [parent retainCount]);
+	UKIntsEqual(1, [view1 retainCount]);
+
+	UKIntsEqual(allocCount + 5, GSDebugAllocationCount([ETLayoutItem class])
+		+ GSDebugAllocationCount([ETLayoutItemGroup class])
+		+ GSDebugAllocationCount([ETView class]));
+
+	DESTROY(pool3);
+	UKIntsEqual(allocCount, GSDebugAllocationCount([ETLayoutItem class])
+		+ GSDebugAllocationCount([ETLayoutItemGroup class])
+		+ GSDebugAllocationCount([ETView class]));
+
+#if 0
+	CREATE_AUTORELEASE_POOL(pool2);
+
+	view = [[ETView alloc] init];
+	item = [ETLayoutItem layoutItemWithView: view];
+	id parent = [ETLayoutItemGroup layoutItem];
+
+	[parent addItem: item];
+
+	UKIntsEqual(3, [item retainCount]);
+	UKIntsEqual(2, [[item supervisorView] retainCount]);
+	UKIntsEqual(2, [parent retainCount]);
+	RELEASE(view);
+	UKIntsEqual(1, [[item supervisorView] retainCount]);
+	UKIntsEqual(allocCount + 2, GSDebugAllocationCount([ETLayoutItem class])
+		+ GSDebugAllocationCount([ETLayoutItemGroup class]));
+	DESTROY(pool2);
+	UKIntsEqual(allocCount, GSDebugAllocationCount([ETLayoutItem class])
+		+ GSDebugAllocationCount([ETLayoutItemGroup class]));
+#endif
+
+	//ETLog(@"Recorded object allocation: %@", 
+	//	GSDebugAllocationListRecordedObjects([ETView class]));
+
+	GSDebugAllocationActive(NO);
+#endif
 }
 
 - (void) testArchiving
@@ -199,4 +351,5 @@
 	
 	UKFalse([[self subviews] containsObject: [self titleBarView]]);
 }
+
 @end

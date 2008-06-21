@@ -156,6 +156,28 @@
     return self;
 }
 
+- (oneway void) release
+{
+	/* Note whether the next release call will deallocate the receiver, because 
+	   once the receiver is deallocated you have no way to safely learn if self
+	   is still valid or not.
+	   Take note the retain count is NSExtraRefCount plus one. */
+	BOOL isDeallocated = (NSExtraRefCount(self) == 0);
+	BOOL hasRetainCycle = (_view != nil);
+
+	[super release];
+
+	/* Tear down the retain cycle owned by the receiver.
+	   By releasing us, we release _view.
+	   If we got deallocated by [super release], self and _view are now
+	   invalid and we must never use them (by sending a message for example).  */
+	if (hasRetainCycle && isDeallocated == NO
+	  && NSExtraRefCount(self) == 0 && NSExtraRefCount(_view) == 0)
+	{
+		DESTROY(self);
+	}
+}
+
 - (void) dealloc
 {
 	DESTROY(_variableProperties);
@@ -165,7 +187,7 @@
     DESTROY(_view);
 	DESTROY(_value);
 	DESTROY(_modelObject);
-	DESTROY(_parentLayoutItem);
+	_parentLayoutItem = nil; /* weak reference */
     
     [super dealloc];
 }
@@ -319,7 +341,7 @@
 	//ETLog(@"For item %@ with supervisor view %@, modify the parent item from "
 	//	"%@ to %@", self, [self supervisorView], _parentLayoutItem, parent, self);
 
-	ASSIGN(_parentLayoutItem, parent);
+	_parentLayoutItem = parent;
 }
 
 /** Detaches the receiver from the layout item group it belongs to.

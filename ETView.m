@@ -91,6 +91,11 @@ static ETView *barViewPrototype = nil;
 	return barViewPrototype;
 }
 
+- (id) init
+{
+	return [self initWithFrame: NSMakeRect(0, 0, 100, 50) layoutItem: nil];
+}
+
 - (id) initWithFrame: (NSRect)frame
 {
 	return [self initWithFrame: frame layoutItem: nil];
@@ -103,6 +108,9 @@ static ETView *barViewPrototype = nil;
 	
 	if (self != nil)
 	{
+		/* In both cases, the item will be set by calling 
+		   -setLayoutItemWithoutInsertingView: that creates a retain cycle by
+		    retaining it. */
 		if (item != nil)
 		{
 			[self setLayoutItem: item];
@@ -110,6 +118,22 @@ static ETView *barViewPrototype = nil;
 		else
 		{
 			_layoutItem = [[ETLayoutItem alloc] initWithView: self];
+			/* -initWithView: has called back -setLayoutItemWithoutInsertingView:
+			   which retained _layoutItem, so we release it.
+
+			   We could alternatively do:
+			   _layoutItem = [[ETLayoutItem alloc] init];
+			   [_layoutItem setView: self];
+			   RELEASE(_layoutItem);
+			   In any cases, we avoid to call +layoutItem (and eliminate the 
+			   last line RELEASE as a byproduct) in order to simplify the 
+			   testing of the retain cycle with 
+			   GSDebugAllocationCount([ETLayoutItem class]). By not creating an 
+			   autoreleased instance, we can ensure that releasing the receiver 
+			   will dealloc the layout item immediately and won't delay it until 
+			   the autorelease pool is deallocated.
+			 */
+			RELEASE(_layoutItem);
 		}
 		[self setRenderer: nil];
 		[self setTitleBarView: nil]; /* Sets up a +titleBarViewPrototype clone */
@@ -125,11 +149,33 @@ static ETView *barViewPrototype = nil;
 	return self;
 }
 
+- (oneway void) release
+{
+	/* Note whether the next release call will deallocate the receiver, because 
+	   once the receiver is deallocated you have no way to safely learn if self
+	   is still valid or not.
+	   Take note the retain count is NSExtraRefCount plus one. */
+	BOOL isDeallocated = (NSExtraRefCount(self) == 0);
+	BOOL hasRetainCycle = (_layoutItem != nil);
+
+	[super release];
+
+	/* Tear down the retain cycle owned by the layout item.
+	   The layout item is our owner and by releasing it, it will release us.
+	   If we got deallocated by [super release], self and _layoutItem are now
+	   invalid and we must never use them (by sending a message for example). */
+	if (hasRetainCycle && isDeallocated == NO 
+	 && NSExtraRefCount(self) == 0 && NSExtraRefCount(_layoutItem) == 0)
+	{
+		DESTROY(_layoutItem);
+	}
+}
+
 - (void) dealloc
 {
 	[NC removeObserver: self];
 
-	DESTROY(_layoutItem);
+	// NOTE: _layoutItem (our owner) is destroyed by -release
 	DESTROY(_renderer);
 	DESTROY(_temporaryView);
 	DESTROY(_wrappedView);
@@ -238,7 +284,7 @@ static ETView *barViewPrototype = nil;
 		[NSException raise: NSInvalidArgumentException format: @"For ETView, "
 			@"-setLayoutItem: parameter %@ must be never be nil", item];
 	}	
-	ASSIGN(_layoutItem, item);
+	ASSIGN(_layoutItem, item); // NOTE: Retain cycle (see -release)
 }
 
 - (void) setRenderer: (id)renderer
