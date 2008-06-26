@@ -91,11 +91,6 @@ static ETView *barViewPrototype = nil;
 	return barViewPrototype;
 }
 
-- (id) init
-{
-	return [self initWithFrame: NSMakeRect(0, 0, 100, 50) layoutItem: nil];
-}
-
 - (id) initWithFrame: (NSRect)frame
 {
 	return [self initWithFrame: frame layoutItem: nil];

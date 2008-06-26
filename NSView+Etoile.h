@@ -40,6 +40,9 @@
 
 @interface NSView (Etoile) <NSCopying, ETCollection, ETCollectionMutation>
 
++ (NSRect) defaultFrame;
+
+- (id) init;
 - (BOOL) isContainer;
 
 /* Copying */

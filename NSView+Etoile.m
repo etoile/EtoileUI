@@ -43,6 +43,16 @@
 
 @implementation NSView (Etoile)
 
++ (NSRect) defaultFrame
+{
+	return NSMakeRect(0, 0, 100, 50);
+}
+
+- (id) init
+{
+	return [self initWithFrame: [[self class] defaultFrame]];
+}
+
 - (BOOL) isContainer
 {
 	return [self isKindOfClass: [ETContainer class]];
