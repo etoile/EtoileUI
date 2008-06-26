@@ -77,9 +77,10 @@
 	/* Build window items */
 	while ((window = [e nextObject]) != nil)
 	{
-		if ([window isSystemPrivateWindow] == NO)
+		if ([window isVisible] && [window isSystemPrivateWindow] == NO)
 		{
 			item = [self renderWindow: window];
+			//ETLog(@"Rendered window %@ visibility %d into %@", window, [window isVisible], item);
 			[windowLayer addItem: item];
 		}
 	}
@@ -132,10 +133,6 @@
 	
 	return item;
 }
-#endif
-
-#if 0
-
 #endif
 
 /* When we encounter an EtoileUI native (ETView subclasses), we only return
