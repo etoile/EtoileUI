@@ -29,6 +29,11 @@ For these two subclasses, you can specify how the overflow should be handled. In
 
 So ETLineLayout results of using ETHorizontalFlowAlgorithm limited to a single line and the overflow hidden. Similarly ETStackLayout results of using ETVerticalFlowAlgorithm limited to a single column and the overflow hidden.
 
+
+# New Features
+
+## Layout
+
 * Implement shape-driven and pattern-driven layouts (a typical case is a grid layout)
 ETShapeLayout
 -initWithShape:
@@ -36,6 +41,42 @@ ETShapeLayout
 ETShape
 ETPatternShape
 
-# AppKit
+# New Applications & Examples
 
-## Modularize NSView to fully separate all the concerns (event handling, hierarchy/composite, drawing surface, responders)
+## Generalize AZSwitch into a versatile Expose-like application that allows to navigate the windows with any EtoileUI layouts. AZSwitch can be seen as a subcase of such an application that only comes with an hardcoded ETTableLayout.
+
+## Write a System-wide Shelf (also often referenced as Overlay Shelf) that runs in a standalone process. Involves to subclass ETPickboard in the Shelf code and modify +[ETPickboard systemPickboard] to return a DO proxy of the pickboard instance in the Shelf process. If we put aside collaboration features, a first implementation Shelf application should probably be around one hundred lines of code. Most of the code involves to override -insertItem:atIndex: and -removeItem: in the following spirit:
+
+// layout items are received by ref through DO and -pushObject: should pass objects by ref too.
+- (void) insertItem: (id)item atIndex: (int)index
+{
+	BOOL putProxyOnTheShelf = [item isMetaLayoutItem]; // a meta layout item is a UI proxy
+	
+	if (putProxyOnTheShelf) // picked a link (encompasses the lazy removal case when -shouldRemoveItemAtPickTime: returns NO)
+	{
+		[super pushObject: item]; // nothing to do in this case
+	}
+	else // picked an object or an object copy (aka cut and copy)
+	{
+		// The CoreObject implementation for this code is underway but far
+		// from usable... the following is a very rough approach that will need
+		// to be carefully refined.
+		id modelObject = [item representedObject];
+
+		if ([modelObject isManagedCoreObject] == NO)
+			[CoreObject snapshot: [object representedObject] inLibrary: ShelfLibrary];
+	
+		[super pushObject: item];
+	}
+}
+
+Then an ETOverlayShelfLayout could be created as an ETFreeLayout subclass to encapsulate the default UI of the Shelf in a pluggable layout.
+
+## Write a PhotoManager
+
+
+# Long-term Experiments
+
+## AppKit
+
+### Modularize NSView to fully separate all the concerns (event handling, hierarchy/composite, drawing surface, responders)
