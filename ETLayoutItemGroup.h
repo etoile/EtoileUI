@@ -105,7 +105,9 @@
 - (NSArray *) itemsIncludingRelatedDescendants;
 - (NSArray *) itemsIncludingAllDescendants;
 
+- (BOOL) canReload;
 - (void) reload;
+- (void) reloadIfNeeded;
 
 - (void) handleAttachItem: (ETLayoutItem *)item;
 - (void) handleAttachViewOfItem: (ETLayoutItem *)item;

@@ -246,7 +246,7 @@
 	/* First time */
 	if (nbOfItems == 0)
 	{
-		[item reload];
+		[item reloadIfNeeded];
 		nbOfItems = [[item items] count];	
 	}
 	

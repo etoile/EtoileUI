@@ -673,14 +673,33 @@
 	return collectedItems;
 }
 
+- (BOOL) canReload
+{
+	ETContainer *container = [self ancestorContainerProvidingRepresentedPath];
+	BOOL hasSource = ([container source] != nil);
+
+	return hasSource && ![self isReloading];
+}
+
+/** This method can be safely called even if the receiver has no source or 
+	doesn't inherit a source from an ancestor. */
+- (void) reloadIfNeeded
+{
+	if ([self canReload])
+		[self reload];
+}
+
+/** Reloads the content by removing all existing childrens and requesting all
+	the receiver immediate children to the source. */
 - (void) reload
 {
 	_reloading = YES;
 	
 	ETContainer *container = [self ancestorContainerProvidingRepresentedPath];
+	BOOL hasSource = ([container source] != nil);
 
 	/* Retrieve layout items provided by source */
-	if (container != nil && [container source] != nil)
+	if (hasSource)
 	{
 		NSArray *itemsFromSource = [self itemsFromSource];
 		[self removeAllItems];
@@ -689,7 +708,7 @@
 	else
 	{
 		ETLog(@"Impossible to reload %@ because the layout item miss either "
-			@"a container or a source", self);
+			@"a container %@ or a source %@", self, container, [container source]);
 	}
 	
 	_reloading = NO;
@@ -1041,7 +1060,7 @@
 {
 	/* Turn item group into stack if necessary */
 	[self setIsStack: YES];
-	[self reload];
+	[self reloadIfNeeded];
 	[self setLayout: [self stackedItemLayout]];
 }
 
@@ -1049,7 +1068,7 @@
 {
 	/* Turn item group into stack if necessary */
 	[self setIsStack: YES];
-	[self reload];
+	[self reloadIfNeeded];
 	[self setLayout: [self unstackedItemLayout]];
 }
 
