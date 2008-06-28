@@ -232,7 +232,7 @@
 		   care of loading the items of the layout context. */
 		if (nbOfItems == 0)
 		{
-			[(ETLayoutItemGroup *)[self layoutContext] reload];
+			[(ETLayoutItemGroup *)[self layoutContext] reloadIfNeeded];
 			nbOfItems = [[[self layoutContext] items] count];
 		}
 	}
