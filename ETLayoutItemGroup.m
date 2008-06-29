@@ -45,9 +45,6 @@
 #import <EtoileUI/ETCompatibility.h>
 
 #define DEFAULT_FRAME NSMakeRect(0, 0, 50, 50)
-#define PROVIDER_SOURCE [[self baseContainer] source]
-#define PROVIDER_CONTAINER [self baseContainer]
-// FIXME: Replace by [[self baseItem] source]
 
 @interface ETLayoutItem (SubclassVisibility)
 - (void) setDisplayView: (ETView *)view;
@@ -531,7 +528,7 @@
 	implementation. */
 - (BOOL) usesRepresentedObjectAsProvider
 {
-	return ([PROVIDER_SOURCE isEqual: [self baseItem]]);
+	return ([[[self baseContainer] source] isEqual: [self baseItem]]);
 }
 
 /*	Alternatively, if you have a relatively small and static tree structure,

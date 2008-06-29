@@ -48,8 +48,6 @@
 #import <EtoileUI/ETCompatibility.h>
 
 #define DETAILED_DESCRIPTION
-#define PROVIDER_CONTAINER [[self baseItem] container]
-#define PROVIDER_SOURCE [PROVIDER_CONTAINER source]
 /* Don't forget that -variableProperties creates the property dictionary */
 #define VARIABLE_PROPERTIES ((NSMutableDictionary *)[self variableProperties])
 
@@ -520,11 +518,12 @@
 	{
 		id parentRepObject = [[self parentLayoutItem] representedObject];
 		
-		// TODO: Should try to retrieve -UniqueID, -UUID and -UUIDString
+		// TODO: Should try to retrieve -UniqueID, -UUID and -UUIDString and 
+		// simplify the if conditional.
 		/* -identifierAtIndex: is implemented by some classes like NSDictionary */
 		if ([parentRepObject isCollection] && [parentRepObject isEmpty] == NO
 		 && [parentRepObject respondsToSelector: @selector(identifierAtIndex:)]
-		 && [PROVIDER_CONTAINER checkSourceProtocolConformance] == 3)
+		 && [[self parentLayoutItem] usesRepresentedObjectAsProvider])
 		{
 			unsigned int index = [[self parentLayoutItem] indexOfItem: self];
 			identifier = [parentRepObject identifierAtIndex: index];
