@@ -301,7 +301,7 @@
 	base item until a descendant item is declared as a new base item (by 
 	providing a represented path base). See also -representedPathBase, 
 	-[ETContainer representedPath], -[ETContainer source], -[ETLayoutItemGroup 
-	ancestorContainerProvidingRepresentedPath].
+	baseContainer].
 	If an item group uses a source, it is automatically bound to a represented 
 	path base.
 	This method will return nil when the receiver isn't a base item, hasn't yet 

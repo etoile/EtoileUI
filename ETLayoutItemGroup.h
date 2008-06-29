@@ -78,7 +78,7 @@
 /* Finding Container */
 
 - (BOOL) isContainer;
-- (ETContainer *) ancestorContainerProvidingRepresentedPath;
+- (ETContainer *) baseContainer;
 
 /* Traversing Layout Item Tree */
 

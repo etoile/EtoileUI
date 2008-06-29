@@ -42,8 +42,8 @@
 /* Private Header
    Don't use or override methods exposed here. */
    
-#define PROVIDER_SOURCE [[self ancestorContainerProvidingRepresentedPath] source]
-#define PROVIDER_CONTAINER [self ancestorContainerProvidingRepresentedPath]
+#define PROVIDER_SOURCE [[self baseContainer] source]
+#define PROVIDER_CONTAINER [self baseContainer]
 
 /* All model mutations are triggered by implicit or explicit remove/insert/add 
    in the layout item tree. Implicit mutations are done by the framework unlike 

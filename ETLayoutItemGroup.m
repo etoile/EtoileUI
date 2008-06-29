@@ -45,8 +45,8 @@
 #import <EtoileUI/ETCompatibility.h>
 
 #define DEFAULT_FRAME NSMakeRect(0, 0, 50, 50)
-#define PROVIDER_SOURCE [[self ancestorContainerProvidingRepresentedPath] source]
-#define PROVIDER_CONTAINER [self ancestorContainerProvidingRepresentedPath]
+#define PROVIDER_SOURCE [[self baseContainer] source]
+#define PROVIDER_CONTAINER [self baseContainer]
 // FIXME: Replace by [[self baseItem] source]
 
 @interface ETLayoutItem (SubclassVisibility)
@@ -206,7 +206,12 @@
 	return [[self view] isKindOfClass: [ETContainer class]];
 }
 
-- (ETContainer *) ancestorContainerProvidingRepresentedPath
+/** Returns the first ancestor container that declares a represented path. The 
+	ancestor layout item that owns this container is known as the base item 
+	(see -baseItem). The base item is usually in charge of coordinating the 
+	event handling and the loading of layout items which are provided by a 
+	source. */
+- (ETContainer *) baseContainer
 {
 	if ([self isContainer] && [self hasValidRepresentedPathBase])
 	{
@@ -214,7 +219,7 @@
 	}
 	else
 	{
-		return [[self parentLayoutItem] ancestorContainerProvidingRepresentedPath];
+		return [[self parentLayoutItem] baseContainer];
 	}
 }
 
@@ -674,7 +679,7 @@
 
 - (BOOL) canReload
 {
-	ETContainer *container = [self ancestorContainerProvidingRepresentedPath];
+	ETContainer *container = [self baseContainer];
 	BOOL hasSource = ([container source] != nil);
 
 	return hasSource && ![self isReloading];
@@ -694,7 +699,7 @@
 {
 	_reloading = YES;
 	
-	ETContainer *container = [self ancestorContainerProvidingRepresentedPath];
+	ETContainer *container = [self baseContainer];
 	BOOL hasSource = ([container source] != nil);
 
 	/* Retrieve layout items provided by source */
@@ -1458,7 +1463,7 @@
 
 - (NSArray *) itemsFromSource
 {
-	ETContainer *container = [self ancestorContainerProvidingRepresentedPath];
+	ETContainer *container = [self baseContainer];
 
 	switch ([container checkSourceProtocolConformance])
 	{
@@ -1485,7 +1490,7 @@
 {
 	NSMutableArray *itemsFromSource = [NSMutableArray array];
 	ETLayoutItem *layoutItem = nil;
-	ETContainer *container = [self ancestorContainerProvidingRepresentedPath];
+	ETContainer *container = [self baseContainer];
 	int nbOfItems = [[container source] numberOfItemsInContainer: container];
 	
 	for (int i = 0; i < nbOfItems; i++)
@@ -1501,7 +1506,7 @@
 {
 	NSMutableArray *itemsFromSource = [NSMutableArray array];
 	ETLayoutItem *layoutItem = nil;
-	ETContainer *baseContainer = [self ancestorContainerProvidingRepresentedPath];
+	ETContainer *baseContainer = [self baseContainer];
 	// NOTE: [self indexPathFromItem: [container layoutItem]] is equal to [[container layoutItem] indexPathFortem: self]
 	NSIndexPath *indexPath = [self indexPathFromItem: [baseContainer layoutItem]];
 	int nbOfItems = 0;
