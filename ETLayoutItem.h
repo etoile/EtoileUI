@@ -136,6 +136,7 @@
 //- (void) setPath: (NSString *)path;
 - (NSString *) representedPath;
 - (NSString *) representedPathBase;
+- (BOOL) hasValidRepresentedPathBase;
 
 - (NSString *) identifier;
 

@@ -141,7 +141,7 @@
 
 - (void) mouseDown: (ETEvent *)event on: (id)item
 {
-	if ([self representedPathBase] != nil)
+	if ([self hasValidRepresentedPathBase])
 	{
 		 // For example ETFreeLayout could intercept click to disable standard interaction
 		 // unlike ETUILayout. This case would also involve layout preemption of events.
@@ -166,7 +166,7 @@
 	if ([self allowsDragging] == NO)
 		return;
 
-	if ([self representedPathBase] != nil)
+	if ([self hasValidRepresentedPathBase])
 	{
 		id layout = nil;
 		
@@ -348,7 +348,7 @@
 {
 	ETLog(@"DROP - Handle drop %@ for %@ on %@ in %@", dragInfo, item, dropTargetItem, self);
 
-	if ([self representedPathBase] != nil)
+	if ([self hasValidRepresentedPathBase])
 	{
 		int dropIndex = NSNotFound;
 
@@ -581,11 +581,11 @@
 		If the flag is YES, dropped item is currently invisible. */
 	if (itemAlreadyRemoved == NO)
 	{
-		ETLog(@"For drop, removes item at index %d", pickIndex);
 		/* We remove the item to handle the case where it is moved to another
 		   index within the existing parent. */
 		if (isLocalPick)
 		{
+			ETLog(@"For drop, removes item at index %d", pickIndex);
 			[itemGroup removeItem: movedItem];
 			if (insertionIndex > pickIndex)
 				insertionIndex--;

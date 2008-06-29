@@ -208,8 +208,7 @@
 
 - (ETContainer *) ancestorContainerProvidingRepresentedPath
 {
-	if ([self isContainer] && [self representedPathBase] != nil
-	 && [[self representedPathBase] isEqual: @""] == NO)
+	if ([self isContainer] && [self hasValidRepresentedPathBase])
 	{
 		return (ETContainer *)[self view];
 	}
@@ -640,7 +639,7 @@
 	{
 		[collectedItems addObject: item];
 			
-		if ([item isGroup] && [item representedPathBase] == nil)
+		if ([item isGroup] && [item hasValidRepresentedPathBase] == NO)
 			[collectedItems addObjectsFromArray: [item itemsIncludingRelatedDescendants]];
 	}
 	

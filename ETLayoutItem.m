@@ -309,8 +309,7 @@
 	descendant of a base item. */
 - (id) baseItem
 {
-	if ([self representedPathBase] != nil
-	 && [[self representedPathBase] isEqual: @""] == NO)
+	if ([self hasValidRepresentedPathBase])
 	{
 		return self;
 	}
@@ -318,6 +317,12 @@
 	{
 		return [[self parentLayoutItem] baseItem];
 	}
+}
+
+- (BOOL) hasValidRepresentedPathBase
+{
+	return ([self representedPathBase] != nil 
+		&& [[self representedPathBase] isEqual: @""] == NO);
 }
 
 /** Returns the layout item group to which the receiver belongs to. 
