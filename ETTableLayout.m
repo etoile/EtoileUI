@@ -546,11 +546,23 @@
 				  proposedRow: (int)row 
 	    proposedDropOperation: (NSTableViewDropOperation)op 
 {
-    ETLog(@"Validate drop with dragging source %@ in %@", [info draggingSource], [self container]);
 	id dropTargetItem = [self layoutContext];
-	
+
+// FIXME: GNUstep should behave like Cocoa by complying to:
+// - row <= [tv numberOfRows] (to eliminate all potential out of range exceptions)
+// - op != NSTableViewDropOn when row = [tv numberOfRows], if you consider that 
+//   a drop on the last row occurs with row = [tv numberOfRows] - 1
+//   Not really sure for this last point though, Cocoa behavior needs to be 
+//   tested because the documentation doesn't cover these details.
+#ifdef GNUSTEP
+	if (op == NSTableViewDropOn && row < [tv numberOfRows])
+		dropTargetItem = [[dropTargetItem items] objectAtIndex: row];
+#else
 	if (op == NSTableViewDropOn)
 		dropTargetItem = [[dropTargetItem items] objectAtIndex: row];
+#endif
+
+    ETLog(@"Validate drop on %@ with dragging source %@ in %@", dropTargetItem, [info draggingSource], [self container]);
 		
 	// TODO: Replace by [layoutContext handleValidateDropForObject:] and improve
 	if (dropTargetItem == nil || [dropTargetItem isGroup])
