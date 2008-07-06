@@ -22,6 +22,7 @@ EtoileUI_OBJC_FILES = \
 	ETApplication.m \
 	ETBrowserLayout.m \
 	ETContainer+Controller.m \
+	ETContainer+EventHandling.m \
 	ETContainer.m \
 	ETEvent.m \
 	ETFlowLayout.m \
