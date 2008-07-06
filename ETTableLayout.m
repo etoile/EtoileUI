@@ -86,6 +86,8 @@
 	[[self tableView] setAutoresizesAllColumnsToFit: NO];
 	 // TODO: Remove next line by modifying GNUstep to match Cocoa behavior
 	[[self tableView] setVerticalMotionCanBeginDrag: YES];
+	/* Enable double-click */
+	[[[self tableView] tableColumnWithIdentifier: @"icon"] setEditable: NO];
 }
 
 - (void) setLayoutView: (NSView *)protoView
