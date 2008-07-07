@@ -547,6 +547,7 @@
 	    proposedDropOperation: (NSTableViewDropOperation)op 
 {
 	id dropTargetItem = [self layoutContext];
+	NSDragOperation dragOp = [info draggingSourceOperationMask];
 
 // FIXME: GNUstep should behave like Cocoa by complying to:
 // - row <= [tv numberOfRows] (to eliminate all potential out of range exceptions)
@@ -562,17 +563,17 @@
 		dropTargetItem = [[dropTargetItem items] objectAtIndex: row];
 #endif
 
-    ETLog(@"Validate drop on %@ with dragging source %@ in %@", dropTargetItem, [info draggingSource], [self container]);
+	ETLog(@"Validate drop on %@ with dragging source %@ in %@ drag mask %d drop op %d", 
+		dropTargetItem, [info draggingSource], [self container], dragOp, op);
 		
 	// TODO: Replace by [layoutContext handleValidateDropForObject:] and improve
-	if (dropTargetItem == nil || [dropTargetItem isGroup])
+	if ([dropTargetItem isGroup] == NO) /* Retarget the drop if needed */
 	{
-		return NSDragOperationEvery;
+		ETLog(@"Retarget drop");
+		[tv setDropRow: row dropOperation: NSTableViewDropAbove];
 	}
-	else
-	{
-		return NSDragOperationNone;
-	}
+
+	return NSDragOperationEvery;
 }
 
 - (BOOL) tableView: (NSTableView *)aTableView 
@@ -580,7 +581,9 @@
                row: (int)row 
 	 dropOperation: (NSTableViewDropOperation)op
 {
-    ETLog(@"Accept drop in %@", [self container]);
+    ETLog(@"Accept drop in %@ drag mask %d drop op %d", [self container], 
+		[info draggingSourceOperationMask], op);
+
 	id droppedItem = [[ETPickboard localPickboard] popObject];
 	id dropTargetItem = [self layoutContext];
 	
@@ -641,6 +644,11 @@
 {
 	// NOTE: Returning the delegate would equivalent.
 	return [[self dataSource] layoutContext];
+}
+
+- (BOOL) ignoreModifierKeysWhileDragging
+{
+	return [[self eventHandler] ignoreModifierKeysWhileDragging];
 }
 
 - (unsigned int) draggingSourceOperationMaskForLocal: (BOOL)isLocal
