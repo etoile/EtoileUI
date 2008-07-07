@@ -305,7 +305,7 @@
 	if ([self allowsDropping] == NO)
 		return NSDragOperationNone;
 	
-	return NSDragOperationPrivate;
+	return [dragInfo draggingSourceOperationMask];
 }
 
 - (NSDragOperation) handleDragEnter: (id)dragInfo forItem: (id)item
@@ -315,7 +315,7 @@
 	if ([self allowsDropping] == NO)
 		return NSDragOperationNone;
 	
-	return NSDragOperationPrivate;
+	return [dragInfo draggingSourceOperationMask];
 }
 
 - (void) handleDragExit: (id)dragInfo forItem: (id)item
@@ -452,15 +452,7 @@
 
 - (unsigned int) draggingSourceOperationMaskForLocal: (BOOL)isLocal
 {
-	// FIXME: Allows more operations
-	if (isLocal)
-	{
-		return NSDragOperationPrivate; //Move
-	}
-	else
-	{
-		return NSDragOperationNone;
-	}
+	return NSDragOperationEvery;
 }
 
 - (void) draggedImage: (NSImage *)anImage beganAt: (NSPoint)aPoint
