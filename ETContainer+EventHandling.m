@@ -263,9 +263,10 @@
 	
 	/* item can be nil, -itemAtLocation: doesn't return the receiver itself */
 	id item = [self dropTargetForDrag: drag];
+	id draggedItem = [[ETPickboard localPickboard] firstObject];
 	NSDragOperation dragOp = NSDragOperationNone;
 	
-	dragOp = [item handleDragMove: drag forItem: item];	
+	dragOp = [item handleDragMove: drag forItem: draggedItem];	
 	
 	// NOTE: Testing non-nil displayView is equivalent to
 	// [[self layout] layoutView] != nil
