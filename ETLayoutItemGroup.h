@@ -94,6 +94,8 @@
 - (void) removeItem: (ETLayoutItem *)item;
 - (void) removeItemAtIndex: (int)index;
 - (ETLayoutItem *) itemAtIndex: (int)index;
+- (ETLayoutItem *) firstItem;
+- (ETLayoutItem *) lastItem;
 - (int) indexOfItem: (id)item;
 - (BOOL) containsItem: (ETLayoutItem *)item;
 - (int) numberOfItems;

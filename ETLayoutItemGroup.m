@@ -564,6 +564,22 @@
 	return [_layoutItems objectAtIndex: index];
 }
 
+/** Returns the first item in the children of the receiver, with a result 
+    identical to [self itemAtIndex: 0].
+    Similar to -firstObject method for collections (see ETCollection).*/
+- (ETLayoutItem *) firstItem
+{
+	return [_layoutItems firstObject];
+}
+
+/** Returns the last item in the children of the receiver, with a result 
+    identical to [self itemWithIndex: [self numberOfItems] - 1].
+    Similar to -lastObject method for collections (see ETCollection).*/
+- (ETLayoutItem *) lastItem
+{
+	return [_layoutItems lastObject];
+}
+
 - (void) addItems: (NSArray *)items
 {
 	//ETLog(@"Add items in %@", self);
