@@ -573,7 +573,7 @@
 }
 
 /** Returns the last item in the children of the receiver, with a result 
-    identical to [self itemWithIndex: [self numberOfItems] - 1].
+    identical to [self itemAtIndex: [self numberOfItems] - 1].
     Similar to -lastObject method for collections (see ETCollection).*/
 - (ETLayoutItem *) lastItem
 {
