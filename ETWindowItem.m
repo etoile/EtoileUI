@@ -38,7 +38,7 @@
 #import <EtoileUI/ETWindowItem.h>
 #import <EtoileUI/ETLayoutItem.h>
 #import <EtoileUI/ETLayoutItemGroup.h>
-#import <EtoileUI/ETLayoutItemGroup+Factory.h>
+#import <EtoileUI/ETLayoutItem+Factory.h>
 #import <EtoileUI/NSWindow+Etoile.h>
 #import <EtoileUI/ETCompatibility.h>
 

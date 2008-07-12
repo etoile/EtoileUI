@@ -32,7 +32,7 @@ EtoileUI_OBJC_FILES = \
 	ETLayer.m \
 	ETLayoutItemBuilder.m \
 	ETLayoutItem+Events.m \
-	ETLayoutItemGroup+Factory.m \
+	ETLayoutItem+Factory.m \
 	ETLayoutItemGroup.m \
 	ETLayoutItemGroup+Mutation.m \
 	ETLayoutItem.m \
@@ -81,7 +81,7 @@ EtoileUI_HEADER_FILES = \
 	ETLayout.h \
 	ETLayoutItemBuilder.h \
 	ETLayoutItem+Events.h \
-	ETLayoutItemGroup+Factory.h \
+	ETLayoutItem+Factory.h \
 	ETLayoutItemGroup.h \
 	ETLayoutItemGroup+Mutation.h \
 	ETLayoutItem.h \

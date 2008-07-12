@@ -36,7 +36,7 @@
 
 #import <EtoileUI/ETApplication.h>
 #import <EtoileUI/ETLayoutItemGroup.h>
-#import <EtoileUI/ETLayoutItemGroup+Factory.h>
+#import <EtoileUI/ETLayoutItem+Factory.h>
 #import <EtoileUI/ETLayoutItemBuilder.h>
 #import <EtoileUI/ETObjectBrowserLayout.h>
 #import <EtoileUI/ETCompatibility.h>

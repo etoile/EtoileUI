@@ -1,8 +1,8 @@
 /*
-	ETLayoutItemGroup+Factory.m
+	ETLayoutItem+Factory.m
 	
-	ETLayoutItem category providing a factory for building various kinds of 
-	layout items and keeping track of special nodes of the layout item tree.
+	ETLayoutItemGroup category providing a factory keeping track of special 
+	nodes of the layout item tree.
  
 	Copyright (C) 2007 Quentin Mathe
  
@@ -36,12 +36,10 @@
 
 #import <Foundation/Foundation.h>
 #import <AppKit/AppKit.h>
-#import <EtoileUI/ETLayoutItem.h>
-
-@class ETLayoutItemGroup;
+#import <EtoileUI/ETLayoutItemGroup.h>
 
 
-@interface ETLayoutItem (ETLayoutItemFactory)
+@interface ETLayoutItemGroup (ETLayoutItemGroupFactory)
 
 + (id) rootGroup;
 + (id) localRootGroup;
