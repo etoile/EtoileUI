@@ -768,7 +768,7 @@
 
 	/* Basic version which doesn't fetch property value beyond the represented 
 	   object, even if this represented object represents another object too. */
-	if (modelObject != nil && [[modelObject properties] containsObject: key])
+	if (modelObject != nil && [[(NSObject *)modelObject properties] containsObject: key])
 	{
 		if ([modelObject isLayoutItem])
 		{
@@ -798,7 +798,7 @@
 
 	/* Basic version which doesn't propagate property editing beyond the represented 
 	   object, even if this represented object represents another object too. */
-	if (modelObject != nil && [[modelObject properties] containsObject: key])
+	if (modelObject != nil && [[(NSObject *)modelObject properties] containsObject: key])
 	{
 		if ([modelObject isLayoutItem])
 		{
@@ -1127,7 +1127,7 @@
 
 		if ([self respondsToSelector: @selector(container)])
 		{
-			[[self container] didChangeDecoratorOfItem: self];
+			[[(id)self container] didChangeDecoratorOfItem: self];
 		}
 		else
 		{

@@ -106,8 +106,9 @@
 	// transparently on nib loading.
 	// FIXME: item implies a memory leak, the container bound to this item must
 	// be assigned to self and this item discarded.
-	id item = [[ETEtoileUIBuilder builder] renderWindow: window];
-	
+	//id item = [[ETEtoileUIBuilder builder] renderWindow: window];
+	[[ETEtoileUIBuilder builder] renderWindow: window];
+
 	[itemGroupView setLayout: AUTORELEASE([[ETOutlineLayout alloc] init])];
 	[itemGroupView setSource: self];
 	[itemGroupView setDelegate: self];

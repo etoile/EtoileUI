@@ -688,10 +688,11 @@
 	// connecting an outlet to the content view of a window. Hence we connect 
 	// _displayViewPrototype to the window embedding the view and retrieve the 
 	// layout view when this method is called during the nib awaking.
+	// This hack isn't used anymore, so it could probably be removed...
 	if ([protoView isKindOfClass: [NSWindow class]])
 	{
 		ETLog(@"NOTE: -setLayoutView: received a window as parameter");
-		ASSIGN(_displayViewPrototype, [protoView contentView]);
+		ASSIGN(_displayViewPrototype, [(NSWindow *)protoView contentView]);
 	}
 	else
 	{

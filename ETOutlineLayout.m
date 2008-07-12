@@ -314,7 +314,7 @@
 
 	/* Report nil value for debugging */
 	if (value == nil || ([value isEqual: [NSNull null]]
-	 && [[item properties] containsObject: [column identifier]] == NO))
+	 && [[(NSObject *)item properties] containsObject: [column identifier]] == NO))
 	{
 		// FIXME: Turn into an ETDebugLog
 		ETLog(@"Item %@ has no property %@ requested by layout %@", item, 
@@ -451,6 +451,10 @@
 @end
 
 #ifdef GNUSTEP /* Ugly hack to fix GNUstep bugs */
+
+@interface NSOutlineView (ShutCompilerWarning)
+- (void) _loadDictionaryStartingWith: (id) startitem atLevel: (int) level;
+@end
 
 @implementation NSOutlineView (UglyHack)
 

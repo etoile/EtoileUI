@@ -637,6 +637,9 @@
 - (void) draggedImage: (NSImage *)draggedImage movedTo: (NSPoint)screenPoint;
 - (void) draggedImage: (NSImage *)anImage endedAt: (NSPoint)aPoint operation: (NSDragOperation)operation;
 @end
+@interface NSTableView (ShutCompilerWarning)
+- (BOOL) _writeRows: (NSIndexSet *)rows toPasteboard: (NSPasteboard *)pboard;
+@end
 
 @implementation NSTableView (ETTableLayoutDraggingSource)
 
