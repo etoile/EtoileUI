@@ -467,7 +467,7 @@
 - (void) testHandleDecorateItemInView
 {
 	id parentView = AUTORELEASE([[ETView alloc] initWithFrame: NSMakeRect(0, 0, 100, 50)]);
-	id parent = [ETLayoutItemGroup layoutItemWithView: parentView];
+	id parent = [ETLayoutItem layoutItemGroupWithView: parentView];
 	id supervisorView = AUTORELEASE([[ETView alloc] initWithFrame: NSMakeRect(0, 0, 100, 50)]);
 	id supervisorView1 = AUTORELEASE([[ETView alloc] initWithFrame: NSMakeRect(0, 0, 100, 50)]);
 	id decorator1 = [ETLayoutItem layoutItem]; //[ETLayoutItem layoutItemWithView: supervisorView1];

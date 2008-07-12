@@ -74,28 +74,6 @@
 
 @implementation ETLayoutItemGroup
 
-/* Factory Methods */
-
-+ (ETLayoutItemGroup *) layoutItemGroup
-{
-	return AUTORELEASE([[self alloc] init]);
-}
-
-+ (ETLayoutItemGroup *) layoutItemGroupWithLayoutItem: (ETLayoutItem *)item
-{
-	return [ETLayoutItemGroup layoutItemGroupWithLayoutItem: [NSArray arrayWithObject: item]];
-}
-
-+ (ETLayoutItemGroup *) layoutItemGroupWithLayoutItems: (NSArray *)items
-{
-	return AUTORELEASE([[self alloc] initWithLayoutItems: items view: nil]);
-}
-
-+ (ETLayoutItem *) layoutItemWithView: (NSView *)view
-{
-	return AUTORELEASE([[self alloc] initWithLayoutItems: nil view: view]);
-}
-
 /* Initialization */
 
 /** Designated initializer */

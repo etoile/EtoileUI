@@ -310,7 +310,7 @@ static NSFileManager *objectManager = nil;
 		[icon setSize: NSMakeSize(128, 128)];
 		if ([[NSFileManager defaultManager] fileExistsAtPath: filePath isDirectory: &isDir] && isDir)
 		{
-			fileItem = [ETLayoutItemGroup layoutItemWithView: [self imageViewForImage: icon]];
+			fileItem = [ETLayoutItem layoutItemGroupWithView: [self imageViewForImage: icon]];
 		}
 		else
 		{

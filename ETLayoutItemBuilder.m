@@ -125,7 +125,7 @@
 	//[window setContentView: container];
 	
 	//id childItem = [[[ETContainer alloc] initWithFrame: [contentView frame]] layoutItem];
-	//id childItem = [ETLayoutItemGroup layoutItemWithView: [[NSSlider alloc] initWithFrame: NSMakeRect(0, 0, 100, 100)]];
+	//id childItem = [ETLayoutItem layoutItemGroupWithView: [[NSSlider alloc] initWithFrame: NSMakeRect(0, 0, 100, 100)]];
 	//[window setContentView: [childItem displayView]];
 	
 	//[window setContentView: [item view]];
@@ -168,7 +168,7 @@
 	{
 		//id superview = [view superview];
 		id container = [[ETContainer alloc] initWithFrame: [view frame]];
-		id item = [container layoutItem]; //[ETLayoutItemGroup layoutItemWithView: container];
+		id item = [container layoutItem]; //[ETLayoutItem layoutItemGroupWithView: container];
 		//return item;
 		// NOTE: -addItem: moves subview when subviews is enumerated, hence we have
 		// to iterate over a separate collection which isn't mutated.

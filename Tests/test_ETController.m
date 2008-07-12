@@ -131,7 +131,7 @@
 	/* Test item template */
 
 	id view = AUTORELEASE([DummyView new]);
-	id templateItem = [ETLayoutItemGroup layoutItemWithView: view];
+	id templateItem = [ETLayoutItem layoutItemGroupWithView: view];
 	[self setTemplateItemGroup: templateItem];
 	newGroup = [self newGroup];
 	newGroup2 = [self newGroup];

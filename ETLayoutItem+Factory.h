@@ -50,6 +50,12 @@
 + (ETLayoutItem *) layoutItemWithValue: (id)value;
 + (ETLayoutItem *) layoutItemWithRepresentedObject: (id)object;
 
+/* Group Factory Methods */
+
++ (ETLayoutItemGroup *) layoutItemGroup;
++ (ETLayoutItemGroup *) layoutItemGroupWithLayoutItem: (ETLayoutItem *)item;
++ (ETLayoutItemGroup *) layoutItemGroupWithLayoutItems: (NSArray *)items;
+
 /* Special Group Access Methods */
 
 + (id) rootGroup;

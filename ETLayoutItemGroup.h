@@ -58,12 +58,6 @@
 	BOOL _shouldMutateRepresentedObject;
 }
 
-/* Factory Methods */
-
-+ (ETLayoutItemGroup *) layoutItemGroup;
-+ (ETLayoutItemGroup *) layoutItemGroupWithLayoutItem: (ETLayoutItem *)item;
-+ (ETLayoutItemGroup *) layoutItemGroupWithLayoutItems: (NSArray *)items;
-
 /* Factory methods useful for controllers
    NOTE: probably to be moved elsewhere or refactored a bit. */
 

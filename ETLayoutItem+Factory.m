@@ -66,6 +66,28 @@
 	return (ETLayoutItem *)AUTORELEASE([[self alloc] initWithRepresentedObject: object]);
 }
 
+/* Group Factory Methods */
+
++ (ETLayoutItemGroup *) layoutItemGroup
+{
+	return AUTORELEASE([[ETLayoutItemGroup alloc] init]);
+}
+
++ (ETLayoutItemGroup *) layoutItemGroupWithLayoutItem: (ETLayoutItem *)item
+{
+	return [ETLayoutItemGroup layoutItemGroupWithLayoutItem: [NSArray arrayWithObject: item]];
+}
+
++ (ETLayoutItemGroup *) layoutItemGroupWithLayoutItems: (NSArray *)items
+{
+	return AUTORELEASE([[ETLayoutItemGroup alloc] initWithLayoutItems: items view: nil]);
+}
+
++ (ETLayoutItem *) layoutItemGroupWithView: (NSView *)view
+{
+	return AUTORELEASE([[ETLayoutItemGroup alloc] initWithLayoutItems: nil view: view]);
+}
+
 /* Special Group Access Methods */
 
 /** Returns the absolute root group usually located in the UI server.
