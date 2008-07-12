@@ -44,6 +44,30 @@
 
 @implementation ETLayoutItem (ETLayoutItemFactory)
 
+/* Basic Item Factory Methods */
+
++ (ETLayoutItem *) layoutItem
+{
+	return (ETLayoutItem *)AUTORELEASE([[self alloc] init]);
+}
+
++ (ETLayoutItem *) layoutItemWithView: (NSView *)view
+{
+	return (ETLayoutItem *)AUTORELEASE([[self alloc] initWithView: view]);
+}
+
++ (ETLayoutItem *) layoutItemWithValue: (id)value
+{
+	return (ETLayoutItem *)AUTORELEASE([[self alloc] initWithValue: value]);
+}
+
++ (ETLayoutItem *) layoutItemWithRepresentedObject: (id)object
+{
+	return (ETLayoutItem *)AUTORELEASE([[self alloc] initWithRepresentedObject: object]);
+}
+
+/* Special Group Access Methods */
+
 /** Returns the absolute root group usually located in the UI server.
 	This root group representing the whole environment is the only layout item 
 	with truly no parent. */

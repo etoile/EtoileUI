@@ -41,6 +41,7 @@
 #import <EtoileFoundation/NSObject+Model.h>
 #import <EtoileUI/ETObjectBrowserLayout.h>
 #import <EtoileUI/ETContainer.h>
+#import <EtoileUI/ETLayoutItem+Factory.h>
 #import <EtoileUI/ETWindowItem.h>
 #import <EtoileUI/ETOutlineLayout.h>
 #import <EtoileUI/NSObject+EtoileUI.h>

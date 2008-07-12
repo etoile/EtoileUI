@@ -34,6 +34,7 @@
 #import <Foundation/Foundation.h>
 #import <AppKit/AppKit.h>
 #import <EtoileUI/ETPickboard.h>
+#import <EtoileUI/ETLayoutItem+Factory.h>
 #import <EtoileUI/ETCompatibility.h>
 #import <UnitKit/UnitKit.h>
 

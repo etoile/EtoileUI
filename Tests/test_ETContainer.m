@@ -33,6 +33,7 @@
 
 #import <Foundation/Foundation.h>
 #import <AppKit/AppKit.h>
+#import <EtoileUI/ETLayoutItem+Factory.h>
 #import <EtoileUI/ETLayoutItemGroup.h>
 #import <EtoileUI/ETContainer.h>
 #import <EtoileUI/ETCompatibility.h>

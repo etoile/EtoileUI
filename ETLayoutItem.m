@@ -94,26 +94,6 @@
 
 @implementation ETLayoutItem
 
-+ (ETLayoutItem *) layoutItem
-{
-	return (ETLayoutItem *)AUTORELEASE([[self alloc] init]);
-}
-
-+ (ETLayoutItem *) layoutItemWithView: (NSView *)view
-{
-	return (ETLayoutItem *)AUTORELEASE([[self alloc] initWithView: view]);
-}
-
-+ (ETLayoutItem *) layoutItemWithValue: (id)value
-{
-	return (ETLayoutItem *)AUTORELEASE([[self alloc] initWithValue: value]);
-}
-
-+ (ETLayoutItem *) layoutItemWithRepresentedObject: (id)object
-{
-	return (ETLayoutItem *)AUTORELEASE([[self alloc] initWithRepresentedObject: object]);
-}
-
 - (id) init
 {
 	return [self initWithView: nil value: nil representedObject: nil];

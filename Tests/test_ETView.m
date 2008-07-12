@@ -35,6 +35,7 @@
 #import <Foundation/NSDebug.h>
 #import <AppKit/AppKit.h>
 #import <EtoileUI/ETLayoutItem.h>
+#import <EtoileUI/ETLayoutItem+Factory.h>
 #import <EtoileUI/ETView.h>
 #import <EtoileUI/ETCompatibility.h>
 #import <UnitKit/UnitKit.h>

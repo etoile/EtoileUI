@@ -103,13 +103,6 @@
 	id _reserved;
 }
 
-/* Factory Methods */
-
-+ (ETLayoutItem *) layoutItem;
-+ (ETLayoutItem *) layoutItemWithView: (NSView *)view;
-+ (ETLayoutItem *) layoutItemWithValue: (id)value;
-+ (ETLayoutItem *) layoutItemWithRepresentedObject: (id)object;
-
 /* Initialization */
 
 - (id) initWithValue: (id)value;

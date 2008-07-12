@@ -43,6 +43,15 @@
 
 @interface ETLayoutItem (ETLayoutItemFactory)
 
+/* Basic Item Factory Methods */
+
++ (ETLayoutItem *) layoutItem;
++ (ETLayoutItem *) layoutItemWithView: (NSView *)view;
++ (ETLayoutItem *) layoutItemWithValue: (id)value;
++ (ETLayoutItem *) layoutItemWithRepresentedObject: (id)object;
+
+/* Special Group Access Methods */
+
 + (id) rootGroup;
 + (id) localRootGroup;
 
