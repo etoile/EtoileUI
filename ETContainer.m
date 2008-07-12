@@ -39,6 +39,7 @@
 #import <EtoileUI/ETContainer.h>
 #import <EtoileUI/ETContainer+Controller.h>
 #import <EtoileUI/ETLayoutItem.h>
+#import <EtoileUI/ETLayoutItem+Factory.h>
 #import <EtoileUI/ETLayoutItem+Events.h>
 #import <EtoileUI/ETEvent.h>
 #import <EtoileUI/ETLayoutItemGroup.h>
@@ -1357,7 +1358,7 @@ NSString *ETLayoutItemPboardType = @"ETLayoutItemPboardType"; // FIXME: replace 
 
 - (void) addLayer: (ETLayoutItem *)item
 {
-	ETLayer *layer = [ETLayer layerWithLayoutItem: item];
+	ETLayer *layer = [ETLayoutItem layerWithLayoutItem: item];
 	
 	/* Insert layer on top of the layout item stack */
 	if (layer != nil)
@@ -1368,7 +1369,7 @@ NSString *ETLayoutItemPboardType = @"ETLayoutItemPboardType"; // FIXME: replace 
 {
 	[self fixOwnerIfNeededForItem: item];
 	
-	ETLayer *layer = [ETLayer layerWithLayoutItem: item];
+	ETLayer *layer = [ETLayoutItem layerWithLayoutItem: item];
 	
 	// FIXME: the insertion code is truly unefficient, it could prove to be
 	// a bottleneck when we have few hundreds of layout items.

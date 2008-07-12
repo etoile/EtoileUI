@@ -70,7 +70,7 @@
 
 - (id) renderApplication: (id)app
 {
-	id windowLayer = [ETWindowLayer layer];
+	id windowLayer = [ETLayoutItem windowGroup];
 	NSEnumerator *e = [[app windows] objectEnumerator];
 	NSWindow *window = nil;
 	id item = nil;

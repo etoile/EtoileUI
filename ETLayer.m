@@ -46,38 +46,6 @@
 
 @implementation ETLayer
 
-+ (ETLayer *) layer
-{
-	return (ETLayer *)AUTORELEASE([[self alloc] init]);
-}
-
-+ (ETLayer *) layerWithLayoutItem: (ETLayoutItem *)item
-{	
-	return [ETLayer layerWithLayoutItems: [NSArray arrayWithObject: item]];
-}
-
-+ (ETLayer *) layerWithLayoutItems: (NSArray *)items
-{
-	ETLayer *layer = [[self alloc] init];
-	
-	if (layer != nil)
-	{
-		[(ETContainer *)[layer view] addItems: items];
-	}
-	
-	return (ETLayer *)AUTORELEASE(layer);
-}
-
-+ (ETLayer *) guideLayer
-{
-	return (ETLayer *)AUTORELEASE([[self alloc] init]);
-}
-
-+ (ETLayer *) gridLayer
-{
-	return (ETLayer *)AUTORELEASE([[self alloc] init]);
-}
-
 - (id) init
 {
 	ETContainer *containerAsLayer = [[ETContainer alloc] initWithFrame: DEFAULT_FRAME];

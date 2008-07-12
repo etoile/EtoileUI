@@ -46,12 +46,6 @@
 	BOOL _outOfFlow;
 }
 
-+ (ETLayer *) layer;
-+ (ETLayer *) layerWithLayoutItem: (ETLayoutItem *)item;
-+ (ETLayer *) layerWithLayoutItems: (NSArray *)items;
-+ (ETLayer *) guideLayer;
-+ (ETLayer *) gridLayer;
-
 - (void) setMovesOutOfLayoutFlow: (BOOL)floating;
 - (BOOL) movesOutOfLayoutFlow;
 

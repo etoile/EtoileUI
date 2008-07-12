@@ -66,6 +66,40 @@
 	return (ETLayoutItem *)AUTORELEASE([[self alloc] initWithRepresentedObject: object]);
 }
 
+/* Layer Factory Methods */
+
++ (ETLayer *) layer
+{
+	return (ETLayer *)AUTORELEASE([[ETLayer alloc] init]);
+}
+
++ (ETLayer *) layerWithLayoutItem: (ETLayoutItem *)item
+{	
+	return [ETLayer layerWithLayoutItems: [NSArray arrayWithObject: item]];
+}
+
++ (ETLayer *) layerWithLayoutItems: (NSArray *)items
+{
+	ETLayer *layer = [[ETLayer alloc] init];
+	
+	if (layer != nil)
+	{
+		[(ETContainer *)[layer view] addItems: items];
+	}
+	
+	return (ETLayer *)AUTORELEASE(layer);
+}
+
++ (ETLayer *) guideLayer
+{
+	return (ETLayer *)AUTORELEASE([[ETLayer alloc] init]);
+}
+
++ (ETLayer *) gridLayer
+{
+	return (ETLayer *)AUTORELEASE([[ETLayer alloc] init]);
+}
+
 /* Group Factory Methods */
 
 + (ETLayoutItemGroup *) layoutItemGroup

@@ -38,7 +38,7 @@
 #import <AppKit/AppKit.h>
 #import <EtoileUI/ETLayoutItem.h>
 
-@class ETLayoutItemGroup;
+@class ETLayoutItemGroup, ETLayer;
 
 
 @interface ETLayoutItem (ETLayoutItemFactory)
@@ -55,6 +55,14 @@
 + (ETLayoutItemGroup *) layoutItemGroup;
 + (ETLayoutItemGroup *) layoutItemGroupWithLayoutItem: (ETLayoutItem *)item;
 + (ETLayoutItemGroup *) layoutItemGroupWithLayoutItems: (NSArray *)items;
+
+/* Layer Factory Methods */
+
++ (ETLayer *) layer;
++ (ETLayer *) layerWithLayoutItem: (ETLayoutItem *)item;
++ (ETLayer *) layerWithLayoutItems: (NSArray *)items;
++ (ETLayer *) guideLayer;
++ (ETLayer *) gridLayer;
 
 /* Special Group Access Methods */
 
