@@ -2,8 +2,9 @@
 
 	ETLayoutItem+Factory.m
 	
-	<abstract>ETLayoutItemGroup category providing a factory keeping track of 
-	special nodes of the layout item tree.</abstract>
+	<abstract>ETLayoutItem category providing a factory for building various 
+	kinds of layout items and keeping track of special nodes of the layout item 
+	tree.</abstract>
  
 	Copyright (C) 2007 Quentin Mathe
  
@@ -36,11 +37,12 @@
  */
 
 #import <EtoileUI/ETLayoutItem+Factory.h>
+#import <EtoileUI/ETLayoutItemGroup.h>
 #import <EtoileUI/ETLayer.h>
 #import <EtoileUI/ETCompatibility.h>
 
 
-@implementation ETLayoutItemGroup (ETLayoutItemGroupFactory)
+@implementation ETLayoutItem (ETLayoutItemFactory)
 
 /** Returns the absolute root group usually located in the UI server.
 	This root group representing the whole environment is the only layout item 
