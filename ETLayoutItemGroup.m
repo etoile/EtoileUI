@@ -65,10 +65,15 @@
 @end
 
 @interface ETLayoutItemGroup (Private)
+- (id) initWithItems: (NSArray *)layoutItems view: (NSView *)view value: (id)value representedObject: (id)repObject;
 - (BOOL) hasNewLayout;
 - (void) setHasNewLayout: (BOOL)flag;
 - (void) collectSelectionIndexPaths: (NSMutableArray *)indexPaths;
 - (void) applySelectionIndexPaths: (NSMutableArray *)indexPaths;
+
+/* Deprecated (DO NOT USE, WILL BE REMOVED LATER) */
+- (id) initWithLayoutItems: (NSArray *)layoutItems view: (NSView *)view value: (id)value;
+- (id) initWithLayoutItems: (NSArray *)layoutItems view: (NSView *)view;
 @end
 
 
@@ -77,7 +82,7 @@
 /* Initialization */
 
 /** Designated initializer */
-- (id) initWithLayoutItems: (NSArray *)layoutItems view: (NSView *)view value: (id)value representedObject: (id)repObject
+- (id) initWithItems: (NSArray *)layoutItems view: (NSView *)view value: (id)value representedObject: (id)repObject
 {
     self = [super initWithView: view value: value representedObject: repObject];
     
@@ -103,17 +108,17 @@
 /* Overriden ETLayoutItem designated initializer */
 - (id) initWithView: (NSView *)view value: (id)value representedObject: (id)repObject
 {
-	return [self initWithLayoutItems: nil view: view value: value representedObject: repObject];
+	return [self initWithItems: nil view: view value: value representedObject: repObject];
 }
 
-- (id) initWithLayoutItems: (NSArray *)layoutItems view: (NSView *)view
+- (id) initWithItems: (NSArray *)layoutItems view: (NSView *)view
 {
-	return [self initWithLayoutItems: layoutItems view: view value: nil representedObject: nil];
+	return [self initWithItems: layoutItems view: view value: nil representedObject: nil];
 }
 
 - (id) init
 {
-	return [self initWithLayoutItems: nil view: nil];
+	return [self initWithItems: nil view: nil];
 }
 
 - (void) dealloc
@@ -1429,6 +1434,17 @@
 	[[self items] makeObjectsPerformSelector: @selector(beginEditingUI)];
 }
 
+/* Deprecated (DO NOT USE, WILL BE REMOVED LATER) */
+
+- (id) initWithLayoutItems: (NSArray *)layoutItems view: (NSView *)view value: (id)value representedObject: (id)repObject
+{
+	return [self initWithItems: layoutItems view: view value: value representedObject: repObject];
+}
+
+- (id) initWithLayoutItems: (NSArray *)layoutItems view: (NSView *)view
+{
+	return [self initWithItems: layoutItems view: view];
+}
 
 @end
 

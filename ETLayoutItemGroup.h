@@ -67,7 +67,7 @@
 
 /* Initialization */
 
-- (id) initWithLayoutItems: (NSArray *)layoutItems view: (NSView *)view;
+- (id) initWithItems: (NSArray *)layoutItems view: (NSView *)view;
 
 /* Finding Container */
 
@@ -187,5 +187,9 @@
 - (NSArray *) contentArray;
 - (void) addObject: (id)object;
 - (void) removeObject: (id)object;
+
+/* Deprecated (DO NOT USE, WILL BE REMOVED LATER) */
+
+- (id) initWithLayoutItems: (NSArray *)layoutItems view: (NSView *)view;
 
 @end
