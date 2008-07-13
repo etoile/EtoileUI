@@ -45,17 +45,17 @@
 
 /* Basic Item Factory Methods */
 
-+ (ETLayoutItem *) layoutItem;
-+ (ETLayoutItem *) layoutItemWithView: (NSView *)view;
-+ (ETLayoutItem *) layoutItemWithValue: (id)value;
-+ (ETLayoutItem *) layoutItemWithRepresentedObject: (id)object;
++ (ETLayoutItem *) item;
++ (ETLayoutItem *) itemWithView: (NSView *)view;
++ (ETLayoutItem *) itemWithValue: (id)value;
++ (ETLayoutItem *) itemWithRepresentedObject: (id)object;
 
 /* Group Factory Methods */
 
-+ (ETLayoutItemGroup *) layoutItemGroup;
-+ (ETLayoutItemGroup *) layoutItemGroupWithLayoutItem: (ETLayoutItem *)item;
-+ (ETLayoutItemGroup *) layoutItemGroupWithLayoutItems: (NSArray *)items;
-+ (ETLayoutItemGroup *) layoutItemGroupWithView: (NSView *)view;
++ (ETLayoutItemGroup *) itemGroup;
++ (ETLayoutItemGroup *) itemGroupWithItem: (ETLayoutItem *)item;
++ (ETLayoutItemGroup *) itemGroupWithItems: (NSArray *)items;
++ (ETLayoutItemGroup *) itemGroupWithView: (NSView *)view;
 
 /* Layer Factory Methods */
 
@@ -81,5 +81,16 @@
 + (void) setWindowGroup: (ETLayoutItemGroup *)windowGroup;
 
 + (id) pickboardGroup;
+
+/* Deprecated (DO NOT USE, WILL BE REMOVED LATER) */
+
++ (ETLayoutItem *) layoutItem;
++ (ETLayoutItem *) layoutItemWithView: (NSView *)view;
++ (ETLayoutItem *) layoutItemWithValue: (id)value;
++ (ETLayoutItem *) layoutItemWithRepresentedObject: (id)object;
++ (ETLayoutItemGroup *) layoutItemGroup;
++ (ETLayoutItemGroup *) layoutItemGroupWithLayoutItem: (ETLayoutItem *)item;
++ (ETLayoutItemGroup *) layoutItemGroupWithLayoutItems: (NSArray *)items;
++ (ETLayoutItemGroup *) layoutItemGroupWithView: (NSView *)view;
 
 @end

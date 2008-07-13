@@ -46,44 +46,44 @@
 
 /* Basic Item Factory Methods */
 
-+ (ETLayoutItem *) layoutItem
++ (ETLayoutItem *) item
 {
 	return (ETLayoutItem *)AUTORELEASE([[self alloc] init]);
 }
 
-+ (ETLayoutItem *) layoutItemWithView: (NSView *)view
++ (ETLayoutItem *) itemWithView: (NSView *)view
 {
 	return (ETLayoutItem *)AUTORELEASE([[self alloc] initWithView: view]);
 }
 
-+ (ETLayoutItem *) layoutItemWithValue: (id)value
++ (ETLayoutItem *) itemWithValue: (id)value
 {
 	return (ETLayoutItem *)AUTORELEASE([[self alloc] initWithValue: value]);
 }
 
-+ (ETLayoutItem *) layoutItemWithRepresentedObject: (id)object
++ (ETLayoutItem *) itemWithRepresentedObject: (id)object
 {
 	return (ETLayoutItem *)AUTORELEASE([[self alloc] initWithRepresentedObject: object]);
 }
 
 /* Group Factory Methods */
 
-+ (ETLayoutItemGroup *) layoutItemGroup
++ (ETLayoutItemGroup *) itemGroup
 {
 	return AUTORELEASE([[ETLayoutItemGroup alloc] init]);
 }
 
-+ (ETLayoutItemGroup *) layoutItemGroupWithLayoutItem: (ETLayoutItem *)item
++ (ETLayoutItemGroup *) itemGroupWithItem: (ETLayoutItem *)item
 {
-	return [ETLayoutItemGroup layoutItemGroupWithLayoutItem: [NSArray arrayWithObject: item]];
+	return [ETLayoutItemGroup itemGroupWithItems: [NSArray arrayWithObject: item]];
 }
 
-+ (ETLayoutItemGroup *) layoutItemGroupWithLayoutItems: (NSArray *)items
++ (ETLayoutItemGroup *) itemGroupWithItems: (NSArray *)items
 {
 	return AUTORELEASE([[ETLayoutItemGroup alloc] initWithLayoutItems: items view: nil]);
 }
 
-+ (ETLayoutItemGroup *) layoutItemGroupWithView: (NSView *)view
++ (ETLayoutItemGroup *) itemGroupWithView: (NSView *)view
 {
 	return AUTORELEASE([[ETLayoutItemGroup alloc] initWithLayoutItems: nil view: view]);
 }
@@ -224,6 +224,48 @@ static ETLayoutItemGroup *pickboardGroup = nil;
 	}
 	
 	return pickboardGroup;
+}
+
+/* Deprecated */
+
++ (ETLayoutItem *) layoutItem
+{
+	return [self item];
+}
+
++ (ETLayoutItem *) layoutItemWithView: (NSView *)view
+{
+	return [self itemWithView: view];
+}
+
++ (ETLayoutItem *) layoutItemWithValue: (id)value
+{
+	return [self itemWithValue: value];
+}
+
++ (ETLayoutItem *) layoutItemWithRepresentedObject: (id)object
+{
+	return [self itemWithRepresentedObject: object];
+}
+
++ (ETLayoutItemGroup *) layoutItemGroup
+{
+	return [self itemGroup];
+}
+
++ (ETLayoutItemGroup *) layoutItemGroupWithLayoutItem: (ETLayoutItem *)item
+{
+	return [self itemGroupWithItem: item];
+}
+
++ (ETLayoutItemGroup *) layoutItemGroupWithLayoutItems: (NSArray *)items
+{
+	return [self itemGroupWithItems: items];
+}
+
++ (ETLayoutItemGroup *) layoutItemGroupWithView: (NSView *)view
+{
+	return [self itemGroupWithView: view];
 }
 
 @end
