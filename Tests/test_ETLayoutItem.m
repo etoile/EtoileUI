@@ -39,7 +39,7 @@
 #import <EtoileUI/ETLayoutItemGroup.h>
 #import <EtoileUI/ETContainer.h>
 #import <EtoileUI/ETFlowLayout.h>
-#import <EtoileUI/NSIndexPath+Etoile.h>
+#import <EtoileFoundation/NSIndexPath+Etoile.h>
 #import <UnitKit/UnitKit.h>
 #import <EtoileUI/ETCompatibility.h>
 @interface ETLayoutItem (UnitKitTests) <UKTest>

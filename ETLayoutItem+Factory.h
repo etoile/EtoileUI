@@ -55,6 +55,7 @@
 + (ETLayoutItemGroup *) layoutItemGroup;
 + (ETLayoutItemGroup *) layoutItemGroupWithLayoutItem: (ETLayoutItem *)item;
 + (ETLayoutItemGroup *) layoutItemGroupWithLayoutItems: (NSArray *)items;
++ (ETLayoutItemGroup *) layoutItemGroupWithView: (NSView *)view;
 
 /* Layer Factory Methods */
 
