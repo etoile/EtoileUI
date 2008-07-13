@@ -60,8 +60,8 @@
 /* Layer Factory Methods */
 
 + (ETLayer *) layer;
-+ (ETLayer *) layerWithLayoutItem: (ETLayoutItem *)item;
-+ (ETLayer *) layerWithLayoutItems: (NSArray *)items;
++ (ETLayer *) layerWithItem: (ETLayoutItem *)item;
++ (ETLayer *) layerWithItems: (NSArray *)items;
 + (ETLayer *) guideLayer;
 + (ETLayer *) gridLayer;
 
@@ -92,5 +92,7 @@
 + (ETLayoutItemGroup *) layoutItemGroupWithLayoutItem: (ETLayoutItem *)item;
 + (ETLayoutItemGroup *) layoutItemGroupWithLayoutItems: (NSArray *)items;
 + (ETLayoutItemGroup *) layoutItemGroupWithView: (NSView *)view;
++ (ETLayer *) layerWithLayoutItem: (ETLayoutItem *)item;
++ (ETLayer *) layerWithLayoutItems: (NSArray *)items;
 
 @end

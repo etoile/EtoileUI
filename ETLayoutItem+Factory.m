@@ -95,12 +95,12 @@
 	return (ETLayer *)AUTORELEASE([[ETLayer alloc] init]);
 }
 
-+ (ETLayer *) layerWithLayoutItem: (ETLayoutItem *)item
++ (ETLayer *) layerWithItem: (ETLayoutItem *)item
 {	
-	return [ETLayer layerWithLayoutItems: [NSArray arrayWithObject: item]];
+	return [ETLayer layerWithItems: [NSArray arrayWithObject: item]];
 }
 
-+ (ETLayer *) layerWithLayoutItems: (NSArray *)items
++ (ETLayer *) layerWithItems: (NSArray *)items
 {
 	ETLayer *layer = [[ETLayer alloc] init];
 	
@@ -266,6 +266,16 @@ static ETLayoutItemGroup *pickboardGroup = nil;
 + (ETLayoutItemGroup *) layoutItemGroupWithView: (NSView *)view
 {
 	return [self itemGroupWithView: view];
+}
+
++ (ETLayer *) layerWithLayoutItem: (ETLayoutItem *)item
+{	
+	return [self layerWithItem: item];
+}
+
++ (ETLayer *) layerWithLayoutItems: (NSArray *)items
+{
+	[self layerWithItems: items];
 }
 
 @end
