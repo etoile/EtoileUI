@@ -308,7 +308,7 @@
 	nil. 
 	This method will return nil when the receiver hasn't yet been added to an
 	item group or has just been removed from an item group. */
-- (ETLayoutItemGroup *) parentLayoutItem
+- (ETLayoutItemGroup *) parentItem
 {
 	return _parentLayoutItem;
 }
@@ -319,7 +319,7 @@
 	subclass. If you need to change the parent of a layout item, use -addItem:, 
 	-removeFromParent and other similar methods provided to manipulate item 
 	collection owned by an item group. */
-- (void) setParentLayoutItem: (ETLayoutItemGroup *)parent
+- (void) setParentItem: (ETLayoutItemGroup *)parent
 {
 	//ETLog(@"For item %@ with supervisor view %@, modify the parent item from "
 	//	"%@ to %@", self, [self supervisorView], _parentLayoutItem, parent, self);
@@ -1729,6 +1729,18 @@
 
 	/* Notify decorator item chain */
 	[[self decoratorItem] beginEditingUI];
+}
+
+/* Deprecated (DO NOT USE, WILL BE REMOVED LATER) */
+
+- (ETLayoutItemGroup *) parentLayoutItem
+{
+	return [self parentItem];
+}
+
+- (void) setParentLayoutItem: (ETLayoutItemGroup *)parent
+{
+	[self setParentItem: parent];
 }
 
 @end

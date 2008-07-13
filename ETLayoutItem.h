@@ -116,8 +116,8 @@
 
 - (id) rootItem;
 - (id) baseItem;
-- (ETLayoutItemGroup *) parentLayoutItem;
-- (void) setParentLayoutItem: (ETLayoutItemGroup *)parent;
+- (ETLayoutItemGroup *) parentItem;
+- (void) setParentItem: (ETLayoutItemGroup *)parent;
 - (void ) removeFromParent;
 - (ETContainer *) closestAncestorContainer;
 - (ETView *) closestAncestorDisplayView;
@@ -304,6 +304,11 @@ shape*/
 - (void) beginEditingUI;
 /*- (BOOL) isEditingUI;
 - (void) commitEditingUI;*/
+
+/* Deprecated (DO NOT USE, WILL BE REMOVED LATER) */
+
+- (ETLayoutItemGroup *) parentLayoutItem;
+- (void) setParentLayoutItem: (ETLayoutItemGroup *)parent;
 
 @end
 

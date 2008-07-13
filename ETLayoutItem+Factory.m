@@ -275,7 +275,7 @@ static ETLayoutItemGroup *pickboardGroup = nil;
 
 + (ETLayer *) layerWithLayoutItems: (NSArray *)items
 {
-	[self layerWithItems: items];
+	return [self layerWithItems: items];
 }
 
 @end
