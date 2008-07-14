@@ -88,6 +88,11 @@
 	return AUTORELEASE([[ETLayoutItemGroup alloc] initWithLayoutItems: nil view: view]);
 }
 
++ (ETLayoutItemGroup *) itemGroupWithValue: (id)value
+{
+	return AUTORELEASE([[ETLayoutItemGroup alloc] initWithValue: value]);
+}
+
 /* Layer Factory Methods */
 
 + (ETLayer *) layer
