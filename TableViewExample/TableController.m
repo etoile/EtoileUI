@@ -38,18 +38,9 @@
 
 @implementation TableController
 
-- (id) init
-{
-	self = [super init];
-	
-	return self;
-}
-
 /** All examples in this code could be rewritten with data source. They just 
 	shows very basic use of EtoileUI when you don't want to deal with the extra
-	burden involved by a data source. A source should be used when you display:
-	either a complex object collection or multiple object collections (like a
-	file manager). */
+	burden involved by a data source. */
 - (void) awakeFromNib
 {	
 	/*
@@ -61,15 +52,13 @@
 	[[tableContainer layout] setDisplayedProperties: [NSArray arrayWithObject: @"displayName"]];
 	[tableContainer setRepresentedPath: @"/"];
 	
-	/* ITEM is a macro. 
-	   ITEM(@"Red") is a shortcut for [ETLayoutItem layoutItemWithValue: @"Red"] */
-	[tableContainer addItem: ITEM(@"Red")];
-	[tableContainer addItem: ITEM(@"Green")];
+	[tableContainer addItem: [ETLayoutItem itemWithValue: @"Red"]];
+	[tableContainer addItem: [ETLayoutItem itemWithValue: @"Green"]];
 	/* Illustrate autoboxing of objects into layout items */
 	[tableContainer addObject: @"Blue"];
 	[tableContainer addObject: [NSNumber numberWithInt: 3]];
 	/* Value will be image object description */
-	//[tableContainer addItem: ITEM([NSImage imageNamed: @"NSApplication"])];
+	[tableContainer addObject: [NSImage imageNamed: @"NSApplication"]];
 	
 	/*
 	 * A container using a two columns table layout
@@ -87,8 +76,8 @@
 	[tableLayout2 setDisplayedProperties: visibleColumnIds];
 	[tableContainer2 setLayout: tableLayout2];
 	[tableContainer2 setRepresentedPath: @"/"];
-		
-	#define NUMBER(x) [NSNumber numberWithInt: x]
+
+#define NUMBER(x) [NSNumber numberWithInt: x]
 
 	item = [ETLayoutItem layoutItem];
 	[item setValue: @"Red" forProperty: @"name"];
@@ -108,46 +97,13 @@
 	[[ETPickboard localPickboard] showPickPalette];
 }
 
-// NOTE: willFinishLaunching must be used instead of didFinishLaunching. 
-// Otherwise outlineView will be wrapped into an ETView by ETEtoileUIBuilder 
-// invoked in -finishLaunching before we took the opportunity to convert it 
-// into an ETContainer instance. In other words, didFinishLaunching works
-// but results in a misconfigured layout item tree.
 - (void) applicationWillFinishLaunching: (NSNotification *)notif
 {
 	/*
 	 * A hierarchical container using a custom outline layout based on an 
-	 * outline view
+	 * existing outline view
 	 */
 
-	/* The following turns outlineView into a layout and inserts a container 
-	   as a subview replacement for outlineView (will become wrapped into it 
-	   on -updateLayout call). 
-	   You could do it by yourself with the following code:
-	   
-	   id existingSuperview = [outlineView superview];
-	   ETLayout *myTableLayout = [ETOutlineLayout layoutWithLayoutView: outlineView];
-	   ETContainer *outlineContainer = [[ETContainer alloc] initWithFrame: [outlineView frame]];
-	   
-	   if ([existingSuperview isContainer]) // existingSuperview must respond to -layoutItem
-	   {
-	       [existingSuperview addItem: [outlineContainer layoutItem]];
-	   }
-	   else // existingSuperview isn't a view-based node in a layout item tree
-	   {
-	       [existingSuperview replaceSubview: outlineView with: outlineContainer];
-	   }
-	   
-	   [outlineContainer setLayout: myTableLayout]; // inject the initial view as a layout
-	   RELEASE(outlineContainer);
-	   
-	   -initWithLayoutView: is a conveniency method that does it for you.
-	*/
-
-	// This method cannot be called in -awakeFromNib because NSNibAwaking 
-	// doesn't ensure decoded views are sent -awakeFromNib in a particular or
-	// sensible order. For example, outlineView may have no superview set in
-	// -awakeFromNib context.
 	ETContainer *outlineContainer = [[ETContainer alloc] initWithLayoutView: outlineView];
 	NSImage *icon = [NSImage imageNamed: @"NSApplicationIcon"];
 	
@@ -155,16 +111,16 @@
 	                        forProperty: @""];
 	[outlineContainer setRepresentedPath: @"/"]; /* Mandatory to handle drop */
 
-	/* This line is optional and simply avoids to update outlineContainer on each
-	   -addItem: call */
+	/* This line is optional and simply avoids to update outlineContainer on 
+	   each -addItem: call */
 	[outlineContainer setAutolayout: NO];
-	id itemGroup = (id)[ETLayoutItemGroup layoutItemWithValue: icon];
+	id itemGroup = [ETLayoutItem itemGroupWithValue: icon];
 
 	[itemGroup setValue: @"Icon!" forProperty: @"name"];
-	[itemGroup addItem: ITEM(icon)];
-	[itemGroup addItem: ITEM(icon)];
+	[itemGroup addItem: [ETLayoutItem itemWithValue: icon]];
+	[itemGroup addItem: [ETLayoutItem itemWithValue: icon]];
 	[outlineContainer addItem: itemGroup];
-	[outlineContainer addItem: ITEM(icon)];
+	[outlineContainer addItem: [ETLayoutItem itemWithValue: icon]];
 	
 	[outlineContainer setAutolayout: YES];
 	[outlineContainer updateLayout];
