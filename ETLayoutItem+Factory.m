@@ -93,6 +93,15 @@
 	return AUTORELEASE([[ETLayoutItemGroup alloc] initWithValue: value]);
 }
 
+/* Decorator Item Factory Methods */
+
+/** Creates a window item with a concrete window. The returned layout item can 
+    be used as a decorator to wrap an existing layout item into a window. */
++ (ETWindowItem *) itemWithWindow: (NSWindow *)window
+{
+	return AUTORELEASE([[ETWindowItem alloc] initWithWindow: window]);
+}
+
 /* Layer Factory Methods */
 
 + (ETLayer *) layer

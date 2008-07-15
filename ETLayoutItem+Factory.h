@@ -58,6 +58,10 @@
 + (ETLayoutItemGroup *) itemGroupWithView: (NSView *)view;
 + (ETLayoutItemGroup *) itemGroupWithValue: (id)value;
 
+/* Decorator Item Factory Methods */
+
++ (ETWindowItem *) itemWithWindow: (NSWindow *)window;
+
 /* Layer Factory Methods */
 
 + (ETLayer *) layer;

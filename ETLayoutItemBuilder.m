@@ -103,7 +103,7 @@
 	/* Decorate only if needed */
 	if (windowDecorator == nil)
 	{
-		windowDecorator = [ETWindowItem layoutItemWithWindow: window];
+		windowDecorator = [ETWindowItem itemWithWindow: window];
 		[[item lastDecoratorItem] setDecoratorItem: windowDecorator];
 	}
 
