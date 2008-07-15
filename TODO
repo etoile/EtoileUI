@@ -3,6 +3,10 @@ TODO
 
 # Refactoring
 
+* Rename -properties (first declared in NSObject+Model part of EtoileFoundation) to -propertyNames to eliminate collisions with other GNUstep/Cocoa classes
+
+* Patch NSBitmapImageRep to avoid method collision with -valueForProperty:, probably rely on posing a subclass or a category and method swizzling
+
 ## Layout
 
 * Rename ETStackLayout to ETColumnLayout
