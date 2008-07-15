@@ -58,6 +58,20 @@
 + (ETLayoutItemGroup *) itemGroupWithView: (NSView *)view;
 + (ETLayoutItemGroup *) itemGroupWithValue: (id)value;
 
+/* Leaf Widget Factory Methods */
+
++ (id) button;
++ (id) radioButton;
++ (id) checkbox;
++ (id) textField;
++ (id) searchField;
++ (id) textView;
++ (id) progressIndicator;
++ (id) horizontalSlider;
++ (id) verticalSlider;
++ (id) stepper;
++ (id) textFieldAndStepper;
+
 /* Decorator Item Factory Methods */
 
 + (ETWindowItem *) itemWithWindow: (NSWindow *)window;

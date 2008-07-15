@@ -93,6 +93,97 @@
 	return AUTORELEASE([[ETLayoutItemGroup alloc] initWithValue: value]);
 }
 
+/* Widget Factory Methods */
+
++ (id) newItemWithViewClass: (Class)class
+{
+	id view = AUTORELEASE([[class alloc] init]);
+
+	return [ETLayoutItem itemWithView: view];
+}
+
+/** Creates and returns a new layout item that uses a NSButton instance as its
+    view. */
++ (id) button
+{
+	return [self newItemWithViewClass: [NSButton class]];
+}
+
+/** Creates and returns a new layout item that uses a NSButton of type 
+    NSRadioButton as its view. */
++ (id) radioButton
+{
+	ETLayoutItem *item = [self newItemWithViewClass: [NSButton class]];
+	[(NSButton *)[item view] setButtonType: NSRadioButton];
+	return item;
+}
+
+/** Creates and returns a new layout item that uses a NSButton of type 
+    NSSwitchButton as its view. */
++ (id) checkbox
+{
+	id item = [self newItemWithViewClass: [NSButton class]];
+	[(NSButton *)[item view] setButtonType: NSSwitchButton];
+	return item;
+}
+
+/** Creates and returns a new layout item that uses a NSTextField instance as 
+    its view. */
++ (id) textField
+{
+	return [self newItemWithViewClass: [NSTextField class]];
+}
+
+/** Creates and returns a new layout item that uses a NSSearchField instance as 
+    its view. */
++ (id) searchField
+{
+	return [self newItemWithViewClass: [NSSearchField class]];
+}
+
+/** Creates and returns a new layout item that uses a NSTextView instance as 
+    its view. */
++ (id) textView
+{
+	return [self newItemWithViewClass: [NSTextView class]];
+}
+
+/** Creates and returns a new layout item that uses a NSProgressIndicator instance as 
+    its view. */
++ (id) progressIndicator
+{
+	return [self newItemWithViewClass: [NSProgressIndicator class]];
+}
+
+/** Creates and returns a new layout item that uses a vertially oriented 
+    NSSlider instance as its view. */
++ (id) verticalSlider
+{
+	return [self newItemWithViewClass: [NSSlider class]];
+}
+
+/** Creates and returns a new layout item that uses a vertially oriented 
+    NSSlider instance as its view. */
++ (id) horizontalSlider
+{
+	return [self newItemWithViewClass: [NSSlider class]];
+}
+
+/** Creates and returns a new layout item that uses a NSStepper instance as its 
+    view. */
++ (id) stepper
+{
+	return [self newItemWithViewClass: [NSStepper class]];
+}
+
+/** Creates and returns a new layout item that uses a view whose subviews are 
+    a text field and a stepper on the right side. */
++ (id) textFieldAndStepper
+{
+	// TODO: Implement
+	return nil;
+}
+
 /* Decorator Item Factory Methods */
 
 /** Creates a window item with a concrete window. The returned layout item can 
