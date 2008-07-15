@@ -45,8 +45,6 @@
 	BOOL _usesCustomWindowTitle;
 }
 
-+ (id) layoutItemWithWindow: (NSWindow *)window;
-
 - (id) initWithWindow: (NSWindow *)window;
 - (NSWindow *) window;
 - (BOOL) usesCustomWindowTitle;

@@ -46,11 +46,6 @@
 
 @implementation ETWindowItem
 
-+ (id) layoutItemWithWindow: (NSWindow *)window
-{
-	return AUTORELEASE([[self alloc] initWithWindow: window]);
-}
-
 /** <init /> */
 - (id) initWithWindow: (NSWindow *)window
 {
