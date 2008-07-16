@@ -62,6 +62,7 @@
 - (ETLayoutItem *) itemGroupView: (ETContainer *)container itemAtPath: (NSIndexPath *)indexPath;
 - (int) propertyView: (ETContainer *)container numberOfItemsAtPath: (NSIndexPath *)path;
 - (ETLayoutItem *) propertyView: (ETContainer *)container itemAtPath: (NSIndexPath *)path;
+- (void) updateInspectorWindowTitle;
 @end
 
 
@@ -410,22 +411,26 @@
 	}
 	[self setRepresentedObject: nil];
 	
-	/* Update inspector window title */ 
+	[self updateInspectorWindowTitle];
+}
+
+- (void) updateInspectorWindowTitle
+{
 	id inspectedItem = [[self inspectedItems] firstObject];
 	
-	if (inspectedItem != nil)
-	{
-		NSString *name = [inspectedItem displayName];
-		NSString *inspectorTitle = nil;
-		
-		[self setRepresentedObject: inspectedItem];
-		
-		if ([name length] > 25)
-			name = [[name substringToIndex: 25] append: @"…"];
-		inspectorTitle = [NSString stringWithFormat: @"%@ (M%d UI)", name,
-			[self UIMetalayer]];
-		[[self window] setTitle: inspectorTitle];
-	}
+	if (inspectedItem == nil)
+		return;
+
+	NSString *name = [inspectedItem displayName];
+	NSString *inspectorTitle = nil;
+	
+	[self setRepresentedObject: inspectedItem];
+	
+	if ([name length] > 25)
+		name = [[name substringToIndex: 25] append: @"…"];
+	inspectorTitle = [NSString stringWithFormat: @"%@ (M%d UI)", name,
+		[self UIMetalayer]];
+	[[self window] setTitle: inspectorTitle];
 }
 
 - (NSWindow *) window
