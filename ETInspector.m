@@ -111,11 +111,16 @@
 	[[ETEtoileUIBuilder builder] renderWindow: window];
 
 	[itemGroupView setLayout: AUTORELEASE([[ETOutlineLayout alloc] init])];
-	[itemGroupView setSource: self];
+	// TODO: Figure out a nice way to restore the layout as is because 
+	// displayed properties are lost on layout changes (happens only if the 
+	// user wants to customize the inspector UI).
+	[[itemGroupView layout] setDisplayedProperties: 
+		[NSArray arrayWithObjects: @"icon", @"displayName", @"UIMetalevel", nil]];
+	[itemGroupView setSource: [itemGroupView layoutItem]];
 	[itemGroupView setDelegate: self];
 	[itemGroupView setDoubleAction: @selector(doubleClickInItemGroupView:)];
 	[itemGroupView setTarget: self];
-	
+
 	[propertyView setLayout: AUTORELEASE([[ETTableLayout alloc] init])];
 	[propertyView setSource: self];
 	// NOTE: If this next line is uncommented, -containerSelectionDidChange:
@@ -129,8 +134,6 @@
 
 - (void) containerSelectionDidChange: (NSNotification *)notif
 {
-	/*[itemGroupView setSource: self];
-	[itemGroupView setDelegate: self];*/
 	ETLog(@"Selection did change for %@ received in %@", [notif object], self);
 	
 	[propertyView reloadAndUpdateLayout];
@@ -145,116 +148,18 @@
 
 - (int) container: (ETContainer *)container numberOfItemsAtPath: (NSIndexPath *)path
 {
-	int nbOfItems = 0;
+	NSAssert([container isEqual: propertyView], @"Inspector must only receive"
+		@"propertyView as first parameter in source methods");
 	
-	if ([container isEqual: itemGroupView])
-	{
-		nbOfItems =	[self itemGroupView: container numberOfItemsAtPath: path];
-	}
-	else if ([container isEqual: propertyView])
-	{
-		nbOfItems = [self propertyView: container numberOfItemsAtPath: path];
-	}
-	
-	return nbOfItems;
+	return [self propertyView: container numberOfItemsAtPath: path];
 }
 
 - (ETLayoutItem *) container: (ETContainer *)container itemAtPath: (NSIndexPath *)path
 {
-	ETLayoutItem *item = nil;
-	
-	if ([container isEqual: itemGroupView])
-	{
-		item =	[self itemGroupView: container itemAtPath: path];
-	}
-	else if ([container isEqual: propertyView])
-	{
-		item = [self propertyView: container itemAtPath: path];
-	}
-	
-	return item;
-}
+	NSAssert([container isEqual: propertyView], @"Inspector must only receive"
+		@"propertyView as first parameter in source methods");
 
-- (int) itemGroupView: (ETContainer *)container numberOfItemsAtPath: (NSIndexPath *)indexPath 
-{
-	int nbOfItems = 0;
-
-	NSAssert(indexPath != nil, @"Index path %@ passed to "
-		@"data source must not be nil");	
-	/*NSAssert1([keyPath characterAtIndex: 0] == '/', @"First character of key "
-		@"path %@ passed to data source must be /", keyPath);*/
-	
-	if ([indexPath length] == 0)
-	{
-		nbOfItems = [[self inspectedItems] count];
-	}
-	else
-	{
-		unsigned int index = [indexPath firstIndex];
-		NSIndexPath *indexSubpath = [indexPath indexPathByRemovingFirstIndex];
-		
-		/*NSAssert1(index == 0 && [pathComp isEqual: @"0"] == NO,
-			@"Path components must be indexes for key path %@", keyPath);*/
-		NSAssert2(index < [[self inspectedItems] count], @"First index %d in "
-			@"index path %@ must be inferior to inspected item number", 
-			index, indexPath);
-	
-		ETLayoutItem *item = [[self inspectedItems] objectAtIndex: index];
-		
-		NSAssert1([item isGroup], @"For "
-			@"-numberOfItemsAtPath:, path %@ must reference an instance of "
-			@"ETLayoutItemGroup kind", indexPath);
-		
-		if ([indexSubpath length] > 0)
-			item = [(ETLayoutItemGroup *)item itemAtIndexPath: indexSubpath];
-		
-		if (item != nil)
-		{
-			nbOfItems = [[(ETLayoutItemGroup *)item items] count];
-		}
-		else
-		{
-			ETLog(@"WARNING: Found no item at subpath %@ for inspector %@", indexSubpath, self);
-		}
-	}
-	
-	//ETLog(@"Returns %d as number of items in %@", nbOfItems, container);
-	
-	return nbOfItems;
-}
-
-- (ETLayoutItem *) itemGroupView: (ETContainer *)container itemAtPath: (NSIndexPath *)indexPath
-{
-	unsigned int index = [indexPath firstIndex];
-	NSIndexPath *indexSubpath = [indexPath indexPathByRemovingFirstIndex];
-	
-	/*NSAssert1(index == 0 && [pathComp isEqual: @"0"] == NO,
-		@"Path components must be indexes for key path %@", keyPath);*/
-	
-	NSAssert3(index < [[self inspectedItems] count], @"Index %d in key "
-		@"path %@ position %d must be inferior to inspected item number", 
-		index, 0, indexPath);
-
-	ETLayoutItem *item = [[self inspectedItems] objectAtIndex: index];
-	
-	if ([indexSubpath length] > 0)
-		item = [(ETLayoutItemGroup *)item itemAtIndexPath: indexSubpath];
-	if (item == nil)
-		ETLog(@"WARNING: Found no item at subpath %@ for inspector %@", indexSubpath, self);
-
-	/* Create a meta layout item */
-	if ([item isGroup])
-	{
-		item = [ETLayoutItem layoutItemWithRepresentedItem: item snapshot: YES];
-	}
-	else
-	{
-		item = [ETLayoutItem layoutItemWithRepresentedItem: item snapshot: YES];
-	}
-	
-	//ETLog(@"Returns item %@ at path %@ in %@", item, indexSubpath, container);
-
-	return item;
+	return [self propertyView: container itemAtPath: path];
 }
 
 - (int) propertyView: (ETContainer *)container numberOfItemsAtPath: (NSIndexPath *)path
@@ -337,19 +242,10 @@
 
 - (NSArray *) displayedItemPropertiesInContainer: (ETContainer *)container
 {
-	NSArray *displayedProperties = nil;
+	NSAssert([container isEqual: propertyView], @"Inspector must only receive"
+		@"propertyView as first parameter in source methods");
 
-	if ([container isEqual: itemGroupView])
-	{
-		displayedProperties = [NSArray arrayWithObjects: @"icon", 
-			@"displayName", @"UIMetalevel", nil];
-	}	
-	else if ([container isEqual: propertyView])
-	{
-		displayedProperties = [NSArray arrayWithObjects: @"property", @"value", nil];
-	}
-	
-	return displayedProperties;
+	return [NSArray arrayWithObjects: @"property", @"value", nil];
 }
 
 - (IBAction) changeLayout: (id)sender
@@ -407,6 +303,7 @@
 	else
 	{
 		ASSIGN(_inspectedItems, items);
+		[[itemGroupView layoutItem] setRepresentedObject: _inspectedItems];
 		[itemGroupView reloadAndUpdateLayout];
 	}
 	[self setRepresentedObject: nil];
