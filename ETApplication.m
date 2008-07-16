@@ -57,7 +57,7 @@
 	layer under the application control. */
 - (ETLayoutItemGroup *) layoutItem
 {
-	return [ETLayoutItemGroup windowGroup];
+	return [ETLayoutItem localRootGroup];
 }
 
 - (void) finishLaunching

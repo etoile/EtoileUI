@@ -237,6 +237,8 @@
 	return nil;
 }
 
+//static ETLayoutItemGroup *localRootGroup = nil;
+
 /** Returns the local root group which represents the current application.
 	This item group is located in the application process and when the UI 
 	server parent is running, it belongs to a parent located outside of the 
@@ -246,7 +248,20 @@
 	(unless the method has been overriden). */
 + (id) localRootGroup
 {
-	return nil;
+	// TODO: Should add -windowGroup... but how the top part of the layout 
+	// item tree is organized needs to be worked out in details.
+#if 0
+	if (localRootGroup == nil)
+	{
+		localRootGroup = [[ETLayoutItemGroup alloc] init];
+		[localRootGroup setName: _(@"Application")];
+		[localRootGroup addItem: [self windowGroup]];
+	}
+
+	return localRootGroup;
+#endif 
+
+	return [self windowGroup];
 }
 
 static ETLayoutItemGroup *floatingItemGroup = nil;
