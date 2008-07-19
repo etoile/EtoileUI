@@ -103,6 +103,9 @@ typedef enum _ETSizeConstraintStyle
 	ETSizeConstraintStyle _itemSizeConstraintStyle;
 }
 
++ (void) registerLayoutClass: (Class)layoutClass;
++ (NSSet *) registeredLayoutClasses;
+
 /* Factory  Method */
 
 + (id) layout;
