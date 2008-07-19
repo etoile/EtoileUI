@@ -40,6 +40,7 @@
 #import <EtoileFoundation/NSIndexPath+Etoile.h>
 #import <EtoileFoundation/NSString+Etoile.h>
 #import <EtoileFoundation/ETCollection.h>
+#import <EtoileFoundation/Macros.h>
 #import <EtoileUI/ETLayoutItem+Reflection.h>
 #import <EtoileUI/ETInspector.h>
 #import <EtoileUI/ETContainer.h>
@@ -109,6 +110,13 @@
 	// be assigned to self and this item discarded.
 	//id item = [[ETEtoileUIBuilder builder] renderWindow: window];
 	[[ETEtoileUIBuilder builder] renderWindow: window];
+
+	[layoutPopup removeAllItems];
+	FOREACH([ETLayout registeredLayoutClasses], layoutClass, ETLayout *)
+	{
+		[layoutPopup addItemWithTitle: [layoutClass displayName]];
+		[[layoutPopup lastItem] setRepresentedObject: layoutClass];
+	}
 
 	[itemGroupView setLayout: AUTORELEASE([[ETOutlineLayout alloc] init])];
 	// TODO: Figure out a nice way to restore the layout as is because 
@@ -250,43 +258,13 @@
 
 - (IBAction) changeLayout: (id)sender
 {
-	Class layoutClass = nil;
-	
-	switch ([[sender selectedItem] tag])
-	{
-		case 0:
-			layoutClass = [ETStackLayout class];
-			break;
-		case 1:
-			layoutClass = [ETLineLayout class];
-			break;
-		case 2:
-			layoutClass = [ETFlowLayout class];
-			break;
-		case 3:
-			layoutClass = [ETTableLayout class];
-			break;
-		case 4:
-			layoutClass = [ETOutlineLayout class];
-			break;
-		case 5:
-			layoutClass = [ETBrowserLayout class];
-			break;
-		case 6:
-			layoutClass = [ETFreeLayout class];
-			break;
-		case 7:
-			layoutClass = [ETViewModelLayout class];
-			break;
-		default:
-			NSLog(@"Unsupported layout or unknown popup menu selection");
-	}
+	Class layoutClass = [[sender selectedItem] representedObject];
 	
 	id firstSelectedItem = [[itemGroupView selectedItemsInLayout] firstObject];
 	id representedItem = [firstSelectedItem representedObject];
 	
 	if ([representedItem respondsToSelector: @selector(setLayout:)])
-		[representedItem setLayout: (ETLayout *)AUTORELEASE([[layoutClass alloc] init])];
+		[representedItem setLayout: [layoutClass layout]];
 }
 
 - (NSArray *) inspectedItems

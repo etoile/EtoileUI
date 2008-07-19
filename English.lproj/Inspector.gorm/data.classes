@@ -38,6 +38,7 @@
 	Outlets = (
 	    itemGroupView,
 	    propertyView,
+	    layoutPopup,
 	    window,
 	    viewModelLayout
 	);

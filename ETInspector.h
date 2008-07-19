@@ -47,6 +47,7 @@
 {
 	IBOutlet ETContainer *itemGroupView;
 	IBOutlet ETContainer *propertyView;
+	IBOutlet NSPopUpButton *layoutPopup;
 	IBOutlet NSWindow *window;
 	IBOutlet id viewModelLayout;
 
