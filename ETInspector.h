@@ -43,6 +43,15 @@
 @class ETView, ETContainer;
 
 
+@interface ETInspectorLayout : ETLayout
+{
+
+}
+
+- (id) inspectedObject;
+
+@end
+
 @interface ETInspector : ETLayoutItem <ETInspector>
 {
 	IBOutlet ETContainer *itemGroupView;
@@ -51,12 +60,11 @@
 	IBOutlet NSWindow *window;
 	IBOutlet id viewModelLayout;
 
-	NSArray *_inspectorViews;
-	NSArray *_inspectedItems;
+	NSArray *_inspectedObjects;
 }
 
-- (NSArray *) inspectedItems;
-- (void) setInspectedItems: (NSArray *)items;
+- (NSArray *) inspectedObjects;
+- (void) setInspectedObjects: (NSArray *)objects;
 
 /*- (ETView *) view;
 - (void) setView: (NSView *)view;*/
@@ -68,12 +76,9 @@
 - (IBAction) inspect: (id)sender;
 - (IBAction) stack: (id)sender;
 
+/* Deprecated (DO NOT USE, WILL BE REMOVED LATER) */
+
+- (NSArray *) inspectedItems;
+- (void) setInspectedItems: (NSArray *)items;
+
 @end
-
-
-/*@interface ETInspectorLayout
-{
-	IBOutlet ETContainer *itemGroupView;
-}
-
-@end*/

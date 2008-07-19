@@ -67,6 +67,16 @@
 @end
 
 
+@implementation ETInspectorLayout
+
+- (id) inspectedObject
+{
+	return [(ETLayoutItem *)[self layoutContext] representedObject];
+}
+
+@end
+
+
 @implementation ETInspector
 
 - (id) init
@@ -80,7 +90,7 @@
 	
 	if (self != nil)
 	{
-		_inspectedItems = nil;
+		_inspectedObjects = nil;
 		
 		BOOL nibLoaded = [NSBundle loadNibNamed: @"Inspector" owner: self];
 		
@@ -97,7 +107,7 @@
 
 - (void) dealloc
 {
-	DESTROY(_inspectedItems);
+	DESTROY(_inspectedObjects);
 	
 	[super dealloc];
 }
@@ -267,21 +277,21 @@
 		[representedItem setLayout: [layoutClass layout]];
 }
 
-- (NSArray *) inspectedItems
+- (NSArray *) inspectedObjects
 {
-	return _inspectedItems;
+	return _inspectedObjects;
 }
 
-- (void) setInspectedItems: (NSArray *)items
+- (void) setInspectedObjects: (NSArray *)objects
 {
-	if ([items count] == 0)
+	if ([objects isEmpty])
 	{
-		ASSIGN(_inspectedItems, nil);
+		ASSIGN(_inspectedObjects, nil);
 	}
 	else
 	{
-		ASSIGN(_inspectedItems, items);
-		[[itemGroupView layoutItem] setRepresentedObject: _inspectedItems];
+		ASSIGN(_inspectedObjects, objects);
+		[[itemGroupView layoutItem] setRepresentedObject: _inspectedObjects];
 		[itemGroupView reloadAndUpdateLayout];
 	}
 	[self setRepresentedObject: nil];
@@ -291,7 +301,7 @@
 
 - (void) updateInspectorWindowTitle
 {
-	id inspectedItem = [[self inspectedItems] firstObject];
+	id inspectedItem = [[self inspectedObjects] firstObject];
 	
 	if (inspectedItem == nil)
 		return;
@@ -350,6 +360,18 @@
 			}
 		}
 	}
+}
+
+/* Deprecated (DO NOT USE, WILL BE REMOVED LATER) */
+
+- (NSArray *) inspectedItems
+{
+	return [self inspectedObjects];
+}
+
+- (void) setInspectedItems: (NSArray *)items
+{
+	[self setInspectedObjects: items];
 }
 
 @end

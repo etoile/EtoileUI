@@ -34,8 +34,12 @@
 	THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#import <EtoileFoundation/NSObject+Model.h>
 #import <EtoileUI/NSObject+EtoileUI.h>
 #import <EtoileUI/ETObjectBrowserLayout.h>
+#import <EtoileUI/ETLayoutItemGroup.h>
+#import <EtoileUI/ETLayoutItem+Factory.h>
+#import <EtoileUI/ETInspector.h>
 #import <EtoileUI/ETCompatibility.h>
 
 
@@ -59,9 +63,9 @@
 	application the browsed object is part of). */
 - (IBAction) browse: (id)sender
 {
-	ETObjectBrowser *browser = [[ETObjectBrowser alloc] init];
+	ETObjectBrowser *browser = [[ETObjectBrowser alloc] init]; // FIXME: Leak
 
-	ETLog(@"browse %@", self);
+	ETDebugLog(@"browse %@", self);
 	[browser setBrowsedObject: self];
 	[[browser panel] makeKeyAndOrderFront: self];
 }
@@ -79,7 +83,11 @@
 	made visible and active as described in the previous paragraph. */
 - (IBAction) view: (id)sender
 {
-	// FIXME: Implement
+	// TODO: Implement. Request the type (UTI) of the receiver, the looks up
+	// in the aspect repository which item template should be used to create a
+	// UI represention of the receiver. Simply copy the template and set the 
+	// receiver as the represented object, then attach the copied item to the 
+	// window group.
 }
 
 /** Shows an inspector which provides informations about the receiver. The 
@@ -89,7 +97,11 @@
 	or bring back the basic inspector. */
 - (IBAction) inspect: (id)sender
 {
-	// FIXME: Implement
+	ETInspector *inspector = [[ETInspector alloc] init];  // FIXME: Leak
+
+	ETDebugLog(@"inspect %@", self);
+	[inspector setInspectedObjects: [NSArray arrayWithObject: self]];
+	[[inspector panel] makeKeyAndOrderFront: self];
 }
 
 @end
