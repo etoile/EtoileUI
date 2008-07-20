@@ -66,6 +66,7 @@
 + (void) registerBuiltInLayoutClasses;
 - (BOOL) loadNibNamed: (NSString *)nibName;
 /* Utility methods */
+- (BOOL) isLayoutViewInUse;
 - (NSRect) lineLayoutRectForItemAtIndex: (int)index;
 - (ETLayoutItem *) itemAtLocation: (NSPoint)location;
 @end
@@ -449,6 +450,20 @@ static NSMutableSet *layoutClasses = nil;
 - (BOOL) isComputedLayout
 {
 	return YES;
+}
+
+/** Returns YES when the layout imposes a custom layout and drawing for all 
+    rendered layout items; in other words, when the receiver overrides the 
+    default drawing styles, views and layouts for the descendant items of the 
+    layout context.
+    By default returns YES if the receiver uses a layout view. Override it to 
+    return NO in case the receiver subclass doesn't let the rendered layout 
+    items draw themselves, yet without using a layout view. 
+    Typically, all composite layouts are opaque, as layouts that wrap controls 
+    of the underlying UI toolkit are (for example ETTableLayout). */
+- (BOOL) isOpaque
+{
+	return ([self layoutView] != nil && [self isLayoutViewInUse]);
 }
 
 /** Returns YES if all layout items are visible in the bounds of the related 
@@ -861,6 +876,20 @@ static NSMutableSet *layoutClasses = nil;
 - (NSView *) layoutView
 {
 	return _displayViewPrototype;
+}
+
+/** Returns YES if the layout view is presently visible in the layout item tree 
+    of the layout context, otherwise returns NO.
+    A layout view can be inserted in a superview bound the parent item and yet 
+    not be visible. For example, if an ancestor item of the parent uses an 
+    opaque layout, the layout view is inserted in the parent view but the 
+    parent view (or another ancestor superview which owns it) isn't inserted 
+    as a subview in the visible view hierarchy of the layout item tree. */
+- (BOOL) isLayoutViewInUse
+{
+	// NOTE: A visible view hierarchy is always rooted in a window, itself bound 
+	// to the layout item representing the content view.
+	return ([[self layoutView] window] == nil);
 }
 
 /** You should call this method in -renderWithLayoutItems:isNewContent: if you 

@@ -128,6 +128,7 @@ typedef enum _ETSizeConstraintStyle
 /* -isSemantic is initially defined by superclass ETStyle */
 - (BOOL) isSemantic;
 - (BOOL) isComputedLayout;
+- (BOOL) isOpaque;
 
 /* Size And Utility Accessors */
 

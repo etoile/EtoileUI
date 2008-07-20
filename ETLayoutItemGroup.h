@@ -118,6 +118,7 @@
 
 - (ETLayout *) layout;
 - (void) setLayout: (ETLayout *)layout;
+- (ETLayoutItemGroup *) ancestorItemForOpaqueLayout;
 
 //-reloadAndUpdateAll;
 - (void) reloadAndUpdateLayout;
