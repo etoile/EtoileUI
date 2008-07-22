@@ -138,6 +138,8 @@
 
 - (NSArray *) visibleItems;
 - (void) setVisibleItems: (NSArray *)items;
+- (NSArray *) visibleItemsForItems: (NSArray *)items;
+- (void) setVisibleItems: (NSArray *)visibleItems forItems: (NSArray *)items;
 - (NSSize) size;
 - (void) setSize: (NSSize)size;
 - (NSView *) view;

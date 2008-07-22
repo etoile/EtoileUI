@@ -911,11 +911,31 @@
 	}
 }
 
+/** Returns the visible child items of the receiver. 
+    This is a shortcut method for -visibleItemsForItems:. */
 - (NSArray *) visibleItems
+{
+	return [self visibleItemsForItems: [self items]];
+}
+
+/** Sets the visible child items of the receiver, by taking care of inserting
+    and removing the item display views based on the visibility of the layout 
+    items.
+    This is a shortcut method for -visibleItemsForItems:. */
+- (void) setVisibleItems: (NSArray *)visibleItems
+{
+	return [self setVisibleItems: visibleItems forItems: [self items]];
+}
+/** Returns the visible child items of the receiver. 
+    You shouldn't need to call this method by yourself unless you write an 
+    ETCompositeLayout subclass which usually requires the receiver displays 
+    layout items which doesn't belong to it, as children, but to another item 
+    group. */
+- (NSArray *) visibleItemsForItems: (NSArray *)items
 {
 	ETContainer *container = nil;
 	NSMutableArray *visibleItems = [NSMutableArray array];
-	NSEnumerator  *e = [[self items] objectEnumerator];
+	NSEnumerator  *e = [items objectEnumerator];
 	ETLayoutItem *item = nil;
 	
 	if ([self isContainer])
@@ -930,14 +950,22 @@
 	return visibleItems;
 }
 
+/** Sets the visible child items of the receiver, by taking care of inserting
+    and removing the item display views based on the visibility of the layout 
+    items.
+    This method is typically called by the layout of the receiver once the 
+    layout rendering is finished in order to adjust the visibility of views and 
+    update the visible property of the child items. 
+    You shouldn't need to call this method by yourself 
+    (see -visibleItemsForItems:). */
+- (void) setVisibleItems: (NSArray *)visibleItems forItems: (NSArray *)items
+{
 // FIXME: Make a bottom top traversal to find the first view which can be used 
 // as superview for the visible layout item views. Actually this isn't needed
 // or supported because all ETLayoutItemGroup instances must embed a container.
 // This last point is going to become purely optional.
-- (void) setVisibleItems: (NSArray *)visibleItems
-{
 	ETContainer *container = nil;
-	NSEnumerator  *e = [[self items] objectEnumerator];
+	NSEnumerator  *e = [items objectEnumerator];
 	ETLayoutItem *item = nil;
 	
 	if ([self isContainer])
