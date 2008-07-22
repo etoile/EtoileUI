@@ -53,6 +53,10 @@
 NSString *ETContainerSelectionDidChangeNotification = @"ETContainerSelectionDidChangeNotification";
 NSString *ETLayoutItemPboardType = @"ETLayoutItemPboardType"; // FIXME: replace by UTI
 
+@interface ETContainer (ETEventHandling)
+- (void) mouseDoubleClick: (NSEvent *)event item: (ETLayoutItem *)item;
+@end
+
 @interface ETContainer (PackageVisibility)
 - (int) checkSourceProtocolConformance;
 - (BOOL) isScrollViewShown;
@@ -65,6 +69,7 @@ NSString *ETLayoutItemPboardType = @"ETLayoutItemPboardType"; // FIXME: replace 
 - (void) syncDisplayViewWithContainer;
 - (NSInvocation *) invocationForSelector: (SEL)selector;
 - (void) sendInvocationToDisplayView: (NSInvocation *)inv;
+- (NSView *) layoutViewWithoutScrollView;
 - (void) cacheScrollViewDecoratorItem: (ETLayoutItem *)decorator;
 - (ETLayoutItem *) cachedScrollViewDecoratorItem;
 - (ETLayoutItem *) createScrollViewDecoratorItem;
@@ -580,8 +585,8 @@ NSString *ETLayoutItemPboardType = @"ETLayoutItemPboardType"; // FIXME: replace 
 	
 	if (_displayView != nil)
 	{
-		SEL doubleAction = [self doubleAction];
-		id target = [self target];
+		SEL doubleAction = @selector(forwardDoubleActionFromLayout:);
+		id target = self;
 		
 		inv = RETAIN([self invocationForSelector: @selector(setDoubleAction:)]);
 		[inv setArgument: &doubleAction atIndex: 2];
@@ -655,6 +660,43 @@ NSString *ETLayoutItemPboardType = @"ETLayoutItemPboardType"; // FIXME: replace 
 	RELEASE(inv); /* Retained in -syncDisplayViewWithContainer otherwise it gets released too soon */
 	
 	//return result;
+}
+
+/** Returns the control view enclosed in the layout view if the latter is a
+    scroll view, otherwise the returned view is identical to -layoutView. */
+- (NSView *) layoutViewWithoutScrollView
+{
+	id layoutView = [self displayView];
+
+	if ([layoutView isKindOfClass: [NSScrollView class]])
+		return [layoutView documentView];
+
+	return layoutView;
+}
+
+- (void) forwardDoubleActionFromLayout: (id)sender
+{
+	id layout = [self layout];
+	NSView *layoutView = [self layoutViewWithoutScrollView];
+	NSEvent *evt = [NSApp currentEvent];
+
+	NSAssert1(layoutView != nil, @"Layout must not be nil if a double action "
+		@"is handed by the layout %@", sender);
+	NSAssert2([sender isEqual: layoutView], @"sender %@ must be the layout "
+		@"view %@ currently in uses", sender, layoutView);
+
+	ETDebugLog(@"Double action on %@ in %@ with selected items %@", sender, evt,
+		[layout selectedItems]);
+
+	if ([layout respondsToSelector: @selector(doubleClickedItem)])
+	{
+		[self mouseDoubleClick: evt item: [layout doubleClickedItem]];
+	}
+	else
+	{
+		ETLog(@"WARNING: Layout %@ based on a layout view must implement "
+			@"-doubleClickedItem", layout);
+	}
 }
 
 /* Inspecting */
@@ -1565,18 +1607,6 @@ NSString *ETLayoutItemPboardType = @"ETLayoutItemPboardType"; // FIXME: replace 
 
 - (ETLayoutItem *) doubleClickedItem
 {
-	if (_displayView != nil)
-	{
-		if ([[self layout] respondsToSelector: @selector(doubleClickedItem)])
-		{
-			ASSIGN(_doubleClickedItem, [(id)[self layout] doubleClickedItem]);
-		}
-		else
-		{
-			NSLog(@"WARNING: Layout %@ based on a display view must implement -doubleClickedItem", [self layout]);
-		}
-	}
-	
 	return _doubleClickedItem;
 }
 
