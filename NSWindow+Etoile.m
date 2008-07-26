@@ -125,7 +125,7 @@
 {
 	ETObjectBrowser *browser = [[ETObjectBrowser alloc] init];
 
-	ETLog(@"browse %@", self);
+	ETDebugLog(@"browse %@", self);
 	[browser setBrowsedObject: [self contentView]];
 	[[browser panel] makeKeyAndOrderFront: self];
 }

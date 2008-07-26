@@ -156,7 +156,7 @@
 		nbOfItems = [[[itemGroup representedObject] contentArray] count];
 	}
 	
-	ETLog(@"Returns %d as number of items in %@", nbOfItems, container);
+	ETDebugLog(@"Returns %d as number of items in %@", nbOfItems, container);
 	
 	/* Useful to debug data source and property editing
 	if (nbOfItems > 1)	
@@ -229,7 +229,7 @@
 		[item setValue: [object description] forProperty: @"description"];*/
 	}
 	
-	ETLog(@"Returns item %@ at path %@ in %@", item, path, container);
+	ETDebugLog(@"Returns item %@ at path %@ in %@", item, path, container);
 
 	return item;
 }

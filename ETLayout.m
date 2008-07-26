@@ -366,7 +366,7 @@ static NSMutableSet *layoutClasses = nil;
 	}
 	else
 	{
-		ETLog(@"Failed to load nib %@", nibName);
+		ETLog(@"WARNING: Failed to load nib %@", nibName);
 		AUTORELEASE(self);
 	}
 	return nibLoaded;
@@ -417,7 +417,7 @@ static NSMutableSet *layoutClasses = nil;
 	retained the receiver. */
 - (void) setLayoutContext: (id <ETLayoutingContext>)context
 {
-	//ETLog(@"Modify layout context from %@ to %@ in %@", _layoutContext, context, self);
+	//ETDebugLog(@"Modify layout context from %@ to %@ in %@", _layoutContext, context, self);
 	
 	// NOTE: Avoids retain cycle by weak referencing the context
 	_layoutContext = context;
@@ -677,7 +677,7 @@ static NSMutableSet *layoutClasses = nil;
 	future. */
 - (void) renderWithLayoutItems: (NSArray *)items isNewContent: (BOOL)isNewContent
 {	
-	//ETLog(@"Render layout items: %@", items);
+	//ETDebugLog(@"Render layout items: %@", items);
 	
 	NSArray *layoutModel = nil;
 	float scale = [[self layoutContext] itemScaleFactor];

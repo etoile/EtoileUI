@@ -248,7 +248,7 @@
 		}
 	}
 	
-	//ETLog(@"Returns %d as number of items in %@", nbOfItems, outlineView);
+	//ETDebugLog(@"Returns %d as number of items in %@", nbOfItems, outlineView);
 	
 	return nbOfItems;
 }
@@ -266,7 +266,7 @@
 		childItem = [(ETLayoutItemGroup *)item itemAtIndex: rowIndex];
 	}
 
-	//ETLog(@"Returns %@ child item in outline view %@", childItem, outlineView);
+	//ETDebugLog(@"Returns %@ child item in outline view %@", childItem, outlineView);
 	
 	return childItem;
 }
@@ -275,7 +275,7 @@
 {
 	if ([item isGroup])
 	{
-		//ETLog(@"Returns item is expandable in outline view %@", outlineView);
+		//ETDebugLog(@"Returns item is expandable in outline view %@", outlineView);
 		return YES;
 	}
 	
@@ -317,11 +317,11 @@
 	 && [[(NSObject *)item properties] containsObject: [column identifier]] == NO))
 	{
 		// FIXME: Turn into an ETDebugLog
-		ETLog(@"Item %@ has no property %@ requested by layout %@", item, 
+		ETDebugLog(@"Item %@ has no property %@ requested by layout %@", item, 
 			[column identifier], self);
 	}
 
-	//ETLog(@"Returns %@ as object value in outline view %@", value, outlineView);
+	//ETDebugLog(@"Returns %@ as object value in outline view %@", value, outlineView);
 	
 	// NOTE: 'value' could be any objects at this point and NSCell only accepts
 	// some common object values like string and number or image for 
@@ -361,7 +361,7 @@
 	if (result == NO && ([[self outlineView] numberOfColumns] == 1 || blankColumnIdentifier))
 		[item setValue: value];
 
-	//ETLog(@"Sets %@ as object value in outline view %@", value, outlineView);
+	//ETDebugLog(@"Sets %@ as object value in outline view %@", value, outlineView);
 }
 
 - (int) dropIndexAtLocation: (NSPoint)localDropPosition forItem: (id)item on: (id)dropTargetItem
@@ -378,7 +378,7 @@
 
 - (BOOL) outlineView: (NSOutlineView *)outlineView acceptDrop: (id < NSDraggingInfo >)info item: (id)item childIndex: (int)index
 {
-    //ETLog(@"Accept drop in %@", [self container]);
+    //ETDebugLog(@"Accept drop in %@", [self container]);
 	id droppedItem = [[ETPickboard localPickboard] popObject];
 	id dropTargetItem = item;
 	
@@ -394,7 +394,7 @@
 
 - (NSDragOperation) outlineView: (NSOutlineView *)outlineView validateDrop: (id < NSDraggingInfo >)info proposedItem: (id)item proposedChildIndex: (int)index
 {
-    //ETLog(@"Validate drop with dragging source %@ in %@", [info draggingSource], [self container]);
+    //ETDebugLog(@"Validate drop with dragging source %@ in %@", [info draggingSource], [self container]);
 
 	// TODO: Replace by [layoutContext handleValidateDropForObject:] and improve
 	if (item == nil || [item isGroup])
@@ -443,7 +443,7 @@
 	ETLayoutItem *item = 
 		[[self outlineView] itemAtRow: [[self outlineView] clickedRow]];
 	
-	//ETLog(@"-doubleClickedItem in %@", self);
+	//ETDebugLog(@"-doubleClickedItem in %@", self);
 	
 	return item;
 }

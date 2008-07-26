@@ -34,8 +34,10 @@
 	THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-// FIXME: Temporary hack until ETLog class is available
-#ifdef DEBUG
+// TODO: Should be improved to rely on a logging class.
+#ifdef DEBUG_LOG
 #define ETDebugLog ETLog
+#else
+#define ETDebugLog(format, args...)
 #endif
 #define ETLog NSLog

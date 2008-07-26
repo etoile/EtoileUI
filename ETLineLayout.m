@@ -73,7 +73,7 @@
 	}
 
 	if ([unlayoutedViews count] > 0)
-		NSLog(@"Not enough space to layout all the views. Views remaining unlayouted: %@", unlayoutedViews);
+		ETDebugLog(@"Not enough space to layout all the views. Views remaining unlayouted: %@", unlayoutedViews);
 
 	return layoutModel;
 }

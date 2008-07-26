@@ -578,7 +578,7 @@
 
 - (void) removeAllItems
 {
-	ETLog(@"Remove all items in %@", self);
+	ETDebugLog(@"Remove all items in %@", self);
 	// FIXME: Temporary solution which is quite slow
 	[self handleRemove: nil items: [self items]];
 

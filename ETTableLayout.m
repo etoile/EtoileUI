@@ -44,8 +44,6 @@
 #import <EtoileUI/NSView+Etoile.h>
 #import <EtoileUI/ETCompatibility.h>
 
-#define ETLog NSLog
-
 /* Private Interface */
 
 @interface ETTableLayout (Private)
@@ -155,7 +153,7 @@
 /* Update column visibility */
 - (void) setDisplayedProperties: (NSArray *)properties
 {
-	//ETLog(@"Set displayed properties %@ of layout %@", properties, self);
+	//ETDebugLog(@"Set displayed properties %@ of layout %@", properties, self);
 
 	if (properties == nil)
 	{
@@ -342,7 +340,7 @@
    -selectedItems. */
 - (void) tableViewSelectionDidChange: (NSNotification *)notif
 {
-	ETLog(@"Selection did change to %@ in layout view %@ of %@", 
+	ETDebugLog(@"Selection did change to %@ in layout view %@ of %@", 
 		[self selectionIndexPaths], [self layoutView], [self container]);
 
 	id delegate = [[self container] delegate];
@@ -414,7 +412,7 @@
 {
 	NSArray *layoutItems = [[self layoutContext] items];
 	
-	NSLog(@"Returns %d as number of items in table view %@", [layoutItems count], tv);
+	ETDebugLog(@"Returns %d as number of items in table view %@", [layoutItems count], tv);
 	
 	return [layoutItems count];
 }
@@ -432,7 +430,7 @@
 	
 	item = [layoutItems objectAtIndex: rowIndex];
 	
-	//ETLog(@"Returns %@ as object value in table view %@", [item valueForProperty: [column identifier]], tv);
+	//ETDebugLog(@"Returns %@ as object value in table view %@", [item valueForProperty: [column identifier]], tv);
 	
 	id value = [item valueForProperty: [column identifier]];
 	BOOL blankColumnIdentifier = [column identifier] == nil || [[column identifier] isEqual: @""];
@@ -463,7 +461,7 @@
 	
 	item = [layoutItems objectAtIndex: rowIndex];
 	
-	//ETLog(@"Sets %@ as object value in table view %@", value, tv);
+	//ETDebugLog(@"Sets %@ as object value in table view %@", value, tv);
 
 	/* Handles the case where a cell with no content is double-clicked/edited 
 	   (NSImageCell or NSLevelIndicatorCell for example), this is only needed 
@@ -493,7 +491,7 @@
 - (void) beginDrag: (ETEvent *)event forItem: (id)item 
 	image: (NSImage *)customDragImage layout: (id)layout
 {
-	ETLog(@"Overriden -beginDrag:forItem:image: in %@", self);
+	ETDebugLog(@"Overriden -beginDrag:forItem:image: in %@", self);
 	/* Overriden to do nothing and let the table view creates and manages the 
 	   drag object. This method is called by -handleDrag:forItem:. */
 }
@@ -563,13 +561,13 @@
 		dropTargetItem = [[dropTargetItem items] objectAtIndex: row];
 #endif
 
-	ETLog(@"Validate drop on %@ with dragging source %@ in %@ drag mask %d drop op %d", 
+	ETDebugLog(@"Validate drop on %@ with dragging source %@ in %@ drag mask %d drop op %d", 
 		dropTargetItem, [info draggingSource], [self container], dragOp, op);
 		
 	// TODO: Replace by [layoutContext handleValidateDropForObject:] and improve
 	if ([dropTargetItem isGroup] == NO) /* Retarget the drop if needed */
 	{
-		ETLog(@"Retarget drop");
+		ETDebugLog(@"Retarget drop");
 		[tv setDropRow: row dropOperation: NSTableViewDropAbove];
 	}
 
@@ -581,7 +579,7 @@
                row: (int)row 
 	 dropOperation: (NSTableViewDropOperation)op
 {
-    ETLog(@"Accept drop in %@ drag mask %d drop op %d", [self container], 
+    ETDebugLog(@"Accept drop in %@ drag mask %d drop op %d", [self container], 
 		[info draggingSourceOperationMask], op);
 
 	id droppedItem = [[ETPickboard localPickboard] popObject];
@@ -615,7 +613,7 @@
 
 - (void) setLastDragEvent: (NSEvent *)event
 {
-	ETLog(@"Set last drag event to %@", event);
+	ETDebugLog(@"Set last drag event to %@", event);
 	_lastDragEvent = event;
 }
 
