@@ -328,7 +328,7 @@ static NSMutableSet *layoutClasses = nil;
 		_maxSizeLayout = NO;
 		_itemSize = NSMakeSize(256, 256); /* Default max item size */
 		/* By default both width and height must be equal or inferior to related _itemSize values */
-		_itemSizeConstraintStyle = ETSizeConstraintStyleVerticalHorizontal;
+		_itemSizeConstraintStyle = ETSizeConstraintStyleNone;
 	
 		if (layoutView != nil) /* Use layout view parameter */
 		{
@@ -880,11 +880,12 @@ static NSMutableSet *layoutClasses = nil;
 
 /** Returns YES if the layout view is presently visible in the layout item tree 
     of the layout context, otherwise returns NO.
-    A layout view can be inserted in a superview bound the parent item and yet 
-    not be visible. For example, if an ancestor item of the parent uses an 
-    opaque layout, the layout view is inserted in the parent view but the 
-    parent view (or another ancestor superview which owns it) isn't inserted 
-    as a subview in the visible view hierarchy of the layout item tree. */
+    A layout view can be inserted in a superview bound to a parent item and 
+    yet not be visible. For example, if an ancestor item of the parent uses an 
+    opaque layout, the layout view can be inserted in the parent view but the 
+    parent view (or another ancestor superview which owns it) might not be 
+    inserted as a subview in the visible view hierarchy of the layout item 
+    tree. */
 - (BOOL) isLayoutViewInUse
 {
 	// NOTE: A visible view hierarchy is always rooted in a window, itself bound 
