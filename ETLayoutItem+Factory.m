@@ -40,7 +40,7 @@
 #import <EtoileUI/ETLayoutItemGroup.h>
 #import <EtoileUI/ETLayer.h>
 #import <EtoileUI/ETCompatibility.h>
-#include <values.h>
+#include <float.h>
 
 @implementation ETLayoutItem (ETLayoutItemFactory)
 
