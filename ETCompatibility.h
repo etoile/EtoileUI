@@ -35,5 +35,7 @@
  */
 
 // FIXME: Temporary hack until ETLog class is available
+#ifdef DEBUG
 #define ETDebugLog ETLog
+#endif
 #define ETLog NSLog

@@ -521,19 +521,19 @@
 	possibility to */
 - (void) addItem: (ETLayoutItem *)item
 {
-	//ETLog(@"Add item in %@", self);
+	//ETDebugLog(@"Add item in %@", self);
 	[self handleAdd: nil item: item];
 }
 
 - (void) insertItem: (ETLayoutItem *)item atIndex: (int)index
 {
-	//ETLog(@"Insert item in %@", self);
+	//ETDebuLog(@"Insert item in %@", self);
 	[self handleInsert: nil item: item atIndex: index];
 }
 
 - (void) removeItem: (ETLayoutItem *)item
 {
-	//ETLog(@"Remove item in %@", self);
+	//ETDebugLog(@"Remove item in %@", self);
 	[self handleRemove: nil item: item];
 }
 
@@ -566,13 +566,13 @@
 
 - (void) addItems: (NSArray *)items
 {
-	//ETLog(@"Add items in %@", self);
+	//ETDebugLog(@"Add items in %@", self);
 	[self handleAdd: nil items: items];
 }
 
 - (void) removeItems: (NSArray *)items
 {
-	//ETLog(@"Remove items in %@", self);
+	//ETDebugLog(@"Remove items in %@", self);
 	[self handleRemove: nil items: items];
 }
 
@@ -731,7 +731,7 @@
 	if (_layout == layout)
 		return;
 
-	//ETLog(@"Modify layout from %@ to %@ in %@", _layout, layout, self);
+	//ETDebugLog(@"Modify layout from %@ to %@ in %@", _layout, layout, self);
 	
 	BOOL wasAutolayoutEnabled = [self isAutolayout];
 	
@@ -979,7 +979,7 @@
 			if (container != nil && [[container subviews] containsObject: [item displayView]] == NO)
 			{
 				[container addSubview: [item displayView]];
-				//NSLog(@"Inserted view at %@", NSStringFromRect([[item displayView] frame]));
+				//ETDebugLog(@"Inserted view at %@", NSStringFromRect([[item displayView] frame]));
 			}
 		}
 		else
@@ -988,7 +988,7 @@
 			if (container != nil && [[container subviews] containsObject: [item displayView]])
 			{
 				[[item displayView] removeFromSuperview];
-				//NSLog(@"Removed view at %@", NSStringFromRect([[item displayView] frame]));
+				//ETDebugLog(@"Removed view at %@", NSStringFromRect([[item displayView] frame]));
 			}
 		}
 	}
@@ -1266,7 +1266,7 @@
 	id item = [object isLayoutItem] ? object : [self itemWithObject: object isValue: [object isCommonObjectValue]];
 	
 	if ([object isLayoutItem] == NO)
-		ETLog(@"Boxed object %@ in item %@ to be added to %@", object, item, self);
+		ETDebugLog(@"Boxed object %@ in item %@ to be added to %@", object, item, self);
 
 	[self addItem: item];
 }
@@ -1276,7 +1276,7 @@
 	id item = [object isLayoutItem] ? object : [self itemWithObject: object isValue: [object isCommonObjectValue]];
 	
 	if ([object isLayoutItem] == NO)
-		ETLog(@"Boxed object %@ in item %@ to be inserted in %@", object, item, self);
+		ETDebugLog(@"Boxed object %@ in item %@ to be inserted in %@", object, item, self);
 
 	[self insertItem: item atIndex: index];
 }
@@ -1524,15 +1524,15 @@
 	switch ([container checkSourceProtocolConformance])
 	{
 		case 1:
-			//ETLog(@"Will -reloadFromFlatSource");
+			//ETDebugLog(@"Will -reloadFromFlatSource");
 			return [self itemsFromFlatSource];
 			break;
 		case 2:
-			//ETLog(@"Will -reloadFromTreeSource");
+			//ETDebugLog(@"Will -reloadFromTreeSource");
 			return [self itemsFromTreeSource];
 			break;
 		case 3:
-			ETLog(@"Will -reloadFromRepresentedObject");
+			ETDebugLog(@"Will -reloadFromRepresentedObject");
 			return [self itemsFromRepresentedObject];
 			break;
 		default:
@@ -1567,7 +1567,7 @@
 	NSIndexPath *indexPath = [self indexPathFromItem: [baseContainer layoutItem]];
 	int nbOfItems = 0;
 	
-	//NSLog(@"-itemsFromTreeSource in %@", self);
+	//ETDebugLog(@"-itemsFromTreeSource in %@", self);
 	
 	/* Request number of items to the source by passing receiver index path 
 	   expressed in a way relative to the base container */
@@ -1581,7 +1581,7 @@
 		/* Request item to the source by passing item index path expressed in a
 		   way relative to the base container */
 		layoutItem = [[baseContainer source] container: baseContainer itemAtPath: indexSubpath];
-		//ETLog(@"Retrieved item %@ known by path %@", layoutItem, indexSubpath);
+		//ETDebugLog(@"Retrieved item %@ known by path %@", layoutItem, indexSubpath);
 		if (layoutItem != nil)
 		{
 			[itemsFromSource addObject: layoutItem];

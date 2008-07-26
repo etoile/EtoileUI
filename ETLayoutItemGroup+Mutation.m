@@ -165,7 +165,7 @@ static 	BOOL _coalescingMutation = NO;
 	if (validatedMutate && [[self baseItem] shouldMutateRepresentedObject] 
 	 && [repObject isMutableCollection])
 	{
-		ETLog(@"Add %@ in represented object %@", [item representedObject], 
+		ETDebugLog(@"Add %@ in represented object %@", [item representedObject], 
 			repObject);
 		[repObject addObject: [item representedObject]];
 	}
@@ -247,7 +247,7 @@ static 	BOOL _coalescingMutation = NO;
 	if (validatedMutate && [[self baseItem] shouldMutateRepresentedObject] 
 	 && [repObject isMutableCollection])
 	{
-		ETLog(@"Insert %@ in represented object %@ at index %d", 
+		ETDebugLog(@"Insert %@ in represented object %@ at index %d", 
 			[item representedObject], repObject, index);
 		[repObject insertObject: [item representedObject] atIndex: index];
 	}
@@ -345,7 +345,7 @@ static 	BOOL _coalescingMutation = NO;
 	if (validatedMutate && [[self baseItem] shouldMutateRepresentedObject] 
 	 && [repObject isMutableCollection])
 	{
-		ETLog(@"Remove %@ in represented object %@", [item representedObject], 
+		ETDebugLog(@"Remove %@ in represented object %@", [item representedObject], 
 			repObject);
 		[repObject removeObject: [item representedObject]];
 	}
@@ -384,7 +384,7 @@ static 	BOOL _coalescingMutation = NO;
 	id item = [object isLayoutItem] ? object : [self itemWithObject: object isValue: [object isCommonObjectValue]];
 	
 	if ([object isLayoutItem] == NO)
-		ETLog(@"Boxed object %@ in item %@ to be added to %@", object, item, self);
+		ETDebugLog(@"Boxed object %@ in item %@ to be added to %@", object, item, self);
 
 	[self handleAdd: event item: item];
 }

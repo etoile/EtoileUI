@@ -192,7 +192,7 @@ NSString *ETLayoutItemPboardType = @"ETLayoutItemPboardType"; // FIXME: replace 
 
 - (id) archiver: (NSKeyedArchiver *)archiver willEncodeObject: (id)object
 {
-	ETLog(@"---- Will encode %@", object);
+	ETDebugLog(@"---- Will encode %@", object);
 	
 	/* Don't encode layout view and item views */
 	if ([object isEqual: [self subviews]])
@@ -200,7 +200,7 @@ NSString *ETLayoutItemPboardType = @"ETLayoutItemPboardType"; // FIXME: replace 
 		id archivableSubviews = [object mutableCopy];
 		id itemViews = [[self items] valueForKey: @"displayView"];
 
-		ETLog(@"> Won't be encoded");	
+		ETDebugLog(@"> Won't be encoded");	
 		if ([self displayView] != nil)	
 			[archivableSubviews removeObject: [self displayView]];
 		[itemViews removeObjectsInArray: archivableSubviews];
@@ -711,13 +711,13 @@ NSString *ETLayoutItemPboardType = @"ETLayoutItemPboardType"; // FIXME: replace 
 
 - (IBAction) inspect: (id)sender
 {
-	ETLog(@"Inspect %@", self);
+	ETDebugLog(@"Inspect %@", self);
 	[[[self inspector] panel] makeKeyAndOrderFront: self];
 }
 
 - (IBAction) inspectSelection: (id)sender
 {
-	ETLog(@"Inspect %@ selection", self);
+	ETDebugLog(@"Inspect %@ selection", self);
 	
 	NSArray *selectedItems = [(id)[self layoutItem] selectedItemsInLayout];
 	id inspector = [self inspectorForItems: selectedItems];
@@ -1077,7 +1077,7 @@ NSString *ETLayoutItemPboardType = @"ETLayoutItemPboardType"; // FIXME: replace 
 #if 0
 - (void) setAutoresizingMask: (unsigned int)mask
 {
-	ETLog(@"--- Resizing mask from %d to %d %@", [self autoresizingMask], mask, self);
+	ETDebugLog(@"--- Resizing mask from %d to %d %@", [self autoresizingMask], mask, self);
 	[super setAutoresizingMask: mask];
 }
 #endif
@@ -1209,7 +1209,7 @@ NSString *ETLayoutItemPboardType = @"ETLayoutItemPboardType"; // FIXME: replace 
 	int numberOfItems = [[self items] count];
 	int lastSelectionIndex = [[self selectionIndexes] lastIndex];
 	
-	NSLog(@"Set selection indexes to %@ in %@", indexes, self);
+	ETDebugLog(@"Set selection indexes to %@ in %@", indexes, self);
 	
 	if (lastSelectionIndex > (numberOfItems - 1) && lastSelectionIndex != NSNotFound) /* NSNotFound is a big value and not -1 */
 	{
@@ -1245,7 +1245,7 @@ NSString *ETLayoutItemPboardType = @"ETLayoutItemPboardType"; // FIXME: replace 
 	any existing selection index paths previously set. */
 - (void) setSelectionIndex: (unsigned int)index
 {
-	ETLog(@"Modify selection index from %d to %d of %@", [self selectionIndex], index, self);
+	ETDebugLog(@"Modify selection index from %d to %d of %@", [self selectionIndex], index, self);
 	
 	/* Check new selection validity */
 	NSAssert1(index >= 0, @"-setSelectionIndex: parameter must not be a negative value like %d", index);
@@ -1628,7 +1628,7 @@ NSString *ETLayoutItemPboardType = @"ETLayoutItemPboardType"; // FIXME: replace 
 {
 	NSRect patchedFrame = frame;
 	
-	ETLog(@"-setFrame to %@", NSStringFromRect(frame));
+	ETDebugLog(@"-setFrame to %@", NSStringFromRect(frame));
 		
 	if ([self isContainerScrollViewInserted])
 	{
@@ -1658,7 +1658,7 @@ NSString *ETLayoutItemPboardType = @"ETLayoutItemPboardType"; // FIXME: replace 
 {
 	NSSize patchedSize = size;
 
-	//ETLog(@"-setFrameSize: to %@", NSStringFromSize(size));
+	//ETDebugLog(@"-setFrameSize: to %@", NSStringFromSize(size));
 
 	// NOTE: Very weird resizing behavior can be observed if the following code 
 	/// is executed when a layout view is in use. The layout view size will be 
@@ -1726,7 +1726,7 @@ NSString *ETLayoutItemPboardType = @"ETLayoutItemPboardType"; // FIXME: replace 
 	int numberOfItems = [[self items] count];
 	int lastSelectionIndex = [indexes lastIndex];
 	
-	NSLog(@"Set selection indexes to %@ in %@", indexes, self);
+	ETDebugLog(@"Set selection indexes to %@ in %@", indexes, self);
 	
 	if (lastSelectionIndex > (numberOfItems - 1) && lastSelectionIndex != NSNotFound) /* NSNotFound is a big value and not -1 */
 	{
@@ -1795,7 +1795,7 @@ NSString *ETLayoutItemPboardType = @"ETLayoutItemPboardType"; // FIXME: replace 
 {
 	int numberOfItems = [[self items] count];
 	
-	NSLog(@"Modify selected item from %d to %d of %@", [self selectionIndex], index, self);
+	ETDebugLog(@"Modify selected item from %d to %d of %@", [self selectionIndex], index, self);
 	
 	/* Check new selection validity */
 	NSAssert1(index >= 0, @"-setSelectionIndex: parameter must not be a negative value like %d", index);

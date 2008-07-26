@@ -321,7 +321,7 @@
 	collection owned by an item group. */
 - (void) setParentItem: (ETLayoutItemGroup *)parent
 {
-	//ETLog(@"For item %@ with supervisor view %@, modify the parent item from "
+	//ETDebugLog(@"For item %@ with supervisor view %@, modify the parent item from "
 	//	"%@ to %@", self, [self supervisorView], _parentLayoutItem, parent, self);
 
 	_parentLayoutItem = parent;
@@ -988,7 +988,7 @@
 
 - (void) setSelected: (BOOL)selected
 {
-	//ETLog(@"Set layout item selection state %@", self);
+	//ETDebugLog(@"Set layout item selection state %@", self);
 	_selected = selected;
 }
 
@@ -1252,7 +1252,7 @@
 		   the size and location of the previous one. Unlike when you add or
 		   or remove an item which involves to recompute the layout. */
 		//[self handleAttachViewOfItem: item];
-		//NSLog(@"parent %@ parent view %@ item display view %@", [item parentLayoutItem],
+		//ETDebugLog(@"parent %@ parent view %@ item display view %@", [item parentLayoutItem],
 		//	parentView, [item displayView]);
 		[parentView addSubview: [self displayView]]; // More sure than [item displayView]
 	}
@@ -1475,7 +1475,7 @@
 
 - (void) setFrame: (NSRect)rect
 {
-	//ETLog(@"-setFrame: %@ on %@", NSStringFromRect(rect), self);
+	//ETDebugLog(@"-setFrame: %@ on %@", NSStringFromRect(rect), self);
 	if ([self displayView] != nil)
 	{
 		[[self displayView] setFrame: rect];
@@ -1651,7 +1651,7 @@
 	NSAssert1([self displayView] != nil, @"View of %@ cannot be nil on view notification", self);
 	NSAssert1([self appliesResizingToBounds] == YES, @"Bounds resizing must be set on view notification in %@", self);
 	
-	ETLog(@"Receives NSViewFrameDidChangeNotification in %@", self);
+	ETDebugLog(@"Receives NSViewFrameDidChangeNotification in %@", self);
 	
 	// FIXME: the proper way to handle such scaling is to use an 
 	// NSAffineTransform and applies to item view in 
@@ -1701,7 +1701,7 @@
 		icon = [[self representedObject] icon];
 		
 	if (icon == nil)
-		ETLog(@"Icon missing for %@", self);
+		ETDebugLog(@"Icon missing for %@", self);
 		
 	return icon;
 }
