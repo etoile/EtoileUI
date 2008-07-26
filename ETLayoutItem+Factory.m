@@ -40,7 +40,7 @@
 #import <EtoileUI/ETLayoutItemGroup.h>
 #import <EtoileUI/ETLayer.h>
 #import <EtoileUI/ETCompatibility.h>
-
+#include <values.h>
 
 @implementation ETLayoutItem (ETLayoutItemFactory)
 
@@ -109,6 +109,18 @@
 	return [self newItemWithViewClass: [NSButton class]];
 }
 
++ (id) buttonWithTitle: (NSString *)aTitle target: (id)aTarget action: (SEL)aSelector
+{
+	ETLayoutItem *buttonItem = [self button];
+	NSButton *buttonView = (NSButton *)[buttonItem view];
+
+	[buttonView setTitle: aTitle];
+	[buttonView setTarget: aTarget];
+	[buttonView setAction: aSelector];
+
+	return buttonItem;
+}
+
 /** Creates and returns a new layout item that uses a NSButton of type 
     NSRadioButton as its view. */
 + (id) radioButton
@@ -142,10 +154,36 @@
 }
 
 /** Creates and returns a new layout item that uses a NSTextView instance as 
-    its view. */
+    its view. 
+    WARNING: presently returns a scrollview if you call -view on the returned 
+    instance. */
 + (id) textView
 {
-	return [self newItemWithViewClass: [NSTextView class]];
+	id textViewItem = [self newItemWithViewClass: [NSTextView class]];
+	NSTextView *textView = (NSTextView *)[textViewItem view];
+	NSScrollView *scrollview = AUTORELEASE([[NSScrollView alloc]
+            initWithFrame: [textView frame]]);
+	NSSize contentSize = [scrollview contentSize];
+
+	[textView setMinSize: NSMakeSize(0.0, contentSize.height)];
+	[textView setMaxSize: NSMakeSize(FLT_MAX, FLT_MAX)];
+	[textView setVerticallyResizable: YES];
+	[textView setHorizontallyResizable: NO];
+	[textView setAutoresizingMask: NSViewWidthSizable];
+	[[textView textContainer]
+            setContainerSize: NSMakeSize(contentSize.width, FLT_MAX)];
+	[[textView textContainer] setWidthTracksTextView: YES];
+
+	// TODO: We should use a scrollview decorator. This is a quick hack.
+	[scrollview setDocumentView: textView];
+	[scrollview setHasVerticalScroller: YES];
+	/* Finally reinsert the text view as a scroll view */
+	[textViewItem setView: scrollview];
+	/* The item supervisor view must be resized if the enclosing container is 
+	   resized. */
+	[textViewItem setAutoresizingMask: NSViewWidthSizable | NSViewHeightSizable];
+
+	return textViewItem;
 }
 
 /** Creates and returns a new layout item that uses a NSProgressIndicator instance as 

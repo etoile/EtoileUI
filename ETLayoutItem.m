@@ -1578,6 +1578,36 @@
 	[self setFrame: [self defaultFrame]]; 
 }
 
+/** Returns the autoresizing mask that applies to the layout item. This mask 
+    is identical to the autoresizing mask of the supervisor view if one exists. */
+- (unsigned int) autoresizingMask
+{
+	if ([self displayView] != nil)
+	{
+		return [[self displayView] autoresizingMask];
+	}
+	else
+	{
+		// TODO: Implement
+		return 0;
+	}
+}
+
+/** Sets the autoresizing mask that applies to the layout item. This mask 
+    is also set as the autoresizing mask of the supervisor view if one exists. */
+- (void) setAutoresizingMask: (unsigned int)mask
+{
+	if ([self displayView] != nil)
+	{
+		[[self displayView] setAutoresizingMask: mask];
+	}
+	else
+	{
+		// TODO: Implement
+	}
+}
+
+
 /** When the layout item uses a view, pass YES to this method to have the 
 	content resize when the view itself is resized (by modifying frame).
 	Resizing content in a view is possible by simply updating bounds size to 

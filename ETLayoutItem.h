@@ -287,6 +287,8 @@ shape*/
 - (NSRect) defaultFrame;
 - (void) setDefaultFrame: (NSRect)frame;
 - (void) restoreDefaultFrame;
+- (unsigned int) autoresizingMask;
+- (void) setAutoresizingMask: (unsigned int)mask;
 - (void) setAppliesResizingToBounds: (BOOL)flag;
 - (BOOL) appliesResizingToBounds;
 

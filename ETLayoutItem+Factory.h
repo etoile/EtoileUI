@@ -49,6 +49,7 @@
 + (ETLayoutItem *) itemWithView: (NSView *)view;
 + (ETLayoutItem *) itemWithValue: (id)value;
 + (ETLayoutItem *) itemWithRepresentedObject: (id)object;
+//+ (ETLayoutItem *) itemWithDefaultView;
 
 /* Group Factory Methods */
 
@@ -57,10 +58,14 @@
 + (ETLayoutItemGroup *) itemGroupWithItems: (NSArray *)items;
 + (ETLayoutItemGroup *) itemGroupWithView: (NSView *)view;
 + (ETLayoutItemGroup *) itemGroupWithValue: (id)value;
+//+ (ETLayoutItemGroup *) itemGroupWithContainer;
+//+ (ETLayoutItemGroup *) itemGroupWithDefaultContainer;
+//+ (ETLayoutItemGroup *) itemGroupWithDefaultView;
 
 /* Leaf Widget Factory Methods */
 
 + (id) button;
++ (id) buttonWithTitle: (NSString *)aTitle target: (id)aTarget action: (SEL)aSelector;
 + (id) radioButton;
 + (id) checkbox;
 + (id) textField;
