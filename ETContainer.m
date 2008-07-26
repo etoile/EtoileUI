@@ -104,7 +104,14 @@ NSString *ETLayoutItemPboardType = @"ETLayoutItemPboardType"; // FIXME: replace 
 	return self;
 }
 
-/** <init /> */
+/** <init /> Returns a new container instance that is bound to item. This layout 
+     item becomes the abstract representation associated with the new container.
+     A container plays the role of a concrete representation specific to the 
+     underlying UI toolkit, for a collection of layout items.
+     item should be an ETLayoutItemGroup instance in almost all cases.
+     The returned container is created by default with a flexible height and 
+     width, this autoresizingMask also holds for the layout item bound to it. 
+    (see -[ETLayoutItem autoresizingMask]). */
 - (id) initWithFrame: (NSRect)rect layoutItem: (ETLayoutItem *)item
 {
 	if (item != nil && [item isGroup] == NO)
@@ -153,6 +160,7 @@ NSString *ETLayoutItemPboardType = @"ETLayoutItemPboardType"; // FIXME: replace 
 		
 		[self registerForDraggedTypes: [NSArray arrayWithObjects:
 			ETLayoutItemPboardType, nil]];
+		[self setAutoresizingMask: NSViewWidthSizable | NSViewHeightSizable];
     }
     
     return self;
