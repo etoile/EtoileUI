@@ -168,7 +168,7 @@
 			newCellSize = [columnMatrix cellSize];
 			newCellSize.height = DEFAULT_ROW_HEIGHT * factor;
 			[columnMatrix setCellSize: newCellSize];
-			ETLog(@"Resize %@ cell size from %@ to %@", columnMatrix, 
+			ETDebugLog(@"Resize %@ cell size from %@ to %@", columnMatrix, 
 				NSStringFromSize([columnMatrix cellSize]), 
 				NSStringFromSize(newCellSize));
 		}
@@ -250,7 +250,7 @@
 		nbOfItems = [[item items] count];	
 	}
 	
-	ETLog(@"Returns %d as number of items in browser view %@", nbOfItems, sender);
+	ETDebugLog(@"Returns %d as number of items in browser view %@", nbOfItems, sender);
 	
 	return nbOfItems;
 }
@@ -294,7 +294,7 @@
 	NSAssert2(value != nil, @"Item %@ returns nil value in browser view %@ "
 		@"and display name must never be nil", childItem, self);
 
-	ETLog(@"Returns %@ as object value in browser view %@", value, sender);
+	ETDebugLog(@"Returns %@ as object value in browser view %@", value, sender);
 	
 	/* See -tableView:objectValueForTableColumn:row: in ETTableLayout to 
 	   understand -objectValue use. */
@@ -394,7 +394,7 @@
 	
 	count = [[container source] container: container numberOfItemsAtPath: indexPath];
 	
-	NSLog(@"Returns %d as number of items in browser view %@", count, sender);
+	ETDebugLog(@"Returns %d as number of items in browser view %@", count, sender);
 	
 	//NSMutableArray *columnCells = [NSMutableArray array];
 	NSSize newCellSize = [matrix cellSize];
@@ -402,14 +402,14 @@
 	for (int i = 0; i < count; i ++)
 		[matrix putCell: [[sender cellPrototype] copy] atRow: i column: column];
 	
-	//NSLog(@"Adds column cells %@ based on %@", columnCells, [[sender cellPrototype] copy]);
+	//ETDebugLog(@"Adds column cells %@ based on %@", columnCells, [[sender cellPrototype] copy]);
 	
 	// NOTE: Unable to make -addColumnWithCells: work so -putCell:atRow:column 
 	// is used instead
 	//[matrix addColumnWithCells: columnCells];
 	
 	newCellSize.height = DEFAULT_ROW_HEIGHT * [container itemScaleFactor];
-	NSLog(@"Resize %@ cell size from %@ to %@", matrix, 
+	ETDebugLog(@"Resize %@ cell size from %@ to %@", matrix, 
 				NSStringFromSize([matrix cellSize]), 
 				NSStringFromSize(newCellSize));
 	[matrix setCellSize: newCellSize];
