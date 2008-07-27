@@ -2,7 +2,7 @@
 
 	ETContainer+Controller.m
 	
-	<abstract>Description forthcoming.</abstract>
+	<abstract>A generic controller layer interfaced with the layout item tree.</abstract>
  
 	Copyright (C) 2007 Quentin Mathe
  
