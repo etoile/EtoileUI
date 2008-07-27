@@ -1,13 +1,14 @@
-/*  <title>ETFlowView</title>
+/*  <title>Builtin Containers</title>
 
-	ETFlowView.m
+	ETContainers.m
 	
-	<abstract>Description forthcoming.</abstract>
+	<abstract>Various builtin containers that only differs from ETContainer by 
+	defining a default layout and the possibility  of reverting to it.</abstract>
  
-	Copyright (C) 2007 Quentin Mathe
+	Copyright (C) 2008 Quentin Mathe
  
 	Author:  Quentin Mathe <qmathe@club-internet.fr>
-	Date:  May 2007
+	Date:  July 2008
  
 	Redistribution and use in source and binary forms, with or without
 	modification, are permitted provided that the following conditions are met:
@@ -34,10 +35,17 @@
 	THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import <EtoileUI/ETFlowView.h>
+#import <Foundation/Foundation.h>
+#import <AppKit/AppKit.h>
+#import <EtoileUI/ETContainers.h>
 #import <EtoileUI/ETFlowLayout.h>
+#import <EtoileUI/ETLineLayout.h>
+#import <EtoileUI/ETStackLayout.h>
+#import <EtoileUI/ETTableLayout.h>
 #import <EtoileUI/ETCompatibility.h>
 
+// TODO: Refactor all the following methods by moving them up into a single 
+// method defined in an ETContainer category.
 
 @implementation ETFlowView
 
@@ -48,6 +56,54 @@
     if (self != nil) 
 	{
 		[self setLayout: (ETLayout *)AUTORELEASE([[ETFlowLayout alloc] init])];
+    }
+	
+    return self;
+}
+
+@end
+
+@implementation ETLineView
+
+- (id) initWithFrame: (NSRect)frame 
+{
+    self = [super initWithFrame: frame];
+	
+    if (self != nil) 
+	{
+		[self setLayout: (ETLineLayout *)AUTORELEASE([[ETLineLayout alloc] init])];
+    }
+	
+    return self;
+}
+
+@end
+
+@implementation ETStackView
+
+- (id) initWithFrame: (NSRect)frame 
+{
+    self = [super initWithFrame: frame];
+	
+    if (self != nil) 
+	{
+		[self setLayout: (ETLayout *)AUTORELEASE([[ETStackLayout alloc] init])];
+    }
+	
+    return self;
+}
+
+@end
+
+@implementation ETTableView
+
+- (id) initWithFrame: (NSRect)frame 
+{
+    self = [super initWithFrame: frame];
+	
+    if (self != nil) 
+	{
+		[self setLayout: (ETLayout *)AUTORELEASE([[ETTableLayout alloc] init])];
     }
 	
     return self;

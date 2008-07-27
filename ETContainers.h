@@ -1,13 +1,13 @@
-/*	<title>ETLineView</title>
-
-	ETLineView.m
-
-	<abstract>Description forthcoming.</abstract>
-
-	Copyright (C) 2007 Quentin Mathe
+/*
+	ETContainers.h
+	
+	Various builtin containers that only differs from ETContainer by defining
+	a default layout and the possibility  of reverting to it.
+ 
+	Copyright (C) 2008 Quentin Mathe
  
 	Author:  Quentin Mathe <qmathe@club-internet.fr>
-	Date:  May 2007
+	Date:  July 2008
  
 	Redistribution and use in source and binary forms, with or without
 	modification, are permitted provided that the following conditions are met:
@@ -34,23 +34,20 @@
 	THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import <EtoileUI/ETLineView.h>
-#import <EtoileUI/ETLineLayout.h>
-#import <EtoileUI/ETCompatibility.h>
+#import <Foundation/Foundation.h>
+#import <AppKit/AppKit.h>
+#import <EtoileUI/ETContainer.h>
 
+/* WARNING: Unstable API, may be removed later. */
 
-@implementation ETLineView
+@interface ETFlowView : ETContainer 
+@end
 
-- (id) initWithFrame: (NSRect)frame 
-{
-    self = [super initWithFrame: frame];
-	
-    if (self != nil) 
-	{
-		[self setLayout: (ETLineLayout *)AUTORELEASE([[ETLineLayout alloc] init])];
-    }
-	
-    return self;
-}
+@interface ETLineView : ETContainer 
+@end
 
+@interface ETStackView : ETContainer 
+@end
+
+@interface ETTableView : ETContainer 
 @end

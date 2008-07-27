@@ -24,9 +24,9 @@ EtoileUI_OBJC_FILES = \
 	ETContainer+Controller.m \
 	ETContainer+EventHandling.m \
 	ETContainer.m \
+	ETContainers.m \
 	ETEvent.m \
 	ETFlowLayout.m \
-	ETFlowView.m \
 	ETFreeLayout.m \
 	ETInspector.m \
 	ETLayer.m \
@@ -40,7 +40,6 @@ EtoileUI_OBJC_FILES = \
 	ETLayoutLine.m \
 	ETLayout.m \
 	ETLineLayout.m \
-	ETLineView.m \
 	ETObjectBrowserLayout.m \
 	ETObjectRegistry+EtoileUI.m \
 	ETOutlineLayout.m \
@@ -48,11 +47,9 @@ EtoileUI_OBJC_FILES = \
 	ETPaneSwitcherLayout.m \
 	ETPickboard.m \
 	ETStackLayout.m \
-	ETStackView.m \
 	ETStyle.m \
 	ETStyleRenderer.m \
 	ETTableLayout.m \
-	ETTableView.m \
 	ETTextEditorLayout.m \
 	ETView.m \
 	ETViewModelLayout.m \
@@ -71,9 +68,9 @@ EtoileUI_HEADER_FILES = \
 	ETCompatibility.h \
 	ETContainer+Controller.h \
 	ETContainer.h \
+	ETContainers.h \
 	ETEvent.h \
 	ETFlowLayout.h \
-	ETFlowView.h \
 	ETFreeLayout.h \
 	ETInspecting.h \
 	ETInspector.h \
@@ -88,7 +85,6 @@ EtoileUI_HEADER_FILES = \
 	ETLayoutItem+Reflection.h \
 	ETLayoutLine.h \
 	ETLineLayout.h \
-	ETLineView.h \
 	ETObjectBrowserLayout.h \
 	ETObjectRegistry+EtoileUI.h \
 	EtoileUI.h \
@@ -97,11 +93,9 @@ EtoileUI_HEADER_FILES = \
 	ETPaneSwitcherLayout.h \
 	ETPickboard.h \
 	ETStackLayout.h \
-	ETStackView.h \
 	ETStyle.h \
 	ETStyleRenderer.h \
 	ETTableLayout.h \
-	ETTableView.h \
 	ETTextEditorLayout.h \
 	ETView.h \
 	ETViewModelLayout.h \

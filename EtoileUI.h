@@ -49,6 +49,7 @@
 
 #import <EtoileUI/ETStyle.h>
 #import <EtoileUI/ETContainer.h>
+#import <EtoileUI/ETContainers.h>
 #import <EtoileUI/ETLayoutItem.h>
 #import <EtoileUI/ETLayoutItem+Events.h>
 #import <EtoileUI/ETLayoutItem+Reflection.h>
@@ -62,14 +63,10 @@
 #import <EtoileUI/ETLayoutLine.h>
 
 #import <EtoileUI/ETFlowLayout.h>
-#import <EtoileUI/ETFlowView.h>
 #import <EtoileUI/ETLineLayout.h>
-#import <EtoileUI/ETLineView.h>
 #import <EtoileUI/ETStackLayout.h>
-#import <EtoileUI/ETStackView.h>
 
 #import <EtoileUI/ETTableLayout.h>
-#import <EtoileUI/ETTableView.h>
 #import <EtoileUI/ETOutlineLayout.h>
 #import <EtoileUI/ETBrowserLayout.h>
 #import <EtoileUI/FSBrowserCell.h>
