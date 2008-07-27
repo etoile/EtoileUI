@@ -34,6 +34,7 @@
 	THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#import <EtoileFoundation/Macros.h>
 #import <EtoileUI/ETBrowserLayout.h>
 #import <EtoileUI/ETContainer.h>
 #import <EtoileUI/ETLayoutItem.h>
@@ -198,6 +199,9 @@
 		// NOTE: Not really sure that's the best way to do it		
 		[[self container] setSelectionIndex: row];
 	}
+
+	ETDebugLog(@"Cell selection did change to %@ in layout view %@ of %@", 
+		[self selectionIndexPaths], [self layoutView], [self container]);
 	
 	return selected;
 }
@@ -217,6 +221,9 @@
 	
 	// NOTE: Not really sure that's the best way to do it
 	[[self container] setSelectionIndex: row];
+
+	ETDebugLog(@"Row selection did change to %@ in layout view %@ of %@", 
+		[self selectionIndexPaths], [self layoutView], [self container]);
 	
 	return selected;
 }
@@ -277,6 +284,8 @@
 
 	childItem = [item itemAtIndex: row];
 	[cell setRepresentedObject: childItem];
+	ETDebugLog(@"Set represented object %@ of cell %@", [cell representedObject], cell);
+
 	if ([childItem isGroup])
 	{
 		[cell setLeaf: NO];
@@ -322,35 +331,70 @@
 	}
 }
 
+/* ETLayout overriden method. Called indirectly by -selectionIndexPaths in 
+   -browserSelectionDidChange. */
+- (NSArray *) selectedItems
+{
+	NSArray *selectedCells = [[self browser] selectedCells];
+	NSMutableArray *selectedItems = 
+		[NSMutableArray arrayWithCapacity: [selectedCells count]];
+	
+	FOREACH(selectedCells, aCell, NSCell *)
+	{
+		NSAssert([aCell representedObject] != nil, @"All browser cells must "
+			@"have a represented object set");
+		
+		[selectedItems addObject: [aCell representedObject]];
+	}
+
+	return selectedItems;
+}
+
+/* We catch the selection change by receiving the action in -click: */
+- (void) browserSelectionDidChange
+{
+	ETDebugLog(@"Selection did change to %@ in layout view %@ of %@", 
+		[self selectionIndexPaths], [self layoutView], [self container]);
+	
+	/* Update selection state in the layout item tree */
+	[[self container] setSelectionIndexPaths: [self selectionIndexPaths]];
+}
+
 /* Actions */
 
 /* NSBrowser action */
 - (IBAction) click: (id)sender
 {
-	int row = [sender selectedRowInColumn: [sender selectedColumn]];
-	
-	ETLog(@"-click: row %d and column %d in %@", row, [sender selectedColumn], self);
-	
-	[[self container] setSelectionIndex: row];
+	ETDebugLog(@"-click: row %d and column %d in %@", 
+		[sender selectedRowInColumn: [sender selectedColumn]], 
+		[sender selectedColumn], self);
+
+	[self browserSelectionDidChange];
 }
 
 - (IBAction) doubleClick: (id)sender
 {
-	int row = [sender selectedRowInColumn: [sender selectedColumn]];
-	
-	ETLog(@"-doubleClick: row %d and column %d in %@", row, [sender selectedColumn], self);
-	
-	[[NSApplication sharedApplication] sendAction: [[self container] doubleAction] 
-	                                           to: [[self container] target] 
-											  from: sender];
+	ETDebugLog(@"-doubleClick: row %d and column %d in %@", 
+		[sender selectedRowInColumn: [sender selectedColumn]], 
+		[sender selectedColumn], self);
+
+	[self browserSelectionDidChange];
+
+	// TODO: Don't harcode the double action of the container. See also
+	// -renderWithLayoutItems:hasNewContent:.
+	[[NSApplication sharedApplication] sendAction: @selector(forwardDoubleActionFromLayout:)
+	                                           to: [self container]
+	                                         from: sender];
 }
 
 - (ETLayoutItem *) doubleClickedItem
 {
-	NSString *path = [[self browser] path];
-	ETLayoutItem *item = [[self layoutContext] itemAtPath: path];
-	
-	ETLog(@"-doubleClickedItem %@ in %@ with browser path %@", item, self, path);
+	ETLayoutItem *item = [[[self browser] selectedCell] representedObject];
+
+	NSAssert(item != nil, @"All browser cells must have a represented object set");
+
+	ETDebugLog(@"-doubleClickedItem %@ in %@ with browser path %@", item, self, 
+		[[self browser] path]);
 	
 	return item;
 }
