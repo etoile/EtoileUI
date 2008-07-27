@@ -77,7 +77,7 @@
 
 - (void) renderWithLayoutItems: (NSArray *)items isNewContent: (BOOL)isNewContent
 {	
-	//ETLog(@"Render layout items: %@", items);
+	//ETDebugLog(@"Render layout items: %@", items);
 	
 	NSArray *layoutModel = nil;
 	float scale = [[self layoutContext] itemScaleFactor];
@@ -101,7 +101,7 @@
 			@"Any layout done in a scroll view must be based on content size");
 			
 		[[self layoutContext] setContentSize: [self layoutSize]];
-		/*NSLog(@"Layout size is %@ with container size %@ and clip view size %@", 
+		/*ETDebugLog(@"Layout size is %@ with container size %@ and clip view size %@", 
 			NSStringFromSize([self layoutSize]), 
 			NSStringFromSize([[self layoutContext] size]), 
 			NSStringFromSize([[self layoutContext] visibleContentSize]));*/
@@ -149,7 +149,7 @@
 		_isLayouting = YES;
 	}
 	
-	ETLog(@"Render layout items: %@", items);
+	ETDebugLog(@"Render layout items: %@", items);
 	
 	float scale = [[self container] itemScaleFactor];
 	
@@ -169,7 +169,7 @@
 			@"Any layout done in a scroll view must be based on content size");
 		
 		[[self container] setFrameSize: [self layoutSize]];
-		NSLog(@"Layout size is %@ with container size %@ and clip view size %@", 
+		ETDebugLog(@"Layout size is %@ with container size %@ and clip view size %@", 
 			NSStringFromSize([self layoutSize]), 
 			NSStringFromSize([[self container] frame].size), 
 			NSStringFromSize([[[self container] scrollView] contentSize]));

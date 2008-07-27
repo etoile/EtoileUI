@@ -108,7 +108,7 @@ static 	BOOL _coalescingMutation = NO;
 
 - (void) handleAdd: (ETEvent *)event item: (ETLayoutItem *)item
 {
-	//ETLog(@"Add item in %@", self);
+	//ETDebugLog(@"Add item in %@", self);
 	
 	if ([_layoutItems containsObject: item])
 	{

@@ -60,7 +60,7 @@
 			[self takeSnapshotFromRect: rect inView: view];
 	}
 	
-	//ETLog(@"New snapshot with reps %@ based on view %@", 
+	//ETDebugLog(@"New snapshot with reps %@ based on view %@", 
 	//	[self representations], view);
 	
 	return self;

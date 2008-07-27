@@ -507,7 +507,7 @@ static NSMutableSet *layoutClasses = nil;
 	calling -setLayoutSize: and only then -render. */
 - (void) setLayoutSize: (NSSize)size
 {
-	//NSLog(@"-setLayoutSize");
+	//ETDebugLog(@"-setLayoutSize");
 	_layoutSize = size;
 }
 
@@ -518,7 +518,7 @@ static NSMutableSet *layoutClasses = nil;
 
 - (void) setContentSizeLayout: (BOOL)flag
 {
-	//NSLog(@"-setContentSizeLayout");
+	//ETDebugLog(@"-setContentSizeLayout");
 	_maxSizeLayout = flag;
 }
 
@@ -610,7 +610,7 @@ static NSMutableSet *layoutClasses = nil;
 
 	/* We remove the display views of layout items. Note they may be invisible 
 	   by being located outside of container bounds. */
-	//NSLog(@"Remove views of layout items currently displayed from their container");
+	//ETDebugLog(@"Remove views of layout items currently displayed from their container");
 	[[self layoutContext] setVisibleItems: [NSArray array]];
 	
 	/* When the number of layout items is zero and doesn't vary, no layout 
@@ -690,7 +690,7 @@ static NSMutableSet *layoutClasses = nil;
 	[self computeLayoutItemLocationsForLayoutModel: layoutModel];
 	
 	// TODO: May be worth to optimize by computing set intersection of visible and unvisible layout items
-	// NSLog(@"Remove views %@ of next layout items to be displayed from their superview", itemViews);
+	// ETDebugLog(@"Remove views %@ of next layout items to be displayed from their superview", itemViews);
 	[[self layoutContext] setVisibleItems: [NSArray array]];
 	
 	/* Adjust container size when it is embedded in a scroll view */
@@ -701,7 +701,7 @@ static NSMutableSet *layoutClasses = nil;
 			@"Any layout done in a scroll view must be based on content size");
 			
 		[[self layoutContext] setContentSize: [self layoutSize]];
-		NSLog(@"Layout size is %@ with container size %@ and clip view size %@", 
+		ETDebugLog(@"Layout size is %@ with container size %@ and clip view size %@", 
 			NSStringFromSize([self layoutSize]), 
 			NSStringFromSize([[self layoutContext] size]), 
 			NSStringFromSize([[self layoutContext] visibleContentSize]));
@@ -788,12 +788,12 @@ static NSMutableSet *layoutClasses = nil;
 		{
 			itemFrame.origin = [item origin];
 			[item setFrame: itemFrame];
-			//NSLog(@"Scale %@ to %@", NSStringFromRect(unscaledFrame), 
+			//ETDebugLog(@"Scale %@ to %@", NSStringFromRect(unscaledFrame), 
 			//	NSStringFromRect(ETScaleRect(unscaledFrame, factor)));
 		}
 		else
 		{
-			NSLog(@"% can't be rescaled because it has no view");
+			ETLog(@"% can't be rescaled because it has no view");
 		}
 	}
 }
@@ -1016,7 +1016,7 @@ static NSMutableSet *layoutClasses = nil;
 		else /* Layout items uses no display view */
 		{
 			// FIXME: Implement
-			NSLog(@"WARNING: -itemAtLocation: not implemented when item uses no display view");
+			ETLog(@"WARNING: -itemAtLocation: not implemented when item uses no display view");
 		}
 	}
 	

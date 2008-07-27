@@ -65,7 +65,7 @@
 		_usesCustomWindowTitle = ([self isUntitled] == NO);
 	}
 	
-	ETLog(@"Init item %@ with window %@ %@ at %@", self, [_itemWindow title],
+	ETDebugLog(@"Init item %@ with window %@ %@ at %@", self, [_itemWindow title],
 		_itemWindow, NSStringFromRect([_itemWindow frame]));
 	
 	return self;
@@ -80,7 +80,7 @@
 
 - (void) dealloc
 {
-	ETLog(@"Dealloc item %@ with window %@ %@ at %@", self, [_itemWindow title],
+	ETDebugLog(@"Dealloc item %@ with window %@ %@ at %@", self, [_itemWindow title],
 		_itemWindow, NSStringFromRect([_itemWindow frame]));
 
 	/* Retain the window to be sure we can send it -isReleasedWhenClosed. We 

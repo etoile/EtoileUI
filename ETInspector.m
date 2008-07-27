@@ -152,7 +152,7 @@
 
 - (void) containerSelectionDidChange: (NSNotification *)notif
 {
-	ETLog(@"Selection did change for %@ received in %@", [notif object], self);
+	ETDebugLog(@"Selection did change for %@ received in %@", [notif object], self);
 	
 	[propertyView reloadAndUpdateLayout];
 }
@@ -203,7 +203,7 @@
 		#endif
 	}
 	
-	//ETLog(@"Returns %d as number of property items in %@", nbOfPropertyItems, container);
+	//ETDebugLog(@"Returns %d as number of property items in %@", nbOfPropertyItems, container);
 	
 	return nbOfPropertyItems;
 }
@@ -251,7 +251,7 @@
 		[propertyItem setValue: @"method (objc)" forProperty: @"value"];
 	}
 #endif	
-	//ETLog(@"Returns property item %@ at index %d in %@", item, index, container);
+	//ETDebugLog(@"Returns property item %@ at index %d in %@", item, index, container);
 	
 	AUTORELEASE(propertyItem);
 	
