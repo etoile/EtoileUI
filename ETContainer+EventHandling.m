@@ -63,7 +63,7 @@
 
 - (void) mouseDown: (NSEvent *)event
 {
-	ETLog(@"Mouse down in %@", self);
+	ETDebugLog(@"Mouse down in %@", self);
 	
 	if ([self displayView] != nil) /* Layout object is wrapping an AppKit control */
 	{
@@ -79,7 +79,7 @@
 		newIndex = [self indexOfItem: newlyClickedItem];
 	
 	/* Update selection if needed */
-	ETLog(@"Update selection on mouse down");
+	ETDebugLog(@"Update selection on mouse down");
 	
 	if (newIndex == NSNotFound && [self allowsEmptySelection])
 	{
@@ -115,7 +115,7 @@
 
 - (void) mouseDoubleClick: (NSEvent *)event item: (ETLayoutItem *)item
 {
-	ETLog(@"Double click detected on item %@ in %@", item, self);
+	ETDebugLog(@"Double click detected on item %@ in %@", item, self);
 	
 	ASSIGN(_doubleClickedItem, item);
 	[[NSApplication sharedApplication] sendAction: [self doubleAction] to: [self target] from: self];
@@ -150,12 +150,12 @@
 	if (localDropPosition.x >= itemMiddleWidth)
 	{
 		indicatorLineX = NSMaxX(hoveredRect);
-		//ETLog(@"Draw right insertion bar");
+		//ETDebugLog(@"Draw right insertion bar");
 	}
 	else if (localDropPosition.x < itemMiddleWidth)
 	{
 		indicatorLineX = NSMinX(hoveredRect);
-		//ETLog(@"Draw left insertion bar");
+		//ETDebugLog(@"Draw left insertion bar");
 	}
 	else
 	{
@@ -227,7 +227,7 @@
 // NOTE: this method isn't part of NSDraggingSource protocol but of NSResponder
 - (void) mouseDragged: (NSEvent *)event
 {
-	ETLog(@"Mouse dragged in %@", self);
+	ETDebugLog(@"Mouse dragged in %@", self);
 	
 	id item = [self itemForEvent: event];
 
@@ -248,7 +248,7 @@
 	be fully covered by the layout view in all cases. */
 - (NSDragOperation) draggingEntered: (id <NSDraggingInfo>)drag
 {
-	ETLog(@"Drag enter receives in dragging destination %@", self);
+	ETDebugLog(@"Drag enter receives in dragging destination %@", self);
 	
 	/* item can be nil, -itemAtLocation: doesn't return the receiver itself */
 	id item = [self dropTargetForDrag: drag];
@@ -259,7 +259,7 @@
 
 - (NSDragOperation) draggingUpdated: (id <NSDraggingInfo>)drag
 {
-	//ETLog(@"Drag update receives in dragging destination %@", self);
+	//ETDebugLog(@"Drag update receives in dragging destination %@", self);
 	
 	/* item can be nil, -itemAtLocation: doesn't return the receiver itself */
 	id item = [self dropTargetForDrag: drag];
@@ -278,7 +278,7 @@
 
 - (void) draggingExited: (id <NSDraggingInfo>)drag
 {
-	ETLog(@"Drag exit receives in dragging destination %@", self);
+	ETDebugLog(@"Drag exit receives in dragging destination %@", self);
 	
 	/* item can be nil, -itemAtLocation: doesn't return the receiver itself */
 	id item = [self dropTargetForDrag: drag];
@@ -292,7 +292,7 @@
 
 - (void) draggingEnded: (id <NSDraggingInfo>)drag
 {
-	ETLog(@"Drag end receives in dragging destination %@", self);
+	ETDebugLog(@"Drag end receives in dragging destination %@", self);
 	
 	/* item can be nil, -itemAtLocation: doesn't return the receiver itself */
 	id item = [self dropTargetForDrag: drag];
@@ -308,7 +308,7 @@
    This method is equivalent to -validateDropXXX data source method.  */
 - (BOOL) prepareForDragOperation: (id <NSDraggingInfo>)drag
 {
-	ETLog(@"Prepare drag receives in dragging destination %@", self);
+	ETDebugLog(@"Prepare drag receives in dragging destination %@", self);
 	
 	/* item can be nil, -itemAtLocation: doesn't return the receiver itself */
 	id item = [self dropTargetForDrag: drag];
@@ -328,7 +328,7 @@
    This method is equivalent to -acceptDropXXX data source method.  */
 - (BOOL) performDragOperation: (id <NSDraggingInfo>)dragInfo
 {
-	ETLog(@"Perform drag receives in dragging destination %@", self);
+	ETDebugLog(@"Perform drag receives in dragging destination %@", self);
 	
 	id droppedItem = [[ETPickboard localPickboard] popObject];
 	id item = [self dropTargetForDrag: dragInfo];
@@ -342,7 +342,7 @@
    drop target item. */
 - (void) concludeDragOperation: (id <NSDraggingInfo>)drag
 {
-	ETLog(@"Conclude drag receives in dragging destination %@", self);
+	ETDebugLog(@"Conclude drag receives in dragging destination %@", self);
 	
 	/* item can be nil, -itemAtLocation: doesn't return the receiver itself */
 	id item = [self itemForLocationInWindow: [drag draggingLocation]];

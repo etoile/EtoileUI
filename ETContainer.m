@@ -541,7 +541,7 @@ NSString *ETLayoutItemPboardType = @"ETLayoutItemPboardType"; // FIXME: replace 
 		}
 		else
 		{
-			NSLog(@"%@ implements container:numberOfItemsAtPath: but misses "
+			ETLog(@"%@ implements container:numberOfItemsAtPath: but misses "
 				  @"container:itemAtPath: as requested by ETContainerSource "
 				  @"protocol.", [self source]);
 			return 0;
@@ -555,7 +555,7 @@ NSString *ETLayoutItemPboardType = @"ETLayoutItemPboardType"; // FIXME: replace 
 		}
 		else
 		{
-			NSLog(@"%@ implements numberOfItemsInContainer: but misses "
+			ETLog(@"%@ implements numberOfItemsInContainer: but misses "
 				  @"container:itemAtIndex as  requested by "
 				  @"ETContainerSource protocol.", [self source]);
 			return 0;
@@ -563,7 +563,7 @@ NSString *ETLayoutItemPboardType = @"ETLayoutItemPboardType"; // FIXME: replace 
 	}
 	else
 	{
-		NSLog(@"%@ implements neither numberOfItemsInContainer: nor "
+		ETLog(@"%@ implements neither numberOfItemsInContainer: nor "
 			  @"container:numberOfItemsAtPath: as requested by "
 			  @"ETContainerSource protocol.", [self source]);
 		return 0;
@@ -1034,7 +1034,7 @@ NSString *ETLayoutItemPboardType = @"ETLayoutItemPboardType"; // FIXME: replace 
 		return;
 	if (_displayView == view && (_displayView != nil || view != nil))
 	{
-		NSLog(@"WARNING: Trying to assign an identical display view to container %@", self);
+		ETLog(@"WARNING: Trying to assign an identical display view to container %@", self);
 		return;
 	}
 	
@@ -1213,7 +1213,7 @@ NSString *ETLayoutItemPboardType = @"ETLayoutItemPboardType"; // FIXME: replace 
 	
 	if (lastSelectionIndex > (numberOfItems - 1) && lastSelectionIndex != NSNotFound) /* NSNotFound is a big value and not -1 */
 	{
-		NSLog(@"WARNING: Try to set selection index %d when container %@ only contains %d items",
+		ETLog(@"WARNING: Try to set selection index %d when container %@ only contains %d items",
 			lastSelectionIndex, self, numberOfItems);
 		return;
 	}
@@ -1730,7 +1730,7 @@ NSString *ETLayoutItemPboardType = @"ETLayoutItemPboardType"; // FIXME: replace 
 	
 	if (lastSelectionIndex > (numberOfItems - 1) && lastSelectionIndex != NSNotFound) /* NSNotFound is a big value and not -1 */
 	{
-		NSLog(@"WARNING: Try to set selection index %d when container %@ only contains %d items",
+		ETLog(@"WARNING: Try to set selection index %d when container %@ only contains %d items",
 			lastSelectionIndex, self, numberOfItems);
 		return;
 	}
@@ -1801,7 +1801,7 @@ NSString *ETLayoutItemPboardType = @"ETLayoutItemPboardType"; // FIXME: replace 
 	NSAssert1(index >= 0, @"-setSelectionIndex: parameter must not be a negative value like %d", index);
 	if (index > (numberOfItems - 1) && index != NSNotFound) /* NSNotFound is a big value and not -1 */
 	{
-		NSLog(@"WARNING: Try to set selection index %d when container %@ only contains %d items",
+		ETLog(@"WARNING: Try to set selection index %d when container %@ only contains %d items",
 			index, self, numberOfItems);
 		return;
 	}
