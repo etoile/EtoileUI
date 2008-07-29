@@ -1,3 +1,5 @@
+PACKAGE_NAME = EtoileUI
+
 include $(GNUSTEP_MAKEFILES)/common.make
 
 #test=yes
@@ -7,61 +9,23 @@ ADDITIONAL_OBJCFLAGS += -I.
 
 FRAMEWORK_NAME = EtoileUI
 PROJECT_NAME = $(FRAMEWORK_NAME)
+VERSION = 0.2
 
-EtoileUI_LIBRARIES_DEPEND_UPON += -lm -lEtoileFoundation
+EtoileUI_LIBRARIES_DEPEND_UPON += -lm -lEtoileFoundation \
+	$(GUI_LIBS) $(FND_LIBS) $(OBJC_LIBS) $(SYSTEM_LIBS)
+
+EtoileUI_SUBPROJECTS = Source
 
 ifeq ($(test), yes)
 	BUNDLE_NAME = $(FRAMEWORK_NAME)
 
-	EtoileUI_SUBPROJECTS = Tests
+	EtoileUI_SUBPROJECTS += Tests
 	EtoileUI_LDFLAGS += -lUnitKit $(EtoileUI_LIBRARIES_DEPEND_UPON)
 endif
 
 
-EtoileUI_OBJC_FILES = \
-	ETApplication.m \
-	ETBrowserLayout.m \
-	ETContainer+Controller.m \
-	ETContainer+EventHandling.m \
-	ETContainer.m \
-	ETContainers.m \
-	ETEvent.m \
-	ETFlowLayout.m \
-	ETFreeLayout.m \
-	ETInspector.m \
-	ETLayer.m \
-	ETLayoutItemBuilder.m \
-	ETLayoutItem+Events.m \
-	ETLayoutItem+Factory.m \
-	ETLayoutItemGroup.m \
-	ETLayoutItemGroup+Mutation.m \
-	ETLayoutItem.m \
-	ETLayoutItem+Reflection.m \
-	ETLayoutLine.m \
-	ETLayout.m \
-	ETLineLayout.m \
-	ETObjectBrowserLayout.m \
-	ETObjectRegistry+EtoileUI.m \
-	ETOutlineLayout.m \
-	ETPaneLayout.m \
-	ETPaneSwitcherLayout.m \
-	ETPickboard.m \
-	ETStackLayout.m \
-	ETStyle.m \
-	ETStyleRenderer.m \
-	ETTableLayout.m \
-	ETTextEditorLayout.m \
-	ETView.m \
-	ETViewModelLayout.m \
-	ETWindowItem.m \
-	FSBrowserCell.m \
-	NSImage+Etoile.m \
-	NSObject+EtoileUI.m \
-	NSView+Etoile.m \
-	NSWindow+Etoile.m
+EtoileUI_HEADER_FILES_DIR = Headers
 
-
-EtoileUI_HEADER_FILES_DIR +=
 EtoileUI_HEADER_FILES = \
 	ETApplication.h \
 	ETBrowserLayout.h \
@@ -116,9 +80,10 @@ EtoileUI_RESOURCE_FILES = \
 	English.lproj/ViewModelPrototype.gorm
 
 
+include $(GNUSTEP_MAKEFILES)/aggregate.make
 ifeq ($(test), yes)
 include $(GNUSTEP_MAKEFILES)/bundle.make
 else
 include $(GNUSTEP_MAKEFILES)/framework.make
-include etoile.make
 endif
+include etoile.make
