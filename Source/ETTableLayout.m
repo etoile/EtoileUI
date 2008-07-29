@@ -545,7 +545,7 @@
 	    proposedDropOperation: (NSTableViewDropOperation)op 
 {
 	id dropTargetItem = [self layoutContext];
-	NSDragOperation dragOp = [info draggingSourceOperationMask];
+//	NSDragOperation dragOp = [info draggingSourceOperationMask];
 
 // FIXME: GNUstep should behave like Cocoa by complying to:
 // - row <= [tv numberOfRows] (to eliminate all potential out of range exceptions)

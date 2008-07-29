@@ -35,6 +35,8 @@
 	THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#import <EtoileFoundation/NSObject+Model.h>
+#import <EtoileFoundation/ETCollection.h>
 #import <EtoileUI/ETLayoutItem+Events.h>
 #import <EtoileUI/ETLayoutItemGroup.h>
 #import <EtoileUI/ETPickboard.h>
@@ -89,7 +91,10 @@
    returns nil. */
 - (ETContainer *) container
 {
-	return ([FORWARDER isGroup] ? [(ETLayoutItemGroup *)FORWARDER container] : nil);
+	if ([FORWARDER isGroup] == NO)
+		return nil;
+
+	return [FORWARDER container];
 }
 
 - (IBAction) copy: (id)sender
@@ -204,7 +209,7 @@
 		   a drag. A better solution could be introduce a ETPointerPickingMask 
 		   (or ETMousePickingMask). */
 		if (item == nil)
-			item = [selectedItems isEmpty] ? self : [selectedItems firstObject];
+			item = [selectedItems isEmpty] ? (id)self : [selectedItems firstObject];
 
 		/* If the dragged item is part of a selection which includes more than
 		   one item, we put a pick collection on pickboard. But if the dragged
