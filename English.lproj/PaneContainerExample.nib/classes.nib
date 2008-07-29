@@ -1,0 +1,27 @@
+{
+    IBClasses = (
+        {CLASS = ETContainer; LANGUAGE = ObjC; SUPERCLASS = NSView; }, 
+        {CLASS = FirstResponder; LANGUAGE = ObjC; SUPERCLASS = NSObject; }, 
+        {
+            ACTIONS = {
+                changeContentLayout = id; 
+                changeLayout = id; 
+                changeSwitcherLayout = id; 
+                changeSwitcherPosition = id; 
+                scale = id; 
+                switchUsesScrollView = id; 
+                switchUsesSource = id; 
+            }; 
+            CLASS = PaneController; 
+            LANGUAGE = ObjC; 
+            OUTLETS = {
+                paneView1 = NSView; 
+                paneView2 = NSView; 
+                paneView3 = NSView; 
+                viewContainer = id; 
+            }; 
+            SUPERCLASS = NSObject; 
+        }
+    ); 
+    IBVersion = 1; 
+}

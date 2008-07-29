@@ -1,0 +1,116 @@
+{
+    "## Comment" = "Do NOT change this file, Gorm maintains it";
+    ETContainer = {
+	Actions = (
+	    "setSource:",
+	    "setDelegate:",
+	    "inspect:",
+	    "inspectSelection:",
+	    "copy:",
+	    "paste:",
+	    "cut:",
+	    "stack:",
+	    "setTarget:",
+	    "addObject:",
+	    "removeObject:"
+	);
+	Outlets = (
+	    _dataSource,
+	    _delegate,
+	    _target,
+	    _inspector
+	);
+	Super = ETView;
+    };
+    ETImageStyle = {
+	Actions = (
+	);
+	Outlets = (
+	);
+	Super = ETStyleRenderer;
+    };
+    ETInspector = {
+	Actions = (
+	    "changeLayout:",
+	    "inspect:",
+	    "stack:"
+	);
+	Outlets = (
+	    itemGroupView,
+	    propertyView,
+	    layoutPopup,
+	    window,
+	    viewModelLayout
+	);
+	Super = ETLayoutItem;
+    };
+    ETLayoutItem = {
+	Actions = (
+	    "initWithValue:",
+	    "initWithRepresentedObject:",
+	    "setValue:",
+	    "setRepresentedObject:"
+	);
+	Outlets = (
+	    _value,
+	    _modelObject,
+	    _view,
+	    _reserved
+	);
+	Super = ETStyleRenderer;
+    };
+    ETScrollView = {
+	Actions = (
+	);
+	Outlets = (
+	);
+	Super = ETView;
+    };
+    ETSelection = {
+	Actions = (
+	);
+	Outlets = (
+	    _hidden
+	);
+	Super = NSObject;
+    };
+    ETStyleRenderer = {
+	Actions = (
+	);
+	Outlets = (
+	);
+	Super = NSObject;
+    };
+    ETView = {
+	Actions = (
+	    "setRenderer:",
+	    "collapse:",
+	    "expand:"
+	);
+	Outlets = (
+	    _renderer
+	);
+	Super = NSView;
+    };
+    FirstResponder = {
+	Actions = (
+	    "addObject:",
+	    "changeLayout:",
+	    "collapse:",
+	    "expand:",
+	    "initWithRepresentedObject:",
+	    "initWithValue:",
+	    "inspect:",
+	    "inspectSelection:",
+	    "removeObject:",
+	    "setDelegate:",
+	    "setRenderer:",
+	    "setRepresentedObject:",
+	    "setSource:",
+	    "setTarget:",
+	    "setValue:",
+	    "stack:"
+	);
+	Super = NSObject;
+    };
+}

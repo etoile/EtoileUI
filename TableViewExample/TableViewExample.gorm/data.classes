@@ -1,0 +1,69 @@
+{
+    "## Comment" = "Do NOT change this file, Gorm maintains it";
+    ETContainer = {
+	Actions = (
+	    "setSource:",
+	    "setDelegate:",
+	    "inspect:",
+	    "inspectSelection:",
+	    "copy:",
+	    "paste:",
+	    "cut:",
+	    "stack:",
+	    "setTarget:",
+	    "addObject:",
+	    "removeObject:"
+	);
+	Outlets = (
+	    _dataSource,
+	    _delegate,
+	    _target,
+	    _inspector
+	);
+	Super = ETView;
+    };
+    ETScrollView = {
+	Actions = (
+	);
+	Outlets = (
+	);
+	Super = ETView;
+    };
+    ETView = {
+	Actions = (
+	    "setRenderer:",
+	    "collapse:",
+	    "expand:"
+	);
+	Outlets = (
+	    _renderer
+	);
+	Super = NSView;
+    };
+    FirstResponder = {
+	Actions = (
+	    "addObject:",
+	    "collapse:",
+	    "expand:",
+	    "inspect:",
+	    "inspectSelection:",
+	    "removeObject:",
+	    "setDelegate:",
+	    "setRenderer:",
+	    "setSource:",
+	    "setTarget:",
+	    "stack:"
+	);
+	Super = NSObject;
+    };
+    TableController = {
+	Actions = (
+	);
+	Outlets = (
+	    tableContainer,
+	    tableContainer2,
+	    outlineView
+	);
+	Super = NSObject;
+    };
+}

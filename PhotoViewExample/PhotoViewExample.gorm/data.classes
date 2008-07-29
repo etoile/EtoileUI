@@ -1,0 +1,42 @@
+{
+    "## Comment" = "Do NOT change this file, Gorm maintains it";
+    ContainerController = {
+	Actions = (
+	    "choosePicturesAndLayout:",
+	    "changeLayout:",
+	    "switchUsesSource:",
+	    "switchUsesScrollView:",
+	    "scale:"
+	);
+	Outlets = (
+	    viewContainer
+	);
+	Super = NSObject;
+    };
+    ETContainer = {
+	Actions = (
+	    "inspect:"
+	);
+	Outlets = (
+	);
+	Super = ETView;
+    };
+    ETView = {
+	Actions = (
+	);
+	Outlets = (
+	);
+	Super = NSView;
+    };
+    FirstResponder = {
+	Actions = (
+	    "changeLayout:",
+	    "choosePicturesAndLayout:",
+	    "inspect:",
+	    "scale:",
+	    "switchUsesScrollView:",
+	    "switchUsesSource:"
+	);
+	Super = NSObject;
+    };
+}

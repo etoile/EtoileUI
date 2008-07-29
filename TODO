@@ -1,0 +1,86 @@
+TODO
+====
+
+# Refactoring
+
+* Rename -properties (first declared in NSObject+Model part of EtoileFoundation) to -propertyNames to eliminate collisions with other GNUstep/Cocoa classes
+
+* Patch NSBitmapImageRep to avoid method collision with -valueForProperty:, probably rely on posing a subclass or a category and method swizzling
+
+## Layout
+
+* Rename ETStackLayout to ETColumnLayout
+
+* Modularize ETFlowLayout, ETLineLayout and ETStackLayout in order to:
+	- share a common underlying layout algorithm (only flow and line shares code presently)
+	- implement a vertical flow algorithm
+	- ony request a minimal protocol for layouted objects: -x, -y, -width, -height, -setX:, -setY:, -setWidth:, setHeight: instead of the more complex one needed by a concrete layout that deals with ETLayoutItem instances (and the whole layout item tree machinery that encompass extra stuff like the event handling... for which the layout takes over in some cases).
+
+The inheritance rooted in ETLayout goes currently like that:
+	- ETFlowLayout
+		- ETLineLayout
+	- ETStackLayout
+
+After the refactoring it should be:
+	- ETFlowLayout
+	- ETLineLayout
+	- ETStackLayout
+
+and a separate ETLayoutAlgorithm class tree of layout strategies:
+	- ETHorizontalFlowAlgorithm
+	- ETVerticalFlowAlgorithm
+For these two subclasses, you can specify how the overflow should be handled. In ETFlowLayout, the right Flow algorithm is selected depending on the value returned by -isVerticallyOriented. In a very-long term vision, these classes could be eventually be subclassed for implementing text layout algorithms (see Universal Polygons in STEPS first year report).
+
+So ETLineLayout results of using ETHorizontalFlowAlgorithm limited to a single line and the overflow hidden. Similarly ETStackLayout results of using ETVerticalFlowAlgorithm limited to a single column and the overflow hidden.
+
+
+# New Features
+
+## Layout
+
+* Implement shape-driven and pattern-driven layouts (a typical case is a grid layout)
+ETShapeLayout
+-initWithShape:
+
+ETShape
+ETPatternShape
+
+# New Applications & Examples
+
+## Generalize AZSwitch into a versatile Expose-like application that allows to navigate the windows with any EtoileUI layouts. AZSwitch can be seen as a subcase of such an application that only comes with an hardcoded ETTableLayout.
+
+## Write a System-wide Shelf (also often referenced as Overlay Shelf) that runs in a standalone process. Involves to subclass ETPickboard in the Shelf code and modify +[ETPickboard systemPickboard] to return a DO proxy of the pickboard instance in the Shelf process. If we put aside collaboration features, a first implementation Shelf application should probably be around one hundred lines of code. Most of the code involves to override -insertItem:atIndex: and -removeItem: in the following spirit:
+
+// layout items are received by ref through DO and -pushObject: should pass objects by ref too.
+- (void) insertItem: (id)item atIndex: (int)index
+{
+	BOOL putProxyOnTheShelf = [item isMetaLayoutItem]; // a meta layout item is a UI proxy
+	
+	if (putProxyOnTheShelf) // picked a link (encompasses the lazy removal case when -shouldRemoveItemAtPickTime: returns NO)
+	{
+		[super insertItem: item atIndex: index]; // nothing to do in this case
+	}
+	else // picked an object or an object copy (aka cut and copy)
+	{
+		// The CoreObject implementation for this code is underway but far
+		// from usable... the following is a very rough approach that will need
+		// to be carefully refined.
+		id modelObject = [item representedObject];
+
+		if ([modelObject isManagedCoreObject] == NO)
+			[CoreObject snapshot: [object representedObject] inLibrary: ShelfLibrary];
+	
+		[super insertItem: item atIndex: index];
+	}
+}
+
+Then an ETOverlayShelfLayout could be created as an ETFreeLayout subclass to encapsulate the default UI of the Shelf in a pluggable layout.
+
+## Write a PhotoManager
+
+
+# Long-term Experiments
+
+## AppKit
+
+### Modularize NSView to fully separate all the concerns (event handling, hierarchy/composite, drawing surface, responders)

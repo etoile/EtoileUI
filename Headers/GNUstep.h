@@ -26,7 +26,8 @@
 
 #ifndef GNUSTEP
 
-#define AUTORELEASE(object)      [object autorelease]
+//#define AUTORELEASE(object)      [object autorelease]
+#define AUTORELEASE(object)      (id)[object autorelease]
 #define TEST_AUTORELEASE(object) ({ if (object) [object autorelease]; })
 
 #define RELEASE(object)          [object release]
