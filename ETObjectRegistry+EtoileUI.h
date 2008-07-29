@@ -38,6 +38,8 @@
 #import <EtoileFoundation/ETObjectRegistry.h>
 
 
+/* WARNING: Deprecated API (DO NOT USE, WILL BE REMOVED LATER) */
+
 @interface ETObjectRegistry (EtoileUI)
 
 /*- (id) rendererRegistry;

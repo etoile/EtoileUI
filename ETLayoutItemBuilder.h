@@ -1,7 +1,8 @@
 /*
 	ETLayoutItemBuilder.h
 	
-	Description forthcoming.
+	Builder classes that can render document formats or object graphs
+	into a layout item tree.
  
 	Copyright (C) 2007 Quentin Mathe
  

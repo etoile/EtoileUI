@@ -2,7 +2,8 @@
 
 	ETLayoutItemBuilder.m
 	
-	<abstract>Description forthcoming.</abstract>
+	<abstract>Builder classes that can render document formats or object graphs
+	into a layout item tree.</abstract>
  
 	Copyright (C) 2007 Quentin Mathe
  

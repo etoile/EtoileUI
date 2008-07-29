@@ -1,7 +1,7 @@
 /*
 	ETStackLayout.h
 	
-	Description forthcoming.
+	A layout class that organize items in a single vertical column or stack.
  
 	Copyright (C) 2007 Quentin Mathe
  

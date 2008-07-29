@@ -33,11 +33,10 @@
 	THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-
 #import <Foundation/Foundation.h>
 #import <AppKit/AppKit.h>
 
-// NOTE: May be rename it ETViewLayoutBox
+
 @interface ETLayoutLine : NSObject
 {
 	NSMutableArray *_items;

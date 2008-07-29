@@ -2,7 +2,8 @@
 
 	ETLineLayout.m
 
-	<abstract>Description forthcoming.</abstract>
+	<abstract>	A layout class that organize items in a single horizontal line 
+	or row..</abstract>
 
 	Copyright (C) 2007 Quentin Mathe
  

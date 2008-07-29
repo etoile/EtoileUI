@@ -1,7 +1,7 @@
 /*
 	ETLineLayout.h
 	
-	Description forthcoming.
+	A layout class that organize items in a single horizontal line or row.
  
 	Copyright (C) 2007 Quentin Mathe
  

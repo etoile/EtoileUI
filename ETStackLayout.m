@@ -2,7 +2,8 @@
 
 	ETStackLayout.m
 
-	<abstract>Description forthcoming.</abstract>
+	<abstract>	A layout class that organize items in a single vertical column 
+	or stack.</abstract>
 
 	Copyright (C) 2007 Quentin Mathe
  

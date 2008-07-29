@@ -1,7 +1,8 @@
 /*
 	ETFlowLayout.h
 	
-	Description forthcoming.
+	A layout class that organize items in an horizontal flow and starts a new 
+	line each time the content width is filled.
  
 	Copyright (C) 2007 Quentin Mathe
  

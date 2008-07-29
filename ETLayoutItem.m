@@ -2,7 +2,9 @@
 
 	ETLayoutItem.m
 	
-	<abstract>Description forthcoming.</abstract>
+	<abstract>ETLayoutItem is the base class for all node subclasses that can be 
+	used in a layout item tree. ETLayoutItem instances are leaf nodes for the
+	layout item tree structure.</abstract>
  
 	Copyright (C) 2007 Quentin Mathe
  

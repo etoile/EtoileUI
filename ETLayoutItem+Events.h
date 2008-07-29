@@ -1,7 +1,8 @@
 /*
 	ETLayoutItem+Events.h
 	
-	Description forthcoming.
+	The EtoileUI event handling model for the layout item tree. Also defines the 
+	Pick and Drop model.
  
 	Copyright (C) 2007 Quentin Mathe
  
@@ -36,6 +37,12 @@
 #import <Foundation/Foundation.h>
 #import <AppKit/AppKit.h>
 #import <EtoileUI/ETLayoutItem.h>
+
+/* WARNING: Unstable API, the method names won't radically change but the event 
+            handler concept will be refined as pluggable aspect and reworked to 
+            support the notion of instruments that can encapsulate the logic of
+            graphic tools for example. 
+            More explanations available in TODO file. */
 
 @class ETPickboard, ETEvent;
 

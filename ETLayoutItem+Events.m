@@ -2,7 +2,8 @@
 
 	ETLayoutItem+Events.m
 	
-	<abstract>Description forthcoming.</abstract>
+	<abstract>The EtoileUI event handling model for the layout item tree. Also 
+	defines the Pick and Drop model.</abstract>
  
 	Copyright (C) 2007 Quentin Mathe
  
@@ -43,8 +44,8 @@
 
 #define FORWARDER [self eventForwarder]
 
-/* TODO: When factoring out (ETEventHandler) in a standalone class, introduce 
-   -eventForwarder that returns the layout item presently known as 'self' */
+// TODO: When factoring out (ETEventHandler) in a standalone class, introduce 
+// -eventForwarder that returns the layout item presently known as 'self'
 @interface ETLayoutItem (ETEventHandlerPrivate)
 - (NSArray *) selectedItems;
 - (ETContainer *) container;

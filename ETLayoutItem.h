@@ -1,7 +1,9 @@
 /*
 	ETLayoutItem.h
 	
-	Description forthcoming.
+	ETLayoutItem is the base class for all node subclasses that can be used in
+	a layout item tree. ETLayoutItem instances are leaf nodes for the layout 
+	item tree structure.
  
 	Copyright (C) 2007 Quentin Mathe
  
@@ -39,40 +41,11 @@
 #import <EtoileUI/ETInspecting.h>
 #import <EtoileFoundation/ETPropertyValueCoding.h>
 
+// TODO: Remove once ETUTI is part of EtoileFoundation.
 #define ETUTI NSString
-#define ITEM(x) [ETLayoutItem layoutItemWithValue: x]
 
 @class ETView, ETContainer, ETLayoutItemGroup, ETWindowItem;
 @protocol ETEventHandler;
-
-/** WARNING: Personal notes that are vague and may change, move or become part
-	of another framework.
-
-	Rendering tree is an extension of renderer support, this extension is 
-	useful essentially in imaging applications either vector or bitmap based.
-
-	Rendering is the step which precedes display and encompass both layout and
-	real time graphics computation.
-	A renderer tree would be roughly identical to GEGL model.
-	Layout item tree and renderer tree form two parallel trees which are 
-	bridged together and ruled by layout items. 
-	At each layout item node, a renderer branch is connected.
-	Both trees are visited together from top to bottom at rendering time.
-	At rendering time, a visitor object which encapsulates the rendering state
-	is passed through layout items:
-	- it enters a layout item
-	- it visits the item renderer branch and computes it if needed
-	- it memorizes the first renderer directly connected to the layout item
-	- it quits the layout item
-	- it enters a second layout item
-	- it checks whether the first renderer of the layout item has a second 
-	input if we put aside renderer branch which plays the first input role; if
-	no second input is present, it uses the last memorized renderer in this 
-	role
-	- it removes the last memorized renderer of the second input if necessary
-	- it memorizes the renderer connected to the second layout
-	- it quits the layout item
- */
 
 // FIXME: Use less memory per instance. Name and value are somehow duplicates.
 // _cells and _view could be moved in a helper object. Pack booleans in a struct.

@@ -1,7 +1,8 @@
 /*
 	ETLayout.h
 	
-	Description forthcoming.
+	Base class to implement pluggable layouts as subclasses and make possible
+	UI composition and transformation at runtime.
  
 	Copyright (C) 2007 Quentin Mathe
  

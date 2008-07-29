@@ -2,7 +2,8 @@
 
 	ETLayout.m
 	
-	<abstract>Description forthcoming.</abstract>
+	<abstract>Base class to implement pluggable layouts as subclasses and make 
+	possible UI composition and transformation at runtime.</abstract>
  
 	Copyright (C) 2007 Quentin Mathe
  
