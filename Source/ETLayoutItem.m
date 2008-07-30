@@ -136,6 +136,22 @@
     return self;
 }
 
+// NOTE: Mac OS X doesn't always update the ref count returned by 
+// NSExtraRefCount if the memory management methods aren't overriden to use
+// the extra ref count functions.
+#ifndef GNUSTEP
+- (id) retain
+{
+	NSIncrementExtraRefCount(self);
+	return self;
+}
+
+- (unsigned int) retainCount
+{
+	return NSExtraRefCount(self) + 1;
+}
+#endif
+
 - (oneway void) release
 {
 	/* Note whether the next release call will deallocate the receiver, because 
@@ -145,7 +161,12 @@
 	BOOL isDeallocated = (NSExtraRefCount(self) == 0);
 	BOOL hasRetainCycle = (_view != nil);
 
+#ifdef GNUSTEP
 	[super release];
+#else
+	if (NSDecrementExtraRefCountWasZero(self))
+		[self dealloc];
+#endif
 
 	/* Tear down the retain cycle owned by the receiver.
 	   By releasing us, we release _view.
