@@ -36,6 +36,7 @@
 
 #import <EtoileUI/ETLayoutItem+Reflection.h>
 #import <EtoileUI/NSView+Etoile.h>
+#import <EtoileUI/ETCompatibility.h>
 
 
 @implementation ETLayoutItem (ETUIReflection)

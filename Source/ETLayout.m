@@ -36,6 +36,7 @@
  */
 
 #import <EtoileFoundation/Macros.h>
+#import <EtoileFoundation/NSObject+Etoile.h>
 #import <EtoileUI/ETLayoutItemGroup.h>
 
 #import <EtoileUI/ETLayout.h>
@@ -46,9 +47,6 @@
 #import <EtoileUI/ETBrowserLayout.h>
 #import <EtoileUI/NSView+Etoile.h>
 #import <EtoileUI/ETCompatibility.h>
-#ifdef GNUSTEP
-#import <GNUstepBase/GSObjCRuntime.h>
-#endif
 
 @interface ETContainer (PackageVisibility)
 - (BOOL) isScrollViewShown;
@@ -85,9 +83,9 @@ static NSMutableSet *layoutClasses = nil;
 {
 	if (self == [ETLayout class])
 	{
-		layoutClasses = [[NSMutableSet alloc] init];	
+		layoutClasses = [[NSMutableSet alloc] init];
 		// TODO: GSObjCAllSubclassesOfClass may not work on Cocoa... check.
-		FOREACH(GSObjCAllSubclassesOfClass(self), subclass, Class)
+		FOREACH([self allSubclasses], subclass, Class)
 		{
 			[self registerLayoutClass: subclass];
 		}
@@ -207,7 +205,7 @@ static NSMutableSet *layoutClasses = nil;
 {
 	// TODO: We should have a method -[Class isSubclassOfClass:]. 
 	// GSObjCIsKindOf may not work on Cocoa... check.
-	if (GSObjCIsKindOf(layoutClass, [ETLayout class]) == NO)
+	if ([layoutClass isSubclassOfClass: [ETLayout class]] == NO)
 	{
 		[NSException raise: NSInvalidArgumentException
 		            format: @"Class %@ must be a subclass of ETLayout to get "

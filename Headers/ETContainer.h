@@ -57,7 +57,7 @@
 	BOOL _scrollViewShown;
 
 	NSView *_displayView;
-#ifdef USE_NSVIEW_RFLAGS
+#ifndef USE_NSVIEW_RFLAGS
 	BOOL _flipped;
 #endif
 
