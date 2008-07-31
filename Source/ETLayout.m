@@ -84,7 +84,6 @@ static NSMutableSet *layoutClasses = nil;
 	if (self == [ETLayout class])
 	{
 		layoutClasses = [[NSMutableSet alloc] init];
-		// TODO: GSObjCAllSubclassesOfClass may not work on Cocoa... check.
 		FOREACH([self allSubclasses], subclass, Class)
 		{
 			[self registerLayoutClass: subclass];
