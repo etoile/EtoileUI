@@ -39,6 +39,8 @@
 #import <EtoileUI/ETLayoutItem+Factory.h>
 #import <EtoileUI/ETLayoutItemGroup.h>
 #import <EtoileUI/ETLayer.h>
+#import <EtoileUI/ETWindowItem.h>
+#import <EtoileUI/ETContainer.h>
 #import <EtoileUI/ETCompatibility.h>
 #include <float.h>
 
@@ -91,6 +93,21 @@
 + (ETLayoutItemGroup *) itemGroupWithValue: (id)value
 {
 	return AUTORELEASE([[ETLayoutItemGroup alloc] initWithValue: value]);
+}
+
+/** Returns a new layout item group instance based on a container to which 
+    you can apply view-based layouts such as ETTableLayout, ETModelViewLayout 
+	etc. This is unlike the other item group factory methods that creates 
+	instances which only accepts positional layouts such ETFlowLayout, 
+	ETLineLayout etc. 
+	TODO: In future, we should modify ETLayoutItemGroup to lazily creates the 
+	container and inserts if a view-based layout is inserted... at this point,
+	the use of this method won't be truly needed anymore. */
++ (ETLayoutItemGroup *) itemGroupWithContainer
+{
+	ETContainer *container = AUTORELEASE([[ETContainer alloc] init]);
+	
+	return (ETLayoutItemGroup *)[container layoutItem];
 }
 
 /* Widget Factory Methods */

@@ -49,7 +49,6 @@
 + (ETLayoutItem *) itemWithView: (NSView *)view;
 + (ETLayoutItem *) itemWithValue: (id)value;
 + (ETLayoutItem *) itemWithRepresentedObject: (id)object;
-//+ (ETLayoutItem *) itemWithDefaultView;
 
 /* Group Factory Methods */
 
@@ -58,9 +57,7 @@
 + (ETLayoutItemGroup *) itemGroupWithItems: (NSArray *)items;
 + (ETLayoutItemGroup *) itemGroupWithView: (NSView *)view;
 + (ETLayoutItemGroup *) itemGroupWithValue: (id)value;
-//+ (ETLayoutItemGroup *) itemGroupWithContainer;
-//+ (ETLayoutItemGroup *) itemGroupWithDefaultContainer;
-//+ (ETLayoutItemGroup *) itemGroupWithDefaultView;
++ (ETLayoutItemGroup *) itemGroupWithContainer;
 
 /* Leaf Widget Factory Methods */
 
