@@ -1720,7 +1720,7 @@
 	if (icon == nil && [self displayView] != nil)
 		icon = [[self displayView] snapshot];
 		
-	if (icon != nil && [self representedObject] != nil)
+	if (icon == nil && [self representedObject] != nil)
 		icon = [[self representedObject] icon];
 		
 	if (icon == nil)
