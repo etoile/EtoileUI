@@ -937,6 +937,8 @@
 
 	if ([self usesLayoutBasedFrame] || NSIntersectsRect(dirtyRect, drawingFrame))
 	{
+		BOOL usesLayoutView = ([[self layout] layoutView] != nil);
+
 		#ifdef DEBUG_DRAWING
 		[self debugDrawingInRect: dirtyRect];
 		#endif
@@ -947,8 +949,11 @@
 		NSRect realDirtyRect = NSIntersectionRect(dirtyRect, [self drawingFrame]);
 		[super render: inputValues dirtyRect: realDirtyRect inView: view];
 		
-		/* Render child items */
+		/* Render child items (if the layout doesn't handle it) */
 		
+		if (usesLayoutView)
+			return;
+			
 		NSEnumerator *e = [[self items] reverseObjectEnumerator];
 		ETLayoutItem *item = nil;
 
@@ -981,12 +986,21 @@
 - (void) display: (NSMutableDictionary *)inputValues item: (ETLayoutItem *)item 
 	dirtyRect: (NSRect)newDirtyRect inView: (NSView *)renderView
 {
-	 /* Only draw child items with no display view (no supervisor view as a byproduct) 
-		Checking the child item has no supervisor view isn't enough, because 
-		it may be enclosed in a view owned by a decorator. In such case, this view will be asked to draw 
-		by the view hierarchy. hmm... not sure
-		This problem is only meaningfull is INTERLEAVING_DRAWING is defined in 
-		ETView. */
+	 /* When the item has a view, it waits to be asked to draw directly by its 
+	    view before rendering anything. 
+		To explain it in a more detailed but complex way... If a parent item 
+		indirectly requests to draw the item by asking us to redraw, we decline 
+		and wait the control return to the view who initiated the drawing and 
+		this view asks the item view to draw itself as a subview.
+		Hence we only draw child items with no display view (no supervisor view
+		as a byproduct).
+		
+		FIXME: Verifying the item has no supervisor view isn't enough, because it 
+		may be enclosed in a view owned by a decorator. In such case, this view 
+		will be asked to draw by the view hierarchy and overwrite the item 
+		drawing since it occurs below it (in a superview). 
+		
+		See also INTERLEAVED_DRAWING in ETView. */
 	BOOL shouldDrawItem = ([item displayView] == nil);
 			
 	if (shouldDrawItem == NO)

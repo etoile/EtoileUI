@@ -38,6 +38,8 @@
 #import <EtoileFoundation/ETObjectChain.h>
 #import <EtoileFoundation/ETRendering.h>
 
+@class ETLayoutItem;
+
 /** Style class is widely used in EtoileUI to implement pervasive late-binding 
 	of state in combination with ETObjectRegistry.
 	Many classes in EtoileUI are subclasses of ETStyle and thereby benefit from 
@@ -86,6 +88,32 @@
 /* Style Rendering */
 
 - (SEL) styleSelector;
-- (id) render: (id)object;
+- (void) render: (NSMutableDictionary *)inputValues;
+- (void) render: (NSMutableDictionary *)inputValues 
+     layoutItem: (ETLayoutItem *)item 
+	  dirtyRect: (NSRect)dirtyRect;
+
+@end
+
+
+@interface ETBasicItemStyle : ETStyle
+{
+	BOOL _titleVisible;
+	//ETSelection _selectionStyle;
+}
+
++ (id) sharedInstance;
+
+- (void) render: (NSMutableDictionary *)inputValues 
+     layoutItem: (ETLayoutItem *)item 
+	  dirtyRect: (NSRect)dirtyRect;
+
+#if 0
+- (BOOL) setTitleVisible: (BOOL)flag;
+- (BOOL) isTitleVisible;
+- (void) drawImageInRect: (NSRect)dirtyRect;
+- (void) drawTitleInRect: (NSRect)dirtyRect;
+- (void) drawSelectionInRect: (NSRect)dirtyRect;
+#endif
 
 @end

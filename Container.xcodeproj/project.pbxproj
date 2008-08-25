@@ -443,6 +443,7 @@
 		60909CD70CB2DAB3009CAD27 /* TableController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TableController.h; path = TableViewExample/TableController.h; sourceTree = "<group>"; };
 		60909CD80CB2DAB3009CAD27 /* TableController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = TableController.m; path = TableViewExample/TableController.m; sourceTree = "<group>"; };
 		60909D360CB30092009CAD27 /* English */ = {isa = PBXFileReference; lastKnownFileType = wrapper.nib; name = English; path = English.lproj/TableExample.nib; sourceTree = "<group>"; };
+		609360D30E62B34300461628 /* log */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = log; sourceTree = "<group>"; };
 		609544AA0C0CE24D00068CBB /* ETBrowserLayout.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ETBrowserLayout.h; path = Headers/ETBrowserLayout.h; sourceTree = "<group>"; };
 		609544AB0C0CE24D00068CBB /* ETBrowserLayout.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ETBrowserLayout.m; path = Source/ETBrowserLayout.m; sourceTree = "<group>"; };
 		609547B70C0E032E00068CBB /* ETLayer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ETLayer.h; path = Headers/ETLayer.h; sourceTree = "<group>"; };
@@ -852,6 +853,7 @@
 		609548D10C0E300F00068CBB /* Layout Items */ = {
 			isa = PBXGroup;
 			children = (
+				609360D30E62B34300461628 /* log */,
 				609F46A10B42049D00AD2209 /* ETLayoutItem.h */,
 				609F46A20B42049D00AD2209 /* ETLayoutItem.m */,
 				603116220CF5131C001A699E /* ETLayoutItem+Events.h */,

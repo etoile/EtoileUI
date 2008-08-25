@@ -49,7 +49,7 @@
 
 // FIXME: Use less memory per instance. Name and value are somehow duplicates.
 // _cells and _view could be moved in a helper object. Pack booleans in a struct.
-@interface ETLayoutItem : ETStyleRenderer <ETPropertyValueCoding, ETObjectInspection>
+@interface ETLayoutItem : ETStyle <ETPropertyValueCoding, ETObjectInspection>
 {
 	ETLayoutItemGroup *_parentLayoutItem;
 	
@@ -57,7 +57,7 @@
 	id _modelObject;
 	NSMutableDictionary *_variableProperties;
 	NSString *_name;
-	ETStyleRenderer *_renderer;
+	ETStyle *_renderer;
 	ETLayoutItem *_decoratorItem; // previous decorator
 	ETLayoutItem *_decoratedItem; // next decorator
 
@@ -192,11 +192,10 @@ shape*/
 - (void) updateLayout;
 - (void) apply: (NSMutableDictionary *)inputValues;
 - (NSRect) drawingFrame;
-- (void) render: (NSMutableDictionary *)inputValues;
 - (void) render: (NSMutableDictionary *)inputValues dirtyRect: (NSRect)dirtyRect inView: (NSView *)view;
 - (void) render;
-- (ETStyleRenderer *) renderer;
-- (void) setStyleRenderer: (ETStyleRenderer *)renderer;
+- (ETStyle *) renderer;
+- (void) setStyleRenderer: (ETStyle *)renderer;
 
 - (void) setNeedsDisplay: (BOOL)now;
 

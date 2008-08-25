@@ -40,46 +40,6 @@
 #import <EtoileUI/ETCompatibility.h>
 
 
-@implementation ETStyleRenderer
-
-- (void) render: (NSMutableDictionary *)inputValues
-{
-	ETLayoutItem *layoutItem = [inputValues objectForKey: @"kETLayoutItemObject"];
-	
-	if (layoutItem != nil)
-		[self renderLayoutItem: layoutItem];
-}
-
-- (void) renderLayoutItem: (ETLayoutItem *)item
-{ 
-	NSRect itemRect = ETMakeRect([item origin], [item size]);
-	
-	[self drawInRect: itemRect];
-}
-
-- (void) drawInRect: (NSRect)rect
-{
-
-}
-
-@end
-
-@implementation ETImageStyle
-
-- (void) renderLayoutItem: (ETLayoutItem *)item
-{ 
-	if ([[item value] isKindOfClass: [NSImage class]] == NO)
-	{
-		NSLog(@"WARNING: Layout item %@ value isn't of type NSImage as expected", item);
-	}
-	
-	NSImage *img = (NSImage *)[item value];
-	
-	[img compositeToPoint: [item origin] operation: NSCompositeSourceOver];
-}
-
-@end
-
 @implementation ETSelection
 
 - (id) init

@@ -128,7 +128,7 @@
 		[self setDecoratedItem: nil];
 		[self setView: view];
 		[self setVisible: NO];
-		[self setStyleRenderer: AUTORELEASE([[ETSelection alloc] init])];
+		[self setStyleRenderer: [ETBasicItemStyle sharedInstance]];
 		[self setValue: value];
 		[self setRepresentedObject: repObject];
     }
@@ -1010,12 +1010,16 @@
 	ASSIGN(_view, view);
 }
 
+/** Sets the receiver selection state.
+    You rarely need to call this method. Take note the new selection state won't 
+	be visible until a redisplay occurs. */
 - (void) setSelected: (BOOL)selected
 {
 	_selected = selected;
 	ETDebugLog(@"Set layout item selection state %@", self);
 }
 
+/** Returns the receiver selection state. */
 - (BOOL) isSelected
 {
 	return _selected;
@@ -1361,48 +1365,6 @@
 	[self updateLayout];
 }
 
-- (void) renderLayoutItem: (ETLayoutItem *)item
-{
-	/* Draw image if defined */
-	if ([item image] != nil)
-	{
-		//ETLog(@"Drawing image %@ in view %@", [item image], [NSView focusView]);
-		NSSize imgSize = [[self image] size];
-		[[item image] drawAtPoint: NSZeroPoint 
-						 fromRect: NSMakeRect(0, 0, imgSize.width, imgSize.height) 
-						operation: NSCompositeSourceOver 
-						 fraction: 1.0];
-	}		
-			 
-	/* Draw selection indicator if selected */
-	if ([item isSelected])
-	{
-		//ETLog(@"--- Drawing selection %@ in view %@", NSStringFromRect([item drawingFrame]), [NSView focusView]);
-		[[NSColor blueColor] set];
-		NSRectFill([item drawingFrame]);
-	}
-}
-
-/** Propagates rendering/drawing in the layout item tree.
-	This method doesn't involve any layout and size computation of the layout 
-	items. If you need to do layout or size computation, implement the method
-	-apply: in addition to this one.
-    Override */
-- (void) render: (NSMutableDictionary *)inputValues
-{
-	/* When we have a view, we wait to be asked to draw directly by our view 
-	   before rendering anything. If a parent layout item asks us to draw, we
-	   decline and wait the control return to the view who initiated the 
-	   drawing and this view asks our view to draw itself as a subview. */
-	//if ([self view] == nil) // || [[NSView focusView] isEqual: [[self displayView] superview]]
-	{
-		//[_renderer renderLayoutItem: self];
-	}
-
-	//[self renderLayoutItem: self];
-	//[self render: inputValues dirtyRect: rect inView: ];
-}
-
 /** Returns the innermost decorator item in the decorator chain which has a 
     supervisor view bound to it, thereby can be qualified as an item with a view.
     If the receiver has a supervisor view, then the receiver is returned. 
@@ -1435,7 +1397,13 @@
 	return drawingFrame;
 }
 
-/** dirtyRect indicates the portion of the item that needs to be redraw and is 
+/** Propagates rendering/drawing in the layout item tree.
+	This method doesn't involve any layout and size computation of the layout 
+	items. If you need to do layout or size computation, implement the method
+	-apply: in addition to this one.
+	You can eventually override this method. If you want to keep the drawing 
+	of the receiver, the superclass implementation must be called.
+    dirtyRect indicates the portion of the item that needs to be redraw and is 
     expressed in the receiver coordinates. This rect is is usally equal to the 
 	item drawing frame, but it may be smaller if only a portion of parent 
 	needs to be redrawn and this portion doesn't overlap the whole receiver 
@@ -1480,9 +1448,10 @@
 	}
 #endif
 
-	[[self renderer] renderLayoutItem: self];
+	[[self renderer] render: inputValues layoutItem: self dirtyRect: dirtyRect];
 }
 
+/** A shortcut method for -render: inherited from ETStyle. */
 - (void) render
 {
 	[self render: nil];
@@ -1501,6 +1470,8 @@
 	[[self closestAncestorDisplayView] setNeedsDisplayInRect: displayRect];
 }
 
+// TODO: Evaluate whether we really need the two following methods
+
 - (void) lockFocus
 {
 	// FIXME: Finds the first layout item ancestor with a view and asks it to
@@ -1512,17 +1483,12 @@
 
 }
 
-// NOTE: Will probably become - (ETService *) renderer;
-- (ETStyleRenderer *) renderer
+- (ETStyle *) renderer
 {
-#ifdef USE_RENDERER
 	return _renderer;
-#else
-	return self;
-#endif
 }
 
-- (void) setStyleRenderer: (ETStyleRenderer *)renderer
+- (void) setStyleRenderer: (ETStyle *)renderer
 {
 	ASSIGN(_renderer, renderer);
 }

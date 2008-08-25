@@ -35,36 +35,18 @@
 
 #import <Foundation/Foundation.h>
 #import <AppKit/AppKit.h>
+#import <EtoileUI/ETStyle.h>
 
 @class ETLayoutItem;
 
 // WARNING: Very unstable API. Please don't use.
 
-// ETStyleUnit
-@interface ETStyleRenderer : NSObject
-{
-
-}
-
 /** Render represents a chain of drawing operations which operates in a drawing context
 	with a focused view or image. This method is equivalent to -drawRect: method. */
-- (void) render: (NSMutableDictionary *)inputValues;
+//- (void) render: (NSMutableDictionary *)inputValues;
 /** Apply represents a chain of transformations which produces or returns a result that 
 	may eventually be renderered by a rendering chain with -render: method. */
 //- (void) apply: (NSMutableDictionary *)inputValues;
-
-// Style defines -render: primitive method in addition to -apply: primitive method defined by ETService
-- (void) renderLayoutItem: (ETLayoutItem *)item;
-- (void) drawInRect: (NSRect)rect;
-
-@end
-
-@interface ETImageStyle : ETStyleRenderer
-{
-
-}
-
-@end
 
 @interface ETSelection : NSObject
 {

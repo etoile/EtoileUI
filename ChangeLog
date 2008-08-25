@@ -1,5 +1,43 @@
 2008-08-25  Quentin Mathe <qmathe@club-internet.fr>
 
+	Modularized the drawing of the layout items, the default rendering style 
+	is now encoded in a new ETStyle subclass named ETBasicItemStyle.
+
+	* ETStyle:
+	(-render:): Modified the return type to be void.
+	(-render:layoutItem:dirtyRect:): New method.
+	New class ETBasicItemStyle which encapsulates the code previously located
+	in -[ETLayoutItem renderLayoutItem:].
+	
+	* ETLayoutItem
+	Modified to inherit from ETStyle rather than ETStyleRenderer. Modified 
+	the type of renderer property to ETStyle.
+	(-initWithView:value:representedObject:): Modified to set ETBasicItemStyle 
+	shared instance as the renderer.
+	(-renderLayoutItem:): Removed by moving the code to 
+	-[ETBasicItemStyle render:layoutItem:dirtyRect].
+	(-render:dirtyRect:inView:): Modified to call the equivalenet ETStyle 
+	method rather than -renderLayoutItem:.
+	(-render:): Removed.
+	
+	* ETLayoutItemGroup
+	Updated various part of the documentation related to the drawing.
+	(-render:dirtyRect:inView:): Fixed to avoid the drawing of the item style 
+	when a layout view is taking over the whole drawing. For example, switching 
+	from a line layout to a table layout resulted in a visible row of items on 
+	top of the table layout.
+	
+	* ETView: Documented INTERLEAVED_DRAWING.
+	
+	* ETStyleRenderer, ETRenderer: Removed various stuff (before getting rid 
+	of these files at a later point).
+	
+	* PhotoViewExample: Tweaked to use no image views when the data source is 
+	disabled, this example can now easily be used to test the direct drawing of 
+	the layout item tree.
+
+2008-08-25  Quentin Mathe <qmathe@club-internet.fr>
+
 	Implemented the direct drawing of the layout items, so items without view can
 	now draw themselves directly into the closest enclosing view. As a byproduct, 
 	this also implies every items with or without a view can also be styled (for 

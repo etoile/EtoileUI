@@ -654,6 +654,25 @@ static ETView *barViewPrototype = nil;
 
 /* Rendering Tree */
 
+/* INTERLEAVED_DRAWING must always be enabled. 
+   You might want to disable it for debugging how the control of the drawing is 
+   handed by ETView to the layout item tree.
+   
+   With INTERLEAVED_DRAWING, the drawing of the layout item follows the drawing
+   of the view its represents and all related subviews. This view is called the 
+   supervisor view and is an ETView instance. The supervisor view can embed a 
+   subview that is returned by -[ETLayoutItem view] and -[ETView wrappedView].
+   Hence the layout item is able to draw its style (border, selection indicators 
+   etc.) on top of the wrapped view.
+
+   Without INTERLEAVED_DRAWING, the drawing of the layout item only occurs 
+   within -drawRect: and precedes the drawing of the view its represents and all 
+   related subviews. Thereby the drawing of the style of an item will be covered 
+   by the drawing of its view. If the item has no view, the issue doesn't exist. 
+   This view is a subview of our closest ancestor view where the item style is 
+   drawn through -drawRect:, but a superview -drawRect: is followed by the 
+   -drawRect: of subviews, that's why the item style cannot be drawn properly 
+   in such cases. */
 #define INTERLEAVED_DRAWING 1
 
 #ifndef INTERLEAVED_DRAWING

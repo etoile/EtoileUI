@@ -128,22 +128,3 @@ etc.
 - (float) rotation;*/
 
 @end
-
-@interface ETSelection : ETShape
-{
-	NSBezierPath *_drawingShape;
-	NSBezierPath *_editingShape;
-	BOOL _hidden;
-}
-
-- (void) setDrawingShape: (NSBezierPath *)shape;
-- (NSBezierPath *) drawingShape;
-- (void) setEditingShape: (NSBezierPath *)shape;
-- (NSBezierPath *) editingShape;
-
-- (void) setAlwaysDrawsEditingShape: (BOOL)flag;
-- (void) setUsesItemGranularityForDrawing: (BOOL)flag;
-
-- (void) drawInRect: (NSRect)rect;
-
-@end

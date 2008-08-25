@@ -196,11 +196,16 @@
 	
 	while ((img = [e nextObject]) != nil)
 	{
+		#ifdef USE_IMG_VIEW
 		NSImageView *imgView = [self imageViewForImage: img];
+		#else
+		NSImageView *imgView = nil;
+		#endif
 		ETLayoutItem *item = [ETLayoutItem layoutItemWithView: imgView];
 		
 		[item setValue: [[img name] lastPathComponent] forProperty: @"name"];
-		[item setValue: img forProperty: @"icon"];		
+		[item setValue: img forProperty: @"icon"];	
+		[item setImage: img];/* Only useful if no imgView exists */	
 		[imageLayoutItems addObject: item];
 	}
 	

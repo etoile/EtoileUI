@@ -36,6 +36,7 @@
  */
 
 #import <EtoileUI/ETStyle.h>
+#import <EtoileUI/ETLayoutItem.h>
 
 
 @implementation ETStyle
@@ -85,16 +86,76 @@
 	return @selector(render:);
 }
 
-/** Renders object with the style chain by passing the parameter from 
-	style-to-style with the order resulting from calling -nextStyle on each
-	style.
+/** Renders the receiver in the active graphics context and the rest of the 
+    style chain connected to it, by passing the input values from style-to-style 
+	with the order resulting from calling -nextStyle on eachstyle.
+	You should never override this method but -render:layoutItem:dirtyRect: 
+	to implement the custom drawing of the style. 
+	This method calls -render:layoutItem:dirtyRect: and try to figure out the 
+	parameter by looking up kETLayoutItemObject and kETDirtyRect in inputValues. */
+- (void) render: (NSMutableDictionary *)inputValues
+{
+	id item = [inputValues objectForKey: @"kETLayoutItemObject"];
+	NSRect dirtyRect = [[inputValues objectForKey: @"kETDirtyRect"] rectValue];
+	
+	[self render: inputValues layoutItem: item dirtyRect: dirtyRect];
+}
+
+/** Main rendering method for the custom drawing implemented by subclasses.
+    Renders the receiver in the active graphics context and the rest of the 
+    style chain connected to it, by passing the input values from style-to-style 
+	with the order resulting from calling -nextStyle on each style.
 	When overriding this method, you should usually handle the receiver 
 	rendering before delegating it to the rest of the style chain. This 
-	implies using return [super render: object] at the end of the overriden 
-	method. */
-- (id) render: (id)object
+	implies using 
+	    return [super render: inputValues item: item dirtyRect: dirtyRect] 
+	at the end of the overriden method. */
+- (void) render: (NSMutableDictionary *)inputValues 
+     layoutItem: (ETLayoutItem *)item 
+	  dirtyRect: (NSRect)dirtyRect
 {
-	return [[self nextStyle] render: object];
+	[[self nextStyle] render: inputValues layoutItem: item dirtyRect: dirtyRect];
+}
+
+@end
+
+
+@implementation ETBasicItemStyle
+
+static ETBasicItemStyle *sharedBasicItemStyle = nil;
+
++ (id) sharedInstance
+{
+	if (sharedBasicItemStyle == nil)
+		sharedBasicItemStyle = [[ETBasicItemStyle alloc] init];
+		
+	return sharedBasicItemStyle;
+}
+
+- (void) render: (NSMutableDictionary *)inputValues 
+     layoutItem: (ETLayoutItem *)item 
+	  dirtyRect: (NSRect)dirtyRect;
+{
+	/* Draw image if defined */
+	if ([item image] != nil)
+	{
+		//ETLog(@"Drawing image %@ in view %@", [item image], [NSView focusView]);
+		NSSize imgSize = [[item image] size];
+		[[item image] drawAtPoint: NSZeroPoint 
+						 fromRect: NSMakeRect(0, 0, imgSize.width, imgSize.height) 
+						operation: NSCompositeSourceOver 
+						 fraction: 1.0];
+	}		
+			 
+	/* Draw selection indicator if selected */
+	if ([item isSelected])
+	{
+		//ETLog(@"--- Drawing selection %@ in view %@", NSStringFromRect([item drawingFrame]), [NSView focusView]);
+		[[NSColor blueColor] set];
+		NSRectFill([item drawingFrame]);
+	}
+	
+	[super render: inputValues layoutItem: item dirtyRect: dirtyRect];
 }
 
 @end
