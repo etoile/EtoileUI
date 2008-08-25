@@ -1,6 +1,28 @@
 TODO
 ====
 
+# Open Issues
+
+* Verify NSView hidden property doesn't cause a KVC error when read or written, it caused a crash in the object browser layout in the past.
+
+* Fix group and ungroup operations. That shouldn't be really hard. The only thing is to settle on a sensible semantic: where a new group is inserted and where the child items of a dismantled group are inserted. Inserting in the existing parent is probably the way to go, the insertion index (z-order) remains to be figured out. The only tricky thing will be to ensure we properly handle these operations on a mix of items with and without views, by reinserting views in the most adequate superview.
+
+* Fix stack and unstack operations, they are currently broken. Documentation is probably missing in this area. Stack/Unstack operations are unrelated to the stack layout (we got a naming issue here), they allow to set a temporary layout on an item group, so that the child item becomes visible instead of the drawing or the view of the item group itself. For example, you set a table layout on a folder item, then the content of the folder appears 'exploded' as a table view rather than just an opaque folder icon. This feature gives a very generic implementation of Aperture-like stacks.
+
+* Write code to deal with shift modifier for extending or restricting the selection.
+
+* Check command modifier is correctly handled on adding or removing a single item to the selection.
+
+# Basic Stuff
+
+## Properties 
+
+* Expose more properties for Foundation, AppKit, EtoileFoundation and EtoileUI classes.
+
+* Handle read-only properties in a sane way, usually when no setter is available. A method like -isReadOnlyProperty: (NSString *)propertyName should be added to NSObject+Model in EtoileFoundation; not really sure this is the best method name though. We also need to update CoreObject related classes to use this same mechanism.
+
+* See Refactoring for more properties related stuff.
+
 # Refactoring
 
 * Rename -properties (first declared in NSObject+Model part of EtoileFoundation) to -propertyNames to eliminate collisions with other GNUstep/Cocoa classes
@@ -35,6 +57,10 @@ So ETLineLayout results of using ETHorizontalFlowAlgorithm limited to a single l
 
 
 # New Features
+
+## Drawing
+
+* Implement rotation support for layout items without view, the code should be put in -[ETLayoutItemGroup render:dirtyRect:inView]
 
 ## Layout
 
