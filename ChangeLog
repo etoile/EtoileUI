@@ -1,3 +1,53 @@
+2008-08-25  Quentin Mathe <qmathe@club-internet.fr>
+
+	Implemented the direct drawing of the layout items, so items without view can
+	now draw themselves directly into the closest enclosing view. As a byproduct, 
+	this also implies every items with or without a view can also be styled (for 
+	stuff such as selection indicator, border etc.). The item style is currently 
+	hardcoded but it is going to be modularized in order to be fully pluggable at 
+	runtime. This feature can also be useful for implementing a graphics editor or 
+	a photo browser, whose contents may consist of thousands of elements, hence 
+	require lightweight items to diplay fast enough.
+	Fixed selection handling in layouts that doesn't use a layout view and reenabled 
+	the display of a visual indicator for selected items... a crude blue square :)
+	WARNING: When scrolling a container made of items without views, the redisplay 
+	doesn't occur transparently right now, clicking or resizing allows to workaround 
+	this issue. In a similar vein, pick and drop work for both items with or without 
+	view, but the result only becomes visible when you click or resize the container 
+	if the picked items have no views.
+
+	* ETLayout (-itemAtLocation:): Added a basic implementation to handle the 
+	case where an item has no view.
+
+	* ETView 
+	(-drawRect:, -_recursiveDisplayAllDirtyWithLockFocus:visRect:, 
+	-displayRectIgnoringOpacity:inContext:): Modified to take control of the 
+	drawing once the subviews are drawn and ask the layout item to render itself.
+	(-renderer): Used the layout item as the view renderer.
+
+	* ETLayoutItem
+	(-description): Tweaked the detailed description to print the frame.
+	(-setImage:): Modified -setImage: to update the item size if needed.
+	(-firstDecoratorItemWithSupervisorView, -drawingFrame, -renderLayoutItem:): 
+	New methods.
+	(-render:dirtyRect:inView:): Finished to implement and largely rewrote by 
+	letting the parent item adjusting the graphic context to match our needs.
+	(-renderer): Used the layout item as the view renderer.
+
+	* ETLayoutItemGroup
+	Documented several methods.
+	(-render:dirtyRect:inView:): Finished to implement and largely rewrote. Now 
+	calls -display:dirtyRect:inView: for adjusting the graphic context to each 
+	child item.
+	(-display:dirtyRect:inView:): New method.
+	(-collectSelectionIndexPaths): Renamed  to
+	-collectSelectionIndexPaths:relativeToItem: and modified to correctly 
+	compute relative index paths of the selected items, rather than index paths 
+	relative to the root item.
+	(-applySelectionIndexPaths): Renamed to
+	-applySelectionIndexPaths:relativeToItem: and fixed to correctly set the 
+	selected items by interpreting the index paths as relative to the receiver.
+
 2008-04-02  Quentin Mathe <qmathe@club-internet.fr>	
 
 	* Headers/UKPluginsRegistry+Icons.h: Added.

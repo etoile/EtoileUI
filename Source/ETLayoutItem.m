@@ -267,9 +267,10 @@
 
 #ifdef DETAILED_DESCRIPTION	
 	desc = [@"<" stringByAppendingFormat: @"%@ meta: %d id: %@, ipath: %@, "
-		@"selected: %d, repobject: %@ view: %@>", desc, [self UIMetalevel], 
+		@"selected: %d, repobject: %@ view: %@ frame %@>", desc, [self UIMetalevel], 
 		[self identifier], [[self indexPath] keyPath], [self isSelected], 
-		[[self representedObject] primitiveDescription], [self view]];
+		[[self representedObject] primitiveDescription], [self view], 
+		NSStringFromRect([self frame])];
 #else
 	desc = [@"<" stringByAppendingFormat: @"%@ id: %@, selected:%d>", 
 		desc, [self identifier], [self isSelected]];
@@ -1011,8 +1012,8 @@
 
 - (void) setSelected: (BOOL)selected
 {
-	//ETDebugLog(@"Set layout item selection state %@", self);
 	_selected = selected;
+	ETDebugLog(@"Set layout item selection state %@", self);
 }
 
 - (BOOL) isSelected
@@ -1360,6 +1361,28 @@
 	[self updateLayout];
 }
 
+- (void) renderLayoutItem: (ETLayoutItem *)item
+{
+	/* Draw image if defined */
+	if ([item image] != nil)
+	{
+		//ETLog(@"Drawing image %@ in view %@", [item image], [NSView focusView]);
+		NSSize imgSize = [[self image] size];
+		[[item image] drawAtPoint: NSZeroPoint 
+						 fromRect: NSMakeRect(0, 0, imgSize.width, imgSize.height) 
+						operation: NSCompositeSourceOver 
+						 fraction: 1.0];
+	}		
+			 
+	/* Draw selection indicator if selected */
+	if ([item isSelected])
+	{
+		//ETLog(@"--- Drawing selection %@ in view %@", NSStringFromRect([item drawingFrame]), [NSView focusView]);
+		[[NSColor blueColor] set];
+		NSRectFill([item drawingFrame]);
+	}
+}
+
 /** Propagates rendering/drawing in the layout item tree.
 	This method doesn't involve any layout and size computation of the layout 
 	items. If you need to do layout or size computation, implement the method
@@ -1373,34 +1396,91 @@
 	   drawing and this view asks our view to draw itself as a subview. */
 	//if ([self view] == nil) // || [[NSView focusView] isEqual: [[self displayView] superview]]
 	{
-		[_renderer renderLayoutItem: self];
+		//[_renderer renderLayoutItem: self];
 	}
+
+	//[self renderLayoutItem: self];
+	//[self render: inputValues dirtyRect: rect inView: ];
 }
 
+/** Returns the innermost decorator item in the decorator chain which has a 
+    supervisor view bound to it, thereby can be qualified as an item with a view.
+    If the receiver has a supervisor view, then the receiver is returned. 
+	TODO: Implement. */
+- (ETLayoutItem *) firstDecoratorItemWithSupervisorView
+{
+	return nil;
+}
+
+/** Returns the rect where the drawing of the layout item must occur, typically 
+    used by the styles. */
+- (NSRect) drawingFrame
+{
+	ETView *drawingView = [self supervisorView];
+	NSRect drawingFrame = [self frame];
+	drawingFrame.origin = NSZeroPoint;
+	
+	if (drawingView != nil) /* Has supervisor view */
+	{
+		/* Exclude the title bar area */
+		drawingFrame = [[drawingView wrappedView] frame];
+	}
+	else /* Has supervisor view in the decorator chain (a supervisor view may exist before the display view if several decorators are set) */
+	{
+		drawingView = [[self firstDecoratorItemWithSupervisorView] supervisorView];
+		if (drawingView != nil)
+			drawingFrame = [[drawingView wrappedView] frame];
+	}
+	
+	return drawingFrame;
+}
+
+/** dirtyRect indicates the portion of the item that needs to be redraw and is 
+    expressed in the receiver coordinates. This rect is is usally equal to the 
+	item drawing frame, but it may be smaller if only a portion of parent 
+	needs to be redrawn and this portion doesn't overlap the whole receiver 
+	frame. 
+	Unlike in a view, you are free to draw outside of an item frame, 
+	yet you should be careful when you draw outside of the boundaries of the  
+	receiver and only uses it to draw visual embellishments strictly related to 
+	the receiver. This ability to draw beyong the boundaries of a layout item is 
+	useful for drawing borders, selection mark, icon badge, control points etc.
+	The focus is always locked on view before this method is called.
+	inputValues is an dictionary of key/value pairs that is passed by the first 
+	ancestor item on which the drawing has begun, you can add or remove values 
+	in it to modify the rendering of style/filter attributes in the renderer 
+	chain of the receiver or other descendant items. This dictionary is carried 
+	downwards through the layout item tree for the length of the drawing 
+	session. 
+	WARNING: The inputValues is currently reset each time an item with a view 
+	is asked to draw, in other words the dictionary handed to its parent item 
+	isn't handed to it. */
 - (void) render: (NSMutableDictionary *)inputValues dirtyRect: (NSRect)dirtyRect inView: (NSView *)view 
 {
-	if (NSIntersectsRect(dirtyRect, [self frame]))
+	//ETLog(@"Render frame %@ of %@ dirtyRect %@ in %@", NSStringFromRect([self drawingFrame]), 
+	//	self, NSStringFromRect(dirtyRect), view);
+
+#ifdef DEBUG_DRAWING
+	/* For debugging the drawing of the supervisor view over the item view */
+	if ([self displayView] != nil)
 	{
-		if ([[NSView focusView] isEqual: view] == NO)
-			[view lockFocus];
-			
-		NSAffineTransform *transform = [NSAffineTransform transform];
-		
-		/* Modify coordinate matrix when the layout item doesn't use a view for 
-		   drawing. */
-		if ([self displayView] == nil)
-		{
-			[transform translateXBy: [self x] yBy: [self y]];
-			[transform concat];
-		}
-		
-		[[self renderer] renderLayoutItem: self];
-		
-		[transform invert];
-		[transform concat];
-			
-		[view unlockFocus];
+		[[NSColor greenColor] set];
+		[NSBezierPath setDefaultLineWidth: 3.0];
+		[NSBezierPath strokeRect: ETMakeRect(NSZeroPoint, [self size])];
 	}
+#endif
+
+#ifdef DEBUG_DRAWING
+	/* For debugging the drawing of the supervisor view over the item view */
+	if ([self displayView] == nil)
+	{
+		[[NSColor cyanColor] set];
+		[NSBezierPath setDefaultLineWidth: 3.0];
+		[NSBezierPath strokeRect: ETMakeRect(NSZeroPoint, [self size])];
+	}
+#endif
+
+	[[self renderer] renderLayoutItem: self];
 }
 
 - (void) render
@@ -1435,7 +1515,11 @@
 // NOTE: Will probably become - (ETService *) renderer;
 - (ETStyleRenderer *) renderer
 {
+#ifdef USE_RENDERER
 	return _renderer;
+#else
+	return self;
+#endif
 }
 
 - (void) setStyleRenderer: (ETStyleRenderer *)renderer
@@ -1700,6 +1784,14 @@
 - (void) setImage: (NSImage *)img
 {
 	[(NSMutableDictionary *)VARIABLE_PROPERTIES setObject: img forKey: @"image"];
+	if (img != nil)
+	{
+		[self setSize: [img size]];
+	}
+	else if ([self displayView] == nil)
+	{
+		[self setSize: NSZeroSize];
+	}
 }
 
 /** Returns the image to be displayed when the receiver must be represented in a 

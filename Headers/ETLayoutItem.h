@@ -191,6 +191,7 @@ shape*/
 
 - (void) updateLayout;
 - (void) apply: (NSMutableDictionary *)inputValues;
+- (NSRect) drawingFrame;
 - (void) render: (NSMutableDictionary *)inputValues;
 - (void) render: (NSMutableDictionary *)inputValues dirtyRect: (NSRect)dirtyRect inView: (NSView *)view;
 - (void) render;

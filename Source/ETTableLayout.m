@@ -545,7 +545,6 @@
 	    proposedDropOperation: (NSTableViewDropOperation)op 
 {
 	id dropTargetItem = [self layoutContext];
-//	NSDragOperation dragOp = [info draggingSourceOperationMask];
 
 // FIXME: GNUstep should behave like Cocoa by complying to:
 // - row <= [tv numberOfRows] (to eliminate all potential out of range exceptions)
@@ -562,7 +561,7 @@
 #endif
 
 	ETDebugLog(@"Validate drop on %@ with dragging source %@ in %@ drag mask %d drop op %d", 
-		dropTargetItem, [info draggingSource], [self container], dragOp, op);
+		dropTargetItem, [info draggingSource], [self container], [info draggingSourceOperationMask], op);
 		
 	// TODO: Replace by [layoutContext handleValidateDropForObject:] and improve
 	if ([dropTargetItem isGroup] == NO) /* Retarget the drop if needed */

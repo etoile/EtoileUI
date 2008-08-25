@@ -39,7 +39,8 @@
 #import <EtoileUI/ETLayoutItem.h>
 #import <EtoileUI/NSView+Etoile.h>
 #import <EtoileUI/ETCompatibility.h>
-
+#import <EtoileUI/ETFlowLayout.h>
+#import <EtoileUI/ETContainer.h>
 #define NC [NSNotificationCenter defaultCenter]
 
 NSString *ETViewTitleBarViewPrototypeDidChangeNotification = @"ETViewTitleBarViewPrototypeDidChangeNotification";
@@ -310,21 +311,8 @@ static ETView *barViewPrototype = nil;
 
 - (id) renderer
 {
-	return _renderer;
-}
-
-- (void) drawRect: (NSRect)rect
-{
-	[super drawRect: rect];
-
-	/* Now we must draw layout items without view... using either a cell or 
-	   their own renderer. Layout item are smart enough to avoid drawing their
-	   view when they have one. */
-	// FIXME: Turned off this invocation of the rendering chain to avoid drawing
-	// selection out of bounds because the selected view doesn't receive 
-	// -lockFocus
-	//if ([[self renderer] respondsToSelector: @selector(render:)])
-		//[[self renderer] render: nil];
+	//return _renderer;
+	return [self layoutItem];
 }
 
 /* Embbeded Views */
@@ -666,6 +654,31 @@ static ETView *barViewPrototype = nil;
 
 /* Rendering Tree */
 
+#define INTERLEAVED_DRAWING 1
+
+#ifndef INTERLEAVED_DRAWING
+
+/** Now we must let layout items handles their custom drawing through their 
+    renderer. For example, by default an item with or without a view has a 
+    renderer to draw its selection state. 
+    In addition, this renderer implements the logic to draw layout items 
+    without view that plays a role similar to cell.
+    Layout items are smart enough to avoid drawing their view when they have 
+    one. */
+- (void) drawRect: (NSRect)rect
+{
+	[super drawRect: rect];
+
+	/* We always composite the rendering chain on top of each view -drawRect: 
+	   drawing sequence (triggered by display-like methods). */
+	if ([[self renderer] respondsToSelector: @selector(render:dirtyRect:inView:)])
+	{
+		[[self renderer] render: nil dirtyRect: rect inView: self];
+	}
+}
+
+#else
+
 - (void) displayIfNeeded
 {
 	//NSLog(@"-displayIfNeeded");
@@ -703,16 +716,25 @@ static ETView *barViewPrototype = nil;
 }
 
 #ifdef GNUSTEP
+
+/** Main and canonical method which is used to take control of the drawing on 
+    GNUstep and pass it to the layout item tree as needed. */
 - (void) displayRectIgnoringOpacity: (NSRect)aRect 
                           inContext: (NSGraphicsContext *)context
 {
 	//ETLog(@"-displayRectIgnoringOpacity:inContext:");
 	[super displayRectIgnoringOpacity: aRect inContext: context];
+	
+	[self lockFocus];
 
 	/* We always composite the rendering chain on top of each view -drawRect: 
-	   drawing sequence. */
-	if ([[self renderer] respondsToSelector: @selector(render:)])
-		[[self renderer] render: nil];
+	   drawing sequence (triggered by display-like methods). */
+	if ([[self renderer] respondsToSelector: @selector(render:dirtyRect:inView:)])
+	{
+		[[self renderer] render: nil dirtyRect: aRect inView: self];
+	}
+
+	[self unlockFocus];
 }
 
 #else
@@ -725,17 +747,43 @@ static ETView *barViewPrototype = nil;
 //_recursiveDisplayRectIfNeededIgnoringOpacity:isVisibleRect:rectIsVisibleRectForView:topView:
 // The previous method usually follows the message on next line:
 //_displayRectIgnoringOpacity:isVisibleRect:rectIsVisibleRectForView:
+
+/** Main and canonical method which is used to take control of the drawing on 
+    Cocoa and pass it to the layout item tree as needed. */
 - (void) _recursiveDisplayAllDirtyWithLockFocus: (BOOL)lockFocus visRect: (NSRect)aRect
 {
-	//ETLog(@"-_recursiveDisplayAllDirtyWithLockFocus:visRect:");
+	ETDebugLog(@"-_recursiveDisplayAllDirtyWithLockFocus:visRect:");
 	[super _recursiveDisplayAllDirtyWithLockFocus: lockFocus visRect: aRect];
 	
+	/* Most of the time, the focus isn't locked. In this case, aRect is a 
+	   portion of the content view frame and no clipping is done either. */
+	if (lockFocus == YES)
+	{
+		[self lockFocus];
+	}
+	
+#ifdef DEBUG_DRAWING
+	//if ([self respondsToSelector: @selector(layout)] && [[(ETContainer *)self layout] isKindOfClass: [ETFlowLayout class]])
+	{
+		[[NSColor blackColor] set];
+		[NSBezierPath setDefaultLineWidth: 6.0];
+		[NSBezierPath strokeRect: aRect];
+	}
+#endif
+
 	/* We always composite the rendering chain on top of each view -drawRect: 
 	   drawing sequence (triggered by display-like methods). */
-	if ([[self renderer] respondsToSelector: @selector(render:)])
-		[[self renderer] render: nil];
+	if ([[self renderer] respondsToSelector: @selector(render:dirtyRect:inView:)])
+	{
+		[[self renderer] render: nil dirtyRect: aRect inView: self];
+	}
+
+	if (lockFocus == YES)
+		[self unlockFocus];
 }
 #endif
+
+#endif /* INTERLEAVED_DRAWING */
 
 @end
 

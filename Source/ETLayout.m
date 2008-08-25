@@ -1013,8 +1013,8 @@ static NSMutableSet *layoutClasses = nil;
 		}
 		else /* Layout items uses no display view */
 		{
-			// FIXME: Implement
-			ETLog(@"WARNING: -itemAtLocation: not implemented when item uses no display view");
+			if (NSPointInRect(location, [item frame]))
+				return item;
 		}
 	}
 	

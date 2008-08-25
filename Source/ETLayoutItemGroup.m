@@ -68,8 +68,11 @@
 - (id) initWithItems: (NSArray *)layoutItems view: (NSView *)view value: (id)value representedObject: (id)repObject;
 - (BOOL) hasNewLayout;
 - (void) setHasNewLayout: (BOOL)flag;
-- (void) collectSelectionIndexPaths: (NSMutableArray *)indexPaths;
-- (void) applySelectionIndexPaths: (NSMutableArray *)indexPaths;
+- (void) collectSelectionIndexPaths: (NSMutableArray *)indexPaths
+					 relativeToItem: (ETLayoutItemGroup *)pathBaseItem;
+- (void) applySelectionIndexPaths: (NSMutableArray *)indexPaths
+                   relativeToItem: (ETLayoutItemGroup *)pathBaseItem;
+- (void) display: (NSMutableDictionary *)inputValues item: (ETLayoutItem *)item dirtyRect: (NSRect)dirtyRect inView: (NSView *)view;
 
 /* Deprecated (DO NOT USE, WILL BE REMOVED LATER) */
 - (id) initWithLayoutItems: (NSArray *)layoutItems view: (NSView *)view value: (id)value;
@@ -838,21 +841,48 @@
 	return [self isAutolayout] && ![self isReloading] && ![[self layout] isRendering];
 }
 
+/** Returns YES if mutating the receiver content by calling -addItem:, 
+    -insertItem:atIndex:, -removeItem: etc. triggers a layout update and a 
+	redisplay, otherwise returns NO when you must call -updateLayout by yourself 
+	after mutating the receiver content. 
+	By default, returns YES, hence there is usually no need to call 
+	-updateLayout and marks the receiver or a parent item for redisplay. */
 - (BOOL) isAutolayout
 {
 	return _autolayout;
 }
 
+/** Sets whether mutating the receiver content by calling -addItem:, 
+    -insertItem:atIndex:, -removeItem: etc. triggers a layout update and a 
+	redisplay.
+	If you need to add, remove or insert a large set of child items, in order 
+	to only recompute the layout once and also avoid a lot of extra redisplay, 
+	you should disable the autolayout, and restore it later after mutating 
+	the receiver children in meantime. Take note that enabling the autolayout 
+	doesn't trigger a layout update, so -updateLayout must be called when 
+	autolayout is disabled or was just restored. */
 - (void) setAutolayout: (BOOL)flag
 {
 	_autolayout = flag;
 }
 
+/** Returns YES if the item frame may vary with the layout of the child items 
+    that makes up the content, otherwise returns NO if the frame is static and 
+	will always remain identical after updating the layout. By default, returns 
+	NO.
+	This method is used by the drawing code of the layout item tree to know 
+	if the whole receiver content must be redrawn subsequently to a layout 
+	change. */
 - (BOOL) usesLayoutBasedFrame
 {
 	return _usesLayoutBasedFrame;
 }
 
+/** Sets to YES to indicate that the item frame may vary with the layout of the 
+    child items that makes up the content, otherwise sets to NO if the frame is 
+	static and will always remain identical after updating the layout.
+	You rarely need to invoke this method unless you write a layout that alter 
+	the frame of its layout context. */
 - (void) setUsesLayoutBasedFrame: (BOOL)flag
 {
 	_usesLayoutBasedFrame = flag;
@@ -860,55 +890,137 @@
 
 /* Rendering */
 
+- (void) debugDrawingInRect: (NSRect)rect
+{
+	// NOTE: For debugging, don't remove.
+	if ([self respondsToSelector: @selector(layout)] && [[self layout] isKindOfClass: [ETFlowLayout class]])
+	{
+		[[NSColor orangeColor] set];
+		//NSRectClip([self frame]);
+		NSRectFill(rect);
+	}
+}
+
+/** See -[ETLayoutItem render:dirtyRect:inView:]. The most important addition of 
+    this method is to manage the drawing of children items by calling this method 
+	recursively on them. */
 - (void) render: (NSMutableDictionary *)inputValues dirtyRect: (NSRect)dirtyRect inView: (NSView *)view 
 {
-	if ([self usesLayoutBasedFrame] || NSIntersectsRect(dirtyRect, [self frame]))
+	//ETLog(@"Render %@ dirtyRect %@ in %@", self, NSStringFromRect(dirtyRect), view);
+	
+	//ETView *drawingView = [self supervisorView];
+	NSView *renderView = view;	
+	BOOL hasLockedFocus = NO;
+	
+	// TODO: Enable later to allow drawing a layout item tree in any views.
+	//if (renderView == nil)
+	//	renderView = [self drawingView];
+	
+	// NOTE: Probably not useful, -render: can lock the focus by safety and 
+	// in other cases this is the reponsability of the framework user.
+	// Somewhat as in -[NSCell drawWithFrame:inView:]
+	//if ([[NSView focusView] isEqual: renderView] == NO)
+	//{
+	//	[renderView lockFocus];
+	//	hasLockedFocus = YES;
+	//}
+
+	// TODO: Move in -render:. Keeping this code here prevents us to draw in 
+	// any views passed as view parameter.
+	//if (drawingView != nil)
+	//{
+	//	NSAssert2(renderView == drawingView, @"Supervisor view %@ and render view %@ must match",
+	//		renderView, drawingView);
+	//}
+	
+	NSRect drawingFrame = [self drawingFrame];
+
+	if ([self usesLayoutBasedFrame] || NSIntersectsRect(dirtyRect, drawingFrame))
 	{
-		NSView *renderView = view;
-		
-		if ([self displayView] != nil)
-			renderView = [self displayView];
-		
-		if ([[NSView focusView] isEqual: renderView] == NO)
-			[renderView lockFocus];
-			
-		NSAffineTransform *transform = [NSAffineTransform transform];
-		
-		/* Modify coordinate matrix when the layout item doesn't use a view for 
-		   drawing. */
-		if ([self displayView] == nil)
-		{
-			[transform translateXBy: [self x] yBy: [self y]];
-			[transform concat];
-		}
-		
-		[[self renderer] renderLayoutItem: self];
-		
-		if ([self displayView] == nil)
-		{
-			[transform invert];
-			[transform concat];
-		}
-			
-		[view unlockFocus];
+		#ifdef DEBUG_DRAWING
+		[self debugDrawingInRect: dirtyRect];
+		#endif
+
+	   /* We intersect our dirtyRect with our drawing frame, so we don't get 
+	      a dirtyRect that includes views of existing decorator items in case our 
+		  decorator chain isn't empty. */
+		NSRect realDirtyRect = NSIntersectionRect(dirtyRect, [self drawingFrame]);
+		[super render: inputValues dirtyRect: realDirtyRect inView: view];
 		
 		/* Render child items */
 		
 		NSEnumerator *e = [[self items] reverseObjectEnumerator];
 		ETLayoutItem *item = nil;
-		NSRect newDirtyRect = NSZeroRect;
-		
-		if ([self displayView] != nil)
-		{
-			newDirtyRect = NSIntersectionRect(dirtyRect, [[self displayView] frame]);
-			[view convertRect: newDirtyRect toView: [self displayView]];
-		}
-		
+
 		while ((item = [e nextObject]) != nil)
 		{
-			[item render: inputValues dirtyRect: newDirtyRect inView: renderView];
+			/* We intersect our dirtyRect with the drawing frame of the item to be 
+		       drawn, so the child items don't receive the drawing frame of their 
+		       parent, but their own. Also restricts the dirtyRect so it doesn't 
+		       encompass any decorators set on the item. */
+			NSRect childDirtyRect = [item convertRectFromParent: realDirtyRect];
+			childDirtyRect = NSIntersectionRect(childDirtyRect, [item drawingFrame]);
+			
+			/* In case, dirtyRect is only a redraw rect on the parent and not on 
+			   the entire parent frame, we try to optimize by not redrawing the 
+			   items that lies outside of the dirtyRect. */
+			if (NSEqualRects(childDirtyRect, NSZeroRect))
+				continue;
+
+			[self display: inputValues item: item dirtyRect: childDirtyRect inView: renderView];
 		}
 	}
+	
+	if (hasLockedFocus)
+		[view unlockFocus];
+}
+
+/** Displays item by adjusting the graphic context for the drawing, then calling 
+    -render:dirtyRect:inView: on it, and finally restoring the graphic context. 
+	You should never need to call this method directly. */
+- (void) display: (NSMutableDictionary *)inputValues item: (ETLayoutItem *)item 
+	dirtyRect: (NSRect)newDirtyRect inView: (NSView *)renderView
+{
+	 /* Only draw child items with no display view (no supervisor view as a byproduct) 
+		Checking the child item has no supervisor view isn't enough, because 
+		it may be enclosed in a view owned by a decorator. In such case, this view will be asked to draw 
+		by the view hierarchy. hmm... not sure
+		This problem is only meaningfull is INTERLEAVING_DRAWING is defined in 
+		ETView. */
+	BOOL shouldDrawItem = ([item displayView] == nil);
+			
+	if (shouldDrawItem == NO)
+		return;
+
+#ifdef DEBUG_DRAWING		
+	NSRect itemRect = [item convertRectFromParent: [item frame]];
+	[[NSColor yellowColor] set];
+	[NSBezierPath setDefaultLineWidth: 4.0];
+	[NSBezierPath strokeRect: itemRect];
+#endif
+				
+	NSAffineTransform *transform = [NSAffineTransform transform];
+	
+	/* Modify coordinate matrix when the layout item doesn't use a view for 
+	   drawing. */
+	if ([item supervisorView] == nil)
+	{
+		/* Translate */
+		[transform translateXBy: [item x] yBy: [item y]];
+	}
+	/* Flip if needed */
+	if ([renderView isFlipped])
+	{
+		[transform translateXBy:0.0 yBy: [item height]];
+		[transform scaleXBy:1.0 yBy:-1.0];
+	}
+	[transform concat];
+	
+	[item render: inputValues dirtyRect: newDirtyRect inView: renderView];
+				
+	/* Reset the coordinates matrix */
+	[transform invert];
+	[transform concat];
 }
 
 /** Returns the visible child items of the receiver. 
@@ -1124,6 +1236,7 @@
 /* Selection */
 
 - (void) collectSelectionIndexPaths: (NSMutableArray *)indexPaths
+                     relativeToItem: (ETLayoutItemGroup *)pathBaseItem
 {
 	NSEnumerator *e = [[self items] objectEnumerator];
 	id item = nil;
@@ -1131,9 +1244,9 @@
 	while ((item = [e nextObject]) != nil)
 	{
 		if ([item isSelected])
-			[indexPaths addObject: [item indexPath]];
+			[indexPaths addObject: [item indexPathFromItem: pathBaseItem]];
 		if ([item isGroup])
-			[item collectSelectionIndexPaths: indexPaths];
+			[item collectSelectionIndexPaths: indexPaths relativeToItem: pathBaseItem];
 	}
 }
 
@@ -1142,19 +1255,29 @@
 {
 	NSMutableArray *indexPaths = [NSMutableArray array];
 	
-	[self collectSelectionIndexPaths: indexPaths];
+	[self collectSelectionIndexPaths: indexPaths relativeToItem: self];
 	
 	return indexPaths;
 }
 
-- (void) applySelectionIndexPaths: (NSMutableArray *)indexPaths
+/** Selects every descendant items which match the index paths passed in 
+    parameter and deselects all other descendant items of the receiver.
+	
+	TODO: This is crude because we deselect everything without taking care of 
+	base items we encounter during the recursive traversal of the subtree... 
+	See -[ETLayout setSelectionIndexPaths:] to understand the issue more 
+	thoroughly. Moreover the method is surely extremly slow if called many times 
+	within a short time interval on a subtree that consists of thousand items or 
+	more. */
+- (void) applySelectionIndexPaths: (NSMutableArray *)indexPaths 
+                   relativeToItem: (ETLayoutItemGroup *)pathBaseItem
 {
 	NSEnumerator *e = [[self items] objectEnumerator];
 	id item = nil;
 		
 	while ((item = [e nextObject]) != nil)
 	{
-		NSIndexPath *itemIndexPath = [item indexPath];
+		NSIndexPath *itemIndexPath = [item indexPathFromItem: pathBaseItem];
 		if ([indexPaths containsObject: itemIndexPath])
 		{
 			[item setSelected: YES];
@@ -1165,7 +1288,7 @@
 			[item setSelected: NO];
 		}
 		if ([item isGroup])
-			[item applySelectionIndexPaths: indexPaths];
+			[item applySelectionIndexPaths: indexPaths relativeToItem: pathBaseItem];
 	}
 }
 
@@ -1173,7 +1296,8 @@
 	TODO: See [ETLayout selectionIndexPaths].*/
 - (void) setSelectionIndexPaths: (NSArray *)indexPaths
 {
-	[self applySelectionIndexPaths: [NSMutableArray arrayWithArray: indexPaths]];
+	[self applySelectionIndexPaths: [NSMutableArray arrayWithArray: indexPaths] 
+	                relativeToItem: self];
 }
 
 /** Returns the selected child items belonging to the receiver. 
