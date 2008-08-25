@@ -13,6 +13,9 @@ TODO
 
 * Check command modifier is correctly handled on adding or removing a single item to the selection.
 
+* Investigate the rewrite of -[ETLayoutItemGroup itemAtPath:] which might be buggy, so that it simply relies on existing methods:
+	return [self itemAtIndexPath: [self indexPathForPath: path]];
+
 # Basic Stuff
 
 ## Properties 
@@ -28,6 +31,8 @@ TODO
 * Rename -properties (first declared in NSObject+Model part of EtoileFoundation) to -propertyNames to eliminate collisions with other GNUstep/Cocoa classes
 
 * Patch NSBitmapImageRep to avoid method collision with -valueForProperty:, probably rely on posing a subclass or a category and method swizzling
+
+* Rename ETInspectorLayout to ETObjectInspectorLayout to match the naming of the dev-oriented object browser layout (ETObjectBrowserLayout). ETInspectorLayout is dev-oriented too and isn't thought to be subclassed.
 
 ## Layout
 
@@ -58,9 +63,17 @@ So ETLineLayout results of using ETHorizontalFlowAlgorithm limited to a single l
 
 # New Features
 
+* Implement sorting of child items accross EtoileUI. Sorting should be done directly on the layout item tree, unless a layout supports sorting as a presentation/browsing mode that shouldn't affect the underlying model. In such case, pick and drop would only be support on the item group by treating it as a non-ordered collection. This last behavior is typically what you want for a table/outline layout in an object/file manager. 
+
+By default, the sorting of the layout items should be non-recursive but a recursive variant must also be supported. ETController API should be extended to allow the possibility to provide a sort descriptor (see NSArrayController and NSTreeController for some inspiration). Finally, when sorting isn't just presentational, view-based layouts (such as ETOutlineLayout) should synchronize transparently each time sorting is changed either at the control level or directly on the layout item tree. 
+
+If the developer does the sorting directly on the model, it's probably reasonable to let him responsible of reloading the related layout item tree.
+
+A last open question... Do we need a delegate method such as -sortDescriptorsDidChange: for ETContainer?
+
 ## Drawing
 
-* Implement rotation support for layout items without view, the code should be put in -[ETLayoutItemGroup render:dirtyRect:inView]
+* Implement rotation support for layout items without view, the code should be put in -[ETLayoutItemGroup display:dirtyRect:inView]
 
 ## Layout
 
