@@ -82,6 +82,10 @@
 
 @implementation ETLayoutItemGroup
 
+/* Ugly hack to shut down the compiler so it doesn't pretend we don't fully
+   implement ETLayoutingContext protocol. */
+- (void) setNeedsDisplay: (BOOL)now { [super setNeedsDisplay: now]; }
+
 /* Initialization */
 
 /** Designated initializer */
