@@ -43,6 +43,8 @@
 #import <EtoileUI/NSView+Etoile.h>
 #import <EtoileUI/ETCompatibility.h>
 
+#define DEFAULT_ITEM_MARGIN 15
+#define DEFAULT_MAX_ITEM_SIZE NSMakeSize(256, 256)
 
 @implementation ETFlowLayout
 
@@ -52,6 +54,11 @@
 	
 	if (self != nil)
 	{
+		/* Overriden default property values */
+		[self setConstrainedItemSize: DEFAULT_MAX_ITEM_SIZE];
+		[self setItemSizeConstraintStyle: ETSizeConstraintStyleVerticalHorizontal];
+		[self setItemMargin: DEFAULT_ITEM_MARGIN];
+		
 		_layoutConstraint = ETSizeConstraintStyleHorizontal;
 	}
 	

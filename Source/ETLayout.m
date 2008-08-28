@@ -737,9 +737,6 @@ static NSMutableSet *layoutClasses = nil;
 
 - (void) resizeLayoutItems: (NSArray *)items toScaleFactor: (float)factor
 {
-	if ([self itemSizeConstraintStyle] == ETSizeConstraintStyleNone)
-		return;
-
 	NSEnumerator *e = [items objectEnumerator];
 	ETLayoutItem *item = nil;
 	

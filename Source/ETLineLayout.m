@@ -35,12 +35,24 @@
 	THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#import <EtoileFoundation/Macros.h>
 #import <EtoileUI/ETLineLayout.h>
 #import <EtoileUI/ETContainer.h>
 #import <EtoileUI/ETLayoutLine.h>
 
 
 @implementation ETLineLayout
+
+- (id) init
+{
+	SUPERINIT
+	
+	/* Overriden default property values */
+	[self setItemSizeConstraintStyle: ETSizeConstraintStyleNone];
+	[self setItemMargin: 0];
+	
+	return self;
+}
 
 - (ETSizeConstraintStyle) layoutSizeConstraintStyle
 {

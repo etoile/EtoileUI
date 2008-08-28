@@ -1,5 +1,16 @@
 2008-08-28  Quentin Mathe <qmathe@club-internet.fr>
 
+	* ETLayout (-resizeItems:toScaleFactor:): Fixed by removing an unwanted bit 
+	of code, the items should now be scaled even when no item size constraint is 
+	set.
+	
+	* ETFlowLayout, ETLineLayout, ETStackLayout: 
+	Defined subclass relative default values for item margin, item size 
+	constraint and item constrained size. May need to be tweaked to be really 
+	sensible.
+
+2008-08-28  Quentin Mathe <qmathe@club-internet.fr>
+
 	Implemented item margin for flow, line and stack layouts. A big step for a
 	real photo view and an incremental step towards form layout :-)
 	Added a new abstract class ETComputedLayout, that will be useful to extract 
