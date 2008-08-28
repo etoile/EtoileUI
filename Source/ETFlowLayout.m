@@ -64,13 +64,14 @@
 	ETLayoutLine *line;
 	NSEnumerator *lineWalker = nil;
 	ETLayoutItem *item = nil;
-	NSPoint itemLocation = NSMakePoint(0, 0);
+	float itemMargin = [self itemMargin];
+	NSPoint itemLocation = NSMakePoint(itemMargin, itemMargin);
 	float newLayoutHeight = 0;
 	
 	if ([[self container] isFlipped] == NO)
 	{
 		NSLog(@"WARNING: Flow layout doesn't handle non-flipped coordinates inside scroll view");
-		itemLocation = NSMakePoint(0, [self layoutSize].height);
+		itemLocation = NSMakePoint(itemMargin, [self layoutSize].height - itemMargin);
 	}
   
 	while ((line = [layoutWalker nextObject]) != nil)
@@ -95,7 +96,7 @@
 		while ((item = [lineWalker nextObject]) != nil)
 		{
 			[item setX: itemLocation.x];
-			itemLocation.x += [item width];
+			itemLocation.x += [item width] + itemMargin;
 		}
     
 		/* NOTE: to avoid computing item locations when they are outside of the
@@ -108,19 +109,19 @@
 		{
 			[line setBaseLineLocation: 
 				NSMakePoint([line baseLineLocation].x, itemLocation.y)];
-			itemLocation.y = [line baseLineLocation].y + [line height];
+			itemLocation.y = [line baseLineLocation].y + [line height] + itemMargin;
 		}
 		else
 		{
 			[line setBaseLineLocation: 
 				NSMakePoint([line baseLineLocation].x, itemLocation.y - [line height])];
-			itemLocation.y = [line baseLineLocation].y;		
+			itemLocation.y = [line baseLineLocation].y + itemMargin;		
 		}
-		itemLocation.x = 0;
+		itemLocation.x = itemMargin;
 		
 		/* Increase height of the content size. Used to adjust the document 
 		   view size in scroll view */
-		newLayoutHeight += [line height];
+		newLayoutHeight += [line height] + itemMargin;
        
 		//NSLog(@"Item locations computed by layout line :%@", line);
 	}
@@ -172,10 +173,11 @@
 	NSMutableArray *layoutedItems = [NSMutableArray array];
 	ETLayoutLine *line = nil;
 	float widthAccumulator = 0;
+	float itemMargin = [self itemMargin];
     
 	while ((itemToLayout = [e nextObject]) != nil)
 	{
-		widthAccumulator += [itemToLayout width];
+		widthAccumulator += itemMargin + [itemToLayout width];
 		
 		if ([self layoutSizeConstraintStyle] != ETSizeConstraintStyleHorizontal
 		 || widthAccumulator < [self layoutSize].width)

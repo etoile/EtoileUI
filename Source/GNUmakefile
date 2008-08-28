@@ -7,6 +7,7 @@ libEtoileUI_OBJCFLAGS += -std=c99
 libEtoileUI_OBJC_FILES = \
 	ETApplication.m \
 	ETBrowserLayout.m \
+	ETComputedLayout.m \
 	ETContainer+Controller.m \
 	ETContainer+EventHandling.m \
 	ETContainer.m \

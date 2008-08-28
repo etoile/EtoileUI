@@ -53,6 +53,8 @@
 		<dict>
 			<key>ACTIONS</key>
 			<dict>
+				<key>changeItemMargin</key>
+				<string>id</string>
 				<key>changeLayout</key>
 				<string>id</string>
 				<key>choosePicturesAndLayout</key>
@@ -70,8 +72,10 @@
 			<string>ObjC</string>
 			<key>OUTLETS</key>
 			<dict>
+				<key>itemMarginSlider</key>
+				<string>NSSlider</string>
 				<key>viewContainer</key>
-				<string>id</string>
+				<string>ETContainer</string>
 			</dict>
 			<key>SUPERCLASS</key>
 			<string>NSObject</string>
@@ -109,15 +113,25 @@
 		<dict>
 			<key>ACTIONS</key>
 			<dict>
+				<key>add</key>
+				<string>id</string>
+				<key>addGroup</key>
+				<string>id</string>
 				<key>copy</key>
 				<string>id</string>
 				<key>cut</key>
+				<string>id</string>
+				<key>insert</key>
+				<string>id</string>
+				<key>insertGroup</key>
 				<string>id</string>
 				<key>inspect</key>
 				<string>id</string>
 				<key>inspectSelection</key>
 				<string>id</string>
 				<key>paste</key>
+				<string>id</string>
+				<key>remove</key>
 				<string>id</string>
 				<key>stack</key>
 				<string>id</string>

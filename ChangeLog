@@ -1,3 +1,25 @@
+2008-08-28  Quentin Mathe <qmathe@club-internet.fr>
+
+	Implemented item margin for flow, line and stack layouts. A big step for a
+	real photo view and an incremental step towards form layout :-)
+	Added a new abstract class ETComputedLayout, that will be useful to extract 
+	state and behavior ETLayout.
+
+	* ETLayout: 
+	Declared protocol ETPositionalLayout.
+	(-isPositional): Added.
+	(-isComputedLayout): Modified to return NO and updated the doc.
+	
+	* ETFlowLayout, ETStackLayout:
+	Modified to inherit from ETComputedLayout and modified the layout 
+	rendering methods to take in account the item margin.
+	
+	* ETComputedLayout.[hm]: Added.
+	* EtoileUI.h: Included ETComputedLayout.h.
+	* Container.xcodeproj, GNUmakefile: Updated.
+	* PhotoViewExample: Added a slider to control the item margin. Only modified 
+	the nib but not the gorm file yet.
+
 2008-08-25  Quentin Mathe <qmathe@club-internet.fr>
 
 	Modularized the drawing of the layout items, the default rendering style 

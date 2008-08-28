@@ -36,12 +36,12 @@
 
 #import <Foundation/Foundation.h>
 #import <AppKit/AppKit.h>
-#import <EtoileUI/ETLayout.h>
+#import <EtoileUI/ETComputedLayout.h>
 
 @class ETLayoutLine, ETContainer;
 
 
-@interface ETFlowLayout : ETLayout 
+@interface ETFlowLayout : ETComputedLayout 
 {
 	ETSizeConstraintStyle _layoutConstraint;
 	BOOL _grid;

@@ -53,10 +53,11 @@
 	NSMutableArray *layoutedItems = [NSMutableArray array];
 	ETLayoutLine *line = nil;
 	float vAccumulator = 0;
+	float itemMargin = [self itemMargin];
     
 	while ((itemToLayout = [e nextObject]) != nil)
 	{
-		vAccumulator += [itemToLayout height];
+		vAccumulator += itemMargin + [itemToLayout height];
 		
 		if ([self isContentSizeLayout] || vAccumulator < [self layoutSize].height)
 		{
@@ -99,8 +100,9 @@
 {
 	NSEnumerator *lineWalker = nil;
 	ETLayoutItem *item = nil;
-	NSPoint itemLocation = NSMakePoint(0, 0);
-	
+	float itemMargin = [self itemMargin];
+	NSPoint itemLocation = NSMakePoint(itemMargin, itemMargin);
+
 	if ([[self container] isFlipped])
 	{
 		lineWalker = [[line items] objectEnumerator];
@@ -109,7 +111,7 @@
 	{
 		/* Don't reverse the item order or selection and sorting will be messed */
 		lineWalker = [[line items] reverseObjectEnumerator];
-		itemLocation = NSMakePoint(0, [self layoutSize].height);	
+		itemLocation = NSMakePoint(itemMargin, [self layoutSize].height + itemMargin);	
 	}
 		
 	while ((item = [lineWalker nextObject]) != nil)
@@ -118,11 +120,11 @@
 		[item setY: itemLocation.y];
 		if ([[self container] isFlipped])
 		{
-			itemLocation.y += [item height];
+			itemLocation.y += itemMargin + [item height];
 		}
 		else
 		{
-			itemLocation.y -= [item height];
+			itemLocation.y -= itemMargin + [item height];
 		}
 	}
 	

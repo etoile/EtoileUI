@@ -427,6 +427,11 @@ static NSMutableSet *layoutClasses = nil;
 	return _layoutContext;
 }
 
+// TODO: Pick better names for the following methods:
+// -isComputedLayout --> -isComputed, -usesComputedCoordinates, -isRuleBased,
+//                       -isRelative
+// -isFixed --> isFixed (as is), -usesFixedCoordinates, -isAbsolute
+
 /** Overrides in subclasses to indicate whether the layout is a semantic layout
 	or not. Returns NO by default.
 	ETTableLayout is a normal layout but ETPropertyLayout (which displays a 
@@ -439,15 +444,27 @@ static NSMutableSet *layoutClasses = nil;
 	return NO;
 }
 
-/** Returns YES when the layout computes the location of the layout items and
-	updates these locations as necessary by itself. 
-	By default returns YES, overrides to return NO when the layout subclass let
-	the user sets the layout item locations. 
+/** Returns YES when the layout conforms to ETPositionalLayout protocol, 
+    otherwise returns NO.
+    A positional layout doesn't inject a custom UI, it handles the display of 
+	the child items bound to the layout context by computing coordinates or 
+	by simply using their fixed coordinates. Fixed coordinates are encoded 
+	in persistentFrame property of ETLayoutItem. */
+- (BOOL) isPositional
+{
+	return [self conformsToProtocol: @protocol(ETPositionalLayout)];
+}
+
+/** Returns YES when the layout is positional, computes the location of the 
+    layout items and updates these locations as necessary by itself. See also
+	ETComputedLayout, whose subclasses are all computed layouts.
+	By default returns NO, overrides to return YES when a positional layout 
+	subclass doesn't allow the user sets the layout item locations. 
 	The returned value alters the order in which ETContainer data source 
 	methods are called. */
 - (BOOL) isComputedLayout
 {
-	return YES;
+	return NO;
 }
 
 /** Returns YES when the layout imposes a custom layout and drawing for all 

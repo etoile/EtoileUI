@@ -89,6 +89,10 @@
 		[layoutObject setDisplayName: @"Size" forProperty: @"size"];
 		[layoutObject setDisplayName: @"Modification Date" forProperty: @"modificationdate"];
 	}
+	if ([layoutObject isKindOfClass: [ETComputedLayout class]])
+	{
+		[layoutObject setItemMargin: [itemMarginSlider floatValue]];
+	}
 	
 	[viewContainer setLayout: layoutObject];
 }
@@ -136,6 +140,12 @@
 - (IBAction) scale: (id)sender
 {
 	[viewContainer setItemScaleFactor: [sender floatValue] / 100];
+}
+
+- (IBAction) changeItemMargin: (id)sender
+{
+	if ([[viewContainer layout] isComputedLayout])
+		[(ETComputedLayout *)[viewContainer layout] setItemMargin: [sender floatValue]];
 }
 
 - (void)selectPicturesPanelDidEnd:(NSOpenPanel *)panel returnCode:(int)returnCode  contextInfo:(void  *)contextInfo

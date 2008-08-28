@@ -62,6 +62,7 @@
 #import <EtoileUI/ETLayout.h>
 #import <EtoileUI/ETLayoutLine.h>
 
+#import <EtoileUI/ETComputedLayout.h>
 #import <EtoileUI/ETFlowLayout.h>
 #import <EtoileUI/ETLineLayout.h>
 #import <EtoileUI/ETStackLayout.h>

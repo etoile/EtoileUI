@@ -39,6 +39,11 @@
 
 @class ETContainer, ETLayoutLine, ETLayoutItem;
 
+/** All subclasses which implement strictly positional layout algorithms as 
+    described in ETComputedLayout description must conform to this prococol. */
+@protocol ETPositionalLayout
+@end
+
 /** Methods which must be implemented by an object to be layouted by any
 	ETLayout subclasses. The object whose layout items are layouted is the
 	layout context (plays a role analog to the graphic context) 
@@ -53,6 +58,7 @@
 - (NSSize) size;
 - (void) setSize: (NSSize)size;
 - (NSView *) view;
+- (void) setNeedsDisplay: (BOOL)now;
 
 /* Required 
    The protocol doesn't truly need these methods, yet they simplify writing new 

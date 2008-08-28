@@ -173,6 +173,10 @@
 		60C1DA220C25715900E00A2E /* BrowserPrototype.nib in Resources */ = {isa = PBXBuildFile; fileRef = 6051502B0C1738D600B5E0E5 /* BrowserPrototype.nib */; };
 		60C1DA230C25715F00E00A2E /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1058C7A1FEA54F0111CA2CBB /* Cocoa.framework */; };
 		60C1DA3D0C2571EE00E00A2E /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 29B97316FDCFA39411CA2CEA /* main.m */; };
+		60C27A0E0E66B0D80040A41D /* ETComputedLayout.h in Headers */ = {isa = PBXBuildFile; fileRef = 60C27A0D0E66B0D80040A41D /* ETComputedLayout.h */; };
+		60C27A0F0E66B0D80040A41D /* ETComputedLayout.h in Headers */ = {isa = PBXBuildFile; fileRef = 60C27A0D0E66B0D80040A41D /* ETComputedLayout.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		60C27A110E66B0EA0040A41D /* ETComputedLayout.m in Sources */ = {isa = PBXBuildFile; fileRef = 60C27A100E66B0EA0040A41D /* ETComputedLayout.m */; };
+		60C27A120E66B0EA0040A41D /* ETComputedLayout.m in Sources */ = {isa = PBXBuildFile; fileRef = 60C27A100E66B0EA0040A41D /* ETComputedLayout.m */; };
 		60CF6C820D3F739000B4CA3D /* ETContainer+Controller.h in Headers */ = {isa = PBXBuildFile; fileRef = 60CF6C800D3F739000B4CA3D /* ETContainer+Controller.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		60CF6C830D3F739000B4CA3D /* ETContainer+Controller.m in Sources */ = {isa = PBXBuildFile; fileRef = 60CF6C810D3F739000B4CA3D /* ETContainer+Controller.m */; };
 		60CF6C850D3F739000B4CA3D /* ETContainer+Controller.m in Sources */ = {isa = PBXBuildFile; fileRef = 60CF6C810D3F739000B4CA3D /* ETContainer+Controller.m */; };
@@ -476,6 +480,8 @@
 		60C09F5A0C6A8FB600A4458D /* ObjectRole */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = ObjectRole; sourceTree = BUILT_PRODUCTS_DIR; };
 		60C1D8AB0C2569D500E00A2E /* PaneController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PaneController.h; path = PaneExample/PaneController.h; sourceTree = "<group>"; };
 		60C1D8AC0C2569D500E00A2E /* PaneController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = PaneController.m; path = PaneExample/PaneController.m; sourceTree = "<group>"; };
+		60C27A0D0E66B0D80040A41D /* ETComputedLayout.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ETComputedLayout.h; path = Headers/ETComputedLayout.h; sourceTree = "<group>"; };
+		60C27A100E66B0EA0040A41D /* ETComputedLayout.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ETComputedLayout.m; path = Source/ETComputedLayout.m; sourceTree = "<group>"; };
 		60CA73860C494B22009D9B02 /* COPYING */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = COPYING; sourceTree = "<group>"; };
 		60CF6C7A0D3F6ECF00B4CA3D /* ETWindowItem.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ETWindowItem.h; path = Headers/ETWindowItem.h; sourceTree = "<group>"; };
 		60CF6C7B0D3F6ECF00B4CA3D /* ETWindowItem.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ETWindowItem.m; path = Source/ETWindowItem.m; sourceTree = "<group>"; };
@@ -891,6 +897,8 @@
 		609548D30C0E30D500068CBB /* New Layouts */ = {
 			isa = PBXGroup;
 			children = (
+				60C27A0D0E66B0D80040A41D /* ETComputedLayout.h */,
+				60C27A100E66B0EA0040A41D /* ETComputedLayout.m */,
 				606B98A40C0AF669000AAA85 /* Pane Layouts */,
 				609F46620B41644700AD2209 /* ETLineLayout.h */,
 				609F46630B41644700AD2209 /* ETLineLayout.m */,
@@ -955,6 +963,7 @@
 			files = (
 				60CF717F0D42E75300B4CA3D /* ETLayoutItemGroup+Mutation.h in Headers */,
 				60DEFD2C0D4E8482008B1038 /* ETTextEditorLayout.h in Headers */,
+				60C27A0E0E66B0D80040A41D /* ETComputedLayout.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1048,6 +1057,7 @@
 				60364A000E40A547003377E0 /* UKNibOwner.h in Headers */,
 				60364A010E40A547003377E0 /* UKPluginsRegistry+Icons.h in Headers */,
 				606C1D310E40AE9C00E8FAE6 /* ETContainers.h in Headers */,
+				60C27A0F0E66B0D80040A41D /* ETComputedLayout.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1386,6 +1396,7 @@
 				60CF710D0D42AA8600B4CA3D /* test_ETObjectChain.m in Sources */,
 				60CF71800D42E75300B4CA3D /* ETLayoutItemGroup+Mutation.m in Sources */,
 				60DEFD2D0D4E8482008B1038 /* ETTextEditorLayout.m in Sources */,
+				60C27A110E66B0EA0040A41D /* ETComputedLayout.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1521,6 +1532,7 @@
 				60364A0F0E40A560003377E0 /* NSImage+NiceScaling.m in Sources */,
 				60364A100E40A560003377E0 /* UKNibOwner.m in Sources */,
 				60364A110E40A560003377E0 /* UKPluginsRegistry+Icons.m in Sources */,
+				60C27A120E66B0EA0040A41D /* ETComputedLayout.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

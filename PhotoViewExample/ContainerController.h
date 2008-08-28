@@ -13,7 +13,8 @@
 
 @interface ContainerController : NSObject
 {
-    IBOutlet id viewContainer;
+    IBOutlet ETContainer *viewContainer;
+	IBOutlet NSSlider *itemMarginSlider;
 	NSMutableArray *images;
 }
 
@@ -22,6 +23,7 @@
 - (IBAction) switchUsesSource: (id)sender;
 - (IBAction) switchUsesScrollView: (id)sender;
 - (IBAction) scale: (id)sender;
+- (IBAction) changeItemMargin: (id)sender;
 
 - (NSArray *) imageViewsForImages: (NSArray *)images;
 - (NSImageView *) imageViewForImage: (NSImage *)image;

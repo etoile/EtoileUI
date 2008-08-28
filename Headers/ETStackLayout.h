@@ -35,12 +35,12 @@
 
 #import <Foundation/Foundation.h>
 #import <AppKit/AppKit.h>
-#import <EtoileUI/ETLayout.h>
+#import <EtoileUI/ETComputedLayout.h>
 
 @class ETLayoutLine, ETContainer;
 
 
-@interface ETStackLayout : ETLayout
+@interface ETStackLayout : ETComputedLayout
 {
 
 }
