@@ -12,28 +12,16 @@
 
 - (void) awakeFromNib
 {
-    NSNotificationCenter *nc = [NSNotificationCenter defaultCenter];
-	
 	images = [[NSMutableArray alloc] init];
-    
-    /*[nc addObserver: self 
-           selector: @selector(viewContainerDidResize:) 
-               name: NSViewFrameDidChangeNotification 
-             object: viewContainer];*/
-	
+
 	[viewContainer setAllowsMultipleSelection: YES];
 	[viewContainer setAllowsEmptySelection: YES];
 	[viewContainer setSource: self];
-	[viewContainer setLayout: AUTORELEASE([[ETStackLayout alloc] init])];
+	[viewContainer setLayout: [self configureLayout: [ETStackLayout layout]]];
 	[viewContainer setHasVerticalScroller: YES];
 	[viewContainer setHasHorizontalScroller: YES];
 	
 	[[ETPickboard localPickboard] showPickPalette];
-}
-
-- (void) viewContainerDidResize: (NSNotification *)notif
-{
-    [viewContainer updateLayout];
 }
 
 - (IBAction)choosePicturesAndLayout:(id)sender
@@ -78,6 +66,14 @@
 	
 	id layoutObject = AUTORELEASE([[layoutClass alloc] init]);
 	
+	[viewContainer setLayout: [self configureLayout: layoutObject]];
+}
+
+- (id) configureLayout: (id)layoutObject
+{
+	/* Adjust some common settings of these layout to match what can be
+	   expected at UI level for a photo viewer. */
+	
 	if ([layoutObject isKindOfClass: [ETTableLayout class]])
 	{
 		NSCell *iconCell = [[NSImageCell alloc] initImageCell: nil];
@@ -94,7 +90,18 @@
 		[layoutObject setItemMargin: [itemMarginSlider floatValue]];
 	}
 	
-	[viewContainer setLayout: layoutObject];
+	/* We override some extra settings even if the defaults defined by EtoileUI 
+	   would work for a photo viewer (see ETFlowLayout, ETLineLayout and 
+	   ETStackLayout).
+	   You can compare the effects of these by testing ObjectManagerExample 
+	   which doesn't override anything. */
+	
+	/* Specify a max size for the items */
+	[layoutObject setConstrainedItemSize: NSMakeSize(300, 300)];
+	/* Indicate that max size should be consulted for both width and height of each item */
+	[layoutObject setItemSizeConstraintStyle: ETSizeConstraintStyleVerticalHorizontal];
+	
+	return layoutObject;
 }
 
 - (IBAction) switchUsesSource: (id)sender

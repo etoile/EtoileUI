@@ -18,7 +18,7 @@
 	NSMutableArray *images;
 }
 
-- (IBAction)choosePicturesAndLayout:(id)sender;
+- (IBAction) choosePicturesAndLayout:(id)sender;
 - (IBAction) changeLayout: (id)sender;
 - (IBAction) switchUsesSource: (id)sender;
 - (IBAction) switchUsesScrollView: (id)sender;
@@ -27,6 +27,8 @@
 
 - (NSArray *) imageViewsForImages: (NSArray *)images;
 - (NSImageView *) imageViewForImage: (NSImage *)image;
+
+- (id) configureLayout: (id)layoutObject;
 
 // Private use
 - (void)selectPicturesPanelDidEnd:(NSOpenPanel *)panel returnCode:(int)returnCode  contextInfo:(void  *)contextInfo;
