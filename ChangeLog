@@ -1,5 +1,13 @@
 2008-08-31  Quentin Mathe <qmathe@club-internet.fr>
 
+	* ETLayout 
+	(-tearDown, -selectionDidChangeInLayoutContext): New methods.
+	(-setLayoutContext:): Modified to call -tearDown if needed.
+	* ELayoutItemGroup (-setLayout:): Cleansed. Moved layout view removal code
+	to -[ETLayout tearDown] since the layout is responsible of the layout view.
+	
+2008-08-31  Quentin Mathe <qmathe@club-internet.fr>
+
 	* ETLayout
 	(-render:isNewContent:): Cleaned. Extracted the code that sets the initial 
 	layout size into a new method -resetLayoutSize.

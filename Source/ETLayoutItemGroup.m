@@ -747,21 +747,9 @@
 	[self setAutolayout: NO];
 	
 	[_layout setLayoutContext: nil];
-	/* Don't forget to remove existing display view if we switch from a layout 
-	   which reuses a native AppKit control like table layout. */
-	// NOTE: Be careful of layout objects which can share a common class but 
-	// all differs by their unique display view prototype.
-	// May be we should move it into -[layout setContainer:]...
-	// Triggers scroll view display which triggers layout render in turn to 
-	// compute the content size
-	if ([self isContainer])
-		[(ETContainer *)[self supervisorView] setDisplayView: nil]; 
 	ASSIGN(_layout, layout);
 	[self setHasNewLayout: YES];
 	[layout setLayoutContext: self];
-	
-	/* if ([_layout representedItem] != nil)
-		[[_layoutItem setDecoratorItem: self]; */
 
 	// FIXME: We should move code to set display view when necessary here. By
 	// calling -setDisplayView: [_container layoutView] we wouldn't
@@ -1316,6 +1304,10 @@
 {
 	[self applySelectionIndexPaths: [NSMutableArray arrayWithArray: indexPaths] 
 	                relativeToItem: self];
+	
+	/* For opaque layouts that may need to keep in sync the selection state of 
+	   their custom UI. */
+	[[self layout] selectionDidChangeInLayoutContext];
 }
 
 /** Returns the selected child items belonging to the receiver. 

@@ -417,6 +417,9 @@ static NSMutableSet *layoutClasses = nil;
 {
 	//ETDebugLog(@"Modify layout context from %@ to %@ in %@", _layoutContext, context, self);
 	
+	if (context == nil)
+		[self tearDown];
+		
 	// NOTE: Avoids retain cycle by weak referencing the context
 	_layoutContext = context;
 	//[[_layoutContext items] makeObjectsPerformSelector: @selector(restoreDefaultFrame)];
@@ -425,6 +428,21 @@ static NSMutableSet *layoutClasses = nil;
 - (id <ETLayoutingContext>) layoutContext
 {
 	return _layoutContext;
+}
+
+/** Overrides if your subclass requires special clean up when a layout gets 
+    unbound from its layout context.
+	The layout context hasn't yet been touched when this method is called. */
+- (void) tearDown
+{
+	/* Don't forget to remove existing display view if we switch from a layout 
+	   which reuses a native AppKit control like table layout. */
+	// NOTE: Be careful of layout objects which can share a common class but 
+	// all differs by their unique display view prototype.
+	// May be we should move it into -[layout setContainer:]...
+	// Triggers scroll view display which triggers layout render in turn to 
+	// compute the content size
+	[[self container] setDisplayView: nil]; 
 }
 
 // TODO: Pick better names for the following methods:
@@ -882,6 +900,21 @@ static NSMutableSet *layoutClasses = nil;
 	}
 
 	return indexPaths;
+}
+
+/** <override-dummy /> Overrides in opaque layout subclasses, if the receiver
+    needs to keep in sync internal objects with the selection state of the 
+	layout context. 
+    You usually override this method if you need to reflect the selected items 
+	of the layout context on the custom UI encapsulated in the receiver.
+	For example, ETItemTemplateLayout overrides it to keep in sync its 
+	replacement items with the child items of the layout context. 
+	Note: We could eventually handle that by binding internal items or state of 
+	the receiver to the 'selected' property of the child items of the layout 
+	context. By doing so, this method wouldn't be necessary/ */
+- (void) selectionDidChangeInLayoutContext
+{
+
 }
 
 /* 

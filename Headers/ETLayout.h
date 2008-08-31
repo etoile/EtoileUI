@@ -131,6 +131,7 @@ typedef enum _ETSizeConstraintStyle
 
 - (void) setLayoutContext: (id <ETLayoutingContext>)context;
 - (id <ETLayoutingContext>) layoutContext;
+- (void) tearDown;
 
 /* -isSemantic is initially defined by superclass ETStyle */
 - (BOOL) isSemantic;
@@ -190,6 +191,7 @@ typedef enum _ETSizeConstraintStyle
 
 - (NSArray *) selectedItems;
 - (NSArray *) selectionIndexPaths;
+- (void) selectionDidChangeInLayoutContext;
 
 /* ETDecoratorLayout */
 
