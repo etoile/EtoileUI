@@ -677,62 +677,10 @@ static NSMutableSet *layoutClasses = nil;
 	_isLayouting = NO;
 }
 
-/** Runs the layout computation which finds a location in the view container
-    to all layout items passed in parameter. 
-	This method is usually called by -render and you should rarely need to
-	do it by yourself. If you want to update the layout, just uses 
-	-[ETContainer updateLayout]. 
-	You may need to override this method in your layout subclasses if you want
-	to create very special layout style. In this cases, it's important to know
-	this method is in charge of calling -resizeLayoutItems, 
-	-layoutModelForLayoutItems:, -computeLayoutItemLocationsForLayoutModel:.
-	Finally once the layout is done, this method set the layout item visibility 
-	by calling -setVisibleItems: on the related container. Actually it takes 
-	care of the scroll view visibility but this may change a little bit in 
-	future. */
+/** <override-dummy /> */
 - (void) renderWithLayoutItems: (NSArray *)items isNewContent: (BOOL)isNewContent
 {	
-	//ETDebugLog(@"Render layout items: %@", items);
-	
-	NSArray *layoutModel = nil;
-	float scale = [[self layoutContext] itemScaleFactor];
-	
-	[self resizeLayoutItems: items toScaleFactor: scale];
-	
-	layoutModel = [self layoutModelForLayoutItems: items];
-	/* Now computes the location of every views by relying on the line by line 
-	   decomposition already made. */
-	[self computeLayoutItemLocationsForLayoutModel: layoutModel];
-	
-	// TODO: May be worth to optimize by computing set intersection of visible and unvisible layout items
-	// ETDebugLog(@"Remove views %@ of next layout items to be displayed from their superview", itemViews);
-	[[self layoutContext] setVisibleItems: [NSArray array]];
-	
-	/* Adjust container size when it is embedded in a scroll view */
-	if ([[self layoutContext] isScrollViewShown])
-	{
-		// NOTE: For this assertion check -[ETContainer setScrollView:] 
-		NSAssert([self isContentSizeLayout] == YES, 
-			@"Any layout done in a scroll view must be based on content size");
-			
-		[[self layoutContext] setContentSize: [self layoutSize]];
-		ETDebugLog(@"Layout size is %@ with container size %@ and clip view size %@", 
-			NSStringFromSize([self layoutSize]), 
-			NSStringFromSize([[self layoutContext] size]), 
-			NSStringFromSize([[self layoutContext] visibleContentSize]));
-	}
-	
-	NSMutableArray *visibleItems = [NSMutableArray array];
-	NSEnumerator  *e = [layoutModel objectEnumerator];
-	ETLayoutLine *line = nil;
-	
-	/* Flatten layout model by putting all views in a single array */
-	while ((line = [e nextObject]) != nil)
-	{
-		[visibleItems addObjectsFromArray: [line items]];
-	}
-	
-	[[self layoutContext] setVisibleItems: visibleItems];
+
 }
 
 - (void) resizeLayoutItems: (NSArray *)items toScaleFactor: (float)factor
@@ -808,44 +756,6 @@ static NSMutableSet *layoutClasses = nil;
 			ETLog(@"% can't be rescaled because it has no view");
 		}
 	}
-}
-
-/* 
- * Line-based layouts methods 
- */
-
-/** Overrides this method to generate a layout line based on the container 
-    constraints. Usual container constraints are size, vertical and horizontal 
-	scroller visibility. */
-- (ETLayoutLine *) layoutLineForLayoutItems: (NSArray *)items
-{
-	return nil;
-}
-
-/** Overrides this method to generate a layout model based on the container 
-    constraints. Usual container constraints are size, vertical and horizontal 
-	scrollers visibility.
-	A layout model is commonly made of several layouts lines inside an array
-	where indexes indicates in which order these layout lines should be 
-	displayed. It's up to you if you want to create a layout model with a more 
-	elaborated ordering and rendering semantic. Finally the layout model is 
-	interpreted by -computeViewLocationsForLayoutModel:. */
-- (NSArray *) layoutModelForLayoutItems: (NSArray *)items
-{
-	ETLayoutLine *line = [self layoutLineForLayoutItems: items];
-	
-	if (line != nil)
-		return [NSArray arrayWithObject: line];
-
-	return nil;
-}
-
-/** Overrides this method to interpretate the layout model and compute layout 
-	item locations accordingly. Most of the work of layout process happens in 
-	this method. */
-- (void) computeLayoutItemLocationsForLayoutModel: (NSArray *)layoutModel
-{
-
 }
 
 /* Wrapping Existing View */

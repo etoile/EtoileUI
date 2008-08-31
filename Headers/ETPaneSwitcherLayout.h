@@ -87,6 +87,9 @@ typedef enum {
 
 // Adds an accessor to control item view size always adjusted to content size (or content container size)
 
+// TODO: Remove
+- (void) computeLayoutItemLocationsForLayoutModel: (NSArray *)layoutModel;
+
 @end
 
 @interface NSObject (ETPaneSwitcherLayoutDelegate)

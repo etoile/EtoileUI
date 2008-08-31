@@ -1,3 +1,15 @@
+2008-08-31  Quentin Mathe <qmathe@club-internet.fr>
+
+	* ETLayout, ETComputedLayout:
+	(-layoutLineForLayoutItems:, -layoutModelForLayoutItems:, 
+	-computeLayoutItemLocationsForLayoutModel:): Moved down to ETComputedLayout 
+	subclass from ETLayout.
+	(-renderWithLayoutItems:isNewContent:): Moved implementation down to 
+	ETComputedLayout.
+	* ETPaneLayout, ETPaneSwitcherLayout: Updated to get rid of the compilation
+	warnings triggered by these changes. Temporary fix until these classes are
+	rewritten.
+
 2008-08-28  Quentin Mathe <qmathe@club-internet.fr>
 
 	* ETLayout (-resizeItems:toScaleFactor:): Fixed by removing an unwanted bit 

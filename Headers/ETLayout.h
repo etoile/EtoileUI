@@ -172,10 +172,6 @@ typedef enum _ETSizeConstraintStyle
 - (void) render: (NSDictionary *)inputValues isNewContent: (BOOL)isNewContent;
 - (void) renderWithLayoutItems: (NSArray *)items isNewContent: (BOOL)isNewContent;
 
-- (ETLayoutLine *) layoutLineForLayoutItems: (NSArray *)items;
-- (NSArray *) layoutModelForLayoutItems: (NSArray *)items;
-- (void) computeLayoutItemLocationsForLayoutModel: (NSArray *)layoutModel;
-
 - (void) resizeLayoutItems: (NSArray *)items toScaleFactor: (float)factor;
 
 /* Utility Methods */

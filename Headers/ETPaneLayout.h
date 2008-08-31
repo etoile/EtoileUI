@@ -56,4 +56,8 @@
 /*- (void) setVisibleItemIndex:
 - indexOfVisibleItem*/
 
+// TODO: Remove
+- (NSArray *) layoutModelForLayoutItems: (NSArray *)items;
+- (void) computeLayoutItemLocationsForLayoutModel: (NSArray *)layoutModel;
+
 @end

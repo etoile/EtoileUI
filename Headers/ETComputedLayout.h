@@ -57,4 +57,12 @@
 - (void) setItemMargin: (float)margin;
 - (float) itemMargin;
 
+- (void) renderWithLayoutItems: (NSArray *)items isNewContent: (BOOL)isNewContent;
+
+/* Line-based Layout */
+
+- (ETLayoutLine *) layoutLineForLayoutItems: (NSArray *)items;
+- (NSArray *) layoutModelForLayoutItems: (NSArray *)items;
+- (void) computeLayoutItemLocationsForLayoutModel: (NSArray *)layoutModel;
+
 @end
