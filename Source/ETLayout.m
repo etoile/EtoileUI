@@ -628,7 +628,7 @@ static NSMutableSet *layoutClasses = nil;
 	/* We remove the display views of layout items. Note they may be invisible 
 	   by being located outside of container bounds. */
 	//ETDebugLog(@"Remove views of layout items currently displayed from their container");
-	//[[self layoutContext] setVisibleItems: [NSArray array]];
+	[[self layoutContext] setVisibleItems: [NSArray array]];
 	
 	/* When the number of layout items is zero and doesn't vary, no layout 
 	   update is necessary */
