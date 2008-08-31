@@ -55,7 +55,7 @@
 	// TODO: Evaluate whether we should add an API at ETLayout level to request 
 	// layout refresh, or rather remove this code and let the developer triggers
 	// the layout update.
-	if ([self isRendering] == NO)
+	if ([self canRender])
 	{	
 		[self render: nil isNewContent: NO];
 		[[self layoutContext] setNeedsDisplay: YES];
@@ -83,14 +83,9 @@
 	future. */
 - (void) renderWithLayoutItems: (NSArray *)items isNewContent: (BOOL)isNewContent
 {	
-	//ETDebugLog(@"Render layout items: %@", items);
-	
-	NSArray *layoutModel = nil;
-	float scale = [[self layoutContext] itemScaleFactor];
-	
-	[self resizeLayoutItems: items toScaleFactor: scale];
-	
-	layoutModel = [self layoutModelForLayoutItems: items];
+	[super renderWithLayoutItems: items isNewContent: isNewContent];
+
+	NSArray *layoutModel = [self layoutModelForLayoutItems: items];
 	/* Now computes the location of every views by relying on the line by line 
 	   decomposition already made. */
 	[self computeLayoutItemLocationsForLayoutModel: layoutModel];

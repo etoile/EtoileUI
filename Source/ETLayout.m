@@ -577,6 +577,12 @@ static NSMutableSet *layoutClasses = nil;
 	return _itemSize;
 }
 
+/** Returns whether the receiver can run the layout now. */
+- (BOOL) canRender
+{
+	return ([self layoutContext] != nil && [self isRendering] == NO);
+}
+
 /** Returns whether the receiver is currently computing and rendering its 
 	layout right now or not.
 	You must call this method in your code before calling any Layouting related
@@ -604,57 +610,48 @@ static NSMutableSet *layoutClasses = nil;
 	-[ETContainer updateLayout]. */
 - (void) render: (NSDictionary *)inputValues isNewContent: (BOOL)isNewContent
 {
+	// TODO: Move after -canRender call or remove.
 	if ([self layoutContext] == nil)
 	{
 		ETLog(@"WARNING: No layout context available");	
 		return;
 	}
-
+	
 	/* Prevent reentrancy. In a threaded environment, it isn't perfectly safe 
 	   because _isLayouting test and _isLayouting assignement doesn't occur in
 	   an atomic way. */
-	if (_isLayouting)
-	{
-		ETLog(@"WARNING: Trying to reenter -render when the layout is already getting updated.");
+	if ([self canRender] == NO)
 		return;
-	}
-	else
-	{
-		_isLayouting = YES;
-	}
+	
+	_isLayouting = YES;
 
 	/* We remove the display views of layout items. Note they may be invisible 
 	   by being located outside of container bounds. */
 	//ETDebugLog(@"Remove views of layout items currently displayed from their container");
-	[[self layoutContext] setVisibleItems: [NSArray array]];
+	//[[self layoutContext] setVisibleItems: [NSArray array]];
 	
 	/* When the number of layout items is zero and doesn't vary, no layout 
 	   update is necessary */
-	/*if ([[[self layoutContext] items] count] == 0 && _nbOfItemCache != [[[self layoutContext] items] count])
-	{
-		_isLayouting = NO;
-		return;
-	}*/
+	// TODO: Try some optimizations, in the vein of...
+	// if ([[[self layoutContext] items] count] == 0 && _nbOfItemCache != [[[self layoutContext] items] count])
+	//	return;
 	
-	/* Let layout delegate overrides default layout items rendering */
-	// FIXME: This delegate stuff isn't really useful. Remove it or make it
-	// useful.
-	if ([_delegate respondsToSelector: @selector(layout:applyLayoutItem:)])
-	{
-		NSEnumerator *e = [[[self layoutContext] items] objectEnumerator];
-		ETLayoutItem *item = nil;
-		
-		while ((item = [e nextObject]) != nil)
-		{
-			//[_delegate layout: self applyLayoutItem: item];
-			//[_delegate layout: self renderLayoutItem: item]; // FIXME: Use proper delegate syntax
-		}
-	}
-	else
-	{
-		[[[self layoutContext] items] makeObjectsPerformSelector: @selector(apply:) withObject: nil];
-	}
-	
+	[self renderWithLayoutItems: [[self layoutContext] items] isNewContent: isNewContent];
+
+	_isLayouting = NO;
+}
+
+/** Sets the layout size to the unlayouted content size of the layout context,
+    unless -usesCustomLayoutSize returns YES. In this last case, the layout size 
+	isn't modified. 
+    You call this method to reset the layout size to a value that should be used 
+	as a basis to compute the layout. By default, the implementation considers 
+	the layout of the content (layout items) should be computed within the 
+	boundaries of the layout context size.
+	If the layout context is enclosed inside a scroll view, this method will 
+	take it in account. */
+- (void) resetLayoutSize
+{
 	/* We always set the layout size which should be used to compute the 
 	   layout unless a custom layout has been set by calling -setLayoutSize:
 	   before -render. */
@@ -671,16 +668,17 @@ static NSMutableSet *layoutClasses = nil;
 			[self setLayoutSize: [[self layoutContext] size]];
 		}
 	}
-	
-	[self renderWithLayoutItems: [[self layoutContext] items] isNewContent: isNewContent];
-	
-	_isLayouting = NO;
 }
 
 /** <override-dummy /> */
 - (void) renderWithLayoutItems: (NSArray *)items isNewContent: (BOOL)isNewContent
 {	
+	//ETDebugLog(@"Render layout items: %@", items);
 
+	float scale = [[self layoutContext] itemScaleFactor];
+
+	[self resetLayoutSize];
+	[self resizeLayoutItems: items toScaleFactor: scale];
 }
 
 - (void) resizeLayoutItems: (NSArray *)items toScaleFactor: (float)factor

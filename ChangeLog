@@ -1,5 +1,18 @@
 2008-08-31  Quentin Mathe <qmathe@club-internet.fr>
 
+	* ETLayout
+	(-render:isNewContent:): Cleaned. Extracted the code that sets the initial 
+	layout size into a new method -resetLayoutSize.
+	(-canRender, -resetLayoutSize): Added.
+	(-renderWithLayoutItems:isNewContent:): Moved up the item scaling call 
+	from ETComputedLayout, and added a call to -resetLayoutSize so that the 
+	initial layout is now set here instead of -render:isNewContent:.
+	* ETComputedLayout (-renderWithLayoutItems:isNewContent:): Moved the item 
+	scaling back into ETLayout, so that it can be shared with other subclasses.
+	* ETFreeLayout: Fixed two compilation warnings (temporary fix).
+
+2008-08-31  Quentin Mathe <qmathe@club-internet.fr>
+
 	* ETLayout, ETComputedLayout:
 	(-layoutLineForLayoutItems:, -layoutModelForLayoutItems:, 
 	-computeLayoutItemLocationsForLayoutModel:): Moved down to ETComputedLayout 

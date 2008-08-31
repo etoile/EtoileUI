@@ -46,4 +46,8 @@
 
 - (void) resetItemLocationsWithLayout: (ETLayout *)layout;
 
+// TODO: Remove
+- (NSArray *) layoutModelForLayoutItems: (NSArray *)items;
+- (void) computeLayoutItemLocationsForLayoutModel: (NSArray *)layoutModel;
+
 @end
