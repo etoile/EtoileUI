@@ -47,8 +47,13 @@
 - (void) _buildLayoutItemTree;
 - (void) _setUpAppMenu;
 - (int) _defaultInsertionIndexInAppMenu;
-@end
+- (void) _buildMainMenuIfNeeded;
+- (NSMenu *) _createApplicationMenu;
 
+/* Private Cocoa API */
+- (void) setAppleMenu: (NSMenu *)menu;
+- (void) setServicesMenu: (NSMenu *)menu;
+@end
 
 @implementation ETApplication
 
@@ -63,15 +68,109 @@
 - (void) finishLaunching
 {
 	[super finishLaunching];
+	[self _buildMainMenuIfNeeded];
 	[self _setUpAppMenu];
 	[self _buildLayoutItemTree];
 }
 
+/** Generates a single layout item tree for the whole application, by mapping 
+    AppKit components to layout items, if those aren't already owned by 
+	a layout item. If an AppKit component is already driven by a layout item,
+	the layout item tree connected to it will be attached to the main layout 
+	item tree that is getting generated.
+    The implementation delegates this process to ETEtoileUIBuilder, which 
+	traverses the window and view hierarchy, in order to ouput a new layout item 
+	tree whose root item will be made available through 
+	-[ETApplication layoutItem]. */
 - (void) _buildLayoutItemTree
 {
 	ETEtoileUIBuilder *builder = [ETEtoileUIBuilder builder];
 
 	[ETLayoutItemGroup setWindowGroup: [builder render: self]];
+}
+
+/* If -mainMenu returns nil, builds a new main menu with -_createApplicationMenu 
+   and installs it by calling -setMainMenu:. Also takes care of calling other 
+   set up methods such -setAppleMenu:, which tend to vary with the platform 
+   (GNUstep or Cocoa). 
+   For now, only used on Mac OS X where no main menu exists if no nib is loaded.
+   On GNUstep, a minimal main menu is always created. */
+- (void) _buildMainMenuIfNeeded
+{
+	if ([self mainMenu] != nil)
+		return;
+
+	// TODO: Eventually support more submenus...
+	//
+	// NSArray *mainSubmenus = [NSArray arrayWithObjects: [self applicationMenu],
+	//       [self editMenu], [self windowMenu], [self helpMenu], nil];
+	//[self setMainMenu: [NSMenu menuWithTitle: @"" submenus: mainSubmenus]];
+
+	NSMenuItem *appMenuItem = [[NSMenuItem alloc] initWithTitle: @"" 
+		action: NULL keyEquivalent:@""];
+	NSMenu *appMenu = [self _createApplicationMenu];
+	NSMenu *mainMenu = [[NSMenu alloc] initWithTitle: @""];	
+
+	[appMenuItem setSubmenu: appMenu];
+	[mainMenu addItem: appMenuItem];
+	RELEASE(appMenuItem);
+	
+	// NOTE: -setAppleMenu: must be called before calling -setMainMenu: and is 
+	// a private Cocoa API that registers the menu as the application menu 
+	// (hence the method is wrongly called -setAppleMenu:). Ditto for 
+	// -setServicesMenu:
+	[self setAppleMenu: appMenu];
+	[self setServicesMenu: [[appMenu itemWithTitle: _(@"Services")] submenu]];
+	[self setMainMenu: mainMenu];
+	RELEASE(mainMenu);
+}
+
+/* Creates a standard application menu by taking in account the expectations 
+   specific to each platform (GNUstep/Etoile and Cocoa). Only supports Mac OS X 
+   for now.
+   See also -_buildMainMenuIfNeeded. */
+- (NSMenu *) _createApplicationMenu
+{
+	// TODO: Append the app name to aboutTitle, hideTitle and quitTitle
+	NSMenu *appMenu = AUTORELEASE([[NSMenu alloc] initWithTitle: @""]);
+	NSString *aboutTitle = _(@"About");
+	NSString *hideTitle = _(@"Hide");
+	NSString *quitTitle = _(@"Quit");
+
+	[appMenu addItemWithTitle: aboutTitle 
+	                   action: @selector(about:) 
+				keyEquivalent: @""];
+	[appMenu addItemWithTitle: _(@"Preferences...") 
+	                   action: NULL 
+				keyEquivalent: @","];
+				
+	[appMenu addItem: [NSMenuItem separatorItem]];
+	
+	[appMenu addItemWithTitle: _(@"Services") 
+					   action: NULL 
+				keyEquivalent: @""];
+	[[appMenu itemWithTitle: _(@"Services")] 
+		setSubmenu: AUTORELEASE([[NSMenu alloc] initWithTitle: @""])];
+		
+	[appMenu addItem: [NSMenuItem separatorItem]];
+	
+	[appMenu addItemWithTitle: hideTitle 
+	                   action: @selector(hide:) 
+				keyEquivalent: @"h"];
+	[appMenu addItemWithTitle: _(@"Hide Others") 
+	                   action: @selector(hideOtherApplications:) 
+				keyEquivalent: @""];
+	[appMenu addItemWithTitle: _(@"Show All") 
+	                   action: @selector(unhideAllApplications:) 
+				keyEquivalent: @""];
+				
+	[appMenu addItem: [NSMenuItem separatorItem]];
+	
+	[appMenu addItemWithTitle: quitTitle 
+	                   action: @selector(terminate:) 
+				keyEquivalent: @"q"];  
+   
+   return appMenu;
 }
 
 - (void) _setUpAppMenu

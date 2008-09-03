@@ -1,9 +1,20 @@
+2008-09-03  Quentin Mathe <qmathe@club-internet.fr>
+
+	Made possible to create application without nibs on Mac OS X, by writing 
+	the code that builds and installs the main menu. This will make the 
+	maintenance of EtoileUI examples less a burden, no nibs and gorms to 
+	keep in sync.
+	* ETApplication
+	More documentation.
+	(-_buildMainMenuIfNeeded, -_createApplicationMenu): New methods.
+	(-finishLaunching): Updated to call -_buildMainMenuIfNeeded.
+
 2008-08-31  Quentin Mathe <qmathe@club-internet.fr>
 
 	* ETLayout 
 	(-tearDown, -selectionDidChangeInLayoutContext): New methods.
 	(-setLayoutContext:): Modified to call -tearDown if needed.
-	* ELayoutItemGroup (-setLayout:): Cleansed. Moved layout view removal code
+	* ETLayoutItemGroup (-setLayout:): Cleansed. Moved layout view removal code
 	to -[ETLayout tearDown] since the layout is responsible of the layout view.
 	
 2008-08-31  Quentin Mathe <qmathe@club-internet.fr>
