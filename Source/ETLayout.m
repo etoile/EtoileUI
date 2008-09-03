@@ -479,7 +479,9 @@ static NSMutableSet *layoutClasses = nil;
 	By default returns NO, overrides to return YES when a positional layout 
 	subclass doesn't allow the user sets the layout item locations. 
 	The returned value alters the order in which ETContainer data source 
-	methods are called. */
+	methods are called. 
+	-[ETLayoutItem setFrame:] checks that the parent item layout is not a 
+	computed layout before updating the persistent frame. */
 - (BOOL) isComputedLayout
 {
 	return NO;
@@ -712,9 +714,10 @@ static NSMutableSet *layoutClasses = nil;
 		   because of size width and height expressed as float. */
 		NSRect itemFrame = ETScaleRect([item defaultFrame], factor);
 		
-		/* Apply item size constraint */
-		if (itemFrame.size.width > [self constrainedItemSize].width
-		 || itemFrame.size.height > [self constrainedItemSize].height)
+		/* Apply item size constraint if needed */
+		if ([self itemSizeConstraintStyle] != ETSizeConstraintStyleNone 
+		 && (itemFrame.size.width > [self constrainedItemSize].width
+		 || itemFrame.size.height > [self constrainedItemSize].height))
 		{ 
 			BOOL isVerticalResize = NO;
 			
@@ -764,8 +767,8 @@ static NSMutableSet *layoutClasses = nil;
 		{
 			itemFrame.origin = [item origin];
 			[item setFrame: itemFrame];
-			//ETDebugLog(@"Scale %@ to %@", NSStringFromRect(unscaledFrame), 
-			//	NSStringFromRect(ETScaleRect(unscaledFrame, factor)));
+			ETDebugLog(@"Scale %@ to %@", NSStringFromRect([item defaultFrame]), 
+				NSStringFromRect(ETScaleRect([item defaultFrame], factor)));
 		}
 		else
 		{

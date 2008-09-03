@@ -1,3 +1,10 @@
+2008-09-04  Quentin Mathe <qmathe@club-internet.fr>
+
+	* ETLayout (-resizeLayoutItems:toScaleFactor:): Applied item size contraint 
+	only if requested, when -itemSizeConstraintStyle returns another value than 
+	ETSizeConstraintStyleNone. This fixes the case where a zero size is 
+	returned by -constrainedItemSize and wrongly applied with the scaling.
+
 2008-09-03  Quentin Mathe <qmathe@club-internet.fr>
 
 	Extracted -[ETBasicItemStyle render:layoutItem:dirtyRect:] into two new 
