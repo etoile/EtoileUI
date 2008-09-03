@@ -45,6 +45,11 @@
 
 @implementation ETStackLayout
 
+- (BOOL) isComputedLayout
+{
+	return YES;
+}
+
 /** Returns a line filled with views to layout (stored in an array). */
 - (ETLayoutLine *) layoutLineForLayoutItems: (NSArray *)items
 {

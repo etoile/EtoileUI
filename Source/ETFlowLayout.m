@@ -65,6 +65,11 @@
 	return self;
 }
 
+- (BOOL) isComputedLayout
+{
+	return YES;
+}
+
 - (void) computeLayoutItemLocationsForLayoutModel: (NSArray *)layoutModel
 {
 	NSEnumerator *layoutWalker = [layoutModel objectEnumerator];
