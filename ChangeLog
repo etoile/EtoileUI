@@ -1,5 +1,18 @@
 2008-09-03  Quentin Mathe <qmathe@club-internet.fr>
 
+	Extracted -[ETBasicItemStyle render:layoutItem:dirtyRect:] into two new 
+	methods. Enhanced existing code to draw a way more pretty selection 
+	indicator (light gray interior, dark gray border), instead of the boring 
+	blue square that was playing this role until then.
+	* ETStyle.[hm]:
+	(-[ETBasicItemStyle render:layoutItem:dirtyRect:]): Modularized the drawing 
+	code into two new methods.
+	(-[ETBasicItemStyle drawImage:]):
+	(-[ETBasicItemStyle drawSelectionIndicatorInRect:]):
+	Added.
+
+2008-09-03  Quentin Mathe <qmathe@club-internet.fr>
+
 	Made possible to create application without nibs on Mac OS X, by writing 
 	the code that builds and installs the main menu. This will make the 
 	maintenance of EtoileUI examples less a burden, no nibs and gorms to 

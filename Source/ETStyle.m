@@ -136,26 +136,64 @@ static ETBasicItemStyle *sharedBasicItemStyle = nil;
      layoutItem: (ETLayoutItem *)item 
 	  dirtyRect: (NSRect)dirtyRect;
 {
-	/* Draw image if defined */
+	// FIXME: May be we should better support dirtyRect. The next drawing 
+	// methods don't take in account it and simply redraw all their content.
+
 	if ([item image] != nil)
-	{
-		//ETLog(@"Drawing image %@ in view %@", [item image], [NSView focusView]);
-		NSSize imgSize = [[item image] size];
-		[[item image] drawAtPoint: NSZeroPoint 
-						 fromRect: NSMakeRect(0, 0, imgSize.width, imgSize.height) 
-						operation: NSCompositeSourceOver 
-						 fraction: 1.0];
-	}		
-			 
-	/* Draw selection indicator if selected */
+		[self drawImage: [item image]]; 
+
 	if ([item isSelected])
-	{
-		//ETLog(@"--- Drawing selection %@ in view %@", NSStringFromRect([item drawingFrame]), [NSView focusView]);
-		[[NSColor blueColor] set];
-		NSRectFill([item drawingFrame]);
-	}
+		[self drawSelectionIndicatorInRect: [item drawingFrame]];
 	
 	[super render: inputValues layoutItem: item dirtyRect: dirtyRect];
+}
+
+/** Draws an image at the origin of the current graphics coordinates. */
+- (void) drawImage: (NSImage *)itemImage
+{
+	//ETLog(@"Drawing image %@ in view %@", [item image], [NSView focusView]);
+	NSSize imgSize = [itemImage size];
+	[itemImage drawAtPoint: NSZeroPoint 
+					 fromRect: NSMakeRect(0, 0, imgSize.width, imgSize.height) 
+					operation: NSCompositeSourceOver 
+					 fraction: 1.0];
+}
+
+/** Draws a selection indicator that covers the whole item frame if 
+    indicatorRect is equal to it. */
+- (void) drawSelectionIndicatorInRect: (NSRect)indicatorRect
+{
+	//ETLog(@"--- Drawing selection %@ in view %@", NSStringFromRect([item drawingFrame]), [NSView focusView]);
+	
+	// TODO: We disable the antialiasing for the stroked rect with direct 
+	// drawing, but this code may be better moved in 
+	// -[ETLayoutItem render:dirtyRect:inView:] to limit the performance impact.
+	BOOL gstateAntialias = [[NSGraphicsContext currentContext] shouldAntialias];
+	[[NSGraphicsContext currentContext] setShouldAntialias: NO];
+	
+	/* Align on pixel boundaries for fractional pixel margin and frame. 
+	   Fractional item frame results from the item scaling. 
+	   NOTE: May be we should adjust pixel boundaries per edge and only if 
+	   needed to get a perfect drawing... */
+	NSRect normalizedIndicatorRect = NSInsetRect(NSIntegralRect(indicatorRect), 0.5, 0.5);
+	
+	/* Draw the interior */
+	[[[NSColor lightGrayColor] colorWithAlphaComponent: 0.45] setFill];
+	[NSBezierPath setDefaultLineWidth: 1.0];
+	// NOTE: [NSBezierPath fillRect: indicatorRect]; doesn't handle color alpha 
+	// on GNUstep
+	NSRectFillUsingOperation(normalizedIndicatorRect, NSCompositeSourceOver);
+
+	/* Draw the outline */
+#ifndef USE_BEZIER_PATH
+	[[[NSColor darkGrayColor] colorWithAlphaComponent: 0.55] set];
+	NSFrameRectWithWidthUsingOperation(normalizedIndicatorRect, 0.0, NSCompositeSourceOver);
+#else
+	[[[NSColor darkGrayColor] colorWithAlphaComponent: 0.55] setStroke];
+	[NSBezierPath strokeRect: normalizedIndicatorRect];
+#endif
+
+	[[NSGraphicsContext currentContext] setShouldAntialias: gstateAntialias];
 }
 
 @end

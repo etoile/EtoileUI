@@ -107,6 +107,9 @@
 - (void) render: (NSMutableDictionary *)inputValues 
      layoutItem: (ETLayoutItem *)item 
 	  dirtyRect: (NSRect)dirtyRect;
+	  
+- (void) drawImage: (NSImage *)itemImage;
+- (void) drawSelectionIndicatorInRect: (NSRect)indicatorRect;
 
 #if 0
 - (BOOL) setTitleVisible: (BOOL)flag;
