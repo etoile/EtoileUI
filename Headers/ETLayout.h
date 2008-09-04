@@ -81,7 +81,7 @@
 - (id <ETLayoutingContext>) layoutContext;
 - (void) setItemMargin: (float)margin;
 - (void) renderWithLayoutItems: (NSArray *)items isNewContent: (BOOL)isNewContent;
-- (id) itemAtLocation: (NSPoint)loc;
+- (ETLayoutItem *) itemAtLocation: (NSPoint)loc;
 @end
 
 @protocol ETCompositeLayout

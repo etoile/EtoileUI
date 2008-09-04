@@ -41,6 +41,12 @@
 
 @implementation ETComputedLayout
 
+/* Ugly hacks to shut down the compiler, so it doesn't complain that inherited 
+   methods also declared by ETPositionaLayout aren't implemented */
+- (void) setLayoutContext: (id <ETLayoutingContext>)context { return [super setLayoutContext: context]; }
+- (id <ETLayoutingContext>) layoutContext { return [super layoutContext]; }
+- (ETLayoutItem *) itemAtLocation: (NSPoint)location { return [super itemAtLocation: location]; }
+
 - (BOOL) isComputedLayout
 {
 	return YES;
