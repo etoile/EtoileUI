@@ -39,10 +39,6 @@
 
 @class ETContainer, ETLayoutLine, ETLayoutItem;
 
-/** All subclasses which implement strictly positional layout algorithms as 
-    described in ETComputedLayout description must conform to this prococol. */
-@protocol ETPositionalLayout
-@end
 
 /** Methods which must be implemented by an object to be layouted by any
 	ETLayout subclasses. The object whose layout items are layouted is the
@@ -76,6 +72,22 @@
 /* Not sure the protocol needs to include the next method */
 //- (void) setShowsScrollView: (BOOL)scroll;
 
+@end
+
+/** All subclasses which implement strictly positional layout algorithms as 
+    described in ETComputedLayout description must conform to this prococol. */
+@protocol ETPositionalLayout
+- (void) setLayoutContext: (id <ETLayoutingContext>)context;
+- (id <ETLayoutingContext>) layoutContext;
+- (void) setItemMargin: (float)margin;
+- (void) renderWithLayoutItems: (NSArray *)items isNewContent: (BOOL)isNewContent;
+- (id) itemAtLocation: (NSPoint)loc;
+@end
+
+@protocol ETCompositeLayout
+- (id <ETPositionalLayout>) positionalLayout;
+- (void) setPositionalLayout: (id <ETPositionalLayout>)layout;
+- (void) renderWithLayoutItems: (NSArray *)items isNewContent: (BOOL)isNewContent;
 @end
 
 // NOTE: May be this should be turned into a mask
@@ -135,6 +147,8 @@ typedef enum _ETSizeConstraintStyle
 
 /* -isSemantic is initially defined by superclass ETStyle */
 - (BOOL) isSemantic;
+- (BOOL) isComposite;
+- (BOOL) isPositional;
 - (BOOL) isComputedLayout;
 - (BOOL) isOpaque;
 
@@ -181,6 +195,7 @@ typedef enum _ETSizeConstraintStyle
 
 - (ETLayoutItem *) itemAtLocation: (NSPoint)location;
 - (NSRect) displayRectOfItem: (ETLayoutItem *)item;
+//- (BOOL) isHitTestEnabledAtPoint: (NSPoint)location;
 
 /* Wrapping Existing View */
 

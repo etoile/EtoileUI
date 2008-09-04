@@ -473,6 +473,11 @@ static NSMutableSet *layoutClasses = nil;
 	return [self conformsToProtocol: @protocol(ETPositionalLayout)];
 }
 
+- (BOOL) isComposite
+{
+	return [self conformsToProtocol: @protocol(ETCompositeLayout)];
+}
+
 /** Returns YES when the layout is positional, computes the location of the 
     layout items and updates these locations as necessary by itself. See also
 	ETComputedLayout, whose subclasses are all computed layouts.
@@ -577,6 +582,9 @@ static NSMutableSet *layoutClasses = nil;
 
 /* Item Sizing Accessors */
 
+/** If the constraint is different than ETSizeConstraintStyleNone, the 
+	autoresizing returned by -[ETLayoutItem autoresizingMask], for each item 
+	that is rendered by the receiver, won't be respected. */
 - (void) setItemSizeConstraintStyle: (ETSizeConstraintStyle)constraint
 {
 	_itemSizeConstraintStyle = constraint;
@@ -648,7 +656,7 @@ static NSMutableSet *layoutClasses = nil;
 	/* We remove the display views of layout items. Note they may be invisible 
 	   by being located outside of container bounds. */
 	//ETDebugLog(@"Remove views of layout items currently displayed from their container");
-	[[self layoutContext] setVisibleItems: [NSArray array]];
+	//[[self layoutContext] setVisibleItems: [NSArray array]];
 	
 	/* When the number of layout items is zero and doesn't vary, no layout 
 	   update is necessary */
@@ -701,6 +709,17 @@ static NSMutableSet *layoutClasses = nil;
 	[self resizeLayoutItems: items toScaleFactor: scale];
 }
 
+/** Resizes layout item by scaling of the given factor the -defaultFrame 
+    returned by each item, then applying the scaled rect with -setFrame:.
+	Once the scaled rect has been computed, right before applying it to the 
+	item, this method checks for the item size contraint. If the size constraint 
+	is ETSizeConstraintStyleNone, the scaled rect is used as is. For other 
+	size constraint values, the scaled rect is checked against 
+	-constrainedItemSize for either width, height or both, then altered if the 
+	rect width or height is superior to the allowed maximum value. 
+	If -itemSizeConstraintStyle returns ETConstraintStyleNone, the layout will 
+	respect the autoresizing mask returned by -[ETLayoutItem autoresizingMask],
+	otherwise it won't. */
 - (void) resizeLayoutItems: (NSArray *)items toScaleFactor: (float)factor
 {
 	NSEnumerator *e = [items objectEnumerator];

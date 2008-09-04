@@ -1,5 +1,16 @@
 2008-09-04  Quentin Mathe <qmathe@club-internet.fr>
 
+	* ETLayout 
+	New work-in-progress protocols ETPositionalLayout and ETCompositeLayout.
+	(-isComposite): Added.
+	(-resizeLayoutItems:toScaleFactor:, -setItemSizeConstraintStyle:): 
+	Documented.
+	(-render:isNewContent:): Commented out the call to -setVisibleItems:, so the 
+	visibility of the items is only handled in 
+	-renderWithLayoutItems:isNewContent:.
+
+2008-09-04  Quentin Mathe <qmathe@club-internet.fr>
+
 	* ETLayout (-resizeLayoutItems:toScaleFactor:): Applied item size contraint 
 	only if requested, when -itemSizeConstraintStyle returns another value than 
 	ETSizeConstraintStyleNone. This fixes the case where a zero size is 
