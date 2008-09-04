@@ -35,10 +35,10 @@
 
 #import <Foundation/Foundation.h>
 #import <AppKit/AppKit.h>
-#import <EtoileUI/ETLayout.h>
+#import <EtoileUI/ETComputedLayout.h>
 
 
-@interface ETPaneLayout : ETLayout
+@interface ETPaneLayout : ETComputedLayout
 {
 
 }
