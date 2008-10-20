@@ -39,7 +39,6 @@
 #import "ETPaneLayout.h"
 #import "ETStackLayout.h"
 #import "ETLineLayout.h"
-#import "ETLayoutItem.h"
 #import "ETLayoutItem+Factory.h"
 #import "ETContainer.h"
 #import "GNUstep.h"
