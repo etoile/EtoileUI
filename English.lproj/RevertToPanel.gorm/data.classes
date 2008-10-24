@@ -1,0 +1,44 @@
+{
+    "## Comment" = "Do NOT change this file, Gorm maintains it";
+    ETApplication = {
+	Actions = (
+	    "browseLayoutItemTree:",
+	    "toggleDevelopmentMenu:",
+	    "toggleLiveDevelopment:"
+	);
+	Outlets = (
+	);
+	Super = NSApplication;
+    };
+    ETPersistencyController = {
+	Actions = (
+	    "undo:",
+	    "redo:",
+	    "restoreTo:",
+	    "restoreSelectionTo:",
+	    "restoreObjectTo:",
+	    "endRestoreToDialog:"
+	);
+	Outlets = (
+	    _revertToPanel,
+	    _revertedVersionField
+	);
+	Super = NSObject;
+    };
+    FirstResponder = {
+	Actions = (
+	    "browseLayoutItemTree:",
+	    "endRestoreToDialog:",
+	    "endRevertToDialog:",
+	    "restoreObjectTo:",
+	    "restoreSelectionTo:",
+	    "restoreTo:",
+	    "revertObjectTo:",
+	    "revertSelectionTo:",
+	    "revertTo:",
+	    "toggleDevelopmentMenu:",
+	    "toggleLiveDevelopment:"
+	);
+	Super = NSObject;
+    };
+}

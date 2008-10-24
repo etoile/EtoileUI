@@ -82,3 +82,7 @@
 #import <EtoileUI/ETViewModelLayout.h>
 #import <EtoileUI/ETTextEditorLayout.h>
 #import <EtoileUI/ETInspector.h>
+
+#ifdef COREOBJECT
+#import <EtoileUI/ETPersistencyController.h>
+#endif

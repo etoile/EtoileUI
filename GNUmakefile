@@ -2,8 +2,6 @@ PACKAGE_NAME = EtoileUI
 
 include $(GNUSTEP_MAKEFILES)/common.make
 
-#test=yes
-
 ADDITIONAL_CPPFLAGS += -std=c99
 ADDITIONAL_OBJCFLAGS += -I. 
 
@@ -16,13 +14,16 @@ EtoileUI_LIBRARIES_DEPEND_UPON += -lm -lEtoileFoundation \
 
 EtoileUI_SUBPROJECTS = Source
 
+ADDITIONAL_CPPFLAGS += -DCOREOBJECT=1
+ADDITIONAL_OBJCFLAGS += -DCOREOBJECT=1
+EtoileUI_LIBRARIES_DEPEND_UPON += -lCoreObject -lEtoileSerialize
+
 ifeq ($(test), yes)
 	BUNDLE_NAME = $(FRAMEWORK_NAME)
 
 	EtoileUI_SUBPROJECTS += Tests
 	EtoileUI_LDFLAGS += -lUnitKit $(EtoileUI_LIBRARIES_DEPEND_UPON)
 endif
-
 
 EtoileUI_HEADER_FILES_DIR = Headers
 
@@ -56,6 +57,7 @@ EtoileUI_HEADER_FILES = \
 	ETOutlineLayout.h \
 	ETPaneLayout.h \
 	ETPaneSwitcherLayout.h \
+	ETPersistencyController.h \
 	ETPickboard.h \
 	ETStackLayout.h \
 	ETStyle.h \
@@ -86,6 +88,10 @@ EtoileUI_RESOURCE_FILES = \
 	English.lproj/OutlinePrototype.gorm \
 	English.lproj/TablePrototype.gorm \
 	English.lproj/ViewModelPrototype.gorm
+
+# CoreObject Extensions
+EtoileUI_RESOURCE_FILES += \
+	English.lproj/RevertToPanel.gorm
 
 
 include $(GNUSTEP_MAKEFILES)/aggregate.make

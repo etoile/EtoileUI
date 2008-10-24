@@ -249,6 +249,22 @@
 	return AUTORELEASE(devMenuItem);
 }
 
+/* Actions */
+
+/** Returns the same target than -[NSApplication targetForAction:], except that 
+    it extends the responder chain to include ETPersistencyController right 
+    after the application delegate (and eventually NSDocumentController too). */
+- (id) targetForAction: (SEL)anAction
+{
+	id target = [super targetForAction: anAction];
+	Class persistencyControllerClass = NSClassFromString(@"ETPersistencyController");
+
+	if ([[persistencyControllerClass sharedInstance] respondsToSelector: anAction])
+		target = [persistencyControllerClass sharedInstance]; 
+
+	return target;
+}
+
 - (IBAction) browseLayoutItemTree: (id)sender
 {
 	ETObjectBrowser *browser = [[ETObjectBrowser alloc] init];
