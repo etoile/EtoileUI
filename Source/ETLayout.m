@@ -327,6 +327,7 @@ static NSMutableSet *layoutClasses = nil;
 		_itemSize = NSMakeSize(256, 256); /* Default max item size */
 		/* By default both width and height must be equal or inferior to related _itemSize values */
 		_itemSizeConstraintStyle = ETSizeConstraintStyleNone;
+		_previousScaleFactor = 1.0; /* Ensures -resizeItems:toScaleFactor: isn't called until the scale changes */
 	
 		if (layoutView != nil) /* Use layout view parameter */
 		{
@@ -706,7 +707,23 @@ static NSMutableSet *layoutClasses = nil;
 	float scale = [[self layoutContext] itemScaleFactor];
 
 	[self resetLayoutSize];
-	[self resizeLayoutItems: items toScaleFactor: scale];
+	// TODO: This is a welcome optimization that avoids unecessary computations, 
+	// however this shouldn't be mandatory. Currently this is used as a 
+	// workaround to handle the fact that the default frame isn't updated if 
+	// -setFrame: is called. The correct fix is probably to update the default 
+	// frame in -setFrame: when the item is managed by a non-computed layout. 
+	// This a little bit tricky to implement cleanly because the layout that 
+	// manages the item may not be on the immediate parent but some higher 
+	// ancestors. Another downside is that ETLayoutItem will become more 
+	// coupled to ETLayoutItemGroup.
+	/* Only scale if needed, but if a constraint exists on item width or height, 
+	   resizing must be forced in all cases. */
+	if (scale != _previousScaleFactor 
+	 || [self itemSizeConstraintStyle] != ETSizeConstraintStyleNone)
+	{
+		[self resizeLayoutItems: items toScaleFactor: scale];
+		_previousScaleFactor = scale;
+	}
 }
 
 /** Resizes layout item by scaling of the given factor the -defaultFrame 

@@ -120,6 +120,7 @@ typedef enum _ETSizeConstraintStyle
 	/* Items Sizing */
 	NSSize _itemSize;
 	ETSizeConstraintStyle _itemSizeConstraintStyle;
+	float _previousScaleFactor;
 }
 
 + (void) registerLayoutClass: (Class)layoutClass;
