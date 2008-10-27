@@ -28,6 +28,7 @@ endif
 EtoileUI_HEADER_FILES_DIR = Headers
 
 EtoileUI_HEADER_FILES = \
+        Controls+Etoile.h \
 	ETApplication.h \
 	ETBrowserLayout.h \
 	ETCompatibility.h \

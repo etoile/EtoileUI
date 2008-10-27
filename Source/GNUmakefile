@@ -5,6 +5,7 @@ SUBPROJECT_NAME = libEtoileUI
 libEtoileUI_OBJCFLAGS += -std=c99
 
 libEtoileUI_OBJC_FILES = \
+	Controls+Etoile.m \
 	ETApplication.m \
 	ETBrowserLayout.m \
 	ETComputedLayout.m \
