@@ -156,6 +156,33 @@
 	return item;
 }
 
+/** Creates and returns a new label item that uses a NSTextField without border
+    and background as its view. */
++ (id) labelWithTitle: (NSString *)aTitle
+{
+	id item = [self newItemWithViewClass: [NSTextField class]];
+	NSTextField *labelField = (NSTextField *)[item view];
+
+	// NOTE: -setBezeled: is necessary only for GNUstep but not on Cocoa.
+	[labelField setBezeled: NO];
+	[labelField setDrawsBackground: NO];
+	[labelField setBordered: NO];
+	[labelField setEditable: NO];
+	[labelField setSelectable: YES];
+	[labelField setStringValue: aTitle];
+	[labelField setFont: [NSFont labelFontOfSize: [NSFont labelFontSize]]];
+	// TODO: Evaluate whether the next two choices are the best defaults.
+	[labelField setAlignment: NSCenterTextAlignment];
+	[labelField setAutoresizingMask: NSViewNotSizable];
+	[labelField sizeToFit];
+	// TODO: Passing the label field to the item now rather than updating the 
+	// item size could be cleaner. Eventually rethink -itemWithView: a bit 
+	// and/or modify this method.
+	[item setSize: [labelField frame].size];
+
+	return item;
+}
+
 /** Creates and returns a new layout item that uses a NSTextField instance as 
     its view. */
 + (id) textField

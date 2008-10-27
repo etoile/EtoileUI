@@ -65,6 +65,7 @@
 + (id) buttonWithTitle: (NSString *)aTitle target: (id)aTarget action: (SEL)aSelector;
 + (id) radioButton;
 + (id) checkbox;
++ (id) labelWithTitle: (NSString *)aTitle;
 + (id) textField;
 + (id) searchField;
 + (id) textView;
