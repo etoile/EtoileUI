@@ -1,12 +1,11 @@
-================
 EtoileUI INSTALL
 ================
 
 Required software
 -----------------
 
-You need to have the GNUstep core libraries installed in order to
-compile and use EtoileExtensionsKit. The core packages are, at a minimum:
+You need to have the GNUstep core libraries installed in order to compile and 
+use EtoileUI. The core packages are, at a minimum:
 
    * gnustep-make
 
@@ -18,13 +17,24 @@ compile and use EtoileExtensionsKit. The core packages are, at a minimum:
 
    See <http://www.gnustep.org/> for further information.
 
+Finally you need from Etoile itself:
+
+   * EtoileFoundation, which can be found in Etoile/Frameworks/EtoileFoundation
+
+This last dependency is automatically handled when EtoileUI is built by running
+'make' tool in Frameworks or any other parent directories.
+
 
 Build and Install
 -----------------
 
-   Steps to build:
+Square brackets "[ ]" are used to indicate optional parameters.
 
-   * make install
+   Steps to build (use gmake on non-GNU systems):
+
+   * make
+
+   * [sudo [-E]] make install
 
 
 Trouble

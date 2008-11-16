@@ -1,6 +1,37 @@
-========
 EtoileUI
 ========
 
-This framework contains various Étoilé related extensions.
+:Maintainer: Quentin Mathe <qmathe@club-internet.fr>
+:Authors: Quentin Mathe, Uli Kusterer
+:License: Modified BSD License
+:Version: 0.4
 
+*EtoileUI* is also available as an early preview release and shouldn't be considered stable. EtoileUI is a high-level OOUI toolkit that provides a uniform tree representation for graphical objects on top of the AppKit. All User Interface concerns such as layouts, event handlers, styles, model objects etc. intends to be implemented as pluggable aspects. It also shares the same interfaces as other CoreObject systems. The combination of these three key features makes possible to inspect and reshape both User Interface and model objects at runtime through direct manipulation. It comes with a library of layouts where each one encapsulate a custom and pluggable UI presentation.
+
+
+Build and Install
+-----------------
+
+Read INSTALL document.
+
+
+Mac OS X support
+----------------
+
+EtoileUI is supported on Mac OS X, some parts rely on GNUstep private API or the GNU runtime and they might be less well implemented on Mac OS X.
+An Xcode project is bundled to build both EtoileFoundation and EtoileUI on Mac OS X. This project can also be used to build all the EtoileUI examples.
+
+
+Developer Notes
+===============
+
+Tests suite
+-----------
+
+UnitKit (bundled with Etoile) is required.
+
+    Steps to produce a test bundle and run tests suite:
+
+    * make test=yes 
+
+    * ukrun

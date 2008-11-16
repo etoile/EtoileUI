@@ -1,10 +1,7 @@
-/*** 
- * EtoileUI is provided under the terms of BSD modified license.
- ***/
+EtoileUI License
+================
 
-/** BSD modified license ***/
-/**
-Copyright (c) 2007, Quentin Mathe
+Copyright (c) 2007-2008, Quentin Mathe
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -33,4 +30,3 @@ AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
 OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT
 OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
 SUCH DAMAGE.
-**/
