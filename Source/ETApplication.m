@@ -259,7 +259,7 @@
 	id target = [super targetForAction: anAction];
 	Class persistencyControllerClass = NSClassFromString(@"ETPersistencyController");
 
-	if ([[persistencyControllerClass sharedInstance] respondsToSelector: anAction])
+	if (target == nil && [[persistencyControllerClass sharedInstance] respondsToSelector: anAction])
 		target = [persistencyControllerClass sharedInstance]; 
 
 	return target;
