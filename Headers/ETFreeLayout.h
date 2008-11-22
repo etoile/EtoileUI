@@ -41,7 +41,8 @@
 
 @interface ETFreeLayout : ETLayout
 {
-
+	id _dragItem;
+	NSPoint _dragStartOffsetFromOrigin;
 }
 
 - (void) resetItemLocationsWithLayout: (ETLayout *)layout;

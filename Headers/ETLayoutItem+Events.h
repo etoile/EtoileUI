@@ -53,7 +53,12 @@
 /* Event Handling */
 
 - (void) mouseDown: (ETEvent *)event on: (id)item;
+- (void) mouseUp: (ETEvent *)event on: (id)item;
 - (void) mouseDragged: (ETEvent *)event on: (id)item;
+
+- (void) handleMouseDown: (ETEvent *)event forItem: (id)item layout: (id)layout;
+- (void) handleClick: (ETEvent *)event forItem: (id)item layout: (id)layout;
+
 
 /* Pick and Drop Filtering */
 

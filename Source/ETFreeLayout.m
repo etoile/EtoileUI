@@ -133,6 +133,24 @@
 	}
 }
 
+- (ETLayoutItem *) itemAtLocation: (NSPoint)location
+{
+	ETLayoutItem *item = [super itemAtLocation: location];
+	if (item != nil)
+	{
+		return item;
+	}
+
+	/* If the layout context is an ETLayoutItemGroup, (the "backdrop" of the layout)
+	  return that. */
+	if ([(NSObject*)[self layoutContext] isKindOfClass: [ETLayoutItemGroup class]])
+	{
+		return (ETLayoutItem *)[self layoutContext];
+	}
+
+	return nil;
+}
+
 #if 0
 - (void) renderWithLayoutItems: (NSArray *)items isNewContent: (BOOL)isNewContent
 {
@@ -194,4 +212,30 @@
 	[[[self container] source] container: container setLocation: vectorLoc forItem: item];
 }
 #endif
+
+- (void) handleMouseDown: (ETEvent *)event forItem: (id)item layout: (id)layout
+{
+	//NSLog(@"ETFreeLayout handleMouseDown: %@ forItem %@ layout %@", event, item, layout);
+	_dragItem = item;
+	_dragStartOffsetFromOrigin = [[self container] convertPoint: [event locationInWindow] fromView: nil];
+	NSPoint origin = [item origin];
+	_dragStartOffsetFromOrigin.x -= origin.x;
+	_dragStartOffsetFromOrigin.y -= origin.y;
+}
+
+- (void) handleDrag: (ETEvent *)event forItem: (id)item layout: (id)layout
+{
+	if (_dragItem == nil || _dragItem == [self layoutContext])
+	{
+		return;
+	}
+
+	NSPoint newOrigin = [[self container] convertPoint: [event locationInWindow] fromView: nil];
+	newOrigin.x -= _dragStartOffsetFromOrigin.x;
+	newOrigin.y -= _dragStartOffsetFromOrigin.y;
+	[_dragItem setOrigin: newOrigin];
+
+	[[self container] updateLayout];
+}
+
 @end

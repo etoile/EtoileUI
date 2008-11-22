@@ -159,6 +159,19 @@
 	}
 }
 
+- (void) mouseUp: (ETEvent *)event on: (id)item;
+{	
+	if ([self hasValidRepresentedPathBase])
+	{
+		// ?
+	}
+	else
+	{
+		[[self parentLayoutItem] mouseUp: event on: item];
+	}
+}
+
+
 /** This method is short-circuited by view-based layouts that come with their
 	own drag and drop implementation. For example ETTableLayout handles the drag
 	directly by catching the event, calling -[ETLayoutItem handleDrag:forItem:] 
@@ -187,6 +200,30 @@
 	else
 	{
 		[[self parentLayoutItem] mouseDragged: event on: item];
+	}
+}
+
+- (void) handleMouseDown: (ETEvent *)event forItem: (id)item layout: (id)layout
+{
+	if (layout != nil && [layout respondsToSelector: @selector(handleMouseDown:forItem:layout:)])
+	{
+		[layout handleMouseDown: event forItem: item layout: layout];
+	}
+	else
+	{
+		// ?
+	}
+}
+
+- (void) handleClick: (ETEvent *)event forItem: (id)item layout: (id)layout
+{
+	if (layout != nil && [layout respondsToSelector: @selector(handleClick:forItem:layout:)])
+	{
+		[layout handleClick: event forItem: item layout: layout];
+	}
+	else
+	{
+		// ?
 	}
 }
 

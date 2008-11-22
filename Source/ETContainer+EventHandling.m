@@ -61,6 +61,15 @@
    typically used when -allowsInternalDragging: returns YES. */
 @implementation ETContainer (ETContainerDraggingSupport)
 
+- (void) mouseUp: (NSEvent *)event
+{
+	ETDebugLog(@"Mouse up in %@", self);
+	
+	id item = [self itemForEvent: event];
+
+	[item mouseUp: ETEVENT(event, nil, 0) on: item];
+}
+
 - (void) mouseDown: (NSEvent *)event
 {
 	ETDebugLog(@"Mouse down in %@", self);
@@ -111,6 +120,8 @@
 	/* Handle possible double click */
 	if ([event clickCount] > 1) 
 		[self mouseDoubleClick: event item: newlyClickedItem];
+
+	[newlyClickedItem handleMouseDown: ETEVENT(event, nil, 0) forItem: newlyClickedItem layout: [self layout]];
 }
 
 - (void) mouseDoubleClick: (NSEvent *)event item: (ETLayoutItem *)item
