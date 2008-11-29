@@ -100,7 +100,7 @@
 - (id) newObject;
 - (id) newGroup;
 - (void) add: (id)sender;
-- (void) addGroup: (id)sender;
+- (BOOL) addGroup: (id)sender;
 - (void) insert: (id)sender;
 - (void) insertGroup: (id)sender;
 - (void) remove: (id)sender;

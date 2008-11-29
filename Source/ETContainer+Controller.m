@@ -188,9 +188,10 @@
 }
 
 /** Creates a new object group by calling -newGroup and adds it to the content. */
-- (void) addGroup: (id)sender
+- (BOOL) addGroup: (id)sender
 {
 	[[self content] addObject: [self newGroup]];
+	return YES;
 }
 
 /** Creates a new object by calling -newGroup and inserts it to the content at 
