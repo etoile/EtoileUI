@@ -128,68 +128,6 @@
 	return nil;
 }
 
-#if 0
-- (void) renderWithLayoutItems: (NSArray *)items isNewContent: (BOOL)isNewContent
-{
-	/* Prevent reentrancy. In a threaded environment, it isn't perfectly safe 
-	   because _isLayouting test and _isLayouting assignement doesn't occur in
-	   an atomic way. */
-	if (_isLayouting)
-	{
-		NSLog(@"WARNING: Trying to reenter -renderWithLayoutItems:isNewContent: when the layout is already getting updated.");
-		return;
-	}
-	else
-	{
-		_isLayouting = YES;
-	}
-	
-	ETDebugLog(@"Render layout items: %@", items);
-	
-	float scale = [[self container] itemScaleFactor];
-	
-	ETVector *vectorLoc = [self container: container locationForItem: item];
-	
-	[self resizeLayoutItems: items toScaleFactor: scale];
-	
-	// TODO: May be worth to optimize by computing set intersection of visible and unvisible layout items
-	// NSLog(@"Remove views %@ of next layout items to be displayed from their superview", itemViews);
-	[[self layoutContext] setVisibleItems: [NSArray array]];
-	
-	/* Adjust container size when it is embedded in a scroll view */
-	if ([[self container] isScrollViewShown])
-	{
-		// NOTE: For this assertion check -[ETContainer setScrollView:] 
-		NSAssert([self isContentSizeLayout] == YES, 
-			@"Any layout done in a scroll view must be based on content size");
-		
-		[[self container] setFrameSize: [self layoutSize]];
-		ETDebugLog(@"Layout size is %@ with container size %@ and clip view size %@", 
-			NSStringFromSize([self layoutSize]), 
-			NSStringFromSize([[self container] frame].size), 
-			NSStringFromSize([[[self container] scrollView] contentSize]));
-	}
-	
-	NSMutableArray *visibleItems = items;
-	
-	[[self layoutContext] setVisibleItems: visibleItems];
-	
-	_isLayouting = NO;	
-}
-
-/* Overriden method to delegate it to the container data source. */
-- (ETVector *) container: (ETContainer *)container locationForItem: (ETLayoutItem *)item
-{
-	return [[[self container] source] container: container locationForItem: item];
-}
-
-/* Overriden method to delegate it to the container data source. */
-- (void) container: (ETContainer *)container setLocation: (ETVector *)vectorLoc forItem: (ETLayoutItem *)item
-{
-	[[[self container] source] container: container setLocation: vectorLoc forItem: item];
-}
-#endif
-
 - (void) handleMouseDown: (ETEvent *)event forItem: (id)item layout: (id)layout
 {
 	//NSLog(@"ETFreeLayout handleMouseDown: %@ forItem %@ layout %@", event, item, layout);
@@ -216,3 +154,40 @@
 }
 
 @end
+
+// TODO: If we want to allow the source to handle the item locations manually,
+// the following methods have to be added back to ETFreeLayout. Take note 
+// that vectorLoc could be an NSPoint initially. The benefit of using a vector 
+// would be simplify the support of a 2.5D behavior (simulating 3D with 2D 
+// transforms).
+// I'm not yet sure that's the best way to let the developer implement 
+// positional constraint. May be this could be implemented in a 'positional 
+// constraint layer/handler' that the developer sets on its ETFreeLayout 
+// instance, this might be better if the contraint logic tends to be large. By 
+// doing so, we could eventually provide more ready-to-use logic that simplifies 
+// the developer task.
+// For 2.5D or 3D, we could add more properties to ETLayoutItem in CoreAnimation 
+// spirit. For example, a zPosition property and a orientationVector property. 
+// Think more about that...
+// Implementing these methods also mean to uncomment them in ETContainer.h.
+// -container:locationForItem: should be called in -itemAtLocation:. If no
+// source exists, -itemAtLocation must run exactly as it is now and requests the 
+// item location to super.
+// -container:setLocation:forItem: should be called in 
+// -handleDrop:forItem:layout: or similar.
+// -container:acceptLocation:forItem: may be needed in 
+// -handleDrag:forItem:layout: to give feedback about positional constraints to 
+// the user.
+#if 0
+/* Overriden method to delegate it to the container data source. */
+- (ETVector *) container: (ETContainer *)container locationForItem: (ETLayoutItem *)item
+{
+	return [[[self container] source] container: container locationForItem: item];
+}
+
+/* Overriden method to delegate it to the container data source. */
+- (void) container: (ETContainer *)container setLocation: (ETVector *)vectorLoc forItem: (ETLayoutItem *)item
+{
+	[[[self container] source] container: container setLocation: vectorLoc forItem: item];
+}
+#endif
