@@ -35,9 +35,12 @@
 	THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#import <EtoileFoundation/Macros.h>
 #import <EtoileUI/ETFreeLayout.h>
+#import <EtoileUI/ETComputedLayout.h>
 #import <EtoileUI/ETContainer.h>
 #import <EtoileUI/ETLayoutItem.h>
+#import <EtoileUI/NSView+Etoile.h>
 #import <EtoileUI/ETCompatibility.h>
 
 @implementation ETFreeLayout
@@ -66,7 +69,7 @@
 	return NO;
 }
 
-- (void) resetItemLocationsWithLayout: (ETLayout *)layout
+- (void) resetItemLocationsWithLayout: (ETComputedLayout *)layout
 {
 	RETAIN(self);
 	[[self container] setLayout: layout];
@@ -77,56 +80,30 @@
 
 - (void) renderWithLayoutItems: (NSArray *)items isNewContent: (BOOL)isNewContent
 {	
-	//ETDebugLog(@"Render layout items: %@", items);
+	/* Frame must be set to persistent frame before -resizeItems:toScale: is 
+	   called by -renderWithLayoutItems:isNewContent:, otherwise the scaling 
+	   is computed based on the frame computed by the last layout in use which 
+	   may not be ETFreeLayout (when switching from another layout). */
+	[self loadPersistentFramesForItems: items];
 	
-	NSArray *layoutModel = nil;
-	float scale = [[self layoutContext] itemScaleFactor];
-	
-	[self resizeLayoutItems: items toScaleFactor: scale];
-	
-	layoutModel = [self layoutModelForLayoutItems: items];
-	/* Now computes the location of every views by relying on the line by line 
-	   decomposition already made. */
-	[self computeLayoutItemLocationsForLayoutModel: layoutModel];
+	[super renderWithLayoutItems: items isNewContent: isNewContent];
 	
 	// TODO: May be worth to optimize by computing set intersection of visible and unvisible layout items
 	// NSLog(@"Remove views %@ of next layout items to be displayed from their superview", itemViews);
-	[[self layoutContext] setVisibleItems: [NSArray array]];
-	
-	/* Adjust container size when it is embedded in a scroll view */
-	if ([[self layoutContext] isScrollViewShown])
-	{
-		// NOTE: For this assertion check -[ETContainer setScrollView:] 
-		NSAssert([self isContentSizeLayout] == YES, 
-			@"Any layout done in a scroll view must be based on content size");
-			
-		[[self layoutContext] setContentSize: [self layoutSize]];
-		/*ETDebugLog(@"Layout size is %@ with container size %@ and clip view size %@", 
-			NSStringFromSize([self layoutSize]), 
-			NSStringFromSize([[self layoutContext] size]), 
-			NSStringFromSize([[self layoutContext] visibleContentSize]));*/
-	}
+	//[[self layoutContext] setVisibleItems: [NSArray array]];
 	
 	[[self layoutContext] setVisibleItems: items];
 }
 
-- (NSArray *) layoutModelForLayoutItems: (NSArray *)items
+- (void) loadPersistentFramesForItems: (NSArray *)items
 {
-	return [NSArray arrayWithArray: items];
-}
-
-- (void) computeLayoutItemLocationsForLayoutModel: (NSArray *)layoutModel
-{
-	NSEnumerator *e = [layoutModel objectEnumerator];
-	id item = nil;
-	
-	while ((item = [e nextObject]) != nil)
+	FOREACH(items, item, ETLayoutItem *)
 	{
 		if ([item valueForProperty: @"kPersistentFrame"])
 		{
 			[item setFrame: [item persistentFrame]];
 		}
-		else
+		else /* First time persistent frame is accessed, initialize it */
 		{
 			[item setPersistentFrame: [item frame]];
 		}

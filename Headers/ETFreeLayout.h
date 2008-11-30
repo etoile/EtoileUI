@@ -38,6 +38,8 @@
 #import <AppKit/AppKit.h>
 #import <EtoileUI/ETLayout.h>
 
+@class ETComputedLayout;
+
 
 @interface ETFreeLayout : ETLayout
 {
@@ -45,10 +47,7 @@
 	NSPoint _dragStartOffsetFromOrigin;
 }
 
-- (void) resetItemLocationsWithLayout: (ETLayout *)layout;
-
-// TODO: Remove
-- (NSArray *) layoutModelForLayoutItems: (NSArray *)items;
-- (void) computeLayoutItemLocationsForLayoutModel: (NSArray *)layoutModel;
+- (void) resetItemLocationsWithLayout: (ETComputedLayout *)layout;
+- (void) loadPersistentFramesForItems: (NSArray *)items;
 
 @end
