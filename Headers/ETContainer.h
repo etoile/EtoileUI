@@ -151,21 +151,6 @@
 - (void) setHasHorizontalScroller: (BOOL)scroll;
 - (NSScrollView *) scrollView;
 
-/* Layout Item Tree */
-
-- (void) addItem: (ETLayoutItem *)item;
-- (void) insertItem: (ETLayoutItem *)item atIndex: (int)index;
-- (void) removeItem: (ETLayoutItem *)item;
-- (void) removeItemAtIndex: (int)index;
-- (ETLayoutItem *) itemAtIndex: (int)index;
-- (int) indexOfItem: (ETLayoutItem *)item;
-- (BOOL) containsItem: (ETLayoutItem *)item;
-- (int) numberOfItems;
-- (NSArray *) items;
-- (void) addItems: (NSArray *)items;
-- (void) removeItems: (NSArray *)items;
-- (void) removeAllItems;
-
 /* Selection */
 
 - (NSArray *) selectedItemsInLayout;
@@ -342,3 +327,25 @@
 
 extern NSString *ETContainerSelectionDidChangeNotification;
 extern NSString *ETLayoutItemPboardType;
+
+
+/* Deprecated (DO NOT USE, WILL BE REMOVED LATER) */
+
+@interface ETContainer (Deprecated)
+
+/* Layout Item Tree */
+
+- (void) addItem: (ETLayoutItem *)item;
+- (void) insertItem: (ETLayoutItem *)item atIndex: (int)index;
+- (void) removeItem: (ETLayoutItem *)item;
+- (void) removeItemAtIndex: (int)index;
+- (ETLayoutItem *) itemAtIndex: (int)index;
+- (int) indexOfItem: (ETLayoutItem *)item;
+- (BOOL) containsItem: (ETLayoutItem *)item;
+- (int) numberOfItems;
+- (NSArray *) items;
+- (void) addItems: (NSArray *)items;
+- (void) removeItems: (NSArray *)items;
+- (void) removeAllItems;
+
+@end

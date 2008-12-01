@@ -1094,80 +1094,6 @@ NSString *ETLayoutItemPboardType = @"ETLayoutItemPboardType"; // FIXME: replace 
 }
 */
 
-/*  Manipulating Layout Item Tree */
-
-/** See -[ETLayoutItemGroup addItem:] */
-- (void) addItem: (ETLayoutItem *)item
-{
-	[(ETLayoutItemGroup *)[self layoutItem] addItem: item];
-}
-
-/** See -[ETLayoutItemGroup insertItem:atIndex:] */
-- (void) insertItem: (ETLayoutItem *)item atIndex: (int)index
-{
-	[(ETLayoutItemGroup *)[self layoutItem] insertItem: item atIndex: index];
-}
-
-/** See -[ETLayoutItemGroup removeItem:] */
-- (void) removeItem: (ETLayoutItem *)item
-{
-	[(ETLayoutItemGroup *)[self layoutItem] removeItem: item];
-}
-
-/** See -[ETLayoutItemGroup removeItem:atIndex:] */
-- (void) removeItemAtIndex: (int)index
-{
-	[(ETLayoutItemGroup *)[self layoutItem] removeItemAtIndex: index];
-}
-
-/** See -[ETLayoutItemGroup itemAtIndex:] */
-- (ETLayoutItem *) itemAtIndex: (int)index
-{
-	return [(ETLayoutItemGroup *)[self layoutItem] itemAtIndex: index];
-}
-
-/** See -[ETLayoutItemGroup addItems:] */
-- (void) addItems: (NSArray *)items
-{
-	[(ETLayoutItemGroup *)[self layoutItem] addItems: items];
-}
-
-/** See -[ETLayoutItemGroup removeItems] */
-- (void) removeItems: (NSArray *)items
-{
-	[(ETLayoutItemGroup *)[self layoutItem] removeItems: items];
-}
-
-/** See -[ETLayoutItemGroup removeAllItems] */
-- (void) removeAllItems
-{
-	[(ETLayoutItemGroup *)[self layoutItem] removeAllItems];
-}
-
-/** See -[ETLayoutItemGroup indexOfItem:] */
-- (int) indexOfItem: (ETLayoutItem *)item
-{
-	return [(ETLayoutItemGroup *)[self layoutItem] indexOfItem: item];
-}
-
-/** See -[ETLayoutItemGroup containsItem:] */
-- (BOOL) containsItem: (ETLayoutItem *)item
-{
-	return [(ETLayoutItemGroup *)[self layoutItem] containsItem: item];
-}
-
-/** See -[ETLayoutItemGroup numberOfItems] */
-- (int) numberOfItems
-{
-	return [(ETLayoutItemGroup *)[self layoutItem] numberOfItems];
-}
-
-/** See -[ETLayoutItemGroup items] */
-- (NSArray *) items
-{
-	return [(ETLayoutItemGroup *)[self layoutItem] items];
-}
-
 /* Selection */
 
 /** See -[ETLayoutItemGroup selectedItemsInLayout] */
@@ -1642,6 +1568,87 @@ NSString *ETLayoutItemPboardType = @"ETLayoutItemPboardType"; // FIXME: replace 
 }
 
 @end
+
+/* Deprecated (DO NOT USE, WILL BE REMOVED LATER) */
+
+@implementation ETContainer (Deprecated)
+
+/*  Manipulating Layout Item Tree */
+
+/** See -[ETLayoutItemGroup addItem:] */
+- (void) addItem: (ETLayoutItem *)item
+{
+	[(ETLayoutItemGroup *)[self layoutItem] addItem: item];
+}
+
+/** See -[ETLayoutItemGroup insertItem:atIndex:] */
+- (void) insertItem: (ETLayoutItem *)item atIndex: (int)index
+{
+	[(ETLayoutItemGroup *)[self layoutItem] insertItem: item atIndex: index];
+}
+
+/** See -[ETLayoutItemGroup removeItem:] */
+- (void) removeItem: (ETLayoutItem *)item
+{
+	[(ETLayoutItemGroup *)[self layoutItem] removeItem: item];
+}
+
+/** See -[ETLayoutItemGroup removeItem:atIndex:] */
+- (void) removeItemAtIndex: (int)index
+{
+	[(ETLayoutItemGroup *)[self layoutItem] removeItemAtIndex: index];
+}
+
+/** See -[ETLayoutItemGroup itemAtIndex:] */
+- (ETLayoutItem *) itemAtIndex: (int)index
+{
+	return [(ETLayoutItemGroup *)[self layoutItem] itemAtIndex: index];
+}
+
+/** See -[ETLayoutItemGroup addItems:] */
+- (void) addItems: (NSArray *)items
+{
+	[(ETLayoutItemGroup *)[self layoutItem] addItems: items];
+}
+
+/** See -[ETLayoutItemGroup removeItems] */
+- (void) removeItems: (NSArray *)items
+{
+	[(ETLayoutItemGroup *)[self layoutItem] removeItems: items];
+}
+
+/** See -[ETLayoutItemGroup removeAllItems] */
+- (void) removeAllItems
+{
+	[(ETLayoutItemGroup *)[self layoutItem] removeAllItems];
+}
+
+/** See -[ETLayoutItemGroup indexOfItem:] */
+- (int) indexOfItem: (ETLayoutItem *)item
+{
+	return [(ETLayoutItemGroup *)[self layoutItem] indexOfItem: item];
+}
+
+/** See -[ETLayoutItemGroup containsItem:] */
+- (BOOL) containsItem: (ETLayoutItem *)item
+{
+	return [(ETLayoutItemGroup *)[self layoutItem] containsItem: item];
+}
+
+/** See -[ETLayoutItemGroup numberOfItems] */
+- (int) numberOfItems
+{
+	return [(ETLayoutItemGroup *)[self layoutItem] numberOfItems];
+}
+
+/** See -[ETLayoutItemGroup items] */
+- (NSArray *) items
+{
+	return [(ETLayoutItemGroup *)[self layoutItem] items];
+}
+
+@end
+
 
 /* Selection Caching Code (not used currently) */
 
