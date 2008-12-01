@@ -51,7 +51,7 @@
 	ETPickboard, ETEvent;
 
 
-@interface ETContainer : ETView <ETObjectInspection, ETCollection, ETCollectionMutation> //ETLayoutingContext
+@interface ETContainer : ETView <ETObjectInspection>
 {
 	ETLayoutItem *_scrollViewDecorator;
 	BOOL _scrollViewShown;
