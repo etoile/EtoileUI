@@ -227,14 +227,6 @@
 /*- (float) itemRotationAngle;
 - (void) setItemRotationAngle: (float)factor;*/
 
-/* Layers */
-
-- (void) addLayer: (ETLayoutItem *)item;
-- (void) insertLayer: (ETLayoutItem *)item atIndex: (int)layerIndex;
-- (void) insertLayer: (ETLayoutItem *)item atZIndex: (int)z;
-- (void) removeLayer: (ETLayoutItem *)item;
-- (void) removeLayerAtIndex: (int)layerIndex;
-
 /* Rendering Chain */
 
 - (void) render;

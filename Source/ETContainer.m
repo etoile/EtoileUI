@@ -74,7 +74,6 @@ NSString *ETLayoutItemPboardType = @"ETLayoutItemPboardType"; // FIXME: replace 
 - (ETLayoutItem *) cachedScrollViewDecoratorItem;
 - (ETLayoutItem *) createScrollViewDecoratorItem;
 - (BOOL) doesSelectionContainsPoint: (NSPoint)point;
-- (void) fixOwnerIfNeededForItem: (ETLayoutItem *)item;
 @end
 
 
@@ -1394,80 +1393,6 @@ NSString *ETLayoutItemPboardType = @"ETLayoutItemPboardType"; // FIXME: replace 
 - (IBAction) cut: (id)sender
 {
 	[[[self layoutItem] eventHandler] cut: sender];
-}
-
-/* Layers */
-
-- (void) fixOwnerIfNeededForItem: (ETLayoutItem *)item
-{
-	/* Check the item to be now embedded in a new container (owned by the new 
-	   layer) isn't already owned by current container */
-	if ([[self items] containsObject: item])
-		[self removeItem: item];
-}
-
-- (void) addLayer: (ETLayoutItem *)item
-{
-	ETLayer *layer = [ETLayoutItem layerWithLayoutItem: item];
-	
-	/* Insert layer on top of the layout item stack */
-	if (layer != nil)
-		[self addItem: (ETLayoutItem *)layer];
-}
-
-- (void) insertLayer: (ETLayoutItem *)item atIndex: (int)layerIndex
-{
-	[self fixOwnerIfNeededForItem: item];
-	
-	ETLayer *layer = [ETLayoutItem layerWithLayoutItem: item];
-	
-	// FIXME: the insertion code is truly unefficient, it could prove to be
-	// a bottleneck when we have few hundreds of layout items.
-	if (layer != nil)
-	{
-		NSArray *layers = nil;
-		ETLayer *layerToMoveUp = nil;
-		int realIndex = 0;
-		
-		/*
-		           _layoutItems            by index (or z order)
-		     
-		               *****  <-- layer 2      4  <-- higher
-		   item          -                     3
-		   item          -                     2
-		               *****  <-- layer 1      1
-		   item          -                     0  <-- lower visual element (background)
-		   
-		   Take note that layout items embedded inside a layer have a 
-		   distinct z order. Rendering isn't impacted by this point.
-		   
-		  */
-		
-		/* Retrieve layers spread in _layoutItems */
-		layers = [[self items] objectsMatchingValue: [ETLayer class] forKey: @"class"];
-		/* Find the layer to be replaced in layers array */
-		layerToMoveUp = [layers objectAtIndex: layerIndex];
-		/* Retrieve the index in layoutItems array for this particular layer */
-		realIndex = [self indexOfItem: layerToMoveUp];
-		
-		/* Insertion will move replaced layer at index + 1 (to top) */
-		[self insertItem: layer atIndex: realIndex];
-	}
-}
-
-- (void) insertLayer: (ETLayoutItem *)item atZIndex: (int)z
-{
-
-}
-
-- (void) removeLayer: (ETLayoutItem *)item
-{
-
-}
-
-- (void) removeLayerAtIndex: (int)layerIndex
-{
-
 }
 
 /* Grouping and Stacking */
