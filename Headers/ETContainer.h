@@ -227,16 +227,6 @@
 - (BOOL) isHitTestEnabled;
 - (void) setEnablesHitTest: (BOOL)hit;
 
-/* Collection Protocol */
-
-- (BOOL) isOrdered;
-- (BOOL) isEmpty;
-- (id) content;
-- (NSArray *) contentArray;
-- (void) addObject: (id)object;
-- (void) insertObject: (id)object atIndex: (unsigned int)index;
-- (void) removeObject: (id)object;
-
 /* Private Use */
 
 - (void) didChangeDecoratorOfItem: (ETLayoutItem *)item;

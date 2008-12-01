@@ -45,7 +45,7 @@
 
 - (id) content
 {
-	return self;
+	return [self layoutItem];
 }
 
 /** Returns the template item used to create leaf items. This template item

@@ -1530,44 +1530,8 @@ NSString *ETLayoutItemPboardType = @"ETLayoutItemPboardType"; // FIXME: replace 
 		[self updateLayout];
 }
 
-/* Collection Protocol */
-
-- (BOOL) isOrdered
-{
-	return [(ETLayoutItemGroup *)[self layoutItem] isOrdered];
-}
-
-- (BOOL) isEmpty
-{
-	return [(ETLayoutItemGroup *)[self layoutItem] isEmpty];
-}
-
-- (id) content
-{
-	return [(ETLayoutItemGroup *)[self layoutItem] content];
-}
-
-- (NSArray *) contentArray
-{
-	return [(ETLayoutItemGroup *)[self layoutItem] contentArray];
-}
-
-- (void) addObject: (id)object
-{
-	[(ETLayoutItemGroup *)[self layoutItem] addObject: object];
-}
-
-- (void) insertObject: (id)object atIndex: (unsigned int)index
-{
-	[(ETLayoutItemGroup *)[self layoutItem] insertObject: object atIndex: index];
-}
-
-- (void) removeObject: (id)object
-{
-	[(ETLayoutItemGroup *)[self layoutItem] removeObject: object];
-}
-
 @end
+
 
 /* Deprecated (DO NOT USE, WILL BE REMOVED LATER) */
 
