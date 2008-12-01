@@ -47,24 +47,27 @@
 	 * A container based on table layout
 	 */
 
-	[tableContainer setLayout: [ETTableLayout layout]];
+	ETLayoutItemGroup *tableItem = [tableContainer layoutItem];
+
+	[tableItem setLayout: [ETTableLayout layout]];
 	
-	[[tableContainer layout] setDisplayedProperties: [NSArray arrayWithObject: @"displayName"]];
+	[[tableItem layout] setDisplayedProperties: [NSArray arrayWithObject: @"displayName"]];
+	// FIXME: Should be... [tableItem setRepresentedPathBase: @"/"];
 	[tableContainer setRepresentedPath: @"/"];
 	
-	[tableContainer addItem: [ETLayoutItem itemWithValue: @"Red"]];
-	[tableContainer addItem: [ETLayoutItem itemWithValue: @"Green"]];
+	[tableItem addItem: [ETLayoutItem itemWithValue: @"Red"]];
+	[tableItem addItem: [ETLayoutItem itemWithValue: @"Green"]];
 	/* Illustrate autoboxing of objects into layout items */
-	[tableContainer addObject: @"Blue"];
-	[tableContainer addObject: [NSNumber numberWithInt: 3]];
+	[tableItem addObject: @"Blue"];
+	[tableItem addObject: [NSNumber numberWithInt: 3]];
 	/* Value will be image object description */
-	[tableContainer addObject: [NSImage imageNamed: @"NSApplication"]];
+	[tableItem addObject: [NSImage imageNamed: @"NSApplication"]];
 	
 	/*
 	 * A container using a two columns table layout
 	 */
 	 
-	ETLayoutItem *item = nil;
+	ETLayoutItemGroup *tableItem2 = [tableContainer2 layoutItem];
 	ETTableLayout *tableLayout2 = [ETTableLayout layout];
 	NSArray *visibleColumnIds = [NSArray arrayWithObjects: @"displayName", @"intensity", nil];
 	
@@ -74,25 +77,27 @@
 	[tableLayout2 setStyle: AUTORELEASE([[NSSliderCell alloc] init])
 	           forProperty: @"intensity"];
 	[tableLayout2 setDisplayedProperties: visibleColumnIds];
-	[tableContainer2 setLayout: tableLayout2];
+
+	[tableItem2 setLayout: tableLayout2];
+	// FIXME: Should be... [tableItem2 setRepresentedPathBase: @"/"];
 	[tableContainer2 setRepresentedPath: @"/"];
 
 #define NUMBER(x) [NSNumber numberWithInt: x]
 
-	item = [ETLayoutItem layoutItem];
+	ETLayoutItem *item = [ETLayoutItem layoutItem];
 	[item setValue: @"Red" forProperty: @"name"];
 	[item setValue: NUMBER(10) forProperty: @"intensity"];	
-	[tableContainer2 addItem: item];
+	[tableItem2 addItem: item];
 	
 	item = [ETLayoutItem layoutItem];
 	[item setValue: @"Green" forProperty: @"name"];
 	[item setValue: NUMBER(100) forProperty: @"intensity"];
-	[tableContainer2 addItem: item];
+	[tableItem2 addItem: item];
 
 	item = [ETLayoutItem layoutItem];
 	[item setValue: @"Blue" forProperty: @"name"];
 	[item setValue: NUMBER(0) forProperty: @"intensity"];	
-	[tableContainer2 addItem: item];
+	[tableItem2 addItem: item];
 	
 	[[ETPickboard localPickboard] showPickPalette];
 }
@@ -105,25 +110,28 @@
 	 */
 
 	ETContainer *outlineContainer = [[ETContainer alloc] initWithLayoutView: outlineView];
+	ETLayoutItemGroup *outlineItem = [outlineContainer layoutItem];
 	NSImage *icon = [NSImage imageNamed: @"NSApplicationIcon"];
 	
-	[[outlineContainer layout] setStyle: AUTORELEASE([[NSImageCell alloc] init])
+	[[outlineItem layout] setStyle: AUTORELEASE([[NSImageCell alloc] init])
 	                        forProperty: @""];
-	[outlineContainer setRepresentedPath: @"/"]; /* Mandatory to handle drop */
+	// FIXME: Should be... [outlineItem setRepresentedPathBase: @"/"]; /* Mandatory to handle drop */
+	[outlineContainer setRepresentedPath: @"/"];
 
-	/* This line is optional and simply avoids to update outlineContainer on 
+	/* This line is optional and simply avoids to update outlineItem on 
 	   each -addItem: call */
-	[outlineContainer setAutolayout: NO];
-	id itemGroup = [ETLayoutItem itemGroupWithValue: icon];
+	[outlineItem setAutolayout: NO];
+
+	ETLayoutItemGroup *itemGroup = [ETLayoutItem itemGroupWithValue: icon];
 
 	[itemGroup setValue: @"Icon!" forProperty: @"name"];
 	[itemGroup addItem: [ETLayoutItem itemWithValue: icon]];
 	[itemGroup addItem: [ETLayoutItem itemWithValue: icon]];
-	[outlineContainer addItem: itemGroup];
-	[outlineContainer addItem: [ETLayoutItem itemWithValue: icon]];
+	[outlineItem addItem: itemGroup];
+	[outlineItem addItem: [ETLayoutItem itemWithValue: icon]];
 	
-	[outlineContainer setAutolayout: YES];
-	[outlineContainer updateLayout];
+	[outlineItem setAutolayout: YES];
+	[outlineItem updateLayout];
 }
 
 @end
