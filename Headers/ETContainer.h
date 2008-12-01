@@ -112,17 +112,6 @@
 - (BOOL) isFlipped;
 - (void) setFlipped: (BOOL)flag;
 
-/* Layout */
-
-- (BOOL) isAutolayout;
-- (void) setAutolayout: (BOOL)flag;
-- (BOOL) canUpdateLayout;
-- (void) updateLayout;
-- (void) reloadAndUpdateLayout;
-
-- (ETLayout *) layout;
-- (void) setLayout: (ETLayout *)layout;
-
 - (NSView *) displayView;
 - (void) setDisplayView: (NSView *)view;
 
@@ -322,6 +311,17 @@ extern NSString *ETLayoutItemPboardType;
 /* Deprecated (DO NOT USE, WILL BE REMOVED LATER) */
 
 @interface ETContainer (Deprecated)
+
+/* Layout */
+
+- (BOOL) isAutolayout;
+- (void) setAutolayout: (BOOL)flag;
+- (BOOL) canUpdateLayout;
+- (void) updateLayout;
+- (void) reloadAndUpdateLayout;
+
+- (ETLayout *) layout;
+- (void) setLayout: (ETLayout *)layout;
 
 /* Layout Item Tree */
 

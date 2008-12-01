@@ -485,38 +485,6 @@ NSString *ETLayoutItemPboardType = @"ETLayoutItemPboardType"; // FIXME: replace 
 	_delegate = delegate;
 }
 
-/* Layout */
-
-/** See -[ETLayoutItemGroup isAutolayout] */
-- (BOOL) isAutolayout
-{
-	return [(ETLayoutItemGroup *)[self layoutItem] isAutolayout];
-}
-
-/** See -[ETLayoutItemGroup setAutolayout:] */
-- (void) setAutolayout: (BOOL)flag
-{
-	[(ETLayoutItemGroup *)[self layoutItem] setAutolayout: flag];
-}
-
-/** See -[ETLayoutItemGroup canUpdateLayout] */
-- (BOOL) canUpdateLayout
-{
-	return [(ETLayoutItemGroup *)[self layoutItem] canUpdateLayout];
-}
-
-/** See -[ETLayoutItemGroup updateLayout] */
-- (void) updateLayout
-{
-	[[self layoutItem] updateLayout];
-}
-
-/** See -[ETLayoutItemGroup reloadAndUpdateLayout] */
-- (void) reloadAndUpdateLayout
-{
-	[(ETLayoutItemGroup *)[self layoutItem] reloadAndUpdateLayout];
-}
-
 /** Returns 0 when source doesn't conform to any parts of ETContainerSource 
 	informal protocol.
     Returns 1 when source conform to protocol for flat collections and display 
@@ -567,18 +535,6 @@ NSString *ETLayoutItemPboardType = @"ETLayoutItemPboardType"; // FIXME: replace 
 			  @"ETContainerSource protocol.", [self source]);
 		return 0;
 	}
-}
-
-/** See -[ETLayoutItemGroup layout] */
-- (ETLayout *) layout
-{
-	return [(ETLayoutItemGroup *)[self layoutItem] layout];
-}
-
-/** See -[ETLayoutItemGroup setLayout] */
-- (void) setLayout: (ETLayout *)layout
-{
-	[(ETLayoutItemGroup *)[self layoutItem] setLayout: layout];
 }
 
 /* Private helper methods to sync display view and container */
@@ -1536,6 +1492,50 @@ NSString *ETLayoutItemPboardType = @"ETLayoutItemPboardType"; // FIXME: replace 
 /* Deprecated (DO NOT USE, WILL BE REMOVED LATER) */
 
 @implementation ETContainer (Deprecated)
+
+/* Layout */
+
+/** See -[ETLayoutItemGroup isAutolayout] */
+- (BOOL) isAutolayout
+{
+	return [(ETLayoutItemGroup *)[self layoutItem] isAutolayout];
+}
+
+/** See -[ETLayoutItemGroup setAutolayout:] */
+- (void) setAutolayout: (BOOL)flag
+{
+	[(ETLayoutItemGroup *)[self layoutItem] setAutolayout: flag];
+}
+
+/** See -[ETLayoutItemGroup canUpdateLayout] */
+- (BOOL) canUpdateLayout
+{
+	return [(ETLayoutItemGroup *)[self layoutItem] canUpdateLayout];
+}
+
+/** See -[ETLayoutItemGroup updateLayout] */
+- (void) updateLayout
+{
+	[[self layoutItem] updateLayout];
+}
+
+/** See -[ETLayoutItemGroup reloadAndUpdateLayout] */
+- (void) reloadAndUpdateLayout
+{
+	[(ETLayoutItemGroup *)[self layoutItem] reloadAndUpdateLayout];
+}
+
+/** See -[ETLayoutItemGroup layout] */
+- (ETLayout *) layout
+{
+	return [(ETLayoutItemGroup *)[self layoutItem] layout];
+}
+
+/** See -[ETLayoutItemGroup setLayout] */
+- (void) setLayout: (ETLayout *)layout
+{
+	[(ETLayoutItemGroup *)[self layoutItem] setLayout: layout];
+}
 
 /*  Manipulating Layout Item Tree */
 
