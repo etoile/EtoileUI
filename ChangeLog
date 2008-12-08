@@ -1,3 +1,13 @@
+2008-12-08  Quentin Mathe <qmathe@club-internet.fr>
+
+	New event handling model - part 1
+	* ETEvent:
+	Rewritten ETEvent to be a standalone event class that wraps backend events 
+	rather than an NSEvent subclass. NSEvent initializers don't expose all 
+	the initialization, so the subclass choice was troublesome.
+	* ETLayoutItem+Events (-beginDrag:forItem:image:layout:): Updated to pass a 
+	backend event to an AppKit drag related method.
+
 2008-09-04  Quentin Mathe <qmathe@club-internet.fr>
 
 	* ETLayout 

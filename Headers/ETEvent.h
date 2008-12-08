@@ -1,7 +1,8 @@
 /*
 	ETEvent.h
 	
-	NSEvent subclass providing additional support for pick and drop.
+	EtoileUI-native event class that represents events to be dispatched and 
+	handled in the layout item tree.
  
 	Copyright (C) 2007 Quentin Mathe
  
@@ -36,9 +37,16 @@
 #import <Foundation/Foundation.h>
 #import <AppKit/AppKit.h>
 
-#define ETEVENT(evt, drag, pick) [ETEvent eventWithEvent: evt pickingMask: pick draggingInfo: drag]
+@class ETLayoutItem;
 
-// NOTE: May be we should have distinct picking and dropping mask.
+// WARNING: Very unstable API.
+
+/** Shorcut to convert a backend event into a native EtoileUI event. */
+#define ETEVENT(evt, drag, pick) [ETEvent eventWithBackendEvent: (void *)evt type: [evt type] pickingMask: pick draggingInfo: drag layoutItem: nil]
+
+/** These constants allows to encode the pick and drop combinations that 
+characterize drag/drop vs copy/cut/paste in EtoileUI. Read -setPickingMask: for 
+the details. */
 enum {
 	ETNonePickingMask = 0,
 	ETPickPickingMask = 2,
@@ -47,24 +55,67 @@ enum {
 	ETDragPickingMask = 16,
 	ETDropPickingMask = 32,
 	ETPastePickingMask = 64
+// NOTE: May be we should have distinct picking and dropping mask.
 };
 
-@interface ETEvent : NSEvent //<NSDraggingInfo>
+/** EtoileUI uses ETEvent objects to represent events to be dispatched and 
+handled in the layout item tree. These events usually represent device events 
+(mouse, keyboard etc.). When they get dispatched, they can be refined into more 
+specialized actions such as cut/copy/paste with the pickingMask property, as 
+explained below.
+ 
+With EtoileUI event handling model, layout items don't receive ETEvent objects, 
+but those events are passed to the active instrument or tool which turns them 
+into actions. Only actions rather than raw events are delivered to the targeted 
+layout items. See ETInstrument and ETActionHandler. A layout item can also be 
+attached to the event. For example, this can be used to easily keep track of 
+the item initially targeted by the event. -[ETInstrument hitTestWithEvent:] does 
+that: the layout item on which the dispatch is expected, is attached to the 
+event.
+
+Every EtoileUI events are created by processing the events emitted by the widget 
+backend, and wrapping them into a native ETEvent instance. The wrapped event 
+can be retrieved through -backendEvent. 
+
+For now, only AppKit is supported as a backend, so -backendEvent will always 
+return an NSEvent. Moreover the event types are the same than NSEventType enum, 
+this is expected to change though. */
+@interface ETEvent : NSObject
 {
+	NSEvent *_backendEvent; // TODO: Move that in a subclass specific to each backend
+	ETLayoutItem *_layoutItem;
+	id <NSDraggingInfo> _draggingInfo; // TODO: Should be backend-agnostic, may be move in a subclass...
+
+	NSEventType _type; // TODO: Should be backend-agnostic, probably ETEventType with our own enum...
 	unsigned int _pickingMask;
-	id <NSDraggingInfo> _draggingInfo;
 	BOOL _isUIEvent;
 }
 
-+ (ETEvent *) eventWithEvent: (NSEvent *)event 
-                 pickingMask: (unsigned int)pickMask 
-				draggingInfo: (id)drag;
++ (ETEvent *) eventWithBackendEvent: (void *)evt 
+                               type: (NSEventType)type
+                        pickingMask: (unsigned int)pickMask 
+                       draggingInfo: (id)drag
+                         layoutItem: (ETLayoutItem *)item;         
++ (ETEvent *) enterEventWithEvent: (ETEvent *)anEvent;
++ (ETEvent *) exitEventWithEvent: (ETEvent *)anEvent;
 
 - (BOOL) isUIEvent;
+- (NSEventType) type;
+- (id) layoutItem;
+- (void) setLayoutItem: (id)anItem;
 - (void) setPickingMask: (unsigned int)pickMask;
 - (unsigned int) pickingMask;
 
 - (id) draggingInfo;
 - (NSPoint) draggingLocation;
+
+- (void *) backendEvent;
+
+- (NSPoint) locationInWindow;
+- (int) windowNumber;
+
+// FIXME: Remove by not relying on it in our code... it exposes a class that 
+// is only valid for the AppKit backend.
+- (NSWindow *) window;
 
 @end

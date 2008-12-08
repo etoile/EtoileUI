@@ -334,7 +334,7 @@
 		[dragSupervisor dragImage: dragIcon
 							   at: [event locationInWindow]
 						   offset: NSZeroSize
-							event: event 
+							event: (NSEvent *)[event backendEvent] 
 					   pasteboard: [NSPasteboard pasteboardWithName: NSDragPboard]
 						   source: self
 						slideBack: YES];

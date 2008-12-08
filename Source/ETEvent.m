@@ -2,8 +2,8 @@
 
 	ETEvent.m
 	
-	<abstract>NSEvent subclass providing additional support for pick and 
-	drop.</abstract>
+	<abstract>EtoileUI-native event class that represents events to be 
+	dispatched and handled in the layout item tree.</abstract>
  
 	Copyright (C) 2007 Quentin Mathe
  
@@ -35,131 +35,182 @@
 	THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import <EtoileUI/ETEvent.h>
-#import <EtoileUI/ETCompatibility.h>
+#import <EtoileFoundation/Macros.h>
+#import "ETEvent.h"
+#import "ETCompatibility.h"
 
-@interface ETEvent (Private)
-#ifdef GNUSTEP
-+ (ETEvent *) _eventWithGSEvent: (NSEvent *)evt;
-#endif
-@end
-
+static const int ETUntypedEvent = 0;
 
 @implementation ETEvent
 
-#ifdef GNUSTEP
-+ (ETEvent *) _eventWithGSEvent: (NSEvent *)evt
-{	
-	id event = nil;
-
-	if (NSEventMaskFromType([evt type]) & GSMouseEventMask)
-	{
-		event = [ETEvent mouseEventWithType: [evt type] 
-									  location: [evt locationInWindow]
-								 modifierFlags: [evt modifierFlags] 
-								     timestamp: [evt timestamp] 
-								  windowNumber: [evt windowNumber] 
-								       context: [evt context] 
-								   eventNumber: [evt eventNumber] 
-								    clickCount: [evt clickCount] 
-									  pressure: [evt pressure]];
-	}
-	else if (NSEventMaskFromType([evt type]) & GSKeyEventMask)
-	{
-		event = [ETEvent keyEventWithType: [evt type] 
-									  location: [evt locationInWindow]
-								 modifierFlags: [evt modifierFlags] 
-								     timestamp: [evt timestamp] 
-								  windowNumber: [evt windowNumber] 
-								       context: [evt context] 
-									characters: [evt characters]
-				   charactersIgnoringModifiers: [evt charactersIgnoringModifiers]
-				                     isARepeat: [evt isARepeat]
-									   keyCode: [evt keyCode]];
-	}
-	else if (NSEventMaskFromType([evt type]) & GSOtherEventMask)
-	{
-		event = [ETEvent otherEventWithType: [evt type] 
-									  location: [evt locationInWindow]
-								 modifierFlags: [evt modifierFlags] 
-								     timestamp: [evt timestamp] 
-								  windowNumber: [evt windowNumber] 
-								       context: [evt context] 
-								   subtype: [evt subtype] 
-								    data1: [evt data1] 
-									  data2: [evt data2]];	
-	}
-	else
-	{
-		ETLog(@"WARNING: Cannot turn %@ into an ETEvent instance", evt);
-	}
-	
-	return event;
-}
-#endif
-
-+ (ETEvent *) eventWithEvent: (NSEvent *)evt 
-                 pickingMask: (unsigned int)pickMask 
-				draggingInfo: (id)drag
+/** Returns an autoreleased EtoileUI native event that wraps and corresponds to 
+the widget backend event passed as evt. */
++ (ETEvent *) eventWithBackendEvent: (void *)evt
+                               type: (NSEventType)type
+                        pickingMask: (unsigned int)pickMask 
+                       draggingInfo: (id)drag
+                         layoutItem: (ETLayoutItem *)item     
 {
-#ifdef GNUSTEP
-	ETEvent *event = (ETEvent *)[ETEvent _eventWithGSEvent: evt];
-#else
-	ETEvent *event = (ETEvent *)[ETEvent eventWithEventRef: [evt eventRef]];
-#endif
+	ETEvent *event = AUTORELEASE([[self alloc] init]);
 
+	ASSIGN(event->_backendEvent, (NSEvent *)evt);
+	[event setLayoutItem: item];
 	ASSIGN(event->_draggingInfo, drag);
+
 	[event setPickingMask: pickMask];
 	event->_isUIEvent = YES;
-	
+
 	return event;
 }
 
-- (void) dealloc
+/** Returns an autoreleased EtoileUI mouse enter event which is identical to 
+anEvent, event type put aside. */
++ (ETEvent *) enterEventWithEvent: (ETEvent *)anEvent
 {
-	DESTROY(_draggingInfo);
+	ETEvent *copiedEvent = [anEvent copy];
+	copiedEvent->_type = NSMouseEntered;
+	return AUTORELEASE(copiedEvent);
+}
 
-	[super dealloc];
+/** Returns an autoreleased EtoileUI mouse exit event which is identical to 
+anEvent, event type put aside. */
++ (ETEvent *) exitEventWithEvent: (ETEvent *)anEvent
+{
+	ETEvent *copiedEvent = [anEvent copy];
+	copiedEvent->_type = NSMouseExited;
+	return AUTORELEASE(copiedEvent);
+}
+
+DEALLOC(DESTROY(_draggingInfo); DESTROY(_layoutItem); DESTROY(_backendEvent))
+
+- (id) copyWithZone: (NSZone *)zone
+{
+	ETEvent *copiedEvent = [[[self class] alloc] init];
+
+	ASSIGN(copiedEvent->_backendEvent, _backendEvent);
+	[copiedEvent setLayoutItem: [self layoutItem]];
+	ASSIGN(copiedEvent->_draggingInfo, _draggingInfo);
+
+	copiedEvent->_type = _type;
+	[copiedEvent setPickingMask: [self pickingMask]];
+	copiedEvent->_isUIEvent = _isUIEvent;
+	
+	return copiedEvent;
+}
+
+/** Returns the type of the EtoileUI event. If a custom type was not used to 
+instantiate the event object, then the type matches the one of the backend event. */
+- (NSEventType) type
+{
+	if (_type == ETUntypedEvent)
+		return [(NSEvent *)_backendEvent type];
+
+	return _type;
 }
 
 /** Returns YES when the event originates from user interaction at UI level, 
-	otherwise returns NO when the event is created directly in code to be used
-	like a notification object. */
+otherwise returns NO when the event is created directly in code to be used like 
+a notification object.
+ 
+FIXME: Implement... should be set when the event is created with a widget 
+backend event as parameter. */
 - (BOOL) isUIEvent
 {
 	return _isUIEvent;
 }
 
+/** Returns the layout item attached to the EtoileUI event. 
+ 
+See -setLayoutItem:. */
+- (id) layoutItem
+{
+	return _layoutItem;
+}
+
+/** Sets the layout item attached to the EtoileUI event.
+ 
+The purpose of the attached item is up to the caller. If the caller API is 
+public, the purpose must be documented in this API. This would be the case with 
+an ETInstrument subclass that is available in a framework. 
+TODO: Rewrite later if we finally make use of it in a different way. */
+- (void) setLayoutItem: (id)anItem
+{
+	ASSIGN(_layoutItem, anItem);
+}
+
+/** Sets the pick an drop mask attached to the EtoileUI event. This mask encodes 
+the pick and drop combinations that characterize drag/drop vs copy/cut/paste. */
 - (void) setPickingMask: (unsigned int)pickMask
 {
 	_pickingMask = pickMask;
 }
 
+/** Returns the pick an drop mask attached to the EtoileUI event. 
+
+See -setPickingMask:. */
 - (unsigned int) pickingMask
 {
 	return _pickingMask;
 }
 
+/** Returns the object that contains all the drag or drop infos, if the current 
+event has triggered a drag or drop action. */
 - (id) draggingInfo
 {
 	return _draggingInfo;
 }
 
+// TODO: May be we don't really need it...
 - (NSPoint) draggingLocation
 {
-	return [[self draggingInfo] draggingLocation];
+	return [_draggingInfo draggingLocation];
 }
 
+/** Returns the widget backend event that was used to construct to the receiver. 
+
+You should avoid to use this method to simplify the portability of your code to 
+other widget backends that might be written in future. */
+- (void *) backendEvent
+{
+	return (void *)_backendEvent;
+}
+
+/** Returns the location of the pointer in the coordinate space of the window 
+content.
+ 
+For the AppKit backend, the window content is the content view. */
+- (NSPoint) locationInWindow
+{
+	return [(NSEvent *)_backendEvent locationInWindow];
+}
+
+/** Returns a window identifier that encodes the window on which the event 
+occured. The returned value is backend-specific. */
+- (int) windowNumber
+{
+	return [(NSEvent *)_backendEvent windowNumber];
+}
+
+- (NSWindow *) window
+{
+	return [(NSEvent *)_backendEvent window];
+}
+
+// FIXME: Far from ideal... Once we know better what the ETEvent API should be
+// to support other backends and other EtoileUI needs, we should remove this hack.
 - (void) forwardInvocation: (NSInvocation *)inv
 {
-    SEL aSelector = [inv selector];
-	id drag = [self draggingInfo];
- 
-    if ([drag respondsToSelector: aSelector])
+    SEL aSelector = [inv selector];;
+
+    if ([(id)_draggingInfo respondsToSelector: aSelector])
 	{
-        [inv invokeWithTarget: drag];
+        [inv invokeWithTarget: _draggingInfo];
 	}
-    else
+	else if ([(NSEvent *)_backendEvent respondsToSelector: aSelector])
+	{
+        [inv invokeWithTarget: (NSEvent *)_backendEvent];
+	}
+	else
 	{
         [self doesNotRecognizeSelector: aSelector];
 	}
