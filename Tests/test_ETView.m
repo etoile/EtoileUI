@@ -98,7 +98,7 @@
 	CREATE_AUTORELEASE_POOL(pool1);
 
 	view = [[ETView alloc] init];
-	item = [ETLayoutItem layoutItemWithView: view];
+	item = [ETLayoutItem itemWithView: view];
 
 	UKIntsEqual(2, [item retainCount]);
 	UKIntsEqual(2, [[item supervisorView] retainCount]);
@@ -178,8 +178,8 @@
 	CREATE_AUTORELEASE_POOL(pool2);
 
 	view = [[ETView alloc] init];
-	item = [ETLayoutItem layoutItemWithView: view];
-	id parent = [ETLayoutItemGroup layoutItem];
+	item = [ETLayoutItem itemWithView: view];
+	id parent = [ETLayoutItemGroup item];
 
 	[parent addItem: item];
 
@@ -202,6 +202,7 @@
 #endif
 }
 
+#if 0
 - (void) testArchiving
 {
 	id barView = AUTORELEASE([[NSView alloc] initWithFrame: NSMakeRect(-20, 30, 100, 25)]);
@@ -228,6 +229,7 @@
 	UKTrue([view isDisclosable]);
 	UKTrue([view usesCustomTitleBar]);
 }
+#endif
 
 + (void) testTitleBarViewPrototype
 {
@@ -302,7 +304,7 @@
 
 - (void) testSetLayoutItem
 {
-	id item = [ETLayoutItem layoutItem];
+	id item = [ETLayoutItem item];
 	
 	[self setLayoutItem: item];
 
@@ -312,7 +314,7 @@
 
 - (void) testSetLayoutItemWithoutInsertingView
 {
-	id item = [ETLayoutItem layoutItem];
+	id item = [ETLayoutItem item];
 	
 	[self setLayoutItemWithoutInsertingView: item];
 	

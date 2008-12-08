@@ -48,7 +48,7 @@
 {
 	id string = [NSString string];
 	id array = [NSArray array];
-	id item = [ETLayoutItem layoutItem];
+	id item = [ETLayoutItem item];
 	id pickRef = nil;
 	
 	pickRef = [self pushObject: string];
@@ -74,7 +74,7 @@
 {
 	id string = [NSString string];
 	id array = [NSArray array];
-	id item = [ETLayoutItem layoutItem];
+	id item = [ETLayoutItem item];
 	id pickRef = nil;
 	id object = nil;
 	
@@ -107,7 +107,7 @@
 {
 	id string = [NSString string];
 	id array = [NSArray array];
-	id item = [ETLayoutItem layoutItem];
+	id item = [ETLayoutItem item];
 	id pickRef = nil;
 	
 	pickRef = [self addObject: string];
@@ -133,7 +133,7 @@
 {
 	id string = [NSString string];
 	id array = [NSArray array];
-	id item = [ETLayoutItem layoutItem];
+	id item = [ETLayoutItem item];
 	id pickRef1 = nil;
 	id pickRef2 = nil;
 	id pickRef3 = nil;

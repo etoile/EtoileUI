@@ -106,7 +106,7 @@
 	[subview01 setWrappedView: subview010];
 	[subview0 addSubview: subview02];
 	[subview02 addSubview: subview020];
-	[(ETContainer *)subview02 addItem: [ETLayoutItem layoutItemWithView: subview021]];
+	[(ETContainer *)subview02 addItem: [ETLayoutItem itemWithView: subview021]];
 
 	id rootItem = [[ETEtoileUIBuilder builder] renderView: view];
 	id childItem = nil;
