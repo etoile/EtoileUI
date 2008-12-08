@@ -33,11 +33,12 @@
  
 #import <Foundation/Foundation.h>
 #import <AppKit/AppKit.h>
-#import <EtoileUI/ETContainer.h>
-#import <EtoileUI/ETContainer+Controller.h>
-#import <EtoileUI/ETLayoutItem.h>
-#import <EtoileUI/ETLayoutItem+Factory.h>
-#import <EtoileUI/ETCompatibility.h>
+#import "ETContainer.h"
+#import "ETContainer+Controller.h"
+#import "ETLayoutItem.h"
+#import "ETLayoutItemGroup.h"
+#import "ETLayoutItem+Factory.h"
+#import "ETCompatibility.h"
 #import <UnitKit/UnitKit.h>
 
 /* NSView subclass for testing the cloning of item templates */
@@ -51,6 +52,11 @@
 
 
 @implementation ETContainer (ControllerTests)
+
+- (NSArray *) contentArray
+{
+	return [[self content] contentArray];
+}
 
 - (void) testInit
 {
@@ -78,7 +84,7 @@
 	/* Test item template */
 
 	id view = AUTORELEASE([DummyView new]);
-	id templateItem = [ETLayoutItem layoutItemWithView: view];
+	id templateItem = [ETLayoutItem itemWithView: view];
 	[self setTemplateItem: templateItem];
 	newObject = [self newObject];
 	newObject2 = [self newObject];
@@ -131,7 +137,7 @@
 	/* Test item template */
 
 	id view = AUTORELEASE([DummyView new]);
-	id templateItem = [ETLayoutItem layoutItemGroupWithView: view];
+	id templateItem = [ETLayoutItem itemGroupWithView: view];
 	[self setTemplateItemGroup: templateItem];
 	newGroup = [self newGroup];
 	newGroup2 = [self newGroup];
