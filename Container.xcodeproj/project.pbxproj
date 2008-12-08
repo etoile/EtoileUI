@@ -22,7 +22,6 @@
 		6002450D0CD162090023182D /* ETObjectRegistry+EtoileUI.m in Sources */ = {isa = PBXBuildFile; fileRef = 609097D30CB00BC2009CAD27 /* ETObjectRegistry+EtoileUI.m */; };
 		6002450F0CD162090023182D /* ETOutlineLayout.m in Sources */ = {isa = PBXBuildFile; fileRef = 609549820C0E462500068CBB /* ETOutlineLayout.m */; };
 		600245100CD162090023182D /* ETPaneLayout.m in Sources */ = {isa = PBXBuildFile; fileRef = 605152EB0C18B45B00B5E0E5 /* ETPaneLayout.m */; };
-		600245110CD162090023182D /* ETPaneSwitcherLayout.m in Sources */ = {isa = PBXBuildFile; fileRef = 605152E70C18B43E00B5E0E5 /* ETPaneSwitcherLayout.m */; };
 		600245120CD162090023182D /* ETStackLayout.m in Sources */ = {isa = PBXBuildFile; fileRef = 609F46600B41643900AD2209 /* ETStackLayout.m */; };
 		600245140CD162090023182D /* ETStyleRenderer.m in Sources */ = {isa = PBXBuildFile; fileRef = 609547DB0C0E0FB000068CBB /* ETStyleRenderer.m */; };
 		600245150CD162090023182D /* ETTableLayout.m in Sources */ = {isa = PBXBuildFile; fileRef = 60EABCBE0C0C289900341BD8 /* ETTableLayout.m */; };
@@ -173,6 +172,8 @@
 		60AE4C9D0EED52B200DE82BC /* ViewModelPrototype.nib in Resources */ = {isa = PBXBuildFile; fileRef = 6087EDF10C824CE100A1263E /* ViewModelPrototype.nib */; };
 		60AE4C9E0EED52B200DE82BC /* TableExample.nib in Resources */ = {isa = PBXBuildFile; fileRef = 60909D350CB30092009CAD27 /* TableExample.nib */; };
 		60AE4C9F0EED52B200DE82BC /* Inspector.nib in Resources */ = {isa = PBXBuildFile; fileRef = 60CF710E0D42AAC600B4CA3D /* Inspector.nib */; };
+		60AE4CAD0EED576000DE82BC /* test_ETController.m in Sources */ = {isa = PBXBuildFile; fileRef = 60AE4CAB0EED576000DE82BC /* test_ETController.m */; };
+		60AE4CAE0EED576000DE82BC /* test_ETLayout.m in Sources */ = {isa = PBXBuildFile; fileRef = 60AE4CAC0EED576000DE82BC /* test_ETLayout.m */; };
 		60B1449A0C11BFB400B4613B /* TablePrototype.nib in Resources */ = {isa = PBXBuildFile; fileRef = 60B144970C11BFB400B4613B /* TablePrototype.nib */; };
 		60B144ED0C11C52900B4613B /* OutlinePrototype.nib in Resources */ = {isa = PBXBuildFile; fileRef = 60B144EA0C11C52900B4613B /* OutlinePrototype.nib */; };
 		60C1D8AD0C2569D500E00A2E /* PaneController.m in Sources */ = {isa = PBXBuildFile; fileRef = 60C1D8AC0C2569D500E00A2E /* PaneController.m */; };
@@ -291,7 +292,7 @@
 			isa = PBXContainerItemProxy;
 			containerPortal = 29B97313FDCFA39411CA2CEA /* Project object */;
 			proxyType = 1;
-			remoteGlobalIDString = 603647AB0E409244003377E0 /* EtoileFoundation */;
+			remoteGlobalIDString = 603647AB0E409244003377E0;
 			remoteInfo = EtoileFoundation;
 		};
 		60CF74370D449B6E00B4CA3D /* PBXContainerItemProxy */ = {
@@ -499,6 +500,8 @@
 		609F46A10B42049D00AD2209 /* ETLayoutItem.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ETLayoutItem.h; path = Headers/ETLayoutItem.h; sourceTree = "<group>"; };
 		609F46A20B42049D00AD2209 /* ETLayoutItem.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ETLayoutItem.m; path = Source/ETLayoutItem.m; sourceTree = "<group>"; };
 		60A563E70A16266900329EE6 /* GNUstep.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = GNUstep.h; path = Headers/GNUstep.h; sourceTree = "<group>"; };
+		60AE4CAB0EED576000DE82BC /* test_ETController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = test_ETController.m; path = Tests/test_ETController.m; sourceTree = "<group>"; };
+		60AE4CAC0EED576000DE82BC /* test_ETLayout.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = test_ETLayout.m; path = Tests/test_ETLayout.m; sourceTree = "<group>"; };
 		60B144980C11BFB400B4613B /* English */ = {isa = PBXFileReference; lastKnownFileType = wrapper.nib; name = English; path = English.lproj/TablePrototype.nib; sourceTree = "<group>"; };
 		60B144EB0C11C52900B4613B /* English */ = {isa = PBXFileReference; lastKnownFileType = wrapper.nib; name = English; path = English.lproj/OutlinePrototype.nib; sourceTree = "<group>"; };
 		60BB92E40E6EAE0E008B5171 /* log */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = log; sourceTree = "<group>"; };
@@ -745,6 +748,8 @@
 		600243CE0CD134C40023182D /* Tests */ = {
 			isa = PBXGroup;
 			children = (
+				60AE4CAB0EED576000DE82BC /* test_ETController.m */,
+				60AE4CAC0EED576000DE82BC /* test_ETLayout.m */,
 				600243C90CD134440023182D /* test_ETLayoutItem.m */,
 				605D6CB90CE78335009ED244 /* test_ETView.m */,
 				600FC23D0D3AB75800828803 /* test_ETContainer.m */,
@@ -1418,7 +1423,6 @@
 				6002450D0CD162090023182D /* ETObjectRegistry+EtoileUI.m in Sources */,
 				6002450F0CD162090023182D /* ETOutlineLayout.m in Sources */,
 				600245100CD162090023182D /* ETPaneLayout.m in Sources */,
-				600245110CD162090023182D /* ETPaneSwitcherLayout.m in Sources */,
 				603112EB0CF448D2001A699E /* ETPickboard.m in Sources */,
 				600245120CD162090023182D /* ETStackLayout.m in Sources */,
 				605D6DF90CE946F8009ED244 /* ETStyle.m in Sources */,
@@ -1438,6 +1442,8 @@
 				60311D660CFB9A84001A699E /* NSWindow+Etoile.m in Sources */,
 				60AE4C940EED520B00DE82BC /* UKNibOwner.m in Sources */,
 				60AE4C950EED520B00DE82BC /* UKPluginsRegistry+Icons.m in Sources */,
+				60AE4CAD0EED576000DE82BC /* test_ETController.m in Sources */,
+				60AE4CAE0EED576000DE82BC /* test_ETLayout.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
