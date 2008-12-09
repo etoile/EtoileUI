@@ -145,10 +145,6 @@
 - (NSArray *) selectedItemsInLayout;
 - (NSArray *) selectionIndexPaths;
 - (void) setSelectionIndexPaths: (NSArray *)indexPaths;
-- (void) setSelectionIndexes: (NSIndexSet *)selection;
-- (NSMutableIndexSet *) selectionIndexes;
-- (void) setSelectionIndex: (unsigned int)index;
-- (unsigned int) selectionIndex;
 - (BOOL) allowsMultipleSelection;
 - (void) setAllowsMultipleSelection: (BOOL)multiple;
 - (BOOL) allowsEmptySelection;
@@ -337,5 +333,12 @@ extern NSString *ETLayoutItemPboardType;
 - (void) addItems: (NSArray *)items;
 - (void) removeItems: (NSArray *)items;
 - (void) removeAllItems;
+
+/* Selection */
+
+- (void) setSelectionIndexes: (NSIndexSet *)selection;
+- (NSMutableIndexSet *) selectionIndexes;
+- (void) setSelectionIndex: (unsigned int)index;
+- (unsigned int) selectionIndex;
 
 @end

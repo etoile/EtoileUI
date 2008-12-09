@@ -173,6 +173,10 @@
 
 /* Selection */
 
+- (unsigned int) selectionIndex;
+- (void) setSelectionIndex: (unsigned int)index;
+- (NSMutableIndexSet *) selectionIndexes;
+- (void) setSelectionIndexes: (NSIndexSet *)indexes;
 - (NSArray *) selectionIndexPaths;
 - (void) setSelectionIndexPaths: (NSArray *)indexPaths;
 

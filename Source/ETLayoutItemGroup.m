@@ -34,6 +34,8 @@
 	THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#import <EtoileFoundation/NSIndexSet+Etoile.h>
+#import <EtoileFoundation/NSIndexPath+Etoile.h>
 #import <EtoileFoundation/NSObject+Model.h>
 #import <EtoileUI/ETLayoutItemGroup.h>
 #import <EtoileUI/ETLayoutItemGroup+Mutation.h>
@@ -1241,12 +1243,81 @@
 
 /* Selection */
 
+/** Returns the index of the first selected item which is an immediate child of 
+ the receiver. If there is none, returns NSNotFound. 
+ 
+ Calling this method is equivalent to [[self selectionIndexes] firstIndex].
+ 
+ Take note that -selectionIndexPaths may return one or multiple values when this
+ method returns NSNotFound. See -selectionIndexes also. */
+- (unsigned int) selectionIndex
+{
+	return [[self selectionIndexes] firstIndex];
+}
+
+/** Sets the selected item identified by index in the receiver and discards any 
+ existing selection index paths previously set. */
+- (void) setSelectionIndex: (unsigned int)index
+{
+	ETDebugLog(@"Modify selection index from %d to %d of %@", [self selectionIndex], index, self);
+	
+	/* Check new selection validity */
+	NSAssert1(index >= 0, @"-setSelectionIndex: parameter must not be a negative value like %d", index);
+	
+	NSMutableIndexSet *indexes = [NSMutableIndexSet indexSet];
+	
+	if (index != NSNotFound)
+		[indexes addIndex: index];
+	
+	[self setSelectionIndexes: indexes];
+}
+
+/** Returns all indexes matching selected items which are immediate children of 
+the receiver.
+
+Put in another way, the method returns the first index of all index paths with a 
+length equal one. */
+- (NSMutableIndexSet *) selectionIndexes
+{
+	NSMutableIndexSet *indexes = [NSMutableIndexSet indexSet];
+	NSEnumerator *e = [[self selectionIndexPaths] objectEnumerator];
+	NSIndexPath *indexPath = nil;
+	
+	while ((indexPath = [e nextObject]) != nil)
+	{
+		if ([indexPath length] == 1)
+			[indexes addIndex: [indexPath firstIndex]];
+	}
+	
+	return indexes;
+}
+
+/** Sets the selected items identified by indexes in the receiver and discards 
+ any existing selection index paths previously set. */
+- (void) setSelectionIndexes: (NSIndexSet *)indexes
+{
+	int numberOfItems = [[self items] count];
+	int lastSelectionIndex = [[self selectionIndexes] lastIndex];
+	
+	ETDebugLog(@"Set selection indexes to %@ in %@", indexes, self);
+	
+	if (lastSelectionIndex > (numberOfItems - 1) && lastSelectionIndex != NSNotFound) /* NSNotFound is a big value and not -1 */
+	{
+		ETLog(@"WARNING: Try to set selection index %d when %@ only contains %d items",
+			  lastSelectionIndex, self, numberOfItems);
+		return;
+	}
+	
+	/* Update selection */
+	[self setSelectionIndexPaths: [indexes indexPaths]];
+}
+
 - (void) collectSelectionIndexPaths: (NSMutableArray *)indexPaths
                      relativeToItem: (ETLayoutItemGroup *)pathBaseItem
 {
 	NSEnumerator *e = [[self items] objectEnumerator];
 	id item = nil;
-		
+	
 	while ((item = [e nextObject]) != nil)
 	{
 		if ([item isSelected])
@@ -1255,6 +1326,7 @@
 			[item collectSelectionIndexPaths: indexPaths relativeToItem: pathBaseItem];
 	}
 }
+
 
 /** Returns the index paths of selected items in layout item subtree of the the receiver. */
 - (NSArray *) selectionIndexPaths
