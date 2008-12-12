@@ -58,13 +58,6 @@
 	BOOL _shouldMutateRepresentedObject;
 }
 
-/* Factory methods useful for controllers
-   NOTE: probably to be moved elsewhere or refactored a bit. */
-
-- (id) itemWithObject: (id)object isValue: (BOOL)isValue;
-- (id) newItemGroup;
-- (id) newItem;
-
 /* Initialization */
 
 - (id) initWithItems: (NSArray *)layoutItems view: (NSView *)view;
