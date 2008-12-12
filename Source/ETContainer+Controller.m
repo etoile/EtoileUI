@@ -88,7 +88,7 @@ changed. */
 - (void) setContent: (id)content
 {
 	BOOL notItemGroupKind = ([content isKindOfClass: [ETLayoutItemGroup class]] == NO);
-	if (content != nil || notItemGroupKind)
+	if (content != nil && notItemGroupKind)
 	{
 		[NSException raise: NSInvalidArgumentException format: @"-setContent: "
 			"parameter %@ must be an ETLayoutItemGroup instance", content];
@@ -96,8 +96,16 @@ changed. */
 	}
 	
 	// FIXME: Break the retain cycle properly between the item and the controller
-	// or rethink the ownership.
-	[_content setValue: nil forProperty: kETControllerProperty];
+	// or rethink the ownership. -removeValueForProperty: won't solve the issue...
+	if (content == nil)
+	{
+		// TODO: Implement -removeValueForProperty:
+		//[content removeValueForProperty: kETControllerProperty];
+	}
+	else
+	{
+		[content setValue: self forProperty: kETControllerProperty];
+	}
 	ASSIGN(_content, content);
 }
 
@@ -241,10 +249,9 @@ changed. */
 }
 
 /** Creates a new object group by calling -newGroup and adds it to the content. */
-- (BOOL) addGroup: (id)sender
+- (void) addNewGroup: (id)sender
 {
 	[[self content] addObject: [self newGroup]];
-	return YES;
 }
 
 /** Creates a new object by calling -newGroup and inserts it to the content at 
@@ -257,7 +264,7 @@ changed. */
 
 /** Creates a new object group by calling -newGroup and inserts it to the 
 	content at -insertionIndex. */
-- (void) insertGroup: (id)sender
+- (void) insertNewGroup: (id)sender
 {
 	[[self content] insertObject: [self newGroup] 
 	                     atIndex: [self insertionIndex]];

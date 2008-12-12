@@ -105,9 +105,9 @@
 - (id) newObject;
 - (id) newGroup;
 - (void) add: (id)sender;
-- (BOOL) addGroup: (id)sender;
+- (void) addNewGroup: (id)sender;
 - (void) insert: (id)sender;
-- (void) insertGroup: (id)sender;
+- (void) insertNewGroup: (id)sender;
 - (void) remove: (id)sender;
 
 /* Selection */
