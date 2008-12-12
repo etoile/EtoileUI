@@ -1376,10 +1376,23 @@ length equal one. */
 {
 	[self applySelectionIndexPaths: [NSMutableArray arrayWithArray: indexPaths] 
 	                relativeToItem: self];
+
+	// FIXME: Rename the notification to ETLayoutItemGroupSelectionDidChangeNotification
+	/* Finally propagate changes by posting notification */
+	NSNotification *notif = [NSNotification 
+		notificationWithName: ETContainerSelectionDidChangeNotification object: self];
+	
+	if ([[[self container] delegate] respondsToSelector: @selector(containerSelectionDidChange:)])
+		[[[self container] delegate] containerSelectionDidChange: notif];
+	
+	[[NSNotificationCenter defaultCenter] postNotification: notif];
 	
 	/* For opaque layouts that may need to keep in sync the selection state of 
 	   their custom UI. */
 	[[self layout] selectionDidChangeInLayoutContext];
+	
+	/* Reflect selection change immediately */
+	[[self supervisorView] display]; // TODO: supervisorView is probably not the best choice...
 }
 
 /** Returns the selected child items belonging to the receiver. 

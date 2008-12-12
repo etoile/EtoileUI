@@ -136,9 +136,6 @@
 
 /* Selection */
 
-- (NSArray *) selectedItemsInLayout;
-- (NSArray *) selectionIndexPaths;
-- (void) setSelectionIndexPaths: (NSArray *)indexPaths;
 - (BOOL) allowsMultipleSelection;
 - (void) setAllowsMultipleSelection: (BOOL)multiple;
 - (BOOL) allowsEmptySelection;
@@ -330,6 +327,9 @@ extern NSString *ETLayoutItemPboardType;
 
 /* Selection */
 
+- (NSArray *) selectedItemsInLayout;
+- (NSArray *) selectionIndexPaths;
+- (void) setSelectionIndexPaths: (NSArray *)indexPaths;
 - (void) setSelectionIndexes: (NSIndexSet *)selection;
 - (NSMutableIndexSet *) selectionIndexes;
 - (void) setSelectionIndex: (unsigned int)index;

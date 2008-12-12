@@ -1048,37 +1048,6 @@ NSString *ETLayoutItemPboardType = @"ETLayoutItemPboardType"; // FIXME: replace 
 
 /* Selection */
 
-/** See -[ETLayoutItemGroup selectedItemsInLayout] */
-- (NSArray *) selectedItemsInLayout
-{
-	return [(ETLayoutItemGroup *)[self layoutItem] selectedItemsInLayout];
-}
-
-/** See -[ETLayoutItemGroup selectionIndexPaths] */
-- (NSArray *) selectionIndexPaths
-{
-	return [(ETLayoutItemGroup *)[self layoutItem] selectionIndexPaths];
-}
-
-/** See -[ETLayoutItemGroup setSelectionIndexPaths] */
-- (void) setSelectionIndexPaths: (NSArray *)indexPaths
-{
-	[(ETLayoutItemGroup *)[self layoutItem] setSelectionIndexPaths: indexPaths];
-	
-	// FIXME: Move this code into -[ETLayoutItemGroup setSelectionIndexPaths:]
-	/* Finally propagate changes by posting notification */
-	NSNotification *notif = [NSNotification 
-		notificationWithName: ETContainerSelectionDidChangeNotification object: self];
-	
-	if ([[self delegate] respondsToSelector: @selector(containerSelectionDidChange:)])
-		[[self delegate] containerSelectionDidChange: notif];
-
-	[[NSNotificationCenter defaultCenter] postNotification: notif];
-	
-	/* Reflect selection change immediately */
-	[self display];
-}
-
 - (BOOL) allowsMultipleSelection
 {
 	return _multipleSelectionAllowed;
@@ -1539,6 +1508,24 @@ NSString *ETLayoutItemPboardType = @"ETLayoutItemPboardType"; // FIXME: replace 
 - (NSArray *) items
 {
 	return [(ETLayoutItemGroup *)[self layoutItem] items];
+}
+
+/** See -[ETLayoutItemGroup selectedItemsInLayout] */
+- (NSArray *) selectedItemsInLayout
+{
+	return [(ETLayoutItemGroup *)[self layoutItem] selectedItemsInLayout];
+}
+
+/** See -[ETLayoutItemGroup selectionIndexPaths] */
+- (NSArray *) selectionIndexPaths
+{
+	return [(ETLayoutItemGroup *)[self layoutItem] selectionIndexPaths];
+}
+
+/** See -[ETLayoutItemGroup setSelectionIndexPaths] */
+- (void) setSelectionIndexPaths: (NSArray *)indexPaths
+{
+	[(ETLayoutItemGroup *)[self layoutItem] setSelectionIndexPaths: indexPaths];
 }
 
 - (void) setSelectionIndexes: (NSIndexSet *)indexes
