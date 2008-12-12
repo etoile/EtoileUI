@@ -33,6 +33,7 @@
  
 #import <Foundation/Foundation.h>
 #import <AppKit/AppKit.h>
+#import <EtoileFoundation/Macros.h>
 #import "ETContainer.h"
 #import "ETContainer+Controller.h"
 #import "ETLayoutItem.h"
@@ -47,11 +48,20 @@
 @implementation DummyView
 @end
 
-@interface ETContainer (ControllerTests) <UKTest>
+@interface ETController (ControllerTests) <UKTest>
 @end
 
 
-@implementation ETContainer (ControllerTests)
+@implementation ETController (ControllerTests)
+
+- (id) initForTest
+{
+	SELFINIT
+
+	[self setContent: [ETLayoutItem itemGroup]];
+	
+	return self;
+}
 
 - (NSArray *) contentArray
 {
@@ -204,7 +214,7 @@
 	UKIntsEqual(2, [[self contentArray] count]);
 	UKObjectsNotSame(item, item2);
 
-	[self setSelectionIndex: 1];
+	[[self content] setSelectionIndex: 1];
 	[self insert: nil];
 	id item3 = [[self contentArray] objectAtIndex: 1];
 
@@ -224,24 +234,24 @@
 	[self remove: nil];
 	UKIntsEqual(2, [[self contentArray] count]);
 
-	[self setSelectionIndex: 1];
+	[[self content] setSelectionIndex: 1];
 	[self remove: nil];
 	UKIntsEqual(1, [[self contentArray] count]);
-	UKFalse([self containsItem: item2]);
+	UKFalse([[self content] containsItem: item2]);
 
 	[self add: nil];
 	item2 = [[self contentArray] objectAtIndex: 1];
 	[self add: nil];
 	id item3 = [[self contentArray] lastObject];
 
-	[self setSelectionIndex: 1];
+	[[self content] setSelectionIndex: 1];
 	[self remove: nil];
 	UKIntsEqual(2, [[self contentArray] count]);
-	UKFalse([self containsItem: item2]);
+	UKFalse([[self content] containsItem: item2]);
 	UKObjectsNotSame(item2, [[self contentArray] firstObject]);
 	UKObjectsNotSame(item2, [[self contentArray] lastObject]);
 
-	[self setSelectionIndexes: [NSIndexSet indexSetWithIndexesInRange: NSMakeRange(0, 2)]];
+	[[self content] setSelectionIndexes: [NSIndexSet indexSetWithIndexesInRange: NSMakeRange(0, 2)]];
 	[self remove: nil];
 	UKTrue([[self contentArray] isEmpty]);
 }

@@ -36,14 +36,18 @@
 
 #import <EtoileFoundation/NSObject+Model.h>
 #import <EtoileFoundation/ETCollection.h>
-#import <EtoileUI/ETLayoutItemGroup+Mutation.h>
-#import <EtoileUI/ETEvent.h>
-#import <EtoileUI/ETContainer.h>
-#import <EtoileUI/ETCompatibility.h>
+#import "ETLayoutItemGroup+Mutation.h"
+#import "ETLayoutItem+Factory.h"
+#import "ETEvent.h"
+#import "ETContainer.h"
+#import "ETContainer+Controller.h"
+#import "ETCompatibility.h"
 
 @interface ETLayoutItemGroup (ETSource)
 - (BOOL) isReloading;
 @end
+
+NSString *kETControllerProperty = @"controller";
 
 
 @implementation ETLayoutItemGroup (ETMutationHandler)
@@ -452,6 +456,100 @@ static 	BOOL _coalescingMutation = NO;
 	}
 	
 	return childItems;
+}
+
+/* Controller Coordination */
+
+/** Creates a new ETLayoutItem object based on a template if possible. 
+ 
+A template can be provided by a controller whose content is set to ancestor item 
+of the receiver. If such a template can be found, then the returned item is 
+created by cloning it, otherwise by simply instantiating ETLayoutItem. See also  
+-[ETController setTemplateItem:]. */
+- (id) newItem
+{
+	id item = nil;
+	
+	if ([self valueForProperty: kETControllerProperty] != nil)
+	{
+		item = [[self valueForProperty: kETControllerProperty] templateItem];
+	}
+	else
+	{
+		item = [[[self baseItem] valueForProperty: kETControllerProperty] templateItem];
+	}
+	
+	if (item != nil)
+	{
+		item = AUTORELEASE([item deepCopy]);
+	}
+	else
+	{
+		item = [ETLayoutItem item];
+	}
+	
+	return item;
+}
+
+/** Creates a new ETLayoutItemGroup object based on a template if possible. 
+ 
+A template can be provided by a controller whose content is set to ancestor item 
+of the receiver. If such a template can be found, then the returned item is 
+created by cloning it, otherwise by simply instantiating ETLayoutItem. See also 
+-[ETController setTemplateItemGroup:]. */
+- (id) newItemGroup
+{
+	id item = nil;
+
+	if ([self valueForProperty: kETControllerProperty] != nil)
+	{
+		item = [[self valueForProperty: kETControllerProperty] templateItemGroup];
+	}
+	else
+	{
+		item = [[[self baseItem] valueForProperty: kETControllerProperty] templateItemGroup];
+	}
+	
+	if (item != nil)
+	{
+		item = AUTORELEASE([item deepCopy]);
+	}
+	else
+	{
+		item = [ETLayoutItem itemGroup];
+	}
+	
+	return item;
+}
+
+/** Creates a new ETLayoutItem or ETLayoutItemGroup object based on whether 
+object return NO or YES to -isCollection and by calling then either -newItem 
+or -newItemGroup. If isValue is equal to YES, object is bound to the item by 
+calling -setValue: rather than -setRepresentedObject:. */
+- (id) itemWithObject: (id)object isValue: (BOOL)isValue
+{
+	id item = [object isCollection] ? [self newItemGroup] : [self newItem];
+	
+	/* We don't set the object as model when it is nil, so any existing value 
+	 or represented object already provided with the item template won't be 
+	 overwritten in such case. 
+	 Value and represented object are copied when -deepCopy is called on the 
+	 template items in -newItem and -newItemGroup. */
+	if (object != nil)
+	{
+		/* If the object is a simple value object rather than a true model object
+		 we don't set it as represented object but as a value. */
+		if (isValue)
+		{
+			[item setValue: object];
+		}
+		else
+		{
+			[item  setRepresentedObject: object];
+		}
+	}
+	
+	return item;
 }
 
 @end

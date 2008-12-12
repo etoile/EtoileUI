@@ -45,6 +45,10 @@
 #define PROVIDER_SOURCE [[self baseContainer] source]
 #define PROVIDER_CONTAINER [self baseContainer]
 
+/* Properties */
+
+extern NSString *kETControllerProperty; // controller
+
 /* All model mutations are triggered by implicit or explicit remove/insert/add 
    in the layout item tree. Implicit mutations are done by the framework unlike 
    explicit ones which are located in your code. These implicit mutations are 
@@ -92,5 +96,11 @@
 /*- (NSArray *) itemsFromSource;
 - (NSArray *) itemsFromFlatSource;
 - (NSArray *) itemsFromTreeSource;*/
+
+/* Controller Coordination */
+
+- (id) newItem;
+- (id) newItemGroup;
+- (id) itemWithObject: (id)object isValue: (BOOL)isValue;
 
 @end

@@ -86,12 +86,6 @@
 	NSRect _prevInsertionIndicatorRect; 
 	
 	id <ETInspector> _inspector;
-
-	/* ETContainer(ETController) ivars, they will be removed later */
-	ETLayoutItem *_templateItem;
-	ETLayoutItemGroup *_templateItemGroup;
-	Class _objectClass;
-	Class _groupClass;
 }
 
 - (id) initWithLayoutView: (NSView *)layoutView;

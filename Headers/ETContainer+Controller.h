@@ -35,11 +35,10 @@
 
 #import <Foundation/Foundation.h>
 #import <AppKit/AppKit.h>
-#import <EtoileUI/ETContainer.h>
 
-// TODO: Turn this category into a standalone subclass of NSObjectController or
-// NSController. 
-// Implement sort descriptors and predicate-base filters for search (see 
+@class ETLayoutItem, ETLayoutItemGroup;
+
+// TODO: Implement sort descriptors and predicate-base filters for search (see 
 // (NSObjectController and NSArrayController to get the idea).
 // Think about the selection marker stuff and implement it if it makes senses.
 
@@ -79,13 +78,17 @@
 	bound to the container. 
 	ETController directly sorts object of the content and doesn't maintain 
 	arranged objects as a collection distinct from the content. */
-@interface ETContainer (ETController)
+@interface ETController : NSObject
+{
+	ETLayoutItemGroup *_content;
+	ETLayoutItem *_templateItem;
+	ETLayoutItemGroup *_templateItemGroup;
+	Class _objectClass;
+	Class _groupClass;
+}
 
 - (id) content;
-
-/** The content must be either an ETContainer or ETLayoutItemGroup instance to 
-	be valid, otherwise an invalid argument exception is raised. */
-//- (void) setContent: (id <ETCollection, ETMutableCollection>)content;
+- (void) setContent: (id)content;
 //- (id) arrangedObjects;
 
 - (ETLayoutItem *) templateItem;
@@ -97,6 +100,8 @@
 - (Class) groupClass;
 - (void) setGroupClass: (Class)modelClass;
 
+/* Actions */
+
 - (id) newObject;
 - (id) newGroup;
 - (void) add: (id)sender;
@@ -104,6 +109,13 @@
 - (void) insert: (id)sender;
 - (void) insertGroup: (id)sender;
 - (void) remove: (id)sender;
+
+/* Selection */
+
+- (BOOL) setSelectionIndexes: (NSIndexSet *)selection;
+- (NSMutableIndexSet *) selectionIndexes;
+- (BOOL) setSelectionIndex: (unsigned int)index;
+- (unsigned int) selectionIndex;
 
 - (unsigned int) insertionIndex;
 
