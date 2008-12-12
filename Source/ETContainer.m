@@ -170,9 +170,9 @@ NSString *ETLayoutItemPboardType = @"ETLayoutItemPboardType"; // FIXME: replace 
 
 - (void) dealloc
 {
-	// FIXME: Clarify memory management of _displayView and _scrollView
+	// FIXME: Clarify memory management of _layoutView and _scrollView
 	DESTROY(_doubleClickedItem);
-	DESTROY(_displayView);
+	DESTROY(_layoutView);
 	DESTROY(_path);
 	// NOTE: Not in use currently
 	//DESTROY(_selection);
@@ -196,8 +196,8 @@ NSString *ETLayoutItemPboardType = @"ETLayoutItemPboardType"; // FIXME: replace 
 		id itemViews = [[self items] valueForKey: @"displayView"];
 
 		ETDebugLog(@"> Won't be encoded");	
-		if ([self displayView] != nil)	
-			[archivableSubviews removeObject: [self displayView]];
+		if ([self layoutView] != nil)	
+			[archivableSubviews removeObject: [self layoutView]];
 		[itemViews removeObjectsInArray: archivableSubviews];
 		return archivableSubviews;
 	}
@@ -542,7 +542,7 @@ NSString *ETLayoutItemPboardType = @"ETLayoutItemPboardType"; // FIXME: replace 
 {
 	NSInvocation *inv = nil;
 	
-	if (_displayView != nil)
+	if (_layoutView != nil)
 	{
 		SEL doubleAction = @selector(forwardDoubleActionFromLayout:);
 		id target = self;
@@ -600,14 +600,14 @@ NSString *ETLayoutItemPboardType = @"ETLayoutItemPboardType"; // FIXME: replace 
 {
 	//id result = [[inv methodSignature] methodReturnLength];
 	
-	if ([_displayView respondsToSelector: [inv selector]])
+	if ([_layoutView respondsToSelector: [inv selector]])
 	{
-			[inv invokeWithTarget: _displayView];
+			[inv invokeWithTarget: _layoutView];
 	}
-	else if ([_displayView isKindOfClass: [NSScrollView class]])
+	else if ([_layoutView isKindOfClass: [NSScrollView class]])
 	{
 		/* May be the display view is packaged inside a scroll view */
-		id enclosedDisplayView = [(NSScrollView *)_displayView documentView];
+		id enclosedDisplayView = [(NSScrollView *)_layoutView documentView];
 		
 		if ([enclosedDisplayView respondsToSelector: [inv selector]]);
 			[inv invokeWithTarget: enclosedDisplayView];
@@ -625,7 +625,7 @@ NSString *ETLayoutItemPboardType = @"ETLayoutItemPboardType"; // FIXME: replace 
     scroll view, otherwise the returned view is identical to -layoutView. */
 - (NSView *) layoutViewWithoutScrollView
 {
-	id layoutView = [self displayView];
+	id layoutView = [self layoutView];
 
 	if ([layoutView isKindOfClass: [NSScrollView class]])
 		return [layoutView documentView];
@@ -936,7 +936,7 @@ NSString *ETLayoutItemPboardType = @"ETLayoutItemPboardType"; // FIXME: replace 
 
 	// FIXME: Asks layout whether it handles scroll view itself or not. If 
 	// needed like with table layout, delegate scroll view handling.
-	BOOL layoutHandlesScrollView = ([self displayView] != nil);
+	BOOL layoutHandlesScrollView = ([self layoutView] != nil);
 	
 	_scrollViewShown = show;
 
@@ -970,31 +970,31 @@ NSString *ETLayoutItemPboardType = @"ETLayoutItemPboardType"; // FIXME: replace 
 /** Returns the view that takes care of the display. Most of time it is equal
     to the container itself. But for some layout like ETTableLayout, the 
 	returned view would be an NSTableView instance. */
-- (NSView *) displayView
+- (NSView *) layoutView
 {
-	return _displayView;
+	return _layoutView;
 }
 
 /** Never calls this method unless you write an ETLayout subclass.
 	Method called when we switch between layouts. Manipulating the display view
 	is the job of ETContainer, ETLayout instances may provide display view
 	prototype but they never never manipulate it as a subview in view hierachy. */
-- (void) setDisplayView: (NSView *)view
+- (void) setLayoutView: (NSView *)view
 {
-	if (_displayView == nil && view == nil)
+	if (_layoutView == nil && view == nil)
 		return;
-	if (_displayView == view && (_displayView != nil || view != nil))
+	if (_layoutView == view && (_layoutView != nil || view != nil))
 	{
 		ETLog(@"WARNING: Trying to assign an identical display view to container %@", self);
 		return;
 	}
 	
-	[_displayView removeFromSuperview];
+	[_layoutView removeFromSuperview];
 	
-	_displayView = view;
+	_layoutView = view;
 	
 	/* Be careful with scroll view code, it will call -displayView and thereby
-	   needs up-to-date _displayView */
+	   needs up-to-date _layoutView */
 	/*if (view != nil && [self scrollView] != nil)
 	{
 		if ([self isScrollViewShown])
@@ -1302,7 +1302,7 @@ NSString *ETLayoutItemPboardType = @"ETLayoutItemPboardType"; // FIXME: replace 
 	   as a display view, we simply return the subview provided by 
 	   -[NSView hitTest:]
 	   If hit test is turned on, everything should be handled as usual. */
-	if ([self displayView] || [self isHitTestEnabled] 
+	if ([self layoutView] || [self isHitTestEnabled] 
 	 || [subview isKindOfClass: [self class]])
 	{
 		return subview;

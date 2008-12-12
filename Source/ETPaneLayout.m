@@ -120,7 +120,7 @@
 		
 	/* Don't forget to remove existing display view if we switch from a layout 
 	   which reuses a native AppKit control like table layout. */
-	[[self container] setDisplayView: nil];
+	[[self container] setLayoutView: nil];
 	
 	// FIXME: Use layout item group and not the container directly
 	//[[self container] setVisibleItems: layoutModel];

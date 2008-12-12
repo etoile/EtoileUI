@@ -443,7 +443,7 @@ static NSMutableSet *layoutClasses = nil;
 	// May be we should move it into -[layout setContainer:]...
 	// Triggers scroll view display which triggers layout render in turn to 
 	// compute the content size
-	[[self container] setDisplayView: nil]; 
+	[[self container] setLayoutView: nil]; 
 }
 
 // TODO: Pick better names for the following methods:
@@ -889,7 +889,7 @@ static NSMutableSet *layoutClasses = nil;
 		// test on it in order subviews can receive events like mouse click.
 		if ([layoutView respondsToSelector: @selector(setEnablesHitTest:)])
 			[layoutView setEnablesHitTest: YES];
-		[[self container] setDisplayView: layoutView];
+		[[self container] setLayoutView: layoutView];
 	}
 	else if ([[layoutView superview] isEqual: [self container]] == NO)
 	{

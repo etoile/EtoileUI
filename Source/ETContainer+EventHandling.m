@@ -74,9 +74,9 @@
 {
 	ETDebugLog(@"Mouse down in %@", self);
 	
-	if ([self displayView] != nil) /* Layout object is wrapping an AppKit control */
+	if ([self layoutView] != nil) /* Layout object is wrapping an AppKit control */
 	{
-		NSLog(@"WARNING: %@ should have catch mouse down %@", [self displayView], event);
+		NSLog(@"WARNING: %@ should have catch mouse down %@", [self layoutView], event);
 		return;
 	}
 	
@@ -279,9 +279,9 @@
 	
 	dragOp = [item handleDragMove: drag forItem: draggedItem];	
 	
-	// NOTE: Testing non-nil displayView is equivalent to
+	// NOTE: Testing non-nil layoutView is equivalent to
 	// [[self layout] layoutView] != nil
-	if (dragOp != NSDragOperationNone && [self displayView] == nil)
+	if (dragOp != NSDragOperationNone && [self layoutView] == nil)
 		[self drawDragInsertionIndicator: drag];
 		
 	return dragOp;

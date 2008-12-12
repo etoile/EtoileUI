@@ -56,7 +56,7 @@
 	ETLayoutItem *_scrollViewDecorator;
 	BOOL _scrollViewShown;
 
-	NSView *_displayView;
+	NSView *_layoutView;
 #ifndef USE_NSVIEW_RFLAGS
 	BOOL _flipped;
 #endif
@@ -106,8 +106,8 @@
 - (BOOL) isFlipped;
 - (void) setFlipped: (BOOL)flag;
 
-- (NSView *) displayView;
-- (void) setDisplayView: (NSView *)view;
+- (NSView *) layoutView;
+- (void) setLayoutView: (NSView *)view;
 
 /* - (ETLayoutAlignment) layoutAlignment;
 - (void) setLayoutAlignment: (ETLayoutAlignment)alignment;
