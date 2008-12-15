@@ -46,6 +46,40 @@
 
 @class ETPickboard, ETEvent;
 
+/** Action handler are lightweight objects whose instances can be shared between 
+a large number of layout items.
+ 
+The same action handler is automatically set on every new layout item 
+instances. You can override it by calling -[ETLayoutItem setActionHandler:].
+For example, ETActionHandler can be subclassed to handle the paint 
+action in your own way: you might want to alter objects or properties bound
+to the layout item  and not just the style object as the base class does. 
+
+For an ETActionHandler subclass, you usually use a single shared instance 
+accross all the layout items to which it is bound. To do so, a possibility 
+is to write a factory method to build your layout items, this factory 
+method will reuse the action handler to be set on every created items. */
+@interface ETActionHandler : NSObject
+{
+	
+}
+
++ (id) sharedInstance;
+
+- (void) handleClickItem: (ETLayoutItem *)item;
+- (void) handleEnterItem: (ETLayoutItem *)item;
+- (void) handleExitItem: (ETLayoutItem *)item;
+- (void) handleEnterChildItem: (ETLayoutItem *)childItem;
+- (void) handleExitChildItem: (ETLayoutItem *)childItem;
+
+// TODO: Add...
+//-handlePick
+//-handlePaint
+//-handleDrag
+//-handleResize
+
+@end
+
 @protocol ETEventHandler
 
 - (ETLayoutItem *) eventForwarder;

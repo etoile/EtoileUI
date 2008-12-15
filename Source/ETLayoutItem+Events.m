@@ -44,6 +44,47 @@
 #import <EtoileUI/ETContainer.h>
 #import <EtoileUI/ETCompatibility.h>
 
+
+@implementation ETActionHandler
+
+static ETActionHandler *defaultActionHandler = nil;
+
++ (id) sharedInstance
+{
+	if (defaultActionHandler == nil)
+		defaultActionHandler = [[self alloc] init];
+	
+	return defaultActionHandler;
+}
+
+- (void) handleClickItem: (ETLayoutItem *)item
+{
+	ETLog(@"Click %@", item);
+}
+
+- (void) handleEnterItem: (ETLayoutItem *)item
+{
+	ETLog(@"Enter %@", item);
+}
+
+- (void) handleExitItem: (ETLayoutItem *)item
+{
+	ETLog(@"Exit %@", item);
+}
+
+- (void) handleEnterChildItem: (ETLayoutItem *)childItem
+{
+	ETLog(@"Exit child %@", childItem);
+}
+
+- (void) handleExitChildItem: (ETLayoutItem *)childItem
+{
+	ETLog(@"Enter child %@", childItem);
+}
+
+@end
+
+
 #define FORWARDER [self eventForwarder]
 
 // TODO: When factoring out (ETEventHandler) in a standalone class, introduce 

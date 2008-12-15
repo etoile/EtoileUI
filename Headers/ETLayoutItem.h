@@ -44,7 +44,7 @@
 // TODO: Remove once ETUTI is part of EtoileFoundation.
 #define ETUTI NSString
 
-@class ETView, ETContainer, ETLayoutItemGroup, ETWindowItem;
+@class ETView, ETContainer, ETLayoutItemGroup, ETWindowItem, ETActionHandler;
 @protocol ETEventHandler;
 
 // FIXME: Use less memory per instance. Name and value are somehow duplicates.
@@ -52,7 +52,7 @@
 @interface ETLayoutItem : ETStyle <ETPropertyValueCoding, ETObjectInspection>
 {
 	ETLayoutItemGroup *_parentLayoutItem;
-	
+
 	id _value;
 	id _modelObject;
 	NSMutableDictionary *_variableProperties;
@@ -199,8 +199,18 @@ shape*/
 
 - (void) setNeedsDisplay: (BOOL)now;
 
+/* Geometry */
+
 - (NSRect) convertRectToParent: (NSRect)rect;
 - (NSRect) convertRectFromParent: (NSRect)rect;
+- (NSPoint) convertPointToParent: (NSPoint)point;
+- (NSPoint) convertPointFromParent: (NSPoint)point;
+- (BOOL) containsPoint: (NSPoint)point;
+- (BOOL) pointInside: (NSPoint)point;
+- (BOOL) isFlipped;
+
+//- (ETLayoutItem *) decoratorItemAtPoint: (NSPoint *)point;
+//- (NSRect) contentRect;
 
 /* Decoration */
 
@@ -267,9 +277,8 @@ shape*/
 
 /* Events & Actions */
 
-- (id <ETEventHandler>) eventHandler;
-
-- (void) doubleClick;
+- (ETActionHandler *) actionHandler;
+- (void) setActionHandler: (ETActionHandler *)anHandler;
 
 - (void) showInspectorPanel;
 - (id <ETInspector>) inspector;
@@ -284,6 +293,7 @@ shape*/
 
 - (ETLayoutItemGroup *) parentLayoutItem;
 - (void) setParentLayoutItem: (ETLayoutItemGroup *)parent;
+- (id <ETEventHandler>) eventHandler;
 
 @end
 

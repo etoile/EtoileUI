@@ -38,16 +38,33 @@
 
 #import <EtoileFoundation/NSIndexPath+Etoile.h>
 #import <EtoileFoundation/NSObject+Model.h>
-#import <EtoileUI/ETLayoutItem.h>
-#import <EtoileUI/ETLayoutItem+Events.h>
-#import <EtoileUI/ETLayoutItemGroup.h>
-#import <EtoileUI/ETWindowItem.h>
-#import <EtoileUI/ETStyleRenderer.h>
-#import <EtoileUI/ETView.h>
-#import <EtoileUI/ETContainer.h>
-#import <EtoileUI/ETInspector.h>
-#import <EtoileUI/NSView+Etoile.h>
-#import <EtoileUI/ETCompatibility.h>
+#import "ETLayoutItem.h"
+#import "ETLayoutItem+Events.h"
+#import "ETLayoutItemGroup.h"
+#import "ETWindowItem.h"
+#import "ETStyleRenderer.h"
+#import "ETView.h"
+#import "ETContainer.h"
+#import "ETInspector.h"
+#import "NSView+Etoile.h"
+#import "ETCompatibility.h"
+
+/* Properties */
+
+NSString *kETActionHandlerProperty = @"actionHandler";
+
+/* Macros to read and write the receiver or local properties without exposing 
+ how the properties are stored. The implicit property owner is self. */
+#define SET_PROPERTY(value, property) \
+	if (value != nil) \
+	{ \
+		[_variableProperties setObject: value forKey: property]; \
+	} \
+	else \
+	{ \
+		[_variableProperties removeObjectForKey: property]; \
+	}
+#define GET_PROPERTY(property) [_variableProperties objectForKey: property]
 
 #define DETAILED_DESCRIPTION
 /* Don't forget that -variableProperties creates the property dictionary */
@@ -122,13 +139,16 @@
     
     if (self != nil)
     {
-		_variableProperties = nil; /* Lazy init in -variableProperties */
+		// TODO: Examine common use cases and see whether we should pass a 
+		// capacity hint to improve performances.
+		_variableProperties = [[NSMutableDictionary alloc] init];
 		_parentLayoutItem = nil;
 		//_decoratorItem = nil;
 		[self setDecoratedItem: nil];
 		[self setView: view];
 		[self setVisible: NO];
 		[self setStyleRenderer: [ETBasicItemStyle sharedInstance]];
+		[self setActionHandler: [ETActionHandler sharedInstance]];
 		[self setValue: value];
 		[self setRepresentedObject: repObject];
     }
@@ -207,6 +227,7 @@
 
 	[item setName: [self name]];
 	[item setStyleRenderer: [self renderer]];
+	[item setActionHandler: [self actionHandler]];
 	[item setFrame: [self frame]];
 	[item setAppliesResizingToBounds: [self appliesResizingToBounds]];
 	
@@ -857,11 +878,14 @@
 	return [[super properties] arrayByAddingObjectsFromArray: properties];
 }
 
+/* Returns a dictionary representation of every property/value pairs not stored 
+in ivars.
+ 
+Unless you write a subclass or reflection code, you should never need this 
+method, but use the property accessors or Property Value Coding methods to read 
+and write the receiver properties. */
 - (NSDictionary *) variableProperties
 {
-	if (_variableProperties == nil)
-		ASSIGN(_variableProperties, [NSMutableDictionary dictionary]);
-		
 	return _variableProperties;
 }
 
@@ -1381,7 +1405,9 @@
 	ETView *drawingView = [self supervisorView];
 	NSRect drawingFrame = [self frame];
 	drawingFrame.origin = NSZeroPoint;
-	
+
+	// FIXME: This code doesn't work as desired...
+#if 0
 	if (drawingView != nil) /* Has supervisor view */
 	{
 		/* Exclude the title bar area */
@@ -1393,7 +1419,8 @@
 		if (drawingView != nil)
 			drawingFrame = [[drawingView wrappedView] frame];
 	}
-	
+#endif
+
 	return drawingFrame;
 }
 
@@ -1493,16 +1520,26 @@
 	ASSIGN(_renderer, renderer);
 }
 
+/* Geometry */
 
 /** Returns a rect expressed in parent layout item coordinate space equivalent 
 	to rect parameter expressed in the receiver coordinate space. */
 - (NSRect) convertRectToParent: (NSRect)rect
 {
-	NSAffineTransform *transform = [NSAffineTransform transform];
 	NSRect rectInParent = rect;
+
+	// NOTE: See -convertRectFromParent:...
+	// NSAffineTransform *transform = [NSAffineTransform transform];
+	// [transform translateXBy: [self x] yBy: [self y]];
+	// rectInParent.origin = [transform transformPoint: rect.origin];
+	rectInParent.origin.x = rect.origin.x + [self x];
+	rectInParent.origin.y = rect.origin.y + [self y];
 	
-	[transform translateXBy: [self x] yBy: [self y]];
-	rectInParent.origin = [transform transformPoint: rect.origin];
+	ETLayoutItem *parent = [self parentItem];
+	if ([self isFlipped] != [parent isFlipped])
+	{
+		rectInParent.origin.y = [parent height] - rectInParent.origin.y - rectInParent.size.height;
+	}
 	
 	return rectInParent;
 }
@@ -1511,13 +1548,80 @@
 	rect parameter expressed in the parent layout item coordinate space. */
 - (NSRect) convertRectFromParent: (NSRect)rect
 {
-	NSAffineTransform *transform = [NSAffineTransform transform];
-	NSRect rectInChild = rect;
-	
-	[transform translateXBy: -([self x]) yBy: -([self y])];
-	rectInChild.origin = [transform transformPoint: rect.origin];
-	
-	return rectInChild;
+	NSRect rectInReceiver = rect; /* Keep the size as is */
+
+	// NOTE: If we want to handle bounds transformations (rotation, translation,  
+	// and scaling), we should switch to NSAffineTransform, the current code 
+	// would be...
+	// NSAffineTransform *transform = [NSAffineTransform transform];
+	// [transform translateXBy: -([self x]) yBy: -([self y])];
+	// rectInChild.origin = [transform transformPoint: rect.origin];
+	rectInReceiver.origin.x = rect.origin.x - [self x];
+	rectInReceiver.origin.y = rect.origin.y - [self y];
+
+	if ([self isFlipped] != [[self parentItem] isFlipped])
+	{
+		rectInReceiver.origin.y = [self height] - rectInReceiver.origin.y - rectInReceiver.size.height;
+	}
+
+	return rectInReceiver;
+}
+
+/** Returns a point expressed in parent layout item coordinate space equivalent 
+	to point parameter expressed in the receiver coordinate space. */
+- (NSPoint) convertPointToParent: (NSPoint)point
+{
+	return [self convertRectToParent: ETMakeRect(point, NSZeroSize)].origin;
+}
+
+/** Returns whether the receiver uses flipped coordinates to position its 
+    content. 
+ 
+	ETLayoutItem class hierarchy has no built-in support for flipped 
+	coordinates, so you must not override this method. However when the 
+	-supervisorView is flipped, this will be taken in account in methods related 
+	to geometry, event handling and drawing. */
+- (BOOL) isFlipped
+{
+	// TODO: Review ETLayoutItem hierarchy to be sure flipped coordinates are 
+	// well supported.
+	return [[self supervisorView] isFlipped];
+}
+
+/** Returns a point expressed in the receiver coordinate space equivalent to
+	point parameter expressed in the parent layout item coordinate space. */
+- (NSPoint) convertPointFromParent: (NSPoint)point
+{
+	return [self convertRectFromParent: ETMakeRect(point, NSZeroSize)].origin;
+}
+
+/** Returns whether a point expressed in the parent item coordinate space is 
+    is within the receiver frame. The item frame is also expressed in the parent 
+	item coordinate space.
+ 
+	This method checks whether the parent item is flipped or not. */
+- (BOOL) containsPoint: (NSPoint)point
+{
+	return NSMouseInRect(point, [self frame], [[self parentItem] isFlipped]);
+}
+
+/** Returns whether a point expressed in the receiver coordinate space is inside 
+    the receiver bounds.
+ 
+	For now, the bounds size is always equal to the item frame and the origin 
+	to zero.
+ 
+	TODO: Ensure the next paragraph really holds...
+	If you convert a point expressed in the parent coordinate space to the 
+	receiver coordinate space with -convertPointFromParent:, if the receiver 
+	is flipped, the point will be adjusted as needed. Hence you can safely pass 
+	a point once converted without worrying whether the parent or the receiver 
+	are flipped. */
+- (BOOL) pointInside: (NSPoint)point
+{
+	NSRect bounds = [self frame];
+	bounds.origin = NSZeroPoint;
+	return NSPointInRect(point, bounds);
 }
 
 - (NSRect) persistentFrame
@@ -1794,19 +1898,17 @@
 
 /* Events & Actions */
 
-/** Returns the event handler associated with the receiver. The returned object
-	must implement ETEventHandler protocol.
-	By default the receiver returns itself. See ETLayoutItem+Events to know 
-	more about event handling in the layout item tree. */
-- (id <ETEventHandler>) eventHandler
+/** Returns the action handler associated with the receiver. See ETInstrument to 
+know more about event handling in the layout item tree. */
+- (ETActionHandler *) actionHandler
 {
-	return self;
+	return GET_PROPERTY(kETActionHandlerProperty);
 }
 
-/* You can override this method for your own custom layout item */
-- (void) doubleClick
+/** Sets the action handler associated with the receiver. */
+- (void) setActionHandler: (ETActionHandler *)anHandler
 {
-
+	SET_PROPERTY(anHandler, kETActionHandlerProperty);
 }
 
 - (void) showInspectorPanel
@@ -1852,6 +1954,15 @@
 - (void) setParentLayoutItem: (ETLayoutItemGroup *)parent
 {
 	[self setParentItem: parent];
+}
+
+/** Returns the event handler associated with the receiver. The returned object
+ must implement ETEventHandler protocol.
+ By default the receiver returns itself. See ETLayoutItem+Events to know 
+ more about event handling in the layout item tree. */
+- (id <ETEventHandler>) eventHandler
+{
+	return self;
 }
 
 @end
