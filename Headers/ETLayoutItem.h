@@ -47,6 +47,14 @@
 @class ETView, ETContainer, ETLayoutItemGroup, ETWindowItem, ETActionHandler;
 @protocol ETEventHandler;
 
+/* Properties */
+
+extern NSString *kETActionHandlerProperty; /** actionHandler property name */
+extern NSString *kETIconProperty; /** icon property name */
+extern NSString *kETImageProperty; /** image property name */
+extern NSString *kETNameProperty; /** name property name */
+extern NSString *kETPersistentFrameProperty; /** persistentFrame property name */
+
 // FIXME: Use less memory per instance. Name and value are somehow duplicates.
 // _cells and _view could be moved in a helper object. Pack booleans in a struct.
 @interface ETLayoutItem : ETStyle <ETPropertyValueCoding, ETObjectInspection>
@@ -56,7 +64,6 @@
 	id _value;
 	id _modelObject;
 	NSMutableDictionary *_variableProperties;
-	NSString *_name;
 	ETStyle *_renderer;
 	ETLayoutItem *_decoratorItem; // previous decorator
 	ETLayoutItem *_decoratedItem; // next decorator

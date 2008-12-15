@@ -52,6 +52,10 @@
 /* Properties */
 
 NSString *kETActionHandlerProperty = @"actionHandler";
+NSString *kETIconProperty = @"icon";
+NSString *kETImageProperty = @"image";
+NSString *kETNameProperty = @"name";
+NSString *kETPersistentFrameProperty = @"persistentFrame";
 
 /* Macros to read and write the receiver or local properties without exposing 
  how the properties are stored. The implicit property owner is self. */
@@ -568,7 +572,8 @@ NSString *kETActionHandlerProperty = @"actionHandler";
 	return identifier;
 }
 
-// FIXME: we should probably define -displayName and may be -name on NSObject
+/** Returns the display name associated with the receiver. See also 
+NSObject(Model) in EtoileFoundation. */
 - (NSString *) displayName
 {
 	id name = [self name];
@@ -600,17 +605,19 @@ NSString *kETActionHandlerProperty = @"actionHandler";
 }
 
 /** Returns the name associated with the layout item.
+ 
 	Take note the returned value can be nil or an empty string. */
 - (NSString *) name
 {
-	return _name;
+	return GET_PROPERTY(kETNameProperty);
 }
 
 /** Sets the name associated with the layout item.
+ 
 	Take note the returned value can be nil or an empty string. */
 - (void) setName: (NSString *)name
 {
-	ASSIGN(_name, name);
+	SET_PROPERTY(name, kETNameProperty);
 }
 
 /** Returns a value which is used when only one value can be displayed like in
@@ -1624,18 +1631,24 @@ and write the receiver properties. */
 	return NSPointInRect(point, bounds);
 }
 
+/** Returns the persistent frame associated with the receiver. 
+
+This custom frame is used by ETFreeLayout. This property keeps track of the 
+fixed location and size that are used for the receiver in the free layout, even 
+if you switch to another layout that alters the receiver frame. The current 
+frame is returned by -frame in all cases, hence when ETFreeLayout is in use, 
+-frame is equal to -persistentFrame. */
 - (NSRect) persistentFrame
 {
-	// TODO: Find the best way to allow the represented object to provide and 
-	// store the persistent frame.
-	//[[[self representedObject] valueForProperty: @"kPersistentFrame"] rectValue];
-	return [[VARIABLE_PROPERTIES objectForKey: @"kPersistentFrame"] rectValue];
+	// TODO: Find the best way to eventually allow the represented object to 
+	// provide and store the persistent frame.
+	return [GET_PROPERTY(kETPersistentFrameProperty) rectValue];
 }
 
+/** Sets the persistent frame associated with the receiver. See -persistentFrame. */
 - (void) setPersistentFrame: (NSRect) frame
 {
-	//[[self representedObject] setValue: [NSValue valueWithRect: frame] forProperty: @"kPersistentFrame"];
-	[VARIABLE_PROPERTIES setObject: [NSValue valueWithRect: frame] forKey: @"kPersistentFrame"];
+	SET_PROPERTY([NSValue valueWithRect: frame], kETPersistentFrameProperty);
 }
 
 - (NSRect) frame
@@ -1837,13 +1850,20 @@ and write the receiver properties. */
 	[[self displayView] setNeedsDisplay: YES];
 }
 
-/** Returns a default image representation of the layout item. 
-	It tries to find it by looking up for 'image' property, then 'icon' 
-	property. If none is found and a view is referenced by the layout item, it 
-	generates an image by taking a snapshot of the view. */
+/** Returns the image representation associated with the receiver.
+
+By default this method, returns by decreasing order of priority:
+<enum>
+<item>the receiver image (aka ETImageProperty), if -setImage: was called previously</item>
+<item>the receiver value, if -value returns an NSImage object</item>
+<item>nil, if none of the above conditions are met</item>
+</enum>.
+The returned image can be overriden by calling -setImage:. 
+ 
+See also -icon. */
 - (NSImage *) image
 {
-	NSImage *img = [VARIABLE_PROPERTIES objectForKey: @"image"];
+	NSImage *img = GET_PROPERTY(kETImageProperty);
 	
 	if (img == nil && [[self value] isKindOfClass: [NSImage class]])
 		img = [self value];
@@ -1851,9 +1871,15 @@ and write the receiver properties. */
 	return img;
 }
 
+/** Sets the image representation associated with the receiver.
+
+If img is nil, then the default behavior of -image is restored and the returned 
+image should not be expected to be nil. */
 - (void) setImage: (NSImage *)img
 {
-	[(NSMutableDictionary *)VARIABLE_PROPERTIES setObject: img forKey: @"image"];
+	SET_PROPERTY(img, kETImageProperty);
+
+	// TODO: Think about whether this is really the best to do...
 	if (img != nil)
 	{
 		[self setSize: [img size]];
@@ -1864,21 +1890,32 @@ and write the receiver properties. */
 	}
 }
 
+// NOTE: May be we should have -displayIcon (or -customIcon, -setCustomIcon:) to 
+// eliminate the lack of symetry between -icon and -setIcon:.
 /** Returns the image to be displayed when the receiver must be represented in a 
 	symbolic style. This icon is commonly used by some layouts and also if the 
 	receiver represents another layout item (when -isMetaLayoutItem returns YES).
-	By default this method, returns either -image if the returned value isn't 
-	nil or a view snapshot when -view isn't nil. 
+
+	By default, this method returns by decreasing order of priority:
+    <enum>
+    <item>the receiver icon (aka ETIconProperty), if -setIcon: was called previously</item>
+    <item>the receiver image (aka ETImageProperty), if -image doesn't return nil</item>
+	<item>a view snapshot, if -view doesn't return nil</item>
+	<item>the represented object icon, if the represented object and the icon 
+    associated with it are not nil</item>
+    <item>nil, if none of the above conditions are met</item>
+    </enum>. 
+	The returned image can be overriden by calling -setIcon:.
+
 	-image and -icon can be considered as symetric equivalents of -name and 
 	-displayName methods. */
 - (NSImage *) icon
 {
-	NSImage *icon = [VARIABLE_PROPERTIES objectForKey: @"icon"];
+	NSImage *icon = GET_PROPERTY(kETIconProperty);
 	
 	if (icon == nil)
 		icon = [self image];
 
-	// NOTE: -bitmapImageRepForCachingDisplayInRect:(NSRect)aRect on Mac OS 10.4
 	if (icon == nil && [self displayView] != nil)
 		icon = [[self displayView] snapshot];
 		
@@ -1891,9 +1928,14 @@ and write the receiver properties. */
 	return icon;
 }
 
+/** Sets the image to be displayed when the receiver must be represented in a 
+    symbolic style. See also -icon.
+
+    If img is nil, then the default behavior of -icon is restored and the 
+    icon image should not be expected to be nil. */
 - (void) setIcon: (NSImage *)img
 {
-	[VARIABLE_PROPERTIES setObject: img forKey: @"icon"];
+	SET_PROPERTY(img, kETIconProperty);
 }
 
 /* Events & Actions */
@@ -1911,11 +1953,13 @@ know more about event handling in the layout item tree. */
 	SET_PROPERTY(anHandler, kETActionHandlerProperty);
 }
 
+/** Shows the inspector associated with the receiver. See also -inspector. */
 - (void) showInspectorPanel
 {
 	[[[self inspector] panel] makeKeyAndOrderFront: self];
 }
 
+/** Returns the inspector associated with the receiver. */
 - (id <ETInspector>) inspector
 {
 	ETContainer *container = [self closestAncestorContainer];
@@ -1970,6 +2014,8 @@ know more about event handling in the layout item tree. */
 
 @implementation NSObject (ETLayoutItem)
 
+/** Returns YES if the receiver is an ETLayoutItem class or subclass instance, 
+otherwise returns NO. */
 - (BOOL) isLayoutItem
 {
 	return ([self isKindOfClass: [ETLayoutItem class]]);

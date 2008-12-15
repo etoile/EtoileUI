@@ -99,7 +99,11 @@
 {
 	FOREACH(items, item, ETLayoutItem *)
 	{
-		if ([item valueForProperty: @"kPersistentFrame"])
+		// TODO: -hasLocalProperty: would be a better check. -persistentFrame 
+		// will return a zero rect both when no persistentFrame exists and when
+		// it is explicitly set to a zero rect. Only -valueForProperty: or 
+		// -hasLocalProperty: can really tell whether the property exists or not.
+		if ([item valueForProperty: kETPersistentFrameProperty] != nil)
 		{
 			[item setFrame: [item persistentFrame]];
 		}
