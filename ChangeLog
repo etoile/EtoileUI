@@ -1,3 +1,22 @@
+2008-12-15  Quentin Mathe <qmathe@club-internet.fr>
+
+	New event handling model - part 2
+	Added an ETActionHandler skeleton that will replace the event handler 
+	logic located in ETLayoutItem+Events.
+	Added new geometry methods to ETLayoutItem that will be used to dispatch 
+	events in the layout item tree.
+	* ETLayoutItem:
+	(-eventHandler): Deprecated.
+	(-actionHandler, -setActionHandler): Added. Thought to replace -eventHandler.
+	(-convertRectToParent:, -convertRectFromParent:): Rewritten to work properly.
+	(-convertPointToParent:, -convertPointFromParent:, -containsPoint:, 
+	-pointInside:, -isFlipped): Added.
+	(-copyWithZone:, -dealloc): Updated to take in account the action handler.
+	(-init): Ditto. Also modified to initialize the property dictionary
+	immediately rather than lazily in -variableProperties.
+	* ETLayoutItem+Events:
+	Added an ETActionHandler skeleton.
+	
 2008-12-12  Quentin Mathe <qmathe@club-internet.fr>
 
 	Turned ETContainer(ETController) into a standalone ETController class.
