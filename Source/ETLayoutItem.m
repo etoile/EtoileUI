@@ -56,6 +56,7 @@ NSString *kETIconProperty = @"icon";
 NSString *kETImageProperty = @"image";
 NSString *kETNameProperty = @"name";
 NSString *kETPersistentFrameProperty = @"persistentFrame";
+NSString *kETValueProperty = @"value";
 
 /* Macros to read and write the receiver or local properties without exposing 
  how the properties are stored. The implicit property owner is self. */
@@ -606,7 +607,7 @@ NSObject(Model) in EtoileFoundation. */
 
 /** Returns the name associated with the layout item.
  
-	Take note the returned value can be nil or an empty string. */
+Take note the returned value can be nil or an empty string. */
 - (NSString *) name
 {
 	return GET_PROPERTY(kETNameProperty);
@@ -614,29 +615,33 @@ NSObject(Model) in EtoileFoundation. */
 
 /** Sets the name associated with the layout item.
  
-	Take note the returned value can be nil or an empty string. */
+Take note the returned value can be nil or an empty string. */
 - (void) setName: (NSString *)name
 {
 	SET_PROPERTY(name, kETNameProperty);
 }
 
-/** Returns a value which is used when only one value can be displayed like in
-	a table view with a single column or an icon view with a rudimentary icon 
-	unit cell. */
+/** Returns a value object, that can be used when a single property has to be 
+displayed. See also -setValue:. */
 - (id) value
 {
-	return _value;
+	return GET_PROPERTY(kETValueProperty);
 }
 
-/** Sets a value to be used when only one value can be displayed like in
-	a table view with a single column or an icon view with a rudimentary icon 
-	unit cell.
-	Most of time this method can be used as a conveniency which allows to 
-	bypass -valueForProperty: and -setValue:forProperty: when the layout item
-	is used by combox box, single column table view, line view made of simple
-	images etc. */
+/** Sets a value object, that can be used when a single property has to be 
+displayed. For example, in a table layout with a single column or a simple 
+positional layout where each basic item style will try to draw it. To know how 
+such value object might be used by a layout, see each ETLayout and ETStyle 
+subclass documentation.
+
+The value object is typically a string, a number or an image.
+
+Most of time this method can be used as a conveniency which allows to bypass
+-valueForProperty: and -setValue:forProperty: when the layout item is used by
+combox box, single column table layout, line layout made of simple images etc. */
 - (void) setValue: (id)value
 {
+	// TODO: Should we restrict what values can be accepted...
 	/*if ([value isCommonObjectValue] == NO)
 	{
 		[NSException raise: NSInvalidArgumentException format: @"Value %@ must "
@@ -644,40 +649,21 @@ NSObject(Model) in EtoileFoundation. */
 		return;
 	}*/
 	
-	ASSIGN(_value, value);
-	
-#if 0
-	if ([_value isKindOfClass: [NSImage class]])
-	{
-		/*ETImageStyle *imgStyle = [ETImageStyle styleWithImage: (NSImage *)_value];
-		
-		[self setDefaultFrame: ETMakeRect(NSZeroPoint, [_value size])];
-		[self setStyleRenderer: imgStyle];*/
-	}
-	else if ([_value isKindOfClass: [NSString class]])
-	{
-	
-	}
-	else if ([_value isKindOfClass: [NSAttributedString class]])
-	{
-	
-	}
-#endif
+	SET_PROPERTY(value, kETValueProperty);
 }
 
-/** Returns model object which embeds the representation of what the layout 
-	item displays. When a new layout item is created, by default it uses a
-	dictionary as a rudimentary model object. */
+/** Returns the model object which embeds the data to be displayed and 
+represented on screen by the receiver. See also -setRepresentedObject:. */
 - (id) representedObject
 {
 	return _modelObject;
 }
 
-/** Sets model object which embeds the representation of what the layout 
-	item displays. 
-	If you want to restore default model object initally set, pass a mutable 
-	dictionary instance as parameter to this method.
-	See -representedObject for more details. */
+/** Sets the model object which embeds the data to be displayed and represented 
+on screen by the receiver.
+
+Take note modelObject can be any objects including an ETLayoutItem instance, in 
+this case the receiver becomes a meta item and returns YES for -isMetaLayoutItem. */
 - (void) setRepresentedObject: (id)modelObject
 {
 	ASSIGN(_modelObject, modelObject);

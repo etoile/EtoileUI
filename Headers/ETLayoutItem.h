@@ -54,6 +54,7 @@ extern NSString *kETIconProperty; /** icon property name */
 extern NSString *kETImageProperty; /** image property name */
 extern NSString *kETNameProperty; /** name property name */
 extern NSString *kETPersistentFrameProperty; /** persistentFrame property name */
+extern NSString *kETValueProperty; /** value property name */
 
 // FIXME: Use less memory per instance. Name and value are somehow duplicates.
 // _cells and _view could be moved in a helper object. Pack booleans in a struct.
@@ -61,7 +62,6 @@ extern NSString *kETPersistentFrameProperty; /** persistentFrame property name *
 {
 	ETLayoutItemGroup *_parentLayoutItem;
 
-	id _value;
 	id _modelObject;
 	NSMutableDictionary *_variableProperties;
 	ETStyle *_renderer;
