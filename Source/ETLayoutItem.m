@@ -1666,7 +1666,7 @@ See also -setPersistentFrame: */
 /** Sets the current frame and also the persistent frame if the layout of the 
 parent item is positional and non-computed such as ETFreeLayout.
 
-See also -[ETLayout isPositional] and -[ETLayout isComputed]. */
+See also -[ETLayout isPositional] and -[ETLayout isComputedLayout]. */
 - (void) setFrame: (NSRect)rect
 {
 	ETDebugLog(@"-setFrame: %@ on %@", NSStringFromRect(rect), self);  
@@ -1685,11 +1685,13 @@ See also -[ETLayout isPositional] and -[ETLayout isComputed]. */
 		[self setPersistentFrame: rect];
 }
 
+/** Returns the current origin associated with the receiver frame. See also -frame. */
 - (NSPoint) origin
 {
 	return [self frame].origin;
 }
 
+/** Sets the current origin associated with the receiver frame. See also -setFrame:. */   
 - (void) setOrigin: (NSPoint)origin
 {
 	NSRect newFrame = [self frame];
@@ -1698,11 +1700,13 @@ See also -[ETLayout isPositional] and -[ETLayout isComputed]. */
 	[self setFrame: newFrame];
 }
 
+/** Returns the current size associated with the receiver frame. See also -frame. */       
 - (NSSize) size
 {
 	return [self frame].size;
 }
 
+/** Sets the current size associated with the receiver frame. See also -setFrame:. */           
 - (void) setSize: (NSSize)size
 {
 	NSRect newFrame = [self frame];
@@ -1711,41 +1715,57 @@ See also -[ETLayout isPositional] and -[ETLayout isComputed]. */
 	[self setFrame: newFrame];
 }
 
+/** Returns the current x coordinate associated with the receiver frame origin. 
+See also -frame. */       
 - (float) x
 {
 	return [self frame].origin.x;
 }
 
+/** Sets the current x coordinate associated with the receiver frame origin. 
+See also -setFrame:. */
 - (void) setX: (float)x
 {
 	[self setOrigin: NSMakePoint(x, [self y])];
 }
 
+/** Returns the current y coordinate associated with the receiver frame origin. 
+See also -frame. */
 - (float) y
 {
 	return [self frame].origin.y;
 }
 
+/** Sets the current y coordinate associated with the receiver frame origin. 
+See also -setFrame:. */
 - (void) setY: (float)y
 {
 	[self setOrigin: NSMakePoint([self x], y)];
 }
 
+/** Returns the current height associated with the receiver frame size. See also 
+-frame. */
 - (float) height
 {
 	return [self size].height;
 }
 
+/** Sets the current height associated with the receiver frame size. See also 
+-setFrame:. */
 - (void) setHeight: (float)height
 {
 	[self setSize: NSMakeSize([self width], height)];
 }
 
+/** Returns the current width associated with the receiver frame size. See also 
+-frame. */
 - (float) width
 {
 	return [self size].width;
 }
 
+/** Sets the current width associated with the receiver frame size. See also 
+-setFrame:. */
 - (void) setWidth: (float)width
 {
 	[self setSize: NSMakeSize(width, [self height])];
