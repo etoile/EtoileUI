@@ -56,6 +56,7 @@ NSString *kETIconProperty = @"icon";
 NSString *kETImageProperty = @"image";
 NSString *kETNameProperty = @"name";
 NSString *kETPersistentFrameProperty = @"persistentFrame";
+NSString *kETStyleProperty = @"style";
 NSString *kETValueProperty = @"value";
 
 /* Macros to read and write the receiver or local properties without exposing 
@@ -152,7 +153,7 @@ NSString *kETValueProperty = @"value";
 		[self setDecoratedItem: nil];
 		[self setView: view];
 		[self setVisible: NO];
-		[self setStyleRenderer: [ETBasicItemStyle sharedInstance]];
+		[self setStyle: [ETBasicItemStyle sharedInstance]];
 		[self setActionHandler: [ETActionHandler sharedInstance]];
 		[self setValue: value];
 		[self setRepresentedObject: repObject];
@@ -211,7 +212,6 @@ NSString *kETValueProperty = @"value";
 	if (_decoratorItem != self)
 		DESTROY(_decoratorItem);
     DESTROY(_view);
-	DESTROY(_value);
 	DESTROY(_modelObject);
 	_parentLayoutItem = nil; /* weak reference */
     
@@ -231,7 +231,7 @@ NSString *kETValueProperty = @"value";
 	                                      representedObject: [self representedObject]];
 
 	[item setName: [self name]];
-	[item setStyleRenderer: [self renderer]];
+	[item setStyle: [self style]];
 	[item setActionHandler: [self actionHandler]];
 	[item setFrame: [self frame]];
 	[item setAppliesResizingToBounds: [self appliesResizingToBounds]];
@@ -1468,7 +1468,7 @@ and write the receiver properties. */
 	}
 #endif
 
-	[[self renderer] render: inputValues layoutItem: self dirtyRect: dirtyRect];
+	[[self style] render: inputValues layoutItem: self dirtyRect: dirtyRect];
 }
 
 /** A shortcut method for -render: inherited from ETStyle. */
@@ -1503,14 +1503,20 @@ and write the receiver properties. */
 
 }
 
-- (ETStyle *) renderer
+/** Returns the style object associated with the receiver. By default, returns 
+ETBasicItemStyle. */    
+- (ETStyle *) style
 {
-	return _renderer;
+	return _style;
 }
 
-- (void) setStyleRenderer: (ETStyle *)renderer
+/** Sets the style object associated with the receiver.
+
+The style object controls the drawing of the receiver. See ETStyle to 
+understand how to customize the layout item look. */
+- (void) setStyle: (ETStyle *)aStyle
 {
-	ASSIGN(_renderer, renderer);
+	ASSIGN(_style, aStyle);
 }
 
 /* Geometry */

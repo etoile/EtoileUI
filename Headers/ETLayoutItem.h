@@ -54,6 +54,7 @@ extern NSString *kETIconProperty; /** icon property name */
 extern NSString *kETImageProperty; /** image property name */
 extern NSString *kETNameProperty; /** name property name */
 extern NSString *kETPersistentFrameProperty; /** persistentFrame property name */
+extern NSString *kETStyleProperty; /** style property name */
 extern NSString *kETValueProperty; /** value property name */
 
 // FIXME: Use less memory per instance. Name and value are somehow duplicates.
@@ -64,12 +65,11 @@ extern NSString *kETValueProperty; /** value property name */
 
 	id _modelObject;
 	NSMutableDictionary *_variableProperties;
-	ETStyle *_renderer;
+	ETStyle *_style;
 	ETLayoutItem *_decoratorItem; // previous decorator
 	ETLayoutItem *_decoratedItem; // next decorator
 
 	IBOutlet ETView *_view;
-	NSArray *_cells; /* NSCell compatibility */
 	
 	/* Model object stores a persistent frame when the layout is non-computed */
 	NSRect _defaultFrame; /* Frame without item scaling */
@@ -199,10 +199,12 @@ shape*/
 - (void) updateLayout;
 - (void) apply: (NSMutableDictionary *)inputValues;
 - (NSRect) drawingFrame;
-- (void) render: (NSMutableDictionary *)inputValues dirtyRect: (NSRect)dirtyRect inView: (NSView *)view;
+- (void) render: (NSMutableDictionary *)inputValues 
+      dirtyRect: (NSRect)dirtyRect 
+         inView: (NSView *)view;
 - (void) render;
-- (ETStyle *) renderer;
-- (void) setStyleRenderer: (ETStyle *)renderer;
+- (ETStyle *) style;
+- (void) setStyle: (ETStyle *)aStyle;
 
 - (void) setNeedsDisplay: (BOOL)now;
 
