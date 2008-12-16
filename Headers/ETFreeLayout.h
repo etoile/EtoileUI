@@ -47,6 +47,9 @@
 	NSPoint _dragStartOffsetFromOrigin;
 }
 
+- (BOOL) isPositional;
+- (BOOL) isComputedLayout;
+
 - (void) resetItemLocationsWithLayout: (ETComputedLayout *)layout;
 - (void) loadPersistentFramesForItems: (NSArray *)items;
 

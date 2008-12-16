@@ -50,6 +50,7 @@
 /* Properties */
 
 extern NSString *kETActionHandlerProperty; /** actionHandler property name */
+extern NSString *kETFrameProperty; /** frame property name */  
 extern NSString *kETIconProperty; /** icon property name */
 extern NSString *kETImageProperty; /** image property name */
 extern NSString *kETNameProperty; /** name property name */
@@ -249,19 +250,10 @@ shape*/
 /*- (void) beginLayoutComputation;
 - (void) endLayoutComputation;*/
 
-/** The persistent frame is only valid and used in non-computed layout like
-	ETFreeLayout. */
 - (NSRect) persistentFrame;
 - (void) setPersistentFrame: (NSRect) frame;
 
-/** Returns always the current frame. This value is always in sync with 
-	persistent frame in non-computed layout but is usually different when
-	the layout is computed */
 - (NSRect) frame;
-/** Sets the current frame and also the persistent frame if the layout
-	is a non-computed one. 
-	The layout is found by looking up in the layout tree for the closest
-	layout item group which has a layout defined. */
 - (void) setFrame: (NSRect)rect;
 - (NSPoint) origin;
 - (void) setOrigin: (NSPoint)origin;

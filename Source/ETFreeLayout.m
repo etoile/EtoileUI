@@ -45,11 +45,12 @@
 
 @implementation ETFreeLayout
 
-/** <init \> Initializes and returns a new layout without constraint on item 
-	size unlike ETLayout. 
-	The returned object is always an ETFreeLayout object if layoutView is nil.
-	If a layout view is passed in parameter, the returned layout can be any
-	ETLayout subclasses (see -[ETLayout initWithLayoutView:]). */
+/** <init \> Initializes and returns a new layout without constraint on item size
+unlike ETLayout.
+
+The returned object is always an ETFreeLayout object if layoutView is nil. If a
+layout view is passed in parameter, the returned layout can be any ETLayout
+subclasses (see -[ETLayout initWithLayoutView:]). */
 - (id) initWithLayoutView: (NSView *)layoutView
 {
 	self = [super initWithLayoutView: layoutView];
@@ -62,8 +63,14 @@
 	return self;
 }
 
+/** Always returns YES since items are positioned by the user. */
+- (BOOL) isPositional
+{
+	return YES;
+}
+
 /** Always returns NO since items are positioned by the user and not computed 
-	by the receiver. */
+by the receiver. */
 - (BOOL) isComputedLayout
 {
 	return NO;

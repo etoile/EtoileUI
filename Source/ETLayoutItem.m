@@ -52,6 +52,7 @@
 /* Properties */
 
 NSString *kETActionHandlerProperty = @"actionHandler";
+NSString *kETFrameProperty = @"frame";
 NSString *kETIconProperty = @"icon";
 NSString *kETImageProperty = @"image";
 NSString *kETNameProperty = @"name";
@@ -1643,6 +1644,13 @@ frame is returned by -frame in all cases, hence when ETFreeLayout is in use,
 	SET_PROPERTY([NSValue valueWithRect: frame], kETPersistentFrameProperty);
 }
 
+/** Returns the current frame. If the receiver has a view attached to it, the 
+returned frame is equivalent to the display view frame.  
+
+This value is always in sync with the persistent frame in a positional and 
+non-computed layout such as ETFreeLayout, but is usually different when the 
+layout is computed. 
+See also -setPersistentFrame: */
 - (NSRect) frame
 {
 	if ([self displayView] != nil)
@@ -1655,9 +1663,14 @@ frame is returned by -frame in all cases, hence when ETFreeLayout is in use,
 	}
 }
 
+/** Sets the current frame and also the persistent frame if the layout of the 
+parent item is positional and non-computed such as ETFreeLayout.
+
+See also -[ETLayout isPositional] and -[ETLayout isComputed]. */
 - (void) setFrame: (NSRect)rect
 {
-	//ETDebugLog(@"-setFrame: %@ on %@", NSStringFromRect(rect), self);
+	ETDebugLog(@"-setFrame: %@ on %@", NSStringFromRect(rect), self);  
+
 	if ([self displayView] != nil)
 	{
 		[[self displayView] setFrame: rect];
@@ -1666,8 +1679,9 @@ frame is returned by -frame in all cases, hence when ETFreeLayout is in use,
 	{
 		_frame = rect;
 	}
-	// NOTE: the next line introduces ETLayoutItemGroup import 
-	if ([[[self parentLayoutItem] layout] isComputedLayout] == NO)
+
+	ETLayout *parentLayout = [[self parentItem] layout];
+	if ([parentLayout isPositional] && [parentLayout isComputedLayout] == NO)
 		[self setPersistentFrame: rect];
 }
 
