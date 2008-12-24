@@ -34,8 +34,8 @@
 	THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import <EtoileUI/NSImage+Etoile.h>
-#import <EtoileUI/ETCompatibility.h>
+#import "NSImage+Etoile.h"
+#import "ETCompatibility.h"
 
 @interface NSImage (EtoilePrivate)
 - (void) takeSnapshotFromRect: (NSRect)sourceRect inView: (NSView *)view;
@@ -80,6 +80,7 @@
 	}
 
 	[view lockFocus];
+	// NOTE: -bitmapImageRepForCachingDisplayInRect: could be used on Mac OS 10.4
 	rep = [[NSBitmapImageRep alloc] initWithFocusedViewRect: sourceRect];
 	[view unlockFocus];
 
