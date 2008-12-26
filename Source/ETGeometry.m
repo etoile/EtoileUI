@@ -35,7 +35,7 @@
  */
 
 #import "ETGeometry.h"
-#include <limits.h>
+#include <float.h>
 
 const NSPoint ETNullPoint = {FLT_MIN, FLT_MIN};
 const NSSize ETNullSize = {FLT_MIN, FLT_MIN};

@@ -16,6 +16,7 @@ libEtoileUI_OBJC_FILES = \
 	ETEvent.m \
 	ETFlowLayout.m \
 	ETFreeLayout.m \
+	ETGeometry.m \
 	ETInspector.m \
 	ETLayer.m \
 	ETLayoutItemBuilder.m \

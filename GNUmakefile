@@ -28,7 +28,7 @@ endif
 EtoileUI_HEADER_FILES_DIR = Headers
 
 EtoileUI_HEADER_FILES = \
-        Controls+Etoile.h \
+	Controls+Etoile.h \
 	ETApplication.h \
 	ETBrowserLayout.h \
 	ETCompatibility.h \
@@ -39,6 +39,7 @@ EtoileUI_HEADER_FILES = \
 	ETEvent.h \
 	ETFlowLayout.h \
 	ETFreeLayout.h \
+	ETGeometry.h \
 	ETInspecting.h \
 	ETInspector.h \
 	ETLayer.h \
