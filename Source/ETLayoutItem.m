@@ -1784,11 +1784,6 @@ must be expressed in the receiver coordinate space. */
 - (void) setAnchorPoint: (NSPoint)anchor
 {
 	SET_PROPERTY([NSValue valueWithPoint: anchor], kETAnchorPointProperty);
-	/*NSPoint position = anchor;
-	
-	position.x -= 5;
-	position.y -= 5;
-	[self setOrigin: position];*/
 }
 
 /** Returns the current position associated with the receiver frame. The 
