@@ -39,6 +39,7 @@
 #import <EtoileFoundation/NSIndexPath+Etoile.h>
 #import <EtoileFoundation/NSObject+Model.h>
 #import "ETLayoutItem.h"
+#import "ETGeometry.h"
 #import "ETLayoutItem+Events.h"
 #import "ETLayoutItemGroup.h"
 #import "ETWindowItem.h"
@@ -51,11 +52,15 @@
 
 /* Properties */
 
+NSString *kETAnchorPointProperty = @"anchorPoint";
 NSString *kETActionHandlerProperty = @"actionHandler";
+NSString *kETDefaultFrameProperty = @"defaultFrame";
+NSString *kETFlippedProperty = @"flipped";
 NSString *kETFrameProperty = @"frame";
 NSString *kETIconProperty = @"icon";
 NSString *kETImageProperty = @"image";
 NSString *kETNameProperty = @"name";
+NSString *kETNeedsDisplayProperty = @"needsDisplay";
 NSString *kETPersistentFrameProperty = @"persistentFrame";
 NSString *kETStyleProperty = @"style";
 NSString *kETValueProperty = @"value";
@@ -72,6 +77,7 @@ NSString *kETValueProperty = @"value";
 		[_variableProperties removeObjectForKey: property]; \
 	}
 #define GET_PROPERTY(property) [_variableProperties objectForKey: property]
+#define HAS_PROPERTY(property) ([_variableProperties objectForKey: property] != nil)
 
 #define DETAILED_DESCRIPTION
 /* Don't forget that -variableProperties creates the property dictionary */
@@ -80,6 +86,8 @@ NSString *kETValueProperty = @"value";
 #define ETUTIAttribute @"uti"
 
 @interface ETLayoutItem (Private)
+- (NSRect) bounds;
+- (NSPoint) centeredAnchorPoint;
 - (void) setImage: (NSImage *)img;
 - (void) setIcon: (NSImage *)img;
 - (void) layoutItemViewFrameDidChange: (NSNotification *)notif;
@@ -151,6 +159,9 @@ NSString *kETValueProperty = @"value";
 		_variableProperties = [[NSMutableDictionary alloc] init];
 		_parentLayoutItem = nil;
 		//_decoratorItem = nil;
+		_frame = ETNullRect;
+		// TODO: Enable next line when well tested...
+		//_isFlipped = YES;
 		[self setDecoratedItem: nil];
 		[self setView: view];
 		[self setVisible: NO];
@@ -713,7 +724,7 @@ this case the receiver becomes a meta item and returns YES for -isMetaLayoutItem
 		/* Stop to observe notifications on current view and reset bounds size */
 		[self setAppliesResizingToBounds: NO];
 	}
-	_defaultFrame = NSZeroRect;
+	SET_PROPERTY([NSValue valueWithRect: NSZeroRect], kETDefaultFrameProperty);
 	
 	/* Inserts the new view */
 	
@@ -783,13 +794,13 @@ this case the receiver becomes a meta item and returns YES for -isMetaLayoutItem
 - (id) valueForUndefinedKey: (NSString *)key
 {
 	//ETLog(@"WARNING: -valueForUndefinedKey: %@ called in %@", key, self);
-	return [VARIABLE_PROPERTIES objectForKey: key]; /* May return nil */
+	return GET_PROPERTY(key); /* May return nil */
 }
 
 - (void) setValue: (id)value forUndefinedKey: (NSString *)key
 {
 	//ETLog(@"WARNING: -setValue:forUndefinedKey: %@ called in %@", key, self);
-	[VARIABLE_PROPERTIES setObject: value forKey: key];
+	SET_PROPERTY(value, key);
 }
 
 /* Property Value Coding */
@@ -1478,7 +1489,8 @@ and write the receiver properties. */
 	[self render: nil];
 }
 
-- (void) setNeedsDisplay: (BOOL)now
+/** See also -display. */
+- (void) setNeedsDisplay: (BOOL)flag
 {
 	NSRect displayRect = [self frame];
 	
@@ -1491,17 +1503,13 @@ and write the receiver properties. */
 	[[self closestAncestorDisplayView] setNeedsDisplayInRect: displayRect];
 }
 
-// TODO: Evaluate whether we really need the two following methods
-
-- (void) lockFocus
+/** Triggers the redisplay of the receiver and the entire layout item tree 
+owned by it. */
+- (void) display
 {
-	// FIXME: Finds the first layout item ancestor with a view and asks it to
-	// redraw itself at our rect location, this will flow back to us.
-}
-
-- (void) unlockFocus
-{
-
+	// FIXME: Minimize the display work
+	//[[self closestAncestorDisplayView] setNeedsDisplayInRect: displayRect];
+	[[self closestAncestorDisplayView] display];
 }
 
 /** Returns the style object associated with the receiver. By default, returns 
@@ -1575,17 +1583,51 @@ understand how to customize the layout item look. */
 }
 
 /** Returns whether the receiver uses flipped coordinates to position its 
-    content. 
+content. 
  
-	ETLayoutItem class hierarchy has no built-in support for flipped 
-	coordinates, so you must not override this method. However when the 
-	-supervisorView is flipped, this will be taken in account in methods related 
-	to geometry, event handling and drawing. */
+The returned value will be taken in account in methods related to geometry, 
+event handling and drawing. If you want to alter the flipping, you must use 
+-setFlipped: and never alter the supervisor view directly with 
+-[ETView setFlipped:].  */
 - (BOOL) isFlipped
 {
 	// TODO: Review ETLayoutItem hierarchy to be sure flipped coordinates are 
 	// well supported.
-	return [[self supervisorView] isFlipped];
+	ETView *supervisorView = [self supervisorView];
+	
+	if (supervisorView != nil)
+	{
+		if (_flipped != [supervisorView isFlipped])
+		{
+			ETLog(@"WARNING: -isFlipped doesn't match between the layout item "
+				"%@ and its supervisor view %@... You may have wrongly called "
+				"-setFlipped: on the supervisor view.", supervisorView, self);
+		}
+		return [supervisorView isFlipped];
+	}
+
+	return _flipped;
+}
+
+/** Sets whether the receiver uses flipped coordinates to position its content. 
+
+This method updates the supervisor view to match the flipping of the receiver.
+The anchor point location is also adjusted if needed.
+
+You must never alter the supervisor view directly with -[ETView setFlipped:]. */
+- (void) setFlipped: (BOOL)flip
+{
+	if (flip == _flipped)
+		return;
+
+	_flipped = flip;
+	[[self supervisorView] setFlipped: flip];
+	if (HAS_PROPERTY(kETAnchorPointProperty))
+	{
+		NSPoint anchorPoint = [self anchorPoint];
+		anchorPoint.y -= [self bounds].size.height;
+		[self setAnchorPoint: anchorPoint];
+	}
 }
 
 /** Returns a point expressed in the receiver coordinate space equivalent to
@@ -1619,9 +1661,14 @@ understand how to customize the layout item look. */
 	are flipped. */
 - (BOOL) pointInside: (NSPoint)point
 {
+	return NSPointInRect(point, [self bounds]);
+}
+
+- (NSRect) bounds
+{
 	NSRect bounds = [self frame];
 	bounds.origin = NSZeroPoint;
-	return NSPointInRect(point, bounds);
+	return bounds;
 }
 
 /** Returns the persistent frame associated with the receiver. 
@@ -1635,7 +1682,13 @@ frame is returned by -frame in all cases, hence when ETFreeLayout is in use,
 {
 	// TODO: Find the best way to eventually allow the represented object to 
 	// provide and store the persistent frame.
-	return [GET_PROPERTY(kETPersistentFrameProperty) rectValue];
+	NSValue *value = GET_PROPERTY(kETPersistentFrameProperty);
+	
+	/* -rectValue wrongly returns random rect values when value is nil */
+	if (value == nil)
+		return ETNullRect;
+
+	return [value rectValue];
 }
 
 /** Sets the persistent frame associated with the receiver. See -persistentFrame. */
@@ -1698,6 +1751,75 @@ See also -[ETLayout isPositional] and -[ETLayout isComputedLayout]. */
 	
 	newFrame.origin = origin;
 	[self setFrame: newFrame];
+}
+
+/** Returns the current anchor point associated with the receiver bounds. The 
+anchor point is expressed in the receiver coordinate space.
+
+By default, the anchor point is centered in the bounds rectangle.
+
+The item position is relative to the anchor point. */
+- (NSPoint) anchorPoint
+{
+	if (HAS_PROPERTY(kETAnchorPointProperty) == NO)
+		return [self centeredAnchorPoint];
+
+	return [GET_PROPERTY(kETAnchorPointProperty) pointValue];
+}
+
+/* Returns the center of the bounds rectangle in the receiver coordinate space. */
+- (NSPoint) centeredAnchorPoint
+{
+	NSSize boundsSize = [self bounds].size;	
+	NSPoint anchorPoint = NSZeroPoint;
+	
+	anchorPoint.x = boundsSize.width / 2.0;
+	anchorPoint.y = boundsSize.height / 2.0;
+	
+	return anchorPoint;
+}
+
+/** Sets the current anchor point associated with the receiver bounds. anchor 
+must be expressed in the receiver coordinate space. */  
+- (void) setAnchorPoint: (NSPoint)anchor
+{
+	SET_PROPERTY([NSValue valueWithPoint: anchor], kETAnchorPointProperty);
+	/*NSPoint position = anchor;
+	
+	position.x -= 5;
+	position.y -= 5;
+	[self setOrigin: position];*/
+}
+
+/** Returns the current position associated with the receiver frame. The 
+position is expressed in the parent item coordinate space. See also 
+-setPosition:. */
+- (NSPoint) position
+{
+	NSPoint anchorPoint = [self anchorPoint];
+	NSPoint position = [self frame].origin;
+
+	position.x += anchorPoint.x;
+	position.y += anchorPoint.y;
+
+	return position;
+}
+
+/** Sets the current position associated with the receiver frame.
+
+When -setPosition: is called, the position is applied relative to -anchorPoint. 
+position must be expressed in the parent item coordinate space (exactly as the 
+frame). When the position is set, the frame is moved to have the anchor point 
+location in the parent item coordinate space equal to the new position value. */  
+- (void) setPosition: (NSPoint)position
+{
+	NSPoint anchorPoint = [self anchorPoint];
+	NSPoint origin = position;
+
+	origin.x -= anchorPoint.x;
+	origin.y -= anchorPoint.y;
+	
+	[self setOrigin: origin];
 }
 
 /** Returns the current size associated with the receiver frame. See also -frame. */       
@@ -1771,31 +1893,44 @@ See also -setFrame:. */
 	[self setSize: NSMakeSize(width, [self height])];
 }
 
+/** Returns the default frame associated with the receiver. See -setDefaultFrame:.
+
+By default, returns ETNullRect. */
 - (NSRect) defaultFrame 
-{ 
-	return _defaultFrame; 
+{
+	NSValue *value = GET_PROPERTY(kETDefaultFrameProperty);
+	
+	/* -rectValue wrongly returns random rect values when value is nil */
+	if (value == nil)
+		return ETNullRect;
+
+	return [value rectValue]; 
 }
 
-/** Modifies the item view frame when the item has a view. Default frame won't
-	be touched by container transforms (like item scaling) unlike frame value
-	returned by NSView. 
-	Initiliazed with view frame passed in argument on ETLayoutItem instance
-	initialization, else set to NSZeroRet. */
+/** Sets the default frame associated with the receiver and updates the item 
+frame to match. The default frame is not touched by layout-related transforms 
+(such as item scaling) unlike the item frame returned by -frame. 
+
+If a view is provided to the initializer when the layout item gets instantiated, 
+the value is initially set to this view frame, else -defaultFrame returns 
+a null rect. */
 - (void) setDefaultFrame: (NSRect)frame
 { 
-	_defaultFrame = frame;
+	SET_PROPERTY([NSValue valueWithRect: frame], kETDefaultFrameProperty);
 	/* Update display view frame only if needed */
-	if (NSEqualRects(_defaultFrame, [[self displayView] frame]) == NO)
+	if (NSEqualRects(frame, [self frame]) == NO)
 		[self restoreDefaultFrame];
 }
 
+/** Modifies the frame associated with the receiver to match the current default 
+frame. */
 - (void) restoreDefaultFrame
 { 
 	[self setFrame: [self defaultFrame]]; 
 }
 
-/** Returns the autoresizing mask that applies to the layout item. This mask 
-    is identical to the autoresizing mask of the supervisor view if one exists. */
+/** Returns the autoresizing mask that applies to the layout item. This mask is 
+identical to the autoresizing mask of the supervisor view if one exists. */
 - (unsigned int) autoresizingMask
 {
 	if ([self displayView] != nil)
@@ -1809,8 +1944,8 @@ See also -setFrame:. */
 	}
 }
 
-/** Sets the autoresizing mask that applies to the layout item. This mask 
-    is also set as the autoresizing mask of the supervisor view if one exists. */
+/** Sets the autoresizing mask that applies to the layout item. This mask is 
+also set as the autoresizing mask of the supervisor view if one exists. */
 - (void) setAutoresizingMask: (unsigned int)mask
 {
 	if ([self displayView] != nil)
@@ -1968,13 +2103,13 @@ image should not be expected to be nil. */
 
 /** Returns the action handler associated with the receiver. See ETInstrument to 
 know more about event handling in the layout item tree. */
-- (ETActionHandler *) actionHandler
+- (id) actionHandler
 {
 	return GET_PROPERTY(kETActionHandlerProperty);
 }
 
 /** Sets the action handler associated with the receiver. */
-- (void) setActionHandler: (ETActionHandler *)anHandler
+- (void) setActionHandler: (id)anHandler
 {
 	SET_PROPERTY(anHandler, kETActionHandlerProperty);
 }

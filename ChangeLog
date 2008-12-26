@@ -1,3 +1,18 @@
+2008-12-26  Quentin Mathe <qmathe@club-internet.fr>
+
+	Some work to clean and improve the geometry support.
+	* ETLayoutItem:
+	Removed _defaultFrame ivar. Declared kETDefaultFrameProperty, 
+	kETFlippedProperty, kETAnchorPointProperty and kETNeedsDisplay. Added 
+	HAS_PROPERTY macro.
+	(-display, -bounds, -centeredAnchorPoint, -anchorPoint, -setAnchorPoint:
+	-position, -setPosition:): Added.
+	(-setFlipped:): Modified to adjust the anchor point if needed.
+	(-isFlipped): Added a check to ensure -isFlipped is consistent between 
+	the supervisor view and the item.
+	(-defaultFrame, -setDefaultFrame:): Modified to store its value in the 
+	variable properties and returns a null rect by default.
+
 2008-12-15  Quentin Mathe <qmathe@club-internet.fr>
 
 	New event handling model - part 2

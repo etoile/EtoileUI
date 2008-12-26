@@ -49,11 +49,15 @@
 
 /* Properties */
 
+extern NSString *kAnchorPointProperty; /** anchorPoint property name */
 extern NSString *kETActionHandlerProperty; /** actionHandler property name */
+extern NSString *kETDefaultFrameProperty; /** defaultFrame property name */
+extern NSString *kETFlippedProperty; /** flipped property name */
 extern NSString *kETFrameProperty; /** frame property name */  
 extern NSString *kETIconProperty; /** icon property name */
 extern NSString *kETImageProperty; /** image property name */
 extern NSString *kETNameProperty; /** name property name */
+extern NSString *kETNeedsDisplayProperty; /** needsDisplay property name */
 extern NSString *kETPersistentFrameProperty; /** persistentFrame property name */
 extern NSString *kETStyleProperty; /** style property name */
 extern NSString *kETValueProperty; /** value property name */
@@ -73,13 +77,14 @@ extern NSString *kETValueProperty; /** value property name */
 	IBOutlet ETView *_view;
 	
 	/* Model object stores a persistent frame when the layout is non-computed */
-	NSRect _defaultFrame; /* Frame without item scaling */
 	NSRect _frame; /* Frame with item scaling */
 	
+	BOOL _flipped;
 	BOOL _selected;
 	BOOL _visible;
 	BOOL _resizeBounds; /* Scale view content by resizing bounds */
 	BOOL _needsUpdateLayout;
+	// TODO: Implement... BOOL _needsDisplay;
 	
 	id _reserved;
 }
@@ -207,7 +212,8 @@ shape*/
 - (ETStyle *) style;
 - (void) setStyle: (ETStyle *)aStyle;
 
-- (void) setNeedsDisplay: (BOOL)now;
+- (void) setNeedsDisplay: (BOOL)flag;
+- (void) display;
 
 /* Geometry */
 
@@ -218,6 +224,7 @@ shape*/
 - (BOOL) containsPoint: (NSPoint)point;
 - (BOOL) pointInside: (NSPoint)point;
 - (BOOL) isFlipped;
+- (void) setFlipped: (BOOL)flip;
 
 //- (ETLayoutItem *) decoratorItemAtPoint: (NSPoint *)point;
 //- (NSRect) contentRect;
@@ -257,6 +264,10 @@ shape*/
 - (void) setFrame: (NSRect)rect;
 - (NSPoint) origin;
 - (void) setOrigin: (NSPoint)origin;
+- (NSPoint) anchorPoint;
+- (void) setAnchorPoint: (NSPoint)center;
+- (NSPoint) position;
+- (void) setPosition: (NSPoint)position;
 - (NSSize) size;
 - (void) setSize: (NSSize)size;
 - (float) x;
@@ -278,8 +289,8 @@ shape*/
 
 /* Events & Actions */
 
-- (ETActionHandler *) actionHandler;
-- (void) setActionHandler: (ETActionHandler *)anHandler;
+- (id) actionHandler;
+- (void) setActionHandler: (id)anHandler;
 
 - (void) showInspectorPanel;
 - (id <ETInspector>) inspector;
