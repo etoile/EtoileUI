@@ -37,16 +37,15 @@
 
 #import <EtoileFoundation/Macros.h>
 #import <EtoileFoundation/NSObject+Etoile.h>
-#import <EtoileUI/ETLayoutItemGroup.h>
-
-#import <EtoileUI/ETLayout.h>
-#import <EtoileUI/ETLayoutLine.h>
-#import <EtoileUI/ETContainer.h>
-#import <EtoileUI/ETTableLayout.h>
-#import <EtoileUI/ETOutlineLayout.h>
-#import <EtoileUI/ETBrowserLayout.h>
-#import <EtoileUI/NSView+Etoile.h>
-#import <EtoileUI/ETCompatibility.h>
+#import "ETLayout.h"
+#import "ETLayoutItemGroup.h"
+#import "ETLayoutLine.h"
+#import "ETContainer.h"
+#import "ETTableLayout.h"
+#import "ETOutlineLayout.h"
+#import "ETBrowserLayout.h"
+#import "NSView+Etoile.h"
+#import "ETCompatibility.h"
 
 @interface ETContainer (PackageVisibility)
 - (BOOL) isScrollViewShown;
@@ -739,10 +738,7 @@ static NSMutableSet *layoutClasses = nil;
 	otherwise it won't. */
 - (void) resizeLayoutItems: (NSArray *)items toScaleFactor: (float)factor
 {
-	NSEnumerator *e = [items objectEnumerator];
-	ETLayoutItem *item = nil;
-	
-	while ((item = [e nextObject]) != nil)
+	FOREACH(items, item, ETLayoutItem *)
 	{
 		/* Scaling is always computed from item default frame rather than
 		   current item view size (or  item display area size) in order to
@@ -983,11 +979,7 @@ static NSMutableSet *layoutClasses = nil;
 	beyond the layout size, nil is returned. */
 - (ETLayoutItem *) itemAtLocation: (NSPoint)location
 {
-	NSArray *layoutItems = [[self layoutContext] visibleItems];
-	NSEnumerator *e = [layoutItems objectEnumerator];
-	ETLayoutItem *item = nil;
-	
-	while ((item = [e nextObject]) != nil)
+	FOREACH([[self layoutContext] visibleItems], item, ETLayoutItem *)
 	{
 		if ([item displayView] != nil)
 		{
