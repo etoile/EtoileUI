@@ -74,7 +74,6 @@ extern NSString *kETVisibleProperty; /** visible property name */
 
 	id _modelObject;
 	NSMutableDictionary *_variableProperties;
-	ETStyle *_style;
 	ETLayoutItem *_decoratorItem; // previous decorator
 	ETLayoutItem *_decoratedItem; // next decorator
 

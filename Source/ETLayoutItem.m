@@ -156,6 +156,8 @@ NSString *kETVisibleProperty = @"visible";
 
 - (id) initWithView: (NSView *)view value: (id)value representedObject: (id)repObject
 {
+	/* For now, we don't call ETStyle designated initializer to avoid extra 
+	   complexity in the initialization path. */
     self = [super init];
     
     if (self != nil)
@@ -1527,7 +1529,7 @@ owned by it. */
 ETBasicItemStyle. */    
 - (ETStyle *) style
 {
-	return _style;
+	return	[self nextStyle];
 }
 
 /** Sets the style object associated with the receiver.
@@ -1536,7 +1538,7 @@ The style object controls the drawing of the receiver. See ETStyle to
 understand how to customize the layout item look. */
 - (void) setStyle: (ETStyle *)aStyle
 {
-	ASSIGN(_style, aStyle);
+	[self setNextStyle: aStyle];
 }
 
 /* Geometry */
