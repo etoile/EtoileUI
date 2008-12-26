@@ -38,6 +38,7 @@
 
 #import <EtoileFoundation/NSIndexPath+Etoile.h>
 #import <EtoileFoundation/NSObject+Model.h>
+#import <EtoileFoundation/Macros.h>
 #import "ETLayoutItem.h"
 #import "ETGeometry.h"
 #import "ETLayoutItem+Events.h"
@@ -54,6 +55,7 @@
 
 NSString *kETAnchorPointProperty = @"anchorPoint";
 NSString *kETActionHandlerProperty = @"actionHandler";
+NSString *kETAutoresizingMask = @"autoresizingMask";
 NSString *kETDefaultFrameProperty = @"defaultFrame";
 NSString *kETFlippedProperty = @"flipped";
 NSString *kETFrameProperty = @"frame";
@@ -61,9 +63,13 @@ NSString *kETIconProperty = @"icon";
 NSString *kETImageProperty = @"image";
 NSString *kETNameProperty = @"name";
 NSString *kETNeedsDisplayProperty = @"needsDisplay";
+NSString *kETParentItemProperty = @"parentItem";
 NSString *kETPersistentFrameProperty = @"persistentFrame";
+NSString *kETRepresentedObjectProperty = @"representedObject";
+NSString *kETSelectedProperty = @"selected";
 NSString *kETStyleProperty = @"style";
 NSString *kETValueProperty = @"value";
+NSString *kETVisibleProperty = @"visible";
 
 /* Macros to read and write the receiver or local properties without exposing 
  how the properties are stored. The implicit property owner is self. */
@@ -873,10 +879,10 @@ this case the receiver becomes a meta item and returns YES for -isMetaLayoutItem
 
 - (NSArray *) properties
 {
-	NSArray *properties = [NSArray arrayWithObjects: @"identifier", @"name", 
-		@"x", @"y", @"width", @"height", @"view", @"selected", 
-		@"visible", @"image", @"frame", @"representedObject", 
-		@"parentLayoutItem", @"UIMetalevel", @"UIMetalayer", nil];
+	NSArray *properties = A(@"identifier", kETNameProperty, @"x", @"y", @"width", 
+		@"height", @"view", kETSelectedProperty, kETSelectedProperty, 
+		kETImageProperty, kETFrameProperty, kETRepresentedObjectProperty, 
+		kETParentItemProperty, @"UIMetalevel", @"UIMetalayer");
 
 	properties = [[VARIABLE_PROPERTIES allKeys] arrayByAddingObjectsFromArray: properties];
 		
@@ -1040,25 +1046,30 @@ and write the receiver properties. */
 }
 
 /** Sets the receiver selection state.
-    You rarely need to call this method. Take note the new selection state won't 
-	be visible until a redisplay occurs. */
+
+You rarely need to call this method. Take note the new selection state won't be 
+apparent until a redisplay occurs. */
 - (void) setSelected: (BOOL)selected
 {
 	_selected = selected;
 	ETDebugLog(@"Set layout item selection state %@", self);
 }
 
-/** Returns the receiver selection state. */
+/** Returns the receiver selection state. See also -setSelected:. */
 - (BOOL) isSelected
 {
 	return _selected;
 }
 
+/** Sets whether the receiver should be displayed or not.
+
+Take note the new visibility state won't be apparent until a redisplay occurs. */
 - (void) setVisible: (BOOL)visible
 {
 	_visible = visible;
 }
 
+/** Returns whether the receiver should be displayed or not. See also -setVisible:. */
 - (BOOL) isVisible
 {
 	return _visible;
