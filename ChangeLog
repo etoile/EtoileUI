@@ -1,3 +1,19 @@
+2008-12-30  Quentin Mathe <qmathe@club-internet.fr>
+
+	Extended ETApplication with a new Arrange built-in menu and the possibility 
+	to instantiate a main controller specified in the info plist of the 
+	application bundle.
+	Corrected header import statements.
+	* ETApplication:
+	Added ETApp macro. Documented the class a bit more. New enum for menu item
+	tags.
+	(-finishLaunching): Reworked to set up the menu bar as soon as possible.
+	(-_instantiateAppDelegateIfSpecified): Added.
+	(-developmentMenuItem:): Updated to use +menuItemWithTitle:tag:action: 
+	category and ETDevelopmentMenuTag.
+	(-arrangeMenuItem): Added.
+	(+[NSMenuItem(Etoile) menuItemWithTitle:tag:action:]): Added.
+
 2008-12-26  Quentin Mathe <qmathe@club-internet.fr>
 
 	Some work to clean and improve the geometry support.
