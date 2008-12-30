@@ -57,8 +57,9 @@
 @implementation ETApplication
 
 /** Returns the layout item representing the application. 
-	The method returns a local root item which is usually the window group or
-	layer under the application control. */
+
+The method returns a local root item which is usually the window group or layer
+under the application control.*/
 - (ETLayoutItemGroup *) layoutItem
 {
 	return [ETLayoutItem localRootGroup];
@@ -101,15 +102,15 @@ The main controller is never released. */
 	[self setDelegate: [[delegateClass alloc] init]];
 }
 
-/** Generates a single layout item tree for the whole application, by mapping 
-    AppKit components to layout items, if those aren't already owned by 
-	a layout item. If an AppKit component is already driven by a layout item,
-	the layout item tree connected to it will be attached to the main layout 
-	item tree that is getting generated.
-    The implementation delegates this process to ETEtoileUIBuilder, which 
-	traverses the window and view hierarchy, in order to ouput a new layout item 
-	tree whose root item will be made available through 
-	-[ETApplication layoutItem]. */
+/** Generates a single layout item tree for the whole application, by mapping
+AppKit components to layout items, if those aren't already owned by a layout
+item. If an AppKit component is already driven by a layout item, the layout item
+tree connected to it will be attached to the main layout item tree that is
+getting generated.
+
+The implementation delegates this process to ETEtoileUIBuilder, which traverses
+the window and view hierarchy, in order to ouput a new layout item tree whose
+root item will be made available through -[ETApplication layoutItem]. */
 - (void) _buildLayoutItemTree
 {
 	ETEtoileUIBuilder *builder = [ETEtoileUIBuilder builder];
@@ -117,12 +118,13 @@ The main controller is never released. */
 	[ETLayoutItemGroup setWindowGroup: [builder render: self]];
 }
 
-/* If -mainMenu returns nil, builds a new main menu with -_createApplicationMenu 
-   and installs it by calling -setMainMenu:. Also takes care of calling other 
-   set up methods such -setAppleMenu:, which tend to vary with the platform 
-   (GNUstep or Cocoa). 
-   For now, only used on Mac OS X where no main menu exists if no nib is loaded.
-   On GNUstep, a minimal main menu is always created. */
+/* If -mainMenu returns nil, builds a new main menu with -_createApplicationMenu
+and installs it by calling -setMainMenu:. Also takes care of calling other set
+up methods such -setAppleMenu:, which tend to vary with the platform (GNUstep or
+Cocoa).
+
+For now, only used on Mac OS X where no main menu exists if no nib is loaded. On
+GNUstep, a minimal main menu is always created. */
 - (void) _buildMainMenuIfNeeded
 {
 	if ([self mainMenu] != nil)
@@ -142,7 +144,7 @@ The main controller is never released. */
 	[appMenuItem setSubmenu: appMenu];
 	[mainMenu addItem: appMenuItem];
 	RELEASE(appMenuItem);
-	
+
 	// NOTE: -setAppleMenu: must be called before calling -setMainMenu: and is 
 	// a private Cocoa API that registers the menu as the application menu 
 	// (hence the method is wrongly called -setAppleMenu:). Ditto for 
@@ -153,10 +155,11 @@ The main controller is never released. */
 	RELEASE(mainMenu);
 }
 
-/* Creates a standard application menu by taking in account the expectations 
-   specific to each platform (GNUstep/Etoile and Cocoa). Only supports Mac OS X 
-   for now.
-   See also -_buildMainMenuIfNeeded. */
+/* Creates a standard application menu by taking in account the expectations
+specific to each platform (GNUstep/Etoile and Cocoa). Only supports Mac OS X for
+now.
+
+See also -_buildMainMenuIfNeeded. */
 - (NSMenu *) _createApplicationMenu
 {
 	// TODO: Append the app name to aboutTitle, hideTitle and quitTitle
@@ -167,38 +170,38 @@ The main controller is never released. */
 
 	[appMenu addItemWithTitle: aboutTitle 
 	                   action: @selector(about:) 
-				keyEquivalent: @""];
+	            keyEquivalent: @""];
 	[appMenu addItemWithTitle: _(@"Preferences...") 
 	                   action: NULL 
-				keyEquivalent: @","];
-				
+	            keyEquivalent: @","];
+
 	[appMenu addItem: [NSMenuItem separatorItem]];
-	
+
 	[appMenu addItemWithTitle: _(@"Services") 
-					   action: NULL 
-				keyEquivalent: @""];
+	                   action: NULL 
+	            keyEquivalent: @""];
 	[[appMenu itemWithTitle: _(@"Services")] 
 		setSubmenu: AUTORELEASE([[NSMenu alloc] initWithTitle: @""])];
-		
+
 	[appMenu addItem: [NSMenuItem separatorItem]];
-	
+
 	[appMenu addItemWithTitle: hideTitle 
 	                   action: @selector(hide:) 
-				keyEquivalent: @"h"];
+	            keyEquivalent: @"h"];
 	[appMenu addItemWithTitle: _(@"Hide Others") 
 	                   action: @selector(hideOtherApplications:) 
-				keyEquivalent: @""];
+	            keyEquivalent: @""];
 	[appMenu addItemWithTitle: _(@"Show All") 
 	                   action: @selector(unhideAllApplications:) 
-				keyEquivalent: @""];
-				
+	            keyEquivalent: @""];
+
 	[appMenu addItem: [NSMenuItem separatorItem]];
-	
+
 	[appMenu addItemWithTitle: quitTitle 
 	                   action: @selector(terminate:) 
-				keyEquivalent: @"q"];  
-   
-   return appMenu;
+	            keyEquivalent: @"q"];  
+
+	return appMenu;
 }
 
 - (void) _setUpAppMenu
@@ -215,7 +218,7 @@ The main controller is never released. */
 {
 	NSMenu *appMenu = [self applicationMenu];
 	int insertionIndex = -1; 
-	
+
 #ifdef GNUSTEP
 	if ([[appMenu menuRepresentation] isHorizontal])
 		insertionIndex = [appMenu indexOfItemWithTitle: _(@"Hide")];
@@ -235,8 +238,8 @@ The main controller is never released. */
 	return [[[self mainMenu] itemAtIndex: 0] submenu];
 }
 
-/** Returns the visible development menu if there is one already inserted in the 
-	menu bar, otherwise builds a new instance and returns it. */
+/** Returns the visible development menu if there is one already inserted in the
+menu bar, otherwise builds a new instance and returns it. */
 - (NSMenuItem *) developmentMenuItem
 {
 	NSMenuItem *devMenuItem = [[self mainMenu] itemWithTag: ETDevelopmentMenuTag];
@@ -270,7 +273,7 @@ The main controller is never released. */
 
 	[menu addItemWithTitle: _(@"Browse Layout Item Tree")
 	                action: @selector(browseLayoutItemTree:) 
-             keyEquivalent: @""];
+	         keyEquivalent: @""];
 
 	return devMenuItem;
 }
@@ -286,35 +289,35 @@ menu bar, otherwise builds a new instance and returns it. */
 		return menuItem;
 
 	menuItem = [NSMenuItem menuItemWithTitle: _(@"Arrange")
-                                         tag: ETArrangeMenuTag
-                                      action: NULL];
+	                                     tag: ETArrangeMenuTag
+	                                  action: NULL];
 	menu = [menuItem submenu];
 
-	[menu addItemWithTitle: _(@"Bring Forward") 
-	                action: @selector(bringForward:) 
+	[menu addItemWithTitle: _(@"Bring Forward")
+	                action: @selector(bringForward:)
 	         keyEquivalent: @""];
 
 	[menu addItemWithTitle: _(@"Bring To Front")
-	                action: @selector(bringToFront:) 
+	                action: @selector(bringToFront:)
 	         keyEquivalent: @""];
 
 	[menu addItemWithTitle:  _(@"Send Backward")
-	                action: @selector(sendBackward:) 
+	                action: @selector(sendBackward:)
 	         keyEquivalent: @""];
-	
+
 	[menu addItemWithTitle: _(@"Send To Back")
-	                action: @selector(sendToBack:) 
+	                action: @selector(sendToBack:)
 	         keyEquivalent: @""];
 
 	[menu addItem: [NSMenuItem separatorItem]];
 
 	[menu addItemWithTitle: _(@"Group")
-	                action: @selector(group:) 
-             keyEquivalent: @""];
+	                action: @selector(group:)
+	         keyEquivalent: @""];
 
 	[menu addItemWithTitle: _(@"Ungroup")
-	                action: @selector(ungroup:) 
-             keyEquivalent: @""];
+	                action: @selector(ungroup:)
+	         keyEquivalent: @""];
 
 	return menuItem;
 }
@@ -322,8 +325,8 @@ menu bar, otherwise builds a new instance and returns it. */
 /* Actions */
 
 /** Returns the same target than -[NSApplication targetForAction:], except that 
-    it extends the responder chain to include ETPersistencyController right 
-    after the application delegate (and eventually NSDocumentController too). */
+it extends the responder chain to include ETPersistencyController right after
+the application delegate (and eventually NSDocumentController too). */
 - (id) targetForAction: (SEL)anAction
 {
 	id target = [super targetForAction: anAction];
