@@ -34,16 +34,15 @@
 	THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import <EtoileUI/ETApplication.h>
-#import <EtoileUI/ETLayoutItemGroup.h>
-#import <EtoileUI/ETLayoutItem+Factory.h>
-#import <EtoileUI/ETLayoutItemBuilder.h>
-#import <EtoileUI/ETObjectBrowserLayout.h>
-#import <EtoileUI/ETCompatibility.h>
-
-#define DEVMENU_TAG 999
+#import "ETApplication.h"
+#import "ETLayoutItemGroup.h"
+#import "ETLayoutItem+Factory.h"
+#import "ETLayoutItemBuilder.h"
+#import "ETObjectBrowserLayout.h"
+#import "ETCompatibility.h"
 
 @interface ETApplication (Private)
+- (void) _instantiateAppDelegateIfSpecified;
 - (void) _buildLayoutItemTree;
 - (void) _setUpAppMenu;
 - (int) _defaultInsertionIndexInAppMenu;
@@ -67,10 +66,39 @@
 
 - (void) finishLaunching
 {
-	[super finishLaunching];
 	[self _buildMainMenuIfNeeded];
 	[self _setUpAppMenu];
+	[self _instantiateAppDelegateIfSpecified];
+
+	[super finishLaunching];
+
 	[self _buildLayoutItemTree];
+}
+
+/* If ETPrincipalControllerClass key is present in the bundle info plist, 
+tries to instantiate the class with the specified name and sets it as the 
+application delegate. The delegate will receive -applicationWillFinishLaunching: 
+and any subsequent notifications. 
+
+The main controller is never released. */
+- (void) _instantiateAppDelegateIfSpecified
+{
+	NSDictionary *infoDict = [[NSBundle mainBundle] infoDictionary];
+
+	if ([[infoDict allKeys] containsObject: @"ETPrincipalControllerClass"] == NO)
+		return;
+
+	NSString *className = [infoDict objectForKey: @"ETPrincipalControllerClass"];
+	Class delegateClass = NSClassFromString(className);
+
+	if (delegateClass == Nil)
+	{
+		ETLog(@"WARNING: ETPrincipalControllerClass named %@ cannot be found",
+			className);
+		return;
+	}
+
+	[self setDelegate: [[delegateClass alloc] init]];
 }
 
 /** Generates a single layout item tree for the whole application, by mapping 
@@ -211,18 +239,16 @@
 	menu bar, otherwise builds a new instance and returns it. */
 - (NSMenuItem *) developmentMenuItem
 {
-	NSMenuItem *devMenuItem = [[self mainMenu] itemWithTag: DEVMENU_TAG];
+	NSMenuItem *devMenuItem = [[self mainMenu] itemWithTag: ETDevelopmentMenuTag];
 	NSMenu *menu = nil;
 
 	if (devMenuItem != nil)
 		return devMenuItem;
 
-	devMenuItem = [[NSMenuItem alloc] initWithTitle: _(@"Development")
-		action: NULL keyEquivalent:@""];
-	[devMenuItem setTag: DEVMENU_TAG];
-	menu = [[NSMenu alloc] initWithTitle: _(@"Development")];
-	[devMenuItem setSubmenu: menu];
-	RELEASE(menu);
+	devMenuItem = [NSMenuItem menuItemWithTitle: _(@"Development")
+	                                        tag: ETDevelopmentMenuTag
+	                                     action: NULL];
+	menu = [devMenuItem submenu];
 
 	/* Builds and inserts menu items into the new dev menu */
 
@@ -237,7 +263,7 @@
 	[menu addItemWithTitle:  _(@"Inspect Selection")
 	                action: @selector(inspectSelection:) 
 	         keyEquivalent: @""];
-	
+
 	[menu addItemWithTitle: _(@"Browse")
 	                action: @selector(browse:) 
 	         keyEquivalent: @""];
@@ -246,7 +272,51 @@
 	                action: @selector(browseLayoutItemTree:) 
              keyEquivalent: @""];
 
-	return AUTORELEASE(devMenuItem);
+	return devMenuItem;
+}
+
+/** Returns the visible Arrange menu if there is one already inserted in the 
+menu bar, otherwise builds a new instance and returns it. */
+- (NSMenuItem *) arrangeMenuItem
+{
+	NSMenuItem *menuItem = [[self mainMenu] itemWithTag: ETArrangeMenuTag];
+	NSMenu *menu = [menuItem submenu];
+
+	if (menuItem != nil)
+		return menuItem;
+
+	menuItem = [NSMenuItem menuItemWithTitle: _(@"Arrange")
+                                         tag: ETArrangeMenuTag
+                                      action: NULL];
+	menu = [menuItem submenu];
+
+	[menu addItemWithTitle: _(@"Bring Forward") 
+	                action: @selector(bringForward:) 
+	         keyEquivalent: @""];
+
+	[menu addItemWithTitle: _(@"Bring To Front")
+	                action: @selector(bringToFront:) 
+	         keyEquivalent: @""];
+
+	[menu addItemWithTitle:  _(@"Send Backward")
+	                action: @selector(sendBackward:) 
+	         keyEquivalent: @""];
+	
+	[menu addItemWithTitle: _(@"Send To Back")
+	                action: @selector(sendToBack:) 
+	         keyEquivalent: @""];
+
+	[menu addItem: [NSMenuItem separatorItem]];
+
+	[menu addItemWithTitle: _(@"Group")
+	                action: @selector(group:) 
+             keyEquivalent: @""];
+
+	[menu addItemWithTitle: _(@"Ungroup")
+	                action: @selector(ungroup:) 
+             keyEquivalent: @""];
+
+	return menuItem;
 }
 
 /* Actions */
@@ -275,7 +345,7 @@
 
 - (IBAction) toggleDevelopmentMenu: (id)sender
 {
-	NSMenuItem *devMenuItem = [[self mainMenu] itemWithTag: DEVMENU_TAG];
+	NSMenuItem *devMenuItem = [[self mainMenu] itemWithTag: ETDevelopmentMenuTag];
 
 	if (devMenuItem == nil) /* Show dev menu */
 	{
@@ -293,6 +363,26 @@
 - (IBAction) toggleLiveDevelopment: (id)sender
 {
 	ETLog(@"Toggle live dev");
+}
+
+@end
+
+@implementation NSMenuItem (Etoile)
+
+/** Returns an autoreleased menu item already associated with an empty submenu. */ 
++ (NSMenuItem *) menuItemWithTitle: (NSString *)aTitle 
+                               tag: (int)aTag
+                            action: (SEL)anAction
+{
+	NSMenuItem *menuItem = AUTORELEASE([[NSMenuItem alloc] initWithTitle: aTitle
+		action: anAction keyEquivalent: @""]);
+
+	[menuItem setTag: aTag];
+	NSMenu *menu = [[NSMenu alloc] initWithTitle: aTitle];
+	[menuItem setSubmenu: menu];
+	RELEASE(menu);
+
+	return menuItem;
 }
 
 @end

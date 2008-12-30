@@ -37,9 +37,24 @@
 #import <AppKit/AppKit.h>
 #import <EtoileUI/ETLayoutItemGroup.h>
 
+#define ETApp (ETApplication *)[ETApplication sharedApplication]
+
 /** If you use a custom NSApplication subclass, you must subclass ETApplication 
-	instead of NSApplication to make it Etoile-native.
-	This subclass takes care of enabling live development support at runtime. */
+instead of NSApplication to make it Etoile-native.
+
+This subclass installs the event handling model of EtoileUI. This model 
+involves both a custom event and action dispatch that takes over the AppKit 
+one.
+
+ETApplication also provides various actions and menus to better support 
+live development support at runtime. 
+
+If ETPrincipalControllerClass key is present in the info plist of your 
+application bundle, the specified class will be instantiated at launch time and 
+sets as the application delegate. As an NSApplication-subclass delegate, it will 
+receive -applicationWillFinishLaunching: and any subsequent notifications. This 
+is available as a simple conveniency, when you don't want to rely on a main nib 
+file or write a custom main() function.*/
 @interface ETApplication : NSApplication 
 {
 	ETLayoutItemGroup *_windowLayer;
@@ -47,7 +62,11 @@
 
 - (ETLayoutItemGroup *) layoutItem;
 - (NSMenu *) applicationMenu;
+
+/* Menu Factory */
+
 - (NSMenuItem *) developmentMenuItem;
+- (NSMenuItem *) arrangeMenuItem;
 
 /* Actions */
 
@@ -56,4 +75,17 @@
 - (IBAction) toggleDevelopmentMenu: (id)sender;
 - (IBAction) toggleLiveDevelopment: (id)sender;
 
+@end
+
+
+enum 
+{
+	ETDevelopmentMenuTag = 30000,
+	ETArrangeMenuTag, 
+};
+
+@interface NSMenuItem (Etoile)
++ (NSMenuItem *) menuItemWithTitle: (NSString *)aTitle 
+                               tag: (int)aTag
+                            action: (SEL)anAction;
 @end
