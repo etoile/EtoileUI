@@ -97,7 +97,8 @@ this is expected to change though. */
                        draggingInfo: (id)drag
                          layoutItem: (ETLayoutItem *)item;         
 + (ETEvent *) enterEventWithEvent: (ETEvent *)anEvent;
-+ (ETEvent *) exitEventWithEvent: (ETEvent *)anEvent;
++ (ETEvent *) exitEventWithEvent: (ETEvent *)anEvent 
+					  layoutItem: (ETLayoutItem *)exitedItem;
 
 - (BOOL) isUIEvent;
 - (NSEventType) type;
@@ -105,6 +106,7 @@ this is expected to change though. */
 - (void) setLayoutItem: (id)anItem;
 - (void) setPickingMask: (unsigned int)pickMask;
 - (unsigned int) pickingMask;
+- (unsigned int) modifierFlags;
 
 - (id) draggingInfo;
 - (NSPoint) draggingLocation;

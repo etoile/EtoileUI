@@ -73,11 +73,13 @@ anEvent, event type put aside. */
 }
 
 /** Returns an autoreleased EtoileUI mouse exit event which is identical to 
-anEvent, event type put aside. */
+anEvent, event type and layout item put aside. */
 + (ETEvent *) exitEventWithEvent: (ETEvent *)anEvent
+					  layoutItem: (ETLayoutItem *)exitedItem;
 {
 	ETEvent *copiedEvent = [anEvent copy];
 	copiedEvent->_type = NSMouseExited;
+	[copiedEvent setLayoutItem: exitedItem];
 	return AUTORELEASE(copiedEvent);
 }
 
@@ -151,6 +153,13 @@ See -setPickingMask:. */
 - (unsigned int) pickingMask
 {
 	return _pickingMask;
+}
+
+/** Returns the key modifier combinations pressed when the event was produced. 
+The key combo is encoded as a bit field. */
+- (unsigned int) modifierFlags
+{
+	return [(NSEvent *)_backendEvent modifierFlags];
 }
 
 /** Returns the object that contains all the drag or drop infos, if the current 
