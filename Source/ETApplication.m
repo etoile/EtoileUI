@@ -242,7 +242,7 @@ See also -_buildMainMenuIfNeeded. */
 menu bar, otherwise builds a new instance and returns it. */
 - (NSMenuItem *) developmentMenuItem
 {
-	NSMenuItem *devMenuItem = [[self mainMenu] itemWithTag: ETDevelopmentMenuTag];
+	NSMenuItem *devMenuItem = (id)[[self mainMenu] itemWithTag: ETDevelopmentMenuTag];
 	NSMenu *menu = nil;
 
 	if (devMenuItem != nil)
@@ -282,7 +282,7 @@ menu bar, otherwise builds a new instance and returns it. */
 menu bar, otherwise builds a new instance and returns it. */
 - (NSMenuItem *) arrangeMenuItem
 {
-	NSMenuItem *menuItem = [[self mainMenu] itemWithTag: ETArrangeMenuTag];
+	NSMenuItem *menuItem = (id)[[self mainMenu] itemWithTag: ETArrangeMenuTag];
 	NSMenu *menu = [menuItem submenu];
 
 	if (menuItem != nil)
@@ -348,7 +348,8 @@ the application delegate (and eventually NSDocumentController too). */
 
 - (IBAction) toggleDevelopmentMenu: (id)sender
 {
-	NSMenuItem *devMenuItem = [[self mainMenu] itemWithTag: ETDevelopmentMenuTag];
+	NSMenuItem *devMenuItem = (id)[[self mainMenu] 
+		itemWithTag: ETDevelopmentMenuTag];
 
 	if (devMenuItem == nil) /* Show dev menu */
 	{
