@@ -134,6 +134,18 @@ NSString *kETVisibleProperty = @"visible";
 
 @implementation ETLayoutItem
 
++ (BOOL) automaticallyNotifiesObserversForKey: (NSString *)theKey 
+{
+    if ([theKey isEqualToString: kETSelectedProperty]) 
+	{
+		return NO;
+    } 
+	else 
+	{
+		return [super automaticallyNotifiesObserversForKey: theKey];
+    }
+}
+
 - (id) init
 {
 	return [self initWithView: nil value: nil representedObject: nil];
