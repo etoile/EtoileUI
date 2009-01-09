@@ -36,6 +36,9 @@
  
 #ifndef GNUSTEP
 #import <EtoileUI/GNUstep.h>
+#else
+// NOTE: Temporary hack until GNUstep Base includes KVO header in Foundation.h
+#import <Foundation/NSKeyValueObserving.h>
 #endif
 
 // TODO: Should be improved to rely on a logging class.
