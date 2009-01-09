@@ -37,7 +37,7 @@
 
 #import <Foundation/Foundation.h>
 #import <AppKit/AppKit.h>
-#import <EtoileUI/ETStyleRenderer.h>
+#import <EtoileUI/ETStyle.h>
 #import <EtoileUI/ETInspecting.h>
 #import <EtoileFoundation/ETPropertyValueCoding.h>
 
@@ -105,11 +105,13 @@ extern NSString *kETVisibleProperty; /** visible property name */
 
 - (id) rootItem;
 - (id) baseItem;
+- (BOOL) isBaseItem;
 - (ETLayoutItemGroup *) parentItem;
 - (void) setParentItem: (ETLayoutItemGroup *)parent;
 - (void ) removeFromParent;
 - (ETContainer *) closestAncestorContainer;
 - (ETView *) closestAncestorDisplayView;
+- (ETLayoutItem *) closestAncestorItemWithDisplayView;
 
 - (NSIndexPath *) indexPathFromItem: (ETLayoutItem *)item;
 - (NSIndexPath *) indexPathForItem: (ETLayoutItem *)item;
@@ -217,6 +219,8 @@ shape*/
 
 - (void) setNeedsDisplay: (BOOL)flag;
 - (void) display;
+- (NSRect) convertDisplayRect: (NSRect)rect 
+		toAncestorDisplayView: (NSView **)aView;
 
 /* Geometry */
 
@@ -224,6 +228,10 @@ shape*/
 - (NSRect) convertRectFromParent: (NSRect)rect;
 - (NSPoint) convertPointToParent: (NSPoint)point;
 - (NSPoint) convertPointFromParent: (NSPoint)point;
+- (NSRect) convertRect: (NSRect)rect fromItem: (ETLayoutItemGroup *)ancestor;
+- (NSRect) convertRect: (NSRect)rect toItem: (ETLayoutItemGroup *)ancestor;
+/*- (NSPoint) convertPoint: (NSPoint)point fromItem: (ETLayoutItemGroup *)ancestor;
+- (NSPoint) convertPoint: (NSPoint)point toItem: (ETLayoutItemGroup *)ancestor;*/
 - (BOOL) containsPoint: (NSPoint)point;
 - (BOOL) pointInside: (NSPoint)point;
 - (BOOL) isFlipped;
@@ -282,6 +290,8 @@ shape*/
 - (float) width;
 - (void) setWidth: (float)width;
 
+- (NSRect) boundingBox;
+//- (void) setBoundingBox: (NSRect)extent;
 - (NSRect) defaultFrame;
 - (void) setDefaultFrame: (NSRect)frame;
 - (void) restoreDefaultFrame;
@@ -290,10 +300,13 @@ shape*/
 - (void) setAppliesResizingToBounds: (BOOL)flag;
 - (BOOL) appliesResizingToBounds;
 
+
+
 /* Events & Actions */
 
 - (id) actionHandler;
 - (void) setActionHandler: (id)anHandler;
+- (BOOL) acceptsActions;
 
 - (void) showInspectorPanel;
 - (id <ETInspector>) inspector;

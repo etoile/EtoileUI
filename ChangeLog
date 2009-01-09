@@ -1,3 +1,21 @@
+2009-01-09  Quentin Mathe <qmathe@club-internet.fr>
+
+	Optimized drawing to only redraw dirty portion of the layout item tree. 
+	More documentation. 
+	Few new utility methods related to the drawing or the geometry.
+	* ETLayoutItem:
+	Documented various methods.
+	(-initWithView:value:representedObject:): Modified to set a default frame 
+	if no view is provided.
+	(-isBaseItem, -closestAncestorItemWithDisplayView, 
+	-convertDisplayRect:toAncestorDisplayView:, -boundingBox, 
+	-convertRectToParent:fromItem:, -convertRect:toItem:, -acceptsActions): 
+	Added.
+	(-setSelected:): Made KVO compliant.
+	(-setNeedsDisplay:, -display): Rewritten to only trigger the redraw of the 
+	receiver area in the view hierarchy. The dirty rect is computed with 
+	-convertDisplayRect:toAncestorDisplayView:.
+
 2008-12-30  Quentin Mathe <qmathe@club-internet.fr>
 
 	Extended ETApplication with a new Arrange built-in menu and the possibility 

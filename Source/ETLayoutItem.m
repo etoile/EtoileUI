@@ -169,7 +169,7 @@ NSString *kETVisibleProperty = @"visible";
 		//_decoratorItem = nil;
 		_frame = ETNullRect;
 		// TODO: Enable next line when well tested...
-		//_isFlipped = YES;
+		//[self setFlipped: YES];
 		[self setDecoratedItem: nil];
 		[self setView: view];
 		[self setVisible: NO];
@@ -177,6 +177,9 @@ NSString *kETVisibleProperty = @"visible";
 		[self setActionHandler: [ETActionHandler sharedInstance]];
 		[self setValue: value];
 		[self setRepresentedObject: repObject];
+
+		if (view == nil)
+			[self setFrame: NSMakeRect(0, 0, 50, 50)];
     }
     
     return self;
@@ -367,10 +370,21 @@ NSString *kETVisibleProperty = @"visible";
 	}
 }
 
+/** Returns whether the receiver is a base item or not.
+
+To be a base itemn the receiver must have a valid represented path base set. 
+See -setRepresentedPathBase:. */
+- (BOOL) isBaseItem
+{
+	return [self hasValidRepresentedPathBase];
+}
+
+/** Returns whether the current -representedPathBase value is valid to qualify 
+the receiver as a base item. */
 - (BOOL) hasValidRepresentedPathBase
 {
 	return ([self representedPathBase] != nil 
-		&& [[self representedPathBase] isEqual: @""] == NO);
+		&& [[self representedPathBase] isEqualToString: @""] == NO);
 }
 
 /** Returns the layout item group to which the receiver belongs to. 
@@ -423,23 +437,47 @@ NSString *kETVisibleProperty = @"visible";
 	}
 	else
 	{
-		ETLog(@"WARNING: Found no ancestor container by ending lookup on %@", self);
 		return nil;
 	}
 }
 
-- (ETView *) closestAncestorDisplayView
+/** Returns the first layout item bound to a view upwards in the layout item 
+tree. 
+
+The receiver itself can be returned. */
+- (ETLayoutItem *) closestAncestorItemWithDisplayView
 {
 	if ([self displayView] != nil)
-		return [self displayView];
+		return self;
 
-	if ([self parentLayoutItem] != nil)
+	if (_parentLayoutItem != nil)
 	{
-		return [[self parentLayoutItem] closestAncestorDisplayView];
+		return [_parentLayoutItem closestAncestorItemWithDisplayView];
 	}
 	else
 	{
-		ETLog(@"WARNING: Found no ancestor display view by ending lookup on %@", self);
+		return nil;
+	}
+}
+
+/** Returns the first display view bound to a layout item upwards in the layout 
+item tree. This layout item is identical to the one returned by 
+-closestAncestorItemWithDisplayView. 
+
+The receiver display view itself can be returned. */
+- (ETView *) closestAncestorDisplayView
+{
+	ETView *displayView = [self displayView];
+
+	if (displayView != nil)
+		return displayView;
+
+	if (_parentLayoutItem != nil)
+	{
+		return [_parentLayoutItem closestAncestorDisplayView];
+	}
+	else
+	{
 		return nil;
 	}
 }
@@ -801,24 +839,30 @@ this case the receiver becomes a meta item and returns YES for -isMetaLayoutItem
 
 - (id) valueForUndefinedKey: (NSString *)key
 {
-	//ETLog(@"WARNING: -valueForUndefinedKey: %@ called in %@", key, self);
+	//ETLog(@"NOTE: -valueForUndefinedKey: %@ called in %@", key, self);
 	return GET_PROPERTY(key); /* May return nil */
 }
 
 - (void) setValue: (id)value forUndefinedKey: (NSString *)key
 {
-	//ETLog(@"WARNING: -setValue:forUndefinedKey: %@ called in %@", key, self);
+	//ETLog(@"NOTE: -setValue:forUndefinedKey: %@ called in %@", key, self);
 	SET_PROPERTY(value, key);
 }
 
 /* Property Value Coding */
 
-/** Returns a value of the model object -representedObject, usually by 
-	calling -valueForProperty: else -valueForKey: with key parameter. By default 
-	the model object is a simple dictionary which gets returned by both this 
-	method and -representedObject method.
-	When the model object is a custom one, it must implement -valueForProperty:
-	and -setValue:forProperty: or conform to NSKeyValueCoding protocol. */
+/** Returns a value of the model object -representedObject, usually by calling
+-valueForProperty: on the represented object. If the represented object is a 
+layout item, -valueForKey: will be  called instead of -valueForProperty:. 
+
+-valueForProperty: is implemented by NSObject as part of the 
+ETPropertyValueCoding informal protocol. When the represented object is a custom 
+model object, it must override -valueForProperty: and -setValue:forProperty: or 
+conform to NSKeyValueCoding protocol. See ETPropertyValueCoding to understand 
+how to implement your model object.
+
+When the represented object is a layout item, the receiver is a meta layout item 
+(see -isMetaItem and -[NSObject(ETLayoutItem) isLayoutItem]). */
 - (id) valueForProperty: (NSString *)key
 {
 	id modelObject = [self representedObject];
@@ -834,9 +878,11 @@ this case the receiver becomes a meta item and returns YES for -isMetaLayoutItem
 		}
 		else
 		{
+			/* We  cannot use -valueForKey here because many classes such as 
+			   NSArray, NSDictionary etc. overrides KVC accessors with their own 
+			   semantic. */
 			value = [modelObject valueForProperty: key];
 		}
-		//value = [modelObject valueForKey: key];
 	}
 	else
 	{
@@ -847,8 +893,9 @@ this case the receiver becomes a meta item and returns YES for -isMetaLayoutItem
 }
 
 /** Sets a value identified by key of the model object returned by 
-	-representedObject. 
-	See -valueForProperty: for more details. */
+-representedObject. 
+
+See -valueForProperty: for more details. */
 - (BOOL) setValue: (id)value forProperty: (NSString *)key
 {
 	id modelObject = [self representedObject];
@@ -864,9 +911,11 @@ this case the receiver becomes a meta item and returns YES for -isMetaLayoutItem
 		}
 		else
 		{
+			/* We  cannot use -setValue:forKey here because many classes such as 
+			   NSArray, NSDictionary etc. overrides KVC accessors with their own 
+			   semantic. */
 			result = [modelObject setValue: value forProperty: key];
 		}
-		//[modelObject setValue: value forKey: key];
 	}
 	else
 	{
@@ -1018,11 +1067,6 @@ and write the receiver properties. */
 	return NO;
 }
 
-- (void) didChangeValueForKey: (NSString *)key
-{
-
-}
-
 /** Returns the display view of the receiver. The display view is the last
 	supervisor view of the decorator item chain. Display view is an instance of 
 	ETView class or subclasses.
@@ -1053,8 +1097,13 @@ You rarely need to call this method. Take note the new selection state won't be
 apparent until a redisplay occurs. */
 - (void) setSelected: (BOOL)selected
 {
+	if (selected == _selected)
+		return;
+
+	[self willChangeValueForKey: kETSelectedProperty];
 	_selected = selected;
 	ETDebugLog(@"Set layout item selection state %@", self);
+	[self didChangeValueForKey: kETSelectedProperty];
 }
 
 /** Returns the receiver selection state. See also -setSelected:. */
@@ -1502,27 +1551,75 @@ Take note the new visibility state won't be apparent until a redisplay occurs. *
 	[self render: nil];
 }
 
-/** See also -display. */
+/** Looks up the view which can display a rect by climbing up the layout 
+item tree until a display view which contains rect is found. This view is 
+returned through the out parameter aView and the returned value is the dirty 
+rect in the coordinate space of aView.
+
+This method hooks the layout item tree display mechanism into the AppKit view 
+hierarchy which implements the underlying display support.
+
+You should never need to call this method, unless you write a subclass which 
+needs some special redisplay policy. */
+- (NSRect) convertDisplayRect: (NSRect)rect toAncestorDisplayView: (NSView **)aView
+{
+	NSRect newRect = rect;
+	// WARNING: If -[ETWindowItem supervisorView] is changed, the next line must 
+	// be updated.
+	NSView *topView = [[[[self closestAncestorDisplayView] window] contentView] superview];
+	NSView *displayView = [self displayView];
+	ETLayoutItem *parent = self;
+
+	/* The displayed receiver has no ancestors bound to a view */
+	if (topView == nil)
+		return NSZeroRect;
+
+	/* We expect topView to be never nil, so that the loop can be entered on a nil displayView. */
+	while (displayView != topView 
+		&& (displayView == nil || NSContainsRect([parent frame], newRect) == NO))
+	{
+		newRect = [parent convertRectToParent: newRect];
+		parent = [parent parentItem];
+		displayView = [parent displayView];
+	}
+
+	*aView = displayView;
+	return newRect;
+}
+
+/** Marks the receiver and the entire layout item tree owned by it to be 
+redisplayed the next time an ancestor view receives a display if needed 
+request (see -[NSView displayIfNeededXXX] methods). 
+
+More explanations in -display. */
 - (void) setNeedsDisplay: (BOOL)flag
 {
-	NSRect displayRect = [self frame];
-	
-	/* If the layout item has a display view, this view will be asked to draw
-	   by itself, so the rect to refresh must be expressed in display view
-	   coordinates system and not the one of its superview. */
-	if ([self displayView] != nil)
-		displayRect.origin = NSZeroPoint;
-		
-	[[self closestAncestorDisplayView] setNeedsDisplayInRect: displayRect];
+	NSView *displayView = nil;
+	NSRect displayRect = [self convertDisplayRect: [self boundingBox] 
+	                        toAncestorDisplayView: &displayView];
+
+	[displayView setNeedsDisplayInRect: displayRect];
 }
 
 /** Triggers the redisplay of the receiver and the entire layout item tree 
-owned by it. */
+owned by it. 
+
+To handle the display, an ancestor view is looked up and the rect to refresh is 
+converted into this ancestor coordinate space. Precisely both the lookup and the 
+conversion are handled by -convertDisplayRect:toAncestorDisplayView:.
+
+If the receiver has a display view, this view will be asked to drawby itself.  */
 - (void) display
 {
-	// FIXME: Minimize the display work
-	//[[self closestAncestorDisplayView] setNeedsDisplayInRect: displayRect];
-	[[self closestAncestorDisplayView] display];
+	// NOTE: We could also use the next two lines to redisplay, but 
+	// -convertDisplayRect:toAncestorDisplayView: is more optimized.
+	// ETLayoutItem *ancestor = [self closestAncestorWithDisplayView];
+	// [[ancestor displayView] displayRect: [self convertRect: [self boundingBox] toItem: ancestor]];
+
+	NSView *displayView = nil;
+	NSRect displayRect = [self convertDisplayRect: [self boundingBox] 
+	                        toAncestorDisplayView: &displayView];
+	[displayView displayRect: displayRect];
 }
 
 /** Returns the style object associated with the receiver. By default, returns 
@@ -1595,6 +1692,46 @@ understand how to customize the layout item look. */
 	return [self convertRectToParent: ETMakeRect(point, NSZeroSize)].origin;
 }
 
+/** Returns a rect expressed in the receiver coordinate space equivalent to rect 
+parameter expressed in ancestor coordinate space.
+
+In case the receiver is not a descendent or ancestor is nil, returns a null rect. */
+- (NSRect) convertRect: (NSRect)rect fromItem: (ETLayoutItemGroup *)ancestor
+{
+	if (ETIsNullRect(rect) || _parentLayoutItem == nil || ancestor == nil)
+		return ETNullRect;
+
+	NSRect newRect = rect;
+
+	if (_parentLayoutItem != ancestor)
+	{
+		newRect = [_parentLayoutItem convertRect: rect fromItem: ancestor];
+	}
+
+	return [self convertRectFromParent: newRect];
+}
+
+/** Returns a rect expressed in ancestor coordinate space equivalent to rect 
+parameter expressed in the receiver coordinate space.
+
+In case the receiver is not a descendent or ancestor is nil, returns a null rect. */
+- (NSRect) convertRect: (NSRect)rect toItem: (ETLayoutItemGroup *)ancestor
+{
+	if (ETIsNullRect(rect) || _parentLayoutItem == nil || ancestor == nil)
+		return ETNullRect;
+
+	NSRect newRect = rect;
+	ETLayoutItem *parent = self;
+
+	while (parent != ancestor)
+	{
+		newRect = [self convertRectToParent: newRect];
+		parent = [parent parentItem];
+	}
+
+	return newRect;
+}
+
 /** Returns whether the receiver uses flipped coordinates to position its 
 content. 
  
@@ -1610,12 +1747,13 @@ event handling and drawing. If you want to alter the flipping, you must use
 	
 	if (supervisorView != nil)
 	{
-		if (_flipped != [supervisorView isFlipped])
+		// TODO: Enable later...
+		/*if (_flipped != [supervisorView isFlipped])
 		{
 			ETLog(@"WARNING: -isFlipped doesn't match between the layout item "
 				"%@ and its supervisor view %@... You may have wrongly called "
 				"-setFlipped: on the supervisor view.", supervisorView, self);
-		}
+		}*/
 		return [supervisorView isFlipped];
 	}
 
@@ -1901,6 +2039,15 @@ See also -setFrame:. */
 	[self setSize: NSMakeSize(width, [self height])];
 }
 
+- (NSRect) boundingBox
+{
+	// TODO: Very crude, we need to figure out what we really needs. For example,
+	// -setBoundingBox: could be called when a handle group is inserted, or the 
+	// layout and/or the style could have a hook -boundingBoxForItem:. We 
+	// probably want to cache the bounding box value in an ivar too.
+	return NSInsetRect([self frame], -10.0, -10.0);
+}
+
 /** Returns the default frame associated with the receiver. See -setDefaultFrame:.
 
 By default, returns ETNullRect. */
@@ -2120,6 +2267,14 @@ know more about event handling in the layout item tree. */
 - (void) setActionHandler: (id)anHandler
 {
 	SET_PROPERTY(anHandler, kETActionHandlerProperty);
+}
+
+/** Returns NO when the receiver should be ignored by the instruments for both 
+hit tests and action dispatch. By default, returns YES, otherwise NO when 
+-actionsHandler returns nil. */
+- (BOOL) acceptsActions
+{
+	return (GET_PROPERTY(kETActionHandlerProperty) != nil);
 }
 
 /** Shows the inspector associated with the receiver. See also -inspector. */
