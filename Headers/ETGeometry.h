@@ -51,3 +51,26 @@ static inline BOOL ETIsNullRect(NSRect rect)
 {
 	return NSEqualRects(rect, ETNullRect);
 }
+
+/** Returns a rect with a positive width and height by shifting the origin as 
+needed. */
+static inline NSRect ETStandardizeRect(NSRect rect)
+{
+	float minX = NSMinX(rect);
+	float minY = NSMinY(rect);
+	float width = NSWidth(rect);
+	float height = NSHeight(rect);
+
+	if (width < 0)
+	{
+		minX += width;
+		width = -width;
+	}
+	if (height < 0)
+	{
+		minY += height;
+		height = -height;
+	}
+
+	return NSMakeRect(minX, minY, width, height);
+}
