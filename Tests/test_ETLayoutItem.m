@@ -83,7 +83,7 @@
 	
 	UKNotNil([item2 rootItem]);
 	UKObjectsSame([item2 rootItem], item1);
-	UKObjectsSame([item2 rootItem], [item2 parentLayoutItem]);
+	UKObjectsSame([item2 rootItem], [item2 parentItem]);
 	UKObjectsSame([self rootItem], item1);
 }
 
@@ -344,9 +344,9 @@
 		NSAssert2([_decoratorItem displayView] == [self displayView], 
 			@"Decorator display view %@ must be decorated item display view %@", 
 			[_decoratorItem displayView], [self displayView]);
-		NSAssert2([_decoratorItem parentLayoutItem] == nil, @"Decorator %@ "
+		NSAssert2([_decoratorItem parentItem] == nil, @"Decorator %@ "
 			@"must have no parent %@ set", _decoratorItem, 
-			[_decoratorItem parentLayoutItem]);
+			[_decoratorItem parentItem]);
 	}
 		
 	/* Verify the new decorator */
@@ -355,11 +355,11 @@
 		NSAssert2([[decorator displayView] isKindOfClass: [ETView class]], 
 			@"Decorator %@ must have display view %@ of type ETView", 
 			decorator, [decorator displayView]);
-		if ([decorator parentLayoutItem] != nil)
+		if ([decorator parentItem] != nil)
 		{
 			ETLog(@"WARNING: Decorator item %@ must have no parent to be used", 
 				decorator);
-			[[decorator parentLayoutItem] removeItem: decorator];
+			[[decorator parentItem] removeItem: decorator];
 		}
 	}
 	
