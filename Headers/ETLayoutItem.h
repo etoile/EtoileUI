@@ -70,7 +70,7 @@ extern NSString *kETVisibleProperty; /** visible property name */
 // _cells and _view could be moved in a helper object. Pack booleans in a struct.
 @interface ETLayoutItem : ETStyle <ETPropertyValueCoding, ETObjectInspection>
 {
-	ETLayoutItemGroup *_parentLayoutItem;
+	ETLayoutItemGroup *_parentItem;
 
 	id _modelObject;
 	NSMutableDictionary *_variableProperties;

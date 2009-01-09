@@ -165,7 +165,7 @@ NSString *kETVisibleProperty = @"visible";
 		// TODO: Examine common use cases and see whether we should pass a 
 		// capacity hint to improve performances.
 		_variableProperties = [[NSMutableDictionary alloc] init];
-		_parentLayoutItem = nil;
+		_parentItem = nil;
 		//_decoratorItem = nil;
 		_frame = ETNullRect;
 		// TODO: Enable next line when well tested...
@@ -236,7 +236,7 @@ NSString *kETVisibleProperty = @"visible";
 		DESTROY(_decoratorItem);
     DESTROY(_view);
 	DESTROY(_modelObject);
-	_parentLayoutItem = nil; /* weak reference */
+	_parentItem = nil; /* weak reference */
     
     [super dealloc];
 }
@@ -394,7 +394,7 @@ the receiver as a base item. */
 	item group or has just been removed from an item group. */
 - (ETLayoutItemGroup *) parentItem
 {
-	return _parentLayoutItem;
+	return _parentItem;
 }
 
 /** Returns the layout item group to which the receiver belongs to. 
@@ -406,9 +406,9 @@ the receiver as a base item. */
 - (void) setParentItem: (ETLayoutItemGroup *)parent
 {
 	//ETDebugLog(@"For item %@ with supervisor view %@, modify the parent item from "
-	//	"%@ to %@", self, [self supervisorView], _parentLayoutItem, parent, self);
+	//	"%@ to %@", self, [self supervisorView], _parentItem, parent, self);
 
-	_parentLayoutItem = parent;
+	_parentItem = parent;
 }
 
 /** Detaches the receiver from the layout item group it belongs to.
@@ -450,9 +450,9 @@ The receiver itself can be returned. */
 	if ([self displayView] != nil)
 		return self;
 
-	if (_parentLayoutItem != nil)
+	if (_parentItem != nil)
 	{
-		return [_parentLayoutItem closestAncestorItemWithDisplayView];
+		return [_parentItem closestAncestorItemWithDisplayView];
 	}
 	else
 	{
@@ -472,9 +472,9 @@ The receiver display view itself can be returned. */
 	if (displayView != nil)
 		return displayView;
 
-	if (_parentLayoutItem != nil)
+	if (_parentItem != nil)
 	{
-		return [_parentLayoutItem closestAncestorDisplayView];
+		return [_parentItem closestAncestorDisplayView];
 	}
 	else
 	{
@@ -1698,14 +1698,14 @@ parameter expressed in ancestor coordinate space.
 In case the receiver is not a descendent or ancestor is nil, returns a null rect. */
 - (NSRect) convertRect: (NSRect)rect fromItem: (ETLayoutItemGroup *)ancestor
 {
-	if (ETIsNullRect(rect) || _parentLayoutItem == nil || ancestor == nil)
+	if (ETIsNullRect(rect) || _parentItem == nil || ancestor == nil)
 		return ETNullRect;
 
 	NSRect newRect = rect;
 
-	if (_parentLayoutItem != ancestor)
+	if (_parentItem != ancestor)
 	{
-		newRect = [_parentLayoutItem convertRect: rect fromItem: ancestor];
+		newRect = [_parentItem convertRect: rect fromItem: ancestor];
 	}
 
 	return [self convertRectFromParent: newRect];
@@ -1717,7 +1717,7 @@ parameter expressed in the receiver coordinate space.
 In case the receiver is not a descendent or ancestor is nil, returns a null rect. */
 - (NSRect) convertRect: (NSRect)rect toItem: (ETLayoutItemGroup *)ancestor
 {
-	if (ETIsNullRect(rect) || _parentLayoutItem == nil || ancestor == nil)
+	if (ETIsNullRect(rect) || _parentItem == nil || ancestor == nil)
 		return ETNullRect;
 
 	NSRect newRect = rect;
