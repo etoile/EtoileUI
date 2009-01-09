@@ -334,9 +334,9 @@ NSString *kETVisibleProperty = @"visible";
 	when the receiver has no parent item. */
 - (id) rootItem
 {
-	if ([self parentLayoutItem] != nil)
+	if (_parentItem != nil)
 	{
-		return [[self parentLayoutItem] rootItem];	
+		return [_parentItem rootItem];	
 	}
 	else
 	{
@@ -366,7 +366,7 @@ NSString *kETVisibleProperty = @"visible";
 	}
 	else
 	{
-		return [[self parentLayoutItem] baseItem];
+		return [_parentItem baseItem];
 	}
 }
 
@@ -416,12 +416,12 @@ the receiver as a base item. */
 	deallocated if no other objects retains it. */
 - (void ) removeFromParent
 {
-	if ([self parentLayoutItem] != nil)
+	if (_parentItem != nil)
 	{
 		/* -removeItem: will release us, so to be sure we won't deallocated 
 		   right now we use retain/autorelease */
 		RETAIN(self);
-		[[self parentLayoutItem] removeItem: self];
+		[_parentItem removeItem: self];
 		AUTORELEASE(self);
 	}
 }
@@ -431,9 +431,9 @@ the receiver as a base item. */
 	if ([[self displayView] isKindOfClass: [ETContainer class]])
 		return (ETContainer *)[self displayView];
 		
-	if ([self parentLayoutItem] != nil)
+	if (_parentItem != nil)
 	{
-		return [[self parentLayoutItem] closestAncestorContainer];
+		return [_parentItem closestAncestorContainer];
 	}
 	else
 	{
@@ -498,13 +498,13 @@ The receiver display view itself can be returned. */
 	if (item == nil && self == [self rootItem])
 		baseItemReached = YES;
 	
-	if ([self parentLayoutItem] != nil && item != self)
+	if (_parentItem != nil && item != self)
 	{
-		indexPath = [[self parentLayoutItem] indexPathFromItem: item];
+		indexPath = [_parentItem indexPathFromItem: item];
 		if (indexPath != nil)
 		{
 			indexPath = [indexPath indexPathByAddingIndex: 
-				[(ETLayoutItemGroup *)[self parentLayoutItem] indexOfItem: (id)self]];
+				[(ETLayoutItemGroup *)_parentItem indexOfItem: (id)self]];
 		}
 	}
 	else if (baseItemReached)
@@ -550,9 +550,9 @@ The receiver display view itself can be returned. */
 	   we belong. */
 	NSString *path = @"/";
 	
-	if ([self parentLayoutItem] != nil)
+	if (_parentItem != nil)
 	{
-		path = [[[self parentLayoutItem] path] 
+		path = [[_parentItem path] 
 			stringByAppendingPathComponent: [self identifier]];
 	}
 	
@@ -566,9 +566,9 @@ The receiver display view itself can be returned. */
 	
 	if (path == nil)
 	{
-		if ([self parentLayoutItem] != nil)
+		if (_parentItem != nil)
 		{
-			path = [[self parentLayoutItem] representedPath];
+			path = [_parentItem representedPath];
 			path = [path stringByAppendingPathComponent: [self identifier]];
 		}
 		else
@@ -604,16 +604,16 @@ The receiver display view itself can be returned. */
 	
 	if (identifier == nil || [identifier isEqual: @""])
 	{
-		id parentRepObject = [[self parentLayoutItem] representedObject];
+		id parentRepObject = [_parentItem representedObject];
 		
 		// TODO: Should try to retrieve -UniqueID, -UUID and -UUIDString and 
 		// simplify the if conditional.
 		/* -identifierAtIndex: is implemented by some classes like NSDictionary */
 		if ([parentRepObject isCollection] && [parentRepObject isEmpty] == NO
 		 && [parentRepObject respondsToSelector: @selector(identifierAtIndex:)]
-		 && [[self parentLayoutItem] usesRepresentedObjectAsProvider])
+		 && [_parentItem usesRepresentedObjectAsProvider])
 		{
-			unsigned int index = [[self parentLayoutItem] indexOfItem: self];
+			unsigned int index = [_parentItem indexOfItem: self];
 			identifier = [parentRepObject identifierAtIndex: index];
 		}
 	}
@@ -625,7 +625,7 @@ The receiver display view itself can be returned. */
 	if (identifier == nil || [identifier isEqual: @""])
 	{
 		identifier = [NSString stringWithFormat: @"%d", 
-			[(ETLayoutItemGroup *)[self parentLayoutItem] indexOfItem: (id)self]];
+			[(ETLayoutItemGroup *)_parentItem indexOfItem: (id)self]];
 	}
 	
 	return identifier;
@@ -1033,7 +1033,7 @@ and write the receiver properties. */
 	int metalayer = [self UIMetalevel];
 	id parent = self;
 	
-	while ((parent = [parent parentLayoutItem]) != nil)
+	while ((parent = [parent parentItem]) != nil)
 	{
 		if ([parent UIMetalevel] > metalayer)
 			metalayer = [parent UIMetalevel];
@@ -1179,8 +1179,8 @@ Take note the new visibility state won't be apparent until a redisplay occurs. *
 
 - (void) checkDecorator
 {
-	NSAssert2([self parentLayoutItem] == nil, @"Decorator %@ "
-		@"must have no parent %@ set", self, [self parentLayoutItem]);
+	NSAssert2(_parentItem == nil, @"Decorator %@ "
+		@"must have no parent %@ set", self, _parentItem);
 
 	// TODO: If there is a window item in the decorator chain, the receiver 
 	// supervisor view or the outermost supervisor view (display view) don't 
@@ -1220,7 +1220,7 @@ Take note the new visibility state won't be apparent until a redisplay occurs. *
 	       not give the parent view in this case but the decorator view. */
 		id parentView = [[self displayView] superview];
 		NSRect frame = [[self displayView] frame];
-		// parentView isEqual: [[item parentLayoutItem] view]
+		// parentView isEqual: [[item parentItem] view]
 		
 		[[self displayView] removeFromSuperview];
 
@@ -1371,7 +1371,7 @@ Take note the new visibility state won't be apparent until a redisplay occurs. *
 		   the size and location of the previous one. Unlike when you add or
 		   or remove an item which involves to recompute the layout. */
 		//[self handleAttachViewOfItem: item];
-		//ETDebugLog(@"parent %@ parent view %@ item display view %@", [item parentLayoutItem],
+		//ETDebugLog(@"parent %@ parent view %@ item display view %@", [item parentItem],
 		//	parentView, [item displayView]);
 		[parentView addSubview: [self displayView]]; // More sure than [item displayView]
 	}
@@ -1397,8 +1397,6 @@ Take note the new visibility state won't be apparent until a redisplay occurs. *
 
 - (void) setSupervisorView: (ETView *)supervisorView
 {
-	id parent = [self parentLayoutItem];
-
 	//if ([self decoratorItem] == nil)
 		[supervisorView setLayoutItemWithoutInsertingView: self];
 	ASSIGN(_view, supervisorView);
@@ -1409,9 +1407,9 @@ Take note the new visibility state won't be apparent until a redisplay occurs. *
 		/* Usually results in [[self decoratorItem] setView: supervisorView] */
 		[[self decoratorItem] handleDecorateItem: self inView: parentView];
 	}
-	else if (parent != nil)
+	else if (_parentItem != nil)
 	{
-		[parent handleAttachViewOfItem: self];
+		[_parentItem handleAttachViewOfItem: self];
 	}
 }
 
@@ -1653,10 +1651,9 @@ understand how to customize the layout item look. */
 	rectInParent.origin.x = rect.origin.x + [self x];
 	rectInParent.origin.y = rect.origin.y + [self y];
 	
-	ETLayoutItem *parent = [self parentItem];
-	if ([self isFlipped] != [parent isFlipped])
+	if ([self isFlipped] != [_parentItem isFlipped])
 	{
-		rectInParent.origin.y = [parent height] - rectInParent.origin.y - rectInParent.size.height;
+		rectInParent.origin.y = [_parentItem height] - rectInParent.origin.y - rectInParent.size.height;
 	}
 	
 	return rectInParent;
@@ -1677,7 +1674,7 @@ understand how to customize the layout item look. */
 	rectInReceiver.origin.x = rect.origin.x - [self x];
 	rectInReceiver.origin.y = rect.origin.y - [self y];
 
-	if ([self isFlipped] != [[self parentItem] isFlipped])
+	if ([self isFlipped] != [_parentItem isFlipped])
 	{
 		rectInReceiver.origin.y = [self height] - rectInReceiver.origin.y - rectInReceiver.size.height;
 	}
@@ -1795,7 +1792,7 @@ You must never alter the supervisor view directly with -[ETView setFlipped:]. */
 	This method checks whether the parent item is flipped or not. */
 - (BOOL) containsPoint: (NSPoint)point
 {
-	return NSMouseInRect(point, [self frame], [[self parentItem] isFlipped]);
+	return NSMouseInRect(point, [self frame], [_parentItem isFlipped]);
 }
 
 /** Returns whether a point expressed in the receiver coordinate space is inside 
@@ -1884,7 +1881,7 @@ See also -[ETLayout isPositional] and -[ETLayout isComputedLayout]. */
 		_frame = rect;
 	}
 
-	ETLayout *parentLayout = [[self parentItem] layout];
+	ETLayout *parentLayout = [_parentItem layout];
 	if ([parentLayout isPositional] && [parentLayout isComputedLayout] == NO)
 		[self setPersistentFrame: rect];
 }
