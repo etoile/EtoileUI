@@ -41,10 +41,8 @@
 #import <EtoileUI/ETInspecting.h>
 #import <EtoileFoundation/ETPropertyValueCoding.h>
 
-// TODO: Remove once ETUTI is part of EtoileFoundation.
-#define ETUTI NSString
-
 @class ETView, ETContainer, ETLayoutItemGroup, ETWindowItem, ETActionHandler;
+@class ETUTI;
 @protocol ETEventHandler;
 
 /* Properties */

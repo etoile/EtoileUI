@@ -38,6 +38,7 @@
 
 #import <EtoileFoundation/NSIndexPath+Etoile.h>
 #import <EtoileFoundation/NSObject+Model.h>
+#import <EtoileFoundation/ETUTI.h>
 #import <EtoileFoundation/Macros.h>
 #import "ETLayoutItem.h"
 #import "ETGeometry.h"
@@ -1144,8 +1145,7 @@ Take note the new visibility state won't be apparent until a redisplay occurs. *
 	if ([self representedObject] == nil
 	 && [[self representedObject] isKindOfClass: [NSDictionary class]] == NO)
 	{
-		// FIXME: Replace by [ETUTI typeForClass: [self class]]
-		return NSStringFromClass([self class]);
+		return [ETUTI typeWithClass: [self class]];
 	}	
 	else if ([[self representedObject] valueForProperty: ETUTIAttribute] != nil)
 	{
@@ -1153,8 +1153,7 @@ Take note the new visibility state won't be apparent until a redisplay occurs. *
 	}
 	else
 	{
-		// FIXME: Replace by [ETUTI typeForClass: [self class]]
-		return NSStringFromClass([[self representedObject] class]);
+		return [ETUTI typeWithClass: [[self representedObject] class]];
 	}
 }
 
