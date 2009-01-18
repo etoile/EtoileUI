@@ -34,6 +34,7 @@
 	THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#import <EtoileFoundation/Macros.h>
 #import <EtoileUI/ETTableLayout.h>
 #import <EtoileUI/ETContainer.h>
 #import <EtoileUI/ETLayoutItem.h>
@@ -69,7 +70,7 @@
 {
 	/* ivar lazily initialized in -setLayoutView: */
 	DESTROY(_propertyColumns);
-		
+	DESTROY(_contentFont);
 	[super dealloc];
 }
 
@@ -244,6 +245,27 @@
 //	[[[self tableView] tableColumnWithIdentifier: property] setDataCell: style];
 }
 
+/** Returns the font used to display each row/column cell value. 
+
+By default, returns nil and uses the font set individually on each column. */
+- (NSFont *) contentFont
+{
+	return _contentFont;
+}
+
+/** Sets the font used to display each row/column cell value.
+
+This overrides any specific font you might have set individually on colums 
+returned by -allTableColumns. */
+- (void) setContentFont: (NSFont *)aFont
+{
+	ASSIGN(_contentFont, aFont);
+	FOREACH([self allTableColumns], column, NSTableColumn *)
+	{
+		[[column dataCell] setFont: _contentFont];
+	}
+}
+
 - (NSTableColumn *) _createTableColumnWithIdentifier: (NSString *)property
 {
 	NSTableHeaderCell *headerCell = [[NSTableHeaderCell alloc] initTextCell: property]; // FIXME: Use display name
@@ -253,6 +275,7 @@
 	[column setHeaderCell: headerCell];
 	RELEASE(headerCell);
 	[dataCell setEditable: YES]; // FIXME: why column setEditable: isn't enough
+	[dataCell setFont: [self contentFont]];
 	[column setDataCell: dataCell];
 	RELEASE(dataCell);
 	[column setEditable: YES];

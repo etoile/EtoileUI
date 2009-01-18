@@ -43,6 +43,7 @@
 @interface ETTableLayout : ETLayout
 {
 	NSMutableDictionary *_propertyColumns;
+	NSFont *_contentFont;
 	NSEvent *_lastDragEvent;
 	int _lastChildDropIndex;
 }
@@ -53,6 +54,8 @@
 - (NSString *) displayNameForProperty: (NSString *)property;
 - (void) setDisplayName: (NSString *)displayName forProperty: (NSString *)property;
 
+- (NSFont *) contentFont;
+- (void) setContentFont: (NSFont *)aFont;
 /*- (id) listStyle;
 - (void) setListStyle: (id)style;*/
 
