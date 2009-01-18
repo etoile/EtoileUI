@@ -65,14 +65,35 @@ under the application control.*/
 	return [ETLayoutItem localRootGroup];
 }
 
+/* The order of the method calls in this method is critical, be very cautious 
+with it.
+
+Unlike Cocoa, GNUstep does not load the main menu from the nib before 
+-finishLaunching. That means, if you call -_buildMainMenuIfNeeded before 
+-[super finishLaunching] on GNUstep, -mainMenu returns nil and therefore 
+-_buildMainMenuIfNeeded wrongly creates a main menu. This doesn't play well with 
+the main menu to be loaded from the main gorm/nib file, a warning is logged: 
+'Services menu not in main menu!'.<br />
+See also -_buildMainMenuIfNeeded. 
+
+-_instantiateAppDelegateIfSpecified must also be called before 
+-[super finishLaunching], to ensure the delegate will receive NSApplication 
+launching notifications. */
 - (void) finishLaunching
 {
+#ifdef GNUSTEP
+	[self _instantiateAppDelegateIfSpecified];
+	[super finishLaunching];
+	[self _buildMainMenuIfNeeded];
+	[self _setUpAppMenu];
+#else
 	[self _buildMainMenuIfNeeded];
 	[self _setUpAppMenu];
 	[self _instantiateAppDelegateIfSpecified];
-
 	[super finishLaunching];
+#endif
 
+	/* Must be called last, because it processes the loaded nib and the menu. */
 	[self _buildLayoutItemTree];
 }
 

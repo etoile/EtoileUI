@@ -1,3 +1,9 @@
+2009-01-18  Quentin Mathe <qmathe@club-internet.fr>
+
+	* ETApplication (-finishLaunching): Fixed the missing title of the 
+	application menu on GNUstep and the repeated logging of 'Services menu not 
+	in main menu!'. This bug was recently introduced with r4188.
+
 2009-01-09  Quentin Mathe <qmathe@club-internet.fr>
 
 	Optimized drawing to only redraw dirty portion of the layout item tree. 
