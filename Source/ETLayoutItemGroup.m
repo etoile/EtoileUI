@@ -1667,7 +1667,17 @@ length equal one. */
 	{
 		case 1:
 			//ETDebugLog(@"Will -reloadFromFlatSource");
-			return [self itemsFromFlatSource];
+			/* We allow the flat source protocol to return item groups that 
+			   will load their child items based on their represented object 
+			   content. */
+			if ([self isEqual: [self baseItem]])
+			{
+				return [self itemsFromFlatSource];
+			}
+			else
+			{
+				return [self itemsFromRepresentedObject];
+			}
 			break;
 		case 2:
 			//ETDebugLog(@"Will -reloadFromTreeSource");
