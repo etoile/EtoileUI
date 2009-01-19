@@ -1,5 +1,11 @@
 2009-01-19  Quentin Mathe <qmathe@club-internet.fr>
 
+	* Headers/ETShape.h:
+	* Source/ETShape.m:
+	Removed previous code and added new class ETShape.
+
+2009-01-19  Quentin Mathe <qmathe@club-internet.fr>
+
 	Rewritten the basic inspector support to be entirely handled outside of 
 	ETContainer.
 	* ETContainer:
