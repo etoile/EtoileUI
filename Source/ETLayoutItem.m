@@ -62,6 +62,7 @@ NSString *kETFlippedProperty = @"flipped";
 NSString *kETFrameProperty = @"frame";
 NSString *kETIconProperty = @"icon";
 NSString *kETImageProperty = @"image";
+NSString *kETInspectorProperty = @"inspector";
 NSString *kETNameProperty = @"name";
 NSString *kETNeedsDisplayProperty = @"needsDisplay";
 NSString *kETParentItemProperty = @"parentItem";
@@ -2285,25 +2286,41 @@ hit tests and action dispatch. By default, returns YES, otherwise NO when
 	return (GET_PROPERTY(kETActionHandlerProperty) != nil);
 }
 
-/** Shows the inspector associated with the receiver. See also -inspector. */
-- (void) showInspectorPanel
+/** Controls the automatic enabling/disabling of UI elements (such as menu 
+items) that uses the responder chain to validate themselves, based on whether 
+the receiver or its action handler can respond to the selector action that would 
+be sent by the UI element in the EtoileUI responder chain. */
+- (BOOL) validateUserInterfaceItem: (id <NSValidatedUserInterfaceItem>)anItem
 {
-	[[[self inspector] panel] makeKeyAndOrderFront: self];
+	SEL action = [anItem action];
+	SEL twoParamSelector = NSSelectorFromString([NSStringFromSelector(action) 
+		stringByAppendingString: @"onItem:"]);
+
+	if ([self respondsToSelector: action])
+		return YES;
+
+	if ([[self actionHandler] respondsToSelector: twoParamSelector])
+		return YES;
+
+	return NO;
 }
 
-/** Returns the inspector associated with the receiver. */
+/** Returns the custom inspector associated with the receiver. By default, 
+returns nil.
+
+-[NSObject(EtoileUI) inspect:] will show this inspector, unless nil is returned. */
 - (id <ETInspector>) inspector
 {
-	ETContainer *container = [self closestAncestorContainer];
-	id <ETInspector> inspector = nil;
-	
-	if (container != nil)
-		inspector = [container inspector];
-		
-	if (inspector != nil)
-		[inspector setInspectedItems: [NSArray arrayWithObject: self]];
-		
+	id <ETInspector> inspector = GET_PROPERTY(kETInspectorProperty);
+	[inspector setInspectedObjects: A(self)];
 	return inspector;
+}
+
+
+/** Sets the custom inspector associated with the receiver. */
+- (void) setInspector: (id <ETInspector>)inspector
+{
+	SET_PROPERTY(inspector, kETInspectorProperty);
 }
 
 /* Live Development */

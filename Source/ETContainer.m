@@ -36,19 +36,20 @@
 
 #import <EtoileFoundation/NSIndexSet+Etoile.h>
 #import <EtoileFoundation/NSIndexPath+Etoile.h>
-#import <EtoileUI/ETContainer.h>
-#import <EtoileUI/ETContainer+Controller.h>
-#import <EtoileUI/ETLayoutItem.h>
-#import <EtoileUI/ETLayoutItem+Factory.h>
-#import <EtoileUI/ETLayoutItem+Events.h>
-#import <EtoileUI/ETEvent.h>
-#import <EtoileUI/ETLayoutItemGroup.h>
-#import <EtoileUI/ETLayout.h>
-#import <EtoileUI/ETLayer.h>
-#import <EtoileUI/ETInspector.h>
-#import <EtoileUI/ETPickboard.h>
-#import <EtoileUI/NSView+Etoile.h>
-#import <EtoileUI/ETCompatibility.h>
+#import "ETContainer.h"
+#import "ETContainer+Controller.h"
+#import "ETLayoutItem.h"
+#import "ETLayoutItem+Factory.h"
+#import "ETLayoutItem+Events.h"
+#import "ETEvent.h"
+#import "ETLayoutItemGroup.h"
+#import "ETLayout.h"
+#import "ETLayer.h"
+#import "ETInspector.h"
+#import "ETPickboard.h"
+#import "NSObject+EtoileUI.h"
+#import "NSView+Etoile.h"
+#import "ETCompatibility.h"
 
 NSString *ETContainerSelectionDidChangeNotification = @"ETContainerSelectionDidChangeNotification";
 NSString *ETLayoutItemPboardType = @"ETLayoutItemPboardType"; // FIXME: replace by UTI
@@ -153,7 +154,6 @@ NSString *ETLayoutItemPboardType = @"ETLayoutItemPboardType"; // FIXME: replace 
 		[self setAllowsEmptySelection: YES];
 		_prevInsertionIndicatorRect = NSZeroRect;
 		_scrollViewDecorator = nil; /* First instance created by calling private method -setShowsScrollView: */
-		_inspector = nil; /* Instantiated lazily in -inspector if needed */
 		
 		[self registerForDraggedTypes: [NSArray arrayWithObjects:
 			ETLayoutItemPboardType, nil]];
@@ -177,7 +177,6 @@ NSString *ETLayoutItemPboardType = @"ETLayoutItemPboardType"; // FIXME: replace 
 	// NOTE: Not in use currently
 	//DESTROY(_selection);
 	DESTROY(_selectionShape);
-	DESTROY(_inspector);
 	_dataSource = nil;
     
     [super dealloc];
@@ -656,47 +655,6 @@ NSString *ETLayoutItemPboardType = @"ETLayoutItemPboardType"; // FIXME: replace 
 		ETLog(@"WARNING: Layout %@ based on a layout view must implement "
 			@"-doubleClickedItem", layout);
 	}
-}
-
-/* Inspecting */
-
-- (IBAction) inspect: (id)sender
-{
-	ETDebugLog(@"Inspect %@", self);
-	[[[self inspector] panel] makeKeyAndOrderFront: self];
-}
-
-- (IBAction) inspectSelection: (id)sender
-{
-	ETDebugLog(@"Inspect %@ selection", self);
-	
-	NSArray *selectedItems = [(id)[self layoutItem] selectedItemsInLayout];
-	id inspector = [self inspectorForItems: selectedItems];
-	
-	[[inspector panel] makeKeyAndOrderFront: self];
-}
-
-- (void) setInspector: (id <ETInspector>)inspector
-{
-	ASSIGN(_inspector, inspector);
-}
-
-/** Returns inspector based on selection unlike ETLayoutItem.
-	If the inspector hasn't been set by calling -setInspector:, it gets lazily
-	instantiated when this accessors is called. */
-- (id <ETInspector>) inspector
-{
-	return [self inspectorForItems: [NSArray arrayWithObject: [self layoutItem]]];
-}
-
-- (id <ETInspector>) inspectorForItems: (NSArray *)items
-{
-	if (_inspector == nil)
-		_inspector = [[ETInspector alloc] init];
-		
-	[_inspector setInspectedItems: items];
-	
-	return _inspector;
 }
 
 /** Returns whether the receiver uses flipped coordinates or not. 
@@ -1391,6 +1349,25 @@ NSString *ETLayoutItemPboardType = @"ETLayoutItemPboardType"; // FIXME: replace 
 /* Deprecated (DO NOT USE, WILL BE REMOVED LATER) */
 
 @implementation ETContainer (Deprecated)
+
+/* Inspecting (WARNING CODE TO BE REPLACED BY THE NEW EVENT HANDLING) */
+
+- (IBAction) inspect: (id)sender
+{
+	[[self layoutItem] inspect: sender];
+}
+
+- (IBAction) inspectSelection: (id)sender
+{
+	ETDebugLog(@"Inspect %@ selection", self);
+
+	id inspector = [[self layoutItem] inspector];
+
+	if (inspector == nil)
+		inspector = [[ETInspector alloc] init]; // NOTE: Leak
+	[inspector setInspectedObjects: [(id)[self layoutItem] selectedItemsInLayout]];
+	[[inspector panel] makeKeyAndOrderFront: self];
+}
 
 /* Layout */
 

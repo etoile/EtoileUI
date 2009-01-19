@@ -34,13 +34,15 @@
 	THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#import <EtoileFoundation/Macros.h>
 #import <EtoileFoundation/NSObject+Model.h>
-#import <EtoileUI/NSObject+EtoileUI.h>
-#import <EtoileUI/ETObjectBrowserLayout.h>
-#import <EtoileUI/ETLayoutItemGroup.h>
-#import <EtoileUI/ETLayoutItem+Factory.h>
-#import <EtoileUI/ETInspector.h>
-#import <EtoileUI/ETCompatibility.h>
+#import "NSObject+EtoileUI.h"
+#import "ETObjectBrowserLayout.h"
+#import "ETLayoutItemGroup.h"
+#import "ETLayoutItem+Factory.h"
+#import "ETInspector.h"
+#import "ETViewModelLayout.h"
+#import "ETCompatibility.h"
 
 
 @implementation NSObject (EtoileUI)
@@ -97,10 +99,16 @@
 	or bring back the basic inspector. */
 - (IBAction) inspect: (id)sender
 {
-	ETInspector *inspector = [[ETInspector alloc] init];  // FIXME: Leak
+	id <ETInspector> inspector = nil;
+
+	if ([self conformsToProtocol: @protocol(ETObjectInspection)])
+		inspector = [self inspector];
+
+	if (inspector == nil)
+		inspector = [[ETInspector alloc] init]; // FIXME: Leak
 
 	ETDebugLog(@"inspect %@", self);
-	[inspector setInspectedObjects: [NSArray arrayWithObject: self]];
+	[inspector setInspectedObjects: A(self)];
 	[[inspector panel] makeKeyAndOrderFront: self];
 }
 

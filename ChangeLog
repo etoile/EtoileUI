@@ -1,3 +1,25 @@
+2009-01-19  Quentin Mathe <qmathe@club-internet.fr>
+
+	Rewritten the basic inspector support to be entirely handled outside of 
+	ETContainer.
+	* ETContainer:
+	Corrected EtoileUI header import statements to be local.
+	Removed _inspector ivar and related code in -initWithFrame:layoutItem: and 
+	-dealloc.
+	Removed ETObjectInspection conformance.
+	(-inspect:, -inspectSelection:): Deprecated and rewritten to rely on 
+	NSObject+EtoileUI and ETLayoutItem.
+	(-setInspector:, -inspector, -inspectorForItems:): Removed.
+	* ETLayoutItem:
+	New property kETInspectorProperty.
+	(-validateUserInterfaceItem:): Added. This will be used by the new event 
+	handling model.
+	(-showInspectorPanel): Removed.
+	(-inspector): Rewritten.
+	(-setInspector:): Added.
+	* NSObject+EtoileUI (-inspect:): Modified to use the inspector provided by 
+	the receiver when a custom one is available.
+
 2009-01-18  Quentin Mathe <qmathe@club-internet.fr>
 
 	* ETApplication (-finishLaunching): Fixed the missing title of the 

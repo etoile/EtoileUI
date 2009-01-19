@@ -38,7 +38,6 @@
 #import <EtoileFoundation/ETCollection.h>
 #import <EtoileUI/ETView.h>
 #import <EtoileUI/ETLayout.h>
-#import <EtoileUI/ETInspecting.h>
 
 #ifdef GNUSTEP
 // NOTE: This hack is needed because GNUstep doesn't retrieve -isFlipped in a 
@@ -51,7 +50,7 @@
 	ETPickboard, ETEvent;
 
 
-@interface ETContainer : ETView <ETObjectInspection>
+@interface ETContainer : ETView
 {
 	ETLayoutItem *_scrollViewDecorator;
 	BOOL _scrollViewShown;
@@ -84,8 +83,6 @@
 	BOOL _removeItemsAtPickTime;
 	/* Insertion indicator to erase on next mouse move event in a drag */
 	NSRect _prevInsertionIndicatorRect; 
-	
-	id <ETInspector> _inspector;
 }
 
 - (id) initWithLayoutView: (NSView *)layoutView;
@@ -114,15 +111,6 @@
 
 - (ETLayoutOverflowStyle) overflowStyle;
 - (void) setOverflowStyle: (ETLayoutOverflowStyle); */
-
-/* Inspecting */
-
-- (IBAction) inspect: (id)sender;
-- (IBAction) inspectSelection: (id)sender;
-- (void) setInspector: (id <ETInspector>)inspector;
-/** Returns inspector based on selection */
-- (id <ETInspector>) inspector;
-- (id <ETInspector>) inspectorForItems: (NSArray *)items;
 
 /* Scrolling */
 
@@ -298,6 +286,11 @@ extern NSString *ETLayoutItemPboardType;
 /* Deprecated (DO NOT USE, WILL BE REMOVED LATER) */
 
 @interface ETContainer (Deprecated)
+
+/* Inspecting */
+
+- (IBAction) inspect: (id)sender;
+- (IBAction) inspectSelection: (id)sender;
 
 /* Layout */
 

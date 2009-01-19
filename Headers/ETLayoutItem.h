@@ -41,9 +41,10 @@
 #import <EtoileUI/ETInspecting.h>
 #import <EtoileFoundation/ETPropertyValueCoding.h>
 
-@class ETView, ETContainer, ETLayoutItemGroup, ETWindowItem, ETActionHandler;
 @class ETUTI;
-@protocol ETEventHandler;
+@class ETView, ETContainer, ETLayoutItemGroup, ETWindowItem, ETActionHandler;
+@protocol ETEventHandler, ETInspector;
+
 
 /* Properties */
 
@@ -55,6 +56,7 @@ extern NSString *kETFlippedProperty; /** flipped property name */
 extern NSString *kETFrameProperty; /** frame property name */  
 extern NSString *kETIconProperty; /** icon property name */
 extern NSString *kETImageProperty; /** image property name */
+extern NSString *kETInspectorProperty; /** inspector property name */
 extern NSString *kETNameProperty; /** name property name */
 extern NSString *kETNeedsDisplayProperty; /** needsDisplay property name */
 extern NSString *kETParentItemProperty; /** parentItem property name */
@@ -298,16 +300,15 @@ shape*/
 - (void) setAppliesResizingToBounds: (BOOL)flag;
 - (BOOL) appliesResizingToBounds;
 
-
-
 /* Events & Actions */
 
 - (id) actionHandler;
 - (void) setActionHandler: (id)anHandler;
 - (BOOL) acceptsActions;
+- (BOOL) validateUserInterfaceItem: (id <NSValidatedUserInterfaceItem>)anItem;
 
-- (void) showInspectorPanel;
 - (id <ETInspector>) inspector;
+- (void) setInspector: (id <ETInspector>)inspector;
 
 /* Live Development */
 
