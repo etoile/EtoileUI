@@ -57,6 +57,7 @@
 + (ETLayoutItemGroup *) itemGroupWithItems: (NSArray *)items;
 + (ETLayoutItemGroup *) itemGroupWithView: (NSView *)view;
 + (ETLayoutItemGroup *) itemGroupWithValue: (id)value;
++ (ETLayoutItemGroup *) itemGroupWithRepresentedObject: (id)object;
 + (ETLayoutItemGroup *) itemGroupWithContainer;
 
 /* Leaf Widget Factory Methods */
@@ -99,10 +100,19 @@
 + (id) project;
 + (id) projectGroup;
 
-+ (id) windowGroup;
++ (ETLayoutItemGroup *) windowGroup;
 + (void) setWindowGroup: (ETLayoutItemGroup *)windowGroup;
 
 + (id) pickboardGroup;
+
+/* Shape Factory Methods */
+
++ (ETLayoutItem *) itemWithBezierPath: (NSBezierPath *)aPath;
+
++ (ETLayoutItem *) rectangleWithRect: (NSRect)aRect;
++ (ETLayoutItem *) rectangle;
++ (ETLayoutItem *) ovalWithRect: (NSRect)aRect;
++ (ETLayoutItem *) oval;
 
 /* Deprecated (DO NOT USE, WILL BE REMOVED LATER) */
 

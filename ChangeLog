@@ -1,5 +1,14 @@
 2009-01-19  Quentin Mathe <qmathe@club-internet.fr>
 
+	* ETLayoutItem+Factory:
+	Corrected header import statements.
+	(+itemGroupWithRepresentedObject:): Added.
+	(+itemGroupWithContainer): Added a temporary hack to make autoresizing work.
+	(+itemWithBezierPath:, +rectangleWithRect:, +rectangle, +ovalWithRect:, 
+	+oval): Added various shape-based item factory methods.
+
+2009-01-19  Quentin Mathe <qmathe@club-internet.fr>
+
 	* Headers/ETShape.h:
 	* Source/ETShape.m:
 	Removed previous code and added new class ETShape.

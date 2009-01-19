@@ -36,12 +36,13 @@
 	THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import <EtoileUI/ETLayoutItem+Factory.h>
-#import <EtoileUI/ETLayoutItemGroup.h>
-#import <EtoileUI/ETLayer.h>
-#import <EtoileUI/ETWindowItem.h>
-#import <EtoileUI/ETContainer.h>
-#import <EtoileUI/ETCompatibility.h>
+#import "ETLayoutItem+Factory.h"
+#import "ETLayoutItemGroup.h"
+#import "ETLayer.h"
+#import "ETWindowItem.h"
+#import "ETContainer.h"
+#import "ETCompatibility.h"
+#import "ETShape.h"
 #include <float.h>
 
 @implementation ETLayoutItem (ETLayoutItemFactory)
@@ -95,6 +96,11 @@
 	return AUTORELEASE([[ETLayoutItemGroup alloc] initWithValue: value]);
 }
 
++ (ETLayoutItemGroup *) itemGroupWithRepresentedObject: (id)object
+{
+	return AUTORELEASE([[ETLayoutItemGroup alloc] initWithRepresentedObject: object]);
+}
+
 /** Returns a new layout item group instance based on a container to which 
     you can apply view-based layouts such as ETTableLayout, ETModelViewLayout 
 	etc. This is unlike the other item group factory methods that creates 
@@ -106,7 +112,9 @@
 + (ETLayoutItemGroup *) itemGroupWithContainer
 {
 	ETContainer *container = AUTORELEASE([[ETContainer alloc] init]);
-	
+	// FIXME: Remove this temporary workaround...
+	[container setAutoresizingMask: NSViewHeightSizable | NSViewWidthSizable];
+
 	return (ETLayoutItemGroup *)[container layoutItem];
 }
 
@@ -394,7 +402,7 @@ static ETLayoutItemGroup *floatingItemGroup = nil;
 static ETWindowLayer *windowLayer = nil;
 
 /** Returns the item group representing all windows in the current application. */
-+ (id) windowGroup
++ (ETLayoutItemGroup *) windowGroup
 {
 	if (windowLayer == nil)
 	{
@@ -479,5 +487,53 @@ static ETLayoutItemGroup *pickboardGroup = nil;
 {
 	return [self layerWithItems: items];
 }
+
+/* Shape Factory Methods */
+
+/* Returns a layout item which uses a shape as both its represented object and 
+style. */
++ (ETLayoutItem *) itemWithShape: (ETShape *)aShape
+{
+	ETLayoutItem *item = [ETLayoutItem itemWithRepresentedObject: aShape];
+	[item setStyle: aShape];
+	[item setSize: [[aShape path] bounds].size];
+	return item;
+}
+
+/** Returns a layout item which represents a custom shape based on the given 
+bezier path. The shape is used as both the represented object and the style. */
++ (ETLayoutItem *) itemWithBezierPath: (NSBezierPath *)aPath
+{
+	return [self itemWithShape: [ETShape shapeWithBezierPath: aPath]];
+}
+
+/** Returns a layout item which represents a rectangular shape with the width 
+and height of aRect. */
++ (ETLayoutItem *) rectangleWithRect: (NSRect)aRect
+{
+	return [self itemWithShape: [ETShape rectangleShapeWithRect: aRect]];
+}
+
+/** Returns a layout item which represents a rectangular shape with the width 
+and height of +[ETShape defaultShapeRect]. */
++ (ETLayoutItem *) rectangle
+{
+	return [self rectangleWithRect: [ETShape defaultShapeRect]];
+}
+
+/** Returns a layout item which represents an oval shape that fits in the width 
+and height of aRect. */
++ (ETLayoutItem *) ovalWithRect: (NSRect)aRect
+{
+	return [self itemWithShape: [ETShape ovalShapeWithRect: aRect]];
+}
+
+/** Returns a layout item which represents an oval shape that fits in the width 
+and height of +[ETShape defaultShapeRect]. */
++ (ETLayoutItem *) oval
+{
+	return [self ovalWithRect: [ETShape defaultShapeRect]];
+}
+
 
 @end
