@@ -76,9 +76,4 @@
 - (IBAction) inspect: (id)sender;
 - (IBAction) stack: (id)sender;
 
-/* Deprecated (DO NOT USE, WILL BE REMOVED LATER) */
-
-- (NSArray *) inspectedItems;
-- (void) setInspectedItems: (NSArray *)items;
-
 @end

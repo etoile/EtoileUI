@@ -40,8 +40,8 @@
 //- (ETView *) view;
 - (NSWindow *) window;
 - (NSPanel *) panel;
-- (NSArray *) inspectedItems;
-- (void) setInspectedItems: (NSArray *)items;
+- (NSArray *) inspectedObjects;
+- (void) setInspectedObjects: (NSArray *)objects;
 @end
 
 /** All classes that want to provide inspectors tailored to their needs should

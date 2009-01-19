@@ -19,6 +19,9 @@
 	(-setInspector:): Added.
 	* NSObject+EtoileUI (-inspect:): Modified to use the inspector provided by 
 	the receiver when a custom one is available.
+	* ETInspecting: Renamed inspectedItems property of ETInspector protocol to 
+	inspectedObjects.
+	* ETInspector: Removed the deprecated inspectedItems accessors.
 
 2009-01-18  Quentin Mathe <qmathe@club-internet.fr>
 

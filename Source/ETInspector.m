@@ -362,18 +362,6 @@
 	}
 }
 
-/* Deprecated (DO NOT USE, WILL BE REMOVED LATER) */
-
-- (NSArray *) inspectedItems
-{
-	return [self inspectedObjects];
-}
-
-- (void) setInspectedItems: (NSArray *)items
-{
-	[self setInspectedObjects: items];
-}
-
 @end
 
 
