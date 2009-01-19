@@ -69,6 +69,7 @@
 - (IBAction) browse: (id)sender;
 - (IBAction) view: (id)sender;
 - (IBAction) inspect: (id)sender;
+- (IBAction) explore: (id)sender;
 
 @end
 

@@ -112,6 +112,38 @@
 	[[inspector panel] makeKeyAndOrderFront: self];
 }
 
+/** Shows a developer-centric inspector based on ETViewModelLayout which 
+provides informations about the receiver object. This explorer inspector allows 
+to inspect properties, instances variables, methods and also the content when 
+the receiver is a collection (ETCollection protocol must be implemented).
+
+The inspector makes possible to edit the object state and behavior. 
+
+Unlike the inspector shown by -inspect:, this built-in inspector is not expected 
+to overriden by a third-party inspector. */
+- (IBAction) explore: (id)sender
+{
+	// TODO: Should be -itemGroupWithRepresentedObject: once ETLayoutItemGroup 
+	// is able to create a container as supervisor view by itself if needed.
+	ETLayoutItemGroup *item = [ETLayoutItem itemGroupWithContainer];
+	ETViewModelLayout *layout = [ETViewModelLayout layout];
+
+	[item setRepresentedObject: self];
+	if ([self isLayoutItem])
+	{
+		[layout setShouldInspectRepresentedObjectAsView: YES];
+		[layout setDisplayMode: ETLayoutDisplayModeViewObject];
+	}
+	else
+	{
+		[layout setDisplayMode: ETLayoutDisplayModeModelObject];
+	}
+	[item setLayout: layout];
+	[item setName: [NSString stringWithFormat: _(@"Explorer %@"), [self primitiveDescription]]];
+	[item setSize: NSMakeSize(350, 500)];
+	[[ETLayoutItem windowGroup] addItem: item];
+}
+
 @end
 
 @implementation NSResponder (EtoileUI)

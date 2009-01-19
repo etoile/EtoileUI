@@ -1,5 +1,29 @@
 2009-01-19  Quentin Mathe <qmathe@club-internet.fr>
 
+	* ETViewModelLayout:
+	Corrected header import statements.
+	New ivar _shouldInspectRepresentedObjectAsView. Documented API.
+	(-awakeFromNib): Replaced the table layout by an outline one. Improved the 
+	the column header readability and look by providing property display names. 
+	Increased how much content can be viewed without scrolling or resizing by 
+	setting the property view content font size to small.
+	(-shouldInspectRepresentedObjectAsView, 
+	-setShouldInspectRepresentedObjectAsView:, -inspectedItem): Added.
+	Added a category to ETInstanceVariable to make each ivar object traversable 
+	by explosing it as a collection of ivars if the ivar value is an object.
+	(-doubleClickInPropertyView:): Rewritten to use -explore:.
+	(-setLayoutContext:): Removed.
+	(-object:itemRepresentingSlotAtIndex:, -numberOfSlotsInObject:): Rewritten 
+	to better leverage EtoileFoundation reflection layer. Temporarily disabled 
+	the listing of methods.
+	(-numberOfItemsInContainer:): Tweaked to make use of 
+	-shouldInspectRepresentedObjectAsView.
+	* NSObject+EtoileUI: 
+	Added -explore: to inspect objects with developer-centric inspector based 
+	on ETViewModelLayout. Still a bit rough...
+
+2009-01-19  Quentin Mathe <qmathe@club-internet.fr>
+
 	* ETLayoutItem+Factory:
 	Corrected header import statements.
 	(+itemGroupWithRepresentedObject:): Added.

@@ -37,8 +37,10 @@
 
 #import <Foundation/Foundation.h>
 #import <AppKit/AppKit.h>
+#import <EtoileFoundation/NSObject+Etoile.h>
 #import <EtoileUI/ETLayout.h>
 
+/** See -setDisplayMode:. */
 typedef enum _ETLayoutDisplayMode {
 	ETLayoutDisplayModeViewProperties = 1,
 	ETLayoutDisplayModeViewContent = 2,
@@ -51,10 +53,15 @@ typedef enum _ETLayoutDisplayMode {
 
 @interface ETViewModelLayout : ETLayout
 {
-	IBOutlet id enclosingView;
+	IBOutlet id enclosingView; // TODO: Remove probably
 	IBOutlet ETContainer *propertyView;
 	ETLayoutDisplayMode _displayMode;
+	BOOL _shouldInspectRepresentedObjectAsView;
 }
+
+- (BOOL) shouldInspectRepresentedObjectAsView;
+- (void) setShouldInspectRepresentedObjectAsView: (BOOL)flag; 
+- (ETLayoutItem *) inspectedItem;
 
 - (ETLayoutDisplayMode) displayMode;
 - (void) setDisplayMode: (ETLayoutDisplayMode)mode;
@@ -62,3 +69,11 @@ typedef enum _ETLayoutDisplayMode {
 
 @end
 
+/** Collection protocol (to recursively traverse ivars whose type is object) */
+@interface ETInstanceVariable (TraversableIvars) <ETCollection>
+- (BOOL) isOrdered;
+- (BOOL) isEmpty;
+- (id) content;
+- (NSArray *) contentArray;
+- (NSEnumerator *) objectEnumerator;
+@end
