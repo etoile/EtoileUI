@@ -50,6 +50,7 @@
 #import <EtoileUI/ETPickboard.h>
 
 #import <EtoileUI/ETStyle.h>
+#import <EtoileUI/ETShape.h>
 #import <EtoileUI/ETContainer.h>
 #import <EtoileUI/ETContainers.h>
 #import <EtoileUI/ETLayoutItem.h>

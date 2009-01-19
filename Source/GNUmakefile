@@ -36,6 +36,7 @@ libEtoileUI_OBJC_FILES = \
 	ETPaneSwitcherLayout.m \
 	ETPersistencyController.m \
 	ETPickboard.m \
+	ETShape.m \
 	ETStackLayout.m \
 	ETStyle.m \
 	ETStyleRenderer.m \
