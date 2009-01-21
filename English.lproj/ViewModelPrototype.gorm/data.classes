@@ -56,8 +56,8 @@
 	    "switchDisplayMode:"
 	);
 	Outlets = (
-	    enclosingView,
-	    propertyView
+	    propertyView,
+	    popup
 	);
 	Super = ETLayout;
     };

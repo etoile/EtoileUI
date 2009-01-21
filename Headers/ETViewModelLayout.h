@@ -53,8 +53,8 @@ typedef enum _ETLayoutDisplayMode {
 
 @interface ETViewModelLayout : ETLayout
 {
-	IBOutlet id enclosingView; // TODO: Remove probably
 	IBOutlet ETContainer *propertyView;
+	IBOutlet NSPopUpButton *popup;
 	ETLayoutDisplayMode _displayMode;
 	BOOL _shouldInspectRepresentedObjectAsView;
 }

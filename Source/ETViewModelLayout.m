@@ -191,6 +191,8 @@ And which perspective is taken to inspect it:
 - (void) setDisplayMode: (ETLayoutDisplayMode)mode
 {
 	_displayMode = mode;
+	// TODO: Implement -selectItemItemWithTag: in GNUstep
+	[popup selectItemAtIndex: [popup indexOfItemWithTag: mode]];
 	[propertyView reloadAndUpdateLayout];
 }
 
