@@ -32,6 +32,8 @@
 			<dict>
 				<key>browse</key>
 				<string>id</string>
+				<key>explore</key>
+				<string>id</string>
 				<key>inspect</key>
 				<string>id</string>
 				<key>view</key>
@@ -72,6 +74,8 @@
 			<dict>
 				<key>enclosingView</key>
 				<string>id</string>
+				<key>popup</key>
+				<string>NSPopUpButton</string>
 				<key>propertyView</key>
 				<string>ETContainer</string>
 			</dict>
