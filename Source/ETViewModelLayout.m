@@ -102,6 +102,7 @@
 	[layout setDisplayName: @"Content" forProperty: @"content"];
 	[layout setDisplayName: @"Name" forProperty: @"name"];
 	[layout setDisplayName: @"Type" forProperty: @"typeName"];
+	[layout setEditable: YES forProperty: @"value"];
 
 	[propertyView setLayout: layout];
 	[propertyView setSource: self];

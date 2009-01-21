@@ -146,12 +146,19 @@
 
 /* Item Property Display */
 
+/** Returns the property names associated with the visible columns. 
+
+The property names are used as the column identifiers. */
 - (NSArray *) displayedProperties
 {
 	return [[[self tableView] tableColumns] valueForKey: @"identifier"];
 }
 
-/* Update column visibility */
+/** Makes visible the columns associated with the given property names. If a 
+column doesn't exist as an invisible column for a property, then it is created 
+and inserted immediately.
+
+The property names are used as the column identifiers. */
 - (void) setDisplayedProperties: (NSArray *)properties
 {
 	//ETDebugLog(@"Set displayed properties %@ of layout %@", properties, self);
@@ -200,49 +207,67 @@
 	}
 }
 
+/** Returns the column header title associated with the given property. */
 - (NSString *) displayNameForProperty: (NSString *)property
 {
 	return [[[_propertyColumns objectForKey: property] headerCell] stringValue];
 }
 
-/** Override */
+/** Sets the column header title associated with the given property. The 
+property display name should usually be passed as argument. */
 - (void) setDisplayName: (NSString *)displayName forProperty: (NSString *)property
 {
-	NSTableColumn *column = [_propertyColumns objectForKey: property];
-	
-	if (column == nil)
-	{
-		column = [self _createTableColumnWithIdentifier: property];
-		[_propertyColumns setObject: column forKey: property];
-	}
-
+	NSTableColumn *column = [self tableColumnWithIdentifierAndCreateIfAbsent: property];
 	[[column headerCell] setStringValue: displayName];
 }
 
+/** Returns whether the column associated with the given property is editable.
+
+By default, columns are not editable and NO is returned. */
+- (BOOL) isEditableForProperty: (NSString *)property
+{
+	return [[_propertyColumns objectForKey: property] isEditable];
+}
+
+/** Sets whether the column associated with the given property is editable. */
+- (void) setEditable: (BOOL)flag forProperty: (NSString *)property
+{
+	NSTableColumn *column = [self tableColumnWithIdentifierAndCreateIfAbsent: property];
+	[[column dataCell] setEditable: flag]; // FIXME: why column setEditable: isn't enough
+	[column setEditable: flag];	
+}
+
+/** Returns the data cell of the column associated with the given property, but 
+this is temporary.
+
+TODO: Return a layout item built dynamically by determining the cell subclass 
+kind. May be add +[ETLayoutItem(Factory) itemWithCell:]. */
 - (id) styleForProperty: (NSString *)property
 {
 	return [[_propertyColumns objectForKey: property] dataCell];
-
-//	return [[[self tableView] tableColumnWithIdentifier: property] dataCell];
 }
 
+/** Sets the widget style used by the column associated with the given property.
+You must pass a layout item bound a view that responds to -cell, otherwise style 
+will be ignored. The view is typically an NSControl subclass instance.
+
+NOTE: The documented behavior is subject to further changes in future to become 
+more widget backend agnostic. */
 - (void) setStyle: (id)style forProperty: (NSString *)property
 {
-	NSTableColumn *column = [_propertyColumns objectForKey: property];
-	
-	if (column == nil)
+	NSTableColumn *column = [self tableColumnWithIdentifierAndCreateIfAbsent: property];
+	NSCell *cell = nil;
+
+	if ([style isLayoutItem] && [[style view] respondsToSelector: @selector(cell)])
 	{
-		column = [self _createTableColumnWithIdentifier: property];
-		[_propertyColumns setObject: column forKey: property];
+		cell = [(id)[style view] cell];	
+
+		[column setDataCell: cell];
+		// NOTE: For cell editability, -[NSTableColumn isEditable] takes over the 
+		// the NSCell method of the data cell (at least for GNUstep, may be 
+		// different for Cocoa).
+		[column setEditable: [cell isEditable]];
 	}
-
-	[column setDataCell: style];
-	// NOTE: For cell editability, -[NSTableColumn isEditable] takes over the 
-	// the NSCell method of the data cell (at least for GNUstep, may be 
-	// different for Cocoa).
-	[column setEditable: [style isEditable]];
-
-//	[[[self tableView] tableColumnWithIdentifier: property] setDataCell: style];
 }
 
 /** Returns the font used to display each row/column cell value. 
@@ -266,6 +291,22 @@ returned by -allTableColumns. */
 	}
 }
 
+/** Returns the column associated with the given property, the column might be 
+visible or not depending on -displayedProperties. If the column doesn't exist 
+yet, it is created. */
+- (NSTableColumn *) tableColumnWithIdentifierAndCreateIfAbsent: (NSString *)property
+{
+	NSTableColumn *column = [_propertyColumns objectForKey: property];
+
+	if (column == nil)
+	{
+		column = [self _createTableColumnWithIdentifier: property];
+		[_propertyColumns setObject: column forKey: property];
+	}
+
+	return column;
+}
+
 - (NSTableColumn *) _createTableColumnWithIdentifier: (NSString *)property
 {
 	NSTableHeaderCell *headerCell = [[NSTableHeaderCell alloc] initTextCell: property]; // FIXME: Use display name
@@ -274,11 +315,10 @@ returned by -allTableColumns. */
 
 	[column setHeaderCell: headerCell];
 	RELEASE(headerCell);
-	[dataCell setEditable: YES]; // FIXME: why column setEditable: isn't enough
 	[dataCell setFont: [self contentFont]];
 	[column setDataCell: dataCell];
 	RELEASE(dataCell);
-	[column setEditable: YES];
+	[column setEditable: NO];
 	
 	return AUTORELEASE(column);
 }

@@ -1,3 +1,20 @@
+2009-01-21  Quentin Mathe <qmathe@club-internet.fr>
+
+	* ETTableLayout:
+	Exposed -displayedProperties and -setDisplayedProperties: in the public API.
+	Reorganized the header a bit and documented more methods.
+	(-dispayNameForProperty:, -setDisplayName:forProperty:): Updated to rely 
+	on -tableColumnWithIdentifierAndCreateIfAbsent:.
+	(-isEditableForProperty:, -setEditable:forProperty:): Added. 
+	(-styleForProperty:, setStyle:forProperty:): Rewrote with a real 
+	implementation.
+	(-tableColumnWithIdentifierAndCreateIfAbsent:): Extracted some common code 
+	in this new method.
+	(-_createTableColumnWithIdentifier:): Modified to create non-editable 
+	columns by default, since they are way more common than editable ones.
+	* ETViewModelLayout (-awakeFromNib): Modified to correctly define the 
+	editable column with -setEditable:forProperty:.
+
 2009-01-19  Quentin Mathe <qmathe@club-internet.fr>
 
 	* ETViewModelLayout:

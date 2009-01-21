@@ -48,20 +48,27 @@
 	int _lastChildDropIndex;
 }
 
-- (NSArray *) allTableColumns;
-- (void) setAllTableColumns: (NSArray *)columns;
-
+- (NSArray *) displayedProperties;
+- (void) setDisplayedProperties: (NSArray *)properties;
 - (NSString *) displayNameForProperty: (NSString *)property;
 - (void) setDisplayName: (NSString *)displayName forProperty: (NSString *)property;
+- (BOOL) isEditableForProperty: (NSString *)property;
+- (void) setEditable: (BOOL)flag forProperty: (NSString *)property;
+- (id) styleForProperty: (NSString *)property;
+- (void) setStyle: (id)style forProperty: (NSString *)property;
 
 - (NSFont *) contentFont;
 - (void) setContentFont: (NSFont *)aFont;
-/*- (id) listStyle;
-- (void) setListStyle: (id)style;*/
 
+/* Widget Backend Access */
+
+- (NSArray *) allTableColumns;
+- (void) setAllTableColumns: (NSArray *)columns;
 - (NSTableView *) tableView;
 
 /* Subclassing */
+
+- (NSTableColumn *) tableColumnWithIdentifierAndCreateIfAbsent: (NSString *)identifier;
 
 // TODO: Moves this method into an NSTableColumn category
 - (NSTableColumn *) _createTableColumnWithIdentifier: (NSString *)property;
