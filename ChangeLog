@@ -1,20 +1,23 @@
-2009-01-21  Quentin Mathe <qmathe@club-internet.fr>
+2009-01-24  Quentin Mathe <qmathe@club-internet.fr>
 
-	* ETTableLayout:
-	Exposed -displayedProperties and -setDisplayedProperties: in the public API.
-	Reorganized the header a bit and documented more methods.
-	(-dispayNameForProperty:, -setDisplayName:forProperty:): Updated to rely 
-	on -tableColumnWithIdentifierAndCreateIfAbsent:.
-	(-isEditableForProperty:, -setEditable:forProperty:): Added. 
-	(-styleForProperty:, setStyle:forProperty:): Rewrote with a real 
-	implementation.
-	(-tableColumnWithIdentifierAndCreateIfAbsent:): Extracted some common code 
-	in this new method.
-	(-_createTableColumnWithIdentifier:): Modified to create non-editable 
-	columns by default, since they are way more common than editable ones.
-	* ETViewModelLayout (-awakeFromNib): Modified to correctly define the 
-	editable column with -setEditable:forProperty:.
-
+	* ETContainer (-dealloc): Fixed a nasty double release error by removing 
+	DESTROY(_layoutView). This ivar is weak reference, hence this line results 
+	in an extra release that translates in more or less random crashes when a 
+	view-based layout is released. Here is the sequence that leads to the crash:
+	- an item group is deallocated and it releases its layout
+	- the layout is deallocated and releases its layout view	
+	At this point the layout view is still retained by the container as a subview
+	... but later:
+	- the container is deallocated and wrongly releases its layout view (which 
+	was not retained in -setLayoutView:)
+	- the layout view is deallocated
+	- the container deallocation code terminates with [super dealloc] which 
+	tries to release its subviews and thereby crashes when trying to send 
+	-removeFromSuperview to the deallocated layout view.
+	The crash happens very often on a window close which releases the layout 
+	item tree it decorates. This fix should also solve random crashes that were 
+	reported when the application terminates (and closes its windows).
+	
 2009-01-19  Quentin Mathe <qmathe@club-internet.fr>
 
 	* ETViewModelLayout:

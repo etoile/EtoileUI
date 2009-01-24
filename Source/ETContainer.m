@@ -170,9 +170,13 @@ NSString *ETLayoutItemPboardType = @"ETLayoutItemPboardType"; // FIXME: replace 
 
 - (void) dealloc
 {
-	// FIXME: Clarify memory management of _layoutView and _scrollView
+	/* NOTE: _layoutView is a weak reference (we retain it indirectly as a 
+	   subview though).
+	   We are owned by our layout item which retains its layout which itself 
+	   retains the layout view. Each time the layout is switched on -layoutItem, 
+	   we must update _layoutView with -setLayoutView: otherwise the ivar might 
+	   reference a freed object. See -[ETLayoutItemGroup setLayout:]. */
 	DESTROY(_doubleClickedItem);
-	DESTROY(_layoutView);
 	DESTROY(_path);
 	// NOTE: Not in use currently
 	//DESTROY(_selection);
