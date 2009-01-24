@@ -2124,19 +2124,16 @@ also set as the autoresizing mask of the supervisor view if one exists. */
 
 
 /** When the layout item uses a view, pass YES to this method to have the 
-	content resize when the view itself is resized (by modifying frame).
-	Resizing content in a view is possible by simply updating bounds size to 
-	match the view frame. 
-	Presently uses in ETPaneSwitcherLayout. */
+content resize when the view itself is resized (by modifying frame).
+
+Resizing content in a view is possible by simply updating bounds size to match 
+the view frame. */
 - (void) setAppliesResizingToBounds: (BOOL)flag
 {
 	_resizeBounds = flag;
 	
 	if ([self displayView] == nil)
-	{
-		NSLog(@"WARNING: -setAppliesResizingToBounds: called with no view for %@", self);
 		return;
-	}
 	
 	if (_resizeBounds && [self displayView] != nil)
 	{
