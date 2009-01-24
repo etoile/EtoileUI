@@ -175,6 +175,7 @@ NSString *ETLayoutItemPboardType = @"ETLayoutItemPboardType"; // FIXME: replace 
 	   reference a freed object. See -[ETLayoutItemGroup setLayout:]. */
 	DESTROY(_doubleClickedItem);
 	DESTROY(_path);
+	DESTROY(_scrollViewDecorator);
 	_dataSource = nil;
     
     [super dealloc];
