@@ -929,22 +929,28 @@ NSString *ETLayoutItemPboardType = @"ETLayoutItemPboardType"; // FIXME: replace 
 	return [scrollViewWrapper layoutItem];
 }
 
-/** Returns the view that takes care of the display. Most of time it is equal
-    to the container itself. But for some layout like ETTableLayout, the 
-	returned view would be an NSTableView instance. */
+/** Returns the custom view that might have been provided by the layout set 
+on -layoutItem.
+
+Returns nil by default. Only returns a view when a view-based layout is used, 
+see layout view related methods in ETLayout. */
 - (NSView *) layoutView
 {
 	return _layoutView;
 }
 
-/** Never calls this method unless you write an ETLayout subclass.
-	Method called when we switch between layouts. Manipulating the display view
-	is the job of ETContainer, ETLayout instances may provide display view
-	prototype but they never never manipulate it as a subview in view hierachy. */
+/** Sets the custom view provided by the layout set on -layoutItem. 
+
+Never calls this method unless you write an ETLayout subclass.
+
+Method called when we switch between layouts. Manipulating the layout view is 
+the job of ETContainer, ETLayout instances may provide a layout view prototype
+but they never never manipulate it as a subview in view hierachy. */
 - (void) setLayoutView: (NSView *)view
 {
 	if (_layoutView == nil && view == nil)
 		return;
+
 	if (_layoutView == view && (_layoutView != nil || view != nil))
 	{
 		ETLog(@"WARNING: Trying to assign an identical display view to container %@", self);
@@ -952,23 +958,11 @@ NSString *ETLayoutItemPboardType = @"ETLayoutItemPboardType"; // FIXME: replace 
 	}
 	
 	[_layoutView removeFromSuperview];
-	
-	_layoutView = view;
-	
-	/* Be careful with scroll view code, it will call -displayView and thereby
-	   needs up-to-date _layoutView */
-	/*if (view != nil && [self scrollView] != nil)
-	{
-		if ([self isScrollViewShown])
-			[self setShowsScrollView: NO];
-	}
-	else if (view == nil && [self scrollView] != nil)
-	{
-		if ([self isScrollViewShown] == NO)
-			[self setShowsScrollView: YES];		
-	}*/
-	
-	if (view != nil)
+	/* Retain indirectly by our layout item which retains the layout that 
+	   provides this view. Also retain as a subview by us just below. */
+	_layoutView = view; 
+
+	if (view != nil) /* Set up layout view */
 	{
 		[self hidesScrollViewDecoratorItem];
 		
@@ -980,7 +974,7 @@ NSString *ETLayoutItemPboardType = @"ETLayoutItemPboardType"; // FIXME: replace 
 		
 		[self syncDisplayViewWithContainer];
 	}
-	else
+	else /* Tear down layout view */
 	{
 		if ([self isScrollViewShown])
 			[self unhidesScrollViewDecoratorItem];		
