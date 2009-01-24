@@ -277,10 +277,12 @@ NSString *ETLayoutItemPboardType = @"ETLayoutItemPboardType"; // FIXME: replace 
 	return self;
 }
 
-#if 0
+// TODO: Finish to implement once ETContainer is cleaned.
+// If we decide to use EtoileSerialize here, we also have to update 
+// -[NSView(Etoile) copyWithZone:].
 - (void) copyWithZone: (NSZone *)zone
 {
-	#ifndef ETOILE_SERIALIZE
+#ifndef ETOILE_SERIALIZE
 	id container = [super copyWithZone: zone];
 	
 	/* Copy objects which doesn't support encoding usually or must not be copied
@@ -288,13 +290,12 @@ NSString *ETLayoutItemPboardType = @"ETLayoutItemPboardType"; // FIXME: replace 
 	[container setSource: [self source]];
 	[container setDelegate: [self delegate]];
 	
-	
 	return container;
-	#else
+#else
 	
-	#endif
-}
 #endif
+}
+
 /** Deep copies are never created by the container itself, but they are instead
 	delegated to the item group returned by -layoutItem. When the layout item
 	receives a deep copy request it will call back -copy on each view (including
@@ -319,9 +320,10 @@ NSString *ETLayoutItemPboardType = @"ETLayoutItemPboardType"; // FIXME: replace 
 - (id) deepCopy
 {
 	id item = [[self layoutItem] deepCopy];
-	id container = [item view];
+	id container = [item supervisorView];
 	
-	//NSAssert3([container isKindOfClass: [ETContainer class]], 
+	// TODO: Finish to implement...
+	// NSAssert3([container isKindOfClass: [ETContainer class]], 
 	
 	return container;
 }
@@ -341,16 +343,17 @@ NSString *ETLayoutItemPboardType = @"ETLayoutItemPboardType"; // FIXME: replace 
 	return [self description];
 }
 
-/** Returns the layout item representing the receiver container in the layout
-	item tree. Layout item representing a container is always an instance of
-	ETLayoutItemGroup class kind (and not ETLayoutItem unlike ETView).
-	Never returns nil. */
+/** Returns the layout item to which the receiver is bound to. 
+
+This layout item can only be an ETLayoutItemGroup instance unlike ETView. See 
+also -[ETView setLayoutItem:].
+
+Never returns nil. */
 - (id) layoutItem
 {
-	/*NSAssert([[super layoutItem] isGroup], 
-		@"Layout item in a container must of ETLayoutItemGroup type");*/
 	if ([[super layoutItem] isGroup] == NO)
-		ETLog(@"Layout item in a container must of ETLayoutItemGroup type");
+		ETLog(@"WARNING: Layout item in a container must of ETLayoutItemGroup type");
+
 	return [super layoutItem];
 }
 
