@@ -71,10 +71,7 @@
 	ETLayoutItem *_doubleClickedItem;
 	
 	float _itemScale;
-	
-	// NOTE: May be used as a cache, selection state is stored in ETLayoutItem
-	//NSMutableIndexSet *_selection;
-	NSRect _selectionRect;
+
 	BOOL _multipleSelectionAllowed;
 	BOOL _emptySelectionAllowed;
 	BOOL _dragAllowed;

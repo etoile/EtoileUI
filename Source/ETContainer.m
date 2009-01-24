@@ -144,8 +144,6 @@ NSString *ETLayoutItemPboardType = @"ETLayoutItemPboardType"; // FIXME: replace 
 		_subviewHitTest = NO;
 		[self setFlipped: YES];
 		_itemScale = 1.0;
-		// NOTE: Not in use currently (see ivars in the header)
-		//_selection = [[NSMutableIndexSet alloc] init];
 		_dragAllowed = YES;
 		_dropAllowed = YES;
 		[self setShouldRemoveItemsAtPickTime: NO];
@@ -177,8 +175,6 @@ NSString *ETLayoutItemPboardType = @"ETLayoutItemPboardType"; // FIXME: replace 
 	   reference a freed object. See -[ETLayoutItemGroup setLayout:]. */
 	DESTROY(_doubleClickedItem);
 	DESTROY(_path);
-	// NOTE: Not in use currently
-	//DESTROY(_selection);
 	_dataSource = nil;
     
     [super dealloc];
@@ -1058,17 +1054,6 @@ but they never never manipulate it as a subview in view hierachy. */
 	return hitSelection;
 #endif
 }
-
-/*
-- (ETSelection *) selection
-{
-	return _selection;
-}
-
-- (void) setSelection: (ETSelection *)
-{
-	_selection;
-} */
 
 /* Pick & Drop */
 
