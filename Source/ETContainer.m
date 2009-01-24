@@ -280,7 +280,7 @@ NSString *ETLayoutItemPboardType = @"ETLayoutItemPboardType"; // FIXME: replace 
 // TODO: Finish to implement once ETContainer is cleaned.
 // If we decide to use EtoileSerialize here, we also have to update 
 // -[NSView(Etoile) copyWithZone:].
-- (void) copyWithZone: (NSZone *)zone
+- (id) copyWithZone: (NSZone *)zone
 {
 #ifndef ETOILE_SERIALIZE
 	id container = [super copyWithZone: zone];
