@@ -146,7 +146,6 @@ NSString *ETLayoutItemPboardType = @"ETLayoutItemPboardType"; // FIXME: replace 
 		_itemScale = 1.0;
 		// NOTE: Not in use currently (see ivars in the header)
 		//_selection = [[NSMutableIndexSet alloc] init];
-		_selectionShape = nil;
 		_dragAllowed = YES;
 		_dropAllowed = YES;
 		[self setShouldRemoveItemsAtPickTime: NO];
@@ -180,7 +179,6 @@ NSString *ETLayoutItemPboardType = @"ETLayoutItemPboardType"; // FIXME: replace 
 	DESTROY(_path);
 	// NOTE: Not in use currently
 	//DESTROY(_selection);
-	DESTROY(_selectionShape);
 	_dataSource = nil;
     
     [super dealloc];
@@ -233,8 +231,6 @@ NSString *ETLayoutItemPboardType = @"ETLayoutItemPboardType"; // FIXME: replace 
 	          forKey: @"ETDoubleAction"];
 	[coder encodeObject: [self target] forKey: @"ETTarget"];
 	[coder encodeFloat: [self itemScaleFactor] forKey: @"ETItemScaleFactor"];
-	// FIXME: selectionShape not yet implemented
-	//[coder encodeObject: [self selectionShape] forKey: @"ETSelectionShape"];
 
 	[coder encodeBool: [self allowsEmptySelection] 
 	           forKey: @"ETAllowsMultipleSelection"];
@@ -271,7 +267,6 @@ NSString *ETLayoutItemPboardType = @"ETLayoutItemPboardType"; // FIXME: replace 
 		NSSelectorFromString([coder decodeObjectForKey: @"ETDoubleAction"])];
 	[self setTarget: [coder decodeObjectForKey: @"ETTarget"]];
 	[self setItemScaleFactor: [coder decodeFloatForKey: @"ETItemScaleFactor"]];
-	//[self setSelectionShape: [coder decodeObjectForKey: @"ETSelectionShape"]];
 
 	[self setAllowsMultipleSelection: 
 		[coder decodeBoolForKey: @"ETAllowsMultipleSelection"]];
@@ -1024,11 +1019,6 @@ but they never never manipulate it as a subview in view hierachy. */
 {
 	_emptySelectionAllowed = empty;
 	[self syncDisplayViewWithContainer];
-}
-
-- (ETSelection *) selectionShape
-{
-	return _selectionShape;
 }
 
 /** point parameter must be expressed in receiver coordinates */

@@ -74,7 +74,6 @@
 	
 	// NOTE: May be used as a cache, selection state is stored in ETLayoutItem
 	//NSMutableIndexSet *_selection;
-	ETSelection *_selectionShape;
 	NSRect _selectionRect;
 	BOOL _multipleSelectionAllowed;
 	BOOL _emptySelectionAllowed;
@@ -128,9 +127,6 @@
 - (void) setAllowsMultipleSelection: (BOOL)multiple;
 - (BOOL) allowsEmptySelection;
 - (void) setAllowsEmptySelection: (BOOL)empty;
-
-/*- (void) setSelectionShape: (ETSelection *)shape;
-- (ETSelection *) selectionShape;*/
 
 /* Pick & Drop */
 
