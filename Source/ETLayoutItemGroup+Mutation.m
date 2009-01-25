@@ -578,13 +578,13 @@ static 	BOOL _coalescingMutation = NO;
 	collection part of protocol like -numberOfItemsInContainer. */
 - (int) checkSourceProtocolConformance
 {
-	if ([[[self container] source] isEqual: self])
+	if ([[[self baseContainer] source] isEqual: self])
 	{
 		return 3;
 	}
-	else if ([[[self container] source] respondsToSelector: @selector(container:numberOfItemsAtPath:)])
+	else if ([[[self baseContainer] source] respondsToSelector: @selector(container:numberOfItemsAtPath:)])
 	{
-		if ([[[self container] source] respondsToSelector: @selector(container:itemAtPath:)])
+		if ([[[self baseContainer] source] respondsToSelector: @selector(container:itemAtPath:)])
 		{
 			return 2;
 		}
@@ -592,13 +592,13 @@ static 	BOOL _coalescingMutation = NO;
 		{
 			ETLog(@"%@ implements container:numberOfItemsAtPath: but misses "
 				  @"container:itemAtPath: as requested by ETContainerSource "
-				  @"protocol.", [[self container] source]);
+				  @"protocol.", [[self baseContainer] source]);
 			return 0;
 		}
 	}
-	else if ([[[self container] source] respondsToSelector: @selector(numberOfItemsInContainer:)])
+	else if ([[[self baseContainer] source] respondsToSelector: @selector(numberOfItemsInContainer:)])
 	{
-		if ([[[self container] source] respondsToSelector: @selector(container:itemAtIndex:)])
+		if ([[[self baseContainer] source] respondsToSelector: @selector(container:itemAtIndex:)])
 		{
 			return 1;
 		}
@@ -606,7 +606,7 @@ static 	BOOL _coalescingMutation = NO;
 		{
 			ETLog(@"%@ implements numberOfItemsInContainer: but misses "
 				  @"container:itemAtIndex as  requested by "
-				  @"ETContainerSource protocol.", [[self container] source]);
+				  @"ETContainerSource protocol.", [[self baseContainer] source]);
 			return 0;
 		}
 	}
@@ -614,7 +614,7 @@ static 	BOOL _coalescingMutation = NO;
 	{
 		ETLog(@"%@ implements neither numberOfItemsInContainer: nor "
 			  @"container:numberOfItemsAtPath: as requested by "
-			  @"ETContainerSource protocol.", [[self container] source]);
+			  @"ETContainerSource protocol.", [[self baseContainer] source]);
 		return 0;
 	}
 }
