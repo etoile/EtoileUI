@@ -479,58 +479,6 @@ Never returns nil. */
 	_delegate = delegate;
 }
 
-/** Returns 0 when source doesn't conform to any parts of ETContainerSource 
-	informal protocol.
-    Returns 1 when source conform to protocol for flat collections and display 
-	of items in a linear style.
-	Returns 2 when source conform to protocol for tree collections and display 
-	of items in a hiearchical style.
-	If tree collection part of the protocol is implemented through 
-	-container:numberOfItemsAtPath: , ETContainer by default ignores flat 
-	collection part of protocol like -numberOfItemsInContainer. */
-- (int) checkSourceProtocolConformance
-{
-	if ([[self source] isEqual: [self layoutItem]])
-	{
-		return 3;
-	}
-	else if ([[self source] respondsToSelector: @selector(container:numberOfItemsAtPath:)])
-	{
-		if ([[self source] respondsToSelector: @selector(container:itemAtPath:)])
-		{
-			return 2;
-		}
-		else
-		{
-			ETLog(@"%@ implements container:numberOfItemsAtPath: but misses "
-				  @"container:itemAtPath: as requested by ETContainerSource "
-				  @"protocol.", [self source]);
-			return 0;
-		}
-	}
-	else if ([[self source] respondsToSelector: @selector(numberOfItemsInContainer:)])
-	{
-		if ([[self source] respondsToSelector: @selector(container:itemAtIndex:)])
-		{
-			return 1;
-		}
-		else
-		{
-			ETLog(@"%@ implements numberOfItemsInContainer: but misses "
-				  @"container:itemAtIndex as  requested by "
-				  @"ETContainerSource protocol.", [self source]);
-			return 0;
-		}
-	}
-	else
-	{
-		ETLog(@"%@ implements neither numberOfItemsInContainer: nor "
-			  @"container:numberOfItemsAtPath: as requested by "
-			  @"ETContainerSource protocol.", [self source]);
-		return 0;
-	}
-}
-
 /* Private helper methods to sync display view and container */
 
 /* Various adjustements necessary when layout object is a wrapper around an 

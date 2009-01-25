@@ -187,9 +187,6 @@
 /* Private Use */
 
 - (void) didChangeDecoratorOfItem: (ETLayoutItem *)item;
-// TOOD: Evaluate whether this method wouldn't be better located hidden in
-// ETLayoutItemGroup+Mutation
-- (int) checkSourceProtocolConformance;
 
 @end
 

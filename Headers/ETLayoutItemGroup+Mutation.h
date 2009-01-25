@@ -98,6 +98,7 @@ extern NSString *kETControllerProperty; // controller
 - (NSArray *) itemsFromFlatSource;
 - (NSArray *) itemsFromTreeSource;
 - (NSArray *) itemsFromRepresentedObject;
+- (int) checkSourceProtocolConformance;
 
 /* Controller Coordination */
 
