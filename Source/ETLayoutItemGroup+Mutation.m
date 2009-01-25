@@ -422,6 +422,115 @@ static 	BOOL _coalescingMutation = NO;
 
 /* Providing */
 
+// TODO: Get rid of that once the source protocols are based on ETLayoutItemGroup
+// rather than ETContainer
+- (ETContainer *) container
+{
+	if ([self isContainer])
+	{
+		return (ETContainer *)[self view];
+	}
+	else
+	{
+		return nil;
+	}
+}
+
+- (BOOL) isReloading
+{
+	return _reloading;
+}
+
+- (NSArray *) itemsFromSource
+{
+	ETContainer *container = [self baseContainer];
+
+	switch ([container checkSourceProtocolConformance])
+	{
+		case 1:
+			ETDebugLog(@"Will -reloadFromFlatSource");
+			/* We allow the flat source protocol to return item groups that 
+			   will load their child items based on their represented object 
+			   content. */
+			if ([self isEqual: [self baseItem]])
+			{
+				return [self itemsFromFlatSource];
+			}
+			else
+			{
+				return [self itemsFromRepresentedObject];
+			}
+			break;
+		case 2:
+			ETDebugLog(@"Will -reloadFromTreeSource");
+			return [self itemsFromTreeSource];
+			break;
+		case 3:
+			ETDebugLog(@"Will -reloadFromRepresentedObject");
+			return [self itemsFromRepresentedObject];
+			break;
+		default:
+			ETLog(@"WARNING: source protocol is incorrectly supported by %@.", [[self container] source]);
+	}
+	
+	return nil;
+}
+
+- (NSArray *) itemsFromFlatSource
+{
+	NSMutableArray *itemsFromSource = [NSMutableArray array];
+	ETLayoutItem *layoutItem = nil;
+	ETContainer *container = [self baseContainer];
+	int nbOfItems = [[container source] numberOfItemsInContainer: container];
+	
+	for (int i = 0; i < nbOfItems; i++)
+	{
+		layoutItem = [[container source] container: container itemAtIndex: i];
+		[itemsFromSource addObject: layoutItem];
+	}
+	
+	return itemsFromSource;
+}
+
+- (NSArray *) itemsFromTreeSource
+{
+	NSMutableArray *itemsFromSource = [NSMutableArray array];
+	ETLayoutItem *layoutItem = nil;
+	ETContainer *baseContainer = [self baseContainer];
+	// NOTE: [self indexPathFromItem: [container layoutItem]] is equal to [[container layoutItem] indexPathFortem: self]
+	NSIndexPath *indexPath = [self indexPathFromItem: [baseContainer layoutItem]];
+	int nbOfItems = 0;
+	
+	//ETDebugLog(@"-itemsFromTreeSource in %@", self);
+	
+	/* Request number of items to the source by passing receiver index path 
+	   expressed in a way relative to the base container */
+	nbOfItems = [[baseContainer source] container: baseContainer numberOfItemsAtPath: indexPath];
+
+	for (int i = 0; i < nbOfItems; i++)
+	{
+		NSIndexPath *indexSubpath = nil;
+		
+		indexSubpath = [indexPath indexPathByAddingIndex: i];
+		/* Request item to the source by passing item index path expressed in a
+		   way relative to the base container */
+		layoutItem = [[baseContainer source] container: baseContainer itemAtPath: indexSubpath];
+		//ETDebugLog(@"Retrieved item %@ known by path %@", layoutItem, indexSubpath);
+		if (layoutItem != nil)
+		{
+			[itemsFromSource addObject: layoutItem];
+		}
+		else
+		{
+			[NSException raise: @"ETInvalidReturnValueException" 
+				format: @"Item at path %@ returned by source %@ must not be "
+				@"nil", indexSubpath, [baseContainer source]];
+		}
+	}
+	
+	return itemsFromSource;
+}
+
 /* Makes the represented object returns layout items as a source would but only
    turning immediate children into ETLayoutItem or ETLayoutItemGroup instances. 
    An empty array of items is returned when the represented object isn't a 

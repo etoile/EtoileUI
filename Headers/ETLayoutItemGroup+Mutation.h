@@ -92,10 +92,12 @@ extern NSString *kETControllerProperty; // controller
 	
 /* Providing */
 
-- (NSArray *) itemsFromRepresentedObject;
-/*- (NSArray *) itemsFromSource;
+- (ETContainer *) container;
+- (BOOL) isReloading;
+- (NSArray *) itemsFromSource;
 - (NSArray *) itemsFromFlatSource;
-- (NSArray *) itemsFromTreeSource;*/
+- (NSArray *) itemsFromTreeSource;
+- (NSArray *) itemsFromRepresentedObject;
 
 /* Controller Coordination */
 
