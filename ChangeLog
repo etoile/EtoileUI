@@ -1,3 +1,18 @@
+2009-01-26  Quentin Mathe <qmathe@club-internet.fr>
+
+	* ETLayoutItem:
+	Added kETRepresentedPathProperty. Moved property access macros to 
+	ETCompatibility.h
+	(-representedPathBase): Modified to return the property rather than nil 
+	by default.
+	* ETLayoutItemGroup:
+	(-representedPathBase): Removed this overriden method version.
+	(-setRepresentedPathBase:): New method based on the old 
+	-[ETContainer representedPath].
+	* ETContainer:
+	Removed _path ivar (now declared as a property on ETLayoutItem).
+	(-representedPath, -setRepresentedPath:): Deprecated.
+
 2009-01-24  Quentin Mathe <qmathe@club-internet.fr>
 
 	* ETContainer (-dealloc): Fixed a nasty double release error by removing 

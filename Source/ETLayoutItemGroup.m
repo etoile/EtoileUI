@@ -205,12 +205,6 @@
 	}
 }
 
-/* Overriden method */
-/*- (void) setDisplayView: (ETView *)view
-{
-
-}*/
-
 /* Traversing Layout Item Tree */
 
 /** Returns a normal path relative to the receiver by translating index path 
@@ -391,14 +385,36 @@
 	return item;
 }
 
-- (NSString *) representedPathBase
+/** Sets the represented path base associated with the receiver. When a valid 
+represented base is set, the receiver becomes a base item. See also -isBaseItem, 
+-baseItem, -representedPath and -representedPathBase in ETLayoutItem.
+
+The represented path base should be a navigational path into the model whose 
+content is currently presented by the receiver. In that way, it is useful to 
+keep track of your location inside the model currently browsed. Tree-related 
+methods implemented by a data source are passed paths which are subpaths of this 
+path base.
+
+A path base is only critical when a source is used, otherwise it's up to the 
+developer to track the level of navigation inside the tree structure. 
+
+You should use paths like '/', '/blabla/myModelObjectName'. You cannot pass an 
+empty string to this method or it will throw an invalid argument exception. If 
+you want no represented path base, use nil. 
+
+Without a source, you can use -setRepresentedPathBase: as a conveniency to 
+remember the represented object location within the model graph that is 
+presented by the receiver. */
+- (void) setRepresentedPathBase: (NSString *)aPath
 {
-	NSString *pathBase = nil;
-	
-	if ([self isContainer])
-		pathBase = [(ETContainer *)[self view] representedPath];
+	if ([aPath isEqual: @""])
+	{
+		[NSException raise: NSInvalidArgumentException format: @"For %@ "
+			@"-setRepresentedPathBase: argument must never be an empty string", self];
 		
-	return pathBase;
+	}
+
+	SET_PROPERTY(aPath, kRepresentedPathBaseProperty);
 }
 
 /* Manipulating Layout Item Tree */

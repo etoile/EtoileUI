@@ -68,24 +68,11 @@ NSString *kETNeedsDisplayProperty = @"needsDisplay";
 NSString *kETParentItemProperty = @"parentItem";
 NSString *kETPersistentFrameProperty = @"persistentFrame";
 NSString *kETRepresentedObjectProperty = @"representedObject";
+NSString *kRepresentedPathBaseProperty = @"representedPathBase";
 NSString *kETSelectedProperty = @"selected";
 NSString *kETStyleProperty = @"style";
 NSString *kETValueProperty = @"value";
 NSString *kETVisibleProperty = @"visible";
-
-/* Macros to read and write the receiver or local properties without exposing 
- how the properties are stored. The implicit property owner is self. */
-#define SET_PROPERTY(value, property) \
-	if (value != nil) \
-	{ \
-		[_variableProperties setObject: value forKey: property]; \
-	} \
-	else \
-	{ \
-		[_variableProperties removeObjectForKey: property]; \
-	}
-#define GET_PROPERTY(property) [_variableProperties objectForKey: property]
-#define HAS_PROPERTY(property) ([_variableProperties objectForKey: property] != nil)
 
 #define DETAILED_DESCRIPTION
 /* Don't forget that -variableProperties creates the property dictionary */
@@ -573,7 +560,8 @@ The receiver display view itself can be returned. */
 	return path;
 }
 
-/** Returns the represented path. */
+/** Returns the represented path which is built with the represented path base 
+provided by the base item. */
 - (NSString *) representedPath
 {
 	NSString *path = [self representedPathBase];
@@ -594,24 +582,26 @@ The receiver display view itself can be returned. */
 	return path;
 }
 
-/** Returns the represented path base which is nil by default. This represented
-	path base can be provided by a container, then allowing to build 
-	represented paths for every descendant layout items which don't specify 
-	their own custom represented path base (in other words when this method 
-	returns nil). 
-	By setting the represented path of a container, the related layout item 
-	group is able to provide a represented path base automatically used by 
-	descendant items. This represented path base is valid until a descendant 
-	provides a new represented path base. */
+/** Returns the represented path base. By default, returns nil.
+
+With a represented path base, an ETLayoutItemGroup instance becomes a base 
+item, and provides a path base used by descendant items to build their 
+represented paths (see -representedPath). This path base is valid until a 
+descendant provides a new represented path base and as such becomes a base item.
+See -[ETLayoutItemGroup setRepresentedPathBase:].
+
+Finally take note represented paths are relative to the base item unlike paths 
+returned by -path which are absolute paths. */
 - (NSString *) representedPathBase
 {
-	return nil;
+	return GET_PROPERTY(kRepresentedPathBaseProperty);
 }
 
-/** Returns the identifier associated with the layout item. By default, the
-	returned value is the name. If -name returns nil or an empty string, the
-	identifier is a string made of the index used by the parent item to 
-	reference the receiver. */
+/** Returns the identifier associated with the layout item. By default, the 
+returned value is the name. 
+
+If -name returns nil or an empty string, the identifier is a string made of 
+the index used by the parent item to reference the receiver. */
 - (NSString *) identifier
 {
 	NSString *identifier = [self name];
@@ -635,7 +625,6 @@ The receiver display view itself can be returned. */
 	/*if (identifier == nil || [identifier isEqual: @""])	
 		identifier = [self name];*/
 
-	
 	if (identifier == nil || [identifier isEqual: @""])
 	{
 		identifier = [NSString stringWithFormat: @"%d", 
@@ -947,7 +936,8 @@ See -valueForProperty: for more details. */
 	NSArray *properties = A(@"identifier", kETNameProperty, @"x", @"y", @"width", 
 		@"height", @"view", kETSelectedProperty, kETSelectedProperty, 
 		kETImageProperty, kETFrameProperty, kETRepresentedObjectProperty, 
-		kETParentItemProperty, @"UIMetalevel", @"UIMetalayer");
+		kRepresentedPathBaseProperty, kETParentItemProperty, @"UIMetalevel", 
+		@"UIMetalayer");
 
 	properties = [[VARIABLE_PROPERTIES allKeys] arrayByAddingObjectsFromArray: properties];
 		

@@ -60,8 +60,6 @@
 	BOOL _flipped;
 #endif
 
-	// NOTE: path ivar may move to ETLayoutItem later
-	NSString *_path; /* A path type could replace NSString later */
 	id _dataSource;
 	id _delegate; // TODO: check this ivar doesn't overshadow a superclass ivar
 	
@@ -89,8 +87,6 @@
 
 /* Basic Accessors */
 
-- (NSString *) representedPath;
-- (void) setRepresentedPath: (NSString *)path;
 - (id) source;
 - (void) setSource: (id)source;
 - (id) delegate;
@@ -276,6 +272,9 @@ extern NSString *ETLayoutItemPboardType;
 /* Deprecated (DO NOT USE, WILL BE REMOVED LATER) */
 
 @interface ETContainer (Deprecated)
+
+- (NSString *) representedPath;
+- (void) setRepresentedPath: (NSString *)path;
 
 /* Inspecting */
 

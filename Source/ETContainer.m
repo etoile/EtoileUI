@@ -174,7 +174,6 @@ NSString *ETLayoutItemPboardType = @"ETLayoutItemPboardType"; // FIXME: replace 
 	   we must update _layoutView with -setLayoutView: otherwise the ivar might 
 	   reference a freed object. See -[ETLayoutItemGroup setLayout:]. */
 	DESTROY(_doubleClickedItem);
-	DESTROY(_path);
 	DESTROY(_scrollViewDecorator);
 	_dataSource = nil;
     
@@ -358,59 +357,6 @@ Never returns nil. */
 }
 
 /* Basic Accessors */
-
-/** Returns the represented path which is the model path whose content is 
-	currently displayed in the receiver. It is useful to keep track of your 
-	location inside the model currently browsed. Tree-related methods 
-	implemented by a data source are passed paths which are subpaths of the 
-	represented path.
-	This path is used as the represented path base in the layout item 
-	representing the receiver. [self representedPath] and
-	[[self layoutItem] representedPathBase] are equal and must always be.
-	[[self layoutItem] representedPath] returns a path which is also identical
-	to the previous methods. See ETLayoutItem and ETLayoutItemGroup to know 
-	more about path management and understand the difference between a 
-	represented path base and a represented path.
-	Finally take note represented paths are relative to the container unlike 
-	paths returned by -[ETLayoutItem path] which are absolute paths. */
-- (NSString *) representedPath
-{
-	return _path;
-}
-
-/** Sets the represented path. Path is only critical when a source is used, 
-	otherwise it's up to the developer to track the level of navigation inside 
-	the tree structure. 
-	Without a source, you can use -setRepresentedPath: as a conveniency to 
-	memorize the location currently displayed by the container. In this case, 
-	each time the user enters a new level, you are in charge of removing then 
-	adding the proper items which are associated with the level requested by 
-	the user. Implementing a data source, alleviates you from this task,
-	you simply need to return the items, EtoileUI will build takes care of 
-	building and managing the tree structure. 
-	To set a represented path turning the container into an entry point in your
-	model, you should use paths like '/', '/blabla/myModelObjectName'
-	You cannot pass an empty string to this method or it will throw an invalid
-	argument exception. If you want no represented path, use nil.
-	-representedPath is also used by ETLayoutItem as a represented path base, 
-	turning the item group related to the container into a base item which 
-	handles events. See also -representedPath, -[ETLayoutItem baseItem] and 
-	-[ETLayoutItem representedPathBase]. */
-- (void) setRepresentedPath: (NSString *)path
-{
-	if ([path isEqual: @""])
-	{
-		[NSException raise: NSInvalidArgumentException format: @"For %@ "
-			@"-setRepresentedPath argument must never be an empty string", self];
-		
-	}
-	
-	ASSIGN(_path, path);
-	
-	// NOTE: If the selection is cached, here the cache should be cleared
-	// [_selection removeAllIndexes]; /* Unset any selection */
-	[self updateLayout];
-}
 
 /** Returns the source which provides the content displayed by the receiver. 
 	A source implements either ETIndexSource or ETPathSource protocols.
@@ -1274,6 +1220,16 @@ but they never never manipulate it as a subview in view hierachy. */
 /* Deprecated (DO NOT USE, WILL BE REMOVED LATER) */
 
 @implementation ETContainer (Deprecated)
+
+- (NSString *) representedPath
+{
+	return [[self layoutItem] representedPathBase];
+}
+
+- (void) setRepresentedPath: (NSString *)path
+{
+	[[self layoutItem] setRepresentedPathBase: path];
+}
 
 /* Inspecting (WARNING CODE TO BE REPLACED BY THE NEW EVENT HANDLING) */
 

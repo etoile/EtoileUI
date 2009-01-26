@@ -61,6 +61,8 @@ extern NSString *kETNameProperty; /** name property name */
 extern NSString *kETNeedsDisplayProperty; /** needsDisplay property name */
 extern NSString *kETParentItemProperty; /** parentItem property name */
 extern NSString *kETPersistentFrameProperty; /** persistentFrame property name */
+extern NSString *kETRepresentedObjectProperty; /** representedObject property name */
+extern NSString *kRepresentedPathBaseProperty; /** representedPathBase property name */
 extern NSString *kETSelectedProperty; /** selected property name */
 extern NSString *kETStyleProperty; /** style property name */
 extern NSString *kETValueProperty; /** value property name */

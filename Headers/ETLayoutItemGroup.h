@@ -42,6 +42,10 @@
 @class ETLayout;
 
 
+/* Properties */
+
+extern NSString *kSourceProperty; /** source property name */
+
 @interface ETLayoutItemGroup : ETLayoutItem <ETLayoutingContext, ETCollection, ETCollectionMutation>
 {
 	NSMutableArray *_layoutItems;
@@ -73,6 +77,8 @@
 - (NSIndexPath *) indexPathForPath: (NSString *)path;
 - (ETLayoutItem *) itemAtIndexPath: (NSIndexPath *)path;
 - (ETLayoutItem *) itemAtPath: (NSString *)path;
+
+- (void) setRepresentedPathBase: (NSString *)aPath;
 
 /*  Manipulating Layout Item Tree */
 
@@ -193,3 +199,11 @@
 - (id) initWithLayoutItems: (NSArray *)layoutItems view: (NSView *)view;
 
 @end
+
+// TODO: Documentation to be reused somewhere...
+/* In this case, each time the user enters a new level, you are in charge of
+removing then adding the proper items which are associated with the level
+requested by the user. Implementing a data source, alleviates you from this
+task, you simply need to return the items, EtoileUI will build takes care of
+building and managing the tree structure. To set a represented path base, turns
+the item group into an entry point in your model, */

@@ -48,3 +48,17 @@
 #define ETDebugLog(format, args...)
 #endif
 #define ETLog NSLog
+
+/* Macros to read and write the receiver or local properties without exposing 
+how the properties are stored. The implicit property owner is self. */
+#define SET_PROPERTY(value, property) \
+	if (value != nil) \
+	{ \
+		[_variableProperties setObject: value forKey: property]; \
+	} \
+	else \
+	{ \
+		[_variableProperties removeObjectForKey: property]; \
+	}
+#define GET_PROPERTY(property) [_variableProperties objectForKey: property]
+#define HAS_PROPERTY(property) ([_variableProperties objectForKey: property] != nil)
