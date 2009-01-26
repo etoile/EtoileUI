@@ -578,7 +578,7 @@ static 	BOOL _coalescingMutation = NO;
 	collection part of protocol like -numberOfItemsInContainer. */
 - (int) checkSourceProtocolConformance
 {
-	if ([[[self baseContainer] source] isEqual: self])
+	if ([[[self baseContainer] source] isEqual: [self baseItem]])
 	{
 		return 3;
 	}
