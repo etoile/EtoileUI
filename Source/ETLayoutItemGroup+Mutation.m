@@ -443,8 +443,6 @@ static 	BOOL _coalescingMutation = NO;
 
 - (NSArray *) itemsFromSource
 {
-	ETContainer *container = [self baseContainer];
-
 	switch ([self checkSourceProtocolConformance])
 	{
 		case 1:
@@ -568,23 +566,28 @@ static 	BOOL _coalescingMutation = NO;
 }
 
 /** Returns 0 when source doesn't conform to any parts of ETContainerSource 
-	informal protocol.
-    Returns 1 when source conform to protocol for flat collections and display 
-	of items in a linear style.
-	Returns 2 when source conform to protocol for tree collections and display 
-	of items in a hiearchical style.
-	If tree collection part of the protocol is implemented through 
-	-container:numberOfItemsAtPath: , ETContainer by default ignores flat 
-	collection part of protocol like -numberOfItemsInContainer. */
+informal protocol.
+
+Returns 1 when source conform to protocol for flat collections and display of 
+items in a linear style.
+
+Returns 2 when source conform to protocol for tree collections and display of 
+items in a hiearchical style.
+
+If tree collection part of the protocol is implemented through 
+-container:numberOfItemsAtPath: , ETContainer by default ignores flat collection 
+part of protocol like -numberOfItemsInContainer. */
 - (int) checkSourceProtocolConformance
 {
-	if ([[[self baseContainer] source] isEqual: [self baseItem]])
+	id source = [[self baseItem] source];
+
+	if ([source isEqual: [self baseItem]])
 	{
 		return 3;
 	}
-	else if ([[[self baseContainer] source] respondsToSelector: @selector(container:numberOfItemsAtPath:)])
+	else if ([source respondsToSelector: @selector(container:numberOfItemsAtPath:)])
 	{
-		if ([[[self baseContainer] source] respondsToSelector: @selector(container:itemAtPath:)])
+		if ([source respondsToSelector: @selector(container:itemAtPath:)])
 		{
 			return 2;
 		}
@@ -592,13 +595,13 @@ static 	BOOL _coalescingMutation = NO;
 		{
 			ETLog(@"%@ implements container:numberOfItemsAtPath: but misses "
 				  @"container:itemAtPath: as requested by ETContainerSource "
-				  @"protocol.", [[self baseContainer] source]);
+				  @"protocol.", source);
 			return 0;
 		}
 	}
-	else if ([[[self baseContainer] source] respondsToSelector: @selector(numberOfItemsInContainer:)])
+	else if ([source respondsToSelector: @selector(numberOfItemsInContainer:)])
 	{
-		if ([[[self baseContainer] source] respondsToSelector: @selector(container:itemAtIndex:)])
+		if ([source respondsToSelector: @selector(container:itemAtIndex:)])
 		{
 			return 1;
 		}
@@ -606,7 +609,7 @@ static 	BOOL _coalescingMutation = NO;
 		{
 			ETLog(@"%@ implements numberOfItemsInContainer: but misses "
 				  @"container:itemAtIndex as  requested by "
-				  @"ETContainerSource protocol.", [[self baseContainer] source]);
+				  @"ETContainerSource protocol.", source);
 			return 0;
 		}
 	}
@@ -614,7 +617,7 @@ static 	BOOL _coalescingMutation = NO;
 	{
 		ETLog(@"%@ implements neither numberOfItemsInContainer: nor "
 			  @"container:numberOfItemsAtPath: as requested by "
-			  @"ETContainerSource protocol.", [[self baseContainer] source]);
+			  @"ETContainerSource protocol.", source);
 		return 0;
 	}
 }
