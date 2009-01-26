@@ -49,6 +49,10 @@
 
 #define DEFAULT_FRAME NSMakeRect(0, 0, 50, 50)
 
+/* Properties */
+
+NSString *kSourceProperty = @"source"; /** source property name */
+
 @interface ETLayoutItem (SubclassVisibility)
 - (void) setDisplayView: (ETView *)view;
 @end
@@ -171,7 +175,7 @@
 
 - (NSArray *) properties
 {
-	NSArray *properties = [NSArray arrayWithObjects: @"layout", nil];
+	NSArray *properties = [NSArray arrayWithObjects: @"layout", kSourceProperty, nil];
 	
 	return [[super properties] arrayByAddingObjectsFromArray: properties];
 }
@@ -530,6 +534,65 @@ presented by the receiver. */
 - (BOOL) usesRepresentedObjectAsProvider
 {
 	return ([[[self baseContainer] source] isEqual: [self baseItem]]);
+}
+
+/** Returns the source which provides the content presented by the receiver.
+
+A source implements either ETIndexSource or ETPathSource protocols. If the
+receiver handles the layout item tree directly without the help of a source
+object, then this method returns nil. */
+- (id) source
+{
+	return GET_PROPERTY(kSourceProperty);
+}
+
+/** Sets the source which provides the content displayed by the receiver. A
+source can be any objects conforming to ETIndexSource or ETPathSource protocol.
+
+So you can write you own data source object by implementing either:
+	1) numberOfItemsInContainer:
+	   container:itemAtIndex:
+	2) container:numberOfItemsAtPath:
+	   container:itemAtPath:
+
+Another common solution is to use the receiver itself as a source, in that 
+case -usesRepresentedObjectAsProvider returns YES. And the receiver will 
+generate the layout item tree bound to it by retrieving any child objects of the 
+represented object (through ETCollection protocol) and wrapping them into 
+ETLayoutItem or ETLayoutItemGroup objects based on whether these childs 
+implements ETCollection or not.
+
+You can also combine these abilities with an off-the-shelf controller object like
+ETController. See -setController to do so. This brings extra flexibility such as:
+<list>
+<item>template item and item group for the generated layout items</item>
+<item>easy to use add, insert and remove actions with template model object and 
+model group for the represented objects to insert wrapped in layout items</item>
+<item>sorting</item>
+<item>searching</item>
+</list>
+
+Finally when -source returns nil, it's always possible to build and manage a 
+layout item tree structure in a static fashion by yourself.
+
+Take note that modifying a source is followed by a layout update, the new
+content is immediately loaded and displayed. By setting a source, the receiver
+represented path base is automatically set to '/' unless another path was set
+previously. If you pass nil to get rid of a source, the represented path base 
+isn't reset to nil but keeps its actual value in order to maintain it as a base
+item and avoid unpredictable changes to the event handling logic. */
+- (void) setSource: (id)source
+{
+	/* By safety, avoids to trigger extra updates */
+	if ([GET_PROPERTY(kSourceProperty) isEqual: source])
+		return;
+
+	[self removeAllItems]; 	/* Resets any particular state like selection */
+	SET_PROPERTY(source, kSourceProperty);
+
+	/* Make base item if needed */
+	if (source != nil && [self isBaseItem] == NO)
+		[self setRepresentedPathBase: @"/"];
 }
 
 /*	Alternatively, if you have a relatively small and static tree structure,

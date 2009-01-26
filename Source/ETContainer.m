@@ -175,8 +175,7 @@ NSString *ETLayoutItemPboardType = @"ETLayoutItemPboardType"; // FIXME: replace 
 	   reference a freed object. See -[ETLayoutItemGroup setLayout:]. */
 	DESTROY(_doubleClickedItem);
 	DESTROY(_scrollViewDecorator);
-	_dataSource = nil;
-    
+
     [super dealloc];
 }
 
@@ -357,63 +356,6 @@ Never returns nil. */
 }
 
 /* Basic Accessors */
-
-/** Returns the source which provides the content displayed by the receiver. 
-	A source implements either ETIndexSource or ETPathSource protocols.
-	If the container handles the layout item tree directly without the help of
-	a source object, then this method returns nil.*/
-- (id) source
-{
-	return _dataSource;
-}
-
-/** Sets the source which provides the content displayed by the receiver. 
-	A source can be any objects conforming to ETIndexSource or ETPathSource
-	protocol, both are variants of ETSource abstract protocol.
-	So you can write you own data source object by implementing either:
-	1) numberOfItemsInContainer:
-	   container:itemAtIndex:
-	2) container:numberOfItemsAtPath:
-	   container:itemAtPath:
-	Another common solution is to use an off-the-shelf controller object like
-	ETController, ETTreeController etc. which implements the source protocol
-	for you. This works well for basic stuff and brings extra flexibility at
-	runtime: you can edit how the controller access the model or simply 
-	replaces it by a different one.
-	A third solution is to use a component. EtoileUI implements a category on 
-	ETComponent (EtoileFoundation class) and this category conforms to 
-	ETPathSource protocol. Then every components can be used as a content 
-	provider for the receiver.
-	By calling -setComponent:, the input source of the component parameter will
-	automatically be set as the source of the receiver, replacing any 
-	previously set source. Usually you create a new component with 
-	-initWithContainer: or -initWithLayoutItem: which handles -setComponent:
-	call. 
-	Take note that modifying a source is followed by a layout update, the new 
-	content is immediately loaded and displayed. By setting a source, the
-	receiver represented path is automatically set to '/' unless another path 
-	was set previously. If you pass nil to get rid of a source, the represented
-	path isn't reset to nil but keeps its actual value in order to maintain it 
-	as a base item and avoid disturbing the related event handling logic. */
-//- (void) setSource: (id <ETSource>)source
-- (void) setSource: (id)source
-{
-	/* By safety, avoids to trigger extra updates */
-	if (_dataSource == source)
-		return;
-	
-	/* Also resets any particular state associated with the container like
-	   selection */
-	[self removeAllItems];
-	
-	_dataSource = source;
-	
-	// NOTE: -setPath: takes care of calling -updateLayout
-	if (source != nil && ([self representedPath] == nil || [[self representedPath] isEqual: @""]))
-	{
-		[self setRepresentedPath: @"/"];
-	}
-}
 
 - (id) delegate
 {
@@ -1220,6 +1162,16 @@ but they never never manipulate it as a subview in view hierachy. */
 /* Deprecated (DO NOT USE, WILL BE REMOVED LATER) */
 
 @implementation ETContainer (Deprecated)
+
+- (id) source
+{
+	return [[self layoutItem] source];
+}
+
+- (void) setSource: (id)source
+{
+	[[self layoutItem] setSource: source];
+}
 
 - (NSString *) representedPath
 {

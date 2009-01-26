@@ -1,3 +1,13 @@
+2009-01-27  Quentin Mathe <qmathe@club-internet.fr>
+
+	* ETLayoutItemGroup:
+	(-source):
+	(-setSource:):
+	New methods moved out of ETContainer.
+	* ETContainer:
+	Removed _dataSource ivar (now declared as a property on ETLayoutItemGroup).
+	(-source, -setSource:): Deprecated.
+
 2009-01-26  Quentin Mathe <qmathe@club-internet.fr>
 
 	* ETLayoutItem:

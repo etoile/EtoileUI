@@ -60,7 +60,6 @@
 	BOOL _flipped;
 #endif
 
-	id _dataSource;
 	id _delegate; // TODO: check this ivar doesn't overshadow a superclass ivar
 	
 	BOOL _subviewHitTest;
@@ -87,8 +86,6 @@
 
 /* Basic Accessors */
 
-- (id) source;
-- (void) setSource: (id)source;
 - (id) delegate;
 - (void) setDelegate: (id)delegate;
 
@@ -275,6 +272,8 @@ extern NSString *ETLayoutItemPboardType;
 
 - (NSString *) representedPath;
 - (void) setRepresentedPath: (NSString *)path;
+- (id) source;
+- (void) setSource: (id)source;
 
 /* Inspecting */
 

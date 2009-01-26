@@ -112,6 +112,8 @@ extern NSString *kSourceProperty; /** source property name */
 - (BOOL) shouldMutateRepresentedObject;
 - (void) setShouldMutateRepresentedObject: (BOOL)flag;
 - (BOOL) usesRepresentedObjectAsProvider;
+- (id) source;
+- (void) setSource: (id)source;
 
 /* Layout */
 
