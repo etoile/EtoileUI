@@ -267,12 +267,12 @@ You must never use this method. */
 	return [slots count];
 }
 
-- (int) numberOfItemsInContainer: (ETContainer *)container
+- (int) numberOfItemsInItemGroup: (ETLayoutItemGroup *)baseItem
 {
 	/* Verify the layout is currently bound to a layout context like a container */
 	if ([self layoutContext] == nil)
 	{
-		ETLog(@"WARNING: Layout context is missing for -numberOfItemsInContainer: in %@", self);
+		ETLog(@"WARNING: Layout context is missing for -numberOfItemsInItemGroup: in %@", self);
 		return 0;
 	}
 
@@ -317,7 +317,7 @@ You must never use this method. */
 	}
 	else
 	{
-		ETLog(@"WARNING: Unknown display mode %d in -numberOfItemsInContainer: "
+		ETLog(@"WARNING: Unknown display mode %d in -numberOfItemsInItemGroup: "
 			"of %@", [self displayMode], self);
 	}
 	
@@ -326,13 +326,13 @@ You must never use this method. */
 	return nbOfItems;
 }
 
-- (ETLayoutItem *) container: (ETContainer *)container itemAtIndex: (int)index
+- (ETLayoutItem *) itemGroup: (ETLayoutItemGroup *)baseItem itemAtIndex: (int)index
 {
 	id inspectedItem = [self layoutContext];
 	id inspectedModel = [inspectedItem representedObject];
 	/* Always generate a meta layout item to simplify introspection code */
 	// FIXME: Regenerating a meta layout item for the same layout context/item 
-	// on each -container:itemAtIndex: call is expansive (see 
+	// on each -itemGroup:itemAtIndex: call is expansive (see 
 	// -[ETLayoutItemGroup copyWithZone:]. ... Caching the meta layout item is
 	// probably worth to do.
 	ETLayoutItem *metaItem =
@@ -369,7 +369,7 @@ You must never use this method. */
 	{
 		NSAssert2([inspectedItem isCollection], 
 			@"Inspected item %@ must conform to protocol ETCollection "
-			@"since -numberOfItemsInContainer: returned a non-zero value in %@",
+			@"since -numberOfItemsInItemGroup: returned a non-zero value in %@",
 			inspectedItem, self);
 
 		ETLayoutItem *child = [[(id <ETCollection>)inspectedItem contentArray] objectAtIndex: index];
@@ -381,7 +381,7 @@ You must never use this method. */
 	{
 		NSAssert2([inspectedModel isCollection], 
 			@"Inspected model %@ must conform to protocol ETCollection "
-			@"since -numberOfItemsInContainer: returned a non-zero value in %@",
+			@"since -numberOfItemsInItemGroup: returned a non-zero value in %@",
 			inspectedModel, self);
 			
 		id child = [[(id <ETCollection>)inspectedModel contentArray] objectAtIndex: index];
@@ -399,7 +399,7 @@ You must never use this method. */
 	}
 	else
 	{
-		ETLog(@"WARNING: Unknown display mode %d in -container:itemAtIndex: "
+		ETLog(@"WARNING: Unknown display mode %d in -itemGroup:itemAtIndex: "
 			"of %@", [self displayMode], self);
 	}
 

@@ -21,6 +21,8 @@
 	[viewContainer setHasVerticalScroller: YES];
 	[viewContainer setHasHorizontalScroller: YES];
 	
+	//[[viewContainer window] setAcceptsMouseMovedEvents: YES];
+	
 	[[ETPickboard localPickboard] showPickPalette];
 }
 
@@ -88,18 +90,18 @@
 	if ([layoutObject isKindOfClass: [ETComputedLayout class]])
 	{
 		[layoutObject setItemMargin: [itemMarginSlider floatValue]];
+
+		/* We override some extra settings even if the defaults defined by EtoileUI 
+		   would work for a photo viewer (see ETFlowLayout, ETLineLayout and 
+		   ETStackLayout).
+		   You can compare the effects of these by testing ObjectManagerExample 
+		   which doesn't override anything. */
+		
+		/* Specify a max size for the items */
+		[layoutObject setConstrainedItemSize: NSMakeSize(300, 300)];
+		/* Indicate that max size should be consulted for both width and height of each item */
+		[layoutObject setItemSizeConstraintStyle: ETSizeConstraintStyleVerticalHorizontal];
 	}
-	
-	/* We override some extra settings even if the defaults defined by EtoileUI 
-	   would work for a photo viewer (see ETFlowLayout, ETLineLayout and 
-	   ETStackLayout).
-	   You can compare the effects of these by testing ObjectManagerExample 
-	   which doesn't override anything. */
-	
-	/* Specify a max size for the items */
-	[layoutObject setConstrainedItemSize: NSMakeSize(300, 300)];
-	/* Indicate that max size should be consulted for both width and height of each item */
-	[layoutObject setItemSizeConstraintStyle: ETSizeConstraintStyleVerticalHorizontal];
 	
 	return layoutObject;
 }
@@ -151,8 +153,13 @@
 
 - (IBAction) changeItemMargin: (id)sender
 {
-	if ([[viewContainer layout] isComputedLayout])
-		[(ETComputedLayout *)[viewContainer layout] setItemMargin: [sender floatValue]];
+	id layout = [viewContainer layout];
+	
+	if ([layout isComposite])
+		layout = [layout positionalLayout];
+
+	if ([layout isComputedLayout])
+		[(ETComputedLayout *)layout setItemMargin: [sender floatValue]];
 }
 
 - (void)selectPicturesPanelDidEnd:(NSOpenPanel *)panel returnCode:(int)returnCode  contextInfo:(void  *)contextInfo
@@ -265,14 +272,14 @@
 
 /* ETContainerSource informal protocol */
 
-- (int) numberOfItemsInContainer: (ETContainer *)container
+- (int) numberOfItemsInItemGroup: (ETLayoutItemGroup *)baseItem
 {
-	NSLog(@"Returns %d as number of items in container %@", [images count], container);
+	NSLog(@"Returns %d as number of items in container %@", [images count], [baseItem supervisorView]);
 	
 	return [images count];
 }
 
-- (ETLayoutItem *) container: (ETContainer *)container itemAtIndex: (int)index
+- (ETLayoutItem *) itemGroup: (ETLayoutItemGroup *)baseItem itemAtIndex: (int)index
 {
 	NSImage *img = [images objectAtIndex: index];
 	ETLayoutItem *imageItem = [ETLayoutItem layoutItemWithView: [self imageViewForImage: img]];

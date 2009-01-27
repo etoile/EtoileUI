@@ -478,12 +478,12 @@ static 	BOOL _coalescingMutation = NO;
 {
 	NSMutableArray *itemsFromSource = [NSMutableArray array];
 	ETLayoutItem *layoutItem = nil;
-	ETContainer *container = [[self baseItem] container];
-	int nbOfItems = [[container source] numberOfItemsInContainer: container];
+	ETLayoutItemGroup *baseItem = [self baseItem];
+	int nbOfItems = [[baseItem source] numberOfItemsInItemGroup: baseItem];
 	
 	for (int i = 0; i < nbOfItems; i++)
 	{
-		layoutItem = [[container source] container: container itemAtIndex: i];
+		layoutItem = [[baseItem source] itemGroup: baseItem itemAtIndex: i];
 		[itemsFromSource addObject: layoutItem];
 	}
 	
@@ -599,15 +599,15 @@ part of protocol like -numberOfItemsInContainer. */
 			return 0;
 		}
 	}
-	else if ([source respondsToSelector: @selector(numberOfItemsInContainer:)])
+	else if ([source respondsToSelector: @selector(numberOfItemsInItemGroup:)])
 	{
-		if ([source respondsToSelector: @selector(container:itemAtIndex:)])
+		if ([source respondsToSelector: @selector(itemGroup:itemAtIndex:)])
 		{
 			return 1;
 		}
 		else
 		{
-			ETLog(@"%@ implements numberOfItemsInContainer: but misses "
+			ETLog(@"%@ implements numberOfItemsInItemGroup: but misses "
 				  @"container:itemAtIndex as  requested by "
 				  @"ETContainerSource protocol.", source);
 			return 0;
@@ -615,7 +615,7 @@ part of protocol like -numberOfItemsInContainer. */
 	}
 	else
 	{
-		ETLog(@"%@ implements neither numberOfItemsInContainer: nor "
+		ETLog(@"%@ implements neither numberOfItemsInItemGroup: nor "
 			  @"container:numberOfItemsAtPath: as requested by "
 			  @"ETContainerSource protocol.", source);
 		return 0;

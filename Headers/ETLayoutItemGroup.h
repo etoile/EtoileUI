@@ -204,6 +204,17 @@ extern NSString *kDelegateProperty; /** delegate property name */
 
 @end
 
+
+/** Informal source protocol to can be implemented by the source object set with 
+-[ETLayoutItemGroup setSource:]. */
+@interface NSObject (ETLayoutItemGroupIndexSource)
+
+/* Flat source protocol based on child index. */
+- (int) numberOfItemsInItemGroup: (ETLayoutItemGroup *)baseItem;
+- (ETLayoutItem *) itemGroup: (ETLayoutItemGroup *)baseItem itemAtIndex: (int)index;
+
+@end
+
 // TODO: Documentation to be reused somewhere...
 /* In this case, each time the user enters a new level, you are in charge of
 removing then adding the proper items which are associated with the level

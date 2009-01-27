@@ -205,18 +205,18 @@
 
 /* ETContainerSource informal protocol */
 
-- (int) numberOfItemsInContainer: (ETContainer *)container
+- (int) numberOfItemsInItemGroup: (ETLayoutItemGroup *)baseItem
 {
 	NSLog(@"Returns %d as number of items in container %@", 3, container);
 	
 	return 3;
 }
 
-- (ETLayoutItem *) container: (ETContainer *)container itemAtIndex: (int)index
+- (ETLayoutItem *) itemGroup: (ETLayoutItemGroup *)baseItem itemAtIndex: (int)index
 {
 	ETLayoutItem *paneItem = [paneItems objectAtIndex: index];
 	
-	NSLog(@"Returns %@ as layout item in container %@", paneItem, container);
+	NSLog(@"Returns %@ as layout item in container %@", paneItem, [baseItem supervisorView]);
 	
 	[paneItem setAppliesResizingToBounds: YES];
 

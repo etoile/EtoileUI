@@ -49,6 +49,7 @@
 @class ETLayoutItem, ETLayout, ETLayer, ETLayoutItemGroup, ETSelection, 
 	ETPickboard, ETEvent;
 
+extern NSString *ETLayoutItemPboardType;
 
 @interface ETContainer : ETView
 {
@@ -180,6 +181,8 @@
 
 @end
 
+/* Deprecated (DO NOT USE, WILL BE REMOVED LATER) */
+
 @interface NSObject (ETContainerSource)
 
 // TODO: Create new set structure NSPathSet rather than using NSArray
@@ -258,12 +261,7 @@
 
 @end
 
-
 extern NSString *ETContainerSelectionDidChangeNotification;
-extern NSString *ETLayoutItemPboardType;
-
-
-/* Deprecated (DO NOT USE, WILL BE REMOVED LATER) */
 
 @interface ETContainer (Deprecated)
 
