@@ -164,20 +164,20 @@
 	[[[item inspector] window] makeKeyAndOrderFront: self];
 }
 
-- (int) container: (ETContainer *)container numberOfItemsAtPath: (NSIndexPath *)path
+- (int) itemGroup: (ETLayoutItemGroup *)baseItem numberOfItemsAtPath: (NSIndexPath *)path
 {
-	NSAssert([container isEqual: propertyView], @"Inspector must only receive"
+	NSAssert([[baseItem supervisorView] isEqual: propertyView], @"Inspector must only receive"
 		@"propertyView as first parameter in source methods");
 	
-	return [self propertyView: container numberOfItemsAtPath: path];
+	return [self propertyView: [baseItem supervisorView] numberOfItemsAtPath: path];
 }
 
-- (ETLayoutItem *) container: (ETContainer *)container itemAtPath: (NSIndexPath *)path
+- (ETLayoutItem *) itemGroup: (ETLayoutItemGroup *)baseItem itemAtPath: (NSIndexPath *)path
 {
-	NSAssert([container isEqual: propertyView], @"Inspector must only receive"
+	NSAssert([[baseItem supervisorView] isEqual: propertyView], @"Inspector must only receive"
 		@"propertyView as first parameter in source methods");
 
-	return [self propertyView: container itemAtPath: path];
+	return [self propertyView: [baseItem supervisorView] itemAtPath: path];
 }
 
 - (int) propertyView: (ETContainer *)container numberOfItemsAtPath: (NSIndexPath *)path

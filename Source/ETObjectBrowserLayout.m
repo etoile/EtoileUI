@@ -125,7 +125,7 @@
 	[item browse: self];
 }
 
-- (int) container: (ETContainer *)container numberOfItemsAtPath: (NSIndexPath *)path
+- (int) itemGroup: (ETLayoutItemGroup *)baseItem numberOfItemsAtPath: (NSIndexPath *)path
 {
 	int nbOfItems = 0;
 
@@ -156,7 +156,7 @@
 		nbOfItems = [[[itemGroup representedObject] contentArray] count];
 	}
 	
-	ETDebugLog(@"Returns %d as number of items in %@", nbOfItems, container);
+	ETDebugLog(@"Returns %d as number of items in %@", nbOfItems, [baseItem supervisorView]);
 	
 	/* Useful to debug data source and property editing
 	if (nbOfItems > 1)	
@@ -165,7 +165,7 @@
 	return nbOfItems;
 }
 
-- (ETLayoutItem *) container: (ETContainer *)container itemAtPath: (NSIndexPath *)path
+- (ETLayoutItem *) itemGroup: (ETLayoutItemGroup *)baseItem itemAtPath: (NSIndexPath *)path
 {
 	id viewItem = [(id)[self layoutView] layoutItem];
 	id itemGroup = nil;
@@ -229,7 +229,7 @@
 		[item setValue: [object description] forProperty: @"description"];*/
 	}
 	
-	ETDebugLog(@"Returns item %@ at path %@ in %@", item, path, container);
+	ETDebugLog(@"Returns item %@ at path %@ in %@", item, path, [baseItem supervisorView]);
 
 	return item;
 }

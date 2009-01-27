@@ -213,6 +213,12 @@ extern NSString *kDelegateProperty; /** delegate property name */
 - (int) numberOfItemsInItemGroup: (ETLayoutItemGroup *)baseItem;
 - (ETLayoutItem *) itemGroup: (ETLayoutItemGroup *)baseItem itemAtIndex: (int)index;
 
+/* Tree source protocol based on index path. */
+- (int) itemGroup: (ETLayoutItemGroup *)baseItem
+	numberOfItemsAtPath: (NSIndexPath *)indexPath;
+- (ETLayoutItem *) itemGroup: (ETLayoutItemGroup *)baseItem 
+	itemAtPath: (NSIndexPath *)indexPath;
+
 @end
 
 // TODO: Documentation to be reused somewhere...

@@ -436,7 +436,7 @@
 	indexPath = [[container layoutItem] indexPathForPath: path];
 	NSAssert(indexPath != nil, @"Index path must never be nil in -browser:numberOfRowsInColumn:");
 	
-	count = [[container source] container: container numberOfItemsAtPath: indexPath];
+	count = [[container source] itemGroup: [container layoutItem] numberOfItemsAtPath: indexPath];
 	
 	ETDebugLog(@"Returns %d as number of items in browser view %@", count, sender);
 	

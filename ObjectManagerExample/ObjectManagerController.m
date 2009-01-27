@@ -260,8 +260,9 @@ static NSFileManager *objectManager = nil;
 
 /* Tree protocol used by TreeContainer */
 
-- (int) container: (ETContainer *)container numberOfItemsAtPath: (NSIndexPath *)indexPath
+- (int) itemGroup: (ETLayoutItemGroup *)baseItem numberOfItemsAtPath: (NSIndexPath *)indexPath
 {
+	ETContainer *container = [baseItem supervisorView];
 	//NSString *textualPath = [self textualPathForMixedPath: newPath];
 	/* Next line is equal to [[[container layoutItem] representedPath] 
 	   stringByAppendingPath: [[container layoutItem] pathForIndexPath: indexPath]]; */
@@ -288,15 +289,16 @@ static NSFileManager *objectManager = nil;
 	return 0;
 }
 
-- (ETLayoutItem *) container: (ETContainer *)container itemAtPath: (NSIndexPath *)indexPath
+- (ETLayoutItem *) itemGroup: (ETLayoutItemGroup *)baseItem itemAtPath: (NSIndexPath *)indexPath
 {
 	NSWorkspace *wk = [NSWorkspace sharedWorkspace];
 	ETLayoutItem *fileItem = nil;
-	
+	ETContainer *container = [baseItem supervisorView];
+
 	if ([container isEqual: viewContainer]) /* Browsing Container */
 	{
 		NSString *subpath = [indexPath stringByJoiningIndexPathWithSeparator: @"/"];
-		NSString *filePath = [[[container layoutItem] representedPath] stringByAppendingPathComponent: subpath];
+		NSString *filePath = [[baseItem representedPath] stringByAppendingPathComponent: subpath];
 	
 		/* Standardize path by replacing indexes by file names */
 		filePath = [self textualPathForMixedPath: filePath];
@@ -332,7 +334,7 @@ static NSFileManager *objectManager = nil;
 	else if ([container isEqual: pathContainer]) /* Path Container */
 	{
 		int flatIndex = [indexPath indexAtPosition: [indexPath length] - 1];
-		return [self itemGroup: [container layoutItem] itemAtIndex: flatIndex];
+		return [self itemGroup: baseItem itemAtIndex: flatIndex];
 	}
 
 	return fileItem;

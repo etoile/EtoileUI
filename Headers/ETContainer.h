@@ -185,18 +185,6 @@ extern NSString *ETLayoutItemPboardType;
 
 @interface NSObject (ETContainerSource)
 
-// TODO: Create new set structure NSPathSet rather than using NSArray
-
-/* Basic index retrieval */
-- (int) numberOfItemsInContainer: (ETContainer *)container;
-- (ETLayoutItem *) container: (ETContainer *)container itemAtIndex: (int)index;
-
-/* Index path retrieval useful with containers displaying tree structure */
-- (int) container: (ETContainer *)container 
-	numberOfItemsAtPath: (NSIndexPath *)indexPath;
-- (ETLayoutItem *) container: (ETContainer *)container 
-	itemAtPath: (NSIndexPath *)indexPath;
-
 /* Coordinates retrieval useful with containers oriented towards graphics and 
    spreadsheet */
 /*- (ETVector *) container: (ETContainer *)container 

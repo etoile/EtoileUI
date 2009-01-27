@@ -1,6 +1,20 @@
 2009-01-27  Quentin Mathe <qmathe@club-internet.fr>
 
 	* ETLayoutItemGroup:
+	Moved ETContainer index path-based source protocol to ETLayoutItemGroup, in 
+	that way it is centered around the base item.
+	(-itemGroup:numberOfItemsAtPath:, itemGroup:itemAtPath:): Added.
+	* ETContainer:
+	(-numberOfItemsInContainer:, container:itemAtIndex:):
+	(-container:numberOfItemsAtPath::, container:itemAtPath:):
+	Removed.
+	* ETLayoutItemGroup+Mutation, ETInspector, ETBrowserLayout, 
+	ETObjectBrowserLayout, ObjectManagerExample:
+	Updated to use the new index path-based source protocol.
+
+2009-01-27  Quentin Mathe <qmathe@club-internet.fr>
+
+	* ETLayoutItemGroup:
 	Moved ETContainer index-based source protocol to ETLayoutItemGroup, in that 
 	way it is centered around the base item.
 	(-numberOfItemsInItemGroup:, itemGroup:itemAtIndex:): Added.

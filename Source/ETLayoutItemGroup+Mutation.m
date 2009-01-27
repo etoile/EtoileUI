@@ -494,7 +494,7 @@ static 	BOOL _coalescingMutation = NO;
 {
 	NSMutableArray *itemsFromSource = [NSMutableArray array];
 	ETLayoutItem *layoutItem = nil;
-	ETContainer *baseContainer = [[self baseItem] container];
+	ETContainer *baseContainer = [[self baseItem] supervisorView];
 	// NOTE: [self indexPathFromItem: [container layoutItem]] is equal to [[container layoutItem] indexPathFortem: self]
 	NSIndexPath *indexPath = [self indexPathFromItem: [baseContainer layoutItem]];
 	int nbOfItems = 0;
@@ -503,7 +503,7 @@ static 	BOOL _coalescingMutation = NO;
 	
 	/* Request number of items to the source by passing receiver index path 
 	   expressed in a way relative to the base container */
-	nbOfItems = [[baseContainer source] container: baseContainer numberOfItemsAtPath: indexPath];
+	nbOfItems = [[baseContainer source] itemGroup: [self baseItem] numberOfItemsAtPath: indexPath];
 
 	for (int i = 0; i < nbOfItems; i++)
 	{
@@ -512,7 +512,7 @@ static 	BOOL _coalescingMutation = NO;
 		indexSubpath = [indexPath indexPathByAddingIndex: i];
 		/* Request item to the source by passing item index path expressed in a
 		   way relative to the base container */
-		layoutItem = [[baseContainer source] container: baseContainer itemAtPath: indexSubpath];
+		layoutItem = [[baseContainer source] itemGroup: [self baseItem] itemAtPath: indexSubpath];
 		//ETDebugLog(@"Retrieved item %@ known by path %@", layoutItem, indexSubpath);
 		if (layoutItem != nil)
 		{
@@ -575,7 +575,7 @@ Returns 2 when source conform to protocol for tree collections and display of
 items in a hiearchical style.
 
 If tree collection part of the protocol is implemented through 
--container:numberOfItemsAtPath: , ETContainer by default ignores flat collection 
+-itemGroup:numberOfItemsAtPath: , ETContainer by default ignores flat collection 
 part of protocol like -numberOfItemsInContainer. */
 - (int) checkSourceProtocolConformance
 {
@@ -585,16 +585,16 @@ part of protocol like -numberOfItemsInContainer. */
 	{
 		return 3;
 	}
-	else if ([source respondsToSelector: @selector(container:numberOfItemsAtPath:)])
+	else if ([source respondsToSelector: @selector(itemGroup:numberOfItemsAtPath:)])
 	{
-		if ([source respondsToSelector: @selector(container:itemAtPath:)])
+		if ([source respondsToSelector: @selector(itemGroup:itemAtPath:)])
 		{
 			return 2;
 		}
 		else
 		{
-			ETLog(@"%@ implements container:numberOfItemsAtPath: but misses "
-				  @"container:itemAtPath: as requested by ETContainerSource "
+			ETLog(@"%@ implements itemGroup:numberOfItemsAtPath: but misses "
+				  @"itemGroup:itemAtPath: as requested by ETContainerSource "
 				  @"protocol.", source);
 			return 0;
 		}
@@ -616,7 +616,7 @@ part of protocol like -numberOfItemsInContainer. */
 	else
 	{
 		ETLog(@"%@ implements neither numberOfItemsInItemGroup: nor "
-			  @"container:numberOfItemsAtPath: as requested by "
+			  @"itemGroup:numberOfItemsAtPath: as requested by "
 			  @"ETContainerSource protocol.", source);
 		return 0;
 	}
