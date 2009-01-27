@@ -1170,7 +1170,8 @@ the receiver immediate children to the source. */
 		if ([visibleItems containsObject: item])
 		{
 			[item setVisible: YES];
-			if (container != nil && [[container subviews] containsObject: [item displayView]] == NO)
+			if (container != nil && [[container subviews] containsObject: [item displayView]] == NO
+			     && [item displayView] != nil )
 			{
 				[container addSubview: [item displayView]];
 				//ETDebugLog(@"Inserted view at %@", NSStringFromRect([[item displayView] frame]));

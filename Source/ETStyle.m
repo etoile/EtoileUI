@@ -139,8 +139,8 @@ static ETBasicItemStyle *sharedBasicItemStyle = nil;
 	// FIXME: May be we should better support dirtyRect. The next drawing 
 	// methods don't take in account it and simply redraw all their content.
 
-	if ([item image] != nil)
-		[self drawImage: [item image]]; 
+	if ([item valueForProperty: kETImageProperty] != nil)
+		[self drawImage: [item valueForProperty: kETImageProperty]]; 
 
 	if ([item isSelected])
 		[self drawSelectionIndicatorInRect: [item drawingFrame]];
