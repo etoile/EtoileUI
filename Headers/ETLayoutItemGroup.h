@@ -69,7 +69,6 @@ extern NSString *kSourceProperty; /** source property name */
 /* Finding Container */
 
 - (BOOL) isContainer;
-- (ETContainer *) baseContainer;
 
 /* Traversing Layout Item Tree */
 

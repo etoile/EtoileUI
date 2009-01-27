@@ -329,10 +329,11 @@ NSString *kETVisibleProperty = @"visible";
 	return desc;
 }
 
-/** Returns the root item of the layout item tree to which the receiver
-	belongs to. 
-	This method never returns nil because the returned value is equal to self
-	when the receiver has no parent item. */
+/** Returns the root item of the layout item tree to which the receiver belongs 
+to. 
+
+This method never returns nil because the returned value is equal to self when 
+the receiver has no parent item. */
 - (id) rootItem
 {
 	if (_parentItem != nil)
@@ -345,20 +346,24 @@ NSString *kETVisibleProperty = @"visible";
 	}
 }
 
-/** Returns the layout item group which controls the receiver. An item group
-	is said to control descendant items when -representedPathBase returns a non
-	nil or blank value.
-	A base item usually handles events and data source mutation for all 
-	descendant items belonging to it. All child items are controlled by a common 
-	base item until a descendant item is declared as a new base item (by 
-	providing a represented path base). See also -representedPathBase, 
-	-[ETContainer representedPath], -[ETContainer source], -[ETLayoutItemGroup 
-	baseContainer].
-	If an item group uses a source, it is automatically bound to a represented 
-	path base.
-	This method will return nil when the receiver isn't a base item, hasn't yet 
-	been added as a descendant of a base item or has just been removed as a 
-	descendant of a base item. */
+/** Returns the layout item group which controls the receiver. An item group is
+said to be base item that controls descendant items when -representedPathBase
+returns a non nil or blank value (see -hasValidRepresentedPathBase).
+
+A base item usually coordinates the event handling, the loading of 
+layout items which are provided by a source and the source related mutations, 
+for all descendant items that fall under its control. 
+
+All child items are controlled by a common base item until a descendant item is 
+declared as a new base item (by providing a represented path base). See also 
+-representedPathBase, -representedPath, -[ETLayoutItemGroup source] and related 
+setter methods.
+
+An item group is automatically turned into a base item, when you set a source.
+
+This method will return nil when the receiver isn't a base item, hasn't yet 
+been added as a descendant of a base item or has just been removed as a 
+descendant of a base item. */
 - (id) baseItem
 {
 	if ([self hasValidRepresentedPathBase])

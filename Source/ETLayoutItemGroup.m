@@ -192,23 +192,6 @@ NSString *kSourceProperty = @"source"; /** source property name */
 	return [[self view] isKindOfClass: [ETContainer class]];
 }
 
-/** Returns the first ancestor container that declares a represented path. The 
-	ancestor layout item that owns this container is known as the base item 
-	(see -baseItem). The base item is usually in charge of coordinating the 
-	event handling and the loading of layout items which are provided by a 
-	source. */
-- (ETContainer *) baseContainer
-{
-	if ([self isContainer] && [self hasValidRepresentedPathBase])
-	{
-		return (ETContainer *)[self view];
-	}
-	else
-	{
-		return [[self parentLayoutItem] baseContainer];
-	}
-}
-
 /* Traversing Layout Item Tree */
 
 /** Returns a normal path relative to the receiver by translating index path 
@@ -533,7 +516,7 @@ presented by the receiver. */
 	implementation. */
 - (BOOL) usesRepresentedObjectAsProvider
 {
-	return ([[[self baseContainer] source] isEqual: [self baseItem]]);
+	return ([[[self baseItem] source] isEqual: [self baseItem]]);
 }
 
 /** Returns the source which provides the content presented by the receiver.
@@ -754,16 +737,18 @@ item and avoid unpredictable changes to the event handling logic. */
 	return collectedItems;
 }
 
+/** Returns whether the receiver can be reloaded presently with -reload. */
 - (BOOL) canReload
 {
-	ETContainer *container = [self baseContainer];
-	BOOL hasSource = ([container source] != nil);
+	BOOL hasSource = ([[self baseItem] source] != nil);
 
 	return hasSource && ![self isReloading];
 }
 
-/** This method can be safely called even if the receiver has no source or 
-	doesn't inherit a source from an ancestor. */
+/** Tries to reload the content of the receiver, but only if it can be reloaded. 
+
+This method can be safely called even if the receiver has no source or doesn't 
+inherit a source from a base item. */
 - (void) reloadIfNeeded
 {
 	if ([self canReload])
@@ -771,13 +756,12 @@ item and avoid unpredictable changes to the event handling logic. */
 }
 
 /** Reloads the content by removing all existing childrens and requesting all
-	the receiver immediate children to the source. */
+the receiver immediate children to the source. */
 - (void) reload
 {
 	_reloading = YES;
-	
-	ETContainer *container = [self baseContainer];
-	BOOL hasSource = ([container source] != nil);
+
+	BOOL hasSource = ([[self baseItem] source] != nil);
 
 	/* Retrieve layout items provided by source */
 	if (hasSource)
@@ -788,8 +772,8 @@ item and avoid unpredictable changes to the event handling logic. */
 	}
 	else
 	{
-		ETLog(@"Impossible to reload %@ because the layout item miss either "
-			@"a container %@ or a source %@", self, container, [container source]);
+		ETLog(@"WARNING: Impossible to reload %@ because the layout item miss " 
+			@"a source %@", self, [[self baseItem] source]);
 	}
 	
 	_reloading = NO;

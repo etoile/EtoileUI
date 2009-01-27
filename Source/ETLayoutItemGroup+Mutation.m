@@ -478,7 +478,7 @@ static 	BOOL _coalescingMutation = NO;
 {
 	NSMutableArray *itemsFromSource = [NSMutableArray array];
 	ETLayoutItem *layoutItem = nil;
-	ETContainer *container = [self baseContainer];
+	ETContainer *container = [[self baseItem] container];
 	int nbOfItems = [[container source] numberOfItemsInContainer: container];
 	
 	for (int i = 0; i < nbOfItems; i++)
@@ -494,7 +494,7 @@ static 	BOOL _coalescingMutation = NO;
 {
 	NSMutableArray *itemsFromSource = [NSMutableArray array];
 	ETLayoutItem *layoutItem = nil;
-	ETContainer *baseContainer = [self baseContainer];
+	ETContainer *baseContainer = [[self baseItem] container];
 	// NOTE: [self indexPathFromItem: [container layoutItem]] is equal to [[container layoutItem] indexPathFortem: self]
 	NSIndexPath *indexPath = [self indexPathFromItem: [baseContainer layoutItem]];
 	int nbOfItems = 0;

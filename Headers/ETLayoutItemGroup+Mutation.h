@@ -42,8 +42,8 @@
 /* Private Header
    Don't use or override methods exposed here. */
    
-#define PROVIDER_SOURCE [[self baseContainer] source]
-#define PROVIDER_CONTAINER [self baseContainer]
+#define PROVIDER_SOURCE [[self baseItem] source]
+#define PROVIDER_CONTAINER [[self baseItem] container]
 
 /* Properties */
 
