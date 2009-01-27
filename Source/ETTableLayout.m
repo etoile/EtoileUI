@@ -198,10 +198,10 @@ The property names are used as the column identifiers. */
 
 - (void) _updateDisplayedPropertiesFromSource
 {
-	if ([[[self container] source] respondsToSelector: @selector(displayedItemPropertiesInContainer:)])
+	if ([[[self container] source] respondsToSelector: @selector(displayedItemPropertiesInItemGroup:)])
 	{
 		NSArray *properties = [[[self container] source] 
-			displayedItemPropertiesInContainer: [self container]];		
+			displayedItemPropertiesInItemGroup: [[self container] layoutItem]];		
 			
 		[self setDisplayedProperties: properties];
 	}

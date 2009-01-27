@@ -51,7 +51,7 @@
 #define itemGroupView (id)[self layoutView]
 
 @interface ETObjectBrowserLayout (Private)
-- (NSArray *) displayedItemPropertiesInContainer: (ETContainer *)container;
+- (NSArray *) displayedItemPropertiesInItemGroup: (ETLayoutItemGroup *)baseItem;
 @end
 
 
@@ -105,7 +105,7 @@
 {
 	[self setUpLayoutView];
 	// [itemGroupView setSource: [self browsedObject]];
-	[[(ETContainer *)itemGroupView layout] setDisplayedProperties: [self displayedItemPropertiesInContainer: (ETContainer *)[self layoutView]]];
+	[[(ETContainer *)itemGroupView layout] setDisplayedProperties: [self displayedItemPropertiesInItemGroup: [(ETContainer *)[self layoutView] layoutItem]]];
 	[[itemGroupView layoutItem] setRepresentedObject: [self browsedObject]];
 	[itemGroupView setSource: [itemGroupView layoutItem]];
 	if (isNewContent)
@@ -234,7 +234,7 @@
 	return item;
 }
 
-- (NSArray *) displayedItemPropertiesInContainer: (ETContainer *)container
+- (NSArray *) displayedItemPropertiesInItemGroup: (ETLayoutItemGroup *)baseItem
 {
 	/* In case, the object browsed is refreshed before the browsed object is set */
 	if ([self browsedObject] == nil)

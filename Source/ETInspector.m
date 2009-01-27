@@ -258,12 +258,12 @@
 	return propertyItem;
 }
 
-- (NSArray *) displayedItemPropertiesInContainer: (ETContainer *)container
+- (NSArray *) displayedItemPropertiesInItemGroup: (ETLayoutItemGroup *)baseItem
 {
-	NSAssert([container isEqual: propertyView], @"Inspector must only receive"
-		@"propertyView as first parameter in source methods");
+	NSAssert([[baseItem supervisorView] isEqual: propertyView], @"Inspector "
+		@"must only receive propertyView as first parameter in source methods");
 
-	return [NSArray arrayWithObjects: @"property", @"value", nil];
+	return A(@"property", @"value");
 }
 
 - (IBAction) changeLayout: (id)sender

@@ -61,8 +61,6 @@ extern NSString *ETLayoutItemPboardType;
 	BOOL _flipped;
 #endif
 
-	id _delegate; // TODO: check this ivar doesn't overshadow a superclass ivar
-	
 	BOOL _subviewHitTest;
 	SEL _doubleClickAction;
 	id _target;
@@ -193,7 +191,6 @@ extern NSString *ETLayoutItemPboardType;
 	forItem: (ETLayoutItem *)item;*/
 
 /* Extra infos */
-- (NSArray *) displayedItemPropertiesInContainer: (ETContainer *)container;
 - (NSArray *) editableItemPropertiesInContainer: (ETContainer *)container;
 - (NSView *) container: (ETContainer *)container 
 	editorObjectForProperty: (NSString *)property ;

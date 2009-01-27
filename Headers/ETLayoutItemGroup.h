@@ -219,6 +219,8 @@ extern NSString *kDelegateProperty; /** delegate property name */
 - (ETLayoutItem *) itemGroup: (ETLayoutItemGroup *)baseItem 
 	itemAtPath: (NSIndexPath *)indexPath;
 
+- (NSArray *) displayedItemPropertiesInItemGroup: (ETLayoutItemGroup *)itemGroup;
+
 @end
 
 // TODO: Documentation to be reused somewhere...

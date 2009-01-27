@@ -408,7 +408,7 @@ You must never use this method. */
 	return propertyItem;
 }
 
-- (NSArray *) displayedItemPropertiesInContainer: (ETContainer *)container
+- (NSArray *) displayedItemPropertiesInItemGroup: (ETLayoutItemGroup *)baseItem
 {
 	NSArray *displayedProperties = nil;
 

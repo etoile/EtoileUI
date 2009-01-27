@@ -315,7 +315,7 @@
 	return imageItem;
 }
 
-- (NSArray *) displayedItemPropertiesInContainer: (ETContainer *)container
+- (NSArray *) displayedItemPropertiesInItemGroup: (ETLayoutItemGroup *)baseItem
 {
 	return [NSArray arrayWithObjects: @"icon", @"name", @"size", @"imgType", @"modificationdate", nil];
 }
