@@ -139,7 +139,7 @@ static ETPickboard *activePickboard = nil;
 		ETContainer *pickView = [[ETContainer alloc] initWithFrame: PALETTE_FRAME layoutItem: self];
 		ETWindowItem *windowItem = [[ETWindowItem alloc] init]; /* Will be released on close */
 
-		[pickView setLayout: [PICKBOARD_LAYOUT layout]];
+		[self setLayout: [PICKBOARD_LAYOUT layout]];
 		/* Moves the object browser from the floating item group to the window 
 		   layer */
 		[[self lastDecoratorItem] setDecoratorItem: windowItem];
