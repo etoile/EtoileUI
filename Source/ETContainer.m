@@ -355,18 +355,6 @@ Never returns nil. */
 	return [super layoutItem];
 }
 
-/* Basic Accessors */
-
-- (id) delegate
-{
-	return _delegate;
-}
-
-- (void) setDelegate: (id)delegate
-{
-	_delegate = delegate;
-}
-
 /* Private helper methods to sync display view and container */
 
 /* Various adjustements necessary when layout object is a wrapper around an 
@@ -1162,6 +1150,16 @@ but they never never manipulate it as a subview in view hierachy. */
 /* Deprecated (DO NOT USE, WILL BE REMOVED LATER) */
 
 @implementation ETContainer (Deprecated)
+
+- (id) delegate
+{
+	return [[self layoutItem] delegate];
+}
+
+- (void) setDelegate: (id)delegate
+{
+	[[self layoutItem] setDelegate: delegate];
+}
 
 - (id) source
 {

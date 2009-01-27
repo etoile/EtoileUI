@@ -86,9 +86,6 @@
 
 /* Basic Accessors */
 
-- (id) delegate;
-- (void) setDelegate: (id)delegate;
-
 - (BOOL) isFlipped;
 - (void) setFlipped: (BOOL)flag;
 
@@ -274,6 +271,8 @@ extern NSString *ETLayoutItemPboardType;
 - (void) setRepresentedPath: (NSString *)path;
 - (id) source;
 - (void) setSource: (id)source;
+- (id) delegate;
+- (void) setDelegate: (id)delegate;
 
 /* Inspecting */
 

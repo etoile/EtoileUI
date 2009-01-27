@@ -45,6 +45,7 @@
 /* Properties */
 
 extern NSString *kSourceProperty; /** source property name */
+extern NSString *kDelegateProperty; /** delegate property name */
 
 @interface ETLayoutItemGroup : ETLayoutItem <ETLayoutingContext, ETCollection, ETCollectionMutation>
 {
@@ -113,6 +114,8 @@ extern NSString *kSourceProperty; /** source property name */
 - (BOOL) usesRepresentedObjectAsProvider;
 - (id) source;
 - (void) setSource: (id)source;
+- (id) delegate;
+- (void) setDelegate: (id)delegate;
 
 /* Layout */
 

@@ -37,6 +37,7 @@
 #import <EtoileFoundation/NSIndexSet+Etoile.h>
 #import <EtoileFoundation/NSIndexPath+Etoile.h>
 #import <EtoileFoundation/NSObject+Model.h>
+#import <EtoileFoundation/Macros.h>
 #import <EtoileUI/ETLayoutItemGroup.h>
 #import <EtoileUI/ETLayoutItemGroup+Mutation.h>
 #import <EtoileUI/ETLayoutItem+Factory.h>
@@ -51,7 +52,8 @@
 
 /* Properties */
 
-NSString *kSourceProperty = @"source"; /** source property name */
+NSString *kSourceProperty = @"source";
+NSString *kDelegateProperty = @"delegate";
 
 @interface ETLayoutItem (SubclassVisibility)
 - (void) setDisplayView: (ETView *)view;
@@ -175,8 +177,8 @@ NSString *kSourceProperty = @"source"; /** source property name */
 
 - (NSArray *) properties
 {
-	NSArray *properties = [NSArray arrayWithObjects: @"layout", kSourceProperty, nil];
-	
+	NSArray *properties = A(@"layout", kSourceProperty, kDelegateProperty);
+
 	return [[super properties] arrayByAddingObjectsFromArray: properties];
 }
 
@@ -576,6 +578,23 @@ item and avoid unpredictable changes to the event handling logic. */
 	/* Make base item if needed */
 	if (source != nil && [self isBaseItem] == NO)
 		[self setRepresentedPathBase: @"/"];
+}
+
+/** Returns the delegate associated with the receiver. 
+
+See also -setDelegate:. */
+- (id) delegate
+{
+	return GET_PROPERTY(kDelegateProperty);
+}
+
+/** Sets the delegate associated with the receiver. 
+
+A delegate is only useful if the receiver is a base item, otherwise it will  
+be ignored. */
+- (void) setDelegate: (id)delegate
+{
+	SET_PROPERTY(delegate, kDelegateProperty);
 }
 
 /*	Alternatively, if you have a relatively small and static tree structure,
