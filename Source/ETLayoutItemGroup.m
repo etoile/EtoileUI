@@ -198,23 +198,25 @@ NSString *ETItemGroupSelectionDidChangeNotification = @"ETItemGroupSelectionDidC
 
 /* Traversing Layout Item Tree */
 
-/** Returns a normal path relative to the receiver by translating index path 
-	into a layout item sequence and concatenating the names of all layout items 
-	in the sequence. Each index in the index path references a child item by 
-	its index in the parent layout item. 
-	Resulting path uses '/' as path separator and always begins by '/'. If an 
-	item has no name (-name returns nil or an empty string), its index is used 
-	instead of the name as a path component.
-	For index path 3.4.8.0, a valid translation would be:
+/** Returns a normal path relative to the receiver, by translating indexPath
+into a layout item sequence and concatenating the names of all layout items in
+the sequence. Each index in the index path references a child item by its index
+in the parent item. 
+
+Resulting path uses '/' as path separator and always begins by '/'. If an item 
+has no name (-name returns nil or an empty string), its index is used instead of 
+the name as a path component.<br />
+For index path 3.4.8.0, a valid translation would be:
 	      3     .4 .8   .0
 	/BlackCircle/4/Tulip/Zone
-	Returns '/' if indexPath is nil or empty. */
+
+Returns '/' if indexPath is nil or empty. */
 - (NSString *) pathForIndexPath: (NSIndexPath *)indexPath
 {
 	NSString *path = @"/";
 	ETLayoutItem *item = self;
 	unsigned int index = NSNotFound;
-	
+
 	for (unsigned int i = 0; i < [indexPath length]; i++)
 	{
 		index = [indexPath indexAtPosition: i];
@@ -225,10 +227,10 @@ NSString *ETItemGroupSelectionDidChangeNotification = @"ETItemGroupSelectionDidC
 		NSAssert2([item isGroup], @"Item %@ "
 			@"must be layout item group to resolve the index path %@", 
 			item, indexPath);
-		NSAssert3(index < [[(ETLayoutItemGroup *)item items] count], @"Index "
+		NSAssert3(index < [(ETLayoutItemGroup *)item numberOfItems], @"Index "
 			@"%d in path %@ position %d must be inferior to children item "
 			@"number", index + 1, indexPath, i);
-			
+
 		item = [(ETLayoutItemGroup *)item itemAtIndex: index];
 		if ([item name] != nil && [item isEqual: @""] == NO)
 		{
@@ -240,37 +242,40 @@ NSString *ETItemGroupSelectionDidChangeNotification = @"ETItemGroupSelectionDidC
 				[NSString stringWithFormat: @"%d", index]];	
 		}
 	}
-	
+
 	return path;
 }
 
-/** Returns an index path relative to the receiver by translating normal path 
-	into a layout item sequence and pushing parent relative index of each 
-	layout item in the sequence into an index path. Each index in the index 
-	path references a child item by its index in the parent layout item. 
-	Resulting path uses internally '.' as path seperator and internally always 
-	begins by an index number and not a path seperator. 
-	For the translation, empty path component or component made of path 
-	separator '/' are skipped in path parameter.
-	For index path /BlackCircle/4/Tulip/Zone, a valid translation would be:
+/** Returns an index path relative to the receiver, by translating normal path
+into a layout item sequence and pushing parent relative index of each layout
+item in the sequence into an index path. Each index in the index path references
+a child item by its index in the parent item. 
+
+Resulting path uses internally '.' as path separator and internally always
+begins by an index number and not a path separator.
+
+For the translation, empty path component or component made of path separator 
+'/' are skipped in path parameter.<br />
+For index path /BlackCircle/4/Tulip/Zone, a valid translation would be:
 	/BlackCircle/4/Tulip/Zone
 	      3     .4 .8   .0
-	Take note 3.5.8.0 could be a valid translation too because a name could be 
-	a number which is unrelated to the item index used by its parent layout 
-	item to reference it. */
+
+Take note 3.5.8.0 could be a valid translation too, because a name could be a
+number which is unrelated to the item index used by its parent item to reference 
+it. */
 - (NSIndexPath *) indexPathForPath: (NSString *)path
 {
-	NSIndexPath *indexPath = AUTORELEASE([[NSIndexPath alloc] init]);
+	NSIndexPath *indexPath = [NSIndexPath indexPath];
 	NSArray *pathComponents = [path pathComponents];
 	NSString *pathComp = nil;
 	ETLayoutItem *item = self;
 	int index = -1;
-		
+
 	for (int position = 0; position < [pathComponents count]; position++)
 	{
 		pathComp = [pathComponents objectAtIndex: position];
-	
-		if ([pathComp isEqual: @"/"] || [pathComp isEqual: @""])
+
+		if ([pathComp isEqualToString: @"/"] || [pathComp isEqualToString: @""])
 			continue;
 
 		if ([item isGroup] == NO)
@@ -280,7 +285,7 @@ NSString *ETItemGroupSelectionDidChangeNotification = @"ETItemGroupSelectionDidC
 			break;
 		}
 		item = [(ETLayoutItemGroup *)item itemAtPath: pathComp];
-		
+
 		/* If no item can be found by interpreting pathComp as an identifier, 
 		   try to interpret pathComp as a number */
 		if (item == nil)
@@ -288,27 +293,27 @@ NSString *ETItemGroupSelectionDidChangeNotification = @"ETItemGroupSelectionDidC
 			index = [pathComp intValue];
 			/* -intValue returns 0 when no numeric value is present to be 
 			   converted */
-			if (index == 0 && [pathComp isEqual: @"0"] == NO)
+			if (index == 0 && [pathComp isEqualToString: @"0"] == NO)
 			{
 				/* path is invalid */
 				indexPath = nil;
 				break;
 			}
-			
+
 			/* Verify the index truly references a child item */
-			if (index >= [[(ETLayoutItemGroup *)item items] count])
+			if (index >= [(ETLayoutItemGroup *)item numberOfItems])
 			{
 				/* path is invalid */
 				indexPath = nil;
-				break;			
+				break;
 			}
 			item = [(ETLayoutItemGroup *)item itemAtIndex: index];
 		}
 		else
 		{
-			index = [[item parentLayoutItem] indexOfItem: item];
+			index = [[item parentItem] indexOfItem: item];
 		}
-		
+
 		/*NSAssert1(index == 0 && [pathComp isEqual: @"0"] == NO,
 			@"Path components must be indexes for path %@", path);
 		NSAssert2([item isGroup], @"Item %@ "
@@ -317,20 +322,20 @@ NSString *ETItemGroupSelectionDidChangeNotification = @"ETItemGroupSelectionDidC
 		NSAssert3(index < [[(ETLayoutItemGroup *)item items] count], @"Index "
 			@"%d in path %@ position %d must be inferior to children item "
 			@"number", index + 1, position, path);*/
-		
+
 		indexPath = [indexPath indexPathByAddingIndex: index];
-	}	
-	
+	}
+
 	return indexPath;
 }
 
 /** Returns the layout item child identified by the index path paremeter 
-	interpreted as relative to the receiver. */
+interpreted as relative to the receiver. */
 - (ETLayoutItem *) itemAtIndexPath: (NSIndexPath *)path
 {
 	int length = [path length];
 	ETLayoutItem *item = self;
-	
+
 	for (unsigned int i = 0; i < length; i++)
 	{
 		if ([item isGroup])
@@ -343,7 +348,7 @@ NSString *ETItemGroupSelectionDidChangeNotification = @"ETItemGroupSelectionDidC
 			break;
 		}
 	}
-	
+
 	return item;
 }
 
