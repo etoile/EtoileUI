@@ -38,15 +38,15 @@
 #import <EtoileFoundation/NSIndexPath+Etoile.h>
 #import <EtoileFoundation/NSObject+Model.h>
 #import <EtoileFoundation/Macros.h>
-#import <EtoileUI/ETLayoutItemGroup.h>
-#import <EtoileUI/ETLayoutItemGroup+Mutation.h>
-#import <EtoileUI/ETLayoutItem+Factory.h>
-#import <EtoileUI/ETFlowLayout.h>
-#import <EtoileUI/ETLineLayout.h>
-#import <EtoileUI/ETContainer.h>
-#import <EtoileUI/ETContainer+Controller.h>
-#import <EtoileUI/NSView+Etoile.h>
-#import <EtoileUI/ETCompatibility.h>
+#import "ETLayoutItemGroup.h"
+#import "ETLayoutItemGroup+Mutation.h"
+#import "ETLayoutItem+Factory.h"
+#import "ETFlowLayout.h"
+#import "ETLineLayout.h"
+#import "ETContainer.h"
+#import "ETContainer+Controller.h"
+#import "NSView+Etoile.h"
+#import "ETCompatibility.h"
 
 #define DEFAULT_FRAME NSMakeRect(0, 0, 50, 50)
 
@@ -90,19 +90,21 @@ NSString *ETItemGroupSelectionDidChangeNotification = @"ETItemGroupSelectionDidC
 
 /* Initialization */
 
-/** Designated initializer */
+/** <init /> Designated initializer */
 - (id) initWithItems: (NSArray *)layoutItems view: (NSView *)view value: (id)value representedObject: (id)repObject
 {
     self = [super initWithView: view value: value representedObject: repObject];
-    
+
     if (self != nil)
     {
 		_layoutItems = [[NSMutableArray alloc] init];
 		if (layoutItems != nil)
+		{
 			[self addItems: layoutItems];
+		}
 		_layout = nil;
-		[self setStackedItemLayout: AUTORELEASE([[ETFlowLayout alloc] init])];
-		[self setUnstackedItemLayout: AUTORELEASE([[ETLineLayout alloc] init])];
+		[self setStackedItemLayout: [ETFlowLayout layout]];
+		[self setUnstackedItemLayout:[ETLineLayout layout]];
 		_isStack = NO;
 		_autolayout = YES;
 		_usesLayoutBasedFrame = NO;
@@ -110,7 +112,7 @@ NSString *ETItemGroupSelectionDidChangeNotification = @"ETItemGroupSelectionDidC
 		[self setHasNewContent: NO];
 		[self setShouldMutateRepresentedObject: YES];
     }
-    
+
     return self;
 }
 
@@ -136,17 +138,24 @@ NSString *ETItemGroupSelectionDidChangeNotification = @"ETItemGroupSelectionDidC
 	DESTROY(_stackedLayout);
 	DESTROY(_unstackedLayout);
 	DESTROY(_layoutItems);
-	
+
 	[super dealloc];
 }
 
+/** Returns a copy of the receiver. See also -[ETLayoutItem copyWithZone:].
+
+All layouts from the receiver returned by -layout, -stackedItemLayout, 
+-unstackedItemLayout are also copied since a layout cannot be shared between 
+several item groups.
+
+The returned copy is mutable because ETLayoutItemGroup cannot be immutable. */ 
 - (id) copyWithZone: (NSZone *)zone
 {
 	ETLayoutItemGroup *item = (ETLayoutItemGroup *)[(id)super copyWithZone: zone];
 	
 	item->_layoutItems = [[NSMutableArray alloc] init];
 	
-	// NOTE: Layout objects must be copied because they support only one layout 
+	// TODO: Layout objects must be copied because they support only one layout 
 	// context. If you share a layout like that: 
 	// [item setLayout: [self layout]];
 	// -[ETLayoutItemGroup setLayout:] will set the item copy as the layout 
@@ -158,7 +167,8 @@ NSString *ETItemGroupSelectionDidChangeNotification = @"ETItemGroupSelectionDidC
 	item->_isStack = [self isStack];
 	item->_autolayout = [self isAutolayout];
 	item->_usesLayoutBasedFrame = [self usesLayoutBasedFrame];
-			
+	item->_shouldMutateRepresentedObject = [self shouldMutateRepresentedObject];
+
 	return item;
 }
 
