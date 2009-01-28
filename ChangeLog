@@ -1,5 +1,18 @@
 2009-01-28  Quentin Mathe <qmathe@club-internet.fr>
 
+	* ETContainer:
+	Removed ETContainerSelectionDidChangeNotification.
+	* ETLayoutItemGroup:
+	Added ETItemGroupSelectionDidChangeNotification. Updated and reformatted 
+	selection related method documentation. Removed some unecessary extra tabs 
+	in the methods.
+	(-setSelectionIndexPaths:): Updated to send the new notification to the 
+	delegate.
+	* ETPaneLayout, ETPaneSwitcherLayout, ETInspector, ETTableLayout:  Updated 
+	to use the new notification.
+
+2009-01-28  Quentin Mathe <qmathe@club-internet.fr>
+
 	* ETTableLayout:
 	Rewritten a bit various methods to be shorter by using more syntatic sugar.
 	(-setLayoutView:): Modified to use FOREACH, A, ETLayoutItemPboardType 

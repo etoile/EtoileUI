@@ -223,6 +223,24 @@ extern NSString *kDelegateProperty; /** delegate property name */
 
 @end
 
+/** Informal delegate protocol that can be implemented by the object set with 
+-[ETLayoutItemGroup setDelegate:]. */
+@interface NSObject (ETLayoutItemGroupDelegate)
+/** Delegate method that corresponds to ETItemGroupSelectionDidChangeNotification. */
+- (void) itemGroupSelectionDidChange: (NSNotification *)notif;
+@end
+
+/** Notification posted by ETLayoutItemGroup and subclasses in reply to 
+selection change in the layout item tree connected to the poster object. The 
+poster object is always an item group and can be retrieved through 
+-[NSNotification object].
+
+This notification is posted when a selection related method such as 
+-setSelectionIndexPaths: has been called on the object associated with the 
+notification, or when the selection is modified by the user, in this last case 
+the poster object will always be a base item. */
+extern NSString *ETItemGroupSelectionDidChangeNotification;
+
 // TODO: Documentation to be reused somewhere...
 /* In this case, each time the user enters a new level, you are in charge of
 removing then adding the proper items which are associated with the level

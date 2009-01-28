@@ -236,7 +236,6 @@ extern NSString *ETLayoutItemPboardType;
 
 @interface ETContainer (ETContainerDelegate)
 
-- (void) containerSelectionDidChange: (NSNotification *)notif;
 - (void) containerShouldStackItem: (NSNotification *)notif;
 - (void) containerDidStackItem: (NSNotification *)notif;
 - (void) containerShouldGroupItem: (NSNotification *)notif;
@@ -245,8 +244,6 @@ extern NSString *ETLayoutItemPboardType;
 //- (void) containerDoubleClickedItem: (NSNotification *)notif;
 
 @end
-
-extern NSString *ETContainerSelectionDidChangeNotification;
 
 @interface ETContainer (Deprecated)
 

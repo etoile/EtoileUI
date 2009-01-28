@@ -141,7 +141,7 @@
 
 	[propertyView setLayout: AUTORELEASE([[ETTableLayout alloc] init])];
 	[propertyView setSource: self];
-	// NOTE: If this next line is uncommented, -containerSelectionDidChange:
+	// NOTE: If this next line is uncommented, -itemGroupSelectionDidChange:
 	// must be updated to filter out property view related notifications.
 	//[propertyView setDelegate: self];
 	// NOTE: The following code is commented out to enable property editing
@@ -150,7 +150,7 @@
 	//[propertyView setTarget: self];
 }
 
-- (void) containerSelectionDidChange: (NSNotification *)notif
+- (void) itemGroupSelectionDidChange: (NSNotification *)notif
 {
 	ETDebugLog(@"Selection did change for %@ received in %@", [notif object], self);
 	

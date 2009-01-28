@@ -399,22 +399,13 @@ yet, it is created. */
 
 	id delegate = [[self container] delegate];
 	
-	/* Update selection state in the layout item tree */
+	/* Update selection state in the layout item tree and post a notification */
 	[[self container] setSelectionIndexPaths: [self selectionIndexPaths]];
 
 	if ([delegate respondsToSelector: @selector(tableViewSelectionDidChange:)])
 	{
 		[delegate tableViewSelectionDidChange: notif];
 	}
-	/*if ([delegate respondsToSelector: @selector(containerSelectionDidChange:)])
-	{
-		NSNotification *containerNotif =
-			[NSNotification notificationWithName: [notif name] 
-			                              object: [self container] 
-										userInfo: [notif userInfo]];
-		
-		[delegate containerSelectionDidChange: containerNotif];
-	}*/
 }
 
 // TODO: Implement forwarding of all delegate methods to ETContainer delegate by

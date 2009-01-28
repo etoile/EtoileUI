@@ -51,7 +51,6 @@
 #import "NSView+Etoile.h"
 #import "ETCompatibility.h"
 
-NSString *ETContainerSelectionDidChangeNotification = @"ETContainerSelectionDidChangeNotification";
 NSString *ETLayoutItemPboardType = @"ETLayoutItemPboardType"; // FIXME: replace by UTI
 
 @interface ETContainer (ETEventHandling)

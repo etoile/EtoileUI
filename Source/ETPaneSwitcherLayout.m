@@ -40,6 +40,7 @@
 #import "ETStackLayout.h"
 #import "ETLineLayout.h"
 #import "ETLayoutItem+Factory.h"
+#import "ETLayoutItemGroup.h"
 #import "ETContainer.h"
 #import "GNUstep.h"
 
@@ -102,8 +103,8 @@
 	{
 		[[NSNotificationCenter defaultCenter] 
 			removeObserver: self 
-					  name: ETContainerSelectionDidChangeNotification 
-					object: [self container]];
+					  name: ETItemGroupSelectionDidChangeNotification
+					object: [[self container] layoutItem]];
 		[_internalContainer removeFromSuperview];
 	}	
 
@@ -113,9 +114,9 @@
 	
 	[[NSNotificationCenter defaultCenter] 
 		addObserver: self 
-		   selector: @selector(containerSelectionDidChange:) 
-		       name: ETContainerSelectionDidChangeNotification 
-			 object: [self container]];
+		   selector: @selector(itemGroupSelectionDidChange:) 
+		       name: ETItemGroupSelectionDidChangeNotification  
+			 object: [[self container] layoutItem]];
 	/* Let content view and switcher view handles mouse click on their own */
 	[[self container] setEnablesHitTest: YES];
 }
@@ -180,9 +181,9 @@
 	[_switcherItem setView: (NSView *)container];
 	[[NSNotificationCenter defaultCenter] 
 		addObserver: self 
-		   selector: @selector(containerSelectionDidChange:) 
-		       name: ETContainerSelectionDidChangeNotification 
-			 object: container];
+		   selector: @selector(itemGroupSelectionDidChange:) 
+		       name: ETItemGroupSelectionDidChangeNotification  
+			 object: [container layoutItem]];
 }
 
 - (ETContainer *) contentContainer
@@ -198,9 +199,9 @@
 	[_contentItem setView: (NSView *)container];
 	[[NSNotificationCenter defaultCenter] 
 		addObserver: self 
-		   selector: @selector(containerSelectionDidChange:) 
-		       name: ETContainerSelectionDidChangeNotification 
-			 object: container];
+		   selector: @selector(itemGroupSelectionDidChange:) 
+		       name: ETItemGroupSelectionDidChangeNotification  
+			 object: [container layoutItem]];
 }
 
 /** O means hidden switcher
@@ -263,14 +264,14 @@
 	{
 		[[NSNotificationCenter defaultCenter] 
 			removeObserver: self 
-					  name: ETContainerSelectionDidChangeNotification 
-					object: prevSwitcherView];
+					  name: ETItemGroupSelectionDidChangeNotification 
+					object: [prevSwitcherView layoutItem]];
 	}	
 	[[NSNotificationCenter defaultCenter] 
 		addObserver: self 
-		   selector: @selector(containerSelectionDidChange:) 
-		       name: ETContainerSelectionDidChangeNotification 
-			 object: switcherView];
+		   selector: @selector(itemGroupSelectionDidChange:) 
+		       name: ETItemGroupSelectionDidChangeNotification 
+			 object: [switcherView layoutItem]];
 			 
 	if ([[_internalContainer items] containsObject: _switcherItem])
 		[_internalContainer removeItem: _switcherItem];
@@ -297,14 +298,14 @@
 	{
 		[[NSNotificationCenter defaultCenter] 
 			removeObserver: self 
-					  name: ETContainerSelectionDidChangeNotification 
-					object: prevContentView];
+					  name: ETItemGroupSelectionDidChangeNotification 
+					object: [prevContentView layoutItem]];
 	}	
 	[[NSNotificationCenter defaultCenter] 
 		addObserver: self 
-		   selector: @selector(containerSelectionDidChange:) 
-		       name: ETContainerSelectionDidChangeNotification 
-			 object: contentView];
+		   selector: @selector(itemGroupSelectionDidChange:) 
+		       name: ETItemGroupSelectionDidChangeNotification 
+			 object: [contentView layoutItem]];
 			 
 	if ([[_internalContainer items] containsObject: _contentItem])
 		[_internalContainer removeItem: _contentItem];
@@ -373,7 +374,7 @@
 /* Propagate pane switch from switcher to content, and additionaly from 
    immediate container to switcher when selection is done in code through 
    methods like -[ETPaneSwitcherLayout setSelectionIndex:] */
-- (void) containerSelectionDidChange: (NSNotification *)notif
+- (void) itemGroupSelectionDidChange: (NSNotification *)notif
 {
 	NSLog(@"Propagate selection change from %@ in %@", [notif object], [self container]);
 	
@@ -430,7 +431,7 @@
 			index = 0;
 		
 		/* Will propagate to switcher container and content container through 
-		    containerSelectionDidChange: */
+		    itemGroupSelectionDidChange: */
 		[[self container] setSelectionIndex: index];
 		
 		NSAssert1([[self container] selectionIndex] != NSNotFound, 

@@ -51,9 +51,11 @@
 #define DEFAULT_FRAME NSMakeRect(0, 0, 50, 50)
 
 /* Properties */
-
 NSString *kSourceProperty = @"source";
 NSString *kDelegateProperty = @"delegate";
+
+/* Notifications */
+NSString *ETItemGroupSelectionDidChangeNotification = @"ETItemGroupSelectionDidChangeNotification";
 
 @interface ETLayoutItem (SubclassVisibility)
 - (void) setDisplayView: (ETView *)view;
@@ -1319,31 +1321,33 @@ the receiver immediate children to the source. */
 /* Selection */
 
 /** Returns the index of the first selected item which is an immediate child of 
- the receiver. If there is none, returns NSNotFound. 
- 
- Calling this method is equivalent to [[self selectionIndexes] firstIndex].
- 
- Take note that -selectionIndexPaths may return one or multiple values when this
- method returns NSNotFound. See -selectionIndexes also. */
+the receiver. If there is none, returns NSNotFound. 
+
+Calling this method is equivalent to [[self selectionIndexes] firstIndex].
+
+Take note that -selectionIndexPaths may return one or multiple values when this
+method returns NSNotFound. See -selectionIndexes also. */
 - (unsigned int) selectionIndex
 {
 	return [[self selectionIndexes] firstIndex];
 }
 
 /** Sets the selected item identified by index in the receiver and discards any 
- existing selection index paths previously set. */
+existing selection index paths previously set.
+
+Posts an ETItemGroupSelectionDidChangeNotification. */
 - (void) setSelectionIndex: (unsigned int)index
 {
 	ETDebugLog(@"Modify selection index from %d to %d of %@", [self selectionIndex], index, self);
-	
+
 	/* Check new selection validity */
 	NSAssert1(index >= 0, @"-setSelectionIndex: parameter must not be a negative value like %d", index);
-	
+
 	NSMutableIndexSet *indexes = [NSMutableIndexSet indexSet];
 	
 	if (index != NSNotFound)
 		[indexes addIndex: index];
-	
+
 	[self setSelectionIndexes: indexes];
 }
 
@@ -1357,32 +1361,34 @@ length equal one. */
 	NSMutableIndexSet *indexes = [NSMutableIndexSet indexSet];
 	NSEnumerator *e = [[self selectionIndexPaths] objectEnumerator];
 	NSIndexPath *indexPath = nil;
-	
+
 	while ((indexPath = [e nextObject]) != nil)
 	{
 		if ([indexPath length] == 1)
 			[indexes addIndex: [indexPath firstIndex]];
 	}
-	
+
 	return indexes;
 }
 
 /** Sets the selected items identified by indexes in the receiver and discards 
- any existing selection index paths previously set. */
+any existing selection index paths previously set.
+
+Posts an ETItemGroupSelectionDidChangeNotification. */
 - (void) setSelectionIndexes: (NSIndexSet *)indexes
 {
 	int numberOfItems = [[self items] count];
 	int lastSelectionIndex = [[self selectionIndexes] lastIndex];
-	
+
 	ETDebugLog(@"Set selection indexes to %@ in %@", indexes, self);
-	
+
 	if (lastSelectionIndex > (numberOfItems - 1) && lastSelectionIndex != NSNotFound) /* NSNotFound is a big value and not -1 */
 	{
 		ETLog(@"WARNING: Try to set selection index %d when %@ only contains %d items",
 			  lastSelectionIndex, self, numberOfItems);
 		return;
 	}
-	
+
 	/* Update selection */
 	[self setSelectionIndexPaths: [indexes indexPaths]];
 }
@@ -1392,42 +1398,43 @@ length equal one. */
 {
 	NSEnumerator *e = [[self items] objectEnumerator];
 	id item = nil;
-	
+
 	while ((item = [e nextObject]) != nil)
 	{
 		if ([item isSelected])
 			[indexPaths addObject: [item indexPathFromItem: pathBaseItem]];
+
 		if ([item isGroup])
 			[item collectSelectionIndexPaths: indexPaths relativeToItem: pathBaseItem];
 	}
 }
 
 
-/** Returns the index paths of selected items in layout item subtree of the the receiver. */
+/** Returns the index paths of selected items in layout item subtree of the the 
+receiver. */
 - (NSArray *) selectionIndexPaths
 {
 	NSMutableArray *indexPaths = [NSMutableArray array];
-	
+
 	[self collectSelectionIndexPaths: indexPaths relativeToItem: self];
-	
+
 	return indexPaths;
 }
 
 /** Selects every descendant items which match the index paths passed in 
-    parameter and deselects all other descendant items of the receiver.
-	
-	TODO: This is crude because we deselect everything without taking care of 
-	base items we encounter during the recursive traversal of the subtree... 
-	See -[ETLayout setSelectionIndexPaths:] to understand the issue more 
-	thoroughly. Moreover the method is surely extremly slow if called many times 
-	within a short time interval on a subtree that consists of thousand items or 
-	more. */
+parameter and deselects all other descendant items of the receiver.
+
+TODO: This is crude because we deselect everything without taking care of base 
+items we encounter during the recursive traversal of the subtree... See
+-[ETLayout setSelectionIndexPaths:] to understand the issue more thoroughly.
+Moreover the method is surely extremly slow if called many times within a short
+time interval on a subtree that consists of thousand items or more. */
 - (void) applySelectionIndexPaths: (NSMutableArray *)indexPaths 
                    relativeToItem: (ETLayoutItemGroup *)pathBaseItem
 {
 	NSEnumerator *e = [[self items] objectEnumerator];
 	id item = nil;
-		
+
 	while ((item = [e nextObject]) != nil)
 	{
 		NSIndexPath *itemIndexPath = [item indexPathFromItem: pathBaseItem];
@@ -1446,47 +1453,49 @@ length equal one. */
 }
 
 /** Sets the selected items in the layout item subtree attached to the receiver. 
-	TODO: See [ETLayout selectionIndexPaths].*/
+
+Posts an ETItemGroupSelectionDidChangeNotification. */
 - (void) setSelectionIndexPaths: (NSArray *)indexPaths
 {
 	[self applySelectionIndexPaths: [NSMutableArray arrayWithArray: indexPaths] 
 	                relativeToItem: self];
 
-	// FIXME: Rename the notification to ETLayoutItemGroupSelectionDidChangeNotification
 	/* Finally propagate changes by posting notification */
 	NSNotification *notif = [NSNotification 
-		notificationWithName: ETContainerSelectionDidChangeNotification object: self];
+		notificationWithName: ETItemGroupSelectionDidChangeNotification object: self];
 	
-	if ([[[self container] delegate] respondsToSelector: @selector(containerSelectionDidChange:)])
-		[[[self container] delegate] containerSelectionDidChange: notif];
+	if ([[self delegate] respondsToSelector: @selector(itemGroupSelectionDidChange:)])
+		[[self delegate] itemGroupSelectionDidChange: notif];
 	
 	[[NSNotificationCenter defaultCenter] postNotification: notif];
-	
+
 	/* For opaque layouts that may need to keep in sync the selection state of 
 	   their custom UI. */
 	[[self layout] selectionDidChangeInLayoutContext];
-	
+
 	/* Reflect selection change immediately */
 	[[self supervisorView] display]; // TODO: supervisorView is probably not the best choice...
 }
 
 /** Returns the selected child items belonging to the receiver. 
-	The returned collection only includes immediate children, other selected 
-	descendant items below these childrens in the layout item subtree are 
-	excluded. */
+
+The returned collection only includes immediate children, other selected 
+descendant items below these childrens in the layout item subtree are excluded. */
 - (NSArray *) selectedItems
 {
-	return [[self items] objectsMatchingValue: [NSNumber numberWithBool: YES] forKey: @"isSelected"];
+	return [[self items] objectsMatchingValue: [NSNumber numberWithBool: YES] 
+	                                   forKey: @"isSelected"];
 }
 
 /** Returns selected descendant items reported by the active layout through 
-	-[ETLayout selectedItems]. 
-	You should call this method to obtain the selection in most cases and not
-	-selectedItems. */
+-[ETLayout selectedItems].
+
+You should call this method to obtain the selection in most cases and not
+-selectedItems. */
 - (NSArray *) selectedItemsInLayout
 {
 	NSArray *layoutSelectedItems = [[self layout] selectedItems];
-	
+
 	if (layoutSelectedItems != nil)
 	{
 		return layoutSelectedItems;
@@ -1501,16 +1510,18 @@ length equal one. */
 - (NSArray *) selectedItemsIncludingRelatedDescendants
 {
 	NSArray *descendantItems = [self itemsIncludingRelatedDescendants];
-	
-	return [descendantItems objectsMatchingValue: [NSNumber numberWithBool: YES] forKey: @"isSelected"];
+
+	return [descendantItems objectsMatchingValue: [NSNumber numberWithBool: YES] 
+	                                      forKey: @"isSelected"];
 }
 
 /** You should rarely need to invoke this method. */
 - (NSArray *) selectedItemsIncludingAllDescendants
 {
 	NSArray *descendantItems = [self itemsIncludingAllDescendants];
-	
-	return [descendantItems objectsMatchingValue: [NSNumber numberWithBool: YES] forKey: @"isSelected"];
+
+	return [descendantItems objectsMatchingValue: [NSNumber numberWithBool: YES] 
+	                                      forKey: @"isSelected"];
 }
 
 /* Collection Protocol */

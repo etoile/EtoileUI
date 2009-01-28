@@ -35,9 +35,9 @@
  */
  
 #import "ETPaneLayout.h"
-#import "ETPaneLayout.h"
 #import "NSView+Etoile.h"
 #import "ETLayoutItem.h"
+#import "ETLayoutItemGroup.h"
 #import "ETContainer.h"
 
 @implementation ETPaneLayout
@@ -52,12 +52,12 @@
 	[super dealloc];
 }
 
-- (void) containerSelectionDidChange: (NSNotification *)notif
+- (void) itemGroupSelectionDidChange: (NSNotification *)notif
 {
-	NSAssert2([[notif object] isEqual: [self container]], 
-		@"Notification object %@ doesn't match container of layout %@", [notif object], self);
+	NSAssert2([[notif object] isEqual: [[self container] layoutItem]], 
+		@"Notification object %@ doesn't match item group of layout %@", [notif object], self);
 	
-	NSLog(@"Pane layout %@ receives selection change from %@", self, [self container]);
+	NSLog(@"Pane layout %@ receives selection change from %@", self, [notif object]);
 	[[self container] updateLayout]; /* Will trigger -[ETLayout render] */
 
 }
@@ -78,13 +78,13 @@
 	[[self container] setAllowsEmptySelection: NO];
 	[[NSNotificationCenter defaultCenter] 
 		removeObserver: self 
-		          name: ETContainerSelectionDidChangeNotification 
+		          name: ETItemGroupSelectionDidChangeNotification 
 			    object: nil];
 	[[NSNotificationCenter defaultCenter] 
 		addObserver: self 
-		   selector: @selector(containerSelectionDidChange:)
-		       name: ETContainerSelectionDidChangeNotification
-		     object: [self container]];
+		   selector: @selector(itemGroupSelectionDidChange:)
+		       name: ETItemGroupSelectionDidChangeNotification
+		     object: [[self container] layoutItem]];
 }
 
 /* Sizing Methods */
