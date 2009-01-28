@@ -35,13 +35,14 @@
  */
 
 #import <EtoileFoundation/ETCollection.h>
-#import <EtoileUI/ETPickboard.h>
-#import <EtoileUI/ETContainer.h>
-#import <EtoileUI/ETLayoutItem.h>
-#import <EtoileUI/ETWindowItem.h>
-#import <EtoileUI/ETFlowLayout.h>
-#import <EtoileUI/ETOutlineLayout.h>
-#import <EtoileUI/ETCompatibility.h>
+#import <EtoileFoundation/Macros.h>
+#import "ETPickboard.h"
+#import "ETContainer.h"
+#import "ETLayoutItem.h"
+#import "ETWindowItem.h"
+#import "ETFlowLayout.h"
+#import "ETOutlineLayout.h"
+#import "ETCompatibility.h"
 
 #define PALETTE_FRAME NSMakeRect(200, 200, 400, 200)
 #define PICKBOARD_LAYOUT ETOutlineLayout
@@ -128,13 +129,13 @@ static ETPickboard *activePickboard = nil;
 - (id) init
 {
 	self = [super init];
-	
+
 	if (self != nil)
 	{
 		_pickedObjects = [[NSMutableDictionary alloc] init];
 		_pickboardRef = 0;
 		[self setName: _(@"Pickboard")];
-		
+
 		/* UI set up */
 		ETContainer *pickView = [[ETContainer alloc] initWithFrame: PALETTE_FRAME layoutItem: self];
 		ETWindowItem *windowItem = [[ETWindowItem alloc] init]; /* Will be released on close */
@@ -152,7 +153,7 @@ static ETPickboard *activePickboard = nil;
 - (void) dealloc
 {
 	DESTROY(_pickedObjects);
-	
+
 	[super dealloc];
 }
 
@@ -169,7 +170,7 @@ static ETPickboard *activePickboard = nil;
 - (id) popObject
 {
 	[self checkPickboardValidity];
-	
+
 	if ([self numberOfItems] == 0)
 		return nil;
 
@@ -178,21 +179,21 @@ static ETPickboard *activePickboard = nil;
 	ETLayoutItem *topItem = [self itemAtIndex: 0];
 	id pickedObject = [topItem representedObject];
 	NSArray *pickRefs = nil;
-	
+
 	NSAssert3([[_pickedObjects allValues] containsObject: pickedObject], 
 		@"Pickboard %@ is in an invalid state, it should contain object %@ "
 		@"referenced by item %@", self, pickedObject, topItem);
 		
 	pickRefs = [_pickedObjects allKeysForObject: pickedObject];
-	
+
 	NSAssert3([pickRefs count] == 1, @"Pickboard %@ is in an invalid state, it "
 		"should have only one pickboard reference %@ for object %@ ", self, 
 		pickedObject, pickRefs);
-	
+
 	RETAIN(pickedObject);
 	[self removeItemAtIndex: 0];
 	[_pickedObjects removeObjectForKey: [pickRefs objectAtIndex: 0]];
-	
+
 	return AUTORELEASE(pickedObject);
 }
 
@@ -211,48 +212,46 @@ static ETPickboard *activePickboard = nil;
 		
 	}
 	[self checkPickboardValidity];
-	
+
 	/* Use -addObject: instead of -pushObject: if necessary */
 	if ([_pickedObjects count] == 0)
 		return [self addObject: object];
-		
+
 	/* Push Object */
 	NSString *pickRef = [NSString stringWithFormat: @"%d", ++_pickboardRef];
-	
 	[_pickedObjects setObject: object forKey: pickRef];
 
 	ETLayoutItem *item = [self layoutItemWithObject: object];
-
 	[self insertItem: item atIndex: 0];
 	RELEASE(item);
-	
+
 	return pickRef;
 }
 
-- (ETLayoutItem *) layoutItemWithObject: (id)object
+/* Returns a retained layout item that wraps the object passed in parameter 
+based on its type. 
+
+If pickObject is an ETPickCollection, returns an ETLayoutItemGroup, otherwise 
+returns an ETLayoutItem. */
+- (ETLayoutItem *) layoutItemWithObject: (id)pickObject
 {
-	id item = nil;
-	
-	if ([object isKindOfClass: [ETPickCollection class]])
+	if ([pickObject isKindOfClass: [ETPickCollection class]])
 	{
-		NSEnumerator *e = [[object contentArray] objectEnumerator];
-		id pickedItem = nil;
-		
-		item = [[ETLayoutItemGroup alloc] initWithRepresentedObject: object];
-		while ((pickedItem = [e nextObject]) != nil)
+		id item = [[ETLayoutItemGroup alloc] initWithRepresentedObject: pickObject];
+
+		FOREACHI([pickObject contentArray], pickedElement)
 		{
-			id childItem = [[ETLayoutItemGroup alloc] initWithRepresentedObject: pickedItem];
-			
+			id childItem = [[ETLayoutItemGroup alloc] initWithRepresentedObject: pickedElement];
 			[item addItem: childItem];
 			RELEASE(childItem);
 		}
+
+		return item;
 	}
 	else
 	{
-		item = [[ETLayoutItem alloc] initWithRepresentedObject: object];	
+		return [[ETLayoutItem alloc] initWithRepresentedObject: pickObject];	
 	}
-	
-	return item;
 }
 
 /** Adds an object as the last element in the pickboard and returns a 
@@ -272,14 +271,12 @@ static ETPickboard *activePickboard = nil;
 	[self checkPickboardValidity];
 
 	NSString *pickRef = [NSString stringWithFormat: @"%d", ++_pickboardRef];
-
 	[_pickedObjects setObject: object forKey: pickRef];
 
 	ETLayoutItem *item = [self layoutItemWithObject: object];
-	
 	[self addItem: item];
 	RELEASE(item);
-	
+
 	return pickRef;
 }
 
@@ -296,18 +293,18 @@ static ETPickboard *activePickboard = nil;
 			@"-removeObjectForPickboardRef: argument must never be nil", self];
 		
 	}
-	
+
 	id object = [_pickedObjects objectForKey: ref];
-	
+
 	if (object == nil)
 	{
 		[NSException raise: NSInvalidArgumentException format: @"Pickboard %@ "
 			"received an invalid pickboard ref %@ to remove an object.", self, ref];
 	}
-	
+
 	ETLayoutItem *item = [[self items] 
 			firstObjectMatchingValue: object forKey: @"representedObject"];
-			
+
 	[self removeItem: item];
 	[_pickedObjects removeObjectForKey: ref];
 }
@@ -364,13 +361,8 @@ static ETPickboard *activePickboard = nil;
 	collection) with the objects of the collection passed in parameter. */
 - (id) initWithCollection: (id <ETCollection>)objects
 {
-	self = [super init];
-	
-	if (self != nil)
-	{
-		ASSIGN(_pickedObjects, [objects contentArray]);
-	}
-	
+	SUPERINIT
+	ASSIGN(_pickedObjects, [objects contentArray]);
 	return self;
 }
 
