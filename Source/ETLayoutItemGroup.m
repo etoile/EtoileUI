@@ -348,23 +348,24 @@ NSString *ETItemGroupSelectionDidChangeNotification = @"ETItemGroupSelectionDidC
 }
 
 /** Returns the layout item child identified by the path paremeter interpreted 
-	as relative to the receiver. 
-	Whether the path begins by '/' or not doesn't modify the result. */
+as relative to the receiver. 
+
+Whether the path begins by '/' or not doesn't modify the result. */
 - (ETLayoutItem *) itemAtPath: (NSString *)path
 {
 	NSArray *pathComponents = [path pathComponents];
-	NSEnumerator *e = [pathComponents objectEnumerator];
-	NSString *pathComp = nil;
 	ETLayoutItem *item = self;
 	
-	while ((pathComp = [e nextObject]) != nil)
+	FOREACH(pathComponents, pathComp, NSString *)
 	{
-		if (pathComp == nil || [pathComp isEqual: @"/"] || [pathComp isEqual: @""])
+		if (pathComp == nil || [pathComp isEqualToString: @"/"] || [pathComp isEqualToString: @""])
 			continue;
 	
 		if ([item isGroup])
 		{
-			item = [[(ETLayoutItemGroup *)item items] firstObjectMatchingValue: pathComp forKey: @"name"];
+			NSArray *childItems = [(ETLayoutItemGroup *)item items];
+			item = [childItems firstObjectMatchingValue: pathComp 
+			                                     forKey: @"name"];
 		}
 		else
 		{
@@ -372,7 +373,7 @@ NSString *ETItemGroupSelectionDidChangeNotification = @"ETItemGroupSelectionDidC
 			break;
 		}
 	}
-	
+
 	return item;
 }
 
@@ -701,60 +702,60 @@ be ignored. */
 	return [NSArray arrayWithArray: _layoutItems];
 }
 
-/** Returns all children items under the control of the receiver. An item is 
-	said to be under the control of an item group when you can traverse the
-	branch leading to the item without crossing a parent item which is declared
-	as a base item.
-	An item group becomes a base item when a represented path base is set, in 
-	other words when -representedPathBase doesn't return nil. 
-	This method collects every items the layout item subtree (excluding the 
-	receiver) by doing a preorder traversal, the resulting collection is a flat
-	list of every items in the tree. 
-	If you are interested by collecting descendant items in another traversal
-	order, you have to implement your own version of this method. */
+/** Returns all children items under the control of the receiver. 
+
+An item is said to be under the control of an item group, when you can traverse
+the branch leading to the item without crossing a parent item declared as a base 
+item. An item group becomes a base item when a represented path base is set, in
+other words when -representedPathBase doesn't return nil. See also -isBaseItem.
+
+This method collects every items the layout item subtree (excluding the
+receiver) by doing a preorder traversal, the resulting collection is a flat list
+of every items in the tree.
+
+If you are interested by collecting descendant items in another traversal order, 
+you have to implement your own version of this method. */
 - (NSArray *) itemsIncludingRelatedDescendants
 {
 	// TODO: This code is probably quite slow by being written in a recursive 
 	// style and allocating/resizing many arrays instead of using a single 
 	// linked list. Test whether optimization are needed or not really...
-	NSEnumerator *e = [[self items] objectEnumerator];
-	id item = nil;
 	NSMutableArray *collectedItems = [NSMutableArray array];
-	
-	while ((item = [e nextObject]) != nil)
+
+	FOREACHI([self items], item)
 	{
 		[collectedItems addObject: item];
-			
+
 		if ([item isGroup] && [item hasValidRepresentedPathBase] == NO)
 			[collectedItems addObjectsFromArray: [item itemsIncludingRelatedDescendants]];
 	}
-	
+
 	return collectedItems;
 }
 
 /** Returns all descendant items of the receiver, including immediate children.
-	This method collects every items the layout item subtree (excluding the 
-	receiver) by doing a preorder traversal, the resulting collection is a flat
-	list of every items in the tree. 
-	If you are interested by collecting descendant items in another traversal
-	order, you have to implement your own version of this method. */
+
+This method collects every items the layout item subtree (excluding the
+receiver) by doing a preorder traversal, the resulting collection is a flat list
+of every items in the tree. 
+
+If you are interested in collecting descendant items in another traversal order,
+you have to implement your own version of this method. */
 - (NSArray *) itemsIncludingAllDescendants
 {
 	// TODO: This code is probably quite slow by being written in a recursive 
 	// style and allocating/resizing many arrays instead of using a single 
 	// linked list. Test whether optimization are needed or not really ...
-	NSEnumerator *e = [[self items] objectEnumerator];
-	id item = nil;
 	NSMutableArray *collectedItems = [NSMutableArray array];
-	
-	while ((item = [e nextObject]) != nil)
+
+	FOREACHI([self items], item)
 	{
 		[collectedItems addObject: item];
-			
+
 		if ([item isGroup])
 			[collectedItems addObjectsFromArray: [item itemsIncludingAllDescendants]];
 	}
-	
+
 	return collectedItems;
 }
 
@@ -1168,7 +1169,7 @@ yourself (see -visibleItemsForItems:). */
 			     && [item displayView] != nil )
 			{
 				[container addSubview: [item displayView]];
-				//ETDebugLog(@"Inserted view at %@", NSStringFromRect([[item displayView] frame]));
+				ETDebugLog(@"Inserted view at %@", NSStringFromRect([[item displayView] frame]));
 			}
 		}
 		else
@@ -1177,7 +1178,7 @@ yourself (see -visibleItemsForItems:). */
 			if (container != nil && [[container subviews] containsObject: [item displayView]])
 			{
 				[[item displayView] removeFromSuperview];
-				//ETDebugLog(@"Removed view at %@", NSStringFromRect([[item displayView] frame]));
+				ETDebugLog(@"Removed view at %@", NSStringFromRect([[item displayView] frame]));
 			}
 		}
 	}
