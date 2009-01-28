@@ -1107,53 +1107,47 @@ the receiver immediate children to the source. */
 	[transform concat];
 }
 
-/** Returns the visible child items of the receiver. 
-    This is a shortcut method for -visibleItemsForItems:. */
+/** Returns the visible child items of the receiver.
+
+This is a shortcut method for -visibleItemsForItems:. */
 - (NSArray *) visibleItems
 {
 	return [self visibleItemsForItems: [self items]];
 }
 
 /** Sets the visible child items of the receiver, by taking care of inserting
-    and removing the item display views based on the visibility of the layout 
-    items.
-    This is a shortcut method for -visibleItemsForItems:. */
+and removing the item display views based on the visibility of the layout items.
+
+This is a shortcut method for -visibleItemsForItems:. */
 - (void) setVisibleItems: (NSArray *)visibleItems
 {
 	return [self setVisibleItems: visibleItems forItems: [self items]];
 }
-/** Returns the visible child items of the receiver. 
-    You shouldn't need to call this method by yourself unless you write an 
-    ETCompositeLayout subclass which usually requires the receiver displays 
-    layout items which doesn't belong to it, as children, but to another item 
-    group. */
+/** Returns the visible child items of the receiver.
+
+You shouldn't need to call this method by yourself, unless you write an
+ETCompositeLayout subclass which usually requires the receiver displays layout
+items, that don't belong to it, as children. */
 - (NSArray *) visibleItemsForItems: (NSArray *)items
 {
-	ETContainer *container = nil;
 	NSMutableArray *visibleItems = [NSMutableArray array];
-	NSEnumerator  *e = [items objectEnumerator];
-	ETLayoutItem *item = nil;
-	
-	if ([self isContainer])
-		container = (ETContainer *)[self view];
-	
-	while ((item = [e nextObject]) != nil)
+
+	FOREACH(items, item, ETLayoutItem *)
 	{
 		if ([item isVisible])
 			[visibleItems addObject: item];
 	}
-	
+
 	return visibleItems;
 }
 
 /** Sets the visible child items of the receiver, by taking care of inserting
-    and removing the item display views based on the visibility of the layout 
-    items.
-    This method is typically called by the layout of the receiver once the 
-    layout rendering is finished in order to adjust the visibility of views and 
-    update the visible property of the child items. 
-    You shouldn't need to call this method by yourself 
-    (see -visibleItemsForItems:). */
+and removing the item display views based on the visibility of the layout items.
+
+This method is typically called by the layout of the receiver once the layout 
+rendering is finished, in order to adjust the visibility of views and update the 
+visible property of the child items. You shouldn't need to call this method by 
+yourself (see -visibleItemsForItems:). */
 - (void) setVisibleItems: (NSArray *)visibleItems forItems: (NSArray *)items
 {
 // FIXME: Make a bottom top traversal to find the first view which can be used 
@@ -1161,13 +1155,11 @@ the receiver immediate children to the source. */
 // or supported because all ETLayoutItemGroup instances must embed a container.
 // This last point is going to become purely optional.
 	ETContainer *container = nil;
-	NSEnumerator  *e = [items objectEnumerator];
-	ETLayoutItem *item = nil;
-	
+
 	if ([self isContainer])
 		container = (ETContainer *)[self view];
-	
-	while ((item = [e nextObject]) != nil)
+
+	FOREACH(items, item, ETLayoutItem *)
 	{
 		if ([visibleItems containsObject: item])
 		{
