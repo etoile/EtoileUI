@@ -215,6 +215,7 @@ Returns '/' if indexPath is nil or empty. */
 {
 	NSString *path = @"/";
 	ETLayoutItem *item = self;
+	NSString *name = nil;
 	unsigned int index = NSNotFound;
 
 	for (unsigned int i = 0; i < [indexPath length]; i++)
@@ -232,9 +233,10 @@ Returns '/' if indexPath is nil or empty. */
 			@"number", index + 1, indexPath, i);
 
 		item = [(ETLayoutItemGroup *)item itemAtIndex: index];
-		if ([item name] != nil && [item isEqual: @""] == NO)
+		name = [item name];
+		if (name != nil && [name isEqualToString: @""] == NO)
 		{
-			path = [path stringByAppendingPathComponent: [item name]];
+			path = [path stringByAppendingPathComponent: name];
 		}
 		else
 		{
