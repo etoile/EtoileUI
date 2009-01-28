@@ -1359,10 +1359,8 @@ length equal one. */
 - (NSMutableIndexSet *) selectionIndexes
 {
 	NSMutableIndexSet *indexes = [NSMutableIndexSet indexSet];
-	NSEnumerator *e = [[self selectionIndexPaths] objectEnumerator];
-	NSIndexPath *indexPath = nil;
 
-	while ((indexPath = [e nextObject]) != nil)
+	FOREACH([self selectionIndexPaths], indexPath, NSIndexPath *)
 	{
 		if ([indexPath length] == 1)
 			[indexes addIndex: [indexPath firstIndex]];
@@ -1396,10 +1394,7 @@ Posts an ETItemGroupSelectionDidChangeNotification. */
 - (void) collectSelectionIndexPaths: (NSMutableArray *)indexPaths
                      relativeToItem: (ETLayoutItemGroup *)pathBaseItem
 {
-	NSEnumerator *e = [[self items] objectEnumerator];
-	id item = nil;
-
-	while ((item = [e nextObject]) != nil)
+	FOREACHI([self items], item)
 	{
 		if ([item isSelected])
 			[indexPaths addObject: [item indexPathFromItem: pathBaseItem]];
@@ -1432,10 +1427,7 @@ time interval on a subtree that consists of thousand items or more. */
 - (void) applySelectionIndexPaths: (NSMutableArray *)indexPaths 
                    relativeToItem: (ETLayoutItemGroup *)pathBaseItem
 {
-	NSEnumerator *e = [[self items] objectEnumerator];
-	id item = nil;
-
-	while ((item = [e nextObject]) != nil)
+	FOREACHI([self items], item)
 	{
 		NSIndexPath *itemIndexPath = [item indexPathFromItem: pathBaseItem];
 		if ([indexPaths containsObject: itemIndexPath])
