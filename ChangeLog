@@ -1,5 +1,13 @@
 2009-01-28  Quentin Mathe <qmathe@club-internet.fr>
 
+	* ETTableLayout:
+	Rewritten a bit various methods to be shorter by using more syntatic sugar.
+	(-setLayoutView:): Modified to use FOREACH, A, ETLayoutItemPboardType 
+	constant and -tableView.
+	(-setDisplayedProperties:, -selectedItems): Modified to use FOREACH.
+
+2009-01-28  Quentin Mathe <qmathe@club-internet.fr>
+
 	* ETPickboard:
 	Corrected header import statements and removed extra tab or unecessary 
 	spacing in various methods.

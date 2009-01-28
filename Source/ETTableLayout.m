@@ -93,17 +93,15 @@
 {
 	[super setLayoutView: protoView];
 
-	NSTableView *tv = [(NSScrollView *)[self layoutView] documentView];
-	NSEnumerator *e = [[tv tableColumns] objectEnumerator];
-	NSTableColumn *column = nil;
+	NSTableView *tv = [self tableView];
 	
 	/* ivar cannot be initialized by overriding -initWithLayoutView: because 
 	   superclass initializer called -loadNibNamed: before returning, moreover
-	   the ivar must reset for each new layout view. */
+	   the ivar must be reset for each new layout view. */
 	ASSIGN(_propertyColumns, [NSMutableDictionary dictionary]);
 
 	/* Retain initial columns to be able to restore exactly identical columns later */	
-	while ((column = [e nextObject]) != nil)
+	FOREACH([tv tableColumns], column, NSTableColumn *)
 	{
 		NSString *colId = [column identifier];
 		
@@ -115,10 +113,11 @@
 		[_propertyColumns setObject: column forKey: colId];
 	}
 	/* Set up a list view using a single column without identifier */
-	[tv registerForDraggedTypes: [NSArray arrayWithObject: @"ETLayoutItemPboardType"]];
+	[tv registerForDraggedTypes: A(ETLayoutItemPboardType)];
 
 	if ([tv dataSource] == nil)
 		[tv setDataSource: self];
+
 	if ([tv delegate] == nil)
 		[tv setDelegate: self];
 }
@@ -161,7 +160,7 @@ and inserted immediately.
 The property names are used as the column identifiers. */
 - (void) setDisplayedProperties: (NSArray *)properties
 {
-	//ETDebugLog(@"Set displayed properties %@ of layout %@", properties, self);
+	ETDebugLog(@"Set displayed properties %@ of layout %@", properties, self);
 
 	if (properties == nil)
 	{
@@ -169,25 +168,19 @@ The property names are used as the column identifiers. */
 			@"-setDisplayedProperties argument must never be nil", self];
 	}
 
-	NSMutableArray *displayedProperties = [properties mutableCopy];
 	NSTableView *tv = [self tableView];
-	/* We cannot enumerate [tv tableColumns] directly because we remove columns */
-	NSEnumerator *e = [[NSArray arrayWithArray: [tv tableColumns]] objectEnumerator];
-	NSTableColumn *column = nil;
-	NSString *property = nil;
 	
-	/* Remove all existing columns */
-	while ((column = [e nextObject]) != nil)
-		[tv removeTableColumn: column];
-	
-	/* Add all columns to be displayed */
-	e = [displayedProperties objectEnumerator];
-	property = nil;
-	column = nil;
-	
-	while ((property = [e nextObject]) != nil)
+	/* Remove all existing columns
+	   NOTE: We cannot enumerate [tv tableColumns] directly because we remove columns */
+	FOREACH([NSArray arrayWithArray: [tv tableColumns]], column, NSTableColumn *)
 	{
-		column = [_propertyColumns objectForKey: property];
+		[tv removeTableColumn: column];
+	}
+
+	/* Add all columns to be displayed */	
+	FOREACH(properties, property, NSString *)
+	{
+		NSTableColumn *column = [_propertyColumns objectForKey: property];
 		
 		if (column == nil)
 			column = [self _createTableColumnWithIdentifier: property];
@@ -358,6 +351,7 @@ yet, it is created. */
 	/* Enforce a minimal row height to avoid redisplay crashes especially */
 	if (rowHeight < 1.0)
 		rowHeight = 1.0;
+
 	[[self tableView] setRowHeight: rowHeight];
 }
 
@@ -377,23 +371,20 @@ yet, it is created. */
 - (NSRect) displayRectOfItem: (ETLayoutItem *)item
 {
 	int row = [[[self layoutContext] items] indexOfObject: item];
-	
+
 	return [[self tableView] rectOfRow: row];
 }
 
 - (NSArray *) selectedItems
 {
 	NSIndexSet *indexes = [[self tableView] selectedRowIndexes];
-	NSEnumerator *e = [indexes objectEnumerator];
-	NSNumber *index = nil;
+	NSArray *items = [[self layoutContext] items];
 	NSMutableArray *selectedItems = 
 		[NSMutableArray arrayWithCapacity: [indexes count]];
 	
-	while ((index = [e nextObject]) != nil)
+	FOREACH(indexes, index, NSNumber *)
 	{
-		id item = [[[self layoutContext] items] objectAtIndex: [index intValue]];
-		
-		[selectedItems addObject: item];
+		[selectedItems addObject: [items objectAtIndex: [index intValue]]];
 	}
 	
 	return selectedItems;
