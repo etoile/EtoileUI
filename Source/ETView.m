@@ -132,6 +132,7 @@ static ETView *barViewPrototype = nil;
 			RELEASE(_layoutItem);
 		}
 		[self setRenderer: nil];
+		[self setFlipped: YES];
 		[self setTitleBarView: nil]; /* Sets up a +titleBarViewPrototype clone */
 		[self setDisclosable: NO];
 		[self setAutoresizesSubviews: YES];	/* NSView set up */
@@ -313,6 +314,31 @@ static ETView *barViewPrototype = nil;
 {
 	//return _renderer;
 	return [self layoutItem];
+}
+
+/** Returns whether the receiver uses flipped coordinates or not.
+
+Default returned value is YES. */
+- (BOOL) isFlipped
+{
+#ifdef USE_NSVIEW_RFLAGS
+ 	return _rFlags.flipped_view;
+#else
+	return _flipped;
+#endif
+}
+
+/** Unlike NSView, ETContainer uses flipped coordinates by default in order to 
+simplify layout computation.
+
+You can revert to non-flipped coordinates by passing NO to this method. */
+- (void) setFlipped: (BOOL)flag
+{
+#ifdef USE_NSVIEW_RFLAGS
+	_rFlags.flipped_view = flag;
+#else
+	_flipped = flag;
+#endif
 }
 
 /* Embbeded Views */

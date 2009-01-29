@@ -141,7 +141,6 @@ NSString *ETLayoutItemPboardType = @"ETLayoutItemPboardType"; // FIXME: replace 
     {
 		[self setRepresentedPath: @"/"];
 		_subviewHitTest = NO;
-		[self setFlipped: YES];
 		_itemScale = 1.0;
 		_dragAllowed = YES;
 		_dropAllowed = YES;
@@ -479,28 +478,6 @@ Never returns nil. */
 	}
 }
 
-/** Returns whether the receiver uses flipped coordinates or not. 
-	Default returned value is YES. */
-- (BOOL) isFlipped
-{
-#ifdef USE_NSVIEW_RFLAGS
- 	return _rFlags.flipped_view;
-#else
-	return _flipped;
-#endif
-}
-
-/** Unlike NSView, ETContainer uses flipped coordinates by default in order to 
-	simplify layout computation.
-	You can revert to non-flipped coordinates by passing NO to this method. */
-- (void) setFlipped: (BOOL)flag
-{
-#ifdef USE_NSVIEW_RFLAGS
-	_rFlags.flipped_view = flag;
-#else
-	_flipped = flag;
-#endif
-}
 
 /* Scrollers */
 

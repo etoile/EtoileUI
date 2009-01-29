@@ -39,6 +39,13 @@
 
 @class ETLayoutItem;
 
+#ifdef GNUSTEP
+// NOTE: This hack is needed because GNUstep doesn't retrieve -isFlipped in a 
+// consistent way. For example in -[NSView _rebuildCoordinates] doesn't call 
+// -isFlipped and instead retrieve it directly from the rFlags structure.
+#define USE_NSVIEW_RFLAGS
+#endif
+
 /** Display Tree Description
 
  */
@@ -88,7 +95,7 @@
 	the class-shared prototype.
 */
 
- // TODO: Implement ETTitleBarView subclass to handle the title bar as a layout
+// TODO: Implement ETTitleBarView subclass to handle the title bar as a layout
 // item which can be introspected and edited at runtime. A subclass is 
 // necessary to create the title bar of title bars in a lazy way, otherwise
 // ETView instantiation would lead to infinite recursion on the title bar set up.
@@ -101,6 +108,9 @@
 	NSView *_titleBarView;
 	NSView *_wrappedView;
 	NSView *_temporaryView;
+#ifndef USE_NSVIEW_RFLAGS
+	BOOL _flipped;
+#endif
 	BOOL _disclosable;
 	BOOL _usesCustomTitleBar;
 }
@@ -119,6 +129,8 @@
 - (void) setLayoutItemWithoutInsertingView: (ETLayoutItem *)item;
 - (void) setRenderer: (id)renderer;
 - (id) renderer;
+- (BOOL) isFlipped;
+- (void) setFlipped: (BOOL)flag;
 
 /* Embbeded Views */
 

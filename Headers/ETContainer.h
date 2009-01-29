@@ -39,13 +39,6 @@
 #import <EtoileUI/ETView.h>
 #import <EtoileUI/ETLayout.h>
 
-#ifdef GNUSTEP
-// NOTE: This hack is needed because GNUstep doesn't retrieve -isFlipped in a 
-// consistent way. For example in -[NSView _rebuildCoordinates] doesn't call 
-// -isFlipped and instead retrieve it directly from the rFlags structure.
-#define USE_NSVIEW_RFLAGS
-#endif
-
 @class ETLayoutItem, ETLayout, ETLayer, ETLayoutItemGroup, ETSelection, 
 	ETPickboard, ETEvent;
 
@@ -57,9 +50,6 @@ extern NSString *ETLayoutItemPboardType;
 	BOOL _scrollViewShown;
 
 	NSView *_layoutView;
-#ifndef USE_NSVIEW_RFLAGS
-	BOOL _flipped;
-#endif
 
 	BOOL _subviewHitTest;
 	SEL _doubleClickAction;
@@ -84,9 +74,6 @@ extern NSString *ETLayoutItemPboardType;
 - (id) deepCopy;
 
 /* Basic Accessors */
-
-- (BOOL) isFlipped;
-- (void) setFlipped: (BOOL)flag;
 
 - (NSView *) layoutView;
 - (void) setLayoutView: (NSView *)view;
