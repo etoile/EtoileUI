@@ -1,3 +1,10 @@
+2009-01-29  Quentin Mathe <qmathe@club-internet.fr>
+
+	* ETLayout:
+	(-setLayoutContext:): Documented new display view removal code in details.
+	(-render:isNewContent): Moved layout context check to -canRender. Moved 
+	code incorrectly disabled that removes display views to -setLayoutContext:.
+
 2009-01-28  Quentin Mathe <qmathe@club-internet.fr>
 
 	* ETContainer:
