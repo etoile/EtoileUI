@@ -200,7 +200,7 @@ typedef enum _ETSizeConstraintStyle
 
 /* Wrapping Existing View */
 
-- (ETLayoutItem *) layoutItem;
+- (ETLayoutItem *) rootItem;
 - (void) setLayoutView: (NSView *)protoView;
 - (NSView *) layoutView;
 - (void) setUpLayoutView;

@@ -835,7 +835,7 @@ You must call the superclass implementation if you override this method. */
 	See ETUIComponent to understand how an aggregate layout can be wrapped in
 	standalone and self-sufficient component which may act as live filter in 
 	the continous model object flows. */
-- (ETLayoutItem *) layoutItem
+- (ETLayoutItem *) rootItem
 {
 	// FIXME: Implement
 	return nil;
