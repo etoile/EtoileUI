@@ -57,6 +57,22 @@
 
 @interface ETWindowLayer : ETLayer
 {
+	NSWindow *_rootWindow;
+	NSMutableArray *_visibleWindows;
+}
+
+- (void) hideHardWindows;
+- (void) showHardWindows;
+
+@end
+
+/** A window layout based on WM-based windows, or more precisely the windows 
+as implemented by the widget backend (NSWindow in AppKit case). 
+
+For now, only applies to the ETWindowLayer instance returned by 
++[ETLayoutItem windowGroup]. */
+@interface ETWindowLayout : ETLayout
+{
 
 }
 

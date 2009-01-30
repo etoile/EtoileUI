@@ -34,12 +34,15 @@
 	ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
 	THE POSSIBILITY OF SUCH DAMAGE.
  */
- 
-#import <EtoileUI/ETLayer.h>
-#import <EtoileUI/ETLayoutItem+Factory.h>
-#import <EtoileUI/ETWindowItem.h>
-#import <EtoileUI/ETContainer.h>
-#import <EtoileUI/ETCompatibility.h>
+
+#import <EtoileFoundation/Macros.h>
+#import "ETLayer.h"
+#import "ETApplication.h"
+#import "ETContainer.h"
+#import "ETCompatibility.h"
+#import "ETLayoutItem+Factory.h"
+#import "ETWindowItem.h"
+#import "NSWindow+Etoile.h"
 
 #define DEFAULT_FRAME NSMakeRect(0, 0, 200, 200)
 
@@ -96,6 +99,32 @@
 
 @implementation ETWindowLayer
 
+/** Returns a new bordeless panel which can be used as a temporary root window 
+when a layout other than ETWindowLayout is set on the receiver. */
+- (NSWindow *) _createRetainedRootWindow
+{
+	NSPanel *win = [[NSPanel alloc] initWithFrame: [self frame] 
+	                                  styleMask: NSBorderlessWindowMask];
+	[win center];
+	[win setFloatingPanel: YES];
+	[win setContentView: [self supervisorView]];
+
+	return win;
+}
+
+- (id) init
+{
+	SUPERINIT
+
+	_rootWindow = [self _createRetainedRootWindow];
+	_visibleWindows = [[NSMutableArray alloc] init];
+	[self setLayout: [ETWindowLayout layout]];
+
+	return self;
+}
+
+DEALLOC(DESTROY(_rootWindow); DESTROY(_visibleWindows));
+
 - (void) handleAttachViewOfItem: (ETLayoutItem *)item
 {
 	// Disable ETLayoutItemGroup implementation that would remove the display 
@@ -145,5 +174,69 @@
 	[[[item windowDecoratorItem] decoratedItem] setDecoratorItem: nil];
 	RELEASE(item);
 }
+
+- (void) setLayout: (ETLayout *)aLayout
+{
+	if ([_layout isKindOfClass: [ETWindowLayout class]])
+		[self hideHardWindows];
+
+	if ([aLayout isKindOfClass: [ETWindowLayout class]])
+		[self showHardWindows];
+
+	[super setLayout: aLayout];
+}
+
+/** Hides currently visible WM-based windows that decorate the items owned by 
+the receiver. 
+
+You should never call this method unless you write an ETWindowLayout subclass. */
+- (void) hideHardWindows
+{
+	[_visibleWindows removeAllObjects];
+
+	/* Display our root window before ordering out all visible windows, 
+	   it literally covers the small delay that might be needed to order out the 
+	   current windows.
+	   FIXME: Moreover on GNUstep our root window won't receive the focus if we 
+	   try to do that once all current windows have been ordered out. */
+	[_rootWindow setFrame: [[NSScreen mainScreen] visibleFrame] display: NO];
+	[_rootWindow makeKeyAndOrderFront: self];
+
+	FOREACH([ETApp windows], win, NSWindow *)
+	{
+		if ([win isEqual: _rootWindow] == NO)
+		{
+			if ([win isVisible] && [win isSystemPrivateWindow] == NO)
+			{
+				ETDebugLog(@"%@ will order out %@", self, win);
+				[_visibleWindows addObject: win];
+				[win orderOut: self];
+			}
+		}	
+	}
+}
+
+/** Shows all the previously visible WM-based windows that decorate the 
+items owned by the receiver. 
+
+You should never call this method unless you write an ETWindowLayout subclass. */
+- (void) showHardWindows
+{
+	FOREACH(_visibleWindows, win, NSWindow *)
+	{
+		[win orderFront: self];
+	}
+	[_rootWindow orderOut: self];
+}
+
+
+@end
+
+@implementation ETWindowLayout
+
+/*- (void) tearDown
+{
+	
+}*/
 
 @end

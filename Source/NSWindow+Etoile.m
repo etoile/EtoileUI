@@ -75,7 +75,7 @@
 	return [self initWithContentRect: rect
 					       styleMask: windowStyle
 							 backing: NSBackingStoreBuffered
-							   defer: YES];
+							   defer: NO];
 }
 
 - (void) setFrameSizeFromTopLeft: (NSSize)size

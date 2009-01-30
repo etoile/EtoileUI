@@ -1,3 +1,15 @@
+2009-01-30  Quentin Mathe <qmathe@club-internet.fr>
+
+	* ETLayer:
+	Added an experimental ETWindowLayout with the possibility to switch the 
+	layout of the window layer from a WM-based layout to a layout such as 
+	outline, table, flow etc.
+	ETWindowLayer
+	Added _visibleWindows and _rootWindow ivar.
+	(-init, -dealloc): Updated.
+	(-_createRetainedRootWindow, -hideHardWindows, -showHardWindows): Added.
+	(-setLayout:): Overriden to use the previous two methods.
+	
 2009-01-29  Quentin Mathe <qmathe@club-internet.fr>
 
 	* ETLayout:
