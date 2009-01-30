@@ -59,4 +59,6 @@
 - (id) renderView: (id)view;
 - (id) renderMenu: (id)menu;
 
+- (NSArray *) itemsWithSubviewsOfView: (NSView *)view;
+
 @end

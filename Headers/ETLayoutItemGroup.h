@@ -205,22 +205,29 @@ extern NSString *kDelegateProperty; /** delegate property name */
 @end
 
 
-/** Informal source protocol to can be implemented by the source object set with 
--[ETLayoutItemGroup setSource:]. */
+/** Informal flat source protocol based on child index, which can be implemented 
+by the source object set with -[ETLayoutItemGroup setSource:]. */
 @interface NSObject (ETLayoutItemGroupIndexSource)
 
-/* Flat source protocol based on child index. */
 - (int) numberOfItemsInItemGroup: (ETLayoutItemGroup *)baseItem;
 - (ETLayoutItem *) itemGroup: (ETLayoutItemGroup *)baseItem itemAtIndex: (int)index;
 
-/* Tree source protocol based on index path. */
+@end
+		
+/** Informal tree source protocol based on index path, which can be implemented 
+by the source object set with -[ETLayoutItemGroup setSource:]. */
+@interface NSObject (ETLayoutItemGroupPathSource)
+
 - (int) itemGroup: (ETLayoutItemGroup *)baseItem
 	numberOfItemsAtPath: (NSIndexPath *)indexPath;
 - (ETLayoutItem *) itemGroup: (ETLayoutItemGroup *)baseItem 
 	itemAtPath: (NSIndexPath *)indexPath;
 
-- (NSArray *) displayedItemPropertiesInItemGroup: (ETLayoutItemGroup *)itemGroup;
+@end
 
+/** Additional methods that makes up the informal source protocol. */
+@interface NSObject (ETLayoutItemGroupSource)
+- (NSArray *) displayedItemPropertiesInItemGroup: (ETLayoutItemGroup *)itemGroup;
 @end
 
 /** Informal delegate protocol that can be implemented by the object set with 

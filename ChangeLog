@@ -1,5 +1,20 @@
 2009-01-30  Quentin Mathe <qmathe@club-internet.fr>
 
+	* ETLayoutItemGroup:
+	For clarity, splitted the index and path based informal source protocol into 
+	two distinct protocols.
+	(-itemsWithSubviewsOfView:): Moved to ETLayoutItemBuilder.s
+	(-handleAttachViewOfItem:, -handleDetachViewOfItem:, -handleAttachItem:, 
+	-handleDetachItem:): Improved the documentation and tidied the code a bit.
+	Improved and reformatted the documentation of methods related to the 
+	represented object or source object.
+	* ETLayoutItemBuilder:
+	(-renderView:): Improved to set the persistent frame on each built item. 
+	Thereby the existing view frames are never lost when we set a layout 
+	(by default the layout of each built item group is nil here).
+
+2009-01-30  Quentin Mathe <qmathe@club-internet.fr>
+
 	* ETLayer:
 	Added an experimental ETWindowLayout with the possibility to switch the 
 	layout of the window layer from a WM-based layout to a layout such as 

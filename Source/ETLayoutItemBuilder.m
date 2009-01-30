@@ -182,11 +182,13 @@
 		[container setAutoresizingMask: NSViewHeightSizable | NSViewWidthSizable];*/
 		[container setFlipped: [view isFlipped]];
 		[container setEnablesHitTest: YES];
+		[item setPersistentFrame: [view frame]];
 
 		while ((subview = [e nextObject]) != nil)
 		{
 			RETAIN(subview);
 			id childItem = [self renderView: subview];
+			[childItem setPersistentFrame: [subview frame]];
 			[item addItem: childItem];
 			//[container addSubview: [childItem displayView]];
 			//[container addSubview: subview];
@@ -214,6 +216,21 @@
 
 - (id) renderMenu: (id)menu
 {
+	return nil;
+}
+
+/** Returns existing subviews of the receiver as layout items.
+
+First checks whether the receiver responds to -layoutItem and in such case
+doesn't already include child items for these subviews. If no, either the
+subview is an ETView or an NSView instance. When the subview is NSView-based, a
+new layout item is instantiated by calling +itemWithView: with subview as
+parameter. Then the new item is automatically inserted as a child item in the
+layout item representing the receiver. If the subview is ETView-based, the item
+representing the subview is immediately inserted in the receiver item. */
+- (NSArray *) itemsWithSubviewsOfView: (NSView *)view
+{
+	// FIXME: Implement. But is this method really necessary...
 	return nil;
 }
 

@@ -176,12 +176,12 @@ The returned copy is mutable because ETLayoutItemGroup cannot be immutable. */
 {
 	ETLayoutItemGroup *item = [super deepCopy];
 	NSArray *copiedChildItems = [[self items] valueForKey: @"deepCopy"];
-	
+
 	[item addItems: copiedChildItems];
 	// TODO: Test if using -autorelease instead of -release results in a quicker 
 	// deep copy (when plenty of items are involved).
 	[copiedChildItems makeObjectsPerformSelector: @selector(release)];
-	
+
 	return item;
 }
 
@@ -196,6 +196,8 @@ The returned copy is mutable because ETLayoutItemGroup cannot be immutable. */
 
 /* Finding Container */
 
+/** Returns YES. An ETLayoutItemGroup is always a group and a collection by 
+default. */
 - (BOOL) isGroup
 {
 	return YES;
@@ -428,27 +430,16 @@ presented by the receiver. */
 
 /* Manipulating Layout Item Tree */
 
-/** Returns existing subviews of the receiver as layout items. 
-	First checks whether the receiver responds to -layoutItem and in such case 
-	doesn't already include child items for these subviews. 
-	If no, either the subview is an ETView or an NSView 
-	instance. When the subview is NSView-based, a new layout item is 
-	instantiated by calling +layoutItemWithView: with subview as parameter. 
-	Then the new item is automatically inserted as a child item in the layout 
-	item representing the receiver. If the subview is ETView-based, the item
-	reprensenting the subview is immediately inserted in the receiver item. */
-- (NSArray *) itemsWithSubviewsOfView: (NSView *)view
-{
-	// FIXME: Implement
-	return nil;
-}
+/** Handles the view visibility of child items with a role similar to 
+-setVisibleItems: that is called by layouts. 
 
-/** This method handles the view visibility of child items with a role similar 
-	to -setVisibleItems: that is called by layouts. It is used when you insert 
-	an item on an item group without layout, otherwise the view insertion is 
-	managed by requesting a layout update which ultimately calls back 
-	-setVisibleItems:. 
-	Having a null layout class may be a solution to get rid of this. */
+This method is called when you insert an item in an item group with a layout 
+which doesn't require an update in that case, otherwise the view insertion is 
+managed by requesting a layout update which ultimately calls back 
+-setVisibleItems:. 
+
+NOTE: Having a null layout class may be a solution to get rid of 
+-handleAttachViewOfItem: and -handleDetachViewOfItem:. */
 - (void) handleAttachViewOfItem: (ETLayoutItem *)item
 {
 	/* Typically needed if your item has no view and gets added to an item 
@@ -472,29 +463,52 @@ presented by the receiver. */
 	if ([item displayView] == nil) /* No view to detach */
 		return;
 
-  	[[item displayView] removeFromSuperview];
+	[[item displayView] removeFromSuperview];
 }
 
+/** <override-dummy />Handles any necessary adjustments to be done right before
+item is made a child item of the receiver. This method is available to be
+overriden in subclasses that want to extend or modify the item insertion
+behavior.
+
+The default implementation takes to care to remove item from any existing parent 
+item, then updates the parent item reference to be the receiver.<br />
+You must always call the superclass implementation.
+
+Symetric method to -handleDetachItem: */
 - (void) handleAttachItem: (ETLayoutItem *)item
 {
 	RETAIN(item);
-	if ([item parentLayoutItem] != nil)
-		[[item parentLayoutItem] removeItem: item];
-	[item setParentLayoutItem: self];
+	if ([item parentItem] != nil)
+	{
+		[[item parentItem] removeItem: item];
+	}
+	[item setParentItem: self];
 	RELEASE(item);
 	[self handleAttachViewOfItem: item];
 }
 
+/** <override-dummy />Handles any necessary adjustments to be done right before
+item is removed as a child item from the receiver. This method is available to
+be overriden in subclasses that want to extend or modify the item removal
+behavior.
+
+The default implementation only updates the parent item reference to be nil. <br />
+You must always call the superclass implementation.
+
+Symetric method to -handleAttachItem: */
 - (void) handleDetachItem: (ETLayoutItem *)item
 {
-	[item setParentLayoutItem: nil];
+	[item setParentItem: nil];
 	[self handleDetachViewOfItem: item];
 }
 
-/* Marks if needed the receiver as having new content to be layouted, otherwise 
-   the layout is told the layout item tree hasn't been mutated. 
-   Only valid when the layout item tree is built directly from the represented 
-   object by the mean of ETCollection protocol. */
+/** See -[ETLayoutItemGroup setRepresentedObject:].
+
+If necessary, marks the receiver as having new content to be layouted, otherwise
+the layout is told the layout item tree hasn't been mutated. Although this only
+holds when the layout item tree is built directly from the represented object by
+the mean of ETCollection protocol. */
 - (void) setRepresentedObject: (id)model
 {
 	[super setRepresentedObject: model];
@@ -502,40 +516,40 @@ presented by the receiver. */
 		[self setHasNewContent: YES];
 }
 
-/** Returns YES when the item tree mutation are propagated to the represented 
-	object, otherwise returns NO if it's up to you to reflect structural changes
-	of the layout item tree onto the model object graph. By default, this method 
-	returns YES.
-	Mutations are triggered by calling children or collection related 
-	methods like -addItem:, -insertItem:atIndex:, removeItem:, addObject: etc. 
-	WARNING: The returned value is meaningful only if the receiver is a base 
-	item. In this case, the value applies to all related descendant items (by
-	being inherited through ETLayoutItem and ETLayoutItemGroup implementation). */
+/** Returns YES when the item tree mutation are propagated to the represented
+object, otherwise returns NO if it's up to you to reflect structural changes of
+the layout item tree onto the model object graph. By default, this method
+returns YES.
+
+Mutations are triggered by calling children or collection related methods
+like -addItem:, -insertItem:atIndex:, removeItem:, addObject: etc. 
+
+<strong>The returned value is meaningful only if the receiver is a base item.
+In this case, the value applies to all related descendant items (by being
+looked up by descendant items).</strong> */
 - (BOOL) shouldMutateRepresentedObject
 {
 	return _shouldMutateRepresentedObject;
 }
 
-/** Sets whether the layout item tree mutation are propagated to the represented 
-	object or not. 
-	WARNING: This value set is meaningful only if the receiver is a base item, 
-	otherwise the value is simply ignored by ETLayoutItem and ETLayoutItemGroup 
-	implementation.  */
+/** Sets whether the layout item tree mutation are propagated to the represented
+object or not. 
+
+<strong>The value set is meaningful only if the receiver is a base item, 
+otherwise the value is simply ignored.</strong>  */
 - (void) setShouldMutateRepresentedObject: (BOOL)flag
 {
 	_shouldMutateRepresentedObject = flag;
 }
 
-/** Returns YES when the child items are automatically generated by wrapping
-	the elements of the represented object collection into ETLayoutItem or 
-	ETLayoutItemGroup instances. 
-	To use represented objects as providers, you have to set the source of a 
-	container to be the layout item bound to it. This item is returned by 
-	-[ETContainer layoutItem]. The code would be something like 
-	[container setSource: [container layoutItem]].
-	WARNING: This value set is meaningful only if the receiver is a base item, 
-	otherwise the value is simply ignored by ETLayoutItem and ETLayoutItemGroup 
-	implementation. */
+/** Returns YES when the child items are automatically generated by wrapping the
+elements of the represented object collection into ETLayoutItem or
+ETLayoutItemGroup instances.
+
+To use represented objects as providers in the layout item tree connected to 
+the receiver, you have to set the source of the receiver to be the receiver 
+itself. The code would be something like <example>
+[itemGroupsetSource: itemGroup]</example>. */
 - (BOOL) usesRepresentedObjectAsProvider
 {
 	return ([[[self baseItem] source] isEqual: [self baseItem]]);
@@ -555,10 +569,16 @@ object, then this method returns nil. */
 source can be any objects conforming to ETIndexSource or ETPathSource protocol.
 
 So you can write you own data source object by implementing either:
-	1) numberOfItemsInContainer:
-	   container:itemAtIndex:
-	2) container:numberOfItemsAtPath:
-	   container:itemAtPath:
+<enum>
+<item><list>
+<item>-numberOfItemsInItemGroup:</item>
+<item>-itemGroup:itemAtIndex:</item>
+</list></item>
+<item><list>
+<item>-itemGroup:numberOfItemsAtPath:</item>
+<item>-itemGroup:itemAtPath:</item>
+</list></item>
+</enum>
 
 Another common solution is to use the receiver itself as a source, in that 
 case -usesRepresentedObjectAsProvider returns YES. And the receiver will 
