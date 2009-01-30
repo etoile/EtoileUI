@@ -1,9 +1,18 @@
 2009-01-30  Quentin Mathe <qmathe@club-internet.fr>
 
 	* ETLayoutItemGroup:
+	(-render:dirtyRect:inView:): Modified to draw the layout item tree 
+	encapsulated in the layout, this way we can really support arbitrary UI 
+	composition.
+	(-display:item:dirtyRect:inView:): Fixed to check the flipping correctly. 
+	(-unmakeGroup): Rewritten to be usable.
+
+2009-01-30  Quentin Mathe <qmathe@club-internet.fr>
+
+	* ETLayoutItemGroup:
 	For clarity, splitted the index and path based informal source protocol into 
 	two distinct protocols.
-	(-itemsWithSubviewsOfView:): Moved to ETLayoutItemBuilder.s
+	(-itemsWithSubviewsOfView:): Moved to ETLayoutItemBuilder.
 	(-handleAttachViewOfItem:, -handleDetachViewOfItem:, -handleAttachItem:, 
 	-handleDetachItem:): Improved the documentation and tidied the code a bit.
 	Improved and reformatted the documentation of methods related to the 

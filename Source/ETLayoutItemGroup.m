@@ -862,7 +862,7 @@ the receiver immediate children to the source. */
 	   view/container frame modification on layout view insertion */
 	[self setAutolayout: NO];
 	
-	[_layout setLayoutContext: nil];
+	[_layout setLayoutContext: nil]; /* Ensures -[ETLayout tearDown] is called */
 	ASSIGN(_layout, layout);
 	[self setHasNewLayout: YES];
 	[layout setLayoutContext: self];
@@ -1057,6 +1057,14 @@ the receiver immediate children to the source. */
 		NSRect realDirtyRect = NSIntersectionRect(dirtyRect, [self drawingFrame]);
 		[super render: inputValues dirtyRect: realDirtyRect inView: view];
 		
+		/* Render the layout-specific tree if needed */
+		
+		id layout = [self layout];
+		if ([layout respondsToSelector: @selector(rootItem)])
+		{
+			[self display: inputValues item: [layout rootItem] dirtyRect: dirtyRect inView: view];
+		}
+
 		/* Render child items (if the layout doesn't handle it) */
 		
 		if (usesLayoutView)
@@ -1131,7 +1139,7 @@ the receiver immediate children to the source. */
 		[transform translateXBy: [item x] yBy: [item y]];
 	}
 	/* Flip if needed */
-	if ([renderView isFlipped])
+	if ([self isFlipped] != [item isFlipped]) /* != [NSGraphicContext/renderView isFlipped] */
 	{
 		[transform translateXBy:0.0 yBy: [item height]];
 		[transform scaleXBy:1.0 yBy:-1.0];
@@ -1261,18 +1269,20 @@ yourself (see -visibleItemsForItems:). */
 /** Dismantles the receiver layout item group. If all items owned by the item */
 - (NSArray *) unmakeGroup
 {
-	ETLayoutItemGroup *parent = [self parentLayoutItem];
 	NSArray *items = [self items];
-	//int itemGroupIndex = [parent indexOfItem: self];
+	int itemGroupIndex = [_parentItem indexOfItem: self];
 	
 	RETAIN(self);
-	[parent removeItem: self];
+	[_parentItem removeItem: self];
 	/* Delay release the receiver until we fully step out of receiver's 
 	   instance methods (like this method). */
 	AUTORELEASE(self);
 
-	// FIXME: Implement -insertItems:atIndex:
-	//[parent insertItems: items atIndex: itemGroupIndex];		
+	// TODO: Use a reverse object enumerator or eventually implement -insertItems:atIndex:
+	FOREACH([self items], item, ETLayoutItem *)
+	{
+		[_parentItem insertItem: item atIndex: itemGroupIndex];		
+	}
 	
 	return items;
 }
