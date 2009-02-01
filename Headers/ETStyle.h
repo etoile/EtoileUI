@@ -108,7 +108,7 @@
      layoutItem: (ETLayoutItem *)item 
 	  dirtyRect: (NSRect)dirtyRect;
 	  
-- (void) drawImage: (NSImage *)itemImage;
+- (void) drawImage: (NSImage *)itemImage inRect:(NSRect)frame;
 - (void) drawSelectionIndicatorInRect: (NSRect)indicatorRect;
 
 #if 0

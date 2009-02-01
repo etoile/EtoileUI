@@ -140,7 +140,8 @@ static ETBasicItemStyle *sharedBasicItemStyle = nil;
 	// methods don't take in account it and simply redraw all their content.
 
 	if ([item valueForProperty: kETImageProperty] != nil)
-		[self drawImage: [item valueForProperty: kETImageProperty]]; 
+		[self drawImage: [item valueForProperty: kETImageProperty]
+		         inRect: [item frame]]; 
 
 	if ([item isSelected])
 		[self drawSelectionIndicatorInRect: [item drawingFrame]];
@@ -149,14 +150,13 @@ static ETBasicItemStyle *sharedBasicItemStyle = nil;
 }
 
 /** Draws an image at the origin of the current graphics coordinates. */
-- (void) drawImage: (NSImage *)itemImage
+- (void) drawImage: (NSImage *)itemImage inRect: (NSRect)frame
 {
 	//ETLog(@"Drawing image %@ in view %@", [item image], [NSView focusView]);
-	NSSize imgSize = [itemImage size];
-	[itemImage drawAtPoint: NSZeroPoint 
-					 fromRect: NSMakeRect(0, 0, imgSize.width, imgSize.height) 
-					operation: NSCompositeSourceOver 
-					 fraction: 1.0];
+	[itemImage drawInRect: frame
+	             fromRect: NSZeroRect // Draw the entire image
+	            operation: NSCompositeSourceOver 
+	             fraction: 1.0];
 }
 
 /** Draws a selection indicator that covers the whole item frame if 
