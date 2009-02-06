@@ -74,3 +74,6 @@ static inline NSRect ETStandardizeRect(NSRect rect)
 
 	return NSMakeRect(minX, minY, width, height);
 }
+
+extern NSRect ETUnionRectWithObjectsAndSelector(NSArray *itemArray, SEL rectSelector);
+
