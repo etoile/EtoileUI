@@ -411,3 +411,30 @@ the application delegate (and eventually NSDocumentController too). */
 }
 
 @end
+
+@implementation NSMenu (Etoile)
+
+/** Adds a menu item initialized with the given parameters to the receiver. */ 
+- (void) addItemWithTitle: (NSString *)aTitle
+                   target: (id)aTarget
+                   action: (SEL)anAction
+            keyEquivalent: (NSString *)aKey
+{
+	NSMenuItem *menuItem = AUTORELEASE([[NSMenuItem alloc] initWithTitle: aTitle
+		action: anAction keyEquivalent: @""]);
+	[menuItem setTarget: aTarget];
+	[self addItem: menuItem];
+}
+
+/** Adds a menu item with a submenu to the receiver. 
+
+The submenu title is set as the menu item title. */ 
+- (void) addItemWithSubmenu: (NSMenu *)aMenu
+{
+	NSMenuItem *menuItem = AUTORELEASE([[NSMenuItem alloc] initWithTitle: [aMenu title]
+		action: NULL keyEquivalent: @""]);
+	[menuItem setSubmenu: aMenu];
+	[self addItem: menuItem];
+}
+
+@end

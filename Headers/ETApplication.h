@@ -89,3 +89,11 @@ enum
                                tag: (int)aTag
                             action: (SEL)anAction;
 @end
+
+@interface NSMenu (Etoile)
+- (void) addItemWithTitle: (NSString *)aTitle
+                   target: (id)aTarget
+                   action: (SEL)anAction
+            keyEquivalent: (NSString *)aKey;
+- (void) addItemWithSubmenu: (NSMenu *)aMenu;
+@end
