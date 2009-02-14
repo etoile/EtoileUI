@@ -35,9 +35,9 @@
 	THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import <EtoileUI/ETStyle.h>
-#import <EtoileUI/ETLayoutItem.h>
-
+#import "ETStyle.h"
+#import "ETLayoutItem.h"
+#import "ETLayoutItemGroup.h"
 
 @implementation ETStyle
 
@@ -117,6 +117,17 @@
 	[[self nextStyle] render: inputValues layoutItem: item dirtyRect: dirtyRect];
 }
 
+/** Notifies the receiver that the styled layout item has been resized.
+
+You can override this method to alter the style state. For example, ETShape 
+overrides it to resize/scale the bezier path as needed.
+
+You must call the superclass implementation. */
+- (void) didChangeItemBounds: (NSRect)bounds
+{
+	[[self nextStyle] didChangeItemBounds: bounds];
+}
+
 @end
 
 
@@ -138,10 +149,17 @@ static ETBasicItemStyle *sharedBasicItemStyle = nil;
 {
 	// FIXME: May be we should better support dirtyRect. The next drawing 
 	// methods don't take in account it and simply redraw all their content.
+	NSImage *itemImage = [item valueForProperty: kETImageProperty];
 
-	if ([item valueForProperty: kETImageProperty] != nil)
-		[self drawImage: [item valueForProperty: kETImageProperty]
-		         inRect: [item frame]]; 
+	if (itemImage != nil)
+	{
+		[self drawImage: itemImage
+		        flipped: [item isFlipped]
+		         inRect: [item drawingFrame]]; 
+	}
+
+	if ([item isGroup] && [(ETLayoutItemGroup *)item isStack])
+		[self drawStackIndicatorInRect: [item drawingFrame]];
 
 	if ([item isSelected])
 		[self drawSelectionIndicatorInRect: [item drawingFrame]];
@@ -150,13 +168,17 @@ static ETBasicItemStyle *sharedBasicItemStyle = nil;
 }
 
 /** Draws an image at the origin of the current graphics coordinates. */
-- (void) drawImage: (NSImage *)itemImage inRect: (NSRect)frame
+- (void) drawImage: (NSImage *)itemImage flipped: (BOOL)itemFlipped inRect: (NSRect)aRect
 {
 	//ETLog(@"Drawing image %@ in view %@", [item image], [NSView focusView]);
-	[itemImage drawInRect: frame
+	BOOL wasFlipped = [itemImage isFlipped];
+	
+	[itemImage setFlipped: itemFlipped];
+	[itemImage drawInRect: aRect
 	             fromRect: NSZeroRect // Draw the entire image
 	            operation: NSCompositeSourceOver 
 	             fraction: 1.0];
+	[itemImage setFlipped: wasFlipped];
 }
 
 /** Draws a selection indicator that covers the whole item frame if 
@@ -201,6 +223,27 @@ static ETBasicItemStyle *sharedBasicItemStyle = nil;
 	[[[NSColor darkGrayColor] colorWithAlphaComponent: 0.55] set];
 	[NSBezierPath strokeRect: normalizedIndicatorRect];
 #endif
+
+	[[NSGraphicsContext currentContext] setShouldAntialias: gstateAntialias];
+}
+
+/** Draws a stack/pile indicator that covers the whole item frame if 
+indicatorRect is equal to it. */
+- (void) drawStackIndicatorInRect: (NSRect)indicatorRect
+{
+	// NOTE: Read comments in -drawSelectionIndicatorInRect:.
+	BOOL gstateAntialias = [[NSGraphicsContext currentContext] shouldAntialias];
+	[[NSGraphicsContext currentContext] setShouldAntialias: NO];
+	NSRect normalizedIndicatorRect = NSInsetRect(NSIntegralRect(indicatorRect), 0.5, 0.5);
+	NSBezierPath *roundedRectPath = [NSBezierPath bezierPathWithRoundedRect: normalizedIndicatorRect xRadius: 15 yRadius: 15];
+	
+	/* Draw the interior */
+	[[[NSColor darkGrayColor] colorWithAlphaComponent: 0.9] setFill];
+	[roundedRectPath fill];
+
+	/* Draw the outline */
+	[[[NSColor yellowColor] colorWithAlphaComponent: 0.55] setStroke];
+	[roundedRectPath stroke];
 
 	[[NSGraphicsContext currentContext] setShouldAntialias: gstateAntialias];
 }

@@ -92,6 +92,8 @@
 - (void) render: (NSMutableDictionary *)inputValues 
      layoutItem: (ETLayoutItem *)item 
 	  dirtyRect: (NSRect)dirtyRect;
+	  
+- (void) didChangeItemBounds: (NSRect)bounds;
 
 @end
 
@@ -99,7 +101,6 @@
 @interface ETBasicItemStyle : ETStyle
 {
 	BOOL _titleVisible;
-	//ETSelection _selectionStyle;
 }
 
 + (id) sharedInstance;
@@ -108,15 +109,13 @@
      layoutItem: (ETLayoutItem *)item 
 	  dirtyRect: (NSRect)dirtyRect;
 	  
-- (void) drawImage: (NSImage *)itemImage inRect:(NSRect)frame;
+- (void) drawImage: (NSImage *)itemImage flipped: (BOOL)itemFlipped inRect: (NSRect)aRect;
 - (void) drawSelectionIndicatorInRect: (NSRect)indicatorRect;
+- (void) drawStackIndicatorInRect: (NSRect)indicatorRect;
 
-#if 0
-- (BOOL) setTitleVisible: (BOOL)flag;
-- (BOOL) isTitleVisible;
-- (void) drawImageInRect: (NSRect)dirtyRect;
-- (void) drawTitleInRect: (NSRect)dirtyRect;
-- (void) drawSelectionInRect: (NSRect)dirtyRect;
-#endif
+// TODO: Implement
+//- (BOOL) setTitleVisible: (BOOL)flag;
+//- (BOOL) isTitleVisible;
+//- (void) drawTitleInRect: (NSRect)aRect;
 
 @end

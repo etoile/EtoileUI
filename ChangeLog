@@ -1,3 +1,13 @@
+2009-02-14  Quentin Mathe <qmathe@club-internet.fr>
+
+	* ETStyle:
+	(-[ETStyle didChangeItemBounds:]): Added.
+	ETBasicItemStyle
+	(-render:layoutItem:dirtyRect:): Updated.
+	(-drawImage:flipped:inRect:): Modified to draw properly even if the item is 
+	flipped.
+	(-drawStackIndicatorInRect:): Added.
+
 2009-01-30  Quentin Mathe <qmathe@club-internet.fr>
 
 	* ETLayoutItemGroup:
