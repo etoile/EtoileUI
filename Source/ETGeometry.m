@@ -52,6 +52,9 @@ itemArray must only contain objects of the same type.
 A zero rect is returned when itemArray is empty. */
 NSRect ETUnionRectWithObjectsAndSelector(NSArray *itemArray, SEL rectSelector)
 {
+	if ([itemArray count] == 0)
+		return NSZeroRect;
+
 	NSRect rect = NSZeroRect;
 	RectIMP rectFunction = (RectIMP)[[itemArray objectAtIndex: 0] methodForSelector: rectSelector];
 
