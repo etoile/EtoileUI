@@ -89,7 +89,9 @@ static NSRect shapeFactoryRect = {{ 0, 0 }, { 150, 100 }};
 + (ETShape *) ovalShapeWithRect: (NSRect)aRect
 {
 	NSBezierPath *path = [NSBezierPath bezierPathWithOvalInRect: aRect];
-	return AUTORELEASE([[self alloc] initWithBezierPath: path]);
+	ETShape *shape = AUTORELEASE([[self alloc] initWithBezierPath: path]);
+	[shape setPathResizeSelector: @selector(bezierPathWithOvalInRect:)];
+	return shape;
 }
 
 /** Returns an oval shape that fits in the width and height of +shapeFactoryRect. */
@@ -292,5 +294,10 @@ static NSRect shapeFactoryRect = {{ 0, 0 }, { 150, 100 }};
 	[[NSGraphicsContext currentContext] setShouldAntialias: gstateAntialias];
 }
 
+- (void) didChangeItemBounds: (NSRect)bounds
+{
+	[self setBounds: bounds];
+	[super didChangeItemBounds: bounds];
+}
 
 @end

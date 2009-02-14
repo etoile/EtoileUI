@@ -97,4 +97,6 @@
 - (void) drawInRect: (NSRect)rect;
 - (void) drawSelectionIndicatorInRect: (NSRect)indicatorRect;
 
+- (void) didChangeItemBounds: (NSRect)bounds;
+
 @end
