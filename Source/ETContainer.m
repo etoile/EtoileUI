@@ -525,7 +525,10 @@ Never returns nil. */
 	decorator chain bound to its layout item. */
 - (void) setHasVerticalScroller: (BOOL)scroll
 {
-	[self setShowsScrollView: YES];
+	if (scroll)
+	{
+		[self setShowsScrollView: YES];
+	}
 	[[self scrollView] setHasVerticalScroller: scroll];
 	
 	/* Updated NSBrowser, NSOutlineView enclosing scroll view etc. */
@@ -546,7 +549,10 @@ Never returns nil. */
 	decorator chain bound to its layout item. */
 - (void) setHasHorizontalScroller: (BOOL)scroll
 {
-	[self setShowsScrollView: YES];
+	if (scroll)
+	{
+		[self setShowsScrollView: YES];
+	}
 	[[self scrollView] setHasHorizontalScroller: scroll];
 	
 	/* Updated NSBrowser, NSOutlineView enclosing scroll view etc. */
@@ -720,6 +726,12 @@ Never returns nil. */
 	
 	scrollViewWrapper = [[ETScrollView alloc] initWithFrame: [self frame]];
 	AUTORELEASE(scrollViewWrapper);
+
+	NSScrollView *scrollView = (NSScrollView *)[scrollViewWrapper mainView];
+	BOOL noVisibleScrollers = ([scrollView hasVerticalScroller] == NO &&
+		[scrollView hasHorizontalScroller] == NO);
+	NSAssert2(noVisibleScrollers, @"New scrollview %@ wrapper is expected have "
+		"no visible scrollers to be used by %@", scrollViewWrapper, self);
 
 	return [scrollViewWrapper layoutItem];
 }

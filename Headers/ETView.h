@@ -113,6 +113,9 @@
 #endif
 	BOOL _disclosable;
 	BOOL _usesCustomTitleBar;
+#ifndef GNUSTEP
+	BOOL _wasJustRedrawn;
+#endif
 }
 
 /* Title Bar */

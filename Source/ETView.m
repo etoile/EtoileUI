@@ -48,6 +48,8 @@ NSString *ETViewTitleBarViewPrototypeDidChangeNotification = @"ETViewTitleBarVie
 #ifndef GNUSTEP
 @interface NSView (CocoaPrivate)
 - (void) _recursiveDisplayAllDirtyWithLockFocus: (BOOL)lockFocus visRect: (NSRect)aRect;
+- (void) _recursiveDisplayRectIfNeededIgnoringOpacity: (NSRect)aRect 
+	isVisibleRect: (BOOL)isVisibleRect rectIsVisibleRectForView: (BOOL)isRectForView topView: (BOOL)isTopView;
 @end
 #endif
 
@@ -132,7 +134,7 @@ static ETView *barViewPrototype = nil;
 			RELEASE(_layoutItem);
 		}
 		[self setRenderer: nil];
-		[self setFlipped: YES];
+		//[self setFlipped: YES];
 		[self setTitleBarView: nil]; /* Sets up a +titleBarViewPrototype clone */
 		[self setDisclosable: NO];
 		[self setAutoresizesSubviews: YES];	/* NSView set up */
@@ -164,13 +166,15 @@ static ETView *barViewPrototype = nil;
 
 - (oneway void) release
 {
-	/* Note whether the next release call will deallocate the receiver, because 
-	   once the receiver is deallocated you have no way to safely learn if self
-	   is still valid or not.
-	   Take note the retain count is NSExtraRefCount plus one. */
-	BOOL isDeallocated = (NSExtraRefCount(self) == 0);
 	BOOL hasRetainCycle = (_layoutItem != nil);
+	/* Memorize whether the next release call will deallocate the receiver, 
+	   because once the receiver is deallocated you have no way to safely learn 
+	   if self is still valid or not.
+	   Take note the retain count is NSExtraRefCount plus one. */
+	int refCountWas = NSExtraRefCount(self);
 
+	/* Dealloc if only retained by ourself (ref count equal to zero), otherwise 
+	   decrement ref count. */
 #ifdef GNUSTEP
 	[super release];
 #else
@@ -178,15 +182,22 @@ static ETView *barViewPrototype = nil;
 		[self dealloc];
 #endif
 
+	/* Exit if we just got deallocated above. 
+	   In that case, self and _layoutItem are now both deallocated and invalid 
+	   and we must never use them (by sending a message for example). */
+	BOOL isDeallocated = (refCountWas == 0);
+	if (isDeallocated)
+		return;
+
 	/* Tear down the retain cycle owned by the layout item.
-	   The layout item is our owner and by releasing it, it will release us.
-	   If we got deallocated by [super release], self and _layoutItem are now
-	   invalid and we must never use them (by sending a message for example). */
-	if (hasRetainCycle && isDeallocated == NO 
-	 && NSExtraRefCount(self) == 0 && NSExtraRefCount(_layoutItem) == 0)
-	{
+	   If we are only retained by our layout item which is also retained only 
+	   by us, DESTROY(_layoutItem) will call -[ETLayoutItem dealloc] which in 
+	   turn will call back -[ETView release] and result this time in our 
+	   deallocation. */	
+	BOOL isGarbageCycle = (hasRetainCycle 
+		&& NSExtraRefCount(self) == 0 && NSExtraRefCount(_layoutItem) == 0);
+	if (isGarbageCycle)
 		DESTROY(_layoutItem);
-	}
 }
 
 - (void) dealloc
@@ -704,12 +715,13 @@ You can revert to non-flipped coordinates by passing NO to this method. */
 #ifndef INTERLEAVED_DRAWING
 
 /** Now we must let layout items handles their custom drawing through their 
-    renderer. For example, by default an item with or without a view has a 
-    renderer to draw its selection state. 
-    In addition, this renderer implements the logic to draw layout items 
-    without view that plays a role similar to cell.
-    Layout items are smart enough to avoid drawing their view when they have 
-    one. */
+style object. For example, by default an item with or without a view has a style 
+to draw its selection state. 
+
+In addition, this style implements the logic to draw layout items without 
+view that plays a role similar to cell.
+
+Layout items are smart enough to avoid drawing their view when they have one. */
 - (void) drawRect: (NSRect)rect
 {
 	[super drawRect: rect];
@@ -726,13 +738,13 @@ You can revert to non-flipped coordinates by passing NO to this method. */
 
 - (void) displayIfNeeded
 {
-	//NSLog(@"-displayIfNeeded");
+	//ETLog(@"-displayIfNeeded");
 	[super displayIfNeeded];
 }
 
 - (void) displayIfNeededInRect:(NSRect)aRect
 {
-	ETLog(@"-displayIfNeededInRect:");
+	//ETLog(@"-displayIfNeededInRect:");
 	[super displayIfNeededInRect: aRect];
 }
 
@@ -762,8 +774,8 @@ You can revert to non-flipped coordinates by passing NO to this method. */
 
 #ifdef GNUSTEP
 
-/** Main and canonical method which is used to take control of the drawing on 
-    GNUstep and pass it to the layout item tree as needed. */
+/* Main and canonical method which is used to take control of the drawing on 
+GNUstep and pass it to the layout item tree as needed. */
 - (void) displayRectIgnoringOpacity: (NSRect)aRect 
                           inContext: (NSGraphicsContext *)context
 {
@@ -784,8 +796,6 @@ You can revert to non-flipped coordinates by passing NO to this method. */
 
 #else
 
-// FIXME: This isn't really safe because Cocoa may use other specialized 
-// methods to update the display. They are named _recursiveDisplayXXX.
 // NOTE: Very often NSView instance which has been sent a display message will 
 // call this method on its subviews. These subviews will do the same with their own 
 // subviews. Here is the other method often used in the same way:
@@ -793,20 +803,20 @@ You can revert to non-flipped coordinates by passing NO to this method. */
 // The previous method usually follows the message on next line:
 //_displayRectIgnoringOpacity:isVisibleRect:rectIsVisibleRectForView:
 
-/** Main and canonical method which is used to take control of the drawing on 
-    Cocoa and pass it to the layout item tree as needed. */
+/* First canonical method which is used to take control of the drawing on 
+Cocoa and pass it to the layout item tree as needed. */
 - (void) _recursiveDisplayAllDirtyWithLockFocus: (BOOL)lockFocus visRect: (NSRect)aRect
 {
-	ETDebugLog(@"-_recursiveDisplayAllDirtyWithLockFocus:visRect:");
+	ETDebugLog(@"-_recursiveDisplayAllDirtyWithLockFocus:visRect: %@", self);
 	[super _recursiveDisplayAllDirtyWithLockFocus: lockFocus visRect: aRect];
-	
+
 	/* Most of the time, the focus isn't locked. In this case, aRect is a 
 	   portion of the content view frame and no clipping is done either. */
 	if (lockFocus == YES)
 	{
 		[self lockFocus];
 	}
-	
+
 #ifdef DEBUG_DRAWING
 	//if ([self respondsToSelector: @selector(layout)] && [[(ETContainer *)self layout] isKindOfClass: [ETFlowLayout class]])
 	{
@@ -825,7 +835,52 @@ You can revert to non-flipped coordinates by passing NO to this method. */
 
 	if (lockFocus == YES)
 		[self unlockFocus];
+		
+	_wasJustRedrawn = YES;
 }
+
+/* Second canonical method which is used to take control of the drawing on 
+Cocoa and pass it to the layout item tree as needed. */
+- (void) _recursiveDisplayRectIfNeededIgnoringOpacity: (NSRect)aRect 
+	isVisibleRect: (BOOL)isVisibleRect rectIsVisibleRectForView: (BOOL)isRectForView topView: (BOOL)isTopView
+{
+	_wasJustRedrawn = NO;
+
+	[super _recursiveDisplayRectIfNeededIgnoringOpacity: aRect 
+		isVisibleRect: isVisibleRect rectIsVisibleRectForView: isRectForView topView: isTopView];
+
+	ETDebugLog(@"-_recursiveDisplayRectIfNeededIgnoringOpacity:XXX %@ %@", self, NSStringFromRect(aRect));
+	
+	/* From what I have observed, _recursiveDisplayAllDirtyXXX was only called 
+	   when isVisibleRect and isRectForView are both NO, or when live resize 
+	   was underway (in that case the invalidated area was the entire view).
+	   If we don't make the check below _recursiveDisplayAllDirtyXXX  will draw 
+	   and this method will then draw another time in the same view/receiver with 
+	   with -render:dirtyRect:inView:. 
+	   The next line works pretty well... 
+	   BOOL needsRedraw = (isVisibleRect && isRectForView && [self needsDisplay] && [self inLiveResize]);
+	   ... but we rather use the _wasJustRedrawn flag which is a safer way to 
+	   check whether _recursiveDisplayAllDirtyXXX was called by the call to 
+	   super at the beginning of this method or not. */
+	BOOL needsRedraw = (isVisibleRect && isRectForView && [self needsDisplay] && _wasJustRedrawn == NO);
+
+	if (needsRedraw)
+	{
+		[self lockFocus];
+
+		/* We always composite the rendering chain on top of each view -drawRect: 
+		   drawing sequence (triggered by display-like methods). */
+		if ([[self renderer] respondsToSelector: @selector(render:dirtyRect:inView:)])
+		{
+			[[self renderer] render: nil dirtyRect: aRect inView: self];
+		}
+
+		[self unlockFocus];
+	}
+
+	_wasJustRedrawn = NO;
+}
+
 #endif
 
 #endif /* INTERLEAVED_DRAWING */
@@ -837,10 +892,6 @@ You can revert to non-flipped coordinates by passing NO to this method. */
 - (id) initWithFrame: (NSRect)frame layoutItem: (ETLayoutItem *)item
 {
 	NSScrollView *realScrollView = [[NSScrollView alloc] initWithFrame: frame];
-
-	[realScrollView setHasVerticalScroller: YES];
-	[realScrollView setHasHorizontalScroller: YES];
-	//[realScrollView setAutoresizingMask: NSViewWidthSizable | NSViewHeightSizable];
 
 	self = [self initWithMainView: realScrollView layoutItem: item];
 	RELEASE(realScrollView);
@@ -857,7 +908,7 @@ You can revert to non-flipped coordinates by passing NO to this method. */
 	{
 		[self setAutoresizingMask: [scrollView autoresizingMask]];
 		[scrollView setAutoresizingMask: NSViewWidthSizable | NSViewHeightSizable];
-		
+
 		/* Will be destroy in -[ETView dealloc] */
 		ASSIGN(_mainView, scrollView);
 		[self addSubview: _mainView];

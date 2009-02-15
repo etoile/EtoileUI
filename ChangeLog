@@ -1,3 +1,27 @@
+2009-02-15  Quentin Mathe <qmathe@club-internet.fr>
+
+	* ETView:
+	(-release): Rewritten retain cycle management code/doc a bit to be easier to 
+	understand.
+	(-_recursiveDisplayAllDirtyWithLockFocus:visRect:): Modified to mark 
+	_wasJustRedrawn.
+	(_recursiveDisplayRectIfNeededIgnoringOpacity:isVisibleRect:rectIsVisibleRectForView:):
+	Added to truly redraw properly on Mac OS X in all cases.
+	(-[ETScrollView initWithFrame:layoutItem:]): Modified to use no scrollers 
+	by default, otherwise -[ETContainer hasVerticalScroller] wrongly starts to 
+	return YES once the layout is switched, because -setLayoutView: causes the 
+	scroll view decorator to be created like that:
+	-[ETContainer createScrollViewDecoratorItem]
+	-[ETContainer scrollView]
+	-[ETContainer hasVerticalScroller]
+	-[ETContainer syncDisplayViewWithContainer]
+	-[ETContainer setLayoutView:]
+	* ETContainer:
+	(-setHasVerticalScroller:, -setHasHorizontalScoller:): Imrproved to only 
+	insert the scroll view decorator when a scroller becomes a visible.
+	(-createScrollViewDecoratorItem): Added an assertion to check the scroller 
+	visibility meet our expectations.
+
 2009-02-14  Quentin Mathe <qmathe@club-internet.fr>
 
 	* ETStyle:
