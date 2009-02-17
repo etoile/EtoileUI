@@ -1,3 +1,12 @@
+2009-02-17  Quentin Mathe <qmathe@club-internet.fr>
+
+	* ETLayoutItem:
+	(-initWithView:value:representedObject:): Turned flipped coordinates on by 
+	default.
+	(-setSupervisorView:): Modified to sync the new supervisor view with the 
+	flipped property of the layout item.
+	(-setFrame:): Modified to notify the style object about bounds change.
+
 2009-02-15  Quentin Mathe <qmathe@club-internet.fr>
 
 	* ETView:

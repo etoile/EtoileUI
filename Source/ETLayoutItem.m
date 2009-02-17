@@ -169,8 +169,7 @@ NSString *kETVisibleProperty = @"visible";
 		_parentItem = nil;
 		//_decoratorItem = nil;
 		_frame = ETNullRect;
-		// TODO: Enable next line when well tested...
-		//[self setFlipped: YES];
+		[self setFlipped: YES];
 		[self setDecoratedItem: nil];
 		[self setView: view];
 		[self setVisible: NO];
@@ -1404,10 +1403,11 @@ Take note the new visibility state won't be apparent until a redisplay occurs. *
 
 - (void) setSupervisorView: (ETView *)supervisorView
 {
-	//if ([self decoratorItem] == nil)
-		[supervisorView setLayoutItemWithoutInsertingView: self];
+	 /* isFlipped is also sync in -setFlipped: */
+	[supervisorView setFlipped: [self isFlipped]];
+	[supervisorView setLayoutItemWithoutInsertingView: self];
 	ASSIGN(_view, supervisorView);
-	
+
 	if ([self decoratorItem] != nil)
 	{
 		id parentView = [[self displayView] superview];
@@ -1887,6 +1887,8 @@ See also -[ETLayout isPositional] and -[ETLayout isComputedLayout]. */
 	{
 		_frame = rect;
 	}
+
+	[[self style] didChangeItemBounds: ETMakeRect(NSZeroPoint, rect.size)];
 
 	ETLayout *parentLayout = [_parentItem layout];
 	if ([parentLayout isPositional] && [parentLayout isComputedLayout] == NO)
