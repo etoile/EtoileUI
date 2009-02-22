@@ -95,6 +95,8 @@
 	  
 - (void) didChangeItemBounds: (NSRect)bounds;
 
+
+- (void) didChangeItemBounds: (NSRect)bounds;
 @end
 
 
@@ -109,7 +111,6 @@
      layoutItem: (ETLayoutItem *)item 
 	  dirtyRect: (NSRect)dirtyRect;
 	  
-- (void) drawImage: (NSImage *)itemImage flipped: (BOOL)itemFlipped inRect: (NSRect)aRect;
 - (void) drawSelectionIndicatorInRect: (NSRect)indicatorRect;
 - (void) drawStackIndicatorInRect: (NSRect)indicatorRect;
 
@@ -117,5 +118,8 @@
 //- (BOOL) setTitleVisible: (BOOL)flag;
 //- (BOOL) isTitleVisible;
 //- (void) drawTitleInRect: (NSRect)aRect;
+
+- (void) drawStackIndicatorInRect: (NSRect)indicatorRect;
+- (void) drawImage: (NSImage *)itemImage flipped: (BOOL)itemFlipped inRect: (NSRect)aRect;
 
 @end

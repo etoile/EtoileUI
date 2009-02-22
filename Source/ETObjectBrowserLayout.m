@@ -169,7 +169,7 @@
 {
 	id viewItem = [(id)[self layoutView] layoutItem];
 	id itemGroup = nil;
-	id contentArray = nil;
+	NSArray *contentArray = nil;
 	id object = nil;
 	id item = nil;
 	
