@@ -882,7 +882,7 @@ the receiver immediate children to the source. */
 }
 
 /** Returns the first ancestor layout item, including itself, whose layout 
-   returns YES to -isOpaque (see ETLayout). If none is found, returns self. */
+returns YES to -isOpaque (see ETLayout). If none is found, returns self. */
 - (ETLayoutItemGroup *) ancestorItemForOpaqueLayout
 {
 	ETLayoutItemGroup *parent = self;
@@ -898,15 +898,22 @@ the receiver immediate children to the source. */
 	return self; /* Found no ancestor with an opaque layout */
 }
 
-/** Attemps to reload the children items from the source and updates the layout 
-    by asking the first ancestor item with an opaque layout to do so. */
+/** Attempts to reload the children items from the source and updates the layout 
+by asking the first ancestor item with an opaque layout to do so. */
 - (void) reloadAndUpdateLayout
 {
 	[self reload];
 	[[self ancestorItemForOpaqueLayout] updateLayout];
 }
 
-// TODO: This code is a little bit messy, refactor...
+/** Updates recursively each layout in the item tree owned by the receiver.
+
+The layout update starts on the leaf descendant items, is carried upward 
+through the tree structure back to the receiver itself, whose layout is the last 
+updated. This postorder processing is necessary because a parent layout 
+computation might depend on one or several child item properties which are 
+dynamically computed. For example, an item can use a layout which alters its 
+frame (see -usesLayoutBasedFrame). */
 - (void) updateLayout
 {
 	if ([self layout] == nil)
@@ -914,36 +921,19 @@ the receiver immediate children to the source. */
 	
 	BOOL isNewLayoutContent = ([self hasNewContent] || [self hasNewLayout]);
 	
-	/* Update layout of descendant items before all because our own layout 
-	   depends on the layout of the descendant items. Layout update may modify
-	   number and frame of descendant items, thereby producing different layout
-	   conditions higher in the hierarchy (like ourself). */
-	if ([[self items] count] > 0)
-		[[self items] makeObjectsPerformSelector: @selector(updateLayout)];
+	[[self items] makeObjectsPerformSelector: @selector(updateLayout)];
 	
 	/* Delegate layout rendering to custom layout object */
 	[[self layout] render: nil isNewContent: isNewLayoutContent];
-	
-	[[self closestAncestorContainer] setNeedsDisplay: YES];
+
+	[self setNeedsDisplay: YES];
 	
 	/* Unset needs layout flags */
 	[self setHasNewContent: NO];
 	[self setHasNewLayout: NO];
-	
-	// FIXME: Redisplay closestAncestorContainer with our rect
-	/*ETContainer *closestContainer = [self closestAncestorContainer];
-	NSRect closestViewInsideRect = [closestContainer frame];
-	NSRect dirtyRect = [self frame];
-	
-	closestViewInsideRect.origin = NSZeroPoint;
-	if ([self displayView] != nil)
-	{
-		dirtyRect = [[self displayView] convertRect: dirtyRect toView: closestContainer];
-	}
-	dirtyRect = NSIntersectionRect(dirtyRect, closestViewInsideRect);
-	[closestContainer setNeedsDisplayInRect: dirtyRect];*/
 }
 
+/** Returns whether -updateLayout can be safely called now. */
 - (BOOL) canUpdateLayout
 {
 	return [self isAutolayout] && ![self isReloading] && ![[self layout] isRendering];
@@ -1081,7 +1071,7 @@ the receiver immediate children to the source. */
 		       encompass any decorators set on the item. */
 			NSRect childDirtyRect = [item convertRectFromParent: realDirtyRect];
 			childDirtyRect = NSIntersectionRect(childDirtyRect, [item drawingFrame]);
-			
+
 			/* In case, dirtyRect is only a redraw rect on the parent and not on 
 			   the entire parent frame, we try to optimize by not redrawing the 
 			   items that lies outside of the dirtyRect. */
@@ -1117,7 +1107,11 @@ the receiver immediate children to the source. */
 		drawing since it occurs below it (in a superview). 
 		
 		See also INTERLEAVED_DRAWING in ETView. */
-	BOOL shouldDrawItem = ([item displayView] == nil);
+
+	// NOTE: On GNUstep unlike Cocoa, a nil item  will alter the coordinates 
+	// when concat/invert is executed. For example, in -render:dirtyRect:inView: 
+	// a nil item can be returned by -[ETLayout rootItem].
+	BOOL shouldDrawItem = (item != nil && [item displayView] == nil);
 			
 	if (shouldDrawItem == NO)
 		return;
@@ -1128,7 +1122,7 @@ the receiver immediate children to the source. */
 	[NSBezierPath setDefaultLineWidth: 4.0];
 	[NSBezierPath strokeRect: itemRect];
 #endif
-				
+
 	NSAffineTransform *transform = [NSAffineTransform transform];
 	
 	/* Modify coordinate matrix when the layout item doesn't use a view for 
@@ -1145,9 +1139,9 @@ the receiver immediate children to the source. */
 		[transform scaleXBy:1.0 yBy:-1.0];
 	}
 	[transform concat];
-	
+
 	[item render: inputValues dirtyRect: newDirtyRect inView: renderView];
-				
+
 	/* Reset the coordinates matrix */
 	[transform invert];
 	[transform concat];

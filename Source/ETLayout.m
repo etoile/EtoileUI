@@ -810,17 +810,10 @@ You must call the superclass implementation if you override this method. */
 		}
 		
 		/* Apply Scaling */
-		if ([item view] != nil)
-		{
-			itemFrame.origin = [item origin];
-			[item setFrame: itemFrame];
-			ETDebugLog(@"Scale %@ to %@", NSStringFromRect([item defaultFrame]), 
-				NSStringFromRect(ETScaleRect([item defaultFrame], factor)));
-		}
-		else
-		{
-			ETLog(@"% can't be rescaled because it has no view");
-		}
+		itemFrame.origin = [item origin];
+		[item setFrame: itemFrame];
+		ETDebugLog(@"Scale %@ to %@", NSStringFromRect([item defaultFrame]), 
+			NSStringFromRect(ETScaleRect([item defaultFrame], factor)));
 	}
 }
 

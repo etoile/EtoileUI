@@ -1474,12 +1474,13 @@ Take note the new visibility state won't be apparent until a redisplay occurs. *
     used by the styles. */
 - (NSRect) drawingFrame
 {
-	ETView *drawingView = [self supervisorView];
 	NSRect drawingFrame = [self frame];
 	drawingFrame.origin = NSZeroPoint;
 
 	// FIXME: This code doesn't work as desired...
 #if 0
+	ETView *drawingView = [self supervisorView];
+
 	if (drawingView != nil) /* Has supervisor view */
 	{
 		/* Exclude the title bar area */
@@ -1583,9 +1584,19 @@ needs some special redisplay policy. */
 	while (displayView != topView 
 		&& (displayView == nil || NSContainsRect([parent frame], newRect) == NO))
 	{
-		newRect = [parent convertRectToParent: newRect];
+		ETLayoutItem *child = parent;
+
 		parent = [parent parentItem];
 		displayView = [parent displayView];
+		/* Force the exit when we reach the window layer and newRect isn't fully 
+		   contained within the window layer frame.
+		   TODO: A more accurate fix could be to override -displayView or 
+		   -setNeedsDisplay: and -setNeedsDisplayInRect: in ETWindowLayer since 
+		   it cannot use a window decorator item as the root window. */
+		if (parent == nil)
+			break;
+
+		newRect = [child convertRectToParent: newRect];
 	}
 
 	*aView = displayView;
@@ -2190,7 +2201,8 @@ See also -icon. */
 	return img;
 }
 
-/** Sets the image representation associated with the receiver.
+/** Sets the image representation associated with the receiver and updates both 
+the default frame and the frame to match the image size.
 
 If img is nil, then the default behavior of -image is restored and the returned 
 image should not be expected to be nil. */
@@ -2201,11 +2213,11 @@ image should not be expected to be nil. */
 	// TODO: Think about whether this is really the best to do...
 	if (img != nil)
 	{
-		[self setSize: [img size]];
+		[self setDefaultFrame: ETMakeRect(NSZeroPoint, [img size])];
 	}
 	else if ([self displayView] == nil)
 	{
-		[self setSize: NSZeroSize];
+		[self setDefaultFrame: NSZeroRect];
 	}
 }
 

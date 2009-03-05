@@ -38,6 +38,7 @@
 #import "ETStyle.h"
 #import "ETLayoutItem.h"
 #import "ETLayoutItemGroup.h"
+#import "ETCompatibility.h"
 
 @implementation ETStyle
 
@@ -170,15 +171,28 @@ static ETBasicItemStyle *sharedBasicItemStyle = nil;
 /** Draws an image at the origin of the current graphics coordinates. */
 - (void) drawImage: (NSImage *)itemImage flipped: (BOOL)itemFlipped inRect: (NSRect)aRect
 {
-	//ETLog(@"Drawing image %@ in view %@", [item image], [NSView focusView]);
-	BOOL wasFlipped = [itemImage isFlipped];
-	
-	[itemImage setFlipped: itemFlipped];
+	//ETLog(@"Drawing image %@ flipped %d in view %@", itemImage, [itemImage isFlipped], [NSView focusView]);
+	BOOL flipMismatch = (itemFlipped && (itemFlipped != [itemImage isFlipped]));
+	NSAffineTransform *xform = nil;
+
+	if (flipMismatch)
+	{
+		xform = [NSAffineTransform transform];
+		[xform translateXBy: 0.0 yBy: aRect.size.height];
+		[xform scaleXBy: 1.0 yBy: -1.0];
+		[xform concat];
+	}
+
 	[itemImage drawInRect: aRect
 	             fromRect: NSZeroRect // Draw the entire image
 	            operation: NSCompositeSourceOver 
 	             fraction: 1.0];
-	[itemImage setFlipped: wasFlipped];
+
+	if (flipMismatch)
+	{
+		[xform invert];
+		[xform concat];
+	}
 }
 
 /** Draws a selection indicator that covers the whole item frame if 

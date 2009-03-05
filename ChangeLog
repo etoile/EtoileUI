@@ -1,3 +1,27 @@
+2009-03-06  Quentin Mathe <qmathe@club-internet.fr>
+
+	* ETLayoutItem:
+	(-convertDisplayRect:toAncestorDisplayView:): Fixed an infinite loop issue 
+	that occurs when trying to redisplay a rect which extends beyond the 
+	boundaries of the topmost ancestor display view.
+	(-setImage:): Modified to update the default frame with the image size, 
+	otherwise the default frame is zero and any scaling done at layout time
+	will always result in a negative size.
+	* ETLayout:
+	(-resizeLayoutItems:toScaleFactor:): Enabled scaling in all cases, now that 
+	we can support it on layout items without a view.
+	* ETLayoutItemGroup:
+	(-display:item:dirtyRect:inView:): Fixed coordinate matrix corruption which 
+	happens when -[ETLayout rootItem] returning a nil item in the calling 
+	method.
+	(-updateLayout:): Cleaned and documented.
+	* ETStyle: 
+	(-drawImage:flipped:inRect:): Fixed to work more or less on GNUstep by 
+	using a flip transform. But... NSImage doesn't seem to always draw 
+	themselves properly on GNUstep when the context uses flipped coordinates. 
+	The new code also allows to safely draw cached images on Cocoa 
+	(-[NSImage setFlipped:] isn't reliable in that case).
+
 2009-03-05  Quentin Mathe <qmathe@club-internet.fr>
 
 	* Collage:
