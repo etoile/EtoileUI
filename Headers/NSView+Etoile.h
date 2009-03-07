@@ -43,6 +43,7 @@
 + (NSRect) defaultFrame;
 
 - (id) init;
+- (BOOL) isWidget;
 - (BOOL) isContainer;
 
 /* Copying */
@@ -87,6 +88,11 @@
 - (NSImage *) icon;
 
 @end
+
+@interface NSScrollView (Etoile)
+- (BOOL) isWidget;
+@end
+
 
 /* Utility Functions */
 

@@ -1,3 +1,24 @@
+2009-03-08  Quentin Mathe <qmathe@club-internet.fr>
+
+	New event handling model - part 3
+	* ETLayoutItem
+	New boundingBox and layout property. Added _boundingBox ivar.
+	(-init): Updated to initialize boundingBox and have -setFlipped: alters the 
+	supervisor view equivalent property as it should.
+	(-usesWidgetView, -layout, -setLayout:, -setNeedsDisplayInRect:, 
+	-displayRect:, -boundingBox, -setBoundingBox:): Added.
+	(-properties): Updated to expose boundingBox, layout and autoresizingMask.
+	(-setNeedsDisplay:): Moved the existing code into -setNeedsDisplayInRect:.
+	(-display): Moved the existing code into -displayRect:.
+	(-convertDisplayRect:toAncestorDisplayView:): Fixed to take in account 
+	the case where the display view is NSThemeFrame and the content view must 
+	be rather returned.
+	(-respondsToSelector:, -methodSignatureForSelector:, -forwardInvocation:): 
+	New methods to support the EtoileUI custom responder chain and to hand 
+	actions to the action handler.
+	* NSView+Etoile, Controls+Etoile:
+	(-isWidget): Added.
+
 2009-03-07  Quentin Mathe <qmathe@club-internet.fr>
 
 	* ETFreeLayout:

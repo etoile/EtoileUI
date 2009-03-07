@@ -44,6 +44,13 @@
 
 @implementation NSControl (Etoile)
 
+/** Returns YES to indicate that the receiver is a widget (or control in AppKit 
+terminology) on which actions should be dispatched. */
+- (BOOL) isWidget
+{
+	return YES;
+}
+
 /* Copying */
 
 /** Returns a view copy of the receiver. The superview of the resulting copy is

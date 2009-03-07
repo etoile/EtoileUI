@@ -56,13 +56,15 @@
 
 NSString *kETAnchorPointProperty = @"anchorPoint";
 NSString *kETActionHandlerProperty = @"actionHandler";
-NSString *kETAutoresizingMask = @"autoresizingMask";
+NSString *kETAutoresizingMaskProperty = @"autoresizingMask";
+NSString *kETBoundingBoxProperty = @"boundingBox";
 NSString *kETDefaultFrameProperty = @"defaultFrame";
 NSString *kETFlippedProperty = @"flipped";
 NSString *kETFrameProperty = @"frame";
 NSString *kETIconProperty = @"icon";
 NSString *kETImageProperty = @"image";
 NSString *kETInspectorProperty = @"inspector";
+NSString *kETLayoutProperty = @"layout";
 NSString *kETNameProperty = @"name";
 NSString *kETNeedsDisplayProperty = @"needsDisplay";
 NSString *kETParentItemProperty = @"parentItem";
@@ -169,9 +171,10 @@ NSString *kETVisibleProperty = @"visible";
 		_parentItem = nil;
 		//_decoratorItem = nil;
 		_frame = ETNullRect;
-		[self setFlipped: YES];
+		_boundingBox = ETNullRect;
 		[self setDecoratedItem: nil];
 		[self setView: view];
+		[self setFlipped: YES]; /* -setFlipped: must follow -setSupervisorView: */
 		[self setVisible: NO];
 		[self setStyle: [ETBasicItemStyle sharedInstance]];
 		[self setActionHandler: [ETActionHandler sharedInstance]];
@@ -811,6 +814,17 @@ this case the receiver becomes a meta item and returns YES for -isMetaLayoutItem
 	}
 }
 
+/** Returns whether the view used by the receiver is a widget. 
+
+Also returns YES when the receiver uses a layout view which is a widget 
+provided by the widget backend. See -[ETLayout layoutView].
+
+See also -[NSView(Etoile) isWidget]. */
+- (BOOL) usesWidgetView
+{
+	return ([[self view] isWidget] || [[[self layout] layoutView] isWidget]);
+}
+
 - (void) setDecoratedView: (NSView *)newView
 {
 	id view = [[self supervisorView] wrappedView];
@@ -938,9 +952,10 @@ See -valueForProperty: for more details. */
 - (NSArray *) properties
 {
 	NSArray *properties = A(@"identifier", kETNameProperty, @"x", @"y", @"width", 
-		@"height", @"view", kETSelectedProperty, kETSelectedProperty, 
+		@"height", @"view", kETSelectedProperty, kETLayoutProperty,
 		kETImageProperty, kETFrameProperty, kETRepresentedObjectProperty, 
-		kRepresentedPathBaseProperty, kETParentItemProperty, @"UIMetalevel", 
+		kRepresentedPathBaseProperty, kETParentItemProperty, 
+		kETAutoresizingMaskProperty, kETBoundingBoxProperty, @"UIMetalevel", 
 		@"UIMetalayer");
 
 	properties = [[VARIABLE_PROPERTIES allKeys] arrayByAddingObjectsFromArray: properties];
@@ -1444,6 +1459,20 @@ Take note the new visibility state won't be apparent until a redisplay occurs. *
 	return windowDecorator;
 }
 
+/** Returns the layout associated with the receiver to present its content. */
+- (ETLayout *) layout
+{
+	return GET_PROPERTY(kETLayoutProperty);
+}
+
+/** Sets the layout associated with the receiver to present its content. */
+- (void) setLayout: (ETLayout *)aLayout
+{
+	SET_PROPERTY(aLayout, kETLayoutProperty);
+}
+
+/** Forces the layout to be recomputed to take in account geometry and content 
+related changes since the last layout update. */
 - (void) updateLayout
 {
 	/* See -apply: */
@@ -1599,6 +1628,9 @@ needs some special redisplay policy. */
 		newRect = [child convertRectToParent: newRect];
 	}
 
+	if (displayView == topView)
+		displayView = [parent supervisorView];
+
 	*aView = displayView;
 	return newRect;
 }
@@ -1610,8 +1642,13 @@ request (see -[NSView displayIfNeededXXX] methods).
 More explanations in -display. */
 - (void) setNeedsDisplay: (BOOL)flag
 {
+	[self setNeedsDisplayInRect: [self boundingBox]];
+}
+
+- (void) setNeedsDisplayInRect: (NSRect)dirtyRect
+{
 	NSView *displayView = nil;
-	NSRect displayRect = [self convertDisplayRect: [self boundingBox] 
+	NSRect displayRect = [self convertDisplayRect: dirtyRect 
 	                        toAncestorDisplayView: &displayView];
 
 	[displayView setNeedsDisplayInRect: displayRect];
@@ -1627,13 +1664,18 @@ conversion are handled by -convertDisplayRect:toAncestorDisplayView:.
 If the receiver has a display view, this view will be asked to drawby itself.  */
 - (void) display
 {
+	[self displayRect: [self boundingBox]];
+}
+
+- (void) displayRect: (NSRect)dirtyRect
+{
 	// NOTE: We could also use the next two lines to redisplay, but 
 	// -convertDisplayRect:toAncestorDisplayView: is more optimized.
-	// ETLayoutItem *ancestor = [self closestAncestorWithDisplayView];
-	// [[ancestor displayView] displayRect: [self convertRect: [self boundingBox] toItem: ancestor]];
+	//ETLayoutItem *ancestor = [self closestAncestorItemWithDisplayView];
+	//[[ancestor displayView] displayRect: [self convertRect: [self boundingBox] toItem: ancestor]];
 
 	NSView *displayView = nil;
-	NSRect displayRect = [self convertDisplayRect: [self boundingBox] 
+	NSRect displayRect = [self convertDisplayRect: dirtyRect
 	                        toAncestorDisplayView: &displayView];
 	[displayView displayRect: displayRect];
 }
@@ -2056,13 +2098,35 @@ See also -setFrame:. */
 	[self setSize: NSMakeSize(width, [self height])];
 }
 
+/** Returns the rect that fully encloses the receiver and represents the maximal 
+extent on which hit test is done and redisplay requested. This rect is expressed 
+in the receiver coordinate space.
+
+You must be cautious with the bounding box, since its value is subject to be 
+overwritten by the layout in use. See -setBoundingBox:. */
 - (NSRect) boundingBox
 {
-	// TODO: Very crude, we need to figure out what we really needs. For example,
-	// -setBoundingBox: could be called when a handle group is inserted, or the 
-	// layout and/or the style could have a hook -boundingBoxForItem:. We 
-	// probably want to cache the bounding box value in an ivar too.
-	return NSInsetRect([self frame], -10.0, -10.0);
+	if (ETIsNullRect(_boundingBox))
+		return [self bounds];
+
+	return _boundingBox;
+}
+
+/** Sets the rect that fully encloses the receiver and represents the maximal 
+extent on which hit test is done and redisplay requested. This rect must be 
+expressed in the receiver coordinate space.
+
+The bounding box is used by ETInstrument in the hit test phase. It is also used 
+by -display and -setNeedsDisplay: methods to compute the dirty area that needs 
+to be refreshed. Hence it can be used by ETLayout subclasses related code to 
+increase the area which requires to be redisplayed. For example, ETHandleGroup 
+calls -setBoundingBox: on its manipulated object, because its handles are not 
+fully enclosed in the receiver frame.
+
+The bounding box must be always be greater or equal to the receiver frame. */
+- (void) setBoundingBox: (NSRect)extent
+{
+	_boundingBox = extent;
 }
 
 /** Returns the default frame associated with the receiver. See -setDefaultFrame:.
@@ -2309,6 +2373,60 @@ be sent by the UI element in the EtoileUI responder chain. */
 		return YES;
 
 	return NO;
+}
+
+- (BOOL) respondsToSelector: (SEL)aSelector
+{
+	if ([super respondsToSelector: aSelector])
+		return YES;
+		
+	SEL twoParamSelector = NSSelectorFromString([NSStringFromSelector(aSelector) 
+		stringByAppendingString: @"onItem:"]);
+	if ([[self actionHandler] respondsToSelector: twoParamSelector])
+		return YES;
+
+	return NO;
+}
+
+- (NSMethodSignature *) methodSignatureForSelector: (SEL)aSelector
+{
+	NSMethodSignature *sig = [super methodSignatureForSelector: aSelector];
+	
+	if (sig == nil)
+	{
+		SEL twoParamSelector = NSSelectorFromString([NSStringFromSelector(aSelector) 
+		stringByAppendingString: @"onItem:"]);
+
+		sig = [[self actionHandler] methodSignatureForSelector: twoParamSelector];
+	}
+
+	return sig;
+}
+
+- (void) forwardInvocation: (NSInvocation *)inv
+{
+	SEL selector = [inv selector];
+
+	if ([self respondsToSelector: selector] == NO)
+	{
+		[self doesNotRecognizeSelector: selector];
+		return;
+	}
+
+	SEL twoParamSelector = NSSelectorFromString([NSStringFromSelector(selector) 
+		stringByAppendingString: @"onItem:"]);
+	NSInvocation *twoParamInv = nil;
+	id sender = nil;
+	id actionHandler = GET_PROPERTY(kETActionHandlerProperty);
+	
+	[inv getArgument: &sender atIndex: 2];
+	twoParamInv = [NSInvocation invocationWithMethodSignature: 
+	[actionHandler methodSignatureForSelector: twoParamSelector]];
+	[twoParamInv setSelector: twoParamSelector];
+	[twoParamInv setArgument: &sender atIndex: 2];
+	[twoParamInv setArgument: &self atIndex: 3];
+
+	[twoParamInv invokeWithTarget: actionHandler];
 }
 
 /** Returns the custom inspector associated with the receiver. By default, 

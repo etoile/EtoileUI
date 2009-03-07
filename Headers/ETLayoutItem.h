@@ -42,7 +42,7 @@
 #import <EtoileFoundation/ETPropertyValueCoding.h>
 
 @class ETUTI;
-@class ETView, ETContainer, ETLayoutItemGroup, ETWindowItem, ETActionHandler;
+@class ETView, ETContainer, ETLayout, ETLayoutItemGroup, ETWindowItem, ETActionHandler;
 @protocol ETEventHandler, ETInspector;
 
 
@@ -50,13 +50,15 @@
 
 extern NSString *kAnchorPointProperty; /** anchorPoint property name */
 extern NSString *kETActionHandlerProperty; /** actionHandler property name */
-extern NSString *kETAutoresizingMask; /** autoresizingMask property name */
+extern NSString *kETAutoresizingMaskProperty; /** autoresizingMask property name */
+extern NSString *kETBoundingBoxProperty; /** boudingBox property name */
 extern NSString *kETDefaultFrameProperty; /** defaultFrame property name */
 extern NSString *kETFlippedProperty; /** flipped property name */
 extern NSString *kETFrameProperty; /** frame property name */  
 extern NSString *kETIconProperty; /** icon property name */
 extern NSString *kETImageProperty; /** image property name */
 extern NSString *kETInspectorProperty; /** inspector property name */
+extern NSString *kETLayoutProperty; /** layout property name */
 extern NSString *kETNameProperty; /** name property name */
 extern NSString *kETNeedsDisplayProperty; /** needsDisplay property name */
 extern NSString *kETParentItemProperty; /** parentItem property name */
@@ -83,7 +85,7 @@ extern NSString *kETVisibleProperty; /** visible property name */
 	
 	/* Model object stores a persistent frame when the layout is non-computed */
 	NSRect _frame; /* Frame with item scaling */
-	
+	NSRect _boundingBox;
 	BOOL _flipped;
 	BOOL _selected;
 	BOOL _visible;
@@ -156,7 +158,7 @@ extern NSString *kETVisibleProperty; /** visible property name */
 
 - (NSView *) view;
 - (void) setView: (NSView *)newView;
-
+- (BOOL) usesWidgetView;
 - (ETView *) displayView;
 
 //-displayObject
@@ -209,6 +211,9 @@ shape*/
 
 /* Layouting & Rendering Chain */
 
+- (ETLayout *) layout;
+- (void) setLayout: (ETLayout *)layout;
+
 - (void) updateLayout;
 - (void) apply: (NSMutableDictionary *)inputValues;
 - (NSRect) drawingFrame;
@@ -220,7 +225,9 @@ shape*/
 - (void) setStyle: (ETStyle *)aStyle;
 
 - (void) setNeedsDisplay: (BOOL)flag;
+- (void) setNeedsDisplayInRect: (NSRect)dirtyRect;
 - (void) display;
+- (void) displayRect: (NSRect)dirtyRect;
 - (NSRect) convertDisplayRect: (NSRect)rect 
 		toAncestorDisplayView: (NSView **)aView;
 
@@ -273,6 +280,7 @@ shape*/
 - (NSRect) persistentFrame;
 - (void) setPersistentFrame: (NSRect) frame;
 
+- (NSRect) bounds;
 - (NSRect) frame;
 - (void) setFrame: (NSRect)rect;
 - (NSPoint) origin;
@@ -293,7 +301,7 @@ shape*/
 - (void) setWidth: (float)width;
 
 - (NSRect) boundingBox;
-//- (void) setBoundingBox: (NSRect)extent;
+- (void) setBoundingBox: (NSRect)extent;
 - (NSRect) defaultFrame;
 - (void) setDefaultFrame: (NSRect)frame;
 - (void) restoreDefaultFrame;

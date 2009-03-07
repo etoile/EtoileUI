@@ -53,6 +53,15 @@
 	return [self initWithFrame: [[self class] defaultFrame]];
 }
 
+/** Returns whether the receiver is a widget (or control in AppKit terminology) 
+on which actions should be dispatched.
+
+By default, returns NO. */
+- (BOOL) isWidget
+{
+	return NO;
+}
+
 - (BOOL) isContainer
 {
 	return [self isKindOfClass: [ETContainer class]];
@@ -315,6 +324,17 @@
 - (NSImage *) icon
 {
 	return [self snapshot];
+}
+
+@end
+
+@implementation NSScrollView (Etoile)
+
+/** Returns YES to indicate that the receiver is a widget on which actions 
+should be dispatched. */
+- (BOOL) isWidget
+{
+	return YES;
 }
 
 @end

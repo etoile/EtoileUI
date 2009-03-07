@@ -42,6 +42,8 @@
 
 @interface NSControl (Etoile)
 
+- (BOOL) isWidget;
+
 /* Copying */
 
 - (id) copyWithZone: (NSZone *)zone;
