@@ -41,10 +41,12 @@
 @class ETLayoutLine, ETContainer;
 
 /** ETFlowLayout overrides several property values defined by ETLayout and 
-    ETComputedLayout: 
-    - itemSizeConstraintStyle to apply to width and height 
-    - constrainedItemSize to a 256 * 256 px size
-	- itemMargin to a 15 px border. */
+ETComputedLayout:
+<list>
+<item>itemSizeConstraintStyle to apply to width and height</item> 
+<item>constrainedItemSize to a 256 * 256 px size</item>
+<item>itemMargin to a 15 px border</item>
+</list> */
 @interface ETFlowLayout : ETComputedLayout 
 {
 	ETSizeConstraintStyle _layoutConstraint;

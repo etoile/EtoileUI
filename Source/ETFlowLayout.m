@@ -35,6 +35,7 @@
 	THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#import <EtoileFoundation/Macros.h>
 #import "ETFlowLayout.h"
 #import "ETLayoutItem.h"
 #import "ETLayout.h"
@@ -49,32 +50,22 @@
 
 - (id) init
 {
-	self = [super init];
+	SUPERINIT
+
+	/* Overriden default property values */
+	[self setConstrainedItemSize: DEFAULT_MAX_ITEM_SIZE];
+	[self setItemSizeConstraintStyle: ETSizeConstraintStyleVerticalHorizontal];
+	[self setItemMargin: DEFAULT_ITEM_MARGIN];
 	
-	if (self != nil)
-	{
-		/* Overriden default property values */
-		[self setConstrainedItemSize: DEFAULT_MAX_ITEM_SIZE];
-		[self setItemSizeConstraintStyle: ETSizeConstraintStyleVerticalHorizontal];
-		[self setItemMargin: DEFAULT_ITEM_MARGIN];
-		
-		_layoutConstraint = ETSizeConstraintStyleHorizontal;
-	}
-	
+	_layoutConstraint = ETSizeConstraintStyleHorizontal;
+
 	return self;
 }
 
-- (BOOL) isComputedLayout
-{
-	return YES;
-}
-
+/** Runs the layout computation which assigns a location in the layout context
+to the items, which are expected to be already broken into lines in layoutModel. */
 - (void) computeLayoutItemLocationsForLayoutModel: (NSArray *)layoutModel
 {
-	NSEnumerator *layoutWalker = [layoutModel objectEnumerator];
-	ETLayoutLine *line;
-	NSEnumerator *lineWalker = nil;
-	ETLayoutItem *item = nil;
 	float itemMargin = [self itemMargin];
 	NSPoint itemLocation = NSMakePoint(itemMargin, itemMargin);
 	float newLayoutHeight = 0;
@@ -82,11 +73,11 @@
 
 	if (isFlipped == NO)
 	{
-		ETLog(@"WARNING: Flow layout doesn't handle non-flipped coordinates inside scroll view");
+		ETLog(@"WARNING: Flow layout doesn't handle non-flipped coordinates inside a scroll view");
 		itemLocation = NSMakePoint(itemMargin, [self layoutSize].height - itemMargin);
 	}
-  
-	while ((line = [layoutWalker nextObject]) != nil)
+
+	FOREACH(layoutModel, line, ETLayoutLine *)
 	{
     /*
          A +---------------------------------------
@@ -97,26 +88,25 @@
          --+--------------------------------------- <-- here is the baseline
            B
        
-       In view container coordinates we have:   
+       In the layout context coordinates we have:   
        baseLineLocation.x = A.x and baseLineLocation.y = A.y - B.y
        
      */
-    
+
 		[line setBaseLineLocation: itemLocation];
-		lineWalker = [[line items] objectEnumerator];
     
-		while ((item = [lineWalker nextObject]) != nil)
+		FOREACH([line items], item, ETLayoutItem *)
 		{
 			[item setX: itemLocation.x];
 			itemLocation.x += [item width] + itemMargin;
 		}
+
+		// TODO: To avoid computing item locations when they are outside of the
+		// frame, think to add an exit condition here.
     
-		/* NOTE: to avoid computing item locations when they are outside of the
-		   frame, think to add an exit condition here. */
-    
-		/* Before computing the following items location in 'x' on the next line, we have 
-		   to reset the 'x' accumulator and take in account the end of the current 
-		   line, by substracting to 'y' the last layout line height. */
+		/* Before computing the following items location in 'x' on the next line, 
+		   we have to reset the 'x' accumulator and take in account the end of 
+		   the current line, by substracting to 'y' the last layout line height. */
 		if (isFlipped)
 		{
 			[line setBaseLineLocation: 
@@ -130,28 +120,25 @@
 			itemLocation.y = [line baseLineLocation].y + itemMargin;		
 		}
 		itemLocation.x = itemMargin;
-		
+
 		/* Increase height of the content size. Used to adjust the document 
 		   view size in scroll view */
 		newLayoutHeight += [line height] + itemMargin;
-       
-		//NSLog(@"Item locations computed by layout line :%@", line);
+
+		ETDebugLog(@"Item locations computed by layout line :%@", line);
 	}
-	
+
 	[self setLayoutSize: NSMakeSize([self layoutSize].width, newLayoutHeight)];
 }
 
-/* A layout is decomposed in lines. A line is decomposed in items. Finally a layout is displayed in a view container. */
-
-/** Run the layout computation which assigns a location in the view container
-    to each item added to the flow layout manager. */
+/** Breaks the items into lines and returns the resulting array as a layout model. */
 - (NSArray *) layoutModelForLayoutItems: (NSArray *)items
 {
 	NSMutableArray *unlayoutedItems = 
 		[NSMutableArray arrayWithArray: items];
 	ETLayoutLine *line = nil;
 	NSMutableArray *layoutModel = [NSMutableArray array];
-	
+
 	/* First start by breaking items to layout by lines. We have to fill the layout
 	   line (layoutLineList) until a item is crossing the right boundary which
 	   happens when -layoutedViewForNextLineInViews: returns nil. */
@@ -172,22 +159,19 @@
 			break;
 		}
 	}
-	
+
 	return layoutModel;
 }
 
-/** Returns a line filled with items to layout (stored in a layout line). */
+/** Returns a line filled with items to layout. */
 - (ETLayoutLine *) layoutLineForLayoutItems: (NSArray *)items
 {
-	//int maxViewHeightInLayoutLine = 0;
-	NSEnumerator *e = [items objectEnumerator];
-	ETLayoutItem *itemToLayout = nil;
 	NSMutableArray *layoutedItems = [NSMutableArray array];
 	ETLayoutLine *line = nil;
 	float widthAccumulator = 0;
 	float itemMargin = [self itemMargin];
-    
-	while ((itemToLayout = [e nextObject]) != nil)
+
+	FOREACH(items, itemToLayout, ETLayoutItem *)
 	{
 		widthAccumulator += itemMargin + [itemToLayout width];
 		
@@ -201,34 +185,37 @@
 			break;
 		}
 	}
-	
+
 	// NOTE: Not really useful for now because we don't support filling the 
 	// layout horizontally, only vertical filling is in place.
-	// We only touch the layout size height in -computeitemLocationsForLayoutModel:
+	// We only touch the layout size height in -computeItemLocationsForLayoutModel:
 	if ([self isContentSizeLayout] && [self layoutSize].width < widthAccumulator)
 		[self setLayoutSize: NSMakeSize(widthAccumulator, [self layoutSize].height)];
-	
+
 	if ([layoutedItems count] == 0)
 		return nil;
-		
+
 	line = [ETLayoutLine layoutLineWithLayoutItems: layoutedItems];
 	[line setVerticallyOriented: NO];
 
 	return line;
 }
 
-/** Lets you control the constraint applied on the layout 
-    when -isContentSizeLayout returns YES. The most common case is when the 
-	layout is set on a container embbeded in a scroll view. 
-	By passing ETSizeConstraintStyleVertical, the layout will try to fill the
-	limited height (provided by -layoutSize) with as many lines of equal 
-	width as possible. In this case, layout width and line width are stretched.
-	By passing ETSizeConstraintStyleHorizontal, the layout will try to fill 
-	the unlimited height with as many lines of equally limited width (returned
-	by -layoutSize) as needed. In this case, only layout height is stretched. 
-	ETSizeConstraintStyleNone and ETSizeConstraintStyleVerticalHorizontal are
-	not supported. If you use them, the receiver resets 
-	ETSizeConstraintStyleHorizontal default value. */
+/** Lets you control the constraint applied on the layout when 
+-isContentSizeLayout returns YES. The most common case is when the layout is set 
+on a layout item embbeded in a scroll view. 
+
+By passing ETSizeConstraintStyleVertical, the layout will try to fill the 
+limited height (provided by -layoutSize) with as many lines of equal width as 
+possible. In this case, layout width and line width are stretched.
+
+By passing ETSizeConstraintStyleHorizontal, the layout will try to fill the 
+unlimited height with as many lines of equally limited width (returned
+by -layoutSize) as needed. In this case, only layout height is stretched. 
+
+ETSizeConstraintStyleNone and ETSizeConstraintStyleVerticalHorizontal are not 
+supported. If you use them, the receiver resets ETSizeConstraintStyleHorizontal 
+default value. */
 - (void) setLayoutSizeConstraintStyle: (ETSizeConstraintStyle)constraint
 {
 	if (constraint == ETSizeConstraintStyleHorizontal 
@@ -243,8 +230,9 @@
 }
 
 /** Returns the constraint applied on the layout which are only valid when 
-	 -isContentSizeLayout returns YES. 
-	 Default value is ETSizeConstraintStyleHorizontal. */
+-isContentSizeLayout returns YES. 
+
+Default value is ETSizeConstraintStyleHorizontal. */
 - (ETSizeConstraintStyle) layoutSizeConstraintStyle
 {
 	return _layoutConstraint;
