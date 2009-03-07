@@ -139,9 +139,6 @@ to the items, which are expected to be already broken into lines in layoutModel.
 	ETLayoutLine *line = nil;
 	NSMutableArray *layoutModel = [NSMutableArray array];
 
-	/* First start by breaking items to layout by lines. We have to fill the layout
-	   line (layoutLineList) until a item is crossing the right boundary which
-	   happens when -layoutedViewForNextLineInViews: returns nil. */
 	while ([unlayoutedItems count] > 0)
 	{
 		line = [self layoutLineForLayoutItems: unlayoutedItems];
@@ -150,7 +147,8 @@ to the items, which are expected to be already broken into lines in layoutModel.
 		{
 			[layoutModel addObject: line];    
 				
-			/* In unlayoutedItems, remove the items which have just been layouted on the previous line. */
+			/* In unlayoutedItems, remove the items which have just been 
+			   layouted on the previous line. */
 			[unlayoutedItems removeObjectsInArray: [line items]];
 		}
 		else
@@ -163,7 +161,13 @@ to the items, which are expected to be already broken into lines in layoutModel.
 	return layoutModel;
 }
 
-/** Returns a line filled with items to layout. */
+/** Returns a line filled with items to layout.
+
+Fills the layout line by iterating over the items until the total width extends 
+beyond the right boundary. At that point, the new line is returned whether or 
+not every items have been inserted into it.
+
+When items is empty, returns an empty layout line. */
 - (ETLayoutLine *) layoutLineForLayoutItems: (NSArray *)items
 {
 	NSMutableArray *layoutedItems = [NSMutableArray array];
