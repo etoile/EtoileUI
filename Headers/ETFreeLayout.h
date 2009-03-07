@@ -50,7 +50,7 @@
 - (BOOL) isPositional;
 - (BOOL) isComputedLayout;
 
-- (void) resetItemLocationsWithLayout: (ETComputedLayout *)layout;
+- (void) resetItemPersistentFramesWithLayout: (ETComputedLayout *)layout;
 - (void) loadPersistentFramesForItems: (NSArray *)items;
 
 @end

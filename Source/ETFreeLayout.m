@@ -36,12 +36,13 @@
  */
 
 #import <EtoileFoundation/Macros.h>
-#import <EtoileUI/ETFreeLayout.h>
-#import <EtoileUI/ETComputedLayout.h>
-#import <EtoileUI/ETContainer.h>
-#import <EtoileUI/ETLayoutItem.h>
-#import <EtoileUI/NSView+Etoile.h>
-#import <EtoileUI/ETCompatibility.h>
+#import "ETFreeLayout.h"
+#import "ETComputedLayout.h"
+#import "ETContainer.h"
+#import "ETGeometry.h"
+#import "ETLayoutItem.h"
+#import "NSView+Etoile.h"
+#import "ETCompatibility.h"
 
 @implementation ETFreeLayout
 
@@ -76,12 +77,26 @@ by the receiver. */
 	return NO;
 }
 
-- (void) resetItemLocationsWithLayout: (ETComputedLayout *)layout
+/** Recomputes new persistent frames for every layout items provided by the 
+layout context, based on the rules or policy of the given layout. */
+- (void) resetItemPersistentFramesWithLayout: (ETComputedLayout *)layout
 {
+	id layoutContext = [self layoutContext];
+
 	RETAIN(self);
-	[[self container] setLayout: layout];
-	[[self container] updateLayout];
-	[[self container] setLayout: self];
+	/* The next line makes [self layoutContext] returns nil because 'layout' 
+	   takes control over it with -setLayout:. */
+	// FIXME: -setLayout: won't recompute every item frames, only the visible 
+	// items are relayouted.
+	[layoutContext setLayout: layout];
+
+	/* Sync the persistent frames with the frames just computed by -setLayout: */
+	FOREACH([layoutContext items], item, ETLayoutItem *)
+	{
+		[item setPersistentFrame: [item frame]];
+	}
+
+	[layoutContext setLayout: self];
 	RELEASE(self);
 }
 
@@ -102,21 +117,23 @@ by the receiver. */
 	[[self layoutContext] setVisibleItems: items];
 }
 
+/** Synchronizes the frames of every layout items provided by the layout 
+context, with their persistent frame values.
+
+When an item has no persistent frame value, the sync is done the other way 
+around: the persistent frame is initialized with the frame value. */
 - (void) loadPersistentFramesForItems: (NSArray *)items
 {
 	FOREACH(items, item, ETLayoutItem *)
 	{
-		// TODO: -hasLocalProperty: would be a better check. -persistentFrame 
-		// will return a zero rect both when no persistentFrame exists and when
-		// it is explicitly set to a zero rect. Only -valueForProperty: or 
-		// -hasLocalProperty: can really tell whether the property exists or not.
-		if ([item valueForProperty: kETPersistentFrameProperty] != nil)
-		{
-			[item setFrame: [item persistentFrame]];
-		}
-		else /* First time persistent frame is accessed, initialize it */
+		/* First time persistent frame is accessed, initialize it */
+		if (ETIsNullRect([item persistentFrame]))
 		{
 			[item setPersistentFrame: [item frame]];
+		}
+		else
+		{
+			[item setFrame: [item persistentFrame]];
 		}
 	}
 }

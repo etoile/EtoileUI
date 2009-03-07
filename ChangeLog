@@ -1,3 +1,13 @@
+2009-03-07  Quentin Mathe <qmathe@club-internet.fr>
+
+	* ETFreeLayout:
+	Corrected header import statements to be local.
+	(-loadPersistentFramesForItems:): Improved to check unitialized persistent 
+	frame properly and documented.
+	(-resetItemPersistentFramesWithLayout:): Renamed 
+	-resetItemLocationsWithLayout: and rewrote it to eliminate dependency on 
+	ETContainer and works with invisible items too. Documented too.
+
 2009-03-06  Quentin Mathe <qmathe@club-internet.fr>
 
 	* ETLayoutItem:
