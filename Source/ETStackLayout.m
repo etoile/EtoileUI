@@ -35,6 +35,7 @@
 	THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#import <EtoileFoundation/Macros.h>
 #import "ETStackLayout.h"
 #import "ETLayoutItem.h"
 #import "ETLayoutLine.h"
@@ -44,22 +45,15 @@
 
 @implementation ETStackLayout
 
-- (BOOL) isComputedLayout
-{
-	return YES;
-}
-
-/** Returns a line filled with views to layout (stored in an array). */
+/** Returns a line filled with items to layout (stored in an array). */
 - (ETLayoutLine *) layoutLineForLayoutItems: (NSArray *)items
 {
-	NSEnumerator *e = [items objectEnumerator];
-	ETLayoutItem *itemToLayout = nil;
 	NSMutableArray *layoutedItems = [NSMutableArray array];
 	ETLayoutLine *line = nil;
 	float vAccumulator = 0;
 	float itemMargin = [self itemMargin];
     
-	while ((itemToLayout = [e nextObject]) != nil)
+	FOREACH(items, itemToLayout, ETLayoutItem *)
 	{
 		vAccumulator += itemMargin + [itemToLayout height];
 		
@@ -91,9 +85,9 @@
 {
 	if ([layoutModel count] > 1)
 	{
-		ETLog(@"%@ -computeViewLocationsForLayoutModel: receives a model with "
-			  @"%d objects and not one, this usually means "
-			  @"-layoutLineForViews: isn't overriden as it should.", self, 
+		ETLog(@"%@ -computeLayoutItemLocationsForLayoutModel: receives a model "
+			  @"with %d objects and not one, this usually means "
+			  @"-layoutLineForLayoutItems: isn't overriden as it should.", self, 
 			  [layoutModel count]);
 	}
 	
@@ -133,10 +127,10 @@
 		}
 	}
 	
-	/* NOTE: to avoid computing view locations when they are outside of the
-		frame, think to add an exit condition here. */
+	// TODO: To avoid computing item locations when they are outside of the
+	// frame, think to add an exit condition here.
 	
-	ETDebugLog(@"View locations computed by layout line :%@", line);
+	ETDebugLog(@"Item locations computed by layout line :%@", line);
 }
 
 @end
