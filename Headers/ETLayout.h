@@ -55,6 +55,7 @@
 - (void) setSize: (NSSize)size;
 - (NSView *) view;
 - (void) setNeedsDisplay: (BOOL)now;
+- (BOOL) isFlipped;
 
 /* Required 
    The protocol doesn't truly need these methods, yet they simplify writing new 

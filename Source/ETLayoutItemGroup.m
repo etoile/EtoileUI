@@ -84,9 +84,10 @@ NSString *ETItemGroupSelectionDidChangeNotification = @"ETItemGroupSelectionDidC
 
 @implementation ETLayoutItemGroup
 
-/* Ugly hack to shut down the compiler so it doesn't pretend we don't fully
-   implement ETLayoutingContext protocol. */
+/* Ugly hacks to shut down the compiler (GCC 4.1.3 on Linux) so it doesn't 
+pretend we don't fully implement ETLayoutingContext protocol. */
 - (void) setNeedsDisplay: (BOOL)now { [super setNeedsDisplay: now]; }
+- (BOOL) isFlipped { return [super isFlipped]; }
 
 /* Initialization */
 
