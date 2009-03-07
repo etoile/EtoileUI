@@ -35,12 +35,11 @@
 	THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import <EtoileUI/ETStackLayout.h>
-#import <EtoileUI/ETContainer.h>
-#import <EtoileUI/ETLayoutItem.h>
-#import <EtoileUI/ETLayoutLine.h>
-#import <EtoileUI/NSView+Etoile.h>
-#import <EtoileUI/ETCompatibility.h>
+#import "ETStackLayout.h"
+#import "ETLayoutItem.h"
+#import "ETLayoutLine.h"
+#import "NSView+Etoile.h"
+#import "ETCompatibility.h"
 
 
 @implementation ETStackLayout
@@ -92,7 +91,7 @@
 {
 	if ([layoutModel count] > 1)
 	{
-		NSLog(@"%@ -computeViewLocationsForLayoutModel: receives a model with "
+		ETLog(@"%@ -computeViewLocationsForLayoutModel: receives a model with "
 			  @"%d objects and not one, this usually means "
 			  @"-layoutLineForViews: isn't overriden as it should.", self, 
 			  [layoutModel count]);
@@ -107,8 +106,9 @@
 	ETLayoutItem *item = nil;
 	float itemMargin = [self itemMargin];
 	NSPoint itemLocation = NSMakePoint(itemMargin, itemMargin);
+	BOOL isFlipped = [[self layoutContext] isFlipped];
 
-	if ([[self container] isFlipped])
+	if (isFlipped)
 	{
 		lineWalker = [[line items] objectEnumerator];
 	}
@@ -123,7 +123,7 @@
 	{
 		[item setX: itemLocation.x];
 		[item setY: itemLocation.y];
-		if ([[self container] isFlipped])
+		if (isFlipped)
 		{
 			itemLocation.y += itemMargin + [item height];
 		}
@@ -136,7 +136,7 @@
 	/* NOTE: to avoid computing view locations when they are outside of the
 		frame, think to add an exit condition here. */
 	
-	//ETDebugLog(@"View locations computed by layout line :%@", line);
+	ETDebugLog(@"View locations computed by layout line :%@", line);
 }
 
 @end

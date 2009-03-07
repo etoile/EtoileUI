@@ -35,13 +35,12 @@
 	THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import <EtoileUI/ETFlowLayout.h>
-#import <EtoileUI/ETContainer.h>
-#import <EtoileUI/ETLayoutItem.h>
-#import <EtoileUI/ETLayout.h>
-#import <EtoileUI/ETLayoutLine.h>
-#import <EtoileUI/NSView+Etoile.h>
-#import <EtoileUI/ETCompatibility.h>
+#import "ETFlowLayout.h"
+#import "ETLayoutItem.h"
+#import "ETLayout.h"
+#import "ETLayoutLine.h"
+#import "NSView+Etoile.h"
+#import "ETCompatibility.h"
 
 #define DEFAULT_ITEM_MARGIN 15
 #define DEFAULT_MAX_ITEM_SIZE NSMakeSize(256, 256)
@@ -79,10 +78,11 @@
 	float itemMargin = [self itemMargin];
 	NSPoint itemLocation = NSMakePoint(itemMargin, itemMargin);
 	float newLayoutHeight = 0;
-	
-	if ([[self container] isFlipped] == NO)
+	BOOL isFlipped = [[self layoutContext] isFlipped];
+
+	if (isFlipped == NO)
 	{
-		NSLog(@"WARNING: Flow layout doesn't handle non-flipped coordinates inside scroll view");
+		ETLog(@"WARNING: Flow layout doesn't handle non-flipped coordinates inside scroll view");
 		itemLocation = NSMakePoint(itemMargin, [self layoutSize].height - itemMargin);
 	}
   
@@ -117,7 +117,7 @@
 		/* Before computing the following items location in 'x' on the next line, we have 
 		   to reset the 'x' accumulator and take in account the end of the current 
 		   line, by substracting to 'y' the last layout line height. */
-		if ([[self container] isFlipped])
+		if (isFlipped)
 		{
 			[line setBaseLineLocation: 
 				NSMakePoint([line baseLineLocation].x, itemLocation.y)];
@@ -168,7 +168,7 @@
 		}
 		else
 		{
-			NSLog(@"Not enough space to layout all the items. Items remaining unlayouted: %@", unlayoutedItems);
+			ETLog(@"Not enough space to layout all the items. Items remaining unlayouted: %@", unlayoutedItems);
 			break;
 		}
 	}
