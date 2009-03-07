@@ -3,7 +3,7 @@
 	ETLineLayout.m
 
 	<abstract>	A layout class that organize items in a single horizontal line 
-	or row..</abstract>
+	or row.</abstract>
 
 	Copyright (C) 2007 Quentin Mathe
  
@@ -35,10 +35,8 @@
 	THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import <EtoileFoundation/Macros.h>
-#import <EtoileUI/ETLineLayout.h>
-#import <EtoileUI/ETContainer.h>
-#import <EtoileUI/ETLayoutLine.h>
+#import "Macros.h"
+#import "ETLineLayout.h"
 
 
 @implementation ETLineLayout
@@ -60,36 +58,5 @@
 	// ETFlowLayout doesn't use it.
 	return ETSizeConstraintStyleNone;
 }
-
-
-#if 0
-/** Run the layout computation which assigns a location in the view container
-    to each view added to the flow layout manager. */
-- (NSArray *) layoutModelForViews: (NSArray *)views inContainer: (ETContainer *)container;
-{
-	NSMutableArray *unlayoutedViews = 
-		[NSMutableArray arrayWithArray: views];
-	ETLayoutLine *line = nil;
-	NSMutableArray *layoutModel = [NSMutableArray array];
-	
-	/* First start by breaking views to layout by lines. We have to fill the layout
-	   line (layoutLineList) until a view is crossing the right boundary which
-	   happens when -layoutedViewForNextLineInViews: returns nil. */
-	line = [self layoutLineForViews: unlayoutedViews];
-		
-	if ([[line views] count] > 0)
-	{
-		[layoutModel addObject: line];    
-				
-		/* In unlayoutedViews, remove the views which have just been layouted on the previous line. */
-		[unlayoutedViews removeObjectsInArray: [line views]];
-	}
-
-	if ([unlayoutedViews count] > 0)
-		ETDebugLog(@"Not enough space to layout all the views. Views remaining unlayouted: %@", unlayoutedViews);
-
-	return layoutModel;
-}
-#endif
 
 @end

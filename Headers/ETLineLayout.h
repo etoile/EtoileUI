@@ -37,9 +37,11 @@
 #import <AppKit/AppKit.h>
 #import <EtoileUI/ETFlowLayout.h>
 
-/** ETLineLayout overrides the following property value defined by ETFlowLayout:
-    - itemSizeConstraintStyle to be disabled
-	- itemMargin to a 0 px border. */
+/** ETLineLayout overrides the following property values defined by ETFlowLayout:
+<list>
+<item>itemSizeConstraintStyle to be disabled</item>
+<item>itemMargin to a 0 px border</item>
+</list> */
 @interface ETLineLayout : ETFlowLayout
 {
 
