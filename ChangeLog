@@ -1,3 +1,27 @@
+2009-03-09  Quentin Mathe <qmathe@club-internet.fr>
+
+	Implemented sorting and searching in the layout item tree. The controller 
+	layer is now mostly finished. This code remains to be tested.
+	* ETController:
+	New ivars _sortDescriptors, _filterPredicate, 
+	_automaticallyRearranges, _hasNewSortDescriptors, _hasNewFilterPredicate, 
+	_hasNewContent.
+	(-init, -dealloc-: Updated.
+	(-filterPredicate, -setFilterPredicate:, -automaticallyRearrangesObjects:, 
+	-setAutomaticallyRearrangesObjects:): Added.
+	* ETLayoutItemGroup:
+	(+isAutolayoutEnabled, +enablesAutolayout, +disablesAutolayout): Added.
+	Will probbly related instance methods in the long run.
+	(-dealloc): Updated.
+	(-properties): Removed 'layout' declaration now declared at ETLayoutItem 
+	level.
+	(-sortWithSortDescriptors:recursively:, -filterWithPredicate:recursively:, 
+	-arrangedItems, -isSorted, -isFiltered): Added. These methods are used by 
+	ETController.
+	(-setSelectionIndexPaths:): Extracted some code into -didChangeSelection: 
+	that lets external objects trigger selection notifications.
+	(-didChangeSelection:): Added.
+
 2009-03-08  Quentin Mathe <qmathe@club-internet.fr>
 
 	New event handling model - part 3

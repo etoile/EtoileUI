@@ -89,6 +89,44 @@ pretend we don't fully implement ETLayoutingContext protocol. */
 - (void) setNeedsDisplay: (BOOL)now { [super setNeedsDisplay: now]; }
 - (BOOL) isFlipped { return [super isFlipped]; }
 
+static BOOL globalAutolayoutEnabled = YES;
+
+/** Returns YES if mutating the content of layout items by calling -addItem:, 
+-insertItem:atIndex:, -removeItem: etc. triggers a layout update and a 
+redisplay, otherwise returns NO when you must call -updateLayout by yourself 
+after mutating the content. 
+	
+By default, returns YES, hence there is usually no need to call -updateLayout 
+and marks child items or their parent item for redisplay. */
++ (BOOL) isAutolayoutEnabled;
+{
+	return globalAutolayoutEnabled;
+}
+
+/** Enables automatic layout update and redisplay when mutating the content of 
+layout items by calling -addItem:, -insertItem:atIndex:, -removeItem: etc.
+
+If you need to add, remove or insert a large set of child items, in order to 
+only recompute the layout once and also avoid a lot of extra redisplay, you 
+should disable the autolayout, and restore it later when mutating the layout 
+item to which the children belong to is finished. 
+
+Take note that enabling the autolayout doesn't trigger a layout update, so 
+-updateLayout must be called when autolayout is disabled or was just restored. */
++ (void) enablesAutolayout;
+{
+	globalAutolayoutEnabled = YES;
+}
+
+/** Disables automatic layout update and redisplay when mutating layout item
+content by calling -addItem:, -insertItem:atIndex:, -removeItem: etc. 
+
+See also +enablesAutolayout. */
++ (void) disablesAutolayout
+{
+	globalAutolayoutEnabled = NO;
+}
+
 /* Initialization */
 
 /** <init /> Designated initializer */
@@ -99,6 +137,8 @@ pretend we don't fully implement ETLayoutingContext protocol. */
     if (self != nil)
     {
 		_layoutItems = [[NSMutableArray alloc] init];
+		_sortedItems = nil;
+		_arrangedItems = nil;
 		if (layoutItems != nil)
 		{
 			[self addItems: layoutItems];
@@ -138,6 +178,8 @@ pretend we don't fully implement ETLayoutingContext protocol. */
 	DESTROY(_layout);
 	DESTROY(_stackedLayout);
 	DESTROY(_unstackedLayout);
+	DESTROY(_arrangedItems);
+	DESTROY(_sortedItems);
 	DESTROY(_layoutItems);
 
 	[super dealloc];
@@ -190,7 +232,7 @@ The returned copy is mutable because ETLayoutItemGroup cannot be immutable. */
 
 - (NSArray *) properties
 {
-	NSArray *properties = A(@"layout", kSourceProperty, kDelegateProperty);
+	NSArray *properties = A(kSourceProperty, kDelegateProperty);
 
 	return [[super properties] arrayByAddingObjectsFromArray: properties];
 }
@@ -845,11 +887,13 @@ the receiver immediate children to the source. */
 
 - (void) setHasNewLayout: (BOOL)flag { _hasNewLayout = flag; }
 
+/** Returns the layout associated with the receiver to present its content. */
 - (ETLayout *) layout
 {
 	return _layout;
 }
 
+/** Sets the layout associated with the receiver to present its content. */
 - (void) setLayout: (ETLayout *)layout
 {
 	if (_layout == layout)
@@ -928,7 +972,7 @@ frame (see -usesLayoutBasedFrame). */
 	[[self layout] render: nil isNewContent: isNewLayoutContent];
 
 	[self setNeedsDisplay: YES];
-	
+
 	/* Unset needs layout flags */
 	[self setHasNewContent: NO];
 	[self setHasNewLayout: NO];
@@ -937,7 +981,7 @@ frame (see -usesLayoutBasedFrame). */
 /** Returns whether -updateLayout can be safely called now. */
 - (BOOL) canUpdateLayout
 {
-	return [self isAutolayout] && ![self isReloading] && ![[self layout] isRendering];
+	return globalAutolayoutEnabled && [self isAutolayout] && ![self isReloading] && ![[self layout] isRendering];
 }
 
 /** Returns YES if mutating the receiver content by calling -addItem:, 
@@ -1487,7 +1531,22 @@ Posts an ETItemGroupSelectionDidChangeNotification. */
 	[self applySelectionIndexPaths: [NSMutableArray arrayWithArray: indexPaths] 
 	                relativeToItem: self];
 
-	/* Finally propagate changes by posting notification */
+	/* For opaque layouts that may need to keep in sync the selection state of 
+	   their custom UI. */
+	[[self layout] selectionDidChangeInLayoutContext];
+
+	/* Reflect selection change immediately */
+	[[self supervisorView] display]; // TODO: supervisorView is probably not the best choice...
+}
+
+/* Tells the receiver the selection has been changed and it should post 
+ETItemGroupSelectionDidChangeNotification. 
+
+You should never use this method when you use -setSelected: on descendant items 
+rather than setSelectionXXX: methods on the receiver. Don't use -setSelected: should */
+- (void) didChangeSelection
+{
+	
 	NSNotification *notif = [NSNotification 
 		notificationWithName: ETItemGroupSelectionDidChangeNotification object: self];
 	
@@ -1495,13 +1554,6 @@ Posts an ETItemGroupSelectionDidChangeNotification. */
 		[[self delegate] itemGroupSelectionDidChange: notif];
 	
 	[[NSNotificationCenter defaultCenter] postNotification: notif];
-
-	/* For opaque layouts that may need to keep in sync the selection state of 
-	   their custom UI. */
-	[[self layout] selectionDidChangeInLayoutContext];
-
-	/* Reflect selection change immediately */
-	[[self supervisorView] display]; // TODO: supervisorView is probably not the best choice...
 }
 
 /** Returns the selected child items belonging to the receiver. 
@@ -1549,6 +1601,103 @@ You should call this method to obtain the selection in most cases and not
 
 	return [descendantItems objectsMatchingValue: [NSNumber numberWithBool: YES] 
 	                                      forKey: @"isSelected"];
+}
+
+/* Sorting and Filtering */
+
+- (void) sortWithSortDescriptors: (NSArray *)descriptors recursively: (BOOL)recursively
+{
+	if (_sortedItems == nil)
+		_sortedItems = [_layoutItems mutableCopy];
+
+	BOOL hasValidSortDescriptors = (descriptors != nil && [descriptors isEmpty] == NO);
+	if (hasValidSortDescriptors)
+	{
+		ASSIGN(_arrangedItems, [NSMutableArray arrayWithArray: _layoutItems]);
+		_sorted = NO;
+		_filtered = NO;
+		return;
+	}
+	else
+	{
+		[_sortedItems sortUsingDescriptors: descriptors];
+		ASSIGN(_arrangedItems, _sortedItems);
+		_sorted = YES;
+		_filtered = NO;
+	}
+
+	if (recursively)
+	{
+		FOREACHI(_sortedItems, item)
+		{
+			if ([item isGroup] == NO)
+				continue;
+				
+			[(ETLayoutItemGroup *)item sortWithSortDescriptors: descriptors
+			                                       recursively: recursively];
+		}
+	}
+}
+
+- (void) filterWithPredicate: (NSPredicate *)predicate recursively: (BOOL)recursively
+{
+	NSArray *itemsToFilter = (_sorted ? _sortedItems : _layoutItems);
+	BOOL hasValidPredicate = (predicate != nil);
+
+	if (hasValidPredicate)
+	{
+		ASSIGN(_arrangedItems, [itemsToFilter filteredArrayUsingPredicate: predicate]);
+		_filtered = YES;
+	}
+	else
+	{
+		ASSIGN(_arrangedItems, itemsToFilter);
+		_filtered = NO;
+	}
+	
+	if (recursively)
+	{
+		FOREACHI(_arrangedItems, item)
+		{
+			if ([item isGroup] == NO)
+				continue;
+				
+			[(ETLayoutItemGroup *)item filterWithPredicate: predicate 
+			                                   recursively: recursively];
+		}
+	}
+}
+
+/** Returns whether -arrangedItems are sorted or not.
+
+See also -sortWithSortDescriptors:recursively:. */
+- (BOOL) isSorted
+{
+	return _sorted;
+}
+
+/** Returns whether -arrangedItems are filtered or not.
+
+See also -filterWithPredicate:recursively:. */
+- (BOOL) isFiltered
+{
+	return _filtered;
+}
+
+/** Returns an array with the child items currently sorted and filtered, 
+otherwise returns an array identical to -items.
+
+If the receiver has not been sorted or filtered yet, returns a nil array. */
+- (NSArray *) arrangedItems
+{
+	if (_sorted || _filtered)
+	{
+		return AUTORELEASE([_arrangedItems copy]);
+	}
+	else
+	{
+		return AUTORELEASE([_layoutItems copy]);
+	}
 }
 
 /* Collection Protocol */

@@ -38,9 +38,7 @@
 
 @class ETLayoutItem, ETLayoutItemGroup;
 
-// TODO: Implement sort descriptors and predicate-base filters for search (see 
-// (NSObjectController and NSArrayController to get the idea).
-// Think about the selection marker stuff and implement it if it makes senses.
+// TODO: Think about the selection marker stuff and implement it if it makes senses.
 
 /** ETController provides a generic controller layer, usually to be used a 
 	replacement for both NSArrayController and NSTreeController. This reusable 
@@ -85,11 +83,16 @@
 	ETLayoutItemGroup *_templateItemGroup;
 	Class _objectClass;
 	Class _groupClass;
+	NSArray *_sortDescriptors;
+	NSPredicate *_filterPredicate;
+	BOOL _automaticallyRearrangesObjects;
+	BOOL _hasNewSortDescriptors;
+	BOOL _hasNewFilterPredicate;
+	BOOL _hasNewContent;
 }
 
 - (id) content;
 - (void) setContent: (id)content;
-//- (id) arrangedObjects;
 
 - (ETLayoutItem *) templateItem;
 - (void) setTemplateItem: (ETLayoutItem *)template;
@@ -119,9 +122,16 @@
 
 - (unsigned int) insertionIndex;
 
-//- (NSArray *) sortDescriptors;
-//- (void) setSortDescriptors: (NSArray *)sortDescriptors;
-//- (void) rearrangeObjects;
+/* Sorting and Filtering */
+
+- (NSArray *) sortDescriptors;
+- (void) setSortDescriptors: (NSArray *)sortDescriptors;
+- (NSPredicate *) filterPredicate;
+- (void) setFilterPredicate: (NSPredicate *)searchPredicate;
+- (void) rearrangeObjects;
+- (BOOL) automaticallyRearrangesObjects;
+- (void) setAutomaticallyRearrangesObjects: (BOOL)flag;
+
 //- (void) commitEditing;
 
 @end

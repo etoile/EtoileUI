@@ -50,6 +50,8 @@ extern NSString *kDelegateProperty; /** delegate property name */
 @interface ETLayoutItemGroup : ETLayoutItem <ETLayoutingContext, ETCollection, ETCollectionMutation>
 {
 	NSMutableArray *_layoutItems;
+	NSMutableArray *_sortedItems;
+	NSMutableArray *_arrangedItems;
 	ETLayout *_layout;
 	ETLayout *_stackedLayout;
 	ETLayout *_unstackedLayout;
@@ -61,7 +63,13 @@ extern NSString *kDelegateProperty; /** delegate property name */
 	BOOL _hasNewContent;
 	BOOL _hasNewLayout;
 	BOOL _shouldMutateRepresentedObject;
+	BOOL _sorted;
+	BOOL _filtered;
 }
+
++ (BOOL) isAutolayoutEnabled;
++ (void) enablesAutolayout;
++ (void) disablesAutolayout;
 
 /* Initialization */
 
@@ -187,6 +195,14 @@ extern NSString *kDelegateProperty; /** delegate property name */
 - (NSArray *) selectedItemsInLayout;
 - (NSArray *) selectedItemsIncludingRelatedDescendants;
 - (NSArray *) selectedItemsIncludingAllDescendants;
+
+/* Sorting and Filtering */
+
+- (void) sortWithSortDescriptors: (NSArray *)descriptors recursively: (BOOL)recursively;
+- (void) filterWithPredicate: (NSPredicate *)predicate recursively: (BOOL)recursively;
+- (NSArray *) arrangedItems;
+- (BOOL) isSorted;
+- (BOOL) isFiltered;
 
 /* Collection Protocol */
 

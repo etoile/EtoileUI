@@ -52,6 +52,7 @@
 	[self setTemplateItemGroup: nil];
 	[self setObjectClass: nil];
 	[self setGroupClass: nil];
+	[self setSortDescriptors: nil];
 
 	return self;
 }
@@ -62,7 +63,8 @@
 	DESTROY(_templateItemGroup); 
 	DESTROY(_objectClass); 
 	DESTROY(_groupClass);
-	
+	DESTROY(_sortDescriptors);
+	DESTROY(_filterPredicate);
 	[self setContent: nil];
 	
 	[super dealloc];
@@ -321,6 +323,80 @@ changed. */
 		index = [[self content] numberOfItems];
 
 	return index;
+}
+
+/** Returns the sort descriptors used to sort the content associated with the 
+receiver.
+
+By default, returns an empty array. */
+- (NSArray *) sortDescriptors
+{
+	return AUTORELEASE([_sortDescriptors copy]);
+}
+
+/** Set the sort descriptors used to sort the content associated with the 
+receiver. */
+- (void) setSortDescriptors: (NSArray *)sortDescriptors
+{
+	if (sortDescriptors != nil)
+	{
+		ASSIGNCOPY(_sortDescriptors, sortDescriptors);
+	}
+	else
+	{
+		_sortDescriptors = [[NSArray alloc] init];
+	}
+	_hasNewSortDescriptors = YES;
+	if ([self automaticallyRearrangesObjects])
+		[self rearrangeObjects];
+}
+
+/** Returns the search predicate to filter the controller content. */
+- (NSPredicate *) filterPredicate
+{
+	return _filterPredicate;
+}
+
+/** Sets the search predicate to filter the controller content. */
+- (void) setFilterPredicate: (NSPredicate *)searchPredicate
+{
+	ASSIGN(_filterPredicate, searchPredicate);
+	_hasNewFilterPredicate = YES;
+	if ([self automaticallyRearrangesObjects])
+		[self rearrangeObjects];
+}
+
+/** Arranges the objects in the content by sorting them, then filtering them 
+with -filterPredicate if the returned predicate is not nil. 
+
+If the content is a tree structure, the entire tree is rearranged recursively 
+by sorting and filtering each item group that get traversed.
+
+You can override this method to implement another sort and filter strategy than 
+the default one based on 
+-[ETLayoutItemGroup sortWithSortDescriptors:recursively:], -sortDescriptors, 
+-[ETLayoutItemGroup filterWithPredicate:recursively:] and -filterPredicate . */
+- (void) rearrangeObjects
+{
+	if (_hasNewContent || _hasNewSortDescriptors)
+		[_content sortWithSortDescriptors: [self sortDescriptors] recursively: YES];
+
+	if (_hasNewContent || _hasNewFilterPredicate)
+		[_content filterWithPredicate: [self filterPredicate] recursively: YES];
+}
+
+/** Returns whether -rearrangeObjects should be automatically called when 
+-setFilterPredicate: is called. */
+- (BOOL) automaticallyRearrangesObjects
+{
+	return _automaticallyRearrangesObjects;
+}
+
+/** Sets whether -rearrangeObjects should be automatically called when 
+-setFilterPredicate: is called. */
+- (void) setAutomaticallyRearrangesObjects: (BOOL)flag
+{
+	_automaticallyRearrangesObjects = flag;
 }
 
 /* Not really needed */
