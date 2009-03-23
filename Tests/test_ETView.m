@@ -299,7 +299,7 @@
 - (void) testLayoutItem
 {
 	UKNotNil([self layoutItem]);
-	UKObjectsSame(self, [[self layoutItem] view]);
+	UKObjectsSame(self, [[self layoutItem] supervisorView]);
 }
 
 - (void) testSetLayoutItem

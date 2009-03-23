@@ -248,7 +248,7 @@ default. */
 
 - (BOOL) isContainer
 {
-	return [[self view] isKindOfClass: [ETContainer class]];
+	return [[self supervisorView] isKindOfClass: [ETContainer class]];
 }
 
 /* Traversing Layout Item Tree */
@@ -496,8 +496,8 @@ NOTE: Having a null layout class may be a solution to get rid of
 	   receiver has a view itself. 
 	   TODO: Probably make more explicit the nil layout check and improve in a
 	   way or another the handling of the nil view case. */
-	if ([self layout] == nil && [self view] != nil)
-		[[self view] addSubview: [item displayView]];
+	if ([self layout] == nil && [self supervisorView] != nil)
+		[[self supervisorView] addSubview: [item displayView]];
 }
 
 /** Symetric method to -handleAttachViewOfItem: */
@@ -1242,7 +1242,7 @@ yourself (see -visibleItemsForItems:). */
 	ETContainer *container = nil;
 
 	if ([self isContainer])
-		container = (ETContainer *)[self view];
+		container = (ETContainer *)[self supervisorView];
 
 	FOREACH(items, item, ETLayoutItem *)
 	{
@@ -1790,9 +1790,9 @@ If the receiver has not been sorted or filtered yet, returns a nil array. */
 
 - (float) itemScaleFactor
 {
-	if ([[self view] respondsToSelector: @selector(itemScaleFactor)])
+	if ([[self supervisorView] respondsToSelector: @selector(itemScaleFactor)])
 	{
-		return	[(id)[self view] itemScaleFactor];
+		return	[(id)[self supervisorView] itemScaleFactor];
 	}
 	else
 	{
@@ -1806,14 +1806,14 @@ If the receiver has not been sorted or filtered yet, returns a nil array. */
 /* -documentVisibleRect size */
 - (NSSize) visibleContentSize
 {
-	if ([[self view] respondsToSelector: @selector(contentSize)])
+	if ([[self supervisorView] respondsToSelector: @selector(contentSize)])
 	{
-		return	[(id)[self view] contentSize];
+		return	[(id)[self supervisorView] contentSize];
 	}
-	else if ([[self view] respondsToSelector: @selector(scrollView)]
-	 && [[(id)[self view] scrollView] respondsToSelector: @selector(contentSize)])
+	else if ([[self supervisorView] respondsToSelector: @selector(scrollView)]
+	 && [[(id)[self supervisorView] scrollView] respondsToSelector: @selector(contentSize)])
 	{
-		return [[(id)[self view] scrollView] contentSize];
+		return [[(id)[self supervisorView] scrollView] contentSize];
 	}
 	else
 	{
@@ -1824,9 +1824,9 @@ If the receiver has not been sorted or filtered yet, returns a nil array. */
 
 - (BOOL) isScrollViewShown
 {
-	if ([[self view] respondsToSelector: @selector(isScrollViewShown)])
+	if ([[self supervisorView] respondsToSelector: @selector(isScrollViewShown)])
 	{
-		return	[(id)[self view] isScrollViewShown];
+		return	[(id)[self supervisorView] isScrollViewShown];
 	}
 	else
 	{
@@ -1842,14 +1842,14 @@ If the receiver has not been sorted or filtered yet, returns a nil array. */
 		   For more details, see -[ETContainer setFrameSize:] */
 - (void) setContentSize: (NSSize)size
 {
-	if ([[self view] respondsToSelector: @selector(setContentSize:)])
+	if ([[self supervisorView] respondsToSelector: @selector(setContentSize:)])
 	{
-		[(id)[self view] setContentSize: size];
+		[(id)[self supervisorView] setContentSize: size];
 	}
-	else if ([[self view] respondsToSelector: @selector(scrollView)]
-	 && [[(id)[self view] scrollView] isKindOfClass: [NSScrollView class]])
+	else if ([[self supervisorView] respondsToSelector: @selector(scrollView)]
+	 && [[(id)[self supervisorView] scrollView] isKindOfClass: [NSScrollView class]])
 	{
-		[[[(id)[self view] scrollView] documentView] setFrameSize: size];		
+		[[[(id)[self supervisorView] scrollView] documentView] setFrameSize: size];		
 	}
 	else
 	{

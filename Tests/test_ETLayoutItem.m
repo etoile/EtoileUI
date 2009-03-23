@@ -95,14 +95,14 @@
 	id parentItem = [parentView layoutItem];
 	
 	[prevParentView addSubview: view];
-	[self setView: view];
+	[self setSupervisorView: view];
 	[parentItem setLayout: [ETFlowLayout layout]];
 	
 	[self setParentLayoutItem: parentItem];
 	/* -setParentLayoutItem: doesn't touch the view hierarchy */
-	UKObjectsNotSame(parentView, [[self view] superview]);
-	UKObjectsSame(prevParentView, [[self view] superview]);
-	UKObjectsSame([[self displayView] superview], [[self view] superview]);
+	UKObjectsNotSame(parentView, [[self supervisorView] superview]);
+	UKObjectsSame(prevParentView, [[self supervisorView] superview]);
+	UKObjectsSame([[self displayView] superview], [[self supervisorView] superview]);
 	[self setParentLayoutItem: nil]; /* Revert to initial state */
 
 	// TODO: More tests and move the following tests into standalone methods
@@ -113,17 +113,17 @@
 
 	[parentItem handleAttachViewOfItem: self];
 	/* For flow layout of parentItem, view insertion is delayed */
-	UKNil([[self view] superview]);
-	UKObjectsSame([[self displayView] superview], [[self view] superview]);
+	UKNil([[self supervisorView] superview]);
+	UKObjectsSame([[self displayView] superview], [[self supervisorView] superview]);
 	[parentItem handleDetachViewOfItem: self]; /* Revert to initial state */
 
 	[parentItem addItem: self]; /* Will set parent layout item and update the layout */
 	UKNotNil([[self displayView] superview]); /* View must be inserted as a subview now */
-	UKObjectsSame([parentItem view], [[self displayView] superview]);	
+	UKObjectsSame([parentItem supervisorView], [[self displayView] superview]);	
 	
 	[parentItem removeItem: self];
 	UKNil([[self displayView] superview]);
-	UKObjectsNotSame([parentItem view], [[self displayView] superview]);
+	UKObjectsNotSame([parentItem supervisorView], [[self displayView] superview]);
 }
 
 - (void) testIndexPathForItem

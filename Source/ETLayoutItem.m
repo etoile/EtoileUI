@@ -737,33 +737,14 @@ this case the receiver becomes a meta item and returns YES for -isMetaLayoutItem
 	ASSIGN(_modelObject, modelObject);
 }
 
+/** Returns the view associated with the receiver. */
 - (NSView *) view
 {
-	id wrappedView = [[self supervisorView] wrappedView];
-	
-	if (wrappedView != nil)
-	{
-		// FIXME: Simplify by hiding these details, the next two branches could
-		// be removed now I think...
-		if ([wrappedView isKindOfClass: [NSScrollView class]])
-		{
-			return [wrappedView documentView];
-		}
-		else if ([wrappedView isKindOfClass: [NSBox class]])
-		{
-			return [wrappedView contentView];
-		}
-		else
-		{
-			return wrappedView;
-		}
-	}
-	else
-	{
-		return [self supervisorView];
-	}
+	return [[self supervisorView] wrappedView];
 }
 
+/** Sets the view associated with the receiver. This view is commonly a 
+widget provided by the widget backend. */
 - (void) setView: (NSView *)newView
 {
 	BOOL resizeBoundsActive = [self appliesResizingToBounds];
@@ -1171,8 +1152,8 @@ Take note the new visibility state won't be apparent until a redisplay occurs. *
 	item is the receiver itself by default. 
 	The decorator item is in charge of managing the item view and must not 
 	break the following rules:
-	- [self displayView] must return [[self decoratorItem] view]
-	- [self view] must return [[[self decoratorItem] view] wrappedView] */
+	- [self displayView] must return [[self decoratorItem] supervisorView]
+	- [self supervisorView] must return [[[self decoratorItem] supervisorView] wrappedView] */
 - (ETLayoutItem *) decoratorItem
 {
 	return _decoratorItem;
@@ -2451,7 +2432,7 @@ returns nil.
 
 - (void) beginEditingUI
 {
-	id view = [self view];
+	id view = [self supervisorView];
 	
 	/* Notify to view */
 	if (view != nil && [view respondsToSelector: @selector(beginEditingUI)])

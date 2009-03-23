@@ -405,7 +405,7 @@ static NSMutableSet *layoutClasses = nil;
 /** Returns the view where the layout happens (by computing locations of a layout item series). */
 - (ETContainer *) container;
 {
-	return (ETContainer *)[[self layoutContext] view];
+	return (ETContainer *)[[self layoutContext] supervisorView];
 }
 
 /** Sets the context where the layout should happen. 

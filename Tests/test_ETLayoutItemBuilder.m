@@ -115,7 +115,7 @@
 	UKIntsEqual([[rootItem items] count], 2);
 	/* NSView are turned into containers but NSView subclasses aren't */
 	UKObjectsNotSame(subview0, [[rootItem itemAtIndex: 0] view]);
-	UKObjectKindOf([[rootItem itemAtIndex: 0] view], ETContainer);
+	UKObjectKindOf([[rootItem itemAtIndex: 0] supervisorView], ETContainer);
 	//UKObjectKindOf(ETContainer, [[rootItem itemAtIndex: 0] view]);
 	UKObjectsSame([[rootItem itemAtIndex: 1] view], subview1);
 	childItem = [rootItem itemAtIndex: 0];

@@ -1,3 +1,21 @@
+2009-03-17  Quentin Mathe <qmathe@club-internet.fr>
+
+	* ETLayoutItem:
+	(-view): Simplified -[ETLayoutItem view] to never return the supervisor view 
+	itself but only its wrapped view.
+	-(beginEditingUI): Updated to use -supervisorView.
+	* ETLayoutItemGroup
+	(-isContainer, -handleAttachViewOfItem:, -setVisibleItems:forItems:, 
+	-itemScaleFactor, -visibleContentSize, -isScrollViewShown, -setContentSize:):
+	 Updated to use -supervisorView.
+	* ETLayoutItemGroup+Mutation:
+	(-container): Updated to use -supervisorView.
+	* ETLayout:
+	Replaced -view by -supervisorView in ETLayoutingContext protocol.
+	(-container): Updated to use -supervisorView.
+	* test_ETLayoutItem, test_ETLayoutItemBuilder, test_ETView: 
+	Updated to use -view and -supervisorView as expected.	
+
 2009-03-09  Quentin Mathe <qmathe@club-internet.fr>
 
 	Implemented sorting and searching in the layout item tree. The controller 

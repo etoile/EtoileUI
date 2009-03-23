@@ -37,7 +37,7 @@
 #import <Foundation/Foundation.h>
 #import <AppKit/AppKit.h>
 
-@class ETContainer, ETLayoutLine, ETLayoutItem;
+@class ETContainer, ETLayoutLine, ETLayoutItem, ETView;
 
 
 /** Methods which must be implemented by an object to be layouted by any
@@ -53,7 +53,7 @@
 - (void) setVisibleItems: (NSArray *)items;
 - (NSSize) size;
 - (void) setSize: (NSSize)size;
-- (NSView *) view;
+- (ETView *) supervisorView;
 - (void) setNeedsDisplay: (BOOL)now;
 - (BOOL) isFlipped;
 

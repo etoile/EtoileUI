@@ -428,7 +428,7 @@ static 	BOOL _coalescingMutation = NO;
 {
 	if ([self isContainer])
 	{
-		return (ETContainer *)[self view];
+		return (ETContainer *)[self supervisorView];
 	}
 	else
 	{
