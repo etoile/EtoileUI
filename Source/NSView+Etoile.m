@@ -287,7 +287,7 @@ By default, returns NO. */
 	NSPoint bottomLeftPoint = [self frame].origin;
 	
 	if ([self superview] != nil && [[self superview] isFlipped])
-		bottomLeftPoint.y -= [self height];
+		bottomLeftPoint.y += [self height];
 		
 	return bottomLeftPoint;
 }

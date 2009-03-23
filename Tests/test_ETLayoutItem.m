@@ -280,6 +280,7 @@
 
 - (void) testConvertRectToParent
 {
+	[[ETLayoutItem itemGroup] addItem: self];
 	[self setOrigin: NSMakePoint(5, 2)];
 	
 	NSRect newRect = [self convertRectToParent: NSMakeRect(0, 0, 10, 20)];
@@ -303,6 +304,7 @@
 
 - (void) testConvertRectFromParent
 {
+	[[ETLayoutItem itemGroup] addItem: self];
 	[self setOrigin: NSMakePoint(5, 2)];
 	
 	NSRect newRect = [self convertRectFromParent: NSMakeRect(0, 0, 10, 20)];
@@ -516,34 +518,9 @@
 	[item10 setSelected: YES]; \
 	[item110 setSelected: YES]; \
 	
-#define DEFINE_BASE_ITEMS_0_10_11 \
-	id container1 = [[ETContainer alloc] initWithFrame: NSMakeRect(0, 0, 50, 100)]; \
-	id container2 = [[ETContainer alloc] initWithFrame: NSMakeRect(0, 0, 50, 100)]; \
-	id container3 = [[ETContainer alloc] initWithFrame: NSMakeRect(0, 0, 50, 100)]; \
-	 \
-	[container1 setRepresentedPath: @"/myModel1"]; \
-	[container2 setRepresentedPath: @"/myModel2"]; \
-	[container3 setRepresentedPath: @"/myModel3"]; \
-	[item0 setView: container1]; \
-	[item10 setView: container2]; \
-	[item11 setView: container3]; \
-	RELEASE(container1); \
-	RELEASE(container2); \
-	RELEASE(container3); \
-
-- (void) testRepresentedPathBase
-{
-	id container = [[ETContainer alloc] initWithFrame: NSMakeRect(0, 0, 50, 100)];
-	
-	UKNil([self representedPathBase]);
-	
-	[container setRepresentedPath: @"/myModel"];
-	[self setView: container];
-	RELEASE(container);
-	
-	UKNotNil([self representedPathBase]);
-	UKStringsEqual(@"/myModel", [self representedPathBase]);
-}
+#define DEFINE_BASE_ITEMS_0_11 \
+	[item0 setRepresentedPathBase: @"/myModel1"]; \
+	[item11 setRepresentedPathBase: @"/myModel3"]; \
 
 - (void) testIsContainer
 {
@@ -558,7 +535,7 @@
 - (void) testItemsIncludingRelatedDescendants
 {
 	BUILD_TEST_TREE
-	DEFINE_BASE_ITEMS_0_10_11
+	DEFINE_BASE_ITEMS_0_11
 	
 	NSArray *items = [self itemsIncludingRelatedDescendants];
 
@@ -663,7 +640,7 @@
 - (void) testSelectedItemsIncludingRelatedDescendants
 {
 	BUILD_SELECTION_TEST_TREE_self_0_10_110
-	DEFINE_BASE_ITEMS_0_10_11
+	DEFINE_BASE_ITEMS_0_11
 	
 	NSArray *selectedItems = [self selectedItemsIncludingRelatedDescendants];
 

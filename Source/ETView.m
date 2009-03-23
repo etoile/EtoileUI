@@ -377,7 +377,15 @@ You can revert to non-flipped coordinates by passing NO to this method. */
 		if (mainView != nil)
 		{
 			[mainView setHeightFromBottomLeft: [mainView height] - [titleBarView height]];
-			[titleBarView setFrameOrigin: [mainView topLeftPoint]];
+			if ([self isFlipped])
+			{
+				[titleBarView setFrameOrigin: NSZeroPoint];
+				[mainView setFrameOrigin: [titleBarView bottomLeftPoint]];
+			}
+			else
+			{
+				[titleBarView setFrameOrigin: [mainView topLeftPoint]];
+			}
 		}
 		else
 		{

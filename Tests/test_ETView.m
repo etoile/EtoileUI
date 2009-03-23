@@ -48,7 +48,7 @@
 
 - (id) initForTest
 {
-	return [self initWithFrame: NSMakeRect(0, 0, 10, 10)];
+	return [self initWithFrame: NSMakeRect(0, 0, 50, 50)];
 }
 
 - (void) testRelease
@@ -270,12 +270,12 @@
 	// then mainView frame is set to a zero rect too in -tile. -init calls 
 	// -initWithFrame: with a zero rect, hence the need for -initForTest.
 	UKFalse(NSEqualSizes([self frame].size, [mainView frame].size));
-	UKTrue(NSEqualPoints(NSZeroPoint, [mainView frame].origin));
+	UKTrue(NSEqualPoints(NSMakePoint(0, [barView height]), [mainView frame].origin));
 	
 	UKObjectsSame(barView, [self titleBarView]);
 	UKObjectsSame(self, [barView superview]);
 	UKIntsEqual(0, [barView x]);	
-	UKIntsEqual([mainView height], [barView y]);
+	UKIntsEqual(0, [barView y]);
 	UKIntsEqual([mainView width], [barView width]);
 	UKIntsEqual(25, [barView height]);
 	/* Flipped:	UKFloatsEqual(0, [[self titleBarView] y]); */
