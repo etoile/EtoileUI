@@ -1383,11 +1383,24 @@ Take note the new visibility state won't be apparent until a redisplay occurs. *
 #endif
 }
 
+/* Returns the supervisor view associated with the receiver. The supervisor view 
+is a wrapper view around the receiver view (see -view). 
+
+You shouldn't use this method unless you write a subclass.
+
+The supervisor view is used internally by EtoileUI to support views or widgets 
+provided by the widget backend (e.g. AppKit) within a layout item tree. See 
+also ETView. */
 - (id) supervisorView
 {
 	return _view;
 }
 
+/** Sets the supervisor view associated with the receiver. 
+
+You should never need to call this method.
+
+See also -supervisorView:. */
 - (void) setSupervisorView: (ETView *)supervisorView
 {
 	 /* isFlipped is also sync in -setFlipped: */
@@ -1407,6 +1420,9 @@ Take note the new visibility state won't be apparent until a redisplay occurs. *
 	}
 }
 
+/** When the receiver content is presented inside scrollers, returns the 
+decorator item that owns the scrollers provided by the widget backend (e.g. 
+AppKit), otherwise returns nil. */
 - (ETLayoutItem *) firstScrollViewDecoratorItem
 {
 	id decorator = self;
@@ -1420,6 +1436,9 @@ Take note the new visibility state won't be apparent until a redisplay occurs. *
 	return decorator;
 }
 
+/** When the receiver content is presented inside a window, returns the 
+decorator item that ownss the window provided by the widget backend (e.g. 
+AppKit), otherwise returns nil. */
 - (ETWindowItem *) windowDecoratorItem
 {
 	id lastDecorator = [self lastDecoratorItem];
