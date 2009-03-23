@@ -88,6 +88,7 @@ NSString *ETItemGroupSelectionDidChangeNotification = @"ETItemGroupSelectionDidC
 pretend we don't fully implement ETLayoutingContext protocol. */
 - (void) setNeedsDisplay: (BOOL)now { [super setNeedsDisplay: now]; }
 - (BOOL) isFlipped { return [super isFlipped]; }
+- (ETView *) supervisorView { return [super supervisorView]; }
 
 static BOOL globalAutolayoutEnabled = YES;
 

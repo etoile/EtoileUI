@@ -61,8 +61,8 @@
 @interface ETInspector (EtoilePrivate)
 - (int) itemGroupView: (ETContainer *)container numberOfItemsAtPath: (NSIndexPath *)indexPath;
 - (ETLayoutItem *) itemGroupView: (ETContainer *)container itemAtPath: (NSIndexPath *)indexPath;
-- (int) propertyView: (ETContainer *)container numberOfItemsAtPath: (NSIndexPath *)path;
-- (ETLayoutItem *) propertyView: (ETContainer *)container itemAtPath: (NSIndexPath *)path;
+- (int) propertyView: (ETView *)container numberOfItemsAtPath: (NSIndexPath *)path;
+- (ETLayoutItem *) propertyView: (ETView *)container itemAtPath: (NSIndexPath *)path;
 - (void) updateInspectorWindowTitle;
 @end
 
@@ -180,7 +180,7 @@
 	return [self propertyView: [baseItem supervisorView] itemAtPath: path];
 }
 
-- (int) propertyView: (ETContainer *)container numberOfItemsAtPath: (NSIndexPath *)path
+- (int) propertyView: (ETView *)container numberOfItemsAtPath: (NSIndexPath *)path
 {
 	int nbOfPropertyItems = 0;
 	ETLayoutItem *item = [[itemGroupView selectedItemsInLayout] firstObject];
@@ -208,7 +208,7 @@
 	return nbOfPropertyItems;
 }
 
-- (ETLayoutItem *) propertyView: (ETContainer *)container itemAtPath: (NSIndexPath *)path
+- (ETLayoutItem *) propertyView: (ETView *)container itemAtPath: (NSIndexPath *)path
 {
 	ETLayoutItem *item = [[[itemGroupView selectedItemsInLayout] firstObject] representedObject];
 	ETLayoutItem *propertyItem = [[ETLayoutItem alloc] init];

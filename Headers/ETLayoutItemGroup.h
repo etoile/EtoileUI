@@ -190,6 +190,7 @@ extern NSString *kDelegateProperty; /** delegate property name */
 - (void) setSelectionIndexes: (NSIndexSet *)indexes;
 - (NSArray *) selectionIndexPaths;
 - (void) setSelectionIndexPaths: (NSArray *)indexPaths;
+- (void) didChangeSelection;
 
 - (NSArray *) selectedItems;
 - (NSArray *) selectedItemsInLayout;
