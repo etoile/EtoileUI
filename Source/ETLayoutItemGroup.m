@@ -1534,6 +1534,7 @@ Posts an ETItemGroupSelectionDidChangeNotification. */
 	/* For opaque layouts that may need to keep in sync the selection state of 
 	   their custom UI. */
 	[[self layout] selectionDidChangeInLayoutContext];
+	[self didChangeSelection];
 
 	/* Reflect selection change immediately */
 	[[self supervisorView] display]; // TODO: supervisorView is probably not the best choice...
