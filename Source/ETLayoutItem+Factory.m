@@ -301,7 +301,7 @@
 	
 	if (layer != nil)
 	{
-		[(ETContainer *)[layer view] addItems: items];
+		[layer addItems: items];
 	}
 	
 	return (ETLayer *)AUTORELEASE(layer);
