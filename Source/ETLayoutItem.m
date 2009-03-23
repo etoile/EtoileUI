@@ -757,7 +757,6 @@ widget provided by the widget backend. */
 	{
 		/* Restore view initial state */
 		[view setFrame: [self defaultFrame]];
-		//[view setRenderer: nil];
 		/* Stop to observe notifications on current view and reset bounds size */
 		[self setAppliesResizingToBounds: NO];
 	}
@@ -769,26 +768,18 @@ widget provided by the widget backend. */
 	   instance to have -drawRect: asking the layout item to render by itself.
 	   Retrieving the display view automatically returns the innermost display
 	   view in the decorator item chain. */
-	if ([newView isKindOfClass: [ETView class]])
+	if (newView != nil && [self supervisorView] == nil)
 	{
-		[self setSupervisorView: (ETView *)newView];
+		ETView *wrapperView = [[ETView alloc] initWithFrame: [newView frame] 
+												 layoutItem: self];
+		[self setSupervisorView: wrapperView];
+		RELEASE(wrapperView);
 	}
-	else if ([newView isKindOfClass: [NSView class]])
-	{
-		if ([self supervisorView] == nil)
-		{
-			ETView *wrapperView = [[ETView alloc] initWithFrame: [newView frame] 
-													 layoutItem: self];
-			[self setSupervisorView: wrapperView];
-			RELEASE(wrapperView);
-		}
-		[[self supervisorView] setWrappedView: newView];
-	}
+	[[self supervisorView] setWrappedView: newView];
 	
 	/* Set up the new view */
 	if (newView != nil)
 	{
-		//[newView setRenderer: self];
 		[self setDefaultFrame: newViewFrame];
 		if (resizeBoundsActive)
 			[self setAppliesResizingToBounds: YES];

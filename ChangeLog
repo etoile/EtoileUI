@@ -1,3 +1,17 @@
+2009-03-18  Quentin Mathe <qmathe@club-internet.fr>
+
+	* ETLayoutItem:
+	(-setView:): Removed the code that checks whether the new view should be 
+	set as a supervisor view or not.
+	* ETView:
+	(-initWithFrame:layoutItem:): Updated to use -setSupervisorView: through 
+	-setLayoutItem: since -initWithView: won't work now to set a supervisor 
+	view.
+	(-setLayoutItem:): Updated to use -setSupervisorView: as needed.
+	* test_ETLayoutItem, test_ETView:
+	Updated all tests that which were using -setView: or -initWithView: to 
+	set a supervisor view.
+
 2009-03-17  Quentin Mathe <qmathe@club-internet.fr>
 
 	* ETLayoutItem:

@@ -115,14 +115,11 @@ static ETView *barViewPrototype = nil;
 		}
 		else
 		{
-			_layoutItem = [[ETLayoutItem alloc] initWithView: self];
-			/* -initWithView: has called back -setLayoutItemWithoutInsertingView:
-			   which retained _layoutItem, so we release it.
+			[self setLayoutItem: [[ETLayoutItem alloc] init]];
+			/* In -setLayoutItem:, -setSupervisorView: has called back 
+			   -setLayoutItemWithoutInsertingView: which retained _layoutItem, 
+			   so we release it.
 
-			   We could alternatively do:
-			   _layoutItem = [[ETLayoutItem alloc] init];
-			   [_layoutItem setView: self];
-			   RELEASE(_layoutItem);
 			   In any cases, we avoid to call +layoutItem (and eliminate the 
 			   last line RELEASE as a byproduct) in order to simplify the 
 			   testing of the retain cycle with 
@@ -134,7 +131,6 @@ static ETView *barViewPrototype = nil;
 			RELEASE(_layoutItem);
 		}
 		[self setRenderer: nil];
-		//[self setFlipped: YES];
 		[self setTitleBarView: nil]; /* Sets up a +titleBarViewPrototype clone */
 		[self setDisclosable: NO];
 		[self setAutoresizesSubviews: YES];	/* NSView set up */
@@ -301,8 +297,7 @@ static ETView *barViewPrototype = nil;
 	Throws an exception when item parameter is nil. */
 - (void) setLayoutItem: (ETLayoutItem *)item
 {
-	[self setLayoutItemWithoutInsertingView: item];
-	[_layoutItem setView: self];
+	[item setSupervisorView: self];
 }
 
 /** You should never need to call this method. */

@@ -460,7 +460,7 @@
 	UKObjectsEqual([[self supervisorView] wrappedView], [self view]);
 	UKObjectsNotEqual(view1, [self supervisorView]);
 	UKObjectsEqual(self, [[self supervisorView] layoutItem]);
-	[self setView: view2];
+	[self setSupervisorView: view2];
 	UKNotNil([self supervisorView]);
 	UKObjectsEqual(view2, [self supervisorView]);
 	UKObjectsEqual(self, [[self supervisorView] layoutItem]);
@@ -469,11 +469,12 @@
 - (void) testHandleDecorateItemInView
 {
 	id parentView = AUTORELEASE([[ETView alloc] initWithFrame: NSMakeRect(0, 0, 100, 50)]);
-	id parent = [ETLayoutItem itemGroupWithView: parentView];
+	id parent = [ETLayoutItem itemGroup];
 	id supervisorView = AUTORELEASE([[ETView alloc] initWithFrame: NSMakeRect(0, 0, 100, 50)]);
 	id supervisorView1 = AUTORELEASE([[ETView alloc] initWithFrame: NSMakeRect(0, 0, 100, 50)]);
 	id decorator1 = [ETLayoutItem item]; //[ETLayoutItem itemWithView: supervisorView1];
-	
+
+	[parent setSupervisorView: parentView];
 	[parent addItem: self];
 	
 	[self setSupervisorView: supervisorView];
@@ -526,7 +527,7 @@
 {
 	id container = [[ETContainer alloc] initWithFrame: NSMakeRect(0, 0, 50, 100)];
 	
-	[self setView: container];
+	[self setSupervisorView: container];
 	RELEASE(container);
 	
 	UKTrue([self isContainer]);
