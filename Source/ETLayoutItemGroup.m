@@ -195,10 +195,10 @@ several item groups.
 The returned copy is mutable because ETLayoutItemGroup cannot be immutable. */ 
 - (id) copyWithZone: (NSZone *)zone
 {
-	ETLayoutItemGroup *item = (ETLayoutItemGroup *)[(id)super copyWithZone: zone];
-	
+	ETLayoutItemGroup *item = [super copyWithZone: zone];
+
 	item->_layoutItems = [[NSMutableArray alloc] init];
-	
+
 	// TODO: Layout objects must be copied because they support only one layout 
 	// context. If you share a layout like that: 
 	// [item setLayout: [self layout]];

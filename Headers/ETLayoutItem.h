@@ -72,7 +72,7 @@ extern NSString *kETVisibleProperty; /** visible property name */
 
 // FIXME: Use less memory per instance. Name and value are somehow duplicates.
 // _cells and _view could be moved in a helper object. Pack booleans in a struct.
-@interface ETLayoutItem : ETStyle <ETPropertyValueCoding, ETObjectInspection>
+@interface ETLayoutItem : ETStyle <NSCopying, ETPropertyValueCoding, ETObjectInspection>
 {
 	ETLayoutItemGroup *_parentItem;
 
@@ -103,6 +103,7 @@ extern NSString *kETVisibleProperty; /** visible property name */
 - (id) initWithView: (NSView *)view;
 - (id) initWithView: (NSView *)view value: (id)value representedObject: (id)repObject;
 
+- (id) copyWithZone: (NSZone *)zone;
 - (id) deepCopy;
 
 /* Layout Item Tree */
