@@ -1198,8 +1198,8 @@ used by the styles. */
 	isn't handed to it. */
 - (void) render: (NSMutableDictionary *)inputValues dirtyRect: (NSRect)dirtyRect inView: (NSView *)view 
 {
-	ETLog(@"Render frame %@ of %@ dirtyRect %@ in %@", NSStringFromRect([self drawingFrame]), 
-		self, NSStringFromRect(dirtyRect), view);
+	//ETLog(@"Render frame %@ of %@ dirtyRect %@ in %@", 
+	//	NSStringFromRect([self drawingFrame]), self, NSStringFromRect(dirtyRect), view);
 
 #ifdef DEBUG_DRAWING
 	/* For debugging the drawing of the supervisor view over the item view */
