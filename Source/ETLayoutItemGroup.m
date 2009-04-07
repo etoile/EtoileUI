@@ -59,6 +59,7 @@ NSString *ETItemGroupSelectionDidChangeNotification = @"ETItemGroupSelectionDidC
 
 @interface ETLayoutItem (SubclassVisibility)
 - (void) setDisplayView: (ETView *)view;
+- (NSRect) visibleContentBounds;
 @end
 
 @interface ETContainer (PackageVisibility)
@@ -1808,20 +1809,7 @@ If the receiver has not been sorted or filtered yet, returns a nil array. */
 /* -documentVisibleRect size */
 - (NSSize) visibleContentSize
 {
-	if ([[self supervisorView] respondsToSelector: @selector(contentSize)])
-	{
-		return	[(id)[self supervisorView] contentSize];
-	}
-	else if ([[self supervisorView] respondsToSelector: @selector(scrollView)]
-	 && [[(id)[self supervisorView] scrollView] respondsToSelector: @selector(contentSize)])
-	{
-		return [[(id)[self supervisorView] scrollView] contentSize];
-	}
-	else
-	{
-		ETLog(@"WARNING: Layout item %@ doesn't respond to -contentSize", self);
-		return NSZeroSize;
-	}
+	return [self visibleContentBounds].size;
 }
 
 - (BOOL) isScrollViewShown
