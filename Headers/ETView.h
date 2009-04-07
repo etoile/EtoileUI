@@ -37,7 +37,7 @@
 #import <AppKit/AppKit.h>
 #import <EtoileFoundation/ETPropertyValueCoding.h>
 
-@class ETLayoutItem;
+@class ETLayoutItem, ETUIItem;
 
 #ifdef GNUSTEP
 // NOTE: This hack is needed because GNUstep doesn't retrieve -isFlipped in a 
@@ -172,19 +172,12 @@
 - (NSView *) mainView;
 - (void) tile;
 
+/* Private Use */
+
+- (void) didChangeDecoratorOfItem: (ETUIItem *)item;
+
 @end
 
 /* Notifications */
 
 extern NSString *ETViewTitleBarViewPrototypeDidChangeNotification;
-
-/* Private stuff */
-
-@interface ETScrollView : ETView
-{
-	NSScrollView *_mainView;
-}
-
-- (id) initWithMainView: (id)scrollView layoutItem: (ETLayoutItem *)item;
-
-@end

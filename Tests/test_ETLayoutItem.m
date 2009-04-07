@@ -33,15 +33,22 @@
 
 #import <Foundation/Foundation.h>
 #import <AppKit/AppKit.h>
-#import <EtoileUI/ETLayoutItem.h>
-#import <EtoileUI/ETLayoutItem+Factory.h>
-#import <EtoileUI/ETWindowItem.h>
-#import <EtoileUI/ETLayoutItemGroup.h>
-#import <EtoileUI/ETContainer.h>
-#import <EtoileUI/ETFlowLayout.h>
-#import <EtoileFoundation/NSIndexPath+Etoile.h>
 #import <UnitKit/UnitKit.h>
-#import <EtoileUI/ETCompatibility.h>
+#import <EtoileFoundation/NSIndexPath+Etoile.h>
+#import "ETDecoratorItem.h"
+#import "NSView+Etoile.h" // NOTE: To be replaced ETGeometry
+#import "ETLayoutItem.h"
+#import "ETLayoutItem+Factory.h"
+#import "ETWindowItem.h"
+#import "ETLayoutItemGroup.h"
+#import "ETContainer.h"
+#import "ETFlowLayout.h"
+#import "ETCompatibility.h"
+
+#define UKRectsEqual(x, y) UKTrue(NSEqualRects(x, y))
+#define UKPointsEqual(x, y) UKTrue(NSEqualPoints(x, y))
+#define UKSizesEqual(x, y) UKTrue(NSEqualSizes(x, y))
+
 @interface ETLayoutItem (UnitKitTests) <UKTest>
 @end
 
@@ -399,10 +406,60 @@
 }
 #endif
 
++ (NSRect) defaultItemRect
+{
+	return NSMakeRect(100, 50, 300, 250);
+}
+
+- (void) testAnchorPoint
+{
+	NSRect rect = [ETLayoutItem defaultItemRect];
+
+	UKPointsEqual(NSMakePoint(150, 125), [self anchorPoint]);
+	UKPointsEqual(NSMakePoint(250, 175), [self position]);
+
+	[self setAnchorPoint: NSZeroPoint];
+	UKPointsEqual(NSMakePoint(250, 175), [self position]);
+	UKRectsEqual(NSMakeRect(250, 175, 300, 250), [self frame]);
+
+	[self setAnchorPoint: NSMakePoint(-50, 500)];
+	UKPointsEqual(NSMakePoint(300, -325), [self origin]);
+
+	[self setFlipped: NO]; /* Expected to have no effects here */
+	UKPointsEqual(NSMakePoint(-50, 500), [self anchorPoint]);
+	UKPointsEqual(NSMakePoint(250, 175), [self position]);
+	UKPointsEqual(NSMakePoint(300, -325), [self origin]);
+}
+
+- (void) testGeometry
+{
+	id itemGroup = [ETLayoutItem itemGroup];
+	NSRect rect = [ETLayoutItem defaultItemRect];
+
+	UKTrue([self isFlipped]);
+	UKPointsEqual(NSMakePoint(150, 125), [self anchorPoint]);
+	UKPointsEqual(NSMakePoint(250, 175), [self position]);
+	UKPointsEqual(rect.origin, [self origin]);
+	UKRectsEqual(rect, [self frame]);
+	UKRectsEqual(rect, [self decorationRect]);
+	UKRectsEqual(ETMakeRect(NSZeroPoint, rect.size), [self contentBounds]);
+}
+
+- (void) testDecoratorGeometry
+{
+	id itemGroup = [ETLayoutItem item];
+	id decorator1 = [ETDecoratorItem item];
+
+	[self setDecoratorItem: decorator1];
+
+	/*id decorator2 = [ETScrollableAreaItem item];
+	id decorator3 = [ETWindowItem item];*/
+}
+
 - (void) testSetDecoratorItem
 {
-	id decorator1 = [ETLayoutItem item];
-	id decorator2 = [ETLayoutItem item];
+	id decorator1 = [ETDecoratorItem item];
+	id decorator2 = [ETDecoratorItem item];
 	id decorator3 = [ETWindowItem item];
 	
 	UKNil([self decoratorItem]);
@@ -419,8 +476,8 @@
 
 - (void) testLastDecoratorItem
 {
-	id decorator1 = [ETLayoutItem item];
-	id decorator2 = [ETLayoutItem item];
+	id decorator1 = [ETDecoratorItem item];
+	id decorator2 = [ETDecoratorItem item];
 	
 	UKObjectsEqual(self, [self lastDecoratorItem]);
 	
@@ -434,8 +491,8 @@
 
 - (void) testFirstDecoratedItem
 {
-	id decorator1 = [ETLayoutItem item];
-	id decorator2 = [ETLayoutItem item];
+	id decorator1 = [ETDecoratorItem item];
+	id decorator2 = [ETDecoratorItem item];
 	
 	UKObjectsEqual(self, [self firstDecoratedItem]);
 	
@@ -450,20 +507,21 @@
 - (void) testSupervisorView
 {
 	id view1 = AUTORELEASE([[NSView alloc] initWithFrame: NSMakeRect(0, 0, 100, 50)]);
-	id view2 = AUTORELEASE([[ETView alloc] initWithFrame: NSMakeRect(0, 0, 100, 50)]);
-	
+	id view2 = AUTORELEASE([[ETView alloc] initWithFrame: NSMakeRect(-50, 0, 100, 200)]);
+
 	UKNil([self supervisorView]);
-	[self setView: view1];
-	UKNotNil([self supervisorView]);
-	UKTrue([[self supervisorView] isKindOfClass: [ETView class]]);
-	/* Next line only valid if view1 isn't an instance of ETView kind */
-	UKObjectsEqual([[self supervisorView] wrappedView], [self view]);
-	UKObjectsNotEqual(view1, [self supervisorView]);
+	
+	[self setView: view1]; /* -setView: creates the supervisor view if needed */
+	UKObjectKindOf([self supervisorView], ETView);
+	UKObjectsEqual(view1, [self view]);
+	UKObjectsEqual(view1, [[self supervisorView] wrappedView]);
 	UKObjectsEqual(self, [[self supervisorView] layoutItem]);
+
 	[self setSupervisorView: view2];
-	UKNotNil([self supervisorView]);
 	UKObjectsEqual(view2, [self supervisorView]);
 	UKObjectsEqual(self, [[self supervisorView] layoutItem]);
+	UKRectsEqual(NSMakeRect(-50, 0, 100, 200), [[self supervisorView] frame]);
+	UKRectsEqual(NSMakeRect(-50, 0, 100, 200), [self frame]);
 }
 
 - (void) testHandleDecorateItemInView
@@ -472,15 +530,14 @@
 	id parent = [ETLayoutItem itemGroup];
 	id supervisorView = AUTORELEASE([[ETView alloc] initWithFrame: NSMakeRect(0, 0, 100, 50)]);
 	id supervisorView1 = AUTORELEASE([[ETView alloc] initWithFrame: NSMakeRect(0, 0, 100, 50)]);
-	id decorator1 = [ETLayoutItem item]; //[ETLayoutItem itemWithView: supervisorView1];
+	id decorator1 = [ETDecoratorItem item]; //[ETLayoutItem itemWithView: supervisorView1];
 
 	[parent setSupervisorView: parentView];
 	[parent addItem: self];
 	
 	[self setSupervisorView: supervisorView];
 	[decorator1 setSupervisorView: supervisorView1];
-	[decorator1 handleDecorateItem: self inView: parentView];
-	UKObjectsEqual([self supervisorView], [decorator1 view]);
+	[decorator1 handleDecorateItem: self supervisorView: supervisorView inView: parentView];
 	UKNotNil([[self supervisorView] superview]);
 	/* Next line is valid with ETView instance as [decorator supervisorView] but 
 	   might not with ETView subclasses (not valid with ETScrollView instance

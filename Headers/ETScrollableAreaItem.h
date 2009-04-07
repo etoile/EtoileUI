@@ -1,13 +1,12 @@
 /*
-	ETWindowItem.h
+	ETScrollableAreaItem.h
 	
-	ETDecoratorItem subclass which makes possibe to decorate any layout items 
-	with a window.
- 
-	Copyright (C) 2007 Quentin Mathe
+	ETDecoratorItem subclass which makes content scrollable.
+
+	Copyright (C) 2009 Quentin Mathe
  
 	Author:  Quentin Mathe <qmathe@club-internet.fr>
-	Date:  August 2007
+	Date:  March 2009
  
 	Redistribution and use in source and binary forms, with or without
 	modification, are permitted provided that the following conditions are met:
@@ -37,29 +36,29 @@
 #import <Foundation/Foundation.h>
 #import <AppKit/AppKit.h>
 #import <EtoileUI/ETDecoratorItem.h>
+#import <EtoileUI/ETView.h>
 
-/** A decorator which can be used to put a layout item inside a window.
+/** A decorator which can be used to make content scrollable.
 
-With the AppKit widget backend, the window is an NSWindow object. */
-@interface ETWindowItem : ETDecoratorItem
+With the AppKit widget backend, the underlying view is an NSScrollView object. */
+@interface ETScrollableAreaItem : ETDecoratorItem
+
+- (NSRect) visibleContentRect;
+
+- (BOOL) hasVerticalScroller;
+- (void) setHasVerticalScroller: (BOOL)scroll;
+- (BOOL) hasHorizontalScroller;
+- (void) setHasHorizontalScroller: (BOOL)scroll;
+
+@end
+
+/* Private stuff */
+
+@interface ETScrollView : ETView
 {
-	NSWindow *_itemWindow;
-	BOOL _usesCustomWindowTitle;
-	BOOL _flipped;
+	NSScrollView *_mainView;
 }
 
-- (id) initWithWindow: (NSWindow *)window;
-- (id) init;
-
-- (NSWindow *) window;
-- (BOOL) usesCustomWindowTitle;
-- (BOOL) isUntitled;
-
-/* Customized Decorator Methods */
-
-- (NSRect) decorationRect;
-- (NSRect) contentRect;
-- (BOOL) acceptsDecoratorItem: (ETLayoutItem *)item;
-- (BOOL) canDecorateItem: (id)item;
+- (id) initWithMainView: (id)scrollView layoutItem: (ETLayoutItem *)item;
 
 @end

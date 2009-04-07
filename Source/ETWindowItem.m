@@ -2,8 +2,8 @@
 
 	ETWindowItem.m
 	
-	<abstract>ETLayoutItem subclass which makes possibe to decorate any layout 
-	items with a window.</abstract>
+	<abstract>ETDecoratorItem subclass which makes possibe to decorate any 
+	layout items with a window.</abstract>
  
 	Copyright (C) 2007 Quentin Mathe
  
@@ -35,21 +35,25 @@
 	THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import <EtoileUI/ETWindowItem.h>
-#import <EtoileUI/ETLayoutItem.h>
-#import <EtoileUI/ETLayoutItemGroup.h>
-#import <EtoileUI/ETLayoutItem+Factory.h>
-#import <EtoileUI/NSWindow+Etoile.h>
-#import <EtoileUI/ETCompatibility.h>
+#import "ETWindowItem.h"
+#import "ETLayoutItem.h"
+#import "ETLayoutItemGroup.h"
+#import "ETLayoutItem+Factory.h"
+#import "NSWindow+Etoile.h"
+#import "ETCompatibility.h"
 
 #define NC [NSNotificationCenter defaultCenter]
 
 @implementation ETWindowItem
 
-/** <init /> */
+/** <init />
+Initializes and returns a new window decorator with a hard window (provided by 
+the widget backend). 
+
+If window is nil, the receiver will create a standard window. */
 - (id) initWithWindow: (NSWindow *)window
 {
-	self = [super initWithView: nil value: nil representedObject: nil];
+	self = [super initWithSupervisorView: nil];
 	
 	if (self != nil)
 	{
@@ -71,9 +75,12 @@
 	return self;
 }
 
-/** Discards all usual ETLayoutItem item parameters view, value and represented 
-	object and calls -initWithWindow: designated initializer. */
-- (id) initWithView: (NSView *)view value: (id)value representedObject: (id)repObject
+- (id) initWithSupervisorView: (ETView *)aView
+{
+	return [self initWithWindow: nil];
+}
+
+- (id) init
 {
 	return [self initWithWindow: nil];
 }
@@ -93,12 +100,15 @@
 	   been called as a side-effect of removing the decorated item from the 
 	   window layer in -windowWillClose: notification. */
 	if ([_itemWindow isReleasedWhenClosed] == NO)
+	{
 		RELEASE(_itemWindow);
+	}
 	DESTROY(_itemWindow);  /* Balance first retain call */
 
 	[super dealloc];
 }
 
+/** Returns YES when the receiver window has no title, otherwise returns NO. */
 - (BOOL) isUntitled
 {
 	NSString *title = [[self window] title];
@@ -109,19 +119,35 @@
    is sent -close on window item release/deallocation (see -dealloc). */
 - (BOOL) windowShouldClose: (NSNotification *)notif
 {
+	ETDebugLog(@"Shoud close %@ with window %@ %@ at %@", self, [_itemWindow title],
+		_itemWindow, NSStringFromRect([_itemWindow frame]));
+
 	/* If the window doesn' t get hidden on close, we release the item 
-	   we decorate simply by removing it from the window layer */
-	if ([[self window] isReleasedWhenClosed])
-		[(ETLayoutItemGroup *)[ETLayoutItemGroup windowGroup] removeItem: [self firstDecoratedItem]];
-		
+	   we decorate by removing it from the window layer or removing ourself 
+	   as a decorator. */
+	if ([_itemWindow isReleasedWhenClosed])
+	{
+		if ([[ETLayoutItem windowGroup] containsItem: [self firstDecoratedItem]])
+		{
+			[[ETLayoutItem windowGroup] removeItem: [self firstDecoratedItem]];
+		}
+		else
+		{
+			[[self decoratedItem] setDecoratorItem: nil];
+		}
+	}
+
 	return YES;
 }
 
+/** Returns the underlying hard window. */
 - (NSWindow *) window
 {
 	return _itemWindow;
 }
 
+/** Returns YES when you have provided a custom window title, otherwise 
+when returns NO when the receiver manages the window title. */
 - (BOOL) usesCustomWindowTitle
 {
 	return _usesCustomWindowTitle;
@@ -130,7 +156,7 @@
 /* Overriden Methods */
 
 /** Returns YES when item can be decorated with a window by the receiver, 
-	otherwise returns no. */
+otherwise returns no. */
 - (BOOL) canDecorateItem: (id)item
 {
 	/* Will call back -[item acceptsDecoratorItem: self] */
@@ -152,19 +178,16 @@
 	return canDecorate;
 }
 
-/* A window can never be decorated */
+/** Returns NO. A window can never be decorated. */
 - (BOOL) acceptsDecoratorItem: (ETLayoutItem *)item
 {
 	return NO;
 }
 
-/** Returns NO to refuse decorating an item. This happens when item has already
-	a decorator item since ETWindowItem instance must always be inserted as
-	the last decorator item. */
-- (void) handleDecorateItem: (ETLayoutItem *)item inView: (ETView *)parentView;
+- (void) handleDecorateItem: (ETUIItem *)item 
+             supervisorView: (ETView *)decoratedView 
+                     inView: (ETView *)parentView
 {
-	id window = [self window];
-
 	/* -handleDecorateItem:inView: will call back 
 	   -[ETWindowItem setDecoratedView:] which overrides ETLayoutItem.
 	   We pass nil instead of parentView because we want to move the decorated
@@ -172,61 +195,74 @@
 	   superview. Reinserting into the existing superview is the usual behavior 
 	   implemented by -handleDecorateItem:inView: that works well when the 
 	   decorator is a view  (box, scroll view etc.). */
-	[super handleDecorateItem: item inView: nil];
-	
-	if (item != nil) /* Window decorator is set up */
-	{
-		/* Move decorated item into the window layer
-		   Take note the item might be already part of the window group if the 
-		   decoration was triggered by [ETWindowLayer addItem:] instead of 
-		   calling -setDecoratorItem: directly. */
-		//[[ETLayoutItemGroup windowGroup] addItem: item];
-
-		// TODO: Use KVB by default to bind the window title
-		if ([self usesCustomWindowTitle] == NO)
-			[window setTitle: [[self firstDecoratedItem] displayName]];
-		[window makeKeyAndOrderFront: self];
-		//[item updateLayout];
-	}
-	else /* Window decorator is teared down */
-	{
-		/* Remove decorated item from the window layer
-		   Take note the item might be already removed from the window group if 
-		   the decoration was triggered by [ETWindowLayer removeItem:] */
-		//[[ETLayoutItemGroup windowGroup] removeItem: item];
-		[window orderOut: self];
-	}
-}
-
-- (NSView *) view
-{
-	return [[self window] contentView];
-}
-
-- (void) setDecoratedView: (NSView *)view
-{
-	NSWindow *window = [self window];
+	[super handleDecorateItem: item supervisorView: nil inView: nil];
 		
-	if (view != nil)
-		[window setContentSizeFromTopLeft: [view frame].size];
-	[window setContentView: view];
+	if (decoratedView != nil)
+	{
+		[_itemWindow setContentSizeFromTopLeft: [decoratedView frame].size];
+	}
+	[_itemWindow setContentView: (NSView *)decoratedView];	
+
+	// TODO: Use KVB by default to bind the window title
+	if ([self usesCustomWindowTitle] == NO)
+	{
+		[_itemWindow setTitle: [[self firstDecoratedItem] displayName]];
+	}
+	[_itemWindow makeKeyAndOrderFront: self];
 }
 
-- (void) setView: (NSView *)view
+- (void) handleUndecorateItem: (ETLayoutItem *)item inView: (ETView *)parentView
 {
-
+	[_itemWindow orderOut: self];
+	[super handleUndecorateItem: item inView: parentView];
 }
 
-/** Returns the superview of the window content view. The class of the returned 
-	instance will vary with the underlying implementation (GNUstep and Cocoa).
-	In future, we may eventually return [[[self window] contentView] superview] 
-	as a supervisor view but that won't make sense until supervisorView must be 
-	of type ETView and ETLayoutItem code calls methods on it which are only 
-	available in ETView and related classes. */
+/** Returns nil. */
 - (id) supervisorView
 {
-	// NOTE: We may prefer return nil;
-	return [[[self window] contentView] superview]; // NSThemeFrame on Mac OS X
+	return nil;
+}
+
+/** Returns the window frame. */
+- (NSRect) decorationRect
+{
+	return [_itemWindow frame];
+}
+
+/** Returns the content view rect expressed in the window coordinate space. 
+This space includes the window decoration (titlebar etc.).  */
+- (NSRect) contentRect
+{
+	NSRect windowFrame = [_itemWindow frame];
+	NSRect rect = [_itemWindow contentRectForFrameRect: windowFrame];
+
+	rect.origin.x = windowFrame.origin.x - rect.origin.x;
+	rect.origin.y = windowFrame.origin.y - rect.origin.y;
+
+	if ([self isFlipped])
+	{
+		rect.origin.y = windowFrame.size.height - (rect.origin.y + rect.size.height);	
+	}
+
+	return rect;
+}
+
+- (void) handleSetDecorationRect: (NSRect)rect
+{
+	// FIXME: The next line should be used. It currently wrongly shifts the 
+	// main window on PhotoViewExample launch.
+	//[_itemWindow setFrame: rect display: YES];
+}
+
+- (BOOL) isFlipped
+{
+	return _flipped;
+}
+
+- (void) setFlipped: (BOOL)flipped
+{
+	_flipped = flipped;
+	[_decoratorItem setFlipped: flipped];	
 }
 
 @end

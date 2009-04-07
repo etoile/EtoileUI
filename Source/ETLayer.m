@@ -160,7 +160,7 @@ DEALLOC(DESTROY(_rootWindow); DESTROY(_visibleWindows));
 	// NOTE: We could eventually check whether the item to decorate already 
 	// has a window decorator before creating a new one that will be 
 	// refused by -setDecoratorItem: and hence never used. 
-	[[item lastDecoratorItem] setDecoratorItem: [ETWindowItem layoutItem]];
+	[[item lastDecoratorItem] setDecoratorItem: (ETDecoratorItem *)[ETWindowItem item]];
 	RELEASE(item);
 }
 

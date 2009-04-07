@@ -39,10 +39,12 @@
 #import <AppKit/AppKit.h>
 #import <EtoileUI/ETStyle.h>
 #import <EtoileUI/ETInspecting.h>
+#import <EtoileUI/ETDecoratorItem.h>
 #import <EtoileFoundation/ETPropertyValueCoding.h>
 
 @class ETUTI;
-@class ETView, ETContainer, ETLayout, ETLayoutItemGroup, ETWindowItem, ETActionHandler;
+@class ETView, ETContainer, ETLayout, ETLayoutItemGroup, ETDecoratorItem, 
+ETWindowItem, ETActionHandler;
 @protocol ETEventHandler, ETInspector;
 
 
@@ -72,17 +74,17 @@ extern NSString *kETVisibleProperty; /** visible property name */
 
 // FIXME: Use less memory per instance. Name and value are somehow duplicates.
 // _cells and _view could be moved in a helper object. Pack booleans in a struct.
-@interface ETLayoutItem : ETStyle <NSCopying, ETPropertyValueCoding, ETObjectInspection>
+@interface ETLayoutItem : ETUIItem <NSCopying, ETPropertyValueCoding, ETObjectInspection>
 {
 	ETLayoutItemGroup *_parentItem;
-
+	
 	id _modelObject;
 	NSMutableDictionary *_variableProperties;
-	ETLayoutItem *_decoratorItem; // previous decorator
-	ETLayoutItem *_decoratedItem; // next decorator
 
-	IBOutlet ETView *_view;
-	
+	NSRect _contentBounds;
+	NSPoint _position;
+	NSAffineTransform *_transform;
+
 	/* Model object stores a persistent frame when the layout is non-computed */
 	NSRect _frame; /* Frame with item scaling */
 	NSRect _boundingBox;
@@ -91,6 +93,7 @@ extern NSString *kETVisibleProperty; /** visible property name */
 	BOOL _visible;
 	BOOL _resizeBounds; /* Scale view content by resizing bounds */
 	BOOL _needsUpdateLayout;
+	BOOL _isSyncingSupervisorViewGeometry;
 	// TODO: Implement... BOOL _needsDisplay;
 	
 	id _reserved;
@@ -160,19 +163,11 @@ extern NSString *kETVisibleProperty; /** visible property name */
 - (NSView *) view;
 - (void) setView: (NSView *)newView;
 - (BOOL) usesWidgetView;
-- (ETView *) displayView;
-
-//-displayObject
 
 - (NSImage *) image;
 - (void) setImage: (NSImage *)img;
 - (NSImage *) icon;
 - (void) setIcon: (NSImage *)icon;
-
-/* If you have a shape set, it's always inserted after image renderer in the
-	rendering chain. */
-/*setShape
-shape*/
 
 /* Model Access */
 
@@ -229,8 +224,6 @@ shape*/
 - (void) setNeedsDisplayInRect: (NSRect)dirtyRect;
 - (void) display;
 - (void) displayRect: (NSRect)dirtyRect;
-- (NSRect) convertDisplayRect: (NSRect)rect 
-		toAncestorDisplayView: (NSView **)aView;
 
 /* Geometry */
 
@@ -252,36 +245,17 @@ shape*/
 
 /* Decoration */
 
-- (ETLayoutItem *) decoratorItem;
-- (void) setDecoratorItem: (ETLayoutItem *)decorator;
-- (ETLayoutItem *) decoratedItem;
-- (void) setDecoratedItem: (ETLayoutItem *)decorator;
-- (ETLayoutItem *) lastDecoratorItem;
-- (ETLayoutItem *) firstDecoratedItem;
-- (BOOL) canDecorateItem: (ETLayoutItem *)item;
-- (BOOL) acceptsDecoratorItem: (ETLayoutItem *)item;
-- (void) handleDecorateItem: (ETLayoutItem *)item inView: (ETView *)parentView;
 - (id) supervisorView;
 - (void) setSupervisorView: (ETView *)supervisorView;
 
-- (ETLayoutItem *) firstScrollViewDecoratorItem;
+- (ETDecoratorItem *) firstScrollViewDecoratorItem;
 - (ETWindowItem *) windowDecoratorItem;
 
-//-setShowsDecorator:
-
 /* Sizing */
-
-// No need for the following
-/** The following method locks the layout item to prevent modifying the 
-    property kETVectorLocation which stores the layout item location in
-	non-computed layout like ETFreeLayout */
-/*- (void) beginLayoutComputation;
-- (void) endLayoutComputation;*/
 
 - (NSRect) persistentFrame;
 - (void) setPersistentFrame: (NSRect) frame;
 
-- (NSRect) bounds;
 - (NSRect) frame;
 - (void) setFrame: (NSRect)rect;
 - (NSPoint) origin;
@@ -300,6 +274,14 @@ shape*/
 - (void) setHeight: (float)height;
 - (float) width;
 - (void) setWidth: (float)width;
+
+- (NSRect) contentBounds;
+- (void) setContentBounds: (NSRect)rect;
+- (void) setContentSize: (NSSize)size;
+- (NSRect) convertRectFromContent: (NSRect)rect;
+- (NSRect) convertRectToContent: (NSRect)rect;
+- (void) setTransform: (NSAffineTransform *)aTransform;
+- (NSAffineTransform *) transform;
 
 - (NSRect) boundingBox;
 - (void) setBoundingBox: (NSRect)extent;

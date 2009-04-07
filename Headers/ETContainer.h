@@ -40,13 +40,13 @@
 #import <EtoileUI/ETLayout.h>
 
 @class ETLayoutItem, ETLayout, ETLayer, ETLayoutItemGroup, ETSelection, 
-	ETPickboard, ETEvent;
+	ETPickboard, ETEvent, ETDecoratorItem;
 
 extern NSString *ETLayoutItemPboardType;
 
 @interface ETContainer : ETView
 {
-	ETLayoutItem *_scrollViewDecorator;
+	ETDecoratorItem *_scrollViewDecorator;
 	BOOL _scrollViewShown;
 
 	NSView *_layoutView;
@@ -159,10 +159,6 @@ extern NSString *ETLayoutItemPboardType;
 
 - (BOOL) isHitTestEnabled;
 - (void) setEnablesHitTest: (BOOL)hit;
-
-/* Private Use */
-
-- (void) didChangeDecoratorOfItem: (ETLayoutItem *)item;
 
 @end
 

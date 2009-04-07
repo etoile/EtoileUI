@@ -35,12 +35,13 @@
  */
 
 #import <EtoileFoundation/NSObject+Model.h>
-#import <EtoileUI/ETView.h>
-#import <EtoileUI/ETLayoutItem.h>
-#import <EtoileUI/NSView+Etoile.h>
-#import <EtoileUI/ETCompatibility.h>
-#import <EtoileUI/ETFlowLayout.h>
-#import <EtoileUI/ETContainer.h>
+#import "ETView.h"
+#import "ETDecoratorItem.h"
+#import "ETLayoutItem.h"
+#import "NSView+Etoile.h"
+#import "ETCompatibility.h"
+#import "ETFlowLayout.h"
+#import "ETContainer.h"
 #define NC [NSNotificationCenter defaultCenter]
 
 NSString *ETViewTitleBarViewPrototypeDidChangeNotification = @"ETViewTitleBarViewPrototypeDidChangeNotification";
@@ -692,6 +693,41 @@ You can revert to non-flipped coordinates by passing NO to this method. */
 	return [self wrappedView];
 }
 
+/* Private Use */
+
+- (void) didChangeDecoratorOfItem: (ETUIItem *)item
+{
+
+}
+
+/* Overriden NSView methods */
+
+- (void) setFrame: (NSRect)frame
+{
+	[super setFrame: frame];
+	if ([_layoutItem shouldSyncSupervisorViewGeometry])
+		[_layoutItem setFrame: frame];
+}
+
+/* GNUstep doesn't rely on -setFrameSize: in -setFrame: unlike Cocoa, so we 
+   in -setFrame: too.
+   See -setFrame: below to understand the reason behind this method. */
+#ifdef GNUSTEP
+- (void) setFrameSize: (NSSize)size
+{
+	[super setFrameSize: size];
+	if ([_layoutItem shouldSyncSupervisorViewGeometry])
+		[_layoutItem setFrameSize: size];
+}
+
+- (void) setFrameOrigin: (NSPoint)origin
+{
+	[super setFrameOrigin: origin];
+	if ([_layoutItem shouldSyncSupervisorViewGeometry])
+		[_layoutItem setFrameOrigin: origin];
+}
+#endif
+
 /* Rendering Tree */
 
 /* INTERLEAVED_DRAWING must always be enabled. 
@@ -889,118 +925,3 @@ Cocoa and pass it to the layout item tree as needed. */
 #endif /* INTERLEAVED_DRAWING */
 
 @end
-
-@implementation ETScrollView : ETView
-
-- (id) initWithFrame: (NSRect)frame layoutItem: (ETLayoutItem *)item
-{
-	NSScrollView *realScrollView = [[NSScrollView alloc] initWithFrame: frame];
-
-	self = [self initWithMainView: realScrollView layoutItem: item];
-	RELEASE(realScrollView);
-	
-	return self;
-}
-
-/** <init /> */
-- (id) initWithMainView: (id)scrollView layoutItem: (ETLayoutItem *)item
-{
-	self = [super initWithFrame: [scrollView frame] layoutItem: item];
-	
-	if (self != nil)
-	{
-		[self setAutoresizingMask: [scrollView autoresizingMask]];
-		[scrollView setAutoresizingMask: NSViewWidthSizable | NSViewHeightSizable];
-
-		/* Will be destroy in -[ETView dealloc] */
-		ASSIGN(_mainView, scrollView);
-		[self addSubview: _mainView];
-		[self tile];
-	}
-	
-	return self;	
-}
-
-- (void) dealloc
-{
-	DESTROY(_mainView);
-	
-	[super dealloc];
-}
-
-- (NSView *) mainView
-{
-	return _mainView;
-}
-
-- (NSView *) wrappedView
-{
-	return [(NSScrollView *)[self mainView] documentView]; 
-}
-
-/* Embed the wrapped view inside the receiver scroll view */
-- (void) setContentView: (NSView *)view temporary: (BOOL)temporary
-{
-	NSAssert2([[self mainView] isKindOfClass: [NSScrollView class]], 
-		@"_mainView %@ of %@ must be an NSScrollView instance", 
-		[self mainView], self);
-
-	if (view != nil)
-	{
-		[self setAutoresizingMask: [view autoresizingMask]];
-	}
-	else
-	{
-		/* Restore autoresizing mask */
-		[[(NSScrollView *)[self mainView] documentView] 
-			setAutoresizingMask: [self autoresizingMask]];	
-	}
-
-	/* Retain the view in case it must be removed from a superview and nobody
-	   else retains it */
-	RETAIN(view);
-	[(NSScrollView *)[self mainView] setDocumentView: view];
-	RELEASE(view);
-}
-
-- (NSMethodSignature *) methodSignatureForSelector: (SEL)selector
-{
-	return [[self mainView] methodSignatureForSelector: selector];
-}
-
-- (BOOL) respondsToSelector: (SEL)selector
-{
-	BOOL isInstanceMethod = [super respondsToSelector: selector];
-	
-	if (isInstanceMethod == NO)
-		return [[self mainView] respondsToSelector: selector];
-	
-	return isInstanceMethod;
-}
-
-- (void) forwardInvocation: (NSInvocation *)inv
-{
-    SEL selector = [inv selector];
-	id realScrollView = [self mainView];
- 
-    if ([realScrollView respondsToSelector: selector])
-	{
-        [inv invokeWithTarget: realScrollView];
-	}
-    else
-	{
-        [self doesNotRecognizeSelector: selector];
-	}
-}
-
-@end
-
-#if 0
-@implementation NSScrollView (EtoileDebug)
-- (void) setAutoresizingMask: (unsigned int)mask
-{
-	ETLog(@"--- Resizing mask from %d to %d %@ %@", [self autoresizingMask], mask, self, [self documentView]);
-	[super setAutoresizingMask: mask];
-}
-@end
-#endif

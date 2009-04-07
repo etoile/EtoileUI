@@ -1,3 +1,38 @@
+2009-04-07 Quentin Mathe <qmathe@club-internet.fr>
+
+	Finished to rework the geometry model to be consistent and better support
+	clipped content (e.g. when the content is scrollable). Now the frame is an
+	implicit property computed on demand (as CoreAnimation does it). The API 
+	hasn't really changed though and this shouldn't impact existing applications.
+	* Container.xcodeproj: Updated.
+	* ETLayoutItem, ETLayoutItemGroup:
+	Reworked and finished the new geometry model. Many methods touched.
+	Extracted the decorator support in a new class ETDecoratorItem and 
+	introduced acommon class ETUIItem which factors code shared by ETLayouItem 
+	and ETDecoratorItem. 
+	* ETDecoratorItem:
+	* ETScrollableAreaItem:
+	Rewritten decorator related code almost entirely to use the new geometry 
+	model.
+	The decorator API is now easier to understand and cleaner.
+	Renamed and rewritten -convertDisplayRect:toAncestorDisplayView: that 
+	handles how damaged areas are propagated back to the views in charge of the 
+	display. This method is now written in a recursive style to make the code 
+	less complex and support to invalid areas on decorators (not yet used though).
+	* ETWindowItem:
+	Rewritten.
+	* ETLayer.m:
+	* ELLayoutItemBuilder:
+	Fixed to create window items correctly.
+	* ETView:
+	Moved ETScrollView to ETScrollableAreaItem.
+	Overriden frame related setters to notify the layout item about geometry 
+	changes.
+	* ETContainer: 
+	Updated to use the right ETDecoratorItem type when needed.
+	* test_ETLayoutItem:
+	Updated to match new behaviors. Added some new geometry tests.
+
 2009-03-18  Quentin Mathe <qmathe@club-internet.fr>
 
 	* ETLayoutItem:

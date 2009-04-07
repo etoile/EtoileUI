@@ -38,6 +38,7 @@
 #import <EtoileFoundation/NSIndexPath+Etoile.h>
 #import "ETContainer.h"
 #import "ETContainer+Controller.h"
+#import "ETDecoratorItem.h"
 #import "ETLayoutItem.h"
 #import "ETLayoutItem+Factory.h"
 #import "ETLayoutItem+Events.h"
@@ -48,6 +49,7 @@
 #import "ETInspector.h"
 #import "ETPickboard.h"
 #import "NSObject+EtoileUI.h"
+#import "ETScrollableAreaItem.h"
 #import "NSView+Etoile.h"
 #import "ETCompatibility.h"
 
@@ -70,9 +72,9 @@ NSString *ETLayoutItemPboardType = @"ETLayoutItemPboardType"; // FIXME: replace 
 - (NSInvocation *) invocationForSelector: (SEL)selector;
 - (void) sendInvocationToDisplayView: (NSInvocation *)inv;
 - (NSView *) layoutViewWithoutScrollView;
-- (void) cacheScrollViewDecoratorItem: (ETLayoutItem *)decorator;
-- (ETLayoutItem *) cachedScrollViewDecoratorItem;
-- (ETLayoutItem *) createScrollViewDecoratorItem;
+- (void) cacheScrollViewDecoratorItem: (ETDecoratorItem *)decorator;
+- (ETDecoratorItem *) cachedScrollViewDecoratorItem;
+- (ETDecoratorItem *) createScrollViewDecoratorItem;
 - (BOOL) doesSelectionContainsPoint: (NSPoint)point;
 @end
 
@@ -581,23 +583,23 @@ Never returns nil. */
 	return (NSScrollView *)[[cachedDecorator supervisorView] mainView];
 }
 
-- (void) cacheScrollViewDecoratorItem: (ETLayoutItem *)decorator
+- (void) cacheScrollViewDecoratorItem: (ETDecoratorItem *)decorator
 {
 	ASSIGN(_scrollViewDecorator, decorator);
 }
 
 
-- (ETLayoutItem *) cachedScrollViewDecoratorItem
+- (ETDecoratorItem *) cachedScrollViewDecoratorItem
 {
 	return _scrollViewDecorator;
 }
 
 /* When a new scroll view decorator is inserted in the decorator chain we cache 
    it. -unhidesScrollViewDecoratorItem triggers this call back. */
-- (void) didChangeDecoratorOfItem: (ETLayoutItem *)item
+- (void) didChangeDecoratorOfItem: (ETUIItem *)item
 {
-	if ([item firstScrollViewDecoratorItem] != nil)
-		[self cacheScrollViewDecoratorItem: [item firstScrollViewDecoratorItem]];
+	if ([item isLayoutItem] && [(ETLayoutItem *)item firstScrollViewDecoratorItem] != nil)
+		[self cacheScrollViewDecoratorItem: [(ETLayoutItem *)item firstScrollViewDecoratorItem]];
 		
 	// TODO: We might cache the position of the first scroll view decorator in  
 	// the decorator chain in order to be able to reinsert it at the same 
@@ -720,7 +722,7 @@ Never returns nil. */
 	}
 }
 
-- (ETLayoutItem *) createScrollViewDecoratorItem
+- (ETDecoratorItem *) createScrollViewDecoratorItem
 {
 	ETScrollView *scrollViewWrapper = nil;
 	

@@ -49,6 +49,7 @@
 #import "ETView.h"
 #import "ETContainer.h"
 #import "ETInspector.h"
+#import "ETScrollableAreaItem.h"
 #import "NSView+Etoile.h"
 #import "ETCompatibility.h"
 
@@ -84,6 +85,7 @@ NSString *kETVisibleProperty = @"visible";
 
 @interface ETLayoutItem (Private)
 - (NSRect) bounds;
+- (void) setBoundsSize: (NSSize)size;
 - (NSPoint) centeredAnchorPoint;
 - (void) setImage: (NSImage *)img;
 - (void) setIcon: (NSImage *)img;
@@ -170,9 +172,8 @@ NSString *kETVisibleProperty = @"visible";
 		_variableProperties = [[NSMutableDictionary alloc] init];
 		_parentItem = nil;
 		//_decoratorItem = nil;
-		_frame = ETNullRect;
+		[self setTransform: [NSAffineTransform transform]];
 		_boundingBox = ETNullRect;
-		[self setDecoratedItem: nil];
 		[self setView: view];
 		[self setFlipped: YES]; /* -setFlipped: must follow -setSupervisorView: */
 		[self setVisible: NO];
@@ -182,63 +183,17 @@ NSString *kETVisibleProperty = @"visible";
 		[self setRepresentedObject: repObject];
 
 		if (view == nil)
-			[self setFrame: NSMakeRect(0, 0, 50, 50)];
+			[self setFrame: [[self class] defaultItemRect]];
     }
     
     return self;
 }
 
-// NOTE: Mac OS X doesn't always update the ref count returned by 
-// NSExtraRefCount if the memory management methods aren't overriden to use
-// the extra ref count functions.
-#ifndef GNUSTEP
-- (id) retain
-{
-	NSIncrementExtraRefCount(self);
-	return self;
-}
-
-- (unsigned int) retainCount
-{
-	return NSExtraRefCount(self) + 1;
-}
-#endif
-
-- (oneway void) release
-{
-	/* Note whether the next release call will deallocate the receiver, because 
-	   once the receiver is deallocated you have no way to safely learn if self
-	   is still valid or not.
-	   Take note the retain count is NSExtraRefCount plus one. */
-	BOOL isDeallocated = (NSExtraRefCount(self) == 0);
-	BOOL hasRetainCycle = (_view != nil);
-
-#ifdef GNUSTEP
-	[super release];
-#else
-	if (NSDecrementExtraRefCountWasZero(self))
-		[self dealloc];
-#endif
-
-	/* Tear down the retain cycle owned by the receiver.
-	   By releasing us, we release _view.
-	   If we got deallocated by [super release], self and _view are now
-	   invalid and we must never use them (by sending a message for example).  */
-	if (hasRetainCycle && isDeallocated == NO
-	  && NSExtraRefCount(self) == 0 && NSExtraRefCount(_view) == 0)
-	{
-		DESTROY(self);
-	}
-}
-
 - (void) dealloc
 {
 	DESTROY(_variableProperties);
-	/* Don't release decorated item (weak reference) */
-	if (_decoratorItem != self)
-		DESTROY(_decoratorItem);
-    DESTROY(_view);
 	DESTROY(_modelObject);
+	DESTROY(_transform);
 	_parentItem = nil; /* weak reference */
     
     [super dealloc];
@@ -797,37 +752,6 @@ See also -[NSView(Etoile) isWidget]. */
 	return ([[self view] isWidget] || [[[self layout] layoutView] isWidget]);
 }
 
-- (void) setDecoratedView: (NSView *)newView
-{
-	id view = [[self supervisorView] wrappedView];
-	// NOTE: Frame is lost when newView becomes a subview of an ETView instance
-	NSRect newViewFrame = [newView frame];
-	
-	/* Tear down the current view */
-	if (view != nil)
-	{
-		/* Restore view initial state */
-		[view setFrame: [self defaultFrame]];  /* -defaultFrame returns display view frame */
-	}
-	
-	/* Inserts the new view */
-	
-	if ([self supervisorView] == nil)
-	{
-		ETView *wrapperView = [[ETView alloc] initWithFrame: [newView frame] 
-												 layoutItem: self];
-		[self setSupervisorView: wrapperView];
-		RELEASE(wrapperView);
-	}
-	[[self supervisorView] setWrappedView: newView];
-	
-	/* Set up the new view */
-	if (newView != nil)
-	{
-		[self setDefaultFrame: newViewFrame];
-	}
-}
-
 /* Key Value Coding */
 
 - (id) valueForUndefinedKey: (NSString *)key
@@ -1062,19 +986,6 @@ and write the receiver properties. */
 	return NO;
 }
 
-/** Returns the display view of the receiver. The display view is the last
-	supervisor view of the decorator item chain. Display view is an instance of 
-	ETView class or subclasses.
-	You can retrieve the outermost decorator of decorator item chain by calling
-	-lastDecoratorItem.
-	Take note there is usually only one decorator which is commonly used to 
-	support scroll view. 
-	See -setDecoratorItem: to know more. */
-- (ETView *) displayView
-{
-	return [[self lastDecoratorItem] supervisorView];
-}
-
 /** Sets the display view of the receiver. Never calls this method directly 
 	unless you write an ETLayoutItem subclass. 
 	You must use -setDecoratorItem: if you want to modify the display view of 
@@ -1139,250 +1050,6 @@ Take note the new visibility state won't be apparent until a redisplay occurs. *
 	}
 }
 
-/** Returns the decorator item when the receiver uses a view. The decorator 
-	item is the receiver itself by default. 
-	The decorator item is in charge of managing the item view and must not 
-	break the following rules:
-	- [self displayView] must return [[self decoratorItem] supervisorView]
-	- [self supervisorView] must return [[[self decoratorItem] supervisorView] wrappedView] */
-- (ETLayoutItem *) decoratorItem
-{
-	return _decoratorItem;
-}
-
-- (void) checkDecoration
-{
-	id decorator = [self decoratorItem];
-	
-	if (decorator == nil)
-		return;
-
-	/* Verify the proper set up of the current decorator */
-	[decorator checkDecorator];
-
-	// NOTE: Next assertion would fail if -[NSWindowItem supervisorView] is 
-	// modified to return nil.
-	NSAssert1([self displayView] != nil, @"Display view must no be nil when a "
-		@"decorator is set on item %@", self);
-	NSAssert2([[decorator displayView] isEqual: [self displayView]], 
-		@"Decorator display view %@ must be decorated item display view %@", 
-		[decorator displayView], [self displayView]);
-
-}
-
-- (void) checkDecorator
-{
-	NSAssert2(_parentItem == nil, @"Decorator %@ "
-		@"must have no parent %@ set", self, _parentItem);
-
-	// TODO: If there is a window item in the decorator chain, the receiver 
-	// supervisor view or the outermost supervisor view (display view) don't 
-	// match the expectation of the following assertions. Find a way to get rid 
-	// of this special case. See -[ETWindowItem superisorView] too..
-	if ([self isMemberOfClass: [ETLayoutItem class]])
-	{
-		NSAssert2([[self supervisorView] isKindOfClass: [ETView class]], 
-			@"Decorator %@ must have a supervisor view %@ of type ETView", 
-			self, [self supervisorView]);
-	}
-	if ([[self lastDecoratorItem] isMemberOfClass: [ETLayoutItem class]])
-	{
-		NSAssert2([[self displayView] isKindOfClass: [ETView class]], 
-			@"Decorator %@ must have display view %@ of type ETView", 
-			self, [self displayView]);
-	}
-}
-
-/** Sets the decorator item in order to customize the item view border. The 
-	decorator item is typically used to display a title bar making possible to
-	manipulate the item directly (by drag and drop). The other common use is 
-	putting the item view inside a scroll view. 
-	By default, the decorator item is nil. */
-- (void) setDecoratorItem: (ETLayoutItem *)decorator
-{
-	[self checkDecoration]; /* Ensure existing decorator is valid */
-
-	if ([decorator isEqual: [self decoratorItem]])
-		return;
-
-	if ([decorator canDecorateItem: self] || decorator == nil)
-	{
-		/* Memorize our decorator to let the new decorator inserts itself into it */
-		id existingDecorator = [self decoratorItem];
-		/* Item could have a decorator, so [[item supervisorView] superview] would
-	       not give the parent view in this case but the decorator view. */
-		id parentView = [[self displayView] superview];
-		NSRect frame = [[self displayView] frame];
-		// parentView isEqual: [[item parentItem] view]
-		
-		[[self displayView] removeFromSuperview];
-
-		// NOTE: Important to retain decorator before calling 
-		// -setDecoratedItem: which is going to decrease its retain count
-		// by removing it from its parent
-		RETAIN(existingDecorator);
-		RETAIN(decorator);
-		
-		/* Must be done before dismantling the existing decorator, otherwise 
-		   -handleDecorateItem: nil inView: parentView doesn't remove the 
-		   existing decorator view. More precisely, it doesn't reinserts the
-		   receiver supervisor view but the one currently in use. */
-		ASSIGN(_decoratorItem, decorator),
-
-		/* Dismantle existing decorator */
-		[existingDecorator setDecoratedItem: nil];
-		[existingDecorator handleDecorateItem: nil inView: nil];
-		
-		/* Set up new decorator */
-		[decorator setDecoratedItem: self];
-		[decorator handleDecorateItem: self inView: parentView];
-
-		if ([self respondsToSelector: @selector(container)])
-		{
-			[[(id)self container] didChangeDecoratorOfItem: self];
-		}
-		else
-		{
-			ETLog(@"WARNING: Item %@ doesn't use a container", self);
-		}
-		
-		/* Restore supervisor view as display view if no decorator is set */
-		if (decorator == nil) // && [self view] != nil
-		{
-			NSAssert2([[self displayView] superview] == nil, @"If %@ decorator "
-				@"was just removed without being replaced, the display view of "
-				@"%@ must have no superview", existingDecorator, self);
-			[parentView addSubview: [self displayView]];
-			/* When a decorator view has been resized and/moved, we must reflect 
-			   it on the embedded view which may not have been resized.
-			   Not updating the frame is especially visible when the view is 
-			   used as a document view within a scroll view and this scroll view 
-			   frame is modified. Switching to a layout view reveals the issue
-			   even more clearly. */
-			[self setFrame: frame];
-		}
-		else
-		{
-				/* Verify new decorator has been correctly inserted */
-		/* Tested by -checkDecoration...
-		NSAssert3([[self displayView] isEqual: [decorator displayView]], @"New "
-			@"display view %@ of item %@ must be the display view of the new "
-			@"decorator %@", [self displayView], self, [decorator displayView]);*/
-		
-		// If window is bound directly to a layout item with a window item, this 
-		// assertion fails because existingDecorator is nil and 
-		// [existingDecorator handleDecorateItem: nil inView: nil]; won't 
-		// dismantle the window
-		/*NSAssert3([[[self supervisorView] superview] isEqual: parentView] == NO,
-			@"New parent view %@ of item %@ must not be its old parent view %@", 
-			[[self supervisorView] superview], self, parentView);*/
-		}
-		
-		RELEASE(existingDecorator);
-		RELEASE(decorator);
-		
-		[self checkDecoration];
-	}
-}
-
-- (ETLayoutItem *) decoratedItem
-{
-	return _decoratedItem;
-}
-
-- (void) setDecoratedItem: (ETLayoutItem *)item
-{
-	/* Weak reference because decorator retains us */
-	_decoratedItem = item;
-	[self removeFromParent]; /* Just to be sure the decorator has no parent */
-}
-
-- (ETLayoutItem *) lastDecoratorItem
-{
-	id decorator = [self decoratorItem];
-	
-	if (decorator != nil)
-	{
-		return [decorator lastDecoratorItem];
-	}
-	else
-	{
-		return self;
-	}
-}
-
-- (ETLayoutItem *) firstDecoratedItem
-{
-	id decorator = [self decoratedItem];
-	
-	if (decorator != nil)
-	{
-		return [decorator firstDecoratedItem];
-	}
-	else
-	{
-		return self;
-	}
-}
-
-/** <override /> */
-- (BOOL) canDecorateItem: (ETLayoutItem *)item
-{
-	return [item acceptsDecoratorItem: self];
-}
-
-/** <override />
-	ETLayoutItem instances accept all decorator kinds.
-	You can override this method to decide otherwise in your subclasses. For 
-	example, ETWindowItem returns NO because a window unlike a view cannot 
-	be decorated. */
-- (BOOL) acceptsDecoratorItem: (ETLayoutItem *)item
-{
-	return YES;
-}
-
-/** <override-dummy /> 
-    You can manipulate the receiver decorator chain in this method and access 
-	both view and supervisor view of the decorated item, but you must not 
-	manipulate item related decorator chain (by calling -[item displayView], 
-	-[item decoratorItem] etc.) 
-	Take in account that parentView and item can be nil. */
-- (void) handleDecorateItem: (ETLayoutItem *)item inView: (ETView *)parentView 
-//	oldDecorator: (ETLayoutItem *)existingDecorator
-{
-	/* Inserts decorated view */
-	[self setDecoratedView: [item supervisorView]];
-	
-	/* If the decorated item display view was part of view tree, inserts the 
-	   new display view into the existing parent view.
-	   We don't insert the decorator supervisor view because this decorator 
-	   could be a decorator chain (by being decorated itself too). The new 
-	   display view is thus the supervisor view of the last decorator item. */
-	if (parentView != nil)
-	{
-		/* No need to update the layout since the new display view will have 
-		   the size and location of the previous one. Unlike when you add or
-		   or remove an item which involves to recompute the layout. */
-		//[self handleAttachViewOfItem: item];
-		//ETDebugLog(@"parent %@ parent view %@ item display view %@", [item parentItem],
-		//	parentView, [item displayView]);
-		[parentView addSubview: [self displayView]]; // More sure than [item displayView]
-	}
-	/*else
-	{
-		[[self displayView] removeFromSuperview];
-	}*/
-
-// -setDecoratorItem: isn't -insertDecoratorItem: so disabled the code below
-#if 0	
-	/* Inserts decorator view (as decorated view into the old item decorator) */
-	if (existingDecorator != nil) // [[item displayView] isEqual: [item supervisorView]]
-	{
-		[self setDecoratorItem: existingDecorator];
-	}
-#endif
-}
-
 /* Returns the supervisor view associated with the receiver. The supervisor view 
 is a wrapper view around the receiver view (see -view). 
 
@@ -1403,33 +1070,27 @@ You should never need to call this method.
 See also -supervisorView:. */
 - (void) setSupervisorView: (ETView *)supervisorView
 {
-	 /* isFlipped is also sync in -setFlipped: */
-	[supervisorView setFlipped: [self isFlipped]];
-	[supervisorView setLayoutItemWithoutInsertingView: self];
-	ASSIGN(_view, supervisorView);
+	[super setSupervisorView: supervisorView];
 
-	if ([self decoratorItem] != nil)
-	{
-		id parentView = [[self displayView] superview];
-		/* Usually results in [[self decoratorItem] setView: supervisorView] */
-		[[self decoratorItem] handleDecorateItem: self inView: parentView];
-	}
-	else if (_parentItem != nil)
-	{
+	[self setFrame: [supervisorView frame]];
+
+	BOOL noDecorator = (_decoratorItem == nil);
+	BOOL hasParent = (_parentItem == nil);
+	
+	if (noDecorator && hasParent)
 		[_parentItem handleAttachViewOfItem: self];
-	}
 }
 
 /** When the receiver content is presented inside scrollers, returns the 
 decorator item that owns the scrollers provided by the widget backend (e.g. 
 AppKit), otherwise returns nil. */
-- (ETLayoutItem *) firstScrollViewDecoratorItem
+- (ETDecoratorItem *) firstScrollViewDecoratorItem
 {
 	id decorator = self;
 	
 	while ((decorator = [decorator decoratorItem]) != nil)
 	{
-		if ([[decorator supervisorView] isKindOfClass: [ETScrollView class]])
+		if ([decorator isKindOfClass: [ETScrollableAreaItem class]])
 			break;
 	}
 	
@@ -1482,39 +1143,31 @@ related changes since the last layout update. */
 }
 
 /** Returns the innermost decorator item in the decorator chain which has a 
-    supervisor view bound to it, thereby can be qualified as an item with a view.
-    If the receiver has a supervisor view, then the receiver is returned. 
-	TODO: Implement. */
+supervisor view bound to it, thereby can be qualified as an item with a view.
+If the receiver has a supervisor view, then the receiver is returned. 
+
+TODO: Implement or remove... */
 - (ETLayoutItem *) firstDecoratorItemWithSupervisorView
 {
 	return nil;
 }
 
 /** Returns the rect where the drawing of the layout item must occur, typically 
-    used by the styles. */
+used by the styles. */
 - (NSRect) drawingFrame
 {
-	NSRect drawingFrame = [self frame];
-	drawingFrame.origin = NSZeroPoint;
+	ETView *supervisorView = [self supervisorView];
 
-	// FIXME: This code doesn't work as desired...
-#if 0
-	ETView *drawingView = [self supervisorView];
-
-	if (drawingView != nil) /* Has supervisor view */
+	if (supervisorView != nil && supervisorView != [self displayView])
 	{
-		/* Exclude the title bar area */
-		drawingFrame = [[drawingView wrappedView] frame];
+		NSRect contentBounds = [[self supervisorView] frame];
+		contentBounds.origin = NSZeroPoint;
+		return contentBounds;
 	}
-	else /* Has supervisor view in the decorator chain (a supervisor view may exist before the display view if several decorators are set) */
+	else
 	{
-		drawingView = [[self firstDecoratorItemWithSupervisorView] supervisorView];
-		if (drawingView != nil)
-			drawingFrame = [[drawingView wrappedView] frame];
+		return [self bounds];
 	}
-#endif
-
-	return drawingFrame;
 }
 
 /** Propagates rendering/drawing in the layout item tree.
@@ -1545,8 +1198,8 @@ related changes since the last layout update. */
 	isn't handed to it. */
 - (void) render: (NSMutableDictionary *)inputValues dirtyRect: (NSRect)dirtyRect inView: (NSView *)view 
 {
-	//ETLog(@"Render frame %@ of %@ dirtyRect %@ in %@", NSStringFromRect([self drawingFrame]), 
-	//	self, NSStringFromRect(dirtyRect), view);
+	ETLog(@"Render frame %@ of %@ dirtyRect %@ in %@", NSStringFromRect([self drawingFrame]), 
+		self, NSStringFromRect(dirtyRect), view);
 
 #ifdef DEBUG_DRAWING
 	/* For debugging the drawing of the supervisor view over the item view */
@@ -1577,6 +1230,7 @@ related changes since the last layout update. */
 	[self render: nil];
 }
 
+#if 0
 /** Looks up the view which can display a rect by climbing up the layout 
 item tree until a display view which contains rect is found. This view is 
 returned through the out parameter aView and the returned value is the dirty 
@@ -1592,7 +1246,7 @@ needs some special redisplay policy. */
 	NSRect newRect = rect;
 	// WARNING: If -[ETWindowItem supervisorView] is changed, the next line must 
 	// be updated.
-	NSView *topView = [[[[self closestAncestorDisplayView] window] contentView] superview];
+	NSView *topView = [[[self closestAncestorDisplayView] window] contentView];
 	NSView *displayView = [self displayView];
 	ETLayoutItem *parent = self;
 
@@ -1619,12 +1273,65 @@ needs some special redisplay policy. */
 		newRect = [child convertRectToParent: newRect];
 	}
 
-	if (displayView == topView)
-		displayView = [parent supervisorView];
+	BOOL shouldPatchRect = (displayView == topView);
+	if (shouldPatchRect && [[topView layoutItem] decoratorItem] != nil)
+	{
+		/* Convert newRect to the window content view coordinate space */
+		[[[topView layoutItem] lastDecoratorItem] convertDecoratorRectToContent: newRect];
+	}
 
 	*aView = displayView;
 	return newRect;
 }
+#endif
+
+#if 0
+- (NSRect) convertDisplayRect: (NSRect)rect
+        toAncestorDisplayView: (NSView **)aView 
+                     rootView: (NSView *)topView
+                   parentItem: (ETLayoutItem *)parent
+{
+	/* The displayed receiver has no ancestors bound to a view */
+	if (topView == nil)
+		return NSZeroRect;
+
+	NSView *displayView = [self displayView];
+	BOOL hasReachedWindow = (displayView == topView);
+
+	BOOL canDisplayRect = (displayView != nil && NSContainsRect([self bounds], rect)) ;
+
+	if (canDisplayRect || hasReachedWindow)
+	{
+		*aView = displayView;
+		return rect;//[[self lastDecoratorItem] displayRectForDecoratorRect: rect];	
+	}
+	else /* Recurse up in the tree until rect is enclosed by the receiver */
+	{
+		if (_parentItem != nil)
+		{
+			NSRect rectInParent = [self convertRectToParent: rect];
+			return [_parentItem convertDisplayRect: rectInParent toAncestorDisplayView: aView rootView: topView parentItem: _parentItem];
+		}
+		else
+		{
+			// NOTE: -convertDisplayRect:XXX invoked on nil can return a rect
+			// with random values rather than a zero rect.
+			return NSZeroRect;
+		}
+	}
+}
+
+- (void) setNeedsDisplay: (BOOL)flag
+{
+	[self setNeedsDisplayInRect: [self bounds]];
+}
+
+- (void) display
+{
+	[self displayRect: [self bounds]];
+}
+
+#endif
 
 /** Marks the receiver and the entire layout item tree owned by it to be 
 redisplayed the next time an ancestor view receives a display if needed 
@@ -1639,8 +1346,10 @@ More explanations in -display. */
 - (void) setNeedsDisplayInRect: (NSRect)dirtyRect
 {
 	NSView *displayView = nil;
-	NSRect displayRect = [self convertDisplayRect: dirtyRect 
-	                        toAncestorDisplayView: &displayView];
+	NSRect displayRect = [[self firstDecoratedItem] convertDisplayRect: dirtyRect 
+	                        toAncestorDisplayView: &displayView
+							rootView: [[[self closestAncestorDisplayView] window] contentView]
+							parentItem: _parentItem];
 
 	[displayView setNeedsDisplayInRect: displayRect];
 }
@@ -1655,6 +1364,7 @@ conversion are handled by -convertDisplayRect:toAncestorDisplayView:.
 If the receiver has a display view, this view will be asked to drawby itself.  */
 - (void) display
 {
+	 /* Redisplay the content bounds unless a custom bouding box is set */
 	[self displayRect: [self boundingBox]];
 }
 
@@ -1666,8 +1376,10 @@ If the receiver has a display view, this view will be asked to drawby itself.  *
 	//[[ancestor displayView] displayRect: [self convertRect: [self boundingBox] toItem: ancestor]];
 
 	NSView *displayView = nil;
-	NSRect displayRect = [self convertDisplayRect: dirtyRect
-	                        toAncestorDisplayView: &displayView];
+	NSRect displayRect = [[self firstDecoratedItem] convertDisplayRect: dirtyRect
+	                        toAncestorDisplayView: &displayView
+							rootView: [[[self closestAncestorDisplayView] window] contentView]
+							parentItem: _parentItem];
 	[displayView displayRect: displayRect];
 }
 
@@ -1690,7 +1402,7 @@ understand how to customize the layout item look. */
 /* Geometry */
 
 /** Returns a rect expressed in parent layout item coordinate space equivalent 
-	to rect parameter expressed in the receiver coordinate space. */
+to rect parameter expressed in the receiver coordinate space. */
 - (NSRect) convertRectToParent: (NSRect)rect
 {
 	NSRect rectInParent = rect;
@@ -1711,7 +1423,7 @@ understand how to customize the layout item look. */
 }
 
 /** Returns a rect expressed in the receiver coordinate space equivalent to
-	rect parameter expressed in the parent layout item coordinate space. */
+rect parameter expressed in the parent layout item coordinate space. */
 - (NSRect) convertRectFromParent: (NSRect)rect
 {
 	NSRect rectInReceiver = rect; /* Keep the size as is */
@@ -1734,7 +1446,7 @@ understand how to customize the layout item look. */
 }
 
 /** Returns a point expressed in parent layout item coordinate space equivalent 
-	to point parameter expressed in the receiver coordinate space. */
+to point parameter expressed in the receiver coordinate space. */
 - (NSPoint) convertPointToParent: (NSPoint)point
 {
 	return [self convertRectToParent: ETMakeRect(point, NSZeroSize)].origin;
@@ -1811,7 +1523,6 @@ event handling and drawing. If you want to alter the flipping, you must use
 /** Sets whether the receiver uses flipped coordinates to position its content. 
 
 This method updates the supervisor view to match the flipping of the receiver.
-The anchor point location is also adjusted if needed.
 
 You must never alter the supervisor view directly with -[ETView setFlipped:]. */
 - (void) setFlipped: (BOOL)flip
@@ -1821,53 +1532,61 @@ You must never alter the supervisor view directly with -[ETView setFlipped:]. */
 
 	_flipped = flip;
 	[[self supervisorView] setFlipped: flip];
-	if (HAS_PROPERTY(kETAnchorPointProperty))
-	{
-		NSPoint anchorPoint = [self anchorPoint];
-		anchorPoint.y -= [self bounds].size.height;
-		[self setAnchorPoint: anchorPoint];
-	}
+	[[self decoratorItem] setFlipped: flip];
 }
 
 /** Returns a point expressed in the receiver coordinate space equivalent to
-	point parameter expressed in the parent layout item coordinate space. */
+point parameter expressed in the parent layout item coordinate space. */
 - (NSPoint) convertPointFromParent: (NSPoint)point
 {
 	return [self convertRectFromParent: ETMakeRect(point, NSZeroSize)].origin;
 }
 
 /** Returns whether a point expressed in the parent item coordinate space is 
-    is within the receiver frame. The item frame is also expressed in the parent 
-	item coordinate space.
+within the receiver frame. The item frame is also expressed in the parent item 
+coordinate space.
  
-	This method checks whether the parent item is flipped or not. */
+This method checks whether the parent item is flipped or not. */
 - (BOOL) containsPoint: (NSPoint)point
 {
 	return NSMouseInRect(point, [self frame], [_parentItem isFlipped]);
 }
 
 /** Returns whether a point expressed in the receiver coordinate space is inside 
-    the receiver bounds.
- 
-	For now, the bounds size is always equal to the item frame and the origin 
-	to zero.
- 
-	TODO: Ensure the next paragraph really holds...
-	If you convert a point expressed in the parent coordinate space to the 
-	receiver coordinate space with -convertPointFromParent:, if the receiver 
-	is flipped, the point will be adjusted as needed. Hence you can safely pass 
-	a point once converted without worrying whether the parent or the receiver 
-	are flipped. */
+the receiver frame. */
 - (BOOL) pointInside: (NSPoint)point
 {
 	return NSPointInRect(point, [self bounds]);
 }
 
+// NOTE: For now, private...
 - (NSRect) bounds
 {
-	NSRect bounds = [self frame];
-	bounds.origin = NSZeroPoint;
-	return bounds;
+	BOOL hasDecorator = (_decoratorItem != nil);
+
+	if (hasDecorator)
+	{
+		return ETMakeRect(NSZeroPoint, [[self lastDecoratorItem] decorationRect].size);
+	}
+	else
+	{
+		return _contentBounds;
+	}
+}
+
+- (void) setBoundsSize: (NSSize)size
+{
+	BOOL hasDecorator = (_decoratorItem != nil);
+
+	if (hasDecorator)
+	{
+		//NSAssert(NSEqualPoints([self origin], [[self lastDecoratorItem] decorationRect].origin);
+		[[self lastDecoratorItem] setDecorationRect: ETMakeRect([self origin], size)];
+	}
+	else
+	{
+		[self setContentSize: size];
+	}
 }
 
 /** Returns the persistent frame associated with the receiver. 
@@ -1905,13 +1624,15 @@ layout is computed.
 See also -setPersistentFrame: */
 - (NSRect) frame
 {
-	if ([self displayView] != nil)
+	BOOL hasDecorator = (_decoratorItem != nil);
+
+	if (hasDecorator)
 	{
-		return [[self displayView] frame];
+		return [[self lastDecoratorItem] decorationRect];
 	}
 	else
 	{
-		return _frame;
+		return ETMakeRect([self origin], _contentBounds.size);
 	}
 }
 
@@ -1923,16 +1644,20 @@ See also -[ETLayout isPositional] and -[ETLayout isComputedLayout]. */
 {
 	ETDebugLog(@"-setFrame: %@ on %@", NSStringFromRect(rect), self);  
 
-	if ([self displayView] != nil)
+	BOOL hasDecorator = (_decoratorItem != nil);
+
+	if (hasDecorator)
 	{
-		[[self displayView] setFrame: rect];
+		return [[self lastDecoratorItem] setDecorationRect: rect];
 	}
 	else
 	{
-		_frame = rect;
+		[self setContentSize: rect.size];
+		/* Must follow -setContentSize: to allow the anchor point to be computed */
+		[self setOrigin: rect.origin];
 	}
 
-	[[self style] didChangeItemBounds: ETMakeRect(NSZeroPoint, rect.size)];
+	[[self style] didChangeItemBounds: [self contentBounds]];
 
 	ETLayout *parentLayout = [_parentItem layout];
 	if ([parentLayout isPositional] && [parentLayout isComputedLayout] == NO)
@@ -1942,36 +1667,50 @@ See also -[ETLayout isPositional] and -[ETLayout isComputedLayout]. */
 /** Returns the current origin associated with the receiver frame. See also -frame. */
 - (NSPoint) origin
 {
-	return [self frame].origin;
+	NSPoint anchorPoint = [self anchorPoint];
+	NSPoint origin = [self position];
+
+	origin.x -= anchorPoint.x;
+	origin.y -= anchorPoint.y;
+
+	return origin;
 }
 
 /** Sets the current origin associated with the receiver frame. See also -setFrame:. */   
 - (void) setOrigin: (NSPoint)origin
 {
-	NSRect newFrame = [self frame];
-	
-	newFrame.origin = origin;
-	[self setFrame: newFrame];
+	NSPoint anchorPoint = [self anchorPoint];
+	NSPoint position = origin ;
+
+	position.x += anchorPoint.x;
+	position.y += anchorPoint.y;
+
+	[self setPosition: position];
 }
 
-/** Returns the current anchor point associated with the receiver bounds. The 
-anchor point is expressed in the receiver coordinate space.
+/** Returns the current anchor point associated with the receiver content bounds. 
+The anchor point is expressed in the receiver content coordinate space.
 
-By default, the anchor point is centered in the bounds rectangle.
+By default, the anchor point is centered in the content bounds rectangle. See 
+-contentBounds.
 
-The item position is relative to the anchor point. */
+The item position is relative to the anchor point. See -position. */
 - (NSPoint) anchorPoint
 {
 	if (HAS_PROPERTY(kETAnchorPointProperty) == NO)
-		return [self centeredAnchorPoint];
-
+	{
+		NSPoint anchor = [self centeredAnchorPoint];
+		SET_PROPERTY([NSValue valueWithPoint: anchor], kETAnchorPointProperty);
+		return anchor;
+	}
 	return [GET_PROPERTY(kETAnchorPointProperty) pointValue];
 }
 
-/* Returns the center of the bounds rectangle in the receiver coordinate space. */
+/* Returns the center of the bounds rectangle in the receiver content coordinate 
+space. */
 - (NSPoint) centeredAnchorPoint
 {
-	NSSize boundsSize = [self bounds].size;	
+	NSSize boundsSize = _contentBounds.size;	
 	NSPoint anchorPoint = NSZeroPoint;
 	
 	anchorPoint.x = boundsSize.width / 2.0;
@@ -1980,10 +1719,11 @@ The item position is relative to the anchor point. */
 	return anchorPoint;
 }
 
-/** Sets the current anchor point associated with the receiver bounds. anchor 
-must be expressed in the receiver coordinate space. */  
+/** Sets the current anchor point associated with the receiver content bounds. 
+anchor must be expressed in the receiver content coordinate space. */  
 - (void) setAnchorPoint: (NSPoint)anchor
 {
+	ETLog(@"Set anchor point to %@ - %@", NSStringFromPoint(anchor), self);
 	SET_PROPERTY([NSValue valueWithPoint: anchor], kETAnchorPointProperty);
 }
 
@@ -1992,13 +1732,13 @@ position is expressed in the parent item coordinate space. See also
 -setPosition:. */
 - (NSPoint) position
 {
-	NSPoint anchorPoint = [self anchorPoint];
-	NSPoint position = [self frame].origin;
+	return _position;
+}
 
-	position.x += anchorPoint.x;
-	position.y += anchorPoint.y;
-
-	return position;
+- (BOOL) shouldSyncSupervisorViewGeometry
+{
+	return (_decoratorItem == nil && _isSyncingSupervisorViewGeometry == NO
+		&& [self supervisorView] != nil);
 }
 
 /** Sets the current position associated with the receiver frame.
@@ -2009,35 +1749,34 @@ frame). When the position is set, the frame is moved to have the anchor point
 location in the parent item coordinate space equal to the new position value. */  
 - (void) setPosition: (NSPoint)position
 {
-	NSPoint anchorPoint = [self anchorPoint];
-	NSPoint origin = position;
+	_position = position;
 
-	origin.x -= anchorPoint.x;
-	origin.y -= anchorPoint.y;
-	
-	[self setOrigin: origin];
+	// NOTE: Will probably be reworked once layout item views are drawn directly by EtoileUI.
+	if ([self shouldSyncSupervisorViewGeometry])
+	{
+		_isSyncingSupervisorViewGeometry = YES;
+		[[self supervisorView] setFrameOrigin: [self origin]];
+		_isSyncingSupervisorViewGeometry = NO;
+	}
 }
 
 /** Returns the current size associated with the receiver frame. See also -frame. */       
 - (NSSize) size
 {
-	return [self frame].size;
+	return [self bounds].size;
 }
 
 /** Sets the current size associated with the receiver frame. See also -setFrame:. */           
 - (void) setSize: (NSSize)size
 {
-	NSRect newFrame = [self frame];
-	
-	newFrame.size = size;
-	[self setFrame: newFrame];
+	[self setBoundsSize: size];
 }
 
 /** Returns the current x coordinate associated with the receiver frame origin. 
 See also -frame. */       
 - (float) x
 {
-	return [self frame].origin.x;
+	return [self origin].x;
 }
 
 /** Sets the current x coordinate associated with the receiver frame origin. 
@@ -2051,7 +1790,7 @@ See also -setFrame:. */
 See also -frame. */
 - (float) y
 {
-	return [self frame].origin.y;
+	return [self origin].y;
 }
 
 /** Sets the current y coordinate associated with the receiver frame origin. 
@@ -2089,16 +1828,147 @@ See also -setFrame:. */
 	[self setSize: NSMakeSize(width, [self height])];
 }
 
+/** Reuturns the content bounds associated with the receiver. */
+- (NSRect) contentBounds
+{
+	return _contentBounds;
+}
+
+/** Returns the content bounds expressed in the decorator item coordinate space. 
+When no decorator is set, the parent item coordinate space is used.
+
+Both decoration rect and content bounds have the same size, because the first 
+decorated item is never a decorator and thereby has no decoration. */ 
+- (NSRect) decorationRectForContentBounds: (NSRect)bounds
+{
+	BOOL hasDecorator = (_decoratorItem != nil);
+
+	if (hasDecorator)
+	{
+		return ETMakeRect([_decoratorItem contentRect].origin, bounds.size);
+	}
+	else
+	{
+		return ETMakeRect([self origin], bounds.size);
+	}
+}
+
+/* Used by ETDecoratorItem */
+- (NSRect) decorationRect
+{
+	return [self decorationRectForContentBounds: [self contentBounds]];
+}
+
+/** Sets the content bounds associated with the receiver.
+
+By default, the origin of the content bounds is (0.0, 0.0). You can customize it 
+to translate the coordinate system used to draw the receiver. The receiver 
+transform, which might include a translation too, won't be altered. Both 
+translations are cumulative.
+
+If the flipped property is modified, the content bounds remains identical. */
+- (void) setContentBounds: (NSRect)rect
+{
+	_contentBounds = rect;
+	
+	BOOL hasDecorator = (_decoratorItem != nil);
+	if (hasDecorator)
+	{
+		[_decoratorItem decoratedItemRectChanged: [self decorationRectForContentBounds: _contentBounds]];
+	}
+	else if ([self shouldSyncSupervisorViewGeometry])
+	{
+		_isSyncingSupervisorViewGeometry = YES;
+		[[self supervisorView] setFrameSize: _contentBounds.size];
+		_isSyncingSupervisorViewGeometry = NO;
+	}
+}
+
+/** Sets the content size associated with the receiver. */
+- (void) setContentSize: (NSSize)size
+{
+	[self setContentBounds: ETMakeRect(_contentBounds.origin, size)];
+}
+
+/** Returns a rect expressed in the receiver coordinate space equivalent 
+to rect parameter expressed in the receiver content coordinate space.
+
+The content coordinate space is located inside -contentBounds. */
+- (NSRect) convertRectFromContent: (NSRect)rect
+{
+	id decorator = [self decoratorItem];
+	NSRect rectInFrame = rect;
+
+	while (decorator != nil)
+	{
+		rectInFrame = [decorator convertDecoratorRectFromContent: rectInFrame];
+		decorator = [decorator decoratorItem];
+	} 
+
+	return rectInFrame;
+}
+
+/** Returns a rect expressed in the receiver content coordinate space 
+equivalent to rect parameter expressed in the receiver coordinate space.
+
+The content coordinate space is located inside -contentBounds. */
+- (NSRect) convertRectToContent: (NSRect)rect
+{
+	id decorator = [self lastDecoratorItem];
+	NSRect rectInContent = rect;
+
+	while (decorator != self)
+	{
+		rectInContent = [decorator convertDecoratorRectToContent: rectInContent];
+		decorator = [decorator decoratedItem];
+	} 
+
+	return rectInContent;
+}
+
+/** Sets the transform applied within the content bounds. */
+- (void) setTransform: (NSAffineTransform *)aTransform
+{
+	ASSIGN(_transform, aTransform);
+}
+
+/** Returns the transform applied within the content bounds. */
+- (NSAffineTransform *) transform
+{
+	return _transform;
+}
+
+/* Returns the visible portion of the content bounds in case the receiver 
+content is clipped by a decorator.
+
+The returned rect origin is equal to (0, 0) all the time unlike -contentBounds.
+
+Private method to be used or removed later on... */
+- (NSRect) visibleContentBounds
+{
+	NSRect visibleContentBounds = _contentBounds;
+	BOOL hasDecorator = (_decoratorItem != nil);
+
+	if (hasDecorator)
+	{
+		visibleContentBounds = NSIntersectionRect(_contentBounds, [_decoratorItem contentRect]);
+	}
+
+	visibleContentBounds.origin = NSZeroPoint;
+
+	return visibleContentBounds;
+}
+
 /** Returns the rect that fully encloses the receiver and represents the maximal 
 extent on which hit test is done and redisplay requested. This rect is expressed 
-in the receiver coordinate space.
+in the receiver content coordinate space.
 
 You must be cautious with the bounding box, since its value is subject to be 
 overwritten by the layout in use. See -setBoundingBox:. */
 - (NSRect) boundingBox
 {
 	if (ETIsNullRect(_boundingBox))
-		return [self bounds];
+		return [self visibleContentBounds]; // NOTE: May be replaced by -visibleContentBounds
 
 	return _boundingBox;
 }

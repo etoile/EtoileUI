@@ -149,6 +149,7 @@
 - (IBAction) scale: (id)sender
 {
 	[viewContainer setItemScaleFactor: [sender floatValue] / 100];
+	[viewContainer display];
 }
 
 - (IBAction) changeItemMargin: (id)sender

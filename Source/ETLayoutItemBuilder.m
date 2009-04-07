@@ -35,16 +35,17 @@
 	THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import <EtoileUI/ETLayoutItemBuilder.h>
-#import <EtoileUI/ETLayoutItem.h>
-#import <EtoileUI/ETLayoutItem+Factory.h>
-#import <EtoileUI/ETLayoutItemGroup.h>
-#import <EtoileUI/ETWindowItem.h>
-#import <EtoileUI/ETLayer.h>
-#import <EtoileUI/ETView.h>
-#import <EtoileUI/ETContainer.h>
-#import <EtoileUI/NSWindow+Etoile.h>
-#import <EtoileUI/ETCompatibility.h>
+#import "ETLayoutItemBuilder.h"
+#import "ETLayoutItem.h"
+#import "ETLayoutItem+Factory.h"
+#import "ETLayoutItemGroup.h"
+#import "ETWindowItem.h"
+#import "ETLayer.h"
+#import "ETView.h"
+#import "ETContainer.h"
+#import "ETScrollableAreaItem.h"
+#import "NSWindow+Etoile.h"
+#import "ETCompatibility.h"
 
 
 /** By inheriting from ETFilter, ETTransform instances can be chained together 
@@ -79,7 +80,8 @@
 	/* Build window items */
 	while ((window = [e nextObject]) != nil)
 	{
-		if ([window isVisible] && [window isSystemPrivateWindow] == NO)
+		BOOL isStandaloneWindow = ([[window contentView] isKindOfClass: [ETView class]] == NO);
+		if ([window isVisible] && [window isSystemPrivateWindow] == NO && isStandaloneWindow)
 		{
 			item = [self renderWindow: window];
 			//ETLog(@"Rendered window %@ visibility %d into %@", window, [window isVisible], item);
@@ -104,7 +106,7 @@
 	/* Decorate only if needed */
 	if (windowDecorator == nil)
 	{
-		windowDecorator = [ETWindowItem itemWithWindow: window];
+		windowDecorator = [ETLayoutItem itemWithWindow: window];
 		[[item lastDecoratorItem] setDecoratorItem: windowDecorator];
 	}
 

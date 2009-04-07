@@ -1837,27 +1837,7 @@ If the receiver has not been sorted or filtered yet, returns a nil array. */
 	}
 }
 
-		/* The frame may be patched by the display view, that's why 
-		   _frame = rect would be incorrect. When the display view is embedded
-		   inside a scroll view, the display view is the document view of the
-		   scroll view and must fit perfectly into it.
-		   For more details, see -[ETContainer setFrameSize:] */
-- (void) setContentSize: (NSSize)size
-{
-	if ([[self supervisorView] respondsToSelector: @selector(setContentSize:)])
-	{
-		[(id)[self supervisorView] setContentSize: size];
-	}
-	else if ([[self supervisorView] respondsToSelector: @selector(scrollView)]
-	 && [[(id)[self supervisorView] scrollView] isKindOfClass: [NSScrollView class]])
-	{
-		[[[(id)[self supervisorView] scrollView] documentView] setFrameSize: size];		
-	}
-	else
-	{
-		ETLog(@"WARNING: Layout item %@ doesn't respond to -setContentSize:", self);
-	}
-}
+- (void) setContentSize: (NSSize)size { [super setContentSize: size]; }
 
 /* Dummy methods to shut down compiler warning about ETLayoutingContext not 
    fully implemented */
