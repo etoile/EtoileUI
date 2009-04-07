@@ -134,7 +134,7 @@ However -supervisorView can be overriden to return nil. */
                      inView: (ETView *)parentView;
 - (void) handleUndecorateItem: (ETUIItem *)item inView: (ETView *)parentView;
 - (void) handleSetDecorationRect: (NSRect)rect;
-- (void) decoratedItemRectChanged: (NSRect)rect;
+- (NSSize) decoratedItemRectChanged: (NSRect)rect;
 
 /* Private Use */
 

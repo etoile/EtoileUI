@@ -633,14 +633,15 @@ NOTE: This purpose will probably evolved a bit later on... */
 This method notifies the receiver that the decorated item has a new decoration 
 rect. The existing implementation simply notifies the next decorator, and so 
 on recursively. When the outermost decorator item is reached, 
--handleSetDecorationRect: is called.
+-handleSetDecorationRect: is called. Finally rect.size is returned.
 
 You can override this method to customize how a subclass react to an inner 
-geometry update. A common use case is to intercept decorated item resizes
-to clip or extend the requested receiver content size.
+geometry update. A custom content size can be returned when needed. A common use 
+case is to intercept decorated item resizes to clip or extend the requested 
+receiver content size.
 
 You must never call this method, but only override it. */
-- (void) decoratedItemRectChanged: (NSRect)rect
+- (NSSize) decoratedItemRectChanged: (NSRect)rect
 {
 	BOOL isLastDecorator = ([self decoratorItem] == nil);
 	
@@ -652,6 +653,8 @@ You must never call this method, but only override it. */
 	{
 		[_decoratorItem decoratedItemRectChanged: [self convertDecoratorRectFromContent: rect]];
 	}
+
+	return rect.size;
 }
 
 @end

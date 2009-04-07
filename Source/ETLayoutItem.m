@@ -1874,7 +1874,8 @@ If the flipped property is modified, the content bounds remains identical. */
 	BOOL hasDecorator = (_decoratorItem != nil);
 	if (hasDecorator)
 	{
-		[_decoratorItem decoratedItemRectChanged: [self decorationRectForContentBounds: _contentBounds]];
+		NSRect decorationRect = [self decorationRectForContentBounds: _contentBounds];
+		_contentBounds.size = [_decoratorItem decoratedItemRectChanged: decorationRect];
 	}
 	else if ([self shouldSyncSupervisorViewGeometry])
 	{

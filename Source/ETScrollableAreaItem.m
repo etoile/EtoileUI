@@ -52,9 +52,18 @@
 	return (NSScrollView *)[[self supervisorView] mainView];
 }
 
-- (void) decoratedItemRectChanged: (NSRect)rect
+- (NSSize) decoratedItemRectChanged: (NSRect)rect
 {
-	[[[self scrollView] documentView] setFrameSize: rect.size]; // May be should be -setFrameSize:
+	NSSize sizeToCoverClipView = rect.size;
+
+	if (rect.size.height < [self visibleContentRect].size.height)
+		sizeToCoverClipView.height = [self visibleContentRect].size.height;
+
+	if (rect.size.width < [self visibleContentRect].size.width)
+		sizeToCoverClipView.width = [self visibleContentRect].size.width;
+
+	[[[self scrollView] documentView] setFrameSize: sizeToCoverClipView];
+	return sizeToCoverClipView;
 }
 
 /** Returns the rect that corresponds to the visible part of the content and 
