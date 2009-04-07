@@ -36,6 +36,7 @@ EtoileUI_HEADER_FILES = \
 	ETContainer+Controller.h \
 	ETContainer.h \
 	ETContainers.h \
+	ETDecoratorItem.h \
 	ETEvent.h \
 	ETFlowLayout.h \
 	ETFreeLayout.h \
@@ -61,6 +62,7 @@ EtoileUI_HEADER_FILES = \
 	ETPaneSwitcherLayout.h \
 	ETPersistencyController.h \
 	ETPickboard.h \
+	ETScrollableAreaItem.h \
 	ETShape.h \
 	ETStackLayout.h \
 	ETStyle.h \

@@ -717,14 +717,14 @@ You can revert to non-flipped coordinates by passing NO to this method. */
 {
 	[super setFrameSize: size];
 	if ([_layoutItem shouldSyncSupervisorViewGeometry])
-		[_layoutItem setFrameSize: size];
+		[_layoutItem setSize: size];
 }
 
 - (void) setFrameOrigin: (NSPoint)origin
 {
 	[super setFrameOrigin: origin];
 	if ([_layoutItem shouldSyncSupervisorViewGeometry])
-		[_layoutItem setFrameOrigin: origin];
+		[_layoutItem setOrigin: origin];
 }
 #endif
 

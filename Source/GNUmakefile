@@ -13,6 +13,7 @@ libEtoileUI_OBJC_FILES = \
 	ETContainer+EventHandling.m \
 	ETContainer.m \
 	ETContainers.m \
+	ETDecoratorItem.m \
 	ETEvent.m \
 	ETFlowLayout.m \
 	ETFreeLayout.m \
@@ -36,6 +37,7 @@ libEtoileUI_OBJC_FILES = \
 	ETPaneSwitcherLayout.m \
 	ETPersistencyController.m \
 	ETPickboard.m \
+	ETScrollableAreaItem.m \
 	ETShape.m \
 	ETStackLayout.m \
 	ETStyle.m \
