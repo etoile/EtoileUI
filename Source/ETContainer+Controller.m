@@ -72,7 +72,7 @@
 
 /** Returns the content object which is either a layout item group or nil. 
 See also -setContent:.*/
-- (id) content
+- (ETLayoutItemGroup *) content
 {
 	return _content;
 }
@@ -87,7 +87,7 @@ You can also bind this property to have it automatically adjusted based on the
 context. For example, if you bind it to -[ETContainer layoutItem] you won't have 
 to call -setContent: each time the layout item attached to the container is 
 changed. */
-- (void) setContent: (id)content
+- (void) setContent: (ETLayoutItemGroup *)content
 {
 	BOOL notItemGroupKind = ([content isKindOfClass: [ETLayoutItemGroup class]] == NO);
 	if (content != nil && notItemGroupKind)

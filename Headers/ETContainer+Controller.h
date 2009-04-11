@@ -91,8 +91,8 @@
 	BOOL _hasNewContent;
 }
 
-- (id) content;
-- (void) setContent: (id)content;
+- (ETLayoutItemGroup *) content;
+- (void) setContent: (ETLayoutItemGroup *)content;
 
 - (ETLayoutItem *) templateItem;
 - (void) setTemplateItem: (ETLayoutItem *)template;
