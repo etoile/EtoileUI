@@ -117,7 +117,7 @@
 	allocCount = GSDebugAllocationCount([ETLayoutItem class])
 		+ GSDebugAllocationCount([ETLayoutItemGroup class]);
 	view = [[ETView alloc] init];
-	item = [ETLayoutItem item];
+	item = [[ETLayoutItem alloc] init];
 	[item setSupervisorView: view];
 	id parent = [[ETLayoutItemGroup alloc] init];
 
@@ -144,7 +144,7 @@
 		+ GSDebugAllocationCount([ETView class]);
 	id view1 = [[ETView alloc] init];
 	id view2 = AUTORELEASE([[ETView alloc] init]);
-	item = [ETLayoutItem item];
+	item = [[ETLayoutItem alloc] init];
 	[item setSupervisorView: view2];
 	parent = [[ETLayoutItemGroup alloc] init];
 	[parent setSupervisorView: view1];
