@@ -4,6 +4,13 @@ SUBPROJECT_NAME = EtoileUITests
 
 ADDITIONAL_INCLUDE_DIRS += -I../
 
+# Remove -Werror set by etoile.make to ignore NSMenuItem protocol warnings
+# GCC requires <NSMenuItem> with -[(id) addItem: (id)]... because NSMenuItem 
+# declares -addItem: (id <NSMenuItem>). To be removed once the compiler is 
+# improved to check protocol in a less zealous way when the receiver is 
+# dynamically typed, or NSMenuItem protocol is deprecated on GNUstep...
+ADDITIONAL_OBJCFLAGS = -Wno-import -Wno-unused -Wno-implicit
+
 EtoileUITests_OBJC_FILES = \
 	test_ETLayoutItem.m \
 	test_ETLayoutItemBuilder.m \
