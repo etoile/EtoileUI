@@ -204,9 +204,9 @@
 		60C27A0F0E66B0D80040A41D /* ETComputedLayout.h in Headers */ = {isa = PBXBuildFile; fileRef = 60C27A0D0E66B0D80040A41D /* ETComputedLayout.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		60C27A110E66B0EA0040A41D /* ETComputedLayout.m in Sources */ = {isa = PBXBuildFile; fileRef = 60C27A100E66B0EA0040A41D /* ETComputedLayout.m */; };
 		60C27A120E66B0EA0040A41D /* ETComputedLayout.m in Sources */ = {isa = PBXBuildFile; fileRef = 60C27A100E66B0EA0040A41D /* ETComputedLayout.m */; };
-		60CF6C820D3F739000B4CA3D /* ETContainer+Controller.h in Headers */ = {isa = PBXBuildFile; fileRef = 60CF6C800D3F739000B4CA3D /* ETContainer+Controller.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		60CF6C830D3F739000B4CA3D /* ETContainer+Controller.m in Sources */ = {isa = PBXBuildFile; fileRef = 60CF6C810D3F739000B4CA3D /* ETContainer+Controller.m */; };
-		60CF6C850D3F739000B4CA3D /* ETContainer+Controller.m in Sources */ = {isa = PBXBuildFile; fileRef = 60CF6C810D3F739000B4CA3D /* ETContainer+Controller.m */; };
+		60CF6C820D3F739000B4CA3D /* ETController.h in Headers */ = {isa = PBXBuildFile; fileRef = 60CF6C800D3F739000B4CA3D /* ETController.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		60CF6C830D3F739000B4CA3D /* ETController.m in Sources */ = {isa = PBXBuildFile; fileRef = 60CF6C810D3F739000B4CA3D /* ETController.m */; };
+		60CF6C850D3F739000B4CA3D /* ETController.m in Sources */ = {isa = PBXBuildFile; fileRef = 60CF6C810D3F739000B4CA3D /* ETController.m */; };
 		60CF709C0D4257DB00B4CA3D /* ETWindowItem.h in Headers */ = {isa = PBXBuildFile; fileRef = 60CF6C7A0D3F6ECF00B4CA3D /* ETWindowItem.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		60CF709D0D4257DB00B4CA3D /* ETWindowItem.m in Sources */ = {isa = PBXBuildFile; fileRef = 60CF6C7B0D3F6ECF00B4CA3D /* ETWindowItem.m */; };
 		60CF70A00D42582A00B4CA3D /* ETWindowItem.m in Sources */ = {isa = PBXBuildFile; fileRef = 60CF6C7B0D3F6ECF00B4CA3D /* ETWindowItem.m */; };
@@ -548,8 +548,8 @@
 		60CA73860C494B22009D9B02 /* COPYING */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = COPYING; sourceTree = "<group>"; };
 		60CF6C7A0D3F6ECF00B4CA3D /* ETWindowItem.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ETWindowItem.h; path = Headers/ETWindowItem.h; sourceTree = "<group>"; };
 		60CF6C7B0D3F6ECF00B4CA3D /* ETWindowItem.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ETWindowItem.m; path = Source/ETWindowItem.m; sourceTree = "<group>"; };
-		60CF6C800D3F739000B4CA3D /* ETContainer+Controller.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "ETContainer+Controller.h"; path = "Headers/ETContainer+Controller.h"; sourceTree = "<group>"; };
-		60CF6C810D3F739000B4CA3D /* ETContainer+Controller.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = "ETContainer+Controller.m"; path = "Source/ETContainer+Controller.m"; sourceTree = "<group>"; };
+		60CF6C800D3F739000B4CA3D /* ETController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ETController.h; path = Headers/ETController.h; sourceTree = "<group>"; };
+		60CF6C810D3F739000B4CA3D /* ETController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ETController.m; path = Source/ETController.m; sourceTree = "<group>"; };
 		60CF710C0D42AA8600B4CA3D /* test_ETObjectChain.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = test_ETObjectChain.m; path = Tests/test_ETObjectChain.m; sourceTree = "<group>"; };
 		60CF710F0D42AAC600B4CA3D /* English */ = {isa = PBXFileReference; lastKnownFileType = wrapper.nib; name = English; path = English.lproj/Inspector.nib; sourceTree = "<group>"; };
 		60CF717B0D42E75300B4CA3D /* ETLayoutItemGroup+Mutation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "ETLayoutItemGroup+Mutation.h"; path = "Headers/ETLayoutItemGroup+Mutation.h"; sourceTree = "<group>"; };
@@ -675,8 +675,8 @@
 			children = (
 				609F463C0B414C0A00AD2209 /* ETContainer.h */,
 				609F463D0B414C0A00AD2209 /* ETContainer.m */,
-				60CF6C800D3F739000B4CA3D /* ETContainer+Controller.h */,
-				60CF6C810D3F739000B4CA3D /* ETContainer+Controller.m */,
+				60CF6C800D3F739000B4CA3D /* ETController.h */,
+				60CF6C810D3F739000B4CA3D /* ETController.m */,
 				609F46590B41641400AD2209 /* ETLayout.h */,
 				609F465A0B41641400AD2209 /* ETLayout.m */,
 				609097D20CB00BC2009CAD27 /* ETObjectRegistry+EtoileUI.h */,
@@ -1161,7 +1161,7 @@
 				60F363FB0D183BB400FCFFDA /* NSImage+Etoile.h in Headers */,
 				60F365920D18651700FCFFDA /* ETViewModelLayout.h in Headers */,
 				60F112BF0D363806003B2EFA /* ETEvent.h in Headers */,
-				60CF6C820D3F739000B4CA3D /* ETContainer+Controller.h in Headers */,
+				60CF6C820D3F739000B4CA3D /* ETController.h in Headers */,
 				60CF717D0D42E75300B4CA3D /* ETLayoutItemGroup+Mutation.h in Headers */,
 				60DEFD2A0D4E8482008B1038 /* ETTextEditorLayout.h in Headers */,
 				603649FB0E40A547003377E0 /* ETLayoutItem+Factory.h in Headers */,
@@ -1495,7 +1495,7 @@
 				605D6C040CE7830A009ED244 /* ETApplication.m in Sources */,
 				600244FF0CD162090023182D /* ETBrowserLayout.m in Sources */,
 				60C27A110E66B0EA0040A41D /* ETComputedLayout.m in Sources */,
-				60CF6C850D3F739000B4CA3D /* ETContainer+Controller.m in Sources */,
+				60CF6C850D3F739000B4CA3D /* ETController.m in Sources */,
 				60AE4C8E0EED520B00DE82BC /* ETContainer+EventHandling.m in Sources */,
 				600245010CD162090023182D /* ETContainer.m in Sources */,
 				60AE4C8F0EED520B00DE82BC /* ETContainers.m in Sources */,
@@ -1670,7 +1670,7 @@
 				60F363FC0D183BB400FCFFDA /* NSImage+Etoile.m in Sources */,
 				60F365930D18651700FCFFDA /* ETViewModelLayout.m in Sources */,
 				60F112C00D363806003B2EFA /* ETEvent.m in Sources */,
-				60CF6C830D3F739000B4CA3D /* ETContainer+Controller.m in Sources */,
+				60CF6C830D3F739000B4CA3D /* ETController.m in Sources */,
 				60CF717E0D42E75300B4CA3D /* ETLayoutItemGroup+Mutation.m in Sources */,
 				60DEFD2B0D4E8482008B1038 /* ETTextEditorLayout.m in Sources */,
 				60364A0A0E40A560003377E0 /* ETContainer+EventHandling.m in Sources */,
