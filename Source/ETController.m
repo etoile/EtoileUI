@@ -1,6 +1,6 @@
-/*  <title>ETContainer+Controller</title>
+/*  <title>ETController</title>
 
-	ETContainer+Controller.m
+	ETController.m
 	
 	<abstract>A generic controller layer interfaced with the layout item tree.</abstract>
  
@@ -35,7 +35,7 @@
  */
 
 #import <EtoileFoundation/Macros.h>
-#import "ETContainer+Controller.h"
+#import "ETController.h"
 #import "ETLayoutItemGroup+Mutation.h"
 #import "ETContainer.h"
 #import "ETLayoutItemGroup.h"

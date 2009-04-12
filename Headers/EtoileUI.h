@@ -53,6 +53,7 @@
 #import <EtoileUI/ETShape.h>
 #import <EtoileUI/ETContainer.h>
 #import <EtoileUI/ETContainers.h>
+#import <EtoileUI/ETController.h>
 #import <EtoileUI/ETLayoutItem.h>
 #import <EtoileUI/ETLayoutItem+Events.h>
 #import <EtoileUI/ETLayoutItem+Reflection.h>

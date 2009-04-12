@@ -40,7 +40,7 @@
 #import "ETLayoutItem+Factory.h"
 #import "ETEvent.h"
 #import "ETContainer.h"
-#import "ETContainer+Controller.h"
+#import "ETController.h"
 #import "ETCompatibility.h"
 
 @interface ETLayoutItemGroup (ETSource)

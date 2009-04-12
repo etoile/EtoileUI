@@ -37,7 +37,7 @@
 #import <EtoileFoundation/NSIndexSet+Etoile.h>
 #import <EtoileFoundation/NSIndexPath+Etoile.h>
 #import "ETContainer.h"
-#import "ETContainer+Controller.h"
+#import "ETController.h"
 #import "ETDecoratorItem.h"
 #import "ETLayoutItem.h"
 #import "ETLayoutItem+Factory.h"
