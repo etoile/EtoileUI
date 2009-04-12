@@ -46,6 +46,7 @@ libEtoileUI_OBJC_FILES = \
 	ETTextEditorLayout.m \
 	ETView.m \
 	ETViewModelLayout.m \
+	ETWidgetLayout.m \
 	ETWindowItem.m \
 	FSBrowserCell.m \
 	NSImage+Etoile.m \

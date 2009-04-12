@@ -35,12 +35,12 @@
 
 #import <Foundation/Foundation.h>
 #import <AppKit/AppKit.h>
-#import <EtoileUI/ETLayout.h>
+#import <EtoileUI/ETWidgetLayout.h>
 
 @class ETLayoutLine, ETContainer;
 
 
-@interface ETTableLayout : ETLayout
+@interface ETTableLayout : ETWidgetLayout
 {
 	NSMutableDictionary *_propertyColumns;
 	NSFont *_contentFont;

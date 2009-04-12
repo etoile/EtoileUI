@@ -71,6 +71,7 @@ EtoileUI_HEADER_FILES = \
 	ETTextEditorLayout.h \
 	ETView.h \
 	ETViewModelLayout.h \
+	ETWidgetLayout.h \
 	ETWindowItem.h \
 	FSBrowserCell.h \
 	GNUstep.h \
