@@ -66,11 +66,11 @@
 	
 	inv = RETAIN([self invocationForSelector: @selector(setDoubleAction:)]);
 	[inv setArgument: &doubleAction atIndex: 2];
-	[self sendInvocationToDisplayView: inv];
+	[inv invoke];
 	
 	inv = RETAIN([self invocationForSelector: @selector(setTarget:)]);
 	[inv setArgument: &self atIndex: 2];
-	[self sendInvocationToDisplayView: inv];
+	[inv invoke];
 	
 	BOOL hasVScroller = [container hasVerticalScroller];
 	BOOL hasHScroller = [container hasHorizontalScroller];
@@ -83,22 +83,24 @@
 	
 	inv = RETAIN([self invocationForSelector: @selector(setHasHorizontalScroller:)]);
 	[inv setArgument: &hasHScroller atIndex: 2];
-	[self sendInvocationToDisplayView: inv];
+	[inv invoke];
 	
 	inv = RETAIN([self invocationForSelector: @selector(setHasVerticalScroller:)]);
 	[inv setArgument: &hasVScroller atIndex: 2];
-	[self sendInvocationToDisplayView: inv];
+	[inv invoke];
 	
 	BOOL allowsEmptySelection = YES; // FIXME: [[self attachedInstrument] allowsEmptySelection];
 	BOOL allowsMultipleSelection = YES; // FIXME: [[self attachedInstrument] allowsMultipleSelection];
 	
 	inv = RETAIN([self invocationForSelector: @selector(setAllowsEmptySelection:)]);
 	[inv setArgument: &allowsEmptySelection atIndex: 2];
-	[self sendInvocationToDisplayView: inv];
+	[inv invoke];
 	
 	inv = RETAIN([self invocationForSelector: @selector(setAllowsMultipleSelection:)]);
 	[inv setArgument: &allowsMultipleSelection atIndex: 2];
-	[self sendInvocationToDisplayView: inv];
+	[inv invoke];
+
+	RELEASE(inv); /* Retained previously otherwise it gets released too soon */
 }
 
 - (NSInvocation *) invocationForSelector: (SEL)selector
@@ -123,34 +125,8 @@
 	return inv;
 }
 
-- (void) sendInvocationToDisplayView: (NSInvocation *)inv
-{
-	//id result = [[inv methodSignature] methodReturnLength];
-	NSView *_layoutView = [self layoutView];
-
-	if ([_layoutView respondsToSelector: [inv selector]])
-	{
-			[inv invokeWithTarget: _layoutView];
-	}
-	else if ([_layoutView isKindOfClass: [NSScrollView class]])
-	{
-		/* May be the display view is packaged inside a scroll view */
-		id enclosedDisplayView = [(NSScrollView *)_layoutView documentView];
-		
-		if ([enclosedDisplayView respondsToSelector: [inv selector]]);
-			[inv invokeWithTarget: enclosedDisplayView];
-	}
-	
-	//if (inv != nil)
-	//	[inv getReturnValue: &result];
-		
-	RELEASE(inv); /* Retained in -syncDisplayViewWithContainer otherwise it gets released too soon */
-	
-	//return result;
-}
-
 /** Returns the control view enclosed in the layout view if the latter is a
-    scroll view, otherwise the returned view is identical to -layoutView. */
+scroll view, otherwise the returned view is identical to -layoutView. */
 - (NSView *) layoutViewWithoutScrollView
 {
 	id layoutView = [self layoutView];
