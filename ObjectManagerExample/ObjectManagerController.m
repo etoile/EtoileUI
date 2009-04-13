@@ -70,7 +70,7 @@ static NSFileManager *objectManager = nil;
 	[viewContainer setDoubleAction: @selector(doubleClickInViewContainer:)];
 	[viewContainer setHasVerticalScroller: YES];
 	[viewContainer setHasHorizontalScroller: YES];
-	[viewContainer setLayout: AUTORELEASE([[ETIconLayout alloc] init])];
+	[viewContainer setLayout: AUTORELEASE([[ETFlowLayout alloc] init])];
 	[viewContainer reloadAndUpdateLayout];
 
 	[pathContainer setLayout: [ETLineLayout layout]];
