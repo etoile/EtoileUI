@@ -380,11 +380,7 @@
 
 	[self browserSelectionDidChange];
 
-	// TODO: Don't harcode the double action of the container. See also
-	// -renderWithLayoutItems:hasNewContent:.
-	[[NSApplication sharedApplication] sendAction: @selector(forwardDoubleActionFromLayout:)
-	                                           to: [self container]
-	                                         from: sender];
+	[super doubleClick: sender];
 }
 
 - (ETLayoutItem *) doubleClickedItem

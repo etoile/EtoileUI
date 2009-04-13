@@ -56,6 +56,7 @@
 /* Properties */
 
 NSString *kETAnchorPointProperty = @"anchorPoint";
+NSString *kETActionProperty = @"action";
 NSString *kETActionHandlerProperty = @"actionHandler";
 NSString *kETAutoresizingMaskProperty = @"autoresizingMask";
 NSString *kETBoundingBoxProperty = @"boundingBox";
@@ -74,6 +75,7 @@ NSString *kETRepresentedObjectProperty = @"representedObject";
 NSString *kRepresentedPathBaseProperty = @"representedPathBase";
 NSString *kETSelectedProperty = @"selected";
 NSString *kETStyleProperty = @"style";
+NSString *kETTargetProperty = @"target";
 NSString *kETValueProperty = @"value";
 NSString *kETVisibleProperty = @"visible";
 
@@ -851,8 +853,8 @@ See -valueForProperty: for more details. */
 		@"height", @"view", kETSelectedProperty, kETLayoutProperty,
 		kETImageProperty, kETFrameProperty, kETRepresentedObjectProperty, 
 		kRepresentedPathBaseProperty, kETParentItemProperty, 
-		kETAutoresizingMaskProperty, kETBoundingBoxProperty, @"UIMetalevel", 
-		@"UIMetalayer");
+		kETAutoresizingMaskProperty, kETBoundingBoxProperty, kETActionProperty, 
+		kETTargetProperty, @"UIMetalevel", @"UIMetalayer");
 
 	properties = [[VARIABLE_PROPERTIES allKeys] arrayByAddingObjectsFromArray: properties];
 		
@@ -2218,6 +2220,7 @@ hit tests and action dispatch. By default, returns YES, otherwise NO when
 	return (GET_PROPERTY(kETActionHandlerProperty) != nil);
 }
 
+#if 1
 /** Controls the automatic enabling/disabling of UI elements (such as menu 
 items) that uses the responder chain to validate themselves, based on whether 
 the receiver or its action handler can respond to the selector action that would 
@@ -2236,7 +2239,7 @@ be sent by the UI element in the EtoileUI responder chain. */
 
 	return NO;
 }
-
+#endif
 - (BOOL) respondsToSelector: (SEL)aSelector
 {
 	if ([super respondsToSelector: aSelector])
@@ -2289,6 +2292,48 @@ be sent by the UI element in the EtoileUI responder chain. */
 	[twoParamInv setArgument: &self atIndex: 3];
 
 	[twoParamInv invokeWithTarget: actionHandler];
+}
+
+/** Sets the target to which actions should be sent.
+
+The target is not retained. */
+- (void) setTarget: (id)aTarget
+{
+	SET_PROPERTY(aTarget, kETTargetProperty);
+	RELEASE(aTarget); // NOTE: target is a weak reference
+	[[self layout] syncLayoutViewWithItem: self];
+}
+
+/** Returns the target to which actions should be sent. */
+- (id) target
+{
+	return GET_PROPERTY(kETTargetProperty);
+}
+
+/** Sets the action that can be sent by the action handler associated with 
+the receiver.
+
+This won't alter the action set on the receiver view, both are completely 
+distinct. */
+- (void) setAction: (SEL)aSelector
+{
+	/* NULL and nil are the same, so a NULL selector removes any existing entry */
+	SET_PROPERTY(kETActionProperty, NSStringFromSelector(aSelector));
+	[[self layout] syncLayoutViewWithItem: self];
+}
+
+/** Returns the action that can be sent by the action handler associated with 
+the receiver. 
+
+See also -setAction:. */
+- (SEL) action
+{
+	NSString *selString = GET_PROPERTY(kETActionProperty);
+
+	if (selString == nil)
+		return NULL;
+
+	return _action;
 }
 
 /** Returns the custom inspector associated with the receiver. By default, 

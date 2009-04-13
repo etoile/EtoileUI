@@ -53,6 +53,7 @@
 /* Properties */
 NSString *kSourceProperty = @"source";
 NSString *kDelegateProperty = @"delegate";
+NSString *kETDoubleClickedItemProperty = @"doubleClickedItem";
 
 /* Notifications */
 NSString *ETItemGroupSelectionDidChangeNotification = @"ETItemGroupSelectionDidChangeNotification";
@@ -234,7 +235,8 @@ The returned copy is mutable because ETLayoutItemGroup cannot be immutable. */
 
 - (NSArray *) properties
 {
-	NSArray *properties = A(kSourceProperty, kDelegateProperty);
+	NSArray *properties = A(kSourceProperty, kDelegateProperty, 
+		kETDoubleClickedItemProperty);
 
 	return [[super properties] arrayByAddingObjectsFromArray: properties];
 }
@@ -1701,6 +1703,35 @@ If the receiver has not been sorted or filtered yet, returns a nil array. */
 	{
 		return AUTORELEASE([_layoutItems copy]);
 	}
+}
+
+/* Actions */
+
+/** Returns the action that can be sent by the action handler, typically on a 
+double click within the receiver area.
+
+For a double action, the sender will be the receiver. The double clicked item 
+can be retrieved by calling -doubleClickedItem on the sender in your action 
+method. */
+- (void) setDoubleAction: (SEL)selector
+{
+	_doubleClickAction = selector;
+	[[self layout] syncLayoutViewWithItem: self];
+}
+
+/** Sets the action that can be sent by the action handler, typically on a 
+double click within the receiver area. 
+
+See also -setDoubleAction:. */
+- (SEL) doubleAction
+{
+	return _doubleClickAction;
+}
+
+/** Returns the last child item on which a double click occurs. */
+- (ETLayoutItem *) doubleClickedItem
+{
+	return GET_PROPERTY(kETDoubleClickedItemProperty);
 }
 
 /* Collection Protocol */

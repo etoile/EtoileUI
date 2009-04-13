@@ -1,3 +1,48 @@
+2009-04-13 Quentin Mathe <qmathe@club-internet.fr>
+
+	Moved target/action support from ETContainer to ETLayoutItem and 
+	ETLayoutItemGroup. 
+	Moved various ETContainer private methods to ETWidgetLayout, that are used 
+	to synchronize the settings of widgets-based layouts with their layout 
+	context. Synchronized properties include scroller visibility, target/action 
+	etc.
+	* ETLayoutItem:
+	New 'target' and 'action' properties and related accessors.
+	(-properties): Updated.
+	* ETLayoutItemGroup:
+	New 'doubleAction' property and related accessors.
+	(-properties): Updated.
+	* ETContainer:
+	Removed ivars _doubleClickAction, _target, _doubleClickedItem, 
+	_multipleSelectionAllowed and _emptySelectionAllowed.
+	(-doubleAction, -setDoubleAction:, -target, -setTarget:, 
+	-doubleClickedItem): Deprecated and moved these methods into ETLayoutItem 
+	and ETLayoutItemGroup.
+	(-allowsMultipleSelection, -setAllowsMultipleSelection:, 
+	-allowsEmptySelection, -setAllowsEmptySelection:): Deprecated. To be 
+	replaced later by the upcoming ETSelectTool (part of the new event handling 
+	model). In the meantime, these properties will implicitly always be equal to 
+	YES.
+	(-syncDisplayViewWithContainer:): Moved code into -[ETWidgetLayout 
+	syncLayoutViewWithItem:] and modified simply to call this method now.
+	(-invocationForSelector:, -sendInvocationToDisplayView:, 
+	-layoutViewWithoutScrollView): Moved to ETWidgetLayout.
+	(-forwardDoubleActionFromLayout:): Moved to ETWidgetLayout under the 
+	name -doubleClick:.
+	* ETContainer+EventHandling:
+	(-mouseDown:): Updated to call -mouseDoubleClickItem.
+	(-mouseDoubleClickItem:): Renamed -mouseDoubleClick:item: and modified to 
+	take in account 'doubleClickedItem' is now declared on ETLayoutItemGroup.
+	* ETLayout:
+	(-syncLayoutViewWithItem:): New abstract method.
+	* ETWidgetLayout:
+	(-syncLayoutViewWithItem:, -invocationForSelector:, 
+	-sendInvocationToDisplayView:, -layoutViewWithoutScrollView, 
+	-doubleClick:, -doubleClickedItem): Added.
+	* ETBrowserLayout:
+	(-doubleClick:): Updated to call the superclass implementation inherited 
+	from ETWidgetLayout.
+
 2009-04-07 Quentin Mathe <qmathe@club-internet.fr>
 
 	Finished to rework the geometry model to be consistent and better support

@@ -205,6 +205,7 @@ typedef enum _ETSizeConstraintStyle
 - (void) setLayoutView: (NSView *)protoView;
 - (NSView *) layoutView;
 - (void) setUpLayoutView;
+- (void) syncLayoutViewWithItem: (ETLayoutItem *)item;
 
 - (NSArray *) selectedItems;
 - (NSArray *) selectionIndexPaths;

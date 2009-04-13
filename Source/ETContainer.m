@@ -55,23 +55,15 @@
 
 NSString *ETLayoutItemPboardType = @"ETLayoutItemPboardType"; // FIXME: replace by UTI
 
-@interface ETContainer (ETEventHandling)
-- (void) mouseDoubleClick: (NSEvent *)event item: (ETLayoutItem *)item;
-@end
-
 @interface ETContainer (PackageVisibility)
 - (int) checkSourceProtocolConformance;
-- (BOOL) isScrollViewShown;
 - (void) setShowsScrollView: (BOOL)scroll;
 - (BOOL) hasScrollView;
 - (void) setHasScrollView: (BOOL)scroll;
 @end
 
 @interface ETContainer (Private)
-- (void) syncDisplayViewWithContainer;
-- (NSInvocation *) invocationForSelector: (SEL)selector;
-- (void) sendInvocationToDisplayView: (NSInvocation *)inv;
-- (NSView *) layoutViewWithoutScrollView;
+- (void) syncDisplayViewWithContainer: (ETContainer *)container;
 - (void) cacheScrollViewDecoratorItem: (ETDecoratorItem *)decorator;
 - (ETDecoratorItem *) cachedScrollViewDecoratorItem;
 - (ETDecoratorItem *) createScrollViewDecoratorItem;
@@ -173,7 +165,6 @@ NSString *ETLayoutItemPboardType = @"ETLayoutItemPboardType"; // FIXME: replace 
 	   retains the layout view. Each time the layout is switched on -layoutItem, 
 	   we must update _layoutView with -setLayoutView: otherwise the ivar might 
 	   reference a freed object. See -[ETLayoutItemGroup setLayout:]. */
-	DESTROY(_doubleClickedItem);
 	DESTROY(_scrollViewDecorator);
 
     [super dealloc];
@@ -362,124 +353,8 @@ Never returns nil. */
    the container is modified and needs to be mirrored on the display view. */
 - (void) syncDisplayViewWithContainer
 {
-	NSInvocation *inv = nil;
-	
-	if (_layoutView != nil)
-	{
-		SEL doubleAction = @selector(forwardDoubleActionFromLayout:);
-		id target = self;
-		
-		inv = RETAIN([self invocationForSelector: @selector(setDoubleAction:)]);
-		[inv setArgument: &doubleAction atIndex: 2];
-		[self sendInvocationToDisplayView: inv];
-		
-		inv = RETAIN([self invocationForSelector: @selector(setTarget:)]);
-		[inv setArgument: &target atIndex: 2];
-		[self sendInvocationToDisplayView: inv];
-		
-		BOOL hasVScroller = [self hasVerticalScroller];
-		BOOL hasHScroller = [self hasHorizontalScroller];
-		
-		if ([self isScrollViewShown] == NO)
-		{
-			hasVScroller = NO;
-			hasHScroller = NO;
-		}
-		
-		inv = RETAIN([self invocationForSelector: @selector(setHasHorizontalScroller:)]);
-		[inv setArgument: &hasHScroller atIndex: 2];
-		[self sendInvocationToDisplayView: inv];
-		
-		inv = RETAIN([self invocationForSelector: @selector(setHasVerticalScroller:)]);
-		[inv setArgument: &hasVScroller atIndex: 2];
-		[self sendInvocationToDisplayView: inv];
-		
-		BOOL allowsEmptySelection = [self allowsEmptySelection];
-		BOOL allowsMultipleSelection = [self allowsMultipleSelection];
-		
-		inv = RETAIN([self invocationForSelector: @selector(setAllowsEmptySelection:)]);
-		[inv setArgument: &allowsEmptySelection atIndex: 2];
-		[self sendInvocationToDisplayView: inv];
-		
-		inv = RETAIN([self invocationForSelector: @selector(setAllowsMultipleSelection:)]);
-		[inv setArgument: &allowsMultipleSelection atIndex: 2];
-		[self sendInvocationToDisplayView: inv];
-	}
+	[[self layout] syncLayoutViewWithItem: [self layoutItem]];
 }
-
-- (NSInvocation *) invocationForSelector: (SEL)selector
-{
-	NSInvocation *inv = [NSInvocation invocationWithMethodSignature: 
-		[self methodSignatureForSelector: selector]];
-	
-	/* Method signature doesn't embed the selector, but only type infos related to it */
-	[inv setSelector: selector];
-	
-	return inv;
-}
-
-- (void) sendInvocationToDisplayView: (NSInvocation *)inv
-{
-	//id result = [[inv methodSignature] methodReturnLength];
-	
-	if ([_layoutView respondsToSelector: [inv selector]])
-	{
-			[inv invokeWithTarget: _layoutView];
-	}
-	else if ([_layoutView isKindOfClass: [NSScrollView class]])
-	{
-		/* May be the display view is packaged inside a scroll view */
-		id enclosedDisplayView = [(NSScrollView *)_layoutView documentView];
-		
-		if ([enclosedDisplayView respondsToSelector: [inv selector]]);
-			[inv invokeWithTarget: enclosedDisplayView];
-	}
-	
-	//if (inv != nil)
-	//	[inv getReturnValue: &result];
-		
-	RELEASE(inv); /* Retained in -syncDisplayViewWithContainer otherwise it gets released too soon */
-	
-	//return result;
-}
-
-/** Returns the control view enclosed in the layout view if the latter is a
-    scroll view, otherwise the returned view is identical to -layoutView. */
-- (NSView *) layoutViewWithoutScrollView
-{
-	id layoutView = [self layoutView];
-
-	if ([layoutView isKindOfClass: [NSScrollView class]])
-		return [layoutView documentView];
-
-	return layoutView;
-}
-
-- (void) forwardDoubleActionFromLayout: (id)sender
-{
-	id layout = [self layout];
-	NSView *layoutView = [self layoutViewWithoutScrollView];
-	NSEvent *evt = [NSApp currentEvent];
-
-	NSAssert1(layoutView != nil, @"Layout must not be nil if a double action "
-		@"is handed by the layout %@", sender);
-	NSAssert2([sender isEqual: layoutView], @"sender %@ must be the layout "
-		@"view %@ currently in uses", sender, layoutView);
-
-	ETDebugLog(@"Double action on %@ in %@ with selected items %@", sender, evt,
-		[layout selectedItems]);
-
-	if ([layout respondsToSelector: @selector(doubleClickedItem)])
-	{
-		[self mouseDoubleClick: evt item: [layout doubleClickedItem]];
-	}
-	else
-	{
-		ETLog(@"WARNING: Layout %@ based on a layout view must implement "
-			@"-doubleClickedItem", layout);
-	}
-}
-
 
 /* Scrollers */
 
@@ -487,7 +362,6 @@ Never returns nil. */
 {
 	return NO;
 }
-
 
 - (void) setLetsLayoutControlsScrollerVisibility: (BOOL)layoutControl
 {
@@ -811,30 +685,6 @@ but they never never manipulate it as a subview in view hierachy. */
 }
 */
 
-/* Selection */
-
-- (BOOL) allowsMultipleSelection
-{
-	return _multipleSelectionAllowed;
-}
-
-- (void) setAllowsMultipleSelection: (BOOL)multiple
-{
-	_multipleSelectionAllowed = multiple;
-	[self syncDisplayViewWithContainer];
-}
-
-- (BOOL) allowsEmptySelection
-{
-	return _emptySelectionAllowed;
-}
-
-- (void) setAllowsEmptySelection: (BOOL)empty
-{
-	_emptySelectionAllowed = empty;
-	[self syncDisplayViewWithContainer];
-}
-
 /** point parameter must be expressed in receiver coordinates */
 - (BOOL) doesSelectionContainsPoint: (NSPoint)point
 {
@@ -1041,37 +891,6 @@ but they never never manipulate it as a subview in view hierachy. */
 }
 
 - (BOOL) isHitTestEnabled { return _subviewHitTest; }
-
-- (void) setTarget: (id)target
-{
-	_target = target;
-	
-	/* If a display view is used, sync its settings with container */
-	[self syncDisplayViewWithContainer];
-}
-
-- (id) target
-{
-	return _target;
-}
-
-- (void) setDoubleAction: (SEL)selector
-{
-	_doubleClickAction = selector;
-	
-	/* If a display view is used, sync its settings with container */
-	[self syncDisplayViewWithContainer];
-}
-
-- (SEL) doubleAction
-{
-	return _doubleClickAction;
-}
-
-- (ETLayoutItem *) doubleClickedItem
-{
-	return _doubleClickedItem;
-}
 
 /* Overriden NSView methods */
 
@@ -1344,6 +1163,51 @@ but they never never manipulate it as a subview in view hierachy. */
 - (unsigned int) selectionIndex
 {
 	return [(ETLayoutItemGroup *)[self layoutItem] selectionIndex];
+}
+
+- (BOOL) allowsMultipleSelection
+{
+	return YES;
+}
+
+- (void) setAllowsMultipleSelection: (BOOL)multiple
+{
+
+}
+
+- (BOOL) allowsEmptySelection
+{
+	return YES;
+}
+
+- (void) setAllowsEmptySelection: (BOOL)empty
+{
+
+}
+
+- (void) setTarget: (id)target
+{
+	[[self layoutItem] setTarget: target];
+}
+
+- (id) target
+{
+	return [[self layoutItem] target];
+}
+
+- (void) setDoubleAction: (SEL)selector
+{
+	return [(ETLayoutItemGroup *)[self layoutItem] setDoubleAction: selector];
+}
+
+- (SEL) doubleAction
+{
+	return [(ETLayoutItemGroup *)[self layoutItem] doubleAction];
+}
+
+- (ETLayoutItem *) doubleClickedItem
+{
+	return [[self layoutItem] doubleClickedItem];
 }
 
 @end

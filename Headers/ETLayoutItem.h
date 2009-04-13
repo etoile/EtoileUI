@@ -51,6 +51,7 @@ ETWindowItem, ETActionHandler;
 /* Properties */
 
 extern NSString *kAnchorPointProperty; /** anchorPoint property name */
+extern NSString *kETActionProperty; /** actionHandler property name */
 extern NSString *kETActionHandlerProperty; /** actionHandler property name */
 extern NSString *kETAutoresizingMaskProperty; /** autoresizingMask property name */
 extern NSString *kETBoundingBoxProperty; /** boudingBox property name */
@@ -69,6 +70,7 @@ extern NSString *kETRepresentedObjectProperty; /** representedObject property na
 extern NSString *kRepresentedPathBaseProperty; /** representedPathBase property name */
 extern NSString *kETSelectedProperty; /** selected property name */
 extern NSString *kETStyleProperty; /** style property name */
+extern NSString *kETTargetProperty; /** actionHandler property name */
 extern NSString *kETValueProperty; /** value property name */
 extern NSString *kETVisibleProperty; /** visible property name */
 
@@ -97,6 +99,8 @@ extern NSString *kETVisibleProperty; /** visible property name */
 	// TODO: Implement... BOOL _needsDisplay;
 	
 	id _reserved;
+	id _target;
+	SEL _action;
 }
 
 /* Initialization */
@@ -299,6 +303,10 @@ extern NSString *kETVisibleProperty; /** visible property name */
 - (void) setActionHandler: (id)anHandler;
 - (BOOL) acceptsActions;
 - (BOOL) validateUserInterfaceItem: (id <NSValidatedUserInterfaceItem>)anItem;
+- (void) setTarget: (id)aTarget;
+- (id) target;
+- (void) setAction: (SEL)aSelector;
+- (SEL) action;
 
 - (id <ETInspector>) inspector;
 - (void) setInspector: (id <ETInspector>)inspector;

@@ -902,6 +902,12 @@ You must call the superclass implementation if you override this method. */
 	}
 }
 
+/** <override-dummy /> */
+- (void) syncLayoutViewWithItem: (ETLayoutItem *)item
+{
+	
+}
+
 /** <override-dummy />
 	Returns the selected items reported by the layout, which can be different 
 	from selected items of the layout context. For example, an outline layout

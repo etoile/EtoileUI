@@ -46,6 +46,7 @@
 
 extern NSString *kSourceProperty; /** source property name */
 extern NSString *kDelegateProperty; /** delegate property name */
+extern NSString *kETDoubleClickedItemProperty; /** doubleClickedItem property name */
 
 @interface ETLayoutItemGroup : ETLayoutItem <ETLayoutingContext, ETCollection, ETCollectionMutation>
 {
@@ -55,6 +56,7 @@ extern NSString *kDelegateProperty; /** delegate property name */
 	ETLayout *_layout;
 	ETLayout *_stackedLayout;
 	ETLayout *_unstackedLayout;
+	SEL _doubleClickAction;
 	//NSString *_path; /* Path caching */
 	BOOL _isStack;
 	BOOL _autolayout;
@@ -204,6 +206,12 @@ extern NSString *kDelegateProperty; /** delegate property name */
 - (NSArray *) arrangedItems;
 - (BOOL) isSorted;
 - (BOOL) isFiltered;
+
+/* Actions */
+
+- (void) setDoubleAction: (SEL)selector;
+- (SEL) doubleAction;
+- (ETLayoutItem *) doubleClickedItem;
 
 /* Collection Protocol */
 

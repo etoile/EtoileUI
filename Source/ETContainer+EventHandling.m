@@ -46,7 +46,7 @@
 
 @interface ETContainer (ETEventHandling)
 - (void) mouseDown: (NSEvent *)event;
-- (void) mouseDoubleClick: (NSEvent *)event item: (ETLayoutItem *)item;
+- (void) mouseDoubleClickItem: (ETLayoutItem *)item;
 
 /* Dragging Support */
 - (id) itemForEvent: (NSEvent *)event;
@@ -119,17 +119,18 @@
 
 	/* Handle possible double click */
 	if ([event clickCount] > 1) 
-		[self mouseDoubleClick: event item: newlyClickedItem];
+		[self mouseDoubleClickItem: newlyClickedItem];
 
 	[newlyClickedItem handleMouseDown: ETEVENT(event, nil, 0) forItem: newlyClickedItem layout: [self layout]];
 }
 
-- (void) mouseDoubleClick: (NSEvent *)event item: (ETLayoutItem *)item
+- (void) mouseDoubleClickItem: (ETLayoutItem *)item
 {
 	ETDebugLog(@"Double click detected on item %@ in %@", item, self);
-	
-	ASSIGN(_doubleClickedItem, item);
-	[[NSApplication sharedApplication] sendAction: [self doubleAction] to: [self target] from: self];
+
+	ETLayoutItemGroup *itemGroup = [self layoutItem];
+	[itemGroup setValue: item forKey: kETDoubleClickedItemProperty];
+	[[NSApplication sharedApplication] sendAction: [itemGroup doubleAction] to: [itemGroup target] from: self];
 }
 
 /* Drag Utility */

@@ -45,4 +45,9 @@
 
 }
 
+- (void) syncLayoutViewWithItem: (ETLayoutItem *)item;
+
+- (ETLayoutItem *) doubleClickedItem;
+- (void) doubleClick: (id)sender;
+
 @end

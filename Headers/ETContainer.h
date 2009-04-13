@@ -52,14 +52,9 @@ extern NSString *ETLayoutItemPboardType;
 	NSView *_layoutView;
 
 	BOOL _subviewHitTest;
-	SEL _doubleClickAction;
-	id _target;
-	ETLayoutItem *_doubleClickedItem;
 	
 	float _itemScale;
 
-	BOOL _multipleSelectionAllowed;
-	BOOL _emptySelectionAllowed;
 	BOOL _dragAllowed;
 	BOOL _dropAllowed;
 	BOOL _removeItemsAtPickTime;
@@ -93,13 +88,7 @@ extern NSString *ETLayoutItemPboardType;
 - (BOOL) hasHorizontalScroller;
 - (void) setHasHorizontalScroller: (BOOL)scroll;
 - (NSScrollView *) scrollView;
-
-/* Selection */
-
-- (BOOL) allowsMultipleSelection;
-- (void) setAllowsMultipleSelection: (BOOL)multiple;
-- (BOOL) allowsEmptySelection;
-- (void) setAllowsEmptySelection: (BOOL)empty;
+- (BOOL) isScrollViewShown;
 
 /* Pick & Drop */
 
@@ -150,12 +139,6 @@ extern NSString *ETLayoutItemPboardType;
 - (void) render;
 
 /* Actions */
-
-- (void) setTarget: (id)target;
-- (id) target;
-- (void) setDoubleAction: (SEL)selector;
-- (SEL) doubleAction;
-- (ETLayoutItem *) doubleClickedItem;
 
 - (BOOL) isHitTestEnabled;
 - (void) setEnablesHitTest: (BOOL)hit;
@@ -277,5 +260,18 @@ extern NSString *ETLayoutItemPboardType;
 - (NSMutableIndexSet *) selectionIndexes;
 - (void) setSelectionIndex: (unsigned int)index;
 - (unsigned int) selectionIndex;
+
+- (BOOL) allowsMultipleSelection;
+- (void) setAllowsMultipleSelection: (BOOL)multiple;
+- (BOOL) allowsEmptySelection;
+- (void) setAllowsEmptySelection: (BOOL)empty;
+
+/* Actions */
+
+- (void) setTarget: (id)target;
+- (id) target;
+- (void) setDoubleAction: (SEL)selector;
+- (SEL) doubleAction;
+- (ETLayoutItem *) doubleClickedItem;
 
 @end

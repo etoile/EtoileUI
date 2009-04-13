@@ -37,8 +37,148 @@
  */
 
 #import "ETWidgetLayout.h"
+#import "ETCompatibility.h"
+#import "ETContainer.h"
 
+@interface ETContainer (ETEventHandling)
+- (void) mouseDoubleClickItem: (ETLayoutItem *)item;
+@end
+
+@interface ETWidgetLayout (Private)
+- (NSInvocation *) invocationForSelector: (SEL)selector;
+- (void) sendInvocationToDisplayView: (NSInvocation *)inv;
+- (NSView *) layoutViewWithoutScrollView;
+@end
 
 @implementation ETWidgetLayout
+
+/* Various adjustements necessary when layout object is a wrapper around an 
+   AppKit view. This method is called on a regular basis each time a setting of
+   the container is modified and needs to be mirrored on the display view. */
+- (void) syncLayoutViewWithItem: (ETLayoutItem *)item
+{
+	if ([self layoutView] == nil && [[item supervisorView] isKindOfClass: [ETContainer class]] == NO)
+		return;
+
+	ETContainer *container = (ETContainer *)[item supervisorView];
+	NSInvocation *inv = nil;
+	SEL doubleAction = @selector(doubleClick:);
+	
+	inv = RETAIN([self invocationForSelector: @selector(setDoubleAction:)]);
+	[inv setArgument: &doubleAction atIndex: 2];
+	[self sendInvocationToDisplayView: inv];
+	
+	inv = RETAIN([self invocationForSelector: @selector(setTarget:)]);
+	[inv setArgument: &self atIndex: 2];
+	[self sendInvocationToDisplayView: inv];
+	
+	BOOL hasVScroller = [container hasVerticalScroller];
+	BOOL hasHScroller = [container hasHorizontalScroller];
+	
+	if ([container isScrollViewShown] == NO)
+	{
+		hasVScroller = NO;
+		hasHScroller = NO;
+	}
+	
+	inv = RETAIN([self invocationForSelector: @selector(setHasHorizontalScroller:)]);
+	[inv setArgument: &hasHScroller atIndex: 2];
+	[self sendInvocationToDisplayView: inv];
+	
+	inv = RETAIN([self invocationForSelector: @selector(setHasVerticalScroller:)]);
+	[inv setArgument: &hasVScroller atIndex: 2];
+	[self sendInvocationToDisplayView: inv];
+	
+	BOOL allowsEmptySelection = YES; // FIXME: [[self attachedInstrument] allowsEmptySelection];
+	BOOL allowsMultipleSelection = YES; // FIXME: [[self attachedInstrument] allowsMultipleSelection];
+	
+	inv = RETAIN([self invocationForSelector: @selector(setAllowsEmptySelection:)]);
+	[inv setArgument: &allowsEmptySelection atIndex: 2];
+	[self sendInvocationToDisplayView: inv];
+	
+	inv = RETAIN([self invocationForSelector: @selector(setAllowsMultipleSelection:)]);
+	[inv setArgument: &allowsMultipleSelection atIndex: 2];
+	[self sendInvocationToDisplayView: inv];
+}
+
+- (NSInvocation *) invocationForSelector: (SEL)selector
+{
+	NSInvocation *inv = [NSInvocation invocationWithMethodSignature: 
+		[[self layoutView] methodSignatureForSelector: selector]];
+
+	if (inv == nil)
+	{
+		inv = [NSInvocation invocationWithMethodSignature: 
+		[[self layoutViewWithoutScrollView] methodSignatureForSelector: selector]];
+	}
+	/* Method signature doesn't embed the selector, but only type infos related to it */
+	[inv setSelector: selector];
+	
+	return inv;
+}
+
+- (void) sendInvocationToDisplayView: (NSInvocation *)inv
+{
+	//id result = [[inv methodSignature] methodReturnLength];
+	NSView *_layoutView = [self layoutView];
+
+	if ([_layoutView respondsToSelector: [inv selector]])
+	{
+			[inv invokeWithTarget: _layoutView];
+	}
+	else if ([_layoutView isKindOfClass: [NSScrollView class]])
+	{
+		/* May be the display view is packaged inside a scroll view */
+		id enclosedDisplayView = [(NSScrollView *)_layoutView documentView];
+		
+		if ([enclosedDisplayView respondsToSelector: [inv selector]]);
+			[inv invokeWithTarget: enclosedDisplayView];
+	}
+	
+	//if (inv != nil)
+	//	[inv getReturnValue: &result];
+		
+	RELEASE(inv); /* Retained in -syncDisplayViewWithContainer otherwise it gets released too soon */
+	
+	//return result;
+}
+
+/** Returns the control view enclosed in the layout view if the latter is a
+    scroll view, otherwise the returned view is identical to -layoutView. */
+- (NSView *) layoutViewWithoutScrollView
+{
+	id layoutView = [self layoutView];
+
+	if ([layoutView isKindOfClass: [NSScrollView class]])
+		return [layoutView documentView];
+
+	return layoutView;
+}
+
+/** <override-subclass /> */
+- (ETLayoutItem *) doubleClickedItem
+{
+	return nil;	
+}
+
+/** Forwards the double click to the action handler bound to the layout context.
+
+Can be overriden by subclasses to update internal or external state in reaction 
+to a double click in the widget view. The superclass implementation must always 
+be called. */
+- (void) doubleClick: (id)sender
+{
+	NSView *layoutView = [self layoutViewWithoutScrollView];
+
+	NSAssert1(layoutView != nil, @"Layout must not be nil if a double action "
+		@"is handed by the layout %@", sender);
+	NSAssert2([sender isEqual: layoutView], @"sender %@ must be the layout "
+		@"view %@ currently in uses", sender, layoutView);
+
+	ETDebugLog(@"Double action in %@ with selected items %@", sender,
+		[self selectedItems]);
+
+	[(ETContainer *)[[self layoutContext] supervisorView] mouseDoubleClickItem: [self doubleClickedItem]];
+}
 
 @end
