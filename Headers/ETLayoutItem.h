@@ -44,7 +44,7 @@
 
 @class ETUTI;
 @class ETView, ETContainer, ETLayout, ETLayoutItemGroup, ETDecoratorItem, 
-ETWindowItem, ETActionHandler;
+ETScrollableAreaItem, ETWindowItem, ETActionHandler;
 @protocol ETEventHandler, ETInspector;
 
 
@@ -96,11 +96,8 @@ extern NSString *kETVisibleProperty; /** visible property name */
 	BOOL _resizeBounds; /* Scale view content by resizing bounds */
 	BOOL _needsUpdateLayout;
 	BOOL _isSyncingSupervisorViewGeometry;
+	BOOL _scrollViewShown; /* Used by ETLayoutItem+Scrollable */
 	// TODO: Implement... BOOL _needsDisplay;
-	
-	id _reserved;
-	id _target;
-	SEL _action;
 }
 
 /* Initialization */
@@ -252,7 +249,7 @@ extern NSString *kETVisibleProperty; /** visible property name */
 - (id) supervisorView;
 - (void) setSupervisorView: (ETView *)supervisorView;
 
-- (ETDecoratorItem *) firstScrollViewDecoratorItem;
+- (ETScrollableAreaItem *) firstScrollViewDecoratorItem;
 - (ETWindowItem *) windowDecoratorItem;
 
 /* Sizing */

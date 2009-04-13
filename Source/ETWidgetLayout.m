@@ -52,6 +52,14 @@
 
 @implementation ETWidgetLayout
 
+/** Returns YES to indicate the receiver adapts and wraps a widget as a layout.
+
+See also -[ETLayout isWidget].*/
+- (BOOL) isWidget
+{
+	return YES;	
+}
+
 /* Various adjustements necessary when layout object is a wrapper around an 
    AppKit view. This method is called on a regular basis each time a setting of
    the container is modified and needs to be mirrored on the display view. */

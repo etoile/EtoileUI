@@ -46,9 +46,6 @@ extern NSString *ETLayoutItemPboardType;
 
 @interface ETContainer : ETView
 {
-	ETDecoratorItem *_scrollViewDecorator;
-	BOOL _scrollViewShown;
-
 	NSView *_layoutView;
 
 	BOOL _subviewHitTest;
@@ -78,17 +75,6 @@ extern NSString *ETLayoutItemPboardType;
 
 - (ETLayoutOverflowStyle) overflowStyle;
 - (void) setOverflowStyle: (ETLayoutOverflowStyle); */
-
-/* Scrolling */
-
-- (BOOL) letsLayoutControlsScrollerVisibility;
-- (void) setLetsLayoutControlsScrollerVisibility: (BOOL)layoutControl;
-- (BOOL) hasVerticalScroller;
-- (void) setHasVerticalScroller: (BOOL)scroll;
-- (BOOL) hasHorizontalScroller;
-- (void) setHasHorizontalScroller: (BOOL)scroll;
-- (NSScrollView *) scrollView;
-- (BOOL) isScrollViewShown;
 
 /* Pick & Drop */
 
@@ -265,6 +251,15 @@ extern NSString *ETLayoutItemPboardType;
 - (void) setAllowsMultipleSelection: (BOOL)multiple;
 - (BOOL) allowsEmptySelection;
 - (void) setAllowsEmptySelection: (BOOL)empty;
+
+/* Scrolling */
+
+- (BOOL) hasVerticalScroller;
+- (void) setHasVerticalScroller: (BOOL)scroll;
+- (BOOL) hasHorizontalScroller;
+- (void) setHasHorizontalScroller: (BOOL)scroll;
+- (NSScrollView *) scrollView;
+- (BOOL) isScrollViewShown;
 
 /* Actions */
 

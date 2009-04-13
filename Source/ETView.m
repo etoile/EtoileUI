@@ -693,13 +693,6 @@ You can revert to non-flipped coordinates by passing NO to this method. */
 	return [self wrappedView];
 }
 
-/* Private Use */
-
-- (void) didChangeDecoratorOfItem: (ETUIItem *)item
-{
-
-}
-
 /* Overriden NSView methods */
 
 - (void) setFrame: (NSRect)frame

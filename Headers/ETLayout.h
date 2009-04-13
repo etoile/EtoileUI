@@ -151,6 +151,7 @@ typedef enum _ETSizeConstraintStyle
 - (BOOL) isSemantic;
 - (BOOL) isComposite;
 - (BOOL) isPositional;
+- (BOOL) isWidget;
 - (BOOL) isComputedLayout;
 - (BOOL) isOpaque;
 

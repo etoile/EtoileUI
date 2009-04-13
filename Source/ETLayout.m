@@ -502,6 +502,16 @@ You must call the superclass implementation if you override this method. */
 	return [self conformsToProtocol: @protocol(ETCompositeLayout)];
 }
 
+/** Returns whether the receiver adapts and wraps a complex widget, provided 
+by the widget backend, as a layout. By default, returns NO.
+
+See ETWidgetLayout.*/
+- (BOOL) isWidget
+{
+	return NO;
+}
+
+
 /** Returns YES when the layout is positional, computes the location of the 
     layout items and updates these locations as necessary by itself. See also
 	ETComputedLayout, whose subclasses are all computed layouts.

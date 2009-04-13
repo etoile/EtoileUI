@@ -282,7 +282,7 @@ model graph and remains semantic. */
 	   document view within a scroll view and this scroll view frame is modified. 
 	   Switching to a layout view reveals the issue even more clearly. */
 	[self setFirstDecoratedItemFrame: existingFrame];
-	[[self supervisorView] didChangeDecoratorOfItem: self];
+	[self didChangeDecoratorOfItem: self];
 
 	RELEASE(existingDecorator);
 	RELEASE(decorator);
@@ -339,6 +339,14 @@ Returns the decoration rect associated with the receiver. */
 - (NSRect) decorationRect
 {
 	return [[self supervisorView] frame];
+}
+
+/* Framework Private */
+
+/** <override-dummy /> */
+- (void) didChangeDecoratorOfItem: (ETUIItem *)item
+{
+
 }
 
 /** <override-dummy />

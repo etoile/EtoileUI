@@ -52,6 +52,7 @@ EtoileUI_HEADER_FILES = \
 	ETLayoutItemGroup+Mutation.h \
 	ETLayoutItem.h \
 	ETLayoutItem+Reflection.h \
+	ETLayoutItem+Scrollable.h \
 	ETLayoutLine.h \
 	ETLineLayout.h \
 	ETObjectBrowserLayout.h \

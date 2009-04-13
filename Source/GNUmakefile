@@ -2,6 +2,7 @@ include $(GNUSTEP_MAKEFILES)/common.make
 
 SUBPROJECT_NAME = libEtoileUI
 
+ADDITIONAL_OBJCFLAGS = 
 libEtoileUI_OBJCFLAGS += -std=c99
 
 libEtoileUI_OBJC_FILES = \
@@ -27,6 +28,7 @@ libEtoileUI_OBJC_FILES = \
 	ETLayoutItemGroup+Mutation.m \
 	ETLayoutItem.m \
 	ETLayoutItem+Reflection.m \
+	ETLayoutItem+Scrollable.m \
 	ETLayoutLine.m \
 	ETLayout.m \
 	ETLineLayout.m \

@@ -1,5 +1,44 @@
 2009-04-13 Quentin Mathe <qmathe@club-internet.fr>
 
+	Moved syntactic sugar related to scrollers from ETContainer to a new
+	category ETLayoutItem+Scrollable. This works in tandem with 
+	ETScrollableAreaItem decorator which wraps an underlying scroll view.
+	The cleaning of this code is not yet finished.
+	* GNUmakefile: 
+	* Source/GNUmakefile:
+	Included ETLayoutItem+Scrollable.[h|m]
+	* Headers/EtoileUI.h: Included ETLayoutItem+Scrollable.h
+	* ETContainer:
+	Removed ivars _scrollViewDecorator and _scrollViewShown.
+	(-letsLayoutControlsScrollerVisibility, 
+	-setLetsLayoutControlsScrollerVisibility:, -hasVerticalScroller, 
+	-setHasVerticalScroller:, -hasHorizontalScroller, -setHasHorizontalScroller:
+	-scrollView, -isScrollViewShown): Deprecated and moved to 
+	ETLayoutItem+Scrollable.
+	(-cacheScrollViewDecoratorItem:, -cachedScrollViewDecoratorItem, 
+	-createScrollViewDecoratorItem, -setShowsScrollView:, 
+	-didChangeDecoratorOfItem:): Moved to ETLayoutItem+Scrollable.
+	(-setLayoutView:, -setFrame:, -setFrameSize:): Updated to call the previous 
+	methods on -layoutItem.
+	* ETView:
+	(-didChangeDecoratorOfItem:): Removed
+	* ETUIItem (in ETDecoratorItem.[h|m]):
+	(-didChangeDecoratorOfItem:): Added.
+	* ETLayout, ETWidgetLayout:
+	(-isWidget): Added.
+	* ETLayoutItem:
+	Added _scrollViewShown ivar. Removed _action, _target that were forgotten 
+	here in a today commit, and also _reserved.
+	(-action): Corrected to return the action property stored in the 
+	property dictionary.
+	* ETLayoutItemGroup:
+	Removed -isScrollViewShown implementation now handled by 
+	ETLayoutItem+Scrollable.
+	* ETLayoutItem+Scrollable:
+	Added.
+
+2009-04-13 Quentin Mathe <qmathe@club-internet.fr>
+
 	Moved target/action support from ETContainer to ETLayoutItem and 
 	ETLayoutItemGroup. 
 	Moved various ETContainer private methods to ETWidgetLayout, that are used 

@@ -45,6 +45,8 @@
 
 }
 
+- (BOOL) isWidget;
+
 - (void) syncLayoutViewWithItem: (ETLayoutItem *)item;
 
 - (ETLayoutItem *) doubleClickedItem;

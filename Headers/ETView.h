@@ -172,10 +172,6 @@
 - (NSView *) mainView;
 - (void) tile;
 
-/* Private Use */
-
-- (void) didChangeDecoratorOfItem: (ETUIItem *)item;
-
 @end
 
 /* Notifications */

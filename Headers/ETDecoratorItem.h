@@ -74,6 +74,7 @@ TODO: Turn this class into a mixin and a protocol. */
 
 /* Framework Private */
 
+- (void) didChangeDecoratorOfItem: (ETUIItem *)item;
 - (BOOL) shouldSyncSupervisorViewGeometry;
 - (NSRect) convertDisplayRect: (NSRect)rect 
         toAncestorDisplayView: (NSView **)aView 

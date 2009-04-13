@@ -41,6 +41,7 @@
 #import "ETLayoutItemGroup.h"
 #import "ETLayoutItemGroup+Mutation.h"
 #import "ETLayoutItem+Factory.h"
+#import "ETLayoutItem+Scrollable.h"
 #import "ETFlowLayout.h"
 #import "ETLineLayout.h"
 #import "ETContainer.h"
@@ -91,6 +92,11 @@ pretend we don't fully implement ETLayoutingContext protocol. */
 - (void) setNeedsDisplay: (BOOL)now { [super setNeedsDisplay: now]; }
 - (BOOL) isFlipped { return [super isFlipped]; }
 - (ETView *) supervisorView { return [super supervisorView]; }
+- (BOOL) isScrollViewShown { return [super isScrollViewShown]; }
+- (void) setContentSize: (NSSize)size { [super setContentSize: size]; }
+- (NSSize) size { return [super size]; }
+- (void) setSize: (NSSize)size { [super setSize: size]; }
+- (NSView *) view { return [super view]; }
 
 static BOOL globalAutolayoutEnabled = YES;
 
@@ -1841,39 +1847,6 @@ See also -setDoubleAction:. */
 - (NSSize) visibleContentSize
 {
 	return [self visibleContentBounds].size;
-}
-
-- (BOOL) isScrollViewShown
-{
-	if ([[self supervisorView] respondsToSelector: @selector(isScrollViewShown)])
-	{
-		return	[(id)[self supervisorView] isScrollViewShown];
-	}
-	else
-	{
-		ETLog(@"WARNING: Layout item %@ doesn't respond to -isScrollViewShown", self);
-		return NO;
-	}
-}
-
-- (void) setContentSize: (NSSize)size { [super setContentSize: size]; }
-
-/* Dummy methods to shut down compiler warning about ETLayoutingContext not 
-   fully implemented */
-
-- (NSSize) size
-{
-	return [super size];
-}
-
-- (void) setSize: (NSSize)size
-{
-	[super setSize: size];
-}
-
-- (NSView *) view
-{
-	return [super view];
 }
 
 /* Live Development */

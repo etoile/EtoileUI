@@ -1086,7 +1086,7 @@ See also -supervisorView:. */
 /** When the receiver content is presented inside scrollers, returns the 
 decorator item that owns the scrollers provided by the widget backend (e.g. 
 AppKit), otherwise returns nil. */
-- (ETDecoratorItem *) firstScrollViewDecoratorItem
+- (ETScrollableAreaItem *) firstScrollViewDecoratorItem
 {
 	id decorator = self;
 	
@@ -2333,7 +2333,7 @@ See also -setAction:. */
 	if (selString == nil)
 		return NULL;
 
-	return _action;
+	return NSSelectorFromString(selString);
 }
 
 /** Returns the custom inspector associated with the receiver. By default, 
