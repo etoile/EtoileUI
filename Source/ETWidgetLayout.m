@@ -103,16 +103,22 @@
 
 - (NSInvocation *) invocationForSelector: (SEL)selector
 {
-	NSInvocation *inv = [NSInvocation invocationWithMethodSignature: 
-		[[self layoutView] methodSignatureForSelector: selector]];
+	NSMethodSignature *sig = [[self layoutView] methodSignatureForSelector: selector];
+	id target = [self layoutView];
 
-	if (inv == nil)
+	if (sig == nil)
 	{
-		inv = [NSInvocation invocationWithMethodSignature: 
-		[[self layoutViewWithoutScrollView] methodSignatureForSelector: selector]];
+		sig = [[self layoutViewWithoutScrollView] methodSignatureForSelector: selector];
+		target = [self layoutViewWithoutScrollView];
 	}
+
+	if (sig == nil)
+		return nil;
+
+	NSInvocation *inv = [NSInvocation invocationWithMethodSignature: sig];
 	/* Method signature doesn't embed the selector, but only type infos related to it */
 	[inv setSelector: selector];
+	[inv setTarget: target];
 	
 	return inv;
 }
