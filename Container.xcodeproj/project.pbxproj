@@ -46,6 +46,18 @@
 		601458AE0F9729AE00268FD1 /* ETLayoutItem+Scrollable.h in Headers */ = {isa = PBXBuildFile; fileRef = 601458AC0F9729AE00268FD1 /* ETLayoutItem+Scrollable.h */; };
 		601458B00F9729C600268FD1 /* ETLayoutItem+Scrollable.m in Sources */ = {isa = PBXBuildFile; fileRef = 601458AF0F9729C600268FD1 /* ETLayoutItem+Scrollable.m */; };
 		601458B10F9729C600268FD1 /* ETLayoutItem+Scrollable.m in Sources */ = {isa = PBXBuildFile; fileRef = 601458AF0F9729C600268FD1 /* ETLayoutItem+Scrollable.m */; };
+		601459D90F97489C00268FD1 /* ETController.m in Sources */ = {isa = PBXBuildFile; fileRef = 60CF6C810D3F739000B4CA3D /* ETController.m */; };
+		601459DA0F97489C00268FD1 /* ETLayoutItem+Events.m in Sources */ = {isa = PBXBuildFile; fileRef = 603116230CF5131D001A699E /* ETLayoutItem+Events.m */; };
+		601459DB0F97489C00268FD1 /* ETLayoutItemGroup+Mutation.m in Sources */ = {isa = PBXBuildFile; fileRef = 60CF717C0D42E75300B4CA3D /* ETLayoutItemGroup+Mutation.m */; };
+		601459DC0F97489C00268FD1 /* ETObjectBrowserLayout.m in Sources */ = {isa = PBXBuildFile; fileRef = 6031194F0CF8B993001A699E /* ETObjectBrowserLayout.m */; };
+		601459DD0F97489C00268FD1 /* ETPaneSwitcherLayout.m in Sources */ = {isa = PBXBuildFile; fileRef = 605152E70C18B43E00B5E0E5 /* ETPaneSwitcherLayout.m */; };
+		601459DE0F97489C00268FD1 /* ETPickboard.m in Sources */ = {isa = PBXBuildFile; fileRef = 603112E70CF448D2001A699E /* ETPickboard.m */; };
+		601459DF0F97489C00268FD1 /* ETTextEditorLayout.m in Sources */ = {isa = PBXBuildFile; fileRef = 60DEFD290D4E8482008B1038 /* ETTextEditorLayout.m */; };
+		601459E00F97489C00268FD1 /* ETViewModelLayout.m in Sources */ = {isa = PBXBuildFile; fileRef = 60F3658F0D18651700FCFFDA /* ETViewModelLayout.m */; };
+		601459E10F97489C00268FD1 /* ETWidgetLayout.m in Sources */ = {isa = PBXBuildFile; fileRef = 60141B1F0F9355EE00014507 /* ETWidgetLayout.m */; };
+		601459E20F97489C00268FD1 /* ETWindowItem.m in Sources */ = {isa = PBXBuildFile; fileRef = 60CF6C7B0D3F6ECF00B4CA3D /* ETWindowItem.m */; };
+		601459E30F97489C00268FD1 /* NSImage+Etoile.m in Sources */ = {isa = PBXBuildFile; fileRef = 60F363F80D183BB400FCFFDA /* NSImage+Etoile.m */; };
+		601459E40F97489C00268FD1 /* NSWindow+Etoile.m in Sources */ = {isa = PBXBuildFile; fileRef = 60311D620CFB9A84001A699E /* NSWindow+Etoile.m */; };
 		6017849E0D670DED00A54D5A /* PhotoViewExample.nib in Resources */ = {isa = PBXBuildFile; fileRef = 6017849D0D670DED00A54D5A /* PhotoViewExample.nib */; };
 		602DC5070F21FA2E00DF23D9 /* ETHistoryManager.h in Headers */ = {isa = PBXBuildFile; fileRef = 602DC5030F21FA2E00DF23D9 /* ETHistoryManager.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		602DC5080F21FA2E00DF23D9 /* ETTranscript.h in Headers */ = {isa = PBXBuildFile; fileRef = 602DC5040F21FA2E00DF23D9 /* ETTranscript.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -1473,13 +1485,6 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				600243CB0CD134440023182D /* test_ETLayoutItem.m in Sources */,
-				605D6CBB0CE78335009ED244 /* test_ETView.m in Sources */,
-				60AE4CAD0EED576000DE82BC /* test_ETController.m in Sources */,
-				60AE4CAE0EED576000DE82BC /* test_ETLayout.m in Sources */,
-				600FC23E0D3AB75800828803 /* test_ETContainer.m in Sources */,
-				605D71B60CEC54A6009ED244 /* test_ETLayoutItemBuilder.m in Sources */,
-				603112DC0CF43D53001A699E /* test_ETPickboard.m in Sources */,
 				60F3BE5D0EE1C09500BB9B02 /* Controls+Etoile.m in Sources */,
 				605D6C040CE7830A009ED244 /* ETApplication.m in Sources */,
 				600244FF0CD162090023182D /* ETBrowserLayout.m in Sources */,
@@ -1487,39 +1492,58 @@
 				60AE4C8E0EED520B00DE82BC /* ETContainer+EventHandling.m in Sources */,
 				600245010CD162090023182D /* ETContainer.m in Sources */,
 				60AE4C8F0EED520B00DE82BC /* ETContainers.m in Sources */,
+				601459D90F97489C00268FD1 /* ETController.m in Sources */,
+				60330B5B0F7CEF3500A1E8C1 /* ETDecoratorItem.m in Sources */,
 				60F112BE0D363806003B2EFA /* ETEvent.m in Sources */,
 				600245020CD162090023182D /* ETFlowLayout.m in Sources */,
 				600245040CD162090023182D /* ETFreeLayout.m in Sources */,
+				607F5F070F005C5100A8CD0C /* ETGeometry.m in Sources */,
 				600245050CD162090023182D /* ETInspector.m in Sources */,
 				600245060CD162090023182D /* ETLayer.m in Sources */,
 				600245070CD162090023182D /* ETLayout.m in Sources */,
+				601459DA0F97489C00268FD1 /* ETLayoutItem+Events.m in Sources */,
 				60AE4C900EED520B00DE82BC /* ETLayoutItem+Factory.m in Sources */,
 				60AE4C910EED520B00DE82BC /* ETLayoutItem+Reflection.m in Sources */,
+				601458B10F9729C600268FD1 /* ETLayoutItem+Scrollable.m in Sources */,
 				600245080CD162090023182D /* ETLayoutItem.m in Sources */,
 				605D6D460CE93732009ED244 /* ETLayoutItemBuilder.m in Sources */,
+				601459DB0F97489C00268FD1 /* ETLayoutItemGroup+Mutation.m in Sources */,
 				600245090CD162090023182D /* ETLayoutItemGroup.m in Sources */,
 				600245180CD162090023182D /* ETLayoutLine.m in Sources */,
 				6002450A0CD162090023182D /* ETLineLayout.m in Sources */,
+				601459DC0F97489C00268FD1 /* ETObjectBrowserLayout.m in Sources */,
 				6002450D0CD162090023182D /* ETObjectRegistry+EtoileUI.m in Sources */,
 				6002450F0CD162090023182D /* ETOutlineLayout.m in Sources */,
 				600245100CD162090023182D /* ETPaneLayout.m in Sources */,
+				601459DD0F97489C00268FD1 /* ETPaneSwitcherLayout.m in Sources */,
+				601459DE0F97489C00268FD1 /* ETPickboard.m in Sources */,
+				6074CA4D0F814FD60081E438 /* ETScrollableAreaItem.m in Sources */,
+				6086160F0F0F9A6B0061ACFE /* ETShape.m in Sources */,
 				600245120CD162090023182D /* ETStackLayout.m in Sources */,
 				605D6DF90CE946F8009ED244 /* ETStyle.m in Sources */,
 				600245140CD162090023182D /* ETStyleRenderer.m in Sources */,
 				600245150CD162090023182D /* ETTableLayout.m in Sources */,
+				601459DF0F97489C00268FD1 /* ETTextEditorLayout.m in Sources */,
 				600245170CD162090023182D /* ETView.m in Sources */,
+				601459E00F97489C00268FD1 /* ETViewModelLayout.m in Sources */,
+				601459E10F97489C00268FD1 /* ETWidgetLayout.m in Sources */,
+				601459E20F97489C00268FD1 /* ETWindowItem.m in Sources */,
 				600245190CD162090023182D /* FSBrowserCell.m in Sources */,
 				60AE4C920EED520B00DE82BC /* NSBezierPathCappedBoxes.m in Sources */,
+				601459E30F97489C00268FD1 /* NSImage+Etoile.m in Sources */,
 				60AE4C930EED520B00DE82BC /* NSImage+NiceScaling.m in Sources */,
 				6002451D0CD162090023182D /* NSObject+EtoileUI.m in Sources */,
 				6002451F0CD162090023182D /* NSView+Etoile.m in Sources */,
+				601459E40F97489C00268FD1 /* NSWindow+Etoile.m in Sources */,
 				60AE4C940EED520B00DE82BC /* UKNibOwner.m in Sources */,
 				60AE4C950EED520B00DE82BC /* UKPluginsRegistry+Icons.m in Sources */,
-				607F5F070F005C5100A8CD0C /* ETGeometry.m in Sources */,
-				6086160F0F0F9A6B0061ACFE /* ETShape.m in Sources */,
-				60330B5B0F7CEF3500A1E8C1 /* ETDecoratorItem.m in Sources */,
-				6074CA4D0F814FD60081E438 /* ETScrollableAreaItem.m in Sources */,
-				601458B10F9729C600268FD1 /* ETLayoutItem+Scrollable.m in Sources */,
+				600243CB0CD134440023182D /* test_ETLayoutItem.m in Sources */,
+				605D6CBB0CE78335009ED244 /* test_ETView.m in Sources */,
+				60AE4CAD0EED576000DE82BC /* test_ETController.m in Sources */,
+				60AE4CAE0EED576000DE82BC /* test_ETLayout.m in Sources */,
+				600FC23E0D3AB75800828803 /* test_ETContainer.m in Sources */,
+				605D71B60CEC54A6009ED244 /* test_ETLayoutItemBuilder.m in Sources */,
+				603112DC0CF43D53001A699E /* test_ETPickboard.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

@@ -40,6 +40,7 @@
 #import "ETLayoutItemGroup.h"
 #import "ETLayoutItem+Factory.h"
 #import "NSWindow+Etoile.h"
+#import "ETGeometry.h"
 #import "ETCompatibility.h"
 
 #define NC [NSNotificationCenter defaultCenter]
@@ -249,9 +250,10 @@ This space includes the window decoration (titlebar etc.).  */
 
 - (void) handleSetDecorationRect: (NSRect)rect
 {
-	// FIXME: The next line should be used. It currently wrongly shifts the 
-	// main window on PhotoViewExample launch.
-	//[_itemWindow setFrame: rect display: YES];
+	// NOTE: At this point, we lost the item position (aka the implicit frame 
+	// origin of the first decorated item). That means the item will have a 
+	// "random" position when the window decorator is removed.
+	[_itemWindow setFrame: ETMakeRect([_itemWindow frame].origin, rect.size) display: YES];
 }
 
 - (BOOL) isFlipped

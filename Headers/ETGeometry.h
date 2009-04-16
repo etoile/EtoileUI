@@ -35,6 +35,10 @@
 
 #import <Foundation/Foundation.h>
 #import <AppKit/AppKit.h>
+// TODO: Remove once geometry functions declared in NSView+Etoile have been 
+// moved in ETGeometry as expected. In the meantime, this avoids to import 
+// NSView+Etoile.h when only ETGeometry.h should be imported.
+#import <EtoileUI/NSView+Etoile.h>
 
 /** The null point which is not equal to NSZeroPoint. It can be returned 
 when a point value is undefined and is a nil-like marker for NSPoint primitive. */

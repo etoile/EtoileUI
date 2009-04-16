@@ -1083,6 +1083,17 @@ See also -supervisorView:. */
 		[_parentItem handleAttachViewOfItem: self];
 }
 
+/* Inserts a supervisor view that is required to be decorated. */
+- (void) setDecoratorItem: (ETDecoratorItem *)decorator
+{
+	BOOL needsInsertSupervisorView = (decorator != nil && [self supervisorView] == nil);
+	if (needsInsertSupervisorView)
+	{
+		[self setSupervisorView: AUTORELEASE([[ETView alloc] initWithFrame: [self frame]])];
+	}
+	[super setDecoratorItem: decorator];
+}
+
 /** When the receiver content is presented inside scrollers, returns the 
 decorator item that owns the scrollers provided by the widget backend (e.g. 
 AppKit), otherwise returns nil. */
@@ -1833,7 +1844,15 @@ See also -setFrame:. */
 /** Reuturns the content bounds associated with the receiver. */
 - (NSRect) contentBounds
 {
-	return _contentBounds;
+	BOOL hasDecorator = (_decoratorItem != nil);
+	if (hasDecorator)
+	{
+		return ETMakeRect(_contentBounds.origin, [_decoratorItem contentRect].size);
+	}
+	else
+	{
+		return _contentBounds;
+	}
 }
 
 /** Returns the content bounds expressed in the decorator item coordinate space. 

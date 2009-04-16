@@ -47,6 +47,7 @@
 
 #define UKRectsEqual(x, y) UKTrue(NSEqualRects(x, y))
 #define UKPointsEqual(x, y) UKTrue(NSEqualPoints(x, y))
+#define UKPointsNotEqual(x, y) UKFalse(NSEqualPoints(x, y))
 #define UKSizesEqual(x, y) UKTrue(NSEqualSizes(x, y))
 
 @interface ETLayoutItem (UnitKitTests) <UKTest>
@@ -449,9 +450,30 @@
 {
 	id itemGroup = [ETLayoutItem item];
 	id decorator1 = [ETDecoratorItem item];
+	NSRect rect = [ETLayoutItem defaultItemRect];
 
 	[self setDecoratorItem: decorator1];
 
+	UKRectsEqual(rect, [decorator1 decorationRect]);
+	UKRectsEqual(ETMakeRect(NSZeroPoint, rect.size), [decorator1 contentRect]);
+	UKRectsEqual([decorator1 contentRect], [decorator1 visibleContentRect]);
+	UKRectsEqual(rect, [self frame]);
+	UKRectsEqual(ETMakeRect(NSZeroPoint, rect.size), [self contentBounds]);
+	UKRectsEqual(ETMakeRect(NSZeroPoint, rect.size), [self decorationRect]);
+	
+	id windowDecorator = [ETWindowItem item];
+
+	[self setDecoratorItem: windowDecorator];
+	NSSize contentSize = [[[windowDecorator window] contentView] frame].size;
+
+	UKSizesEqual(rect.size, [windowDecorator decorationRect].size);
+	UKPointsNotEqual(rect.origin, [windowDecorator contentRect].origin);
+	UKSizesEqual(contentSize, [windowDecorator contentRect].size);
+	UKRectsEqual([windowDecorator contentRect], [windowDecorator visibleContentRect]);
+	UKRectsEqual(ETMakeRect([windowDecorator decorationRect].origin, rect.size), [self frame]);
+	UKRectsEqual(ETMakeRect(NSZeroPoint, contentSize), [self contentBounds]);
+	UKRectsEqual([windowDecorator contentRect], [self decorationRect]);
+	
 	/*id decorator2 = [ETScrollableAreaItem item];
 	id decorator3 = [ETWindowItem item];*/
 }

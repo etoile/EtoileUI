@@ -440,7 +440,7 @@ because the content is resized rather than clipped when a decorator is
 resized. However subclasses can decide otherwise (e.g. ETScrollableAreaItem). */
 - (NSRect) visibleContentRect
 {
-	return [[[self supervisorView] wrappedView] frame];
+	return [self contentRect];
 }
 
 /** Returns the content rect expressed in the receiver coordinate space (the 
