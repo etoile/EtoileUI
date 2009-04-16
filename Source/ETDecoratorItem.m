@@ -338,7 +338,19 @@ be decorated. */
 Returns the decoration rect associated with the receiver. */
 - (NSRect) decorationRect
 {
-	return [[self supervisorView] frame];
+	BOOL hasDecorator = (_decoratorItem != nil);
+
+	if (hasDecorator)
+	{
+		/* When a decorator (like ETWindowItem) doesn't use a supervisor view,
+		   [[self supervisorView] frame] won't transparently match
+		   [[_decoratorItem supervisorView] wrappedView] frame] as expected. */
+		return [_decoratorItem contentRect];
+	}
+	else
+	{
+		return [[self supervisorView] frame];
+	}
 }
 
 /* Framework Private */
@@ -486,6 +498,16 @@ For extra details, see -convertDecoratorRectFromContent:. */
 	rectInContent.origin.y -= [self contentRect].origin.y;
 
 	return rectInContent;
+}
+
+- (NSSize) decorationSizeForContentSize: (NSSize)aSize
+{
+	NSRect decorationRect = [self decorationRect];
+	NSRect contentRect = [self visibleContentRect];
+	float widthOffset = decorationRect.size.width - contentRect.size.width;
+	float heightOffset = decorationRect.size.height - contentRect.size.height;
+
+	return NSMakeSize(aSize.width + widthOffset, aSize.height + heightOffset);
 }
 
 - (BOOL) isFlipped
@@ -643,6 +665,8 @@ rect. The existing implementation simply notifies the next decorator, and so
 on recursively. When the outermost decorator item is reached, 
 -handleSetDecorationRect: is called. Finally rect.size is returned.
 
+rect is in the receiver content coordinate space.
+
 You can override this method to customize how a subclass react to an inner 
 geometry update. A custom content size can be returned when needed. A common use 
 case is to intercept decorated item resizes to clip or extend the requested 
@@ -652,10 +676,11 @@ You must never call this method, but only override it. */
 - (NSSize) decoratedItemRectChanged: (NSRect)rect
 {
 	BOOL isLastDecorator = ([self decoratorItem] == nil);
-	
+
 	if (isLastDecorator)
 	{
-		[self handleSetDecorationRect: rect];
+		NSSize newSize = [self decorationSizeForContentSize: rect.size];
+		[self handleSetDecorationRect: ETMakeRect([self decorationRect].origin, newSize)];
 	}
 	else
 	{

@@ -146,6 +146,9 @@
 		60364A0B0E40A560003377E0 /* ETContainers.m in Sources */ = {isa = PBXBuildFile; fileRef = 60364A030E40A560003377E0 /* ETContainers.m */; };
 		60364A0C0E40A560003377E0 /* ETLayoutItem+Factory.m in Sources */ = {isa = PBXBuildFile; fileRef = 60364A040E40A560003377E0 /* ETLayoutItem+Factory.m */; };
 		60364A0D0E40A560003377E0 /* ETLayoutItem+Reflection.m in Sources */ = {isa = PBXBuildFile; fileRef = 60364A050E40A560003377E0 /* ETLayoutItem+Reflection.m */; };
+		604473D00F976C52008E2C99 /* ETController.h in Headers */ = {isa = PBXBuildFile; fileRef = 60CF6C800D3F739000B4CA3D /* ETController.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		6044750A0F97A4E7008E2C99 /* EtoileUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 60EF8E9D0C5E4D0600C97C41 /* EtoileUI.framework */; };
+		6044754A0F97A509008E2C99 /* EtoileUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 60EF8E9D0C5E4D0600C97C41 /* EtoileUI.framework */; };
 		6051502E0C1738D600B5E0E5 /* BrowserPrototype.nib in Resources */ = {isa = PBXBuildFile; fileRef = 6051502B0C1738D600B5E0E5 /* BrowserPrototype.nib */; };
 		60539D9E0C242065006C57EC /* PaneContainerExample.nib in Resources */ = {isa = PBXBuildFile; fileRef = 60539D9C0C242065006C57EC /* PaneContainerExample.nib */; };
 		60599A760C772129007F225E /* ETInspector.h in Headers */ = {isa = PBXBuildFile; fileRef = 60599A740C772129007F225E /* ETInspector.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -612,6 +615,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				60C1DA230C25715F00E00A2E /* Cocoa.framework in Frameworks */,
+				6044754A0F97A509008E2C99 /* EtoileUI.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -620,6 +624,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				605F0E360C0F5310003AE3E6 /* Cocoa.framework in Frameworks */,
+				6044750A0F97A4E7008E2C99 /* EtoileUI.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1122,6 +1127,7 @@
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				604473D00F976C52008E2C99 /* ETController.h in Headers */,
 				60CF709C0D4257DB00B4CA3D /* ETWindowItem.h in Headers */,
 				60EF8EA40C5E4D8500C97C41 /* ETContainer.h in Headers */,
 				60EF8EA50C5E4D8500C97C41 /* ETLayout.h in Headers */,

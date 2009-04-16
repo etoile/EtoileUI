@@ -200,7 +200,21 @@ otherwise returns no. */
 		
 	if (decoratedView != nil)
 	{
-		[_itemWindow setContentSizeFromTopLeft: [decoratedView frame].size];
+		// TODO: Rather than reusing the item size as other decorator do, 
+		// ETWindowItem could extend it temporarily until it is removed. To 
+		// do so, we could add -frameToRestore to retrieve the existingFrame 
+		// in -setDecoratorItem: and -setFrameToRestore: which can be called 
+		// here. This way we could also restore the initial item position when 
+		// a window decorator is removed.
+		//[_itemWindow setContentSizeFromTopLeft: [decoratedView frame].size];
+		
+		NSRect windowFrameWithItemSize = ETMakeRect([_itemWindow frame].origin, [decoratedView frame].size);
+		[_itemWindow setFrame: windowFrameWithItemSize
+		              display: YES];
+
+		NSSize shrinkedItemSize = [_itemWindow contentRectForFrameRect: [_itemWindow frame]].size;
+		[decoratedView setFrameSize: shrinkedItemSize];
+		/* Previous line similar to [decoratedItem setContentSize: shrinkedItemSize] */
 	}
 	[_itemWindow setContentView: (NSView *)decoratedView];	
 
@@ -248,12 +262,21 @@ This space includes the window decoration (titlebar etc.).  */
 	return rect;
 }
 
+// NOTE: At this point, we lost the item position (aka the implicit frame 
+// origin of the first decorated item). That means the item will have a "random" 
+// position when the window decorator is removed.
 - (void) handleSetDecorationRect: (NSRect)rect
 {
-	// NOTE: At this point, we lost the item position (aka the implicit frame 
-	// origin of the first decorated item). That means the item will have a 
-	// "random" position when the window decorator is removed.
-	[_itemWindow setFrame: ETMakeRect([_itemWindow frame].origin, rect.size) display: YES];
+	 /* Will be called back when the window is resized, but -setFrame:display: 
+	    will do nothing then. In this case, the call stack looks like:
+		-[ETDecoratorItem handleSetDecorationRect:]
+		-[ETDecorator decoratedItemRectChanged:]
+		-[ETLayoutItem setContentBounds:]
+		... 
+		-[ETView setFrame:] -- the window content view
+		-[NSWindow setFrame:display:] */
+	[_itemWindow setFrame: ETMakeRect([_itemWindow frame].origin, rect.size) 
+	              display: YES];
 }
 
 - (BOOL) isFlipped

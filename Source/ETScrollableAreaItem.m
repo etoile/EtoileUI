@@ -44,7 +44,13 @@
 
 - (id) init
 {
-	return [super initWithSupervisorView: nil];
+	return [self initWithSupervisorView: nil];
+}
+
+- (id) initWithSupervisorView: (ETView *)aView
+{
+	ETScrollView *supervisorView = AUTORELEASE([[ETScrollView alloc] initWithMainView: nil layoutItem: (ETLayoutItem *)self]);
+	return [super initWithSupervisorView: supervisorView];
 }
 
 - (NSScrollView *) scrollView
@@ -117,21 +123,22 @@ For additional notes, see also -setHasVerticalScroller:. */
 
 - (id) initWithFrame: (NSRect)frame layoutItem: (ETLayoutItem *)item
 {
-	NSScrollView *realScrollView = [[NSScrollView alloc] initWithFrame: frame];
-
-	self = [self initWithMainView: realScrollView layoutItem: item];
-	RELEASE(realScrollView);
-	
-	return self;
+	return [self initWithMainView: AUTORELEASE([[NSScrollView alloc] initWithFrame: frame]) 
+	                   layoutItem: item];
 }
 
-- (id) initWithMainView: (id)scrollView layoutItem: (ETLayoutItem *)item
+- (id) initWithMainView: (id)aScrollView layoutItem: (ETLayoutItem *)item
 {
 	ETLayoutItem *newItem = item;
+	NSScrollView *scrollView = aScrollView;
 
 	if (newItem == nil)
 	{
 		newItem = AUTORELEASE([[ETScrollableAreaItem alloc] init]);
+	}
+	if (scrollView == nil)
+	{
+		scrollView = AUTORELEASE([[NSScrollView alloc] init]);
 	}
 
 	NSAssert([newItem isKindOfClass: [ETScrollableAreaItem class]], @"The item "

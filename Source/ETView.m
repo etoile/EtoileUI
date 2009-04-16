@@ -698,8 +698,17 @@ You can revert to non-flipped coordinates by passing NO to this method. */
 - (void) setFrame: (NSRect)frame
 {
 	[super setFrame: frame];
-	if ([_layoutItem shouldSyncSupervisorViewGeometry])
+	if ([_layoutItem shouldSyncSupervisorViewGeometry] == NO)
+		return;
+
+	if ([_layoutItem decoratorItem] == nil)
+	{
 		[_layoutItem setFrame: frame];
+	}
+	else
+	{
+		[_layoutItem setContentSize: frame.size];
+	}
 }
 
 /* GNUstep doesn't rely on -setFrameSize: in -setFrame: unlike Cocoa, so we 
@@ -709,15 +718,29 @@ You can revert to non-flipped coordinates by passing NO to this method. */
 - (void) setFrameSize: (NSSize)size
 {
 	[super setFrameSize: size];
-	if ([_layoutItem shouldSyncSupervisorViewGeometry])
+	if ([_layoutItem shouldSyncSupervisorViewGeometry] == NO)
+		return;
+
+	if ([_layoutItem decoratorItem] == nil)
+	{
 		[_layoutItem setSize: size];
+	}
+	else
+	{
+		[_layoutItem setContentSize: size];
+	}
 }
 
 - (void) setFrameOrigin: (NSPoint)origin
 {
 	[super setFrameOrigin: origin];
-	if ([_layoutItem shouldSyncSupervisorViewGeometry])
-		[_layoutItem setOrigin: origin];
+	if ([_layoutItem shouldSyncSupervisorViewGeometry] == NO)
+		return;
+
+	if ([_layoutItem decoratorItem] == nil)
+	{
+		[_layoutItem setOrigin: frame];
+	}
 }
 #endif
 

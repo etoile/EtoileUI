@@ -123,6 +123,7 @@ However -supervisorView can be overriden to return nil. */
 
 - (NSRect) convertDecoratorRectFromContent: (NSRect)rectInContent;
 - (NSRect) convertDecoratorRectToContent: (NSRect)rectInDecorator;
+- (NSSize) decorationSizeForContentSize: (NSSize)aSize;
 
 - (BOOL) isFlipped;
 - (void) setFlipped: (BOOL)flipped;

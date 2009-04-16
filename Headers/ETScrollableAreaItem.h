@@ -50,9 +50,12 @@ With the AppKit widget backend, the underlying view is an NSScrollView object. *
 - (BOOL) hasHorizontalScroller;
 - (void) setHasHorizontalScroller: (BOOL)scroll;
 
+// TODO: May be be nicer to override -contentRect in ETScrollableAreaItem 
+// so that the content rect origin reflects the current scroll position.
+
 @end
 
-/* Private stuff */
+/* Private stuff (legacy to be eliminated) */
 
 @interface ETScrollView : ETView
 {

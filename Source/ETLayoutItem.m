@@ -1750,8 +1750,7 @@ position is expressed in the parent item coordinate space. See also
 
 - (BOOL) shouldSyncSupervisorViewGeometry
 {
-	return (_decoratorItem == nil && _isSyncingSupervisorViewGeometry == NO
-		&& [self supervisorView] != nil);
+	return (_isSyncingSupervisorViewGeometry == NO && [self supervisorView] != nil);
 }
 
 /** Sets the current position associated with the receiver frame.
@@ -1844,15 +1843,7 @@ See also -setFrame:. */
 /** Reuturns the content bounds associated with the receiver. */
 - (NSRect) contentBounds
 {
-	BOOL hasDecorator = (_decoratorItem != nil);
-	if (hasDecorator)
-	{
-		return ETMakeRect(_contentBounds.origin, [_decoratorItem contentRect].size);
-	}
-	else
-	{
-		return _contentBounds;
-	}
+	return _contentBounds;
 }
 
 /** Returns the content bounds expressed in the decorator item coordinate space. 
@@ -1891,19 +1882,23 @@ If the flipped property is modified, the content bounds remains identical. */
 - (void) setContentBounds: (NSRect)rect
 {
 	_contentBounds = rect;
-	
+
+	if ([self shouldSyncSupervisorViewGeometry] == NO)
+		return;
+
 	BOOL hasDecorator = (_decoratorItem != nil);
+	
+	_isSyncingSupervisorViewGeometry = YES;
 	if (hasDecorator)
 	{
 		NSRect decorationRect = [self decorationRectForContentBounds: _contentBounds];
 		_contentBounds.size = [_decoratorItem decoratedItemRectChanged: decorationRect];
 	}
-	else if ([self shouldSyncSupervisorViewGeometry])
+	else
 	{
-		_isSyncingSupervisorViewGeometry = YES;
 		[[self supervisorView] setFrameSize: _contentBounds.size];
-		_isSyncingSupervisorViewGeometry = NO;
 	}
+	_isSyncingSupervisorViewGeometry = NO;
 }
 
 /** Sets the content size associated with the receiver. */

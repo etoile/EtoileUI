@@ -43,9 +43,11 @@
 #import "ETLayoutItemGroup.h"
 #import "ETContainer.h"
 #import "ETFlowLayout.h"
+#import "ETScrollableAreaItem.h"
 #import "ETCompatibility.h"
 
 #define UKRectsEqual(x, y) UKTrue(NSEqualRects(x, y))
+#define UKRectsNotEqual(x, y) UKFalse(NSEqualRects(x, y))
 #define UKPointsEqual(x, y) UKTrue(NSEqualPoints(x, y))
 #define UKPointsNotEqual(x, y) UKFalse(NSEqualPoints(x, y))
 #define UKSizesEqual(x, y) UKTrue(NSEqualSizes(x, y))
@@ -446,9 +448,8 @@
 	UKRectsEqual(ETMakeRect(NSZeroPoint, rect.size), [self contentBounds]);
 }
 
-- (void) testDecoratorGeometry
+- (void) testDummyDecoratorGeometry
 {
-	id itemGroup = [ETLayoutItem item];
 	id decorator1 = [ETDecoratorItem item];
 	NSRect rect = [ETLayoutItem defaultItemRect];
 
@@ -460,8 +461,12 @@
 	UKRectsEqual(rect, [self frame]);
 	UKRectsEqual(ETMakeRect(NSZeroPoint, rect.size), [self contentBounds]);
 	UKRectsEqual(ETMakeRect(NSZeroPoint, rect.size), [self decorationRect]);
-	
+}
+
+- (void) testWindowDecoratorGeometry
+{
 	id windowDecorator = [ETWindowItem item];
+	NSRect rect = [ETLayoutItem defaultItemRect];
 
 	[self setDecoratorItem: windowDecorator];
 	NSSize contentSize = [[[windowDecorator window] contentView] frame].size;
@@ -473,9 +478,45 @@
 	UKRectsEqual(ETMakeRect([windowDecorator decorationRect].origin, rect.size), [self frame]);
 	UKRectsEqual(ETMakeRect(NSZeroPoint, contentSize), [self contentBounds]);
 	UKRectsEqual([windowDecorator contentRect], [self decorationRect]);
-	
-	/*id decorator2 = [ETScrollableAreaItem item];
-	id decorator3 = [ETWindowItem item];*/
+}
+
+- (void) testScrollDecoratorGeometry
+{
+	id scrollDecorator = [ETScrollableAreaItem item];
+	NSRect rect = [ETLayoutItem defaultItemRect];
+
+	[self setDecoratorItem: scrollDecorator];
+	NSRect contentRect = [[[scrollDecorator scrollView] contentView] frame];
+
+	UKRectsEqual(rect, [scrollDecorator decorationRect]);
+	/* NSScrollView doesn't touch the document view frame, but scrolls by 
+	   altering the bounds its the content view.
+	   TODO: May be be nicer to override -contentRect in ETScrollableAreaItem 
+	   so that the content rect origin reflects the current scroll position. */
+	UKRectsEqual(rect, [scrollDecorator contentRect]);
+	UKRectsEqual(contentRect, [scrollDecorator visibleContentRect]);
+	UKRectsEqual(rect, [self frame]);
+	UKRectsEqual(ETMakeRect(NSZeroPoint, rect.size), [self contentBounds]);
+	UKRectsEqual([scrollDecorator contentRect], [self decorationRect]); /* See -[ETDecoratorItem contentRect] doc */
+}
+
+
+- (void) testTooManyDecoratorGeometry
+{
+	id windowDecorator = [ETWindowItem item];
+	id scrollDecorator = [ETScrollableAreaItem item];
+	NSRect rect = [ETLayoutItem defaultItemRect];
+
+	[self setDecoratorItem: scrollDecorator];
+	[scrollDecorator setDecoratorItem: windowDecorator];
+
+	UKRectsEqual([windowDecorator contentRect], [scrollDecorator decorationRect]);
+	UKRectsEqual(rect, [scrollDecorator contentRect]);
+	UKRectsNotEqual([scrollDecorator contentRect], [scrollDecorator visibleContentRect]);
+	UKSizesEqual(rect.size, [windowDecorator decorationRect].size);
+	UKSizesEqual(rect.size, [self size]);
+	UKRectsEqual(ETMakeRect(NSZeroPoint, rect.size), [self contentBounds]);
+	UKRectsEqual([scrollDecorator contentRect], [self decorationRect]);
 }
 
 - (void) testSetDecoratorItem

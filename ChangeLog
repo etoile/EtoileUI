@@ -1,3 +1,36 @@
+2009-04-16 Quentin Mathe <qmathe@club-internet.fr>
+
+	* ETDecoratorItem:
+	(-decorationRect): Fixed to behave correctly when the next decorator uses no 
+	supervisor view.
+	(-decorationSizeForContentSize:): Added.
+	(-decoratedItemRectChanged:): Updated to use the previous method and call 
+	-handleSetDecorationRect: now with the correct value.
+	* ETLayoutItem:
+	(-contentBounds): Reverted my previous change on -contentBounds which was 
+	incorrect. 
+	(-setContentBounds:): Modified to support to sync _contentBounds when the  
+	supervisor view frame is altered even when the receiver has a  decorator. 
+	Previously -contentBounds value was invalid when the receiver had been 
+	resized through its supervisor view itself resized by an enclosing 
+	decorator (such as an ETWindowItem).
+	* ETScrollableAreaItem:
+	Fixed to have an underlying scroll view created at initialization.
+	(-init): Modified to call -initWithSupervisorView:.
+	(-initWithSupervisorView:): Added.
+	Tweaked ETScrollView to create an NSScrollView automatically when a nil 
+	scroll view is passed to -initWithScrollView:layoutItem:.
+	* ETWindowItem:
+	(-handleDecorateItem:supervisorView:inView:): Modified to shrink the 
+	content size and match the window frame with the decorated item one.
+	* ETView:
+	(-setFrame:, -setFrameSize:, -setFrameOrigin:): Modified to sync the 
+	geometry even when a decorator is used on -layoutItem.
+	* test_ETLayoutItem.m:
+	Broken decorator geometry related into several methods. Updated various 
+	tests and written -testTooManyDecoratorGeometry to test a window/scroll 
+	decorator combo.
+
 2009-04-13 Quentin Mathe <qmathe@club-internet.fr>
 
 	Moved syntactic sugar related to scrollers from ETContainer to a new
