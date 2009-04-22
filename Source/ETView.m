@@ -739,7 +739,7 @@ You can revert to non-flipped coordinates by passing NO to this method. */
 
 	if ([_layoutItem decoratorItem] == nil)
 	{
-		[_layoutItem setOrigin: frame];
+		[_layoutItem setOrigin: origin];
 	}
 }
 #endif
