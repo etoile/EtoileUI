@@ -2342,13 +2342,14 @@ hit tests and action dispatch. By default, returns YES, otherwise NO when
 	return (GET_PROPERTY(kETActionHandlerProperty) != nil);
 }
 
-#if 1
 /** Controls the automatic enabling/disabling of UI elements (such as menu 
 items) that uses the responder chain to validate themselves, based on whether 
 the receiver or its action handler can respond to the selector action that would 
 be sent by the UI element in the EtoileUI responder chain. */
 - (BOOL) validateUserInterfaceItem: (id <NSValidatedUserInterfaceItem>)anItem
 {
+// TODO: Remove when validation works correctly on GNUstep
+#ifndef GNUSTEP
 	SEL action = [anItem action];
 	SEL twoParamSelector = NSSelectorFromString([NSStringFromSelector(action) 
 		stringByAppendingString: @"onItem:"]);
@@ -2360,8 +2361,10 @@ be sent by the UI element in the EtoileUI responder chain. */
 		return YES;
 
 	return NO;
-}
 #endif
+	return YES;
+}
+
 - (BOOL) respondsToSelector: (SEL)aSelector
 {
 	if ([super respondsToSelector: aSelector])
