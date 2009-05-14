@@ -44,7 +44,8 @@ static NSFileManager *objectManager = nil;
            selector: @selector(viewContainerDidResize:) 
                name: NSViewFrameDidChangeNotification 
              object: viewContainer];
-			 
+
+#ifndef GNUSTEP			 
 	NSString *testPath = nil;
 	NSString *fixedPath = nil;
 	
@@ -65,6 +66,7 @@ static NSFileManager *objectManager = nil;
 	fixedPath = [self textualPathForMixedPath: testPath];
 	if (fixedPath)
 		NSLog(@"Mixed path test: %@ -> %@", testPath, fixedPath);
+#endif
 
 	[ETUTI registerTypeWithString: myFileUTI 
 	                  description: nil 
