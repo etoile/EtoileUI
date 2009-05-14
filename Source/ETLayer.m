@@ -190,10 +190,10 @@ DEALLOC(DESTROY(_rootWindowItem); DESTROY(_visibleWindows));
 
 - (NSRect) rootWindowFrame
 {
-#ifndef DEBUG
-	return [[NSScreen mainScreen] visibleFrame];
-#else
+#ifdef DEBUG_LAYOUT
 	return NSMakeRect(100, 100, 600, 500);
+#else
+	return [[NSScreen mainScreen] visibleFrame];
 #endif
 }
 

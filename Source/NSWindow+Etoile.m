@@ -179,20 +179,21 @@ top left coordinates when the content view returns YES to -isFlipped.  */
 - (id) init
 {
 	return [self initWithContentRect: [[NSScreen mainScreen] frame]
-					       styleMask: NSTitledWindowMask //NSBorderlessWindowMask
-							 backing: NSBackingStoreBuffered
-							   defer: NO];
+	                       styleMask: NSBorderlessWindowMask
+	                         backing: NSBackingStoreBuffered
+	                           defer: NO];
 }
 
 - (id) initWithContentRect: (NSRect)contentRect 
                  styleMask: (NSUInteger)windowStyle
                    backing: (NSBackingStoreType)bufferingType 
-                    defer: (BOOL)deferCreation
+                     defer: (BOOL)deferCreation
 {
 	self = [super initWithContentRect: contentRect
-					        styleMask: windowStyle
-							  backing: bufferingType
-							    defer: deferCreation];
+			        styleMask: windowStyle
+				  backing: bufferingType
+				    defer: deferCreation];
+
 	if (self == nil)
 		return nil;
 
@@ -212,3 +213,4 @@ NSWindow implementation. */
 }
 
 @end
+
