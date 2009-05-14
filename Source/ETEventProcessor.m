@@ -377,14 +377,12 @@ dispatched. */
 	   TODO: Try to remove, on Mac OS X, each control is responsible to decide 
 	   whether it becomes first responder or not on mouse down */
 #ifdef GNUSTEP
-	if ([aView acceptsFirstResponder] == NO)
-	{
+	/* Prevent the mouse down when the view refuses the first responder 
+	   status, however let the mouse down be sent to the view in case it 
+	   returns NO for -acceptsFirstResponder. e.g. NSScroller returns NO 
+	   but we still expect it to handle the mouse click. */
+	if ([aView acceptsFirstResponder] && [[evt window] makeFirstResponder: aView] == NO)
 		return;
-	}
-	if ([[evt window] makeFirstResponder: aView] == NO)
-	{
-		return;
-	}
 #endif
 
 	/* Click-through support */
