@@ -1,169 +1,268 @@
-/*	<title>ETPaneLayout</title>
-
-	ETPaneLayout.m
-
-	<abstract>Description forthcoming.</abstract>
-
+/*
 	Copyright (C) 2007 Quentin Mathe
- 
+
 	Author:  Quentin Mathe <qmathe@club-internet.fr>
 	Date:  June 2007
- 
-	Redistribution and use in source and binary forms, with or without
-	modification, are permitted provided that the following conditions are met:
-
-	* Redistributions of source code must retain the above copyright notice,
-	  this list of conditions and the following disclaimer.
-	* Redistributions in binary form must reproduce the above copyright notice,
-	  this list of conditions and the following disclaimer in the documentation
-	  and/or other materials provided with the distribution.
-	* Neither the name of the Etoile project nor the names of its contributors
-	  may be used to endorse or promote products derived from this software
-	  without specific prior written permission.
-
-	THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
-	AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
-	IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
-	ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE
-	LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
-	CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
-	SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
-	INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
-	CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
-	ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
-	THE POSSIBILITY OF SUCH DAMAGE.
+	License:  Modified BSD  (see COPYING)
  */
  
+#import <EtoileFoundation/Macros.h>
+#import <EtoileFoundation/ETCollection.h>
 #import "ETPaneLayout.h"
+#import "ETCompatibility.h"
 #import "NSView+Etoile.h"
+#import "ETSelectTool.h"
 #import "ETLayoutItem.h"
+#import "ETLayoutItem+Factory.h"
 #import "ETLayoutItemGroup.h"
+#import "ETLineLayout.h"
+#import "ETTableLayout.h"
 #import "ETContainer.h"
 
 @implementation ETPaneLayout
 
+- (id) init
+{
+	SUPERINIT
+	
+	// FIXME: Should be -itemGroupWithView...
+	ASSIGN(_rootItem, [ETLayoutItem itemGroupWithContainer]);
+	[_rootItem setActionHandler: nil];
+	ASSIGN(_contentItem, [ETLayoutItem itemGroupWithContainer]);
+	[_contentItem setAutoresizingMask: NSViewWidthSizable | NSViewHeightSizable];
+	[_rootItem addItem: _contentItem];
+	
+	// Move to subclass
+	[self setBarItem: [ETLayoutItem itemGroupWithContainer]];
+	[_barItem setAutoresizingMask: NSViewWidthSizable];
+	[_barItem setLayout: [ETTableLayout layout]];
+	[[_barItem layout] setAttachedInstrument: [ETSelectTool instrument]];
+	
+	[self tile];
+
+	return self;
+}
+
 - (void) dealloc
 {
 	[[NSNotificationCenter defaultCenter] removeObserver: self];
-
-	/* Neither container and delegate have to be retained. For container, only
-	   because it retains us and is in charge of us
-	   For _displayViewPrototype, it's up to subclasses to manage it. */
+	DESTROY(_contentItem);
 	[super dealloc];
 }
 
-- (void) itemGroupSelectionDidChange: (NSNotification *)notif
+- (float) barHeightOrWidth
 {
-	NSAssert2([[notif object] isEqual: [[self container] layoutItem]], 
-		@"Notification object %@ doesn't match item group of layout %@", [notif object], self);
-	
-	NSLog(@"Pane layout %@ receives selection change from %@", self, [notif object]);
-	[[self container] updateLayout]; /* Will trigger -[ETLayout render] */
-
+	return 50;
 }
 
-/*- (void) allowsMultipleSelection
+- (void) tile
 {
-	return NO;
-}*/
+	//[[self contentItem] setFrame: ETMakeRect(NSZeroPoint, [[self rootItem] size])];
+	
+	NSSize rootSize = [[self rootItem] size];
+	[[self contentItem] setFrame: NSMakeRect(0, [self barHeightOrWidth], rootSize.width, rootSize.height - [self barHeightOrWidth])];
+	[[self barItem] setFrame: NSMakeRect(0, 0, rootSize.width, [self barHeightOrWidth])];
+}
 
-- (void) setContainer: (ETContainer *)container
+/** Returns the root item supervisor view. */
+- (NSView *) layoutView
 {
-	// FIXME: Use layout context
-	//[super setContainer: container];
-	// FIXME: Memorize container selection style and restore it when the layout
-	// is unset.
-	[[self container] setEnablesHitTest: YES];
-	[[self container] setAllowsMultipleSelection: NO];
-	[[self container] setAllowsEmptySelection: NO];
+	return [[self rootItem] supervisorView];
+}
+
+/** Returns the main area item where panes are inserted and shown. */
+- (ETLayoutItemGroup *) contentItem
+{
+	return _contentItem;
+}
+
+/** Returns the bar area item which can be used to interact with the receiver. */
+- (ETLayoutItemGroup *) barItem
+{
+	return _barItem;
+}
+
+/** Sets the bar area item which can be used to interact with the receiver. */
+- (void) setBarItem: (ETLayoutItemGroup *)anItem
+{
 	[[NSNotificationCenter defaultCenter] 
 		removeObserver: self 
 		          name: ETItemGroupSelectionDidChangeNotification 
-			    object: nil];
+			    object: _barItem];
+
+	ASSIGN(_barItem, anItem);
+	[[self rootItem] addItem: anItem];
+	[self tile];
+
 	[[NSNotificationCenter defaultCenter] 
-		addObserver: self 
-		   selector: @selector(itemGroupSelectionDidChange:)
-		       name: ETItemGroupSelectionDidChangeNotification
-		     object: [[self container] layoutItem]];
+		   addObserver: self
+	          selector: @selector(itemGroupSelectionDidChange:)
+		          name: ETItemGroupSelectionDidChangeNotification 
+			    object: anItem];
 }
 
-/* Sizing Methods */
-
-- (BOOL) isAllContentVisible
+- (NSView *) contentView
 {
-	return YES;
+	return [[self contentItem] supervisorView];
 }
 
-- (void) adjustLayoutSizeToContentSize
+- (BOOL) canGoBack
 {
+	return ([self backItem] != nil);
+}
 
+- (BOOL) canGoForward
+{
+	return ([self forwardItem] != nil);
+}
+
+- (void) goBack
+{
+	[self goToItem: [self backItem]];
+}
+
+- (void) goForward
+{
+	[self goToItem: [self forwardItem]];
+}
+
+/** Returns the current item which is currently displayed inside the content 
+item. The current item represents the active pane element. */
+- (id) currentItem
+{
+	return _currentItem;
+}
+
+/** Returns the item that comes before to the current item in its parent ite, or 
+nil if the current item is the first item. */
+- (id) backItem
+{
+	ETLayoutItem *currentItem = [self currentItem];
+
+	if ([currentItem isEqual: [[currentItem parentItem] firstItem]])
+		return nil;
+
+	int currentIndex = [[currentItem parentItem] indexOfItem: currentItem];
+
+	return [[currentItem parentItem] itemAtIndex: currentIndex - 1];
+}
+
+/** Returns the item that comes next to the current item in its parent item, or 
+nil if the current item is the last item. */
+- (id) forwardItem
+{
+	ETLayoutItem *currentItem = [self currentItem];
+
+	if ([currentItem isEqual: [[currentItem parentItem] lastItem]])
+		return nil;
+
+	int currentIndex = [[currentItem parentItem] indexOfItem: currentItem];
+
+	return [[currentItem parentItem] itemAtIndex: currentIndex + 1];
+}
+
+// TODO: Allows a default pane to be shown with -goToItem: -setStartItem: 
+// and -startItem.
+- (void) goToItem: (ETLayoutItem *)anItem
+{
+	if (anItem == nil)
+		return;
+
+	if ([[self currentItem] supervisorView] != nil)
+	{
+		NSAssert1([[[[self currentItem] supervisorView] superview] isEqual: [self contentView]], 
+			@"The current item view is expected to have the content view as superview in %@", self);
+		[[[self currentItem] supervisorView] removeFromSuperview];
+	}
+
+	ASSIGN(_currentItem, anItem);
+
+	if ([anItem supervisorView] != nil)
+	{
+		NSSize contentSize = [[self contentView] frame].size;
+		NSSize itemSize = [anItem size];
+		ETView *itemView = [anItem supervisorView];
+
+		/* Temporarily insert the supervisor view in the content view, will 
+		   be moved back when the layout is tear down or we go to another pane. */
+		[[self contentView] addSubview: itemView];
+		[itemView setFrameOrigin: NSMakePoint(contentSize.width / 2. + itemSize.width / 2,
+			contentSize.height / 2. + itemSize.height / 2.)];
+	}
+}
+
+/* Propagates pane switch done in bar to content. */
+- (void) itemGroupSelectionDidChange: (NSNotification *)notif
+{
+	ETLog(@"Pane layout %@ receives selection change from %@", self, [notif object]);
+	
+	NSAssert1([[notif object] isEqual: [self barItem]], @"Selection "
+		"notification must be posted by the bar item in %@", self);
+	NSAssert1([[[self barItem] selectedItems] count] == 1, @"Only a single "
+		"item  at a time must be selected in the bar item in %@", self);
+
+	ETLayoutItem *barElementItem = [[[self barItem] selectedItems] firstObject];
+	[self goToItem: [barElementItem representedObject]];
+	[(ETLayoutItemGroup *)[self layoutContext] updateLayout]; /* Will trigger -[ETLayout render] */
+}
+
+- (NSArray *) tabItemsWithItems: (NSArray *)items
+{
+	NSMutableArray *tabItems = [NSMutableArray array];
+	
+	FOREACH(items, paneItem, ETLayoutItem *)
+	{
+		ETLayoutItem *tabItem = [paneItem copy];
+		NSImage *img = [tabItem valueForProperty: @"icon"];
+
+		if (img == nil)
+			img = [tabItem valueForProperty: @"image"];	
+
+		if (img == nil)
+		{
+			ETLog(@"WARNING: Pane item  %@ has no image or icon available to "
+				  @"be displayed in switcher of %@", paneItem, self);
+		}
+		[tabItem setRepresentedObject: paneItem];
+
+		[tabItems addObject: tabItem];
+	}
+	
+	return tabItems;
+}
+
+- (void) rebuildBarWithItems: (NSArray *)items
+{
+	[_barItem removeAllItems];
+	[_barItem addItems: [self tabItemsWithItems: items]];
+	[_barItem updateLayout];
 }
 
 /* Layouting */
 
 - (void) renderWithLayoutItems: (NSArray *)items isNewContent: (BOOL)isNewContent
 {
-	NSArray *layoutModel = nil;
-	
-	/* By safety, we correct container style in case it got modified between
-	   -setContainer: call and now. */
-	[[self container] setAllowsMultipleSelection: NO];
-	[[self container] setAllowsEmptySelection: NO];
-	
-	//float scale = [container itemScaleFactor];
-	//[self resizeLayoutItems: items toScaleFactor: scale];
-	
-	layoutModel = [self layoutModelForLayoutItems: items];
-	/* Now computes the location of every views by relying on the line by line 
-	   decomposition already made. */
-	[self computeLayoutItemLocationsForLayoutModel: layoutModel];
-		
-	/* Don't forget to remove existing display view if we switch from a layout 
-	   which reuses a native AppKit control like table layout. */
-	[[self container] setLayoutView: nil];
-	
-	// FIXME: Use layout item group and not the container directly
-	//[[self container] setVisibleItems: layoutModel];
-}
-
-/* Only returns selected item view */
-- (NSArray *) layoutModelForLayoutItems: (NSArray *)items
-{
-	int selectedPaneIndex = [[self container] selectionIndex];
-	
-	NSLog(@"Layout selected pane %d in container %@", selectedPaneIndex, [self container]);
-	
-	if (selectedPaneIndex == NSNotFound)
-		return items; // return nil;
-		
-	return [NSArray arrayWithObject: [items objectAtIndex: selectedPaneIndex]];
-	/*@try 
-	{ 
-		return [views objectAtIndex: selectedPaneIndex];
-	}
-	@catch (NSException *e)
+	if (isNewContent)
 	{
-		NSLog(@"Selection handling bug in ETContainer code");
+		[self rebuildBarWithItems: items];
 	}
-	@finally { return nil; }*/
-}
-
-- (void) computeLayoutItemLocationsForLayoutModel: (NSArray *)layoutModel
-{
-	//NSPoint viewLocation = NSMakePoint([container width] / 2.0, [container height] / 2.0);
-	NSPoint itemLocation = NSZeroPoint;
-	NSEnumerator *itemWalker = [layoutModel objectEnumerator];
-	ETLayoutItem *item = nil;
 	
-	while ((item = [itemWalker nextObject]) != nil)
+	[self setUpLayoutView];
+	if (isNewContent)
 	{
-		[item setOrigin: itemLocation];
+		[self goToItem: [items firstObject]];
 	}
-	
-	NSLog(@"Layout item locations computed by layout model %@", layoutModel);
+	[self mapRootItemIntoLayoutContext];
 }
 
-// Private use
-- (void) adjustLayoutSizeToSizeOfContainer: (ETContainer *)container { }
+- (void) tearDown
+{
+	[super tearDown];
+
+	FOREACH([[self layoutContext] arrangedItems], item, ETLayoutItem *)
+	{
+	
+	}
+}
 
 @end
