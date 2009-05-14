@@ -694,11 +694,13 @@ Hence whether or not the item has children, this method will be called. */
 	if (anItem == nil)
 		return nil;
 
+#ifdef DEBUG_EVENT
 	if ([anEvent type] == NSLeftMouseDown)
 	{
 		ETLog(@"Will try hit test at %@ in %@: %d", NSStringFromPoint(itemRelativePoint), 
 			anItem, [anItem pointInside: itemRelativePoint useBoundingBox: YES]);
 	}
+#endif
 
 	BOOL isOutside = ([anItem pointInside: itemRelativePoint useBoundingBox: YES] == NO);
 	

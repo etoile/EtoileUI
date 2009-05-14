@@ -133,12 +133,7 @@ active instrumend and NO is returned.
 Returns YES when the event has been handled by EtoileUI. */
 - (BOOL) processMouseEvent: (ETEvent *)anEvent
 {
-	ETLog(@"Process mouse event %@", anEvent);
-
-	if ([anEvent type] == NSLeftMouseUp)
-	{
-		ETLog(@"Blabla");
-	}
+	//ETLog(@"Process mouse event %@", anEvent);
 
 	if ([anEvent isWindowDecorationEvent] || [anEvent contentItem] == nil)
 		return NO;
