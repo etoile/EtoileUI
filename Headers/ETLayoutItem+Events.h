@@ -1,37 +1,13 @@
-/*
-	ETLayoutItem+Events.h
-	
-	The EtoileUI event handling model for the layout item tree. Also defines the 
-	Pick and Drop model.
- 
+/*  <title>ETLayoutItem+Events</title>
+
+	<abstract>The EtoileUI event handling model for the layout item tree. Also 
+	defines the Pick and Drop model.</abstract>
+
 	Copyright (C) 2007 Quentin Mathe
  
 	Author:  Quentin Mathe <qmathe@club-internet.fr>
 	Date:  November 2007
- 
-	Redistribution and use in source and binary forms, with or without
-	modification, are permitted provided that the following conditions are met:
-
-	* Redistributions of source code must retain the above copyright notice,
-	  this list of conditions and the following disclaimer.
-	* Redistributions in binary form must reproduce the above copyright notice,
-	  this list of conditions and the following disclaimer in the documentation
-	  and/or other materials provided with the distribution.
-	* Neither the name of the Etoile project nor the names of its contributors
-	  may be used to endorse or promote products derived from this software
-	  without specific prior written permission.
-
-	THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
-	AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
-	IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
-	ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE
-	LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
-	CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
-	SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
-	INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
-	CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
-	ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
-	THE POSSIBILITY OF SUCH DAMAGE.
+    License:  Modified BSD (see COPYING)
  */
 
 #import <Foundation/Foundation.h>
@@ -44,7 +20,8 @@
             graphic tools for example. 
             More explanations available in TODO file. */
 
-@class ETPickboard, ETEvent;
+@class ETEvent, ETPickboard, ETPickDropCoordinator;
+@protocol ETKeyInputAction;
 
 /** Action handler are lightweight objects whose instances can be shared between 
 a large number of layout items.
@@ -61,97 +38,138 @@ is to write a factory method to build your layout items, this factory
 method will reuse the action handler to be set on every created items. */
 @interface ETActionHandler : NSObject
 {
-	
+
 }
 
 + (id) sharedInstance;
 
+/* Instrument/Tool Actions */
+
 - (void) handleClickItem: (ETLayoutItem *)item;
+- (void) handleDoubleClickItem: (ETLayoutItem *)item;
+- (void) handleDragItem: (ETLayoutItem *)item byDelta: (NSSize)delta;
+- (void) handleTranslateItem: (ETLayoutItem *)item byDelta: (NSSize)delta;
 - (void) handleEnterItem: (ETLayoutItem *)item;
 - (void) handleExitItem: (ETLayoutItem *)item;
 - (void) handleEnterChildItem: (ETLayoutItem *)childItem;
 - (void) handleExitChildItem: (ETLayoutItem *)childItem;
+
+/* Key Actions */
+
+- (BOOL) handleKeyEquivalent: (id <ETKeyInputAction>)keyInput onItem: (ETLayoutItem *)item;
+- (void) handleKeyUp: (id <ETKeyInputAction>)keyInput onItem: (ETLayoutItem *)item;
+- (void) handleKeyDown: (id <ETKeyInputAction>)keyInput onItem: (ETLayoutItem *)item;
+
+/* Select Actions */
+
+//ETSelectTool produced actions.
+//-canSelectIndexes:onItem:
+//-selectIndexes:onItem:
+- (BOOL) canSelect: (ETLayoutItem *)item;
+- (void) handleSelect: (ETLayoutItem *)item;
+- (BOOL) canDeselect: (ETLayoutItem *)item;
+- (void) handleDeselect: (ETLayoutItem *)item;
+
+/* Paint Actions */
+
+- (BOOL) canFill: (ETLayoutItem *)item;
+- (void) handleFill: (ETLayoutItem *)item withColor: (NSColor *)aColor;
+- (BOOL) canStroke: (ETLayoutItem *)item;
+- (void) handleStroke: (ETLayoutItem *)item withColor: (NSColor *)aColor;
 
 // TODO: Add...
 //-handlePick
 //-handlePaint
 //-handleDrag
 //-handleResize
+/* Methods to be implemented and used...
+- (IBAction) pick: (id)sender;
+- (IBAction) pickCopy: (id)sender;
+- (IBAction) drop: (id)sender;*/
 
-@end
+/* Generic Actions */
 
-@protocol ETEventHandler
+- (BOOL) acceptsFirstResponder;
+- (BOOL) becomeFirstResponder;
+- (BOOL) resignFirstResponder;
+- (BOOL) acceptsFirstMouse;
 
-- (ETLayoutItem *) eventForwarder;
+- (void) sendBackward: (id)sender onItem: (ETLayoutItem *)item;
+- (void) sendToBack: (id)sender onItem: (ETLayoutItem *)item;
+- (void) bringForward: (id)sender onItem: (ETLayoutItem *)item;
+- (void) bringToFront: (id)sender onItem: (ETLayoutItem *)item;
 
-/* Event Handling */
+- (void) ungroup: (id)sender onItem: (ETLayoutItem *)item;
 
-- (void) mouseDown: (ETEvent *)event on: (id)item;
-- (void) mouseUp: (ETEvent *)event on: (id)item;
-- (void) mouseDragged: (ETEvent *)event on: (id)item;
+/* Pick & Drop Actions */
 
-- (void) handleMouseDown: (ETEvent *)event forItem: (id)item layout: (id)layout;
-- (void) handleClick: (ETEvent *)event forItem: (id)item layout: (id)layout;
-
+- (BOOL) handlePickItem: (ETLayoutItem *)item coordinator: (id)aPickCoordinator;
+- (BOOL) handleDragItem: (ETLayoutItem *)item coordinator: (id)aPickCoordinator;
+- (ETLayoutItem *) handleValidateDropObject: (id)droppedObject 
+                                     onItem: (ETLayoutItem *)dropTarget
+                                coordinator: (id)aPickCoordinator;
+- (BOOL) handleDropObject: (id)droppedObject
+                   onItem: (ETLayoutItem *)dropTargetItem 
+              coordinator: (id)aPickDropCoordinator;
 
 /* Pick and Drop Filtering */
 
-- (BOOL) allowsDragging;
-- (BOOL) allowsDropping;
+- (ETUTI *) allowedPickTypeForItem: (ETLayoutItem *)item;
+- (ETUTI *) allowedDropTypeForItem: (ETLayoutItem *)item;
+- (BOOL) canDragItem: (ETLayoutItem *)item
+         coordinator: (ETPickDropCoordinator *)aPickCoordinator;
+- (BOOL) canDropObject: (id)droppedObject
+                onItem: (ETLayoutItem *)dropTarget
+           coordinator: (ETPickDropCoordinator *)aPickCoordinator;
 
-/* Pick and Drop Handling */
+- (unsigned int) draggingSourceOperationMaskForLocal: (BOOL)isLocal;
+- (BOOL) shouldRemoveItemsAtPickTime;
 
-- (void) handlePick: (ETEvent *)event forItem: (id)item layout: (id)layout;
-- (void) handleDrag: (ETEvent *)event forItem: (id)item layout: (id)layout;
-- (void) beginDrag: (ETEvent *)event forItem: (id)item 
-	image: (NSImage *)customDragImage layout: (id)layout;
-- (NSDragOperation) handleDragEnter: (id)dragInfo forItem: (id)item;
-- (void) handleDragExit: (id)dragInfo forItem: (id)item;
-- (NSDragOperation) handleDragMove: (id)dragInfo forItem: (id)item;
-- (void) handleDragEnd: (id)dragInfo forItem: (id)item on: (id) dropTargetItem;
-- (BOOL) handleDrop: (id)dragInfo forItem: (id)item on: (id)dropTargetItem;
+/* Drag Destination Feedback */
+
+- (NSDragOperation) handleDragMoveOverItem: (ETLayoutItem *)item 
+                                  withItem: (ETLayoutItem *)draggedItem
+                               coordinator: (id)aPickCoordinator;
+- (NSDragOperation) handleDragEnterItem: (ETLayoutItem *)item
+                               withItem: (ETLayoutItem *)draggedItem
+                            coordinator: (id)aPickCoordinator;
+- (void) handleDragExitItem: (ETLayoutItem *)item
+                   withItem: (ETLayoutItem *)draggedItem
+                coordinator: (id)aPickCoordinator;
+- (void) handleDragEndAtItem: (ETLayoutItem *)item
+                    withItem: (ETLayoutItem *)draggedItem
+                wasCancelled: (BOOL)cancelled
+                 coordinator: (id)aPickCoordinator;
+
+/* Drag Source Feedback */
+
+- (void) handleDragItem: (ETLayoutItem *)draggedItem 
+           beginAtPoint: (NSPoint)aPoint 
+            coordinator: (id)aPickCoordinator;
+- (void) handleDragItem: (ETLayoutItem *)draggedItem 
+             moveToItem: (ETLayoutItem *)item
+            coordinator: (id)aPickCoordinator;
+- (void) handleDragItem: (ETLayoutItem *)draggedItem 
+              endAtItem: (ETLayoutItem *)item
+           wasCancelled: (BOOL)cancelled
+            coordinator: (id)aPickCoordinator;
+
+/* With a source, do we need to handle call back with:
+
+- (BOOL) handlePick: (ETEvent *)event forItems: (NSArray *)items pickboard: (ETPickboard *)pboard;
+- (BOOL) handleAcceptDrop: (id)dragInfo forItems: (NSArray *)items on: (id)item pickboard: (ETPickboard *)pboard;
+- (BOOL) handleDrop: (id)dragInfo forItems: (NSArray *)items on: (id)item pickboard: (ETPickboard *)pboard;*/
 //- (BOOL) handleDrop: (id)dragInfo forObject: (id)object; // on: (id)item
 /*- (void) handlePickForObject: (id)object;
 - (void) handleAcceptDropForObject: (id)object;
 - (void) handleDropForObject: (id)object;*/
 
-- (BOOL) handlePick: (ETEvent *)event forItems: (NSArray *)items pickboard: (ETPickboard *)pboard;
-- (BOOL) handleAcceptDrop: (id)dragInfo forItems: (NSArray *)items on: (id)item pickboard: (ETPickboard *)pboard;
-- (BOOL) handleDrop: (id)dragInfo forItems: (NSArray *)items on: (id)item pickboard: (ETPickboard *)pboard;
-
-/* Helper Methods */
-
-//-itemGroup:dropIndexAtLocation:forItem:on:
-- (BOOL) acceptsDropAtLocationInWindow: (NSPoint)loc;
-- (NSRect) dropOnRect;
-- (unsigned int) draggingSourceOperationMaskForLocal: (BOOL)isLocal;
-- (BOOL) shouldRemoveItemsAtPickTime;
-- (int) itemGroup: (ETLayoutItemGroup *)itemGroup dropIndexAtLocation: (NSPoint)localDropPosition 
-	forItem: (id)item on: (id)dropTargetItem;
-- (void) itemGroup: (ETLayoutItemGroup *)itemGroup insertDroppedObject: (id)movedObject atIndex: (int)index;
-- (void) itemGroup: (ETLayoutItemGroup *)itemGroup insertDroppedItem: (id)movedObject atIndex: (int)index;
-
 /* Cut, Copy and Paste Compatibility */
 
-- (IBAction) copy: (id)sender;
-- (IBAction) paste: (id)sender;
-- (IBAction) cut: (id)sender;
+- (IBAction) copy: (id)sender onItem: (ETLayoutItem *)item;
+- (IBAction) paste: (id)sender onItem: (ETLayoutItem *)item;
+- (IBAction) cut: (id)sender onItem: (ETLayoutItem *)item;
 
-@end
-
-/** Informal Event Handling Protocol that ETLayout subclasses can implement to 
-	override the default event handling implemented by ETEventHandler. 
-	ETEventHandler automatically takes care of checking whether the layout bound 
-	to the item that handles the event, implements one or several of the 
-	following methods and calling these methods on the layout object when the 
-	event handling behavior can be delegated. */
-@interface NSObject (ETLayoutEventHandling)
-- (void) handlePick: (ETEvent *)event forItem: (id)item layout: (id)layout;
-- (void) handleDrag: (ETEvent *)event forItem: (id)item layout: (id)layout;
-- (void) beginDrag: (ETEvent *)event forItem: (id)item 
-	image: (NSImage *)customDragImage layout: (id)layout;
-- (int) dropIndexAtLocation: (NSPoint)localDropPosition forItem: (id)item 
-	on: (id)dropTargetItem;
 @end
 
 /** Event Handling in the Layout Item Tree 
@@ -229,8 +247,3 @@ method will reuse the action handler to be set on every created items. */
 
 // TODO: Refactor this category in a pluggable event handler object. 
 // A new ETInteraction class or class hierachy should be introduced.
-@interface ETLayoutItem (Events) <ETEventHandler>
-
-@end
-
-extern NSString *ETLayoutItemPboardType;

@@ -1,42 +1,23 @@
-/*  <title>ETEvent</title>
-
-	ETEvent.m
-	
-	<abstract>EtoileUI-native event class that represents events to be 
-	dispatched and handled in the layout item tree.</abstract>
- 
+/*
 	Copyright (C) 2007 Quentin Mathe
- 
+
 	Author:  Quentin Mathe <qmathe@club-internet.fr>
 	Date:  January 2007
- 
-	Redistribution and use in source and binary forms, with or without
-	modification, are permitted provided that the following conditions are met:
-
-	* Redistributions of source code must retain the above copyright notice,
-	  this list of conditions and the following disclaimer.
-	* Redistributions in binary form must reproduce the above copyright notice,
-	  this list of conditions and the following disclaimer in the documentation
-	  and/or other materials provided with the distribution.
-	* Neither the name of the Etoile project nor the names of its contributors
-	  may be used to endorse or promote products derived from this software
-	  without specific prior written permission.
-
-	THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
-	AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
-	IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
-	ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE
-	LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
-	CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
-	SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
-	INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
-	CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
-	ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
-	THE POSSIBILITY OF SUCH DAMAGE.
+	License:  Modified BSD (see COPYING)
  */
 
+#ifndef GNUSTEP
+#import <Carbon/Carbon.h>
+#endif
 #import <EtoileFoundation/Macros.h>
 #import "ETEvent.h"
+#import "ETApplication.h"
+#import "ETGeometry.h"
+#import "ETDecoratorItem.h"
+#import "ETLayoutItem+Factory.h"
+#import "ETView.h"
+#import "ETWindowItem.h"
+#import "NSWindow+Etoile.h"
 #import "ETCompatibility.h"
 
 static const int ETUntypedEvent = 0;
@@ -100,6 +81,12 @@ DEALLOC(DESTROY(_draggingInfo); DESTROY(_layoutItem); DESTROY(_backendEvent))
 	return copiedEvent;
 }
 
+- (NSString *) description
+{
+	// TODO: Improve
+	return [(NSEvent *)[self backendEvent] description];
+}
+
 /** Returns the type of the EtoileUI event. If a custom type was not used to 
 instantiate the event object, then the type matches the one of the backend event. */
 - (NSEventType) type
@@ -121,12 +108,50 @@ backend event as parameter. */
 	return _isUIEvent;
 }
 
+/* Event Dispatch Status */
+
+/** Returns whether the event has been handled or not yet. */
+- (BOOL) wasDelivered
+{
+	return _wasDelivered;
+}
+
+/** Marks the event as now handled. */
+- (void) markAsDelivered
+{
+	_wasDelivered = YES;
+}
+
 /** Returns the layout item attached to the EtoileUI event. 
  
 See -setLayoutItem:. */
 - (id) layoutItem
 {
 	return _layoutItem;
+}
+
+/** Returns the event location in the layout item coordinate space, this point 
+usually corresponds to the hit test that was done by ETInstrument and 
+memorized in the receiver with -setLocationInLayoutItem:.
+If -layoutItem returns nil or doesn't match the hit test of the event, a null 
+point will be returned.
+ 
+See -setLayoutItem:. */
+- (NSPoint) locationInLayoutItem
+{
+	return _locationInLayoutItem;
+}
+
+/** Sets the event location in the layout item coordinate space, this point 
+usually corresponds to the hit test that was done by ETInstrument and 
+memorized in the receiver by calling this method.
+If -layoutItem returns nil or doesn't match the hit test of the event, a null 
+point will be returned.
+ 
+See -setLayoutItem:. */
+- (void) setLocationInLayoutItem: (NSPoint)aPoint
+{
+	_locationInLayoutItem = aPoint;
 }
 
 /** Sets the layout item attached to the EtoileUI event.
@@ -155,11 +180,215 @@ See -setPickingMask:. */
 	return _pickingMask;
 }
 
+/* Input Device Data */
+
+/** Returns the click count when the EtoileUI event type matches a click-like 
+input, otherwise raises an exception. */
+- (int) clickCount
+{
+	return [(NSEvent *)_backendEvent clickCount];
+}
+
+/** Returns the pressed key characters when the EtoileUI event type matches 
+a keyboard-like input. */
+- (NSString *) characters
+{
+	return [(NSEvent *)_backendEvent characters];
+}
+
 /** Returns the key modifier combinations pressed when the event was produced. 
+
 The key combo is encoded as a bit field. */
 - (unsigned int) modifierFlags
 {
 	return [(NSEvent *)_backendEvent modifierFlags];
+}
+
+/** Returns the item bound to the window content view. When the view has no 
+ETUIItem bound to it, returns nil.
+
+e.g. with a scroll view as content view, the content item is expected to be a 
+scrollable area item, not the ETLayoutItem object it decorates and which exists
+in the layout item tree as a window layer child. The scrollable area item has 
+no parent per se. You can retrieve the layout item with 
+[contentItem firstDecoratedItem]. */
+- (ETUIItem *) contentItem
+{
+	id contentView = [self contentView];
+	
+	if (contentView == nil || [contentView isKindOfClass: [ETView class]] == NO)
+		return nil;
+	
+	return (ETUIItem *)[contentView layoutItem];
+}
+
+/** Returns the item that represents the window per se. When the window 
+content view has no ETUIItem bound to it, returns nil. */
+- (ETWindowItem *) windowItem
+{
+	ETUIItem *contentItem = [self contentItem];
+	ETWindowItem *windowItem = [contentItem lastDecoratorItem];
+
+	if (windowItem != nil)
+	{
+		NSParameterAssert([windowItem isKindOfClass: [ETWindowItem class]]);
+	}
+	NSParameterAssert([(NSEvent *)_backendEvent window] == [windowItem window]);
+	NSParameterAssert([windowItem isFlipped] == [contentItem isFlipped]);
+
+	return windowItem;
+}
+
+/** Returns the location of the pointer in the window item coordinate space (the 
+window frame).
+
+When the event has no associated window, returns a null point. */
+- (NSPoint) locationInWindowItem
+{
+	ETDecoratorItem *windowItem = [self windowItem];
+
+	if (windowItem == nil)
+		return ETNullPoint;
+
+	NSPoint contentRelativeLoc = [self locationInWindowContentItem];
+	NSPoint frameRelativeLoc = [windowItem convertDecoratorPointFromContent: contentRelativeLoc];
+	NSRect windowBounds = ETMakeRect(NSZeroPoint, [windowItem decorationRect].size);
+	BOOL outsideWindow = (NSMouseInRect(frameRelativeLoc, windowBounds, [windowItem isFlipped]) == NO);
+	
+	if (outsideWindow)
+		return ETNullPoint;
+
+	return frameRelativeLoc;
+}
+
+/** Returns the location of the pointer in the window content item coordinate 
+space (the window content rect).
+
+When the event has no associated window, returns a null point.
+
+See -contentItem. */
+- (NSPoint) locationInWindowContentItem
+{
+	NSView *contentView = [self contentView];
+	BOOL hasNoWindow = ([self contentView] == nil);
+
+	if (hasNoWindow)
+		return ETNullPoint;
+
+	/* Even if the content view is flipped, -locationInWindow returns a point 
+	   in a non-flipped coordinate space.
+	   WARNING: Any transform applied to the content view probably need to be 
+	   applied to the point returned by -locationInWindow... */
+	NSPoint contentViewRelativePoint = [(NSEvent *)_backendEvent locationInWindow];
+	if ([contentView isFlipped])
+	{
+		contentViewRelativePoint.y = [contentView frame].size.height - contentViewRelativePoint.y;
+	}	
+
+	return contentViewRelativePoint;
+}
+
+/** Returns the location of the pointer in the coordinate space of the window 
+layer.
+
+This coordinate space is equivalent the screen coordinate space, minus the menu 
+bar and that it uses flipped coordinates unless specifed otherwise on ETWindowLayer. */
+- (NSPoint) location
+{
+	NSWindow *window = [(NSEvent *)_backendEvent window];
+	NSPoint windowLayerLoc = ETNullPoint;
+
+	if (window == nil)
+	{
+		windowLayerLoc = [(NSEvent *)_backendEvent locationInWindow];
+	}
+	else
+	{
+		windowLayerLoc = [window convertBaseToScreen: [(NSEvent *)_backendEvent locationInWindow]];
+	}
+
+	/* -locationInWindow is in bottom left coordinates even when the content 
+	   view is flipped, that's why we only need to alter the point when the 
+	   window layer uses flipped coordinates. */
+	if ([[ETLayoutItem windowGroup] isFlipped])
+	{
+		windowLayerLoc.y = [[NSScreen mainScreen] frame].size.height - windowLayerLoc.y - [[ETApp mainMenu] menuBarHeight];
+	}
+
+	return windowLayerLoc;
+}
+
+/* Widget Backend Integration */
+
+/** Returns whether the event is located within the window title bar or border. 
+This includes the resize indicator which overlaps the content view on Mac OS X. */
+- (BOOL) isWindowDecorationEvent
+{
+	NSWindow *window = [(NSEvent *)_backendEvent window];
+
+	if (window == nil)
+		return NO;
+
+	NSPoint contentRelativeLoc = [self locationInWindowContentItem];
+	BOOL outsideWindow = (NSPointInRect(contentRelativeLoc, [window frameRectInContent]) == NO);
+
+	if (outsideWindow)
+		return NO;
+	
+	NSView *contentView = [window contentView];
+	BOOL outsideContentView = ([contentView mouse: contentRelativeLoc
+	                                       inRect: [contentView bounds]] == NO);
+
+#ifdef GNUSTEP
+	return outsideContentView;
+#else
+	/* We use content view frame and not bounds, because the resize indicator is 
+	   not a subview. The resize indicator is drawn by NSThemeFrame itself.
+	   No need to check whether the content view is flipped, -locationInWindow 
+	   is always expressed in non-flipped coordinates (at least on Mac OS X). */
+	NSRect resizeIndicatorRect = NSMakeRect([contentView frame].size.width - 16, 0, 16, 16);
+	BOOL insideResizeIndicator = [contentView mouse: contentRelativeLoc inRect: resizeIndicatorRect];
+
+	return (outsideContentView || insideResizeIndicator);
+#endif
+}
+
+/** Returns the widget backend event that was used to construct to the receiver. 
+
+You should avoid to use this method to simplify the portability of your code to 
+other widget backends that might be written in future. */
+- (void *) backendEvent
+{
+	return (void *)_backendEvent;
+}
+
+/** Returns a window identifier that encodes the window on which the event 
+occured. The returned value is backend-specific. */
+- (int) windowNumber
+{
+	return [(NSEvent *)_backendEvent windowNumber];
+}
+
+/** Returns the window content view bound to the content item. */
+- (id) contentView
+{
+	return [[(NSEvent *)_backendEvent window] contentView];
+}
+
+/* Deprecated */
+
+/** Returns the location of the pointer expressed in non-flipped coordinates 
+relative to the window content.
+ 
+For the AppKit backend, the window content is the content view. */
+- (NSPoint) locationInWindow
+{
+	return [(NSEvent *)_backendEvent locationInWindow];
+}
+
+- (NSWindow *) window
+{
+	return [(NSEvent *)_backendEvent window];
 }
 
 /** Returns the object that contains all the drag or drop infos, if the current 
@@ -173,36 +402,6 @@ event has triggered a drag or drop action. */
 - (NSPoint) draggingLocation
 {
 	return [_draggingInfo draggingLocation];
-}
-
-/** Returns the widget backend event that was used to construct to the receiver. 
-
-You should avoid to use this method to simplify the portability of your code to 
-other widget backends that might be written in future. */
-- (void *) backendEvent
-{
-	return (void *)_backendEvent;
-}
-
-/** Returns the location of the pointer in the coordinate space of the window 
-content.
- 
-For the AppKit backend, the window content is the content view. */
-- (NSPoint) locationInWindow
-{
-	return [(NSEvent *)_backendEvent locationInWindow];
-}
-
-/** Returns a window identifier that encodes the window on which the event 
-occured. The returned value is backend-specific. */
-- (int) windowNumber
-{
-	return [(NSEvent *)_backendEvent windowNumber];
-}
-
-- (NSWindow *) window
-{
-	return [(NSEvent *)_backendEvent window];
 }
 
 // FIXME: Far from ideal... Once we know better what the ETEvent API should be

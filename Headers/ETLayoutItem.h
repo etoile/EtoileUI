@@ -69,6 +69,7 @@ extern NSString *kETPersistentFrameProperty; /** persistentFrame property name *
 extern NSString *kETRepresentedObjectProperty; /** representedObject property name */
 extern NSString *kRepresentedPathBaseProperty; /** representedPathBase property name */
 extern NSString *kETSelectedProperty; /** selected property name */
+extern NSString *kETSubtypeProperty; /** subtype property name */
 extern NSString *kETStyleProperty; /** style property name */
 extern NSString *kETTargetProperty; /** actionHandler property name */
 extern NSString *kETValueProperty; /** value property name */
@@ -82,6 +83,7 @@ extern NSString *kETVisibleProperty; /** visible property name */
 	
 	id _modelObject;
 	NSMutableDictionary *_variableProperties;
+	NSMutableDictionary *_defaultValues; // TODO: Probably merge the two dictionaries
 
 	NSRect _contentBounds;
 	NSPoint _position;
@@ -106,6 +108,7 @@ extern NSString *kETVisibleProperty; /** visible property name */
 - (id) initWithRepresentedObject: (id)object;
 - (id) initWithView: (NSView *)view;
 - (id) initWithView: (NSView *)view value: (id)value representedObject: (id)repObject;
+- (id) initWithFrame: (NSRect)frame;
 
 - (id) copyWithZone: (NSZone *)zone;
 - (id) deepCopy;
@@ -113,7 +116,7 @@ extern NSString *kETVisibleProperty; /** visible property name */
 /* Layout Item Tree */
 
 - (id) rootItem;
-- (id) baseItem;
+- (ETLayoutItemGroup *) baseItem;
 - (BOOL) isBaseItem;
 - (ETLayoutItemGroup *) parentItem;
 - (void) setParentItem: (ETLayoutItemGroup *)parent;
@@ -205,6 +208,8 @@ extern NSString *kETVisibleProperty; /** visible property name */
 
 /** Used to select items which can be dragged or dropped in a dragging operation */
 - (ETUTI *) type;
+- (void) setSubtype: (ETUTI *)aUTI;
+- (ETUTI *) subtype;
 
 /* Layouting & Rendering Chain */
 
@@ -225,6 +230,10 @@ extern NSString *kETVisibleProperty; /** visible property name */
 - (void) setNeedsDisplayInRect: (NSRect)dirtyRect;
 - (void) display;
 - (void) displayRect: (NSRect)dirtyRect;
+- (void) displayIfNeeded;
+
+- (void) setDefaultValue: (id)aValue forProperty: (NSString *)key;
+- (id) defaultValueForProperty: (NSString *)key;
 
 /* Geometry */
 
@@ -237,12 +246,9 @@ extern NSString *kETVisibleProperty; /** visible property name */
 /*- (NSPoint) convertPoint: (NSPoint)point fromItem: (ETLayoutItemGroup *)ancestor;
 - (NSPoint) convertPoint: (NSPoint)point toItem: (ETLayoutItemGroup *)ancestor;*/
 - (BOOL) containsPoint: (NSPoint)point;
-- (BOOL) pointInside: (NSPoint)point;
+- (BOOL) pointInside: (NSPoint)point useBoundingBox: (BOOL)extended;
 - (BOOL) isFlipped;
 - (void) setFlipped: (BOOL)flip;
-
-//- (ETLayoutItem *) decoratorItemAtPoint: (NSPoint *)point;
-//- (NSRect) contentRect;
 
 /* Decoration */
 
@@ -304,6 +310,7 @@ extern NSString *kETVisibleProperty; /** visible property name */
 - (id) target;
 - (void) setAction: (SEL)aSelector;
 - (SEL) action;
+- (id) nextResponder;
 
 - (id <ETInspector>) inspector;
 - (void) setInspector: (id <ETInspector>)inspector;
@@ -318,7 +325,6 @@ extern NSString *kETVisibleProperty; /** visible property name */
 
 - (ETLayoutItemGroup *) parentLayoutItem;
 - (void) setParentLayoutItem: (ETLayoutItemGroup *)parent;
-- (id <ETEventHandler>) eventHandler;
 
 @end
 

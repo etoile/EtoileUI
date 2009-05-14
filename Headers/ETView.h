@@ -116,6 +116,7 @@
 #ifndef GNUSTEP
 	BOOL _wasJustRedrawn;
 #endif
+	NSRect _rectToRedraw;
 }
 
 /* Title Bar */

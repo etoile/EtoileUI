@@ -36,7 +36,7 @@
 #import <Foundation/Foundation.h>
 #import <AppKit/AppKit.h>
 
-@class ETLayoutItem, ETLayoutItemGroup;
+@class ETLayoutItem, ETLayoutItemGroup, ETUTI;
 
 // TODO: Think about the selection marker stuff and implement it if it makes senses.
 
@@ -56,7 +56,7 @@
 	For the UI, you can specify items templates to be cloned when a new element 
 	has to be inserted/added. On the model side, you can specify the class of 
 	the model objects to be instantiated.
-	WARNING: the following part of the overview is work-in-progress, it may not 
+
 	be exactly accurate or entirely implemented.
 	This whole facility can be used at any levels of the UI. For example, for  
 	supporting multiple windows in a file manager, you can create an 
@@ -85,6 +85,8 @@
 	Class _groupClass;
 	NSArray *_sortDescriptors;
 	NSPredicate *_filterPredicate;
+	ETUTI *_allowedPickType;
+	NSMutableDictionary *_allowedDropTypes; /* Allowed drop UTIs by drop target UTIs */
 	BOOL _automaticallyRearrangesObjects;
 	BOOL _hasNewSortDescriptors;
 	BOOL _hasNewFilterPredicate;
@@ -119,7 +121,6 @@
 - (NSMutableIndexSet *) selectionIndexes;
 - (BOOL) setSelectionIndex: (unsigned int)index;
 - (unsigned int) selectionIndex;
-
 - (unsigned int) insertionIndex;
 
 /* Sorting and Filtering */
@@ -134,4 +135,12 @@
 
 //- (void) commitEditing;
 
+/* Pick and Drop */
+
+- (ETUTI *) allowedPickType;
+- (void) setAllowedPickType: (ETUTI *)aUTI;
+- (ETUTI *) allowedDropTypeForTargetType: (ETUTI *)aUTI;
+- (void) setAllowedDropType: (ETUTI *)aUTI forTargetType: (ETUTI *)targetUTI;
+
 @end
+

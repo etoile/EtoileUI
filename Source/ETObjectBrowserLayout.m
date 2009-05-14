@@ -86,6 +86,11 @@
 	return self;
 }
 
+- (ETLayoutItemGroup *) rootItem
+{
+	return [(ETView *)[self layoutView] layoutItem];
+}
+
 - (void) setLayoutView: (NSView *)protoView
 {
 	[super setLayoutView: protoView];

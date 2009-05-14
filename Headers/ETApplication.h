@@ -35,7 +35,8 @@
  
 #import <Foundation/Foundation.h>
 #import <AppKit/AppKit.h>
-#import <EtoileUI/ETLayoutItemGroup.h>
+
+@class ETLayoutItemGroup;
 
 #define ETApp (ETApplication *)[ETApplication sharedApplication]
 
@@ -70,7 +71,7 @@ file or write a custom main() function.*/
 
 /* Actions */
 
-- (id) targetForAction: (SEL)anAction;
+- (id) targetForAction: (SEL)aSelector to: (id)aTarget from: (id)sender;
 - (IBAction) browseLayoutItemTree: (id)sender;
 - (IBAction) toggleDevelopmentMenu: (id)sender;
 - (IBAction) toggleLiveDevelopment: (id)sender;

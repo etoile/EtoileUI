@@ -67,10 +67,17 @@
 #import <EtoileUI/ETLayout.h>
 #import <EtoileUI/ETLayoutLine.h>
 
+#import <EtoileUI/ETInstrument.h>
+#import <EtoileUI/ETInstruments.h>
+#import <EtoileUI/ETSelectTool.h>
+#import <EtoileUI/ETPickDropCoordinator.h>
+
 #import <EtoileUI/ETComputedLayout.h>
 #import <EtoileUI/ETFlowLayout.h>
 #import <EtoileUI/ETLineLayout.h>
 #import <EtoileUI/ETStackLayout.h>
+#import <EtoileUI/ETTemplateItemLayout.h>
+#import <EtoileUI/ETIconLayout.h>
 
 #import <EtoileUI/ETTableLayout.h>
 #import <EtoileUI/ETOutlineLayout.h>

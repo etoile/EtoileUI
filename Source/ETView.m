@@ -42,6 +42,7 @@
 #import "ETCompatibility.h"
 #import "ETFlowLayout.h"
 #import "ETContainer.h"
+
 #define NC [NSNotificationCenter defaultCenter]
 
 NSString *ETViewTitleBarViewPrototypeDidChangeNotification = @"ETViewTitleBarViewPrototypeDidChangeNotification";
@@ -513,7 +514,9 @@ You can revert to non-flipped coordinates by passing NO to this method. */
 	/* Ensure the resizing of all subviews is handled automatically */
 	[self setAutoresizesSubviews: YES];
 	[self setAutoresizingMask: [view autoresizingMask]];
-	
+
+	[[self wrappedView] removeFromSuperview];
+
 	if (temporary) /* Temporary view setter */
 	{
 		if (view != nil)
@@ -541,8 +544,7 @@ You can revert to non-flipped coordinates by passing NO to this method. */
 		{
 			/* Restore autoresizing mask */
 			[[self wrappedView] setAutoresizingMask: [self autoresizingMask]];
-			[[self wrappedView] removeFromSuperview];
-		}	
+		}
 	}
 }
 
@@ -746,6 +748,29 @@ You can revert to non-flipped coordinates by passing NO to this method. */
 
 /* Rendering Tree */
 
+#ifdef DEBUG_DRAWING
+
+- (void) drawInvalidatedAreaWithRect: (NSRect)needsDisplayRect
+{
+	if ([self lockFocusIfCanDraw] == NO)
+	{
+		ETLog(@"WARNING: Cannot draw invalidated area %@ in %@", 
+			NSStringFromRect(needsDisplayRect), self);
+		return;	
+	}
+	[[[NSColor redColor] colorWithAlphaComponent: 0.2] set];
+	[NSBezierPath fillRect: needsDisplayRect];
+	[self unlockFocus];
+}
+
+- (void) setNeedsDisplayInRect: (NSRect)dirtyRect
+{
+	//[self displayRect: dirtyRect];
+	[self drawInvalidatedAreaWithRect: dirtyRect];
+}
+
+#endif
+
 /* INTERLEAVED_DRAWING must always be enabled. 
    You might want to disable it for debugging how the control of the drawing is 
    handed by ETView to the layout item tree.
@@ -791,11 +816,18 @@ Layout items are smart enough to avoid drawing their view when they have one. */
 
 #else
 
+- (void) drawRect: (NSRect)rect
+{
+	_rectToRedraw = rect;
+}
+
+#ifdef GNUSTEP
 - (void) displayIfNeeded
 {
 	//ETLog(@"-displayIfNeeded");
 	[super displayIfNeeded];
 }
+#endif
 
 - (void) displayIfNeededInRect:(NSRect)aRect
 {
@@ -851,6 +883,17 @@ GNUstep and pass it to the layout item tree as needed. */
 
 #else
 
+- (void) lockFocusInRect: (NSRect)rectToRedraw
+{
+	[self lockFocus];
+	if ([self wantsDefaultClipping])
+	{
+		/* No need to apply bounds transform to aRect because we get this rect 
+		   from -drawRect: which receives a rect already adjusted. */ 
+		NSRectClip(rectToRedraw);
+	}
+}
+
 // NOTE: Very often NSView instance which has been sent a display message will 
 // call this method on its subviews. These subviews will do the same with their own 
 // subviews. Here is the other method often used in the same way:
@@ -869,7 +912,7 @@ Cocoa and pass it to the layout item tree as needed. */
 	   portion of the content view frame and no clipping is done either. */
 	if (lockFocus == YES)
 	{
-		[self lockFocus];
+		[self lockFocusInRect: _rectToRedraw];
 	}
 
 #ifdef DEBUG_DRAWING
@@ -885,12 +928,15 @@ Cocoa and pass it to the layout item tree as needed. */
 	   drawing sequence (triggered by display-like methods). */
 	if ([[self renderer] respondsToSelector: @selector(render:dirtyRect:inView:)])
 	{
-		[[self renderer] render: nil dirtyRect: aRect inView: self];
+		[[self renderer] render: nil dirtyRect: _rectToRedraw inView: self];
 	}
 
 	if (lockFocus == YES)
+	{
 		[self unlockFocus];
-		
+		[[self window] flushWindow];
+	}
+
 	_wasJustRedrawn = YES;
 }
 
@@ -913,27 +959,82 @@ Cocoa and pass it to the layout item tree as needed. */
 	   and this method will then draw another time in the same view/receiver with 
 	   with -render:dirtyRect:inView:. 
 	   The next line works pretty well... 
-	   BOOL needsRedraw = (isVisibleRect && isRectForView && [self needsDisplay] && [self inLiveResize]);
+	   BOOL needsRedraw = (isRectForView && [self needsDisplay] && [self inLiveResize]);
 	   ... but we rather use the _wasJustRedrawn flag which is a safer way to 
 	   check whether _recursiveDisplayAllDirtyXXX was called by the call to 
-	   super at the beginning of this method or not. */
-	BOOL needsRedraw = (isVisibleRect && isRectForView && [self needsDisplay] && _wasJustRedrawn == NO);
+	   super at the beginning of this method or not.
+	   isVisibleRect seems to be YES when -displayXXX was used but NO when 
+	   -displayIfNeededXXX was. */
+	BOOL needsRedraw = (isRectForView && [self needsDisplay] && _wasJustRedrawn == NO);
 
 	if (needsRedraw)
 	{
-		[self lockFocus];
+		[self lockFocusInRect: _rectToRedraw];
 
 		/* We always composite the rendering chain on top of each view -drawRect: 
 		   drawing sequence (triggered by display-like methods). */
 		if ([[self renderer] respondsToSelector: @selector(render:dirtyRect:inView:)])
 		{
-			[[self renderer] render: nil dirtyRect: aRect inView: self];
+			[[self renderer] render: nil dirtyRect: _rectToRedraw inView: self];
 		}
 
 		[self unlockFocus];
+		[[self window] flushWindow];
 	}
 
 	_wasJustRedrawn = NO;
+}
+
+#if 0
+- (void) displayIfNeeded
+{
+	ETDebugLog(@"-displayIfNeeded %@", self);
+	[super displayIfNeeded];
+
+	/* Most of the time, the focus isn't locked. In this case, aRect is a 
+	   portion of the content view frame and no clipping is done either. */
+	//if (lockFocus == YES)
+	{
+		[self lockFocus];
+	}
+
+#ifdef DEBUG_DRAWING
+	//if ([self respondsToSelector: @selector(layout)] && [[(ETContainer *)self layout] isKindOfClass: [ETFlowLayout class]])
+	{
+		[[NSColor blackColor] set];
+		[NSBezierPath setDefaultLineWidth: 6.0];
+		[NSBezierPath strokeRect: aRect];
+	}
+#endif
+
+	/* We always composite the rendering chain on top of each view -drawRect: 
+	   drawing sequence (triggered by display-like methods). */
+	if ([[self renderer] respondsToSelector: @selector(render:dirtyRect:inView:)])
+	{
+		[[self renderer] render: nil dirtyRect: [self bounds] inView: self];
+	}
+
+	//if (lockFocus == YES)
+		[self unlockFocus];
+		
+	_wasJustRedrawn = YES;
+}
+
+- (void) displayIfNeededIgnoringOpacity
+{
+
+}
+#endif
+
+- (void) _recursiveDisplayRectIfNeededIgnoringOpacity: (NSRect)aRect 
+	inContext: (NSGraphicsContext *)ctxt topView: (BOOL)isTopView
+{
+
+}
+
+- (void) _lightWeightRecursiveDisplayInRect: (NSRect)aRect
+{
+
 }
 
 #endif

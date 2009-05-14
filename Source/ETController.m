@@ -35,6 +35,7 @@
  */
 
 #import <EtoileFoundation/Macros.h>
+#import <EtoileFoundation/ETUTI.h>
 #import "ETController.h"
 #import "ETLayoutItemGroup+Mutation.h"
 #import "ETContainer.h"
@@ -53,6 +54,8 @@
 	[self setObjectClass: nil];
 	[self setGroupClass: nil];
 	[self setSortDescriptors: nil];
+	_allowedPickType = [[ETUTI alloc] init];
+	_allowedDropTypes = [[NSMutableDictionary alloc] init];
 
 	return self;
 }
@@ -65,6 +68,8 @@
 	DESTROY(_groupClass);
 	DESTROY(_sortDescriptors);
 	DESTROY(_filterPredicate);
+	DESTROY(_allowedPickType);
+	DESTROY(_allowedDropTypes);
 	[self setContent: nil];
 	
 	[super dealloc];
@@ -107,7 +112,12 @@ changed. */
 	else
 	{
 		[content setValue: self forProperty: kETControllerProperty];
+
+		/* Make base item if needed */
+		if ([content isBaseItem] == NO)
+			[content setRepresentedPathBase: @"/"];
 	}
+
 	ASSIGN(_content, content);
 }
 
@@ -383,6 +393,9 @@ the default one based on
 
 	if (_hasNewContent || _hasNewFilterPredicate)
 		[_content filterWithPredicate: [self filterPredicate] recursively: YES];
+
+	if (_hasNewContent || _hasNewSortDescriptors || _hasNewFilterPredicate)
+		[_content updateLayout];
 }
 
 /** Returns whether -rearrangeObjects should be automatically called when 
@@ -405,4 +418,41 @@ the default one based on
 // 	[[self content] reloadAndUpdateLayout];
 // }
 
+/* Pick and Drop */
+
+- (ETUTI *) allowedPickType
+{
+	return _allowedPickType;
+}
+
+- (void) setAllowedPickType: (ETUTI *)aUTI
+{
+	NILARG_EXCEPTION_TEST(aUTI)
+	ASSIGN(_allowedPickType, aUTI);
+}
+
+- (ETUTI *) allowedDropTypeForTargetType: (ETUTI *)aUTI
+{
+	NILARG_EXCEPTION_TEST(aUTI)
+	NSMutableArray *matchedDropTypes = [NSMutableArray arrayWithCapacity: 100];
+
+	FOREACH([_allowedDropTypes allKeys], targetType, ETUTI *)
+	{
+		if ([aUTI conformsToType: targetType])
+		{
+			[matchedDropTypes addObject: [_allowedDropTypes objectForKey: targetType]];
+		}
+	}
+
+	return [ETUTI transientTypeWithSupertypes: matchedDropTypes];
+}
+
+- (void) setAllowedDropType: (ETUTI *)aUTI forTargetType: (ETUTI *)targetUTI
+{
+	NILARG_EXCEPTION_TEST(targetUTI)
+	NILARG_EXCEPTION_TEST(aUTI)
+	[_allowedDropTypes setObject: aUTI forKey: targetUTI];
+}
+
 @end
+

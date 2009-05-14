@@ -35,26 +35,52 @@
  */
 
 #import <EtoileUI/ETStyleRenderer.h>
-#import <EtoileUI/ETLayoutItem.h>
+#import <EtoileUI/ETShape.h>
 #import <EtoileUI/NSView+Etoile.h>
 #import <EtoileUI/ETCompatibility.h>
 
+@implementation ETSelectionAreaItem
 
+- (id) initWithView: (NSView *)view value: (id)value representedObject: (id)repObject;
+{
+	self = [super initWithView: view value: value representedObject: repObject];
+	if (self == nil)
+		return nil;
+	
+	ETShape *shape = [ETShape rectangleShapeWithRect: NSMakeRect(0, 0, 100, 50)];
+
+	[shape setStrokeColor: [NSColor darkGrayColor]];
+	[shape setFillColor: [NSColor lightGrayColor]];
+	[shape setAlphaValue: 0.5];
+	[self setRepresentedObject: shape];
+	[self setStyle: shape];
+
+    return self;
+}
+
+- (void) setFrame: (NSRect)rect
+{
+	[super setFrame: rect];
+	NSRect bounds = ETMakeRect(NSZeroPoint, rect.size);
+	[[self representedObject] setBounds: bounds];
+	[self setBoundingBox: NSInsetRect(bounds, -5, -5)]; // FIXME: Handle this properly
+	//[[self representedObject] setPath: [NSBezierPath bezierPathWithRect: rect]];
+}
+
+@end
+
+#if 0
 @implementation ETSelection
 
 - (id) init
 {
-	self = [super init];
-
-    if (self != nil)
-    {
-        [self setDrawingShape: [NSBezierPath bezierPathWithRect: NSMakeRect(0, 0, 100, 100)]];
-        [self setEditingShape: [NSBezierPath bezierPathWithRect: NSMakeRect(0, 0, 200, 200)]];
-        [self setOutlineColor: [NSColor darkGrayColor]];
-        [self setInteriorColor: [NSColor lightGrayColor]];
-        [self setAlphaValue: 0.5];
-        [self setHidden: NO];
-    }
+	SUPERINIT
+	
+	[self setDrawingShape: [NSBezierPath bezierPathWithRect: NSMakeRect(0, 0, 100, 100)]];
+	[self setEditingShape: [NSBezierPath bezierPathWithRect: NSMakeRect(0, 0, 200, 200)]];
+	[self setStrokeColor: [NSColor darkGrayColor]];
+	[self setFillColor: [NSColor lightGrayColor]];
+	[self setAlphaValue: 0.5];
 	
     return self;
 }
@@ -63,8 +89,6 @@
 {
     DESTROY(_drawingShape);
     DESTROY(_editingShape);
-    DESTROY(_outlineColor);
-    DESTROY(_interiorColor);
     [super dealloc];
 }
 
@@ -88,60 +112,5 @@
     ASSIGN(_editingShape, [shape copy]); 
 }
 
-- (NSColor *) outlineColor
-{
-    return AUTORELEASE([_outlineColor copy]); 
-}
-
-- (void) setOutlineColor: (NSColor *)color
-{
-	ASSIGN(_outlineColor, [color copy]);
-}
-
-- (NSColor *) interiorColor
-{
-    return AUTORELEASE([_interiorColor copy]); 
-}
-
-- (void) setInteriorColor: (NSColor *)color
-{
-	ASSIGN(_interiorColor, [color copy]);
-}
-
-- (float) alphaValue
-{
-    return _alpha;
-}
-
-- (void) setAlphaValue: (float)newAlpha
-{
-    _alpha = newAlpha;
-}
-
-- (BOOL) hidden
-{
-    return _hidden;
-}
-
-- (void) setHidden: (BOOL)flag
-{
-    _hidden = flag;
-}
-
-- (void) renderLayoutItem: (ETLayoutItem *)item
-{
-	NSRect itemRect = ETMakeRect([item origin], [item size]);
-	if ([item isSelected])
-	{
-		NSLog(@"Draw selection for %@", item);
-		[self drawInRect: NSInsetRect(itemRect, 30, 30)];
-	}
-}
-
-- (void) drawInRect: (NSRect)rect
-{
-	[[NSColor redColor] set];
-	NSRectFill(rect);
-}
-
 @end
+#endif

@@ -44,6 +44,11 @@
 #import "ETViewModelLayout.h"
 #import "ETCompatibility.h"
 
+@interface NSObject (EtoileUIPrivate)
++ (NSString *) stripClassName;
++ (NSString *) stringBySpacingCapitalizedWordsOfString: (NSString *)name;
+@end
+
 
 @implementation NSObject (EtoileUI)
 
@@ -142,6 +147,124 @@ to overriden by a third-party inspector. */
 	[item setName: [NSString stringWithFormat: _(@"Explorer %@"), [self primitiveDescription]]];
 	[item setSize: NSMakeSize(350, 500)];
 	[[ETLayoutItem windowGroup] addItem: item];
+}
+
+/* Introspection Utility */
+
+/** Returns the display name used to present the receiver or its instances in 
+in various EtoileUI builtin facilities such as an inspector. */
++ (NSString *) displayName
+{
+	return [self stringBySpacingCapitalizedWordsOfString: [self stripClassName]];
+}
+
+/** Overrides. */
++ (NSString *) baseClassName
+{
+	return @"Object";
+}
+
+/* Removes collision prefix and base suffix of class names. */
++ (NSString *) stripClassName
+{
+	NSString *className = [self className];
+
+	if ([className hasPrefix: [self typePrefix]] == NO 
+	 || [className hasSuffix: [self baseClassName]] == NO)
+	{
+		ETLog(@"Type prefix %@ or base class name %@ doesn't match class name %@ ",
+			[self typePrefix], [self baseClassName], className);
+		return className;
+	}
+	
+	// TODO: Implement -stringByRemovingPrefix: and use it.
+	unsigned int prefixLength = [[self typePrefix] length];
+	unsigned int classSuffixLength = [[self baseClassName] length];
+	NSRange range = NSMakeRange(prefixLength, 
+		[className length] - (prefixLength + classSuffixLength));
+
+	return [className substringWithRange: range];
+}
+
+/* Returns a string where all words are separated by spaces for a given string 
+of capitalized words with no spaces at all. 
+
+Useful to convert a name in camel case into a more user friendly name.
+
+TODO: Move in NSString+Etoile.h. */
++ (NSString *) stringBySpacingCapitalizedWordsOfString: (NSString *)name
+{
+	NSScanner *scanner = [NSScanner scannerWithString: name];
+	NSCharacterSet *charset = [NSCharacterSet uppercaseLetterCharacterSet];
+	NSString *word = nil;
+	NSMutableString *displayName = [NSMutableString stringWithCapacity: 40];
+	BOOL beforeLastLetter = NO;
+
+	do
+	{
+		/* Scan a first capital or an uppercase word */
+		BOOL hasScannedCapitals = [scanner scanCharactersFromSet: charset
+	                                                  intoString: &word];
+		if (hasScannedCapitals)
+		{
+			beforeLastLetter = ([scanner isAtEnd] == NO);
+			BOOL hasFoundUppercaseWord = ([word length] > 1);
+			if (hasFoundUppercaseWord && beforeLastLetter)
+			{
+				[displayName appendString: [word substringToIndex: [word length] - 1]];
+				[displayName appendString: @" "]; /* Add a space between each words */
+				[displayName appendString: [word substringFromIndex: [word length] - 1]];
+			}
+			else /* single capital or uppercase word at the end */
+			{
+				[displayName appendString: word];
+			}
+		}
+
+		/* Scan lowercase characters, either a full word or what follows the 
+		   a capital until the next one */
+		BOOL hasFoundNextCapitalOrEnd = [scanner scanUpToCharactersFromSet: charset
+	                                                            intoString: &word];
+		if (hasFoundNextCapitalOrEnd)
+		{
+			[displayName appendString: word];
+
+			/* Add a space between each words */
+			beforeLastLetter = ([scanner isAtEnd] == NO);
+			BOOL beyondFirstCapital = ([scanner scanLocation] > 0);
+			if (beyondFirstCapital && beforeLastLetter)
+			{
+				[displayName appendString: @" "];
+			}
+		}
+	} while (beforeLastLetter);
+
+	return displayName;
+}
+
+/** Returns the default aspect name used to register a receiver instance in
+the aspect repository. */
++ (NSString *) aspectName
+{
+	NSString *name = [self stripClassName];
+
+	NSAssert(name != nil, @"+stripClassName must never return nil but an empty string if needed");
+	if ([name isEqual: @""])
+		return name;
+
+	NSString *lowercasedFirstLetter = [[name substringToIndex: 1] lowercaseString];
+
+#ifdef GNUSTEP
+	return [lowercasedFirstLetter stringByAppendingString: [name substringFromIndex: 1]];
+#else
+	return [name stringByReplacingCharactersInRange: NSMakeRange(0, 1) 
+	                                     withString: lowercasedFirstLetter];
+#endif
+}
+
+- (BOOL) isFirstResponderProxy
+{
+	return NO;
 }
 
 @end

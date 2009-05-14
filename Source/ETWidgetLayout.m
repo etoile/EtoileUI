@@ -37,6 +37,7 @@
  */
 
 #import "ETWidgetLayout.h"
+#import "ETLayoutItem+Events.h"
 #import "ETCompatibility.h"
 #import "ETContainer.h"
 
@@ -56,6 +57,15 @@
 
 See also -[ETLayout isWidget].*/
 - (BOOL) isWidget
+{
+	return YES;	
+}
+
+/** Returns YES to indicate the receiver don't let the layout context items draw 
+themselves, but delegate it the wrapped widget.
+
+See also -[ETLayout isOpaque].*/
+- (BOOL) isOpaque
 {
 	return YES;	
 }
@@ -168,7 +178,7 @@ be called. */
 	ETDebugLog(@"Double action in %@ with selected items %@", sender,
 		[self selectedItems]);
 
-	[(ETContainer *)[[self layoutContext] supervisorView] mouseDoubleClickItem: [self doubleClickedItem]];
+	[[(ETLayoutItemGroup *)[self layoutContext] actionHandler] handleDoubleClickItem: [self doubleClickedItem]];
 }
 
 @end

@@ -43,6 +43,10 @@
 #import "NSView+Etoile.h"
 #import "ETCompatibility.h"
 
+@interface ETDecoratorItem (Private)
+- (NSRect) convertDecoratorRectToVisibleContent: (NSRect)rectInDecorator;
+- (NSPoint) convertDecoratorPointToVisibleContent: (NSPoint)aPoint;
+@end
 
 @implementation ETUIItem
 
@@ -51,6 +55,15 @@ both size and position are undetermined in the initialization context. */
 + (NSRect) defaultItemRect
 {
 	return NSMakeRect(0, 0, 50, 50);
+}
+
+/** <override-dummy />
+Returns whether the view used by the receiver is a widget. 
+
+By default, returns NO. */
+- (BOOL) usesWidgetView
+{
+	return NO;
 }
 
 - (void) dealloc
@@ -175,7 +188,7 @@ You can retrieve the outermost decorator by calling -lastDecoratorItem. */
 - (NSRect) convertDisplayRect: (NSRect)rect 
         toAncestorDisplayView: (NSView **)aView 
                      rootView: (NSView *)topView
-                   parentItem: (ETLayoutItem *)parent
+                   parentItem: (ETLayoutItemGroup *)parent
 {
 	NSView *displayView = [self supervisorView];
 	NSRect decorationBounds = ETMakeRect(NSZeroPoint, [self decorationRect].size);
@@ -200,7 +213,7 @@ You can retrieve the outermost decorator by calling -lastDecoratorItem. */
 		else if (parent != nil) /* Then move up to the parent item */
 		{
 			NSRect rectInParent = [[self firstDecoratedItem] convertRectToParent: rect];
-			return [parent convertDisplayRect: rectInParent toAncestorDisplayView: aView rootView: topView parentItem: parent];
+			return [parent convertDisplayRect: rectInParent toAncestorDisplayView: aView rootView: topView parentItem: [parent parentItem]];
 		}
 		else
 		{
@@ -288,6 +301,22 @@ model graph and remains semantic. */
 	RELEASE(decorator);
 }
 
+/** Traverses the decorator chain to remove the given decorator item.
+
+This method won't remove other decorator items in the chain, even if they follow 
+the removed one. */
+- (void) removeDecoratorItem: (ETDecoratorItem *)aDecorator
+{
+	if ([aDecorator isEqual: _decoratorItem])
+	{
+		[self setDecoratorItem: [_decoratorItem decoratorItem]];
+	}
+	else
+	{
+		[_decoratorItem removeDecoratorItem: aDecorator];
+	}
+}
+
 /** Returns the outermost item in the decorator chain. */
 - (id) lastDecoratorItem
 {
@@ -361,6 +390,28 @@ Returns the decoration rect associated with the receiver. */
 
 }
 
+
+/* Default implementation inherited by ETLayoutItem but overriden by ETDecoratorItem */
+- (ETUIItem *) decoratedItemAtPoint: (NSPoint)aPoint
+{
+	NSRect bounds = ETMakeRect(NSZeroPoint, [self decorationRect].size);
+	BOOL isInside = NSMouseInRect(aPoint, bounds, [self isFlipped]);
+
+	return (isInside ? self : (ETUIItem *)nil);
+}
+
+/** Returns the innermost decorator item whose content rect contains aPoint.
+aPoint must be expressed in the receiver coordinate space.
+
+Will return self, when the receiver is the matched innermost decorator, and nil 
+when the point is not located inside the receiver.  */
+- (ETUIItem *) decoratorItemAtPoint: (NSPoint)aPoint
+{
+	return [[self lastDecoratorItem] decoratedItemAtPoint: aPoint];
+}
+
+/* Framework Private */
+
 /** <override-dummy />
 Returns whether the geometry between the receiver and the supervisor view 
 shoud be synced.
@@ -406,10 +457,27 @@ initializer. */
 
 /** Returns whether the view used by the receiver is a widget. 
 
-By default, returns NO. */
+By default, returns YES. */
 - (BOOL) usesWidgetView
 {
 	return YES;
+}
+
+- (ETUIItem *) decoratedItemAtPoint: (NSPoint)aPoint
+{
+	/* All the items in a decorator chain have the same -isFlipped value, no 
+	   need to use NSMouseInRect. */
+	BOOL isInside = NSMouseInRect(aPoint, [self visibleContentRect], [self isFlipped]);
+
+	if (isInside && _decoratedItem != nil)
+	{
+		NSPoint contentRelativePoint = [self convertDecoratorPointToVisibleContent: aPoint];
+		return [_decoratedItem decoratedItemAtPoint: contentRelativePoint];
+	}
+	else
+	{
+		return self;
+	}
 }
 
 // TODO: The be used when EtoileUI will draw everything by itself including 
@@ -441,13 +509,22 @@ If you want to intercept a decoration rect update, see -handleSetDecorationRect:
 
 /** <override-dummy />
 Returns the content rect portion that remains visible when the content is 
+clipped. The visible rect is expressed in the content coordinate space unlike 
+-visibleContentRect. */
+- (NSRect) visibleRect
+{
+	return [self contentRect];
+}
+
+/** <override-dummy />
+Returns the content rect portion that remains visible when the content is 
 clipped. The visible content rect is expressed in the receiver coordinate space. 
 See also -contentRect.
 
 When the content is not clipped by the receiver, -visibleContentRect and 
 -contentRect are equal.
 
-With ETDecoratorItem, the content rect and the visible content rect and equal, 
+With ETDecoratorItem, the content rect and the visible content rect are equal, 
 because the content is resized rather than clipped when a decorator is 
 resized. However subclasses can decide otherwise (e.g. ETScrollableAreaItem). */
 - (NSRect) visibleContentRect
@@ -479,25 +556,85 @@ See also -convertDecoratorRectToContent:. */
 - (NSRect) convertDecoratorRectFromContent: (NSRect)rectInContent
 {
 	NSRect rectInDecorator = rectInContent;
+	NSRect visibleRect = [self visibleRect];
+	NSRect contentRect = [self contentRect];
+	BOOL isContentClipped = (NSEqualSizes(visibleRect.size, contentRect.size) == NO);
 
-	rectInDecorator.origin.x += [self contentRect].origin.x;
-	rectInDecorator.origin.y += [self contentRect].origin.y;
+	/* Convert to the visible content coordinate space
+	
+	   When the origin is beyond the visible content boundaries, the rebased 
+	   origin will have x and/or y negative. */
+	if (isContentClipped)
+	{
+		rectInDecorator.origin.x -= [self visibleRect].origin.x;
+		rectInDecorator.origin.y -= [self visibleRect].origin.y;
+	}
+
+	/* Convert to the decoration coordinate space */
+	rectInDecorator.origin.x += [self visibleContentRect].origin.x;
+	rectInDecorator.origin.y += [self visibleContentRect].origin.y;
 
 	return rectInDecorator;
 }
 
+/** Returns a point expressed in the receiver coordinate space equivalent to
+point parameter expressed in the receiver content coordinate space.
+
+See also -convertDecoratorRectFromContent:. */
+- (NSPoint) convertDecoratorPointFromContent: (NSPoint)aPoint
+{
+	return [self convertDecoratorRectFromContent: ETMakeRect(aPoint, NSZeroSize)].origin;
+}
+
 /** Returns a rect expressed in the receiver content coordinate space equivalent 
-torect parameter expressed in the receiver coordinate space.
+to rect parameter expressed in the receiver coordinate space.
 
 For extra details, see -convertDecoratorRectFromContent:. */
 - (NSRect) convertDecoratorRectToContent: (NSRect)rectInDecorator
 {
 	NSRect rectInContent = rectInDecorator;
+	NSRect visibleRect = [self visibleRect];
+	NSRect contentRect = [self contentRect];
+	BOOL isContentClipped = (NSEqualSizes(visibleRect.size, contentRect.size) == NO);
 
-	rectInContent.origin.x -= [self contentRect].origin.x;
-	rectInContent.origin.y -= [self contentRect].origin.y;
+	rectInContent.origin.x -= [self visibleContentRect].origin.x;
+	rectInContent.origin.y -= [self visibleContentRect].origin.y;
 
+	/* Convert to the visible content coordinate space
+	
+	   When the origin is beyond the visible content boundaries, the rebased 
+	   origin will have x and/or y negative. */
+	if (isContentClipped)
+	{
+		rectInContent.origin.x += [self visibleRect].origin.x;
+		rectInContent.origin.y += [self visibleRect].origin.y;
+	}
+	
 	return rectInContent;
+}
+
+/** Returns a point expressed in the receiver coordinate space equivalent to
+point parameter expressed in the receiver content coordinate space.
+
+See also -convertDecoratorRectToContent:. */
+- (NSPoint) convertDecoratorPointToContent: (NSPoint)aPoint
+{
+	return [self convertDecoratorRectToContent: ETMakeRect(aPoint, NSZeroSize)].origin;
+}
+
+- (NSRect) convertDecoratorRectToVisibleContent: (NSRect)rectInDecorator
+{
+	NSRect rectInContent = rectInDecorator;
+
+	rectInContent.origin.x -= [self visibleContentRect].origin.x;
+	rectInContent.origin.y -= [self visibleContentRect].origin.y;
+	
+	return rectInContent;
+}
+
+- (NSPoint) convertDecoratorPointToVisibleContent: (NSPoint)aPoint
+{
+	return [self convertDecoratorRectToVisibleContent: ETMakeRect(aPoint, NSZeroSize)].origin;
 }
 
 - (NSSize) decorationSizeForContentSize: (NSSize)aSize

@@ -35,6 +35,8 @@
  */
 
 #import "ETApplication.h"
+#import "ETEventProcessor.h"
+#import "ETInstrument.h"
 #import "ETLayoutItemGroup.h"
 #import "ETLayoutItem+Factory.h"
 #import "ETLayoutItemBuilder.h"
@@ -343,21 +345,183 @@ menu bar, otherwise builds a new instance and returns it. */
 	return menuItem;
 }
 
-/* Actions */
+/* AppKit Widget Backend Glue Code
 
-/** Returns the same target than -[NSApplication targetForAction:], except that 
-it extends the responder chain to include ETPersistencyController right after
-the application delegate (and eventually NSDocumentController too). */
-- (id) targetForAction: (SEL)anAction
+   TODO: Probably to be reworked/reorganized. */
+
+/** Overriden to pass events to ETEventProcessor. */
+- (void) sendEvent: (NSEvent *)theEvent
 {
-	id target = [super targetForAction: anAction];
+// NOTE: Temporary GNUstep-owned code below as reminder...
+#ifdef GNUSTEP_SENDEVENT
+  NSView *v;
+  NSEventType type;
+
+  /*
+  If the backend reacts slowly, events (eg. mouse down) might arrive for a
+  window that has been ordered out (and thus is logically invisible). We
+  need to ignore those events. Otherwise, eg. clicking twice on a button
+  that ends a modal session and closes the window with the button might
+  cause the button to be pressed twice, which causes Bad Things to happen
+  when it tries to stop a modal session twice.
+
+  We let NSAppKitDefined events through since they deal with window ordering.
+  */
+  if (!_f.visible && [theEvent type] != NSAppKitDefined)
+    return;
+
+  if (!_f.cursor_rects_valid)
+    {
+      [self resetCursorRects];
+    }
+
+  type = [theEvent type];
+  if ([self ignoresMouseEvents] 
+      && GSMouseEventMask == NSEventMaskFromType(type))
+    {
+      return;
+    }
+#endif
+
+	BOOL widgetBackendDispatch = ([[ETEventProcessor sharedInstance] processEvent: (void *)theEvent] == NO);
+	
+	//ETLog(@"Send %@ and pass to widget backend %i", theEvent, widgetBackendDispatch);
+		
+	if (widgetBackendDispatch)
+		[super sendEvent: theEvent];
+}
+
+- (id) targetForAction: (SEL)aSelector firstResponder: (id)aResponder
+{
+	if (aSelector == NULL)
+		return nil;
+
+	id responder = aResponder;
+	SEL twoParamSelector = NSSelectorFromString([NSStringFromSelector(aSelector) 
+		stringByAppendingString: @"onItem:"]);
+
+	while (responder != nil)
+	{
+		if ([responder respondsToSelector: aSelector])
+			return responder;
+
+		// NOTE: We don't really need this since ETLayoutItem overrides 
+		// -respondsToSelector: to check the action handler exactly we do it below...
+		if ([responder isLayoutItem] 
+		 && [[(ETLayoutItem *)responder actionHandler] respondsToSelector: twoParamSelector])
+		{
+			return responder;
+		}
+
+		responder = [responder nextResponder];
+	}
+
+	return responder;
+}
+
+/** Returns the target in a way similar to -[NSApplication targetForAction:to:from] 
+but involves a responder chain which is not exactly the same.
+
+The first key and main responder are retrieved on the active 
+instrument (see ETInstrument) rather than on the key and main windows.
+
+The responder chain is extended to include ETPersistencyController right after
+the application delegate when CoreObject is available. */
+- (id) targetForAction: (SEL)aSelector to: (id)aTarget from: (id)sender
+{
+	if (aSelector == NULL)
+		return nil;
+	
+	if ([aTarget respondsToSelector: aSelector])
+		return aTarget;
+
+	ETInstrument *instrument = [ETInstrument activeInstrument];
+
+	id firstResponder = [instrument firstKeyResponder];
+	id responder = [self targetForAction: aSelector firstResponder: firstResponder];
+
+	if (responder != nil)
+	{
+		return responder;
+	}
+	
+	// FIXME: On GNUstep, we have...
+	//if (_session != 0)
+    //return nil;
+	
+	firstResponder = [instrument firstMainResponder];
+	responder = [self targetForAction: aSelector firstResponder: firstResponder];
+
+	if ([self respondsToSelector: aSelector])
+	{
+		return self;
+	}
+
+	id delegate = [self delegate];
+	if (delegate != nil && [delegate respondsToSelector: aSelector])
+	{
+		return delegate;
+	}
+
+	/*if ([NSDocumentController isDocumentBasedApplication]
+	 && [[NSDocumentController sharedDocumentController] respondsToSelector: aSelector])
+    {
+		return [NSDocumentController sharedDocumentController];
+    }*/
+
 	Class persistencyControllerClass = NSClassFromString(@"ETPersistencyController");
 
-	if (target == nil && [[persistencyControllerClass sharedInstance] respondsToSelector: anAction])
-		target = [persistencyControllerClass sharedInstance]; 
+	if ([[persistencyControllerClass sharedInstance] respondsToSelector: aSelector])
+	{
+		return [persistencyControllerClass sharedInstance]; 
+	}
 
-	return target;
+	return nil;
 }
+
+#ifdef GNUSTEP
+// TODO: GNUstep should implement -targetForAction: logic in 
+// -targetForAction:to:from: and not the other way around. In Cocoa, 
+// -targetForAction: calls -targetForAction:to:from: unlike GNUstep.
+- (id) targetForAction: (SEL)aSelector
+{
+	return [self targetForAction: aSelector to: nil from: nil];
+}
+#endif
+
+- (BOOL) sendAction: (SEL)aSelector to: (id)aTarget from: (id)sender
+{
+	id responder = [self targetForAction: aSelector to: aTarget from: sender];
+
+	if (responder == nil)
+		return NO;
+
+	NSMethodSignature *sig = [responder methodSignatureForSelector: aSelector];
+	NSInvocation *inv = [NSInvocation invocationWithMethodSignature: sig];
+		
+	if ([sig numberOfArguments] == 3) /* action: */
+	{
+		[inv setTarget: responder];
+		[inv setSelector: aSelector];
+		[inv setArgument: &sender atIndex: 2];
+	}
+	else if ([sig numberOfArguments] == 4) /* action:onItem: */
+	{
+		SEL twoParamSelector = NSSelectorFromString([NSStringFromSelector(aSelector) 
+			stringByAppendingString: @"onItem:"]);
+
+		[inv setTarget: [responder actionHandler]];
+		[inv setSelector: twoParamSelector];
+		[inv setArgument: &sender atIndex: 2];
+		[inv setArgument: &responder atIndex: 3];
+	}
+
+	[inv invoke];
+
+	return YES;
+}
+
+/* Actions */
 
 - (IBAction) browseLayoutItemTree: (id)sender
 {

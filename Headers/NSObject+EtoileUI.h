@@ -71,6 +71,19 @@
 - (IBAction) inspect: (id)sender;
 - (IBAction) explore: (id)sender;
 
+/* Introspection Utility
+
+   TODO: Move some of this stuff in EtoileFoundation once we have a clean 
+   reflection layer. */
+
++ (NSString *) displayName;
++ (NSString *) baseClassName;
++ (NSString *) aspectName;
+
+/* Event Dispatch */
+
+- (BOOL) isFirstResponderProxy;
+
 @end
 
 @interface NSObject (ETInspector) <ETObjectInspection>

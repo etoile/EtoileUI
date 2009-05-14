@@ -1,20 +1,22 @@
-//
-//  ContainerController.h
-//  FlowAutolayoutExample
-//
-//  Created by Quentin Mathé on 28/05/07.
-//  Copyright 2007 __MyCompanyName__. All rights reserved.
-//
+/*
+	Copyright (C) 2007 Quentin Mathe
+ 
+	Author:  Quentin Mathe <qmathe@club-internet.fr>
+	Date:  May 2007
+	License:  Modified BSD (see COPYING)
+ */
 
 #import <Foundation/Foundation.h>
 #import <AppKit/AppKit.h>
+#import <EtoileFoundation/EtoileFoundation.h>
 #import <EtoileUI/EtoileUI.h>
 
 
-@interface ContainerController : NSObject
+@interface ContainerController : ETController
 {
     IBOutlet ETContainer *viewContainer;
 	IBOutlet NSSlider *itemMarginSlider;
+	ETLayoutItemGroup *photoViewItem;
 	NSMutableArray *images;
 }
 
@@ -25,13 +27,14 @@
 - (IBAction) scale: (id)sender;
 - (IBAction) changeItemMargin: (id)sender;
 
-- (NSArray *) imageViewsForImages: (NSArray *)images;
-- (NSImageView *) imageViewForImage: (NSImage *)image;
-
 - (id) configureLayout: (id)layoutObject;
 
-// Private use
-- (void)selectPicturesPanelDidEnd:(NSOpenPanel *)panel returnCode:(int)returnCode  contextInfo:(void  *)contextInfo;
+/* Private */
+
+- (void) selectPicturesPanelDidEnd: (NSOpenPanel *)panel 
+                        returnCode: (int)returnCode
+                       contextInfo: (void  *)contextInfo;
 - (void) setUpLayoutItemsDirectly;
+- (NSImageView *) imageViewForImage: (NSImage *)image;
 
 @end

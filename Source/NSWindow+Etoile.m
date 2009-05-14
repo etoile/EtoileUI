@@ -100,6 +100,46 @@
 	return NSMakePoint(NSMinX([self frame]), NSMaxY([self frame]));
 }
 
+/** Returns the frame rect expressed in the window base coordinate space. 
+
+This space includes the window decoration (titlebar etc.) and uses 
+top left coordinates when the content view returns YES to -isFlipped.  */
+- (NSRect) frameRectInContent
+{
+	NSRect contentRect = [self contentRectInFrame];
+	NSRect rect = [self frame];
+
+	rect.origin.x = -contentRect.origin.x;
+	rect.origin.y = -contentRect.origin.y;
+
+	return rect;
+}
+
+/** Returns the content view rect expressed in the window coordinate space. 
+
+This coordinate space includes the window decoration (titlebar etc.) and uses 
+top left coordinates when the content view returns YES to -isFlipped.  */
+- (NSRect) contentRectInFrame;
+{
+	NSRect windowFrame = [self frame];
+	NSRect rect = [self contentRectForFrameRect: windowFrame];
+
+	NSParameterAssert(rect.size.width <= windowFrame.size.width && rect.size.height <= windowFrame.size.height);
+
+	rect.origin.x = rect.origin.x - windowFrame.origin.x;
+	rect.origin.y = rect.origin.y - windowFrame.origin.y;
+
+	if ([[self contentView] isFlipped])
+	{
+		rect.origin.y = windowFrame.size.height - (rect.origin.y + rect.size.height);	
+	}
+
+	NSParameterAssert(rect.origin.x >= 0 && rect.origin.x <= rect.size.width 
+		&& rect.origin.y >= 0 && rect.origin.y <= rect.size.height);
+
+	return rect;
+}
+
 - (BOOL) isSystemPrivateWindow
 {
 #ifdef GNUSTEP
@@ -128,6 +168,47 @@
 	ETDebugLog(@"browse %@", self);
 	[browser setBrowsedObject: [self contentView]];
 	[[browser panel] makeKeyAndOrderFront: self];
+}
+
+@end
+
+
+@implementation ETFullScreenWindow
+
+/** Initializes and returns a new borderless window that fills the main screen. */
+- (id) init
+{
+	return [self initWithContentRect: [[NSScreen mainScreen] frame]
+					       styleMask: NSTitledWindowMask //NSBorderlessWindowMask
+							 backing: NSBackingStoreBuffered
+							   defer: NO];
+}
+
+- (id) initWithContentRect: (NSRect)contentRect 
+                 styleMask: (NSUInteger)windowStyle
+                   backing: (NSBackingStoreType)bufferingType 
+                    defer: (BOOL)deferCreation
+{
+	self = [super initWithContentRect: contentRect
+					        styleMask: windowStyle
+							  backing: bufferingType
+							    defer: deferCreation];
+	if (self == nil)
+		return nil;
+
+	[self center];
+	[self setLevel: NSFloatingWindowLevel];
+	[self setHidesOnDeactivate: YES];
+	[self setExcludedFromWindowsMenu: YES];
+
+	return self;
+}
+
+/** Returns YES in all cases even when the receiver is borderless (unlike 
+NSWindow implementation. */
+- (BOOL) canBecomeKeyWindow
+{
+	return YES;
 }
 
 @end

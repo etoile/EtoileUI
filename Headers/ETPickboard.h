@@ -37,6 +37,8 @@
 #import <AppKit/AppKit.h>
 #import <EtoileUI/ETLayoutItemGroup.h>
 
+@class ETUTI;
+
 // NOTE: NSString will be replaced by a CoreObject uuid
 #define ETPickboardRef NSString
 
@@ -111,11 +113,14 @@
 @interface ETPickCollection : NSObject <ETCollection>
 {
 	NSArray *_pickedObjects;
+	ETUTI *_type;
 }
 
 + (id) pickCollectionWithCollection: (id <ETCollection>)objects;
 
 - (id) initWithCollection: (id <ETCollection>)objects;
+
+- (ETUTI *) type;
 
 /* ETCollection protocol */
 

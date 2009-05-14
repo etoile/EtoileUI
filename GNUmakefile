@@ -82,6 +82,16 @@ EtoileUI_HEADER_FILES = \
 	NSWindow+Etoile.h
 
 EtoileUI_HEADER_FILES += \
+	ETEventProcessor.h \
+	ETTemplateItemLayout.h \
+	ETIconLayout.h \
+	ETInstrument.h \
+	ETSelectTool.h \
+	ETPickDropCoordinator.h \
+	ETInstruments.h \
+	ETHandle.h
+
+EtoileUI_HEADER_FILES += \
 	EtoileCompatibility.h \
 	NSBezierPathCappedBoxes.h \
 	NSImage+NiceScaling.h \

@@ -46,13 +46,14 @@
 	[[ETApp mainMenu] addItem: [ETApp arrangeMenuItem]];
 
 	mainItem = [ETLayoutItem itemGroupWithContainer];
+	//[mainItem setFlipped: NO];
 	[mainItem setSize: NSMakeSize(500, 400)];
 	[mainItem setLayout: [ETFreeLayout layout]];
 	[[ETLayoutItem windowGroup] addItem: mainItem];
 
-	/*[mainItem addItem: [ETLayoutItem horizontalSlider]];
+	[mainItem addItem: [ETLayoutItem horizontalSlider]];
 	[mainItem addItem: [ETLayoutItem textField]];
-	[mainItem addItem: [ETLayoutItem labelWithTitle: @"Hello World!"]];*/
+	[mainItem addItem: [ETLayoutItem labelWithTitle: @"Hello World!"]];
 	[mainItem addItem: [ETLayoutItem button]];
 	[mainItem addItem: [ETLayoutItem rectangle]];
 	[mainItem addItem: [ETLayoutItem oval]];
@@ -61,10 +62,12 @@
 	ETFlowLayout *flow = [ETFlowLayout layout];
 	[flow setItemSizeConstraintStyle: ETSizeConstraintStyleNone];
 	[(ETFreeLayout *)[mainItem layout] resetItemPersistentFramesWithLayout: flow];
+	//[mainItem setLayout: [ETFlowLayout layout]];
 	//[[mainItem layout] setAttachedInstrument: [ETMoveTool instrument]];
 	//[ETInstrument setMainInstrument: [ETSelectTool instrument]];
 	//[[ETPickboard localPickboard] showPickPalette];
-
+	//[mainItem inspect: nil];
+	[[ETLayoutItem windowGroup] inspect: nil];
 	//[[ETModelDescription modelDescription] view: nil];
 	
 	//[ETApp explore: nil];

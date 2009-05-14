@@ -57,6 +57,7 @@
 	IBOutlet ETContainer *itemGroupView;
 	IBOutlet ETContainer *propertyView;
 	IBOutlet NSPopUpButton *layoutPopup;
+	IBOutlet NSPopUpButton *instrumentPopup;
 	IBOutlet NSWindow *window;
 	IBOutlet id viewModelLayout;
 
@@ -73,6 +74,7 @@
 - (NSPanel *) panel;
 
 - (IBAction) changeLayout: (id)sender;
+- (IBAction) changeInstrument: (id)sender;
 - (IBAction) inspect: (id)sender;
 - (IBAction) stack: (id)sender;
 

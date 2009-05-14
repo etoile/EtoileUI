@@ -105,3 +105,14 @@ terminology) on which actions should be dispatched. */
 }
 
 @end
+
+
+@implementation NSImageView (Etoile)
+
+/** Returns YES when the receiver is editable, otherwise returns NO. */
+- (BOOL) isWidget
+{
+	return [self isEditable];
+}
+
+@end

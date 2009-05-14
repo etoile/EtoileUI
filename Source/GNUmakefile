@@ -62,6 +62,16 @@ libEtoileUI_OBJC_FILES += \
 	NSImage+NiceScaling.m \
 	UKNibOwner.m
 
+libEtoileUI_OBJC_FILES += \
+	ETEventProcessor.m \
+	ETTemplateItemLayout.m \
+	ETIconLayout.m \
+	ETInstrument.m \
+	ETSelectTool.m \
+	ETPickDropCoordinator.m \
+	ETInstruments.m \
+	ETHandle.m
+
 -include GNUmakefile.preamble
 include $(GNUSTEP_MAKEFILES)/subproject.make
 -include GNUmakefile.postamble

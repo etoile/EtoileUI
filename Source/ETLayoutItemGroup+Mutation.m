@@ -494,7 +494,7 @@ static 	BOOL _coalescingMutation = NO;
 {
 	NSMutableArray *itemsFromSource = [NSMutableArray array];
 	ETLayoutItem *layoutItem = nil;
-	ETContainer *baseContainer = [[self baseItem] supervisorView];
+	ETContainer *baseContainer = (ETContainer *)[[self baseItem] supervisorView]; // FIXME: Eliminate cast, clean and update the method code btw...
 	// NOTE: [self indexPathFromItem: [container layoutItem]] is equal to [[container layoutItem] indexPathFortem: self]
 	NSIndexPath *indexPath = [self indexPathFromItem: [baseContainer layoutItem]];
 	int nbOfItems = 0;

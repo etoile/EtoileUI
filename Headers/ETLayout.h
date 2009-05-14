@@ -37,8 +37,7 @@
 #import <Foundation/Foundation.h>
 #import <AppKit/AppKit.h>
 
-@class ETContainer, ETLayoutLine, ETLayoutItem, ETView;
-
+@class ETContainer, ETLayoutLine, ETLayoutItem, ETLayoutItemGroup, ETView;
 
 /** Methods which must be implemented by an object to be layouted by any
 	ETLayout subclasses. The object whose layout items are layouted is the
@@ -49,6 +48,7 @@
 
 /* Required */
 - (NSArray *) items;
+- (NSArray *) arrangedItems;
 - (NSArray *) visibleItems;
 - (void) setVisibleItems: (NSArray *)items;
 - (NSSize) size;
@@ -68,9 +68,15 @@
 - (float) itemScaleFactor;
 - (NSSize) visibleContentSize; /* -documentVisibleRect size */
 - (void) setContentSize: (NSSize)size;
+//- (NSSize) contentSize;
 - (BOOL) isScrollViewShown;
 
-/* Not sure the protocol needs to include the next method */
+/* Not sure the protocol needs to or should include the next methods */
+- (NSArray *) visibleItems;
+- (void) setVisibleItems: (NSArray *)items;
+- (NSArray *) visibleItemsForItems: (NSArray *)items;
+- (void) setVisibleItems: (NSArray *)visibleItems forItems: (NSArray *)items;
+- (void) sortWithSortDescriptors: (NSArray *)descriptors recursively: (BOOL)recursively;
 //- (void) setShowsScrollView: (BOOL)scroll;
 
 @end
@@ -110,7 +116,9 @@ typedef enum _ETSizeConstraintStyle
 	IBOutlet id _layoutContext;
 	IBOutlet id _delegate;
 	IBOutlet NSView *_displayViewPrototype;
-	
+	id _instrument;
+	ETLayoutItemGroup *_rootItem;
+
 	BOOL _isLayouting; /* -isRendering */
 	
 	/* Layout and Content Size in Scrollview */
@@ -140,6 +148,8 @@ typedef enum _ETSizeConstraintStyle
 
 /* Main Accessors */
 
+- (void) setAttachedInstrument: (id)anInstrument;
+- (id) attachedInstrument;
 //- (void) setContainer: (ETContainer *)newContainer;
 - (ETContainer *) container;
 
@@ -202,7 +212,10 @@ typedef enum _ETSizeConstraintStyle
 
 /* Wrapping Existing View */
 
-- (ETLayoutItem *) rootItem;
+- (ETLayoutItemGroup *) rootItem;
+- (void) mapRootItemIntoLayoutContext;
+- (void) unmapRootItemFromLayoutContext;
+
 - (void) setLayoutView: (NSView *)protoView;
 - (NSView *) layoutView;
 - (void) setUpLayoutView;

@@ -72,6 +72,7 @@
 @interface ETStyle : ETObjectChain <ETRendering>
 {
 	id _nextStyle;
+	BOOL _isSharedStyle;
 }
 
 /* Initialization */
@@ -84,6 +85,8 @@
 - (ETStyle *) nextStyle;
 - (void) setNextStyle: (ETStyle *)style;
 - (ETStyle *) lastStyle;
+
+- (BOOL) isSharedStyle;
 
 /* Style Rendering */
 
@@ -110,16 +113,53 @@
 - (void) render: (NSMutableDictionary *)inputValues 
      layoutItem: (ETLayoutItem *)item 
 	  dirtyRect: (NSRect)dirtyRect;
-	  
+
+- (void) drawImage: (NSImage *)itemImage 
+           flipped: (BOOL)itemFlipped 
+            inRect: (NSRect)aRect;	  
 - (void) drawSelectionIndicatorInRect: (NSRect)indicatorRect;
 - (void) drawStackIndicatorInRect: (NSRect)indicatorRect;
+- (void) drawFirstResponderIndicatorInRect: (NSRect)indicatorRect;
 
 // TODO: Implement
 //- (BOOL) setTitleVisible: (BOOL)flag;
 //- (BOOL) isTitleVisible;
 //- (void) drawTitleInRect: (NSRect)aRect;
 
-- (void) drawStackIndicatorInRect: (NSRect)indicatorRect;
-- (void) drawImage: (NSImage *)itemImage flipped: (BOOL)itemFlipped inRect: (NSRect)aRect;
+@end
+
+@interface ETGraphicsGroupStyle : ETBasicItemStyle
+{
+
+}
+
+- (void) render: (NSMutableDictionary *)inputValues 
+     layoutItem: (ETLayoutItem *)item 
+	  dirtyRect: (NSRect)dirtyRect;
+	  
+- (void) drawBorderInRect: (NSRect)aRect;
+
+@end
+
+@interface ETDropIndicator : ETStyle
+{
+	NSPoint _dropLocation;
+	ETLayoutItem *_hoveredItem;
+	BOOL _dropOn;
+	NSRect _prevInsertionIndicatorRect;
+	NSRect _lastIndicatorRect;
+}
+
+- (id) initWithLocation: (NSPoint)dropLocation 
+            hoveredItem: (ETLayoutItem *)hoveredItem
+           isDropTarget: (BOOL)dropOn;
+
+- (float) thickness;
+- (NSColor *) color;
+
+- (void) drawVerticalInsertionIndicatorInRect: (NSRect)indicatorRect;
+- (void) drawRectangularInsertionIndicatorInRect: (NSRect)indicatorRect;
+- (NSRect) previousIndicatorRect;
+- (NSRect) currentIndicatorRect;
 
 @end

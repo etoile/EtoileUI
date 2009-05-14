@@ -137,9 +137,10 @@ NSString *ETLayoutItemPboardType = @"ETLayoutItemPboardType"; // FIXME: replace 
 		[self setShouldRemoveItemsAtPickTime: NO];
 		[self setAllowsMultipleSelection: YES];
 		[self setAllowsEmptySelection: YES];
+		[self setEnablesHitTest: YES];
 		_prevInsertionIndicatorRect = NSZeroRect;
-		[self registerForDraggedTypes: [NSArray arrayWithObjects:
-			ETLayoutItemPboardType, nil]];
+		//[self registerForDraggedTypes: [NSArray arrayWithObjects:
+		//	ETLayoutItemPboardType, nil]];
 		[self setAutoresizingMask: NSViewWidthSizable | NSViewHeightSizable];
     }
     
@@ -495,21 +496,6 @@ but they never never manipulate it as a subview in view hierachy. */
 		return NO;
 	
 	return _dropAllowed;
-}
-
-- (IBAction) copy: (id)sender
-{
-	[[[self layoutItem] eventHandler] copy: sender];
-}
-
-- (IBAction) paste: (id)sender
-{
-	[[[self layoutItem] eventHandler] paste: sender];
-}
-
-- (IBAction) cut: (id)sender
-{
-	[[[self layoutItem] eventHandler] cut: sender];
 }
 
 /* Grouping and Stacking */

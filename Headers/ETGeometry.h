@@ -79,5 +79,26 @@ static inline NSRect ETStandardizeRect(NSRect rect)
 	return NSMakeRect(minX, minY, width, height);
 }
 
+/** Returns whether rect contains a point expressed in coordinates relative 
+to the rect origin. */
+static inline BOOL ETPointInsideRect(NSPoint aPoint, NSRect rect)
+{
+	return ((rect.origin.x + aPoint.x <= rect.size.width) 
+		&& (rect.origin.y + aPoint.y <= rect.size.height));
+}
+
+/** Returns a new point by summing the x and y coordinates of two points. */
+static inline NSPoint ETSumPoint(NSPoint aPoint, NSPoint otherPoint)
+{
+	return NSMakePoint(aPoint.x + otherPoint.x, aPoint.y + otherPoint.y);
+}
+
+/** Returns a new point by summing the point x and y coordinates with the size 
+width and height. */
+static inline NSPoint ETSumPointAndSize(NSPoint aPoint, NSSize aSize)
+{
+	return NSMakePoint(aPoint.x + aSize.width, aPoint.y + aSize.height);
+}
+
 extern NSRect ETUnionRectWithObjectsAndSelector(NSArray *itemArray, SEL rectSelector);
 

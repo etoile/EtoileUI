@@ -43,6 +43,7 @@
 With the AppKit widget backend, the underlying view is an NSScrollView object. */
 @interface ETScrollableAreaItem : ETDecoratorItem
 
+- (NSRect) visibleRect;
 - (NSRect) visibleContentRect;
 
 - (BOOL) hasVerticalScroller;

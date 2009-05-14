@@ -37,6 +37,8 @@
  */
 
 #import "ETLayoutItem+Factory.h"
+#import "ETFreeLayout.h"
+#import "ETGeometry.h"
 #import "ETLayoutItemGroup.h"
 #import "ETLayer.h"
 #import "ETWindowItem.h"
@@ -116,6 +118,14 @@
 	[container setAutoresizingMask: NSViewHeightSizable | NSViewWidthSizable];
 
 	return (ETLayoutItemGroup *)[container layoutItem];
+}
+
++ (ETLayoutItemGroup *) graphicsGroup
+{
+	ETLayoutItemGroup *itemGroup = [ETLayoutItem itemGroupWithContainer];
+	[itemGroup setStyle: AUTORELEASE([[ETGraphicsGroupStyle alloc] init])];
+	[itemGroup setLayout: [ETFreeLayout layout]];
+	return itemGroup;
 }
 
 /* Widget Factory Methods */
@@ -492,11 +502,12 @@ static ETLayoutItemGroup *pickboardGroup = nil;
 
 /* Returns a layout item which uses a shape as both its represented object and 
 style. */
-+ (ETLayoutItem *) itemWithShape: (ETShape *)aShape
++ (ETLayoutItem *) itemWithShape: (ETShape *)aShape inFrame: (NSRect)aRect
 {
+	NSParameterAssert(NSEqualSizes(aRect.size, [[aShape path] bounds].size));
 	ETLayoutItem *item = [ETLayoutItem itemWithRepresentedObject: aShape];
 	[item setStyle: aShape];
-	[item setSize: [[aShape path] bounds].size];
+	[item setFrame: aRect];
 	return item;
 }
 
@@ -504,35 +515,38 @@ style. */
 bezier path. The shape is used as both the represented object and the style. */
 + (ETLayoutItem *) itemWithBezierPath: (NSBezierPath *)aPath
 {
-	return [self itemWithShape: [ETShape shapeWithBezierPath: aPath]];
+	return [self itemWithShape: [ETShape shapeWithBezierPath: aPath]
+	                   inFrame: ETMakeRect(NSZeroPoint, [aPath bounds].size)];
 }
 
 /** Returns a layout item which represents a rectangular shape with the width 
 and height of aRect. */
 + (ETLayoutItem *) rectangleWithRect: (NSRect)aRect
 {
-	return [self itemWithShape: [ETShape rectangleShapeWithRect: aRect]];
+	return [self itemWithShape: [ETShape rectangleShapeWithRect: ETMakeRect(NSZeroPoint, aRect.size)] 
+	                   inFrame: aRect];
 }
 
 /** Returns a layout item which represents a rectangular shape with the width 
 and height of +[ETShape defaultShapeRect]. */
 + (ETLayoutItem *) rectangle
 {
-	return [self rectangleWithRect: [ETShape defaultShapeRect]];
+	return [self rectangleWithRect: ETMakeRect(NSZeroPoint, [ETShape defaultShapeRect].size)];
 }
 
 /** Returns a layout item which represents an oval shape that fits in the width 
 and height of aRect. */
 + (ETLayoutItem *) ovalWithRect: (NSRect)aRect
 {
-	return [self itemWithShape: [ETShape ovalShapeWithRect: aRect]];
+	return [self itemWithShape: [ETShape ovalShapeWithRect: ETMakeRect(NSZeroPoint, aRect.size)]
+	                   inFrame: aRect];
 }
 
 /** Returns a layout item which represents an oval shape that fits in the width 
 and height of +[ETShape defaultShapeRect]. */
 + (ETLayoutItem *) oval
 {
-	return [self ovalWithRect: [ETShape defaultShapeRect]];
+	return [self ovalWithRect: ETMakeRect(NSZeroPoint, [ETShape defaultShapeRect].size)];
 }
 
 

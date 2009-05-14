@@ -35,10 +35,12 @@
 	THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#import <EtoileFoundation/Macros.h>
 #import "ETWindowItem.h"
 #import "ETLayoutItem.h"
 #import "ETLayoutItemGroup.h"
 #import "ETLayoutItem+Factory.h"
+#import "ETPickDropCoordinator.h"
 #import "NSWindow+Etoile.h"
 #import "ETGeometry.h"
 #import "ETCompatibility.h"
@@ -66,7 +68,17 @@ If window is nil, the receiver will create a standard window. */
 		{
 			_itemWindow = [[NSWindow alloc] init];
 		}
+		// TODO: Would be better not to break the window delegate... May be 
+		// we should rather reimplement NSDraggingDestination protocol in 
+		// a NSWindow category. 
+		if ([_itemWindow delegate] != nil)
+		{
+			ETLog(@"WARNING: The window delegate %@ will be replaced by %@ "
+				"-initWithWindow:", [_itemWindow delegate], self);
+		}
 		[_itemWindow setDelegate: self];
+		[_itemWindow setAcceptsMouseMovedEvents: YES];
+		[_itemWindow registerForDraggedTypes: A(ETLayoutItemPboardType)];
 		_usesCustomWindowTitle = ([self isUntitled] == NO);
 	}
 	
@@ -238,6 +250,12 @@ otherwise returns no. */
 	return nil;
 }
 
+/** Returns the window content view. */
+- (NSView *) view
+{
+	return [_itemWindow contentView];
+}
+
 /** Returns the window frame. */
 - (NSRect) decorationRect
 {
@@ -245,21 +263,28 @@ otherwise returns no. */
 }
 
 /** Returns the content view rect expressed in the window coordinate space. 
-This space includes the window decoration (titlebar etc.).  */
+
+This coordinate space includes the window decoration (titlebar etc.).  */
 - (NSRect) contentRect
 {
 	NSRect windowFrame = [_itemWindow frame];
 	NSRect rect = [_itemWindow contentRectForFrameRect: windowFrame];
 
-	rect.origin.x = windowFrame.origin.x - rect.origin.x;
-	rect.origin.y = windowFrame.origin.y - rect.origin.y;
+	NSParameterAssert(rect.size.width <= windowFrame.size.width && rect.size.height <= windowFrame.size.height);
+
+	rect.origin.x = rect.origin.x - windowFrame.origin.x;
+	rect.origin.y = rect.origin.y - windowFrame.origin.y;
 
 	if ([self isFlipped])
 	{
 		rect.origin.y = windowFrame.size.height - (rect.origin.y + rect.size.height);	
 	}
 
+	NSParameterAssert(rect.origin.x >= 0 && rect.origin.x <= rect.size.width 
+		&& rect.origin.y >= 0 && rect.origin.y <= rect.size.height);
+
 	return rect;
+	// TODO: Use [_itemWindow contentRectInFrame];
 }
 
 // NOTE: At this point, we lost the item position (aka the implicit frame 
@@ -288,6 +313,62 @@ This space includes the window decoration (titlebar etc.).  */
 {
 	_flipped = flipped;
 	[_decoratorItem setFlipped: flipped];	
+}
+
+/* Dragging Destination (as Window delegate) */
+
+/** This method can be called on the receiver when a drag exits. When a 
+	view-based layout is used, existing the layout view results in entering
+	the related container, that's probably a bug because the container should
+	be fully covered by the layout view in all cases. */
+- (NSDragOperation) draggingEntered: (id <NSDraggingInfo>)drag
+{
+	ETDebugLog(@"Drag enter receives in dragging destination %@", self);
+	return [[ETPickDropCoordinator sharedInstance] draggingEntered: drag];
+}
+
+- (NSDragOperation) draggingUpdated: (id <NSDraggingInfo>)drag
+{
+	//ETLog(@"Drag update receives in dragging destination %@", self);
+	return [[ETPickDropCoordinator sharedInstance] draggingUpdated: drag];
+}
+
+- (void) draggingExited: (id <NSDraggingInfo>)drag
+{
+	ETDebugLog(@"Drag exit receives in dragging destination %@", self);
+	[[ETPickDropCoordinator sharedInstance] draggingExited: drag];
+}
+
+- (void) draggingEnded: (id <NSDraggingInfo>)drag
+{
+	ETDebugLog(@"Drag end receives in dragging destination %@", self);
+	[[ETPickDropCoordinator sharedInstance] draggingEnded: drag];
+}
+
+/* Will be called when -draggingEntered and -draggingUpdated have validated the drag
+   This method is equivalent to -validateDropXXX data source method.  */
+- (BOOL) prepareForDragOperation: (id <NSDraggingInfo>)drag
+{
+	ETDebugLog(@"Prepare drag receives in dragging destination %@", self);
+	return [[ETPickDropCoordinator sharedInstance] prepareForDragOperation: drag];	
+}
+
+/* Will be called when -draggingEntered and -draggingUpdated have validated the drag
+   This method is equivalent to -acceptDropXXX data source method.  */
+- (BOOL) performDragOperation: (id <NSDraggingInfo>)dragInfo
+{
+	ETDebugLog(@"Perform drag receives in dragging destination %@", self);
+	return [[ETPickDropCoordinator sharedInstance] performDragOperation: dragInfo];
+}
+
+/* This method is called in replacement of -draggingEnded: when a drop has 
+   occured. That's why it's not enough to clean insertion indicator in
+   -draggingEnded:. Both methods called -handleDragEnd:forItem: on the 
+   drop target item. */
+- (void) concludeDragOperation: (id <NSDraggingInfo>)dragInfo
+{
+	ETDebugLog(@"Conclude drag receives in dragging destination %@", self);
+	[[ETPickDropCoordinator sharedInstance] concludeDragOperation: dragInfo];
 }
 
 @end

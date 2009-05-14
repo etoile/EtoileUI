@@ -35,6 +35,7 @@
  */
 
 #import <EtoileFoundation/ETCollection.h>
+#import <EtoileFoundation/ETUTI.h>
 #import <EtoileFoundation/Macros.h>
 #import "ETPickboard.h"
 #import "ETContainer.h"
@@ -363,14 +364,23 @@ returns an ETLayoutItem. */
 {
 	SUPERINIT
 	ASSIGN(_pickedObjects, [objects contentArray]);
+	ASSIGN(_type, [ETUTI transientTypeWithSupertypes: [(NSObject *)objects valueForKey: @"type"]]);
 	return self;
 }
 
 - (void) dealloc
 {
 	DESTROY(_pickedObjects);
-	
+	DESTROY(_type);
+
 	[super dealloc];
+}
+
+/** Returns a transient union type of the receiver type and all its element 
+type. */
+- (ETUTI *) type
+{
+	return _type;
 }
 
 /* ETCollection protocol */

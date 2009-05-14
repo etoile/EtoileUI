@@ -60,6 +60,8 @@
 + (ETLayoutItemGroup *) itemGroupWithRepresentedObject: (id)object;
 + (ETLayoutItemGroup *) itemGroupWithContainer;
 
++ (ETLayoutItemGroup *) graphicsGroup;
+
 /* Leaf Widget Factory Methods */
 
 + (id) button;

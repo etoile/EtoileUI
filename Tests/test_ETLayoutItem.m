@@ -36,7 +36,7 @@
 #import <UnitKit/UnitKit.h>
 #import <EtoileFoundation/NSIndexPath+Etoile.h>
 #import "ETDecoratorItem.h"
-#import "NSView+Etoile.h" // NOTE: To be replaced ETGeometry
+#import "ETGeometry.h"
 #import "ETLayoutItem.h"
 #import "ETLayoutItem+Factory.h"
 #import "ETWindowItem.h"
@@ -335,10 +335,22 @@
 	UKIntsEqual(20, newRect.size.height);
 }
 
-- (void) testDisplayView
+- (void) testConvertRectFromItem
 {
-	//id decorator1 = [ETLayoutItem item];
-	//id decorator2 = [ETLayoutItem item];
+	ETLayoutItemGroup *parent = [ETLayoutItem itemGroupWithItem: self];	
+	ETLayoutItemGroup *ancestor = [ETLayoutItem itemGroupWithItem: parent];
+
+	[parent setOrigin: NSMakePoint(10, 30)];	
+	[self setOrigin: NSMakePoint(5, 2)];
+	NSRect rect = NSMakeRect(0, 0, 10, 20);
+
+	/* First test with an ancestor item without a parent */
+	UKRectsEqual(rect, [ancestor convertRect: rect fromItem: ancestor]);
+	UKRectsEqual(rect, [parent convertRect: rect fromItem: parent]);
+	UKRectsEqual(ETNullRect, [self convertRect: rect fromItem: nil]);
+	UKRectsEqual(ETNullRect, [self convertRect: ETNullRect fromItem: parent]);
+	UKRectsEqual(NSMakeRect(-5, -2, 0, 0), [self convertRect: NSZeroRect fromItem: parent]);
+	UKRectsEqual(NSMakeRect(-15, -32, 10, 20), [self convertRect: rect fromItem: ancestor]);	
 }
 
 #if 0

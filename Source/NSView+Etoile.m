@@ -67,6 +67,15 @@ By default, returns NO. */
 	return [self isKindOfClass: [ETContainer class]];
 }
 
+/** Returns whether the receiver is currently used as a window content view. */
+- (BOOL) isWindowContentView
+{
+	// NOTE: -window will be nil in -viewDidMoveToSuperview with
+	// [self isEqual: [[self window] contentView]];
+	return [[self superview] isKindOfClass: NSClassFromString(@"NSThemeFrame")];
+}
+
+
 /* Copying */
 
 /** Returns a view copy of the receiver. The superview of the resulting copy is

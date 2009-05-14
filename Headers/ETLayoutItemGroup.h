@@ -76,6 +76,7 @@ extern NSString *kETDoubleClickedItemProperty; /** doubleClickedItem property na
 /* Initialization */
 
 - (id) initWithItems: (NSArray *)layoutItems view: (NSView *)view;
+- (id) initWithItems: (NSArray *)layoutItems view: (NSView *)view value: (id)value representedObject: (id)repObject;
 
 /* Finding Container */
 

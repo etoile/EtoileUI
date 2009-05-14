@@ -57,6 +57,7 @@ With the AppKit widget backend, the window is an NSWindow object. */
 
 /* Customized Decorator Methods */
 
+- (NSView *) view;
 - (NSRect) decorationRect;
 - (NSRect) contentRect;
 - (BOOL) acceptsDecoratorItem: (ETLayoutItem *)item;

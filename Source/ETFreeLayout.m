@@ -40,7 +40,11 @@
 #import "ETComputedLayout.h"
 #import "ETContainer.h"
 #import "ETGeometry.h"
+#import "ETHandle.h"
+#import "ETSelectTool.h"
 #import "ETLayoutItem.h"
+#import "ETLayoutItem+Factory.h"
+#import "ETLayoutItemGroup.h"
 #import "NSView+Etoile.h"
 #import "ETCompatibility.h"
 
@@ -58,10 +62,63 @@ subclasses (see -[ETLayout initWithLayoutView:]). */
 	
 	if (self != nil)
 	{
+		[self setAttachedInstrument: [ETSelectTool instrument]];
 		[self setItemSizeConstraintStyle: ETSizeConstraintStyleNone];
+		ASSIGN(_rootItem, [ETLayoutItem itemGroup]);
+		[_rootItem setActionHandler: nil];
 	}
 	
 	return self;
+}
+
+- (void) dealloc
+{
+	[self updateKVOForItems: nil]; /* Release _observedItems */
+
+	[super dealloc];
+}
+
+- (id) attachedInstrument
+{
+	return [super attachedInstrument];
+}
+
+/* KVO */
+
+- (void) updateKVOForItems: (NSArray *)items
+{
+	FOREACHI(_observedItems, oldItem)
+    {
+		[oldItem removeObserver: self
+				  forKeyPath: kETSelectedProperty];
+	}
+
+	ASSIGN(_observedItems, items);
+
+	FOREACHI(_observedItems, newItem)
+    {
+		[newItem addObserver: self
+              forKeyPath: kETSelectedProperty
+                 options: NSKeyValueObservingOptionNew
+				 context: NULL];
+	}
+}
+
+- (void) observeValueForKeyPath: (NSString *)keyPath 
+                       ofObject: (id)object 
+					     change: (NSDictionary *)change 
+						context: (void *)context
+{
+	BOOL selected = [[change objectForKey: NSKeyValueChangeNewKey] boolValue];
+	
+	if (selected)
+	{
+		[self showHandlesForItem: object];
+	}
+	else
+	{
+		[self hideHandlesForItem: object];
+	}
 }
 
 /** Always returns YES since items are positioned by the user. */
@@ -75,6 +132,56 @@ by the receiver. */
 - (BOOL) isComputedLayout
 {
 	return NO;
+}
+
+- (void) showHandlesForItem: (ETLayoutItem *)item
+{
+	ETHandleGroup *handleGroup = AUTORELEASE([[ETResizeRectangle alloc] initWithManipulatedObject: item]);
+		
+	[[self rootItem] addItem: handleGroup];
+	// FIXME: Should [handleGroup display]; and display should retrieve the 
+	// bounding box of the handleGroup. This bouding box would include the 
+	// handles unlike the frame.
+	// Finally we should use -setNeedsDisplay:
+	//[[self rootItem] display];
+	[handleGroup setNeedsDisplay: YES];
+	[item setNeedsDisplay: YES];
+}
+
+- (void) hideHandlesForItem: (ETLayoutItem *)item
+{
+	FOREACHI([[self rootItem] items], utilityItem)
+	{
+		if ([utilityItem isKindOfClass: [ETHandleGroup class]] == NO)
+			continue;
+
+		if ([[utilityItem manipulatedObject] isEqual: item])
+		{
+			[utilityItem setNeedsDisplay: YES]; /* Propagate the damaged area upwards */
+			[item setNeedsDisplay: YES];
+			[[self rootItem] removeItem: utilityItem];
+			break;
+		}
+	}
+	// FIXME: Should [handleGroup display]; and -display should retrieve the 
+	// bounding box of the handleGroup. This bouding box would include the 
+	// handles unlike the frame. 
+	// Finally we should use -setNeedsDisplay:
+	//[[self rootItem] display];
+}
+
+- (void) buildHandlesForItems: (NSArray *)manipulatedItems
+{
+	[[self rootItem] removeAllItems];
+
+	FOREACH(manipulatedItems, item, ETLayoutItem *)
+	{
+		if ([item isSelected])
+		{
+			ETHandleGroup *handleGroup = AUTORELEASE([[ETResizeRectangle alloc] initWithManipulatedObject: item]);
+			[[self rootItem] addItem: handleGroup];
+		}
+	}
 }
 
 /** Recomputes new persistent frames for every layout items provided by the 
@@ -107,13 +214,19 @@ layout context, based on the rules or policy of the given layout. */
 	   is computed based on the frame computed by the last layout in use which 
 	   may not be ETFreeLayout (when switching from another layout). */
 	[self loadPersistentFramesForItems: items];
-	
+	if (isNewContent)
+	{
+		[self updateKVOForItems: items];
+		[self buildHandlesForItems: items];
+	}
+
 	[super renderWithLayoutItems: items isNewContent: isNewContent];
-	
+
+	[self mapRootItemIntoLayoutContext];
 	// TODO: May be worth to optimize by computing set intersection of visible and unvisible layout items
 	// NSLog(@"Remove views %@ of next layout items to be displayed from their superview", itemViews);
-	//[[self layoutContext] setVisibleItems: [NSArray array]];
-	
+	[[self layoutContext] setVisibleItems: [NSArray array]];
+
 	[[self layoutContext] setVisibleItems: items];
 }
 
@@ -138,6 +251,15 @@ around: the persistent frame is initialized with the frame value. */
 	}
 }
 
+#if 0
+- (NSArray *) selectedItems
+{
+	// TODO: Probably returns the selected items by collecting them 
+	// recursively over nested free layouts.
+	return [[self layoutContext] items];
+}
+#endif
+
 - (ETLayoutItem *) itemAtLocation: (NSPoint)location
 {
 	ETLayoutItem *item = [super itemAtLocation: location];
@@ -154,31 +276,6 @@ around: the persistent frame is initialized with the frame value. */
 	}
 
 	return nil;
-}
-
-- (void) handleMouseDown: (ETEvent *)event forItem: (id)item layout: (id)layout
-{
-	//NSLog(@"ETFreeLayout handleMouseDown: %@ forItem %@ layout %@", event, item, layout);
-	_dragItem = item;
-	_dragStartOffsetFromOrigin = [[self container] convertPoint: [event locationInWindow] fromView: nil];
-	NSPoint origin = [item origin];
-	_dragStartOffsetFromOrigin.x -= origin.x;
-	_dragStartOffsetFromOrigin.y -= origin.y;
-}
-
-- (void) handleDrag: (ETEvent *)event forItem: (id)item layout: (id)layout
-{
-	if (_dragItem == nil || _dragItem == [self layoutContext])
-	{
-		return;
-	}
-
-	NSPoint newOrigin = [[self container] convertPoint: [event locationInWindow] fromView: nil];
-	newOrigin.x -= _dragStartOffsetFromOrigin.x;
-	newOrigin.y -= _dragStartOffsetFromOrigin.y;
-	[_dragItem setOrigin: newOrigin];
-
-	[[self container] updateLayout];
 }
 
 @end

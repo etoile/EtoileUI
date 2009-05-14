@@ -1,0 +1,35 @@
+TableViewExample
+================
+
+// TODO: Write a short description of the example.
+
+Here are some additional notes about this EtoileUI example.
+
+Create a layout with an existing view
+-------------------------------------
+
+-[ETContainer initWithLayoutView:] in -[TableController applicationWillFinishLaunching:] turns outlineView into a layout and inserts a container as a subview replacement for outlineView (will become wrapped into it on -updateLayout call). 
+
+If the layout view is created at runtime (not part of a nib), you can freely invoke -initWithLayoutView:. However you must take in account the  limitations detailed below, in case you invoke this method with a layout view created in a nib, as the example precisely does. The basic rule is that applicationWillFinishLaunching: must be used instead of applicationDidFinishLaunching: or -awakeFromNib. 
+In our example, if we try to use -applicationDidFinishLaunching:, outlineView will be wrapped into an ETView by ETEtoileUIBuilder invoked in -[ETApplication finishLaunching] before we get the opportunity to convert it into an ETContainer instance. In other words, applicationDidFinishLaunching: works but results in a misconfigured layout item tree.
+In addition, -initWithLayoutView: cannot be called in -awakeFromNib because NSNibAwaking doesn't ensure decoded views are sent -awakeFromNib in a particular or sensible order. For example, outlineView may have no superview set at -awakeFromNib time.
+
+Instead of calling -initWithLayoutView: on the container, you could wrap the layout view into a layout by yourself with the following code:
+	   
+	   id existingSuperview = [outlineView superview];
+	   ETLayout *myTableLayout = [ETOutlineLayout layoutWithLayoutView: outlineView];
+	   ETContainer *outlineContainer = [[ETContainer alloc] initWithFrame: [outlineView frame]];
+	   
+	   if ([existingSuperview isContainer]) // existingSuperview must respond to -layoutItem
+	   {
+	       [existingSuperview addItem: [outlineContainer layoutItem]];
+	   }
+	   else // existingSuperview isn't a view-based node in a layout item tree
+	   {
+	       [existingSuperview replaceSubview: outlineView with: outlineContainer];
+	   }
+	   
+	   [outlineContainer setLayout: myTableLayout]; // inject the initial view as a layout
+	   RELEASE(outlineContainer);
+	   
+-initWithLayoutView: is a conveniency method that does all the above for you.

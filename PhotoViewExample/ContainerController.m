@@ -1,10 +1,21 @@
-#import "ContainerController.h"
+/*
+	Copyright (C) 2007 Quentin Mathe
+ 
+	Author:  Quentin Mathe <qmathe@club-internet.fr>
+	Date:  May 2007
+	License:  Modified BSD (see COPYING)
+ */
+ 
+ #import "ContainerController.h"
 
 
 @implementation ContainerController
 
 - (void) dealloc
 {
+	DESTROY(viewContainer);
+	DESTROY(itemMarginSlider);
+	DESTROY(photoViewItem);
 	DESTROY(images);
 	
 	[super dealloc];
@@ -13,26 +24,33 @@
 - (void) awakeFromNib
 {
 	images = [[NSMutableArray alloc] init];
+	ASSIGN(photoViewItem, [viewContainer layoutItem]);
 
-	[viewContainer setAllowsMultipleSelection: YES];
-	[viewContainer setAllowsEmptySelection: YES];
-	[viewContainer setSource: self];
-	[viewContainer setLayout: [self configureLayout: [ETStackLayout layout]]];
-	[viewContainer setHasVerticalScroller: YES];
-	[viewContainer setHasHorizontalScroller: YES];
+	[photoViewItem setSource: self];
+	[photoViewItem setLayout: [self configureLayout: [ETStackLayout layout]]];
+	[photoViewItem setHasVerticalScroller: YES];
+
+	// FIXME: Move into an EtoileUI plist loaded by ETUTI
+	[ETUTI registerTypeWithString: @"org.etoile-project.objc.class.NSImage"
+	                  description: @"Objective-C Class"
+	             supertypeStrings: A(@"public.image")];
+
+	[self setContent: photoViewItem];
+	[self setAutomaticallyRearrangesObjects: YES]; /* Enable automatic sorting */
+	[self setAllowedPickType: [ETUTI typeWithString: @"public.image"]];
+	[self setAllowedDropType: [ETUTI typeWithString: @"public.image"]
+	           forTargetType: [ETUTI typeWithClass: [ETLayoutItemGroup class]]];
 	
-	//[[viewContainer window] setAcceptsMouseMovedEvents: YES];
-	
-	[[ETPickboard localPickboard] showPickPalette];
+	[[ETPickboard localPickboard] showPickPalette]; /* Just to show it */
 }
 
-- (IBAction)choosePicturesAndLayout:(id)sender
+- (IBAction) choosePicturesAndLayout:(id)sender
 {
     NSOpenPanel *op = [NSOpenPanel openPanel];
     
     [op setAllowsMultipleSelection: YES];
     [op setCanCreateDirectories: YES];
-    //[op setAllowedFileTypes: nil];
+    // TODO: Specify image file types... [op setAllowedFileTypes: nil];
     
     [op beginSheetForDirectory: nil file: nil types: nil 
                 modalForWindow: [viewContainer window] 
@@ -63,24 +81,25 @@
 			layoutClass = [ETFreeLayout class];
 			break;
 		default:
-			NSLog(@"Unsupported layout or unknown popup menu selection");
+			ETLog(@"Unsupported layout or unknown popup menu selection");
 	}
 	
 	id layoutObject = AUTORELEASE([[layoutClass alloc] init]);
-	
-	[viewContainer setLayout: [self configureLayout: layoutObject]];
+
+	[photoViewItem setLayout: [self configureLayout: layoutObject]];
 }
 
+/* Adjust some common settings of these layout to match what can be expected at 
+UI level for a photo viewer. */
 - (id) configureLayout: (id)layoutObject
 {
-	/* Adjust some common settings of these layout to match what can be
-	   expected at UI level for a photo viewer. */
-	
 	if ([layoutObject isKindOfClass: [ETTableLayout class]])
 	{
 		NSCell *iconCell = [[NSImageCell alloc] initImageCell: nil];
 		
 		[layoutObject setStyle: AUTORELEASE(iconCell) forProperty: @"icon"];
+		[layoutObject setEditable: YES forProperty: @"name"];
+
 		[layoutObject setDisplayName: @"" forProperty: @"icon"];
 		[layoutObject setDisplayName: @"Name" forProperty: @"name"];
 		[layoutObject setDisplayName: @"Type" forProperty: @"imgType"];
@@ -89,6 +108,7 @@
 	}
 	if ([layoutObject isKindOfClass: [ETComputedLayout class]])
 	{
+		[layoutObject setAttachedInstrument: [ETSelectTool instrument]];
 		[layoutObject setItemMargin: [itemMarginSlider floatValue]];
 
 		/* We override some extra settings even if the defaults defined by EtoileUI 
@@ -110,51 +130,46 @@
 {
 	if ([sender state] == NSOnState)
 	{
-		[viewContainer setSource: self];
+		[photoViewItem setSource: self];
 	}
 	else if ([sender state] == NSOffState)
 	{
-		[viewContainer setSource: nil];
+		[photoViewItem setSource: nil];
 		[self setUpLayoutItemsDirectly];
 	}
 	
-	[viewContainer reloadAndUpdateLayout];
-    
-    /* Flow autolayout manager doesn't take care of trigerring or updating the display. */
-    [viewContainer setNeedsDisplay: YES];  
+	[photoViewItem reloadAndUpdateLayout];
 }
 
 - (IBAction) switchUsesScrollView: (id)sender
 {
 	if ([sender state] == NSOnState)
 	{
-		[viewContainer setShowsScrollView: YES];
-		//[viewContainer setHasVerticalScroller: YES];
-		//[viewContainer setHasHorizontalScroller: YES];
+		[photoViewItem setShowsScrollView: YES];
+		//[photoViewItem setHasVerticalScroller: YES];
+		//[photoViewItem setHasHorizontalScroller: YES];
 	}
 	else if ([sender state] == NSOffState)
 	{
-		[viewContainer setShowsScrollView: NO];
+		[photoViewItem setShowsScrollView: NO];
 		// NOTE: Testing related lines
-		//[viewContainer setHasVerticalScroller: NO];
-		//[viewContainer setHasHorizontalScroller: NO];
+		//[photoViewItem setHasVerticalScroller: NO];
+		//[photoViewItem setHasHorizontalScroller: NO];
 	}
 	
-	[viewContainer updateLayout];
-    
-    /* Flow autolayout manager doesn't take care of trigerring or updating the display. */
-    [viewContainer setNeedsDisplay: YES];  
+	[photoViewItem updateLayout]; 
 }
 
 - (IBAction) scale: (id)sender
 {
+	// FIXME: Should be...
+	//[photoViewItem or layout setItemScaleFactor: [sender floatValue] / 100];
 	[viewContainer setItemScaleFactor: [sender floatValue] / 100];
-	[viewContainer display];
 }
 
 - (IBAction) changeItemMargin: (id)sender
 {
-	id layout = [viewContainer layout];
+	id layout = [photoViewItem layout];
 	
 	if ([layout isComposite])
 		layout = [layout positionalLayout];
@@ -163,164 +178,137 @@
 		[(ETComputedLayout *)layout setItemMargin: [sender floatValue]];
 }
 
-- (void)selectPicturesPanelDidEnd:(NSOpenPanel *)panel returnCode:(int)returnCode  contextInfo:(void  *)contextInfo
+- (void) selectPicturesPanelDidEnd: (NSOpenPanel *)panel 
+                        returnCode: (int)returnCode
+                       contextInfo: (void  *)contextInfo
 {
-    NSArray *paths = [panel filenames];
-    NSEnumerator *e = [paths objectEnumerator];
-    NSString *path = nil;
-    
-    //NSLog(@"Pictures selected: %@\n", paths);
+    //ETLog(@"Pictures selected: %@\n", paths);
 	
 	[images removeAllObjects];
     
-    while ((path = [e nextObject]) != nil)
+    FOREACH([panel filenames], path, NSString *)
     {
         NSImage *image = AUTORELEASE([[NSImage alloc] initWithContentsOfFile: path]);
 		
-		if (image != nil)
+		if (image == nil)
+			continue;
+
+		//ETLog(@"New image loaded: %@\n", image);
+		
+		// NOTE: NSImage retains image on -setName:
+		if ([NSImage imageNamed: path] != nil)
 		{
-			//NSLog(@"New image loaded: %@\n", image);
-			
-			// NOTE: NSImage retains image on -setName:
-			if ([NSImage imageNamed: path] != nil)
+			/* Reuse already registered image */
+			[images addObject: [NSImage imageNamed: path]];
+		}
+		else /* Register image */
+		{
+			if ([image setName: path])
 			{
-				/* Reuse already registered image */
-				[images addObject: [NSImage imageNamed: path]];
+				[images addObject: image];
 			}
-			else 
+			else
 			{
-				if ([image setName: path])
-				{
-					[images addObject: image];
-				}
-				else
-				{
-					NSLog(@"Impossible to register image for name %@", path);
-				}
+				ETLog(@"Impossible to register image for name %@", path);
 			}
 		}
     }        
 	
-	if ([viewContainer source] == nil)
+	if ([photoViewItem source] == nil)
+	{
 		[self setUpLayoutItemsDirectly];
-    [viewContainer reloadAndUpdateLayout];
-    
-    /* Flow autolayout manager doesn't take care of trigerring or updating the display. */
-    [viewContainer setNeedsDisplay: YES];  
+	}
+
+	/* Whether or not we use a source, we reload everything now */
+    [photoViewItem reloadAndUpdateLayout];
 }
 
-/* This method generates layout items and adds them to the container. Useful 
-   when no source is set.  */
+/* When no source is set, this method is called by -selectPicturePanelDidEnd:XXX 
+to build layout items and adds them to the photo view directly.
+
+This method sets less properties on the returned items unlike 
+-itemGroup:itemAtIndex:.
+
+See -switchUsesSource: action which toggles how the photo view item content 
+is provided. The content is provided either by this method or the source 
+protocol methods. */
 - (void) setUpLayoutItemsDirectly
 {
-	NSMutableArray *imageLayoutItems = [NSMutableArray array];
-	NSEnumerator *e = [images objectEnumerator];
-	NSImage *img = nil;
+	NSMutableArray *imageItems = [NSMutableArray array];
 	
-	NSLog(@"Set up layout items directly");
+	ETLog(@"Set up layout items directly...");
 	
-	while ((img = [e nextObject]) != nil)
+	FOREACH(images, img, NSImage *)
 	{
-		#ifdef USE_IMG_VIEW
-		NSImageView *imgView = [self imageViewForImage: img];
-		#else
-		NSImageView *imgView = nil;
-		#endif
-		ETLayoutItem *item = [ETLayoutItem layoutItemWithView: imgView];
-		
-		[item setValue: [[img name] lastPathComponent] forProperty: @"name"];
-		[item setValue: img forProperty: @"icon"];	
-		[item setImage: img];/* Only useful if no imgView exists */	
-		[imageLayoutItems addObject: item];
+		ETLayoutItem *item = [ETLayoutItem layoutItemWithView: [self imageViewForImage: img]];
+
+		[item setRepresentedObject: img]; /* Use the image as the item model */
+		[item setImage: img]; /* Only useful if no imgView exists */	
+		[item setName: [[img name] lastPathComponent]];
+		[item setIcon: img];	
+
+		[imageItems addObject: item];
 	}
 	
-	[viewContainer removeAllItems]; // Remove all views added the last time	
-	[viewContainer addItems: imageLayoutItems];
-}
-
-- (NSArray *) imageViewsForImages: (NSArray *)imgs
-{
-    NSEnumerator *e = [imgs objectEnumerator];
-    NSImage *image = nil;
-    NSMutableArray *views = [NSMutableArray array];
-    
-    while ((image = [e nextObject]) != nil)
-    {
-		NSImageView *imageView = [self imageViewForImage: image];
-		
-		if (imageView != nil)
-			[views addObject: imageView];
-    }
-
-    NSLog(@"New image views list: %@\n", views);
-
-    return views;
+	[photoViewItem removeAllItems]; /* Remove all the items added previously */
+	[photoViewItem addItems: imageItems];
 }
 
 - (NSImageView *) imageViewForImage: (NSImage *)image
 {
-	if (image != nil)
-    {
-        NSImageView *view = [[NSImageView alloc] 
-            initWithFrame: NSMakeRect(0, 0, [image size].width, [image size].height)];
-        
-        [view setImage: image];
-		return (NSImageView *)AUTORELEASE(view);
-    }
+#ifdef USE_IMG_VIEW
+	return nil;
+#endif
 
-    return nil;
+	if (image == nil)
+		return nil;
+
+	NSImageView *view = AUTORELEASE([[NSImageView alloc] 
+		initWithFrame: ETMakeRect(NSZeroPoint, [image size])]);
+	
+	[view setImage: image];
+
+	return view;
 }
 
-/* ETContainerSource informal protocol */
+/* ETLayoutItemGroup informal flat source protocol as a variant to 
+   -setUpLayoutItemsDirectly. 
+
+   Will be called back in reaction to -reloadXXX when [photoViewItem source] is 
+   not nil, see -selectPicturePanelDidEnd:XXX and -switchUsesSource:. */
 
 - (int) numberOfItemsInItemGroup: (ETLayoutItemGroup *)baseItem
 {
-	NSLog(@"Returns %d as number of items in container %@", [images count], [baseItem supervisorView]);
-	
+	ETLog(@"Returns %d as number of items in %@", [images count], baseItem);
+
 	return [images count];
 }
 
 - (ETLayoutItem *) itemGroup: (ETLayoutItemGroup *)baseItem itemAtIndex: (int)index
 {
 	NSImage *img = [images objectAtIndex: index];
-	ETLayoutItem *imageItem = [ETLayoutItem layoutItemWithView: [self imageViewForImage: img]];
-	//ETLayoutItem *imageItem = [[ETLayoutItem alloc] initWithValue: img];
+	ETLayoutItem *imageItem = [ETLayoutItem itemWithView: [self imageViewForImage: img]];
 	NSWorkspace *wk = [NSWorkspace sharedWorkspace];
-	NSValue *size = [NSValue valueWithSize: [img size]];
-	NSString *type = nil;
 	NSString *appName = nil;
+	NSString *type = nil;
 
 	[wk getInfoForFile: [img name] application: &appName type: &type];
-	
-	[imageItem setValue: img forProperty: @"icon"];
-	//[imageItem setValue: [wk iconForFile: [img name]] forProperty: @"icon"];
-	[imageItem setValue: [[img name] lastPathComponent] forProperty: @"name"];
-	// 'type' is defined by NSObject(Model) so we have to use another property 
-	// name unless we add the possibility to override the inherited property 
-	// instead of updating it with -setValue:forKey:. -addValue:forProperty: 
-	// would add a property or override the inherited value if the property is
-	// already declared in a parent.
-	//[imageItem addValue: type forProperty: @"type"];
+
+	[imageItem setRepresentedObject: img]; /* Use the image as the item model */	
+	[imageItem setName: [[img name] lastPathComponent]];
+	[imageItem setIcon: [wk iconForFile: [img name]] ];		
 	[imageItem setValue: type forProperty: @"imgType"];
-// FIXME: GNUstep doesn't handle common structs like NSSize, NSRect etc. which 
-// can be boxed in a NSValue object. GSObjCSetVal() have to be improved.
-#ifndef GNUSTEP
-	[imageItem setValue: size forProperty: @"size"];
-#endif
-	//[imageItem setValue: date forProperty	: @"modificationdate"];
 	
-	//NSLog(@"Returns %@ as layout item in container %@", imageItem, container);
-	
-	//AUTORELEASE(imageItem);
+	//ETLog(@"Returns %@ as item in %@", imageItem, baseItem);
 
 	return imageItem;
 }
 
 - (NSArray *) displayedItemPropertiesInItemGroup: (ETLayoutItemGroup *)baseItem
 {
-	return [NSArray arrayWithObjects: @"icon", @"name", @"size", @"imgType", @"modificationdate", nil];
+	return A(@"icon", @"name", @"size", @"imgType", @"modificationdate");
 }
 
-//- (NSFormatter *) container: (ETContainer *)container formaterForDisplayItemProperty:
+// TODO: - (NSFormatter *) container: (ETContainer *)container formaterForDisplayItemProperty:
 
 @end

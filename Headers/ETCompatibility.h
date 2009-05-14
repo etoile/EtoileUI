@@ -33,14 +33,14 @@
 	ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
 	THE POSSIBILITY OF SUCH DAMAGE.
  */
- 
+
 #ifndef GNUSTEP
 #import <EtoileUI/GNUstep.h>
 #else
 // NOTE: Temporary hack until GNUstep Base includes KVO header in Foundation.h
 #import <Foundation/NSKeyValueObserving.h>
 #endif
-
+//#define DEBUG_DRAWING
 // TODO: Should be improved to rely on a logging class.
 #ifdef DEBUG_LOG
 #define ETDebugLog ETLog
@@ -62,3 +62,45 @@ how the properties are stored. The implicit property owner is self. */
 	}
 #define GET_PROPERTY(property) [_variableProperties objectForKey: property]
 #define HAS_PROPERTY(property) ([_variableProperties objectForKey: property] != nil)
+
+#define NILARG_EXCEPTION_TEST(arg) \
+	if (arg == nil) \
+	{ \
+		[NSException raise: NSInvalidArgumentException format: @"For %@, " \
+			"%@ must not be nil", NSStringFromSelector(_cmd), #arg ]; \
+	} \
+
+
+//#define DEBUG_DRAWING
+
+#define TRACE_RELEASE_RETAIN(className) \
+@interface className (TraceReleaseRetain) \
+- (oneway void) release; \
+- (id) retain; \
+@end \
+@implementation className (TraceReleaseRetain) \
+- (oneway void) release \
+{ \
+	ETLog(@"TRACE -- Release %@", self); \
+	[super release]; \
+} \
+- (id) retain \
+{ \
+	ETLog(@"TRACE -- Retain %@", self); \
+	return [super retain]; \
+} \
+@end
+
+// TODO: Probably move that back into EtoileFoundation and eliminate the code 
+// duplication.
+#define _FOREACH(collection,object,type) _FOREACHE([collection objectEnumerator],object,type,object ## enumerator)
+
+#define _FOREACHE(e,object,type,enumeratorName)\
+NSEnumerator *enumerator = e;\
+type object;\
+IMP next ## object ## in ## enumeratorName = \
+[enumerator methodForSelector:@selector(nextObject)];\
+while(enumerator != nil && (object = next ## object ## in ## enumeratorName(\
+												   enumerator,\
+												   @selector(nextObject))))
+

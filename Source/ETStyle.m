@@ -35,7 +35,11 @@
 	THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#import <EtoileFoundation/Macros.h>
 #import "ETStyle.h"
+#import "ETFreeLayout.h"
+#import "ETInstrument.h"
+#import "ETGeometry.h"
 #import "ETLayoutItem.h"
 #import "ETLayoutItemGroup.h"
 #import "ETCompatibility.h"
@@ -75,6 +79,12 @@
 - (ETStyle *) lastStyle
 {
 	return (ETStyle *)[self lastObject];
+}
+
+/** Returns whether the receiver can be inserted in several style chains. */
+- (BOOL) isSharedStyle
+{
+	return _isSharedStyle;
 }
 
 /** Returns the selector uses for style rendering which is equal to -render:
@@ -139,14 +149,17 @@ static ETBasicItemStyle *sharedBasicItemStyle = nil;
 + (id) sharedInstance
 {
 	if (sharedBasicItemStyle == nil)
+	{
 		sharedBasicItemStyle = [[ETBasicItemStyle alloc] init];
-		
+		sharedBasicItemStyle->_isSharedStyle = YES;
+	}
+
 	return sharedBasicItemStyle;
 }
 
 - (void) render: (NSMutableDictionary *)inputValues 
      layoutItem: (ETLayoutItem *)item 
-	  dirtyRect: (NSRect)dirtyRect;
+	  dirtyRect: (NSRect)dirtyRect
 {
 	// FIXME: May be we should better support dirtyRect. The next drawing 
 	// methods don't take in account it and simply redraw all their content.
@@ -162,8 +175,14 @@ static ETBasicItemStyle *sharedBasicItemStyle = nil;
 	if ([item isGroup] && [(ETLayoutItemGroup *)item isStack])
 		[self drawStackIndicatorInRect: [item drawingFrame]];
 
-	if ([item isSelected])
+	// FIXME: We should pass a hint in inputValues that lets us known whether 
+	// we handle the selection visual clue or not, in order to eliminate the 
+	// hard check on ETFreeLayout...
+	if ([item isSelected] && [[[item parentItem] layout] isKindOfClass: [ETFreeLayout layout]] == NO)
 		[self drawSelectionIndicatorInRect: [item drawingFrame]];
+
+	if ([[[ETInstrument activeInstrument] firstKeyResponder] isEqual: item])
+		[self drawFirstResponderIndicatorInRect: [item drawingFrame]];
 	
 	[super render: inputValues layoutItem: item dirtyRect: dirtyRect];
 }
@@ -265,6 +284,150 @@ indicatorRect is equal to it. */
 	[roundedRectPath stroke];
 
 	[[NSGraphicsContext currentContext] setShouldAntialias: gstateAntialias];
+}
+
+- (void) drawFirstResponderIndicatorInRect: (NSRect)indicatorRect
+{
+	[[[NSColor keyboardFocusIndicatorColor] colorWithAlphaComponent: 0.8] setStroke];
+	[NSBezierPath setDefaultLineWidth: 6.0];
+	[NSBezierPath strokeRect: indicatorRect];
+}
+
+@end
+
+
+@implementation ETGraphicsGroupStyle
+
+- (void) render: (NSMutableDictionary *)inputValues 
+     layoutItem: (ETLayoutItem *)item 
+	  dirtyRect: (NSRect)dirtyRect
+{
+	//[super render: inputValues layoutItem: item dirtyRect: dirtyRect];
+	[self drawBorderInRect: [item drawingFrame]];
+}
+
+/** Draws a border that covers the whole item frame if aRect is equal to it. */
+- (void) drawBorderInRect: (NSRect)aRect
+{
+	[[NSColor darkGrayColor] setStroke];
+	[NSBezierPath strokeRect: aRect];
+}
+
+@end
+
+
+@implementation ETDropIndicator
+
+- (id) initWithLocation: (NSPoint)dropLocation 
+            hoveredItem: (ETLayoutItem *)hoveredItem
+           isDropTarget: (BOOL)dropOn
+{
+	SUPERINIT
+
+	_dropLocation = dropLocation;
+	ASSIGN(_hoveredItem, hoveredItem);
+	_dropOn = dropOn;
+
+	return self;
+}
+
+// FIXME: Handle layout orientation, only works with horizontal layout
+// currently, in other words the insertion indicator is always vertical.
+- (void) render: (NSMutableDictionary *)inputValues 
+     layoutItem: (ETLayoutItem *)item 
+	  dirtyRect: (NSRect)dirtyRect
+{
+	//ETLog(@"Draw indicator rect %@ in %@", NSStringFromRect([self currentIndicatorRect]), item);
+
+	if (_dropOn) /* Add */
+	{
+		//NSRect hoveredRect = [_hoveredItem frame];
+		[self drawRectangularInsertionIndicatorInRect: [item drawingFrame]];
+	}
+	else /* Insert */
+	{
+		[self drawVerticalInsertionIndicatorInRect: [self currentIndicatorRect]];
+	}
+}
+
+- (void) setUpDrawingAttributes
+{
+
+}
+
+/** Returns the line width to used to draw the indicator. */
+- (float) thickness
+{
+	return 8.0;
+}
+
+/** Returns the color used to draw to the indicator. */
+- (NSColor *) color
+{
+	return [NSColor blueColor];
+}
+
+- (void) drawVerticalInsertionIndicatorInRect: (NSRect)indicatorRect
+{
+	[[self color] setFill];
+	[NSBezierPath setDefaultLineWidth: [self thickness] / 2];
+	[NSBezierPath fillRect: indicatorRect];
+	/*[NSBezierPath strokeLineFromPoint: NSMakePoint(indicatorLineX, NSMinY(hoveredRect))
+							  toPoint: NSMakePoint(indicatorLineX, NSMaxY(hoveredRect))];*/
+	
+	_prevInsertionIndicatorRect = indicatorRect;
+}
+
+- (void) drawRectangularInsertionIndicatorInRect: (NSRect)indicatorRect
+{
+	[[self color] setStroke];
+	[NSBezierPath setDefaultLineCapStyle: NSButtLineCapStyle];
+	[NSBezierPath setDefaultLineWidth: [self thickness]];
+	[NSBezierPath strokeRect: indicatorRect];
+
+	_prevInsertionIndicatorRect = indicatorRect;
+}
+
+- (NSRect) previousIndicatorRect
+{
+	return NSIntegralRect(_prevInsertionIndicatorRect);
+}
+
+- (NSRect) verticalIndicatorRect
+{
+	// NOTE: Should we use... -[[item layout] displayRectOfItem: hoveredItem];
+	NSRect hoveredRect = [_hoveredItem frame];
+	float itemMiddleWidth = hoveredRect.origin.x + hoveredRect.size.width / 2;
+	float indicatorWidth = 4.0;
+	float indicatorLineX = 0.0;
+
+	/* Decides whether to draw on left or right border of hovered item */
+	if (_dropLocation.x >= itemMiddleWidth)
+	{
+		indicatorLineX = NSMaxX(hoveredRect);
+		//ETDebugLog(@"Draw right insertion bar");
+	}
+	else if (_dropLocation.x < itemMiddleWidth)
+	{
+		indicatorLineX = NSMinX(hoveredRect);
+		//ETDebugLog(@"Draw left insertion bar");
+	}
+
+	/* Computes indicator rect */
+	return NSMakeRect(indicatorLineX - indicatorWidth / 2.0, 
+		NSMinY(hoveredRect), indicatorWidth, NSHeight(hoveredRect));
+}
+
+- (NSRect) currentIndicatorRect
+{
+	if (_dropOn)
+	{
+		return ETMakeRect(NSZeroPoint, [_hoveredItem drawingFrame].size);
+	}
+	else
+	{
+		return [self verticalIndicatorRect];
+	}
 }
 
 @end

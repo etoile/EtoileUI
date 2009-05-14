@@ -42,7 +42,9 @@
 #import <EtoileFoundation/ETCollection.h>
 #import <EtoileFoundation/Macros.h>
 #import <EtoileUI/ETLayoutItem+Reflection.h>
+#import "ETLayoutItem+Factory.h"
 #import <EtoileUI/ETInspector.h>
+#import "ETInstrument.h"
 #import <EtoileUI/ETContainer.h>
 #import <EtoileUI/ETLayoutItemGroup.h>
 #import <EtoileUI/ETTableLayout.h>
@@ -119,13 +121,20 @@
 	// FIXME: item implies a memory leak, the container bound to this item must
 	// be assigned to self and this item discarded.
 	//id item = [[ETEtoileUIBuilder builder] renderWindow: window];
-	[[ETEtoileUIBuilder builder] renderWindow: window];
+	[[ETLayoutItem windowGroup] addItem: [[ETEtoileUIBuilder builder] renderWindow: window]];
 
 	[layoutPopup removeAllItems];
 	FOREACH([ETLayout registeredLayoutClasses], layoutClass, ETLayout *)
 	{
 		[layoutPopup addItemWithTitle: [layoutClass displayName]];
 		[[layoutPopup lastItem] setRepresentedObject: layoutClass];
+	}
+	
+	[instrumentPopup removeAllItems];
+	FOREACH([ETInstrument registeredInstrumentClasses], instrumentClass, ETInstrument *)
+	{
+		[instrumentPopup addItemWithTitle: [instrumentClass displayName]];
+		[[instrumentPopup lastItem] setRepresentedObject: instrumentClass];
 	}
 
 	[itemGroupView setLayout: AUTORELEASE([[ETOutlineLayout alloc] init])];
@@ -141,6 +150,7 @@
 
 	[propertyView setLayout: AUTORELEASE([[ETTableLayout alloc] init])];
 	[propertyView setSource: self];
+	[(ETTableLayout *)[propertyView layout] setEditable: YES forProperty: @"value"];
 	// NOTE: If this next line is uncommented, -itemGroupSelectionDidChange:
 	// must be updated to filter out property view related notifications.
 	//[propertyView setDelegate: self];
@@ -275,6 +285,17 @@
 	
 	if ([representedItem respondsToSelector: @selector(setLayout:)])
 		[representedItem setLayout: [layoutClass layout]];
+}
+
+- (IBAction) changeInstrument: (id)sender
+{
+	Class instrumentClass = [[sender selectedItem] representedObject];
+	
+	id firstSelectedItem = [[itemGroupView selectedItemsInLayout] firstObject];
+	id representedItem = [firstSelectedItem representedObject];
+	
+	if ([representedItem respondsToSelector: @selector(layout)])
+		[[(ETLayoutItemGroup *)representedItem layout] setAttachedInstrument: [instrumentClass instrument]];
 }
 
 - (NSArray *) inspectedObjects

@@ -35,17 +35,18 @@
  */
 
 #import <EtoileFoundation/NSObject+Model.h>
-#import <EtoileUI/ETOutlineLayout.h>
-#import <EtoileUI/ETLayout.h>
-#import <EtoileUI/ETContainer.h>
-#import <EtoileUI/ETLayoutItem.h>
-#import <EtoileUI/ETLayoutItem+Events.h>
-#import <EtoileUI/ETEvent.h>
-#import <EtoileUI/ETLayoutItemGroup.h>
-#import <EtoileUI/ETLayoutLine.h>
-#import <EtoileUI/ETPickboard.h>
-#import <EtoileUI/NSView+Etoile.h>
-#import <EtoileUI/ETCompatibility.h>
+#import "ETOutlineLayout.h"
+#import "ETLayout.h"
+#import "ETContainer.h"
+#import "ETLayoutItem.h"
+#import "ETLayoutItem+Events.h"
+#import "ETEvent.h"
+#import "ETLayoutItemGroup.h"
+#import "ETLayoutLine.h"
+#import "ETPickboard.h"
+#import "ETPickDropCoordinator.h"
+#import "NSView+Etoile.h"
+#import "ETCompatibility.h"
 
 @interface ETTableLayout (PackageVisibility)
 - (void) tableViewSelectionDidChange: (NSNotification *)notif;
@@ -197,7 +198,7 @@
 
 - (void) outlineViewSelectionDidChange: (NSNotification *)notif
 {
-	id delegate = [[self container] delegate];
+	id delegate = [[self container] delegate]; // FIXME: Remove ETContainer dependency
 	
 	[self tableViewSelectionDidChange: notif];
 
@@ -224,7 +225,7 @@
 	
 	if (item == nil)
 	{
-		nbOfItems = [[[self layoutContext] items] count];
+		nbOfItems = [[[self layoutContext] arrangedItems] count];
 
 		/* First time. Useful when the layout context is browsed or 
 		   inspected without having been loaded and displayed yet. 
@@ -233,22 +234,22 @@
 		if (nbOfItems == 0)
 		{
 			[(ETLayoutItemGroup *)[self layoutContext] reloadIfNeeded];
-			nbOfItems = [[[self layoutContext] items] count];
+			nbOfItems = [[[self layoutContext] arrangedItems] count];
 		}
 	}
 	else if ([item isGroup]) 
 	{
-		nbOfItems = [[item items] count];
+		nbOfItems = [[item arrangedItems] count];
 		
 		/* First time */
 		if (nbOfItems == 0)
 		{
 			[item reloadIfNeeded];
-			nbOfItems = [[item items] count];
+			nbOfItems = [[item arrangedItems] count];
 		}
 	}
 	
-	//ETDebugLog(@"Returns %d as number of items in %@", nbOfItems, outlineView);
+	ETLog(@"Returns %d as number of items in %@", nbOfItems, outlineView);
 	
 	return nbOfItems;
 }
@@ -259,11 +260,11 @@
 	
 	if (item == nil) /* Root */
 	{
-		childItem = [[[self layoutContext] items] objectAtIndex: rowIndex];
+		childItem = [[[self layoutContext] arrangedItems] objectAtIndex: rowIndex];
 	}
 	else if ([item isGroup]) /* Node */
 	{
-		childItem = [(ETLayoutItemGroup *)item itemAtIndex: rowIndex];
+		childItem = [[(ETLayoutItemGroup *)item arrangedItems] objectAtIndex: rowIndex];
 	}
 
 	//ETDebugLog(@"Returns %@ child item in outline view %@", childItem, outlineView);
@@ -388,7 +389,8 @@
 	id baseItem = [(ETLayoutItem *)[self layoutContext] baseItem];
 	
 	_lastChildDropIndex = index;
-	[baseItem handleDrop: info forItem: droppedItem on: dropTargetItem];
+	[[baseItem actionHandler] handleDropObject: droppedItem onItem: dropTargetItem 
+		coordinator: [ETPickDropCoordinator sharedInstance]];
 	return YES;
 }
 
@@ -433,9 +435,16 @@
 	NSAssert3([items containsObject: draggedItem], @"Dragged items %@ must "
 		@"contain clicked item %@ in %@", items, draggedItem, self);
 		
-	[baseItem handleDrag: dragEvent forItem: draggedItem layout: self];	
-	
+	[[baseItem actionHandler] handleDragItem: draggedItem 
+		coordinator: [ETPickDropCoordinator sharedInstanceWithEvent: dragEvent]];
+
 	return YES;
+}
+
+- (void) outlineView: (NSOutlineView *)outlineView sortDescriptorsDidChange: (NSArray *)oldDescriptors
+{
+	[[self layoutContext] sortWithSortDescriptors: [outlineView sortDescriptors] recursively: YES];
+	[outlineView reloadData];
 }
 
 - (ETLayoutItem *) doubleClickedItem
@@ -627,8 +636,10 @@
 // NOTE: Read the next comment.
 //- (unsigned int) draggingSourceOperationMaskForLocal: (BOOL)isLocal;
 //- (void) draggedImage: (NSImage *)anImage beganAt: (NSPoint)aPoint;
+#if 0
 - (void) draggedImage: (NSImage *)draggedImage movedTo: (NSPoint)screenPoint;
 - (void) draggedImage: (NSImage *)anImage endedAt: (NSPoint)aPoint operation: (NSDragOperation)operation;
+#endif
 @end
 
 @implementation NSOutlineView (ETTableLayoutDraggingSource)
@@ -646,7 +657,6 @@
 {
 	[[self eventHandler] draggedImage: anImage beganAt: aPoint];
 }
-#endif
 
 /* However the following two methods are implemented by NSOutlineView by default
    unlike NSTableView. It means NSTableView(ETTableLayoutDraggingSource)
@@ -670,5 +680,6 @@
 {
 	[[self eventHandler] draggedImage: anImage endedAt: aPoint operation: operation];
 }
+#endif
 
 @end

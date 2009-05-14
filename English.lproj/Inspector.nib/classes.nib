@@ -21,14 +21,6 @@
 		</dict>
 		<dict>
 			<key>CLASS</key>
-			<string>ETStyleRenderer</string>
-			<key>LANGUAGE</key>
-			<string>ObjC</string>
-			<key>SUPERCLASS</key>
-			<string>NSObject</string>
-		</dict>
-		<dict>
-			<key>CLASS</key>
 			<string>ETLayoutItem</string>
 			<key>LANGUAGE</key>
 			<string>ObjC</string>
@@ -38,47 +30,29 @@
 				<string>ETView</string>
 			</dict>
 			<key>SUPERCLASS</key>
-			<string>ETStyleRenderer</string>
+			<string>ETStyle</string>
 		</dict>
 		<dict>
-			<key>ACTIONS</key>
-			<dict>
-				<key>browse</key>
-				<string>id</string>
-			</dict>
 			<key>CLASS</key>
+			<string>NSTextField</string>
+			<key>LANGUAGE</key>
+			<string>ObjC</string>
+			<key>SUPERCLASS</key>
+			<string>NSControl</string>
+		</dict>
+		<dict>
+			<key>CLASS</key>
+			<string>NSControl</string>
+			<key>LANGUAGE</key>
+			<string>ObjC</string>
+			<key>SUPERCLASS</key>
 			<string>NSView</string>
-			<key>LANGUAGE</key>
-			<string>ObjC</string>
-			<key>SUPERCLASS</key>
-			<string>NSResponder</string>
 		</dict>
 		<dict>
 			<key>ACTIONS</key>
 			<dict>
-				<key>browse</key>
+				<key>changeInstrument</key>
 				<string>id</string>
-				<key>inspect</key>
-				<string>id</string>
-				<key>view</key>
-				<string>id</string>
-			</dict>
-			<key>CLASS</key>
-			<string>NSObject</string>
-			<key>LANGUAGE</key>
-			<string>ObjC</string>
-		</dict>
-		<dict>
-			<key>CLASS</key>
-			<string>FirstResponder</string>
-			<key>LANGUAGE</key>
-			<string>ObjC</string>
-			<key>SUPERCLASS</key>
-			<string>NSObject</string>
-		</dict>
-		<dict>
-			<key>ACTIONS</key>
-			<dict>
 				<key>changeLayout</key>
 				<string>id</string>
 				<key>inspect</key>
@@ -92,6 +66,8 @@
 			<string>ObjC</string>
 			<key>OUTLETS</key>
 			<dict>
+				<key>instrumentPopup</key>
+				<string>NSPopUpButton</string>
 				<key>itemGroupView</key>
 				<string>ETContainer</string>
 				<key>layoutPopup</key>
@@ -107,6 +83,31 @@
 			<string>ETLayoutItem</string>
 		</dict>
 		<dict>
+			<key>CLASS</key>
+			<string>ETObjectChain</string>
+			<key>LANGUAGE</key>
+			<string>ObjC</string>
+			<key>SUPERCLASS</key>
+			<string>NSObject</string>
+		</dict>
+		<dict>
+			<key>ACTIONS</key>
+			<dict>
+				<key>browse</key>
+				<string>id</string>
+				<key>explore</key>
+				<string>id</string>
+				<key>inspect</key>
+				<string>id</string>
+				<key>view</key>
+				<string>id</string>
+			</dict>
+			<key>CLASS</key>
+			<string>NSObject</string>
+			<key>LANGUAGE</key>
+			<string>ObjC</string>
+		</dict>
+		<dict>
 			<key>ACTIONS</key>
 			<dict>
 				<key>browse</key>
@@ -118,6 +119,43 @@
 			<string>ObjC</string>
 			<key>SUPERCLASS</key>
 			<string>NSResponder</string>
+		</dict>
+		<dict>
+			<key>CLASS</key>
+			<string>ETStyle</string>
+			<key>LANGUAGE</key>
+			<string>ObjC</string>
+			<key>SUPERCLASS</key>
+			<string>ETObjectChain</string>
+		</dict>
+		<dict>
+			<key>ACTIONS</key>
+			<dict>
+				<key>browse</key>
+				<string>id</string>
+			</dict>
+			<key>CLASS</key>
+			<string>NSView</string>
+			<key>LANGUAGE</key>
+			<string>ObjC</string>
+			<key>SUPERCLASS</key>
+			<string>NSResponder</string>
+		</dict>
+		<dict>
+			<key>CLASS</key>
+			<string>NSMenuItem</string>
+			<key>LANGUAGE</key>
+			<string>ObjC</string>
+			<key>SUPERCLASS</key>
+			<string>NSObject</string>
+		</dict>
+		<dict>
+			<key>CLASS</key>
+			<string>FirstResponder</string>
+			<key>LANGUAGE</key>
+			<string>ObjC</string>
+			<key>SUPERCLASS</key>
+			<string>NSObject</string>
 		</dict>
 		<dict>
 			<key>ACTIONS</key>

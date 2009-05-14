@@ -70,7 +70,6 @@ NSString *ETItemGroupSelectionDidChangeNotification = @"ETItemGroupSelectionDidC
 @end
 
 @interface ETLayoutItemGroup (Private)
-- (id) initWithItems: (NSArray *)layoutItems view: (NSView *)view value: (id)value representedObject: (id)repObject;
 - (BOOL) hasNewLayout;
 - (void) setHasNewLayout: (BOOL)flag;
 - (void) collectSelectionIndexPaths: (NSMutableArray *)indexPaths
@@ -1107,6 +1106,10 @@ frame (see -usesLayoutBasedFrame). */
 		id layout = [self layout];
 		if ([layout respondsToSelector: @selector(rootItem)])
 		{
+			if ([[layout rootItem] numberOfItems] > 0)
+			{
+				ETLog(@"");
+			}
 			[self display: inputValues item: [layout rootItem] dirtyRect: dirtyRect inView: view];
 		}
 
@@ -1624,17 +1627,18 @@ You should call this method to obtain the selection in most cases and not
 	BOOL hasValidSortDescriptors = (descriptors != nil && [descriptors isEmpty] == NO);
 	if (hasValidSortDescriptors)
 	{
-		ASSIGN(_arrangedItems, [NSMutableArray arrayWithArray: _layoutItems]);
-		_sorted = NO;
-		_filtered = NO;
-		return;
-	}
-	else
-	{
 		[_sortedItems sortUsingDescriptors: descriptors];
 		ASSIGN(_arrangedItems, _sortedItems);
 		_sorted = YES;
 		_filtered = NO;
+	}
+	else
+	{
+		ASSIGN(_arrangedItems, [NSMutableArray arrayWithArray: _layoutItems]);
+		_sorted = NO;
+		_filtered = NO;
+		_hasNewContent = YES;
+		return;
 	}
 
 	if (recursively)
@@ -1648,12 +1652,38 @@ You should call this method to obtain the selection in most cases and not
 			                                       recursively: recursively];
 		}
 	}
+
+	_hasNewContent = YES;
 }
 
 - (void) filterWithPredicate: (NSPredicate *)predicate recursively: (BOOL)recursively
 {
 	NSArray *itemsToFilter = (_sorted ? _sortedItems : _layoutItems);
 	BOOL hasValidPredicate = (predicate != nil);
+	NSMutableArray *itemsToExclude = [NSMutableArray array];
+		
+	if (recursively)
+	{
+		FOREACHI(itemsToFilter, item)
+		{
+			if ([item isGroup] == NO)
+				continue;
+				
+			[(ETLayoutItemGroup *)item filterWithPredicate: predicate 
+			                                   recursively: recursively];
+			BOOL hasSearchResult = ([[item arrangedItems] count] > 0);
+			if (hasSearchResult)
+			{
+				[itemsToExclude addObject: item];
+			}
+		}
+
+		if ([itemsToExclude count] > 0)
+		{
+			itemsToFilter = [NSMutableArray arrayWithArray: itemsToFilter];
+			[(NSMutableArray *)itemsToFilter removeObjectsInArray: itemsToExclude];
+		}
+	}
 
 	if (hasValidPredicate)
 	{
@@ -1665,18 +1695,9 @@ You should call this method to obtain the selection in most cases and not
 		ASSIGN(_arrangedItems, itemsToFilter);
 		_filtered = NO;
 	}
-	
-	if (recursively)
-	{
-		FOREACHI(_arrangedItems, item)
-		{
-			if ([item isGroup] == NO)
-				continue;
-				
-			[(ETLayoutItemGroup *)item filterWithPredicate: predicate 
-			                                   recursively: recursively];
-		}
-	}
+	ASSIGN(_arrangedItems, [_arrangedItems arrayByAddingObjectsFromArray: itemsToExclude]);
+
+	_hasNewContent = YES;
 }
 
 /** Returns whether -arrangedItems are sorted or not.

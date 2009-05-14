@@ -19,6 +19,8 @@
 - (ETLayoutItem *) itemGroup: (ETLayoutItemGroup *)baseItem itemAtIndex: (int)index;
 @end
 
+NSString *myFolderUTI = @"org.etoile.ObjectManagerExample.folder";
+NSString *myFileUTI = @"org.etoile.ObjectManagerExample.file";
 
 @implementation ObjectManagerController
 
@@ -36,7 +38,7 @@ static NSFileManager *objectManager = nil;
 	
 	objectManager = [NSFileManager defaultManager];
 	
-	ASSIGN(path, @"/");
+	ASSIGN(path, @"/Users");
     
     [nc addObserver: self 
            selector: @selector(viewContainerDidResize:) 
@@ -64,13 +66,28 @@ static NSFileManager *objectManager = nil;
 	if (fixedPath)
 		NSLog(@"Mixed path test: %@ -> %@", testPath, fixedPath);
 
-	[viewContainer setAllowsMultipleSelection: YES];			
+	[ETUTI registerTypeWithString: myFileUTI 
+	                  description: nil 
+	             supertypeStrings: [NSArray array]];
+	[ETUTI registerTypeWithString: myFolderUTI 
+	                  description: nil 
+	             supertypeStrings: [NSArray array]];
+		
+	controller = [[ETController alloc] init];
+	[controller setAutomaticallyRearrangesObjects: YES];
+	[controller setContent: [viewContainer layoutItem]];
+	[controller setAllowedPickType: [ETUTI typeWithString: myFileUTI]];
+	[controller setAllowedPickType: [ETUTI transientTypeWithSupertypes: 
+		A([ETUTI typeWithString: myFileUTI], [ETUTI typeWithString: myFolderUTI])]];
+
+	[viewContainer setAllowsMultipleSelection: YES];
+	[viewContainer setRepresentedPath: path];		
 	[viewContainer setSource: self];
 	[viewContainer setTarget: self];
 	[viewContainer setDoubleAction: @selector(doubleClickInViewContainer:)];
 	[viewContainer setHasVerticalScroller: YES];
 	[viewContainer setHasHorizontalScroller: YES];
-	[viewContainer setLayout: AUTORELEASE([[ETFlowLayout alloc] init])];
+	[viewContainer setLayout: [ETFlowLayout layout]];
 	[viewContainer reloadAndUpdateLayout];
 
 	[pathContainer setLayout: [ETLineLayout layout]];
@@ -139,12 +156,12 @@ static NSFileManager *objectManager = nil;
 	if ([sender state] == NSOnState)
 	{
 		[viewContainer setHasVerticalScroller: YES];
-		[viewContainer setHasHorizontalScroller: YES];
+		//[viewContainer setHasHorizontalScroller: YES];
 	}
 	else if ([sender state] == NSOffState)
 	{
 		[viewContainer setHasVerticalScroller: NO];
-		[viewContainer setHasHorizontalScroller: NO];
+		//[viewContainer setHasHorizontalScroller: NO];
 	}
 	
 	[viewContainer updateLayout];
@@ -156,6 +173,20 @@ static NSFileManager *objectManager = nil;
 - (IBAction) scale: (id)sender
 {
 	[viewContainer setItemScaleFactor: [sender floatValue] / 100];
+}
+
+- (IBAction) search: (id)sender
+{
+	NSString *searchString = [sender stringValue];
+
+	if ([searchString isEqual: @""])
+	{
+		[controller setFilterPredicate: nil];
+	}
+	else
+	{
+		[controller setFilterPredicate: [NSPredicate predicateWithFormat: @"displayName contains %@", searchString]];
+	}
 }
 
 - (void) doubleClickInViewContainer: (id)sender
@@ -315,10 +346,12 @@ static NSFileManager *objectManager = nil;
 		if ([[NSFileManager defaultManager] fileExistsAtPath: filePath isDirectory: &isDir] && isDir)
 		{
 			fileItem = [ETLayoutItem layoutItemGroupWithView: [self imageViewForImage: icon]];
+			[fileItem setSubtype: myFolderUTI];
 		}
 		else
 		{
 			fileItem = [ETLayoutItem layoutItemWithView: [self imageViewForImage: icon]];
+			[fileItem setSubtype: myFileUTI];
 		}
 		
 		// FIXME: better to have a method -setIdentifier: different from -setName:
@@ -388,7 +421,7 @@ static NSFileManager *objectManager = nil;
 		NSImage *icon = [wk iconForFile: filePath];
 		
 		fileItem = [ETLayoutItem layoutItemWithView: [self imageViewForImage: icon]];
-		
+
 		[fileItem setValue: [filePath lastPathComponent] forProperty: @"name"];
 		[fileItem setValue: filePath forProperty: @"filePath"];
 		[fileItem setValue: icon forProperty: @"icon"];

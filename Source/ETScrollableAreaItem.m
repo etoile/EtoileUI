@@ -73,6 +73,14 @@
 }
 
 /** Returns the rect that corresponds to the visible part of the content and 
+expressed in the receiver content coordinate space (relative to the content 
+rect). */
+- (NSRect) visibleRect
+{
+	return [[self scrollView] documentVisibleRect];
+}
+
+/** Returns the rect that corresponds to the visible part of the content and 
 expressed in the receiver coordinate space (relative to the decoration rect). */
 - (NSRect) visibleContentRect
 {

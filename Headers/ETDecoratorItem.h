@@ -38,7 +38,7 @@
 #import <AppKit/AppKit.h>
 #import <EtoileUI/ETStyle.h>
 
-@class ETDecoratorItem, ETView;
+@class ETDecoratorItem, ETLayoutItemGroup, ETView;
 
 /** An abstract class/mixin that provides some basic behavior common to both 
 ETLayoutItem and ETDecoratorItem.
@@ -51,6 +51,8 @@ TODO: Turn this class into a mixin and a protocol. */
 }
 
 + (NSRect) defaultItemRect;
+
+- (BOOL) usesWidgetView;
 
 - (BOOL) isFlipped;
 - (id) supervisorView;
@@ -66,11 +68,14 @@ TODO: Turn this class into a mixin and a protocol. */
 
 - (ETDecoratorItem *) decoratorItem;
 - (void) setDecoratorItem: (ETDecoratorItem *)decorator;
+- (void) removeDecoratorItem: (ETDecoratorItem *)decorator;
 - (id) lastDecoratorItem;
 - (ETUIItem *) decoratedItem;
 - (id) firstDecoratedItem;
 - (BOOL) acceptsDecoratorItem: (ETDecoratorItem *)item;
 - (NSRect) decorationRect;
+
+- (ETUIItem *) decoratorItemAtPoint: (NSPoint)aPoint;
 
 /* Framework Private */
 
@@ -79,7 +84,8 @@ TODO: Turn this class into a mixin and a protocol. */
 - (NSRect) convertDisplayRect: (NSRect)rect 
         toAncestorDisplayView: (NSView **)aView 
                      rootView: (NSView *)topView
-                   parentItem: (ETLayoutItem *)parent;
+                   parentItem: (ETLayoutItemGroup *)parent;
+- (ETUIItem *) decoratedItemAtPoint: (NSPoint)aPoint;
 
 @end
 
@@ -118,11 +124,14 @@ However -supervisorView can be overriden to return nil. */
 
 - (void) setDecorationRect: (NSRect)rect;
 
+- (NSRect) visibleRect;
 - (NSRect) visibleContentRect;
 - (NSRect) contentRect;
 
 - (NSRect) convertDecoratorRectFromContent: (NSRect)rectInContent;
+- (NSPoint) convertDecoratorPointFromContent: (NSPoint)aPoint;
 - (NSRect) convertDecoratorRectToContent: (NSRect)rectInDecorator;
+- (NSPoint) convertDecoratorPointToContent: (NSPoint)aPoint;
 - (NSSize) decorationSizeForContentSize: (NSSize)aSize;
 
 - (BOOL) isFlipped;
@@ -141,5 +150,6 @@ However -supervisorView can be overriden to return nil. */
 /* Private Use */
 
 - (void) setDecoratedItem: (ETUIItem *)item;
+- (ETUIItem *) decoratedItemAtPoint: (NSPoint)aPoint;
 
 @end

@@ -113,7 +113,9 @@
 			NSStringFromSize([[self layoutContext] size]), 
 			NSStringFromSize([[self layoutContext] visibleContentSize]));
 	}
-	
+
+	[self mapRootItemIntoLayoutContext];
+
 	NSMutableArray *visibleItems = [NSMutableArray array];
 	NSEnumerator  *e = [layoutModel objectEnumerator];
 	ETLayoutLine *line = nil;

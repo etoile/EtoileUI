@@ -40,6 +40,7 @@
 #import "ETApplication.h"
 #import "ETContainer.h"
 #import "ETCompatibility.h"
+#import "ETInstruments.h"
 #import "ETLayoutItem+Factory.h"
 #import "ETWindowItem.h"
 #import "NSWindow+Etoile.h"
@@ -51,16 +52,14 @@
 
 - (id) init
 {
-	ETContainer *containerAsLayer = [[ETContainer alloc] initWithFrame: DEFAULT_FRAME];
-	
-	AUTORELEASE(containerAsLayer);
-    self = (ETLayer *)[super initWithView: (NSView *)containerAsLayer];
-    
-    if (self != nil)
-    {
-		_visible = YES;
-		_outOfFlow = YES;
-    }
+	SUPERINIT;
+
+ 	ETContainer *containerAsLayer = 
+		AUTORELEASE([[ETContainer alloc] initWithFrame: DEFAULT_FRAME]); 
+
+	[self setSupervisorView: containerAsLayer];
+	_visible = YES;
+	_outOfFlow = YES;
     
     return self;
 }
@@ -101,29 +100,26 @@
 
 /** Returns a new bordeless panel which can be used as a temporary root window 
 when a layout other than ETWindowLayout is set on the receiver. */
-- (NSWindow *) _createRetainedRootWindow
+- (ETWindowItem *) createRootWindowItem
 {
-	NSPanel *win = [[NSPanel alloc] initWithFrame: [self frame] 
-	                                  styleMask: NSBorderlessWindowMask];
-	[win center];
-	[win setFloatingPanel: YES];
-	[win setContentView: [self supervisorView]];
-
-	return win;
+	return [ETLayoutItem itemWithWindow: AUTORELEASE([[ETFullScreenWindow alloc] init])];
 }
 
 - (id) init
 {
 	SUPERINIT
 
-	_rootWindow = [self _createRetainedRootWindow];
+	ETContainer *supervisorView = [[ETContainer alloc] initWithFrame: [[NSScreen mainScreen] visibleFrame] layoutItem: self];
+	RELEASE(supervisorView); /* Was retained on -initWithFrame:layoutItem: */
+		
+	ASSIGN(_rootWindowItem, [self createRootWindowItem]);
 	_visibleWindows = [[NSMutableArray alloc] init];
 	[self setLayout: [ETWindowLayout layout]];
 
 	return self;
 }
 
-DEALLOC(DESTROY(_rootWindow); DESTROY(_visibleWindows));
+DEALLOC(DESTROY(_rootWindowItem); DESTROY(_visibleWindows));
 
 - (void) handleAttachViewOfItem: (ETLayoutItem *)item
 {
@@ -178,12 +174,27 @@ DEALLOC(DESTROY(_rootWindow); DESTROY(_visibleWindows));
 - (void) setLayout: (ETLayout *)aLayout
 {
 	if ([_layout isKindOfClass: [ETWindowLayout class]])
+	{
 		[self hideHardWindows];
+		[self removeWindowDecoratorItems];
+	}
 
 	if ([aLayout isKindOfClass: [ETWindowLayout class]])
+	{
 		[self showHardWindows];
+		[self restoreWindowDecoratorItems];
+	}
 
 	[super setLayout: aLayout];
+}
+
+- (NSRect) rootWindowFrame
+{
+#ifndef DEBUG
+	return [[NSScreen mainScreen] visibleFrame];
+#else
+	return NSMakeRect(100, 100, 600, 500);
+#endif
 }
 
 /** Hides currently visible WM-based windows that decorate the items owned by 
@@ -199,12 +210,12 @@ You should never call this method unless you write an ETWindowLayout subclass. *
 	   current windows.
 	   FIXME: Moreover on GNUstep our root window won't receive the focus if we 
 	   try to do that once all current windows have been ordered out. */
-	[_rootWindow setFrame: [[NSScreen mainScreen] visibleFrame] display: NO];
-	[_rootWindow makeKeyAndOrderFront: self];
+	[[self lastDecoratorItem] setDecoratorItem: _rootWindowItem];
+	[[_rootWindowItem window] setFrame: [self rootWindowFrame] display: NO];
 
 	FOREACH([ETApp windows], win, NSWindow *)
 	{
-		if ([win isEqual: _rootWindow] == NO)
+		if ([win isEqual: [_rootWindowItem window]] == NO)
 		{
 			if ([win isVisible] && [win isSystemPrivateWindow] == NO)
 			{
@@ -226,17 +237,35 @@ You should never call this method unless you write an ETWindowLayout subclass. *
 	{
 		[win orderFront: self];
 	}
-	[_rootWindow orderOut: self];
+	[self removeDecoratorItem: _rootWindowItem]; /* Order out the root window */
 }
 
+- (void) removeWindowDecoratorItems
+{
+	FOREACH([self items], item, ETLayoutItem *)
+	{
+		[[[item windowDecoratorItem] decoratedItem] setDecoratorItem: nil];
+	}
+}
+
+- (void) restoreWindowDecoratorItems
+{
+
+}
 
 @end
 
 @implementation ETWindowLayout
 
-/*- (void) tearDown
+- (id) initWithLayoutView: (NSView *)layoutView
 {
-	
-}*/
+	self = [super initWithLayoutView: layoutView];
+	if (self == nil)
+		return nil;
+
+	[self setAttachedInstrument: [ETArrowTool instrument]];
+
+	return self;
+}
 
 @end

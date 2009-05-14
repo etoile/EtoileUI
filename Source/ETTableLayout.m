@@ -35,15 +35,16 @@
  */
 
 #import <EtoileFoundation/Macros.h>
-#import <EtoileUI/ETTableLayout.h>
-#import <EtoileUI/ETContainer.h>
-#import <EtoileUI/ETLayoutItem.h>
-#import <EtoileUI/ETLayoutItem+Events.h>
-#import <EtoileUI/ETEvent.h>
-#import <EtoileUI/ETLayoutLine.h>
-#import <EtoileUI/ETPickboard.h>
-#import <EtoileUI/NSView+Etoile.h>
-#import <EtoileUI/ETCompatibility.h>
+#import "ETTableLayout.h"
+#import "ETContainer.h"
+#import "ETLayoutItem.h"
+#import "ETLayoutItem+Events.h"
+#import "ETEvent.h"
+#import "ETLayoutLine.h"
+#import "ETPickboard.h"
+#import "ETPickDropCoordinator.h"
+#import "NSView+Etoile.h"
+#import "ETCompatibility.h"
 
 /* Private Interface */
 
@@ -305,14 +306,27 @@ yet, it is created. */
 	NSTableHeaderCell *headerCell = [[NSTableHeaderCell alloc] initTextCell: property]; // FIXME: Use display name
 	NSCell *dataCell = [[NSCell alloc] initTextCell: @""];
 	NSTableColumn *column = [[NSTableColumn alloc] initWithIdentifier: property];
+	// FIXME: Implement sort descriptor support on NSTableView and NSTableColumn
+#ifndef GNUSTEP
+	// TODO: -compare: is really a suboptimal choice in various cases.
+	// For example, NSString provides -localizedCompare: unlike NSNumber, NSDate etc.
+	NSSortDescriptor *sortDescriptor = AUTORELEASE([[NSSortDescriptor alloc] 
+		initWithKey: property ascending: YES selector: @selector(compare:)]);
+#endif
 
 	[column setHeaderCell: headerCell];
 	RELEASE(headerCell);
 	[dataCell setFont: [self contentFont]];
+#ifdef GNUstep // FIXME: Probably don't needed on GNUstep either...
+	NSParameterAssert([[column dataCell] isKindOfClass: [NSTextFieldCell class]]);
 	[column setDataCell: dataCell];
+#endif
 	RELEASE(dataCell);
 	[column setEditable: NO];
-	
+#ifndef GNUSTEP
+	[column setSortDescriptorPrototype: sortDescriptor];
+#endif
+
 	return AUTORELEASE(column);
 }
 
@@ -339,6 +353,7 @@ yet, it is created. */
 			[self _updateDisplayedPropertiesFromSource];
 				
 		[[self tableView] reloadData];
+		[[self tableView] setNeedsDisplay: YES]; // FIXME: -updateLayout redisplay should be enough
 	}
 }
 
@@ -363,14 +378,14 @@ yet, it is created. */
 	// NOTE: Table view returns -1 when no row exists at location (but not 
 	// NSNotFound as we could expect it)
 	if (row != -1 && row != NSNotFound)
-		return [[[self layoutContext] items] objectAtIndex: row];
+		return [[[self layoutContext] arrangedItems] objectAtIndex: row];
 	
 	return item;
 }
 
 - (NSRect) displayRectOfItem: (ETLayoutItem *)item
 {
-	int row = [[[self layoutContext] items] indexOfObject: item];
+	int row = [[[self layoutContext] arrangedItems] indexOfObject: item];
 
 	return [[self tableView] rectOfRow: row];
 }
@@ -378,7 +393,7 @@ yet, it is created. */
 - (NSArray *) selectedItems
 {
 	NSIndexSet *indexes = [[self tableView] selectedRowIndexes];
-	NSArray *items = [[self layoutContext] items];
+	NSArray *items = [[self layoutContext] arrangedItems];
 	NSMutableArray *selectedItems = 
 		[NSMutableArray arrayWithCapacity: [indexes count]];
 	
@@ -411,12 +426,13 @@ yet, it is created. */
 // TODO: Implement forwarding of all delegate methods to ETContainer delegate by
 // overriding -respondsToSelector: and forwardInvocation:
 // Put this forward code into ETLayout
+#if 0
 - (void) tableView: (NSTableView *)tv willDisplayCell: (id)cell
     forTableColumn: (NSTableColumn *)col row: (int)row
 {
-	ETLayoutItem *item = [[[self container] items] objectAtIndex: row];
+	ETLayoutItem *item = [[[self  layoutContext] arrangedItems] objectAtIndex: row];
 	NSString *colIdentifier = [col identifier];
-	id delegate = [[self container] delegate];
+	id delegate = [[self container] delegate]; // TODO: Remove ETContainer dependency
 
 	if ([delegate respondsToSelector: @selector(layoutItem:setValue:forProperty:)])
 	{
@@ -428,6 +444,7 @@ yet, it is created. */
 		[delegate tableView: tv willDisplayCell: cell forTableColumn: col row: row];
 	}
 }
+#endif
 
 // NOTE: Only for Cocoa presently but we'll be probably be used everywhere later.
 #ifndef GNUSTEP
@@ -455,7 +472,7 @@ yet, it is created. */
 
 - (int) numberOfRowsInTableView: (NSTableView *)tv
 {
-	NSArray *layoutItems = [[self layoutContext] items];
+	NSArray *layoutItems = [[self layoutContext] arrangedItems];
 	
 	ETDebugLog(@"Returns %d as number of items in table view %@", [layoutItems count], tv);
 	
@@ -464,7 +481,7 @@ yet, it is created. */
 
 - (id) tableView: (NSTableView *)tv objectValueForTableColumn: (NSTableColumn *)column row: (int)rowIndex
 {
-	NSArray *layoutItems = [[self layoutContext] items];
+	NSArray *layoutItems = [[self layoutContext] arrangedItems];
 	ETLayoutItem *item = nil;
 	
 	if (rowIndex >= [layoutItems count])
@@ -495,7 +512,7 @@ yet, it is created. */
 
 - (void) tableView: (NSTableView *)tv setObjectValue: (id)value forTableColumn: (NSTableColumn *)column row: (int)rowIndex
 {
-	NSArray *layoutItems = [[self layoutContext] items];
+	NSArray *layoutItems = [[self layoutContext] arrangedItems];
 	ETLayoutItem *item = nil;
 	
 	if (rowIndex >= [layoutItems count])
@@ -578,10 +595,10 @@ yet, it is created. */
 	NSPoint localPoint = [tv convertPoint: [dragEvent locationInWindow] fromView: nil];
 	id draggedItem = [self itemAtLocation: localPoint];
 	id baseItem = [(ETLayoutItem *)[self layoutContext] baseItem];
-		
-	[baseItem handleDrag: dragEvent forItem: draggedItem layout: self];
-	
-	return YES;
+
+	// TODO: May be better to use [draggedItem actionHandler]
+	return [[baseItem actionHandler] handleDragItem: draggedItem 
+		coordinator: [ETPickDropCoordinator sharedInstanceWithEvent: dragEvent]];
 }
 
 - (NSDragOperation) tableView:(NSTableView*)tv 
@@ -635,14 +652,23 @@ yet, it is created. */
 	id baseItem = [(ETLayoutItem *)[self layoutContext] baseItem];
 		
 	_lastChildDropIndex = row;
-	[baseItem handleDrop: info forItem: droppedItem on: dropTargetItem];
+	[[baseItem actionHandler] handleDropObject: droppedItem onItem: dropTargetItem
+		coordinator: [ETPickDropCoordinator sharedInstance]];
+
 	return YES;
+}
+
+- (void) tableView: (NSTableView *)tv sortDescriptorsDidChange: (NSArray *)oldDescriptors
+{
+	ETLog(@"Did change sort from %@ to %@", oldDescriptors, [tv sortDescriptors]);
+	[[self layoutContext] sortWithSortDescriptors: [tv sortDescriptors] recursively: NO];
+	[tv reloadData];
 }
 
 - (ETLayoutItem *) doubleClickedItem
 {
 	NSTableView *tv = [self tableView];
-	NSArray *layoutItems = [[self layoutContext] items];
+	NSArray *layoutItems = [[self layoutContext] arrangedItems];
 	ETLayoutItem *item = [layoutItems objectAtIndex: [tv clickedRow]];
 	
 	return item;
@@ -673,7 +699,7 @@ yet, it is created. */
    default behavior implemented in ETEventHandler (see ETLayoutItem+Events). */
 
 @interface NSTableView (ETTableLayoutDraggingSource)
-- (id) eventHandler;
+- (id) actionHandler;
 - (unsigned int) draggingSourceOperationMaskForLocal: (BOOL)isLocal;
 - (void) draggedImage: (NSImage *)anImage beganAt: (NSPoint)aPoint;
 - (void) draggedImage: (NSImage *)draggedImage movedTo: (NSPoint)screenPoint;
@@ -685,35 +711,38 @@ yet, it is created. */
 
 @implementation NSTableView (ETTableLayoutDraggingSource)
 
-- (id) eventHandler
+// FIXME: Sort out the responsabilities more clearly between the coordinator, 
+// the action handler and the table view
+
+- (id) actionHandler
 {
 	// NOTE: Returning the delegate would equivalent.
-	return [[self dataSource] layoutContext];
+	return [(ETLayoutItem *)[[self dataSource] layoutContext] actionHandler];
 }
 
 - (BOOL) ignoreModifierKeysWhileDragging
 {
-	return [[self eventHandler] ignoreModifierKeysWhileDragging];
+	return [[self actionHandler] ignoreModifierKeysWhileDragging];
 }
 
 - (unsigned int) draggingSourceOperationMaskForLocal: (BOOL)isLocal
 {
-	return [[self eventHandler] draggingSourceOperationMaskForLocal: isLocal];
+	return [[self actionHandler] draggingSourceOperationMaskForLocal: isLocal];
 }
 
 - (void) draggedImage: (NSImage *)anImage beganAt: (NSPoint)aPoint
 {
-	[[self eventHandler] draggedImage: anImage beganAt: aPoint];
+	// FIXME: [[self eventHandler] draggedImage: anImage beganAt: aPoint];
 }
 
 - (void) draggedImage: (NSImage *)draggedImage movedTo: (NSPoint)screenPoint
 {
-	[[self eventHandler] draggedImage: draggedImage movedTo: screenPoint];
+	// FIXME: [[self eventHandler] draggedImage: draggedImage movedTo: screenPoint];
 }
 
 - (void) draggedImage: (NSImage *)anImage endedAt: (NSPoint)aPoint operation: (NSDragOperation)operation
 {
-	[[self eventHandler] draggedImage: anImage endedAt: aPoint operation: operation];
+	// FIXME: [[self eventHandler] draggedImage: anImage endedAt: aPoint operation: operation];
 }
 
 

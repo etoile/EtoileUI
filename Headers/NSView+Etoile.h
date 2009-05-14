@@ -45,6 +45,7 @@
 - (id) init;
 - (BOOL) isWidget;
 - (BOOL) isContainer;
+- (BOOL) isWindowContentView;
 
 /* Copying */
 

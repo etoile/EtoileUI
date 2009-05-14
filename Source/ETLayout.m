@@ -37,6 +37,7 @@
 
 #import <EtoileFoundation/Macros.h>
 #import <EtoileFoundation/NSObject+Etoile.h>
+#import "ETInstrument.h"
 #import "ETLayout.h"
 #import "ETLayoutItemGroup.h"
 #import "ETLayoutLine.h"
@@ -355,10 +356,17 @@ static NSMutableSet *layoutClasses = nil;
 	{
 		// TODO: Remove this branch statement once the outlet has been renamed 
 		// layoutView
-		/* Because this outlet will be removed from its superview, it must be 
-	       retained like any other to-one relationship ivars. If this proto view 
-		   is later replaced by calling -setLayoutView:, this retain will be 
-		   balanced by the release in ASSIGN. */ 
+		/* This outlet will be removed from its superview by -setLayoutView:. 
+		   However the nib loading doesn't send a retain when connecting it to 
+		   the outlet ivar and ASSIGN(_displayViewPrototype, protoView) in 
+		   -setLayoutView:  won't retain it either in our case, because both 
+		   members of the expression are identical. That's why we do a RETAIN 
+		   here, it simply plays the role of the ASSIGN in -setLayoutView:.
+
+		   When _displayViewPrototype will be later renamed layoutView, the nib 
+		   loading will call -setLayoutView: to connect the view to the ivar 
+		   outlet, in this case ASSIGN will play its role as expected by 
+		   retaining the view. */ 
 		RETAIN(_displayViewPrototype);
 		[self setLayoutView: _displayViewPrototype];
 	}
@@ -380,7 +388,9 @@ static NSMutableSet *layoutClasses = nil;
 	/* Neither layout context and delegate have to be retained. For layout 
 	   context, only because it retains us and is in charge of us. */
 	DESTROY(_displayViewPrototype);
-	
+	DESTROY(_instrument);
+	DESTROY(_rootItem);
+
 	[super dealloc];
 }
 
@@ -392,6 +402,7 @@ static NSMutableSet *layoutClasses = nil;
 	proto->_delegate = nil;
 	// FIXME: Probably replace copy by a fake copy (archive/unarchive)
 	//proto->_displayViewPrototype = [_displayViewPrototype copy];
+	proto->_instrument = nil; // TODO: Should be [_attachedInstrument copy];
 	
 	proto->_layoutSize = _layoutSize;
 	proto->_layoutSizeCustomized = _layoutSizeCustomized;
@@ -400,6 +411,20 @@ static NSMutableSet *layoutClasses = nil;
 	proto->_itemSizeConstraintStyle = _itemSizeConstraintStyle;
 	
 	return AUTORELEASE(proto);
+}
+
+- (id) attachedInstrument
+{
+	return _instrument;
+}
+
+- (void) setAttachedInstrument: (id)anInstrument
+{
+	if ([anInstrument isEqual: _instrument] == NO)
+		[_instrument setLayoutOwner: nil];
+
+	ASSIGN(_instrument, anInstrument);
+	[_instrument setLayoutOwner: self];
 }
 
 /** Returns the view where the layout happens (by computing locations of a layout item series). */
@@ -537,7 +562,7 @@ See ETWidgetLayout.*/
     of the underlying UI toolkit are (for example ETTableLayout). */
 - (BOOL) isOpaque
 {
-	return ([self layoutView] != nil && [self isLayoutViewInUse]);
+	return NO;
 }
 
 /** Returns YES if all layout items are visible in the bounds of the related 
@@ -689,7 +714,7 @@ See ETWidgetLayout.*/
 	// if ([[[self layoutContext] items] count] == 0 && _nbOfItemCache != [[[self layoutContext] items] count])
 	//	return;
 
-	[self renderWithLayoutItems: [[self layoutContext] items] isNewContent: isNewContent];
+	[self renderWithLayoutItems: [[self layoutContext] arrangedItems] isNewContent: isNewContent];
 
 	_isLayouting = NO;
 }
@@ -838,10 +863,51 @@ See ETWidgetLayout.*/
 	See ETUIComponent to understand how an aggregate layout can be wrapped in
 	standalone and self-sufficient component which may act as live filter in 
 	the continous model object flows. */
-- (ETLayoutItem *) rootItem
+/** Returns the root item specific to the receiver. This layout-specific tree 
+includes additional items such as resize handles, positioning indicators etc. 
+
+These items can be composed into the semantic layout item tree, each time the 
+receiver is set on a layout context. At this point, the layout item tree visible 
+on screen is really a composite between the main item tree which owns the layout 
+context and the tree rooted in -rootItem. */
+- (ETLayoutItemGroup *) rootItem
 {
-	// FIXME: Implement
-	return nil;
+	if (_rootItem == nil)
+	{
+		_rootItem = [[ETLayoutItemGroup alloc] init];
+		[_rootItem setActionHandler: nil];
+	}
+
+	return _rootItem;
+}
+
+- (void) mapRootItemIntoLayoutContext
+{
+	ETLayoutItemGroup *layoutContext = (ETLayoutItemGroup *)[self layoutContext];
+	ETLayoutItemGroup *rootItem = [self rootItem];
+	NSRect rootItemFrame = ETMakeRect(NSZeroPoint, [layoutContext visibleContentSize]);
+
+	/* We don't insert the root item in the layout context, because we don't 
+	   want to make it visible in the semantic tree. Yet to support -display 
+	   in the root item tree, we set the layout context as its parent, hence 
+	   redisplay requests can flow back to the closest ancestor view in the 
+	   main layout item tree. */
+	if ([layoutContext isLayoutItem])
+	{
+		[rootItem setParentItem: layoutContext];
+	}
+	else /* For layout composition, when the layout context is a layout */
+	{
+		[rootItem setParentItem: [layoutContext rootItem]];
+	}
+	[rootItem setFlipped: [[self layoutContext] isFlipped]];
+	/* The root item is rendered in the coordinate space of the layout context */
+	[rootItem setFrame: rootItemFrame];
+}
+
+- (void) unmapRootItemFromLayoutContext
+{
+	[[self rootItem]setParentItem: nil];
 }
 
 - (void) setLayoutView: (NSView *)protoView

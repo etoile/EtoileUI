@@ -57,12 +57,14 @@
 
 @interface ETWindowLayer : ETLayer
 {
-	NSWindow *_rootWindow;
+	ETWindowItem *_rootWindowItem;
 	NSMutableArray *_visibleWindows;
 }
 
 - (void) hideHardWindows;
 - (void) showHardWindows;
+- (void) removeWindowDecoratorItems;
+- (void) restoreWindowDecoratorItems;
 
 @end
 

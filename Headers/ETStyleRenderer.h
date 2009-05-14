@@ -35,11 +35,7 @@
 
 #import <Foundation/Foundation.h>
 #import <AppKit/AppKit.h>
-#import <EtoileUI/ETStyle.h>
-
-@class ETLayoutItem;
-
-// WARNING: Very unstable API. Please don't use.
+#import <EtoileUI/ETLayoutItem.h>
 
 /** Render represents a chain of drawing operations which operates in a drawing context
 	with a focused view or image. This method is equivalent to -drawRect: method. */
@@ -48,26 +44,19 @@
 	may eventually be renderered by a rendering chain with -render: method. */
 //- (void) apply: (NSMutableDictionary *)inputValues;
 
-@interface ETSelection : NSObject
+@interface ETSelectionAreaItem : ETLayoutItem
+{
+
+}
+
+@end
+
+#if 0
+@interface ETSelection : ETShape
 {
 	NSBezierPath *_drawingShape;
 	NSBezierPath *_editingShape;
-	NSColor *_outlineColor;
-	NSColor *_interiorColor;
-	float _alpha;
-	BOOL _hidden;
-}
-
-- (void) setAlphaValue: (float)alpha;
-- (float) alphaValue;
-
-- (BOOL) hidden;
-- (void) setHidden: (BOOL)flag;
-
-- (void) setInteriorColor: (NSColor *)color;
-- (NSColor *) interiorColor;
-- (void) setOutlineColor: (NSColor *)color;
-- (NSColor *) outlineColor;
+}s
 
 - (void) setDrawingShape: (NSBezierPath *)shape;
 - (NSBezierPath *) drawingShape;
@@ -81,3 +70,4 @@
 - (void) drawInRect: (NSRect)rect;
 
 @end
+#endif

@@ -35,6 +35,8 @@
 	THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#import <EtoileFoundation/Macros.h>
+#import "ETTemplateItemLayout.h"
 #import "ETLayoutItemBuilder.h"
 #import "ETLayoutItem.h"
 #import "ETLayoutItem+Factory.h"
@@ -131,7 +133,7 @@
 	//id childItem = [ETLayoutItem layoutItemGroupWithView: [[NSSlider alloc] initWithFrame: NSMakeRect(0, 0, 100, 100)]];
 	//[window setContentView: [childItem displayView]];
 	
-	//[window setContentView: [item view]];
+	//[window setContentView: [item supervisorView]];
 	
 	//[[item displayView] addSubview: [[NSSlider alloc] initWithFrame: NSMakeRect(0, 0, 100, 100)]];
 	
@@ -148,72 +150,56 @@
    returns an empty arrary). */
 - (id) renderView: (id)view
 {
+	id item = nil;
 
 	if ([view isKindOfClass: [NSScrollView class]])
 	{
 		ETScrollView *scrollViewWrapper = [[ETScrollView alloc] initWithMainView: view layoutItem: nil];
 		id scrollDecorator = [scrollViewWrapper layoutItem];
-		id documentViewItem = [self renderView: [view documentView]];
 
-		[documentViewItem setDecoratorItem: scrollDecorator];
-		
-		return documentViewItem;
+		item = [self renderView: [view documentView]];
+		[item setDecoratorItem: scrollDecorator];
 	}
 	else if ([view isKindOfClass: [ETScrollView class]])
 	{
-		return [[view layoutItem] firstDecoratedItem];
+		item = [[view layoutItem] firstDecoratedItem];
 	}
 	else if ([view isKindOfClass: [ETView class]] || [view isContainer])
 	{
-		return [view layoutItem];
+		item = [view layoutItem];
 	}
 	else if ([view isMemberOfClass: [NSView class]])
 	{
-		//id superview = [view superview];
 		id container = [[ETContainer alloc] initWithFrame: [view frame]];
-		id item = [container layoutItem]; //[ETLayoutItem layoutItemGroupWithView: container];
-		//return item;
-		// NOTE: -addItem: moves subview when subviews is enumerated, hence we have
-		// to iterate over a separate collection which isn't mutated.
+
+		item = [container layoutItem];
+		
+		[item setFlipped: [view isFlipped]];
+		//[container setFlipped: [view isFlipped]];
+		[container setEnablesHitTest: YES];
+
+		// NOTE: -addItem: moves subview when subviews is enumerated, hence we 
+		// have to iterate over a separate collection which isn't mutated.
 		// May be we could avoid moving subviews in -addItem: when they are 
 		// going to be reinserted at the location where they have been removed.
-		NSEnumerator *e = [[NSArray arrayWithArray: [view subviews]] objectEnumerator];
-		NSView *subview = nil;
-		
-		/*[container setAutoresizesSubviews: YES];
-		[container setAutoresizingMask: NSViewHeightSizable | NSViewWidthSizable];*/
-		[container setFlipped: [view isFlipped]];
-		[container setEnablesHitTest: YES];
-		[item setPersistentFrame: [view frame]];
-
-		while ((subview = [e nextObject]) != nil)
+		FOREACH([NSArray arrayWithArray: [view subviews]], subview, NSView *)
 		{
-			RETAIN(subview);
 			id childItem = [self renderView: subview];
-			[childItem setPersistentFrame: [subview frame]];
 			[item addItem: childItem];
-			//[container addSubview: [childItem displayView]];
-			//[container addSubview: subview];
-			RELEASE(subview);
 		}
-		
-		//[superview addSubview: [item displayView]];
-				
-		return item;
 	}
 	else
 	{
-		//id superview = [view superview];
-		id item = nil;
-		
 		RETAIN(view);
-		item = [ETLayoutItem layoutItemWithView: view];
+		item = [ETLayoutItem itemWithView: view];
 		RELEASE(view);
-		
-		//[superview addSubview: [item displayView]];
-		
-		return item;
 	}
+	
+	/* Fixed layouts such as ETFreeLayout are expected to restore the 
+	   initial view frame on the item. */
+	[item setPersistentFrame: [item frame]];
+
+	return item;
 }
 
 - (id) renderMenu: (id)menu

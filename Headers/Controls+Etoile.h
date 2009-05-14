@@ -60,3 +60,7 @@
 - (NSArray *) properties;
 @end
 
+@interface NSImageView (Etoile)
+- (BOOL) isWidget;
+@end
+

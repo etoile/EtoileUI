@@ -38,11 +38,12 @@
 #import <AppKit/AppKit.h>
 #import <EtoileUI/ETLayout.h>
 
-@class ETComputedLayout;
+@class ETComputedLayout, ETLayoutItemGroup;
 
-
+/** The free layout requires an ETLayoutItemGroup object as the layout context. */
 @interface ETFreeLayout : ETLayout
 {
+	NSArray *_observedItems;
 	id _dragItem;
 	NSPoint _dragStartOffsetFromOrigin;
 }
@@ -50,6 +51,10 @@
 - (BOOL) isPositional;
 - (BOOL) isComputedLayout;
 
+- (void) updateKVOForItems: (NSArray *)items;
+- (void) showHandlesForItem: (ETLayoutItem *)item;
+- (void) hideHandlesForItem: (ETLayoutItem *)item;
+- (void) buildHandlesForItems: (NSArray *)manipulatedItems;
 - (void) resetItemPersistentFramesWithLayout: (ETComputedLayout *)layout;
 - (void) loadPersistentFramesForItems: (NSArray *)items;
 

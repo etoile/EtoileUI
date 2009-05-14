@@ -49,9 +49,21 @@
 - (void) setContentSizeFromTopLeft: (NSSize)size;
 - (NSPoint) topLeftPoint;
 
+- (NSRect) frameRectInContent;
+- (NSRect) contentRectInFrame;
+
 - (BOOL) isSystemPrivateWindow;
 - (BOOL) isCacheWindow;
 
 - (IBAction) browse: (id)sender;
+
+@end
+
+
+/** Full screen window which can become key. */
+@interface ETFullScreenWindow : NSWindow
+
+- (id) init;
+- (BOOL) canBecomeKeyWindow;
 
 @end
