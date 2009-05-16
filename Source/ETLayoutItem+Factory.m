@@ -222,12 +222,11 @@
     instance. */
 + (id) textView
 {
-	id textViewItem = [self newItemWithViewClass: [NSTextView class]];
-	NSTextView *textView = (NSTextView *)[textViewItem view];
 	NSScrollView *scrollview = AUTORELEASE([[NSScrollView alloc]
-            initWithFrame: [textView frame]]);
+            initWithFrame: [ETLayoutItem defaultItemRect]]);
 	NSSize contentSize = [scrollview contentSize];
-
+	NSTextView *textView = [[NSTextView alloc] initWithFrame: ETMakeRect(NSZeroPoint, contentSize)];
+	
 	[textView setMinSize: NSMakeSize(0.0, contentSize.height)];
 	[textView setMaxSize: NSMakeSize(FLT_MAX, FLT_MAX)];
 	[textView setVerticallyResizable: YES];
@@ -237,14 +236,13 @@
             setContainerSize: NSMakeSize(contentSize.width, FLT_MAX)];
 	[[textView textContainer] setWidthTracksTextView: YES];
 
-	RETAIN(textView);
-	[textViewItem setView: nil];
 	// TODO: We should use a scrollview decorator. This is a quick hack.
 	[scrollview setDocumentView: textView];
 	RELEASE(textView);
 	[scrollview setHasVerticalScroller: YES];
+	[scrollview setAutoresizingMask: NSViewWidthSizable | NSViewHeightSizable];
 	/* Finally reinsert the text view as a scroll view */
-	[textViewItem setView: scrollview];
+	ETLayoutItem *textViewItem = [ETLayoutItem itemWithView: scrollview];
 	/* The item supervisor view must be resized if the enclosing container is 
 	   resized. */
 	[textViewItem setAutoresizingMask: NSViewWidthSizable | NSViewHeightSizable];
