@@ -97,4 +97,5 @@
 
 #ifdef COREOBJECT
 #import <EtoileUI/ETPersistencyController.h>
+#import <EtoileUI/COUIServer.h>
 #endif

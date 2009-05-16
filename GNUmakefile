@@ -12,7 +12,7 @@ VERSION = 0.4.1
 EtoileUI_LIBRARIES_DEPEND_UPON += -lm -lEtoileFoundation \
 	$(GUI_LIBS) $(FND_LIBS) $(OBJC_LIBS) $(SYSTEM_LIBS)
 
-EtoileUI_SUBPROJECTS = Source
+EtoileUI_SUBPROJECTS = Source CoreObjectBackend
 
 ADDITIONAL_CPPFLAGS += -DCOREOBJECT=1
 ADDITIONAL_OBJCFLAGS += -DCOREOBJECT=1
@@ -90,6 +90,9 @@ EtoileUI_HEADER_FILES += \
 	ETPickDropCoordinator.h \
 	ETInstruments.h \
 	ETHandle.h
+
+EtoileUI_HEADER_FILES += \
+	COUIServer.h
 
 EtoileUI_HEADER_FILES += \
 	EtoileCompatibility.h \
