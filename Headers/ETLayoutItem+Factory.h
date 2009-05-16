@@ -81,6 +81,7 @@
 /* Decorator Item Factory Methods */
 
 + (ETWindowItem *) itemWithWindow: (NSWindow *)window;
++ (ETWindowItem *) fullScreenWindow;
 
 /* Layer Factory Methods */
 

@@ -45,6 +45,7 @@
 #import "ETContainer.h"
 #import "ETCompatibility.h"
 #import "ETShape.h"
+#import "NSWindow+Etoile.h"
 #include <float.h>
 
 @implementation ETLayoutItem (ETLayoutItemFactory)
@@ -295,6 +296,13 @@
 + (ETWindowItem *) itemWithWindow: (NSWindow *)window
 {
 	return AUTORELEASE([[ETWindowItem alloc] initWithWindow: window]);
+}
+
++ (ETWindowItem *) fullScreenWindow
+{
+	ETWindowItem *window = [self itemWithWindow: AUTORELEASE([[ETFullScreenWindow alloc] init])];
+	[window setShouldKeepWindowFrame: YES];
+	return window;
 }
 
 /* Layer Factory Methods */

@@ -80,6 +80,7 @@ If window is nil, the receiver will create a standard window. */
 		[_itemWindow setAcceptsMouseMovedEvents: YES];
 		[_itemWindow registerForDraggedTypes: A(ETLayoutItemPboardType)];
 		_usesCustomWindowTitle = ([self isUntitled] == NO);
+		_shouldKeepWindowFrame = NO;
 	}
 	
 	ETDebugLog(@"Init item %@ with window %@ %@ at %@", self, [_itemWindow title],
@@ -197,6 +198,20 @@ otherwise returns no. */
 	return NO;
 }
 
+/** Used to make the window keep its size when used as a decorator.
+    This is needed for fullscreen windows, so that they fill the screen
+    regardless of the size of the item they decorate.
+ */
+- (void) setShouldKeepWindowFrame: (BOOL)shouldKeepWindowFrame
+{
+	_shouldKeepWindowFrame = shouldKeepWindowFrame;
+}
+
+- (BOOL) shouldKeepWindowFrame
+{
+	return _shouldKeepWindowFrame;
+}
+
 - (void) handleDecorateItem: (ETUIItem *)item 
              supervisorView: (ETView *)decoratedView 
                      inView: (ETView *)parentView
@@ -220,10 +235,12 @@ otherwise returns no. */
 		// a window decorator is removed.
 		//[_itemWindow setContentSizeFromTopLeft: [decoratedView frame].size];
 		
-		NSRect windowFrameWithItemSize = ETMakeRect([_itemWindow frame].origin, [decoratedView frame].size);
-		[_itemWindow setFrame: windowFrameWithItemSize
-		              display: YES];
-
+		if (![self shouldKeepWindowFrame])
+		{
+			NSRect windowFrameWithItemSize = ETMakeRect([_itemWindow frame].origin, [decoratedView frame].size);
+			[_itemWindow setFrame: windowFrameWithItemSize
+			   	           display: YES];
+		}
 		NSSize shrinkedItemSize = [_itemWindow contentRectForFrameRect: [_itemWindow frame]].size;
 		[decoratedView setFrameSize: shrinkedItemSize];
 		/* Previous line similar to [decoratedItem setContentSize: shrinkedItemSize] */
@@ -300,8 +317,12 @@ This coordinate space includes the window decoration (titlebar etc.).  */
 		... 
 		-[ETView setFrame:] -- the window content view
 		-[NSWindow setFrame:display:] */
-	[_itemWindow setFrame: ETMakeRect([_itemWindow frame].origin, rect.size) 
-	              display: YES];
+
+	if (![self shouldKeepWindowFrame])
+	{
+		[_itemWindow setFrame: ETMakeRect([_itemWindow frame].origin, rect.size)
+	    	          display: YES];
+	}
 }
 
 - (BOOL) isFlipped

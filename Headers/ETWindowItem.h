@@ -46,6 +46,7 @@ With the AppKit widget backend, the window is an NSWindow object. */
 	NSWindow *_itemWindow;
 	BOOL _usesCustomWindowTitle;
 	BOOL _flipped;
+	BOOL _shouldKeepWindowFrame;
 }
 
 - (id) initWithWindow: (NSWindow *)window;
