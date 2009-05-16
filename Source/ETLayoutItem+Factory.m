@@ -236,8 +236,11 @@
             setContainerSize: NSMakeSize(contentSize.width, FLT_MAX)];
 	[[textView textContainer] setWidthTracksTextView: YES];
 
+	RETAIN(textView);
+	[textViewItem setView: nil];
 	// TODO: We should use a scrollview decorator. This is a quick hack.
 	[scrollview setDocumentView: textView];
+	RELEASE(textView);
 	[scrollview setHasVerticalScroller: YES];
 	/* Finally reinsert the text view as a scroll view */
 	[textViewItem setView: scrollview];
@@ -245,6 +248,7 @@
 	   resized. */
 	[textViewItem setAutoresizingMask: NSViewWidthSizable | NSViewHeightSizable];
 
+	NSParameterAssert([textView superview] != nil);
 	return textViewItem;
 }
 

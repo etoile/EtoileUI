@@ -515,7 +515,13 @@ You can revert to non-flipped coordinates by passing NO to this method. */
 	[self setAutoresizesSubviews: YES];
 	[self setAutoresizingMask: [view autoresizingMask]];
 
-	[[self wrappedView] removeFromSuperview];
+	if ([self wrappedView] != nil)
+	{
+		NSAssert1([[self wrappedView] isDescendantOf: self], @"You must not "
+			"move view %@ to a superview without first removing it explicitely "
+			"with -[ETLayoutItem setView: nil] or -[ETView setWrappedView: nil]", [self wrappedView]);
+		[[self wrappedView] removeFromSuperview];
+	}
 
 	if (temporary) /* Temporary view setter */
 	{
