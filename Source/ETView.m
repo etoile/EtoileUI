@@ -344,6 +344,8 @@ You can revert to non-flipped coordinates by passing NO to this method. */
 {
 #ifdef USE_NSVIEW_RFLAGS
 	_rFlags.flipped_view = flag;
+	[self _invalidateCoordinates];
+	[self _rebuildCoordinates];
 #else
 	_flipped = flag;
 #endif
@@ -875,7 +877,8 @@ GNUstep and pass it to the layout item tree as needed. */
 	//ETLog(@"-displayRectIgnoringOpacity:inContext:");
 	[super displayRectIgnoringOpacity: aRect inContext: context];
 	
-	[self lockFocus];
+	if ([self lockFocusIfCanDrawInContext: context] == NO)
+		return;
 
 	/* We always composite the rendering chain on top of each view -drawRect: 
 	   drawing sequence (triggered by display-like methods). */
