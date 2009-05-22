@@ -273,10 +273,23 @@ otherwise returns no. */
 	return [_itemWindow contentView];
 }
 
-/** Returns the window frame. */
+/** Returns the window frame in the window layer coordinate base which is flipped by default.
+
+See also -[ETItemFactory windowGroup]. */
 - (NSRect) decorationRect
 {
-	return [_itemWindow frame];
+	if ([[ETLayoutItem windowGroup] isFlipped])
+	{	
+		NSRect windowFrame = [_itemWindow frame];		
+ 		float windowLayerHeight = [[ETLayoutItem windowGroup] frame].size.height;
+		float flippedY = windowLayerHeight - (windowFrame.origin.y + windowFrame.size.height);
+
+		return NSMakeRect(windowFrame.origin.x, flippedY, windowFrame.size.width, windowFrame.size.height);
+	}
+	else
+	{
+		return [_itemWindow frame];
+	}
 }
 
 /** Returns the content view rect expressed in the window coordinate space. 
