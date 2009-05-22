@@ -249,7 +249,7 @@
 		}
 	}
 	
-	ETLog(@"Returns %d as number of items in %@", nbOfItems, outlineView);
+	ETDebugLog(@"Returns %d as number of items in %@", nbOfItems, outlineView);
 	
 	return nbOfItems;
 }
