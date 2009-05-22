@@ -14,8 +14,7 @@
 #import "ETFreeLayout.h"
 #import "ETInstrument.h"
 #import "ETLayer.h"
-#import "ETSelectTool
-.h"
+#import "ETSelectTool.h"
 #import "ETCompatibility.h"
 
 #define UKRectsEqual(x, y) UKTrue(NSEqualRects(x, y))
