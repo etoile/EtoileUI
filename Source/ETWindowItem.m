@@ -198,18 +198,20 @@ otherwise returns no. */
 	return NO;
 }
 
-/** Used to make the window keep its size when used as a decorator.
-    This is needed for fullscreen windows, so that they fill the screen
-    regardless of the size of the item they decorate.
- */
-- (void) setShouldKeepWindowFrame: (BOOL)shouldKeepWindowFrame
-{
-	_shouldKeepWindowFrame = shouldKeepWindowFrame;
-}
-
+/** Returns whether the window should keep its size when used as a 
+decorator, rather than getting resized to match the decorated item size. */
 - (BOOL) shouldKeepWindowFrame
 {
 	return _shouldKeepWindowFrame;
+}
+
+/** Sets whether the window should keep its size when used as a decorator.
+
+This is needed for fullscreen windows, so that they fill the screen
+regardless of the size of the item they decorate. */
+- (void) setShouldKeepWindowFrame: (BOOL)shouldKeepWindowFrame
+{
+	_shouldKeepWindowFrame = shouldKeepWindowFrame;
 }
 
 - (void) handleDecorateItem: (ETUIItem *)item 

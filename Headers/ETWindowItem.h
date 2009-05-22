@@ -55,6 +55,8 @@ With the AppKit widget backend, the window is an NSWindow object. */
 - (NSWindow *) window;
 - (BOOL) usesCustomWindowTitle;
 - (BOOL) isUntitled;
+- (BOOL) shouldKeepWindowFrame;
+- (void) setShouldKeepWindowFrame: (BOOL)shouldKeepWindowFrame;
 
 /* Customized Decorator Methods */
 
