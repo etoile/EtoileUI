@@ -66,6 +66,10 @@
 - (void) removeWindowDecoratorItems;
 - (void) restoreWindowDecoratorItems;
 
+/* Framework Private */
+
+- (NSRect) rootWindowFrame;
+
 @end
 
 /** A window layout based on WM-based windows, or more precisely the windows 

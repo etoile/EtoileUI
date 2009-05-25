@@ -37,6 +37,7 @@
 
 #import <EtoileFoundation/Macros.h>
 #import "ETWindowItem.h"
+#import "ETLayer.h"
 #import "ETLayoutItem.h"
 #import "ETLayoutItemGroup.h"
 #import "ETLayoutItem+Factory.h"
@@ -282,8 +283,10 @@ See also -[ETItemFactory windowGroup]. */
 {
 	if ([[ETLayoutItem windowGroup] isFlipped])
 	{	
-		NSRect windowFrame = [_itemWindow frame];		
- 		float windowLayerHeight = [[ETLayoutItem windowGroup] frame].size.height;
+		NSRect windowFrame = [_itemWindow frame];
+		/* We call -rootWindowFrame on ETWindowLayer and not -frame which would 
+		   call back the current method and results in an endless recursion. */
+		float windowLayerHeight = [(ETWindowLayer *)[ETLayoutItem windowGroup] rootWindowFrame].size.height;
 		float flippedY = windowLayerHeight - (windowFrame.origin.y + windowFrame.size.height);
 
 		return NSMakeRect(windowFrame.origin.x, flippedY, windowFrame.size.width, windowFrame.size.height);
