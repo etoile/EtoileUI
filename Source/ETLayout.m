@@ -464,6 +464,9 @@ retain context. */
 	// NOTE: Avoids retain cycle by weak referencing the context
 	_layoutContext = context;
 
+	if (context != nil)
+		[self setUp];
+
 	// TODO: May be safer to restore the default frame here rather than relying 
 	// on the next layout update and -resizeItems:toScaleFactor:... 
 	//[[_layoutContext items] makeObjectsPerformSelector: @selector(restoreDefaultFrame)];
@@ -492,6 +495,18 @@ You must call the superclass implementation if you override this method. */
 	// Triggers scroll view display which triggers layout render in turn to 
 	// compute the content size
 	[[self container] setLayoutView: nil]; 
+}
+
+/** <override-dummy />Overrides if your subclass requires extra transformation 
+when the layout context is switched to the receiver (it becomes the new layout 
+and starts to be used and visible).
+
+The new layout context has been set when this method is called.
+
+You must call the superclass implementation if you override this method. */
+- (void) setUp
+{
+
 }
 
 // TODO: Pick better names for the following methods:
