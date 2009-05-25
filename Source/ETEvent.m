@@ -232,9 +232,16 @@ content view has no ETUIItem bound to it, returns nil. */
 	if (windowItem != nil)
 	{
 		NSParameterAssert([windowItem isKindOfClass: [ETWindowItem class]]);
+		/* The backend window can be an open/save panel without an EtoileUI 
+		   representation, that's why we do the next checks only when 
+		   windowItem is not nil. */ 
+		NSParameterAssert([(NSEvent *)_backendEvent window] == [windowItem window]);
+		NSParameterAssert([windowItem isFlipped] == [contentItem isFlipped]);
 	}
-	NSParameterAssert([(NSEvent *)_backendEvent window] == [windowItem window]);
-	NSParameterAssert([windowItem isFlipped] == [contentItem isFlipped]);
+	else
+	{
+		NSParameterAssert(contentItem == nil);
+	}
 
 	return windowItem;
 }
@@ -250,15 +257,18 @@ When the event has no associated window, returns a null point. */
 	if (windowItem == nil)
 		return ETNullPoint;
 
-	NSPoint contentRelativeLoc = [self locationInWindowContentItem];
-	NSPoint frameRelativeLoc = [windowItem convertDecoratorPointFromContent: contentRelativeLoc];
+	NSPoint windowItemLoc = [(NSEvent *)_backendEvent locationInWindow];
+	if ([windowItem isFlipped])
+	{
+		windowItemLoc.y = [windowItem decorationRect].size.height - windowItemLoc.y;
+	}	
 	NSRect windowBounds = ETMakeRect(NSZeroPoint, [windowItem decorationRect].size);
-	BOOL outsideWindow = (NSMouseInRect(frameRelativeLoc, windowBounds, [windowItem isFlipped]) == NO);
+	BOOL outsideWindow = (NSMouseInRect(windowItemLoc, windowBounds, [windowItem isFlipped]) == NO);
 	
 	if (outsideWindow)
 		return ETNullPoint;
 
-	return frameRelativeLoc;
+	return windowItemLoc;
 }
 
 /** Returns the location of the pointer in the window content item coordinate 
@@ -269,23 +279,13 @@ When the event has no associated window, returns a null point.
 See -contentItem. */
 - (NSPoint) locationInWindowContentItem
 {
-	NSView *contentView = [self contentView];
-	BOOL hasNoWindow = ([self contentView] == nil);
+	ETWindowItem *windowItem = [self windowItem];
+	BOOL hasNoWindow = (windowItem == nil);
 
 	if (hasNoWindow)
 		return ETNullPoint;
 
-	/* Even if the content view is flipped, -locationInWindow returns a point 
-	   in a non-flipped coordinate space.
-	   WARNING: Any transform applied to the content view probably need to be 
-	   applied to the point returned by -locationInWindow... */
-	NSPoint contentViewRelativePoint = [(NSEvent *)_backendEvent locationInWindow];
-	if ([contentView isFlipped])
-	{
-		contentViewRelativePoint.y = [contentView frame].size.height - contentViewRelativePoint.y;
-	}	
-
-	return contentViewRelativePoint;
+	return [windowItem convertDecoratorPointToContent: [self locationInWindowItem]];
 }
 
 /** Returns the location of the pointer in the coordinate space of the window 
@@ -312,7 +312,10 @@ bar and that it uses flipped coordinates unless specifed otherwise on ETWindowLa
 	   window layer uses flipped coordinates. */
 	if ([[ETLayoutItem windowGroup] isFlipped])
 	{
-		windowLayerLoc.y = [[NSScreen mainScreen] frame].size.height - windowLayerLoc.y - [[ETApp mainMenu] menuBarHeight];
+		// TODO: Extract screen size logic into ETWindowLayer. See also -[ETWindowItem decorationRect].
+		BOOL isFullScreenFrame = NSEqualRects([[NSScreen mainScreen] visibleFrame], [[NSScreen mainScreen] frame]);
+		float menuBarHeight = (isFullScreenFrame ? 0 : [[ETApp mainMenu] menuBarHeight]);
+		windowLayerLoc.y = [[NSScreen mainScreen] frame].size.height - windowLayerLoc.y - menuBarHeight;
 	}
 
 	return windowLayerLoc;

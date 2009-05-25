@@ -1,3 +1,48 @@
+2009-05-25 Quentin Mathe <qmathe@club-internet.fr>
+
+	* ETEvent:
+	(-locationInWindowItem, -locationInWindowContentItem):
+	Rewritten to return the event location in window base coordinates with 
+	-locationInWindowItem and not -locationInWindowContentItem as wrongly 
+	implemented previously. The previous implementation happens to work 
+	correctly on Mac OS X, because the bottom border is zero pixel thick and 
+	the window base coordinates are not flipped. I wrongly assumed that 
+	the window coordinate base was the content view coordinate space (except it 
+	was always non-flipped) when I initially wrote the code...
+	Now -locationInWindowContentItem depends on -locationInWindowItem as it 
+	should and not the reverse as before.
+	(-location): Fixed to handle the case where the window layer uses flipped 
+	coordinates. In fact, that's the default case with EtoileUI.
+	* ETInstrument:
+	(-hitTestWithEvent:): Improved to intercept and handle window layer 
+	related events correctly. Renamed contentViewRelativePoint variable to 
+	windowItemRelativePoint since that's now the case and removed the 
+	warning comment, which doesn't hold anymore thanks to ETEvent whose 
+	location-related methods are now sensible and consistent.
+	* test_ETInstrument.m: Updated, cleaned and improved the event handling 
+	tests.
+
+2009-05-14 Quentin Mathe <qmathe@club-internet.fr>
+
+	New event handling model - part 4
+	Snapshot of my current massive rewrite of EtoileUI event model.
+	This introduces a new event handling model based on instrument/tool concept.
+	Instruments/tools encapsulate the event handling logic and make it reusable,
+	they convert events into semantic actions and send these to layout items
+	(rather than events as other UI toolkits do).
+	Among the major new features are several tools (move, select, arrow, paint
+	bucket) which hands actions to the action handler bound to the layout item on
+	which the instrument/tool is acting upon. And many new DTP-like additions
+	such handles, grouping/ungrouping, rubber banding, z-index reordering etc.
+	This commit includes more or less unrelated changes such as several new layouts
+	template item layout, icon layout, form layout and various cleaned/rewritten
+	elements such as window item,  window layout, AppKit to EUI layout item
+	builder, free layout etc. In addition, geometry and drawing fixes are bundled
+	with this elephant-style commit... not pretty, but let say that the hackathon
+	is a good excuse to do that!
+	PhotoViewExample has also been almost entirely rewritten to conform to the
+	latest EtoileUI API trends :-) Few other examples remain to be updated.
+
 2009-04-16 Quentin Mathe <qmathe@club-internet.fr>
 
 	* ETDecoratorItem:

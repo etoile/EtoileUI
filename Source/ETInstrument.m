@@ -597,7 +597,10 @@ ignored and the local root item is also returned. */
 {
 	ETLayoutItem *testedItem = [[anEvent contentItem] firstDecoratedItem];
 	ETLayoutItem *hitItem = nil;
-	BOOL isImplicitWindowLayer = (testedItem == nil);
+	// TODO: May be try to use -pointInside:useBoundingBox: rather than NSMouseInRect()
+	BOOL isOutsideItem = (testedItem != nil 
+		&& NSMouseInRect([anEvent location], [testedItem frame], [testedItem isFlipped]) == NO);
+	BOOL isImplicitWindowLayer = (testedItem == nil || isOutsideItem);
 
 	/* Mouse is not over a window or the content view is not a container. */
 	if (isImplicitWindowLayer)
@@ -608,13 +611,9 @@ ignored and the local root item is also returned. */
 		return hitItem;
 	}
 
-	/* Even if the content view is flipped, -locationInWindow returns a point 
-	   in a non-flipped coordinate space.
-	   WARNING: Any transform applied to the content view probably need to be 
-	   applied to the point returned by -locationInWindow... */
-	NSPoint contentViewRelativePoint = [anEvent locationInWindowItem];
+	NSPoint windowItemRelativePoint = [anEvent locationInWindowItem];
 
-	hitItem = [self hitTest: contentViewRelativePoint
+	hitItem = [self hitTest: windowItemRelativePoint
 	              withEvent: anEvent
 	                 inItem: (ETLayoutItemGroup *)testedItem];
 	[anEvent setLayoutItem: hitItem];

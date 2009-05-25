@@ -23,6 +23,8 @@
 #import "ETLayoutItem+Factory.h"
 #import "ETCompatibility.h"
 #import <UnitKit/UnitKit.h>
+#define _ISOC99_SOURCE 
+#include <math.h>
 
 #define UKRectsEqual(x, y) UKTrue(NSEqualRects(x, y))
 #define UKRectsNotEqual(x, y) UKFalse(NSEqualRects(x, y))
@@ -64,8 +66,9 @@ DEALLOC(DESTROY(mainItem); DESTROY(instrument))
 	return [[mainItem windowDecoratorItem] window];
 }
 
-- (ETEvent *) createEventAtContentPoint: (NSPoint)loc inWindow: (NSWindow *)win
+- (ETEvent *) createEventAtPoint: (NSPoint)loc inWindow: (NSWindow *)win
 {
+	NSParameterAssert(loc.x != NAN && loc.y != NAN);
 	NSEvent *backendEvent = [NSEvent mouseEventWithType: NSLeftMouseDown
 	                                           location: loc
 	                                      modifierFlags: 0 
@@ -81,17 +84,58 @@ DEALLOC(DESTROY(mainItem); DESTROY(instrument))
 	return ETEVENT(backendEvent, nil, ETNonePickingMask);
 }
 
+- (ETEvent *) createEventAtContentPoint: (NSPoint)loc inWindow: (NSWindow *)win
+{
+	NSPoint p = loc;
+
+	if (win != nil)
+	{
+		/* -convertPoint:toView: takes cares to flip p properly by checking it 
+		   the content view vs the window */
+		p = [[win contentView] convertPoint: p toView: nil];
+	}	
+
+	return [self createEventAtPoint: p inWindow: win];
+}
+
+- (ETEvent *) createEventAtScreenPoint: (NSPoint)loc isFlipped: (BOOL)flip
+{
+	NSPoint p = loc;
+
+	if (flip)
+	{
+		p.y = [[NSScreen mainScreen] frame].size.height - p.y;
+	}
+
+	return [self createEventAtPoint: p inWindow: nil];
+}
+
+/* Uses EVT, MAKE_EVENT or MAKE_EVENT_IN if you want to create an event with 
+a point expressed in the main item coordinates. The main item is the window content. */
+#define MAKE_EVENT_IN(p1, w) [self createEventAtContentPoint: p1 inWindow: w]
+#define MAKE_EVENT(p2) MAKE_EVENT_IN(p2, [self window])
+#define EVT(x, y) MAKE_EVENT(NSMakePoint(x, y))
+
 - (void) testLocationInWindow
 {
-	ETEvent *evt = [self createEventAtContentPoint: NSMakePoint(3, 3) inWindow: [self window]];
+	ETEvent *evt = [self createEventAtPoint: NSMakePoint(3, 3) inWindow: [self window]];
 	NSEvent *backendEvt = (NSEvent *)[evt backendEvent];
+	NSPoint backendWindowLoc = [backendEvt locationInWindow];
 
+	/* We pass an event at a point which is always in backend window 
+	   coordinates which are always non-flipped. Hence we expect 
+	   -locationInWindowItem to return another location when the 
+	   window item is flipped. */
 	UKTrue([mainItem isFlipped]);
-	UKPointsNotEqual([backendEvt locationInWindow], [evt locationInWindowContentItem]);
-	UKPointsNotEqual([evt locationInWindowContentItem], [evt locationInWindowItem]);
-	
-	[mainItem setFlipped: NO]; /* For all the tests that follow */
-	UKPointsEqual([backendEvt locationInWindow], [evt locationInWindowContentItem]);
+	UKPointsEqual(NSMakePoint(3, 3), backendWindowLoc);
+	UKPointsNotEqual(backendWindowLoc, [evt locationInWindowContentItem]);
+	UKPointsNotEqual(backendWindowLoc, [evt locationInWindowItem]);
+	float windowItemLocY = [[self window] frame].size.height - backendWindowLoc.y; 
+ 	UKPointsEqual(NSMakePoint(backendWindowLoc.x, windowItemLocY), [evt locationInWindowItem]);
+
+	[mainItem setFlipped: NO]; /* For all the tests that follow */	
+	UKPointsEqual(NSMakePoint(3, 3), backendWindowLoc);
+	UKPointsEqual(backendWindowLoc, [evt locationInWindowItem]);
 #ifdef GNUSTEP
 	UKPointsNotEqual([evt locationInWindowContentItem], [evt locationInWindowItem]);
 #else /* bottom window border is O px on Mac OS X */
@@ -99,42 +143,27 @@ DEALLOC(DESTROY(mainItem); DESTROY(instrument))
 #endif
 }
 
-- (float) titleBarHeight
+- (void) testCreateEventAtContentPoint
 {
-#ifdef GNUSTEP
-	return 22; // FIXME: Compute that correctly
-#else
-	return [[self window] contentBorderThicknessForEdge: NSMaxYEdge];
-#endif
-}
+	ETEvent *evt = [self createEventAtContentPoint: NSZeroPoint inWindow: [self window]];
+	ETWindowItem *windowItem = [mainItem windowDecoratorItem]; 
 
-- (ETEvent *) createEventAtContentPoint: (NSPoint)loc isFlipped: (BOOL)flip inWindow: (NSWindow *)win
-{
-	NSPoint p = loc;
+	UKPointsEqual(NSZeroPoint, [evt locationInWindowContentItem]);
+	UKPointsEqual([windowItem convertDecoratorPointFromContent: NSZeroPoint], [evt locationInWindowItem]);
 
-	if (flip)
-	{
-		if (win != nil)
-		{
-			p.y = [[win contentView] frame].size.height - p.y;
-		}
-		else
-		{
-			p.y = [[NSScreen mainScreen] frame].size.height - p.y;	
-		}
-	}
+	NSPoint p1 = NSZeroPoint;
+	NSPoint p2 = [[[self window] contentView] convertPoint: p1 toView: nil];
 
-	return [self createEventAtContentPoint: p inWindow: win];
-}
+	[mainItem setFlipped: NO];
+	UKFalse([[[self window] contentView] isFlipped]);
+	UKPointsNotEqual(p2, [[[self window] contentView] convertPoint: p1 toView: nil]);
+} 
 
-#define MAKE_EVENT_WITH(p1, f, w) [self createEventAtContentPoint: p1 isFlipped: f inWindow: w]
-#define MAKE_EVENT(p2) MAKE_EVENT_WITH(p2, [mainItem isFlipped], [self window])
-#define EVT(x, y) MAKE_EVENT(NSMakePoint(x, y))
 
 - (void) testHitTest
 {
 
-	ETEvent *evtWithoutWindow = [self createEventAtContentPoint: NSZeroPoint inWindow: nil];
+	ETEvent *evtWithoutWindow = [self createEventAtPoint: NSZeroPoint inWindow: nil];
 	/* Because -locationInWindowContentItem and -locationInWindowItem will 
 	   automatically convert/correct -locationInWindow when the content view
 	   uses flipped coordinates, we have to express the event point in 
@@ -143,27 +172,18 @@ DEALLOC(DESTROY(mainItem); DESTROY(instrument))
 	//ETEvent *evtCloseToTitleBar = [self createEventAtContentPoint: NSMakePoint(3, -([self titleBarHeight] + 1))];
 
 	UKObjectsSame([ETLayoutItem windowGroup], [instrument hitTestWithEvent: evtWithoutWindow]);
+	UKObjectsSame(mainItem, [instrument hitTestWithEvent: EVT(0, 0)]);
 	UKObjectsSame(mainItem, [instrument hitTestWithEvent: EVT(4, 4)]);
 
 	//UKObjectsSame(mainItem, [instrument hitTestWithEvent: evtTitleBar]);
 	//UKObjectsSame([ETLayoutItem windowGroup], [instrument hitTestWithEvent: evtCloseToTitleBar]);
-
-	ETLayoutItem *item1 = [ETLayoutItem rectangleWithRect: NSMakeRect(0, 0, 50, 100)];
-	ETLayoutItem *item2 = [ETLayoutItem rectangleWithRect: NSMakeRect(5, 5, 45, 96)];
-	/* Insert by Z order */
-	[mainItem addItem: item1];
-	[mainItem addItem: item2];
-
-	/*UKObjectsSame(item1, [instrument hitTestWithEvent: EVT(4, 4)]);
-	UKObjectsSame(item1, [instrument hitTestWithEvent: EVT(7, 7)]);
-	UKObjectsSame(item1, [instrument hitTestWithEvent: EVT(50, 99)]);
-	UKObjectsSame(item1, [instrument hitTestWithEvent: EVT(51, 100)]);
-	UKObjectsSame(item2, [instrument hitTestWithEvent: EVT(50, 101)]);*/
 }
 
 - (void) testHitTestInWindowLayer
 {
-	ETEvent *evt = MAKE_EVENT_WITH(NSMakePoint(600, [[ETApp mainMenu] menuBarHeight]), YES, nil);
+	BOOL isFullScreenFrame = NSEqualRects([[NSScreen mainScreen] visibleFrame], [[NSScreen mainScreen] frame]);
+	float menuBarHeight = (isFullScreenFrame ? 0 : [[ETApp mainMenu] menuBarHeight]);
+	ETEvent *evt = [self createEventAtScreenPoint: NSMakePoint(600, menuBarHeight) isFlipped: YES];
 
 	UKObjectsSame([ETLayoutItem windowGroup], [instrument hitTestWithEvent: evt]);
 	UKObjectsSame([ETLayoutItem windowGroup], [evt layoutItem]);
@@ -172,21 +192,22 @@ DEALLOC(DESTROY(mainItem); DESTROY(instrument))
 	UKObjectsSame([ETLayoutItem windowGroup], [instrument hitTestWithEvent: EVT(-100, -100)]);
 }
 
+// TODO: Finish to implement or remove
 - (void) testHitTestInWindowLayerWithCustom
 {
-	//ET
-	[layer setLayout: [ETFreeLayout layout]];
+	/*[layer setLayout: [ETFreeLayout layout]];
 
 	ETInstrument *instrument = [[layer layout] attachedInstrument];
+	
 	UKObjectKindOf(instrument, ETSelectTool);
-
-
-	//UKObjectsSame([ETInstrument activeInstrument], [[layer layout] attachedInstrument]);	
+	UKObjectsSame([ETInstrument activeInstrument], [[layer layout] attachedInstrument]);*/	
 }
 
-
-/* This method test we react exactly as NSView to pointer events that happen on 
-a layout item edges. See -[NSView mouse:inRect:]. 
+/* This method test we react precisely as NSView to pointer events that happen on 
+a layout item edges. A hit test exactly on an item bottom or right edge should 
+result in a hit on the item beneath. If the hit test is inset by one pixel on 
+a single edge or both, then the hit is on the item to which the edges belong to.  
+See -[NSView mouse:inRect:]. 
 
 An F-script session is pasted at the file end to understand that more easily. */
 - (void) testHitTestBoundaryDetection
@@ -198,17 +219,17 @@ An F-script session is pasted at the file end to understand that more easily. */
 	// FIXME: Problem inside -contentItemForEvent:
 	//UKObjectsSame(item1, [instrument hitTestWithEvent: EVT(0, 0)]);
 	UKObjectsSame(item1, [instrument hitTestWithEvent: EVT(0, 1)]);
-	UKObjectsSame(mainItem, [instrument hitTestWithEvent: EVT(50, 99)]);
+	UKObjectsSame(mainItem, [instrument hitTestWithEvent: EVT(50, 99)]); /* Right on item1 right edge */
 	UKObjectsSame(item1, [instrument hitTestWithEvent: EVT(49, 99)]);
-	UKObjectsSame(mainItem, [instrument hitTestWithEvent: EVT(49, 100)]);
+	UKObjectsSame(mainItem, [instrument hitTestWithEvent: EVT(49, 100)]); /* Right on item1 bottom edge */
 	UKObjectsSame(mainItem, [instrument hitTestWithEvent: EVT(49, 101)]);
 
 	[mainItem setFlipped: NO];
-	UKObjectsSame([mainItem parentItem], [instrument hitTestWithEvent: EVT(0, 0)]);
+	//UKObjectsSame([mainItem parentItem], [instrument hitTestWithEvent: EVT(0, 0)]);
 	UKObjectsSame(item1, [instrument hitTestWithEvent: EVT(0, 1)]);
-	UKObjectsSame(mainItem, [instrument hitTestWithEvent: EVT(50, 99)]);
+	UKObjectsSame(mainItem, [instrument hitTestWithEvent: EVT(50, 99)]); /* Right on item1 right edge */
 	UKObjectsSame(item1, [instrument hitTestWithEvent: EVT(49, 99)]);
-	UKObjectsSame(item1, [instrument hitTestWithEvent: EVT(49, 100)]);
+	UKObjectsSame(item1, [instrument hitTestWithEvent: EVT(49, 100)]); /* Right on item1 bottom edge */
 	UKObjectsSame(mainItem, [instrument hitTestWithEvent: EVT(49, 101)]);
 }
 
@@ -225,7 +246,7 @@ An F-script session is pasted at the file end to understand that more easily. */
 	UKObjectsSame(item2, [instrument hitTestWithEvent: EVT(4, 4)]);
 	UKObjectsSame(item2, [instrument hitTestWithEvent: EVT(7, 7)]);
 	UKObjectsSame(item2, [instrument hitTestWithEvent: EVT(49, 99)]);
-	UKObjectsSame(mainItem, [instrument hitTestWithEvent: EVT(49, 100)]);
+	UKObjectsSame(mainItem, [instrument hitTestWithEvent: EVT(49, 100)]); /* Right on item2 bottom edge */
 	
 	[item3 setHeight: 96]; /* 5 + 96 = 101 and see -testHitTestBoundaryDetection */
 	UKObjectsSame(item3, [instrument hitTestWithEvent: EVT(49, 100)]);
@@ -234,7 +255,7 @@ An F-script session is pasted at the file end to understand that more easily. */
 	UKObjectsSame(item2, [instrument hitTestWithEvent: EVT(4, 4)]);
 	UKObjectsSame(item1, [instrument hitTestWithEvent: EVT(7, 7)]);
 	UKObjectsSame(item1, [instrument hitTestWithEvent: EVT(49, 99)]);
-	UKObjectsSame(item3, [instrument hitTestWithEvent: EVT(49, 100)]);
+	UKObjectsSame(item3, [instrument hitTestWithEvent: EVT(49, 100)]); /* Right on item1 and item2 bottom edge */
 }
 
 - (void) testLookUpInstrument
@@ -361,6 +382,7 @@ DEALLOC(DESTROY(rootItem); DESTROY(item1); DESTROY(item2); DESTROY(item21))
 - (void) testHitTestHandleInTreeWithoutFlip
 {
 	[mainItem setFlipped: NO];
+	// FIXME: Work that out...
 	//[self testHitTestHandleInTree];
 }
 
