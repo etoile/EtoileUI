@@ -123,7 +123,8 @@ needed replicate other actions on each selected item. */
 	[self makeFirstMainResponder: self];
 }
 
-#if 1
+// TODO: Would be nice to simplify this a bit and try to share more with 
+// ETInstrument implementation.
 - (ETInstrument *) lookUpInstrumentInHoveredItemStack
 {
 	ETInstrument *foundInstrument = nil;
@@ -133,17 +134,17 @@ needed replicate other actions on each selected item. */
 	NSEnumerator *e = [[self hoveredItemStack] reverseObjectEnumerator];
 	ETLayoutItem *item = nil;
 
-	ETLog(@"Hovered item stack %@", [self hoveredItemStack]);
+	//ETLog(@"Hovered item stack %@", [self hoveredItemStack]);
 
 	while ((item = [e nextObject]) != nil)
 	{
-		ETLog(@"Look up instrument at level %@ in hovered item stack", item);
+		//ETLog(@"Look up instrument at level %@ in hovered item stack", item);
 
 		/* The top item can be an ETLayoutItem instance */
 		if ([item isGroup] == NO)
 			continue;
 		
-		ETLog(@" ---> Found instrument %@", [[(ETLayoutItemGroup *)item layout] attachedInstrument]);
+		//ETLog(@" ---> Found instrument %@", [[(ETLayoutItemGroup *)item layout] attachedInstrument]);
 		
 		foundInstrument = [[(ETLayoutItemGroup *)item layout] attachedInstrument];
 		parentInstrument = [[[(ETLayoutItemGroup *)item parentItem] layout] attachedInstrument];
@@ -159,8 +160,6 @@ needed replicate other actions on each selected item. */
 
 	return foundInstrument;
 }
-
-#endif
 
 /* When the hit test is inside the target item, we customize it to restrict it 
 to either the target item itself or its immediate children. */
@@ -324,7 +323,7 @@ returnedItemRelativePoint is a point in the window frame rect. */
 be reactivated when we exit our owner layout. */
 - (void) mouseUp: (ETEvent *)anEvent
 {
-	ETLog(@"Mouse up with select tool on item %@", [self hitTestWithEvent: anEvent]);
+	ETDebugLog(@"Mouse up with select tool on item %@", [self hitTestWithEvent: anEvent]);
 
 	//[self trySendEventToWidgetView: anEvent];
 	if ([anEvent wasDelivered])
@@ -399,7 +398,7 @@ be reactivated when we exit our owner layout. */
 	NSArray *selectedItems = [self selectedItems];
 	if ([selectedItems count] == 1)
 	{
-		ETLog(@"Retarget tool %@ to item %@", self, [selectedItems firstObject]);
+		ETDebugLog(@"Retarget tool %@ to item %@", self, [selectedItems firstObject]);
 		[self setTargetItem: [selectedItems firstObject]];
 	}
 }
@@ -407,7 +406,7 @@ be reactivated when we exit our owner layout. */
 /** Restores the original target item. */
 - (void) endEditingInsideSelection
 {
-	ETLog(@"Restore original target of tool %@ to item %@", self, [[self layoutOwner] layoutContext]);
+	ETDebugLog(@"Restore original target of tool %@ to item %@", self, [[self layoutOwner] layoutContext]);
 	[self setTargetItem: [[self layoutOwner] layoutContext]];
 }
 
