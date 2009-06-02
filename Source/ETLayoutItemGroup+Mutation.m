@@ -622,6 +622,14 @@ part of protocol like -numberOfItemsInContainer. */
 	}
 }
 
+/* The receiver registers itself as an observer on the source object in 
+-setSource:. See also ETSourceDidUpdateNotification.*/
+- (void) sourceDidUpdate: (NSNotification *)notif
+{
+	NSParameterAssert([notif object] == [self source]);
+	[self reloadIfNeeded];
+}
+
 /* Controller Coordination */
 
 /** Creates a new ETLayoutItem object based on a template if possible. 

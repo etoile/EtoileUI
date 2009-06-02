@@ -58,6 +58,7 @@ NSString *kETDoubleClickedItemProperty = @"doubleClickedItem";
 
 /* Notifications */
 NSString *ETItemGroupSelectionDidChangeNotification = @"ETItemGroupSelectionDidChangeNotification";
+NSString *ETSourceDidUpdateNotification = @"ETSourceDidUpdateNotification";
 
 @interface ETLayoutItem (SubclassVisibility)
 - (void) setDisplayView: (ETView *)view;
@@ -189,6 +190,7 @@ See also +enablesAutolayout. */
 	DESTROY(_arrangedItems);
 	DESTROY(_sortedItems);
 	DESTROY(_layoutItems);
+	[self setSource: nil]; /* Tear down the receiver as a source observer */
 
 	[super dealloc];
 }
@@ -664,8 +666,19 @@ item and avoid unpredictable changes to the event handling logic. */
 	if ([GET_PROPERTY(kSourceProperty) isEqual: source])
 		return;
 
+	[[NSNotificationCenter defaultCenter] 
+		removeObserver: self 
+		          name: ETSourceDidUpdateNotification 
+			    object: GET_PROPERTY(kSourceProperty)];
+
 	[self removeAllItems]; 	/* Resets any particular state like selection */
 	SET_PROPERTY(source, kSourceProperty);
+
+	[[NSNotificationCenter defaultCenter] 
+		   addObserver: self
+	          selector: @selector(sourceDidUpdate:)
+		          name: ETSourceDidUpdateNotification 
+			    object: source];
 
 	/* Make base item if needed */
 	if (source != nil && [self isBaseItem] == NO)
