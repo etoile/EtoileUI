@@ -1,3 +1,18 @@
+2009-06-03 Quentin Mathe <qmathe@club-internet.fr>
+
+	Introduced ETUIItemFactory which takes over ETLayoutItem+Factory, this 
+	category is going to be deprecated in a next commit.
+	* ETUIItemFactory:
+	Refactored ETLayoutItem+Factory in a standalone factory and cleaned the API.
+	Updated many method documentation and documented some methods which weren't. 	
+	All class methods are now instance methods of the factory. 
+	(+factory): Added.
+	(+itemGroupWithView:, +itemGroupWithValue:, +floatingItemGroup): Eliminated 
+	these methods declared in ETLayoutItem+Factory which have never found any 
+	real use.
+	* GNUmakefile, Source/GNUmakefile, EtoileUI.h:
+	Updated.
+
 2009-05-25 Quentin Mathe <qmathe@club-internet.fr>
 
 	* ETEvent:

@@ -64,6 +64,7 @@
 #import <EtoileUI/ETLayoutItem+Factory.h>
 #import <EtoileUI/ETLayer.h>
 #import <EtoileUI/ETWindowItem.h>
+#import <EtoileUI/ETUIItemFactory.h>
 #import <EtoileUI/ETLayout.h>
 #import <EtoileUI/ETLayoutLine.h>
 
