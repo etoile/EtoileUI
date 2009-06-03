@@ -99,6 +99,7 @@ extern NSString *kETControllerProperty; // controller
 - (NSArray *) itemsFromTreeSource;
 - (NSArray *) itemsFromRepresentedObject;
 - (int) checkSourceProtocolConformance;
+- (void) sourceDidUpdate: (NSNotification *)notif;
 
 /* Controller Coordination */
 
