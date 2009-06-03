@@ -32,6 +32,8 @@
 - (ETLayoutItemGroup *) itemGroup;
 - (ETLayoutItemGroup *) itemGroupWithItem: (ETLayoutItem *)item;
 - (ETLayoutItemGroup *) itemGroupWithItems: (NSArray *)items;
+- (ETLayoutItemGroup *) itemGroupWithView: (NSView *)view;
+- (ETLayoutItemGroup *) itemGroupWithValue: (id)value;
 - (ETLayoutItemGroup *) itemGroupWithRepresentedObject: (id)object;
 - (ETLayoutItemGroup *) itemGroupWithContainer;
 

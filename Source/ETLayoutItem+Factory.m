@@ -45,8 +45,11 @@
 #import "ETContainer.h"
 #import "ETCompatibility.h"
 #import "ETShape.h"
+#import "ETUIItemFactory.h"
 #import "NSWindow+Etoile.h"
 #include <float.h>
+
+#define FACTORY [ETUIItemFactory factory]
 
 @implementation ETLayoutItem (ETLayoutItemFactory)
 
@@ -54,406 +57,145 @@
 
 + (ETLayoutItem *) item
 {
-	return (ETLayoutItem *)AUTORELEASE([[self alloc] init]);
+	return [FACTORY item];
 }
 
 + (ETLayoutItem *) itemWithView: (NSView *)view
 {
-	return (ETLayoutItem *)AUTORELEASE([[self alloc] initWithView: view]);
+	return [FACTORY itemWithView: view];
 }
 
 + (ETLayoutItem *) itemWithValue: (id)value
 {
-	return (ETLayoutItem *)AUTORELEASE([[self alloc] initWithValue: value]);
+	return [FACTORY itemWithValue: value];
 }
 
 + (ETLayoutItem *) itemWithRepresentedObject: (id)object
 {
-	return (ETLayoutItem *)AUTORELEASE([[self alloc] initWithRepresentedObject: object]);
+	return [FACTORY itemWithRepresentedObject: object];
 }
 
 /* Group Factory Methods */
 
 + (ETLayoutItemGroup *) itemGroup
 {
-	return AUTORELEASE([[ETLayoutItemGroup alloc] init]);
+	return [FACTORY itemGroup];
 }
 
 + (ETLayoutItemGroup *) itemGroupWithItem: (ETLayoutItem *)item
 {
-	return [ETLayoutItemGroup itemGroupWithItems: [NSArray arrayWithObject: item]];
+	return [FACTORY itemGroupWithItem: item];
 }
 
 + (ETLayoutItemGroup *) itemGroupWithItems: (NSArray *)items
 {
-	return AUTORELEASE([[ETLayoutItemGroup alloc] initWithLayoutItems: items view: nil]);
-}
-
-+ (ETLayoutItemGroup *) itemGroupWithView: (NSView *)view
-{
-	return AUTORELEASE([[ETLayoutItemGroup alloc] initWithLayoutItems: nil view: view]);
-}
-
-+ (ETLayoutItemGroup *) itemGroupWithValue: (id)value
-{
-	return AUTORELEASE([[ETLayoutItemGroup alloc] initWithValue: value]);
+	return [FACTORY itemGroupWithItems: items];
 }
 
 + (ETLayoutItemGroup *) itemGroupWithRepresentedObject: (id)object
 {
-	return AUTORELEASE([[ETLayoutItemGroup alloc] initWithRepresentedObject: object]);
+	return [FACTORY itemGroupWithRepresentedObject: object];
 }
 
-/** Returns a new layout item group instance based on a container to which 
-    you can apply view-based layouts such as ETTableLayout, ETModelViewLayout 
-	etc. This is unlike the other item group factory methods that creates 
-	instances which only accepts positional layouts such ETFlowLayout, 
-	ETLineLayout etc. 
-	TODO: In future, we should modify ETLayoutItemGroup to lazily creates the 
-	container and inserts if a view-based layout is inserted... at this point,
-	the use of this method won't be truly needed anymore. */
 + (ETLayoutItemGroup *) itemGroupWithContainer
 {
-	ETContainer *container = AUTORELEASE([[ETContainer alloc] init]);
-	// FIXME: Remove this temporary workaround...
-	[container setAutoresizingMask: NSViewHeightSizable | NSViewWidthSizable];
-
-	return (ETLayoutItemGroup *)[container layoutItem];
+	return [FACTORY itemGroupWithContainer];
 }
 
 + (ETLayoutItemGroup *) graphicsGroup
 {
-	ETLayoutItemGroup *itemGroup = [ETLayoutItem itemGroupWithContainer];
-	[itemGroup setStyle: AUTORELEASE([[ETGraphicsGroupStyle alloc] init])];
-	[itemGroup setLayout: [ETFreeLayout layout]];
-	return itemGroup;
+	return [FACTORY graphicsGroup];
 }
 
 /* Widget Factory Methods */
 
-+ (id) newItemWithViewClass: (Class)class
-{
-	id view = AUTORELEASE([[class alloc] init]);
-
-	return [ETLayoutItem itemWithView: view];
-}
-
-/** Creates and returns a new layout item that uses a NSButton instance as its
-    view. */
 + (id) button
 {
-	return [self newItemWithViewClass: [NSButton class]];
+	return [FACTORY button];
 }
 
 + (id) buttonWithTitle: (NSString *)aTitle target: (id)aTarget action: (SEL)aSelector
 {
-	ETLayoutItem *buttonItem = [self button];
-	NSButton *buttonView = (NSButton *)[buttonItem view];
-
-	[buttonView setTitle: aTitle];
-	[buttonView setTarget: aTarget];
-	[buttonView setAction: aSelector];
-
-	return buttonItem;
+	return [FACTORY buttonWithTitle: aTitle target: aTarget action: aSelector];
 }
 
-/** Creates and returns a new layout item that uses a NSButton of type 
-    NSRadioButton as its view. */
 + (id) radioButton
 {
-	ETLayoutItem *item = [self newItemWithViewClass: [NSButton class]];
-	[(NSButton *)[item view] setButtonType: NSRadioButton];
-	return item;
+	return [FACTORY radioButton];
 }
 
-/** Creates and returns a new layout item that uses a NSButton of type 
-    NSSwitchButton as its view. */
 + (id) checkbox
 {
-	id item = [self newItemWithViewClass: [NSButton class]];
-	[(NSButton *)[item view] setButtonType: NSSwitchButton];
-	return item;
+	return [FACTORY checkbox];
 }
 
-/** Creates and returns a new label item that uses a NSTextField without border
-    and background as its view. */
 + (id) labelWithTitle: (NSString *)aTitle
 {
-	id item = [self newItemWithViewClass: [NSTextField class]];
-	NSTextField *labelField = (NSTextField *)[item view];
-
-	// NOTE: -setBezeled: is necessary only for GNUstep but not on Cocoa.
-	[labelField setBezeled: NO];
-	[labelField setDrawsBackground: NO];
-	[labelField setBordered: NO];
-	[labelField setEditable: NO];
-	[labelField setSelectable: YES];
-	[labelField setStringValue: aTitle];
-	[labelField setFont: [NSFont labelFontOfSize: [NSFont labelFontSize]]];
-	// TODO: Evaluate whether the next two choices are the best defaults.
-	[labelField setAlignment: NSCenterTextAlignment];
-	[labelField setAutoresizingMask: NSViewNotSizable];
-	[labelField sizeToFit];
-	// TODO: Passing the label field to the item now rather than updating the 
-	// item size could be cleaner. Eventually rethink -itemWithView: a bit 
-	// and/or modify this method.
-	[item setSize: [labelField frame].size];
-
-	return item;
+	return [FACTORY labelWithTitle: aTitle];
 }
 
-/** Creates and returns a new layout item that uses a NSTextField instance as 
-    its view. */
 + (id) textField
 {
-	return [self newItemWithViewClass: [NSTextField class]];
+	return [FACTORY textField];
 }
 
-/** Creates and returns a new layout item that uses a NSSearchField instance as 
-    its view. */
 + (id) searchField
 {
-	return [self newItemWithViewClass: [NSSearchField class]];
+	return [FACTORY searchField];
 }
 
-/** Creates and returns a new layout item that uses a NSTextView instance as 
-    its view. 
-    WARNING: presently returns a scrollview if you call -view on the returned 
-    instance. */
 + (id) textView
 {
-	NSScrollView *scrollview = AUTORELEASE([[NSScrollView alloc]
-            initWithFrame: [ETLayoutItem defaultItemRect]]);
-	NSSize contentSize = [scrollview contentSize];
-	NSTextView *textView = [[NSTextView alloc] initWithFrame: ETMakeRect(NSZeroPoint, contentSize)];
-	
-	[textView setMinSize: NSMakeSize(0.0, contentSize.height)];
-	[textView setMaxSize: NSMakeSize(FLT_MAX, FLT_MAX)];
-	[textView setVerticallyResizable: YES];
-	[textView setHorizontallyResizable: NO];
-	[textView setAutoresizingMask: NSViewWidthSizable];
-	[[textView textContainer]
-            setContainerSize: NSMakeSize(contentSize.width, FLT_MAX)];
-	[[textView textContainer] setWidthTracksTextView: YES];
-
-	// TODO: We should use a scrollview decorator. This is a quick hack.
-	[scrollview setDocumentView: textView];
-	RELEASE(textView);
-	[scrollview setHasVerticalScroller: YES];
-	[scrollview setAutoresizingMask: NSViewWidthSizable | NSViewHeightSizable];
-	/* Finally reinsert the text view as a scroll view */
-	ETLayoutItem *textViewItem = [ETLayoutItem itemWithView: scrollview];
-	/* The item supervisor view must be resized if the enclosing container is 
-	   resized. */
-	[textViewItem setAutoresizingMask: NSViewWidthSizable | NSViewHeightSizable];
-
-	NSParameterAssert([textView superview] != nil);
-	return textViewItem;
+	return [FACTORY textView];
 }
 
-/** Creates and returns a new layout item that uses a NSProgressIndicator instance as 
-    its view. */
 + (id) progressIndicator
 {
-	return [self newItemWithViewClass: [NSProgressIndicator class]];
+	return [FACTORY progressIndicator];
 }
 
-/** Creates and returns a new layout item that uses a vertially oriented 
-    NSSlider instance as its view. */
 + (id) verticalSlider
 {
-	return [self newItemWithViewClass: [NSSlider class]];
+	return [FACTORY verticalSlider];
 }
 
-/** Creates and returns a new layout item that uses a vertially oriented 
-    NSSlider instance as its view. */
 + (id) horizontalSlider
 {
-	return [self newItemWithViewClass: [NSSlider class]];
+	return [FACTORY horizontalSlider];
 }
 
-/** Creates and returns a new layout item that uses a NSStepper instance as its 
-    view. */
 + (id) stepper
 {
-	return [self newItemWithViewClass: [NSStepper class]];
-}
-
-/** Creates and returns a new layout item that uses a view whose subviews are 
-    a text field and a stepper on the right side. */
-+ (id) textFieldAndStepper
-{
-	// TODO: Implement
-	return nil;
+	return [FACTORY stepper];
 }
 
 /* Decorator Item Factory Methods */
 
-/** Creates a window item with a concrete window. The returned layout item can 
-    be used as a decorator to wrap an existing layout item into a window. */
 + (ETWindowItem *) itemWithWindow: (NSWindow *)window
 {
-	return AUTORELEASE([[ETWindowItem alloc] initWithWindow: window]);
+	return [FACTORY itemWithWindow: window];
 }
 
 + (ETWindowItem *) fullScreenWindow
 {
-	ETWindowItem *window = [self itemWithWindow: AUTORELEASE([[ETFullScreenWindow alloc] init])];
-	[window setShouldKeepWindowFrame: YES];
-	return window;
-}
-
-/* Layer Factory Methods */
-
-+ (ETLayer *) layer
-{
-	return (ETLayer *)AUTORELEASE([[ETLayer alloc] init]);
-}
-
-+ (ETLayer *) layerWithItem: (ETLayoutItem *)item
-{	
-	return [ETLayer layerWithItems: [NSArray arrayWithObject: item]];
-}
-
-+ (ETLayer *) layerWithItems: (NSArray *)items
-{
-	ETLayer *layer = [[ETLayer alloc] init];
-	
-	if (layer != nil)
-	{
-		[layer addItems: items];
-	}
-	
-	return (ETLayer *)AUTORELEASE(layer);
-}
-
-+ (ETLayer *) guideLayer
-{
-	return (ETLayer *)AUTORELEASE([[ETLayer alloc] init]);
-}
-
-+ (ETLayer *) gridLayer
-{
-	return (ETLayer *)AUTORELEASE([[ETLayer alloc] init]);
+	return [FACTORY fullScreenWindow];
 }
 
 /* Special Group Access Methods */
 
-/** Returns the absolute root group usually located in the UI server.
-	This root group representing the whole environment is the only layout item 
-	with truly no parent. */
-+ (id) rootGroup
-{
-	return nil;
-}
-
-//static ETLayoutItemGroup *localRootGroup = nil;
-
-/** Returns the local root group which represents the current application.
-	This item group is located in the application process and when the UI 
-	server parent is running, it belongs to a parent located outside of the 
-	present process. When no UI server is available, the local root group will
-	have no parent. 
-	ETApplication returns this item group when you call -layoutItem method 
-	(unless the method has been overriden). */
 + (id) localRootGroup
 {
-	// TODO: Should add -windowGroup... but how the top part of the layout 
-	// item tree is organized needs to be worked out in details.
-#if 0
-	if (localRootGroup == nil)
-	{
-		localRootGroup = [[ETLayoutItemGroup alloc] init];
-		[localRootGroup setName: _(@"Application")];
-		[localRootGroup addItem: [self windowGroup]];
-	}
-
-	return localRootGroup;
-#endif 
-
-	return [self windowGroup];
+	return [FACTORY localRootGroup];
 }
 
-static ETLayoutItemGroup *floatingItemGroup = nil;
-
-/** Returns the item group representing floating layout items.
-	Layout items are floating when they have no parent. However layout items 
-	returned by +rootGroup or +localRootGroup don't qualify as floating even
-	though they have no parent. 
-	When you create an ETView or an ETContainer, until you inserts it in the 
-	layout item tree, its layout item will be attached to the floating item 
-	group. */
-+ (id) floatingItemGroup
-{
-	if (floatingItemGroup == nil)
-	{
-		floatingItemGroup = [[ETLayoutItemGroup alloc] init];
-		[floatingItemGroup setName: _(@"Floating Items")];
-	}
-	
-	return floatingItemGroup;
-}
-
-/** Returns the item representing the main screen. */
-+ (id) screen
-{
-	return nil;
-}
-
-/** Returns the item group representing all screens available (usually the 
-	screens connected to the computer). */
-+ (id) screenGroup
-{
-	return nil;
-}
-
-/** Returns the item group representing the active project. */
-+ (id) project
-{
-	return nil;
-}
-
-/** Returns the item group representing all projects. */
-+ (id) projectGroup
-{
-	return nil;
-}
-
-static ETWindowLayer *windowLayer = nil;
-
-/** Returns the item group representing all windows in the current application. */
 + (ETLayoutItemGroup *) windowGroup
 {
-	if (windowLayer == nil)
-	{
-		ASSIGN(windowLayer, [[ETWindowLayer alloc] init]);
-		RELEASE(windowLayer);
-		[windowLayer setName: _(@"Windows")];
-	}
-	
-	return windowLayer;
+	return [FACTORY windowGroup];
 }
 
-/** Sets the item group representing all windows in the current application. It
-	is usually advised to pass an ETWindowLayer instance in parameter. */
 + (void) setWindowGroup: (ETLayoutItemGroup *)windowGroup
 {
-	ASSIGN(windowLayer, windowGroup);
-}
-
-static ETLayoutItemGroup *pickboardGroup = nil;
-
-/** Returns the item group representing all pickboards including both 
-	system-wide pickboards and those local to the application. */
-+ (id) pickboardGroup
-{
-	if (pickboardGroup == nil)
-	{
-		pickboardGroup = [[ETLayoutItemGroup alloc] init];
-		[pickboardGroup setName: _(@"Pickboards")];
-	}
-	
-	return pickboardGroup;
+	return [FACTORY setWindowGroup: windowGroup];
 }
 
 /* Deprecated */
@@ -493,71 +235,31 @@ static ETLayoutItemGroup *pickboardGroup = nil;
 	return [self itemGroupWithItems: items];
 }
 
-+ (ETLayoutItemGroup *) layoutItemGroupWithView: (NSView *)view
-{
-	return [self itemGroupWithView: view];
-}
-
-+ (ETLayer *) layerWithLayoutItem: (ETLayoutItem *)item
-{	
-	return [self layerWithItem: item];
-}
-
-+ (ETLayer *) layerWithLayoutItems: (NSArray *)items
-{
-	return [self layerWithItems: items];
-}
-
 /* Shape Factory Methods */
 
-/* Returns a layout item which uses a shape as both its represented object and 
-style. */
-+ (ETLayoutItem *) itemWithShape: (ETShape *)aShape inFrame: (NSRect)aRect
-{
-	NSParameterAssert(NSEqualSizes(aRect.size, [[aShape path] bounds].size));
-	ETLayoutItem *item = [ETLayoutItem itemWithRepresentedObject: aShape];
-	[item setStyle: aShape];
-	[item setFrame: aRect];
-	return item;
-}
-
-/** Returns a layout item which represents a custom shape based on the given 
-bezier path. The shape is used as both the represented object and the style. */
 + (ETLayoutItem *) itemWithBezierPath: (NSBezierPath *)aPath
 {
-	return [self itemWithShape: [ETShape shapeWithBezierPath: aPath]
-	                   inFrame: ETMakeRect(NSZeroPoint, [aPath bounds].size)];
+	return [FACTORY itemWithBezierPath: aPath];
 }
 
-/** Returns a layout item which represents a rectangular shape with the width 
-and height of aRect. */
 + (ETLayoutItem *) rectangleWithRect: (NSRect)aRect
 {
-	return [self itemWithShape: [ETShape rectangleShapeWithRect: ETMakeRect(NSZeroPoint, aRect.size)] 
-	                   inFrame: aRect];
+	return [FACTORY rectangleWithRect: aRect];
 }
 
-/** Returns a layout item which represents a rectangular shape with the width 
-and height of +[ETShape defaultShapeRect]. */
 + (ETLayoutItem *) rectangle
 {
-	return [self rectangleWithRect: ETMakeRect(NSZeroPoint, [ETShape defaultShapeRect].size)];
+	return [FACTORY rectangle];
 }
 
-/** Returns a layout item which represents an oval shape that fits in the width 
-and height of aRect. */
 + (ETLayoutItem *) ovalWithRect: (NSRect)aRect
 {
-	return [self itemWithShape: [ETShape ovalShapeWithRect: ETMakeRect(NSZeroPoint, aRect.size)]
-	                   inFrame: aRect];
+	return [FACTORY ovalWithRect: aRect];
 }
 
-/** Returns a layout item which represents an oval shape that fits in the width 
-and height of +[ETShape defaultShapeRect]. */
 + (ETLayoutItem *) oval
 {
-	return [self ovalWithRect: ETMakeRect(NSZeroPoint, [ETShape defaultShapeRect].size)];
+	return [FACTORY oval];
 }
-
 
 @end

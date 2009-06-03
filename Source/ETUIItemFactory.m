@@ -92,6 +92,34 @@ An NSInvalidArgumentException will be raised if you pass nil. */
 	return AUTORELEASE([[ETLayoutItemGroup alloc] initWithLayoutItems: items view: nil]);
 }
 
+/** Returns a new layout item group which represents the given object and 
+treats it as a simple value rather than a full-blown model object.
+
+NOTE: This method is still under evaluation. You should rarely need to use it.   
+It is useful to organize multiple value items in a hierarchical structure 
+with a layout such as ETOutlineLayout. e.g a single column might be allowed to 
+be visible at a time, then this column is usually bound to the 'value' property 
+and item groups have to be labeled/named with the 'value' property.
+
+See also -itemWithValue:. */
+- (ETLayoutItemGroup *) itemGroupWithValue: (id)value
+{
+	return AUTORELEASE([[ETLayoutItemGroup alloc] initWithValue: value]);
+}
+
+/** Returns a new layout item group to which the given view gets bound.
+
+The view is expected to be a custom view which doesn't present the content or 
+tree structure by itself. If you want to do so, you have to write an ETLayout 
+or ETWidgetLayout subclass, or use +[ETLayout layoutWithLayoutView:] when the 
+layout subclass is already available.
+
+NOTE: This method is still under evaluation. You should rarely need to use it. */ 
+- (ETLayoutItemGroup *) itemGroupWithView: (NSView *)view
+{
+	return AUTORELEASE([[ETLayoutItemGroup alloc] initWithView: view]);
+}
+
 /** Returns a new layout item group which represents the given object, usually 
 a collection.
 

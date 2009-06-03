@@ -40,6 +40,7 @@
 
 @class ETLayoutItemGroup, ETLayer;
 
+// WARNING: This category is deprecated. You must now use ETUIItemFactory API.
 
 @interface ETLayoutItem (ETLayoutItemFactory)
 
@@ -55,8 +56,6 @@
 + (ETLayoutItemGroup *) itemGroup;
 + (ETLayoutItemGroup *) itemGroupWithItem: (ETLayoutItem *)item;
 + (ETLayoutItemGroup *) itemGroupWithItems: (NSArray *)items;
-+ (ETLayoutItemGroup *) itemGroupWithView: (NSView *)view;
-+ (ETLayoutItemGroup *) itemGroupWithValue: (id)value;
 + (ETLayoutItemGroup *) itemGroupWithRepresentedObject: (id)object;
 + (ETLayoutItemGroup *) itemGroupWithContainer;
 
@@ -76,41 +75,20 @@
 + (id) horizontalSlider;
 + (id) verticalSlider;
 + (id) stepper;
-+ (id) textFieldAndStepper;
 
 /* Decorator Item Factory Methods */
 
 + (ETWindowItem *) itemWithWindow: (NSWindow *)window;
 + (ETWindowItem *) fullScreenWindow;
 
-/* Layer Factory Methods */
-
-+ (ETLayer *) layer;
-+ (ETLayer *) layerWithItem: (ETLayoutItem *)item;
-+ (ETLayer *) layerWithItems: (NSArray *)items;
-+ (ETLayer *) guideLayer;
-+ (ETLayer *) gridLayer;
-
 /* Special Group Access Methods */
 
-+ (id) rootGroup;
 + (id) localRootGroup;
-
-+ (id) floatingItemGroup;
-
-+ (id) screen;
-+ (id) screenGroup;
-+ (id) project;
-+ (id) projectGroup;
 
 + (ETLayoutItemGroup *) windowGroup;
 + (void) setWindowGroup: (ETLayoutItemGroup *)windowGroup;
 
-+ (id) pickboardGroup;
-
 /* Shape Factory Methods */
-
-+ (ETLayoutItem *) itemWithBezierPath: (NSBezierPath *)aPath;
 
 + (ETLayoutItem *) rectangleWithRect: (NSRect)aRect;
 + (ETLayoutItem *) rectangle;
@@ -126,8 +104,5 @@
 + (ETLayoutItemGroup *) layoutItemGroup;
 + (ETLayoutItemGroup *) layoutItemGroupWithLayoutItem: (ETLayoutItem *)item;
 + (ETLayoutItemGroup *) layoutItemGroupWithLayoutItems: (NSArray *)items;
-+ (ETLayoutItemGroup *) layoutItemGroupWithView: (NSView *)view;
-+ (ETLayer *) layerWithLayoutItem: (ETLayoutItem *)item;
-+ (ETLayer *) layerWithLayoutItems: (NSArray *)items;
 
 @end
