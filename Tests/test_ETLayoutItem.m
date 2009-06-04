@@ -38,7 +38,7 @@
 #import "ETDecoratorItem.h"
 #import "ETGeometry.h"
 #import "ETLayoutItem.h"
-#import "ETLayoutItem+Factory.h"
+#import "ETUIItemFactory.h"
 #import "ETWindowItem.h"
 #import "ETLayoutItemGroup.h"
 #import "ETContainer.h"
@@ -52,6 +52,8 @@
 #define UKPointsNotEqual(x, y) UKFalse(NSEqualPoints(x, y))
 #define UKSizesEqual(x, y) UKTrue(NSEqualSizes(x, y))
 
+static ETUIItemFactory *itemFactory = nil;
+
 @interface ETLayoutItem (UnitKitTests) <UKTest>
 @end
 
@@ -61,15 +63,22 @@
 
 @implementation ETLayoutItem (UnitKitTests)
 
+- (id) initForTest
+{
+	self = [self init];
+	itemFactory = [ETUIItemFactory factory];
+	return self;
+}
+
 /*- (void) buildTestTree
 {
-	id item1 = [ETLayoutItemGroup item];
-	id item11 = [ETLayoutItem item];
-	id item12 = [ETLayoutItem item];
-	id item2 = [ETLayoutItemGroup item];
-	id item21 = [ETLayoutItem item];
-	id item22 = [ETLayoutItemGroup item];
-	id item221 = [ETLayoutItem item];
+	id item1 = [itemFactory item];
+	id item11 = [itemFactory item];
+	id item12 = [itemFactory item];
+	id item2 = [itemFactory item];
+	id item21 = [itemFactory item];
+	id item22 = [itemFactory item];
+	id item221 = [itemFactory item];
 	
 	[self addItem: item1];
 	[item1 addItem: item11];
@@ -85,8 +94,8 @@
 	UKNotNil([self rootItem]);
 	UKObjectsSame([self rootItem], self);
 	
-	id item1 = [ETLayoutItemGroup item];
-	id item2 = [ETLayoutItemGroup item];
+	id item1 = [itemFactory itemGroup];
+	id item2 = [itemFactory itemGroup];
 	
 	[item1 addItem: item2];
 	[item2 addItem: self];
@@ -138,13 +147,13 @@
 
 - (void) testIndexPathForItem
 {
-	id item = [ETLayoutItemGroup item];
-	id item0 = [ETLayoutItemGroup item];
-	id item00 = [ETLayoutItem item];
-	id item1 = [ETLayoutItemGroup item];
+	id item = [itemFactory itemGroup];
+	id item0 = [itemFactory itemGroup];
+	id item00 = [itemFactory item];
+	id item1 = [itemFactory itemGroup];
 	id item10 = self;
-	id item11 = [ETLayoutItemGroup item];
-	id item110 = [ETLayoutItem item];
+	id item11 = [itemFactory itemGroup];
+	id item110 = [itemFactory item];
 	
 	[item addItem: item0];
 	[item0 addItem: item00];
@@ -178,13 +187,13 @@
 
 - (void) testIndexPathFromItem
 {
-	id item = [ETLayoutItemGroup item];
-	id item0 = [ETLayoutItemGroup item];
-	id item00 = [ETLayoutItem item];
-	id item1 = [ETLayoutItemGroup item];
+	id item = [itemFactory itemGroup];
+	id item0 = [itemFactory itemGroup];
+	id item00 = [itemFactory item];
+	id item1 = [itemFactory itemGroup];
 	id item10 = self;
-	id item11 = [ETLayoutItemGroup item];
-	id item110 = [ETLayoutItem item];
+	id item11 = [itemFactory itemGroup];
+	id item110 = [itemFactory item];
 	
 	[item addItem: item0];
 	[item0 addItem: item00];
@@ -218,13 +227,13 @@
 
 - (void) testUIMetalevel
 {
-	id item = [ETLayoutItem item];
-	id item1 = [ETLayoutItem itemWithRepresentedObject: nil];
-	id item2 = [ETLayoutItem itemWithRepresentedObject: item1];
-	id item3 = [ETLayoutItem itemWithRepresentedObject: 
+	id item = [itemFactory item];
+	id item1 = [itemFactory itemWithRepresentedObject: nil];
+	id item2 = [itemFactory itemWithRepresentedObject: item1];
+	id item3 = [itemFactory itemWithRepresentedObject: 
 		[NSImage imageNamed: @"NSApplication"]];
-	id item4 = [ETLayoutItem itemWithRepresentedObject: item2];
-	id item5 = [ETLayoutItem itemWithRepresentedObject: 
+	id item4 = [itemFactory itemWithRepresentedObject: item2];
+	id item5 = [itemFactory itemWithRepresentedObject: 
 		AUTORELEASE([[ETView alloc] initWithFrame: NSMakeRect(0, 0, 100, 50)])];	
 	
 	UKIntsEqual(0, [item UIMetalevel]);
@@ -253,20 +262,20 @@
 	- (4) item 000, 0000, 0001 */
 - (void) testUIMetalayer
 {
-	id itemM0 = [ETLayoutItem item];
-	id itemM1 = [ETLayoutItem itemWithRepresentedObject: itemM0];
-	id itemM2 = [ETLayoutItem itemWithRepresentedObject: itemM1];
-	id itemM3 = [ETLayoutItem itemWithRepresentedObject: itemM2];
+	id itemM0 = [itemFactory item];
+	id itemM1 = [itemFactory itemWithRepresentedObject: itemM0];
+	id itemM2 = [itemFactory itemWithRepresentedObject: itemM1];
+	id itemM3 = [itemFactory itemWithRepresentedObject: itemM2];
 
-	id item = [ETLayoutItemGroup item];
-	id item0 = [ETLayoutItemGroup itemWithRepresentedObject: itemM1];
-	id item00 = [ETLayoutItemGroup itemWithRepresentedObject: itemM0];
-	id item000 = [ETLayoutItemGroup itemWithRepresentedObject: itemM3];
-	id item0000 = [ETLayoutItem itemWithRepresentedObject: itemM3];
-	id item0001 = [ETLayoutItem item];
-	id item001 = [ETLayoutItem itemWithRepresentedObject: itemM1];
-	id item1 = [ETLayoutItemGroup item];
-	id item10 = [ETLayoutItem item];
+	id item = [itemFactory itemGroup];
+	id item0 = [itemFactory itemGroupWithRepresentedObject: itemM1];
+	id item00 = [itemFactory itemGroupWithRepresentedObject: itemM0];
+	id item000 = [itemFactory itemGroupWithRepresentedObject: itemM3];
+	id item0000 = [itemFactory itemWithRepresentedObject: itemM3];
+	id item0001 = [itemFactory item];
+	id item001 = [itemFactory itemWithRepresentedObject: itemM1];
+	id item1 = [itemFactory itemGroup];
+	id item10 = [itemFactory item];
 	
 	[item addItem: item0];
 	[item0 addItem: item00];
@@ -290,7 +299,7 @@
 
 - (void) testConvertRectToParent
 {
-	[[ETLayoutItem itemGroup] addItem: self];
+	[[itemFactory itemGroup] addItem: self];
 	[self setOrigin: NSMakePoint(5, 2)];
 	
 	NSRect newRect = [self convertRectToParent: NSMakeRect(0, 0, 10, 20)];
@@ -314,7 +323,7 @@
 
 - (void) testConvertRectFromParent
 {
-	[[ETLayoutItem itemGroup] addItem: self];
+	[[itemFactory itemGroup] addItem: self];
 	[self setOrigin: NSMakePoint(5, 2)];
 	
 	NSRect newRect = [self convertRectFromParent: NSMakeRect(0, 0, 10, 20)];
@@ -337,8 +346,8 @@
 
 - (void) testConvertRectFromItem
 {
-	ETLayoutItemGroup *parent = [ETLayoutItem itemGroupWithItem: self];	
-	ETLayoutItemGroup *ancestor = [ETLayoutItem itemGroupWithItem: parent];
+	ETLayoutItemGroup *parent = [itemFactory itemGroupWithItem: self];	
+	ETLayoutItemGroup *ancestor = [itemFactory itemGroupWithItem: parent];
 
 	[parent setOrigin: NSMakePoint(10, 30)];	
 	[self setOrigin: NSMakePoint(5, 2)];
@@ -448,7 +457,7 @@
 
 - (void) testGeometry
 {
-	id itemGroup = [ETLayoutItem itemGroup];
+	id itemGroup = [itemFactory itemGroup];
 	NSRect rect = [ETLayoutItem defaultItemRect];
 
 	UKTrue([self isFlipped]);
@@ -602,10 +611,10 @@
 - (void) testHandleDecorateItemInView
 {
 	id parentView = AUTORELEASE([[ETView alloc] initWithFrame: NSMakeRect(0, 0, 100, 50)]);
-	id parent = [ETLayoutItem itemGroup];
+	id parent = [itemFactory itemGroup];
 	id supervisorView = AUTORELEASE([[ETView alloc] initWithFrame: NSMakeRect(0, 0, 100, 50)]);
 	id supervisorView1 = AUTORELEASE([[ETView alloc] initWithFrame: NSMakeRect(0, 0, 100, 50)]);
-	id decorator1 = [ETDecoratorItem item]; //[ETLayoutItem itemWithView: supervisorView1];
+	id decorator1 = [ETDecoratorItem item]; //[itemFactory itemWithView: supervisorView1];
 
 	[parent setSupervisorView: parentView];
 	[parent addItem: self];
@@ -629,13 +638,13 @@
 @implementation ETLayoutItemGroup (UnitKitTests)
 	
 #define BUILD_TEST_TREE \
-	id item0 = [ETLayoutItemGroup item]; \
-	id item00 = [ETLayoutItem item]; \
-	id item01 = [ETLayoutItem item]; \
-	id item1 = [ETLayoutItemGroup item]; \
-	id item10 = [ETLayoutItem item]; \
-	id item11 = [ETLayoutItemGroup item]; \
-	id item110 = [ETLayoutItem item]; \
+	id item0 = [itemFactory itemGroup]; \
+	id item00 = [itemFactory item]; \
+	id item01 = [itemFactory item]; \
+	id item1 = [itemFactory itemGroup]; \
+	id item10 = [itemFactory item]; \
+	id item11 = [itemFactory itemGroup]; \
+	id item110 = [itemFactory item]; \
 	\
 	[self addItem: item0]; \
 	[item0 addItem: item00]; \
@@ -741,7 +750,7 @@
 {
 	BUILD_SELECTION_TEST_TREE_self_0_10_110
 	
-	id item2 = [ETLayoutItem item];
+	id item2 = [itemFactory item];
 	
 	[self addItem: item2];
 	[item2 setSelected: YES];

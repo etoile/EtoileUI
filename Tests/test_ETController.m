@@ -38,7 +38,7 @@
 #import "ETController.h"
 #import "ETLayoutItem.h"
 #import "ETLayoutItemGroup.h"
-#import "ETLayoutItem+Factory.h"
+#import "ETUIItemFactory.h"
 #import "ETCompatibility.h"
 #import <UnitKit/UnitKit.h>
 
@@ -58,7 +58,7 @@
 {
 	SELFINIT
 
-	[self setContent: [ETLayoutItem itemGroup]];
+	[self setContent: [[ETUIItemFactory factory] itemGroup]];
 	
 	return self;
 }
@@ -94,7 +94,7 @@
 	/* Test item template */
 
 	id view = AUTORELEASE([DummyView new]);
-	id templateItem = [ETLayoutItem itemWithView: view];
+	id templateItem = [[ETUIItemFactory factory] itemWithView: view];
 	[self setTemplateItem: templateItem];
 	newObject = [self newObject];
 	newObject2 = [self newObject];
@@ -147,7 +147,7 @@
 	/* Test item template */
 
 	id view = AUTORELEASE([DummyView new]);
-	id templateItem = [ETLayoutItem itemGroupWithView: view];
+	id templateItem = [[ETUIItemFactory factory] itemGroupWithView: view];
 	[self setTemplateItemGroup: templateItem];
 	newGroup = [self newGroup];
 	newGroup2 = [self newGroup];
