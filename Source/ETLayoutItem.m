@@ -1498,8 +1498,8 @@ understand how to customize the layout item look. */
 
 /* Geometry */
 
-/** Returns a rect expressed in parent layout item coordinate space equivalent 
-to rect parameter expressed in the receiver coordinate space. */
+/** Returns a rect expressed in the parent item content coordinate space 
+equivalent to rect parameter expressed in the receiver coordinate space. */
 - (NSRect) convertRectToParent: (NSRect)rect
 {
 	NSRect rectInParent = rect;
@@ -1520,7 +1520,7 @@ to rect parameter expressed in the receiver coordinate space. */
 }
 
 /** Returns a rect expressed in the receiver coordinate space equivalent to
-rect parameter expressed in the parent layout item coordinate space. */
+rect parameter expressed in the parent item content coordinate space. */
 - (NSRect) convertRectFromParent: (NSRect)rect
 {
 	NSRect rectInReceiver = rect; /* Keep the size as is */
@@ -1542,8 +1542,8 @@ rect parameter expressed in the parent layout item coordinate space. */
 	return rectInReceiver;
 }
 
-/** Returns a point expressed in parent layout item coordinate space equivalent 
-to point parameter expressed in the receiver coordinate space. */
+/** Returns a point expressed in the parent item content coordinate space 
+equivalent to point parameter expressed in the receiver coordinate space. */
 - (NSPoint) convertPointToParent: (NSPoint)point
 {
 	return [self convertRectToParent: ETMakeRect(point, NSZeroSize)].origin;
@@ -1636,15 +1636,15 @@ You must never alter the supervisor view directly with -[ETView setFlipped:]. */
 }
 
 /** Returns a point expressed in the receiver coordinate space equivalent to
-point parameter expressed in the parent layout item coordinate space. */
+point parameter expressed in the parent item content coordinate space. */
 - (NSPoint) convertPointFromParent: (NSPoint)point
 {
 	return [self convertRectFromParent: ETMakeRect(point, NSZeroSize)].origin;
 }
 
-/** Returns whether a point expressed in the parent item coordinate space is 
-within the receiver frame. The item frame is also expressed in the parent item 
-coordinate space.
+/** Returns whether a point expressed in the parent item content coordinate 
+space is within the receiver frame. The item frame is also expressed in the 
+parent item content coordinate space.
  
 This method checks whether the parent item is flipped or not. */
 - (BOOL) containsPoint: (NSPoint)point
