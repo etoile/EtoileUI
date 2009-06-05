@@ -46,6 +46,7 @@ libEtoileUI_OBJC_FILES = \
 	ETStyleRenderer.m \
 	ETTableLayout.m \
 	ETTextEditorLayout.m \
+	ETUIItem.m \
 	ETUIItemFactory.m \
 	ETView.m \
 	ETViewModelLayout.m \

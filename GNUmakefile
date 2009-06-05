@@ -70,6 +70,7 @@ EtoileUI_HEADER_FILES = \
 	ETStyleRenderer.h \
 	ETTableLayout.h \
 	ETTextEditorLayout.h \
+	ETUIItem.h \
 	ETUIItemFactory.h \
 	ETView.h \
 	ETViewModelLayout.h \

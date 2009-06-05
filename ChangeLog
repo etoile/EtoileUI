@@ -1,6 +1,19 @@
 2009-06-05 Quentin Mathe <qmathe@club-internet.fr>
 
-	* ETUIItem (in ETDecoratorItem.[h|m]):
+	* ETUIItem.(h|m):
+	Added.
+	* ETDecoratorItem.(h|m):
+	Extracted ETUIItem into the new header and source files mentionned just 
+	above.
+	* EtoileUI.h:
+	Included both ETUIItem.h and ETDecoratorItem.h. The latter was previously 
+	missing. 
+	* GNUmakefile, Source/GNUmakefile:
+	Updated.
+
+2009-06-05 Quentin Mathe <qmathe@club-internet.fr>
+
+	* ETUIItem (in ETDecoratorItem.(h|m)):
 	(-isDecoratorItem, -isWindowItem, -enclosingItem, 
 	-convertRectToEnclosingItem:, -convertPointToEnclosingItem:): Added.
 	* ETCompatibility.h:

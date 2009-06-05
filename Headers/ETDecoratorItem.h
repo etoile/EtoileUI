@@ -1,102 +1,20 @@
-/*
-	ETDecoratorItem.h
-	
-	ETUIItem subclass which makes possibe to decorate any layout items, 
-	usually with a widget view.
+/** <title>ETDecoratorItem</title>
 
-	Copyright (C) 2009 Quentin Mathe
- 
+	<abstract>ETUIItem subclass which makes possibe to decorate any layout 
+	items, usually with a widget view.</abstract>
+
+	Copyright (C) 20O9 Quentin Mathe
+
 	Author:  Quentin Mathe <qmathe@club-internet.fr>
 	Date:  March 2009
- 
-	Redistribution and use in source and binary forms, with or without
-	modification, are permitted provided that the following conditions are met:
-
-	* Redistributions of source code must retain the above copyright notice,
-	  this list of conditions and the following disclaimer.
-	* Redistributions in binary form must reproduce the above copyright notice,
-	  this list of conditions and the following disclaimer in the documentation
-	  and/or other materials provided with the distribution.
-	* Neither the name of the Etoile project nor the names of its contributors
-	  may be used to endorse or promote products derived from this software
-	  without specific prior written permission.
-
-	THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
-	AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
-	IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
-	ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE
-	LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
-	CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
-	SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
-	INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
-	CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
-	ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
-	THE POSSIBILITY OF SUCH DAMAGE.
+	License: Modified BSD (see COPYING)
  */
 
 #import <Foundation/Foundation.h>
 #import <AppKit/AppKit.h>
-#import <EtoileUI/ETStyle.h>
+#import <EtoileUI/ETUIItem.h>
 
-@class ETDecoratorItem, ETLayoutItemGroup, ETView;
-
-/** An abstract class/mixin that provides some basic behavior common to both 
-ETLayoutItem and ETDecoratorItem.
-
-TODO: Turn this class into a mixin and a protocol. */
-@interface ETUIItem : ETStyle
-{
-	ETDecoratorItem *_decoratorItem; // next decorator
-	ETView *_view;
-}
-
-+ (NSRect) defaultItemRect;
-
-- (BOOL) usesWidgetView;
-
-- (BOOL) isFlipped;
-- (id) supervisorView;
-- (void) setSupervisorView: (ETView *)aView;
-- (ETView *) displayView;
-- (void) beginEditingUI;
-/*- (BOOL) isEditingUI;
-- (void) commitEditingUI;*/
-
-- (void) render: (NSMutableDictionary *)inputValues dirtyRect: (NSRect)dirtyRect inView: (NSView *)view;
-
-/* Decoration */
-
-- (ETDecoratorItem *) decoratorItem;
-- (void) setDecoratorItem: (ETDecoratorItem *)decorator;
-- (void) removeDecoratorItem: (ETDecoratorItem *)decorator;
-- (id) lastDecoratorItem;
-- (ETUIItem *) decoratedItem;
-- (id) firstDecoratedItem;
-- (BOOL) acceptsDecoratorItem: (ETDecoratorItem *)item;
-- (NSRect) decorationRect;
-
-- (ETUIItem *) decoratorItemAtPoint: (NSPoint)aPoint;
-
-- (BOOL) isDecoratorItem;
-- (BOOL) isWindowItem;
-
-/* Enclosing Item */
-
-- (id) enclosingItem;
-- (NSRect) convertRectToEnclosingItem: (NSRect)aRect;
-- (NSPoint) convertPointToEnclosingItem: (NSPoint)aPoint;
-
-/* Framework Private */
-
-- (void) didChangeDecoratorOfItem: (ETUIItem *)item;
-- (BOOL) shouldSyncSupervisorViewGeometry;
-- (NSRect) convertDisplayRect: (NSRect)rect 
-        toAncestorDisplayView: (NSView **)aView 
-                     rootView: (NSView *)topView
-                   parentItem: (ETLayoutItemGroup *)parent;
-- (ETUIItem *) decoratedItemAtPoint: (NSPoint)aPoint;
-
-@end
+@class ETLayoutItemGroup, ETView;
 
 
 /** Decorator class which can be subclassed to turn wrapper-like widgets such 
@@ -162,3 +80,4 @@ However -supervisorView can be overriden to return nil. */
 - (ETUIItem *) decoratedItemAtPoint: (NSPoint)aPoint;
 
 @end
+
