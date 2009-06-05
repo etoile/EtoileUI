@@ -70,6 +70,8 @@ how the properties are stored. The implicit property owner is self. */
 			"%@ must not be nil", NSStringFromSelector(_cmd), #arg ]; \
 	} \
 
+#define ASSERT_FAIL(msg) NSAssert(NO, msg)
+#define ASSERT_INVALID_CASE ASSERT_FAIL(@"Reached invalid branch statement. e.g. the default case in a switch statement")
 
 //#define DEBUG_DRAWING
 

@@ -37,10 +37,10 @@
 
 #import <EtoileFoundation/Macros.h>
 #import "ETDecoratorItem.h"
+#import "ETGeometry.h"
 #import "ETLayoutItem.h"
 #import "ETLayoutItem+Factory.h"
 #import "ETView.h"
-#import "NSView+Etoile.h"
 #import "ETCompatibility.h"
 
 @interface ETDecoratorItem (Private)
@@ -380,6 +380,85 @@ Returns the decoration rect associated with the receiver. */
 	{
 		return [[self supervisorView] frame];
 	}
+}
+
+/** Returns whether the receiver is a decorator item.
+
+See ETDecoratorItem and also -[NSObject(EtoileUI) isLayoutItem]. */
+- (BOOL) isDecoratorItem
+{
+	return [self isKindOfClass: [ETDecoratorItem class]];
+}
+
+/** Returns whether the receiver a window decorator item. 
+
+See ETWindowItem. */
+- (BOOL) isWindowItem
+{
+	return [self isKindOfClass: [ETWindowItem class]];
+}
+
+/* Enclosing Item */
+
+/** Returns the first item which contains the receiver area. 
+
+When a decorator item is set on the receiver, it is returned, otherwise the 
+parent item is returned. When no parent item is available, nil is returned. */
+- (id) enclosingItem
+{
+	ETUIItem *firstDecoratedItem = [self firstDecoratedItem];
+
+	if (_decoratorItem != nil)
+	{
+		return _decoratorItem;
+	}
+	else if ([firstDecoratedItem isLayoutItem])
+	{
+		return [(ETLayoutItem *)firstDecoratedItem parentItem];
+	}
+
+	return nil;
+}
+
+/** Returns a rect expressed in the enclosing item content coordinate space 
+equivalent to the given rect expressed in the receiver coordinate space. */
+- (NSRect) convertRectToEnclosingItem: (NSRect)aRect
+{
+	id enclosingItem = [self enclosingItem];
+
+	if (enclosingItem == nil)
+		return aRect;
+
+	// NOTE: Instead of the type-based switch below, we could rely on 
+	// polymorphism with -[enclosingItem convertRectFromEnclosedItem: self].
+	// However it doesn't seem worth the complexity since no new subtypes are  
+	// going to be introduced in the switch logic at a later point.
+	if ([enclosingItem isLayoutItem])
+	{
+		ETLayoutItem *firstDecoratedItem = [self firstDecoratedItem];
+		NSParameterAssert([firstDecoratedItem isLayoutItem]);
+
+		/* The last decorator coordinate space is identical to the receiver 
+		   coordinate space, hence the rect to convert expressed in the former  
+		   is also valid in the latter. */
+		return [firstDecoratedItem convertRectToParent: aRect];
+	}
+	else if ([enclosingItem isDecoratorItem])
+	{
+		return [enclosingItem convertDecoratorRectFromContent: aRect];
+	}
+	else
+	{
+		ASSERT_INVALID_CASE;
+		return ETNullRect;
+	}
+}
+
+/** Returns a point expressed in the enclosing item content coordinate space 
+equivalent to the given point expressed in the receiver coordinate space. */
+- (NSPoint) convertPointToEnclosingItem: (NSPoint)aPoint
+{
+	return [self convertRectToEnclosingItem: ETMakeRect(aPoint, NSZeroSize)].origin;
 }
 
 /* Framework Private */

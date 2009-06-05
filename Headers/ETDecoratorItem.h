@@ -62,7 +62,7 @@ TODO: Turn this class into a mixin and a protocol. */
 /*- (BOOL) isEditingUI;
 - (void) commitEditingUI;*/
 
-- (void) render: (NSMutableDictionary *)inputValues dirtyRect: (NSRect)dirtyRect inView: (NSView *)view ;
+- (void) render: (NSMutableDictionary *)inputValues dirtyRect: (NSRect)dirtyRect inView: (NSView *)view;
 
 /* Decoration */
 
@@ -76,6 +76,15 @@ TODO: Turn this class into a mixin and a protocol. */
 - (NSRect) decorationRect;
 
 - (ETUIItem *) decoratorItemAtPoint: (NSPoint)aPoint;
+
+- (BOOL) isDecoratorItem;
+- (BOOL) isWindowItem;
+
+/* Enclosing Item */
+
+- (id) enclosingItem;
+- (NSRect) convertRectToEnclosingItem: (NSRect)aRect;
+- (NSPoint) convertPointToEnclosingItem: (NSPoint)aPoint;
 
 /* Framework Private */
 

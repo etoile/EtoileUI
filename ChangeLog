@@ -1,3 +1,11 @@
+2009-06-05 Quentin Mathe <qmathe@club-internet.fr>
+
+	* ETUIItem (in ETDecoratorItem.[h|m]):
+	(-isDecoratorItem, -isWindowItem, -enclosingItem, 
+	-convertRectToEnclosingItem:, -convertPointToEnclosingItem:): Added.
+	* ETCompatibility.h:
+	Added ASSERT_FAIL and ASSERT_INVALID_CASE utility macros.
+
 2009-06-03 Quentin Mathe <qmathe@club-internet.fr>
 
 	Introduced ETUIItemFactory which takes over ETLayoutItem+Factory, this 
