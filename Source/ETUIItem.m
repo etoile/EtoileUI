@@ -11,7 +11,6 @@
 #import "ETDecoratorItem.h"
 #import "ETGeometry.h"
 #import "ETLayoutItem.h"
-#import "ETLayoutItem+Factory.h"
 #import "ETView.h"
 #import "ETCompatibility.h"
 
