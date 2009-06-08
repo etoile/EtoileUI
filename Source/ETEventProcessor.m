@@ -411,6 +411,19 @@ dispatched. */
 	}
 }
 
+// TODO: Would be nice to eliminate that... 
+- (NSView *) viewForHitTestWithItem: (ETUIItem *)anItem
+{
+	if ([anItem isWindowItem])
+	{
+		return [[(ETWindowItem *)anItem window] contentView];
+	}
+	else
+	{
+		return [anItem supervisorView];
+	}
+}
+
 /** Tries to send an event to a view bound to the given item and returns whether 
 the event was sent. The item view must returns YES to -isWidgetView, otherwise 
 the event won't be sent.
@@ -424,9 +437,8 @@ If item is nil, returns NO immediately. */
 	if (item == nil)
 		return NO;
 
-	NSPoint eventLoc = [anEvent locationInLayoutItem]; /* In the item coordinate space */
-	ETUIItem *hitItem = [item decoratorItemAtPoint: eventLoc];
-
+	NSPoint eventLoc = [anEvent locationInLayoutItem]; /* In the argument item coordinate space */
+	ETUIItem *hitItem = [item decoratorItemAtPoint: eventLoc]; 
 	NSParameterAssert([anEvent layoutItem] == item);
 	NSParameterAssert(hitItem != nil);
 
@@ -443,19 +455,20 @@ If item is nil, returns NO immediately. */
 	/* Try to send the event */
 	if ([hitItem usesWidgetView])
 	{
-		NSView *hitTestView = [hitItem displayView];
-		// FIXME: Should be [item convertPointToParent: [anEvent locationInLayoutItem]];
-		
-		NSPoint parentRelativePoint = relativeLoc;
-		
-		//if ([hitTestView isEqual: [[hitTestView window] contentView]] == NO)
-		{
-			parentRelativePoint = [hitTestView convertPoint: relativeLoc 
-		                                                 toView: [hitTestView superview]];
-		}
-		NSView *widgetSubview = [hitTestView hitTest: parentRelativePoint];
+		/* The hit test view is the hit item supervisor view or equivalent and 
+		   not the widget view itself. 
+		   The hit test point is thus in the coordinate space of the 
+		   superview of the supervisor view or equivalent (-[NSView hitTest:] 
+		   takes a point expressed in the superview coordinate space).
+		   Note that the window view is never flipped, even when the window 
+		   item is, that's why we do the point conversion with a NSView method. */
+		NSView *hitTestView = [self viewForHitTestWithItem: hitItem];
+		NSPoint hitTestLoc = [hitTestView convertPoint: relativeLoc 
+		                                        toView: [hitTestView superview]];
+		NSView *widgetSubview = [hitTestView hitTest: hitTestLoc];
 
-		ETDebugLog(@"Hit test widget subview %@ at %@", widgetSubview, NSStringFromPoint(relativeLoc));
+		ETDebugLog(@"Hit test widget subview %@ at %@ in %@", widgetSubview, 
+			NSStringFromPoint(hitTestLoc), hitItem);
 
 		BOOL isVisibleSubview = ([widgetSubview window] != nil);
 		if (isVisibleSubview) /* For opaque layout that cover item views */
