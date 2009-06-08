@@ -712,11 +712,14 @@ Hence whether or not the item has children, this method will be called. */
 	                                   inItem: anItem
 	                              newLocation: &hitItemRelativePoint];
 
-	// NOTE: The next two lines could eventually be put in -willHitTest:XXX
+	// NOTE: The next block could eventually be put in -willHitTest:XXX
 	// The current choice makes harder to wrongly override the method and 
 	// newLocation: acts as an explicit hint to update the event location.
-	[anEvent setLayoutItem: hitItem];
-	[anEvent setLocationInLayoutItem: hitItemRelativePoint];
+	if (hitItem != nil && [hitItem acceptsActions])
+	{
+		[anEvent setLayoutItem: hitItem];
+		[anEvent setLocationInLayoutItem: hitItemRelativePoint];
+	}
 
 	BOOL hitTestCustomized = (hitItem != anItem);
 	BOOL shouldContinue = ([self shouldContinueHitTest: itemRelativePoint 
