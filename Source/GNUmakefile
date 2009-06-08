@@ -33,7 +33,6 @@ libEtoileUI_OBJC_FILES = \
 	ETLayout.m \
 	ETLineLayout.m \
 	ETObjectBrowserLayout.m \
-	ETObjectRegistry+EtoileUI.m \
 	ETOutlineLayout.m \
 	ETPaneLayout.m \
 	ETPaneSwitcherLayout.m \
