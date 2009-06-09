@@ -16,7 +16,6 @@
 #import <EtoileUI/NSWindow+Etoile.h>
 #import <EtoileUI/NSImage+Etoile.h>
 #import <EtoileUI/Controls+Etoile.h>
-#import <EtoileUI/ETObjectRegistry+EtoileUI.h>
 #import <EtoileUI/ETInspecting.h>
 
 #import <EtoileUI/ETApplication.h>
