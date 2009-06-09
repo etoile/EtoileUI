@@ -1,3 +1,21 @@
+2009-06-09 Quentin Mathe <qmathe@club-internet.fr>
+
+	First step in making the styling support really usable and clean.
+	The current version implements styles as linked list which can bound to a 
+	layout	item with -setStyle:. However this doesn't work well because styles 
+	tend to be shared and you get in trouble when you want to chain new styles 
+	without altering all the items which share the existing style. 
+	e.g. when the pick and drop coordinator tries to insert the drop indicator 
+	style as the last style on a drop target, the drop indicator gets drawn on 
+	every layouts items since they all use the same instance of ETBasicItemStyle as 
+	their default style. The current workaround is to do roughly:
+	[[item style] setStyle: [[item style] copy]]
+	[[item lastStyle] setNextStyle: dropIndicator]
+	* ETStyleGroup.(h|m):
+	Added.
+	* EtoileUI.h, GNUmakefile, Source/GNUmakefile:
+	Updated.
+
 2009-06-05 Quentin Mathe <qmathe@club-internet.fr>
 
 	* ETUIItem.(h|m):

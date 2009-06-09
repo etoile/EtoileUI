@@ -66,6 +66,7 @@ EtoileUI_HEADER_FILES = \
 	ETShape.h \
 	ETStackLayout.h \
 	ETStyle.h \
+	ETStyleGroup.h \
 	ETStyleRenderer.h \
 	ETTableLayout.h \
 	ETTextEditorLayout.h \
