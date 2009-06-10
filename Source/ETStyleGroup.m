@@ -7,7 +7,8 @@
  */
 
 #import <EtoileFoundation/Macros.h>
-#import <EtoileUI/ETStyleGroup.h>
+#import "ETStyleGroup.h"
+#import "ETCompatibility.h"
 
 @implementation ETStyleGroup
 
