@@ -30,6 +30,7 @@ means a style can be also organized in a tree structure. */
 	NSMutableArray *_styles;
 }
 
+- (id) init;
 - (id) initWithStyle: (ETStyle *)aStyle;
 - (id) initWithCollection: (id <ETCollection>)styles;
 
@@ -38,6 +39,7 @@ means a style can be also organized in a tree structure. */
 - (void) addStyle: (ETStyle *)aStyle;
 - (void) insertStyle: (ETStyle *)aStyle atIndex: (int)anIndex;
 - (void) removeStyle: (ETStyle *)aStyle;
+- (void) removeAllStyles;
 - (id) firstStyle;
 - (id) lastStyle;
 

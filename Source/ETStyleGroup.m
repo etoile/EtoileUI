@@ -12,6 +12,12 @@
 
 @implementation ETStyleGroup
 
+/** Initializes and returns an empty style group. */
+- (id) init
+{
+	return [self initWithCollection: nil];	
+}
+
 /** Initializes and returns a style group that only contains a single style. */
 - (id) initWithStyle: (ETStyle *)aStyle
 {
@@ -23,7 +29,14 @@ in the given style collection. */
 - (id) initWithCollection: (id <ETCollection>)styles
 {
 	SUPERINIT
-	_styles = [[styles contentArray] mutableCopy];
+	if (styles != nil)
+	{
+		_styles = [[styles contentArray] mutableCopy];
+	}
+	else
+	{
+		_styles = [[NSMutableArray alloc] init];
+	}
 	return self;
 }
 
@@ -51,6 +64,12 @@ in the given style collection. */
 - (void) removeStyle: (ETStyle *)aStyle
 {
 	[_styles removeObject: aStyle];
+}
+
+/** Removes all the styles. */
+- (void) removeAllStyles
+{
+	[_styles removeAllObjects];
 }
 
 /** Returns the first rendered style. */
