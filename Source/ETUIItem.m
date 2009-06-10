@@ -12,6 +12,7 @@
 #import "ETGeometry.h"
 #import "ETLayoutItem.h"
 #import "ETView.h"
+#import "ETWindowItem.h"
 #import "ETCompatibility.h"
 
 
