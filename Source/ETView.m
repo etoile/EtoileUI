@@ -816,9 +816,9 @@ Layout items are smart enough to avoid drawing their view when they have one. */
 
 	/* We always composite the rendering chain on top of each view -drawRect: 
 	   drawing sequence (triggered by display-like methods). */
-	if ([[self renderer] respondsToSelector: @selector(render:dirtyRect:inView:)])
+	if ([[self renderer] respondsToSelector: @selector(render:dirtyRect:inContext:)])
 	{
-		[[self renderer] render: nil dirtyRect: rect inView: self];
+		[[self renderer] render: nil dirtyRect: rect inContext: nil];
 	}
 }
 
@@ -882,9 +882,9 @@ GNUstep and pass it to the layout item tree as needed. */
 
 	/* We always composite the rendering chain on top of each view -drawRect: 
 	   drawing sequence (triggered by display-like methods). */
-	if ([[self renderer] respondsToSelector: @selector(render:dirtyRect:inView:)])
+	if ([[self renderer] respondsToSelector: @selector(render:dirtyRect:inContext:)])
 	{
-		[[self renderer] render: nil dirtyRect: aRect inView: self];
+		[[self renderer] render: nil dirtyRect: aRect inContext: nil];
 	}
 
 	[self unlockFocus];
@@ -935,9 +935,9 @@ Cocoa and pass it to the layout item tree as needed. */
 
 	/* We always composite the rendering chain on top of each view -drawRect: 
 	   drawing sequence (triggered by display-like methods). */
-	if ([[self renderer] respondsToSelector: @selector(render:dirtyRect:inView:)])
+	if ([[self renderer] respondsToSelector: @selector(render:dirtyRect:inContext:)])
 	{
-		[[self renderer] render: nil dirtyRect: _rectToRedraw inView: self];
+		[[self renderer] render: nil dirtyRect: _rectToRedraw inContext: nil];
 	}
 
 	if (lockFocus == YES)
@@ -966,7 +966,7 @@ Cocoa and pass it to the layout item tree as needed. */
 	   was underway (in that case the invalidated area was the entire view).
 	   If we don't make the check below _recursiveDisplayAllDirtyXXX  will draw 
 	   and this method will then draw another time in the same view/receiver with 
-	   with -render:dirtyRect:inView:. 
+	   with -render:dirtyRect:inContext:. 
 	   The next line works pretty well... 
 	   BOOL needsRedraw = (isRectForView && [self needsDisplay] && [self inLiveResize]);
 	   ... but we rather use the _wasJustRedrawn flag which is a safer way to 
@@ -982,9 +982,9 @@ Cocoa and pass it to the layout item tree as needed. */
 
 		/* We always composite the rendering chain on top of each view -drawRect: 
 		   drawing sequence (triggered by display-like methods). */
-		if ([[self renderer] respondsToSelector: @selector(render:dirtyRect:inView:)])
+		if ([[self renderer] respondsToSelector: @selector(render:dirtyRect:inContext:)])
 		{
-			[[self renderer] render: nil dirtyRect: _rectToRedraw inView: self];
+			[[self renderer] render: nil dirtyRect: _rectToRedraw inContext: nil];
 		}
 
 		[self unlockFocus];
@@ -1018,9 +1018,9 @@ Cocoa and pass it to the layout item tree as needed. */
 
 	/* We always composite the rendering chain on top of each view -drawRect: 
 	   drawing sequence (triggered by display-like methods). */
-	if ([[self renderer] respondsToSelector: @selector(render:dirtyRect:inView:)])
+	if ([[self renderer] respondsToSelector: @selector(render:dirtyRect:inContext:)])
 	{
-		[[self renderer] render: nil dirtyRect: [self bounds] inView: self];
+		[[self renderer] render: nil dirtyRect: [self bounds] inContext: nil];
 	}
 
 	//if (lockFocus == YES)

@@ -193,7 +193,9 @@ You can retrieve the outermost decorator by calling -lastDecoratorItem. */
 }
 
 /** <override-subclass /> */
-- (void) render: (NSMutableDictionary *)inputValues dirtyRect: (NSRect)dirtyRect inView: (NSView *)view
+- (void) render: (NSMutableDictionary *)inputValues 
+      dirtyRect: (NSRect)dirtyRect 
+      inContext: (id)ctxt
 {
 
 }

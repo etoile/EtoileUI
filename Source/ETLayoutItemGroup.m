@@ -77,7 +77,10 @@ NSString *ETSourceDidUpdateNotification = @"ETSourceDidUpdateNotification";
 					 relativeToItem: (ETLayoutItemGroup *)pathBaseItem;
 - (void) applySelectionIndexPaths: (NSMutableArray *)indexPaths
                    relativeToItem: (ETLayoutItemGroup *)pathBaseItem;
-- (void) display: (NSMutableDictionary *)inputValues item: (ETLayoutItem *)item dirtyRect: (NSRect)dirtyRect inView: (NSView *)view;
+- (void) display: (NSMutableDictionary *)inputValues 
+            item: (ETLayoutItem *)item 
+       dirtyRect: (NSRect)dirtyRect 
+       inContext: (id)ctxt;
 
 /* Deprecated (DO NOT USE, WILL BE REMOVED LATER) */
 - (id) initWithLayoutItems: (NSArray *)layoutItems view: (NSView *)view value: (id)value;
@@ -1066,16 +1069,16 @@ frame (see -usesLayoutBasedFrame). */
 	}
 }
 
-/** See -[ETLayoutItem render:dirtyRect:inView:]. The most important addition of 
-    this method is to manage the drawing of children items by calling this method 
-	recursively on them. */
-- (void) render: (NSMutableDictionary *)inputValues dirtyRect: (NSRect)dirtyRect inView: (NSView *)view 
+/** See -[ETLayoutItem render:dirtyRect:inContext:]. The most important addition of 
+this method is to manage the drawing of children items by calling this method 
+recursively on them. */
+- (void) render: (NSMutableDictionary *)inputValues 
+      dirtyRect: (NSRect)dirtyRect 
+      inContext: (id)ctxt
 {
-	//ETLog(@"Render %@ dirtyRect %@ in %@", self, NSStringFromRect(dirtyRect), view);
+	//ETLog(@"Render %@ dirtyRect %@ in %@", self, NSStringFromRect(dirtyRect), ctxt);
 	
 	//ETView *drawingView = [self supervisorView];
-	NSView *renderView = view;	
-	BOOL hasLockedFocus = NO;
 	
 	// TODO: Enable later to allow drawing a layout item tree in any views.
 	//if (renderView == nil)
@@ -1112,7 +1115,7 @@ frame (see -usesLayoutBasedFrame). */
 	      a dirtyRect that includes views of existing decorator items in case our 
 		  decorator chain isn't empty. */
 		NSRect realDirtyRect = NSIntersectionRect(dirtyRect, [self drawingFrame]);
-		[super render: inputValues dirtyRect: realDirtyRect inView: view];
+		[super render: inputValues dirtyRect: realDirtyRect inContext: ctxt];
 		
 		/* Render the layout-specific tree if needed */
 		
@@ -1123,7 +1126,10 @@ frame (see -usesLayoutBasedFrame). */
 			{
 				ETLog(@"");
 			}
-			[self display: inputValues item: [layout rootItem] dirtyRect: dirtyRect inView: view];
+			[self display: inputValues 
+			         item: [layout rootItem] 
+			    dirtyRect: dirtyRect 
+			    inContext: ctxt];
 		}
 
 		/* Render child items (if the layout doesn't handle it) */
@@ -1149,19 +1155,22 @@ frame (see -usesLayoutBasedFrame). */
 			if (NSEqualRects(childDirtyRect, NSZeroRect))
 				continue;
 
-			[self display: inputValues item: item dirtyRect: childDirtyRect inView: renderView];
+			[self display: inputValues 
+			         item: item 
+			    dirtyRect: childDirtyRect 
+				inContext: ctxt];
 		}
 	}
-	
-	if (hasLockedFocus)
-		[view unlockFocus];
 }
 
 /** Displays item by adjusting the graphic context for the drawing, then calling 
-    -render:dirtyRect:inView: on it, and finally restoring the graphic context. 
-	You should never need to call this method directly. */
-- (void) display: (NSMutableDictionary *)inputValues item: (ETLayoutItem *)item 
-	dirtyRect: (NSRect)newDirtyRect inView: (NSView *)renderView
+-render:dirtyRect:inContext: on it, and finally restoring the graphic context. 
+
+You should never need to call this method directly. */
+- (void) display: (NSMutableDictionary *)inputValues 
+            item: (ETLayoutItem *)item 
+       dirtyRect: (NSRect)newDirtyRect 
+       inContext: (id)ctxt
 {
 	 /* When the item has a view, it waits to be asked to draw directly by its 
 	    view before rendering anything. 
@@ -1180,7 +1189,7 @@ frame (see -usesLayoutBasedFrame). */
 		See also INTERLEAVED_DRAWING in ETView. */
 
 	// NOTE: On GNUstep unlike Cocoa, a nil item  will alter the coordinates 
-	// when concat/invert is executed. For example, in -render:dirtyRect:inView: 
+	// when concat/invert is executed. For example, in -render:dirtyRect:inContext: 
 	// a nil item can be returned by -[ETLayout rootItem].
 	BOOL shouldDrawItem = (item != nil && [item displayView] == nil);
 			
@@ -1211,7 +1220,7 @@ frame (see -usesLayoutBasedFrame). */
 	}
 	[transform concat];
 
-	[item render: inputValues dirtyRect: newDirtyRect inView: renderView];
+	[item render: inputValues dirtyRect: newDirtyRect inContext: ctxt];
 
 	/* Reset the coordinates matrix */
 	[transform invert];

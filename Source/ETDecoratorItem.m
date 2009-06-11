@@ -75,10 +75,12 @@ By default, returns YES. */
 
 // TODO: The be used when EtoileUI will draw everything by itself including 
 // the views without relying on the view hierarchy machinery.
-- (void) render: (NSMutableDictionary *)inputValues dirtyRect: (NSRect)dirtyRect inView: (NSView *)view
+- (void) render: (NSMutableDictionary *)inputValues 
+      dirtyRect: (NSRect)dirtyRect 
+      inContext: (id)ctxt
 {
 	//NSRect rectInContent = [self convertDecoratorRectToContent: dirtyRect];
-	//[_decoratedItem render: inputValues dirtyRect: rectInContent inView: view];
+	//[_decoratedItem render: inputValues dirtyRect: rectInContent inContext: ctxt];
 }
 
 /** <override-never /> 

@@ -1278,10 +1278,12 @@ used by the styles. */
 	WARNING: The inputValues is currently reset each time an item with a view 
 	is asked to draw, in other words the dictionary handed to its parent item 
 	isn't handed to it. */
-- (void) render: (NSMutableDictionary *)inputValues dirtyRect: (NSRect)dirtyRect inView: (NSView *)view 
+- (void) render: (NSMutableDictionary *)inputValues 
+      dirtyRect: (NSRect)dirtyRect 
+      inContext: (id)ctxt 
 {
 	//ETLog(@"Render frame %@ of %@ dirtyRect %@ in %@", 
-	//	NSStringFromRect([self drawingFrame]), self, NSStringFromRect(dirtyRect), view);
+	//	NSStringFromRect([self drawingFrame]), self, NSStringFromRect(dirtyRect), ctxt);
 
 #ifdef DEBUG_DRAWING
 	/* For debugging the drawing of the supervisor view over the item view */

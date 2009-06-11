@@ -254,7 +254,7 @@ static ETBasicHandleStyle *sharedBasicHandleStyle = nil;
 	
 	// TODO: We disable the antialiasing for the stroked rect with direct 
 	// drawing, but this code may be better moved in 
-	// -[ETLayoutItem render:dirtyRect:inView:] to limit the performance impact.
+	// -[ETLayoutItem render:dirtyRect:inContext:] to limit the performance impact.
 	BOOL gstateAntialias = [[NSGraphicsContext currentContext] shouldAntialias];
 	[[NSGraphicsContext currentContext] setShouldAntialias: NO];
 	
@@ -488,11 +488,11 @@ or not. */
 /** Draws the receiver style. See ETStyle. */
 - (void) render: (NSMutableDictionary *)inputValues 
 	  dirtyRect: (NSRect)dirtyRect
-         inView: (NSView *)aView
+      inContext: (id)ctxt
 {
 	[self drawOutlineInRect: [self drawingFrame]];
 	/* Now draw the handles that are our children */
-	[super render: inputValues dirtyRect: dirtyRect inView: aView];
+	[super render: inputValues dirtyRect: dirtyRect inContext: ctxt];
 }
 
 /** Draws a rectangular outline. */

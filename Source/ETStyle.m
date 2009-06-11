@@ -222,7 +222,7 @@ static ETBasicItemStyle *sharedBasicItemStyle = nil;
 	
 	// TODO: We disable the antialiasing for the stroked rect with direct 
 	// drawing, but this code may be better moved in 
-	// -[ETLayoutItem render:dirtyRect:inView:] to limit the performance impact.
+	// -[ETLayoutItem render:dirtyRect:inContext:] to limit the performance impact.
 	BOOL gstateAntialias = [[NSGraphicsContext currentContext] shouldAntialias];
 	[[NSGraphicsContext currentContext] setShouldAntialias: NO];
 	

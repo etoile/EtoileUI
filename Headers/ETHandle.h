@@ -75,7 +75,7 @@ the resize tool more straightforward to use for the user. */
 
 - (void) render: (NSMutableDictionary *)inputValues 
 	  dirtyRect: (NSRect)dirtyRect
-         inView: (NSView *)aView;
+      inContext: (id)ctxt;
 - (void) drawOutlineInRect: (NSRect)rect;
 
 @end

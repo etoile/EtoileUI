@@ -164,7 +164,9 @@ extern NSString *kETDoubleClickedItemProperty; /** doubleClickedItem property na
 
 /* Rendering */
 
-- (void) render: (NSMutableDictionary *)inputValues dirtyRect: (NSRect)dirtyRect inView: (NSView *)view;
+- (void) render: (NSMutableDictionary *)inputValues 
+      dirtyRect: (NSRect)dirtyRect 
+      inContext: (id)ctxt;
 
 /* Grouping */
 

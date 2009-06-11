@@ -221,7 +221,7 @@ extern NSString *kETVisibleProperty; /** visible property name */
 - (NSRect) drawingFrame;
 - (void) render: (NSMutableDictionary *)inputValues 
       dirtyRect: (NSRect)dirtyRect 
-         inView: (NSView *)view;
+      inContext: (id)ctxt;
 - (void) render;
 - (ETStyleGroup *) styleGroup;
 - (void) setStyleGroup: (ETStyleGroup *)aStyle;

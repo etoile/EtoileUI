@@ -36,7 +36,9 @@
 /*- (BOOL) isEditingUI;
 - (void) commitEditingUI;*/
 
-- (void) render: (NSMutableDictionary *)inputValues dirtyRect: (NSRect)dirtyRect inView: (NSView *)view;
+- (void) render: (NSMutableDictionary *)inputValues 
+      dirtyRect: (NSRect)dirtyRect 
+      inContext: (id)ctxt;
 
 /* Decoration */
 
