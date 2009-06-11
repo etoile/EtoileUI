@@ -1,3 +1,31 @@
+2009-06-11 Quentin Mathe <qmathe@club-internet.fr>
+
+	* ETLayoutItem:
+	Added kETStyleGroupProperty property and removed kETStyleProperty.
+	(-styleGroup, -setStyleGroup:): Added.
+	(-style, setStyle:): Rewritten to use -styleGroup and be syntatic sugar to 
+	access the first style.
+	(-initWithView:value:representedObject:, -dealloc, -copyWithZone:, 
+	-properties): Updated.
+	* ETHandle:
+	(-[ETHandleGroup initWithActionHandler:manipulatedObject:]): Modified to 
+	suppress ETBasicItemStyle instance which is set by ETLayoutItem.
+	(-[ETResizeRectangle style]): Removed.
+	(-[ETResizeRectangle render:dirtyRect:inView:): Renamed 
+	-render:layoutItem:dirtyRect:, this way we now override the ETLayoutItem 
+	main render method and the overriden -style can be removed.
+	* ETPickDropCoordinator:
+	(-draggingExited:): Fixed crash on inserting a nil drop indicator in 
+	-insertDropIndicator:forDropTarget:. Assigning _previousDropTarget without 
+	-updateDropIndicator:withDropTarget: was messing up the internal state. 
+	Now we can be sure _previousDropTarget always has a valid drop indicator 
+	set, and thereby no nil drop indicator will ever be inserted on a dragging 
+	update.
+	(-dropIndicatorForDropTarget:, -insertDropIndicator:forDropTarget:, 
+	-removeDropIndicatorForDropTarget:): Rewritten to use the style group 
+	facility and get rid of the previous hack that involved to copy the 
+	existing item style before inserting the drop indicator.
+	
 2009-06-09 Quentin Mathe <qmathe@club-internet.fr>
 
 	First step in making the styling support really usable and clean.

@@ -47,6 +47,7 @@
 #import "ETLayoutItemGroup.h"
 #import "ETWindowItem.h"
 #import "ETStyleRenderer.h"
+#import "ETStyleGroup.h"
 #import "ETView.h"
 #import "ETContainer.h"
 #import "ETInspector.h"
@@ -75,7 +76,7 @@ NSString *kETPersistentFrameProperty = @"persistentFrame";
 NSString *kETRepresentedObjectProperty = @"representedObject";
 NSString *kRepresentedPathBaseProperty = @"representedPathBase";
 NSString *kETSelectedProperty = @"selected";
-NSString *kETStyleProperty = @"style";
+NSString *kETStyleGroupProperty = @"styleGroup";
 NSString *kETSubtypeProperty = @"subtype";
 NSString *kETTargetProperty = @"target";
 NSString *kETValueProperty = @"value";
@@ -189,6 +190,7 @@ NSString *kETVisibleProperty = @"visible";
 		[self setView: view];
 		[self setFlipped: YES]; /* -setFlipped: must follow -setSupervisorView: */
 		[self setVisible: NO];
+		[self setStyleGroup: AUTORELEASE([[ETStyleGroup alloc] init])];
 		[self setStyle: [ETBasicItemStyle sharedInstance]];
 		[self setActionHandler: [ETActionHandler sharedInstance]];
 		[self setValue: value];
@@ -225,7 +227,8 @@ NSString *kETVisibleProperty = @"visible";
 	                                      representedObject: [self representedObject]];
 
 	[item setName: [self name]];
-	[item setStyle: [self style]];
+	[item setStyleGroup: AUTORELEASE([[ETStyleGroup alloc] init])];
+	[item setStyle: [self style]]; // FIXME: We should simply make a copy of the style group
 	[item setActionHandler: [self actionHandler]];
 	[item setFrame: [self frame]];
 	[item setAppliesResizingToBounds: [self appliesResizingToBounds]];
@@ -862,11 +865,12 @@ See -valueForProperty: for more details. */
 - (NSArray *) properties
 {
 	NSArray *properties = A(@"identifier", kETNameProperty, @"x", @"y", @"width", 
-		@"height", @"view", kETSelectedProperty, kETLayoutProperty,
-		kETImageProperty, kETFrameProperty, kETRepresentedObjectProperty, 
-		kRepresentedPathBaseProperty, kETParentItemProperty, 
-		kETAutoresizingMaskProperty, kETBoundingBoxProperty, kETActionProperty, 
-		kETSubtypeProperty, kETTargetProperty, @"UIMetalevel", @"UIMetalayer");
+		@"height", @"view", kETSelectedProperty, kETLayoutProperty, 
+		kETStyleGroupProperty, @"style", kETImageProperty, kETFrameProperty, 
+		kETRepresentedObjectProperty, kRepresentedPathBaseProperty, 
+		kETParentItemProperty, kETAutoresizingMaskProperty, kETBoundingBoxProperty, 
+		kETActionProperty, kETSubtypeProperty, kETTargetProperty, @"UIMetalevel",
+		@"UIMetalayer");
 
 	properties = [[VARIABLE_PROPERTIES allKeys] arrayByAddingObjectsFromArray: properties];
 		
@@ -1299,7 +1303,7 @@ used by the styles. */
 	}
 #endif
 
-	[[self style] render: inputValues layoutItem: self dirtyRect: dirtyRect];
+	[[self styleGroup] render: inputValues layoutItem: self dirtyRect: dirtyRect];
 }
 
 /** A shortcut method for -render: inherited from ETStyle. */
@@ -1470,20 +1474,39 @@ Areas can be marked as invalid with -setNeedsDisplay: and -setNeedsDisplayInRect
 	[[self closestAncestorDisplayView] displayIfNeeded];
 }
 
-/** Returns the style object associated with the receiver. By default, returns 
-ETBasicItemStyle. */    
-- (ETStyle *) style
+/** Returns the style group associated with the receiver. By default, 
+returns a style group whose only style element is an ETBasicItemStyle object. */    
+- (ETStyleGroup *) styleGroup
 {
-	return	[self nextStyle];
+	return	(ETStyleGroup *)[self nextStyle];
 }
 
-/** Sets the style object associated with the receiver.
+/** Sets the style group associated with the receiver.
 
-The style object controls the drawing of the receiver. See ETStyle to 
-understand how to customize the layout item look. */
-- (void) setStyle: (ETStyle *)aStyle
+The styles inside the style group control the drawing of the receiver.<br />
+See ETStyle to understand how to customize the layout item look. */
+- (void) setStyleGroup: (ETStyleGroup *)aStyle
 {
 	[self setNextStyle: aStyle];
+}
+
+/** Returns the first style inside the style group. */
+- (id) style
+{
+	return [[self styleGroup] firstStyle];
+}
+
+/** Removes all styles inside the style group, then adds the given style to the 
+style group. 
+
+If the given style is nil, the style group becomes empty. */
+- (void) setStyle: (ETStyle *)aStyle
+{
+	[[self styleGroup] removeAllStyles];
+	if (aStyle != nil)
+	{
+		[[self styleGroup] addStyle: aStyle];
+	}
 }
 
 - (void) setDefaultValue: (id)aValue forProperty: (NSString *)key

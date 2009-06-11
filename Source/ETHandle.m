@@ -319,6 +319,7 @@ static ETBasicHandleStyle *sharedBasicHandleStyle = nil;
 	// NOTE: Must be called before -setManipulatedObject: that sets the handle
 	// locations.
 	[self setFlipped: YES];
+	[self setStyle: nil]; /* Suppress the default ETLayoutItem style */
 	[self setActionHandler: anHandler];
 	[self setManipulatedObject: aTarget];
 
@@ -484,19 +485,14 @@ or not. */
 	return (ETHandle *)[self itemAtIndex: 3];
 }
 
-/** Forces itself as the style object to implement the custom drawing without 
-delegating it as usual. */
-- (ETStyle *) style
-{
-	return self;
-}
-
 /** Draws the receiver style. See ETStyle. */
 - (void) render: (NSMutableDictionary *)inputValues 
-     layoutItem: (ETLayoutItem *)item 
-	  dirtyRect: (NSRect)dirtyRect;
+	  dirtyRect: (NSRect)dirtyRect
+         inView: (NSView *)aView
 {
-	[self drawOutlineInRect: [item drawingFrame]];
+	[self drawOutlineInRect: [self drawingFrame]];
+	/* Now draw the handles that are our children */
+	[super render: inputValues dirtyRect: dirtyRect inView: aView];
 }
 
 /** Draws a rectangular outline. */

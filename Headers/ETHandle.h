@@ -73,10 +73,9 @@ the resize tool more straightforward to use for the user. */
 - (ETHandle *) bottomRightHandle;
 - (ETHandle *) bottomLeftHandle;
 
-- (ETStyle *) style;
 - (void) render: (NSMutableDictionary *)inputValues 
-     layoutItem: (ETLayoutItem *)item 
-	  dirtyRect: (NSRect)dirtyRect;
+	  dirtyRect: (NSRect)dirtyRect
+         inView: (NSView *)aView;
 - (void) drawOutlineInRect: (NSRect)rect;
 
 @end

@@ -18,6 +18,7 @@
 #import "ETLayoutItemGroup.h"
 #import "ETPickboard.h"
 #import "ETStyle.h"
+#import "ETStyleGroup.h"
 #import "ETCompatibility.h"
 
 @interface ETPickDropCoordinator (Private)
@@ -331,28 +332,23 @@ entering a new one. */
 
 - (ETDropIndicator *) dropIndicatorForDropTarget: (ETLayoutItem *)dropTarget
 {
-	if ([[dropTarget lastStyle] isKindOfClass: [ETDropIndicator class]] == NO)
-	{
-		//ETLog(@"WARNING: Try to obtain a non-existent drop indicator on %@", dropTarget);
-		return nil;
-	}
-
-	return (ETDropIndicator *)[dropTarget lastStyle];
+	return [[dropTarget styleGroup] firstStyleOfClass: [ETDropIndicator class]];
 }
 
+/* Inserts the drop indicator style in the style group of the given drop target 
+item. */
 - (void) insertDropIndicator: (ETDropIndicator *)indicator 
                forDropTarget: (ETLayoutItem *)dropTarget
 {
-	// TODO: Improve the code below that will break when styles are removed 
-	// or inserted. Probably better to wait the style model is fully worked out.
-	if ([[dropTarget lastStyle] isEqual: indicator] == NO)
-	{
-		ETLog(@"Insert drop indicator for %@", dropTarget);
-		if ([[dropTarget style] isSharedStyle])
-			[dropTarget setStyle: AUTORELEASE([[ETBasicItemStyle alloc] init])];
+	BOOL hasDropIndicatorAlready = ([[dropTarget styleGroup] 
+		firstStyleOfClass: [ETDropIndicator class]] != nil);
 
-		[[dropTarget style] setNextStyle: indicator];
-	}
+	if (hasDropIndicatorAlready)
+		return;
+
+	ETLog(@"Insert drop indicator for %@", dropTarget);
+
+	[[dropTarget styleGroup] addStyle: indicator];
 }
 
 - (void) removeDropIndicatorForDropTarget: (ETLayoutItem *)dropTarget
@@ -362,10 +358,10 @@ entering a new one. */
 	if (dropTarget == nil || indicator  == nil)
 		return;
 
-	/* Indicator is released -setNextStyle:, hence we retrieve the rect before */
+	/* Indicator is released -removeStyle:, hence we retrieve the rect before */
 	NSRect prevIndicatorRect = [indicator previousIndicatorRect];
 	
-	[[dropTarget style] setNextStyle: nil]; // FIXME: Pretty limited...
+	[[dropTarget styleGroup] removeStyle: indicator];
 	[dropTarget setNeedsDisplayInRect: prevIndicatorRect];
 }
 
@@ -511,13 +507,11 @@ entering a new one. */
 	                                withItem: draggedItem 
 	                             coordinator: [ETPickDropCoordinator sharedInstance]];
 
-	[self removeDropIndicatorForDropTarget: item];
-
 	// NOTE: To handle the case where we exit a window without entering a new 
 	// one, then we reenter that window we just existed. If we let the ivar 
 	// as is, -draggingUpdated: (see dropTargetChanged) will wrongly conclude we 
 	// haven't exited the window when we reenter it .
-	ASSIGN(_previousDropTarget, [self dropTargetForDrag: drag]);
+	[self updateDropIndicator: drag withDropTarget: [self dropTargetForDrag: drag]];
 }
 
 - (void) draggingEnded: (id <NSDraggingInfo>)drag

@@ -218,13 +218,13 @@ TODO: Problably remove, since it should be of any use and just adds complexity. 
 
 - (void) handleFill: (ETLayoutItem *)item withColor: (NSColor *)aColor
 {
-	[(id)[item style] setFillColor: aColor];
+	[[item style] setFillColor: aColor];
 	[item setNeedsDisplay: YES];
 }
 
 - (void) handleStroke: (ETLayoutItem *)item withColor: (NSColor *)aColor
 {
-	[(id)[item style] setStrokeColor: aColor];
+	[[item style] setStrokeColor: aColor];
 	[item setNeedsDisplay: YES];
 }
 

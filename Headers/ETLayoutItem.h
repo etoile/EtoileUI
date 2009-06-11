@@ -44,7 +44,7 @@
 
 @class ETUTI;
 @class ETView, ETContainer, ETLayout, ETLayoutItemGroup, ETDecoratorItem, 
-ETScrollableAreaItem, ETWindowItem, ETActionHandler;
+ETScrollableAreaItem, ETWindowItem, ETStyleGroup, ETActionHandler;
 @protocol ETEventHandler, ETInspector;
 
 
@@ -70,7 +70,7 @@ extern NSString *kETRepresentedObjectProperty; /** representedObject property na
 extern NSString *kRepresentedPathBaseProperty; /** representedPathBase property name */
 extern NSString *kETSelectedProperty; /** selected property name */
 extern NSString *kETSubtypeProperty; /** subtype property name */
-extern NSString *kETStyleProperty; /** style property name */
+extern NSString *kETStyleGroupProperty; /** styleGroup property name */
 extern NSString *kETTargetProperty; /** actionHandler property name */
 extern NSString *kETValueProperty; /** value property name */
 extern NSString *kETVisibleProperty; /** visible property name */
@@ -223,7 +223,9 @@ extern NSString *kETVisibleProperty; /** visible property name */
       dirtyRect: (NSRect)dirtyRect 
          inView: (NSView *)view;
 - (void) render;
-- (ETStyle *) style;
+- (ETStyleGroup *) styleGroup;
+- (void) setStyleGroup: (ETStyleGroup *)aStyle;
+- (id) style;
 - (void) setStyle: (ETStyle *)aStyle;
 
 - (void) setNeedsDisplay: (BOOL)flag;
