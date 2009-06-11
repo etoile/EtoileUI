@@ -72,10 +72,32 @@ in the given style collection. */
 	[_styles removeAllObjects];
 }
 
+/** Returns whether the receiver contains a style equal to the given style. */
+- (BOOL) containsStyle: (ETStyle *)aStyle
+{
+	return [_styles containsObject: aStyle];
+}
+
 /** Returns the first rendered style. */
 - (id) firstStyle
 {
 	return [_styles firstObject];
+}
+
+/** Returns the first style of the kind of the given class.
+
+When no style matches, returns nil.  */
+- (id) firstStyleOfClass: (Class)aStyleClass
+{
+	FOREACH(_styles, style, ETStyle *)
+	{
+		if ([style isKindOfClass: aStyleClass])
+		{
+			return style;
+		}
+	}
+
+	return nil;
 }
 
 /** Returns the last rendered style. */

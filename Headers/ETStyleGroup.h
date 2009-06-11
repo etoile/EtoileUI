@@ -40,7 +40,9 @@ means a style can be also organized in a tree structure. */
 - (void) insertStyle: (ETStyle *)aStyle atIndex: (int)anIndex;
 - (void) removeStyle: (ETStyle *)aStyle;
 - (void) removeAllStyles;
+- (BOOL) containsStyle: (ETStyle *)aStyle;
 - (id) firstStyle;
+- (id) firstStyleOfClass: (Class)aStyleClass;
 - (id) lastStyle;
 
 /* Style Rendering */
