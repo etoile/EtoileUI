@@ -18,7 +18,7 @@
 #import "ETLayoutItem.h"
 #import "ETLayoutItemGroup.h"
 #import "ETLayout.h"
-#import "ETStyleRenderer.h"
+#import "ETSelectionAreaItem.h"
 #import "ETCompatibility.h"
 
 #define SELECTION_BY_RANGE_KEY_MASK NSShiftKeyMask

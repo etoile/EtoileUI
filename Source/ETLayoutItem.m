@@ -46,7 +46,6 @@
 #import "ETLayoutItem+Events.h"
 #import "ETLayoutItemGroup.h"
 #import "ETWindowItem.h"
-#import "ETStyleRenderer.h"
 #import "ETStyleGroup.h"
 #import "ETView.h"
 #import "ETContainer.h"

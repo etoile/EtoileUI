@@ -35,7 +35,6 @@
 
 #import <Foundation/Foundation.h>
 #import <AppKit/AppKit.h>
-#import <EtoileUI/ETStyleRenderer.h>
 #import <EtoileUI/ETLayoutItem.h>
 
 

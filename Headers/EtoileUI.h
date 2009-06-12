@@ -38,6 +38,7 @@
 #import <EtoileUI/ETLayoutItemGroup+Mutation.h>
 #import <EtoileUI/ETLayoutItem+Factory.h>
 #import <EtoileUI/ETLayer.h>
+#import <EtoileUI/ETSelectionAreaItem.h>
 #import <EtoileUI/ETWindowItem.h>
 #import <EtoileUI/ETUIItem.h>
 #import <EtoileUI/ETUIItemFactory.h>

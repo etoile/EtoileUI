@@ -20,7 +20,6 @@
 #import "ETLayout.h"
 #import "ETPickDropCoordinator.h"
 #import "ETCompatibility.h"
-#import "ETStyleRenderer.h"
 #import "NSView+Etoile.h"
 
 #define SELECTION_BY_RANGE_KEY_MASK NSShiftKeyMask

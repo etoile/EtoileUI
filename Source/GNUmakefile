@@ -39,11 +39,11 @@ libEtoileUI_OBJC_FILES = \
 	ETPersistencyController.m \
 	ETPickboard.m \
 	ETScrollableAreaItem.m \
+	ETSelectionAreaItem.m \
 	ETShape.m \
 	ETStackLayout.m \
 	ETStyle.m \
 	ETStyleGroup.m \
-	ETStyleRenderer.m \
 	ETTableLayout.m \
 	ETTextEditorLayout.m \
 	ETUIItem.m \

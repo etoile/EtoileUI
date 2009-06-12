@@ -6,7 +6,7 @@
 	License:  Modified BSD  (see COPYING)
  */
 
-#import "ETStyleRenderer.h"
+#import "ETSelectionAreaItem.h"
 #import "ETGeometry.h"
 #import "ETShape.h"
 #import "ETCompatibility.h"

@@ -63,11 +63,11 @@ EtoileUI_HEADER_FILES = \
 	ETPersistencyController.h \
 	ETPickboard.h \
 	ETScrollableAreaItem.h \
+	ETSelectionAreaItem.h \
 	ETShape.h \
 	ETStackLayout.h \
 	ETStyle.h \
 	ETStyleGroup.h \
-	ETStyleRenderer.h \
 	ETTableLayout.h \
 	ETTextEditorLayout.h \
 	ETUIItem.h \
