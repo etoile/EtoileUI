@@ -20,11 +20,18 @@
 With a style group, several style aspects can be attached to a layout item with 
 -[ETLayoutItem setStyleGroup:] and rendered in a precise order. 
 
+The order in which styles are inserted is used as the compositing order. From 
+-firstStyle to -lastStyle, each style is rendered over the previously rendered 
+style.
+
 Styles can be reordered and swapped in and out to easily change at runtime how 
 a document or an UI looks.
 
 Both basic styles and style groups can be inserted in a style group, which 
-means a style can be also organized in a tree structure. */
+means a style can be also organized in a tree structure. 
+
+Each layout item is initialized with its own ETStyleGroup instance and not a 
+shared instance. Style groups can be used as shared style objects too though.  */
 @interface ETStyleGroup : ETStyle <ETCollectionMutation>
 {
 	NSMutableArray *_styles;

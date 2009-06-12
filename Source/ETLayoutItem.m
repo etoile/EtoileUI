@@ -207,6 +207,7 @@ NSString *kETVisibleProperty = @"visible";
 {
 	DESTROY(_variableProperties);
 	DESTROY(_defaultValues);
+	DESTROY(_styleGroup);
 	DESTROY(_modelObject);
 	DESTROY(_transform);
 	_parentItem = nil; /* weak reference */
@@ -1480,7 +1481,7 @@ Areas can be marked as invalid with -setNeedsDisplay: and -setNeedsDisplayInRect
 returns a style group whose only style element is an ETBasicItemStyle object. */    
 - (ETStyleGroup *) styleGroup
 {
-	return	(ETStyleGroup *)[self nextStyle];
+	return _styleGroup;
 }
 
 /** Sets the style group associated with the receiver.
@@ -1489,7 +1490,7 @@ The styles inside the style group control the drawing of the receiver.<br />
 See ETStyle to understand how to customize the layout item look. */
 - (void) setStyleGroup: (ETStyleGroup *)aStyle
 {
-	[self setNextStyle: aStyle];
+	ASSIGN(_styleGroup, aStyle);
 }
 
 /** Returns the first style inside the style group. */

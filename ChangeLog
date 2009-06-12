@@ -1,3 +1,18 @@
+2009-06-12 Quentin Mathe <qmathe@club-internet.fr>
+
+	* ETLayoutItem:
+	Added _styleGroup ivar.
+	(-styleGroup, -setStyleGroup:, -dealloc): Updated to use the new ivar.
+	* ETStyle:
+	Altered to inherit from NSObject and not from ETObjectChain. Removed ivar 
+	_nextStyle. Rewritten or updated both class and method documentation.
+	(-initWithStyle:, -initWithCollection:, -nextStyle, -setNextStyle:, -lastStyle): 
+	Removed.
+	(-render:layoutItem:dirtyRect:, -didChangeItemBounds:): Modified to do 
+	nothing now.
+	* ETStyleGroup:
+	Improved documentation.
+
 2009-06-11 Quentin Mathe <qmathe@club-internet.fr>
 
 	* ETLayoutItem:

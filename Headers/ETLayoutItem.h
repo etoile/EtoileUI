@@ -82,6 +82,7 @@ extern NSString *kETVisibleProperty; /** visible property name */
 	ETLayoutItemGroup *_parentItem;
 	
 	id _modelObject;
+	ETStyleGroup *_styleGroup;
 	NSMutableDictionary *_variableProperties;
 	NSMutableDictionary *_defaultValues; // TODO: Probably merge the two dictionaries
 

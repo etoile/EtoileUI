@@ -1,38 +1,9 @@
-/*  <title>ETStyle</title>
-
-	ETStyle.m
-	
-	<abstract>Generic object chain class to implement late-binding of behavior
-	through delegation.</abstract>
- 
+/*
 	Copyright (C) 2007 Quentin Mathe
- 
+
 	Author:  Quentin Mathe <qmathe@club-internet.fr>
 	Date:  November 2007
- 
-	Redistribution and use in source and binary forms, with or without
-	modification, are permitted provided that the following conditions are met:
-
-	* Redistributions of source code must retain the above copyright notice,
-	  this list of conditions and the following disclaimer.
-	* Redistributions in binary form must reproduce the above copyright notice,
-	  this list of conditions and the following disclaimer in the documentation
-	  and/or other materials provided with the distribution.
-	* Neither the name of the Etoile project nor the names of its contributors
-	  may be used to endorse or promote products derived from this software
-	  without specific prior written permission.
-
-	THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
-	AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
-	IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
-	ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE
-	LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
-	CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
-	SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
-	INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
-	CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
-	ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
-	THE POSSIBILITY OF SUCH DAMAGE.
+	License: Modified BSD (see COPYING)
  */
 
 #import <EtoileFoundation/Macros.h>
@@ -46,64 +17,34 @@
 
 @implementation ETStyle
 
-/** Returns a new style connected to an existing style. */
-- (id) initWithStyle: (ETStyle *)style
-{
-	return [self initWithObject: style];
-}
+/** Returns whether the receiver can be shared between several owners.
 
-/** <init /> Returns a new style by chaining styles passed in parameter. */
-- (id) initWithCollection: (id <ETCollection>)styles
-{
-	return [super initWithCollection: styles];
-}
-
-/** Returns the style following the receiver in the style chain. */
-- (ETStyle *) nextStyle
-{
-	return (ETStyle *)[self nextObject];
-}
-
-/** Sets the style following the receiver in the style chain. 
-	Take note this method discards the existing next style and the whole 
-	style chain connected to it. If you want to reconnect the existing 
-	next style, it's up to you to handle it. */
-- (void) setNextStyle: (ETStyle *)style
-{
-	[self setNextObject: style];
-}
-
-/** Returns the style terminating the style chain the receiver belongs
-	to. In other words, returns the first style that has no next style 
-	connected to it. */
-- (ETStyle *) lastStyle
-{
-	return (ETStyle *)[self lastObject];
-}
-
-/** Returns whether the receiver can be inserted in several style chains. */
+TODO: Not really implemented yet... */
 - (BOOL) isSharedStyle
 {
 	return _isSharedStyle;
 }
 
 /** Returns the selector uses for style rendering which is equal to -render:
-	if you don't override the method. 
-	Try also to override -render: if you override this method, so you your 
-	custom styles can be used in other style chains in some sort of fallback
-	mode. */
+if you don't override the method. 
+
+Try also to override -render: if you override this method, so you your 
+custom styles can be used in other style chains in some sort of fallback
+mode.
+
+TODO: Not really implemented yet and could be removed... */
 - (SEL) styleSelector
 {
 	return @selector(render:);
 }
 
-/** Renders the receiver in the active graphics context and the rest of the 
-    style chain connected to it, by passing the input values from style-to-style 
-	with the order resulting from calling -nextStyle on eachstyle.
-	You should never override this method but -render:layoutItem:dirtyRect: 
-	to implement the custom drawing of the style. 
-	This method calls -render:layoutItem:dirtyRect: and try to figure out the 
-	parameter by looking up kETLayoutItemObject and kETDirtyRect in inputValues. */
+/** Renders the receiver in the active graphics context.
+
+You should never override this method but -render:layoutItem:dirtyRect: to 
+implement the custom drawing of the style. 
+
+This method calls -render:layoutItem:dirtyRect: and try to figure out the 
+parameter by looking up kETLayoutItemObject and kETDirtyRect in inputValues. */
 - (void) render: (NSMutableDictionary *)inputValues
 {
 	id item = [inputValues objectForKey: @"kETLayoutItemObject"];
@@ -112,31 +53,33 @@
 	[self render: inputValues layoutItem: item dirtyRect: dirtyRect];
 }
 
-/** Main rendering method for the custom drawing implemented by subclasses.
-    Renders the receiver in the active graphics context and the rest of the 
-    style chain connected to it, by passing the input values from style-to-style 
-	with the order resulting from calling -nextStyle on each style.
-	When overriding this method, you should usually handle the receiver 
-	rendering before delegating it to the rest of the style chain. This 
-	implies using 
-	    return [super render: inputValues item: item dirtyRect: dirtyRect] 
-	at the end of the overriden method. */
+/** <override-subclass />
+Main rendering method for the custom drawing implemented by subclasses.
+    
+Renders the receiver in the active graphics context with the given layout item 
+in the role of the element on which the style is applied.
+
+item indicates in which item the receiver is rendered. Usually this item is the 
+one on which the receiver is indirectly set through -[ETLayoutItem styleGroup]. 
+However the item can be unrelated to the style or nil.
+
+dirtyRect can be used to optimize the drawing. You only need to redraw what is 
+inside that redisplayed area and won't be clipped by the graphics context. */
 - (void) render: (NSMutableDictionary *)inputValues 
      layoutItem: (ETLayoutItem *)item 
 	  dirtyRect: (NSRect)dirtyRect
 {
-	[[self nextStyle] render: inputValues layoutItem: item dirtyRect: dirtyRect];
+
 }
 
-/** Notifies the receiver that the styled layout item has been resized.
+/** <override-dummy />
+Notifies the receiver that the styled layout item has been resized.
 
 You can override this method to alter the style state. For example, ETShape 
-overrides it to resize/scale the bezier path as needed.
-
-You must call the superclass implementation. */
+overrides it to resize/scale the bezier path as needed. */
 - (void) didChangeItemBounds: (NSRect)bounds
 {
-	[[self nextStyle] didChangeItemBounds: bounds];
+
 }
 
 @end
