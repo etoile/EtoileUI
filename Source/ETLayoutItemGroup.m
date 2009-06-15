@@ -1078,38 +1078,13 @@ recursively on them. */
 {
 	//ETLog(@"Render %@ dirtyRect %@ in %@", self, NSStringFromRect(dirtyRect), ctxt);
 	
-	//ETView *drawingView = [self supervisorView];
-	
-	// TODO: Enable later to allow drawing a layout item tree in any views.
-	//if (renderView == nil)
-	//	renderView = [self drawingView];
-	
-	// NOTE: Probably not useful, -render: can lock the focus by safety and 
-	// in other cases this is the reponsability of the framework user.
-	// Somewhat as in -[NSCell drawWithFrame:inView:]
-	//if ([[NSView focusView] isEqual: renderView] == NO)
-	//{
-	//	[renderView lockFocus];
-	//	hasLockedFocus = YES;
-	//}
-
-	// TODO: Move in -render:. Keeping this code here prevents us to draw in 
-	// any views passed as view parameter.
-	//if (drawingView != nil)
-	//{
-	//	NSAssert2(renderView == drawingView, @"Supervisor view %@ and render view %@ must match",
-	//		renderView, drawingView);
-	//}
-	
 	NSRect drawingFrame = [self drawingFrame];
 
 	if ([self usesLayoutBasedFrame] || NSIntersectsRect(dirtyRect, drawingFrame))
 	{
-		BOOL usesLayoutView = ([[self layout] layoutView] != nil);
-
-		#ifdef DEBUG_DRAWING
+#ifdef DEBUG_DRAWING
 		[self debugDrawingInRect: dirtyRect];
-		#endif
+#endif
 
 	   /* We intersect our dirtyRect with our drawing frame, so we don't get 
 	      a dirtyRect that includes views of existing decorator items in case our 
@@ -1122,10 +1097,6 @@ recursively on them. */
 		id layout = [self layout];
 		if ([layout respondsToSelector: @selector(rootItem)])
 		{
-			if ([[layout rootItem] numberOfItems] > 0)
-			{
-				ETLog(@"");
-			}
 			[self display: inputValues 
 			         item: [layout rootItem] 
 			    dirtyRect: dirtyRect 
@@ -1134,6 +1105,7 @@ recursively on them. */
 
 		/* Render child items (if the layout doesn't handle it) */
 		
+		BOOL usesLayoutView = ([[self layout] layoutView] != nil);
 		if (usesLayoutView)
 			return;
 			
