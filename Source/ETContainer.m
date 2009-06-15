@@ -398,19 +398,6 @@ but they never never manipulate it as a subview in view hierachy. */
 }
 #endif
 
-/* FIXME: Implement
-
-- (ETLayoutOverflowStyle) overflowStyle
-{
-
-}
-
-- (void) setOverflowStyle: (ETLayoutOverflowStyle)
-{
-
-}
-*/
-
 /** point parameter must be expressed in receiver coordinates */
 - (BOOL) doesSelectionContainsPoint: (NSPoint)point
 {
@@ -509,29 +496,6 @@ but they never never manipulate it as a subview in view hierachy. */
 	_itemScale = factor;
 	if ([self canUpdateLayout])
 		[self updateLayout];
-}
-
-/* Rendering Chain */
-
-- (void) render
-{
-	//[_layoutItems makeObjectsPerformSelector: @selector(render)];
-}
-
-- (void) render: (NSMutableDictionary *)inputValues
-{
-	[[self items] makeObjectsPerformSelector: @selector(render:) withObject: nil];
-}
-
-- (void) drawRect: (NSRect)rect
-{
-	/* Takes care of drawing layout items with a view */
-	[super drawRect: rect];
-	
-	/* Now we must draw layout items without view... using either a cell or 
-	   their own renderer. Layout item are smart enough to avoid drawing their
-	   view when they have one. */
-	//[[self items] makeObjectsPerformSelector: @selector(render:) withObject: nil];
 }
 
 /* Overriden NSView methods */

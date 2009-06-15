@@ -80,10 +80,6 @@ extern NSString *ETLayoutItemPboardType;
 - (float) itemScaleFactor;
 - (void) setItemScaleFactor: (float)factor;
 
-/* Rendering Chain */
-
-- (void) render;
-
 @end
 
 /* Deprecated (DO NOT USE, WILL BE REMOVED LATER) */
