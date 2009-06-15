@@ -49,9 +49,6 @@ extern NSString *ETLayoutItemPboardType;
 	NSView *_layoutView;
 	
 	float _itemScale;
-
-	/* Insertion indicator to erase on next mouse move event in a drag */
-	NSRect _prevInsertionIndicatorRect; 
 }
 
 - (id) initWithLayoutView: (NSView *)layoutView;

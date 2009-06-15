@@ -133,7 +133,6 @@ NSString *ETLayoutItemPboardType = @"ETLayoutItemPboardType"; // FIXME: replace 
 		_itemScale = 1.0;
 		[self setAllowsMultipleSelection: YES];
 		[self setAllowsEmptySelection: YES];
-		_prevInsertionIndicatorRect = NSZeroRect;
 		//[self registerForDraggedTypes: [NSArray arrayWithObjects:
 		//	ETLayoutItemPboardType, nil]];
 		[self setAutoresizingMask: NSViewWidthSizable | NSViewHeightSizable];
