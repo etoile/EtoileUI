@@ -47,8 +47,6 @@ extern NSString *ETLayoutItemPboardType;
 @interface ETContainer : ETView
 {
 	NSView *_layoutView;
-
-	BOOL _subviewHitTest;
 	
 	float _itemScale;
 
@@ -113,11 +111,6 @@ extern NSString *ETLayoutItemPboardType;
 /* Rendering Chain */
 
 - (void) render;
-
-/* Actions */
-
-- (BOOL) isHitTestEnabled;
-- (void) setEnablesHitTest: (BOOL)hit;
 
 @end
 
@@ -258,5 +251,7 @@ extern NSString *ETLayoutItemPboardType;
 - (void) setDoubleAction: (SEL)selector;
 - (SEL) doubleAction;
 - (ETLayoutItem *) doubleClickedItem;
+- (BOOL) isHitTestEnabled;
+- (void) setEnablesHitTest: (BOOL)hit;
 
 @end

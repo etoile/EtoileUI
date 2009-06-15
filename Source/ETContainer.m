@@ -130,14 +130,12 @@ NSString *ETLayoutItemPboardType = @"ETLayoutItemPboardType"; // FIXME: replace 
 	if (self != nil)
     {
 		[self setRepresentedPath: @"/"];
-		_subviewHitTest = NO;
 		_itemScale = 1.0;
 		_dragAllowed = YES;
 		_dropAllowed = YES;
 		[self setShouldRemoveItemsAtPickTime: NO];
 		[self setAllowsMultipleSelection: YES];
 		[self setAllowsEmptySelection: YES];
-		[self setEnablesHitTest: YES];
 		_prevInsertionIndicatorRect = NSZeroRect;
 		//[self registerForDraggedTypes: [NSArray arrayWithObjects:
 		//	ETLayoutItemPboardType, nil]];
@@ -205,8 +203,7 @@ NSString *ETLayoutItemPboardType = @"ETLayoutItemPboardType"; // FIXME: replace 
 	   like [coder encodeLateBoundObject: [self source] forKey: @"ETSource"]; */
 	[coder encodeObject: [self scrollView] forKey: @"NSScrollView"];
 	[coder encodeBool: [self isDisclosable] forKey: @"ETFlipped"];
-	[coder encodeObject: [self representedPath] forKey: @"ETRepresentedPath"];
-	[coder encodeBool: [self isHitTestEnabled] forKey: @"ETHitTestEnabled"];	
+	[coder encodeObject: [self representedPath] forKey: @"ETRepresentedPath"];	
 	[coder encodeObject: NSStringFromSelector([self doubleAction]) 
 	          forKey: @"ETDoubleAction"];
 	[coder encodeObject: [self target] forKey: @"ETTarget"];
@@ -242,7 +239,6 @@ NSString *ETLayoutItemPboardType = @"ETLayoutItemPboardType"; // FIXME: replace 
 	//[self setScrollView: [coder decodeObjectForKey: @"NSScrollView"]];
 	[self setFlipped: [coder decodeBoolForKey: @"ETFlipped"]];
 	[self setRepresentedPath: [coder decodeObjectForKey: @"ETRepresentedPath"]];
-	[self setEnablesHitTest: [coder decodeBoolForKey: @"ETHitTestEnabled"]];	
 	[self setDoubleAction: 
 		NSSelectorFromString([coder decodeObjectForKey: @"ETDoubleAction"])];
 	[self setTarget: [coder decodeObjectForKey: @"ETTarget"]];
@@ -570,50 +566,6 @@ but they never never manipulate it as a subview in view hierachy. */
 	   view when they have one. */
 	//[[self items] makeObjectsPerformSelector: @selector(render:) withObject: nil];
 }
-
-/* Actions */
-
-/** Returns usually the lowest subcontainer of the receiver which contains 
-    location point in the view hierarchy. For any other kind of subviews, hit 
-	test doesn't succeed by default to eliminate potential issues you may 
-	encounter by using subclasses of NSControl like NSImageView as layout item 
-	view.
-	If you want to layout controls which should support direct interaction like
-	checkbox or popup menu, you can turn hit test on by calling 
-	-setEnablesHitTest: with YES.
-	If the point is located in the receiver itself but outside of any 
-	subcontainers, returns self. When no subcontainer can be found, returns 
-	nil. 
-	*/
-- (NSView *) hitTest: (NSPoint)location
-{
-	NSView *subview = [super hitTest: location];
-	
-	/* If -[NSView hitTest:] returns a container or if we use an AppKit control 
-	   as a display view, we simply return the subview provided by 
-	   -[NSView hitTest:]
-	   If hit test is turned on, everything should be handled as usual. */
-	if ([self layoutView] || [self isHitTestEnabled] 
-	 || [subview isKindOfClass: [self class]])
-	{
-		return subview;
-	}
-	else if (NSPointInRect(location, [self frame]))
-	{
-		return self;
-	}
-	else
-	{
-		return nil;
-	}
-}
-
-- (void) setEnablesHitTest: (BOOL)passHitTest
-{ 
-	_subviewHitTest = passHitTest; 
-}
-
-- (BOOL) isHitTestEnabled { return _subviewHitTest; }
 
 /* Overriden NSView methods */
 
@@ -970,6 +922,16 @@ but they never never manipulate it as a subview in view hierachy. */
 - (ETLayoutItem *) doubleClickedItem
 {
 	return [[self layoutItem] doubleClickedItem];
+}
+
+- (void) setEnablesHitTest: (BOOL)passHitTest
+{ 
+ 
+}
+
+- (BOOL) isHitTestEnabled 
+{ 
+	return YES; 
 }
 
 @end

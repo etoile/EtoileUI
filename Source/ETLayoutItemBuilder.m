@@ -175,8 +175,6 @@
 		item = [container layoutItem];
 		
 		[item setFlipped: [view isFlipped]];
-		//[container setFlipped: [view isFlipped]];
-		[container setEnablesHitTest: YES];
 
 		// NOTE: -addItem: moves subview when subviews is enumerated, hence we 
 		// have to iterate over a separate collection which isn't mutated.
