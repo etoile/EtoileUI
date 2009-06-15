@@ -50,8 +50,6 @@ extern NSString *ETLayoutItemPboardType;
 	
 	float _itemScale;
 
-	BOOL _dragAllowed;
-	BOOL _dropAllowed;
 	BOOL _removeItemsAtPickTime;
 	/* Insertion indicator to erase on next mouse move event in a drag */
 	NSRect _prevInsertionIndicatorRect; 
@@ -72,12 +70,6 @@ extern NSString *ETLayoutItemPboardType;
 
 - (BOOL) shouldRemoveItemsAtPickTime;
 - (void) setShouldRemoveItemsAtPickTime: (BOOL)flag;
-
-// NOTE: Following methods are deprecated
-- (void) setAllowsDragging: (BOOL)flag;
-- (BOOL) allowsDragging;
-- (void) setAllowsDropping: (BOOL)flag;
-- (BOOL) allowsDropping;
 
 /* Groups and Stacks */
 

@@ -131,8 +131,6 @@ NSString *ETLayoutItemPboardType = @"ETLayoutItemPboardType"; // FIXME: replace 
     {
 		[self setRepresentedPath: @"/"];
 		_itemScale = 1.0;
-		_dragAllowed = YES;
-		_dropAllowed = YES;
 		[self setShouldRemoveItemsAtPickTime: NO];
 		[self setAllowsMultipleSelection: YES];
 		[self setAllowsEmptySelection: YES];
@@ -213,10 +211,6 @@ NSString *ETLayoutItemPboardType = @"ETLayoutItemPboardType"; // FIXME: replace 
 	           forKey: @"ETAllowsMultipleSelection"];
 	[coder encodeBool: [self allowsEmptySelection] 
 	           forKey: @"ETAllowsEmptySelection"];
-	// FIXME: Replace encoding of allowsDragging and allowsDropping by
-	// allowedDraggingTypes and allowedDroppingTypes
-	[coder encodeBool: [self allowsDragging] forKey: @"ETAllowsDragging"];
-	[coder encodeBool: [self allowsDropping] forKey: @"ETAllowsDropping"];
 	[coder encodeBool: [self shouldRemoveItemsAtPickTime] 
 	           forKey: @"ETShouldRemoveItemAtPickTime"];
 			   
@@ -248,8 +242,6 @@ NSString *ETLayoutItemPboardType = @"ETLayoutItemPboardType"; // FIXME: replace 
 		[coder decodeBoolForKey: @"ETAllowsMultipleSelection"]];
 	[self setAllowsEmptySelection: 
 		[coder decodeBoolForKey: @"ETAllowsEmptySelection"]];
-	[self setAllowsDragging: [coder decodeBoolForKey: @"ETAllowsDragging"]];
-	[self setAllowsDropping: [coder decodeBoolForKey: @"ETAllowsDropping"]];
 	[self setShouldRemoveItemsAtPickTime: 
 		[coder decodeBoolForKey: @"ETShouldRemoveItemAtPickTime"]];
 
@@ -467,31 +459,6 @@ but they never never manipulate it as a subview in view hierachy. */
 - (void) setShouldRemoveItemsAtPickTime: (BOOL)flag
 {
 	_removeItemsAtPickTime = flag;
-}
-
-- (void) setAllowsDragging: (BOOL)flag
-{
-	_dragAllowed = flag;
-}
-
-- (BOOL) allowsDragging
-{
-	return _dragAllowed;
-}
-
-- (void) setAllowsDropping: (BOOL)flag
-{
-	_dropAllowed = flag;
-}
-
-- (BOOL) allowsDropping
-{
-	// FIXME: We should rather check whether source implement dragging data
-	// source methods.
-	if ([self source] != nil)
-		return NO;
-	
-	return _dropAllowed;
 }
 
 /* Grouping and Stacking */
