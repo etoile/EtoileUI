@@ -131,7 +131,6 @@ NSString *ETLayoutItemPboardType = @"ETLayoutItemPboardType"; // FIXME: replace 
     {
 		[self setRepresentedPath: @"/"];
 		_itemScale = 1.0;
-		[self setShouldRemoveItemsAtPickTime: NO];
 		[self setAllowsMultipleSelection: YES];
 		[self setAllowsEmptySelection: YES];
 		_prevInsertionIndicatorRect = NSZeroRect;
@@ -211,8 +210,6 @@ NSString *ETLayoutItemPboardType = @"ETLayoutItemPboardType"; // FIXME: replace 
 	           forKey: @"ETAllowsMultipleSelection"];
 	[coder encodeBool: [self allowsEmptySelection] 
 	           forKey: @"ETAllowsEmptySelection"];
-	[coder encodeBool: [self shouldRemoveItemsAtPickTime] 
-	           forKey: @"ETShouldRemoveItemAtPickTime"];
 			   
 	[(NSKeyedArchiver *)coder setDelegate: nil];
 }
@@ -242,8 +239,6 @@ NSString *ETLayoutItemPboardType = @"ETLayoutItemPboardType"; // FIXME: replace 
 		[coder decodeBoolForKey: @"ETAllowsMultipleSelection"]];
 	[self setAllowsEmptySelection: 
 		[coder decodeBoolForKey: @"ETAllowsEmptySelection"]];
-	[self setShouldRemoveItemsAtPickTime: 
-		[coder decodeBoolForKey: @"ETShouldRemoveItemAtPickTime"]];
 
 	return self;
 }
@@ -434,18 +429,6 @@ but they never never manipulate it as a subview in view hierachy. */
 	
 	return hitSelection;
 #endif
-}
-
-/* Pick & Drop */
-
-- (BOOL) shouldRemoveItemsAtPickTime
-{
-	return _removeItemsAtPickTime;
-}
-
-- (void) setShouldRemoveItemsAtPickTime: (BOOL)flag
-{
-	_removeItemsAtPickTime = flag;
 }
 
 /* Grouping and Stacking */

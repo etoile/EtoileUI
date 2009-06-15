@@ -50,7 +50,6 @@ extern NSString *ETLayoutItemPboardType;
 	
 	float _itemScale;
 
-	BOOL _removeItemsAtPickTime;
 	/* Insertion indicator to erase on next mouse move event in a drag */
 	NSRect _prevInsertionIndicatorRect; 
 }
@@ -65,11 +64,6 @@ extern NSString *ETLayoutItemPboardType;
 
 - (NSView *) layoutView;
 - (void) setLayoutView: (NSView *)view;
-
-/* Pick & Drop */
-
-- (BOOL) shouldRemoveItemsAtPickTime;
-- (void) setShouldRemoveItemsAtPickTime: (BOOL)flag;
 
 /* Groups and Stacks */
 
