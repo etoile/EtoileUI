@@ -7,6 +7,7 @@ libEtoileUI_OBJCFLAGS += -std=c99
 
 libEtoileUI_OBJC_FILES = \
 	Controls+Etoile.m \
+	ETActionHandler.m \
 	ETApplication.m \
 	ETBrowserLayout.m \
 	ETComputedLayout.m \
@@ -21,7 +22,6 @@ libEtoileUI_OBJC_FILES = \
 	ETInspector.m \
 	ETLayer.m \
 	ETLayoutItemBuilder.m \
-	ETLayoutItem+Events.m \
 	ETLayoutItem+Factory.m \
 	ETLayoutItemGroup.m \
 	ETLayoutItemGroup+Mutation.m \

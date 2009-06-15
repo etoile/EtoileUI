@@ -14,7 +14,7 @@
 #import <AppKit/AppKit.h>
 #import <EtoileUI/ETLayoutItem.h>
 #import <EtoileUI/ETLayoutItemGroup.h>
-#import <EtoileUI/ETLayoutItem+Events.h>
+#import <EtoileUI/ETActionHandler.h>
 #import <EtoileUI/ETStyle.h>
 
 @class ETInstrument; 

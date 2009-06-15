@@ -29,7 +29,7 @@
 #import <EtoileUI/ETController.h>
 #import <EtoileUI/ETDecoratorItem.h>
 #import <EtoileUI/ETLayoutItem.h>
-#import <EtoileUI/ETLayoutItem+Events.h>
+#import <EtoileUI/ETActionHandler.h>
 #import <EtoileUI/ETLayoutItem+Reflection.h>
 #import <EtoileUI/ETLayoutItem+Scrollable.h>
 #import <EtoileUI/ETEvent.h>

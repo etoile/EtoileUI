@@ -41,7 +41,7 @@
 #import "ETDecoratorItem.h"
 #import "ETLayoutItem.h"
 #import "ETLayoutItem+Factory.h"
-#import "ETLayoutItem+Events.h"
+#import "ETActionHandler.h"
 #import "ETLayoutItem+Scrollable.h"
 #import "ETEvent.h"
 #import "ETLayoutItemGroup.h"

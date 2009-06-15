@@ -1,4 +1,4 @@
-/*  <title>ETLayoutItem+Events</title>
+/*  <title>ETActionHandler</title>
 
 	<abstract>The EtoileUI event handling model for the layout item tree. Also 
 	defines the Pick and Drop model.</abstract>

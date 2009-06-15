@@ -14,7 +14,7 @@
 #import "ETEvent.h"
 #import "ETInstrument.h"
 #import "ETLayoutItem.h"
-#import "ETLayoutItem+Events.h"
+#import "ETActionHandler.h"
 #import "ETLayoutItemGroup.h"
 #import "ETPickboard.h"
 #import "ETStyle.h"

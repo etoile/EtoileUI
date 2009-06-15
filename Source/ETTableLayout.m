@@ -38,7 +38,7 @@
 #import "ETTableLayout.h"
 #import "ETContainer.h"
 #import "ETLayoutItem.h"
-#import "ETLayoutItem+Events.h"
+#import "ETActionHandler.h"
 #import "ETEvent.h"
 #import "ETLayoutLine.h"
 #import "ETPickboard.h"
@@ -696,7 +696,7 @@ yet, it is created. */
    cancellation in order to pop the object just pushed on the pickboard in 
    -tableView:writeRowsWithIndexes:toPasteboard: and -handleDrag:forItem: 
    That's why we override dragging source related methods to simply call the
-   default behavior implemented in ETEventHandler (see ETLayoutItem+Events). */
+   default behavior implemented in ETEventHandler (see ETActionHandler). */
 
 @interface NSTableView (ETTableLayoutDraggingSource)
 - (id) actionHandler;

@@ -37,7 +37,7 @@
  */
 
 #import "ETWidgetLayout.h"
-#import "ETLayoutItem+Events.h"
+#import "ETActionHandler.h"
 #import "ETCompatibility.h"
 #import "ETContainer.h"
 

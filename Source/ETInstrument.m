@@ -12,7 +12,7 @@
 #import "ETEvent.h"
 #import "ETEventProcessor.h"
 #import "ETGeometry.h"
-#import "ETLayoutItem+Events.h"
+#import "ETActionHandler.h"
 #import "ETLayoutItem.h"
 #import "ETLayoutItem+Factory.h"
 #import "ETLayoutItemGroup.h"

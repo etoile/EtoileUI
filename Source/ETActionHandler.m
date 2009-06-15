@@ -10,7 +10,7 @@
 #import <EtoileFoundation/NSObject+Model.h>
 #import <EtoileFoundation/ETCollection.h>
 #import <EtoileFoundation/ETUTI.h>
-#import <EtoileUI/ETLayoutItem+Events.h>
+#import <EtoileUI/ETActionHandler.h>
 #import "ETApplication.h"
 #import "ETController.h"
 #import "ETGeometry.h"

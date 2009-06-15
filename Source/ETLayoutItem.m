@@ -43,7 +43,7 @@
 #import <EtoileFoundation/Macros.h>
 #import "ETLayoutItem.h"
 #import "ETGeometry.h"
-#import "ETLayoutItem+Events.h"
+#import "ETActionHandler.h"
 #import "ETLayoutItemGroup.h"
 #import "ETWindowItem.h"
 #import "ETStyleGroup.h"

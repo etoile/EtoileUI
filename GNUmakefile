@@ -29,6 +29,7 @@ EtoileUI_HEADER_FILES_DIR = Headers
 
 EtoileUI_HEADER_FILES = \
 	Controls+Etoile.h \
+	ETActionHandler.h \
 	ETApplication.h \
 	ETBrowserLayout.h \
 	ETCompatibility.h \
@@ -45,7 +46,6 @@ EtoileUI_HEADER_FILES = \
 	ETLayer.h \
 	ETLayout.h \
 	ETLayoutItemBuilder.h \
-	ETLayoutItem+Events.h \
 	ETLayoutItem+Factory.h \
 	ETLayoutItemGroup.h \
 	ETLayoutItemGroup+Mutation.h \

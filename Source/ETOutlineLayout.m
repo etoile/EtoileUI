@@ -39,7 +39,7 @@
 #import "ETLayout.h"
 #import "ETContainer.h"
 #import "ETLayoutItem.h"
-#import "ETLayoutItem+Events.h"
+#import "ETActionHandler.h"
 #import "ETEvent.h"
 #import "ETLayoutItemGroup.h"
 #import "ETLayoutLine.h"
