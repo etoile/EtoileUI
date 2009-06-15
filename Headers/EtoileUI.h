@@ -26,7 +26,6 @@
 #import <EtoileUI/ETStyleGroup.h>
 #import <EtoileUI/ETShape.h>
 #import <EtoileUI/ETContainer.h>
-#import <EtoileUI/ETContainers.h>
 #import <EtoileUI/ETController.h>
 #import <EtoileUI/ETDecoratorItem.h>
 #import <EtoileUI/ETLayoutItem.h>
