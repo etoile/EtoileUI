@@ -149,8 +149,10 @@ static 	BOOL _coalescingMutation = NO;
 	// FIXME: Implement
 	//BOOL isValidElementType = NO;
 	BOOL validatedMutate = YES;
-		
-	if ([PROVIDER_SOURCE respondsToSelector: @selector(container:addItems:atPath:operation:)])
+
+	// FIXME: Rewrite the code below once the source protocol is rethough or 
+	// eliminate.
+	/*if ([PROVIDER_SOURCE respondsToSelector: @selector(container:addItems:atPath:operation:)])
 	{
 		NSArray *items = [NSArray arrayWithObject: item];
 
@@ -165,7 +167,7 @@ static 	BOOL _coalescingMutation = NO;
 				
 		validatedMutate = [PROVIDER_SOURCE container: PROVIDER_CONTAINER 
 			insertItems: items atPaths: indexPaths operation: event];
-	}
+	}*/
 	if (validatedMutate && [[self baseItem] shouldMutateRepresentedObject] 
 	 && [repObject isMutableCollection])
 	{
@@ -238,8 +240,10 @@ static 	BOOL _coalescingMutation = NO;
 	// FIXME: Implement
 	//BOOL isValidElementType = NO;
 	BOOL validatedMutate = YES;
-		
-	if ([PROVIDER_SOURCE respondsToSelector: @selector(container:insertItems:atPaths:operation:)])
+
+	// FIXME: Rewrite the code below once the source protocol is rethough or 
+	// eliminate.		
+	/*if ([PROVIDER_SOURCE respondsToSelector: @selector(container:insertItems:atPaths:operation:)])
 	{
 		NSArray *items = [NSArray arrayWithObject: item];
 		NSIndexPath *indexPath = [[self indexPath] indexPathByAddingIndex: index];
@@ -247,7 +251,7 @@ static 	BOOL _coalescingMutation = NO;
 
 		validatedMutate = [PROVIDER_SOURCE container: PROVIDER_CONTAINER 
 			insertItems: items atPaths: indexPaths operation: event];
-	}
+	}*/
 	if (validatedMutate && [[self baseItem] shouldMutateRepresentedObject] 
 	 && [repObject isMutableCollection])
 	{
@@ -338,14 +342,16 @@ static 	BOOL _coalescingMutation = NO;
 	 // FIXME: Implement
 	//BOOL isValidElementType = NO;
 	BOOL validatedMutate = YES;
-		
-	if ([PROVIDER_SOURCE respondsToSelector: @selector(container:removeItemsAtPaths:operation:)])
+
+	// FIXME: Rewrite the code below once the source protocol is rethough or 
+	// eliminate.		
+	/*if ([PROVIDER_SOURCE respondsToSelector: @selector(container:removeItemsAtPaths:operation:)])
 	{
 		NSArray *indexPaths = [NSArray arrayWithObject: [item indexPath]];
 
 		validatedMutate = [PROVIDER_SOURCE container: PROVIDER_CONTAINER 
 			removeItemsAtPaths: indexPaths operation: event];
-	}
+	}*/
 	if (validatedMutate && [[self baseItem] shouldMutateRepresentedObject] 
 	 && [repObject isMutableCollection])
 	{

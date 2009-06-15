@@ -68,20 +68,7 @@ extern NSString *ETLayoutItemPboardType;
 - (NSView *) layoutView;
 - (void) setLayoutView: (NSView *)view;
 
-/* - (ETLayoutAlignment) layoutAlignment;
-- (void) setLayoutAlignment: (ETLayoutAlignment)alignment;
-
-- (ETLayoutOverflowStyle) overflowStyle;
-- (void) setOverflowStyle: (ETLayoutOverflowStyle); */
-
 /* Pick & Drop */
-
-/*- (void) setDraggingAllowedForTypes: (NSArray *)types;
-- (NSArray *) allowedDraggingTypes;
-- (void) setDroppingAllowedForTypes: (NSArray *)types;
-- (NSArray *) allowedDroppingTypes;
-- (void) setDropTargetTypes: (NSArray *)types;
-- (NSArray *)dropTargetTypes;*/
 
 - (BOOL) shouldRemoveItemsAtPickTime;
 - (void) setShouldRemoveItemsAtPickTime: (BOOL)flag;
@@ -100,13 +87,6 @@ extern NSString *ETLayoutItemPboardType;
 
 - (float) itemScaleFactor;
 - (void) setItemScaleFactor: (float)factor;
-/*- (id) scaleItemsToRect: (NSRect)rect;
-- (id) scaleItemsToFit: (id)sender;
-// This method is equivalent to calling -setItemScaleFactor with 1.0 value
-- (id) scaleItemsToActualSize: (id)sender;*/
-// FIXME: Implement the following methods
-/*- (float) itemRotationAngle;
-- (void) setItemRotationAngle: (float)factor;*/
 
 /* Rendering Chain */
 
@@ -115,70 +95,6 @@ extern NSString *ETLayoutItemPboardType;
 @end
 
 /* Deprecated (DO NOT USE, WILL BE REMOVED LATER) */
-
-@interface NSObject (ETContainerSource)
-
-/* Coordinates retrieval useful with containers oriented towards graphics and 
-   spreadsheet */
-/*- (ETVector *) container: (ETContainer *)container 
-	locationForItem: (ETLayoutItem *)item;
-- (void) container: (ETContainer *)container setLocation: (ETVector *)vectorLoc 
-	forItem: (ETLayoutItem *)item;*/
-
-/* Extra infos */
-- (NSArray *) editableItemPropertiesInContainer: (ETContainer *)container;
-- (NSView *) container: (ETContainer *)container 
-	editorObjectForProperty: (NSString *)property ;
-- (int) firstVisibleItemInContainer: (ETContainer *)container;
-- (int) lastVisibleItemInContainer: (ETContainer *)container;
-
-/* Pick and drop support and Bindings support by index */
-/* When operation is a pick and drop one (either copy/paste or drag/drop), 
-   - 'container:addItems:operation:' is called when no selection is set
-   - 'container:insertItems:atIndexes:operation:' is called when a selection 
-      exists */
-/* These methods make also possible to use your data source with bindings if 
-   you use the specifically designed controller ETSourceController */
-- (BOOL) container: (ETContainer *)container addItems: (NSArray *)items 
-	operation: (ETEvent *)op;
-- (BOOL) container: (ETContainer *)container insertItems: (NSArray *)items 
-	atIndexes: (NSIndexSet *)indexes operation: (ETEvent *)op;
-- (BOOL) container: (ETContainer *)container removeItems: (NSArray *)items 
-	atIndexes: (NSIndexSet *)indexes operation: (ETEvent *)op;
-
-/* Pick and drop support and Bindings support by index path */
-- (BOOL) container: (ETContainer *)container addItems: (NSArray *)items 
-	atPath: (NSIndexPath *)path operation: (ETEvent *)op;
-- (BOOL) container: (ETContainer *)container insertItems: (NSArray *)items 
-	atPaths: (NSArray *)paths operation: (ETEvent *)op;
-- (BOOL) container: (ETContainer *)container 
-	removeItemsAtPaths: (NSArray *)paths operation: (ETEvent *)op;
-
-/* Advanced pick and drop support 
-   Only needed if you want to override pick and drop support. Useful to get more
-   control over drag an drop. */
-- (BOOL) container: (ETContainer *)container handlePick: (ETEvent *)event 
-	forItems: (NSArray *)items pickboard: (ETPickboard *)pboard;
-- (BOOL) container: (ETContainer *)container handleAcceptDrop: (id)dragInfo 
-	forItems: (NSArray *)items on: (id)item pickboard: (ETPickboard *)pboard;
-- (BOOL) container: (ETContainer *)container handleDrop: (id)dragInfo 
-	forItems: (NSArray *)items on: (id)item pickboard: (ETPickboard *)pboard;
-
-// TODO: Extend the informal protocol to propogate group/ungroup actions in 
-// they can be properly reflected on model side.
-
-@end
-
-@interface ETContainer (ETContainerDelegate)
-
-- (void) containerShouldStackItem: (NSNotification *)notif;
-- (void) containerDidStackItem: (NSNotification *)notif;
-- (void) containerShouldGroupItem: (NSNotification *)notif;
-- (void) containerDidGroupItem: (NSNotification *)notif;
-// NOTE: We use a double action instead of the delegate to handle double-click
-//- (void) containerDoubleClickedItem: (NSNotification *)notif;
-
-@end
 
 @interface ETContainer (Deprecated)
 
