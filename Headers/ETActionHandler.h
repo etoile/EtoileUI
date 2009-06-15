@@ -12,7 +12,6 @@
 
 #import <Foundation/Foundation.h>
 #import <AppKit/AppKit.h>
-#import <EtoileUI/ETLayoutItem.h>
 
 /* WARNING: Unstable API, the method names won't radically change but the event 
             handler concept will be refined as pluggable aspect and reworked to 
@@ -20,7 +19,8 @@
             graphic tools for example. 
             More explanations available in TODO file. */
 
-@class ETEvent, ETPickboard, ETPickDropCoordinator;
+@class ETUTI;
+@class ETEvent, ETLayoutItem, ETPickboard, ETPickDropCoordinator;
 @protocol ETKeyInputAction;
 
 /** Action handler are lightweight objects whose instances can be shared between 

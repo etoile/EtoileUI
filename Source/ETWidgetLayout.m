@@ -38,6 +38,7 @@
 
 #import "ETWidgetLayout.h"
 #import "ETActionHandler.h"
+#import "ETLayoutItem.h"
 #import "ETCompatibility.h"
 #import "ETContainer.h"
 

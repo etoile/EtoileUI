@@ -43,9 +43,9 @@
 #import <EtoileFoundation/ETPropertyValueCoding.h>
 
 @class ETUTI;
-@class ETView, ETContainer, ETLayout, ETLayoutItemGroup, ETDecoratorItem, 
-ETScrollableAreaItem, ETWindowItem, ETStyleGroup, ETActionHandler;
-@protocol ETEventHandler, ETInspector;
+@class ETView, ETContainer, ETLayout, ETLayoutItemGroup, 
+ETDecoratorItem, ETScrollableAreaItem, ETWindowItem, ETStyleGroup;
+@protocol ETInspector;
 
 
 /* Properties */
