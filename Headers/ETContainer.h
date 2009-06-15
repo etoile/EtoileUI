@@ -46,8 +46,14 @@ extern NSString *ETLayoutItemPboardType;
 
 @interface ETContainer : ETView
 {
+	/* NOTE: _layoutView is a weak reference (we retain it indirectly as a 
+	   subview though).
+	   We are owned by our layout item which retains its layout which itself 
+	   retains the layout view. Each time the layout is switched on -layoutItem, 
+	   we must update _layoutView with -setLayoutView: otherwise the ivar might 
+	   reference a freed object. See -[ETLayoutItemGroup setLayout:]. */
 	NSView *_layoutView;
-	
+
 	float _itemScale;
 }
 

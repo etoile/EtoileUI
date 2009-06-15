@@ -131,10 +131,6 @@ NSString *ETLayoutItemPboardType = @"ETLayoutItemPboardType"; // FIXME: replace 
     {
 		[self setRepresentedPath: @"/"];
 		_itemScale = 1.0;
-		[self setAllowsMultipleSelection: YES];
-		[self setAllowsEmptySelection: YES];
-		//[self registerForDraggedTypes: [NSArray arrayWithObjects:
-		//	ETLayoutItemPboardType, nil]];
 		[self setAutoresizingMask: NSViewWidthSizable | NSViewHeightSizable];
     }
     
@@ -144,18 +140,6 @@ NSString *ETLayoutItemPboardType = @"ETLayoutItemPboardType"; // FIXME: replace 
 - (id) initWithFrame: (NSRect)rect
 {
 	return [self initWithFrame: rect layoutItem: nil];
-}
-
-- (void) dealloc
-{
-	/* NOTE: _layoutView is a weak reference (we retain it indirectly as a 
-	   subview though).
-	   We are owned by our layout item which retains its layout which itself 
-	   retains the layout view. Each time the layout is switched on -layoutItem, 
-	   we must update _layoutView with -setLayoutView: otherwise the ivar might 
-	   reference a freed object. See -[ETLayoutItemGroup setLayout:]. */
-
-    [super dealloc];
 }
 
 /* Archiving */
@@ -194,21 +178,8 @@ NSString *ETLayoutItemPboardType = @"ETLayoutItemPboardType"; // FIXME: replace 
 	[(NSKeyedArchiver *)coder setDelegate: self];
 	[super encodeWithCoder: coder];
 
-	/* Don't encode displayView, source, delegate and inspector.
-	   NOTE: It could be useful to encode tham as late-bound objects though
-	   like [coder encodeLateBoundObject: [self source] forKey: @"ETSource"]; */
-	[coder encodeObject: [self scrollView] forKey: @"NSScrollView"];
 	[coder encodeBool: [self isDisclosable] forKey: @"ETFlipped"];
-	[coder encodeObject: [self representedPath] forKey: @"ETRepresentedPath"];	
-	[coder encodeObject: NSStringFromSelector([self doubleAction]) 
-	          forKey: @"ETDoubleAction"];
-	[coder encodeObject: [self target] forKey: @"ETTarget"];
 	[coder encodeFloat: [self itemScaleFactor] forKey: @"ETItemScaleFactor"];
-
-	[coder encodeBool: [self allowsEmptySelection] 
-	           forKey: @"ETAllowsMultipleSelection"];
-	[coder encodeBool: [self allowsEmptySelection] 
-	           forKey: @"ETAllowsEmptySelection"];
 			   
 	[(NSKeyedArchiver *)coder setDelegate: nil];
 }
@@ -228,16 +199,7 @@ NSString *ETLayoutItemPboardType = @"ETLayoutItemPboardType"; // FIXME: replace 
 	// way to reconstruct the scroll view decorator
 	//[self setScrollView: [coder decodeObjectForKey: @"NSScrollView"]];
 	[self setFlipped: [coder decodeBoolForKey: @"ETFlipped"]];
-	[self setRepresentedPath: [coder decodeObjectForKey: @"ETRepresentedPath"]];
-	[self setDoubleAction: 
-		NSSelectorFromString([coder decodeObjectForKey: @"ETDoubleAction"])];
-	[self setTarget: [coder decodeObjectForKey: @"ETTarget"]];
 	[self setItemScaleFactor: [coder decodeFloatForKey: @"ETItemScaleFactor"]];
-
-	[self setAllowsMultipleSelection: 
-		[coder decodeBoolForKey: @"ETAllowsMultipleSelection"]];
-	[self setAllowsEmptySelection: 
-		[coder decodeBoolForKey: @"ETAllowsEmptySelection"]];
 
 	return self;
 }
@@ -391,44 +353,6 @@ but they never never manipulate it as a subview in view hierachy. */
 	[super setAutoresizingMask: mask];
 }
 #endif
-
-/** point parameter must be expressed in receiver coordinates */
-- (BOOL) doesSelectionContainsPoint: (NSPoint)point
-{
-	ETLayoutItem *item = [[self layout] itemAtLocation: point];
-
-	if ([item isSelected])
-	{
-		NSAssert2([[self selectionIndexes] containsIndex: [self indexOfItem: item]],
-			@"Mismatch between selection indexes and item %@ selected state in %@", 
-			item, self);
-		return YES;
-	}
-		
-	return NO;
-
-// NOTE: The code below could be significantly faster on large set of items
-#if 0
-	NSArray *selectedItems = [[self items] objectsAtIndexes: [self selectionIndexes]];
-	NSEnumerator *e = [selectedItems objectEnumerator];
-	ETLayoutItem *item = nil;
-	BOOL hitSelection = NO;
-	
-	while ((item = [nextObject]) != nil)
-	{
-		if ([item displayView] != nil)
-		{
-			hitSelection = NSPointInRect(point, [[item displayView] frame]);
-		}
-		else /* Layout items uses no display view */
-		{
-			// FIXME: Implement
-		}
-	}
-	
-	return hitSelection;
-#endif
-}
 
 /* Grouping and Stacking */
 
