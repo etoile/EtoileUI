@@ -1089,7 +1089,7 @@ recursively on them. */
 	   /* We intersect our dirtyRect with our drawing frame, so we don't get 
 	      a dirtyRect that includes views of existing decorator items in case our 
 		  decorator chain isn't empty. */
-		NSRect realDirtyRect = NSIntersectionRect(dirtyRect, [self drawingFrame]);
+		NSRect realDirtyRect = NSIntersectionRect(dirtyRect, drawingFrame);
 		[super render: inputValues dirtyRect: realDirtyRect inContext: ctxt];
 		
 		/* Render the layout-specific tree if needed */
@@ -1105,7 +1105,7 @@ recursively on them. */
 
 		/* Render child items (if the layout doesn't handle it) */
 		
-		BOOL usesLayoutView = ([[self layout] layoutView] != nil);
+		BOOL usesLayoutView = ([layout layoutView] != nil);
 		if (usesLayoutView)
 			return;
 			
@@ -1135,8 +1135,13 @@ recursively on them. */
 	}
 }
 
-/** Displays item by adjusting the graphic context for the drawing, then calling 
--render:dirtyRect:inContext: on it, and finally restoring the graphic context. 
+/** Displays the given item by adjusting the graphic context for the drawing, 
+then calling -render:dirtyRect:inContext: on it, and finally restoring the 
+graphic context. 
+
+Take note this method doesn't save and restore the graphics state.
+
+newDirtyRect is expressed in the given item coordinate space.
 
 You should never need to call this method directly. */
 - (void) display: (NSMutableDictionary *)inputValues 
@@ -1187,8 +1192,8 @@ You should never need to call this method directly. */
 	/* Flip if needed */
 	if ([self isFlipped] != [item isFlipped]) /* != [NSGraphicContext/renderView isFlipped] */
 	{
-		[transform translateXBy:0.0 yBy: [item height]];
-		[transform scaleXBy:1.0 yBy:-1.0];
+		[transform translateXBy: 0.0 yBy: [item height]];
+		[transform scaleXBy: 1.0 yBy: -1.0];
 	}
 	[transform concat];
 
