@@ -42,8 +42,6 @@
 @class ETLayoutItem, ETLayout, ETLayer, ETLayoutItemGroup, ETSelection, 
 	ETPickboard, ETEvent, ETDecoratorItem;
 
-extern NSString *ETLayoutItemPboardType;
-
 @interface ETContainer : ETView
 {
 	/* NOTE: _layoutView is a weak reference (we retain it indirectly as a 

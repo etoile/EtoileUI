@@ -54,16 +54,8 @@
 #import "NSView+Etoile.h"
 #import "ETCompatibility.h"
 
-NSString *ETLayoutItemPboardType = @"ETLayoutItemPboardType"; // FIXME: replace by UTI
-
-@interface ETContainer (PackageVisibility)
-- (int) checkSourceProtocolConformance;
-
-@end
-
 @interface ETContainer (Private)
 - (void) syncDisplayViewWithContainer: (ETContainer *)container;
-- (BOOL) doesSelectionContainsPoint: (NSPoint)point;
 @end
 
 

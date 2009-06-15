@@ -39,6 +39,7 @@
 
 @class ETUTI;
 
+extern NSString *ETLayoutItemPboardType;
 // NOTE: NSString will be replaced by a CoreObject uuid
 #define ETPickboardRef NSString
 
