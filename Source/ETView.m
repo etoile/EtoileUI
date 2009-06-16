@@ -132,7 +132,6 @@ static ETView *barViewPrototype = nil;
 			 */
 			RELEASE(_layoutItem);
 		}
-		[self setRenderer: nil];
 		[self setTitleBarView: nil]; /* Sets up a +titleBarViewPrototype clone */
 		[self setDisclosable: NO];
 		[self setAutoresizesSubviews: YES];	/* NSView set up */
@@ -203,7 +202,6 @@ static ETView *barViewPrototype = nil;
 	[NC removeObserver: self];
 
 	// NOTE: _layoutItem (our owner) is destroyed by -release
-	DESTROY(_renderer);
 	DESTROY(_temporaryView);
 	DESTROY(_wrappedView);
 	DESTROY(_titleBarView);
@@ -263,17 +261,6 @@ static ETView *barViewPrototype = nil;
 			@"-setLayoutItem: parameter %@ must be never be nil", item];
 	}	
 	ASSIGN(_layoutItem, item); // NOTE: Retain cycle (see -release)
-}
-
-- (void) setRenderer: (id)renderer
-{
-	ASSIGN(_renderer, renderer);
-}
-
-- (id) renderer
-{
-	//return _renderer;
-	return [self layoutItem];
 }
 
 /** Returns whether the receiver uses flipped coordinates or not.
@@ -634,13 +621,6 @@ You can revert to non-flipped coordinates by passing NO to this method. */
 	return [[super properties] arrayByAddingObjectsFromArray: properties];
 }
 
-/* Live Development */
-
-/*- (BOOL) isEditingUI
-{
-	return _isEditingUI;
-}*/
-
 /* Subclassing */
 
 /** Returns the direct subview of the receiver which is displayed right under 
@@ -777,10 +757,7 @@ Layout items are smart enough to avoid drawing their view when they have one. */
 
 	/* We always composite the rendering chain on top of each view -drawRect: 
 	   drawing sequence (triggered by display-like methods). */
-	if ([[self renderer] respondsToSelector: @selector(render:dirtyRect:inContext:)])
-	{
-		[[self renderer] render: nil dirtyRect: rect inContext: nil];
-	}
+	[_layoutItem render: nil dirtyRect: rect inContext: nil];
 }
 
 #else
@@ -843,10 +820,7 @@ GNUstep and pass it to the layout item tree as needed. */
 
 	/* We always composite the rendering chain on top of each view -drawRect: 
 	   drawing sequence (triggered by display-like methods). */
-	if ([[self renderer] respondsToSelector: @selector(render:dirtyRect:inContext:)])
-	{
-		[[self renderer] render: nil dirtyRect: aRect inContext: nil];
-	}
+	[_layoutItem render: nil dirtyRect: aRect inContext: nil];
 
 	[self unlockFocus];
 }
@@ -896,10 +870,7 @@ Cocoa and pass it to the layout item tree as needed. */
 
 	/* We always composite the rendering chain on top of each view -drawRect: 
 	   drawing sequence (triggered by display-like methods). */
-	if ([[self renderer] respondsToSelector: @selector(render:dirtyRect:inContext:)])
-	{
-		[[self renderer] render: nil dirtyRect: _rectToRedraw inContext: nil];
-	}
+	[_layoutItem render: nil dirtyRect: _rectToRedraw inContext: nil];
 
 	if (lockFocus == YES)
 	{
@@ -943,10 +914,7 @@ Cocoa and pass it to the layout item tree as needed. */
 
 		/* We always composite the rendering chain on top of each view -drawRect: 
 		   drawing sequence (triggered by display-like methods). */
-		if ([[self renderer] respondsToSelector: @selector(render:dirtyRect:inContext:)])
-		{
-			[[self renderer] render: nil dirtyRect: _rectToRedraw inContext: nil];
-		}
+		[_layoutItem render: nil dirtyRect: _rectToRedraw inContext: nil];
 
 		[self unlockFocus];
 		[[self window] flushWindow];
@@ -979,10 +947,7 @@ Cocoa and pass it to the layout item tree as needed. */
 
 	/* We always composite the rendering chain on top of each view -drawRect: 
 	   drawing sequence (triggered by display-like methods). */
-	if ([[self renderer] respondsToSelector: @selector(render:dirtyRect:inContext:)])
-	{
-		[[self renderer] render: nil dirtyRect: [self bounds] inContext: nil];
-	}
+	[_layoutItem render: nil dirtyRect: [self bounds] inContext: nil];
 
 	//if (lockFocus == YES)
 		[self unlockFocus];

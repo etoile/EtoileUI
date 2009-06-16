@@ -46,10 +46,6 @@
 #define USE_NSVIEW_RFLAGS
 #endif
 
-/** Display Tree Description
-
- */
-
 /** ETView is the generic view class extensively used by EtoileUI. It 
 	implements several facilities in addition to the ones already provided by
 	NSView. If you want to write Etoile-native UI code, you should always use
@@ -103,7 +99,6 @@
 @interface ETView : NSView <ETPropertyValueCoding>
 {
 	ETLayoutItem *_layoutItem;
-	id _renderer;
 	// NOTE: May be remove the view ivars to make the class more lightweight
 	NSView *_titleBarView;
 	NSView *_wrappedView;
@@ -131,8 +126,6 @@
 - (id) layoutItem;
 - (void) setLayoutItem: (ETLayoutItem *)item;
 - (void) setLayoutItemWithoutInsertingView: (ETLayoutItem *)item;
-- (void) setRenderer: (id)renderer;
-- (id) renderer;
 - (BOOL) isFlipped;
 - (void) setFlipped: (BOOL)flag;
 
@@ -163,10 +156,6 @@
 - (id) valueForProperty: (NSString *)key;
 - (BOOL) setValue: (id)value forProperty: (NSString *)key;
 - (NSArray *) properties;
-
-/* Live Development */
-
-//- (BOOL) isEditingUI;
 
 /* Subclassing */
 
