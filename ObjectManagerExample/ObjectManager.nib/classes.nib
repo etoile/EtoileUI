@@ -57,14 +57,6 @@
 			<string>NSView</string>
 		</dict>
 		<dict>
-			<key>CLASS</key>
-			<string>ETObjectChain</string>
-			<key>LANGUAGE</key>
-			<string>ObjC</string>
-			<key>SUPERCLASS</key>
-			<string>NSObject</string>
-		</dict>
-		<dict>
 			<key>ACTIONS</key>
 			<dict>
 				<key>changeInstrument</key>
@@ -114,6 +106,14 @@
 			<string>NSObject</string>
 			<key>LANGUAGE</key>
 			<string>ObjC</string>
+		</dict>
+		<dict>
+			<key>CLASS</key>
+			<string>ETMoveTool</string>
+			<key>LANGUAGE</key>
+			<string>ObjC</string>
+			<key>SUPERCLASS</key>
+			<string>ETInstrument</string>
 		</dict>
 		<dict>
 			<key>ACTIONS</key>
@@ -178,7 +178,7 @@
 			<key>LANGUAGE</key>
 			<string>ObjC</string>
 			<key>SUPERCLASS</key>
-			<string>ETObjectChain</string>
+			<string>NSObject</string>
 		</dict>
 		<dict>
 			<key>CLASS</key>
@@ -236,11 +236,30 @@
 		</dict>
 		<dict>
 			<key>CLASS</key>
-			<string>ETLineView</string>
+			<string>ETInstrument</string>
 			<key>LANGUAGE</key>
 			<string>ObjC</string>
 			<key>SUPERCLASS</key>
-			<string>ETContainer</string>
+			<string>NSResponder</string>
+		</dict>
+		<dict>
+			<key>ACTIONS</key>
+			<dict>
+				<key>group</key>
+				<string>id</string>
+				<key>insertNewLine</key>
+				<string>id</string>
+				<key>selectAll</key>
+				<string>id</string>
+				<key>ungroup</key>
+				<string>id</string>
+			</dict>
+			<key>CLASS</key>
+			<string>ETSelectTool</string>
+			<key>LANGUAGE</key>
+			<string>ObjC</string>
+			<key>SUPERCLASS</key>
+			<string>ETMoveTool</string>
 		</dict>
 		<dict>
 			<key>ACTIONS</key>
