@@ -66,10 +66,6 @@
 - (NSView *) layoutView;
 - (void) setLayoutView: (NSView *)view;
 
-/* Groups and Stacks */
-
-- (IBAction) stack: (id)sender;
-
 /* Item scaling */
 
 - (float) itemScaleFactor;

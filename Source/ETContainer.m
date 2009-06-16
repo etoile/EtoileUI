@@ -346,42 +346,6 @@ but they never never manipulate it as a subview in view hierachy. */
 }
 #endif
 
-/* Grouping and Stacking */
-
-- (void) group: (id)sender
-{
-	/*ETLayoutItem *item = [self itemAtIndex: [self selectionIndex]]; 
-	
-	if ([item isGroup])
-	{
-		[(ETLayoutItemGroup *)item make];
-	}
-	else
-	{
-		ETLog(@"WARNING: Layout item %@ must be an item group to be stacked", self);
-	}
-	
-	if ([self canUpdateLayout])
-		[self updateLayout];*/	
-}
-
-- (IBAction) stack: (id)sender
-{
-	ETLayoutItem *item = [self itemAtIndex: [self selectionIndex]]; 
-	
-	if ([item isGroup])
-	{
-		[(ETLayoutItemGroup *)item stack];
-	}
-	else
-	{
-		ETLog(@"WARNING: Layout item %@ must be an item group to be stacked", self);
-	}
-	
-	if ([self canUpdateLayout])
-		[self updateLayout];	
-}
-
 /* Item scaling */
 
 - (float) itemScaleFactor
