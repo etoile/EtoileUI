@@ -129,11 +129,6 @@
     return self;
 }
 
-- (id) initWithFrame: (NSRect)rect
-{
-	return [self initWithFrame: rect layoutItem: nil];
-}
-
 /* Archiving */
 
 - (id) archiver: (NSKeyedArchiver *)archiver willEncodeObject: (id)object
@@ -194,25 +189,6 @@
 	[self setItemScaleFactor: [coder decodeFloatForKey: @"ETItemScaleFactor"]];
 
 	return self;
-}
-
-// TODO: Finish to implement once ETContainer is cleaned.
-// If we decide to use EtoileSerialize here, we also have to update 
-// -[NSView(Etoile) copyWithZone:].
-- (id) copyWithZone: (NSZone *)zone
-{
-#ifndef ETOILE_SERIALIZE
-	id container = [super copyWithZone: zone];
-	
-	/* Copy objects which doesn't support encoding usually or must not be copied
-	   but rather shared by the receiver and the copy. */
-	[container setSource: [self source]];
-	[container setDelegate: [self delegate]];
-	
-	return container;
-#else
-	
-#endif
 }
 
 /** Deep copies are never created by the container itself, but they are instead
@@ -337,14 +313,6 @@ but they never never manipulate it as a subview in view hierachy. */
 			[[self layoutItem] unhidesScrollViewDecoratorItem];		
 	}	
 }
-
-#if 0
-- (void) setAutoresizingMask: (unsigned int)mask
-{
-	ETDebugLog(@"--- Resizing mask from %d to %d %@", [self autoresizingMask], mask, self);
-	[super setAutoresizingMask: mask];
-}
-#endif
 
 /* Item scaling */
 

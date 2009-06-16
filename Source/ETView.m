@@ -754,6 +754,15 @@ You can revert to non-flipped coordinates by passing NO to this method. */
 }
 #endif
 
+#ifdef DEBUG
+- (void) setAutoresizingMask: (unsigned int)mask
+{
+	ETLog(@"Will alter resizing mask from %d to %d %@", [self autoresizingMask], 
+		mask, self);
+	[super setAutoresizingMask: mask];
+}
+#endif
+
 /* Rendering Tree */
 
 #ifdef DEBUG_DRAWING
