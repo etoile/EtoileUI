@@ -491,7 +491,7 @@
 	   image, icon, name. Eventually it makes a copy of the item view as an
 	   image which can be easily displayed. */
 #ifdef USE_SWITCHER
-	[switcherView setItemScaleFactor: [[self container] itemScaleFactor]];
+	[switcherView setItemScaleFactor: [[self layoutContext] itemScaleFactor]];
 	[[self switcherLayout] renderWithLayoutItems: [self switcherTabItemsForPaneItems: items]];
 #endif
 	/* Don't forget to remove existing display view if we switch from a layout 

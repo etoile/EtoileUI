@@ -122,7 +122,6 @@
 	if (self != nil)
     {
 		[self setRepresentedPath: @"/"];
-		_itemScale = 1.0;
 		[self setAutoresizingMask: NSViewWidthSizable | NSViewHeightSizable];
     }
     
@@ -166,7 +165,6 @@
 	[super encodeWithCoder: coder];
 
 	[coder encodeBool: [self isDisclosable] forKey: @"ETFlipped"];
-	[coder encodeFloat: [self itemScaleFactor] forKey: @"ETItemScaleFactor"];
 			   
 	[(NSKeyedArchiver *)coder setDelegate: nil];
 }
@@ -186,7 +184,6 @@
 	// way to reconstruct the scroll view decorator
 	//[self setScrollView: [coder decodeObjectForKey: @"NSScrollView"]];
 	[self setFlipped: [coder decodeBoolForKey: @"ETFlipped"]];
-	[self setItemScaleFactor: [coder decodeFloatForKey: @"ETItemScaleFactor"]];
 
 	return self;
 }
@@ -312,20 +309,6 @@ but they never never manipulate it as a subview in view hierachy. */
 		if ([[self layoutItem] isScrollViewShown])
 			[[self layoutItem] unhidesScrollViewDecoratorItem];		
 	}	
-}
-
-/* Item scaling */
-
-- (float) itemScaleFactor
-{
-	return _itemScale;
-}
-
-- (void) setItemScaleFactor: (float)factor
-{
-	_itemScale = factor;
-	if ([self canUpdateLayout])
-		[self updateLayout];
 }
 
 /* Overriden NSView methods */

@@ -174,7 +174,7 @@ static NSFileManager *objectManager = nil;
 
 - (IBAction) scale: (id)sender
 {
-	[viewContainer setItemScaleFactor: [sender floatValue] / 100];
+	[[viewContainer layoutItem] setItemScaleFactor: [sender floatValue] / 100];
 }
 
 - (IBAction) search: (id)sender

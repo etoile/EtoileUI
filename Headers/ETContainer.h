@@ -51,8 +51,6 @@
 	   we must update _layoutView with -setLayoutView: otherwise the ivar might 
 	   reference a freed object. See -[ETLayoutItemGroup setLayout:]. */
 	NSView *_layoutView;
-
-	float _itemScale;
 }
 
 - (id) initWithLayoutView: (NSView *)layoutView;
@@ -65,11 +63,6 @@
 
 - (NSView *) layoutView;
 - (void) setLayoutView: (NSView *)view;
-
-/* Item scaling */
-
-- (float) itemScaleFactor;
-- (void) setItemScaleFactor: (float)factor;
 
 @end
 

@@ -52,9 +52,10 @@
 #define DEFAULT_FRAME NSMakeRect(0, 0, 50, 50)
 
 /* Properties */
-NSString *kSourceProperty = @"source";
 NSString *kDelegateProperty = @"delegate";
 NSString *kETDoubleClickedItemProperty = @"doubleClickedItem";
+NSString *kETItemScaleFactor = @"itemScaleFactor";
+NSString *kSourceProperty = @"source";
 
 /* Notifications */
 NSString *ETItemGroupSelectionDidChangeNotification = @"ETItemGroupSelectionDidChangeNotification";
@@ -164,6 +165,7 @@ See also +enablesAutolayout. */
 		[self setHasNewLayout: NO];
 		[self setHasNewContent: NO];
 		[self setShouldMutateRepresentedObject: YES];
+		[self setItemScaleFactor: 1.0];
     }
 
     return self;
@@ -246,7 +248,7 @@ The returned copy is mutable because ETLayoutItemGroup cannot be immutable. */
 - (NSArray *) properties
 {
 	NSArray *properties = A(kSourceProperty, kDelegateProperty, 
-		kETDoubleClickedItemProperty);
+		kETItemScaleFactor, kETDoubleClickedItemProperty);
 
 	return [[super properties] arrayByAddingObjectsFromArray: properties];
 }
@@ -1056,6 +1058,29 @@ frame (see -usesLayoutBasedFrame). */
 	_usesLayoutBasedFrame = flag;
 }
 
+/* Item scaling */
+
+/** Returns the scale factor applied to each item when the layout supports it. 
+
+See also -setItemScaleFactor:. */
+- (float) itemScaleFactor
+{
+	return [GET_PROPERTY(kETItemScaleFactor) floatValue];
+}
+
+/** Sets the scale factor applied to each item when the layout supports it.
+
+This scale factor only applies to the immediate children.
+
+See -[ETLayout setItemSizeConstraintStyle:] and -[ETLayout setConstrainedItemSize:] 
+to control more precisely how the items get resized per layout. */
+- (void) setItemScaleFactor: (float)aFactor
+{
+	SET_PROPERTY([NSNumber numberWithFloat: aFactor], kETItemScaleFactor);
+	if ([self canUpdateLayout])
+		[self updateLayout];
+}
+
 /* Rendering */
 
 - (void) debugDrawingInRect: (NSRect)rect
@@ -1376,7 +1401,7 @@ yourself (see -visibleItemsForItems:). */
 				initWithFrame: stackFrame layoutItem: self];*/
 			// FIXME: Insert the container on the fly
 		}
-		[[self container] setItemScaleFactor: 0.7];
+		[self setItemScaleFactor: 0.7];
 		[self setSize: [ETLayoutItemGroup stackSize]];
 	}
 		
@@ -1847,19 +1872,6 @@ See also -setDoubleAction:. */
 }
 
 /* ETLayoutingContext */
-
-- (float) itemScaleFactor
-{
-	if ([[self supervisorView] respondsToSelector: @selector(itemScaleFactor)])
-	{
-		return	[(id)[self supervisorView] itemScaleFactor];
-	}
-	else
-	{
-		ETLog(@"WARNING: Layout item %@ doesn't respond to -itemScaleFactor", self);
-		return 0;
-	}
-}
 
 /* ETLayoutingContext scroll view related methods */
 

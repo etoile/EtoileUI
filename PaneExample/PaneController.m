@@ -200,7 +200,7 @@
 
 - (IBAction) scale: (id)sender
 {
-	[viewContainer setItemScaleFactor: [sender floatValue] / 100];
+	[[viewContainer layoutItem] setItemScaleFactor: [sender floatValue] / 100];
 }
 
 /* ETContainerSource informal protocol */

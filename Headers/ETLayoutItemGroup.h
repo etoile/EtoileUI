@@ -44,9 +44,10 @@
 
 /* Properties */
 
-extern NSString *kSourceProperty; /** source property name */
 extern NSString *kDelegateProperty; /** delegate property name */
 extern NSString *kETDoubleClickedItemProperty; /** doubleClickedItem property name */
+extern NSString *kETItemScaleFactor; /** itemScaleFactor property name */
+extern NSString *kSourceProperty; /** source property name */
 
 @interface ETLayoutItemGroup : ETLayoutItem <ETLayoutingContext, ETCollection, ETCollectionMutation>
 {
@@ -157,10 +158,14 @@ extern NSString *kETDoubleClickedItemProperty; /** doubleClickedItem property na
 - (NSSize) size;
 - (void) setSize: (NSSize)size;
 - (NSView *) view;
-- (float) itemScaleFactor;
 - (NSSize) visibleContentSize;
 - (void) setContentSize: (NSSize)size;
 - (BOOL) isScrollViewShown;
+
+/* Item scaling */
+
+- (float) itemScaleFactor;
+- (void) setItemScaleFactor: (float)aFactor;
 
 /* Rendering */
 

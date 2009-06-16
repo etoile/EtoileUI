@@ -162,9 +162,7 @@ UI level for a photo viewer. */
 
 - (IBAction) scale: (id)sender
 {
-	// FIXME: Should be...
-	//[photoViewItem or layout setItemScaleFactor: [sender floatValue] / 100];
-	[viewContainer setItemScaleFactor: [sender floatValue] / 100];
+	[photoViewItem setItemScaleFactor: [sender floatValue] / 100];
 }
 
 - (IBAction) changeItemMargin: (id)sender

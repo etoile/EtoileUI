@@ -71,7 +71,7 @@
 	- 'icon' for icon part of the row
 	'name' is never looked up directly but through 'displayName'.
 	
-	NOTE: row resizing based on -[ETContainer itemScaleFactor] isn't yet 
+	NOTE: row resizing based on -[ETLayoutItemGroup itemScaleFactor] isn't yet 
 	supported.
 */
 
@@ -448,7 +448,7 @@
 	// is used instead
 	//[matrix addColumnWithCells: columnCells];
 	
-	newCellSize.height = DEFAULT_ROW_HEIGHT * [container itemScaleFactor];
+	newCellSize.height = DEFAULT_ROW_HEIGHT * [[self layoutContext] itemScaleFactor];
 	ETDebugLog(@"Resize %@ cell size from %@ to %@", matrix, 
 				NSStringFromSize([matrix cellSize]), 
 				NSStringFromSize(newCellSize));
