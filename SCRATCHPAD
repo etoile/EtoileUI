@@ -112,3 +112,73 @@
 //- (void) containerDoubleClickedItem: (NSNotification *)notif;
 
 @end
+
+== ETView/ETContainer Archiving Code ==
+
+- (id) archiver: (NSKeyedArchiver *)archiver willEncodeObject: (id)object
+{
+	ETDebugLog(@"---- Will encode %@", object);
+	
+	/* Don't encode layout view and item views */
+	if ([object isEqual: [self subviews]])
+	{
+		id archivableSubviews = [object mutableCopy];
+		id itemViews = [[self items] valueForKey: @"displayView"];
+
+		ETDebugLog(@"> Won't be encoded");	
+		if ([self layoutView] != nil)	
+			[archivableSubviews removeObject: [self layoutView]];
+		[itemViews removeObjectsInArray: archivableSubviews];
+		return archivableSubviews;
+	}
+		
+	return object;
+}
+
+- (void) encodeWithCoder: (NSCoder *)coder
+{
+	if ([coder allowsKeyedCoding] == NO)
+	{	
+		[NSException raise: NSInvalidArgumentException format: @"ETView only "
+			@"supports keyed archiving"];
+	}
+
+	/* We must disable the encoding of item subviews by catching it on 
+	   -[ETView encodeWithCoder:] with call back -archiver:willEncodeObject: */
+	[(NSKeyedArchiver *)coder setDelegate: self];
+	[super encodeWithCoder: coder];
+
+	// TODO: We might want to use -encodeLateBoundObject:forKey: to serialize 
+	// an id rather the object itself
+	[coder encodeObject: [self titleBarView] forKey: @"ETTitleBarView"];
+	[coder encodeObject: [self wrappedView] forKey: @"ETWrappedView"];	
+	[coder encodeObject: [self temporaryView] forKey: @"ETTemporaryView"];
+	[coder encodeBool: [self isDisclosable] forKey: @"ETDisclosable"];
+	[coder encodeBool: [self usesCustomTitleBar] forKey: @"ETUsesCustomTitleBar"];
+	[coder encodeBool: [self isFlipped] forKey: @"ETFlipped"];
+
+	[(NSKeyedArchiver *)coder setDelegate: nil];
+}
+
+- (id) initWithCoder: (NSCoder *)coder
+{
+	self = [super initWithCoder: coder];
+	
+	if ([coder allowsKeyedCoding] == NO)
+	{	
+		[NSException raise: NSInvalidArgumentException format: @"ETView only "
+			@"supports keyed unarchiving"];
+		return nil;
+	}
+	
+	// NOTE: Don't use accessors, they involve a lot of set up logic and they
+	// would change the subviews in relation with their call order.
+	_usesCustomTitleBar = [coder decodeBoolForKey: @"ETUsesCustomTitleBar"];	
+	_disclosable = [coder decodeBoolForKey: @"ETDisclosable"];
+	ASSIGN(_titleBarView, [coder decodeObjectForKey: @"ETTitleBarView"]);
+	ASSIGN(_wrappedView, [coder decodeObjectForKey: @"ETWrappedView"]);
+	ASSIGN(_temporaryView, [coder decodeObjectForKey: @"ETTemporaryView"]);
+	[self setFlipped: [coder decodeBoolForKey: @"ETFlipped"]];
+
+	return self;
+}

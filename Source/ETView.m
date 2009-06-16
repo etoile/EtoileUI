@@ -211,54 +211,6 @@ static ETView *barViewPrototype = nil;
 	[super dealloc];
 }
 
-/* Archiving */
-
-- (void) encodeWithCoder: (NSCoder *)coder
-{
-	if ([coder allowsKeyedCoding] == NO)
-	{	
-		[NSException raise: NSInvalidArgumentException format: @"ETView only "
-			@"supports keyed archiving"];
-	}
-
-	[super encodeWithCoder: coder];
-
-	//[coder encodeObject: nil forKey: @"ETLayoutItem"];	
-	// FIXME: Replace by
-	// [coder encodeLateBoundObject: [self renderer] forKey: @"ETRenderer"];
-	[coder encodeObject: [self renderer] forKey: @"ETRenderer"];
-	[coder encodeObject: [self titleBarView] forKey: @"ETTitleBarView"];
-	[coder encodeObject: [self wrappedView] forKey: @"ETWrappedView"];	
-	[coder encodeObject: [self temporaryView] forKey: @"ETTemporaryView"];
-	[coder encodeBool: [self isDisclosable] forKey: @"ETDisclosable"];
-	[coder encodeBool: [self usesCustomTitleBar] forKey: @"ETUsesCustomTitleBar"];
-}
-
-- (id) initWithCoder: (NSCoder *)coder
-{
-	self = [super initWithCoder: coder];
-	
-	if ([coder allowsKeyedCoding] == NO)
-	{	
-		[NSException raise: NSInvalidArgumentException format: @"ETView only "
-			@"supports keyed unarchiving"];
-		return nil;
-	}
-	
-	// NOTE: Don't use accessors, they involve a lot of set up logic and they
-	// would change the subviews in relation with their call order.
-	_usesCustomTitleBar = [coder decodeBoolForKey: @"ETUsesCustomTitleBar"];	
-	_disclosable = [coder decodeBoolForKey: @"ETDisclosable"];
-	ASSIGN(_titleBarView, [coder decodeObjectForKey: @"ETTitleBarView"]);
-	ASSIGN(_wrappedView, [coder decodeObjectForKey: @"ETWrappedView"]);
-	ASSIGN(_temporaryView, [coder decodeObjectForKey: @"ETTemporaryView"]);
-
-	//[coder decodeObjectForKey: @"ETRenderer"];
-	//[coder decodeObjectForKey: @"ETLayoutItem"];
-
-	return self;
-}
-
 - (NSString *) displayName
 {
 	// FIXME: Trim the angle brackets out.

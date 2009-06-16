@@ -128,66 +128,6 @@
     return self;
 }
 
-/* Archiving */
-
-- (id) archiver: (NSKeyedArchiver *)archiver willEncodeObject: (id)object
-{
-	ETDebugLog(@"---- Will encode %@", object);
-	
-	/* Don't encode layout view and item views */
-	if ([object isEqual: [self subviews]])
-	{
-		id archivableSubviews = [object mutableCopy];
-		id itemViews = [[self items] valueForKey: @"displayView"];
-
-		ETDebugLog(@"> Won't be encoded");	
-		if ([self layoutView] != nil)	
-			[archivableSubviews removeObject: [self layoutView]];
-		[itemViews removeObjectsInArray: archivableSubviews];
-		return archivableSubviews;
-	}
-		
-	return object;
-}
-
-// TODO: Probably implement EtoileSerialize-based archiving (on Etoile only)
-- (void) encodeWithCoder: (NSCoder *)coder
-{
-	if ([coder allowsKeyedCoding] == NO)
-	{	
-		[NSException raise: NSInvalidArgumentException format: @"ETContainer "
-			@"only supports keyed archiving"];
-	}
-
-	/* We must disable the encoding of item subviews by catching it on 
-	   -[ETView encodeWithCoder:] with call back -archiver:willEncodeObject: */
-	[(NSKeyedArchiver *)coder setDelegate: self];
-	[super encodeWithCoder: coder];
-
-	[coder encodeBool: [self isDisclosable] forKey: @"ETFlipped"];
-			   
-	[(NSKeyedArchiver *)coder setDelegate: nil];
-}
-
-- (id) initWithCoder: (NSCoder *)coder
-{
-	self = [super initWithCoder: coder];
-	
-	if ([coder allowsKeyedCoding] == NO)
-	{	
-		[NSException raise: NSInvalidArgumentException format: @"ETView only "
-			@"supports keyed unarchiving"];
-		return nil;
-	}
-	
-	// FIXME: We need to write -setScrollView: or may be come up with some other 
-	// way to reconstruct the scroll view decorator
-	//[self setScrollView: [coder decodeObjectForKey: @"NSScrollView"]];
-	[self setFlipped: [coder decodeBoolForKey: @"ETFlipped"]];
-
-	return self;
-}
-
 /** Deep copies are never created by the container itself, but they are instead
 	delegated to the item group returned by -layoutItem. When the layout item
 	receives a deep copy request it will call back -copy on each view (including
