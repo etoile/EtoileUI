@@ -73,7 +73,7 @@ NSString *kETNeedsDisplayProperty = @"needsDisplay";
 NSString *kETParentItemProperty = @"parentItem";
 NSString *kETPersistentFrameProperty = @"persistentFrame";
 NSString *kETRepresentedObjectProperty = @"representedObject";
-NSString *kRepresentedPathBaseProperty = @"representedPathBase";
+NSString *kETRepresentedPathBaseProperty = @"representedPathBase";
 NSString *kETSelectedProperty = @"selected";
 NSString *kETStyleGroupProperty = @"styleGroup";
 NSString *kETSubtypeProperty = @"subtype";
@@ -222,7 +222,7 @@ NSString *kETVisibleProperty = @"visible";
 	TODO: Implement decorators copying that is currently missing.*/
 - (id) copyWithZone: (NSZone *)zone
 {
-	ETLayoutItem *item = [[[self class] alloc] initWithView: nil 
+	ETLayoutItem *item = [[[self class] alloc] initWithView: AUTORELEASE([[self view] copy])
 	                                                  value: [self value] 
 	                                      representedObject: [self representedObject]];
 
@@ -573,7 +573,7 @@ Finally take note represented paths are relative to the base item unlike paths
 returned by -path which are absolute paths. */
 - (NSString *) representedPathBase
 {
-	return GET_PROPERTY(kRepresentedPathBaseProperty);
+	return GET_PROPERTY(kETRepresentedPathBaseProperty);
 }
 
 /** Returns the identifier associated with the layout item. By default, the 
@@ -867,7 +867,7 @@ See -valueForProperty: for more details. */
 	NSArray *properties = A(@"identifier", kETNameProperty, @"x", @"y", @"width", 
 		@"height", @"view", kETSelectedProperty, kETLayoutProperty, 
 		kETStyleGroupProperty, @"style", kETImageProperty, kETFrameProperty, 
-		kETRepresentedObjectProperty, kRepresentedPathBaseProperty, 
+		kETRepresentedObjectProperty, kETRepresentedPathBaseProperty, 
 		kETParentItemProperty, kETAutoresizingMaskProperty, kETBoundingBoxProperty, 
 		kETActionProperty, kETSubtypeProperty, kETTargetProperty, @"UIMetalevel",
 		@"UIMetalayer");

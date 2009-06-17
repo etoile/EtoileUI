@@ -44,10 +44,10 @@
 
 /* Properties */
 
-extern NSString *kDelegateProperty; /** delegate property name */
+extern NSString *kETDelegateProperty; /** delegate property name */
 extern NSString *kETDoubleClickedItemProperty; /** doubleClickedItem property name */
 extern NSString *kETItemScaleFactor; /** itemScaleFactor property name */
-extern NSString *kSourceProperty; /** source property name */
+extern NSString *kETSourceProperty; /** source property name */
 
 @interface ETLayoutItemGroup : ETLayoutItem <ETLayoutingContext, ETCollection, ETCollectionMutation>
 {

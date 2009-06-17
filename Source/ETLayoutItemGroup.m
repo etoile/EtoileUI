@@ -52,10 +52,10 @@
 #define DEFAULT_FRAME NSMakeRect(0, 0, 50, 50)
 
 /* Properties */
-NSString *kDelegateProperty = @"delegate";
+NSString *kETDelegateProperty = @"delegate";
 NSString *kETDoubleClickedItemProperty = @"doubleClickedItem";
 NSString *kETItemScaleFactor = @"itemScaleFactor";
-NSString *kSourceProperty = @"source";
+NSString *kETSourceProperty = @"source";
 
 /* Notifications */
 NSString *ETItemGroupSelectionDidChangeNotification = @"ETItemGroupSelectionDidChangeNotification";
@@ -247,7 +247,7 @@ The returned copy is mutable because ETLayoutItemGroup cannot be immutable. */
 
 - (NSArray *) properties
 {
-	NSArray *properties = A(kSourceProperty, kDelegateProperty, 
+	NSArray *properties = A(kETSourceProperty, kETDelegateProperty, 
 		kETItemScaleFactor, kETDoubleClickedItemProperty);
 
 	return [[super properties] arrayByAddingObjectsFromArray: properties];
@@ -484,7 +484,7 @@ presented by the receiver. */
 		
 	}
 
-	SET_PROPERTY(aPath, kRepresentedPathBaseProperty);
+	SET_PROPERTY(aPath, kETRepresentedPathBaseProperty);
 }
 
 /* Manipulating Layout Item Tree */
@@ -621,7 +621,7 @@ receiver handles the layout item tree directly without the help of a source
 object, then this method returns nil. */
 - (id) source
 {
-	return GET_PROPERTY(kSourceProperty);
+	return GET_PROPERTY(kETSourceProperty);
 }
 
 /** Sets the source which provides the content displayed by the receiver. A
@@ -668,16 +668,16 @@ item and avoid unpredictable changes to the event handling logic. */
 - (void) setSource: (id)source
 {
 	/* By safety, avoids to trigger extra updates */
-	if ([GET_PROPERTY(kSourceProperty) isEqual: source])
+	if ([GET_PROPERTY(kETSourceProperty) isEqual: source])
 		return;
 
 	[[NSNotificationCenter defaultCenter] 
 		removeObserver: self 
 		          name: ETSourceDidUpdateNotification 
-			    object: GET_PROPERTY(kSourceProperty)];
+			    object: GET_PROPERTY(kETSourceProperty)];
 
 	[self removeAllItems]; 	/* Resets any particular state like selection */
-	SET_PROPERTY(source, kSourceProperty);
+	SET_PROPERTY(source, kETSourceProperty);
 
 	[[NSNotificationCenter defaultCenter] 
 		   addObserver: self
@@ -695,7 +695,7 @@ item and avoid unpredictable changes to the event handling logic. */
 See also -setDelegate:. */
 - (id) delegate
 {
-	return GET_PROPERTY(kDelegateProperty);
+	return GET_PROPERTY(kETDelegateProperty);
 }
 
 /** Sets the delegate associated with the receiver. 
@@ -704,7 +704,7 @@ A delegate is only useful if the receiver is a base item, otherwise it will
 be ignored. */
 - (void) setDelegate: (id)delegate
 {
-	SET_PROPERTY(delegate, kDelegateProperty);
+	SET_PROPERTY(delegate, kETDelegateProperty);
 }
 
 /*	Alternatively, if you have a relatively small and static tree structure,
@@ -1413,6 +1413,7 @@ yourself (see -visibleItemsForItems:). */
 	return _isStack;
 }
 
+/** Returns YES when the receiver is a collapsed stack, otherwise returns NO. */
 - (BOOL) isStacked
 {
 	return [self isStack] && [[self layout] isEqual: [self stackedItemLayout]];

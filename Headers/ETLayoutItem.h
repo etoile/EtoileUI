@@ -50,7 +50,7 @@ ETDecoratorItem, ETScrollableAreaItem, ETWindowItem, ETStyleGroup;
 
 /* Properties */
 
-extern NSString *kAnchorPointProperty; /** anchorPoint property name */
+extern NSString *kETAnchorPointProperty; /** anchorPoint property name */
 extern NSString *kETActionProperty; /** actionHandler property name */
 extern NSString *kETActionHandlerProperty; /** actionHandler property name */
 extern NSString *kETAutoresizingMaskProperty; /** autoresizingMask property name */
@@ -67,7 +67,7 @@ extern NSString *kETNeedsDisplayProperty; /** needsDisplay property name */
 extern NSString *kETParentItemProperty; /** parentItem property name */
 extern NSString *kETPersistentFrameProperty; /** persistentFrame property name */
 extern NSString *kETRepresentedObjectProperty; /** representedObject property name */
-extern NSString *kRepresentedPathBaseProperty; /** representedPathBase property name */
+extern NSString *kETRepresentedPathBaseProperty; /** representedPathBase property name */
 extern NSString *kETSelectedProperty; /** selected property name */
 extern NSString *kETSubtypeProperty; /** subtype property name */
 extern NSString *kETStyleGroupProperty; /** styleGroup property name */
@@ -91,7 +91,6 @@ extern NSString *kETVisibleProperty; /** visible property name */
 	NSAffineTransform *_transform;
 
 	/* Model object stores a persistent frame when the layout is non-computed */
-	NSRect _frame; /* Frame with item scaling */
 	NSRect _boundingBox;
 	BOOL _flipped;
 	BOOL _selected;
