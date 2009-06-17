@@ -42,7 +42,9 @@
 	shows very basic use of EtoileUI when you don't want to deal with the extra
 	burden involved by a data source. */
 - (void) awakeFromNib
-{	
+{
+	ETUIItemFactory *itemFactory = [ETUIItemFactory factory];
+
 	/*
 	 * A container based on table layout
 	 */
@@ -55,8 +57,8 @@
 	// FIXME: Should be... [tableItem setRepresentedPathBase: @"/"];
 	[tableContainer setRepresentedPath: @"/"];
 	
-	[tableItem addItem: [ETLayoutItem itemWithValue: @"Red"]];
-	[tableItem addItem: [ETLayoutItem itemWithValue: @"Green"]];
+	[tableItem addItem: [itemFactory itemWithValue: @"Red"]];
+	[tableItem addItem: [itemFactory itemWithValue: @"Green"]];
 	/* Illustrate autoboxing of objects into layout items */
 	[tableItem addObject: @"Blue"];
 	[tableItem addObject: [NSNumber numberWithInt: 3]];
@@ -74,7 +76,7 @@
 	[tableLayout2 setDisplayName: @"Name" forProperty: @"displayName"]; 
 	[[[tableLayout2 allTableColumns] objectAtIndex: 0] setWidth: 50];
 	[tableLayout2 setDisplayName: @"Intensity" forProperty: @"intensity"]; 	
-	[tableLayout2 setStyle: AUTORELEASE([[NSSliderCell alloc] init])
+	[tableLayout2 setStyle: [itemFactory horizontalSlider]
 	           forProperty: @"intensity"];
 	[tableLayout2 setDisplayedProperties: visibleColumnIds];
 
@@ -84,17 +86,17 @@
 
 #define NUMBER(x) [NSNumber numberWithInt: x]
 
-	ETLayoutItem *item = [ETLayoutItem layoutItem];
+	ETLayoutItem *item = [itemFactory item];
 	[item setValue: @"Red" forProperty: @"name"];
 	[item setValue: NUMBER(10) forProperty: @"intensity"];	
 	[tableItem2 addItem: item];
 	
-	item = [ETLayoutItem layoutItem];
+	item = [itemFactory item];
 	[item setValue: @"Green" forProperty: @"name"];
 	[item setValue: NUMBER(100) forProperty: @"intensity"];
 	[tableItem2 addItem: item];
 
-	item = [ETLayoutItem layoutItem];
+	item = [itemFactory item];
 	[item setValue: @"Blue" forProperty: @"name"];
 	[item setValue: NUMBER(0) forProperty: @"intensity"];	
 	[tableItem2 addItem: item];
@@ -104,6 +106,8 @@
 
 - (void) applicationWillFinishLaunching: (NSNotification *)notif
 {
+	ETUIItemFactory *itemFactory = [ETUIItemFactory factory];
+
 	/*
 	 * A hierarchical container using a custom outline layout based on an 
 	 * existing outline view
@@ -112,9 +116,10 @@
 	ETContainer *outlineContainer = [[ETContainer alloc] initWithLayoutView: outlineView];
 	ETLayoutItemGroup *outlineItem = [outlineContainer layoutItem];
 	NSImage *icon = [NSImage imageNamed: @"NSApplicationIcon"];
-	
-	[[outlineItem layout] setStyle: AUTORELEASE([[NSImageCell alloc] init])
-	                        forProperty: @""];
+	ETLayoutItem *imgViewItem = AUTORELEASE([[ETLayoutItem alloc] initWithView: 
+		AUTORELEASE([[NSImageView alloc] init])]);
+
+	[[outlineItem layout] setStyle: imgViewItem forProperty: @""];
 	// FIXME: Should be... [outlineItem setRepresentedPathBase: @"/"]; /* Mandatory to handle drop */
 	[outlineContainer setRepresentedPath: @"/"];
 
@@ -122,13 +127,13 @@
 	   each -addItem: call */
 	[outlineItem setAutolayout: NO];
 
-	ETLayoutItemGroup *itemGroup = [ETLayoutItem itemGroupWithValue: icon];
+	ETLayoutItemGroup *itemGroup = [itemFactory itemGroupWithValue: icon];
 
 	[itemGroup setValue: @"Icon!" forProperty: @"name"];
-	[itemGroup addItem: [ETLayoutItem itemWithValue: icon]];
-	[itemGroup addItem: [ETLayoutItem itemWithValue: icon]];
+	[itemGroup addItem: [itemFactory itemWithValue: icon]];
+	[itemGroup addItem: [itemFactory itemWithValue: icon]];
 	[outlineItem addItem: itemGroup];
-	[outlineItem addItem: [ETLayoutItem itemWithValue: icon]];
+	[outlineItem addItem: [itemFactory itemWithValue: icon]];
 	
 	[outlineItem setAutolayout: YES];
 	[outlineItem updateLayout];
