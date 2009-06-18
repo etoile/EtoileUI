@@ -323,11 +323,6 @@ extern NSString *kETVisibleProperty; /** visible property name */
 /*- (BOOL) isEditingUI;
 - (void) commitEditingUI;*/
 
-/* Deprecated (DO NOT USE, WILL BE REMOVED LATER) */
-
-- (ETLayoutItemGroup *) parentLayoutItem;
-- (void) setParentLayoutItem: (ETLayoutItemGroup *)parent;
-
 @end
 
 /** ETlayoutItem has no delegate but rather used the delegate of the closest 

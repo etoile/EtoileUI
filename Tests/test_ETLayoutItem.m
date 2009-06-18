@@ -106,7 +106,7 @@ static ETUIItemFactory *itemFactory = nil;
 	UKObjectsSame([self rootItem], item1);
 }
 
-- (void) testSetParentLayoutItem
+- (void) testSetParentItem
 {
 	id view = [[ETView alloc] initWithFrame: NSMakeRect(0, 0, 5, 10)];
 	id parentView = [[ETContainer alloc] initWithFrame: NSMakeRect(0, 0, 50, 100)];
@@ -117,12 +117,12 @@ static ETUIItemFactory *itemFactory = nil;
 	[self setSupervisorView: view];
 	[parentItem setLayout: [ETFlowLayout layout]];
 	
-	[self setParentLayoutItem: parentItem];
-	/* -setParentLayoutItem: doesn't touch the view hierarchy */
+	[self setParentItem: parentItem];
+	/* -setParentItem: doesn't touch the view hierarchy */
 	UKObjectsNotSame(parentView, [[self supervisorView] superview]);
 	UKObjectsSame(prevParentView, [[self supervisorView] superview]);
 	UKObjectsSame([[self displayView] superview], [[self supervisorView] superview]);
-	[self setParentLayoutItem: nil]; /* Revert to initial state */
+	[self setParentItem: nil]; /* Revert to initial state */
 
 	// TODO: More tests and move the following tests into standalone methods
 

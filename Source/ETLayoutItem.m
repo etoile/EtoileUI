@@ -2526,18 +2526,6 @@ returns nil.
 	[[self decoratorItem] beginEditingUI];
 }
 
-/* Deprecated (DO NOT USE, WILL BE REMOVED LATER) */
-
-- (ETLayoutItemGroup *) parentLayoutItem
-{
-	return [self parentItem];
-}
-
-- (void) setParentLayoutItem: (ETLayoutItemGroup *)parent
-{
-	[self setParentItem: parent];
-}
-
 @end
 
 

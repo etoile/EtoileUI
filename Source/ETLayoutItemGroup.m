@@ -774,7 +774,7 @@ be ignored. */
 	// here because this method doesn't the primitive mutation method 
 	// -removeItem:
 	
-	[_layoutItems makeObjectsPerformSelector: @selector(setParentLayoutItem:) withObject: nil];
+	[_layoutItems makeObjectsPerformSelector: @selector(setParentItem:) withObject: nil];
 	[_layoutItems removeAllObjects];
 	if ([self canUpdateLayout])
 		[self updateLayout];
@@ -1304,13 +1304,13 @@ yourself (see -visibleItemsForItems:). */
 		NSEnumerator *e = [[self items] objectEnumerator];
 		ETLayoutItem *item = [e nextObject];
 		
-		prevParent = [item parentLayoutItem];
+		prevParent = [item parentItem];
 		firstItemIndex = [prevParent indexOfItem: item];
 		
 		/* Try to find a common parent shared by all items */
 		while ((item = [e nextObject]) != nil)
 		{
-			if ([[item parentLayoutItem] isEqual: prevParent] == NO)
+			if ([[item parentItem] isEqual: prevParent] == NO)
 			{
 				prevParent = nil;
 				break;

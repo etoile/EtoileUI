@@ -227,7 +227,7 @@ static 	BOOL _coalescingMutation = NO;
        That's precisely the selections state we expect once item at index 2
        has been removed. */
 	
-	[item setParentLayoutItem: nil];
+	[item setParentItem: nil];
 	[_layoutItems insertObject: item atIndex: index];
 	[indexes shiftIndexesStartingAtIndex: index by: 1];
 	[self setSelectionIndexes: indexes];
