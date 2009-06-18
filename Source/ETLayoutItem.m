@@ -1865,7 +1865,7 @@ space. */
 anchor must be expressed in the receiver content coordinate space. */  
 - (void) setAnchorPoint: (NSPoint)anchor
 {
-	ETLog(@"Set anchor point to %@ - %@", NSStringFromPoint(anchor), self);
+	ETDebugLog(@"Set anchor point to %@ - %@", NSStringFromPoint(anchor), self);
 	SET_PROPERTY([NSValue valueWithPoint: anchor], kETAnchorPointProperty);
 }
 
