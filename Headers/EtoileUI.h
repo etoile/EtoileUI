@@ -62,8 +62,6 @@
 #import <EtoileUI/FSBrowserCell.h>
 
 #import <EtoileUI/ETPaneLayout.h>
-//#import <EtoileUI/ETPaneView.h>
-#import <EtoileUI/ETPaneSwitcherLayout.h>
 
 #import <EtoileUI/ETFreeLayout.h>
 

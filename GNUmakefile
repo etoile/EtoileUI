@@ -58,7 +58,6 @@ EtoileUI_HEADER_FILES = \
 	EtoileUI.h \
 	ETOutlineLayout.h \
 	ETPaneLayout.h \
-	ETPaneSwitcherLayout.h \
 	ETPersistencyController.h \
 	ETPickboard.h \
 	ETScrollableAreaItem.h \

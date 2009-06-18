@@ -34,7 +34,6 @@ libEtoileUI_OBJC_FILES = \
 	ETObjectBrowserLayout.m \
 	ETOutlineLayout.m \
 	ETPaneLayout.m \
-	ETPaneSwitcherLayout.m \
 	ETPersistencyController.m \
 	ETPickboard.m \
 	ETScrollableAreaItem.m \
