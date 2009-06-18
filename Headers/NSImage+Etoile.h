@@ -39,4 +39,5 @@
 
 @interface NSImage (Etoile)
 - (NSImage *) initWithView: (NSView *)view fromRect: (NSRect)rect;
+- (NSImage *) icon;
 @end

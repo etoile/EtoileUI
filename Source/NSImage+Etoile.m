@@ -117,4 +117,10 @@
 
 #endif
 
+/** Returns the receiver. */
+- (NSImage *) icon
+{
+	return self;
+}
+
 @end
