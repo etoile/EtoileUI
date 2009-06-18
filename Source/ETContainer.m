@@ -206,7 +206,7 @@ Returns nil by default. Only returns a view when a view-based layout is used,
 see layout view related methods in ETLayout. */
 - (NSView *) layoutView
 {
-	return _layoutView;
+	return _temporaryView;
 }
 
 /** Sets the custom view provided by the layout set on -layoutItem. 
@@ -218,19 +218,19 @@ the job of ETContainer, ETLayout instances may provide a layout view prototype
 but they never never manipulate it as a subview in view hierachy. */
 - (void) setLayoutView: (NSView *)view
 {
-	if (_layoutView == nil && view == nil)
+	if (_temporaryView == nil && view == nil)
 		return;
 
-	if (_layoutView == view && (_layoutView != nil || view != nil))
+	if (_temporaryView == view && (_temporaryView != nil || view != nil))
 	{
 		ETLog(@"WARNING: Trying to assign an identical display view to container %@", self);
 		return;
 	}
 	
-	[_layoutView removeFromSuperview];
+	[_temporaryView removeFromSuperview];
 	/* Retain indirectly by our layout item which retains the layout that 
 	   provides this view. Also retain as a subview by us just below. */
-	_layoutView = view; 
+	_temporaryView = view; 
 
 	if (view != nil) /* Set up layout view */
 	{

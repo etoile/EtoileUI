@@ -102,6 +102,12 @@
 	// NOTE: May be remove the view ivars to make the class more lightweight
 	NSView *_titleBarView;
 	NSView *_wrappedView;
+	/* NOTE: _temporaryView is a weak reference (we retain it indirectly as a 
+	   subview though).
+	   We are owned by our layout item which retains its layout which itself 
+	   retains the layout view. Each time the layout is switched on -layoutItem, 
+	   we must update _temporaryView with -setLayoutView: otherwise the ivar
+	   might reference a freed object. See -[ETLayoutItem setLayout:]. */
 	NSView *_temporaryView;
 #ifndef USE_NSVIEW_RFLAGS
 	BOOL _flipped;

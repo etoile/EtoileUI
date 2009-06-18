@@ -201,8 +201,8 @@ static ETView *barViewPrototype = nil;
 {
 	[NC removeObserver: self];
 
-	// NOTE: _layoutItem (our owner) is destroyed by -release
-	DESTROY(_temporaryView);
+	// NOTE: _layoutItem (our owner) is destroyed by -release and _temporaryView
+	// is a weak reference
 	DESTROY(_wrappedView);
 	DESTROY(_titleBarView);
 	
@@ -437,7 +437,7 @@ You can revert to non-flipped coordinates by passing NO to this method. */
 	// NOTE: Next lines must be kept in this precise order and -tile not moved
 	// into -setContentView:temporary:
 	[self setContentView: subview temporary: YES];
-	ASSIGN(_temporaryView, subview);
+	_temporaryView = subview;
 	[self tile]; /* Update view layout */
 }
 
