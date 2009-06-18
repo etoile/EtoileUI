@@ -51,7 +51,7 @@ of the target item. */
 - (void) setAllowsMultipleSelection: (BOOL)multiple
 {
 	_multipleSelectionAllowed = multiple;
-	// FIXME: [self syncDisplayViewWithContainer];
+	// FIXME: [[self layoutOwner] syncLayoutViewWithItem: self];
 }
 
 /** Returns whether the tool allows to have no items selected among the children 
@@ -66,7 +66,7 @@ the target item. */
 - (void) setAllowsEmptySelection: (BOOL)empty
 {
 	_emptySelectionAllowed = empty;
-	// FIXME: [self syncDisplayViewWithContainer];
+	// FIXME: [[self layoutOwner] syncLayoutViewWithItem: self];
 }
 
 - (BOOL) shouldRemoveItemsAtPickTime

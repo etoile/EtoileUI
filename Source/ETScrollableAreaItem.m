@@ -103,7 +103,7 @@ won't remove the receiver from the decorator chain it currently belongs to. */
 	[[self scrollView] setHasVerticalScroller: scroll];
 	
 	/* Updated NSBrowser, NSOutlineView enclosing scroll view etc. */
-	//[self syncDisplayViewWithContainer];
+	//[[self layout] syncLayoutViewWithItem: self];
 }
 
 /** Returns YES when the horizontal scroller of the current scrollable area view 
@@ -121,7 +121,7 @@ For additional notes, see also -setHasVerticalScroller:. */
 	[[self scrollView] setHasHorizontalScroller: scroll];
 	
 	/* Updated NSBrowser, NSOutlineView enclosing scroll view etc. */
-	//[self syncDisplayViewWithContainer];
+	//[[self layout] syncLayoutViewWithItem: self];
 }
 
 @end

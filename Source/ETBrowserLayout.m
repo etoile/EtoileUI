@@ -133,7 +133,7 @@
 	//[self resizeLayoutItems: items toScaleFactor: [[self layoutContext] itemScaleFactor]];
 	
 	// FIXME: The next lines shouldn't be needed but
-	// -[ETContainer syncDisplayViewWithContainer] regularly overwrites what have
+	// -[ETWidgetLayout syncLayoutViewWithItem:] regularly overwrites what has 
 	// been set in -setLayoutView:
 	[browserView setDoubleAction: @selector(doubleClick:)];
 	[browserView setAction: @selector(click:)];
@@ -405,8 +405,8 @@
 
 @implementation NSBrowser (EtoileETBrowserLayout)
 
-/* ETContainer expects -displayView to be a scroll view, so we fake NSBrowser 
-   to respond like NSScrollView. See -[ETContainer syncDisplayViewWithContainer] */
+/* ETWidgetLayout expects -layoutView to be a scroll view, so we fake NSBrowser 
+   to respond like NSScrollView. See -[ETWidgetLayout syncLayoutViewWithItem:]; */
 - (NSView *) documentView
 {
 	return self;

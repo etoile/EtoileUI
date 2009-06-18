@@ -54,10 +54,6 @@
 #import "NSView+Etoile.h"
 #import "ETCompatibility.h"
 
-@interface ETContainer (Private)
-- (void) syncDisplayViewWithContainer: (ETContainer *)container;
-@end
-
 
 @implementation ETContainer
 
@@ -191,14 +187,6 @@ Never returns nil. */
 
 /* Private helper methods to sync display view and container */
 
-/* Various adjustements necessary when layout object is a wrapper around an 
-   AppKit view. This method is called on a regular basis each time a setting of
-   the container is modified and needs to be mirrored on the display view. */
-- (void) syncDisplayViewWithContainer
-{
-	[[self layout] syncLayoutViewWithItem: [self layoutItem]];
-}
-
 /** Sets the custom view provided by the layout set on -layoutItem. 
 
 Never calls this method unless you write an ETLayout subclass.
@@ -232,7 +220,7 @@ but they never never manipulate it as a subview in view hierachy. */
 		[view setFrameOrigin: NSZeroPoint];
 		[self addSubview: view];
 		
-		[self syncDisplayViewWithContainer];
+		[[self layout] syncLayoutViewWithItem: [self layoutItem]];
 	}
 	else /* Tear down layout view */
 	{

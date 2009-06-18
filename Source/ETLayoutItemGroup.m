@@ -66,11 +66,6 @@ NSString *ETSourceDidUpdateNotification = @"ETSourceDidUpdateNotification";
 - (NSRect) visibleContentBounds;
 @end
 
-@interface ETContainer (PackageVisibility)
-- (int) checkSourceProtocolConformance;
-- (void) syncDisplayViewWithContainer;
-@end
-
 @interface ETLayoutItemGroup (Private)
 - (BOOL) hasNewLayout;
 - (void) setHasNewLayout: (BOOL)flag;
@@ -938,15 +933,6 @@ the receiver immediate children to the source. */
 	ASSIGN(_layout, layout);
 	[self setHasNewLayout: YES];
 	[layout setLayoutContext: self];
-
-	// FIXME: We should move code to set display view when necessary here. By
-	// calling -setDisplayView: [_container temporaryView] we wouldn't
-	// need anymore to call -syncDisplayViewWithContainer here.
-	// All display view set up code is currently in -renderWithLayoutItems:
-	// of AppKit-based layouts. Part of this code should be put inside 
-	// overidden -layoutView method in each ETLayout suclasses.
-	if ([self isContainer])
-		[(ETContainer *)[self supervisorView] syncDisplayViewWithContainer];
 	
 	[self setAutolayout: wasAutolayoutEnabled];
 	if ([self canUpdateLayout])
