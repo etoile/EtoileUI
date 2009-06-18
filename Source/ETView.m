@@ -428,10 +428,11 @@ You can revert to non-flipped coordinates by passing NO to this method. */
 	return _wrappedView;
 }
 
-/** Sets the view to be used  temporarily as a wrapped view. When such a view 
-	is set, this view is displayed in place of -wrappedView.
-	If you pass nil, the displayed wrapped view is reverted to the view
-	originally set on -setWrappedView: call. */
+/** Sets the view to be used temporarily as a wrapped view. 
+
+When a temporary view is set, this view is visible in place of -wrappedView.
+
+If you pass nil, the visible view is reverted to -wrappedView. */
 - (void) setTemporaryView: (NSView *)subview
 {
 	// NOTE: Next lines must be kept in this precise order and -tile not moved
@@ -441,9 +442,10 @@ You can revert to non-flipped coordinates by passing NO to this method. */
 	[self tile]; /* Update view layout */
 }
 
-/** Returns the wrapped view temporarily overriding the default wrapped view or 
-	nil if there is none. When such a view is set, this view is displayed in 
-	place of -wrappedView. */
+/** Returns the view temporarily used as a wrapped view or nil.
+
+When a widget-based layout is set on -layoutItem, this method returns the widget 
+view installed by the layout. */
 - (NSView *) temporaryView
 {
 	return _temporaryView;

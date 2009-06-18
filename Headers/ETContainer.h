@@ -35,12 +35,10 @@
  
 #import <Foundation/Foundation.h>
 #import <AppKit/AppKit.h>
-#import <EtoileFoundation/ETCollection.h>
 #import <EtoileUI/ETView.h>
-#import <EtoileUI/ETLayout.h>
 
-@class ETLayoutItem, ETLayout, ETLayer, ETLayoutItemGroup, ETSelection, 
-	ETPickboard, ETEvent, ETDecoratorItem;
+@class ETLayoutItem, ETLayout, ETLayer, ETLayoutItemGroup,  ETPickboard, 
+ETEvent, ETDecoratorItem;
 
 @interface ETContainer : ETView
 {
@@ -55,8 +53,7 @@
 
 /* Basic Accessors */
 
-- (NSView *) layoutView;
-- (void) setLayoutView: (NSView *)view;
+- (void) setTemporaryView: (NSView *)view;
 
 @end
 

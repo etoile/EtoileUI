@@ -199,16 +199,6 @@ Never returns nil. */
 	[[self layout] syncLayoutViewWithItem: [self layoutItem]];
 }
 
-/** Returns the custom view that might have been provided by the layout set 
-on -layoutItem.
-
-Returns nil by default. Only returns a view when a view-based layout is used, 
-see layout view related methods in ETLayout. */
-- (NSView *) layoutView
-{
-	return _temporaryView;
-}
-
 /** Sets the custom view provided by the layout set on -layoutItem. 
 
 Never calls this method unless you write an ETLayout subclass.
@@ -216,7 +206,7 @@ Never calls this method unless you write an ETLayout subclass.
 Method called when we switch between layouts. Manipulating the layout view is 
 the job of ETContainer, ETLayout instances may provide a layout view prototype
 but they never never manipulate it as a subview in view hierachy. */
-- (void) setLayoutView: (NSView *)view
+- (void) setTemporaryView: (NSView *)view
 {
 	if (_temporaryView == nil && view == nil)
 		return;

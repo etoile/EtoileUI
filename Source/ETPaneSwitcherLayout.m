@@ -496,7 +496,7 @@
 #endif
 	/* Don't forget to remove existing display view if we switch from a layout 
 	   which reuses a native AppKit control like table layout. */
-	[[self container] setLayoutView: nil];
+	[[self container] setTemporaryView: nil];
 	
 	/* Move internal item switcher and content container into enclosing container */
 	// NOTE: Done by [_internalContainer updateLayout]

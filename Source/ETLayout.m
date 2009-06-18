@@ -494,7 +494,7 @@ You must call the superclass implementation if you override this method. */
 	// May be we should move it into -[layout setContainer:]...
 	// Triggers scroll view display which triggers layout render in turn to 
 	// compute the content size
-	[[self container] setLayoutView: nil]; 
+	[[self container] setTemporaryView: nil]; 
 }
 
 /** <override-dummy />Overrides if your subclass requires extra transformation 
@@ -980,7 +980,7 @@ context and the tree rooted in -rootItem. */
 	if ([layoutView superview] == nil)
 	{
 		[layoutView setAutoresizingMask: NSViewHeightSizable | NSViewWidthSizable];
-		[[self container] setLayoutView: layoutView];
+		[[self container] setTemporaryView: layoutView];
 	}
 	else if ([[layoutView superview] isEqual: [self container]] == NO)
 	{

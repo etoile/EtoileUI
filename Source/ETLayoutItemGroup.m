@@ -940,7 +940,7 @@ the receiver immediate children to the source. */
 	[layout setLayoutContext: self];
 
 	// FIXME: We should move code to set display view when necessary here. By
-	// calling -setDisplayView: [_container layoutView] we wouldn't
+	// calling -setDisplayView: [_container temporaryView] we wouldn't
 	// need anymore to call -syncDisplayViewWithContainer here.
 	// All display view set up code is currently in -renderWithLayoutItems:
 	// of AppKit-based layouts. Part of this code should be put inside 
