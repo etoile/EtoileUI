@@ -923,6 +923,7 @@ the receiver immediate children to the source. */
 
 	//ETDebugLog(@"Modify layout from %@ to %@ in %@", _layout, layout, self);
 	
+	ETLayout *oldLayout = RETAIN(_layout);
 	BOOL wasAutolayoutEnabled = [self isAutolayout];
 	
 	/* Disable autolayout to avoid spurious updates triggered by stuff like
@@ -933,6 +934,9 @@ the receiver immediate children to the source. */
 	ASSIGN(_layout, layout);
 	[self setHasNewLayout: YES];
 	[layout setLayoutContext: self];
+
+	[self didChangeLayout: oldLayout];
+	RELEASE(oldLayout);
 	
 	[self setAutolayout: wasAutolayoutEnabled];
 	if ([self canUpdateLayout])
@@ -1571,7 +1575,6 @@ You should never use this method when you use -setSelected: on descendant items
 rather than setSelectionXXX: methods on the receiver. Don't use -setSelected: should */
 - (void) didChangeSelection
 {
-	
 	NSNotification *notif = [NSNotification 
 		notificationWithName: ETItemGroupSelectionDidChangeNotification object: self];
 	

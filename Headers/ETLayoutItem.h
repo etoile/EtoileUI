@@ -215,6 +215,7 @@ extern NSString *kETVisibleProperty; /** visible property name */
 
 - (ETLayout *) layout;
 - (void) setLayout: (ETLayout *)layout;
+- (void) didChangeLayout: (ETLayout *)oldLayout;
 
 - (void) updateLayout;
 - (void) apply: (NSMutableDictionary *)inputValues;
@@ -325,31 +326,22 @@ extern NSString *kETVisibleProperty; /** visible property name */
 
 @end
 
-/** ETlayoutItem has no delegate but rather used the delegate of the closest 
-	container ancestor.
-	Implements this method if you set values in aggregate views or cells. For
-	example, when you have a mixed icon text cell, you would write:
-	if ([property isEqual: kPropertyName])
-	{
-		[[item cell] setText: value];
-		[[item cell] setImage: [item valueForProperty: @"icon"];
-	}
-	Be careful with property because it can be a key path so you may better 
-	to always retrieve the last component.
-	Binding can be used instead of this method if you prefer.
-	An other alternative is to subclass ETLayoutItem and overrides method
-	-setValue:forProperty:. But the purpose of this delegate is precisely to 
-	avoid subclassing burden. */
-@interface ETLayoutItem (ETLayoutItemDelegate)
-- (void) layoutItem: (ETLayoutItem *)item setValue: (id)value forProperty: (NSString *)property;
+
+@interface NSObject (ETLayoutItemDelegate)
+/** See ETLayoutItemLayoutDidChangeNotification. */
+- (void) layoutDidChange: (NSNotification *)notif;
 @end
 
-/*
-@interface ETLayoutItem (NSCellCompatibility)
-- (NSCell *) cellForProperty: (NSString *)property;
-- (void) setCellForProperty: (NSCell *)cell;
-@end
-*/
+/** Notification posted by ETLayoutItem and subclasses in reply to -setLayout: 
+on the poster object. The poster object can be retrieved through 
+-[NSNotification object]. 
+
+If -setLayout: results in no layout change, no notification is posted.
+
+This notification is also posted when the layout is modified by the user (e.g. 
+through an inspector). */
+extern NSString *ETLayoutItemLayoutDidChangeNotification;
+
 
 @interface NSObject (ETLayoutItem)
 - (BOOL) isLayoutItem;

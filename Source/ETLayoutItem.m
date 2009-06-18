@@ -55,7 +55,6 @@
 #import "ETCompatibility.h"
 
 /* Properties */
-
 NSString *kETAnchorPointProperty = @"anchorPoint";
 NSString *kETActionProperty = @"action";
 NSString *kETActionHandlerProperty = @"actionHandler";
@@ -81,11 +80,12 @@ NSString *kETTargetProperty = @"target";
 NSString *kETValueProperty = @"value";
 NSString *kETVisibleProperty = @"visible";
 
+/* Notifications */
+NSString *ETLayoutItemLayoutDidChangeNotification = @"ETLayoutItemLayoutDidChangeNotification";
+
 #define DETAILED_DESCRIPTION
 /* Don't forget that -variableProperties creates the property dictionary */
 #define VARIABLE_PROPERTIES ((NSMutableDictionary *)[self variableProperties])
-
-#define ETUTIAttribute @"uti"
 
 @interface ETLayoutItem (Private)
 - (NSRect) bounds;
@@ -1193,6 +1193,25 @@ content rect does.  */
 	return [self frame];
 }
 
+/** Tells the receiver the layout has been changed and it should post 
+ETLayoutItemLayoutDidChangeNotification. 
+
+This method tries to notify the delegate that might exist with subclasses 
+e.g. ETLayoutItemGroup.
+
+You should never use this method unless you write an ETLayoutItem subclass. */
+- (void) didChangeLayout: (ETLayout *)oldLayout
+{
+	NSNotification *notif = [NSNotification 
+		notificationWithName: ETLayoutItemLayoutDidChangeNotification object: self];
+	id delegate = [self valueForKey: kETDelegateProperty];
+
+	if ([delegate respondsToSelector: @selector(layoutDidChange:)])
+		[delegate layoutDidChange: notif];
+	
+	[[NSNotificationCenter defaultCenter] postNotification: notif];
+}
+
 /** Returns the layout associated with the receiver to present its content. */
 - (ETLayout *) layout
 {
@@ -1202,7 +1221,11 @@ content rect does.  */
 /** Sets the layout associated with the receiver to present its content. */
 - (void) setLayout: (ETLayout *)aLayout
 {
+	ETLayout *oldLayout = GET_PROPERTY(kETLayoutProperty);
+	RETAIN(oldLayout);
 	SET_PROPERTY(aLayout, kETLayoutProperty);
+	[self didChangeLayout: oldLayout];
+	RELEASE(oldLayout);
 }
 
 /** Forces the layout to be recomputed to take in account geometry and content 
