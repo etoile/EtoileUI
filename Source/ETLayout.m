@@ -494,7 +494,7 @@ You must call the superclass implementation if you override this method. */
 	// May be we should move it into -[layout setContainer:]...
 	// Triggers scroll view display which triggers layout render in turn to 
 	// compute the content size
-	[[self container] setTemporaryView: nil]; 
+	[[[self layoutContext] supervisorView] setTemporaryView: nil]; 
 }
 
 /** <override-dummy />Overrides if your subclass requires extra transformation 
@@ -974,18 +974,19 @@ context and the tree rooted in -rootItem. */
 - (void) setUpLayoutView
 {
 	id layoutView = [self layoutView];
-	
+	ETView *supervisorView = [[self layoutContext] supervisorView];
+
 	NSAssert1(layoutView != nil, @"Layout view to set up must not be nil in %@", self);
 	
 	if ([layoutView superview] == nil)
 	{
 		[layoutView setAutoresizingMask: NSViewHeightSizable | NSViewWidthSizable];
-		[[self container] setTemporaryView: layoutView];
+		[supervisorView setTemporaryView: layoutView];
 	}
-	else if ([[layoutView superview] isEqual: [self container]] == NO)
+	else if ([[layoutView superview] isEqual: supervisorView] == NO)
 	{
-		ETLog(@"WARNING: Table view of table layout should never have another "
-			  @"superview than container parameter or nil.");
+		ETLog(@"WARNING: A view-based layout should never have another "
+			  @"superview than the layout context supervisor view or nil.");
 	}
 }
 
@@ -1088,11 +1089,13 @@ context and the tree rooted in -rootItem. */
 			   and not routed into some subview part of the layout view. */
 			if ([self layoutView] == nil)
 			{
+				ETView *supervisorView = [[self layoutContext] supervisorView];
+
 				/* Item display view must be a direct subview of our container, 
 				   otherwise NSPointInRect test is going to be meaningless. */
-				NSAssert1([[[self container] subviews] containsObject: [item displayView]],
+				NSAssert1([[supervisorView subviews] containsObject: [item displayView]],
 					@"Item display view must be a direct subview of %@ to know "
-					@"whether it matches given location", [self container]);
+					@"whether it matches given location", supervisorView);
 			}
 			
 			if (NSPointInRect(location, [[item displayView] frame]))
