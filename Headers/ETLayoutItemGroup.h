@@ -39,11 +39,12 @@
 #import <EtoileUI/ETLayout.h>
 #import <EtoileFoundation/ETCollection.h>
 
-@class ETLayout;
+@class ETController;
 
 
 /* Properties */
 
+extern NSString *kETControllerProperty; /** controller property name */
 extern NSString *kETDelegateProperty; /** delegate property name */
 extern NSString *kETDoubleClickedItemProperty; /** doubleClickedItem property name */
 extern NSString *kETItemScaleFactor; /** itemScaleFactor property name */
@@ -128,6 +129,8 @@ extern NSString *kETSourceProperty; /** source property name */
 - (void) setSource: (id)source;
 - (id) delegate;
 - (void) setDelegate: (id)delegate;
+- (ETController *) controller;
+- (void) setController: (ETController *)aController;
 
 /* Layout */
 

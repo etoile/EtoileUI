@@ -26,6 +26,7 @@
 	images = [[NSMutableArray alloc] init];
 	ASSIGN(photoViewItem, [viewContainer layoutItem]);
 
+	[photoViewItem setController: self];
 	[photoViewItem setSource: self];
 	[photoViewItem setLayout: [self configureLayout: [ETStackLayout layout]]];
 	[photoViewItem setHasVerticalScroller: YES];
@@ -35,7 +36,6 @@
 	                  description: @"Objective-C Class"
 	             supertypeStrings: A(@"public.image")];
 
-	[self setContent: photoViewItem];
 	[self setAutomaticallyRearrangesObjects: YES]; /* Enable automatic sorting */
 	[self setAllowedPickType: [ETUTI typeWithString: @"public.image"]];
 	[self setAllowedDropType: [ETUTI typeWithString: @"public.image"]

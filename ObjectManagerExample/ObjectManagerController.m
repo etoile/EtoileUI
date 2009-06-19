@@ -75,9 +75,9 @@ static NSFileManager *objectManager = nil;
 	                  description: nil 
 	             supertypeStrings: [NSArray array]];
 		
-	controller = [[ETController alloc] init];
+	controller = AUTORELEASE([[ETController alloc] init]);
+	[[viewContainer layoutItem] setController: controller];
 	[controller setAutomaticallyRearrangesObjects: YES];
-	[controller setContent: [viewContainer layoutItem]];
 	[controller setAllowedPickType: [ETUTI typeWithString: myFileUTI]];
 	[controller setAllowedPickType: [ETUTI transientTypeWithSupertypes: 
 		A([ETUTI typeWithString: myFileUTI], [ETUTI typeWithString: myFolderUTI])]];

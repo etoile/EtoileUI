@@ -52,6 +52,7 @@
 #define DEFAULT_FRAME NSMakeRect(0, 0, 50, 50)
 
 /* Properties */
+NSString *kETController = @"controller";
 NSString *kETDelegateProperty = @"delegate";
 NSString *kETDoubleClickedItemProperty = @"doubleClickedItem";
 NSString *kETItemScaleFactor = @"itemScaleFactor";
@@ -619,6 +620,14 @@ object, then this method returns nil. */
 	return GET_PROPERTY(kETSourceProperty);
 }
 
+- (void) makeBaseItemIfNeeded
+{
+	if ([self isBaseItem])
+		return;
+
+	[self setRepresentedPathBase: @"/"];
+}
+
 /** Sets the source which provides the content displayed by the receiver. A
 source can be any objects conforming to ETIndexSource or ETPathSource protocol.
 
@@ -680,9 +689,8 @@ item and avoid unpredictable changes to the event handling logic. */
 		          name: ETSourceDidUpdateNotification 
 			    object: source];
 
-	/* Make base item if needed */
-	if (source != nil && [self isBaseItem] == NO)
-		[self setRepresentedPathBase: @"/"];
+	if (source != nil)
+		[self makeBaseItemIfNeeded];
 }
 
 /** Returns the delegate associated with the receiver. 
@@ -700,6 +708,32 @@ be ignored. */
 - (void) setDelegate: (id)delegate
 {
 	SET_PROPERTY(delegate, kETDelegateProperty);
+}
+
+/** Returns the controller which allows to customize the overall UI interaction 
+with the receiver item tree.
+
+When the controller is not nil, the receiver is both a base item and the 
+controller content. */
+- (ETController *) controller
+{
+	return GET_PROPERTY(kETControllerProperty);
+}
+
+/** Sets the controller which allows to customize the overall UI interaction 
+with the receiver item tree.
+
+When the given controller is not nil, the receiver becomes both a base item and 
+the controller content.
+
+See also -setSource: and -isBaseItem. */
+- (void) setController: (ETController *)aController
+{
+	SET_PROPERTY(aController, kETControllerProperty);
+	[aController setContent: self];
+
+	if (aController != nil)
+		[self makeBaseItemIfNeeded];
 }
 
 /*	Alternatively, if you have a relatively small and static tree structure,

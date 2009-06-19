@@ -58,9 +58,15 @@
 {
 	SELFINIT
 
-	[self setContent: [[ETUIItemFactory factory] itemGroup]];
+	[[[ETUIItemFactory factory] itemGroup] setController: self];
+	RETAIN([self content]);
 	
 	return self;
+}
+
+- (void) releaseForTest
+{
+	RELEASE([self content]);
 }
 
 - (NSArray *) contentArray
