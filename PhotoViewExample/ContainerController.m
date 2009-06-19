@@ -40,7 +40,7 @@
 	[self setAllowedPickType: [ETUTI typeWithString: @"public.image"]];
 	[self setAllowedDropType: [ETUTI typeWithString: @"public.image"]
 	           forTargetType: [ETUTI typeWithClass: [ETLayoutItemGroup class]]];
-	
+
 	[[ETPickboard localPickboard] showPickPalette]; /* Just to show it */
 }
 
@@ -95,9 +95,10 @@ UI level for a photo viewer. */
 {
 	if ([layoutObject isKindOfClass: [ETTableLayout class]])
 	{
-		NSCell *iconCell = [[NSImageCell alloc] initImageCell: nil];
+		ETLayoutItem *imgViewItem = AUTORELEASE([[ETLayoutItem alloc] initWithView: 
+			AUTORELEASE([[NSImageView alloc] init])]);
 		
-		[layoutObject setStyle: AUTORELEASE(iconCell) forProperty: @"icon"];
+		[layoutObject setStyle: imgViewItem forProperty: @"icon"];
 		[layoutObject setEditable: YES forProperty: @"name"];
 
 		[layoutObject setDisplayName: @"" forProperty: @"icon"];
@@ -240,10 +241,13 @@ protocol methods. */
 	{
 		ETLayoutItem *item = [ETLayoutItem layoutItemWithView: [self imageViewForImage: img]];
 
-		[item setRepresentedObject: img]; /* Use the image as the item model */
-		[item setImage: img]; /* Only useful if no imgView exists */	
-		[item setName: [[img name] lastPathComponent]];
-		[item setIcon: img];	
+		 /* Use the image as the item model
+		 
+		    Property values set on the item itself (with -setImage:, -setIcon:, 
+			-setName: etc.) won't be visible at the UI level, because property 
+			values are retrieved through -[ETLayoutItem valueForProperty:] which 
+			only looks them up on the represented object when one is set. */
+		[item setRepresentedObject: img];
 
 		[imageItems addObject: item];
 	}
@@ -292,7 +296,9 @@ protocol methods. */
 
 	[wk getInfoForFile: [img name] application: &appName type: &type];
 
-	[imageItem setRepresentedObject: img]; /* Use the image as the item model */	
+	/* We can set property values on the layout item itself, because no 
+	   represented object has been set and -[ETLayoutItem valueForProperty:] 
+	   will thus look them up in the item. */
 	[imageItem setName: [[img name] lastPathComponent]];
 	[imageItem setIcon: [wk iconForFile: [img name]] ];		
 	[imageItem setValue: type forProperty: @"imgType"];
