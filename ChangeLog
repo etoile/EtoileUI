@@ -1,3 +1,23 @@
+2009-06-21 Quentin Mathe <qmathe@club-internet.fr>
+
+	* ETLayoutItem:
+	(-didChangeLayout:): Modified to now update the layout view and the 
+	scrollable area item visibility.
+	* ETLayoutItem+Scrollable:
+	(-updateScrollableAreaItemVisibility): Added.
+	(-didChangeDecoratorOfItem:): Moved the receiver validity check into a new 
+	assertion.
+	* ETLayout:
+	(-isScrollable, -hasScrollers): Added.
+	* ETWidgetLayout: 
+	(-hasScrollers): Added overriden method.
+	* ETObjectBrowserLayout:
+	(-hasScrollers): Added overriden method (temporary solution).
+	* ETContainer:
+	(-setTemporaryView:): Moved the code that controls the scrollable area 
+	item visibility into -[ETLayoutItem(Scrollable) 
+	updateScrollableAreaItemVisibility].
+	
 2009-06-12 Quentin Mathe <qmathe@club-internet.fr>
 
 	* ETLayoutItem:

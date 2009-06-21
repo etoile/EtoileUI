@@ -44,6 +44,7 @@
 #import "ETLayoutItem.h"
 #import "ETGeometry.h"
 #import "ETActionHandler.h"
+#import "ETLayoutItem+Scrollable.h"
 #import "ETLayoutItemGroup.h"
 #import "ETWindowItem.h"
 #import "ETStyleGroup.h"
@@ -1193,7 +1194,8 @@ content rect does.  */
 	return [self frame];
 }
 
-/** Tells the receiver the layout has been changed and it should post 
+/** <override-never />
+Tells the receiver the layout has been changed and it should post 
 ETLayoutItemLayoutDidChangeNotification. 
 
 This method tries to notify the delegate that might exist with subclasses 
@@ -1202,6 +1204,9 @@ e.g. ETLayoutItemGroup.
 You should never use this method unless you write an ETLayoutItem subclass. */
 - (void) didChangeLayout: (ETLayout *)oldLayout
 {
+	[[self layout] syncLayoutViewWithItem: self];
+	[self updateScrollableAreaItemVisibility];
+
 	NSNotification *notif = [NSNotification 
 		notificationWithName: ETLayoutItemLayoutDidChangeNotification object: self];
 	id delegate = [self valueForKey: kETDelegateProperty];

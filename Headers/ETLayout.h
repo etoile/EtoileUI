@@ -165,6 +165,9 @@ typedef enum _ETSizeConstraintStyle
 - (BOOL) isWidget;
 - (BOOL) isComputedLayout;
 - (BOOL) isOpaque;
+- (BOOL) isScrollable;
+
+- (BOOL) hasScrollers;
 
 /* Size And Utility Accessors */
 

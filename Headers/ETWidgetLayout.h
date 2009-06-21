@@ -46,6 +46,8 @@
 }
 
 - (BOOL) isWidget;
+- (BOOL) isOpaque;
+- (BOOL) hasScrollers;
 
 - (void) syncLayoutViewWithItem: (ETLayoutItem *)item;
 

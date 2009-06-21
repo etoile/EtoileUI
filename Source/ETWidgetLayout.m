@@ -62,6 +62,16 @@ See also -[ETLayout isWidget].*/
 	return YES;	
 }
 
+/** <override-dummy />
+Returns YES to indicate the receiver makes the content scrollable by itself; 
+layout views usually come with their own scrollers.
+
+See also -[ETLayout hasScrollers].*/
+- (BOOL) hasScrollers
+{
+	return YES;
+}
+
 /** Returns YES to indicate the receiver don't let the layout context items draw 
 themselves, but delegate it the wrapped widget.
 

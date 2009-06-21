@@ -580,6 +580,32 @@ See ETWidgetLayout.*/
 	return NO;
 }
 
+/** <override-dummy />
+Returns whether the layout content is scrollable. By default, returns YES.
+
+You can override this method to prevent the content to be scrollable. When 
+NO is returned and a scrollable area item decorates the layout context, that  
+decorator will be removed temporarily.
+
+See also -hasScrollers. */
+- (BOOL) isScrollable
+{
+	return YES;
+}
+
+/** <override-dummy />
+Returns YES when the layout has its own scrollers. By default, returns NO.
+
+You are expected to override this method to indicate that the layout makes the 
+content scrollable by itself. By returning YES, the layout context can know 
+that no scrollable area item has to be inserted.
+
+See also -isScrollable and ETLayoutItem(Scrollable). */
+- (BOOL) hasScrollers
+{
+	return NO;
+}
+
 /** Returns YES if all layout items are visible in the bounds of the related 
 	container once the layout has been computed, otherwise returns NO when
 	the layout has run out of space.

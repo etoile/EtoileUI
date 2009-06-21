@@ -212,21 +212,12 @@ but they never never manipulate it as a subview in view hierachy. */
 
 	if (view != nil) /* Set up layout view */
 	{
-		[[self layoutItem] hidesScrollViewDecoratorItem];
-		
 		/* Inserts the layout view */
 		[view removeFromSuperview];
 		[view setFrameSize: [self frame].size];
 		[view setFrameOrigin: NSZeroPoint];
 		[self addSubview: view];
-		
-		[[self layout] syncLayoutViewWithItem: [self layoutItem]];
 	}
-	else /* Tear down layout view */
-	{
-		if ([[self layoutItem] isScrollViewShown])
-			[[self layoutItem] unhidesScrollViewDecoratorItem];		
-	}	
 }
 
 /* Overriden NSView methods */

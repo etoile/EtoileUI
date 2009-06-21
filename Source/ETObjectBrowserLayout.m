@@ -57,6 +57,13 @@
 
 @implementation ETObjectBrowserLayout
 
+// TODO: To be removed once this layout is not just an outline view. Then 
+// -isScrollable should be added and returns NO.
+- (BOOL) hasScrollers
+{
+	return YES;
+}
+
 - (id) browsedObject
 {
 	return [(ETLayoutItem *)[self layoutContext] representedObject];

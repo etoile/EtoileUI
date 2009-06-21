@@ -156,6 +156,33 @@ decorator chain by calling hide/unhide methods. */
 	return (NSScrollView *)[[cachedDecorator supervisorView] mainView];
 }
 
+/** Hides or shows the cached scrollable area item based on whether the current 
+layout controls the scrollers visibility or not.
+
+You should never need to call this method which is used internally. */
+- (void) updateScrollableAreaItemVisibility
+{
+	ETLayout *layout = [self layout];
+
+	if ([layout hasScrollers])
+	{
+		NSAssert([layout isScrollable], @"A layout which returns YES "
+		 "with -hasScrollers must return YES with -isScrollable");
+	}
+
+	BOOL hideScrollableAreaItem = ([layout isScrollable] == NO || [layout hasScrollers]);
+	BOOL showScrollableAreaItem =  ([layout isScrollable] && [layout hasScrollers] == NO);
+
+	if (hideScrollableAreaItem)
+	{
+		[self hidesScrollViewDecoratorItem];
+	}
+	else if (showScrollableAreaItem && [self isScrollViewShown])
+	{
+		[self unhidesScrollViewDecoratorItem];		
+	}
+}
+
 - (void) cacheScrollViewDecoratorItem: (ETScrollableAreaItem *)decorator
 {
 	SET_PROPERTY(decorator, kETCachedScrollableAreaDecoratorItem);
@@ -170,7 +197,8 @@ decorator chain by calling hide/unhide methods. */
    it. -unhidesScrollViewDecoratorItem triggers this call back. */
 - (void) didChangeDecoratorOfItem: (ETUIItem *)item
 {
-	if ([item isLayoutItem] && [(ETLayoutItem *)item firstScrollViewDecoratorItem] != nil)
+	NSParameterAssert([item isLayoutItem]);
+	if ([(ETLayoutItem *)item firstScrollViewDecoratorItem] != nil)
 		[self cacheScrollViewDecoratorItem: [(ETLayoutItem *)item firstScrollViewDecoratorItem]];
 
 	// TODO: We might cache the position of the first scroll view decorator in  

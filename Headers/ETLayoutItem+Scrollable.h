@@ -55,12 +55,16 @@ reenabled.  */
 - (BOOL) hasHorizontalScroller;
 - (void) setHasHorizontalScroller: (BOOL)scroll;
 - (NSScrollView *) scrollView;
-- (BOOL) isScrollViewShown;
+- (BOOL) isScrollViewShown; // TODO: Rename -hasAnyVisibleScrollers
 
 // TODO: Remove...
 - (void) setShowsScrollView: (BOOL)show;
 - (BOOL) isContainerScrollViewInserted;
 - (void) unhidesScrollViewDecoratorItem;
 - (void) hidesScrollViewDecoratorItem;
+
+/* Framework Private */
+
+- (void) updateScrollableAreaItemVisibility;
 
 @end
