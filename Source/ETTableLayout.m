@@ -195,8 +195,13 @@ The property names are used as the column identifiers. */
 	if (nil == aSource)
 		return;
 
-	[self setDisplayedProperties: 
-		[[aSource ifResponds] displayedItemPropertiesInItemGroup: _layoutContext]];
+	NSArray *properties = [[aSource ifResponds] 
+		displayedItemPropertiesInItemGroup: _layoutContext];
+
+	if (nil == properties)
+		return;
+
+	[self setDisplayedProperties: properties];
 }
 
 /** Returns the column header title associated with the given property. */
