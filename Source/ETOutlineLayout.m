@@ -372,7 +372,8 @@
 
 - (BOOL) outlineView: (NSOutlineView *)outlineView acceptDrop: (id < NSDraggingInfo >)info item: (id)item childIndex: (int)index
 {
-    //ETDebugLog(@"Accept drop in %@", [self container]);
+    ETDebugLog(@"Accept drop in %@", _layoutContext);
+
 	id droppedItem = [[ETPickboard localPickboard] popObject];
 	id dropTargetItem = item;
 	
@@ -389,7 +390,7 @@
 
 - (NSDragOperation) outlineView: (NSOutlineView *)outlineView validateDrop: (id < NSDraggingInfo >)info proposedItem: (id)item proposedChildIndex: (int)index
 {
-    //ETDebugLog(@"Validate drop with dragging source %@ in %@", [info draggingSource], [self container]);
+    //ETLog(@"Validate drop with dragging source %@ in %@", [info draggingSource], _layoutContext);
 
 	// TODO: Replace by [layoutContext handleValidateDropForObject:] and improve
 	if (item == nil || [item isGroup])

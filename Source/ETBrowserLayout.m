@@ -182,26 +182,20 @@
 // -setSelectionIndexPaths:. 
 - (BOOL) browser: (NSBrowser *)sender selectCellWithString: (NSString *)title inColumn: (int)column
 {
-	id delegate = [[self container] delegate];
 	BOOL selected = YES;
 	NSString *path = [[sender pathToColumn: column] stringByAppendingPathComponent: title];
 	ETLayoutItem *item = [[self layoutContext] itemAtPath: path];
 	
-	if ([delegate respondsToSelector: @selector(browser:selectCellWithString:inColumn:)])
-	{
-		selected = [delegate browser: sender selectCellWithString: title inColumn: column];
-	}
-	
 	if (selected)
 	{
-		int row = [[self container] indexOfItem: item];
+		int row = [(ETLayoutItemGroup *)_layoutContext indexOfItem: item];
 
 		// NOTE: Not really sure that's the best way to do it		
-		[[self container] setSelectionIndex: row];
+		[(ETLayoutItemGroup *)_layoutContext setSelectionIndex: row];
 	}
 
 	ETDebugLog(@"Cell selection did change to %@ in layout view %@ of %@", 
-		[self selectionIndexPaths], [self layoutView], [self container]);
+		[self selectionIndexPaths], [self layoutView], _layoutContext);
 	
 	return selected;
 }
@@ -211,19 +205,13 @@
 // [sender selectedCells]; is probably helpful.
 - (BOOL) browser: (NSBrowser *)sender selectRow: (int)row inColumn: (int)column
 {
-	id delegate = [[self container] delegate];
 	BOOL selected = YES;
 	
-	if ([delegate respondsToSelector: @selector(browser:selectRow:inColumn:)])
-	{
-		selected = [delegate browser: sender selectRow: row inColumn: column];
-	}
-	
 	// NOTE: Not really sure that's the best way to do it
-	[[self container] setSelectionIndex: row];
+	[(ETLayoutItemGroup *)_layoutContext setSelectionIndex: row];
 
 	ETDebugLog(@"Row selection did change to %@ in layout view %@ of %@", 
-		[self selectionIndexPaths], [self layoutView], [self container]);
+		[self selectionIndexPaths], [self layoutView], _layoutContext);
 	
 	return selected;
 }
