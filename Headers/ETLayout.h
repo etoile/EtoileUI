@@ -154,8 +154,6 @@ typedef enum _ETSizeConstraintStyle
 
 - (void) setAttachedInstrument: (id)anInstrument;
 - (id) attachedInstrument;
-//- (void) setContainer: (ETContainer *)newContainer;
-- (ETContainer *) container;
 
 - (void) setLayoutContext: (id <ETLayoutingContext>)context;
 - (id <ETLayoutingContext>) layoutContext;

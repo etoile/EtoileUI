@@ -211,10 +211,10 @@ You must never use this method. */
 
 - (void) renderWithLayoutItems: (NSArray *)items isNewContent: (BOOL)isNewContent
 {
-	if ([self container] == nil)
+	if ([_layoutContext supervisorView] == nil)
 	{
 		ETLog(@"WARNING: Layout context %@ must have a container otherwise "
-			@"view-based layout %@ cannot be set", [self layoutContext], self);
+			@"view-based layout %@ cannot be set", _layoutContext, self);
 		return;
 	}
 
