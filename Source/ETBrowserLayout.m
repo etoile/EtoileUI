@@ -35,17 +35,13 @@
  */
 
 #import <EtoileFoundation/Macros.h>
-#import <EtoileUI/ETBrowserLayout.h>
-#import <EtoileUI/ETContainer.h>
-#import <EtoileUI/ETLayoutItem.h>
-#import <EtoileUI/ETLayoutItemGroup.h>
-#import <EtoileUI/ETLayout.h>
-#import <EtoileUI/ETLayoutLine.h>
-#import <EtoileUI/NSView+Etoile.h>
-#import <EtoileUI/ETCompatibility.h>
+#import "ETBrowserLayout.h"
+#import "ETLayout.h"
+#import "ETLayoutItem.h"
+#import "ETLayoutItemGroup.h"
+#import "ETCompatibility.h"
 
-#import <EtoileUI/FSBrowserCell.h>
-
+#import "FSBrowserCell.h"
 
 #define DEFAULT_ROW_HEIGHT 20
 
@@ -169,6 +165,7 @@
 			newCellSize = [columnMatrix cellSize];
 			newCellSize.height = DEFAULT_ROW_HEIGHT * factor;
 			[columnMatrix setCellSize: newCellSize];
+
 			ETDebugLog(@"Resize %@ cell size from %@ to %@", columnMatrix, 
 				NSStringFromSize([columnMatrix cellSize]), 
 				NSStringFromSize(newCellSize));
@@ -221,11 +218,11 @@
 - (int) browser: (NSBrowser *)sender numberOfRowsInColumn: (int)column
 {
 	ETLayoutItemGroup *item = nil;
-	int nbOfItems = 0;
+	BOOL isFirstColumn = (0 == column);
 
-	if (column == 0)
+	if (isFirstColumn)
 	{
-		item = (ETLayoutItemGroup *)[self layoutContext];
+		item = _layoutContext;
 	}
 	else
 	{
@@ -234,15 +231,15 @@
 		item = [[sender selectedCellInColumn: column - 1] representedObject];
 	}
 	NSAssert(item != nil, @"Parent item must never be nil in -browser:numberOfRowsInColumn:");
-	NSAssert([item isGroup], @"Parent item "
-		@"must always be of ETLayoutItemGroup class kind");
-	
-	nbOfItems = [[item items] count];	
-	/* First time */
-	if (nbOfItems == 0)
+	NSAssert([item isGroup], @"Parent item must always be of ETLayoutItemGroup class kind");
+
+	int nbOfItems = [[item arrangedItems] count];
+	BOOL isFirstAccess = (0 == nbOfItems);
+
+	if (isFirstAccess)
 	{
 		[item reloadIfNeeded];
-		nbOfItems = [[item items] count];	
+		nbOfItems = [[item arrangedItems] count];	
 	}
 	
 	ETDebugLog(@"Returns %d as number of items in browser view %@", nbOfItems, sender);
@@ -250,15 +247,17 @@
 	return nbOfItems;
 }
 
-- (void) browser: (NSBrowser *)sender willDisplayCell: (id)cell atRow: (int)row column: (int)column
+- (void) browser: (NSBrowser *)sender 
+ willDisplayCell: (id)cell 
+           atRow: (int)row 
+          column: (int)column
 {
 	ETLayoutItemGroup *item = nil;
-	ETLayoutItem *childItem = nil;
-	id value = nil;
+	BOOL isFirstColumn = (0 == column);
 	
-	if (column == 0)
+	if (isFirstColumn)
 	{
-		item = (ETLayoutItemGroup *)[self layoutContext];
+		item = _layoutContext;
 	}
 	else
 	{
@@ -267,10 +266,9 @@
 		item = [[sender selectedCellInColumn: column - 1] representedObject];
 	}
 	NSAssert(item != nil, @"Parent item must never be nil in -browser:numberOfRowsInColumn:");
-	NSAssert([item isGroup], @"Parent item "
-		@"must always be of ETLayoutItemGroup class kind");
+	NSAssert([item isGroup], @"Parent item must always be of ETLayoutItemGroup class kind");
 
-	childItem = [item itemAtIndex: row];
+	ETLayoutItem *childItem = [[item arrangedItems] objectAtIndex: row];
 	[cell setRepresentedObject: childItem];
 	ETDebugLog(@"Set represented object %@ of cell %@", [cell representedObject], cell);
 
@@ -285,8 +283,8 @@
 
 	// TODO: Let the developer customizes what value and icon are bound to and 
 	// also makes use of a custom cell instead of FSBrowserCell. The best 
-	// way is probably to provide a delegate method (and option
-	value = [childItem valueForProperty: @"displayName"];
+	// way is probably to provide a delegate method.
+	id value = [childItem valueForProperty: kETDisplayNameProperty];
 
 	NSAssert2(value != nil, @"Item %@ returns nil value in browser view %@ "
 		@"and display name must never be nil", childItem, self);
@@ -299,7 +297,7 @@
 
 	if ([cell isKindOfClass: [NSBrowserCell class]])
 	{
-		NSImage *icon = [childItem valueForProperty: @"icon"];
+		NSImage *icon = [childItem valueForProperty: kETIconProperty];
 		NSSize cellSize = [[sender matrixInColumn: column] cellSize];
 		NSSize updatedIconSize = [icon size];
 		

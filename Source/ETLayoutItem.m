@@ -62,6 +62,7 @@ NSString *kETActionHandlerProperty = @"actionHandler";
 NSString *kETAutoresizingMaskProperty = @"autoresizingMask";
 NSString *kETBoundingBoxProperty = @"boundingBox";
 NSString *kETDefaultFrameProperty = @"defaultFrame";
+NSString *kETDisplayNameProperty = @"displayName"; 
 NSString *kETFlippedProperty = @"flipped";
 NSString *kETFrameProperty = @"frame";
 NSString *kETIconProperty = @"icon";

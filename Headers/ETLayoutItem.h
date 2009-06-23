@@ -56,6 +56,7 @@ extern NSString *kETActionHandlerProperty; /** actionHandler property name */
 extern NSString *kETAutoresizingMaskProperty; /** autoresizingMask property name */
 extern NSString *kETBoundingBoxProperty; /** boudingBox property name */
 extern NSString *kETDefaultFrameProperty; /** defaultFrame property name */
+extern NSString *kETDisplayNameProperty; /** displayName property name */
 extern NSString *kETFlippedProperty; /** flipped property name */
 extern NSString *kETFrameProperty; /** frame property name */  
 extern NSString *kETIconProperty; /** icon property name */
