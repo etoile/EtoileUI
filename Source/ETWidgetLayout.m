@@ -40,16 +40,11 @@
 #import "ETWidgetLayout.h"
 #import "ETActionHandler.h"
 #import "ETLayoutItem.h"
+#import "ETLayoutItem+Scrollable.h"
 #import "ETCompatibility.h"
-#import "ETContainer.h"
-
-@interface ETContainer (ETEventHandling)
-- (void) mouseDoubleClickItem: (ETLayoutItem *)item;
-@end
 
 @interface ETWidgetLayout (Private)
 - (NSInvocation *) invocationForSelector: (SEL)selector;
-- (void) sendInvocationToDisplayView: (NSInvocation *)inv;
 - (NSView *) layoutViewWithoutScrollView;
 @end
 
@@ -82,15 +77,17 @@ See also -[ETLayout isOpaque].*/
 	return YES;	
 }
 
-/* Various adjustements necessary when layout object is a wrapper around an 
-   AppKit view. This method is called on a regular basis each time a setting of
-   the container is modified and needs to be mirrored on the display view. */
+/** Synchronizes the widget view settings with the given item.
+
+This layout item is usually the layout context.
+
+This method is called on a regular basis each time a setting of the layout 
+context is modified and needs to be mirrored on the widget view. */
 - (void) syncLayoutViewWithItem: (ETLayoutItem *)item
 {
-	if ([self layoutView] == nil && [[item supervisorView] isKindOfClass: [ETContainer class]] == NO)
-		return;
+	NSParameterAssert([self layoutView] != nil);
+	NSParameterAssert([item supervisorView] != nil);
 
-	ETContainer *container = (ETContainer *)[item supervisorView];
 	NSInvocation *inv = nil;
 	SEL doubleAction = @selector(doubleClick:);
 	
@@ -102,10 +99,10 @@ See also -[ETLayout isOpaque].*/
 	[inv setArgument: &self atIndex: 2];
 	[inv invoke];
 	
-	BOOL hasVScroller = [container hasVerticalScroller];
-	BOOL hasHScroller = [container hasHorizontalScroller];
+	BOOL hasVScroller = [item hasVerticalScroller];
+	BOOL hasHScroller = [item hasHorizontalScroller];
 	
-	if ([container isScrollViewShown] == NO)
+	if ([item isScrollViewShown] == NO)
 	{
 		hasVScroller = NO;
 		hasHScroller = NO;
