@@ -353,11 +353,7 @@
 /* We catch the selection change by receiving the action in -click: */
 - (void) browserSelectionDidChange
 {
-	ETDebugLog(@"Selection did change to %@ in layout view %@ of %@", 
-		[self selectionIndexPaths], [self layoutView], [self container]);
-	
-	/* Update selection state in the layout item tree */
-	[[self container] setSelectionIndexPaths: [self selectionIndexPaths]];
+	[self didChangeSelectionInLayoutView];
 }
 
 /* Actions */

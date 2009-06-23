@@ -36,6 +36,7 @@
 	THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#import <EtoileFoundation/NSObject+HOM.h>
 #import "ETWidgetLayout.h"
 #import "ETActionHandler.h"
 #import "ETLayoutItem.h"
@@ -164,6 +165,22 @@ scroll view, otherwise the returned view is identical to -layoutView. */
 		return [layoutView documentView];
 
 	return layoutView;
+}
+
+/** <override-never />
+Tells the receiver that the layout view selection has changed and it needs to 
+reflect this new selection in the layout context.
+
+Keep in mind this method is invoked by various subclasses such as ETOutlineLayout 
+which overrides -selectedItems. */
+- (void) didChangeSelectionInLayoutView
+{
+	ETDebugLog(@"Selection did change to %@ in layout view %@ of %@", 
+		[self selectionIndexPaths], [self layoutView], _layoutContext);
+	
+	/* Update selection state in the layout item tree and post a notification */
+	[(id <ETWidgetLayoutingContext>)[_layoutContext ifResponds] 
+		setSelectionIndexPaths: [self selectionIndexPaths]];
 }
 
 /** <override-subclass /> */

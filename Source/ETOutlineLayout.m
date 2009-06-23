@@ -198,14 +198,7 @@
 
 - (void) outlineViewSelectionDidChange: (NSNotification *)notif
 {
-	id delegate = [[self container] delegate]; // FIXME: Remove ETContainer dependency
-	
-	[self tableViewSelectionDidChange: notif];
-
-	if ([delegate respondsToSelector: @selector(outlineViewSelectionDidChange:)])
-	{
-		[delegate outlineViewSelectionDidChange: notif];
-	}
+	[self didChangeSelectionInLayoutView];
 }
 
 // NOTE: Only for Cocoa presently but we'll be probably be used everywhere later.

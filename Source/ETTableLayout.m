@@ -403,16 +403,9 @@ yet, it is created. */
 	return selectedItems;
 }
 
-/* Keep in mind this method is also used by ETOutlineLayout which overrides
-   -selectedItems. */
 - (void) tableViewSelectionDidChange: (NSNotification *)notif
 {
-	ETDebugLog(@"Selection did change to %@ in layout view %@ of %@", 
-		[self selectionIndexPaths], [self layoutView], _layoutContext);
-	
-	/* Update selection state in the layout item tree and post a notification */
-	[(id <ETWidgetLayoutingContext>)[_layoutContext ifResponds] 
-		setSelectionIndexPaths: [self selectionIndexPaths]];
+	[self didChangeSelectionInLayoutView];
 }
 
 // TODO: Implement forwarding of all delegate methods to ETContainer delegate by

@@ -54,6 +54,7 @@
 - (BOOL) hasScrollers;
 
 - (void) syncLayoutViewWithItem: (ETLayoutItem *)item;
+- (void) didChangeSelectionInLayoutView;
 
 - (ETLayoutItem *) doubleClickedItem;
 - (void) doubleClick: (id)sender;
