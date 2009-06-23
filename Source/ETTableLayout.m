@@ -35,6 +35,7 @@
  */
 
 #import <EtoileFoundation/Macros.h>
+#import <EtoileFoundation/NSObject+HOM.h>
 #import "ETTableLayout.h"
 #import "ETContainer.h"
 #import "ETLayoutItem.h"
@@ -135,7 +136,6 @@
 
 - (NSArray *) allTableColumns
 {
-	// FIXME: return copy or not? I don't think so.
 	return [_propertyColumns allValues];
 }
 
@@ -190,15 +190,13 @@ The property names are used as the column identifiers. */
 	}
 }
 
-- (void) _updateDisplayedPropertiesFromSource
+- (void) _updateDisplayedPropertiesFromSource: (id)aSource
 {
-	if ([[[self container] source] respondsToSelector: @selector(displayedItemPropertiesInItemGroup:)])
-	{
-		NSArray *properties = [[[self container] source] 
-			displayedItemPropertiesInItemGroup: [[self container] layoutItem]];		
-			
-		[self setDisplayedProperties: properties];
-	}
+	if (nil == aSource)
+		return;
+
+	[self setDisplayedProperties: 
+		[[aSource ifResponds] displayedItemPropertiesInItemGroup: _layoutContext]];
 }
 
 /** Returns the column header title associated with the given property. */
@@ -235,7 +233,7 @@ By default, columns are not editable and NO is returned. */
 this is temporary.
 
 TODO: Return a layout item built dynamically by determining the cell subclass 
-kind. May be add +[ETLayoutItem(Factory) itemWithCell:]. */
+kind. May be add -[ETUIItemFactory itemWithCell:]. */
 - (id) styleForProperty: (NSString *)property
 {
 	return [[_propertyColumns objectForKey: property] dataCell];
@@ -334,24 +332,24 @@ yet, it is created. */
 
 - (void) renderWithLayoutItems: (NSArray *)items isNewContent: (BOOL)isNewContent
 {
-	if ([self container] == nil)
+	if ([[self layoutContext] supervisorView] == nil)
 	{
-		ETLog(@"WARNING: Layout context %@ must have a container otherwise "
-			@"view-based layout %@ cannot be set", [self layoutContext], self);
+		ETLog(@"WARNING: Layout context %@ must have a supervisor view otherwise "
+			@"view-based layout %@ cannot be set", _layoutContext, self);
 		return;
 	}
 	
-	[self setUpLayoutView];
-	
-	[self resizeLayoutItems: items toScaleFactor: [[self layoutContext] itemScaleFactor]];
+	[self setUpLayoutView];	
+	[self resizeLayoutItems: items 
+	          toScaleFactor: [[self layoutContext] itemScaleFactor]];
 
 	/* Only reload from the data source if the layout item tree visible in the 
 	   table/outline view has been mutated */
 	if (isNewContent)
 	{
-		if ([[self container] source] != nil)
-			[self _updateDisplayedPropertiesFromSource];
-				
+		id source = [[_layoutContext ifResponds] source];
+		[self _updateDisplayedPropertiesFromSource: source];
+
 		[[self tableView] reloadData];
 		[[self tableView] setNeedsDisplay: YES]; // FIXME: -updateLayout redisplay should be enough
 	}
@@ -410,41 +408,16 @@ yet, it is created. */
 - (void) tableViewSelectionDidChange: (NSNotification *)notif
 {
 	ETDebugLog(@"Selection did change to %@ in layout view %@ of %@", 
-		[self selectionIndexPaths], [self layoutView], [self container]);
-
-	id delegate = [[self container] delegate];
+		[self selectionIndexPaths], [self layoutView], _layoutContext);
 	
 	/* Update selection state in the layout item tree and post a notification */
-	[[self container] setSelectionIndexPaths: [self selectionIndexPaths]];
-
-	if ([delegate respondsToSelector: @selector(tableViewSelectionDidChange:)])
-	{
-		[delegate tableViewSelectionDidChange: notif];
-	}
+	[(id <ETWidgetLayoutingContext>)[_layoutContext ifResponds] 
+		setSelectionIndexPaths: [self selectionIndexPaths]];
 }
 
 // TODO: Implement forwarding of all delegate methods to ETContainer delegate by
 // overriding -respondsToSelector: and forwardInvocation:
 // Put this forward code into ETLayout
-#if 0
-- (void) tableView: (NSTableView *)tv willDisplayCell: (id)cell
-    forTableColumn: (NSTableColumn *)col row: (int)row
-{
-	ETLayoutItem *item = [[[self  layoutContext] arrangedItems] objectAtIndex: row];
-	NSString *colIdentifier = [col identifier];
-	id delegate = [[self container] delegate]; // TODO: Remove ETContainer dependency
-
-	if ([delegate respondsToSelector: @selector(layoutItem:setValue:forProperty:)])
-	{
-		// NOTE: May we do this only on reload
-		[delegate layoutItem: item setValue: [item valueForProperty: colIdentifier] forProperty: colIdentifier];
-	}
-	if ([delegate respondsToSelector: @selector(tableView:willDisplayCell:forTableColumn:row:)])
-	{
-		[delegate tableView: tv willDisplayCell: cell forTableColumn: col row: row];
-	}
-}
-#endif
 
 // NOTE: Only for Cocoa presently but we'll be probably be used everywhere later.
 #ifndef GNUSTEP
@@ -623,7 +596,7 @@ yet, it is created. */
 #endif
 
 	ETDebugLog(@"Validate drop on %@ with dragging source %@ in %@ drag mask %d drop op %d", 
-		dropTargetItem, [info draggingSource], [self container], [info draggingSourceOperationMask], op);
+		dropTargetItem, [info draggingSource], _layoutContext, [info draggingSourceOperationMask], op);
 		
 	// TODO: Replace by [layoutContext handleValidateDropForObject:] and improve
 	if ([dropTargetItem isGroup] == NO) /* Retarget the drop if needed */
@@ -640,7 +613,7 @@ yet, it is created. */
                row: (int)row 
 	 dropOperation: (NSTableViewDropOperation)op
 {
-    ETDebugLog(@"Accept drop in %@ drag mask %d drop op %d", [self container], 
+    ETDebugLog(@"Accept drop in %@ drag mask %d drop op %d", _layoutContext, 
 		[info draggingSourceOperationMask], op);
 
 	id droppedItem = [[ETPickboard localPickboard] popObject];

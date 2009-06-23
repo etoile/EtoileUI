@@ -1,3 +1,22 @@
+2009-06-22 Quentin Mathe <qmathe@club-internet.fr>
+
+	* ETLayout:
+	Declared a ETLayoutingContextOptional protocol which extends indirectly 
+	ETLayoutingContext.
+	* ETWidgetLayout:
+	Declared a protocol ETWidgetLayoutingContext.
+	* ETTableLayout:
+	Removed every container related methods use (not listing all the methods 
+	in this entry).
+	(-_updateDisplayedPropertiesFromSource:): Rewritten to use -ifResponds and 
+	access the source object through a parameter.
+	(-renderWithLayoutItems:isNewContent:): Updated to use -ifResponds and the 
+	altered -_updatedDisplayedPropertiesFromSource:.
+	(-tableViewSelectionDidChange:): Removed code without any real use which 
+	was forwarding -tableViewSelectionDidChange.
+	(-tableView:willDisplayCell:forTableColumn:row:): Removed (was a dead 
+	method not compiled).
+	
 2009-06-21 Quentin Mathe <qmathe@club-internet.fr>
 
 	* ETLayoutItem:

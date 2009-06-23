@@ -44,7 +44,7 @@
 	layout context (plays a role analog to the graphic context) 
 	- layout context is where the layouting occurs
 	- graphic context is where the drawing occurs */
-@protocol ETLayoutingContext
+@protocol ETLayoutingContext <NSObject>
 
 /* Required */
 - (NSArray *) items;
@@ -79,6 +79,10 @@
 - (void) sortWithSortDescriptors: (NSArray *)descriptors recursively: (BOOL)recursively;
 //- (void) setShowsScrollView: (BOOL)scroll;
 
+@end
+
+@interface NSObject (ETLayoutingContextOptional)
+- (id) source;
 @end
 
 /** All subclasses which implement strictly positional layout algorithms as 

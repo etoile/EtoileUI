@@ -39,6 +39,10 @@
 #import <AppKit/AppKit.h>
 #import <EtoileUI/ETLayout.h>
 
+@protocol ETWidgetLayoutingContext
+- (void) setSelectionIndexPaths: (NSArray *)indexPaths;
+@end
+
 
 @interface ETWidgetLayout : ETLayout
 {
