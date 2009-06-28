@@ -51,10 +51,6 @@ ETEvent, ETDecoratorItem;
 
 - (id) deepCopy;
 
-/* Basic Accessors */
-
-- (void) setTemporaryView: (NSView *)view;
-
 @end
 
 /* Deprecated (DO NOT USE, WILL BE REMOVED LATER) */

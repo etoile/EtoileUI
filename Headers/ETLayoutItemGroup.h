@@ -154,6 +154,7 @@ extern NSString *kETSourceProperty; /** source property name */
 
 /* Layouting Context Protocol */
 
+- (void) setLayoutView: (NSView *)aView;
 - (NSArray *) visibleItems;
 - (void) setVisibleItems: (NSArray *)items;
 - (NSArray *) visibleItemsForItems: (NSArray *)items;

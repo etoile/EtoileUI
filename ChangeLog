@@ -1,4 +1,21 @@
-2009-06-22 Quentin Mathe <qmathe@club-internet.fr>
+2009-06-28 Quentin Mathe <qmathe@club-internet.fr>
+
+	* ETContainer:
+	(-setTemporaryView:): Removed. We now use the superclass implementation.
+	* ETLayout:
+	(-tearDown): Modified to use -setLayoutView: now provided by 
+	ETLayoutingContext protocol.
+	(-setUpLayoutView): Rewritten to use -setUpLayoutView.
+	* ETView:
+	(-setContentView:isTemporary:): Disabled the code that touches the receiver 
+	autoresizing mask.
+	* ETLayoutItemGroup:
+	(-setLayoutView:): Added.
+	* ETLayoutItem:
+	(-setView:): Improved to invoke -setAutoresizingMask:, this will currently 
+	apply the new view autoresizing mask to the display view.
+
+2009-06-23 Quentin Mathe <qmathe@club-internet.fr>
 
 	* ETLayout:
 	Declared a ETLayoutingContextOptional protocol which extends indirectly 

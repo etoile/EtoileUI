@@ -749,6 +749,7 @@ widget provided by the widget backend. */
 		[self setSupervisorView: wrapperView];
 		RELEASE(wrapperView);
 	}
+	[self setAutoresizingMask: [newView autoresizingMask]];
 	[[self supervisorView] setWrappedView: newView];
 	
 	/* Set up the new view */

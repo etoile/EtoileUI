@@ -456,13 +456,13 @@ view installed by the layout. */
 {
 	/* Ensure the resizing of all subviews is handled automatically */
 	[self setAutoresizesSubviews: YES];
-	[self setAutoresizingMask: [view autoresizingMask]];
 
 	if ([self wrappedView] != nil)
 	{
 		NSAssert1([[self wrappedView] isDescendantOf: self], @"You must not "
 			"move view %@ to a superview without first removing it explicitely "
-			"with -[ETLayoutItem setView: nil] or -[ETView setWrappedView: nil]", [self wrappedView]);
+			"with -[ETLayoutItem setView: nil] or -[ETView setWrappedView: nil]", 
+			[self wrappedView]);
 		[[self wrappedView] removeFromSuperview];
 	}
 
@@ -477,7 +477,7 @@ view installed by the layout. */
 		else /* Passed a nil temporary view */
 		{
 			/* Restore autoresizing mask */
-			[[self temporaryView] setAutoresizingMask: [self autoresizingMask]];
+			//[[self temporaryView] setAutoresizingMask: [self autoresizingMask]];
 			[[self temporaryView] removeFromSuperview];
 			[[self wrappedView] setHidden: NO];
 		}
@@ -492,7 +492,7 @@ view installed by the layout. */
 		else /* Passed a nil wrapped view */
 		{
 			/* Restore autoresizing mask */
-			[[self wrappedView] setAutoresizingMask: [self autoresizingMask]];
+			//[[self wrappedView] setAutoresizingMask: [self autoresizingMask]];
 		}
 	}
 }

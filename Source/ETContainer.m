@@ -185,41 +185,6 @@ Never returns nil. */
 	return [super layoutItem];
 }
 
-/* Private helper methods to sync display view and container */
-
-/** Sets the custom view provided by the layout set on -layoutItem. 
-
-Never calls this method unless you write an ETLayout subclass.
-
-Method called when we switch between layouts. Manipulating the layout view is 
-the job of ETContainer, ETLayout instances may provide a layout view prototype
-but they never never manipulate it as a subview in view hierachy. */
-- (void) setTemporaryView: (NSView *)view
-{
-	if (_temporaryView == nil && view == nil)
-		return;
-
-	if (_temporaryView == view && (_temporaryView != nil || view != nil))
-	{
-		ETLog(@"WARNING: Trying to assign an identical display view to container %@", self);
-		return;
-	}
-	
-	[_temporaryView removeFromSuperview];
-	/* Retain indirectly by our layout item which retains the layout that 
-	   provides this view. Also retain as a subview by us just below. */
-	_temporaryView = view; 
-
-	if (view != nil) /* Set up layout view */
-	{
-		/* Inserts the layout view */
-		[view removeFromSuperview];
-		[view setFrameSize: [self frame].size];
-		[view setFrameOrigin: NSZeroPoint];
-		[self addSubview: view];
-	}
-}
-
 /* Overriden NSView methods */
 
 /* GNUstep doesn't rely on -setFrameSize: in -setFrame: unlike Cocoa, so we 

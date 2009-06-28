@@ -488,7 +488,7 @@ You must call the superclass implementation if you override this method. */
 	// May be we should move it into -[layout setContainer:]...
 	// Triggers scroll view display which triggers layout render in turn to 
 	// compute the content size
-	[[[self layoutContext] supervisorView] setTemporaryView: nil]; 
+	[[self layoutContext] setLayoutView: nil]; 
 }
 
 /** <override-dummy />Overrides if your subclass requires extra transformation 
@@ -994,20 +994,14 @@ context and the tree rooted in -rootItem. */
 - (void) setUpLayoutView
 {
 	id layoutView = [self layoutView];
-	ETView *supervisorView = [[self layoutContext] supervisorView];
 
 	NSAssert1(layoutView != nil, @"Layout view to set up must not be nil in %@", self);
 	
-	if ([layoutView superview] == nil)
-	{
-		[layoutView setAutoresizingMask: NSViewHeightSizable | NSViewWidthSizable];
-		[supervisorView setTemporaryView: layoutView];
-	}
-	else if ([[layoutView superview] isEqual: supervisorView] == NO)
-	{
-		ETLog(@"WARNING: A view-based layout should never have another "
-			  @"superview than the layout context supervisor view or nil.");
-	}
+	if ([layoutView superview] != nil)
+		return;
+
+	[layoutView setAutoresizingMask: NSViewHeightSizable | NSViewWidthSizable];
+	[[self layoutContext] setLayoutView: layoutView];
 }
 
 /** <override-dummy /> */

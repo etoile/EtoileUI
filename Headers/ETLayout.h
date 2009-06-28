@@ -53,6 +53,7 @@
 - (void) setVisibleItems: (NSArray *)items;
 - (NSSize) size;
 - (void) setSize: (NSSize)size;
+- (void) setLayoutView: (NSView *)aView;
 - (ETView *) supervisorView;
 - (void) setNeedsDisplay: (BOOL)now;
 - (BOOL) isFlipped;

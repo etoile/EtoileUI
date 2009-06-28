@@ -1897,6 +1897,21 @@ See also -setDoubleAction:. */
 
 /* ETLayoutingContext */
 
+/** Inserts the given layout view into the supervisor view. */
+- (void) setLayoutView: (NSView *)aView
+{
+	NSView *superview = [aView superview];
+
+	NSAssert(nil == superview || [superview isEqual: [self supervisorView]], 
+		@"A layout view should never have another superview than the layout " 
+		 "context supervisor view or nil.");
+
+	[aView removeFromSuperview];
+	[aView setFrameSize: [self frame].size];
+	[aView setFrameOrigin: NSZeroPoint];
+	[[self supervisorView] setTemporaryView: aView];
+}
+
 /* ETLayoutingContext scroll view related methods */
 
 /* -documentVisibleRect size */
