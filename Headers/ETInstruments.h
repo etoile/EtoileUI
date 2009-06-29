@@ -81,33 +81,3 @@ move, translate and drag behaviors. */
 // ETFreeLayout configures the select tool to produce translate actions with 
 // -setShouldProduceTranslateActions: YES otherwise the select tool produces 
 // drag actions by default.
-
-typedef enum _ETPaintMode
-{
-	ETPaintModeFill,
-	ETPaintModeStroke
-} ETPaintMode;
-
-
-/** An ETInstrument subclass that implements the very classic paint bucket tool.
-
-TODO: Implement tolerance option. */
-@interface ETBucketTool : ETInstrument
-{
-	NSColor *_fillColor;
-	NSColor *_strokeColor;
-	ETPaintMode _paintMode;
-}
-
-- (NSColor *) fillColor;
-- (void) setFillColor: (NSColor *)color;
-- (NSColor *) strokeColor;
-- (void) setStrokeColor: (NSColor *)color;
-// NOTE: May be better named paintAction with ETStrokePaintAction...
-- (ETPaintMode) paintMode;
-- (void) setPaintMode: (ETPaintMode)aMode;
-
-- (void) changePaintMode: (id)sender;
-- (void) changeColor: (id)sender;
-
-@end

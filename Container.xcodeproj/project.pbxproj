@@ -247,6 +247,9 @@
 		60B27D820FF7B56C0012BB42 /* ETCollection+HOM.m in Sources */ = {isa = PBXBuildFile; fileRef = 60B27D7C0FF7B56C0012BB42 /* ETCollection+HOM.m */; };
 		60B27D8B0FF7B6180012BB42 /* ETCollection+HOM.h in Headers */ = {isa = PBXBuildFile; fileRef = 60B27D8A0FF7B6180012BB42 /* ETCollection+HOM.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		60B27DB90FF7B7C60012BB42 /* UTIDefinitions.plist in Resources */ = {isa = PBXBuildFile; fileRef = 602DC5410F21FD1500DF23D9 /* UTIDefinitions.plist */; };
+		60B27ED30FF8DAD00012BB42 /* ETPaintBucketTool.h in Headers */ = {isa = PBXBuildFile; fileRef = 60B27ED20FF8DAD00012BB42 /* ETPaintBucketTool.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		60B27ED50FF8DB060012BB42 /* ETPaintBucketTool.m in Sources */ = {isa = PBXBuildFile; fileRef = 60B27ED40FF8DB060012BB42 /* ETPaintBucketTool.m */; };
+		60B27ED60FF8DB060012BB42 /* ETPaintBucketTool.m in Sources */ = {isa = PBXBuildFile; fileRef = 60B27ED40FF8DB060012BB42 /* ETPaintBucketTool.m */; };
 		60C1D8AD0C2569D500E00A2E /* PaneController.m in Sources */ = {isa = PBXBuildFile; fileRef = 60C1D8AC0C2569D500E00A2E /* PaneController.m */; };
 		60C1DA230C25715F00E00A2E /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1058C7A1FEA54F0111CA2CBB /* Cocoa.framework */; };
 		60C1DA3D0C2571EE00E00A2E /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 29B97316FDCFA39411CA2CEA /* main.m */; };
@@ -590,6 +593,8 @@
 		60B27D7C0FF7B56C0012BB42 /* ETCollection+HOM.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = "ETCollection+HOM.m"; path = "../EtoileFoundation/Source/ETCollection+HOM.m"; sourceTree = SOURCE_ROOT; };
 		60B27D7D0FF7B56C0012BB42 /* ETCollection+HOMMethods.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = "ETCollection+HOMMethods.m"; path = "../EtoileFoundation/Source/ETCollection+HOMMethods.m"; sourceTree = SOURCE_ROOT; };
 		60B27D8A0FF7B6180012BB42 /* ETCollection+HOM.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "ETCollection+HOM.h"; path = "../EtoileFoundation/Headers/ETCollection+HOM.h"; sourceTree = SOURCE_ROOT; };
+		60B27ED20FF8DAD00012BB42 /* ETPaintBucketTool.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ETPaintBucketTool.h; path = Headers/ETPaintBucketTool.h; sourceTree = "<group>"; };
+		60B27ED40FF8DB060012BB42 /* ETPaintBucketTool.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ETPaintBucketTool.m; path = Source/ETPaintBucketTool.m; sourceTree = "<group>"; };
 		60BB9F140EED2FD000D5E1A6 /* ChangeLog */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = ChangeLog; sourceTree = "<group>"; };
 		60C1D8AB0C2569D500E00A2E /* PaneController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PaneController.h; path = PaneExample/PaneController.h; sourceTree = "<group>"; };
 		60C1D8AC0C2569D500E00A2E /* PaneController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = PaneController.m; path = PaneExample/PaneController.m; sourceTree = "<group>"; };
@@ -1191,6 +1196,8 @@
 				607A43E80F0AEA8900753B56 /* ETInstruments.m */,
 				604A32C10F9BEE680090932A /* ETPickDropCoordinator.h */,
 				604A32C40F9BEE780090932A /* ETPickDropCoordinator.m */,
+				60B27ED20FF8DAD00012BB42 /* ETPaintBucketTool.h */,
+				60B27ED40FF8DB060012BB42 /* ETPaintBucketTool.m */,
 				60E7D5D80F99F951007AEAA6 /* ETSelectTool.h */,
 				60E7D5DA0F99F961007AEAA6 /* ETSelectTool.m */,
 			);
@@ -1334,6 +1341,7 @@
 				607FBAF40FE0050200960039 /* ETUIItemFactory.h in Headers */,
 				60FDA9A10FE58F460009686A /* ETSelectionAreaItem.h in Headers */,
 				608BC0F90FE6F4D3007152BB /* ETActionHandler.h in Headers */,
+				60B27ED30FF8DAD00012BB42 /* ETPaintBucketTool.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1737,6 +1745,7 @@
 				607FBAFA0FE005E900960039 /* ETUIItemFactory.m in Sources */,
 				60FDA9A30FE58F590009686A /* ETSelectionAreaItem.m in Sources */,
 				608BC0FC0FE6F4E7007152BB /* ETActionHandler.m in Sources */,
+				60B27ED60FF8DB060012BB42 /* ETPaintBucketTool.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1925,6 +1934,7 @@
 				607FBAFD0FE005E900960039 /* ETUIItemFactory.m in Sources */,
 				60FDA9A40FE58F590009686A /* ETSelectionAreaItem.m in Sources */,
 				608BC0FB0FE6F4E7007152BB /* ETActionHandler.m in Sources */,
+				60B27ED50FF8DB060012BB42 /* ETPaintBucketTool.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

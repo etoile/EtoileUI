@@ -46,6 +46,7 @@
 
 #import <EtoileUI/ETInstrument.h>
 #import <EtoileUI/ETInstruments.h>
+#import <EtoileUI/ETPaintBucketTool.h>
 #import <EtoileUI/ETSelectTool.h>
 #import <EtoileUI/ETPickDropCoordinator.h>
 
