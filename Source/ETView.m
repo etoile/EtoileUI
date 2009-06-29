@@ -214,9 +214,19 @@ static ETView *barViewPrototype = nil;
 - (NSString *) description
 {
 	NSString *desc = [super description];
-	
-	desc = [@"<" stringByAppendingString: desc];
-	desc = [desc stringByAppendingFormat: @" + %@>", [(ETLayoutItem *)[self layoutItem] layout], nil];
+
+	// FIXME: Rename -layoutItem to -item because it can return any ETUIItem.
+	if ([[self layoutItem] isLayoutItem])
+	{
+		ETLayout *layout = [(ETLayoutItem *)[self layoutItem] layout];
+		
+		if (layout != nil)
+		{
+			desc = [@"<" stringByAppendingString: desc];
+			desc = [desc stringByAppendingFormat: @" + %@>", layout, nil];
+		}
+	}
+
 	return desc;
 }
 
