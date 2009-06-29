@@ -14,7 +14,7 @@
 #import "ETCompatibility.h"
 
 
-@implementation ETBucketTool
+@implementation ETPaintBucketTool
 
 + (NSString *) baseClassName
 {

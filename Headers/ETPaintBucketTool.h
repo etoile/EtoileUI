@@ -24,7 +24,7 @@ typedef enum _ETPaintMode
 /** An ETInstrument subclass that implements the very classic paint bucket tool.
 
 TODO: Implement tolerance option. */
-@interface ETBucketTool : ETInstrument
+@interface ETPaintBucketTool : ETInstrument
 {
 	NSColor *_fillColor;
 	NSColor *_strokeColor;
