@@ -556,6 +556,63 @@ the application delegate when CoreObject is available. */
 
 @end
 
+
+/** Sets up the Etoile application with the infos provided by the application 
+bundle Informations property list, then returns the application object.
+
+First, instatiate the principal class (NSPrincipalClass) which must be 
+ETApplication or a subclass. Then loads the main nib/gorm (NSMainNibFile) when 
+there is one specified.
+
+When the principal class is invalid or the nib loading fails, this method 
+will respectively raise NSInvalidArgumentException or NSInternalInconsistencyException. */
+int ETApplicationMain(int argc, const char **argv)
+{
+	CREATE_AUTORELEASE_POOL(pool);
+
+	NSDictionary *infos = [[NSBundle mainBundle] infoDictionary];
+	NSString *appClassName = [infos objectForKey: @"NSPrincipalClass"];
+	Class appClass = NSClassFromString(appClassName);
+
+	if (Nil == appClass || NO == [appClass isSubclassOfClass: [ETApplication class]])
+	{
+		[NSException raise: NSInvalidArgumentException format: @"Principal "
+			"class must be ETApplication or a subclass unlike %@ identified by " 
+			"'%@' key in the bundle property list", appClass, appClassName];
+    }
+
+	id app = [appClass sharedApplication];
+ 
+#ifndef GNUSTEP
+	// NOTE: The loading of the main nib is done in -[NSApplication init] on 
+	// GNUstep, unlike Cocoa where this is the responsability of 
+	// NSApplicationMain()
+	NSString *nibName = [infos objectForKey: @"NSMainNibFile"];
+	BOOL hasNibNameEntry = (nil != nibName && NO == [nibName isEqual: @""]);
+
+	if (hasNibNameEntry)
+	{
+		BOOL nibLoadFailed = (NO == [NSBundle loadNibNamed: nibName owner: ETApp]);
+
+		if (nibLoadFailed)
+		{
+			[NSException raise: NSInternalInconsistencyException 
+				format: @"Failed to load main nib named '%@'. The application is " 
+				"not usable state and will terminate now.", nibName];
+			return 1;
+		}
+	}
+#endif
+
+	[app run];
+
+	DESTROY(app);
+	DESTROY(pool);
+
+	return 0;
+}
+
+
 @implementation NSMenuItem (Etoile)
 
 /** Returns an autoreleased menu item already associated with an empty submenu. */ 

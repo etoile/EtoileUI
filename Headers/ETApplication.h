@@ -79,6 +79,9 @@ file or write a custom main() function.*/
 @end
 
 
+int ETApplicationMain(int argc, const char **argv);
+
+
 enum 
 {
 	ETDevelopmentMenuTag = 30000,
