@@ -37,5 +37,5 @@
 int main(int argc, char *argv[])
 {
 	NSZombieEnabled = YES;
-    return NSApplicationMain(argc,  (const char **) argv);
+    return ETApplicationMain(argc,  (const char **) argv);
 }
