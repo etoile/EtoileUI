@@ -209,15 +209,31 @@ static ETView *barViewPrototype = nil;
 	[super dealloc];
 }
 
+// TODO: Rewrite the next two methods in a more sensible way
+
+- (NSString *) description
+{
+	NSString *desc = [super description];
+	
+	desc = [@"<" stringByAppendingString: desc];
+	desc = [desc stringByAppendingFormat: @" + %@>", [(ETLayoutItem *)[self layoutItem] layout], nil];
+	return desc;
+}
+
 - (NSString *) displayName
 {
+	if ([[self layoutItem] isGroup])
+		return [self description];
+
 	// FIXME: Trim the angle brackets out.
 	NSString *desc = @"<";
-	
+
 	if ([self wrappedView] != nil)
+	{
 		desc = [desc stringByAppendingFormat: @"%@ in ", [[self wrappedView] className]];
-	desc = [desc stringByAppendingFormat: @"%@>", [super description]];
-	return desc;
+	}
+
+	return [desc stringByAppendingFormat: @"%@>", [super description]];
 }
 
 - (BOOL) acceptsFirstResponder

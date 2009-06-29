@@ -156,35 +156,6 @@
 	return container;
 }
 
-- (NSString *) description
-{
-	NSString *desc = [super description];
-	
-	desc = [@"<" stringByAppendingString: desc];
-	desc = [desc stringByAppendingFormat: @" + %@>", [self layout], nil];
-	return desc;
-}
-
-- (NSString *) displayName
-{
-	// FIXME: Trim the angle brackets out.
-	return [self description];
-}
-
-/** Returns the layout item to which the receiver is bound to. 
-
-This layout item can only be an ETLayoutItemGroup instance unlike ETView. See 
-also -[ETView setLayoutItem:].
-
-Never returns nil. */
-- (id) layoutItem
-{
-	if ([[super layoutItem] isGroup] == NO)
-		ETLog(@"WARNING: Layout item in a container must of ETLayoutItemGroup type");
-
-	return [super layoutItem];
-}
-
 /* Overriden NSView methods */
 
 /* GNUstep doesn't rely on -setFrameSize: in -setFrame: unlike Cocoa, so we 
