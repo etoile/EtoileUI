@@ -238,6 +238,11 @@ when they get deallocated. */
 	return [[self layoutContext] supervisorView];
 }
 
+- (void) setLayoutView: (NSView *)aLayoutView
+{
+
+}
+
 - (NSView *) view
 {
  // FIXME: Remove this cast and solve this properly

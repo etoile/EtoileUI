@@ -57,6 +57,7 @@ EtoileUI_HEADER_FILES = \
 	ETObjectBrowserLayout.h \
 	EtoileUI.h \
 	ETOutlineLayout.h \
+	ETPaintBucketTool.h \
 	ETPaneLayout.h \
 	ETPersistencyController.h \
 	ETPickboard.h \

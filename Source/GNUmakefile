@@ -33,6 +33,7 @@ libEtoileUI_OBJC_FILES = \
 	ETLineLayout.m \
 	ETObjectBrowserLayout.m \
 	ETOutlineLayout.m \
+	ETPaintBucketTool.m \
 	ETPaneLayout.m \
 	ETPersistencyController.m \
 	ETPickboard.m \
