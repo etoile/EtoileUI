@@ -21,6 +21,9 @@
 #import "ETStyle.h"
 #import "ETCompatibility.h"
 
+#define SELECTION_BY_RANGE_KEY_MASK NSShiftKeyMask
+#define SELECTION_BY_ONE_KEY_MASK NSCommandKeyMask
+
 
 @implementation ETActionHandler (ETPickDropActionHandler)
 
