@@ -36,6 +36,7 @@ libEtoileUI_OBJC_FILES = \
 	ETPaintBucketTool.m \
 	ETPaneLayout.m \
 	ETPersistencyController.m \
+	ETPickDropActionHandler.m \
 	ETPickboard.m \
 	ETScrollableAreaItem.m \
 	ETSelectionAreaItem.m \

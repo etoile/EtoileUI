@@ -128,6 +128,9 @@
 		604B5C1F0F4B473F001C25E8 /* ETEventProcessor.m in Sources */ = {isa = PBXBuildFile; fileRef = 604B5C1E0F4B473F001C25E8 /* ETEventProcessor.m */; };
 		604B5C200F4B473F001C25E8 /* ETEventProcessor.m in Sources */ = {isa = PBXBuildFile; fileRef = 604B5C1E0F4B473F001C25E8 /* ETEventProcessor.m */; };
 		60539D9E0C242065006C57EC /* PaneContainerExample.nib in Resources */ = {isa = PBXBuildFile; fileRef = 60539D9C0C242065006C57EC /* PaneContainerExample.nib */; };
+		6053E12F0FFA5CB300A5EBEA /* ETPickDropActionHandler.h in Headers */ = {isa = PBXBuildFile; fileRef = 6053E12E0FFA5CB300A5EBEA /* ETPickDropActionHandler.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		6053E1310FFA5CC700A5EBEA /* ETPickDropActionHandler.m in Sources */ = {isa = PBXBuildFile; fileRef = 6053E1300FFA5CC700A5EBEA /* ETPickDropActionHandler.m */; };
+		6053E1320FFA5CC700A5EBEA /* ETPickDropActionHandler.m in Sources */ = {isa = PBXBuildFile; fileRef = 6053E1300FFA5CC700A5EBEA /* ETPickDropActionHandler.m */; };
 		605480600FA2271500048283 /* ETController.h in Headers */ = {isa = PBXBuildFile; fileRef = 60CF6C800D3F739000B4CA3D /* ETController.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		60599A760C772129007F225E /* ETInspector.h in Headers */ = {isa = PBXBuildFile; fileRef = 60599A740C772129007F225E /* ETInspector.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		60599A770C772129007F225E /* ETInspector.m in Sources */ = {isa = PBXBuildFile; fileRef = 60599A750C772129007F225E /* ETInspector.m */; };
@@ -505,6 +508,8 @@
 		60539D940C240A7B006C57EC /* PaneContainerExample.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = PaneContainerExample.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		60539D960C240A7B006C57EC /* PaneContainerExample-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = "PaneContainerExample-Info.plist"; path = "PaneExample/PaneContainerExample-Info.plist"; sourceTree = "<group>"; };
 		60539D9D0C242065006C57EC /* English */ = {isa = PBXFileReference; lastKnownFileType = wrapper.nib; name = English; path = English.lproj/PaneContainerExample.nib; sourceTree = "<group>"; };
+		6053E12E0FFA5CB300A5EBEA /* ETPickDropActionHandler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ETPickDropActionHandler.h; path = Headers/ETPickDropActionHandler.h; sourceTree = "<group>"; };
+		6053E1300FFA5CC700A5EBEA /* ETPickDropActionHandler.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ETPickDropActionHandler.m; path = Source/ETPickDropActionHandler.m; sourceTree = "<group>"; };
 		60599A740C772129007F225E /* ETInspector.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ETInspector.h; path = Headers/ETInspector.h; sourceTree = "<group>"; };
 		60599A750C772129007F225E /* ETInspector.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ETInspector.m; path = Source/ETInspector.m; sourceTree = "<group>"; };
 		60599AD70C772EA0007F225E /* ETFreeLayout.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ETFreeLayout.h; path = Headers/ETFreeLayout.h; sourceTree = "<group>"; };
@@ -1184,8 +1189,8 @@
 		60E7D63E0F9A032A007AEAA6 /* Events & Instruments */ = {
 			isa = PBXGroup;
 			children = (
-				608BC0FA0FE6F4E7007152BB /* ETActionHandler.m */,
 				608BC0F80FE6F4D3007152BB /* ETActionHandler.h */,
+				608BC0FA0FE6F4E7007152BB /* ETActionHandler.m */,
 				60F112BB0D363806003B2EFA /* ETEvent.h */,
 				60F112BC0D363806003B2EFA /* ETEvent.m */,
 				604B5C1B0F4B472E001C25E8 /* ETEventProcessor.h */,
@@ -1198,6 +1203,8 @@
 				604A32C40F9BEE780090932A /* ETPickDropCoordinator.m */,
 				60B27ED20FF8DAD00012BB42 /* ETPaintBucketTool.h */,
 				60B27ED40FF8DB060012BB42 /* ETPaintBucketTool.m */,
+				6053E12E0FFA5CB300A5EBEA /* ETPickDropActionHandler.h */,
+				6053E1300FFA5CC700A5EBEA /* ETPickDropActionHandler.m */,
 				60E7D5D80F99F951007AEAA6 /* ETSelectTool.h */,
 				60E7D5DA0F99F961007AEAA6 /* ETSelectTool.m */,
 			);
@@ -1342,6 +1349,7 @@
 				60FDA9A10FE58F460009686A /* ETSelectionAreaItem.h in Headers */,
 				608BC0F90FE6F4D3007152BB /* ETActionHandler.h in Headers */,
 				60B27ED30FF8DAD00012BB42 /* ETPaintBucketTool.h in Headers */,
+				6053E12F0FFA5CB300A5EBEA /* ETPickDropActionHandler.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1746,6 +1754,7 @@
 				60FDA9A30FE58F590009686A /* ETSelectionAreaItem.m in Sources */,
 				608BC0FC0FE6F4E7007152BB /* ETActionHandler.m in Sources */,
 				60B27ED60FF8DB060012BB42 /* ETPaintBucketTool.m in Sources */,
+				6053E1320FFA5CC700A5EBEA /* ETPickDropActionHandler.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1935,6 +1944,7 @@
 				60FDA9A40FE58F590009686A /* ETSelectionAreaItem.m in Sources */,
 				608BC0FB0FE6F4E7007152BB /* ETActionHandler.m in Sources */,
 				60B27ED50FF8DB060012BB42 /* ETPaintBucketTool.m in Sources */,
+				6053E1310FFA5CC700A5EBEA /* ETPickDropActionHandler.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

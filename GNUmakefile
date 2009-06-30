@@ -60,6 +60,7 @@ EtoileUI_HEADER_FILES = \
 	ETPaintBucketTool.h \
 	ETPaneLayout.h \
 	ETPersistencyController.h \
+	ETPickDropActionHandler.h \
 	ETPickboard.h \
 	ETScrollableAreaItem.h \
 	ETSelectionAreaItem.h \

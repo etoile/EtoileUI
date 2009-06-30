@@ -18,6 +18,7 @@
 #import "ETLayoutItem.h"
 #import "ETLayoutItemGroup.h"
 #import "ETLayout.h"
+#import "ETPickDropActionHandler.h"
 #import "ETPickDropCoordinator.h"
 #import "ETCompatibility.h"
 #import "NSView+Etoile.h"
