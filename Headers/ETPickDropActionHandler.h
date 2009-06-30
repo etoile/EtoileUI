@@ -78,4 +78,9 @@
 - (IBAction) paste: (id)sender onItem: (ETLayoutItem *)item;
 - (IBAction) cut: (id)sender onItem: (ETLayoutItem *)item;
 
+/* Methods to be implemented and used...
+- (IBAction) pick: (id)sender;
+- (IBAction) pickCopy: (id)sender;
+- (IBAction) drop: (id)sender;*/
+
 @end

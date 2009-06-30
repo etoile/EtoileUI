@@ -70,23 +70,6 @@ method will reuse the action handler to be set on every created items. */
 - (BOOL) canDeselect: (ETLayoutItem *)item;
 - (void) handleDeselect: (ETLayoutItem *)item;
 
-/* Paint Actions */
-
-- (BOOL) canFill: (ETLayoutItem *)item;
-- (void) handleFill: (ETLayoutItem *)item withColor: (NSColor *)aColor;
-- (BOOL) canStroke: (ETLayoutItem *)item;
-- (void) handleStroke: (ETLayoutItem *)item withColor: (NSColor *)aColor;
-
-// TODO: Add...
-//-handlePick
-//-handlePaint
-//-handleDrag
-//-handleResize
-/* Methods to be implemented and used...
-- (IBAction) pick: (id)sender;
-- (IBAction) pickCopy: (id)sender;
-- (IBAction) drop: (id)sender;*/
-
 /* Generic Actions */
 
 - (BOOL) acceptsFirstResponder;

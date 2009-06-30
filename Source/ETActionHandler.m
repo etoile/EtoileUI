@@ -8,23 +8,14 @@
 
 #import <EtoileFoundation/NSObject+Etoile.h>
 #import <EtoileFoundation/NSObject+Model.h>
-#import <EtoileFoundation/ETCollection.h>
-#import <EtoileFoundation/ETUTI.h>
 #import "ETActionHandler.h"
 #import "ETApplication.h"
-#import "ETController.h"
+#import "ETEvent.h"
 #import "ETGeometry.h"
+#import "ETInstrument.h"
 #import "ETLayoutItem.h"
 #import "ETLayoutItemGroup.h"
-#import "ETLayoutItemGroup+Mutation.h"
-#import "ETPickDropCoordinator.h"
-#import "ETPickboard.h"
-#import "ETEvent.h"
-#import "ETContainer.h"
 #import "ETCompatibility.h"
-#import "ETInstrument.h"
-#import "ETShape.h"
-#import "ETStyle.h"
 
 #define SELECTION_BY_RANGE_KEY_MASK NSShiftKeyMask
 #define SELECTION_BY_ONE_KEY_MASK NSCommandKeyMask
@@ -205,28 +196,6 @@ TODO: Problably remove, since it should be of any use and just adds complexity. 
 
 	// TODO: May be cache in the controller... 
 	//[[[item baseItem] controller] removeSelectedObject: item];
-}
-
-- (BOOL) canFill: (ETLayoutItem *)item
-{
-	return [[item style] respondsToSelector: @selector(setFillColor:)];
-}
-
-- (BOOL) canStroke: (ETLayoutItem *)item
-{
-	return [[item style] respondsToSelector: @selector(setStrokeColor:)];
-}
-
-- (void) handleFill: (ETLayoutItem *)item withColor: (NSColor *)aColor
-{
-	[[item style] setFillColor: aColor];
-	[item setNeedsDisplay: YES];
-}
-
-- (void) handleStroke: (ETLayoutItem *)item withColor: (NSColor *)aColor
-{
-	[[item style] setStrokeColor: aColor];
-	[item setNeedsDisplay: YES];
 }
 
 /* Generic Actions */

@@ -41,6 +41,7 @@
 #import <EtoileUI/ETOutlineLayout.h>
 #import <EtoileUI/ETPaintBucketTool.h>
 #import <EtoileUI/ETPaneLayout.h>
+#import <EtoileUI/ETPaintActionHandler.h>
 #import <EtoileUI/ETPickDropActionHandler.h>
 #import <EtoileUI/ETPickDropCoordinator.h>
 #import <EtoileUI/ETPickboard.h>

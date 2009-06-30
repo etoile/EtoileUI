@@ -8,7 +8,7 @@
 
 #import <EtoileFoundation/Macros.h>
 #import "ETPaintBucketTool.h"
-#import "ETActionHandler.h"
+#import "ETPaintActionHandler.h"
 #import "ETApplication.h"
 #import "ETLayoutItem.h"
 #import "ETCompatibility.h"
