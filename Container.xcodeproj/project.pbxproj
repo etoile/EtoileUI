@@ -49,11 +49,11 @@
 		6017849E0D670DED00A54D5A /* PhotoViewExample.nib in Resources */ = {isa = PBXBuildFile; fileRef = 6017849D0D670DED00A54D5A /* PhotoViewExample.nib */; };
 		60264AA50FB72D4D00D8163F /* Carbon.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 60264AA40FB72D4D00D8163F /* Carbon.framework */; };
 		60264AA60FB72D4D00D8163F /* Carbon.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 60264AA40FB72D4D00D8163F /* Carbon.framework */; };
-		602DC5070F21FA2E00DF23D9 /* ETHistoryManager.h in Headers */ = {isa = PBXBuildFile; fileRef = 602DC5030F21FA2E00DF23D9 /* ETHistoryManager.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		602DC5070F21FA2E00DF23D9 /* ETHistory.h in Headers */ = {isa = PBXBuildFile; fileRef = 602DC5030F21FA2E00DF23D9 /* ETHistory.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		602DC5080F21FA2E00DF23D9 /* ETTranscript.h in Headers */ = {isa = PBXBuildFile; fileRef = 602DC5040F21FA2E00DF23D9 /* ETTranscript.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		602DC5090F21FA2E00DF23D9 /* ETUTI.h in Headers */ = {isa = PBXBuildFile; fileRef = 602DC5050F21FA2E00DF23D9 /* ETUTI.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		602DC50F0F21FA4C00DF23D9 /* ETTranscript.m in Sources */ = {isa = PBXBuildFile; fileRef = 602DC50B0F21FA4C00DF23D9 /* ETTranscript.m */; };
-		602DC5100F21FA4C00DF23D9 /* ETHistoryManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 602DC50C0F21FA4C00DF23D9 /* ETHistoryManager.m */; };
+		602DC5100F21FA4C00DF23D9 /* ETHistory.m in Sources */ = {isa = PBXBuildFile; fileRef = 602DC50C0F21FA4C00DF23D9 /* ETHistory.m */; };
 		602DC5110F21FA4C00DF23D9 /* ETUTI.m in Sources */ = {isa = PBXBuildFile; fileRef = 602DC50D0F21FA4C00DF23D9 /* ETUTI.m */; };
 		602DC5420F21FD1500DF23D9 /* UTIDefinitions.plist in Resources */ = {isa = PBXBuildFile; fileRef = 602DC5410F21FD1500DF23D9 /* UTIDefinitions.plist */; };
 		602F8B270CE1CA3E0042F6C0 /* ETCompatibility.h in Headers */ = {isa = PBXBuildFile; fileRef = 602F8B260CE1CA3E0042F6C0 /* ETCompatibility.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -212,7 +212,7 @@
 		609B67CF0FEE81740007F842 /* ETException.m in Sources */ = {isa = PBXBuildFile; fileRef = 603647FD0E40931E003377E0 /* ETException.m */; };
 		609B67D00FEE81740007F842 /* ETFilter.m in Sources */ = {isa = PBXBuildFile; fileRef = 603647FE0E40931E003377E0 /* ETFilter.m */; };
 		609B67D10FEE81740007F842 /* ETGetOptionsDictionary.m in Sources */ = {isa = PBXBuildFile; fileRef = 603647FF0E40931E003377E0 /* ETGetOptionsDictionary.m */; };
-		609B67D20FEE81740007F842 /* ETHistoryManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 602DC50C0F21FA4C00DF23D9 /* ETHistoryManager.m */; };
+		609B67D20FEE81740007F842 /* ETHistory.m in Sources */ = {isa = PBXBuildFile; fileRef = 602DC50C0F21FA4C00DF23D9 /* ETHistory.m */; };
 		609B67D30FEE81740007F842 /* ETObjectChain.m in Sources */ = {isa = PBXBuildFile; fileRef = 603648000E40931E003377E0 /* ETObjectChain.m */; };
 		609B67D40FEE81740007F842 /* ETPropertyValueCoding.m in Sources */ = {isa = PBXBuildFile; fileRef = 603648020E40931E003377E0 /* ETPropertyValueCoding.m */; };
 		609B67D50FEE81740007F842 /* ETTranscript.m in Sources */ = {isa = PBXBuildFile; fileRef = 602DC50B0F21FA4C00DF23D9 /* ETTranscript.m */; };
@@ -417,12 +417,12 @@
 		60141B1F0F9355EE00014507 /* ETWidgetLayout.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ETWidgetLayout.m; path = Source/ETWidgetLayout.m; sourceTree = "<group>"; };
 		6017849D0D670DED00A54D5A /* PhotoViewExample.nib */ = {isa = PBXFileReference; lastKnownFileType = wrapper.nib; name = PhotoViewExample.nib; path = PhotoViewExample/PhotoViewExample.nib; sourceTree = "<group>"; };
 		60264AA40FB72D4D00D8163F /* Carbon.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Carbon.framework; path = /System/Library/Frameworks/Carbon.framework; sourceTree = "<absolute>"; };
-		602DC5030F21FA2E00DF23D9 /* ETHistoryManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ETHistoryManager.h; path = ../EtoileFoundation/Headers/ETHistoryManager.h; sourceTree = SOURCE_ROOT; };
+		602DC5030F21FA2E00DF23D9 /* ETHistory.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ETHistory.h; path = ../EtoileFoundation/Headers/ETHistory.h; sourceTree = SOURCE_ROOT; };
 		602DC5040F21FA2E00DF23D9 /* ETTranscript.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ETTranscript.h; path = ../EtoileFoundation/Headers/ETTranscript.h; sourceTree = SOURCE_ROOT; };
 		602DC5050F21FA2E00DF23D9 /* ETUTI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ETUTI.h; path = ../EtoileFoundation/Headers/ETUTI.h; sourceTree = SOURCE_ROOT; };
 		602DC5060F21FA2E00DF23D9 /* NSObject+Prototypes.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "NSObject+Prototypes.h"; path = "../EtoileFoundation/Headers/NSObject+Prototypes.h"; sourceTree = SOURCE_ROOT; };
 		602DC50B0F21FA4C00DF23D9 /* ETTranscript.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ETTranscript.m; path = ../EtoileFoundation/Source/ETTranscript.m; sourceTree = SOURCE_ROOT; };
-		602DC50C0F21FA4C00DF23D9 /* ETHistoryManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ETHistoryManager.m; path = ../EtoileFoundation/Source/ETHistoryManager.m; sourceTree = SOURCE_ROOT; };
+		602DC50C0F21FA4C00DF23D9 /* ETHistory.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ETHistory.m; path = ../EtoileFoundation/Source/ETHistory.m; sourceTree = SOURCE_ROOT; };
 		602DC50D0F21FA4C00DF23D9 /* ETUTI.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ETUTI.m; path = ../EtoileFoundation/Source/ETUTI.m; sourceTree = SOURCE_ROOT; };
 		602DC50E0F21FA4C00DF23D9 /* NSObject+Prototypes.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = "NSObject+Prototypes.m"; path = "../EtoileFoundation/Source/NSObject+Prototypes.m"; sourceTree = SOURCE_ROOT; };
 		602DC5410F21FD1500DF23D9 /* UTIDefinitions.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = UTIDefinitions.plist; path = ../EtoileFoundation/UTIDefinitions.plist; sourceTree = SOURCE_ROOT; };
@@ -883,7 +883,7 @@
 				603647BD0E4092EA003377E0 /* ETException.h */,
 				603647BE0E4092EA003377E0 /* ETFilter.h */,
 				603647BF0E4092EA003377E0 /* ETGetOptionsDictionary.h */,
-				602DC5030F21FA2E00DF23D9 /* ETHistoryManager.h */,
+				602DC5030F21FA2E00DF23D9 /* ETHistory.h */,
 				60F8C9DD0F8DF34C0069FA6C /* ETModelDescription.h */,
 				603647C00E4092EA003377E0 /* ETObjectChain.h */,
 				603647C20E4092EA003377E0 /* EtoileCompatibility.h */,
@@ -926,7 +926,7 @@
 				603647FD0E40931E003377E0 /* ETException.m */,
 				603647FE0E40931E003377E0 /* ETFilter.m */,
 				603647FF0E40931E003377E0 /* ETGetOptionsDictionary.m */,
-				602DC50C0F21FA4C00DF23D9 /* ETHistoryManager.m */,
+				602DC50C0F21FA4C00DF23D9 /* ETHistory.m */,
 				60F8C9DF0F8DF3690069FA6C /* ETModelDescription.m */,
 				603648000E40931E003377E0 /* ETObjectChain.m */,
 				603648020E40931E003377E0 /* ETPropertyValueCoding.m */,
@@ -1272,7 +1272,7 @@
 				603647F40E4092EA003377E0 /* NSURL+Etoile.h in Headers */,
 				603647F80E4092EA003377E0 /* UKPluginsRegistry.h in Headers */,
 				603648230E40931E003377E0 /* GNUstep.h in Headers */,
-				602DC5070F21FA2E00DF23D9 /* ETHistoryManager.h in Headers */,
+				602DC5070F21FA2E00DF23D9 /* ETHistory.h in Headers */,
 				602DC5080F21FA2E00DF23D9 /* ETTranscript.h in Headers */,
 				602DC5090F21FA2E00DF23D9 /* ETUTI.h in Headers */,
 				60B27D8B0FF7B6180012BB42 /* ETCollection+HOM.h in Headers */,
@@ -1791,7 +1791,7 @@
 				6036482E0E40931E003377E0 /* NSURL+Etoile.m in Sources */,
 				603648320E40931E003377E0 /* UKPluginsRegistry.m in Sources */,
 				602DC50F0F21FA4C00DF23D9 /* ETTranscript.m in Sources */,
-				602DC5100F21FA4C00DF23D9 /* ETHistoryManager.m in Sources */,
+				602DC5100F21FA4C00DF23D9 /* ETHistory.m in Sources */,
 				602DC5110F21FA4C00DF23D9 /* ETUTI.m in Sources */,
 				60A221ED0FEFF8EF00952E11 /* NSObject+HOM.m in Sources */,
 				60B27D820FF7B56C0012BB42 /* ETCollection+HOM.m in Sources */,
@@ -1845,7 +1845,7 @@
 				609B67CF0FEE81740007F842 /* ETException.m in Sources */,
 				609B67D00FEE81740007F842 /* ETFilter.m in Sources */,
 				609B67D10FEE81740007F842 /* ETGetOptionsDictionary.m in Sources */,
-				609B67D20FEE81740007F842 /* ETHistoryManager.m in Sources */,
+				609B67D20FEE81740007F842 /* ETHistory.m in Sources */,
 				609B67D30FEE81740007F842 /* ETObjectChain.m in Sources */,
 				609B67D40FEE81740007F842 /* ETPropertyValueCoding.m in Sources */,
 				609B67D50FEE81740007F842 /* ETTranscript.m in Sources */,
