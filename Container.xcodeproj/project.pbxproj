@@ -47,6 +47,7 @@
 		601455D70F9722B900268FD1 /* ETDecoratorItem.m in Sources */ = {isa = PBXBuildFile; fileRef = 60330B5A0F7CEF3400A1E8C1 /* ETDecoratorItem.m */; };
 		601455D80F9722B900268FD1 /* NSBezierPathCappedBoxes.m in Sources */ = {isa = PBXBuildFile; fileRef = 60364A060E40A560003377E0 /* NSBezierPathCappedBoxes.m */; };
 		6017849E0D670DED00A54D5A /* PhotoViewExample.nib in Resources */ = {isa = PBXBuildFile; fileRef = 6017849D0D670DED00A54D5A /* PhotoViewExample.nib */; };
+		6022404E1003DF14007D5D07 /* TestItemGeometry.m in Sources */ = {isa = PBXBuildFile; fileRef = 6022404D1003DF14007D5D07 /* TestItemGeometry.m */; };
 		60264AA50FB72D4D00D8163F /* Carbon.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 60264AA40FB72D4D00D8163F /* Carbon.framework */; };
 		60264AA60FB72D4D00D8163F /* Carbon.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 60264AA40FB72D4D00D8163F /* Carbon.framework */; };
 		602DC5070F21FA2E00DF23D9 /* ETHistory.h in Headers */ = {isa = PBXBuildFile; fileRef = 602DC5030F21FA2E00DF23D9 /* ETHistory.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -416,6 +417,7 @@
 		60141B1C0F9355DF00014507 /* ETWidgetLayout.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ETWidgetLayout.h; path = Headers/ETWidgetLayout.h; sourceTree = "<group>"; };
 		60141B1F0F9355EE00014507 /* ETWidgetLayout.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ETWidgetLayout.m; path = Source/ETWidgetLayout.m; sourceTree = "<group>"; };
 		6017849D0D670DED00A54D5A /* PhotoViewExample.nib */ = {isa = PBXFileReference; lastKnownFileType = wrapper.nib; name = PhotoViewExample.nib; path = PhotoViewExample/PhotoViewExample.nib; sourceTree = "<group>"; };
+		6022404D1003DF14007D5D07 /* TestItemGeometry.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = TestItemGeometry.m; path = Tests/TestItemGeometry.m; sourceTree = "<group>"; };
 		60264AA40FB72D4D00D8163F /* Carbon.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Carbon.framework; path = /System/Library/Frameworks/Carbon.framework; sourceTree = "<absolute>"; };
 		602DC5030F21FA2E00DF23D9 /* ETHistory.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ETHistory.h; path = ../EtoileFoundation/Headers/ETHistory.h; sourceTree = SOURCE_ROOT; };
 		602DC5040F21FA2E00DF23D9 /* ETTranscript.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ETTranscript.h; path = ../EtoileFoundation/Headers/ETTranscript.h; sourceTree = SOURCE_ROOT; };
@@ -859,6 +861,7 @@
 		600243CE0CD134C40023182D /* Tests */ = {
 			isa = PBXGroup;
 			children = (
+				6022404D1003DF14007D5D07 /* TestItemGeometry.m */,
 				60B1BCE80FA527A300BD3123 /* test_ETInstrument.m */,
 				60AEDA240FB4A6B800F31EEA /* test_ETLayer.m */,
 				60AE4CAB0EED576000DE82BC /* test_ETController.m */,
@@ -1764,6 +1767,7 @@
 				60B27ED60FF8DB060012BB42 /* ETPaintBucketTool.m in Sources */,
 				6053E1320FFA5CC700A5EBEA /* ETPickDropActionHandler.m in Sources */,
 				6053E1B40FFA6F5800A5EBEA /* ETPaintActionHandler.m in Sources */,
+				6022404E1003DF14007D5D07 /* TestItemGeometry.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
