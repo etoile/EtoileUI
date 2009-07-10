@@ -56,6 +56,81 @@
 
 DEALLOC(DESTROY(itemFactory); DESTROY(item))
 
+static unsigned int sizableMask = (NSViewWidthSizable | NSViewHeightSizable);
+
+- (void) testAutoresizingMaskWithoutView
+{
+	UKIntsEqual(NSViewNotSizable, [item autoresizingMask]);
+
+	[item setAutoresizingMask: sizableMask];
+	
+	UKIntsEqual(sizableMask, [item autoresizingMask]);
+}
+
+- (NSTextField *) textFieldWithAutoresizingMask: (unsigned int)aMask
+{
+	NSTextField *textField = AUTORELEASE([[NSTextField alloc] init]);
+	[textField setAutoresizingMask: aMask];
+	return textField;
+}
+
+- (void) checkViewAutoresizingMask: (unsigned int)initialMask 
+{
+	UKIntsEqual(initialMask, [item autoresizingMask]);
+	UKIntsEqual(initialMask, [[item supervisorView] autoresizingMask]);
+	UKIntsEqual(sizableMask, [[item view] autoresizingMask]);
+	
+	[item setView: nil];
+	
+	UKIntsEqual(NSViewNotSizable, [item autoresizingMask]);
+	UKIntsEqual(NSViewNotSizable, [[item supervisorView] autoresizingMask]);
+}
+
+static unsigned int weirdMask = (NSViewMaxXMargin | NSViewMinYMargin | NSViewHeightSizable);
+
+- (void) testAutoresizingMaskWithView
+{
+	[item setView: [self textFieldWithAutoresizingMask: weirdMask]];
+
+	[self checkViewAutoresizingMask: weirdMask];
+}
+
+/* Test that ETLayoutItem handles the initialization properly since -setView: 
+and -setAutoresizingMask: can potentially erase each other. */
+- (void) testAutoresizingMaskWithViewFromFactory
+{
+	NSTextField *textField = [self textFieldWithAutoresizingMask: weirdMask];
+
+	ASSIGN(item, [itemFactory itemWithView: textField]);
+	[self checkViewAutoresizingMask: weirdMask];
+
+	// TODO: We should probably set an autoresizing mask on returned widget item.
+	/*ASSIGN(item, [itemFactory textField]);						   
+	[self checkViewAutoresizingMask: sizableMask];*/
+}
+
+- (void) testAutoresizingMaskForSupervisorViewRemoval
+{
+	[item setView: [self textFieldWithAutoresizingMask: NSViewMaxXMargin]];
+	[item setView: nil];
+	[item setAutoresizingMask: NSViewMinYMargin];
+	
+	UKIntsEqual(NSViewMinYMargin, [[item supervisorView] autoresizingMask]);
+
+	[item setSupervisorView: nil];
+	
+	UKIntsEqual(NSViewMinYMargin, [item autoresizingMask]);
+}
+
+- (void) testInvalidSetAutoresizingMask
+{
+	[item setView: [self textFieldWithAutoresizingMask: NSViewMaxXMargin]];	
+	/* Framework user must never do that */
+	[[item supervisorView] setAutoresizingMask: sizableMask];
+	
+	UKIntsNotEqual([item autoresizingMask], [[item supervisorView] autoresizingMask]);
+}
+
 - (void) testConvertRectToParent
 {
 	[[itemFactory itemGroup] addItem: item];

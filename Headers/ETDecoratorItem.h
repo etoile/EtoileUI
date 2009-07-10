@@ -50,6 +50,7 @@ However -supervisorView can be overriden to return nil. */
 /* Decoration Geometry */
 
 - (void) setDecorationRect: (NSRect)rect;
+- (void) setAutoresizingMask: (unsigned int)aMask;
 
 - (NSRect) visibleRect;
 - (NSRect) visibleContentRect;

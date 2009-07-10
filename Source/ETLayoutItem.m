@@ -187,6 +187,8 @@ NSString *ETLayoutItemLayoutDidChangeNotification = @"ETLayoutItemLayoutDidChang
 		_parentItem = nil;
 		//_decoratorItem = nil;
 		[self setTransform: [NSAffineTransform transform]];
+		 /* Will be overriden by -setView: when the view is not nil */
+		_autoresizingMask = NSViewNotSizable;
 		_boundingBox = ETNullRect;
 		[self setView: view];
 		[self setFlipped: YES]; /* -setFlipped: must follow -setSupervisorView: */
@@ -751,7 +753,8 @@ widget provided by the widget backend. */
 	}
 	[self setAutoresizingMask: [newView autoresizingMask]];
 	[[self supervisorView] setWrappedView: newView];
-	
+	[newView setAutoresizingMask: NSViewWidthSizable | NSViewHeightSizable];
+
 	/* Set up the new view */
 	if (newView != nil)
 	{
@@ -2206,33 +2209,40 @@ frame. */
 	[self setFrame: [self defaultFrame]]; 
 }
 
-/** Returns the autoresizing mask that applies to the layout item. This mask is 
-identical to the autoresizing mask of the supervisor view if one exists. */
+/** Returns the autoresizing mask that applies to the layout item as whole. 
+
+See also -setAutoresizingMask:.   */
 - (unsigned int) autoresizingMask
 {
-	if ([self displayView] != nil)
-	{
-		return [[self displayView] autoresizingMask];
-	}
-	else
-	{
-		// TODO: Implement
-		return 0;
-	}
+	return _autoresizingMask;
 }
 
-/** Sets the autoresizing mask that applies to the layout item. This mask is 
-also set as the autoresizing mask of the supervisor view if one exists. */
-- (void) setAutoresizingMask: (unsigned int)mask
+/** Sets the autoresizing mask that applies to the layout item as whole. 
+
+The autoresizing mask only applies to the last decorator item (which might be 
+the receiver itself).<br />
+When the receiver has a decorator, the content autoresizing is controlled by the 
+decorator and not by the receiver autoresizing mask directly.
+
+TODO: Autoresizing mask isn't yet supported when the receiver has no view. */
+- (void) setAutoresizingMask: (unsigned int)aMask
 {
-	if ([self displayView] != nil)
+	_autoresizingMask = aMask;
+
+	if ([self shouldSyncSupervisorViewGeometry] == NO)
+		return;
+	
+	_isSyncingSupervisorViewGeometry = YES;
+	// TODO: Might be reduce to a single line with [super setAutoresizingMask: aMask];
+	if (nil != _decoratorItem)
 	{
-		[[self displayView] setAutoresizingMask: mask];
+		[[self lastDecoratorItem] setAutoresizingMask: aMask];
 	}
 	else
 	{
-		// TODO: Implement
+		[[self supervisorView] setAutoresizingMask: aMask];
 	}
+	_isSyncingSupervisorViewGeometry = NO;
 }
 
 

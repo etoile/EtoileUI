@@ -90,6 +90,7 @@ extern NSString *kETVisibleProperty; /** visible property name */
 	NSRect _contentBounds;
 	NSPoint _position;
 	NSAffineTransform *_transform;
+	unsigned int _autoresizingMask;
 
 	/* Model object stores a persistent frame when the layout is non-computed */
 	NSRect _boundingBox;

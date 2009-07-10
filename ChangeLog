@@ -1,3 +1,18 @@
+2009-07-10 Quentin Mathe <qmathe@club-internet.fr>
+
+	* ETLayoutItem:
+	Added _autoresizingMask ivar.
+	(-autoresizingMask: -setAutoresizingMask:): Rewritten to store the mask 
+	in the ivar and sync the supervisor view as necessary.
+	(-initWithView:value:representedObject:): Modified to initialize the new 
+	ivar.
+	(-setView:): Modified to make the item view sizable inside the supervisor 
+	view. The supervisor view resizes the item view.
+	* ETDecoratorItem:
+	(-setAutoresizingMask:):
+	* TestItemGeometry:
+	Written various autoresizing mask related tests.
+
 2009-06-28 Quentin Mathe <qmathe@club-internet.fr>
 
 	* ETContainer:

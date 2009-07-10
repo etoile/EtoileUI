@@ -253,6 +253,13 @@ See also -convertDecoratorRectToContent:. */
 	[_decoratorItem setFlipped: flipped];	
 }
 
+/** <override-dummy />
+Sets the autoresizing mask of the supervisor view. */
+- (void) setAutoresizingMask: (unsigned int)aMask
+{
+	[[self supervisorView] setAutoresizingMask: aMask];
+}
+
 - (ETUIItem *) decoratedItem
 {
 	return _decoratedItem;
