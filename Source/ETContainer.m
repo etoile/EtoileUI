@@ -81,14 +81,6 @@
 	return self;
 }
 
-/** <init /> Returns a new container instance that is bound to item. This layout 
-     item becomes the abstract representation associated with the new container.
-     A container plays the role of a concrete representation specific to the 
-     underlying UI toolkit, for a collection of layout items.
-     item should be an ETLayoutItemGroup instance in almost all cases.
-     The returned container is created by default with a flexible height and 
-     width, this autoresizingMask also holds for the layout item bound to it. 
-    (see -[ETLayoutItem autoresizingMask]). */
 - (id) initWithFrame: (NSRect)rect layoutItem: (ETLayoutItem *)item
 {
 	if (item != nil && [item isGroup] == NO)
@@ -113,15 +105,7 @@
 	// and failing because [self layoutItem] returns ETLayoutItem instance
 	// and not ETLayoutItemGroup instance; ETLayoutItem doesn't respond to
 	// -canUpdateLayout...
-	self = [super initWithFrame: rect layoutItem: itemGroup];
-    
-	if (self != nil)
-    {
-		[self setRepresentedPath: @"/"];
-		[self setAutoresizingMask: NSViewWidthSizable | NSViewHeightSizable];
-    }
-    
-    return self;
+	return [super initWithFrame: rect layoutItem: itemGroup];
 }
 
 /** Deep copies are never created by the container itself, but they are instead

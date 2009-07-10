@@ -101,7 +101,19 @@ static ETView *barViewPrototype = nil;
 	return [self initWithFrame: frame layoutItem: nil];
 }
 
-/* <init /> */
+/** <init /> 
+Initializes and returns a supervisor view instance that is bound to the given 
+item.
+
+You should never need to use this method which uses internally by EtoileUI.
+
+When the item is nil, an ETLayoutItem will be instantiated and bound to the 
+receiver.
+
+The returned view uses the item autoresizing mask (see 
+-[ETLayoutItem autoresizingMask]).
+
+See also -[ETUIItem supervisorView]. */
 - (id) initWithFrame: (NSRect)frame layoutItem: (ETLayoutItem *)item
 {
 	self = [super initWithFrame: frame];
