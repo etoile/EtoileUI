@@ -115,7 +115,7 @@ static ETView *barViewPrototype = nil;
 	   [existingSuperview addSubview: self];
 	}
 
-	[self setLayout: layout]; /* inject the initial view as a layout */
+	[[self layoutItem] setLayout: layout]; /* inject the initial view as a layout */
 
 	return self;
 }
