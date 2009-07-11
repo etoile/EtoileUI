@@ -45,8 +45,6 @@ ETEvent, ETDecoratorItem;
 
 }
 
-- (id) initWithLayoutView: (NSView *)layoutView;
-
 - (id) deepCopy;
 
 @end

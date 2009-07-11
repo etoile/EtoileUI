@@ -126,6 +126,7 @@
 + (NSView *) titleBarViewPrototype;
 
 - (id) initWithFrame: (NSRect)rect layoutItem: (ETLayoutItem *)item;
+- (id) initWithLayoutView: (NSView *)layoutView;
 
 /* Basic Accessors */
 

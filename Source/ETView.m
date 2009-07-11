@@ -96,6 +96,30 @@ static ETView *barViewPrototype = nil;
 	return barViewPrototype;
 }
 
+// TODO: Move this method to ETUIItemFactory
+- (id) initWithLayoutView: (NSView *)layoutView
+{
+	self = [self initWithFrame: [layoutView frame]];
+	if (self == nil)
+		return nil;
+
+	id existingSuperview = [layoutView superview];
+	ETLayout *layout = [ETLayout layoutWithLayoutView: layoutView];
+	
+	if ([existingSuperview isSupervisorView])
+	{
+	   [[existingSuperview layoutItem] addItem: [self layoutItem]];
+	}
+	else /* existingSuperview isn't a view-based node in a layout item tree */
+	{
+	   [existingSuperview addSubview: self];
+	}
+
+	[self setLayout: layout]; /* inject the initial view as a layout */
+
+	return self;
+}
+
 - (id) initWithFrame: (NSRect)frame
 {
 	return [self initWithFrame: frame layoutItem: nil];

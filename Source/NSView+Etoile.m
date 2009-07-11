@@ -67,6 +67,13 @@ By default, returns NO. */
 	return [self isKindOfClass: [ETContainer class]];
 }
 
+/** Returns YES when the receiver is an ETView class or subclass instance, 
+otherwise returns NO. */
+- (BOOL) isSupervisorView
+{
+	return [self isKindOfClass: [ETView class]];
+}
+
 /** Returns whether the receiver is currently used as a window content view. */
 - (BOOL) isWindowContentView
 {
