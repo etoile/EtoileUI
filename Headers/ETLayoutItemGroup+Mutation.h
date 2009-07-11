@@ -43,7 +43,6 @@
    Don't use or override methods exposed here. */
    
 #define PROVIDER_SOURCE [[self baseItem] source]
-#define PROVIDER_CONTAINER [[self baseItem] container]
 
 /* Properties */
 
@@ -92,7 +91,6 @@ extern NSString *kETControllerProperty; // controller
 	
 /* Providing */
 
-- (ETContainer *) container;
 - (BOOL) isReloading;
 - (NSArray *) itemsFromSource;
 - (NSArray *) itemsFromFlatSource;

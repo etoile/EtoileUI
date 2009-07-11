@@ -428,20 +428,6 @@ static 	BOOL _coalescingMutation = NO;
 
 /* Providing */
 
-// TODO: Get rid of that once the source protocols are based on ETLayoutItemGroup
-// rather than ETContainer
-- (ETContainer *) container
-{
-	if ([self isContainer])
-	{
-		return (ETContainer *)[self supervisorView];
-	}
-	else
-	{
-		return nil;
-	}
-}
-
 - (BOOL) isReloading
 {
 	return _reloading;
@@ -474,7 +460,7 @@ static 	BOOL _coalescingMutation = NO;
 			return [self itemsFromRepresentedObject];
 			break;
 		default:
-			ETLog(@"WARNING: source protocol is incorrectly supported by %@.", [[self container] source]);
+			ETLog(@"WARNING: source protocol is incorrectly supported by %@.", [self source]);
 	}
 	
 	return nil;
