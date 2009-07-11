@@ -20,7 +20,6 @@
 - (ETLayoutLine *) layoutLineForLayoutItems: (NSArray *)items
 {
 	NSMutableArray *layoutedItems = [NSMutableArray array];
-	ETLayoutLine *line = nil;
 	float vAccumulator = 0;
 	float itemMargin = [self itemMargin];
     
@@ -38,15 +37,17 @@
 		}
 	}
 	
-	if ([layoutedItems count] == 0)
+	if ([layoutedItems isEmpty])
 		return nil;
 		
-	line = [ETLayoutLine layoutLineWithLayoutItems: layoutedItems];
+	ETLayoutLine *line = [ETLayoutLine layoutLineWithLayoutItems: layoutedItems];
 	[line setVerticallyOriented: YES];
 	
 	/* Update layout size, useful when the layout context is embedded in a scroll view */
 	if ([self isContentSizeLayout])
+	{
 		[self setLayoutSize: NSMakeSize([line width], vAccumulator)];
+	}
 
 	return line;
 }
@@ -68,7 +69,6 @@
 - (void) computeLayoutItemLocationsForLayoutLine: (ETLayoutLine *)line
 {
 	NSEnumerator *lineWalker = nil;
-	ETLayoutItem *item = nil;
 	float itemMargin = [self itemMargin];
 	NSPoint itemLocation = NSMakePoint(itemMargin, itemMargin);
 	BOOL isFlipped = [[self layoutContext] isFlipped];
@@ -84,7 +84,7 @@
 		itemLocation = NSMakePoint(itemMargin, [self layoutSize].height + itemMargin);	
 	}
 		
-	while ((item = [lineWalker nextObject]) != nil)
+	FOREACHE(nil, item, ETLayoutItem *, lineWalker)
 	{
 		[item setX: itemLocation.x];
 		[item setY: itemLocation.y];

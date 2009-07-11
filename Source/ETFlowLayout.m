@@ -105,14 +105,12 @@ to the items, which are expected to be already broken into lines in layoutModel.
 /** Breaks the items into lines and returns the resulting array as a layout model. */
 - (NSArray *) layoutModelForLayoutItems: (NSArray *)items
 {
-	NSMutableArray *unlayoutedItems = 
-		[NSMutableArray arrayWithArray: items];
-	ETLayoutLine *line = nil;
+	NSMutableArray *unlayoutedItems = [NSMutableArray arrayWithArray: items];
 	NSMutableArray *layoutModel = [NSMutableArray array];
 
 	while ([unlayoutedItems count] > 0)
 	{
-		line = [self layoutLineForLayoutItems: unlayoutedItems];
+		ETLayoutLine *line = [self layoutLineForLayoutItems: unlayoutedItems];
 		
 		if ([[line items] count] > 0)
 		{
@@ -142,7 +140,6 @@ When items is empty, returns an empty layout line. */
 - (ETLayoutLine *) layoutLineForLayoutItems: (NSArray *)items
 {
 	NSMutableArray *layoutedItems = [NSMutableArray array];
-	ETLayoutLine *line = nil;
 	float widthAccumulator = 0;
 	float itemMargin = [self itemMargin];
 
@@ -165,12 +162,14 @@ When items is empty, returns an empty layout line. */
 	// layout horizontally, only vertical filling is in place.
 	// We only touch the layout size height in -computeItemLocationsForLayoutModel:
 	if ([self isContentSizeLayout] && [self layoutSize].width < widthAccumulator)
+	{
 		[self setLayoutSize: NSMakeSize(widthAccumulator, [self layoutSize].height)];
+	}
 
-	if ([layoutedItems count] == 0)
+	if ([layoutedItems isEmpty])
 		return nil;
 
-	line = [ETLayoutLine layoutLineWithLayoutItems: layoutedItems];
+	ETLayoutLine *line = [ETLayoutLine layoutLineWithLayoutItems: layoutedItems];
 	[line setVerticallyOriented: NO];
 
 	return line;

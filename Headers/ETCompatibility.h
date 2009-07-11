@@ -92,17 +92,3 @@ how the properties are stored. The implicit property owner is self. */
 	return [super retain]; \
 } \
 @end
-
-// TODO: Probably move that back into EtoileFoundation and eliminate the code 
-// duplication.
-#define _FOREACH(collection,object,type) _FOREACHE([collection objectEnumerator],object,type,object ## enumerator)
-
-#define _FOREACHE(e,object,type,enumeratorName)\
-NSEnumerator *enumerator = e;\
-type object;\
-IMP next ## object ## in ## enumeratorName = \
-[enumerator methodForSelector:@selector(nextObject)];\
-while(enumerator != nil && (object = next ## object ## in ## enumeratorName(\
-												   enumerator,\
-												   @selector(nextObject))))
-

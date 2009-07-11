@@ -6,6 +6,7 @@
 	License:  Modified BSD (see COPYING)
  */
 
+#import <EtoileFoundation/Macros.h>
 #import "ETComputedLayout.h"
 #import "ETCompatibility.h"
 
@@ -82,7 +83,7 @@ The scroll view visibility is handled by this method (this is subject to change)
 	/* Adjust layout context size when it is embedded in a scroll view */
 	if ([[self layoutContext] isScrollViewShown])
 	{
-		NSAssert([self isContentSizeLayout] == YES, 
+		NSAssert([self isContentSizeLayout], 
 			@"Any layout done in a scroll view must be based on content size");
 			
 		[[self layoutContext] setContentSize: [self layoutSize]];
@@ -95,11 +96,9 @@ The scroll view visibility is handled by this method (this is subject to change)
 	[self mapRootItemIntoLayoutContext];
 
 	NSMutableArray *visibleItems = [NSMutableArray array];
-	NSEnumerator  *e = [layoutModel objectEnumerator];
-	ETLayoutLine *line = nil;
 	
 	/* Flatten layout model by putting all items into a single array */
-	while ((line = [e nextObject]) != nil)
+	FOREACH(layoutModel, line, ETLayoutLine *)
 	{
 		[visibleItems addObjectsFromArray: [line items]];
 	}
@@ -134,7 +133,7 @@ This layout model will be interpreted by -computeViewLocationsForLayoutModel:. *
 	ETLayoutLine *line = [self layoutLineForLayoutItems: items];
 	
 	if (line != nil)
-		return [NSArray arrayWithObject: line];
+		return A(line);
 
 	return nil;
 }
