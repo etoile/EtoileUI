@@ -73,7 +73,7 @@
 	line = [ETLayoutLine layoutLineWithLayoutItems: layoutedItems];
 	[line setVerticallyOriented: YES];
 	
-	/* Update layout size, useful when related container is embedded in a scroll view */
+	/* Update layout size, useful when the layout context is embedded in a scroll view */
 	if ([self isContentSizeLayout])
 		[self setLayoutSize: NSMakeSize([line width], vAccumulator)];
 

@@ -74,17 +74,17 @@
 	return _itemMargin;
 }
 
-/** Runs the layout computation which finds a location in the view container
+/** Runs the layout computation which finds a location in the layout context 
     to all layout items passed in parameter. 
 	This method is usually called by -render and you should rarely need to
 	do it by yourself. If you want to update the layout, just uses 
-	-[ETContainer updateLayout]. 
+	-[ETLayoutItemGroup updateLayout]. 
 	You may need to override this method in your layout subclasses if you want
 	to create very special layout style. In this cases, it's important to know
 	this method is in charge of calling -resizeLayoutItems, 
 	-layoutModelForLayoutItems:, -computeLayoutItemLocationsForLayoutModel:.
 	Finally once the layout is done, this method set the layout item visibility 
-	by calling -setVisibleItems: on the related container. Actually it takes 
+	by calling -setVisibleItems: on the layout context. Actually it takes 
 	care of the scroll view visibility but this may change a little bit in 
 	future. */
 - (void) renderWithLayoutItems: (NSArray *)items isNewContent: (BOOL)isNewContent
@@ -100,15 +100,14 @@
 	// ETDebugLog(@"Remove views %@ of next layout items to be displayed from their superview", itemViews);
 	[[self layoutContext] setVisibleItems: [NSArray array]];
 	
-	/* Adjust container size when it is embedded in a scroll view */
+	/* Adjust layout context size when it is embedded in a scroll view */
 	if ([[self layoutContext] isScrollViewShown])
 	{
-		// NOTE: For this assertion check -[ETContainer setScrollView:] 
 		NSAssert([self isContentSizeLayout] == YES, 
 			@"Any layout done in a scroll view must be based on content size");
 			
 		[[self layoutContext] setContentSize: [self layoutSize]];
-		ETDebugLog(@"Layout size is %@ with container size %@ and clip view size %@", 
+		ETDebugLog(@"Layout size is %@ with layout context size %@ and clip view size %@", 
 			NSStringFromSize([self layoutSize]), 
 			NSStringFromSize([[self layoutContext] size]), 
 			NSStringFromSize([[self layoutContext] visibleContentSize]));
@@ -133,16 +132,16 @@
  * Line-based layouts methods 
  */
 
-/** Overrides this method to generate a layout line based on the container 
-    constraints. Usual container constraints are size, vertical and horizontal 
+/** Overrides this method to generate a layout line based on the layout context 
+    constraints. Usual layout context constraints are size, vertical and horizontal 
 	scroller visibility. */
 - (ETLayoutLine *) layoutLineForLayoutItems: (NSArray *)items
 {
 	return nil;
 }
 
-/** Overrides this method to generate a layout model based on the container 
-    constraints. Usual container constraints are size, vertical and horizontal 
+/** Overrides this method to generate a layout model based on the layout context 
+    constraints. Usual layout context constraints are size, vertical and horizontal 
 	scrollers visibility.
 	A layout model is commonly made of several layouts lines inside an array
 	where indexes indicates in which order these layout lines should be 

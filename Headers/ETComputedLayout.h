@@ -38,7 +38,7 @@
 #import <AppKit/AppKit.h>
 #import <EtoileUI/ETLayout.h>
 
-@class ETLayoutLine, ETContainer;
+@class ETLayoutLine;
 
 
 /** ETComputedLayout is a basic abstract class that must be subclassed by all 

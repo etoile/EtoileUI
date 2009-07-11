@@ -37,7 +37,7 @@
 #import <AppKit/AppKit.h>
 #import <EtoileUI/ETComputedLayout.h>
 
-@class ETLayoutLine, ETContainer;
+@class ETLayoutLine;
 
 
 @interface ETStackLayout : ETComputedLayout
