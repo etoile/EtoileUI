@@ -1,42 +1,13 @@
-/*  <title>ETComputedLayout</title>
-
-	ETComputedLayout.m
-
-	<abstract>An abstract layout class whose subclasses position items by 
-	computing their location based on a set of rules.</abstract>
-
+/*
 	Copyright (C) 2008 Quentin Mathe
  
 	Author:  Quentin Mathe <qmathe@club-internet.fr>
 	Date:  July 2008
- 
-	Redistribution and use in source and binary forms, with or without
-	modification, are permitted provided that the following conditions are met:
-
-	* Redistributions of source code must retain the above copyright notice,
-	  this list of conditions and the following disclaimer.
-	* Redistributions in binary form must reproduce the above copyright notice,
-	  this list of conditions and the following disclaimer in the documentation
-	  and/or other materials provided with the distribution.
-	* Neither the name of the Etoile project nor the names of its contributors
-	  may be used to endorse or promote products derived from this software
-	  without specific prior written permission.
-
-	THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
-	AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
-	IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
-	ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE
-	LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
-	CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
-	SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
-	INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
-	CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
-	ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
-	THE POSSIBILITY OF SUCH DAMAGE.
+	License:  Modified BSD (see COPYING)
  */
 
-#import <EtoileUI/ETComputedLayout.h>
-#import <EtoileUI/ETCompatibility.h>
+#import "ETComputedLayout.h"
+#import "ETCompatibility.h"
 
 
 @implementation ETComputedLayout
@@ -53,7 +24,7 @@
 }
 
 /** Sets the size of the margin around each item to be layouted and triggers a 
-    layout update. */
+layout update. */
 - (void) setItemMargin: (float)aMargin
 {
 	_itemMargin = aMargin;
@@ -74,30 +45,38 @@
 	return _itemMargin;
 }
 
-/** Runs the layout computation which finds a location in the layout context 
-    to all layout items passed in parameter. 
-	This method is usually called by -render and you should rarely need to
-	do it by yourself. If you want to update the layout, just uses 
-	-[ETLayoutItemGroup updateLayout]. 
-	You may need to override this method in your layout subclasses if you want
-	to create very special layout style. In this cases, it's important to know
-	this method is in charge of calling -resizeLayoutItems, 
-	-layoutModelForLayoutItems:, -computeLayoutItemLocationsForLayoutModel:.
-	Finally once the layout is done, this method set the layout item visibility 
-	by calling -setVisibleItems: on the layout context. Actually it takes 
-	care of the scroll view visibility but this may change a little bit in 
-	future. */
+/** <override-never />
+Runs the layout computation.<br />
+See also -[ETLayout renderLayoutItems:isNewContent:].
+
+This method is usually called by -render and you should rarely need to do it by 
+yourself. If you want to update the layout, just uses 
+-[ETLayoutItemGroup updateLayout]. 
+	
+You may need to override this method in your layout subclasses if you want
+to create a very special layout style. This method will sequentially invoke:
+<list>
+<item>-resetLayoutSize
+<item>-resizeLayoutItems:toScaleFactor:</item>
+<item>-layoutModelForLayoutItems:</item>
+<item>-computeLayoutItemLocationsForLayoutModel:</item>.
+</list>
+
+Finally once the layout is computed, this method set the layout item visibility 
+by calling -setVisibleItems: on the layout context. 
+
+The scroll view visibility is handled by this method (this is subject to change). */
 - (void) renderWithLayoutItems: (NSArray *)items isNewContent: (BOOL)isNewContent
 {	
 	[super renderWithLayoutItems: items isNewContent: isNewContent];
 
 	NSArray *layoutModel = [self layoutModelForLayoutItems: items];
-	/* Now computes the location of every views by relying on the line by line 
+	/* Now computes the location of every items by relying on the line by line 
 	   decomposition already made. */
 	[self computeLayoutItemLocationsForLayoutModel: layoutModel];
 	
-	// TODO: May be worth to optimize by computing set intersection of visible and unvisible layout items
-	// ETDebugLog(@"Remove views %@ of next layout items to be displayed from their superview", itemViews);
+	// TODO: May be worth to optimize by computing set intersection of visible 
+	// and unvisible layout items
 	[[self layoutContext] setVisibleItems: [NSArray array]];
 	
 	/* Adjust layout context size when it is embedded in a scroll view */
@@ -119,7 +98,7 @@
 	NSEnumerator  *e = [layoutModel objectEnumerator];
 	ETLayoutLine *line = nil;
 	
-	/* Flatten layout model by putting all views in a single array */
+	/* Flatten layout model by putting all items into a single array */
 	while ((line = [e nextObject]) != nil)
 	{
 		[visibleItems addObjectsFromArray: [line items]];
@@ -132,22 +111,24 @@
  * Line-based layouts methods 
  */
 
-/** Overrides this method to generate a layout line based on the layout context 
-    constraints. Usual layout context constraints are size, vertical and horizontal 
-	scroller visibility. */
+/** <override-subclass />
+Overrides this method to generate a layout line based on the layout context 
+constraints. Usual layout context constraints are size, vertical and horizontal 
+scroller visibility. */
 - (ETLayoutLine *) layoutLineForLayoutItems: (NSArray *)items
 {
 	return nil;
 }
 
-/** Overrides this method to generate a layout model based on the layout context 
-    constraints. Usual layout context constraints are size, vertical and horizontal 
-	scrollers visibility.
-	A layout model is commonly made of several layouts lines inside an array
-	where indexes indicates in which order these layout lines should be 
-	displayed. It's up to you if you want to create a layout model with a more 
-	elaborated ordering and rendering semantic. Finally the layout model is 
-	interpreted by -computeViewLocationsForLayoutModel:. */
+/** <override-dummy />
+Returns a layout model where layouts lines have been collected inside an array, 
+whose indexes indicate in which order these layout lines should be presented.
+
+Overrides this method to generate your own layout model based on the layout 
+context constraints. Usual layout context constraints are size, vertical and 
+horizontal scrollers visibility. How the layout model is structured is up to you.
+
+This layout model will be interpreted by -computeViewLocationsForLayoutModel:. */
 - (NSArray *) layoutModelForLayoutItems: (NSArray *)items
 {
 	ETLayoutLine *line = [self layoutLineForLayoutItems: items];
@@ -158,9 +139,9 @@
 	return nil;
 }
 
-/** Overrides this method to interpretate the layout model and compute layout 
-	item locations accordingly. Most of the work of layout process happens in 
-	this method. */
+/** <override-subclass />
+Overrides this method to interpret the layout model and compute the layout item 
+geometrical attributes (position, size, scale etc.) accordingly. */
 - (void) computeLayoutItemLocationsForLayoutModel: (NSArray *)layoutModel
 {
 

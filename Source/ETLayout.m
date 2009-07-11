@@ -783,7 +783,20 @@ See also -isScrollable and ETLayoutItem(Scrollable). */
 	}
 }
 
-/** <override-dummy /> */
+/** <override-dummy />
+Renders the layout.<br />
+This is a skeleton implementation which only invokes -resetLayoutSize: and 
+-resizeLayoutItems:toScaleFactor:.
+
+You can reuse this implementation in your subclass or not.
+
+isNewContent indicates when the layout update is triggered by a node insertion 
+or removal in the tree structure that belong to the layout context.
+
+Any layout item which belong to the layout context, but not present in the item 
+array argument, can be ignored in the layout logic implemented by subclasses. 
+This optimization is not yet used and a subclass is not required to comply to 
+it (this is subject to change though). */
 - (void) renderWithLayoutItems: (NSArray *)items isNewContent: (BOOL)isNewContent
 {	
 	ETDebugLog(@"Render layout items: %@", items);
