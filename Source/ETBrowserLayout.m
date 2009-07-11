@@ -405,16 +405,15 @@
 {
 	NSString *path = [sender pathToColumn: column];
 	NSIndexPath *indexPath = nil;
-	ETContainer *container = [self container];
 	int count = 0;
 	
 	if (path == nil || [path isEqual: @""])
 		path = @"/";
 	
-	indexPath = [[container layoutItem] indexPathForPath: path];
+	indexPath = [[self layoutContext] indexPathForPath: path];
 	NSAssert(indexPath != nil, @"Index path must never be nil in -browser:numberOfRowsInColumn:");
 	
-	count = [[container source] itemGroup: [container layoutItem] numberOfItemsAtPath: indexPath];
+	count = [[[self layoutContext] source] itemGroup: [self layoutContext] numberOfItemsAtPath: indexPath];
 	
 	ETDebugLog(@"Returns %d as number of items in browser view %@", count, sender);
 	

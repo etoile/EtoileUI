@@ -38,8 +38,6 @@
 #import <EtoileUI/ETTableLayout.h>
 
 
-@class ETLayoutLine, ETContainer;
-
 @interface ETOutlineLayout : ETTableLayout 
 {
 	BOOL _treatsGroupsAsStacks;

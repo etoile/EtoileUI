@@ -38,7 +38,6 @@
 #import <EtoileFoundation/Macros.h>
 #import "ETFreeLayout.h"
 #import "ETComputedLayout.h"
-#import "ETContainer.h"
 #import "ETGeometry.h"
 #import "ETHandle.h"
 #import "ETSelectTool.h"
@@ -294,25 +293,24 @@ around: the persistent frame is initialized with the frame value. */
 // For 2.5D or 3D, we could add more properties to ETLayoutItem in CoreAnimation 
 // spirit. For example, a zPosition property and a orientationVector property. 
 // Think more about that...
-// Implementing these methods also mean to uncomment them in ETContainer.h.
-// -container:locationForItem: should be called in -itemAtLocation:. If no
+// -itemGroup:locationForItem: should be called in -itemAtLocation:. If no
 // source exists, -itemAtLocation must run exactly as it is now and requests the 
 // item location to super.
-// -container:setLocation:forItem: should be called in 
+// -itemGroup:setLocation:forItem: should be called in 
 // -handleDrop:forItem:layout: or similar.
-// -container:acceptLocation:forItem: may be needed in 
+// -itemGroup:acceptLocation:forItem: may be needed in 
 // -handleDrag:forItem:layout: to give feedback about positional constraints to 
 // the user.
 #if 0
-/* Overriden method to delegate it to the container data source. */
-- (ETVector *) container: (ETContainer *)container locationForItem: (ETLayoutItem *)item
+/* Overriden method to delegate it to the layout item group data source. */
+- (ETVector *) itemGroup: (ETLayoutItemGroup *)itemGroup locationForItem: (ETLayoutItem *)item
 {
-	return [[[self container] source] container: container locationForItem: item];
+	return [[itemGroup source] itemGroup: itemGroup locationForItem: item];
 }
 
-/* Overriden method to delegate it to the container data source. */
-- (void) container: (ETContainer *)container setLocation: (ETVector *)vectorLoc forItem: (ETLayoutItem *)item
+/* Overriden method to delegate it to the layout item group data source. */
+- (void) itemGroup: (ETLayoutItemGroup *)itemGroup setLocation: (ETVector *)vectorLoc forItem: (ETLayoutItem *)item
 {
-	[[[self container] source] container: container setLocation: vectorLoc forItem: item];
+	[[itemGroup source] itemGroup: itemGroup setLocation: vectorLoc forItem: item];
 }
 #endif

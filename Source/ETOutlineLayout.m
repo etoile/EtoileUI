@@ -37,7 +37,6 @@
 #import <EtoileFoundation/NSObject+Model.h>
 #import "ETOutlineLayout.h"
 #import "ETLayout.h"
-#import "ETContainer.h"
 #import "ETLayoutItem.h"
 #import "ETPickDropActionHandler.h"
 #import "ETEvent.h"

@@ -37,7 +37,6 @@
 #import <EtoileFoundation/Macros.h>
 #import <EtoileFoundation/NSObject+HOM.h>
 #import "ETTableLayout.h"
-#import "ETContainer.h"
 #import "ETLayoutItem.h"
 #import "ETEvent.h"
 #import "ETLayoutLine.h"
@@ -412,10 +411,6 @@ yet, it is created. */
 {
 	[self didChangeSelectionInLayoutView];
 }
-
-// TODO: Implement forwarding of all delegate methods to ETContainer delegate by
-// overriding -respondsToSelector: and forwardInvocation:
-// Put this forward code into ETLayout
 
 // NOTE: Only for Cocoa presently but we'll be probably be used everywhere later.
 #ifndef GNUSTEP
