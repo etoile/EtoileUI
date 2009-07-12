@@ -17,6 +17,13 @@
 
 @implementation ETStyle
 
+- (id) copyWithZone: (NSZone *)aZone
+{
+	ETStyle *newStyle = [[[self class] alloc] init];
+	newStyle->_isSharedStyle = _isSharedStyle;
+	return newStyle;
+}
+
 /** Returns whether the receiver can be shared between several owners.
 
 TODO: Not really implemented yet... */
@@ -89,15 +96,30 @@ overrides it to resize/scale the bezier path as needed. */
 
 static ETBasicItemStyle *sharedBasicItemStyle = nil;
 
+/** Returns the shared basic item style instance. */
 + (id) sharedInstance
 {
 	if (sharedBasicItemStyle == nil)
 	{
 		sharedBasicItemStyle = [[ETBasicItemStyle alloc] init];
-		sharedBasicItemStyle->_isSharedStyle = YES;
 	}
 
 	return sharedBasicItemStyle;
+}
+
+/** <init />Initializes and returns a new basic item style. */
+- (id) init
+{
+	SUPERINIT
+	_isSharedStyle = YES;
+	return self;
+}
+
+- (id) copyWithZone: (NSZone *)aZone
+{
+	ETBasicItemStyle *newStyle = [super copyWithZone: aZone];
+	newStyle->_titleVisible = _titleVisible;
+	return newStyle;
 }
 
 - (void) render: (NSMutableDictionary *)inputValues 
@@ -260,6 +282,8 @@ indicatorRect is equal to it. */
 
 
 @implementation ETDropIndicator
+
+// NOTE: -copyWithZone: implementation can be omitted, the ivars are transient.
 
 - (id) initWithLocation: (NSPoint)dropLocation 
             hoveredItem: (ETLayoutItem *)hoveredItem

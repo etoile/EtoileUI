@@ -34,7 +34,7 @@ This method is usually called indirectly like that:
 ETStyle objects are usually shared between multiple style groups 
 (or other owners) . Thereby they don't know on which UI areas they are applied 
 and expect to be provided a layout item through -render:layoutItem:dirtyRect:. */
-@interface ETStyle : NSObject <ETRendering>
+@interface ETStyle : NSObject <ETRendering, NSCopying>
 {
 	BOOL _isSharedStyle;
 }

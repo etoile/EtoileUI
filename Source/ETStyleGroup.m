@@ -46,6 +46,13 @@ in the given style collection. */
 	[super dealloc];
 }
 
+- (id) copyWithZone: (NSZone *)aZone
+{
+	ETStyleGroup *newStyle = [super copyWithZone: aZone];
+	newStyle->_styles = [_styles mutableCopyWithZone: aZone];
+	return newStyle;
+}
+
 /* Style Collection */
 
 /** Add the style. */

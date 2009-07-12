@@ -122,6 +122,20 @@ static NSRect shapeFactoryRect = {{ 0, 0 }, { 150, 100 }};
     [super dealloc];
 }
 
+/** Returns a copy of the receiver shape.
+
+The copied shape is never hidden, even when the receiver was. */
+- (id) copyWithZone: (NSZone *)aZone
+{
+	ETShape *newShape = [super copyWithZone: aZone];
+	newShape->_path = [_path copyWithZone: aZone];
+	newShape->_fillColor = [_fillColor copyWithZone: aZone];
+	newShape->_strokeColor = [_strokeColor copyWithZone: aZone];
+	newShape->_alpha = _alpha;
+	newShape->_resizeSelector = _resizeSelector;
+	return newShape;
+}
+
 - (NSBezierPath *) path
 {
 	return _path;
