@@ -179,6 +179,7 @@ extern NSString *kETVisibleProperty; /** visible property name */
 
 - (id) representedObject;
 - (void) setRepresentedObject: (id)modelObject;
+- (id) subject;
 
 - (id) valueForProperty: (NSString *)key;
 - (BOOL) setValue: (id)value forProperty: (NSString *)key;

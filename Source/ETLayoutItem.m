@@ -703,6 +703,19 @@ represented on screen by the receiver. See also -setRepresentedObject:. */
 	return _modelObject;
 }
 
+/** Returns the represented object when not nil, otherwise returns the receiver.
+
+You shouldn't have to use this method a lot since -valueForProperty: and 
+-setValue:forProperty: make the property access transparent. For example 
+[self valueForProperty: kNameProperty] is equivalent to [[self subject] name].
+
+-subject can be useful with KVC which only considers the layout item itself. e.g. 
+[itemCollection valueForKey: @"subject.name"].  */
+- (id) subject
+{
+	return (nil != _modelObject ? _modelObject : self);
+}
+
 /** Sets the model object which embeds the data to be displayed and represented 
 on screen by the receiver.
 
