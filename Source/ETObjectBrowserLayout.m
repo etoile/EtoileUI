@@ -115,7 +115,6 @@
 
 - (void) renderWithLayoutItems: (NSArray *)items isNewContent: (BOOL)isNewContent
 {
-	[self setUpLayoutView];
 	// [itemGroupView setSource: [self browsedObject]];
 	[[(ETContainer *)itemGroupView layout] setDisplayedProperties: [self displayedItemPropertiesInItemGroup: [(ETContainer *)[self layoutView] layoutItem]]];
 	[[itemGroupView layoutItem] setRepresentedObject: [self browsedObject]];
