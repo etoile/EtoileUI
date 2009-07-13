@@ -342,8 +342,7 @@ yet, it is created. */
 			@"view-based layout %@ cannot be set", _layoutContext, self);
 		return;
 	}
-	
-	[self setUpLayoutView];	
+
 	[self resizeLayoutItems: items 
 	          toScaleFactor: [[self layoutContext] itemScaleFactor]];
 

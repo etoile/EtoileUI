@@ -245,11 +245,6 @@ nil if the current item is the last item. */
 	if (isNewContent)
 	{
 		[self rebuildBarWithItems: items];
-	}
-	
-	[self setUpLayoutView];
-	if (isNewContent)
-	{
 		[self goToItem: [items firstObject]];
 	}
 	[self mapRootItemIntoLayoutContext];

@@ -500,7 +500,7 @@ The new layout context has been set when this method is called.
 You must call the superclass implementation if you override this method. */
 - (void) setUp
 {
-
+	[self setUpLayoutView];
 }
 
 // TODO: Pick better names for the following methods:
@@ -984,13 +984,14 @@ context and the tree rooted in -rootItem. */
 }
 
 /** Returns YES if the layout view is presently visible in the layout item tree 
-    of the layout context, otherwise returns NO.
-    A layout view can be inserted in a superview bound to a parent item and 
-    yet not be visible. For example, if an ancestor item of the parent uses an 
-    opaque layout, the layout view can be inserted in the parent view but the 
-    parent view (or another ancestor superview which owns it) might not be 
-    inserted as a subview in the visible view hierarchy of the layout item 
-    tree. */
+of the layout context, otherwise returns NO.
+
+A layout view can be inserted in a superview bound to a parent item and 
+yet not be visible. <br />
+For example, if an ancestor item of the parent uses an opaque layout, the layout 
+view can be inserted in the parent view but the parent view (or another ancestor 
+superview which owns it) might not be inserted as a subview in the visible view 
+hierarchy of the layout item tree. */
 - (BOOL) isLayoutViewInUse
 {
 	// NOTE: A visible view hierarchy is always rooted in a window, itself bound 
@@ -998,19 +999,19 @@ context and the tree rooted in -rootItem. */
 	return ([[self layoutView] window] == nil);
 }
 
-/** You should call this method in -renderWithLayoutItems:isNewContent: if you 
-	write a view-based layout subclass.
-	This method may be overriden by subclasses to handle view-specific 
-	configuration before the view gets injected in the layout context. You must  
-	then call the superclass method to have the layout view added as a subview 
-	to the container associated with the layout context. */
+/** <override-dummy />
+You should call this method in -renderWithLayoutItems:isNewContent: if you 
+write a view-based layout subclass.
+
+This method may be overriden by subclasses to handle view-specific configuration 
+before the view gets injected in the layout context. You must then call the 
+superclass method to let the layout view be inserted in the layout context 
+supervisor view. */
 - (void) setUpLayoutView
 {
 	id layoutView = [self layoutView];
 
-	NSAssert1(layoutView != nil, @"Layout view to set up must not be nil in %@", self);
-	
-	if ([layoutView superview] != nil)
+	if (nil == layoutView || [layoutView superview] != nil)
 		return;
 
 	[layoutView setAutoresizingMask: NSViewHeightSizable | NSViewWidthSizable];

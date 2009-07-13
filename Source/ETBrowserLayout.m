@@ -122,8 +122,6 @@
 {
 	NSBrowser *browserView = [self browser];
 	
-	[self setUpLayoutView];
-	
 	// FIXME: Implement browser cell scaling to get 
 	// -resizeLayoutItems:toScaleFactor: works as expected
 	//[self resizeLayoutItems: items toScaleFactor: [[self layoutContext] itemScaleFactor]];

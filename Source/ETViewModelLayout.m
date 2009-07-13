@@ -218,7 +218,6 @@ You must never use this method. */
 		return;
 	}
 
-	[self setUpLayoutView];
 	[propertyView reloadAndUpdateLayout];
 }
 
