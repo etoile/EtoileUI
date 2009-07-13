@@ -1,37 +1,9 @@
-/*  <title>ETController</title>
-
-	ETController.m
-	
-	<abstract>A generic controller layer interfaced with the layout item tree.</abstract>
- 
+/*
 	Copyright (C) 2007 Quentin Mathe
  
 	Author:  Quentin Mathe <qmathe@club-internet.fr>
 	Date:  January 2007
- 
-	Redistribution and use in source and binary forms, with or without
-	modification, are permitted provided that the following conditions are met:
-
-	* Redistributions of source code must retain the above copyright notice,
-	  this list of conditions and the following disclaimer.
-	* Redistributions in binary form must reproduce the above copyright notice,
-	  this list of conditions and the following disclaimer in the documentation
-	  and/or other materials provided with the distribution.
-	* Neither the name of the Etoile project nor the names of its contributors
-	  may be used to endorse or promote products derived from this software
-	  without specific prior written permission.
-
-	THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
-	AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
-	IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
-	ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE
-	LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
-	CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
-	SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
-	INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
-	CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
-	ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
-	THE POSSIBILITY OF SUCH DAMAGE.
+	License:  Modified BSD  (see COPYING)
  */
 
 #import <EtoileFoundation/Macros.h>
@@ -48,11 +20,7 @@
 - (id) init
 {
 	SUPERINIT
-	
-	[self setTemplateItem: nil];
-	[self setTemplateItemGroup: nil];
-	[self setObjectClass: nil];
-	[self setGroupClass: nil];
+
 	[self setSortDescriptors: nil];
 	_allowedPickType = [[ETUTI alloc] init];
 	_allowedDropTypes = [[NSMutableDictionary alloc] init];
@@ -72,6 +40,30 @@
 	DESTROY(_allowedDropTypes);
 	
 	[super dealloc];
+}
+
+/** Returns a receiver copy with a nil content.
+
+You can set the returned controller content indirectly with 
+-[ETLayoutItemGroup setController:]. */
+- (id) copyWithZone: (NSZone *)aZone
+{
+	ETController *newController = [[[self class] alloc] init];
+
+	newController->_templateItem = [_templateItem copyWithZone: aZone];
+	newController->_templateItemGroup = [_templateItemGroup copyWithZone: aZone];
+	ASSIGN(newController->_objectClass, _objectClass);
+	ASSIGN(newController->_groupClass, _groupClass);
+	newController->_sortDescriptors = [_sortDescriptors copyWithZone: aZone];
+	newController->_filterPredicate = [_filterPredicate copyWithZone: aZone];
+	newController->_allowedPickType = [_allowedPickType copyWithZone: aZone];
+	newController->_allowedDropTypes = [_allowedDropTypes mutableCopyWithZone: aZone];
+	newController->_automaticallyRearrangesObjects = _automaticallyRearrangesObjects;
+	newController->_hasNewSortDescriptors = (NO == [_sortDescriptors isEmpty]);
+	newController->_hasNewFilterPredicate = (nil != _filterPredicate);
+	newController->_hasNewContent = NO;
+
+	return newController;
 }
 
 /** Returns the content object which is either a layout item group or nil.
