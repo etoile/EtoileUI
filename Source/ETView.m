@@ -478,6 +478,9 @@ You can revert to non-flipped coordinates by passing NO to this method. */
 
 - (void) setWrappedView: (NSView *)view
 {
+	NSAssert([[self temporaryView] isEqual: view] == NO, @"A temporary view "
+		"cannot be set as a wrapped view.");
+
 	// NOTE: Next lines must be kept in this precise order and -tile not moved
 	// into -setContentView:temporary:
 	[self setContentView: view temporary: NO];
@@ -496,7 +499,10 @@ When a temporary view is set, this view is visible in place of -wrappedView.
 
 If you pass nil, the visible view is reverted to -wrappedView. */
 - (void) setTemporaryView: (NSView *)subview
-{
+{	
+	NSAssert([[self wrappedView] isEqual: subview] == NO, @"A wrapped view "
+		"cannot be set as a temporary view.");
+
 	// NOTE: Next lines must be kept in this precise order and -tile not moved
 	// into -setContentView:temporary:
 	[self setContentView: subview temporary: YES];
@@ -516,6 +522,10 @@ view installed by the layout. */
 /** You must override this method in subclasses. */
 - (void) setContentView: (NSView *)view temporary: (BOOL)temporary
 {
+	/* Reset the content view frame to fill the receiver */
+	[view setFrameOrigin: NSZeroPoint];
+	[view setFrameSize: [self frame].size];
+
 	/* Ensure the resizing of all subviews is handled automatically */
 	[self setAutoresizesSubviews: YES];
 
@@ -701,9 +711,15 @@ view installed by the layout. */
 
 /* Overriden NSView methods */
 
+#define CHECKSIZE(size) \
+NSAssert1(size.width >= 0 && size.height >= 0, @"For a supervisor view, the " \
+	"frame must always have a positive size %@", NSStringFromSize(size));
+
 - (void) setFrame: (NSRect)frame
 {
+	CHECKSIZE(frame.size)
 	[super setFrame: frame];
+
 	if ([_layoutItem shouldSyncSupervisorViewGeometry] == NO)
 		return;
 
@@ -723,6 +739,7 @@ view installed by the layout. */
 #ifdef GNUSTEP
 - (void) setFrameSize: (NSSize)size
 {
+	CHECKSIZE(size)
 	[super setFrameSize: size];
 	if ([_layoutItem shouldSyncSupervisorViewGeometry] == NO)
 		return;
@@ -756,6 +773,12 @@ view installed by the layout. */
 	ETLog(@"Will alter resizing mask from %d to %d %@", [self autoresizingMask], 
 		mask, self);
 	[super setAutoresizingMask: mask];
+}
+
+- (void) resizeSubviewsWithOldSize: (NSSize)aSize
+{
+	[_temporaryView resizeWithOldSuperviewSize: aSize];
+	[_wrappedView resizeWithOldSuperviewSize: aSize];
 }
 #endif
 

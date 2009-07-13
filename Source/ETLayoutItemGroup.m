@@ -1907,8 +1907,6 @@ See also -setDoubleAction:. */
 		 "context supervisor view or nil.");
 
 	[aView removeFromSuperview];
-	[aView setFrameSize: [self frame].size];
-	[aView setFrameOrigin: NSZeroPoint];
 	[[self supervisorView] setTemporaryView: aView];
 }
 
