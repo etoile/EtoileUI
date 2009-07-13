@@ -488,7 +488,8 @@ You must call the superclass implementation if you override this method. */
 	// May be we should move it into -[layout setContainer:]...
 	// Triggers scroll view display which triggers layout render in turn to 
 	// compute the content size
-	[[self layoutContext] setLayoutView: nil]; 
+	[[self layoutContext] setLayoutView: nil];
+	[self unmapRootItemFromLayoutContext];
 }
 
 /** <override-dummy />Overrides if your subclass requires extra transformation 
@@ -501,6 +502,7 @@ You must call the superclass implementation if you override this method. */
 - (void) setUp
 {
 	[self setUpLayoutView];
+	[self mapRootItemIntoLayoutContext];
 }
 
 // TODO: Pick better names for the following methods:
@@ -643,6 +645,7 @@ See also -isScrollable and ETLayoutItem(Scrollable). */
 {
 	//ETDebugLog(@"-setLayoutSize");
 	_layoutSize = size;
+	[self syncRootItemGeometryWithSize: size];
 }
 
 - (NSSize) layoutSize
@@ -929,11 +932,18 @@ context and the tree rooted in -rootItem. */
 	return _rootItem;
 }
 
+/** Resizes the root item to the given size and sets its -isFlipped property 
+to be identical to the layout context. */
+- (void) syncRootItemGeometryWithSize: (NSSize)aSize
+{
+	[[self rootItem] setFlipped: [[self layoutContext] isFlipped]];
+	/* The root item is rendered in the coordinate space of the layout context */
+	[[self rootItem] setSize: aSize];
+}
+
 - (void) mapRootItemIntoLayoutContext
 {
 	ETLayoutItemGroup *layoutContext = (ETLayoutItemGroup *)[self layoutContext];
-	ETLayoutItemGroup *rootItem = [self rootItem];
-	NSRect rootItemFrame = ETMakeRect(NSZeroPoint, [layoutContext visibleContentSize]);
 
 	/* We don't insert the root item in the layout context, because we don't 
 	   want to make it visible in the semantic tree. Yet to support -display 
@@ -942,15 +952,14 @@ context and the tree rooted in -rootItem. */
 	   main layout item tree. */
 	if ([layoutContext isLayoutItem])
 	{
-		[rootItem setParentItem: layoutContext];
+		[[self rootItem] setParentItem: layoutContext];
 	}
 	else /* For layout composition, when the layout context is a layout */
 	{
-		[rootItem setParentItem: [layoutContext rootItem]];
+		[[self rootItem] setParentItem: [layoutContext rootItem]];
 	}
-	[rootItem setFlipped: [[self layoutContext] isFlipped]];
-	/* The root item is rendered in the coordinate space of the layout context */
-	[rootItem setFrame: rootItemFrame];
+
+	[self syncRootItemGeometryWithSize: [layoutContext visibleContentSize]];
 }
 
 - (void) unmapRootItemFromLayoutContext

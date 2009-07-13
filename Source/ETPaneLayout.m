@@ -247,7 +247,6 @@ nil if the current item is the last item. */
 		[self rebuildBarWithItems: items];
 		[self goToItem: [items firstObject]];
 	}
-	[self mapRootItemIntoLayoutContext];
 }
 
 - (void) tearDown

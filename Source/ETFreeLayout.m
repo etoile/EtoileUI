@@ -221,7 +221,6 @@ layout context, based on the rules or policy of the given layout. */
 
 	[super renderWithLayoutItems: items isNewContent: isNewContent];
 
-	[self mapRootItemIntoLayoutContext];
 	// TODO: May be worth to optimize by computing set intersection of visible and unvisible layout items
 	// NSLog(@"Remove views %@ of next layout items to be displayed from their superview", itemViews);
 	[[self layoutContext] setVisibleItems: [NSArray array]];

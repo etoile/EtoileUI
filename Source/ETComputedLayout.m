@@ -93,8 +93,6 @@ The scroll view visibility is handled by this method (this is subject to change)
 			NSStringFromSize([[self layoutContext] visibleContentSize]));
 	}
 
-	[self mapRootItemIntoLayoutContext];
-
 	NSMutableArray *visibleItems = [NSMutableArray array];
 	
 	/* Flatten layout model by putting all items into a single array */

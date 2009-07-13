@@ -172,7 +172,6 @@ when they get deallocated. */
 	NSAssert1([self positionalLayout] != nil, @"Positional layout %@ must "
 		@"not be nil in a template item layout", [self positionalLayout]);
 
-	[self mapRootItemIntoLayoutContext];
 	/* Visibility of replaced and replacement items is handled in 
 	   -setVisibleItems: */
 	[[self positionalLayout] renderWithLayoutItems: _replacementItems isNewContent: isNewContent];

@@ -222,6 +222,7 @@ typedef enum _ETSizeConstraintStyle
 - (ETLayoutItemGroup *) rootItem;
 - (void) mapRootItemIntoLayoutContext;
 - (void) unmapRootItemFromLayoutContext;
+- (void) syncRootItemGeometryWithSize: (NSSize)aSize;
 
 - (void) setLayoutView: (NSView *)protoView;
 - (NSView *) layoutView;
