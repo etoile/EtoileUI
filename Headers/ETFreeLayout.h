@@ -53,6 +53,5 @@
 - (void) hideHandlesForItem: (ETLayoutItem *)item;
 - (void) buildHandlesForItems: (NSArray *)manipulatedItems;
 - (void) resetItemPersistentFramesWithLayout: (ETComputedLayout *)layout;
-- (void) loadPersistentFramesForItems: (NSArray *)items;
 
 @end

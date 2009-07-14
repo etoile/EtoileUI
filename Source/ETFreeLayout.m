@@ -194,45 +194,12 @@ layout context, based on the rules or policy of the given layout. */
 }
 
 - (void) renderWithLayoutItems: (NSArray *)items isNewContent: (BOOL)isNewContent
-{	
-	/* Frame must be set to persistent frame before -resizeItems:toScale: is 
-	   called by -renderWithLayoutItems:isNewContent:, otherwise the scaling 
-	   is computed based on the frame computed by the last layout in use which 
-	   may not be ETFreeLayout (when switching from another layout). */
-	[self loadPersistentFramesForItems: items];
+{
+	[super renderWithLayoutItems: items isNewContent: isNewContent];
 	if (isNewContent)
 	{
 		[self updateKVOForItems: items];
 		[self buildHandlesForItems: items];
-	}
-
-	[super renderWithLayoutItems: items isNewContent: isNewContent];
-
-	// TODO: May be worth to optimize by computing set intersection of visible and unvisible layout items
-	// NSLog(@"Remove views %@ of next layout items to be displayed from their superview", itemViews);
-	[[self layoutContext] setVisibleItems: [NSArray array]];
-
-	[[self layoutContext] setVisibleItems: items];
-}
-
-/** Synchronizes the frames of every layout items provided by the layout 
-context, with their persistent frame values.
-
-When an item has no persistent frame value, the sync is done the other way 
-around: the persistent frame is initialized with the frame value. */
-- (void) loadPersistentFramesForItems: (NSArray *)items
-{
-	FOREACH(items, item, ETLayoutItem *)
-	{
-		/* First time persistent frame is accessed, initialize it */
-		if (ETIsNullRect([item persistentFrame]))
-		{
-			[item setPersistentFrame: [item frame]];
-		}
-		else
-		{
-			[item setFrame: [item persistentFrame]];
-		}
 	}
 }
 

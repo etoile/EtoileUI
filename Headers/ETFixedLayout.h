@@ -23,4 +23,6 @@
 - (BOOL) isPositional;
 - (BOOL) isComputedLayout;
 
+- (void) loadPersistentFramesForItems: (NSArray *)items;
+
 @end
