@@ -237,6 +237,16 @@
 		608BC0F90FE6F4D3007152BB /* ETActionHandler.h in Headers */ = {isa = PBXBuildFile; fileRef = 608BC0F80FE6F4D3007152BB /* ETActionHandler.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		608BC0FB0FE6F4E7007152BB /* ETActionHandler.m in Sources */ = {isa = PBXBuildFile; fileRef = 608BC0FA0FE6F4E7007152BB /* ETActionHandler.m */; };
 		608BC0FC0FE6F4E7007152BB /* ETActionHandler.m in Sources */ = {isa = PBXBuildFile; fileRef = 608BC0FA0FE6F4E7007152BB /* ETActionHandler.m */; };
+		608EBAEC100D22AB00B36FAB /* BrowserPrototype.nib in Resources */ = {isa = PBXBuildFile; fileRef = 608EBAE2100D22AB00B36FAB /* BrowserPrototype.nib */; };
+		608EBAED100D22AB00B36FAB /* Inspector.nib in Resources */ = {isa = PBXBuildFile; fileRef = 608EBAE4100D22AB00B36FAB /* Inspector.nib */; };
+		608EBAEE100D22AB00B36FAB /* OutlinePrototype.nib in Resources */ = {isa = PBXBuildFile; fileRef = 608EBAE6100D22AB00B36FAB /* OutlinePrototype.nib */; };
+		608EBAEF100D22AB00B36FAB /* TablePrototype.nib in Resources */ = {isa = PBXBuildFile; fileRef = 608EBAE8100D22AB00B36FAB /* TablePrototype.nib */; };
+		608EBAF0100D22AB00B36FAB /* ViewModelPrototype.nib in Resources */ = {isa = PBXBuildFile; fileRef = 608EBAEA100D22AB00B36FAB /* ViewModelPrototype.nib */; };
+		608EBAF1100D22AB00B36FAB /* BrowserPrototype.nib in Resources */ = {isa = PBXBuildFile; fileRef = 608EBAE2100D22AB00B36FAB /* BrowserPrototype.nib */; };
+		608EBAF2100D22AB00B36FAB /* Inspector.nib in Resources */ = {isa = PBXBuildFile; fileRef = 608EBAE4100D22AB00B36FAB /* Inspector.nib */; };
+		608EBAF3100D22AB00B36FAB /* OutlinePrototype.nib in Resources */ = {isa = PBXBuildFile; fileRef = 608EBAE6100D22AB00B36FAB /* OutlinePrototype.nib */; };
+		608EBAF4100D22AB00B36FAB /* TablePrototype.nib in Resources */ = {isa = PBXBuildFile; fileRef = 608EBAE8100D22AB00B36FAB /* TablePrototype.nib */; };
+		608EBAF5100D22AB00B36FAB /* ViewModelPrototype.nib in Resources */ = {isa = PBXBuildFile; fileRef = 608EBAEA100D22AB00B36FAB /* ViewModelPrototype.nib */; };
 		609097990CAEBC32009CAD27 /* NSObject+EtoileUI.h in Headers */ = {isa = PBXBuildFile; fileRef = 609097970CAEBC32009CAD27 /* NSObject+EtoileUI.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		6090979A0CAEBC32009CAD27 /* NSObject+EtoileUI.m in Sources */ = {isa = PBXBuildFile; fileRef = 609097980CAEBC32009CAD27 /* NSObject+EtoileUI.m */; };
 		60909CD90CB2DAB3009CAD27 /* TableController.m in Sources */ = {isa = PBXBuildFile; fileRef = 60909CD80CB2DAB3009CAD27 /* TableController.m */; };
@@ -477,9 +487,8 @@
 		600243BA0CD133420023182D /* EtoileUITests-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = "EtoileUITests-Info.plist"; path = "Tests/EtoileUITests-Info.plist"; sourceTree = "<group>"; };
 		600243C40CD133950023182D /* UnitKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UnitKit.framework; path = /Library/Frameworks/UnitKit.framework; sourceTree = "<absolute>"; };
 		600243C90CD134440023182D /* test_ETLayoutItem.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = test_ETLayoutItem.m; path = Tests/test_ETLayoutItem.m; sourceTree = "<group>"; };
-		60073BC510074ACF007272E6 /* EtoileUI-Info copy.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "EtoileUI-Info copy.plist"; sourceTree = "<group>"; };
 		60073C2910074B39007272E6 /* EtoileWeb.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = EtoileWeb.framework; sourceTree = BUILT_PRODUCTS_DIR; };
-		60073C2E10074B39007272E6 /* EtoileWeb-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "EtoileWeb-Info.plist"; sourceTree = "<group>"; };
+		60073C2E10074B39007272E6 /* EtoileWeb-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = "EtoileWeb-Info.plist"; path = "../EtoileWeb/EtoileWeb-Info.plist"; sourceTree = "<group>"; };
 		60073E9F10074BC4007272E6 /* ETXHTMLWriter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ETXHTMLWriter.h; path = ../EtoileWeb/ETXHTMLWriter.h; sourceTree = SOURCE_ROOT; };
 		60073EA010074BC4007272E6 /* ETXHTMLWriter.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ETXHTMLWriter.m; path = ../EtoileWeb/ETXHTMLWriter.m; sourceTree = SOURCE_ROOT; };
 		60073EAD10074D26007272E6 /* EtoileXML.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = EtoileXML.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -655,6 +664,11 @@
 		6086160E0F0F9A6B0061ACFE /* ETShape.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ETShape.m; path = Source/ETShape.m; sourceTree = "<group>"; };
 		608BC0F80FE6F4D3007152BB /* ETActionHandler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ETActionHandler.h; path = Headers/ETActionHandler.h; sourceTree = "<group>"; };
 		608BC0FA0FE6F4E7007152BB /* ETActionHandler.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ETActionHandler.m; path = Source/ETActionHandler.m; sourceTree = "<group>"; };
+		608EBAE3100D22AB00B36FAB /* English */ = {isa = PBXFileReference; lastKnownFileType = wrapper.nib; name = English; path = English.lproj/BrowserPrototype.nib; sourceTree = "<group>"; };
+		608EBAE5100D22AB00B36FAB /* English */ = {isa = PBXFileReference; lastKnownFileType = wrapper.nib; name = English; path = English.lproj/Inspector.nib; sourceTree = "<group>"; };
+		608EBAE7100D22AB00B36FAB /* English */ = {isa = PBXFileReference; lastKnownFileType = wrapper.nib; name = English; path = English.lproj/OutlinePrototype.nib; sourceTree = "<group>"; };
+		608EBAE9100D22AB00B36FAB /* English */ = {isa = PBXFileReference; lastKnownFileType = wrapper.nib; name = English; path = English.lproj/TablePrototype.nib; sourceTree = "<group>"; };
+		608EBAEB100D22AB00B36FAB /* English */ = {isa = PBXFileReference; lastKnownFileType = wrapper.nib; name = English; path = English.lproj/ViewModelPrototype.nib; sourceTree = "<group>"; };
 		609097010CADC366009CAD27 /* PhotoViewExample-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = "PhotoViewExample-Info.plist"; path = "PhotoViewExample/PhotoViewExample-Info.plist"; sourceTree = "<group>"; };
 		609097970CAEBC32009CAD27 /* NSObject+EtoileUI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "NSObject+EtoileUI.h"; path = "Headers/NSObject+EtoileUI.h"; sourceTree = "<group>"; };
 		609097980CAEBC32009CAD27 /* NSObject+EtoileUI.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = "NSObject+EtoileUI.m"; path = "Source/NSObject+EtoileUI.m"; sourceTree = "<group>"; };
@@ -961,7 +975,11 @@
 				60CA73860C494B22009D9B02 /* COPYING */,
 				60EF8E9E0C5E4D0600C97C41 /* EtoileUI-Info.plist */,
 				600243BA0CD133420023182D /* EtoileUITests-Info.plist */,
-				60073BC510074ACF007272E6 /* EtoileUI-Info copy.plist */,
+				608EBAE2100D22AB00B36FAB /* BrowserPrototype.nib */,
+				608EBAE4100D22AB00B36FAB /* Inspector.nib */,
+				608EBAE6100D22AB00B36FAB /* OutlinePrototype.nib */,
+				608EBAE8100D22AB00B36FAB /* TablePrototype.nib */,
+				608EBAEA100D22AB00B36FAB /* ViewModelPrototype.nib */,
 			);
 			name = Resources;
 			sourceTree = "<group>";
@@ -1841,6 +1859,11 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				608EBAEC100D22AB00B36FAB /* BrowserPrototype.nib in Resources */,
+				608EBAED100D22AB00B36FAB /* Inspector.nib in Resources */,
+				608EBAEE100D22AB00B36FAB /* OutlinePrototype.nib in Resources */,
+				608EBAEF100D22AB00B36FAB /* TablePrototype.nib in Resources */,
+				608EBAF0100D22AB00B36FAB /* ViewModelPrototype.nib in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1925,6 +1948,11 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				608EBAF1100D22AB00B36FAB /* BrowserPrototype.nib in Resources */,
+				608EBAF2100D22AB00B36FAB /* Inspector.nib in Resources */,
+				608EBAF3100D22AB00B36FAB /* OutlinePrototype.nib in Resources */,
+				608EBAF4100D22AB00B36FAB /* TablePrototype.nib in Resources */,
+				608EBAF5100D22AB00B36FAB /* ViewModelPrototype.nib in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2339,6 +2367,46 @@
 			name = ObjectManager.nib;
 			sourceTree = "<group>";
 		};
+		608EBAE2100D22AB00B36FAB /* BrowserPrototype.nib */ = {
+			isa = PBXVariantGroup;
+			children = (
+				608EBAE3100D22AB00B36FAB /* English */,
+			);
+			name = BrowserPrototype.nib;
+			sourceTree = "<group>";
+		};
+		608EBAE4100D22AB00B36FAB /* Inspector.nib */ = {
+			isa = PBXVariantGroup;
+			children = (
+				608EBAE5100D22AB00B36FAB /* English */,
+			);
+			name = Inspector.nib;
+			sourceTree = "<group>";
+		};
+		608EBAE6100D22AB00B36FAB /* OutlinePrototype.nib */ = {
+			isa = PBXVariantGroup;
+			children = (
+				608EBAE7100D22AB00B36FAB /* English */,
+			);
+			name = OutlinePrototype.nib;
+			sourceTree = "<group>";
+		};
+		608EBAE8100D22AB00B36FAB /* TablePrototype.nib */ = {
+			isa = PBXVariantGroup;
+			children = (
+				608EBAE9100D22AB00B36FAB /* English */,
+			);
+			name = TablePrototype.nib;
+			sourceTree = "<group>";
+		};
+		608EBAEA100D22AB00B36FAB /* ViewModelPrototype.nib */ = {
+			isa = PBXVariantGroup;
+			children = (
+				608EBAEB100D22AB00B36FAB /* English */,
+			);
+			name = ViewModelPrototype.nib;
+			sourceTree = "<group>";
+		};
 /* End PBXVariantGroup section */
 
 /* Begin XCBuildConfiguration section */
@@ -2416,7 +2484,7 @@
 				GCC_OPTIMIZATION_LEVEL = 0;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "$(SYSTEM_LIBRARY_DIR)/Frameworks/AppKit.framework/Headers/AppKit.h";
-				INFOPLIST_FILE = "EtoileWeb-Info.plist";
+				INFOPLIST_FILE = "../EtoileWeb/EtoileWeb-Info.plist";
 				INSTALL_PATH = "$(HOME)/Library/Frameworks";
 				OTHER_LDFLAGS = (
 					"-framework",
