@@ -681,9 +681,13 @@ view installed by the layout. */
 
 /* Overriden NSView methods */
 
+#ifndef GNUSTEP
 #define CHECKSIZE(size) \
 NSAssert1(size.width >= 0 && size.height >= 0, @"For a supervisor view, the " \
 	"frame must always have a positive size %@", NSStringFromSize(size));
+#else
+#define CHECKSIZE(size)
+#endif
 
 - (void) setFrame: (NSRect)frame
 {
