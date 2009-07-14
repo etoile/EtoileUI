@@ -36,20 +36,17 @@
  
 #import <Foundation/Foundation.h>
 #import <AppKit/AppKit.h>
-#import <EtoileUI/ETLayout.h>
+#import <EtoileUI/ETFixedLayout.h>
 
 @class ETComputedLayout, ETLayoutItemGroup;
 
 /** The free layout requires an ETLayoutItemGroup object as the layout context. */
-@interface ETFreeLayout : ETLayout
+@interface ETFreeLayout : ETFixedLayout
 {
 	NSArray *_observedItems;
 	id _dragItem;
 	NSPoint _dragStartOffsetFromOrigin;
 }
-
-- (BOOL) isPositional;
-- (BOOL) isComputedLayout;
 
 - (void) updateKVOForItems: (NSArray *)items;
 - (void) showHandlesForItem: (ETLayoutItem *)item;

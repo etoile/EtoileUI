@@ -18,6 +18,7 @@
 #import <EtoileUI/ETController.h>
 #import <EtoileUI/ETDecoratorItem.h>
 #import <EtoileUI/ETEvent.h>
+#import <EtoileUI/ETFixedLayout.h>
 #import <EtoileUI/ETFlowLayout.h>
 #import <EtoileUI/ETFreeLayout.h>
 #import <EtoileUI/ETGeometry.h>

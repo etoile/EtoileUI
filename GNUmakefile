@@ -38,6 +38,7 @@ EtoileUI_HEADER_FILES = \
 	ETContainer.h \
 	ETDecoratorItem.h \
 	ETEvent.h \
+	ETFixedLayout.h \
 	ETFlowLayout.h \
 	ETFreeLayout.h \
 	ETGeometry.h \

@@ -120,19 +120,6 @@ subclasses (see -[ETLayout initWithLayoutView:]). */
 	}
 }
 
-/** Always returns YES since items are positioned by the user. */
-- (BOOL) isPositional
-{
-	return YES;
-}
-
-/** Always returns NO since items are positioned by the user and not computed 
-by the receiver. */
-- (BOOL) isComputedLayout
-{
-	return NO;
-}
-
 - (void) showHandlesForItem: (ETLayoutItem *)item
 {
 	ETHandleGroup *handleGroup = AUTORELEASE([[ETResizeRectangle alloc] initWithManipulatedObject: item]);
