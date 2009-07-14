@@ -34,6 +34,7 @@
 	THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#import <EtoileFoundation/Macros.h> 
 #import <EtoileFoundation/NSObject+Model.h>
 #import "ETView.h"
 #import "ETDecoratorItem.h"
@@ -243,6 +244,13 @@ See also -[ETUIItem supervisorView]. */
 	DESTROY(_titleBarView);
 	
 	[super dealloc];
+}
+
+
+- (NSArray *) properties
+{
+	// NOTE: We may expose other properties in future
+	return [[super properties] arrayByAddingObjectsFromArray: A(@"disclosable")];
 }
 
 // TODO: Rewrite the next two methods in a more sensible way
@@ -655,44 +663,6 @@ view installed by the layout. */
 		ETLog(@"WARNING: View %@ isn't disclosable, yet it is presently "
 			"collapsed and asked to expand", self);
 	}
-}
-
-/* Property Value Coding */
-
-- (id) valueForProperty: (NSString *)key
-{
-	id value = nil;
-
-	if ([[self properties] containsObject: key])
-		value = [self valueForKey: key];
-		
-	if (value == nil)
-		ETLog(@"WARNING: Found no value for property %@ in view %@", key, self);
-		
-	return value;
-}
-
-- (BOOL) setValue: (id)value forProperty: (NSString *)key
-{
-	if ([[self properties] containsObject: key])
-	{
-		[self setValue: value forKey: key];
-		return YES;
-	}
-	else
-	{
-		ETLog(@"WARNING: Trying to set value %@ for property %@ missing in "
-			@"immutable property collection of view %@", value, key, self);
-		return NO;
-	}
-}
-
-- (NSArray *) properties
-{
-	// NOTE: We may expose other properties in future
-	id properties = [NSArray arrayWithObjects: @"disclosable", nil];
-	
-	return [[super properties] arrayByAddingObjectsFromArray: properties];
 }
 
 /* Subclassing */

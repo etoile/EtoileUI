@@ -35,7 +35,6 @@
 
 #import <Foundation/Foundation.h>
 #import <AppKit/AppKit.h>
-#import <EtoileFoundation/ETPropertyValueCoding.h>
 
 @class ETLayoutItem, ETUIItem;
 
@@ -96,7 +95,7 @@
 // necessary to create the title bar of title bars in a lazy way, otherwise
 // ETView instantiation would lead to infinite recursion on the title bar set up.
 
-@interface ETView : NSView <ETPropertyValueCoding>
+@interface ETView : NSView
 {
 	ETLayoutItem *_layoutItem;
 	// NOTE: May be remove the view ivars to make the class more lightweight
@@ -128,6 +127,8 @@
 - (id) initWithFrame: (NSRect)rect layoutItem: (ETLayoutItem *)item;
 - (id) initWithLayoutView: (NSView *)layoutView;
 
+- (NSArray *) properties;
+
 /* Basic Accessors */
 
 - (id) layoutItem;
@@ -157,12 +158,6 @@
 
 - (void) collapse: (id)sender;
 - (void) expand: (id)sender;
-
-/* Property Value Coding */
-
-- (id) valueForProperty: (NSString *)key;
-- (BOOL) setValue: (id)value forProperty: (NSString *)key;
-- (NSArray *) properties;
 
 /* Subclassing */
 
