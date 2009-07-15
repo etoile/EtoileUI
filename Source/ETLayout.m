@@ -1,38 +1,9 @@
-/*  <title>ETLayout</title>
-
-	ETLayout.m
-	
-	<abstract>Base class to implement pluggable layouts as subclasses and make 
-	possible UI composition and transformation at runtime.</abstract>
- 
+/*
 	Copyright (C) 2007 Quentin Mathe
- 
+
 	Author:  Quentin Mathe <qmathe@club-internet.fr>
 	Date:  May 2007
- 
-	Redistribution and use in source and binary forms, with or without
-	modification, are permitted provided that the following conditions are met:
-
-	* Redistributions of source code must retain the above copyright notice,
-	  this list of conditions and the following disclaimer.
-	* Redistributions in binary form must reproduce the above copyright notice,
-	  this list of conditions and the following disclaimer in the documentation
-	  and/or other materials provided with the distribution.
-	* Neither the name of the Etoile project nor the names of its contributors
-	  may be used to endorse or promote products derived from this software
-	  without specific prior written permission.
-
-	THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
-	AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
-	IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
-	ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE
-	LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
-	CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
-	SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
-	INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
-	CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
-	ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
-	THE POSSIBILITY OF SUCH DAMAGE.
+	License:  Modified BSD (see COPYING)
  */
 
 #import <EtoileFoundation/Macros.h>
@@ -41,22 +12,12 @@
 #import "ETLayout.h"
 #import "ETLayoutItemGroup.h"
 #import "ETLayoutLine.h"
-#import "ETContainer.h"
 #import "ETTableLayout.h"
 #import "ETOutlineLayout.h"
 #import "ETBrowserLayout.h"
 #import "NSObject+EtoileUI.h"
 #import "NSView+Etoile.h"
 #import "ETCompatibility.h"
-
-@interface ETContainer (PackageVisibility)
-- (BOOL) isScrollViewShown;
-- (void) setShowsScrollView: (BOOL)scroll;
-@end
-
-/*
- * Private methods
- */
 
 @interface ETLayout (Private)
 + (void) registerBuiltInLayoutClasses;
@@ -67,15 +28,12 @@
 - (ETLayoutItem *) itemAtLocation: (NSPoint)location;
 @end
 
-/*
- * Main implementation
- */
 
 @implementation ETLayout
 
 static NSMutableSet *layoutClasses = nil;
 
-/** Initializes ETLayout class by preparing the registered layout classes. */
+/** Registers ETLayout subclasses when the receiver is equal to ETLayout class. */
 + (void) initialize
 {
 	if (self == [ETLayout class])
@@ -88,23 +46,25 @@ static NSMutableSet *layoutClasses = nil;
 	}
 }
 
-/* Overrides NSObject+Etoile. */
+/** Returns ET. */
 + (NSString *) typePrefix
 {
 	return @"ET";
 }
 
+/** Returns 'Layout'. */
 + (NSString *) baseClassName
 {
 	return @"Layout";
 }
 
-/** Registers the given class as a layout class available for various EtoileUI
-    facilities that allow to change a layout at runtime, such as an inspector.
-    This also results in the publishing of a layout prototype of this class 
-    in the default aspect repository (not yet implemented). 
-    Raises an invalid argument exception if layoutClass isn't a subclass of 
-    ETLayout. */
+/** Makes the given class available to EtoileUI facilities (inspector, etc.) 
+that allow to change a layout at runtime.
+
+Also publishes a layout prototype of this class in the shared aspect repository 
+(not yet implemented). 
+
+Raises an invalid argument exception if layoutClass isn't a subclass of ETLayout. */
 + (void) registerLayoutClass: (Class)layoutClass
 {
 	// TODO: We should have a method -[Class isSubclassOfClass:]. 
@@ -122,7 +82,7 @@ static NSMutableSet *layoutClasses = nil;
 }
 
 /** Returns all the layout classes directly available for EtoileUI facilities 
-    that allow to transform the UI at runtime. */
+that allow to transform the UI at runtime. */
 + (NSSet *) registeredLayoutClasses
 {
 	return AUTORELEASE([layoutClasses copy]);
@@ -130,16 +90,31 @@ static NSMutableSet *layoutClasses = nil;
 
 /* Factory Method */
 
+/** Returns a new autoreleased instance. */
 + (id) layout
 {
 	return AUTORELEASE([[[self class] alloc] init]);
 }
 
+/** Returns a new autoreleased instance whose class matches the given layout 
+view.
+
+See -initWithLayoutView:. */
 + (id) layoutWithLayoutView: (NSView *)layoutView
 {
 	return AUTORELEASE([[[self  class] alloc] initWithLayoutView: layoutView]);
 }
 
+
+/** Returns the layout class to  instantiate in -initWithLayoutView: for the 
+given layout view.
+
+For the view classes listed below, the substitute classes are:
+<deflist>
+<term>NSOutlineView</term><desc>ETOutlineLayout</desc>
+<term>NSTableView</term><desc>ETTableLayout</desc>
+<term>NSBrowserView</term><desc>ETColumnBrowserLayout</desc>
+</deflist> */
 - (Class) layoutClassForLayoutView: (NSView *)layoutView
 {
 	Class layoutClass = nil;
@@ -171,22 +146,16 @@ static NSMutableSet *layoutClasses = nil;
 	return layoutClass;
 }
 
-/** Returns a prototype which is a receiver copy you can freely assign to 
-	another container. Because a layout can be bound to only one container, 
-	this method is useful for sharing a customized layout between several 
-	containers without having to recreate a new instance from scratch each
-	time. */
-- (id) layoutPrototype
-{
-	return [self copy];
-}
+/** <init /> 
+Returns ETLayout instance when layoutView is nil, otherwise returns a concrete 
+subclass with class cluster style initialization.
 
-/** <init /> Returns ETLayout instance when layoutView is nil, otherwise 
-	returns a concrete subclass with class cluster style initialization.
-	The returned layout has both vertical and horizontal constraint on item
-	size enabled. The size constraint is set to 256 * 256 px. You can customize
-	item size constraint with -setItemSizeConstraint: and 
-	-setConstrainedItemSize:. */
+e.g. If you pass an NSOutlineView, an ETOutlineLayout instance is returned, the 
+substitution list in -layoutClassForLayoutView:.
+
+The returned layout has both vertical and horizontal constraint on item size 
+enabled. The size constraint is set to 256 * 256 px. You can customize item size 
+constraint with -setItemSizeConstraint: and -setConstrainedItemSize:. */
 - (id) initWithLayoutView: (NSView *)layoutView
 {
 	self = [super init];
@@ -248,6 +217,9 @@ static NSMutableSet *layoutClasses = nil;
 	return self;
 }
 
+/** <overidde-dummy />
+Returns the name of the nib file the receiver should automatically load when 
+it gets instantiated. */
 - (NSString *) nibName
 {
 	return nil;
@@ -299,30 +271,38 @@ static NSMutableSet *layoutClasses = nil;
 	[super dealloc];
 }
 
-- (id) copyWithZone: (NSZone *)zone
+/** Returns a copy of the receiver.
+
+The layout context and delegate in the copy are nil.
+
+Subclasses must be aware the root item is not copied, the layout copy just has a 
+new root item created by -initWithLayoutView:. */ 
+- (id) copyWithZone: (NSZone *)aZone
 {
-	ETLayout *proto = [[[self class] alloc] init];
-	
-	proto->_layoutContext = nil;
-	proto->_delegate = nil;
-	// FIXME: Probably replace copy by a fake copy (archive/unarchive)
-	//proto->_displayViewPrototype = [_displayViewPrototype copy];
-	proto->_instrument = nil; // TODO: Should be [_attachedInstrument copy];
-	
-	proto->_layoutSize = _layoutSize;
-	proto->_layoutSizeCustomized = _layoutSizeCustomized;
-	proto->_maxSizeLayout  = _maxSizeLayout;
-	
-	proto->_itemSizeConstraintStyle = _itemSizeConstraintStyle;
-	
-	return AUTORELEASE(proto);
+	ETLayout *newLayout = [[[self class] alloc] init];
+
+	newLayout->_displayViewPrototype = [_displayViewPrototype copyWithZone: aZone];
+	[newLayout setAttachedInstrument: [[self attachedInstrument] copyWithZone: aZone]];
+	RELEASE([newLayout attachedInstrument]);
+	newLayout->_layoutSize = _layoutSize;
+	newLayout->_layoutSizeCustomized = _layoutSizeCustomized;
+	newLayout->_maxSizeLayout  = _maxSizeLayout;
+	newLayout->_itemSize = _itemSize;
+	newLayout->_itemSizeConstraintStyle = _itemSizeConstraintStyle;
+	newLayout->_previousScaleFactor = _previousScaleFactor;
+
+	return newLayout;
 }
 
+/** Returns the instrument or tool bound to the receiver. */
 - (id) attachedInstrument
 {
 	return _instrument;
 }
 
+/** Sets the instrument or tool bound to the receiver. 
+
+The instrument set becomes the receiver owner. See -[ETInstrument layoutOwner]. */
 - (void) setAttachedInstrument: (id)anInstrument
 {
 	if ([anInstrument isEqual: _instrument] == NO)
@@ -388,9 +368,8 @@ You must call the superclass implementation if you override this method. */
 {
 	/* Don't forget to remove existing layout view if we switch from a layout 
 	   which reuses a native AppKit control like table layout. */
-	// NOTE: Be careful of layout objects which can share a common class but 
-	// all differs by their unique display view prototype.
-	// May be we should move it into -[layout setContainer:]...
+	// NOTE: Be careful of layout instances which can share a common class but 
+	// all differ by their unique layout view prototype.
 	// Triggers scroll view display which triggers layout render in turn to 
 	// compute the content size
 	[[self layoutContext] setLayoutView: nil];
@@ -410,29 +389,31 @@ You must call the superclass implementation if you override this method. */
 	[self mapRootItemIntoLayoutContext];
 }
 
-// TODO: Pick better names for the following methods:
-// -isComputedLayout --> -isComputed, -usesComputedCoordinates, -isRuleBased,
-//                       -isRelative
-// -isFixed --> isFixed (as is), -usesFixedCoordinates, -isAbsolute
+// NOTE: -isSemantic will be a public method when its role has become clearer.
+// Aspect support needs to be committed in order to precise this role.
 
-/** Overrides in subclasses to indicate whether the layout is a semantic layout
-	or not. Returns NO by default.
-	ETTableLayout is a normal layout but ETPropertyLayout (which displays a 
-	list of properties) is semantic, the latter works by delegating everything 
-	to an existing normal layout and may eventually replace this layout by 
-	another one. If you overrides this method to return YES, forwarding of all
-	non-overidden methods to the delegate will be handled automatically. */
+/* Overrides in subclasses to indicate whether the layout is a semantic layout
+or not. Returns NO by default.
+
+ETTableLayout is a normal layout but ETPropertyLayout (which displays a list of 
+properties) is semantic, the latter works by delegating everything to an 
+existing normal layout and may eventually replace this layout by another one. 
+	
+If you overrides this method to return YES, forwarding of all non-overidden 
+methods to the delegate will be handled automatically (not yet implemented). */
 - (BOOL) isSemantic
 {
 	return NO;
 }
 
 /** Returns YES when the layout conforms to ETPositionalLayout protocol, 
-    otherwise returns NO.
-    A positional layout doesn't inject a custom UI, it handles the display of 
-	the child items bound to the layout context by computing coordinates or 
-	by simply using their fixed coordinates. Fixed coordinates are encoded 
-	in persistentFrame property of ETLayoutItem. */
+otherwise returns NO.
+
+A positional layout doesn't inject a custom UI, it handles the display of the 
+child items bound to the layout context by computing coordinates or by simply 
+using their fixed coordinates. 
+
+Fixed coordinates are encoded in persistentFrame property of ETLayoutItem. */
 - (BOOL) isPositional
 {
 	return [self conformsToProtocol: @protocol(ETPositionalLayout)];
@@ -443,8 +424,9 @@ You must call the superclass implementation if you override this method. */
 	return [self conformsToProtocol: @protocol(ETCompositeLayout)];
 }
 
-/** Returns whether the receiver adapts and wraps a complex widget, provided 
-by the widget backend, as a layout. By default, returns NO.
+/** <override-dummy />
+Returns whether the receiver adapts and wraps a complex widget, provided by the 
+widget backend, as a layout. By default, returns NO.
 
 See ETWidgetLayout.*/
 - (BOOL) isWidget
@@ -452,30 +434,37 @@ See ETWidgetLayout.*/
 	return NO;
 }
 
+/** <override-dummy />
+Returns YES when the layout is positional, computes the location of the layout 
+items and updates these locations as necessary by itself. 
 
-/** Returns YES when the layout is positional, computes the location of the 
-    layout items and updates these locations as necessary by itself. See also
-	ETComputedLayout, whose subclasses are all computed layouts.
-	By default returns NO, overrides to return YES when a positional layout 
-	subclass doesn't allow the user sets the layout item locations. 
-	The returned value alters the order in which ETContainer data source 
-	methods are called. 
-	-[ETLayoutItem setFrame:] checks that the parent item layout is not a 
-	computed layout before updating the persistent frame. */
+See also ETComputedLayout, whose subclasses are all computed layouts.
+
+By default returns NO, overrides to return YES when a positional layout 
+subclass doesn't allow the user sets the layout item locations. 
+
+The returned value alters the order in which ETLayoutItemGroup source methods 
+are called. 
+
+-[ETLayoutItem setFrame:] checks that the parent item layout is not a computed 
+layout before updating the persistent frame. */
 - (BOOL) isComputedLayout
 {
 	return NO;
 }
 
-/** Returns YES when the layout imposes a custom layout and drawing for all 
-    rendered layout items; in other words, when the receiver overrides the 
-    default drawing styles, views and layouts for the descendant items of the 
-    layout context.
-    By default returns YES if the receiver uses a layout view. Override it to 
-    return NO in case the receiver subclass doesn't let the rendered layout 
-    items draw themselves, yet without using a layout view. 
-    Typically, all composite layouts are opaque, as layouts that wrap controls 
-    of the underlying UI toolkit are (for example ETTableLayout). */
+/** <override-dummy />
+Returns YES when the layout imposes a custom layout and drawing for all rendered 
+layout items; in other words, when the receiver overrides the default drawing 
+styles, views and layouts for the descendant items of the layout context.
+
+By default returns YES if the receiver uses a layout view. 
+
+Override it to return NO in case the receiver subclass doesn't let the rendered 
+layout items draw themselves, yet without using a layout view. 
+
+Typically, all composite layouts are opaque, as layouts that wrap controls of 
+the underlying UI toolkit are (e.g. ETTableLayout). */
 - (BOOL) isOpaque
 {
 	return NO;
@@ -629,15 +618,21 @@ See also -isScrollable and ETLayoutItem(Scrollable). */
 	[self render: inputValues isNewContent: YES];
 }
 
-/** Renders a collection of items by requesting them to the container to which
-	the receiver is bound to.
-	Layout items can be requested in two styles: to the container itself or
-	indirectly to a data source provided by the container. When the layout 
-	items are provided through a data source, the layout will only request 
-	lazily the subset of them to be displayed (not currently true). 
-	This method is usually called by ETContainer and you should rarely need to
-	do it by yourself. If you want to update the layout, just uses 
-	-[ETContainer updateLayout]. */
+/** Renders a collection of items by requesting them to the layout context to 
+which the receiver is bound to.
+
+Layout items can be requested in two styles: 
+<list>
+<item>to the layout context itself</item>
+<item>or indirectly to a data source provided by the layout context.</item>
+</list>
+
+When the layout items are provided through a data source, the layout will only 
+request lazily the subset of them to be displayed (not currently true). 
+
+This method is usually called by ETLayoutItemGroup and you should rarely need to 
+do it by yourself. If you want to update the layout, just uses 
+-[ETLayoutItemGroup updateLayout]. */
 - (void) render: (NSDictionary *)inputValues isNewContent: (BOOL)isNewContent
 {
 	if ([self layoutContext] == nil)

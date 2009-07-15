@@ -40,6 +40,8 @@
 #import <EtoileFoundation/NSObject+Etoile.h>
 #import <EtoileUI/ETLayout.h>
 
+@class ETContainer;
+
 /** See -setDisplayMode:. */
 typedef enum _ETLayoutDisplayMode {
 	ETLayoutDisplayModeViewProperties = 1,
