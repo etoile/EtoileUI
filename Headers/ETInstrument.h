@@ -42,7 +42,7 @@ deactivated on mouse exit. However some intruments such as ETSelectTool
 implement a custom policy: the instruments of child layouts are activated on 
 double-click and deactivated on a mouse click outside of their layout boundaries
 (see -setDeactivateOn:). */
-@interface ETInstrument : NSResponder
+@interface ETInstrument : NSResponder <NSCopying>
 {
 	NSMutableArray *_hoveredItemStack; /* Lazily initialized, never access directly */
 	ETLayoutItem *_targetItem;
@@ -80,6 +80,8 @@ double-click and deactivated on a mouse click outside of their layout boundaries
 /* Initialization */
 
 - (id) init;
+
+- (id) copyWithZone: (NSZone *)aZone;
 
 /* Activation Hooks */
 
@@ -160,6 +162,7 @@ double-click and deactivated on a mouse click outside of their layout boundaries
 - (BOOL) instrument: (ETInstrument *)anInstrument shouldDeactivateWithEvent: (ETEvent *)anEvent;
 - (ETInstrument *) instrumentToActivateWithEvent: (ETEvent *)anEvent;
 @end
+
 
 /** An ETFirstResponderProxy instance is passed to 
 -[NSWindow makeFirstResponder:], when you call -setFirstKeyResponder: or 

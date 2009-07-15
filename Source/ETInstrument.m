@@ -172,6 +172,20 @@ See also -mainInstrument. */
 	[super dealloc];
 }
 
+- (id) copyWithZone: (NSZone *)aZone
+{
+	ETInstrument *newInstrument = [[[self class] allocWithZone: aZone] init];
+
+	// NOTE: For now, we don't copy any NSResponder property such as 
+	// -nextResponder or -menu.
+
+	/* NSCursor factory methods are shared instances */
+	ASSIGN(newInstrument->_cursor, _cursor);
+	newInstrument->_customActivation = _customActivation;
+
+	return newInstrument;
+}
+
 // TODO: For each document set the editor instrument. Eventually offer a 
 // delegate method either through ETInstrument or ETDocumentManager to give 
 // more control over this...

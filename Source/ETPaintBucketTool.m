@@ -26,8 +26,8 @@ as stroke color and brown as fill color. */
 - (id) init
 {
 	SUPERINIT
-	[self setStrokeColor: [NSColor orangeColor]];
-	[self setFillColor: [NSColor brownColor]];
+	ASSIGN(_strokeColor, [NSColor orangeColor]);
+	ASSIGN(_fillColor, [NSColor brownColor]);
 	return self;
 }
 
@@ -36,6 +36,15 @@ as stroke color and brown as fill color. */
     DESTROY(_fillColor);
     DESTROY(_strokeColor);
     [super dealloc];
+}
+
+- (id) copyWithZone: (NSZone *)aZone
+{
+	ETPaintBucketTool *newTool = [super copyWithZone: aZone];
+	newTool->_fillColor = [_fillColor copyWithZone: aZone];
+	newTool->_strokeColor = [_strokeColor copyWithZone: aZone];
+	newTool->_paintMode = _paintMode;
+	return newTool;
 }
 
 /** Returns the fill color associated with the receiver. */
@@ -47,7 +56,7 @@ as stroke color and brown as fill color. */
 /** Sets the fill color associated with the receiver. */
 - (void) setFillColor: (NSColor *)color
 {
-	ASSIGN(_fillColor, [color copy]);
+	ASSIGNCOPY(_fillColor, color);
 }
 
 /** Returns the stroke color associated with the receiver. */
@@ -59,7 +68,7 @@ as stroke color and brown as fill color. */
 /** Sets the stroke color associated with the receiver. */
 - (void) setStrokeColor: (NSColor *)color
 {
-	ASSIGN(_strokeColor, [color copy]);
+	ASSIGNCOPY(_strokeColor, color);
 }
 
 /** Returns the paint action produced by the receiver, either stroke or fill. */

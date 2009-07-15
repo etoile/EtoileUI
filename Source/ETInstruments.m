@@ -108,6 +108,8 @@ DEALLOC(DESTROY(_draggedItem))
 	return self;
 }
 
+// NOTE: We don't need to override -copyWithZone:
+
 /* Passes events only to the decorator items bound to the target item.
 
 When the hit item is not the target item, we don't care whether it uses a widget 

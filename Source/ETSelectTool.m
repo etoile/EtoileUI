@@ -39,6 +39,19 @@
 
 DEALLOC(DESTROY(_actionHandlerPrototype); DESTROY(_selectionAreaItem));
 
+- (id) copyWithZone: (NSZone *)aZone
+{
+	ETSelectTool *newTool = [super copyWithZone: aZone];
+
+	[newTool setAllowsEmptySelection: [self allowsEmptySelection]];
+	[newTool setAllowsMultipleSelection: [self allowsMultipleSelection]];
+	newTool->_removeItemsAtPickTime = _removeItemsAtPickTime;
+	ASSIGN(newTool->_actionHandlerPrototype, _actionHandlerPrototype);
+	newTool->_selectionAreaItem = [_selectionAreaItem copyWithZone: aZone];
+
+	return newTool;
+}
+
 /** Returns whether the tool can be used to select several items among the 
 children of the target item. */
 - (BOOL) allowsMultipleSelection
