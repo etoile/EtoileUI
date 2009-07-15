@@ -89,6 +89,14 @@ By default, returns NO. */
 	}
 }
 
+- (id) copyWithZone: (NSZone *)aZone
+{
+	ETUIItem *newItem = [super copyWithZone: aZone];
+	[newItem setSupervisorView: AUTORELEASE([[self supervisorView] copyWithZone: aZone])];
+	[newItem setDecoratorItem: AUTORELEASE([[self decoratorItem] copyWithZone: aZone])];
+	return newItem;
+}
+
 /* <override-dummy /> 
 Returns whether the receiver uses flipped coordinates.
 

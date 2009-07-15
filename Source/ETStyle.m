@@ -17,10 +17,40 @@
 
 @implementation ETStyle
 
+/** <override-dummy />
+Returns the initializer invocation used by -copyWithZone: to create a new 
+instance. 
+
+This method returns nil. You can override it to return a custom invocation and 
+in this way shares complex initialization logic between -copyWithZone: and 
+the designated initializer in a subclass.
+ 
+e.g. if you return an invocation like -initWithWindow: aWindow. 
+-copyWithZone: will automatically set the target to be the copy allocated with 
+[[[self class] allocWithZone: aZone] and then initializes the copy by invoking 
+the invocation. */
+- (NSInvocation *) initInvocationForCopyWithZone: (NSZone *)aZone
+{
+	return nil;
+}
+
 - (id) copyWithZone: (NSZone *)aZone
 {
-	ETStyle *newStyle = [[[self class] alloc] init];
+	NSInvocation *initInvocation = [self initInvocationForCopyWithZone: aZone];
+	ETStyle *newStyle = [[self class] alloc];
+	
+	if (nil != initInvocation)
+	{
+		[initInvocation invokeWithTarget: newStyle];
+		[initInvocation getReturnValue: &newStyle];
+	}
+	else
+	{
+		newStyle = [newStyle init];
+	}
+
 	newStyle->_isSharedStyle = _isSharedStyle;
+
 	return newStyle;
 }
 

@@ -48,6 +48,8 @@ initializer. */
 	return nil;
 }
 
+// NOTE: -copyWithZone: implementation can be omitted, the ivars are transient.
+
 /** Returns whether the view used by the receiver is a widget. 
 
 By default, returns YES. */

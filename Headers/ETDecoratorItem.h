@@ -3,7 +3,7 @@
 	<abstract>ETUIItem subclass which makes possibe to decorate any layout 
 	items, usually with a widget view.</abstract>
 
-	Copyright (C) 20O9 Quentin Mathe
+	Copyright (C) 2009 Quentin Mathe
 
 	Author:  Quentin Mathe <qmathe@club-internet.fr>
 	Date:  March 2009

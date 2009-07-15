@@ -41,6 +41,10 @@ and expect to be provided a layout item through -render:layoutItem:dirtyRect:. *
 
 - (BOOL) isSharedStyle;
 
+/* Copying */
+
+- (NSInvocation *) initInvocationForCopyWithZone: (NSZone *)aZone;
+
 /* Style Rendering */
 
 - (SEL) styleSelector;
