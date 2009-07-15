@@ -246,6 +246,21 @@ See also -[ETUIItem supervisorView]. */
 	[super dealloc];
 }
 
+/** Returns a receiver copy but without an UI item bound to it.
+
+A temporary view set on the receiver won't be copied.  */
+- (id) copyWithZone: (NSZone *)aZone
+{
+	ETView *newView = [super copyWithZone: aZone];
+
+	[newView setWrappedView: [[self wrappedView] copyWithZone: aZone]];
+	[newView setTitleBarView: [[self titleBarView] copyWithZone: aZone]];
+	[newView setFlipped: [self isFlipped]];
+	newView->_disclosable = _disclosable;
+	newView->_usesCustomTitleBar = _usesCustomTitleBar;
+
+	return newView;
+}
 
 - (NSArray *) properties
 {
