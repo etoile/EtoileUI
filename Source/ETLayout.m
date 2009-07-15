@@ -45,6 +45,7 @@
 #import "ETTableLayout.h"
 #import "ETOutlineLayout.h"
 #import "ETBrowserLayout.h"
+#import "NSObject+EtoileUI.h"
 #import "NSView+Etoile.h"
 #import "ETCompatibility.h"
 
@@ -58,10 +59,6 @@
  */
 
 @interface ETLayout (Private)
-+ (NSString *) baseClassName;
-+ (NSString *) stripClassName;
-+ (NSString *) stringBySpacingCapitalizedWordsOfString: (NSString *)name;
-+ (NSString *) aspectName;
 + (void) registerBuiltInLayoutClasses;
 - (BOOL) loadNibNamed: (NSString *)nibName;
 /* Utility methods */
@@ -97,101 +94,9 @@ static NSMutableSet *layoutClasses = nil;
 	return @"ET";
 }
 
-/** Returns the display name used to present the receiver or its instances in 
-    in various EtoileUI builtin facilities such as an inspector. */
-+ (NSString *) displayName
-{
-	return [self stringBySpacingCapitalizedWordsOfString: [self stripClassName]];
-}
-
 + (NSString *) baseClassName
 {
 	return @"Layout";
-}
-
-/* Removes collision prefix and base suffix of class names. */
-+ (NSString *) stripClassName
-{
-	unsigned int prefixLength = [[self typePrefix] length];
-	unsigned int classSuffixLength = [[self baseClassName] length];
-	NSString *className = [self className];
-	NSRange range = NSMakeRange(prefixLength, 
-		[className length] - (prefixLength + classSuffixLength));
-
-	return [className substringWithRange: range];
-}
-
-/* Returns a string where all words are separated by spaces for a given string 
-   of capitalized words with no spaces at all. 
-   Useful to convert a name in camel case into a more user friendly name. */
-+ (NSString *) stringBySpacingCapitalizedWordsOfString: (NSString *)name
-{
-	NSScanner *scanner = [NSScanner scannerWithString: name];
-	NSCharacterSet *charset = [NSCharacterSet uppercaseLetterCharacterSet];
-	NSString *word = nil;
-	NSMutableString *displayName = [NSMutableString stringWithCapacity: 40];
-	BOOL beforeLastLetter = NO;
-
-	do
-	{
-		/* Scan a first capital or an uppercase word */
-		BOOL hasScannedCapitals = [scanner scanCharactersFromSet: charset
-	                                                  intoString: &word];
-		if (hasScannedCapitals)
-		{
-			beforeLastLetter = ([scanner isAtEnd] == NO);
-			BOOL hasFoundUppercaseWord = ([word length] > 1);
-			if (hasFoundUppercaseWord && beforeLastLetter)
-			{
-				[displayName appendString: [word substringToIndex: [word length] - 1]];
-				[displayName appendString: @" "]; /* Add a space between each words */
-				[displayName appendString: [word substringFromIndex: [word length] - 1]];
-			}
-			else /* single capital or uppercase word at the end */
-			{
-				[displayName appendString: word];
-			}
-		}
-
-		/* Scan lowercase characters, either a full word or what follows the 
-		   a capital until the next one */
-		BOOL hasFoundNextCapitalOrEnd = [scanner scanUpToCharactersFromSet: charset
-	                                                            intoString: &word];
-		if (hasFoundNextCapitalOrEnd)
-		{
-			[displayName appendString: word];
-
-			/* Add a space between each words */
-			beforeLastLetter = ([scanner isAtEnd] == NO);
-			BOOL beyondFirstCapital = ([scanner scanLocation] > 0);
-			if (beyondFirstCapital && beforeLastLetter)
-			{
-				[displayName appendString: @" "];
-			}
-		}
-	} while (beforeLastLetter);
-
-	return displayName;
-}
-
-/** Returns the default aspect name used to register a receiver instance in
-    the aspect repository. */
-+ (NSString *) aspectName
-{
-	NSString *name = [self stripClassName];
-
-	NSAssert(name != nil, @"+stripClassName must never return nil but an empty string if needed");
-	if ([name isEqual: @""])
-		return name;
-
-	NSString *lowercasedFirstLetter = [[name substringToIndex: 1] lowercaseString];
-
-#ifdef GNUSTEP
-	return [lowercasedFirstLetter stringByAppendingString: [name substringFromIndex: 1]];
-#else
-	return [name stringByReplacingCharactersInRange: NSMakeRange(0, 1) 
-	                                     withString: lowercasedFirstLetter];
-#endif
 }
 
 /** Registers the given class as a layout class available for various EtoileUI
