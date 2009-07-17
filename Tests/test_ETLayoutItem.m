@@ -455,16 +455,6 @@ static ETUIItemFactory *itemFactory = nil;
 	[item0 setRepresentedPathBase: @"/myModel1"]; \
 	[item11 setRepresentedPathBase: @"/myModel3"]; \
 
-- (void) testIsContainer
-{
-	id container = [[ETContainer alloc] initWithFrame: NSMakeRect(0, 0, 50, 100)];
-	
-	[self setSupervisorView: container];
-	RELEASE(container);
-	
-	UKTrue([self isContainer]);
-}
-
 - (void) testItemsIncludingRelatedDescendants
 {
 	BUILD_TEST_TREE

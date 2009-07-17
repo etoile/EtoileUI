@@ -259,11 +259,6 @@ default. */
 	return YES;
 }
 
-- (BOOL) isContainer
-{
-	return [[self supervisorView] isKindOfClass: [ETContainer class]];
-}
-
 /* Traversing Layout Item Tree */
 
 /** Returns a normal path relative to the receiver, by translating indexPath

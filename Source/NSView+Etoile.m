@@ -34,11 +34,6 @@ By default, returns NO. */
 	return NO;
 }
 
-- (BOOL) isContainer
-{
-	return [self isKindOfClass: [ETContainer class]];
-}
-
 /** Returns YES when the receiver is an ETView class or subclass instance, 
 otherwise returns NO. */
 - (BOOL) isSupervisorView

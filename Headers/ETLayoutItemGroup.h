@@ -80,10 +80,6 @@ extern NSString *kETSourceProperty; /** source property name */
 - (id) initWithItems: (NSArray *)layoutItems view: (NSView *)view;
 - (id) initWithItems: (NSArray *)layoutItems view: (NSView *)view value: (id)value representedObject: (id)repObject;
 
-/* Finding Container */
-
-- (BOOL) isContainer;
-
 /* Traversing Layout Item Tree */
 
 - (NSString *) pathForIndexPath: (NSIndexPath *)path;

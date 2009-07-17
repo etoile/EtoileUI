@@ -164,7 +164,7 @@
 	{
 		item = [[view layoutItem] firstDecoratedItem];
 	}
-	else if ([view isKindOfClass: [ETView class]] || [view isContainer])
+	else if ([view isSupervisorView])
 	{
 		item = [view layoutItem];
 	}

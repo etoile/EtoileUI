@@ -20,7 +20,6 @@
 
 - (id) init;
 - (BOOL) isWidget;
-- (BOOL) isContainer;
 - (BOOL) isSupervisorView;
 - (BOOL) isWindowContentView;
 
