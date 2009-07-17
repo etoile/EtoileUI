@@ -63,6 +63,7 @@ NSString *ETItemGroupSelectionDidChangeNotification = @"ETItemGroupSelectionDidC
 NSString *ETSourceDidUpdateNotification = @"ETSourceDidUpdateNotification";
 
 @interface ETLayoutItem (SubclassVisibility)
+- (ETView *) setUpSupervisorViewWithFrame: (NSRect)aFrame;
 - (void) setDisplayView: (ETView *)view;
 - (NSRect) visibleContentBounds;
 @end
@@ -1300,10 +1301,7 @@ yourself (see -visibleItemsForItems:). */
 // as superview for the visible layout item views. Actually this isn't needed
 // or supported because all ETLayoutItemGroup instances must embed a container.
 // This last point is going to become purely optional.
-	ETContainer *container = nil;
-
-	if ([self isContainer])
-		container = (ETContainer *)[self supervisorView];
+	ETView *container = [self setUpSupervisorViewWithFrame: [self frame]];
 
 	FOREACH(items, item, ETLayoutItem *)
 	{

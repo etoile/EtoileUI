@@ -753,6 +753,18 @@ this case the receiver becomes a meta item and returns YES for -isMetaLayoutItem
 	ASSIGN(_modelObject, modelObject);
 }
 
+- (ETView *) setUpSupervisorViewWithFrame: (NSRect)aFrame 
+{
+	ETView *supervisorView = [self supervisorView];
+
+	if (supervisorView != nil)
+		return supervisorView;
+
+	supervisorView = [[ETView alloc] initWithFrame: aFrame layoutItem: self];
+	RELEASE(supervisorView);
+	return supervisorView;
+}
+
 /** Returns the view associated with the receiver. */
 - (NSView *) view
 {
@@ -778,22 +790,16 @@ widget provided by the widget backend. */
 	}
 	SET_PROPERTY([NSValue valueWithRect: NSZeroRect], kETDefaultFrameProperty);
 	
-	/* Inserts the new view */
-	
 	/* When the view isn't an ETView instance, we wrap it inside a new ETView 
 	   instance to have -drawRect: asking the layout item to render by itself.
 	   Retrieving the display view automatically returns the innermost display
 	   view in the decorator item chain. */
-	if (newView != nil && [self supervisorView] == nil)
+	if (newView != nil)
 	{
-		ETView *wrapperView = [[ETView alloc] initWithFrame: [newView frame] 
-												 layoutItem: self];
-		[self setSupervisorView: wrapperView];
-		RELEASE(wrapperView);
+		[self setUpSupervisorViewWithFrame: [newView frame]];	
 	}
 	[self setAutoresizingMask: [newView autoresizingMask]];
 	[[self supervisorView] setWrappedView: newView];
-	[newView setAutoresizingMask: NSViewWidthSizable | NSViewHeightSizable];
 
 	/* Set up the new view */
 	if (newView != nil)
@@ -1176,10 +1182,10 @@ See also -supervisorView:. */
 /* Inserts a supervisor view that is required to be decorated. */
 - (void) setDecoratorItem: (ETDecoratorItem *)decorator
 {
-	BOOL needsInsertSupervisorView = (decorator != nil && [self supervisorView] == nil);
+	BOOL needsInsertSupervisorView = (decorator != nil);
 	if (needsInsertSupervisorView)
 	{
-		[self setSupervisorView: AUTORELEASE([[ETView alloc] initWithFrame: [self frame]])];
+		[self setUpSupervisorViewWithFrame: [self frame]];
 	}
 	[super setDecoratorItem: decorator];
 }

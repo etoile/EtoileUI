@@ -45,7 +45,7 @@
 {
 	[[ETApp mainMenu] addItem: [ETApp arrangeMenuItem]];
 
-	mainItem = [ETLayoutItem itemGroupWithContainer];
+	mainItem = [ETLayoutItem itemGroup];
 	//[mainItem setFlipped: NO];
 	[mainItem setSize: NSMakeSize(500, 400)];
 	[mainItem setLayout: [ETFreeLayout layout]];
