@@ -223,19 +223,46 @@ NSString *ETLayoutItemLayoutDidChangeNotification = @"ETLayoutItemLayoutDidChang
 	ETLayoutItemGroup related classes. 
 	Take note that a deep copy of the decorators is created and no view 
 	reference is kept, -view will return nil for the copied item.
-	TODO: Implement decorators copying that is currently missing.*/
-- (id) copyWithZone: (NSZone *)zone
+	TODO: Implement decorators copying that is currently missing.
+	
+Default values won't be copied. */
+- (id) copyWithZone: (NSZone *)aZone
 {
-	ETLayoutItem *item = [[[self class] alloc] initWithView: AUTORELEASE([[self view] copy])
-	                                                  value: [self value] 
-	                                      representedObject: [self representedObject]];
+	ETLayoutItem *item = [super copyWithZone: aZone];
+
+	// NOTE: Geometry synchronization logic in setters such as setFlippedView: 
+	// and -setAutoresizingMask: is not required to make a copy, because all 
+	// the related objects (supervisor view, decorator etc.) are in a valid and 
+	// well synchronized state at copy time.
+
+	/* We copy every primitive ivars expect _needsUpdateLayout and 
+	   _isSyncingSupervisorViewGeometry */
+
+	item->_contentBounds = _contentBounds;
+	item->_position = _position;
+	item->_transform = [_transform copyWithZone: aZone];
+	/* Will be overriden by -setView: when the view is not nil */	
+	item->_autoresizingMask = _autoresizingMask;
+	item->_boundingBox = _boundingBox;
+	item->_flipped = _flipped;
+	item->_selected = _selected;
+	item->_visible = _visible;
+	item->_resizeBounds = _resizeBounds;
+	item->_scrollViewShown = _scrollViewShown;
+	
+	/* We copy all object ivars except _parentItem */
+
+	[item setView: AUTORELEASE([[self view] copyWithZone: aZone])];
+	[item setRepresentedObject: [self representedObject]];
+	[item setValue: AUTORELEASE([[self value] copyWithZone: aZone])];
+	/* We set the style in the copy by copying the style group */
+	[item setStyleGroup: AUTORELEASE([[self styleGroup] copyWithZone: aZone])];
+
+	/* We copy all variables properties listed in ETLayoutItem.h */
 
 	[item setName: [self name]];
-	[item setStyleGroup: AUTORELEASE([[ETStyleGroup alloc] init])];
-	[item setStyle: [self style]]; // FIXME: We should simply make a copy of the style group
 	[item setActionHandler: [self actionHandler]];
-	[item setFrame: [self frame]];
-	[item setAppliesResizingToBounds: [self appliesResizingToBounds]];
+	[item setTarget: [self target]];
 	
 	return item;
 }
