@@ -46,6 +46,7 @@
 #import "ETView.h"
 #import "ETContainer.h"
 #import "ETScrollableAreaItem.h"
+#import "NSView+Etoile.h"
 #import "NSWindow+Etoile.h"
 #import "ETCompatibility.h"
 
