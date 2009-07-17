@@ -365,6 +365,17 @@ static ETUIItemFactory *itemFactory = nil;
 	UKRectsEqual(NSMakeRect(-50, 0, 100, 200), [self frame]);
 }
 
+- (void) testSupervisorViewInsertionByDecorator
+{
+	UKNil([self supervisorView]);
+	
+	ETWindowItem *windowItem = AUTORELEASE([[ETWindowItem alloc] init]);
+	[self setDecoratorItem: windowItem];
+	
+	UKNotNil([self supervisorView]);
+	UKObjectsEqual([[windowItem window] contentView], [self supervisorView]);
+}
+
 - (void) testHandleDecorateItemInView
 {
 	id parentView = AUTORELEASE([[ETView alloc] initWithFrame: NSMakeRect(0, 0, 100, 50)]);
@@ -391,8 +402,31 @@ static ETUIItemFactory *itemFactory = nil;
 
 @end
 
+#import "ETTableLayout.h"
 
 @implementation ETLayoutItemGroup (UnitKitTests)
+
+- (void) testSupervisorViewInsertionByLayoutView
+{
+	UKNil([self supervisorView]);
+	
+	ETTableLayout *layout = [ETTableLayout layout];
+	[self setLayout: layout];
+	
+	UKNotNil([self supervisorView]);
+	UKTrue([[[self supervisorView] subviews] containsObject: [layout layoutView]]);
+}
+
+- (void) testSupervisorViewInsertionByChild
+{
+	UKNil([self supervisorView]);
+	
+	ETLayoutItem *textFieldItem = [itemFactory textField];
+	[self addItem: textFieldItem];
+	
+	UKNotNil([self supervisorView]);
+	UKTrue([[[self supervisorView] subviews] containsObject: [textFieldItem supervisorView]]);
+}
 	
 #define BUILD_TEST_TREE \
 	id item0 = [itemFactory itemGroup]; \

@@ -505,12 +505,13 @@ NOTE: Having a null layout class may be a solution to get rid of
 		return;
 
 	[[item displayView] removeFromSuperview];
-	/* Only insert the item view if the layout is a fixed/free layout and the 
-	   receiver has a view itself. 
+	/* Only insert the item view if the layout is a fixed/free layout. 
 	   TODO: Probably make more explicit the nil layout check and improve in a
 	   way or another the handling of the nil view case. */
-	if ([self layout] == nil && [self supervisorView] != nil)
-		[[self supervisorView] addSubview: [item displayView]];
+	if ([self layout] == nil)
+	{
+		[[self setUpSupervisorViewWithFrame: [self frame]] addSubview: [item displayView]];
+	}
 }
 
 /** Symetric method to -handleAttachViewOfItem: */
