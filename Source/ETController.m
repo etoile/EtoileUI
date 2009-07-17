@@ -10,7 +10,6 @@
 #import <EtoileFoundation/ETUTI.h>
 #import "ETController.h"
 #import "ETLayoutItemGroup+Mutation.h"
-#import "ETContainer.h"
 #import "ETLayoutItemGroup.h"
 #import "ETCompatibility.h"
 

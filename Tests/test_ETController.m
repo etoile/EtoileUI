@@ -34,7 +34,6 @@
 #import <Foundation/Foundation.h>
 #import <AppKit/AppKit.h>
 #import <EtoileFoundation/Macros.h>
-#import "ETContainer.h"
 #import "ETController.h"
 #import "ETLayoutItem.h"
 #import "ETLayoutItemGroup.h"

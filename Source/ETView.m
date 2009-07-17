@@ -42,7 +42,6 @@
 #import "NSView+Etoile.h"
 #import "ETCompatibility.h"
 #import "ETFlowLayout.h"
-#import "ETContainer.h"
 
 #define NC [NSNotificationCenter defaultCenter]
 

@@ -8,7 +8,7 @@
 
 #import <EtoileFoundation/NSObject+Model.h>
 #import "NSView+Etoile.h"
-#import "ETContainer.h"
+#import "ETView.h"
 #import "NSImage+Etoile.h"
 #import "ETCompatibility.h"
 

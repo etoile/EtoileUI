@@ -37,16 +37,8 @@
  */
 
 #import "ETLayoutItem+Factory.h"
-#import "ETFreeLayout.h"
-#import "ETGeometry.h"
-#import "ETLayoutItemGroup.h"
-#import "ETLayer.h"
-#import "ETWindowItem.h"
-#import "ETContainer.h"
-#import "ETCompatibility.h"
-#import "ETShape.h"
 #import "ETUIItemFactory.h"
-#import "NSWindow+Etoile.h"
+#import "ETCompatibility.h"
 #include <float.h>
 
 #define FACTORY [ETUIItemFactory factory]
