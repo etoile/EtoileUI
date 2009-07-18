@@ -39,13 +39,14 @@
 #import <EtoileFoundation/NSIndexPath+Etoile.h>
 #import <EtoileFoundation/NSString+Etoile.h>
 #import <EtoileFoundation/NSObject+Model.h>
-#import <EtoileUI/ETObjectBrowserLayout.h>
-#import <EtoileUI/ETContainer.h>
-#import <EtoileUI/ETLayoutItem+Factory.h>
-#import <EtoileUI/ETWindowItem.h>
-#import <EtoileUI/ETOutlineLayout.h>
-#import <EtoileUI/NSObject+EtoileUI.h>
-#import <EtoileUI/ETCompatibility.h>
+#import "ETObjectBrowserLayout.h"
+#import "ETContainer.h"
+#import "ETLayoutItem+Factory.h"
+#import "ETLayoutItem+Scrollable.h"
+#import "ETOutlineLayout.h"
+#import "ETWindowItem.h"
+#import "NSObject+EtoileUI.h"
+#import "ETCompatibility.h"
 
 #define PALETTE_FRAME NSMakeRect(200, 200, 600, 300)
 #define itemGroupView (id)[self layoutView]
@@ -259,32 +260,30 @@
 
 @implementation ETObjectBrowser
 
+- (void) setUpUI
+{
+	[self setHasVerticalScroller: YES];
+	[self setHasHorizontalScroller: YES];
+	[self setAutoresizingMask: NSViewWidthSizable | NSViewHeightSizable];
+	[self setLayout: [ETObjectBrowserLayout layout]];
+
+	/* Moves the object browser into to the window layer
+	   NOTE: The window item will be released on close. */
+	[[self lastDecoratorItem] setDecoratorItem: [[ETWindowItem alloc] init]];
+}
+
 /** Initializes a new object browser and decorates it with a window.
 	If the object browser is later moved outside of the window layer (in some 
 	other part of the layout item tree), the initial window will be lost. */
 - (id) init
 {
-	self = [super init];
+	self = [super initWithFrame: PALETTE_FRAME];
 	
 	if (self != nil)
 	{
 		_browsedObject = nil;
 		[self setName: _(@"Object Browser")];
-		
-		/* UI set up */
-		ETContainer *browserView = [[ETContainer alloc] 
-			initWithFrame: PALETTE_FRAME layoutItem: self];
-		ETWindowItem *windowItem = [[ETWindowItem alloc] init]; //AUTORELEASE([[ETWindowItem alloc] init]);
-
-		[browserView setHasVerticalScroller: YES];
-		[browserView setHasHorizontalScroller: YES];
-		[browserView setAutoresizingMask: NSViewWidthSizable | NSViewHeightSizable];
-		[browserView setLayout: [ETObjectBrowserLayout layout]];
-		/* Moves the object browser from the floating item group to the window 
-		   layer */
-		[[self lastDecoratorItem] setDecoratorItem: windowItem];
-
-		RELEASE(browserView); /* Was retained on -initWithFrame:layoutItem: */
+		[self setUpUI];
 	}
 	
 	return self;

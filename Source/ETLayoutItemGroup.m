@@ -1412,13 +1412,6 @@ yourself (see -visibleItemsForItems:). */
 {
 	if (_isStack == NO)
 	{
-		if ([[self view] isKindOfClass: [ETContainer class]] == NO)
-		{
-			/*NSRect stackFrame = ETMakeRect(NSZeroPoint, [ETLayoutItemGroup stackSize]);
-			ETContainer *container = [[ETContainer alloc] 
-				initWithFrame: stackFrame layoutItem: self];*/
-			// FIXME: Insert the container on the fly
-		}
 		[self setItemScaleFactor: 0.7];
 		[self setSize: [ETLayoutItemGroup stackSize]];
 	}

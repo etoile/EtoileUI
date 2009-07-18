@@ -128,26 +128,25 @@ static ETPickboard *activePickboard = nil;
 
 /* Initialization */
 
+- (void) setUpUI
+{
+	[self setLayout: [PICKBOARD_LAYOUT layout]];
+	/* Moves the object browser into to the window layer
+	   NOTE: The window item will be released on close. */
+	[[self lastDecoratorItem] setDecoratorItem: [[ETWindowItem alloc] init]];
+}
+
 /** <init \> Initializes and returns a new pickboard. */
 - (id) init
 {
-	self = [super init];
+	self = [super initWithFrame: PALETTE_FRAME];
 
 	if (self != nil)
 	{
 		_pickedObjects = [[NSMutableDictionary alloc] init];
 		_pickboardRef = 0;
 		[self setName: _(@"Pickboard")];
-
-		/* UI set up */
-		ETContainer *pickView = [[ETContainer alloc] initWithFrame: PALETTE_FRAME layoutItem: self];
-		ETWindowItem *windowItem = [[ETWindowItem alloc] init]; /* Will be released on close */
-
-		[self setLayout: [PICKBOARD_LAYOUT layout]];
-		/* Moves the object browser from the floating item group to the window 
-		   layer */
-		[[self lastDecoratorItem] setDecoratorItem: windowItem];
-		RELEASE(pickView); /* Was retained on -initWithFrame:layoutItem: */
+		[self setUpUI];
 	}
 	
 	return self;

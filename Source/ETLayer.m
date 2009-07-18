@@ -52,12 +52,10 @@
 
 - (id) init
 {
-	SUPERINIT;
+	self = [super initWithFrame: DEFAULT_FRAME];
+	if (nil == self)
+		return nil;
 
- 	ETContainer *containerAsLayer = 
-		AUTORELEASE([[ETContainer alloc] initWithFrame: DEFAULT_FRAME]); 
-
-	[self setSupervisorView: containerAsLayer];
 	_visible = YES;
 	_outOfFlow = YES;
     
@@ -107,10 +105,9 @@ when a layout other than ETWindowLayout is set on the receiver. */
 
 - (id) init
 {
-	SUPERINIT
-
-	ETContainer *supervisorView = [[ETContainer alloc] initWithFrame: [[NSScreen mainScreen] visibleFrame] layoutItem: self];
-	RELEASE(supervisorView); /* Was retained on -initWithFrame:layoutItem: */
+	self = [super initWithFrame: [[NSScreen mainScreen] visibleFrame]];
+	if (nil == self)
+		return nil;
 		
 	ASSIGN(_rootWindowItem, [self createRootWindowItem]);
 	_visibleWindows = [[NSMutableArray alloc] init];
