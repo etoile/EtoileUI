@@ -30,6 +30,10 @@
 	return (NSScrollView *)[[self supervisorView] mainView];
 }
 
+
+/* Patches the size to be sure it will never be smaller than the clip view 
+size, otherwise a click on the content background to unselect might not work 
+and custom content background or overlay won't draw over the entire visible area. */
 - (NSSize) decoratedItemRectChanged: (NSRect)rect
 {
 	NSSize sizeToCoverClipView = rect.size;
