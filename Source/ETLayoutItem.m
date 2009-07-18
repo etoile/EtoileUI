@@ -740,7 +740,7 @@ You shouldn't have to use this method a lot since -valueForProperty: and
 [itemCollection valueForKey: @"subject.name"].  */
 - (id) subject
 {
-	return (nil != _modelObject ? _modelObject : self);
+	return (nil != _modelObject ? _modelObject : (id)self);
 }
 
 /** Sets the model object which embeds the data to be displayed and represented 
