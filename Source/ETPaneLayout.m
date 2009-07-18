@@ -26,14 +26,14 @@
 	SUPERINIT
 	
 	// FIXME: Should be -itemGroupWithView...
-	ASSIGN(_rootItem, [ETLayoutItem itemGroupWithContainer]);
+	ASSIGN(_rootItem, [ETLayoutItem itemGroup]);
 	[_rootItem setActionHandler: nil];
-	ASSIGN(_contentItem, [ETLayoutItem itemGroupWithContainer]);
+	ASSIGN(_contentItem, [ETLayoutItem itemGroup]);
 	[_contentItem setAutoresizingMask: NSViewWidthSizable | NSViewHeightSizable];
 	[_rootItem addItem: _contentItem];
 	
 	// Move to subclass
-	[self setBarItem: [ETLayoutItem itemGroupWithContainer]];
+	[self setBarItem: [ETLayoutItem itemGroup]];
 	[_barItem setAutoresizingMask: NSViewWidthSizable];
 	[_barItem setLayout: [ETTableLayout layout]];
 	[[_barItem layout] setAttachedInstrument: [ETSelectTool instrument]];

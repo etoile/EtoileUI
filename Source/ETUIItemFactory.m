@@ -133,23 +133,6 @@ See also -itemWithRepresentedObject:. */
 	return AUTORELEASE([[ETLayoutItemGroup alloc] initWithRepresentedObject: object]);
 }
 
-/** Returns a new layout item group instance based on a container to which 
-    you can apply view-based layouts such as ETTableLayout, ETModelViewLayout 
-	etc. This is unlike the other item group factory methods that creates 
-	instances which only accepts positional layouts such ETFlowLayout, 
-	ETLineLayout etc. 
-	TODO: In future, we should modify ETLayoutItemGroup to lazily creates the 
-	container and inserts if a view-based layout is inserted... at this point,
-	the use of this method won't be truly needed anymore. */
-- (ETLayoutItemGroup *) itemGroupWithContainer
-{
-	ETContainer *container = AUTORELEASE([[ETContainer alloc] init]);
-	// FIXME: Remove this temporary workaround...
-	[container setAutoresizingMask: NSViewHeightSizable | NSViewWidthSizable];
-
-	return (ETLayoutItemGroup *)[container layoutItem];
-}
-
 /** Returns a new layout item group set up as a graphics group with 
 ETGraphicsGroupStyle as style and ETFreeLayout as layout.
 
@@ -157,7 +140,7 @@ You can use it to build structured graphics editor. e.g. ETSelectTool uses it
 when you request the grouping of several items. */
 - (ETLayoutItemGroup *) graphicsGroup
 {
-	ETLayoutItemGroup *itemGroup = [self itemGroupWithContainer];
+	ETLayoutItemGroup *itemGroup = [self itemGroup];
 	[itemGroup setStyle: AUTORELEASE([[ETGraphicsGroupStyle alloc] init])];
 	[itemGroup setLayout: [ETFreeLayout layout]];
 	return itemGroup;
@@ -553,6 +536,18 @@ width and height of +[ETShape defaultShapeRect]. */
 - (ETLayoutItem *) oval
 {
 	return [self ovalWithRect: ETMakeRect(NSZeroPoint, [ETShape defaultShapeRect].size)];
+}
+
+/* Deprecated */
+
+/** Deprecated. You must use -itemGroup now. */
+- (ETLayoutItemGroup *) itemGroupWithContainer
+{
+	ETContainer *container = AUTORELEASE([[ETContainer alloc] init]);
+	// FIXME: Remove this temporary workaround...
+	[container setAutoresizingMask: NSViewHeightSizable | NSViewWidthSizable];
+
+	return (ETLayoutItemGroup *)[container layoutItem];
 }
 
 

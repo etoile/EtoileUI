@@ -51,7 +51,7 @@ coordinates or not to set the event location in the window. */
 {
 	SUPERINIT
 
-	ASSIGN(mainItem, [ETLayoutItem itemGroupWithContainer]);
+	ASSIGN(mainItem, [ETLayoutItem itemGroup]);
 	[mainItem setFrame: NSMakeRect(0, 0, WIN_WIDTH, WIN_HEIGHT)];
 	[[ETLayoutItem windowGroup] addItem: mainItem];
 	ASSIGN(instrument, [ETInstrument instrument]);

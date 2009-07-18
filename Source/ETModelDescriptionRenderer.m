@@ -44,7 +44,7 @@
 
 - (id) renderEntityDescription: (ETEntityDescription *)aDescription
 {
-	ETLayoutItemGroup *entityItem = [ETLayoutItem itemGroupWithContainer];
+	ETLayoutItemGroup *entityItem = [ETLayoutItem itemGroup];
 
 	FOREACHI(aDescription, propertyDescription)
 	{

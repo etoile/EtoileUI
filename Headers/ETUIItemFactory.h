@@ -35,7 +35,6 @@
 - (ETLayoutItemGroup *) itemGroupWithView: (NSView *)view;
 - (ETLayoutItemGroup *) itemGroupWithValue: (id)value;
 - (ETLayoutItemGroup *) itemGroupWithRepresentedObject: (id)object;
-- (ETLayoutItemGroup *) itemGroupWithContainer;
 
 - (ETLayoutItemGroup *) graphicsGroup;
 
@@ -91,5 +90,9 @@
 - (ETLayoutItem *) rectangle;
 - (ETLayoutItem *) ovalWithRect: (NSRect)aRect;
 - (ETLayoutItem *) oval;
+
+/* Deprecated (DO NOT USE, WILL BE REMOVED LATER) */
+
+- (ETLayoutItemGroup *) itemGroupWithContainer;
 
 @end
