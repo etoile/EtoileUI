@@ -106,11 +106,16 @@
 
 	[parent addItem: item];
 
+	/* Now parent and [parent superview] retains respectively item and 
+	   [item supervisorView].
+	   Although parent has no supervisor view initially, one was lazily 
+	   instantiated to insert [item supervisorView] as a subview on 
+	   -addItem:. */
 	UKIntsEqual(3, [item retainCount]);
-	UKIntsEqual(2, [[item supervisorView] retainCount]);
-	UKIntsEqual(1, [parent retainCount]); /* Not retained by item */
+	UKIntsEqual(3, [[item supervisorView] retainCount]);
+	UKIntsEqual(2, [parent retainCount]); /* Not retained by item */
 	RELEASE(view);
-	UKIntsEqual(1, [[item supervisorView] retainCount]);
+	UKIntsEqual(2, [[item supervisorView] retainCount]);
 	UKIntsEqual(allocCount + 2, GSDebugAllocationCount([ETLayoutItem class])
 		+ GSDebugAllocationCount([ETLayoutItemGroup class]));
 	RELEASE(parent);
@@ -137,13 +142,13 @@
 	[parent addItem: item]; /* Inserts view2 into view1 */
 
 	UKIntsEqual(3, [item retainCount]); /* Retained by view2 and parent */
-	UKIntsEqual(3, [view2 retainCount]); /* Retained by item and view1 (parent view) */
-	UKIntsEqual(3, [parent retainCount]); /* Retained by view1 ancestor */
-	UKIntsEqual(2, [view1 retainCount]); /* Retained by parent */
-	UKIntsEqual(1, [ancestor retainCount]); /* Retained by nobody */
+	UKIntsEqual(3, [view2 retainCount]); /* Retained by item and view1 (parent supervisor view) */
+	UKIntsEqual(3, [parent retainCount]); /* Retained by view1 and ancestor */
+	UKIntsEqual(3, [view1 retainCount]); /* Retained by parent and ancestor supervisor view  */
+	UKIntsEqual(2, [ancestor retainCount]); /* Retained by its supervisor view (lazily created) */
 
 	RELEASE(view1);
-	UKIntsEqual(1, [view1 retainCount]);
+	UKIntsEqual(2, [view1 retainCount]);
 	UKIntsEqual(3, [item retainCount]);
 
 	RELEASE(item);
@@ -151,9 +156,9 @@
 	UKIntsEqual(2, [item retainCount]);
 	UKIntsEqual(3, [view2 retainCount]);
 	UKIntsEqual(2, [parent retainCount]);
-	UKIntsEqual(1, [view1 retainCount]);
+	UKIntsEqual(2, [view1 retainCount]);
 
-	UKIntsEqual(allocCount + 5, GSDebugAllocationCount([ETLayoutItem class])
+	UKIntsEqual(allocCount + 6, GSDebugAllocationCount([ETLayoutItem class])
 		+ GSDebugAllocationCount([ETLayoutItemGroup class])
 		+ GSDebugAllocationCount([ETView class]));
 
