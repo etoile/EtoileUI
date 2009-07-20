@@ -13,6 +13,7 @@
 #import <EtoileUI/ETApplication.h>
 #import <EtoileUI/ETBrowserLayout.h>
 #import <EtoileUI/ETCompatibility.h>
+#import <EtoileUI/ETCompositeLayout.h>
 #import <EtoileUI/ETComputedLayout.h>
 #import <EtoileUI/ETContainer.h>
 #import <EtoileUI/ETController.h>

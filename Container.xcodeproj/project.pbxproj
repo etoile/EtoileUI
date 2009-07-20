@@ -162,7 +162,6 @@
 		604B5C1D0F4B472E001C25E8 /* ETEventProcessor.h in Headers */ = {isa = PBXBuildFile; fileRef = 604B5C1B0F4B472E001C25E8 /* ETEventProcessor.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		604B5C1F0F4B473F001C25E8 /* ETEventProcessor.m in Sources */ = {isa = PBXBuildFile; fileRef = 604B5C1E0F4B473F001C25E8 /* ETEventProcessor.m */; };
 		604B5C200F4B473F001C25E8 /* ETEventProcessor.m in Sources */ = {isa = PBXBuildFile; fileRef = 604B5C1E0F4B473F001C25E8 /* ETEventProcessor.m */; };
-		6051F56E100CC23E005ED827 /* ETFixedLayout.h in Headers */ = {isa = PBXBuildFile; fileRef = 6051F56D100CC23E005ED827 /* ETFixedLayout.h */; };
 		6051F56F100CC23E005ED827 /* ETFixedLayout.h in Headers */ = {isa = PBXBuildFile; fileRef = 6051F56D100CC23E005ED827 /* ETFixedLayout.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		6051F58F100CC264005ED827 /* ETFixedLayout.m in Sources */ = {isa = PBXBuildFile; fileRef = 6051F58E100CC264005ED827 /* ETFixedLayout.m */; };
 		6051F590100CC264005ED827 /* ETFixedLayout.m in Sources */ = {isa = PBXBuildFile; fileRef = 6051F58E100CC264005ED827 /* ETFixedLayout.m */; };
@@ -312,6 +311,10 @@
 		60C1DA3D0C2571EE00E00A2E /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 29B97316FDCFA39411CA2CEA /* main.m */; };
 		60C27A0F0E66B0D80040A41D /* ETComputedLayout.h in Headers */ = {isa = PBXBuildFile; fileRef = 60C27A0D0E66B0D80040A41D /* ETComputedLayout.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		60C27A110E66B0EA0040A41D /* ETComputedLayout.m in Sources */ = {isa = PBXBuildFile; fileRef = 60C27A100E66B0EA0040A41D /* ETComputedLayout.m */; };
+		60C76C571013681B0073C381 /* ETCompositeLayout.h in Headers */ = {isa = PBXBuildFile; fileRef = 60C76C561013681B0073C381 /* ETCompositeLayout.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		60C76C591013682A0073C381 /* ETCompositeLayout.m in Sources */ = {isa = PBXBuildFile; fileRef = 60C76C581013682A0073C381 /* ETCompositeLayout.m */; };
+		60C76C5A1013682A0073C381 /* ETCompositeLayout.m in Sources */ = {isa = PBXBuildFile; fileRef = 60C76C581013682A0073C381 /* ETCompositeLayout.m */; };
+		60C76C6810136D0A0073C381 /* TestCompositeLayout.m in Sources */ = {isa = PBXBuildFile; fileRef = 60C76C6710136D0A0073C381 /* TestCompositeLayout.m */; };
 		60C94F600F8BB874007912D9 /* ETInstrument.h in Headers */ = {isa = PBXBuildFile; fileRef = 60C94F5E0F8BB874007912D9 /* ETInstrument.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		60C94F620F8BB884007912D9 /* ETInstrument.m in Sources */ = {isa = PBXBuildFile; fileRef = 60C94F610F8BB884007912D9 /* ETInstrument.m */; };
 		60C94F780F8BB9B4007912D9 /* ETTemplateItemLayout.h in Headers */ = {isa = PBXBuildFile; fileRef = 60C94F760F8BB9B3007912D9 /* ETTemplateItemLayout.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -382,6 +385,9 @@
 		60F3BE5A0EE1C08000BB9B02 /* Controls+Etoile.h in Headers */ = {isa = PBXBuildFile; fileRef = 60F3BE580EE1C08000BB9B02 /* Controls+Etoile.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		60F3BE5D0EE1C09500BB9B02 /* Controls+Etoile.m in Sources */ = {isa = PBXBuildFile; fileRef = 60F3BE5B0EE1C09500BB9B02 /* Controls+Etoile.m */; };
 		60F3BE630EE1C0A600BB9B02 /* ETPersistencyController.h in Headers */ = {isa = PBXBuildFile; fileRef = 60F3BE610EE1C0A600BB9B02 /* ETPersistencyController.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		60F6EEEE101471FC003F4508 /* NSFileHandle+Socket.h in Headers */ = {isa = PBXBuildFile; fileRef = 60F6EEED101471FC003F4508 /* NSFileHandle+Socket.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		60F6EEF01014722D003F4508 /* NSFileHandle+Socket.m in Sources */ = {isa = PBXBuildFile; fileRef = 60F6EEEF1014722D003F4508 /* NSFileHandle+Socket.m */; };
+		60F6EEF11014722D003F4508 /* NSFileHandle+Socket.m in Sources */ = {isa = PBXBuildFile; fileRef = 60F6EEEF1014722D003F4508 /* NSFileHandle+Socket.m */; };
 		60F714130C5E7DA8002CA8AA /* EtoileUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 60EF8E9D0C5E4D0600C97C41 /* EtoileUI.framework */; };
 		60F8C9CA0F8DF19C0069FA6C /* ETHandle.h in Headers */ = {isa = PBXBuildFile; fileRef = 60F8C9C80F8DF19B0069FA6C /* ETHandle.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		60F8C9CC0F8DF1AB0069FA6C /* ETHandle.m in Sources */ = {isa = PBXBuildFile; fileRef = 60F8C9CB0F8DF1AB0069FA6C /* ETHandle.m */; };
@@ -484,8 +490,7 @@
 		29B97325FDCFA39411CA2CEA /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = /System/Library/Frameworks/Foundation.framework; sourceTree = "<absolute>"; };
 		6000978E0FAB479500622E5D /* ETModelDescriptionRenderer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ETModelDescriptionRenderer.m; path = Source/ETModelDescriptionRenderer.m; sourceTree = "<group>"; };
 		600097910FAB47A600622E5D /* ETModelDescriptionRenderer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ETModelDescriptionRenderer.h; path = Headers/ETModelDescriptionRenderer.h; sourceTree = "<group>"; };
-		600243B90CD133420023182D /* EtoileUITests.bundle */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = EtoileUITests.bundle; sourceTree = BUILT_PRODUCTS_DIR; };
-		600243BA0CD133420023182D /* EtoileUITests-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = "EtoileUITests-Info.plist"; path = "Tests/EtoileUITests-Info.plist"; sourceTree = "<group>"; };
+		600243B90CD133420023182D /* TestEtoileUI.bundle */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = TestEtoileUI.bundle; sourceTree = BUILT_PRODUCTS_DIR; };
 		600243C40CD133950023182D /* UnitKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UnitKit.framework; path = /Library/Frameworks/UnitKit.framework; sourceTree = "<absolute>"; };
 		600243C90CD134440023182D /* test_ETLayoutItem.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = test_ETLayoutItem.m; path = Tests/test_ETLayoutItem.m; sourceTree = "<group>"; };
 		60073C2910074B39007272E6 /* EtoileWeb.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = EtoileWeb.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -686,8 +691,7 @@
 		609549820C0E462500068CBB /* ETOutlineLayout.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ETOutlineLayout.m; path = Source/ETOutlineLayout.m; sourceTree = "<group>"; };
 		609B660C0FEE75C00007F842 /* NSObject+HOM.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "NSObject+HOM.h"; path = "../EtoileFoundation/Headers/NSObject+HOM.h"; sourceTree = SOURCE_ROOT; };
 		609B66120FEE7CD10007F842 /* TestBasicHOM.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = TestBasicHOM.m; path = ../EtoileFoundation/Source/TestBasicHOM.m; sourceTree = SOURCE_ROOT; };
-		609B66740FEE80990007F842 /* EtoileFoundationTests-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "EtoileFoundationTests-Info.plist"; sourceTree = "<group>"; };
-		609B66D70FEE80CE0007F842 /* EtoileFoundationTests.bundle */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = EtoileFoundationTests.bundle; sourceTree = BUILT_PRODUCTS_DIR; };
+		609B66D70FEE80CE0007F842 /* TestEtoileFoundation.bundle */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = TestEtoileFoundation.bundle; sourceTree = BUILT_PRODUCTS_DIR; };
 		609F463C0B414C0A00AD2209 /* ETContainer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ETContainer.h; path = Headers/ETContainer.h; sourceTree = "<group>"; };
 		609F463D0B414C0A00AD2209 /* ETContainer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ETContainer.m; path = Source/ETContainer.m; sourceTree = "<group>"; wrapsLines = 0; };
 		609F46590B41641400AD2209 /* ETLayout.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ETLayout.h; path = Headers/ETLayout.h; sourceTree = "<group>"; };
@@ -724,6 +728,9 @@
 		60C1D8AC0C2569D500E00A2E /* PaneController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = PaneController.m; path = PaneExample/PaneController.m; sourceTree = "<group>"; };
 		60C27A0D0E66B0D80040A41D /* ETComputedLayout.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ETComputedLayout.h; path = Headers/ETComputedLayout.h; sourceTree = "<group>"; };
 		60C27A100E66B0EA0040A41D /* ETComputedLayout.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ETComputedLayout.m; path = Source/ETComputedLayout.m; sourceTree = "<group>"; };
+		60C76C561013681B0073C381 /* ETCompositeLayout.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ETCompositeLayout.h; path = Headers/ETCompositeLayout.h; sourceTree = "<group>"; };
+		60C76C581013682A0073C381 /* ETCompositeLayout.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ETCompositeLayout.m; path = Source/ETCompositeLayout.m; sourceTree = "<group>"; };
+		60C76C6710136D0A0073C381 /* TestCompositeLayout.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = TestCompositeLayout.m; path = Tests/TestCompositeLayout.m; sourceTree = "<group>"; };
 		60C94F5E0F8BB874007912D9 /* ETInstrument.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ETInstrument.h; path = Headers/ETInstrument.h; sourceTree = "<group>"; };
 		60C94F610F8BB884007912D9 /* ETInstrument.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ETInstrument.m; path = Source/ETInstrument.m; sourceTree = "<group>"; };
 		60C94F760F8BB9B3007912D9 /* ETTemplateItemLayout.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ETTemplateItemLayout.h; path = Headers/ETTemplateItemLayout.h; sourceTree = "<group>"; };
@@ -768,6 +775,8 @@
 		60F3BE5B0EE1C09500BB9B02 /* Controls+Etoile.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = "Controls+Etoile.m"; path = "Source/Controls+Etoile.m"; sourceTree = "<group>"; };
 		60F3BE5C0EE1C09500BB9B02 /* ETPersistencyController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ETPersistencyController.m; path = Source/ETPersistencyController.m; sourceTree = "<group>"; };
 		60F3BE610EE1C0A600BB9B02 /* ETPersistencyController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ETPersistencyController.h; path = Headers/ETPersistencyController.h; sourceTree = "<group>"; };
+		60F6EEED101471FC003F4508 /* NSFileHandle+Socket.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "NSFileHandle+Socket.h"; path = "../EtoileFoundation/Headers/NSFileHandle+Socket.h"; sourceTree = SOURCE_ROOT; };
+		60F6EEEF1014722D003F4508 /* NSFileHandle+Socket.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = "NSFileHandle+Socket.m"; path = "../EtoileFoundation/Source/NSFileHandle+Socket.m"; sourceTree = SOURCE_ROOT; };
 		60F8C9C80F8DF19B0069FA6C /* ETHandle.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ETHandle.h; path = Headers/ETHandle.h; sourceTree = "<group>"; };
 		60F8C9CB0F8DF1AB0069FA6C /* ETHandle.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ETHandle.m; path = Source/ETHandle.m; sourceTree = "<group>"; };
 		60F8C9DD0F8DF34C0069FA6C /* ETModelDescription.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ETModelDescription.h; path = ../EtoileFoundation/Headers/ETModelDescription.h; sourceTree = SOURCE_ROOT; };
@@ -925,9 +934,9 @@
 			isa = PBXGroup;
 			children = (
 				60EF8E9D0C5E4D0600C97C41 /* EtoileUI.framework */,
-				600243B90CD133420023182D /* EtoileUITests.bundle */,
+				600243B90CD133420023182D /* TestEtoileUI.bundle */,
 				603647AC0E409244003377E0 /* EtoileFoundation.framework */,
-				609B66D70FEE80CE0007F842 /* EtoileFoundationTests.bundle */,
+				609B66D70FEE80CE0007F842 /* TestEtoileFoundation.bundle */,
 				60073C2910074B39007272E6 /* EtoileWeb.framework */,
 				60073EAD10074D26007272E6 /* EtoileXML.framework */,
 			);
@@ -954,8 +963,6 @@
 				60909CC90CB2DA42009CAD27 /* TableViewExample.app */,
 				60CF742A0D449A8A00B4CA3D /* MarkupEditor.app */,
 				60EEB9020F09457C00EBB632 /* Collage.app */,
-				60073C2E10074B39007272E6 /* EtoileWeb-Info.plist */,
-				60073EAE10074D26007272E6 /* EtoileXML-Info.plist */,
 			);
 			name = FlowAutolayoutExample;
 			sourceTree = "<group>";
@@ -976,7 +983,6 @@
 			children = (
 				60CA73860C494B22009D9B02 /* COPYING */,
 				60EF8E9E0C5E4D0600C97C41 /* EtoileUI-Info.plist */,
-				600243BA0CD133420023182D /* EtoileUITests-Info.plist */,
 				608EBAE2100D22AB00B36FAB /* BrowserPrototype.nib */,
 				608EBAE4100D22AB00B36FAB /* Inspector.nib */,
 				608EBAE6100D22AB00B36FAB /* OutlinePrototype.nib */,
@@ -999,6 +1005,7 @@
 		600243CE0CD134C40023182D /* Tests */ = {
 			isa = PBXGroup;
 			children = (
+				60C76C6710136D0A0073C381 /* TestCompositeLayout.m */,
 				6022404D1003DF14007D5D07 /* TestItemGeometry.m */,
 				60B1BCE80FA527A300BD3123 /* test_ETInstrument.m */,
 				60AEDA240FB4A6B800F31EEA /* test_ETLayer.m */,
@@ -1015,6 +1022,7 @@
 		60073B1D10074A97007272E6 /* EtoileWeb */ = {
 			isa = PBXGroup;
 			children = (
+				60073C2E10074B39007272E6 /* EtoileWeb-Info.plist */,
 				60DAC87B100774F4007F143A /* ETLayoutXHTMLRenderer.h */,
 				60DAC87C100774F4007F143A /* ETLayoutXHTMLRenderer.m */,
 				60073E9F10074BC4007272E6 /* ETXHTMLWriter.h */,
@@ -1030,6 +1038,7 @@
 		60073EA310074CF3007272E6 /* EtoileXML */ = {
 			isa = PBXGroup;
 			children = (
+				60073EAE10074D26007272E6 /* EtoileXML-Info.plist */,
 				60073EB610074D6A007272E6 /* ETXMLDeclaration.h */,
 				60073EB710074D6A007272E6 /* ETXMLDeclaration.m */,
 				60073EB810074D6A007272E6 /* ETXMLNode.h */,
@@ -1078,6 +1087,7 @@
 				603647C70E4092EA003377E0 /* ETTransform.h */,
 				602DC5050F21FA2E00DF23D9 /* ETUTI.h */,
 				603647C80E4092EA003377E0 /* ETUUID.h */,
+				60F6EEED101471FC003F4508 /* NSFileHandle+Socket.h */,
 				603647CB0E4092EA003377E0 /* NSFileManager+NameForTempFile.h */,
 				603647CC0E4092EA003377E0 /* NSFileManager+TempFile.h */,
 				603647CD0E4092EA003377E0 /* NSIndexPath+Etoile.h */,
@@ -1100,7 +1110,6 @@
 			children = (
 				60B27D890FF7B5E80012BB42 /* Tests */,
 				603649810E4095F0003377E0 /* EtoileFoundation-Info.plist */,
-				609B66740FEE80990007F842 /* EtoileFoundationTests-Info.plist */,
 				602DC5410F21FD1500DF23D9 /* UTIDefinitions.plist */,
 				603648350E409329003377E0 /* Headers */,
 				6680CED8101257C800CAF439 /* ETReflection.m */,
@@ -1119,6 +1128,7 @@
 				603648040E40931E003377E0 /* ETTransform.m */,
 				602DC50D0F21FA4C00DF23D9 /* ETUTI.m */,
 				603648050E40931E003377E0 /* ETUUID.m */,
+				60F6EEEF1014722D003F4508 /* NSFileHandle+Socket.m */,
 				603648080E40931E003377E0 /* NSFileManager+NameForTempFile.m */,
 				603648090E40931E003377E0 /* NSFileManager+TempFile.m */,
 				6036480A0E40931E003377E0 /* NSIndexPath+Etoile.m */,
@@ -1244,6 +1254,8 @@
 		607FBB080FE0073F00960039 /* Composite Layouts */ = {
 			isa = PBXGroup;
 			children = (
+				60C76C561013681B0073C381 /* ETCompositeLayout.h */,
+				60C76C581013682A0073C381 /* ETCompositeLayout.m */,
 				606B98A40C0AF669000AAA85 /* Pane Layouts */,
 				6031194E0CF8B993001A699E /* ETObjectBrowserLayout.h */,
 				6031194F0CF8B993001A699E /* ETObjectBrowserLayout.m */,
@@ -1448,7 +1460,6 @@
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				6051F56E100CC23E005ED827 /* ETFixedLayout.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1515,6 +1526,7 @@
 				602DC5090F21FA2E00DF23D9 /* ETUTI.h in Headers */,
 				60B27D8B0FF7B6180012BB42 /* ETCollection+HOM.h in Headers */,
 				6680CED7101257B200CAF439 /* ETReflection.h in Headers */,
+				60F6EEEE101471FC003F4508 /* NSFileHandle+Socket.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1598,15 +1610,16 @@
 				6053E12F0FFA5CB300A5EBEA /* ETPickDropActionHandler.h in Headers */,
 				6053E1B10FFA6F3900A5EBEA /* ETPaintActionHandler.h in Headers */,
 				6051F56F100CC23E005ED827 /* ETFixedLayout.h in Headers */,
+				60C76C571013681B0073C381 /* ETCompositeLayout.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXHeadersBuildPhase section */
 
 /* Begin PBXNativeTarget section */
-		600243B80CD133420023182D /* EtoileUITests */ = {
+		600243B80CD133420023182D /* TestEtoileUI */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 600243BB0CD133420023182D /* Build configuration list for PBXNativeTarget "EtoileUITests" */;
+			buildConfigurationList = 600243BB0CD133420023182D /* Build configuration list for PBXNativeTarget "TestEtoileUI" */;
 			buildPhases = (
 				600243B30CD133420023182D /* Headers */,
 				600243B40CD133420023182D /* Resources */,
@@ -1619,9 +1632,9 @@
 			dependencies = (
 				60AE4C6C0EED4ECB00DE82BC /* PBXTargetDependency */,
 			);
-			name = EtoileUITests;
+			name = TestEtoileUI;
 			productName = EtoileUITests;
-			productReference = 600243B90CD133420023182D /* EtoileUITests.bundle */;
+			productReference = 600243B90CD133420023182D /* TestEtoileUI.bundle */;
 			productType = "com.apple.product-type.bundle";
 		};
 		60073C2810074B39007272E6 /* EtoileWeb */ = {
@@ -1753,9 +1766,9 @@
 			productReference = 60909CC90CB2DA42009CAD27 /* TableViewExample.app */;
 			productType = "com.apple.product-type.application";
 		};
-		609B667C0FEE80CE0007F842 /* EtoileFoundationTests */ = {
+		609B667C0FEE80CE0007F842 /* TestEtoileFoundation */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 609B66D40FEE80CE0007F842 /* Build configuration list for PBXNativeTarget "EtoileFoundationTests" */;
+			buildConfigurationList = 609B66D40FEE80CE0007F842 /* Build configuration list for PBXNativeTarget "TestEtoileFoundation" */;
 			buildPhases = (
 				609B667F0FEE80CE0007F842 /* Headers */,
 				609B66800FEE80CE0007F842 /* Resources */,
@@ -1767,9 +1780,9 @@
 			);
 			dependencies = (
 			);
-			name = EtoileFoundationTests;
+			name = TestEtoileFoundation;
 			productName = EtoileUITests;
-			productReference = 609B66D70FEE80CE0007F842 /* EtoileFoundationTests.bundle */;
+			productReference = 609B66D70FEE80CE0007F842 /* TestEtoileFoundation.bundle */;
 			productType = "com.apple.product-type.bundle";
 		};
 		60CF74290D449A8A00B4CA3D /* MarkupEditor */ = {
@@ -1844,10 +1857,10 @@
 			targets = (
 				60073EAC10074D26007272E6 /* EtoileXML */,
 				603647AB0E409244003377E0 /* EtoileFoundation */,
-				609B667C0FEE80CE0007F842 /* EtoileFoundationTests */,
+				609B667C0FEE80CE0007F842 /* TestEtoileFoundation */,
 				60EF8E9C0C5E4D0600C97C41 /* EtoileUI */,
+				600243B80CD133420023182D /* TestEtoileUI */,
 				60073C2810074B39007272E6 /* EtoileWeb */,
-				600243B80CD133420023182D /* EtoileUITests */,
 				60EEB9010F09457C00EBB632 /* Collage */,
 				60CF74290D449A8A00B4CA3D /* MarkupEditor */,
 				605F0CC90C0F400D003AE3E6 /* ObjectManagerExample */,
@@ -2070,6 +2083,8 @@
 				6053E1B40FFA6F5800A5EBEA /* ETPaintActionHandler.m in Sources */,
 				6022404E1003DF14007D5D07 /* TestItemGeometry.m in Sources */,
 				6051F58F100CC264005ED827 /* ETFixedLayout.m in Sources */,
+				60C76C5A1013682A0073C381 /* ETCompositeLayout.m in Sources */,
+				60C76C6810136D0A0073C381 /* TestCompositeLayout.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2130,6 +2145,7 @@
 				60A221ED0FEFF8EF00952E11 /* NSObject+HOM.m in Sources */,
 				60B27D820FF7B56C0012BB42 /* ETCollection+HOM.m in Sources */,
 				6680CED9101257C800CAF439 /* ETReflection.m in Sources */,
+				60F6EEF01014722D003F4508 /* NSFileHandle+Socket.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2201,6 +2217,7 @@
 				60B27D740FF7B51D0012BB42 /* TestETCollectionHOM.m in Sources */,
 				60B27D760FF7B54F0012BB42 /* TestUTI.m in Sources */,
 				60B27D7F0FF7B56C0012BB42 /* ETCollection+HOM.m in Sources */,
+				60F6EEF11014722D003F4508 /* NSFileHandle+Socket.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2291,6 +2308,7 @@
 				6053E1310FFA5CC700A5EBEA /* ETPickDropActionHandler.m in Sources */,
 				6053E1B30FFA6F5800A5EBEA /* ETPaintActionHandler.m in Sources */,
 				6051F590100CC264005ED827 /* ETFixedLayout.m in Sources */,
+				60C76C591013682A0073C381 /* ETCompositeLayout.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2429,7 +2447,7 @@
 				GCC_WARN_FOUR_CHARACTER_CONSTANTS = NO;
 				GCC_WARN_UNKNOWN_PRAGMAS = NO;
 				HEADER_SEARCH_PATHS = /usr/GNUstep/System/Library/Headers/;
-				INFOPLIST_FILE = "Tests/EtoileUITests-Info.plist";
+				INFOPLIST_FILE = "";
 				INSTALL_PATH = "$(USER_LIBRARY_DIR)/Bundles";
 				LIBRARY_SEARCH_PATHS = /usr/GNUstep/System/Library/Libraries/;
 				OTHER_CFLAGS = "";
@@ -2439,7 +2457,7 @@
 					"-framework",
 					AppKit,
 				);
-				PRODUCT_NAME = EtoileUITests;
+				PRODUCT_NAME = TestEtoileUI;
 				WARNING_CFLAGS = "-Wmost";
 			};
 			name = Debug;
@@ -2928,7 +2946,7 @@
 					"-framework",
 					Foundation,
 				);
-				PRODUCT_NAME = EtoileFoundationTests;
+				PRODUCT_NAME = TestEtoileFoundation;
 				WARNING_CFLAGS = "-Wmost";
 			};
 			name = Debug;
@@ -3164,7 +3182,7 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		600243BB0CD133420023182D /* Build configuration list for PBXNativeTarget "EtoileUITests" */ = {
+		600243BB0CD133420023182D /* Build configuration list for PBXNativeTarget "TestEtoileUI" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				600243BC0CD133420023182D /* Debug */,
@@ -3236,7 +3254,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		609B66D40FEE80CE0007F842 /* Build configuration list for PBXNativeTarget "EtoileFoundationTests" */ = {
+		609B66D40FEE80CE0007F842 /* Build configuration list for PBXNativeTarget "TestEtoileFoundation" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				609B66D50FEE80CE0007F842 /* Debug */,
