@@ -1,46 +1,17 @@
-/*  <title>ETLayoutItemGroup+Mutation</title>
-
-	ETLayoutItemGroup+Mutation.m
-	
-	<abstract>Description forthcoming.</abstract>
- 
+/* 
 	Copyright (C) 2007 Quentin Mathe
  
 	Author:  Quentin Mathe <qmathe@club-internet.fr>
 	Date:  January 2007
- 
-	Redistribution and use in source and binary forms, with or without
-	modification, are permitted provided that the following conditions are met:
-
-	* Redistributions of source code must retain the above copyright notice,
-	  this list of conditions and the following disclaimer.
-	* Redistributions in binary form must reproduce the above copyright notice,
-	  this list of conditions and the following disclaimer in the documentation
-	  and/or other materials provided with the distribution.
-	* Neither the name of the Etoile project nor the names of its contributors
-	  may be used to endorse or promote products derived from this software
-	  without specific prior written permission.
-
-	THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
-	AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
-	IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
-	ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE
-	LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
-	CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
-	SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
-	INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
-	CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
-	ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
-	THE POSSIBILITY OF SUCH DAMAGE.
+	License:  Modified BSD (see COPYING)
  */
 
 #import <EtoileFoundation/NSObject+Model.h>
 #import <EtoileFoundation/ETCollection.h>
 #import "ETLayoutItemGroup+Mutation.h"
-#import "ETLayoutItem+Factory.h"
-#import "ETEvent.h"
-#import "ETContainer.h"
 #import "ETController.h"
+#import "ETEvent.h"
+#import "ETLayoutItem+Factory.h"
 #import "ETCompatibility.h"
 
 @interface ETLayoutItemGroup (ETSource)
@@ -468,15 +439,14 @@ static 	BOOL _coalescingMutation = NO;
 
 - (NSArray *) itemsFromFlatSource
 {
-	NSMutableArray *itemsFromSource = [NSMutableArray array];
-	ETLayoutItem *layoutItem = nil;
 	ETLayoutItemGroup *baseItem = [self baseItem];
 	int nbOfItems = [[baseItem source] numberOfItemsInItemGroup: baseItem];
-	
+	NSMutableArray *itemsFromSource = [NSMutableArray arrayWithCapacity: nbOfItems];
+
 	for (int i = 0; i < nbOfItems; i++)
 	{
-		layoutItem = [[baseItem source] itemGroup: baseItem itemAtIndex: i];
-		[itemsFromSource addObject: layoutItem];
+		ETLayoutItem *item = [[baseItem source] itemGroup: baseItem itemAtIndex: i];
+		[itemsFromSource addObject: item];
 	}
 	
 	return itemsFromSource;
@@ -484,37 +454,37 @@ static 	BOOL _coalescingMutation = NO;
 
 - (NSArray *) itemsFromTreeSource
 {
-	NSMutableArray *itemsFromSource = [NSMutableArray array];
-	ETLayoutItem *layoutItem = nil;
-	ETContainer *baseContainer = (ETContainer *)[[self baseItem] supervisorView]; // FIXME: Eliminate cast, clean and update the method code btw...
-	// NOTE: [self indexPathFromItem: [container layoutItem]] is equal to [[container layoutItem] indexPathFortem: self]
-	NSIndexPath *indexPath = [self indexPathFromItem: [baseContainer layoutItem]];
-	int nbOfItems = 0;
+	ETLayoutItemGroup *baseItem = [self baseItem];
+	// NOTE: [self indexPathFromItem: baseItem] is equal to [baseItem indexPathForItem: self]
+	NSIndexPath *indexPath = [self indexPathFromItem: baseItem];
 	
-	//ETDebugLog(@"-itemsFromTreeSource in %@", self);
+	ETDebugLog(@"-itemsFromTreeSource in %@", self);
 	
 	/* Request number of items to the source by passing receiver index path 
-	   expressed in a way relative to the base container */
-	nbOfItems = [[baseContainer source] itemGroup: [self baseItem] numberOfItemsAtPath: indexPath];
+	   expressed in a way relative to the base item */
+	int nbOfItems = [[baseItem source] itemGroup: baseItem
+	                         numberOfItemsAtPath: indexPath];
+	NSMutableArray *itemsFromSource = [NSMutableArray arrayWithCapacity: nbOfItems];
 
 	for (int i = 0; i < nbOfItems; i++)
 	{
-		NSIndexPath *indexSubpath = nil;
-		
-		indexSubpath = [indexPath indexPathByAddingIndex: i];
+		NSIndexPath *indexSubpath = [indexPath indexPathByAddingIndex: i];
 		/* Request item to the source by passing item index path expressed in a
-		   way relative to the base container */
-		layoutItem = [[baseContainer source] itemGroup: [self baseItem] itemAtPath: indexSubpath];
-		//ETDebugLog(@"Retrieved item %@ known by path %@", layoutItem, indexSubpath);
-		if (layoutItem != nil)
+		   way relative to the base item */
+		ETLayoutItem *item = [[baseItem source] itemGroup: baseItem 
+		                                       itemAtPath: indexSubpath];
+		
+		//ETLog(@"Retrieved item %@ known by path %@", item, indexSubpath);
+
+		if (item != nil)
 		{
-			[itemsFromSource addObject: layoutItem];
+			[itemsFromSource addObject: item];
 		}
 		else
 		{
 			[NSException raise: @"ETInvalidReturnValueException" 
 				format: @"Item at path %@ returned by source %@ must not be "
-				@"nil", indexSubpath, [baseContainer source]];
+				@"nil", indexSubpath, [baseItem source]];
 		}
 	}
 	
@@ -557,18 +527,18 @@ static 	BOOL _coalescingMutation = NO;
 	return childItems;
 }
 
-/** Returns 0 when source doesn't conform to any parts of ETContainerSource 
-informal protocol.
+/** Returns 0 when source doesn't conform to any parts of 
+ETLayoutItemGroupIndexSource or ETLayoutItemGroupPathSource informal protocols.
 
-Returns 1 when source conform to protocol for flat collections and display of 
-items in a linear style.
+Returns 1 when source conform to ETLayoutItemGroupIndexSource protocol for flat 
+collections and display of items in a linear style.
 
-Returns 2 when source conform to protocol for tree collections and display of 
-items in a hiearchical style.
+Returns 2 when source conform to ETLayoutItemGroupPathSource protocol for tree 
+collections and display of items in a hiearchical style.
 
 If tree collection part of the protocol is implemented through 
--itemGroup:numberOfItemsAtPath: , ETContainer by default ignores flat collection 
-part of protocol like -numberOfItemsInContainer. */
+-itemGroup:numberOfItemsAtPath: , ETLayoutItemGroup by default ignores flat 
+collection part of protocol like -numberOfItemsInItemGroup:. */
 - (int) checkSourceProtocolConformance
 {
 	id source = [[self baseItem] source];
@@ -586,8 +556,8 @@ part of protocol like -numberOfItemsInContainer. */
 		else
 		{
 			ETLog(@"%@ implements itemGroup:numberOfItemsAtPath: but misses "
-				  @"itemGroup:itemAtPath: as requested by ETContainerSource "
-				  @"protocol.", source);
+				  @"itemGroup:itemAtPath: as requested by "
+				  @"ETLayoutItemGroupPathSource protocol.", source);
 			return 0;
 		}
 	}
@@ -600,8 +570,8 @@ part of protocol like -numberOfItemsInContainer. */
 		else
 		{
 			ETLog(@"%@ implements numberOfItemsInItemGroup: but misses "
-				  @"container:itemAtIndex as  requested by "
-				  @"ETContainerSource protocol.", source);
+				  @"itemGroup:itemAtIndex as  requested by "
+				  @"ETLayoutItemGroupIndexSource  protocol.", source);
 			return 0;
 		}
 	}
@@ -609,7 +579,8 @@ part of protocol like -numberOfItemsInContainer. */
 	{
 		ETLog(@"%@ implements neither numberOfItemsInItemGroup: nor "
 			  @"itemGroup:numberOfItemsAtPath: as requested by "
-			  @"ETContainerSource protocol.", source);
+			  @"ETLayoutItemGroupIndexSource and ETLayoutItemGroupPathSource "
+			  @"protocol.", source);
 		return 0;
 	}
 }
