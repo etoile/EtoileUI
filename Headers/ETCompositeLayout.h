@@ -60,9 +60,8 @@
     Another way to look at composite layouts is to see them as inner decorator 
     items unlike decorator items you can set on ETLayoutItem instances which are 
     outer decorators. */
-@interface ETCompositeLayout : ETLayout <ETLayoutingContext>
+@interface ETCompositeLayout : ETLayout
 {
-	ETLayoutItemGroup *_rootItem; /* works like a virtual node */
 	ETLayoutItemGroup *_targetItem; /* a descendent of the root virtual node */
 }
 
@@ -70,16 +69,11 @@
 
 - (id) initWithRootItem: (ETLayoutItemGroup *)itemGroup;
 - (id) initWithRootItem: (ETLayoutItemGroup *)rootItem 
-             targetItem: (ETLayoutItemGroup *)targetItem;
-
-/* Layouting */
+  firstPresentationItem: (ETLayoutItemGroup *)targetItem;
 
 - (void) renderWithLayoutItems: (NSArray *)items isNewContent: (BOOL)isNewContent;
 
-- (ETLayoutItemGroup *) rootItem;
-- (ETContainer *) rootContainer;
-- (id) targetItem;
-- (void) setTargetItem: (ETLayoutItemGroup *)targetItem;
-- (id) targetLayout;
+- (id) firstPresentationItem;
+- (void) setFirstPresentationItem: (ETLayoutItemGroup *)targetItem;
 
 @end
