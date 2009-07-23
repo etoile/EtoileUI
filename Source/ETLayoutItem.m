@@ -1173,10 +1173,12 @@ See also -supervisorView:. */
 	[self setFrame: [supervisorView frame]];
 
 	BOOL noDecorator = (_decoratorItem == nil);
-	BOOL hasParent = (_parentItem == nil);
+	BOOL hasParent = (_parentItem != nil);
 	
 	if (noDecorator && hasParent)
+	{
 		[_parentItem handleAttachViewOfItem: self];
+	}
 }
 
 /* Inserts a supervisor view that is required to be decorated. */

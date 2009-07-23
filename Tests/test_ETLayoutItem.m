@@ -427,6 +427,21 @@ static ETUIItemFactory *itemFactory = nil;
 	UKNotNil([self supervisorView]);
 	UKTrue([[[self supervisorView] subviews] containsObject: [textFieldItem supervisorView]]);
 }
+
+- (void) testSupervisorViewInsertionByDescendant
+{
+	ETLayoutItemGroup *intermediateParent = [itemFactory itemGroup];
+	ETLayoutItem *textFieldItem = [itemFactory textField];
+
+	UKNil([self supervisorView]);
+	UKNil([intermediateParent supervisorView]);
+
+	[self addItem: intermediateParent];
+	[intermediateParent addItem: textFieldItem];
+	
+	UKNotNil([self supervisorView]);
+	UKTrue([[[self supervisorView] subviews] containsObject: [intermediateParent supervisorView]]);
+}
 	
 #define BUILD_TEST_TREE \
 	id item0 = [itemFactory itemGroup]; \
