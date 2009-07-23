@@ -6,6 +6,7 @@
 	License:  Modified BSD (see COPYING)
  */
 
+#import <EtoileFoundation/Macros.h>
 #import <EtoileFoundation/NSObject+Model.h>
 #import <EtoileFoundation/ETCollection.h>
 #import "ETLayoutItemGroup+Mutation.h"
@@ -85,7 +86,7 @@ static 	BOOL _coalescingMutation = NO;
 {
 	//ETDebugLog(@"Add item in %@", self);
 	
-	if ([_layoutItems containsObject: item])
+	if ([[item parentItem] isEqual: self])
 	{
 		ETLog(@"WARNING: Trying to add item %@ to the item group %@ it "
 			@"already belongs to", item, self);
@@ -152,7 +153,7 @@ static 	BOOL _coalescingMutation = NO;
 
 - (void) handleInsert: (ETEvent *)event item: (ETLayoutItem *)item atIndex: (int)index
 {
-	if ([_layoutItems containsObject: item])
+	if ([[item parentItem] isEqual: self])
 	{
 		ETLog(@"WARNING: Trying to insert item %@ in the item group %@ it "
 			@"already belongs to", item, self);
@@ -236,6 +237,11 @@ static 	BOOL _coalescingMutation = NO;
 
 - (void) handleRemove: (ETEvent *)event item: (ETLayoutItem *)item
 {
+	/* Very important to return immediately, -handleDetachItem: execution would 
+	   lead to a weird behavior: the item parent item would be set to nil. */
+	if ([[item parentItem] isEqual: self] == NO)
+		return;
+
 	BOOL validatedRemove = YES;
 
 	/* Take note that -reload calls -removeAllItems. 
@@ -338,10 +344,7 @@ static 	BOOL _coalescingMutation = NO;
 
 - (void) handleAdd: (ETEvent *)event items: (NSArray *)items
 {
-	NSEnumerator *e = [items objectEnumerator];
-	ETLayoutItem *item = nil;
-	
-	while ((item = [e nextObject]) != nil)
+	FOREACH(items, item, ETLayoutItem *)
 	{
 		[self handleAdd: event item: item];
 	}
@@ -349,10 +352,7 @@ static 	BOOL _coalescingMutation = NO;
 
 - (void) handleRemove: (ETEvent *)event items: (NSArray *)items
 {
-	NSEnumerator *e = [items objectEnumerator];
-	ETLayoutItem *item = nil;
-	
-	while ((item = [e nextObject]) != nil)
+	FOREACH(items, item, ETLayoutItem *)
 	{
 		[self handleRemove: event item: item];
 	}
