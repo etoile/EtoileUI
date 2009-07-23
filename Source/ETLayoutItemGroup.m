@@ -496,14 +496,14 @@ NOTE: Having a null layout class may be a solution to get rid of
 	/* Typically needed if your item has no view and gets added to an item 
 	   group without a layout. Without this check -addSuview: [item displayView]
 	   results in a crash. */
-	if ([item displayView] == nil) /* No view to attach */
+	if ([item isVisible] == NO && [item displayView] == nil) /* No view to attach */
 		return;
 
 	[[item displayView] removeFromSuperview];
 	/* Only insert the item view if the layout is a fixed/free layout. 
 	   TODO: Probably make more explicit the nil layout check and improve in a
 	   way or another the handling of the nil view case. */
-	if ([self layout] == nil)
+	if ([[self layout] isOpaque] == NO)
 	{
 		[[self setUpSupervisorViewWithFrame: [self frame]] addSubview: [item displayView]];
 	}
@@ -1151,6 +1151,7 @@ recursively on them. */
 
 		/* Render child items (if the layout doesn't handle it) */
 		
+		// TODO: Probably better to check -isOpaque.
 		BOOL usesLayoutView = ([layout layoutView] != nil);
 		if (usesLayoutView)
 			return;

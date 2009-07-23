@@ -126,13 +126,7 @@ static ETUIItemFactory *itemFactory = nil;
 
 	// TODO: More tests and move the following tests into standalone methods
 
-	/* View is lazily inserted on layout update, unless -handleAttachViewOfItem: 
-	  is called before the layout update occurs and calls this method. 
-	  This special case occurs with a null layout. */
-
 	[parentItem handleAttachViewOfItem: self];
-	/* For flow layout of parentItem, view insertion is delayed */
-	UKNil([[self supervisorView] superview]);
 	UKObjectsSame([[self displayView] superview], [[self supervisorView] superview]);
 	[parentItem handleDetachViewOfItem: self]; /* Revert to initial state */
 

@@ -463,8 +463,8 @@ By default returns YES if the receiver uses a layout view.
 Override it to return NO in case the receiver subclass doesn't let the rendered 
 layout items draw themselves, yet without using a layout view. 
 
-Typically, all composite layouts are opaque, as layouts that wrap controls of 
-the underlying UI toolkit are (e.g. ETTableLayout). */
+Typically layouts that wrap controls of the underlying UI toolkit are opaque 
+(e.g. ETTableLayout). */
 - (BOOL) isOpaque
 {
 	return NO;
