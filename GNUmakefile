@@ -33,6 +33,7 @@ EtoileUI_HEADER_FILES = \
 	ETApplication.h \
 	ETBrowserLayout.h \
 	ETCompatibility.h \
+	ETCompositeLayout.h \
 	ETComputedLayout.h \
 	ETController.h \
 	ETContainer.h \

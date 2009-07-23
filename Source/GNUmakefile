@@ -10,6 +10,7 @@ libEtoileUI_OBJC_FILES = \
 	ETActionHandler.m \
 	ETApplication.m \
 	ETBrowserLayout.m \
+	ETCompositeLayout.m \
 	ETComputedLayout.m \
 	ETController.m \
 	ETContainer+EventHandling.m \
