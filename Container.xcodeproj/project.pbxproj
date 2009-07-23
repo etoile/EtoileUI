@@ -400,6 +400,12 @@
 		60FDA9A40FE58F590009686A /* ETSelectionAreaItem.m in Sources */ = {isa = PBXBuildFile; fileRef = 60FDA9A20FE58F590009686A /* ETSelectionAreaItem.m */; };
 		6680CED7101257B200CAF439 /* ETReflection.h in Headers */ = {isa = PBXBuildFile; fileRef = 6680CED6101257B200CAF439 /* ETReflection.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		6680CED9101257C800CAF439 /* ETReflection.m in Sources */ = {isa = PBXBuildFile; fileRef = 6680CED8101257C800CAF439 /* ETReflection.m */; };
+		66C3AF8C10181CFA0046D74A /* ETSocket.h in Headers */ = {isa = PBXBuildFile; fileRef = 66C3AF8A10181CFA0046D74A /* ETSocket.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		66C3AF8D10181CFA0046D74A /* NSData+Hash.h in Headers */ = {isa = PBXBuildFile; fileRef = 66C3AF8B10181CFA0046D74A /* NSData+Hash.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		66C3AF9010181D110046D74A /* ETSocket.m in Sources */ = {isa = PBXBuildFile; fileRef = 66C3AF8E10181D110046D74A /* ETSocket.m */; };
+		66C3AF9110181D110046D74A /* NSData+Hash.m in Sources */ = {isa = PBXBuildFile; fileRef = 66C3AF8F10181D110046D74A /* NSData+Hash.m */; };
+		66C3AF9A10181DDE0046D74A /* libssl.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 66C3AF9910181DDE0046D74A /* libssl.dylib */; };
+		66C3AFB610181ECD0046D74A /* libcrypto.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 66C3AFB510181ECD0046D74A /* libcrypto.dylib */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -785,6 +791,12 @@
 		60FDA9A20FE58F590009686A /* ETSelectionAreaItem.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ETSelectionAreaItem.m; path = Source/ETSelectionAreaItem.m; sourceTree = "<group>"; };
 		6680CED6101257B200CAF439 /* ETReflection.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ETReflection.h; path = ../EtoileFoundation/Headers/ETReflection.h; sourceTree = SOURCE_ROOT; };
 		6680CED8101257C800CAF439 /* ETReflection.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ETReflection.m; path = ../EtoileFoundation/Source/ETReflection.m; sourceTree = SOURCE_ROOT; };
+		66C3AF8A10181CFA0046D74A /* ETSocket.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ETSocket.h; path = ../EtoileFoundation/Headers/ETSocket.h; sourceTree = SOURCE_ROOT; };
+		66C3AF8B10181CFA0046D74A /* NSData+Hash.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "NSData+Hash.h"; path = "../EtoileFoundation/Headers/NSData+Hash.h"; sourceTree = SOURCE_ROOT; };
+		66C3AF8E10181D110046D74A /* ETSocket.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ETSocket.m; path = ../EtoileFoundation/Source/ETSocket.m; sourceTree = SOURCE_ROOT; };
+		66C3AF8F10181D110046D74A /* NSData+Hash.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = "NSData+Hash.m"; path = "../EtoileFoundation/Source/NSData+Hash.m"; sourceTree = SOURCE_ROOT; };
+		66C3AF9910181DDE0046D74A /* libssl.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libssl.dylib; path = usr/lib/libssl.dylib; sourceTree = SDKROOT; };
+		66C3AFB510181ECD0046D74A /* libcrypto.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libcrypto.dylib; path = usr/lib/libcrypto.dylib; sourceTree = SDKROOT; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -827,6 +839,8 @@
 			files = (
 				603649730E409488003377E0 /* AppKit.framework in Frameworks */,
 				603649740E409488003377E0 /* Foundation.framework in Frameworks */,
+				66C3AF9A10181DDE0046D74A /* libssl.dylib in Frameworks */,
+				66C3AFB610181ECD0046D74A /* libcrypto.dylib in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -963,6 +977,8 @@
 				60909CC90CB2DA42009CAD27 /* TableViewExample.app */,
 				60CF742A0D449A8A00B4CA3D /* MarkupEditor.app */,
 				60EEB9020F09457C00EBB632 /* Collage.app */,
+				66C3AF9910181DDE0046D74A /* libssl.dylib */,
+				66C3AFB510181ECD0046D74A /* libcrypto.dylib */,
 			);
 			name = FlowAutolayoutExample;
 			sourceTree = "<group>";
@@ -1067,6 +1083,8 @@
 		603648350E409329003377E0 /* Headers */ = {
 			isa = PBXGroup;
 			children = (
+				66C3AF8A10181CFA0046D74A /* ETSocket.h */,
+				66C3AF8B10181CFA0046D74A /* NSData+Hash.h */,
 				6680CED6101257B200CAF439 /* ETReflection.h */,
 				603648060E40931E003377E0 /* GNUstep.h */,
 				603647C90E4092EA003377E0 /* Macros.h */,
@@ -1108,6 +1126,8 @@
 		605D6D4F0CE94218009ED244 /* EtoileFoundation */ = {
 			isa = PBXGroup;
 			children = (
+				66C3AF8E10181D110046D74A /* ETSocket.m */,
+				66C3AF8F10181D110046D74A /* NSData+Hash.m */,
 				60B27D890FF7B5E80012BB42 /* Tests */,
 				603649810E4095F0003377E0 /* EtoileFoundation-Info.plist */,
 				602DC5410F21FD1500DF23D9 /* UTIDefinitions.plist */,
@@ -1527,6 +1547,8 @@
 				60B27D8B0FF7B6180012BB42 /* ETCollection+HOM.h in Headers */,
 				6680CED7101257B200CAF439 /* ETReflection.h in Headers */,
 				60F6EEEE101471FC003F4508 /* NSFileHandle+Socket.h in Headers */,
+				66C3AF8C10181CFA0046D74A /* ETSocket.h in Headers */,
+				66C3AF8D10181CFA0046D74A /* NSData+Hash.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2146,6 +2168,8 @@
 				60B27D820FF7B56C0012BB42 /* ETCollection+HOM.m in Sources */,
 				6680CED9101257C800CAF439 /* ETReflection.m in Sources */,
 				60F6EEF01014722D003F4508 /* NSFileHandle+Socket.m in Sources */,
+				66C3AF9010181D110046D74A /* ETSocket.m in Sources */,
+				66C3AF9110181D110046D74A /* NSData+Hash.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
