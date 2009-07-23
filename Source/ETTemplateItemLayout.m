@@ -8,14 +8,14 @@
 
 #import <EtoileFoundation/ETCollection.h>
 #import <EtoileFoundation/Macros.h>
-#import <EtoileUI/ETTemplateItemLayout.h>
-#import <EtoileUI/ETFlowLayout.h>
-#import <EtoileUI/ETStackLayout.h>
-#import <EtoileUI/ETLayoutItem.h>
-#import <EtoileUI/ETLayoutItem+Factory.h>
-#import <EtoileUI/ETLayoutItemGroup.h>
-#import <EtoileUI/NSView+Etoile.h>
-#import <EtoileUI/ETCompatibility.h>
+#import "ETTemplateItemLayout.h"
+#import "ETFlowLayout.h"
+#import "ETStackLayout.h"
+#import "ETLayoutItem.h"
+#import "ETLayoutItem+Factory.h"
+#import "ETLayoutItemGroup.h"
+#import "NSView+Etoile.h"
+#import "ETCompatibility.h"
 
 
 @implementation ETTemplateItemLayout

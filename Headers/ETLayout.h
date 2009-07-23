@@ -64,7 +64,7 @@
 
 /** All subclasses which implement strictly positional layout algorithms as 
     described in ETComputedLayout description must conform to this prococol. */
-@protocol ETPositionalLayout
+@protocol ETPositionalLayout <NSObject>
 - (void) setLayoutContext: (id <ETLayoutingContext>)context;
 - (id <ETLayoutingContext>) layoutContext;
 - (void) setItemMargin: (float)margin;
