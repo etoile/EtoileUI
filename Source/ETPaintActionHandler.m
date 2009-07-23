@@ -15,23 +15,23 @@
 
 @implementation ETActionHandler (ETPaintActionHandler)
 
-- (BOOL) canFill: (ETLayoutItem *)item
+- (BOOL) canFillItem: (ETLayoutItem *)item
 {
 	return [[item style] respondsToSelector: @selector(setFillColor:)];
 }
 
-- (BOOL) canStroke: (ETLayoutItem *)item
+- (BOOL) canStrokeItem: (ETLayoutItem *)item
 {
 	return [[item style] respondsToSelector: @selector(setStrokeColor:)];
 }
 
-- (void) handleFill: (ETLayoutItem *)item withColor: (NSColor *)aColor
+- (void) handleFillItem: (ETLayoutItem *)item withColor: (NSColor *)aColor
 {
 	[[item style] setFillColor: aColor];
 	[item setNeedsDisplay: YES];
 }
 
-- (void) handleStroke: (ETLayoutItem *)item withColor: (NSColor *)aColor
+- (void) handleStrokeItem: (ETLayoutItem *)item withColor: (NSColor *)aColor
 {
 	[[item style] setStrokeColor: aColor];
 	[item setNeedsDisplay: YES];

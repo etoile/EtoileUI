@@ -22,9 +22,9 @@ See ETPaintBucketTool. */
 
 /* Paint Actions */
 
-- (BOOL) canFill: (ETLayoutItem *)item;
-- (void) handleFill: (ETLayoutItem *)item withColor: (NSColor *)aColor;
-- (BOOL) canStroke: (ETLayoutItem *)item;
-- (void) handleStroke: (ETLayoutItem *)item withColor: (NSColor *)aColor;
+- (BOOL) canFillItem: (ETLayoutItem *)item;
+- (void) handleFillItem: (ETLayoutItem *)item withColor: (NSColor *)aColor;
+- (BOOL) canStrokeItem: (ETLayoutItem *)item;
+- (void) handleStrokeItem: (ETLayoutItem *)item withColor: (NSColor *)aColor;
 
 @end

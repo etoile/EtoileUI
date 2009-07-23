@@ -92,13 +92,13 @@ be reactivated when we exit our owner layout. */
 
 	ETDebugLog(@"Mouse up with %@ on item %@", self, item);
 
-	if ([self paintMode] == ETPaintModeFill && [actionHandler canFill: item])
+	if ([self paintMode] == ETPaintModeFill && [actionHandler canFillItem: item])
 	{
-		[actionHandler handleFill: item withColor: [self fillColor]];
+		[actionHandler handleFillItem: item withColor: [self fillColor]];
 	}
-	else if ([self paintMode] == ETPaintModeStroke && [actionHandler canStroke: item])
+	else if ([self paintMode] == ETPaintModeStroke && [actionHandler canStrokeItem: item])
 	{
-		[actionHandler handleStroke: item withColor: [self strokeColor]];
+		[actionHandler handleStrokeItem: item withColor: [self strokeColor]];
 	}
 }
 
