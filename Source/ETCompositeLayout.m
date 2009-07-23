@@ -31,7 +31,8 @@
 
 - (id) init
 {
-	return nil;
+	return [self initWithRootItem: AUTORELEASE([[ETLayoutItemGroup alloc] init])
+	        firstPresentationItem: nil];
 }
 
 - (id) initWithRootItem: (ETLayoutItemGroup *)itemGroup
@@ -66,6 +67,7 @@
 		return nil;
 
 	ASSIGN(_rootItem, rootItem);
+	[_rootItem setActionHandler: nil];
 	[self setFirstPresentationItem: targetItem];
 
 	return self;
@@ -123,8 +125,9 @@ routed to inside the receiver. */
 
 	if (nil == presentationProxy)
 	{
+		NSSize proxySize = NSMakeSize([item width] / 2, [item height]);
  		presentationProxy = [self defaultPresentationProxyWithFrame: 
-			ETMakeRect(NSZeroPoint, [item size])];
+			ETMakeRect(NSZeroPoint, proxySize)];
 		[[self rootItem] addItem: presentationProxy];
 	}
 
@@ -144,6 +147,7 @@ routed to inside the receiver. */
 {
 	[super setUp];
 
+	//[_layoutContext setVisibleItems: [NSArray array]];
 	[self setFirstPresentationItem: [self presentationProxyWithItem: _layoutContext]];
 	[self moveContentFromItem: [self rootItem] toItem: _layoutContext];
 	[_layoutContext setVisibleItems: [_layoutContext items]];
@@ -153,9 +157,13 @@ routed to inside the receiver. */
 {
 	[super tearDown];
 
+	[ETLayoutItemGroup disablesAutolayout];
+
 	[self moveContentFromItem: _layoutContext toItem: [self rootItem]];
 	[self restoreItemWithPresentationProxy: [self firstPresentationItem]];
 	[_layoutContext setVisibleItems: [_layoutContext items]];
+
+	[ETLayoutItemGroup enablesAutolayout];
 }
 
 - (void) renderWithLayoutItems: (NSArray *)items isNewContent: (BOOL)isNewContent

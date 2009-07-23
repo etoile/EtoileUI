@@ -71,6 +71,7 @@
 - (id) initWithRootItem: (ETLayoutItemGroup *)rootItem 
   firstPresentationItem: (ETLayoutItemGroup *)targetItem;
 
+- (id) presentationProxyWithItem: (ETLayoutItemGroup *)item;
 - (void) renderWithLayoutItems: (NSArray *)items isNewContent: (BOOL)isNewContent;
 
 - (id) firstPresentationItem;

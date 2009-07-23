@@ -17,23 +17,24 @@
 #import "ETLayoutItemGroup.h"
 #import "ETLineLayout.h"
 #import "ETTableLayout.h"
+#import "ETUIItemFactory.h"
 #import "ETContainer.h"
+
+@interface ETPaneLayout (Private)
+- (void) setContentItem: (ETLayoutItemGroup *)anItem;
+@end
+
 
 @implementation ETPaneLayout
 
 - (id) init
 {
 	SUPERINIT
-	
-	// FIXME: Should be -itemGroupWithView...
-	ASSIGN(_rootItem, [ETLayoutItem itemGroup]);
-	[_rootItem setActionHandler: nil];
-	ASSIGN(_contentItem, [ETLayoutItem itemGroup]);
-	[_contentItem setAutoresizingMask: NSViewWidthSizable | NSViewHeightSizable];
-	[_rootItem addItem: _contentItem];
-	
+
+	[self setContentItem: [[ETUIItemFactory factory] itemGroup]];
+
 	// Move to subclass
-	[self setBarItem: [ETLayoutItem itemGroup]];
+	[self setBarItem: [[ETUIItemFactory factory] itemGroup]];
 	[_barItem setAutoresizingMask: NSViewWidthSizable];
 	[_barItem setLayout: [ETTableLayout layout]];
 	[[_barItem layout] setAttachedInstrument: [ETSelectTool instrument]];
@@ -47,6 +48,7 @@
 {
 	[[NSNotificationCenter defaultCenter] removeObserver: self];
 	DESTROY(_contentItem);
+	DESTROY(_barItem);
 	[super dealloc];
 }
 
@@ -55,25 +57,54 @@
 	return 50;
 }
 
-- (void) tile
+- (void) tileContent
 {
-	//[[self contentItem] setFrame: ETMakeRect(NSZeroPoint, [[self rootItem] size])];
-	
-	NSSize rootSize = [[self rootItem] size];
-	[[self contentItem] setFrame: NSMakeRect(0, [self barHeightOrWidth], rootSize.width, rootSize.height - [self barHeightOrWidth])];
-	[[self barItem] setFrame: NSMakeRect(0, 0, rootSize.width, [self barHeightOrWidth])];
+	if ([[self contentItem] isEmpty])
+		return;
+
+	ETLayoutItem *anItem = [[self contentItem] firstItem];
+	NSSize contentSize = [[self contentItem] size];
+	NSSize itemSize = [anItem size];
+
+	[anItem setOrigin: NSMakePoint(contentSize.width / 2 - itemSize.width / 2,
+		contentSize.height / 2 - itemSize.height / 2)];
 }
 
-/** Returns the root item supervisor view. */
-- (NSView *) layoutView
+- (void) tile
 {
-	return [[self rootItem] supervisorView];
+	// FIXME: Handle the next line in a more transparent way in ETLayout
+	[self syncRootItemGeometryWithSize: [[self layoutContext] visibleContentSize]];
+	NSSize rootSize = [[self rootItem] size];
+
+	[[self barItem] setFrame: NSMakeRect(0, 0, rootSize.width, [self barHeightOrWidth])];
+
+	[[self contentItem] setOrigin: NSMakePoint(0, [self barHeightOrWidth])];
+	[[self contentItem] setWidth: rootSize.width];
+	[[self contentItem] setHeight: rootSize.height - [self barHeightOrWidth]];
+	[self tileContent];
 }
 
 /** Returns the main area item where panes are inserted and shown. */
 - (ETLayoutItemGroup *) contentItem
 {
 	return _contentItem;
+}
+
+- (void) setContentItem: (ETLayoutItemGroup *)anItem
+{
+	NSParameterAssert(anItem != nil);
+
+	if (_contentItem != nil)
+	{
+		[[self rootItem] removeItem: _contentItem];
+	}
+
+	ASSIGN(_contentItem, anItem);
+
+	[anItem setName: @"Content item (ETPaneLayout)"]; /* For debugging */
+	[anItem setAutoresizingMask: NSViewWidthSizable | NSViewHeightSizable];
+	[[self rootItem] addItem: anItem];
+	[self tile];
 }
 
 /** Returns the bar area item which can be used to interact with the receiver. */
@@ -85,12 +116,27 @@
 /** Sets the bar area item which can be used to interact with the receiver. */
 - (void) setBarItem: (ETLayoutItemGroup *)anItem
 {
+	NSParameterAssert(anItem != nil);
+
 	[[NSNotificationCenter defaultCenter] 
 		removeObserver: self 
 		          name: ETItemGroupSelectionDidChangeNotification 
 			    object: _barItem];
 
+	if (_barItem != nil)
+	{
+		[[self rootItem] removeItem: _barItem];
+		[self setFirstPresentationItem: [self presentationProxyWithItem: _barItem]];
+	}
+	else
+	{
+		[self setFirstPresentationItem: anItem];
+	}
+
 	ASSIGN(_barItem, anItem);
+
+	[anItem setName: @"Bar item (ETPaneLayout)"]; /* For debugging */
+	[anItem setAutoresizingMask: NSViewHeightSizable | NSViewWidthSizable];
 	[[self rootItem] addItem: anItem];
 	[self tile];
 
@@ -161,34 +207,45 @@ nil if the current item is the last item. */
 	return [[currentItem parentItem] itemAtIndex: currentIndex + 1];
 }
 
+/* Return consistently YES when an item proxy (current item) or its real item 
+(content item child) is passed. Would otherwise return NO with the content item 
+child because it is not a bar child item. */
+- (BOOL) isCurrentItem: (ETLayoutItem *)anItem
+{
+	return ([anItem isEqual: [self currentItem]] || [[self contentItem] containsItem: anItem]);
+}
+
+- (BOOL) canGoToItem: (ETLayoutItem *)anItem
+{
+	return (anItem != nil && [[self barItem] containsItem: anItem]);
+}
+
 // TODO: Allows a default pane to be shown with -goToItem: -setStartItem: 
 // and -startItem.
-- (void) goToItem: (ETLayoutItem *)anItem
+- (BOOL) goToItem: (ETLayoutItem *)anItem
 {
-	if (anItem == nil)
-		return;
+	if ([self isCurrentItem: anItem])
+		return YES;
 
-	if ([[self currentItem] supervisorView] != nil)
+	if ([self canGoToItem: anItem] == NO)
+		return NO;
+
+	NSParameterAssert([anItem parentItem] != nil);
+
+	if (_currentItem != nil)
 	{
-		NSAssert1([[[[self currentItem] supervisorView] superview] isEqual: [self contentView]], 
-			@"The current item view is expected to have the content view as superview in %@", self);
-		[[[self currentItem] supervisorView] removeFromSuperview];
+		NSParameterAssert([_currentItem parentItem] != nil);
+
+		[self endVisitingItem: _currentItem];
+		//[[self contentItem] removeItem: [_currentItem representedObject]];
 	}
 
-	ASSIGN(_currentItem, anItem);
+	ASSIGN(_currentItem, [self beginVisitingItem: anItem]);
+	NSParameterAssert([_currentItem isEqual: anItem] == NO);
 
-	if ([anItem supervisorView] != nil)
-	{
-		NSSize contentSize = [[self contentView] frame].size;
-		NSSize itemSize = [anItem size];
-		ETView *itemView = [anItem supervisorView];
+	[self tileContent];
 
-		/* Temporarily insert the supervisor view in the content view, will 
-		   be moved back when the layout is tear down or we go to another pane. */
-		[[self contentView] addSubview: itemView];
-		[itemView setFrameOrigin: NSMakePoint(contentSize.width / 2. + itemSize.width / 2,
-			contentSize.height / 2. + itemSize.height / 2.)];
-	}
+	return YES;
 }
 
 /* Propagates pane switch done in bar to content. */
@@ -202,40 +259,54 @@ nil if the current item is the last item. */
 		"item  at a time must be selected in the bar item in %@", self);
 
 	ETLayoutItem *barElementItem = [[[self barItem] selectedItems] firstObject];
-	[self goToItem: [barElementItem representedObject]];
-	[(ETLayoutItemGroup *)[self layoutContext] updateLayout]; /* Will trigger -[ETLayout render] */
+	[self goToItem: barElementItem];
 }
 
-- (NSArray *) tabItemsWithItems: (NSArray *)items
+/* Returns a new tab item that represents and replaces in the bar item the tab 
+item that just got selected and moved into the content item. */
+- (ETLayoutItem *) visitedItemProxyWithItem: (ETLayoutItem *)paneItem
 {
-	NSMutableArray *tabItems = [NSMutableArray array];
-	
-	FOREACH(items, paneItem, ETLayoutItem *)
+	ETLayoutItem *tabItem = [[ETUIItemFactory factory] itemWithRepresentedObject: paneItem];
+	NSImage *img = [tabItem valueForProperty: @"icon"];
+
+	if (img == nil)
+		img = [tabItem valueForProperty: @"image"];	
+
+	if (img == nil)
 	{
-		ETLayoutItem *tabItem = [paneItem copy];
-		NSImage *img = [tabItem valueForProperty: @"icon"];
-
-		if (img == nil)
-			img = [tabItem valueForProperty: @"image"];	
-
-		if (img == nil)
-		{
-			ETLog(@"WARNING: Pane item  %@ has no image or icon available to "
-				  @"be displayed in switcher of %@", paneItem, self);
-		}
-		[tabItem setRepresentedObject: paneItem];
-
-		[tabItems addObject: tabItem];
+		ETLog(@"WARNING: Pane item  %@ has no image or icon available to "
+			   "be displayed in switcher of %@", paneItem, self);
 	}
-	
-	return tabItems;
+
+	return tabItem;
 }
 
-- (void) rebuildBarWithItems: (NSArray *)items
+- (id) beginVisitingItem: (ETLayoutItem *)tabItem
 {
-	[_barItem removeAllItems];
-	[_barItem addItems: [self tabItemsWithItems: items]];
-	[_barItem updateLayout];
+	ETLayoutItem *visitedItemProxy = [self visitedItemProxyWithItem: tabItem];
+	unsigned int tabIndex = [[tabItem parentItem] indexOfItem: tabItem];
+
+	[tabItem setDefaultValue: [NSValue valueWithRect: [tabItem frame]] forProperty: @"frame"];	
+	[[tabItem parentItem] insertItem: visitedItemProxy atIndex: tabIndex];
+	[[self contentItem] addItem: tabItem];
+
+	return visitedItemProxy;
+}
+
+/** Eliminates the given proxy items in the bar item by replacing them with 
+the real items they currently represent. */
+- (void) endVisitingItem: (ETLayoutItem *)tabItem
+{
+	NSParameterAssert([tabItem isMetaLayoutItem]);
+
+	ETLayoutItem *visitedItem = [tabItem representedObject];
+	unsigned int tabIndex = [[tabItem parentItem] indexOfItem: tabItem];
+	NSValue *frameBeforeVisit = [visitedItem defaultValueForProperty: @"frame"];
+ 
+	[[tabItem parentItem] insertItem: visitedItem atIndex: tabIndex];
+	[tabItem removeFromParent];
+	[visitedItem setValue: frameBeforeVisit forProperty: @"frame"];
+	// FIXME: [visitedItem setDefaultValue: nil forProperty: @"frame"];
 }
 
 /* Layouting */
@@ -244,19 +315,9 @@ nil if the current item is the last item. */
 {
 	if (isNewContent)
 	{
-		[self rebuildBarWithItems: items];
-		[self goToItem: [items firstObject]];
+		[self goToItem: [[self barItem] firstItem]];
 	}
-}
-
-- (void) tearDown
-{
-	[super tearDown];
-
-	FOREACH([[self layoutContext] arrangedItems], item, ETLayoutItem *)
-	{
-	
-	}
+	[self tile];
 }
 
 @end

@@ -11,7 +11,7 @@
 
 #import <Foundation/Foundation.h>
 #import <AppKit/AppKit.h>
-#import <EtoileUI/ETComputedLayout.h>
+#import <EtoileUI/ETCompositeLayout.h>
 
 @class ETLayoutItemGroup;
 
@@ -25,7 +25,7 @@ typedef enum {
 } ETPanePosition;
 
 
-@interface ETPaneLayout : ETLayout
+@interface ETPaneLayout : ETCompositeLayout
 {
 	ETLayoutItemGroup *_contentItem;
 	ETLayoutItemGroup *_barItem;
@@ -41,7 +41,7 @@ typedef enum {
 - (id) currentItem;
 - (id) backItem;
 - (id) forwardItem;
-- (void) goToItem: (ETLayoutItem *)item;
+- (BOOL) goToItem: (ETLayoutItem *)item;
 
 /* Presentation */
 
@@ -52,6 +52,7 @@ typedef enum {
 - (ETLayoutItemGroup *) contentItem;
 - (void) tile;
 
-- (NSArray *) tabItemsWithItems: (NSArray *)items;
+- (id) beginVisitingItem: (ETLayoutItem *)tabItem;
+- (void) endVisitingItem: (ETLayoutItem *)tabItem;
 
 @end
