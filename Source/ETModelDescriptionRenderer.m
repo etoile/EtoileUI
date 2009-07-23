@@ -32,7 +32,8 @@
             inLayoutItem: (ETLayoutItem *)anItem 
               withLayout: (ETLayout *)aLayout;
 {
-	ETModelDescription *desc = [ETModelDescription registeredModelDescriptionForClass: [anObject class]];
+	// FIXME: lookup description for anObject
+	ETModelDescription *desc = nil;
 	ETLayoutItem *builtItem = (anItem != nil ? anItem : [self render: desc]);
 	ETLayout *layout = (aLayout != nil ? aLayout : [ETFormLayout layout]);
 
@@ -46,33 +47,21 @@
 {
 	ETLayoutItemGroup *entityItem = [ETLayoutItem itemGroup];
 
-	FOREACHI(aDescription, propertyDescription)
+	FOREACHI([aDescription propertyDescriptions], propertyDescription)
 	{
 		[entityItem addItem: [self render: propertyDescription]];
 	}	
-	[entityItem setName: [aDescription label]];
+	[entityItem setName: [aDescription name]];
 
 	return entityItem;
 }
 
-- (id) renderBooleanDescription: (ETBooleanDescription *)aDescription
+- (id) renderPropertyDescription: (ETPropertyDescription *)aDescription
 {
-	ETLayoutItem *item = [ETLayoutItem checkbox];
-	[item setName: [aDescription label]];
-	return item;
-}
+	// TODO: we need a mapping from UTI to "layout item for editing that type"
 
-- (id) renderStringDescription: (ETStringDescription *)aDescription
-{
 	ETLayoutItem *item = [ETLayoutItem textField];
-	[item setName: [aDescription label]];
-	return item;
-}
-
-- (id) renderNumberDescription: (ETNumberDescription *)aDescription
-{
-	ETLayoutItem *item = [ETLayoutItem textField];
-	[item setName: [aDescription label]];
+	[item setName: [aDescription name]];
 	return item;
 }
 

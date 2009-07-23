@@ -12,7 +12,8 @@
 #import <Foundation/Foundation.h>
 #import <AppKit/AppKit.h>
 #import <EtoileFoundation/ETTransform.h>
-#import <EtoileFoundation/ETModelDescription.h>
+#import <EtoileFoundation/ETEntityDescription.h>
+#import <EtoileFoundation/ETPropertyDescription.h>
 
 @class ETLayout, ETLayoutItem;
 
@@ -29,10 +30,7 @@
               withLayout: (ETLayout *)aLayout;
 
 - (id) renderEntityDescription: (ETEntityDescription *)aDescription;
-- (id) renderBooleanDescription: (ETBooleanDescription *)aDescription;
-- (id) renderStringDescription: (ETStringDescription *)aDescription;
-- (id) renderNumberDescription: (ETNumberDescription *)aDescription;
-
+- (id) renderPropertyDescription: (ETPropertyDescription *)aDescription;
 
 /* There is no need to support an explicit method like:
 -setInlineModel:(BOOL)forProperty:ofDescription:
