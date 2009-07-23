@@ -30,6 +30,7 @@
 /* Group Factory Methods */
 
 - (ETLayoutItemGroup *) itemGroup;
+- (ETLayoutItemGroup *) itemGroupWithFrame: (NSRect)aRect;
 - (ETLayoutItemGroup *) itemGroupWithItem: (ETLayoutItem *)item;
 - (ETLayoutItemGroup *) itemGroupWithItems: (NSArray *)items;
 - (ETLayoutItemGroup *) itemGroupWithView: (NSView *)view;

@@ -78,6 +78,12 @@ meta representation. */
 	return AUTORELEASE([[ETLayoutItemGroup alloc] init]);
 }
 
+/** Returns a new blank layout item group initialized with the given frame. */
+- (ETLayoutItemGroup *) itemGroupWithFrame: (NSRect)aRect
+{
+	return AUTORELEASE([[ETLayoutItemGroup alloc] initWithFrame: aRect]);
+}
+
 /** Returns a new layout item group which contains the given item as a child .
 
 An NSInvalidArgumentException will be raised if you pass nil. */
