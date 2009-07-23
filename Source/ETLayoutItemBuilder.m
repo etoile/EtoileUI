@@ -1,154 +1,136 @@
-/*  <title>ETLayoutItemBuilder</title>
-
-	ETLayoutItemBuilder.m
-	
-	<abstract>Builder classes that can render document formats or object graphs
-	into a layout item tree.</abstract>
- 
+/*
 	Copyright (C) 2007 Quentin Mathe
- 
+
 	Author:  Quentin Mathe <qmathe@club-internet.fr>
 	Date:  November 2007
- 
-	Redistribution and use in source and binary forms, with or without
-	modification, are permitted provided that the following conditions are met:
-
-	* Redistributions of source code must retain the above copyright notice,
-	  this list of conditions and the following disclaimer.
-	* Redistributions in binary form must reproduce the above copyright notice,
-	  this list of conditions and the following disclaimer in the documentation
-	  and/or other materials provided with the distribution.
-	* Neither the name of the Etoile project nor the names of its contributors
-	  may be used to endorse or promote products derived from this software
-	  without specific prior written permission.
-
-	THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
-	AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
-	IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
-	ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE
-	LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
-	CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
-	SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
-	INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
-	CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
-	ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
-	THE POSSIBILITY OF SUCH DAMAGE.
+	License: Modified BSD (see COPYING)
  */
 
 #import <EtoileFoundation/Macros.h>
 #import "ETTemplateItemLayout.h"
 #import "ETLayoutItemBuilder.h"
 #import "ETLayoutItem.h"
-#import "ETLayoutItem+Factory.h"
 #import "ETLayoutItemGroup.h"
 #import "ETWindowItem.h"
 #import "ETLayer.h"
 #import "ETView.h"
-#import "ETContainer.h"
 #import "ETScrollableAreaItem.h"
+#import "ETUIItemFactory.h"
 #import "NSView+Etoile.h"
 #import "NSWindow+Etoile.h"
 #import "ETCompatibility.h"
 
 
-/** By inheriting from ETFilter, ETTransform instances can be chained together 
-	in a filter/transform unit. For example, you can combine several tree 
-	renderers into a new renderer to implement a new transform. */
 @implementation ETLayoutItemBuilder
 
+/** Returns a new autoreleased builder. */
 + (id) builder
 {
 	return AUTORELEASE([[[self class] alloc] init]);
 }
 
+/** <init />
+Initializes and returns the receiver builder. */
+- (id) init
+{
+	SUPERINIT
+	ASSIGN(itemFactory, [ETUIItemFactory factory]);
+	return self;
+}
+
+DEALLOC(DESTROY(itemFactory))
+
 @end
 
-/** Generates a layout item tree from an AppKit-based application */
+
 @implementation ETEtoileUIBuilder
 
+/** Returns items built with the given pasteboards (not yet implemented).
+
+The returned items are not yet decorated by a window item, -renderApplication: 
+handles that. */
+- (id) renderPasteboards: (NSArray *)pasteboards
+{
+	// TODO: Implement
+	return [NSArray array];
+}
+
+/** Returns an item built with the given pasteboard (not yet implemented). */
 - (id) renderPasteboard: (NSPasteboard *)pasteboard
 {
+	// TODO: Implement...
 	//ETPickboard *pickboard = nil;
 	
 	return nil;
 }
 
-- (id) renderApplication: (id)app
+/** Returns the window layer built with the elements (windows, pasteboards) 
+that makes up the given application object. */
+- (id) renderApplication: (NSApplication *)app
 {
-	id windowLayer = [ETLayoutItem windowGroup];
-	NSEnumerator *e = [[app windows] objectEnumerator];
-	NSWindow *window = nil;
-	id item = nil;
+	ETLayoutItemGroup *windowLayer = [itemFactory windowGroup];
+	NSArray *pasteboards = A([NSPasteboard generalPasteboard]);
 
-	/* Build window items */
-	while ((window = [e nextObject]) != nil)
-	{
-		BOOL isStandaloneWindow = ([[window contentView] isKindOfClass: [ETView class]] == NO);
-		if ([window isVisible] && [window isSystemPrivateWindow] == NO && isStandaloneWindow)
-		{
-			item = [self renderWindow: window];
-			//ETLog(@"Rendered window %@ visibility %d into %@", window, [window isVisible], item);
-			[windowLayer addItem: item];
-		}
-	}
-	
-	/* Build pickboards */
-	/*[windowLayer addItem: 
-		[self renderPasteboard: [NSPasteboard generalPasteboard]]];*/
+	[windowLayer addItems: [self renderWindows: [app windows]]];
+	[windowLayer addItems: [self renderPasteboards: pasteboards]];
 
 	return windowLayer;	
 }
 
-#if 1
-- (id) renderWindow: (id)window
+/** Returns items built with the given windows. */
+- (id) renderWindows: (NSArray *)windows
 {
-	id item = [self renderView: [window contentView]];
-	id windowDecorator = [item windowDecoratorItem];
+	NSMutableArray *items = [NSMutableArray array];
 
-	//[windowDecorator setRepresentedObject: window];
-	/* Decorate only if needed */
-	if (windowDecorator == nil)
+	FOREACH([NSArray arrayWithArray: windows], window, NSWindow *) 
 	{
-		windowDecorator = [ETLayoutItem itemWithWindow: window];
+		BOOL isStandaloneWindow = ([[window contentView] isSupervisorView] == NO);
+		BOOL shouldBecomeVisibleItem = ([window isVisible] 
+			&& [window isSystemPrivateWindow] == NO && isStandaloneWindow);
+	
+		if (shouldBecomeVisibleItem)
+		{
+			[items addObject: [self renderWindow: window]];
+
+			ETDebugLog(@"Rendered window %@ visibility %d into %@", window, 
+				[window isVisible], [items lastObject]);
+		}
+	}
+
+	return items;
+}
+
+/** Returns an item built with the given window.
+
+The returned item is decorated by a window item that reuses this window. */
+- (id) renderWindow: (NSWindow *)window
+{
+	ETLayoutItem *item = [self renderView: [window contentView]];
+	ETWindowItem *windowDecorator = [item windowDecoratorItem];
+	BOOL isWindowDecorationNeeded = (windowDecorator == nil);
+
+	if (isWindowDecorationNeeded)
+	{
+		windowDecorator = [itemFactory itemWithWindow: window];
 		[[item lastDecoratorItem] setDecoratorItem: windowDecorator];
 	}
 
 	return item;
 }
-#else
-- (id) renderWindow: (id)window
-{
-	id contentView = [window contentView];
-	id item = nil;
-	
-	RETAIN(contentView);
-	//[window setContentView: nil];
-	item = [self renderView: contentView];
-	[window setContentView: [item displayView]];
-	RELEASE(contentView);
-	
-	//id container = [[ETContainer alloc] initWithFrame: [contentView frame]];
-	//[window setContentView: container];
-	
-	//id childItem = [[[ETContainer alloc] initWithFrame: [contentView frame]] layoutItem];
-	//id childItem = [ETLayoutItem layoutItemGroupWithView: [[NSSlider alloc] initWithFrame: NSMakeRect(0, 0, 100, 100)]];
-	//[window setContentView: [childItem displayView]];
-	
-	//[window setContentView: [item supervisorView]];
-	
-	//[[item displayView] addSubview: [[NSSlider alloc] initWithFrame: NSMakeRect(0, 0, 100, 100)]];
-	
-	return item;
-}
-#endif
 
-/* When we encounter an EtoileUI native (ETView subclasses), we only return
-   the proper layout item, either the item bound to the view or the first 
-   decorated item if the view is used as a decorator. We never render 
-   subviews of native views since we expect their content is properly set up 
-   in term of layout item tree. All other views (other NSView subclasses) 
-   are rendered recursively until the end of their view hierachy (-subviews
-   returns an empty arrary). */
+/** Returns an item built with the given view, by traversing the subview 
+hierarchy recursively.
+
+When we encounter a supervisor view (ETView subclasses), we stop the recursive 
+traversal in the given view hierarchy and return its layout item.<br />
+We never render subviews of supervisor views since we expect their content to be  
+a valid layout item tree. 
+
+The returned layout item is either the item bound to the view, or the first 
+decorated item when the view is bound to a decorator item. 
+
+All other views (other NSView subclasses) are rendered recursively until the end 
+of their view hierachy (-subviews returns an empty arrary). */
 - (id) renderView: (id)view
 {
 	id item = nil;
@@ -171,9 +153,7 @@
 	}
 	else if ([view isMemberOfClass: [NSView class]])
 	{
-		id container = [[ETContainer alloc] initWithFrame: [view frame]];
-
-		item = [container layoutItem];
+		item = [itemFactory itemGroupWithFrame: [view frame]];
 		
 		[item setFlipped: [view isFlipped]];
 
@@ -190,7 +170,7 @@
 	else
 	{
 		RETAIN(view);
-		item = [ETLayoutItem itemWithView: view];
+		item = [itemFactory itemWithView: view];
 		RELEASE(view);
 	}
 	
@@ -201,23 +181,9 @@
 	return item;
 }
 
-- (id) renderMenu: (id)menu
+// TODO: Think about it and implement...
+- (id) renderMenu: (NSMenu *)menu
 {
-	return nil;
-}
-
-/** Returns existing subviews of the receiver as layout items.
-
-First checks whether the receiver responds to -layoutItem and in such case
-doesn't already include child items for these subviews. If no, either the
-subview is an ETView or an NSView instance. When the subview is NSView-based, a
-new layout item is instantiated by calling +itemWithView: with subview as
-parameter. Then the new item is automatically inserted as a child item in the
-layout item representing the receiver. If the subview is ETView-based, the item
-representing the subview is immediately inserted in the receiver item. */
-- (NSArray *) itemsWithSubviewsOfView: (NSView *)view
-{
-	// FIXME: Implement. But is this method really necessary...
 	return nil;
 }
 
