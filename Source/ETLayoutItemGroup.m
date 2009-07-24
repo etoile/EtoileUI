@@ -669,7 +669,7 @@ item and avoid unpredictable changes to the event handling logic. */
 - (void) setSource: (id)source
 {
 	/* By safety, avoids to trigger extra updates */
-	if ([GET_PROPERTY(kETSourceProperty) isEqual: source])
+	if (GET_PROPERTY(kETSourceProperty) == source)
 		return;
 
 	[[NSNotificationCenter defaultCenter] 

@@ -400,6 +400,16 @@ static ETUIItemFactory *itemFactory = nil;
 
 @implementation ETLayoutItemGroup (UnitKitTests)
 
+- (void) testSetSource
+{
+	UKTrue([self isEmpty]);
+
+	[self addItem: [itemFactory item]];
+	[self setSource: nil];
+
+	UKFalse([self isEmpty]);
+}
+
 - (void) testSupervisorViewInsertionByLayoutView
 {
 	UKNil([self supervisorView]);
