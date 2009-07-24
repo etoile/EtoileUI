@@ -35,8 +35,8 @@
  */
 
 #import <EtoileUI/ETLayoutItem+Reflection.h>
-#import <EtoileUI/NSView+Etoile.h>
-#import <EtoileUI/ETCompatibility.h>
+#import "NSView+Etoile.h"
+#import "ETCompatibility.h"
 
 
 @implementation ETLayoutItem (ETUIReflection)
@@ -53,7 +53,7 @@
 	   objects. When -items will be called on the meta item, the collection 
 	   protocol will be used to transparently retrieve the represented children 
 	   items and generates all the necessary meta children items. */
-	ETLayoutItem *metaLayoutItem = [item copy]; 
+	ETLayoutItem *metaLayoutItem = AUTORELEASE([[ETLayoutItem alloc] initWithRepresentedObject: item]); 
 	id propertyName = nil;
 
 	[metaLayoutItem setRepresentedObject: item];
@@ -134,7 +134,7 @@
 		}
 	}
 	
-	return AUTORELEASE(metaLayoutItem);
+	return metaLayoutItem;
 }
 
 /*
