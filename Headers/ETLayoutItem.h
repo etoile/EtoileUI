@@ -210,7 +210,7 @@ extern NSString *kETVisibleProperty; /** visible property name */
 - (BOOL) isVisible;
 
 /** Used to select items which can be dragged or dropped in a dragging operation */
-- (ETUTI *) type;
+- (ETUTI *) UTI;
 - (void) setSubtype: (ETUTI *)aUTI;
 - (ETUTI *) subtype;
 

@@ -302,11 +302,11 @@ item of the given item. */
 
 	if ([item representedObject] != nil)
 	{
-		uti = (ETUTI *)[[item representedObject] type];
+		uti = [[item representedObject] UTI];
 	}
 	else
 	{
-		uti = [item type];
+		uti = [item UTI];
 	}
 
 	return [controller allowedDropTypeForTargetType: uti];
@@ -325,7 +325,7 @@ Returns YES when the item conforms to the allowed pick types returned by
 	// FIXME: Rework ETUTI API a bit...
 	//return [testedObject conformsToType: [ETUTI transientTypeWithSupertypes: 
 	//	[self allowedPickUTIsForItem: item]]];
-	return [[item type] conformsToType: [self allowedPickTypeForItem: item]];
+	return [[item UTI] conformsToType: [self allowedPickTypeForItem: item]];
 }
 
 /** Returns whether the dropped object can be inserted into the drop target.
@@ -348,7 +348,7 @@ When the dropped object is a pick collection, each element type is checked with
 	// FIXME: Rework ETUTI API a bit...
 	//return [testedObject conformsToType: [ETUTI transientTypeWithSupertypes: 
 	//	[self allowedDropUTIsForItem: item]]];
-	return [[(NSObject *)droppedObject type] conformsToType: [self allowedDropTypeForItem: dropTarget]];
+	return [[(NSObject *)droppedObject UTI] conformsToType: [self allowedDropTypeForItem: dropTarget]];
 }
 
 - (IBAction) copy: (id)sender onItem: (ETLayoutItem *)item

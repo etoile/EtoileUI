@@ -1102,7 +1102,7 @@ Take note the new visibility state won't be apparent until a redisplay occurs. *
 	return _visible;
 }
 
-/** Returns the receiver UTI type as -[NSObject type], but combines it with the
+/** Returns the receiver UTI type as -[NSObject UTI], but combines it with the
 subtype and the represented object type when available.
 
 When the receiver has a subtype, the returned type is a transient type whose 
@@ -1111,10 +1111,10 @@ When the receiver has a represented object, the returned type is a transient
 type whose supertypes are the class type and the represented object class type.<br />
 In case, the receiver has both a represented object and a subtype, the 
 returned type will combine both as supertypes. */
-- (ETUTI *) type
+- (ETUTI *) UTI
 {
 	ETUTI *subtype = [self subtype];
-	NSMutableArray *supertypes = [NSMutableArray arrayWithObject: [super type]];
+	NSMutableArray *supertypes = [NSMutableArray arrayWithObject: [super UTI]];
 
 	if (subtype != nil)
 	{
@@ -1122,7 +1122,7 @@ returned type will combine both as supertypes. */
 	}
 	if (_modelObject != nil)
 	{
-		[supertypes addObject: [_modelObject type]];
+		[supertypes addObject: [_modelObject UTI]];
 	}
 
 	return [ETUTI transientTypeWithSupertypes: supertypes];

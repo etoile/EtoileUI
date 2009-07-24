@@ -716,7 +716,7 @@ item. */
 
 - (void) handleDropForObject: (id)object
 {
-	if ([[self allowedDroppingTypes] containsObject: [object type]] == NO)
+	if ([[self allowedDroppingTypes] containsObject: [object UTI]] == NO)
 		return;
 		
 	
