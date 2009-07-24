@@ -227,7 +227,7 @@ You must never use this method. */
 		return;
 	}
 
-	//[propertyView reloadAndUpdateLayout];
+	[propertyView reloadAndUpdateLayout];
 }
 
 - (void) doubleClickInPropertyView: (id)sender
