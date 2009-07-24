@@ -52,14 +52,17 @@ DEALLOC(DESTROY(itemFactory); DESTROY(item))
 
 - (void) testSetUpCompositeLayout
 {
+	NSRect proxyFrame = NSMakeRect(0, 0, [item width] / 2, [item height] / 2);
+	ETLayoutItemGroup *proxy = [ETCompositeLayout defaultPresentationProxyWithFrame: proxyFrame];
 	ETCompositeLayout *layout = AUTORELEASE([[ETCompositeLayout alloc] 
-		initWithRootItem: [itemFactory itemGroup]]);
+		initWithRootItem: [itemFactory itemGroup] firstPresentationItem: proxy]);
 	NSArray *content = A([itemFactory verticalSlider], [itemFactory oval], [itemFactory textField]);
 
 	[item addItems: content];
 	[item setLayout: layout];
 
 	ETLayoutItemGroup *proxyItem = [layout firstPresentationItem];
+	UKObjectsEqual(proxy, proxyItem);
 	UKObjectsEqual(proxyItem, [item firstItem]);
 	UKObjectsEqual(content, [proxyItem items]);
 

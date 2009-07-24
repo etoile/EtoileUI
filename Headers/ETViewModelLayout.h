@@ -38,7 +38,7 @@
 #import <Foundation/Foundation.h>
 #import <AppKit/AppKit.h>
 #import <EtoileFoundation/NSObject+Etoile.h>
-#import <EtoileUI/ETLayout.h>
+#import <EtoileUI/ETCompositeLayout.h>
 
 @class ETContainer;
 
@@ -53,7 +53,7 @@ typedef enum _ETLayoutDisplayMode {
 } ETLayoutDisplayMode;
 
 
-@interface ETViewModelLayout : ETLayout
+@interface ETViewModelLayout : ETCompositeLayout
 {
 	IBOutlet ETContainer *propertyView;
 	IBOutlet NSPopUpButton *popup;

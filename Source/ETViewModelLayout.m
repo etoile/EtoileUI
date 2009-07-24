@@ -39,11 +39,12 @@
 #import <EtoileFoundation/ETCollection.h>
 #import <EtoileFoundation/NSObject+Model.h>
 #import "ETViewModelLayout.h"
+#import "ETLayoutItemBuilder.h"
 #import "ETLayoutItem+Factory.h"
 #import "ETLayoutItem+Reflection.h"
 #import "ETLayoutItemGroup.h"
-#import "ETContainer.h"
 #import "ETOutlineLayout.h"
+#import "ETUIItemFactory.h"
 #import "ETCompatibility.h"
 #import "NSObject+EtoileUI.h"
 
@@ -89,6 +90,23 @@
 
 @implementation ETViewModelLayout
 
+- (id) initWithRootItem: (ETLayoutItemGroup *)rootItem 
+  firstPresentationItem: (ETLayoutItemGroup *)targetItem
+
+{
+	/* Will load the nib and call -awakeFromNib */
+	self = [super initWithRootItem: rootItem firstPresentationItem: nil];
+
+	if (self == nil)
+		return nil;
+
+	/* Don't set these in -awakeFromNib otherwise ETCompositeLayout initializer
+	   will erase them */
+	[self setRootItem: [[ETEtoileUIBuilder builder] renderView: [propertyView superview]]];
+
+	return self;
+}
+
 - (void) awakeFromNib
 {
 	ETDebugLog(@"Awaking from nib for %@", self);
@@ -119,15 +137,6 @@
 - (NSString *) nibName
 {
 	return @"ViewModelPrototype";
-}
-
-- (void) setUpLayoutView
-{
-	[super setUpLayoutView];
-	// FIXME: When a container is used as a layout view we usually need to 
-	// unflip the coordinates in order to have subviews positioned as expected
-	// (container coordinates are flipped by default).
-	//[[self layoutView] setFlipped: NO];
 }
 
 /** Returns the item inspected as a view and whose represented object is 
@@ -218,12 +227,12 @@ You must never use this method. */
 		return;
 	}
 
-	[propertyView reloadAndUpdateLayout];
+	//[propertyView reloadAndUpdateLayout];
 }
 
 - (void) doubleClickInPropertyView: (id)sender
 {
-	ETLayoutItem *item = [[[propertyView layoutItem] items] objectAtIndex: [propertyView selectionIndex]];
+	ETLayoutItem *item = [[(ETLayoutItemGroup *)[propertyView layoutItem] items] objectAtIndex: [propertyView selectionIndex]];
 	[[[item representedObject] value] explore: nil];
 }
 

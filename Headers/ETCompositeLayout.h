@@ -65,16 +65,28 @@
 	ETLayoutItemGroup *_targetItem; /* a descendent of the root virtual node */
 }
 
++ (id) defaultPresentationProxyWithFrame: (NSRect)aRect;
+
 /* Initialization */
 
 - (id) initWithRootItem: (ETLayoutItemGroup *)itemGroup;
 - (id) initWithRootItem: (ETLayoutItemGroup *)rootItem 
   firstPresentationItem: (ETLayoutItemGroup *)targetItem;
+  
+- (void) setRootItem: (ETLayoutItemGroup *)anItem;
 
 - (id) presentationProxyWithItem: (ETLayoutItemGroup *)item;
 - (void) renderWithLayoutItems: (NSArray *)items isNewContent: (BOOL)isNewContent;
 
 - (id) firstPresentationItem;
 - (void) setFirstPresentationItem: (ETLayoutItemGroup *)targetItem;
+- (BOOL) isContentRouted;
+
+/* Subclassing */
+
+- (void) saveInitialContextState: (NSSet *)properties;
+- (void) prepareNewContextState;
+- (void) restoreInitialContextState: (NSSet *)properties;
+- (void) restoreContextState;
 
 @end

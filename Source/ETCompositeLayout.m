@@ -66,8 +66,7 @@
 	if (self == nil)
 		return nil;
 
-	ASSIGN(_rootItem, rootItem);
-	[_rootItem setActionHandler: nil];
+	[self setRootItem: rootItem];
 	[self setFirstPresentationItem: targetItem];
 
 	return self;
@@ -75,42 +74,92 @@
 
 DEALLOC(DESTROY(_rootItem); DESTROY(_targetItem));
 
+/** Sets the root item to which items that makes up the composite layout belong 
+to. 
+
+The first presentation item will be reset to nil. You should usually update it 
+immediately.
+
+This method removes the action handler on the root item.
+
+You must no call this method when the layout is currently in use, otherwise 
+an NSInternalInconsistencyException will be raised. */
+- (void) setRootItem: (ETLayoutItemGroup *)anItem
+{
+	NSParameterAssert(_layoutContext == nil);
+
+	[self setFirstPresentationItem: nil];
+	[anItem setActionHandler: nil];
+	ASSIGN(_rootItem, anItem);
+}
+
+/** Returns the layout item to which the layout context content can be routed. */
 - (id) firstPresentationItem
 {
 	return _targetItem;
 }
 
+/** Returns the layout item to which the layout context content can be routed. 
+
+If the given item has no parent item*/
 - (void) setFirstPresentationItem: (ETLayoutItemGroup *)targetItem
 {
+	// TODO: Verify that the item has the layout context or the root item as 
+	// ancestor, otherwise raise an exception.
+	if (targetItem != nil && [targetItem parentItem] == nil)
+	{
+		BOOL isLayoutActive = (_layoutContext != nil);
+
+		if (isLayoutActive)
+		{
+			// FIXME: Ugly cast
+			[(ETLayoutItemGroup *)_layoutContext addItem: targetItem];
+		}
+		else
+		{
+			[[self rootItem] addItem: targetItem];
+		}
+	}
+
 	ASSIGN(_targetItem, targetItem);
+}
+
+/** Returns whether the receiver routes the layout context content to the first 
+presentation item. */
+- (BOOL) isContentRouted
+{
+	return ([self firstPresentationItem] != nil);
 }
 
 /** Returns a new autoreleased presentation proxy which can be used as the first 
 presentation item. */
-- (id) defaultPresentationProxyWithFrame: (NSRect)aRect
++ (id) defaultPresentationProxyWithFrame: (NSRect)aRect
 {
-	ETLayoutItemGroup *presentationProxy = [[ETLayoutItemGroup alloc] initWithFrame: aRect];//[[ETUIItemFactory factory] itemGroup];
+	ETLayoutItemGroup *presentationProxy = [[ETUIItemFactory factory] itemGroupWithFrame: aRect];
 	[presentationProxy setLayout: [ETOutlineLayout layout]];
 	[presentationProxy setAutoresizingMask: NSViewWidthSizable];
 	return presentationProxy;
 }
 
+- (BOOL) isStaticItemTree: (ETLayoutItemGroup *)anItem
+{
+	return ([anItem source] == nil);
+}
+
 - (void) moveContentFromItem: (ETLayoutItemGroup *)item
                       toItem: (ETLayoutItemGroup *)dest
 {
-	BOOL isStaticItemTree = ([item source] == nil);
-
 	[dest removeAllItems];
 
-	if (isStaticItemTree)
+	if ([self isStaticItemTree: item])
 	{
 		[dest addItems: [item items]];
 	}
 	else
 	{
 		[dest setSource: [item source]];
-
 		[item setSource: nil];
+
 		[item removeAllItems];
 	}
 
@@ -123,22 +172,81 @@ routed to inside the receiver. */
 {
 	ETLayoutItemGroup *presentationProxy = [self firstPresentationItem];
 
-	if (nil == presentationProxy)
-	{
-		NSSize proxySize = NSMakeSize([item width] / 2, [item height]);
- 		presentationProxy = [self defaultPresentationProxyWithFrame: 
-			ETMakeRect(NSZeroPoint, proxySize)];
-		[[self rootItem] addItem: presentationProxy];
-	}
-
+	if (presentationProxy == nil)
+		return nil;
+	
 	[self moveContentFromItem: item toItem: presentationProxy];
 
 	return presentationProxy;
 }
 
-- (void) restoreItemWithPresentationProxy: (ETLayoutItemGroup *)presentationProxy
+- (void) saveInitialContextState: (NSSet *)properties
 {
-	[self moveContentFromItem: presentationProxy toItem: _layoutContext];
+	if ([properties containsObject: @"items"])
+	{
+		[_layoutContext setDefaultValue: [_layoutContext items] 
+		                    forProperty: @"items"];
+	}
+	if ([properties containsObject: kETSourceProperty] 
+	 && [_layoutContext source] != nil)
+	{
+		[_layoutContext setDefaultValue: [_layoutContext source] 
+							forProperty: kETSourceProperty];
+	}
+	if ([properties containsObject: kETFlippedProperty])
+	{
+		BOOL isFlipped = [_layoutContext isFlipped];
+		[_layoutContext setDefaultValue: [NSNumber numberWithBool: isFlipped] 
+	                        forProperty: kETFlippedProperty];
+	}
+}
+
+- (void) prepareNewContextState
+{
+	[self setFirstPresentationItem: [self presentationProxyWithItem: _layoutContext]];
+	[self moveContentFromItem: [self rootItem] toItem: _layoutContext];
+}
+
+- (NSMutableSet *) initialStateProperties
+{
+	NSMutableSet *properties = [NSMutableSet setWithObject: kETFlippedProperty];
+
+	/* When the content is routed to a presentation proxy, -items and -source 
+	   must not be restored with -restoreInitialContextState: because 
+	   -restoreContextState: will have done it. */
+	if ([self isContentRouted] == NO)
+	{
+		[properties addObjectsFromArray: A(@"items", kETSourceProperty)];
+	}
+
+	return properties;
+}
+
+- (void) restoreInitialContextState: (NSSet *)properties
+{
+	if ([properties containsObject: @"items"])
+	{
+		[_layoutContext addItems: [_layoutContext defaultValueForProperty: @"items"]];
+	} 
+	if ([properties containsObject: kETSourceProperty])
+	{
+		[_layoutContext setSource: [_layoutContext defaultValueForProperty: kETSourceProperty]];
+	}
+	if ([properties containsObject: kETFlippedProperty])
+	{
+		[_layoutContext setFlipped: 
+			[[_layoutContext defaultValueForProperty: kETFlippedProperty] boolValue]];	
+	}
+}
+
+- (void) restoreContextState
+{
+	[self moveContentFromItem: _layoutContext toItem: [self rootItem]];
+
+	if ([self firstPresentationItem] == nil)
+		return;
+
+	[self moveContentFromItem: [self firstPresentationItem] toItem: _layoutContext];
 }
 
 /* Layouting */
@@ -147,9 +255,9 @@ routed to inside the receiver. */
 {
 	[super setUp];
 
-	//[_layoutContext setVisibleItems: [NSArray array]];
-	[self setFirstPresentationItem: [self presentationProxyWithItem: _layoutContext]];
-	[self moveContentFromItem: [self rootItem] toItem: _layoutContext];
+	[self saveInitialContextState: [self initialStateProperties]];
+	[self prepareNewContextState];
+
 	[_layoutContext setVisibleItems: [_layoutContext items]];
 }
 
@@ -159,8 +267,9 @@ routed to inside the receiver. */
 
 	[ETLayoutItemGroup disablesAutolayout];
 
-	[self moveContentFromItem: _layoutContext toItem: [self rootItem]];
-	[self restoreItemWithPresentationProxy: [self firstPresentationItem]];
+	[self restoreContextState];
+	[self restoreInitialContextState: [self initialStateProperties]];
+
 	[_layoutContext setVisibleItems: [_layoutContext items]];
 
 	[ETLayoutItemGroup enablesAutolayout];
