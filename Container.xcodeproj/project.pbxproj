@@ -401,6 +401,16 @@
 		662EA3FB101916310044F013 /* ETEntityDescription.m in Sources */ = {isa = PBXBuildFile; fileRef = 662EA3F8101916310044F013 /* ETEntityDescription.m */; };
 		662EA3FC101916310044F013 /* ETPropertyDescription.m in Sources */ = {isa = PBXBuildFile; fileRef = 662EA3F9101916310044F013 /* ETPropertyDescription.m */; };
 		662EA3FD101916310044F013 /* ETValidationResult.m in Sources */ = {isa = PBXBuildFile; fileRef = 662EA3FA101916310044F013 /* ETValidationResult.m */; };
+		662EA82B101BC8320044F013 /* ETClassMirror.h in Headers */ = {isa = PBXBuildFile; fileRef = 662EA826101BC8310044F013 /* ETClassMirror.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		662EA82C101BC8320044F013 /* ETInstanceVariableMirror.h in Headers */ = {isa = PBXBuildFile; fileRef = 662EA827101BC8310044F013 /* ETInstanceVariableMirror.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		662EA82D101BC8320044F013 /* ETMethodMirror.h in Headers */ = {isa = PBXBuildFile; fileRef = 662EA828101BC8310044F013 /* ETMethodMirror.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		662EA82E101BC8320044F013 /* ETObjectMirror.h in Headers */ = {isa = PBXBuildFile; fileRef = 662EA829101BC8320044F013 /* ETObjectMirror.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		662EA82F101BC8320044F013 /* ETProtocolMirror.h in Headers */ = {isa = PBXBuildFile; fileRef = 662EA82A101BC8320044F013 /* ETProtocolMirror.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		662EA836101BC8610044F013 /* ETClassMirror.m in Sources */ = {isa = PBXBuildFile; fileRef = 662EA831101BC8610044F013 /* ETClassMirror.m */; };
+		662EA837101BC8610044F013 /* ETInstanceVariableMirror.m in Sources */ = {isa = PBXBuildFile; fileRef = 662EA832101BC8610044F013 /* ETInstanceVariableMirror.m */; };
+		662EA838101BC8610044F013 /* ETMethodMirror.m in Sources */ = {isa = PBXBuildFile; fileRef = 662EA833101BC8610044F013 /* ETMethodMirror.m */; };
+		662EA839101BC8610044F013 /* ETObjectMirror.m in Sources */ = {isa = PBXBuildFile; fileRef = 662EA834101BC8610044F013 /* ETObjectMirror.m */; };
+		662EA83A101BC8610044F013 /* ETProtocolMirror.m in Sources */ = {isa = PBXBuildFile; fileRef = 662EA835101BC8610044F013 /* ETProtocolMirror.m */; };
 		6680CED7101257B200CAF439 /* ETReflection.h in Headers */ = {isa = PBXBuildFile; fileRef = 6680CED6101257B200CAF439 /* ETReflection.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		6680CED9101257C800CAF439 /* ETReflection.m in Sources */ = {isa = PBXBuildFile; fileRef = 6680CED8101257C800CAF439 /* ETReflection.m */; };
 		66C3AF8C10181CFA0046D74A /* ETSocket.h in Headers */ = {isa = PBXBuildFile; fileRef = 66C3AF8A10181CFA0046D74A /* ETSocket.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -796,6 +806,16 @@
 		662EA3F8101916310044F013 /* ETEntityDescription.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ETEntityDescription.m; path = ../EtoileFoundation/Source/ETEntityDescription.m; sourceTree = SOURCE_ROOT; };
 		662EA3F9101916310044F013 /* ETPropertyDescription.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ETPropertyDescription.m; path = ../EtoileFoundation/Source/ETPropertyDescription.m; sourceTree = SOURCE_ROOT; };
 		662EA3FA101916310044F013 /* ETValidationResult.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ETValidationResult.m; path = ../EtoileFoundation/Source/ETValidationResult.m; sourceTree = SOURCE_ROOT; };
+		662EA826101BC8310044F013 /* ETClassMirror.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ETClassMirror.h; path = ../EtoileFoundation/Headers/ETClassMirror.h; sourceTree = SOURCE_ROOT; };
+		662EA827101BC8310044F013 /* ETInstanceVariableMirror.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ETInstanceVariableMirror.h; path = ../EtoileFoundation/Headers/ETInstanceVariableMirror.h; sourceTree = SOURCE_ROOT; };
+		662EA828101BC8310044F013 /* ETMethodMirror.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ETMethodMirror.h; path = ../EtoileFoundation/Headers/ETMethodMirror.h; sourceTree = SOURCE_ROOT; };
+		662EA829101BC8320044F013 /* ETObjectMirror.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ETObjectMirror.h; path = ../EtoileFoundation/Headers/ETObjectMirror.h; sourceTree = SOURCE_ROOT; };
+		662EA82A101BC8320044F013 /* ETProtocolMirror.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ETProtocolMirror.h; path = ../EtoileFoundation/Headers/ETProtocolMirror.h; sourceTree = SOURCE_ROOT; };
+		662EA831101BC8610044F013 /* ETClassMirror.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ETClassMirror.m; path = ../EtoileFoundation/Source/ETClassMirror.m; sourceTree = SOURCE_ROOT; };
+		662EA832101BC8610044F013 /* ETInstanceVariableMirror.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ETInstanceVariableMirror.m; path = ../EtoileFoundation/Source/ETInstanceVariableMirror.m; sourceTree = SOURCE_ROOT; };
+		662EA833101BC8610044F013 /* ETMethodMirror.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ETMethodMirror.m; path = ../EtoileFoundation/Source/ETMethodMirror.m; sourceTree = SOURCE_ROOT; };
+		662EA834101BC8610044F013 /* ETObjectMirror.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ETObjectMirror.m; path = ../EtoileFoundation/Source/ETObjectMirror.m; sourceTree = SOURCE_ROOT; };
+		662EA835101BC8610044F013 /* ETProtocolMirror.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ETProtocolMirror.m; path = ../EtoileFoundation/Source/ETProtocolMirror.m; sourceTree = SOURCE_ROOT; };
 		6680CED6101257B200CAF439 /* ETReflection.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ETReflection.h; path = ../EtoileFoundation/Headers/ETReflection.h; sourceTree = SOURCE_ROOT; };
 		6680CED8101257C800CAF439 /* ETReflection.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ETReflection.m; path = ../EtoileFoundation/Source/ETReflection.m; sourceTree = SOURCE_ROOT; };
 		66C3AF8A10181CFA0046D74A /* ETSocket.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ETSocket.h; path = ../EtoileFoundation/Headers/ETSocket.h; sourceTree = SOURCE_ROOT; };
@@ -1093,6 +1113,7 @@
 				603648060E40931E003377E0 /* GNUstep.h */,
 				603647C90E4092EA003377E0 /* Macros.h */,
 				603647BB0E4092EA003377E0 /* ETCArray.h */,
+				662EA826101BC8310044F013 /* ETClassMirror.h */,
 				603647BC0E4092EA003377E0 /* ETCollection.h */,
 				60B27D8A0FF7B6180012BB42 /* ETCollection+HOM.h */,
 				662EA3F21019161B0044F013 /* ETEntityDescription.h */,
@@ -1100,11 +1121,15 @@
 				603647BE0E4092EA003377E0 /* ETFilter.h */,
 				603647BF0E4092EA003377E0 /* ETGetOptionsDictionary.h */,
 				602DC5030F21FA2E00DF23D9 /* ETHistory.h */,
+				662EA827101BC8310044F013 /* ETInstanceVariableMirror.h */,
+				662EA828101BC8310044F013 /* ETMethodMirror.h */,
 				603647C00E4092EA003377E0 /* ETObjectChain.h */,
+				662EA829101BC8320044F013 /* ETObjectMirror.h */,
 				603647C20E4092EA003377E0 /* EtoileCompatibility.h */,
 				603647C30E4092EA003377E0 /* EtoileFoundation.h */,
 				662EA3F31019161B0044F013 /* ETPropertyDescription.h */,
 				603647C40E4092EA003377E0 /* ETPropertyValueCoding.h */,
+				662EA82A101BC8320044F013 /* ETProtocolMirror.h */,
 				6680CED6101257B200CAF439 /* ETReflection.h */,
 				603647C60E4092EA003377E0 /* ETRendering.h */,
 				66C3AF8A10181CFA0046D74A /* ETSocket.h */,
@@ -1140,6 +1165,7 @@
 				602DC5410F21FD1500DF23D9 /* UTIDefinitions.plist */,
 				603648350E409329003377E0 /* Headers */,
 				603647FB0E40931E003377E0 /* ETCArray.c */,
+				662EA831101BC8610044F013 /* ETClassMirror.m */,
 				603647FC0E40931E003377E0 /* ETCollection.m */,
 				60B27D7C0FF7B56C0012BB42 /* ETCollection+HOM.m */,
 				60B27D7D0FF7B56C0012BB42 /* ETCollection+HOMMethods.m */,
@@ -1148,9 +1174,13 @@
 				603647FE0E40931E003377E0 /* ETFilter.m */,
 				603647FF0E40931E003377E0 /* ETGetOptionsDictionary.m */,
 				602DC50C0F21FA4C00DF23D9 /* ETHistory.m */,
+				662EA832101BC8610044F013 /* ETInstanceVariableMirror.m */,
+				662EA833101BC8610044F013 /* ETMethodMirror.m */,
 				603648000E40931E003377E0 /* ETObjectChain.m */,
+				662EA834101BC8610044F013 /* ETObjectMirror.m */,
 				662EA3F9101916310044F013 /* ETPropertyDescription.m */,
 				603648020E40931E003377E0 /* ETPropertyValueCoding.m */,
+				662EA835101BC8610044F013 /* ETProtocolMirror.m */,
 				6680CED8101257C800CAF439 /* ETReflection.m */,
 				66C3AF8E10181D110046D74A /* ETSocket.m */,
 				602DC50B0F21FA4C00DF23D9 /* ETTranscript.m */,
@@ -1562,6 +1592,11 @@
 				662EA3F51019161B0044F013 /* ETEntityDescription.h in Headers */,
 				662EA3F61019161B0044F013 /* ETPropertyDescription.h in Headers */,
 				662EA3F71019161B0044F013 /* ETValidationResult.h in Headers */,
+				662EA82B101BC8320044F013 /* ETClassMirror.h in Headers */,
+				662EA82C101BC8320044F013 /* ETInstanceVariableMirror.h in Headers */,
+				662EA82D101BC8320044F013 /* ETMethodMirror.h in Headers */,
+				662EA82E101BC8320044F013 /* ETObjectMirror.h in Headers */,
+				662EA82F101BC8320044F013 /* ETProtocolMirror.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2185,6 +2220,11 @@
 				662EA3FB101916310044F013 /* ETEntityDescription.m in Sources */,
 				662EA3FC101916310044F013 /* ETPropertyDescription.m in Sources */,
 				662EA3FD101916310044F013 /* ETValidationResult.m in Sources */,
+				662EA836101BC8610044F013 /* ETClassMirror.m in Sources */,
+				662EA837101BC8610044F013 /* ETInstanceVariableMirror.m in Sources */,
+				662EA838101BC8610044F013 /* ETMethodMirror.m in Sources */,
+				662EA839101BC8610044F013 /* ETObjectMirror.m in Sources */,
+				662EA83A101BC8610044F013 /* ETProtocolMirror.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
