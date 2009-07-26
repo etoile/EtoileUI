@@ -81,6 +81,21 @@
 		601455D70F9722B900268FD1 /* ETDecoratorItem.m in Sources */ = {isa = PBXBuildFile; fileRef = 60330B5A0F7CEF3400A1E8C1 /* ETDecoratorItem.m */; };
 		601455D80F9722B900268FD1 /* NSBezierPathCappedBoxes.m in Sources */ = {isa = PBXBuildFile; fileRef = 60364A060E40A560003377E0 /* NSBezierPathCappedBoxes.m */; };
 		6017849E0D670DED00A54D5A /* PhotoViewExample.nib in Resources */ = {isa = PBXBuildFile; fileRef = 6017849D0D670DED00A54D5A /* PhotoViewExample.nib */; };
+		60222D8F101CCA9C00B2B1C1 /* TestReflection.m in Sources */ = {isa = PBXBuildFile; fileRef = 60222D8E101CCA9C00B2B1C1 /* TestReflection.m */; };
+		60222D91101CCAAC00B2B1C1 /* TestEntityDescription.m in Sources */ = {isa = PBXBuildFile; fileRef = 60222D90101CCAAC00B2B1C1 /* TestEntityDescription.m */; };
+		60222DB3101CCB4800B2B1C1 /* ETClassMirror.m in Sources */ = {isa = PBXBuildFile; fileRef = 662EA831101BC8610044F013 /* ETClassMirror.m */; };
+		60222DB4101CCB4800B2B1C1 /* ETEntityDescription.m in Sources */ = {isa = PBXBuildFile; fileRef = 662EA3F8101916310044F013 /* ETEntityDescription.m */; };
+		60222DB5101CCB4800B2B1C1 /* ETInstanceVariableMirror.m in Sources */ = {isa = PBXBuildFile; fileRef = 662EA832101BC8610044F013 /* ETInstanceVariableMirror.m */; };
+		60222DB6101CCB4800B2B1C1 /* ETMethodMirror.m in Sources */ = {isa = PBXBuildFile; fileRef = 662EA833101BC8610044F013 /* ETMethodMirror.m */; };
+		60222DB7101CCB4800B2B1C1 /* ETObjectMirror.m in Sources */ = {isa = PBXBuildFile; fileRef = 662EA834101BC8610044F013 /* ETObjectMirror.m */; };
+		60222DB8101CCB4800B2B1C1 /* ETPropertyDescription.m in Sources */ = {isa = PBXBuildFile; fileRef = 662EA3F9101916310044F013 /* ETPropertyDescription.m */; };
+		60222DB9101CCB4800B2B1C1 /* ETProtocolMirror.m in Sources */ = {isa = PBXBuildFile; fileRef = 662EA835101BC8610044F013 /* ETProtocolMirror.m */; };
+		60222DBA101CCB4800B2B1C1 /* ETReflection.m in Sources */ = {isa = PBXBuildFile; fileRef = 6680CED8101257C800CAF439 /* ETReflection.m */; };
+		60222DBB101CCB4800B2B1C1 /* ETSocket.m in Sources */ = {isa = PBXBuildFile; fileRef = 66C3AF8E10181D110046D74A /* ETSocket.m */; };
+		60222DBC101CCB4800B2B1C1 /* ETValidationResult.m in Sources */ = {isa = PBXBuildFile; fileRef = 662EA3FA101916310044F013 /* ETValidationResult.m */; };
+		60222DBD101CCB4800B2B1C1 /* NSData+Hash.m in Sources */ = {isa = PBXBuildFile; fileRef = 66C3AF8F10181D110046D74A /* NSData+Hash.m */; };
+		60222DC6101CCB8D00B2B1C1 /* libcrypto.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 66C3AFB510181ECD0046D74A /* libcrypto.dylib */; };
+		60222DC7101CCB9000B2B1C1 /* libssl.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 66C3AF9910181DDE0046D74A /* libssl.dylib */; };
 		6022404E1003DF14007D5D07 /* TestItemGeometry.m in Sources */ = {isa = PBXBuildFile; fileRef = 6022404D1003DF14007D5D07 /* TestItemGeometry.m */; };
 		60264AA50FB72D4D00D8163F /* Carbon.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 60264AA40FB72D4D00D8163F /* Carbon.framework */; };
 		60264AA60FB72D4D00D8163F /* Carbon.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 60264AA40FB72D4D00D8163F /* Carbon.framework */; };
@@ -546,6 +561,8 @@
 		60141B1C0F9355DF00014507 /* ETWidgetLayout.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ETWidgetLayout.h; path = Headers/ETWidgetLayout.h; sourceTree = "<group>"; };
 		60141B1F0F9355EE00014507 /* ETWidgetLayout.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ETWidgetLayout.m; path = Source/ETWidgetLayout.m; sourceTree = "<group>"; };
 		6017849D0D670DED00A54D5A /* PhotoViewExample.nib */ = {isa = PBXFileReference; lastKnownFileType = wrapper.nib; name = PhotoViewExample.nib; path = PhotoViewExample/PhotoViewExample.nib; sourceTree = "<group>"; };
+		60222D8E101CCA9C00B2B1C1 /* TestReflection.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = TestReflection.m; path = ../EtoileFoundation/Source/TestReflection.m; sourceTree = SOURCE_ROOT; };
+		60222D90101CCAAC00B2B1C1 /* TestEntityDescription.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = TestEntityDescription.m; path = ../EtoileFoundation/Source/TestEntityDescription.m; sourceTree = SOURCE_ROOT; };
 		6022404D1003DF14007D5D07 /* TestItemGeometry.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = TestItemGeometry.m; path = Tests/TestItemGeometry.m; sourceTree = "<group>"; };
 		60264AA40FB72D4D00D8163F /* Carbon.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Carbon.framework; path = /System/Library/Frameworks/Carbon.framework; sourceTree = "<absolute>"; };
 		602DC5030F21FA2E00DF23D9 /* ETHistory.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ETHistory.h; path = ../EtoileFoundation/Headers/ETHistory.h; sourceTree = SOURCE_ROOT; };
@@ -915,6 +932,8 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				60222DC7101CCB9000B2B1C1 /* libssl.dylib in Frameworks */,
+				60222DC6101CCB8D00B2B1C1 /* libcrypto.dylib in Frameworks */,
 				609B66D00FEE80CE0007F842 /* UnitKit.framework in Frameworks */,
 				609B66D20FEE80CE0007F842 /* Carbon.framework in Frameworks */,
 			);
@@ -1448,6 +1467,8 @@
 				60CF710C0D42AA8600B4CA3D /* test_ETObjectChain.m */,
 				609B66120FEE7CD10007F842 /* TestBasicHOM.m */,
 				60B27D730FF7B51D0012BB42 /* TestETCollectionHOM.m */,
+				60222D90101CCAAC00B2B1C1 /* TestEntityDescription.m */,
+				60222D8E101CCA9C00B2B1C1 /* TestReflection.m */,
 				60B27D750FF7B54F0012BB42 /* TestUTI.m */,
 				603648130E40931E003377E0 /* TestUUID.m */,
 			);
@@ -2268,6 +2289,18 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				60222DB3101CCB4800B2B1C1 /* ETClassMirror.m in Sources */,
+				60222DB4101CCB4800B2B1C1 /* ETEntityDescription.m in Sources */,
+				60222DB5101CCB4800B2B1C1 /* ETInstanceVariableMirror.m in Sources */,
+				60222DB6101CCB4800B2B1C1 /* ETMethodMirror.m in Sources */,
+				60222DB7101CCB4800B2B1C1 /* ETObjectMirror.m in Sources */,
+				60222DB8101CCB4800B2B1C1 /* ETPropertyDescription.m in Sources */,
+				60222DB9101CCB4800B2B1C1 /* ETProtocolMirror.m in Sources */,
+				60222DBA101CCB4800B2B1C1 /* ETReflection.m in Sources */,
+				60222DBB101CCB4800B2B1C1 /* ETSocket.m in Sources */,
+				60222DBC101CCB4800B2B1C1 /* ETValidationResult.m in Sources */,
+				60222DBD101CCB4800B2B1C1 /* NSData+Hash.m in Sources */,
+				60F6EEF11014722D003F4508 /* NSFileHandle+Socket.m in Sources */,
 				609B67CA0FEE81740007F842 /* TestBasicHOM.m in Sources */,
 				609B67CB0FEE81740007F842 /* TestUUID.m in Sources */,
 				609B67CE0FEE81740007F842 /* ETCollection.m in Sources */,
@@ -2295,7 +2328,8 @@
 				60B27D740FF7B51D0012BB42 /* TestETCollectionHOM.m in Sources */,
 				60B27D760FF7B54F0012BB42 /* TestUTI.m in Sources */,
 				60B27D7F0FF7B56C0012BB42 /* ETCollection+HOM.m in Sources */,
-				60F6EEF11014722D003F4508 /* NSFileHandle+Socket.m in Sources */,
+				60222D8F101CCA9C00B2B1C1 /* TestReflection.m in Sources */,
+				60222D91101CCAAC00B2B1C1 /* TestEntityDescription.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
