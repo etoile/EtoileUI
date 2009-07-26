@@ -69,6 +69,7 @@ NSString *ETSourceDidUpdateNotification = @"ETSourceDidUpdateNotification";
 @end
 
 @interface ETLayoutItemGroup (Private)
+- (void) tryReloadWithSource: (id)aSource;
 - (BOOL) hasNewLayout;
 - (void) setHasNewLayout: (BOOL)flag;
 - (void) collectSelectionIndexPaths: (NSMutableArray *)indexPaths
@@ -660,12 +661,15 @@ model group for the represented objects to insert wrapped in layout items</item>
 Finally when -source returns nil, it's always possible to build and manage a 
 layout item tree structure in a static fashion by yourself.
 
-Take note that modifying a source is followed by a layout update, the new
-content is immediately loaded and displayed. By setting a source, the receiver
-represented path base is automatically set to '/' unless another path was set
-previously. If you pass nil to get rid of a source, the represented path base 
-isn't reset to nil but keeps its actual value in order to maintain it as a base
-item and avoid unpredictable changes to the event handling logic. */
+When the new source is set, the content is immediately reloaded, and the layout 
+updated unless the autolayout is disabled. Finally an 
+ETSourceDidUpdateNotification is posted.
+
+By setting a source, the receiver represented path base is automatically set to 
+'/' unless another path was set previously. If you pass nil to get rid of a 
+source, the represented path base isn't reset to nil but keeps its actual value 
+in order to maintain it as a base item and avoid unpredictable changes to the 
+event handling logic. */
 - (void) setSource: (id)source
 {
 	/* By safety, avoids to trigger extra updates */
@@ -677,17 +681,20 @@ item and avoid unpredictable changes to the event handling logic. */
 		          name: ETSourceDidUpdateNotification 
 			    object: GET_PROPERTY(kETSourceProperty)];
 
-	[self removeAllItems]; 	/* Resets any particular state like selection */
 	SET_PROPERTY(source, kETSourceProperty);
+
+	if (source != nil)
+		[self makeBaseItemIfNeeded];
+
+	[self tryReloadWithSource: source]; /* Resets any particular state like selection */
+	if ([self canUpdateLayout])
+		[self updateLayout];
 
 	[[NSNotificationCenter defaultCenter] 
 		   addObserver: self
 	          selector: @selector(sourceDidUpdate:)
 		          name: ETSourceDidUpdateNotification 
 			    object: source];
-
-	if (source != nil)
-		[self makeBaseItemIfNeeded];
 }
 
 /** Returns the delegate associated with the receiver. 
@@ -910,28 +917,42 @@ inherit a source from a base item. */
 		[self reload];
 }
 
+/* Forces the reload whether or not the given source is nil.
+
+When the source is nil, the receiver becomes empty. */
+- (void) tryReloadWithSource: (id)aSource
+{
+	NSParameterAssert([self isReloading] == NO);
+	
+	ETDebugLog(@"Try reload %@", self);
+
+	BOOL wasAutolayoutEnabled = [self isAutolayout];
+
+	_reloading = YES;
+	[self setAutolayout: NO];
+
+	[self removeAllItems];
+	[self addItems: [self itemsFromSource]];
+
+	[self setAutolayout: wasAutolayoutEnabled];
+	_reloading = NO;
+}
+
 /** Reloads the content by removing all existing childrens and requesting all
-the receiver immediate children to the source. */
+the receiver immediate children to the base item source. */
 - (void) reload
 {
-	_reloading = YES;
-
 	BOOL hasSource = ([[self baseItem] source] != nil);
 
-	/* Retrieve layout items provided by source */
 	if (hasSource)
 	{
-		NSArray *itemsFromSource = [self itemsFromSource];
-		[self removeAllItems];
-		[self addItems: itemsFromSource];
+		[self tryReloadWithSource: [[self baseItem] source]];
 	}
 	else
 	{
-		ETLog(@"WARNING: Impossible to reload %@ because the layout item miss " 
+		ETLog(@"WARNING: Impossible to reload %@ because the base item miss " 
 			@"a source %@", self, [[self baseItem] source]);
 	}
-	
-	_reloading = NO;
 }
 
 /* Layout */
@@ -1011,6 +1032,8 @@ frame (see -usesLayoutBasedFrame). */
 {
 	if ([self layout] == nil)
 		return;
+
+	ETLog(@"Try update layout of %@", self);
 	
 	BOOL isNewLayoutContent = ([self hasNewContent] || [self hasNewLayout]);
 	

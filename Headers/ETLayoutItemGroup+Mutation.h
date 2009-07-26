@@ -43,15 +43,17 @@ extern NSString *kETControllerProperty; // controller
 - (BOOL) isCoalescingModelMutation;
 - (void) beginCoalescingModelMutation;
 - (void) endCoalescingModelMutation;
+- (BOOL) beginMutate;
+- (void) endMutate: (BOOL)wasAutolayoutEnabled;
 
 /* Mutation Backend
    Handling of Mutations on Layout Item Tree, Model Graph and Source  */
 
-- (void) handleAdd: (ETEvent *)event item: (ETLayoutItem *)item;
+- (BOOL) handleAdd: (ETEvent *)event item: (ETLayoutItem *)item;
 - (BOOL) handleModelAdd: (ETEvent *)event item: (ETLayoutItem *)item;
-- (void) handleInsert: (ETEvent *)event item: (ETLayoutItem *)item atIndex: (int)index;
+- (BOOL) handleInsert: (ETEvent *)event item: (ETLayoutItem *)item atIndex: (int)index;
 - (BOOL) handleModelInsert: (ETEvent *)event item: (ETLayoutItem *)item atIndex: (int)index;
-- (void) handleRemove: (ETEvent *)event item: (ETLayoutItem *)item;
+- (BOOL) handleRemove: (ETEvent *)event item: (ETLayoutItem *)item;
 - (BOOL) handleModelRemove: (ETEvent *)event item: (ETLayoutItem *)item;
 
 - (void) handleAdd: (ETEvent *)event items: (NSArray *)items;

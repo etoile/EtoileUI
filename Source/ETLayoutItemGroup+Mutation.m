@@ -80,9 +80,39 @@ static 	BOOL _coalescingMutation = NO;
 	_coalescingMutation = NO;
 }
 
+/* Disables the autolayout and returns whether the autolayout was previously 
+enabled.
+
+You must pair every -beginMutate with an -endMutate:.
+
+See also -endMutate:. */
+- (BOOL) beginMutate
+{
+	BOOL wasAutolayoutEnabled = [self isAutolayout];
+	[self setAutolayout: NO];
+	return wasAutolayoutEnabled;
+}
+
+/* Restores autolayout to its previous value, marks the receiver has having 
+new content and triggers a layout update.
+
+You must pass the value returned by -beginMutate: in parameter.
+
+When wasAutolayoutEnabled or +isAutolayoutEnabled are NO, the layout update 
+won't happen. For example, this would be case on invoking -endMutate: nested 
+inside another -begin/endMutate pair.  */
+- (void) endMutate: (BOOL)wasAutolayoutEnabled
+{
+	[self setHasNewContent: YES];
+	[self setAutolayout: wasAutolayoutEnabled];
+
+	if ([self canUpdateLayout])
+		[self updateLayout];
+}
+
 /* Element Mutation Handler */
 
-- (void) handleAdd: (ETEvent *)event item: (ETLayoutItem *)item
+- (BOOL) handleAdd: (ETEvent *)event item: (ETLayoutItem *)item
 {
 	//ETDebugLog(@"Add item in %@", self);
 	
@@ -90,7 +120,7 @@ static 	BOOL _coalescingMutation = NO;
 	{
 		ETLog(@"WARNING: Trying to add item %@ to the item group %@ it "
 			@"already belongs to", item, self);
-		return;
+		return NO;
 	}
 	
 	BOOL validatedAdd = YES;
@@ -113,6 +143,8 @@ static 	BOOL _coalescingMutation = NO;
 
 		[self endCoalescingModelMutation];
 	}
+
+	return validatedAdd;
 }
 
 - (BOOL) handleModelAdd: (ETEvent *)event item: (ETLayoutItem *)item;
@@ -151,13 +183,13 @@ static 	BOOL _coalescingMutation = NO;
 	return validatedMutate;
 }
 
-- (void) handleInsert: (ETEvent *)event item: (ETLayoutItem *)item atIndex: (int)index
+- (BOOL) handleInsert: (ETEvent *)event item: (ETLayoutItem *)item atIndex: (int)index
 {
 	if ([[item parentItem] isEqual: self])
 	{
 		ETLog(@"WARNING: Trying to insert item %@ in the item group %@ it "
 			@"already belongs to", item, self);
-		return;
+		return NO;
 	}
 	
 	BOOL validatedInsert = YES;
@@ -177,6 +209,8 @@ static 	BOOL _coalescingMutation = NO;
 
 		[self endCoalescingModelMutation];
 	}
+
+	return validatedInsert;
 
 // NOTE: The code below is kept as an example to implement selection caching 
 // at later time if better performance are necessary.
@@ -235,12 +269,12 @@ static 	BOOL _coalescingMutation = NO;
 	return validatedMutate;
 }
 
-- (void) handleRemove: (ETEvent *)event item: (ETLayoutItem *)item
+- (BOOL) handleRemove: (ETEvent *)event item: (ETLayoutItem *)item
 {
 	/* Very important to return immediately, -handleDetachItem: execution would 
 	   lead to a weird behavior: the item parent item would be set to nil. */
 	if ([[item parentItem] isEqual: self] == NO)
-		return;
+		return NO;
 
 	BOOL validatedRemove = YES;
 
@@ -261,6 +295,8 @@ static 	BOOL _coalescingMutation = NO;
 
 		[self endCoalescingModelMutation];
 	}
+	
+	return validatedRemove;
 
 // NOTE: The code below is kept as an example to implement selection caching 
 // at later time if better performance are necessary.
@@ -344,18 +380,26 @@ static 	BOOL _coalescingMutation = NO;
 
 - (void) handleAdd: (ETEvent *)event items: (NSArray *)items
 {
+	BOOL wasAutolayoutEnabled = [self beginMutate];
+
 	FOREACH(items, item, ETLayoutItem *)
 	{
 		[self handleAdd: event item: item];
 	}
+
+	[self endMutate: wasAutolayoutEnabled];
 }
 
 - (void) handleRemove: (ETEvent *)event items: (NSArray *)items
 {
+	BOOL wasAutolayoutEnabled = [self beginMutate];
+
 	FOREACH(items, item, ETLayoutItem *)
 	{
 		[self handleRemove: event item: item];
 	}
+
+	[self endMutate: wasAutolayoutEnabled];
 }
 
 /* Collection Protocol Backend */
