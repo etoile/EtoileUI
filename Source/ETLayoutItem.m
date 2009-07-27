@@ -1,39 +1,9 @@
-/*  <title>ETLayoutItem</title>
-
-	ETLayoutItem.m
-	
-	<abstract>ETLayoutItem is the base class for all node subclasses that can be 
-	used in a layout item tree. ETLayoutItem instances are leaf nodes for the
-	layout item tree structure.</abstract>
- 
+/*
 	Copyright (C) 2007 Quentin Mathe
- 
+
 	Author:  Quentin Mathe <qmathe@club-internet.fr>
 	Date:  May 2007
- 
-	Redistribution and use in source and binary forms, with or without
-	modification, are permitted provided that the following conditions are met:
-
-	* Redistributions of source code must retain the above copyright notice,
-	  this list of conditions and the following disclaimer.
-	* Redistributions in binary form must reproduce the above copyright notice,
-	  this list of conditions and the following disclaimer in the documentation
-	  and/or other materials provided with the distribution.
-	* Neither the name of the Etoile project nor the names of its contributors
-	  may be used to endorse or promote products derived from this software
-	  without specific prior written permission.
-
-	THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
-	AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
-	IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
-	ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE
-	LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
-	CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
-	SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
-	INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
-	CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
-	ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
-	THE POSSIBILITY OF SUCH DAMAGE.
+	License: Modified BSD (see COPYING)
  */
 
 #import <EtoileFoundation/NSIndexPath+Etoile.h>
@@ -42,6 +12,7 @@
 #import <EtoileFoundation/ETUTI.h>
 #import <EtoileFoundation/Macros.h>
 #import "ETLayoutItem.h"
+#import "ETLayoutItem+Reflection.h"
 #import "ETGeometry.h"
 #import "ETActionHandler.h"
 #import "ETLayoutItem+Scrollable.h"
@@ -939,117 +910,6 @@ and write the receiver properties. */
 {
 	return _variableProperties;
 }
-
-/** Returns the metalevel in the UI domain.
-	Three metamodel variants exist in Etoile:
-	- Object
-	- Model
-	- UI
-	Each metamodel domain is bound to an arbitrary number of metalevels (0, 1, 
-	3, etc.). Metalevels are expressed as positive integers and are usually 
-	not limited to a max value.
-	A new metalevel is entered, each time -setRepresentedObject: is called with 
-	an object of the same type than the receiver. The type interpretation of 
-	both the receiver and the paremeter varies with the metamodel domain. For UI
-	domain, both must include ETLayoutItem type or subtype in their type.
-	For example:
-	
-	id item1 = [ETLayoutItem layoutItem];
-	
-	item2 = [ETLayoutItem layoutItemWithRepresentedObject: item1];
-	item3 = [ETLayoutItem layoutItemWithRepresentedObject: [NSImage image]];
-	item4 = [ETLayoutItem layoutItemWithRepresentedObject: item2];
-	
-	If we call -metalevel method on each item, the output is the following:
-	- item1 will return 0
-	- item2 will return 1
-	- item3 will return 0
-	- item4 will return 2 */
-- (unsigned int) UIMetalevel
-{
-	if ([self isMetaLayoutItem])
-	{
-		unsigned int metalevel = 0;
-		id repObject = [self representedObject];
-		
-		/* An item can be a meta layout item by using a view as represented object */
-		if ([repObject respondsToSelector: @selector(UIMetalevel)] )
-			metalevel = [repObject UIMetalevel];
-		
-		return ++metalevel;
-	}
-	else
-	{
-		return 0;
-	}
-}
-
-/** Returns the UI metalayer the receiver belongs to.
-	The metalayer is the metalevel which owns the receiver. For UI metamodel 
-	domain, the ownership to a metalayer results of existing parent/child 
-	relationships in the layout item tree.
-	An item has equal UIMetalevel and UIMetalayer when no parent with superior
-	UIMetalevel value can be found by climbing up the layout item tree until the
-	root item is reached. The root item UI metalevel is 0, thus all descendant
-	items can create metalayers by having a superior UI metalevel. 
-	A child item can introduce a new metalayer by having a UI metalevel 
-	superior to the last parent item defining a UI metalayer. 
-	Finally in a metalayer, objects can have arbitrary metalevel. 
-	For example:
-	
-		Item Tree		Metalevel
-	
-	- root item	0			(0)
-	- item 1				(2)
-		- child item 11		(1)
-			- item 111		(4)
-				- item 1111	(4)
-				- item 1112	(0)
-		- child item 12		(2)
-	- item 2				(0)
-		- item 21			(0)
-		
-	Available metalayers:
-	- (0) item 0, 2, 21
-	- (2) item 1, 11, 12
-	- (4) item 1111, 1111, 1112
-	
-	No metalayer (1) exists with this layout item tree, because the only item
-	bound to this metalevel is preempted by the metalayer (2) introduced with 
-	'item 1'. */
-- (unsigned int) UIMetalayer
-{
-	int metalayer = [self UIMetalevel];
-	id parent = self;
-	
-	while ((parent = [parent parentItem]) != nil)
-	{
-		if ([parent UIMetalevel] > metalayer)
-			metalayer = [parent UIMetalevel];
-	}
-	
-	return metalayer;
-}
-
-// TODO: Rename -isMetalevelItem
-- (BOOL) isMetaLayoutItem
-{
-	// NOTE: Defining the item as a meta item when a view is the represented 
-	// object allows to read and write view values when the item is modified
-	// with PVC. If the item is declared as a normal item, PVC will apply to
-	// the item itself for all properties common to NSView and ETLayoutItem 
-	// (mostly frame related properties).
-	// See also -valueForProperty and -setValue:forProperty:
-	return ([[self representedObject] isKindOfClass: [ETLayoutItem class]]
-		|| [[self representedObject] isKindOfClass: [NSView class]]);
-}
-
-#if 0
-- (BOOL) isPropertyItem
-{
-	return [[self representedObject] isKindOfClass: [ETProperty class]];
-}
-#endif
 
 - (BOOL) isGroup
 {

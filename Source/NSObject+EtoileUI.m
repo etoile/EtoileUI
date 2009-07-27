@@ -35,6 +35,7 @@
  */
 
 #import <EtoileFoundation/Macros.h>
+#import <EtoileFoundation/NSObject+Etoile.h>
 #import <EtoileFoundation/NSObject+Model.h>
 #import "NSObject+EtoileUI.h"
 #import "ETObjectBrowserLayout.h"

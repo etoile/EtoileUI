@@ -38,6 +38,7 @@
 #import "ETDecoratorItem.h"
 #import "ETGeometry.h"
 #import "ETLayoutItem.h"
+#import "ETLayoutItem+Reflection.h"
 #import "ETUIItemFactory.h"
 #import "ETWindowItem.h"
 #import "ETLayoutItemGroup.h"

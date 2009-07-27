@@ -16,6 +16,10 @@
 
 @interface ETLayoutItem (ETUIReflection)
 
+- (unsigned int) UIMetalevel;
+- (unsigned int) UIMetalayer;
+- (BOOL) isMetaLayoutItem;
+
 /** A basic meta model which inspects layout items by wrapping each one in a 
 	new meta layout item. Achieved by setting the base layout item as the
 	represented object of the new meta layout item. */
