@@ -45,6 +45,7 @@
 #import "ETFlowLayout.h"
 #import "ETLineLayout.h"
 #import "ETController.h"
+#import "ETView.h"
 #import "NSView+Etoile.h"
 #import "ETCompatibility.h"
 
