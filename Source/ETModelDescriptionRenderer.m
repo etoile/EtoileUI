@@ -65,6 +65,18 @@
 	return item;
 }
 
+/** Returns a dictionary mapping value classes to editor object prototypes. 
+	These editor objects are UI elements like NSSlider, NSStepper, NSTextField, 
+	NSButton. */
+- (NSDictionary *) editorObjects
+{
+	/*NSButton *checkBox = [[NSButton alloc] ini
+
+	return [NSDictionary dictionaryWithObjectsAndKeys: 
+		[NS*/
+	return nil;
+}
+
 @end
 
 
