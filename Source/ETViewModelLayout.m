@@ -11,13 +11,15 @@
 #import <EtoileFoundation/NSObject+Model.h>
 #import "ETViewModelLayout.h"
 #import "ETLayoutItemBuilder.h"
-#import "ETLayoutItem+Factory.h"
 #import "ETLayoutItem+Reflection.h"
+#import "ETLayoutItem+Scrollable.h"
 #import "ETLayoutItemGroup.h"
 #import "ETOutlineLayout.h"
 #import "ETUIItemFactory.h"
-#import "ETCompatibility.h"
+#import "ETView.h"
 #import "NSObject+EtoileUI.h"
+#import "ETCompatibility.h"
+
 
 @implementation ETInstanceVariableMirror (TraversableIvars)
 
@@ -73,8 +75,10 @@
 
 	/* Don't set these in -awakeFromNib otherwise ETCompositeLayout initializer
 	   will erase them */
-	[self setRootItem: [[ETEtoileUIBuilder builder] renderView: [propertyView superview]]];
-	ASSIGN(propertyViewItem, [propertyView layoutItem]);
+	NSView *topLevelView = [propertyView superview];
+	[self setRootItem: [[ETEtoileUIBuilder builder] renderView: topLevelView]];
+	 /* Now we retain it through a layout item, the nib can release it */
+	DESTROY(topLevelView);
 	ASSIGN(_mirrorCache, [NSMapTable mapTableWithStrongToStrongObjects]);
 
 	return self;
@@ -82,11 +86,8 @@
 
 DEALLOC(DESTROY(_mirrorCache))
 
-- (void) awakeFromNib
+- (ETLayout *) defaultPropertyViewLayout
 {
-	ETDebugLog(@"Awaking from nib for %@", self);
-
-	/* Configure propertyView outlet */
 	ETOutlineLayout *layout = [ETOutlineLayout layout];
 	
 	[layout setContentFont: [NSFont controlContentFontOfSize: [NSFont smallSystemFontSize]]];
@@ -97,13 +98,25 @@ DEALLOC(DESTROY(_mirrorCache))
 	[layout setDisplayName: @"Type" forProperty: @"typeName"];
 	[layout setEditable: YES forProperty: @"value"];
 
-	[propertyView setLayout: layout];
-	[propertyView setSource: self];
-	[propertyView setDelegate: self];
-	[propertyView setDoubleAction: @selector(doubleClickInPropertyView:)];
-	[propertyView setTarget: self];
-	[propertyView setHasVerticalScroller: YES];
-	[propertyView setHasHorizontalScroller: YES];
+	return layout;
+}
+
+/* Configures propertyView outlet. 
+
+Will be called before the receiver is fully initialized. */
+- (void) awakeFromNib
+{
+	ETDebugLog(@"Awaking from nib for %@", self);
+
+	ASSIGN(propertyViewItem, [propertyView layoutItem]);
+
+	[propertyViewItem setLayout: [self defaultPropertyViewLayout]];
+	[propertyViewItem setSource: self];
+	[propertyViewItem setDelegate: self];
+	[propertyViewItem setDoubleAction: @selector(doubleClickInPropertyView:)];
+	[propertyViewItem setTarget: self];
+	[propertyViewItem setHasVerticalScroller: YES];
+	[propertyViewItem setHasHorizontalScroller: YES];
 }
 
 - (NSString *) nibName
