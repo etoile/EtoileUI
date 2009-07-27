@@ -99,7 +99,6 @@ extern NSString *kETVisibleProperty; /** visible property name */
 - (ETLayoutItemGroup *) parentItem;
 - (void) setParentItem: (ETLayoutItemGroup *)parent;
 - (void ) removeFromParent;
-- (ETContainer *) closestAncestorContainer;
 - (ETView *) closestAncestorDisplayView;
 - (ETLayoutItem *) closestAncestorItemWithDisplayView;
 

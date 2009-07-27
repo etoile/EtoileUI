@@ -20,7 +20,6 @@
 #import "ETWindowItem.h"
 #import "ETStyleGroup.h"
 #import "ETView.h"
-#import "ETContainer.h"
 #import "ETInspector.h"
 #import "ETScrollableAreaItem.h"
 #import "NSView+Etoile.h"
@@ -405,21 +404,6 @@ the receiver as a base item. */
 		RETAIN(self);
 		[_parentItem removeItem: self];
 		AUTORELEASE(self);
-	}
-}
-
-- (ETContainer *) closestAncestorContainer
-{
-	if ([[self displayView] isKindOfClass: [ETContainer class]])
-		return (ETContainer *)[self displayView];
-		
-	if (_parentItem != nil)
-	{
-		return [_parentItem closestAncestorContainer];
-	}
-	else
-	{
-		return nil;
 	}
 }
 

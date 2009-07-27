@@ -44,7 +44,6 @@
 #import "ETLayoutItem+Scrollable.h"
 #import "ETFlowLayout.h"
 #import "ETLineLayout.h"
-#import "ETContainer.h"
 #import "ETController.h"
 #import "NSView+Etoile.h"
 #import "ETCompatibility.h"
