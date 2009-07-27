@@ -12,7 +12,6 @@
 
 #import <Foundation/Foundation.h>
 #import <AppKit/AppKit.h>
-#import <EtoileFoundation/NSObject+Etoile.h>
 #import <EtoileFoundation/ETInstanceVariableMirror.h>
 #import <EtoileUI/ETCompositeLayout.h>
 
@@ -37,8 +36,13 @@ typedef enum _ETLayoutDisplayMode {
 	/* We don't use a dictionary to ensure keys won't be copied since they can  
 	   be arbitrary objects. */
 	NSMapTable *_mirrorCache; 
+	ETLayoutItemGroup *presentationProxy; // NOTE: Temporary hack
 }
 
+// TODO: May be useful to have the possibility to inspect itself, the 
+// property view item and popup item inserted into the context, rather than only 
+// supporting to inspect the original layout context content.
+// We could add -setShouldInspectItself: and -shouldInspectItself...
 - (BOOL) shouldInspectRepresentedObjectAsView;
 - (void) setShouldInspectRepresentedObjectAsView: (BOOL)flag; 
 - (ETLayoutItem *) inspectedItem;

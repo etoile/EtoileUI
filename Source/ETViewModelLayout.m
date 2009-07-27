@@ -93,7 +93,8 @@ DEALLOC(DESTROY(_mirrorCache))
 	[layout setContentFont: [NSFont controlContentFontOfSize: [NSFont smallSystemFontSize]]];
 	[layout setDisplayName: @"Value" forProperty: @"value"];
 	[layout setDisplayName: @"Property" forProperty: @"property"];
-	[layout setDisplayName: @"Content" forProperty: @"content"];
+	[layout setDisplayName: @"Identifier" forProperty: @"identifier"];
+	[layout setDisplayName: @"Description" forProperty: @"description"];
 	[layout setDisplayName: @"Name" forProperty: @"name"];
 	[layout setDisplayName: @"Type" forProperty: @"typeName"];
 	[layout setEditable: YES forProperty: @"value"];
@@ -132,19 +133,31 @@ active. */
 	[self setDisplayMode: ETLayoutDisplayModeViewProperties];
 }
 
+/* Temporary hack. ETCompositeLayout needs to be reworked to support using an 
+invisible first presentation item transparently. */
+- (ETLayoutItemGroup *) presentationProxyWithContext: (id)layoutCtxt
+{
+	if (presentationProxy != nil)
+		return presentationProxy;
+
+	NSArray *items = [layoutCtxt defaultValueForProperty: @"items"];
+	ASSIGN(presentationProxy, [[ETUIItemFactory factory] itemGroupWithItems: items]);
+	return presentationProxy;
+}
+
 /** Returns the item inspected as a view and whose represented object is 
 inspected as model. */
 - (ETLayoutItem *) inspectedItem
 {
-	ETLayoutItem *contextItem = (ETLayoutItem *)[self layoutContext];
+	ETLayoutItem *contentProxyItem = [self presentationProxyWithContext: [self layoutContext]];
 
 	if ([self shouldInspectRepresentedObjectAsView] 
-	 && [contextItem isMetaLayoutItem])
+	 && [contentProxyItem isMetaLayoutItem])
 	{
-		contextItem = [contextItem representedObject];
+		contentProxyItem = [contentProxyItem representedObject];
 	}
 
-	return contextItem;
+	return contentProxyItem;
 }
 
 /** Returns whether the receiver should try to inspect the represented object of 
@@ -188,6 +201,15 @@ being returned. */
 	return mirror;
 }
 
+- (void) makeContentProviderWithObject: (id)anObject
+{
+	id <ETCollection> collection = ([anObject isCollection] ? anObject : nil);
+
+	[propertyViewItem setRepresentedObject: collection];
+	[propertyViewItem setSource: propertyViewItem];
+	[[propertyViewItem layout] setDisplayedProperties: A(@"identifier", @"description")];
+}
+
 - (void) makeMirrorProviderWithObject: (id)anObject
 {
 	[propertyViewItem setRepresentedObject: [self cachedMirrorForObject: anObject]];
@@ -227,17 +249,22 @@ And which perspective is taken to inspect it:
 	// TODO: Implement -selectItemItemWithTag: in GNUstep
 	[popup selectItemAtIndex: [popup indexOfItemWithTag: mode]];
 	
-	if (mode == ETLayoutDisplayModeViewObject)
+	switch (mode)
 	{
-		[self makeMirrorProviderWithObject: [self inspectedItem]];
-	}
-	else if (mode == ETLayoutDisplayModeModelObject)
-	{
-		[self makeMirrorProviderWithObject:[[self inspectedItem] representedObject]];
-	}
-	else
-	{
-		[self resetProvider];
+		case ETLayoutDisplayModeViewObject:
+			[self makeMirrorProviderWithObject: [self inspectedItem]];
+			break;
+		case ETLayoutDisplayModeModelObject:
+			[self makeMirrorProviderWithObject: [[self inspectedItem] representedObject]];
+			break;
+		case ETLayoutDisplayModeViewContent:
+			[self makeContentProviderWithObject: [self inspectedItem]];
+			break;
+		case ETLayoutDisplayModeModelContent:
+			[self makeContentProviderWithObject: [[self inspectedItem] representedObject]];
+			break;
+		default:
+			[self resetProvider];
 	}
 
 	[propertyViewItem reloadAndUpdateLayout];
@@ -284,6 +311,8 @@ You must never use this method. */
 			[[ivarMirror value] explore: nil];
 			break;
 		}
+		default:
+			ASSERT_INVALID_CASE;
 	}
 }
 
@@ -318,16 +347,6 @@ You must never use this method. */
 	else if ([self displayMode] == ETLayoutDisplayModeModelProperties)
 	{
 		nbOfItems = [[inspectedModel properties] count];
-	}
-	else if ([self displayMode] == ETLayoutDisplayModeViewContent)
-	{
-		if ([inspectedItem isCollection])
-			nbOfItems = [[(id <ETCollection>)inspectedItem contentArray] count];
-	}
-	else if ([self displayMode] == ETLayoutDisplayModeModelContent)
-	{
-		if ([inspectedModel isCollection])
-			nbOfItems = [[inspectedModel contentArray] count];
 	}
 	else
 	{
@@ -379,30 +398,6 @@ You must never use this method. */
 		[propertyItem setValue: property forProperty: @"property"];
 		[propertyItem setValue: [inspectedModel valueForProperty: property] forProperty: @"value"];
 	}
-	else if ([self displayMode] == ETLayoutDisplayModeViewContent)
-	{
-		NSAssert2([inspectedItem isCollection], 
-			@"Inspected item %@ must conform to protocol ETCollection "
-			@"since -numberOfItemsInItemGroup: returned a non-zero value in %@",
-			inspectedItem, self);
-
-		ETLayoutItem *child = [[(id <ETCollection>)inspectedItem contentArray] objectAtIndex: index];
-
-		[propertyItem setValue: [NSNumber numberWithInt: index] forProperty: @"content"];
-		[propertyItem setValue: child forProperty: @"value"];
-	}
-	else if ([self displayMode] == ETLayoutDisplayModeModelContent)
-	{
-		NSAssert2([inspectedModel isCollection], 
-			@"Inspected model %@ must conform to protocol ETCollection "
-			@"since -numberOfItemsInItemGroup: returned a non-zero value in %@",
-			inspectedModel, self);
-			
-		id child = [[(id <ETCollection>)inspectedModel contentArray] objectAtIndex: index];
-
-		[propertyItem setValue: [NSNumber numberWithInt: index] forProperty: @"content"];
-		[propertyItem setValue: child forProperty: @"value"];
-	}
 	else
 	{
 		ETLog(@"WARNING: Unknown display mode %d in -itemGroup:itemAtIndex: "
@@ -427,6 +422,8 @@ You must never use this method. */
 		case ETLayoutDisplayModeViewContent:
 		case ETLayoutDisplayModeModelContent:
 			displayedProperties = A(@"content", @"value");
+			break;
+		default:
 			break;
 	}
 	
