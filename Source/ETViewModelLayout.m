@@ -1,38 +1,9 @@
-/*  <title>ETViewModelLayout</title>
-
-	ETViewModelLayout.m
-	
-	<abstract>A property inspector implemented as a pluggable layout which 
-	supports introspecting an object as both view and model.</abstract>
- 
+/*
 	Copyright (C) 2007 Quentin Mathe
- 
+
 	Author:  Quentin Mathe <qmathe@club-internet.fr>
 	Date:  December 2007
- 
-	Redistribution and use in source and binary forms, with or without
-	modification, are permitted provided that the following conditions are met:
-
-	* Redistributions of source code must retain the above copyright notice,
-	  this list of conditions and the following disclaimer.
-	* Redistributions in binary form must reproduce the above copyright notice,
-	  this list of conditions and the following disclaimer in the documentation
-	  and/or other materials provided with the distribution.
-	* Neither the name of the Etoile project nor the names of its contributors
-	  may be used to endorse or promote products derived from this software
-	  without specific prior written permission.
-
-	THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
-	AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
-	IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
-	ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE
-	LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
-	CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
-	SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
-	INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
-	CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
-	ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
-	THE POSSIBILITY OF SUCH DAMAGE.
+	License:  Modified BSD  (see COPYING)
  */
 
 #import <EtoileFoundation/Macros.h>
@@ -48,7 +19,7 @@
 #import "ETCompatibility.h"
 #import "NSObject+EtoileUI.h"
 
-@implementation ETInstanceVariable (TraversableIvars)
+@implementation ETInstanceVariableMirror (TraversableIvars)
 
 - (BOOL) isCollection
 {
@@ -67,17 +38,17 @@
 	if ([self isObjectType] == NO)
 		return NO;
 
-	return ([[[self value] instanceVariables] count] == 0);
+	return ([[[self valueMirror] allInstanceVariableMirrors] count] == 0);
 }
 
 - (id) content
 {
-	return [[self value] instanceVariables];
+	return [self contentArray];
 }
 
 - (NSArray *) contentArray
 {
-	return [[self value] instanceVariables];
+	return [[self valueMirror] allInstanceVariableMirrors];
 }
 
 - (NSEnumerator *) objectEnumerator
@@ -103,9 +74,13 @@
 	/* Don't set these in -awakeFromNib otherwise ETCompositeLayout initializer
 	   will erase them */
 	[self setRootItem: [[ETEtoileUIBuilder builder] renderView: [propertyView superview]]];
+	ASSIGN(propertyViewItem, [propertyView layoutItem]);
+	ASSIGN(_mirrorCache, [NSMapTable mapTableWithStrongToStrongObjects]);
 
 	return self;
 }
+
+DEALLOC(DESTROY(_mirrorCache))
 
 - (void) awakeFromNib
 {
@@ -129,14 +104,19 @@
 	[propertyView setTarget: self];
 	[propertyView setHasVerticalScroller: YES];
 	[propertyView setHasHorizontalScroller: YES];
-
-	/* Finish init */
-	[self setDisplayMode: ETLayoutDisplayModeViewProperties];
 }
 
 - (NSString *) nibName
 {
 	return @"ViewModelPrototype";
+}
+
+/* Reloads and updates the property view layout when ETViewModelLayout becomes 
+active. */
+- (void) setUp
+{
+	[super setUp];
+	[self setDisplayMode: ETLayoutDisplayModeViewProperties];
 }
 
 /** Returns the item inspected as a view and whose represented object is 
@@ -178,6 +158,36 @@ See also -shouldInspectRepresentedObjectAsView. */
 	_shouldInspectRepresentedObjectAsView = flag;
 }
 
+/** Returns the mirror object that corresponds to the given object.
+
+When the mirror isn't yet cached, it is created and immediately cached, before 
+being returned. */
+- (id <ETObjectMirror>) cachedMirrorForObject: (id)anObject
+{
+	id <ETObjectMirror> mirror = [_mirrorCache objectForKey: anObject];
+
+	if (mirror == nil)
+	{
+		mirror = [ETReflection reflectObject: anObject];
+		[_mirrorCache setObject: mirror forKey: anObject];
+	}
+
+	return mirror;
+}
+
+- (void) makeMirrorProviderWithObject: (id)anObject
+{
+	[propertyViewItem setRepresentedObject: [self cachedMirrorForObject: anObject]];
+	[propertyViewItem setSource: propertyViewItem];
+	[[propertyViewItem layout] setDisplayedProperties: A(@"name", @"typeName", @"value")];
+}
+
+- (void) resetProvider
+{
+	[propertyViewItem setRepresentedObject: nil];
+	[propertyViewItem setSource: self];
+}
+
 /** Returns the active display mode. */ 
 - (ETLayoutDisplayMode) displayMode
 {
@@ -203,7 +213,21 @@ And which perspective is taken to inspect it:
 	_displayMode = mode;
 	// TODO: Implement -selectItemItemWithTag: in GNUstep
 	[popup selectItemAtIndex: [popup indexOfItemWithTag: mode]];
-	[propertyView reloadAndUpdateLayout];
+	
+	if (mode == ETLayoutDisplayModeViewObject)
+	{
+		[self makeMirrorProviderWithObject: [self inspectedItem]];
+	}
+	else if (mode == ETLayoutDisplayModeModelObject)
+	{
+		[self makeMirrorProviderWithObject:[[self inspectedItem] representedObject]];
+	}
+	else
+	{
+		[self resetProvider];
+	}
+
+	[propertyViewItem reloadAndUpdateLayout];
 }
 
 /** Action used by the receiver to switch the display mode when the user changes 
@@ -218,62 +242,39 @@ You must never use this method. */
 	[self setDisplayMode: [[sender selectedItem] tag]];
 }
 
-- (void) renderWithLayoutItems: (NSArray *)items isNewContent: (BOOL)isNewContent
-{
-	if ([_layoutContext supervisorView] == nil)
-	{
-		ETLog(@"WARNING: Layout context %@ must have a container otherwise "
-			@"view-based layout %@ cannot be set", _layoutContext, self);
-		return;
-	}
-
-	[propertyView reloadAndUpdateLayout];
-}
-
 - (void) doubleClickInPropertyView: (id)sender
 {
-	ETLayoutItem *item = [[(ETLayoutItemGroup *)[propertyView layoutItem] items] objectAtIndex: [propertyView selectionIndex]];
-	[[[item representedObject] value] explore: nil];
+	ETLayoutItem *clickedItem = [propertyViewItem doubleClickedItem];
+
+	switch ([self displayMode])
+	{
+		case ETLayoutDisplayModeViewProperties:
+		case ETLayoutDisplayModeModelProperties:
+		{
+			// TODO: Should probably be... ETProperty property = repObject;
+			ETProperty *property = [clickedItem valueForProperty: @"value"];
+			[[property objectValue] explore: nil];
+			break;
+		}
+		case ETLayoutDisplayModeViewContent:
+		case ETLayoutDisplayModeModelContent:
+		{
+			// TODO: Should probably be... ETLayoutItem *childItem = repObject;
+			ETLayoutItem *childItem = [clickedItem valueForProperty: @"value"];
+			[childItem explore: nil];
+			break;
+		}
+		case ETLayoutDisplayModeViewObject:
+		case ETLayoutDisplayModeModelObject:
+		{
+			id ivarMirror = [clickedItem representedObject];
+			[[ivarMirror value] explore: nil];
+			break;
+		}
+	}
 }
 
 /* Object Inspection */
-
-- (ETLayoutItem *) object: (id)inspectedObject itemRepresentingSlotAtIndex: (int)index
-{
-	if (inspectedObject == nil)
-		return nil;
-
-	NSArray *ivars = [inspectedObject instanceVariables];
-	NSArray *methods = [NSArray array]; // FIXME: This is very slow: [inspectedObject methods];
-	NSArray *slots = [[NSArray arrayWithArray: ivars] 
-				arrayByAddingObjectsFromArray: methods];
-	id slot = [slots objectAtIndex: index];
-	ETLayoutItem *propertyItem = nil;
-
-	if ([slot isKindOfClass: [ETInstanceVariable class]] && [slot isObjectType])
-	{
-		propertyItem = [ETLayoutItem itemGroupWithRepresentedObject: slot];
-	}
-	else
-	{
-		propertyItem = [ETLayoutItem itemWithRepresentedObject: slot];
-	}
-	
-	return propertyItem;
-}
-
-- (int) numberOfSlotsInObject: (id)inspectedObject
-{
-	if (inspectedObject == nil)
-		return 0;
-		
-	NSArray *ivars = [inspectedObject instanceVariables];
-	NSArray *methods = [NSArray array];// FIXME: This is very slow: [inspectedObject methods];
-	NSArray *slots = [[NSArray arrayWithArray: ivars] 
-				arrayByAddingObjectsFromArray: methods];
-	
-	return [slots count];
-}
 
 - (int) numberOfItemsInItemGroup: (ETLayoutItemGroup *)baseItem
 {
@@ -314,14 +315,6 @@ You must never use this method. */
 	{
 		if ([inspectedModel isCollection])
 			nbOfItems = [[inspectedModel contentArray] count];
-	}
-	else if ([self displayMode] == ETLayoutDisplayModeViewObject)
-	{
-		nbOfItems = [self numberOfSlotsInObject: inspectedItem];
-	}
-	else if ([self displayMode] == ETLayoutDisplayModeModelObject)
-	{
-		nbOfItems = [self numberOfSlotsInObject: inspectedModel];
 	}
 	else
 	{
@@ -397,14 +390,6 @@ You must never use this method. */
 		[propertyItem setValue: [NSNumber numberWithInt: index] forProperty: @"content"];
 		[propertyItem setValue: child forProperty: @"value"];
 	}
-	else if ([self displayMode] == ETLayoutDisplayModeViewObject)
-	{
-		propertyItem = [self object: inspectedItem itemRepresentingSlotAtIndex: index];
-	}
-	else if ([self displayMode] == ETLayoutDisplayModeModelObject)
-	{
-		propertyItem = [self object: inspectedModel itemRepresentingSlotAtIndex: index];
-	}
 	else
 	{
 		ETLog(@"WARNING: Unknown display mode %d in -itemGroup:itemAtIndex: "
@@ -429,10 +414,6 @@ You must never use this method. */
 		case ETLayoutDisplayModeViewContent:
 		case ETLayoutDisplayModeModelContent:
 			displayedProperties = A(@"content", @"value");
-			break;
-		case ETLayoutDisplayModeViewObject:
-		case ETLayoutDisplayModeModelObject:
-			displayedProperties = A(@"name", @"typeName", @"value");
 			break;
 	}
 	
