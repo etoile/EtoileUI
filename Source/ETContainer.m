@@ -57,18 +57,18 @@
 
 @implementation ETContainer
 
-- (id) initWithFrame: (NSRect)rect layoutItem: (ETLayoutItem *)item
+- (id) initWithFrame: (NSRect)rect layoutItem: (ETLayoutItem *)anItem
 {
-	if (item != nil && [item isGroup] == NO)
+	if (anItem != nil && [anItem isGroup] == NO)
 	{
 		[NSException raise: NSInvalidArgumentException format: @"Layout item "
 			@"parameter %@ must be of class ETLayoutItemGroup for initializing "
-			@"an ETContainer instance", item];
+			@"an ETContainer instance", anItem];
 	}
 
 	/* Before all, bind layout item group representing the container */
 
-	ETLayoutItemGroup *itemGroup = (ETLayoutItemGroup *)item;
+	ETLayoutItemGroup *itemGroup = (ETLayoutItemGroup *)anItem;
 	
 	if (itemGroup == nil)
 		itemGroup = AUTORELEASE([[ETLayoutItemGroup alloc] init]);
@@ -107,8 +107,8 @@
 	but -[ETView copy] doesn't. */
 - (id) deepCopy
 {
-	id item = [[self layoutItem] deepCopy];
-	id container = [item supervisorView];
+	id newItem = [[self layoutItem] deepCopy];
+	id container = [newItem supervisorView];
 	
 	// TODO: Finish to implement...
 	// NSAssert3([container isKindOfClass: [ETContainer class]], 
@@ -219,21 +219,21 @@
 /*  Manipulating Layout Item Tree */
 
 /** See -[ETLayoutItemGroup addItem:] */
-- (void) addItem: (ETLayoutItem *)item
+- (void) addItem: (ETLayoutItem *)anItem
 {
-	[(ETLayoutItemGroup *)[self layoutItem] addItem: item];
+	[(ETLayoutItemGroup *)[self layoutItem] addItem: anItem];
 }
 
 /** See -[ETLayoutItemGroup insertItem:atIndex:] */
-- (void) insertItem: (ETLayoutItem *)item atIndex: (int)index
+- (void) insertItem: (ETLayoutItem *)anItem atIndex: (int)index
 {
-	[(ETLayoutItemGroup *)[self layoutItem] insertItem: item atIndex: index];
+	[(ETLayoutItemGroup *)[self layoutItem] insertItem: anItem atIndex: index];
 }
 
 /** See -[ETLayoutItemGroup removeItem:] */
-- (void) removeItem: (ETLayoutItem *)item
+- (void) removeItem: (ETLayoutItem *)anItem
 {
-	[(ETLayoutItemGroup *)[self layoutItem] removeItem: item];
+	[(ETLayoutItemGroup *)[self layoutItem] removeItem: anItem];
 }
 
 /** See -[ETLayoutItemGroup removeItem:atIndex:] */
@@ -267,15 +267,15 @@
 }
 
 /** See -[ETLayoutItemGroup indexOfItem:] */
-- (int) indexOfItem: (ETLayoutItem *)item
+- (int) indexOfItem: (ETLayoutItem *)anItem
 {
-	return [(ETLayoutItemGroup *)[self layoutItem] indexOfItem: item];
+	return [(ETLayoutItemGroup *)[self layoutItem] indexOfItem: anItem];
 }
 
 /** See -[ETLayoutItemGroup containsItem:] */
-- (BOOL) containsItem: (ETLayoutItem *)item
+- (BOOL) containsItem: (ETLayoutItem *)anItem
 {
-	return [(ETLayoutItemGroup *)[self layoutItem] containsItem: item];
+	return [(ETLayoutItemGroup *)[self layoutItem] containsItem: anItem];
 }
 
 /** See -[ETLayoutItemGroup numberOfItems] */

@@ -105,15 +105,15 @@ For additional notes, see also -setHasVerticalScroller:. */
 
 @implementation ETScrollView : ETView
 
-- (id) initWithFrame: (NSRect)frame layoutItem: (ETLayoutItem *)item
+- (id) initWithFrame: (NSRect)frame layoutItem: (ETLayoutItem *)anItem
 {
 	return [self initWithMainView: AUTORELEASE([[NSScrollView alloc] initWithFrame: frame]) 
-	                   layoutItem: item];
+	                   layoutItem: anItem];
 }
 
-- (id) initWithMainView: (id)aScrollView layoutItem: (ETLayoutItem *)item
+- (id) initWithMainView: (id)aScrollView layoutItem: (ETLayoutItem *)anItem
 {
-	ETLayoutItem *newItem = item;
+	ETLayoutItem *newItem = anItem;
 	NSScrollView *scrollView = aScrollView;
 
 	if (newItem == nil)

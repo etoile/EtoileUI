@@ -97,7 +97,7 @@
 
 @interface ETView : NSView
 {
-	ETLayoutItem *_layoutItem;
+	IBOutlet ETLayoutItem *item;
 	// NOTE: May be remove the view ivars to make the class more lightweight
 	NSView *_titleBarView;
 	NSView *_wrappedView;
@@ -131,8 +131,10 @@
 
 /* Basic Accessors */
 
+// TODO: Rename -layoutItem to -item. Will be done separately because it is a 
+// pretty big change which needs to be handled very carefully.
 - (id) layoutItem;
-- (void) setLayoutItem: (ETLayoutItem *)item;
+- (void) setItem: (ETUIItem *)item;
 - (void) setLayoutItemWithoutInsertingView: (ETLayoutItem *)item;
 - (BOOL) isFlipped;
 - (void) setFlipped: (BOOL)flag;

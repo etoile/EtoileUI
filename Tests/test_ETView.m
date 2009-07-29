@@ -307,23 +307,23 @@
 
 - (void) testSetLayoutItem
 {
-	id item = [ETLayoutItem item];
+	id theItem = [ETLayoutItem item];
 	
-	[self setLayoutItem: item];
+	[self setItem: theItem];
 
 	[self testLayoutItem];
-	UKObjectsSame(item, [self layoutItem]);
+	UKObjectsSame(theItem, [self layoutItem]);
 }
 
 - (void) testSetLayoutItemWithoutInsertingView
 {
-	id item = [ETLayoutItem item];
+	id theItem = [ETLayoutItem item];
 	
-	[self setLayoutItemWithoutInsertingView: item];
+	[self setLayoutItemWithoutInsertingView: theItem];
 	
 	UKNotNil([self layoutItem]);
-	UKObjectsSame(item, [self layoutItem]);
-	UKNil([item view]);
+	UKObjectsSame(theItem, [self layoutItem]);
+	UKNil([theItem view]);
 }
 
 - (void) testSetDisclosable

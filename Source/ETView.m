@@ -138,7 +138,7 @@ The returned view uses the item autoresizing mask (see
 -[ETLayoutItem autoresizingMask]).
 
 See also -[ETUIItem supervisorView]. */
-- (id) initWithFrame: (NSRect)frame layoutItem: (ETLayoutItem *)item
+- (id) initWithFrame: (NSRect)frame layoutItem: (ETLayoutItem *)anItem
 {
 	self = [super initWithFrame: frame];
 	
@@ -147,15 +147,15 @@ See also -[ETUIItem supervisorView]. */
 		/* In both cases, the item will be set by calling 
 		   -setLayoutItemWithoutInsertingView: that creates a retain cycle by
 		    retaining it. */
-		if (item != nil)
+		if (anItem != nil)
 		{
-			[self setLayoutItem: item];
+			[self setItem: anItem];
 		}
 		else
 		{
-			[self setLayoutItem: [[ETLayoutItem alloc] init]];
+			[self setItem: [[ETLayoutItem alloc] init]];
 			/* In -setLayoutItem:, -setSupervisorView: has called back 
-			   -setLayoutItemWithoutInsertingView: which retained _layoutItem, 
+			   -setLayoutItemWithoutInsertingView: which retained item, 
 			   so we release it.
 
 			   In any cases, we avoid to call +layoutItem (and eliminate the 
@@ -166,7 +166,7 @@ See also -[ETUIItem supervisorView]. */
 			   will dealloc the layout item immediately and won't delay it until 
 			   the autorelease pool is deallocated.
 			 */
-			RELEASE(_layoutItem);
+			RELEASE(anItem);
 		}
 		[self setTitleBarView: nil]; /* Sets up a +titleBarViewPrototype clone */
 		[self setDisclosable: NO];
@@ -199,7 +199,7 @@ See also -[ETUIItem supervisorView]. */
 
 - (oneway void) release
 {
-	BOOL hasRetainCycle = (_layoutItem != nil);
+	BOOL hasRetainCycle = (item != nil);
 	/* Memorize whether the next release call will deallocate the receiver, 
 	   because once the receiver is deallocated you have no way to safely learn 
 	   if self is still valid or not.
@@ -216,7 +216,7 @@ See also -[ETUIItem supervisorView]. */
 #endif
 
 	/* Exit if we just got deallocated above. 
-	   In that case, self and _layoutItem are now both deallocated and invalid 
+	   In that case, self and item are now both deallocated and invalid 
 	   and we must never use them (by sending a message for example). */
 	BOOL isDeallocated = (refCountWas == 0);
 	if (isDeallocated)
@@ -224,20 +224,20 @@ See also -[ETUIItem supervisorView]. */
 
 	/* Tear down the retain cycle owned by the layout item.
 	   If we are only retained by our layout item which is also retained only 
-	   by us, DESTROY(_layoutItem) will call -[ETLayoutItem dealloc] which in 
+	   by us, DESTROY(item) will call -[ETLayoutItem dealloc] which in 
 	   turn will call back -[ETView release] and result this time in our 
 	   deallocation. */	
 	BOOL isGarbageCycle = (hasRetainCycle 
-		&& NSExtraRefCount(self) == 0 && NSExtraRefCount(_layoutItem) == 0);
+		&& NSExtraRefCount(self) == 0 && NSExtraRefCount(item) == 0);
 	if (isGarbageCycle)
-		DESTROY(_layoutItem);
+		DESTROY(item);
 }
 
 - (void) dealloc
 {
 	[NC removeObserver: self];
 
-	// NOTE: _layoutItem (our owner) is destroyed by -release and _temporaryView
+	// NOTE: item (our owner) is destroyed by -release and _temporaryView
 	// is a weak reference
 	DESTROY(_wrappedView);
 	DESTROY(_titleBarView);
@@ -319,10 +319,10 @@ A temporary view set on the receiver won't be copied.  */
 {
 	// NOTE: We must use -primitiveDescription not to enter an infinite loop
 	// with -description calling -layoutItem
-	/*NSAssert1(_layoutItem != nil, @"Layout item of %@ must never be nil", [self primitiveDescription]);*/
-	if (_layoutItem == nil)
+	/*NSAssert1(item != nil, @"Layout item of %@ must never be nil", [self primitiveDescription]);*/
+	if (item == nil)
 		ETLog(@"Layout item of %@ must never be nil", [self primitiveDescription]);
-	return _layoutItem;
+	return item;
 }
 
 /** Sets the layout item representing the receiver view in the layout item
@@ -331,20 +331,20 @@ A temporary view set on the receiver won't be copied.  */
 	a new layout item to a view, you may move the view to a different place in
 	the view hierarchy.
 	Throws an exception when item parameter is nil. */
-- (void) setLayoutItem: (ETLayoutItem *)item
+- (void) setItem: (ETUIItem *)anItem
 {
-	[item setSupervisorView: self];
+	[anItem setSupervisorView: self];
 }
 
 /** You should never need to call this method. */
-- (void) setLayoutItemWithoutInsertingView: (ETLayoutItem *)item
+- (void) setLayoutItemWithoutInsertingView: (ETLayoutItem *)anItem
 {	
-	if (item == nil)
+	if (anItem == nil)
 	{
 		[NSException raise: NSInvalidArgumentException format: @"For ETView, "
-			@"-setLayoutItem: parameter %@ must be never be nil", item];
+			@"-setLayoutItem: parameter %@ must be never be nil", anItem];
 	}	
-	ASSIGN(_layoutItem, item); // NOTE: Retain cycle (see -release)
+	ASSIGN(item, anItem); // NOTE: Retain cycle (see -release)
 }
 
 /** Returns whether the receiver uses flipped coordinates or not.
@@ -708,16 +708,16 @@ NSAssert1(size.width >= 0 && size.height >= 0, @"For a supervisor view, the " \
 	CHECKSIZE(frame.size)
 	[super setFrame: frame];
 
-	if ([_layoutItem shouldSyncSupervisorViewGeometry] == NO)
+	if ([item shouldSyncSupervisorViewGeometry] == NO)
 		return;
 
-	if ([_layoutItem decoratorItem] == nil)
+	if ([item decoratorItem] == nil)
 	{
-		[_layoutItem setFrame: frame];
+		[item setFrame: frame];
 	}
 	else
 	{
-		[_layoutItem setContentSize: frame.size];
+		[item setContentSize: frame.size];
 	}
 }
 
@@ -729,28 +729,28 @@ NSAssert1(size.width >= 0 && size.height >= 0, @"For a supervisor view, the " \
 {
 	CHECKSIZE(size)
 	[super setFrameSize: size];
-	if ([_layoutItem shouldSyncSupervisorViewGeometry] == NO)
+	if ([item shouldSyncSupervisorViewGeometry] == NO)
 		return;
 
-	if ([_layoutItem decoratorItem] == nil)
+	if ([item decoratorItem] == nil)
 	{
-		[_layoutItem setSize: size];
+		[item setSize: size];
 	}
 	else
 	{
-		[_layoutItem setContentSize: size];
+		[item setContentSize: size];
 	}
 }
 
 - (void) setFrameOrigin: (NSPoint)origin
 {
 	[super setFrameOrigin: origin];
-	if ([_layoutItem shouldSyncSupervisorViewGeometry] == NO)
+	if ([item shouldSyncSupervisorViewGeometry] == NO)
 		return;
 
-	if ([_layoutItem decoratorItem] == nil)
+	if ([item decoratorItem] == nil)
 	{
-		[_layoutItem setOrigin: origin];
+		[item setOrigin: origin];
 	}
 }
 #endif
@@ -832,7 +832,7 @@ Layout items are smart enough to avoid drawing their view when they have one. */
 
 	/* We always composite the rendering chain on top of each view -drawRect: 
 	   drawing sequence (triggered by display-like methods). */
-	[_layoutItem render: nil dirtyRect: rect inContext: nil];
+	[item render: nil dirtyRect: rect inContext: nil];
 }
 
 #else
@@ -895,7 +895,7 @@ GNUstep and pass it to the layout item tree as needed. */
 
 	/* We always composite the rendering chain on top of each view -drawRect: 
 	   drawing sequence (triggered by display-like methods). */
-	[_layoutItem render: nil dirtyRect: aRect inContext: nil];
+	[item render: nil dirtyRect: aRect inContext: nil];
 
 	[self unlockFocus];
 }
@@ -945,7 +945,7 @@ Cocoa and pass it to the layout item tree as needed. */
 
 	/* We always composite the rendering chain on top of each view -drawRect: 
 	   drawing sequence (triggered by display-like methods). */
-	[_layoutItem render: nil dirtyRect: _rectToRedraw inContext: nil];
+	[item render: nil dirtyRect: _rectToRedraw inContext: nil];
 
 	if (lockFocus == YES)
 	{
@@ -989,7 +989,7 @@ Cocoa and pass it to the layout item tree as needed. */
 
 		/* We always composite the rendering chain on top of each view -drawRect: 
 		   drawing sequence (triggered by display-like methods). */
-		[_layoutItem render: nil dirtyRect: _rectToRedraw inContext: nil];
+		[item render: nil dirtyRect: _rectToRedraw inContext: nil];
 
 		[self unlockFocus];
 		[[self window] flushWindow];
@@ -1022,7 +1022,7 @@ Cocoa and pass it to the layout item tree as needed. */
 
 	/* We always composite the rendering chain on top of each view -drawRect: 
 	   drawing sequence (triggered by display-like methods). */
-	[_layoutItem render: nil dirtyRect: [self bounds] inContext: nil];
+	[item render: nil dirtyRect: [self bounds] inContext: nil];
 
 	//if (lockFocus == YES)
 		[self unlockFocus];
