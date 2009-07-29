@@ -133,6 +133,13 @@ active. */
 	[self setDisplayMode: ETLayoutDisplayModeViewProperties];
 }
 
+/* Prevents a scrollable area item to be visible on the layout context, because 
+the property view item is scrollable. */
+- (BOOL) isScrollable
+{
+	return NO;
+}
+
 /* Temporary hack. ETCompositeLayout needs to be reworked to support using an 
 invisible first presentation item transparently. */
 - (ETLayoutItemGroup *) presentationProxyWithContext: (id)layoutCtxt
