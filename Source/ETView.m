@@ -166,7 +166,7 @@ See also -[ETUIItem supervisorView]. */
 			   will dealloc the layout item immediately and won't delay it until 
 			   the autorelease pool is deallocated.
 			 */
-			RELEASE(anItem);
+			RELEASE(item);
 		}
 		[self setTitleBarView: nil]; /* Sets up a +titleBarViewPrototype clone */
 		[self setDisclosable: NO];
