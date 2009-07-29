@@ -303,8 +303,9 @@
 	
 	if ([self browsedObject] != nil)
 	{
-		displayName = [displayName append: @" - "];
-		displayName = [displayName append: [[self browsedObject] displayName]];
+		displayName = [displayName stringByAppendingString: @" - "];
+		displayName = [displayName stringByAppendingString: 
+			[[self browsedObject] displayName]];
 	}
 	
 	return displayName;

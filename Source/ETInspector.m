@@ -333,7 +333,7 @@
 	[self setRepresentedObject: inspectedItem];
 	
 	if ([name length] > 25)
-		name = [[name substringToIndex: 25] append: @"…"];
+		name = [[name substringToIndex: 25] stringByAppendingString: @"…"];
 	inspectorTitle = [NSString stringWithFormat: @"%@ (M%d UI)", name,
 		[self UIMetalayer]];
 	[[self window] setTitle: inspectorTitle];
