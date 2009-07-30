@@ -59,6 +59,7 @@
 
 - (ETWindowItem *) itemWithWindow: (NSWindow *)window;
 - (ETWindowItem *) fullScreenWindow;
+- (ETWindowItem *) transparentFullScreenWindow;
 
 /* Layer Factory Methods */
 

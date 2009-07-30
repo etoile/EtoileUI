@@ -330,6 +330,23 @@ The concrete window class used is ETFullScreenWindow. */
 	return window;
 }
 
+/** Returns a new window item to which a fullscreen concrete window gets bound.
+ This window has a transparent background.
+ 
+ The returned item can be used as a decorator to make an existing layout item 
+ full screen. 
+ 
+ The concrete window class used is ETFullScreenWindow. */
+- (ETWindowItem *) transparentFullScreenWindow
+{
+	NSWindow *window = AUTORELEASE([[ETFullScreenWindow alloc] init]);
+	[window setOpaque: NO];
+	[window setBackgroundColor: [NSColor clearColor]];
+	ETWindowItem *windowItem = [self itemWithWindow: window];
+	[windowItem setShouldKeepWindowFrame: YES];
+	return windowItem;
+}
+
 /* Layer Factory Methods */
 
 /** Returns a new blank layer. 
