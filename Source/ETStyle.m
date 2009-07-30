@@ -428,3 +428,101 @@ indicatorRect is equal to it. */
 }
 
 @end
+
+
+@implementation ETShadowStyle
+
++ (id) shadowWithStyle: (ETStyle *)style
+{
+	return [[[ETShadowStyle alloc] initWithStyle: style] autorelease];
+}
+
+- (id) initWithStyle: (ETStyle *)style
+{
+	SUPERINIT;
+	ASSIGN(_content, style);
+	// FIXME: implement on GNUstep
+#ifndef GNUSTEP
+	_shadow = [[NSShadow alloc] init];
+	[_shadow setShadowOffset: NSMakeSize(4.0, -4.0)];
+	[_shadow setShadowColor: [NSColor blackColor]];
+	[_shadow setShadowBlurRadius: 5.0];
+#endif
+	return self;
+}
+
+- (void) render: (NSMutableDictionary *)inputValues 
+     layoutItem: (ETLayoutItem *)item 
+	  dirtyRect: (NSRect)dirtyRect
+{
+	// FIXME: This will usually draw outside of item's frame..
+	//        A shadow should increase the size of the item's frame.
+	//        Maybe the shadow style should be a decorator item instead?
+	[NSGraphicsContext saveGraphicsState];
+	[_shadow set];
+	[_content render: inputValues layoutItem: item dirtyRect: dirtyRect];
+	[NSGraphicsContext restoreGraphicsState];
+}
+
+- (void) didChangeItemBounds: (NSRect)bounds
+{
+	[_content didChangeItemBounds: bounds];
+	[super didChangeItemBounds: bounds];
+}
+
+@end
+
+
+
+@implementation ETTintStyle
+
++ (id) tintWithStyle: (ETStyle *)style color: (NSColor *)color
+{
+	ETTintStyle *tinit = [[[ETTintStyle alloc] initWithStyle: style] autorelease];
+	[tinit setColor: color];
+	return tint;
+}
+
++ (id) tintWithStyle: (ETStyle *)style
+{
+	return [[[ETTintStyle alloc] initWithStyle: style] autorelease];
+}
+
+- (id) initWithStyle: (ETStyle *)style
+{
+	SUPERINIT;
+	ASSIGN(_content, style);
+	_color = [[NSColor colorWithDeviceRed:0.005 green:0.0 blue:0.01 alpha:0.7] retain];
+	return self;
+}
+
+- (void) setColor: (NSColor *)color
+{
+	ASSIGN(_color, color);
+}
+
+- (NSColor *) color
+{
+	return _color;
+}
+
+- (void) render: (NSMutableDictionary *)inputValues 
+     layoutItem: (ETLayoutItem *)item 
+	  dirtyRect: (NSRect)dirtyRect
+{
+	[_content render: inputValues layoutItem: item dirtyRect: dirtyRect];
+	
+	[NSGraphicsContext saveGraphicsState];
+	[_color set];
+	NSRectFillUsingOperation([item drawingFrame], NSCompositeSourceOver);
+	[NSGraphicsContext restoreGraphicsState];
+}
+
+- (void) didChangeItemBounds: (NSRect)bounds
+{
+	[_content didChangeItemBounds: bounds];
+	[super didChangeItemBounds: bounds];
+}
+
+@end
+

@@ -130,3 +130,25 @@ a custom style object. */
 - (NSRect) currentIndicatorRect;
 
 @end
+
+@interface ETShadowStyle : ETStyle
+{
+	ETStyle *_content;
+	id _shadow;
+}
++ (id) shadowWithStyle: (ETStyle *)style;
+
+@end
+
+@interface ETTintStyle : ETStyle
+{
+	ETStyle *_content;
+	NSColor *_color;
+}
+
++ (id) tintWithStyle: (ETStyle *)style color: (NSColor *)color;
++ (id) tintWithStyle: (ETStyle *)style;
+- (void) setColor: (NSColor *)color;
+- (NSColor *) color;
+
+@end
