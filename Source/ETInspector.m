@@ -40,6 +40,7 @@
 #import <EtoileFoundation/NSIndexPath+Etoile.h>
 #import <EtoileFoundation/NSString+Etoile.h>
 #import <EtoileFoundation/ETCollection.h>
+#import <EtoileFoundation/ETPropertyViewpoint.h>
 #import <EtoileFoundation/Macros.h>
 #import <EtoileUI/ETLayoutItem+Reflection.h>
 #import "ETLayoutItem+Factory.h"

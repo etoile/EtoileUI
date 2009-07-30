@@ -8,6 +8,7 @@
 
 #import <EtoileFoundation/Macros.h>
 #import <EtoileFoundation/ETCollection.h>
+#import <EtoileFoundation/ETPropertyViewpoint.h>
 #import <EtoileFoundation/NSObject+Model.h>
 #import "ETViewModelLayout.h"
 #import "ETLayoutItemBuilder.h"
