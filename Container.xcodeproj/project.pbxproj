@@ -171,6 +171,7 @@
 		60364A0A0E40A560003377E0 /* ETContainer+EventHandling.m in Sources */ = {isa = PBXBuildFile; fileRef = 60364A020E40A560003377E0 /* ETContainer+EventHandling.m */; };
 		60364A0C0E40A560003377E0 /* ETLayoutItem+Factory.m in Sources */ = {isa = PBXBuildFile; fileRef = 60364A040E40A560003377E0 /* ETLayoutItem+Factory.m */; };
 		60364A0D0E40A560003377E0 /* ETLayoutItem+Reflection.m in Sources */ = {isa = PBXBuildFile; fileRef = 60364A050E40A560003377E0 /* ETLayoutItem+Reflection.m */; };
+		603812731021C51B00C221A2 /* TestString.m in Sources */ = {isa = PBXBuildFile; fileRef = 603812721021C51B00C221A2 /* TestString.m */; };
 		604A32C20F9BEE680090932A /* ETPickDropCoordinator.h in Headers */ = {isa = PBXBuildFile; fileRef = 604A32C10F9BEE680090932A /* ETPickDropCoordinator.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		604A32C50F9BEE780090932A /* ETPickDropCoordinator.m in Sources */ = {isa = PBXBuildFile; fileRef = 604A32C40F9BEE780090932A /* ETPickDropCoordinator.m */; };
 		604A32C60F9BEE780090932A /* ETPickDropCoordinator.m in Sources */ = {isa = PBXBuildFile; fileRef = 604A32C40F9BEE780090932A /* ETPickDropCoordinator.m */; };
@@ -646,6 +647,7 @@
 		60364A070E40A560003377E0 /* NSImage+NiceScaling.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = "NSImage+NiceScaling.m"; path = "Source/NSImage+NiceScaling.m"; sourceTree = "<group>"; };
 		60364A080E40A560003377E0 /* UKNibOwner.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = UKNibOwner.m; path = Source/UKNibOwner.m; sourceTree = "<group>"; };
 		60364A090E40A560003377E0 /* UKPluginsRegistry+Icons.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = "UKPluginsRegistry+Icons.m"; path = "Source/UKPluginsRegistry+Icons.m"; sourceTree = "<group>"; };
+		603812721021C51B00C221A2 /* TestString.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = TestString.m; path = ../EtoileFoundation/Source/TestString.m; sourceTree = SOURCE_ROOT; };
 		604A32C10F9BEE680090932A /* ETPickDropCoordinator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ETPickDropCoordinator.h; path = Headers/ETPickDropCoordinator.h; sourceTree = "<group>"; };
 		604A32C40F9BEE780090932A /* ETPickDropCoordinator.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ETPickDropCoordinator.m; path = Source/ETPickDropCoordinator.m; sourceTree = "<group>"; };
 		604B5C1B0F4B472E001C25E8 /* ETEventProcessor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ETEventProcessor.h; path = Headers/ETEventProcessor.h; sourceTree = "<group>"; };
@@ -1469,6 +1471,7 @@
 				60B27D730FF7B51D0012BB42 /* TestETCollectionHOM.m */,
 				60222D90101CCAAC00B2B1C1 /* TestEntityDescription.m */,
 				60222D8E101CCA9C00B2B1C1 /* TestReflection.m */,
+				603812721021C51B00C221A2 /* TestString.m */,
 				60B27D750FF7B54F0012BB42 /* TestUTI.m */,
 				603648130E40931E003377E0 /* TestUUID.m */,
 			);
@@ -2330,6 +2333,7 @@
 				60B27D7F0FF7B56C0012BB42 /* ETCollection+HOM.m in Sources */,
 				60222D8F101CCA9C00B2B1C1 /* TestReflection.m in Sources */,
 				60222D91101CCAAC00B2B1C1 /* TestEntityDescription.m in Sources */,
+				603812731021C51B00C221A2 /* TestString.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
