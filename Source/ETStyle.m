@@ -478,8 +478,8 @@ indicatorRect is equal to it. */
 
 + (id) tintWithStyle: (ETStyle *)style color: (NSColor *)color
 {
-	ETTintStyle *tinit = [[[ETTintStyle alloc] initWithStyle: style] autorelease];
-	[tinit setColor: color];
+	ETTintStyle *tint = [[[ETTintStyle alloc] initWithStyle: style] autorelease];
+	[tint setColor: color];
 	return tint;
 }
 

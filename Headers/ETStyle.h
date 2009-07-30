@@ -137,6 +137,7 @@ a custom style object. */
 	id _shadow;
 }
 + (id) shadowWithStyle: (ETStyle *)style;
+- (id) initWithStyle: (ETStyle *)style;
 
 @end
 
@@ -148,6 +149,7 @@ a custom style object. */
 
 + (id) tintWithStyle: (ETStyle *)style color: (NSColor *)color;
 + (id) tintWithStyle: (ETStyle *)style;
+- (id) initWithStyle: (ETStyle *)style;
 - (void) setColor: (NSColor *)color;
 - (NSColor *) color;
 
