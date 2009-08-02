@@ -50,6 +50,7 @@
 	[[NSNotificationCenter defaultCenter] removeObserver: self];
 	DESTROY(_contentItem);
 	DESTROY(_barItem);
+	DESTROY(_currentItem);
 	[super dealloc];
 }
 
