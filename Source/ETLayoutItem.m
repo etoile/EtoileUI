@@ -181,6 +181,7 @@ NSString *ETLayoutItemLayoutDidChangeNotification = @"ETLayoutItemLayoutDidChang
 	DESTROY(_variableProperties);
 	DESTROY(_defaultValues);
 	DESTROY(_styleGroup);
+	[_modelObject removeObserver: self];
 	DESTROY(_modelObject);
 	DESTROY(_transform);
 	_parentItem = nil; /* weak reference */
@@ -705,7 +706,9 @@ Take note modelObject can be any objects including an ETLayoutItem instance, in
 this case the receiver becomes a meta item and returns YES for -isMetaLayoutItem. */
 - (void) setRepresentedObject: (id)modelObject
 {
+	[_modelObject removeObserver: self];
 	ASSIGN(_modelObject, modelObject);
+	[modelObject addObserver: self];
 }
 
 - (ETView *) setUpSupervisorViewWithFrame: (NSRect)aFrame 
