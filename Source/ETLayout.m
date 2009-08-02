@@ -1064,6 +1064,19 @@ supervisor view. */
 	}
 }
 
+/** <override- dummy />
+Marks the layout view rect that corresponds the given item area in the receiver 
+layout as needing display. 
+
+You must override this method to handle the item redisplay when a layout 
+subclass completely takes over the display and ignores the layout item geometry, 
+styles, view etc. For example, ETTableLayout overrides this method to invalidate 
+the row associated with the given item. */
+- (void) setNeedsDisplayForItem: (ETLayoutItem *)anItem
+{
+	[[self layoutView] setNeedsDisplayInRect: [self displayRectOfItem: anItem]];
+}
+
 /* Item Property Display */
 
 /** <override-dummy /> */

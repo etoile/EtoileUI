@@ -391,6 +391,12 @@ yet, it is created. */
 	return [[self tableView] rectOfRow: row];
 }
 
+/** Invalidates the row associated with the given item. */
+- (void) setNeedsDisplayForItem: (ETLayoutItem *)anItem
+{
+	[[self tableView] setNeedsDisplayInRect: [self displayRectOfItem: anItem]];
+}
+
 - (NSArray *) selectedItems
 {
 	NSIndexSet *indexes = [[self tableView] selectedRowIndexes];

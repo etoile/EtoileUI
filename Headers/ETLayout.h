@@ -188,6 +188,7 @@ typedef enum _ETSizeConstraintStyle
 
 - (ETLayoutItem *) itemAtLocation: (NSPoint)location;
 - (NSRect) displayRectOfItem: (ETLayoutItem *)item;
+- (void) setNeedsDisplayForItem: (ETLayoutItem *)item;
 //- (BOOL) isHitTestEnabledAtPoint: (NSPoint)location;
 
 /* Wrapping Existing View */
