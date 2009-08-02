@@ -161,6 +161,16 @@ You can retrieve the outermost decorator by calling -lastDecoratorItem. */
 	return supervisorView;
 }
 
+/** Looks up the view which can display a rect by climbing up the layout 
+item tree until a display view which contains rect is found. This view is 
+returned through the out parameter aView and the returned value is the dirty 
+rect in the coordinate space of aView.
+
+This method hooks the layout item tree display mechanism into the AppKit view 
+hierarchy which implements the underlying display support.
+
+You should never need to call this method, unless you write a subclass which 
+needs some special redisplay policy. */
 - (NSRect) convertDisplayRect: (NSRect)rect 
         toAncestorDisplayView: (NSView **)aView 
                      rootView: (NSView *)topView

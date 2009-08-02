@@ -1239,109 +1239,6 @@ used by the styles. */
 	[self render: nil];
 }
 
-#if 0
-/** Looks up the view which can display a rect by climbing up the layout 
-item tree until a display view which contains rect is found. This view is 
-returned through the out parameter aView and the returned value is the dirty 
-rect in the coordinate space of aView.
-
-This method hooks the layout item tree display mechanism into the AppKit view 
-hierarchy which implements the underlying display support.
-
-You should never need to call this method, unless you write a subclass which 
-needs some special redisplay policy. */
-- (NSRect) convertDisplayRect: (NSRect)rect toAncestorDisplayView: (NSView **)aView
-{
-	NSRect newRect = rect;
-	// WARNING: If -[ETWindowItem supervisorView] is changed, the next line must 
-	// be updated.
-	NSView *topView = [[[self closestAncestorDisplayView] window] contentView];
-	NSView *displayView = [self displayView];
-	ETLayoutItem *parent = self;
-
-	/* The displayed receiver has no ancestors bound to a view */
-	if (topView == nil)
-		return NSZeroRect;
-
-	/* We expect topView to be never nil, so that the loop can be entered on a nil displayView. */
-	while (displayView != topView 
-		&& (displayView == nil || NSContainsRect([parent frame], newRect) == NO))
-	{
-		ETLayoutItem *child = parent;
-
-		parent = [parent parentItem];
-		displayView = [parent supervisorView];
-		/* Force the exit when we reach the window layer and newRect isn't fully 
-		   contained within the window layer frame.
-		   TODO: A more accurate fix could be to override -displayView or 
-		   -setNeedsDisplay: and -setNeedsDisplayInRect: in ETWindowLayer since 
-		   it cannot use a window decorator item as the root window. */
-		if (parent == nil)
-			break;
-
-		newRect = [child convertRectToParent: newRect];
-	}
-
-	BOOL shouldPatchRect = (displayView == topView);
-	if (shouldPatchRect && [[topView layoutItem] decoratorItem] != nil)
-	{
-		/* Convert newRect to the window content view coordinate space */
-		[[[topView layoutItem] lastDecoratorItem] convertDecoratorRectToContent: newRect];
-	}
-
-	*aView = displayView;
-	return newRect;
-}
-#endif
-
-#if 0
-- (NSRect) convertDisplayRect: (NSRect)rect
-        toAncestorDisplayView: (NSView **)aView 
-                     rootView: (NSView *)topView
-                   parentItem: (ETLayoutItem *)parent
-{
-	/* The displayed receiver has no ancestors bound to a view */
-	if (topView == nil)
-		return NSZeroRect;
-
-	NSView *displayView = [self displayView];
-	BOOL hasReachedWindow = (displayView == topView);
-
-	BOOL canDisplayRect = (displayView != nil && NSContainsRect([self bounds], rect)) ;
-
-	if (canDisplayRect || hasReachedWindow)
-	{
-		*aView = displayView;
-		return rect;//[[self lastDecoratorItem] displayRectForDecoratorRect: rect];	
-	}
-	else /* Recurse up in the tree until rect is enclosed by the receiver */
-	{
-		if (_parentItem != nil)
-		{
-			NSRect rectInParent = [self convertRectToParent: rect];
-			return [_parentItem convertDisplayRect: rectInParent toAncestorDisplayView: aView rootView: topView parentItem: _parentItem];
-		}
-		else
-		{
-			// NOTE: -convertDisplayRect:XXX invoked on nil can return a rect
-			// with random values rather than a zero rect.
-			return NSZeroRect;
-		}
-	}
-}
-
-- (void) setNeedsDisplay: (BOOL)flag
-{
-	[self setNeedsDisplayInRect: [self bounds]];
-}
-
-- (void) display
-{
-	[self displayRect: [self bounds]];
-}
-
-#endif
-
 /** Marks the receiver and the entire layout item tree owned by it to be 
 redisplayed the next time an ancestor view receives a display if needed 
 request (see -[NSView displayIfNeededXXX] methods). 
@@ -1360,7 +1257,7 @@ More explanations in -display. */
 							rootView: [[[self closestAncestorDisplayView] window] contentView]
 							parentItem: _parentItem];
 
-[displayView setNeedsDisplayInRect: displayRect];
+	[displayView setNeedsDisplayInRect: displayRect];
 }
 
 /** Triggers the redisplay of the receiver and the entire layout item tree 
