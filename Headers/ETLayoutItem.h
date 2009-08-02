@@ -189,6 +189,7 @@ extern NSString *kETVisibleProperty; /** visible property name */
 
 - (ETLayout *) layout;
 - (void) setLayout: (ETLayout *)layout;
+- (ETLayoutItem *) ancestorItemForOpaqueLayout;
 - (void) didChangeLayout: (ETLayout *)oldLayout;
 
 - (void) updateLayout;
@@ -208,6 +209,7 @@ extern NSString *kETVisibleProperty; /** visible property name */
 - (void) display;
 - (void) displayRect: (NSRect)dirtyRect;
 - (void) displayIfNeeded;
+- (void) refreshIfNeeded;
 
 - (void) setDefaultValue: (id)aValue forProperty: (NSString *)key;
 - (id) defaultValueForProperty: (NSString *)key;

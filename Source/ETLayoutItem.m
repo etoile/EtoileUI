@@ -1130,6 +1130,24 @@ You should never use this method unless you write an ETLayoutItem subclass. */
 	RELEASE(oldLayout);
 }
 
+/** Returns the topmost ancestor layout item, including itself, whose layout 
+returns YES to -isOpaque (see ETLayout). If none is found, returns self. */
+- (ETLayoutItem *) ancestorItemForOpaqueLayout
+{
+	ETLayoutItem *parent = self;
+	ETLayoutItem *lastFoundOpaqueAncestor = self;
+
+	while (parent != nil)
+	{
+		if ([[parent layout] isOpaque])
+			lastFoundOpaqueAncestor = parent;
+		
+		parent = [parent parentItem];
+	}
+
+	return lastFoundOpaqueAncestor;
+}
+
 /** Forces the layout to be recomputed to take in account geometry and content 
 related changes since the last layout update. */
 - (void) updateLayout
@@ -1296,6 +1314,26 @@ Areas can be marked as invalid with -setNeedsDisplay: and -setNeedsDisplayInRect
 - (void) displayIfNeeded
 {
 	[[self closestAncestorDisplayView] displayIfNeeded];
+}
+
+/** When the receveir is visible in an opaque layout and won't redraw by itself, 
+marks the ancestor item to redisplay the area that corresponds to the receiver 
+in this layout. Else marks the receiver to be redisplayed exactly as 
+-setNeedsDisplay: with YES. 
+
+See also -ancestorItemForOpaqueLayout. */
+- (void) refreshIfNeeded
+{
+	ETLayoutItem *opaqueAncestor = [self ancestorItemForOpaqueLayout];
+
+	if (opaqueAncestor != self)
+	{
+		[[opaqueAncestor layout] setNeedsDisplayForItem: self];
+	}
+	else
+	{
+		[self setNeedsDisplay: YES];
+	}
 }
 
 /** Returns the style group associated with the receiver. By default, 

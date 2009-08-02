@@ -1000,23 +1000,6 @@ the receiver immediate children to the base item source. */
 		[self updateLayout];
 }
 
-/** Returns the first ancestor layout item, including itself, whose layout 
-returns YES to -isOpaque (see ETLayout). If none is found, returns self. */
-- (ETLayoutItemGroup *) ancestorItemForOpaqueLayout
-{
-	ETLayoutItemGroup *parent = self;
-
-	while (parent != nil)
-	{
-		if ([[parent layout] isOpaque])
-			return parent;
-		
-		parent = [parent parentItem];
-	}
-
-	return self; /* Found no ancestor with an opaque layout */
-}
-
 /** Attempts to reload the children items from the source and updates the layout 
 by asking the first ancestor item with an opaque layout to do so. */
 - (void) reloadAndUpdateLayout

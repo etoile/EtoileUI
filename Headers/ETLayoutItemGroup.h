@@ -132,7 +132,6 @@ extern NSString *kETSourceProperty; /** source property name */
 
 - (ETLayout *) layout;
 - (void) setLayout: (ETLayout *)layout;
-- (ETLayoutItemGroup *) ancestorItemForOpaqueLayout;
 
 //-reloadAndUpdateAll;
 - (void) reloadAndUpdateLayout;
