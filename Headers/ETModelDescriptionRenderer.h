@@ -12,9 +12,9 @@
 #import <Foundation/Foundation.h>
 #import <AppKit/AppKit.h>
 #import <EtoileFoundation/ETTransform.h>
-#import <EtoileFoundation/ETModelDescription.h>
+#import <EtoileFoundation/ETEntityDescription.h>
 
-@class ETEntityDescription, ETPropertyDescription;
+@class ETPropertyDescription;
 @class ETLayout, ETLayoutItem;
 
 @interface ETModelDescriptionRenderer : ETTransform
@@ -44,6 +44,6 @@ description. */
 
 @end
 
-@interface ETModelDescription (EtoileUI)
+@interface ETEntityDescription (EtoileUI)
 - (void) view: (id)sender;
 @end

@@ -33,7 +33,7 @@
               withLayout: (ETLayout *)aLayout;
 {
 	// FIXME: lookup description for anObject
-	ETModelDescription *desc = nil;
+	ETEntityDescription *desc = nil;
 	ETLayoutItem *builtItem = (anItem != nil ? anItem : [self render: desc]);
 	ETLayout *layout = (aLayout != nil ? aLayout : [ETFormLayout layout]);
 
@@ -80,7 +80,7 @@
 @end
 
 
-@implementation ETModelDescription (EtoileUI)
+@implementation ETEntityDescription (EtoileUI)
 
 - (void) view: (id)sender
 {
