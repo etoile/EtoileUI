@@ -34,6 +34,7 @@
 #import <Foundation/Foundation.h>
 #import <AppKit/AppKit.h>
 #import <UnitKit/UnitKit.h>
+#import <EtoileFoundation/Macros.h>
 #import <EtoileFoundation/NSIndexPath+Etoile.h>
 #import "ETDecoratorItem.h"
 #import "ETGeometry.h"
@@ -138,6 +139,25 @@ static ETUIItemFactory *itemFactory = nil;
 	[parentItem removeItem: self];
 	UKNil([[self displayView] superview]);
 	UKObjectsNotSame([parentItem supervisorView], [[self displayView] superview]);
+}
+
+/* Verify that a parent item nullifies the weak references to itself on -dealloc. */
+- (void) testDeallocatedParentItem
+{
+	id item = [[ETLayoutItemGroup alloc] init];
+	id item0 = [[ETLayoutItemGroup alloc] init];
+	id item1 = [[ETLayoutItem alloc] init];
+
+	[item addItems: A(item0, item1)];
+
+	RELEASE(item);
+	/* The next tests ensure the parent item was correctly reset to nil, 
+	   otherwise -parentItem crashes. */
+	UKNil([item0 parentItem]);
+	UKNil([item1 parentItem]);
+
+	RELEASE(item0);
+	RELEASE(item1);
 }
 
 - (void) testIndexPathForItem

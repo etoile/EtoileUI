@@ -192,6 +192,11 @@ See also +enablesAutolayout. */
 	DESTROY(_unstackedLayout);
 	DESTROY(_arrangedItems);
 	DESTROY(_sortedItems);
+	/* _arrangedItems and _sortedItems is always a subset of _layoutItems, so 
+	   we don't have to worry about nullifying weak references their element 
+	   might have */
+	[_layoutItems makeObjectsPerformSelector: @selector(setParentItem:) 
+	                              withObject: nil];
 	DESTROY(_layoutItems);
 	[self setSource: nil]; /* Tear down the receiver as a source observer */
 
