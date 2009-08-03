@@ -39,6 +39,7 @@
 #import "ETLayout.h"
 #import "ETLayoutItem.h"
 #import "ETLayoutItemGroup.h"
+#import "EtoileUIProperties.h"
 #import "ETCompatibility.h"
 
 #import "FSBrowserCell.h"

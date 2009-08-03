@@ -40,10 +40,11 @@
 #import "ETComputedLayout.h"
 #import "ETGeometry.h"
 #import "ETHandle.h"
-#import "ETSelectTool.h"
-#import "ETLayoutItem.h"
 #import "ETLayoutItem+Factory.h"
 #import "ETLayoutItemGroup.h"
+#import "ETLayoutItem.h"
+#import "EtoileUIProperties.h"
+#import "ETSelectTool.h"
 #import "NSView+Etoile.h"
 #import "ETCompatibility.h"
 

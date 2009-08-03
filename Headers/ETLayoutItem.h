@@ -24,38 +24,6 @@ ETDecoratorItem, ETScrollableAreaItem, ETWindowItem, ETStyleGroup;
 @protocol ETInspector;
 
 
-/* Properties */
-
-extern NSString *kETAnchorPointProperty; /** anchorPoint property name */
-extern NSString *kETActionProperty; /** actionHandler property name */
-extern NSString *kETActionHandlerProperty; /** actionHandler property name */
-extern NSString *kETAutoresizingMaskProperty; /** autoresizingMask property name */
-extern NSString *kETBoundingBoxProperty; /** boudingBox property name */
-extern NSString *kETContentBoundsProperty; /** contentBounds property name */
-extern NSString *kETDefaultFrameProperty; /** defaultFrame property name */
-extern NSString *kETDisplayNameProperty; /** displayName property name */
-extern NSString *kETFlippedProperty; /** flipped property name */
-extern NSString *kETFrameProperty; /** frame property name */  
-extern NSString *kETIconProperty; /** icon property name */
-extern NSString *kETImageProperty; /** image property name */
-extern NSString *kETInspectorProperty; /** inspector property name */
-extern NSString *kETLayoutProperty; /** layout property name */
-extern NSString *kETNameProperty; /** name property name */
-extern NSString *kETNeedsDisplayProperty; /** needsDisplay property name */
-extern NSString *kETParentItemProperty; /** parentItem property name */
-extern NSString *kETPositionProperty; /** position property name */
-extern NSString *kETPersistentFrameProperty; /** persistentFrame property name */
-extern NSString *kETRepresentedObjectProperty; /** representedObject property name */
-extern NSString *kETRepresentedPathBaseProperty; /** representedPathBase property name */
-extern NSString *kETSelectedProperty; /** selected property name */
-extern NSString *kETSubtypeProperty; /** subtype property name */
-extern NSString *kETStyleGroupProperty; /** styleGroup property name */
-extern NSString *kETStyleProperty; /** style property name */
-extern NSString *kETTargetProperty; /** actionHandler property name */
-extern NSString *kETValueProperty; /** value property name */
-extern NSString *kETViewProperty; /** view property name */
-extern NSString *kETVisibleProperty; /** visible property name */
-
 // FIXME: Use less memory per instance. Name and value are somehow duplicates.
 // _cells and _view could be moved in a helper object. Pack booleans in a struct.
 @interface ETLayoutItem : ETUIItem <NSCopying, ETPropertyValueCoding, ETObjectInspection>

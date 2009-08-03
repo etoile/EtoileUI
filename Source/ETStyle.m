@@ -9,10 +9,11 @@
 #import <EtoileFoundation/Macros.h>
 #import "ETStyle.h"
 #import "ETFreeLayout.h"
-#import "ETInstrument.h"
 #import "ETGeometry.h"
-#import "ETLayoutItem.h"
+#import "ETInstrument.h"
 #import "ETLayoutItemGroup.h"
+#import "ETLayoutItem.h"
+#import "EtoileUIProperties.h"
 #import "ETCompatibility.h"
 
 @implementation ETStyle

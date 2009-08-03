@@ -6,18 +6,19 @@
 	License:  Modified BSD (see COPYING)
  */
 
-#import <EtoileFoundation/NSObject+Etoile.h>
-#import <EtoileFoundation/NSObject+Model.h>
 #import <EtoileFoundation/ETCollection.h>
 #import <EtoileFoundation/ETUTI.h>
+#import <EtoileFoundation/NSObject+Etoile.h>
+#import <EtoileFoundation/NSObject+Model.h>
 #import "ETPickDropActionHandler.h"
 #import "ETController.h"
-#import "ETInstrument.h"
-#import "ETLayoutItem.h"
-#import "ETLayoutItemGroup.h"
-#import "ETPickDropCoordinator.h"
-#import "ETPickboard.h"
 #import "ETEvent.h"
+#import "ETInstrument.h"
+#import "ETLayoutItemGroup.h"
+#import "ETLayoutItem.h"
+#import "EtoileUIProperties.h"
+#import "ETPickboard.h"
+#import "ETPickDropCoordinator.h"
 #import "ETStyle.h"
 #import "ETCompatibility.h"
 

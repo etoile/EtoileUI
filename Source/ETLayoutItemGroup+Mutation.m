@@ -6,20 +6,19 @@
 	License:  Modified BSD (see COPYING)
  */
 
-#import <EtoileFoundation/Macros.h>
-#import <EtoileFoundation/NSObject+Model.h>
 #import <EtoileFoundation/ETCollection.h>
+#import <EtoileFoundation/NSObject+Model.h>
+#import <EtoileFoundation/Macros.h>
 #import "ETLayoutItemGroup+Mutation.h"
 #import "ETController.h"
 #import "ETEvent.h"
 #import "ETLayoutItem+Factory.h"
+#import "EtoileUIProperties.h"
 #import "ETCompatibility.h"
 
 @interface ETLayoutItemGroup (ETSource)
 - (BOOL) isReloading;
 @end
-
-NSString *kETControllerProperty = @"controller";
 
 
 @implementation ETLayoutItemGroup (ETMutationHandler)

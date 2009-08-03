@@ -18,10 +18,6 @@
    
 #define PROVIDER_SOURCE [[self baseItem] source]
 
-/* Properties */
-
-extern NSString *kETControllerProperty; // controller
-
 /* All model mutations are triggered by implicit or explicit remove/insert/add 
    in the layout item tree. Implicit mutations are done by the framework unlike 
    explicit ones which are located in your code. These implicit mutations are 

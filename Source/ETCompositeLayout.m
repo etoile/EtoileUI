@@ -15,11 +15,12 @@
 #import <EtoileFoundation/Macros.h>
 #import "ETCompositeLayout.h"
 #import "ETGeometry.h"
-#import "ETUIItemFactory.h"
-#import "ETLayoutItem.h"
 #import "ETLayoutItemGroup.h"
-#import "ETTableLayout.h"
+#import "ETLayoutItem.h"
+#import "EtoileUIProperties.h"
 #import "ETOutlineLayout.h"
+#import "ETTableLayout.h"
+#import "ETUIItemFactory.h"
 #import "ETCompatibility.h"
 
 @interface ETCompositeLayout (Private)

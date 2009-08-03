@@ -12,49 +12,19 @@
 #import <EtoileFoundation/ETUTI.h>
 #import <EtoileFoundation/Macros.h>
 #import "ETLayoutItem.h"
-#import "ETLayoutItem+Reflection.h"
-#import "ETGeometry.h"
 #import "ETActionHandler.h"
-#import "ETLayoutItem+Scrollable.h"
+#import "ETGeometry.h"
+#import "ETInspector.h"
 #import "ETLayoutItemGroup.h"
-#import "ETWindowItem.h"
+#import "ETLayoutItem+Reflection.h"
+#import "ETLayoutItem+Scrollable.h"
+#import "EtoileUIProperties.h"
+#import "ETScrollableAreaItem.h"
 #import "ETStyleGroup.h"
 #import "ETView.h"
-#import "ETInspector.h"
-#import "ETScrollableAreaItem.h"
+#import "ETWindowItem.h"
 #import "NSView+Etoile.h"
 #import "ETCompatibility.h"
-
-/* Properties */
-NSString *kETAnchorPointProperty = @"anchorPoint";
-NSString *kETActionProperty = @"action";
-NSString *kETActionHandlerProperty = @"actionHandler";
-NSString *kETAutoresizingMaskProperty = @"autoresizingMask";
-NSString *kETBoundingBoxProperty = @"boundingBox";
-NSString *kETContentBoundsProperty = @"contentBounds";
-NSString *kETDefaultFrameProperty = @"defaultFrame";
-NSString *kETDisplayNameProperty = @"displayName"; 
-NSString *kETFlippedProperty = @"flipped";
-NSString *kETFrameProperty = @"frame";
-NSString *kETIconProperty = @"icon";
-NSString *kETImageProperty = @"image";
-NSString *kETInspectorProperty = @"inspector";
-NSString *kETLayoutProperty = @"layout";
-NSString *kETNameProperty = @"name";
-NSString *kETNeedsDisplayProperty = @"needsDisplay";
-NSString *kETParentItemProperty = @"parentItem";
-NSString *kETPositionProperty = @"position";
-NSString *kETPersistentFrameProperty = @"persistentFrame";
-NSString *kETRepresentedObjectProperty = @"representedObject";
-NSString *kETRepresentedPathBaseProperty = @"representedPathBase";
-NSString *kETSelectedProperty = @"selected";
-NSString *kETStyleGroupProperty = @"styleGroup";
-NSString *kETStyleProperty = @"style";
-NSString *kETSubtypeProperty = @"subtype";
-NSString *kETTargetProperty = @"target";
-NSString *kETValueProperty = @"value";
-NSString *kETViewProperty = @"view";
-NSString *kETVisibleProperty = @"visible";
 
 /* Notifications */
 NSString *ETLayoutItemLayoutDidChangeNotification = @"ETLayoutItemLayoutDidChangeNotification";
