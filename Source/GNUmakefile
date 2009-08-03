@@ -28,12 +28,14 @@ libEtoileUI_OBJC_FILES = \
 	ETLayoutItemGroup.m \
 	ETLayoutItemGroup+Mutation.m \
 	ETLayoutItem.m \
+	ETLayoutItem+KVO.m \
 	ETLayoutItem+Reflection.m \
 	ETLayoutItem+Scrollable.m \
 	ETLayoutLine.m \
 	ETLayout.m \
 	ETLineLayout.m \
 	ETObjectBrowserLayout.m \
+	EtoileUIProperties.m \
 	ETOutlineLayout.m \
 	ETPaintBucketTool.m \
 	ETPaneLayout.m \

@@ -123,8 +123,8 @@ static ETPickboard *activePickboard = nil;
 
 - (void) dealloc
 {
+	[self stopKVOObservationIfNeeded];
 	DESTROY(_pickedObjects);
-
 	[super dealloc];
 }
 

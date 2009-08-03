@@ -291,8 +291,8 @@
 
 - (void) dealloc
 {
+	[self stopKVOObservationIfNeeded];
 	DESTROY(_browsedObject);
-	
 	[super dealloc];
 }
 

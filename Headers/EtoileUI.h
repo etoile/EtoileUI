@@ -31,6 +31,7 @@
 #import <EtoileUI/ETLayer.h>
 #import <EtoileUI/ETLayout.h>
 #import <EtoileUI/ETLayoutItem+Factory.h>
+#import <EtoileUI/ETLayoutItem+KVO.h>
 #import <EtoileUI/ETLayoutItem+Reflection.h>
 #import <EtoileUI/ETLayoutItem+Scrollable.h>
 #import <EtoileUI/ETLayoutItem.h>

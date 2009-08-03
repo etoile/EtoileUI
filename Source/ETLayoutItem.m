@@ -31,6 +31,7 @@ NSString *kETActionProperty = @"action";
 NSString *kETActionHandlerProperty = @"actionHandler";
 NSString *kETAutoresizingMaskProperty = @"autoresizingMask";
 NSString *kETBoundingBoxProperty = @"boundingBox";
+NSString *kETContentBoundsProperty = @"contentBounds";
 NSString *kETDefaultFrameProperty = @"defaultFrame";
 NSString *kETDisplayNameProperty = @"displayName"; 
 NSString *kETFlippedProperty = @"flipped";
@@ -42,14 +43,17 @@ NSString *kETLayoutProperty = @"layout";
 NSString *kETNameProperty = @"name";
 NSString *kETNeedsDisplayProperty = @"needsDisplay";
 NSString *kETParentItemProperty = @"parentItem";
+NSString *kETPositionProperty = @"position";
 NSString *kETPersistentFrameProperty = @"persistentFrame";
 NSString *kETRepresentedObjectProperty = @"representedObject";
 NSString *kETRepresentedPathBaseProperty = @"representedPathBase";
 NSString *kETSelectedProperty = @"selected";
 NSString *kETStyleGroupProperty = @"styleGroup";
+NSString *kETStyleProperty = @"style";
 NSString *kETSubtypeProperty = @"subtype";
 NSString *kETTargetProperty = @"target";
 NSString *kETValueProperty = @"value";
+NSString *kETViewProperty = @"view";
 NSString *kETVisibleProperty = @"visible";
 
 /* Notifications */
@@ -102,18 +106,6 @@ NSString *ETLayoutItemLayoutDidChangeNotification = @"ETLayoutItemLayoutDidChang
 
 
 @implementation ETLayoutItem
-
-+ (BOOL) automaticallyNotifiesObserversForKey: (NSString *)theKey 
-{
-    if ([theKey isEqualToString: kETSelectedProperty]) 
-	{
-		return NO;
-    } 
-	else 
-	{
-		return [super automaticallyNotifiesObserversForKey: theKey];
-    }
-}
 
 - (id) init
 {
@@ -176,12 +168,51 @@ NSString *ETLayoutItemLayoutDidChangeNotification = @"ETLayoutItemLayoutDidChang
     return self;
 }
 
+/** <override-dummy />
+Removes the receiver as an observer on all objects that it was observing until 
+now.
+
+You must override this method when a subclass calls KVO methods such as 
+-addObserver:XXX. In the overriden method, you must call the superclass 
+implementation.<br />
+You must never call this method in your own code.
+
+In -dealloc, we must stop to be a KVO observer immediately, otherwise we may 
+receive KVO notifications triggered by releasing objects we observe. In the 
+worst case, we can be retained/released and thereby reenter -dealloc. */
+- (void) stopKVOObservation
+{
+	[_modelObject removeObserver: self];
+}
+
+/** <override-never /> 
+See -[ETLayoutItem dealloc]. */
+- (void) stopKVOObservationIfNeeded
+{
+	/* This is not really pretty, but it makes possible to have the safest and 
+	   simplest API semantic when a developer writes an ETLayoutItem subclass 
+	   and want to add/remove observers. The deveveloper won't have to check 
+	   special cases (e.g. was KVO stopped by a subclass) in -stopKVOObservation.
+	   Later we could reuse this solution in other class hierarchy too, unless 
+	   we figure out a better way to implement that. */
+	if (_wasKVOStopped)
+		return;
+
+	[self stopKVOObservation];
+
+	_wasKVOStopped = YES;
+}
+
+/** <override-dummy />
+You must call -stopKVOObservationIfNeeded right at the beginning of -dealloc in 
+every subclass that overrides -dealloc. */
 - (void) dealloc
 {
+	[self stopKVOObservationIfNeeded];
+
 	DESTROY(_variableProperties);
 	DESTROY(_defaultValues);
 	DESTROY(_styleGroup);
-	[_modelObject removeObserver: self];
 	DESTROY(_modelObject);
 	DESTROY(_transform);
 	_parentItem = nil; /* weak reference */

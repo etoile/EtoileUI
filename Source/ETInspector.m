@@ -110,8 +110,8 @@
 
 - (void) dealloc
 {
+	[self stopKVOObservationIfNeeded];
 	DESTROY(_inspectedObjects);
-	
 	[super dealloc];
 }
 

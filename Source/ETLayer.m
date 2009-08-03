@@ -88,7 +88,13 @@ when a layout other than ETWindowLayout is set on the receiver. */
 	return self;
 }
 
-DEALLOC(DESTROY(_rootWindowItem); DESTROY(_visibleWindows));
+- (void) dealloc
+{
+	[self stopKVOObservationIfNeeded];
+	DESTROY(_rootWindowItem); 
+	DESTROY(_visibleWindows);
+	[super dealloc];
+}
 
 - (void) handleAttachViewOfItem: (ETLayoutItem *)item
 {

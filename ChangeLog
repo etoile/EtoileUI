@@ -1,3 +1,20 @@
+2009-08-03 Quentin Mathe <qmathe@club-internet.fr>
+
+	* ETLayoutItem:
+	Declared some new property constants. Added _wasKVOStopped ivar.
+	(+automaticallyNotifiesObserversForKey:): Moved to ETLayoutItem+KVO.
+	(-stopKVOObservation, -stopKVOObservationIfNeeded): Added.
+	(-dealloc): Modified to use -stopKVOObservationIfNeeded and bypass 
+	-setParentItem when nullifying weak references. Also documented it.
+	* ETLayoutItem+KVO:
+	Added as a new category to handle the KVO support.
+	* ETLayer, ETPickboard, ETInspector, ETObjectBrowser:
+	(-dealloc): Updated to invoke -stopKVOObservationIfNeeded.
+	* EtoileUIProperties:
+	Added.
+	* GNUmakefile, Source/GNUmakefile, Container.xcodeproj:
+	Included the new files.
+
 2009-07-10 Quentin Mathe <qmathe@club-internet.fr>
 
 	* ETLayoutItem:

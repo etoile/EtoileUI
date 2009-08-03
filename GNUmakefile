@@ -52,12 +52,14 @@ EtoileUI_HEADER_FILES = \
 	ETLayoutItemGroup.h \
 	ETLayoutItemGroup+Mutation.h \
 	ETLayoutItem.h \
+	ETLayoutItem+KVO.h \
 	ETLayoutItem+Reflection.h \
 	ETLayoutItem+Scrollable.h \
 	ETLayoutLine.h \
 	ETLineLayout.h \
 	ETObjectBrowserLayout.h \
 	EtoileUI.h \
+	EtoileUIProperties.h \
 	ETOutlineLayout.h \
 	ETPaintBucketTool.h \
 	ETPaneLayout.h \

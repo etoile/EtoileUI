@@ -187,6 +187,8 @@ See also +enablesAutolayout. */
 
 - (void) dealloc
 {
+	[self stopKVOObservationIfNeeded];
+
 	DESTROY(_layout);
 	DESTROY(_stackedLayout);
 	DESTROY(_unstackedLayout);
@@ -195,8 +197,12 @@ See also +enablesAutolayout. */
 	/* _arrangedItems and _sortedItems is always a subset of _layoutItems, so 
 	   we don't have to worry about nullifying weak references their element 
 	   might have */
-	[_layoutItems makeObjectsPerformSelector: @selector(setParentItem:) 
-	                              withObject: nil];
+	FOREACH(_layoutItems, child, ETLayoutItem *)
+	{
+		/* We bypass -setParentItem: to be sure we won't be trigger a KVO 
+		   notification that would retain/release us in a change dictionary. */
+		child->_parentItem = nil;
+	}
 	DESTROY(_layoutItems);
 	[self setSource: nil]; /* Tear down the receiver as a source observer */
 
