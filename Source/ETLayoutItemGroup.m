@@ -158,13 +158,19 @@ See also +enablesAutolayout. */
 	DESTROY(_layout);
 	DESTROY(_stackedLayout);
 	DESTROY(_unstackedLayout);
+	/* Arranged and sorted items are always a children subset, we don't 
+	   have to worry about nullifying weak references their element might have. */
 	DESTROY(_arrangedItems);
 	DESTROY(_sortedItems);
-	/* _arrangedItems and _sortedItems is always a subset of _layoutItems, so 
-	   we don't have to worry about nullifying weak references their element 
-	   might have */
-	FOREACH(_layoutItems, child, ETLayoutItem *)
+	/* We now nullify the weak references our children hold. 
+	   We don't use FOREACH to avoid -objectEnumerator which would retain the 
+	   children and make the memory management more complex to test in the tree 
+	   structure since the returned enumerator is autoreleased and won't 
+	   release the children before the autorelease pool is popped. */
+	int n = [_layoutItems count];
+	for (int i = 0; i < n; i++)
 	{
+		ETLayoutItem *child = [_layoutItems objectAtIndex: i];
 		/* We bypass -setParentItem: to be sure we won't be trigger a KVO 
 		   notification that would retain/release us in a change dictionary. */
 		child->_parentItem = nil;
