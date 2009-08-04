@@ -1658,7 +1658,7 @@ See also -[ETLayout isPositional] and -[ETLayout isComputedLayout]. */
 
 	if (hasDecorator)
 	{
-		return [[self lastDecoratorItem] setDecorationRect: rect];
+		[[self lastDecoratorItem] setDecorationRect: rect];
 	}
 	else
 	{
