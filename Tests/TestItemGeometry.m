@@ -353,8 +353,8 @@ layout item internal geometry (contentBounds and position). */
 		oldItemOrigin: oldOrigin oldItemPosition: oldPosition];
 }
 
-/* Verify that moving or resizing the supervisor view is replicated on the 
-layout item internal geometry (contentBounds and position). */
+/* Verify that moving or resizing the layout item is replicated on the 
+supervisor view geometry (frame). */
 - (void) testItemToSupervisorViewGeometrySynchronization
 {
 	[item setView: AUTORELEASE([[NSSlider alloc] init])];
