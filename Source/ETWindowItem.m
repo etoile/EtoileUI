@@ -188,7 +188,7 @@ otherwise returns no. */
 }
 
 /** Returns NO. A window can never be decorated. */
-- (BOOL) acceptsDecoratorItem: (ETLayoutItem *)item
+- (BOOL) acceptsDecoratorItem: (ETDecoratorItem *)item
 {
 	return NO;
 }
@@ -309,8 +309,7 @@ This coordinate space includes the window decoration (titlebar etc.).  */
 		rect.origin.y = windowFrame.size.height - (rect.origin.y + rect.size.height);	
 	}
 
-	NSParameterAssert(rect.origin.x >= 0 && rect.origin.x <= rect.size.width 
-		&& rect.origin.y >= 0 && rect.origin.y <= rect.size.height);
+	NSParameterAssert(rect.origin.x >= 0 && rect.origin.y >= 0);
 
 	return rect;
 	// TODO: Use [_itemWindow contentRectInFrame];

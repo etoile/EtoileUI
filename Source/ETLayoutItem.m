@@ -1558,7 +1558,6 @@ a point whose y or x values are negative.  */
 	}
 }
 
-// NOTE: For now, private...
 - (NSRect) bounds
 {
 	BOOL hasDecorator = (_decoratorItem != nil);
@@ -1582,7 +1581,8 @@ a point whose y or x values are negative.  */
 
 	if (hasDecorator)
 	{
-		//NSAssert(NSEqualPoints([self origin], [[self lastDecoratorItem] decorationRect].origin);
+		/* Will indirectly resize the supervisor view with -setFrameSize: that 
+		   will in turn call back -setContentSize:. */
 		[[self lastDecoratorItem] setDecorationRect: ETMakeRect([self origin], size)];
 	}
 	else
@@ -1652,20 +1652,24 @@ parent item is positional and non-computed such as ETFreeLayout.
 See also -[ETLayout isPositional] and -[ETLayout isComputedLayout]. */
 - (void) setFrame: (NSRect)rect
 {
-	ETDebugLog(@"-setFrame: %@ on %@", NSStringFromRect(rect), self);  
+	NSParameterAssert(_isSyncingSupervisorViewGeometry == NO);
+
+	ETDebugLog(@"-setFrame: %@ on %@", NSStringFromRect(rect), self); 
 
 	BOOL hasDecorator = (_decoratorItem != nil);
 
 	if (hasDecorator)
 	{
+		/* Will indirectly resize the supervisor view with -setFrameSize: that 
+		   will in turn call back -setContentSize:. */
 		[[self lastDecoratorItem] setDecorationRect: rect];
 	}
 	else
 	{
 		[self setContentSize: rect.size];
-		/* Must follow -setContentSize: to allow the anchor point to be computed */
-		[self setOrigin: rect.origin];
 	}
+	/* Must follow -setContentSize: to allow the anchor point to be computed */
+	[self setOrigin: rect.origin];
 
 	[[self style] didChangeItemBounds: [self contentBounds]];
 }
@@ -1757,13 +1761,27 @@ location in the parent item coordinate space equal to the new position value. */
 	_position = position;
 
 	// NOTE: Will probably be reworked once layout item views are drawn directly by EtoileUI.
-	if ([self shouldSyncSupervisorViewGeometry])
-	{
-		_isSyncingSupervisorViewGeometry = YES;
-		[[self displayView] setFrameOrigin: [self origin]];
-		_isSyncingSupervisorViewGeometry = NO;
-	}
+	if ([self shouldSyncSupervisorViewGeometry] == NO)
+		return;
+
+	BOOL hasDecorator = (_decoratorItem != nil);
 	
+	_isSyncingSupervisorViewGeometry = YES;
+	if (hasDecorator)
+	{
+		ETDecoratorItem *lastDecoratorItem = [self lastDecoratorItem];
+		NSSize size = [lastDecoratorItem decorationRect].size;
+		NSRect movedFrame = ETMakeRect([self origin], size);
+		/* Will indirectly move the supervisor view with -setFrameOrigin: that 
+		   will in turn call back -setOrigin:. */
+		[lastDecoratorItem setDecorationRect: movedFrame];
+	}
+	else
+	{
+		[[self displayView] setFrameOrigin: [self origin]];
+	}
+	_isSyncingSupervisorViewGeometry = NO;
+
 	[self updatePersistentGeometryIfNeeded];
 }
 

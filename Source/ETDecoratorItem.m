@@ -24,6 +24,8 @@
 /** Do not use. May be remove later. */
 + (id) item
 {
+	NSAssert([self isEqual: [ETDecoratorItem class]] == NO, @"ETDecoratorItem "
+		"is an abstract class which cannot be instantiated.");
 	return AUTORELEASE([[self alloc] initWithSupervisorView: nil]);
 }
 
@@ -135,12 +137,19 @@ area that lies inside -decorationRect).
 The receiver content rect is equal to [[self decoratedItem] decorationRect]. */
 - (NSRect) contentRect
 {
-	NSRect contentRect = [[[self supervisorView] wrappedView] frame];
+	NSView *wrappedView = [[self supervisorView] wrappedView];
+	
+	if (nil != wrappedView)
+	{
+		return [wrappedView frame];
+	}
+	else
+	{
+		return NSZeroRect;
+	}
 
 	/*NSAssert(NSEqualRects([_decoratedItem decorationRect], contentRect), 
 		@"The content rect must be equal to the decorated item decoration rect");*/
-
-	return contentRect;
 }
 
 /** Returns a rect expressed in the receiver coordinate space equivalent to
@@ -325,6 +334,7 @@ Take in account that parentView can be nil. */
              supervisorView: (ETView *)decoratedView 
                      inView: (ETView *)parentView 
 {
+	[self saveAndOverrideAutoresizingMaskOfDecoratedItem: item];
 	[self setDecoratedView: decoratedView];
 	
 	/* If the display view bound to item was part of the view hierarchy owned by 
@@ -366,13 +376,32 @@ Take in account that parentView can be nil. */
 		"display view %@", [item parentItem], parentView, [item displayView]);
 
 	[self setDecoratedView: nil];
+	[self restoreAutoresizingMaskOfDecoratedItem: item];
 	[[self displayView] removeFromSuperview];
 	/* Insert the new item display view into the parent view */
 	[parentView addSubview: [item supervisorView]];
 }
 
-/* Private Use */
+/** <override-dummy />
+Sets the last decorator item autoresizing mask to match the given item, then 
+overrides the given item autoresizing mask with NSViewWidthSizable and 
+NSViewHeightSizable. */
+- (void) saveAndOverrideAutoresizingMaskOfDecoratedItem: (ETUIItem *)item;
+{
+	[[[self lastDecoratorItem] supervisorView] setAutoresizingMask: 
+		[[item supervisorView] autoresizingMask]];
+	[[item supervisorView] setAutoresizingMask: NSViewWidthSizable | NSViewHeightSizable];
+}
 
+/** <override-dummy />
+Sets the given item autoresizing mask to match the last decorator item. */
+- (void) restoreAutoresizingMaskOfDecoratedItem: (ETUIItem *)item
+{
+	[[item supervisorView] setAutoresizingMask: 
+		[[[self lastDecoratorItem] supervisorView] autoresizingMask]];
+}
+
+/* Private Use */
 
 /** <override-dummy />
 This method updates the decoration rect associated with the receiver.

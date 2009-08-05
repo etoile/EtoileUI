@@ -20,6 +20,7 @@ With the AppKit widget backend, the window is an NSWindow object. */
 @interface ETWindowItem : ETDecoratorItem
 {
 	NSWindow *_itemWindow;
+	int _oldDecoratedItemAutoresizingMask; /* Autoresizing mask to restore */
 	BOOL _usesCustomWindowTitle;
 	BOOL _flipped;
 	BOOL _shouldKeepWindowFrame;
@@ -39,7 +40,7 @@ With the AppKit widget backend, the window is an NSWindow object. */
 - (NSView *) view;
 - (NSRect) decorationRect;
 - (NSRect) contentRect;
-- (BOOL) acceptsDecoratorItem: (ETLayoutItem *)item;
+- (BOOL) acceptsDecoratorItem: (ETDecoratorItem *)item;
 - (BOOL) canDecorateItem: (id)item;
 
 @end

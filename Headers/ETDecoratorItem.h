@@ -72,6 +72,8 @@ However -supervisorView can be overriden to return nil. */
              supervisorView: (ETView *)decoratedView 
                      inView: (ETView *)parentView;
 - (void) handleUndecorateItem: (ETUIItem *)item inView: (ETView *)parentView;
+- (void) saveAndOverrideAutoresizingMaskOfDecoratedItem: (ETUIItem *)item;
+- (void) restoreAutoresizingMaskOfDecoratedItem: (ETUIItem *)item;
 - (void) handleSetDecorationRect: (NSRect)rect;
 - (NSSize) decoratedItemRectChanged: (NSRect)rect;
 

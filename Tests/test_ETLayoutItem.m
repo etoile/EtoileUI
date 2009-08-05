@@ -54,6 +54,10 @@
 #define UKPointsNotEqual(x, y) UKFalse(NSEqualPoints(x, y))
 #define UKSizesEqual(x, y) UKTrue(NSEqualSizes(x, y))
 
+@interface ETDecoratorItem (TestItemGeometry)
++ (ETDecoratorItem *) itemWithDummySupervisorView;
+@end
+
 static ETUIItemFactory *itemFactory = nil;
 
 @interface ETLayoutItem (UnitKitTests) <UKTest>
@@ -314,8 +318,8 @@ static ETUIItemFactory *itemFactory = nil;
 
 - (void) testSetDecoratorItem
 {
-	id decorator1 = [ETDecoratorItem item];
-	id decorator2 = [ETDecoratorItem item];
+	id decorator1 = [ETDecoratorItem itemWithDummySupervisorView];
+	id decorator2 = [ETDecoratorItem itemWithDummySupervisorView];
 	id decorator3 = [ETWindowItem item];
 	
 	UKNil([self decoratorItem]);
@@ -332,8 +336,8 @@ static ETUIItemFactory *itemFactory = nil;
 
 - (void) testLastDecoratorItem
 {
-	id decorator1 = [ETDecoratorItem item];
-	id decorator2 = [ETDecoratorItem item];
+	id decorator1 = [ETDecoratorItem itemWithDummySupervisorView];
+	id decorator2 = [ETDecoratorItem itemWithDummySupervisorView];
 	
 	UKObjectsEqual(self, [self lastDecoratorItem]);
 	
@@ -347,8 +351,8 @@ static ETUIItemFactory *itemFactory = nil;
 
 - (void) testFirstDecoratedItem
 {
-	id decorator1 = [ETDecoratorItem item];
-	id decorator2 = [ETDecoratorItem item];
+	id decorator1 = [ETDecoratorItem itemWithDummySupervisorView];
+	id decorator2 = [ETDecoratorItem itemWithDummySupervisorView];
 	
 	UKObjectsEqual(self, [self firstDecoratedItem]);
 	
@@ -397,7 +401,7 @@ static ETUIItemFactory *itemFactory = nil;
 	id parent = [itemFactory itemGroup];
 	id supervisorView = AUTORELEASE([[ETView alloc] initWithFrame: NSMakeRect(0, 0, 100, 50)]);
 	id supervisorView1 = AUTORELEASE([[ETView alloc] initWithFrame: NSMakeRect(0, 0, 100, 50)]);
-	id decorator1 = [ETDecoratorItem item]; //[itemFactory itemWithView: supervisorView1];
+	id decorator1 = [ETDecoratorItem itemWithDummySupervisorView]; //[itemFactory itemWithView: supervisorView1];
 
 	[parent setSupervisorView: parentView];
 	[parent addItem: self];

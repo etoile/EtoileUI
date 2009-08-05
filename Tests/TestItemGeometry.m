@@ -37,6 +37,21 @@
 
 @end
 
+@interface ETDecoratorItem (TestItemGeometry)
++ (ETDecoratorItem *) itemWithDummySupervisorView;
+@end
+
+@implementation ETDecoratorItem (TestItemGeometry)
+
+/* For test, patch the framework implementation. */
++ (ETDecoratorItem *) itemWithDummySupervisorView
+{
+	ETView *view = AUTORELEASE([[ETView alloc] init]);
+	return AUTORELEASE([[ETDecoratorItem alloc] initWithSupervisorView: view]);
+}
+
+@end
+
 @interface TestItemGeometry : NSObject <UKTest>
 {
 	ETUIItemFactory *itemFactory;
@@ -130,6 +145,40 @@ and -setAutoresizingMask: can potentially erase each other. */
 	[[item supervisorView] setAutoresizingMask: sizableMask];
 	
 	UKIntsNotEqual([item autoresizingMask], [[item supervisorView] autoresizingMask]);
+}
+
+- (void) testAutoresizingMaskWithDecoratorItem
+{
+	[item setView: [self textFieldWithAutoresizingMask: weirdMask]];
+	[item setDecoratorItem: [ETDecoratorItem itemWithDummySupervisorView]];
+
+	UKIntsEqual(weirdMask, [item autoresizingMask]);
+	UKTrue(weirdMask == [item autoresizingMask]);
+	UKIntsEqual(sizableMask, [[item supervisorView] autoresizingMask]);
+	UKIntsEqual(sizableMask, [[item view] autoresizingMask]);
+	UKIntsEqual(weirdMask, [[[item decoratorItem] supervisorView] autoresizingMask]);
+}
+
+- (void) testAutoresizingMaskForDecoratorItemRemoval
+{
+	[item setView: [self textFieldWithAutoresizingMask: weirdMask]];
+	[item setDecoratorItem: [ETDecoratorItem itemWithDummySupervisorView]];
+	[item setDecoratorItem: nil];
+
+	UKIntsEqual(weirdMask, [item autoresizingMask]);
+	UKIntsEqual(weirdMask, [[item supervisorView] autoresizingMask]);
+	UKIntsEqual(sizableMask, [[item view] autoresizingMask]);
+}
+
+- (void) testAutoresizingMaskWithScrollableAreaItem
+{
+	[item setView: [self textFieldWithAutoresizingMask: weirdMask]];
+	[item setDecoratorItem: [ETScrollableAreaItem item]];
+
+	UKIntsEqual(weirdMask, [item autoresizingMask]);
+	UKIntsEqual(NSViewNotSizable, [[item supervisorView] autoresizingMask]);
+	UKIntsEqual(sizableMask, [[item view] autoresizingMask]);
+	UKIntsEqual(weirdMask, [[[item decoratorItem] supervisorView] autoresizingMask]);
 }
 
 - (void) testConvertRectToParent
@@ -229,7 +278,7 @@ and -setAutoresizingMask: can potentially erase each other. */
 
 - (void) testDummyDecoratorGeometry
 {
-	ETDecoratorItem *decorator1 = [ETDecoratorItem item];
+	ETDecoratorItem *decorator1 = [ETDecoratorItem itemWithDummySupervisorView];
 	NSRect rect = [ETLayoutItem defaultItemRect];
 
 	[item setDecoratorItem: decorator1];
@@ -257,6 +306,7 @@ and -setAutoresizingMask: can potentially erase each other. */
 	UKRectsEqual(ETMakeRect([windowDecorator decorationRect].origin, rect.size), [item frame]);
 	UKRectsEqual(ETMakeRect(NSZeroPoint, contentSize), [item contentBounds]);
 	UKRectsEqual([windowDecorator contentRect], [item decorationRect]);
+	UKRectsEqual(ETMakeRect(NSZeroPoint, contentSize), [[item supervisorView] frame]);
 }
 
 - (void) testScrollDecoratorGeometry
@@ -301,19 +351,24 @@ and -setAutoresizingMask: can potentially erase each other. */
 // TODO: Test the boundingBox in -testXXXGeometrySynchronization once we really 
 // worked out the way it should behave
 
-- (void) checkGeometrySynchronizationWithFrame: (NSRect)viewFrame 
-	oldItemOrigin: (NSPoint)oldOrigin oldItemPosition: (NSPoint)oldPosition
+- (void) checkGeometrySynchronizationWithFrame: (NSRect)frame 
+                                 oldItemOrigin: (NSPoint)oldOrigin 
+                               oldItemPosition: (NSPoint)oldPosition
 {
-	UKRectsEqual(viewFrame, [item frame]);
-	UKPointsEqual(viewFrame.origin, [item origin]);
-	UKSizesEqual(viewFrame.size, [item size]);
-	UKRectsEqual(ETMakeRect(NSZeroPoint, viewFrame.size), [item contentBounds]);
-	NSPoint newOrigin = viewFrame.origin;
+	UKRectsEqual(frame, [item frame]);
+	UKPointsEqual(frame.origin, [item origin]);
+	UKSizesEqual(frame.size, [item size]);
+
+	NSPoint newOrigin = frame.origin;
 	NSPoint originDelta = NSMakePoint(newOrigin.x - oldOrigin.x, newOrigin.y - oldOrigin.y);
 	NSPoint newPosition = ETSumPoint(oldPosition, originDelta);
 	UKPointsEqual(newPosition, [item position]);
+}
 
-	UKRectsEqual(viewFrame, [item decorationRect]);
+- (void) checkContentGeometrySynchronizationWithFrame: (NSRect)frame
+{
+	UKRectsEqual(ETMakeRect(NSZeroPoint, frame.size), [item contentBounds]);
+	UKRectsEqual(frame, [item decorationRect]);
 }
 
 /* Verify that a lazily inserted supervisor view size and origin are replicated 
@@ -331,6 +386,7 @@ on the layout item internal geometry (contentBounds and position). */
 
 	[self checkGeometrySynchronizationWithFrame: sliderFrame 
 		oldItemOrigin: oldOrigin oldItemPosition: oldPosition];
+	[self checkContentGeometrySynchronizationWithFrame: sliderFrame];
 }
 
 /* Verify that moving or resizing the supervisor view is replicated on the 
@@ -351,6 +407,7 @@ layout item internal geometry (contentBounds and position). */
 
 	[self checkGeometrySynchronizationWithFrame: newFrame
 		oldItemOrigin: oldOrigin oldItemPosition: oldPosition];
+	[self checkContentGeometrySynchronizationWithFrame: newFrame];
 }
 
 /* Verify that moving or resizing the layout item is replicated on the 
@@ -371,6 +428,38 @@ supervisor view geometry (frame). */
 
 	[self checkGeometrySynchronizationWithFrame: [[item supervisorView] frame]
 		oldItemOrigin: oldOrigin oldItemPosition: oldPosition];
+	[self checkContentGeometrySynchronizationWithFrame: [[item supervisorView] frame]];
+}
+
+/* Verify that moving or resizing a decorated layout item is replicated on the 
+supervisor view geometry (frame). */
+- (void) testSupervisorViewToDecoratedItemGeometrySynchronization
+{
+	[item setView: AUTORELEASE([[NSSlider alloc] init])];
+	[item setDecoratorItem: [ETWindowItem item]];
+
+	NSPoint oldPosition = [item position];
+	NSPoint oldOrigin = [item origin];
+	NSRect newFrame = NSMakeRect(500, 700, 30, 40);
+
+	/* Important preconditions */
+	UKPointsNotEqual([item origin], newFrame.origin);
+	UKSizesNotEqual([item size], newFrame.size);
+
+	[[item supervisorView] setAutoresizingMask: NSViewWidthSizable | NSViewHeightSizable];
+	[item setFrame: newFrame];
+
+	// FIXME: Should use [self checkGeometrySynchronizationWithFrame: newFrame
+	//	oldItemOrigin: oldOrigin oldItemPosition: oldPosition];
+	
+	UKSizesEqual(newFrame.size, [item frame].size);
+	UKPointsEqual(newFrame.origin, [item origin]);
+	UKSizesEqual(newFrame.size, [item size]);
+
+	NSPoint newOrigin = newFrame.origin;
+	NSPoint originDelta = NSMakePoint(newOrigin.x - oldOrigin.x, newOrigin.y - oldOrigin.y);
+	NSPoint newPosition = ETSumPoint(oldPosition, originDelta);
+	UKPointsEqual(newPosition, [item position]);
 }
 
 @end

@@ -30,6 +30,14 @@
 	return (NSScrollView *)[[self supervisorView] mainView];
 }
 
+/* We must prevent the decorated item view to be resizable, otherwise 
+NSScrollView will try to resize it when it is itself resized. */
+- (void) saveAndOverrideAutoresizingMaskOfDecoratedItem: (ETUIItem *)item;
+{
+	[[[self lastDecoratorItem] supervisorView] setAutoresizingMask: 
+		[[item supervisorView] autoresizingMask]];
+	[[item supervisorView] setAutoresizingMask: NSViewNotSizable];
+}
 
 /* Patches the size to be sure it will never be smaller than the clip view 
 size, otherwise a click on the content background to unselect might not work 
@@ -167,17 +175,6 @@ For additional notes, see also -setHasVerticalScroller:. */
 	NSAssert2([[self mainView] isKindOfClass: [NSScrollView class]], 
 		@"_mainView %@ of %@ must be an NSScrollView instance", 
 		[self mainView], self);
-
-	if (view != nil)
-	{
-		[self setAutoresizingMask: [view autoresizingMask]];
-	}
-	else
-	{
-		/* Restore autoresizing mask */
-		[[(NSScrollView *)[self mainView] documentView] 
-			setAutoresizingMask: [self autoresizingMask]];	
-	}
 
 	/* Retain the view in case it must be removed from a superview and nobody
 	   else retains it */
