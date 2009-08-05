@@ -301,19 +301,19 @@ and -setAutoresizingMask: can potentially erase each other. */
 // TODO: Test the boundingBox in -testXXXGeometrySynchronization once we really 
 // worked out the way it should behave
 
-- (void) checkGeometrySynchronizationWithFrame: (NSRect)newFrame 
+- (void) checkGeometrySynchronizationWithFrame: (NSRect)viewFrame 
 	oldItemOrigin: (NSPoint)oldOrigin oldItemPosition: (NSPoint)oldPosition
 {
-	UKRectsEqual(newFrame, [item frame]);
-	UKPointsEqual(newFrame.origin, [item origin]);
-	UKSizesEqual(newFrame.size, [item size]);
-	UKRectsEqual(ETMakeRect(NSZeroPoint, newFrame.size), [item contentBounds]);
-	NSPoint newOrigin = newFrame.origin;
+	UKRectsEqual(viewFrame, [item frame]);
+	UKPointsEqual(viewFrame.origin, [item origin]);
+	UKSizesEqual(viewFrame.size, [item size]);
+	UKRectsEqual(ETMakeRect(NSZeroPoint, viewFrame.size), [item contentBounds]);
+	NSPoint newOrigin = viewFrame.origin;
 	NSPoint originDelta = NSMakePoint(newOrigin.x - oldOrigin.x, newOrigin.y - oldOrigin.y);
 	NSPoint newPosition = ETSumPoint(oldPosition, originDelta);
 	UKPointsEqual(newPosition, [item position]);
 
-	UKRectsEqual(newFrame, [item decorationRect]);
+	UKRectsEqual(viewFrame, [item decorationRect]);
 }
 
 /* Verify that a lazily inserted supervisor view size and origin are replicated 
@@ -350,6 +350,26 @@ layout item internal geometry (contentBounds and position). */
 	[[item supervisorView] setFrame: newFrame];
 
 	[self checkGeometrySynchronizationWithFrame: newFrame
+		oldItemOrigin: oldOrigin oldItemPosition: oldPosition];
+}
+
+/* Verify that moving or resizing the supervisor view is replicated on the 
+layout item internal geometry (contentBounds and position). */
+- (void) testItemToSupervisorViewGeometrySynchronization
+{
+	[item setView: AUTORELEASE([[NSSlider alloc] init])];
+
+	NSPoint oldPosition = [item position];
+	NSPoint oldOrigin = [item origin];
+	NSRect newFrame = NSMakeRect(500, 700, 30, 40);
+
+	/* Important preconditions */
+	UKPointsNotEqual([item origin], newFrame.origin);
+	UKSizesNotEqual([item size], newFrame.size);
+
+	[item setFrame: newFrame];
+
+	[self checkGeometrySynchronizationWithFrame: [[item supervisorView] frame]
 		oldItemOrigin: oldOrigin oldItemPosition: oldPosition];
 }
 
