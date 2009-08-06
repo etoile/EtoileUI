@@ -34,6 +34,7 @@ With the AppKit widget backend, the window is an NSWindow object. */
 - (BOOL) isUntitled;
 - (BOOL) shouldKeepWindowFrame;
 - (void) setShouldKeepWindowFrame: (BOOL)shouldKeepWindowFrame;
+- (float) titleBarHeight;
 
 /* Customized Decorator Methods */
 

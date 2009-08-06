@@ -162,6 +162,12 @@ when returns NO when the receiver manages the window title. */
 	return _usesCustomWindowTitle;
 }
 
+/** Returns the height of the window title bar or zero when no title bar is used. */
+- (float) titleBarHeight
+{
+	return [self decorationRect].size.height - [self contentRect].size.height;
+}
+
 /* Overriden Methods */
 
 /** Returns YES when item can be decorated with a window by the receiver, 
