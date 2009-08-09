@@ -25,7 +25,7 @@ decorated item returns NO to -isFlipped. */
 @interface ETScrollableAreaItem : ETDecoratorItem
 {
 	int _oldDecoratedItemAutoresizingMask; /* Autoresizing mask to restore */
-	BOOL _ensuresContentFillVisibleArea;
+	BOOL _ensuresContentFillsVisibleArea;
 }
 
 - (NSRect) visibleRect;

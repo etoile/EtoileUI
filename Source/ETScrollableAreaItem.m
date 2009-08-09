@@ -74,7 +74,7 @@ the role played by -contentView in other AppKit view classes). */
 	if (nil == self)
 		return nil;
 
-	_ensuresContentFillVisibleArea = YES;
+	_ensuresContentFillsVisibleArea = YES;
 
 	//ETLog(@"Scroll view %@", [self scrollView]);
 
@@ -252,7 +252,7 @@ superior to the visible content size.
 Returns YES by default. */
 - (BOOL) ensuresContentFillsVisibleArea
 {
-	return _ensuresContentFillVisibleArea;
+	return _ensuresContentFillsVisibleArea;
 }
 
 /** Sets whether the decorated item size should be always be kept equal or 
@@ -263,7 +263,7 @@ size must remain fixed. A layout item that presents an image must probably
 never be resized when the scrollable area item is resized. */
 - (void) setEnsuresContentFillsVisibleArea: (BOOL)flag
 {
-	_ensuresContentFillVisibleArea = flag;
+	_ensuresContentFillsVisibleArea = flag;
 }
 
 @end
