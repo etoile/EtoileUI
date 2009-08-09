@@ -899,6 +899,13 @@ and write the receiver properties. */
 	return _variableProperties;
 }
 
+/** Returns YES, see [NSObject(EtoileUI) -isLayoutItem] */
+- (BOOL) isLayoutItem
+{
+	return YES;
+}
+
+/** Returns NO, see -[ETLayoutItemGroup isGroup] */
 - (BOOL) isGroup
 {
 	return NO;
@@ -1669,6 +1676,8 @@ See also -[ETLayout isPositional] and -[ETLayout isComputedLayout]. */
 		[self setContentSize: rect.size];
 	}
 	/* Must follow -setContentSize: to allow the anchor point to be computed */
+	 // TODO: When the receiver is decorated, will invoke -setDecorationRect: 
+	 // one more time. We should eliminate this extra call.
 	[self setOrigin: rect.origin];
 
 	[[self style] didChangeItemBounds: [self contentBounds]];
@@ -2413,18 +2422,6 @@ returns nil.
 
 	/* Notify decorator item chain */
 	[[self decoratorItem] beginEditingUI];
-}
-
-@end
-
-
-@implementation NSObject (ETLayoutItem)
-
-/** Returns YES if the receiver is an ETLayoutItem class or subclass instance, 
-otherwise returns NO. */
-- (BOOL) isLayoutItem
-{
-	return ([self isKindOfClass: [ETLayoutItem class]]);
 }
 
 @end

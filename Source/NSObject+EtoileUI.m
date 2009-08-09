@@ -213,6 +213,13 @@ the aspect repository. */
 	return NO;
 }
 
+/** Returns YES if the receiver is an ETLayoutItem class or subclass instance, 
+otherwise returns NO. */
+- (BOOL) isLayoutItem
+{
+	return NO;
+}
+
 @end
 
 @implementation NSResponder (EtoileUI)

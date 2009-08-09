@@ -84,6 +84,8 @@
 
 - (BOOL) isFirstResponderProxy;
 
+- (BOOL) isLayoutItem;
+
 @end
 
 @interface NSObject (ETInspector) <ETObjectInspection>

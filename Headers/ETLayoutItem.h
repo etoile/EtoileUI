@@ -136,6 +136,7 @@ ETDecoratorItem, ETScrollableAreaItem, ETWindowItem, ETStyleGroup;
 - (NSArray *) properties;
 - (NSDictionary *) variableProperties;
 
+- (BOOL) isLayoutItem;
 - (BOOL) isGroup;
 
 /* Utility Accessors */
@@ -292,8 +293,3 @@ If -setLayout: results in no layout change, no notification is posted.
 This notification is also posted when the layout is modified by the user (e.g. 
 through an inspector). */
 extern NSString *ETLayoutItemLayoutDidChangeNotification;
-
-
-@interface NSObject (ETLayoutItem)
-- (BOOL) isLayoutItem;
-@end
