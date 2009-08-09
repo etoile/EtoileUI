@@ -23,6 +23,45 @@
 ETDecoratorItem, ETScrollableAreaItem, ETWindowItem, ETStyleGroup;
 @protocol ETInspector;
 
+/** Describes how the content looks when the layout item is resized.
+
+The content can be:
+<list>
+<item>a view, when -view is not nil</item>
+<item>what the styles draw, when -styleGroup is not empty</item>
+</list>
+
+The content aspect is applied to a view by altering its autoresizing mask.<br />
+For their parts, styles are expected to rely on the item content aspect to know 
+how they should draw the properties they retrieve through the layout item. 
+
+Some content aspects won't be applied to a view because they cannot be 
+translated into an autoresizing mask. */
+typedef enum
+{
+	ETContentAspectNone, 
+/** Lets the content as is. */
+	ETContentAspectCentered, 
+/** Centers the content and never resizes it. */
+	ETContentAspectScaleToFit, 
+/** Scales the content, by preserving the content proportions, to the maximum 
+size that keeps both the height and width equals to or less than the item 
+content size. And centers the content. */
+	ETContentAspectScaleToFill,
+/** Scales the content, by preserving the content proportions, to the minimum 
+size that keeps both the height and width equals to or greater than the item 
+content size. And centers the content. */
+	ETContentAspectScaleToFillHorizontally,
+/** Scales the content, by preserving the content proportions, to the item 
+content width and centers it. */
+	ETContentAspectScaleToFillVertically,
+/** Scales the content, by preserving the content proportions, to the item 
+content height and centers it. */
+	ETContentAspectStretchToFill,
+/** Streches the content, by distorting it if needed, to the item content size 
+and centers it. A strech is a scale that doesn't preserve the content proportions. */
+} ETContentAspect;
+
 
 // FIXME: Use less memory per instance. Name and value are somehow duplicates.
 // _cells and _view could be moved in a helper object. Pack booleans in a struct.
