@@ -386,7 +386,7 @@ Take in account that parentView can be nil. */
 Sets the last decorator item autoresizing mask to match the given item, then 
 overrides the given item autoresizing mask with NSViewWidthSizable and 
 NSViewHeightSizable. */
-- (void) saveAndOverrideAutoresizingMaskOfDecoratedItem: (ETUIItem *)item;
+- (void) saveAndOverrideAutoresizingMaskOfDecoratedItem: (ETUIItem *)item
 {
 	[[[self lastDecoratorItem] supervisorView] setAutoresizingMask: 
 		[[item supervisorView] autoresizingMask]];
