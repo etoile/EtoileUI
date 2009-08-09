@@ -39,6 +39,7 @@
 #import "ETLayoutItem+Scrollable.h"
 #import "ETLayout.h"
 #import "ETScrollableAreaItem.h"
+#import "NSObject+EtoileUI.h"
 #import "ETCompatibility.h"
 
 /* First instance created by calling private method -setShowsScrollView: */
