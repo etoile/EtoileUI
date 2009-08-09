@@ -16,8 +16,17 @@
 
 /** A decorator which can be used to make content scrollable.
 
-With the AppKit widget backend, the underlying view is an NSScrollView object. */
+With the AppKit widget backend, the underlying view is an NSScrollView object.
+
+You must not alter the underlying NSScrollView object with -setContentView:.
+
+Non-flipped coordinates are untested with ETScrollableAreaItem i.e. when the 
+decorated item returns NO to -isFlipped. */
 @interface ETScrollableAreaItem : ETDecoratorItem
+{
+	int _oldDecoratedItemAutoresizingMask; /* Autoresizing mask to restore */
+	BOOL _ensuresContentFillVisibleArea;
+}
 
 - (NSRect) visibleRect;
 - (NSRect) visibleContentRect;
@@ -27,8 +36,11 @@ With the AppKit widget backend, the underlying view is an NSScrollView object. *
 - (BOOL) hasHorizontalScroller;
 - (void) setHasHorizontalScroller: (BOOL)scroll;
 
-// TODO: May be be nicer to override -contentRect in ETScrollableAreaItem 
-// so that the content rect origin reflects the current scroll position.
+- (BOOL) ensuresContentFillsVisibleArea;
+- (void) setEnsuresContentFillsVisibleArea: (BOOL)flag;
+
+// TODO: May be nicer to override -contentRect in ETScrollableAreaItem so that 
+// the content rect origin reflects the current scroll position.
 
 @end
 

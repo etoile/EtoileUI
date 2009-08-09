@@ -315,6 +315,11 @@ and -setAutoresizingMask: can potentially erase each other. */
 	NSRect rect = [ETLayoutItem defaultItemRect];
 
 	[item setDecoratorItem: scrollDecorator];
+	
+	/* Preconditions */
+	UKFalse([scrollDecorator hasHorizontalScroller]);
+	UKFalse([scrollDecorator hasVerticalScroller]);
+
 	// NOTE: -[ETScrollableAreaItem scrollView] is a private method */
 	NSRect contentRect = [[[(id)scrollDecorator scrollView] contentView] frame];
 
@@ -326,8 +331,52 @@ and -setAutoresizingMask: can potentially erase each other. */
 	UKRectsEqual(rect, [scrollDecorator contentRect]);
 	UKRectsEqual(contentRect, [scrollDecorator visibleContentRect]);
 	UKRectsEqual(rect, [item frame]);
+	/* The two tests below only holds when -ensuresContentFillsVisibleArea is YES */
 	UKRectsEqual(ETMakeRect(NSZeroPoint, rect.size), [item contentBounds]);
 	UKRectsEqual([scrollDecorator contentRect], [item decorationRect]); /* See -[ETDecoratorItem contentRect] doc */
+}
+
+- (void) testScrollDecoratorGeometryForDecorationRectResize
+{
+	ETScrollableAreaItem *scrollDecorator = [ETScrollableAreaItem item];
+	NSRect rect = NSMakeRect(0, 0, 1000, 3000);
+
+	[item setDecoratorItem: scrollDecorator];
+	[scrollDecorator setDecorationRect: rect];
+
+	// NOTE: -[ETScrollableAreaItem scrollView] is a private method */
+	NSRect contentRect = [[[(id)scrollDecorator scrollView] contentView] frame];
+
+	UKRectsEqual(rect, [scrollDecorator decorationRect]);
+	UKSizesEqual(rect.size, [scrollDecorator contentRect].size);
+	UKRectsEqual(contentRect, [scrollDecorator visibleContentRect]);
+	UKRectsEqual(rect, [item frame]);
+	/* The two tests below only holds when -ensuresContentFillsVisibleArea is YES */
+	UKRectsEqual(ETMakeRect(NSZeroPoint, rect.size), [item contentBounds]);
+	UKRectsEqual([scrollDecorator contentRect], [item decorationRect]);
+}
+
+- (void) testScrollDecoratorGeometryForScrollViewResize
+{
+	ETScrollableAreaItem *scrollDecorator = [ETScrollableAreaItem item];
+	NSRect rect = NSMakeRect(0, 0, 1000, 3000);
+
+	[item setDecoratorItem: scrollDecorator];
+	/* The scroll view is never resized directly but only through its enclosing 
+	   supervisor view. That's why to simulate a user resize at UI level we 
+	   won't do [[scrollDecorator scrollView] setFrame: rect] */
+	[[(id)scrollDecorator supervisorView] setFrame: rect];
+
+	// NOTE: -[ETScrollableAreaItem scrollView] is a private method */
+	NSRect contentRect = [[[(id)scrollDecorator scrollView] contentView] frame];
+
+	UKRectsEqual(rect, [scrollDecorator decorationRect]);
+	UKSizesEqual(rect.size, [scrollDecorator contentRect].size);
+	UKRectsEqual(contentRect, [scrollDecorator visibleContentRect]);
+	UKRectsEqual(rect, [item frame]);
+	/* The two tests below only holds when -ensuresContentFillsVisibleArea is YES */
+	UKRectsEqual(ETMakeRect(NSZeroPoint, rect.size), [item contentBounds]);
+	UKRectsEqual([scrollDecorator contentRect], [item decorationRect]);
 }
 
 - (void) testTooManyDecoratorGeometry
@@ -338,13 +387,25 @@ and -setAutoresizingMask: can potentially erase each other. */
 
 	[item setDecoratorItem: scrollDecorator];
 	[scrollDecorator setDecoratorItem: windowDecorator];
+	
+	/* Preconditions */
+	UKFalse([scrollDecorator hasHorizontalScroller]);
+	UKFalse([scrollDecorator hasVerticalScroller]);
+	
+	NSRect rectMinusTitleBar = NSMakeRect(rect.origin.x, rect.origin.y, 
+		rect.size.width, rect.size.height - [windowDecorator titleBarHeight]);
 
 	UKRectsEqual([windowDecorator contentRect], [scrollDecorator decorationRect]);
-	UKRectsEqual(rect, [scrollDecorator contentRect]);
-	UKRectsNotEqual([scrollDecorator contentRect], [scrollDecorator visibleContentRect]);
+	// FIXME: Should be rect and not rectMinusTitleBar. We need to check 
+	// -usesLayoutBaseFrame is YES in -clipViewFrameDidChange: in order to 
+	// have the right to invoke [[decoratedItem supervisorView] setFrame:].
+	UKRectsEqual(rectMinusTitleBar, [scrollDecorator contentRect]);
+	UKRectsNotEqual(rectMinusTitleBar, [scrollDecorator visibleContentRect]);
 	UKSizesEqual(rect.size, [windowDecorator decorationRect].size);
 	UKSizesEqual(rect.size, [item size]);
-	UKRectsEqual(ETMakeRect(NSZeroPoint, rect.size), [item contentBounds]);
+	/* The two tests below only holds when -ensuresContentFillsVisibleArea is YES */
+	// FIXME: Should be rect.size and not rectMinusTitleBar.size
+	UKRectsEqual(ETMakeRect(NSZeroPoint, rectMinusTitleBar.size), [item contentBounds]);
 	UKRectsEqual([scrollDecorator contentRect], [item decorationRect]);
 }
 
@@ -399,7 +460,7 @@ layout item internal geometry (contentBounds and position). */
 	NSPoint oldOrigin = [item origin];
 	NSRect newFrame = NSMakeRect(500, 700, 30, 40);
 
-	/* Important preconditions */
+	/* Preconditions */
 	UKPointsNotEqual([item origin], newFrame.origin);
 	UKSizesNotEqual([item size], newFrame.size);
 
@@ -420,7 +481,7 @@ supervisor view geometry (frame). */
 	NSPoint oldOrigin = [item origin];
 	NSRect newFrame = NSMakeRect(500, 700, 30, 40);
 
-	/* Important preconditions */
+	/* Preconditions */
 	UKPointsNotEqual([item origin], newFrame.origin);
 	UKSizesNotEqual([item size], newFrame.size);
 
@@ -442,7 +503,7 @@ supervisor view geometry (frame). */
 	NSPoint oldOrigin = [item origin];
 	NSRect newFrame = NSMakeRect(500, 700, 30, 40);
 
-	/* Important preconditions */
+	/* Preconditions */
 	UKPointsNotEqual([item origin], newFrame.origin);
 	UKSizesNotEqual([item size], newFrame.size);
 

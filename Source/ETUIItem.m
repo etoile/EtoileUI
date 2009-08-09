@@ -120,6 +120,11 @@ also ETView. */
 	return _view;
 }
 
+// TODO: Would be better to only allow -setSupervisorView: to be called once 
+// and prevents supervisorView replacement. Presently developers must not 
+// overlook this possibility when they write a subclass, otherwise weird issues 
+// might occur.
+
 /** Sets the supervisor view associated with the receiver. 
 
 You should never need to call this method.
