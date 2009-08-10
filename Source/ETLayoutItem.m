@@ -2197,22 +2197,22 @@ image should not be expected to be nil. */
 // NOTE: May be we should have -displayIcon (or -customIcon, -setCustomIcon:) to 
 // eliminate the lack of symetry between -icon and -setIcon:.
 /** Returns the image to be displayed when the receiver must be represented in a 
-	symbolic style. This icon is commonly used by some layouts and also if the 
-	receiver represents another layout item (when -isMetaLayoutItem returns YES).
+symbolic style. This icon is commonly used by some layouts and also if the 
+receiver represents another layout item (when -isMetaLayoutItem returns YES).
 
-	By default, this method returns by decreasing order of priority:
-    <enum>
-    <item>the receiver icon (aka ETIconProperty), if -setIcon: was called previously</item>
-    <item>the receiver image (aka ETImageProperty), if -image doesn't return nil</item>
-	<item>a view snapshot, if -view doesn't return nil</item>
-	<item>the represented object icon, if the represented object and the icon 
-    associated with it are not nil</item>
-    <item>nil, if none of the above conditions are met</item>
-    </enum>. 
-	The returned image can be overriden by calling -setIcon:.
+By default, this method returns by decreasing order of priority:
+<enum>
+<item>the receiver icon (aka kETIconProperty), if -setIcon: was called previously</item>
+<item>the receiver image (aka kETImageProperty), if -image doesn't return nil</item>
+<item>a view snapshot, if -view doesn't return nil</item>
+<item>the represented object icon, if the represented object and the icon 
+associated with it are not nil</item>
+<item>nil, if none of the above conditions are met</item>
+</enum>. 
+The returned image can be overriden by calling -setIcon:.
 
-	-image and -icon can be considered as symetric equivalents of -name and 
-	-displayName methods. */
+-image and -icon can be considered as symetric equivalents of -name and 
+-displayName methods. */
 - (NSImage *) icon
 {
 	NSImage *icon = GET_PROPERTY(kETIconProperty);
@@ -2233,10 +2233,10 @@ image should not be expected to be nil. */
 }
 
 /** Sets the image to be displayed when the receiver must be represented in a 
-    symbolic style. See also -icon.
+symbolic style. See also -icon.
 
-    If img is nil, then the default behavior of -icon is restored and the 
-    icon image should not be expected to be nil. */
+If img is nil, then the default behavior of -icon is restored and the icon image 
+should not be expected to be nil. */
 - (void) setIcon: (NSImage *)img
 {
 	SET_PROPERTY(img, kETIconProperty);
