@@ -306,7 +306,10 @@ and -setAutoresizingMask: can potentially erase each other. */
 	UKRectsEqual(ETMakeRect([windowDecorator decorationRect].origin, rect.size), [item frame]);
 	UKRectsEqual(ETMakeRect(NSZeroPoint, contentSize), [item contentBounds]);
 	UKRectsEqual([windowDecorator contentRect], [item decorationRect]);
-	UKRectsEqual(ETMakeRect(NSZeroPoint, contentSize), [[item supervisorView] frame]);
+	/* For Cocoa, the supervisor view frame origin will be (0, 0) unlike 
+	   GNUstep where windows use a border and the origin will have strictly 
+	   positive values. */
+	UKSizesEqual(contentSize, [[item supervisorView] frame].size);
 }
 
 - (void) testScrollDecoratorGeometry
@@ -399,13 +402,18 @@ and -setAutoresizingMask: can potentially erase each other. */
 	// FIXME: Should be rect and not rectMinusTitleBar. We need to check 
 	// -usesLayoutBaseFrame is YES in -clipViewFrameDidChange: in order to 
 	// have the right to invoke [[decoratedItem supervisorView] setFrame:].
+	// Moreover this quick hack doesn't work on GNUstep the window has a border.
+#ifndef GNUSTEP
 	UKRectsEqual(rectMinusTitleBar, [scrollDecorator contentRect]);
+#endif
 	UKRectsNotEqual(rectMinusTitleBar, [scrollDecorator visibleContentRect]);
 	UKSizesEqual(rect.size, [windowDecorator decorationRect].size);
 	UKSizesEqual(rect.size, [item size]);
 	/* The two tests below only holds when -ensuresContentFillsVisibleArea is YES */
 	// FIXME: Should be rect.size and not rectMinusTitleBar.size
+#ifndef GNUSTEP
 	UKRectsEqual(ETMakeRect(NSZeroPoint, rectMinusTitleBar.size), [item contentBounds]);
+#endif
 	UKRectsEqual([scrollDecorator contentRect], [item decorationRect]);
 }
 
