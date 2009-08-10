@@ -16,7 +16,6 @@
 #import <EtoileUI/ETStyle.h>
 #import <EtoileUI/ETInspecting.h>
 #import <EtoileUI/ETDecoratorItem.h>
-#import <EtoileFoundation/ETPropertyValueCoding.h>
 
 @class ETUTI;
 @class ETView, ETContainer, ETLayout, ETLayoutItemGroup, 
@@ -63,25 +62,24 @@ and centers it. A strech is a scale that doesn't preserve the content proportion
 } ETContentAspect;
 
 
-// FIXME: Use less memory per instance. Name and value are somehow duplicates.
-// _cells and _view could be moved in a helper object. Pack booleans in a struct.
-@interface ETLayoutItem : ETUIItem <NSCopying, ETPropertyValueCoding, ETObjectInspection>
+@interface ETLayoutItem : ETUIItem <NSCopying, ETObjectInspection>
 {
 	ETLayoutItemGroup *_parentItem;
 	
 	id _modelObject;
 	ETStyleGroup *_styleGroup;
 	NSMutableDictionary *_variableProperties;
-	NSMutableDictionary *_defaultValues; // TODO: Probably merge the two dictionaries
+	// TODO: Merge the two dictionaries or store the default values per object 
+	// in an external dictionary.
+	NSMutableDictionary *_defaultValues;
 
 	NSRect _contentBounds;
 	NSPoint _position;
 	NSAffineTransform *_transform;
 	unsigned int _autoresizingMask;
 	ETContentAspect _contentAspect;
-
-	/* Model object stores a persistent frame when the layout is non-computed */
 	NSRect _boundingBox;
+
 	BOOL _flipped;
 	BOOL _selected;
 	BOOL _visible;
@@ -89,7 +87,6 @@ and centers it. A strech is a scale that doesn't preserve the content proportion
 	BOOL _isSyncingSupervisorViewGeometry;
 	BOOL _scrollViewShown; /* Used by ETLayoutItem+Scrollable */
 	BOOL _wasKVOStopped;
-	// TODO: Implement... BOOL _needsDisplay;
 }
 
 /* Initialization */
@@ -120,7 +117,6 @@ and centers it. A strech is a scale that doesn't preserve the content proportion
 - (NSIndexPath *) indexPathForItem: (ETLayoutItem *)item;
 - (NSIndexPath *) indexPath;
 - (NSString *) path;
-//- (void) setPath: (NSString *)path;
 - (NSString *) representedPath;
 - (NSString *) representedPathBase;
 - (BOOL) hasValidRepresentedPathBase;
@@ -129,23 +125,6 @@ and centers it. A strech is a scale that doesn't preserve the content proportion
 
 /* Main Accessors */
 
-/** Facility methods to store a name acting like a last fallback property for 
-	display. Name is also used as a path component to build 
-	paths passed through tree source protocol to the container source. If no 
-	name is available, the layout item is referenced in the path by its index 
-	in layout item group which owns it. Name have the advantage to be more 
-	stable than index in some cases, you can also store id or uuid in this
-	field.
-	You can retrieve a layout item bound a know path by simply passing this 
-	path as a parameter to -[ETContainer layoutItemForPath:]. Layout items
-	tree structure are managed by container archictecture so you never need
-	to worry about releasing/retaining items. Only your wrapped model if you
-	need/have one must be memory-managed by your code. 
-	NOTE: the feature described below isn't yet supported by container
-	architecture and could never be.
-	If you use no container source, and you call -[ETContainer addItem:] with
-	a layout item group referencing other items, in this case the management
-	of the tree structure is up to you.*/
 - (NSString *) name;
 - (void) setName: (NSString *)name;
 - (NSString *) displayName;
@@ -180,22 +159,11 @@ and centers it. A strech is a scale that doesn't preserve the content proportion
 
 /* Utility Accessors */
 
-/** When selection is enabled on -render call, the layout item checks a
-	selection renderer (ETSelection class or subclasses) is part of its 
-	rendering chain. When none is found, it inserts default selection
-	renderer at the end of the chain.
-	[ETRenderer rendererForName: kETStyleSelection
-	If selection is disabled, it does nothing. If you call 
-	-setEnablesSelection: with NO, it removes all selection renderers part
-	of the rendering chain. */
-/*- setEnablesSelection:
-- isSelectionEnabled;*/
 - (void) setSelected: (BOOL)selected;
 - (BOOL) isSelected;
 - (void) setVisible: (BOOL)visible;
 - (BOOL) isVisible;
 
-/** Used to select items which can be dragged or dropped in a dragging operation */
 - (ETUTI *) UTI;
 - (void) setSubtype: (ETUTI *)aUTI;
 - (ETUTI *) subtype;
@@ -206,9 +174,8 @@ and centers it. A strech is a scale that doesn't preserve the content proportion
 - (void) setLayout: (ETLayout *)layout;
 - (ETLayoutItem *) ancestorItemForOpaqueLayout;
 - (void) didChangeLayout: (ETLayout *)oldLayout;
-
 - (void) updateLayout;
-- (void) apply: (NSMutableDictionary *)inputValues;
+
 - (NSRect) drawingFrame;
 - (void) render: (NSMutableDictionary *)inputValues 
       dirtyRect: (NSRect)dirtyRect 
@@ -237,8 +204,6 @@ and centers it. A strech is a scale that doesn't preserve the content proportion
 - (NSPoint) convertPointFromParent: (NSPoint)point;
 - (NSRect) convertRect: (NSRect)rect fromItem: (ETLayoutItemGroup *)ancestor;
 - (NSRect) convertRect: (NSRect)rect toItem: (ETLayoutItemGroup *)ancestor;
-/*- (NSPoint) convertPoint: (NSPoint)point fromItem: (ETLayoutItemGroup *)ancestor;
-- (NSPoint) convertPoint: (NSPoint)point toItem: (ETLayoutItemGroup *)ancestor;*/
 - (BOOL) containsPoint: (NSPoint)point;
 - (BOOL) pointInside: (NSPoint)point useBoundingBox: (BOOL)extended;
 - (BOOL) isFlipped;

@@ -964,7 +964,7 @@ Take note the new visibility state won't be apparent until a redisplay occurs. *
 subtype and the represented object type when available.
 
 When the receiver has a subtype, the returned type is a transient type whose 
-supertypes are the class type and the subtype. <br />
+supertypes are the class type and the subtype.<br />
 When the receiver has a represented object, the returned type is a transient 
 type whose supertypes are the class type and the represented object class type.<br />
 In case, the receiver has both a represented object and a subtype, the 
@@ -1134,7 +1134,10 @@ You should never use this method unless you write an ETLayoutItem subclass. */
 	return GET_PROPERTY(kETLayoutProperty);
 }
 
-/** Sets the layout associated with the receiver to present its content. */
+/** Sets the layout associated with the receiver to present its content.
+
+Layout are not yet supported on ETLayoutItem instances, which this method is 
+useless currently. */
 - (void) setLayout: (ETLayout *)aLayout
 {
 	ETLayout *oldLayout = GET_PROPERTY(kETLayoutProperty);
@@ -1162,33 +1165,15 @@ returns YES to -isOpaque (see ETLayout). If none is found, returns self. */
 	return lastFoundOpaqueAncestor;
 }
 
-/** Forces the layout to be recomputed to take in account geometry and content 
-related changes since the last layout update. */
+/** <override-dummy />
+Forces the layout to be recomputed to take in account geometry and content 
+related changes since the last layout update.
+
+This method is not yet implemented.<br />
+See also -[ETLayoutItemGroup updateLayout].  */
 - (void) updateLayout
 {
-	/* See -apply: */
-}
-
-/** Allows to compute the layout of the whole layout item tree without any 
-	rendering/drawing. The layout begins with layout item leaves which can 
-	simply returns their size, then moves up to layout item node which can 
-	compute their layout and by side-effect their size. The process is 
-	continued until the root layout item associated with a container is 
-	reached.
-	inputValues is usually nil. */
-- (void) apply: (NSMutableDictionary *)inputValues
-{
-	[self updateLayout];
-}
-
-/** Returns the innermost decorator item in the decorator chain which has a 
-supervisor view bound to it, thereby can be qualified as an item with a view.
-If the receiver has a supervisor view, then the receiver is returned. 
-
-TODO: Implement or remove... */
-- (ETLayoutItem *) firstDecoratorItemWithSupervisorView
-{
-	return nil;
+	// TODO: Implement
 }
 
 /** Returns the rect where the drawing of the layout item must occur, typically 
@@ -1281,6 +1266,11 @@ More explanations in -display. */
 	[self setNeedsDisplayInRect: [self convertRectToContent: [self boundingBox]]];
 }
 
+/** Marks the given receiver area and the entire layout item subtree that 
+intersects it, to be redisplayed the next time an ancestor view receives a 
+display if needed request (see -[NSView displayIfNeededXXX] methods). 
+
+More explanations in -display. */
 - (void) setNeedsDisplayInRect: (NSRect)dirtyRect
 {
 	NSView *displayView = nil;
@@ -1297,15 +1287,20 @@ owned by it.
 
 To handle the display, an ancestor view is looked up and the rect to refresh is 
 converted into this ancestor coordinate space. Precisely both the lookup and the 
-conversion are handled by -convertDisplayRect:toAncestorDisplayView:.
+conversion are handled by 
+-convertDisplayRect:toAncestorDisplayView:rootView:parentItem:.
 
-If the receiver has a display view, this view will be asked to drawby itself.  */
+If the receiver has a display view, this view will be asked to draw by itself.  */
 - (void) display
 {
 	 /* Redisplay the content bounds unless a custom bouding box is set */
 	[self displayRect: [self convertRectToContent: [self boundingBox]]];
 }
 
+/** Triggers the redisplay of the given receiver area and the entire layout item 
+subtree that intersects it. 
+
+More explanations in -display. */
 - (void) displayRect: (NSRect)dirtyRect
 {
 	// NOTE: We could also use the next two lines to redisplay, but 
@@ -1330,7 +1325,7 @@ Areas can be marked as invalid with -setNeedsDisplay: and -setNeedsDisplayInRect
 	[[self closestAncestorDisplayView] displayIfNeeded];
 }
 
-/** When the receveir is visible in an opaque layout and won't redraw by itself, 
+/** When the receiver is visible in an opaque layout and won't redraw by itself, 
 marks the ancestor item to redisplay the area that corresponds to the receiver 
 in this layout. Else marks the receiver to be redisplayed exactly as 
 -setNeedsDisplay: with YES. 
@@ -1521,7 +1516,8 @@ event handling and drawing. If you want to alter the flipping, you must use
 
 /** Sets whether the receiver uses flipped coordinates to position its content. 
 
-This method updates the supervisor view to match the flipping of the receiver.
+This method updates the supervisor view and the decorator chain to match the 
+flipping of the receiver.
 
 You must never alter the supervisor view directly with -[ETView setFlipped:]. */
 - (void) setFlipped: (BOOL)flip
@@ -1640,7 +1636,7 @@ returned frame is equivalent to the display view frame.
 
 This value is always in sync with the persistent frame in a positional and 
 non-computed layout such as ETFreeLayout, but is usually different when the 
-layout is computed. 
+layout is computed.<br />
 See also -setPersistentFrame: */
 - (NSRect) frame
 {
@@ -2383,6 +2379,7 @@ returns nil.
 
 /* Live Development */
 
+/** This feature is not yet implemented. */
 - (void) beginEditingUI
 {
 	id view = [self supervisorView];
