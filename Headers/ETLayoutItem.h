@@ -315,11 +315,6 @@ and centers it. A strech is a scale that doesn't preserve the content proportion
 /*- (BOOL) isEditingUI;
 - (void) commitEditingUI;*/
 
-/* Deprecated (DO NOT USE, WILL BE REMOVED LATER) */
-
-- (void) setAppliesResizingToBounds: (BOOL)flag;
-- (BOOL) appliesResizingToBounds;
-
 @end
 
 

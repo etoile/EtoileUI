@@ -39,7 +39,7 @@ Non observable properties are -hasValidRepresentedPathBase, -usesWidgetView,
 -closestAncestorDisplayView, -closestAncestorItemWithDisplayView, 
 -supervisorView, -ancestorItemForOpaqueLayout, ,-properties, -variableProperties, 
 -drawingFrame, -windowDecoratorItem, -firstScrollViewDecoratorItem, -origin,  
--contentSize, -appliesResizingToBounds and -inspector.
+-contentSize, and -inspector.
 
 TODO: Move into ETLayoutItem entity description. */
 + (NSSet *) nonObservableProperties
@@ -49,7 +49,7 @@ TODO: Move into ETLayoutItem entity description. */
 		@"supervisorView", @"ancestorItemForOpaqueLayout", @"properties", 
 		@"variableProperties", @"drawingFrame", @"windowDecoratorItem", 
 		@"firstScrollViewDecoratorItem", @"origin",  @"contentSize", 
-		@"appliesResizingToBounds", @"inspector");
+		@"inspector");
 }
 
 /** Returns the observable properties. 

@@ -25,7 +25,6 @@
 	paneItems = [[NSMutableArray alloc] init];
 	
 	paneItem = [ETLayoutItem layoutItemWithView: paneView1];
-	[paneItem setAppliesResizingToBounds: YES];
 	[paneItem setRepresentedObject: [NSMutableDictionary dictionary]];
 	//[paneItem setName: @"Funky"];
 	[paneItem setValue: @"Funky" forProperty: @"name"];
@@ -34,7 +33,6 @@
 	[paneItems addObject: paneItem];
 	
 	paneItem = [ETLayoutItem layoutItemWithView: paneView2];
-	[paneItem setAppliesResizingToBounds: YES];
 	[paneItem setRepresentedObject: [NSMutableDictionary dictionary]];
 	//[paneItem setName: @"Edgy"];
 	[paneItem setValue: @"Edgy" forProperty: @"name"];
@@ -43,7 +41,6 @@
 	[paneItems addObject: paneItem];
 	
 	paneItem = [ETLayoutItem layoutItemWithView: paneView3];
-	[paneItem setAppliesResizingToBounds: YES];
 	[paneItem setRepresentedObject: [NSMutableDictionary dictionary]];
 	//[paneItem setName: @"Groovy"];
 	[paneItem setValue: @"Groovy" forProperty: @"name"];
@@ -217,8 +214,6 @@
 	ETLayoutItem *paneItem = [paneItems objectAtIndex: index];
 	
 	NSLog(@"Returns %@ as layout item in container %@", paneItem, [baseItem supervisorView]);
-	
-	[paneItem setAppliesResizingToBounds: YES];
 
 	return paneItem;
 }
