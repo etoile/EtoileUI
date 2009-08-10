@@ -57,7 +57,7 @@ content width and centers it. */
 	ETContentAspectScaleToFillVertically,
 /** Scales the content, by preserving the content proportions, to the item 
 content height and centers it. */
-	ETContentAspectStretchToFill,
+	ETContentAspectStretchToFill
 /** Streches the content, by distorting it if needed, to the item content size 
 and centers it. A strech is a scale that doesn't preserve the content proportions. */
 } ETContentAspect;
@@ -78,13 +78,13 @@ and centers it. A strech is a scale that doesn't preserve the content proportion
 	NSPoint _position;
 	NSAffineTransform *_transform;
 	unsigned int _autoresizingMask;
+	ETContentAspect _contentAspect;
 
 	/* Model object stores a persistent frame when the layout is non-computed */
 	NSRect _boundingBox;
 	BOOL _flipped;
 	BOOL _selected;
 	BOOL _visible;
-	BOOL _resizeBounds; /* Scale view content by resizing bounds */
 	BOOL _needsUpdateLayout;
 	BOOL _isSyncingSupervisorViewGeometry;
 	BOOL _scrollViewShown; /* Used by ETLayoutItem+Scrollable */
@@ -291,8 +291,8 @@ and centers it. A strech is a scale that doesn't preserve the content proportion
 - (void) restoreDefaultFrame;
 - (unsigned int) autoresizingMask;
 - (void) setAutoresizingMask: (unsigned int)mask;
-- (void) setAppliesResizingToBounds: (BOOL)flag;
-- (BOOL) appliesResizingToBounds;
+- (ETContentAspect) contentAspect;
+- (void) setContentAspect: (ETContentAspect)anAspect;
 
 /* Events & Actions */
 
@@ -314,6 +314,11 @@ and centers it. A strech is a scale that doesn't preserve the content proportion
 - (void) beginEditingUI;
 /*- (BOOL) isEditingUI;
 - (void) commitEditingUI;*/
+
+/* Deprecated (DO NOT USE, WILL BE REMOVED LATER) */
+
+- (void) setAppliesResizingToBounds: (BOOL)flag;
+- (BOOL) appliesResizingToBounds;
 
 @end
 

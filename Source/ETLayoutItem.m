@@ -121,6 +121,7 @@ NSString *ETLayoutItemLayoutDidChangeNotification = @"ETLayoutItemLayoutDidChang
 		[self setTransform: [NSAffineTransform transform]];
 		 /* Will be overriden by -setView: when the view is not nil */
 		_autoresizingMask = NSViewNotSizable;
+		_contentAspect = ETContentAspectScaleToFill;
 		_boundingBox = ETNullRect;
 		[self setView: view];
 		[self setFlipped: YES]; /* -setFlipped: must follow -setSupervisorView: */
@@ -219,7 +220,7 @@ Default values won't be copied. */
 	item->_flipped = _flipped;
 	item->_selected = _selected;
 	item->_visible = _visible;
-	item->_resizeBounds = _resizeBounds;
+	item->_contentAspect = _contentAspect;
 	item->_scrollViewShown = _scrollViewShown;
 	
 	/* We copy all object ivars except _parentItem */
@@ -2103,40 +2104,22 @@ TODO: Autoresizing mask isn't yet supported when the receiver has no view. */
 	_isSyncingSupervisorViewGeometry = NO;
 }
 
+/** Returns that the content aspect that describes how the content looks when 
+the receiver is resized.
 
-/** When the layout item uses a view, pass YES to this method to have the 
-content resize when the view itself is resized (by modifying frame).
-
-Resizing content in a view is possible by simply updating bounds size to match 
-the view frame. */
-- (void) setAppliesResizingToBounds: (BOOL)flag
+See ETContentAspect enum. */
+- (ETContentAspect) contentAspect
 {
-	_resizeBounds = flag;
-	
-	if ([self displayView] == nil)
-		return;
-	
-	if (_resizeBounds && [self displayView] != nil)
-	{
-		[[NSNotificationCenter defaultCenter] addObserver: self 
-		                                         selector: @selector(layoutItemViewFrameDidChange:) 
-												     name: NSViewFrameDidChangeNotification
-												   object: [self displayView]];
-		/* Fake notification to update bounds size */
-		[self layoutItemViewFrameDidChange: nil];
-	}
-	else
-	{
-		[[NSNotificationCenter defaultCenter] removeObserver: self];
-		/* Restore bounds size */
-		[[self displayView] setBoundsSize: [[self displayView] frame].size];
-		[[self displayView] setNeedsDisplay: YES];
-	}
+	return _contentAspect;
 }
 
-- (BOOL) appliesResizingToBounds
+/** Sets the content aspect that describes how the content looks when the 
+receiver is resized. 
+
+See ETContentAspect enum. */
+- (void) setContentAspect: (ETContentAspect)anAspect
 {
-	return _resizeBounds;
+	_contentAspect = anAspect;
 }
 
 - (void) layoutItemViewFrameDidChange: (NSNotification *)notif
@@ -2422,6 +2405,50 @@ returns nil.
 
 	/* Notify decorator item chain */
 	[[self decoratorItem] beginEditingUI];
+}
+
+/* Deprecated (DO NOT USE, WILL BE REMOVED LATER) */
+
+/** When the layout item uses a view, pass YES to this method to have the 
+content resize when the view itself is resized (by modifying frame).
+
+Resizing content in a view is possible by simply updating bounds size to match 
+the view frame. */
+- (void) setAppliesResizingToBounds: (BOOL)flag
+{
+	if (flag)
+	{
+		[self setContentAspect: ETContentAspectStretchToFill];
+	}
+	else
+	{
+		[self setContentAspect: ETContentAspectCentered];
+	}
+
+	if ([self supervisorView] == nil)
+		return;
+	
+	if (flag)
+	{
+		[[NSNotificationCenter defaultCenter] addObserver: self 
+		                                         selector: @selector(layoutItemViewFrameDidChange:) 
+												     name: NSViewFrameDidChangeNotification
+												   object: [self displayView]];
+		/* Fake notification to update bounds size */
+		[self layoutItemViewFrameDidChange: nil];
+	}
+	else
+	{
+		[[NSNotificationCenter defaultCenter] removeObserver: self];
+		/* Restore bounds size */
+		[[self displayView] setBoundsSize: [[self displayView] frame].size];
+		[[self displayView] setNeedsDisplay: YES];
+	}
+}
+
+- (BOOL) appliesResizingToBounds
+{
+	return (ETContentAspectStretchToFill == _contentAspect);
 }
 
 @end
