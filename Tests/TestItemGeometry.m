@@ -518,17 +518,27 @@ supervisor view geometry (frame). */
 	[[item supervisorView] setAutoresizingMask: NSViewWidthSizable | NSViewHeightSizable];
 	[item setFrame: newFrame];
 
-	// FIXME: Should use [self checkGeometrySynchronizationWithFrame: newFrame
-	//	oldItemOrigin: oldOrigin oldItemPosition: oldPosition];
-	
-	UKSizesEqual(newFrame.size, [item frame].size);
-	UKPointsEqual(newFrame.origin, [item origin]);
-	UKSizesEqual(newFrame.size, [item size]);
+	[self checkGeometrySynchronizationWithFrame: newFrame
+		oldItemOrigin: oldOrigin oldItemPosition: oldPosition];
+}
 
-	NSPoint newOrigin = newFrame.origin;
-	NSPoint originDelta = NSMakePoint(newOrigin.x - oldOrigin.x, newOrigin.y - oldOrigin.y);
-	NSPoint newPosition = ETSumPoint(oldPosition, originDelta);
-	UKPointsEqual(newPosition, [item position]);
+- (void) testGeometrySynchronizationForDecoratorRemoval
+{
+	[item setView: AUTORELEASE([[NSSlider alloc] init])];
+	[item setDecoratorItem: [ETWindowItem item]];
+
+	NSRect newFrame = NSMakeRect(500, 700, 30, 40);
+
+	[[item supervisorView] setAutoresizingMask: NSViewWidthSizable | NSViewHeightSizable];
+	[item setFrame: newFrame];
+
+	NSPoint oldPosition = [item position];
+	NSPoint oldOrigin = [item origin];
+
+	[item setDecoratorItem: nil];
+
+	[self checkGeometrySynchronizationWithFrame: newFrame 
+		oldItemOrigin: oldOrigin oldItemPosition: oldPosition];
 }
 
 @end
