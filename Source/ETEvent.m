@@ -249,6 +249,12 @@ content view has no ETUIItem bound to it, returns nil. */
 /** Returns the location of the pointer in the window item coordinate space (the 
 window frame).
 
+When [[self windowItem] isFlipped] returns YES as it is usually the case, the 
+returned point will be expressed in flipped coordinates.<br />
+Decorator items keep -isFlipped in sync with the item they decorate and 
+layout items are instantiated with -isFlipped equals to YES. Hence 
+-[ETWindowItem isFlipped] usually returns YES.
+
 When the event has no associated window, returns a null point. */
 - (NSPoint) locationInWindowItem
 {
@@ -346,11 +352,14 @@ This includes the resize indicator which overlaps the content view on Mac OS X. 
 	return outsideContentView;
 #else
 	/* We use content view frame and not bounds, because the resize indicator is 
-	   not a subview. The resize indicator is drawn by NSThemeFrame itself.
-	   No need to check whether the content view is flipped, -locationInWindow 
-	   is always expressed in non-flipped coordinates (at least on Mac OS X). */
-	NSRect resizeIndicatorRect = NSMakeRect([contentView frame].size.width - 16, 0, 16, 16);
-	BOOL insideResizeIndicator = [contentView mouse: contentRelativeLoc inRect: resizeIndicatorRect];
+	   not a subview. The resize indicator is drawn by NSThemeFrame itself. */
+	NSRect resizeIndicatorRect = NSMakeRect([contentView width] - 16, 0, 16, 16);
+	if ([contentView isFlipped])
+	{
+		resizeIndicatorRect.origin.y = [contentView height] - 16;
+	}
+	BOOL insideResizeIndicator = [contentView mouse: contentRelativeLoc 
+	                                         inRect: resizeIndicatorRect];
 
 	return (outsideContentView || insideResizeIndicator);
 #endif
