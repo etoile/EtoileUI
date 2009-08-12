@@ -14,6 +14,7 @@
 #import "ETLayoutItemGroup.h"
 #import "ETLayoutItem+Factory.h"
 #import "ETPickDropCoordinator.h"
+#import "ETUIItemFactory.h"
 #import "NSWindow+Etoile.h"
 #import "ETGeometry.h"
 #import "ETCompatibility.h"
@@ -215,6 +216,46 @@ regardless of the size of the item they decorate. */
 	_shouldKeepWindowFrame = shouldKeepWindowFrame;
 }
 
+/* Converts the given rect expressed in the EtoileUI window layer coordinate 
+space to the AppKit screen coordinate space.
+
+This method will check whether the window layer (aka window group) is flipped 
+and make the necessary adjustments. */
+- (NSRect) convertRectToWidgetBackendScreenBase: (NSRect)rect
+{
+	ETWindowLayer *windowLayer = (ETWindowLayer *)[[ETUIItemFactory factory] windowGroup];
+
+	if ([windowLayer isFlipped] == NO)
+		return rect;
+
+	/* We call -rootWindowFrame on ETWindowLayer and not -frame which would 
+	   call back the current method and results in an endless recursion. */
+	float windowLayerHeight = [windowLayer rootWindowFrame].size.height;
+	float flippedY = windowLayerHeight - (rect.origin.y + rect.size.height);
+
+	return NSMakeRect(rect.origin.x, flippedY, rect.size.width, rect.size.height);	
+}
+
+/* Converts the given rect expressed in the AppKit screen coordinate space to 
+the EtoileUI window layer coordinate space.
+
+This method will check whether the window layer (aka window group) is flipped 
+and make the necessary adjustments. */
+- (NSRect) convertRectFromWidgetBackendScreenBase: (NSRect)windowFrame
+{
+	ETWindowLayer *windowLayer = (ETWindowLayer *)[[ETUIItemFactory factory] windowGroup];
+
+	if ([windowLayer isFlipped] == NO)
+		return windowFrame;
+
+	/* We call -rootWindowFrame on ETWindowLayer and not -frame which would 
+	   call back the current method and results in an endless recursion. */
+	float windowLayerHeight = [windowLayer rootWindowFrame].size.height;
+	float flippedY = windowLayerHeight - (windowFrame.origin.y + windowFrame.size.height);
+
+	return NSMakeRect(windowFrame.origin.x, flippedY, windowFrame.size.width, windowFrame.size.height);
+}
+
 - (void) handleDecorateItem: (ETUIItem *)item 
              supervisorView: (ETView *)decoratedView 
                      inView: (ETView *)parentView
@@ -238,12 +279,12 @@ regardless of the size of the item they decorate. */
 		// a window decorator is removed.
 		//[_itemWindow setContentSizeFromTopLeft: [decoratedView frame].size];
 		
-		if (![self shouldKeepWindowFrame])
+		if ([self shouldKeepWindowFrame] == NO)
 		{
-			NSRect windowFrameWithItemSize = ETMakeRect([_itemWindow frame].origin, [decoratedView frame].size);
-			[_itemWindow setFrame: windowFrameWithItemSize
-			   	           display: YES];
+			[_itemWindow setFrame: [self convertRectToWidgetBackendScreenBase: [decoratedView frame]]
+			              display: YES];
 		}
+	
 		NSSize shrinkedItemSize = [_itemWindow contentRectForFrameRect: [_itemWindow frame]].size;
 		[decoratedView setFrameSize: shrinkedItemSize];
 		/* Previous line similar to [decoratedItem setContentSize: shrinkedItemSize] */
@@ -264,6 +305,17 @@ regardless of the size of the item they decorate. */
 	[super handleUndecorateItem: item inView: parentView];
 }
 
+- (void) saveAndOverrideAutoresizingMaskOfDecoratedItem: (ETUIItem *)item
+{
+	_oldDecoratedItemAutoresizingMask = [[item supervisorView] autoresizingMask];
+	[[item supervisorView] setAutoresizingMask: NSViewWidthSizable | NSViewHeightSizable];
+}
+
+- (void) restoreAutoresizingMaskOfDecoratedItem: (ETUIItem *)item
+{
+	[[item supervisorView] setAutoresizingMask: _oldDecoratedItemAutoresizingMask];
+}
+
 /** Returns nil. */
 - (id) supervisorView
 {
@@ -276,25 +328,13 @@ regardless of the size of the item they decorate. */
 	return [_itemWindow contentView];
 }
 
-/** Returns the window frame in the window layer coordinate base which is flipped by default.
+/** Returns the window frame in the window layer coordinate base which is 
+flipped by default.
 
 See also -[ETItemFactory windowGroup]. */
 - (NSRect) decorationRect
 {
-	if ([[ETLayoutItem windowGroup] isFlipped])
-	{	
-		NSRect windowFrame = [_itemWindow frame];
-		/* We call -rootWindowFrame on ETWindowLayer and not -frame which would 
-		   call back the current method and results in an endless recursion. */
-		float windowLayerHeight = [(ETWindowLayer *)[ETLayoutItem windowGroup] rootWindowFrame].size.height;
-		float flippedY = windowLayerHeight - (windowFrame.origin.y + windowFrame.size.height);
-
-		return NSMakeRect(windowFrame.origin.x, flippedY, windowFrame.size.width, windowFrame.size.height);
-	}
-	else
-	{
-		return [_itemWindow frame];
-	}
+	return [self convertRectFromWidgetBackendScreenBase: [_itemWindow frame]];
 }
 
 /** Returns the content view rect expressed in the window coordinate space. 
@@ -305,7 +345,8 @@ This coordinate space includes the window decoration (titlebar etc.).  */
 	NSRect windowFrame = [_itemWindow frame];
 	NSRect rect = [_itemWindow contentRectForFrameRect: windowFrame];
 
-	NSParameterAssert(rect.size.width <= windowFrame.size.width && rect.size.height <= windowFrame.size.height);
+	NSParameterAssert(rect.size.width <= windowFrame.size.width 
+		&& rect.size.height <= windowFrame.size.height);
 
 	rect.origin.x = rect.origin.x - windowFrame.origin.x;
 	rect.origin.y = rect.origin.y - windowFrame.origin.y;
@@ -335,11 +376,11 @@ This coordinate space includes the window decoration (titlebar etc.).  */
 		-[ETView setFrame:] -- the window content view
 		-[NSWindow setFrame:display:] */
 
-	if (![self shouldKeepWindowFrame])
-	{
-		[_itemWindow setFrame: ETMakeRect([_itemWindow frame].origin, rect.size)
-	    	          display: YES];
-	}
+	if ([self shouldKeepWindowFrame])
+		return;
+
+	[_itemWindow setFrame: [self convertRectToWidgetBackendScreenBase: rect] 
+	              display: YES];
 }
 
 - (BOOL) isFlipped

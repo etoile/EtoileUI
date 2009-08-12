@@ -102,7 +102,8 @@ that makes up the given application object. */
 
 /** Returns an item built with the given window.
 
-The returned item is decorated by a window item that reuses this window. */
+The returned item is decorated by a window item that reuses this window and 
+returns YES to -[ETWindowItem shouldKeepWindowFrame:].  */
 - (id) renderWindow: (NSWindow *)window
 {
 	ETLayoutItem *item = [self renderView: [window contentView]];
@@ -112,6 +113,7 @@ The returned item is decorated by a window item that reuses this window. */
 	if (isWindowDecorationNeeded)
 	{
 		windowDecorator = [itemFactory itemWithWindow: window];
+		[windowDecorator setShouldKeepWindowFrame: YES];
 		[[item lastDecoratorItem] setDecoratorItem: windowDecorator];
 	}
 
