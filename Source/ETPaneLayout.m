@@ -15,9 +15,12 @@
 #import "ETLayoutItem.h"
 #import "ETLayoutItem+Factory.h"
 #import "ETLayoutItem+Reflection.h"
+#import "ETLayoutItem+Scrollable.h"
 #import "ETLayoutItemGroup.h"
 #import "ETLineLayout.h"
 #import "ETTableLayout.h"
+#import "ETOutlineLayout.h"
+#import "ETBrowserLayout.h"
 #import "ETUIItemFactory.h"
 #import "ETContainer.h"
 
@@ -38,6 +41,8 @@
 	[self setBarItem: [[ETUIItemFactory factory] itemGroup]];
 	[_barItem setAutoresizingMask: NSViewWidthSizable];
 	[_barItem setLayout: [ETTableLayout layout]];
+	_barPosition = ETPanePositionTop;
+	
 	[[_barItem layout] setAttachedInstrument: [ETSelectTool instrument]];
 	
 	[self tile];
@@ -56,7 +61,7 @@
 
 - (float) barHeightOrWidth
 {
-	return 50;
+	return 300;
 }
 
 - (void) tileContent
@@ -78,11 +83,32 @@
 	[self syncRootItemGeometryWithSize: [[self layoutContext] visibleContentSize]];
 	NSSize rootSize = [[self rootItem] size];
 
-	[[self barItem] setFrame: NSMakeRect(0, 0, rootSize.width, [self barHeightOrWidth])];
-
-	[[self contentItem] setOrigin: NSMakePoint(0, [self barHeightOrWidth])];
-	[[self contentItem] setWidth: rootSize.width];
-	[[self contentItem] setHeight: rootSize.height - [self barHeightOrWidth]];
+	if (_barPosition == ETPanePositionNone)
+	{
+		[[self barItem] setVisible: NO];
+		[[self contentItem] setFrame: ETMakeRect(NSZeroPoint, rootSize)];
+	}
+	else if (_barPosition == ETPanePositionTop)
+	{
+		[[self barItem] setFrame: NSMakeRect(0, 0, rootSize.width, [self barHeightOrWidth])];
+		[[self contentItem] setFrame: NSMakeRect(0, [self barHeightOrWidth], rootSize.width, rootSize.height - [self barHeightOrWidth])];
+	}
+	else if (_barPosition == ETPanePositionBottom)
+	{
+		[[self barItem] setFrame: NSMakeRect(0, rootSize.height - [self barHeightOrWidth], rootSize.width, [self barHeightOrWidth])];
+		[[self contentItem] setFrame: NSMakeRect(0, 0, rootSize.width, rootSize.height - [self barHeightOrWidth])];
+	}
+	else if (_barPosition == ETPanePositionLeft)
+	{
+		[[self barItem] setFrame: NSMakeRect(0, 0, [self barHeightOrWidth], rootSize.height)];
+		[[self contentItem] setFrame: NSMakeRect(0, [self barHeightOrWidth], rootSize.width - [self barHeightOrWidth], rootSize.height)];
+	}
+	else if (_barPosition == ETPanePositionRight)
+	{
+		[[self barItem] setFrame: NSMakeRect(rootSize.width - [self barHeightOrWidth], 0, [self barHeightOrWidth], rootSize.height)];
+		[[self contentItem] setFrame: NSMakeRect(0, 0, rootSize.width - [self barHeightOrWidth], rootSize.height)];
+	}
+	
 	[self tileContent];
 }
 
@@ -106,6 +132,28 @@
 	[anItem setName: @"Content item (ETPaneLayout)"]; /* For debugging */
 	[anItem setAutoresizingMask: NSViewWidthSizable | NSViewHeightSizable];
 	[[self rootItem] addItem: anItem];
+	[self tile];
+}
+
+- (ETPanePosition) barPosition
+{
+	return _barPosition;
+}
+
+- (void) setBarPosition: (ETPanePosition)position
+{
+	if (_barPosition == position)
+		return;
+	
+	_barPosition = position;
+	if (_barPosition == ETPanePositionTop || _barPosition == ETPanePositionBottom)
+	{
+		[_barItem setAutoresizingMask: NSViewWidthSizable];
+	}
+	else if (_barPosition == ETPanePositionLeft || _barPosition == ETPanePositionRight)
+	{
+		[_barItem setAutoresizingMask: NSViewHeightSizable];
+	}
 	[self tile];
 }
 
@@ -320,6 +368,48 @@ the real items they currently represent. */
 		[self goToItem: [[self barItem] firstItem]];
 	}
 	[self tile];
+}
+
+@end
+
+
+@implementation ETPaneLayout (Factory)
+
++ (ETPaneLayout *) slideshowLayout
+{
+	ETPaneLayout *layout = [self layout]; // self is ETPaneLayout class here
+	[layout setBarPosition:	ETPanePositionNone];
+	return layout;
+}
+
++ (ETPaneLayout *) slideshowLayoutWithNavigationBar
+{
+	ETPaneLayout *layout = [self layout];
+	[[layout barItem] setLayout: [ETLineLayout layout]];
+	[[[layout barItem] layout] setAttachedInstrument: [ETSelectTool instrument]];
+	[[layout barItem] setHasHorizontalScroller: YES];
+	return layout;
+}
+
++ (ETPaneLayout *) drillDownLayout
+{
+	ETPaneLayout *layout = [self layout];
+	[[layout barItem] setLayout: [ETBrowserLayout layout]];
+	[[[layout barItem] layout] setAttachedInstrument: [ETSelectTool instrument]];
+	[layout setBarPosition: ETPanePositionLeft];
+	return layout;
+}
+
++ (ETPaneLayout *) paneNavigationLayout
+{
+	ETPaneLayout *layout = [self layout];
+	return layout;
+}
+
++ (ETPaneLayout *) wizardLayout
+{
+	ETPaneLayout *layout = [self layout];	
+	return layout;
 }
 
 @end

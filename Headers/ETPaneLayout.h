@@ -30,6 +30,7 @@ typedef enum {
 	ETLayoutItemGroup *_contentItem;
 	ETLayoutItemGroup *_barItem;
 	ETLayoutItem *_currentItem;
+	ETPanePosition _barPosition;
 }
 
 /* Navigation */
@@ -45,8 +46,8 @@ typedef enum {
 
 /* Presentation */
 
-/*- (ETPanePosition) barPosition;
-- (void) setBarPosition: (ETPanePosition)position;*/
+- (ETPanePosition) barPosition;
+- (void) setBarPosition: (ETPanePosition)position;
 - (void) setBarItem: (ETLayoutItemGroup *)item;
 - (ETLayoutItemGroup *) barItem;
 - (ETLayoutItemGroup *) contentItem;
@@ -54,5 +55,16 @@ typedef enum {
 
 - (id) beginVisitingItem: (ETLayoutItem *)tabItem;
 - (void) endVisitingItem: (ETLayoutItem *)tabItem;
+
+@end
+
+
+@interface ETPaneLayout (Factory)
+
++ (ETPaneLayout *) slideshowLayout;
++ (ETPaneLayout *) slideshowLayoutWithNavigationBar;
++ (ETPaneLayout *) drillDownLayout;
++ (ETPaneLayout *) paneNavigationLayout;
++ (ETPaneLayout *) wizardLayout;
 
 @end
