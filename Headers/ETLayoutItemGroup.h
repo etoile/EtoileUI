@@ -188,6 +188,7 @@
 - (void) setDoubleAction: (SEL)selector;
 - (SEL) doubleAction;
 - (ETLayoutItem *) doubleClickedItem;
+- (BOOL) acceptsActionsForItemsOutsideOfFrame;
 
 /* Collection Protocol */
 

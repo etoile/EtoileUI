@@ -184,10 +184,10 @@ when the receiver is set up as a decorator.*/
 	   because we just made the document view not automatically resizable. */
 	[super handleSetDecorationRect: aRect];
 
-	NSSize contentSize = [self contentRect].size;
+	/*NSSize contentSize = [self contentRect].size;
 	NSSize visibleContentSize = [self visibleContentRect].size;
 	NSParameterAssert(contentSize.width >= visibleContentSize.width 
-		&& contentSize.height >= visibleContentSize.height);
+		&& contentSize.height >= visibleContentSize.height);*/
 }
 
 /** Returns the rect that corresponds to the visible part of the content and 

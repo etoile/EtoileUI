@@ -1786,6 +1786,19 @@ See also -setDoubleAction:. */
 	return GET_PROPERTY(kETDoubleClickedItemProperty);
 }
 
+/** <overidde-dummy />
+Returns whether the instruments should hit test the children which intersect the 
+area that lies outside the receiver frame but inside its bounding box.
+
+By default, returns NO.
+
+You can override this method to implement control points external to the 
+receiver area as ETHandleGroup do. */
+- (BOOL) acceptsActionsForItemsOutsideOfFrame
+{
+	return NO;
+}
+
 /* Collection Protocol */
 
 - (BOOL) isOrdered

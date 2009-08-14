@@ -19,8 +19,10 @@
 #import "ETHandle.h"
 #import "ETInstrument.h"
 #import "ETLayoutItem.h"
+#import "ETLayoutItem+Scrollable.h"
 #import "ETLayoutItemGroup.h"
 #import "ETLayoutItem+Factory.h"
+#import "ETLineLayout.h"
 #import "ETUIItemFactory.h"
 #import "ETCompatibility.h"
 #import <UnitKit/UnitKit.h>
@@ -66,7 +68,14 @@ coordinates or not to set the event location in the window. */
 	return self;
 }
 
-DEALLOC(DESTROY(itemFactory); DESTROY(mainItem); DESTROY(instrument))
+- (void) dealloc
+{
+	[[itemFactory windowGroup] removeItem: mainItem];
+	DESTROY(mainItem); 
+	DESTROY(itemFactory); 
+	DESTROY(instrument);
+	[super dealloc];
+}
 
 - (NSWindow *) window
 {
@@ -292,6 +301,105 @@ An F-script session is pasted at the file end to understand that more easily. */
 	UKObjectsEqual(mainItem, [instrument hitTestWithEvent: EVT([item1 x] - 15, [item1 y] - 15)]);
 	/* Hit inside mainItem, outside item1 but inside its bounding box */
 	UKObjectsEqual(item1, [instrument hitTestWithEvent: EVT([item1 x] - 5, [item1 y] - 5)]);
+}
+
+/* Verify that hit test only continues recursively when the event location is 
+inside the content bounds. */
+- (void) testHitTestOutsideItemFrame
+{
+	float width = [mainItem width] + 20;
+	float height = [mainItem height] + 20;
+	ETLayoutItem *item1 = [itemFactory rectangleWithRect: NSInsetRect([mainItem bounds], -20, -20)];
+
+	[mainItem addItem: item1];
+
+	/* Hit outside mainItem and inside item1 */
+	UKObjectsEqual([itemFactory windowGroup], [instrument hitTestWithEvent: EVT(width - 5, height - 5)]);
+	
+	/* Shift a bit the mainItem to have enough space to hit test between the 
+	   top left corner of the window layer and the origin of the main item. */
+	[mainItem setOrigin: NSMakePoint(30, 30)];
+	/* Hit outside mainItem and inside item1 */
+	ETEvent *evt = [self createEventAtScreenPoint: NSMakePoint([mainItem x] - 5, [mainItem y] - 5) isFlipped: YES];
+	UKObjectsEqual([itemFactory windowGroup], [instrument hitTestWithEvent: evt]);
+	
+	[mainItem setBoundingBox: NSMakeRect(-10, -10, [mainItem width], [mainItem height])];
+	/* Hit outside mainItem but inside its bounding box, and outside item1 but 
+	   inside its bounding box  */
+	evt = [self createEventAtScreenPoint: NSMakePoint([mainItem x] - 5, [mainItem y] - 5) isFlipped: YES];
+	// FIXME: UKObjectsEqual(mainItem, [instrument hitTestWithEvent: evt]);
+	// See TODO comment in -hitTestWithEvent:
+}
+
+/* Verify that hit test only continues recursively when the event location is 
+inside the content bounds. */
+- (void) testHitTestDecorator
+{
+	NSRect contentRect = NSMakeRect(0, 0, 2000, 3000);
+	ETLayoutItem *item1 = [itemFactory rectangleWithRect: contentRect];
+
+	[mainItem addItem: item1];
+	[mainItem setHasVerticalScroller: YES];
+	[mainItem setHasHorizontalScroller: YES];
+	// FIXME: The precondition won't work without a layout or if we move 
+	// -setLayout: before the two previous lines.
+	[mainItem setLayout: [ETLineLayout layout]];
+
+	/* Precondition */
+	UKRectsEqual(contentRect, [mainItem contentBounds]);
+
+	/* Hit inside scrollers */
+	// FIXME: -setHasVerticalScroller: removes the window decorator.
+	//UKObjectsEqual(mainItem, [instrument hitTestWithEvent: EVT([mainItem width] - 5, [mainItem height] - 5)]);
+}
+
+- (void) testTrySendEventToWidget
+{
+	NSRect contentRect = NSMakeRect(0, 0, 2000, 3000);
+	/* We create item1 to be able to safely ignore the window decorator that 
+	   exist on mainItem in our tests */
+	ETLayoutItemGroup *item1 = [itemFactory itemGroupWithFrame: NSMakeRect(0, 0, 200, 100)];
+	ETLayoutItem *item2 = [itemFactory rectangleWithRect: contentRect];
+
+	[mainItem addItem: item1];
+	[item1 addItem: item2];
+	[item1 setHasVerticalScroller: YES];
+	[item1 setHasHorizontalScroller: YES];
+
+	/* Hit inside the scrollers */
+	ETEvent *evt = EVT([item1 width] - 5, [item1 height] - 5); 
+	[instrument trySendEventToWidgetView: evt];
+
+	UKTrue([evt wasDelivered]);
+	UKObjectsEqual(item1, [evt layoutItem]);
+
+	 /* Hit inside the scrollable content */
+	evt = EVT(50, 50);
+	[instrument trySendEventToWidgetView: evt];
+
+	UKFalse([evt wasDelivered]);
+	UKObjectsEqual(item2, [evt layoutItem]);
+	
+	/* Hit outside item1 */
+	evt = EVT([item1 width] + 25, [item1 height] + 25);
+	[instrument trySendEventToWidgetView: evt];
+
+	UKFalse([evt wasDelivered]);
+	UKObjectsEqual(mainItem, [evt layoutItem]);
+	
+	/* Hit outside item1 but inside its bounding box
+
+	   We want to be sure we won't hit item2 whose extent (2000, 3000) 
+	   intersects the item2 bounding box outside the scrollable area item. 
+	   At the drawing level, the scrollable area item clips the item2. At the 
+	   event handling level, the hit test phase implemented by EtoileUI must 
+	   behave similarly. */
+	[item1 setBoundingBox: NSMakeRect(0, 0, [item1 width] + 30, [item1 height] + 30)];
+	evt = EVT([item1 width] + 25, [item1 height] + 25);
+	[instrument trySendEventToWidgetView: evt];
+
+	UKFalse([evt wasDelivered]);
+	UKObjectsEqual(item1, [evt layoutItem]);
 }
 
 @end

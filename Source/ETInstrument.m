@@ -7,6 +7,7 @@
  */
 
 #import <EtoileFoundation/NSObject+Etoile.h>
+#import <EtoileFoundation/NSObject+Model.h>
 #import <EtoileFoundation/Macros.h>
 #import "ETInstrument.h"
 #import "ETEvent.h"
@@ -696,6 +697,20 @@ Hence whether or not the item has children, this method will be called. */
 	
 	return anItem;
 }
+
+/* For debugging, see -hitTestWithEvent:inItem: */
+- (void) logEvent: (ETEvent *)anEvent ofType: (NSEventType)evtType atPoint: (NSPoint)aPoint inItem: (ETLayoutItem *)anItem
+{
+	if ([anEvent type] != evtType)
+		return;
+
+	ETUIItem *decorator = [anItem decoratorItemAtPoint: aPoint];
+	BOOL isInside = [anItem pointInside: aPoint useBoundingBox: YES];
+
+	ETLog(@"Will try hit test at %@, decorator %@, isInside %d in %@", 
+		NSStringFromPoint(aPoint), [decorator primitiveDescription], isInside, anItem);
+}
+
 // TODO: Benchmark this method. If it proves to be bottleneck, optimize. 
 // Handles the dispatch on the decorator chain, probably by adding -contentRect
 // to ETLayoutItem and verifying whether itemRelativePoint is contained in the 
@@ -707,13 +722,7 @@ Hence whether or not the item has children, this method will be called. */
 	if (anItem == nil)
 		return nil;
 
-#ifdef DEBUG_EVENT
-	if ([anEvent type] == NSLeftMouseDown)
-	{
-		ETLog(@"Will try hit test at %@ in %@: %d", NSStringFromPoint(itemRelativePoint), 
-			anItem, [anItem pointInside: itemRelativePoint useBoundingBox: YES]);
-	}
-#endif
+	//[self logEvent: anEvent ofType: NSLeftMouseDown atPoint: itemRelativePoint inItem: anItem];
 
 	BOOL isOutside = ([anItem pointInside: itemRelativePoint useBoundingBox: YES] == NO);
 	
@@ -735,13 +744,19 @@ Hence whether or not the item has children, this method will be called. */
 		[anEvent setLocationInLayoutItem: hitItemRelativePoint];
 	}
 
+	/* When -decoratorItemAtPoint: returns nil, the hit lies within the extended 
+	   bounding box area and is outside the layout item frame. */
+	ETUIItem *decorator = [hitItem decoratorItemAtPoint: hitItemRelativePoint];
+	BOOL isInsideContent = (decorator == hitItem);
+	BOOL isInsideActionArea = (isInsideContent || ([hitItem isGroup] && 
+		[(ETLayoutItemGroup *)hitItem acceptsActionsForItemsOutsideOfFrame]));
 	BOOL hitTestCustomized = (hitItem != anItem);
 	BOOL shouldContinue = ([self shouldContinueHitTest: itemRelativePoint 
 	                                      withEvent: anEvent 
 	                                         inItem: hitItem 
 	                                    wasReplaced: hitTestCustomized]);
 
-	if (shouldContinue)
+	if (shouldContinue && isInsideActionArea)
 	{
 		hitItem = [self hitTest: itemRelativePoint 
 		              withEvent: anEvent 

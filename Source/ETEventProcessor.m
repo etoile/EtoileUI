@@ -136,8 +136,10 @@ Returns YES when the event has been handled by EtoileUI. */
 	//ETLog(@"Process mouse event %@", anEvent);
 
 	if ([anEvent isWindowDecorationEvent] || [anEvent contentItem] == nil)
+	{
+		ETDebugLog(@"Will push back event to widget backend %@", anEvent);
 		return NO;
-
+	}
 	ETInstrument *activeInstrument = [ETInstrument activeInstrument];
 
 	ASSIGN(_initialKeyWindow, [NSApp keyWindow]); /* Used by -wasKeyWindow: */
@@ -438,6 +440,12 @@ If item is nil, returns NO immediately. */
 		return NO;
 
 	NSPoint eventLoc = [anEvent locationInLayoutItem]; /* In the argument item coordinate space */
+	
+	/* We ignore events that occur outside of the layout item frame 
+	   e.g. hit in the bounding box extended area. */
+	if ([item pointInside: eventLoc useBoundingBox: NO] == NO)
+		return NO;
+
 	ETUIItem *hitItem = [item decoratorItemAtPoint: eventLoc]; 
 	NSParameterAssert([anEvent layoutItem] == item);
 	NSParameterAssert(hitItem != nil);

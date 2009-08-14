@@ -58,6 +58,7 @@ the resize tool more straightforward to use for the user. */
 - (id) manipulatedObject;
 - (void) setManipulatedObject: (id)anObject;
 - (void) setNeedsDisplay: (BOOL)flag;
+- (BOOL) acceptsActionsForItemsOutsideOfFrame;
 
 @end
 

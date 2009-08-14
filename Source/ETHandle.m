@@ -429,6 +429,12 @@ or not. */
 	//[self setBoundingBox: [self convertRectToParent: localBoundingBox]];
 }
 
+/** Returns YES. */
+- (BOOL) acceptsActionsForItemsOutsideOfFrame
+{
+	return YES;
+}
+
 @end
 
 
