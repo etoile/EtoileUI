@@ -21,6 +21,7 @@
 #import "ETLayoutItem.h"
 #import "ETLayoutItemGroup.h"
 #import "ETLayoutItem+Factory.h"
+#import "ETUIItemFactory.h"
 #import "ETCompatibility.h"
 #import <UnitKit/UnitKit.h>
 #define _ISOC99_SOURCE 
@@ -32,10 +33,15 @@
 #define UKPointsNotEqual(x, y) UKFalse(NSEqualPoints(x, y))
 #define UKSizesEqual(x, y) UKTrue(NSEqualSizes(x, y))
 
+@interface ETLayoutItem (Private)
+- (NSRect) bounds;
+@end
+
 @interface BasicEventTest : NSObject <UKTest>
 {
 	ETLayoutItemGroup *mainItem;
 	ETInstrument *instrument;
+	ETUIItemFactory *itemFactory;
 }
 
 @end
@@ -51,6 +57,7 @@ coordinates or not to set the event location in the window. */
 {
 	SUPERINIT
 
+	ASSIGN(itemFactory, [ETUIItemFactory factory]);
 	ASSIGN(mainItem, [ETLayoutItem itemGroup]);
 	[mainItem setFrame: NSMakeRect(0, 0, WIN_WIDTH, WIN_HEIGHT)];
 	[[ETLayoutItem windowGroup] addItem: mainItem];
@@ -59,7 +66,7 @@ coordinates or not to set the event location in the window. */
 	return self;
 }
 
-DEALLOC(DESTROY(mainItem); DESTROY(instrument))
+DEALLOC(DESTROY(itemFactory); DESTROY(mainItem); DESTROY(instrument))
 
 - (NSWindow *) window
 {
@@ -263,10 +270,28 @@ An F-script session is pasted at the file end to understand that more easily. */
 	ETLayoutItem *item1 = [ETLayoutItem rectangleWithRect: NSMakeRect(0, 0, 50, 100)];
 	[mainItem addItem: item1];
 
-	ETInstrument *activeInstrument = [ETInstrument activeInstrument];
+	[instrument mouseDown: EVT(4, 4)];
+}
 
-	[activeInstrument mouseDown: EVT(4, 4)];
+- (void) testHitTestBoundingBox
+{
+	ETLayoutItem *item1 = [itemFactory rectangleWithRect: NSMakeRect(0, 0, 50, 100)];
+
+	[item1 setBoundingBox: NSInsetRect([item1 bounds], -10, -10)];
+	[mainItem addItem: item1];
+
+	/* Hit inside mainItem, outside item1 and its bounding box */
+	UKObjectsEqual(mainItem, [instrument hitTestWithEvent: EVT(70, 120)]);
+	/* Hit inside mainItem, outside item1 but inside its bounding box */
+	UKObjectsEqual(item1, [instrument hitTestWithEvent: EVT(55, 105)]);
 	
+	/* Shift a bit item1 to have enough space to hit test between the 
+	   top left corner of the mainItem and the origin of item1. */
+	[item1 setOrigin: NSMakePoint(20, 20)];
+	/* Hit inside mainItem, outside item1 and its bounding box */
+	UKObjectsEqual(mainItem, [instrument hitTestWithEvent: EVT([item1 x] - 15, [item1 y] - 15)]);
+	/* Hit inside mainItem, outside item1 but inside its bounding box */
+	UKObjectsEqual(item1, [instrument hitTestWithEvent: EVT([item1 x] - 5, [item1 y] - 5)]);
 }
 
 @end
