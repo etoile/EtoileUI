@@ -367,7 +367,24 @@ inside the content bounds. */
 	[item1 setHasHorizontalScroller: YES];
 
 	/* Hit inside the scrollers */
-	ETEvent *evt = EVT([item1 width] - 5, [item1 height] - 5); 
+#ifdef GNUSTEP
+	// NOTE: Scroller buttons are on the left side of the window on GNUstep.
+	// Moreover we have to synthetize a mouse up event otherwise the run loop 
+	// gets stuck waiting a mouse up event to exit -trackMouse:inRect:ofView:.
+	ETEvent *evt = EVT(5, [item1 height] - 5);
+	[NSApp postEvent: [NSEvent mouseEventWithType: NSLeftMouseUp
+	                                     location: [(NSEvent *)[evt backendEvent] locationInWindow]
+	                                modifierFlags: 0
+                                            timestamp: [NSDate timeIntervalSinceReferenceDate]
+	                                 windowNumber: [evt windowNumber]
+	                                      context: [NSGraphicsContext currentContext]
+	                                  eventNumber: 0
+	                                   clickCount: 1
+	                                     pressure: 0.0] atStart: NO];
+#else
+	ETEvent *evt = EVT([item1 width] - 5, [item1 height] - 5);
+#endif
+
 	[instrument trySendEventToWidgetView: evt];
 
 	UKTrue([evt wasDelivered]);
