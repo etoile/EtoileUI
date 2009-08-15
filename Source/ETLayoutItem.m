@@ -1098,31 +1098,6 @@ AppKit), otherwise returns nil. */
 	return windowDecorator;
 }
 
-/** Returns the content rect in the decorator/receiver? coordinate space.
-
-When the receiver has no decorator, the content rect is equal to the bounds, 
-otherwise it corresponds to the positioning and sizing within the outermost 
-decorator. No ---> The outermost decorator content rect is always equal to the bounds.
-
-For every items within a decorator chain, frame and bounds don't vary, only the 
-content rect does.  */
-- (NSRect) contentRect // Move into ETDecoratorItem
-{
-	ETView *supervisorView = [self supervisorView];
-
-	// TODO: Ugly code...
-	if ([supervisorView isKindOfClass: [ETScrollView class]])
-	{
-		return [[(NSScrollView *)[supervisorView mainView] contentView] frame];
-	}
-	else if ([supervisorView isKindOfClass: [ETView class]])
-	{
-		return [[supervisorView wrappedView] frame]; // FIXME: Should [[self view] frame]
-	}
-
-	return [self frame];
-}
-
 /** <override-never />
 Tells the receiver the layout has been changed and it should post 
 ETLayoutItemLayoutDidChangeNotification. 
