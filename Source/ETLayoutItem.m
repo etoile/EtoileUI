@@ -46,26 +46,55 @@ NSString *ETLayoutItemLayoutDidChangeNotification = @"ETLayoutItemLayoutDidChang
 
 @implementation ETLayoutItem
 
+/** Initializes and returns a layout item.
+
+You should use -[ETUIItemFactory item] or -[ETUIItemFactory itemGroup] rather 
+than this method.*/
 - (id) init
 {
 	return [self initWithView: nil value: nil representedObject: nil];
 }
 
+/** Initializes and returns a layout item with the given value object.<br />
+See also -setValue:.
+
+The given value can be nil.
+
+You should use -[ETUIItemFactory itemWithValue:] or 
+-[ETUIItemFactory itemGroupWithValue:] rather than this method. */
 - (id) initWithValue: (id)value
 {
 	return [self initWithView: nil value: value representedObject: nil];
 }
 
+/** Initializes and returns a layout item with the given represented object.<br />
+See also -setRepresentedObject:.
+
+The given represented object can be nil.
+
+You should use -[ETUIItemFactory itemWithRepresentedObject:] or 
+-[ETUIItemFactory itemGroupWithRepresentedObject:] rather than this method. */
 - (id) initWithRepresentedObject: (id)object
 {
 	return [self initWithView: nil value: nil representedObject: object];
 }
 
+/** Initializes and returns a layout item with the given view.<br />
+See also -setView:.
+
+The given view can be nil.
+
+You should use -[ETUIItemFactory itemWithView:] or 
+-[ETUIItemFactory itemGroupWithView:] rather than this method. */
 - (id) initWithView: (NSView *)view
 {
 	return [self initWithView: view value: nil representedObject: nil];
 }
 
+/** Initializes and returns a layout item with the given frame.
+
+You should use -[ETUIItemFactory itemWithFrame] or 
+-[ETUIItemFactory itemGroupWithFrame:] rather than this method. */
 - (id) initWithFrame: (NSRect)frame
 {
 	self = [self initWithView: nil value: nil representedObject: nil];
@@ -73,38 +102,46 @@ NSString *ETLayoutItemLayoutDidChangeNotification = @"ETLayoutItemLayoutDidChang
 	return self;
 }
 
-/** <init /> */
+/** <init />
+Initializes and returns a layout item with the given view, value object and 
+represented object. 
+
+Any of the arguments can be nil.
+
+If the represented object declares a property 'value', both 
+[receiver valueForProperty: @"value"] and 
+[receiver setValue: anObject forProperty: @"value"] won't access your value 
+object but the one provided by the represented object.
+
+See also -setView:, -setValue: and -setRepresentedObject:.  */
 - (id) initWithView: (NSView *)view value: (id)value representedObject: (id)repObject
 {
-	/* For now, we don't call ETStyle designated initializer to avoid extra 
-	   complexity in the initialization path. */
-    self = [super init];
+    SUPERINIT
     
-    if (self != nil)
-    {
-		// TODO: Examine common use cases and see whether we should pass a 
-		// capacity hint to improve performances.
-		_variableProperties = [[NSMutableDictionary alloc] init];
-		_defaultValues = [[NSMutableDictionary alloc] init];
-		_parentItem = nil;
-		//_decoratorItem = nil;
-		[self setTransform: [NSAffineTransform transform]];
-		 /* Will be overriden by -setView: when the view is not nil */
-		_autoresizingMask = NSViewNotSizable;
-		_contentAspect = ETContentAspectScaleToFill;
-		_boundingBox = ETNullRect;
-		[self setView: view];
-		[self setFlipped: YES]; /* -setFlipped: must follow -setSupervisorView: */
-		[self setVisible: NO];
-		[self setStyleGroup: AUTORELEASE([[ETStyleGroup alloc] init])];
-		[self setStyle: [ETBasicItemStyle sharedInstance]];
-		[self setActionHandler: [ETActionHandler sharedInstance]];
-		[self setValue: value];
-		[self setRepresentedObject: repObject];
+	// TODO: Examine common use cases and see whether we should pass a 
+	// capacity hint to improve performances.
+	_variableProperties = [[NSMutableDictionary alloc] init];
+	_defaultValues = [[NSMutableDictionary alloc] init];
+	_parentItem = nil;
+	//_decoratorItem = nil;
+	[self setTransform: [NSAffineTransform transform]];
+	 /* Will be overriden by -setView: when the view is not nil */
+	_autoresizingMask = NSViewNotSizable;
+	_contentAspect = ETContentAspectScaleToFill;
+	_boundingBox = ETNullRect;
+	[self setView: view];
+	[self setFlipped: YES]; /* -setFlipped: must follow -setSupervisorView: */
+	[self setVisible: NO];
+	[self setStyleGroup: AUTORELEASE([[ETStyleGroup alloc] init])];
+	[self setStyle: [ETBasicItemStyle sharedInstance]];
+	[self setActionHandler: [ETActionHandler sharedInstance]];
+	[self setValue: value];
+	[self setRepresentedObject: repObject];
 
-		if (view == nil)
-			[self setFrame: [[self class] defaultItemRect]];
-    }
+	if (view == nil)
+	{
+		[self setFrame: [[self class] defaultItemRect]];
+	}
     
     return self;
 }
