@@ -117,11 +117,6 @@ Any of the arguments can be nil.
 When the given view is nil, the returned item will use +defaultItemRect as its 
 frame.
 
-If the represented object declares a property 'value', both 
-[receiver valueForProperty: @"value"] and 
-[receiver setValue: anObject forProperty: @"value"] won't access your value 
-object but the one provided by the represented object.
-
 See also -setView:, -setValue: and -setRepresentedObject:.  */
 - (id) initWithView: (NSView *)view value: (id)value representedObject: (id)repObject
 {
@@ -327,8 +322,8 @@ Default values won't be copied. */
 /** Returns the root item of the layout item tree to which the receiver belongs 
 to. 
 
-This method never returns nil because the returned value is equal to self when 
-the receiver has no parent item. */
+This method never returns nil. The returned value is equal to self when the 
+receiver has no parent item. */
 - (id) rootItem
 {
 	if (_parentItem != nil)
@@ -341,25 +336,29 @@ the receiver has no parent item. */
 	}
 }
 
-/** Returns the layout item group which controls the receiver. An item group is
-said to be base item that controls descendant items when -representedPathBase
-returns a non nil or blank value (see -hasValidRepresentedPathBase).
+/** Returns the layout item group which controls the receiver.<br />
+An item group is said to be base item that controls its descendant items when 
+its represented path base is neither nil nor a blank value (see 
+-hasValidRepresentedPathBase).
 
-A base item usually coordinates the event handling, the loading of 
-layout items which are provided by a source and the source related mutations, 
-for all descendant items that fall under its control. 
+For every descendant item under its control, the base item will drive:
+<list>
+<item>pick and drop validation</item>
+<item>source access</item>
+</list>
+Various delegate-like methods use the base item as their main argument.
 
-All child items are controlled by a common base item until a descendant item is 
-declared as a new base item (by providing a represented path base). See also 
--representedPathBase, -representedPath, -[ETLayoutItemGroup source] and related 
-setter methods.
+All descendant items are controlled by the receiver base item until a descendant 
+becomes a new base item (by providing a represented path base).<br /> 
+See also -representedPathBase, -representedPath, -[ETLayoutItemGroup source] 
+and related setter methods.
 
 An item group is automatically turned into a base item, when you set a source 
-or set it as a controller content (see -[ETController setContent:]).
+or a controller (see -[ETLayoutItemGroup setController:]).
 
-This method will return nil when the receiver isn't a base item, hasn't yet 
-been added as a descendant of a base item or has just been removed as a 
-descendant of a base item. */
+This method will return nil when the receiver isn't a base item or has no 
+ancestor which is a base item.<br />
+Hence -[[[ETLayoutItem alloc] init] baseItem] returns nil. */
 - (ETLayoutItemGroup *) baseItem
 {
 	if ([self hasValidRepresentedPathBase])
@@ -390,21 +389,20 @@ the receiver as a base item. */
 }
 
 /** Returns the layout item group to which the receiver belongs to. 
-	For the root item as returned by -rootItem, the returned value is always 
-	nil. 
-	This method will return nil when the receiver hasn't yet been added to an
-	item group or has just been removed from an item group. */
+
+For the root item, returns nil. */
 - (ETLayoutItemGroup *) parentItem
 {
 	return _parentItem;
 }
 
-/** Returns the layout item group to which the receiver belongs to. 
-	If parent parameter is nil, the receiver becomes a root item. 
-	You must never call this method directly unless your code belongs to a 
-	subclass. If you need to change the parent of a layout item, use -addItem:, 
-	-removeFromParent and other similar methods provided to manipulate item 
-	collection owned by an item group. */
+/** Sets the layout item group to which the receiver belongs to. 
+
+If the given parent is nil, the receiver becomes a root item. 
+
+You must never call this method directly, unless you write a subclass.<br />
+To change the parent, use -addItem:, -removeFromParent and other similar methods 
+to manipulate the item collection that belongs to the parent. */
 - (void) setParentItem: (ETLayoutItemGroup *)parent
 {
 	//ETDebugLog(@"For item %@ with supervisor view %@, modify the parent item from "
@@ -413,9 +411,10 @@ the receiver as a base item. */
 	_parentItem = parent;
 }
 
-/** Detaches the receiver from the layout item group it belongs to.
-	You are in charge of retaining the receiver, otherwise it could be 
-	deallocated if no other objects retains it. */
+/** Detaches the receiver from the item group it belongs to.
+
+You are in charge of retaining the receiver, otherwise it could be deallocated 
+if no other objects retains it. */
 - (void ) removeFromParent
 {
 	if (_parentItem != nil)
@@ -448,7 +447,7 @@ The receiver itself can be returned. */
 }
 
 /** Returns the first display view bound to a layout item upwards in the layout 
-item tree. This layout item is identical to the one returned by 
+item tree. This item is identical to the one returned by 
 -closestAncestorItemWithDisplayView. 
 
 The receiver display view itself can be returned. */
@@ -469,13 +468,15 @@ The receiver display view itself can be returned. */
 	}
 }
 
-/** Returns receiver index path relative to item parameter. 
-	The index path is computed by climbing up the layout item tree until we 
-	find item parameter and pushing parent relative index of each layout item 
-	sequentially into an index path. 
-	Passing nil is equivalent to passing the root item as returned by 
-	-rootItem. If item is equal to self, the resulting index path is an blank 
-	one (relative to itself). */
+/** Returns receiver index path relative to the given item. 
+
+The index path is computed by climbing up the layout item tree until we 
+find the given item. At each level we traverse, the parent relative index is 
+pushed into the index path to be returned. 
+
+Passing nil is equivalent to passing the root item.<br />
+If the given item is equal to self, the resulting index path is a blank one 
+(relative to itself). */
 - (NSIndexPath *) indexPathFromItem: (ETLayoutItem *)item
 {
 	NSIndexPath *indexPath = nil;
@@ -503,34 +504,36 @@ The receiver display view itself can be returned. */
 	return indexPath;
 }
 
-/** Returns item index path relative to the receiver.
-	This method is equivalent to [item indexFromItem: self].
-	If item doesn't belong to the layout item subtree of the receiver, nil is
-	returned.
-	Passing nil is equivalent to passing the root item as returned by 
-	-rootItem, the returned value is always nil because the root item can never
-	be a child of the receiver. If item is equal to self, the resulting index 
-	path is an blank one (relative to itself). */
+/** Returns the given item index path relative to the receiver.
+
+This method is equivalent to [item indexFromItem: self].
+
+Returns nil when the given item isn't a receiver descendant.
+
+Passing nil is equivalent to passing the root item. In this case, the returned 
+value is nil because the root item can never be a receiver descendant.<br />
+If the given item is equal to self, the resulting index path is an blank one 
+(relative to itself). */
 - (NSIndexPath *) indexPathForItem: (ETLayoutItem *)item
 {
 	return [item indexPathFromItem: self];
 }
 
-/** Returns absolute index path of the receiver by collecting index of each
-	parent layout item until the root layout item is reached (when -parentItem
-	returns nil). 
-	This method is equivalent to [[self rootItem] indexPathForItem: self]. */
+/** Returns the receiver absolute index path by collecting the index of each
+parent item until the root item is reached (when -parentItem returns nil). 
+
+This method is equivalent to [[self rootItem] indexPathForItem: self]. */
 - (NSIndexPath *) indexPath
 {
 	// TODO: Test whether it is worth to optimize or not
 	return [[self rootItem] indexPathForItem: self];
 }
 
-/** Returns absolute path of the receiver by collecting the name of each
-	parent layout item until the root layout item is reached (when -parentItem
-	returns nil). 
-	This method is equivalent to [[self rootItem] pathForIndexPath: 
-	[[self rootItem] indexPathForItem: self]]. */
+/** Returns the receiver absolute path by collecting the name of each parent 
+item until the root item is reached (when -parentItem returns nil). 
+
+This method is equivalent to 
+[[self rootItem] pathForIndexPath: [[self rootItem] indexPathForItem: self]]. */
 - (NSString *) path
 {
 	/* We rebuild the path by chaining names of the layout item tree to which 
@@ -571,20 +574,20 @@ provided by the base item. */
 /** Returns the represented path base. By default, returns nil.
 
 With a represented path base, an ETLayoutItemGroup instance becomes a base 
-item, and provides a path base used by descendant items to build their 
+item, and its descendant items will use this path base to build their 
 represented paths (see -representedPath). This path base is valid until a 
-descendant provides a new represented path base and as such becomes a base item.
+represented path base is set on a descendant and as such becomes a base item.
 See -[ETLayoutItemGroup setRepresentedPathBase:].
 
-Finally take note represented paths are relative to the base item unlike paths 
-returned by -path which are absolute paths. */
+Represented paths are relative to the base item unlike paths returned by -path 
+which are absolute paths. */
 - (NSString *) representedPathBase
 {
 	return GET_PROPERTY(kETRepresentedPathBaseProperty);
 }
 
-/** Returns the identifier associated with the layout item. By default, the 
-returned value is the name. 
+/** Returns the identifier associated with the layout item. By default, returns 
+the name.
 
 If -name returns nil or an empty string, the identifier is a string made of 
 the index used by the parent item to reference the receiver. */
@@ -654,7 +657,7 @@ NSObject(Model) in EtoileFoundation. */
 
 /** Returns the name associated with the layout item.
  
-Take note the returned value can be nil or an empty string. */
+The returned value can be nil or an empty string. */
 - (NSString *) name
 {
 	return GET_PROPERTY(kETNameProperty);
@@ -662,7 +665,7 @@ Take note the returned value can be nil or an empty string. */
 
 /** Sets the name associated with the layout item.
  
-Take note the returned value can be nil or an empty string. */
+The returned value can be nil or an empty string. */
 - (void) setName: (NSString *)name
 {
 	SET_PROPERTY(name, kETNameProperty);
@@ -675,17 +678,20 @@ displayed. See also -setValue:. */
 	return GET_PROPERTY(kETValueProperty);
 }
 
-/** Sets a value object, that can be used when a single property has to be 
-displayed. For example, in a table layout with a single column or a simple 
-positional layout where each basic item style will try to draw it. To know how 
-such value object might be used by a layout, see each ETLayout and ETStyle 
-subclass documentation.
+/** Sets a value object.<br />
+Styles or layouts can use it to show the receiver with a basic value 
+representation or when they restrict their presentation to a single property.
+
+e.g. a table layout with a single column or a simple positional layout where 
+ETBasicItemStyle will try to draw the value. To know how the value can be 
+presented, see ETLayout and ETStyle subclasses.
 
 The value object is typically a string, a number or an image.
 
-Most of time this method can be used as a conveniency which allows to bypass
--valueForProperty: and -setValue:forProperty: when the layout item is used by
-combox box, single column table layout, line layout made of simple images etc. */
+If the represented object declares a property 'value', both 
+[receiver valueForProperty: @"value"] and 
+[receiver setValue: anObject forProperty: @"value"] won't access your value 
+object but the one provided by the represented object. */
 - (void) setValue: (id)value
 {
 	// TODO: Should we restrict what values can be accepted...
@@ -754,8 +760,11 @@ this case the receiver becomes a meta item and returns YES for -isMetaLayoutItem
 	return [[self supervisorView] wrappedView];
 }
 
-/** Sets the view associated with the receiver. This view is commonly a 
-widget provided by the widget backend. */
+/** Sets the view associated with the receiver. This view is commonly a widget 
+provided by the widget backend. 
+
+The receiver autoresizing mask will be updated to match the given view, and 
+the default frame and frame to match this view frame. */
 - (void) setView: (NSView *)newView
 {
 	id view = [[self supervisorView] wrappedView];
@@ -909,7 +918,7 @@ See -valueForProperty: for more details. */
 	return [[super properties] arrayByAddingObjectsFromArray: properties];
 }
 
-/* Returns a dictionary representation of every property/value pairs not stored 
+/** Returns a dictionary representation of every property/value pairs not stored 
 in ivars.
  
 Unless you write a subclass or reflection code, you should never need this 
@@ -932,21 +941,16 @@ and write the receiver properties. */
 	return NO;
 }
 
-/** Sets the display view of the receiver. Never calls this method directly 
-	unless you write an ETLayoutItem subclass. 
-	You must use -setDecoratorItem: if you want to modify the display view of 
-	the receiver. */
-- (void) setDisplayView: (ETView *)view
-{
-	if ([self decoratorItem] == nil)
-		[view setLayoutItemWithoutInsertingView: self];
-	ASSIGN(_view, view);
-}
-
 /** Sets the receiver selection state.
 
-You rarely need to call this method. Take note the new selection state won't be 
-apparent until a redisplay occurs. */
+You rarely need to call this method. You should rather use -setSelectionIndex:, 
+-setSelectionIndexes: or -setSelectionIndexPaths: on the parent item (see 
+ETLayoutItemGroup).
+
+This method doesn't post an ETItemGroupSelectionDidChangeNotification unlike 
+the previously mentioned ETLayoutItemGroup methods.
+
+The new selection state won't be apparent until a redisplay occurs. */
 - (void) setSelected: (BOOL)selected
 {
 	if (selected == _selected)
@@ -966,7 +970,7 @@ apparent until a redisplay occurs. */
 
 /** Sets whether the receiver should be displayed or not.
 
-Take note the new visibility state won't be apparent until a redisplay occurs. */
+The new visibility state won't be apparent until a redisplay occurs. */
 - (void) setVisible: (BOOL)visible
 {
 	_visible = visible;
@@ -1009,8 +1013,7 @@ returned type will combine both as supertypes. */
 This method can be used to subtype an object (without involving any subclassing).
 
 You can use it to restrict pick and drop allowed types to the receiver type, 
-when the receiver is a "pure UI object" without a represented object bound to a 
-UI. */
+when the receiver is a "pure UI object" without a represented object bound to it. */
 - (void) setSubtype: (ETUTI *)aUTI
 {
 	SET_PROPERTY(aUTI, kETSubtypeProperty);
