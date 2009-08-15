@@ -48,6 +48,8 @@ NSString *ETLayoutItemLayoutDidChangeNotification = @"ETLayoutItemLayoutDidChang
 
 /** Initializes and returns a layout item.
 
+The returned item will use +defaultItemRect as its frame.
+
 You should use -[ETUIItemFactory item] or -[ETUIItemFactory itemGroup] rather 
 than this method.*/
 - (id) init
@@ -60,6 +62,8 @@ See also -setValue:.
 
 The given value can be nil.
 
+The returned item will use +defaultItemRect as its frame.
+
 You should use -[ETUIItemFactory itemWithValue:] or 
 -[ETUIItemFactory itemGroupWithValue:] rather than this method. */
 - (id) initWithValue: (id)value
@@ -71,6 +75,8 @@ You should use -[ETUIItemFactory itemWithValue:] or
 See also -setRepresentedObject:.
 
 The given represented object can be nil.
+
+The returned item will use +defaultItemRect as its frame.
 
 You should use -[ETUIItemFactory itemWithRepresentedObject:] or 
 -[ETUIItemFactory itemGroupWithRepresentedObject:] rather than this method. */
@@ -108,6 +114,9 @@ represented object.
 
 Any of the arguments can be nil.
 
+When the given view is nil, the returned item will use +defaultItemRect as its 
+frame.
+
 If the represented object declares a property 'value', both 
 [receiver valueForProperty: @"value"] and 
 [receiver setValue: anObject forProperty: @"value"] won't access your value 
@@ -117,14 +126,22 @@ See also -setView:, -setValue: and -setRepresentedObject:.  */
 - (id) initWithView: (NSView *)view value: (id)value representedObject: (id)repObject
 {
     SUPERINIT
-    
+
 	// TODO: Examine common use cases and see whether we should pass a 
 	// capacity hint to improve performances.
 	_variableProperties = [[NSMutableDictionary alloc] init];
 	_defaultValues = [[NSMutableDictionary alloc] init];
+
 	_parentItem = nil;
-	//_decoratorItem = nil;
-	[self setTransform: [NSAffineTransform transform]];
+
+	[self setRepresentedObject: repObject];
+	[self setValue: value];
+
+	_styleGroup = [[ETStyleGroup alloc] init];
+	[self setStyle: [ETBasicItemStyle sharedInstance]];	
+	[self setActionHandler: [ETActionHandler sharedInstance]];
+
+	ASSIGN(_transform, [NSAffineTransform transform]);
 	 /* Will be overriden by -setView: when the view is not nil */
 	_autoresizingMask = NSViewNotSizable;
 	_contentAspect = ETContentAspectScaleToFill;
@@ -132,11 +149,6 @@ See also -setView:, -setValue: and -setRepresentedObject:.  */
 	[self setView: view];
 	[self setFlipped: YES]; /* -setFlipped: must follow -setSupervisorView: */
 	[self setVisible: NO];
-	[self setStyleGroup: AUTORELEASE([[ETStyleGroup alloc] init])];
-	[self setStyle: [ETBasicItemStyle sharedInstance]];
-	[self setActionHandler: [ETActionHandler sharedInstance]];
-	[self setValue: value];
-	[self setRepresentedObject: repObject];
 
 	if (view == nil)
 	{
@@ -215,8 +227,7 @@ Default values won't be copied. */
 	// the related objects (supervisor view, decorator etc.) are in a valid and 
 	// well synchronized state at copy time.
 
-	/* We copy every primitive ivars expect _needsUpdateLayout and 
-	   _isSyncingSupervisorViewGeometry */
+	/* We copy every primitive ivars except _isSyncingSupervisorViewGeometry */
 
 	item->_contentBounds = _contentBounds;
 	item->_position = _position;

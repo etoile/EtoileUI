@@ -64,14 +64,14 @@ and centers it. A strech is a scale that doesn't preserve the content proportion
 
 @interface ETLayoutItem : ETUIItem <NSCopying, ETObjectInspection>
 {
-	ETLayoutItemGroup *_parentItem;
-	
-	id _modelObject;
-	ETStyleGroup *_styleGroup;
 	NSMutableDictionary *_variableProperties;
 	// TODO: Merge the two dictionaries or store the default values per object 
 	// in an external dictionary.
 	NSMutableDictionary *_defaultValues;
+
+	ETLayoutItemGroup *_parentItem;
+	id _modelObject;
+	ETStyleGroup *_styleGroup;
 
 	NSRect _contentBounds;
 	NSPoint _position;
@@ -83,7 +83,6 @@ and centers it. A strech is a scale that doesn't preserve the content proportion
 	BOOL _flipped;
 	BOOL _selected;
 	BOOL _visible;
-	BOOL _needsUpdateLayout;
 	BOOL _isSyncingSupervisorViewGeometry;
 	BOOL _scrollViewShown; /* Used by ETLayoutItem+Scrollable */
 	BOOL _wasKVOStopped;
