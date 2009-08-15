@@ -179,7 +179,6 @@ and centers it. A strech is a scale that doesn't preserve the content proportion
 - (void) render: (NSMutableDictionary *)inputValues 
       dirtyRect: (NSRect)dirtyRect 
       inContext: (id)ctxt;
-- (void) render;
 - (ETStyleGroup *) styleGroup;
 - (void) setStyleGroup: (ETStyleGroup *)aStyle;
 - (id) style;

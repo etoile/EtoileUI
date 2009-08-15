@@ -1212,32 +1212,40 @@ used by the styles. */
 	}
 }
 
-/** Propagates rendering/drawing in the layout item tree.
-	This method doesn't involve any layout and size computation of the layout 
-	items. If you need to do layout or size computation, implement the method
-	-apply: in addition to this one.
-	You can eventually override this method. If you want to keep the drawing 
-	of the receiver, the superclass implementation must be called.
-    dirtyRect indicates the portion of the item that needs to be redraw and is 
-    expressed in the receiver coordinates. This rect is is usally equal to the 
-	item drawing frame, but it may be smaller if only a portion of parent 
-	needs to be redrawn and this portion doesn't overlap the whole receiver 
-	frame. 
-	Unlike in a view, you are free to draw outside of an item frame, 
-	yet you should be careful when you draw outside of the boundaries of the  
-	receiver and only uses it to draw visual embellishments strictly related to 
-	the receiver. This ability to draw beyong the boundaries of a layout item is 
-	useful for drawing borders, selection mark, icon badge, control points etc.
-	The focus is always locked on view before this method is called.
-	inputValues is an dictionary of key/value pairs that is passed by the first 
-	ancestor item on which the drawing has begun, you can add or remove values 
-	in it to modify the rendering of style/filter attributes in the renderer 
-	chain of the receiver or other descendant items. This dictionary is carried 
-	downwards through the layout item tree for the length of the drawing 
-	session. 
-	WARNING: The inputValues is currently reset each time an item with a view 
-	is asked to draw, in other words the dictionary handed to its parent item 
-	isn't handed to it. */
+/** <override-dummy />
+Renders or draws the receiver in the given rendering context. 
+
+The rendering is entirely delegated to the style group.<br />
+Subclasses such as ETLayoutItemGroup can override this method to extend, alter 
+or replace this behavior.
+
+EtoileUI will lock and unlock the focus when needed around this method, unless 
+you call this method directly. In this case, you are responsible to lock/unlock 
+the focus.
+
+You are allowed to draw beyond the receiver frame (EtoileUI doesn't clip the 
+drawing). In that case, you have to use -setBoundingBox to specify the area were 
+the redisplay is now expected to occur, otherwise methods like -display and 
+-setNeedsDisplay: won't work correctly.<br />
+You should be careful and only use this possibility to draw visual 
+embellishments strictly related to the receiver. e.g. borders, selection mark, 
+icon badge, control points etc.
+
+dirtyRect indicates the receiver portion that needs to be redrawn and is 
+expressed in the receiver coordinate space. This rect is is usally equal to 
+-drawingFrame. But it can be smaller when the parent item doesn't need to be 
+entirely redrawn and the portion to redraw intersects the receiver area 
+(without covering it).<br />
+Warning: When -decoratorItem is not nil, the receiver coordinate space is not  
+equal to the receiver content coordinate space.
+
+inputValues is a key/value pair list that is initially passed to the ancestor 
+item on which the rendering was started. You can add or remove key/value pairs  
+to let styles know how they are expected to be rendered.<br />
+This key/value pair list will be carried downwards until the rendering is finished.
+
+ctxt represents the rendering context which encloses the drawing context. For 
+now, the context is nil and must be ignored.  */
 - (void) render: (NSMutableDictionary *)inputValues 
       dirtyRect: (NSRect)dirtyRect 
       inContext: (id)ctxt 
@@ -1266,12 +1274,6 @@ used by the styles. */
 #endif
 
 	[[self styleGroup] render: inputValues layoutItem: self dirtyRect: dirtyRect];
-}
-
-/** A shortcut method for -render: inherited from ETStyle. */
-- (void) render
-{
-	[self render: nil];
 }
 
 /** Marks the receiver and the entire layout item tree owned by it to be 
