@@ -95,7 +95,7 @@ An NSInvalidArgumentException will be raised if you pass nil. */
 /** Returns a new layout item group which contains the given items as children. */ 
 - (ETLayoutItemGroup *) itemGroupWithItems: (NSArray *)items
 {
-	return AUTORELEASE([[ETLayoutItemGroup alloc] initWithLayoutItems: items view: nil]);
+	return AUTORELEASE([[ETLayoutItemGroup alloc] initWithItems: items view: nil]);
 }
 
 /** Returns a new layout item group which represents the given object and 

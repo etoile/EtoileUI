@@ -47,7 +47,8 @@
 /* Initialization */
 
 - (id) initWithItems: (NSArray *)layoutItems view: (NSView *)view;
-- (id) initWithItems: (NSArray *)layoutItems view: (NSView *)view value: (id)value representedObject: (id)repObject;
+- (id) initWithItems: (NSArray *)layoutItems view: (NSView *)view 
+	value: (id)value representedObject: (id)repObject;
 
 /* Traversing Layout Item Tree */
 
@@ -201,8 +202,6 @@
 - (void) removeObject: (id)object;
 
 /* Deprecated (DO NOT USE, WILL BE REMOVED LATER) */
-
-- (id) initWithLayoutItems: (NSArray *)layoutItems view: (NSView *)view;
 
 @end
 

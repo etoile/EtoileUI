@@ -46,10 +46,6 @@ NSString *ETSourceDidUpdateNotification = @"ETSourceDidUpdateNotification";
             item: (ETLayoutItem *)item 
        dirtyRect: (NSRect)dirtyRect 
        inContext: (id)ctxt;
-
-/* Deprecated (DO NOT USE, WILL BE REMOVED LATER) */
-- (id) initWithLayoutItems: (NSArray *)layoutItems view: (NSView *)view value: (id)value;
-- (id) initWithLayoutItems: (NSArray *)layoutItems view: (NSView *)view;
 @end
 
 
@@ -107,7 +103,8 @@ See also +enablesAutolayout. */
 /* Initialization */
 
 /** <init /> Designated initializer */
-- (id) initWithItems: (NSArray *)layoutItems view: (NSView *)view value: (id)value representedObject: (id)repObject
+- (id) initWithItems: (NSArray *)layoutItems view: (NSView *)view 
+	value: (id)value representedObject: (id)repObject
 {
     self = [super initWithView: view value: value representedObject: repObject];
 
@@ -1920,15 +1917,5 @@ receiver area as ETHandleGroup do. */
 }
 
 /* Deprecated (DO NOT USE, WILL BE REMOVED LATER) */
-
-- (id) initWithLayoutItems: (NSArray *)layoutItems view: (NSView *)view value: (id)value representedObject: (id)repObject
-{
-	return [self initWithItems: layoutItems view: view value: value representedObject: repObject];
-}
-
-- (id) initWithLayoutItems: (NSArray *)layoutItems view: (NSView *)view
-{
-	return [self initWithItems: layoutItems view: view];
-}
 
 @end
