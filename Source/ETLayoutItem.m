@@ -2331,7 +2331,7 @@ distinct. */
 - (void) setAction: (SEL)aSelector
 {
 	/* NULL and nil are the same, so a NULL selector removes any existing entry */
-	SET_PROPERTY(kETActionProperty, NSStringFromSelector(aSelector));
+	SET_PROPERTY(NSStringFromSelector(aSelector), kETActionProperty);
 	[[self layout] syncLayoutViewWithItem: self];
 }
 
