@@ -55,6 +55,7 @@
 
 - (BOOL) isDecoratorItem;
 - (BOOL) isWindowItem;
+- (BOOL) isScrollableAreaItem;
 
 /* Enclosing Item */
 

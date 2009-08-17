@@ -146,13 +146,13 @@ UI level for a photo viewer. */
 {
 	if ([sender state] == NSOnState)
 	{
-		[photoViewItem setShowsScrollableAreaItem: YES];
+		[photoViewItem setScrollable: YES];
 		//[photoViewItem setHasVerticalScroller: YES];
 		//[photoViewItem setHasHorizontalScroller: YES];
 	}
 	else if ([sender state] == NSOffState)
 	{
-		[photoViewItem setShowsScrollableAreaItem: NO];
+		[photoViewItem setScrollable: NO];
 		// NOTE: Testing related lines
 		//[photoViewItem setHasVerticalScroller: NO];
 		//[photoViewItem setHasHorizontalScroller: NO];

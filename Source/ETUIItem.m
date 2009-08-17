@@ -12,6 +12,7 @@
 #import "ETGeometry.h"
 #import "ETLayoutItem.h"
 #import "ETView.h"
+#import "ETScrollableAreaItem.h"
 #import "ETWindowItem.h"
 #import "NSObject+EtoileUI.h"
 #import "ETCompatibility.h"
@@ -384,12 +385,20 @@ See ETDecoratorItem and also -[NSObject(EtoileUI) isLayoutItem]. */
 	return [self isKindOfClass: [ETDecoratorItem class]];
 }
 
-/** Returns whether the receiver a window decorator item. 
+/** Returns whether the receiver is a window decorator item. 
 
 See ETWindowItem. */
 - (BOOL) isWindowItem
 {
 	return [self isKindOfClass: [ETWindowItem class]];
+}
+
+/** Returns whether the receiver is scrollable area decorator item. 
+
+See ETScrollableAreaItem. */
+- (BOOL) isScrollableAreaItem
+{
+	return [self isKindOfClass: [ETScrollableAreaItem class]];
 }
 
 /* Enclosing Item */
