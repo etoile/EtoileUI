@@ -49,7 +49,7 @@ const NSString *kETCachedScrollableAreaDecoratorItem = @"cachedScrollViewDecorat
 - (void) setShowsScrollView: (BOOL)scroll;
 - (void) cacheScrollViewDecoratorItem: (ETScrollableAreaItem *)decorator;
 - (ETScrollableAreaItem *) cachedScrollViewDecoratorItem;
-- (ETScrollableAreaItem *) createScrollViewDecoratorItem;
+- (ETScrollableAreaItem *) createScrollableAreaItem;
 @end
 
 
@@ -150,7 +150,7 @@ decorator chain by calling hide/unhide methods. */
 	
 	if (cachedDecorator == nil)
 	{
-		[self cacheScrollViewDecoratorItem: [self createScrollViewDecoratorItem]];
+		[self cacheScrollViewDecoratorItem: AUTORELEASE([self createScrollableAreaItem])];
 		cachedDecorator = [self cachedScrollViewDecoratorItem];
 	}
 
@@ -246,7 +246,7 @@ You should never need to call this method which is used internally. */
 	   scroller settings. We update any scroller settings defined in a display
 	   view with that of the newly created scroll view.  */
 	if (scrollDecorator == nil)
-		scrollDecorator = [self createScrollViewDecoratorItem];
+		scrollDecorator = AUTORELEASE([self createScrollableAreaItem]);
 
 	// NOTE: Will call back -didChangeScrollDecoratorOfItem: which takes care of 
 	// caching the scroll decorator
@@ -323,20 +323,14 @@ You should never need to call this method which is used internally. */
 	}
 }
 
-- (ETScrollableAreaItem *) createScrollViewDecoratorItem
+- (ETScrollableAreaItem *) createScrollableAreaItem
 {
-	ETScrollView *scrollViewWrapper = nil;
-	
-	scrollViewWrapper = [[ETScrollView alloc] initWithFrame: [self frame]];
-	AUTORELEASE(scrollViewWrapper);
+	ETScrollableAreaItem *decorator = [[ETScrollableAreaItem alloc] init];
 
-	NSScrollView *scrollView = (NSScrollView *)[scrollViewWrapper mainView];
-	BOOL noVisibleScrollers = ([scrollView hasVerticalScroller] == NO &&
-		[scrollView hasHorizontalScroller] == NO);
-	NSAssert2(noVisibleScrollers, @"New scrollview %@ wrapper is expected have "
-		"no visible scrollers to be used by %@", scrollViewWrapper, self);
+	NSParameterAssert([decorator hasVerticalScroller] == NO 
+		&& [decorator hasHorizontalScroller] == NO);
 
-	return (ETScrollableAreaItem *)[scrollViewWrapper layoutItem];
+	return decorator;
 }
 
 @end
