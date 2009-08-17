@@ -382,7 +382,7 @@
 
 - (void) setShowsScrollView: (BOOL)show
 {
-	[[self layoutItem] setShowsScrollView: show];
+	[[self layoutItem] setShowsScrollableAreaItem: show];
 }
 
 /* Actions */

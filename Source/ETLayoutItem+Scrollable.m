@@ -46,7 +46,9 @@
 const NSString *kETCachedScrollableAreaDecoratorItem = @"cachedScrollViewDecoratorItem";
 
 @interface ETLayoutItem (ScrollablePrivate)
-- (void) setShowsScrollView: (BOOL)scroll;
+- (void) setShowsScrollableAreaItem: (BOOL)scroll;
+- (void) hidesScrollableAreaItem;
+- (void) unhidesScrollableAreaItem;
 - (void) cacheScrollViewDecoratorItem: (ETScrollableAreaItem *)decorator;
 - (ETScrollableAreaItem *) cachedScrollViewDecoratorItem;
 - (ETScrollableAreaItem *) createScrollableAreaItem;
@@ -101,7 +103,7 @@ decorator chain. */
 {
 	if (scroll)
 	{
-		[self setShowsScrollView: YES];
+		[self setShowsScrollableAreaItem: YES];
 	}
 	[[self scrollView] setHasVerticalScroller: scroll];
 
@@ -126,7 +128,7 @@ decorator chain. */
 {
 	if (scroll)
 	{
-		[self setShowsScrollView: YES];
+		[self setShowsScrollableAreaItem: YES];
 	}
 	[[self scrollView] setHasHorizontalScroller: scroll];
 
@@ -176,11 +178,11 @@ You should never need to call this method which is used internally. */
 
 	if (hideScrollableAreaItem)
 	{
-		[self hidesScrollViewDecoratorItem];
+		[self hidesScrollableAreaItem];
 	}
 	else if (showScrollableAreaItem && [self isScrollViewShown])
 	{
-		[self unhidesScrollViewDecoratorItem];		
+		[self unhidesScrollableAreaItem];		
 	}
 }
 
@@ -234,7 +236,7 @@ You should never need to call this method which is used internally. */
 	this method creates a ETScrollView instance and builds a decorator item with 
 	this view. This new scroll view decorator item is finally inserted as the 
 	first decorator. */
-- (void) unhidesScrollViewDecoratorItem 
+- (void) unhidesScrollableAreaItem 
 {
 	if ([self isContainerScrollViewInserted])
 		return;
@@ -258,7 +260,7 @@ You should never need to call this method which is used internally. */
 	[[self layout] setContentSizeLayout: YES];
 }
 
-- (void) hidesScrollViewDecoratorItem 
+- (void) hidesScrollableAreaItem 
 {
 	if ([self isContainerScrollViewInserted] == NO)
 		return;
@@ -295,7 +297,7 @@ You should never need to call this method which is used internally. */
 	[[self layout] setContentSizeLayout: NO];
 }
 
-- (void) setShowsScrollView: (BOOL)show
+- (void) setShowsScrollableAreaItem: (BOOL)show
 {
 	if (_scrollViewShown == show)
 		return;
@@ -314,11 +316,11 @@ You should never need to call this method which is used internally. */
 	{
 		if (show)
 		{
-			[self unhidesScrollViewDecoratorItem];
+			[self unhidesScrollableAreaItem];
 		}
 		else
 		{
-			[self hidesScrollViewDecoratorItem];
+			[self hidesScrollableAreaItem];
 		}
 	}
 }

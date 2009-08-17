@@ -58,10 +58,8 @@ reenabled.  */
 - (BOOL) isScrollViewShown; // TODO: Rename -hasAnyVisibleScrollers
 
 // TODO: Remove...
-- (void) setShowsScrollView: (BOOL)show;
+- (void) setShowsScrollableAreaItem: (BOOL)show;
 - (BOOL) isContainerScrollViewInserted;
-- (void) unhidesScrollViewDecoratorItem;
-- (void) hidesScrollViewDecoratorItem;
 
 /* Framework Private */
 
