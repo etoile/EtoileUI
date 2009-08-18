@@ -28,6 +28,8 @@ decorated item returns NO to -isFlipped. */
 	BOOL _ensuresContentFillsVisibleArea;
 }
 
+- (id) initWithScrollView: (NSScrollView *)aScrollView;
+
 - (NSRect) visibleRect;
 - (NSRect) visibleContentRect;
 
@@ -41,16 +43,5 @@ decorated item returns NO to -isFlipped. */
 
 // TODO: May be nicer to override -contentRect in ETScrollableAreaItem so that 
 // the content rect origin reflects the current scroll position.
-
-@end
-
-/* Private stuff (legacy to be eliminated) */
-
-@interface ETScrollView : ETView
-{
-	NSScrollView *_mainView;
-}
-
-- (id) initWithMainView: (id)scrollView layoutItem: (ETLayoutItem *)item;
 
 @end

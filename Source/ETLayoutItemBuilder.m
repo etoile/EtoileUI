@@ -16,6 +16,7 @@
 #import "ETView.h"
 #import "ETScrollableAreaItem.h"
 #import "ETUIItemFactory.h"
+#import "NSObject+EtoileUI.h"
 #import "NSView+Etoile.h"
 #import "NSWindow+Etoile.h"
 #import "ETCompatibility.h"
@@ -139,17 +140,18 @@ of their view hierachy (-subviews returns an empty arrary). */
 
 	if ([view isKindOfClass: [NSScrollView class]])
 	{
-		ETScrollView *scrollViewWrapper = [[ETScrollView alloc] initWithMainView: view layoutItem: nil];
-		id scrollDecorator = [scrollViewWrapper layoutItem];
-
 		item = [self renderView: [view documentView]];
-		[item setDecoratorItem: scrollDecorator];
+		[item setDecoratorItem: [itemFactory itemWithScrollView: view]];
 	}
-	else if ([view isKindOfClass: [ETScrollView class]])
+	else if ([view isSupervisorView] && [[view layoutItem] isDecoratorItem])
 	{
 		item = [[view layoutItem] firstDecoratedItem];
+
+		NSAssert([item isLayoutItem], @"Your view hierarchy is invalid, it "
+			"contains a supervisor view bound to a decorator item that isn't "
+				"inserted in the layout item tree");
 	}
-	else if ([view isSupervisorView])
+	else if ([view isSupervisorView] && [[view layoutItem] isLayoutItem])
 	{
 		item = [view layoutItem];
 	}
@@ -175,9 +177,11 @@ of their view hierachy (-subviews returns an empty arrary). */
 		item = [itemFactory itemWithView: view];
 		RELEASE(view);
 	}
-	
+
+	NSParameterAssert([item isLayoutItem]);
+
 	/* Fixed layouts such as ETFreeLayout are expected to restore the 
-	   initial view frame on the item. */
+		   initial view frame on the item. */
 	[item setPersistentFrame: [item frame]];
 
 	return item;

@@ -11,6 +11,7 @@
 #import "ETGeometry.h"
 #import "ETLayoutItemGroup.h"
 #import "ETLayer.h"
+#import "ETScrollableAreaItem.h"
 #import "ETWindowItem.h"
 #import "ETContainer.h"
 #import "ETShape.h"
@@ -345,6 +346,16 @@ The concrete window class used is ETFullScreenWindow. */
 	ETWindowItem *windowItem = [self itemWithWindow: window];
 	[windowItem setShouldKeepWindowFrame: YES];
 	return windowItem;
+}
+
+/** Returns a new scrollable area item to which the given concrete scroll view 
+gets bound. 
+
+The returned item can be used as a decorator to wrap an existing layout item 
+into a scrollable area. */
+- (ETScrollableAreaItem *) itemWithScrollView: (NSScrollView *)scrollView
+{
+	return AUTORELEASE([[ETScrollableAreaItem alloc] initWithScrollView: scrollView]);
 }
 
 /* Layer Factory Methods */

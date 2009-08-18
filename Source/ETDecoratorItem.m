@@ -331,12 +331,16 @@ inserted as the last decorator.
 
 Take in account that parentView can be nil. */
 - (void) handleDecorateItem: (ETUIItem *)item 
-             supervisorView: (ETView *)decoratedView 
+             supervisorView: (NSView *)decoratedView 
                      inView: (ETView *)parentView 
 {
 	[self saveAndOverrideAutoresizingMaskOfDecoratedItem: item];
-	[self setDecoratedView: decoratedView];
-	
+	BOOL shouldInsertDecoratedView = (nil != decoratedView);
+	if (shouldInsertDecoratedView)
+	{
+		[self setDecoratedView: decoratedView];
+	}
+
 	/* If the display view bound to item was part of the view hierarchy owned by 
 	   the layout item tree, inserts the new display view into the existing 
 	   parent view. */
@@ -365,17 +369,26 @@ This methods provides a basic implemention that works well when a subclass uses
 a supervisor view. Whether you extend this behavior or replace it, you must 
 call the superclass implementation.
 
+To take over the decorated item removal from the receiver supervisor view, pass 
+nil as decoratedView.
 To take over the outermost decorator removal from the parent view, pass nil 
 as parentView. This case is only useful when the receiver is currently the last 
 decorator.
 
 Take in account that parentView can be nil. */
-- (void) handleUndecorateItem: (ETUIItem *)item inView: (ETView *)parentView
+- (void) handleUndecorateItem: (ETUIItem *)item
+               supervisorView: (NSView *)decoratedView 
+                       inView: (ETView *)parentView 
 {
 	ETDebugLog(@"Handle undecorate with parent %@ parent view %@ item "
 		"display view %@", [item parentItem], parentView, [item displayView]);
 
-	[self setDecoratedView: nil];
+	BOOL shouldRemoveDecoratedView = (nil != decoratedView);
+
+	if (shouldRemoveDecoratedView)
+	{
+		[self setDecoratedView: nil];
+	}
 	[self restoreAutoresizingMaskOfDecoratedItem: item];
 	[[self displayView] removeFromSuperview];
 	/* Insert the new item display view into the parent view */

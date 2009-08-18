@@ -59,26 +59,47 @@ the role played by -contentView in other AppKit view classes). */
 
 - (NSScrollView *) scrollView
 {
-	return (NSScrollView *)[[self supervisorView] mainView];
+	return (NSScrollView *)[[self supervisorView] wrappedView];
 }
 
 - (id) init
 {
-	return [self initWithSupervisorView: nil];
+	return [self initWithScrollView: nil];
 }
 
-- (id) initWithSupervisorView: (ETView *)aView
+- (id) initWithScrollView: (NSScrollView *)aScrollView
 {
-	ETScrollView *supervisorView = AUTORELEASE([[ETScrollView alloc] initWithMainView: nil layoutItem: (ETLayoutItem *)self]);
-	self = [super initWithSupervisorView: supervisorView];
+	self = [super initWithSupervisorView: AUTORELEASE([[ETView alloc] init])];
 	if (nil == self)
 		return nil;
 
 	_ensuresContentFillsVisibleArea = YES;
+	
+	NSScrollView *scrollView = aScrollView;
+	
+	if (nil == scrollView)
+	{
+		scrollView = AUTORELEASE([[NSScrollView alloc] init]);
+	}
+
+	int sizableMask = NSViewWidthSizable | NSViewHeightSizable;
+
+	[scrollView setAutoresizingMask: sizableMask];
+	[[self supervisorView] setWrappedView: scrollView];
+
+	NSParameterAssert(NSEqualSizes([[self supervisorView] frame].size, [scrollView frame].size) 
+		&& NSEqualPoints(NSZeroPoint, [scrollView frame].origin));
+	NSParameterAssert([scrollView superview] != nil);
+	NSParameterAssert([scrollView autoresizingMask] == sizableMask);
 
 	//ETLog(@"Scroll view %@", [self scrollView]);
 
 	return self;
+}
+
+- (id) initWithSupervisorView: (ETView *)aView
+{
+	return [self initWithScrollView: nil];
 }
 
 - (void) dealloc
@@ -133,6 +154,25 @@ usually through its enclosing scroll view getting resized. */
 	[[[self lastDecoratorItem] supervisorView] setAutoresizingMask: 
 		[[item supervisorView] autoresizingMask]];
 	[[item supervisorView] setAutoresizingMask: NSViewNotSizable];
+}
+
+- (void) handleDecorateItem: (ETUIItem *)item 
+             supervisorView: (ETView *)decoratedView 
+                     inView: (ETView *)parentView 
+{
+	/* Retain the view in case it must be removed from a superview and nobody
+	   else retains it */
+	RETAIN(decoratedView);
+	[[self scrollView] setDocumentView: decoratedView];
+	RELEASE(decoratedView);
+	[super handleDecorateItem: item supervisorView: nil inView: parentView];
+}
+
+- (void) handleUndecorateItem: (ETUIItem *)item
+               supervisorView: (NSView *)decoratedView 
+                       inView: (ETView *)parentView 
+{
+	[super handleUndecorateItem: item supervisorView: nil inView: parentView];
 }
 
 /* Patches the size to be sure it will never be smaller than the clip view 
@@ -212,6 +252,24 @@ when scrollers are disabled). This is subject to change though. */
 	return [[[self scrollView] contentView] frame];
 }
 
+/** Returns the rect that corresponds to the entire content.<br />
+This area includes both the visible part and invisible part of the content.
+
+You must ignore the origin, only the size can be considered valid. */
+- (NSRect) contentRect
+{
+	NSView *documentView = [[self scrollView] documentView];
+	
+	if (nil != documentView)
+	{
+		return [documentView frame];
+	}
+	else
+	{
+		return NSZeroRect;
+	}
+}
+
 /** Returns YES when the vertical scroller of the current scrollable area is 
 visible, otherwise returns NO. */
 - (BOOL) hasVerticalScroller
@@ -267,81 +325,6 @@ never be resized when the scrollable area item is resized. */
 - (void) setEnsuresContentFillsVisibleArea: (BOOL)flag
 {
 	_ensuresContentFillsVisibleArea = flag;
-}
-
-@end
-
-
-@implementation ETScrollView : ETView
-
-- (id) initWithFrame: (NSRect)frame layoutItem: (ETLayoutItem *)anItem
-{
-	return [self initWithMainView: AUTORELEASE([[NSScrollView alloc] initWithFrame: frame]) 
-	                   layoutItem: anItem];
-}
-
-- (id) initWithMainView: (id)aScrollView layoutItem: (ETLayoutItem *)anItem
-{
-	ETLayoutItem *newItem = anItem;
-	NSScrollView *scrollView = aScrollView;
-
-	if (newItem == nil)
-	{
-		newItem = AUTORELEASE([[ETScrollableAreaItem alloc] init]);
-	}
-	if (scrollView == nil)
-	{
-		scrollView = AUTORELEASE([[NSScrollView alloc] init]);
-	}
-
-	NSAssert([newItem isKindOfClass: [ETScrollableAreaItem class]], @"The item "
-		"used to initialize an ETScrollView must be an ETScrollableAreaItem");
-
-	self = [super initWithFrame: [scrollView frame] layoutItem: newItem];
-
-	if (self != nil)
-	{
-		[self setAutoresizingMask: [scrollView autoresizingMask]];
-		[scrollView setAutoresizingMask: NSViewWidthSizable | NSViewHeightSizable];
-
-		/* Will be destroy in -[ETView dealloc] */
-		ASSIGN(_mainView, scrollView);
-		[self addSubview: _mainView];
-		[self tile];
-	}
-	
-	return self;	
-}
-
-- (void) dealloc
-{
-	DESTROY(_mainView);
-	
-	[super dealloc];
-}
-
-- (NSView *) mainView
-{
-	return _mainView;
-}
-
-- (NSView *) wrappedView
-{
-	return [(NSScrollView *)[self mainView] documentView]; 
-}
-
-/* Embed the wrapped view inside the receiver scroll view */
-- (void) setContentView: (NSView *)view temporary: (BOOL)temporary
-{
-	NSAssert2([[self mainView] isKindOfClass: [NSScrollView class]], 
-		@"_mainView %@ of %@ must be an NSScrollView instance", 
-		[self mainView], self);
-
-	/* Retain the view in case it must be removed from a superview and nobody
-	   else retains it */
-	RETAIN(view);
-	[(NSScrollView *)[self mainView] setDocumentView: view];
-	RELEASE(view);
 }
 
 @end

@@ -276,7 +276,9 @@ model graph and remains semantic. */
 
 	/* Dismantle existing decorator */
 	[existingDecorator setDecoratedItem: nil];
-	[existingDecorator handleUndecorateItem: self inView: parentView];
+	[existingDecorator handleUndecorateItem: self 
+	                         supervisorView: [self supervisorView]
+	                                 inView: parentView];
 	/* Set up new decorator */
 	[decorator setFlipped: [self isFlipped]];
 	[decorator setDecoratedItem: self];

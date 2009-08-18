@@ -257,7 +257,7 @@ and make the necessary adjustments. */
 }
 
 - (void) handleDecorateItem: (ETUIItem *)item 
-             supervisorView: (ETView *)decoratedView 
+             supervisorView: (NSView *)decoratedView 
                      inView: (ETView *)parentView
 {
 	/* -handleDecorateItem:inView: will call back 
@@ -299,10 +299,12 @@ and make the necessary adjustments. */
 	[_itemWindow makeKeyAndOrderFront: self];
 }
 
-- (void) handleUndecorateItem: (ETLayoutItem *)item inView: (ETView *)parentView
+- (void) handleUndecorateItem: (ETUIItem *)item
+               supervisorView: (NSView *)decoratedView 
+                       inView: (ETView *)parentView
 {
 	[_itemWindow orderOut: self];
-	[super handleUndecorateItem: item inView: parentView];
+	[super handleUndecorateItem: item supervisorView: decoratedView inView: parentView];
 }
 
 - (void) saveAndOverrideAutoresizingMaskOfDecoratedItem: (ETUIItem *)item

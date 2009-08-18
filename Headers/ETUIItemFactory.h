@@ -13,7 +13,7 @@
 #import <Foundation/Foundation.h>
 #import <AppKit/AppKit.h>
 
-@class ETLayoutItem, ETLayoutItemGroup, ETLayer, ETWindowItem;
+@class ETLayoutItem, ETLayoutItemGroup, ETLayer, ETScrollableAreaItem, ETWindowItem;
 
 
 @interface ETUIItemFactory : NSObject
@@ -60,6 +60,7 @@
 - (ETWindowItem *) itemWithWindow: (NSWindow *)window;
 - (ETWindowItem *) fullScreenWindow;
 - (ETWindowItem *) transparentFullScreenWindow;
+- (ETScrollableAreaItem *) itemWithScrollView: (NSScrollView *)scrollView;
 
 /* Layer Factory Methods */
 
