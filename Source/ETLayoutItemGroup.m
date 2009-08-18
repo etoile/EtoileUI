@@ -102,32 +102,33 @@ See also +enablesAutolayout. */
 
 /* Initialization */
 
-/** <init /> Designated initializer */
+/** <init /> */
 - (id) initWithItems: (NSArray *)layoutItems view: (NSView *)view 
 	value: (id)value representedObject: (id)repObject
 {
     self = [super initWithView: view value: value representedObject: repObject];
+	if (nil == self)
+		return nil;
 
-    if (self != nil)
-    {
-		_layoutItems = [[NSMutableArray alloc] init];
-		_sortedItems = nil;
-		_arrangedItems = nil;
-		if (layoutItems != nil)
-		{
-			[self addItems: layoutItems];
-		}
-		_layout = nil;
-		[self setStackedItemLayout: [ETFlowLayout layout]];
-		[self setUnstackedItemLayout:[ETLineLayout layout]];
-		_isStack = NO;
-		_autolayout = YES;
-		_usesLayoutBasedFrame = NO;
-		[self setHasNewLayout: NO];
-		[self setHasNewContent: NO];
-		[self setShouldMutateRepresentedObject: YES];
-		[self setItemScaleFactor: 1.0];
-    }
+	_layoutItems = [[NSMutableArray alloc] init];
+	_sortedItems = nil;
+	_arrangedItems = nil;
+	if (layoutItems != nil)
+	{
+		[self addItems: layoutItems];
+	}
+
+	_layout = nil;
+	ASSIGN(_stackedLayout, [ETFlowLayout layout]);
+	ASSIGN(_unstackedLayout, [ETLineLayout layout]);
+	_isStack = NO;
+	_autolayout = YES;
+	_usesLayoutBasedFrame = NO;
+	_hasNewLayout = NO;
+	_hasNewContent = NO; /* Private accessors in ETMutationHandler category */
+	[self setItemScaleFactor: 1.0];
+	
+	_shouldMutateRepresentedObject = YES;
 
     return self;
 }

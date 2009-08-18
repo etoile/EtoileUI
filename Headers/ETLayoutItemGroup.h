@@ -28,11 +28,10 @@
 	ETLayout *_stackedLayout;
 	ETLayout *_unstackedLayout;
 	SEL _doubleClickAction;
-	//NSString *_path; /* Path caching */
 	BOOL _isStack;
 	BOOL _autolayout;
 	BOOL _usesLayoutBasedFrame;
-	BOOL _reloading; /* ivar used by ETSource category */
+	BOOL _reloading; /* ivar used by ETMutationHandler category */
 	BOOL _hasNewContent;
 	BOOL _hasNewLayout;
 	BOOL _shouldMutateRepresentedObject;
