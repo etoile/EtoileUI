@@ -22,7 +22,6 @@
 #import "ETOutlineLayout.h"
 #import "ETBrowserLayout.h"
 #import "ETUIItemFactory.h"
-#import "ETContainer.h"
 
 @interface ETPaneLayout (Private)
 - (void) setContentItem: (ETLayoutItemGroup *)anItem;
@@ -195,11 +194,6 @@
 	          selector: @selector(itemGroupSelectionDidChange:)
 		          name: ETItemGroupSelectionDidChangeNotification 
 			    object: anItem];
-}
-
-- (NSView *) contentView
-{
-	return [[self contentItem] supervisorView];
 }
 
 - (BOOL) canGoBack

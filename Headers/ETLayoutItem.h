@@ -18,7 +18,7 @@
 #import <EtoileUI/ETDecoratorItem.h>
 
 @class ETUTI;
-@class ETView, ETContainer, ETLayout, ETLayoutItemGroup, 
+@class ETView, ETLayout, ETLayoutItemGroup, 
 ETDecoratorItem, ETScrollableAreaItem, ETWindowItem, ETStyleGroup;
 @protocol ETInspector;
 
