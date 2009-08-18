@@ -13,7 +13,6 @@ libEtoileUI_OBJC_FILES = \
 	ETCompositeLayout.m \
 	ETComputedLayout.m \
 	ETController.m \
-	ETContainer+EventHandling.m \
 	ETContainer.m \
 	ETDecoratorItem.m \
 	ETEvent.m \
