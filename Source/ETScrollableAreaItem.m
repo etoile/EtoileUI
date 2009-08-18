@@ -122,6 +122,9 @@ usually through its enclosing scroll view getting resized. */
 	// supervisor view. Presently ETScrollView and ETScrollableAreaItem 
 	// initializers invokes each other in a very ugly way and can overwrite 
 	// their state.
+#ifdef GNUSTEP /* Required with GNUstep prior to trunk r28465 */
+	[[self supervisorView] setPostsFrameChangedNotifications: YES];
+#endif
 	[[NSNotificationCenter defaultCenter] addObserver: self
 	                                         selector: @selector(clipViewFrameDidChange:)
 	                                             name: NSViewFrameDidChangeNotification
