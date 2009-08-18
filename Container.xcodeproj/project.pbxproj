@@ -661,8 +661,6 @@
 		604A32C40F9BEE780090932A /* ETPickDropCoordinator.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ETPickDropCoordinator.m; path = Source/ETPickDropCoordinator.m; sourceTree = "<group>"; };
 		604B5C1B0F4B472E001C25E8 /* ETEventProcessor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ETEventProcessor.h; path = Headers/ETEventProcessor.h; sourceTree = "<group>"; };
 		604B5C1E0F4B473F001C25E8 /* ETEventProcessor.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ETEventProcessor.m; path = Source/ETEventProcessor.m; sourceTree = "<group>"; };
-		605150190C1733B500B5E0E5 /* ETPaneView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ETPaneView.h; path = Headers/ETPaneView.h; sourceTree = "<group>"; };
-		6051501A0C1733B500B5E0E5 /* ETPaneView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ETPaneView.m; path = Source/ETPaneView.m; sourceTree = "<group>"; };
 		605152EA0C18B45B00B5E0E5 /* ETPaneLayout.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ETPaneLayout.h; path = Headers/ETPaneLayout.h; sourceTree = "<group>"; };
 		605152EB0C18B45B00B5E0E5 /* ETPaneLayout.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ETPaneLayout.m; path = Source/ETPaneLayout.m; sourceTree = "<group>"; };
 		605153B80C1993F900B5E0E5 /* FSBrowserCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FSBrowserCell.h; path = Headers/FSBrowserCell.h; sourceTree = "<group>"; };
@@ -1272,8 +1270,6 @@
 		606B98A40C0AF669000AAA85 /* Pane Layouts */ = {
 			isa = PBXGroup;
 			children = (
-				605150190C1733B500B5E0E5 /* ETPaneView.h */,
-				6051501A0C1733B500B5E0E5 /* ETPaneView.m */,
 				605152EA0C18B45B00B5E0E5 /* ETPaneLayout.h */,
 				605152EB0C18B45B00B5E0E5 /* ETPaneLayout.m */,
 			);
