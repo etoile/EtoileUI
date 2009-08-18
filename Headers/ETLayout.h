@@ -177,7 +177,6 @@ typedef enum _ETSizeConstraintStyle
 
 - (BOOL) isRendering;
 - (BOOL) canRender;
-- (void) render: (NSDictionary *)inputValues;
 - (void) render: (NSDictionary *)inputValues isNewContent: (BOOL)isNewContent;
 - (void) renderWithLayoutItems: (NSArray *)items isNewContent: (BOOL)isNewContent;
 

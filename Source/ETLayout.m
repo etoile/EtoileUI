@@ -613,11 +613,6 @@ See also -isScrollable and ETLayoutItem(Scrollable). */
 	return _isLayouting;
 }
 
-- (void) render: (NSDictionary *)inputValues
-{
-	[self render: inputValues isNewContent: YES];
-}
-
 /** Renders a collection of items by requesting them to the layout context to 
 which the receiver is bound to.
 
