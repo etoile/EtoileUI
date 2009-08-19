@@ -997,7 +997,7 @@ frame (see -usesLayoutBasedFrame). */
 	if ([self layout] == nil)
 		return;
 
-	ETLog(@"Try update layout of %@", self);
+	ETDebugLog(@"Try update layout of %@", self);
 	
 	BOOL isNewLayoutContent = ([self hasNewContent] || [self hasNewLayout]);
 	
