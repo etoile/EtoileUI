@@ -67,13 +67,26 @@
 	if (self == nil)
 		return nil;
 
-	[self setRootItem: rootItem];
+	if (nil != rootItem)
+	{
+		[self setRootItem: rootItem];
+	}
+	else
+	{
+		[self setRootItem: [[ETUIItemFactory factory] itemGroup]];
+	}
 	[self setFirstPresentationItem: targetItem];
 
 	return self;
 }
 
 DEALLOC(DESTROY(_rootItem); DESTROY(_targetItem));
+
+/** Returns NO. */
+- (BOOL) isScrollable
+{
+	return NO;
+}
 
 /** Sets the root item to which items that makes up the composite layout belong 
 to. 
@@ -83,7 +96,7 @@ immediately.
 
 This method removes the action handler on the root item.
 
-You must no call this method when the layout is currently in use, otherwise 
+You must not call this method when the layout is currently in use, otherwise 
 an NSInternalInconsistencyException will be raised. */
 - (void) setRootItem: (ETLayoutItemGroup *)anItem
 {
@@ -158,7 +171,21 @@ presentation item. */
 	}
 	else
 	{
-		[dest setSource: [item source]];
+		// TODO: We could optimize that by moving the children instead of 
+		// letting -setSource: triggers a reloading. We could do:
+		// [dest setSource: dest or [item source]];
+		// [dest presentItems: [item items];
+		// [dest setHasNewContent: NO];
+		[dest setRepresentedPathBase: [item representedPathBase]];
+		[dest setRepresentedObject: [item representedObject]];
+        if ([item usesRepresentedObjectAsProvider])
+        {
+            [dest setSource: dest];
+        }
+        else
+        {
+            [dest setSource: [item source]];
+        }
 		[item setSource: nil];
 
 		[item removeAllItems];

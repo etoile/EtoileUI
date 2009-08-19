@@ -10,6 +10,7 @@
 #import <AppKit/AppKit.h>
 #import <UnitKit/UnitKit.h>
 #import <EtoileFoundation/Macros.h>
+#import <EtoileFoundation/ETCollection+HOM.h>
 #import "ETCompositeLayout.h"
 #import "ETGeometry.h"
 #import "ETLayout.h"
@@ -26,7 +27,6 @@
 #define UKPointsEqual(x, y) UKTrue(NSEqualPoints(x, y))
 #define UKPointsNotEqual(x, y) UKFalse(NSEqualPoints(x, y))
 #define UKSizesEqual(x, y) UKTrue(NSEqualSizes(x, y))
-#define S(...) [NSSet setWithObjects:__VA_ARGS__ , nil]
 #define SA(x) [NSSet setWithArray: x]
 
 @interface TestCompositeLayout : NSObject <UKTest>
@@ -50,33 +50,152 @@
 
 DEALLOC(DESTROY(itemFactory); DESTROY(item))
 
+- (NSRect) proxyFrame
+{
+	return NSMakeRect(0, 0, [item width] / 2, [item height] / 2);
+}
+
+- (ETCompositeLayout *) createLayout
+{
+	ETLayoutItemGroup *proxy = [ETCompositeLayout defaultPresentationProxyWithFrame: [self proxyFrame]];
+	return AUTORELEASE([[ETCompositeLayout alloc] initWithRootItem: nil firstPresentationItem: proxy]);
+}
+
 - (void) testSetUpCompositeLayout
 {
-	NSRect proxyFrame = NSMakeRect(0, 0, [item width] / 2, [item height] / 2);
-	ETLayoutItemGroup *proxy = [ETCompositeLayout defaultPresentationProxyWithFrame: proxyFrame];
-	ETCompositeLayout *layout = AUTORELEASE([[ETCompositeLayout alloc] 
-		initWithRootItem: [itemFactory itemGroup] firstPresentationItem: proxy]);
+	ETCompositeLayout *layout = [self createLayout];
+	ETLayoutItemGroup *proxyItem = [layout firstPresentationItem];
+	ETTableLayout *proxyLayout = (ETTableLayout *)[proxyItem layout];
 	NSArray *content = A([itemFactory verticalSlider], [itemFactory oval], [itemFactory textField]);
 
 	[item addItems: content];
 	[item setLayout: layout];
-
-	ETLayoutItemGroup *proxyItem = [layout firstPresentationItem];
-	UKObjectsEqual(proxy, proxyItem);
-	UKObjectsEqual(proxyItem, [item firstItem]);
-	UKObjectsEqual(content, [proxyItem items]);
-
-	ETTableLayout *proxyLayout = (ETTableLayout *)[proxyItem layout];
-
-	[item updateLayout];
 
 	UKIntsEqual(3, [[proxyLayout tableView] numberOfRows]);
 	UKNotNil([item supervisorView]);
 	// TODO: Next line could be UKTrue([[item supervisorView] containsObject: [proxyItem supervisorView]]);
 	UKTrue([[[item supervisorView] subviews] containsObject: [proxyItem supervisorView]]);
 	UKObjectsEqual([proxyItem supervisorView], [[proxyLayout layoutView] superview]);
+}
 
-	// FIXME: UKRectsEqual(ETMakeRect(NSZeroPoint, [item size]), [proxyItem frame]);
+- (void) testPrepareNewContextStateWithStaticItemTree
+{
+	NSArray *content = A([itemFactory verticalSlider], [itemFactory oval], [itemFactory textField]);
+
+	[item addItems: content];
+	[item setLayout: [self createLayout]];
+
+	ETLayoutItemGroup *proxyItem = [(id)[item layout] firstPresentationItem];
+	UKObjectsEqual(proxyItem, [item firstItem]);
+	UKObjectsEqual(content, [proxyItem items]);
+	UKNil([proxyItem source]);
+	UKNil([proxyItem representedObject]);
+	UKObjectsEqual(A(proxyItem), [item items]);
+	UKNil([item source]);
+	UKNil([item representedObject]);
+}
+
+- (void) testRestoreContextStateWithStaticItemTree
+{
+	NSArray *content = A([itemFactory verticalSlider], [itemFactory oval], [itemFactory textField]);
+
+	[item addItems: content];
+	[item setLayout: [self createLayout]];
+	[item setLayout: nil];
+
+	ETLayoutItemGroup *proxyItem = [(id)[item layout] firstPresentationItem];
+	// TODO: May be we should ensure that UKTrue([proxyItem isEmpty]);
+	UKNil([proxyItem source]);
+	UKNil([proxyItem representedObject]);
+	UKObjectsEqual(content, [item items]);
+	UKNil([item source]);
+	UKNil([item representedObject]);
+}
+
+- (id) modelContent
+{
+	return A(@"Azalea",@"Rudbeckia", @"Camomile");
+}
+
+- (void) testPrepareNewContextStateWithRepresentedObjectProvider
+{
+	[item setRepresentedObject: [self modelContent]];
+	[item setSource: item];
+	[item setLayout: [self createLayout]];
+
+	ETLayoutItemGroup *proxyItem = [(id)[item layout] firstPresentationItem];
+	UKObjectsEqual(proxyItem, [item firstItem]);
+	UKObjectsEqual([self modelContent], [[[proxyItem items] mappedCollection] representedObject]);
+	UKObjectsEqual(proxyItem, [proxyItem source]);
+	UKObjectsEqual([self modelContent], [proxyItem representedObject]);
+	UKObjectsEqual(A(proxyItem), [item items]);
+	UKNil([item source]);
+	// NOTE: May be we should have UKNil([item representedObject]);
+}
+
+- (void) testRestoreContextStateWithRepresentedObjectProvider
+{
+	[item setRepresentedObject: [self modelContent]];
+	[item setSource: item];
+	[item setLayout: [self createLayout]];
+	[item setLayout: nil];
+
+	ETLayoutItemGroup *proxyItem = [(id)[item layout] firstPresentationItem];
+	// TODO: May be we should ensure that UKTrue([proxyItem isEmpty]);
+	UKNil([proxyItem source]);
+	UKNil([proxyItem representedObject]);
+	UKObjectsEqual([self modelContent], [[[item items] mappedCollection] representedObject]);
+	UKObjectsEqual(item, [item source]);
+	UKObjectsEqual([self modelContent], [item representedObject]);
+}
+
+/* We implement a basic index-based source protocol to be able to use 
+   TestCompositeLayout instances like that [item setSource: self]. */
+
+- (int) numberOfItemsInItemGroup: (ETLayoutItemGroup *)baseItem
+{
+	return 3;
+}
+
+- (ETLayoutItem *) itemGroup: (ETLayoutItemGroup *)baseItem itemAtIndex: (int)index
+{
+	return [itemFactory itemWithRepresentedObject: [[self modelContent] objectAtIndex: index]];	
+}
+
+- (void) testPrepareNewContextStateWithSourceProvider
+{
+	[item setRepresentedPathBase: @"/whatever/bla"];
+	[item setSource: self];
+	[item setLayout: [self createLayout]];
+
+	ETLayoutItemGroup *proxyItem = [(id)[item layout] firstPresentationItem];
+	UKObjectsEqual(proxyItem, [item firstItem]);
+	UKObjectsEqual([self modelContent], [[[proxyItem items] mappedCollection] representedObject]);
+	UKObjectsEqual(self, [proxyItem source]);
+	UKNil([proxyItem representedObject]);
+	UKStringsEqual(@"/whatever/bla", [proxyItem representedPathBase]);
+	UKObjectsEqual(A(proxyItem), [item items]);
+	UKNil([item source]);
+	// NOTE: May be we should have UKNil([item representedObject]); and 
+	// UKNil([item representedPathBase]);
+}
+
+- (void) testRestoreContextStateWithSourceProvider
+{
+	[item setRepresentedPathBase: @"/whatever/bla"];
+	[item setSource: self];
+	[item setLayout: [self createLayout]];
+	[item setLayout: nil];
+
+	ETLayoutItemGroup *proxyItem = [(id)[item layout] firstPresentationItem];
+	// TODO: May be we should ensure that UKTrue([proxyItem isEmpty]);
+	UKNil([proxyItem source]);
+	UKNil([proxyItem representedObject]);
+	UKNil([proxyItem representedPathBase]);
+	UKObjectsEqual([self modelContent], [[[item items] mappedCollection] representedObject]);
+	UKObjectsEqual(self, [item source]);
+	UKNil([item representedObject]);
+	UKStringsEqual(@"/whatever/bla", [item representedPathBase]);
 }
 
 @end

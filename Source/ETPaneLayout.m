@@ -60,7 +60,7 @@
 
 - (float) barHeightOrWidth
 {
-	return 300;
+	return 150;
 }
 
 - (void) tileContent
