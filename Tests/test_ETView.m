@@ -203,11 +203,13 @@
 }
 #endif
 
+#if 0
 + (void) testTitleBarViewPrototype
 {
 	UKNotNil([self titleBarViewPrototype]);
 	UKTrue(NSEqualRects(NSMakeRect(0, 0, 100, 50), [[self titleBarViewPrototype] frame]));
 }
+#endif
 
 - (NSView *) dummyView
 {
@@ -240,6 +242,7 @@
 	[self checkContentView: contentView];
 }
 
+#if 0
 - (void) testTitleBarView
 {
 	UKNotNil([self titleBarView]);
@@ -298,6 +301,7 @@
 	UKNotNil([self titleBarView]);
 	UKObjectsNotSame(barView, [self titleBarView]);
 }
+#endif
 
 - (void) testLayoutItem
 {
@@ -326,6 +330,7 @@
 	UKNil([theItem view]);
 }
 
+#if 0
 - (void) testSetDisclosable
 {
 	[self setDisclosable: YES];
@@ -357,5 +362,6 @@
 	
 	UKFalse([[self subviews] containsObject: [self titleBarView]]);
 }
+#endif
 
 @end
