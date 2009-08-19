@@ -214,6 +214,104 @@ NSString *kETManipulatedObjectProperty = @"manipulatedObject";
 
 @end
 
+/* Explanations in ETBottomLeftHandleActionHandler comments. */
+@implementation ETLeftHandleActionHandler
+
+- (void) handleTranslateItem: (ETHandle *)handle byDelta: (NSSize)delta
+{
+	ETHandleGroup *handleGroup = [handle manipulatedObject];
+	NSRect manipulatedFrame = [handleGroup frame];
+	
+	[handleGroup setNeedsDisplay: YES];
+		
+	manipulatedFrame.origin.x += delta.width;
+	manipulatedFrame.size.width -= delta.width;
+	
+	[handleGroup setFrame: manipulatedFrame];
+	[handleGroup setNeedsDisplay: YES];
+}
+
+@end
+
+/* Explanations in ETBottomLeftHandleActionHandler comments. */
+@implementation ETRightHandleActionHandler
+
+- (void) handleTranslateItem: (ETHandle *)handle byDelta: (NSSize)delta
+{
+	ETHandleGroup *handleGroup = [handle manipulatedObject];
+	NSRect manipulatedFrame = [handleGroup frame];
+	
+	[handleGroup setNeedsDisplay: YES];
+	
+	manipulatedFrame.size.width += delta.width;
+		
+	[handleGroup setFrame: manipulatedFrame];
+	[handleGroup setNeedsDisplay: YES];
+}
+
+@end
+
+/* Explanations in ETBottomLeftHandleActionHandler comments. */
+@implementation ETTopHandleActionHandler
+
+- (void) handleTranslateItem: (ETHandle *)handle byDelta: (NSSize)delta
+{
+	ETHandleGroup *handleGroup = [handle manipulatedObject];
+	NSRect manipulatedFrame = [handleGroup frame];
+	float deltaHeight = delta.height;
+	
+	[handleGroup setNeedsDisplay: YES];
+	
+	if ([[handleGroup parentItem] isFlipped] != [handleGroup isFlipped])
+		deltaHeight = -deltaHeight;
+	
+	if ([[handleGroup parentItem] isFlipped])
+	{
+		manipulatedFrame.origin.y += deltaHeight;
+		manipulatedFrame.size.height -= deltaHeight;
+	}
+	else
+	{
+		manipulatedFrame.size.height += deltaHeight;	
+	}
+	
+	[handleGroup setFrame: manipulatedFrame];
+	[handleGroup setNeedsDisplay: YES];
+}
+
+@end
+
+/* Explanations in ETBottomLeftHandleActionHandler comments. */
+@implementation ETBottomHandleActionHandler
+
+- (void) handleTranslateItem: (ETHandle *)handle byDelta: (NSSize)delta
+{
+	ETHandleGroup *handleGroup = [handle manipulatedObject];
+	NSRect manipulatedFrame = [handleGroup frame];
+	float deltaHeight = delta.height;
+	
+	[handleGroup setNeedsDisplay: YES];
+	
+	if ([[handleGroup parentItem] isFlipped] != [handleGroup isFlipped])
+		deltaHeight = -deltaHeight;
+	
+	if ([[handleGroup parentItem] isFlipped])
+	{
+		manipulatedFrame.size.height += deltaHeight;
+	}
+	else
+	{
+		manipulatedFrame.origin.y += deltaHeight;
+		manipulatedFrame.size.height -= deltaHeight;
+	}
+	
+	[handleGroup setFrame: manipulatedFrame];
+	[handleGroup setNeedsDisplay: YES];
+}
+
+@end
+
+
 @implementation ETBasicHandleStyle
 
 static ETBasicHandleStyle *sharedBasicHandleStyle = nil;
@@ -308,7 +406,11 @@ static ETBasicHandleStyle *sharedBasicHandleStyle = nil;
 	NSArray *handles = A(HANDLE(ETTopLeftHandleActionHandler), 
                          HANDLE(ETTopRightHandleActionHandler),
                          HANDLE(ETBottomRightHandleActionHandler),
-                         HANDLE(ETBottomLeftHandleActionHandler));
+                         HANDLE(ETBottomLeftHandleActionHandler),
+						 HANDLE(ETLeftHandleActionHandler), 
+                         HANDLE(ETRightHandleActionHandler),
+                         HANDLE(ETTopHandleActionHandler),
+                         HANDLE(ETBottomHandleActionHandler));
 	//NSArray *handles = A(HANDLE(ETTopLeftHandleActionHandler));
 
 	// NOTE: -setManipulatedObject: will set aTarget as a representedObject
@@ -455,6 +557,10 @@ or not. */
 		[[self topRightHandle] setPosition: NSMakePoint(frame.size.width, 0)];
 		[[self bottomRightHandle] setPosition: NSMakePoint(frame.size.width, frame.size.height)];
 		[[self bottomLeftHandle] setPosition: NSMakePoint(0, frame.size.height)];
+		[[self leftHandle] setPosition: NSMakePoint(0, frame.size.height / 2)];
+		[[self rightHandle] setPosition: NSMakePoint(frame.size.width, frame.size.height / 2)];
+		[[self topHandle] setPosition: NSMakePoint(frame.size.width / 2, 0)];
+		[[self bottomHandle] setPosition: NSMakePoint(frame.size.width / 2, frame.size.height)];
 	}
 	else
 	{
@@ -462,6 +568,10 @@ or not. */
 		[[self topRightHandle] setPosition: NSMakePoint(frame.size.width, frame.size.height)];
 		[[self bottomRightHandle] setPosition: NSMakePoint(frame.size.width, 0)];
 		[[self bottomLeftHandle] setPosition: NSZeroPoint];
+		[[self leftHandle] setPosition: NSMakePoint(0, frame.size.height / 2)];
+		[[self rightHandle] setPosition: NSMakePoint(frame.size.width, frame.size.height / 2)];
+		[[self topHandle] setPosition: NSMakePoint(frame.size.width / 2, frame.size.height)];
+		[[self bottomHandle] setPosition: NSMakePoint(frame.size.width / 2, 0)];
 	}
 
 	[super updateHandleLocations];
@@ -490,6 +600,31 @@ or not. */
 {
 	return (ETHandle *)[self itemAtIndex: 3];
 }
+
+/** Returns the handle item located on the left side. */
+- (ETHandle *) leftHandle
+{
+	return (ETHandle *)[self itemAtIndex: 4];
+}
+
+/** Returns the handle item located on the right side. */
+- (ETHandle *) rightHandle
+{
+	return (ETHandle *)[self itemAtIndex: 5];
+}
+
+/** Returns the handle item located on the top. */
+- (ETHandle *) topHandle
+{
+	return (ETHandle *)[self itemAtIndex: 6];
+}
+
+/** Returns the handle item located on the bottom. */
+- (ETHandle *) bottomHandle
+{
+	return (ETHandle *)[self itemAtIndex: 7];
+}
+
 
 /** Draws the receiver style. See ETStyle. */
 - (void) render: (NSMutableDictionary *)inputValues 

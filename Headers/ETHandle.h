@@ -73,6 +73,10 @@ the resize tool more straightforward to use for the user. */
 - (ETHandle *) topRightHandle;
 - (ETHandle *) bottomRightHandle;
 - (ETHandle *) bottomLeftHandle;
+- (ETHandle *) leftHandle;
+- (ETHandle *) rightHandle;
+- (ETHandle *) topHandle;
+- (ETHandle *) bottomHandle;
 
 - (void) render: (NSMutableDictionary *)inputValues 
 	  dirtyRect: (NSRect)dirtyRect
@@ -100,6 +104,22 @@ the resize tool more straightforward to use for the user. */
 @end
 
 @interface ETTopRightHandleActionHandler : ETHandleActionHandler
+- (void) handleTranslateItem: (ETHandle *)handle byDelta: (NSSize)delta;
+@end
+
+@interface ETLeftHandleActionHandler : ETHandleActionHandler
+- (void) handleTranslateItem: (ETHandle *)handle byDelta: (NSSize)delta;
+@end
+
+@interface ETRightHandleActionHandler : ETHandleActionHandler
+- (void) handleTranslateItem: (ETHandle *)handle byDelta: (NSSize)delta;
+@end
+
+@interface ETTopHandleActionHandler : ETHandleActionHandler
+- (void) handleTranslateItem: (ETHandle *)handle byDelta: (NSSize)delta;
+@end
+
+@interface ETBottomHandleActionHandler : ETHandleActionHandler
 - (void) handleTranslateItem: (ETHandle *)handle byDelta: (NSSize)delta;
 @end
 
