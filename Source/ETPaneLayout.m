@@ -100,7 +100,7 @@
 	else if (_barPosition == ETPanePositionLeft)
 	{
 		[[self barItem] setFrame: NSMakeRect(0, 0, [self barHeightOrWidth], rootSize.height)];
-		[[self contentItem] setFrame: NSMakeRect(0, [self barHeightOrWidth], rootSize.width - [self barHeightOrWidth], rootSize.height)];
+		[[self contentItem] setFrame: NSMakeRect([self barHeightOrWidth], 0, rootSize.width - [self barHeightOrWidth], rootSize.height)];
 	}
 	else if (_barPosition == ETPanePositionRight)
 	{
