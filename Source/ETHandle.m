@@ -343,7 +343,9 @@ static ETBasicHandleStyle *sharedBasicHandleStyle = nil;
 - (void) drawHandleInRect: (NSRect)rect
 {
 	[[[NSColor purpleColor] colorWithAlphaComponent: 0.80] set];
-	NSRectFillUsingOperation(rect, NSCompositeSourceOver);
+	NSRectFillUsingOperation(NSInsetRect(rect, 2, 2), NSCompositeSourceOver);
+	[[[NSColor blackColor] colorWithAlphaComponent: 0.80] set];
+	NSFrameRectWithWidth(NSInsetRect(rect, 2, 2), 0.5);	
 }
 
 - (void) drawSelectionIndicatorInRect: (NSRect)indicatorRect
@@ -631,7 +633,7 @@ or not. */
 	  dirtyRect: (NSRect)dirtyRect
       inContext: (id)ctxt
 {
-	[self drawOutlineInRect: [self drawingFrame]];
+	//[self drawOutlineInRect: [self drawingFrame]];
 	/* Now draw the handles that are our children */
 	[super render: inputValues dirtyRect: dirtyRect inContext: ctxt];
 }
