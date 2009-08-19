@@ -70,24 +70,6 @@
 	ETView class or subclass instance, ETLayoutItem automatically wraps the
 	view in an ETView making possible to apply renderers, styles etc. over the
 	real view.
-	
-	ETView also offers a customizable title bar. The title bar visibility can
-	always be turned on or off. By default, it's turned off. If you are in 
-	Live Development mode, most view title bars are usually visible and are 
-	tuned for live UI editing with various buttons to switch between available
-	edition modes like view, model, object, component etc. By clicking and 
-	dragging a title bar in Live Development you can edit your UI layout. 
-	Outside of Live Development mode, title bars support collapse and expand
-	operations (think of it as window shading at view level) which is useful
-	to build complex inspectors or very flexible UI based on disclosable views.
-	Title bar support also means an ETContainer embedding ETView instances and 
-	using a layout of type ETFreeLayout will give you a built-in window manager.
-	Title bar views can be customized at application-level by setting a title
-	bar view prototype to be reused by all instances. Instance-by-instance 
-	customization is also possible by calling -setTitleBarView:, in this case
-	calling +setTitleBarViewPrototype: will never be reflected at instance 
-	level until you call -setTitleBarView: nil which resets the title bar to 
-	the class-shared prototype.
 */
 
 // TODO: Implement ETTitleBarView subclass to handle the title bar as a layout
@@ -99,7 +81,6 @@
 {
 	IBOutlet ETLayoutItem *item;
 	// NOTE: May be remove the view ivars to make the class more lightweight
-	NSView *_titleBarView;
 	NSView *_wrappedView;
 	/* NOTE: _temporaryView is a weak reference (we retain it indirectly as a 
 	   subview though).
@@ -111,18 +92,11 @@
 #ifndef USE_NSVIEW_RFLAGS
 	BOOL _flipped;
 #endif
-	BOOL _disclosable;
-	BOOL _usesCustomTitleBar;
 #ifndef GNUSTEP
 	BOOL _wasJustRedrawn;
 #endif
 	NSRect _rectToRedraw;
 }
-
-/* Title Bar */
-
-+ (void) setTitleBarViewPrototype: (NSView *)barView;
-+ (NSView *) titleBarViewPrototype;
 
 - (id) initWithFrame: (NSRect)rect layoutItem: (ETLayoutItem *)item;
 - (id) initWithLayoutView: (NSView *)layoutView;
@@ -147,27 +121,9 @@
 - (NSView *) temporaryView;
 - (NSView *) contentView;
 
-- (void) setDisclosable: (BOOL)flag;
-- (BOOL) isDisclosable;
-- (BOOL) isExpanded;
-
-- (BOOL) isTitleBarVisible;
-- (BOOL) usesCustomTitleBar;
-- (void) setTitleBarView: (NSView *)barView;
-- (NSView *) titleBarView;
-
-/* Actions */
-
-- (void) collapse: (id)sender;
-- (void) expand: (id)sender;
-
 /* Subclassing */
 
 - (NSView *) mainView;
 - (void) tile;
 
 @end
-
-/* Notifications */
-
-extern NSString *ETViewTitleBarViewPrototypeDidChangeNotification;
