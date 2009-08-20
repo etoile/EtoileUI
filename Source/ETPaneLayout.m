@@ -23,9 +23,6 @@
 #import "ETBrowserLayout.h"
 #import "ETUIItemFactory.h"
 
-@interface ETSelectorPaneLayout : ETPaneLayout
-@end
-
 @interface ETPaneLayout (Private)
 - (void) setContentItem: (ETLayoutItemGroup *)anItem;
 @end
@@ -46,8 +43,6 @@ If barItem is nil, a default bar item will be created.
 If contentItem is nil, a default content item will be created. */
 - (id) initWithBarItem: (ETLayoutItemGroup *)barItem contentItem: (ETLayoutItemGroup *)contentItem
 {
-	isa = [ETSelectorPaneLayout class];
-
 	SUPERINIT
 
 	if (nil != contentItem)
@@ -216,6 +211,7 @@ If contentItem is nil, a default content item will be created. */
 
 	[anItem setName: @"Bar item (ETPaneLayout)"]; /* For debugging */
 	[anItem setAutoresizingMask: NSViewHeightSizable | NSViewWidthSizable];
+	[[self rootItem] addItem: anItem];
 	[self tile];
 
 	[[NSNotificationCenter defaultCenter] 
@@ -356,7 +352,11 @@ the real items they currently represent. */
 
 @end
 
-@implementation ETSelectorPaneLayout
+
+@interface ETMasterDetailPaneLayout : ETPaneLayout
+@end
+
+@implementation ETMasterDetailPaneLayout
 
 - (void) setBarItem: (ETLayoutItemGroup *)barItem
 {
@@ -424,6 +424,13 @@ the real items they currently represent. */
 
 
 @implementation ETPaneLayout (Factory)
+
+/** Returns a new autoreleased pane selector layout.<br />
+The bar item is the master view and the content item is the detail view. */
++ (ETPaneLayout *) masterDetailLayout
+{
+	return [ETMasterDetailPaneLayout layout];
+}
 
 + (ETPaneLayout *) slideshowLayout
 {

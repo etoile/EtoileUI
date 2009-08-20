@@ -219,7 +219,7 @@ DEALLOC(DESTROY(itemFactory); DESTROY(item))
 	SUPERINIT
 
 	[item setAutolayout: NO];
-	layout = [[ETPaneLayout alloc] init];
+	ASSIGN(layout, [ETPaneLayout masterDetailLayout]);
 	barItem = [layout barItem]; /* layout will retains us */
 
 	return self;	
