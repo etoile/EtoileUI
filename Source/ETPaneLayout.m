@@ -23,6 +23,9 @@
 #import "ETBrowserLayout.h"
 #import "ETUIItemFactory.h"
 
+@interface ETSelectorPaneLayout : ETPaneLayout
+@end
+
 @interface ETPaneLayout (Private)
 - (void) setContentItem: (ETLayoutItemGroup *)anItem;
 @end
@@ -43,6 +46,8 @@ If barItem is nil, a default bar item will be created.
 If contentItem is nil, a default content item will be created. */
 - (id) initWithBarItem: (ETLayoutItemGroup *)barItem contentItem: (ETLayoutItemGroup *)contentItem
 {
+	isa = [ETSelectorPaneLayout class];
+
 	SUPERINIT
 
 	if (nil != contentItem)
@@ -336,6 +341,29 @@ child because it is not a bar child item. */
 	[self goToItem: barElementItem];
 }
 
+- (id) beginVisitingItem: (ETLayoutItem *)tabItem
+{
+	return tabItem;
+}
+
+/** Eliminates the given proxy items in the bar item by replacing them with 
+the real items they currently represent. */
+- (void) endVisitingItem: (ETLayoutItem *)tabItem
+{
+
+}
+
+/* Layouting */
+
+- (void) renderWithLayoutItems: (NSArray *)items isNewContent: (BOOL)isNewContent
+{
+	[self tile];
+}
+
+@end
+
+@implementation ETSelectorPaneLayout
+
 /* Returns a new tab item that represents and replaces in the bar item the tab 
 item that just got selected and moved into the content item. */
 - (ETLayoutItem *) visitedItemProxyWithItem: (ETLayoutItem *)paneItem
@@ -382,8 +410,6 @@ the real items they currently represent. */
 	[visitedItem setValue: frameBeforeVisit forProperty: @"frame"];
 	// FIXME: [visitedItem setDefaultValue: nil forProperty: @"frame"];
 }
-
-/* Layouting */
 
 - (void) renderWithLayoutItems: (NSArray *)items isNewContent: (BOOL)isNewContent
 {
