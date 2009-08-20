@@ -913,7 +913,10 @@ When the source is nil, the receiver becomes empty. */
 	[self setAutolayout: NO];
 
 	[self removeAllItems];
-	[self addItems: [self itemsFromSource]];
+	if (nil != aSource)
+	{
+		[self addItems: [self itemsFromSource]];
+	}
 
 	[self setAutolayout: wasAutolayoutEnabled];
 	_reloading = NO;
