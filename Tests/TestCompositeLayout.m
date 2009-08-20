@@ -130,7 +130,7 @@ DEALLOC(DESTROY(itemFactory); DESTROY(item))
 	UKObjectsEqual([self modelContent], [proxyItem representedObject]);
 	UKObjectsEqual(A(proxyItem), [item items]);
 	UKNil([item source]);
-	// NOTE: May be we should have UKNil([item representedObject]);
+	UKNil([item representedObject]);
 }
 
 - (void) testRestoreContextStateWithRepresentedObjectProvider
@@ -176,8 +176,8 @@ DEALLOC(DESTROY(itemFactory); DESTROY(item))
 	UKStringsEqual(@"/whatever/bla", [proxyItem representedPathBase]);
 	UKObjectsEqual(A(proxyItem), [item items]);
 	UKNil([item source]);
-	// NOTE: May be we should have UKNil([item representedObject]); and 
-	// UKNil([item representedPathBase]);
+	UKNil([item representedObject]);
+	// NOTE: May be we should have UKNil([item representedPathBase]);
 }
 
 - (void) testRestoreContextStateWithSourceProvider

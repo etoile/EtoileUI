@@ -113,9 +113,12 @@ an NSInternalInconsistencyException will be raised. */
 	return _targetItem;
 }
 
-/** Returns the layout item to which the layout context content can be routed. 
+/** Sets the layout item to which the layout context content can be routed. 
 
-If the given item has no parent item*/
+If the given item has no parent item, it will be added to the root item (or 
+the layout context when the layout is in use). 
+
+Both represented object and source will be reset to nil on the given item. */
 - (void) setFirstPresentationItem: (ETLayoutItemGroup *)targetItem
 {
 	// TODO: Verify that the item has the layout context or the root item as 
@@ -160,9 +163,25 @@ presentation item. */
 	return ([anItem source] == nil);
 }
 
+/* We must be sure that 'item' and 'dest' have no source or represented object when 
+they get mutated, otherwise it can result in a source or represented object 
+mutation.
+
+Not so obvious border case example:
+
+- A (ancestor and base item)
+	- B (the layout context) + represented object
+
+We suppose the composite layout was set previously on B. Now we restore B as it 
+was initially with  [self moveContentFromItem: [self rootItem] toItem: B]. When 
+A is base item, [[B baseItem] shouldMutateRepresentedObject:] will return YE 
+in -handleAddXXX which will then invoke [[B representedObject] addObject: bla]. */
 - (void) moveContentFromItem: (ETLayoutItemGroup *)item
                       toItem: (ETLayoutItemGroup *)dest
 {
+	NSParameterAssert([dest source] == nil);
+	NSParameterAssert([dest representedObject] == nil);
+
 	[dest removeAllItems];
 
 	if ([self isStaticItemTree: item])
@@ -186,7 +205,11 @@ presentation item. */
         {
             [dest setSource: [item source]];
         }
+		[item setRepresentedObject: nil];
 		[item setSource: nil];
+
+		NSParameterAssert([item source] == nil);
+		NSParameterAssert([item representedObject] == nil);
 
 		[item removeAllItems];
 	}
@@ -202,7 +225,9 @@ routed to inside the receiver. */
 
 	if (presentationProxy == nil)
 		return nil;
-	
+
+	[presentationProxy setRepresentedObject: nil];
+	[presentationProxy setSource: nil];
 	[self moveContentFromItem: item toItem: presentationProxy];
 
 	return presentationProxy;

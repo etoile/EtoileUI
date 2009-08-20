@@ -30,14 +30,38 @@
 
 @implementation ETPaneLayout
 
-- (id) init
+/** Returns a new autoreleased pane layout.<br />
+See -initWithBarItem:contentItem:. */
++ (id) layoutWithBarItem: (ETLayoutItemGroup *)barItem contentItem: (ETLayoutItemGroup *)contentItem
+{
+	return AUTORELEASE([[[self class] alloc] initWithBarItem: barItem contentItem: contentItem]);
+}
+
+/** <init />Initializes and returns a new pane layout.
+
+If barItem is nil, a default bar item will be created.
+If contentItem is nil, a default content item will be created. */
+- (id) initWithBarItem: (ETLayoutItemGroup *)barItem contentItem: (ETLayoutItemGroup *)contentItem
 {
 	SUPERINIT
 
-	[self setContentItem: [[ETUIItemFactory factory] itemGroup]];
+	if (nil != contentItem)
+	{
+		[self setContentItem: contentItem];
+	}
+	else
+	{
+		[self setContentItem: [[ETUIItemFactory factory] itemGroup]];
+	}
 
-	// Move to subclass
-	[self setBarItem: [[ETUIItemFactory factory] itemGroup]];
+	if (nil != barItem)
+	{
+		[self setBarItem: barItem];
+	}
+	else
+	{
+		[self setBarItem: [[ETUIItemFactory factory] itemGroup]];
+	}
 	[_barItem setAutoresizingMask: NSViewWidthSizable];
 	[_barItem setLayout: [ETTableLayout layout]];
 	_barPosition = ETPanePositionTop;
@@ -47,6 +71,12 @@
 	[self tile];
 
 	return self;
+}
+
+// TODO: Remove and clean the initialization chain in ETCompositeLayout class hierarchy.
+- (id) init
+{
+	return [self initWithBarItem: nil contentItem: nil];
 }
 
 - (void) dealloc

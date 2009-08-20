@@ -33,6 +33,10 @@ typedef enum {
 	ETPanePosition _barPosition;
 }
 
++ (id) layoutWithBarItem: (ETLayoutItemGroup *)barItem contentItem: (ETLayoutItemGroup *)contentItem;
+
+- (id) initWithBarItem: (ETLayoutItemGroup *)barItem contentItem: (ETLayoutItemGroup *)contentItem;
+
 /* Navigation */
 
 - (BOOL) canGoBack;
