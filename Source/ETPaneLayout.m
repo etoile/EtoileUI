@@ -207,21 +207,15 @@ If contentItem is nil, a default content item will be created. */
 		          name: ETItemGroupSelectionDidChangeNotification 
 			    object: _barItem];
 
-	if (_barItem != nil)
+	if (_barItem != nil) 
 	{
 		[[self rootItem] removeItem: _barItem];
-		[self setFirstPresentationItem: [self presentationProxyWithItem: _barItem]];
-	}
-	else
-	{
-		[self setFirstPresentationItem: anItem];
 	}
 
 	ASSIGN(_barItem, anItem);
 
 	[anItem setName: @"Bar item (ETPaneLayout)"]; /* For debugging */
 	[anItem setAutoresizingMask: NSViewHeightSizable | NSViewWidthSizable];
-	[[self rootItem] addItem: anItem];
 	[self tile];
 
 	[[NSNotificationCenter defaultCenter] 
@@ -363,6 +357,12 @@ the real items they currently represent. */
 @end
 
 @implementation ETSelectorPaneLayout
+
+- (void) setBarItem: (ETLayoutItemGroup *)barItem
+{
+	[super setBarItem: barItem];
+	[self setFirstPresentationItem: barItem];
+}
 
 /* Returns a new tab item that represents and replaces in the bar item the tab 
 item that just got selected and moved into the content item. */
