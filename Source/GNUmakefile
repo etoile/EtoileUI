@@ -50,6 +50,8 @@ libEtoileUI_OBJC_FILES = \
 	ETStyleGroup.m \
 	ETTableLayout.m \
 	ETTextEditorLayout.m \
+	ETTitleBarItem.m \
+	ETTitleBarView.m \
 	ETUIItem.m \
 	ETUIItemFactory.m \
 	ETView.m \
