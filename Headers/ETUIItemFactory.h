@@ -47,13 +47,17 @@
 - (id) checkbox;
 - (id) labelWithTitle: (NSString *)aTitle;
 - (id) textField;
-- (id) searchField;
+- (id) searchFieldWithTarget: (id)aTarget action: (SEL)aSelector;
 - (id) textView;
 - (id) progressIndicator;
 - (id) horizontalSlider;
 - (id) verticalSlider;
 - (id) stepper;
 - (id) textFieldAndStepper;
+- (id) popUpMenuWithItemTitles: (NSArray *)entryTitles 
+            representedObjects: (NSArray *)entryModels 
+                        target: (id)aTarget 
+                        action: (SEL)aSelector;
 
 /* Decorator Item Factory Methods */
 

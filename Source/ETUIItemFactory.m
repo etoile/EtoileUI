@@ -233,10 +233,14 @@ and background as its view. */
 	return [self newItemWithViewClass: [NSTextField class]];
 }
 
-/** Returns a new layout item that uses a NSSearchField instance as its view. */
-- (id) searchField
+/** Returns a new layout item that uses a NSSearchField instance as its view, and 
+initializes this search field with the given target and action.  */
+- (id) searchFieldWithTarget: (id)aTarget action: (SEL)aSelector
 {
-	return [self newItemWithViewClass: [NSSearchField class]];
+	NSSearchField *searchField = AUTORELEASE([[NSSearchField alloc] init]);
+	[searchField setTarget: aTarget];
+	[searchField setAction: aSelector];
+	return [self itemWithView: searchField];
 }
 
 /** Returns a new layout item that uses a NSTextView instance as its view. 
@@ -305,6 +309,44 @@ and a stepper on the right side. */
 {
 	// TODO: Implement
 	return nil;
+}
+
+
+// TODO: -popUpMenuWithTitleXXX should return an ETLayoutItemGroup whose layout 
+// is ETPopUpMenuLayout.
+// Then we could add a method -popUpMenuWithTitle:items:target:action:.
+
+/** Returns a new layout item that uses a NSPopUpButton instance as its view, 
+and initializes this pop-up button with the given title, target, action and 
+entries to be put in the menu. 
+
+When entryModels is not nil, each element is set as the represented object of 
+the menu entry with the same index in entryTitles. You can pass [NSNull null] 
+to set no represented object on a menu entry. */
+- (id) popUpMenuWithItemTitles: (NSArray *)entryTitles 
+            representedObjects: (NSArray *)entryModels 
+                        target: (id)aTarget 
+                        action: (SEL)aSelector
+{
+	NSPopUpButton *popUpView = AUTORELEASE([[NSPopUpButton alloc] initWithFrame: [NSView defaultFrame]]);
+
+	[popUpView addItemsWithTitles: entryTitles];
+
+	for (int i = 0; i < [popUpView numberOfItems] && i < [entryModels count]; i++)
+	{
+		id repObject = [entryModels objectAtIndex: i];
+
+		if ([repObject isEqual: [NSNull null]])
+		{
+			repObject = nil;
+		}
+		[[popUpView itemAtIndex: i] setRepresentedObject: repObject];
+	}
+
+	[popUpView setTarget: aTarget];
+	[popUpView setAction: aSelector];
+
+	return [self itemWithView: popUpView];
 }
 
 /* Decorator Item Factory Methods */
