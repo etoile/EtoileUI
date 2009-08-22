@@ -158,9 +158,15 @@ presentation item. */
 	return presentationProxy;
 }
 
-- (BOOL) isStaticItemTree: (ETLayoutItemGroup *)anItem
+- (BOOL) isStaticItem: (ETLayoutItemGroup *)anItem
 {
-	return ([anItem source] == nil);
+	return ([anItem source] == nil && [anItem representedObject] == nil);
+}
+
+- (void) makeItemStatic: (ETLayoutItemGroup *)anItem
+{
+	[anItem setRepresentedObject: nil];
+	[anItem setSource: nil];
 }
 
 /* We must be sure that 'item' and 'dest' have no source or represented object when 
@@ -184,7 +190,7 @@ in -handleAddXXX which will then invoke [[B representedObject] addObject: bla]. 
 
 	[dest removeAllItems];
 
-	if ([self isStaticItemTree: item])
+	if ([self isStaticItem: item])
 	{
 		[dest addItems: [item items]];
 	}
@@ -205,32 +211,14 @@ in -handleAddXXX which will then invoke [[B representedObject] addObject: bla]. 
         {
             [dest setSource: [item source]];
         }
-		[item setRepresentedObject: nil];
-		[item setSource: nil];
 
-		NSParameterAssert([item source] == nil);
-		NSParameterAssert([item representedObject] == nil);
-
+		[self makeItemStatic: item];
 		[item removeAllItems];
 	}
 
+	NSParameterAssert([item source] == nil);
+	NSParameterAssert([item representedObject] == nil);
 	NSParameterAssert([item isEmpty]);
-}
-
-/** Returns a new item to which the children of the given item group will be 
-routed to inside the receiver. */
-- (id) presentationProxyWithItem: (ETLayoutItemGroup *)item
-{
-	ETLayoutItemGroup *presentationProxy = [self firstPresentationItem];
-
-	if (presentationProxy == nil)
-		return nil;
-
-	[presentationProxy setRepresentedObject: nil];
-	[presentationProxy setSource: nil];
-	[self moveContentFromItem: item toItem: presentationProxy];
-
-	return presentationProxy;
 }
 
 - (void) saveInitialContextState: (NSSet *)properties
@@ -256,7 +244,16 @@ routed to inside the receiver. */
 
 - (void) prepareNewContextState
 {
-	[self setFirstPresentationItem: [self presentationProxyWithItem: _layoutContext]];
+	if ([self firstPresentationItem] != nil)
+	{
+		[self makeItemStatic: [self firstPresentationItem]];
+		[self moveContentFromItem: _layoutContext toItem: [self firstPresentationItem]];
+	}
+	else
+	{
+		[self makeItemStatic: _layoutContext];
+	}
+	
 	[self moveContentFromItem: [self rootItem] toItem: _layoutContext];
 }
 

@@ -310,7 +310,6 @@ child because it is not a bar child item. */
 	}
 
 	ASSIGN(_currentItem, [self beginVisitingItem: anItem]);
-	NSParameterAssert([_currentItem isEqual: anItem] == NO);
 
 	[self tileContent];
 
