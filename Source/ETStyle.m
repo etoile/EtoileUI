@@ -45,10 +45,6 @@ the invocation. */
 		[initInvocation invokeWithTarget: newStyle];
 		[initInvocation getReturnValue: &newStyle];
 	}
-	else
-	{
-		newStyle = [newStyle init];
-	}
 
 	newStyle->_isSharedStyle = _isSharedStyle;
 

@@ -108,6 +108,18 @@ the role played by -contentView in other AppKit view classes). */
 	[super dealloc];
 }
 
+- (id) copyWithZone: (NSZone *)aZone
+{
+	ETScrollableAreaItem *item = [super copyWithZone: aZone];
+
+	// NOTE: May be we shouldn't copy this mask when the copy was started on the 
+	// receiver and not on a decorated item.
+	item->_oldDecoratedItemAutoresizingMask = _oldDecoratedItemAutoresizingMask;
+	item->_ensuresContentFillsVisibleArea = _ensuresContentFillsVisibleArea;
+
+	return item;
+}
+
 /** Ensures the content fills the clip view area when the latter is resized, 
 usually through its enclosing scroll view getting resized. */
 - (void) clipViewFrameDidChange: (NSNotification *)notif
