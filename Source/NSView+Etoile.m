@@ -57,8 +57,14 @@ The superview of the resulting copy is always nil. The whole subview tree is
 also copied, in other words the new object is a deep copy of the receiver. */
 - (id) copyWithZone: (NSZone *)zone
 {
+#ifdef GNUSTEP
+	// FIXME: Scroll view and keyed archiving issue workaround (GNUstep bug #27311)
+	NSData *viewData = [NSArchiver archivedDataWithRootObject: self];
+	NSView *viewCopy = [NSUnarchiver unarchiveObjectWithData: viewData];
+#else
 	NSData *viewData = [NSKeyedArchiver archivedDataWithRootObject: self];
 	NSView *viewCopy = [NSKeyedUnarchiver unarchiveObjectWithData: viewData];
+#endif
 	return RETAIN(viewCopy);
 }
 
