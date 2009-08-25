@@ -478,7 +478,7 @@ NOTE: Having a null layout class may be a solution to get rid of
 	/* Typically needed if your item has no view and gets added to an item 
 	   group without a layout. Without this check -addSuview: [item displayView]
 	   results in a crash. */
-	if ([item isVisible] == NO && [item displayView] == nil) /* No view to attach */
+	if ([item displayView] == nil || [item isVisible] == NO) /* No view to attach */
 		return;
 
 	[[item displayView] removeFromSuperview];
@@ -1284,10 +1284,6 @@ visible property of the child items. You shouldn't need to call this method by
 yourself (see -visibleItemsForItems:). */
 - (void) setVisibleItems: (NSArray *)visibleItems forItems: (NSArray *)items
 {
-// FIXME: Make a bottom top traversal to find the first view which can be used 
-// as superview for the visible layout item views. Actually this isn't needed
-// or supported because all ETLayoutItemGroup instances must embed a container.
-// This last point is going to become purely optional.
 	ETView *container = [self setUpSupervisorViewWithFrame: [self frame]];
 
 	FOREACH(items, item, ETLayoutItem *)

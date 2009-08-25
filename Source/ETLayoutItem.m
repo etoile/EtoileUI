@@ -143,7 +143,7 @@ See also -setView:, -setValue: and -setRepresentedObject:.  */
 	_boundingBox = ETNullRect;
 	[self setView: view];
 	[self setFlipped: YES]; /* -setFlipped: must follow -setSupervisorView: */
-	[self setVisible: NO];
+	_visible = YES;
 
 	if (view == nil)
 	{
