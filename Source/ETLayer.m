@@ -103,11 +103,19 @@ when a layout other than ETWindowLayout is set on the receiver. */
 	// the item, the display view is the window view (NSThemeFrame on Mac OS X)
 	// Removing NSThemeFrame results in a very weird behavior: the window 
 	// remains visible but a -lockFocus assertion is thrown on mouse down.
+	if ([[self layout] isKindOfClass: [ETWindowLayout class]])
+		return;
+
+	[super handleAttachViewOfItem: item];
 }
 
 - (void) handleDetachViewOfItem: (ETLayoutItem *)item
 {
 	// Ditto. More explanations in -handleDetachItem:.
+	if ([[self layout] isKindOfClass: [ETWindowLayout class]])
+		return;
+
+	[super handleDetachViewOfItem: item];
 }
 
 - (void) handleAttachItem: (ETLayoutItem *)item

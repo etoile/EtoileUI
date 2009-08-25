@@ -989,7 +989,7 @@ The new visibility state won't be apparent until a redisplay occurs. */
 	}
 	else
 	{
-		[[self displayView] removeFromSuperview];
+		[_parentItem handleDetachViewOfItem: self];
 		ETDebugLog(@"Removed view at %@", NSStringFromRect([self frame]));
 	}
 }
