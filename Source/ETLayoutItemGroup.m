@@ -1291,8 +1291,6 @@ visible property of the child items. You shouldn't need to call this method by
 yourself (see -visibleItemsForItems:). */
 - (void) setVisibleItems: (NSArray *)visibleItems forItems: (NSArray *)items
 {
-	[self setUpSupervisorViewWithFrame: [self frame]];
-
 	FOREACH(items, item, ETLayoutItem *)
 	{
 		[item setVisible: [visibleItems containsObject: item]];
@@ -1819,13 +1817,14 @@ receiver area as ETHandleGroup do. */
 - (void) setLayoutView: (NSView *)aView
 {
 	NSView *superview = [aView superview];
+	ETView *supervisorView = [self setUpSupervisorViewWithFrame: [self frame]];
 
-	NSAssert(nil == superview || [superview isEqual: [self supervisorView]], 
+	NSAssert(nil == superview || [superview isEqual: supervisorView], 
 		@"A layout view should never have another superview than the layout " 
 		 "context supervisor view or nil.");
 
 	[aView removeFromSuperview];
-	[[self supervisorView] setTemporaryView: aView];
+	[supervisorView setTemporaryView: aView];
 }
 
 /* ETLayoutingContext scroll view related methods */
