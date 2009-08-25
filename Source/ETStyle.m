@@ -523,3 +523,143 @@ indicatorRect is equal to it. */
 
 @end
 
+
+/**
+ * Draws a speech bubble around the item to which this style is applied.
+ */
+@implementation ETSpeechBubbleStyle
+
+/**
+ * Returns a bezier path for a speech bubble positioned around rect, to be
+ * placed on the left side of a speaker.
+ *
+ * Coordinates are unflipped.
+ *
+ * Modelled after:
+ * http://jesseross.com/clients/etoile/ui/concepts/01/workspace_200.jpg
+ */
++ (NSBezierPath *)leftSpeechBubbleAroundRect: (NSRect)rect
+{
+	const float radius = 9.0;
+	NSBezierPath *path = [NSBezierPath bezierPath];
+	
+	// Add some padding to the inner rectangle
+	rect = NSInsetRect(rect, -1, -3);
+	
+	// Calculate the bounding points of the inner area of the bubble
+	NSPoint bottomLeft = NSMakePoint(NSMinX(rect), NSMinY(rect));
+	NSPoint topLeft = NSMakePoint(NSMinX(rect), NSMaxY(rect));
+	NSPoint topRight = NSMakePoint(NSMaxX(rect), NSMaxY(rect));
+	NSPoint bottomRight = NSMakePoint(NSMaxX(rect), NSMinY(rect));
+	
+	// Bottom left corner
+	[path moveToPoint: NSMakePoint(bottomLeft.x, bottomLeft.y + (-1 * radius))];
+	[path appendBezierPathWithArcWithCenter: bottomLeft radius: radius startAngle: 270 endAngle: 180 clockwise: YES];
+	// Left edge
+	[path lineToPoint: NSMakePoint(bottomLeft.x - radius, topLeft.y)];	
+	// Top left corner
+	[path appendBezierPathWithArcWithCenter: topLeft radius: radius startAngle: 180 endAngle: 90 clockwise: YES];
+	// Top edge
+	[path lineToPoint: NSMakePoint(topRight.x, topLeft.y + (radius))];	
+	// Top right corner
+	[path appendBezierPathWithArcWithCenter: topRight radius: radius startAngle: 90 endAngle: 0 clockwise: YES];
+	// Right edge
+	[path lineToPoint: NSMakePoint(bottomRight.x + radius, bottomRight.y)];
+	
+	// Partial bottom right corner (62 degree arc)
+	[path appendBezierPathWithArcWithCenter: bottomRight radius: radius startAngle: 0 endAngle: 298 clockwise: YES];
+	// Curve out to the tip
+	[path relativeCurveToPoint: NSMakePoint(7.5, -8.5) controlPoint1: NSMakePoint(-1, -4) controlPoint2: NSMakePoint(7.5, -8.5)];
+	// Curve back to the bottom edge of the speech bubble
+	[path curveToPoint: NSMakePoint(bottomRight.x - 5, bottomRight.y + (-1 * radius)) controlPoint1:NSMakePoint(bottomRight.x + 2.5, bottomRight.y + (-18)) controlPoint2: NSMakePoint(bottomRight.x - 5, bottomRight.y + (-1 * radius))];
+	
+	// Connect back to the bottom left corner
+	[path closePath];
+	
+	return path;
+}
+
+
++ (id) speechWithStyle: (ETStyle *)style
+{
+	return [[[ETSpeechBubbleStyle alloc] initWithStyle: style] autorelease];
+}
+
+- (id) initWithStyle: (ETStyle *)style
+{
+	SUPERINIT;
+	ASSIGN(_content, style);
+	return self;
+}
+
+- (void) render: (NSMutableDictionary *)inputValues 
+     layoutItem: (ETLayoutItem *)item 
+	  dirtyRect: (NSRect)dirtyRect
+{
+	[NSGraphicsContext saveGraphicsState];
+	
+	// The bubble uses unflipped coordinates
+	NSBezierPath *bubble = [ETSpeechBubbleStyle leftSpeechBubbleAroundRect: [item drawingFrame]];
+	NSRect bounds = NSInsetRect([bubble bounds], -6, -6); // Inset the rect to leave room for the shadow
+	
+	BOOL flipped = [item isFlipped];
+	NSAffineTransform *xform;
+	if (flipped)
+	{
+		xform = [NSAffineTransform transform];
+		[xform scaleXBy: 1.0 yBy: -1.0];
+		[xform translateXBy: 0 yBy: -1 * [item drawingFrame].size.height];
+		[xform concat];
+		bounds.origin.y = [item drawingFrame].size.height - (bounds.size.height + bounds.origin.y);
+	}
+	
+	[item setBoundingBox: bounds];
+	
+#ifndef GNUSTEP
+	
+	// Draw shadow
+	[NSGraphicsContext saveGraphicsState];
+	NSShadow *shadow = [[NSShadow alloc] init];
+	[shadow setShadowOffset: NSMakeSize(2.0, -2.0)];
+	[shadow setShadowColor: [[NSColor blackColor] colorWithAlphaComponent: 0.3]];
+	[shadow setShadowBlurRadius: 5.0];
+	[shadow set];
+	[[NSColor whiteColor] setFill];
+	[bubble fill];
+	[NSGraphicsContext restoreGraphicsState];
+	[shadow release];
+	
+	// Draw gradient fill
+	NSGradient *gradient = [[NSGradient alloc]initWithStartingColor: [NSColor whiteColor]
+														endingColor: [NSColor colorWithCalibratedRed: 227.0/255.0 green: 226.0/255.0 blue: 228.0/255.0 alpha: 1]];
+	[gradient drawInBezierPath: bubble angle: 90];
+	[gradient release];
+	
+#else
+	
+	// Draw plain fill
+	[[NSColor whiteColor] setFill];
+	[bubble fill];
+#endif
+	
+	[[[NSColor blackColor] colorWithAlphaComponent: 0.4] setStroke];
+	[bubble stroke];
+	
+	if (flipped)
+	{
+		[xform invert];
+		[xform concat];
+	}
+	
+	[_content render: inputValues layoutItem: item dirtyRect: dirtyRect];
+	
+	[NSGraphicsContext restoreGraphicsState];
+}
+
+- (void) didChangeItemBounds: (NSRect)bounds
+{
+	[_content didChangeItemBounds: bounds];
+	[super didChangeItemBounds: bounds];
+}
+
+@end

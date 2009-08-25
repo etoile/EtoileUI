@@ -154,3 +154,16 @@ a custom style object. */
 - (NSColor *) color;
 
 @end
+
+/**
+ * Draws a speech bubble around the item to which this style is applied.
+ */
+@interface ETSpeechBubbleStyle : ETStyle
+{
+	ETStyle *_content;
+}
+
++ (id) speechWithStyle: (ETStyle *)style;
+- (id) initWithStyle: (ETStyle *)style;
+
+@end
