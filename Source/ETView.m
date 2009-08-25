@@ -676,15 +676,16 @@ GNUstep and pass it to the layout item tree as needed. */
 
 #else
 
-- (void) lockFocusInRect: (NSRect)rectToRedraw
+- (BOOL) lockFocusInRect: (NSRect)rectToRedraw
 {
-	[self lockFocus];
+	BOOL lockFocus = [self lockFocusIfCanDraw];
 	if ([self wantsDefaultClipping])
 	{
 		/* No need to apply bounds transform to aRect because we get this rect 
 		   from -drawRect: which receives a rect already adjusted. */ 
 		NSRectClip(rectToRedraw);
 	}
+	return lockFocus;
 }
 
 // NOTE: Very often NSView instance which has been sent a display message will 
@@ -703,26 +704,21 @@ Cocoa and pass it to the layout item tree as needed. */
 
 	/* Most of the time, the focus isn't locked. In this case, aRect is a 
 	   portion of the content view frame and no clipping is done either. */
-	if (lockFocus == YES)
+	if ([self lockFocusInRect: _rectToRedraw])
 	{
-		[self lockFocusInRect: _rectToRedraw];
-	}
-
 #ifdef DEBUG_DRAWING
-	//if ([self respondsToSelector: @selector(layout)] && [[(ETContainer *)self layout] isKindOfClass: [ETFlowLayout class]])
-	{
-		[[NSColor blackColor] set];
-		[NSBezierPath setDefaultLineWidth: 6.0];
-		[NSBezierPath strokeRect: aRect];
-	}
+		//if ([self respondsToSelector: @selector(layout)] && [[(ETContainer *)self layout] isKindOfClass: [ETFlowLayout class]])
+		{
+			[[NSColor blackColor] set];
+			[NSBezierPath setDefaultLineWidth: 6.0];
+			[NSBezierPath strokeRect: aRect];
+		}
 #endif
 
-	/* We always composite the rendering chain on top of each view -drawRect: 
-	   drawing sequence (triggered by display-like methods). */
-	[item render: nil dirtyRect: _rectToRedraw inContext: nil];
+		/* We always composite the rendering chain on top of each view -drawRect: 
+		   drawing sequence (triggered by display-like methods). */
+		[item render: nil dirtyRect: _rectToRedraw inContext: nil];
 
-	if (lockFocus == YES)
-	{
 		[self unlockFocus];
 		[[self window] flushWindow];
 	}
@@ -757,10 +753,8 @@ Cocoa and pass it to the layout item tree as needed. */
 	   -displayIfNeededXXX was. */
 	BOOL needsRedraw = (isRectForView && [self needsDisplay] && _wasJustRedrawn == NO);
 
-	if (needsRedraw)
+	if (needsRedraw && [self lockFocusInRect: _rectToRedraw])
 	{
-		[self lockFocusInRect: _rectToRedraw];
-
 		/* We always composite the rendering chain on top of each view -drawRect: 
 		   drawing sequence (triggered by display-like methods). */
 		[item render: nil dirtyRect: _rectToRedraw inContext: nil];
@@ -772,53 +766,17 @@ Cocoa and pass it to the layout item tree as needed. */
 	_wasJustRedrawn = NO;
 }
 
-#if 0
-- (void) displayIfNeeded
-{
-	ETDebugLog(@"-displayIfNeeded %@", self);
-	[super displayIfNeeded];
-
-	/* Most of the time, the focus isn't locked. In this case, aRect is a 
-	   portion of the content view frame and no clipping is done either. */
-	//if (lockFocus == YES)
-	{
-		[self lockFocus];
-	}
-
-#ifdef DEBUG_DRAWING
-	//if ([self respondsToSelector: @selector(layout)] && [[(ETContainer *)self layout] isKindOfClass: [ETFlowLayout class]])
-	{
-		[[NSColor blackColor] set];
-		[NSBezierPath setDefaultLineWidth: 6.0];
-		[NSBezierPath strokeRect: aRect];
-	}
-#endif
-
-	/* We always composite the rendering chain on top of each view -drawRect: 
-	   drawing sequence (triggered by display-like methods). */
-	[item render: nil dirtyRect: [self bounds] inContext: nil];
-
-	//if (lockFocus == YES)
-		[self unlockFocus];
-		
-	_wasJustRedrawn = YES;
-}
-
-- (void) displayIfNeededIgnoringOpacity
-{
-
-}
-#endif
-
 - (void) _recursiveDisplayRectIfNeededIgnoringOpacity: (NSRect)aRect 
 	inContext: (NSGraphicsContext *)ctxt topView: (BOOL)isTopView
 {
-
+	ASSERT_FAIL(@"This method is never called based on our tests... As it "
+		"clearly got called now, we need to find out why and override it properly.");
 }
 
 - (void) _lightWeightRecursiveDisplayInRect: (NSRect)aRect
 {
-
+	ASSERT_FAIL(@"This method is never called based on our tests... As it "
+		"clearly got called now, we need to find out why and override it properly.");
 }
 
 #endif
