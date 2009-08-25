@@ -434,6 +434,10 @@
 		662EA83A101BC8610044F013 /* ETProtocolMirror.m in Sources */ = {isa = PBXBuildFile; fileRef = 662EA835101BC8610044F013 /* ETProtocolMirror.m */; };
 		6680CED7101257B200CAF439 /* ETReflection.h in Headers */ = {isa = PBXBuildFile; fileRef = 6680CED6101257B200CAF439 /* ETReflection.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		6680CED9101257C800CAF439 /* ETReflection.m in Sources */ = {isa = PBXBuildFile; fileRef = 6680CED8101257C800CAF439 /* ETReflection.m */; };
+		6697A9411044A76600456911 /* ETWebBrowserViewLayout.h in Headers */ = {isa = PBXBuildFile; fileRef = 6697A93D1044A76600456911 /* ETWebBrowserViewLayout.h */; };
+		6697A9421044A76600456911 /* ETWebBrowserViewLayout.m in Sources */ = {isa = PBXBuildFile; fileRef = 6697A93E1044A76600456911 /* ETWebBrowserViewLayout.m */; };
+		6697A9431044A76600456911 /* ETWebRendererLayout.h in Headers */ = {isa = PBXBuildFile; fileRef = 6697A93F1044A76600456911 /* ETWebRendererLayout.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		6697A9441044A76600456911 /* ETWebRendererLayout.m in Sources */ = {isa = PBXBuildFile; fileRef = 6697A9401044A76600456911 /* ETWebRendererLayout.m */; };
 		66B74127103CB008008AF5B1 /* ETTitleBarItem.h in Headers */ = {isa = PBXBuildFile; fileRef = 66B74125103CB008008AF5B1 /* ETTitleBarItem.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		66B74128103CB008008AF5B1 /* ETTitleBarItem.m in Sources */ = {isa = PBXBuildFile; fileRef = 66B74126103CB008008AF5B1 /* ETTitleBarItem.m */; };
 		66B7412B103CB03D008AF5B1 /* ETTitleBarView.h in Headers */ = {isa = PBXBuildFile; fileRef = 66B74129103CB03D008AF5B1 /* ETTitleBarView.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -849,6 +853,10 @@
 		662EA835101BC8610044F013 /* ETProtocolMirror.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ETProtocolMirror.m; path = ../EtoileFoundation/Source/ETProtocolMirror.m; sourceTree = SOURCE_ROOT; };
 		6680CED6101257B200CAF439 /* ETReflection.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ETReflection.h; path = ../EtoileFoundation/Headers/ETReflection.h; sourceTree = SOURCE_ROOT; };
 		6680CED8101257C800CAF439 /* ETReflection.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ETReflection.m; path = ../EtoileFoundation/Source/ETReflection.m; sourceTree = SOURCE_ROOT; };
+		6697A93D1044A76600456911 /* ETWebBrowserViewLayout.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ETWebBrowserViewLayout.h; path = ../EtoileWeb/ETWebBrowserViewLayout.h; sourceTree = SOURCE_ROOT; };
+		6697A93E1044A76600456911 /* ETWebBrowserViewLayout.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ETWebBrowserViewLayout.m; path = ../EtoileWeb/ETWebBrowserViewLayout.m; sourceTree = SOURCE_ROOT; };
+		6697A93F1044A76600456911 /* ETWebRendererLayout.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ETWebRendererLayout.h; path = ../EtoileWeb/ETWebRendererLayout.h; sourceTree = SOURCE_ROOT; };
+		6697A9401044A76600456911 /* ETWebRendererLayout.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ETWebRendererLayout.m; path = ../EtoileWeb/ETWebRendererLayout.m; sourceTree = SOURCE_ROOT; };
 		66B74125103CB008008AF5B1 /* ETTitleBarItem.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ETTitleBarItem.h; path = Headers/ETTitleBarItem.h; sourceTree = "<group>"; };
 		66B74126103CB008008AF5B1 /* ETTitleBarItem.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ETTitleBarItem.m; path = Source/ETTitleBarItem.m; sourceTree = "<group>"; };
 		66B74129103CB03D008AF5B1 /* ETTitleBarView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ETTitleBarView.h; path = Headers/ETTitleBarView.h; sourceTree = "<group>"; };
@@ -1109,8 +1117,12 @@
 				60073EA010074BC4007272E6 /* ETXHTMLWriter.m */,
 				60073F7610075DDC007272E6 /* ETXHTMLRenderContext.h */,
 				60073F7710075DDC007272E6 /* ETXHTMLRenderContext.m */,
+				6697A93D1044A76600456911 /* ETWebBrowserViewLayout.h */,
+				6697A93E1044A76600456911 /* ETWebBrowserViewLayout.m */,
 				60073F6E10075826007272E6 /* ETWebLayout.h */,
 				60073F6F10075826007272E6 /* ETWebLayout.m */,
+				6697A93F1044A76600456911 /* ETWebRendererLayout.h */,
+				6697A9401044A76600456911 /* ETWebRendererLayout.m */,
 			);
 			name = EtoileWeb;
 			sourceTree = "<group>";
@@ -1579,6 +1591,8 @@
 				60073F7010075826007272E6 /* ETWebLayout.h in Headers */,
 				60073F7810075DDC007272E6 /* ETXHTMLRenderContext.h in Headers */,
 				60DAC87D100774F4007F143A /* ETLayoutXHTMLRenderer.h in Headers */,
+				6697A9411044A76600456911 /* ETWebBrowserViewLayout.h in Headers */,
+				6697A9431044A76600456911 /* ETWebRendererLayout.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2218,6 +2232,8 @@
 				60073F7110075826007272E6 /* ETWebLayout.m in Sources */,
 				60073F7910075DDC007272E6 /* ETXHTMLRenderContext.m in Sources */,
 				60DAC87E100774F4007F143A /* ETLayoutXHTMLRenderer.m in Sources */,
+				6697A9421044A76600456911 /* ETWebBrowserViewLayout.m in Sources */,
+				6697A9441044A76600456911 /* ETWebRendererLayout.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
