@@ -1152,11 +1152,10 @@ recursively on them. */
 		BOOL usesLayoutView = ([layout layoutView] != nil);
 		if (usesLayoutView)
 			return;
-			
-		NSEnumerator *e = [[self items] reverseObjectEnumerator];
-		ETLayoutItem *item = nil;
 
-		while ((item = [e nextObject]) != nil)
+		NSEnumerator *e = [[self arrangedItems] reverseObjectEnumerator];
+	
+		FOREACHE(nil, item, ETLayoutItem *, e)
 		{
 			/* We intersect our dirtyRect with the drawing frame of the item to be 
 		       drawn, so the child items don't receive the drawing frame of their 
@@ -1264,6 +1263,7 @@ This is a shortcut method for -visibleItemsForItems:. */
 {
 	return [self setVisibleItems: visibleItems forItems: [self items]];
 }
+
 /** Returns the visible child items of the receiver.
 
 You shouldn't need to call this method by yourself, unless you write an
