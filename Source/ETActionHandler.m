@@ -294,10 +294,4 @@ status, when others request it. */
 	RELEASE(item);
 }
 
-- (void) ungroup: (id)sender onItem: (ETLayoutItem *)item
-{
-	if ([item isGroup])
-		[(ETLayoutItemGroup *)item unmakeGroup];
-}
-
 @end
