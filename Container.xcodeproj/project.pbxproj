@@ -434,7 +434,7 @@
 		662EA83A101BC8610044F013 /* ETProtocolMirror.m in Sources */ = {isa = PBXBuildFile; fileRef = 662EA835101BC8610044F013 /* ETProtocolMirror.m */; };
 		6680CED7101257B200CAF439 /* ETReflection.h in Headers */ = {isa = PBXBuildFile; fileRef = 6680CED6101257B200CAF439 /* ETReflection.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		6680CED9101257C800CAF439 /* ETReflection.m in Sources */ = {isa = PBXBuildFile; fileRef = 6680CED8101257C800CAF439 /* ETReflection.m */; };
-		6697A9411044A76600456911 /* ETWebBrowserViewLayout.h in Headers */ = {isa = PBXBuildFile; fileRef = 6697A93D1044A76600456911 /* ETWebBrowserViewLayout.h */; };
+		6697A9411044A76600456911 /* ETWebBrowserViewLayout.h in Headers */ = {isa = PBXBuildFile; fileRef = 6697A93D1044A76600456911 /* ETWebBrowserViewLayout.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		6697A9421044A76600456911 /* ETWebBrowserViewLayout.m in Sources */ = {isa = PBXBuildFile; fileRef = 6697A93E1044A76600456911 /* ETWebBrowserViewLayout.m */; };
 		6697A9431044A76600456911 /* ETWebRendererLayout.h in Headers */ = {isa = PBXBuildFile; fileRef = 6697A93F1044A76600456911 /* ETWebRendererLayout.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		6697A9441044A76600456911 /* ETWebRendererLayout.m in Sources */ = {isa = PBXBuildFile; fileRef = 6697A9401044A76600456911 /* ETWebRendererLayout.m */; };
