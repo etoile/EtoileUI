@@ -968,12 +968,30 @@ The new selection state won't be apparent until a redisplay occurs. */
 	return _selected;
 }
 
+- (BOOL) canBecomeVisible
+{
+	return ([[self layout] isOpaque] == NO);
+}
+
 /** Sets whether the receiver should be displayed or not.
 
 The new visibility state won't be apparent until a redisplay occurs. */
 - (void) setVisible: (BOOL)visible
 {
 	_visible = visible;
+	if (visible)
+	{
+		if ([[[_parentItem supervisorView] subviews] containsObject: [self displayView]] == NO)
+		{
+			[_parentItem handleAttachViewOfItem: self];
+			ETDebugLog(@"Inserted view at %@", NSStringFromRect([self frame]));
+		}
+	}
+	else
+	{
+		[[self displayView] removeFromSuperview];
+		ETDebugLog(@"Removed view at %@", NSStringFromRect([self frame]));
+	}
 }
 
 /** Returns whether the receiver should be displayed or not. See also -setVisible:. */

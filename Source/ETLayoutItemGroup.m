@@ -1284,29 +1284,11 @@ visible property of the child items. You shouldn't need to call this method by
 yourself (see -visibleItemsForItems:). */
 - (void) setVisibleItems: (NSArray *)visibleItems forItems: (NSArray *)items
 {
-	ETView *container = [self setUpSupervisorViewWithFrame: [self frame]];
+	[self setUpSupervisorViewWithFrame: [self frame]];
 
 	FOREACH(items, item, ETLayoutItem *)
 	{
-		if ([visibleItems containsObject: item])
-		{
-			[item setVisible: YES];
-			if (container != nil && [[container subviews] containsObject: [item displayView]] == NO
-			     && [item displayView] != nil )
-			{
-				[container addSubview: [item displayView]];
-				ETDebugLog(@"Inserted view at %@", NSStringFromRect([[item displayView] frame]));
-			}
-		}
-		else
-		{
-			[item setVisible: NO];
-			if (container != nil && [[container subviews] containsObject: [item displayView]])
-			{
-				[[item displayView] removeFromSuperview];
-				ETDebugLog(@"Removed view at %@", NSStringFromRect([[item displayView] frame]));
-			}
-		}
+		[item setVisible: [visibleItems containsObject: item]];
 	}
 }
 
