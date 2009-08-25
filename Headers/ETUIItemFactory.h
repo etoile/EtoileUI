@@ -98,6 +98,12 @@
 - (ETLayoutItem *) ovalWithRect: (NSRect)aRect;
 - (ETLayoutItem *) oval;
 
+/* Seperator Factory Methods */
+
+- (ETLayoutItem *) lineSeparator;
+- (ETLayoutItem *) spaceSeparator;
+- (ETLayoutItem *) flexibleSpaceSeparator;
+
 /* Deprecated (DO NOT USE, WILL BE REMOVED LATER) */
 
 - (ETLayoutItemGroup *) itemGroupWithContainer;

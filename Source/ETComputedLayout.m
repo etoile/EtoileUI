@@ -71,7 +71,17 @@ The scroll view visibility is handled by this method (this is subject to change)
 {	
 	[super renderWithLayoutItems: items isNewContent: isNewContent];
 
-	NSArray *layoutModel = [self layoutModelForLayoutItems: items];
+	NSMutableArray *spacedItems = [NSMutableArray array];
+	for (unsigned int i=0; i<[items count]; i++)
+	{
+		[spacedItems addObject: [items objectAtIndex: i]];
+		if (i < [items count] - 1 && [self seperatorTemplateItem] != nil)
+		{
+			[spacedItems addObject: AUTORELEASE([[self seperatorTemplateItem] copy])];
+		}
+	}
+	
+	NSArray *layoutModel = [self layoutModelForLayoutItems: spacedItems];
 	/* Now computes the location of every items by relying on the line by line 
 	   decomposition already made. */
 	[self computeLayoutItemLocationsForLayoutModel: layoutModel];
@@ -142,6 +152,24 @@ geometrical attributes (position, size, scale etc.) accordingly. */
 - (void) computeLayoutItemLocationsForLayoutModel: (NSArray *)layoutModel
 {
 
+}
+
+/* Seperator support */
+
+- (void) setSeparatorTemplateItem: (ETLayoutItem *)seperator
+{
+	ASSIGN(_seperatorTemplateItem, seperator);
+	
+	if ([self canRender])
+	{	
+		[self render: nil isNewContent: NO];
+		[[self layoutContext] setNeedsDisplay: YES];
+	}
+}
+			
+- (ETLayoutItem *) seperatorTemplateItem
+{
+	return _seperatorTemplateItem;
 }
 
 @end

@@ -614,6 +614,22 @@ width and height of +[ETShape defaultShapeRect]. */
 	return [self ovalWithRect: ETMakeRect(NSZeroPoint, [ETShape defaultShapeRect].size)];
 }
 
+
+/* Seperator Factory Methods */
+
+- (ETLayoutItem *) lineSeparator
+{
+	return [self oval];
+}
+- (ETLayoutItem *) spaceSeparator
+{
+	return [self oval];
+}
+- (ETLayoutItem *) flexibleSpaceSeparator
+{
+	return [self oval];
+}
+
 /* Deprecated */
 
 /** Deprecated. You must use -itemGroup now. */
