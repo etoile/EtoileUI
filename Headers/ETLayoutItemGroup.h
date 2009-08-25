@@ -141,11 +141,6 @@
       dirtyRect: (NSRect)dirtyRect 
       inContext: (id)ctxt;
 
-/* Grouping */
-
-- (ETLayoutItemGroup *) makeGroupWithItems: (NSArray *)items;
-- (NSArray *) unmakeGroup;
-
 /* Stacking */
 
 - (ETLayout *) stackedItemLayout;

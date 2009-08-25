@@ -1299,64 +1299,6 @@ yourself (see -visibleItemsForItems:). */
 	}
 }
 
-/* Grouping */
-
-- (ETLayoutItemGroup *) makeGroupWithItems: (NSArray *)items
-{
-	ETLayoutItemGroup *itemGroup = nil;
-	ETLayoutItemGroup *prevParent = nil;
-	int firstItemIndex = NSNotFound;
-	
-	if (items != nil && [items count] > 0)
-	{
-		NSEnumerator *e = [[self items] objectEnumerator];
-		ETLayoutItem *item = [e nextObject];
-		
-		prevParent = [item parentItem];
-		firstItemIndex = [prevParent indexOfItem: item];
-		
-		/* Try to find a common parent shared by all items */
-		while ((item = [e nextObject]) != nil)
-		{
-			if ([[item parentItem] isEqual: prevParent] == NO)
-			{
-				prevParent = nil;
-				break;
-			}
-		}
-	}
-		
-	/* Will reparent each layout item to itemGroup */
-	itemGroup = [ETLayoutItemGroup layoutItemGroupWithLayoutItems: items];
-	/* When a parent shared by all items exists, inserts new item group where
-	   its first item was previously located */
-	if (prevParent != nil)
-		[prevParent insertItem: itemGroup atIndex: firstItemIndex];
-	
-	return itemGroup;
-}
-
-/** Dismantles the receiver layout item group. If all items owned by the item */
-- (NSArray *) unmakeGroup
-{
-	NSArray *items = [self items];
-	int itemGroupIndex = [_parentItem indexOfItem: self];
-	
-	RETAIN(self);
-	[_parentItem removeItem: self];
-	/* Delay release the receiver until we fully step out of receiver's 
-	   instance methods (like this method). */
-	AUTORELEASE(self);
-
-	// TODO: Use a reverse object enumerator or eventually implement -insertItems:atIndex:
-	FOREACH([self items], item, ETLayoutItem *)
-	{
-		[_parentItem insertItem: item atIndex: itemGroupIndex];		
-	}
-	
-	return items;
-}
-
 /* Stacking */
 
 + (NSSize) stackSize
