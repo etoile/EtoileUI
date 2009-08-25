@@ -1134,47 +1134,41 @@ recursively on them. */
 		  decorator chain isn't empty. */
 		NSRect realDirtyRect = NSIntersectionRect(dirtyRect, drawingFrame);
 		[super render: inputValues dirtyRect: realDirtyRect inContext: ctxt];
-		
-		/* Render the layout-specific tree if needed */
-		
-		id layout = [self layout];
-		if ([layout respondsToSelector: @selector(rootItem)])
-		{
-			[self display: inputValues 
-			         item: [layout rootItem] 
-			    dirtyRect: dirtyRect 
-			    inContext: ctxt];
-		}
 
 		/* Render child items (if the layout doesn't handle it) */
-		
-		// TODO: Probably better to check -isOpaque.
-		BOOL usesLayoutView = ([layout layoutView] != nil);
-		if (usesLayoutView)
-			return;
 
-		NSEnumerator *e = [[self arrangedItems] reverseObjectEnumerator];
-	
-		FOREACHE(nil, item, ETLayoutItem *, e)
+		if ([[self layout] isOpaque] == NO)
 		{
-			/* We intersect our dirtyRect with the drawing frame of the item to be 
-		       drawn, so the child items don't receive the drawing frame of their 
-		       parent, but their own. Also restricts the dirtyRect so it doesn't 
-		       encompass any decorators set on the item. */
-			NSRect childDirtyRect = [item convertRectFromParent: realDirtyRect];
-			childDirtyRect = NSIntersectionRect(childDirtyRect, [item drawingFrame]);
+			NSEnumerator *e = [[self arrangedItems] reverseObjectEnumerator];
+		
+			FOREACHE(nil, item, ETLayoutItem *, e)
+			{
+				/* We intersect our dirtyRect with the drawing frame of the item to be 
+				   drawn, so the child items don't receive the drawing frame of their 
+				   parent, but their own. Also restricts the dirtyRect so it doesn't 
+				   encompass any decorators set on the item. */
+				NSRect childDirtyRect = [item convertRectFromParent: realDirtyRect];
+				childDirtyRect = NSIntersectionRect(childDirtyRect, [item drawingFrame]);
 
-			/* In case, dirtyRect is only a redraw rect on the parent and not on 
-			   the entire parent frame, we try to optimize by not redrawing the 
-			   items that lies outside of the dirtyRect. */
-			if (NSEqualRects(childDirtyRect, NSZeroRect))
-				continue;
+				/* In case, dirtyRect is only a redraw rect on the parent and not on 
+				   the entire parent frame, we try to optimize by not redrawing the 
+				   items that lies outside of the dirtyRect. */
+				if (NSEqualRects(childDirtyRect, NSZeroRect))
+					continue;
 
-			[self display: inputValues 
-			         item: item 
-			    dirtyRect: childDirtyRect 
-				inContext: ctxt];
+				[self display: inputValues 
+						 item: item 
+					dirtyRect: childDirtyRect 
+					inContext: ctxt];
+			}
 		}
+
+		/* Render the layout-specific tree if needed */
+
+		[self display: inputValues 
+		         item: [[self layout] rootItem] 
+		    dirtyRect: dirtyRect 
+		    inContext: ctxt];
 	}
 }
 
