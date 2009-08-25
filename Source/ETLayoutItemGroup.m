@@ -475,19 +475,26 @@ NOTE: Having a null layout class may be a solution to get rid of
 -handleAttachViewOfItem: and -handleDetachViewOfItem:. */
 - (void) handleAttachViewOfItem: (ETLayoutItem *)item
 {
-	/* Typically needed if your item has no view and gets added to an item 
-	   group without a layout. Without this check -addSuview: [item displayView]
-	   results in a crash. */
-	if ([item displayView] == nil || [item isVisible] == NO) /* No view to attach */
+	ETView *itemDisplayView = [item displayView];
+
+	// NOTE: -[NSView addSuview: nil] results in an exception.
+	if (itemDisplayView == nil || [item isVisible] == NO) /* No view to attach */
 		return;
 
-	[[item displayView] removeFromSuperview];
+	BOOL isAlreadyAttached = [[itemDisplayView superview] isEqual: [_parentItem supervisorView]];
+
+	/* We don't want to change the subview ordering when we simply switch 
+	   the visibility */
+	if (isAlreadyAttached)
+		return;
+
+	[itemDisplayView removeFromSuperview];
+
 	/* Only insert the item view if the layout is a fixed/free layout. 
-	   TODO: Probably make more explicit the nil layout check and improve in a
-	   way or another the handling of the nil view case. */
+	   TODO: Probably make more explicit the nil layout check. */
 	if ([[self layout] isOpaque] == NO)
 	{
-		[[self setUpSupervisorViewWithFrame: [self frame]] addSubview: [item displayView]];
+		[[self setUpSupervisorViewWithFrame: [self frame]] addSubview: itemDisplayView];
 	}
 }
 

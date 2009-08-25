@@ -981,11 +981,8 @@ The new visibility state won't be apparent until a redisplay occurs. */
 	_visible = visible;
 	if (visible)
 	{
-		if ([[[_parentItem supervisorView] subviews] containsObject: [self displayView]] == NO)
-		{
-			[_parentItem handleAttachViewOfItem: self];
-			ETDebugLog(@"Inserted view at %@", NSStringFromRect([self frame]));
-		}
+		[_parentItem handleAttachViewOfItem: self];
+		ETDebugLog(@"Inserted view at %@", NSStringFromRect([self frame]));
 	}
 	else
 	{
