@@ -57,6 +57,11 @@
 
 @implementation ETContainer
 
+- (Class) defaultItemClass
+{
+	return [ETLayoutItemGroup class];
+}
+
 - (id) initWithFrame: (NSRect)rect layoutItem: (ETLayoutItem *)anItem
 {
 	if (anItem != nil && [anItem isGroup] == NO)
@@ -66,54 +71,7 @@
 			@"an ETContainer instance", anItem];
 	}
 
-	/* Before all, bind layout item group representing the container */
-
-	ETLayoutItemGroup *itemGroup = (ETLayoutItemGroup *)anItem;
-	
-	if (itemGroup == nil)
-		itemGroup = AUTORELEASE([[ETLayoutItemGroup alloc] init]);
-
-	// NOTE: Very important to destroy ETView layout item to avoid any 
-	// layout update in ETLayoutItem
-	// -setView: -> -setDefaultFrame: -> -restoreDefaultFrame -> -setFrame:
-	// then reentering ETContainer
-	// -setFrameSize: -> -canUpdateLayout
-	// and failing because [self layoutItem] returns ETLayoutItem instance
-	// and not ETLayoutItemGroup instance; ETLayoutItem doesn't respond to
-	// -canUpdateLayout...
-	return [super initWithFrame: rect layoutItem: itemGroup];
-}
-
-/** Deep copies are never created by the container itself, but they are instead
-	delegated to the item group returned by -layoutItem. When the layout item
-	receives a deep copy request it will call back -copy on each view (including
-	containers) embedded in descendant items. Subview hierarchy will later get 
-	transparently reconstructed when -updateLayout will be called on the 
-	resulting layout item tree copy.
-	
-		View Tree							Layout Item Tree
-	
-	-> [container deepCopy] 
-									-> [containerItem deepCopy] 
-	-> [container copy]
-									-> [childItem deepCopy]
-	-> [subview copy] 
-	
-	For ETView and ETContainer, view copies created by -copy are shallow copies
-	that don't include subviews unlike -copy invoked on NSView and other 
-	related subclasses. Layout/Display view isn't copied either. However title 
-	bar view is copied unlike other subviews (as explained in -[ETView copy]).
-	Remember -[NSView copy] returns a deep copy (view hierachy copy) 
-	but -[ETView copy] doesn't. */
-- (id) deepCopy
-{
-	id newItem = [[self layoutItem] deepCopy];
-	id container = [newItem supervisorView];
-	
-	// TODO: Finish to implement...
-	// NSAssert3([container isKindOfClass: [ETContainer class]], 
-	
-	return container;
+	return [super initWithFrame: rect layoutItem: anItem];
 }
 
 @end

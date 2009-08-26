@@ -37,15 +37,12 @@
 #import <AppKit/AppKit.h>
 #import <EtoileUI/ETView.h>
 
-@class ETLayoutItem, ETLayout, ETLayer, ETLayoutItemGroup,  ETPickboard, 
-ETEvent, ETDecoratorItem;
+@class ETLayoutItem, ETLayout, ETLayoutItemGroup;
 
 @interface ETContainer : ETView
 {
 
 }
-
-- (id) deepCopy;
 
 @end
 
