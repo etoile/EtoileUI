@@ -75,6 +75,17 @@
 	[super dealloc];
 }
 
+- (id) copyWithZone: (NSZone *)aZone
+{
+	ETTableLayout *newLayout = [super copyWithZone: aZone];
+	NSParameterAssert([newLayout tableView] != [self tableView]);
+
+	/* Will initialize the ivars in the layout copy */
+	[newLayout setLayoutView: [newLayout layoutView]];
+
+	return newLayout;
+}
+
 - (void) awakeFromNib
 {
 	/* Finish to initialize attributes that cannot be set in the nib/gorm and 
@@ -92,6 +103,7 @@
 
 - (void) setLayoutView: (NSView *)protoView
 {
+	NSParameterAssert(nil != protoView);
 	[super setLayoutView: protoView];
 
 	NSTableView *tv = [self tableView];
@@ -116,11 +128,11 @@
 	/* Set up a list view using a single column without identifier */
 	[tv registerForDraggedTypes: A(ETLayoutItemPboardType)];
 
-	if ([tv dataSource] == nil)
-		[tv setDataSource: self];
-
-	if ([tv delegate] == nil)
-		[tv setDelegate: self];
+	// NOTE: When a table view is archived/unarchived on GNUstep, a nil data 
+	// source or delegate in the initial instance becomes the table view itself 
+	// in the unarchived instance.
+	[tv setDataSource: self];
+	[tv setDelegate: self];
 }
 
 - (NSTableView *) tableView
