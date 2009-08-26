@@ -196,8 +196,9 @@ A temporary view set on the receiver won't be copied. */
 
 - (NSArray *) properties
 {
-	// NOTE: We may expose other properties in future
-	return [super properties];
+	NSArray *properties = A(@"item", @"wrappedView", @"temporaryView", 
+		@"contentView", @"mainView");
+	return [properties arrayByAddingObjectsFromArray: [super properties]];
 }
 
 // TODO: Rewrite the next two methods in a more sensible way
@@ -245,31 +246,38 @@ A temporary view set on the receiver won't be copied. */
 
 /* Basic Accessors */
 
-/** Returns the layout item representing the receiver in the layout item 
-	tree. 
-	Never returns nil. */
+/** Returns the item representing the receiver in the layout item tree. 
+
+Never returns nil. */
 - (id) layoutItem
 {
 	// NOTE: We must use -primitiveDescription not to enter an infinite loop
 	// with -description calling -layoutItem
-	/*NSAssert1(item != nil, @"Layout item of %@ must never be nil", [self primitiveDescription]);*/
 	if (item == nil)
-		ETLog(@"Layout item of %@ must never be nil", [self primitiveDescription]);
+	{
+		ETLog(@"WARNING: Item bound to %@ must never be nil", [self primitiveDescription]);
+	}
 	return item;
 }
 
-/** Sets the layout item representing the receiver view in the layout item
-	tree. When the layout item has an ancestor layout item which represents a
-	view, then the receiver is added as a subview to this view. So by binding 
-	a new layout item to a view, you may move the view to a different place in
-	the view hierarchy.
-	Throws an exception when item parameter is nil. */
+/** This method is only exposed to be used internally by EtoileUI.<br />
+You should must never call this method.
+
+Sets the item representing the receiver view in the layout item tree. 
+
+The receiver will be added as a subview to the supervisor view bound to the 
+parent item to which the given item belongs to. Which means, this method may 
+move the view to a different place in the view hierarchy.
+
+Throws an exception when item parameter is nil. */
 - (void) setItem: (ETUIItem *)anItem
 {
+	NSParameterAssert(nil != anItem);
 	[anItem setSupervisorView: self];
 }
 
-/** You should never need to call this method. */
+/** This method is only exposed to be used internally by EtoileUI.<br />
+You should must never call this method. */
 - (void) setLayoutItemWithoutInsertingView: (ETLayoutItem *)anItem
 {	
 	if (anItem == nil)
@@ -280,7 +288,10 @@ A temporary view set on the receiver won't be copied. */
 	ASSIGN(item, anItem); // NOTE: Retain cycle (see -release)
 }
 
-/** Returns whether the receiver uses flipped coordinates or not.
+/** This method is only exposed to be used internally by EtoileUI.<br />
+You must never call this method but -[ETLayoutItem isFlipped:].
+
+Returns whether the receiver uses flipped coordinates or not.
 
 Default returned value is YES. */
 - (BOOL) isFlipped
@@ -292,7 +303,10 @@ Default returned value is YES. */
 #endif
 }
 
-/** Unlike NSView, ETContainer uses flipped coordinates by default in order to 
+/** This method is only exposed to be used internally by EtoileUI.<br />
+You must never call this method but -[ETLayoutItem setFlipped:].
+
+Unlike NSView, ETContainer uses flipped coordinates by default in order to 
 simplify layout computation.
 
 You can revert to non-flipped coordinates by passing NO to this method. */
@@ -309,7 +323,9 @@ You can revert to non-flipped coordinates by passing NO to this method. */
 
 /* Embbeded Views */
 
-/** Recomputes the positioning of the main view. */
+/** This method is only exposed to be used internally by EtoileUI. 
+
+Recomputes the positioning of the main view. */
 - (void) tile
 {
 	id mainView = [self mainView];
@@ -323,6 +339,10 @@ You can revert to non-flipped coordinates by passing NO to this method. */
 	[self setAutoresizesSubviews: YES];
 }
 
+/** Sets the item view.<br />
+The receiver is the view owner.
+
+You must never call this method but -[ETLayoutItem setView:]. */
 - (void) setWrappedView: (NSView *)view
 {
 	NSAssert([[self temporaryView] isEqual: view] == NO, @"A temporary view "
@@ -335,6 +355,8 @@ You can revert to non-flipped coordinates by passing NO to this method. */
 	[self tile]; /* Update view layout */
 }
 
+/** Returns the item view.<br />
+The receiver is the view owner. */
 - (NSView *) wrappedView
 {
 	return _wrappedView;
@@ -359,14 +381,16 @@ If you pass nil, the visible view is reverted to -wrappedView. */
 
 /** Returns the view temporarily used as a wrapped view or nil.
 
-When a widget-based layout is set on -layoutItem, this method returns the widget 
-view installed by the layout. */
+When a widget-based layout is set on -item, this method returns the widget view 
+installed by the layout. */
 - (NSView *) temporaryView
 {
 	return _temporaryView;
 }
 
-/** You must override this method in subclasses. */
+/** This method is only exposed to be used internally by EtoileUI. 
+
+You must override this method in subclasses. */
 - (void) setContentView: (NSView *)view temporary: (BOOL)temporary
 {
 	/* Reset the content view frame to fill the receiver */
@@ -417,12 +441,14 @@ view installed by the layout. */
 }
 
 /** Returns the current content view which is either the wrapped view or 
-	the temporary view. The wrapped view is returned when -temporaryView
-	is nil. When a temporary view is set, it overrides the wrapped view
-	in the role of content view. 
-	Take note that as long as -temporaryView returns a non nil value, 
-	calling -setWrappedView: has no effect on -contentView, the method
-	will continue to return the temporary view.  */
+the temporary view. 
+
+The wrapped view is returned when -temporaryView is nil. When a temporary view 
+is set, it overrides the wrapped viewin the role of content view. 
+	
+Take note that as long as -temporaryView returns a non nil value, calling -
+setWrappedView: has no effect on -contentView, the method will continue to 
+return the temporary view. */
 - (NSView *) contentView
 {
 	NSView *contentView = [self temporaryView];
@@ -435,13 +461,17 @@ view installed by the layout. */
 
 /* Subclassing */
 
-/** Returns the direct subview of the receiver. The returned value is identical
-	to -wrappedView. 
-	If you write an ETView subclass where the wrapped view is put inside another
-	view (like a scroll view), you must override this method to return this 
-	superview. 
-	This method should never be called directly, uses -contentView, -wrappedView
-	or -temporaryView instead. */
+/** This method is only exposed to be used internally by EtoileUI.
+
+Returns the direct subview of the receiver. The returned value is identical
+to -wrappedView. 
+
+If you write an ETView subclass where the wrapped view is put inside another
+view (like a scroll view), you must override this method to return this 
+superview. 
+
+This method should never be called directly, uses -contentView, -wrappedView
+or -temporaryView instead. */
 - (NSView *) mainView
 {
 	return [self wrappedView];
