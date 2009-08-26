@@ -121,7 +121,6 @@ static ETUIItemFactory *itemFactory = nil;
 	
 	[prevParentView addSubview: view];
 	[self setSupervisorView: view];
-	[parentItem setLayout: [ETFlowLayout layout]];
 	
 	[self setParentItem: parentItem];
 	/* -setParentItem: doesn't touch the view hierarchy */

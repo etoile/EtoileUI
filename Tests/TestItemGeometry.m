@@ -72,6 +72,15 @@
 
 DEALLOC(DESTROY(itemFactory); DESTROY(item))
 
+- (void) testNewSupervisorViewWithFrame
+{
+	NSRect frame = NSMakeRect(-300, 20, 500, 50);
+	ETView *view = AUTORELEASE([[ETView alloc] initWithFrame: frame layoutItem: nil]);
+
+	UKRectsEqual(frame, [view frame]);
+	UKRectsEqual(frame, [[view layoutItem] frame]);
+}
+
 static unsigned int sizableMask = (NSViewWidthSizable | NSViewHeightSizable);
 
 - (void) testAutoresizingMaskWithoutView
@@ -272,6 +281,7 @@ and -setAutoresizingMask: can potentially erase each other. */
 	UKPointsEqual(NSMakePoint(250, 175), [item position]);
 	UKPointsEqual(rect.origin, [item origin]);
 	UKRectsEqual(rect, [item frame]);
+	UKRectsEqual(rect, [item defaultFrame]);
 	UKRectsEqual(rect, [item decorationRect]);
 	UKRectsEqual(ETMakeRect(NSZeroPoint, rect.size), [item contentBounds]);
 }

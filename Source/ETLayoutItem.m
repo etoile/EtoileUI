@@ -147,7 +147,12 @@ See also -setView:, -setValue: and -setRepresentedObject:.  */
 
 	if (view == nil)
 	{
-		[self setFrame: [[self class] defaultItemRect]];
+		NSRect frame = [[self class] defaultItemRect];
+
+		/* We must have a valid frame to use -setDefaultFrame:, otherwise this 
+		   method will look up an invalid frame and try to restore it. */
+		[self setFrame: frame];
+		[self setDefaultFrame: frame];
 	}
     
     return self;
@@ -777,7 +782,6 @@ the default frame and frame to match this view frame. */
 		/* Restore view initial state */
 		[view setFrame: [self defaultFrame]];
 	}
-	SET_PROPERTY([NSValue valueWithRect: NSZeroRect], kETDefaultFrameProperty);
 	
 	/* When the view isn't an ETView instance, we wrap it inside a new ETView 
 	   instance to have -drawRect: asking the layout item to render by itself.
