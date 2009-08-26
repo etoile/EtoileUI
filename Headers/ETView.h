@@ -21,38 +21,23 @@
 #define USE_NSVIEW_RFLAGS
 #endif
 
-/** ETView is the generic view class extensively used by EtoileUI. It 
-	implements several facilities in addition to the ones already provided by
-	NSView. If you want to write Etoile-native UI code, you should always use
-	or subclass ETView and not NSView when you need a custom view and you don't
-	rely an AppKit-specific NSView subclasses.
-	Take note that if you want to add subviews (or child items) you should use
-	ETContainer and not ETView which throws exceptions if you try to call 
-	-addSubview: directly.
-	
-	A key feature is additional control and flexibility over the 
-	drawing process. It lets you sets a render delegate by calling 
-	-setRenderer:. This delegate can implement -render:  method to avoid the 
-	tedious subclassing involved by -drawRect:. 
-	More importantly, -render: isn't truly a delegated version of -drawRect:. 
-	This new method enables the possibility to draw directly over the subviews 
-	by offering another drawing path. This drawing option is widely used in 
-	EtoileUI and is the entry point of every renderer chains when they are 
-	asked to render themselves on screen. See Display Tree Description if you
-	want to know more. 
-	
-	An ETView instance is also always bound to a layout item unlike NSView 
-	instances. When a view is set on a layout item, when this view isn't an
-	ETView class or subclass instance, ETLayoutItem automatically wraps the
-	view in an ETView making possible to apply renderers, styles etc. over the
-	real view.
-*/
+/** ETView is the generic view class extensively used by EtoileUI and whose 
+instance are named 'supervisor view'.
 
-// TODO: Implement ETTitleBarView subclass to handle the title bar as a layout
-// item which can be introspected and edited at runtime. A subclass is 
-// necessary to create the title bar of title bars in a lazy way, otherwise
-// ETView instantiation would lead to infinite recursion on the title bar set up.
+An ETView instance is bound to a layout item or a decorator item unlike NSView 
+instances. ETLayoutItem automatically wraps any view you set with -setView: into 
+a supervisor view.
+	
+The supervisor view is a wrapper that allows EtoileUI to intercept the drawing 
+process. ETView delegates the drawing to its item in the -render:  method.<br />
+More importantly, -render: isn't truly a delegated version of -drawRect:. 
+This method makes possible to draw directly over the subviews rather than 
+beneath. This drawing path is widely used in EtoileUI.
+	
+You must not subclass ETView.
 
+Take note that we plan to eliminate ETView and the supervisor view concept in a 
+next EtoileUI release. */
 @interface ETView : NSView
 {
 	IBOutlet ETLayoutItem *item;
