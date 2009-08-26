@@ -226,10 +226,18 @@ Default values won't be copied. */
 	// and -setAutoresizingMask: is not required to make a copy, because all 
 	// the related objects (supervisor view, decorator etc.) are in a valid and 
 	// well synchronized state at copy time.
+	// -[ETUIItem copyWithZone:] copies the supervisor view and its subviews
 
 	/* We copy every primitive ivars except _isSyncingSupervisorViewGeometry */
 
 	item->_contentBounds = _contentBounds;
+	if (ETIsNullPoint([self anchorPoint]) == NO)
+	{
+		/* anchorPoint must be initialized before position but after contentBounds.
+		   position must be initialized after anchorPoint.
+		   NOTE: anchorPoint is a variable property. */
+		[item setAnchorPoint: [self anchorPoint]];
+	}
 	item->_position = _position;
 	item->_transform = [_transform copyWithZone: aZone];
 	/* Will be overriden by -setView: when the view is not nil */	
@@ -243,19 +251,26 @@ Default values won't be copied. */
 	
 	/* We copy all object ivars except _parentItem */
 
-	[item setView: AUTORELEASE([[self view] copyWithZone: aZone])];
 	[item setRepresentedObject: [self representedObject]];
 	[item setValue: AUTORELEASE([[self value] copyWithZone: aZone])];
 	/* We set the style in the copy by copying the style group */
 	[item setStyleGroup: AUTORELEASE([[self styleGroup] copyWithZone: aZone])];
 
-	/* We copy all variables properties listed in ETLayoutItem.h */
+	/* We copy all variables properties */
 
 	[item setName: [self name]];
 	[item setActionHandler: [self actionHandler]];
 	[item setTarget: [self target]];
+	// TODO: To be improved... Not really pretty.
+	[item->_variableProperties setObject: GET_PROPERTY(kETDefaultFrameProperty) 
+	                              forKey: kETDefaultFrameProperty];
 	
 	return item;
+}
+
+- (id) deepCopy
+{
+	return [self deepCopyWithZone: NSDefaultMallocZone()];
 }
 
 /** Returns a deep copy of the receiver by copying the view and all its 
@@ -266,9 +281,11 @@ Default values won't be copied. */
 	children items). 
 	TODO: Implement styles copying that is currently missing (decorators too in 
 	-copyWithZone:). */
-- (id) deepCopy
+- (id) deepCopyWithZone: (NSZone *)aZone
 {
-	ETLayoutItem *item = [self copyWithZone: NULL];
+	ETLayoutItem *item = [self copyWithZone: aZone];
+
+#if 0
 	id repObjectCopy = nil;
 
 	// TODO: We probably want to handle different kind of copies on the model. 
@@ -293,15 +310,7 @@ Default values won't be copied. */
 		repObjectCopy = [[self representedObject] copy];
 	}
 	[item setRepresentedObject: AUTORELEASE(repObjectCopy)];
-
-	// NOTE: When a  view like a slider is used, it is interesting to support
-	// true copy in order to clone existing layout items. An example could be
-	// picking a layout item from an UI object palette (in Gorm-like style 
-	// development).
-	if ([[self view] respondsToSelector: @selector(copyWithZone:)])
-	{
-		[item setView: [[self view] copy]];
-	}
+#endif
 
 	return item;
 }
@@ -2047,9 +2056,7 @@ The bounding box must be always be greater or equal to the receiver frame. */
 	_boundingBox = extent;
 }
 
-/** Returns the default frame associated with the receiver. See -setDefaultFrame:.
-
-By default, returns ETNullRect. */
+/** Returns the default frame associated with the receiver. See -setDefaultFrame:. */
 - (NSRect) defaultFrame 
 {
 	NSValue *value = GET_PROPERTY(kETDefaultFrameProperty);
@@ -2065,9 +2072,8 @@ By default, returns ETNullRect. */
 frame to match. The default frame is not touched by layout-related transforms 
 (such as item scaling) unlike the item frame returned by -frame. 
 
-If a view is provided to the initializer when the layout item gets instantiated, 
-the value is initially set to this view frame, else -defaultFrame returns 
-a null rect. */
+When the layout item gets instantiated, the value is set to the initial item 
+frame. */
 - (void) setDefaultFrame: (NSRect)frame
 { 
 	SET_PROPERTY([NSValue valueWithRect: frame], kETDefaultFrameProperty);

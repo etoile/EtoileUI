@@ -50,6 +50,12 @@ extern const NSSize ETNullSize;
 when a rect value is undefined and is a nil-like marker for NSRect primitive. */
 extern const NSRect ETNullRect;
 
+/** Returns whether the given point is equal to ETNullPoint. */
+static inline BOOL ETIsNullPoint(NSPoint aPoint)
+{
+	return NSEqualPoints(aPoint, ETNullPoint);
+}
+
 /** Returns whether rect is equal to ETNullRect. */
 static inline BOOL ETIsNullRect(NSRect rect)
 {

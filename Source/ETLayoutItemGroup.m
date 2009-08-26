@@ -9,6 +9,7 @@
 #import <EtoileFoundation/NSIndexPath+Etoile.h>
 #import <EtoileFoundation/NSIndexSet+Etoile.h>
 #import <EtoileFoundation/NSObject+Model.h>
+#import <EtoileFoundation/ETCollection+HOM.h>
 #import <EtoileFoundation/Macros.h>
 #import "ETLayoutItemGroup.h"
 #import "ETController.h"
@@ -186,37 +187,58 @@ All layouts from the receiver returned by -layout, -stackedItemLayout,
 several item groups.
 
 The returned copy is mutable because ETLayoutItemGroup cannot be immutable. */ 
-- (id) copyWithZone: (NSZone *)zone
+- (id) copyWithZone: (NSZone *)aZone items: (NSMutableArray *)childItems
 {
-	ETLayoutItemGroup *item = [super copyWithZone: zone];
+	// FIXME: NSParameterAssert([childItems isMutableCollection]);
 
-	item->_layoutItems = [[NSMutableArray alloc] init];
+	ETLayoutItemGroup *item = [super copyWithZone: aZone];
 
-	// TODO: Layout objects must be copied because they support only one layout 
-	// context. If you share a layout like that: 
-	// [item setLayout: [self layout]];
-	// -[ETLayoutItemGroup setLayout:] will set the item copy as the layout 
-	// context replacing the current value of -[[self layout] layoutContext].
-	// This latter value is precisely self.
-	/*[item setLayout: [[self layout] layoutPrototype]];
-	[item setStackedItemLayout: [[self stackedItemLayout] layoutPrototype]];
-	[item setUnstackedItemLayout: [[self unstackedItemLayout] layoutPrototype]];*/
-	item->_isStack = [self isStack];
-	item->_autolayout = [self isAutolayout];
-	item->_usesLayoutBasedFrame = [self usesLayoutBasedFrame];
-	item->_shouldMutateRepresentedObject = [self shouldMutateRepresentedObject];
+	ASSIGN(item->_layoutItems, childItems);
+	
+	/* We copy all object ivars except _stackedLayout, _unstackedLayout, 
+      _reloading, and _layoutItems whose copying is delegated to -deepCopyWithZone: */
+
+	
+	[item setLayout: AUTORELEASE([_layout copyWithZone: aZone])];
+	item->_doubleClickAction = _doubleClickAction;
+	item->_isStack = _isStack; 
+	/* Must follow -setLayout: to ensure autolayout is disabled in the copy when -setLayout: is called */
+	item->_autolayout = _autolayout;
+	item->_usesLayoutBasedFrame = _usesLayoutBasedFrame;
+	item->_hasNewContent = ([item->_layoutItems isEmpty] == NO);
+	item->_hasNewLayout = YES;
+	item->_shouldMutateRepresentedObject = _shouldMutateRepresentedObject;
+	item->_sorted = _sorted;
+	item->_filtered = _filtered;
+
+	/* We copy all variables properties */
+
+	[item setRepresentedPathBase: [self representedPathBase]];
+	if ([self usesRepresentedObjectAsProvider])
+	{
+		[item setSource: item];
+	}
+	else
+	{
+		[item setSource: [self source]];
+	}
+	[item setController: [self controller]];
+	[item setDelegate: [self delegate]];
+	[item setItemScaleFactor: [self itemScaleFactor]];
 
 	return item;
 }
 
-- (id) deepCopy
+- (id) copyWithZone: (NSZone *)aZone
 {
-	ETLayoutItemGroup *item = [super deepCopy];
-	NSArray *copiedChildItems = [[self items] valueForKey: @"deepCopy"];
+	return [self copyWithZone: aZone items: [NSMutableArray array]];
+}
 
-	[item addItems: copiedChildItems];
-	// TODO: Test if using -autorelease instead of -release results in a quicker 
-	// deep copy (when plenty of items are involved).
+- (id) deepCopyWithZone: (NSZone *)aZone
+{
+	NSArray *copiedChildItems = [[_layoutItems map] deepCopyWithZone: aZone];
+	ETLayoutItemGroup *item = [self copyWithZone: aZone items: [NSMutableArray arrayWithArray: copiedChildItems]];
+
 	[copiedChildItems makeObjectsPerformSelector: @selector(release)];
 
 	return item;
