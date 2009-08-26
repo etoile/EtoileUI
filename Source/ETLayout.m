@@ -273,14 +273,17 @@ it gets instantiated. */
 
 /** Returns a copy of the receiver.
 
-The layout context and delegate in the copy are nil.
+The layout context in the copy is nil.
 
-Subclasses must be aware the root item is not copied, the layout copy just has a 
-new root item created by -initWithLayoutView:. */ 
+Subclasses must be aware that this method calls -setAttachedInstrument: with an 
+instrument copy. */ 
 - (id) copyWithZone: (NSZone *)aZone
 {
-	ETLayout *newLayout = [[[self class] alloc] init];
+	ETLayout *newLayout = [[self class] alloc];
 
+	/* We copy all ivars except _layoutContext and _isLayouting */
+
+	newLayout->_delegate = _delegate;
 	newLayout->_displayViewPrototype = [_displayViewPrototype copyWithZone: aZone];
 	[newLayout setAttachedInstrument: [[self attachedInstrument] copyWithZone: aZone]];
 	RELEASE([newLayout attachedInstrument]);
