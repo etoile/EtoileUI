@@ -74,7 +74,7 @@
 	NSArray *visibleColumnIds = [NSArray arrayWithObjects: @"displayName", @"intensity", nil];
 	
 	[tableLayout2 setDisplayName: @"Name" forProperty: @"displayName"]; 
-	[[[tableLayout2 allTableColumns] objectAtIndex: 0] setWidth: 50];
+	[[tableLayout2 columnForProperty: @"displayName"] setWidth: 50];
 	[tableLayout2 setDisplayName: @"Intensity" forProperty: @"intensity"]; 	
 	[tableLayout2 setStyle: [itemFactory horizontalSlider]
 	           forProperty: @"intensity"];

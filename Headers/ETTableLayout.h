@@ -37,6 +37,22 @@
 #import <AppKit/AppKit.h>
 #import <EtoileUI/ETWidgetLayout.h>
 
+@protocol ETColumnFragment
+
+- (void) setWidth: (NSUInteger)width;
+- (NSUInteger) width;
+- (void) setMinWidth: (NSUInteger)width;
+- (NSUInteger) minWidth; 
+- (void) setMaxWidth: (NSUInteger)width;
+- (NSUInteger) maxWidth;
+- (void) setResizingMask: (NSUInteger)mask;
+- (NSUInteger) resizingMask;
+
+@end
+
+@interface NSTableColumn (Etoile) <ETColumnFragment>
+@end
+
 
 @interface ETTableLayout : ETWidgetLayout
 {
@@ -54,6 +70,7 @@
 - (void) setEditable: (BOOL)flag forProperty: (NSString *)property;
 - (id) styleForProperty: (NSString *)property;
 - (void) setStyle: (id)style forProperty: (NSString *)property;
+- (id <ETColumnFragment>) columnForProperty: (NSString *)property;
 
 - (NSFont *) contentFont;
 - (void) setContentFont: (NSFont *)aFont;

@@ -344,6 +344,11 @@ yet, it is created. */
 	return AUTORELEASE(column);
 }
 
+- (id <ETColumnFragment>) columnForProperty: (NSString *)property
+{
+	return [self tableColumnWithIdentifierAndCreateIfAbsent: property];
+}
+
 /* Layouting */
 
 - (void) renderWithLayoutItems: (NSArray *)items isNewContent: (BOOL)isNewContent
