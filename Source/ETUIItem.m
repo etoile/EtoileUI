@@ -7,10 +7,12 @@
  */
 
 #import <EtoileFoundation/Macros.h>
+#import <EtoileFoundation/NSObject+Model.h>
 #import "ETUIItem.h"
 #import "ETDecoratorItem.h"
 #import "ETGeometry.h"
 #import "ETLayoutItem.h"
+#import "EtoileUIProperties.h"
 #import "ETView.h"
 #import "ETScrollableAreaItem.h"
 #import "ETWindowItem.h"
@@ -97,6 +99,16 @@ By default, returns NO. */
 	[newItem setSupervisorView: AUTORELEASE([[self supervisorView] copyWithZone: aZone])];
 	[newItem setDecoratorItem: AUTORELEASE([[self decoratorItem] copyWithZone: aZone])];
 	return newItem;
+}
+
+- (NSArray *) properties
+{
+	NSArray *properties = A(kETFlippedProperty, kETDecoratorItemProperty, 
+		kETDecoratedItemProperty, @"firstDecoratedItem", @"lastDecoratorItem", 
+		@"decorationRect", @"isDecoratorItem", @"isWindowItem", 
+		@"isScrollableAreaItem", @"enclosingItem", @"supervisorView", 
+		@"shouldSyncSupervisorViewGeometry", @"usesWidgetView");
+	return [[super properties] arrayByAddingObjectsFromArray: properties];
 }
 
 /* <override-dummy /> 

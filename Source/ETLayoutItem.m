@@ -222,6 +222,9 @@ Default values won't be copied. */
 {
 	ETLayoutItem *item = [super copyWithZone: aZone];
 
+	item->_variableProperties = [[NSMutableDictionary alloc] init];
+	item->_defaultValues = [[NSMutableDictionary alloc] init];
+
 	// NOTE: Geometry synchronization logic in setters such as setFlippedView: 
 	// and -setAutoresizingMask: is not required to make a copy, because all 
 	// the related objects (supervisor view, decorator etc.) are in a valid and 
