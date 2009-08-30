@@ -254,19 +254,21 @@ Default values won't be copied. */
 	
 	/* We copy all object ivars except _parentItem */
 
-	[item setRepresentedObject: [self representedObject]];
+	[item setRepresentedObject: [self representedObject]]; /* Will set up the observer */
 	[item setValue: AUTORELEASE([[self value] copyWithZone: aZone])];
 	/* We set the style in the copy by copying the style group */
 	[item setStyleGroup: AUTORELEASE([[self styleGroup] copyWithZone: aZone])];
 
 	/* We copy all variables properties */
 
-	[item setName: [self name]];
-	[item setActionHandler: [self actionHandler]];
-	[item setTarget: [self target]];
-	// TODO: To be improved... Not really pretty.
-	[item->_variableProperties setObject: GET_PROPERTY(kETDefaultFrameProperty) 
-	                              forKey: kETDefaultFrameProperty];
+	SET_OBJECT_PROPERTY(item, GET_PROPERTY(kETDefaultFrameProperty),  kETDefaultFrameProperty);
+	SET_OBJECT_PROPERTY(item, GET_PROPERTY(kETNameProperty), kETNameProperty);
+	SET_OBJECT_PROPERTY(item, GET_PROPERTY(kETImageProperty), kETImageProperty);
+	SET_OBJECT_PROPERTY(item, GET_PROPERTY(kETIconProperty), kETIconProperty);
+	SET_OBJECT_PROPERTY(item, GET_PROPERTY(kETSubtypeProperty),  kETSubtypeProperty);
+	SET_OBJECT_PROPERTY(item, GET_PROPERTY(kETActionHandlerProperty), kETActionHandlerProperty);
+	SET_OBJECT_PROPERTY(item, GET_PROPERTY(kETActionProperty), kETActionProperty);
+	SET_OBJECT_PROPERTY(item, GET_PROPERTY(kETTargetProperty), kETTargetProperty);
 	
 	return item;
 }

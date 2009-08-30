@@ -96,8 +96,12 @@ By default, returns NO. */
 - (id) copyWithZone: (NSZone *)aZone
 {
 	ETUIItem *newItem = [super copyWithZone: aZone];
-	[newItem setSupervisorView: AUTORELEASE([[self supervisorView] copyWithZone: aZone])];
-	[newItem setDecoratorItem: AUTORELEASE([[self decoratorItem] copyWithZone: aZone])];
+
+	ASSIGN_AND_RELEASE(newItem->_view, [_view copyWithZone: aZone]);
+	[newItem->_view setLayoutItemWithoutInsertingView: (id)newItem];
+
+	//[newItem setDecoratorItem: AUTORELEASE([_decoratorItem copyWithZone: aZone])];
+
 	return newItem;
 }
 

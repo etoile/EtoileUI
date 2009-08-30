@@ -49,19 +49,34 @@
 #endif
 #define ETLog NSLog
 
-/* Macros to read and write the receiver or local properties without exposing 
-how the properties are stored. The implicit property owner is self. */
-#define SET_PROPERTY(value, property) \
+#define ASSIGN_AND_RELEASE(object, value) \
+	ASSIGN(object, value); \
+	RELEASE(value);
+
+/* Macros to read and write the local properties that belongs the given object 
+without exposing how the properties are stored. */
+#define SET_OBJECT_PROPERTY(object, value, property) \
 	if (value != nil) \
 	{ \
-		[_variableProperties setObject: value forKey: property]; \
+		[object->_variableProperties setObject: value forKey: property]; \
 	} \
 	else \
 	{ \
-		[_variableProperties removeObjectForKey: property]; \
+		[object->_variableProperties removeObjectForKey: property]; \
 	}
-#define GET_PROPERTY(property) [_variableProperties objectForKey: property]
-#define HAS_PROPERTY(property) ([_variableProperties objectForKey: property] != nil)
+#define GET_OBJECT_PROPERTY(object, property) \
+	[object->_variableProperties objectForKey: property]
+#define HAS_OBJECT_PROPERTY(object, property) \
+	([object->_variableProperties objectForKey: property] != nil)
+
+/* Macros to read and write the receiver local properties without exposing 
+how the properties are stored. The implicit property owner is self. */
+#define SET_PROPERTY(value, property) \
+	SET_OBJECT_PROPERTY(self, value, property)
+#define GET_PROPERTY(property) \
+	GET_OBJECT_PROPERTY(self, property)
+#define HAS_PROPERTY(property) \
+	HAS_OBJECT_PROPERTY(self, property)
 
 #define NILARG_EXCEPTION_TEST(arg) \
 	if (arg == nil) \
