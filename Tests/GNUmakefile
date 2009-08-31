@@ -21,6 +21,7 @@ EtoileUITests_OBJC_FILES = \
 	test_ETLayout.m \
 	test_ETInstrument.m \
 	TestCompositeLayout.m \
+	TestItemCopy.m \
 	TestItemGeometry.m \
 
 include $(GNUSTEP_MAKEFILES)/subproject.make

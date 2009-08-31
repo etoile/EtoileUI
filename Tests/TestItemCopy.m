@@ -71,10 +71,8 @@ DEALLOC(DESTROY(itemFactory); DESTROY(item))
 		/* We could use -valueForKey: as well */
 		id value = [aView valueForProperty: property];
 		id copiedValue = [newView valueForProperty: property];
-		if ([value isEqual: copiedValue] == NO)
-		{
-			NSLog(@"Fail!!!");
-		}
+
+		ETLog(@"'%@'", property);
 		UKObjectsEqual(value, copiedValue);
 	}
 }
@@ -100,6 +98,7 @@ DEALLOC(DESTROY(itemFactory); DESTROY(item))
 		id value = [item valueForProperty: property];
 		id copiedValue = [newItem valueForProperty: property];
 
+		ETLog(@"'%@'", property);
 		UKObjectsEqual(value, copiedValue);
 	}
 
@@ -117,9 +116,7 @@ DEALLOC(DESTROY(itemFactory); DESTROY(item))
 	[item setImage: [NSImage imageNamed: @"NSApplicationIcon"]];
 	[item setIcon: [[NSWorkspace sharedWorkspace] iconForFile: @"/"]];
 	[item setRepresentedObject: [NSSet set]];
-	//[item setRepresentedPathBase: @"/my/model/path"];
 	[item setSubtype: [ETUTI typeWithClass: [NSSet class]]];
-	//[item setController: AUTORELEASE([[ETController alloc] init])];
 	[item setTarget: self];
 	[item setAction: @selector(wibble:)];
 	[item setView: AUTORELEASE([[NSButton alloc] init])];
@@ -143,10 +140,7 @@ DEALLOC(DESTROY(itemFactory); DESTROY(item))
 		id value = [item valueForKey: property];
 		id copiedValue = [newItem valueForKey: property];
 
-		if ([value isEqual: copiedValue] == NO)
-		{
-			NSLog(@"Fail!!!");
-		}
+		ETLog(@"'%@'", property);
 		UKObjectsEqual(value, copiedValue);
 	}
 
@@ -162,7 +156,8 @@ DEALLOC(DESTROY(itemFactory); DESTROY(item))
 
 - (void) testEmptyItemGroupCopy
 {
-
+	//[item setRepresentedPathBase: @"/my/model/path"];
+	//[item setController: AUTORELEASE([[ETController alloc] init])];
 }
 
 - (void) testItemGroupCopy
@@ -176,3 +171,4 @@ DEALLOC(DESTROY(itemFactory); DESTROY(item))
 }
 
 @end
+
