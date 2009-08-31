@@ -420,7 +420,7 @@ be reactivated when we exit our owner layout. */
 - (void) endEditingInsideSelection
 {
 	ETDebugLog(@"Restore original target of tool %@ to item %@", self, [[self layoutOwner] layoutContext]);
-	[self setTargetItem: [[self layoutOwner] layoutContext]];
+	[self setTargetItem: (ETLayoutItem *)[[self layoutOwner] layoutContext]];
 }
 
 /** Shows the selection area item in the layout. */

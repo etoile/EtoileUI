@@ -25,6 +25,7 @@
 
 @interface ETInstrument (Private)
 - (BOOL) makeFirstResponder: (id)aResponder inWindow: (NSWindow *)aWindow;
+- (BOOL) performKeyEquivalent: (ETEvent *)anEvent;
 - (void) setHoveredItemStack: (NSMutableArray *)itemStack;
 @end
 
