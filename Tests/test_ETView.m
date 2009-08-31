@@ -104,7 +104,12 @@
 	[item setSupervisorView: view];
 	id parent = [[ETLayoutItemGroup alloc] init];
 
+	/* We create a temporary pool because -addItem: requests a layout update 
+	   and -[ETLayout renderXXX] methods might store items in autoreleased 
+	   collections. */
+	CREATE_AUTORELEASE_POOL(layoutPool2);
 	[parent addItem: item];
+	DESTROY(layoutPool2);
 
 	/* Now parent and [parent superview] retains respectively item and 
 	   [item supervisorView].
@@ -138,8 +143,10 @@
 	[parent setSupervisorView: view1];
 	id ancestor = [ETLayoutItem itemGroup];
 
+	CREATE_AUTORELEASE_POOL(layoutPool3); /* See layoutPool2 comment */
 	[ancestor addItem: parent];	
 	[parent addItem: item]; /* Inserts view2 into view1 */
+	DESTROY(layoutPool3);
 
 	UKIntsEqual(3, [item retainCount]); /* Retained by view2 and parent */
 	UKIntsEqual(3, [view2 retainCount]); /* Retained by item and view1 (parent supervisor view) */
@@ -158,7 +165,12 @@
 	UKIntsEqual(2, [parent retainCount]);
 	UKIntsEqual(2, [view1 retainCount]);
 
-	UKIntsEqual(allocCount + 6, GSDebugAllocationCount([ETLayoutItem class])
+	/* We have 3 items and 3 supervisor views which raises the alloc count to 6.
+	   However both parent and ancestor triggers the allocation of 
+	   -[ETLayout rootItem]. Parent is now released but ancestor isn't yet. 
+	   Which means we must count 7 objects to take in account 
+	   [[ancestor layout] rootItem]. */
+	UKIntsEqual(allocCount + 7, GSDebugAllocationCount([ETLayoutItem class])
 		+ GSDebugAllocationCount([ETLayoutItemGroup class])
 		+ GSDebugAllocationCount([ETView class]));
 
