@@ -13,6 +13,7 @@
 #import <EtoileFoundation/Macros.h>
 #import "ETLayoutItemGroup.h"
 #import "ETController.h"
+#import "ETFixedLayout.h"
 #import "ETFlowLayout.h"
 #import "ETLayoutItem+Factory.h"
 #import "ETLayoutItemGroup+Mutation.h"
@@ -37,6 +38,7 @@ NSString *ETSourceDidUpdateNotification = @"ETSourceDidUpdateNotification";
 
 @interface ETLayoutItemGroup (Private)
 - (void) tryReloadWithSource: (id)aSource;
+- (void) assignLayout: (ETLayout *)aLayout;
 - (BOOL) hasNewLayout;
 - (void) setHasNewLayout: (BOOL)flag;
 - (void) collectSelectionIndexPaths: (NSMutableArray *)indexPaths
@@ -119,7 +121,7 @@ See also +enablesAutolayout. */
 		[self addItems: layoutItems];
 	}
 
-	_layout = nil;
+	[self assignLayout: [ETFixedLayout layout]];
 	ASSIGN(_stackedLayout, [ETFlowLayout layout]);
 	ASSIGN(_unstackedLayout, [ETLineLayout layout]);
 	_isStack = NO;
@@ -254,13 +256,18 @@ The returned copy is mutable because ETLayoutItemGroup cannot be immutable. */
 	return [[super properties] arrayByAddingObjectsFromArray: properties];
 }
 
-/* Finding Container */
-
 /** Returns YES. An ETLayoutItemGroup is always a group and a collection by 
 default. */
 - (BOOL) isGroup
 {
 	return YES;
+}
+
+/** Returns whether the receiver is a root item encaspulated in a layout and 
+invisible in the main layout item tree. */
+- (BOOL) isLayoutOwnedRootItem
+{
+	return ([_parentItem containsItem: self] == NO);
 }
 
 /* Traversing Layout Item Tree */
@@ -980,7 +987,20 @@ the receiver immediate children to the base item source. */
 	return _layout;
 }
 
-/** Sets the layout associated with the receiver to present its content. */
+- (void) assignLayout: (ETLayout *)aLayout
+{
+	NILARG_EXCEPTION_TEST(aLayout)
+
+	[_layout setLayoutContext: nil]; /* Ensures -[ETLayout tearDown] is called */
+	ASSIGN(_layout, aLayout);
+	[self setHasNewLayout: YES];
+	[aLayout setLayoutContext: self];
+}
+
+/** Sets the layout associated with the receiver to present its content.
+
+The given layout must not be nil otherwise an NSInvalidArgumentException is 
+raised. */
 - (void) setLayout: (ETLayout *)layout
 {
 	if (_layout == layout)
@@ -995,11 +1015,7 @@ the receiver immediate children to the base item source. */
 	   view/container frame modification on layout view insertion */
 	[self setAutolayout: NO];
 	
-	[_layout setLayoutContext: nil]; /* Ensures -[ETLayout tearDown] is called */
-	ASSIGN(_layout, layout);
-	[self setHasNewLayout: YES];
-	[layout setLayoutContext: self];
-
+	[self assignLayout: layout];
 	[self didChangeLayout: oldLayout];
 	RELEASE(oldLayout);
 	

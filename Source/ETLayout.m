@@ -821,7 +821,20 @@ on screen is really a composite between the main item tree which owns the layout
 context and the tree rooted in -rootItem. */
 - (ETLayoutItemGroup *) rootItem
 {
-	if (_rootItem == nil)
+	/* A layout set on a root item encapsulated in a layout must have no root 
+	   item otherwise -[ETLayout rootItem] results in an endless recursion:
+	   -[ETFixedLayout rootItem]
+	   -[ETFixedLayout mapRootItemInLayoutContext]
+	   -[ETFixedLayout setUp]
+	   -[ETFixedLayout setLayoutContext:]
+	   -[ETLayoutItemGroup init]
+	   -[ETFixedLayout rootItem]
+	   -[ETFixedLayout mapRootItemInLayoutContext]
+	   -[ETFixedLayout setUp]
+	   -[ETFixedLayout setLayoutContext:]
+	   -[ETLayoutItemGroup init]
+	   That's why we check -isLayoutOwnedRootItem. */
+	if (_rootItem == nil && [_layoutContext isLayoutOwnedRootItem] == NO)
 	{
 		_rootItem = [[ETLayoutItemGroup alloc] init];
 		[_rootItem setActionHandler: nil];
@@ -841,6 +854,9 @@ to be identical to the layout context. */
 
 - (void) mapRootItemIntoLayoutContext
 {
+	if ([self rootItem] == nil)
+		return;
+
 	ETLayoutItemGroup *layoutContext = (ETLayoutItemGroup *)[self layoutContext];
 
 	/* We don't insert the root item in the layout context, because we don't 

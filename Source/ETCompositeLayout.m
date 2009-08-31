@@ -297,6 +297,12 @@ in -handleAddXXX which will then invoke [[B representedObject] addObject: bla]. 
 		return;
 
 	[self moveContentFromItem: [self firstPresentationItem] toItem: _layoutContext];
+	/* We keep the represented path base on the layout context in 
+	   -prepareNewContextState (-makeItemStatic: lets the property as is), hence 
+	   the previous line won't nullify it on the presentation proxy. 
+	   To reset the represented path base to nil isn't required though. We do it  
+	   to restore the presentation proxy exactly as it was initially. */
+	[[self firstPresentationItem] setRepresentedPathBase: nil];
 }
 
 /* Layouting */

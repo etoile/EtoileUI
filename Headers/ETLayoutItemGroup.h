@@ -49,6 +49,8 @@
 - (id) initWithItems: (NSArray *)layoutItems view: (NSView *)view 
 	value: (id)value representedObject: (id)repObject;
 
+- (BOOL) isLayoutOwnedRootItem;
+
 /* Traversing Layout Item Tree */
 
 - (NSString *) pathForIndexPath: (NSIndexPath *)path;

@@ -12,6 +12,7 @@
 #import <EtoileFoundation/Macros.h>
 #import <EtoileFoundation/ETCollection+HOM.h>
 #import "ETCompositeLayout.h"
+#import "ETFixedLayout.h"
 #import "ETGeometry.h"
 #import "ETLayout.h"
 #import "ETLayoutItem.h"
@@ -98,12 +99,13 @@ DEALLOC(DESTROY(itemFactory); DESTROY(item))
 - (void) testRestoreContextStateWithStaticItemTree
 {
 	NSArray *content = A([itemFactory verticalSlider], [itemFactory oval], [itemFactory textField]);
+	ETCompositeLayout *compositeLayout = [self createLayout];
 
 	[item addItems: content];
-	[item setLayout: [self createLayout]];
-	[item setLayout: nil];
+	[item setLayout: compositeLayout];
+	[item setLayout: [ETFixedLayout layout]];
 
-	ETLayoutItemGroup *proxyItem = [(id)[item layout] firstPresentationItem];
+	ETLayoutItemGroup *proxyItem = [compositeLayout firstPresentationItem];
 	// TODO: May be we should ensure that UKTrue([proxyItem isEmpty]);
 	UKNil([proxyItem source]);
 	UKNil([proxyItem representedObject]);
@@ -135,12 +137,14 @@ DEALLOC(DESTROY(itemFactory); DESTROY(item))
 
 - (void) testRestoreContextStateWithRepresentedObjectProvider
 {
+	ETCompositeLayout *compositeLayout = [self createLayout];
+
 	[item setRepresentedObject: [self modelContent]];
 	[item setSource: item];
-	[item setLayout: [self createLayout]];
-	[item setLayout: nil];
+	[item setLayout: compositeLayout];
+	[item setLayout: [ETFixedLayout layout]];
 
-	ETLayoutItemGroup *proxyItem = [(id)[item layout] firstPresentationItem];
+	ETLayoutItemGroup *proxyItem = [compositeLayout firstPresentationItem];
 	// TODO: May be we should ensure that UKTrue([proxyItem isEmpty]);
 	UKNil([proxyItem source]);
 	UKNil([proxyItem representedObject]);
@@ -182,12 +186,14 @@ DEALLOC(DESTROY(itemFactory); DESTROY(item))
 
 - (void) testRestoreContextStateWithSourceProvider
 {
+	ETCompositeLayout *compositeLayout = [self createLayout];
+
 	[item setRepresentedPathBase: @"/whatever/bla"];
 	[item setSource: self];
-	[item setLayout: [self createLayout]];
-	[item setLayout: nil];
+	[item setLayout: compositeLayout];
+	[item setLayout: [ETFixedLayout layout]];
 
-	ETLayoutItemGroup *proxyItem = [(id)[item layout] firstPresentationItem];
+	ETLayoutItemGroup *proxyItem = [compositeLayout firstPresentationItem];
 	// TODO: May be we should ensure that UKTrue([proxyItem isEmpty]);
 	UKNil([proxyItem source]);
 	UKNil([proxyItem representedObject]);
