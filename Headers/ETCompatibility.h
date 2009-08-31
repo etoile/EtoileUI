@@ -69,6 +69,10 @@ without exposing how the properties are stored. */
 #define HAS_OBJECT_PROPERTY(object, property) \
 	([object->_variableProperties objectForKey: property] != nil)
 
+#define SET_OBJECT_PROPERTY_AND_RELEASE(object, value, property) \
+	SET_OBJECT_PROPERTY(object, value, property); \
+	RELEASE(value);
+
 /* Macros to read and write the receiver local properties without exposing 
 how the properties are stored. The implicit property owner is self. */
 #define SET_PROPERTY(value, property) \

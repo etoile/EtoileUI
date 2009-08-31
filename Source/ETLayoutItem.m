@@ -230,19 +230,21 @@ Default values won't be copied. */
 	// the related objects (supervisor view, decorator etc.) are in a valid and 
 	// well synchronized state at copy time.
 	// -[ETUIItem copyWithZone:] copies the supervisor view and its subviews
+	
+	/* We copy all object ivars except _parentItem */
+
+	[item setRepresentedObject: [self representedObject]]; /* Will set up the observer */
+	/* We set the style in the copy by copying the style group */
+	item->_styleGroup = [_styleGroup copyWithZone: aZone];
+	item->_transform = [_transform copyWithZone: aZone];
 
 	/* We copy every primitive ivars except _isSyncingSupervisorViewGeometry */
 
 	item->_contentBounds = _contentBounds;
-	if (ETIsNullPoint([self anchorPoint]) == NO)
-	{
-		/* anchorPoint must be initialized before position but after contentBounds.
-		   position must be initialized after anchorPoint.
-		   NOTE: anchorPoint is a variable property. */
-		[item setAnchorPoint: [self anchorPoint]];
-	}
+	/* anchorPoint must be initialized before position but after contentBounds.
+	   position must be initialized after anchorPoint. */
+	SET_OBJECT_PROPERTY(item, GET_PROPERTY(kETAnchorPointProperty), kETAnchorPointProperty);
 	item->_position = _position;
-	item->_transform = [_transform copyWithZone: aZone];
 	/* Will be overriden by -setView: when the view is not nil */	
 	item->_autoresizingMask = _autoresizingMask;
 	item->_boundingBox = _boundingBox;
@@ -251,16 +253,10 @@ Default values won't be copied. */
 	item->_visible = _visible;
 	item->_contentAspect = _contentAspect;
 	item->_scrollViewShown = _scrollViewShown;
-	
-	/* We copy all object ivars except _parentItem */
-
-	[item setRepresentedObject: [self representedObject]]; /* Will set up the observer */
-	[item setValue: AUTORELEASE([[self value] copyWithZone: aZone])];
-	/* We set the style in the copy by copying the style group */
-	[item setStyleGroup: AUTORELEASE([[self styleGroup] copyWithZone: aZone])];
 
 	/* We copy all variables properties */
 
+	SET_OBJECT_PROPERTY_AND_RELEASE(item, [GET_PROPERTY(kETValueProperty) copyWithZone: aZone], kETValueProperty);
 	SET_OBJECT_PROPERTY(item, GET_PROPERTY(kETDefaultFrameProperty),  kETDefaultFrameProperty);
 	SET_OBJECT_PROPERTY(item, GET_PROPERTY(kETNameProperty), kETNameProperty);
 	SET_OBJECT_PROPERTY(item, GET_PROPERTY(kETImageProperty), kETImageProperty);
