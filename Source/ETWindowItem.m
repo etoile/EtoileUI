@@ -99,7 +99,7 @@ If window is nil, the receiver will create a standard window. */
 - (NSInvocation *) initInvocationForCopyWithZone: (NSZone *)aZone
 {
 	NSWindow *windowCopy = [_itemWindow copyWithZone: aZone];
-	NSInvocation *inv = [NSInvocation invocationWithTarget: nil 
+	NSInvocation *inv = [NSInvocation invocationWithTarget: self
 	                                              selector: @selector(initWithWindow:)
                                                  arguments: A(windowCopy)];
 	RELEASE(windowCopy); // NOTE: We don't autorelease to simplify debugging.
