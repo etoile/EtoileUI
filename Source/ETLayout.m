@@ -834,7 +834,7 @@ context and the tree rooted in -rootItem. */
 	   -[ETFixedLayout setLayoutContext:]
 	   -[ETLayoutItemGroup init]
 	   That's why we check -isLayoutOwnedRootItem. */
-	if (_rootItem == nil && [_layoutContext isLayoutOwnedRootItem] == NO)
+	if (_rootItem == nil && [[_layoutContext rootItem] isLayoutOwnedRootItem] == NO)
 	{
 		_rootItem = [[ETLayoutItemGroup alloc] init];
 		[_rootItem setActionHandler: nil];
