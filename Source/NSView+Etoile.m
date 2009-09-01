@@ -322,6 +322,38 @@ also copied, in other words the new object is a deep copy of the receiver. */
 	return [self snapshot];
 }
 
+#ifdef GNUSTEP
+- (void) setSubviews: (NSArray *)subviews
+{
+	NSUInteger oldCount = [_sub_views count];
+	NSUInteger newCount = [subviews count];
+	NSUInteger maxCount = MAX(oldCount, newCount);
+	NSUInteger i;
+
+	for (i = 0; i < maxCount; i++)
+	{
+		if (i < oldCount && i < newCount)
+		{
+			NSView *existingSubview = [_sub_views objectAtIndex: i];
+			NSView *newSubview = [subviews objectAtIndex: i];
+
+			if (existingSubview != newSubview)
+			{
+				[self replaceSubview: existingSubview with: newSubview]; 
+			}
+		}
+		else if (i < oldCount) /* i >= newCount */
+		{
+			[self removeSubview: [_sub_views objectAtIndex: i]]; 
+		}
+		else if (i < newCount) /* i >= oldCount */
+		{
+			[self addSubview: [subviews objectAtIndex: i]];
+		}
+	}
+}
+#endif
+
 @end
 
 @implementation NSScrollView (Etoile)

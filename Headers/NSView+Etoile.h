@@ -64,6 +64,10 @@
 - (NSImage *) snapshot;
 - (NSImage *) icon;
 
+#ifdef GNUSTEP
+- (void) setSubviews: (NSArray *)subviews;
+#endif
+
 @end
 
 @interface NSScrollView (Etoile)
