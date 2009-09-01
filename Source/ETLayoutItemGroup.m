@@ -196,12 +196,10 @@ The returned copy is mutable because ETLayoutItemGroup cannot be immutable. */
 	ETLayoutItemGroup *item = [super copyWithZone: aZone];
 
 	ASSIGN(item->_layoutItems, childItems);
-	
-	/* We copy all object ivars except _stackedLayout, _unstackedLayout, 
-      _reloading, and _layoutItems whose copying is delegated to -deepCopyWithZone: */
-
-	
 	[item setLayout: AUTORELEASE([_layout copyWithZone: aZone])];
+
+	/* We copy all primitive ivars except _reloading */
+
 	item->_doubleClickAction = _doubleClickAction;
 	item->_isStack = _isStack; 
 	/* Must follow -setLayout: to ensure autolayout is disabled in the copy when -setLayout: is called */
@@ -213,9 +211,10 @@ The returned copy is mutable because ETLayoutItemGroup cannot be immutable. */
 	item->_sorted = _sorted;
 	item->_filtered = _filtered;
 
-	/* We copy all variables properties */
+	/* We copy all object ivars except _stackedLayout, _unstackedLayout and 
+	   _layoutItems whose copying is delegated to -deepCopyWithZone: */
 
-	[item setRepresentedPathBase: [self representedPathBase]];
+	/* -setSource: will set up the observer */
 	if ([self usesRepresentedObjectAsProvider])
 	{
 		[item setSource: item];
@@ -224,9 +223,14 @@ The returned copy is mutable because ETLayoutItemGroup cannot be immutable. */
 	{
 		[item setSource: [self source]];
 	}
+	/* -setController will set the controller content */
 	[item setController: [self controller]];
-	[item setDelegate: [self delegate]];
-	[item setItemScaleFactor: [self itemScaleFactor]];
+
+	/* We copy all variables properties */
+
+	SET_OBJECT_PROPERTY(item, GET_PROPERTY(kETDelegateProperty), kETDelegateProperty);
+	SET_OBJECT_PROPERTY(item, GET_PROPERTY(kETRepresentedPathBaseProperty), kETRepresentedPathBaseProperty);
+	SET_OBJECT_PROPERTY(item, GET_PROPERTY(kETItemScaleFactorProperty), kETItemScaleFactorProperty);
 
 	return item;
 }
@@ -238,7 +242,7 @@ The returned copy is mutable because ETLayoutItemGroup cannot be immutable. */
 
 - (id) deepCopyWithZone: (NSZone *)aZone
 {
-	NSArray *copiedChildItems = [[_layoutItems map] deepCopyWithZone: aZone];
+	NSArray *copiedChildItems = [[_layoutItems mappedCollection] deepCopyWithZone: aZone];
 	ETLayoutItemGroup *item = [self copyWithZone: aZone items: [NSMutableArray arrayWithArray: copiedChildItems]];
 
 	[copiedChildItems makeObjectsPerformSelector: @selector(release)];

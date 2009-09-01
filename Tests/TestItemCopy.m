@@ -120,6 +120,8 @@ DEALLOC(DESTROY(itemFactory); DESTROY(item))
 	[item setTarget: self];
 	[item setAction: @selector(wibble:)];
 	[item setView: AUTORELEASE([[NSButton alloc] init])];
+	[item setDecoratorItem: [ETDecoratorItem itemWithDummySupervisorView]];
+	//[[item decoratorItem] setDecoratorItem: [ETWindowItem item]];
 
 	NSArray *properties = [self checkablePropertiesForItem: item];
 	NSArray *nilProperties = A(kETRepresentedPathBaseProperty);
@@ -144,8 +146,11 @@ DEALLOC(DESTROY(itemFactory); DESTROY(item))
 		UKObjectsEqual(value, copiedValue);
 	}
 
-	UKNil([newItem decoratorItem]);
 	UKNil([newItem decoratedItem]);
+	UKNotNil([newItem decoratorItem]);
+	UKNotNil([[newItem decoratorItem] decoratedItem]);
+	/*UKNotNil([[newItem decoratorItem] decoratorItem]);
+	UKNotNil([[[newItem decoratorItem] decoratorItem] decoratedItem]);*/
 	UKObjectsEqual([[newItem supervisorView] class], [[item supervisorView] class]);
 	UKNil([newItem parentItem]);
 	// TODO: Set a layout and UKNotNil([newItem layout]);

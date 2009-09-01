@@ -49,10 +49,6 @@
 #endif
 #define ETLog NSLog
 
-#define ASSIGN_AND_RELEASE(object, value) \
-	ASSIGN(object, value); \
-	RELEASE(value);
-
 /* Macros to read and write the local properties that belongs the given object 
 without exposing how the properties are stored. */
 #define SET_OBJECT_PROPERTY(object, value, property) \
@@ -70,8 +66,12 @@ without exposing how the properties are stored. */
 	([object->_variableProperties objectForKey: property] != nil)
 
 #define SET_OBJECT_PROPERTY_AND_RELEASE(object, value, property) \
-	SET_OBJECT_PROPERTY(object, value, property); \
-	RELEASE(value);
+do { \
+	id __val = value; \
+	SET_OBJECT_PROPERTY(object, __val, property); \
+	RELEASE(__val); \
+} while (0)
+
 
 /* Macros to read and write the receiver local properties without exposing 
 how the properties are stored. The implicit property owner is self. */

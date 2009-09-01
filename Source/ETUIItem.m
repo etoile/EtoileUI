@@ -96,11 +96,22 @@ By default, returns NO. */
 - (id) copyWithZone: (NSZone *)aZone
 {
 	ETUIItem *newItem = [super copyWithZone: aZone];
+	ETDecoratorItem *decorator = _decoratorItem;
 
-	ASSIGN_AND_RELEASE(newItem->_view, [_view copyWithZone: aZone]);
+	RETAIN(decorator);
+	[self setDecoratorItem: nil];
+
+	newItem->_view = [_view copyWithZone: aZone]; // -release?
 	[newItem->_view setLayoutItemWithoutInsertingView: (id)newItem];
 
-	//[newItem setDecoratorItem: AUTORELEASE([_decoratorItem copyWithZone: aZone])];
+	newItem->_decoratorItem = [decorator copyWithZone: aZone];
+	[newItem->_decoratorItem setDecoratedItem: newItem];
+	[newItem->_decoratorItem handleDecorateItem: newItem 
+	                             supervisorView: [newItem supervisorView] 
+	                                     inView: nil];
+
+	[self setDecoratorItem: decorator];
+	RELEASE(decorator);
 
 	return newItem;
 }
