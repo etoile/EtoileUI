@@ -56,17 +56,17 @@ The content view and its whole subview tree is not copied, in other words the
 new object is a shallow copy of the receiver.*/
 - (id) copyWithZone: (NSZone *)zone
 {
-	NSView *contentView = RETAIN([self contentView]);
+	// NOTE: For NSWindow, NSCoding is not supported on Mac OS X 
+	NSRect contentRect = [self contentRectForFrameRect: [self frame]];
+	NSWindow *windowCopy = [[NSWindow alloc] initWithContentRect: contentRect
+	                                                   styleMask: [self styleMask] 
+	                                                     backing: [self backingType] 
+	                                                       defer: NO];
 
-	[self setContentView: nil];
+	// FIXME: Copy more NSWindow properties (probably not all but at least the 
+	// subet that matters in our case).
 
-	NSData *windowData = [NSKeyedArchiver archivedDataWithRootObject: self];
-	NSWindow *windowCopy = [NSKeyedUnarchiver unarchiveObjectWithData: windowData];
-
-	[self setContentView: contentView];
-	RELEASE(contentView);
-
-	return RETAIN(windowCopy);
+	return windowCopy;
 }
 
 - (void) setFrameSizeFromTopLeft: (NSSize)size
