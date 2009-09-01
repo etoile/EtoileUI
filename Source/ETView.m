@@ -186,10 +186,25 @@ The returned view copies are shallow copies that don't include subviews unlike
 A temporary view set on the receiver won't be copied. */
 - (id) copyWithZone: (NSZone *)aZone
 {
+	/* -subviews doesn't return a defensive copy on Cocoa unlike GNUstep */
+	NSArray *existingSubviews = [NSArray arrayWithArray: [self subviews]];
+	NSArray *copiableSubviews = A(_wrappedView);
+
+	// TODO: This might be very costly and require optimizations (e.g. when 
+	// the only subview is the wrapped view)
+	[self setSubviews: copiableSubviews];
+
 	ETView *newView = [super copyWithZone: aZone];
 
+	// TODO: May be we can bypass -setWrappedView:
 	[newView setWrappedView: [[self wrappedView] copyWithZone: aZone]];
+	/* We copy the flipping manually because it isn't encoded by the NSView 
+	   archiving.
+	   We use -setFlipped: because we have to mark the coordinates to be rebuilt 
+	   on GNUstep. */
 	[newView setFlipped: [self isFlipped]];
+
+	[self setSubviews: existingSubviews];
 
 	return newView;
 }
