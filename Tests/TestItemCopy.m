@@ -19,6 +19,7 @@
 #import "ETLayoutItemGroup.h"
 #import "EtoileUIProperties.h"
 #import "ETScrollableAreaItem.h"
+#import "ETTableLayout.h"
 #import "ETUIItem.h"
 #import "ETUIItemFactory.h"
 #import "ETWindowItem.h"
@@ -222,6 +223,8 @@ DEALLOC(DESTROY(itemFactory); DESTROY(item); DESTROY(itemGroup))
 	[itemGroup setController: AUTORELEASE([[ETController alloc] init])];
 	[itemGroup setDelegate: self];
 	[itemGroup setDoubleAction: @selector(boum:)];
+	
+	[itemGroup setLayout: [ETTableLayout layout]];
 
 	ETLayoutItemGroup *newItemGroup = [itemGroup copy];
 
@@ -229,6 +232,11 @@ DEALLOC(DESTROY(itemFactory); DESTROY(item); DESTROY(itemGroup))
 	NSArray *nilProperties = A(kETDoubleClickedItemProperty);
 	NSArray *equalProperties = [properties arrayByRemovingObjectsInArray: 
 		[[self nonEqualItemGroupProperties] arrayByAddingObjectsFromArray: nilProperties]];
+
+	// FIXME: -hasVerticallScroller automatically creates a cached scrollable
+	// area item and is called -[ETWidgetLayout syncLayoutViewWithItem:].
+	// -hasVerticalScroller should just return NO in this case.
+	equalProperties = [equalProperties arrayByRemovingObjectsInArray: A(@"cachedScrollViewDecoratorItem")];
 
 	FOREACH(equalProperties, property, NSString *)
 	{
@@ -243,6 +251,9 @@ DEALLOC(DESTROY(itemFactory); DESTROY(item); DESTROY(itemGroup))
 	}
 
 	UKObjectsEqual(newItemGroup, [[newItemGroup layout] layoutContext]);
+	UKObjectsNotEqual([[itemGroup layout] layoutView], [[newItemGroup layout] layoutView]);
+	UKObjectsEqual([[newItemGroup supervisorView] contentView], [[newItemGroup layout] layoutView]);
+	UKObjectsEqual([newItemGroup supervisorView], [[[newItemGroup layout] layoutView] superview]);
 }
 
 - (void) testBasicItemGroupCopy
