@@ -104,11 +104,13 @@ By default, returns NO. */
 	newItem->_view = [_view copyWithZone: aZone]; // -release?
 	[newItem->_view setLayoutItemWithoutInsertingView: (id)newItem];
 
-	newItem->_decoratorItem = [decorator copyWithZone: aZone];
-	[newItem->_decoratorItem setDecoratedItem: newItem];
-	[newItem->_decoratorItem handleDecorateItem: newItem 
-	                             supervisorView: [newItem supervisorView] 
-	                                     inView: nil];
+	// NOTE: The decorator set up below must mirror -setDecoratorItem:.
+	ETDecoratorItem *decoratorCopy = [decorator copyWithZone: aZone];
+	[decoratorCopy handleDecorateItem: newItem 
+	                   supervisorView: [newItem supervisorView] 
+	                           inView: nil];
+	[decoratorCopy setDecoratedItem: newItem];
+	newItem->_decoratorItem = decoratorCopy;
 
 	[self setDecoratorItem: decorator];
 	RELEASE(decorator);
@@ -299,19 +301,28 @@ model graph and remains semantic. */
 	RETAIN(existingDecorator);
 	RETAIN(decorator);
 
-	ASSIGN(_decoratorItem, decorator);
-
 	/* Dismantle existing decorator */
+	ASSIGN(_decoratorItem, nil);
 	[existingDecorator setDecoratedItem: nil];
 	[existingDecorator handleUndecorateItem: self 
 	                         supervisorView: [self supervisorView]
 	                                 inView: parentView];
 	/* Set up new decorator */
 	[decorator setFlipped: [self isFlipped]];
-	[decorator setDecoratedItem: self];
 	[decorator handleDecorateItem: self
 	               supervisorView: [self supervisorView]
 	                       inView: parentView];
+	// NOTE: We disconnect decorator and decorated item as early as 
+	// possible and we reconnect them as late as possible to prevent any 
+	// accidental synchronization to be propagated through the decorator 
+	// chain which might be in an invalid state between the two ASSIGN. 
+	// e.g. a decorated item whose supervisor isn't yet inserted 
+	// in its decorator item supervisor view and at the same time an 
+	// unexpected frame change on the decorated item or its supervisor view  
+	// that triggers -decoratedItemRectChanged:... -visibleContentRect 
+	// could then wrongly return a zero rect.
+	[decorator setDecoratedItem: self];
+	ASSIGN(_decoratorItem, decorator);
 
 	/* When a decorator view has been resized, moved or removed, we must reflect
 	   it on the decorated view which may not have been resized.
