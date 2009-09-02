@@ -403,26 +403,63 @@ installed by the layout. */
 	return _temporaryView;
 }
 
+- (void) checkViewHierarchyValidity
+{
+	if (_wrappedView != nil)
+	{
+		NSAssert1([[_wrappedView superview] isEqual: self], @"The wrapped view"
+			"%@ has been wrongly moved to a superview without first removing "
+			"it explicitely with -[ETLayoutItem setView: nil] or "
+			"-[ETView setWrappedView: nil]", _wrappedView);
+	}
+	if (_temporaryView != nil)
+	{
+		NSAssert1([[_temporaryView superview] isEqual: self], @"The temporary view"
+			"%@ has been wrongly moved to a superview without first removing "
+			"it explicitely with -[ETLayoutItem setLayoutView: nil] or "
+			"-[ETView setTemporaryView: nil]", _temporaryView);
+	}
+}
+
+/* Not really costly since aView is expected to have no superview normally. */
+- (BOOL) hasSupervisorViewAncestor: (NSView *)aView
+{
+	NSView *ancestorView = [aView superview];
+
+	while (nil != ancestorView)
+	{
+		if ([ancestorView isSupervisorView])
+			return YES;
+
+		ancestorView = [ancestorView superview];
+	}
+
+	return NO;
+}
+
 /** This method is only exposed to be used internally by EtoileUI. 
 
 You must override this method in subclasses. */
 - (void) setContentView: (NSView *)view temporary: (BOOL)temporary
 {
+	[self checkViewHierarchyValidity];
+
+	if (view != nil && [[self layoutItem] isDecoratorItem] == NO)
+	{
+		NSString *selSubstring = (temporary ? @"Temporary" : @"Wrapped");
+
+		NSAssert2([self hasSupervisorViewAncestor: view] == NO, @"You must not move "
+			"view %@ to a new superview without first removing it explicitely "
+			"with -[ETLayoutItem setView: nil] or -[ETView set%@View: nil]", 
+			view, selSubstring);
+	}
+
 	/* Reset the content view frame to fill the receiver */
 	[view setFrameOrigin: NSZeroPoint];
 	[view setFrameSize: [self frame].size];
 
 	/* Ensure the resizing of all subviews is handled automatically */
 	[self setAutoresizesSubviews: YES];
-
-	if ([self wrappedView] != nil)
-	{
-		NSAssert1([[self wrappedView] isDescendantOf: self], @"You must not "
-			"move view %@ to a superview without first removing it explicitely "
-			"with -[ETLayoutItem setView: nil] or -[ETView setWrappedView: nil]", 
-			[self wrappedView]);
-		[[self wrappedView] removeFromSuperview];
-	}
 
 	if (temporary) /* Temporary view setter */
 	{
@@ -451,6 +488,7 @@ You must override this method in subclasses. */
 		{
 			/* Restore autoresizing mask */
 			//[[self wrappedView] setAutoresizingMask: [self autoresizingMask]];
+			[[self wrappedView] removeFromSuperview];
 		}
 	}
 }
