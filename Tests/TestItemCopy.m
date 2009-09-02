@@ -12,6 +12,7 @@
 #import <EtoileFoundation/ETUTI.h>
 #import <EtoileFoundation/Macros.h>
 #import <EtoileFoundation/NSObject+Model.h>
+#import "ETController.h"
 #import "ETDecoratorItem.h"
 #import "ETGeometry.h"
 #import "ETLayoutItem.h"
@@ -23,11 +24,15 @@
 #import "ETWindowItem.h"
 #import "ETCompatibility.h"
 
+@interface ETDecoratorItem (TestItemGeometry)
++ (ETDecoratorItem *) itemWithDummySupervisorView;
+@end
 
 @interface TestItemCopy: NSObject <UKTest>
 {
 	ETUIItemFactory *itemFactory;
 	ETLayoutItem *item;
+	ETLayoutItemGroup *itemGroup;
 }
 
 @end
@@ -39,10 +44,11 @@
 	SUPERINIT
 	ASSIGN(itemFactory, [ETUIItemFactory factory]);
 	item = [[ETLayoutItem alloc] init];
+	itemGroup = [[ETLayoutItemGroup alloc] init];
 	return self;
 }
 
-DEALLOC(DESTROY(itemFactory); DESTROY(item))
+DEALLOC(DESTROY(itemFactory); DESTROY(item); DESTROY(itemGroup))
 
 - (NSArray *) nonCheckablePropertiesForAnyObject
 {
@@ -77,18 +83,27 @@ DEALLOC(DESTROY(itemFactory); DESTROY(item))
 	}
 }
 
+- (NSArray *) defaultNilItemProperties
+{
+	return A(kETNameProperty, kETIconProperty, kETImageProperty,
+		kETRepresentedObjectProperty, kETRepresentedPathBaseProperty, 
+		kETSubtypeProperty, kETActionProperty, kETTargetProperty);
+}
+
+- (NSArray *) nonEqualItemProperties
+{
+	return A(kETDisplayNameProperty, kETDecoratorItemProperty, 
+		kETDecoratedItemProperty, @"firstDecoratedItem", @"lastDecoratorItem", 
+		@"enclosingItem", @"supervisorView", kETViewProperty, 
+		kETParentItemProperty, kETStyleGroupProperty, kETLayoutProperty);
+}
+
 - (void) testBasicItemCopy
 {
 	NSArray *properties = [self checkablePropertiesForItem: item];
-	NSArray *nilProperties = A(kETNameProperty, kETIconProperty, kETImageProperty,
-		kETRepresentedObjectProperty, kETRepresentedPathBaseProperty, 
-		kETSubtypeProperty, kETActionProperty, kETTargetProperty);
-	NSArray *nonEqualProperties = A(kETDisplayNameProperty, 
-		kETDecoratorItemProperty, kETDecoratedItemProperty, @"firstDecoratedItem", 
-		@"lastDecoratorItem", @"enclosingItem", @"supervisorView", kETViewProperty,
-		kETParentItemProperty, kETStyleGroupProperty, kETLayoutProperty);
+	NSArray *nilProperties = [self defaultNilItemProperties];
 	NSArray *equalProperties = [properties arrayByRemovingObjectsInArray: 
-		[nonEqualProperties arrayByAddingObjectsFromArray: nilProperties]];
+		[[self nonEqualItemProperties] arrayByAddingObjectsFromArray: nilProperties]];
 
 	ETLayoutItem *newItem = [item copy];
 
@@ -125,12 +140,8 @@ DEALLOC(DESTROY(itemFactory); DESTROY(item))
 
 	NSArray *properties = [self checkablePropertiesForItem: item];
 	NSArray *nilProperties = A(kETRepresentedPathBaseProperty);
-	NSArray *nonEqualProperties = A(kETDisplayNameProperty, 
-		kETDecoratorItemProperty, kETDecoratedItemProperty, @"firstDecoratedItem", 
-		@"lastDecoratorItem", @"enclosingItem", @"supervisorView", kETViewProperty,
-		kETParentItemProperty, kETStyleGroupProperty, kETLayoutProperty);
 	NSArray *equalProperties = [properties arrayByRemovingObjectsInArray: 
-		[nonEqualProperties arrayByAddingObjectsFromArray: nilProperties]];
+		[[self nonEqualItemProperties] arrayByAddingObjectsFromArray: nilProperties]];
 
 	ETLayoutItem *newItem = [item copy];
 
@@ -159,15 +170,86 @@ DEALLOC(DESTROY(itemFactory); DESTROY(item))
 	[self checkViewCopy: [newItem supervisorView] ofView: [item supervisorView]];
 }
 
-- (void) testEmptyItemGroupCopy
+- (NSArray *) defaultNilItemGroupProperties
 {
-	//[item setRepresentedPathBase: @"/my/model/path"];
-	//[item setController: AUTORELEASE([[ETController alloc] init])];
+	return [[self defaultNilItemProperties] arrayByAddingObjectsFromArray:
+		A(kETDelegateProperty, kETSourceProperty, kETDoubleClickedItemProperty)];
 }
 
-- (void) testItemGroupCopy
+- (NSArray *) nonEqualItemGroupProperties
 {
+	return [self nonEqualItemProperties];
+}
 
+- (void) testEmptyBasicItemGroupCopy
+{
+	ETLayoutItemGroup *newItemGroup = [itemGroup copy];
+
+	NSArray *properties = [self checkablePropertiesForItem: itemGroup];
+	NSArray *nilProperties = [self defaultNilItemGroupProperties];
+	NSArray *equalProperties = [properties arrayByRemovingObjectsInArray: 
+		[[self nonEqualItemGroupProperties] arrayByAddingObjectsFromArray: nilProperties]];
+
+	FOREACH(equalProperties, property, NSString *)
+	{
+		/* We don't want to check the properties on the represented object but 
+		   on the item itself, so we must use -valueForKey: which has no custom 
+		   lookup policy on the represented object unlike -valueForProperty:. */
+		id value = [itemGroup valueForKey: property];
+		id copiedValue = [newItemGroup valueForKey: property];
+
+		ETLog(@"'%@'", property);
+		UKObjectsEqual(value, copiedValue);
+	}
+
+	UKObjectsEqual(newItemGroup, [[newItemGroup layout] layoutContext]);
+}
+
+- (void) testEmptyItemGroupCopy
+{
+	[itemGroup setName: @"Whatever"];
+	[itemGroup setImage: [NSImage imageNamed: @"NSApplicationIcon"]];
+	[itemGroup setIcon: [[NSWorkspace sharedWorkspace] iconForFile: @"/"]];
+	[itemGroup setRepresentedObject: [NSSet set]];
+	[itemGroup setSubtype: [ETUTI typeWithClass: [NSSet class]]];
+	[itemGroup setTarget: self];
+	[itemGroup setAction: @selector(wibble:)];
+	[itemGroup setView: AUTORELEASE([[NSButton alloc] init])];
+	[itemGroup setDecoratorItem: [ETDecoratorItem itemWithDummySupervisorView]];
+
+	[itemGroup setRepresentedPathBase: @"/my/model/path"];
+	[itemGroup setSource: self];
+	[itemGroup setController: AUTORELEASE([[ETController alloc] init])];
+	[itemGroup setDelegate: self];
+	[itemGroup setDoubleAction: @selector(boum:)];
+
+	ETLayoutItemGroup *newItemGroup = [itemGroup copy];
+
+	NSArray *properties = [self checkablePropertiesForItem: itemGroup];
+	NSArray *nilProperties = A(kETDoubleClickedItemProperty);
+	NSArray *equalProperties = [properties arrayByRemovingObjectsInArray: 
+		[[self nonEqualItemGroupProperties] arrayByAddingObjectsFromArray: nilProperties]];
+
+	FOREACH(equalProperties, property, NSString *)
+	{
+		/* We don't want to check the properties on the represented object but 
+		   on the item itself, so we must use -valueForKey: which has no custom 
+		   lookup policy on the represented object unlike -valueForProperty:. */
+		id value = [itemGroup valueForKey: property];
+		id copiedValue = [newItemGroup valueForKey: property];
+
+		ETLog(@"'%@'", property);
+		UKObjectsEqual(value, copiedValue);
+	}
+
+	UKObjectsEqual(newItemGroup, [[newItemGroup layout] layoutContext]);
+}
+
+- (void) testBasicItemGroupCopy
+{
+	[itemGroup addItem: item];
+
+	ETLayoutItemGroup *newItemGroup = [itemGroup copy];
 }
 
 - (void) testItemTreeCopy
