@@ -131,6 +131,7 @@ typedef enum _ETSizeConstraintStyle
 - (void) setAttachedInstrument: (id)anInstrument;
 - (id) attachedInstrument;
 
+- (void) setUpCopyWithLayoutContext: (id <ETLayoutingContext>)context;
 - (void) setLayoutContext: (id <ETLayoutingContext>)context;
 - (id <ETLayoutingContext>) layoutContext;
 - (void) tearDown;

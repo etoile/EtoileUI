@@ -195,8 +195,13 @@ The returned copy is mutable because ETLayoutItemGroup cannot be immutable. */
 
 	ETLayoutItemGroup *item = [super copyWithZone: aZone];
 
+	FOREACH(childItems, childItem, ETLayoutItem *)
+	{
+		childItem->_parentItem = item; /* Weak reference */
+	}
 	ASSIGN(item->_layoutItems, childItems);
-	[item setLayout: AUTORELEASE([_layout copyWithZone: aZone])];
+	item->_layout = [_layout copyWithZone: aZone];
+	[item->_layout setUpCopyWithLayoutContext: item];
 
 	/* We copy all primitive ivars except _reloading */
 
@@ -231,6 +236,21 @@ The returned copy is mutable because ETLayoutItemGroup cannot be immutable. */
 	SET_OBJECT_PROPERTY(item, GET_PROPERTY(kETDelegateProperty), kETDelegateProperty);
 	SET_OBJECT_PROPERTY(item, GET_PROPERTY(kETRepresentedPathBaseProperty), kETRepresentedPathBaseProperty);
 	SET_OBJECT_PROPERTY(item, GET_PROPERTY(kETItemScaleFactorProperty), kETItemScaleFactorProperty);
+
+	/* We need to update the layout to have the content reloaded in widget layouts
+	   Which means the item copy will then receive a layout update even in case 
+	   the receiver had received none until now.  */
+	if ([[item layout] isWidget])
+	{
+		[item updateLayout]; // TODO: Should be setNeedsUpdateLayout:
+	}
+	else if ([[item layout] isOpaque] == NO) /* We don't need a true layout update */
+	{
+		// NOTE: Might be better to iterate over the visible items backed by a
+		// supervisor view and do [[item supervisorView] addSubview: childSupervisorView]
+		[item setVisibleItems: [item visibleItemsForItems: item->_layoutItems]
+		             forItems: item->_layoutItems];
+	}
 
 	return item;
 }
@@ -450,7 +470,7 @@ Whether the path begins by '/' or not doesn't modify the result. */
 		{
 			NSArray *childItems = [(ETLayoutItemGroup *)item items];
 			item = [childItems firstObjectMatchingValue: pathComp 
-			                                     forKey: @"name"];
+			                                     forKey: kETIdentifierProperty];
 		}
 		else
 		{

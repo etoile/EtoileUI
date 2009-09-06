@@ -285,6 +285,7 @@ instrument copy. */
 
 	newLayout->_delegate = _delegate;
 	newLayout->_displayViewPrototype = [_displayViewPrototype copyWithZone: aZone];
+	newLayout->_rootItem = [_rootItem copyWithZone: aZone];
 	[newLayout setAttachedInstrument: [[self attachedInstrument] copyWithZone: aZone]];
 	RELEASE([newLayout attachedInstrument]);
 	newLayout->_layoutSize = _layoutSize;
@@ -313,6 +314,14 @@ The instrument set becomes the receiver owner. See -[ETInstrument layoutOwner]. 
 
 	ASSIGN(_instrument, anInstrument);
 	[_instrument setLayoutOwner: self];
+}
+
+- (void) setUpCopyWithLayoutContext: (id <ETLayoutingContext>)context
+{
+	NSParameterAssert(context != nil);
+	// NOTE: Avoids retain cycle by weak referencing the context
+	_layoutContext = context;
+	[self setUp];
 }
 
 /** Sets the context where the layout should happen. 

@@ -9,6 +9,7 @@
 #import <Foundation/Foundation.h>
 #import <AppKit/AppKit.h>
 #import <UnitKit/UnitKit.h>
+#import <EtoileFoundation/ETCollection+HOM.h>
 #import <EtoileFoundation/ETUTI.h>
 #import <EtoileFoundation/Macros.h>
 #import <EtoileFoundation/NSObject+Model.h>
@@ -20,13 +21,29 @@
 #import "EtoileUIProperties.h"
 #import "ETScrollableAreaItem.h"
 #import "ETTableLayout.h"
+#import "ETOutlineLayout.h"
 #import "ETUIItem.h"
 #import "ETUIItemFactory.h"
 #import "ETWindowItem.h"
 #import "ETCompatibility.h"
 
+@interface ETOutlineLayout (Private)
+- (NSOutlineView *) outlineView;
+@end
+
 @interface ETDecoratorItem (TestItemGeometry)
 + (ETDecoratorItem *) itemWithDummySupervisorView;
+@end
+
+@interface ETLayoutItem (TestItemCopy)
+- (BOOL) isNotVisible;
+@end
+
+@implementation ETLayoutItem (TestItemCopy)
+- (BOOL) isNotVisible
+{
+	return [self isVisible] == NO;
+}
 @end
 
 @interface TestItemCopy: NSObject <UKTest>
@@ -256,16 +273,75 @@ DEALLOC(DESTROY(itemFactory); DESTROY(item); DESTROY(itemGroup))
 	UKObjectsEqual([newItemGroup supervisorView], [[[newItemGroup layout] layoutView] superview]);
 }
 
-- (void) testBasicItemGroupCopy
-{
-	[itemGroup addItem: item];
+#define IPATH(cArray, length) [NSIndexPath indexPathWithIndexes: cArray length: length]
 
-	ETLayoutItemGroup *newItemGroup = [itemGroup copy];
+- (void) testBasicItemGroupCopyWithOutlineLayout
+{
+	ETLayoutItemGroup *itemGroup1 = [itemFactory itemGroup];
+
+	[itemGroup addItem: item];
+	[itemGroup addItem: itemGroup1];
+
+	[itemGroup setLayout: [ETOutlineLayout layout]];
+
+	ETLayoutItemGroup *newItemGroup = [itemGroup deepCopy];
+
+	UKIntsEqual(2, [newItemGroup numberOfItems]);
+	UKObjectsEqual(newItemGroup, [[newItemGroup itemAtIndex: 1] parentItem]);
+	UKObjectsEqual(newItemGroup, [[newItemGroup itemAtIndex: 0] parentItem]);
+	UKObjectsEqual([NSIndexPath indexPathWithIndex: 0], [[newItemGroup itemAtIndex: 0] indexPath]);
+	UKObjectsEqual([NSIndexPath indexPathWithIndex: 1], [[newItemGroup itemAtIndex: 1] indexPath]);
+
+	UKIntsEqual(2, [[(ETOutlineLayout *)[newItemGroup layout] outlineView] numberOfRows]);
 }
 
 - (void) testItemTreeCopy
 {
+	ETLayoutItemGroup *itemGroup1 = [itemFactory itemGroup];
+	ETLayoutItemGroup *itemGroup10 = [itemFactory itemGroup];
+	ETLayoutItem *item100 = [itemFactory item];
+	ETLayoutItem *item101 = [itemFactory item];
+	ETLayoutItemGroup *itemGroup2 = [itemFactory itemGroup];
+	ETLayoutItemGroup *itemGroup20 = [itemFactory itemGroup];
+	ETLayoutItem *item3 = [itemFactory button];
 
+	[itemGroup addItem: item];
+	[itemGroup addItem: itemGroup1];
+	[itemGroup1 addItem: itemGroup10];
+	[itemGroup10 addItem: item100];
+	[itemGroup10 addItem: item101];
+	[itemGroup addItem: itemGroup2];
+	[itemGroup2 addItem: itemGroup20];
+	[itemGroup addItem: item3];
+
+	[itemGroup2 setLayout: [ETOutlineLayout layout]];
+
+	ETLayoutItemGroup *newItemGroup = [itemGroup deepCopy];
+
+	UKIntsEqual(4, [newItemGroup numberOfItems]);
+	UKIntsEqual(1, [(id)[newItemGroup itemAtIndex: 1] numberOfItems]);
+	UKIntsEqual(2, [(id)[newItemGroup itemAtPath: @"1/0"] numberOfItems]);
+	UKIntsEqual(1, [(id)[newItemGroup itemAtIndex: 2] numberOfItems]);
+	UKIntsEqual(0, [(id)[newItemGroup itemAtPath: @"2/0"] numberOfItems]);
+
+	ETOutlineLayout *layoutCopy = (ETOutlineLayout *)[[newItemGroup itemAtIndex: 2] layout];
+	UKIntsEqual(1, [[layoutCopy outlineView] numberOfRows]);
+
+	UKNotNil([newItemGroup supervisorView]);
+	UKNil([[newItemGroup itemAtIndex: 1] supervisorView]);
+	UKNil([[newItemGroup itemAtPath: @"1/0"] supervisorView]);
+	UKNil([[newItemGroup itemAtPath: @"1/0/0"] supervisorView]);
+	UKNil([[newItemGroup itemAtPath: @"1/0/1"] supervisorView]);
+	UKNotNil([[newItemGroup itemAtIndex: 2] supervisorView]);
+	UKNil([[newItemGroup itemAtPath: @"2/0"] supervisorView]);
+	UKNotNil([[newItemGroup itemAtIndex: 3] supervisorView]);
+
+	NSMutableArray *allNewItems = [NSMutableArray arrayWithArray: [newItemGroup items]];
+	[[allNewItems filter] isNotVisible];
+	// FIXME: UKObjectsEqual(A(itemGroup20), allNewItems);
+
+	UKObjectsEqual([newItemGroup supervisorView], [[[newItemGroup itemAtIndex: 2] supervisorView] superview]);
+	UKObjectsEqual([newItemGroup supervisorView], [[[newItemGroup itemAtIndex: 3] supervisorView] superview]);
 }
 
 @end
