@@ -283,7 +283,8 @@ structure, this way the tree structure maintains a very tight mapping with the
 model graph and remains semantic. */
 - (void) setDecoratorItem: (ETDecoratorItem *)decorator
 {
-	if ([decorator isEqual: _decoratorItem])
+	/* Take in account the case where both sides are nil unlike -isEqual: */
+	if (decorator == _decoratorItem)
 		return;
 
 	if ([decorator canDecorateItem: self] == NO && decorator != nil)
