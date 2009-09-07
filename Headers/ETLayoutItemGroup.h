@@ -25,10 +25,7 @@
 	NSMutableArray *_sortedItems;
 	NSMutableArray *_arrangedItems;
 	ETLayout *_layout;
-	ETLayout *_stackedLayout;
-	ETLayout *_unstackedLayout;
 	SEL _doubleClickAction;
-	BOOL _isStack;
 	BOOL _autolayout;
 	BOOL _usesLayoutBasedFrame;
 	BOOL _reloading; /* ivar used by ETMutationHandler category */
@@ -143,20 +140,6 @@
       dirtyRect: (NSRect)dirtyRect 
       inContext: (id)ctxt;
 
-/* Stacking */
-
-- (ETLayout *) stackedItemLayout;
-- (void) setStackedItemLayout: (ETLayout *)layout;
-- (ETLayout *) unstackedItemLayout;
-- (void) setUnstackedItemLayout: (ETLayout *)layout;
-
-- (void) setIsStack: (BOOL)flag;
-- (BOOL) isStack;
-- (BOOL) isStacked;
-
-- (void) stack;
-- (void) unstack;
-
 /* Selection */
 
 - (unsigned int) selectionIndex;
@@ -186,6 +169,13 @@
 - (SEL) doubleAction;
 - (ETLayoutItem *) doubleClickedItem;
 - (BOOL) acceptsActionsForItemsOutsideOfFrame;
+
+/* Stacking */
+
+- (BOOL) isStack;
+- (BOOL) isStacked;
+- (void) stack;
+- (void) unstack;
 
 /* Collection Protocol */
 

@@ -122,9 +122,6 @@ See also +enablesAutolayout. */
 	}
 
 	[self assignLayout: [ETFixedLayout layout]];
-	ASSIGN(_stackedLayout, [ETFlowLayout layout]);
-	ASSIGN(_unstackedLayout, [ETLineLayout layout]);
-	_isStack = NO;
 	_autolayout = YES;
 	_usesLayoutBasedFrame = NO;
 	_hasNewLayout = NO;
@@ -157,8 +154,6 @@ See also +enablesAutolayout. */
 	[self stopKVOObservationIfNeeded];
 
 	DESTROY(_layout);
-	DESTROY(_stackedLayout);
-	DESTROY(_unstackedLayout);
 	/* Arranged and sorted items are always a children subset, we don't 
 	   have to worry about nullifying weak references their element might have. */
 	DESTROY(_arrangedItems);
@@ -206,7 +201,6 @@ The returned copy is mutable because ETLayoutItemGroup cannot be immutable. */
 	/* We copy all primitive ivars except _reloading */
 
 	item->_doubleClickAction = _doubleClickAction;
-	item->_isStack = _isStack; 
 	/* Must follow -setLayout: to ensure autolayout is disabled in the copy when -setLayout: is called */
 	item->_autolayout = _autolayout;
 	item->_usesLayoutBasedFrame = _usesLayoutBasedFrame;
@@ -1355,71 +1349,6 @@ yourself (see -visibleItemsForItems:). */
 	}
 }
 
-/* Stacking */
-
-+ (NSSize) stackSize
-{
-	return NSMakeSize(200, 200);
-}
-
-- (ETLayout *) stackedItemLayout
-{
-	return _stackedLayout;
-}
-
-- (void) setStackedItemLayout: (ETLayout *)layout
-{
-	ASSIGN(_stackedLayout, layout);
-}
-
-- (ETLayout *) unstackedItemLayout
-{
-	return _unstackedLayout;
-}
-
-- (void) setUnstackedItemLayout: (ETLayout *)layout
-{
-	ASSIGN(_unstackedLayout, layout);
-}
-
-- (void) setIsStack: (BOOL)flag
-{
-	if (_isStack == NO)
-	{
-		[self setItemScaleFactor: 0.7];
-		[self setSize: [ETLayoutItemGroup stackSize]];
-	}
-		
-	_isStack = flag;
-}
-
-- (BOOL) isStack
-{
-	return _isStack;
-}
-
-/** Returns YES when the receiver is a collapsed stack, otherwise returns NO. */
-- (BOOL) isStacked
-{
-	return [self isStack] && [[self layout] isEqual: [self stackedItemLayout]];
-}
-
-- (void) stack
-{
-	/* Turn item group into stack if necessary */
-	[self setIsStack: YES];
-	[self reloadIfNeeded];
-	[self setLayout: [self stackedItemLayout]];
-}
-
-- (void) unstack
-{
-	/* Turn item group into stack if necessary */
-	[self setIsStack: YES];
-	[self reloadIfNeeded];
-	[self setLayout: [self unstackedItemLayout]];
-}
-
 /* Selection */
 
 /** Returns the index of the first selected item which is an immediate child of 
@@ -1781,6 +1710,40 @@ receiver area as ETHandleGroup do. */
 - (BOOL) acceptsActionsForItemsOutsideOfFrame
 {
 	return NO;
+}
+
+/* Stacking */
+
+/** Returns whether the receiver is currently a stack.
+
+TODO: Implement */
+- (BOOL) isStack
+{
+	return NO;
+}
+
+/** Returns YES when the receiver is a collapsed stack, otherwise returns NO.
+
+TODO: Implement */
+- (BOOL) isStacked
+{
+	return NO;
+}
+
+/** Collapses the receiver as a stack.
+
+TODO: Implement and may be rename -collapse or -collapseStack */
+- (void) stack
+{
+
+}
+
+/** Expands the receiver as a stack.
+
+TODO: Implement and may be rename -expand or -expandStack */
+- (void) unstack
+{
+
 }
 
 /* Collection Protocol */
