@@ -39,11 +39,6 @@ NSString *ETLayoutItemLayoutDidChangeNotification = @"ETLayoutItemLayoutDidChang
 - (NSPoint) centeredAnchorPoint;
 @end
 
-@interface ETLayoutItem (SubclassVisibility)
-- (void) setDisplayView: (ETView *)view;
-@end
-
-
 @implementation ETLayoutItem
 
 /** Initializes and returns a layout item.

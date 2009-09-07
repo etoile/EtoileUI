@@ -14,25 +14,19 @@
 #import "ETLayoutItemGroup.h"
 #import "ETController.h"
 #import "ETFixedLayout.h"
-#import "ETFlowLayout.h"
-#import "ETLayoutItem+Factory.h"
 #import "ETLayoutItemGroup+Mutation.h"
 #import "ETLayoutItem+Scrollable.h"
-#import "ETLineLayout.h"
 #import "EtoileUIProperties.h"
 #import "ETView.h"
 #import "NSView+Etoile.h"
 #import "ETCompatibility.h"
 
-#define DEFAULT_FRAME NSMakeRect(0, 0, 50, 50)
-
 /* Notifications */
-NSString *ETItemGroupSelectionDidChangeNotification = @"ETItemGroupSelectionDidChangeNotification";
-NSString *ETSourceDidUpdateNotification = @"ETSourceDidUpdateNotification";
+NSString * const ETItemGroupSelectionDidChangeNotification = @"ETItemGroupSelectionDidChangeNotification";
+NSString * const ETSourceDidUpdateNotification = @"ETSourceDidUpdateNotification";
 
 @interface ETLayoutItem (SubclassVisibility)
 - (ETView *) setUpSupervisorViewWithFrame: (NSRect)aFrame;
-- (void) setDisplayView: (ETView *)view;
 - (NSRect) visibleContentBounds;
 @end
 
@@ -1162,7 +1156,7 @@ to control more precisely how the items get resized per layout. */
 - (void) debugDrawingInRect: (NSRect)rect
 {
 	// NOTE: For debugging, don't remove.
-	if ([self respondsToSelector: @selector(layout)] && [[self layout] isKindOfClass: [ETFlowLayout class]])
+	if ([self respondsToSelector: @selector(layout)] && [[self layout] isKindOfClass: NSClassFromString(@"ETFlowLayout")])
 	{
 		[[NSColor orangeColor] set];
 		//NSRectClip([self frame]);
@@ -1866,7 +1860,5 @@ TODO: Implement and may be rename -expand or -expandStack */
 	/* Notify children */
 	[[self items] makeObjectsPerformSelector: @selector(beginEditingUI)];
 }
-
-/* Deprecated (DO NOT USE, WILL BE REMOVED LATER) */
 
 @end
