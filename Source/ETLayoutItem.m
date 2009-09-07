@@ -217,13 +217,13 @@ every subclass that overrides -dealloc. */
 	reference is kept, -view will return nil for the copied item.
 	TODO: Implement decorators copying that is currently missing.
 	
-Default values won't be copied. */
+Default values will be copied but not individually (shallow copy). */
 - (id) copyWithZone: (NSZone *)aZone
 {
 	ETLayoutItem *item = [super copyWithZone: aZone];
 
 	item->_variableProperties = [[NSMutableDictionary alloc] init];
-	item->_defaultValues = [[NSMutableDictionary alloc] init];
+	item->_defaultValues = [_defaultValues copyWithZone: aZone];
 
 	// NOTE: Geometry synchronization logic in setters such as setFlippedView: 
 	// and -setAutoresizingMask: is not required to make a copy, because all 
