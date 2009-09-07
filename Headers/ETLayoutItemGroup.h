@@ -187,8 +187,6 @@
 - (void) addObject: (id)object;
 - (void) removeObject: (id)object;
 
-/* Deprecated (DO NOT USE, WILL BE REMOVED LATER) */
-
 @end
 
 
@@ -233,7 +231,7 @@ This notification is posted when a selection related method such as
 -setSelectionIndexPaths: has been called on the object associated with the 
 notification, or when the selection is modified by the user, in this last case 
 the poster object will always be a base item. */
-extern NSString *ETItemGroupSelectionDidChangeNotification;
+extern NSString * const ETItemGroupSelectionDidChangeNotification;
 /** Notification observed by ETLayoutItemGroup, ETUIMediator and other classes 
 on which a source can be set. When the notification is received, the layout 
 item tree that belongs to the receiver is automatically reloaded. 
@@ -244,7 +242,7 @@ object of the observer.
 You can use this method to trigger the reloading everywhere the poster object 
 is used as source, without having to know the involved objects directly and 
 explicitly invoke -reload on each object. */
-extern NSString *ETSourceDidUpdateNotification;
+extern NSString * const ETSourceDidUpdateNotification;
 
 // TODO: Documentation to be reused somewhere...
 /* In this case, each time the user enters a new level, you are in charge of
