@@ -65,7 +65,7 @@
 - (NSImage *) icon;
 
 #ifdef GNUSTEP
-- (void) setSubviews: (NSArray *)subviews;
+- (void) setSubviews: (NSArray *)newSubviews;
 #endif
 
 @end

@@ -323,32 +323,32 @@ also copied, in other words the new object is a deep copy of the receiver. */
 }
 
 #ifdef GNUSTEP
-- (void) setSubviews: (NSArray *)subviews
+- (void) setSubviews: (NSArray *)newSubviews
 {
-	NSUInteger oldCount = [_sub_views count];
-	NSUInteger newCount = [subviews count];
+	NSArray *oldSubviews = [NSArray arrayWithArray: _sub_views];
+	NSUInteger oldCount = [oldSubviews count];
+	NSUInteger newCount = [newSubviews count];
 	NSUInteger maxCount = MAX(oldCount, newCount);
-	NSUInteger i;
 
-	for (i = 0; i < maxCount; i++)
+	for (int i = 0; i < maxCount; i++)
 	{
 		if (i < oldCount && i < newCount)
 		{
-			NSView *existingSubview = [_sub_views objectAtIndex: i];
-			NSView *newSubview = [subviews objectAtIndex: i];
+			NSView *oldSubview = [oldSubviews objectAtIndex: i];
+			NSView *newSubview = [newSubviews objectAtIndex: i];
 
-			if (existingSubview != newSubview)
+			if (oldSubview != newSubview)
 			{
-				[self replaceSubview: existingSubview with: newSubview]; 
+				[self replaceSubview: oldSubview with: newSubview]; 
 			}
 		}
 		else if (i < oldCount) /* i >= newCount */
 		{
-			[self removeSubview: [_sub_views objectAtIndex: i]]; 
+			[self removeSubview: [oldSubviews objectAtIndex: i]]; 
 		}
 		else if (i < newCount) /* i >= oldCount */
 		{
-			[self addSubview: [subviews objectAtIndex: i]];
+			[self addSubview: [newSubviews objectAtIndex: i]];
 		}
 	}
 }
