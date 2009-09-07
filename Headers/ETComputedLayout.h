@@ -30,7 +30,7 @@ ETTemplateItemLayout are allowed to do. */
 @interface ETComputedLayout : ETLayout <ETPositionalLayout>
 {
 	float _itemMargin;
-	ETLayoutItem *_seperatorTemplateItem;
+	ETLayoutItem *_separatorTemplateItem;
 }
 
 - (void) setItemMargin: (float)margin;
@@ -46,7 +46,7 @@ ETTemplateItemLayout are allowed to do. */
 
 /* Seperator support */
 
-- (void) setSeparatorTemplateItem: (ETLayoutItem *)seperator;
-- (ETLayoutItem *) seperatorTemplateItem;
+- (void) setSeparatorTemplateItem: (ETLayoutItem *)separator;
+- (ETLayoutItem *) separatorTemplateItem;
 
 @end

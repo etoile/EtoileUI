@@ -75,9 +75,9 @@ The scroll view visibility is handled by this method (this is subject to change)
 	for (unsigned int i=0; i<[items count]; i++)
 	{
 		[spacedItems addObject: [items objectAtIndex: i]];
-		if (i < [items count] - 1 && [self seperatorTemplateItem] != nil)
+		if (i < [items count] - 1 && [self separatorTemplateItem] != nil)
 		{
-			[spacedItems addObject: AUTORELEASE([[self seperatorTemplateItem] copy])];
+			[spacedItems addObject: AUTORELEASE([[self separatorTemplateItem] copy])];
 		}
 	}
 	
@@ -156,9 +156,9 @@ geometrical attributes (position, size, scale etc.) accordingly. */
 
 /* Seperator support */
 
-- (void) setSeparatorTemplateItem: (ETLayoutItem *)seperator
+- (void) setSeparatorTemplateItem: (ETLayoutItem *)separator
 {
-	ASSIGN(_seperatorTemplateItem, seperator);
+	ASSIGN(_separatorTemplateItem, separator);
 	
 	if ([self canRender])
 	{	
@@ -167,9 +167,9 @@ geometrical attributes (position, size, scale etc.) accordingly. */
 	}
 }
 			
-- (ETLayoutItem *) seperatorTemplateItem
+- (ETLayoutItem *) separatorTemplateItem
 {
-	return _seperatorTemplateItem;
+	return _separatorTemplateItem;
 }
 
 @end
