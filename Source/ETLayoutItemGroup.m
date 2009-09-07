@@ -781,103 +781,105 @@ See also -setSource: and -isBaseItem. */
 		[self makeBaseItemIfNeeded];
 }
 
-/*	Alternatively, if you have a relatively small and static tree structure,
-	you can also build the tree by yourself and assigns the root item to the
-	container by calling -addItem:. In this case, the user will have the 
-	possibility to */
+/** Adds the given item to the receiver children. */
 - (void) addItem: (ETLayoutItem *)item
 {
 	//ETDebugLog(@"Add item in %@", self);
 	[self handleAdd: nil item: item];
 }
 
+/** Inserts the given item in the receiver children at a precise index. */
 - (void) insertItem: (ETLayoutItem *)item atIndex: (int)index
 {
 	//ETDebuLog(@"Insert item in %@", self);
 	[self handleInsert: nil item: item atIndex: index];
 }
 
+/** Removes the given item from the receiver children. */
 - (void) removeItem: (ETLayoutItem *)item
 {
 	//ETDebugLog(@"Remove item in %@", self);
 	[self handleRemove: nil item: item];
 }
 
+/** Removes the child item at the given index in the receiver children. */
 - (void) removeItemAtIndex: (int)index
 {
 	ETLayoutItem *item = [_layoutItems objectAtIndex: index];
 	[self removeItem: item];
 }
 
+/** Returns the child item at the given index in the receiver children. */
 - (ETLayoutItem *) itemAtIndex: (int)index
 {
 	return [_layoutItems objectAtIndex: index];
 }
 
-/** Returns the first item in the children of the receiver, with a result 
-    identical to [self itemAtIndex: 0].
-    Similar to -firstObject method for collections (see ETCollection).*/
+/** Returns the first receiver child item.
+
+Shortcut method equivalent to [self itemAtIndex: 0].
+
+Similar to -firstObject method for collections (see ETCollection).*/
 - (ETLayoutItem *) firstItem
 {
 	return [_layoutItems firstObject];
 }
 
-/** Returns the last item in the children of the receiver, with a result 
-    identical to [self itemAtIndex: [self numberOfItems] - 1].
-    Similar to -lastObject method for collections (see ETCollection).*/
+/** Returns the last receiver child item.
+
+Shortcut method equivalent to [self itemAtIndex: [self numberOfItems] - 1].
+	
+Similar to -lastObject method for collections (see ETCollection).*/
 - (ETLayoutItem *) lastItem
 {
 	return [_layoutItems lastObject];
 }
 
+/** Adds the given the items to the receiver children. */
 - (void) addItems: (NSArray *)items
 {
 	//ETDebugLog(@"Add items in %@", self);
 	[self handleAdd: nil items: items];
 }
 
+/** Removes the given child items from the receiver children. */
 - (void) removeItems: (NSArray *)items
 {
 	//ETDebugLog(@"Remove items in %@", self);
 	[self handleRemove: nil items: items];
 }
 
+/** Removes all the receiver child items. */
 - (void) removeAllItems
 {
-	ETDebugLog(@"Remove all items in %@", self);
+	//ETDebugLog(@"Remove all items in %@", self);
 	// FIXME: Temporary solution which is quite slow
 	[self handleRemove: nil items: [self items]];
-
-#if 0	
-	// NOTE: If a selection cache is implemented, the cache must be cleared
-	// here because this method doesn't the primitive mutation method 
-	// -removeItem:
-	
-	[_layoutItems makeObjectsPerformSelector: @selector(setParentItem:) withObject: nil];
-	[_layoutItems removeAllObjects];
-	if ([self canUpdateLayout])
-		[self updateLayout];
-#endif
 }
 
 // FIXME: (id) parameter rather than (ETLayoutItem *) turns off compiler 
 // conflicts with menu item protocol which also implements this method. 
 // Fix compiler.
+
+/** Returns the index of the given child item in the receiver children. */
 - (int) indexOfItem: (id)item
 {
 	return [_layoutItems indexOfObject: item];
 }
 
+/** Returns whether the given item is a receiver child or not. */
 - (BOOL) containsItem: (ETLayoutItem *)item
 {
 	return ([self indexOfItem: (id)item] != NSNotFound);
 }
 
+/** Returns how many child items the receiver includes. */
 - (int) numberOfItems
 {
 	return [_layoutItems count];
 }
 
+/** Returns an autoreleased array which contains the receiver child items. */
 - (NSArray *) items
 {
 	return [NSArray arrayWithArray: _layoutItems];
