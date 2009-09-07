@@ -271,18 +271,19 @@ it gets instantiated. */
 	[super dealloc];
 }
 
-/** Returns a copy of the receiver.
-
-The layout context in the copy is nil.
+/** <override-dummy />
+Returns a copy of the receiver.<br />
+The given context which might be nil will be set as the layout context on the copy.
 
 Subclasses must be aware that this method calls -setAttachedInstrument: with an 
 instrument copy. */ 
-- (id) copyWithZone: (NSZone *)aZone
+- (id) copyWithZone: (NSZone *)aZone layoutContext: (id <ETLayoutingContext>)ctxt
 {
 	ETLayout *newLayout = [[self class] alloc];
 
 	/* We copy all ivars except _layoutContext and _isLayouting */
 
+	newLayout->_layoutContext = ctxt;
 	newLayout->_delegate = _delegate;
 	newLayout->_displayViewPrototype = [_displayViewPrototype copyWithZone: aZone];
 	newLayout->_rootItem = [_rootItem copyWithZone: aZone];
@@ -296,6 +297,34 @@ instrument copy. */
 	newLayout->_previousScaleFactor = _previousScaleFactor;
 
 	return newLayout;
+}
+
+/** <override-dummy />
+Overrides to specify to set up the receiver when it is the copy and has just 
+been assigned to its layout context.
+
+The default implementation calls -setUp.
+
+You can call the superclass implementation or not. */
+- (void) setUpCopy
+{
+	NSParameterAssert(_layoutContext != nil);
+	[self setUp];
+}
+
+/** <override-never />
+Returns a copy of the receiver.
+
+The layout context in the copy is nil.
+
+Subclasses must be aware that this method calls -setAttachedInstrument: with an 
+instrument copy.
+
+To customize the copying in a subclass, you must override 
+-copyWithZone:layoutContext:. */ 
+- (id) copyWithZone: (NSZone *)aZone
+{
+	return [self copyWithZone: aZone layoutContext: nil];
 }
 
 /** Returns the instrument or tool bound to the receiver. */
@@ -314,14 +343,6 @@ The instrument set becomes the receiver owner. See -[ETInstrument layoutOwner]. 
 
 	ASSIGN(_instrument, anInstrument);
 	[_instrument setLayoutOwner: self];
-}
-
-- (void) setUpCopyWithLayoutContext: (id <ETLayoutingContext>)context
-{
-	NSParameterAssert(context != nil);
-	// NOTE: Avoids retain cycle by weak referencing the context
-	_layoutContext = context;
-	[self setUp];
 }
 
 /** Sets the context where the layout should happen. 
@@ -378,6 +399,7 @@ The layout context hasn't yet been touched when this method is called.
 You must call the superclass implementation if you override this method. */
 - (void) tearDown
 {
+	NSParameterAssert(_layoutContext != nil);
 	/* Don't forget to remove existing layout view if we switch from a layout 
 	   which reuses a native AppKit control like table layout. */
 	// NOTE: Be careful of layout instances which can share a common class but 
@@ -397,6 +419,7 @@ The new layout context has been set when this method is called.
 You must call the superclass implementation if you override this method. */
 - (void) setUp
 {
+	NSParameterAssert(_layoutContext != nil);
 	[self setUpLayoutView];
 	[self mapRootItemIntoLayoutContext];
 }
@@ -863,6 +886,8 @@ to be identical to the layout context. */
 
 - (void) mapRootItemIntoLayoutContext
 {
+	NSParameterAssert(nil != _layoutContext);
+
 	if ([self rootItem] == nil)
 		return;
 
@@ -887,7 +912,7 @@ to be identical to the layout context. */
 
 - (void) unmapRootItemFromLayoutContext
 {
-	[[self rootItem]setParentItem: nil];
+	[[self rootItem] setParentItem: nil];
 }
 
 - (void) setLayoutView: (NSView *)protoView
@@ -941,6 +966,8 @@ superclass method to let the layout view be inserted in the layout context
 supervisor view. */
 - (void) setUpLayoutView
 {
+	NSParameterAssert(nil != _layoutContext);
+
 	id layoutView = [self layoutView];
 
 	if (nil == layoutView || [layoutView superview] != nil)

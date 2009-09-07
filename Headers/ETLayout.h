@@ -126,12 +126,14 @@ typedef enum _ETSizeConstraintStyle
 - (id) initWithLayoutView: (NSView *)layoutView;
 - (NSString *) nibName;
 
+- (id) copyWithZone: (NSZone *)aZone layoutContext: (id <ETLayoutingContext>)newContext;
+- (void) setUpCopy;
+
 /* Main Accessors */
 
 - (void) setAttachedInstrument: (id)anInstrument;
 - (id) attachedInstrument;
 
-- (void) setUpCopyWithLayoutContext: (id <ETLayoutingContext>)context;
 - (void) setLayoutContext: (id <ETLayoutingContext>)context;
 - (id <ETLayoutingContext>) layoutContext;
 - (void) tearDown;

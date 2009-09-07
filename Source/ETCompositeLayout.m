@@ -12,6 +12,7 @@
  */
 
 #import <EtoileFoundation/ETCollection.h>
+#import <EtoileFoundation/ETCollection+HOM.h>
 #import <EtoileFoundation/Macros.h>
 #import "ETCompositeLayout.h"
 #import "ETGeometry.h"
@@ -82,6 +83,48 @@
 
 DEALLOC(DESTROY(_rootItem); DESTROY(_targetItem));
 
+- (ETLayoutItemGroup *) proposedParentItemForFirstPresentationItem
+{
+		BOOL isLayoutActive = (_layoutContext != nil);
+		// FIXME: Ugly cast
+		return isLayoutActive ? (ETLayoutItemGroup *)_layoutContext : [self rootItem];
+}
+
+- (id) copyWithZone: (NSZone *)aZone layoutContext: (id <ETLayoutingContext>)ctxt
+{
+	ETCompositeLayout *layoutCopy = [super copyWithZone: aZone layoutContext: ctxt];
+
+	/* We figure out the first presentation item index path in the original to 
+	   look up the same item in the copy. */
+	NSIndexPath *indexPath = [[self proposedParentItemForFirstPresentationItem] 
+		indexPathForItem: [self firstPresentationItem]];
+	ETLayoutItem *firstPresentationItemCopy = 
+		[[layoutCopy proposedParentItemForFirstPresentationItem] itemAtIndexPath: indexPath];
+
+	ASSIGN(layoutCopy->_targetItem, firstPresentationItemCopy);
+
+	/* When the content is not routed, both the original 'items' are 'source'
+	   are stored in the default values. However -[ETLayoutItem copyWithZone:] 
+	   invoked on the layout context only makes a shallow copy, therefore the 
+	   initial items must be deeply copied since they cannot be shared between 
+	   an original layout and its copy (bad things would happen when their 
+	   context states get both restored). */
+	if ([layoutCopy isContentRouted] == NO)
+	{
+		NSArray *initialItemTree = [_layoutContext defaultValueForProperty: @"items"];
+		NSArray *initialItemTreeAlias = [layoutCopy->_layoutContext defaultValueForProperty: @"items"];
+
+		NSParameterAssert([initialItemTree isEqual: initialItemTreeAlias]);
+
+		NSArray *initialItemTreeCopy = [[initialItemTree mappedCollection] deepCopyWithZone: aZone];			
+		[layoutCopy->_layoutContext setDefaultValue: initialItemTreeCopy
+		                                forProperty: @"items"];
+		RELEASE(initialItemTree);
+	}
+
+	return layoutCopy;
+}
+
 /** Returns NO. */
 - (BOOL) isScrollable
 {
@@ -125,17 +168,7 @@ Both represented object and source will be reset to nil on the given item. */
 	// ancestor, otherwise raise an exception.
 	if (targetItem != nil && [targetItem parentItem] == nil)
 	{
-		BOOL isLayoutActive = (_layoutContext != nil);
-
-		if (isLayoutActive)
-		{
-			// FIXME: Ugly cast
-			[(ETLayoutItemGroup *)_layoutContext addItem: targetItem];
-		}
-		else
-		{
-			[[self rootItem] addItem: targetItem];
-		}
+		[[self proposedParentItemForFirstPresentationItem] addItem: targetItem];
 	}
 
 	ASSIGN(_targetItem, targetItem);

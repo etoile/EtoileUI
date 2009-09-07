@@ -75,9 +75,9 @@
 	[super dealloc];
 }
 
-- (id) copyWithZone: (NSZone *)aZone
+- (id) copyWithZone: (NSZone *)aZone layoutContext: (id <ETLayoutingContext>)ctxt
 {
-	ETTableLayout *newLayout = [super copyWithZone: aZone];
+	ETTableLayout *newLayout = [super copyWithZone: aZone layoutContext: ctxt];
 	NSParameterAssert([newLayout tableView] != [self tableView]);
 
 	/* Will initialize the ivars in the layout copy */
