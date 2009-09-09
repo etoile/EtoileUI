@@ -218,7 +218,7 @@ Default values will be copied but not individually (shallow copy). */
 	ETLayoutItem *item = [super copyWithZone: aZone];
 
 	item->_variableProperties = [[NSMutableDictionary alloc] init];
-	item->_defaultValues = [_defaultValues copyWithZone: aZone];
+	item->_defaultValues = [_defaultValues mutableCopyWithZone: aZone];
 
 	// NOTE: Geometry synchronization logic in setters such as setFlippedView: 
 	// and -setAutoresizingMask: is not required to make a copy, because all 
