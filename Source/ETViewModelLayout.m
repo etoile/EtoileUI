@@ -126,6 +126,19 @@ Will be called before the receiver is fully initialized. */
 	return @"ViewModelPrototype";
 }
 
+/* Adjusts the layout context flipping to match the our custom view converted 
+into the root item at initialization time. 
+
+The initial flipping will be automatically restored by 
+-restoreInitialContextState on a layout switch.*/
+- (void) prepareNewContextState
+{
+	[super prepareNewContextState];
+
+	// FIXME: NSParameterAssert([[self rootItem] isFlipped] == NO);
+	[_layoutContext setFlipped: NO];
+}
+
 /* Reloads and updates the property view layout when ETViewModelLayout becomes 
 active. */
 - (void) setUp
