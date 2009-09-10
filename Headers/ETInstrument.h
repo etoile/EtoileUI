@@ -57,10 +57,10 @@ double-click and deactivated on a mouse click outside of their layout boundaries
 
 /* Registering Instruments */
 
-+ (void) registerInstrumentClass: (Class)instrumentClass;
++ (void) registerInstrument: (ETInstrument *)anInstrument;
++ (NSSet *) registeredInstruments;
 + (NSSet *) registeredInstrumentClasses;
 
-+ (NSArray *) registeredInstruments;
 + (void) show: (id)sender;
 
 /* Instrument Activation */

@@ -7,6 +7,7 @@
  */
 
 #import <EtoileFoundation/Macros.h>
+#import <EtoileFoundation/ETCollection+HOM.h>
 #import <EtoileFoundation/NSObject+Etoile.h>
 #import "ETInstrument.h"
 #import "ETLayout.h"
@@ -31,17 +32,19 @@
 
 @implementation ETLayout
 
-static NSMutableSet *layoutClasses = nil;
+static NSMutableSet *layoutPrototypes = nil;
 
-/** Registers ETLayout subclasses when the receiver is equal to ETLayout class. */
+/** Registers a prototype for every ETLayout subclasses.
+
+The implementation won't be executed in the subclasses. */
 + (void) initialize
 {
 	if (self == [ETLayout class])
 	{
-		layoutClasses = [[NSMutableSet alloc] init];
+		layoutPrototypes = [[NSMutableSet alloc] init];
 		FOREACH([self allSubclasses], subclass, Class)
 		{
-			[self registerLayoutClass: subclass];
+			[self registerLayout: AUTORELEASE([[subclass alloc] init])];
 		}
 	}
 }
@@ -58,34 +61,41 @@ static NSMutableSet *layoutClasses = nil;
 	return @"Layout";
 }
 
-/** Makes the given class available to EtoileUI facilities (inspector, etc.) 
+/** Makes the given prototype available to EtoileUI facilities (inspector, etc.) 
 that allow to change a layout at runtime.
 
-Also publishes a layout prototype of this class in the shared aspect repository 
-(not yet implemented). 
+Also publishes the prototype in the shared aspect repository (not yet implemented). 
 
-Raises an invalid argument exception if layoutClass isn't a subclass of ETLayout. */
-+ (void) registerLayoutClass: (Class)layoutClass
+Raises an invalid argument exception if aLayout class isn't a subclass of ETLayout. */
++ (void) registerLayout: (ETLayout *)aLayout
 {
-	// TODO: We should have a method -[Class isSubclassOfClass:]. 
-	// GSObjCIsKindOf may not work on Cocoa... check.
-	if ([layoutClass isSubclassOfClass: [ETLayout class]] == NO)
+	if ([aLayout isKindOfClass: [ETLayout class]] == NO)
 	{
 		[NSException raise: NSInvalidArgumentException
-		            format: @"Class %@ must be a subclass of ETLayout to get "
-		                    @"registered as a layout class.", layoutClass, nil];
+		            format: @"Prototype %@ must be a subclass of ETLayout to get "
+		                    @"registered as a layout prototype.", aLayout, nil];
 	}
 
-	[layoutClasses addObject: layoutClass];
+	[layoutPrototypes addObject: aLayout];
 	// TODO: Make a class instance available as an aspect in the aspect 
 	// repository.
 }
 
-/** Returns all the layout classes directly available for EtoileUI facilities 
+/** Returns all the layout prototypes directly available for EtoileUI facilities 
 that allow to transform the UI at runtime. */
++ (NSSet *) registeredLayouts
+{
+	return AUTORELEASE([layoutPrototypes copy]);
+}
+
+/** Returns all the layout classes directly available for EtoileUI facilities 
+that allow to transform the UI at runtime.
+
+These layout classes are a subset of the registered layout prototypes since 
+several prototypes might share the same class. */
 + (NSSet *) registeredLayoutClasses
 {
-	return AUTORELEASE([layoutClasses copy]);
+	return (NSSet *)[[layoutPrototypes mappedCollection] class];
 }
 
 /* Factory Method */

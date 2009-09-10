@@ -6,6 +6,7 @@
 	License:  Modified BSD (see COPYING)
  */
 
+#import <EtoileFoundation/ETCollection+HOM.h>
 #import <EtoileFoundation/NSObject+Etoile.h>
 #import <EtoileFoundation/NSObject+Model.h>
 #import <EtoileFoundation/Macros.h>
@@ -32,17 +33,19 @@
 
 @implementation ETInstrument
 
-static NSMutableSet *instrumentClasses = nil;
+static NSMutableSet *instrumentPrototypes = nil;
 
-/** Initializes ETInstrument class by preparing the registered instrument classes. */
+/** Registers a prototype for every ETInstrument subclasses.
+
+The implementation won't be executed in the subclasses. */
 + (void) initialize
 {
 	if (self == [ETInstrument class])
 	{
-		instrumentClasses = [[NSMutableSet alloc] init];
+		instrumentPrototypes = [[NSMutableSet alloc] init];
 		FOREACH([self allSubclasses], subclass, Class)
 		{
-			[self registerInstrumentClass: subclass];
+			[self registerInstrument: AUTORELEASE([[subclass alloc] init])];
 		}
 	}
 }
@@ -57,35 +60,42 @@ static NSMutableSet *instrumentClasses = nil;
 	return @"Instrument";
 }
 
-/** Registers the given class as an instrument class available to interact with 
-the UI.
+/** Makes the given prototype available to EtoileUI facilities (inspector, etc.) 
+that allow to change an instrument at runtime.
 
-Raises an invalid argument exception if instrumentClass isn't a subclass of 
+Also publishes the prototype in the shared aspect repository (not yet implemented). 
+
+Raises an invalid argument exception if anInstrument class isn't a subclass of 
 ETInstrument. */
-+ (void) registerInstrumentClass: (Class)instrumentClass
++ (void) registerInstrument: (ETInstrument *)anInstrument
 {
-	if ([instrumentClass isSubclassOfClass: [ETInstrument class]] == NO)
+	if ([anInstrument isKindOfClass: [ETInstrument class]] == NO)
 	{
 		[NSException raise: NSInvalidArgumentException
-		            format: @"Class %@ must be a subclass of ETInstrument to get "
-		                    @"registered as an instrument class.", instrumentClass, nil];
+		            format: @"Prototype %@ must be a subclass of ETInstrument to get "
+		                    @"registered as an instrument prototype.", anInstrument, nil];
 	}
 
-	[instrumentClasses addObject: instrumentClass];
+	[instrumentPrototypes addObject: anInstrument];
 	// TODO: Make a class instance available as an aspect in the aspect 
 	// repository.
 }
 
-/** Returns all the instrument classes available to interact with the UI. */
-+ (NSSet *) registeredInstrumentClasses
+/** Returns all the instrument prototypes directly available for EtoileUI 
+facilities that allow to transform the UI at runtime. */
++ (NSSet *) registeredInstruments
 {
-	return AUTORELEASE([instrumentClasses copy]);
+	return AUTORELEASE([instrumentPrototypes copy]);
 }
 
-+ (NSArray *) registeredInstruments
+/** Returns all the instrument classes directly available for EtoileUI facilities 
+that allow to transform the UI at runtime.
+
+These instrument classes are a subset of the registered instrument prototypes since 
+several prototypes might share the same class. */
++ (NSSet *) registeredInstrumentClasses
 {
-	// FIXME: Implement
-	return nil;
+	return (NSSet *)[[instrumentPrototypes mappedCollection] class];
 }
 
 /** Shows a palette which lists all the registered instruments. 

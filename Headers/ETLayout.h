@@ -113,7 +113,8 @@ typedef enum _ETSizeConstraintStyle
 	float _previousScaleFactor;
 }
 
-+ (void) registerLayoutClass: (Class)layoutClass;
++ (void) registerLayout: (ETLayout *)aLayout;
++ (NSSet *) registeredLayouts;
 + (NSSet *) registeredLayoutClasses;
 
 /* Factory  Method */
