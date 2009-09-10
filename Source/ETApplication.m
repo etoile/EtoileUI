@@ -34,6 +34,8 @@
 	THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#import <EtoileFoundation/Macros.h>
+#import <EtoileFoundation/ETCollection+HOM.h>
 #import "ETApplication.h"
 #import "ETEventProcessor.h"
 #import "ETInstrument.h"
@@ -46,6 +48,7 @@
 @interface ETApplication (Private)
 - (void) _instantiateAppDelegateIfSpecified;
 - (void) _buildLayoutItemTree;
+- (void) _registerAllAspects;
 - (void) _setUpAppMenu;
 - (int) _defaultInsertionIndexInAppMenu;
 - (void) _buildMainMenuIfNeeded;
@@ -97,6 +100,7 @@ launching notifications. */
 
 	/* Must be called last, because it processes the loaded nib and the menu. */
 	[self _buildLayoutItemTree];
+	[self _registerAllAspects];
 }
 
 /* If ETPrincipalControllerClass key is present in the bundle info plist, 
@@ -139,6 +143,19 @@ root item will be made available through -[ETApplication layoutItem]. */
 	ETEtoileUIBuilder *builder = [ETEtoileUIBuilder builder];
 
 	[ETLayoutItemGroup setWindowGroup: [builder render: self]];
+}
+
+- (NSArray *) aspectBaseClassNames
+{
+	return A(@"ETLayout", @"ETInstrument", @"ETStyle");
+}
+
+/* Asks every aspect base class (ETLayout, ETInstrument, ETStyle etc.) to 
+register the aspects it wants to make available to EtoileUI facilities 
+(inspector, etc.) that allow to change the UI at runtime. */
+- (void) _registerAllAspects
+{
+	[[[self aspectBaseClassNames] map] registerAspects];
 }
 
 /* If -mainMenu returns nil, builds a new main menu with -_createApplicationMenu

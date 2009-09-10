@@ -39,6 +39,8 @@ and expect to be provided a layout item through -render:layoutItem:dirtyRect:. *
 	BOOL _isSharedStyle;
 }
 
++ (void) registerAspects;
+
 - (BOOL) isSharedStyle;
 
 /* Copying */

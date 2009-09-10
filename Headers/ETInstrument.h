@@ -57,6 +57,7 @@ double-click and deactivated on a mouse click outside of their layout boundaries
 
 /* Registering Instruments */
 
++ (void) registerAspects;
 + (void) registerInstrument: (ETInstrument *)anInstrument;
 + (NSSet *) registeredInstruments;
 + (NSSet *) registeredInstrumentClasses;

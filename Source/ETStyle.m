@@ -18,6 +18,11 @@
 
 @implementation ETStyle
 
++ (void) registerAspects
+{
+	// TODO: Implement
+}
+
 /** <override-dummy />
 Returns the initializer invocation used by -copyWithZone: to create a new 
 instance. 

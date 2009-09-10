@@ -34,18 +34,27 @@
 
 static NSMutableSet *layoutPrototypes = nil;
 
+/* Dummy method to trigger +initialize */
++ (void) willInitialize
+{
+
+}
+
 /** Registers a prototype for every ETLayout subclasses.
 
-The implementation won't be executed in the subclasses. */
-+ (void) initialize
+The implementation won't be executed in the subclasses but only the abstract 
+base class.
+
+You should never need to call this method.
+
+See also NSObject(ETAspectRegistration). */
++ (void) registerAspects
 {
-	if (self == [ETLayout class])
+	ASSIGN(layoutPrototypes, [NSMutableSet set]);
+
+	FOREACH([self allSubclasses], subclass, Class)
 	{
-		layoutPrototypes = [[NSMutableSet alloc] init];
-		FOREACH([self allSubclasses], subclass, Class)
-		{
-			[self registerLayout: AUTORELEASE([[subclass alloc] init])];
-		}
+		[self registerLayout: AUTORELEASE([[subclass alloc] init])];
 	}
 }
 
@@ -73,7 +82,7 @@ Raises an invalid argument exception if aLayout class isn't a subclass of ETLayo
 	{
 		[NSException raise: NSInvalidArgumentException
 		            format: @"Prototype %@ must be a subclass of ETLayout to get "
-		                    @"registered as a layout prototype.", aLayout, nil];
+		                    @"registered as a layout prototype.", aLayout];
 	}
 
 	[layoutPrototypes addObject: aLayout];

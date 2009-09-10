@@ -82,6 +82,15 @@ file or write a custom main() function.*/
 int ETApplicationMain(int argc, const char **argv);
 
 
+@interface NSObject (ETAspectRegistration)
+/** Can be implemented by an aspect base class to trigger the automatic 
+registration of its aspect prototypes at the application launch time.
+
+e.g. ETLayout will register ETTableLayout, ETIconLayout instances etc. */
+- (void) registerAspects;
+@end
+
+
 enum 
 {
 	ETDevelopmentMenuTag = 30000,

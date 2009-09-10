@@ -37,16 +37,19 @@ static NSMutableSet *instrumentPrototypes = nil;
 
 /** Registers a prototype for every ETInstrument subclasses.
 
-The implementation won't be executed in the subclasses. */
-+ (void) initialize
+The implementation won't be executed in the subclasses but only the abstract 
+base class.
+
+You should never need to call this method.
+
+See also NSObject(ETAspectRegistration). */
++ (void) registerAspects
 {
-	if (self == [ETInstrument class])
+	ASSIGN(instrumentPrototypes, [NSMutableSet set]);
+
+	FOREACH([self allSubclasses], subclass, Class)
 	{
-		instrumentPrototypes = [[NSMutableSet alloc] init];
-		FOREACH([self allSubclasses], subclass, Class)
-		{
-			[self registerInstrument: AUTORELEASE([[subclass alloc] init])];
-		}
+		[self registerInstrument: AUTORELEASE([[subclass alloc] init])];
 	}
 }
 
@@ -73,7 +76,7 @@ ETInstrument. */
 	{
 		[NSException raise: NSInvalidArgumentException
 		            format: @"Prototype %@ must be a subclass of ETInstrument to get "
-		                    @"registered as an instrument prototype.", anInstrument, nil];
+		                    @"registered as an instrument prototype.", anInstrument];
 	}
 
 	[instrumentPrototypes addObject: anInstrument];
