@@ -25,6 +25,21 @@
 	return [self initWithFrame: [[self class] defaultFrame]];
 }
 
+- (NSString *) description
+{
+	NSRect frame = [self frame];
+	NSString *viewDesc = [NSString stringWithFormat: @" x: %.1f y: %.1f "
+		"width: %.1f height: %.1f flipped: %i hidden: %i autoresizing: %i "
+		"autoresize: %i subviews: %i superview: %@ window: %@", frame.origin.x, 
+		frame.origin.y, frame.size.width, frame.size.height, 
+		[self isFlipped], [self isHidden], [self autoresizingMask], 
+		[self autoresizesSubviews], [[self subviews] count], 
+		[[self superview] primitiveDescription], 
+		[[self window] primitiveDescription]];
+
+	return [[super description] stringByAppendingString: viewDesc];
+}
+
 /** Returns whether the receiver is a widget (or control in AppKit terminology) 
 on which actions should be dispatched.
 
