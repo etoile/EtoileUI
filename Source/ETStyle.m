@@ -608,7 +608,7 @@ indicatorRect is equal to it. */
 	NSRect bounds = NSInsetRect([bubble bounds], -6, -6); // Inset the rect to leave room for the shadow
 	
 	BOOL flipped = [item isFlipped];
-	NSAffineTransform *xform;
+	NSAffineTransform *xform = nil;
 	if (flipped)
 	{
 		xform = [NSAffineTransform transform];

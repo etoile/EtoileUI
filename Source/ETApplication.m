@@ -35,7 +35,6 @@
  */
 
 #import <EtoileFoundation/Macros.h>
-#import <EtoileFoundation/ETCollection+HOM.h>
 #import "ETApplication.h"
 #import "ETEventProcessor.h"
 #import "ETInstrument.h"
@@ -155,7 +154,7 @@ register the aspects it wants to make available to EtoileUI facilities
 (inspector, etc.) that allow to change the UI at runtime. */
 - (void) _registerAllAspects
 {
-	[[[self aspectBaseClassNames] map] registerAspects];
+	[[self aspectBaseClassNames] makeObjectsPerformSelector: @selector(registerAspects)];
 }
 
 /* If -mainMenu returns nil, builds a new main menu with -_createApplicationMenu

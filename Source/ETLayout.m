@@ -34,12 +34,6 @@
 
 static NSMutableSet *layoutPrototypes = nil;
 
-/* Dummy method to trigger +initialize */
-+ (void) willInitialize
-{
-
-}
-
 /** Registers a prototype for every ETLayout subclasses.
 
 The implementation won't be executed in the subclasses but only the abstract 
