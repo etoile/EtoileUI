@@ -33,16 +33,16 @@ typedef enum _ETLayoutDisplayMode {
 	IBOutlet NSPopUpButton *popup;
 	ETLayoutDisplayMode _displayMode;
 	BOOL _shouldInspectRepresentedObjectAsView;
+	BOOL _shouldInspectItself;
 	/* We don't use a dictionary to ensure keys won't be copied since they can  
 	   be arbitrary objects. */
 	NSMapTable *_mirrorCache; 
-	ETLayoutItemGroup *presentationProxy; // NOTE: Temporary hack
 }
 
-// TODO: May be useful to have the possibility to inspect itself, the 
-// property view item and popup item inserted into the context, rather than only 
-// supporting to inspect the original layout context content.
-// We could add -setShouldInspectItself: and -shouldInspectItself...
+
+// NOTE: Could be better named -shouldInspectInitialContent
+- (BOOL) shouldInspectItself;
+- (void) setShouldInspectItself: (BOOL)inspectLayout;
 - (BOOL) shouldInspectRepresentedObjectAsView;
 - (void) setShouldInspectRepresentedObjectAsView: (BOOL)flag; 
 - (ETLayoutItem *) inspectedItem;

@@ -15,6 +15,7 @@
 #import "ETLayoutItem+Reflection.h"
 #import "ETLayoutItem+Scrollable.h"
 #import "ETLayoutItemGroup.h"
+#import "EtoileUIProperties.h"
 #import "ETOutlineLayout.h"
 #import "ETUIItemFactory.h"
 #import "ETView.h"
@@ -154,23 +155,12 @@ the property view item is scrollable. */
 	return NO;
 }
 
-/* Temporary hack. ETCompositeLayout needs to be reworked to support using an 
-invisible first presentation item transparently. */
-- (ETLayoutItemGroup *) presentationProxyWithContext: (id)layoutCtxt
-{
-	if (presentationProxy != nil)
-		return presentationProxy;
-
-	NSArray *items = [layoutCtxt defaultValueForProperty: @"items"];
-	ASSIGN(presentationProxy, [[ETUIItemFactory factory] itemGroupWithItems: items]);
-	return presentationProxy;
-}
-
 /** Returns the item inspected as a view and whose represented object is 
 inspected as model. */
 - (ETLayoutItem *) inspectedItem
 {
-	ETLayoutItem *contentProxyItem = [self presentationProxyWithContext: [self layoutContext]];
+	// FIXME: Ugly cast
+	ETLayoutItem *contentProxyItem = (ETLayoutItemGroup *)[self layoutContext];
 
 	if ([self shouldInspectRepresentedObjectAsView] 
 	 && [contentProxyItem isMetaLayoutItem])
@@ -179,6 +169,63 @@ inspected as model. */
 	}
 
 	return contentProxyItem;
+}
+
+- (id) modelForInspectedItem: (id)anItem
+{
+	if ([self shouldInspectItself] == NO && [anItem isEqual: _layoutContext])
+	{
+		return [anItem defaultValueForProperty: kETRepresentedObjectProperty];
+	}
+	else
+	{
+		return [anItem representedObject];
+	}
+}
+
+/* When the inspected item is the layout context and -shouldInspectItself is NO, 
+returns the items which were its children before the view model layout was 
+applied to it, otherwise returns its current children. */
+- (id) contentForInspectedItem: (id)anItem
+{
+	if ([anItem isGroup] == NO)
+		return nil;
+
+	if ([self shouldInspectItself] == NO && [anItem isEqual: _layoutContext])
+	{
+		NSArray *initialChildren = [anItem defaultValueForProperty: @"items"];
+		NSParameterAssert(nil != initialChildren);
+		return initialChildren;
+	}
+	else
+	{
+		return [anItem items];
+	}
+}
+
+/** Returns whether the receiver should try to inspect the current layout 
+context content, rather than inspecting its initial content before the view 
+model layout was applied.
+
+The value returned by this method is ignored when 
+-shouldInspectRepresentedObjectAsView returns YES.
+
+By default, NO is returned and in ETLayoutDisplayModeViewContent present the 
+items that belonged to the layout context before the view model layout was 
+applied. */
+- (BOOL) shouldInspectItself
+{
+	return _shouldInspectItself;
+}
+
+/** Sets whether the receiver should try to inspect the current layout 
+context content, rather than inspecting its initial content before the view 
+model layout was applied.
+
+See also -shouldInspectItself. */
+- (void) setShouldInspectItself: (BOOL)inspectLayout
+{
+	_shouldInspectItself = inspectLayout;
 }
 
 /** Returns whether the receiver should try to inspect the represented object of 
@@ -222,6 +269,28 @@ being returned. */
 	return mirror;
 }
 
+- (id) entityViewPointForObject: (id)anObject
+{
+	NSArray *properties = [(NSObject *)anObject properties];
+	NSMutableArray *propertyViewpoints = 
+		[NSMutableArray arrayWithCapacity: [properties count]];
+
+	FOREACH(properties, property, NSString *)
+	{
+		[propertyViewpoints addObject: [ETProperty propertyWithName: property 
+		                                          representedObject: anObject]];
+	}
+
+	return propertyViewpoints;
+}
+
+- (void) makePropertyProviderWithObject: (id)anObject
+{
+	[propertyViewItem setRepresentedObject: [self entityViewPointForObject: anObject]];
+	[propertyViewItem setSource: propertyViewItem];
+	[[propertyViewItem layout] setDisplayedProperties: A(@"name", @"value")];
+}
+
 - (void) makeContentProviderWithObject: (id)anObject
 {
 	id <ETCollection> collection = ([anObject isCollection] ? anObject : nil);
@@ -242,6 +311,19 @@ being returned. */
 {
 	[propertyViewItem setRepresentedObject: nil];
 	[propertyViewItem setSource: self];
+}
+
+// FIXME: Remove
+- (void) renderWithLayoutItems: (NSArray *)items isNewContent: (BOOL)isNewContent
+{
+	if ([propertyViewItem canReload])
+	{
+		[propertyViewItem reloadAndUpdateLayout];
+	}
+	else
+	{
+		[propertyViewItem updateLayout];
+	}
 }
 
 /** Returns the active display mode. */ 
@@ -272,17 +354,23 @@ And which perspective is taken to inspect it:
 	
 	switch (mode)
 	{
+		case ETLayoutDisplayModeViewProperties:
+			[self makePropertyProviderWithObject: [self inspectedItem]];
+			break;
+		case ETLayoutDisplayModeModelProperties:
+			[self makePropertyProviderWithObject: [self modelForInspectedItem: [self inspectedItem]]];
+			break;
 		case ETLayoutDisplayModeViewObject:
 			[self makeMirrorProviderWithObject: [self inspectedItem]];
 			break;
 		case ETLayoutDisplayModeModelObject:
-			[self makeMirrorProviderWithObject: [[self inspectedItem] representedObject]];
+			[self makeMirrorProviderWithObject: [self modelForInspectedItem: [self inspectedItem]]];
 			break;
 		case ETLayoutDisplayModeViewContent:
-			[self makeContentProviderWithObject: [self inspectedItem]];
+			[self makeContentProviderWithObject: [self contentForInspectedItem: [self inspectedItem]]];
 			break;
 		case ETLayoutDisplayModeModelContent:
-			[self makeContentProviderWithObject: [[self inspectedItem] representedObject]];
+			[self makeContentProviderWithObject: [self modelForInspectedItem: [self inspectedItem]]];
 			break;
 		default:
 			[self resetProvider];
@@ -335,120 +423,6 @@ You must never use this method. */
 		default:
 			ASSERT_INVALID_CASE;
 	}
-}
-
-/* Object Inspection */
-
-- (int) numberOfItemsInItemGroup: (ETLayoutItemGroup *)baseItem
-{
-	/* Verify the layout is currently bound to a layout context like a container */
-	if ([self layoutContext] == nil)
-	{
-		ETLog(@"WARNING: Layout context is missing for -numberOfItemsInItemGroup: in %@", self);
-		return 0;
-	}
-
-	id inspectedItem = [self inspectedItem];
-	id inspectedModel = [inspectedItem representedObject];
-	/* Always generate a meta layout item to simplify introspection code */
-	ETLayoutItem *metaItem = 
-		[ETLayoutItem layoutItemWithRepresentedItem: inspectedItem snapshot: NO];
-	int nbOfItems = 0;
-
-	if ([self displayMode] == ETLayoutDisplayModeViewProperties)
-	{
-		/* By using a meta layout item, the inspected item ivars which are 
-		   implicit properties get transparently reified into properties. This 
-		   happens when the inspected item becomes the model (or represented 
-		   object) of the meta item. 
-		   See -[ETLayoutItem properties] to know which ivars/accessors are 
-		   reified into properties. */
-		nbOfItems = [[metaItem properties] count];
-	}
-	else if ([self displayMode] == ETLayoutDisplayModeModelProperties)
-	{
-		nbOfItems = [[inspectedModel properties] count];
-	}
-	else
-	{
-		ETLog(@"WARNING: Unknown display mode %d in -numberOfItemsInItemGroup: "
-			"of %@", [self displayMode], self);
-	}
-	
-	//ETLog(@"Returns %d as number of property or slot items in %@", nbOfItems, container);
-	
-	return nbOfItems;
-}
-
-- (ETLayoutItem *) itemGroup: (ETLayoutItemGroup *)baseItem itemAtIndex: (int)index
-{
-	id inspectedItem = [self layoutContext];
-	id inspectedModel = [inspectedItem representedObject];
-	/* Always generate a meta layout item to simplify introspection code */
-	// FIXME: Regenerating a meta layout item for the same layout context/item 
-	// on each -itemGroup:itemAtIndex: call is expansive (see 
-	// -[ETLayoutItemGroup copyWithZone:]. ... Caching the meta layout item is
-	// probably worth to do.
-	ETLayoutItem *metaItem =
-		[ETLayoutItem layoutItemWithRepresentedItem: inspectedItem snapshot: NO];
-	ETLayoutItem *propertyItem = AUTORELEASE([[ETLayoutItem alloc] init]);
-	
-	/* Inspected item is used as model */
-	if (inspectedModel == nil)
-		inspectedModel = inspectedItem;
-	
-	NSAssert1(inspectedModel != nil, @"Layout context of % must not be nil.", self);
-	
-	if ([self displayMode] == ETLayoutDisplayModeViewProperties)
-	{
-		NSString *property = [[metaItem properties] objectAtIndex: index];
-
-		[propertyItem setValue: property forProperty: @"property"];
-		// FIXME: Instead using -description, write a generic ETObjectFormatter
-		// For example, on table view display, the value is copied when passed 
-		// in parameter to -[NSCell setObjectValue:]. If the value like an 
-		// NSView instance doesn't implement -copyWithZone:, it leads to a 
-		// crash. That's why having a generic formatter or always passing the
-		// object description string is critical.
-		[propertyItem setValue: [[metaItem valueForProperty: property] stringValue] forProperty: @"value"];
-	}
-	else if ([self displayMode] == ETLayoutDisplayModeModelProperties)
-	{
-		NSString *property = [(NSArray *)[inspectedModel properties] objectAtIndex: index];
-
-		[propertyItem setValue: property forProperty: @"property"];
-		[propertyItem setValue: [inspectedModel valueForProperty: property] forProperty: @"value"];
-	}
-	else
-	{
-		ETLog(@"WARNING: Unknown display mode %d in -itemGroup:itemAtIndex: "
-			"of %@", [self displayMode], self);
-	}
-
-	//ETLog(@"Returns property or slot item %@ at index %d in %@", propertyItem, index, container);
-	
-	return propertyItem;
-}
-
-- (NSArray *) displayedItemPropertiesInItemGroup: (ETLayoutItemGroup *)baseItem
-{
-	NSArray *displayedProperties = nil;
-
-	switch ([self displayMode])
-	{
-		case ETLayoutDisplayModeViewProperties:
-		case ETLayoutDisplayModeModelProperties:
-			displayedProperties = A(@"property", @"value");
-			break;
-		case ETLayoutDisplayModeViewContent:
-		case ETLayoutDisplayModeModelContent:
-			displayedProperties = A(@"content", @"value");
-			break;
-		default:
-			break;
-	}
-	
-	return displayedProperties;
 }
 
 @end

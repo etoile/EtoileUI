@@ -267,6 +267,12 @@ in -handleAddXXX which will then invoke [[B representedObject] addObject: bla]. 
 		[_layoutContext setDefaultValue: [_layoutContext source] 
 							forProperty: kETSourceProperty];
 	}
+	if ([properties containsObject: kETRepresentedObjectProperty] 
+	 && [_layoutContext representedObject] != nil)
+	{
+		[_layoutContext setDefaultValue: [_layoutContext representedObject] 
+							forProperty: kETRepresentedObjectProperty];
+	}
 	if ([properties containsObject: kETFlippedProperty])
 	{
 		BOOL isFlipped = [_layoutContext isFlipped];
@@ -299,7 +305,8 @@ in -handleAddXXX which will then invoke [[B representedObject] addObject: bla]. 
 	   -restoreContextState: will have done it. */
 	if ([self isContentRouted] == NO)
 	{
-		[properties addObjectsFromArray: A(@"items", kETSourceProperty)];
+		[properties addObjectsFromArray: 
+			A(@"items", kETRepresentedObjectProperty, kETSourceProperty)];
 	}
 
 	return properties;
@@ -314,6 +321,10 @@ in -handleAddXXX which will then invoke [[B representedObject] addObject: bla]. 
 	if ([properties containsObject: kETSourceProperty])
 	{
 		[_layoutContext setSource: [_layoutContext defaultValueForProperty: kETSourceProperty]];
+	}
+	if ([properties containsObject: kETRepresentedObjectProperty])
+	{
+		[_layoutContext setRepresentedObject: [_layoutContext defaultValueForProperty: kETRepresentedObjectProperty]];
 	}
 	if ([properties containsObject: kETFlippedProperty])
 	{
