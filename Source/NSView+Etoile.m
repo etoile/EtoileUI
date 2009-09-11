@@ -74,7 +74,8 @@ also copied, in other words the new object is a deep copy of the receiver. */
 {
 	NSView *superview = [self superview];
 
-	RETAIN(superview);
+
+	RETAIN(self);
 	[self removeFromSuperview];
 
 #ifdef GNUSTEP
@@ -87,7 +88,7 @@ also copied, in other words the new object is a deep copy of the receiver. */
 #endif
 
 	[superview addSubview: self];
-	RELEASE(superview);
+	RELEASE(self);
 
 	return RETAIN(viewCopy);
 }
