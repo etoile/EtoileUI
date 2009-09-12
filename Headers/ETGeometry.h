@@ -1,36 +1,12 @@
-/*
-	ETGeometry.h
-	
-	Geometry utility functions and constants.
- 
+/** <title>Geometry</title>
+
+	<abstract>Geometry utility functions and constants.</abstract>
+
 	Copyright (C) 2008 Quentin Mathe
  
 	Author:  Quentin Mathe <qmathe@club-internet.fr>
 	Date:  December 2008
- 
-	Redistribution and use in source and binary forms, with or without
-	modification, are permitted provided that the following conditions are met:
-
-	* Redistributions of source code must retain the above copyright notice,
-	  this list of conditions and the following disclaimer.
-	* Redistributions in binary form must reproduce the above copyright notice,
-	  this list of conditions and the following disclaimer in the documentation
-	  and/or other materials provided with the distribution.
-	* Neither the name of the Etoile project nor the names of its contributors
-	  may be used to endorse or promote products derived from this software
-	  without specific prior written permission.
-
-	THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
-	AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
-	IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
-	ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE
-	LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
-	CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
-	SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
-	INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
-	CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
-	ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
-	THE POSSIBILITY OF SUCH DAMAGE.
+	License:  Modified BSD (see COPYING)
  */
 
 #import <Foundation/Foundation.h>
@@ -60,6 +36,29 @@ static inline BOOL ETIsNullPoint(NSPoint aPoint)
 static inline BOOL ETIsNullRect(NSRect rect)
 {
 	return NSEqualRects(rect, ETNullRect);
+}
+
+/** Returns a rect that uses aSize as its size and centered inside the given rect.
+
+The returned rect is expressed relative the given rect parent coordinate space.<br />
+To get a rect expressed relative the the given rect itself, pass a rect with a zero 
+origin: 
+<code>
+NSRect inRect = NSMakeRect(40, 50, 100, 200);
+NSRect centeredRectSize = NSMakeSize(50, 100);
+NSRect rect = ETCenteredRect(centeredRectSize, ETMakeRect(NSZeroPoint, inRect.size));
+</code>
+The resulting rect is equal to { 25, 50, 50, 100 }.
+
+The returned rect origin is valid whether or not your coordinate space is flipped. */
+static inline NSRect ETCenteredRect(NSSize aSize, NSRect inRect)
+{
+	float xOffset = aSize.width * 0.5;
+	float x = NSMidX(inRect) - xOffset;
+	float yOffset = aSize.height  * 0.5;
+	float y = NSMidY(inRect) - yOffset;
+
+	return NSMakeRect(x, y, aSize.width, aSize.height);
 }
 
 /** Returns a rect with a positive width and height by shifting the origin as 
