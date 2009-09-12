@@ -126,6 +126,14 @@ overrides it to resize/scale the bezier path as needed. */
 
 @implementation ETBasicItemStyle
 
+/** Returns the string attributes used to draw the label by default.
+
+The returned attributes only include the label font supplied by NSFont. */
++ (NSDictionary *) standardLabelAttributes
+{
+	return D([NSFont labelFontOfSize: [NSFont labelFontSize]], NSFontAttributeName);
+}
+
 static ETBasicItemStyle *sharedBasicItemStyle = nil;
 
 /** Returns the shared basic item style instance. */
@@ -144,13 +152,22 @@ static ETBasicItemStyle *sharedBasicItemStyle = nil;
 {
 	SUPERINIT
 	_isSharedStyle = YES;
+	_labelPosition = ETLabelPositionCentered;
+	ASSIGN(_labelAttributes, [[self class] standardLabelAttributes]);
 	return self;
 }
+
+DEALLOC(DESTROY(_labelAttributes));
 
 - (id) copyWithZone: (NSZone *)aZone
 {
 	ETBasicItemStyle *newStyle = [super copyWithZone: aZone];
-	newStyle->_titleVisible = _titleVisible;
+
+	newStyle->_labelAttributes = [_labelAttributes copyWithZone: aZone];
+	newStyle->_labelPosition = _labelPosition;
+	newStyle->_labelMargin = _labelMargin;
+	newStyle->_labelVisible = _labelVisible;
+
 	return newStyle;
 }
 
@@ -162,11 +179,20 @@ static ETBasicItemStyle *sharedBasicItemStyle = nil;
 	// methods don't take in account it and simply redraw all their content.
 	NSImage *itemImage = [item valueForProperty: kETImageProperty];
 
-	if (itemImage != nil)
+	if (nil != itemImage)
 	{
 		[self drawImage: itemImage
 		        flipped: [item isFlipped]
 		         inRect: [item drawingFrame]]; 
+	}
+
+	NSString *itemLabel = [self labelForItem: item];
+
+	if (nil != itemLabel)
+	{
+		ETLog(@"Try to draw label in %@ of %@", NSStringFromRect([self rectForLabel: itemLabel ofItem: item]), item);
+		[itemLabel drawInRect: [self rectForLabel: itemLabel ofItem: item]
+		       withAttributes: _labelAttributes];
 	}
 
 	if ([item isGroup] && [(ETLayoutItemGroup *)item isStack])
@@ -288,6 +314,116 @@ indicatorRect is equal to it. */
 	[[[NSColor keyboardFocusIndicatorColor] colorWithAlphaComponent: 0.8] setStroke];
 	[NSBezierPath setDefaultLineWidth: 6.0];
 	[NSBezierPath strokeRect: indicatorRect];
+}
+
+/** Returns the item title position. */
+- (ETLabelPosition) labelPosition
+{
+	return _labelPosition;
+}
+
+/** Sets the title position. */
+- (void) setLabelPosition: (ETLabelPosition)aPositionRule
+{
+	_labelPosition = aPositionRule;
+}
+
+/** Returns the margin between the item label and the item content. */
+- (float) labelMargin
+{
+	return _labelMargin;
+}
+
+/** Sets the margin between the item label and the item content. */
+- (void) setLabelMargin: (float)aMargin
+{
+	_labelMargin = aMargin;
+}
+
+/** Returns the string attributes used to draw the label. */
+- (NSDictionary *) labelAttributes
+{
+	return _labelAttributes;
+}
+
+/** Sets the string attributes used to draw the label. */
+- (void) setLabelAttributes: (NSDictionary *)stringAttributes
+{
+	ASSIGN(_labelAttributes, stringAttributes);
+}
+
+- (NSRect) rectForLabel: (NSString *)aLabel ofItem: (ETLayoutItem *)anItem
+{
+	NSParameterAssert(nil != aLabel);
+	NSParameterAssert(nil != anItem);
+
+	NSRect itemFrame = [anItem frame];
+	NSSize labelSize = [aLabel sizeWithAttributes: _labelAttributes];
+	NSRect rect = ETNullRect;
+
+	switch (_labelPosition)
+	{
+		case ETLabelPositionCentered:
+			rect = ETCenteredRect(labelSize, itemFrame);
+			break;
+		case ETLabelPositionOutsideTop:
+		{
+			float labelBaseY = itemFrame.size.height + labelSize.height;
+			
+			if ([anItem isFlipped])
+			{
+				labelBaseY = - labelSize.height;
+			}
+				
+			rect = NSMakeRect(0, labelBaseY, labelSize.width, labelSize.height);
+			break;
+		}
+		case ETLabelPositionOutsideLeft:
+		{
+			float labelBaseY = 0;
+			
+			if ([anItem isFlipped])
+			{
+				labelBaseY = itemFrame.size.height;
+			}
+
+			rect = NSMakeRect(itemFrame.size.width + _labelMargin, labelBaseY, labelSize.width, labelSize.height);
+			break;
+		}
+		case ETLabelPositionNone:
+			return NSZeroRect;
+		default:
+			ASSERT_INVALID_CASE;
+			return NSZeroRect;
+	}
+
+	return NSIntersectionRect(rect, [anItem drawingFrame]);
+}
+
+/** Returns the string to be used as the label to draw.
+
+When the given item has a view, returns the item name which might be nil, 
+otherwise returns the item display name which is never nil. This behavior 
+ensures no label is drawn when the item uses a custom view (such as a widget), 
+unless you explicitly set one with -[ETLayoutItem setName:]. */
+- (NSString *) labelForItem: (ETLayoutItem *)anItem
+{
+	NSString *label = nil;
+
+	// TODO: We probably want extra flexibility. e.g. kETShouldDrawGroupLabelHint 
+	// set by the parent item in inputValues based on the layout. 
+	// ETLayoutItemGroup might want to query the layout with 
+	// -[ETLayout shouldLayoutContextDraws(All)ItemLabel].
+	if ([anItem view] != nil)
+	{
+		label = [anItem name];
+	}
+	else if ([anItem isGroup] == NO)
+	{
+		label = [anItem displayName];
+	}
+
+	return label;
 }
 
 @end

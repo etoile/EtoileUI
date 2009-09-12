@@ -66,6 +66,7 @@ subclasses (see -[ETLayout initWithLayoutView:]). */
 		[self setItemSizeConstraintStyle: ETSizeConstraintStyleNone];
 		ASSIGN(_rootItem, [ETLayoutItem itemGroup]);
 		[_rootItem setActionHandler: nil];
+		[_rootItem setStyle: nil];
 	}
 	
 	return self;

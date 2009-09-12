@@ -60,6 +60,23 @@ and expect to be provided a layout item through -render:layoutItem:dirtyRect:. *
 @end
 
 
+typedef enum
+{
+	ETLabelPositionNone, 
+/** Lets the content aspect positions and resizes the title. */
+	ETLabelPositionContentAspect, 
+/** Lets the content as is. */
+	ETLabelPositionCentered, 
+	ETLabelPositionInsideLeft,
+	ETLabelPositionOutsideLeft,
+	ETLabelPositionInsideTop,
+	ETLabelPositionOutsideTop,
+	ETLabelPositionInsideRight,
+	ETLabelPositionOutsideRight,
+	ETLabelPositionInsideBottom,
+	ETLabelPositionOutsideBottom
+} ETLabelPosition;
+
 /** ETBasicItemStyle is a very generic style that knows how to draw:
 <list> 
 <item>various basic ETLayoutItem properties when available (such as name, image 
@@ -74,8 +91,13 @@ Tailored items build by ETUIItemFactory might not use ETBasicItemStyle, but
 a custom style object. */
 @interface ETBasicItemStyle : ETStyle
 {
-	BOOL _titleVisible;
+	ETLabelPosition _labelPosition;
+	float _labelMargin;
+	BOOL _labelVisible;
+	NSDictionary *_labelAttributes;
 }
+
++ (NSDictionary *) standardLabelAttributes;
 
 + (id) sharedInstance;
 
@@ -83,17 +105,27 @@ a custom style object. */
      layoutItem: (ETLayoutItem *)item 
 	  dirtyRect: (NSRect)dirtyRect;
 
+/* Drawing */
+
 - (void) drawImage: (NSImage *)itemImage 
            flipped: (BOOL)itemFlipped 
-            inRect: (NSRect)aRect;	  
+            inRect: (NSRect)aRect;
 - (void) drawSelectionIndicatorInRect: (NSRect)indicatorRect;
 - (void) drawStackIndicatorInRect: (NSRect)indicatorRect;
 - (void) drawFirstResponderIndicatorInRect: (NSRect)indicatorRect;
 
+/* Label */
+
+- (ETLabelPosition) labelPosition;
+- (void) setLabelPosition: (ETLabelPosition)aPositionRule;
+- (NSDictionary *) labelAttributes;
+- (void) setLabelAttributes: (NSDictionary *)stringAttributes;
+- (NSRect) rectForLabel: (NSString *)aLabel ofItem: (ETLayoutItem *)anItem;
+- (NSString *) labelForItem: (ETLayoutItem *)anItem;
+
 // TODO: Implement
-//- (BOOL) setTitleVisible: (BOOL)flag;
-//- (BOOL) isTitleVisible;
-//- (void) drawTitleInRect: (NSRect)aRect;
+//- (BOOL) setLabelVisible: (BOOL)flag;
+//- (BOOL) isLabelVisible;
 
 @end
 

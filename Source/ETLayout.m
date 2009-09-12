@@ -883,6 +883,7 @@ context and the tree rooted in -rootItem. */
 	{
 		_rootItem = [[ETLayoutItemGroup alloc] init];
 		[_rootItem setActionHandler: nil];
+		[_rootItem setStyle: nil];
 	}
 
 	return _rootItem;
