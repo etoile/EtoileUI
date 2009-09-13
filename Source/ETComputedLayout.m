@@ -8,6 +8,7 @@
 
 #import <EtoileFoundation/Macros.h>
 #import "ETComputedLayout.h"
+#import "ETLayoutItem.h"
 #import "ETCompatibility.h"
 
 
@@ -19,10 +20,29 @@
 - (id <ETLayoutingContext>) layoutContext { return [super layoutContext]; }
 - (ETLayoutItem *) itemAtLocation: (NSPoint)location { return [super itemAtLocation: location]; }
 
+DEALLOC(DESTROY(_separatorTemplateItem))
+
+- (id) copyWithZone: (NSZone *)aZone layoutContext: (id <ETLayoutingContext>)ctxt
+{
+	ETComputedLayout *newLayout = [super copyWithZone: aZone layoutContext: ctxt];
+
+	newLayout->_itemMargin = _itemMargin;
+	newLayout->_horizontalAlignment = _horizontalAlignment;
+	newLayout->_horizontalAlignmentGuidePosition = _horizontalAlignmentGuidePosition;
+	newLayout->_computesItemRectFromBoundingBox = _computesItemRectFromBoundingBox;
+	newLayout->_separatorTemplateItem = [_separatorTemplateItem copyWithZone: aZone];
+
+	return newLayout;
+}
+
+/** <override-never /> 
+Returns YES. */
 - (BOOL) isComputedLayout
 {
 	return YES;
 }
+
+/* Alignment and Margins */
 
 /** Sets the size of the margin around each item to be layouted and triggers a 
 layout update. */
@@ -44,6 +64,80 @@ layout update. */
 - (float) itemMargin
 {
 	return _itemMargin;
+}
+
+/** Returns the content horizontal alignment in the layout context area. */
+- (ETLayoutHorizontalAlignment) horizontalAlignment
+{
+	return _horizontalAlignment;
+}
+
+/** Sets the content horizontal alignment in the layout context area. */
+- (void) setHorizontalAligment: (ETLayoutHorizontalAlignment)anAlignment
+{
+	_horizontalAlignment = anAlignment;
+}
+
+/** Returns the horizontal alignment guide 'x' coordinate relative to the layout 
+context left edge.
+
+See also -setHorizontalAlignmentGuidePosition: */
+- (float) horizontalAlignmentGuidePosition
+{
+	return _horizontalAlignmentGuidePosition;
+}
+
+/** Sets the horizontal alignment guide 'x' coordinate relative to the layout 
+context left edge.
+
+The horizontal alignment guide is like a virtual vertical guide against which 
+the layouted items can be aligned. See -setHorizontalAlignment:.
+
+When -horizontalAlignment is not equal to ETHorizontalAlignmentGuided, this 
+guide is ignored by the layout computation.  */
+- (void) setHorizontalAlignmentGuidePosition: (float)aPosition
+{
+	_horizontalAlignmentGuidePosition = aPosition;
+}
+
+/* Layout Computation */
+
+/** Returns whether the bounding box rather than the frame is the item area 
+that will be used to compute the layout. */
+- (BOOL) computesItemRectFromBoundingBox
+{
+	return _computesItemRectFromBoundingBox;
+}
+
+/** Sets whether the bounding box rather than the frame is the item area 
+that will be used to compute the layout. */
+- (void) setComputesItemRectFromBoundingBox: (BOOL)usesBoundingBox
+{
+	_computesItemRectFromBoundingBox = usesBoundingBox;
+}
+
+/** <override-dummy />
+Returns either the given item frame or its bounding box expressed in its parent 
+content coordinate space.
+
+The parent is the layout context. */
+- (NSRect) rectForItem: (ETLayoutItem *)anItem
+{
+	if (_computesItemRectFromBoundingBox)
+	{
+		return [anItem convertRectToParent: [anItem boundingBox]];
+	}
+	else
+	{
+		return [anItem frame];
+	}
+}
+
+/** Moves the item frame by the given delta. */
+- (void) translateOriginOfItem: (ETLayoutItem *)anItem byX: (float)dx Y: (float)dy
+{
+	NSRect itemFrame = [anItem frame];
+	[anItem setOrigin: NSMakePoint(itemFrame.origin.x + dx, itemFrame.origin.y + dy)];
 }
 
 /** <override-never />
@@ -72,10 +166,10 @@ The scroll view visibility is handled by this method (this is subject to change)
 	[super renderWithLayoutItems: items isNewContent: isNewContent];
 
 	NSMutableArray *spacedItems = [NSMutableArray array];
-	for (unsigned int i=0; i<[items count]; i++)
+	for (unsigned int i = 0; i < [items count]; i++)
 	{
 		[spacedItems addObject: [items objectAtIndex: i]];
-		if (i < [items count] - 1 && [self separatorTemplateItem] != nil)
+		if (i < ([items count] - 1) && [self separatorTemplateItem] != nil)
 		{
 			[spacedItems addObject: AUTORELEASE([[self separatorTemplateItem] copy])];
 		}
@@ -156,6 +250,7 @@ geometrical attributes (position, size, scale etc.) accordingly. */
 
 /* Seperator support */
 
+/** Sets the separator item to be drawn between each layouted item. */
 - (void) setSeparatorTemplateItem: (ETLayoutItem *)separator
 {
 	ASSIGN(_separatorTemplateItem, separator);
@@ -166,7 +261,8 @@ geometrical attributes (position, size, scale etc.) accordingly. */
 		[[self layoutContext] setNeedsDisplay: YES];
 	}
 }
-			
+
+/** Returns the separator item to be drawn between each layouted item. */			
 - (ETLayoutItem *) separatorTemplateItem
 {
 	return _separatorTemplateItem;

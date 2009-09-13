@@ -16,6 +16,24 @@
 
 @class ETLayoutLine;
 
+/** Describes how the content is horizontally positioned inside the layout 
+context.
+
+The horizontal aligment computation takes in account all the margins previously 
+specified on the layout. */
+typedef enum
+{
+	ETLayoutHorizontalAlignmentCenter,
+/** Centers the content horizontally in the layout context. */
+	ETLayoutHorizontalAlignmentLeft,
+/** Shifts the content as much as possible towards the left edge of the layout context. */
+	ETLayoutHorizontalAlignmentRight,
+/** Shifts the content as much as possible towards the right edge of the layout context. */
+	ETLayoutHorizontalAlignmentGuided
+/** Positions the content on the right of the horizontal alignment guide.<br />
+Each layouted item origin will use -horizontalAlignmentGuidePosition as its 'x' value. */
+} ETLayoutHorizontalAlignment;
+
 
 /** ETComputedLayout is a basic abstract class that must be subclassed everytime 
 a layout role only consists in positioning, orienting and sizing the layout 
@@ -30,11 +48,27 @@ ETTemplateItemLayout are allowed to do. */
 @interface ETComputedLayout : ETLayout <ETPositionalLayout>
 {
 	float _itemMargin;
+	ETLayoutHorizontalAlignment _horizontalAlignment;
+	float _horizontalAlignmentGuidePosition;
 	ETLayoutItem *_separatorTemplateItem;
+	BOOL _computesItemRectFromBoundingBox;
 }
+
+/* Alignment and Margins */
 
 - (void) setItemMargin: (float)margin;
 - (float) itemMargin;
+- (ETLayoutHorizontalAlignment) horizontalAlignment;
+- (void) setHorizontalAligment: (ETLayoutHorizontalAlignment)anAlignment;
+- (float) horizontalAlignmentGuidePosition;
+- (void) setHorizontalAlignmentGuidePosition: (float)aPosition;
+
+/* Layout Computation */
+
+- (BOOL) computesItemRectFromBoundingBox;
+- (void) setComputesItemRectFromBoundingBox: (BOOL)usesBoundingBox;
+- (NSRect) rectForItem: (ETLayoutItem *)anItem;
+- (void) translateOriginOfItem: (ETLayoutItem *)anItem byX: (float)dx Y: (float)dy;
 
 - (void) renderWithLayoutItems: (NSArray *)items isNewContent: (BOOL)isNewContent;
 
