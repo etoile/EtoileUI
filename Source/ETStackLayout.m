@@ -23,13 +23,13 @@
 	float vAccumulator = 0;
 	float itemMargin = [self itemMargin];
     
-	FOREACH(items, itemToLayout, ETLayoutItem *)
+	FOREACH(items, item, ETLayoutItem *)
 	{
-		vAccumulator += itemMargin + [itemToLayout height];
+		vAccumulator += itemMargin + [self rectForItem: item].size.height;
 		
 		if ([self isContentSizeLayout] || vAccumulator < [self layoutSize].height)
 		{
-			[layoutedItems addObject: itemToLayout];
+			[layoutedItems addObject: item];
 		}
 		else
 		{
@@ -86,15 +86,20 @@
 		
 	FOREACHE(nil, item, ETLayoutItem *, lineWalker)
 	{
-		[item setX: itemLocation.x];
-		[item setY: itemLocation.y];
+		NSRect itemRect = [self rectForItem: item];
+		NSPoint oldOrigin = itemRect.origin;
+		NSPoint newOrigin = itemLocation;
+
+		[self translateOriginOfItem: item byX: (newOrigin.x - oldOrigin.x) 
+											Y: (newOrigin.y - oldOrigin.y)];
+
 		if (isFlipped)
 		{
-			itemLocation.y += itemMargin + [item height];
+			itemLocation.y += itemMargin + itemRect.size.height;
 		}
 		else
 		{
-			itemLocation.y -= itemMargin + [item height];
+			itemLocation.y -= itemMargin + itemRect.size.height;
 		}
 	}
 	
