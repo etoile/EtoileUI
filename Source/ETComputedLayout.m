@@ -202,7 +202,7 @@ The scroll view visibility is handled by this method (this is subject to change)
 	/* Flatten layout model by putting all items into a single array */
 	FOREACH(layoutModel, line, ETLayoutLine *)
 	{
-		[visibleItems addObjectsFromArray: [line items]];
+		[visibleItems addObjectsFromArray: [line fragments]];
 	}
 	
 	[[self layoutContext] setVisibleItems: visibleItems];

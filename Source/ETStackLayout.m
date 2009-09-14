@@ -40,7 +40,7 @@
 	if ([layoutedItems isEmpty])
 		return nil;
 		
-	ETLayoutLine *line = [ETLayoutLine layoutLineWithLayoutItems: layoutedItems];
+	ETLayoutLine *line = [ETLayoutLine horizontalLineWithFragments: layoutedItems];
 	[line setVerticallyOriented: YES];
 	
 	/* Update layout size, useful when the layout context is embedded in a scroll view */
@@ -75,12 +75,12 @@
 
 	if (isFlipped)
 	{
-		lineWalker = [[line items] objectEnumerator];
+		lineWalker = [[line fragments] objectEnumerator];
 	}
 	else
 	{
 		/* Don't reverse the item order or selection and sorting will be messed */
-		lineWalker = [[line items] reverseObjectEnumerator];
+		lineWalker = [[line fragments] reverseObjectEnumerator];
 		itemLocation = NSMakePoint(itemMargin, [self layoutSize].height + itemMargin);	
 	}
 		

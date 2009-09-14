@@ -15,15 +15,15 @@
 
 @interface ETLayoutLine : NSObject
 {
-	NSMutableArray *_items;
+	NSMutableArray *_fragments;
 	NSPoint _origin;
 	NSPoint _topLineLocation;
 	BOOL _vertical;
 }
 
-+ (id) layoutLineWithLayoutItems: (NSArray *)items;
++ (id) horizontalLineWithFragments: (NSArray *)items;
 
-- (NSArray *) items;
+- (NSArray *) fragments;
 
 - (NSPoint) origin;
 - (void) setOrigin: (NSPoint)location;

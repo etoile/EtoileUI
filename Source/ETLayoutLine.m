@@ -6,6 +6,7 @@
 	License:  Modified BSD  (see COPYING)
  */
 
+#import <EtoileFoundation/Macros.h>
 #import "ETLayoutLine.h"
 #import "ETLayoutItem.h"
 #import "ETLayoutItem+Factory.h"
@@ -15,25 +16,57 @@
 
 @implementation ETLayoutLine
 
-+ (id) layoutLineWithLayoutItems: (NSArray *)items
+/* <init /> */
+- (id) initWithFragments: (NSArray *)fragments
 {
-	ETLayoutLine *layoutLine = [[ETLayoutLine alloc] init];
-    
-	ASSIGN(layoutLine->_items, items);
-    
-	return (id)AUTORELEASE(layoutLine);
+	NILARG_EXCEPTION_TEST(fragments);
+	SUPERINIT;
+	ASSIGN(_fragments, fragments);
+	return self;
 }
 
-- (NSArray *) items
+- (id) init
 {
-	return _items;
+	return [self initWithFragments: [NSArray array]];
 }
 
+DEALLOC(DESTROY(_fragments))
+
+/** Returns a new autoreleased horizontal layout line filled with the given 
+fragments. */
++ (id) horizontalLineWithFragments: (NSArray *)fragments
+{
+	return AUTORELEASE([[[self class] alloc] initWithFragments: fragments]);
+}
+
+- (NSString *) description
+{
+    NSString *desc = [super description];
+
+	FOREACHI(_fragments, fragment)
+    {
+		desc = [desc stringByAppendingFormat: @", %@", NSStringFromRect([fragment frame])];
+    }
+    
+    return desc;
+}
+
+
+/** Returns the fragments that fills the receiver. */
+- (NSArray *) fragments
+{
+	return _fragments;
+}
+
+/** Sets the origin of the line in a layout. 
+
+The origin is at the top left corner of the line when the parent coordinate 
+space is flipped, ortherwise at the bottom left corner. */
 - (void) setOrigin: (NSPoint)location
 {
 	_origin = location;
 	
-	NSEnumerator *e = [_items objectEnumerator];
+	NSEnumerator *e = [_fragments objectEnumerator];
 	ETLayoutItem *item = nil;
 	
 	while ((item = [e nextObject]) != nil)
@@ -42,14 +75,16 @@
 	}
 }
 
+/** Returns the origin of the line in a layout. */
 - (NSPoint) origin
 {
 	return _origin;  
 }
 
+/** Returns the height of the line. */
 - (float) height
 {
-	NSEnumerator *e = [_items objectEnumerator];
+	NSEnumerator *e = [_fragments objectEnumerator];
 	ETLayoutItem *item = nil;
 	float height = 0;
 	
@@ -59,12 +94,12 @@
 	
 	if ([self isVerticallyOriented])
 	{
-		height = [[_items valueForKey: @"@sum.height"] floatValue];
+		height = [[_fragments valueForKey: @"@sum.height"] floatValue];
 	}
 	else
 	{
 		// FIXME: Try to make the next line works
-		// height = [[_items valueForKey: @"@max.height"] floatValue];
+		// height = [[_fragments valueForKey: @"@max.height"] floatValue];
 		
 		while ((item = [e nextObject]) != nil)
 		{
@@ -76,9 +111,10 @@
 	return height;
 }
 
+/** Returns the width of the line. */
 - (float) width
 {
-	NSEnumerator *e = [_items objectEnumerator];
+	NSEnumerator *e = [_fragments objectEnumerator];
 	ETLayoutItem *item = nil;
 	float width = 0;
 	
@@ -89,7 +125,7 @@
 	if ([self isVerticallyOriented])
 	{
 		// FIXME: Try to make the next line works
-		// width = [[_items valueForKey: @"@max.width"] floatValue];
+		// width = [[_fragments valueForKey: @"@max.width"] floatValue];
 		
 		while ((item = [e nextObject]) != nil)
 		{
@@ -99,7 +135,7 @@
 	}
 	else
 	{
-		width = [[_items valueForKey: @"@sum.width"] floatValue];
+		width = [[_fragments valueForKey: @"@sum.width"] floatValue];
 	}
 
 	
@@ -114,20 +150,6 @@
 - (void) setVerticallyOriented: (BOOL)vertical
 {
 	_vertical = vertical;
-}
-
-- (NSString *) description
-{
-    NSString *desc = [super description];
-    NSEnumerator *e = [_items objectEnumerator];
-    id item = nil;
-    
-    while ((item = [e nextObject]) != nil)
-    {
-		desc = [desc stringByAppendingFormat: @", %@", NSStringFromRect([item frame])];
-    }
-    
-    return desc;
 }
 
 @end

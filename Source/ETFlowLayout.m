@@ -66,7 +66,7 @@ to the items, which are expected to be already broken into lines in layoutModel.
 
 		[line setOrigin: itemLocation];
     
-		FOREACH([line items], item, ETLayoutItem *)
+		FOREACH([line fragments], item, ETLayoutItem *)
 		{
 			[item setX: itemLocation.x];
 			itemLocation.x += [item width] + itemMargin;
@@ -112,13 +112,13 @@ to the items, which are expected to be already broken into lines in layoutModel.
 	{
 		ETLayoutLine *line = [self layoutLineForLayoutItems: unlayoutedItems];
 		
-		if ([[line items] count] > 0)
+		if ([[line fragments] count] > 0)
 		{
 			[layoutModel addObject: line];    
 				
 			/* In unlayoutedItems, remove the items which have just been 
 			   layouted on the previous line. */
-			[unlayoutedItems removeObjectsInArray: [line items]];
+			[unlayoutedItems removeObjectsInArray: [line fragments]];
 		}
 		else
 		{
@@ -169,7 +169,7 @@ When items is empty, returns an empty layout line. */
 	if ([layoutedItems isEmpty])
 		return nil;
 
-	ETLayoutLine *line = [ETLayoutLine layoutLineWithLayoutItems: layoutedItems];
+	ETLayoutLine *line = [ETLayoutLine horizontalLineWithFragments: layoutedItems];
 	[line setVerticallyOriented: NO];
 
 	return line;
