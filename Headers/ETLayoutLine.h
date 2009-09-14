@@ -12,27 +12,30 @@
 #import <Foundation/Foundation.h>
 #import <AppKit/AppKit.h>
 
+/** A line fragment is a collection of fragments to be layouted either 
+horizontally or vertically.
 
+A line fragment is typically used together with ETComputedLayout to cluster 
+items spatially without requiring that these layout items belong to an item 
+group.  */
 @interface ETLayoutLine : NSObject
 {
 	NSMutableArray *_fragments;
 	NSPoint _origin;
-	NSPoint _topLineLocation;
-	BOOL _vertical;
 }
 
-+ (id) horizontalLineWithFragments: (NSArray *)items;
++ (id) horizontalLineWithFragments: (NSArray *)fragments;
++ (id) verticalLineWithFragments: (NSArray *)fragments;
 
 - (NSArray *) fragments;
 
 - (NSPoint) origin;
 - (void) setOrigin: (NSPoint)location;
-
-/** In flipped layout, top line location is rather than base line location. */ 
 - (float) height;
 - (float) width;
 
+- (float) length;
+- (float) thickness;
 - (BOOL) isVerticallyOriented;
-- (void) setVerticallyOriented: (BOOL)vertical;
 
 @end

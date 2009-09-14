@@ -9,6 +9,7 @@
 #import <EtoileFoundation/Macros.h>
 #import "ETComputedLayout.h"
 #import "ETLayoutItem.h"
+#import "ETLayoutLine.h"
 #import "ETCompatibility.h"
 
 

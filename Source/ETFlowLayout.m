@@ -170,7 +170,6 @@ When items is empty, returns an empty layout line. */
 		return nil;
 
 	ETLayoutLine *line = [ETLayoutLine horizontalLineWithFragments: layoutedItems];
-	[line setVerticallyOriented: NO];
 
 	return line;
 }

@@ -40,8 +40,7 @@
 	if ([layoutedItems isEmpty])
 		return nil;
 		
-	ETLayoutLine *line = [ETLayoutLine horizontalLineWithFragments: layoutedItems];
-	[line setVerticallyOriented: YES];
+	ETLayoutLine *line = [ETLayoutLine verticalLineWithFragments: layoutedItems];
 	
 	/* Update layout size, useful when the layout context is embedded in a scroll view */
 	if ([self isContentSizeLayout])

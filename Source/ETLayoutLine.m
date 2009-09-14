@@ -9,9 +9,10 @@
 #import <EtoileFoundation/Macros.h>
 #import "ETLayoutLine.h"
 #import "ETLayoutItem.h"
-#import "ETLayoutItem+Factory.h"
-#import "NSView+Etoile.h"
 #import "ETCompatibility.h"
+
+@interface ETVerticalLineFragment : ETLayoutLine
+@end
 
 
 @implementation ETLayoutLine
@@ -37,6 +38,13 @@ fragments. */
 + (id) horizontalLineWithFragments: (NSArray *)fragments
 {
 	return AUTORELEASE([[[self class] alloc] initWithFragments: fragments]);
+}
+
+/** Returns a new autoreleased vertical layout line filled with the given 
+fragments. */
++ (id) verticalLineWithFragments: (NSArray *)fragments
+{
+	return AUTORELEASE([[ETVerticalLineFragment alloc] initWithFragments: fragments]);
 }
 
 - (NSString *) description
@@ -66,12 +74,9 @@ space is flipped, ortherwise at the bottom left corner. */
 {
 	_origin = location;
 	
-	NSEnumerator *e = [_fragments objectEnumerator];
-	ETLayoutItem *item = nil;
-	
-	while ((item = [e nextObject]) != nil)
+	FOREACHI(_fragments, fragment)
 	{
-		[item setY: _origin.y];
+		[fragment setY: _origin.y];
 	}
 }
 
@@ -84,28 +89,18 @@ space is flipped, ortherwise at the bottom left corner. */
 /** Returns the height of the line. */
 - (float) height
 {
-	NSEnumerator *e = [_fragments objectEnumerator];
-	ETLayoutItem *item = nil;
 	float height = 0;
 	
 	/* We must look for the tallest layouted item (by line) when we are
-	   horizontally oriented. When vertically oriented, we must compute the sum 
-	   of layout item height. */
+	   horizontally oriented. */
+
+	// FIXME: Try to make the next line works
+	// height = [[_fragments valueForKey: @"@max.height"] floatValue];
 	
-	if ([self isVerticallyOriented])
+	FOREACHI(_fragments, fragment)
 	{
-		height = [[_fragments valueForKey: @"@sum.height"] floatValue];
-	}
-	else
-	{
-		// FIXME: Try to make the next line works
-		// height = [[_fragments valueForKey: @"@max.height"] floatValue];
-		
-		while ((item = [e nextObject]) != nil)
-		{
-			if ([item height] > height)
-				height = [item height];
-		}
+		if ([fragment height] > height)
+			height = [fragment height];
 	}
 	
 	return height;
@@ -114,42 +109,83 @@ space is flipped, ortherwise at the bottom left corner. */
 /** Returns the width of the line. */
 - (float) width
 {
-	NSEnumerator *e = [_fragments objectEnumerator];
-	ETLayoutItem *item = nil;
+	/* We must compute the sum of layout item width when we are horizontally 
+	   oriented. */
+	return [[_fragments valueForKey: @"@sum.width"] floatValue];
+}
+
+/** <override-dummy />
+Returns the lenght of the line.
+
+The length is the width when the line is horizontal, the height when the line 
+is vertical. */
+- (float) length
+{
+	return [self width];
+}
+
+
+/** <override-dummy />
+Returns the lenght of the line.
+
+The thickness is the height when the line is horizontal, the width when the line 
+is vertical. */
+- (float) thickness
+{
+	return [self height];
+}
+
+/** <override-dummy />
+Returns whether the line is vertical or horizontal. */
+- (BOOL) isVerticallyOriented
+{
+	return NO;
+}
+
+@end
+
+
+@implementation ETVerticalLineFragment
+
+- (float) height
+{
+	/* We must compute the sum of layout item height when we are vertically 
+	   oriented. */
+	return [[_fragments valueForKey: @"@sum.height"] floatValue];
+}
+
+- (float) width
+{
 	float width = 0;
 	
 	/* We must look for the widest layouted item (by line) when we are
-	   vertically oriented. When horizontally riented, we must compute the sum 
-	   of layout item width. */
+	   vertically oriented. */
 
-	if ([self isVerticallyOriented])
-	{
-		// FIXME: Try to make the next line works
-		// width = [[_fragments valueForKey: @"@max.width"] floatValue];
-		
-		while ((item = [e nextObject]) != nil)
-		{
-			if ([item width] > width)
-				width = [item width];
-		}
-	}
-	else
-	{
-		width = [[_fragments valueForKey: @"@sum.width"] floatValue];
-	}
+	// FIXME: Try to make the next line works
+	// width = [[_fragments valueForKey: @"@max.width"] floatValue];
 
+	FOREACHI(_fragments, fragment)
+	{
+		if ([fragment width] > width)
+			width = [fragment width];
+	}
 	
 	return width;
 }
 
-- (BOOL) isVerticallyOriented
+- (float) length
 {
-	return _vertical;
+	return [self height];
 }
 
-- (void) setVerticallyOriented: (BOOL)vertical
+- (float) thickness
 {
-	_vertical = vertical;
+	return [self width];
+}
+
+- (BOOL) isVerticallyOriented
+{
+	return YES;
 }
 
 @end
