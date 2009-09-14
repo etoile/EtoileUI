@@ -64,7 +64,7 @@ to the items, which are expected to be already broken into lines in layoutModel.
        
      */
 
-		[line setBaseLineLocation: itemLocation];
+		[line setOrigin: itemLocation];
     
 		FOREACH([line items], item, ETLayoutItem *)
 		{
@@ -80,15 +80,15 @@ to the items, which are expected to be already broken into lines in layoutModel.
 		   the current line, by substracting to 'y' the last layout line height. */
 		if (isFlipped)
 		{
-			[line setBaseLineLocation: 
-				NSMakePoint([line baseLineLocation].x, itemLocation.y)];
-			itemLocation.y = [line baseLineLocation].y + [line height] + itemMargin;
+			[line setOrigin: 
+				NSMakePoint([line origin].x, itemLocation.y)];
+			itemLocation.y = [line origin].y + [line height] + itemMargin;
 		}
 		else
 		{
-			[line setBaseLineLocation: 
-				NSMakePoint([line baseLineLocation].x, itemLocation.y - [line height])];
-			itemLocation.y = [line baseLineLocation].y + itemMargin;		
+			[line setOrigin: 
+				NSMakePoint([line origin].x, itemLocation.y - [line height])];
+			itemLocation.y = [line origin].y + itemMargin;		
 		}
 		itemLocation.x = itemMargin;
 
