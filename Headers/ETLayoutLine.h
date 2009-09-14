@@ -11,6 +11,7 @@
 
 #import <Foundation/Foundation.h>
 #import <AppKit/AppKit.h>
+#import <EtoileUI/ETFragment.h>
 
 /** A line fragment is a collection of fragments to be layouted either 
 horizontally or vertically.
@@ -18,7 +19,7 @@ horizontally or vertically.
 A line fragment is typically used together with ETComputedLayout to cluster 
 items spatially without requiring that these layout items belong to an item 
 group.  */
-@interface ETLayoutLine : NSObject
+@interface ETLayoutLine : NSObject <ETFragment>
 {
 	NSMutableArray *_fragments;
 	NSPoint _origin;

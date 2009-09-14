@@ -13,9 +13,9 @@
 
 #import <Foundation/Foundation.h>
 #import <AppKit/AppKit.h>
-#import <EtoileUI/ETStyle.h>
 #import <EtoileUI/ETInspecting.h>
-#import <EtoileUI/ETDecoratorItem.h>
+#import <EtoileUI/ETFragment.h>
+#import <EtoileUI/ETUIItem.h>
 
 @class ETUTI;
 @class ETView, ETLayout, ETLayoutItemGroup, 
@@ -62,7 +62,7 @@ and centers it. A strech is a scale that doesn't preserve the content proportion
 } ETContentAspect;
 
 
-@interface ETLayoutItem : ETUIItem <NSCopying, ETObjectInspection>
+@interface ETLayoutItem : ETUIItem <NSCopying, ETObjectInspection, ETFragment>
 {
 	NSMutableDictionary *_variableProperties;
 	// TODO: Merge the two dictionaries or store the default values per object 

@@ -24,6 +24,7 @@
 #import "ETLayoutItem+Factory.h"
 #import "ETLineLayout.h"
 #import "ETUIItemFactory.h"
+#import "ETWindowItem.h"
 #import "ETCompatibility.h"
 #import <UnitKit/UnitKit.h>
 #define _ISOC99_SOURCE 

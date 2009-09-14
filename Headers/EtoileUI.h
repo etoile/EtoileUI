@@ -21,6 +21,7 @@
 #import <EtoileUI/ETEvent.h>
 #import <EtoileUI/ETFixedLayout.h>
 #import <EtoileUI/ETFlowLayout.h>
+#import <EtoileUI/ETFragment.h>
 #import <EtoileUI/ETFreeLayout.h>
 #import <EtoileUI/ETGeometry.h>
 #import <EtoileUI/ETIconLayout.h>
