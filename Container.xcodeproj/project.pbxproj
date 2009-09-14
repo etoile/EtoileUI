@@ -235,6 +235,9 @@
 		6077C1830F9802E1006CB3F5 /* ETViewModelLayout.m in Sources */ = {isa = PBXBuildFile; fileRef = 60F3658F0D18651700FCFFDA /* ETViewModelLayout.m */; };
 		6077C1FE0F980516006CB3F5 /* EtoileUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 60EF8E9D0C5E4D0600C97C41 /* EtoileUI.framework */; };
 		6077C1FF0F980525006CB3F5 /* EtoileUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 60EF8E9D0C5E4D0600C97C41 /* EtoileUI.framework */; };
+		60793A4F105C125A005E4F39 /* EtoileFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 603647AC0E409244003377E0 /* EtoileFoundation.framework */; };
+		60793A50105C125A005E4F39 /* EtoileUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 60EF8E9D0C5E4D0600C97C41 /* EtoileUI.framework */; };
+		60793AC5105C1263005E4F39 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 29B97316FDCFA39411CA2CEA /* main.m */; };
 		607F5F020F005A8E00A8CD0C /* ETGeometry.h in Headers */ = {isa = PBXBuildFile; fileRef = 607F5F000F005A8E00A8CD0C /* ETGeometry.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		607F5F070F005C5100A8CD0C /* ETGeometry.m in Sources */ = {isa = PBXBuildFile; fileRef = 607F5F060F005C5100A8CD0C /* ETGeometry.m */; };
 		607F5F080F005C5100A8CD0C /* ETGeometry.m in Sources */ = {isa = PBXBuildFile; fileRef = 607F5F060F005C5100A8CD0C /* ETGeometry.m */; };
@@ -414,6 +417,7 @@
 		60F8C9CC0F8DF1AB0069FA6C /* ETHandle.m in Sources */ = {isa = PBXBuildFile; fileRef = 60F8C9CB0F8DF1AB0069FA6C /* ETHandle.m */; };
 		60F8C9D60F8DF2910069FA6C /* ETInstruments.h in Headers */ = {isa = PBXBuildFile; fileRef = 607A43E50F0AEA7300753B56 /* ETInstruments.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		60F8C9DB0F8DF3200069FA6C /* ETInstruments.m in Sources */ = {isa = PBXBuildFile; fileRef = 607A43E80F0AEA8900753B56 /* ETInstruments.m */; };
+		60FC29F3105C11E4008D2EFF /* FormController.m in Sources */ = {isa = PBXBuildFile; fileRef = 60FC29F2105C11E4008D2EFF /* FormController.m */; };
 		60FDA9A10FE58F460009686A /* ETSelectionAreaItem.h in Headers */ = {isa = PBXBuildFile; fileRef = 60FDA99F0FE58F460009686A /* ETSelectionAreaItem.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		60FDA9A30FE58F590009686A /* ETSelectionAreaItem.m in Sources */ = {isa = PBXBuildFile; fileRef = 60FDA9A20FE58F590009686A /* ETSelectionAreaItem.m */; };
 		60FDA9A40FE58F590009686A /* ETSelectionAreaItem.m in Sources */ = {isa = PBXBuildFile; fileRef = 60FDA9A20FE58F590009686A /* ETSelectionAreaItem.m */; };
@@ -472,6 +476,20 @@
 			proxyType = 1;
 			remoteGlobalIDString = 603647AB0E409244003377E0;
 			remoteInfo = EtoileFoundation;
+		};
+		60793B2A105C1658005E4F39 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 29B97313FDCFA39411CA2CEA /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 603647AB0E409244003377E0;
+			remoteInfo = EtoileFoundation;
+		};
+		60793B2C105C1658005E4F39 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 29B97313FDCFA39411CA2CEA /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 60EF8E9C0C5E4D0600C97C41;
+			remoteInfo = EtoileUI;
 		};
 		60909D5E0CB30484009CAD27 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -835,6 +853,10 @@
 		60F6EEEF1014722D003F4508 /* NSFileHandle+Socket.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = "NSFileHandle+Socket.m"; path = "../EtoileFoundation/Source/NSFileHandle+Socket.m"; sourceTree = SOURCE_ROOT; };
 		60F8C9C80F8DF19B0069FA6C /* ETHandle.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ETHandle.h; path = Headers/ETHandle.h; sourceTree = "<group>"; };
 		60F8C9CB0F8DF1AB0069FA6C /* ETHandle.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ETHandle.m; path = Source/ETHandle.m; sourceTree = "<group>"; };
+		60FC2925105C112D008D2EFF /* FormExample.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = FormExample.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		60FC2927105C112D008D2EFF /* FormExample-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "FormExample-Info.plist"; sourceTree = "<group>"; };
+		60FC29E3105C118A008D2EFF /* FormController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FormController.h; path = FormExample/FormController.h; sourceTree = "<group>"; };
+		60FC29F2105C11E4008D2EFF /* FormController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = FormController.m; path = FormExample/FormController.m; sourceTree = "<group>"; };
 		60FDA99F0FE58F460009686A /* ETSelectionAreaItem.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ETSelectionAreaItem.h; path = Headers/ETSelectionAreaItem.h; sourceTree = "<group>"; };
 		60FDA9A20FE58F590009686A /* ETSelectionAreaItem.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ETSelectionAreaItem.m; path = Source/ETSelectionAreaItem.m; sourceTree = "<group>"; };
 		662EA3F21019161B0044F013 /* ETEntityDescription.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ETEntityDescription.h; path = ../EtoileFoundation/Headers/ETEntityDescription.h; sourceTree = SOURCE_ROOT; };
@@ -997,6 +1019,15 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		60FC2923105C112D008D2EFF /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				60793A4F105C125A005E4F39 /* EtoileFoundation.framework in Frameworks */,
+				60793A50105C125A005E4F39 /* EtoileUI.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
@@ -1027,6 +1058,7 @@
 				609B66D70FEE80CE0007F842 /* TestEtoileFoundation.bundle */,
 				60073C2910074B39007272E6 /* EtoileWeb.framework */,
 				60073EAD10074D26007272E6 /* EtoileXML.framework */,
+				60FC2925105C112D008D2EFF /* FormExample.app */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -1053,6 +1085,7 @@
 				60EEB9020F09457C00EBB632 /* Collage.app */,
 				66C3AF9910181DDE0046D74A /* libssl.dylib */,
 				66C3AFB510181ECD0046D74A /* libcrypto.dylib */,
+				60FC2927105C112D008D2EFF /* FormExample-Info.plist */,
 			);
 			name = FlowAutolayoutExample;
 			sourceTree = "<group>";
@@ -1489,6 +1522,8 @@
 				60EEB91D0F0946BF00EBB632 /* CollageController.m */,
 				606B97480C0AF283000AAA85 /* ContainerController.h */,
 				606B97490C0AF283000AAA85 /* ContainerController.m */,
+				60FC29E3105C118A008D2EFF /* FormController.h */,
+				60FC29F2105C11E4008D2EFF /* FormController.m */,
 				607667190F2F225200961963 /* ObjectManagerController.h */,
 				605F0CC30C0F3F8F003AE3E6 /* ObjectManagerController.m */,
 				60C1D8AB0C2569D500E00A2E /* PaneController.h */,
@@ -1978,6 +2013,25 @@
 			productReference = 60EF8E9D0C5E4D0600C97C41 /* EtoileUI.framework */;
 			productType = "com.apple.product-type.framework";
 		};
+		60FC2924105C112D008D2EFF /* FormExample */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 60FC292A105C112E008D2EFF /* Build configuration list for PBXNativeTarget "FormExample" */;
+			buildPhases = (
+				60FC2921105C112D008D2EFF /* Resources */,
+				60FC2922105C112D008D2EFF /* Sources */,
+				60FC2923105C112D008D2EFF /* Frameworks */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				60793B2B105C1658005E4F39 /* PBXTargetDependency */,
+				60793B2D105C1658005E4F39 /* PBXTargetDependency */,
+			);
+			name = FormExample;
+			productName = FormExample;
+			productReference = 60FC2925105C112D008D2EFF /* FormExample.app */;
+			productType = "com.apple.product-type.application";
+		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
@@ -2005,6 +2059,7 @@
 				60539D930C240A7B006C57EC /* PaneContainerExample */,
 				606B98C80C0AF831000AAA85 /* PhotoViewExample */,
 				60909CC80CB2DA42009CAD27 /* TableViewExample */,
+				60FC2924105C112D008D2EFF /* FormExample */,
 			);
 		};
 /* End PBXProject section */
@@ -2108,6 +2163,13 @@
 				608EBAF3100D22AB00B36FAB /* OutlinePrototype.nib in Resources */,
 				608EBAF4100D22AB00B36FAB /* TablePrototype.nib in Resources */,
 				608EBAF5100D22AB00B36FAB /* ViewModelPrototype.nib in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		60FC2921105C112D008D2EFF /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2480,6 +2542,15 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		60FC2922105C112D008D2EFF /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				60793AC5105C1263005E4F39 /* main.m in Sources */,
+				60FC29F3105C11E4008D2EFF /* FormController.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
@@ -2497,6 +2568,16 @@
 			isa = PBXTargetDependency;
 			target = 603647AB0E409244003377E0 /* EtoileFoundation */;
 			targetProxy = 603647B10E409256003377E0 /* PBXContainerItemProxy */;
+		};
+		60793B2B105C1658005E4F39 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 603647AB0E409244003377E0 /* EtoileFoundation */;
+			targetProxy = 60793B2A105C1658005E4F39 /* PBXContainerItemProxy */;
+		};
+		60793B2D105C1658005E4F39 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 60EF8E9C0C5E4D0600C97C41 /* EtoileUI */;
+			targetProxy = 60793B2C105C1658005E4F39 /* PBXContainerItemProxy */;
 		};
 		60909D5F0CB30484009CAD27 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
@@ -2728,6 +2809,10 @@
 				GCC_OPTIMIZATION_LEVEL = 0;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "$(SYSTEM_LIBRARY_DIR)/Frameworks/AppKit.framework/Headers/AppKit.h";
+				HEADER_SEARCH_PATHS = (
+					$SRCROOT,
+					/usr/GNUstep/System/Library/Headers/,
+				);
 				INFOPLIST_FILE = "EtoileXML-Info.plist";
 				INSTALL_PATH = "$(HOME)/Library/Frameworks";
 				OTHER_LDFLAGS = (
@@ -3287,6 +3372,54 @@
 			};
 			name = Release;
 		};
+		60FC2928105C112E008D2EFF /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				COPY_PHASE_STRIP = NO;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_ENABLE_FIX_AND_CONTINUE = YES;
+				GCC_MODEL_TUNING = G5;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "$(SYSTEM_LIBRARY_DIR)/Frameworks/AppKit.framework/Headers/AppKit.h";
+				INFOPLIST_FILE = "FormExample/FormExample-Info.plist";
+				INSTALL_PATH = "$(HOME)/Applications";
+				OTHER_LDFLAGS = (
+					"-framework",
+					Foundation,
+					"-framework",
+					AppKit,
+				);
+				PREBINDING = NO;
+				PRODUCT_NAME = FormExample;
+			};
+			name = Debug;
+		};
+		60FC2929105C112E008D2EFF /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				COPY_PHASE_STRIP = YES;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				GCC_ENABLE_FIX_AND_CONTINUE = NO;
+				GCC_MODEL_TUNING = G5;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "$(SYSTEM_LIBRARY_DIR)/Frameworks/AppKit.framework/Headers/AppKit.h";
+				INFOPLIST_FILE = "FormExample-Info.plist";
+				INSTALL_PATH = "$(HOME)/Applications";
+				OTHER_LDFLAGS = (
+					"-framework",
+					Foundation,
+					"-framework",
+					AppKit,
+				);
+				PREBINDING = NO;
+				PRODUCT_NAME = FormExample;
+				ZERO_LINK = NO;
+			};
+			name = Release;
+		};
 		C01FCF4F08A954540054247B /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -3454,6 +3587,15 @@
 			buildConfigurations = (
 				60EF8EA00C5E4D0800C97C41 /* Debug */,
 				60EF8EA10C5E4D0800C97C41 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		60FC292A105C112E008D2EFF /* Build configuration list for PBXNativeTarget "FormExample" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				60FC2928105C112E008D2EFF /* Debug */,
+				60FC2929105C112E008D2EFF /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
