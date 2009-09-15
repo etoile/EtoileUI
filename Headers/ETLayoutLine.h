@@ -29,6 +29,7 @@ group.  */
 + (id) verticalLineWithFragments: (NSArray *)fragments;
 
 - (NSArray *) fragments;
+- (void) updateFragmentLocations;
 
 - (NSPoint) origin;
 - (void) setOrigin: (NSPoint)location;

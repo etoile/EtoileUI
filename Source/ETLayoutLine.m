@@ -66,6 +66,19 @@ fragments. */
 	return _fragments;
 }
 
+/** Computes and sets the new fragment locations relative the receiver parent 
+coordinate space.
+
+The fragment locations need to be recomputed every time the receiver origin, 
+size or the fragment margin get changed. */
+- (void) updateFragmentLocations
+{
+	FOREACHI(_fragments, fragment)
+	{
+		[fragment setY: _origin.y];
+	}
+}
+
 /** Sets the origin of the line in a layout. 
 
 The origin is at the top left corner of the line when the parent coordinate 
@@ -73,11 +86,7 @@ space is flipped, ortherwise at the bottom left corner. */
 - (void) setOrigin: (NSPoint)location
 {
 	_origin = location;
-	
-	FOREACHI(_fragments, fragment)
-	{
-		[fragment setY: _origin.y];
-	}
+	[self updateFragmentLocations];
 }
 
 /** Returns the origin of the line in a layout. */
@@ -146,6 +155,14 @@ Returns whether the line is vertical or horizontal. */
 
 
 @implementation ETVerticalLineFragment
+
+- (void) updateFragmentLocations
+{
+	FOREACHI(_fragments, fragment)
+	{
+		[fragment setX: _origin.x];
+	}
+}
 
 - (float) height
 {
