@@ -66,6 +66,16 @@ fragments. */
 	return _fragments;
 }
 
+- (float) fragmentMargin
+{
+	return _fragmentMargin;
+}
+
+- (void) setFragmentMargin: (float)aMargin
+{
+	_fragmentMargin = aMargin;
+}
+
 /** Computes and sets the new fragment locations relative the receiver parent 
 coordinate space.
 
@@ -73,9 +83,12 @@ The fragment locations need to be recomputed every time the receiver origin,
 size or the fragment margin get changed. */
 - (void) updateFragmentLocations
 {
+	NSPoint fragmentOrigin = NSMakePoint(_origin.x + _fragmentMargin, _origin.y + _fragmentMargin);
+
 	FOREACHI(_fragments, fragment)
 	{
-		[fragment setY: _origin.y];
+		[fragment setOrigin: fragmentOrigin];
+		fragmentOrigin.x += [fragment width] + _fragmentMargin;
 	}
 }
 

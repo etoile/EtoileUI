@@ -23,6 +23,7 @@ group.  */
 {
 	NSMutableArray *_fragments;
 	NSPoint _origin;
+	float _fragmentMargin;
 }
 
 + (id) horizontalLineWithFragments: (NSArray *)fragments;
@@ -30,6 +31,8 @@ group.  */
 
 - (NSArray *) fragments;
 - (void) updateFragmentLocations;
+- (float) fragmentMargin;
+- (void) setFragmentMargin: (float)aMargin;
 
 - (NSPoint) origin;
 - (void) setOrigin: (NSPoint)location;

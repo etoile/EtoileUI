@@ -38,7 +38,7 @@ to the items, which are expected to be already broken into lines in layoutModel.
 - (void) computeLayoutItemLocationsForLayoutModel: (NSArray *)layoutModel
 {
 	float itemMargin = [self itemMargin];
-	NSPoint itemLocation = NSMakePoint(itemMargin, itemMargin);
+	NSPoint itemLocation = NSZeroPoint;
 	float newLayoutHeight = 0;
 	BOOL isFlipped = [[self layoutContext] isFlipped];
 
@@ -60,20 +60,11 @@ to the items, which are expected to be already broken into lines in layoutModel.
            B
        
        In the layout context coordinates we have:   
-       baseLineLocation.x = A.x and baseLineLocation.y = A.y - B.y
+       baselineLocation.x = A.x and baselineLocation.y = A.y - B.y
        
      */
 
 		[line setOrigin: itemLocation];
-    
-		FOREACH([line fragments], item, ETLayoutItem *)
-		{
-			[item setX: itemLocation.x];
-			itemLocation.x += [item width] + itemMargin;
-		}
-
-		// TODO: To avoid computing item locations when they are outside of the
-		// frame, think to add an exit condition here.
     
 		/* Before computing the following items location in 'x' on the next line, 
 		   we have to reset the 'x' accumulator and take in account the end of 
@@ -90,7 +81,6 @@ to the items, which are expected to be already broken into lines in layoutModel.
 				NSMakePoint([line origin].x, itemLocation.y - [line height])];
 			itemLocation.y = [line origin].y + itemMargin;		
 		}
-		itemLocation.x = itemMargin;
 
 		/* Increase height of the content size. Used to adjust the document 
 		   view size in scroll view */
@@ -170,7 +160,7 @@ When items is empty, returns an empty layout line. */
 		return nil;
 
 	ETLayoutLine *line = [ETLayoutLine horizontalLineWithFragments: layoutedItems];
-
+	[line setFragmentMargin: [self itemMargin]];
 	return line;
 }
 
