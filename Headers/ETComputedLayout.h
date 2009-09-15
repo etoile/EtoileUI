@@ -72,11 +72,11 @@ ETTemplateItemLayout are allowed to do. */
 
 - (void) renderWithLayoutItems: (NSArray *)items isNewContent: (BOOL)isNewContent;
 
-/* Line-based Layout */
+/* Fragment-based Layout */
 
-- (ETLayoutLine *) layoutLineForLayoutItems: (NSArray *)items;
-- (NSArray *) layoutModelForLayoutItems: (NSArray *)items;
-- (void) computeLayoutItemLocationsForLayoutModel: (NSArray *)layoutModel;
+- (ETLayoutLine *) layoutFragmentWithSubsetOfItems: (NSArray *)unlayoutedItems;
+- (NSArray *) generateFragmentsForItems: (NSArray *)items;
+- (void) computeLocationsForFragments: (NSArray *)layoutModel;
 
 /* Seperator support */
 

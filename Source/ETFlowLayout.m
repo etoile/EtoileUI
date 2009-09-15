@@ -13,6 +13,7 @@
 #import "ETLayoutItem.h"
 #import "ETLayoutLine.h"
 #import "ETCompatibility.h"
+#include <float.h>
 
 #define DEFAULT_ITEM_MARGIN 15
 #define DEFAULT_MAX_ITEM_SIZE NSMakeSize(256, 256)
@@ -35,17 +36,17 @@
 
 /** Runs the layout computation which assigns a location in the layout context
 to the items, which are expected to be already broken into lines in layoutModel. */
-- (void) computeLayoutItemLocationsForLayoutModel: (NSArray *)layoutModel
+- (void) computeLocationsForFragments: (NSArray *)layoutModel
 {
 	float itemMargin = [self itemMargin];
-	NSPoint itemLocation = NSZeroPoint;
+	NSPoint itemLocation = NSMakePoint(0, itemMargin);
 	float newLayoutHeight = 0;
 	BOOL isFlipped = [[self layoutContext] isFlipped];
 
 	if (isFlipped == NO)
 	{
 		ETLog(@"WARNING: Flow layout doesn't handle non-flipped coordinates inside a scroll view");
-		itemLocation = NSMakePoint(itemMargin, [self layoutSize].height - itemMargin);
+		itemLocation.y = [self layoutSize].height - itemMargin;
 	}
 
 	FOREACH(layoutModel, line, ETLayoutLine *)
@@ -71,15 +72,11 @@ to the items, which are expected to be already broken into lines in layoutModel.
 		   the current line, by substracting to 'y' the last layout line height. */
 		if (isFlipped)
 		{
-			[line setOrigin: 
-				NSMakePoint([line origin].x, itemLocation.y)];
 			itemLocation.y = [line origin].y + [line height] + itemMargin;
 		}
 		else
 		{
-			[line setOrigin: 
-				NSMakePoint([line origin].x, itemLocation.y - [line height])];
-			itemLocation.y = [line origin].y + itemMargin;		
+			itemLocation.y = [line origin].y - [line height] - itemMargin;		
 		}
 
 		/* Increase height of the content size. Used to adjust the document 
@@ -93,14 +90,14 @@ to the items, which are expected to be already broken into lines in layoutModel.
 }
 
 /** Breaks the items into lines and returns the resulting array as a layout model. */
-- (NSArray *) layoutModelForLayoutItems: (NSArray *)items
+- (NSArray *) generateFragmentsForItems: (NSArray *)items
 {
 	NSMutableArray *unlayoutedItems = [NSMutableArray arrayWithArray: items];
 	NSMutableArray *layoutModel = [NSMutableArray array];
 
 	while ([unlayoutedItems count] > 0)
 	{
-		ETLayoutLine *line = [self layoutLineForLayoutItems: unlayoutedItems];
+		ETLayoutLine *line = [self layoutFragmentWithSubsetOfItems: unlayoutedItems];
 		
 		if ([[line fragments] count] > 0)
 		{
@@ -112,7 +109,7 @@ to the items, which are expected to be already broken into lines in layoutModel.
 		}
 		else
 		{
-			ETLog(@"Not enough space to layout all the items. Items remaining unlayouted: %@", unlayoutedItems);
+			ETDebugLog(@"Unlayouted items: %@", unlayoutedItems);
 			break;
 		}
 	}
@@ -127,40 +124,31 @@ beyond the right boundary. At that point, the new line is returned whether or
 not every items have been inserted into it.
 
 When items is empty, returns an empty layout line. */
-- (ETLayoutLine *) layoutLineForLayoutItems: (NSArray *)items
+- (ETLayoutLine *) layoutFragmentWithSubsetOfItems: (NSArray *)items
 {
-	NSMutableArray *layoutedItems = [NSMutableArray array];
-	float widthAccumulator = 0;
-	float itemMargin = [self itemMargin];
-
-	FOREACH(items, itemToLayout, ETLayoutItem *)
+	float layoutWidth = FLT_MAX;
+	
+	if ([self layoutSizeConstraintStyle] == ETSizeConstraintStyleHorizontal)
 	{
-		widthAccumulator += itemMargin + [itemToLayout width];
-		
-		if ([self layoutSizeConstraintStyle] != ETSizeConstraintStyleHorizontal
-		 || widthAccumulator < [self layoutSize].width)
-		{
-			[layoutedItems addObject: itemToLayout];
-		}
-		else
-		{
-			break;
-		}
+		layoutWidth = [self layoutSize].width;
 	}
+
+	ETLayoutLine *line = [ETLayoutLine horizontalLineWithFragmentMargin: [self itemMargin] 
+	                                                           maxWidth: layoutWidth];
+	NSArray *acceptedItems = [line fillWithFragments: items];
+	float lineLength = [line length];
 
 	// NOTE: Not really useful for now because we don't support filling the 
 	// layout horizontally, only vertical filling is in place.
 	// We only touch the layout size height in -computeItemLocationsForLayoutModel:
-	if ([self isContentSizeLayout] && [self layoutSize].width < widthAccumulator)
+	if ([self isContentSizeLayout] && [self layoutSize].width < lineLength)
 	{
-		[self setLayoutSize: NSMakeSize(widthAccumulator, [self layoutSize].height)];
+		[self setLayoutSize: NSMakeSize(lineLength, [self layoutSize].height)];
 	}
 
-	if ([layoutedItems isEmpty])
+	if ([acceptedItems isEmpty])
 		return nil;
 
-	ETLayoutLine *line = [ETLayoutLine horizontalLineWithFragments: layoutedItems];
-	[line setFragmentMargin: [self itemMargin]];
 	return line;
 }
 
@@ -201,11 +189,13 @@ Default value is ETSizeConstraintStyleHorizontal. */
 	return _layoutConstraint;
 }
 
+/** Not yet implemented */
 - (BOOL) usesGrid
 {
 	return _grid;
 }
 
+/** Not yet implemented */
 - (void) setUsesGrid: (BOOL)constraint
 {
 	_grid = constraint;

@@ -24,11 +24,16 @@ group.  */
 	NSMutableArray *_fragments;
 	NSPoint _origin;
 	float _fragmentMargin;
+	float _maxWidth;
+	float _maxHeight;
 }
 
-+ (id) horizontalLineWithFragments: (NSArray *)fragments;
-+ (id) verticalLineWithFragments: (NSArray *)fragments;
++ (id) horizontalLineWithFragmentMargin: (float)aMargin 
+                               maxWidth: (float)aWidth;
++ (id) verticalLineWithFragmentMargin: (float)aMargin 
+                            maxHeight: (float)aHeight;
 
+- (NSArray *) fillWithFragments: (NSArray *)aFragment;
 - (NSArray *) fragments;
 - (void) updateFragmentLocations;
 - (float) fragmentMargin;
@@ -39,7 +44,12 @@ group.  */
 - (float) height;
 - (float) width;
 
+- (float) maxWidth;
+- (float) maxHeight;
+- (float) maxLength;
+
 - (float) length;
+- (void) setLength: (float)aLength;
 - (float) thickness;
 - (BOOL) isVerticallyOriented;
 

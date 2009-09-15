@@ -12,12 +12,13 @@
 #import "ETLayoutItem.h"
 #import "ETLayoutLine.h"
 #import "ETCompatibility.h"
+#include <float.h>
 
 
 @implementation ETStackLayout
 
 /** Returns a line filled with items to layout (stored in an array). */
-- (ETLayoutLine *) layoutLineForLayoutItems: (NSArray *)items
+- (ETLayoutLine *) layoutFragmentWithSubsetOfItems: (NSArray *)items
 {
 	NSMutableArray *layoutedItems = [NSMutableArray array];
 	float vAccumulator = 0;
@@ -40,7 +41,9 @@
 	if ([layoutedItems isEmpty])
 		return nil;
 		
-	ETLayoutLine *line = [ETLayoutLine verticalLineWithFragments: layoutedItems];
+	ETLayoutLine *line = [ETLayoutLine verticalLineWithFragmentMargin: 0
+		maxHeight: FLT_MAX];
+	[line fillWithFragments: layoutedItems];
 	
 	/* Update layout size, useful when the layout context is embedded in a scroll view */
 	if ([self isContentSizeLayout])
@@ -52,7 +55,7 @@
 }
 
 // Must override unless you use a display view
-- (void) computeLayoutItemLocationsForLayoutModel: (NSArray *)layoutModel
+- (void) computeLocationsForFragments: (NSArray *)layoutModel
 {
 	if ([layoutModel count] > 1)
 	{

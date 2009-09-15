@@ -10,6 +10,7 @@
 #import "ETLayoutLine.h"
 #import "ETLayoutItem.h"
 #import "ETCompatibility.h"
+#include <float.h>
 
 @interface ETVerticalLineFragment : ETLayoutLine
 @end
@@ -18,33 +19,44 @@
 @implementation ETLayoutLine
 
 /* <init /> */
-- (id) initWithFragments: (NSArray *)fragments
+- (id) initWithFragments: (NSArray *)fragments 
+          fragmentMargin: (float)aMargin 
+                maxWidth: (float)aWidth
+               maxHeight: (float)aHeight
 {
 	NILARG_EXCEPTION_TEST(fragments);
 	SUPERINIT;
 	ASSIGN(_fragments, fragments);
+	_fragmentMargin = aMargin;
+	_maxWidth = aWidth;
+	_maxHeight = aHeight;
 	return self;
 }
 
 - (id) init
 {
-	return [self initWithFragments: [NSArray array]];
+	return [self initWithFragments: [NSArray array] fragmentMargin: 0
+		maxWidth: FLT_MAX maxHeight: FLT_MAX];
 }
 
 DEALLOC(DESTROY(_fragments))
 
 /** Returns a new autoreleased horizontal layout line filled with the given 
 fragments. */
-+ (id) horizontalLineWithFragments: (NSArray *)fragments
++ (id) horizontalLineWithFragmentMargin: (float)aMargin 
+                               maxWidth: (float)aWidth
 {
-	return AUTORELEASE([[[self class] alloc] initWithFragments: fragments]);
+	return AUTORELEASE([[[self class] alloc] initWithFragments: [NSMutableArray array]
+		fragmentMargin: aMargin maxWidth: aWidth maxHeight: FLT_MAX]);
 }
 
 /** Returns a new autoreleased vertical layout line filled with the given 
 fragments. */
-+ (id) verticalLineWithFragments: (NSArray *)fragments
++ (id) verticalLineWithFragmentMargin: (float)aMargin 
+                            maxHeight: (float)aHeight
 {
-	return AUTORELEASE([[ETVerticalLineFragment alloc] initWithFragments: fragments]);
+	return AUTORELEASE([[ETVerticalLineFragment alloc] initWithFragments: [NSMutableArray array]
+		fragmentMargin: aMargin maxWidth: FLT_MAX maxHeight: aHeight]);
 }
 
 - (NSString *) description
@@ -59,6 +71,33 @@ fragments. */
     return desc;
 }
 
+/** Adds the given fragments sequentially to the receiver until its length 
+becomes greater than its max allowed length, then return all the fragments 
+that were accepted and added.
+
+Accepted fragments can be an empty array or equal to the fragments given in 
+input. */
+- (NSArray *) fillWithFragments: (NSArray *)fragments
+{
+	NSMutableArray *acceptedFragments = [NSMutableArray arrayWithCapacity: [fragments count]];
+	float length = 0;
+	float maxLength = [self maxLength];
+
+	FOREACH(fragments, fragment, ETLayoutItem *)
+	{
+		length += _fragmentMargin + [fragment width]; // TODO: Retrieve with or height
+		
+		if (length > maxLength)
+			break;
+
+		[acceptedFragments addObject: fragment];
+	}
+
+	[self setLength: length];
+	[_fragments addObjectsFromArray: acceptedFragments];
+
+	return acceptedFragments;
+}
 
 /** Returns the fragments that fills the receiver. */
 - (NSArray *) fragments
@@ -74,6 +113,11 @@ fragments. */
 - (void) setFragmentMargin: (float)aMargin
 {
 	_fragmentMargin = aMargin;
+}
+
+- (float) totalFragmentMargin
+{
+	return ([_fragments count] + 1) * _fragmentMargin;
 }
 
 /** Computes and sets the new fragment locations relative the receiver parent 
@@ -133,7 +177,44 @@ space is flipped, ortherwise at the bottom left corner. */
 {
 	/* We must compute the sum of layout item width when we are horizontally 
 	   oriented. */
-	return [[_fragments valueForKey: @"@sum.width"] floatValue];
+	float totalFragmentWidth = 0;
+
+	FOREACHI(_fragments, fragment)
+	{
+		totalFragmentWidth += [fragment width];
+	}
+
+	return totalFragmentWidth + [self totalFragmentMargin];
+	// FIXME: Next line should work but does not on Mac OS X.
+	//return [[_fragments valueForKey: @"@sum.width"] floatValue] + [self totalFragmentMargin];
+}
+
+/** Returns the max width to which the receiver can be stretched to.
+
+See -maxLength. */
+- (float) maxWidth
+{
+	return _maxWidth;
+}
+
+/** Returns the max height to which the receiver can be stretched to.
+
+See -maxLength. */
+- (float) maxHeight
+{
+	return _maxHeight;
+}
+
+/** <override-dummy />
+Returns the max lenght of the line.
+
+When the receiver length reaches the max length, it starts to refuse fragments.
+
+The max length is the max width when the line is horizontal, the max height when 
+the line is vertical. */
+- (float) maxLength
+{
+	return _maxWidth;
 }
 
 /** <override-dummy />
@@ -146,6 +227,10 @@ is vertical. */
 	return [self width];
 }
 
+- (void) setLength: (float)aLength
+{
+
+}
 
 /** <override-dummy />
 Returns the lenght of the line.
@@ -181,7 +266,7 @@ Returns whether the line is vertical or horizontal. */
 {
 	/* We must compute the sum of layout item height when we are vertically 
 	   oriented. */
-	return [[_fragments valueForKey: @"@sum.height"] floatValue];
+	return [[_fragments valueForKey: @"@sum.height"] floatValue] + [self totalFragmentMargin];
 }
 
 - (float) width
@@ -201,6 +286,11 @@ Returns whether the line is vertical or horizontal. */
 	}
 	
 	return width;
+}
+
+- (float) maxLength
+{
+	return _maxHeight;
 }
 
 - (float) length

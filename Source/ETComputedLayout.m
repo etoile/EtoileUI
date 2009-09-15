@@ -176,10 +176,10 @@ The scroll view visibility is handled by this method (this is subject to change)
 		}
 	}
 	
-	NSArray *layoutModel = [self layoutModelForLayoutItems: spacedItems];
+	NSArray *layoutModel = [self generateFragmentsForItems: spacedItems];
 	/* Now computes the location of every items by relying on the line by line 
 	   decomposition already made. */
-	[self computeLayoutItemLocationsForLayoutModel: layoutModel];
+	[self computeLocationsForFragments: layoutModel];
 	
 	// TODO: May be worth to optimize by computing set intersection of visible 
 	// and unvisible layout items
@@ -209,15 +209,13 @@ The scroll view visibility is handled by this method (this is subject to change)
 	[[self layoutContext] setVisibleItems: visibleItems];
 }
 
-/* 
- * Line-based layouts methods 
- */
+/* Fragment-based Layout */
 
 /** <override-subclass />
 Overrides this method to generate a layout line based on the layout context 
 constraints. Usual layout context constraints are size, vertical and horizontal 
 scroller visibility. */
-- (ETLayoutLine *) layoutLineForLayoutItems: (NSArray *)items
+- (ETLayoutLine *) layoutFragmentWithSubsetOfItems: (NSArray *)items
 {
 	return nil;
 }
@@ -231,9 +229,9 @@ context constraints. Usual layout context constraints are size, vertical and
 horizontal scrollers visibility. How the layout model is structured is up to you.
 
 This layout model will be interpreted by -computeViewLocationsForLayoutModel:. */
-- (NSArray *) layoutModelForLayoutItems: (NSArray *)items
+- (NSArray *) generateFragmentsForItems: (NSArray *)items
 {
-	ETLayoutLine *line = [self layoutLineForLayoutItems: items];
+	ETLayoutLine *line = [self layoutFragmentWithSubsetOfItems: items];
 	
 	if (line != nil)
 		return A(line);
@@ -242,9 +240,9 @@ This layout model will be interpreted by -computeViewLocationsForLayoutModel:. *
 }
 
 /** <override-subclass />
-Overrides this method to interpret the layout model and compute the layout item 
+Overrides this method to interpret the layout model and compute the fragments 
 geometrical attributes (position, size, scale etc.) accordingly. */
-- (void) computeLayoutItemLocationsForLayoutModel: (NSArray *)layoutModel
+- (void) computeLocationsForFragments: (NSArray *)layoutModel
 {
 
 }
