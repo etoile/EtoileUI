@@ -28,10 +28,10 @@
 	}
 
 	ETLayoutLine *line = [ETLayoutLine verticalLineWithOwner: self 
-	                                          fragmentMargin: [self itemMargin]
+                                                  itemMargin: [self itemMargin]
 	                                               maxHeight: layoutHeight 
 	                                               isFlipped: [_layoutContext isFlipped]];
-	NSArray *acceptedItems = [line fillWithFragments: unlayoutedItems];
+	NSArray *acceptedItems = [line fillWithItems: unlayoutedItems];
 
 	if ([acceptedItems isEmpty])
 		return nil;

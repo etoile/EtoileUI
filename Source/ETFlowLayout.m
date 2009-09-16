@@ -124,13 +124,13 @@ to the items, which are expected to be already broken into lines in layoutModel.
 	{
 		ETLayoutLine *line = [self layoutFragmentWithSubsetOfItems: unlayoutedItems];
 		
-		if ([[line fragments] count] > 0)
+		if ([[line items] count] > 0)
 		{
 			[layoutModel addObject: line];    
 				
 			/* In unlayoutedItems, remove the items which have just been 
 			   layouted on the previous line. */
-			[unlayoutedItems removeObjectsInArray: [line fragments]];
+			[unlayoutedItems removeObjectsInArray: [line items]];
 		}
 		else
 		{
@@ -160,7 +160,7 @@ When items is empty, returns an empty layout line. */
 
 	ETLayoutLine *line = [ETLayoutLine horizontalLineWithOwner: self fragmentMargin: [self itemMargin] 
 	                                                           maxWidth: layoutWidth];
-	NSArray *acceptedItems = [line fillWithFragments: items];
+	NSArray *acceptedItems = [line fillWithItems: items];
 	float lineLength = [line length];
 
 	// NOTE: Not really useful for now because we don't support filling the 

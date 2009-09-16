@@ -56,7 +56,7 @@ fragments. */
 /** Returns a new autoreleased vertical layout line filled with the given 
 fragments. */
 + (id) verticalLineWithOwner: (id)anOwner
-              fragmentMargin: (float)aMargin 
+                  itemMargin: (float)aMargin 
                    maxHeight: (float)aHeight
                    isFlipped: (BOOL)isFlipped
 
@@ -89,7 +89,7 @@ that were accepted and added.
 
 Accepted fragments can be an empty array or equal to the fragments given in 
 input. */
-- (NSArray *) fillWithFragments: (NSArray *)fragments
+- (NSArray *) fillWithItems: (NSArray *)fragments
 {
 	NSMutableArray *acceptedFragments = [NSMutableArray arrayWithCapacity: [fragments count]];
 	float length = 0;
@@ -112,12 +112,12 @@ input. */
 }
 
 /** Returns the fragments that fills the receiver. */
-- (NSArray *) fragments
+- (NSArray *) items
 {
 	return _fragments;
 }
 
-- (float) fragmentMargin
+- (float) itemMargin
 {
 	return _fragmentMargin;
 }
@@ -156,13 +156,13 @@ coordinate space.
 
 The fragment locations need to be recomputed every time the receiver origin, 
 size or the fragment margin get changed. */
-- (void) updateFragmentLocations
+- (void) updateItemLocations
 {
 	NSPoint fragmentOrigin = [self originOfFirstFragment: [_fragments firstObject]];
 
 	FOREACHI(_fragments, fragment)
 	{
-		[_owner setOrigin: fragmentOrigin ofItem: fragment];
+		[_owner setOrigin: fragmentOrigin forItem: fragment];
 		fragmentOrigin = [self nextOriginAfterFragment: fragment withOrigin: fragmentOrigin];
 	}
 }
@@ -174,7 +174,7 @@ space is flipped, ortherwise at the bottom left corner. */
 - (void) setOrigin: (NSPoint)location
 {
 	_origin = location;
-	[self updateFragmentLocations];
+	[self updateItemLocations];
 }
 
 /** Returns the origin of the line in a layout. */

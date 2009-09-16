@@ -143,7 +143,7 @@ The parent is the layout context. */
 
 /** Sets the origin of the given item based on the item rect kind (frame or 
 bounding box). */
-- (void) setOrigin: (NSPoint)newOrigin ofItem: (ETLayoutItem *)anItem
+- (void) setOrigin: (NSPoint)newOrigin forItem: (ETLayoutItem *)anItem
 {
 	if (_computesItemRectFromBoundingBox)
 	{
@@ -222,7 +222,7 @@ The scroll view visibility is handled by this method (this is subject to change)
 	/* Flatten layout model by putting all items into a single array */
 	FOREACH(layoutModel, line, ETLayoutLine *)
 	{
-		[visibleItems addObjectsFromArray: [line fragments]];
+		[visibleItems addObjectsFromArray: [line items]];
 	}
 	
 	[[self layoutContext] setVisibleItems: visibleItems];

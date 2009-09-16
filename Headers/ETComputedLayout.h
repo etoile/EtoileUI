@@ -13,6 +13,7 @@
 #import <Foundation/Foundation.h>
 #import <AppKit/AppKit.h>
 #import <EtoileUI/ETLayout.h>
+#import <EtoileUI/ETFragment.h>
 
 @class ETLayoutLine;
 
@@ -45,7 +46,7 @@ the item geometry (position, width, height, scale, rotation etc.).
 Subclasses must not hide, replace or modify the layout item tree structure bound 
 to the layout context in any way, unlike what ETCompositeLayout or 
 ETTemplateItemLayout are allowed to do. */
-@interface ETComputedLayout : ETLayout <ETPositionalLayout>
+@interface ETComputedLayout : ETLayout <ETPositionalLayout, ETLayoutFragmentOwner>
 {
 	float _itemMargin;
 	ETLayoutHorizontalAlignment _horizontalAlignment;
@@ -68,7 +69,7 @@ ETTemplateItemLayout are allowed to do. */
 - (BOOL) computesItemRectFromBoundingBox;
 - (void) setComputesItemRectFromBoundingBox: (BOOL)usesBoundingBox;
 - (NSRect) rectForItem: (ETLayoutItem *)anItem;
-- (void) setOrigin: (NSPoint)newOrigin ofItem: (ETLayoutItem *)anItem;
+- (void) setOrigin: (NSPoint)newOrigin forItem: (ETLayoutItem *)anItem;
 
 - (void) renderWithLayoutItems: (NSArray *)items isNewContent: (BOOL)isNewContent;
 

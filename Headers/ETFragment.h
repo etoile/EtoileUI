@@ -42,3 +42,20 @@ implements ETCollection protocol or not. */
 - (float) width;
 
 @end
+
+
+/** Layout fragments never interact directly with the items they embed, but 
+through a mediator object that must implement the ETLayoutFragmentOwner protocol.
+
+This protocol lets the objects that implements it the possibility to customize 
+how the item geometry is exposed (with a NSValueTransformer-like behavior).<br />
+
+Every item inserted into a layout fragment must match the item type expected by 
+its owner in the protocol methods.
+
+Any computed layout can be used transparently in this owner role.
+See ETLineFragment (layout fragment) and ETComputedLayout (layout fragment owner). */
+@protocol ETLayoutFragmentOwner
+- (NSRect) rectForItem: (id)anItem;
+- (void) setOrigin: (NSPoint)newOrigin forItem: (id)anItem;
+@end

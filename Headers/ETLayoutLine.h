@@ -18,10 +18,10 @@ horizontally or vertically.
 
 A line fragment is typically used together with ETComputedLayout to cluster 
 items spatially without requiring that these layout items belong to an item 
-group.  */
+group. */
 @interface ETLayoutLine : NSObject <ETFragment>
 {
-	id _owner;
+	id <ETLayoutFragmentOwner>_owner;
 	NSMutableArray *_fragments;
 	NSPoint _origin;
 	float _fragmentMargin;
@@ -30,19 +30,17 @@ group.  */
 	BOOL _flipped;
 }
 
-+ (id) horizontalLineWithOwner: (id)anOwner
++ (id) horizontalLineWithOwner: (id <ETLayoutFragmentOwner>)anOwner
                 fragmentMargin: (float)aMargin 
                       maxWidth: (float)aWidth;
-+ (id) verticalLineWithOwner: (id)anOwner
-              fragmentMargin: (float)aMargin 
++ (id) verticalLineWithOwner: (id <ETLayoutFragmentOwner>)anOwner
+                  itemMargin: (float)aMargin 
                    maxHeight: (float)aHeight
                    isFlipped: (BOOL)isFlipped;
 
-- (NSArray *) fillWithFragments: (NSArray *)aFragment;
-- (NSArray *) fragments;
-- (void) updateFragmentLocations;
-- (float) fragmentMargin;
-- (void) setFragmentMargin: (float)aMargin;
+- (NSArray *) fillWithItems: (NSArray *)aFragment;
+- (NSArray *) items;
+- (float) itemMargin;
 
 - (NSPoint) origin;
 - (void) setOrigin: (NSPoint)location;
@@ -54,7 +52,6 @@ group.  */
 - (float) maxLength;
 
 - (float) length;
-- (void) setLength: (float)aLength;
 - (float) thickness;
 - (BOOL) isVerticallyOriented;
 
