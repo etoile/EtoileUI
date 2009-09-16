@@ -28,7 +28,7 @@
 
 	[photoViewItem setController: self];
 	[photoViewItem setSource: self];
-	[photoViewItem setLayout: [self configureLayout: [ETStackLayout layout]]];
+	[photoViewItem setLayout: [self configureLayout: [ETColumnLayout layout]]];
 	[photoViewItem setHasVerticalScroller: YES];
 
 	// FIXME: Move into an EtoileUI plist loaded by ETUTI
@@ -66,7 +66,7 @@
 	switch ([[sender selectedItem] tag])
 	{
 		case 0:
-			layoutClass = [ETStackLayout class];
+			layoutClass = [ETColumnLayout class];
 			break;
 		case 1:
 			layoutClass = [ETLineLayout class];
@@ -114,7 +114,7 @@ UI level for a photo viewer. */
 
 		/* We override some extra settings even if the defaults defined by EtoileUI 
 		   would work for a photo viewer (see ETFlowLayout, ETLineLayout and 
-		   ETStackLayout).
+		   ETColumnLayout).
 		   You can compare the effects of these by testing ObjectManagerExample 
 		   which doesn't override anything. */
 		

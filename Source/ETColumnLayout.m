@@ -7,7 +7,7 @@
  */
 
 #import <EtoileFoundation/Macros.h>
-#import "ETStackLayout.h"
+#import "ETColumnLayout.h"
 #import "ETGeometry.h"
 #import "ETLayoutItem.h"
 #import "ETLineFragment.h"
@@ -15,7 +15,7 @@
 #include <float.h>
 
 
-@implementation ETStackLayout
+@implementation ETColumnLayout
 
 /** Returns a line fragment filled with items to layout. */
 - (ETLineFragment *) layoutFragmentWithSubsetOfItems: (NSArray *)unlayoutedItems

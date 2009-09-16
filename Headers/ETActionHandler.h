@@ -132,7 +132,7 @@ method will reuse the action handler to be set on every created items. */
 	  
 	Layouts which don't preempt events:
 	- ETFlowLayout
-	- ETStackLayout
+	- ETColumnLayout
 	- ETLineLayout
 	- ETFreeLayout
 	- ETUILayout

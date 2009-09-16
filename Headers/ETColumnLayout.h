@@ -1,6 +1,6 @@
-/** <title>ETStackLayout</title>
+/** <title>ETColumnLayout</title>
 
-	<abstract>	A layout class that organize items in a single vertical column 
+	<abstract>A layout class that organize items in a single vertical column 
 	or stack.</abstract>
  
 	Copyright (C) 2007 Quentin Mathe
@@ -15,7 +15,7 @@
 #import <EtoileUI/ETComputedLayout.h>
 
 
-@interface ETStackLayout : ETComputedLayout
+@interface ETColumnLayout : ETComputedLayout
 {
 
 }

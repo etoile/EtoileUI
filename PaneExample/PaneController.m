@@ -1,6 +1,6 @@
 #import "PaneController.h"
 #import "ETLayoutItem.h"
-#import "ETStackLayout.h"
+#import "ETColumnLayout.h"
 #import "ETFlowLayout.h"
 #import "ETLineLayout.h"
 #import "ETTableLayout.h"
@@ -72,7 +72,7 @@
 	switch ([[sender selectedItem] tag])
 	{
 		case 0:
-			layoutClass = [ETStackLayout class];
+			layoutClass = [ETColumnLayout class];
 			break;
 		case 1:
 			layoutClass = [ETLineLayout class];
@@ -104,7 +104,7 @@
 	switch ([[sender selectedItem] tag])
 	{
 		case 0:
-			layoutClass = [ETStackLayout class];
+			layoutClass = [ETColumnLayout class];
 			break;
 		case 1:
 			layoutClass = [ETLineLayout class];
@@ -134,7 +134,7 @@
 	switch ([[sender selectedItem] tag])
 	{
 		case 0:
-			layoutClass = [ETStackLayout class];
+			layoutClass = [ETColumnLayout class];
 			break;
 		case 1:
 			layoutClass = [ETLineLayout class];

@@ -53,7 +53,7 @@
 #import <EtoileUI/ETSelectTool.h>
 #import <EtoileUI/ETSelectionAreaItem.h>
 #import <EtoileUI/ETShape.h>
-#import <EtoileUI/ETStackLayout.h>
+#import <EtoileUI/ETColumnLayout.h>
 #import <EtoileUI/ETStyle.h>
 #import <EtoileUI/ETStyleGroup.h>
 #import <EtoileUI/ETTableLayout.h>

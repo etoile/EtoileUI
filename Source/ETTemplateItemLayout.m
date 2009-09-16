@@ -10,7 +10,7 @@
 #import <EtoileFoundation/Macros.h>
 #import "ETTemplateItemLayout.h"
 #import "ETFlowLayout.h"
-#import "ETStackLayout.h"
+#import "ETColumnLayout.h"
 #import "ETLayoutItem.h"
 #import "ETLayoutItem+Factory.h"
 #import "ETLayoutItemGroup.h"
@@ -323,7 +323,7 @@ kETFormLayoutInset	NSZeroRect (default) or nil
 {
 	SUPERINIT
 	
-	[self setPositionalLayout: [ETStackLayout layout]];
+	[self setPositionalLayout: [ETColumnLayout layout]];
 	
 	return self;
 }

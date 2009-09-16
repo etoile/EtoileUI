@@ -84,7 +84,7 @@
 	switch ([[sender selectedItem] tag])
 	{
 		case 0:
-			layoutClass = [ETStackLayout class];
+			layoutClass = [ETColumnLayout class];
 			break;
 		case 1:
 			layoutClass = [ETLineLayout class];
