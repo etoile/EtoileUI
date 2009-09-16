@@ -141,6 +141,25 @@ The parent is the layout context. */
 	[anItem setOrigin: NSMakePoint(itemFrame.origin.x + dx, itemFrame.origin.y + dy)];
 }
 
+/** Sets the origin of the given item based on the item rect kind (frame or 
+bounding box). */
+- (void) setOrigin: (NSPoint)newOrigin ofItem: (ETLayoutItem *)anItem
+{
+	if (_computesItemRectFromBoundingBox)
+	{
+		NSRect itemRect = [anItem convertRectToParent: [anItem boundingBox]];
+		NSPoint oldOrigin = itemRect.origin;
+		float dx = newOrigin.x - oldOrigin.x;
+		float dy = newOrigin.y - oldOrigin.y;
+
+		[self translateOriginOfItem: anItem byX: dx Y: dy];
+	}
+	else
+	{
+		return [anItem setOrigin: newOrigin];
+	}
+}
+
 /** <override-never />
 Runs the layout computation.<br />
 See also -[ETLayout renderLayoutItems:isNewContent:].
@@ -236,7 +255,49 @@ This layout model will be interpreted by -computeViewLocationsForLayoutModel:. *
 	if (line != nil)
 		return A(line);
 
-	return nil;
+	return [NSArray array];
+}
+
+- (NSPoint) originOfFirstFragment: (id)aFragment 
+                 forContentHeight: (float)contentHeight
+{
+	BOOL isFlipped = [_layoutContext isFlipped];
+	 /* Was just reset and equal to the layout context height at this point */
+	float layoutHeight = [self layoutSize].height;
+	float itemMargin = [self itemMargin];
+	float lineY = itemMargin;
+	float fragmentHeight = [aFragment height];
+
+	/* The statement below looks simple but is very easy to break and hard to 
+	   get right.
+	   If you ever edit it, please use PhotoViewExample to test the 4 cases 
+	   exhaustively (resizing the layout context and varying item count, margin 
+	   and scaling):
+	   - [_layoutContext isFlipped] + [_layoutContext decoratorItem] == nil
+	   - [_layoutContext isFlipped] + [_layoutContext decoratorItem] == scrollable area
+	   - [_layoutContext isFlipped] == NO + [_layoutContext decoratorItem] == nil
+	   - [_layoutContext isFlipped] == NO + [_layoutContext decoratorItem] == scrollable area */
+	if (isFlipped == NO)
+	{
+		if ([self isContentSizeLayout] && contentHeight > layoutHeight)
+		{
+			lineY = contentHeight - fragmentHeight - itemMargin;
+		}
+		else /* contentHeight < layoutHeight */
+		{
+			lineY = layoutHeight - fragmentHeight - itemMargin;
+		}
+		/*if ([self isContentSizeLayout] == NO || contentHeight < layoutHeight)
+		{
+			lineY = layoutHeight - fragmentHeight - itemMargin;
+		}
+		else
+		{
+			lineY = contentHeight - fragmentHeight - itemMargin;	
+		}*/
+	}
+
+	return NSMakePoint(itemMargin, lineY);
 }
 
 /** <override-subclass />

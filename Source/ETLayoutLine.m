@@ -9,6 +9,7 @@
 #import <EtoileFoundation/Macros.h>
 #import "ETLayoutLine.h"
 #import "ETLayoutItem.h"
+#import "ETComputedLayout.h"
 #import "ETCompatibility.h"
 #include <float.h>
 
@@ -19,44 +20,49 @@
 @implementation ETLayoutLine
 
 /* <init /> */
-- (id) initWithFragments: (NSArray *)fragments 
+- (id) initWithOwner: (id)anOwner 
           fragmentMargin: (float)aMargin 
                 maxWidth: (float)aWidth
                maxHeight: (float)aHeight
+               isFlipped: (BOOL)isFlipped
 {
-	NILARG_EXCEPTION_TEST(fragments);
 	SUPERINIT;
-	ASSIGN(_fragments, fragments);
+	_owner = anOwner; /* Weak reference */
+	_fragments = [[NSMutableArray alloc] init];
 	_fragmentMargin = aMargin;
 	_maxWidth = aWidth;
 	_maxHeight = aHeight;
+	_flipped = isFlipped;
 	return self;
 }
 
 - (id) init
 {
-	return [self initWithFragments: [NSArray array] fragmentMargin: 0
-		maxWidth: FLT_MAX maxHeight: FLT_MAX];
+	return [self initWithOwner: nil fragmentMargin: 0 maxWidth: FLT_MAX maxHeight: FLT_MAX isFlipped: YES];
 }
 
 DEALLOC(DESTROY(_fragments))
 
 /** Returns a new autoreleased horizontal layout line filled with the given 
 fragments. */
-+ (id) horizontalLineWithFragmentMargin: (float)aMargin 
-                               maxWidth: (float)aWidth
++ (id) horizontalLineWithOwner: (id)anOwner
+                fragmentMargin: (float)aMargin 
+                      maxWidth: (float)aWidth
 {
-	return AUTORELEASE([[[self class] alloc] initWithFragments: [NSMutableArray array]
-		fragmentMargin: aMargin maxWidth: aWidth maxHeight: FLT_MAX]);
+	return AUTORELEASE([[[self class] alloc] initWithOwner: anOwner
+		fragmentMargin: aMargin maxWidth: aWidth maxHeight: FLT_MAX isFlipped: YES]);
 }
 
 /** Returns a new autoreleased vertical layout line filled with the given 
 fragments. */
-+ (id) verticalLineWithFragmentMargin: (float)aMargin 
-                            maxHeight: (float)aHeight
++ (id) verticalLineWithOwner: (id)anOwner
+              fragmentMargin: (float)aMargin 
+                   maxHeight: (float)aHeight
+                   isFlipped: (BOOL)isFlipped
+
 {
-	return AUTORELEASE([[ETVerticalLineFragment alloc] initWithFragments: [NSMutableArray array]
-		fragmentMargin: aMargin maxWidth: FLT_MAX maxHeight: aHeight]);
+	return AUTORELEASE([[ETVerticalLineFragment alloc] initWithOwner: anOwner
+		fragmentMargin: aMargin maxWidth: FLT_MAX maxHeight: aHeight isFlipped: isFlipped]);
 }
 
 - (NSString *) description
@@ -69,6 +75,12 @@ fragments. */
     }
     
     return desc;
+}
+
+- (float) lengthForFragment: (id)aFragment
+{
+	NSRect rect = [_owner rectForItem: aFragment];
+	return [self isVerticallyOriented] ? rect.size.height : rect.size.width;
 }
 
 /** Adds the given fragments sequentially to the receiver until its length 
@@ -85,7 +97,7 @@ input. */
 
 	FOREACH(fragments, fragment, ETLayoutItem *)
 	{
-		length += _fragmentMargin + [fragment width]; // TODO: Retrieve with or height
+		length += _fragmentMargin + [self lengthForFragment: fragment];
 		
 		if (length > maxLength)
 			break;
@@ -93,7 +105,7 @@ input. */
 		[acceptedFragments addObject: fragment];
 	}
 
-	[self setLength: length];
+	//[self setLength: length];
 	[_fragments addObjectsFromArray: acceptedFragments];
 
 	return acceptedFragments;
@@ -117,7 +129,26 @@ input. */
 
 - (float) totalFragmentMargin
 {
-	return ([_fragments count] + 1) * _fragmentMargin;
+	return ([_fragments count] - 1) * _fragmentMargin;
+}
+
+- (NSPoint) originOfFirstFragment: (id)aFragment
+{	
+	/*float fragmentY = _origin.y;
+
+	if (NO == _flipped)
+	{
+		fragmentY = _origin.y - [_owner rectForItem: aFragment].size.height;
+	}*/
+
+	return NSMakePoint(_origin.x, _origin.y);
+}
+
+- (NSPoint) nextOriginAfterFragment: (id)aFragment withOrigin: (NSPoint)aFragmentOrigin
+{
+	// NOTE: Next line could use -lengthForFragment:
+	aFragmentOrigin.x += [_owner rectForItem: aFragment].size.width + _fragmentMargin;
+	return aFragmentOrigin;	
 }
 
 /** Computes and sets the new fragment locations relative the receiver parent 
@@ -127,12 +158,12 @@ The fragment locations need to be recomputed every time the receiver origin,
 size or the fragment margin get changed. */
 - (void) updateFragmentLocations
 {
-	NSPoint fragmentOrigin = NSMakePoint(_origin.x + _fragmentMargin, _origin.y + _fragmentMargin);
+	NSPoint fragmentOrigin = [self originOfFirstFragment: [_fragments firstObject]];
 
 	FOREACHI(_fragments, fragment)
 	{
-		[fragment setOrigin: fragmentOrigin];
-		fragmentOrigin.x += [fragment width] + _fragmentMargin;
+		[_owner setOrigin: fragmentOrigin ofItem: fragment];
+		fragmentOrigin = [self nextOriginAfterFragment: fragment withOrigin: fragmentOrigin];
 	}
 }
 
@@ -254,19 +285,62 @@ Returns whether the line is vertical or horizontal. */
 
 @implementation ETVerticalLineFragment
 
-- (void) updateFragmentLocations
+// FIXME: Remove
+- (float) totalFragmentMargin
 {
-	FOREACHI(_fragments, fragment)
+	return ([_fragments count] + 1) * _fragmentMargin;
+}
+
+- (NSPoint) originOfFirstFragment: (id)aFragment
+{
+	float fragmentY = 0;
+	
+	if (_flipped)
 	{
-		[fragment setX: _origin.x];
+		 fragmentY = _origin.y + _fragmentMargin;
 	}
+	else
+	{
+		// NOTE: Next line equivalent to -lengthForFragment:
+		float fragmentHeight = [_owner rectForItem: aFragment].size.height;
+		fragmentY = _origin.y + [self height] - _fragmentMargin - fragmentHeight;
+	}
+
+	return NSMakePoint(_origin.x, fragmentY);
+}
+
+- (NSPoint) nextOriginAfterFragment: (id)aFragment withOrigin: (NSPoint)aFragmentOrigin
+{
+	NSPoint nextOrigin = aFragmentOrigin;
+	// NOTE: Next line could use -lengthForFragment:
+	float advancement = [_owner rectForItem: aFragment].size.height + _fragmentMargin;
+
+	if (_flipped)
+	{
+		nextOrigin.y += advancement;
+	}
+	else
+	{
+		nextOrigin.y -= advancement;
+	}
+	
+	return nextOrigin;	
 }
 
 - (float) height
 {
 	/* We must compute the sum of layout item height when we are vertically 
 	   oriented. */
-	return [[_fragments valueForKey: @"@sum.height"] floatValue] + [self totalFragmentMargin];
+	float totalFragmentHeight = 0;
+
+	FOREACHI(_fragments, fragment)
+	{
+		totalFragmentHeight += [fragment height];
+	}
+
+	return totalFragmentHeight + [self totalFragmentMargin];
+	// FIXME: Next line should work but does not on Mac OS X.
+	// [[_fragments valueForKey: @"@sum.height"] floatValue] + [self totalFragmentMargin];
 }
 
 - (float) width

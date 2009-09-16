@@ -17,97 +17,75 @@
 
 @implementation ETStackLayout
 
-/** Returns a line filled with items to layout (stored in an array). */
-- (ETLayoutLine *) layoutFragmentWithSubsetOfItems: (NSArray *)items
+/** Returns a line fragment filled with items to layout. */
+- (ETLayoutLine *) layoutFragmentWithSubsetOfItems: (NSArray *)unlayoutedItems
 {
-	NSMutableArray *layoutedItems = [NSMutableArray array];
-	float vAccumulator = 0;
-	float itemMargin = [self itemMargin];
-    
-	FOREACH(items, item, ETLayoutItem *)
-	{
-		vAccumulator += itemMargin + [self rectForItem: item].size.height;
-		
-		if ([self isContentSizeLayout] || vAccumulator < [self layoutSize].height)
-		{
-			[layoutedItems addObject: item];
-		}
-		else
-		{
-			break;
-		}
-	}
-	
-	if ([layoutedItems isEmpty])
-		return nil;
-		
-	ETLayoutLine *line = [ETLayoutLine verticalLineWithFragmentMargin: 0
-		maxHeight: FLT_MAX];
-	[line fillWithFragments: layoutedItems];
-	
-	/* Update layout size, useful when the layout context is embedded in a scroll view */
+	float layoutHeight = [self layoutSize].height;
+
 	if ([self isContentSizeLayout])
 	{
-		[self setLayoutSize: NSMakeSize([line width], vAccumulator)];
+		layoutHeight = FLT_MAX;
 	}
+
+	ETLayoutLine *line = [ETLayoutLine verticalLineWithOwner: self 
+	                                          fragmentMargin: [self itemMargin]
+	                                               maxHeight: layoutHeight 
+	                                               isFlipped: [_layoutContext isFlipped]];
+	NSArray *acceptedItems = [line fillWithFragments: unlayoutedItems];
+
+	if ([acceptedItems isEmpty])
+		return nil;
 
 	return line;
 }
 
-// Must override unless you use a display view
-- (void) computeLocationsForFragments: (NSArray *)layoutModel
+- (NSPoint) originOfFirstFragment: (id)line
 {
-	if ([layoutModel count] > 1)
+	BOOL isFlipped = [_layoutContext isFlipped];
+	float lineHeight = [line height];
+	float layoutHeight = [self layoutSize].height;
+	float lineY = 0; /* itemMargin already includes in the line height */
+
+	/* The statement below looks simple but is very easy to break and hard to 
+	   get right.
+	   If you ever edit, please use PhotoViewExample to test the 4 cases 
+	   exhaustively (resizing the layout context and varying item count, margin 
+	   and scaling):
+	   - [_layoutContext isFlipped] + [_layoutContext decoratorItem] == nil
+	   - [_layoutContext isFlipped] + [_layoutContext decoratorItem] == scrollable area
+	   - [_layoutContext isFlipped] == NO + [_layoutContext decoratorItem] == nil
+	   - [_layoutContext isFlipped] == NO + [_layoutContext decoratorItem] == scrollable area */
+	if (isFlipped == NO)
 	{
-		ETLog(@"%@ -computeLayoutItemLocationsForLayoutModel: receives a model "
-			  @"with %d objects and not one, this usually means "
-			  @"-layoutLineForLayoutItems: isn't overriden as it should.", self, 
-			  [layoutModel count]);
+		if ([self isContentSizeLayout] == NO || lineHeight < layoutHeight)
+		{
+			lineY = layoutHeight - lineHeight;
+		}
 	}
-	
-	[self computeLayoutItemLocationsForLayoutLine: [layoutModel lastObject]];
+
+	return NSMakePoint([self itemMargin], lineY);
 }
 
-- (void) computeLayoutItemLocationsForLayoutLine: (ETLayoutLine *)line
+- (void) computeLocationsForFragments: (NSArray *)layoutModel
 {
-	NSEnumerator *lineWalker = nil;
-	float itemMargin = [self itemMargin];
-	NSPoint itemLocation = NSMakePoint(itemMargin, itemMargin);
-	BOOL isFlipped = [[self layoutContext] isFlipped];
+	if ([layoutModel isEmpty])
+		return;
 
-	if (isFlipped)
-	{
-		lineWalker = [[line fragments] objectEnumerator];
-	}
-	else
-	{
-		/* Don't reverse the item order or selection and sorting will be messed */
-		lineWalker = [[line fragments] reverseObjectEnumerator];
-		itemLocation = NSMakePoint(itemMargin, [self layoutSize].height + itemMargin);	
-	}
-		
-	FOREACHE(nil, item, ETLayoutItem *, lineWalker)
-	{
-		NSRect itemRect = [self rectForItem: item];
-		NSPoint oldOrigin = itemRect.origin;
-		NSPoint newOrigin = itemLocation;
+	NSParameterAssert([layoutModel count] == 1);
 
-		[self translateOriginOfItem: item byX: (newOrigin.x - oldOrigin.x) 
-											Y: (newOrigin.y - oldOrigin.y)];
+	ETLayoutLine *line = [layoutModel lastObject];
+	float lineHeight = [line height];
 
-		if (isFlipped)
-		{
-			itemLocation.y += itemMargin + itemRect.size.height;
-		}
-		else
-		{
-			itemLocation.y -= itemMargin + itemRect.size.height;
-		}
+	/* Will compute and set the item locations */
+	[line setOrigin: [self originOfFirstFragment: line]];
+
+	/* Update layout size, useful when the layout context is embedded in a scroll view */
+	if ([self isContentSizeLayout])
+	{
+		/* lineHeight already includes itemMargin * 2 */
+		[self setLayoutSize: NSMakeSize([line width] + [self itemMargin] * 2, lineHeight)];
 	}
-	
-	// TODO: To avoid computing item locations when they are outside of the
-	// frame, think to add an exit condition here.
-	
+
 	ETDebugLog(@"Item locations computed by layout line :%@", line);
 }
 

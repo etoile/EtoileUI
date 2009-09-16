@@ -21,17 +21,22 @@ items spatially without requiring that these layout items belong to an item
 group.  */
 @interface ETLayoutLine : NSObject <ETFragment>
 {
+	id _owner;
 	NSMutableArray *_fragments;
 	NSPoint _origin;
 	float _fragmentMargin;
 	float _maxWidth;
 	float _maxHeight;
+	BOOL _flipped;
 }
 
-+ (id) horizontalLineWithFragmentMargin: (float)aMargin 
-                               maxWidth: (float)aWidth;
-+ (id) verticalLineWithFragmentMargin: (float)aMargin 
-                            maxHeight: (float)aHeight;
++ (id) horizontalLineWithOwner: (id)anOwner
+                fragmentMargin: (float)aMargin 
+                      maxWidth: (float)aWidth;
++ (id) verticalLineWithOwner: (id)anOwner
+              fragmentMargin: (float)aMargin 
+                   maxHeight: (float)aHeight
+                   isFlipped: (BOOL)isFlipped;
 
 - (NSArray *) fillWithFragments: (NSArray *)aFragment;
 - (NSArray *) fragments;

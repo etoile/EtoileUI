@@ -14,14 +14,10 @@
 #import <AppKit/AppKit.h>
 #import <EtoileUI/ETComputedLayout.h>
 
-@class ETLayoutLine;
-
 
 @interface ETStackLayout : ETComputedLayout
 {
 
 }
-
-- (void) computeLayoutItemLocationsForLayoutLine: (ETLayoutLine *)line;
 
 @end

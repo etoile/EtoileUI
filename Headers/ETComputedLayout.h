@@ -68,7 +68,7 @@ ETTemplateItemLayout are allowed to do. */
 - (BOOL) computesItemRectFromBoundingBox;
 - (void) setComputesItemRectFromBoundingBox: (BOOL)usesBoundingBox;
 - (NSRect) rectForItem: (ETLayoutItem *)anItem;
-- (void) translateOriginOfItem: (ETLayoutItem *)anItem byX: (float)dx Y: (float)dy;
+- (void) setOrigin: (NSPoint)newOrigin ofItem: (ETLayoutItem *)anItem;
 
 - (void) renderWithLayoutItems: (NSArray *)items isNewContent: (BOOL)isNewContent;
 
@@ -76,6 +76,8 @@ ETTemplateItemLayout are allowed to do. */
 
 - (ETLayoutLine *) layoutFragmentWithSubsetOfItems: (NSArray *)unlayoutedItems;
 - (NSArray *) generateFragmentsForItems: (NSArray *)items;
+- (NSPoint) originOfFirstFragment: (id)aFragment 
+                 forContentHeight: (float)contentHeight;
 - (void) computeLocationsForFragments: (NSArray *)layoutModel;
 
 /* Seperator support */

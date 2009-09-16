@@ -34,25 +34,57 @@
 	return self;
 }
 
+/** <override-dummy />
+Returns the height in which all the given fragments fits. 
+
+Item margins are included in the sum. */
+- (float) totalHeightForFragments: (NSArray *)fragments
+{
+	float totalHeight = _itemMargin;
+
+	FOREACHI(fragments, fragment)
+	{
+		totalHeight += [fragment height] + _itemMargin;
+	}
+
+	return totalHeight;
+}
+
+- (NSPoint) nextOriginAfterFragment: (id)line 
+                             margin: (float)itemMargin 
+                          isFlipped: (BOOL)isFlipped
+{
+	NSPoint nextOrigin = [line origin];
+
+	/* Before computing the following items location in 'x' on the next line, 
+	   we have to reset the 'x' accumulator and take in account the end of 
+	   the current line, by substracting to 'y' the last layout line height. */
+	if (isFlipped)
+	{
+		nextOrigin.y = [line origin].y + [line height] + itemMargin;
+	}
+	else
+	{
+		nextOrigin.y = [line origin].y - [line height] - itemMargin;		
+	}
+
+	return nextOrigin;
+}
+
 /** Runs the layout computation which assigns a location in the layout context
 to the items, which are expected to be already broken into lines in layoutModel. */
 - (void) computeLocationsForFragments: (NSArray *)layoutModel
 {
-	float itemMargin = [self itemMargin];
-	NSPoint itemLocation = NSMakePoint(0, itemMargin);
-	float newLayoutHeight = 0;
+	if ([layoutModel count] == 0)
+		return;
+
 	BOOL isFlipped = [[self layoutContext] isFlipped];
+	float itemMargin = [self itemMargin];
+	float contentHeight = [self totalHeightForFragments: layoutModel];
+	NSPoint lineOrigin = [self originOfFirstFragment: [layoutModel firstObject]
+	                                forContentHeight: contentHeight];
 
-	if (isFlipped == NO)
-	{
-		ETLog(@"WARNING: Flow layout doesn't handle non-flipped coordinates inside a scroll view");
-		itemLocation.y = [self layoutSize].height - itemMargin;
-	}
-
-	FOREACH(layoutModel, line, ETLayoutLine *)
-	{
-    /*
-         A +---------------------------------------
+    /*   A +---------------------------------------
            |          ----------------
            |----------|              |    Layout
            | Layouted |   Layouted   |    Line
@@ -61,32 +93,25 @@ to the items, which are expected to be already broken into lines in layoutModel.
            B
        
        In the layout context coordinates we have:   
-       baselineLocation.x = A.x and baselineLocation.y = A.y - B.y
-       
-     */
+       baselineLocation.x = A.x and baselineLocation.y = A.y - B.y 
+	 */
+	FOREACH(layoutModel, line, ETLayoutLine *)
+	{
+		/* Will compute and set the item locations */
+		[line setOrigin: lineOrigin];
+    	lineOrigin = [self nextOriginAfterFragment: line 
+		                                    margin: itemMargin 
+		                                 isFlipped: isFlipped];
 
-		[line setOrigin: itemLocation];
-    
-		/* Before computing the following items location in 'x' on the next line, 
-		   we have to reset the 'x' accumulator and take in account the end of 
-		   the current line, by substracting to 'y' the last layout line height. */
-		if (isFlipped)
-		{
-			itemLocation.y = [line origin].y + [line height] + itemMargin;
-		}
-		else
-		{
-			itemLocation.y = [line origin].y - [line height] - itemMargin;		
-		}
-
-		/* Increase height of the content size. Used to adjust the document 
-		   view size in scroll view */
-		newLayoutHeight += [line height] + itemMargin;
-
-		ETDebugLog(@"Item locations computed by layout line :%@", line);
+		ETDebugLog(@"Item locations computed at line :%@", line);
 	}
 
-	[self setLayoutSize: NSMakeSize([self layoutSize].width, newLayoutHeight)];
+	/* Increase height of the content size. Used to adjust the document view 
+	   size in scroll view */
+	if (contentHeight > [self layoutSize].height)
+	{
+		[self setLayoutSize: NSMakeSize([self layoutSize].width, contentHeight)];
+	}
 }
 
 /** Breaks the items into lines and returns the resulting array as a layout model. */
@@ -133,7 +158,7 @@ When items is empty, returns an empty layout line. */
 		layoutWidth = [self layoutSize].width;
 	}
 
-	ETLayoutLine *line = [ETLayoutLine horizontalLineWithFragmentMargin: [self itemMargin] 
+	ETLayoutLine *line = [ETLayoutLine horizontalLineWithOwner: self fragmentMargin: [self itemMargin] 
 	                                                           maxWidth: layoutWidth];
 	NSArray *acceptedItems = [line fillWithFragments: items];
 	float lineLength = [line length];
