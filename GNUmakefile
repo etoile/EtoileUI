@@ -32,6 +32,7 @@ EtoileUI_HEADER_FILES = \
 	ETActionHandler.h \
 	ETApplication.h \
 	ETBrowserLayout.h \
+	ETColumnLayout.h \
 	ETCompatibility.h \
 	ETCompositeLayout.h \
 	ETComputedLayout.h \
@@ -71,7 +72,6 @@ EtoileUI_HEADER_FILES = \
 	ETScrollableAreaItem.h \
 	ETSelectionAreaItem.h \
 	ETShape.h \
-	ETStackLayout.h \
 	ETStyle.h \
 	ETStyleGroup.h \
 	ETTableLayout.h \

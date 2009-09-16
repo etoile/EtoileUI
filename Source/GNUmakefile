@@ -10,6 +10,7 @@ libEtoileUI_OBJC_FILES = \
 	ETActionHandler.m \
 	ETApplication.m \
 	ETBrowserLayout.m \
+	ETColumnLayout.m \
 	ETCompositeLayout.m \
 	ETComputedLayout.m \
 	ETController.m \
@@ -45,7 +46,6 @@ libEtoileUI_OBJC_FILES = \
 	ETScrollableAreaItem.m \
 	ETSelectionAreaItem.m \
 	ETShape.m \
-	ETStackLayout.m \
 	ETStyle.m \
 	ETStyleGroup.m \
 	ETTableLayout.m \
