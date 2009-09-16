@@ -7,17 +7,17 @@
  */
 
 #import <EtoileFoundation/Macros.h>
-#import "ETLayoutLine.h"
+#import "ETLineFragment.h"
 #import "ETLayoutItem.h"
 #import "ETComputedLayout.h"
 #import "ETCompatibility.h"
 #include <float.h>
 
-@interface ETVerticalLineFragment : ETLayoutLine
+@interface ETVerticalLineFragment : ETLineFragment
 @end
 
 
-@implementation ETLayoutLine
+@implementation ETLineFragment
 
 /* <init /> */
 - (id) initWithOwner: (id)anOwner 

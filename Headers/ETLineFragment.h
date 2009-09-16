@@ -1,4 +1,4 @@
-/** <title>ETLayoutLine</title>
+/** <title>ETLineFragment</title>
 
 	<abstract>Represents an horizontal or vertical line box in a layout.</abstract>
 
@@ -19,7 +19,7 @@ horizontally or vertically.
 A line fragment is typically used together with ETComputedLayout to cluster 
 items spatially without requiring that these layout items belong to an item 
 group. */
-@interface ETLayoutLine : NSObject <ETFragment>
+@interface ETLineFragment : NSObject <ETFragment>
 {
 	id <ETLayoutFragmentOwner>_owner;
 	NSMutableArray *_fragments;

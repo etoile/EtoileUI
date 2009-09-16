@@ -39,7 +39,6 @@
 #import "ETTableLayout.h"
 #import "ETLayoutItem.h"
 #import "ETEvent.h"
-#import "ETLayoutLine.h"
 #import "ETPickboard.h"
 #import "ETPickDropActionHandler.h"
 #import "ETPickDropCoordinator.h"

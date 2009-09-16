@@ -12,7 +12,6 @@
 #import "ETInstrument.h"
 #import "ETLayout.h"
 #import "ETLayoutItemGroup.h"
-#import "ETLayoutLine.h"
 #import "ETTableLayout.h"
 #import "ETOutlineLayout.h"
 #import "ETBrowserLayout.h"

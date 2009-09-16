@@ -39,7 +39,7 @@
 #import <EtoileUI/ETLayoutItemBuilder.h>
 #import <EtoileUI/ETLayoutItemGroup+Mutation.h>
 #import <EtoileUI/ETLayoutItemGroup.h>
-#import <EtoileUI/ETLayoutLine.h>
+#import <EtoileUI/ETLineFragment.h>
 #import <EtoileUI/ETLineLayout.h>
 #import <EtoileUI/ETObjectBrowserLayout.h>
 #import <EtoileUI/EtoileUIProperties.h>

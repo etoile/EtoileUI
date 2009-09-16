@@ -9,7 +9,7 @@
 #import <EtoileFoundation/Macros.h>
 #import "ETComputedLayout.h"
 #import "ETLayoutItem.h"
-#import "ETLayoutLine.h"
+#import "ETLineFragment.h"
 #import "ETCompatibility.h"
 
 
@@ -220,7 +220,7 @@ The scroll view visibility is handled by this method (this is subject to change)
 	NSMutableArray *visibleItems = [NSMutableArray array];
 	
 	/* Flatten layout model by putting all items into a single array */
-	FOREACH(layoutModel, line, ETLayoutLine *)
+	FOREACH(layoutModel, line, ETLineFragment *)
 	{
 		[visibleItems addObjectsFromArray: [line items]];
 	}
@@ -234,7 +234,7 @@ The scroll view visibility is handled by this method (this is subject to change)
 Overrides this method to generate a layout line based on the layout context 
 constraints. Usual layout context constraints are size, vertical and horizontal 
 scroller visibility. */
-- (ETLayoutLine *) layoutFragmentWithSubsetOfItems: (NSArray *)items
+- (ETLineFragment *) layoutFragmentWithSubsetOfItems: (NSArray *)items
 {
 	return nil;
 }
@@ -250,7 +250,7 @@ horizontal scrollers visibility. How the layout model is structured is up to you
 This layout model will be interpreted by -computeViewLocationsForLayoutModel:. */
 - (NSArray *) generateFragmentsForItems: (NSArray *)items
 {
-	ETLayoutLine *line = [self layoutFragmentWithSubsetOfItems: items];
+	ETLineFragment *line = [self layoutFragmentWithSubsetOfItems: items];
 	
 	if (line != nil)
 		return A(line);

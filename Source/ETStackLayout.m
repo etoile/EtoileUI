@@ -10,7 +10,7 @@
 #import "ETStackLayout.h"
 #import "ETGeometry.h"
 #import "ETLayoutItem.h"
-#import "ETLayoutLine.h"
+#import "ETLineFragment.h"
 #import "ETCompatibility.h"
 #include <float.h>
 
@@ -18,7 +18,7 @@
 @implementation ETStackLayout
 
 /** Returns a line fragment filled with items to layout. */
-- (ETLayoutLine *) layoutFragmentWithSubsetOfItems: (NSArray *)unlayoutedItems
+- (ETLineFragment *) layoutFragmentWithSubsetOfItems: (NSArray *)unlayoutedItems
 {
 	float layoutHeight = [self layoutSize].height;
 
@@ -27,7 +27,7 @@
 		layoutHeight = FLT_MAX;
 	}
 
-	ETLayoutLine *line = [ETLayoutLine verticalLineWithOwner: self 
+	ETLineFragment *line = [ETLineFragment verticalLineWithOwner: self 
                                                   itemMargin: [self itemMargin]
 	                                               maxHeight: layoutHeight 
 	                                               isFlipped: [_layoutContext isFlipped]];
@@ -73,7 +73,7 @@
 
 	NSParameterAssert([layoutModel count] == 1);
 
-	ETLayoutLine *line = [layoutModel lastObject];
+	ETLineFragment *line = [layoutModel lastObject];
 	float lineHeight = [line height];
 
 	/* Will compute and set the item locations */

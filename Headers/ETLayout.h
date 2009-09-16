@@ -13,7 +13,7 @@
 #import <Foundation/Foundation.h>
 #import <AppKit/AppKit.h>
 
-@class ETLayoutLine, ETLayoutItem, ETLayoutItemGroup, ETView;
+@class ETLineFragment, ETLayoutItem, ETLayoutItemGroup, ETView;
 
 /** Methods which must be implemented by an object to be layouted by any
 	ETLayout subclasses. The object whose layout items are layouted is the

@@ -16,7 +16,7 @@
 #import <AppKit/AppKit.h>
 #import <EtoileUI/ETComputedLayout.h>
 
-@class ETLayoutLine;
+@class ETLineFragment;
 
 /** ETFlowLayout overrides several property values defined by ETLayout and 
 ETComputedLayout:

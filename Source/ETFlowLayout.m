@@ -11,7 +11,7 @@
 #import "ETGeometry.h"
 #import "ETLayout.h"
 #import "ETLayoutItem.h"
-#import "ETLayoutLine.h"
+#import "ETLineFragment.h"
 #import "ETCompatibility.h"
 #include <float.h>
 
@@ -95,7 +95,7 @@ to the items, which are expected to be already broken into lines in layoutModel.
        In the layout context coordinates we have:   
        baselineLocation.x = A.x and baselineLocation.y = A.y - B.y 
 	 */
-	FOREACH(layoutModel, line, ETLayoutLine *)
+	FOREACH(layoutModel, line, ETLineFragment *)
 	{
 		/* Will compute and set the item locations */
 		[line setOrigin: lineOrigin];
@@ -122,7 +122,7 @@ to the items, which are expected to be already broken into lines in layoutModel.
 
 	while ([unlayoutedItems count] > 0)
 	{
-		ETLayoutLine *line = [self layoutFragmentWithSubsetOfItems: unlayoutedItems];
+		ETLineFragment *line = [self layoutFragmentWithSubsetOfItems: unlayoutedItems];
 		
 		if ([[line items] count] > 0)
 		{
@@ -149,7 +149,7 @@ beyond the right boundary. At that point, the new line is returned whether or
 not every items have been inserted into it.
 
 When items is empty, returns an empty layout line. */
-- (ETLayoutLine *) layoutFragmentWithSubsetOfItems: (NSArray *)items
+- (ETLineFragment *) layoutFragmentWithSubsetOfItems: (NSArray *)items
 {
 	float layoutWidth = FLT_MAX;
 	
@@ -158,7 +158,7 @@ When items is empty, returns an empty layout line. */
 		layoutWidth = [self layoutSize].width;
 	}
 
-	ETLayoutLine *line = [ETLayoutLine horizontalLineWithOwner: self fragmentMargin: [self itemMargin] 
+	ETLineFragment *line = [ETLineFragment horizontalLineWithOwner: self fragmentMargin: [self itemMargin] 
 	                                                           maxWidth: layoutWidth];
 	NSArray *acceptedItems = [line fillWithItems: items];
 	float lineLength = [line length];

@@ -41,7 +41,6 @@
 #import "ETPickDropActionHandler.h"
 #import "ETEvent.h"
 #import "ETLayoutItemGroup.h"
-#import "ETLayoutLine.h"
 #import "ETPickboard.h"
 #import "ETPickDropCoordinator.h"
 #import "NSView+Etoile.h"

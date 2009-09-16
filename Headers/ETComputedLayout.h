@@ -15,7 +15,7 @@
 #import <EtoileUI/ETLayout.h>
 #import <EtoileUI/ETFragment.h>
 
-@class ETLayoutLine;
+@class ETLineFragment;
 
 /** Describes how the content is horizontally positioned inside the layout 
 context.
@@ -75,7 +75,7 @@ ETTemplateItemLayout are allowed to do. */
 
 /* Fragment-based Layout */
 
-- (ETLayoutLine *) layoutFragmentWithSubsetOfItems: (NSArray *)unlayoutedItems;
+- (ETLineFragment *) layoutFragmentWithSubsetOfItems: (NSArray *)unlayoutedItems;
 - (NSArray *) generateFragmentsForItems: (NSArray *)items;
 - (NSPoint) originOfFirstFragment: (id)aFragment 
                  forContentHeight: (float)contentHeight;
