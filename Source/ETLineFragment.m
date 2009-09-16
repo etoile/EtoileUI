@@ -20,11 +20,11 @@
 @implementation ETLineFragment
 
 /* <init /> */
-- (id) initWithOwner: (id)anOwner 
-          fragmentMargin: (float)aMargin 
-                maxWidth: (float)aWidth
-               maxHeight: (float)aHeight
-               isFlipped: (BOOL)isFlipped
+- (id) initWithOwner: (id <ETLayoutFragmentOwner>)anOwner 
+      fragmentMargin: (float)aMargin 
+            maxWidth: (float)aWidth
+           maxHeight: (float)aHeight
+           isFlipped: (BOOL)isFlipped
 {
 	SUPERINIT;
 	_owner = anOwner; /* Weak reference */
@@ -45,7 +45,7 @@ DEALLOC(DESTROY(_fragments))
 
 /** Returns a new autoreleased horizontal layout line filled with the given 
 fragments. */
-+ (id) horizontalLineWithOwner: (id)anOwner
++ (id) horizontalLineWithOwner: (id <ETLayoutFragmentOwner>)anOwner
                 fragmentMargin: (float)aMargin 
                       maxWidth: (float)aWidth
 {
@@ -55,11 +55,10 @@ fragments. */
 
 /** Returns a new autoreleased vertical layout line filled with the given 
 fragments. */
-+ (id) verticalLineWithOwner: (id)anOwner
++ (id) verticalLineWithOwner: (id <ETLayoutFragmentOwner>)anOwner
                   itemMargin: (float)aMargin 
                    maxHeight: (float)aHeight
                    isFlipped: (BOOL)isFlipped
-
 {
 	return AUTORELEASE([[ETVerticalLineFragment alloc] initWithOwner: anOwner
 		fragmentMargin: aMargin maxWidth: FLT_MAX maxHeight: aHeight isFlipped: isFlipped]);

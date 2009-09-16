@@ -36,10 +36,8 @@ TODO
 
 ## Layout
 
-* Rename ETStackLayout to ETColumnLayout
 
-* Modularize ETFlowLayout, ETLineLayout and ETStackLayout in order to:
-	- share a common underlying layout algorithm (only flow and line shares code presently)
+* Finish to rework ETFlowLayout, ETLineLayout and ETLineFragment in order to:
 	- implement a vertical flow algorithm
 	- ony request a minimal protocol for layouted objects: -x, -y, -width, -height, -setX:, -setY:, -setWidth:, setHeight: instead of the more complex one needed by a concrete layout that deals with ETLayoutItem instances (and the whole layout item tree machinery that encompass extra stuff like the event handling... for which the layout takes over in some cases).
 
@@ -53,11 +51,12 @@ After the refactoring it should be:
 	- ETLineLayout
 	- ETStackLayout
 
-and a separate ETLayoutAlgorithm class tree of layout strategies:
+ETLineFragment should now allow that to be done easily because a line fragment can be either horizontal or vertical and ETColumnLayout and ETLineLayout act as dumb shell classes around ETLineFragment and ETVerticalLineFragment (private subclass).
+
+My initial idea was to separate ETLayoutAlgorithm class tree of layout strategies:
 	- ETHorizontalFlowAlgorithm
 	- ETVerticalFlowAlgorithm
 For these two subclasses, you can specify how the overflow should be handled. In ETFlowLayout, the right Flow algorithm is selected depending on the value returned by -isVerticallyOriented. In a very-long term vision, these classes could be eventually be subclassed for implementing text layout algorithms (see Universal Polygons in STEPS first year report).
-
 So ETLineLayout results of using ETHorizontalFlowAlgorithm limited to a single line and the overflow hidden. Similarly ETStackLayout results of using ETVerticalFlowAlgorithm limited to a single column and the overflow hidden.
 
 
