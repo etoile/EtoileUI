@@ -30,7 +30,7 @@ libEtoileUI_OBJC_FILES = \
 	ETLayoutItem+KVO.m \
 	ETLayoutItem+Reflection.m \
 	ETLayoutItem+Scrollable.m \
-	ETLayoutLine.m \
+	ETLineFragment.m \
 	ETLayout.m \
 	ETLineLayout.m \
 	ETObjectBrowserLayout.m \

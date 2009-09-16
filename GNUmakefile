@@ -56,7 +56,7 @@ EtoileUI_HEADER_FILES = \
 	ETLayoutItem+KVO.h \
 	ETLayoutItem+Reflection.h \
 	ETLayoutItem+Scrollable.h \
-	ETLayoutLine.h \
+	ETLineFragment.h \
 	ETLineLayout.h \
 	ETObjectBrowserLayout.h \
 	EtoileUI.h \
