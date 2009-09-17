@@ -417,7 +417,7 @@ to manipulate the item collection that belongs to the parent. */
 {
 	//ETDebugLog(@"For item %@ with supervisor view %@, modify the parent item from "
 	//	"%@ to %@", self, [self supervisorView], _parentItem, parent, self);
-
+	NSParameterAssert(parent != self);
 	_parentItem = parent;
 }
 

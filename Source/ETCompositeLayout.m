@@ -351,6 +351,14 @@ in -handleAddXXX which will then invoke [[B representedObject] addObject: bla]. 
 
 /* Layouting */
 
+/* We must not invoke -saveInitialContextState and -prepareNewContextState 
+because both our initial and current context state are transparently copied (by 
+the copying support in ETLayoutItemGroup and ETCompositeLayout/ETLayout). */
+- (void) setUpCopy
+{
+	[super setUp];
+}
+
 - (void) setUp
 {
 	[super setUp];
