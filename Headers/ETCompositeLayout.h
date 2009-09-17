@@ -88,4 +88,7 @@
 - (void) restoreInitialContextState: (NSSet *)properties;
 - (void) restoreContextState;
 
+- (ETLayoutItemGroup *) holderItem;
+- (ETLayoutItemGroup *) proposedParentItemForFirstPresentationItem;
+
 @end

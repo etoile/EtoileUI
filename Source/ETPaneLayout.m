@@ -88,6 +88,40 @@ If contentItem is nil, a default content item will be created. */
 	[super dealloc];
 }
 
+- (id) copyWithZone: (NSZone *)aZone layoutContext: (id <ETLayoutingContext>)ctxt
+{
+	ETPaneLayout *layoutCopy = [super copyWithZone: aZone layoutContext: ctxt];
+
+	/* We figure out the bar item, content item and current item index path in 
+	   the original to look up the same items in the copy.
+	   We could simply look up the index, we look up the index path in case 
+	   subclasses want to place those items elsewhere than in the holder item 
+	   itself (e.g. in a descendant). */
+	NSIndexPath *barIndexPath = [[self holderItem] indexPathForItem: [self barItem]];
+	NSIndexPath *contentIndexPath = [[self holderItem] indexPathForItem: [self contentItem]];
+	NSIndexPath *currentIndexPath = [[self holderItem] indexPathForItem: [self currentItem]];
+	ETLayoutItemGroup *barItemCopy = (id)[[layoutCopy holderItem] itemAtIndexPath: barIndexPath];
+	ETLayoutItemGroup *contentItemCopy = (id)[[layoutCopy holderItem] itemAtIndexPath: contentIndexPath];
+	/* The current item will be a proxy (as a tab item) on the item displayed 
+	   in the content in some subclasses such as ETMasterDetailPaneLayout. 
+	   See -beginVisitingItem: */
+	ETLayoutItem *currentItemCopy = (id)[[layoutCopy holderItem] itemAtIndexPath: currentIndexPath];
+
+	ASSIGN(layoutCopy->_barItem, barItemCopy);
+	ASSIGN(layoutCopy->_contentItem, contentItemCopy);
+	ASSIGN(layoutCopy->_currentItem, currentItemCopy);
+	layoutCopy->_barPosition = _barPosition;
+
+	/* Replicate the observer set up in -setBarItem: */
+	[[NSNotificationCenter defaultCenter] 
+		   addObserver: layoutCopy
+	          selector: @selector(itemGroupSelectionDidChange:)
+		          name: ETItemGroupSelectionDidChangeNotification 
+			    object: layoutCopy->_barItem];
+
+	return layoutCopy;
+}
+
 - (float) barHeightOrWidth
 {
 	return 150;
@@ -356,6 +390,28 @@ the real items they currently represent. */
 @end
 
 @implementation ETMasterDetailPaneLayout
+
+- (id) copyWithZone: (NSZone *)aZone layoutContext: (id <ETLayoutingContext>)ctxt
+{
+	ETMasterDetailPaneLayout *layoutCopy = [super copyWithZone: aZone layoutContext: ctxt];
+
+	/* We figure out the visited item and current item index in the original to 
+	   look up the same item in the copy.
+	   The current item is a proxy on the item displayed in the content and 
+	   this proxy is inserted in the bar item by -beginVisitingItem: to play a 
+	   tab item role.
+	   The represented object is not copied in a layout item, which 
+	   means we must adjust the copy of the visited item proxy to now point on 
+	   the visited item copy.  */
+	unsigned int visitedItemIndex = [[self contentItem] indexOfItem: [[self currentItem] representedObject]];
+	unsigned int visitedItemProxyIndex = [[self barItem] indexOfItem: [self currentItem]];
+	ETLayoutItem *visitedItemCopy = [[layoutCopy contentItem] itemAtIndex: visitedItemIndex];
+	ETLayoutItem *visitedItemProxyCopy = [[layoutCopy barItem] itemAtIndex: visitedItemProxyIndex];
+
+	[visitedItemProxyCopy setRepresentedObject: visitedItemCopy];
+
+	return layoutCopy;
+}
 
 - (void) setBarItem: (ETLayoutItemGroup *)barItem
 {

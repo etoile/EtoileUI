@@ -83,11 +83,10 @@
 
 DEALLOC(DESTROY(_rootItem); DESTROY(_targetItem));
 
+/** Returns the holder item. */
 - (ETLayoutItemGroup *) proposedParentItemForFirstPresentationItem
 {
-		BOOL isLayoutActive = (_layoutContext != nil);
-		// FIXME: Ugly cast
-		return isLayoutActive ? (ETLayoutItemGroup *)_layoutContext : [self rootItem];
+	return [self holderItem];
 }
 
 - (id) copyWithZone: (NSZone *)aZone layoutContext: (id <ETLayoutingContext>)ctxt
@@ -148,6 +147,22 @@ an NSInternalInconsistencyException will be raised. */
 	[self setFirstPresentationItem: nil];
 	[anItem setActionHandler: nil];
 	ASSIGN(_rootItem, anItem);
+}
+
+/** <override-never />
+Returns the item that currently hold the items that were initially attached 
+to the receiver root item.
+
+The holder item is either:
+<list>
+<item>the layout context when the layout is active</item>
+<item>the receiver root item otherwise</item>
+</list> */
+- (ETLayoutItemGroup *) holderItem
+{
+	BOOL isLayoutActive = (_layoutContext != nil);
+	// FIXME: Ugly cast
+	return isLayoutActive ? (ETLayoutItemGroup *)_layoutContext : [self rootItem];
 }
 
 /** Returns the layout item to which the layout context content can be routed. */
