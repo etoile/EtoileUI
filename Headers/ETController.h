@@ -69,8 +69,11 @@
 	BOOL _hasNewContent;
 }
 
+- (id) copyWithZone: (NSZone *)aZone content: (ETLayoutItemGroup *)newContent;
+
 - (ETLayoutItemGroup *) content;
 - (void) setContent: (ETLayoutItemGroup *)content;
+- (NSArray *) trackedItemPropertyNames;
 
 - (ETLayoutItem *) templateItem;
 - (void) setTemplateItem: (ETLayoutItem *)template;

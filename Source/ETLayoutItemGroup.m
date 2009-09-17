@@ -217,8 +217,7 @@ The returned copy is mutable because ETLayoutItemGroup cannot be immutable. */
 		[item setSource: [self source]];
 	}
 
-	ETController *controllerCopy = [GET_PROPERTY(kETControllerProperty) copyWithZone: aZone];
-	[controllerCopy setContent: item];
+	ETController *controllerCopy = [GET_PROPERTY(kETControllerProperty) copyWithZone: aZone content: item];
 	SET_OBJECT_PROPERTY_AND_RELEASE(item, controllerCopy, kETControllerProperty);
 
 	/* We copy all variables properties */

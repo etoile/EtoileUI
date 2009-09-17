@@ -287,6 +287,9 @@ it gets instantiated. */
 Returns a copy of the receiver.<br />
 The given context which might be nil will be set as the layout context on the copy.
 
+This method is ETLayout designated copier. Subclasses that want to extend 
+the copying support must invoke it instead of -copyWithZone:.
+
 Subclasses must be aware that this method calls -setAttachedInstrument: with an 
 instrument copy. */ 
 - (id) copyWithZone: (NSZone *)aZone layoutContext: (id <ETLayoutingContext>)ctxt

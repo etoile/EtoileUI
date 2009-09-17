@@ -41,11 +41,44 @@
 	[super dealloc];
 }
 
-/** Returns a receiver copy with a nil content.
+- (void) resolveTrackedItemsInCopy: (ETController *)newController
+{
+	ETLayoutItemGroup *newContent = newController->_content;
 
-You can set the returned controller content indirectly with 
--[ETLayoutItemGroup setController:]. */
-- (id) copyWithZone: (NSZone *)aZone
+	if (nil == newContent)
+		return;
+
+	NSParameterAssert(nil != _content);
+
+	FOREACH([self trackedItemPropertyNames], itemName, NSString *)
+	{
+		ETLayoutItem *item = [self valueForKey: itemName];
+		
+		NSAssert3(nil != item && [item isLayoutItem], @"Found no item "
+			"identified by '%@' property in %@.\n Every name returned by "
+			"-trackedItemPropertyNames must match a KVC-compliant properties in "
+			"the controller and they must have a valid layout item set.", self, 
+			itemName, _content);
+
+		NSIndexPath *indexPath = [_content indexPathForItem: item];
+
+		NSAssert3(nil != indexPath, @"Found no item at the index path in %@.\n "
+			"The name '%@' returned by -trackedItemPropertyNames must "
+			"identity a layout item that belongs to the controller content "
+			"tree %@", self, itemName, _content);
+
+		ETLayoutItem *itemCopy = [newContent itemAtIndexPath: indexPath];
+		NSParameterAssert(nil != itemCopy);
+		
+		[newController setValue: itemCopy forKey: itemName];
+	}
+}
+
+/** Returns a receiver copy which uses the given content.
+
+This method is ETController designated copier. Subclasses that want to extend 
+the copying support must invoke it instead of -copyWithZone:. */
+- (id) copyWithZone: (NSZone *)aZone content: (ETLayoutItemGroup *)newContent
 {
 	ETController *newController = [[[self class] alloc] init];
 
@@ -62,7 +95,21 @@ You can set the returned controller content indirectly with
 	newController->_hasNewFilterPredicate = (nil != _filterPredicate);
 	newController->_hasNewContent = NO;
 
+	[self resolveTrackedItemsInCopy: newController];
+
 	return newController;
+}
+
+/** Returns a receiver copy with a nil content.
+
+You can set the returned controller content indirectly with 
+-[ETLayoutItemGroup setController:].
+
+To customize the copying in a subclass, you must override 
+-copyWithZone:content:. */
+- (id) copyWithZone: (NSZone *)aZone
+{
+	return [self copyWithZone: aZone content: nil];
 }
 
 /** Returns the content object which is either a layout item group or nil.
@@ -92,6 +139,23 @@ an invalid argument exception is raised. */
 	}
 
 	_content = content;
+}
+
+/** <override-dummy />
+Override to return property names which can be used with KVC to retrieve 
+every layout item your subclass keeps track of.
+
+You must override this method when a subclass stores ETLayoutItem or 
+ETLayoutItemGroup objects (e.g. in an instance variable). Copying would 
+otherwise be unreliable and controllers are required to be copiable.
+
+When the controller is copied, -copyWithZone:content: will use the item index 
+paths in the original content to resolve the named items in the controller copy. 
+
+Returns an empty array by default. */
+- (NSArray *) trackedItemPropertyNames
+{
+	return [NSArray array];
 }
 
 /** Returns the template item used to create leaf items. This template item
