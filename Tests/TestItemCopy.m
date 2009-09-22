@@ -196,7 +196,7 @@ DEALLOC(DESTROY(itemFactory); DESTROY(item); DESTROY(itemGroup))
 
 - (NSArray *) nonEqualItemGroupProperties
 {
-	return [self nonEqualItemProperties];
+	return [[self nonEqualItemProperties] arrayByAddingObjectsFromArray: A(kETControllerProperty)];
 }
 
 - (void) testEmptyBasicItemGroupCopy

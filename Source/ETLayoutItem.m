@@ -8,6 +8,7 @@
 
 #import <EtoileFoundation/NSIndexPath+Etoile.h>
 #import <EtoileFoundation/NSObject+Etoile.h>
+#import <EtoileFoundation/NSObject+HOM.h>
 #import <EtoileFoundation/NSObject+Model.h>
 #import <EtoileFoundation/ETUTI.h>
 #import <EtoileFoundation/Macros.h>
@@ -251,6 +252,14 @@ Default values will be copied but not individually (shallow copy). */
 
 	/* We copy all variables properties */
 
+	id target = GET_PROPERTY(kETTargetProperty);
+	id targetCopy = [[self objectReferencesForCopy] objectForKey: target];
+
+	if (nil == targetCopy)
+	{
+		targetCopy = target;
+	} 
+
 	SET_OBJECT_PROPERTY_AND_RELEASE(item, [GET_PROPERTY(kETValueProperty) copyWithZone: aZone], kETValueProperty);
 	SET_OBJECT_PROPERTY(item, GET_PROPERTY(kETDefaultFrameProperty),  kETDefaultFrameProperty);
 	SET_OBJECT_PROPERTY(item, GET_PROPERTY(kETNameProperty), kETNameProperty);
@@ -259,7 +268,8 @@ Default values will be copied but not individually (shallow copy). */
 	SET_OBJECT_PROPERTY(item, GET_PROPERTY(kETSubtypeProperty),  kETSubtypeProperty);
 	SET_OBJECT_PROPERTY(item, GET_PROPERTY(kETActionHandlerProperty), kETActionHandlerProperty);
 	SET_OBJECT_PROPERTY(item, GET_PROPERTY(kETActionProperty), kETActionProperty);
-	SET_OBJECT_PROPERTY(item, GET_PROPERTY(kETTargetProperty), kETTargetProperty);
+	SET_OBJECT_PROPERTY(item, targetCopy, kETTargetProperty);
+	[[[item view] ifResponds] setTarget: targetCopy]; 
 	
 	return item;
 }
@@ -309,6 +319,37 @@ Default values will be copied but not individually (shallow copy). */
 #endif
 
 	return item;
+}
+
+static NSMapTable *objectRefsForCopy = nil;
+
+/** Returns a context which binds objects/values in the original object graph to 
+their new equivalent objects/values in the resulting copy. 
+
+This context is a key/value table which allows to retrieve arbitrary objects 
+(usually they are controller) that were copied by an ancestor layout item in the 
+deep copy underway.
+e.g. In an item copy, you can correct a reference to a controller that belongs 
+to an ancestor item like that: 
+<code>
+id controllerInItemCopy = [[self objectReferencesForCopy] objectForKey: [self target]];
+
+if (controllerInItemCopy != nil)
+{
+	ASSIGN(itemCopy->_target, controllerInItemCopy);
+}
+else
+{
+	ASSIGN(itemCopy->_target, _target);
+}
+</code> */
+- (NSMapTable *) objectReferencesForCopy
+{
+	if (nil == objectRefsForCopy)
+	{
+		ASSIGN(objectRefsForCopy, [NSMapTable mapTableWithStrongToStrongObjects]);
+	}
+	return objectRefsForCopy;
 }
 
 - (NSString *) description

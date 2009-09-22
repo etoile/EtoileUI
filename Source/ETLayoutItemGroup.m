@@ -217,14 +217,26 @@ The returned copy is mutable because ETLayoutItemGroup cannot be immutable. */
 		[item setSource: [self source]];
 	}
 
-	ETController *controllerCopy = [GET_PROPERTY(kETControllerProperty) copyWithZone: aZone content: item];
+	ETController *controller = GET_PROPERTY(kETControllerProperty);
+	ETController *controllerCopy = [controller copyWithZone: aZone content: item];
+
+	[[self objectReferencesForCopy] setObject: controllerCopy forKey: controller];
+
 	SET_OBJECT_PROPERTY_AND_RELEASE(item, controllerCopy, kETControllerProperty);
 
 	/* We copy all variables properties */
 
-	SET_OBJECT_PROPERTY(item, GET_PROPERTY(kETDelegateProperty), kETDelegateProperty);
+	id delegate = GET_PROPERTY(kETDelegateProperty);
+	id delegateCopy = [[self objectReferencesForCopy] objectForKey: delegate];
+
+	if (nil == delegateCopy)
+	{
+		delegateCopy = delegate;
+	}
+
 	SET_OBJECT_PROPERTY(item, GET_PROPERTY(kETRepresentedPathBaseProperty), kETRepresentedPathBaseProperty);
 	SET_OBJECT_PROPERTY(item, GET_PROPERTY(kETItemScaleFactorProperty), kETItemScaleFactorProperty);
+	SET_OBJECT_PROPERTY(item, delegateCopy, kETDelegateProperty);
 
 	/* We need to update the layout to have the content reloaded in widget layouts
 	   Which means the item copy will then receive a layout update even in case 
@@ -249,12 +261,35 @@ The returned copy is mutable because ETLayoutItemGroup cannot be immutable. */
 	return [self copyWithZone: aZone items: [NSMutableArray array]];
 }
 
+static unsigned int copyDepth = 0;
+
+- (void) beginDeepCopy
+{
+	copyDepth++;
+}
+
+- (void) endDeepCopy
+{
+	copyDepth--;
+
+	BOOL isCopyFinished = (0 == copyDepth);
+
+	if (isCopyFinished)
+	{
+		[[self objectReferencesForCopy] removeAllObjects];
+	}
+}
+
 - (id) deepCopyWithZone: (NSZone *)aZone
 {
+	[self beginDeepCopy]; /* Marks the copy starts with us */
+
 	NSArray *copiedChildItems = [[_layoutItems mappedCollection] deepCopyWithZone: aZone];
 	ETLayoutItemGroup *item = [self copyWithZone: aZone items: [NSMutableArray arrayWithArray: copiedChildItems]];
 
 	[copiedChildItems makeObjectsPerformSelector: @selector(release)];
+
+	[self endDeepCopy]; /* Reset the context if the copy started with us */
 
 	return item;
 }

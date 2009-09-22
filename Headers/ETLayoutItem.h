@@ -101,6 +101,7 @@ and centers it. A strech is a scale that doesn't preserve the content proportion
 - (id) copyWithZone: (NSZone *)zone;
 - (id) deepCopy;
 - (id) deepCopyWithZone: (NSZone *)aZone;
+- (NSMapTable *) objectReferencesForCopy;
 
 /* Layout Item Tree */
 
