@@ -82,6 +82,7 @@ the copying support must invoke it instead of -copyWithZone:. */
 {
 	ETController *newController = [[[self class] alloc] init];
 
+	newController->_content = newContent; /* Weak reference */
 	newController->_templateItem = [_templateItem copyWithZone: aZone];
 	newController->_templateItemGroup = [_templateItemGroup copyWithZone: aZone];
 	ASSIGN(newController->_objectClass, _objectClass);
