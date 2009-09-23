@@ -20,6 +20,7 @@
 {
 	SUPERINIT
 
+	_observations = [[NSMutableSet alloc] init];
 	[self setSortDescriptors: nil];
 	_allowedPickType = [[ETUTI alloc] init];
 	_allowedDropTypes = [[NSMutableDictionary alloc] init];
@@ -27,8 +28,21 @@
 	return self;
 }
 
+- (void) stopObservation
+{
+	NSNotificationCenter *notifCenter = [NSNotificationCenter defaultCenter];
+
+	FOREACH(_observations, observation, NSDictionary *)
+	{
+		[notifCenter removeObserver: [observation objectForKey: @"object"]];
+	}
+}
+
 - (void) dealloc
 {
+	[self stopObservation];
+
+	DESTROY(_observations);
 	DESTROY(_templateItem); 
 	DESTROY(_templateItemGroup); 
 	DESTROY(_objectClass); 
@@ -74,15 +88,47 @@
 	}
 }
 
+- (void) setUpObserversForCopy: (ETController *)controllerCopy content: (ETLayoutItemGroup *)contentCopy
+{
+	FOREACH(_observations, observation, NSDictionary *)
+	{ 
+		id observedObject = [observation objectForKey: @"object"];
+
+		NSParameterAssert(observedObject != nil);
+
+		if ([observedObject isLayoutItem])
+		{
+			if (contentCopy != nil)
+			{
+				NSIndexPath *indexPath = [[self content] indexPathForItem: observedObject];
+				observedObject = [[controllerCopy content] itemAtIndexPath: indexPath];
+			}
+			else
+			{
+				observedObject = nil;
+			}
+		}
+
+		BOOL observedObjectUnresolved = (nil ==  observedObject);
+
+		if (observedObjectUnresolved)
+			continue;
+
+		[controllerCopy startObserveObject: observedObject
+		               forNotificationName: [observation objectForKey: @"name"]
+		                          selector: NSSelectorFromString([observation objectForKey: @"selector"])];
+	}
+}
+
 /** Returns a receiver copy which uses the given content.
 
 This method is ETController designated copier. Subclasses that want to extend 
 the copying support must invoke it instead of -copyWithZone:. */
 - (id) copyWithZone: (NSZone *)aZone content: (ETLayoutItemGroup *)newContent
 {
-	ETController *newController = [[[self class] alloc] init];
+	ETController *newController = [[[self class] allocWithZone: aZone] init];
 
-	newController->_content = newContent; /* Weak reference */
+	newController->_observations = [[NSMutableSet allocWithZone: aZone] init];
 	newController->_templateItem = [_templateItem copyWithZone: aZone];
 	newController->_templateItemGroup = [_templateItemGroup copyWithZone: aZone];
 	ASSIGN(newController->_objectClass, _objectClass);
@@ -96,9 +142,22 @@ the copying support must invoke it instead of -copyWithZone:. */
 	newController->_hasNewFilterPredicate = (nil != _filterPredicate);
 	newController->_hasNewContent = NO;
 
-	[self resolveTrackedItemsInCopy: newController];
+	 /* When the copy is requested by -[ETLayoutItemGroup copyWithZone:], 
+       -finishCopy: will be called back when the item copy is done. */
+	// TODO: For a deep copy... if (nil == newContent)
+	{
+		[self finishCopy: newController content: newContent];
+	}
 
 	return newController;
+}
+
+- (void) finishCopy: (ETController *)newController content: (ETLayoutItemGroup *)newContent
+{
+	newController->_content = newContent; /* Weak reference */
+
+	[self resolveTrackedItemsInCopy: newController];
+	[self setUpObserversForCopy: newController content: newContent];
 }
 
 /** Returns a receiver copy with a nil content.
@@ -111,6 +170,62 @@ To customize the copying in a subclass, you must override
 - (id) copyWithZone: (NSZone *)aZone
 {
 	return [self copyWithZone: aZone content: nil];
+}
+
+/** Adds the receiver as an observer on the given object and notification name 
+combination to the default notification center.
+ 
+The method bound to the given selector on the receiver will be called back, 
+when the observed object posts a notification whose name matches aName.
+
+Pass nil as the notification name, if you want to receive all notifications 
+posted by the observed object.
+
+The observed object must not be nil. */ 
+- (void) startObserveObject: (id)anObject
+        forNotificationName: (NSString *)aName 
+                   selector: (SEL)aSelector
+{
+	NILARG_EXCEPTION_TEST(anObject);
+
+	[_observations addObject: D(anObject, @"object", aName, @"name",  
+		NSStringFromSelector(aSelector), @"selector")];
+
+	[[NSNotificationCenter defaultCenter] addObserver: self
+	                                         selector: aSelector
+	                                             name: aName
+	                                           object: anObject];
+}
+
+/** Removes the receiver as an observer on the given object and notification 
+name combination from the default notification center.
+ 
+Pass nil as the notification name, if you want to stop to receive any 
+notification posted by the observed object.
+
+The observed object must not be nil. */ 
+- (void) stopObserveObject: (id)anObject forNotificationName: (NSString *)aName 
+{
+	NILARG_EXCEPTION_TEST(anObject);
+
+	NSNotificationCenter *notifCenter = [NSNotificationCenter defaultCenter];
+	BOOL removeAll = (nil == aName);
+
+	FOREACH([NSSet setWithSet: _observations], observation, NSDictionary *)
+	{
+		id object = [observation objectForKey: @"object"];
+
+		if (object != anObject)
+			continue;
+
+		id name = [observation objectForKey: @"name"];
+
+		if ([name isEqual: aName] || removeAll)
+		{
+			[_observations removeObject: observation];
+			[notifCenter removeObserver: self name: aName object: anObject];
+		}
+	}
 }
 
 /** Returns the content object which is either a layout item group or nil.

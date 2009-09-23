@@ -54,6 +54,7 @@
 	arranged objects as a collection distinct from the content. */
 @interface ETController : NSObject <NSCopying>
 {
+	NSMutableSet *_observations;
 	ETLayoutItemGroup *_content;
 	ETLayoutItem *_templateItem;
 	ETLayoutItemGroup *_templateItemGroup;
@@ -69,7 +70,13 @@
 	BOOL _hasNewContent;
 }
 
+- (void) startObserveObject: (id)anObject
+        forNotificationName: (NSString *)aName 
+                   selector: (SEL)aSelector;
+- (void) stopObserveObject: (id)anObject forNotificationName: (NSString *)aName;
+
 - (id) copyWithZone: (NSZone *)aZone content: (ETLayoutItemGroup *)newContent;
+- (void) finishCopy: (ETController *)controllerCopy content: (ETLayoutItemGroup *)newContent;
 
 - (ETLayoutItemGroup *) content;
 - (void) setContent: (ETLayoutItemGroup *)content;
