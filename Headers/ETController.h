@@ -70,17 +70,24 @@
 	BOOL _hasNewContent;
 }
 
+- (ETLayoutItemGroup *) content;
+- (void) setContent: (ETLayoutItemGroup *)content;
+- (NSArray *) trackedItemPropertyNames;
+
+/* Observation */
+
 - (void) startObserveObject: (id)anObject
         forNotificationName: (NSString *)aName 
                    selector: (SEL)aSelector;
 - (void) stopObserveObject: (id)anObject forNotificationName: (NSString *)aName;
 
-- (id) copyWithZone: (NSZone *)aZone content: (ETLayoutItemGroup *)newContent;
-- (void) finishCopy: (ETController *)controllerCopy content: (ETLayoutItemGroup *)newContent;
+/* Copying */
 
-- (ETLayoutItemGroup *) content;
-- (void) setContent: (ETLayoutItemGroup *)content;
-- (NSArray *) trackedItemPropertyNames;
+- (id) copyWithZone: (NSZone *)aZone content: (ETLayoutItemGroup *)newContent;
+- (void) finishDeepCopy: (ETController *)controllerCopy 
+               withZone: (NSZone *)aZone 
+                content: (ETLayoutItemGroup *)newContent;
+/* Templates */
 
 - (ETLayoutItem *) templateItem;
 - (void) setTemplateItem: (ETLayoutItem *)template;
