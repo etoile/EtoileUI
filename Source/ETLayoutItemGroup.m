@@ -213,15 +213,16 @@ The returned copy is mutable because ETLayoutItemGroup cannot be immutable. */
 	/* We copy all object ivars except _stackedLayout, _unstackedLayout and 
 	   _layoutItems whose copying is delegated to -deepCopyWithZone: */
 
-	/* -setSource: will set up the observer */
-	if ([self usesRepresentedObjectAsProvider])
-	{
-		[item setSource: item];
-	}
-	else
-	{
-		[item setSource: [self source]];
-	}
+	id source =  GET_PROPERTY(kETSourceProperty);
+	id sourceCopy = ([self usesRepresentedObjectAsProvider] ? (id)item : source);
+
+	SET_OBJECT_PROPERTY(item, sourceCopy, kETSourceProperty);
+	/* Set up an observer as -setSource: does */
+	[[NSNotificationCenter defaultCenter] 
+		   addObserver: item
+	          selector: @selector(sourceDidUpdate:)
+		          name: ETSourceDidUpdateNotification 
+			    object: sourceCopy];
 
 	ETController *controller = GET_PROPERTY(kETControllerProperty);
 	ETController *controllerCopy = [controller copyWithZone: aZone content: item];
