@@ -171,6 +171,8 @@ See also +enablesAutolayout. */
 	[super dealloc];
 }
 
+static unsigned int copyDepth = 0;
+
 /** Returns a copy of the receiver. See also -[ETLayoutItem copyWithZone:].
 
 All layouts from the receiver returned by -layout, -stackedItemLayout, 
@@ -180,6 +182,7 @@ several item groups.
 The returned copy is mutable because ETLayoutItemGroup cannot be immutable. */ 
 - (id) copyWithZone: (NSZone *)aZone items: (NSMutableArray *)childItems
 {
+	BOOL isDeepCopy = (copyDepth > 0);
 	// FIXME: NSParameterAssert([childItems isMutableCollection]);
 
 	ETLayoutItemGroup *item = [super copyWithZone: aZone];
@@ -190,7 +193,10 @@ The returned copy is mutable because ETLayoutItemGroup cannot be immutable. */
 	}
 	ASSIGN(item->_layoutItems, childItems);
 	item->_layout = [_layout copyWithZone: aZone layoutContext: item];
-	[item->_layout setUpCopyWithZone: aZone original: _layout];
+	if (NO == isDeepCopy)
+	{
+		[item->_layout setUpCopyWithZone: aZone original: _layout];
+	}
 
 	/* We copy all primitive ivars except _reloading */
 
@@ -240,21 +246,6 @@ The returned copy is mutable because ETLayoutItemGroup cannot be immutable. */
 	SET_OBJECT_PROPERTY(item, GET_PROPERTY(kETItemScaleFactorProperty), kETItemScaleFactorProperty);
 	SET_OBJECT_PROPERTY(item, delegateCopy, kETDelegateProperty);
 
-	/* We need to update the layout to have the content reloaded in widget layouts
-	   Which means the item copy will then receive a layout update even in case 
-	   the receiver had received none until now.  */
-	if ([[item layout] isWidget])
-	{
-		[item updateLayout]; // TODO: Should be setNeedsUpdateLayout:
-	}
-	else if ([[item layout] isOpaque] == NO) /* We don't need a true layout update */
-	{
-		// NOTE: Might be better to iterate over the visible items backed by a
-		// supervisor view and do [[item supervisorView] addSubview: childSupervisorView]
-		[item setVisibleItems: [item visibleItemsForItems: item->_layoutItems]
-		             forItems: item->_layoutItems];
-	}
-
 	return item;
 }
 
@@ -262,8 +253,6 @@ The returned copy is mutable because ETLayoutItemGroup cannot be immutable. */
 {
 	return [self copyWithZone: aZone items: [NSMutableArray array]];
 }
-
-static unsigned int copyDepth = 0;
 
 - (void) beginDeepCopy
 {
@@ -286,6 +275,8 @@ static unsigned int copyDepth = 0;
 {
 	[self beginDeepCopy]; /* Marks the copy starts with us */
 
+	/* Copy Children */
+
 	NSMutableArray *childrenCopy = [[NSMutableArray alloc] initWithCapacity: [_layoutItems count]];
 
 	FOREACH(_layoutItems, child, ETLayoutItem *)
@@ -294,7 +285,39 @@ static unsigned int copyDepth = 0;
 	}
 	[childrenCopy makeObjectsPerformSelector: @selector(release)];
 
+	/* Copy Receiver */
+
 	ETLayoutItemGroup *itemCopy = [self copyWithZone: aZone items: childrenCopy];
+
+	/* Assign Children */
+
+#if 0
+	FOREACH(childrenCopy, eachChild, ETLayoutItem *)
+	{
+		eachChild->_parentItem = itemCopy; /* Weak reference */
+	}
+	ASSIGN(itemCopy->_layoutItems, childrenCopy);
+	RELEASE(childrenCopy);
+#endif
+
+	/* Finish Copy Layout and Controller */
+
+	[itemCopy->_layout setUpCopyWithZone: aZone original: _layout];
+
+	/* We need to update the layout to have the content reloaded in widget layouts
+	   Which means the item copy will then receive a layout update even in case 
+	   the receiver had received none until now.  */
+	if ([[itemCopy layout] isWidget])
+	{
+		[itemCopy updateLayout]; // TODO: Should be setNeedsUpdateLayout:
+	}
+	else if ([[itemCopy layout] isOpaque] == NO) /* We don't need a true layout update */
+	{
+		// NOTE: Might be better to iterate over the visible items backed by a
+		// supervisor view and do [[item supervisorView] addSubview: childSupervisorView]
+		[itemCopy setVisibleItems: [itemCopy visibleItemsForItems: childrenCopy]
+		                 forItems: childrenCopy];
+	}
 
 	[self endDeepCopy]; /* Reset the context if the copy started with us */
 
