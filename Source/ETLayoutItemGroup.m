@@ -286,14 +286,19 @@ static unsigned int copyDepth = 0;
 {
 	[self beginDeepCopy]; /* Marks the copy starts with us */
 
-	NSArray *copiedChildItems = [[_layoutItems mappedCollection] deepCopyWithZone: aZone];
-	ETLayoutItemGroup *item = [self copyWithZone: aZone items: [NSMutableArray arrayWithArray: copiedChildItems]];
+	NSMutableArray *childrenCopy = [[NSMutableArray alloc] initWithCapacity: [_layoutItems count]];
 
-	[copiedChildItems makeObjectsPerformSelector: @selector(release)];
+	FOREACH(_layoutItems, child, ETLayoutItem *)
+	{
+		[childrenCopy addObject: [child deepCopyWithZone: aZone]];
+	}
+	[childrenCopy makeObjectsPerformSelector: @selector(release)];
+
+	ETLayoutItemGroup *itemCopy = [self copyWithZone: aZone items: childrenCopy];
 
 	[self endDeepCopy]; /* Reset the context if the copy started with us */
 
-	return item;
+	return itemCopy;
 }
 
 /* Property Value Coding */
