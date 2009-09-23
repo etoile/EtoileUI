@@ -173,25 +173,18 @@ See also +enablesAutolayout. */
 
 static unsigned int copyDepth = 0;
 
-/** Returns a copy of the receiver. See also -[ETLayoutItem copyWithZone:].
+/** Returns a copy of the receiver.
 
-All layouts from the receiver returned by -layout, -stackedItemLayout, 
--unstackedItemLayout are also copied since a layout cannot be shared between 
-several item groups.
+The layout and its instrument are always copied (they cannot be shared).
 
 The returned copy is mutable because ETLayoutItemGroup cannot be immutable. */ 
-- (id) copyWithZone: (NSZone *)aZone items: (NSMutableArray *)childItems
+- (id) copyWithZone: (NSZone *)aZone
 {
 	BOOL isDeepCopy = (copyDepth > 0);
 	// FIXME: NSParameterAssert([childItems isMutableCollection]);
 
 	ETLayoutItemGroup *item = [super copyWithZone: aZone];
 
-	FOREACH(childItems, childItem, ETLayoutItem *)
-	{
-		childItem->_parentItem = item; /* Weak reference */
-	}
-	ASSIGN(item->_layoutItems, childItems);
 	item->_layout = [_layout copyWithZone: aZone layoutContext: item];
 	if (NO == isDeepCopy)
 	{
@@ -210,8 +203,8 @@ The returned copy is mutable because ETLayoutItemGroup cannot be immutable. */
 	item->_sorted = _sorted;
 	item->_filtered = _filtered;
 
-	/* We copy all object ivars except _stackedLayout, _unstackedLayout and 
-	   _layoutItems whose copying is delegated to -deepCopyWithZone: */
+	/* We copy all object ivars except _layoutItems whose copying is delegated 
+	   to -deepCopyWithZone: */
 
 	id source =  GET_PROPERTY(kETSourceProperty);
 	id sourceCopy = ([self usesRepresentedObjectAsProvider] ? (id)item : source);
@@ -250,11 +243,6 @@ The returned copy is mutable because ETLayoutItemGroup cannot be immutable. */
 	return item;
 }
 
-- (id) copyWithZone: (NSZone *)aZone
-{
-	return [self copyWithZone: aZone items: [NSMutableArray array]];
-}
-
 - (void) beginDeepCopy
 {
 	copyDepth++;
@@ -288,18 +276,16 @@ The returned copy is mutable because ETLayoutItemGroup cannot be immutable. */
 
 	/* Copy Receiver */
 
-	ETLayoutItemGroup *itemCopy = [self copyWithZone: aZone items: childrenCopy];
+	ETLayoutItemGroup *itemCopy = [self copyWithZone: aZone];
 
 	/* Assign Children */
 
-#if 0
 	FOREACH(childrenCopy, eachChild, ETLayoutItem *)
 	{
 		eachChild->_parentItem = itemCopy; /* Weak reference */
 	}
 	ASSIGN(itemCopy->_layoutItems, childrenCopy);
 	RELEASE(childrenCopy);
-#endif
 
 	/* Finish Copy Layout and Controller */
 
