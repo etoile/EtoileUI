@@ -190,7 +190,7 @@ The returned copy is mutable because ETLayoutItemGroup cannot be immutable. */
 	}
 	ASSIGN(item->_layoutItems, childItems);
 	item->_layout = [_layout copyWithZone: aZone layoutContext: item];
-	[item->_layout setUpCopy];
+	[item->_layout setUpCopyWithZone: aZone original: _layout];
 
 	/* We copy all primitive ivars except _reloading */
 

@@ -316,12 +316,16 @@ instrument copy. */
 
 /** <override-dummy />
 Overrides to specify to set up the receiver when it is the copy and has just 
-been assigned to its layout context.
+been assigned to its layout context.<br />
+At that point, the item tree owned by the layout context has been fully copied, 
+and object references that belongs to the original can now be resolved to their 
+equivalent in the tree copy (or object graph copy to be precise).
 
 The default implementation calls -setUp.
 
 You can call the superclass implementation or not. */
-- (void) setUpCopy
+- (void) setUpCopyWithZone: (NSZone *)aZone
+                  original: (ETLayout *)layoutOriginal
 {
 	NSParameterAssert(_layoutContext != nil);
 	[self setUp];

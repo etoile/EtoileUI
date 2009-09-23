@@ -89,41 +89,6 @@ DEALLOC(DESTROY(_rootItem); DESTROY(_targetItem));
 	return [self holderItem];
 }
 
-- (id) copyWithZone: (NSZone *)aZone layoutContext: (id <ETLayoutingContext>)ctxt
-{
-	ETCompositeLayout *layoutCopy = [super copyWithZone: aZone layoutContext: ctxt];
-
-	/* We figure out the first presentation item index path in the original to 
-	   look up the same item in the copy. */
-	NSIndexPath *indexPath = [[self proposedParentItemForFirstPresentationItem] 
-		indexPathForItem: [self firstPresentationItem]];
-	ETLayoutItem *firstPresentationItemCopy = 
-		[[layoutCopy proposedParentItemForFirstPresentationItem] itemAtIndexPath: indexPath];
-
-	ASSIGN(layoutCopy->_targetItem, firstPresentationItemCopy);
-
-	/* When the content is not routed, both the original 'items' are 'source'
-	   are stored in the default values. However -[ETLayoutItem copyWithZone:] 
-	   invoked on the layout context only makes a shallow copy, therefore the 
-	   initial items must be deeply copied since they cannot be shared between 
-	   an original layout and its copy (bad things would happen when their 
-	   context states get both restored). */
-	if ([layoutCopy isContentRouted] == NO)
-	{
-		NSArray *initialItemTree = [_layoutContext defaultValueForProperty: @"items"];
-		NSArray *initialItemTreeAlias = [layoutCopy->_layoutContext defaultValueForProperty: @"items"];
-
-		NSParameterAssert([initialItemTree isEqual: initialItemTreeAlias]);
-
-		NSArray *initialItemTreeCopy = [[initialItemTree mappedCollection] deepCopyWithZone: aZone];			
-		[layoutCopy->_layoutContext setDefaultValue: initialItemTreeCopy
-		                                forProperty: @"items"];
-		RELEASE(initialItemTree);
-	}
-
-	return layoutCopy;
-}
-
 /** Returns NO. */
 - (BOOL) isScrollable
 {
@@ -369,8 +334,37 @@ in -handleAddXXX which will then invoke [[B representedObject] addObject: bla]. 
 /* We must not invoke -saveInitialContextState and -prepareNewContextState 
 because both our initial and current context state are transparently copied (by 
 the copying support in ETLayoutItemGroup and ETCompositeLayout/ETLayout). */
-- (void) setUpCopy
+- (void) setUpCopyWithZone: (NSZone *)aZone 
+                  original: (ETCompositeLayout *)layoutOriginal
 {
+	/* We figure out the first presentation item index path in the original to 
+	   look up the same item in the copy. */
+	NSIndexPath *indexPath = [[layoutOriginal proposedParentItemForFirstPresentationItem] 
+		indexPathForItem: [layoutOriginal firstPresentationItem]];
+	ETLayoutItem *firstPresentationItemCopy = 
+		[[self proposedParentItemForFirstPresentationItem] itemAtIndexPath: indexPath];
+
+	ASSIGN(_targetItem, firstPresentationItemCopy);
+
+	/* When the content is not routed, both the original 'items' are 'source'
+	   are stored in the default values. However -[ETLayoutItem copyWithZone:] 
+	   invoked on the layout context only makes a shallow copy, therefore the 
+	   initial items must be deeply copied since they cannot be shared between 
+	   an original layout and its copy (bad things would happen when their 
+	   context states get both restored). */
+	if ([self isContentRouted] == NO)
+	{
+		NSArray *initialItemTree = [layoutOriginal->_layoutContext defaultValueForProperty: @"items"];
+		NSArray *initialItemTreeAlias = [_layoutContext defaultValueForProperty: @"items"];
+
+		NSParameterAssert([initialItemTree isEqual: initialItemTreeAlias]);
+
+		NSArray *initialItemTreeCopy = [[initialItemTree mappedCollection] deepCopyWithZone: aZone];			
+		[_layoutContext setDefaultValue: initialItemTreeCopy
+		                    forProperty: @"items"];
+		RELEASE(initialItemTree);
+	}
+
 	[super setUp];
 }
 
