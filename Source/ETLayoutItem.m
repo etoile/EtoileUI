@@ -252,12 +252,19 @@ Default values will be copied but not individually (shallow copy). */
 
 	/* We copy all variables properties */
 
+	// NOTE: -objectForKey: returns nil when the key is nil.
 	id target = GET_PROPERTY(kETTargetProperty);
 	id targetCopy = [[self objectReferencesForCopy] objectForKey: target];
+	id viewTarget = [[[self view] ifResponds] target];
+	id viewTargetCopy = [[self objectReferencesForCopy] objectForKey: viewTarget];
 
 	if (nil == targetCopy)
 	{
 		targetCopy = target;
+	} 
+	if (nil == viewTargetCopy)
+	{
+		viewTargetCopy = viewTarget;
 	} 
 
 	SET_OBJECT_PROPERTY_AND_RELEASE(item, [GET_PROPERTY(kETValueProperty) copyWithZone: aZone], kETValueProperty);
@@ -269,7 +276,7 @@ Default values will be copied but not individually (shallow copy). */
 	SET_OBJECT_PROPERTY(item, GET_PROPERTY(kETActionHandlerProperty), kETActionHandlerProperty);
 	SET_OBJECT_PROPERTY(item, GET_PROPERTY(kETActionProperty), kETActionProperty);
 	SET_OBJECT_PROPERTY(item, targetCopy, kETTargetProperty);
-	[[[item view] ifResponds] setTarget: targetCopy]; 
+	[[[item view] ifResponds] setTarget: viewTargetCopy]; 
 	
 	return item;
 }
