@@ -248,9 +248,9 @@ the copying support must invoke it instead of -copyWithZone:. */
 	newController->_hasNewFilterPredicate = (nil != _filterPredicate);
 	newController->_hasNewContent = NO;
 
-	 /* When the copy is requested by -[ETLayoutItemGroup copyWithZone:], 
+	 /* When the copy was initially requested by -[ETLayoutItemGroup copyWithZone:], 
        -finishCopy: will be called back when the item copy is done. */
-	// TODO: For a deep copy... if (nil == newContent)
+	if (nil == newContent)
 	{
 		[self finishDeepCopy: newController withZone: aZone content: newContent];
 	}

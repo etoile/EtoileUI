@@ -218,7 +218,8 @@ The returned copy is mutable because ETLayoutItemGroup cannot be immutable. */
 			    object: sourceCopy];
 
 	ETController *controller = GET_PROPERTY(kETControllerProperty);
-	ETController *controllerCopy = [controller copyWithZone: aZone content: item];
+	ETLayoutItemGroup *contentCopy = (isDeepCopy ? (ETLayoutItemGroup *)nil : item);
+	ETController *controllerCopy = [controller copyWithZone: aZone content: contentCopy];
 
 	if (nil != controllerCopy)
 	{
@@ -264,6 +265,10 @@ The returned copy is mutable because ETLayoutItemGroup cannot be immutable. */
 {
 	[self beginDeepCopy]; /* Marks the copy starts with us */
 
+	/* Copy Receiver */
+
+	ETLayoutItemGroup *itemCopy = [self copyWithZone: aZone];
+
 	/* Copy Children */
 
 	NSMutableArray *childrenCopy = [[NSMutableArray alloc] initWithCapacity: [_layoutItems count]];
@@ -273,10 +278,6 @@ The returned copy is mutable because ETLayoutItemGroup cannot be immutable. */
 		[childrenCopy addObject: [child deepCopyWithZone: aZone]];
 	}
 	[childrenCopy makeObjectsPerformSelector: @selector(release)];
-
-	/* Copy Receiver */
-
-	ETLayoutItemGroup *itemCopy = [self copyWithZone: aZone];
 
 	/* Assign Children */
 
@@ -290,6 +291,11 @@ The returned copy is mutable because ETLayoutItemGroup cannot be immutable. */
 	/* Finish Copy Layout and Controller */
 
 	[itemCopy->_layout setUpCopyWithZone: aZone original: _layout];
+
+	ETController *controller = GET_PROPERTY(kETControllerProperty);
+	ETController *controllerCopy = GET_OBJECT_PROPERTY(itemCopy, kETControllerProperty);
+
+	[controller finishDeepCopy: controllerCopy withZone: aZone content: itemCopy];
 
 	/* We need to update the layout to have the content reloaded in widget layouts
 	   Which means the item copy will then receive a layout update even in case 
@@ -307,6 +313,9 @@ The returned copy is mutable because ETLayoutItemGroup cannot be immutable. */
 	}
 
 	[self endDeepCopy]; /* Reset the context if the copy started with us */
+	
+	//ETLog(@"Make deep copy %@ + %@ of %@ + %@ at depth %i", itemCopy, 
+	//	[itemCopy controller], self, [self controller], copyDepth);
 
 	return itemCopy;
 }
