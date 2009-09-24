@@ -188,7 +188,10 @@ A temporary view set on the receiver won't be copied. */
 {
 	/* -subviews doesn't return a defensive copy on Cocoa unlike GNUstep */
 	NSArray *existingSubviews = [NSArray arrayWithArray: [self subviews]];
-	NSArray *copiableSubviews = A(_wrappedView);
+	/* We don't let the wrapped view be archived/unarchived as a subview since 
+	   some widget views need extra adjustments once deserialized. 
+	   See -[NSPopUpButton copyWithZone:]. */
+	NSArray *copiableSubviews = [NSArray array];
 
 	// TODO: This might be very costly and require optimizations (e.g. when 
 	// the only subview is the wrapped view)
