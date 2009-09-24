@@ -116,3 +116,27 @@ terminology) on which actions should be dispatched. */
 }
 
 @end
+
+
+@interface NSPopUpButton (Etoile)
+- (id) copyWithZone: (NSZone *)aZone;
+@end
+
+@implementation NSPopUpButton (Etoile)
+
+- (id) copyWithZone: (NSZone *)aZone
+{
+	NSPopUpButton *popUpCopy = [super copyWithZone: aZone];
+	unsigned int nbOfItems = [self numberOfItems];
+
+	for (int i = 0; i < nbOfItems; i++)
+	{
+		id repObject = [[self itemAtIndex: i] representedObject];
+		[[popUpCopy itemAtIndex: i] setRepresentedObject: repObject];
+	}
+
+	return popUpCopy;
+}
+
+@end
+
