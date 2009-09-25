@@ -39,7 +39,30 @@
 	return self;
 }
 
-DEALLOC(DESTROY(_positionalLayout); DESTROY(_templateKeys); DESTROY(_replacementItems); DESTROY(_localBindings);)
+- (void) dealloc
+{
+	DESTROY(_positionalLayout);
+	DESTROY(_templateItem);
+	DESTROY(_templateKeys);
+	DESTROY(_replacementItems); 
+	DESTROY(_localBindings);
+	[super dealloc];
+}
+
+- (id) copyWithZone: (NSZone *)aZone layoutContext: (id <ETLayoutingContext>)ctxt
+{
+	ETTemplateItemLayout *layoutCopy = [super copyWithZone: aZone layoutContext: ctxt];
+
+	layoutCopy->_positionalLayout = [(ETLayout *)_positionalLayout copyWithZone: aZone layoutContext: layoutCopy];
+	layoutCopy->_templateItem = [_templateItem deepCopyWithZone: aZone];
+	layoutCopy->_templateKeys = [_templateKeys copyWithZone: aZone];
+	layoutCopy->_localBindings = [_localBindings mutableCopyWithZone: aZone];	
+	// NOTE: If we really use replacementItems, we need...
+	//layoutCopy->_replacementItems = [[NSArray allocWithZone: aZone] initWithArray: _replacementItems copyItems: YES];
+	// TODO: Set up the bindings per item in -setUpCopyWithZone:
+
+	return layoutCopy;
+}
 
 - (ETLayoutItem *) templateItem
 {
