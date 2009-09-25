@@ -20,13 +20,22 @@
 
 @implementation ETTemplateItemLayout
 
+- (id) initWithLayoutView: (NSView *)aView
+{
+	return [self init];
+}
+
+/** <init /> */ 
 - (id) init
 {
-	SUPERINIT
+	self = [super initWithLayoutView: nil];
+	if (nil == self)
+		return nil;
 	
 	[self setPositionalLayout: [ETFlowLayout layout]];
 	_templateKeys = [[NSArray alloc] init];
 	_localBindings = [[NSMutableDictionary alloc] init];
+
 	return self;
 }
 
