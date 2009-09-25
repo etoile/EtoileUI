@@ -2136,7 +2136,7 @@ frame. */
 /** Returns the autoresizing mask that applies to the layout item as whole. 
 
 See also -setAutoresizingMask:.   */
-- (unsigned int) autoresizingMask
+- (ETAutoresizing) autoresizingMask
 {
 	return _autoresizingMask;
 }
@@ -2149,7 +2149,7 @@ When the receiver has a decorator, the content autoresizing is controlled by the
 decorator and not by the receiver autoresizing mask directly.
 
 TODO: Autoresizing mask isn't yet supported when the receiver has no view. */
-- (void) setAutoresizingMask: (unsigned int)aMask
+- (void) setAutoresizingMask: (ETAutoresizing)aMask
 {
 	_autoresizingMask = aMask;
 

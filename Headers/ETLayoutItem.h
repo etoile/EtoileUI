@@ -22,6 +22,46 @@
 ETDecoratorItem, ETScrollableAreaItem, ETWindowItem, ETStyleGroup;
 @protocol ETInspector;
 
+/** Describes how the item is resized when its parent item is resized.
+
+An item autoresizing margin is the space between a layout item frame edge (left, 
+top, right, bottom) and the equivalent parent frame edge.
+
+Unlike NSAutoresizingMask, ETAutoresizing is independent of the -isFlipped value 
+returned by the parent item. e.g. NSMinYMargin means a flexible bottom margin 
+when [parent isFlipped] returns NO. When YES is returned, NSMinYMargin means a 
+flexible top margin.
+
+-[ETLayoutItem setAutoresizingMask:] also applies to the item view. EtoileUI 
+transparently converts it to the right AppKit autoresizing mask by looking at 
+whether the parent is flipped or not.
+
+See also ETContentAspect. */
+enum
+{
+	ETAutoresizingNone = NSViewNotSizable, 
+/** Lets both the size and the position as is. */
+	ETAutoresizingFlexibleLeftMargin = NSViewMinXMargin, 
+/** Keeps both the right margin and the width fixed but allows the left margin 
+to be resized. */
+	ETAutoresizingFlexibleWidth = NSViewWidthSizable, 
+/** Keeps both the left margin and the right margin fixed but allows the width 
+to be resized. */
+	ETAutoresizingFlexibleRightMargin = NSViewMaxXMargin,
+/** Keeps both the left margin and the width fixed but allows the right margin 
+to be resized. */
+	ETAutoresizingFlexibleTopMargin = NSViewMinYMargin,
+/** Keeps both the bottom margin and the height fixed but allows the top margin 
+to be resized. */
+	ETAutoresizingFlexibleHeight = NSViewHeightSizable,
+/** Keeps both the bottom margin and the top margin fixed but allows the height 
+to be resized. */
+	ETAutoresizingFlexibleBottomMargin = NSViewMaxYMargin
+/** Keeps both the top margin and the height fixed but allows the bottom margin 
+to be resized. */
+};
+typedef unsigned int ETAutoresizing;
+
 /** Describes how the content looks when the layout item is resized.
 
 The content can be:
@@ -76,7 +116,7 @@ and centers it. A strech is a scale that doesn't preserve the content proportion
 	NSRect _contentBounds;
 	NSPoint _position;
 	NSAffineTransform *_transform;
-	unsigned int _autoresizingMask;
+	ETAutoresizing _autoresizingMask;
 	ETContentAspect _contentAspect;
 	NSRect _boundingBox;
 
@@ -254,8 +294,8 @@ and centers it. A strech is a scale that doesn't preserve the content proportion
 - (NSRect) defaultFrame;
 - (void) setDefaultFrame: (NSRect)frame;
 - (void) restoreDefaultFrame;
-- (unsigned int) autoresizingMask;
-- (void) setAutoresizingMask: (unsigned int)mask;
+- (ETAutoresizing) autoresizingMask;
+- (void) setAutoresizingMask: (ETAutoresizing)mask;
 - (ETContentAspect) contentAspect;
 - (void) setContentAspect: (ETContentAspect)anAspect;
 
