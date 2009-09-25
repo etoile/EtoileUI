@@ -146,30 +146,39 @@ If contentItem is nil, a default content item will be created. */
 	[self syncRootItemGeometryWithSize: [[self layoutContext] visibleContentSize]];
 	NSSize rootSize = [[self rootItem] size];
 
+	[[self contentItem] setAutoresizingMask: ETAutoresizingFlexibleWidth | ETAutoresizingFlexibleHeight];
+
 	if (_barPosition == ETPanePositionNone)
 	{
 		[[self barItem] setVisible: NO];
 		[[self contentItem] setFrame: ETMakeRect(NSZeroPoint, rootSize)];
+		[[self barItem] setAutoresizingMask: ETAutoresizingNone];
+		[[self contentItem] setAutoresizingMask: ETAutoresizingNone];
 	}
 	else if (_barPosition == ETPanePositionTop)
 	{
 		[[self barItem] setFrame: NSMakeRect(0, 0, rootSize.width, [self barHeightOrWidth])];
 		[[self contentItem] setFrame: NSMakeRect(0, [self barHeightOrWidth], rootSize.width, rootSize.height - [self barHeightOrWidth])];
+		[[self barItem] setAutoresizingMask: ETAutoresizingFlexibleBottomMargin | ETAutoresizingFlexibleWidth];
 	}
 	else if (_barPosition == ETPanePositionBottom)
 	{
 		[[self barItem] setFrame: NSMakeRect(0, rootSize.height - [self barHeightOrWidth], rootSize.width, [self barHeightOrWidth])];
 		[[self contentItem] setFrame: NSMakeRect(0, 0, rootSize.width, rootSize.height - [self barHeightOrWidth])];
+		[[self barItem] setAutoresizingMask: ETAutoresizingFlexibleTopMargin | ETAutoresizingFlexibleWidth];
 	}
 	else if (_barPosition == ETPanePositionLeft)
 	{
 		[[self barItem] setFrame: NSMakeRect(0, 0, [self barHeightOrWidth], rootSize.height)];
 		[[self contentItem] setFrame: NSMakeRect([self barHeightOrWidth], 0, rootSize.width - [self barHeightOrWidth], rootSize.height)];
+		[[self barItem] setAutoresizingMask: ETAutoresizingFlexibleRightMargin | ETAutoresizingFlexibleHeight];
+
 	}
 	else if (_barPosition == ETPanePositionRight)
 	{
 		[[self barItem] setFrame: NSMakeRect(rootSize.width - [self barHeightOrWidth], 0, [self barHeightOrWidth], rootSize.height)];
 		[[self contentItem] setFrame: NSMakeRect(0, 0, rootSize.width - [self barHeightOrWidth], rootSize.height)];
+		[[self barItem] setAutoresizingMask: ETAutoresizingFlexibleLeftMargin | ETAutoresizingFlexibleHeight];
 	}
 	
 	[self tileContent];
