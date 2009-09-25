@@ -101,7 +101,12 @@ original items which are replaced by the layout. */
 {
 	FOREACH(_templateKeys, key, NSString *)
 	{
-		[item setDefaultValue: [item valueForKey: key] forProperty: key];
+		id value = [item valueForKey: key];
+
+		if (nil == value)
+			value = [NSNull null];
+
+		[item setDefaultValue: value forProperty: key];
 
 		id templateValue = [_templateItem valueForKey: key];
 		BOOL shouldCopyValue = ([templateValue conformsToProtocol: @protocol(NSCopying)] 
