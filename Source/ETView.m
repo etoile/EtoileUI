@@ -360,6 +360,9 @@ Recomputes the positioning of the main view. */
 /** Sets the item view.<br />
 The receiver is the view owner.
 
+If a temporary view is currently set, the new wrapped view won't become visible 
+until you remove the temporary view.
+
 You must never call this method but -[ETLayoutItem setView:]. */
 - (void) setWrappedView: (NSView *)view
 {
@@ -442,7 +445,10 @@ installed by the layout. */
 
 /** This method is only exposed to be used internally by EtoileUI. 
 
-You must override this method in subclasses. */
+You must override this method in subclasses. 
+
+See -setWrappedView: and -setTemporaryView: documentation which explains the 
+implemented behavior. */
 - (void) setContentView: (NSView *)view temporary: (BOOL)temporary
 {
 	[self checkViewHierarchyValidity];
@@ -466,6 +472,12 @@ You must override this method in subclasses. */
 
 	if (temporary) /* Temporary view setter */
 	{
+		NSParameterAssert(_wrappedView == nil || [_wrappedView superview] == self);
+
+		/* In case a temporary view is already in use, we remove it */
+		[[self temporaryView] removeFromSuperview];
+
+
 		if (view != nil)
 		{
 			[view setAutoresizingMask: NSViewWidthSizable | NSViewHeightSizable];
@@ -476,12 +488,17 @@ You must override this method in subclasses. */
 		{
 			/* Restore autoresizing mask */
 			//[[self temporaryView] setAutoresizingMask: [self autoresizingMask]];
-			[[self temporaryView] removeFromSuperview];
+
 			[[self wrappedView] setHidden: NO];
 		}
 	}
 	else /* Wrapped view setter */
 	{
+		NSParameterAssert(nil == _temporaryView);
+
+		/* In case a wrapped view is already in use, we remove it */
+		[[self wrappedView] removeFromSuperview];
+
 		if (view != nil)
 		{
 			[view setAutoresizingMask: NSViewWidthSizable | NSViewHeightSizable];
@@ -491,7 +508,6 @@ You must override this method in subclasses. */
 		{
 			/* Restore autoresizing mask */
 			//[[self wrappedView] setAutoresizingMask: [self autoresizingMask]];
-			[[self wrappedView] removeFromSuperview];
 		}
 	}
 }
