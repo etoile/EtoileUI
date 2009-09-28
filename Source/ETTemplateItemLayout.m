@@ -12,10 +12,12 @@
 #import "ETFlowLayout.h"
 #import "ETColumnLayout.h"
 #import "ETLayoutItem.h"
-#import "ETLayoutItem+Factory.h"
 #import "ETLayoutItemGroup.h"
+#import "ETUIItemFactory.h"
 #import "NSView+Etoile.h"
 #import "ETCompatibility.h"
+
+#define _layoutContext (id <ETLayoutingContext>)_layoutContext
 
 
 @implementation ETTemplateItemLayout
@@ -33,6 +35,7 @@
 		return nil;
 	
 	[self setPositionalLayout: [ETFlowLayout layout]];
+	_renderedItems = [[NSMutableSet alloc] init];
 	_templateKeys = [[NSArray alloc] init];
 	_localBindings = [[NSMutableDictionary alloc] init];
 
@@ -44,7 +47,7 @@
 	DESTROY(_positionalLayout);
 	DESTROY(_templateItem);
 	DESTROY(_templateKeys);
-	DESTROY(_replacementItems); 
+	DESTROY(_renderedItems);
 	DESTROY(_localBindings);
 	[super dealloc];
 }
@@ -112,6 +115,7 @@ original items which are replaced by the layout. */
 		BOOL shouldCopyValue = ([templateValue conformsToProtocol: @protocol(NSCopying)] 
 			|| [templateValue conformsToProtocol: @protocol(NSMutableCopying)]);
 		id newValue = (shouldCopyValue ? [templateValue copy] : templateValue);
+
 		[item setValue: newValue forKey: key];
 
 		[self setUpKVOForItem: item];
@@ -164,29 +168,46 @@ when they get deallocated. */
 
 - (void) tearDown
 {
-	FOREACH(_replacementItems, replacementItem, ETLayoutItem *)
-	{
-		[[replacementItem displayView] removeFromSuperview];
-	}
-	
-	DESTROY(_replacementItems);
-}
-
-/** Reflects the selection state of the replaced items on the replacement 
-    items. */
-- (void) selectionDidChangeInLayoutContext
-{
-	FOREACH(_replacementItems, replacementItem, ETLayoutItem *)
-	{
-		ETLayoutItem *replacedItem = [replacementItem representedObject];
-		[replacementItem setSelected: [replacedItem isSelected]];
-	}
+	[self restoreAllItems];
+	[super tearDown];
 }
 
 /** Returns the replaced item for the replacement item found at the given location. */
 - (ETLayoutItem *) itemAtLocation: (NSPoint)loc
 {
-	return [[(id)[self positionalLayout] itemAtLocation: loc] representedObject];
+	return [(id)[self positionalLayout] itemAtLocation: loc];
+}
+
+- (void) prepareNewItems: (NSArray *)items
+{
+	[self restoreAllItems];
+	[_renderedItems removeAllObjects];
+
+	FOREACH(items, item, ETLayoutItem *)
+	{
+		[self setUpTemplateElementsForItem: item];
+	}
+}
+
+/** Restores all the items which were rendered since the layout was set up to 
+their initial state. */
+- (void) restoreAllItems
+{
+	FOREACH(_renderedItems,item, ETLayoutItem *)
+	{
+		[[item displayView] removeFromSuperview];
+
+		FOREACH(_templateKeys, key, NSString *)
+		{
+			id restoredValue = [item defaultValueForProperty: key];
+
+			if ([restoredValue isEqual: [NSNull null]])
+				restoredValue = nil;
+
+			[item setValue: restoredValue forProperty: key];
+		}
+	}
+	[_renderedItems removeAllObjects];
 }
 
 /* Layouting */
@@ -195,23 +216,17 @@ when they get deallocated. */
 {
 	if (isNewContent)
 	{
-		[self tearDown];
-
-		ASSIGN(_replacementItems, items);
-
-		FOREACH(items, replacedItem, ETLayoutItem *)
-		{
-			[self setUpTemplateElementsForItem: replacedItem];
-
-		}
+		[self prepareNewItems: items];
 	}
-	
+
+	[_renderedItems addObjectsFromArray: items];
+
 	NSAssert1([self positionalLayout] != nil, @"Positional layout %@ must "
 		@"not be nil in a template item layout", [self positionalLayout]);
 
 	/* Visibility of replaced and replacement items is handled in 
 	   -setVisibleItems: */
-	[[self positionalLayout] renderWithLayoutItems: _replacementItems isNewContent: isNewContent];
+	[[self positionalLayout] renderWithLayoutItems: items isNewContent: isNewContent];
 }
 
 /* Layouting Context Protocol 
@@ -227,13 +242,13 @@ when they get deallocated. */
 
 - (NSArray *) items
 {
-	return _replacementItems;
+	return [_layoutContext items];
 }
 
 // FIXME: ...
 - (NSArray *) arrangedItems
 {
-	return _replacementItems;
+	return [_layoutContext arrangedItems];
 }
 
 // TODO: Visible items are a bit problematic because they depend on the target 
@@ -243,35 +258,35 @@ when they get deallocated. */
 
 - (NSArray *) visibleItems
 {
-	return [[self layoutContext] visibleItemsForItems: _replacementItems];
+	return [_layoutContext visibleItemsForItems: [_layoutContext items]];
 }
 
-- (void) setVisibleItems: (NSArray *)visibleReplacementItems
+- (void) setVisibleItems: (NSArray *)visibleItems
 {
-	[[self layoutContext] setVisibleItems: [NSArray array]];
-	
-	[[self layoutContext] setVisibleItems: visibleReplacementItems 
-	                          forItems: _replacementItems];
+	NSArray *items = [_layoutContext items];
+
+	[_layoutContext setVisibleItems: [NSArray array]];
+	[_layoutContext setVisibleItems: visibleItems forItems: items];
 							  
-	FOREACH(_replacementItems, replacementItem, ETLayoutItem *)
+	FOREACH(items, item, ETLayoutItem *)
 	{
-		[[replacementItem representedObject] setVisible: [replacementItem isVisible]];
+		[[item representedObject] setVisible: [item isVisible]];
 	}
 }
 
 - (NSSize) size
 {
-	return [[self layoutContext] size];
+	return [_layoutContext size];
 }
 
 - (void) setSize: (NSSize)size
 {
-	[[self layoutContext] setSize: size];
+	[_layoutContext setSize: size];
 }
 
 - (ETView *) supervisorView
 {
-	return [[self layoutContext] supervisorView];
+	return [_layoutContext supervisorView];
 }
 
 - (void) setLayoutView: (NSView *)aLayoutView
@@ -282,62 +297,62 @@ when they get deallocated. */
 - (NSView *) view
 {
  // FIXME: Remove this cast and solve this properly
-	return [(ETLayoutItem *)[self layoutContext] view];
+	return [(ETLayoutItem *)_layoutContext view];
 }
 
 - (ETLayoutItem *) itemAtIndexPath: (NSIndexPath *)path
 {
-	return [[self layoutContext] itemAtIndexPath: path];
+	return [_layoutContext itemAtIndexPath: path];
 }
 
 - (ETLayoutItem *) itemAtPath: (NSString *)path
 {
-	return [[self layoutContext] itemAtPath: path];
+	return [_layoutContext itemAtPath: path];
 }
 
 - (float) itemScaleFactor
 {
-	return [[self layoutContext] itemScaleFactor];
+	return [_layoutContext itemScaleFactor];
 }
 
 - (NSSize) visibleContentSize
 {
-	return [[self layoutContext] visibleContentSize];
+	return [_layoutContext visibleContentSize];
 }
 
 - (void) setContentSize: (NSSize)size;
 {
-	[[self layoutContext] setContentSize: size];
+	[_layoutContext setContentSize: size];
 }
 
 - (BOOL) isScrollViewShown
 {
-	return [[self layoutContext] isScrollViewShown];
+	return [_layoutContext isScrollViewShown];
 }
 
 - (void) setNeedsDisplay: (BOOL)now
 {
-	return [[self layoutContext] setNeedsDisplay: now];
+	return [_layoutContext setNeedsDisplay: now];
 }
 
 - (BOOL) isFlipped
 {
-	return [[self layoutContext] isFlipped];
+	return [_layoutContext isFlipped];
 }
 
 - (NSArray *) visibleItemsForItems: (NSArray *)items
 {
-	return [[self layoutContext] visibleItemsForItems: items];
+	return [_layoutContext visibleItemsForItems: items];
 }
 
 - (void) setVisibleItems: (NSArray *)visibleItems forItems: (NSArray *)items
 {
-	[[self layoutContext] setVisibleItems: visibleItems forItems: items];
+	[_layoutContext setVisibleItems: visibleItems forItems: items];
 }
 
 - (void) sortWithSortDescriptors: (NSArray *)descriptors recursively: (BOOL)recursively
 {
-	return [[self layoutContext] sortWithSortDescriptors: descriptors recursively: recursively];
+	return [_layoutContext sortWithSortDescriptors: descriptors recursively: recursively];
 }
 
 @end
@@ -455,7 +470,7 @@ kETFormLayoutInset	NSZeroRect (default) or nil
 	//[self setAutoresizingMask: NSViewWidthSizable];
 	//[self setAutoresizesSubviews: YES];
 
-	return [ETLayoutItem itemWithView: templateView];
+	return [[ETUIItemFactory factory] itemWithView: templateView];
 }
 
 - (void) setUpTemplateElementsForItem: (ETLayoutItem *)item

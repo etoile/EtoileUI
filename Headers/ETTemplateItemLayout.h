@@ -37,7 +37,8 @@
 {
 	id <ETPositionalLayout> _positionalLayout;
 	ETLayoutItem *_templateItem;
-	NSMutableArray *_replacementItems;
+	/* All the items that got rendered since the layout has been set up */
+	NSMutableSet *_renderedItems; 
 	NSArray *_templateKeys;
 	NSMutableDictionary *_localBindings;
 
@@ -62,6 +63,8 @@
 - (void) tearDownKVO;
 
 - (void) tearDown;
+- (void) prepareNewItems: (NSArray *)items;
+- (void) restoreAllItems;
 
 /* Layouting */
 
