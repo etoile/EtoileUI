@@ -27,7 +27,12 @@
 	return [self init];
 }
 
-/** <init /> */ 
+/** <init />
+Initializes and return a new template item layout which uses a flow layout as 
+its positional layout.
+
+You are responsible to specify a template item and the template keys on the 
+returned instance (usually in a subclass initializer). */ 
 - (id) init
 {
 	self = [super initWithLayoutView: nil];
@@ -67,21 +72,47 @@
 	return layoutCopy;
 }
 
+/** Returns the template item whose property values are used to override the 
+equivalent values on every item that gets layouted. 
+
+By default returns nil.
+
+See also -setTemplateItem:.*/
 - (ETLayoutItem *) templateItem
 {
 	return _templateItem;
 }
 
+/** Sets the template item whose property values are used to override the 
+equivalent values on every item that gets layouted. 
+
+A layouted item property will have its value replaced only when this property 
+is listed in the template keys.
+
+See -setTemplateKeys:. */
 - (void) setTemplateItem: (ETLayoutItem *)item
 {
 	ASSIGN(_templateItem, item);
 }
 
+/** Returns the properties whose value should replaced, on every item that get 
+layouted, with the value provided by the template item.
+
+By default returns an empty array.
+
+See also -setTemplateKeys:. */
 - (NSArray *) templateKeys
 {
 	return _templateKeys;
 }
 
+/** Sets the properties whose value should be replaced, on every item that get 
+layouted, with the value provided by the template item.
+
+Those overriden properties will be restored to their original values when the 
+layout is torn down.
+
+See -setTemplateItem:. */
 - (void) setTemplateKeys: (NSArray *)keys
 {
 	ASSIGN(_templateKeys, keys);
@@ -178,6 +209,8 @@ when they get deallocated. */
 	return [(id)[self positionalLayout] itemAtLocation: loc];
 }
 
+/** For each item, replaces the value of every properties matching -templateKeys 
+by the value returned by the template item. */
 - (void) prepareNewItems: (NSArray *)items
 {
 	[self restoreAllItems];
