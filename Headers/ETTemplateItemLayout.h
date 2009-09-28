@@ -16,23 +16,37 @@
 
 @class ETLayoutItem;
 
-/** ETTemplateItemLayout is a layout that allows to substitute the child items 
-    of the layout context by others, in order to deeply customize the look of 
-	each layouted item.
-	For example, you may want to display a custom and temporary view per layout 
-	item without altering their usual display outside of this layout.
-	The items of the layout context are used as represented objects of the new 
-	ones. The new displayed items which are created by cloning a template item. 
-	When this layout is active, the original items of the layout context are 
-	never displayed. However you get the illusion they are and you manipulate 
-	them, because the temporary items are symetric and replicate all changes 
-	applied to them by treating the original items as model objects. 
-	
-	-itemAtLocation: to return to return the real item and not the replacement 
-	item. If the selection state changes in the layout context, it will get 
-	transparently applied to the replacement items on the next display update, 
-	because the replacement item selected property... No, selection state is 
-	isn't inherited by meta items from their represented items. */
+/** ETTemplateItemLayout is a layout that allows to temporarily override 
+layout item properties, in order to deeply customize the item look and behavior.
+
+For example, you may want to display a custom and temporary view per layout 
+item without altering their usual display outside of this layout.
+
+-setTemplateItem: and -setTemplateKeys: lets you specify how the layout will 
+customize the items handed by the layout context. 
+Here is a short example to create a IM-like area where each item will be 
+drawn inside a speech bubble and laid out vertically with some space around 
+each one:
+<code>
+ETTemplateItemLayout *bubbleLayout = [ETTemplateItemLayout layout];
+ETLayoutItem *item = [[ETUIItemFactory factory] item];
+ETLayoutItemGroup *chatAreaItem = [[ETUIItemFactory factory] itemGroup];
+
+[item setStyle: [ETSpeechBubbleStyle style]];
+[chatLayout setTemplateItem: item];
+[chatLayout setTemplateKeys: A(kETStyleProperty)];
+[chatLayout setPositionalLayout: [ETColumnLayout layout]];
+[[chatLayout positionalLayout] setItemMargin: 15];
+
+[chatAreaItem setLayout: chatLayout];
+</code>
+
+The item positioning and sizing is always delegated the layout returned by 
+-positionalLayout. You can pass any layout that conforms to ETPositionalLayout 
+protocol to -setPositionalLayout: to change how the items are organized spatially.
+
+See ETFormLayout and ETIconLayout subclasses to better understand what is 
+possible and how to use ETTemplateItemLayout. */
 @interface ETTemplateItemLayout : ETLayout <ETCompositeLayout, ETLayoutingContext>
 {
 	id <ETPositionalLayout> _positionalLayout;
