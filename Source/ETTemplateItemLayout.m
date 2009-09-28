@@ -237,7 +237,7 @@ their initial state. */
 			if ([restoredValue isEqual: [NSNull null]])
 				restoredValue = nil;
 
-			[item setValue: restoredValue forProperty: key];
+			[item setValue: restoredValue forKey: key];
 		}
 	}
 	[_renderedItems removeAllObjects];

@@ -1,7 +1,7 @@
 /** <title>ETTemplateItemLayout</title>
 
-	<abstract>A layout subclass that formalizes and simplifies the 
-	composition of layouts.</abstract>
+	<abstract>A layout subclass that formalizes and simplifies temporary layout 
+	item customization.</abstract>
 
 	Copyright (C) 2008 Quentin Mathe
  
@@ -18,17 +18,19 @@
 
 /** ETTemplateItemLayout is a layout that allows to temporarily override 
 layout item properties, in order to deeply customize the item look and behavior.
+When a new layout is set on the layout context, every item will have its 
+overriden properties reverted back to their original values.
 
 For example, you may want to display a custom and temporary view per layout 
 item without altering their usual display outside of this layout.
 
--setTemplateItem: and -setTemplateKeys: lets you specify how the layout will 
+-setTemplateItem: and -setTemplateKeys: let you specify how the layout will 
 customize the items handed by the layout context. 
 Here is a short example to create a IM-like area where each item will be 
 drawn inside a speech bubble and laid out vertically with some space around 
 each one:
 <code>
-ETTemplateItemLayout *bubbleLayout = [ETTemplateItemLayout layout];
+ETTemplateItemLayout *chatLayout = [ETTemplateItemLayout layout];
 ETLayoutItem *item = [[ETUIItemFactory factory] item];
 ETLayoutItemGroup *chatAreaItem = [[ETUIItemFactory factory] itemGroup];
 
@@ -44,6 +46,16 @@ ETLayoutItemGroup *chatAreaItem = [[ETUIItemFactory factory] itemGroup];
 The item positioning and sizing is always delegated the layout returned by 
 -positionalLayout. You can pass any layout that conforms to ETPositionalLayout 
 protocol to -setPositionalLayout: to change how the items are organized spatially.
+
+To override the item properties, ETTemplateItemLayout uses Key Value Coding and 
+not Property Value Coding since the latter would only give access to the model 
+side when the item has a represented object. Key Value Coding when invoked on 
+a layout item consistenly read and write the item properties and will never try 
+to read and write its represented object properties.<br />
+This point means you cannot override properties set on the represented object 
+or include key paths in the array returned by -templateKeys. We were unable 
+to find a use case where this would be really be needed, that's why we chose 
+not to support it.
 
 See ETFormLayout and ETIconLayout subclasses to better understand what is 
 possible and how to use ETTemplateItemLayout. */
