@@ -272,10 +272,14 @@ The returned copy is mutable because ETLayoutItemGroup cannot be immutable. */
 	/* Copy Children */
 
 	NSMutableArray *childrenCopy = [[NSMutableArray alloc] initWithCapacity: [_layoutItems count]];
+	NSMapTable *objectRefsForCopy = [self objectReferencesForCopy];
 
 	FOREACH(_layoutItems, child, ETLayoutItem *)
 	{
-		[childrenCopy addObject: [child deepCopyWithZone: aZone]];
+		ETLayoutItem *childCopy = [child deepCopyWithZone: aZone];
+
+		[childrenCopy addObject: childCopy];
+		[objectRefsForCopy setObject: itemCopy forKey: child];
 	}
 	[childrenCopy makeObjectsPerformSelector: @selector(release)];
 

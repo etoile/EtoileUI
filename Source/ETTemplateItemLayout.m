@@ -64,12 +64,28 @@ returned instance (usually in a subclass initializer). */
 	layoutCopy->_positionalLayout = [(ETLayout *)_positionalLayout copyWithZone: aZone layoutContext: layoutCopy];
 	layoutCopy->_templateItem = [_templateItem deepCopyWithZone: aZone];
 	layoutCopy->_templateKeys = [_templateKeys copyWithZone: aZone];
-	layoutCopy->_localBindings = [_localBindings mutableCopyWithZone: aZone];	
-	// NOTE: If we really use replacementItems, we need...
-	//layoutCopy->_replacementItems = [[NSArray allocWithZone: aZone] initWithArray: _replacementItems copyItems: YES];
+	layoutCopy->_localBindings = [_localBindings mutableCopyWithZone: aZone];
 	// TODO: Set up the bindings per item in -setUpCopyWithZone:
 
 	return layoutCopy;
+}
+
+- (void) setUpCopyWithZone: (NSZone *)aZone 
+                  original: (ETTemplateItemLayout *)layoutOriginal
+{
+	_renderedItems = [[NSMutableSet allocWithZone: aZone] 
+		initWithCapacity: [layoutOriginal->_renderedItems count]];
+
+	FOREACH(layoutOriginal->_renderedItems, item, ETLayoutItem *)
+	{
+		// FIXME: Declare -objectReferencesForCopy in the layouting context protocol
+		ETLayoutItem *itemCopy = [[(id)_layoutContext objectReferencesForCopy] objectForKey: item];
+	
+		NSParameterAssert(itemCopy != nil);
+		NSParameterAssert([itemCopy parentItem] == _layoutContext);
+
+		[_renderedItems addObject: itemCopy];
+	}
 }
 
 /** Returns the template item whose property values are used to override the 
