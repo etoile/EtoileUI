@@ -262,32 +262,17 @@ their initial state. */
 	[[self positionalLayout] renderWithLayoutItems: items isNewContent: isNewContent];
 }
 
-/* Layouting Context Protocol 
-
-   We redirect several calls on the layout context to the target item where the 
-   layout items are really rendered. 
-   You may better understand what is really going on by reading the code of 
-   -renderWithLayoutItems:isNewContent:.
-   The target item is the layout context for all presentational related calls 
-   and all other calls that relates to the tree structure to be displayed are 
-   passed to the receiver layout context (the layout item on which is the 
-   composite layout is applied). */
+/* Layouting Context Protocol (used by our positional layout delegate) */
 
 - (NSArray *) items
 {
 	return [_layoutContext items];
 }
 
-// FIXME: ...
 - (NSArray *) arrangedItems
 {
 	return [_layoutContext arrangedItems];
 }
-
-// TODO: Visible items are a bit problematic because they depend on the target 
-// item precisely its size and at the same time they are provided by the routed 
-// context ([self layoutContext], they bolong to the item to which the receiver 
-// layout is applied. That's why we reimplement these methods here.
 
 - (NSArray *) visibleItems
 {
@@ -296,15 +281,7 @@ their initial state. */
 
 - (void) setVisibleItems: (NSArray *)visibleItems
 {
-	NSArray *items = [_layoutContext items];
-
-	[_layoutContext setVisibleItems: [NSArray array]];
-	[_layoutContext setVisibleItems: visibleItems forItems: items];
-							  
-	FOREACH(items, item, ETLayoutItem *)
-	{
-		[[item representedObject] setVisible: [item isVisible]];
-	}
+	[_layoutContext setVisibleItems: visibleItems];
 }
 
 - (NSSize) size
