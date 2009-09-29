@@ -149,6 +149,9 @@ original items which are replaced by the layout. */
 
 - (void) setUpTemplateElementsForItem: (ETLayoutItem *)item
 {
+	if ([_renderedItems containsObject: item])
+		return;
+
 	FOREACH(_templateKeys, key, NSString *)
 	{
 		id value = [item valueForKey: key];
