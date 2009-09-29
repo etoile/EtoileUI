@@ -78,8 +78,24 @@ also copied, in other words the new object is a deep copy of the receiver. */
 	RETAIN(self);
 	[self removeFromSuperview];
 
+#ifdef GNUSTEP // FIXME: Implement NSBrowser keyed archiving on GNUstep
+	NSData *viewData = nil;
+	NSView *viewCopy = nil;
+
+	if ([self isKindOfClass: [NSBrowser class]])
+	{
+		viewData = [NSArchiver archivedDataWithRootObject: self];
+		viewCopy = [NSUnarchiver unarchiveObjectWithData: viewData];
+	}
+	else
+	{
+		viewData = [NSKeyedArchiver archivedDataWithRootObject: self];
+		viewCopy = [NSKeyedUnarchiver unarchiveObjectWithData: viewData];
+	}
+#else
 	NSData *viewData = [NSKeyedArchiver archivedDataWithRootObject: self];
 	NSView *viewCopy = [NSKeyedUnarchiver unarchiveObjectWithData: viewData];
+#endif
 
 	[superview addSubview: self];
 	RELEASE(self);
