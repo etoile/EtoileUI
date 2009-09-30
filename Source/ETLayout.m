@@ -1149,32 +1149,68 @@ the row associated with the given item. */
 
 /* Item Property Display */
 
-/** <override-dummy /> */
+/** <override-dummy />
+Returns the laid out item properties that should be visible in the layout.
+
+Overrides this method in your subclasses to return which properties are 
+presented by the layout.<br />
+You can choose to make the ordering in the property array reflects the order 
+in which properties are presented by the layout.
+
+By default, returns an empty array.
+
+NOTE: In future, the overriding might become mandatory in every subclass. */
 - (NSArray *) displayedProperties
 {
-	return nil;
+	return [NSArray array];
 }
 
-/** <override-dummy /> */
+/** <override-dummy /> 
+Sets the laid out item properties that should be visible in the layout.
+
+Overrides this method in your subclasses to adjust which properties are 
+presented by the layout.<br />
+You can choose to make the order in which properties are presented by the 
+layout reflect the ordering in the property array.
+
+If you override this method, you must override -displayedProperties too. */
 - (void) setDisplayedProperties: (NSArray *)properties
 {
 	
 }
 
-/** <override-dummy /> */
+/** <override-dummy /> 
+Returns an arbitrary style object used to draw the given property in the layout. 
+
+The returned style object type is determined by each subclass. Usually the 
+style will simply be an ETLayoutItem or ETStyle instance.
+
+Overrides in your subclass to return a style object per property and documents 
+the class or type of the returned object. Several properties can share the 
+same style object. */
 - (id) styleForProperty: (NSString *)property
 {
 	return nil;
 }
 
-/** <override-dummy /> */
+/** <override-dummy /> 
+Sets a style object to should be used to present the given property in the 
+layout. 
+
+The accepted style object type is determined by each subclass. Usually the 
+style will simply be an ETLayoutItem or ETStyle instance.<br />
+Subclasses must raise an exception when the style object type doesn't match 
+their expectation or cannot be used in conjunction with the given property.
+
+Overrides in your subclass to adjust the style per property and documents the 
+class or type of the accepted object. Suclasses can use the given style directly 
+or interpret/convert it. e.g. ETTableLayout converts ETLayoutItem into NSCell 
+(internal representation only relevant to the AppKit widget backend).
+
+If you override this method, you must override -styleForProperty: too. */
 - (void) setStyle: (id)style forProperty: (NSString *)property
 {
 
 }
-
-// NOTE: Extensions probably not really interesting...
-//- (NSRange) layoutItemRangeForLineLayout:
-//- (NSRange) layoutItemForLineLayoutWithIndex: (int)lineIndex
 
 @end
