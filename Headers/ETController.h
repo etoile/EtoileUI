@@ -108,6 +108,8 @@
 - (void) insertNewGroup: (id)sender;
 - (void) remove: (id)sender;
 
+- (id) nextResponder;
+
 /* Selection */
 
 - (BOOL) setSelectionIndexes: (NSIndexSet *)selection;

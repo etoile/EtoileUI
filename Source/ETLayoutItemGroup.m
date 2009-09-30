@@ -817,17 +817,19 @@ controller content. */
 /** Sets the controller which allows to customize the overall UI interaction 
 with the receiver item tree.
 
-When the given controller is not nil, the receiver becomes both a base item and 
-the controller content.
+When the given controller is not nil, it is inserted as the next responder and 
+the receiver becomes both a base item and the controller content.
 
-See also -setSource: and -isBaseItem. */
+See also -setSource:, -isBaseItem and -nextResponder. */
 - (void) setController: (ETController *)aController
 {
 	SET_PROPERTY(aController, kETControllerProperty);
 	[aController setContent: self];
 
 	if (aController != nil)
+	{
 		[self makeBaseItemIfNeeded];
+	}
 }
 
 /** Adds the given item to the receiver children. */
@@ -1765,6 +1767,21 @@ receiver area as ETHandleGroup do. */
 - (BOOL) acceptsActionsForItemsOutsideOfFrame
 {
 	return NO;
+}
+
+/** Returns the next responder in the responder chain. 
+
+When a controller is set, the next responder is the controller rather than the 
+parent item. The parent item becomes the next responder of the controller. 
+See -[ETController nextResponder]. */
+- (id) nextResponder
+{
+	ETController *controller = [self controller];
+
+	if (nil != controller)
+		return controller;
+
+	return [super nextResponder];
 }
 
 /* Stacking */

@@ -458,6 +458,16 @@ To customize the copying in a subclass, you must override
 	[selectedItems makeObjectsPerformSelector: @selector(removeFromParent)];
 }
 
+/** Returns the next responder in the responder chain. 
+
+The next responder is the content parent item unless specified otherwise.
+
+You can override this method in a subclass, although it should rarely be needed. */
+- (id) nextResponder
+{
+	return [[self content] parentItem];
+}
+
 /* Selection */
 
 - (BOOL) setSelectionIndexes: (NSIndexSet *)selection
