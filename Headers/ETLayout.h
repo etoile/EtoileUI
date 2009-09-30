@@ -189,38 +189,29 @@ typedef enum _ETSizeConstraintStyle
 - (void) resetLayoutSize;
 - (void) resizeLayoutItems: (NSArray *)items toScaleFactor: (float)factor;
 
-/* Utility Methods */
-
-- (ETLayoutItem *) itemAtLocation: (NSPoint)location;
-- (NSRect) displayRectOfItem: (ETLayoutItem *)item;
-- (void) setNeedsDisplayForItem: (ETLayoutItem *)item;
-//- (BOOL) isHitTestEnabledAtPoint: (NSPoint)location;
-
-/* Wrapping Existing View */
-
 - (ETLayoutItemGroup *) rootItem;
 - (void) mapRootItemIntoLayoutContext;
 - (void) unmapRootItemFromLayoutContext;
 - (void) syncRootItemGeometryWithSize: (NSSize)aSize;
+
+/* Wrapping Existing View */
 
 - (void) setLayoutView: (NSView *)protoView;
 - (NSView *) layoutView;
 - (void) setUpLayoutView;
 - (void) syncLayoutViewWithItem: (ETLayoutItem *)item;
 
+/* Selection */
+
 - (NSArray *) selectedItems;
 - (NSArray *) selectionIndexPaths;
 - (void) selectionDidChangeInLayoutContext;
 
-/* ETDecoratorLayout */
+/* Item Geometry and Display */
 
-//- (BOOL) isDecorator;
-
-/** Returns the decorated item
-	Overrides this method in your subclasses to implement a decorator layout */
-//-representedItem
-/** Sets the decorated item */
-//-setRepresentedItem
+- (ETLayoutItem *) itemAtLocation: (NSPoint)location;
+- (NSRect) displayRectOfItem: (ETLayoutItem *)item;
+- (void) setNeedsDisplayForItem: (ETLayoutItem *)item;
 
 /* Item Property Display */
 

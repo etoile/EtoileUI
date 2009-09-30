@@ -9,8 +9,9 @@
 #import <EtoileFoundation/Macros.h>
 #import <EtoileFoundation/ETCollection+HOM.h>
 #import <EtoileFoundation/NSObject+Etoile.h>
-#import "ETInstrument.h"
 #import "ETLayout.h"
+#import "ETGeometry.h"
+#import "ETInstrument.h"
 #import "ETLayoutItemGroup.h"
 #import "ETTableLayout.h"
 #import "ETOutlineLayout.h"
@@ -22,10 +23,7 @@
 @interface ETLayout (Private)
 + (void) registerBuiltInLayoutClasses;
 - (BOOL) loadNibNamed: (NSString *)nibName;
-/* Utility methods */
 - (BOOL) isLayoutViewInUse;
-- (NSRect) lineLayoutRectForItemAtIndex: (int)index;
-- (ETLayoutItem *) itemAtLocation: (NSPoint)location;
 @end
 
 
@@ -1003,6 +1001,8 @@ supervisor view. */
 	
 }
 
+/* Selection */
+
 /** <override-dummy />
 	Returns the selected items reported by the layout, which can be different 
 	from selected items of the layout context. For example, an outline layout
@@ -1061,80 +1061,61 @@ supervisor view. */
 
 }
 
-/* 
- * Utility methods
- */
- 
-// FIXME: Implement or remove
-// - (NSRect) lineLayoutRectForItem:
-// - (NSRect) lineLayoutRectAtLocation:
-- (NSRect) lineLayoutRectForItemIndex: (int)index 
-{ 
-	return NSZeroRect; 
-}
+/* Item Geometry and Display */
 
-/** Returns the layout item positioned at location point and inside the visible 
-	part of the receiver layout (equals or inferior to the layout context 
-	frame). 
-	If several items overlap at this location, then the topmost item owned by 
-	the layout is returned. This implies a topmost item which isn't an immediate 
-	child of the layout context may not be be matched if it is owned by another 
-	layout object. For example -[ETOutlineLayout itemAtLocation:] can match
-	descendant items unlike ETFlowLayout which only matches immediate child
-	items. Take note topmost item on screen is the deepest descendant item if 
-	you view it in layout item tree perspective.
-	Location must be expressed in the coordinates of the container presently 
-	associated with the receiver. If the point passed in parameter is located
-	beyond the layout size, nil is returned. */
+/** Returns the layout item positioned at the given location point and inside 
+the visible part of the layout.
+
+If several items overlap at this location, then the topmost item presented by 
+the layout is returned. A topmost item which doesn't belong to the layout 
+context won't be matched by default. Subclasses which override -isOpaque 
+to return YES can supercede this policy.<br />
+For example -[ETOutlineLayout itemAtLocation:] can match descendant items unlike 
+ETFlowLayout which only matches immediate child items.<br />
+The topmost item on screen is the deepest descendant item in the layout item 
+tree perspective.
+	
+The location must be expressed in the layout context coordinates.<br />
+If the given point doesn't lie inside the layout size, nil is returned. */
 - (ETLayoutItem *) itemAtLocation: (NSPoint)location
 {
-	FOREACH([[self layoutContext] visibleItems], item, ETLayoutItem *)
+	FOREACH([_layoutContext visibleItems], item, ETLayoutItem *)
 	{
-		if ([item displayView] != nil)
-		{
-			/* When items are layouted and displayed directly into the layout 
-			   and not routed into some subview part of the layout view. */
-			if ([self layoutView] == nil)
-			{
-				ETView *supervisorView = [[self layoutContext] supervisorView];
-
-				/* Item display view must be a direct subview of our container, 
-				   otherwise NSPointInRect test is going to be meaningless. */
-				NSAssert1([[supervisorView subviews] containsObject: [item displayView]],
-					@"Item display view must be a direct subview of %@ to know "
-					@"whether it matches given location", supervisorView);
-			}
-			
-			if (NSPointInRect(location, [[item displayView] frame]))
+		if (NSPointInRect(location, [item frame]))
 				return item;
-		}
-		else /* Layout items uses no display view */
-		{
-			if (NSPointInRect(location, [item frame]))
-				return item;
-		}
 	}
 	
 	return nil;
 }
 
-/** Returns the display area of the layout item passed in parameter. 
-	Returned rect is expressed in the coordinates of the container presently 
-	associated with the receiver.*/
+/** <override-dummy />
+Returns the display area of the given layout item.
+ 
+The returned rect is expressed in the layout context coordinates.
+
+Overrides in your subclass to return the right display rect when the layout 
+doesn't let the presented items draw themselves, but use its own drawing 
+mechanism and a display area per item which might not match the item frame.
+
+When no layout context is available, returns a null rect.<br />
+This method doesn't check whether the given item really belongs to the layout 
+context or not. When it doesn't, the returned rect value is undetermined. 
+Subclasses which override -isOpaque to return YES can supercede this policy.<br />
+For example -[ETOutlineLayout displayRectOfItem:] can match descendant items 
+unlike ETFlowLayout which only matches immediate child items.
+
+If the given item is nil, an NSInvalidArgumentException will be raised. */
 - (NSRect) displayRectOfItem: (ETLayoutItem *)item
 {
-	if ([item displayView] != nil)
-	{
-		return [[item displayView] frame];
-	}
-	else
-	{
-		// FIXME: Take in account any item decorations drawn by layout directly
-		return NSZeroRect;
-	}
+	NILARG_EXCEPTION_TEST(item);
+
+	if (nil == _layoutContext)
+		return ETNullRect;
+
+	return [item frame];
 }
 
-/** <override- dummy />
+/** <override-dummy />
 Marks the layout view rect that corresponds the given item area in the receiver 
 layout as needing display. 
 
