@@ -1772,7 +1772,7 @@ receiver area as ETHandleGroup do. */
 /** Returns the next responder in the responder chain. 
 
 When a controller is set, the next responder is the controller rather than the 
-parent item. The parent item becomes the next responder of the controller. 
+parent item. The enclosing item becomes the next responder of the controller. 
 See -[ETController nextResponder]. */
 - (id) nextResponder
 {

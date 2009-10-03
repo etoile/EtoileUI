@@ -16,7 +16,11 @@
 
 /** A decorator which can be used to put a layout item inside a window.
 
-With the AppKit widget backend, the window is an NSWindow object. */
+With the AppKit widget backend, the window is an NSWindow object.
+
+Once the window is managed by a window item, you must not call the following 
+NSWindow methods: -setDelegate:, -setAcceptsMouseMovedEvents:, 
+-registerForDraggedTypes: and -setNextResponder:. */
 @interface ETWindowItem : ETDecoratorItem
 {
 	NSWindow *_itemWindow;
@@ -26,7 +30,7 @@ With the AppKit widget backend, the window is an NSWindow object. */
 	BOOL _shouldKeepWindowFrame;
 }
 
-- (id) initWithWindow: (NSWindow *)window;
+- (id) initWithWindow: (NSWindow *)window nextResponder: (id)aResponder;
 - (id) init;
 
 - (NSWindow *) window;
@@ -43,5 +47,7 @@ With the AppKit widget backend, the window is an NSWindow object. */
 - (NSRect) contentRect;
 - (BOOL) acceptsDecoratorItem: (ETDecoratorItem *)item;
 - (BOOL) canDecorateItem: (id)item;
+
+- (id) nextResponder;
 
 @end

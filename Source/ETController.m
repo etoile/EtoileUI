@@ -460,12 +460,12 @@ To customize the copying in a subclass, you must override
 
 /** Returns the next responder in the responder chain. 
 
-The next responder is the content parent item unless specified otherwise.
+The next responder is the enclosing item of the content unless specified otherwise.
 
 You can override this method in a subclass, although it should rarely be needed. */
 - (id) nextResponder
 {
-	return [[self content] parentItem];
+	return [[self content] enclosingItem];
 }
 
 /* Selection */

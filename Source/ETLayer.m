@@ -71,8 +71,9 @@
 when a layout other than ETWindowLayout is set on the receiver. */
 - (ETWindowItem *) createRootWindowItem
 {
-	return [[ETUIItemFactory factory] itemWithWindow: 
-		AUTORELEASE([[ETFullScreenWindow alloc] init])];
+	ETFullScreenWindow *fullScreenWindow = AUTORELEASE([[ETFullScreenWindow alloc] init]); 
+	return AUTORELEASE([[ETWindowItem alloc] initWithWindow: fullScreenWindow 
+	                                          nextResponder: nil]);
 }
 
 - (id) init

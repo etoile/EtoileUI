@@ -2418,14 +2418,6 @@ See also -setAction:. */
 	return NSSelectorFromString(selString);
 }
 
-/** Returns the next responder in the responder chain. 
-
-The next responder is the parent item unless specified otherwise. */
-- (id) nextResponder
-{
-	return _parentItem;
-}
-
 /** Returns the custom inspector associated with the receiver. By default, 
 returns nil.
 

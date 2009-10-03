@@ -14,6 +14,7 @@
 #import "ETLayoutItem+Factory.h"
 #import "ETLayoutItemBuilder.h"
 #import "ETObjectBrowserLayout.h"
+#import "NSView+Etoile.h"
 #import "ETCompatibility.h"
 
 @interface ETApplication (Private)
@@ -382,19 +383,34 @@ menu bar, otherwise builds a new instance and returns it. */
 		[super sendEvent: theEvent];
 }
 
-- (id) targetForAction: (SEL)aSelector firstResponder: (id)aResponder
+/* When a window is the first key or main responder, it must not be tested as 
+target directly, but indirectly through its content item where it will be 
+present upstream in the next responder chain. */
+- (id) _replacementResponderForFirstResponder: (id)aResponder
+{
+	if ([aResponder isKindOfClass: [NSWindow class]] && [[aResponder contentView] isSupervisorView])
+	{
+		return [[aResponder contentView] layoutItem];
+	}
+
+	return aResponder;
+}
+
+- (id) targetForAction: (SEL)aSelector firstResponder: (id)aResponder isMain: (BOOL)isMainChain
 {
 	if (aSelector == NULL)
 		return nil;
 
-	id responder = aResponder;
+	id responder = [self _replacementResponderForFirstResponder: aResponder];
 	SEL twoParamSelector = NSSelectorFromString([NSStringFromSelector(aSelector) 
 		stringByAppendingString: @"onItem:"]);
 
 	while (responder != nil)
 	{
 		if ([responder respondsToSelector: aSelector])
+		{
 			return responder;
+		}
 
 		// NOTE: We don't really need this since ETLayoutItem overrides 
 		// -respondsToSelector: to check the action handler exactly we do it below...
@@ -402,6 +418,22 @@ menu bar, otherwise builds a new instance and returns it. */
 		 && [[(ETLayoutItem *)responder actionHandler] respondsToSelector: twoParamSelector])
 		{
 			return responder;
+		}
+
+		/* We only check the window next responder aka -[ETUIItemFactory windowGroup], 
+		   when we are in the main window responder chain.
+		   When a key window which is not the main window is reached, we return 
+		   nil to allow the main window responder chain to be checked. */
+		if (NO == isMainChain && [responder isEqual: [self keyWindow]])
+		{
+			if ([responder respondsToSelector: aSelector])
+			{
+				return responder;
+			}
+			else
+			{
+				return nil;
+			}
 		}
 
 		responder = [responder nextResponder];
@@ -427,21 +459,59 @@ the application delegate when CoreObject is available. */
 		return aTarget;
 
 	ETInstrument *instrument = [ETInstrument activeInstrument];
-
-	id firstResponder = [instrument firstKeyResponder];
-	id responder = [self targetForAction: aSelector firstResponder: firstResponder];
+	id firstKeyResponder = [instrument firstKeyResponder];
+	id firstMainResponder = [instrument firstMainResponder];
+	BOOL keyAndMainIdentical = (firstKeyResponder == firstMainResponder);
+	id responder = [self targetForAction: aSelector 
+	                      firstResponder: firstKeyResponder 
+	                              isMain: keyAndMainIdentical];
 
 	if (responder != nil)
 	{
+		//ETLog(@"Found key responder %@ for %@", responder, NSStringFromSelector(aSelector));
 		return responder;
 	}
 	
 	// FIXME: On GNUstep, we have...
 	//if (_session != 0)
     //return nil;
+
+	if (keyAndMainIdentical == NO)
+	{
+		responder = [self targetForAction: aSelector 
+	 	                   firstResponder: firstMainResponder 
+		                           isMain: YES];
+
+		if (responder != nil)
+		{
+			//ETLog(@"Found main responder %@ for %@", responder, NSStringFromSelector(aSelector));
+			return responder;
+		}
+	}
+
+	/* In the long run, we might want to make things simpler and only rely on 
+	   -nextResponder to model the responder chain. This would eliminate the 
+	   code below. 
+	   The hardcoded responder chain below is present to ensure a better 
+	   compatibility with existing GNUstep/Cocoa code.
+	   We already have controllers in the responder chain, that's why a pure 
+	   EtoileUI responder chain would probably skip the app and window delegates.
+	 
+	   widget window -> window group -> window group controller -> app object -> persistency controller 
 	
-	firstResponder = [instrument firstMainResponder];
-	responder = [self targetForAction: aSelector firstResponder: firstResponder];
+	   Both the persistency controller and the window group controller could be 
+	   used as document manager in a document editor. To make the overall 
+	   architecture even simpler, we could remove ETPersistencyController as 
+	   the last responder, turn it into an ETController subclass and set it as 
+	   the window group controller. Object Managers and Document Editor might 
+	   have needs that vary a bit in term of CoreObject integration, so we 
+	   could provide specialized ETPersistencyController subclasses (but 
+	   ETPersistencyController might support well enough with a richer API). 
+	   The managed documents can be any node in the layout item tree and not 
+	   just the nodes owned by the window group (as in NSDocument architecture).
+	   ETPersistencyController was initially positioned upstream to mimic 
+	   NSDocumentManager and as a way to prevent the framework user to draw any 
+	   assumption on where the documents are located in the layout item tree. */
 
 	if ([self respondsToSelector: aSelector])
 	{
@@ -454,14 +524,17 @@ the application delegate when CoreObject is available. */
 		return delegate;
 	}
 
-	/*if ([NSDocumentController isDocumentBasedApplication]
+	/* EtoileUI is not compatible with NSDocument architecture that's why 
+	   the next block is disabled. We keep it to remember where 
+	   NSDocumentControllercontroller is inserted in the responder chain.
+
+	if ([NSDocumentController isDocumentBasedApplication]
 	 && [[NSDocumentController sharedDocumentController] respondsToSelector: aSelector])
     {
 		return [NSDocumentController sharedDocumentController];
-    }*/
+    } */
 
 	Class persistencyControllerClass = NSClassFromString(@"ETPersistencyController");
-
 	if ([[persistencyControllerClass sharedInstance] respondsToSelector: aSelector])
 	{
 		return [persistencyControllerClass sharedInstance]; 

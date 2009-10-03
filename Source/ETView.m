@@ -306,6 +306,12 @@ You should must never call this method. */
 	ASSIGN(item, anItem); // NOTE: Retain cycle (see -release)
 }
 
+/** Returns the item as the supervisor view next responder. */
+- (id) nextResponder
+{
+	return item;
+}
+
 /** This method is only exposed to be used internally by EtoileUI.<br />
 You must never call this method but -[ETLayoutItem isFlipped:].
 

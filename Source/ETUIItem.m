@@ -505,6 +505,17 @@ equivalent to the given point expressed in the receiver coordinate space. */
 	return [self convertRectToEnclosingItem: ETMakeRect(aPoint, NSZeroSize)].origin;
 }
 
+/* Actions */
+
+/** Returns the next responder in the responder chain. 
+
+The next responder is the enclosing item unless specified otherwise. */
+- (id) nextResponder
+{
+	// TODO: Verify that -enclosingItem is not too slow.
+	return [self enclosingItem];
+}
+
 /* Framework Private */
 
 /** <override-dummy /> */
