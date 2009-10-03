@@ -19,8 +19,8 @@
 With the AppKit widget backend, the window is an NSWindow object.
 
 Once the window is managed by a window item, you must not call the following 
-NSWindow methods: -setDelegate:, -setAcceptsMouseMovedEvents:, 
--registerForDraggedTypes: and -setNextResponder:. */
+NSWindow methods: -setDelegate:, -setAcceptsMouseMovedEvents: and 
+-registerForDraggedTypes:. */
 @interface ETWindowItem : ETDecoratorItem
 {
 	NSWindow *_itemWindow;
@@ -30,7 +30,7 @@ NSWindow methods: -setDelegate:, -setAcceptsMouseMovedEvents:,
 	BOOL _shouldKeepWindowFrame;
 }
 
-- (id) initWithWindow: (NSWindow *)window nextResponder: (id)aResponder;
+- (id) initWithWindow: (NSWindow *)window;
 - (id) init;
 
 - (NSWindow *) window;

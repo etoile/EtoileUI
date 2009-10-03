@@ -72,8 +72,7 @@ when a layout other than ETWindowLayout is set on the receiver. */
 - (ETWindowItem *) createRootWindowItem
 {
 	ETFullScreenWindow *fullScreenWindow = AUTORELEASE([[ETFullScreenWindow alloc] init]); 
-	return AUTORELEASE([[ETWindowItem alloc] initWithWindow: fullScreenWindow 
-	                                          nextResponder: nil]);
+	return AUTORELEASE([[ETWindowItem alloc] initWithWindow: fullScreenWindow]);
 }
 
 - (id) init

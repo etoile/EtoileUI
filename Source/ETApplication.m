@@ -14,6 +14,7 @@
 #import "ETLayoutItem+Factory.h"
 #import "ETLayoutItemBuilder.h"
 #import "ETObjectBrowserLayout.h"
+#import "ETUIItemFactory.h"
 #import "NSView+Etoile.h"
 #import "ETCompatibility.h"
 
@@ -420,22 +421,6 @@ present upstream in the next responder chain. */
 			return responder;
 		}
 
-		/* We only check the window next responder aka -[ETUIItemFactory windowGroup], 
-		   when we are in the main window responder chain.
-		   When a key window which is not the main window is reached, we return 
-		   nil to allow the main window responder chain to be checked. */
-		if (NO == isMainChain && [responder isEqual: [self keyWindow]])
-		{
-			if ([responder respondsToSelector: aSelector])
-			{
-				return responder;
-			}
-			else
-			{
-				return nil;
-			}
-		}
-
 		responder = [responder nextResponder];
 	}
 
@@ -487,6 +472,17 @@ the application delegate when CoreObject is available. */
 			//ETLog(@"Found main responder %@ for %@", responder, NSStringFromSelector(aSelector));
 			return responder;
 		}
+	}
+
+	ETLayoutItemGroup *windowGroup = [[ETUIItemFactory factory] windowGroup];
+	responder = [self targetForAction: aSelector 
+	                   firstResponder: windowGroup
+	                           isMain: YES];
+
+	if (responder != nil)
+	{
+		//ETLog(@"Found responder %@ for %@", responder, NSStringFromSelector(aSelector));
+		return responder;
 	}
 
 	/* In the long run, we might want to make things simpler and only rely on 

@@ -871,4 +871,37 @@ Cocoa and pass it to the layout item tree as needed. */
 
 #endif /* INTERLEAVED_DRAWING */
 
+/* Intercept and Discard Events */
+
+- (void) mouseDown: (NSEvent *)theEvent { }
+- (void) rightMouseDown: (NSEvent *)theEvent { }
+- (void) otherMouseDown: (NSEvent *)theEvent { }
+- (void) mouseUp: (NSEvent *)theEvent { }
+- (void) rightMouseUp: (NSEvent *)theEvent { }
+- (void) otherMouseUp: (NSEvent *)theEvent { }
+- (void) mouseMoved: (NSEvent *)theEvent { }
+- (void) mouseDragged: (NSEvent *)theEvent { }
+- (void) scrollWheel: (NSEvent *)theEvent { }
+- (void) rightMouseDragged: (NSEvent *)theEvent { }
+- (void) otherMouseDragged: (NSEvent *)theEvent { }
+- (void) mouseEntered: (NSEvent *)theEvent { }
+- (void) mouseExited: (NSEvent *)theEvent { }
+- (void) keyDown: (NSEvent *)theEvent { }
+- (void) keyUp: (NSEvent *)theEvent { }
+- (void) flagsChanged: (NSEvent *)theEvent { }
+#ifndef GNUSTEP
+- (void) tabletPoint: (NSEvent *)theEvent { }
+- (void) tabletProximity: (NSEvent *)theEvent { }
+- (void) cursorUpdate: (NSEvent *)event { }
+- (void) magnifyWithEvent: (NSEvent *)event { }
+- (void) rotateWithEvent: (NSEvent *)event { }
+- (void) swipeWithEvent: (NSEvent *)event { }
+- (void) beginGestureWithEvent: (NSEvent *)event { }
+- (void) endGestureWithEvent: (NSEvent *)event { }
+- (void) touchesBeganWithEvent: (NSEvent *)event { }
+- (void) touchesMovedWithEvent: (NSEvent *)event { }
+- (void) touchesEndedWithEvent: (NSEvent *)event { }
+- (void) touchesCancelledWithEvent: (NSEvent *)event { }
+#endif
+
 @end
