@@ -36,7 +36,7 @@ Factory methods will initialize the receiver with -[ETUIItemFactory windowGroup]
 as the next responder of the widget window.
 
 If window is nil, the receiver creates a standard widget backend window. */
-- (id) initWithWindow: (NSWindow *)window nextResponder: (id)aResponder
+- (id) initWithWindow: (NSWindow *)window
 {
 	self = [super initWithSupervisorView: nil];
 	
@@ -61,7 +61,6 @@ If window is nil, the receiver creates a standard widget backend window. */
 		[_itemWindow setDelegate: self];
 		[_itemWindow setAcceptsMouseMovedEvents: YES];
 		[_itemWindow registerForDraggedTypes: A(ETLayoutItemPboardType)];
-		[_itemWindow setNextResponder: aResponder];
 		_usesCustomWindowTitle = ([self isUntitled] == NO);
 		_shouldKeepWindowFrame = NO;
 	}
@@ -70,11 +69,6 @@ If window is nil, the receiver creates a standard widget backend window. */
 		_itemWindow, NSStringFromRect([_itemWindow frame]));
 	
 	return self;
-}
-
-- (id) initWithWindow: (NSWindow *)aWindow
-{
-	return [self initWithWindow: aWindow nextResponder: [[ETUIItemFactory factory] windowGroup]];
 }
 
 - (id) initWithSupervisorView: (ETView *)aView
@@ -410,16 +404,11 @@ This coordinate space includes the window decoration (titlebar etc.).  */
 	[_decoratorItem setFlipped: flipped];	
 }
 
-/** Returns the widget backend window as the next responder.
-
--[ETLayoutItemFactory windowGroup] will be the next responder of the widget 
-backend window. */
+/** Returns the widget backend window as the next responder. */
 - (id) nextResponder
 {
-	NSAssert2([_itemWindow nextResponder] == (id)[[ETUIItemFactory factory] windowGroup], 
-		@"The widget backend window owned by %@ must use the window group "
-		"and not %@ as its next responder", self, [_itemWindow nextResponder]);
-
+	// NOTE: See -targetForAction:to:from: to understand how ETApplication
+	// simulates [_itemWindow setNextResponder: [itemFactory windowGroup]]
 	return _itemWindow;
 }
 
