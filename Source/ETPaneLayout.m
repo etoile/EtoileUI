@@ -88,38 +88,37 @@ If contentItem is nil, a default content item will be created. */
 	[super dealloc];
 }
 
-- (id) copyWithZone: (NSZone *)aZone layoutContext: (id <ETLayoutingContext>)ctxt
+- (void) setUpCopyWithZone: (NSZone *)aZone 
+                  original: (ETPaneLayout *)layoutOriginal
 {
-	ETPaneLayout *layoutCopy = [super copyWithZone: aZone layoutContext: ctxt];
+	[super setUpCopyWithZone: aZone original: layoutOriginal];
 
 	/* We figure out the bar item, content item and current item index path in 
 	   the original to look up the same items in the copy.
 	   We could simply look up the index, we look up the index path in case 
 	   subclasses want to place those items elsewhere than in the holder item 
 	   itself (e.g. in a descendant). */
-	NSIndexPath *barIndexPath = [[self holderItem] indexPathForItem: [self barItem]];
-	NSIndexPath *contentIndexPath = [[self holderItem] indexPathForItem: [self contentItem]];
-	NSIndexPath *currentIndexPath = [[self holderItem] indexPathForItem: [self currentItem]];
-	ETLayoutItemGroup *barItemCopy = (id)[[layoutCopy holderItem] itemAtIndexPath: barIndexPath];
-	ETLayoutItemGroup *contentItemCopy = (id)[[layoutCopy holderItem] itemAtIndexPath: contentIndexPath];
+	NSIndexPath *barIndexPath = [[layoutOriginal holderItem] indexPathForItem: [layoutOriginal barItem]];
+	NSIndexPath *contentIndexPath = [[layoutOriginal holderItem] indexPathForItem: [layoutOriginal contentItem]];
+	NSIndexPath *currentIndexPath = [[layoutOriginal holderItem] indexPathForItem: [layoutOriginal currentItem]];
+	ETLayoutItemGroup *barItemCopy = (id)[[self holderItem] itemAtIndexPath: barIndexPath];
+	ETLayoutItemGroup *contentItemCopy = (id)[[self holderItem] itemAtIndexPath: contentIndexPath];
 	/* The current item will be a proxy (as a tab item) on the item displayed 
 	   in the content in some subclasses such as ETMasterDetailPaneLayout. 
 	   See -beginVisitingItem: */
-	ETLayoutItem *currentItemCopy = (id)[[layoutCopy holderItem] itemAtIndexPath: currentIndexPath];
+	ETLayoutItem *currentItemCopy = [[self holderItem] itemAtIndexPath: currentIndexPath];
 
-	ASSIGN(layoutCopy->_barItem, barItemCopy);
-	ASSIGN(layoutCopy->_contentItem, contentItemCopy);
-	ASSIGN(layoutCopy->_currentItem, currentItemCopy);
-	layoutCopy->_barPosition = _barPosition;
+	ASSIGN(_barItem, barItemCopy);
+	ASSIGN(_contentItem, contentItemCopy);
+	ASSIGN(_currentItem, currentItemCopy);
+	_barPosition = layoutOriginal->_barPosition;
 
 	/* Replicate the observer set up in -setBarItem: */
 	[[NSNotificationCenter defaultCenter] 
-		   addObserver: layoutCopy
+		   addObserver: self
 	          selector: @selector(itemGroupSelectionDidChange:)
 		          name: ETItemGroupSelectionDidChangeNotification 
-			    object: layoutCopy->_barItem];
-
-	return layoutCopy;
+			    object: _barItem];
 }
 
 - (float) barHeightOrWidth
@@ -400,9 +399,10 @@ the real items they currently represent. */
 
 @implementation ETMasterDetailPaneLayout
 
-- (id) copyWithZone: (NSZone *)aZone layoutContext: (id <ETLayoutingContext>)ctxt
+- (void) setUpCopyWithZone: (NSZone *)aZone 
+                  original: (ETMasterDetailPaneLayout *)layoutOriginal
 {
-	ETMasterDetailPaneLayout *layoutCopy = [super copyWithZone: aZone layoutContext: ctxt];
+	[super setUpCopyWithZone: aZone original: layoutOriginal];
 
 	/* We figure out the visited item and current item index in the original to 
 	   look up the same item in the copy.
@@ -412,14 +412,12 @@ the real items they currently represent. */
 	   The represented object is not copied in a layout item, which 
 	   means we must adjust the copy of the visited item proxy to now point on 
 	   the visited item copy.  */
-	unsigned int visitedItemIndex = [[self contentItem] indexOfItem: [[self currentItem] representedObject]];
-	unsigned int visitedItemProxyIndex = [[self barItem] indexOfItem: [self currentItem]];
-	ETLayoutItem *visitedItemCopy = [[layoutCopy contentItem] itemAtIndex: visitedItemIndex];
-	ETLayoutItem *visitedItemProxyCopy = [[layoutCopy barItem] itemAtIndex: visitedItemProxyIndex];
+	unsigned int visitedItemIndex = [[layoutOriginal contentItem] indexOfItem: [[layoutOriginal currentItem] representedObject]];
+	unsigned int visitedItemProxyIndex = [[layoutOriginal barItem] indexOfItem: [layoutOriginal currentItem]];
+	ETLayoutItem *visitedItemCopy = [[self contentItem] itemAtIndex: visitedItemIndex];
+	ETLayoutItem *visitedItemProxyCopy = [[self barItem] itemAtIndex: visitedItemProxyIndex];
 
 	[visitedItemProxyCopy setRepresentedObject: visitedItemCopy];
-
-	return layoutCopy;
 }
 
 - (void) setBarItem: (ETLayoutItemGroup *)barItem

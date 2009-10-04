@@ -21,6 +21,7 @@
 #import "ETLayoutItem.h"
 #import "ETLayoutItemGroup.h"
 #import "EtoileUIProperties.h"
+#import "ETPaneLayout.h"
 #import "ETScrollableAreaItem.h"
 #import "ETTableLayout.h"
 #import "ETTemplateItemLayout.h"
@@ -29,6 +30,8 @@
 #import "ETUIItemFactory.h"
 #import "ETWindowItem.h"
 #import "ETCompatibility.h"
+
+#define SA(x) [NSSet setWithArray: x]
 
 @interface ETOutlineLayout (Private)
 - (NSOutlineView *) outlineView;
@@ -362,7 +365,7 @@ DEALLOC(DESTROY(itemFactory); DESTROY(item); DESTROY(itemGroup))
 - (void) testIconLayoutCopy
 {
 	ETLayoutItemGroup *itemGroup1 = [itemFactory itemGroup];
-	ETLayout *layout = [ETIconLayout layout];
+	ETIconLayout *layout = [ETIconLayout layout];
 
 	[itemGroup addItem: item];
 	[itemGroup addItem: itemGroup1];
@@ -381,6 +384,43 @@ DEALLOC(DESTROY(itemFactory); DESTROY(item); DESTROY(itemGroup))
 	UKNotNil([[newItemGroup firstItem] view]);
 	UKObjectsEqual([[newItemGroup firstItem] supervisorView], [[[newItemGroup firstItem] view] superview]);
 	UKObjectsEqual([newItemGroup supervisorView], [[[newItemGroup firstItem] supervisorView] superview]);
+}
+
+// NOTE: Test ETCompositeLayout and ETPaneLayout copying at the same time.
+- (void) testMasterDetailPaneLayoutCopy
+{
+	ETLayoutItemGroup *itemGroup1 = [itemFactory itemGroup];
+	ETLayoutItem *item1 = [itemFactory item];
+	ETPaneLayout *layout = [ETPaneLayout masterDetailLayout];
+
+	[item setName: @"Ubiquity"];
+	[item1 setName: @"Hilarity"];
+	[itemGroup addItem: item];
+	[itemGroup addItem: item1];
+	[itemGroup addItem: itemGroup1];
+	[itemGroup setLayout: layout];
+
+	ETLayoutItemGroup *newItemGroup = [itemGroup deepCopy];
+	ETPaneLayout *layoutCopy = (id)[newItemGroup layout];
+
+	UKNotNil([layoutCopy barItem]);
+	UKNotNil([layoutCopy contentItem]);
+	UKObjectsNotEqual([layout barItem], [layoutCopy barItem]);
+	UKObjectsNotEqual([layout contentItem], [layoutCopy contentItem]);
+
+	/* Fairly similar to -[TestPaneLayout testInit] except the layout is in use 
+	   with the root item children injected into the layout context. */
+	UKTrue([[[layoutCopy rootItem] items] isEmpty]);
+	UKObjectsEqual(S([layoutCopy barItem], [layoutCopy contentItem]), SA([[layoutCopy layoutContext] items]));
+	UKObjectsEqual([layoutCopy firstPresentationItem], [layoutCopy barItem]);
+
+	/* Fairly similar to -[TestPaneLayout testSetUpLayout/testUpdateLayout] */
+	UKIntsEqual(3, [[layoutCopy barItem] numberOfItems]);
+	UKObjectsEqual([[layoutCopy contentItem] firstItem], [[[layoutCopy barItem] firstItem] representedObject]);
+	UKStringsEqual(@"Hilarity", [[[layoutCopy barItem] itemAtIndex: 1] name]);
+	UKIntsEqual(1, [[layoutCopy contentItem] numberOfItems]);
+	UKStringsEqual(@"Ubiquity", [[[layoutCopy contentItem] firstItem] name]);
+	UKObjectsEqual([layoutCopy contentItem], [[[layoutCopy contentItem] firstItem] parentItem]);
 }
 
 @end
