@@ -850,7 +850,7 @@ it (this is subject to change though). */
 	}
 }
 
-/* Wrapping Existing View */
+/* Presentational Item Tree */
 
 /** Returns a layout item when the receiver is an aggregate layout which 
 	doesn't truly layout items but rather wraps a predefined view (aka layout 
@@ -933,6 +933,8 @@ to be identical to the layout context. */
 	[[self rootItem] setParentItem: nil];
 }
 
+/* Wrapping Existing View */
+
 - (void) setLayoutView: (NSView *)protoView
 {
 	// FIXME: Horrible hack to work around the fact Gorm doesn't support 
@@ -962,7 +964,7 @@ to be identical to the layout context. */
 of the layout context, otherwise returns NO.
 
 A layout view can be inserted in a superview bound to a parent item and 
-yet not be visible. <br />
+yet not be visible.<br />
 For example, if an ancestor item of the parent uses an opaque layout, the layout 
 view can be inserted in the parent view but the parent view (or another ancestor 
 superview which owns it) might not be inserted as a subview in the visible view 
@@ -995,7 +997,8 @@ supervisor view. */
 	[[self layoutContext] setLayoutView: layoutView];
 }
 
-/** <override-dummy /> */
+/** <override-dummy />
+See -[ETWidgetLayout syncLayoutViewWithItem:] */
 - (void) syncLayoutViewWithItem: (ETLayoutItem *)item
 {
 	
@@ -1004,58 +1007,31 @@ supervisor view. */
 /* Selection */
 
 /** <override-dummy />
-	Returns the selected items reported by the layout, which can be different 
-	from selected items of the layout context. For example, an outline layout
-	reports selected items in all expanded items and not only selected items of 
-	the root item (unlike layout context whose selection is restricted to 
-	immediate child items).
-	Returns an empty array when no items are selected.
-	Returns nil when the layout doesn't implement its own set of selected items.
-	You can override this method to implement a layout-based selection in your
-	subclass. This method is called by 
-	-[ETLayoutItemGroup selectedItemsInLayout]. */
+Returns the selected items in the layout, which might not be identical to the 
+selected items in the layout context. 
+
+For example, ETOutlineLayout reports the selected items accross every expanded 
+item and not the items selected at the layout context level only.
+
+You can override this method to implement a layout-based selection in your
+subclass. This method is called by -[ETLayoutItemGroup selectedItemsInLayout].
+
+Returns nil by default. Which means the layout uses no custom policy.<br />
+A subclass must return an empty array when no items are selected. */
 - (NSArray *) selectedItems
 {
 	return nil;
 }
 
-/** Returns the index paths for the selected items by taking account these 
-	index paths must be relative to the layout context.
-	If a layout view is used, this method is useful to synchronize the selection 
-	state of the layout item tree with the selection reported by -selectedItems. 
-	You can synchronize the selection between a layout view and the layout item 
-	tree with the following code: 
-	[[self layoutContext] setSelectionIndexPaths: [self selectionIndexPaths]]
-	TODO: We need more control over the way we set the selection in the layout 
-	item tree. Calling -setSelectionIndexPaths: presently resets the selection 
-	state of all descendent items even the hidden ones in the layout (like the 
-	children of a collapsed row in an outline view). Various new methods could 
-	be introduced like -extendsSelectionIndexPaths: and 
-	-restrictsSelectionIndexPaths: to synchronize the selection by delta for 
-	newly selected and deselected items. Another possibility would be a method 
-	like -setSelectionIndexPathsInLayout:, but its usefulness is more limited. */
-- (NSArray *) selectionIndexPaths
-{
-	NSMutableArray *indexPaths = [NSMutableArray array];
+/** <override-dummy /> 
+Synchronizes the layout selection state with the layout context.
 
-	FOREACH([self selectedItems], item, ETLayoutItem *)
-	{
-		[indexPaths addObject: [item indexPathFromItem: (id)[self layoutContext]]];
-	}
+You usually override this method if you need to reflect the selected items 
+in the layout context on the custom UI encapsulated by the receiver (usually 
+a widget layout or a less specialized opaque layout).<br />
 
-	return indexPaths;
-}
-
-/** <override-dummy /> Overrides in opaque layout subclasses, if the receiver
-    needs to keep in sync internal objects with the selection state of the 
-	layout context. 
-    You usually override this method if you need to reflect the selected items 
-	of the layout context on the custom UI encapsulated in the receiver.
-	For example, ETItemTemplateLayout overrides it to keep in sync its 
-	replacement items with the child items of the layout context. 
-	Note: We could eventually handle that by binding internal items or state of 
-	the receiver to the 'selected' property of the child items of the layout 
-	context. By doing so, this method wouldn't be necessary/ */
+This method is called on a regular basis each time the layout context selection 
+is modified and needs to be mirrored in the receiver (e.g. in a widget view). */
 - (void) selectionDidChangeInLayoutContext
 {
 
@@ -1063,7 +1039,8 @@ supervisor view. */
 
 /* Item Geometry and Display */
 
-/** Returns the layout item positioned at the given location point and inside 
+/** <override-dummy />
+Returns the layout item positioned at the given location point and inside 
 the visible part of the layout.
 
 If several items overlap at this location, then the topmost item presented by 

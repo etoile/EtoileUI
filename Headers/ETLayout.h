@@ -176,9 +176,6 @@ typedef enum _ETSizeConstraintStyle
 - (BOOL) isAllContentVisible;
 //- (void) adjustLayoutSizeToContentSize;
 
-//-setStyleTemplate:
-//-styleTemplate // apply to each layouted item (like a border)
-
 /* Layouting */
 
 - (BOOL) isRendering;
@@ -188,6 +185,8 @@ typedef enum _ETSizeConstraintStyle
 
 - (void) resetLayoutSize;
 - (void) resizeLayoutItems: (NSArray *)items toScaleFactor: (float)factor;
+
+/* Presentational Item Tree */
 
 - (ETLayoutItemGroup *) rootItem;
 - (void) mapRootItemIntoLayoutContext;
@@ -204,7 +203,6 @@ typedef enum _ETSizeConstraintStyle
 /* Selection */
 
 - (NSArray *) selectedItems;
-- (NSArray *) selectionIndexPaths;
 - (void) selectionDidChangeInLayoutContext;
 
 /* Item Geometry and Display */

@@ -1,41 +1,12 @@
-/*  <title>ETWidgetLayout</title>
-
-	ETWidgetLayout.m
-
-	<abstract>An abstract layout class whose subclasses adapt and wrap complex 
-	widgets provided by widget backends such as tree view, popup menu, etc. and 
-	turn them into pluggable layouts.</abstract>
-
+/*
 	Copyright (C) 2009 Quentin Mathe
 
 	Author:  Quentin Mathe <qmathe@club-internet.fr>
 	Date:  April 2009
-
-	Redistribution and use in source and binary forms, with or without
-	modification, are permitted provided that the following conditions are met:
-
-	* Redistributions of source code must retain the above copyright notice,
-	this list of conditions and the following disclaimer.
-	* Redistributions in binary form must reproduce the above copyright notice,
-	this list of conditions and the following disclaimer in the documentation
-	and/or other materials provided with the distribution.
-	* Neither the name of the Etoile project nor the names of its contributors
-	may be used to endorse or promote products derived from this software
-	without specific prior written permission.
-
-	THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
-	AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
-	IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
-	ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE
-	LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
-	CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
-	SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
-	INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
-	CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
-	ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
-	THE POSSIBILITY OF SUCH DAMAGE.
+	License:  Modified BSD (see COPYING)
  */
 
+#import <EtoileFoundation/Macros.h>
 #import <EtoileFoundation/NSObject+HOM.h>
 #import "ETWidgetLayout.h"
 #import "ETActionHandler.h"
@@ -76,6 +47,8 @@ See also -[ETLayout isOpaque].*/
 {
 	return YES;	
 }
+
+/* Layout Context & Layout View Synchronization */
 
 /** Synchronizes the widget view settings with the given item.
 
@@ -180,7 +153,43 @@ which overrides -selectedItems. */
 		setSelectionIndexPaths: [self selectionIndexPaths]];
 }
 
-/** <override-subclass /> */
+/** Returns the selected item index paths expressed relative to the layout 
+context.
+
+This method is used to collect the selection in the layout view reported by 
+-selectedItems. For example, -didChangeSelectionInLayoutView invokes it to 
+mirror the wdiget selection state on the layout context.
+
+You can synchronize the selection between the layout view and the layout item 
+tree with the following code: 
+<code>
+[[self layoutContext] setSelectionIndexPaths: [self selectionIndexPaths]]
+</code>
+	
+TODO: We need more control over the way we set the selection in the layout 
+item tree. To call -setSelectionIndexPaths: presently resets the selection 
+state in every descendant item even in invisible descendants (e.g. the children 
+bond to a collapsed row in an outline view). Various new methods could be 
+introduced like -extendsSelectionIndexPaths: and -restrictsSelectionIndexPaths: 
+to synchronize the selection by delta for newly selected and deselected items. 
+Another possibility would be a method like -setSelectionIndexPathsInLayout:, but 
+its usefulness is more limited. */
+- (NSArray *) selectionIndexPaths
+{
+	NSMutableArray *indexPaths = [NSMutableArray array];
+
+	FOREACH([self selectedItems], item, ETLayoutItem *)
+	{
+		[indexPaths addObject: [item indexPathFromItem: _layoutContext]];
+	}
+
+	return indexPaths;
+}
+
+/* Actions */
+
+/** <override-subclass />
+Overrides to return the item that was last double-clicked in the layout view. */
 - (ETLayoutItem *) doubleClickedItem
 {
 	return nil;	
