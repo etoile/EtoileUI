@@ -40,6 +40,13 @@ and expect to be provided a layout item through -render:layoutItem:dirtyRect:. *
 }
 
 + (void) registerAspects;
++ (void) registerStyle: (ETStyle *)aStyle;
++ (NSSet *) registeredStyles;
++ (NSSet *) registeredStyleClasses;
+
+/* Factory Method */
+
++ (id) sharedInstance;
 
 - (BOOL) isSharedStyle;
 
@@ -53,7 +60,7 @@ and expect to be provided a layout item through -render:layoutItem:dirtyRect:. *
 - (void) render: (NSMutableDictionary *)inputValues;
 - (void) render: (NSMutableDictionary *)inputValues 
      layoutItem: (ETLayoutItem *)item 
-	  dirtyRect: (NSRect)dirtyRect;
+      dirtyRect: (NSRect)dirtyRect;
 	  
 - (void) didChangeItemBounds: (NSRect)bounds;
 
@@ -98,8 +105,6 @@ a custom style object. */
 }
 
 + (NSDictionary *) standardLabelAttributes;
-
-+ (id) sharedInstance;
 
 - (void) render: (NSMutableDictionary *)inputValues 
      layoutItem: (ETLayoutItem *)item 

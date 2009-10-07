@@ -37,10 +37,19 @@
 /** Returns the layout item representing the application. 
 
 The method returns a local root item which is usually the window group or layer
-under the application control.*/
+under the application control. */
 - (ETLayoutItemGroup *) layoutItem
 {
 	return [ETLayoutItem localRootGroup];
+}
+
+/* We override init to get the possibility to register aspects even when the app 
+is not run (e.g. with the UnitKit test suite). */
+- (id) init
+{
+	SUPERINIT
+	[self _registerAllAspects];
+	return self;
 }
 
 /* The order of the method calls in this method is critical, be very cautious 
@@ -73,7 +82,6 @@ launching notifications. */
 
 	/* Must be called last, because it processes the loaded nib and the menu. */
 	[self _buildLayoutItemTree];
-	[self _registerAllAspects];
 }
 
 /* If ETPrincipalControllerClass key is present in the bundle info plist, 
