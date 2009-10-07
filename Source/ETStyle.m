@@ -7,6 +7,8 @@
  */
 
 #import <EtoileFoundation/Macros.h>
+#import <EtoileFoundation/ETCollection+HOM.h>
+#import <EtoileFoundation/NSObject+Etoile.h>
 #import "ETStyle.h"
 #import "ETFreeLayout.h"
 #import "ETGeometry.h"
@@ -18,9 +20,101 @@
 
 @implementation ETStyle
 
+static NSMutableSet *stylePrototypes = nil;
+static NSMapTable *styleSharedInstances = nil;
+
+/** Registers a prototype for every ETStyle subclasses.
+
+The implementation won't be executed in the subclasses but only the abstract 
+base class.
+
+Since ETUIItem is an ETStyle subclass, every ETLayoutItem and ETDecoratorItem 
+subclass will also get registered as a style (not yet true).
+
+You should never need to call this method.
+
+See also NSObject(ETAspectRegistration). */
 + (void) registerAspects
 {
-	// TODO: Implement
+	stylePrototypes = [[NSMutableSet alloc] init];
+	ASSIGN(styleSharedInstances, [NSMapTable mapTableWithStrongToStrongObjects]);
+
+	FOREACH([self allSubclasses], subclass, Class)
+	{
+		/* -init returns nil in in some ETDecoratorItem subclasses.
+		   Astract class like ETUIItem should also not be registered.
+		   In the long run we will replace this check by: nil == instance */
+		if ([subclass isSubclassOfClass: [ETUIItem class]])	
+			continue;
+
+		[self registerStyle: AUTORELEASE([[subclass alloc] init])];
+	}
+}
+
+/** Returns ET. */
++ (NSString *) typePrefix
+{
+	return @"ET";
+}
+
+/** Returns 'Style'. */
++ (NSString *) baseClassName
+{
+	return @"Style";
+}
+
+/** Makes the given prototype available to EtoileUI facilities (inspector, etc.) 
+that allow to change a style at runtime.
+
+Also publishes the prototype in the shared aspect repository (not yet implemented). 
+
+If multiple instances of a single class are registered, the first registered   
+becomes the shared instance to be returned by +sharedInstance.
+
+Raises an invalid argument exception if aStyle class isn't a subclass of ETStyle. */
++ (void) registerStyle: (ETStyle *)aStyle
+{
+	if ([aStyle isKindOfClass: [ETStyle class]] == NO)
+	{
+		[NSException raise: NSInvalidArgumentException
+		            format: @"Prototype %@ must be a subclass of ETStyle to get "
+		                    @"registered as a style prototype.", aStyle];
+	}
+
+	[stylePrototypes addObject: aStyle];
+	if ([styleSharedInstances objectForKey: [aStyle class]] == nil)
+	{
+		[styleSharedInstances setObject: aStyle forKey: [aStyle class]];
+	}
+	// TODO: Make a class instance available as an aspect in the aspect 
+	// repository.
+}
+
+/** Returns all the style prototypes directly available for EtoileUI facilities 
+that allow to transform the UI at runtime. */
++ (NSSet *) registeredStyles
+{
+	return AUTORELEASE([stylePrototypes copy]);
+}
+
+/** Returns all the style classes directly available for EtoileUI facilities 
+that allow to transform the UI at runtime.
+
+These style classes are a subset of the registered style prototypes since 
+several prototypes might share the same class. */
++ (NSSet *) registeredStyleClasses
+{
+	return (NSSet *)[[[self registeredStyles] mappedCollection] class];
+}
+
+/** <override-never />
+Returns the shared instance that corresponds to the receiver class. 
+
+Those shared instances have been previously registered by +registerAspects and 
+can be retrieved as a subset of +registeredStyles. */
++ (id) sharedInstance
+{
+	return [styleSharedInstances objectForKey: self];
 }
 
 /** <override-dummy />
@@ -132,19 +226,6 @@ The returned attributes only include the label font supplied by NSFont. */
 + (NSDictionary *) standardLabelAttributes
 {
 	return D([NSFont labelFontOfSize: [NSFont labelFontSize]], NSFontAttributeName);
-}
-
-static ETBasicItemStyle *sharedBasicItemStyle = nil;
-
-/** Returns the shared basic item style instance. */
-+ (id) sharedInstance
-{
-	if (sharedBasicItemStyle == nil)
-	{
-		sharedBasicItemStyle = [[ETBasicItemStyle alloc] init];
-	}
-
-	return sharedBasicItemStyle;
 }
 
 /** <init />Initializes and returns a new basic item style. */
