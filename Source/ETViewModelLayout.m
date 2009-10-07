@@ -17,7 +17,7 @@
 #import "ETLayoutItemGroup.h"
 #import "EtoileUIProperties.h"
 #import "ETOutlineLayout.h"
-#import "ETUIItemFactory.h"
+#import "ETLayoutItemFactory.h"
 #import "ETView.h"
 #import "NSObject+EtoileUI.h"
 #import "ETCompatibility.h"

@@ -14,14 +14,14 @@
 #import <AppKit/AppKit.h>
 #import <EtoileFoundation/ETTransform.h>
 
-@class ETLayoutItem, ETLayout, ETUIItemFactory;
+@class ETLayoutItem, ETLayout, ETLayoutItemFactory;
 
 /** By inheriting from ETFilter, ETTransform instances can be chained together 
 in a filter/transform unit. For example, you can combine several tree builder 
 into a new builder to implement a new transform. */
 @interface ETLayoutItemBuilder : ETTransform
 {
-	ETUIItemFactory *itemFactory;
+	ETLayoutItemFactory *itemFactory;
 }
 
 + (id) builder;

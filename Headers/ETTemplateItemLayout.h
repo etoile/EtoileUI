@@ -31,8 +31,8 @@ drawn inside a speech bubble and laid out vertically with some space around
 each one:
 <code>
 ETTemplateItemLayout *chatLayout = [ETTemplateItemLayout layout];
-ETLayoutItem *item = [[ETUIItemFactory factory] item];
-ETLayoutItemGroup *chatAreaItem = [[ETUIItemFactory factory] itemGroup];
+ETLayoutItem *item = [[ETLayoutItemFactory factory] item];
+ETLayoutItemGroup *chatAreaItem = [[ETLayoutItemFactory factory] itemGroup];
 
 [item setStyle: [ETSpeechBubbleStyle style]];
 [chatLayout setTemplateItem: item];

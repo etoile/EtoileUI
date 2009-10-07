@@ -46,8 +46,8 @@ NSString *ETLayoutItemLayoutDidChangeNotification = @"ETLayoutItemLayoutDidChang
 
 The returned item will use +defaultItemRect as its frame.
 
-You should use -[ETUIItemFactory item] or -[ETUIItemFactory itemGroup] rather 
-than this method.*/
+You should use -[ETLayoutItemFactory item] or -[ETLayoutItemFactory itemGroup] 
+rather than this method.*/
 - (id) init
 {
 	return [self initWithView: nil value: nil representedObject: nil];
@@ -60,8 +60,8 @@ The given value can be nil.
 
 The returned item will use +defaultItemRect as its frame.
 
-You should use -[ETUIItemFactory itemWithValue:] or 
--[ETUIItemFactory itemGroupWithValue:] rather than this method. */
+You should use -[ETLayoutItemFactory itemWithValue:] or 
+-[ETLayoutItemFactory itemGroupWithValue:] rather than this method. */
 - (id) initWithValue: (id)value
 {
 	return [self initWithView: nil value: value representedObject: nil];
@@ -74,8 +74,8 @@ The given represented object can be nil.
 
 The returned item will use +defaultItemRect as its frame.
 
-You should use -[ETUIItemFactory itemWithRepresentedObject:] or 
--[ETUIItemFactory itemGroupWithRepresentedObject:] rather than this method. */
+You should use -[ETLayoutItemFactory itemWithRepresentedObject:] or 
+-[ETLayoutItemFactory itemGroupWithRepresentedObject:] rather than this method. */
 - (id) initWithRepresentedObject: (id)object
 {
 	return [self initWithView: nil value: nil representedObject: object];
@@ -86,8 +86,8 @@ See also -setView:.
 
 The given view can be nil.
 
-You should use -[ETUIItemFactory itemWithView:] or 
--[ETUIItemFactory itemGroupWithView:] rather than this method. */
+You should use -[ETLayoutItemFactory itemWithView:] or 
+-[ETLayoutItemFactory itemGroupWithView:] rather than this method. */
 - (id) initWithView: (NSView *)view
 {
 	return [self initWithView: view value: nil representedObject: nil];
@@ -95,8 +95,8 @@ You should use -[ETUIItemFactory itemWithView:] or
 
 /** Initializes and returns a layout item with the given frame.
 
-You should use -[ETUIItemFactory itemWithFrame] or 
--[ETUIItemFactory itemGroupWithFrame:] rather than this method. */
+You should use -[ETLayoutItemFactory itemWithFrame] or 
+-[ETLayoutItemFactory itemGroupWithFrame:] rather than this method. */
 - (id) initWithFrame: (NSRect)frame
 {
 	self = [self initWithView: nil value: nil representedObject: nil];

@@ -22,7 +22,7 @@
 #import "ETLayoutItemGroup.h"
 #import "ETOutlineLayout.h"
 #import "ETLayoutItemBuilder.h"
-#import "ETUIItemFactory.h"
+#import "ETLayoutItemFactory.h"
 #import "ETView.h"
 #import "ETCompatibility.h"
 
@@ -85,7 +85,7 @@
 	// FIXME: item implies a memory leak, the container bound to this item must
 	// be assigned to self and this item discarded.
 	//id item = [[ETEtoileUIBuilder builder] renderWindow: window];
-	[[[ETUIItemFactory factory] windowGroup] addItem: 
+	[[[ETLayoutItemFactory factory] windowGroup] addItem: 
 		[[ETEtoileUIBuilder builder] renderWindow: window]];
 
 	ASSIGN(masterViewItem, [itemGroupView layoutItem]);

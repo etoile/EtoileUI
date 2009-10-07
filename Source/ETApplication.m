@@ -14,7 +14,7 @@
 #import "ETLayoutItem+Factory.h"
 #import "ETLayoutItemBuilder.h"
 #import "ETObjectBrowserLayout.h"
-#import "ETUIItemFactory.h"
+#import "ETLayoutItemFactory.h"
 #import "NSView+Etoile.h"
 #import "ETCompatibility.h"
 
@@ -474,7 +474,7 @@ the application delegate when CoreObject is available. */
 		}
 	}
 
-	ETLayoutItemGroup *windowGroup = [[ETUIItemFactory factory] windowGroup];
+	ETLayoutItemGroup *windowGroup = [[ETLayoutItemFactory factory] windowGroup];
 	responder = [self targetForAction: aSelector 
 	                   firstResponder: windowGroup
 	                           isMain: YES];

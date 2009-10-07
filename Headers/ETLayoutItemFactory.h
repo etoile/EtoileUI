@@ -1,4 +1,4 @@
-/**	<title>ETUIItemFactory</title>
+/**	<title>ETLayoutItemFactory</title>
 
 	<abstract>Factory for building various kinds of UI items and keeping track 
 	of special nodes of the layout item tree.</abstract>
@@ -16,7 +16,7 @@
 @class ETLayoutItem, ETLayoutItemGroup, ETLayer, ETScrollableAreaItem, ETWindowItem;
 
 
-@interface ETUIItemFactory : NSObject
+@interface ETLayoutItemFactory : NSObject
 
 + (id) factory;
 
@@ -108,4 +108,9 @@
 
 - (ETLayoutItemGroup *) itemGroupWithContainer;
 
+@end
+
+
+/** Deprecated (DO NOT USE, WILL BE REMOVED LATER) */
+@interface ETUIItemFactory : ETLayoutItemFactory
 @end

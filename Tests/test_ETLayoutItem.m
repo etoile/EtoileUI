@@ -40,7 +40,7 @@
 #import "ETGeometry.h"
 #import "ETLayoutItem.h"
 #import "ETLayoutItem+Reflection.h"
-#import "ETUIItemFactory.h"
+#import "ETLayoutItemFactory.h"
 #import "ETWindowItem.h"
 #import "ETLayoutItemGroup.h"
 #import "ETContainer.h"
@@ -58,7 +58,7 @@
 + (ETDecoratorItem *) itemWithDummySupervisorView;
 @end
 
-static ETUIItemFactory *itemFactory = nil;
+static ETLayoutItemFactory *itemFactory = nil;
 
 @interface ETLayoutItem (UnitKitTests) <UKTest>
 @end
@@ -72,7 +72,7 @@ static ETUIItemFactory *itemFactory = nil;
 - (id) initForTest
 {
 	self = [self init];
-	itemFactory = [ETUIItemFactory factory];
+	itemFactory = [ETLayoutItemFactory factory];
 	return self;
 }
 

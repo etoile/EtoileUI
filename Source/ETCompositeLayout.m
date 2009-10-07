@@ -21,7 +21,7 @@
 #import "EtoileUIProperties.h"
 #import "ETOutlineLayout.h"
 #import "ETTableLayout.h"
-#import "ETUIItemFactory.h"
+#import "ETLayoutItemFactory.h"
 #import "ETCompatibility.h"
 
 @interface ETCompositeLayout (Private)
@@ -74,7 +74,7 @@
 	}
 	else
 	{
-		[self setRootItem: [[ETUIItemFactory factory] itemGroup]];
+		[self setRootItem: [[ETLayoutItemFactory factory] itemGroup]];
 	}
 	[self setFirstPresentationItem: targetItem];
 
@@ -165,7 +165,7 @@ presentation item. */
 presentation item. */
 + (id) defaultPresentationProxyWithFrame: (NSRect)aRect
 {
-	ETLayoutItemGroup *presentationProxy = [[ETUIItemFactory factory] itemGroupWithFrame: aRect];
+	ETLayoutItemGroup *presentationProxy = [[ETLayoutItemFactory factory] itemGroupWithFrame: aRect];
 	[presentationProxy setLayout: [ETOutlineLayout layout]];
 	[presentationProxy setAutoresizingMask: NSViewWidthSizable];
 	return presentationProxy;

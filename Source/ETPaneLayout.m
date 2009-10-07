@@ -21,7 +21,7 @@
 #import "ETTableLayout.h"
 #import "ETOutlineLayout.h"
 #import "ETBrowserLayout.h"
-#import "ETUIItemFactory.h"
+#import "ETLayoutItemFactory.h"
 
 @interface ETPaneLayout (Private)
 - (void) setContentItem: (ETLayoutItemGroup *)anItem;
@@ -51,7 +51,7 @@ If contentItem is nil, a default content item will be created. */
 	}
 	else
 	{
-		[self setContentItem: [[ETUIItemFactory factory] itemGroup]];
+		[self setContentItem: [[ETLayoutItemFactory factory] itemGroup]];
 	}
 
 	if (nil != barItem)
@@ -60,7 +60,7 @@ If contentItem is nil, a default content item will be created. */
 	}
 	else
 	{
-		[self setBarItem: [[ETUIItemFactory factory] itemGroup]];
+		[self setBarItem: [[ETLayoutItemFactory factory] itemGroup]];
 	}
 	[_barItem setAutoresizingMask: NSViewWidthSizable];
 	[_barItem setLayout: [ETTableLayout layout]];
@@ -430,7 +430,7 @@ the real items they currently represent. */
 item that just got selected and moved into the content item. */
 - (ETLayoutItem *) visitedItemProxyWithItem: (ETLayoutItem *)paneItem
 {
-	ETLayoutItem *tabItem = [[ETUIItemFactory factory] itemWithRepresentedObject: paneItem];
+	ETLayoutItem *tabItem = [[ETLayoutItemFactory factory] itemWithRepresentedObject: paneItem];
 	NSImage *img = [tabItem valueForProperty: @"icon"];
 
 	if (img == nil)

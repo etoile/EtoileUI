@@ -13,7 +13,7 @@
 
 - (void) applicationDidFinishLaunching: (NSNotification *)notif
 {
-	ETUIItemFactory *itemFactory = [ETUIItemFactory factory];
+	ETLayoutItemFactory *itemFactory = [ETLayoutItemFactory factory];
 
 	/* Shows the graphics editing related menu which contains commands like 
 	   'group', 'ungroup', 'send backward' etc. */
@@ -27,7 +27,7 @@
 	// base located in the bottom left.
 	//[mainItem setFlipped: NO];
 	[mainItem setSize: NSMakeSize(500, 400)];
-	[mainItem setLayout: [ETFreeLayout layout]];
+	//[mainItem setLayout: [ETFreeLayout layout]];
 
 	/* Make mainItem visible by inserting it inside the window layer */
 
@@ -44,7 +44,11 @@
 	/* Selection rubber-band is a layout item too, which means we can use it 
 	   in the same way than other shape-based items... */
 	[mainItem addItem: AUTORELEASE([[ETSelectionAreaItem alloc] init])];
+	[mainItem setLayout: [ETPaneLayout masterDetailLayout]];
+	[[mainItem layout] setBarPosition: ETPanePositionRight];
 
+	[[itemFactory windowGroup] addItem: [mainItem deepCopy]];
+	return;
 	/* ... A less useless use case would be to replace the shape bound to it or 
 	   alter its shape as below. */
 

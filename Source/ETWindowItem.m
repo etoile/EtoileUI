@@ -14,7 +14,7 @@
 #import "ETLayoutItemGroup.h"
 #import "ETLayoutItem+Factory.h"
 #import "ETPickDropCoordinator.h"
-#import "ETUIItemFactory.h"
+#import "ETLayoutItemFactory.h"
 #import "NSWindow+Etoile.h"
 #import "ETGeometry.h"
 #import "ETCompatibility.h"
@@ -32,7 +32,7 @@ the factory methods.
 
 This responder is the widget window next responder and not the window item next 
 responder. The widget window is the receiver next responder.<br />
-Factory methods will initialize the receiver with -[ETUIItemFactory windowGroup] 
+Factory methods will initialize the receiver with -[ETLayoutItemFactory windowGroup] 
 as the next responder of the widget window.
 
 If window is nil, the receiver creates a standard widget backend window. */
@@ -231,7 +231,7 @@ This method will check whether the window layer (aka window group) is flipped
 and make the necessary adjustments. */
 - (NSRect) convertRectToWidgetBackendScreenBase: (NSRect)rect
 {
-	ETWindowLayer *windowLayer = (ETWindowLayer *)[[ETUIItemFactory factory] windowGroup];
+	ETWindowLayer *windowLayer = (ETWindowLayer *)[[ETLayoutItemFactory factory] windowGroup];
 
 	if ([windowLayer isFlipped] == NO)
 		return rect;
@@ -251,7 +251,7 @@ This method will check whether the window layer (aka window group) is flipped
 and make the necessary adjustments. */
 - (NSRect) convertRectFromWidgetBackendScreenBase: (NSRect)windowFrame
 {
-	ETWindowLayer *windowLayer = (ETWindowLayer *)[[ETUIItemFactory factory] windowGroup];
+	ETWindowLayer *windowLayer = (ETWindowLayer *)[[ETLayoutItemFactory factory] windowGroup];
 
 	if ([windowLayer isFlipped] == NO)
 		return windowFrame;

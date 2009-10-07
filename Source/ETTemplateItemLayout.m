@@ -13,7 +13,7 @@
 #import "ETColumnLayout.h"
 #import "ETLayoutItem.h"
 #import "ETLayoutItemGroup.h"
-#import "ETUIItemFactory.h"
+#import "ETLayoutItemFactory.h"
 #import "NSView+Etoile.h"
 #import "ETCompatibility.h"
 
@@ -499,7 +499,7 @@ kETFormLayoutInset	NSZeroRect (default) or nil
 	//[self setAutoresizingMask: NSViewWidthSizable];
 	//[self setAutoresizesSubviews: YES];
 
-	return [[ETUIItemFactory factory] itemWithView: templateView];
+	return [[ETLayoutItemFactory factory] itemWithView: templateView];
 }
 
 - (void) setUpTemplateElementsForItem: (ETLayoutItem *)item

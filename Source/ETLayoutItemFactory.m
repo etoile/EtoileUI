@@ -6,7 +6,7 @@
 	License: Modified BSD (see COPYING)
  */
 
-#import "ETUIItemFactory.h"
+#import "ETLayoutItemFactory.h"
 #import "ETFreeLayout.h"
 #import "ETGeometry.h"
 #import "ETLayoutItemGroup.h"
@@ -20,7 +20,7 @@
 #import "ETCompatibility.h"
 
 
-@implementation ETUIItemFactory
+@implementation ETLayoutItemFactory
 
 /** Creates and returns an autoreleased factory object. */
 + (id) factory
@@ -642,5 +642,8 @@ width and height of +[ETShape defaultShapeRect]. */
 	return (ETLayoutItemGroup *)[container layoutItem];
 }
 
+@end
 
+
+@implementation ETUIItemFactory
 @end

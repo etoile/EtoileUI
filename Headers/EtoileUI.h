@@ -61,7 +61,7 @@
 #import <EtoileUI/ETTextEditorLayout.h>
 #import <EtoileUI/ETTitleBarItem.h>
 #import <EtoileUI/ETUIItem.h>
-#import <EtoileUI/ETUIItemFactory.h>
+#import <EtoileUI/ETLayoutItemFactory.h>
 #import <EtoileUI/ETViewModelLayout.h>
 #import <EtoileUI/ETWindowItem.h>
 #import <EtoileUI/FSBrowserCell.h>

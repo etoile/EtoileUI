@@ -20,7 +20,7 @@
 #import "ETPaneLayout.h"
 #import "ETTableLayout.h"
 #import "ETUIItem.h"
-#import "ETUIItemFactory.h"
+#import "ETLayoutItemFactory.h"
 #import "ETCompatibility.h"
 
 #define UKRectsEqual(x, y) UKTrue(NSEqualRects(x, y))
@@ -32,7 +32,7 @@
 
 @interface TestCompositeLayout : NSObject <UKTest>
 {
-	ETUIItemFactory *itemFactory;
+	ETLayoutItemFactory *itemFactory;
 	ETLayoutItemGroup *item;
 }
 
@@ -44,7 +44,7 @@
 - (id) init
 {
 	SUPERINIT
-	ASSIGN(itemFactory, [ETUIItemFactory factory]);
+	ASSIGN(itemFactory, [ETLayoutItemFactory factory]);
 	item = [[ETLayoutItemGroup alloc] init];
 	return self;
 }

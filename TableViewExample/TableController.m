@@ -43,7 +43,7 @@
 	burden involved by a data source. */
 - (void) awakeFromNib
 {
-	ETUIItemFactory *itemFactory = [ETUIItemFactory factory];
+	ETLayoutItemFactory *itemFactory = [ETLayoutItemFactory factory];
 
 	/*
 	 * A container based on table layout
@@ -106,7 +106,7 @@
 
 - (void) applicationWillFinishLaunching: (NSNotification *)notif
 {
-	ETUIItemFactory *itemFactory = [ETUIItemFactory factory];
+	ETLayoutItemFactory *itemFactory = [ETLayoutItemFactory factory];
 
 	/*
 	 * A hierarchical container using a custom outline layout based on an 

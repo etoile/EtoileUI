@@ -40,7 +40,7 @@
 
 @class ETLayoutItemGroup, ETLayer;
 
-// WARNING: This category is deprecated. You must now use ETUIItemFactory API.
+// WARNING: This category is deprecated. You must now use ETLayoutItemFactory API.
 
 @interface ETLayoutItem (ETLayoutItemFactory)
 

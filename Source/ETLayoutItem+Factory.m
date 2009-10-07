@@ -37,11 +37,11 @@
  */
 
 #import "ETLayoutItem+Factory.h"
-#import "ETUIItemFactory.h"
+#import "ETLayoutItemFactory.h"
 #import "ETCompatibility.h"
 #include <float.h>
 
-#define FACTORY [ETUIItemFactory factory]
+#define FACTORY [ETLayoutItemFactory factory]
 
 @implementation ETLayoutItem (ETLayoutItemFactory)
 

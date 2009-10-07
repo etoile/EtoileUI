@@ -23,7 +23,7 @@
 #import "ETLayoutItemGroup.h"
 #import "ETLayoutItem+Factory.h"
 #import "ETLineLayout.h"
-#import "ETUIItemFactory.h"
+#import "ETLayoutItemFactory.h"
 #import "ETWindowItem.h"
 #import "ETCompatibility.h"
 #import <UnitKit/UnitKit.h>
@@ -44,7 +44,7 @@
 {
 	ETLayoutItemGroup *mainItem;
 	ETInstrument *instrument;
-	ETUIItemFactory *itemFactory;
+	ETLayoutItemFactory *itemFactory;
 }
 
 @end
@@ -60,7 +60,7 @@ coordinates or not to set the event location in the window. */
 {
 	SUPERINIT
 
-	ASSIGN(itemFactory, [ETUIItemFactory factory]);
+	ASSIGN(itemFactory, [ETLayoutItemFactory factory]);
 	ASSIGN(mainItem, [ETLayoutItem itemGroup]);
 	[mainItem setFrame: NSMakeRect(0, 0, WIN_WIDTH, WIN_HEIGHT)];
 	[[ETLayoutItem windowGroup] addItem: mainItem];

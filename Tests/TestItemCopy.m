@@ -27,7 +27,7 @@
 #import "ETTemplateItemLayout.h"
 #import "ETOutlineLayout.h"
 #import "ETUIItem.h"
-#import "ETUIItemFactory.h"
+#import "ETLayoutItemFactory.h"
 #import "ETWindowItem.h"
 #import "ETCompatibility.h"
 
@@ -65,7 +65,7 @@
 
 @interface TestItemCopy: NSObject <UKTest>
 {
-	ETUIItemFactory *itemFactory;
+	ETLayoutItemFactory *itemFactory;
 	ETLayoutItem *item;
 	ETLayoutItemGroup *itemGroup;
 }
@@ -77,7 +77,7 @@
 - (id) init
 {
 	SUPERINIT
-	ASSIGN(itemFactory, [ETUIItemFactory factory]);
+	ASSIGN(itemFactory, [ETLayoutItemFactory factory]);
 	item = [[ETLayoutItem alloc] init];
 	itemGroup = [[ETLayoutItemGroup alloc] init];
 	return self;

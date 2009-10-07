@@ -24,7 +24,7 @@
 
 - (void) applicationDidFinishLaunching: (NSNotification *)notif
 {
-	ETUIItemFactory *itemFactory = [ETUIItemFactory factory];
+	ETLayoutItemFactory *itemFactory = [ETLayoutItemFactory factory];
 	ETLayoutItemGroup *itemGroup = [itemFactory itemGroup];
 	ETLayoutItem *sectionLabelItem = [itemFactory item]; // -itemWithName:
 	ETLayoutItem *sliderItem = [itemFactory horizontalSlider];

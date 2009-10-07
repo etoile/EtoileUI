@@ -15,7 +15,7 @@
 #import "ETLayer.h"
 #import "ETView.h"
 #import "ETScrollableAreaItem.h"
-#import "ETUIItemFactory.h"
+#import "ETLayoutItemFactory.h"
 #import "NSObject+EtoileUI.h"
 #import "NSView+Etoile.h"
 #import "NSWindow+Etoile.h"
@@ -35,7 +35,7 @@ Initializes and returns the receiver builder. */
 - (id) init
 {
 	SUPERINIT
-	ASSIGN(itemFactory, [ETUIItemFactory factory]);
+	ASSIGN(itemFactory, [ETLayoutItemFactory factory]);
 	return self;
 }
 

@@ -347,7 +347,7 @@ static NSFileManager *objectManager = nil;
 		[icon setSize: NSMakeSize(128, 128)];
 		if ([[NSFileManager defaultManager] fileExistsAtPath: filePath isDirectory: &isDir] && isDir)
 		{
-			fileItem = [[ETUIItemFactory factory] itemGroupWithView: [self imageViewForImage: icon]];
+			fileItem = [[ETLayoutItemFactory factory] itemGroupWithView: [self imageViewForImage: icon]];
 			[fileItem setSubtype: myFolderUTI];
 		}
 		else

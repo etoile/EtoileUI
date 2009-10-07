@@ -37,7 +37,7 @@
 	return [ETLayoutItem class];
 }
 
-// TODO: Move this method to ETUIItemFactory
+// TODO: Move this method to ETLayoutItemFactory
 - (id) initWithLayoutView: (NSView *)layoutView
 {
 	self = [self initWithFrame: [layoutView frame]];

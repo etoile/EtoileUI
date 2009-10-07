@@ -13,7 +13,7 @@
 #import "ETLayoutItemGroup.h"
 #import "ETLayoutItem+Factory.h"
 #import "ETTitleBarView.h"
-#import "ETUIItemFactory.h"
+#import "ETLayoutItemFactory.h"
 #import "ETCompatibility.h"
 
 #define NC [NSNotificationCenter defaultCenter]

@@ -87,7 +87,7 @@ etc.),</item>
 ETBasicItemStyle shared instance is also the only style automatically inserted 
 in -[ETLayoutItem styleGroup], when a new layout item is initialized.
 
-Tailored items build by ETUIItemFactory might not use ETBasicItemStyle, but 
+Tailored items build by ETLayoutItemFactory might not use ETBasicItemStyle, but 
 a custom style object. */
 @interface ETBasicItemStyle : ETStyle
 {

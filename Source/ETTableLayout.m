@@ -248,7 +248,7 @@ By default, columns are not editable and NO is returned. */
 this is temporary.
 
 TODO: Return a layout item built dynamically by determining the cell subclass 
-kind. May be add -[ETUIItemFactory itemWithCell:]. */
+kind. May be add -[ETLayoutItemFactory itemWithCell:]. */
 - (id) styleForProperty: (NSString *)property
 {
 	return [[_propertyColumns objectForKey: property] dataCell];
