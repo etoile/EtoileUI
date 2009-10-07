@@ -57,6 +57,7 @@ EtoileUI_HEADER_FILES = \
 	ETLayoutItem+KVO.h \
 	ETLayoutItem+Reflection.h \
 	ETLayoutItem+Scrollable.h \
+	ETLayoutItemFactory.h \
 	ETLineFragment.h \
 	ETLineLayout.h \
 	ETObjectBrowserLayout.h \
@@ -79,7 +80,6 @@ EtoileUI_HEADER_FILES = \
 	ETTitleBarItem.h \
 	ETTitleBarView.h \
 	ETUIItem.h \
-	ETUIItemFactory.h \
 	ETView.h \
 	ETViewModelLayout.h \
 	ETWidgetLayout.h \

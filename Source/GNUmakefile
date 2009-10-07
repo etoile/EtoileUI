@@ -31,6 +31,7 @@ libEtoileUI_OBJC_FILES = \
 	ETLayoutItem+KVO.m \
 	ETLayoutItem+Reflection.m \
 	ETLayoutItem+Scrollable.m \
+	ETLayoutItemFactory.m \
 	ETLineFragment.m \
 	ETLayout.m \
 	ETLineLayout.m \
@@ -53,7 +54,6 @@ libEtoileUI_OBJC_FILES = \
 	ETTitleBarItem.m \
 	ETTitleBarView.m \
 	ETUIItem.m \
-	ETUIItemFactory.m \
 	ETView.m \
 	ETViewModelLayout.m \
 	ETWidgetLayout.m \
