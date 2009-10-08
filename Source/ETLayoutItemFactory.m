@@ -11,9 +11,11 @@
 #import "ETGeometry.h"
 #import "ETLayoutItemGroup.h"
 #import "ETLayer.h"
+#import "ETLineLayout.h"
 #import "ETScrollableAreaItem.h"
 #import "ETWindowItem.h"
 #import "ETContainer.h"
+#import "ETStyle.h"
 #import "ETShape.h"
 #import "NSWindow+Etoile.h"
 #include <float.h>
@@ -26,6 +28,19 @@
 + (id) factory
 {
 	return AUTORELEASE([[self alloc] init]);
+}
+
+/** Returns the style applied to all the bar elements to be built. */
+- (ETStyle *) currentBarElementStyle
+{
+	return _currentBarElementStyle;
+}
+
+
+/** Sets the style to apply to all the bar elements to be built. */
+- (void) setCurrentBarElementStyle: (ETStyle *)aStyle
+{
+	ASSIGN(_currentBarElementStyle, aStyle);
 }
 
 /* Basic Item Factory Methods */
@@ -69,6 +84,29 @@ meta representation. */
 - (ETLayoutItem *) itemWithRepresentedObject: (id)object
 {
 	return (ETLayoutItem *)AUTORELEASE([[ETLayoutItem alloc] initWithRepresentedObject: object]);
+}
+
+
+/** <override-never /> 
+Returns the layout item set up as a bar element with the given label and the 
+shared style returned by -currentBarElementStyle.  */
+- (ETLayoutItem *) barElementFromItem: (ETLayoutItem *)anItem 
+                            withLabel: (NSString *)aLabel
+{
+	return [self barElementFromItem: anItem 
+	                      withLabel: aLabel 
+	                          style: [self currentBarElementStyle]]; 
+}
+
+/** Returns the layout item set up as a bar element with the given label and item style. */
+- (ETLayoutItem *) barElementFromItem: (ETLayoutItem *)anItem 
+                            withLabel: (NSString *)aLabel
+                                style: (ETStyle *)aStyle
+{
+	[anItem setName: aLabel];
+	[anItem setStyle: aStyle];
+	[anItem setBoundingBox: [aStyle boundingBoxForItem: anItem]];
+	return anItem;
 }
 
 /* Group Factory Methods */
@@ -150,6 +188,23 @@ when you request the grouping of several items. */
 	ETLayoutItemGroup *itemGroup = [self itemGroup];
 	[itemGroup setStyle: AUTORELEASE([[ETGraphicsGroupStyle alloc] init])];
 	[itemGroup setLayout: [ETFreeLayout layout]];
+	return itemGroup;
+}
+
+/** Returns a new layout item group set up as an bar element group with 
+ETBarStyle as style and ETLineLayout as layout.
+
+Also resets the current bar element style to 
+-[ETBasicItemStyle iconAndLabelBarElementStyle] to ensure new bar elements 
+share the same style.
+
+The returned bar has a flexible width and a fixed height. */
+- (ETLayoutItemGroup *) horizontalBarWithSize: (NSSize)aSize
+{
+	ETLayoutItemGroup *itemGroup = [self itemGroupWithFrame: ETMakeRect(NSZeroPoint, aSize)];
+	[itemGroup setAutoresizingMask: ETAutoresizingFlexibleWidth];
+	[itemGroup setLayout: [ETLineLayout layout]];
+	[self setCurrentBarElementStyle: [ETBasicItemStyle iconAndLabelBarElementStyle]]; 
 	return itemGroup;
 }
 

@@ -215,6 +215,11 @@ overrides it to resize/scale the bezier path as needed. */
 
 }
 
+- (NSRect) boundingBoxForItem: (ETLayoutItem *)anItem
+{
+	return ETMakeRect(NSZeroPoint, [anItem size]);
+}
+
 @end
 
 
@@ -226,6 +231,15 @@ The returned attributes only include the label font supplied by NSFont. */
 + (NSDictionary *) standardLabelAttributes
 {
 	return D([NSFont labelFontOfSize: [NSFont labelFontSize]], NSFontAttributeName);
+}
+
+/** Returns a new autoreleased style that draws the item icon and its name as 
+a label underneath. */
++ (ETBasicItemStyle *) iconAndLabelBarElementStyle
+{
+	ETBasicItemStyle *style = AUTORELEASE([[self alloc] init]);
+	[style setLabelPosition: ETLabelPositionOutsideBottom];
+	return style;
 }
 
 /** <init />Initializes and returns a new basic item style. */
@@ -505,6 +519,12 @@ unless you explicitly set one with -[ETLayoutItem setName:]. */
 	}
 
 	return label;
+}
+
+- (NSRect) boundingBoxForItem: (ETLayoutItem *)anItem
+{
+	NSRect labelRect = [self rectForLabel: [self labelForItem: anItem] ofItem: anItem];
+	return NSUnionRect([super boundingBoxForItem: anItem], labelRect);
 }
 
 @end

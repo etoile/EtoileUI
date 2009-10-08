@@ -63,6 +63,7 @@ and expect to be provided a layout item through -render:layoutItem:dirtyRect:. *
       dirtyRect: (NSRect)dirtyRect;
 	  
 - (void) didChangeItemBounds: (NSRect)bounds;
+- (NSRect) boundingBoxForItem: (ETLayoutItem *)anItem;
 
 @end
 
@@ -105,6 +106,8 @@ a custom style object. */
 }
 
 + (NSDictionary *) standardLabelAttributes;
+
++ (ETBasicItemStyle *) iconAndLabelBarElementStyle;
 
 - (void) render: (NSMutableDictionary *)inputValues 
      layoutItem: (ETLayoutItem *)item 

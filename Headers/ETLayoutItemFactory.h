@@ -13,12 +13,18 @@
 #import <Foundation/Foundation.h>
 #import <AppKit/AppKit.h>
 
-@class ETLayoutItem, ETLayoutItemGroup, ETLayer, ETScrollableAreaItem, ETWindowItem;
+@class ETLayoutItem, ETLayoutItemGroup, ETLayer, ETScrollableAreaItem, ETStyle, ETWindowItem;
 
 
 @interface ETLayoutItemFactory : NSObject
+{
+	ETStyle *_currentBarElementStyle;
+}
 
 + (id) factory;
+
+- (ETStyle *) currentBarElementStyle;
+- (void) setCurrentBarElementStyle: (ETStyle *)aStyle;
 
 /* Basic Item Factory Methods */
 
@@ -26,6 +32,12 @@
 - (ETLayoutItem *) itemWithView: (NSView *)view;
 - (ETLayoutItem *) itemWithValue: (id)value;
 - (ETLayoutItem *) itemWithRepresentedObject: (id)object;
+
+- (ETLayoutItem *) barElementFromItem: (ETLayoutItem *)anItem 
+                            withLabel: (NSString *)aLabel;
+- (ETLayoutItem *) barElementFromItem: (ETLayoutItem *)anItem 
+                            withLabel: (NSString *)aLabel
+                                style: (ETStyle *)aStyle;
 
 /* Group Factory Methods */
 
@@ -38,6 +50,8 @@
 - (ETLayoutItemGroup *) itemGroupWithRepresentedObject: (id)object;
 
 - (ETLayoutItemGroup *) graphicsGroup;
+
+- (ETLayoutItemGroup *) horizontalBarWithSize: (NSSize)aSize;
 
 /* Leaf Widget Factory Methods */
 
