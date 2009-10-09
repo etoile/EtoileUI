@@ -43,13 +43,22 @@ under the application control. */
 	return [ETLayoutItem localRootGroup];
 }
 
-/* We override init to get the possibility to register aspects even when the app 
-is not run (e.g. with the UnitKit test suite). */
-- (id) init
+/** <override-dummy />
+Will be called just before -run is invoked.
+
+You must call the superclass implementation if you override this method.
+
+This method is a last chance to prepare the application to be run. You can 
+use it to do extra initialization that is required even when -run and 
+-finishLaunching are not invoked (e.g. when running the EtoileUI UnitKit test 
+suite).<br />
+You can safely load nibs on both GNUstep and Cocoa in this method (nib loading 
+is not supported in -init and +sharedApplication on Cocoa).
+
+See also -finishLaunching which is called after -run is invoked. */
+- (void) setUp
 {
-	SUPERINIT
 	[self _registerAllAspects];
-	return self;
 }
 
 /* The order of the method calls in this method is critical, be very cautious 
@@ -672,6 +681,7 @@ int ETApplicationMain(int argc, const char **argv)
 	}
 #endif
 
+	[app setUp];
 	[app run];
 
 	DESTROY(app);

@@ -38,6 +38,8 @@ file or write a custom main() function.*/
 - (ETLayoutItemGroup *) layoutItem;
 - (NSMenu *) applicationMenu;
 
+- (void) setUp;
+
 /* Menu Factory */
 
 - (NSMenuItem *) developmentMenuItem;
