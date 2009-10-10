@@ -135,7 +135,7 @@ See also -setView:, -setValue: and -setRepresentedObject:.  */
 	ASSIGN(_transform, [NSAffineTransform transform]);
 	 /* Will be overriden by -setView: when the view is not nil */
 	_autoresizingMask = NSViewNotSizable;
-	_contentAspect = ETContentAspectScaleToFill;
+	_contentAspect = ETContentAspectStretchToFill;
 	_boundingBox = ETNullRect;
 	[self setView: view];
 	[self setFlipped: YES]; /* -setFlipped: must follow -setSupervisorView: */
@@ -809,7 +809,35 @@ this case the receiver becomes a meta item and returns YES for -isMetaLayoutItem
 
 - (unsigned int) autoresizingMaskForContentAspect: (ETContentAspect)anAspect
 {
-	return NSViewHeightSizable | NSViewWidthSizable; // TODO: Implement
+	switch (anAspect)
+	{
+		case ETContentAspectNone:
+		{
+			return ETAutoresizingNone;
+		}
+		case ETContentAspectCentered:
+		{
+			return ETAutoresizingFlexibleLeftMargin | ETAutoresizingFlexibleRightMargin 
+				| ETAutoresizingFlexibleBottomMargin | ETAutoresizingFlexibleTopMargin;
+		}
+		case ETContentAspectScaleToFill:
+		case ETContentAspectScaleToFillHorizontally:
+		case ETContentAspectScaleToFillVertically:
+		case ETContentAspectScaleToFit:
+		{
+			// TODO: May be return ETAutoresizingCustom or ETAutoresizingProportional
+			return ETAutoresizingNone;		
+		}
+		case ETContentAspectStretchToFill:
+		{
+			return ETAutoresizingFlexibleWidth | ETAutoresizingFlexibleHeight;
+		}
+		default:
+		{
+			ASSERT_INVALID_CASE;
+			return ETAutoresizingNone;
+		}
+	}
 }
 
 - (NSRect) contentRectWithRect: (NSRect)aRect 
