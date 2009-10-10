@@ -812,6 +812,39 @@ this case the receiver becomes a meta item and returns YES for -isMetaLayoutItem
 	return NSViewHeightSizable | NSViewWidthSizable; // TODO: Implement
 }
 
+- (NSRect) contentRectWithRect: (NSRect)aRect 
+                 contentAspect: (ETContentAspect)anAspect 
+                    boundsSize: (NSSize)maxSize
+{
+	switch (anAspect)
+	{
+		case ETContentAspectNone:
+		{
+			return aRect;
+		}
+		case ETContentAspectCentered:
+		{
+			return ETCenteredRect(aRect.size, ETMakeRect(NSZeroPoint, maxSize));
+		}
+		case ETContentAspectScaleToFill:
+		case ETContentAspectScaleToFillHorizontally:
+		case ETContentAspectScaleToFillVertically:
+		case ETContentAspectScaleToFit:
+		{
+			return ETScaledRect(aRect.size, ETMakeRect(NSZeroPoint, maxSize), anAspect);	
+		}
+		case ETContentAspectStretchToFill:
+		{
+			return ETMakeRect(NSZeroPoint, maxSize);
+		}
+		default:
+		{
+			ASSERT_INVALID_CASE;
+			return ETNullRect;
+		}
+	}
+}
+
 /** Returns the view associated with the receiver. */
 - (NSView *) view
 {

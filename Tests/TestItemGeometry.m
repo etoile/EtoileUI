@@ -552,3 +552,93 @@ supervisor view geometry (frame). */
 }
 
 @end
+
+
+@interface ETLayoutItem (ContentAspectPrivate)
+- (NSRect) contentRectWithRect: (NSRect)aRect 
+                 contentAspect: (ETContentAspect)anAspect 
+                    boundsSize: (NSSize)maxSize;
+@end
+
+@interface TestItemContentAspect : TestItemGeometry <UKTest>
+{
+	NSRect initialContentRect;
+	NSSize boundsSize;
+}
+
+@end
+
+@implementation TestItemContentAspect
+
+- (id) init
+{
+	SUPERINIT
+	initialContentRect = NSMakeRect(100, 50, 40, 80);
+	boundsSize = NSMakeSize(200, 100);
+	return self;
+}
+
+- (void) testRectForNoneContentAspect
+{
+	NSRect rect = [item contentRectWithRect: initialContentRect
+	                          contentAspect: ETContentAspectNone
+                                 boundsSize: boundsSize];
+
+	UKRectsEqual(initialContentRect, rect);
+}
+
+- (void) testRectForCenteredContentAspect
+{
+	NSRect rect = [item contentRectWithRect: initialContentRect
+	                          contentAspect: ETContentAspectCentered
+                                 boundsSize: boundsSize];
+
+	UKRectsEqual(NSMakeRect(80, 10, 40, 80), rect);
+}
+
+- (void) testRectForStrechContentAspect
+{
+	NSRect rect = [item contentRectWithRect: initialContentRect
+	                          contentAspect: ETContentAspectStretchToFill
+                                 boundsSize: boundsSize];
+
+	UKRectsEqual(ETMakeRect(NSZeroPoint, boundsSize), rect);
+}
+
+- (void) testRectForFillHorizontallyContentAspect
+{
+	NSRect rect = [item contentRectWithRect: initialContentRect
+	                          contentAspect: ETContentAspectScaleToFillHorizontally
+                                 boundsSize: boundsSize];
+
+	UKRectsEqual(NSMakeRect(0, -150, 200, 400), rect);
+}
+
+- (void) testRectForFillVerticallyContentAspect
+{
+	NSRect rect = [item contentRectWithRect: initialContentRect
+	                          contentAspect: ETContentAspectScaleToFillVertically
+                                 boundsSize: boundsSize];
+
+	UKRectsEqual(NSMakeRect(75, 0, 50, 100), rect);
+}
+
+- (void) testRectForFillContentAspect
+{
+	NSRect rect = [item contentRectWithRect: initialContentRect
+	                          contentAspect: ETContentAspectScaleToFill
+                                 boundsSize: boundsSize];
+
+	UKRectsEqual(NSMakeRect(0, -150, 200, 400), rect);
+}
+
+- (void) testRectForFitContentAspect
+{
+	NSRect rect = [item contentRectWithRect: initialContentRect
+	                          contentAspect: ETContentAspectScaleToFit
+                                 boundsSize: boundsSize];
+
+	UKRectsEqual(NSMakeRect(75, 0, 50, 100), rect);
+}
+
+@end

@@ -14,6 +14,56 @@ const NSPoint ETNullPoint = {FLT_MIN, FLT_MIN};
 const NSSize ETNullSize = {FLT_MIN, FLT_MIN};
 const NSRect ETNullRect = {{FLT_MIN, FLT_MIN}, {FLT_MIN, FLT_MIN}};
 
+NSRect ETScaledRect(NSSize aSize, NSRect inRect, ETContentAspect anAspect)
+{
+	NSRect newRect = ETMakeRect(NSZeroPoint, aSize);
+	BOOL fillHorizontally = (ETContentAspectScaleToFillHorizontally == anAspect);
+	BOOL fillVertically = (ETContentAspectScaleToFillVertically == anAspect);
+	float widthRatio = inRect.size.width / aSize.width;	
+	float heightRatio = inRect.size.height / aSize.height;
+	BOOL hasPortraitOrientation = (widthRatio > heightRatio);
+
+	if (ETContentAspectScaleToFill == anAspect)
+	{
+		if (hasPortraitOrientation)
+		{
+			fillVertically = NO;
+			fillHorizontally = YES;
+		}
+		else
+		{
+			fillVertically = YES;
+			fillHorizontally = NO;
+		}	
+	}
+	else if (ETContentAspectScaleToFit == anAspect)
+	{
+		if (hasPortraitOrientation)
+		{
+			fillVertically = YES;
+			fillHorizontally = NO;
+		}
+		else
+		{
+			fillVertically = NO;
+			fillHorizontally = YES;
+		}
+	}
+
+	if (fillHorizontally)
+	{
+		newRect.size.height *= widthRatio;
+		newRect.size.width = inRect.size.width;
+	}
+	else if (fillVertically)
+	{
+		newRect.size.width *= heightRatio;
+		newRect.size.height = inRect.size.height;
+	}
+
+	return ETCenteredRect(newRect.size, inRect);
+}
+
 typedef NSRect (*RectIMP)(id, SEL);
 
 /** Returns an union rect computed by iterating over itemArray and unionning the 

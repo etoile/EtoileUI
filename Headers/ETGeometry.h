@@ -15,6 +15,7 @@
 // moved in ETGeometry as expected. In the meantime, this avoids to import 
 // NSView+Etoile.h when only ETGeometry.h should be imported.
 #import <EtoileUI/NSView+Etoile.h>
+#import <EtoileUI/ETLayoutItem.h>
 
 /** The null point which is not equal to NSZeroPoint. It can be returned 
 when a point value is undefined and is a nil-like marker for NSPoint primitive. */
@@ -60,6 +61,15 @@ static inline NSRect ETCenteredRect(NSSize aSize, NSRect inRect)
 
 	return NSMakeRect(x, y, aSize.width, aSize.height);
 }
+
+/** Returns a rect that uses aSize scaled based on the content aspect rule and 
+then centered inside the given rect.
+
+The returned rect is expressed relative the given rect parent coordinate space.<br />
+To get a rect expressed relative the the given rect itself, see ETCenteredRect().
+
+The returned rect origin is valid whether or not your coordinate space is flipped. */
+extern NSRect ETScaledRect(NSSize aSize, NSRect inRect, ETContentAspect anAspect);
 
 /** Returns a rect with a positive width and height by shifting the origin as 
 needed. */
