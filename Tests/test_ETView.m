@@ -10,12 +10,11 @@
 #import <Foundation/Foundation.h>
 #import <Foundation/NSDebug.h>
 #import <AppKit/AppKit.h>
+#import <UnitKit/UnitKit.h>
 #import "ETGeometry.h"
 #import "ETLayoutItem.h"
-#import "ETLayoutItem+Factory.h"
 #import "ETView.h"
 #import "ETCompatibility.h"
-#import <UnitKit/UnitKit.h>
 
 #define UKRectsEqual(x, y) UKTrue(NSEqualRects(x, y))
 #define UKRectsNotEqual(x, y) UKFalse(NSEqualRects(x, y))
@@ -23,11 +22,11 @@
 #define UKPointsNotEqual(x, y) UKFalse(NSEqualPoints(x, y))
 #define UKSizesEqual(x, y) UKTrue(NSEqualSizes(x, y))
 
-@interface ETView (UnitKitTests) <UKTest>
+@interface ETView (TestSupervisorView) <UKTest>
 @end
 
 
-@implementation ETView (UnitKitTests)
+@implementation ETView (TestSupervisorView)
 
 - (id) initForTest
 {
@@ -186,46 +185,11 @@
 #endif
 }
 
-#if 0
-- (void) testArchiving
-{
-	id barView = AUTORELEASE([[NSView alloc] initWithFrame: NSMakeRect(-20, 30, 100, 25)]);
-	id mainView = AUTORELEASE([[NSTextView alloc] initWithFrame: NSMakeRect(0, 0, 100, 80)]);
-
-	[self setTitleBarView: barView];
-	[self setWrappedView: mainView];
-	[self setDisclosable: YES];
-
-	id dummyView = AUTORELEASE([[NSView alloc] initWithFrame: NSMakeRect(0, 0, 50, 50)]);
-	
-	[self addSubview: dummyView];
-	
-	NSData *archive = [NSKeyedArchiver archivedDataWithRootObject: self];
-	id view = [NSKeyedUnarchiver unarchiveObjectWithData: archive];
-
-	//UKNil([view layoutItem]);
-	//UKNotNil([view renderer]);	
-	UKNotNil([view wrappedView]);
-	UKObjectsSame(view, [[view wrappedView] superview]);
-	UKNotNil([view titleBarView]);	
-	UKObjectsSame(view, [[view titleBarView] superview]);
-	UKIntsEqual(3, [[view subviews] count]);
-	UKTrue([view isDisclosable]);
-	UKTrue([view usesCustomTitleBar]);
-}
-#endif
-
-#if 0
-+ (void) testTitleBarViewPrototype
-{
-	UKNotNil([self titleBarViewPrototype]);
-	UKTrue(NSEqualRects(NSMakeRect(0, 0, 100, 50), [[self titleBarViewPrototype] frame]));
-}
-#endif
-
 - (NSView *) dummyView
 {
-	return AUTORELEASE([[NSView alloc] initWithFrame: NSMakeRect(-20, 30, 100, 25)]);
+	NSView *view = AUTORELEASE([[NSView alloc] initWithFrame: NSMakeRect(-20, 30, 100, 25)]);
+	[view setAutoresizingMask: NSViewWidthSizable | NSViewHeightSizable];
+	return view;
 }
 
 - (void) checkContentView: (NSView *)contentView
@@ -254,76 +218,15 @@
 	[self checkContentView: contentView];
 }
 
-#if 0
-- (void) testTitleBarView
-{
-	UKNotNil([self titleBarView]);
-	// FIXME: We need something like -isEqual: and -isMemberOfClass: to test 
-	// whether an instance is a clone of a given object or not.
-	//UKTrue([[self titleBarView] isMemberOfClass: [[self titleBarViewPrototype] class]]);
-}
-
-- (void) testSetTitleBarView
-{
-	id barView = AUTORELEASE([[NSView alloc] initWithFrame: NSMakeRect(-20, 30, 100, 25)]);
-	id mainView = AUTORELEASE([[NSView alloc] initWithFrame: NSMakeRect(0, 0, 100, 80)]);
-	
-	/* Main view check */
-	[self setWrappedView: mainView];
-	
-	UKObjectsSame(mainView, [self contentView]);
-	UKObjectsSame(mainView, [self mainView]); /* May be invalid in subclasses */
-	UKObjectsSame(self, [mainView superview]);
-	UKTrue(NSEqualSizes([self frame].size, [mainView frame].size));
-	UKTrue(NSEqualPoints(NSZeroPoint, [mainView frame].origin));
-	
-	/* Title bar view check */
-	[self setDisclosable: YES];
-	[self setTitleBarView: barView]; /* -useCustomTitleBar will now  return YES */
-	
-	UKObjectsSame(mainView, [self contentView]);
-	UKObjectsSame(mainView, [self mainView]);
-	UKObjectsSame(self, [mainView superview]);
-	// NOTE: Next test will fail if the receiver frame is a zero rect because 
-	// then mainView frame is set to a zero rect too in -tile. -init calls 
-	// -initWithFrame: with a zero rect, hence the need for -initForTest.
-	UKFalse(NSEqualSizes([self frame].size, [mainView frame].size));
-	UKTrue(NSEqualPoints(NSMakePoint(0, [barView height]), [mainView frame].origin));
-	
-	UKObjectsSame(barView, [self titleBarView]);
-	UKObjectsSame(self, [barView superview]);
-	UKIntsEqual(0, [barView x]);	
-	UKIntsEqual(0, [barView y]);
-	UKIntsEqual([mainView width], [barView width]);
-	UKIntsEqual(25, [barView height]);
-	/* Flipped:	UKFloatsEqual(0, [[self titleBarView] y]); */
-	
-	NSLog(@"---------------- >>> rect content %@", NSStringFromRect([[self mainView] frame]));
-	NSLog(@"---------------- >>> rect title bar %@", NSStringFromRect([[self titleBarView] frame]));
-
-	id barViewProto = AUTORELEASE([[NSView alloc] initWithFrame: NSMakeRect(-20, 30, 100, 25)]);
-	
-	/* Test usesCustomTitleBar equals YES */
-	[[self class] setTitleBarViewPrototype: barViewProto];
-	UKObjectsSame(barView, [self titleBarView]);
-	
-	/* Test usesCustomTitleBar equals NO */
-	[self setTitleBarView: nil]; /* -useCustomTitleBar will now  return NO */
-	[[self class] setTitleBarViewPrototype: barViewProto];
-	UKNotNil([self titleBarView]);
-	UKObjectsNotSame(barView, [self titleBarView]);
-}
-#endif
-
 - (void) testLayoutItem
 {
 	UKNotNil([self layoutItem]);
 	UKObjectsSame(self, [[self layoutItem] supervisorView]);
 }
 
-- (void) testSetLayoutItem
+- (void) testSetItem
 {
-	id theItem = [ETLayoutItem item];
+	id theItem = AUTORELEASE([[ETLayoutItem alloc] init]);
 	
 	[self setItem: theItem];
 
@@ -333,7 +236,7 @@
 
 - (void) testSetLayoutItemWithoutInsertingView
 {
-	id theItem = [ETLayoutItem item];
+	id theItem = AUTORELEASE([[ETLayoutItem alloc] init]);
 	
 	[self setLayoutItemWithoutInsertingView: theItem];
 	
@@ -341,39 +244,5 @@
 	UKObjectsSame(theItem, [self layoutItem]);
 	UKNil([theItem view]);
 }
-
-#if 0
-- (void) testSetDisclosable
-{
-	[self setDisclosable: YES];
-	UKTrue([[self subviews] containsObject: [self titleBarView]]);
-	
-	[self setDisclosable: NO];
-	
-	UKFalse([[self subviews] containsObject: [self titleBarView]]);
-}
-
-- (void) testExpand
-{
-	[self setDisclosable: YES];
-	
-	[self expand: nil];
-	UKTrue([[self subviews] containsObject: [self titleBarView]]);
-	
-	[self collapse: nil];
-	[self expand: nil];
-	UKTrue([[self subviews] containsObject: [self titleBarView]]);
-}
-
-- (void) testCollapse
-{
-	[self setDisclosable: YES];
-	UKTrue([[self subviews] containsObject: [self titleBarView]]);
-	
-	[self setDisclosable: NO];
-	
-	UKFalse([[self subviews] containsObject: [self titleBarView]]);
-}
-#endif
 
 @end

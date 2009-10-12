@@ -297,6 +297,9 @@ and centers it. A strech is a scale that doesn't preserve the content proportion
 - (void) setAutoresizingMask: (ETAutoresizing)mask;
 - (ETContentAspect) contentAspect;
 - (void) setContentAspect: (ETContentAspect)anAspect;
+- (NSRect) contentRectWithRect: (NSRect)aRect 
+                 contentAspect: (ETContentAspect)anAspect 
+                    boundsSize: (NSSize)maxSize;
 
 /* Events & Actions */
 

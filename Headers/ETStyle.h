@@ -103,6 +103,8 @@ a custom style object. */
 	float _labelMargin;
 	BOOL _labelVisible;
 	NSDictionary *_labelAttributes;
+	NSSize _maxImageSize;
+	float _edgeInset;
 }
 
 + (NSDictionary *) standardLabelAttributes;
@@ -130,10 +132,25 @@ a custom style object. */
 - (void) setLabelAttributes: (NSDictionary *)stringAttributes;
 - (NSRect) rectForLabel: (NSString *)aLabel ofItem: (ETLayoutItem *)anItem;
 - (NSString *) labelForItem: (ETLayoutItem *)anItem;
-
 // TODO: Implement
 //- (BOOL) setLabelVisible: (BOOL)flag;
 //- (BOOL) isLabelVisible;
+
+/* Image & View */
+
+- (NSSize) maxImageSize;
+- (void) setMaxImageSize: (NSSize)aSize;
+- (NSRect) rectForImage: (NSImage *)anImage 
+                 ofItem: (ETLayoutItem *)anItem;
+- (NSRect) rectForImage: (NSImage *)anImage 
+                 ofItem: (ETLayoutItem *)anItem
+          withLabelRect: (NSRect)labelRect;
+- (NSRect) rectForViewOfItem: (ETLayoutItem *)anItem;
+- (NSRect) rectForViewOfItem: (ETLayoutItem *)anItem
+               withLabelRect: (NSRect)labelRect;
+
+- (float) edgeInset;
+- (void) setEdgeInset: (float)anInset;
 
 @end
 

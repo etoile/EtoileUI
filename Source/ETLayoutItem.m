@@ -35,6 +35,7 @@ NSString *ETLayoutItemLayoutDidChangeNotification = @"ETLayoutItemLayoutDidChang
 #define VARIABLE_PROPERTIES ((NSMutableDictionary *)[self variableProperties])
 
 @interface ETLayoutItem (Private)
+- (void) setViewAndSync: (NSView *)newView;
 - (NSRect) bounds;
 - (void) setBoundsSize: (NSSize)size;
 - (NSPoint) centeredAnchorPoint;
@@ -137,7 +138,7 @@ See also -setView:, -setValue: and -setRepresentedObject:.  */
 	_autoresizingMask = NSViewNotSizable;
 	_contentAspect = ETContentAspectStretchToFill;
 	_boundingBox = ETNullRect;
-	[self setView: view];
+	[self setViewAndSync: view];
 	[self setFlipped: YES]; /* -setFlipped: must follow -setSupervisorView: */
 	_visible = YES;
 
@@ -884,7 +885,7 @@ provided by the widget backend.
 
 The receiver autoresizing mask will be updated to match the given view, and 
 the default frame and frame to match this view frame. */
-- (void) setView: (NSView *)newView
+- (void) setViewAndSync: (NSView *)newView
 {
 	id view = [[self supervisorView] wrappedView];
 	// NOTE: Frame is lost when newView becomes a subview of an ETView instance
@@ -915,6 +916,24 @@ the default frame and frame to match this view frame. */
 		[newView setAutoresizingMask: 
 			[self autoresizingMaskForContentAspect: [self contentAspect]]];
 	}
+}
+
+/** Sets the view associated with the receiver. This view is commonly a widget 
+provided by the widget backend. */
+- (void) setView: (NSView *)newView
+{
+	ETView *supervisorView = [self supervisorView];
+
+	if (newView != nil)
+	{
+		supervisorView = [self setUpSupervisorViewWithFrame: [self frame]];
+		NSParameterAssert(NSEqualSizes([self contentBounds].size, [supervisorView frame].size));
+
+		[newView setAutoresizingMask: [self autoresizingMaskForContentAspect: [self contentAspect]]];
+		/* The view frame will be adjusted by -[ETView tileContentView:temporary:]
+		which invokes -contentRectWithRect:contentAspect:boundsSize:. */
+	}
+	[supervisorView setWrappedView: newView];
 }
 
 /** Returns whether the view used by the receiver is a widget. 

@@ -27,6 +27,10 @@
 #define UKSizesEqual(x, y) UKTrue(NSEqualSizes(x, y))
 #define UKSizesNotEqual(x, y) UKFalse(NSEqualSizes(x, y))
 
+@interface ETLayoutItem (Private)
+- (void) setViewAndSync: (NSView *)newView;
+@end
+
 @implementation ETLayoutItem (TestItemGeometry)
 
 /* For test, patch the framework implementation. */
@@ -105,7 +109,7 @@ static unsigned int sizableMask = (NSViewWidthSizable | NSViewHeightSizable);
 	UKIntsEqual(initialMask, [[item supervisorView] autoresizingMask]);
 	UKIntsEqual(sizableMask, [[item view] autoresizingMask]);
 	
-	[item setView: nil];
+	[item setViewAndSync: nil];
 	
 	UKIntsEqual(NSViewNotSizable, [item autoresizingMask]);
 	UKIntsEqual(NSViewNotSizable, [[item supervisorView] autoresizingMask]);
@@ -115,7 +119,7 @@ static unsigned int weirdMask = (NSViewMaxXMargin | NSViewMinYMargin | NSViewHei
 
 - (void) testAutoresizingMaskWithView
 {
-	[item setView: [self textFieldWithAutoresizingMask: weirdMask]];
+	[item setViewAndSync: [self textFieldWithAutoresizingMask: weirdMask]];
 
 	[self checkViewAutoresizingMask: weirdMask];
 }
@@ -136,8 +140,8 @@ and -setAutoresizingMask: can potentially erase each other. */
 
 - (void) testAutoresizingMaskForSupervisorViewRemoval
 {
-	[item setView: [self textFieldWithAutoresizingMask: NSViewMaxXMargin]];
-	[item setView: nil];
+	[item setViewAndSync: [self textFieldWithAutoresizingMask: NSViewMaxXMargin]];
+	[item setViewAndSync: nil];
 	[item setAutoresizingMask: NSViewMinYMargin];
 	
 	UKIntsEqual(NSViewMinYMargin, [[item supervisorView] autoresizingMask]);
@@ -149,7 +153,7 @@ and -setAutoresizingMask: can potentially erase each other. */
 
 - (void) testInvalidSetAutoresizingMask
 {
-	[item setView: [self textFieldWithAutoresizingMask: NSViewMaxXMargin]];	
+	[item setViewAndSync: [self textFieldWithAutoresizingMask: NSViewMaxXMargin]];	
 	/* Framework user must never do that */
 	[[item supervisorView] setAutoresizingMask: sizableMask];
 	
@@ -158,7 +162,7 @@ and -setAutoresizingMask: can potentially erase each other. */
 
 - (void) testAutoresizingMaskWithDecoratorItem
 {
-	[item setView: [self textFieldWithAutoresizingMask: weirdMask]];
+	[item setViewAndSync: [self textFieldWithAutoresizingMask: weirdMask]];
 	[item setDecoratorItem: [ETDecoratorItem itemWithDummySupervisorView]];
 
 	UKIntsEqual(weirdMask, [item autoresizingMask]);
@@ -170,7 +174,7 @@ and -setAutoresizingMask: can potentially erase each other. */
 
 - (void) testAutoresizingMaskForDecoratorItemRemoval
 {
-	[item setView: [self textFieldWithAutoresizingMask: weirdMask]];
+	[item setViewAndSync: [self textFieldWithAutoresizingMask: weirdMask]];
 	[item setDecoratorItem: [ETDecoratorItem itemWithDummySupervisorView]];
 	[item setDecoratorItem: nil];
 
@@ -181,7 +185,7 @@ and -setAutoresizingMask: can potentially erase each other. */
 
 - (void) testAutoresizingMaskWithScrollableAreaItem
 {
-	[item setView: [self textFieldWithAutoresizingMask: weirdMask]];
+	[item setViewAndSync: [self textFieldWithAutoresizingMask: weirdMask]];
 	[item setDecoratorItem: [ETScrollableAreaItem item]];
 
 	UKIntsEqual(weirdMask, [item autoresizingMask]);
@@ -461,7 +465,7 @@ on the layout item internal geometry (contentBounds and position). */
 
 	UKRectsNotEqual([item frame], sliderFrame); /* Important precondition */
 
-	[item setView: slider]; /* Will insert a supervisor view */
+	[item setViewAndSync: slider]; /* Will insert a supervisor view */
 
 	[self checkGeometrySynchronizationWithFrame: sliderFrame 
 		oldItemOrigin: oldOrigin oldItemPosition: oldPosition];
@@ -472,7 +476,7 @@ on the layout item internal geometry (contentBounds and position). */
 layout item internal geometry (contentBounds and position). */
 - (void) testSupervisorViewToItemGeometrySynchronization
 {
-	[item setView: AUTORELEASE([[NSSlider alloc] init])];
+	[item setViewAndSync: AUTORELEASE([[NSSlider alloc] init])];
 
 	NSPoint oldPosition = [item position];
 	NSPoint oldOrigin = [item origin];
@@ -493,7 +497,7 @@ layout item internal geometry (contentBounds and position). */
 supervisor view geometry (frame). */
 - (void) testItemToSupervisorViewGeometrySynchronization
 {
-	[item setView: AUTORELEASE([[NSSlider alloc] init])];
+	[item setViewAndSync: AUTORELEASE([[NSSlider alloc] init])];
 
 	NSPoint oldPosition = [item position];
 	NSPoint oldOrigin = [item origin];
@@ -514,7 +518,7 @@ supervisor view geometry (frame). */
 supervisor view geometry (frame). */
 - (void) testSupervisorViewToDecoratedItemGeometrySynchronization
 {
-	[item setView: AUTORELEASE([[NSSlider alloc] init])];
+	[item setViewAndSync: AUTORELEASE([[NSSlider alloc] init])];
 	[item setDecoratorItem: [ETWindowItem item]];
 
 	NSPoint oldPosition = [item position];
@@ -534,7 +538,7 @@ supervisor view geometry (frame). */
 
 - (void) testGeometrySynchronizationForDecoratorRemoval
 {
-	[item setView: AUTORELEASE([[NSSlider alloc] init])];
+	[item setViewAndSync: AUTORELEASE([[NSSlider alloc] init])];
 	[item setDecoratorItem: [ETWindowItem item]];
 
 	NSRect newFrame = NSMakeRect(500, 700, 30, 40);

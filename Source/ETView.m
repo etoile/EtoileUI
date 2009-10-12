@@ -330,8 +330,7 @@ Default returned value is YES. */
 /** This method is only exposed to be used internally by EtoileUI.<br />
 You must never call this method but -[ETLayoutItem setFlipped:].
 
-Unlike NSView, ETContainer uses flipped coordinates by default in order to 
-simplify layout computation.
+Unlike NSView, ETView uses flipped coordinates by default.
 
 You can revert to non-flipped coordinates by passing NO to this method. */
 - (void) setFlipped: (BOOL)flag
@@ -347,20 +346,30 @@ You can revert to non-flipped coordinates by passing NO to this method. */
 
 /* Embbeded Views */
 
-/** This method is only exposed to be used internally by EtoileUI. 
-
-Recomputes the positioning of the main view. */
-- (void) tile
+/* When a temporary view is just removed and the wrapped view is reinserted, 
+isTemporary is NO and the code below takes care to resize the wrapped view 
+to match the supervisor view size. The supervisor view may have been resized 
+when the temporary view was in use. */
+- (void) tileContentView: (NSView *)view temporary: (BOOL)isTemporary
 {
-	id mainView = [self mainView];
-	
-	/* Reset main view frame to fill the receiver */
-	[mainView setFrameOrigin: NSZeroPoint];
-	[mainView setFrameSize: [self frame].size];
-	
-	/* Reset autoresizing */
-	[mainView setAutoresizingMask: NSViewHeightSizable | NSViewWidthSizable];
-	[self setAutoresizesSubviews: YES];
+	if ([item isLayoutItem] && NO == isTemporary)
+	{
+		/* We don't touch the autoresizing mask previously set by the user or in 
+		   -[ETLayoutItem setView:] by with -autoresizingMaskForContentAspect: */
+		[view setFrame: [item contentRectWithRect: [view frame]
+		                            contentAspect: [item contentAspect]
+		                               boundsSize: [self frame].size]];	
+	}
+	else
+	{
+		/* Reset frame to fill the receiver */
+		[view setFrameOrigin: NSZeroPoint];
+		[view setFrameSize: [self frame].size];
+		
+		/* Reset autoresizing */
+		[view setAutoresizingMask: NSViewHeightSizable | NSViewWidthSizable];
+		[self setAutoresizesSubviews: YES];
+	}
 }
 
 /** Sets the item view.<br />
@@ -375,11 +384,9 @@ You must never call this method but -[ETLayoutItem setView:]. */
 	NSAssert([[self temporaryView] isEqual: view] == NO, @"A temporary view "
 		"cannot be set as a wrapped view.");
 
-	// NOTE: Next lines must be kept in this precise order and -tile not moved
-	// into -setContentView:temporary:
 	[self setContentView: view temporary: NO];
 	ASSIGN(_wrappedView, view);
-	[self tile]; /* Update view layout */
+	[self tileContentView: view temporary: NO];
 }
 
 /** Returns the item view.<br />
@@ -399,11 +406,16 @@ If you pass nil, the visible view is reverted to -wrappedView. */
 	NSAssert([[self wrappedView] isEqual: subview] == NO, @"A wrapped view "
 		"cannot be set as a temporary view.");
 
-	// NOTE: Next lines must be kept in this precise order and -tile not moved
-	// into -setContentView:temporary:
 	[self setContentView: subview temporary: YES];
 	_temporaryView = subview;
-	[self tile]; /* Update view layout */
+	if (nil != subview)
+	{
+		[self tileContentView: subview temporary: YES];
+	}
+	else
+	{
+		[self tileContentView: _wrappedView temporary: NO];
+	}
 }
 
 /** Returns the view temporarily used as a wrapped view or nil.
@@ -449,11 +461,7 @@ installed by the layout. */
 	return NO;
 }
 
-/** This method is only exposed to be used internally by EtoileUI. 
-
-You must override this method in subclasses. 
-
-See -setWrappedView: and -setTemporaryView: documentation which explains the 
+/* See -setWrappedView: and -setTemporaryView: documentation which explains the 
 implemented behavior. */
 - (void) setContentView: (NSView *)view temporary: (BOOL)temporary
 {
@@ -469,10 +477,6 @@ implemented behavior. */
 			view, selSubstring);
 	}
 
-	/* Reset the content view frame to fill the receiver */
-	[view setFrameOrigin: NSZeroPoint];
-	[view setFrameSize: [self frame].size];
-
 	/* Ensure the resizing of all subviews is handled automatically */
 	[self setAutoresizesSubviews: YES];
 
@@ -483,18 +487,13 @@ implemented behavior. */
 		/* In case a temporary view is already in use, we remove it */
 		[[self temporaryView] removeFromSuperview];
 
-
 		if (view != nil)
 		{
-			[view setAutoresizingMask: NSViewWidthSizable | NSViewHeightSizable];
 			[self addSubview: view];
 			[[self wrappedView] setHidden: YES];
 		}
 		else /* Passed a nil temporary view */
 		{
-			/* Restore autoresizing mask */
-			//[[self temporaryView] setAutoresizingMask: [self autoresizingMask]];
-
 			[[self wrappedView] setHidden: NO];
 		}
 	}
@@ -507,13 +506,11 @@ implemented behavior. */
 
 		if (view != nil)
 		{
-			[view setAutoresizingMask: NSViewWidthSizable | NSViewHeightSizable];
 			[self addSubview: view];
 		}
 		else /* Passed a nil wrapped view */
 		{
-			/* Restore autoresizing mask */
-			//[[self wrappedView] setAutoresizingMask: [self autoresizingMask]];
+
 		}
 	}
 }
@@ -535,24 +532,6 @@ return the temporary view. */
 		contentView = [self wrappedView];
 	
 	return contentView;
-}
-
-/* Subclassing */
-
-/** This method is only exposed to be used internally by EtoileUI.
-
-Returns the direct subview of the receiver. The returned value is identical
-to -wrappedView. 
-
-If you write an ETView subclass where the wrapped view is put inside another
-view (like a scroll view), you must override this method to return this 
-superview. 
-
-This method should never be called directly, uses -contentView, -wrappedView
-or -temporaryView instead. */
-- (NSView *) mainView
-{
-	return [self wrappedView];
 }
 
 /* Overriden NSView methods */

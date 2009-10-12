@@ -105,6 +105,7 @@ shared style returned by -currentBarElementStyle.  */
 {
 	[anItem setName: aLabel];
 	[anItem setStyle: aStyle];
+	[anItem setContentAspect: ETContentAspectCentered];
 	[anItem setBoundingBox: [aStyle boundingBoxForItem: anItem]];
 	return anItem;
 }

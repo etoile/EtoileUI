@@ -238,7 +238,9 @@ a label underneath. */
 + (ETBasicItemStyle *) iconAndLabelBarElementStyle
 {
 	ETBasicItemStyle *style = AUTORELEASE([[self alloc] init]);
-	[style setLabelPosition: ETLabelPositionOutsideBottom];
+	[style setLabelPosition: ETLabelPositionInsideBottom];
+	[style setMaxImageSize: NSMakeSize(32, 32)];
+	[style setEdgeInset: 3];
 	return style;
 }
 
@@ -249,6 +251,8 @@ a label underneath. */
 	_isSharedStyle = YES;
 	_labelPosition = ETLabelPositionCentered;
 	ASSIGN(_labelAttributes, [[self class] standardLabelAttributes]);
+	_maxImageSize = ETNullSize;
+	_edgeInset = 0;
 	return self;
 }
 
@@ -262,6 +266,8 @@ DEALLOC(DESTROY(_labelAttributes));
 	newStyle->_labelPosition = _labelPosition;
 	newStyle->_labelMargin = _labelMargin;
 	newStyle->_labelVisible = _labelVisible;
+	newStyle->_maxImageSize = _maxImageSize;
+	newStyle->_edgeInset = _edgeInset;
 
 	return newStyle;
 }
@@ -278,14 +284,14 @@ DEALLOC(DESTROY(_labelAttributes));
 	{
 		[self drawImage: itemImage
 		        flipped: [item isFlipped]
-		         inRect: [item drawingFrame]]; 
+		         inRect: [self rectForImage: itemImage ofItem: item]]; 
 	}
 
 	NSString *itemLabel = [self labelForItem: item];
 
 	if (nil != itemLabel)
 	{
-		ETLog(@"Try to draw label in %@ of %@", NSStringFromRect([self rectForLabel: itemLabel ofItem: item]), item);
+		//ETLog(@"Try to draw label in %@ of %@", NSStringFromRect([self rectForLabel: itemLabel ofItem: item]), item);
 		[itemLabel drawInRect: [self rectForLabel: itemLabel ofItem: item]
 		       withAttributes: _labelAttributes];
 	}
@@ -525,6 +531,121 @@ unless you explicitly set one with -[ETLayoutItem setName:]. */
 {
 	NSRect labelRect = [self rectForLabel: [self labelForItem: anItem] ofItem: anItem];
 	return NSUnionRect([super boundingBoxForItem: anItem], labelRect);
+}
+
+/** Returns the max allowed size to draw to the image
+
+When the image size is superior to this max size, 
+-rectForImage:ofItem: will strink the image drawing area to this size. */
+- (NSSize) maxImageSize
+{
+	return _maxImageSize;
+}
+
+/** Sets the max allowed size to draw the image.
+
+See also -maxImageSize. */
+- (void) setMaxImageSize: (NSSize)aSize
+{
+	_maxImageSize = aSize;
+}
+
+/** <override-never />
+Returns the image drawing area in the given item content bounds. */
+- (NSRect) rectForImage: (NSImage *)anImage 
+                 ofItem: (ETLayoutItem *)anItem
+{
+	NSRect labelRect = [self rectForLabel: [self labelForItem: anItem] ofItem: anItem];
+	return [self rectForImage: anImage 
+	                   ofItem: anItem 
+	            withLabelRect: labelRect];
+}
+
+/** Returns the iamge drawing area in the given item content bounds with enough 
+room for the given label area based on the label position.
+
+If the label position is not inside, the label area is simply ignored. */
+- (NSRect) rectForImage: (NSImage *)anImage 
+                 ofItem: (ETLayoutItem *)anItem
+          withLabelRect: (NSRect)labelRect
+{
+	// TODO: Implement
+	return NSZeroRect;
+}
+
+/** <override-never />
+Returns the view drawing area in the given item content bounds. */
+- (NSRect) rectForViewOfItem: (ETLayoutItem *)anItem
+{
+	NSRect labelRect = [self rectForLabel: [self labelForItem: anItem] ofItem: anItem];
+	return [self rectForViewOfItem: anItem 
+	                 withLabelRect: labelRect];
+}
+
+/** Returns the view drawing area in the given item content bounds with enough 
+room for the given label area based on the label position.
+
+If the label position is not inside, the label area is simply ignored. */
+- (NSRect) rectForViewOfItem: (ETLayoutItem *)anItem
+               withLabelRect: (NSRect)labelRect
+{
+	NSView *view = [anItem view];
+	NSRect contentBounds = [anItem contentBounds];
+	NSRect insetContentRect = NSInsetRect(contentBounds, _edgeInset, _edgeInset);
+	NSSize viewSize = [view frame].size;
+	NSRect maxViewRect = insetContentRect;
+
+	switch (_labelPosition)
+	{
+		case ETLabelPositionCentered:
+			break;
+		case ETLabelPositionInsideBottom:
+		{
+			if ([anItem isFlipped] == NO)
+			{
+				maxViewRect.origin.y = labelRect.size.height + _labelMargin;	
+			}
+			maxViewRect.size.height -= labelRect.size.height + _labelMargin;
+			break;
+		}
+		case ETLabelPositionNone:
+			return NSZeroRect;
+		default:
+			ASSERT_INVALID_CASE;
+			return NSZeroRect;
+	}
+
+	NSRect viewRect = ETCenteredRect(viewSize, maxViewRect);
+
+	if (viewSize.width > insetContentRect.size.width)
+	{
+		viewRect.size.width = insetContentRect.size.width;
+		viewRect.origin.x = 0;
+	}
+	if (viewSize.height > insetContentRect.size.height)
+	{
+		viewRect.size.height = insetContentRect.size.height;
+		viewRect.origin.y = 0;
+	}
+
+	return viewRect;
+}
+
+/** Returns the inset margin along each item content bounds edge.
+
+The returned value can be used as inset along the item frame edge rather than 
+the content bounds in subclasses. */
+- (float) edgeInset
+{
+	return _edgeInset;
+}
+
+/** Sets the inset margin along each item content bounds edge.
+
+See also -edgeInset. */
+- (void) setEdgeInset: (float)anInset
+{
+	_edgeInset = anInset;
 }
 
 @end

@@ -82,9 +82,4 @@ next EtoileUI release. */
 - (NSView *) temporaryView;
 - (NSView *) contentView;
 
-/* Subclassing */
-
-- (NSView *) mainView;
-- (void) tile;
-
 @end
