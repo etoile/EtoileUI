@@ -80,6 +80,8 @@ typedef enum
 {
 	ETContentAspectNone, 
 /** Lets the content as is. */
+	ETContentAspectComputed, 
+/** Delegates the content position and size computation to -[ETLayoutItem style]. */
 	ETContentAspectCentered, 
 /** Centers the content and never resizes it. */
 	ETContentAspectScaleToFit, 

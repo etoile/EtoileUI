@@ -111,8 +111,8 @@ static unsigned int sizableMask = (NSViewWidthSizable | NSViewHeightSizable);
 	
 	[item setViewAndSync: nil];
 	
-	UKIntsEqual(NSViewNotSizable, [item autoresizingMask]);
-	UKIntsEqual(NSViewNotSizable, [[item supervisorView] autoresizingMask]);
+	UKIntsEqual(initialMask, [item autoresizingMask]);
+	UKIntsEqual(initialMask, [[item supervisorView] autoresizingMask]);
 }
 
 static unsigned int weirdMask = (NSViewMaxXMargin | NSViewMinYMargin | NSViewHeightSizable);

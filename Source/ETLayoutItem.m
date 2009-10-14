@@ -138,20 +138,17 @@ See also -setView:, -setValue: and -setRepresentedObject:.  */
 	_autoresizingMask = NSViewNotSizable;
 	_contentAspect = ETContentAspectStretchToFill;
 	_boundingBox = ETNullRect;
+
+	NSRect frame = (nil != view ? [view frame] : [[self class] defaultItemRect]);
+	/* We must have a valid frame to use -setDefaultFrame:, otherwise this 
+	   method will look up an invalid frame and try to restore it. */
+	[self setFrame: frame];
+	[self setDefaultFrame: frame];
 	[self setViewAndSync: view];
+
 	[self setFlipped: YES]; /* -setFlipped: must follow -setSupervisorView: */
 	_visible = YES;
 
-	if (view == nil)
-	{
-		NSRect frame = [[self class] defaultItemRect];
-
-		/* We must have a valid frame to use -setDefaultFrame:, otherwise this 
-		   method will look up an invalid frame and try to restore it. */
-		[self setFrame: frame];
-		[self setDefaultFrame: frame];
-	}
-    
     return self;
 }
 
@@ -880,47 +877,11 @@ this case the receiver becomes a meta item and returns YES for -isMetaLayoutItem
 	return [[self supervisorView] wrappedView];
 }
 
-/** Sets the view associated with the receiver. This view is commonly a widget 
-provided by the widget backend. 
-
-The receiver autoresizing mask will be updated to match the given view, and 
-the default frame and frame to match this view frame. */
-- (void) setViewAndSync: (NSView *)newView
-{
-	id view = [[self supervisorView] wrappedView];
-	// NOTE: Frame is lost when newView becomes a subview of an ETView instance
-	NSRect newViewFrame = [newView frame];
-	
-	/* Tear down the current view */
-	if (view != nil)
-	{
-		/* Restore view initial state */
-		[view setFrame: [self defaultFrame]];
-	}
-	
 	/* When the view isn't an ETView instance, we wrap it inside a new ETView 
 	   instance to have -drawRect: asking the layout item to render by itself.
 	   Retrieving the display view automatically returns the innermost display
 	   view in the decorator item chain. */
-	if (newView != nil)
-	{
-		[self setDefaultFrame: newViewFrame];
-		[self setUpSupervisorViewWithFrame: [newView frame]];	
-	}
-	[self setAutoresizingMask: [newView autoresizingMask]];
-	[[self supervisorView] setWrappedView: newView];
-
-	/* Set up the new view */
-	if (newView != nil)
-	{
-		[newView setAutoresizingMask: 
-			[self autoresizingMaskForContentAspect: [self contentAspect]]];
-	}
-}
-
-/** Sets the view associated with the receiver. This view is commonly a widget 
-provided by the widget backend. */
-- (void) setView: (NSView *)newView
+- (void) setView: (NSView *)newView autoresizingMask: (ETAutoresizing)autoresizing
 {
 	ETView *supervisorView = [self supervisorView];
 
@@ -929,11 +890,43 @@ provided by the widget backend. */
 		supervisorView = [self setUpSupervisorViewWithFrame: [self frame]];
 		NSParameterAssert(NSEqualSizes([self contentBounds].size, [supervisorView frame].size));
 
-		[newView setAutoresizingMask: [self autoresizingMaskForContentAspect: [self contentAspect]]];
+		[newView setAutoresizingMask: autoresizing];
 		/* The view frame will be adjusted by -[ETView tileContentView:temporary:]
 		which invokes -contentRectWithRect:contentAspect:boundsSize:. */
 	}
 	[supervisorView setWrappedView: newView];
+}
+
+/** Sets the view associated with the receiver. This view is commonly a widget 
+provided by the widget backend. 
+
+The receiver autoresizing mask will be updated to match the given view, and 
+the default frame and frame to match this view frame. */
+- (void) setViewAndSync: (NSView *)newView
+{
+	// NOTE: Frame and autoresizing are lost when newView is inserted into the 
+	// supervisor view.
+	NSRect newViewFrame = [newView frame];
+	unsigned int newViewAutoresizing = [newView autoresizingMask];
+	
+	if (newView != nil)
+	{
+		[self setUpSupervisorViewWithFrame: newViewFrame];
+		NSParameterAssert(nil != [self supervisorView]);
+
+		[self setContentAspect: ETContentAspectStretchToFill];
+		[self setDefaultFrame: newViewFrame];
+		// FIXME: Convert to ETAutoresizing by checking -isFlipped.
+		[self setAutoresizingMask: newViewAutoresizing];
+	}
+	[self setView: newView autoresizingMask: [self autoresizingMaskForContentAspect: [self contentAspect]]];
+}
+
+/** Sets the view associated with the receiver. This view is commonly a widget 
+provided by the widget backend. */
+- (void) setView: (NSView *)newView
+{
+	[self setView: newView autoresizingMask: [self autoresizingMaskForContentAspect: [self contentAspect]]];
 }
 
 /** Returns whether the view used by the receiver is a widget. 
