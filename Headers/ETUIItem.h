@@ -16,6 +16,14 @@
 
 @class ETDecoratorItem, ETLayoutItemGroup, ETView;
 
+/** Enum used internally by EtoileUI to synchronize supervisor view and item 
+properties. */
+typedef enum 
+{
+	ETSyncSupervisorViewToItem,
+	ETSyncSupervisorViewFromItem
+} ETSyncSupervisorView;
+
 // TODO: Turn this class into a mixin and a protocol
 
 /** ETUIItem is an abstract class which serves as a basic item protocol. 
@@ -55,6 +63,7 @@ persistency controller (when CoreObject is installed). */
 
 - (BOOL) isFlipped;
 - (id) supervisorView;
+- (void) setSupervisorView: (ETView *)aView sync: (ETSyncSupervisorView)syncDirection;
 - (void) setSupervisorView: (ETView *)aView;
 - (ETView *) displayView;
 - (void) beginEditingUI;
@@ -103,4 +112,3 @@ persistency controller (when CoreObject is installed). */
 - (ETUIItem *) decoratedItemAtPoint: (NSPoint)aPoint;
 
 @end
-

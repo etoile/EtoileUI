@@ -160,11 +160,11 @@ also ETView. */
 You should never need to call this method.
 
 See also -supervisorView:. */
-- (void) setSupervisorView: (ETView *)supervisorView
+- (void) setSupervisorView: (ETView *)supervisorView sync: (ETSyncSupervisorView)syncDirection
 {
 	 /* isFlipped is also sync in -setFlipped: (see subclasses) */
 	[supervisorView setFlipped: [self isFlipped]];
-	[supervisorView setItemWithoutInsertingView: (id)self];
+	[supervisorView setItemWithoutInsertingView: self];
 	ASSIGN(_view, supervisorView);
 
 	BOOL hasDecorator = (_decoratorItem != nil);
@@ -174,6 +174,11 @@ See also -supervisorView:. */
 		/* Usually results in [_decoratorItem setView: supervisorView] */
 		[_decoratorItem handleDecorateItem: self supervisorView: [self supervisorView] inView: parentView];
 	}
+}
+
+- (void) setSupervisorView: (ETView *)aView
+{
+	[self setSupervisorView: aView sync: ETSyncSupervisorViewToItem];
 }
 
 /** Returns the display view of the receiver. The display view is the last

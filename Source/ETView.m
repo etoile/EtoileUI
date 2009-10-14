@@ -90,12 +90,12 @@ See also -[ETUIItem supervisorView]. */
 	   -setItemWithoutInsertingView: that creates a retain cycle by retaining it. */
 	if (anItem != nil)
 	{
-		[anItem setSupervisorView: self];
+		[anItem setSupervisorView: self sync: ETSyncSupervisorViewFromItem];
 	}
 	else
 	{
 		ETUIItem *newItem = [[[self defaultItemClass] alloc] init];
-		[newItem setSupervisorView: self];
+		[newItem setSupervisorView: self sync: ETSyncSupervisorViewToItem];
 		/* -setSupervisorView: will call back -setItemWithoutInsertingView: 
 		   which retained the item, so we release it.
 
@@ -335,7 +335,10 @@ when the temporary view was in use. */
 		   -[ETLayoutItem setView:] by with -autoresizingMaskForContentAspect: */
 		[view setFrame: [(id)item contentRectWithRect: [view frame]
 		                                contentAspect: [(id)item contentAspect]
-		                                   boundsSize: [self frame].size]];	
+		                                   boundsSize: [self frame].size]];
+		// TODO: For now this is not true when the item is decorated because 
+		// the decorator touches the supervisor view autoresizing directly.
+		//NSParameterAssert([item autoresizingMask] == [self autoresizingMask]);
 	}
 	else
 	{

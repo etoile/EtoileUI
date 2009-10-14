@@ -904,6 +904,7 @@ the default frame and frame to match this view frame. */
 	   view in the decorator item chain. */
 	if (newView != nil)
 	{
+		[self setDefaultFrame: newViewFrame];
 		[self setUpSupervisorViewWithFrame: [newView frame]];	
 	}
 	[self setAutoresizingMask: [newView autoresizingMask]];
@@ -912,7 +913,6 @@ the default frame and frame to match this view frame. */
 	/* Set up the new view */
 	if (newView != nil)
 	{
-		[self setDefaultFrame: newViewFrame];
 		[newView setAutoresizingMask: 
 			[self autoresizingMaskForContentAspect: [self contentAspect]]];
 	}
@@ -1203,11 +1203,23 @@ move the view to a different place in the view hierarchy.
 Throws an exception when item parameter is nil.
 
 See also -supervisorView:. */
-- (void) setSupervisorView: (ETView *)supervisorView
+- (void) setSupervisorView: (ETView *)supervisorView sync: (ETSyncSupervisorView)syncDirection
 {
-	[super setSupervisorView: supervisorView];
+	if (nil != supervisorView)
+	{
+		if (ETSyncSupervisorViewToItem == syncDirection)
+		{
+			[self setFrame: [supervisorView frame]];
+			[self setAutoresizingMask: [supervisorView autoresizingMask]];
+		}
+		else /* ETSyncSupervisorViewFromItem */
+		{
+			[supervisorView setFrame: [self frame]];
+			[supervisorView setAutoresizingMask: [self autoresizingMask]];
+		}
+	}
 
-	[self setFrame: [supervisorView frame]];
+	[super setSupervisorView: supervisorView sync: syncDirection];
 
 	BOOL noDecorator = (_decoratorItem == nil);
 	BOOL hasParent = (_parentItem != nil);
