@@ -30,8 +30,18 @@ NSWindow methods: -setDelegate:, -setAcceptsMouseMovedEvents: and
 	BOOL _shouldKeepWindowFrame;
 }
 
+/* Factory Methods */
+
++ (ETWindowItem *) itemWithWindow: (NSWindow *)window;
++ (ETWindowItem *) fullScreenItem;
++ (ETWindowItem *) transparentFullScreenItem;
+
+/* Initialization */
+
 - (id) initWithWindow: (NSWindow *)window;
 - (id) init;
+
+/* Main Accessors */
 
 - (NSWindow *) window;
 - (BOOL) usesCustomWindowTitle;

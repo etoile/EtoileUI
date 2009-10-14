@@ -57,6 +57,16 @@ NSScrollView terminology isn't not really clear (especially when you consider
 the role played by -contentView in other AppKit view classes). */
 @implementation ETScrollableAreaItem
 
+/** Returns a new scrollable area item to which the given concrete scroll view 
+gets bound. 
+
+The returned item can be used as a decorator to wrap an existing layout item 
+into a scrollable area. */
++ (ETScrollableAreaItem *) itemWithScrollView: (NSScrollView *)scrollView
+{
+	return AUTORELEASE([[self alloc] initWithScrollView: scrollView]);
+}
+
 - (NSScrollView *) scrollView
 {
 	return (NSScrollView *)[[self supervisorView] wrappedView];

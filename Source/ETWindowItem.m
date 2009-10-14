@@ -23,6 +23,49 @@
 
 @implementation ETWindowItem
 
+/* Factory Methods */
+
+/** Returns a new window item to which the given concrete window gets bound. 
+
+The returned item can be used as a decorator to wrap an existing layout item 
+into a window. */
++ (ETWindowItem *) itemWithWindow: (NSWindow *)window
+{
+	return AUTORELEASE([[self alloc] initWithWindow: window]);
+}
+
+/** Returns a new window item to which a fullscreen concrete window gets bound.
+
+The returned item can be used as a decorator to make an existing layout item 
+full screen. 
+
+The concrete window class used is ETFullScreenWindow. */
++ (ETWindowItem *) fullScreenItem
+{
+	ETWindowItem *window = [self itemWithWindow: AUTORELEASE([[ETFullScreenWindow alloc] init])];
+	[window setShouldKeepWindowFrame: YES];
+	return window;
+}
+
+/** Returns a new window item to which a fullscreen concrete window gets bound.
+This window has a transparent background.
+ 
+The returned item can be used as a decorator to make an existing layout item 
+full screen. 
+ 
+The concrete window class used is ETFullScreenWindow. */
++ (ETWindowItem *) transparentFullScreenItem
+{
+	NSWindow *window = AUTORELEASE([[ETFullScreenWindow alloc] init]);
+	[window setOpaque: NO];
+	[window setBackgroundColor: [NSColor clearColor]];
+	ETWindowItem *windowItem = [self itemWithWindow: window];
+	[windowItem setShouldKeepWindowFrame: YES];
+	return windowItem;
+}
+
+/* Initialization */
+
 /** <init />
 Initializes and returns a new window decorator with a hard window (provided by 
 the widget backend) and its next responder. 
@@ -125,6 +168,8 @@ If window is nil, the receiver creates a standard widget backend window. */
 
 	return newItem;
 }
+
+/* Main Accessors */
 
 /** Returns YES when the receiver window has no title, otherwise returns NO. */
 - (BOOL) isUntitled

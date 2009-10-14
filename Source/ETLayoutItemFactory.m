@@ -405,57 +405,6 @@ to set no represented object on a menu entry. */
 	return [self itemWithView: popUpView];
 }
 
-/* Decorator Item Factory Methods */
-
-/** Returns a new window item to which the given concrete window gets bound. 
-
-The returned item can be used as a decorator to wrap an existing layout item 
-into a window. */
-- (ETWindowItem *) itemWithWindow: (NSWindow *)window
-{
-	return AUTORELEASE([[ETWindowItem alloc] initWithWindow: window]);
-}
-
-/** Returns a new window item to which a fullscreen concrete window gets bound.
-
-The returned item can be used as a decorator to make an existing layout item 
-full screen. 
-
-The concrete window class used is ETFullScreenWindow. */
-- (ETWindowItem *) fullScreenWindow
-{
-	ETWindowItem *window = [self itemWithWindow: AUTORELEASE([[ETFullScreenWindow alloc] init])];
-	[window setShouldKeepWindowFrame: YES];
-	return window;
-}
-
-/** Returns a new window item to which a fullscreen concrete window gets bound.
- This window has a transparent background.
- 
- The returned item can be used as a decorator to make an existing layout item 
- full screen. 
- 
- The concrete window class used is ETFullScreenWindow. */
-- (ETWindowItem *) transparentFullScreenWindow
-{
-	NSWindow *window = AUTORELEASE([[ETFullScreenWindow alloc] init]);
-	[window setOpaque: NO];
-	[window setBackgroundColor: [NSColor clearColor]];
-	ETWindowItem *windowItem = [self itemWithWindow: window];
-	[windowItem setShouldKeepWindowFrame: YES];
-	return windowItem;
-}
-
-/** Returns a new scrollable area item to which the given concrete scroll view 
-gets bound. 
-
-The returned item can be used as a decorator to wrap an existing layout item 
-into a scrollable area. */
-- (ETScrollableAreaItem *) itemWithScrollView: (NSScrollView *)scrollView
-{
-	return AUTORELEASE([[ETScrollableAreaItem alloc] initWithScrollView: scrollView]);
-}
-
 /* Layer Factory Methods */
 
 /** Returns a new blank layer. 
@@ -702,4 +651,25 @@ width and height of +[ETShape defaultShapeRect]. */
 
 
 @implementation ETUIItemFactory
+
+- (ETWindowItem *) itemWithWindow: (NSWindow *)window
+{
+	return [ETWindowItem itemWithWindow: window];
+}
+
+- (ETWindowItem *) fullScreenWindow
+{
+	return [ETWindowItem fullScreenItem];
+}
+
+- (ETWindowItem *) transparentFullScreenWindow
+{
+	return [ETWindowItem transparentFullScreenItem];
+}
+
+- (ETScrollableAreaItem *) itemWithScrollView: (NSScrollView *)scrollView
+{
+	return [ETScrollableAreaItem itemWithScrollView: scrollView];
+}
+
 @end

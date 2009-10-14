@@ -28,6 +28,8 @@ decorated item returns NO to -isFlipped. */
 	BOOL _ensuresContentFillsVisibleArea;
 }
 
++ (ETScrollableAreaItem *) itemWithScrollView: (NSScrollView *)scrollView;
+
 - (id) initWithScrollView: (NSScrollView *)aScrollView;
 
 - (NSRect) visibleRect;
