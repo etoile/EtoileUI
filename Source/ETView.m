@@ -86,8 +86,7 @@ See also -[ETUIItem supervisorView]. */
 		return nil;
 
 	/* In both cases, the item will be set by calling 
-	   -setLayoutItemWithoutInsertingView: that creates a retain cycle by
-		retaining it. */
+	   -setItemWithoutInsertingView: that creates a retain cycle by retaining it. */
 	if (anItem != nil)
 	{
 		[anItem setSupervisorView: self];
@@ -96,20 +95,18 @@ See also -[ETUIItem supervisorView]. */
 	{
 		ETUIItem *newItem = [[[self defaultItemClass] alloc] init];
 		[newItem setSupervisorView: self];
-		/* -setSupervisorView: will call back -setLayoutItemWithoutInsertingView: 
+		/* -setSupervisorView: will call back -setItemWithoutInsertingView: 
 		   which retained the item, so we release it.
 
-		   In any cases, we avoid to call +layoutItem (and eliminate the 
-		   last line RELEASE as a byproduct) in order to simplify the 
-		   testing of the retain cycle with 
-		   GSDebugAllocationCount([ETLayoutItem class]). By not creating an 
-		   autoreleased instance, we can ensure that releasing the receiver 
-		   will dealloc the layout item immediately and won't delay it until 
-		   the autorelease pool is deallocated.
-		 */
+		   In any cases, we avoid to call +layoutItem (and eliminate the last 
+		   line RELEASE as a byproduct) in order to simplify the testing of the 
+		   retain cycle with GSDebugAllocationCount([ETLayoutItem class]). By 
+		   not creating an autoreleased instance, we can ensure that releasing 
+		   the receiver will dealloc the layout item immediately and won't delay 
+		   it until the autorelease pool is deallocated. */
 		RELEASE(newItem);
 	}
-	[self setAutoresizesSubviews: YES];	/* NSView set up */
+	[self setAutoresizesSubviews: YES];
 
 	return self;
 }
