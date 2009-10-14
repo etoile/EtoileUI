@@ -44,6 +44,7 @@
 #import "ETActionHandler.h"
 #import "ETLayoutItem+Scrollable.h"
 #import "ETEvent.h"
+#import "ETLayoutItem.h"
 #import "ETLayoutItemGroup.h"
 #import "ETLayout.h"
 #import "ETLayer.h"
@@ -64,7 +65,7 @@
 
 - (id) initWithFrame: (NSRect)rect item: (ETUIItem *)anItem
 {
-	if (anItem != nil && [anItem isGroup] == NO)
+	if (anItem != nil && [anItem isLayoutItem] && [(ETLayoutItem *)anItem isGroup] == NO)
 	{
 		[NSException raise: NSInvalidArgumentException format: @"Layout item "
 			@"parameter %@ must be of class ETLayoutItemGroup for initializing "

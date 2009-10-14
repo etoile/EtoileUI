@@ -552,11 +552,11 @@ NSAssert1(size.width >= 0 && size.height >= 0, @"For a supervisor view, the " \
 
 	if ([item decoratorItem] == nil)
 	{
-		[item setSize: size];
+		[(ETLayoutItem *)item setSize: size];
 	}
 	else
 	{
-		[item setContentSize: size];
+		[(ETLayoutItem *)item setContentSize: size];
 	}
 }
 
@@ -568,7 +568,7 @@ NSAssert1(size.width >= 0 && size.height >= 0, @"For a supervisor view, the " \
 
 	if ([item decoratorItem] == nil)
 	{
-		[item setOrigin: origin];
+		[(ETLayoutItem *)item setOrigin: origin];
 	}
 }
 #endif
