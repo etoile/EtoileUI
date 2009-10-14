@@ -224,16 +224,6 @@
 	UKObjectsSame(self, [[self layoutItem] supervisorView]);
 }
 
-- (void) testSetItem
-{
-	id theItem = AUTORELEASE([[ETLayoutItem alloc] init]);
-	
-	[self setItem: theItem];
-
-	[self testLayoutItem];
-	UKObjectsSame(theItem, [self layoutItem]);
-}
-
 - (void) testSetLayoutItemWithoutInsertingView
 {
 	id theItem = AUTORELEASE([[ETLayoutItem alloc] init]);

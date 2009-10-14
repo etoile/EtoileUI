@@ -69,7 +69,6 @@ next EtoileUI release. */
 // TODO: Rename -layoutItem to -item. Will be done separately because it is a 
 // pretty big change which needs to be handled very carefully.
 - (id) layoutItem;
-- (void) setItem: (ETUIItem *)item;
 - (void) setLayoutItemWithoutInsertingView: (ETLayoutItem *)item;
 - (BOOL) isFlipped;
 - (void) setFlipped: (BOOL)flag;

@@ -250,7 +250,7 @@ and centers it. A strech is a scale that doesn't preserve the content proportion
 
 /* Decoration */
 
-- (id) supervisorView;
+- (ETView *) supervisorView;
 - (void) setSupervisorView: (ETView *)supervisorView;
 
 - (ETScrollableAreaItem *) firstScrollViewDecoratorItem;

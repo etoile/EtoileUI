@@ -90,14 +90,14 @@ See also -[ETUIItem supervisorView]. */
 		    retaining it. */
 		if (anItem != nil)
 		{
-			[self setItem: anItem];
+			[anItem setSupervisorView: self];
 		}
 		else
 		{
-			[self setItem: [[[self defaultItemClass] alloc] init]];
-			/* In -setLayoutItem:, -setSupervisorView: has called back 
-			   -setLayoutItemWithoutInsertingView: which retained item, 
-			   so we release it.
+			ETUIItem *newItem = [[[self defaultItemClass] alloc] init];
+			[newItem setSupervisorView: self];
+			/* -setSupervisorView: will call back -setLayoutItemWithoutInsertingView: 
+			   which retained the item, so we release it.
 
 			   In any cases, we avoid to call +layoutItem (and eliminate the 
 			   last line RELEASE as a byproduct) in order to simplify the 
@@ -107,7 +107,7 @@ See also -[ETUIItem supervisorView]. */
 			   will dealloc the layout item immediately and won't delay it until 
 			   the autorelease pool is deallocated.
 			 */
-			RELEASE(item);
+			RELEASE(newItem);
 		}
 		[self setAutoresizesSubviews: YES];	/* NSView set up */
 	}
@@ -276,22 +276,6 @@ Never returns nil. */
 		ETLog(@"WARNING: Item bound to %@ must never be nil", [self primitiveDescription]);
 	}
 	return item;
-}
-
-/** This method is only exposed to be used internally by EtoileUI.<br />
-You should must never call this method.
-
-Sets the item representing the receiver view in the layout item tree. 
-
-The receiver will be added as a subview to the supervisor view bound to the 
-parent item to which the given item belongs to. Which means, this method may 
-move the view to a different place in the view hierarchy.
-
-Throws an exception when item parameter is nil. */
-- (void) setItem: (ETUIItem *)anItem
-{
-	NSParameterAssert(nil != anItem);
-	[anItem setSupervisorView: self];
 }
 
 /** This method is only exposed to be used internally by EtoileUI.<br />

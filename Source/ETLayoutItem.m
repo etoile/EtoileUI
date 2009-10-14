@@ -1187,7 +1187,7 @@ You shouldn't use this method unless you write a subclass.
 The supervisor view is used internally by EtoileUI to support views or widgets 
 provided by the widget backend (e.g. AppKit) within a layout item tree. See 
 also ETView. */
-- (id) supervisorView
+- (ETView *) supervisorView
 {
 	return _view;
 }
@@ -1195,6 +1195,12 @@ also ETView. */
 /** Sets the supervisor view associated with the receiver. 
 
 You should never need to call this method.
+
+The view will be added as a subview to the supervisor view bound to the 
+parent item to which the given item belongs to. Which means, this method may 
+move the view to a different place in the view hierarchy.
+
+Throws an exception when item parameter is nil.
 
 See also -supervisorView:. */
 - (void) setSupervisorView: (ETView *)supervisorView
