@@ -280,13 +280,9 @@ Never returns nil. */
 
 /** This method is only exposed to be used internally by EtoileUI.<br />
 You should must never call this method. */
-- (void) setLayoutItemWithoutInsertingView: (ETLayoutItem *)anItem
+- (void) setItemWithoutInsertingView: (ETUIItem *)anItem
 {	
-	if (anItem == nil)
-	{
-		[NSException raise: NSInvalidArgumentException format: @"For ETView, "
-			@"-setLayoutItem: parameter %@ must be never be nil", anItem];
-	}	
+	NILARG_EXCEPTION_TEST(anItem);
 	ASSIGN(item, anItem); // NOTE: Retain cycle (see -release)
 }
 

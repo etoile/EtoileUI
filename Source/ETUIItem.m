@@ -102,7 +102,7 @@ By default, returns NO. */
 	[self setDecoratorItem: nil];
 
 	newItem->_view = [_view copyWithZone: aZone]; // -release?
-	[newItem->_view setLayoutItemWithoutInsertingView: (id)newItem];
+	[newItem->_view setItemWithoutInsertingView: newItem];
 
 	// NOTE: The decorator set up below must mirror -setDecoratorItem:.
 	ETDecoratorItem *decoratorCopy = [decorator copyWithZone: aZone];
@@ -164,7 +164,7 @@ See also -supervisorView:. */
 {
 	 /* isFlipped is also sync in -setFlipped: (see subclasses) */
 	[supervisorView setFlipped: [self isFlipped]];
-	[supervisorView setLayoutItemWithoutInsertingView: (id)self];
+	[supervisorView setItemWithoutInsertingView: (id)self];
 	ASSIGN(_view, supervisorView);
 
 	BOOL hasDecorator = (_decoratorItem != nil);

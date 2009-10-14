@@ -228,7 +228,7 @@
 {
 	id theItem = AUTORELEASE([[ETLayoutItem alloc] init]);
 	
-	[self setLayoutItemWithoutInsertingView: theItem];
+	[self setItemWithoutInsertingView: theItem];
 	
 	UKNotNil([self layoutItem]);
 	UKObjectsSame(theItem, [self layoutItem]);
