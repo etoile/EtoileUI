@@ -803,7 +803,7 @@ this case the receiver becomes a meta item and returns YES for -isMetaLayoutItem
 	if (supervisorView != nil)
 		return supervisorView;
 
-	supervisorView = [[ETView alloc] initWithFrame: aFrame layoutItem: self];
+	supervisorView = [[ETView alloc] initWithFrame: aFrame item: self];
 	RELEASE(supervisorView);
 	return supervisorView;
 }

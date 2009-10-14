@@ -62,7 +62,7 @@
 	return [ETLayoutItemGroup class];
 }
 
-- (id) initWithFrame: (NSRect)rect layoutItem: (ETLayoutItem *)anItem
+- (id) initWithFrame: (NSRect)rect item: (ETUIItem *)anItem
 {
 	if (anItem != nil && [anItem isGroup] == NO)
 	{
@@ -71,7 +71,7 @@
 			@"an ETContainer instance", anItem];
 	}
 
-	return [super initWithFrame: rect layoutItem: anItem];
+	return [super initWithFrame: rect item: anItem];
 }
 
 @end

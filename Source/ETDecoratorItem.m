@@ -303,7 +303,7 @@ implementation returns the same. */
 	{
 		NSRect newViewFrame = (newView != nil ? [newView frame] : NSZeroRect);
 		ETView *wrapperView = [[ETView alloc] initWithFrame: newViewFrame 
-												 layoutItem: (id)self];
+												 item: self];
 		[self setSupervisorView: wrapperView];
 		RELEASE(wrapperView);
 	}

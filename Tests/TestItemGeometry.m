@@ -79,7 +79,7 @@ DEALLOC(DESTROY(itemFactory); DESTROY(item))
 - (void) testNewSupervisorViewWithFrame
 {
 	NSRect frame = NSMakeRect(-300, 20, 500, 50);
-	ETView *view = AUTORELEASE([[ETView alloc] initWithFrame: frame layoutItem: nil]);
+	ETView *view = AUTORELEASE([[ETView alloc] initWithFrame: frame item: nil]);
 
 	UKRectsEqual(frame, [view frame]);
 	UKRectsEqual(frame, [[view layoutItem] frame]);

@@ -11,6 +11,7 @@
 #import "ETView.h"
 #import "ETDecoratorItem.h"
 #import "ETLayoutItem.h"
+#import "NSObject+EtoileUI.h"
 #import "NSView+Etoile.h"
 #import "ETCompatibility.h"
 #import "ETFlowLayout.h"
@@ -63,7 +64,7 @@
 
 - (id) initWithFrame: (NSRect)frame
 {
-	return [self initWithFrame: frame layoutItem: nil];
+	return [self initWithFrame: frame item: nil];
 }
 
 /** <init /> 
@@ -79,7 +80,7 @@ The returned view uses the item autoresizing mask (see
 -[ETLayoutItem autoresizingMask]).
 
 See also -[ETUIItem supervisorView]. */
-- (id) initWithFrame: (NSRect)frame layoutItem: (ETLayoutItem *)anItem
+- (id) initWithFrame: (NSRect)frame item: (ETUIItem *)anItem
 {
 	self = [super initWithFrame: frame];
 	if (nil == self)
@@ -332,9 +333,9 @@ when the temporary view was in use. */
 	{
 		/* We don't touch the autoresizing mask previously set by the user or in 
 		   -[ETLayoutItem setView:] by with -autoresizingMaskForContentAspect: */
-		[view setFrame: [item contentRectWithRect: [view frame]
-		                            contentAspect: [item contentAspect]
-		                               boundsSize: [self frame].size]];	
+		[view setFrame: [(id)item contentRectWithRect: [view frame]
+		                                contentAspect: [(id)item contentAspect]
+		                                   boundsSize: [self frame].size]];	
 	}
 	else
 	{
@@ -530,11 +531,11 @@ NSAssert1(size.width >= 0 && size.height >= 0, @"For a supervisor view, the " \
 
 	if ([item decoratorItem] == nil)
 	{
-		[item setFrame: frame];
+		[(ETLayoutItem *)item setFrame: frame];
 	}
 	else
 	{
-		[item setContentSize: frame.size];
+		[(ETLayoutItem *)item setContentSize: frame.size];
 	}
 }
 

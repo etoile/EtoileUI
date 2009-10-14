@@ -40,11 +40,11 @@ Take note that we plan to eliminate ETView and the supervisor view concept in a
 next EtoileUI release. */
 @interface ETView : NSView
 {
-	IBOutlet ETLayoutItem *item;
+	IBOutlet ETUIItem *item;
 	// NOTE: May be remove the view ivars to make the class more lightweight
 	NSView *_wrappedView;
-	/* NOTE: _temporaryView is a weak reference (we retain it indirectly as a 
-	   subview though).
+	/* _temporaryView is a weak reference (we retain it indirectly as a subview 
+	   though).
 	   We are owned by our layout item which retains its layout which itself 
 	   retains the layout view. Each time the layout is switched on -layoutItem, 
 	   we must update _temporaryView with -setLayoutView: otherwise the ivar
@@ -59,7 +59,7 @@ next EtoileUI release. */
 	NSRect _rectToRedraw;
 }
 
-- (id) initWithFrame: (NSRect)rect layoutItem: (ETLayoutItem *)item;
+- (id) initWithFrame: (NSRect)rect item: (ETUIItem *)item;
 - (id) initWithLayoutView: (NSView *)layoutView;
 
 - (NSArray *) properties;
