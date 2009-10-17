@@ -6,6 +6,7 @@
 	License: Modified BSD (see COPYING)
  */
 
+#import <EtoileFoundation/Macros.h>
 #import "ETLayoutItemFactory.h"
 #import "ETFreeLayout.h"
 #import "ETGeometry.h"
@@ -30,12 +31,18 @@
 	return AUTORELEASE([[self alloc] init]);
 }
 
+- (id) init
+{
+	SUPERINIT
+	[self setCurrentBarElementStyle: [ETBasicItemStyle iconAndLabelBarElementStyle]];
+	return self;
+}
+
 /** Returns the style applied to all the bar elements to be built. */
 - (ETStyle *) currentBarElementStyle
 {
 	return _currentBarElementStyle;
 }
-
 
 /** Sets the style to apply to all the bar elements to be built. */
 - (void) setCurrentBarElementStyle: (ETStyle *)aStyle
@@ -105,7 +112,7 @@ shared style returned by -currentBarElementStyle.  */
 {
 	[anItem setName: aLabel];
 	[anItem setStyle: aStyle];
-	[anItem setContentAspect: ETContentAspectCentered];
+	[anItem setContentAspect: ETContentAspectComputed];
 	[anItem setBoundingBox: [aStyle boundingBoxForItem: anItem]];
 	return anItem;
 }

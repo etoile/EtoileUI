@@ -491,6 +491,23 @@ indicatorRect is equal to it. */
 			rect = NSMakeRect(itemFrame.size.width + _labelMargin, labelBaseY, labelSize.width, labelSize.height);
 			break;
 		}
+		case ETLabelPositionInsideBottom:
+		{
+			float labelBaseX = (itemFrame.size.width - labelSize.width) / 2;
+			float labelBaseY = 0;
+			
+			if ([anItem isFlipped])
+			{
+				labelBaseY = itemFrame.size.height - labelSize.height - _edgeInset;
+			}
+			else
+			{
+				labelBaseY = _edgeInset;
+			}
+
+			rect = NSMakeRect(labelBaseX, labelBaseY, labelSize.width, labelSize.height);
+			break;
+		}
 		case ETLabelPositionNone:
 			return NSZeroRect;
 		default:
@@ -561,6 +578,53 @@ Returns the image drawing area in the given item content bounds. */
 	            withLabelRect: labelRect];
 }
 
+- (NSRect) rectForAreaSize: (NSSize)aSize 
+                    ofItem: (ETLayoutItem *)anItem
+             withLabelRect: (NSRect)labelRect
+{
+	NSRect contentBounds = [anItem contentBounds];
+	NSRect insetContentRect = NSInsetRect(contentBounds, _edgeInset, _edgeInset);
+	NSSize viewSize = aSize;
+	NSRect maxViewRect = insetContentRect;
+
+	switch (_labelPosition)
+	{
+		case ETLabelPositionCentered:
+			break;
+		case ETLabelPositionInsideBottom:
+		{
+			if ([anItem isFlipped] == NO)
+			{	
+				maxViewRect.origin.y += labelRect.size.height + _labelMargin;	
+			}
+			maxViewRect.size.height -= labelRect.size.height + _labelMargin;
+			break;
+		}
+		case ETLabelPositionNone:
+			return NSZeroRect;
+		default:
+			ASSERT_INVALID_CASE;
+			return NSZeroRect;
+	}
+
+	NSRect viewRect = ETCenteredRect(viewSize, maxViewRect);
+
+	/* When the existing view size was already smaller than the inset area we 
+	   use this view measure rather than the inset area measure. */
+	if (viewSize.width > insetContentRect.size.width)
+	{
+		viewRect.size.width = maxViewRect.size.width;
+		viewRect.origin.x = maxViewRect.origin.x;
+	}
+	if (viewSize.height > insetContentRect.size.height)
+	{
+		viewRect.size.height = maxViewRect.size.height;
+		viewRect.origin.y = maxViewRect.origin.y;
+	}
+
+	return viewRect;
+}
+
 /** Returns the iamge drawing area in the given item content bounds with enough 
 room for the given label area based on the label position.
 
@@ -569,8 +633,9 @@ If the label position is not inside, the label area is simply ignored. */
                  ofItem: (ETLayoutItem *)anItem
           withLabelRect: (NSRect)labelRect
 {
-	// TODO: Implement
-	return NSZeroRect;
+	return [self rectForAreaSize: [anImage size]
+	                      ofItem: anItem
+	               withLabelRect: labelRect];
 }
 
 /** <override-never />
@@ -589,46 +654,9 @@ If the label position is not inside, the label area is simply ignored. */
 - (NSRect) rectForViewOfItem: (ETLayoutItem *)anItem
                withLabelRect: (NSRect)labelRect
 {
-	NSView *view = [anItem view];
-	NSRect contentBounds = [anItem contentBounds];
-	NSRect insetContentRect = NSInsetRect(contentBounds, _edgeInset, _edgeInset);
-	NSSize viewSize = [view frame].size;
-	NSRect maxViewRect = insetContentRect;
-
-	switch (_labelPosition)
-	{
-		case ETLabelPositionCentered:
-			break;
-		case ETLabelPositionInsideBottom:
-		{
-			if ([anItem isFlipped] == NO)
-			{
-				maxViewRect.origin.y = labelRect.size.height + _labelMargin;	
-			}
-			maxViewRect.size.height -= labelRect.size.height + _labelMargin;
-			break;
-		}
-		case ETLabelPositionNone:
-			return NSZeroRect;
-		default:
-			ASSERT_INVALID_CASE;
-			return NSZeroRect;
-	}
-
-	NSRect viewRect = ETCenteredRect(viewSize, maxViewRect);
-
-	if (viewSize.width > insetContentRect.size.width)
-	{
-		viewRect.size.width = insetContentRect.size.width;
-		viewRect.origin.x = 0;
-	}
-	if (viewSize.height > insetContentRect.size.height)
-	{
-		viewRect.size.height = insetContentRect.size.height;
-		viewRect.origin.y = 0;
-	}
-
-	return viewRect;
+	return [self rectForAreaSize: [[anItem view] frame].size
+	                      ofItem: anItem
+	               withLabelRect: labelRect];
 }
 
 /** Returns the inset margin along each item content bounds edge.

@@ -852,6 +852,10 @@ this case the receiver becomes a meta item and returns YES for -isMetaLayoutItem
 		{
 			return ETCenteredRect(aRect.size, ETMakeRect(NSZeroPoint, maxSize));
 		}
+		case ETContentAspectComputed:
+		{
+			return [[self style] rectForViewOfItem: self];
+		}
 		case ETContentAspectScaleToFill:
 		case ETContentAspectScaleToFillHorizontally:
 		case ETContentAspectScaleToFillVertically:
@@ -2276,6 +2280,13 @@ See ETContentAspect enum. */
 - (void) setContentAspect: (ETContentAspect)anAspect
 {
 	_contentAspect = anAspect;
+
+	if ([self view] != nil)
+	{
+		[[self view] setFrame: [self contentRectWithRect: [[self view] frame] 
+		                                   contentAspect: anAspect 
+		                                      boundsSize: _contentBounds.size]];
+	}
 }
 
 /** Returns the image representation associated with the receiver.

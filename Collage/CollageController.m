@@ -11,6 +11,14 @@
 
 @implementation CollageController
 
+- (NSImage *) appImage
+{
+	NSImage *appImg = [NSImage imageNamed: @"NSApplicationIcon"];
+	[appImg setScalesWhenResized: YES];	
+	[appImg setSize: NSMakeSize(32, 32)];
+	return appImg;
+}
+
 - (void) applicationDidFinishLaunching: (NSNotification *)notif
 {
 	ETLayoutItemFactory *itemFactory = [ETLayoutItemFactory factory];
@@ -27,7 +35,7 @@
 	// base located in the bottom left.
 	//[mainItem setFlipped: NO];
 	[mainItem setSize: NSMakeSize(500, 400)];
-	//[mainItem setLayout: [ETFreeLayout layout]];
+	[mainItem setLayout: [ETFreeLayout layout]];
 
 	/* Make mainItem visible by inserting it inside the window layer */
 
@@ -41,14 +49,14 @@
 	[mainItem addItem: [itemFactory button]];
 	[mainItem addItem: [itemFactory rectangle]];
 	[mainItem addItem: [itemFactory oval]];
+	[mainItem addItem: [itemFactory barElementFromItem: [itemFactory button] 
+	                                         withLabel: @"Useless"]];
+	[mainItem addItem: [itemFactory barElementFromItem: [itemFactory itemWithValue: [self appImage]]
+	                                         withLabel: @"Useful"]];
 	/* Selection rubber-band is a layout item too, which means we can use it 
 	   in the same way than other shape-based items... */
 	[mainItem addItem: AUTORELEASE([[ETSelectionAreaItem alloc] init])];
-	[mainItem setLayout: [ETPaneLayout masterDetailLayout]];
-	[[mainItem layout] setBarPosition: ETPanePositionRight];
 
-	[[itemFactory windowGroup] addItem: [mainItem deepCopy]];
-	return;
 	/* ... A less useless use case would be to replace the shape bound to it or 
 	   alter its shape as below. */
 
@@ -60,6 +68,8 @@
 	ETFlowLayout *flow = [ETFlowLayout layout];
 	[flow setItemSizeConstraintStyle: ETSizeConstraintStyleNone];
 	[(ETFreeLayout *)[mainItem layout] resetItemPersistentFramesWithLayout: flow];
+
+	[[itemFactory windowGroup] addItem: [mainItem deepCopy]];
 
 	/* Open an inspector that allows us to easily switch the instrument and the 
 	   layout in use */
