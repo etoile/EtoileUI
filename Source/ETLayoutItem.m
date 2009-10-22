@@ -810,6 +810,7 @@ this case the receiver becomes a meta item and returns YES for -isMetaLayoutItem
 	switch (anAspect)
 	{
 		case ETContentAspectNone:
+		case ETContentAspectComputed:
 		{
 			return ETAutoresizingNone;
 		}
