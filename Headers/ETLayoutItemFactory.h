@@ -57,6 +57,7 @@
 
 - (id) button;
 - (id) buttonWithTitle: (NSString *)aTitle target: (id)aTarget action: (SEL)aSelector;
+- (id) buttonWithImage: (NSImage *)anImage target: (id)aTarget action: (SEL)aSelector;
 - (id) radioButton;
 - (id) checkbox;
 - (id) labelWithTitle: (NSString *)aTitle;

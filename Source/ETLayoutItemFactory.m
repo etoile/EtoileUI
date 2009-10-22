@@ -114,6 +114,16 @@ shared style returned by -currentBarElementStyle.  */
 	[anItem setStyle: aStyle];
 	[anItem setContentAspect: ETContentAspectComputed];
 	[anItem setBoundingBox: [aStyle boundingBoxForItem: anItem]];
+
+	if ([[anItem view] isMemberOfClass: [NSButton class]] 
+	 && [(NSButton *)[anItem view] image] != nil)
+	{
+		[anItem setImage: [(NSButton *)[anItem view] image]];
+		[anItem setAction: [(NSControl *)[anItem view] action]];
+		[anItem setTarget: [(NSControl *)[anItem view] target]];
+		[anItem setView: nil];
+	}
+
 	return anItem;
 }
 
@@ -229,6 +239,21 @@ The returned bar has a flexible width and a fixed height. */
 - (id) button
 {
 	return [self newItemWithViewClass: [NSButton class]];
+}
+
+/** Returns a new layout item that uses a NSButton instance as its view, and 
+initializes this button with the given image, target and action. */
+- (id) buttonWithImage: (NSImage *)anImage target: (id)aTarget action: (SEL)aSelector
+{
+	ETLayoutItem *buttonItem = [self button];
+	NSButton *buttonView = (NSButton *)[buttonItem view];
+
+	[buttonView setImagePosition: NSImageOnly];
+	[buttonView setImage: anImage];
+	[buttonView setTarget: aTarget];
+	[buttonView setAction: aSelector];
+
+	return buttonItem;
 }
 
 /** Returns a new layout item that uses a NSButton instance as its view, and 
