@@ -35,8 +35,17 @@
 {
 	SUPERINIT
 	[self setCurrentBarElementStyle: [ETBasicItemStyle iconAndLabelBarElementStyle]];
+	[self setCurrentBarElementHeight: [self defaultIconAndLabelBarHeight]];
 	return self;
 }
+
+- (void) dealloc
+{
+	DESTROY(_currentBarElementStyle);
+	[super dealloc];
+}
+
+/* Bar Building Settings */
 
 /** Returns the style applied to all the bar elements to be built. */
 - (ETStyle *) currentBarElementStyle
@@ -48,6 +57,30 @@
 - (void) setCurrentBarElementStyle: (ETStyle *)aStyle
 {
 	ASSIGN(_currentBarElementStyle, aStyle);
+}
+
+/** Returns the height applied to all the bar elements to be built. */
+- (float) currentBarElementHeight
+{
+	return _currentBarElementHeight;
+}
+
+/** Sets the height to apply to all the bar elements to be built. */
+- (void) setCurrentBarElementHeight: (float)aHeight
+{
+	_currentBarElementHeight = aHeight;
+}
+
+/** Returns the standard bar height to fit labelled bar elements.
+
+This bar height is set as the current bar element height when the receiver is 
+initialized.
+
+This height is also identical to the standard toolbar height in Aqua. */
+- (float) defaultIconAndLabelBarHeight
+{
+	return 53;
+
 }
 
 /* Basic Item Factory Methods */
@@ -93,7 +126,6 @@ meta representation. */
 	return (ETLayoutItem *)AUTORELEASE([[ETLayoutItem alloc] initWithRepresentedObject: object]);
 }
 
-
 /** <override-never /> 
 Returns the layout item set up as a bar element with the given label and the 
 shared style returned by -currentBarElementStyle.  */
@@ -114,6 +146,8 @@ shared style returned by -currentBarElementStyle.  */
 	[anItem setStyle: aStyle];
 	[anItem setContentAspect: ETContentAspectComputed];
 	[anItem setBoundingBox: [aStyle boundingBoxForItem: anItem]];
+	// NOTE: Must follow -setContentAspect:
+	[anItem setHeight: [self currentBarElementHeight]];
 
 	if ([[anItem view] isMemberOfClass: [NSButton class]] 
 	 && [(NSButton *)[anItem view] image] != nil)
@@ -214,7 +248,8 @@ ETBarStyle as style and ETLineLayout as layout.
 
 Also resets the current bar element style to 
 -[ETBasicItemStyle iconAndLabelBarElementStyle] to ensure new bar elements 
-share the same style.
+share the same style.<br />
+And resets the current bar element height to the given size height.
 
 The returned bar has a flexible width and a fixed height. */
 - (ETLayoutItemGroup *) horizontalBarWithSize: (NSSize)aSize
@@ -222,15 +257,118 @@ The returned bar has a flexible width and a fixed height. */
 	ETLayoutItemGroup *itemGroup = [self itemGroupWithFrame: ETMakeRect(NSZeroPoint, aSize)];
 	[itemGroup setAutoresizingMask: ETAutoresizingFlexibleWidth];
 	[itemGroup setLayout: [ETLineLayout layout]];
-	[self setCurrentBarElementStyle: [ETBasicItemStyle iconAndLabelBarElementStyle]]; 
+	[self setCurrentBarElementStyle: [ETBasicItemStyle iconAndLabelBarElementStyle]];
+	[self setCurrentBarElementHeight: aSize.height];
 	return itemGroup;
 }
 
 /* Widget Factory Methods */
 
-- (id) newItemWithViewClass: (Class)class
+/** Returns the basic rect used by the methods that returns widget-based items. 
+
+Many widget factory methods use a custom height, see -defaultWidgetFrameWithHeight:. */
+- (NSRect) defaultWidgetFrame
 {
-	id view = AUTORELEASE([[class alloc] init]);
+	return NSMakeRect(0, 0, 100, 20);
+}
+
+/** Returns the same rect than -defaultWidgetFrame but with a custom height. */
+- (NSRect) defaultWidgetFrameWithHeight: (float)aHeight
+{
+	NSRect frame = [self defaultWidgetFrame];
+	frame.size.height = aHeight;
+	return frame;
+}
+
+/* No equivalent in Aqua guidelines but the size corresponds to the icon button 
+although it is not one (it is more akin a bevel button without a label). */
+- (NSRect) defaultImageButtonFrame
+{
+	NSRect frame = [self defaultWidgetFrame];
+	frame.size = NSMakeSize(53, 53);
+	return frame;
+}
+
+- (float) defaultButtonHeight
+{
+#ifdef GNUSTEP
+	return 24;
+#else
+	return 32;
+#endif
+}
+
+- (float) defaultCheckboxHeight
+{
+#ifdef GNUSTEP
+	return 16;
+#else
+	return 18;
+#endif
+}
+
+- (float) defaultRadioButtonHeight
+{
+	return [self defaultCheckboxHeight];
+}
+
+- (float) defaultPopUpMenuHeight
+{
+#ifdef GNUSTEP
+	return 22;
+#else
+	return 26;
+#endif
+}
+
+- (float) defaultProgressIndicatorHeight
+{
+#ifdef GNUSTEP
+	return 18;
+#else
+	return 20;
+#endif
+}
+
+- (float) defaultSliderThickness
+{
+#ifdef GNUSTEP
+	return 16;
+#else
+	return 21;
+#endif
+}
+
+- (float) defaultStepperHeight
+{
+#ifdef GNUSTEP
+	return 23;
+#else
+	return 27;
+#endif
+}
+
+- (float) defaultTextFieldHeight
+{
+#ifdef GNUSTEP
+	return 21;
+#else
+	return 22;
+#endif
+}
+
+- (float) defaultLabelHeight
+{
+#ifdef GNUSTEP
+	return 18;
+#else
+	return 17;
+#endif
+}
+
+- (id) newItemWithViewClass: (Class)class height: (float)aHeight
+{
+	id view = AUTORELEASE([[class alloc] initWithFrame: [self defaultWidgetFrameWithHeight: aHeight]]);
 
 	return [self itemWithView: view];
 }
@@ -238,22 +376,21 @@ The returned bar has a flexible width and a fixed height. */
 /** Returns a new layout item that uses a NSButton instance as its view. */
 - (id) button
 {
-	return [self newItemWithViewClass: [NSButton class]];
+	return [self newItemWithViewClass: [NSButton class] height: [self defaultButtonHeight]];
 }
 
 /** Returns a new layout item that uses a NSButton instance as its view, and 
 initializes this button with the given image, target and action. */
 - (id) buttonWithImage: (NSImage *)anImage target: (id)aTarget action: (SEL)aSelector
 {
-	ETLayoutItem *buttonItem = [self button];
-	NSButton *buttonView = (NSButton *)[buttonItem view];
+	NSButton *buttonView = AUTORELEASE([[NSButton alloc] initWithFrame: [self defaultImageButtonFrame]]);
 
 	[buttonView setImagePosition: NSImageOnly];
 	[buttonView setImage: anImage];
 	[buttonView setTarget: aTarget];
 	[buttonView setAction: aSelector];
 
-	return buttonItem;
+	return [self itemWithView: buttonView];
 }
 
 /** Returns a new layout item that uses a NSButton instance as its view, and 
@@ -274,7 +411,8 @@ initializes this button with the given title, target and action. */
 view. */
 - (id) radioButton
 {
-	ETLayoutItem *item = [self newItemWithViewClass: [NSButton class]];
+	ETLayoutItem *item = [self newItemWithViewClass: [NSButton class] 
+	                                         height: [self defaultRadioButtonHeight]];
 	[(NSButton *)[item view] setButtonType: NSRadioButton];
 	return item;
 }
@@ -283,7 +421,8 @@ view. */
 its view. */
 - (id) checkbox
 {
-	id item = [self newItemWithViewClass: [NSButton class]];
+	id item = [self newItemWithViewClass: [NSButton class]
+	                              height: [self defaultCheckboxHeight]];
 	[(NSButton *)[item view] setButtonType: NSSwitchButton];
 	return item;
 }
@@ -292,7 +431,8 @@ its view. */
 and background as its view. */
 - (id) labelWithTitle: (NSString *)aTitle
 {
-	id item = [self newItemWithViewClass: [NSTextField class]];
+	id item = [self newItemWithViewClass: [NSTextField class] 
+	                              height: [self defaultLabelHeight]];
 	NSTextField *labelField = (NSTextField *)[item view];
 
 	// NOTE: -setBezeled: is necessary only for GNUstep but not on Cocoa.
@@ -318,14 +458,16 @@ and background as its view. */
 /** Returns a new layout item that uses a NSTextField instance as its view. */
 - (id) textField
 {
-	return [self newItemWithViewClass: [NSTextField class]];
+	return [self newItemWithViewClass: [NSTextField class] 
+	                           height: [self defaultTextFieldHeight]];
 }
 
 /** Returns a new layout item that uses a NSSearchField instance as its view, and 
 initializes this search field with the given target and action.  */
 - (id) searchFieldWithTarget: (id)aTarget action: (SEL)aSelector
 {
-	NSSearchField *searchField = AUTORELEASE([[NSSearchField alloc] init]);
+	NSRect frame = [self defaultWidgetFrameWithHeight: [self defaultTextFieldHeight]];
+	NSSearchField *searchField = AUTORELEASE([[NSSearchField alloc] initWithFrame: frame]);
 	[searchField setTarget: aTarget];
 	[searchField setAction: aSelector];
 	return [self itemWithView: searchField];
@@ -368,27 +510,36 @@ WARNING: presently returns a scrollview if you call -view on the returned item. 
 /** Returns a new layout item that uses a NSProgressIndicator instance as its view. */
 - (id) progressIndicator
 {
-	return [self newItemWithViewClass: [NSProgressIndicator class]];
+	return [self newItemWithViewClass: [NSProgressIndicator class] 
+	                           height: [self defaultProgressIndicatorHeight]];
 }
 
 /** Returns a new layout item that uses a vertially oriented NSSlider instance 
 as its view. */
 - (id) verticalSlider
 {
-	return [self newItemWithViewClass: [NSSlider class]];
+	NSRect frame = [self defaultWidgetFrame];
+	frame.size.height = frame.size.width;
+	frame.size.width = [self defaultSliderThickness];
+	NSSlider *sliderView = AUTORELEASE([[NSSlider alloc] initWithFrame: frame]);
+
+	return [self itemWithView: sliderView];
 }
 
 /** Returns a new layout item that uses a vertially oriented NSSlider instance 
 as its view. */
 - (id) horizontalSlider
 {
-	return [self newItemWithViewClass: [NSSlider class]];
+	ETLayoutItem *item = [self newItemWithViewClass: [NSSlider class]
+	                                         height: [self defaultSliderThickness]];
+	return item;
 }
 
 /** Returns a new layout item that uses a NSStepper instance as its view. */
 - (id) stepper
 {
-	return [self newItemWithViewClass: [NSStepper class]];
+	return [self newItemWithViewClass: [NSStepper class]
+	                           height: [self defaultStepperHeight]];
 }
 
 /** Returns a new layout item that uses a view whose subviews are a text field 
@@ -398,7 +549,6 @@ and a stepper on the right side. */
 	// TODO: Implement
 	return nil;
 }
-
 
 // TODO: -popUpMenuWithTitleXXX should return an ETLayoutItemGroup whose layout 
 // is ETPopUpMenuLayout.
@@ -416,7 +566,8 @@ to set no represented object on a menu entry. */
                         target: (id)aTarget 
                         action: (SEL)aSelector
 {
-	NSPopUpButton *popUpView = AUTORELEASE([[NSPopUpButton alloc] initWithFrame: [NSView defaultFrame]]);
+	NSRect frame = [self defaultWidgetFrameWithHeight: [self defaultPopUpMenuHeight]];
+	NSPopUpButton *popUpView = AUTORELEASE([[NSPopUpButton alloc] initWithFrame: frame]);
 
 	[popUpView addItemsWithTitles: entryTitles];
 

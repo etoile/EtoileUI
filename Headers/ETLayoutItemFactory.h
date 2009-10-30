@@ -19,12 +19,18 @@
 @interface ETLayoutItemFactory : NSObject
 {
 	ETStyle *_currentBarElementStyle;
+	float _currentBarElementHeight;
 }
 
 + (id) factory;
 
+/* Bar Building Settings */
+
 - (ETStyle *) currentBarElementStyle;
 - (void) setCurrentBarElementStyle: (ETStyle *)aStyle;
+- (float) currentBarElementHeight;
+- (void) setCurrentBarElementHeight: (float)aHeight;
+- (float) defaultIconAndLabelBarHeight;
 
 /* Basic Item Factory Methods */
 
