@@ -227,10 +227,11 @@ overrides it to resize/scale the bezier path as needed. */
 
 /** Returns the string attributes used to draw the label by default.
 
-The returned attributes only include the label font supplied by NSFont. */
+The returned attributes only include the label font supplied by NSFont with a 
+small system font size. */
 + (NSDictionary *) standardLabelAttributes
 {
-	return D([NSFont labelFontOfSize: [NSFont labelFontSize]], NSFontAttributeName);
+	return D([NSFont labelFontOfSize: [NSFont smallSystemFontSize]], NSFontAttributeName);
 }
 
 /** Returns a new autoreleased style that draws the item icon and its name as 
@@ -240,7 +241,7 @@ a label underneath. */
 	ETBasicItemStyle *style = AUTORELEASE([[self alloc] init]);
 	[style setLabelPosition: ETLabelPositionInsideBottom];
 	[style setMaxImageSize: NSMakeSize(32, 32)];
-	[style setEdgeInset: 3];
+	[style setEdgeInset: 7];
 	return style;
 }
 
@@ -606,6 +607,7 @@ Returns the image drawing area in the given item content bounds. */
 			ASSERT_INVALID_CASE;
 			return NSZeroRect;
 	}
+	//return ETMakeRect(maxViewRect.origin, viewSize);
 
 	NSRect viewRect = ETCenteredRect(viewSize, maxViewRect);
 
@@ -625,7 +627,7 @@ Returns the image drawing area in the given item content bounds. */
 	return viewRect;
 }
 
-/** Returns the iamge drawing area in the given item content bounds with enough 
+/** Returns the image drawing area in the given item content bounds with enough 
 room for the given label area based on the label position.
 
 If the label position is not inside, the label area is simply ignored. */
@@ -633,7 +635,24 @@ If the label position is not inside, the label area is simply ignored. */
                  ofItem: (ETLayoutItem *)anItem
           withLabelRect: (NSRect)labelRect
 {
-	return [self rectForAreaSize: [anImage size]
+	NSSize maxSize = NSEqualSizes(_maxImageSize, ETNullSize) ? [anItem contentBounds].size : _maxImageSize;
+	ETContentAspect imageAspect = [anItem contentAspect];
+
+	if (ETContentAspectComputed == imageAspect)
+	{
+		imageAspect = ETContentAspectScaleToFit;
+	}
+
+	NSRect imageRect = [anItem contentRectWithRect: ETMakeRect(NSZeroPoint, [anImage size])
+	                                 contentAspect: imageAspect
+	                                    boundsSize: maxSize];
+
+	/*ETLog(@"Image size %@ to %@", NSStringFromSize([anImage size]), NSStringFromRect(imageRect));
+	ETLog(@" -- %@", NSStringFromRect([self rectForAreaSize: imageRect.size
+	                      ofItem: anItem
+	               withLabelRect: labelRect]));*/
+
+	return [self rectForAreaSize: imageRect.size
 	                      ofItem: anItem
 	               withLabelRect: labelRect];
 }
@@ -654,9 +673,17 @@ If the label position is not inside, the label area is simply ignored. */
 - (NSRect) rectForViewOfItem: (ETLayoutItem *)anItem
                withLabelRect: (NSRect)labelRect
 {
-	return [self rectForAreaSize: [[anItem view] frame].size
-	                      ofItem: anItem
-	               withLabelRect: labelRect];
+	NSSize viewSize = [[anItem view] frame].size;
+	NSRect viewRect = [self rectForAreaSize: viewSize
+	                                 ofItem: anItem
+	                          withLabelRect: labelRect];
+
+	// TODO: In most case, we want to keep the widget height but it would be 
+	// nice to have a way to allow the widget width to be flexible. We could add 
+	// minWidth and maxWidth properties to ETLayoutItem and rework the code below.
+	viewRect.size = viewSize;
+
+	return viewRect;
 }
 
 /** Returns the inset margin along each item content bounds edge.
