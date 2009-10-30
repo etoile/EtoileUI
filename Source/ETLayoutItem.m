@@ -2275,7 +2275,10 @@ See ETContentAspect enum. */
 }
 
 /** Sets the content aspect that describes how the content looks when the 
-receiver is resized. 
+receiver is resized.
+
+When the item has a view, the view autoresizing mask and frame are altered to 
+match the new content aspect.
 
 See ETContentAspect enum. */
 - (void) setContentAspect: (ETContentAspect)anAspect
@@ -2284,6 +2287,7 @@ See ETContentAspect enum. */
 
 	if ([self view] != nil)
 	{
+		[[self view] setAutoresizingMask: [self autoresizingMaskForContentAspect: anAspect]];
 		[[self view] setFrame: [self contentRectWithRect: [[self view] frame] 
 		                                   contentAspect: anAspect 
 		                                      boundsSize: _contentBounds.size]];
@@ -2311,24 +2315,18 @@ See also -icon. */
 	return img;
 }
 
-/** Sets the image representation associated with the receiver and updates both 
-the default frame and the frame to match the image size.
+/** Sets the image representation associated with the receiver.
+
+The image is drawn by the styles based on the content aspect. See 
+ETBasicItemStyle as an example.<br />
+You can adjust the image size by altering the receiver size combined with a 
+content aspect such as ETContentAspectScaleXXX or ETContentAspectStretchXXX. 
 
 If img is nil, then the default behavior of -image is restored and the returned 
 image should not be expected to be nil. */
 - (void) setImage: (NSImage *)img
 {
 	SET_PROPERTY(img, kETImageProperty);
-
-	// TODO: Think about whether this is really the best to do...
-	if (img != nil)
-	{
-		[self setDefaultFrame: ETMakeRect(NSZeroPoint, [img size])];
-	}
-	else if ([self displayView] == nil)
-	{
-		[self setDefaultFrame: NSZeroRect];
-	}
 }
 
 // NOTE: May be we should have -displayIcon (or -customIcon, -setCustomIcon:) to 
