@@ -322,20 +322,24 @@ DEALLOC(DESTROY(_labelAttributes));
 	if (flipMismatch)
 	{
 		xform = [NSAffineTransform transform];
-		[xform translateXBy: 0.0 yBy: aRect.size.height];
+		[xform translateXBy: aRect.origin.x yBy: aRect.origin.y + aRect.size.height];
 		[xform scaleXBy: 1.0 yBy: -1.0];
 		[xform concat];
-	}
 
-	[itemImage drawInRect: aRect
-	             fromRect: NSZeroRect // Draw the entire image
-	            operation: NSCompositeSourceOver 
-	             fraction: 1.0];
+		[itemImage drawInRect: ETMakeRect(NSZeroPoint, aRect.size)
+	                 fromRect: NSZeroRect // Draw the entire image
+	                operation: NSCompositeSourceOver 
+	                 fraction: 1.0];
 
-	if (flipMismatch)
-	{
 		[xform invert];
 		[xform concat];
+	}
+	else
+	{
+		[itemImage drawInRect: aRect
+	                 fromRect: NSZeroRect // Draw the entire image
+	                operation: NSCompositeSourceOver 
+	                 fraction: 1.0];
 	}
 }
 
