@@ -358,7 +358,7 @@ If the previously attached instrument was the active instrument, the new one
 becomes the active instrument. See -[ETInstrument setActiveInstrument:].
 
 Also invokes -didChangeAttachedInstrument:toInstrument:.  */
-- (void) setAttachedInstrument: (id)newInstrument
+- (void) setAttachedInstrument: (ETInstrument *)newInstrument
 {
 	if ([newInstrument isEqual: _instrument] == NO)
 		[_instrument setLayoutOwner: nil];

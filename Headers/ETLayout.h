@@ -134,7 +134,7 @@ typedef enum _ETSizeConstraintStyle
 
 /* Main Accessors */
 
-- (void) setAttachedInstrument: (ETInstrument *)anInstrument;
+- (void) setAttachedInstrument: (ETInstrument *)newInstrument;
 - (id) attachedInstrument;
 - (void) didChangeAttachedInstrument: (ETInstrument *)oldInstrument
                         toInstrument: (ETInstrument *)newInstrument;
