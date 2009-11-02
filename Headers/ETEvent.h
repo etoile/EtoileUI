@@ -25,6 +25,21 @@
 - (unsigned int) modifierFlags;
 @end
 
+/** Represents an arbitrary touch action. The input device can be a mouse, a 
+stylus, one or multiple fingers etc. */
+@protocol ETTouchAction
+/** Returns the hit item set by the active instrument. */
+- (ETLayoutItem *) layoutItem;
+/** See -[ETEvent locationInLayoutItem]. */
+- (NSPoint) locationInLayoutItem;
+// TODO: Support the methods below.
+/*- (NSPoint) tilt;
+- (float) pressure;
+- (float) rotation;
+- (float) tangentialPressure;
+- (NSArray *) touchedLayoutItems;*/
+@end
+
 /** These constants allows to encode the pick and drop combinations that 
 characterize drag/drop vs copy/cut/paste in EtoileUI. Read -setPickingMask: for 
 the details. */
@@ -61,7 +76,7 @@ can be retrieved through -backendEvent.
 For now, only AppKit is supported as a backend, so -backendEvent will always 
 return an NSEvent. Moreover the event types are the same than NSEventType enum, 
 this is expected to change though. */
-@interface ETEvent : NSObject <ETKeyInputAction>
+@interface ETEvent : NSObject <ETKeyInputAction, ETTouchAction>
 {
 	NSEvent *_backendEvent; // TODO: Move that in a subclass specific to each backend
 	ETLayoutItem *_layoutItem;

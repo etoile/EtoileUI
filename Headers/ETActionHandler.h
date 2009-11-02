@@ -21,7 +21,7 @@
 
 @class ETUTI;
 @class ETEvent, ETLayoutItem, ETPickboard, ETPickDropCoordinator;
-@protocol ETKeyInputAction;
+@protocol ETKeyInputAction, ETTouchAction;
 
 /** Action handler are lightweight objects whose instances can be shared between 
 a large number of layout items.
@@ -41,6 +41,8 @@ method will reuse the action handler to be set on every created items. */
 
 }
 
++ (Class) styleClass;
+
 + (id) sharedInstance;
 
 /* Instrument/Tool Actions */
@@ -59,6 +61,12 @@ method will reuse the action handler to be set on every created items. */
 - (BOOL) handleKeyEquivalent: (id <ETKeyInputAction>)keyInput onItem: (ETLayoutItem *)item;
 - (void) handleKeyUp: (id <ETKeyInputAction>)keyInput onItem: (ETLayoutItem *)item;
 - (void) handleKeyDown: (id <ETKeyInputAction>)keyInput onItem: (ETLayoutItem *)item;
+
+/* Touch Tracking Actions */
+
+- (BOOL) handleBeginTouch: (id <ETTouchAction>)aTouch atPoint: (NSPoint)aPoint onItem: (ETLayoutItem *)item;
+- (void) handleContinueTouch: (id <ETTouchAction>)aTouch atPoint: (NSPoint)aPoint onItem: (ETLayoutItem *)item;
+- (void) handleEndTouch: (id <ETTouchAction>)aTouch onItem: (ETLayoutItem *)item;
 
 /* Select Actions */
 
@@ -81,6 +89,16 @@ method will reuse the action handler to be set on every created items. */
 - (void) sendToBack: (id)sender onItem: (ETLayoutItem *)item;
 - (void) bringForward: (id)sender onItem: (ETLayoutItem *)item;
 - (void) bringToFront: (id)sender onItem: (ETLayoutItem *)item;
+
+@end
+
+
+@interface ETButtonItemActionHandler : ETActionHandler
+{
+
+}
+
++ (Class) styleClass;
 
 @end
 

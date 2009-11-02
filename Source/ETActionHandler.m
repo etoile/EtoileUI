@@ -21,6 +21,18 @@
 
 @implementation ETActionHandler
 
+/** <override-dummy />
+Returns the style class that can be used together with the receiver class.
+
+Action handler and style very often exist as a class pair whose instances are 
+thought to be used together.
+
+Returns Nil by default. */
++ (Class) styleClass
+{
+	return Nil;
+}
+
 static NSMutableDictionary *sharedActionHandlers = nil;
 
 + (id) sharedInstance
@@ -154,6 +166,57 @@ Overrides this method when you want to customize how exit are handled. */
 {
 	// FIXME: [[item nextResponder] handleKeyDown: keyInput];
 }
+
+/* Touch Tracking Actions */
+
+/** <override-dummy />
+Tells the receiver a touch begins at a location inside the given item.<br />
+Does nothing by default and returns NO.
+
+Overrides to return YES and initiate a tracking sequence which will make the 
+active instrument invokes -handleContinueTouch:atPoint:onItem: repeatedly (even 
+when the touch moves outside the given item) and finally -handleEndTouch:onItem:. 
+
+The point is expressed relative to the item received in parameter.
+
+[aTouch layoutItem] is equal to the given item. */
+- (BOOL) handleBeginTouch: (id <ETTouchAction>)aTouch atPoint: (NSPoint)aPoint onItem: (ETLayoutItem *)item
+{
+	return NO;
+}
+
+/** <override-dummy /> 
+Tells the receiver a touch initiated on the given item has moved to a new 
+location.<br />
+Does nothing by default.
+
+Overrides to handle how the receiver reacts to each step in the tracking 
+sequence motion.<br />
+-handleEndTouch:onItem: is always invoked once the touch is released.
+
+The point is expressed relative to the item received in parameter.<br />
+For now, aPoint is not yet supported and is equal to ETNullPoint. */
+- (void) handleContinueTouch: (id <ETTouchAction>)aTouch atPoint: (NSPoint)aPoint onItem: (ETLayoutItem *)item
+{
+
+}
+
+/** <override-dummy />
+Tells the receiver a touch initiated on the given item has ended.<br />
+Does nothing by default.
+
+Overrides to handle how the receiver reacts to the touch release. This is the 
+last step in the tracking sequence.
+
+You can retrieve the item on which the touch has ended with [aTouch layoutItem]. 
+The touch location related to this item can be retrieved with 
+[aTouch locationInLayoutItem]. */
+- (void) handleEndTouch: (id <ETTouchAction>)aTouch onItem: (ETLayoutItem *)item
+{
+
+}
+
+/* Select Actions */
 
 /** Returns whether item can be selected or not. 
 
@@ -292,6 +355,57 @@ status, when others request it. */
 	[item removeFromParent];
 	[parent addItem: item];
 	RELEASE(item);
+}
+
+@end
+
+
+@implementation ETButtonItemActionHandler
+
+/** Returns ETBasicItemStyle class. */
++ (Class) styleClass
+{
+	return NSClassFromString(@"ETBasicItemStyle");
+}
+
+- (BOOL) handleBeginTouch: (id <ETTouchAction>)aTouch atPoint: (NSPoint)aPoint onItem: (ETLayoutItem *)item
+{
+	[item setSelected: YES];
+	[item setNeedsDisplay: YES];
+	return YES;
+}
+
+- (void) handleContinueTouch: (id <ETTouchAction>)aTouch atPoint: (NSPoint)aPoint onItem: (ETLayoutItem *)item
+{
+	if ([item isEqual: [aTouch layoutItem]])
+	{
+		[item setSelected: YES];
+		[item setNeedsDisplay: YES];
+	}
+	else
+	{
+		[item setSelected: NO];
+		[item setNeedsDisplay: YES];	
+	}
+}
+
+- (void) handleEndTouch: (id <ETTouchAction>)aTouch onItem: (ETLayoutItem *)item
+{
+	[item setSelected: NO];
+	[item setNeedsDisplay: YES];
+
+	if ([item isEqual: [aTouch layoutItem]])
+	{
+		BOOL foundTarget = ([ETApp targetForAction: [item action] 
+	                                            to: [item target]
+		                                      from: item] != nil);
+		if (foundTarget)
+		{
+			[ETApp sendAction: [item action] 
+			               to: [item target] 
+			             from: item];
+		}
+	}
 }
 
 @end

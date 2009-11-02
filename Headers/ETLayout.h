@@ -13,7 +13,7 @@
 #import <Foundation/Foundation.h>
 #import <AppKit/AppKit.h>
 
-@class ETLineFragment, ETLayoutItem, ETLayoutItemGroup, ETView;
+@class ETInstrument, ETLineFragment, ETLayoutItem, ETLayoutItemGroup, ETView;
 
 /** Methods which must be implemented by an object to be layouted by any
 	ETLayout subclasses. The object whose layout items are layouted is the
@@ -134,8 +134,10 @@ typedef enum _ETSizeConstraintStyle
 
 /* Main Accessors */
 
-- (void) setAttachedInstrument: (id)anInstrument;
+- (void) setAttachedInstrument: (ETInstrument *)anInstrument;
 - (id) attachedInstrument;
+- (void) didChangeAttachedInstrument: (ETInstrument *)oldInstrument
+                        toInstrument: (ETInstrument *)newInstrument;
 
 - (void) setLayoutContext: (id <ETLayoutingContext>)context;
 - (id <ETLayoutingContext>) layoutContext;

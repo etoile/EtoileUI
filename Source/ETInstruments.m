@@ -33,6 +33,28 @@
 	return @"Tool";
 }
 
+- (void) mouseDown: (ETEvent *)anEvent
+{
+	[self tryActivateItem: nil withEvent: anEvent];
+	[self trySendEventToWidgetView: anEvent];
+	if ([anEvent wasDelivered])
+		return;
+
+	ETLayoutItem *item = [anEvent layoutItem];
+	NSParameterAssert(item != nil);
+	NSParameterAssert(_isTrackingTouch == NO);
+	NSParameterAssert(_firstTouchedItem == nil);
+	
+	_isTrackingTouch = [[item actionHandler] handleBeginTouch: anEvent 
+	                                                  atPoint: [anEvent locationInLayoutItem]
+	                                                   onItem: item];
+	if (_isTrackingTouch)
+	{
+		ASSIGN(_firstTouchedItem, item);
+	}
+	[anEvent markAsDelivered];
+}
+
 /** Delivers click and double click to the item currently hovered by the 
 pointer. */
 - (void) mouseUp: (ETEvent *)anEvent
@@ -46,7 +68,12 @@ pointer. */
 
 	ETDebugLog(@"Mouse up with arrow tool on item %@", item);
 
-	if ([anEvent clickCount] == 1)
+	if (_isTrackingTouch)
+	{
+		[[_firstTouchedItem actionHandler] handleEndTouch: anEvent onItem: _firstTouchedItem];
+		[anEvent markAsDelivered];
+	}
+	else if ([anEvent clickCount] == 1)
 	{
 		[[item actionHandler] handleClickItem: item];
 		[anEvent markAsDelivered];
@@ -56,6 +83,9 @@ pointer. */
 		[[item actionHandler] handleDoubleClickItem: item];
 		[anEvent markAsDelivered];
 	}
+
+	_isTrackingTouch = NO;
+	DESTROY(_firstTouchedItem);
 }
 
 - (BOOL) isPickDropForcedWithEvent: (ETEvent *)anEvent
@@ -79,7 +109,14 @@ The drag request can be handled with -[ETActionHandler handleDragItem:coordinato
 	BOOL isBackgroundHit = [item isEqual: [self targetItem]];
 	BOOL startDrag = ([self isPickDropForcedWithEvent: anEvent] && isBackgroundHit == NO);
 
-	if (startDrag)
+	if (_isTrackingTouch)
+	{
+		[[_firstTouchedItem actionHandler] handleContinueTouch: anEvent 
+		                                               atPoint: [anEvent locationInLayoutItem]
+		                                                onItem: _firstTouchedItem];
+		[anEvent markAsDelivered];
+	}
+	else if (startDrag)
 	{
 		// TODO: Each pointer/instrument (in multi-pointer perspective) should 
 		// instantiate a new distinct coordinator.

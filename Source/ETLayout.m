@@ -352,14 +352,57 @@ To customize the copying in a subclass, you must override
 
 /** Sets the instrument or tool bound to the receiver. 
 
-The instrument set becomes the receiver owner. See -[ETInstrument layoutOwner]. */
-- (void) setAttachedInstrument: (id)anInstrument
-{
-	if ([anInstrument isEqual: _instrument] == NO)
-		[_instrument setLayoutOwner: nil];
+The instrument set becomes the receiver owner. See -[ETInstrument layoutOwner].
 
-	ASSIGN(_instrument, anInstrument);
-	[_instrument setLayoutOwner: self];
+If the previously attached instrument was the active instrument, the new one 
+becomes the active instrument. See -[ETInstrument setActiveInstrument:].
+
+Also invokes -didChangeAttachedInstrument:toInstrument:.  */
+- (void) setAttachedInstrument: (id)newInstrument
+{
+	if ([newInstrument isEqual: _instrument] == NO)
+		[_instrument setLayoutOwner: nil];
+		
+	ETInstrument *oldInstrument = RETAIN(_instrument);
+
+	ASSIGN(_instrument, newInstrument);
+	[newInstrument setLayoutOwner: self];
+
+	if ([oldInstrument isEqual: [ETInstrument activeInstrument]])
+	{
+		[ETInstrument setActiveInstrument: newInstrument];
+	}
+
+	[self didChangeAttachedInstrument: oldInstrument  toInstrument: newInstrument];
+
+	RELEASE(oldInstrument);
+}
+
+/** <override-dummy />
+Tells the receiver the attached instrument owned by an ancestor layout (or itself) 
+has changed. This instrument may or may not be active.
+
+You can override this method in subclasses to adjust the receiver layout to the 
+new instrument that can now be used to interact with the presented content. 
+
+By default, propagates the message recursively in the layout item tree through 
+the layout context arranged items.
+
+You can override this method to hide or show layout items that belong the item 
+tree returned by -[ETLayout rootItem] on an instrument change. e.g. ETFreeLayout 
+toggles the handle visibility when the select tool is attached (or detached) to 
+the receiver layout or any ancestor layout.
+
+The ancestor layout on which the instrument was changed can be retrieved with 
+[newInstrument layoutOwner]. */
+- (void) didChangeAttachedInstrument: (ETInstrument *)oldInstrument
+                        toInstrument: (ETInstrument *)newInstrument
+{
+	FOREACH([_layoutContext arrangedItems], item, ETLayoutItem *)
+	{
+		[[item layout] didChangeAttachedInstrument: oldInstrument
+		                              toInstrument: newInstrument];
+	}
 }
 
 /** Sets the context where the layout should happen. 

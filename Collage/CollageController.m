@@ -43,6 +43,11 @@
 	
 	/* Insert a bit of everything as content (widgets and shapes) */
 
+	ETLayoutItem *imageItem = [itemFactory itemWithValue: [self appImage]];
+	ETLayoutItem *buttonItem = [itemFactory buttonWithImage: [self appImage] 
+	                                                 target: self 
+	                                                 action: @selector(bing:)];
+
 	[mainItem addItem: [itemFactory horizontalSlider]];
 	[mainItem addItem: [itemFactory textField]];
 	[mainItem addItem: [itemFactory labelWithTitle: @"Hello World!"]];
@@ -51,7 +56,9 @@
 	[mainItem addItem: [itemFactory oval]];
 	[mainItem addItem: [itemFactory barElementFromItem: [itemFactory button] 
 	                                         withLabel: @"Useless"]];
-	[mainItem addItem: [itemFactory barElementFromItem: [itemFactory itemWithValue: [self appImage]]
+	[mainItem addItem: [itemFactory barElementFromItem: imageItem
+	                                         withLabel: @"Useless"]];
+	[mainItem addItem: [itemFactory barElementFromItem: buttonItem
 	                                         withLabel: @"Useful"]];
 	/* Selection rubber-band is a layout item too, which means we can use it 
 	   in the same way than other shape-based items... */
@@ -77,6 +84,13 @@
 	[[itemFactory windowGroup] inspect: nil];
 	
 	// FIXME: [ETApp explore: nil];
+}
+
+- (void) bing: (id)sender
+{
+	NSAlert *alert = [[NSAlert alloc] init];
+	[alert runModal];
+	RELEASE(alert);
 }
 
 @end

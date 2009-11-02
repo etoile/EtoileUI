@@ -72,6 +72,7 @@ double-click and deactivated on a mouse click outside of their layout boundaries
 /* Factory Methods */
 
 + (id) activeInstrument;
++ (void) setActiveInstrument: (ETInstrument *)anInstrument;
 + (id) activatableInstrument;
 + (id) mainInstrument;
 + (void) setMainInstrument: (id)anInstrument;

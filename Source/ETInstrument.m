@@ -125,6 +125,44 @@ layout item tree. */
 	return activeInstrument;
 }
 
++ (void) notifyOfChangeFromInstrument: (ETInstrument *)oldInstrument 
+                         toInstrument: (ETInstrument *)newInstrument
+{
+	// TODO: Post a notification
+}
+
+/** Sets the active instrument through which the events are dispatched in the 
+layout item tree.
+
+Take a look at -didBecomeActive and -didBecomeInactive to react to activation 
+and deactivation in your ETInstrument subclasses.
+
+You should rarely need to invoke this method since EtoileUI usually 
+automatically activates instruments in response to the user's click with 
+-updateActiveInstrumentWithEvent:. */
++ (void) setActiveInstrument: (ETInstrument *)instrumentToActivate
+{
+	ETInstrument *instrumentToDeactivate = [ETInstrument activeInstrument];
+
+	if ([instrumentToActivate isEqual: instrumentToDeactivate])
+		return;
+
+	ETDebugLog(@"Update active instrument to %@", instrumentToActivate);
+
+	[instrumentToActivate setHoveredItemStack: [instrumentToDeactivate hoveredItemStack]];
+	[instrumentToDeactivate setHoveredItemStack: nil]; /* To detect invalid item stack more easily */
+	
+	RETAIN(instrumentToDeactivate);
+	ASSIGN(activeInstrument, instrumentToActivate);
+
+	[instrumentToDeactivate didBecomeInactive];
+	[instrumentToActivate didBecomeActive];
+	[self notifyOfChangeFromInstrument: instrumentToDeactivate 
+	                      toInstrument: instrumentToActivate];
+
+	RELEASE(instrumentToDeactivate);
+}
+
 /** Returns the instrument attached to the hovered item through its layout.
 
 This insturment will usually be activated if the hovered item is clicked (on 
@@ -426,31 +464,11 @@ Updates the active instrument with a new one looked up in the active instrument
 hovered item stack.
 
 You should never to call this method, only ETEventProcessor is expected to use 
-it. 
-
-Take a look at -didBecomeActive and -didBecomeInactive to react to activation 
-and deactivation in your ETInstrument subclasses. */
+it. */
 + (ETInstrument *) updateActiveInstrumentWithEvent: (ETEvent *)anEvent
 {
-	ETInstrument *instrumentToDeactivate = [ETInstrument activeInstrument];
-	ETInstrument *instrumentToActivate = [instrumentToDeactivate lookUpInstrumentInHoveredItemStack];
-
-	if ([instrumentToActivate isEqual: instrumentToDeactivate])
-		return instrumentToActivate;
-
-	ETDebugLog(@"Update active instrument to %@", instrumentToActivate);
-
-	[instrumentToActivate setHoveredItemStack: [instrumentToDeactivate hoveredItemStack]];
-	[instrumentToDeactivate setHoveredItemStack: nil]; /* To detect invalid item stack more easily */
-	
-	RETAIN(instrumentToDeactivate);
-	ASSIGN(activeInstrument, instrumentToActivate);
-
-	[instrumentToDeactivate didBecomeInactive];
-	[instrumentToActivate didBecomeActive];
-
-	RELEASE(instrumentToDeactivate);
-
+	ETInstrument *instrumentToActivate = [[ETInstrument activeInstrument] lookUpInstrumentInHoveredItemStack];
+	[self setActiveInstrument: instrumentToActivate];
 	return instrumentToActivate;
 }
 

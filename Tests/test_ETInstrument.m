@@ -446,6 +446,10 @@ inside the content bounds. */
 	ASSIGN(item2, [ETLayoutItem graphicsGroup]);
 	[item2 setFrame: NSMakeRect(0, 0, 100, 50)];
 	ASSIGN(item21, [ETLayoutItem rectangleWithRect: NSMakeRect(10, 10, 80, 30)]);
+
+	/* We need a active instrument in order to have -observeValueForKeyPath:XXX 
+	   in ETFreeLayout reacts to a selection change by toggling the handle visibility */
+	[ETInstrument setActiveInstrument: instrument];
 	
 	[mainItem addItem: item1];
 	[item2 addItem: item21]; /* Test methods insert item2 as they want */

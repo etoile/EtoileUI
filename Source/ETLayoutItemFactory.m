@@ -8,6 +8,7 @@
 
 #import <EtoileFoundation/Macros.h>
 #import "ETLayoutItemFactory.h"
+#import "ETActionHandler.h"
 #import "ETFreeLayout.h"
 #import "ETGeometry.h"
 #import "ETLayoutItemGroup.h"
@@ -156,6 +157,11 @@ shared style returned by -currentBarElementStyle.  */
 		[anItem setAction: [(NSControl *)[anItem view] action]];
 		[anItem setTarget: [(NSControl *)[anItem view] target]];
 		[anItem setView: nil];
+		[anItem setActionHandler: [ETButtonItemActionHandler sharedInstance]];
+	}
+	else if ([anItem image] != nil)
+	{
+		[anItem setActionHandler: [ETButtonItemActionHandler sharedInstance]];
 	}
 
 	return anItem;

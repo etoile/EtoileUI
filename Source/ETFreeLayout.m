@@ -1,38 +1,9 @@
-/*  <title>ETFreeLayout</title>
-
-	ETFreeLayout.m
-	
-	<abstract>Free layout class which let the user position the layout items by 
-	direct manipulation</abstract>
- 
+/*
 	Copyright (C) 2007 Quentin Mathe
- 
+
 	Author:  Quentin Mathe <qmathe@club-internet.fr>
 	Date:  August 2007
- 
-	Redistribution and use in source and binary forms, with or without
-	modification, are permitted provided that the following conditions are met:
-
-	* Redistributions of source code must retain the above copyright notice,
-	  this list of conditions and the following disclaimer.
-	* Redistributions in binary form must reproduce the above copyright notice,
-	  this list of conditions and the following disclaimer in the documentation
-	  and/or other materials provided with the distribution.
-	* Neither the name of the Etoile project nor the names of its contributors
-	  may be used to endorse or promote products derived from this software
-	  without specific prior written permission.
-
-	THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
-	AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
-	IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
-	ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE
-	LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
-	CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
-	SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
-	INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
-	CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
-	ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
-	THE POSSIBILITY OF SUCH DAMAGE.
+	License:  Modified BSD (see COPYING)
  */
 
 #import <EtoileFoundation/Macros.h>
@@ -40,7 +11,6 @@
 #import "ETComputedLayout.h"
 #import "ETGeometry.h"
 #import "ETHandle.h"
-#import "ETLayoutItem+Factory.h"
 #import "ETLayoutItemGroup.h"
 #import "ETLayoutItem.h"
 #import "EtoileUIProperties.h"
@@ -64,7 +34,7 @@ subclasses (see -[ETLayout initWithLayoutView:]). */
 	{
 		[self setAttachedInstrument: [ETSelectTool instrument]];
 		[self setItemSizeConstraintStyle: ETSizeConstraintStyleNone];
-		ASSIGN(_rootItem, [ETLayoutItem itemGroup]);
+		_rootItem = [[ETLayoutItemGroup alloc] init];
 		[_rootItem setActionHandler: nil];
 		[_rootItem setStyle: nil];
 	}
@@ -74,7 +44,7 @@ subclasses (see -[ETLayout initWithLayoutView:]). */
 
 - (void) dealloc
 {
-	[self updateKVOForItems: nil]; /* Release _observedItems */
+	[self updateKVOForItems: [NSArray array]]; /* Release _observedItems */
 
 	[super dealloc];
 }
@@ -84,10 +54,39 @@ subclasses (see -[ETLayout initWithLayoutView:]). */
 	return [super attachedInstrument];
 }
 
+- (void) didChangeAttachedInstrument: (ETInstrument *)oldInstrument 
+                        toInstrument: (ETInstrument*)newInstrument
+{
+	NSParameterAssert(oldInstrument != newInstrument);
+
+	/* Let the superclass tells our descendant layouts about the instrument change */
+	[super didChangeAttachedInstrument: oldInstrument toInstrument: newInstrument];
+
+	BOOL wereHandlesVisible = [self showsHandlesForInstrument: oldInstrument];
+	BOOL willHandlesBeVisible = [self showsHandlesForInstrument: newInstrument];
+
+	if (NO == wereHandlesVisible && willHandlesBeVisible)
+	{
+		[self showHandles];
+	}
+	else if (wereHandlesVisible && NO == willHandlesBeVisible)
+	{
+		[self hideHandles];
+	}
+	// else the handle visibility remains identical
+}
+
+- (BOOL) showsHandlesForInstrument: (ETInstrument *)anInstrument
+{
+	return [anInstrument isKindOfClass: [ETSelectTool class]];
+}
+
 /* KVO */
 
 - (void) updateKVOForItems: (NSArray *)items
 {
+	NSParameterAssert(nil != items);
+
 	FOREACHI(_observedItems, oldItem)
     {
 		[oldItem removeObserver: self
@@ -96,7 +95,7 @@ subclasses (see -[ETLayout initWithLayoutView:]). */
 
 	ASSIGN(_observedItems, items);
 
-	FOREACHI(_observedItems, newItem)
+	FOREACHI(items, newItem)
     {
 		[newItem addObserver: self
               forKeyPath: kETSelectedProperty
@@ -110,6 +109,9 @@ subclasses (see -[ETLayout initWithLayoutView:]). */
 					     change: (NSDictionary *)change 
 						context: (void *)context
 {
+	if ([self showsHandlesForInstrument: [ETInstrument activeInstrument]] == NO)
+		return;
+
 	BOOL selected = [[change objectForKey: NSKeyValueChangeNewKey] boolValue];
 	
 	if (selected)
@@ -119,6 +121,28 @@ subclasses (see -[ETLayout initWithLayoutView:]). */
 	else
 	{
 		[self hideHandlesForItem: object];
+	}
+}
+
+- (void) showHandles
+{
+	FOREACH(_observedItems, item, ETLayoutItem *)
+	{
+		if ([item isSelected])
+		{
+			[self showHandlesForItem: item];
+		}
+	}
+}
+
+- (void) hideHandles
+{
+	FOREACH(_observedItems, item, ETLayoutItem *)
+	{
+		if ([item isSelected])
+		{
+			[self hideHandlesForItem: item];
+		}
 	}
 }
 
