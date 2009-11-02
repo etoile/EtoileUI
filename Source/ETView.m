@@ -196,7 +196,7 @@ A temporary view set on the receiver won't be copied. */
 
 	ETView *newView = [super copyWithZone: aZone];
 
-	[newView setWrappedView: [[self wrappedView] copyWithZone: aZone]];
+	[newView setWrappedView: [_wrappedView copyWithZone: aZone]];
 	RELEASE(newView->_wrappedView);
 	/* We copy the flipping manually because it isn't encoded by the NSView 
 	   archiving.
@@ -222,10 +222,9 @@ A temporary view set on the receiver won't be copied. */
 {
 	NSString *desc = [super description];
 
-	// FIXME: Rename -layoutItem to -item because it can return any ETUIItem.
-	if ([[self layoutItem] isLayoutItem])
+	if ([item isLayoutItem])
 	{
-		ETLayout *layout = [(ETLayoutItem *)[self layoutItem] layout];
+		ETLayout *layout = [(ETLayoutItem *)item layout];
 		
 		if (layout != nil)
 		{
@@ -239,15 +238,15 @@ A temporary view set on the receiver won't be copied. */
 
 - (NSString *) displayName
 {
-	if ([[self layoutItem] isGroup])
+	if ([item isGroup])
 		return [self description];
 
 	// FIXME: Trim the angle brackets out.
 	NSString *desc = @"<";
 
-	if ([self wrappedView] != nil)
+	if (_wrappedView != nil)
 	{
-		desc = [desc stringByAppendingFormat: @"%@ in ", [[self wrappedView] className]];
+		desc = [desc stringByAppendingFormat: @"%@ in ", [_wrappedView className]];
 	}
 
 	return [desc stringByAppendingFormat: @"%@>", [super description]];
@@ -260,6 +259,8 @@ A temporary view set on the receiver won't be copied. */
 }
 
 /* Basic Accessors */
+
+// TODO: Rename -layoutItem to -item because it can return any ETUIItem.
 
 /** Returns the item representing the receiver in the layout item tree. 
 
@@ -361,7 +362,7 @@ until you remove the temporary view.
 You must never call this method but -[ETLayoutItem setView:]. */
 - (void) setWrappedView: (NSView *)view
 {
-	NSAssert([[self temporaryView] isEqual: view] == NO, @"A temporary view "
+	NSAssert([_temporaryView isEqual: view] == NO, @"A temporary view "
 		"cannot be set as a wrapped view.");
 
 	[self setContentView: view temporary: NO];
@@ -383,7 +384,7 @@ When a temporary view is set, this view is visible in place of -wrappedView.
 If you pass nil, the visible view is reverted to -wrappedView. */
 - (void) setTemporaryView: (NSView *)subview
 {	
-	NSAssert([[self wrappedView] isEqual: subview] == NO, @"A wrapped view "
+	NSAssert([_wrappedView isEqual: subview] == NO, @"A wrapped view "
 		"cannot be set as a temporary view.");
 
 	[self setContentView: subview temporary: YES];
@@ -467,16 +468,16 @@ implemented behavior. */
 		NSParameterAssert(_wrappedView == nil || [_wrappedView superview] == self);
 
 		/* In case a temporary view is already in use, we remove it */
-		[[self temporaryView] removeFromSuperview];
+		[_temporaryView removeFromSuperview];
 
 		if (view != nil)
 		{
 			[self addSubview: view];
-			[[self wrappedView] setHidden: YES];
+			[_wrappedView setHidden: YES];
 		}
 		else /* Passed a nil temporary view */
 		{
-			[[self wrappedView] setHidden: NO];
+			[_wrappedView setHidden: NO];
 		}
 	}
 	else /* Wrapped view setter */
@@ -484,7 +485,7 @@ implemented behavior. */
 		NSParameterAssert(nil == _temporaryView);
 
 		/* In case a wrapped view is already in use, we remove it */
-		[[self wrappedView] removeFromSuperview];
+		[_wrappedView removeFromSuperview];
 
 		if (view != nil)
 		{
@@ -508,10 +509,10 @@ setWrappedView: has no effect on -contentView, the method will continue to
 return the temporary view. */
 - (NSView *) contentView
 {
-	NSView *contentView = [self temporaryView];
+	NSView *contentView = _temporaryView;
 	
 	if (contentView == nil)
-		contentView = [self wrappedView];
+		contentView = _wrappedView;
 	
 	return contentView;
 }
