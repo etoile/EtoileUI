@@ -117,7 +117,7 @@ Overrides this method when you want to customize how double-click are handled. *
 	[[item parentItem] setNeedsDisplayInRect: dirtyRect];
 	[[item parentItem] displayIfNeeded];
 
-	ETLog(@"Translate dirty rect %@", NSStringFromRect(dirtyRect));
+	//ETLog(@"Translate dirty rect %@", NSStringFromRect(dirtyRect));
 }
 
 /** <override-dummy />
