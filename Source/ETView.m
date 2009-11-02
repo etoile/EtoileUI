@@ -196,8 +196,8 @@ A temporary view set on the receiver won't be copied. */
 
 	ETView *newView = [super copyWithZone: aZone];
 
-	// TODO: May be we can bypass -setWrappedView:
 	[newView setWrappedView: [[self wrappedView] copyWithZone: aZone]];
+	RELEASE(newView->_wrappedView);
 	/* We copy the flipping manually because it isn't encoded by the NSView 
 	   archiving.
 	   We use -setFlipped: because we have to mark the coordinates to be rebuilt 
@@ -447,7 +447,9 @@ implemented behavior. */
 {
 	[self checkViewHierarchyValidity];
 
-	if (view != nil && [[self layoutItem] isDecoratorItem] == NO)
+	BOOL isCopying = (item == nil);
+
+	if (view != nil && isCopying == NO && [item isDecoratorItem] == NO)
 	{
 		NSString *selSubstring = (temporary ? @"Temporary" : @"Wrapped");
 
