@@ -190,23 +190,24 @@ A temporary view set on the receiver won't be copied. */
 	   See -[NSPopUpButton copyWithZone:]. */
 	NSArray *copiableSubviews = [NSArray array];
 
-	// TODO: This might be very costly and require optimizations (e.g. when 
+	// TODO: This might be a quite costly and require optimizations (e.g. when 
 	// the only subview is the wrapped view)
 	[self setSubviews: copiableSubviews];
 
-	ETView *newView = [super copyWithZone: aZone];
+	ETView *viewCopy = [super copyWithZone: aZone];
+	NSView *wrappedViewCopy = [_wrappedView copyWithZone: aZone];
 
-	[newView setWrappedView: [_wrappedView copyWithZone: aZone]];
-	RELEASE(newView->_wrappedView);
-	/* We copy the flipping manually because it isn't encoded by the NSView 
-	   archiving.
-	   We use -setFlipped: because we have to mark the coordinates to be rebuilt 
-	   on GNUstep. */
-	[newView setFlipped: [self isFlipped]];
+	[viewCopy setContentView: wrappedViewCopy temporary: NO];
+	viewCopy->_wrappedView = wrappedViewCopy;
+	/* The flipping isn't encoded by the NSView archiving, that's why we must 
+	   copy it manually.
+	   We also use -setFlipped: because we have to mark the coordinates to be 
+	   rebuilt on GNUstep. */
+	[viewCopy setFlipped: [self isFlipped]];
 
 	[self setSubviews: existingSubviews];
 
-	return newView;
+	return viewCopy;
 }
 
 - (NSArray *) properties
