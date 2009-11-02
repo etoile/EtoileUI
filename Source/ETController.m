@@ -16,6 +16,8 @@
 
 @implementation ETController
 
+/** <init />
+Initializes and returns a new controller which automatically rearrange objects. */
 - (id) init
 {
 	SUPERINIT
@@ -24,6 +26,7 @@
 	[self setSortDescriptors: nil];
 	_allowedPickType = [[ETUTI alloc] init];
 	_allowedDropTypes = [[NSMutableDictionary alloc] init];
+	_automaticallyRearrangesObjects = YES;
 
 	return self;
 }
@@ -570,7 +573,9 @@ the default one based on
 }
 
 /** Returns whether -rearrangeObjects should be automatically called when 
--setFilterPredicate: is called. */
+-setFilterPredicate: is called.
+
+Returns YES by default. */
 - (BOOL) automaticallyRearrangesObjects
 {
 	return _automaticallyRearrangesObjects;
