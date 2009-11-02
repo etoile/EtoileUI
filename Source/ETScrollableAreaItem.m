@@ -194,6 +194,16 @@ usually through its enclosing scroll view getting resized. */
                supervisorView: (NSView *)decoratedView 
                        inView: (ETView *)parentView 
 {
+	/* We must prevent the clip view to receive notifications on a document 
+	   view geometry change when the scroll view has no superview... This 
+	   situation can arise because once we return -setDecoratorItem: will 
+	   remove the document view from the clip view with -removeFromSuperview 
+	   when inserting it back into another supervisor view.
+       However on GNUstep, this won't tear down the clip view as an observer 
+	   as [scrollView setDocumentView: nil] would do it. And on GNUstep when 
+	   [clipView window] returns nil, an assertion is raised when the clip view 
+	   tries to handle this geometry change notification. */
+	[[self scrollView] setDocumentView: nil];
 	[super handleUndecorateItem: item supervisorView: nil inView: parentView];
 }
 
