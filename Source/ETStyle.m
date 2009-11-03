@@ -397,12 +397,7 @@ indicatorRect is equal to it. */
 	BOOL gstateAntialias = [[NSGraphicsContext currentContext] shouldAntialias];
 	[[NSGraphicsContext currentContext] setShouldAntialias: NO];
 	NSRect normalizedIndicatorRect = NSInsetRect(NSIntegralRect(indicatorRect), 0.5, 0.5);
-	// TODO: Implement +bezierPathWithRoundedRect:xRadius:yRadius in GNUstep...
-#ifdef GNUSTEP
-	NSBezierPath *roundedRectPath = [NSBezierPath bezierPathWithRect: normalizedIndicatorRect];
-#else
 	NSBezierPath *roundedRectPath = [NSBezierPath bezierPathWithRoundedRect: normalizedIndicatorRect xRadius: 15 yRadius: 15];
-#endif
 
 	/* Draw the interior */
 	[[[NSColor darkGrayColor] colorWithAlphaComponent: 0.9] setFill];
