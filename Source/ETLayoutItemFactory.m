@@ -9,6 +9,7 @@
 #import <EtoileFoundation/Macros.h>
 #import "ETLayoutItemFactory.h"
 #import "ETActionHandler.h"
+#import "ETBasicItemStyle.h"
 #import "ETFreeLayout.h"
 #import "ETGeometry.h"
 #import "ETLayoutItemGroup.h"

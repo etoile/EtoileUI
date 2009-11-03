@@ -31,6 +31,7 @@ EtoileUI_HEADER_FILES = \
 	Controls+Etoile.h \
 	ETActionHandler.h \
 	ETApplication.h \
+	ETBasicItemStyle.h \
 	ETBrowserLayout.h \
 	ETColumnLayout.h \
 	ETCompatibility.h \

@@ -9,6 +9,7 @@ libEtoileUI_OBJC_FILES = \
 	Controls+Etoile.m \
 	ETActionHandler.m \
 	ETApplication.m \
+	ETBasicItemStyle.m \
 	ETBrowserLayout.m \
 	ETColumnLayout.m \
 	ETCompositeLayout.m \

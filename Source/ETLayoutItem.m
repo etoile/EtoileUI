@@ -14,6 +14,7 @@
 #import <EtoileFoundation/Macros.h>
 #import "ETLayoutItem.h"
 #import "ETActionHandler.h"
+#import "ETBasicItemStyle.h"
 #import "ETGeometry.h"
 #import "ETInspector.h"
 #import "ETLayoutItemGroup.h"

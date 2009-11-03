@@ -419,6 +419,9 @@
 		60F8C9CC0F8DF1AB0069FA6C /* ETHandle.m in Sources */ = {isa = PBXBuildFile; fileRef = 60F8C9CB0F8DF1AB0069FA6C /* ETHandle.m */; };
 		60F8C9D60F8DF2910069FA6C /* ETInstruments.h in Headers */ = {isa = PBXBuildFile; fileRef = 607A43E50F0AEA7300753B56 /* ETInstruments.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		60F8C9DB0F8DF3200069FA6C /* ETInstruments.m in Sources */ = {isa = PBXBuildFile; fileRef = 607A43E80F0AEA8900753B56 /* ETInstruments.m */; };
+		60FBB13010A0A92A00BE7E21 /* ETBasicItemStyle.h in Headers */ = {isa = PBXBuildFile; fileRef = 60FBB12F10A0A92A00BE7E21 /* ETBasicItemStyle.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		60FBB13210A0A94600BE7E21 /* ETBasicItemStyle.m in Sources */ = {isa = PBXBuildFile; fileRef = 60FBB13110A0A94600BE7E21 /* ETBasicItemStyle.m */; };
+		60FBB13310A0A94600BE7E21 /* ETBasicItemStyle.m in Sources */ = {isa = PBXBuildFile; fileRef = 60FBB13110A0A94600BE7E21 /* ETBasicItemStyle.m */; };
 		60FC29F3105C11E4008D2EFF /* FormController.m in Sources */ = {isa = PBXBuildFile; fileRef = 60FC29F2105C11E4008D2EFF /* FormController.m */; };
 		60FDA9A10FE58F460009686A /* ETSelectionAreaItem.h in Headers */ = {isa = PBXBuildFile; fileRef = 60FDA99F0FE58F460009686A /* ETSelectionAreaItem.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		60FDA9A30FE58F590009686A /* ETSelectionAreaItem.m in Sources */ = {isa = PBXBuildFile; fileRef = 60FDA9A20FE58F590009686A /* ETSelectionAreaItem.m */; };
@@ -857,6 +860,8 @@
 		60F6EEEF1014722D003F4508 /* NSFileHandle+Socket.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = "NSFileHandle+Socket.m"; path = "../EtoileFoundation/Source/NSFileHandle+Socket.m"; sourceTree = SOURCE_ROOT; };
 		60F8C9C80F8DF19B0069FA6C /* ETHandle.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ETHandle.h; path = Headers/ETHandle.h; sourceTree = "<group>"; };
 		60F8C9CB0F8DF1AB0069FA6C /* ETHandle.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ETHandle.m; path = Source/ETHandle.m; sourceTree = "<group>"; };
+		60FBB12F10A0A92A00BE7E21 /* ETBasicItemStyle.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ETBasicItemStyle.h; path = Headers/ETBasicItemStyle.h; sourceTree = "<group>"; };
+		60FBB13110A0A94600BE7E21 /* ETBasicItemStyle.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ETBasicItemStyle.m; path = Source/ETBasicItemStyle.m; sourceTree = "<group>"; };
 		60FC2925105C112D008D2EFF /* FormExample.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = FormExample.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		60FC2927105C112D008D2EFF /* FormExample-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "FormExample-Info.plist"; sourceTree = "<group>"; };
 		60FC29E3105C118A008D2EFF /* FormController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FormController.h; path = FormExample/FormController.h; sourceTree = "<group>"; };
@@ -1355,6 +1360,8 @@
 				605D6DF50CE946F8009ED244 /* ETStyle.m */,
 				607FBAEC0FE0050100960039 /* ETStyleGroup.h */,
 				607FBAF50FE005E900960039 /* ETStyleGroup.m */,
+				60FBB12F10A0A92A00BE7E21 /* ETBasicItemStyle.h */,
+				60FBB13110A0A94600BE7E21 /* ETBasicItemStyle.m */,
 				6086160B0F0F9A560061ACFE /* ETShape.h */,
 				6086160E0F0F9A6B0061ACFE /* ETShape.m */,
 			);
@@ -1791,6 +1798,7 @@
 				66B74127103CB008008AF5B1 /* ETTitleBarItem.h in Headers */,
 				66B7412B103CB03D008AF5B1 /* ETTitleBarView.h in Headers */,
 				60CDD5C4105E8DE8005E253B /* ETFragment.h in Headers */,
+				60FBB13010A0A92A00BE7E21 /* ETBasicItemStyle.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2296,6 +2304,7 @@
 				608A5DC310231D500086F4B3 /* ETLayoutItem+KVO.m in Sources */,
 				6067EB5A1046B4E600C39086 /* TestItemCopy.m in Sources */,
 				60E7BD21107E7B3F00E7C0F2 /* TestStyle.m in Sources */,
+				60FBB13310A0A94600BE7E21 /* ETBasicItemStyle.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2548,6 +2557,7 @@
 				608A612D102378580086F4B3 /* EtoileUIProperties.m in Sources */,
 				66B74128103CB008008AF5B1 /* ETTitleBarItem.m in Sources */,
 				66B7412C103CB03D008AF5B1 /* ETTitleBarView.m in Sources */,
+				60FBB13210A0A94600BE7E21 /* ETBasicItemStyle.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
