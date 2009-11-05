@@ -138,60 +138,51 @@ DEALLOC(DESTROY(_labelAttributes));
 }
 
 /** Draws a selection indicator that covers the whole item frame if 
-    indicatorRect is equal to it. */
+ the given indicator rect is equal to it. */
 - (void) drawSelectionIndicatorInRect: (NSRect)indicatorRect
 {
 	//ETLog(@"--- Drawing selection %@ in view %@", NSStringFromRect([item drawingFrame]), [NSView focusView]);
 	
-	// TODO: We disable the antialiasing for the stroked rect with direct 
-	// drawing, but this code may be better moved in 
-	// -[ETLayoutItem render:dirtyRect:inContext:] to limit the performance impact.
-	BOOL gstateAntialias = [[NSGraphicsContext currentContext] shouldAntialias];
-	[[NSGraphicsContext currentContext] setShouldAntialias: NO];
+	NSGraphicsContext *ctxt = [NSGraphicsContext currentContext];
+	BOOL gstateAntialias = [ctxt shouldAntialias];
+
+	/* Disable the antialiasing for the stroked rect */
+	[ctxt setShouldAntialias: NO];
 	
 	/* Align on pixel boundaries for fractional pixel margin and frame. 
 	   Fractional item frame results from the item scaling. 
 	   NOTE: May be we should adjust pixel boundaries per edge and only if 
 	   needed to get a perfect drawing... */
 	NSRect normalizedIndicatorRect = NSInsetRect(NSIntegralRect(indicatorRect), 0.5, 0.5);
-	
-	/* Draw the interior */
-	// FIXME: -setFill doesn't work on GNUstep
-	[[[NSColor lightGrayColor] colorWithAlphaComponent: 0.45] set];
 
-	// NOTE: [NSBezierPath fillRect: indicatorRect]; doesn't handle color alpha 
-	// on GNUstep
-	NSRectFillUsingOperation(normalizedIndicatorRect, NSCompositeSourceOver);
+	/* Draw the interior */
+	[[[NSColor lightGrayColor] colorWithAlphaComponent: 0.45] setFill];
+	[NSBezierPath fillRect: normalizedIndicatorRect];
 
 	/* Draw the outline
 	   FIXME: Cannot get the outline precisely aligned on pixel boundaries for 
 	   GNUstep. With the current code which works well on Cocoa, the top border 
 	   of the outline isn't drawn most of the time and the image drawn 
 	   underneath seems to wrongly extend beyond the border. */
-#ifdef USE_BEZIER_PATH
-	// FIXME: NSFrameRectWithWidthUsingOperation() seems to be broken. It 
-	// doesn't work even with no alpha in the color, NSCompositeCopy and a width 
-	// of 1.0
-	[[[NSColor darkGrayColor] colorWithAlphaComponent: 0.55] set];
-	NSFrameRectWithWidthUsingOperation(normalizedIndicatorRect, 0.0, NSCompositeSourceOver);
-#else
-	// FIXME: -setStroke doesn't work on GNUstep
-	[[[NSColor darkGrayColor] colorWithAlphaComponent: 0.55] set];
+	[[[NSColor darkGrayColor] colorWithAlphaComponent: 0.55] setStroke];
 	[NSBezierPath strokeRect: normalizedIndicatorRect];
-#endif
 
-	[[NSGraphicsContext currentContext] setShouldAntialias: gstateAntialias];
+	[ctxt setShouldAntialias: gstateAntialias];
 }
 
 /** Draws a stack/pile indicator that covers the whole item frame if 
-indicatorRect is equal to it. */
+the given indicator rect is equal to it. */
 - (void) drawStackIndicatorInRect: (NSRect)indicatorRect
 {
 	// NOTE: Read comments in -drawSelectionIndicatorInRect:.
-	BOOL gstateAntialias = [[NSGraphicsContext currentContext] shouldAntialias];
-	[[NSGraphicsContext currentContext] setShouldAntialias: NO];
+	NSGraphicsContext *ctxt = [NSGraphicsContext currentContext]; 
+	BOOL gstateAntialias = [ctxt shouldAntialias];
+
+	[ctxt setShouldAntialias: NO];
+
 	NSRect normalizedIndicatorRect = NSInsetRect(NSIntegralRect(indicatorRect), 0.5, 0.5);
-	NSBezierPath *roundedRectPath = [NSBezierPath bezierPathWithRoundedRect: normalizedIndicatorRect xRadius: 15 yRadius: 15];
+	NSBezierPath *roundedRectPath = 
+		[NSBezierPath bezierPathWithRoundedRect: normalizedIndicatorRect xRadius: 15 yRadius: 15];
 
 	/* Draw the interior */
 	[[[NSColor darkGrayColor] colorWithAlphaComponent: 0.9] setFill];
@@ -201,14 +192,20 @@ indicatorRect is equal to it. */
 	[[[NSColor yellowColor] colorWithAlphaComponent: 0.55] setStroke];
 	[roundedRectPath stroke];
 
-	[[NSGraphicsContext currentContext] setShouldAntialias: gstateAntialias];
+	[ctxt setShouldAntialias: gstateAntialias];
 }
 
+/** Draws a focus ring that covers the whole item frame if the given indicator 
+rect is equal to it. */
 - (void) drawFirstResponderIndicatorInRect: (NSRect)indicatorRect
 {
+	float gstateLineWidth = [NSBezierPath defaultLineWidth];
+
 	[[[NSColor keyboardFocusIndicatorColor] colorWithAlphaComponent: 0.8] setStroke];
 	[NSBezierPath setDefaultLineWidth: 6.0];
 	[NSBezierPath strokeRect: indicatorRect];
+
+	[NSBezierPath setDefaultLineWidth: gstateLineWidth];
 }
 
 /** Returns the item title position. */
