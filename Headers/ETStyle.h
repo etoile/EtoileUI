@@ -62,6 +62,8 @@ and expect to be provided a layout item through -render:layoutItem:dirtyRect:. *
      layoutItem: (ETLayoutItem *)item 
       dirtyRect: (NSRect)dirtyRect;
 	  
+- (void) drawSelectionIndicatorInRect: (NSRect)indicatorRect;
+	  
 - (void) didChangeItemBounds: (NSRect)bounds;
 - (NSRect) boundingBoxForItem: (ETLayoutItem *)anItem;
 

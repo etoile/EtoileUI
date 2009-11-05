@@ -137,39 +137,6 @@ DEALLOC(DESTROY(_labelAttributes));
 	}
 }
 
-/** Draws a selection indicator that covers the whole item frame if 
- the given indicator rect is equal to it. */
-- (void) drawSelectionIndicatorInRect: (NSRect)indicatorRect
-{
-	//ETLog(@"--- Drawing selection %@ in view %@", NSStringFromRect([item drawingFrame]), [NSView focusView]);
-	
-	NSGraphicsContext *ctxt = [NSGraphicsContext currentContext];
-	BOOL gstateAntialias = [ctxt shouldAntialias];
-
-	/* Disable the antialiasing for the stroked rect */
-	[ctxt setShouldAntialias: NO];
-	
-	/* Align on pixel boundaries for fractional pixel margin and frame. 
-	   Fractional item frame results from the item scaling. 
-	   NOTE: May be we should adjust pixel boundaries per edge and only if 
-	   needed to get a perfect drawing... */
-	NSRect normalizedIndicatorRect = NSInsetRect(NSIntegralRect(indicatorRect), 0.5, 0.5);
-
-	/* Draw the interior */
-	[[[NSColor lightGrayColor] colorWithAlphaComponent: 0.45] setFill];
-	[NSBezierPath fillRect: normalizedIndicatorRect];
-
-	/* Draw the outline
-	   FIXME: Cannot get the outline precisely aligned on pixel boundaries for 
-	   GNUstep. With the current code which works well on Cocoa, the top border 
-	   of the outline isn't drawn most of the time and the image drawn 
-	   underneath seems to wrongly extend beyond the border. */
-	[[[NSColor darkGrayColor] colorWithAlphaComponent: 0.55] setStroke];
-	[NSBezierPath strokeRect: normalizedIndicatorRect];
-
-	[ctxt setShouldAntialias: gstateAntialias];
-}
-
 /** Draws a stack/pile indicator that covers the whole item frame if 
 the given indicator rect is equal to it. */
 - (void) drawStackIndicatorInRect: (NSRect)indicatorRect

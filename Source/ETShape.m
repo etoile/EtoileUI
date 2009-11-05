@@ -1,39 +1,9 @@
-/*  <title>ETShape</title>
-
-	ETShape.m
-	
-	<abstract>An ETStyle subclass used to represent arbitrary shapes. These 
-	shapes can be primitives such as rectangles, oval etc., or more complex 
-	shapes that embed or combine text, image, shadow, mask etc.</abstract>
- 
+/**
 	Copyright (C) 2007 Quentin Mathe
- 
+
 	Author:  Quentin Mathe <qmathe@club-internet.fr>
 	Date:  July 2007
- 
-	Redistribution and use in source and binary forms, with or without
-	modification, are permitted provided that the following conditions are met:
-
-	* Redistributions of source code must retain the above copyright notice,
-	  this list of conditions and the following disclaimer.
-	* Redistributions in binary form must reproduce the above copyright notice,
-	  this list of conditions and the following disclaimer in the documentation
-	  and/or other materials provided with the distribution.
-	* Neither the name of the Etoile project nor the names of its contributors
-	  may be used to endorse or promote products derived from this software
-	  without specific prior written permission.
-
-	THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
-	AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
-	IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
-	ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE
-	LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
-	CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
-	SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
-	INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
-	CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
-	ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
-	THE POSSIBILITY OF SUCH DAMAGE.
+	License: Modified BSD (see COPYING)
  */
 
 #import <EtoileFoundation/Macros.h>
@@ -260,52 +230,6 @@ The copied shape is never hidden, even when the receiver was. */
 	[[self path] stroke];
 
 	[NSGraphicsContext restoreGraphicsState];
-}
-
-/** Draws a selection indicator that covers the whole item frame if 
-    indicatorRect is equal to it. */
-- (void) drawSelectionIndicatorInRect: (NSRect)indicatorRect
-{
-	//ETLog(@"--- Drawing selection %@ in view %@", NSStringFromRect([item drawingFrame]), [NSView focusView]);
-	
-	// TODO: We disable the antialiasing for the stroked rect with direct 
-	// drawing, but this code may be better moved in 
-	// -[ETLayoutItem render:dirtyRect:inContext:] to limit the performance impact.
-	BOOL gstateAntialias = [[NSGraphicsContext currentContext] shouldAntialias];
-	[[NSGraphicsContext currentContext] setShouldAntialias: NO];
-	
-	/* Align on pixel boundaries for fractional pixel margin and frame. 
-	   Fractional item frame results from the item scaling. 
-	   NOTE: May be we should adjust pixel boundaries per edge and only if 
-	   needed to get a perfect drawing... */
-	NSRect normalizedIndicatorRect = NSInsetRect(NSIntegralRect(indicatorRect), 0.5, 0.5);
-	
-	/* Draw the interior */
-	// FIXME: -setFill doesn't work on GNUstep
-	[[[NSColor lightGrayColor] colorWithAlphaComponent: 0.45] set];
-
-	// NOTE: [NSBezierPath fillRect: indicatorRect]; doesn't handle color alpha 
-	// on GNUstep
-	NSRectFillUsingOperation(normalizedIndicatorRect, NSCompositeSourceOver);
-
-	/* Draw the outline
-	   FIXME: Cannot get the outline precisely aligned on pixel boundaries for 
-	   GNUstep. With the current code which works well on Cocoa, the top border 
-	   of the outline isn't drawn most of the time and the image drawn 
-	   underneath seems to wrongly extend beyond the border. */
-#ifdef USE_BEZIER_PATH
-	// FIXME: NSFrameRectWithWidthUsingOperation() seems to be broken. It 
-	// doesn't work even with no alpha in the color, NSCompositeCopy and a width 
-	// of 1.0
-	[[[NSColor darkGrayColor] colorWithAlphaComponent: 0.55] set];
-	NSFrameRectWithWidthUsingOperation(normalizedIndicatorRect, 0.0, NSCompositeSourceOver);
-#else
-	// FIXME: -setStroke doesn't work on GNUstep
-	[[[NSColor darkGrayColor] colorWithAlphaComponent: 0.55] set];
-	[NSBezierPath strokeRect: normalizedIndicatorRect];
-#endif
-
-	[[NSGraphicsContext currentContext] setShouldAntialias: gstateAntialias];
 }
 
 - (void) didChangeItemBounds: (NSRect)bounds

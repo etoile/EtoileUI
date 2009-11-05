@@ -67,7 +67,6 @@ a custom style object. */
 - (void) drawImage: (NSImage *)itemImage 
            flipped: (BOOL)itemFlipped 
             inRect: (NSRect)aRect;
-- (void) drawSelectionIndicatorInRect: (NSRect)indicatorRect;
 - (void) drawStackIndicatorInRect: (NSRect)indicatorRect;
 - (void) drawFirstResponderIndicatorInRect: (NSRect)indicatorRect;
 
