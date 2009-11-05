@@ -7,6 +7,8 @@
  */
 
 #import <EtoileFoundation/Macros.h>
+#import <EtoileFoundation/ETPropertyViewpoint.h>
+#import <EtoileFoundation/NSObject+Model.h>
 #import "ETLayoutItemFactory.h"
 #import "ETActionHandler.h"
 #import "ETBasicItemStyle.h"
@@ -425,12 +427,38 @@ view. */
 }
 
 /** Returns a new layout item that uses a NSButton of type NSSwitchButton as 
-its view. */
-- (id) checkbox
+its view, and initializes this checkbox with the given label, target and action.
+
+You can provide a model object on which -setValue:forProperty: will be invoked 
+for the given property every time the checkbox state changes.<br />
+The model object and property name are used to initialize a property viewpoint 
+which is set as the returned item represented object.
+
+Both model and property name must be valid objects when they are not nil. */
+- (id) checkboxWithLabel: (NSString *)aLabel 
+                  target: (id)aTarget 
+                  action: (SEL)aSelector
+            propertyName: (NSString *)aKey
+                 ofModel: (id)aModel 
 {
 	id item = [self newItemWithViewClass: [NSButton class]
 	                              height: [self defaultCheckboxHeight]];
-	[(NSButton *)[item view] setButtonType: NSSwitchButton];
+	NSButton *buttonView = (NSButton *)[item view];
+
+	[buttonView setTitle: aLabel];
+	[buttonView setButtonType: NSSwitchButton];
+	[buttonView setTarget: aTarget];
+	[buttonView setAction: aSelector];
+
+	if (nil != aKey || nil != aModel)
+	{
+		NSAssert2([[(NSObject *)aModel properties] containsObject: aKey], @"To be used as "
+			"a checkbox model, %@ must expose the requested property %@", aKey, aModel);
+	}
+
+	[item setRepresentedObject: [ETProperty propertyWithName: aKey
+	                                       representedObject: aModel]];
+
 	return item;
 }
 

@@ -168,6 +168,14 @@ worst case, we can be retained/released and thereby reenter -dealloc. */
 - (void) stopKVOObservation
 {
 	[_modelObject removeObserver: self];
+
+	NSView *view = [self view];
+
+	if (nil != view && [view isWidget])
+	{
+		[[(id <ETWidget>)view cell] removeObserver: self forKeyPath: @"objectValue"];
+		[[(id <ETWidget>)view cell] removeObserver: self forKeyPath: @"state"];
+	}
 }
 
 /** <override-never /> 
@@ -249,8 +257,20 @@ Default values will be copied but not individually (shallow copy). */
 	item->_contentAspect = _contentAspect;
 	item->_scrollViewShown = _scrollViewShown;
 
-	/* We copy all variables properties */
+	/* We copy all variables properties except kETTargetProperty */
 
+	SET_OBJECT_PROPERTY_AND_RELEASE(item, [GET_PROPERTY(kETValueProperty) copyWithZone: aZone], kETValueProperty);
+	SET_OBJECT_PROPERTY(item, GET_PROPERTY(kETDefaultFrameProperty),  kETDefaultFrameProperty);
+	SET_OBJECT_PROPERTY(item, GET_PROPERTY(kETNameProperty), kETNameProperty);
+	SET_OBJECT_PROPERTY(item, GET_PROPERTY(kETImageProperty), kETImageProperty);
+	SET_OBJECT_PROPERTY(item, GET_PROPERTY(kETIconProperty), kETIconProperty);
+	SET_OBJECT_PROPERTY(item, GET_PROPERTY(kETSubtypeProperty),  kETSubtypeProperty);
+	SET_OBJECT_PROPERTY(item, GET_PROPERTY(kETActionHandlerProperty), kETActionHandlerProperty);
+	SET_OBJECT_PROPERTY(item, GET_PROPERTY(kETActionProperty), kETActionProperty);
+
+	/* We adjust targets and observers to reference equivalent objects in the object graph copy */
+
+	NSView *viewCopy = [item->_view wrappedView];
 	// NOTE: -objectForKey: returns nil when the key is nil.
 	id target = GET_PROPERTY(kETTargetProperty);
 	id targetCopy = [[self objectReferencesForCopy] objectForKey: target];
@@ -264,18 +284,21 @@ Default values will be copied but not individually (shallow copy). */
 	if (nil == viewTargetCopy)
 	{
 		viewTargetCopy = viewTarget;
-	} 
-
-	SET_OBJECT_PROPERTY_AND_RELEASE(item, [GET_PROPERTY(kETValueProperty) copyWithZone: aZone], kETValueProperty);
-	SET_OBJECT_PROPERTY(item, GET_PROPERTY(kETDefaultFrameProperty),  kETDefaultFrameProperty);
-	SET_OBJECT_PROPERTY(item, GET_PROPERTY(kETNameProperty), kETNameProperty);
-	SET_OBJECT_PROPERTY(item, GET_PROPERTY(kETImageProperty), kETImageProperty);
-	SET_OBJECT_PROPERTY(item, GET_PROPERTY(kETIconProperty), kETIconProperty);
-	SET_OBJECT_PROPERTY(item, GET_PROPERTY(kETSubtypeProperty),  kETSubtypeProperty);
-	SET_OBJECT_PROPERTY(item, GET_PROPERTY(kETActionHandlerProperty), kETActionHandlerProperty);
-	SET_OBJECT_PROPERTY(item, GET_PROPERTY(kETActionProperty), kETActionProperty);
+	}
+	[[viewCopy ifResponds] setTarget: viewTargetCopy];
 	SET_OBJECT_PROPERTY(item, targetCopy, kETTargetProperty);
-	[[[item view] ifResponds] setTarget: viewTargetCopy]; 
+
+	if ([viewCopy isWidget]) /* See -setView:autoresizingMask and keep in sync */
+	{
+		[[(id <ETWidget>)viewCopy cell] addObserver: item
+		                                 forKeyPath: @"objectValue"
+			                            options: NSKeyValueObservingOptionNew
+		                                    context: NULL];
+		[[(id <ETWidget>)viewCopy cell] addObserver: item
+		                                 forKeyPath: @"state"
+			                            options: NSKeyValueObservingOptionNew
+		                                    context: NULL];
+	}
 	
 	return item;
 }
@@ -890,9 +913,32 @@ this case the receiver becomes a meta item and returns YES for -isMetaLayoutItem
 - (void) setView: (NSView *)newView autoresizingMask: (ETAutoresizing)autoresizing
 {
 	ETView *supervisorView = [self supervisorView];
+	NSView *oldView = [supervisorView wrappedView];
 
-	if (newView != nil)
+	if (nil != oldView)
 	{
+		if ([oldView isWidget])
+		{
+			[[(id <ETWidget>)oldView cell] removeObserver: self forKeyPath: @"objectValue"];
+			[[(id <ETWidget>)oldView cell] removeObserver: self forKeyPath: @"state"];
+		}
+	}
+
+	if (nil != newView)
+	{
+		if ([newView isWidget])
+		{
+			[[(id <ETWidget>)newView cell] addObserver: self 
+			                                forKeyPath: @"objectValue"
+			                                   options: NSKeyValueObservingOptionNew
+		                                           context: NULL];
+			[[(id <ETWidget>)newView cell] addObserver: self 
+			                                forKeyPath: @"state"
+			                                   options: NSKeyValueObservingOptionNew
+		                                           context: NULL];
+
+		}
+
 		supervisorView = [self setUpSupervisorViewWithFrame: [self frame]];
 		NSParameterAssert(NSEqualSizes([self contentBounds].size, [supervisorView frame].size));
 
@@ -900,6 +946,7 @@ this case the receiver becomes a meta item and returns YES for -isMetaLayoutItem
 		/* The view frame will be adjusted by -[ETView tileContentView:temporary:]
 		which invokes -contentRectWithRect:contentAspect:boundsSize:. */
 	}
+
 	[supervisorView setWrappedView: newView];
 }
 
@@ -2525,6 +2572,7 @@ See also -setAction:. */
 See also -subject. */
 - (void) didChangeViewValue: (id)newValue
 {
+	ETLog(@"Did Change view value to %@", newValue);
 	[self setValue: newValue forProperty: kETValueProperty];
 }
 

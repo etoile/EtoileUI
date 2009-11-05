@@ -65,7 +65,11 @@
 - (id) buttonWithTitle: (NSString *)aTitle target: (id)aTarget action: (SEL)aSelector;
 - (id) buttonWithImage: (NSImage *)anImage target: (id)aTarget action: (SEL)aSelector;
 - (id) radioButton;
-- (id) checkbox;
+- (id) checkboxWithLabel: (NSString *)aLabel 
+                  target: (id)aTarget 
+                  action: (SEL)aSelector
+            propertyName: (NSString *)aKey
+                 ofModel: (id)aModel; 
 - (id) labelWithTitle: (NSString *)aTitle;
 - (id) textField;
 - (id) searchFieldWithTarget: (id)aTarget action: (SEL)aSelector;

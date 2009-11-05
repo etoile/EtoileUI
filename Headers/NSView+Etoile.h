@@ -13,6 +13,17 @@
 #import <AppKit/AppKit.h>
 #import <EtoileFoundation/ETCollection.h>
 
+/** See -isWidget.
+
+This protocol is subject to change or be removed. */
+@protocol ETWidget
+- (id) target;
+- (void) setTarget: (id)aTarget;
+- (SEL) action;
+- (void) setAction: (SEL)aSelector;
+- (NSActionCell *) cell;
+@end
+
 
 @interface NSView (Etoile) <NSCopying, ETCollection, ETCollectionMutation>
 

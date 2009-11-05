@@ -72,11 +72,6 @@
 	return nil;//[[self superview]
 }
 
-- (BOOL) isWidget
-{
-	return YES;
-}
-
 - (NSImageView *) imageView
 {
 	return [[self subviews] objectAtIndex: 0]; 

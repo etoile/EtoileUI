@@ -11,6 +11,7 @@
 #import <EtoileFoundation/Macros.h>
 #import "ETLayoutItem+KVO.h"
 #import "EtoileUIProperties.h"
+#import "NSView+Etoile.h"
 
 
 @implementation ETLayoutItem (KVO)
@@ -30,7 +31,19 @@
 - (void) observeValueForKeyPath: (NSString *)keyPath ofObject: (id)object 
 	change: (NSDictionary *)change context: (void *)context
 {
-	[self refreshIfNeeded];
+	NSView *view = [self view];
+	BOOL isWidgetViewChange = ([view isWidget] && object == [(id <ETWidget>)view cell]);
+
+	if (isWidgetViewChange)
+	{
+		NSParameterAssert([keyPath isEqual: @"objectValue"] || [keyPath isEqual: @"state"]);
+		[self didChangeViewValue: [change objectForKey: NSKeyValueChangeNewKey]];
+	}
+	else /* isRepresentedObjectChange */
+	{
+		NSParameterAssert(object == _modelObject);
+		[self refreshIfNeeded];
+	}
 }
 
 /* Returns the observable properties which shouldn't be observed.

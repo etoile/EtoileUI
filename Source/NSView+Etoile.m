@@ -43,6 +43,9 @@
 /** Returns whether the receiver is a widget (or control in AppKit terminology) 
 on which actions should be dispatched.
 
+If you override this method to return YES, your subclass must implement the 
+methods listed in the ETWidget protocol.
+
 By default, returns NO. */
 - (BOOL) isWidget
 {
