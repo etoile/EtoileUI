@@ -15,6 +15,7 @@
 #import "ETLayoutItemBuilder.h"
 #import "ETObjectBrowserLayout.h"
 #import "ETLayoutItemFactory.h"
+#import "NSObject+EtoileUI.h"
 #import "NSView+Etoile.h"
 #import "ETCompatibility.h"
 
@@ -566,6 +567,26 @@ the application delegate when CoreObject is available. */
 }
 #endif
 
+/* Notifies the item that owns the sender (can be itself) that the widget value 
+changed, and gives it a chance to propagate it to other parties such as its 
+represented object. */
+- (void) notifyOwnerItemOfSenderValueChange: (id)sender
+{
+	if ([sender isView] == NO || [[sender superview] isSupervisorView] == NO)
+		return;
+
+	ETLayoutItem *senderItem = [(ETView *)[sender superview] layoutItem];
+
+	/* Decorator items don't respond to -didChangeViewValue: */
+	if ([senderItem isLayoutItem] == NO)
+		return;
+
+	if ([sender respondsToSelector: @selector(objectValue)])
+	{
+		[senderItem didChangeViewValue: [sender objectValue]];
+	}
+}
+
 - (BOOL) sendAction: (SEL)aSelector to: (id)aTarget from: (id)sender
 {
 	id responder = [self targetForAction: aSelector to: aTarget from: sender];
@@ -594,6 +615,7 @@ the application delegate when CoreObject is available. */
 	}
 
 	[inv invoke];
+	[self notifyOwnerItemOfSenderValueChange: sender];
 
 	return YES;
 }

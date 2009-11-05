@@ -2520,6 +2520,14 @@ See also -setAction:. */
 	return NSSelectorFromString(selString);
 }
 
+/** Updates the subject 'value' property when the widget view value changed.
+
+See also -subject. */
+- (void) didChangeViewValue: (id)newValue
+{
+	[self setValue: newValue forProperty: kETValueProperty];
+}
+
 /** Returns the custom inspector associated with the receiver. By default, 
 returns nil.
 
