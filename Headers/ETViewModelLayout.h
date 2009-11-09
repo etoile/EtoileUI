@@ -26,6 +26,13 @@ typedef enum _ETLayoutDisplayMode {
 } ETLayoutDisplayMode;
 
 
+/** When a view model layout is in use, you can change the represented object 
+on its layout context. The represented object will usually be exposed in the 
+model-related display modes. Alternative behaviors can be obtained with 
+-setShouldInspectItself: and -setShouldInspectRepresentedObjectAsView:.
+
+However you shouldn't change the layout context source or invoke -reload or 
+similar methods on it as required by ETCompositeLayout. */
 @interface ETViewModelLayout : ETCompositeLayout
 {
 	IBOutlet ETView *propertyView;

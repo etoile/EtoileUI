@@ -114,12 +114,14 @@ Will be called before the receiver is fully initialized. */
 	ASSIGN(propertyViewItem, [propertyView layoutItem]);
 
 	[propertyViewItem setLayout: [self defaultPropertyViewLayout]];
-	[propertyViewItem setSource: self];
 	[propertyViewItem setDelegate: self];
 	[propertyViewItem setDoubleAction: @selector(doubleClickInPropertyView:)];
 	[propertyViewItem setTarget: self];
 	[propertyViewItem setHasVerticalScroller: YES];
 	[propertyViewItem setHasHorizontalScroller: YES];
+
+	/* Update the content to match the selection in the display mode popup */
+	[self switchDisplayMode: popup];
 }
 
 - (NSString *) nibName
@@ -310,7 +312,7 @@ being returned. */
 - (void) resetProvider
 {
 	[propertyViewItem setRepresentedObject: nil];
-	[propertyViewItem setSource: self];
+	[propertyViewItem setSource: propertyViewItem];
 }
 
 // FIXME: Remove

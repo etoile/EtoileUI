@@ -128,7 +128,7 @@
 	ETLayoutItem *inspectedItem = [selectedItem representedObject];
 
 	[detailViewItem setRepresentedObject: inspectedItem];
-	[detailViewItem reloadAndUpdateLayout];
+	[detailViewItem updateLayout];
 }
 
 - (id) selectedObject
