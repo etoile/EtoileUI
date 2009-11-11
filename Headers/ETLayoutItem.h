@@ -314,6 +314,7 @@ and centers it. A strech is a scale that doesn't preserve the content proportion
 - (void) setAction: (SEL)aSelector;
 - (SEL) action;
 - (void) didChangeViewValue: (id)newValue;
+- (void) didChangeRepresentedObjectValue: (id)newValue;
 
 - (id <ETInspector>) inspector;
 - (void) setInspector: (id <ETInspector>)inspector;

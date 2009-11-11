@@ -42,6 +42,14 @@
 	else /* isRepresentedObjectChange */
 	{
 		NSParameterAssert(object == _modelObject);
+
+		if ([keyPath isEqual: @"value"] || [keyPath isEqual: @"objectValue"])
+		{
+			[self didChangeRepresentedObjectValue: [change objectForKey: NSKeyValueChangeNewKey]];
+		}
+		
+		/* Allow the item to redisplay any visual element that depends on the value 
+		   e.g. a style or a cell in a layout view */
 		[self refreshIfNeeded];
 	}
 }

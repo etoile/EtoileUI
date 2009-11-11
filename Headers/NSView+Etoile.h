@@ -21,6 +21,8 @@ This protocol is subject to change or be removed. */
 - (void) setTarget: (id)aTarget;
 - (SEL) action;
 - (void) setAction: (SEL)aSelector;
+- (id) objectValue;
+- (void) setObjectValue: (id)aValue;
 - (NSActionCell *) cell;
 @end
 

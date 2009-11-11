@@ -432,7 +432,9 @@ its view, and initializes this checkbox with the given label, target and action.
 You can provide a model object on which -setValue:forProperty: will be invoked 
 for the given property every time the checkbox state changes.<br />
 The model object and property name are used to initialize a property viewpoint 
-which is set as the returned item represented object.
+which is set as the returned item represented object. The property view point 
+is also initialized to treat dictionary keys as properties, so you can use a 
+dictionary as model.
 
 Both model and property name must be valid objects when they are not nil. */
 - (id) checkboxWithLabel: (NSString *)aLabel 
@@ -452,12 +454,20 @@ Both model and property name must be valid objects when they are not nil. */
 
 	if (nil != aKey || nil != aModel)
 	{
-		NSAssert2([[(NSObject *)aModel properties] containsObject: aKey], @"To be used as "
-			"a checkbox model, %@ must expose the requested property %@", aKey, aModel);
+		/* Will raise an NSUndefinedKeyException when the model has no such key  */
+		NS_DURING
+
+			[aModel valueForKey: aKey];
+
+		NS_HANDLER
+			[NSException raise: NSInvalidArgumentException format: @"To be used as a "
+				"checkbox model, %@ must be KVC-compliant for %@", aModel, aKey];
+		NS_ENDHANDLER
 	}
 
 	[item setRepresentedObject: [ETProperty propertyWithName: aKey
 	                                       representedObject: aModel]];
+	[[item representedObject] setTreatsAllKeysAsProperties: YES];
 
 	return item;
 }

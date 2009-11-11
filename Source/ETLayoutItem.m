@@ -805,15 +805,48 @@ You shouldn't have to use this method a lot since -valueForProperty: and
 	return (nil != _modelObject ? _modelObject : (id)self);
 }
 
+- (void) syncView: (NSView *)aView withValue: (id)newValue
+{
+	if (nil == aView || NO == [aView isWidget])
+		return;
+
+	[(id <ETWidget>)aView setObjectValue: newValue];
+}
+
+/* -value is not implemented by every object unlike -objectValue which is implemented 
+by NSObject+Model in EtoileFoundation. */
+- (void) syncView: (NSView *)aView withRepresentedObject: (id)anObject
+{
+	if (nil == anObject)
+		return;
+
+	id value = nil;
+
+	if ([anObject respondsToSelector: @selector(value)])
+	{
+		value = [anObject value];
+	}
+	else
+	{
+		value = [anObject objectValue];
+	}
+
+	[self syncView: aView withValue: value];
+}
+
 /** Sets the model object which embeds the data to be displayed and represented 
 on screen by the receiver.
 
 Take note modelObject can be any objects including an ETLayoutItem instance, in 
-this case the receiver becomes a meta item and returns YES for -isMetaLayoutItem. */
+this case the receiver becomes a meta item and returns YES for -isMetaLayoutItem.
+
+The item view is also synchronized with the object value of the given represented 
+object when the view is a widget. */
 - (void) setRepresentedObject: (id)modelObject
 {
 	[_modelObject removeObserver: self];
 	ASSIGN(_modelObject, modelObject);
+	[self syncView: [self view] withRepresentedObject: modelObject];
 	[modelObject addObserver: self];
 }
 
@@ -914,40 +947,40 @@ this case the receiver becomes a meta item and returns YES for -isMetaLayoutItem
 {
 	ETView *supervisorView = [self supervisorView];
 	NSView *oldView = [supervisorView wrappedView];
+	BOOL stopObservingOldView = (nil != oldView && [oldView isWidget]);
+	BOOL startObservingNewView = (nil != newView && [newView isWidget]);
 
-	if (nil != oldView)
+	if (stopObservingOldView)
 	{
-		if ([oldView isWidget])
-		{
-			[[(id <ETWidget>)oldView cell] removeObserver: self forKeyPath: @"objectValue"];
-			[[(id <ETWidget>)oldView cell] removeObserver: self forKeyPath: @"state"];
-		}
+		[[(id <ETWidget>)oldView cell] removeObserver: self forKeyPath: @"objectValue"];
+		[[(id <ETWidget>)oldView cell] removeObserver: self forKeyPath: @"state"];
 	}
 
+	/* Insert a supervisor view if needed and adjust the new view autoresizing behavior */
 	if (nil != newView)
 	{
-		if ([newView isWidget])
-		{
-			[[(id <ETWidget>)newView cell] addObserver: self 
-			                                forKeyPath: @"objectValue"
-			                                   options: NSKeyValueObservingOptionNew
-		                                           context: NULL];
-			[[(id <ETWidget>)newView cell] addObserver: self 
-			                                forKeyPath: @"state"
-			                                   options: NSKeyValueObservingOptionNew
-		                                           context: NULL];
-
-		}
-
 		supervisorView = [self setUpSupervisorViewWithFrame: [self frame]];
 		NSParameterAssert(NSEqualSizes([self contentBounds].size, [supervisorView frame].size));
 
 		[newView setAutoresizingMask: autoresizing];
 		/* The view frame will be adjusted by -[ETView tileContentView:temporary:]
-		which invokes -contentRectWithRect:contentAspect:boundsSize:. */
+		   which invokes -contentRectWithRect:contentAspect:boundsSize:. */
 	}
 
 	[supervisorView setWrappedView: newView];
+	[self syncView: newView withRepresentedObject: _modelObject]; 
+
+	if (startObservingNewView)
+	{
+		[[(id <ETWidget>)newView cell] addObserver: self 
+		                                forKeyPath: @"objectValue"
+		                                   options: NSKeyValueObservingOptionNew
+	                                           context: NULL];
+		[[(id <ETWidget>)newView cell] addObserver: self 
+		                                forKeyPath: @"state"
+		                                   options: NSKeyValueObservingOptionNew
+		                                   context: NULL];
+	}
 }
 
 /** Sets the view associated with the receiver. This view is commonly a widget 
@@ -2574,6 +2607,13 @@ See also -subject. */
 {
 	ETLog(@"Did Change view value to %@", newValue);
 	[self setValue: newValue forProperty: kETValueProperty];
+}
+
+/** Updates the view 'object value' property when the represented object value changed. */
+- (void) didChangeRepresentedObjectValue: (id)newValue
+{
+	ETLog(@"Did Change represented object value to %@", newValue);
+	[self syncView: [self view] withValue: newValue];
 }
 
 /** Returns the custom inspector associated with the receiver. By default, 
