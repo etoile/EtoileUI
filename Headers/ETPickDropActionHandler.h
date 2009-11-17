@@ -32,8 +32,8 @@
 
 /* Pick and Drop Filtering */
 
-- (ETUTI *) allowedPickTypeForItem: (ETLayoutItem *)item;
-- (ETUTI *) allowedDropTypeForItem: (ETLayoutItem *)item;
+- (NSArray *) allowedPickTypesForItem: (ETLayoutItem *)item;
+- (NSArray *) allowedDropTypesForItem: (ETLayoutItem *)item;
 - (BOOL) canDragItem: (ETLayoutItem *)item
          coordinator: (ETPickDropCoordinator *)aPickCoordinator;
 - (BOOL) canDropObject: (id)droppedObject

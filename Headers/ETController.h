@@ -62,7 +62,7 @@
 	Class _groupClass;
 	NSArray *_sortDescriptors;
 	NSPredicate *_filterPredicate;
-	ETUTI *_allowedPickType;
+	NSArray *_allowedPickTypes;
 	NSMutableDictionary *_allowedDropTypes; /* Allowed drop UTIs by drop target UTIs */
 	BOOL _automaticallyRearrangesObjects;
 	BOOL _hasNewSortDescriptors;
@@ -132,10 +132,10 @@
 
 /* Pick and Drop */
 
-- (ETUTI *) allowedPickType;
-- (void) setAllowedPickType: (ETUTI *)aUTI;
-- (ETUTI *) allowedDropTypeForTargetType: (ETUTI *)aUTI;
-- (void) setAllowedDropType: (ETUTI *)aUTI forTargetType: (ETUTI *)targetUTI;
+- (NSArray *) allowedPickTypes;
+- (void) setAllowedPickTypes: (NSArray *)UTIs;
+- (NSArray *) allowedDropTypesForTargetType: (ETUTI *)aUTI;
+- (void) setAllowedDropTypes: (NSArray *)UTIs forTargetType: (ETUTI *)targetUTI;
 
 @end
 

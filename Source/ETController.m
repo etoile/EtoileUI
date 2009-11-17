@@ -24,7 +24,7 @@ Initializes and returns a new controller which automatically rearrange objects. 
 
 	_observations = [[NSMutableSet alloc] init];
 	[self setSortDescriptors: nil];
-	_allowedPickType = [[ETUTI alloc] init];
+	_allowedPickTypes = [[NSArray alloc] init];
 	_allowedDropTypes = [[NSMutableDictionary alloc] init];
 	_automaticallyRearrangesObjects = YES;
 
@@ -52,7 +52,7 @@ Initializes and returns a new controller which automatically rearrange objects. 
 	DESTROY(_groupClass);
 	DESTROY(_sortDescriptors);
 	DESTROY(_filterPredicate);
-	DESTROY(_allowedPickType);
+	DESTROY(_allowedPickTypes);
 	DESTROY(_allowedDropTypes);
 	
 	[super dealloc];
@@ -244,7 +244,7 @@ the copying support must invoke it instead of -copyWithZone:. */
 	ASSIGN(newController->_groupClass, _groupClass);
 	newController->_sortDescriptors = [_sortDescriptors copyWithZone: aZone];
 	newController->_filterPredicate = [_filterPredicate copyWithZone: aZone];
-	newController->_allowedPickType = [_allowedPickType copyWithZone: aZone];
+	newController->_allowedPickTypes = [_allowedPickTypes copyWithZone: aZone];
 	newController->_allowedDropTypes = [_allowedDropTypes mutableCopyWithZone: aZone];
 	newController->_automaticallyRearrangesObjects = _automaticallyRearrangesObjects;
 	newController->_hasNewSortDescriptors = (NO == [_sortDescriptors isEmpty]);
@@ -596,22 +596,31 @@ Returns YES by default. */
 
 /* Pick and Drop */
 
-- (ETUTI *) allowedPickType
+- (NSArray *) allowedPickTypes
 {
-	return _allowedPickType;
+	return _allowedPickTypes;
 }
 
-- (void) setAllowedPickType: (ETUTI *)aUTI
+- (void) setAllowedPickTypes: (NSArray *)UTIs
 {
-	NILARG_EXCEPTION_TEST(aUTI)
-	ASSIGN(_allowedPickType, aUTI);
+	NILARG_EXCEPTION_TEST(UTIs)
+	ASSIGN(_allowedPickTypes, UTIs);
 }
 
-- (ETUTI *) allowedDropTypeForTargetType: (ETUTI *)aUTI
+/* -allowedDropTypesForTargetType: can be rewritten with HOM. Not sure it won't
+too slow given that the method tends to be invoked repeatedly.
+
+	NSArray *matchedTargetTypes = [[[_allowedDropTypes allKeys] filter] conformsToType: targetType];
+	NSArray *matchedDropTypeArrays = [_allowedDropTypes objectsForKeys: matchedTargetTypes
+	                                                    notFoundMarker: [NSNull null]];
+
+	return [matchedDropTypeArrays flattenedCollection]; */
+
+- (NSArray *) allowedDropTypesForTargetType: (ETUTI *)aUTI
 {
 	NILARG_EXCEPTION_TEST(aUTI)
 	NSMutableArray *matchedDropTypes = [NSMutableArray arrayWithCapacity: 100];
-
+	
 	FOREACH([_allowedDropTypes allKeys], targetType, ETUTI *)
 	{
 		if ([aUTI conformsToType: targetType])
@@ -620,14 +629,14 @@ Returns YES by default. */
 		}
 	}
 
-	return [ETUTI transientTypeWithSupertypes: matchedDropTypes];
+	return matchedDropTypes;
 }
 
-- (void) setAllowedDropType: (ETUTI *)aUTI forTargetType: (ETUTI *)targetUTI
+- (void) setAllowedDropTypes: (NSArray *)UTIs forTargetType: (ETUTI *)targetUTI
 {
 	NILARG_EXCEPTION_TEST(targetUTI)
-	NILARG_EXCEPTION_TEST(aUTI)
-	[_allowedDropTypes setObject: aUTI forKey: targetUTI];
+	NILARG_EXCEPTION_TEST(UTIs)
+	[_allowedDropTypes setObject: UTIs forKey: targetUTI];
 }
 
 @end

@@ -19,8 +19,8 @@
 - (ETLayoutItem *) itemGroup: (ETLayoutItemGroup *)baseItem itemAtIndex: (int)index;
 @end
 
-NSString *myFolderUTI = @"org.etoile.ObjectManagerExample.folder";
-NSString *myFileUTI = @"org.etoile.ObjectManagerExample.file";
+NSString *myFolderUTIString = @"org.etoile.ObjectManagerExample.folder";
+NSString *myFileUTIString = @"org.etoile.ObjectManagerExample.file";
 
 @implementation ObjectManagerController
 
@@ -68,19 +68,19 @@ static NSFileManager *objectManager = nil;
 		NSLog(@"Mixed path test: %@ -> %@", testPath, fixedPath);
 #endif
 
-	[ETUTI registerTypeWithString: myFileUTI 
+	[ETUTI registerTypeWithString: myFileUTIString 
 	                  description: nil 
 	             supertypeStrings: [NSArray array]];
-	[ETUTI registerTypeWithString: myFolderUTI 
+	[ETUTI registerTypeWithString: myFolderUTIString 
 	                  description: nil 
 	             supertypeStrings: [NSArray array]];
 		
 	controller = AUTORELEASE([[ETController alloc] init]);
 	[[viewContainer layoutItem] setController: controller];
 	[controller setAutomaticallyRearrangesObjects: YES];
-	[controller setAllowedPickType: [ETUTI typeWithString: myFileUTI]];
-	[controller setAllowedPickType: [ETUTI transientTypeWithSupertypes: 
-		A([ETUTI typeWithString: myFileUTI], [ETUTI typeWithString: myFolderUTI])]];
+	[controller setAllowedPickTypes: A([ETUTI typeWithString: myFileUTIString])];
+	[controller setAllowedPickTypes: A([ETUTI typeWithString: myFileUTIString], 
+		[ETUTI typeWithString: myFolderUTIString])];
 
 	[viewContainer setAllowsMultipleSelection: YES];
 	[viewContainer setRepresentedPath: path];		
@@ -348,12 +348,12 @@ static NSFileManager *objectManager = nil;
 		if ([[NSFileManager defaultManager] fileExistsAtPath: filePath isDirectory: &isDir] && isDir)
 		{
 			fileItem = [[ETLayoutItemFactory factory] itemGroupWithView: [self imageViewForImage: icon]];
-			[fileItem setSubtype: myFolderUTI];
+			[fileItem setSubtype: [ETUTI typeWithString: myFolderUTIString]];
 		}
 		else
 		{
 			fileItem = [ETLayoutItem layoutItemWithView: [self imageViewForImage: icon]];
-			[fileItem setSubtype: myFileUTI];
+			[fileItem setSubtype: [ETUTI typeWithString: myFileUTIString]];
 		}
 		
 		// FIXME: better to have a method -setIdentifier: different from -setName:

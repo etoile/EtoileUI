@@ -1247,6 +1247,8 @@ You can use it to restrict pick and drop allowed types to the receiver type,
 when the receiver is a "pure UI object" without a represented object bound to it. */
 - (void) setSubtype: (ETUTI *)aUTI
 {
+	/* Check type aggressively in case the user passes a string */
+	NSParameterAssert([aUTI isKindOfClass: [ETUTI class]]);
 	SET_PROPERTY(aUTI, kETSubtypeProperty);
 }
 

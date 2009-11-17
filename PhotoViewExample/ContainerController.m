@@ -37,9 +37,9 @@
 	             supertypeStrings: A(@"public.image")];
 
 	[self setAutomaticallyRearrangesObjects: YES]; /* Enable automatic sorting */
-	[self setAllowedPickType: [ETUTI typeWithString: @"public.image"]];
-	[self setAllowedDropType: [ETUTI typeWithString: @"public.image"]
-	           forTargetType: [ETUTI typeWithClass: [ETLayoutItemGroup class]]];
+	[self setAllowedPickTypes: A([ETUTI typeWithString: @"public.image"])];
+	[self setAllowedDropTypes: A([ETUTI typeWithString: @"public.image"])
+	            forTargetType: [ETUTI typeWithClass: [ETLayoutItemGroup class]]];
 
 	[[ETPickboard localPickboard] showPickPalette]; /* Just to show it */
 }
@@ -302,6 +302,7 @@ protocol methods. */
 	[imageItem setName: [[img name] lastPathComponent]];
 	[imageItem setIcon: [wk iconForFile: [img name]] ];		
 	[imageItem setValue: type forProperty: @"imgType"];
+	[imageItem setSubtype: [ETUTI typeWithString: @"public.image"]];
 	
 	//ETLog(@"Returns %@ as item in %@", imageItem, baseItem);
 

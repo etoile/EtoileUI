@@ -6,7 +6,9 @@
 	License:  Modified BSD (see COPYING)
  */
 
+#import <EtoileFoundation/Macros.h>
 #import <EtoileFoundation/ETCollection.h>
+#import <EtoileFoundation/ETCollection+HOM.h>
 #import <EtoileFoundation/ETUTI.h>
 #import <EtoileFoundation/NSObject+Etoile.h>
 #import <EtoileFoundation/NSObject+Model.h>
@@ -289,14 +291,14 @@ feedback), when a drag results in a drop or is cancelled on the drop target area
 
 /** Returns the allowed pick UTIs specified in the controller bound to the base 
 item of the given item. */
-- (ETUTI *) allowedPickTypeForItem: (ETLayoutItem *)item
+- (NSArray *) allowedPickTypesForItem: (ETLayoutItem *)item
 {
-	return [[[item baseItem] valueForProperty: kETControllerProperty] allowedPickType];
+	return [[[item baseItem] valueForProperty: kETControllerProperty] allowedPickTypes];
 }
 
 /** Returns the allowed drop UTIs specified in the controller bound to the base 
 item of the given item. */
-- (ETUTI *) allowedDropTypeForItem: (ETLayoutItem *)item
+- (NSArray *) allowedDropTypesForItem: (ETLayoutItem *)item
 {
 	ETController *controller = [[item baseItem] valueForProperty: kETControllerProperty];
 	ETUTI *uti = nil;
@@ -310,29 +312,39 @@ item of the given item. */
 		uti = [item UTI];
 	}
 
-	return [controller allowedDropTypeForTargetType: uti];
+	return [controller allowedDropTypesForTargetType: uti];
 }
 
 /** Returns whether the item is draggable.
 
-Returns YES when the item conforms to the allowed pick types returned by 
--allowedPickUTIsForItem:, otherwise returns NO. */
+Returns YES when the item conforms to a pick type returned by 
+-allowedPickTypesForItem:, otherwise returns NO. */
 - (BOOL) canDragItem: (ETLayoutItem *)item
          coordinator: (ETPickDropCoordinator *)aPickCoordinator
 {
 	if ([aPickCoordinator isPickDropForced])
 		return YES;
 
-	// FIXME: Rework ETUTI API a bit...
-	//return [testedObject conformsToType: [ETUTI transientTypeWithSupertypes: 
-	//	[self allowedPickUTIsForItem: item]]];
-	return [[item UTI] conformsToType: [self allowedPickTypeForItem: item]];
+	// TODO: Would be nice to rewrite that with HOM but that might be too hard...
+	// [[item UTI] conformsToType: [[self allowedDropTypesForItem: dropTarget] each]];
+	// will return the last evaluated -conformsToType: result rather than exit
+	// on the first conforming type.
+	ETUTI *draggedType = [item UTI];
+
+	FOREACH([self allowedPickTypesForItem: item], pickType, ETUTI *)
+	{
+		if ([draggedType conformsToType: pickType])
+		{
+			return YES;
+		}
+	}
+	return NO;
 }
 
 /** Returns whether the dropped object can be inserted into the drop target.
 
-Returns YES when the dropped object conforms to the allowed drop types returned 
-by -allowedDropUTIsForItem: for the drop target, otherwise returns NO.
+Returns YES when the dropped object conforms to a drop type returned 
+by -allowedDropTypesForItem: for the drop target, otherwise returns NO.
 
 When the dropped object is a pick collection, each element type is checked with 
 -conformsToType:. */
@@ -346,10 +358,16 @@ When the dropped object is a pick collection, each element type is checked with
 	if ([aPickCoordinator isPickDropForced])
 		return YES;
 
-	// FIXME: Rework ETUTI API a bit...
-	//return [testedObject conformsToType: [ETUTI transientTypeWithSupertypes: 
-	//	[self allowedDropUTIsForItem: item]]];
-	return [[(NSObject *)droppedObject UTI] conformsToType: [self allowedDropTypeForItem: dropTarget]];
+	ETUTI *droppedType = [droppedObject UTI];
+
+	FOREACH([self allowedDropTypesForItem: dropTarget], dropType, ETUTI *)
+	{
+		if ([droppedType conformsToType: dropType])
+		{
+			return YES;
+		}
+	}
+	return NO;
 }
 
 - (IBAction) copy: (id)sender onItem: (ETLayoutItem *)item
