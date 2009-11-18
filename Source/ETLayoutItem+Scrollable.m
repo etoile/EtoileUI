@@ -171,7 +171,7 @@ synchronize those layouts with it every time a setting changed.  */
 	{
 		[[self layout] syncLayoutViewWithItem: self];	
 	}
-	[[self layout] setContentSizeLayout: YES];
+	[[self layout] setIsContentSizeLayout: YES];
 }
 
 - (void) hidesScrollableAreaItem 
@@ -187,7 +187,7 @@ synchronize those layouts with it every time a setting changed.  */
 	{
 		[[self layout] syncLayoutViewWithItem: self];	
 	}
-	[[self layout] setContentSizeLayout: NO];
+	[[self layout] setIsContentSizeLayout: NO];
 }
 
 /** Returns wether the receiver content is enclosed in a scrollable area.

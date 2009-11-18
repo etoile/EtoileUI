@@ -115,7 +115,6 @@ See -initWithLayoutView:. */
 	return AUTORELEASE([[[self  class] alloc] initWithLayoutView: layoutView]);
 }
 
-
 /** Returns the layout class to  instantiate in -initWithLayoutView: for the 
 given layout view.
 
@@ -157,18 +156,19 @@ For the view classes listed below, the substitute classes are:
 }
 
 /** <init /> 
-Returns ETLayout instance when layoutView is nil, otherwise returns a concrete 
-subclass with class cluster style initialization.
+Returns a new ETLayout instance when the given view is nil, otherwise returns a 
+concrete subclass instance based on the view type.
 
 e.g. If you pass an NSOutlineView, an ETOutlineLayout instance is returned, the 
-substitution list in -layoutClassForLayoutView:.
+substitution list in -layoutClassForLayoutView:. The instantiation behaves like 
+a class cluster.
 
 The returned layout has both vertical and horizontal constraint on item size 
 enabled. The size constraint is set to 256 * 256 px. You can customize item size 
 constraint with -setItemSizeConstraint: and -setConstrainedItemSize:. */
 - (id) initWithLayoutView: (NSView *)layoutView
 {
-	self = [super init];
+	SUPERINIT
 	
 	/* Class cluster initialization */
 	
@@ -200,27 +200,28 @@ constraint with -setItemSizeConstraint: and -setConstrainedItemSize:. */
   
 	/* Concrete instance initialization */
 	
-	if (self != nil)
+	_layoutContext = nil;
+	_delegate = nil;
+	_instrument = nil;
+	_isLayouting = NO;
+	_layoutSize = NSMakeSize(200, 200); /* Dummy value */
+	_layoutSizeCustomized = NO;
+	_maxSizeLayout = NO;
+	_itemSize = NSMakeSize(256, 256); /* Default max item size */
+	/* By default both width and height must be equal or inferior to related _itemSize values */
+	_itemSizeConstraintStyle = ETSizeConstraintStyleNone;
+	 /* Will ensure -resizeItems:toScaleFactor: isn't called until the scale changes */
+	 _previousScaleFactor = 1.0;
+
+	if (layoutView != nil) /* Use layout view parameter */
 	{
-		_layoutContext = nil;
-		_delegate = nil;
-		_isLayouting = NO;
-		_layoutSize = NSMakeSize(200, 200); /* Dummy value */
-		_layoutSizeCustomized = NO;
-		_maxSizeLayout = NO;
-		_itemSize = NSMakeSize(256, 256); /* Default max item size */
-		/* By default both width and height must be equal or inferior to related _itemSize values */
-		_itemSizeConstraintStyle = ETSizeConstraintStyleNone;
-		_previousScaleFactor = 1.0; /* Ensures -resizeItems:toScaleFactor: isn't called until the scale changes */
-	
-		if (layoutView != nil) /* Use layout view parameter */
+		[self setLayoutView: layoutView];
+	}
+	else if ([self nibName] != nil) /* Use layout view in nib */
+	{
+		if ([self loadNibNamed: [self nibName]] == NO)
 		{
-			[self setLayoutView: layoutView];
-		}
-		else if ([self nibName] != nil) /* Use layout view in nib */
-		{
-			if ([self loadNibNamed: [self nibName]] == NO)
-				self = nil;
+			self = nil;
 		}
 	}
 	
@@ -229,7 +230,14 @@ constraint with -setItemSizeConstraint: and -setConstrainedItemSize:. */
 
 /** <overidde-dummy />
 Returns the name of the nib file the receiver should automatically load when 
-it gets instantiated. */
+it gets instantiated.
+
+Overrides in your subclass when you want to retrieve objects stored in a nib 
+to initialize your subclass instances. e.g. you can bind the _layoutView outlet 
+to any view to make it transparently available with -layoutView. -setLayoutView: 
+will be invoked when the outlet is set.
+
+Returns nil by default. */
 - (NSString *) nibName
 {
 	return nil;
@@ -272,8 +280,8 @@ it gets instantiated. */
 
 - (void) dealloc
 {
-	/* Neither layout context and delegate have to be retained. For layout 
-	   context, only because it retains us and is in charge of us. */
+	/* Neither layout context and delegate have to be retained. 
+	   The layout context is our owner and retains us. */
 	DESTROY(_displayViewPrototype);
 	DESTROY(_instrument);
 	DESTROY(_rootItem);
@@ -313,8 +321,8 @@ instrument copy. */
 }
 
 /** <override-dummy />
-Overrides to specify to set up the receiver when it is the copy and has just 
-been assigned to its layout context.<br />
+Overrides to set up the receiver when it is the copy and has just been assigned 
+to its layout context.<br />
 At that point, the item tree owned by the layout context has been fully copied, 
 and object references that belongs to the original can now be resolved to their 
 equivalent in the tree copy (or object graph copy to be precise).
@@ -405,13 +413,17 @@ The ancestor layout on which the instrument was changed can be retrieved with
 	}
 }
 
-/** Sets the context where the layout should happen. 
+/** <override-never />
+Sets the context where the layout should happen. 
 
 When a layout context is set, with the next layout update the receiver will 
-arrange the layout items in a specific style and order. 
+arrange the layout items in a specific style and order.
+
+You must override -setUp and/or -tearDown to react to a layout change and not 
+this method.
 
 The layout context is expected to retain its layout, hence the receiver doesn't 
-retain context. */
+retain the given context. */
 - (void) setLayoutContext: (id <ETLayoutingContext>)context
 {
 	ETDebugLog(@"Modify layout context from %@ to %@ in %@", _layoutContext, context, self);
@@ -466,7 +478,7 @@ You must call the superclass implementation if you override this method. */
 	// all differ by their unique layout view prototype.
 	// Triggers scroll view display which triggers layout render in turn to 
 	// compute the content size
-	[[self layoutContext] setLayoutView: nil];
+	[_layoutContext setLayoutView: nil];
 	[self unmapRootItemFromLayoutContext];
 }
 
@@ -490,12 +502,10 @@ You must call the superclass implementation if you override this method. */
 /* Overrides in subclasses to indicate whether the layout is a semantic layout
 or not. Returns NO by default.
 
-ETTableLayout is a normal layout but ETPropertyLayout (which displays a list of 
-properties) is semantic, the latter works by delegating everything to an 
-existing normal layout and may eventually replace this layout by another one. 
+A semantic layout would work by delegating everything to a concrete layout.
 	
 If you overrides this method to return YES, forwarding of all non-overidden 
-methods to the delegate will be handled automatically (not yet implemented). */
+methods to the normal layout will be handled automatically (not yet implemented). */
 - (BOOL) isSemantic
 {
 	return NO;
@@ -504,9 +514,12 @@ methods to the delegate will be handled automatically (not yet implemented). */
 /** Returns YES when the layout conforms to ETPositionalLayout protocol, 
 otherwise returns NO.
 
-A positional layout doesn't inject a custom UI, it handles the display of the 
-child items bound to the layout context by computing coordinates or by simply 
-using their fixed coordinates. 
+A positional layout doesn't inject a custom UI, it presents the layout context 
+items by either:
+<list>
+<item>computing their coordinates</item>
+<item>using their fixed coordinates</item>
+</list>
 
 Fixed coordinates are encoded in persistentFrame property of ETLayoutItem. */
 - (BOOL) isPositional
@@ -530,13 +543,13 @@ See ETWidgetLayout.*/
 }
 
 /** <override-dummy />
-Returns YES when the layout is positional, computes the location of the layout 
-items and updates these locations as necessary by itself. 
+Returns YES when the layout is positional and computes every item geometry
+(position, rotation, scale etc.) on demand.
 
 See also ETComputedLayout, whose subclasses are all computed layouts.
 
 By default returns NO, overrides to return YES when a positional layout 
-subclass doesn't allow the user sets the layout item locations. 
+subclass doesn't allow the user sets the item positions. 
 
 The returned value alters the order in which ETLayoutItemGroup source methods 
 are called. 
@@ -549,17 +562,14 @@ layout before updating the persistent frame. */
 }
 
 /** <override-dummy />
-Returns YES when the layout imposes a custom layout and drawing for all rendered 
-layout items; in other words, when the receiver overrides the default drawing 
-styles, views and layouts for the descendant items of the layout context.
+Returns YES when the layout don't let the layout context items draw 
+themselves and prevent the descendant item styles, views, layouts etc. to be 
+visible.<br />
+Opaque layouts completely impose their own presentation.
 
-By default returns YES if the receiver uses a layout view. 
+By default returns NO. 
 
-Override it to return NO in case the receiver subclass doesn't let the rendered 
-layout items draw themselves, yet without using a layout view. 
-
-Typically layouts that wrap controls of the underlying UI toolkit are opaque 
-(e.g. ETTableLayout). */
+Subclass instances that wrap widgets are opaque (e.g. ETTableLayout). */
 - (BOOL) isOpaque
 {
 	return NO;
@@ -599,9 +609,7 @@ See also -isScrollable and ETLayoutItem(Scrollable). */
 	container size is altered. */
 - (BOOL) isAllContentVisible
 {
-	int nbOfItems = [[[self layoutContext] items] count];
-	
-	return [[[self layoutContext] visibleItems] count] == nbOfItems;
+	return ([[_layoutContext visibleItems] count] == [[_layoutContext items] count]);
 }
 
 /** By default layout size is precisely matching frame size of the container to 
@@ -621,14 +629,22 @@ See also -isScrollable and ETLayoutItem(Scrollable). */
 	_layoutSizeCustomized = flag;
 }
 
+/** Returns whether a custom area size where the layout should be rendered. */
 - (BOOL) usesCustomLayoutSize
 {
 	return _layoutSizeCustomized;
 }
 
-/** Layout size can be set directly only if -usesCustomLayoutSize returns
-	YES.
-	In this case, you can restrict layout size to your personal needs by 
+/** Sets the newly computed layout size.
+
+Many layouts compute the extent necessary to present the items in their own way. 
+This layout size is the minimal area which bounds the whole presentation and 
+ensure every item to be presented is visible.
+
+You should not need to use this method usually, -renderLayoutItems:isNewContent: 
+automatically invokes -resetLayoutSize.
+
+in.You can restrict the layout size to your personal needs by 
 	calling -setLayoutSize: and only then -render. */
 - (void) setLayoutSize: (NSSize)size
 {
@@ -637,30 +653,55 @@ See also -isScrollable and ETLayoutItem(Scrollable). */
 	[self syncRootItemGeometryWithSize: size];
 }
 
+/** Returns the last computed layout size.
+
+The layout area size is usually computed every time 
+-renderWithLayoutItems:isNewContent: is invoked with a new content. */
 - (NSSize) layoutSize
 {
 	return _layoutSize;
 }
 
-- (void) setContentSizeLayout: (BOOL)flag
+/** Sets whether the layout context can be resized, when its current size is 
+not enough to let the layout present the items in its own way. 
+
+The only common case where -isContentSizeLayout should return YES is when the 
+layout context is scrollable, and ETLayout does it transparently. Which means 
+you very rarely need to use this method.
+
+See also -isContentSizeLayout:. */
+- (void) setIsContentSizeLayout: (BOOL)flag
 {
 	//ETDebugLog(@"-setContentSizeLayout");
 	_maxSizeLayout = flag;
 }
 
+/** Returns whether the layout context can be resized, when its current size is 
+not enough to let the layout present the items in its own way. 
+
+When a scrollable area item decorates the layout context, -isContentSizeLayout 
+always returns YES. */
 - (BOOL) isContentSizeLayout
 {
-	if ([[self layoutContext] isScrollViewShown])
+	if ([_layoutContext isScrollViewShown])
 		return YES;
 
 	return _maxSizeLayout;
 }
 
+/** Sets the delegate.
+
+The delegate is not retained.
+
+Not used presently. */
 - (void) setDelegate: (id)delegate
 {
 	_delegate = delegate;
 }
 
+/** Returns the delegate. 
+
+See also -setDelegate:. */
 - (id) delegate
 {
 	return _delegate;
@@ -668,48 +709,60 @@ See also -isScrollable and ETLayoutItem(Scrollable). */
 
 /* Item Sizing Accessors */
 
-/** If the constraint is different than ETSizeConstraintStyleNone, the 
-	autoresizing returned by -[ETLayoutItem autoresizingMask], for each item 
-	that is rendered by the receiver, won't be respected. */
+/** Sets how the item is resized based on the constrained item size.
+
+See ETSizeConstraintStyle enum. */
 - (void) setItemSizeConstraintStyle: (ETSizeConstraintStyle)constraint
 {
 	_itemSizeConstraintStyle = constraint;
 }
 
+/** Returns how the item is resized based on the constrained item size.
+
+See ETSizeConstraintStyle enum. */
 - (ETSizeConstraintStyle) itemSizeConstraintStyle
 {
 	return _itemSizeConstraintStyle;
 }
 
+/** Sets the width and/or height to which the items should be resized when their 
+width and/or is greater than the given one.
+
+Whether the width, the height or both are resized is controlled by 
+-itemSizeConstraintStyle.
+
+See also setItemSizeConstraintStyle: and -resizeLayoutItems:toScaleFactor:. */
 - (void) setConstrainedItemSize: (NSSize)size
 {
 	_itemSize = size;
 }
 
+/** Returns the width and/or height to which the items should be resized when 
+their width and/or height is greater than the returned one.
+
+See also -setContrainedItemSize:. */
 - (NSSize) constrainedItemSize
 {
 	return _itemSize;
 }
 
-/** Returns whether the receiver can run the layout now. */
+/** Returns whether -renderXXX methods can be invoked now. */
 - (BOOL) canRender
 {
-	return ([self layoutContext] != nil && [self isRendering] == NO);
+	return (_layoutContext != nil && [self isRendering] == NO);
 }
 
-/** Returns whether the receiver is currently computing and rendering its 
-	layout right now or not.
-	You must call this method in your code before calling any Layouting related
-	methods. If YES is returned, don't call the method you want to and wait a 
-	bit before giving another try to -isRendering. When NO is returned, you are 
-	free to call any Layouting related methods. */
+/** Returns whether the layout phase in underway.
+
+When you want to use Layouting related methods, you must check this method 
+returns YES. When NO is returned, wait until it returns YES.  */
 - (BOOL) isRendering
 {
 	return _isLayouting;
 }
 
-/** Renders a collection of items by requesting them to the layout context to 
-which the receiver is bound to.
+/** Requests the items to present to the layout context, then renders the 
+layout with -renderWithLayoutItems:isNewContent:.
 
 Layout items can be requested in two styles: 
 <list>
@@ -717,20 +770,20 @@ Layout items can be requested in two styles:
 <item>or indirectly to a data source provided by the layout context.</item>
 </list>
 
-When the layout items are provided through a data source, the layout will only 
-request lazily the subset of them to be displayed (not currently true). 
+When the items are provided through a data source, the layout retrieves the 
+items lazily and tries to only request the subset to be presented (not yet 
+implemented). 
 
-This method is usually called by ETLayoutItemGroup and you should rarely need to 
-do it by yourself. If you want to update the layout, just uses 
--[ETLayoutItemGroup updateLayout]. */
+You should rarely need to use this method. ETLayoutItemGroup does it 
+transparently.<br />
+To explictly update the layout, just uses -[ETLayoutItemGroup updateLayout]. */
 - (void) render: (NSDictionary *)inputValues isNewContent: (BOOL)isNewContent
 {
-	if ([self layoutContext] == nil)
-		ETLog(@"WARNING: No layout context available with %@", self);
+	if (_layoutContext == nil)
+	{
+		ETLog(@"WARNING: Missing layout context in %@... Won't render.", self);
+	}
 
-	/* Prevent reentrancy. In a threaded environment, it isn't perfectly safe 
-	   because _isLayouting test and _isLayouting assignement doesn't occur in
-	   an atomic way. */
 	if ([self canRender] == NO)
 		return;
 
@@ -740,9 +793,9 @@ do it by yourself. If you want to update the layout, just uses
 	   update is necessary */
 	// TODO: Try some optimizations, in the vein of...
 	// if ([[[self layoutContext] items] count] == 0 && _nbOfItemCache != [[[self layoutContext] items] count])
-	//	return;
+	//	 return;
 
-	[self renderWithLayoutItems: [[self layoutContext] arrangedItems] isNewContent: isNewContent];
+	[self renderWithLayoutItems: [_layoutContext arrangedItems] isNewContent: isNewContent];
 
 	_isLayouting = NO;
 }
@@ -784,10 +837,10 @@ This is a skeleton implementation which only invokes -resetLayoutSize: and
 You can reuse this implementation in your subclass or not.
 
 isNewContent indicates when the layout update is triggered by a node insertion 
-or removal in the tree structure that belong to the layout context.
+or removal in the tree structure that belongs to the layout context.
 
-Any layout item which belong to the layout context, but not present in the item 
-array argument, can be ignored in the layout logic implemented by subclasses. 
+Any layout item which belongs to the layout context, but not present in the item 
+array argument, can be ignored in the layout logic implemented by subclasses.<br />
 This optimization is not yet used and a subclass is not required to comply to 
 it (this is subject to change though). */
 - (void) renderWithLayoutItems: (NSArray *)items isNewContent: (BOOL)isNewContent
@@ -1037,7 +1090,7 @@ supervisor view. */
 		return;
 
 	[layoutView setAutoresizingMask: NSViewHeightSizable | NSViewWidthSizable];
-	[[self layoutContext] setLayoutView: layoutView];
+	[_layoutContext setLayoutView: layoutView];
 }
 
 /** <override-dummy />

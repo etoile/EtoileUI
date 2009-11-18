@@ -79,6 +79,8 @@
 @end
 
 // NOTE: May be this should be turned into a mask
+/** When the constraint is not ETSizeConstraintStyleNone, the item autoresizing 
+provided by -[ETLayoutItem autoresizingMask] won't be respected. */
 typedef enum _ETSizeConstraintStyle 
 {
 	ETSizeConstraintStyleNone,
@@ -94,11 +96,11 @@ typedef enum _ETSizeConstraintStyle
 
 @interface ETLayout : NSObject <NSCopying>
 {
-	IBOutlet id _layoutContext;
-	IBOutlet id _delegate;
+	IBOutlet id _layoutContext; /* Weak reference */
+	IBOutlet id _delegate; /* Weak reference */
 	IBOutlet NSView *_displayViewPrototype;
-	id _instrument;
-	ETLayoutItemGroup *_rootItem;
+	ETInstrument *_instrument;
+	ETLayoutItemGroup *_rootItem; /* Lazily initialized */
 
 	BOOL _isLayouting; /* -isRendering */
 	
@@ -160,7 +162,7 @@ typedef enum _ETSizeConstraintStyle
 - (void) setLayoutSize: (NSSize)size;
 - (NSSize) layoutSize;
 // Not sure the two next methods will be kept public
-- (void) setContentSizeLayout: (BOOL)flag;
+- (void) setIsContentSizeLayout: (BOOL)flag;
 - (BOOL) isContentSizeLayout;
 
 - (void) setDelegate: (id)delegate;
@@ -221,16 +223,3 @@ typedef enum _ETSizeConstraintStyle
 - (void) setStyle: (id)style forProperty: (NSString *)property;
 
 @end
-
-
-@interface ETLayout (Delegate)
-
-/** If you want to render layout items in different ways depending on the layout
-	settings, you can implement this delegate method. When implemented in a
-	delegate object, -[ETLayoutItem render] isn't called automatically anymore
-	and you are in charge of calling it in this delegate method if you want to. */
-- (void) layout: (ETLayout *)layout renderLayoutItem: (ETLayoutItem *)item;
-- (NSView *) layout: (ETLayout *)layout replacementViewForItem: (ETLayoutItem *)item;
-
-@end
-
