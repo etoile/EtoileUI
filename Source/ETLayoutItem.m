@@ -548,6 +548,22 @@ The receiver display view itself can be returned. */
 	}
 }
 
+/** Returns the first layout item decorated by a window upwards in the layout 
+item tree. 
+
+The receiver itself can be returned. */
+- (ETLayoutItem *) windowBackedAncestorItem
+{
+	NSWindow *window = [[[self closestAncestorItemWithDisplayView] supervisorView] window];
+
+	if (nil == window)
+		return nil;
+
+	NSParameterAssert([[window contentView] isSupervisorView]);
+
+	return [[[window contentView] layoutItem] firstDecoratedItem];
+}
+
 /** Returns receiver index path relative to the given item. 
 
 The index path is computed by climbing up the layout item tree until we 
@@ -1645,19 +1661,20 @@ If the given style is nil, the style group becomes empty. */
 equivalent to rect parameter expressed in the receiver coordinate space. */
 - (NSRect) convertRectToParent: (NSRect)rect
 {
+	NSRect rectToTranslate = rect;
 	NSRect rectInParent = rect;
 
 	if ([self isFlipped] != [_parentItem isFlipped])
 	{
-		rectInParent.origin.y = [self height] - rectInParent.origin.y - rectInParent.size.height;
+		rectToTranslate.origin.y = [self height] - rect.origin.y - rect.size.height;
 	}
 
 	// NOTE: See -convertRectFromParent:...
 	// NSAffineTransform *transform = [NSAffineTransform transform];
 	// [transform translateXBy: [self x] yBy: [self y]];
 	// rectInParent.origin = [transform transformPoint: rect.origin];
-	rectInParent.origin.x = rect.origin.x + [self x];
-	rectInParent.origin.y = rect.origin.y + [self y];
+	rectInParent.origin.x = rectToTranslate.origin.x + [self x];
+	rectInParent.origin.y = rectToTranslate.origin.y + [self y];
 	
 	return rectInParent;
 }
@@ -1728,7 +1745,7 @@ In case the receiver is not a descendent or ancestor is nil, returns a null rect
 
 	while (parent != ancestor)
 	{
-		newRect = [self convertRectToParent: [self convertRectFromContent: newRect]];
+		newRect = [parent convertRectToParent: [parent convertRectFromContent: newRect]];
 		parent = [parent parentItem];
 	}
 
