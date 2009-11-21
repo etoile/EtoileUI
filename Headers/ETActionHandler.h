@@ -38,12 +38,23 @@ is to write a factory method to build your layout items, this factory
 method will reuse the action handler to be set on every created items. */
 @interface ETActionHandler : NSObject
 {
-
+	ETLayoutItem *_fieldEditorItem;
+	ETLayoutItem *_editedItem;
+	BOOL _wasFieldEditorParentModelMutator;
 }
 
 + (Class) styleClass;
 
 + (id) sharedInstance;
+
+/* Text Editing */
+
+- (ETLayoutItem *) fieldEditorItem;
+- (void) setFieldEditorItem: (ETLayoutItem *)anItem;
+- (void) beginEditingItem: (ETLayoutItem *)item 
+                 property: (NSString *)property
+                   inRect: (NSRect)fieldEditorFrame;
+- (void) endEditingItem;
 
 /* Instrument/Tool Actions */
 

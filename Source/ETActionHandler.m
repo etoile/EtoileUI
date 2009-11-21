@@ -6,6 +6,8 @@
 	License:  Modified BSD (see COPYING)
  */
 
+#import <EtoileFoundation/Macros.h>
+#import <EtoileFoundation/NSObject+HOM.h>
 #import <EtoileFoundation/NSObject+Etoile.h>
 #import <EtoileFoundation/NSObject+Model.h>
 #import "ETActionHandler.h"
@@ -14,6 +16,7 @@
 #import "ETGeometry.h"
 #import "ETInstrument.h"
 #import "ETLayoutItem.h"
+#import "ETLayoutItemFactory.h"
 #import "ETLayoutItemGroup.h"
 #import "EtoileUIProperties.h"
 #import "ETCompatibility.h"
@@ -50,6 +53,140 @@ static NSMutableDictionary *sharedActionHandlers = nil;
 	}
 
 	return handler;
+}
+
+/** Initializes and returns a new action handler. */
+- (id) init
+{
+	SUPERINIT
+	return self;
+}
+
+- (void) dealloc
+{
+	// TODO: Think whether we should really destroy the edited item or simply 
+	// expect it to be nil.
+	if (nil != _editedItem)
+	{
+		[self endEditingItem];
+	}
+	DESTROY(_fieldEditorItem);
+	[super dealloc];
+}
+
+- (NSFont *) defaultFieldEditorFont
+{
+	return [NSFont systemFontOfSize: [NSFont smallSystemFontSize]];
+}
+
+/** Returns a reusable item with a transparent text view as its view.
+
+This text view is dedicated to text editing in a reusable way.
+
+This item can be reused every time editing a property is needed in reaction to 
+an action. See -beginEditingItem:property:inRect:. */
+- (ETLayoutItem *) fieldEditorItem
+{
+	/* Lazily initialization is required, otherwise -textField reenters -init 
+	   with +sharedInstance */
+	if (nil == _fieldEditorItem)
+	{
+		NSTextView *fieldEditor = AUTORELEASE([[NSTextView alloc] initWithFrame: [ETLayoutItem defaultItemRect]]);
+		
+		[fieldEditor setFont: [self defaultFieldEditorFont]];
+		[fieldEditor setDrawsBackground: YES];
+		[fieldEditor setEditable: YES];
+		[fieldEditor setFieldEditor: YES];
+		[fieldEditor setSelectable: YES];
+		[fieldEditor setRichText: NO];
+		[fieldEditor setImportsGraphics: NO];
+		[fieldEditor setUsesFontPanel: NO];
+		[fieldEditor setAllowsUndo: YES];
+
+		_fieldEditorItem = [[ETLayoutItem alloc] initWithView: fieldEditor];
+	}
+
+	return _fieldEditorItem;
+}
+
+/** Sets the item to be used in the field editor role. 
+
+See also -fieldEditorItem. */
+- (void) setFieldEditorItem: (ETLayoutItem *)anItem
+{
+	ASSIGN(_fieldEditorItem, anItem);
+}
+
+- (NSFont *) fontForEditingItem: (ETLayoutItem *)anItem
+{
+	NSFont *font = [[[anItem view] ifResponds] font];
+
+	if (nil == font)
+	{
+		font = [self defaultFieldEditorFont];
+	}
+
+	return font;
+}
+
+/** Starts a text editing session in the given rect.
+
+This method prepares the field editor item with the property value returned by 
+the provided item, then inserts it in the window backed ancestor item where 
+the item is located.
+
+To end the text editing, invoke -endEditingItem.<br />
+Which actions begins and ends the text editing is up to you. */
+- (void) beginEditingItem: (ETLayoutItem *)item 
+                 property: (NSString *)property 
+                   inRect: (NSRect)fieldEditorRect
+{
+	ETLayoutItemGroup *windowBackedItem = [item windowBackedAncestorItem];
+
+	if (nil == windowBackedItem)
+	{
+		ETLog(@"WARNING: Found no window backed ancestor item to edit %@", item);
+		return;
+	}
+
+	ETLayoutItem *fieldEditorItem = [self fieldEditorItem];
+
+	NSParameterAssert(nil != fieldEditorItem);
+
+	_wasFieldEditorParentModelMutator = [windowBackedItem shouldMutateRepresentedObject];
+	[windowBackedItem setShouldMutateRepresentedObject: NO];
+
+	NSRect fieldEditorFrame = [item convertRect: [item contentBounds] toItem: windowBackedItem];
+	NSTextView *fieldEditor = (NSTextView *)[fieldEditorItem view];
+
+	// TODO: Use -bindXXX
+	[fieldEditor setString: [[item subject] valueForProperty: property]];
+	[fieldEditor setFont: [self fontForEditingItem: item]];
+	[fieldEditorItem setFrame: fieldEditorFrame];
+	[windowBackedItem addItem: fieldEditorItem];
+	[[ETInstrument activeInstrument] makeFirstResponder: fieldEditor];
+
+	ASSIGN(_editedItem, item);
+}
+
+/** Ends the text editing started with -beginEditingItem:property:inRect: and 
+removes the field editor item inserted in the window backed ancestor item. */
+- (void) endEditingItem
+{
+	NSParameterAssert(nil != _editedItem);
+
+	ETLayoutItemGroup *windowBackedItem = [_editedItem windowBackedAncestorItem];
+
+	if (nil == windowBackedItem)
+	{
+		ETLog(@"WARNING: Found no window backed ancestor item to edit %@", _editedItem);
+		return;
+	}
+
+	[windowBackedItem removeItem: [self fieldEditorItem]];
+	[windowBackedItem setShouldMutateRepresentedObject: _wasFieldEditorParentModelMutator];
+
+	DESTROY(_editedItem);
 }
 
 /* <override-dummy />
