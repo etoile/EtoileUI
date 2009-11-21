@@ -57,7 +57,7 @@
 /* Returns the observable properties which shouldn't be observed.
 
 Non observable properties are -hasValidRepresentedPathBase, -usesWidgetView, 
--closestAncestorDisplayView, -closestAncestorItemWithDisplayView, 
+-closestAncestorDisplayView, -supervisorViewBackedAncestorItem, -windowBackedAncestor
 -supervisorView, -ancestorItemForOpaqueLayout, ,-properties, -variableProperties, 
 -drawingFrame, -windowDecoratorItem, -firstScrollViewDecoratorItem, -origin,  
 -contentSize, and -inspector.
@@ -66,11 +66,11 @@ TODO: Move into ETLayoutItem entity description. */
 + (NSSet *) nonObservableProperties
 {
 	return S(@"hasValidRepresentedPathBase", @"usesWidgetView",	
-		@"closestAncestorDisplayView", "closestAncestorItemWithDisplayView", 
-		@"supervisorView", @"ancestorItemForOpaqueLayout", @"properties", 
-		@"variableProperties", @"drawingFrame", @"windowDecoratorItem", 
-		@"firstScrollViewDecoratorItem", @"origin",  @"contentSize", 
-		@"inspector");
+		@"closestAncestorDisplayView", "supervisorViewBackedAncestorItem", 
+		@"windowBackedAncestorItem", @"supervisorView", 
+		@"ancestorItemForOpaqueLayout", @"properties", @"variableProperties", 
+		@"drawingFrame", @"windowDecoratorItem", @"firstScrollViewDecoratorItem", 
+		@"origin",  @"contentSize", @"inspector");
 }
 
 /** Returns the observable properties. 

@@ -511,14 +511,14 @@ if no other objects retains it. */
 tree. 
 
 The receiver itself can be returned. */
-- (ETLayoutItem *) closestAncestorItemWithDisplayView
+- (ETLayoutItem *) supervisorViewBackedAncestorItem
 {
 	if ([self displayView] != nil)
 		return self;
 
 	if (_parentItem != nil)
 	{
-		return [_parentItem closestAncestorItemWithDisplayView];
+		return [_parentItem supervisorViewBackedAncestorItem];
 	}
 	else
 	{
@@ -528,7 +528,7 @@ The receiver itself can be returned. */
 
 /** Returns the first display view bound to a layout item upwards in the layout 
 item tree. This item is identical to the one returned by 
--closestAncestorItemWithDisplayView. 
+-supervisorViewBackedAncestorItem. 
 
 The receiver display view itself can be returned. */
 - (ETView *) closestAncestorDisplayView
@@ -552,9 +552,9 @@ The receiver display view itself can be returned. */
 item tree. 
 
 The receiver itself can be returned. */
-- (ETLayoutItem *) windowBackedAncestorItem
+- (id) windowBackedAncestorItem
 {
-	NSWindow *window = [[[self closestAncestorItemWithDisplayView] supervisorView] window];
+	NSWindow *window = [[[self supervisorViewBackedAncestorItem] supervisorView] window];
 
 	if (nil == window)
 		return nil;
@@ -1570,7 +1570,7 @@ More explanations in -display. */
 {
 	// NOTE: We could also use the next two lines to redisplay, but 
 	// -convertDisplayRect:toAncestorDisplayView: is more optimized.
-	//ETLayoutItem *ancestor = [self closestAncestorItemWithDisplayView];
+	//ETLayoutItem *ancestor = [self supervisorViewBackedAncestorItem];
 	//[[ancestor displayView] displayRect: [self convertRect: [self boundingBox] toItem: ancestor]];
 
 	NSView *displayView = nil;

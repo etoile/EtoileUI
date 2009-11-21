@@ -153,7 +153,7 @@ and centers it. A strech is a scale that doesn't preserve the content proportion
 - (void) setParentItem: (ETLayoutItemGroup *)parent;
 - (void ) removeFromParent;
 - (ETView *) closestAncestorDisplayView;
-- (ETLayoutItem *) closestAncestorItemWithDisplayView;
+- (ETLayoutItem *) supervisorViewBackedAncestorItem;
 - (id) windowBackedAncestorItem;
 
 - (NSIndexPath *) indexPathFromItem: (ETLayoutItem *)item;
