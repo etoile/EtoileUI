@@ -29,7 +29,9 @@
 
 /** <init />
 Initializes and return a new template item layout which uses a flow layout as 
-its positional layout.
+its positional layout. 
+
+The positional layout item size contraint style is also set to none.
 
 You are responsible to specify a template item and the template keys on the 
 returned instance (usually in a subclass initializer). */ 
@@ -40,6 +42,7 @@ returned instance (usually in a subclass initializer). */
 		return nil;
 	
 	[self setPositionalLayout: [ETFlowLayout layout]];
+	[(ETFlowLayout *)_positionalLayout setItemSizeConstraintStyle: ETSizeConstraintStyleNone];
 	_renderedItems = [[NSMutableSet alloc] init];
 	_templateKeys = [[NSArray alloc] init];
 	_localBindings = [[NSMutableDictionary alloc] init];
@@ -262,6 +265,19 @@ their initial state. */
 	[_renderedItems removeAllObjects];
 }
 
+/** <override-dummy />
+Overrides to make adjustments to the given items just before they get handed to 
+to the positional layout.
+
+For example, ETIconLayout implements a special resizing policy that takes over 
+the one provided by the positional layout.
+
+Does nothing by default. */
+- (void) willRenderItems: (NSArray *)items isNewContent: (BOOL)isNewContent
+{
+
+}
+
 /* Layouting */
 
 - (void) renderWithLayoutItems: (NSArray *)items isNewContent: (BOOL)isNewContent
@@ -276,6 +292,7 @@ their initial state. */
 	NSAssert1([self positionalLayout] != nil, @"Positional layout %@ must "
 		@"not be nil in a template item layout", [self positionalLayout]);
 
+	[self willRenderItems: items isNewContent: isNewContent];
 	/* Visibility of replaced and replacement items is handled in 
 	   -setVisibleItems: */
 	[[self positionalLayout] renderWithLayoutItems: items isNewContent: isNewContent];

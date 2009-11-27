@@ -91,10 +91,12 @@ possible and how to use ETTemplateItemLayout. */
 - (void) tearDown;
 - (void) prepareNewItems: (NSArray *)items;
 - (void) restoreAllItems;
+- (void) willRenderItems: (NSArray *)items isNewContent: (BOOL)isNewContent;
 
 /* Layouting */
 
 - (void) renderWithLayoutItems: (NSArray *)items isNewContent: (BOOL)isNewContent;
+
 
 @end
 
