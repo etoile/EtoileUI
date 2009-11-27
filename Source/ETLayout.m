@@ -511,6 +511,15 @@ methods to the normal layout will be handled automatically (not yet implemented)
 	return NO;
 }
 
+/** Returns YES when the receiver is a layout that does nothing, otherwise 
+returns NO. See ETNullLayout which is the only built-in class that returns YES.
+
+By default, returns NO. */
+- (BOOL) isNull
+{
+	return NO;
+}
+
 /** Returns YES when the layout conforms to ETPositionalLayout protocol, 
 otherwise returns NO.
 

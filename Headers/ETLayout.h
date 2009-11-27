@@ -146,6 +146,7 @@ typedef enum _ETSizeConstraintStyle
 - (void) tearDown;
 - (void) setUp;
 
+- (BOOL) isNull;
 - (BOOL) isComposite;
 - (BOOL) isPositional;
 - (BOOL) isWidget;
