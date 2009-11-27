@@ -34,7 +34,6 @@ See also NSObject(ETAspectRegistration). */
 + (void) registerAspects
 {
 	stylePrototypes = [[NSMutableSet alloc] init];
-	ASSIGN(styleSharedInstances, [NSMapTable mapTableWithStrongToStrongObjects]);
 
 	FOREACH([self allSubclasses], subclass, Class)
 	{
@@ -65,9 +64,6 @@ that allow to change a style at runtime.
 
 Also publishes the prototype in the shared aspect repository (not yet implemented). 
 
-If multiple instances of a single class are registered, the first registered   
-becomes the shared instance to be returned by +sharedInstance.
-
 Raises an invalid argument exception if aStyle class isn't a subclass of ETStyle. */
 + (void) registerStyle: (ETStyle *)aStyle
 {
@@ -79,10 +75,6 @@ Raises an invalid argument exception if aStyle class isn't a subclass of ETStyle
 	}
 
 	[stylePrototypes addObject: aStyle];
-	if ([styleSharedInstances objectForKey: [aStyle class]] == nil)
-	{
-		[styleSharedInstances setObject: aStyle forKey: [aStyle class]];
-	}
 	// TODO: Make a class instance available as an aspect in the aspect 
 	// repository.
 }
@@ -105,13 +97,23 @@ several prototypes might share the same class. */
 }
 
 /** <override-never />
-Returns the shared instance that corresponds to the receiver class. 
-
-Those shared instances have been previously registered by +registerAspects and 
-can be retrieved as a subset of +registeredStyles. */
+Returns the shared instance that corresponds to the receiver class. */	
 + (id) sharedInstance
 {
-	return [styleSharedInstances objectForKey: self];
+	if (styleSharedInstances == nil)
+	{
+		ASSIGN(styleSharedInstances, [NSMapTable mapTableWithStrongToStrongObjects]);
+	}
+
+	ETStyle *style = [styleSharedInstances  objectForKey: self];
+
+	if (style == nil)
+	{
+		style = AUTORELEASE([[self alloc] init]);
+		[styleSharedInstances setObject: style forKey: self];
+	}
+
+	return style;
 }
 
 /** <override-dummy />
