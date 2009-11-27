@@ -50,8 +50,11 @@ a custom style object. */
 	float _labelMargin;
 	BOOL _labelVisible;
 	NSDictionary *_labelAttributes;
+	NSSize _maxLabelSize;
 	NSSize _maxImageSize;
 	float _edgeInset;
+	NSRect _currentLabelRect;
+	NSRect _currentImageRect;
 }
 
 + (NSDictionary *) standardLabelAttributes;
@@ -61,6 +64,9 @@ a custom style object. */
 - (void) render: (NSMutableDictionary *)inputValues 
      layoutItem: (ETLayoutItem *)item 
 	  dirtyRect: (NSRect)dirtyRect;
+
+- (NSRect) currentLabelRect;
+- (NSRect) currentImageRect;
 
 /* Drawing */
 
@@ -72,25 +78,38 @@ a custom style object. */
 
 /* Label */
 
+- (void) setMaxLabelSize: (NSSize)aSize;
+- (NSSize) maxLabelSize;
 - (ETLabelPosition) labelPosition;
 - (void) setLabelPosition: (ETLabelPosition)aPositionRule;
+- (float) labelMargin;
+- (void) setLabelMargin: (float)aMargin;
 - (NSDictionary *) labelAttributes;
 - (void) setLabelAttributes: (NSDictionary *)stringAttributes;
-- (NSRect) rectForLabel: (NSString *)aLabel ofItem: (ETLayoutItem *)anItem;
-- (NSString *) labelForItem: (ETLayoutItem *)anItem;
 // TODO: Implement
 //- (BOOL) setLabelVisible: (BOOL)flag;
 //- (BOOL) isLabelVisible;
 
-/* Image & View */
+- (NSRect) rectForLabel: (NSString *)aLabel 
+                inFrame: (NSRect)itemFrame 
+                 ofItem: (ETLayoutItem *)anItem;
+- (NSString *) labelForItem: (ETLayoutItem *)anItem;
+
+/* Image */
+
+- (NSImage *) imageForItem: (ETLayoutItem *)anItem;
 
 - (NSSize) maxImageSize;
 - (void) setMaxImageSize: (NSSize)aSize;
+
 - (NSRect) rectForImage: (NSImage *)anImage 
                  ofItem: (ETLayoutItem *)anItem;
 - (NSRect) rectForImage: (NSImage *)anImage 
                  ofItem: (ETLayoutItem *)anItem
           withLabelRect: (NSRect)labelRect;
+
+/* View/Widget */
+
 - (NSRect) rectForViewOfItem: (ETLayoutItem *)anItem;
 - (NSRect) rectForViewOfItem: (ETLayoutItem *)anItem
                withLabelRect: (NSRect)labelRect;
@@ -98,6 +117,8 @@ a custom style object. */
 - (float) edgeInset;
 - (void) setEdgeInset: (float)anInset;
 
+- (NSSize) boundingSizeForItem: (ETLayoutItem *)anItem imageSize: (NSSize)imgSize;
+ 
 @end
 
 
@@ -111,5 +132,12 @@ a custom style object. */
 	  dirtyRect: (NSRect)dirtyRect;
 	  
 - (void) drawBorderInRect: (NSRect)aRect;
+
+@end
+
+@interface ETFieldEditorItemStyle : ETBasicItemStyle
+{
+
+}
 
 @end

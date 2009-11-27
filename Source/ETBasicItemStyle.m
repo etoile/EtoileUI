@@ -47,6 +47,7 @@ a label underneath. */
 	_labelPosition = ETLabelPositionCentered;
 	ASSIGN(_labelAttributes, [[self class] standardLabelAttributes]);
 	_maxImageSize = ETNullSize;
+	_maxLabelSize = ETNullSize;
 	_edgeInset = 0;
 	return self;
 }
@@ -61,6 +62,7 @@ DEALLOC(DESTROY(_labelAttributes));
 	newStyle->_labelPosition = _labelPosition;
 	newStyle->_labelMargin = _labelMargin;
 	newStyle->_labelVisible = _labelVisible;
+	newStyle->_maxLabelSize = _maxLabelSize;
 	newStyle->_maxImageSize = _maxImageSize;
 	newStyle->_edgeInset = _edgeInset;
 
@@ -71,39 +73,81 @@ DEALLOC(DESTROY(_labelAttributes));
      layoutItem: (ETLayoutItem *)item 
 	  dirtyRect: (NSRect)dirtyRect
 {
+	/* Compute Label And Image Geometry */
+
 	// FIXME: May be we should better support dirtyRect. The next drawing 
 	// methods don't take in account it and simply redraw all their content.
-	NSImage *itemImage = [item valueForProperty: kETImageProperty];
-
-	if (nil != itemImage)
-	{
-		[self drawImage: itemImage
-		        flipped: [item isFlipped]
-		         inRect: [self rectForImage: itemImage ofItem: item]]; 
-	}
+	_currentLabelRect = NSZeroRect;
+	_currentImageRect = NSZeroRect;
 
 	NSString *itemLabel = [self labelForItem: item];
 
 	if (nil != itemLabel)
 	{
-		//ETLog(@"Try to draw label in %@ of %@", NSStringFromRect([self rectForLabel: itemLabel ofItem: item]), item);
-		[itemLabel drawInRect: [self rectForLabel: itemLabel ofItem: item]
-		       withAttributes: _labelAttributes];
+		_currentLabelRect = [self rectForLabel: itemLabel 
+		                               inFrame: [item drawingFrame] 
+		                                ofItem: item];	
+	}
+
+	NSImage *itemImage = [self imageForItem: item];
+
+	if (nil != itemImage)
+	{
+		_currentImageRect = [self rectForImage: itemImage 
+		                                ofItem: item 
+		                         withLabelRect: _currentLabelRect];
+	}
+
+	/* Draw */
+
+	if (nil != itemImage)
+	{
+		[self drawImage: itemImage flipped: [item isFlipped] inRect: _currentImageRect]; 	
+	}
+
+	if (nil != itemLabel)
+	{
+		//ETLog(@"Try to draw label in %@ of %@", NSStringFromRect(_currentLabelRect), item);
+		[itemLabel drawInRect: _currentLabelRect withAttributes: _labelAttributes];
 	}
 
 	if ([item isGroup] && [(ETLayoutItemGroup *)item isStack])
+	{
 		[self drawStackIndicatorInRect: [item drawingFrame]];
+	}
 
 	// FIXME: We should pass a hint in inputValues that lets us known whether 
 	// we handle the selection visual clue or not, in order to eliminate the 
 	// hard check on ETFreeLayout...
 	if ([item isSelected] && [[[item parentItem] layout] isKindOfClass: [ETFreeLayout layout]] == NO)
+	{
 		[self drawSelectionIndicatorInRect: [item drawingFrame]];
+	}
 
 	if ([[[ETInstrument activeInstrument] firstKeyResponder] isEqual: item])
+	{
 		[self drawFirstResponderIndicatorInRect: [item drawingFrame]];
-	
+	}
+
 	[super render: inputValues layoutItem: item dirtyRect: dirtyRect];
+}
+
+/** Returns the last value computed for -rectForLabel:inFrame:ofItem:. 
+
+This value is computed at the beginning of -render:layoutItem:dirtyRect:. Which  
+means you can safely use it when overriding other drawing methods. */
+- (NSRect) currentLabelRect
+{
+	return _currentLabelRect;
+}
+
+/** Returns the last value computed for -rectForImage:ofItem:withLabelRect:.
+
+This value is computed at the beginning of -render:layoutItem:dirtyRect:. Which  
+means you can safely use it when overriding other drawing methods. */
+- (NSRect) currentImageRect
+{
+	return _currentImageRect;
 }
 
 /** Draws an image at the origin of the current graphics coordinates. */
@@ -166,13 +210,34 @@ the given indicator rect is equal to it. */
 rect is equal to it. */
 - (void) drawFirstResponderIndicatorInRect: (NSRect)indicatorRect
 {
-	float gstateLineWidth = [NSBezierPath defaultLineWidth];
+	[NSGraphicsContext saveGraphicsState];
 
+	NSSetFocusRingStyle(NSFocusRingOnly);
+	[[NSBezierPath bezierPathWithRect: indicatorRect] fill];
+
+	/* For debugging, this code draws it with a square look... 
 	[[[NSColor keyboardFocusIndicatorColor] colorWithAlphaComponent: 0.8] setStroke];
 	[NSBezierPath setDefaultLineWidth: 6.0];
-	[NSBezierPath strokeRect: indicatorRect];
+	[NSBezierPath strokeRect: indicatorRect];*/
 
-	[NSBezierPath setDefaultLineWidth: gstateLineWidth];
+	[NSGraphicsContext restoreGraphicsState];
+}
+
+/** Returns the max allowed size to draw to the label.
+
+When the label size is superior to this max size, 
+-rectForLabel:ofItem: will shrink the label drawing area to this size. */
+- (void) setMaxLabelSize: (NSSize)aSize
+{
+	_maxLabelSize = aSize;
+}
+
+/** Sets the max allowed size to draw the label.
+
+See also -maxLabelSize. */
+- (NSSize) maxLabelSize
+{
+	return _maxLabelSize;
 }
 
 /** Returns the item title position. */
@@ -211,13 +276,18 @@ rect is equal to it. */
 	ASSIGN(_labelAttributes, stringAttributes);
 }
 
-- (NSRect) rectForLabel: (NSString *)aLabel ofItem: (ETLayoutItem *)anItem
+- (NSRect) rectForLabel: (NSString *)aLabel 
+                inFrame: (NSRect)itemFrame 
+                 ofItem: (ETLayoutItem *)anItem
 {
 	NSParameterAssert(nil != aLabel);
 	NSParameterAssert(nil != anItem);
 
-	NSRect itemFrame = [anItem frame];
 	NSSize labelSize = [aLabel sizeWithAttributes: _labelAttributes];
+	float maxLabelWidth = (_maxLabelSize.width != ETNullSize.width ? _maxLabelSize.width : itemFrame.size.width);
+	float maxLabelHeight = (_maxLabelSize.height != ETNullSize.height ? _maxLabelSize.height : itemFrame.size.height);
+	float labelSizeWidth = MIN(labelSize.width, maxLabelWidth);
+	float labelSizeHeight = MIN(labelSize.height, maxLabelHeight);
 	NSRect rect = ETNullRect;
 
 	switch (_labelPosition)
@@ -227,43 +297,67 @@ rect is equal to it. */
 			break;
 		case ETLabelPositionOutsideTop:
 		{
-			float labelBaseY = itemFrame.size.height + labelSize.height;
-			
+			float labelBaseX = (itemFrame.size.width - labelSizeWidth) / 2;
+			float labelBaseY = 0;
+
 			if ([anItem isFlipped])
 			{
-				labelBaseY = - labelSize.height;
+				labelBaseY = - _labelMargin - labelSizeHeight;
+			}
+			else
+			{
+				labelBaseY = itemFrame.size.height + _labelMargin + labelSizeHeight;
 			}
 				
-			rect = NSMakeRect(0, labelBaseY, labelSize.width, labelSize.height);
+			rect = NSMakeRect(labelBaseX, labelBaseY, labelSizeWidth, labelSizeHeight);
 			break;
 		}
 		case ETLabelPositionOutsideLeft:
 		{
 			float labelBaseY = 0;
-			
+			// TODO: Support max label size in a better way rather than only 
+			// allowing a width equal to the item width when no max size is set.
+
 			if ([anItem isFlipped])
 			{
 				labelBaseY = itemFrame.size.height;
 			}
 
-			rect = NSMakeRect(itemFrame.size.width + _labelMargin, labelBaseY, labelSize.width, labelSize.height);
+			rect = NSMakeRect(itemFrame.size.width + _labelMargin, labelBaseY, labelSizeWidth, labelSizeHeight);
 			break;
 		}
 		case ETLabelPositionInsideBottom:
 		{
-			float labelBaseX = (itemFrame.size.width - labelSize.width) / 2;
+			float labelBaseX = (itemFrame.size.width - labelSizeWidth) / 2;
 			float labelBaseY = 0;
-			
+
 			if ([anItem isFlipped])
 			{
-				labelBaseY = itemFrame.size.height - labelSize.height - _edgeInset;
+				labelBaseY = itemFrame.size.height - labelSizeHeight - _edgeInset;
 			}
 			else
 			{
 				labelBaseY = _edgeInset;
 			}
 
-			rect = NSMakeRect(labelBaseX, labelBaseY, labelSize.width, labelSize.height);
+			rect = NSMakeRect(labelBaseX, labelBaseY, labelSizeWidth, labelSizeHeight);
+			break;
+		}
+		case ETLabelPositionOutsideBottom:
+		{
+			float labelBaseX = (itemFrame.size.width - labelSizeWidth) / 2;
+			float labelBaseY = 0;
+
+			if ([anItem isFlipped])
+			{
+				labelBaseY = itemFrame.size.height + _labelMargin + labelSizeHeight;
+			}
+			else
+			{
+				labelBaseY = - _labelMargin - labelSizeHeight;
+			}
+				
+			rect = NSMakeRect(labelBaseX, labelBaseY, labelSizeWidth, labelSizeHeight);
 			break;
 		}
 		case ETLabelPositionNone:
@@ -273,28 +367,31 @@ rect is equal to it. */
 			return NSZeroRect;
 	}
 
-	return NSIntersectionRect(rect, [anItem drawingFrame]);
+	return rect;
 }
 
 /** Returns the string to be used as the label to draw.
 
-When the given item has a view, returns the item name which might be nil, 
-otherwise returns the item display name which is never nil. This behavior 
-ensures no label is drawn when the item uses a custom view (such as a widget), 
-unless you explicitly set one with -[ETLayoutItem setName:]. */
+When the given item has a view or a layout, returns the item name which might be 
+nil, otherwise returns thedisplay name which is never nil. This behavior 
+ensures no label is drawn when the item uses a custom view (such as a widget) 
+or a layout, unless you explicitly set one with -[ETLayoutItem setName:]. */
 - (NSString *) labelForItem: (ETLayoutItem *)anItem
 {
 	NSString *label = nil;
+	ETLayout *layout = [anItem layout];
 
 	// TODO: We probably want extra flexibility. e.g. kETShouldDrawGroupLabelHint 
 	// set by the parent item in inputValues based on the layout. 
 	// ETLayoutItemGroup might want to query the layout with 
 	// -[ETLayout shouldLayoutContextDraws(All)ItemLabel].
-	if ([anItem view] != nil)
+
+	// TODO: Remove nil layout check once ETNullLayout is used everywhere.
+	if ((nil != layout && NO == [layout isNull]) || [anItem view] != nil)
 	{
 		label = [anItem name];
 	}
-	else if ([anItem isGroup] == NO)
+	else
 	{
 		label = [anItem displayName];
 	}
@@ -302,10 +399,100 @@ unless you explicitly set one with -[ETLayoutItem setName:]. */
 	return label;
 }
 
-- (NSRect) boundingBoxForItem: (ETLayoutItem *)anItem
+/** Returns the size required to present the item image (at the given size) and 
+label, without scaling the image down and trimming the label while respecting 
+the max image size and the max label size.
+
+The computed size can be either greather and lesser than the existing item size.
+
+You can use the returned size to resize the item without moving it with 
+-[ETLayoutItem setSize:] or alternatively computes a bouding box and sets it 
+with -[ETLayoutItem setBoundingBox:]. */
+- (NSSize) boundingSizeForItem: (ETLayoutItem *)anItem imageSize: (NSSize)imgSize
 {
-	NSRect labelRect = [self rectForLabel: [self labelForItem: anItem] ofItem: anItem];
-	return NSUnionRect([super boundingBoxForItem: anItem], labelRect);
+	NSParameterAssert(nil != anItem);
+
+	float maxImgWidth = (_maxImageSize.width != ETNullSize.width ? _maxImageSize.width : imgSize.width);
+	float maxImgHeight = (_maxImageSize.height != ETNullSize.height ? _maxImageSize.height : imgSize.height);
+	float imgWidth = MIN(imgSize.width, maxImgWidth);
+	float imgHeight = MIN(imgSize.height, maxImgHeight);
+
+	NSSize labelSize = [[self labelForItem: anItem] sizeWithAttributes: _labelAttributes];
+	float maxLabelWidth = (_maxLabelSize.width != ETNullSize.width ? _maxLabelSize.width : labelSize.width);
+	float maxLabelHeight = (_maxLabelSize.height != ETNullSize.height ? _maxLabelSize.height : labelSize.height);
+	float labelWidth = MIN(labelSize.width, maxLabelWidth);
+	float labelHeight = MIN(labelSize.height, maxLabelHeight);
+
+	float insetSpace = _edgeInset * 2;
+
+	switch (_labelPosition)
+	{
+		case ETLabelPositionNone:
+		case ETLabelPositionContentAspect:
+		{
+			return [anItem size];
+		}
+		/* We ignore the label margin in that case */	
+		case ETLabelPositionCentered:
+		{
+			float width = MAX(labelWidth, imgWidth);
+			float height = MAX(labelHeight, imgHeight);
+
+			return NSMakeSize(width + insetSpace, height + insetSpace);
+		}
+		case ETLabelPositionInsideTop:
+		case ETLabelPositionOutsideTop:
+		case ETLabelPositionInsideBottom:
+		case ETLabelPositionOutsideBottom:
+		{
+			float width = MAX(labelWidth, imgWidth);
+			/* In ETLabelPositionOutsideBottom/Top, the bottom edge inset is between 
+			   the image and the label margin but the final height is the same.
+			   The height computation below corresponds to ETLabelPositionInsideBottom. */
+			float height = imgHeight + _labelMargin + labelHeight;
+
+			return NSMakeSize(width + insetSpace, height + insetSpace);
+		}
+		case ETLabelPositionInsideLeft:
+		case ETLabelPositionOutsideLeft:
+		case ETLabelPositionInsideRight:
+		case ETLabelPositionOutsideRight:
+		{
+			/* In ETLabelPositionOutsideLeft/Right, the left edge inset is between 
+			   the image and the label margin but the final width is the same.
+			   The width computation below corresponds to ETLabelPositionInsideLeft. */
+			float width = imgWidth + _labelMargin + labelWidth;
+			float height = MAX(labelHeight, imgHeight);
+
+			return NSMakeSize(width + insetSpace, height + insetSpace);
+		}
+		default:
+			ASSERT_INVALID_CASE;
+			return NSZeroSize;
+	}
+}
+
+/** <override-dummy />
+Returns the image to be drawn.
+
+When the given item has a view or a layout, returns nil, otherwise returns the 
+item icon which is never nil. This behavior ensures no image is drawn when the 
+item uses a custom view (such as a widget) or a layout.
+
+You can override this method to return any item or represented object property 
+which corresponds to an image. Don't access the represented object directly 
+but through [anItem valueForProperty:].
+
+See also -[ETLayoutItem icon]. */
+- (NSImage *) imageForItem: (ETLayoutItem *)anItem
+{
+	ETLayout *layout = [anItem layout];
+
+	// TODO: Remove nil layout check once ETNullLayout is used everywhere.
+	if ((nil != layout && NO == [layout isNull]) || nil != [anItem view])
+		return nil;
+
+	return [anItem icon];
 }
 
 /** Returns the max allowed size to draw to the image
@@ -330,7 +517,9 @@ Returns the image drawing area in the given item content bounds. */
 - (NSRect) rectForImage: (NSImage *)anImage 
                  ofItem: (ETLayoutItem *)anItem
 {
-	NSRect labelRect = [self rectForLabel: [self labelForItem: anItem] ofItem: anItem];
+	NSRect labelRect = [self rectForLabel: [self labelForItem: anItem] 
+	                              inFrame: [anItem frame]
+	                               ofItem: anItem];
 	return [self rectForImage: anImage 
 	                   ofItem: anItem 
 	            withLabelRect: labelRect];
@@ -345,6 +534,7 @@ Returns the image drawing area in the given item content bounds. */
 	NSSize viewSize = aSize;
 	NSRect maxViewRect = insetContentRect;
 
+	// TODO: Write the missing cases...
 	switch (_labelPosition)
 	{
 		case ETLabelPositionCentered:
@@ -364,7 +554,6 @@ Returns the image drawing area in the given item content bounds. */
 			ASSERT_INVALID_CASE;
 			return NSZeroRect;
 	}
-	//return ETMakeRect(maxViewRect.origin, viewSize);
 
 	NSRect viewRect = ETCenteredRect(viewSize, maxViewRect);
 
@@ -384,41 +573,91 @@ Returns the image drawing area in the given item content bounds. */
 	return viewRect;
 }
 
-/** Returns the image drawing area in the given item content bounds with enough 
-room for the given label area based on the label position.
+// TODO: We could add an extra parameter to override the image scaling policy 
+// (i.e. ETContentAspectScaleToFit) used when the item content aspect is computed.
+// For example -rectForImage:ofItem:withLabelRect:scalingHint: (ETContentAspect)imgAspect
+// We don't know yet whether subclasses that override -render:layoutItem:dirtyRect:
+// might want this extra flexibility.
 
-If the label position is not inside, the label area is simply ignored. */
+/** Returns the image drawing area in the given item content bounds.
+
+When the item content aspect is set to ETContentAspectComputed, the image rect
+is limited to -imageMaxSize and resized proportionally to occupy as much space 
+as possible while letting enough room to the label rect (label margin included).<br />
+If the label position is not inside or the content aspect is not computed, the 
+label area is simply ignored.
+
+The edge inset is taken in account in all cases, even when the content aspect 
+is not computed. */
 - (NSRect) rectForImage: (NSImage *)anImage 
                  ofItem: (ETLayoutItem *)anItem
           withLabelRect: (NSRect)labelRect
 {
-	NSSize maxSize = NSEqualSizes(_maxImageSize, ETNullSize) ? [anItem contentBounds].size : _maxImageSize;
-	ETContentAspect imageAspect = [anItem contentAspect];
+	NSRect contentBounds = [anItem contentBounds];
+	NSRect insetContentRect = NSInsetRect(contentBounds, _edgeInset, _edgeInset);
+	ETContentAspect contentAspect = [anItem contentAspect];
 
-	if (ETContentAspectComputed == imageAspect)
+	if (ETContentAspectComputed == contentAspect)
 	{
-		imageAspect = ETContentAspectScaleToFit;
-	}
+		NSSize imageAreaSize = insetContentRect.size;
 
-	NSRect imageRect = [anItem contentRectWithRect: ETMakeRect(NSZeroPoint, [anImage size])
-	                                 contentAspect: imageAspect
-	                                    boundsSize: maxSize];
+		switch (_labelPosition)
+		{
+			case ETLabelPositionCentered:
+				break;
+			case ETLabelPositionInsideLeft:
+			case ETLabelPositionInsideRight:
+			{
+				imageAreaSize.width -= labelRect.size.width + _labelMargin;	
+				break;
+			}
+			case ETLabelPositionInsideTop:
+			case ETLabelPositionInsideBottom:
+			{
+				imageAreaSize.height -= labelRect.size.height + _labelMargin;	
+				break;
+			}
+			case ETLabelPositionOutsideLeft:
+			case ETLabelPositionOutsideTop:
+			case ETLabelPositionOutsideRight:
+			case ETLabelPositionOutsideBottom:
+			case ETLabelPositionNone:
+				break;
+			default:
+				ASSERT_INVALID_CASE;
+		}
+
+		NSSize maxSize = NSEqualSizes(_maxImageSize, ETNullSize) ? imageAreaSize : _maxImageSize;
+		NSRect imageRect = [anItem contentRectWithRect: ETMakeRect(NSZeroPoint, [anImage size])
+		                                 contentAspect: ETContentAspectScaleToFit
+	                                        boundsSize: maxSize];
+									 
+		return [self rectForAreaSize: imageRect.size
+							  ofItem: anItem
+					   withLabelRect: labelRect];
+	}
+	else
+	{
+		// FIXME: We lost the edge inset at the origin here. Probably rename 
+		// boundsSize: method keyword to boundingRect: so we can pass insetContentRect.
+		return [anItem contentRectWithRect: ETMakeRect(NSZeroPoint, [anImage size])
+		                     contentAspect: contentAspect
+	                            boundsSize: insetContentRect.size];
+	}
 
 	/*ETLog(@"Image size %@ to %@", NSStringFromSize([anImage size]), NSStringFromRect(imageRect));
 	ETLog(@" -- %@", NSStringFromRect([self rectForAreaSize: imageRect.size
 	                      ofItem: anItem
 	               withLabelRect: labelRect]));*/
-
-	return [self rectForAreaSize: imageRect.size
-	                      ofItem: anItem
-	               withLabelRect: labelRect];
 }
 
 /** <override-never />
 Returns the view drawing area in the given item content bounds. */
 - (NSRect) rectForViewOfItem: (ETLayoutItem *)anItem
 {
-	NSRect labelRect = [self rectForLabel: [self labelForItem: anItem] ofItem: anItem];
+	NSRect labelRect = [self rectForLabel: [self labelForItem: anItem] 
+	                              inFrame: [anItem frame] 
+	                               ofItem: anItem];
 	return [self rectForViewOfItem: anItem 
 	                 withLabelRect: labelRect];
 }
@@ -478,6 +717,18 @@ See also -edgeInset. */
 {
 	[[NSColor darkGrayColor] setStroke];
 	[NSBezierPath strokeRect: aRect];
+}
+
+@end
+
+
+@implementation ETFieldEditorItemStyle
+
+- (void) render: (NSMutableDictionary *)inputValues 
+     layoutItem: (ETLayoutItem *)item 
+	  dirtyRect: (NSRect)dirtyRect
+{
+	[self drawFirstResponderIndicatorInRect: [item drawingFrame]];
 }
 
 @end
