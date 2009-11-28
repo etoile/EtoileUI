@@ -22,6 +22,7 @@
 #import "ETInstruments.h"
 #import "ETLayout.h"
 #import "ETView.h"
+#import "ETWindowItem.h"
 #import "ETCompatibility.h"
 
 @interface ETInstrument (Private)
