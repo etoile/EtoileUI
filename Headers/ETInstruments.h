@@ -19,7 +19,7 @@
 
 /** The actions which can be produced by ETArrowTool. */
 @protocol ETArrowToolActionConsumer
-- (void) handleClickItem: (ETLayoutItem *)item;
+- (void) handleClickItem: (ETLayoutItem *)item atPoint: (NSPoint)aPoint;
 - (void) handleDoubleClickItem: (ETLayoutItem *)item;
 - (void) handleDragItem: (ETLayoutItem *)item byDelta: (NSSize)delta;
 - (void) handleEnterItem: (ETLayoutItem *)item;
@@ -39,11 +39,11 @@ be used to click, double-click, pick and drop layout items.
 
 ETArrowTool produce the actions listed in ETArrowToolActionConsumer protocol.<br />
 When -handleBeginTouch:atPoint:onItem: returns YES in an action handler, 
--handleClickItem:, -handleDoubleClickItem: and -handleDragItem: are not emitted 
-by the tool.
+-handleClickItem:atPoint:, -handleDoubleClickItem: and -handleDragItem: are not 
+emitted by the tool.
 
 You should generally use the more high-level methods in the action handler 
-such as -handleClickItem:, -handleEnterChildItem: etc. unless you want to 
+such as -handleClickItem:atPoint:, -handleEnterChildItem: etc. unless you want to 
 implement your own tracking behavior at the action handler level (e.g. button 
 highlighting that is inversed every time the item is entered/exited while the 
 mouse button is kept pressed). 
