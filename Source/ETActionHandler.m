@@ -7,7 +7,7 @@
  */
 
 #import <EtoileFoundation/Macros.h>
-#import <EtoileFoundation/ETPropertyViewPoint.h>
+#import <EtoileFoundation/ETPropertyViewpoint.h>
 #import <EtoileFoundation/NSObject+HOM.h>
 #import <EtoileFoundation/NSObject+Etoile.h>
 #import <EtoileFoundation/NSObject+Model.h>
