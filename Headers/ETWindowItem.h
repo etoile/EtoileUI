@@ -13,6 +13,7 @@
 #import <Foundation/Foundation.h>
 #import <AppKit/AppKit.h>
 #import <EtoileUI/ETDecoratorItem.h>
+#import <EtoileUI/ETInstrument.h> /* For ETFirstResponderSharingArea */
 
 /** A decorator which can be used to put a layout item inside a window.
 
@@ -21,13 +22,15 @@ With the AppKit widget backend, the window is an NSWindow object.
 Once the window is managed by a window item, you must not call the following 
 NSWindow methods: -setDelegate:, -setAcceptsMouseMovedEvents: and 
 -registerForDraggedTypes:. */
-@interface ETWindowItem : ETDecoratorItem
+@interface ETWindowItem : ETDecoratorItem <ETFirstResponderSharingArea>
 {
 	NSWindow *_itemWindow;
 	int _oldDecoratedItemAutoresizingMask; /* Autoresizing mask to restore */
 	BOOL _usesCustomWindowTitle;
 	BOOL _flipped;
 	BOOL _shouldKeepWindowFrame;
+	ETLayoutItem *_activeFieldEditorItem;
+	ETLayoutItem *_editedItem;
 }
 
 /* Factory Methods */
@@ -59,5 +62,13 @@ NSWindow methods: -setDelegate:, -setAcceptsMouseMovedEvents: and
 - (BOOL) canDecorateItem: (id)item;
 
 - (id) nextResponder;
+
+/* First Responder Sharing Area */
+
+- (ETLayoutItem *) activeFieldEditorItem;
+- (ETLayoutItem *) editedItem;
+- (void) setActiveFieldEditorItem: (ETLayoutItem *)anItem 
+                       editedItem: (ETLayoutItem *)anItem;
+- (void) removeActiveFieldEditorItem;
 
 @end

@@ -129,6 +129,8 @@ If window is nil, the receiver creates a standard widget backend window. */
 	ETDebugLog(@"Dealloc item %@ with window %@ %@ at %@", self, [_itemWindow title],
 		_itemWindow, NSStringFromRect([_itemWindow frame]));
 
+	[self removeActiveFieldEditorItem]; /* For _editedItem and _activeFieldEditorItem */
+
 	/* Retain the window to be sure we can send it -isReleasedWhenClosed. We 
 	   must defer the deallocation in case -close releases it and drops the
 	   retain count to zero. */
@@ -455,6 +457,54 @@ This coordinate space includes the window decoration (titlebar etc.).  */
 	// NOTE: See -targetForAction:to:from: to understand how ETApplication
 	// simulates [_itemWindow setNextResponder: [itemFactory windowGroup]]
 	return _itemWindow;
+}
+
+/* First Responder Sharing Area */
+
+/** Returns the item owning the field editor which has the first responder 
+status, or nil when no text editing is underway in the window. */
+- (ETLayoutItem *) activeFieldEditorItem
+{
+	return _activeFieldEditorItem;
+}
+
+/** Returns the item on which the text editing was initiated. */
+- (ETLayoutItem *) editedItem
+{
+	return _editedItem;
+}
+
+/** Inserts the editor item which provides text editing in the window and makes 
+it the first responder.
+
+Any existing active field editor item is removed first.
+
+An NSInvalidArgumentException is raised when any given item is nil. */
+- (void) setActiveFieldEditorItem: (ETLayoutItem *)editorItem
+                       editedItem: (ETLayoutItem *)editedItem
+{
+	NILARG_EXCEPTION_TEST(editorItem);
+	NILARG_EXCEPTION_TEST(editedItem);
+	[self removeActiveFieldEditorItem];
+
+	ASSIGN(_activeFieldEditorItem, editorItem);
+	ASSIGN(_editedItem, editedItem);
+
+	[[self firstDecoratedItem] addItem: (id)editorItem];
+	[[ETInstrument activeInstrument] makeFirstResponder: [editorItem view]];
+}
+
+/** Removes the item which provides text editing in the window.
+
+Does nothing when there is no active field editor item in the window. */
+- (void) removeActiveFieldEditorItem
+{
+	if (nil == _activeFieldEditorItem)
+		return;
+
+	[[self firstDecoratedItem] removeItem: (id)_activeFieldEditorItem];
+	DESTROY(_activeFieldEditorItem);
+	DESTROY(_editedItem);
 }
 
 /* Dragging Destination (as Window delegate) */

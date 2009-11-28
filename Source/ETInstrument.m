@@ -450,6 +450,19 @@ The main window can be retrieved through the decorator item with
 }
 
 /** <override-never />
+Returns the object that represents the area where the first responder status 
+is shared and the given item located.
+
+The returned object coordinates the field editor use to ensure the first 
+responder status is given to a single object in this area.
+
+Nil can be returned when the item is not inserted in the main item tree. */
+- (id <ETFirstResponderSharingArea>) editionCoordinatorForItem: (ETLayoutItem *)anItem
+{
+	return [[anItem windowBackedAncestorItem] windowDecoratorItem];
+}
+
+/** <override-never />
 Updates the cursor with the one provided by the activatable instrument.
 
 You should never to call this method, only ETEventProcessor is expected to use 
@@ -850,6 +863,17 @@ NO. */
 		[anEvent markAsDelivered];
 
 	return [[ETEventProcessor sharedInstance] tryActivateItem: item withEvent: anEvent];
+}
+
+- (BOOL) tryRemoveFieldEditorItemWithEvent: (ETEvent *)anEvent
+{
+	ETWindowItem *windowItem = [anEvent windowItem];
+
+	if ([windowItem activeFieldEditorItem] == nil)
+		return NO;
+
+	[windowItem removeActiveFieldEditorItem];
+	return YES;
 }
 
 - (void) mouseDown: (ETEvent *)anEvent

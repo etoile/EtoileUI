@@ -15,6 +15,14 @@
 
 @class ETEvent, ETLayoutItem, ETLayoutItemGroup, ETLayout;
 
+@protocol ETFirstResponderSharingArea
+- (ETLayoutItem *) activeFieldEditorItem;
+- (ETLayoutItem *) editedItem;
+- (void) setActiveFieldEditorItem: (ETLayoutItem *)anItem 
+                       editedItem: (ETLayoutItem *)anItem;
+- (void) removeActiveFieldEditorItem;
+@end
+
 /** Action Handlers are bound to layout items.
     Instrument are bound to layouts.
 
@@ -103,6 +111,8 @@ double-click and deactivated on a mouse click outside of their layout boundaries
 - (ETLayoutItem *) keyItem;
 - (ETLayoutItem *) mainItem;
 
+- (id <ETFirstResponderSharingArea>) editionCoordinatorForItem: (ETLayoutItem *)anItem;
+
 /* Hit Test */
 
 - (ETLayoutItem *) hitItemForNil;
@@ -123,6 +133,7 @@ double-click and deactivated on a mouse click outside of their layout boundaries
 
 - (BOOL) tryActivateItem: (ETLayoutItem *)item withEvent: (ETEvent *)anEvent;
 - (void) trySendEventToWidgetView: (ETEvent *)anEvent;
+- (BOOL) tryRemoveFieldEditorItemWithEvent: (ETEvent *)anEvent;
 - (void) tryPerformKeyEquivalentAndSendKeyEvent: (ETEvent *)anEvent 
                                     toResponder: (id)aResponder;
 
