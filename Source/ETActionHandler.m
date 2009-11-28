@@ -7,11 +7,13 @@
  */
 
 #import <EtoileFoundation/Macros.h>
+#import <EtoileFoundation/ETPropertyViewPoint.h>
 #import <EtoileFoundation/NSObject+HOM.h>
 #import <EtoileFoundation/NSObject+Etoile.h>
 #import <EtoileFoundation/NSObject+Model.h>
 #import "ETActionHandler.h"
 #import "ETApplication.h"
+#import "ETBasicItemStyle.h"
 #import "ETEvent.h"
 #import "ETGeometry.h"
 #import "ETInstrument.h"
@@ -93,6 +95,7 @@ an action. See -beginEditingItem:property:inRect:. */
 	{
 		NSTextView *fieldEditor = AUTORELEASE([[NSTextView alloc] initWithFrame: [ETLayoutItem defaultItemRect]]);
 		
+		[fieldEditor setFocusRingType: NSFocusRingTypeExterior];
 		[fieldEditor setFont: [self defaultFieldEditorFont]];
 		[fieldEditor setDrawsBackground: YES];
 		[fieldEditor setEditable: YES];
@@ -104,6 +107,7 @@ an action. See -beginEditingItem:property:inRect:. */
 		[fieldEditor setAllowsUndo: YES];
 
 		_fieldEditorItem = [[ETLayoutItem alloc] initWithView: fieldEditor];
+		[_fieldEditorItem setStyle: [ETFieldEditorItemStyle sharedInstance]];
 	}
 
 	return _fieldEditorItem;
@@ -141,11 +145,12 @@ Which actions begins and ends the text editing is up to you. */
                  property: (NSString *)property 
                    inRect: (NSRect)fieldEditorRect
 {
-	ETLayoutItemGroup *windowBackedItem = [item windowBackedAncestorItem];
+	id <ETFirstResponderSharingArea> editionCoordinator = 
+		[[ETInstrument activeInstrument] editionCoordinatorForItem: item];
 
-	if (nil == windowBackedItem)
+	if (nil == editionCoordinator)
 	{
-		ETLog(@"WARNING: Found no window backed ancestor item to edit %@", item);
+		ETLog(@"WARNING: Found no coordinator to edit %@", item);
 		return;
 	}
 
@@ -153,18 +158,21 @@ Which actions begins and ends the text editing is up to you. */
 
 	NSParameterAssert(nil != fieldEditorItem);
 
+	ETLayoutItemGroup *windowBackedItem = [item windowBackedAncestorItem];
 	_wasFieldEditorParentModelMutator = [windowBackedItem shouldMutateRepresentedObject];
 	[windowBackedItem setShouldMutateRepresentedObject: NO];
 
-	NSRect fieldEditorFrame = [item convertRect: [item contentBounds] toItem: windowBackedItem];
+	NSRect fieldEditorFrame = [item convertRect: fieldEditorRect toItem: windowBackedItem];
 	NSTextView *fieldEditor = (NSTextView *)[fieldEditorItem view];
 
 	// TODO: Use -bindXXX
 	[fieldEditor setString: [[item subject] valueForProperty: property]];
 	[fieldEditor setFont: [self fontForEditingItem: item]];
 	[fieldEditorItem setFrame: fieldEditorFrame];
-	[windowBackedItem addItem: fieldEditorItem];
-	[[ETInstrument activeInstrument] makeFirstResponder: fieldEditor];
+	[fieldEditorItem setRepresentedObject: [ETProperty propertyWithName: property 
+	                                                  representedObject: [item subject]]];
+	[editionCoordinator setActiveFieldEditorItem: fieldEditorItem
+	                                  editedItem: item];
 
 	ASSIGN(_editedItem, item);
 }
@@ -173,18 +181,20 @@ Which actions begins and ends the text editing is up to you. */
 removes the field editor item inserted in the window backed ancestor item. */
 - (void) endEditingItem
 {
-	NSParameterAssert(nil != _editedItem);
+	if (nil == _editedItem)
+		return;
 
-	ETLayoutItemGroup *windowBackedItem = [_editedItem windowBackedAncestorItem];
+	id <ETFirstResponderSharingArea> editionCoordinator = 
+		[[ETInstrument activeInstrument] editionCoordinatorForItem: _editedItem];
 
-	if (nil == windowBackedItem)
+	if (nil == editionCoordinator)
 	{
-		ETLog(@"WARNING: Found no window backed ancestor item to edit %@", _editedItem);
+		ETLog(@"WARNING: Found no coordinator to edit %@", _editedItem);
 		return;
 	}
 
-	[windowBackedItem removeItem: [self fieldEditorItem]];
-	[windowBackedItem setShouldMutateRepresentedObject: _wasFieldEditorParentModelMutator];
+	[editionCoordinator removeActiveFieldEditorItem];
+	[[_editedItem windowBackedAncestorItem] setShouldMutateRepresentedObject: _wasFieldEditorParentModelMutator];
 
 	DESTROY(_editedItem);
 }
@@ -193,7 +203,7 @@ removes the field editor item inserted in the window backed ancestor item. */
 Makes the clicked item the first responder of the active instrument.
 
 Overrides this method when you want to customize how simple click are handled. */
-- (void) handleClickItem: (ETLayoutItem *)item
+- (void) handleClickItem: (ETLayoutItem *)item atPoint: (NSPoint)aPoint
 {
 	ETDebugLog(@"Click %@", item);
 	[[ETInstrument activeInstrument] makeFirstResponder: (id)item];

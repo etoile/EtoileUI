@@ -17,7 +17,7 @@
 
 @class ETUTI;
 @class ETEvent, ETLayoutItem, ETPickboard, ETPickDropCoordinator;
-@protocol ETKeyInputAction, ETTouchAction;
+@protocol ETFirstResponderSharingArea, ETKeyInputAction, ETTouchAction;
 
 /** Action handler are lightweight objects whose instances can be shared between 
 a large number of layout items.
@@ -51,10 +51,11 @@ method will reuse the action handler to be set on every created items. */
                  property: (NSString *)property
                    inRect: (NSRect)fieldEditorFrame;
 - (void) endEditingItem;
+//- (void) tryEnd
 
 /* Instrument/Tool Actions */
 
-- (void) handleClickItem: (ETLayoutItem *)item;
+- (void) handleClickItem: (ETLayoutItem *)item atPoint: (NSPoint)aPoint;
 - (void) handleDoubleClickItem: (ETLayoutItem *)item;
 - (void) handleDragItem: (ETLayoutItem *)item byDelta: (NSSize)delta;
 - (void) handleTranslateItem: (ETLayoutItem *)item byDelta: (NSSize)delta;

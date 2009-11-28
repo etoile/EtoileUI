@@ -559,7 +559,12 @@ The receiver itself can be returned. */
 	if (nil == window)
 		return nil;
 
-	NSParameterAssert([[window contentView] isSupervisorView]);
+	// FIXME: Should be ok to use (but not with ObjectManagerExample... we have 
+	// need to turn the window into a window item sooner to eliminate the crash 
+	//in -awakeFromNib)
+	//NSParameterAssert([[window contentView] isSupervisorView]);
+	if ([[window contentView] isSupervisorView] == NO)
+		return nil;
 
 	return [[[window contentView] layoutItem] firstDecoratedItem];
 }

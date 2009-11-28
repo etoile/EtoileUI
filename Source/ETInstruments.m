@@ -75,7 +75,7 @@ pointer. */
 	}
 	else if ([anEvent clickCount] == 1)
 	{
-		[[item actionHandler] handleClickItem: item];
+		[[item actionHandler] handleClickItem: item atPoint: [anEvent locationInLayoutItem]];
 		[anEvent markAsDelivered];
 	}
 	else if ([anEvent clickCount] == 2)
