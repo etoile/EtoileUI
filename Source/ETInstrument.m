@@ -882,7 +882,12 @@ NO. */
 	[self tryActivateItem: nil withEvent: anEvent];
 	[self trySendEventToWidgetView: anEvent];
 	if ([anEvent wasDelivered])
+	{
 		return;
+	}
+	/* The field editor has not received the event with -trySendEventToWidgetView:, 
+	   the event is not directed towards it. */
+	[self tryRemoveFieldEditorItemWithEvent: anEvent];
 }
 
 - (void) mouseUp: (ETEvent *)anEvent

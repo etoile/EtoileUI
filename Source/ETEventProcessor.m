@@ -141,8 +141,12 @@ Returns YES when the event has been handled by EtoileUI. */
 		return NO;
 	}
 	ETInstrument *activeInstrument = [ETInstrument activeInstrument];
+	ETWindowItem *windowItem = [anEvent windowItem];
+	BOOL hadActiveFieldEditorItem = (nil != windowItem && nil != [windowItem activeFieldEditorItem]);
+	NSWindow *window = [windowItem window];
 
 	ASSIGN(_initialKeyWindow, [NSApp keyWindow]); /* Used by -wasKeyWindow: */
+	ASSIGN(_initialFirstResponder, [window firstResponder]);
 
 	switch ([anEvent type])
 	{
@@ -172,6 +176,17 @@ Returns YES when the event has been handled by EtoileUI. */
 			break;
 		default:
 			return NO;
+	}
+
+	id firstResponder = [window firstResponder];
+	BOOL firstResponderChanged = (_initialFirstResponder != firstResponder);
+
+	// NOTE: A better way to do that might be to use KVO on -[NSWindow firstResponder] 
+	// with ETWindowItem and reacts to the change immediately.
+	// However -[NSWindow firstResponder] isn't KVO-observable prior to 10.6.
+	if (hadActiveFieldEditorItem && firstResponderChanged)
+	{
+		[activeInstrument tryRemoveFieldEditorItemWithEvent: anEvent];
 	}
 
 	return YES;

@@ -10,13 +10,32 @@
 */
 
 #import <EtoileUI/ETTemplateItemLayout.h>
+#import <EtoileUI/ETActionHandler.h>
+#import <EtoileUI/ETBasicItemStyle.h>
 
 
 @interface ETIconLayout : ETTemplateItemLayout
 {
 	NSFont *_itemLabelFont;
+	NSSize _iconSizeForScaleFactorUnit;
+	NSSize _minIconSize;
 }
 
 - (void) setItemTitleFont: (NSFont *)font;
 
+/* Icon Sizing */
+
+- (NSSize) iconSizeForScaleFactorUnit;
+- (void) setIconSizeForScaleFactorUnit: (NSSize)aSize;
+- (NSSize) minIconSize;
+- (void) setMinIconSize: (NSSize)aSize;
+
+@end
+
+@interface ETIconAndLabelStyle : ETBasicItemStyle
+
+@end
+
+@interface ETIconAndLabelActionHandler : ETActionHandler
+- (void) handleClickItem: (ETLayoutItem *)item atPoint: (NSPoint)aPoint;
 @end

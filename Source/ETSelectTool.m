@@ -280,8 +280,16 @@ returnedItemRelativePoint is a point in the window frame rect. */
 	[self tryActivateItem: nil withEvent: anEvent];
 	[self trySendEventToWidgetView: anEvent];
 	if ([anEvent wasDelivered])
+	{
 		return;
+	}
+	/* The field editor has not received the event with -trySendEventToWidgetView:, 
+	   the event is not directed towards it. */
+	[self tryRemoveFieldEditorItemWithEvent: anEvent];
 
+	/* Make ourself the first responder in case thos status was given to a widget 
+	   (e.g. a field editor) since the last event which was not delegated 
+	   with -tryActivateItem:withEvent: or -trySendEventToWidgetView: */
 	[self makeFirstKeyResponder: self];
 
 	ETLayoutItem *item = [self hitTestWithEvent: anEvent];
@@ -377,6 +385,13 @@ be reactivated when we exit our owner layout. */
 
 - (void) keyDown: (ETEvent *)anEvent
 {
+	// FIXME: Is this exactly what we should do... My brain is tired.
+	if ([[self firstKeyResponder] isEqual: self] == NO)
+	{
+		[super keyDown: anEvent];
+		return;
+	}
+
 	NSString *chars = [anEvent characters];
 
 	if ([chars length] == 1)

@@ -38,7 +38,12 @@
 	[self tryActivateItem: nil withEvent: anEvent];
 	[self trySendEventToWidgetView: anEvent];
 	if ([anEvent wasDelivered])
+	{
 		return;
+	}
+	/* The field editor has not received the event with -trySendEventToWidgetView:, 
+	   the event is not directed towards it. */
+	[self tryRemoveFieldEditorItemWithEvent: anEvent];
 
 	ETLayoutItem *item = [anEvent layoutItem];
 	NSParameterAssert(item != nil);
@@ -59,6 +64,8 @@
 pointer. */
 - (void) mouseUp: (ETEvent *)anEvent
 {
+	/* Don't try to activate an item or remove the field editor. We does that
+	   in -mouseDown: time which precedes -mouseUp:. */
 	[self trySendEventToWidgetView: anEvent];
 	if ([anEvent wasDelivered])
 		return;
@@ -99,6 +106,8 @@ pointer. */
 The drag request can be handled with -[ETActionHandler handleDragItem:coordinator:]. */
 - (void) mouseDragged: (ETEvent *)anEvent
 {
+	/* Don't try to activate an item or remove the field editor. We does that
+	   in -mouseDown: time which precedes -mouseDragged:. */
 	[self trySendEventToWidgetView: anEvent];
 	if ([anEvent wasDelivered])
 		return;
@@ -175,6 +184,7 @@ when they are expected to. */
 	if ([self isTranslating])
 	{
 		[self endTranslate];
+		[anEvent markAsDelivered];
 	}
 	else /* Try deliver the event to a target item decorator */
 	{
@@ -203,10 +213,12 @@ when they are expected to. */
 		{
 			[self beginDragItem: hitItem withEvent: anEvent];
 		}
+		[anEvent markAsDelivered];
 	}
 	else if ([self isTranslating])
 	{
 		[self translateToPoint: [anEvent locationInWindow]]; // FIXME: Should be in screen coordinates...
+		[anEvent markAsDelivered];
 	}
 	else /* Try deliver the event to a target item decorator */
 	{
