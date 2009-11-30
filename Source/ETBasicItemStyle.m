@@ -212,13 +212,16 @@ rect is equal to it. */
 {
 	[NSGraphicsContext saveGraphicsState];
 
+	// TODO: Implement NSSetFocusRingStyle() on GNUstep
+#ifndef GNUSTEP
 	NSSetFocusRingStyle(NSFocusRingOnly);
 	[[NSBezierPath bezierPathWithRect: indicatorRect] fill];
-
-	/* For debugging, this code draws it with a square look... 
+#else
+	/* For debugging, this code draws it with a square look... */
 	[[[NSColor keyboardFocusIndicatorColor] colorWithAlphaComponent: 0.8] setStroke];
 	[NSBezierPath setDefaultLineWidth: 6.0];
-	[NSBezierPath strokeRect: indicatorRect];*/
+	[NSBezierPath strokeRect: indicatorRect];
+#endif
 
 	[NSGraphicsContext restoreGraphicsState];
 }
