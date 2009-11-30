@@ -39,7 +39,7 @@ static NSFileManager *objectManager = nil;
 	objectManager = [NSFileManager defaultManager];
 	
 	ASSIGN(path, @"/Users");
-    
+
     [nc addObserver: self 
            selector: @selector(viewContainerDidResize:) 
                name: NSViewFrameDidChangeNotification 
@@ -89,7 +89,7 @@ static NSFileManager *objectManager = nil;
 	[viewContainer setDoubleAction: @selector(doubleClickInViewContainer:)];
 	[viewContainer setHasVerticalScroller: YES];
 	[viewContainer setHasHorizontalScroller: YES];
-	[viewContainer setLayout: [ETFlowLayout layout]];
+	[viewContainer setLayout: [ETIconLayout layout]];
 	[viewContainer reloadAndUpdateLayout];
 
 	[pathContainer setLayout: [ETLineLayout layout]];
@@ -174,7 +174,7 @@ static NSFileManager *objectManager = nil;
 
 - (IBAction) scale: (id)sender
 {
-	[[viewContainer layoutItem] setItemScaleFactor: [sender floatValue] / 100];
+	[[viewContainer layoutItem] setItemScaleFactor: [sender floatValue]];
 }
 
 - (IBAction) search: (id)sender
@@ -347,12 +347,15 @@ static NSFileManager *objectManager = nil;
 		[icon setSize: NSMakeSize(128, 128)];
 		if ([[NSFileManager defaultManager] fileExistsAtPath: filePath isDirectory: &isDir] && isDir)
 		{
-			fileItem = [[ETLayoutItemFactory factory] itemGroupWithView: [self imageViewForImage: icon]];
+			fileItem = [[ETLayoutItemFactory factory] itemGroup];
+			/* We discard the fixed layout set +itemGroup to ensure 
+			   -[ETBasicItemStyle imageForItem:] returns an image. */
+			[fileItem setLayout: [ETNullLayout layout]];
 			[fileItem setSubtype: [ETUTI typeWithString: myFolderUTIString]];
 		}
 		else
 		{
-			fileItem = [ETLayoutItem layoutItemWithView: [self imageViewForImage: icon]];
+			fileItem = [[ETLayoutItemFactory factory] item];
 			[fileItem setSubtype: [ETUTI typeWithString: myFileUTIString]];
 		}
 		

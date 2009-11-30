@@ -26,11 +26,13 @@
 
 @implementation ETIconLayout
 
+/** <init />
+Initializes and returns a new icon layout. */
 - (id) init
 {
 	SUPERINIT
 	
-	_iconSizeForScaleFactorUnit = NSMakeSize(128, 128);
+	_iconSizeForScaleFactorUnit = NSMakeSize(32, 32);
 	_minIconSize = NSMakeSize(16, 16);
 
 	[self setAttachedInstrument: [ETSelectAndClickTool instrument]];
@@ -50,11 +52,6 @@
 }
 
 DEALLOC(DESTROY(_itemLabelFont))
-
-- (void) setPositionalLayout:(id <ETPositionalLayout>)layout
-{
-	[super setPositionalLayout: layout];
-}
 
 /* Mainly useful for debugging... */
 - (void) setUpTemplateElementsForItem: (ETLayoutItem *)item
@@ -87,6 +84,8 @@ icon layout does it in its own way by overriding -resizeLayoutItems:toScaleFacto
 
 /** Returns the icon size used when the scale factor is equal to 1. 
 
+By default, returns (32, 32).
+
 See also -setIconSizeForScaleFactorUnit. */
 - (NSSize) iconSizeForScaleFactorUnit
 {
@@ -96,7 +95,9 @@ See also -setIconSizeForScaleFactorUnit. */
 /** Sets the icon size used when the scale factor is equal to 1.
 
 This icon size is used a base to compute the new item size every time the item 
-scale factor changed. */
+scale factor changed.
+
+See also -iconSizeForScaleFactorUnit. */
 - (void) setIconSizeForScaleFactorUnit: (NSSize)aSize
 {
 	_iconSizeForScaleFactorUnit = aSize;
@@ -127,11 +128,11 @@ positional layout. */
 - (void) willRenderItems: (NSArray *)items isNewContent: (BOOL)isNewContent
 {
 	float scale = [_layoutContext itemScaleFactor];
-	if (scale == _previousScaleFactor)
-		return;
-
-	[self resizeLayoutItems: items toScaleFactor: scale];
-	_previousScaleFactor = scale;
+	if (isNewContent || scale != _previousScaleFactor)
+	{
+		[self resizeLayoutItems: items toScaleFactor: scale];
+		_previousScaleFactor = scale;
+	}
 }
 
 /** Resizes every item to the given scale by delegating it to 
