@@ -53,6 +53,17 @@ Initializes and returns a new icon layout. */
 
 DEALLOC(DESTROY(_itemLabelFont))
 
+- (id) copyWithZone: (NSZone *)aZone layoutContext: (id <ETLayoutingContext>)ctxt
+{
+	ETIconLayout *layoutCopy = 	[super copyWithZone: aZone layoutContext: ctxt];
+	
+	layoutCopy->_itemLabelFont = [_itemLabelFont copyWithZone: aZone];
+	layoutCopy->_iconSizeForScaleFactorUnit = _iconSizeForScaleFactorUnit;
+	layoutCopy->_minIconSize = _minIconSize;
+
+	return layoutCopy;
+}
+
 /* Mainly useful for debugging... */
 - (void) setUpTemplateElementsForItem: (ETLayoutItem *)item
 {
@@ -192,9 +203,15 @@ The resizing isn't delegated to the positional layout unlike in ETTemplateItemLa
 - (id) init
 {
 	SUPERINIT
+
+	NSSize maxLabelSize = [self maxLabelSize];
+
+	maxLabelSize.width = 150;
+	[self setMaxLabelSize: maxLabelSize];
 	[self setLabelPosition: ETLabelPositionInsideBottom];
 	[self setLabelMargin: 8];
 	[self setEdgeInset: 7];
+
 	return self;
 }
 
@@ -265,13 +282,29 @@ the given indicator rect. */
 	if (NSPointInRect(aPoint, labelRect) == NO)
 		return;								
 
-	NSSize labelSize = [label sizeWithAttributes: [iconStyle labelAttributes]];	
+	NSSize labelSize = [label sizeWithAttributes: [iconStyle labelAttributes]];
+	float lineHeight = labelSize.height;
+	BOOL nbOfLines = 1;
+
+	/* Limit the editing width to the max label width */
+	if (labelSize.width > labelRect.size.width)
+	{
+		labelSize.width = labelRect.size.width;
+		nbOfLines = 2;
+		labelSize.height = lineHeight * nbOfLines; /* Add an extra line */
+	}
 
 	/* We need some extra width to fit the label into the field editor */
 	labelSize.width += 11;
 
-	/* Resize the field editor to show the whole label */
+	/* Resize the field editor and compute its new location */
 	labelRect.origin.x -= (labelSize.width - labelRect.size.width) * 0.5;
+	// TODO: To be compensated in -beginEditingItem:property:inRect: when 
+	// the window backed item is flipped.
+	if ([item isFlipped] == NO)
+	{
+		labelRect.origin.y -= lineHeight * (nbOfLines - 1);
+	}
 	labelRect.size = labelSize;
 
 	[self beginEditingItem: item property: kETNameProperty inRect: labelRect];
