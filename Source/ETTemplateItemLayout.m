@@ -150,6 +150,17 @@ original items which are replaced by the layout. */
 	[_localBindings removeAllObjects];
 }
 
+- (void) setUpTemplateElementWithNewValue: (id)templateValue
+                                   forKey: (NSString *)aKey
+                                   inItem: (ETLayoutItem *)anItem
+{
+	BOOL shouldCopyValue = ([templateValue conformsToProtocol: @protocol(NSCopying)] 
+		|| [templateValue conformsToProtocol: @protocol(NSMutableCopying)]);
+	id newValue = (shouldCopyValue ? [templateValue copy] : templateValue);
+
+	[anItem setValue: newValue forKey: aKey];
+}
+
 - (void) setUpTemplateElementsForItem: (ETLayoutItem *)item
 {
 	if ([_renderedItems containsObject: item])
@@ -159,20 +170,17 @@ original items which are replaced by the layout. */
 	{
 		id value = [item valueForKey: key];
 
-		if (nil == value)
-			value = [NSNull null];
+		/* Remember the original value to be restored later */
+		[item setDefaultValue: (nil != value ? value : [NSNull null]) 
+		          forProperty: key];
 
-		[item setDefaultValue: value forProperty: key];
+		[self setUpTemplateElementWithNewValue: [_templateItem valueForKey: key]
+		                                forKey: key
+		                                inItem: item];
 
-		id templateValue = [_templateItem valueForKey: key];
-		BOOL shouldCopyValue = ([templateValue conformsToProtocol: @protocol(NSCopying)] 
-			|| [templateValue conformsToProtocol: @protocol(NSMutableCopying)]);
-		id newValue = (shouldCopyValue ? [templateValue copy] : templateValue);
-
-		[item setValue: newValue forKey: key];
-
-		[self setUpKVOForItem: item];
 	}
+
+	[self setUpKVOForItem: item];
 }
 
 - (id <ETPositionalLayout>) positionalLayout

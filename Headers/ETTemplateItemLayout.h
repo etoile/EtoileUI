@@ -85,6 +85,9 @@ possible and how to use ETTemplateItemLayout. */
 /* Subclass Hooks */
 
 - (void) setUpTemplateElementsForItem: (ETLayoutItem *)item;
+- (void) setUpTemplateElementWithNewValue: (id)templateValue
+                                   forKey: (NSString *)aKey
+                                   inItem: (ETLayoutItem *)anItem;
 - (void) setUpKVOForItem: (ETLayoutItem *)item;
 - (void) tearDownKVO;
 
