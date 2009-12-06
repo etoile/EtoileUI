@@ -388,7 +388,8 @@
 
 - (NSDragOperation) outlineView: (NSOutlineView *)outlineView validateDrop: (id < NSDraggingInfo >)info proposedItem: (id)item proposedChildIndex: (int)index
 {
-    //ETLog(@"Validate drop with dragging source %@ in %@", [info draggingSource], _layoutContext);
+    //ETLog(@"Validate drop item %@ atIndex %d with dragging source %@ in %@", 
+	//	[item primitiveDescription], index, [[info draggingSource] primitiveDescription], _layoutContext);
 
 	// TODO: Replace by [layoutContext handleValidateDropForObject:] and improve
 	if (item == nil || [item isGroup])
