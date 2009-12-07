@@ -103,7 +103,7 @@ See also +enablesAutolayout. */
 - (id) initWithItems: (NSArray *)layoutItems view: (NSView *)view 
 	value: (id)value representedObject: (id)repObject
 {
-    self = [super initWithView: view value: value representedObject: repObject];
+    self = [super initWithView: nil value: value representedObject: repObject];
 	if (nil == self)
 		return nil;
 
@@ -133,14 +133,30 @@ See also +enablesAutolayout. */
 	return [self initWithItems: nil view: view value: value representedObject: repObject];
 }
 
-- (id) initWithItems: (NSArray *)layoutItems view: (NSView *)view
+- (id) initWithItems: (NSArray *)layoutItems
 {
-	return [self initWithItems: layoutItems view: view value: nil representedObject: nil];
+	return [self initWithItems: layoutItems view: nil value: nil representedObject: nil];
 }
 
 - (id) init
 {
-	return [self initWithItems: nil view: nil];
+	return [self initWithItems: nil];
+}
+
+/** Initializes and returns a root item to be encaspulated in a layout.
+
+You should never need to use this method.
+
+See also -isLayoutOwnedRootItem. */
+- (id) initAsLayoutOwnedRootItem
+{
+	_isLayoutOwnedRootItem = YES;
+
+	self = [self initWithItems: nil view: nil value: nil representedObject: nil];
+	[self setActionHandler: nil];
+	[self setStyle: nil];
+
+	return self;
 }
 
 - (void) dealloc
@@ -334,13 +350,6 @@ default. */
 - (BOOL) isGroup
 {
 	return YES;
-}
-
-/** Returns whether the receiver is a root item encaspulated in a layout and 
-invisible in the main layout item tree. */
-- (BOOL) isLayoutOwnedRootItem
-{
-	return ([_parentItem containsItem: self] == NO);
 }
 
 /* Traversing Layout Item Tree */
@@ -1937,6 +1946,15 @@ TODO: Implement and may be rename -expand or -expandStack */
 	
 	/* Notify children */
 	[[self items] makeObjectsPerformSelector: @selector(beginEditingUI)];
+}
+
+/* Framework Private */
+
+/** Returns whether the receiver is a root item encaspulated in a layout and 
+invisible in the main layout item tree. */
+- (BOOL) isLayoutOwnedRootItem
+{
+	return _isLayoutOwnedRootItem;
 }
 
 @end

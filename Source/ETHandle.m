@@ -416,7 +416,7 @@ static ETBasicHandleStyle *sharedBasicHandleStyle = nil;
 	//NSArray *handles = A(HANDLE(ETTopLeftHandleActionHandler));
 
 	// NOTE: -setManipulatedObject: will set aTarget as a representedObject
-	self = [super initWithItems: handles view: nil value: nil representedObject: nil];
+	self = [super initWithItems: handles];
 	if (self == nil)
 		return nil;
 

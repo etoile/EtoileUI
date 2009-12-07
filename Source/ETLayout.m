@@ -990,9 +990,7 @@ context and the tree rooted in -rootItem. */
 	   That's why we check -isLayoutOwnedRootItem. */
 	if (_rootItem == nil && [_layoutContext isLayoutItem] && [_layoutContext isLayoutOwnedRootItem] == NO)
 	{
-		_rootItem = [[ETLayoutItemGroup alloc] init];
-		[_rootItem setActionHandler: nil];
-		[_rootItem setStyle: nil];
+		_rootItem = [[ETLayoutItemGroup alloc] initAsLayoutOwnedRootItem];
 	}
 
 	return _rootItem;

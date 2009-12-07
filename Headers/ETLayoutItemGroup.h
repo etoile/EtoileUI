@@ -34,6 +34,7 @@
 	BOOL _shouldMutateRepresentedObject;
 	BOOL _sorted;
 	BOOL _filtered;
+	BOOL _isLayoutOwnedRootItem;
 }
 
 + (BOOL) isAutolayoutEnabled;
@@ -42,11 +43,9 @@
 
 /* Initialization */
 
-- (id) initWithItems: (NSArray *)layoutItems view: (NSView *)view;
+- (id) initWithItems: (NSArray *)layoutItems;
 - (id) initWithItems: (NSArray *)layoutItems view: (NSView *)view 
 	value: (id)value representedObject: (id)repObject;
-
-- (BOOL) isLayoutOwnedRootItem;
 
 /* Traversing Layout Item Tree */
 
@@ -186,6 +185,11 @@
 - (NSArray *) contentArray;
 - (void) addObject: (id)object;
 - (void) removeObject: (id)object;
+
+/* Framework Private */
+
+- (id) initAsLayoutOwnedRootItem;
+- (BOOL) isLayoutOwnedRootItem;
 
 @end
 

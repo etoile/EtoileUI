@@ -336,6 +336,7 @@ Does nothing by default. */
 
 - (void) setSize: (NSSize)size
 {
+	[self setLayoutSize: size]; /* To sync the root item geometry */
 	[_layoutContext setSize: size];
 }
 
@@ -377,6 +378,7 @@ Does nothing by default. */
 
 - (void) setContentSize: (NSSize)size;
 {
+	[self setLayoutSize: size]; /* To sync the root item geometry */
 	[_layoutContext setContentSize: size];
 }
 

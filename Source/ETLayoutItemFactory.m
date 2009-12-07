@@ -195,7 +195,7 @@ An NSInvalidArgumentException will be raised if you pass nil. */
 /** Returns a new layout item group which contains the given items as children. */ 
 - (ETLayoutItemGroup *) itemGroupWithItems: (NSArray *)items
 {
-	return AUTORELEASE([[ETLayoutItemGroup alloc] initWithItems: items view: nil]);
+	return AUTORELEASE([[ETLayoutItemGroup alloc] initWithItems: items]);
 }
 
 /** Returns a new layout item group which represents the given object and 
@@ -211,19 +211,6 @@ See also -itemWithValue:. */
 - (ETLayoutItemGroup *) itemGroupWithValue: (id)value
 {
 	return AUTORELEASE([[ETLayoutItemGroup alloc] initWithValue: value]);
-}
-
-/** Returns a new layout item group to which the given view gets bound.
-
-The view is expected to be a custom view which doesn't present the content or 
-tree structure by itself. If you want to do so, you have to write an ETLayout 
-or ETWidgetLayout subclass, or use +[ETLayout layoutWithLayoutView:] when the 
-layout subclass is already available.
-
-NOTE: This method is still under evaluation. You should rarely need to use it. */ 
-- (ETLayoutItemGroup *) itemGroupWithView: (NSView *)view
-{
-	return AUTORELEASE([[ETLayoutItemGroup alloc] initWithView: view]);
 }
 
 /** Returns a new layout item group which represents the given object, usually 
