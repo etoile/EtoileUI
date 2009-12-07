@@ -1,40 +1,13 @@
-/*  <title>ETTableLayout</title>
-
-	ETTableLayout.m
-	
-	<abstract>Description forthcoming.</abstract>
- 
+/*
 	Copyright (C) 2007 Quentin Mathe
- 
+
 	Author:  Quentin Mathe <qmathe@club-internet.fr>
 	Date:  May 2007
- 
-	Redistribution and use in source and binary forms, with or without
-	modification, are permitted provided that the following conditions are met:
-
-	* Redistributions of source code must retain the above copyright notice,
-	  this list of conditions and the following disclaimer.
-	* Redistributions in binary form must reproduce the above copyright notice,
-	  this list of conditions and the following disclaimer in the documentation
-	  and/or other materials provided with the distribution.
-	* Neither the name of the Etoile project nor the names of its contributors
-	  may be used to endorse or promote products derived from this software
-	  without specific prior written permission.
-
-	THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
-	AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
-	IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
-	ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE
-	LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
-	CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
-	SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
-	INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
-	CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
-	ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
-	THE POSSIBILITY OF SUCH DAMAGE.
+	License:  Modified BSD (see COPYING)
  */
 
 #import <EtoileFoundation/Macros.h>
+#import <EtoileFoundation/ETCollection+HOM.h>
 #import <EtoileFoundation/NSObject+HOM.h>
 #import "ETTableLayout.h"
 #import "ETLayoutItem.h"
@@ -44,6 +17,9 @@
 #import "ETPickDropCoordinator.h"
 #import "NSView+Etoile.h"
 #import "ETCompatibility.h"
+
+@interface NSTableColumn (Etoile) <ETColumnFragment>
+@end
 
 /* Private Interface */
 
@@ -70,6 +46,7 @@
 {
 	/* ivar lazily initialized in -setLayoutView: */
 	DESTROY(_propertyColumns);
+	DESTROY(_currentSortDescriptors);
 	DESTROY(_contentFont);
 	[super dealloc];
 }
@@ -180,7 +157,11 @@ The property names are used as the column identifiers. */
 	}
 
 	NSTableView *tv = [self tableView];
-	
+	NSArray *tableViewSortKeys = (id)[[[tv sortDescriptors] mappedCollection] key];
+
+	/* Prepare the current sort descriptors */
+	ASSIGN(_currentSortDescriptors, [NSMutableArray arrayWithArray: [tv sortDescriptors]]);
+
 	/* Remove all existing columns
 	   NOTE: We cannot enumerate [tv tableColumns] directly because we remove columns */
 	FOREACH([NSArray arrayWithArray: [tv tableColumns]], column, NSTableColumn *)
@@ -192,11 +173,19 @@ The property names are used as the column identifiers. */
 	FOREACH(properties, property, NSString *)
 	{
 		NSTableColumn *column = [_propertyColumns objectForKey: property];
-		
+
 		if (column == nil)
 			column = [self _createTableColumnWithIdentifier: property];
 		
 		[tv addTableColumn: column];
+		
+		BOOL usesSortDescriptorProto = ([tableViewSortKeys containsObject: property] == NO
+			&& [column sortDescriptorPrototype] != nil);
+
+		if (usesSortDescriptorProto)
+		{
+			[_currentSortDescriptors addObject: [column sortDescriptorPrototype]];
+		}
 	}
 }
 
@@ -746,8 +735,8 @@ yet, it is created. */
 #ifndef GNUSTEP	
 	NSPoint pointInWindow = [self convertPoint: point toView: nil];
 
-	/* We check the current event is precisely the mouse down event that 
-	   triggers the present drag request */
+	/* We check the current event is precisely the mouse down (cocoa) or dragged 
+	   (gnustep) event that triggers the present drag request */
 	NSAssert3(NSEqualPoints([event locationInWindow], pointInWindow), @"For "
 		@"%@, current event point %@ must be equal to point %@ passed by "
 		@"-canDragRowsWithIndexes:point:", self, 
