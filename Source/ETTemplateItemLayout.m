@@ -171,7 +171,7 @@ original items which are replaced by the layout. */
 		id value = [item valueForKey: key];
 
 		/* Remember the original value to be restored later */
-		[item setDefaultValue: (nil != value ? value : [NSNull null]) 
+		[item setDefaultValue: (nil != value ? value : (id)[NSNull null]) 
 		          forProperty: key];
 
 		[self setUpTemplateElementWithNewValue: [_templateItem valueForKey: key]
@@ -258,6 +258,7 @@ their initial state. */
 {
 	FOREACH(_renderedItems,item, ETLayoutItem *)
 	{
+		/* Equivalent to [item setVisible: NO] */
 		[[item displayView] removeFromSuperview];
 
 		FOREACH(_templateKeys, key, NSString *)

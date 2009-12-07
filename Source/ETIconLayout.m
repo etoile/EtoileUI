@@ -46,7 +46,12 @@ Initializes and returns a new icon layout. */
 	/* Will delegate the icon/image rect computation to the icon style rather 
 	   than stretching it. */
 	[templateItem setContentAspect: ETContentAspectComputed];
-	[self setTemplateKeys: A(@"style", @"actionHandler", @"contentAspect")];
+	/* Icon must precede Style and View to let us snapshot the item in its 
+	   initial state. See -setUpTemplateElementWithNewValue:forKey:inItem:
+	   View must also be restored after Content Aspect, otherwise the view 
+	   geometry computation occurs two times when the items are restored. */
+	// FIXME: When View comes before Content Aspect an assertion is raised.
+	[self setTemplateKeys: A(@"icon", @"style", @"actionHandler", @"contentAspect", @"view")];
 
 	return self;
 }
@@ -64,9 +69,32 @@ DEALLOC(DESTROY(_itemLabelFont))
 	return layoutCopy;
 }
 
+- (void) setUpTemplateElementWithNewValue: (id)templateValue
+                                   forKey: (NSString *)aKey
+                                   inItem: (ETLayoutItem *)anItem
+{
+	if ([aKey isEqualToString: kETIconProperty])
+	{
+		/* Generate/retrieve the icon with -icon and cache it with -setIcon:.
+		   Once the item view/style is removed, we cannot generate the icon lazily. */
+		[anItem setIcon: [anItem icon]];
+	}
+	else
+	{
+		[super setUpTemplateElementWithNewValue: templateValue 
+		                                 forKey: aKey 
+		                                 inItem: anItem];
+	}
+
+}
+
 /* Mainly useful for debugging... */
 - (void) setUpTemplateElementsForItem: (ETLayoutItem *)item
 {
+	/* We insert the item display view into the view hierarchy to let us take a 
+	   snapshot with -icon */
+	[item setVisible: YES];
+
 	if (_localBindings != nil)
 	{
 		[super setUpTemplateElementsForItem: item];
@@ -75,6 +103,8 @@ DEALLOC(DESTROY(_itemLabelFont))
 	{
 		ETLog(@"WARNING: Bindings missing in %@", self);
 	}
+
+	[item setVisible: NO];
 
 	//[item setFrame: [[item style] boundingFrameForItem: item]];
 	// FIXME: Shouldn't be needed if we set on the template view already

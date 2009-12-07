@@ -185,6 +185,7 @@ and centers it. A strech is a scale that doesn't preserve the content proportion
 - (void) setImage: (NSImage *)img;
 - (NSImage *) icon;
 - (void) setIcon: (NSImage *)icon;
+- (NSImage *) snapshotFromRect: (NSRect)aRect;
 
 /* Model Access */
 

@@ -25,6 +25,7 @@
 #import "ETStyleGroup.h"
 #import "ETView.h"
 #import "ETWindowItem.h"
+#import "NSImage+Etoile.h"
 #import "NSView+Etoile.h"
 #import "ETCompatibility.h"
 
@@ -1044,6 +1045,8 @@ provided by the widget backend. See -[ETLayout layoutView].
 See also -[NSView(Etoile) isWidget]. */
 - (BOOL) usesWidgetView
 {
+	// NOTE: The next line would work too...
+	//return ([self view] != nil || [[[self layout] layoutView] isWidget]);
 	return ([[self view] isWidget] || [[[self layout] layoutView] isWidget]);
 }
 
@@ -1212,7 +1215,11 @@ The new selection state won't be apparent until a redisplay occurs. */
 
 /** Sets whether the receiver should be displayed or not.
 
-The new visibility state won't be apparent until a redisplay occurs. */
+The new visibility state won't be apparent until a redisplay occurs. 
+
+When the layout changes, this receiver visibility might change. Any custom 
+value you might have set is lost too and won't be restored by switching back to 
+the previous layout in use. */
 - (void) setVisible: (BOOL)visible
 {
 	_visible = visible;
@@ -2444,9 +2451,9 @@ By default, this method returns by decreasing order of priority:
 <enum>
 <item>the receiver icon (aka kETIconProperty), if -setIcon: was called previously</item>
 <item>the receiver image (aka kETImageProperty), if -image doesn't return nil</item>
-<item>a view snapshot, if -view doesn't return nil</item>
 <item>the represented object icon, if the represented object and the icon 
 associated with it are not nil</item>
+<item>a receiver snapshot, if the item can be snapshotted</item>
 <item>nil, if none of the above conditions are met</item>
 </enum>. 
 The returned image can be overriden by calling -setIcon:.
@@ -2460,11 +2467,11 @@ The returned image can be overriden by calling -setIcon:.
 	if (icon == nil)
 		icon = [self image];
 
-	if (icon == nil && [self displayView] != nil)
-		icon = [[self displayView] snapshot];
-		
 	if (icon == nil && [self representedObject] != nil)
 		icon = [[self representedObject] icon];
+
+	if (icon == nil)
+		icon = [self snapshotFromRect: [self bounds]];
 		
 	if (icon == nil)
 		ETDebugLog(@"Icon missing for %@", self);
@@ -2480,6 +2487,23 @@ should not be expected to be nil. */
 - (void) setIcon: (NSImage *)img
 {
 	SET_PROPERTY(img, kETIconProperty);
+}
+
+/** Returns an image snapshot of the receiver. The snapshot is taken at the time 
+this method is called.
+
+When the receiver isn't backed by a window and has no window-backed ancestor 
+item backed either, returns nil. */
+- (NSImage *) snapshotFromRect: (NSRect)aRect
+{
+	id viewBackedItem = [self supervisorViewBackedAncestorItem];
+
+	if (nil == viewBackedItem || nil == [[viewBackedItem supervisorView] window])
+		return nil;
+
+	NSRect rectInView = [self convertRect: aRect toItem: viewBackedItem];
+
+	return AUTORELEASE([[NSImage alloc] initWithView: [viewBackedItem displayView] fromRect: rectInView]);
 }
 
 /* Events & Actions */
