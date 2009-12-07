@@ -26,6 +26,8 @@ moved to a window to be snapshotted (not yet working). */
 - (NSImage *) initWithView: (NSView *)view fromRect: (NSRect)rect
 {
 	NSParameterAssert(nil != view);
+	if (NSIsEmptyRect(rect) || rect.size.width < 1 || rect.size.height < 1)
+		return nil;
 
 	self = [self initWithSize: rect.size];
 	if (nil == self)
