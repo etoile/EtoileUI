@@ -103,7 +103,7 @@ See also +enablesAutolayout. */
 - (id) initWithItems: (NSArray *)layoutItems view: (NSView *)view 
 	value: (id)value representedObject: (id)repObject
 {
-    self = [super initWithView: nil value: value representedObject: repObject];
+    self = [super initWithView: view value: value representedObject: repObject];
 	if (nil == self)
 		return nil;
 
