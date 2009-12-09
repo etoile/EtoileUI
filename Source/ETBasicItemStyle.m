@@ -39,12 +39,14 @@ a label underneath. */
 	return style;
 }
 
-/** <init />Initializes and returns a new basic item style. */
+/** <init />
+Initializes and returns a new basic item style with no visible label, 
+no max image and label size and no edge inset. */
 - (id) init
 {
 	SUPERINIT
 	_isSharedStyle = YES;
-	_labelPosition = ETLabelPositionCentered;
+	_labelPosition = ETLabelPositionNone;
 	ASSIGN(_labelAttributes, [[self class] standardLabelAttributes]);
 	_maxImageSize = ETNullSize;
 	_maxLabelSize = ETNullSize;
@@ -61,7 +63,6 @@ DEALLOC(DESTROY(_labelAttributes));
 	newStyle->_labelAttributes = [_labelAttributes copyWithZone: aZone];
 	newStyle->_labelPosition = _labelPosition;
 	newStyle->_labelMargin = _labelMargin;
-	newStyle->_labelVisible = _labelVisible;
 	newStyle->_maxLabelSize = _maxLabelSize;
 	newStyle->_maxImageSize = _maxImageSize;
 	newStyle->_edgeInset = _edgeInset;
@@ -71,7 +72,7 @@ DEALLOC(DESTROY(_labelAttributes));
 
 - (void) render: (NSMutableDictionary *)inputValues 
      layoutItem: (ETLayoutItem *)item 
-	  dirtyRect: (NSRect)dirtyRect
+      dirtyRect: (NSRect)dirtyRect
 {
 	/* Compute Label And Image Geometry */
 
@@ -82,7 +83,7 @@ DEALLOC(DESTROY(_labelAttributes));
 
 	NSString *itemLabel = [self labelForItem: item];
 
-	if (nil != itemLabel)
+	if (nil != itemLabel && ETLabelPositionNone != _labelPosition)
 	{
 		_currentLabelRect = [self rectForLabel: itemLabel 
 		                               inFrame: [item drawingFrame] 
@@ -373,33 +374,18 @@ See also -maxLabelSize. */
 	return rect;
 }
 
-/** Returns the string to be used as the label to draw.
+/** <override-dummy />
+Returns the string to be used as the label to draw.
 
-When the given item has a view or a layout, returns the item name which might be 
-nil, otherwise returns thedisplay name which is never nil. This behavior 
-ensures no label is drawn when the item uses a custom view (such as a widget) 
-or a layout, unless you explicitly set one with -[ETLayoutItem setName:]. */
+Returns the display name which is never nil.<br />
+The label won't be drawn when -labelPosition returns ETLabelPositionNone.  */
 - (NSString *) labelForItem: (ETLayoutItem *)anItem
 {
-	NSString *label = nil;
-	ETLayout *layout = [anItem layout];
-
 	// TODO: We probably want extra flexibility. e.g. kETShouldDrawGroupLabelHint 
 	// set by the parent item in inputValues based on the layout. 
 	// ETLayoutItemGroup might want to query the layout with 
 	// -[ETLayout shouldLayoutContextDraws(All)ItemLabel].
-
-	// TODO: Remove nil layout check once ETNullLayout is used everywhere.
-	if ((nil != layout && NO == [layout isNull]) || [anItem view] != nil)
-	{
-		label = [anItem name];
-	}
-	else
-	{
-		label = [anItem displayName];
-	}
-
-	return label;
+	return [anItem displayName];
 }
 
 /** Returns the size required to present the item image (at the given size) and 

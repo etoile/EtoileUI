@@ -15,6 +15,7 @@
 
 @class ETLayoutItem;
 
+// TODO: Write correct enum doc
 typedef enum
 {
 	ETLabelPositionNone, 
@@ -43,12 +44,14 @@ ETBasicItemStyle shared instance is also the only style automatically inserted
 in -[ETLayoutItem styleGroup], when a new layout item is initialized.
 
 Tailored items build by ETLayoutItemFactory might not use ETBasicItemStyle, but 
-a custom style object. */
+a custom style object.
+
+You can control the label visibility with -setLabelPosition:, ETLabelPositionNone 
+makes the label invisible. */
 @interface ETBasicItemStyle : ETStyle
 {
 	ETLabelPosition _labelPosition;
 	float _labelMargin;
-	BOOL _labelVisible;
 	NSDictionary *_labelAttributes;
 	NSSize _maxLabelSize;
 	NSSize _maxImageSize;
@@ -86,9 +89,6 @@ a custom style object. */
 - (void) setLabelMargin: (float)aMargin;
 - (NSDictionary *) labelAttributes;
 - (void) setLabelAttributes: (NSDictionary *)stringAttributes;
-// TODO: Implement
-//- (BOOL) setLabelVisible: (BOOL)flag;
-//- (BOOL) isLabelVisible;
 
 - (NSRect) rectForLabel: (NSString *)aLabel 
                 inFrame: (NSRect)itemFrame 
