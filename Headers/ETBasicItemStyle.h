@@ -63,6 +63,7 @@ makes the label invisible. */
 + (NSDictionary *) standardLabelAttributes;
 
 + (ETBasicItemStyle *) iconAndLabelBarElementStyle;
++ (ETBasicItemStyle *) styleWithLabelPosition: (ETLabelPosition)aPositionRule;
 
 - (void) render: (NSMutableDictionary *)inputValues 
      layoutItem: (ETLayoutItem *)item 

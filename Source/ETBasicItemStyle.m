@@ -39,6 +39,14 @@ a label underneath. */
 	return style;
 }
 
+/** Returns a new autoreleased style with the given label position. */
++ (ETBasicItemStyle *) styleWithLabelPosition: (ETLabelPosition)aPositionRule
+{
+	ETBasicItemStyle *style = AUTORELEASE([[self alloc] init]);
+	[style setLabelPosition: aPositionRule];
+	return style;
+}
+
 /** <init />
 Initializes and returns a new basic item style with no visible label, 
 no max image and label size and no edge inset. */
@@ -154,7 +162,7 @@ means you can safely use it when overriding other drawing methods. */
 /** Draws an image at the origin of the current graphics coordinates. */
 - (void) drawImage: (NSImage *)itemImage flipped: (BOOL)itemFlipped inRect: (NSRect)aRect
 {
-	//ETLog(@"Drawing image %@ flipped %d in view %@", itemImage, [itemImage isFlipped], [NSView focusView]);
+	//ETLog(@"Drawing image %@ %@ flipped %d in view %@", itemImage, NSStringFromRect(aRect), [itemImage isFlipped], [NSView focusView]);
 	BOOL flipMismatch = (itemFlipped && (itemFlipped != [itemImage isFlipped]));
 	NSAffineTransform *xform = nil;
 
