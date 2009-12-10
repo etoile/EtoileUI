@@ -64,6 +64,7 @@
 	NSPredicate *_filterPredicate;
 	NSArray *_allowedPickTypes;
 	NSMutableDictionary *_allowedDropTypes; /* Allowed drop UTIs by drop target UTIs */
+	NSMutableSet *_editorItems;
 	BOOL _automaticallyRearrangesObjects;
 	BOOL _hasNewSortDescriptors;
 	BOOL _hasNewFilterPredicate;
@@ -128,14 +129,20 @@
 - (BOOL) automaticallyRearrangesObjects;
 - (void) setAutomaticallyRearrangesObjects: (BOOL)flag;
 
-//- (void) commitEditing;
-
 /* Pick and Drop */
 
 - (NSArray *) allowedPickTypes;
 - (void) setAllowedPickTypes: (NSArray *)UTIs;
 - (NSArray *) allowedDropTypesForTargetType: (ETUTI *)aUTI;
 - (void) setAllowedDropTypes: (NSArray *)UTIs forTargetType: (ETUTI *)targetUTI;
+
+/* Editing (NSEditor and NSEditorRegistration Protocols) */
+
+- (BOOL) isEditing;
+- (BOOL) commitEditing;
+- (void) discardEditing;
+- (void) objectDidBeginEditing: (ETLayoutItem *)anItem;
+- (void) objectDidEndEditing: (ETLayoutItem *)anItem;
 
 @end
 

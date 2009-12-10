@@ -318,6 +318,14 @@ and centers it. A strech is a scale that doesn't preserve the content proportion
 - (void) didChangeViewValue: (id)newValue;
 - (void) didChangeRepresentedObjectValue: (id)newValue;
 
+/* Editing (NSEditor and NSEditorRegistration Protocols) */
+
+- (void) beginEditing;
+- (void) discardEditing;
+- (BOOL) commitEditing;
+- (void) objectDidBeginEditing: (id)anEditor;
+- (void) objectDidEndEditing: (id)anEditor;
+
 - (id <ETInspector>) inspector;
 - (void) setInspector: (id <ETInspector>)inspector;
 

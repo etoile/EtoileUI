@@ -76,6 +76,41 @@ static NSMutableDictionary *sharedActionHandlers = nil;
 	[super dealloc];
 }
 
+/* Editing */
+
+/** <override-dummy />
+Makes the item view the first responder or the item itself when there is no view. */
+- (void) beginEditingForItem: (ETLayoutItem *)item
+{
+	id newFirstResponder = ([item view] != nil ? (id)[item view] : (id)item);
+	[[[item view] window] makeFirstResponder: newFirstResponder];
+}
+
+/** <override-dummy />
+Discards any pending changes in the item view. */
+- (void) discardEditingForItem: (ETLayoutItem *)item
+{
+	[[[item view] ifResponds] discardEditing];
+}
+
+/** <override-dummy />
+Tries to commit any pending changes in the item view.
+
+Always returns YES when the item has no view. */
+- (BOOL) commitEditingForItem: (ETLayoutItem *)item
+{
+	if ([[item view] respondsToSelector: @selector(commitEditing)])
+	{
+		return [[item view] commitEditing];
+	}
+	else
+	{
+		return YES;
+	}
+}
+
+/* Text Editing */
+
 - (NSFont *) defaultFieldEditorFont
 {
 	return [NSFont systemFontOfSize: [NSFont smallSystemFontSize]];

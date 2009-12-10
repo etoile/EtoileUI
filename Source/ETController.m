@@ -7,6 +7,7 @@
  */
 
 #import <EtoileFoundation/Macros.h>
+#import <EtoileFoundation/ETCollection+HOM.h>
 #import <EtoileFoundation/ETUTI.h>
 #import "ETController.h"
 #import "ETLayoutItemGroup+Mutation.h"
@@ -26,6 +27,7 @@ Initializes and returns a new controller which automatically rearrange objects. 
 	[self setSortDescriptors: nil];
 	_allowedPickTypes = [[NSArray alloc] init];
 	_allowedDropTypes = [[NSMutableDictionary alloc] init];
+	_editorItems = [[NSMutableSet alloc] init];
 	_automaticallyRearrangesObjects = YES;
 
 	return self;
@@ -54,6 +56,7 @@ Initializes and returns a new controller which automatically rearrange objects. 
 	DESTROY(_filterPredicate);
 	DESTROY(_allowedPickTypes);
 	DESTROY(_allowedDropTypes);
+	DESTROY(_editorItems);
 	
 	[super dealloc];
 }
@@ -246,6 +249,7 @@ the copying support must invoke it instead of -copyWithZone:. */
 	newController->_filterPredicate = [_filterPredicate copyWithZone: aZone];
 	newController->_allowedPickTypes = [_allowedPickTypes copyWithZone: aZone];
 	newController->_allowedDropTypes = [_allowedDropTypes mutableCopyWithZone: aZone];
+	newController->_editorItems = [[NSMutableSet allocWithZone: aZone] init];
 	newController->_automaticallyRearrangesObjects = _automaticallyRearrangesObjects;
 	newController->_hasNewSortDescriptors = (NO == [_sortDescriptors isEmpty]);
 	newController->_hasNewFilterPredicate = (nil != _filterPredicate);
@@ -588,12 +592,6 @@ Returns YES by default. */
 	_automaticallyRearrangesObjects = flag;
 }
 
-/* Not really needed */
-// - (void) commitEditing
-// {
-// 	[[self content] reloadAndUpdateLayout];
-// }
-
 /* Pick and Drop */
 
 - (NSArray *) allowedPickTypes
@@ -637,6 +635,61 @@ too slow given that the method tends to be invoked repeatedly.
 	NILARG_EXCEPTION_TEST(targetUTI)
 	NILARG_EXCEPTION_TEST(UTIs)
 	[_allowedDropTypes setObject: UTIs forKey: targetUTI];
+}
+
+/* Editing (NSEditor and NSEditorRegistration Protocols) */
+
+/** Returns YES when one or several editors are registered, otherwise NO. */
+- (BOOL) isEditing
+{
+	return ([_editorItems isEmpty] == NO);
+}
+
+/** Tries to commit all the pending changes existing the current editors that 
+were previously registered with -objectDidBeginEditing:.
+
+When all pending changes have been committed and all editors have been 
+unregistered returns YES, otherwise returns NO. */
+- (BOOL) commitEditing
+{
+	FOREACH(_editorItems, item, ETLayoutItem *)
+	{
+		if ([item commitEditing] == NO)
+		{
+			return NO;
+		}
+		[_editorItems removeObject: item];
+	}
+	return YES;
+}
+
+/** Discards all the pending changes existing the current editors that 
+were previously registered with -objectDidBeginEditing:.
+
+All the editors get unregistered. */
+- (void) discardEditing
+{
+	[[_editorItems map] discardEditing];
+	[_editorItems removeAllObjects];	
+}
+
+/** Notifies the controller the given item has begun to be edited.
+
+You should never need to invoke this method.<br />
+See instead -[ETLayoutItem objectDidBeginEditing:]. */
+- (void) objectDidBeginEditing: (ETLayoutItem *)anItem
+{
+	[_editorItems addObject: anItem];
+}
+
+/** Notifies the controller the editing which was underway in the given item 
+has ended.
+
+You should never need to invoke this method.<br />
+See instead -[ETLayoutItem objectDidEndEditing:]. */
+- (void) objectDidEndEditing: (ETLayoutItem *)anItem
+{
+	[_editorItems removeObject: anItem];
 }
 
 @end

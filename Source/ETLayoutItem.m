@@ -2675,6 +2675,60 @@ See also -subject. */
 	[self syncView: [self view] withValue: newValue];
 }
 
+/* Editing */
+
+/** Invokes -beginEditingForItem: on the action handler which makes the item view 
+the first responder or the item when there is no view. */
+- (void) beginEditing
+{
+	[[self actionHandler] beginEditingForItem: self];
+}
+
+/** Invokes -discardEditingForItem: on the action handler which in turn invokes 
+-discardEditing on the item view when possible. */
+- (void) discardEditing
+{
+	[[self actionHandler] discardEditingForItem: self];
+}
+
+/** Invokes -commitEditingForItem: on the action handler which in turn invokes 
+-commitEditing on the item view when possible. */
+- (BOOL) commitEditing
+{
+	return [[self actionHandler] commitEditingForItem: self];
+}
+
+/** Notifies the item it has begun to be edited.
+
+This method is usually invoked by the item view or the action handler to allow  
+the item to notify the base item controller about the editing.
+
+You can invoke it in an action handler method when you want the possibility  
+to react with -commitEditingForItem: or -discardEditingForItem: to an early 
+editing termination by the controller.<br />
+
+See also -objectDidEndEditing:. */
+- (void) objectDidBeginEditing: (id)anEditor
+{
+	// NOTE: We implement NSEditorRegistration to allow the view which are 
+	// bound to an item with -bind:toObject:XXX to notify the controller transparently.
+	[[[self baseItem] controller] objectDidBeginEditing: anEditor];
+}
+
+/** Notifies the item the editing underway ended.
+
+This method is usually invoked by the item view or the action handler to allow  
+the item to notify the base item controller about the editing.
+
+You must invoke it in an action handler method when you have previously call 
+-objectDidBeginEditing and your editor has finished to edit a property.<br />
+
+See also -objectDidBeginEditing:. */
+- (void) objectDidEndEditing: (id)anEditor
+{ 	
+	[[[self baseItem] controller] objectDidEndEditing: anEditor];
+}
+
 /** Returns the custom inspector associated with the receiver. By default, 
 returns nil.
 
@@ -2685,7 +2739,6 @@ returns nil.
 	[inspector setInspectedObjects: A(self)];
 	return inspector;
 }
-
 
 /** Sets the custom inspector associated with the receiver. */
 - (void) setInspector: (id <ETInspector>)inspector

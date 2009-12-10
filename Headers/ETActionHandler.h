@@ -43,6 +43,12 @@ method will reuse the action handler to be set on every created items. */
 
 + (id) sharedInstance;
 
+/* Editing */
+
+- (void) beginEditingForItem: (ETLayoutItem *)item;
+- (void) discardEditingForItem: (ETLayoutItem *)item;
+- (BOOL) commitEditingForItem: (ETLayoutItem *)item;
+
 /* Text Editing */
 
 - (ETLayoutItem *) fieldEditorItem;
@@ -51,7 +57,6 @@ method will reuse the action handler to be set on every created items. */
                  property: (NSString *)property
                    inRect: (NSRect)fieldEditorFrame;
 - (void) endEditingItem;
-//- (void) tryEnd
 
 /* Instrument/Tool Actions */
 
