@@ -427,7 +427,7 @@ Both model and property name must be valid objects when they are not nil. */
 - (id) checkboxWithLabel: (NSString *)aLabel 
                   target: (id)aTarget 
                   action: (SEL)aSelector
-            propertyName: (NSString *)aKey
+             forProperty: (NSString *)aKey
                  ofModel: (id)aModel 
 {
 	id item = [self newItemWithViewClass: [NSButton class]
@@ -558,14 +558,62 @@ as its view. */
 	return [self itemWithView: sliderView];
 }
 
-/** Returns a new layout item that uses a vertially oriented NSSlider instance 
-as its view. */
-- (id) horizontalSlider
+- (id) horizontalSliderWithWidth: (float)aWidth
+                        minValue: (float)min 
+                        maxValue: (float)max
+                    initialValue: (float)aValue
+                          target: (id)aTarget
+                          action: (SEL)aSelector
+                     forProperty: (NSString *)aKey
+                         ofModel: (id)anObject
 {
 	ETLayoutItem *item = [self newItemWithViewClass: [NSSlider class]
 	                                         height: [self defaultSliderThickness]];
+	NSSlider *sliderView = (NSSlider *)[item view];
+
+	[sliderView setMinValue: min];
+	[sliderView setMaxValue: max];
+	[sliderView setFloatValue: aValue];
+	[sliderView setTarget: aTarget];
+	[sliderView setAction: aSelector];
+
+	[item setWidth: aWidth];
+	[item setAutoresizingMask: ETAutoresizingNone];
+	if (nil != aKey && nil != anObject)
+	{
+		[item setRepresentedObject: [ETProperty propertyWithName: aKey
+		                                       representedObject: anObject]];
+		[[item representedObject] setTreatsAllKeysAsProperties: YES];
+	}
+
 	return item;
 }
+
+/** Returns a new layout item that uses a horizontally oriented NSSlider instance 
+as its view. */
+- (id) horizontalSliderWithWidth: (float)aWidth 
+                        minValue: (float)min 
+                        maxValue: (float)max
+                    initialValue: (float)aValue 
+                          target: (id)aTarget 
+                          action: (SEL)aSelector
+{
+	return [self horizontalSliderWithWidth: aWidth minValue: min maxValue: max
+		initialValue: aValue target: aTarget action: aSelector forProperty: nil ofModel: nil];
+}
+
+/** Returns a new layout item that uses a horizontally oriented NSSlider instance 
+as its view. */
+- (id) horizontalSliderWithWidth: (float)aWidth
+                        minValue: (float)min 
+                        maxValue: (float)max
+                     forProperty: (NSString *)aKey
+                         ofModel: (id)anObject
+{
+	return [self horizontalSliderWithWidth: aWidth minValue: min maxValue: max
+		initialValue: (max - min) target: nil action: NULL forProperty: aKey ofModel: anObject];
+}
+
 
 /** Returns a new layout item that uses a NSStepper instance as its view. */
 - (id) stepper

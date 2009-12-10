@@ -67,14 +67,24 @@
 - (id) checkboxWithLabel: (NSString *)aLabel 
                   target: (id)aTarget 
                   action: (SEL)aSelector
-            propertyName: (NSString *)aKey
+             forProperty: (NSString *)aKey
                  ofModel: (id)aModel; 
 - (id) labelWithTitle: (NSString *)aTitle;
 - (id) textField;
 - (id) searchFieldWithTarget: (id)aTarget action: (SEL)aSelector;
 - (id) textView;
 - (id) progressIndicator;
-- (id) horizontalSlider;
+- (id) horizontalSliderWithWidth: (float)aWidth 
+                        minValue: (float)min 
+                        maxValue: (float)max
+                    initialValue: (float)aValue 
+                          target: (id)aTarget 
+                          action: (SEL)aSelector;
+- (id) horizontalSliderWithWidth: (float)aWidth
+                        minValue: (float)min 
+                        maxValue: (float)max
+                     forProperty: (NSString *)aKey
+                         ofModel: (id)anObject;
 - (id) verticalSlider;
 - (id) stepper;
 - (id) textFieldAndStepper;
