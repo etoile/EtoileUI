@@ -16,5 +16,12 @@
 
 /** WARNING: Unstable API. */
 @interface ETLayoutItem (KVO)
+
 - (NSSet *) observableKeyPaths;
+
+/* Framework Private */
+
+- (NSSet *) willChangeRepresentedObjectFrom: (id)newObject to: (id)oldObject;
+- (void) didChangeValuesForKeys: (NSSet *)affectedKeys;
+
 @end

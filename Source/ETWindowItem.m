@@ -9,15 +9,15 @@
 #import <EtoileFoundation/NSInvocation+Etoile.h>
 #import <EtoileFoundation/Macros.h>
 #import "ETWindowItem.h"
+#import "ETGeometry.h"
 #import "ETLayer.h"
 #import "ETLayoutItem.h"
 #import "ETLayoutItemGroup.h"
-#import "ETLayoutItem+Factory.h"
-#import "ETPickDropCoordinator.h"
 #import "ETLayoutItemFactory.h"
-#import "NSWindow+Etoile.h"
-#import "ETGeometry.h"
+#import "EtoileUIProperties.h"
+#import "ETPickDropCoordinator.h"
 #import "ETCompatibility.h"
+#import "NSWindow+Etoile.h"
 
 #define NC [NSNotificationCenter defaultCenter]
 
@@ -192,9 +192,11 @@ If window is nil, the receiver creates a standard widget backend window. */
 	   as a decorator. */
 	if ([_itemWindow isReleasedWhenClosed])
 	{
-		if ([[ETLayoutItem windowGroup] containsItem: [self firstDecoratedItem]])
+		ETLayoutItemGroup *windowGroup = [[ETLayoutItemFactory factory] windowGroup];
+
+		if ([windowGroup containsItem: [self firstDecoratedItem]])
 		{
-			[[ETLayoutItem windowGroup] removeItem: [self firstDecoratedItem]];
+			[windowGroup removeItem: [self firstDecoratedItem]];
 		}
 		else
 		{
@@ -346,10 +348,14 @@ and make the necessary adjustments. */
 	}
 	[_itemWindow setContentView: (NSView *)decoratedView];	
 
-	// TODO: Use KVB by default to bind the window title
-	if ([self usesCustomWindowTitle] == NO)
+	// TODO: Update the binding when intermediate decorators are bound to a new 
+	// decorated item.
+	if ([self usesCustomWindowTitle] == NO && [[item firstDecoratedItem] isLayoutItem])
 	{
-		[_itemWindow setTitle: [[self firstDecoratedItem] displayName]];
+		[_itemWindow bind: NSTitleBinding
+		         toObject: [item firstDecoratedItem]
+		      withKeyPath: kETDisplayNameProperty
+		          options: nil];
 	}
 	[_itemWindow makeKeyAndOrderFront: self];
 }
@@ -359,6 +365,7 @@ and make the necessary adjustments. */
                        inView: (ETView *)parentView
 {
 	[_itemWindow orderOut: self];
+	[_itemWindow unbind: NSTitleBinding];
 	[super handleUndecorateItem: item supervisorView: decoratedView inView: parentView];
 }
 

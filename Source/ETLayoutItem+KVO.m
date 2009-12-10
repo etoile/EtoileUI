@@ -54,6 +54,60 @@
 	}
 }
 
+/* Returns all the observed properties affected by the change or nil when the 
+receiver is not observed.
+-didChangeValuesForKeys: must be invoked with the result afterwards. */
+- (NSSet *) willChangeRepresentedObjectFrom: (id)newObject to: (id)oldObject
+{
+	// We could speed it up by putting -observationInfo in an ivar and invoking 
+	// -will/DidChange only when the ivar is not nil.
+	// What should probably do handle that correctly is to override all 
+	// -addObserver:XXX methods and keep track of observed/observer/keyPath 
+	// triplet in order to broacast only the necessary changes when the rep 
+	// object changes.
+	// We could also support batch changes with -[NSObject didChange] that 
+	// tells the receiver as globally dirty and posts a normal notification 
+	// observed by the layout items bound to this rep object. Then they could 
+	// broadcast the changes at a normal KVO granularity to their observers 
+	// by leveraging the observation triplet they keep track of.
+	BOOL isObserved = ([self observationInfo] != nil);
+
+	if (NO == isObserved)
+		return nil;
+
+	NSMutableSet *affectedKeys = [NSMutableSet setWithCapacity: 150];
+
+	/* Add keys for values affected by a represented object change
+	   TODO: We probably can remove that once our model object (e.g. COObject, 
+	   COFile etc.) correctly override -observableKeyPaths. */
+	[affectedKeys addObjectsFromArray: A(kETDisplayNameProperty, kETValueProperty, 
+		kETIconProperty, kETRepresentedObjectProperty, kETSubjectProperty)];
+	[affectedKeys unionSet: [oldObject observableKeyPaths]];
+	[affectedKeys unionSet: [newObject observableKeyPaths]];
+	if (nil == oldObject || nil == newObject)
+	{
+		[affectedKeys unionSet: [self observableKeyPaths]];
+	}
+
+	FOREACH(affectedKeys, key, NSString *)
+	{
+		[self willChangeValueForKey: key];
+	}
+
+	return affectedKeys;
+}
+
+- (void) didChangeValuesForKeys: (NSSet *)affectedKeys
+{
+	if (nil == affectedKeys)
+		return;
+
+	FOREACH(affectedKeys, key, NSString *)
+	{
+		[self didChangeValueForKey: key];
+	}
+}
+
 /* Returns the observable properties which shouldn't be observed.
 
 Non observable properties are -hasValidRepresentedPathBase, -usesWidgetView, 

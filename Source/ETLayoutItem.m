@@ -18,6 +18,7 @@
 #import "ETGeometry.h"
 #import "ETInspector.h"
 #import "ETLayoutItemGroup.h"
+#import "ETLayoutItem+KVO.h"
 #import "ETLayoutItem+Reflection.h"
 #import "ETLayoutItem+Scrollable.h"
 #import "EtoileUIProperties.h"
@@ -866,8 +867,18 @@ The item view is also synchronized with the object value of the given represente
 object when the view is a widget. */
 - (void) setRepresentedObject: (id)modelObject
 {
+	id oldObject = _modelObject;
+
 	[_modelObject removeObserver: self];
+
+	/* To ensure the values are not released before the KVO notification ends */
+	RETAIN(oldObject);	
+	NSSet *affectedKeys = [self willChangeRepresentedObjectFrom: oldObject 
+	                                                         to: modelObject];
 	ASSIGN(_modelObject, modelObject);
+	[self didChangeValuesForKeys: affectedKeys];
+	RELEASE(oldObject);
+
 	[self syncView: [self view] withRepresentedObject: modelObject];
 	[modelObject addObserver: self];
 }
