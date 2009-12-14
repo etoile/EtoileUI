@@ -546,7 +546,7 @@ WARNING: presently returns a scrollview if you call -view on the returned item. 
 	                           height: [self defaultProgressIndicatorHeight]];
 }
 
-/** Returns a new layout item that uses a vertially oriented NSSlider instance 
+/** Returns a new layout item that uses a vertically oriented NSSlider instance 
 as its view. */
 - (id) verticalSlider
 {
@@ -556,6 +556,15 @@ as its view. */
 	NSSlider *sliderView = AUTORELEASE([[NSSlider alloc] initWithFrame: frame]);
 
 	return [self itemWithView: sliderView];
+}
+
+/** Returns a new layout item that uses a horizontally oriented NSSlider instance 
+as its view. */
+- (id) horizontalSlider
+{
+	// NOTE: Might be better to invoke -horizontalSliderWithWidth:XXX.
+	return [self newItemWithViewClass: [NSSlider class]
+	                           height: [self defaultSliderThickness]];
 }
 
 - (id) horizontalSliderWithWidth: (float)aWidth

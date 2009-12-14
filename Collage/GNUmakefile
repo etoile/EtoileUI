@@ -14,3 +14,4 @@ $(APP_NAME)_RESOURCE_FILES = $(APP_NAME)Info.plist
 $(APP_NAME)_GUI_LIBS = -lEtoileUI
 
 include $(GNUSTEP_MAKEFILES)/application.make
+-include ../../../etoile.make

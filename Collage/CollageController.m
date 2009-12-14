@@ -60,6 +60,8 @@
 	                                         withLabel: @"Useless"]];
 	[mainItem addItem: [itemFactory barElementFromItem: buttonItem
 	                                         withLabel: @"Useful"]];
+	[mainItem addItem: [itemFactory barElementFromItem: [itemFactory buttonWithImage: [self appImage] target: nil action: NULL]
+	                                         withLabel: @"App"]];
 	/* Selection rubber-band is a layout item too, which means we can use it 
 	   in the same way than other shape-based items... */
 	[mainItem addItem: AUTORELEASE([[ETSelectionAreaItem alloc] init])];

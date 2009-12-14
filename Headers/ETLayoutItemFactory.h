@@ -74,6 +74,8 @@
 - (id) searchFieldWithTarget: (id)aTarget action: (SEL)aSelector;
 - (id) textView;
 - (id) progressIndicator;
+- (id) verticalSlider;
+- (id) horizontalSlider;
 - (id) horizontalSliderWithWidth: (float)aWidth 
                         minValue: (float)min 
                         maxValue: (float)max
@@ -85,7 +87,6 @@
                         maxValue: (float)max
                      forProperty: (NSString *)aKey
                          ofModel: (id)anObject;
-- (id) verticalSlider;
 - (id) stepper;
 - (id) textFieldAndStepper;
 - (id) popUpMenuWithItemTitles: (NSArray *)entryTitles 
