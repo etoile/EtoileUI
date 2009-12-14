@@ -13,6 +13,7 @@
 
 #import <Foundation/Foundation.h>
 #import <AppKit/AppKit.h>
+#import <EtoileFoundation/EtoileFoundation.h>
 #import <EtoileUI/EtoileUI.h>
 
 

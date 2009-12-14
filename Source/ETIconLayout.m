@@ -216,7 +216,7 @@ The resizing isn't delegated to the positional layout unlike in ETTemplateItemLa
 	FOREACH(items, item, ETLayoutItem *)
 	{
 
-		[item setSize: [iconStyle boundingSizeForItem: item imageSize: iconSize]];
+		[item setSize: [iconStyle boundingSizeForItem: item imageOrViewSize: iconSize]];
 	}
 }
 

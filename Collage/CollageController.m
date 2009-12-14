@@ -47,6 +47,10 @@
 	ETLayoutItem *buttonItem = [itemFactory buttonWithImage: [self appImage] 
 	                                                 target: self 
 	                                                 action: @selector(bing:)];
+	ETLayoutItem *popUpItem = [itemFactory popUpMenuWithItemTitles: A(@"Tap", @"Tip", @"Top") 
+	                                            representedObjects: nil 
+	                                                        target: nil
+	                                                        action: NULL];
 
 	[mainItem addItem: [itemFactory horizontalSlider]];
 	[mainItem addItem: [itemFactory textField]];
@@ -60,8 +64,8 @@
 	                                         withLabel: @"Useless"]];
 	[mainItem addItem: [itemFactory barElementFromItem: buttonItem
 	                                         withLabel: @"Useful"]];
-	[mainItem addItem: [itemFactory barElementFromItem: [itemFactory buttonWithImage: [self appImage] target: nil action: NULL]
-	                                         withLabel: @"App"]];
+	[mainItem addItem: [itemFactory barElementFromItem: popUpItem
+	                                         withLabel: @"Hm"]];
 	/* Selection rubber-band is a layout item too, which means we can use it 
 	   in the same way than other shape-based items... */
 	[mainItem addItem: AUTORELEASE([[ETSelectionAreaItem alloc] init])];

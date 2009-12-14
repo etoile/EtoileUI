@@ -146,25 +146,38 @@ shared style returned by -currentBarElementStyle.  */
                             withLabel: (NSString *)aLabel
                                 style: (ETStyle *)aStyle
 {
+	NSSize initialSize = [anItem size];
+
 	[anItem setName: aLabel];
 	[anItem setStyle: aStyle];
 	[anItem setContentAspect: ETContentAspectComputed];
-	[anItem setBoundingBox: [aStyle boundingBoxForItem: anItem]];
+	//[anItem setBoundingBox: [aStyle boundingBoxForItem: anItem]];
 	// NOTE: Must follow -setContentAspect:
 	[anItem setHeight: [self currentBarElementHeight]];
 
-	if ([[anItem view] isMemberOfClass: [NSButton class]] 
-	 && [(NSButton *)[anItem view] image] != nil)
+	id view = [anItem view];
+	BOOL isUntitledButtonView = ([view title] == nil || [[view title] isEqual: @""]);
+	BOOL isImageOnlyButtonView = ([view isMemberOfClass: [NSButton class]] 
+	 && [view image] != nil && isUntitledButtonView);
+	BOOL needsButtonBehavior = (isImageOnlyButtonView || nil != [anItem image]);
+	BOOL usesFlexibleWidth = (nil != view && NO == isImageOnlyButtonView);
+
+	if (isImageOnlyButtonView)
 	{
-		[anItem setImage: [(NSButton *)[anItem view] image]];
-		[anItem setAction: [(NSControl *)[anItem view] action]];
-		[anItem setTarget: [(NSControl *)[anItem view] target]];
+		[anItem setImage: [(NSButton *)view image]];
+		[anItem setAction: [(NSControl *)view action]];
+		[anItem setTarget: [(NSControl *)view target]];
 		[anItem setView: nil];
+	}
+	if (needsButtonBehavior)
+	{
 		[anItem setActionHandler: [ETButtonItemActionHandler sharedInstance]];
 	}
-	else if ([anItem image] != nil)
+
+	if (usesFlexibleWidth)
 	{
-		[anItem setActionHandler: [ETButtonItemActionHandler sharedInstance]];
+		[anItem setWidth: [[anItem style] boundingSizeForItem: anItem 
+		                                      imageOrViewSize: initialSize].width];
 	}
 
 	return anItem;
@@ -385,6 +398,7 @@ initializes this button with the given image, target and action. */
 	[buttonView setImage: anImage];
 	[buttonView setTarget: aTarget];
 	[buttonView setAction: aSelector];
+	[buttonView setTitle: nil];
 
 	return [self itemWithView: buttonView];
 }

@@ -118,7 +118,7 @@ makes the label invisible. */
 - (float) edgeInset;
 - (void) setEdgeInset: (float)anInset;
 
-- (NSSize) boundingSizeForItem: (ETLayoutItem *)anItem imageSize: (NSSize)imgSize;
+- (NSSize) boundingSizeForItem: (ETLayoutItem *)anItem imageOrViewSize: (NSSize)imgSize;
  
 @end
 

@@ -396,21 +396,24 @@ The label won't be drawn when -labelPosition returns ETLabelPositionNone.  */
 	return [anItem displayName];
 }
 
-/** Returns the size required to present the item image (at the given size) and 
-label, without scaling the image down and trimming the label while respecting 
-the max image size and the max label size.
+/** Returns the size required to present the item image or view (at the given 
+size) and label, without resizing the image/view down and trimming the label 
+while respecting the max image size and the max label size.
+
+When the item has the view, the max image size won't be considered.
 
 The computed size can be either greather and lesser than the existing item size.
 
 You can use the returned size to resize the item without moving it with 
 -[ETLayoutItem setSize:] or alternatively computes a bouding box and sets it 
 with -[ETLayoutItem setBoundingBox:]. */
-- (NSSize) boundingSizeForItem: (ETLayoutItem *)anItem imageSize: (NSSize)imgSize
+- (NSSize) boundingSizeForItem: (ETLayoutItem *)anItem imageOrViewSize: (NSSize)imgSize
 {
 	NSParameterAssert(nil != anItem);
 
-	float maxImgWidth = (_maxImageSize.width != ETNullSize.width ? _maxImageSize.width : imgSize.width);
-	float maxImgHeight = (_maxImageSize.height != ETNullSize.height ? _maxImageSize.height : imgSize.height);
+	BOOL noView = ([anItem view] == nil);
+	float maxImgWidth = (noView && _maxImageSize.width != ETNullSize.width ? _maxImageSize.width : imgSize.width);
+	float maxImgHeight = (noView && _maxImageSize.height != ETNullSize.height ? _maxImageSize.height : imgSize.height);
 	float imgWidth = MIN(imgSize.width, maxImgWidth);
 	float imgHeight = MIN(imgSize.height, maxImgHeight);
 
@@ -531,10 +534,19 @@ Returns the image drawing area in the given item content bounds. */
 	NSSize viewSize = aSize;
 	NSRect maxViewRect = insetContentRect;
 
-	// TODO: Write the missing cases...
+	/* With a label position centered or based on the content aspect, the label 
+	   overlaps the view/image area. The image/view area extent is then equal to 
+	   the inset item content bounds and the label rect can be ignored.
+	   Also true when the label is positionned outside the content bounds. */
 	switch (_labelPosition)
 	{
+		case ETLabelPositionNone:
 		case ETLabelPositionCentered:
+		case ETLabelPositionContentAspect:
+		case ETLabelPositionOutsideBottom:
+		case ETLabelPositionOutsideLeft:
+		case ETLabelPositionOutsideTop:
+		case ETLabelPositionOutsideRight:
 			break;
 		case ETLabelPositionInsideBottom:
 		{
@@ -545,8 +557,26 @@ Returns the image drawing area in the given item content bounds. */
 			maxViewRect.size.height -= labelRect.size.height + _labelMargin;
 			break;
 		}
-		case ETLabelPositionNone:
-			return NSZeroRect;
+		case ETLabelPositionInsideLeft:
+		{
+			maxViewRect.origin.x += labelRect.size.width + _labelMargin;
+			maxViewRect.size.width -= labelRect.size.width + _labelMargin;
+			break;
+		}
+		case ETLabelPositionInsideTop:
+		{
+			if ([anItem isFlipped])
+			{	
+				maxViewRect.origin.y += labelRect.size.height + _labelMargin;	
+			}
+			maxViewRect.size.height -= labelRect.size.height + _labelMargin;
+			break;
+		}
+		case ETLabelPositionInsideRight:
+		{
+			maxViewRect.size.width -= labelRect.size.width + _labelMargin;
+			break;
+		}
 		default:
 			ASSERT_INVALID_CASE;
 			return NSZeroRect;
