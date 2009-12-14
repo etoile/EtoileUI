@@ -156,9 +156,9 @@ shared style returned by -currentBarElementStyle.  */
 	[anItem setHeight: [self currentBarElementHeight]];
 
 	id view = [anItem view];
-	BOOL isUntitledButtonView = ([view title] == nil || [[view title] isEqual: @""]);
-	BOOL isImageOnlyButtonView = ([view isMemberOfClass: [NSButton class]] 
-	 && [view image] != nil && isUntitledButtonView);
+	BOOL isButtonView = [view isMemberOfClass: [NSButton class]]; 
+	BOOL isUntitledButtonView = (isButtonView && ([view title] == nil || [[view title] isEqual: @""]));
+	BOOL isImageOnlyButtonView = (isButtonView && isUntitledButtonView && [view image] != nil);
 	BOOL needsButtonBehavior = (isImageOnlyButtonView || nil != [anItem image]);
 	BOOL usesFlexibleWidth = (nil != view && NO == isImageOnlyButtonView);
 
