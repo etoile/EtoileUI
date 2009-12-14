@@ -15,8 +15,10 @@
 
 @interface ObjectManagerController : NSObject 
 {
-    IBOutlet ETContainer *pathContainer;
+	IBOutlet ETContainer *pathContainer;
 	IBOutlet ETContainer *viewContainer;
+	ETLayoutItemGroup *mainViewItem;
+	ETLayoutItemGroup *pathViewItem;
 	ETController *controller;
 	NSString *path;
 }
@@ -25,7 +27,5 @@
 - (IBAction) switchUsesScrollView: (id)sender;
 - (IBAction) scale: (id)sender;
 - (IBAction) search: (id)sender;
-
-- (NSImageView *) imageViewForImage: (NSImage *)image;
 
 @end
