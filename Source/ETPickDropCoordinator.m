@@ -317,6 +317,7 @@ entering a new one. */
 	// the next line might returns nil in case this item has already been 
 	// popped. See e.g. -performDragOperation: where the line ordering matters.
 	id pickedObject = [[ETPickboard localPickboard] firstObject];
+	NSInteger dropIndex = ETUndeterminedIndex;
 
 	// FIXME: Use NSParameterAssert(dropTarget != nil && draggedItem != nil);
 	// Fix to be done explained in -concludeDragOperation:.
@@ -327,7 +328,9 @@ entering a new one. */
 	   -allowsDropping returns NO
 	   location outside of the drop on rect. */
 	return [[dropTarget actionHandler] handleValidateDropObject: pickedObject 
-		onItem: dropTarget coordinator: [ETPickDropCoordinator sharedInstance]];
+	                                                    atIndex: &dropIndex
+	                                                     onItem: dropTarget
+	                                                coordinator: [ETPickDropCoordinator sharedInstance]];
 }
 
 - (ETDropIndicator *) dropIndicatorForDropTarget: (ETLayoutItem *)dropTarget
@@ -594,10 +597,10 @@ item. */
 {
 	id layout = [baseItem layout];
 	
-	if (layout != nil && [layout respondsToSelector: @selector(dropIndexAtLocation:forItem:on:)])
+	/*if (layout != nil && [layout respondsToSelector: @selector(dropIndexAtLocation:forItem:on:)])
 	{
 		return [layout dropIndexAtLocation: localDropPosition forItem: item on: dropTargetItem];
-	}
+	}*/
 
 	NSAssert2([dropTargetItem isGroup], @"Drop target item %@ must be a group "
 		@"in event handler %@", dropTargetItem, self);

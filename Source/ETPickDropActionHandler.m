@@ -24,6 +24,8 @@
 #import "ETStyle.h"
 #import "ETCompatibility.h"
 
+const NSInteger ETUndeterminedIndex = -1;
+
 #define SELECTION_BY_RANGE_KEY_MASK NSShiftKeyMask
 #define SELECTION_BY_ONE_KEY_MASK NSCommandKeyMask
 
@@ -114,26 +116,46 @@ method is called by ETTableLayout when rows are dragged). */
 	return YES;
 }
 
+/** Returns the drop target item when -canDropObject:atIndex:onItem:coordinator: 
+returns YES, otherwise returns nil to denote an invalid drop or the drop target 
+parent in case the object can be dropped on it.
+
+The parent item is tested with -canDropObject:atIndex:onItem:coordinator:.
+
+When the drop target is not an item group, the drop won't be validated.
+
+You can override this method to implement other drop validation rules, which 
+cannot be expressed with -allowedPickTypesForItem: and -allowedDropTypesForItem: 
+whose UTIs are usually declared at the controller level.<br />
+When the given index is equal to ETUndeterminedIndex, the drop operation is a 
+'drop on'the drop target, otherwise the drop operation is 'drop insertion'. You 
+are allowed to change the drop index which might also represent a new drop 
+operation. e.g. <code>*anIndex = ETUndeterminedIndex</code> when anIndex was 3. */
 - (ETLayoutItem *) handleValidateDropObject: (id)droppedObject
+                                    atIndex: (NSInteger *)anIndex
                                      onItem: (ETLayoutItem *)dropTarget
-                                coordinator: (id)aPickCoordinator
+                                coordinator: (ETPickDropCoordinator *)aPickCoordinator
 {
 	BOOL canDrop = [self canDropObject: droppedObject
-	                            onItem: dropTarget 
+	                           atIndex: *anIndex
+	                            onItem: dropTarget
 	                       coordinator: aPickCoordinator];
-	BOOL retargetDrop = ([dropTarget isGroup] == NO || canDrop == NO);
+	BOOL retargetDrop = (NO == [dropTarget isGroup] || NO == canDrop);
 
 	if (retargetDrop)
 	{
 		ETLayoutItemGroup *parent = [dropTarget parentItem];
+		NSInteger dropTargetIndex = [parent indexOfItem: dropTarget]; /* drop above or before */
 
-		if (parent == nil)
-			return nil;
-
-		/* We try to find recursively a parent item which validates the drop */
-		return [[parent actionHandler] handleValidateDropObject: droppedObject
-		                                                 onItem: parent 
-		                                            coordinator: aPickCoordinator];
+		if (nil != parent && [[parent actionHandler] canDropObject: droppedObject
+		                                                   atIndex: dropTargetIndex
+		                                                    onItem: parent 
+		                                               coordinator: aPickCoordinator])
+		{
+			*anIndex = dropTargetIndex;
+			return parent;
+		}
+		return nil;
 	}
 
 	return dropTarget;
@@ -211,7 +233,7 @@ method is called by ETTableLayout when rows are dragged). */
            beginAtPoint: (NSPoint)aPoint 
             coordinator: (id)aPickCoordinator
 {
-	ETLog(@"DRAG SOURCE - Drag begin receives in dragging source %@", draggedItem);
+	ETDebugLog(@"DRAG SOURCE - Drag begin receives in dragging source %@", draggedItem);
 }
 
 - (void) handleDragItem: (ETLayoutItem *)draggedItem 
@@ -226,7 +248,7 @@ method is called by ETTableLayout when rows are dragged). */
            wasCancelled: (BOOL)cancelled
             coordinator: (id)aPickCoordinator
 {
-	ETLog(@"DRAG SOURCE - Drag end receives in dragging source %@", draggedItem);
+	ETDebugLog(@"DRAG SOURCE - Drag end receives in dragging source %@", draggedItem);
 
 	if (cancelled)
 	{
@@ -247,7 +269,7 @@ feedback), when a dragged item moves over drop target area. */
 {
 	//ETLog(@"DRAG DEST - Drag move receives in dragging destination %@", item);
 	
-	if ([self canDropObject: draggedItem onItem: item coordinator: aPickCoordinator] == NO)
+	if ([self canDropObject: draggedItem atIndex: ETUndeterminedIndex onItem: item coordinator: aPickCoordinator] == NO)
 		return NSDragOperationNone;
 	
 	return [aPickCoordinator dragOperationMask];
@@ -261,7 +283,7 @@ feedback), when a dragged item enters the drop target area. */
 {
 	ETDebugLog(@"DRAG DEST - Drag enter receives in dragging destination %@", item);
 
-	if ([self canDropObject: draggedItem onItem: item coordinator: aPickCoordinator] == NO)
+	if ([self canDropObject: draggedItem atIndex: ETUndeterminedIndex onItem: item coordinator: aPickCoordinator] == NO)
 		return NSDragOperationNone;
 	
 	return [aPickCoordinator dragOperationMask];
@@ -348,7 +370,8 @@ by -allowedDropTypesForItem: for the drop target, otherwise returns NO.
 
 When the dropped object is a pick collection, each element type is checked with 
 -conformsToType:. */
-- (BOOL) canDropObject: (id)droppedObject 
+- (BOOL) canDropObject: (id)droppedObject
+               atIndex: (NSInteger)dropIndex 
                 onItem: (ETLayoutItem *)dropTarget
            coordinator: (ETPickDropCoordinator *)aPickCoordinator
 {

@@ -16,6 +16,12 @@
 @class ETUTI;
 @class ETLayoutItem, ETPickboard, ETPickDropCoordinator;
 
+/** Marks an element which shouldn't be considered bound to a particular index 
+in an ordered collection or whose index isn't yet determined.
+
+Can be used to indicate a drop is not an insertion at precise index but a simple drop on. */
+extern const NSInteger ETUndeterminedIndex;
+
 
 @interface ETActionHandler (ETPickDropActionHandler)
 
@@ -23,9 +29,10 @@
 
 - (BOOL) handlePickItem: (ETLayoutItem *)item coordinator: (id)aPickCoordinator;
 - (BOOL) handleDragItem: (ETLayoutItem *)item coordinator: (id)aPickCoordinator;
-- (ETLayoutItem *) handleValidateDropObject: (id)droppedObject 
+- (ETLayoutItem *) handleValidateDropObject: (id)droppedObject
+                                    atIndex: (NSInteger *)anIndex
                                      onItem: (ETLayoutItem *)dropTarget
-                                coordinator: (id)aPickCoordinator;
+                                coordinator: (ETPickDropCoordinator *)aPickCoordinator;
 - (BOOL) handleDropObject: (id)droppedObject
                    onItem: (ETLayoutItem *)dropTargetItem 
               coordinator: (id)aPickDropCoordinator;
@@ -37,6 +44,7 @@
 - (BOOL) canDragItem: (ETLayoutItem *)item
          coordinator: (ETPickDropCoordinator *)aPickCoordinator;
 - (BOOL) canDropObject: (id)droppedObject
+               atIndex: (NSInteger)dropIndex
                 onItem: (ETLayoutItem *)dropTarget
            coordinator: (ETPickDropCoordinator *)aPickCoordinator;
 

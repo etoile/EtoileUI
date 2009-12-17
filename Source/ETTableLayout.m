@@ -521,35 +521,12 @@ yet, it is created. */
 		[item setValue: value];
 }
 
-/*- (void) handleDrag: (NSEvent *)event forItem: (id)item
-{
-
-}*/
-
 - (void) beginDrag: (ETEvent *)event forItem: (id)item 
 	image: (NSImage *)customDragImage layout: (id)layout
 {
 	ETDebugLog(@"Overriden -beginDrag:forItem:image: in %@", self);
 	/* Overriden to do nothing and let the table view creates and manages the 
 	   drag object. This method is called by -handleDrag:forItem:. */
-}
-
-- (int) dropIndexAtLocation: (NSPoint)localDropPosition forItem: (id)item on: (id)dropTargetItem
-{
-	int childDropIndex = _lastChildDropIndex;
-
-	/* Drop index is -1 when the drop occurs on a row (highlighted) or 
-	   underneath the last row (in the blank area) */
-	if (childDropIndex == -1)
-	{
-		childDropIndex = NSNotFound;
-	}
-	else if ([dropTargetItem isEqual: [self layoutContext]] == NO)
-	{
-		childDropIndex = [dropTargetItem numberOfItems] - 1;
-	}
-	
-	return childDropIndex;
 }
 
 - (BOOL) tableView: (NSTableView *)tv writeRowsWithIndexes: (NSIndexSet *)rowIndexes 
@@ -584,30 +561,57 @@ yet, it is created. */
 				  proposedRow: (int)row 
 	    proposedDropOperation: (NSTableViewDropOperation)op 
 {
-	id dropTargetItem = [self layoutContext];
+	ETLayoutItem *dropTarget = (ETLayoutItem *)_layoutContext;
 
-// FIXME: GNUstep should behave like Cocoa by complying to:
-// - row <= [tv numberOfRows] (to eliminate all potential out of range exceptions)
-// - op != NSTableViewDropOn when row = [tv numberOfRows], if you consider that 
-//   a drop on the last row occurs with row = [tv numberOfRows] - 1
-//   Not really sure for this last point though, Cocoa behavior needs to be 
-//   tested because the documentation doesn't cover these details.
-#ifdef GNUSTEP
-	if (op == NSTableViewDropOn && row < [tv numberOfRows])
-		dropTargetItem = [[dropTargetItem items] objectAtIndex: row];
-#else
-	if (op == NSTableViewDropOn)
-		dropTargetItem = [[dropTargetItem items] objectAtIndex: row];
-#endif
-
-	ETDebugLog(@"Validate drop on %@ with dragging source %@ in %@ drag mask %d drop op %d", 
-		dropTargetItem, [info draggingSource], _layoutContext, [info draggingSourceOperationMask], op);
-		
-	// TODO: Replace by [layoutContext handleValidateDropForObject:] and improve
-	if ([dropTargetItem isGroup] == NO) /* Retarget the drop if needed */
+	if (ETUndeterminedIndex != row && NSTableViewDropOn == op)
 	{
-		ETDebugLog(@"Retarget drop");
-		[tv setDropRow: row dropOperation: NSTableViewDropAbove];
+		dropTarget = [[_layoutContext items] objectAtIndex: row];
+	}
+
+	ETLog(@"Validate drop on %@ with dragging source %@ in %@ drag mask %d drop op %d", 
+		dropTarget, [info draggingSource], _layoutContext, [info draggingSourceOperationMask], op);
+	
+	id draggedObject = [[ETPickboard localPickboard] firstObject];
+	ETLayoutItem *baseItem = [_layoutContext baseItem];
+	NSInteger dropIndex = (NSTableViewDropAbove == op ? row : ETUndeterminedIndex);
+	ETLayoutItem *validDropTarget = 
+		[[baseItem actionHandler] handleValidateDropObject: draggedObject
+		                                           atIndex: &dropIndex
+	                                                onItem: dropTarget
+	                                           coordinator: [ETPickDropCoordinator sharedInstance]];
+
+	/* -handleValidateXXX can return nil, the drop target, the drop target parent or another child */	
+	if (nil == validDropTarget)
+	{
+		return NSDragOperationNone;
+	}
+
+	BOOL isRetargeted = ([validDropTarget isEqual: dropTarget] == NO || dropIndex != row);
+
+	if (isRetargeted)
+	{
+		NSInteger dropOp;
+		NSInteger dropRow;
+
+		if ([validDropTarget isEqual: _layoutContext])
+		{
+			dropOp = (ETUndeterminedIndex == dropIndex ? NSTableViewDropOn : NSTableViewDropAbove);
+			dropRow = dropIndex;
+		}
+		else
+		{
+			dropOp = NSTableViewDropOn;
+			dropRow = [_layoutContext indexOfObject: validDropTarget];
+
+			if (NSNotFound == dropRow) /* NSNotFound is not ETUndeterminedIndex */
+			{
+				ETLog(@"WARNING: Drop target %@ doesn't belong to %@", validDropTarget, _layoutContext);
+				return NSDragOperationNone;
+			}
+		}
+		[tv setDropRow: dropRow dropOperation: dropOp];
+
+		ETLog(@"Retarget drop to %i with op %i", dropRow, dropOp);
 	}
 
 	return NSDragOperationEvery;
