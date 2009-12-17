@@ -131,6 +131,7 @@ If window is nil, the receiver creates a standard widget backend window. */
 
 	[self removeActiveFieldEditorItem]; /* For _editedItem and _activeFieldEditorItem */
 
+	[_itemWindow unbind: NSTitleBinding];
 	/* Retain the window to be sure we can send it -isReleasedWhenClosed. We 
 	   must defer the deallocation in case -close releases it and drops the
 	   retain count to zero. */
@@ -352,10 +353,12 @@ and make the necessary adjustments. */
 	// decorated item.
 	if ([self usesCustomWindowTitle] == NO && [[item firstDecoratedItem] isLayoutItem])
 	{
-		[_itemWindow bind: NSTitleBinding
+		// FIXME: We have a crash later because the observed object can be 
+		// released without any way to let us know.
+		/*[_itemWindow bind: NSTitleBinding
 		         toObject: [item firstDecoratedItem]
 		      withKeyPath: kETDisplayNameProperty
-		          options: nil];
+		          options: nil];*/
 	}
 	[_itemWindow makeKeyAndOrderFront: self];
 }
