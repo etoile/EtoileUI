@@ -69,6 +69,22 @@ and expect to be provided a layout item through -render:layoutItem:dirtyRect:. *
 
 @end
 
+// TODO: Support bottom and top indicator position
+/** The drop indicator positions which can computed by ETDropIndicator.
+
+Based on the drop indicator position, the indicator drawing will vary. e.g. bar 
+or rectangle. */
+typedef enum
+{
+/** No visible indicator. */
+	ETIndicatorPositionNone,
+/** Drop on indicator. */
+	ETIndicatorPositionOn, 
+/** Left bar indicator. */
+	ETIndicatorPositionLeft,
+/** Right bar indicator. */
+	ETIndicatorPositionRight
+} ETIndicatorPosition;
 
 @interface ETDropIndicator : ETStyle
 {
@@ -90,6 +106,10 @@ and expect to be provided a layout item through -render:layoutItem:dirtyRect:. *
 - (void) drawRectangularInsertionIndicatorInRect: (NSRect)indicatorRect;
 - (NSRect) previousIndicatorRect;
 - (NSRect) currentIndicatorRect;
+
+- (ETIndicatorPosition) indicatorPosition;
++ (ETIndicatorPosition) indicatorPositionForPoint: (NSPoint)dropPoint
+                                    nearItemFrame: (NSRect)itemRect;
 
 @end
 

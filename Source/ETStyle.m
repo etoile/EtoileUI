@@ -339,20 +339,23 @@ overrides it to resize/scale the bezier path as needed. */
 {
 	// NOTE: Should we use... -[[item layout] displayRectOfItem: hoveredItem];
 	NSRect hoveredRect = [_hoveredItem frame];
-	float itemMiddleWidth = hoveredRect.origin.x + hoveredRect.size.width / 2;
 	float indicatorWidth = 4.0;
 	float indicatorLineX = 0.0;
 
 	/* Decides whether to draw on left or right border of hovered item */
-	if (_dropLocation.x >= itemMiddleWidth)
+	switch ([[self class] indicatorPositionForPoint: _dropLocation 
+	                                  nearItemFrame: hoveredRect])
 	{
-		indicatorLineX = NSMaxX(hoveredRect);
-		//ETDebugLog(@"Draw right insertion bar");
-	}
-	else if (_dropLocation.x < itemMiddleWidth)
-	{
-		indicatorLineX = NSMinX(hoveredRect);
-		//ETDebugLog(@"Draw left insertion bar");
+		case ETIndicatorPositionRight:
+			indicatorLineX = NSMaxX(hoveredRect);
+			//ETLog(@"Draw right insertion bar");
+			break;
+		case ETIndicatorPositionLeft:
+			indicatorLineX = NSMinX(hoveredRect);
+			//ETLog(@"Draw left insertion bar");
+			break;
+		default:
+			ASSERT_INVALID_CASE;
 	}
 
 	/* Computes indicator rect */
@@ -370,6 +373,43 @@ overrides it to resize/scale the bezier path as needed. */
 	{
 		return [self verticalIndicatorRect];
 	}
+}
+
+/** Returns where the drop indicator is drawn and its orientation.
+
+See ETIndicatorPosition enum. */
+- (ETIndicatorPosition) indicatorPosition
+{
+	if (_dropOn)
+	{
+		return ETIndicatorPositionOn;
+	}
+	else
+	{
+		return [[self class] indicatorPositionForPoint: _dropLocation
+		                                 nearItemFrame: [_hoveredItem frame]];
+	}
+}
+
+/** Returns the indicator position to be used when the pointer is at the given 
+point in the area inside or close to the item rect.
+
+Both the given point and rect must be expressed in the item parent coordinate 
+space.  */
++ (ETIndicatorPosition) indicatorPositionForPoint: (NSPoint)dropPoint
+                                    nearItemFrame: (NSRect)itemRect
+{
+	float itemMiddleWidth = itemRect.origin.x + itemRect.size.width / 2;
+
+	if (dropPoint.x >= itemMiddleWidth)
+	{
+		return ETIndicatorPositionRight;
+	}
+	else if (dropPoint.x < itemMiddleWidth)
+	{
+		return ETIndicatorPositionLeft;
+	}
+	return ETIndicatorPositionNone;
 }
 
 @end
