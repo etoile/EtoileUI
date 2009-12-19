@@ -86,10 +86,15 @@ such as NSTableView, NSOutlineView etc. provides it.
 ETPickDropCoordinator automatically checks whether the layout implements one or 
 several methods in the protocol. */
 @interface NSObject (ETLayoutPickDropIntegration)
-- (void) beginDrag: (ETEvent *)event forItem: (id)item 
-	image: (NSImage *)customDragImage layout: (id)layout;
-- (int) dropIndexAtLocation: (NSPoint)localDropPosition forItem: (id)item 
-	on: (id)dropTargetItem;
+/** Returns whether the receiver can initiate and monitor a drag session until 
+it ends.
+
+When YES is returned, the receiver must invoke -handleDragXXX method on the 
+action handler bound to the hit item, then -handleValidateDropXXX and 
+-handleDropXXX methods on the action handler bound the drop targets.<br />
+When a drop validation returns a new drop target, -handleDropXXX must be sent to 
+this drop target action handler.  */
+- (BOOL) hasBuiltInDragAndDropSupport;
 @end
 
 extern NSString *ETLayoutItemPboardType;

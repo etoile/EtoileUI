@@ -523,12 +523,10 @@ yet, it is created. */
 		[item setValue: value];
 }
 
-- (void) beginDrag: (ETEvent *)event forItem: (id)item 
-	image: (NSImage *)customDragImage layout: (id)layout
+/** Returns YES. See ETLayoutPickAndDropIntegration protocol. */
+- (BOOL) hasBuiltInDragAndDropSupport
 {
-	ETDebugLog(@"Overriden -beginDrag:forItem:image: in %@", self);
-	/* Overriden to do nothing and let the table view creates and manages the 
-	   drag object. This method is called by -handleDrag:forItem:. */
+	return YES;
 }
 
 - (BOOL) tableView: (NSTableView *)tv writeRowsWithIndexes: (NSIndexSet *)rowIndexes 

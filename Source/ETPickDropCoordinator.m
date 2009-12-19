@@ -109,48 +109,47 @@ would be messed up. */
 	DESTROY(_dragInfo);
 	DESTROY(_previousDropTarget);
 	DESTROY(_previousHoveredItem);
+	_currentDropIndex = ETUndeterminedIndex;
 }
 
-/** Starts a drag session to provide visual feedback throughout the dragging. 
+/** Starts a drag session to provide visual feedback throughout the dragging.
+
 customDragImage can be used to supercede the item icon that represents the 
 dragged item from the beginning of the drag to the end. 
 
-When item has a base item and this base item layout is not nil, this method
-tries to delegate the expected behavior by forwarding the message to the layout 
-(e.g. this method is implemented by ETTableLayout to disable the current 
-method behavior). */
+When the item is presented in an opaque layout which returns YES to 
+-hasBuiltInDragAndDropSupport, returns immediately.
+
+See also -hasBuiltInDragAndDropSupport. */
 - (void) beginDragItem: (ETLayoutItem *)item image: (NSImage *)customDragImage
 {
 	NILARG_EXCEPTION_TEST(item)
 
-	ETLayout *layout = [[item baseItem] layout];
+	ETLayout *layout = [[item ancestorItemForOpaqueLayout] layout];
 
-	// TODO: Rethink the selector sent to the layout
-	if (layout != nil && [layout respondsToSelector: @selector(beginDrag:forItem:image:layout:)])
+	if (layout != nil && [layout hasBuiltInDragAndDropSupport])
 	{
-		[layout beginDrag: [self pickEvent] forItem: item image: customDragImage layout: layout];
+		return;
 	}
-	else
-	{
-		NSParameterAssert([self pickEvent] != nil);
 
-		ASSIGN(_dragSource, [item parentItem]);
+	NSParameterAssert([self pickEvent] != nil);
+
+	ASSIGN(_dragSource, [item parentItem]);
+
+	id dragSupervisor = [[self pickEvent] window];
+	NSImage *dragIcon = customDragImage;
 	
-		id dragSupervisor = [[self pickEvent] window];
-		NSImage *dragIcon = customDragImage;
-		
-		if (dragIcon == nil)
-			dragIcon = [item icon];
-		
-		// FIXME: Draw drag image made of all dragged items and not just first one
-		[dragSupervisor dragImage: dragIcon
-							   at: [[self pickEvent] locationInWindow]
-						   offset: NSZeroSize
-							event: (NSEvent *)[[self pickEvent] backendEvent] 
-					   pasteboard: [NSPasteboard pasteboardWithName: NSDragPboard]
-						   source: self
-						slideBack: YES];
-	}
+	if (dragIcon == nil)
+		dragIcon = [item icon];
+	
+	// FIXME: Draw drag image made of all dragged items and not just first one
+	[dragSupervisor dragImage: dragIcon
+	                       at: [[self pickEvent] locationInWindow]
+	                   offset: NSZeroSize
+	                    event: (NSEvent *)[[self pickEvent] backendEvent] 
+	               pasteboard: [NSPasteboard pasteboardWithName: NSDragPboard]
+	                   source: self
+	                slideBack: YES];
 }
 
 /** Returns whether the current drop is a paste or the end of a drag. */
