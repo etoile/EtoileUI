@@ -9,7 +9,9 @@
 #import <EtoileFoundation/Macros.h>
 #import <EtoileFoundation/ETCollection+HOM.h>
 #import <EtoileFoundation/NSObject+HOM.h>
+#import <EtoileFoundation/NSObject+Model.h>
 #import "ETTableLayout.h"
+#import "ETGeometry.h"
 #import "ETLayoutItem.h"
 #import "ETEvent.h"
 #import "ETPickboard.h"
@@ -569,14 +571,16 @@ yet, it is created. */
 	}
 
 	ETLog(@"Validate drop on %@ with dragging source %@ in %@ drag mask %d drop op %d", 
-		dropTarget, [info draggingSource], _layoutContext, [info draggingSourceOperationMask], op);
+		[dropTarget primitiveDescription], [[info draggingSource] primitiveDescription], 
+		_layoutContext, [info draggingSourceOperationMask], op);
 	
 	id draggedObject = [[ETPickboard localPickboard] firstObject];
 	ETLayoutItem *baseItem = [_layoutContext baseItem];
 	NSInteger dropIndex = (NSTableViewDropAbove == op ? row : ETUndeterminedIndex);
 	ETLayoutItem *validDropTarget = 
 		[[baseItem actionHandler] handleValidateDropObject: draggedObject
-		                                           atIndex: &dropIndex
+		                                           atPoint: ETNullPoint
+		                                     proposedIndex: &dropIndex
 	                                                onItem: dropTarget
 	                                           coordinator: [ETPickDropCoordinator sharedInstance]];
 
@@ -625,17 +629,19 @@ yet, it is created. */
     ETDebugLog(@"Accept drop in %@ drag mask %d drop op %d", _layoutContext, 
 		[info draggingSourceOperationMask], op);
 
-	id droppedItem = [[ETPickboard localPickboard] popObject];
-	id dropTargetItem = [self layoutContext];
+	id droppedObject = [[ETPickboard localPickboard] popObject];
+	ETLayoutItem *baseItem = [(ETLayoutItem *)_layoutContext baseItem];
+	ETLayoutItemGroup *dropTarget = _layoutContext;
 	
 	if (op == NSTableViewDropOn)
-		dropTargetItem = [[dropTargetItem items] objectAtIndex: row];
+	{
+		dropTarget = [[dropTarget arrangedItems] objectAtIndex: row];
+	}
 
-	id baseItem = [(ETLayoutItem *)[self layoutContext] baseItem];
-		
-	_lastChildDropIndex = row;
-	[[baseItem actionHandler] handleDropObject: droppedItem onItem: dropTargetItem
-		coordinator: [ETPickDropCoordinator sharedInstance]];
+	[[baseItem actionHandler] handleDropObject: droppedObject 
+	                                   atIndex: row
+	                                    onItem: dropTarget
+	                               coordinator: [ETPickDropCoordinator sharedInstance]];
 
 	return YES;
 }

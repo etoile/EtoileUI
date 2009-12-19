@@ -1,41 +1,15 @@
-/*  <title>ETOutlineLayout</title>
-
-	ETOutlineLayout.m
-	
-	<abstract>Description forthcoming.</abstract>
- 
+/*
 	Copyright (C) 2007 Quentin Mathe
- 
+
 	Author:  Quentin Mathe <qmathe@club-internet.fr>
 	Date:  May 2007
- 
-	Redistribution and use in source and binary forms, with or without
-	modification, are permitted provided that the following conditions are met:
-
-	* Redistributions of source code must retain the above copyright notice,
-	  this list of conditions and the following disclaimer.
-	* Redistributions in binary form must reproduce the above copyright notice,
-	  this list of conditions and the following disclaimer in the documentation
-	  and/or other materials provided with the distribution.
-	* Neither the name of the Etoile project nor the names of its contributors
-	  may be used to endorse or promote products derived from this software
-	  without specific prior written permission.
-
-	THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
-	AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
-	IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
-	ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE
-	LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
-	CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
-	SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
-	INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
-	CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
-	ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
-	THE POSSIBILITY OF SUCH DAMAGE.
+	License:  Modified BSD (see COPYING)
  */
 
+#import <EtoileFoundation/Macros.h>
 #import <EtoileFoundation/NSObject+Model.h>
 #import "ETOutlineLayout.h"
+#import "ETGeometry.h"
 #import "ETLayout.h"
 #import "ETLayoutItem.h"
 #import "ETPickDropActionHandler.h"
@@ -56,11 +30,10 @@
 - (id) initWithLayoutView: (NSView *)layoutView
 {
 	self = [super initWithLayoutView: layoutView];
-    
-	if (self != nil)
-	{
-		_treatsGroupsAsStacks = YES;
-    }
+    if (nil == self)
+		return nil;
+
+	_treatsGroupsAsStacks = YES;
     
 	return self;
 }
@@ -141,18 +114,20 @@
 	}
 }
 
-/** Returns YES when every groups are displayed as stacks which can be expanded
-	and collapsed by clicking on their related outline arrows. 
-	When only stacks can be expanded and collapsed (in other words when 
-	only stack-related rows have an outline arrow), returns NO. 
-	By default, returns YES. */
+/* Returns YES when every groups are displayed as stacks which can be expanded
+and collapsed by clicking on their related outline arrows. 
+
+When only stacks can be expanded and collapsed (in other words when only 
+stack-related rows have an outline arrow), returns NO. 
+
+By default, returns YES. */
 - (BOOL) treatsGroupsAsStacks
 {
 	return _treatsGroupsAsStacks;
 }
 
-/** Sets whether the receiver handles every groups as stacks which can be 
-	expanded and collapsed by getting automatically a related outline arrow. */
+/* Sets whether the receiver handles every groups as stacks which can be 
+expanded and collapsed by getting automatically a related outline arrow. */
 - (void) setTreatsGroupsAsStacks: (BOOL)flag
 {
 	_treatsGroupsAsStacks = flag;
@@ -161,34 +136,24 @@
 - (ETLayoutItem *) itemAtLocation: (NSPoint)location
 {
 	int row = [[self outlineView] rowAtPoint: location];
-	id item = nil;
-	
-	if (row != NSNotFound)
-		item = [[self outlineView] itemAtRow: row];
-	
-	return item;
+	return (row != NSNotFound ? [[self outlineView] itemAtRow: row] : nil);
 }
 
 - (NSRect) displayRectOfItem: (ETLayoutItem *)item
 {
 	int row = [[self outlineView] rowForItem: item];
-	
 	return [[self outlineView] rectOfRow: row];
 }
 
 - (NSArray *) selectedItems
 {
-	NSIndexSet *indexes = [[self outlineView] selectedRowIndexes];
-	NSEnumerator *e = [indexes objectEnumerator];
-	NSNumber *index = nil;
-	NSMutableArray *selectedItems = 
-		[NSMutableArray arrayWithCapacity: [indexes count]];
+	NSOutlineView *outlineView = [self outlineView];
+	NSIndexSet *indexes = [outlineView selectedRowIndexes];
+	NSMutableArray *selectedItems = [NSMutableArray arrayWithCapacity: [indexes count]];
 	
-	while ((index = [e nextObject]) != nil)
+	FOREACH(indexes, index, NSNumber *)
 	{
-		id item = [[self outlineView] itemAtRow: [index intValue]];
-		
-		[selectedItems addObject: item];
+		[selectedItems addObject: [outlineView itemAtRow: [index intValue]]];
 	}
 	
 	return selectedItems;
@@ -212,11 +177,12 @@
 
 - (int) outlineView: (NSOutlineView *)outlineView numberOfChildrenOfItem: (id)item
 {
+	BOOL isRootItem = (nil == item);
 	int nbOfItems = 0;
 	
-	if (item == nil)
+	if (isRootItem)
 	{
-		nbOfItems = [[[self layoutContext] arrangedItems] count];
+		nbOfItems = [[_layoutContext arrangedItems] count];
 
 		/* First time. Useful when the layout context is browsed or 
 		   inspected without having been loaded and displayed yet. 
@@ -224,8 +190,8 @@
 		   care of loading the items of the layout context. */
 		if (nbOfItems == 0)
 		{
-			[(ETLayoutItemGroup *)[self layoutContext] reloadIfNeeded];
-			nbOfItems = [[[self layoutContext] arrangedItems] count];
+			[(ETLayoutItemGroup *)_layoutContext reloadIfNeeded];
+			nbOfItems = [[_layoutContext arrangedItems] count];
 		}
 	}
 	else if ([item isGroup]) 
@@ -247,18 +213,19 @@
 
 - (id) outlineView: (NSOutlineView *)outlineView child: (int)rowIndex ofItem: (id)item
 {
+	BOOL isRootItem = (nil == item);
 	ETLayoutItem *childItem = nil; /* Leaf by default */
 	
-	if (item == nil) /* Root */
+	if (isRootItem)
 	{
-		childItem = [[[self layoutContext] arrangedItems] objectAtIndex: rowIndex];
+		childItem = [[_layoutContext arrangedItems] objectAtIndex: rowIndex];
 	}
-	else if ([item isGroup]) /* Node */
+	else if ([item isGroup])
 	{
 		childItem = [[(ETLayoutItemGroup *)item arrangedItems] objectAtIndex: rowIndex];
 	}
 
-	//ETDebugLog(@"Returns %@ child item in outline view %@", childItem, outlineView);
+	//ETLog(@"Returns %@ child item in outline view %@", childItem, outlineView);
 	
 	return childItem;
 }
@@ -267,10 +234,10 @@
 {
 	if ([item isGroup])
 	{
-		//ETDebugLog(@"Returns item is expandable in outline view %@", outlineView);
+		//ETLog(@"Returns item is expandable in outline view %@", outlineView);
 		return YES;
 	}
-	
+
 	return NO;
 }
 
@@ -308,12 +275,11 @@
 	if (value == nil || ([value isEqual: [NSNull null]]
 	 && [[(NSObject *)item properties] containsObject: [column identifier]] == NO))
 	{
-		// FIXME: Turn into an ETDebugLog
 		ETDebugLog(@"Item %@ has no property %@ requested by layout %@", item, 
 			[column identifier], self);
 	}
 
-	//ETDebugLog(@"Returns %@ as object value in outline view %@", value, outlineView);
+	//ETLog(@"Returns %@ as object value in outline view %@", value, outlineView);
 	
 	// NOTE: 'value' could be any objects at this point and NSCell only accepts
 	// some common object values like string and number or image for 
@@ -353,56 +319,71 @@
 	if (result == NO && ([[self outlineView] numberOfColumns] == 1 || blankColumnIdentifier))
 		[item setValue: value];
 
-	//ETDebugLog(@"Sets %@ as object value in outline view %@", value, outlineView);
+	//ETLog(@"Sets %@ as object value in outline view %@", value, outlineView);
 }
 
-- (int) dropIndexAtLocation: (NSPoint)localDropPosition forItem: (id)item on: (id)dropTargetItem
-{
-	int childDropIndex = _lastChildDropIndex;
-	
-	/* Drop index is -1 when the drop occurs on a row (highlighted) or 
-	   underneath the last row (in the blank area) */
-	if (childDropIndex == NSOutlineViewDropOnItemIndex)
-		childDropIndex = NSNotFound;
-	
-	return childDropIndex;
-}
-
-- (BOOL) outlineView: (NSOutlineView *)outlineView acceptDrop: (id < NSDraggingInfo >)info item: (id)item childIndex: (int)index
+- (BOOL) outlineView: (NSOutlineView *)outlineView 
+	acceptDrop: (id < NSDraggingInfo >)info item: (id)item childIndex: (int)index
 {
     ETDebugLog(@"Accept drop in %@", _layoutContext);
 
-	id droppedItem = [[ETPickboard localPickboard] popObject];
-	id dropTargetItem = item;
-	
-	if (dropTargetItem == nil) /* Root item */
-		dropTargetItem = [self layoutContext];
+	id droppedObject = [[ETPickboard localPickboard] popObject];
+	ETLayoutItem *dropTarget = (item != nil ? item : _layoutContext);
+	ETLayoutItem *baseItem = [(ETLayoutItem *)_layoutContext baseItem];
 
-	id baseItem = [(ETLayoutItem *)[self layoutContext] baseItem];
-	
-	_lastChildDropIndex = index;
-	[[baseItem actionHandler] handleDropObject: droppedItem onItem: dropTargetItem 
-		coordinator: [ETPickDropCoordinator sharedInstance]];
-	return YES;
+	return [[baseItem actionHandler] handleDropObject: droppedObject
+	                                          atIndex: index
+	                                           onItem: dropTarget
+		                                  coordinator: [ETPickDropCoordinator sharedInstance]];
 }
 
-- (NSDragOperation) outlineView: (NSOutlineView *)outlineView validateDrop: (id < NSDraggingInfo >)info proposedItem: (id)item proposedChildIndex: (int)index
+- (NSDragOperation) outlineView: (NSOutlineView *)outlineView 
+                   validateDrop: (id < NSDraggingInfo >)info 
+                   proposedItem: (id)item 
+             proposedChildIndex: (int)index
 {
-    //ETLog(@"Validate drop item %@ atIndex %d with dragging source %@ in %@", 
-	//	[item primitiveDescription], index, [[info draggingSource] primitiveDescription], _layoutContext);
+	ETLayoutItem *dropTarget = (item != nil ? item : _layoutContext);
 
-	// TODO: Replace by [layoutContext handleValidateDropForObject:] and improve
-	if (item == nil || [item isGroup])
-	{
-		return NSDragOperationEvery;
-	}
-	else
+    ETLog(@"Validate drop item %@ atIndex %d with dragging source %@ in %@", 
+		[item primitiveDescription], index, [[info draggingSource] primitiveDescription], _layoutContext);
+	
+	id draggedObject = [[ETPickboard localPickboard] firstObject];
+	int dropIndex = index;
+	ETLayoutItem *baseItem = [_layoutContext baseItem];
+	ETLayoutItem *validDropTarget = 
+		[[baseItem actionHandler] handleValidateDropObject: draggedObject
+		                                           atPoint: ETNullPoint
+		                                     proposedIndex: &dropIndex
+	                                                onItem: dropTarget
+	                                           coordinator: [ETPickDropCoordinator sharedInstance]];
+
+	/* -handleValidateXXX can return nil, the drop target, the drop target parent or another child */	
+	if (nil == validDropTarget)
 	{
 		return NSDragOperationNone;
 	}
+
+	BOOL isRetargeted = ([validDropTarget isEqual: dropTarget] == NO || dropIndex != index);
+
+	if (isRetargeted)
+	{
+		id dropItem = validDropTarget;
+
+		if ([validDropTarget isEqual: _layoutContext])
+		{
+			dropItem = nil;
+		}
+
+		[outlineView setDropItem: dropItem dropChildIndex: dropIndex];
+
+		ETLog(@"Retarget drop to %i in %@", dropIndex, dropItem);
+	}
+
+	return NSDragOperationEvery;
 }
 
-- (BOOL) outlineView: (NSOutlineView *)outlineView writeItems: (NSArray *)items toPasteboard: (NSPasteboard *)pboard
+- (BOOL) outlineView: (NSOutlineView *)outlineView 
+	writeItems: (NSArray *)items toPasteboard: (NSPasteboard *)pboard
 {
 #if 0
 	// NOTE: On Mac OS X, -currentEvent returns a later event rather than the 
@@ -422,32 +403,26 @@
 
 	/* Convert drag location from window coordinates to the receiver coordinates */
 	NSPoint localPoint = [outlineView convertPoint: [dragEvent locationInWindow] fromView: nil];
-	id draggedItem = [self itemAtLocation: localPoint];
-	id baseItem = [(ETLayoutItem *)[self layoutContext] baseItem];
+	ETLayoutItem *draggedItem = [self itemAtLocation: localPoint];
+	ETLayoutItem *baseItem = [(ETLayoutItem *)_layoutContext baseItem];
 	
 	NSAssert3([items containsObject: draggedItem], @"Dragged items %@ must "
 		@"contain clicked item %@ in %@", items, draggedItem, self);
 		
-	[[baseItem actionHandler] handleDragItem: draggedItem 
+	return [[baseItem actionHandler] handleDragItem: draggedItem 
 		coordinator: [ETPickDropCoordinator sharedInstanceWithEvent: dragEvent]];
-
-	return YES;
 }
 
 - (void) outlineView: (NSOutlineView *)outlineView sortDescriptorsDidChange: (NSArray *)oldDescriptors
 {
-	[[self layoutContext] sortWithSortDescriptors: [outlineView sortDescriptors] recursively: YES];
+	[_layoutContext sortWithSortDescriptors: [outlineView sortDescriptors] recursively: YES];
 	[outlineView reloadData];
 }
 
 - (ETLayoutItem *) doubleClickedItem
 {
-	ETLayoutItem *item = 
-		[[self outlineView] itemAtRow: [[self outlineView] clickedRow]];
-	
-	//ETDebugLog(@"-doubleClickedItem in %@", self);
-	
-	return item;
+	//ETLog(@"-doubleClickedItem in %@", self);
+	return [[self outlineView] itemAtRow: [[self outlineView] clickedRow]];
 }
 
 @end

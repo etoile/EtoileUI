@@ -36,6 +36,7 @@
 	id <NSDraggingInfo> _dragInfo;
 	ETLayoutItem *_previousDropTarget;
 	ETLayoutItem *_previousHoveredItem;
+	NSInteger _currentDropIndex;
 }
 
 + (id) sharedInstance;
@@ -60,10 +61,6 @@
 
 /* Drop Insertion */
 
-- (int) itemGroup: (ETLayoutItemGroup *)itemGroup 
-	dropIndexAtLocation: (NSPoint)localDropPosition 
-               withItem: (id)item 
-                 onItem: (id)dropTargetItem;
 - (void) itemGroup: (ETLayoutItemGroup *)itemGroup 
 	insertDroppedObject: (id)movedObject atIndex: (int)index;
 - (void) itemGroup: (ETLayoutItemGroup *)itemGroup 

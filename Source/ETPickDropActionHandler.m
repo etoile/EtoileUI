@@ -15,6 +15,7 @@
 #import "ETPickDropActionHandler.h"
 #import "ETController.h"
 #import "ETEvent.h"
+#import "ETGeometry.h"
 #import "ETInstrument.h"
 #import "ETLayoutItemGroup.h"
 #import "ETLayoutItem.h"
@@ -132,7 +133,8 @@ When the given index is equal to ETUndeterminedIndex, the drop operation is a
 are allowed to change the drop index which might also represent a new drop 
 operation. e.g. <code>*anIndex = ETUndeterminedIndex</code> when anIndex was 3. */
 - (ETLayoutItem *) handleValidateDropObject: (id)droppedObject
-                                    atIndex: (NSInteger *)anIndex
+                                    atPoint: (NSPoint)dropPoint
+                              proposedIndex: (NSInteger *)anIndex
                                      onItem: (ETLayoutItem *)dropTarget
                                 coordinator: (ETPickDropCoordinator *)aPickCoordinator
 {
@@ -146,6 +148,21 @@ operation. e.g. <code>*anIndex = ETUndeterminedIndex</code> when anIndex was 3. 
 	{
 		ETLayoutItemGroup *parent = [dropTarget parentItem];
 		NSInteger dropTargetIndex = [parent indexOfItem: dropTarget]; /* drop above or before */
+		BOOL needsIndexAdjustment = (ETIsNullPoint(dropPoint) == NO);
+
+		if (needsIndexAdjustment)
+		{
+			Class dropIndicatorClass = [ETDropIndicator class]; // TODO: [[parent layout] dropIndicatorClass];
+			NSPoint pointInParent = [dropTarget convertPointToParent: dropPoint];
+			ETIndicatorPosition position = 
+				[dropIndicatorClass indicatorPositionForPoint: pointInParent
+				                                nearItemFrame: [dropTarget frame]];
+
+			if (ETIndicatorPositionRight == position)
+			{
+				dropTargetIndex++;
+			}
+		}
 
 		if (nil != parent && [[parent actionHandler] canDropObject: droppedObject
 		                                                   atIndex: dropTargetIndex
@@ -153,53 +170,55 @@ operation. e.g. <code>*anIndex = ETUndeterminedIndex</code> when anIndex was 3. 
 		                                               coordinator: aPickCoordinator])
 		{
 			*anIndex = dropTargetIndex;
-			return parent;
+			dropTarget = parent;
 		}
-		return nil;
+		else
+		{
+			dropTarget = nil;
+		}
 	}
+
+	//ETLog(@"DROP - Validate drop %@ at %i on %@ in %@", droppedObject, *anIndex, dropTarget, self);
 
 	return dropTarget;
 }
 
-/** You can override this method to change how drop is handled. The parameter
-	item represents the dragged item which just got dropped on the receiver. */
+/** Inserts the dropped object at the given index in the drop target and 
+returns YES on success and NO otherwise (e.g. an invalid index).
+
+When the index is ETUndeterminedIndex, the dropped object is inserted as the 
+last element in the drop target collection.
+
+The dropped object can be a pick collection. See ETPickCollection.
+
+The existing implementation requires drop targets to return YES to -isGroup and 
+can unbox pick collections transparently (it inserts the elements into the drop 
+target).
+
+You can override this method to change how drop is handled. e.g. You might 
+want to support dropping object on drop targets without requiring them to be 
+item groups and reacts to that appropriately. */
 - (BOOL) handleDropObject: (id)droppedObject
-                   onItem: (ETLayoutItem *)dropTargetItem
-			  coordinator: (id)aPickCoordinator
+                  atIndex: (NSInteger)anIndex
+                   onItem: (ETLayoutItem *)dropTarget
+			  coordinator: (ETPickDropCoordinator *)aPickCoordinator
 {
-	ETDebugLog(@"DROP - Handle drop %@ for %@ on %@ in %@", aPickCoordinator, 
-		droppedObject, dropTargetItem, self);
+	NSParameterAssert([dropTarget isGroup]);
 
-	ETLayoutItemGroup *baseItem = [dropTargetItem baseItem];
-	int dropIndex = NSNotFound;
-
-	if ([aPickCoordinator isPasting] == NO)
-	{
-		// FIXME: Do the coordinate conversion with ETLayoutItem API.
-		NSPoint loc = [[baseItem supervisorView] convertPoint: [aPickCoordinator dragLocationInWindow] fromView: nil];
-		dropIndex = [aPickCoordinator itemGroup: baseItem dropIndexAtLocation: loc withItem: droppedObject onItem: dropTargetItem];
-	}
+	ETLog(@"DROP - Handle drop %@ at %i on %@ in %@", droppedObject, anIndex, dropTarget, self);
 	
-	NSAssert2([dropTargetItem isGroup], @"Drop target %@ must be a layout "
-		"item group to accept dropped droppedObject %@ as a child", 
-		dropTargetItem, droppedObject);
-			
-	// FIXME: Handle pick collection too.
-	if (dropIndex != NSNotFound)
-	{
-		[aPickCoordinator itemGroup: (ETLayoutItemGroup *)dropTargetItem 
-		        insertDroppedObject: droppedObject 
-		                    atIndex: dropIndex];
-		return YES;
-	}
-	else
-	{
+	NSInteger insertionIndex = anIndex;
 
-		[aPickCoordinator itemGroup: (ETLayoutItemGroup *)dropTargetItem 
-		        insertDroppedObject: droppedObject 
-		                    atIndex: [(ETLayoutItemGroup *)dropTargetItem numberOfItems]];
-		return NO;
+	if (ETUndeterminedIndex != anIndex)
+	{
+		insertionIndex = [(ETLayoutItemGroup *)dropTarget numberOfItems];
 	}
+
+	/* Will unbox a pick collection transparently */
+	/*return*/ [aPickCoordinator itemGroup: (ETLayoutItemGroup *)dropTarget
+		           insertDroppedObject: droppedObject 
+		                       atIndex: anIndex];
+	return YES;
 }
 
 /* Dragging Source
@@ -407,8 +426,9 @@ When the dropped object is a pick collection, each element type is checked with
 	ETLayoutItem *pastedItem = [[ETPickboard localPickboard] popObject];
 	
 	[self handleDropObject: pastedItem 
-	              onItem: item 
-	         coordinator: [ETPickDropCoordinator sharedInstance]];
+	               atIndex: ETUndeterminedIndex
+	                onItem: item 
+	           coordinator: [ETPickDropCoordinator sharedInstance]];
 }
 
 - (IBAction) cut: (id)sender onItem: (ETLayoutItem *)item

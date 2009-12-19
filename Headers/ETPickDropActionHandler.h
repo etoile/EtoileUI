@@ -30,12 +30,14 @@ extern const NSInteger ETUndeterminedIndex;
 - (BOOL) handlePickItem: (ETLayoutItem *)item coordinator: (id)aPickCoordinator;
 - (BOOL) handleDragItem: (ETLayoutItem *)item coordinator: (id)aPickCoordinator;
 - (ETLayoutItem *) handleValidateDropObject: (id)droppedObject
-                                    atIndex: (NSInteger *)anIndex
+                                    atPoint: (NSPoint)dropPoint
+                              proposedIndex: (NSInteger *)anIndex
                                      onItem: (ETLayoutItem *)dropTarget
                                 coordinator: (ETPickDropCoordinator *)aPickCoordinator;
 - (BOOL) handleDropObject: (id)droppedObject
+                  atIndex: (NSInteger)anIndex
                    onItem: (ETLayoutItem *)dropTargetItem 
-              coordinator: (id)aPickDropCoordinator;
+              coordinator: (ETPickDropCoordinator *)aPickDropCoordinator;
 
 /* Pick and Drop Filtering */
 

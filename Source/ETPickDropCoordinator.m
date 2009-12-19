@@ -312,12 +312,23 @@ setters in the ETActionHandler bound to the drag source. */
 entering a new one. */
 - (ETLayoutItem *) dropTargetForDrag: (id <NSDraggingInfo>)dragInfo
 {
-	ETLayoutItem *dropTarget = [[ETInstrument instrument] hitTestWithEvent: ETEVENT([NSApp currentEvent], dragInfo, ETDragPickingMask)];
+	ETEvent *event = ETEVENT([NSApp currentEvent], dragInfo, ETDragPickingMask);
+	ETLayoutItem *dropTarget = [[ETInstrument instrument] hitTestWithEvent: event];
 	// FIXME: We should receive the dragged item as an argument, otherwise 
 	// the next line might returns nil in case this item has already been 
 	// popped. See e.g. -performDragOperation: where the line ordering matters.
 	id pickedObject = [[ETPickboard localPickboard] firstObject];
-	NSInteger dropIndex = ETUndeterminedIndex;
+	BOOL isOpaqueGroup = ([dropTarget isGroup] && [dropTarget layout] != nil 
+		&& [[dropTarget layout] isOpaque]);
+	NSPoint dropPoint = [event locationInLayoutItem];
+
+	if (isOpaqueGroup)
+	{
+		dropTarget = [[dropTarget layout] itemAtLocation: dropPoint];
+		dropPoint = [dropTarget convertPointFromParent: dropPoint];
+	}
+
+	_currentDropIndex = ETUndeterminedIndex;
 
 	// FIXME: Use NSParameterAssert(dropTarget != nil && draggedItem != nil);
 	// Fix to be done explained in -concludeDragOperation:.
@@ -328,7 +339,8 @@ entering a new one. */
 	   -allowsDropping returns NO
 	   location outside of the drop on rect. */
 	return [[dropTarget actionHandler] handleValidateDropObject: pickedObject 
-	                                                    atIndex: &dropIndex
+	                                                    atPoint: dropPoint
+	                                              proposedIndex: &_currentDropIndex
 	                                                     onItem: dropTarget
 	                                                coordinator: [ETPickDropCoordinator sharedInstance]];
 }
@@ -396,7 +408,7 @@ item. */
 	BOOL dropOn = [hoveredItem isEqual: dropTarget];
 	NSPoint locRelativeToDropTarget = [dragEvent locationInLayoutItem];
 
-	ETLog(@"Drop target %@ and event %@", dropTarget, dragEvent);
+	//ETLog(@"Drop target %@ and event %@", dropTarget, dragEvent);
 
 	if (dropOn == NO)
 	{
@@ -551,6 +563,7 @@ item. */
 
 	ASSIGN(_dragInfo, dragInfo); // May be... ASSIGN(_dropEvent, [ETApp current
 	BOOL dropSuccess = [[dropTarget actionHandler] handleDropObject: droppedObject
+	                                                        atIndex: _currentDropIndex
 	                                                         onItem: dropTarget 
 	                                                    coordinator: self];
 	return dropSuccess;
@@ -589,61 +602,6 @@ item. */
 }
 
 /* Drop Insertion */
-
-- (int) itemGroup: (ETLayoutItemGroup *)baseItem
-	dropIndexAtLocation: (NSPoint)localDropPosition 
-               withItem: (id)item 
-                 onItem: (id)dropTargetItem;
-{
-	id layout = [baseItem layout];
-	
-	/*if (layout != nil && [layout respondsToSelector: @selector(dropIndexAtLocation:forItem:on:)])
-	{
-		return [layout dropIndexAtLocation: localDropPosition forItem: item on: dropTargetItem];
-	}*/
-
-	NSAssert2([dropTargetItem isGroup], @"Drop target item %@ must be a group "
-		@"in event handler %@", dropTargetItem, self);
-
-	id hoveredItem = [[(ETLayoutItemGroup *)dropTargetItem layout] itemAtLocation: localDropPosition];
-	int dropIndex = NSNotFound;
-	NSRect dropTargetRect = NSZeroRect;
-	
-	ETLog(@"Found item %@ as drop target and %@ as hovered item", 
-		dropTargetItem, hoveredItem);
-		
-	NSAssert2(hoveredItem == nil || [[dropTargetItem items] containsObject: hoveredItem], 
-		@"Hovered item %@ must be a child of drop target item %@", 
-		hoveredItem, dropTargetItem);
-	
-	/* Drop occured a child item of the receiver. For now the drop is 
-	   automatically retargeted to insert the item to the right or the left
-	   of the hovered item. */
-	if (hoveredItem != nil && [hoveredItem isEqual: dropTargetItem] == NO)
-	{
-		/* Find where the item should be inserted. Drop target item will
-		   be the item where the dropped item is inserted. Hovered item
-		   is the item which intersects the drop location. */
-		dropIndex = [dropTargetItem indexOfItem: hoveredItem];
-		
-		/* Increase index if the insertion is located on the right of hoveredItem */
-		// FIXME: Handle layout orientation, only works with horizontal layout
-		// currently.
-		dropTargetRect = [layout displayRectOfItem: hoveredItem];
-		if (localDropPosition.x > NSMidX(dropTargetRect))
-			dropIndex++;
-	}
-	else
-	{
-		 /* When drop occurs on the receiver itself which is the item 
-			handling the drop. For example, this item could be a container 
-			with a flow layout and the drop occured on a empty area where
-			no child items are displayed. */
-		dropIndex = [dropTargetItem numberOfItems] - 1;
-	}
-		
-	return dropIndex;
-}
 
 - (void) itemGroup: (ETLayoutItemGroup *)itemGroup 
 	insertDroppedObject: (id)movedObject atIndex: (int)index
