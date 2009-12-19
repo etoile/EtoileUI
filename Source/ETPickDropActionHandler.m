@@ -209,7 +209,7 @@ item groups and reacts to that appropriately. */
 	
 	NSInteger insertionIndex = anIndex;
 
-	if (ETUndeterminedIndex != anIndex)
+	if (ETUndeterminedIndex == anIndex)
 	{
 		insertionIndex = [(ETLayoutItemGroup *)dropTarget numberOfItems];
 	}
@@ -217,7 +217,7 @@ item groups and reacts to that appropriately. */
 	/* Will unbox a pick collection transparently */
 	/*return*/ [aPickCoordinator itemGroup: (ETLayoutItemGroup *)dropTarget
 		           insertDroppedObject: droppedObject 
-		                       atIndex: anIndex];
+		                       atIndex: insertionIndex];
 	return YES;
 }
 
@@ -440,15 +440,5 @@ When the dropped object is a pick collection, each element type is checked with
 	[self handlePickItem: item 
 	         coordinator: [ETPickDropCoordinator sharedInstanceWithEvent: event]];
 }
-
-/** This method is short-circuited by view-based layouts that come with their
-	own drag and drop implementation. For example ETTableLayout handles the drag
-	directly by catching the event, calling -[ETLayoutItem handleDrag:forItem:] 
-	on the layout context and getting -[ETTableLayout beginDrag:forItem:image:] 
-	invoked as a call back. 
-	Layouts should -invoke -[ETLayoutItem handleDrag:forItem:] then they will
-	receive -handleDrag:forItem:, -beginDrag:forItem:image: as call backs in
-	case they decide to implement these methods. */
-//- (void) mouseDragged: (ETEvent *)event on: (id)item
 
 @end
