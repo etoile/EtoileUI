@@ -606,36 +606,6 @@ item. */
 /* Drop Insertion */
 
 - (void) itemGroup: (ETLayoutItemGroup *)itemGroup 
-	insertDroppedObject: (id)movedObject atIndex: (int)index
-{
-	ETLog(@"DROP - Insert dropped object %@ at %d into %@", movedObject, index, itemGroup);
-
-	if ([movedObject isKindOfClass: [ETPickCollection class]])
-	{
-		// NOTE: To keep the order of the picked objects a reverse enumerator is 
-		// used to balance the shifting of the last inserted object occurring on each insertion
-		NSEnumerator *e = [[movedObject contentArray] reverseObjectEnumerator];
-
-		FOREACHE(nil, item, ETLayoutItem *, e)
-		{
-			[self itemGroup: itemGroup insertDroppedItem: item atIndex: index];
-		}
-	}
-	else if ([movedObject isKindOfClass: [ETLayoutItem class]])
-	{
-		[self itemGroup: itemGroup insertDroppedItem: movedObject atIndex: index];
-	}
-	else
-	{
-		// TODO: Improve insertion of arbitrary objects. All objects can be
-		// dropped (NSArray, NSString, NSWindow, NSImage, NSObject, Class etc.)
-		ETLayoutItem *newItem = [itemGroup itemWithObject: movedObject 
-		                                          isValue: [movedObject isCommonObjectValue]];
-		[self itemGroup: itemGroup insertDroppedItem: newItem atIndex: index];
-	}
-}
-
-- (void) itemGroup: (ETLayoutItemGroup *)itemGroup 
 	insertDroppedItem: (id)movedItem atIndex: (int)index
 {
 	NSAssert2(index >= 0, @"Insertion index %d must be superior or equal to zero in %@ -insertDroppedObject:atIndex:", index, self);
@@ -669,6 +639,50 @@ item. */
 	//[self setSelectionIndex: insertionIndex];
 
 	RELEASE(movedItem);
+}
+
+/** Inserts the dropped object at the given index in the item group.
+
+When the dropped object is:
+<list>
+<item>a pick collection, each element is inserted</item>
+<item>a layout item, it gets inserted as is</item/>
+<item>another object kind, a layout item is instantiated based on the template 
+item, and the object is set as its represented object or its value, then the 
+item is inserted.</item>
+</list>
+
+See ETController to set the template item and 
+-[NSObject(Model) isCommonObjectValue] in EtoileFoundation to know whether 
+the object will be treated as a value or a represented object. */
+- (void) itemGroup: (ETLayoutItemGroup *)itemGroup 
+	insertDroppedObject: (id)movedObject atIndex: (int)index
+{
+	ETLog(@"DROP - Insert dropped object %@ at %d into %@", movedObject, index, itemGroup);
+
+	if ([movedObject isKindOfClass: [ETPickCollection class]])
+	{
+		// NOTE: To keep the order of the picked objects a reverse enumerator is 
+		// used to balance the shifting of the last inserted object occurring on each insertion
+		NSEnumerator *e = [[movedObject contentArray] reverseObjectEnumerator];
+
+		FOREACHE(nil, object, id, e)
+		{
+			[self itemGroup: itemGroup insertDroppedObject: object atIndex: index];
+		}
+	}
+	else if ([movedObject isKindOfClass: [ETLayoutItem class]])
+	{
+		[self itemGroup: itemGroup insertDroppedItem: movedObject atIndex: index];
+	}
+	else
+	{
+		// TODO: Improve insertion of arbitrary objects. All objects can be
+		// dropped (NSArray, NSString, NSWindow, NSImage, NSObject, Class etc.)
+		ETLayoutItem *newItem = [itemGroup itemWithObject: movedObject 
+		                                          isValue: [movedObject isCommonObjectValue]];
+		[self itemGroup: itemGroup insertDroppedItem: newItem atIndex: index];
+	}
 }
 
 @end

@@ -63,8 +63,6 @@
 
 - (void) itemGroup: (ETLayoutItemGroup *)itemGroup 
 	insertDroppedObject: (id)movedObject atIndex: (int)index;
-- (void) itemGroup: (ETLayoutItemGroup *)itemGroup 
-	insertDroppedItem: (id)movedObject atIndex: (int)index;
 
 /* AppKit Interface (should be in a concrete subclass) */
 
