@@ -9,12 +9,15 @@
 #ifndef GNUSTEP
 #import <Carbon/Carbon.h>
 #endif
+#import <EtoileFoundation/Macros.h>
 #import <EtoileFoundation/ETCollection.h>
+#import <EtoileFoundation/NSObject+Model.h>
 #import "ETPickDropCoordinator.h"
 #import "ETEvent.h"
 #import "ETInstrument.h"
 #import "ETLayoutItem.h"
 #import "ETLayoutItemGroup.h"
+#import "ETLayoutItemGroup+Mutation.h"
 #import "ETPickboard.h"
 #import "ETPickDropActionHandler.h"
 #import "ETStyle.h"
@@ -609,13 +612,14 @@ item. */
 
 	if ([movedObject isKindOfClass: [ETPickCollection class]])
 	{
-		// NOTE: To keep the order of picked objects a reverse enumerator 
-		// is needed to balance the shifting of the last inserted object occurring on each insertion
+		// NOTE: To keep the order of the picked objects a reverse enumerator is 
+		// used to balance the shifting of the last inserted object occurring on each insertion
 		NSEnumerator *e = [[movedObject contentArray] reverseObjectEnumerator];
-		ETLayoutItem *movedItem = nil;
-		
-		while ((movedItem = [e nextObject]) != nil)
-			[self itemGroup: itemGroup insertDroppedItem: movedItem atIndex: index];
+
+		FOREACHE(nil, item, ETLayoutItem *, e)
+		{
+			[self itemGroup: itemGroup insertDroppedItem: item atIndex: index];
+		}
 	}
 	else if ([movedObject isKindOfClass: [ETLayoutItem class]])
 	{
@@ -623,8 +627,11 @@ item. */
 	}
 	else
 	{
-		// FIXME: Implement insertion of arbitrary objects. All objects can be
+		// TODO: Improve insertion of arbitrary objects. All objects can be
 		// dropped (NSArray, NSString, NSWindow, NSImage, NSObject, Class etc.)
+		ETLayoutItem *newItem = [itemGroup itemWithObject: movedObject 
+		                                          isValue: [movedObject isCommonObjectValue]];
+		[self itemGroup: itemGroup insertDroppedItem: newItem atIndex: index];
 	}
 }
 
@@ -665,39 +672,3 @@ item. */
 }
 
 @end
-
-
-#if 0
-		
-- (void) handleDropForItem: (id)item
-{
-
-}
-
-- (void) handleDropForObject: (id)object
-{
-	if ([[self allowedDroppingTypes] containsObject: [object UTI]] == NO)
-		return;
-		
-	
-	if ([object isKindOfClass: [ETLayoutItem class]])
-	{
-		[self handleDropForItem: object];
-	}
-	else
-	{
-		if (layout != nil && [layout respondsToSelector: @selector(handleDropForObject:)])
-		{
-			[layout handleDropForObject: item];
-		}
-		else
-		{
-			// TODO: pickboard shouldn't be harcoded but rather customizable
-			ETPickboard *pickboard = [ETPickboard activePickboard];
-
-			[dropTargetItem insertItems: [pickboard popObjectCollection] atIndex: ];
-		}
-	}
-}
-
-#endif
