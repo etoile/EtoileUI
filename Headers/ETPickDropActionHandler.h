@@ -51,7 +51,6 @@ extern const NSInteger ETUndeterminedIndex;
            coordinator: (ETPickDropCoordinator *)aPickCoordinator;
 
 - (unsigned int) draggingSourceOperationMaskForLocal: (BOOL)isLocal;
-- (BOOL) shouldRemoveItemsAtPickTime;
 
 /* Drag Destination Feedback */
 

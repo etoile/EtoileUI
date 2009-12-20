@@ -22,6 +22,7 @@
 #import "EtoileUIProperties.h"
 #import "ETPickboard.h"
 #import "ETPickDropCoordinator.h"
+#import "ETSelectTool.h" /* For -shouldRemoveItemsAtPickTime */
 #import "ETStyle.h"
 #import "ETCompatibility.h"
 
@@ -61,23 +62,16 @@ method is called by ETTableLayout when rows are dragged). */
 
 - (BOOL) handlePickItem: (ETLayoutItem *)item coordinator: (id)aPickCoordinator
 {
+	NSParameterAssert(nil != item);
+
 	if ([self canDragItem: item coordinator: aPickCoordinator] == NO)
 		return NO;
-		
-	ETLayoutItemGroup *baseItem = [item baseItem];
-	NSArray *selectedItems = [baseItem selectedItemsInLayout];
+
+	NSArray *selectedItems = [[item parentItem] selectedItems];
 	ETEvent *pickInfo = [aPickCoordinator pickEvent];
 	// TODO: pickboard shouldn't be harcoded but rather customizable
-	id pboard = [ETPickboard localPickboard];
+	ETPickboard *pboard = [ETPickboard localPickboard];
 	id pick = nil;
-	
-	/* No selection exists, we will pick the receiver
-	   NOTE: otherwise we set a picked item when none exists to ensure
-	   [selectedItems containsObject: item] can succeed when the pick isn't
-	   a drag. A better solution could be introduce a ETPointerPickingMask 
-	   (or ETMousePickingMask). */
-	if (item == nil)
-		item = [selectedItems isEmpty] ? (id)baseItem : [selectedItems firstObject];
 
 	/* If the dragged item is part of a selection which includes more than
 	   one item, we put a pick collection on pickboard. But if the dragged
@@ -112,8 +106,32 @@ method is called by ETTableLayout when rows are dragged). */
 	
 	[pboard pushObject: pick];
 
-	// TODO: Call back -handlePick:forItems:pickboard: which takes care of calling
-	// pick and drop source methods when a source exists.
+	BOOL isMove = ~([pickInfo pickingMask] & ETCopyPickingMask);
+
+	if (isMove)
+	{
+		BOOL shouldRemoveItems = YES;
+
+		if ([[ETInstrument activeInstrument] respondsToSelector: @selector(shouldRemoveItemsAtPickTime)])
+		{
+			shouldRemoveItems = [[ETInstrument activeInstrument] shouldRemoveItemsAtPickTime];
+		}
+		
+		if (shouldRemoveItems)
+		{
+			if ([pick isKindOfClass: [ETPickCollection class]])
+			{
+				// FIXME: Doesn't work on Mac OS X 
+				// [[[pick contentArray] map] removeFromParent];
+				[[pick contentArray] makeObjectsPerformSelector: @selector(removeFromParent)];
+			}
+			else
+			{
+				[pick removeFromParent];
+			}
+		}
+	}
+
 	return YES;
 }
 
@@ -236,14 +254,6 @@ item groups and reacts to that appropriately. */
 - (unsigned int) draggingSourceOperationMaskForLocal: (BOOL)isLocal
 {
 	return NSDragOperationEvery;
-}
-
-- (BOOL) shouldRemoveItemsAtPickTime
-{
-	if ([[ETInstrument activeInstrument] respondsToSelector: @selector(shouldRemoveItemsAtPickTime)])
-		return [[ETInstrument activeInstrument] shouldRemoveItemsAtPickTime];
-		
-	return NO;
 }
 
 /* Drag Source Feedback */

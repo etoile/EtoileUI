@@ -11,6 +11,7 @@
 #endif
 #import <EtoileFoundation/Macros.h>
 #import <EtoileFoundation/ETCollection.h>
+#import <EtoileFoundation/NSObject+HOM.h>
 #import <EtoileFoundation/NSObject+Model.h>
 #import "ETPickDropCoordinator.h"
 #import "ETEvent.h"
@@ -20,6 +21,7 @@
 #import "ETLayoutItemGroup+Mutation.h"
 #import "ETPickboard.h"
 #import "ETPickDropActionHandler.h"
+#import "ETSelectTool.h" /* For -shouldRemoveItemsAtPickTime */
 #import "ETStyle.h"
 #import "ETStyleGroup.h"
 #import "ETCompatibility.h"
@@ -72,6 +74,7 @@ event. */
 		// TODO: Rework to look up the class to instantiate based on the 
 		// linked/configured widged backend.
 		sharedInstance = [[ETPickDropCoordinator alloc] init];
+		[sharedInstance reset];
 	}
 	ASSIGN(sharedInstance->_event, anEvent);
 
@@ -113,6 +116,7 @@ would be messed up. */
 	DESTROY(_previousDropTarget);
 	DESTROY(_previousHoveredItem);
 	_currentDropIndex = ETUndeterminedIndex;
+	_wereItemsRemovedAtPickTime = YES;
 }
 
 /** Starts a drag session to provide visual feedback throughout the dragging.
@@ -127,17 +131,20 @@ See also -hasBuiltInDragAndDropSupport. */
 - (void) beginDragItem: (ETLayoutItem *)item image: (NSImage *)customDragImage
 {
 	NILARG_EXCEPTION_TEST(item)
+	NSParameterAssert([self pickEvent] != nil);
 
 	ETLayout *layout = [[item ancestorItemForOpaqueLayout] layout];
 
-	if (layout != nil && [layout hasBuiltInDragAndDropSupport])
+	if (layout != nil && [[layout ifResponds] hasBuiltInDragAndDropSupport])
 	{
 		return;
 	}
 
-	NSParameterAssert([self pickEvent] != nil);
-
 	ASSIGN(_dragSource, [item parentItem]);
+	if ([[ETInstrument activeInstrument] respondsToSelector: @selector(shouldRemoveItemsAtPickTime)])
+	{
+		_wereItemsRemovedAtPickTime = [[ETInstrument activeInstrument] shouldRemoveItemsAtPickTime];
+	}
 
 	id dragSupervisor = [[self pickEvent] window];
 	NSImage *dragIcon = customDragImage;
@@ -605,38 +612,52 @@ item. */
 
 /* Drop Insertion */
 
+/** Returns whether the dragged items were removed immediately when they were picked.
+
+By default, returns YES. During in a drag session only, can return NO.
+
+See also -shouldRemoveItemsAtPickTime in ETInstrument subclasses that implements 
+it such as ETSelectTool. */
+- (BOOL) wereItemsRemovedAtPickTime
+{
+	return _wereItemsRemovedAtPickTime;
+}
+
 - (void) itemGroup: (ETLayoutItemGroup *)itemGroup 
 	insertDroppedItem: (id)movedItem atIndex: (int)index
 {
-	NSAssert2(index >= 0, @"Insertion index %d must be superior or equal to zero in %@ -insertDroppedObject:atIndex:", index, self);
+	NSParameterAssert(nil != itemGroup);
+	NSParameterAssert(index >= 0);
+
 	int insertionIndex = index;
-	int pickIndex = [itemGroup indexOfItem: movedItem];
-	BOOL isLocalPick = ([movedItem parentItem] == [itemGroup baseItem]);
-	BOOL itemAlreadyRemoved = NO; // NOTE: Feature to be implemented
+	BOOL itemAlreadyRemoved = [self wereItemsRemovedAtPickTime];
 	
 	RETAIN(movedItem);
 
-	//[self setAutolayout: NO];
 	 /* Dropped item is visible where it was initially located.
 		If the flag is YES, dropped item is currently invisible. */
-	if (itemAlreadyRemoved == NO)
+	if (NO == itemAlreadyRemoved)
 	{
+		int pickIndex = [itemGroup indexOfItem: movedItem];
+		BOOL isLocalPick = (NSNotFound != pickIndex);
+
 		/* We remove the item to handle the case where it is moved to another
 		   index within the existing parent. */
 		if (isLocalPick)
 		{
 			ETLog(@"For drop, removes item at index %d", pickIndex);
+
 			[itemGroup removeItem: movedItem];
 			if (insertionIndex > pickIndex)
+			{
 				insertionIndex--;
+			}
 		}
 	}
-	//[self setAutolayout: YES];
 
 	ETLog(@"For drop, insert item at index %d", insertionIndex);
 
 	[itemGroup insertItem: movedItem atIndex: insertionIndex];
-	//[self setSelectionIndex: insertionIndex];
 
 	RELEASE(movedItem);
 }

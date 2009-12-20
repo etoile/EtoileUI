@@ -37,6 +37,7 @@
 	ETLayoutItem *_previousDropTarget;
 	ETLayoutItem *_previousHoveredItem;
 	NSInteger _currentDropIndex;
+	BOOL _wereItemsRemovedAtPickTime;
 }
 
 + (id) sharedInstance;
@@ -61,6 +62,7 @@
 
 /* Drop Insertion */
 
+- (BOOL) wereItemsRemovedAtPickTime;
 - (void) itemGroup: (ETLayoutItemGroup *)itemGroup 
 	insertDroppedObject: (id)movedObject atIndex: (int)index;
 
