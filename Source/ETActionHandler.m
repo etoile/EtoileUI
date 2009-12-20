@@ -437,6 +437,7 @@ TODO: Problably remove, since it should be of any use and just adds complexity. 
 {
 	ETLog(@"Deselect %@", item);
 	[item setSelected: NO];
+	[item setNeedsDisplay: YES];
 
 	// TODO: May be cache in the controller... 
 	//[[[item baseItem] controller] removeSelectedObject: item];
