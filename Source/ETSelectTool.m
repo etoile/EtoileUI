@@ -82,16 +82,23 @@ the target item. */
 	// FIXME: [[self layoutOwner] syncLayoutViewWithItem: self];
 }
 
+/** Returns whether the dragged items should be removed immediately when they 
+get picked.
+
+By default, returns YES. 
+
+The returned value is only meaningful during a drag session. */
 - (BOOL) shouldRemoveItemsAtPickTime
 {
 	return _removeItemsAtPickTime;
 }
 
+/** Sets whether the dragged items should be removed immediately when they 
+get picked. */
 - (void) setShouldRemoveItemsAtPickTime: (BOOL)flag
 {
 	_removeItemsAtPickTime = flag;
 }
-
 
 /** Returns the selection area item. By default, it returns an 
 ETSelectionAreaItem object which uses a rectangular shape to draw a selection 
@@ -599,6 +606,13 @@ item will be selected. */
 	ETLayoutItemGroup *parent = [item parentItem];
 	unsigned int newSelectionIndex = [parent indexOfItem: item];
 	NSIndexSet *selectionIndexes = [parent selectionIndexes];
+
+	if ([selectionIndexes isEmpty])
+	{
+		[parent setSelectionIndex: newSelectionIndex];
+		return;
+	}
+
 	unsigned int firstSelectionIndex = [selectionIndexes firstIndex];
 	unsigned int lastSelectionIndex = [selectionIndexes lastIndex];
 
