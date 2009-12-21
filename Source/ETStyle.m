@@ -232,6 +232,7 @@ inside that redisplayed area and won't be clipped by the graphics context. */
 	   of the outline isn't drawn most of the time and the image drawn 
 	   underneath seems to wrongly extend beyond the border. */
 	[[[NSColor darkGrayColor] colorWithAlphaComponent: 0.55] setStroke];
+	[NSBezierPath setDefaultLineWidth: 1.0];
 	[NSBezierPath strokeRect: normalizedIndicatorRect];
 
 	[ctxt setShouldAntialias: gstateAntialias];
@@ -311,21 +312,32 @@ overrides it to resize/scale the bezier path as needed. */
 
 - (void) drawVerticalInsertionIndicatorInRect: (NSRect)indicatorRect
 {
+	// NOTE: On Mac OS X, the graphics state doesn't save NSBezierPath 
+	// attributes such as +defaultLineWidth unlike what Cocoa Drawing said.
+	[NSGraphicsContext saveGraphicsState];
+
 	[[self color] setFill];
 	[NSBezierPath setDefaultLineWidth: [self thickness] / 2];
 	[NSBezierPath fillRect: indicatorRect];
 	/*[NSBezierPath strokeLineFromPoint: NSMakePoint(indicatorLineX, NSMinY(hoveredRect))
 							  toPoint: NSMakePoint(indicatorLineX, NSMaxY(hoveredRect))];*/
+
+	[NSGraphicsContext restoreGraphicsState];
 	
 	_prevInsertionIndicatorRect = indicatorRect;
 }
 
 - (void) drawRectangularInsertionIndicatorInRect: (NSRect)indicatorRect
 {
+	// NOTE: On Mac OS X, the graphics state doesn't save NSBezierPath 
+	// attributes such as +defaultLineWidth unlike what Cocoa Drawing said.
+	[NSGraphicsContext saveGraphicsState];
+
 	[[self color] setStroke];
-	[NSBezierPath setDefaultLineCapStyle: NSButtLineCapStyle];
 	[NSBezierPath setDefaultLineWidth: [self thickness]];
 	[NSBezierPath strokeRect: indicatorRect];
+	
+	[NSGraphicsContext restoreGraphicsState];
 
 	_prevInsertionIndicatorRect = indicatorRect;
 }

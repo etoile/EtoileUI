@@ -1232,6 +1232,7 @@ to control more precisely how the items get resized per layout. */
 	{
 		[[NSColor orangeColor] set];
 		//NSRectClip([self frame]);
+		[NSBezierPath setDefaultLineWidth: 1.0];
 		[NSBezierPath strokeRect: rect];
 	}
 }

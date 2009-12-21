@@ -221,15 +221,11 @@ The copied shape is never hidden, even when the receiver was. */
 
 - (void) drawInRect: (NSRect)rect
 {
-	[NSGraphicsContext saveGraphicsState];
-
 	float alpha = [self alphaValue];
 	[[[self fillColor] colorWithAlphaComponent: alpha] setFill];
 	[[[self strokeColor] colorWithAlphaComponent: alpha] setStroke];
 	[[self path] fill];
 	[[self path] stroke];
-
-	[NSGraphicsContext restoreGraphicsState];
 }
 
 - (void) didChangeItemBounds: (NSRect)bounds

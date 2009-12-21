@@ -210,6 +210,7 @@ the given indicator rect is equal to it. */
 
 	/* Draw the outline */
 	[[[NSColor yellowColor] colorWithAlphaComponent: 0.55] setStroke];
+	[NSBezierPath setDefaultLineWidth: 1.0];
 	[roundedRectPath stroke];
 
 	[ctxt setShouldAntialias: gstateAntialias];
@@ -743,6 +744,7 @@ See also -edgeInset. */
 - (void) drawBorderInRect: (NSRect)aRect
 {
 	[[NSColor darkGrayColor] setStroke];
+	[NSBezierPath setDefaultLineWidth: 1.0];
 	[NSBezierPath strokeRect: aRect];
 }
 

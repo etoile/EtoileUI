@@ -369,15 +369,14 @@ static ETBasicHandleStyle *sharedBasicHandleStyle = nil;
 	   GNUstep. With the current code which works well on Cocoa, the top border 
 	   of the outline isn't drawn most of the time and the image drawn 
 	   underneath seems to wrongly extend beyond the border. */
+	[NSBezierPath setDefaultLineWidth: 1.0];
+	[[[NSColor darkGrayColor] colorWithAlphaComponent: 0.55] set];
 #ifdef USE_BEZIER_PATH
 	// FIXME: NSFrameRectWithWidthUsingOperation() seems to be broken. It 
 	// doesn't work even with no alpha in the color, NSCompositeCopy and a width 
 	// of 1.0
-	[[[NSColor darkGrayColor] colorWithAlphaComponent: 0.55] set];
 	NSFrameRectWithWidthUsingOperation(normalizedIndicatorRect, 0.0, NSCompositeSourceOver);
 #else
-	// FIXME: -setStroke doesn't work on GNUstep
-	[[[NSColor darkGrayColor] colorWithAlphaComponent: 0.55] set];
 	[NSBezierPath strokeRect: normalizedIndicatorRect];
 #endif
 
@@ -641,9 +640,13 @@ or not. */
 /** Draws a rectangular outline. */
 - (void) drawOutlineInRect: (NSRect)rect
 {
+	float gstateLineWidth = [NSBezierPath defaultLineWidth];
+
 	[[[NSColor blackColor] colorWithAlphaComponent: 0.90] set];
 	[NSBezierPath setDefaultLineWidth: 0.0];
 	[NSBezierPath strokeRect: rect];
+
+	[NSBezierPath setDefaultLineWidth: gstateLineWidth];
 }
 
 @end
