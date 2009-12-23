@@ -565,7 +565,7 @@ yet, it is created. */
 
 	if (ETUndeterminedIndex != row && NSTableViewDropOn == op)
 	{
-		dropTarget = [[_layoutContext items] objectAtIndex: row];
+		dropTarget = [[_layoutContext arrangedItems] objectAtIndex: row];
 	}
 
 	ETLog(@"Validate drop on %@ with dragging source %@ in %@ drag mask %d drop op %d", 
@@ -603,7 +603,7 @@ yet, it is created. */
 		else
 		{
 			dropOp = NSTableViewDropOn;
-			dropRow = [_layoutContext indexOfObject: validDropTarget];
+			dropRow = [[_layoutContext arrangedItems] indexOfObject: validDropTarget];
 
 			if (NSNotFound == dropRow) /* NSNotFound is not ETUndeterminedIndex */
 			{
