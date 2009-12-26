@@ -43,6 +43,11 @@
 	return @"OutlinePrototype";
 }
 
+- (Class) widgetViewClass
+{
+	return [NSOutlineView class];
+}
+
 - (NSOutlineView *) outlineView
 {
 	return (NSOutlineView *)[super tableView];

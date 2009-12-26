@@ -79,13 +79,20 @@
 	[[[self tableView] tableColumnWithIdentifier: @"icon"] setEditable: NO];
 }
 
+- (Class) widgetViewClass
+{
+	return [ETTableView class];
+}
+
 - (void) setLayoutView: (NSView *)protoView
 {
 	NSParameterAssert(nil != protoView);
 	[super setLayoutView: protoView];
 
 	NSTableView *tv = [self tableView];
-	
+
+	[self upgradeWidgetView: tv toClass: [self widgetViewClass]];
+
 	/* ivar cannot be initialized by overriding -initWithLayoutView: because 
 	   superclass initializer called -loadNibNamed: before returning, moreover
 	   the ivar must be reset for each new layout view. */
@@ -684,18 +691,11 @@ yet, it is created. */
    That's why we override dragging source related methods to simply call the
    default behavior implemented in ETEventHandler (see ETActionHandler). */
 
-@interface NSTableView (ETTableLayoutDraggingSource)
-- (id) actionHandler;
-- (unsigned int) draggingSourceOperationMaskForLocal: (BOOL)isLocal;
-- (void) draggedImage: (NSImage *)anImage beganAt: (NSPoint)aPoint;
-- (void) draggedImage: (NSImage *)draggedImage movedTo: (NSPoint)screenPoint;
-- (void) draggedImage: (NSImage *)anImage endedAt: (NSPoint)aPoint operation: (NSDragOperation)operation;
-@end
 @interface NSTableView (ShutCompilerWarning)
 - (BOOL) _writeRows: (NSIndexSet *)rows toPasteboard: (NSPasteboard *)pboard;
 @end
 
-@implementation NSTableView (ETTableLayoutDraggingSource)
+@implementation ETTableView 
 
 // FIXME: Sort out the responsabilities more clearly between the coordinator, 
 // the action handler and the table view

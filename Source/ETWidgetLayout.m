@@ -8,6 +8,7 @@
 
 #import <EtoileFoundation/Macros.h>
 #import <EtoileFoundation/NSObject+HOM.h>
+#import <EtoileFoundation/runtime.h>
 #import "ETWidgetLayout.h"
 #import "ETActionHandler.h"
 #import "ETLayoutItem.h"
@@ -213,6 +214,38 @@ be called. */
 		[self selectedItems]);
 
 	[[(ETLayoutItemGroup *)[self layoutContext] actionHandler] handleDoubleClickItem: [self doubleClickedItem]];
+}
+
+/* Custom Widget Subclass */
+
+/** <override-always />
+Returns the widget view class required by the layout.
+
+You can use the returned class to invoke -updateWidgetView:toClass: when you 
+override -setLayoutView:.
+
+By default, returns Nil. */
+- (Class) widgetViewClass
+{
+	return Nil;
+}
+
+/** Swizzles the widget class to the target class.
+
+This method raises an invalid argument exception when the class cannot be changed.
+
+For example, NSTableView is swizzled to ETTableView to integrate with pick and drop. */
+- (void) upgradeWidgetView: (id)widgetView toClass: (Class)aClass
+{
+	if ([widgetView isKindOfClass: aClass])
+		return;
+
+	if (object_setClass(widgetView, aClass) == Nil)
+	{
+		[NSException raise: NSInvalidArgumentException format: @"The widget view "
+			"class must be either the widget base class, the target class or "
+			"a target class subclass."];
+	}
 }
 
 @end

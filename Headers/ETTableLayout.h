@@ -69,3 +69,17 @@
 - (void) setLastDragEvent: (NSEvent *)event;
 
 @end
+
+/** The class the table views must match to be used with ETTableLayout.
+
+You should not be concerned by this class unless you want to reuse an 
+existing NSTableView subclass. In that case, its superclass must be change to 
+ETTableView, otherwise an exception will be raised when initializing the layout.
+
+ETTableLayout can automatically upgrade NSTableView to ETTableView.
+
+In future, we hope to eliminate this subclass, but this implies to have 
+NSTableView drag and drop support better exposed at the delegate or data source 
+level. */
+@interface ETTableView : NSTableView
+@end

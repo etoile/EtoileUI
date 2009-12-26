@@ -40,4 +40,9 @@
 - (ETLayoutItem *) doubleClickedItem;
 - (void) doubleClick: (id)sender;
 
+/* Custom Widget Subclass */
+
+- (Class) widgetViewClass;
+- (void) upgradeWidgetView: (id)widgetView toClass: (Class)aClass;
+
 @end
