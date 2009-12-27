@@ -58,8 +58,10 @@
 	ETTableLayout *newLayout = [super copyWithZone: aZone layoutContext: ctxt];
 	NSParameterAssert([newLayout tableView] != [self tableView]);
 
-	/* Will initialize the ivars in the layout copy */
+	/* Will initialize several ivars in the layout copy */
 	[newLayout setLayoutView: [newLayout layoutView]];
+	newLayout->_currentSortDescriptors = [_currentSortDescriptors copyWithZone: aZone];
+	newLayout->_contentFont = [_contentFont copyWithZone: aZone];
 
 	return newLayout;
 }
@@ -120,6 +122,10 @@
 	[tv setDelegate: self];
 }
 
+/** Returns the table view enclosed in the scroll view returned by -layoutView.
+
+You shouldn't use this method unless you need to customize the table view in a way 
+not supported by ETTableLayout API. */
 - (NSTableView *) tableView
 {
 	id layoutView = [self layoutView];
@@ -127,17 +133,16 @@
 	NSAssert2([layoutView isKindOfClass: [NSScrollView class]], @"Layout view "
 		@" %@ of %@ must be an NSScrollView instance", layoutView, self);
 
-	return [(NSScrollView *)[self layoutView] documentView];
+	return [layoutView documentView];
 }
 
+/** Returns the underlying table columns used by the table view. 
+
+You shouldn't use this method unless you need to customize the columns in a way 
+not supported by ETTableLayout API. */
 - (NSArray *) allTableColumns
 {
 	return [_propertyColumns allValues];
-}
-
-- (void) setAllTableColumns: (NSArray *)columns
-{
-	ASSIGN(_propertyColumns, columns);
 }
 
 /* Item Property Display */

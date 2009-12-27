@@ -59,7 +59,6 @@
 /* Widget Backend Access */
 
 - (NSArray *) allTableColumns;
-- (void) setAllTableColumns: (NSArray *)columns;
 - (NSTableView *) tableView;
 
 /* Framework Private & Subclassing */
