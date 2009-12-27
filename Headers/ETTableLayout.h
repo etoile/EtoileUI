@@ -32,6 +32,7 @@
 {
 	NSMutableDictionary *_propertyColumns;
 	int _lastChildDropIndex;
+	NSImage *_dragImage; /* Cached drag image generated before the items are removed */
 
 	@private
 	/* The sort descriptors that combine the table view sort descriptors and the 
@@ -39,6 +40,7 @@
 	NSMutableArray *_currentSortDescriptors;
 	NSFont *_contentFont;
 	NSEvent *_lastDragEvent;
+
 }
 
 - (NSArray *) displayedProperties;
@@ -60,13 +62,14 @@
 - (void) setAllTableColumns: (NSArray *)columns;
 - (NSTableView *) tableView;
 
-/* Subclassing */
+/* Framework Private & Subclassing */
 
 - (NSTableColumn *) tableColumnWithIdentifierAndCreateIfAbsent: (NSString *)identifier;
 // TODO: Moves this method into an NSTableColumn category
 - (NSTableColumn *) _createTableColumnWithIdentifier: (NSString *)property;
 - (NSEvent *) lastDragEvent;
 - (void) setLastDragEvent: (NSEvent *)event;
+- (NSImage *) dragImage;
 
 @end
 
@@ -82,4 +85,9 @@ In future, we hope to eliminate this subclass, but this implies to have
 NSTableView drag and drop support better exposed at the delegate or data source 
 level. */
 @interface ETTableView : NSTableView
+@end
+
+
+@interface NSTableView (EtoileUI)
+- (NSArray *) visibleTableColumns;
 @end

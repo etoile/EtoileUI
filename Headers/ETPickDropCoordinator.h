@@ -44,7 +44,8 @@
 + (id) sharedInstanceWithEvent: (ETEvent *)anEvent;
 + (unsigned int) forceEnablePickAndDropModifier;
 
-- (void) beginDragItem: (ETLayoutItem *)item image: (NSImage *)customDragImage;
+- (void) beginDragItem: (ETLayoutItem *)item image: (NSImage *)customDragImage 
+	inLayout: (ETLayout *)aLayout;
 
 - (BOOL) isPasting;
 - (BOOL) isDragging;

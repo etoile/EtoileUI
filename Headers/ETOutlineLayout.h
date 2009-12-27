@@ -21,3 +21,9 @@
 }
 
 @end
+
+/** The class the outline views must match to be used with ETOutlineLayout.
+
+See ETTableView documentation whose explanations also applies to ETOutlineView. */
+@interface ETOutlineView : NSOutlineView
+@end

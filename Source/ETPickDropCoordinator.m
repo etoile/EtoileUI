@@ -27,6 +27,7 @@
 #import "ETCompatibility.h"
 
 @interface ETPickDropCoordinator (Private)
+- (id) initWithEvent: (ETEvent *)anEvent;
 - (void) reset;
 
 - (BOOL) ignoreModifierKeysWhileDragging;
@@ -62,7 +63,11 @@ static ETPickDropCoordinator *sharedInstance = nil;
 /** Returns the default pick and drop coordinator. */
 + (id) sharedInstance
 {
-	return [self sharedInstanceWithEvent: [sharedInstance pickEvent]];
+	if (nil == sharedInstance)
+	{
+		return [self sharedInstanceWithEvent: nil];
+	}
+	return sharedInstance;
 }
 
 /** Returns the default pick and drop coordinator reinitialized with a new 
@@ -73,12 +78,18 @@ event. */
 	{
 		// TODO: Rework to look up the class to instantiate based on the 
 		// linked/configured widged backend.
-		sharedInstance = [[ETPickDropCoordinator alloc] init];
-		[sharedInstance reset];
+		sharedInstance = [[ETPickDropCoordinator alloc] initWithEvent: anEvent];
 	}
-	ASSIGN(sharedInstance->_event, anEvent);
 
-	return sharedInstance; 
+	return [sharedInstance initWithEvent: anEvent];
+}
+
+- (id) initWithEvent: (ETEvent *)anEvent
+{
+	SUPERINIT
+	ASSIGN(_event, anEvent);
+	_wereItemsRemovedAtPickTime = YES;
+	return self;
 }
 
 /** Returns the modifier that instruments should check to know when they should 
@@ -122,20 +133,25 @@ would be messed up. */
 /** Starts a drag session to provide visual feedback throughout the dragging.
 
 customDragImage can be used to supercede the item icon that represents the 
-dragged item from the beginning of the drag to the end. 
+dragged item from the beginning of the drag to the end.
+
+aLayout must be the opaque layout in which the dragged item is presented or its 
+parent item layout when no opaque layout is in use higher in the item tree.
+
+Will raise an NSInvalidArgumentException when either the item or layout is nil.
 
 When the item is presented in an opaque layout which returns YES to 
 -hasBuiltInDragAndDropSupport, returns immediately.
 
 See also -hasBuiltInDragAndDropSupport. */
-- (void) beginDragItem: (ETLayoutItem *)item image: (NSImage *)customDragImage
+- (void) beginDragItem: (ETLayoutItem *)item image: (NSImage *)customDragImage 
+	inLayout: (ETLayout *)aLayout
 {
-	NILARG_EXCEPTION_TEST(item)
+	NILARG_EXCEPTION_TEST(item);
+	NILARG_EXCEPTION_TEST(aLayout);
 	NSParameterAssert([self pickEvent] != nil);
 
-	ETLayout *layout = [[item ancestorItemForOpaqueLayout] layout];
-
-	if (layout != nil && [[layout ifResponds] hasBuiltInDragAndDropSupport])
+	if ([[aLayout ifResponds] hasBuiltInDragAndDropSupport])
 	{
 		return;
 	}
@@ -315,6 +331,7 @@ setters in the ETActionHandler bound to the drag source. */
 	                                        endAtItem: dropTarget
 	                                     wasCancelled: (operation == NSDragOperationNone)
 	                                      coordinator: self];
+	[self reset];
 }
 
 /* Returns the window layer when the drag is exiting a window without 

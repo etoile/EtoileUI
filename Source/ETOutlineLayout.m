@@ -20,12 +20,21 @@
 #import "NSView+Etoile.h"
 #import "ETCompatibility.h"
 
+@interface NSOutlineView (EtoileUI)
+- (NSIndexSet *) rowIndexesForItems: (NSArray *)items;
+@end
+
 @interface ETTableLayout (PackageVisibility)
 - (void) tableViewSelectionDidChange: (NSNotification *)notif;
 @end
 
 
 @implementation ETOutlineLayout
+
+- (NSOutlineView *) outlineView
+{
+	return (NSOutlineView *)[super tableView];
+}
 
 - (id) initWithLayoutView: (NSView *)layoutView
 {
@@ -34,7 +43,8 @@
 		return nil;
 
 	_treatsGroupsAsStacks = YES;
-    
+
+	NSParameterAssert([[self outlineView] isKindOfClass: [ETOutlineView class]]);
 	return self;
 }
 
@@ -45,12 +55,7 @@
 
 - (Class) widgetViewClass
 {
-	return [NSOutlineView class];
-}
-
-- (NSOutlineView *) outlineView
-{
-	return (NSOutlineView *)[super tableView];
+	return [ETOutlineView class];
 }
 
 // NOTE: Dealloc and Awaking from nib handled by ETTableLayout superview.
@@ -141,7 +146,7 @@ expanded and collapsed by getting automatically a related outline arrow. */
 - (ETLayoutItem *) itemAtLocation: (NSPoint)location
 {
 	int row = [[self outlineView] rowAtPoint: location];
-	return (row != NSNotFound ? [[self outlineView] itemAtRow: row] : nil);
+	return (row != ETUndeterminedIndex ? [[self outlineView] itemAtRow: row] : nil);
 }
 
 - (NSRect) displayRectOfItem: (ETLayoutItem *)item
@@ -390,31 +395,35 @@ expanded and collapsed by getting automatically a related outline arrow. */
 - (BOOL) outlineView: (NSOutlineView *)outlineView 
 	writeItems: (NSArray *)items toPasteboard: (NSPasteboard *)pboard
 {
-#if 0
-	// NOTE: On Mac OS X, -currentEvent returns a later event rather than the 
-	// mouse down that began the drag when the user moves the mouse too quickly.
-	id dragEvent = ETEVENT([NSApp currentEvent], nil, ETDragPickingMask);
-#else
-	id dragEvent = ETEVENT([self lastDragEvent], nil, ETDragPickingMask);
-#endif
+	// NOTE: On Mac OS X and GNUstep, -[NSApp currentEvent] returns a later 
+	// event rather than the mouse down or dragged that began the drag when the 
+	// user moves the mouse too quickly.
+	NSEvent *backendEvent = [self lastDragEvent];
+	NSEventType eventType = [backendEvent type];
 
-	NSAssert3([[dragEvent window] isEqual: [outlineView window]], @"NSApp "
-		@"current event %@ in %@ -outlineView:writeItems:toPasteboard: doesn't "
-		@"belong to the outline view %@", dragEvent, self, outlineView);
-	
-	NSAssert3([[dragEvent window] isEqual: [outlineView window]], @"NSApp "
-		@"current event %@ in %@ -outlineView:writeRowsWithItems:toPasteboard: "
-		@"doesn't belong to the outline view %@", dragEvent, self, outlineView);
+	NSAssert3([[backendEvent window] isEqual: [outlineView window]], @"Backend "
+		"event %@ in %@ -outlineView:writeItems:toPasteboard: doesn't belong "
+		"to the outline view %@", backendEvent, self, outlineView);
+	NSAssert2(eventType == NSLeftMouseDown || eventType == NSLeftMouseDragged, 
+		@"Backend event %@ in %@ -outlineView:writeItems:toPasteboard: must be "
+		"of type NSLeftMouseDown/Dragged", eventType, self);
 
 	/* Convert drag location from window coordinates to the receiver coordinates */
-	NSPoint localPoint = [outlineView convertPoint: [dragEvent locationInWindow] fromView: nil];
+	NSPoint localPoint = [outlineView convertPoint: [backendEvent locationInWindow] fromView: nil];
 	ETLayoutItem *draggedItem = [self itemAtLocation: localPoint];
-	ETLayoutItem *baseItem = [(ETLayoutItem *)_layoutContext baseItem];
-	
+	ETEvent *dragEvent = ETEVENT(backendEvent, nil, ETDragPickingMask);
+	NSPoint point = NSZeroPoint;
+
+	DESTROY(_dragImage);
+	ASSIGN(_dragImage, [outlineView dragImageForRowsWithIndexes: [outlineView rowIndexesForItems: items]
+	                                               tableColumns: [outlineView visibleTableColumns]
+	                                                      event: backendEvent
+	                                                     offset: &point]);
+
 	NSAssert3([items containsObject: draggedItem], @"Dragged items %@ must "
 		@"contain clicked item %@ in %@", items, draggedItem, self);
-		
-	return [[baseItem actionHandler] handleDragItem: draggedItem 
+
+	return [[draggedItem actionHandler] handleDragItem: draggedItem 
 		coordinator: [ETPickDropCoordinator sharedInstanceWithEvent: dragEvent]];
 }
 
@@ -600,59 +609,128 @@ expanded and collapsed by getting automatically a related outline arrow. */
 
 #endif
 
-/* Declared in ETTableLayout.m */
-@interface NSTableView (ETTableLayoutDraggingSource)
-- (id) eventHandler;
-@end
+@implementation ETOutlineView
 
-@interface NSOutlineView (ETTableLayoutDraggingSource)
-// NOTE: Read the next comment.
-//- (unsigned int) draggingSourceOperationMaskForLocal: (BOOL)isLocal;
-//- (void) draggedImage: (NSImage *)anImage beganAt: (NSPoint)aPoint;
-#if 0
-- (void) draggedImage: (NSImage *)draggedImage movedTo: (NSPoint)screenPoint;
-- (void) draggedImage: (NSImage *)anImage endedAt: (NSPoint)aPoint operation: (NSDragOperation)operation;
-#endif
-@end
+- (BOOL) ignoreModifierKeysWhileDragging
+{
+	return [[ETPickDropCoordinator sharedInstance] ignoreModifierKeysWhileDragging];
+}
 
-@implementation NSOutlineView (ETTableLayoutDraggingSource)
-
-/* The next methods are implemented in NSTableView(ETTableLayoutDraggingSource),
-   no need to override them. They are kept here to document the hack below. */
-
-#if 0
 - (unsigned int) draggingSourceOperationMaskForLocal: (BOOL)isLocal
 {
-	return [[self eventHandler] draggingSourceOperationMaskForLocal: isLocal];
+	return [[ETPickDropCoordinator sharedInstance] draggingSourceOperationMaskForLocal: isLocal];
 }
 
 - (void) draggedImage: (NSImage *)anImage beganAt: (NSPoint)aPoint
 {
-	[[self eventHandler] draggedImage: anImage beganAt: aPoint];
+	[super draggedImage: anImage beganAt: aPoint];
+	[[ETPickDropCoordinator sharedInstance] draggedImage: anImage beganAt: aPoint];
 }
 
-/* However the following two methods are implemented by NSOutlineView by default
-   unlike NSTableView. It means NSTableView(ETTableLayoutDraggingSource)
-   implementation is lost and we need to patch NSOutlineView. 
-   NOTE: It may break NSOutlineView on Mac OS X but everything seems to work
-   well so they could just exist as empty methods in NSOutlineView.The problem
-   shouldn't exist on GNUstep
-   TODO: We should check it is really the case by setting a break point on these
-   methods and steps in the assembly to know whether if they truly do nothing.
-   Well, according to my tests, they seems to be in charge of refreshing 
-   expanded item on a drop (when child items are inserted).
-   In the end, the best solution would be to swizzle the methods, it would avoid
-   posing NSOutlineView. */
-
-- (void) draggedImage: (NSImage *)draggedImage movedTo: (NSPoint)screenPoint
+- (void) draggedImage: (NSImage *)anImage movedTo: (NSPoint)aPoint
 {
-	[[self eventHandler] draggedImage: draggedImage movedTo: screenPoint];
+	[super draggedImage: anImage movedTo: aPoint];
+	[[ETPickDropCoordinator sharedInstance] draggedImage: anImage movedTo: aPoint];
 }
 
 - (void) draggedImage: (NSImage *)anImage endedAt: (NSPoint)aPoint operation: (NSDragOperation)operation
 {
-	[[self eventHandler] draggedImage: anImage endedAt: aPoint operation: operation];
+	[super draggedImage: anImage endedAt: aPoint operation: operation];
+	[[ETPickDropCoordinator sharedInstance] draggedImage: anImage endedAt: aPoint operation: operation];
 }
+
+/* We implement this method only because [NSApp currentEvent] in 
+   -outlineView:writeItems:toPasteboard: isn't the expected mouse down/dragged 
+   event that triggered the drag when the mouse is moved/dragged very quickly. */
+- (BOOL) canDragRowsWithIndexes: (NSIndexSet *)indexes atPoint: (NSPoint)point
+{
+	NSParameterAssert([[ETPickDropCoordinator sharedInstance] isDragging] == NO);
+
+	NSEvent *event = [NSApp currentEvent];
+
+	// FIXME: Looks -convertPoint:toView: isn't exactly symetric to 
+	// -convertPoint:fromView: in -_startDragOperationWithEvent:
+#ifndef GNUSTEP	
+	NSPoint pointInWindow = [self convertPoint: point toView: nil];
+
+	/* We check the current event is precisely the mouse down (cocoa) or dragged 
+	   (gnustep) event that triggers the present drag request */
+	NSAssert3(NSEqualPoints([event locationInWindow], pointInWindow), @"For "
+		@"%@, current event point %@ must be equal to point %@ passed by "
+		@"-canDragRowsWithIndexes:point:", self, 
+		NSStringFromPoint([event locationInWindow]), 
+		NSStringFromPoint(pointInWindow));
 #endif
+
+	[[self dataSource] setLastDragEvent: event];
+
+	return YES;
+}
+
+/* See -dragImage:at:offset:event:pasteboard:source:slideback: comment */
+- (NSImage *) dragImageForRowsWithIndexes: (NSIndexSet *)indexes
+                             tableColumns: (NSArray *)columns
+                                    event: (NSEvent *)dragEvent
+                                   offset: (NSPointPointer)imgOffset
+{
+	BOOL isNewDrag = (nil == [[self dataSource] dragImage]);
+
+	if (isNewDrag)
+	{
+		return [super dragImageForRowsWithIndexes: indexes 
+			tableColumns: columns event: dragEvent offset: imgOffset];
+	}
+
+	return [[self dataSource] dragImage];
+}
+
+/* On Mac OS X, -[NSOutlineView -dragImage:at:offset:event:pasteboard:source:slideback:] 
+invokes -_itemsFromRowsWithIndexes:.
+When the dragged item(s) are removed at pick time, this results in a crash 
+because the remembered indexes corresponds to the dragged items which are not 
+present anymore in the outline view. Here is the stack trace:
+
+_NSArrayRaiseInsertNilException
+-[NSCFArray insertObject:atIndex:]
+-[NSCFArray addObject:]
+-[NSOutlineView _itemsFromRowsWithIndexes:]
+-[NSOutlineView dragImage:at:offset:event:pasteboard:source:slideBack:]
+-[ETOutlineView dragImage:at:offset:event:pasteboard:source:slideBack:]
+-[NSTableView _doImageDragUsingRowsWithIndexes:event:pasteboard:source:slideBack:startRow:]
+-[NSTableView _performDragFromMouseDown:]
+-[NSTableView mouseDown:]
+-[NSOutlineView mouseDown:]
+
+So we work around this Cocoa AppKit issue by overriding the method. 
+TODO: Report the issue to Apple since we have no idea whether the original 
+NSOutlineView method is important or not really.
+
+Take note we also override -dragImageForRowsWithIndexes:tableColumns:event:offset: 
+in a similar way. */
+- (void) dragImage: (NSImage *)anImage 
+                at: (NSPoint)imageLoc 
+            offset: (NSSize)mouseOffset 
+             event: (NSEvent *)theEvent 
+        pasteboard: (NSPasteboard *)pboard
+            source: (id)sourceObject
+         slideBack: (BOOL)slideBack
+{
+	NSPoint pointInWindow = [self convertPoint: imageLoc toView: nil] ;
+
+	return [[self window] dragImage: anImage at: pointInWindow offset: mouseOffset 
+		event: theEvent pasteboard: pboard source: sourceObject slideBack: slideBack];
+}
+
+- (NSIndexSet *) rowIndexesForItems: (NSArray *)items
+{
+	NSMutableIndexSet *indexes = [NSMutableIndexSet indexSet];
+
+	FOREACH(items, item, ETLayoutItem *)
+	{
+		[indexes addIndex: [self rowForItem: item]];
+	}
+
+	return indexes;
+}
 
 @end

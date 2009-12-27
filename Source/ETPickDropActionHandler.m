@@ -41,11 +41,15 @@ This method can be called by the layout to synthetize a new drag (e.g. this
 method is called by ETTableLayout when rows are dragged). */
 - (BOOL) handleDragItem: (ETLayoutItem *)item coordinator: (id)aPickCoordinator
 {
+	/* Find right now the layout which presents the item, its parent item might 
+	   become nil with -handlePickItem:coordinator:. */
+	ETLayout *layout = [[item ancestorItemForOpaqueLayout] layout];
+
 	BOOL pickDisallowed = ([self handlePickItem: item coordinator: aPickCoordinator] == NO);
 
 	if (pickDisallowed)
 		return NO;
-	
+
 	/* We need to put something on the pasteboard otherwise AppKit won't 
 	   allow the drag */
 	NSPasteboard *pboard = [NSPasteboard pasteboardWithName: NSDragPboard];
@@ -56,7 +60,7 @@ method is called by ETTableLayout when rows are dragged). */
 	//NSData *data = [NSKeyedArchiver archivedDataWithRootObject: item];
 	//[pboard setData: data forType: ETLayoutItemPboardType];
 
-	[aPickCoordinator beginDragItem: item image: nil];
+	[aPickCoordinator beginDragItem: item image: nil inLayout: layout];
 	return YES;
 }
 
@@ -116,7 +120,7 @@ method is called by ETTableLayout when rows are dragged). */
 		{
 			shouldRemoveItems = [[ETInstrument activeInstrument] shouldRemoveItemsAtPickTime];
 		}
-		
+
 		if (shouldRemoveItems)
 		{
 			if ([pick isKindOfClass: [ETPickCollection class]])

@@ -555,11 +555,16 @@ yet, it is created. */
 	/* Convert drag location from window coordinates to the receiver coordinates */
 	NSPoint localPoint = [tv convertPoint: [backendEvent locationInWindow] fromView: nil];
 	ETLayoutItem *draggedItem = [self itemAtLocation: localPoint];
-	ETLayoutItem *baseItem = [_layoutContext baseItem];
 	ETEvent *dragEvent = ETEVENT(backendEvent, nil, ETDragPickingMask);
+	NSPoint point = NSZeroPoint;
 
-	// TODO: May be better to use [draggedItem actionHandler]
-	return [[baseItem actionHandler] handleDragItem: draggedItem 
+	DESTROY(_dragImage);
+	ASSIGN(_dragImage, [tv dragImageForRowsWithIndexes: rowIndexes 
+	                                      tableColumns: [tv visibleTableColumns] 
+	                                             event: backendEvent
+	                                            offset: &point]);
+
+	return [[draggedItem actionHandler] handleDragItem: draggedItem 
 		coordinator: [ETPickDropCoordinator sharedInstanceWithEvent: dragEvent]];
 }
 
@@ -667,7 +672,7 @@ yet, it is created. */
 	return item;
 }
 
-/* Subclassing */
+/* Framework Private & Subclassing */
 
 - (NSEvent *) lastDragEvent
 {
@@ -680,55 +685,51 @@ yet, it is created. */
 	_lastDragEvent = event;
 }
 
+/** Returns the cached drag image. */
+- (NSImage *) dragImage
+{
+	return _dragImage;
+}
+
 @end
-
-/* NSTableView overriden methods for dragging 
-
-   NSTableViewDataSource doesn't provide a way to know whether a drag has been 
-   cancelled (validated or moved). ETTableLayout must be aware of dragging 
-   cancellation in order to pop the object just pushed on the pickboard in 
-   -tableView:writeRowsWithIndexes:toPasteboard: and -handleDrag:forItem: 
-   That's why we override dragging source related methods to simply call the
-   default behavior implemented in ETEventHandler (see ETActionHandler). */
 
 @interface NSTableView (ShutCompilerWarning)
 - (BOOL) _writeRows: (NSIndexSet *)rows toPasteboard: (NSPasteboard *)pboard;
 @end
 
+/* NSTableViewDataSource doesn't provide a way to know whether a drag has been 
+   cancelled (validated or moved). ETTableLayout must be aware of dragging 
+   cancellation in order to pop the object just pushed on the pickboard in 
+   -tableView:writeRowsWithIndexes:toPasteboard: and -handleDragItemXXX 
+   That's why we override dragging source related methods (see ETActionHandler). */
 @implementation ETTableView 
-
-// FIXME: Sort out the responsabilities more clearly between the coordinator, 
-// the action handler and the table view
-
-- (id) actionHandler
-{
-	// NOTE: Returning the delegate would equivalent.
-	return [(ETLayoutItem *)[[self dataSource] layoutContext] actionHandler];
-}
 
 - (BOOL) ignoreModifierKeysWhileDragging
 {
-	return [[self actionHandler] ignoreModifierKeysWhileDragging];
+	return [[ETPickDropCoordinator sharedInstance] ignoreModifierKeysWhileDragging];
 }
 
 - (unsigned int) draggingSourceOperationMaskForLocal: (BOOL)isLocal
 {
-	return [[self actionHandler] draggingSourceOperationMaskForLocal: isLocal];
+	return [[ETPickDropCoordinator sharedInstance] draggingSourceOperationMaskForLocal: isLocal];
 }
 
 - (void) draggedImage: (NSImage *)anImage beganAt: (NSPoint)aPoint
 {
-	// FIXME: [[self eventHandler] draggedImage: anImage beganAt: aPoint];
+	[super draggedImage: anImage beganAt: aPoint];
+	[[ETPickDropCoordinator sharedInstance] draggedImage: anImage beganAt: aPoint];
 }
 
-- (void) draggedImage: (NSImage *)draggedImage movedTo: (NSPoint)screenPoint
+- (void) draggedImage: (NSImage *)anImage movedTo: (NSPoint)aPoint
 {
-	// FIXME: [[self eventHandler] draggedImage: draggedImage movedTo: screenPoint];
+	[super draggedImage: anImage movedTo: aPoint];
+	[[ETPickDropCoordinator sharedInstance] draggedImage: anImage movedTo: aPoint];
 }
 
 - (void) draggedImage: (NSImage *)anImage endedAt: (NSPoint)aPoint operation: (NSDragOperation)operation
 {
-	// FIXME: [[self eventHandler] draggedImage: anImage endedAt: aPoint operation: operation];
+	[super draggedImage: anImage endedAt: aPoint operation: operation];
+	[[ETPickDropCoordinator sharedInstance] draggedImage: anImage endedAt: aPoint operation: operation];
 }
 
 /* We implement this method only because [NSApp currentEvent] in 
@@ -736,6 +737,8 @@ yet, it is created. */
    event that triggered the drag when the mouse is moved/dragged very quickly. */
 - (BOOL) canDragRowsWithIndexes: (NSIndexSet *)indexes atPoint: (NSPoint)point
 {
+	NSParameterAssert([[ETPickDropCoordinator sharedInstance] isDragging] == NO);
+
 	NSEvent *event = [NSApp currentEvent];
 
 	// FIXME: Looks -convertPoint:toView: isn't exactly symetric to 
@@ -751,20 +754,55 @@ yet, it is created. */
 		NSStringFromPoint([event locationInWindow]), 
 		NSStringFromPoint(pointInWindow));
 #endif
-	
-	// NOTE: The present method is called by NSTableView so we must not send 
-	// -setLastDragEvent: in case the table view is set up directly. For example, 
-	// if you omit the -isKindOfClass: check it results in an unknown selector 
-	// assertion if you drag a row in NSOpenPanel.
-	if ([[self dataSource] isKindOfClass: [ETTableLayout class]])
-	{
-		[[self dataSource] setLastDragEvent: event];
-	}
+
+	[[self dataSource] setLastDragEvent: event];
 
 	return YES;
 }
 
+- (NSImage *) dragImageForRowsWithIndexes: (NSIndexSet *)indexes
+                             tableColumns: (NSArray *)columns
+                                    event: (NSEvent *)dragEvent
+                                   offset: (NSPointPointer)imgOffset
+{
+	BOOL isNewDrag = (nil == [[self dataSource] dragImage]);
+
+	if (isNewDrag)
+	{
+		return [super dragImageForRowsWithIndexes: indexes 
+			tableColumns: columns event: dragEvent offset: imgOffset];
+	}
+
+	return [[self dataSource] dragImage];
+}
+
 @end
+
+
+@implementation NSTableView (EtoileUI)
+
+/** Returns the column objects which are partially or fully visible in the 
+receiver. */
+- (NSArray *) visibleTableColumns
+{
+	NSIndexSet *columnIndexes = [self columnIndexesInRect: [self visibleRect]];
+	NSMutableArray *columns = [NSMutableArray array];
+
+	// TODO: Would be interesting to express the loop as below...
+	// return [[[self tableColumns] slicedCollection] objectAtIndex: [[columnIndexes each] intValue]];
+	FOREACH(columnIndexes, index, NSNumber *)
+	{
+		/* We don't use -addObject: to carry the ordering over. */
+		[columns insertObject: [[self tableColumns] objectAtIndex: [index intValue]] 
+		              atIndex: 0];
+	}
+
+	return columns;
+	
+}
+
+@end
+
 
 /* Private Helper Methods (not in use) */
 
