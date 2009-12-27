@@ -693,10 +693,6 @@ yet, it is created. */
 
 @end
 
-@interface NSTableView (ShutCompilerWarning)
-- (BOOL) _writeRows: (NSIndexSet *)rows toPasteboard: (NSPasteboard *)pboard;
-@end
-
 /* NSTableViewDataSource doesn't provide a way to know whether a drag has been 
    cancelled (validated or moved). ETTableLayout must be aware of dragging 
    cancellation in order to pop the object just pushed on the pickboard in 
