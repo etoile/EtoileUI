@@ -31,7 +31,6 @@
 @interface ETTableLayout : ETWidgetLayout
 {
 	NSMutableDictionary *_propertyColumns;
-	int _lastChildDropIndex;
 	NSImage *_dragImage; /* Cached drag image generated before the items are removed */
 
 	@private
