@@ -350,7 +350,7 @@ yet, it is created. */
 
 - (void) renderWithLayoutItems: (NSArray *)items isNewContent: (BOOL)isNewContent
 {
-	if ([[self layoutContext] supervisorView] == nil)
+	if ([_layoutContext supervisorView] == nil)
 	{
 		ETLog(@"WARNING: Layout context %@ must have a supervisor view otherwise "
 			@"view-based layout %@ cannot be set", _layoutContext, self);
@@ -358,7 +358,7 @@ yet, it is created. */
 	}
 
 	[self resizeLayoutItems: items 
-	          toScaleFactor: [[self layoutContext] itemScaleFactor]];
+	          toScaleFactor: [_layoutContext itemScaleFactor]];
 
 	/* Only reload from the data source if the layout item tree visible in the 
 	   table/outline view has been mutated */
@@ -393,14 +393,14 @@ yet, it is created. */
 	// NOTE: Table view returns -1 when no row exists at location (but not 
 	// NSNotFound as we could expect it)
 	if (row != -1 && row != NSNotFound)
-		return [[[self layoutContext] arrangedItems] objectAtIndex: row];
+		return [[_layoutContext arrangedItems] objectAtIndex: row];
 	
 	return item;
 }
 
 - (NSRect) displayRectOfItem: (ETLayoutItem *)item
 {
-	int row = [[[self layoutContext] arrangedItems] indexOfObject: item];
+	int row = [[_layoutContext arrangedItems] indexOfObject: item];
 
 	return [[self tableView] rectOfRow: row];
 }
@@ -414,7 +414,7 @@ yet, it is created. */
 - (NSArray *) selectedItems
 {
 	NSIndexSet *indexes = [[self tableView] selectedRowIndexes];
-	NSArray *items = [[self layoutContext] arrangedItems];
+	NSArray *items = [_layoutContext arrangedItems];
 	NSMutableArray *selectedItems = 
 		[NSMutableArray arrayWithCapacity: [indexes count]];
 	
@@ -457,7 +457,7 @@ yet, it is created. */
 
 - (int) numberOfRowsInTableView: (NSTableView *)tv
 {
-	NSArray *layoutItems = [[self layoutContext] arrangedItems];
+	NSArray *layoutItems = [_layoutContext arrangedItems];
 	
 	ETDebugLog(@"Returns %d as number of items in table view %@", [layoutItems count], tv);
 	
@@ -466,7 +466,7 @@ yet, it is created. */
 
 - (id) tableView: (NSTableView *)tv objectValueForTableColumn: (NSTableColumn *)column row: (int)rowIndex
 {
-	NSArray *layoutItems = [[self layoutContext] arrangedItems];
+	NSArray *layoutItems = [_layoutContext arrangedItems];
 	ETLayoutItem *item = nil;
 	
 	if (rowIndex >= [layoutItems count])
@@ -497,7 +497,7 @@ yet, it is created. */
 
 - (void) tableView: (NSTableView *)tv setObjectValue: (id)value forTableColumn: (NSTableColumn *)column row: (int)rowIndex
 {
-	NSArray *layoutItems = [[self layoutContext] arrangedItems];
+	NSArray *layoutItems = [_layoutContext arrangedItems];
 	ETLayoutItem *item = nil;
 	
 	if (rowIndex >= [layoutItems count])
@@ -659,14 +659,14 @@ yet, it is created. */
 - (void) tableView: (NSTableView *)tv sortDescriptorsDidChange: (NSArray *)oldDescriptors
 {
 	ETLog(@"Did change sort from %@ to %@", oldDescriptors, [tv sortDescriptors]);
-	[[self layoutContext] sortWithSortDescriptors: [tv sortDescriptors] recursively: NO];
+	[_layoutContext sortWithSortDescriptors: [tv sortDescriptors] recursively: NO];
 	[tv reloadData];
 }
 
 - (ETLayoutItem *) doubleClickedItem
 {
 	NSTableView *tv = [self tableView];
-	NSArray *layoutItems = [[self layoutContext] arrangedItems];
+	NSArray *layoutItems = [_layoutContext arrangedItems];
 	ETLayoutItem *item = [layoutItems objectAtIndex: [tv clickedRow]];
 	
 	return item;
