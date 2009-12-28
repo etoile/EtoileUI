@@ -10,7 +10,7 @@
 #import <EtoileFoundation/ETCollection.h>
 #import "ETPaneLayout.h"
 #import "ETCompatibility.h"
-#import "NSView+Etoile.h"
+#import "ETGeometry.h"
 #import "ETSelectTool.h"
 #import "ETLayoutItem.h"
 #import "ETLayoutItem+Factory.h"

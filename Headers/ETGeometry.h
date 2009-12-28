@@ -39,6 +39,12 @@ static inline BOOL ETIsNullRect(NSRect rect)
 	return NSEqualRects(rect, ETNullRect);
 }
 
+/** Returns a rect with the given origin and size. */
+static inline NSRect ETMakeRect(NSPoint origin, NSSize size)
+{
+	return NSMakeRect(origin.x, origin.y, size.width, size.height);
+}
+
 /** Returns a rect that uses aSize as its size and centered inside the given rect.
 
 The returned rect is expressed relative the given rect parent coordinate space.<br />
@@ -70,6 +76,30 @@ To get a rect expressed relative the the given rect itself, see ETCenteredRect()
 
 The returned rect origin is valid whether or not your coordinate space is flipped. */
 extern NSRect ETScaledRect(NSSize aSize, NSRect inRect, ETContentAspect anAspect);
+
+/** Returns a size with a width and height multiplied by the given factor. */
+static inline NSSize ETScaleSize(NSSize size, float factor)
+{	
+	size.width *= factor;
+	size.height *= factor;
+
+	return size;
+}
+
+/** Returns a rect with a width and height multiplied by the given factor and 
+by shifting the origin to retain the original rect center location. */
+static inline NSRect ETScaleRect(NSRect frame, float factor)
+{
+	NSSize prevSize = frame.size;
+	
+	frame.size = ETScaleSize(frame.size, factor);
+	// NOTE: frame.origin.x -= (frame.size.width - prevSize.width) / 2;
+	//       frame.origin.y -= (frame.size.height - prevSize.height) / 2;
+	frame.origin.x += (prevSize.width - frame.size.width) / 2;
+	frame.origin.y += (prevSize.height - frame.size.height) / 2;
+
+	return frame;
+}
 
 /** Returns a rect with a positive width and height by shifting the origin as 
 needed. */

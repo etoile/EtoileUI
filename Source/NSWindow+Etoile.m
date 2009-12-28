@@ -6,10 +6,10 @@
 	License: Modified BSD (see COPYING)
  */
 
-#import <EtoileUI/NSWindow+Etoile.h>
-#import <EtoileUI/NSView+Etoile.h>
-#import <EtoileUI/ETObjectBrowserLayout.h>
-#import <EtoileUI/ETCompatibility.h>
+#import "NSWindow+Etoile.h"
+#import "ETGeometry.h"
+#import "ETObjectBrowserLayout.h"
+#import "ETCompatibility.h"
 
 #define WINDOW_CONTENT_RECT NSMakeRect(200, 200, 600, 300)
 

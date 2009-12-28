@@ -87,9 +87,3 @@ This protocol is subject to change or be removed. */
 - (BOOL) isWidget;
 @end
 
-
-/* Utility Functions */
-
-NSRect ETMakeRect(NSPoint origin, NSSize size);
-NSRect ETScaleRect(NSRect frame, float factor);
-NSSize ETScaleSize(NSSize size, float factor);

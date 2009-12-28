@@ -396,30 +396,3 @@ should be dispatched. */
 
 @end
 
-/* Utility Functions */
-
-NSRect ETMakeRect(NSPoint origin, NSSize size)
-{
-	return NSMakeRect(origin.x, origin.y, size.width, size.height);
-}
-
-NSRect ETScaleRect(NSRect frame, float factor)
-{
-	NSSize prevSize = frame.size;
-	
-	frame.size = ETScaleSize(frame.size, factor);
-	// NOTE: frame.origin.x -= (frame.size.width - prevSize.width) / 2;
-	//       frame.origin.y -= (frame.size.height - prevSize.height) / 2;
-	frame.origin.x += (prevSize.width - frame.size.width) / 2;
-	frame.origin.y += (prevSize.height - frame.size.height) / 2;
-
-	return frame;
-}
-
-NSSize ETScaleSize(NSSize size, float factor)
-{	
-	size.width *= factor;
-	size.height *= factor;
-
-	return size;
-}
