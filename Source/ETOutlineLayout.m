@@ -283,6 +283,7 @@ expanded and collapsed by getting automatically a related outline arrow. */
 	   on GNUstep, because Cocoa won't let the editing happens in such case 
 	   even if -isEditable returns YES for the cell. Moreover
 	   -[NSImageCell isEditable] returns NO by default on Cocoa unlike GNUstep.
+
 	   TODO: Don't call -setValue:forProperty: if the property is read-only. In 
 	   theory, this should never happen since the cell shouldn't be editable if 
 	   the property is read-only. But having a safety check, wouldn't hurt and 
@@ -307,12 +308,11 @@ expanded and collapsed by getting automatically a related outline arrow. */
 
 	id droppedObject = [[ETPickboard localPickboard] popObject];
 	ETLayoutItem *dropTarget = (item != nil ? item : _layoutContext);
-	ETLayoutItem *baseItem = [(ETLayoutItem *)_layoutContext baseItem];
 
-	return [[baseItem actionHandler] handleDropObject: droppedObject
-	                                          atIndex: index
-	                                           onItem: dropTarget
-		                                  coordinator: [ETPickDropCoordinator sharedInstance]];
+	return [[dropTarget actionHandler] handleDropObject: droppedObject
+	                                            atIndex: index
+	                                             onItem: dropTarget
+		                                    coordinator: [ETPickDropCoordinator sharedInstance]];
 }
 
 - (NSDragOperation) outlineView: (NSOutlineView *)outlineView 
@@ -327,13 +327,12 @@ expanded and collapsed by getting automatically a related outline arrow. */
 	
 	id draggedObject = [[ETPickboard localPickboard] firstObject];
 	int dropIndex = index;
-	ETLayoutItem *baseItem = [_layoutContext baseItem];
 	ETLayoutItem *validDropTarget = 
-		[[baseItem actionHandler] handleValidateDropObject: draggedObject
-		                                           atPoint: ETNullPoint
-		                                     proposedIndex: &dropIndex
-	                                                onItem: dropTarget
-	                                           coordinator: [ETPickDropCoordinator sharedInstance]];
+		[[dropTarget actionHandler] handleValidateDropObject: draggedObject
+		                                             atPoint: ETNullPoint
+		                                       proposedIndex: &dropIndex
+	                                                  onItem: dropTarget
+	                                             coordinator: [ETPickDropCoordinator sharedInstance]];
 
 	/* -handleValidateXXX can return nil, the drop target, the drop target parent or another child */	
 	if (nil == validDropTarget)
@@ -363,18 +362,12 @@ expanded and collapsed by getting automatically a related outline arrow. */
 - (BOOL) outlineView: (NSOutlineView *)outlineView 
 	writeItems: (NSArray *)items toPasteboard: (NSPasteboard *)pboard
 {
-	// NOTE: On Mac OS X and GNUstep, -[NSApp currentEvent] returns a later 
-	// event rather than the mouse down or dragged that began the drag when the 
-	// user moves the mouse too quickly.
+	// NOTE: See -canDragRowsWithIndexes:atPoint: to understand -backendDragEvent
 	NSEvent *backendEvent = [self backendDragEvent];
 	NSEventType eventType = [backendEvent type];
 
-	NSAssert3([[backendEvent window] isEqual: [outlineView window]], @"Backend "
-		"event %@ in %@ -outlineView:writeItems:toPasteboard: doesn't belong "
-		"to the outline view %@", backendEvent, self, outlineView);
-	NSAssert2(eventType == NSLeftMouseDown || eventType == NSLeftMouseDragged, 
-		@"Backend event %@ in %@ -outlineView:writeItems:toPasteboard: must be "
-		"of type NSLeftMouseDown/Dragged", eventType, self);
+	NSParameterAssert([[backendEvent window] isEqual: [outlineView window]]);
+	NSParameterAssert(eventType == NSLeftMouseDown || eventType == NSLeftMouseDragged);
 
 	/* Convert drag location from window coordinates to the receiver coordinates */
 	NSPoint localPoint = [outlineView convertPoint: [backendEvent locationInWindow] fromView: nil];
@@ -623,11 +616,7 @@ expanded and collapsed by getting automatically a related outline arrow. */
 
 	/* We check the current event is precisely the mouse down (cocoa) or dragged 
 	   (gnustep) event that triggers the present drag request */
-	NSAssert3(NSEqualPoints([event locationInWindow], pointInWindow), @"For "
-		@"%@, current event point %@ must be equal to point %@ passed by "
-		@"-canDragRowsWithIndexes:point:", self, 
-		NSStringFromPoint([event locationInWindow]), 
-		NSStringFromPoint(pointInWindow));
+	NSParameterAssert(NSEqualPoints([event locationInWindow], pointInWindow));
 #endif
 
 	[[self dataSource] setBackendDragEvent: event];

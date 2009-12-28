@@ -28,10 +28,6 @@
 - (void) _updateDisplayedPropertiesFromSource;
 @end
 
-@interface ETTableLayout (ETableLayoutDisplayViewGeneration)
-- (NSScrollView *) scrollingTableView;
-@end
-
 #define DEFAULT_ROW_HEIGHT 16
 
 
@@ -440,7 +436,6 @@ See ETColumnFragment protocol to customize the returned column. */
 - (NSRect) displayRectOfItem: (ETLayoutItem *)item
 {
 	int row = [[_layoutContext arrangedItems] indexOfObject: item];
-
 	return [[self tableView] rectOfRow: row];
 }
 
@@ -503,23 +498,25 @@ See ETColumnFragment protocol to customize the returned column. */
 	return [layoutItems count];
 }
 
-- (id) tableView: (NSTableView *)tv objectValueForTableColumn: (NSTableColumn *)column row: (int)rowIndex
+- (id) tableView: (NSTableView *)tv 
+	objectValueForTableColumn: (NSTableColumn *)column row: (int)rowIndex
 {
 	NSArray *layoutItems = [_layoutContext arrangedItems];
 	ETLayoutItem *item = nil;
 	
 	if (rowIndex >= [layoutItems count])
 	{
-		ETLog(@"WARNING: Row index %d uncoherent with number of items %d in %@", rowIndex, [layoutItems count], self);
+		ETLog(@"WARNING: Row index %d uncoherent with number of items %d in %@", 
+			rowIndex, [layoutItems count], self);
 		return nil;
 	}
 	
 	item = [layoutItems objectAtIndex: rowIndex];
 	
-	//ETDebugLog(@"Returns %@ as object value in table view %@", [item valueForProperty: [column identifier]], tv);
+	//ETLog(@"Returns %@ as object value in table view %@", [item valueForProperty: [column identifier]], tv);
 	
 	id value = [item valueForProperty: [column identifier]];
-	BOOL blankColumnIdentifier = [column identifier] == nil || [[column identifier] isEqual: @""];
+	BOOL blankColumnIdentifier = ([column identifier] == nil || [[column identifier] isEqual: @""]);
 	
 	if (value == nil && ([tv numberOfColumns] == 1 || blankColumnIdentifier))
 		value = [item value];
@@ -534,26 +531,29 @@ See ETColumnFragment protocol to customize the returned column. */
 	return [value objectValue];
 }
 
-- (void) tableView: (NSTableView *)tv setObjectValue: (id)value forTableColumn: (NSTableColumn *)column row: (int)rowIndex
+- (void) tableView: (NSTableView *)tv 
+	setObjectValue: (id)value forTableColumn: (NSTableColumn *)column row: (int)rowIndex
 {
 	NSArray *layoutItems = [_layoutContext arrangedItems];
 	ETLayoutItem *item = nil;
 	
 	if (rowIndex >= [layoutItems count])
 	{
-		ETLog(@"WARNING: Row index %d uncoherent with number of items %d in %@", rowIndex, [layoutItems count], self);
+		ETLog(@"WARNING: Row index %d uncoherent with number of items %d in %@", 
+			rowIndex, [layoutItems count], self);
 		return;
 	}
 	
 	item = [layoutItems objectAtIndex: rowIndex];
 	
-	//ETDebugLog(@"Sets %@ as object value in table view %@", value, tv);
+	//ETLog(@"Sets %@ as object value in table view %@", value, tv);
 
 	/* Handles the case where a cell with no content is double-clicked/edited 
 	   (NSImageCell or NSLevelIndicatorCell for example), this is only needed 
 	   on GNUstep, because Cocoa won't let the editing happens in such case 
 	   even if -isEditable returns YES for the cell. Moreover
 	   -[NSImageCell isEditable] returns NO by default on Cocoa unlike GNUstep.
+
 	   TODO: Don't call -setValue:forProperty: if the property is read-only. In 
 	   theory, this should never happen since the cell shouldn't be editable if 
 	   the property is read-only. But having a safety check, wouldn't hurt and 
@@ -578,18 +578,12 @@ See ETColumnFragment protocol to customize the returned column. */
 - (BOOL) tableView: (NSTableView *)tv writeRowsWithIndexes: (NSIndexSet *)rowIndexes 
 	toPasteboard: (NSPasteboard*)pboard 
 {
-	// NOTE: On Mac OS X and GNUstep, -[NSApp currentEvent] returns a later 
-	// event rather than the mouse down or dragged that began the drag when the 
-	// user moves the mouse too quickly.
+	// NOTE: See -canDragRowsWithIndexes:atPoint: to understand -backendDragEvent
 	NSEvent *backendEvent = [self backendDragEvent]; 
 	NSEventType eventType = [backendEvent type];
 
-	NSAssert3([[backendEvent window] isEqual: [tv window]], @"Backend event %@ in %@"
-		"-tableView:writeRowsWithIndexes:toPasteboard: doesn't belong to the "
-		"table view %@", backendEvent, self, tv);
-	NSAssert2(eventType == NSLeftMouseDown || eventType == NSLeftMouseDragged, 
-		@"Backend event %@ in %@ -tableView:writeRowsWithIndexes:toPasteboard: "
-		"must be of type NSLeftMouseDown/Dragged", eventType, self);
+	NSParameterAssert([[backendEvent window] isEqual: [tv window]]);
+	NSParameterAssert(eventType == NSLeftMouseDown || eventType == NSLeftMouseDragged);
 	
 	/* Convert drag location from window coordinates to the receiver coordinates */
 	NSPoint localPoint = [tv convertPoint: [backendEvent locationInWindow] fromView: nil];
@@ -624,14 +618,13 @@ See ETColumnFragment protocol to customize the returned column. */
 		_layoutContext, [info draggingSourceOperationMask], op);
 	
 	id draggedObject = [[ETPickboard localPickboard] firstObject];
-	ETLayoutItem *baseItem = [_layoutContext baseItem];
 	NSInteger dropIndex = (NSTableViewDropAbove == op ? row : ETUndeterminedIndex);
 	ETLayoutItem *validDropTarget = 
-		[[baseItem actionHandler] handleValidateDropObject: draggedObject
-		                                           atPoint: ETNullPoint
-		                                     proposedIndex: &dropIndex
-	                                                onItem: dropTarget
-	                                           coordinator: [ETPickDropCoordinator sharedInstance]];
+		[[dropTarget actionHandler] handleValidateDropObject: draggedObject
+		                                             atPoint: ETNullPoint
+		                                       proposedIndex: &dropIndex
+	                                                  onItem: dropTarget
+	                                             coordinator: [ETPickDropCoordinator sharedInstance]];
 
 	/* -handleValidateXXX can return nil, the drop target, the drop target parent or another child */	
 	if (nil == validDropTarget)
@@ -679,7 +672,6 @@ See ETColumnFragment protocol to customize the returned column. */
 		[info draggingSourceOperationMask], op);
 
 	id droppedObject = [[ETPickboard localPickboard] popObject];
-	ETLayoutItem *baseItem = [(ETLayoutItem *)_layoutContext baseItem];
 	ETLayoutItemGroup *dropTarget = _layoutContext;
 	
 	if (op == NSTableViewDropOn)
@@ -687,10 +679,10 @@ See ETColumnFragment protocol to customize the returned column. */
 		dropTarget = [[dropTarget arrangedItems] objectAtIndex: row];
 	}
 
-	[[baseItem actionHandler] handleDropObject: droppedObject 
-	                                   atIndex: row
-	                                    onItem: dropTarget
-	                               coordinator: [ETPickDropCoordinator sharedInstance]];
+	[[dropTarget actionHandler] handleDropObject: droppedObject 
+	                                     atIndex: row
+	                                      onItem: dropTarget
+	                                 coordinator: [ETPickDropCoordinator sharedInstance]];
 
 	return YES;
 }
@@ -794,11 +786,7 @@ Returns the cached drag image. */
 
 	/* We check the current event is precisely the mouse down (cocoa) or dragged 
 	   (gnustep) event that triggers the present drag request */
-	NSAssert3(NSEqualPoints([event locationInWindow], pointInWindow), @"For "
-		@"%@, current event point %@ must be equal to point %@ passed by "
-		@"-canDragRowsWithIndexes:point:", self, 
-		NSStringFromPoint([event locationInWindow]), 
-		NSStringFromPoint(pointInWindow));
+	NSParameterAssert(NSEqualPoints([event locationInWindow], pointInWindow));
 #endif
 
 	[[self dataSource] setBackendDragEvent: event];
@@ -852,9 +840,13 @@ receiver. */
 
 /* Private Helper Methods (not in use) */
 
-@implementation ETTableLayout (ETableLayoutDisplayViewGeneration)
+@interface ETTableLayout (ETTableViewGeneration)
+- (NSScrollView *) scrollingTableView;
+@end
 
-/** Build a table view enclosed in a scroll view from scratch. */
+@implementation ETTableLayout (ETTableViewGeneration)
+
+/** Builds a table view enclosed in a scroll view from scratch. */
 - (NSScrollView *) scrollingTableView
 {
 	NSTableView *tv = nil;
