@@ -27,7 +27,6 @@
 
 @interface ETTableLayout (Private)
 - (void) _updateDisplayedPropertiesFromSource;
-- (NSArray *) selectionIndexPaths;
 @end
 
 @interface ETTableLayout (ETableLayoutDisplayViewGeneration)
@@ -159,16 +158,14 @@ The property names are used as the column identifiers. */
 column doesn't exist as an invisible column for a property, then it is created 
 and inserted immediately.
 
-The property names are used as the column identifiers. */
+The property names are used as the column identifiers.
+
+Will raise an NSInvalidArgumentException when the properties array is nil. */
 - (void) setDisplayedProperties: (NSArray *)properties
 {
 	ETDebugLog(@"Set displayed properties %@ of layout %@", properties, self);
 
-	if (properties == nil)
-	{
-		[NSException raise: NSInvalidArgumentException format: @"For %@ "
-			@"-setDisplayedProperties argument must never be nil", self];
-	}
+	NILARG_EXCEPTION_TEST(properties);
 
 	NSTableView *tv = [self tableView];
 	NSArray *tableViewSortKeys = (id)[[[tv sortDescriptors] mappedCollection] key];
@@ -347,6 +344,9 @@ ETTableLayout machinery. */
 	return AUTORELEASE(column);
 }
 
+/** Returns the column associated with the given property.
+
+See ETColumnFragment protocol to customize the returned column. */
 - (id <ETColumnFragment>) columnForProperty: (NSString *)property
 {
 	return [self tableColumnWithIdentifierAndCreateIfAbsent: property];
@@ -394,14 +394,11 @@ ETTableLayout machinery. */
 - (ETLayoutItem *) itemAtLocation: (NSPoint)location
 {
 	int row = [[self tableView] rowAtPoint: location];
-	id item = nil;
 	
-	// NOTE: Table view returns -1 when no row exists at location (but not 
-	// NSNotFound as we could expect it)
-	if (row != -1 && row != NSNotFound)
+	if (ETUndeterminedIndex != row)
 		return [[_layoutContext arrangedItems] objectAtIndex: row];
 	
-	return item;
+	return nil;
 }
 
 - (NSRect) displayRectOfItem: (ETLayoutItem *)item
