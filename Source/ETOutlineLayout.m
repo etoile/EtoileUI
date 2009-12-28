@@ -93,7 +93,7 @@
 		NSTableColumn *column = [_propertyColumns objectForKey: property];
 		
 		if (column == nil)
-			column = [self _createTableColumnWithIdentifier: property]; // FIXME: ETTableLayout private method
+			column = [self createTableColumnWithIdentifier: property];
 			
 		if (isFirstColumn)
 		{
@@ -398,7 +398,7 @@ expanded and collapsed by getting automatically a related outline arrow. */
 	// NOTE: On Mac OS X and GNUstep, -[NSApp currentEvent] returns a later 
 	// event rather than the mouse down or dragged that began the drag when the 
 	// user moves the mouse too quickly.
-	NSEvent *backendEvent = [self lastDragEvent];
+	NSEvent *backendEvent = [self backendDragEvent];
 	NSEventType eventType = [backendEvent type];
 
 	NSAssert3([[backendEvent window] isEqual: [outlineView window]], @"Backend "
@@ -662,7 +662,7 @@ expanded and collapsed by getting automatically a related outline arrow. */
 		NSStringFromPoint(pointInWindow));
 #endif
 
-	[[self dataSource] setLastDragEvent: event];
+	[[self dataSource] setBackendDragEvent: event];
 
 	return YES;
 }

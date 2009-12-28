@@ -34,11 +34,13 @@
 	NSImage *_dragImage; /* Cached drag image generated before the items are removed */
 
 	@private
+	/* The widget event which initiated the drag when there is one underway */
+	NSEvent *_backendDragEvent;
 	/* The sort descriptors that combine the table view sort descriptors and the 
 	   table column sort descriptor prototypes. */
 	NSMutableArray *_currentSortDescriptors;
 	NSFont *_contentFont;
-	NSEvent *_lastDragEvent;
+
 
 }
 
@@ -63,10 +65,9 @@
 /* Framework Private & Subclassing */
 
 - (NSTableColumn *) tableColumnWithIdentifierAndCreateIfAbsent: (NSString *)identifier;
-// TODO: Moves this method into an NSTableColumn category
-- (NSTableColumn *) _createTableColumnWithIdentifier: (NSString *)property;
-- (NSEvent *) lastDragEvent;
-- (void) setLastDragEvent: (NSEvent *)event;
+- (NSTableColumn *) createTableColumnWithIdentifier: (NSString *)property;
+- (NSEvent *) backendDragEvent;
+- (void) setBackendDragEvent: (NSEvent *)event;
 - (NSImage *) dragImage;
 
 @end

@@ -189,7 +189,7 @@ The property names are used as the column identifiers. */
 		NSTableColumn *column = [_propertyColumns objectForKey: property];
 
 		if (column == nil)
-			column = [self _createTableColumnWithIdentifier: property];
+			column = [self createTableColumnWithIdentifier: property];
 		
 		[tv addTableColumn: column];
 		
@@ -301,7 +301,9 @@ returned by -allTableColumns. */
 	}
 }
 
-/** Returns the column associated with the given property, the column might be 
+/** This method is only exposed to be used internally by EtoileUI.
+
+Returns the column associated with the given property, the column might be 
 visible or not depending on -displayedProperties. If the column doesn't exist 
 yet, it is created. */
 - (NSTableColumn *) tableColumnWithIdentifierAndCreateIfAbsent: (NSString *)property
@@ -310,14 +312,18 @@ yet, it is created. */
 
 	if (column == nil)
 	{
-		column = [self _createTableColumnWithIdentifier: property];
+		column = [self createTableColumnWithIdentifier: property];
 		[_propertyColumns setObject: column forKey: property];
 	}
 
 	return column;
 }
 
-- (NSTableColumn *) _createTableColumnWithIdentifier: (NSString *)property
+/** This method is only exposed to be used internally by EtoileUI.
+
+Instantiates and returns a new table column initialized to integrate with 
+ETTableLayout machinery. */
+- (NSTableColumn *) createTableColumnWithIdentifier: (NSString *)property
 {
 	NSTableHeaderCell *headerCell = [[NSTableHeaderCell alloc] initTextCell: property]; // FIXME: Use display name
 	NSCell *dataCell = [[NSCell alloc] initTextCell: @""];
@@ -542,7 +548,7 @@ yet, it is created. */
 	// NOTE: On Mac OS X and GNUstep, -[NSApp currentEvent] returns a later 
 	// event rather than the mouse down or dragged that began the drag when the 
 	// user moves the mouse too quickly.
-	NSEvent *backendEvent = [self lastDragEvent]; 
+	NSEvent *backendEvent = [self backendDragEvent]; 
 	NSEventType eventType = [backendEvent type];
 
 	NSAssert3([[backendEvent window] isEqual: [tv window]], @"Backend event %@ in %@"
@@ -674,18 +680,29 @@ yet, it is created. */
 
 /* Framework Private & Subclassing */
 
-- (NSEvent *) lastDragEvent
+/** This method is only exposed to be used internally by EtoileUI.
+
+Returns the widget event that tries to start a drag session. */
+- (NSEvent *) backendDragEvent
 {
-	return _lastDragEvent;
+	return _backendDragEvent;
 }
 
-- (void) setLastDragEvent: (NSEvent *)event
+/** This method is only exposed to be used internally by EtoileUI.
+
+Sets the widget event that tries to start a drag session.
+
+This method must be invoked by the widget (e.g. ETTableView) on every attempt to 
+start a drag. */
+- (void) setBackendDragEvent: (NSEvent *)event
 {
 	ETDebugLog(@"Set last drag event to %@", event);
-	_lastDragEvent = event;
+	_backendDragEvent = event;
 }
 
-/** Returns the cached drag image. */
+/** This method is only exposed to be used internally by EtoileUI.
+
+Returns the cached drag image. */
 - (NSImage *) dragImage
 {
 	return _dragImage;
@@ -751,7 +768,7 @@ yet, it is created. */
 		NSStringFromPoint(pointInWindow));
 #endif
 
-	[[self dataSource] setLastDragEvent: event];
+	[[self dataSource] setBackendDragEvent: event];
 
 	return YES;
 }
