@@ -322,13 +322,10 @@ yet, it is created. */
 	NSTableHeaderCell *headerCell = [[NSTableHeaderCell alloc] initTextCell: property]; // FIXME: Use display name
 	NSCell *dataCell = [[NSCell alloc] initTextCell: @""];
 	NSTableColumn *column = [[NSTableColumn alloc] initWithIdentifier: property];
-	// FIXME: Implement sort descriptor support on NSTableView and NSTableColumn
-#ifndef GNUSTEP
 	// TODO: -compare: is really a suboptimal choice in various cases.
 	// For example, NSString provides -localizedCompare: unlike NSNumber, NSDate etc.
 	NSSortDescriptor *sortDescriptor = AUTORELEASE([[NSSortDescriptor alloc] 
 		initWithKey: property ascending: YES selector: @selector(compare:)]);
-#endif
 
 	[column setHeaderCell: headerCell];
 	RELEASE(headerCell);
@@ -339,9 +336,7 @@ yet, it is created. */
 #endif
 	RELEASE(dataCell);
 	[column setEditable: NO];
-#ifndef GNUSTEP
 	[column setSortDescriptorPrototype: sortDescriptor];
-#endif
 
 	return AUTORELEASE(column);
 }
