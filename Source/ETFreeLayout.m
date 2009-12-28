@@ -15,7 +15,6 @@
 #import "ETLayoutItem.h"
 #import "EtoileUIProperties.h"
 #import "ETSelectTool.h"
-#import "NSView+Etoile.h"
 #import "ETCompatibility.h"
 
 @implementation ETFreeLayout

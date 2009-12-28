@@ -10,7 +10,6 @@
 #import "ETHandle.h"
 #import "ETCompatibility.h"
 #import "ETGeometry.h"
-#import "NSView+Etoile.h"
 
 NSString *kETMediatedInstrumentProperty = @"mediatedInstrument";
 NSString *kETManipulatedObjectProperty = @"manipulatedObject";

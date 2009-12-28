@@ -13,10 +13,9 @@
 #import "ETComputedLayout.h"
 #import "ETEvent.h"
 #import "ETLayoutItem.h"
-#import "ETLayoutItem+Factory.h"
+#import "ETLayoutItemFactory.h"
 #import "EtoileUIProperties.h"
 #import "ETSelectTool.h"
-#import "NSView+Etoile.h"
 #import "ETCompatibility.h"
 
 // TODO: Find a better name...
@@ -37,7 +36,7 @@ Initializes and returns a new icon layout. */
 
 	[self setAttachedInstrument: [ETSelectAndClickTool instrument]];
 
-	ETLayoutItem *templateItem = [ETLayoutItem item];
+	ETLayoutItem *templateItem = [[ETLayoutItemFactory factory] item];
 	ETIconAndLabelStyle *iconStyle = AUTORELEASE([[ETIconAndLabelStyle alloc] init]);
 
 	[self setTemplateItem: templateItem];

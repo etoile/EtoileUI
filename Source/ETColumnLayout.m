@@ -7,6 +7,7 @@
  */
 
 #import <EtoileFoundation/Macros.h>
+#import <EtoileFoundation/ETCollection.h>
 #import "ETColumnLayout.h"
 #import "ETGeometry.h"
 #import "ETLayoutItem.h"

@@ -7,6 +7,7 @@
  */
 
 #import <EtoileFoundation/Macros.h>
+#import <EtoileFoundation/ETCollection.h>
 #import "ETEventProcessor.h"
 #import "ETDecoratorItem.h"
 #import "ETGeometry.h"

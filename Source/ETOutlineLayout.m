@@ -17,7 +17,6 @@
 #import "ETLayoutItemGroup.h"
 #import "ETPickboard.h"
 #import "ETPickDropCoordinator.h"
-#import "NSView+Etoile.h"
 #import "ETCompatibility.h"
 
 @interface NSOutlineView (EtoileUI)

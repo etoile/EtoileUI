@@ -17,6 +17,7 @@
 #import "ETLayoutItem+Factory.h"
 #import "ETView.h"
 #import "ETWindowItem.h"
+#import "NSView+Etoile.h"
 #import "NSWindow+Etoile.h"
 #import "ETCompatibility.h"
 

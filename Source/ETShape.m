@@ -10,7 +10,6 @@
 #import "ETShape.h"
 #import "ETCompatibility.h"
 #import "ETLayoutItem.h"
-#import "NSView+Etoile.h"
 
 typedef NSBezierPath* (*PathProviderFunction)(id, SEL, NSRect);
 

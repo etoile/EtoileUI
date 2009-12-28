@@ -21,7 +21,6 @@
 #import "ETPickDropActionHandler.h"
 #import "ETPickDropCoordinator.h"
 #import "ETCompatibility.h"
-#import "NSView+Etoile.h"
 
 #define SELECTION_BY_RANGE_KEY_MASK NSShiftKeyMask
 #define SELECTION_BY_ONE_KEY_MASK NSCommandKeyMask

@@ -17,6 +17,7 @@
 #import "ETScrollableAreaItem.h"
 #import "ETWindowItem.h"
 #import "NSObject+EtoileUI.h"
+#import "NSView+Etoile.h"
 #import "ETCompatibility.h"
 
 
