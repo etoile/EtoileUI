@@ -17,7 +17,8 @@
 
 @interface ETOutlineLayout : ETTableLayout 
 {
-	BOOL _treatsGroupsAsStacks; // TODO: Implement or remove (see implementaion)
+	@private
+	BOOL _treatsGroupsAsStacks; // TODO: Implement or remove (see implementation)
 }
 
 @end

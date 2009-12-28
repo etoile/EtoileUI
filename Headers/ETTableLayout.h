@@ -66,6 +66,8 @@
 
 - (NSTableColumn *) tableColumnWithIdentifierAndCreateIfAbsent: (NSString *)identifier;
 - (NSTableColumn *) createTableColumnWithIdentifier: (NSString *)property;
+- (BOOL) canRemoveTableColumn: (NSTableColumn *)aTableColumn;
+- (BOOL) prepareTableColumn: (NSTableColumn *)aTableColum isFirst: (BOOL)isFirstColumn;
 - (NSEvent *) backendDragEvent;
 - (void) setBackendDragEvent: (NSEvent *)event;
 - (NSImage *) dragImage;

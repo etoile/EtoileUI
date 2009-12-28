@@ -177,8 +177,13 @@ Will raise an NSInvalidArgumentException when the properties array is nil. */
 	   NOTE: We cannot enumerate [tv tableColumns] directly because we remove columns */
 	FOREACH([NSArray arrayWithArray: [tv tableColumns]], column, NSTableColumn *)
 	{
-		[tv removeTableColumn: column];
+		if ([self canRemoveTableColumn: column])
+		{
+			[tv removeTableColumn: column];
+		}
 	}
+
+	BOOL isFirstColumn = YES;
 
 	/* Add all columns to be displayed */	
 	FOREACH(properties, property, NSString *)
@@ -186,10 +191,18 @@ Will raise an NSInvalidArgumentException when the properties array is nil. */
 		NSTableColumn *column = [_propertyColumns objectForKey: property];
 
 		if (column == nil)
+		{
 			column = [self createTableColumnWithIdentifier: property];
-		
-		[tv addTableColumn: column];
-		
+		}
+
+		BOOL shouldInsertColumn = [self prepareTableColumn: column 
+		                                           isFirst: isFirstColumn];
+
+		if (shouldInsertColumn)
+		{
+			[tv addTableColumn: column];
+		}
+
 		BOOL usesSortDescriptorProto = ([tableViewSortKeys containsObject: property] == NO
 			&& [column sortDescriptorPrototype] != nil);
 
@@ -197,6 +210,8 @@ Will raise an NSInvalidArgumentException when the properties array is nil. */
 		{
 			[_currentSortDescriptors addObject: [column sortDescriptorPrototype]];
 		}
+
+		isFirstColumn = NO;
 	}
 }
 
@@ -339,6 +354,31 @@ ETTableLayout machinery. */
 	[column setSortDescriptorPrototype: sortDescriptor];
 
 	return AUTORELEASE(column);
+}
+
+/** This method is only exposed to be used internally by EtoileUI.
+
+Returns whether the given column can be removed from the widget.
+
+By default, returns YES since all NSTableView columns can be removed. */
+- (BOOL) canRemoveTableColumn: (NSTableColumn *)aTableColumn
+{
+	return YES;
+}
+
+/** This method is only exposed to be used internally by EtoileUI.
+
+Gives the possibility to customize every table column archived with the widget 
+or just instantiated by -createTableColumnWithIdentifier: and returns whether 
+the column should be inserted in the widget or not (in case the column was not 
+removed or this method handles the insertion).<br />
+By default, does nothing and returns YES.
+
+This method will be invoked every time the displayed properties change and 
+a new column not in use previously needs to be prepared. */
+- (BOOL) prepareTableColumn: (NSTableColumn *)aTableColum isFirst: (BOOL)isFirstColumn
+{
+	return YES;
 }
 
 /** Returns the column associated with the given property.
@@ -690,7 +730,7 @@ This method must be invoked by the widget (e.g. ETTableView) on every attempt to
 start a drag. */
 - (void) setBackendDragEvent: (NSEvent *)event
 {
-	ETDebugLog(@"Set last drag event to %@", event);
+	ETDebugLog(@"Set backend drag event to %@", event);
 	_backendDragEvent = event;
 }
 

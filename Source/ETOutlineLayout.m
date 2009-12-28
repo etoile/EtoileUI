@@ -60,68 +60,37 @@
 
 // NOTE: Dealloc and Awaking from nib handled by ETTableLayout superview.
 
-/* Update column visibility */
-- (void) setDisplayedProperties: (NSArray *)properties
+- (BOOL) canRemoveTableColumn: (NSTableColumn *)aTableColumn
 {
-	if (properties == nil)
+	return ([aTableColumn isEqual: [[self outlineView] outlineTableColumn]] == NO);
+}
+
+/* Requires the outline column to be the first column. */
+- (BOOL) prepareTableColumn: (NSTableColumn *)column isFirst: (BOOL)isFirstColumn
+{
+	/* We cannot use -setOutlineTableColumn:, the outline indicator would be lost.
+	   That's why we sync the outline column attribute-by-attribute with the first column. */
+	NSTableColumn *outlineColumn = [[self outlineView] outlineTableColumn];
+	BOOL shouldInsertColumn = ([[[self outlineView] tableColumns] containsObject: column] == NO);
+
+	if (isFirstColumn)
 	{
-		[NSException raise: NSInvalidArgumentException format: @"For %@ "
-			@"-setDisplayedProperties argument must never be nil", self];
+		[outlineColumn setIdentifier: [column identifier]];
+		[outlineColumn setDataCell: [column dataCell]];
+		[outlineColumn setHeaderCell: [column headerCell]];
+		[outlineColumn setWidth: [column width]];
+		[outlineColumn setMinWidth: [column minWidth]];
+		[outlineColumn setMaxWidth: [column maxWidth]];
+#ifdef GNUSTEP
+		[outlineColumn setResizable: [column isResizable]];
+#else
+		[outlineColumn setResizingMask: [column resizingMask]];
+#endif
+		[outlineColumn setEditable: [column isEditable]];
+		shouldInsertColumn = NO;
 	}
 
-	NSMutableArray *displayedProperties = [properties mutableCopy];
-	NSOutlineView *tv = [self outlineView];
-	/* We cannot enumerate [tv tableColumns] directly because we remove columns */
-	NSEnumerator *e = [[NSArray arrayWithArray: [tv tableColumns]] objectEnumerator];
-	NSTableColumn *column = nil;
-	NSString *property = nil;
-	
-	/* Remove all existing columns except the outline column */
-	while ((column = [e nextObject]) != nil)
-	{
-		if ([column isEqual: [tv outlineTableColumn]] == NO)
-			[tv removeTableColumn: column];
-	}
-	
-	/* Add all columns to be displayed and update the outline column */
-	e = [displayedProperties objectEnumerator];
-	property = nil;
-	BOOL isFirstColumn = YES;
-	
-	while ((property = [e nextObject]) != nil)
-	{
-		NSTableColumn *column = [_propertyColumns objectForKey: property];
-		
-		if (column == nil)
-			column = [self createTableColumnWithIdentifier: property];
-			
-		if (isFirstColumn)
-		{
-			// FIXME: Modifying the outline table column directly leads to the 
-			// loss of the hierarchical indicator, that's why we sync outline
-			// column with first column attribute-by-attribute
-			//[tv setOutlineTableColumn: column];
-			NSTableColumn *tc = [tv outlineTableColumn];
-			
-			[tc setIdentifier: [column identifier]];
-			[tc setDataCell: [column dataCell]];
-			[tc setHeaderCell: [column headerCell]];
-			[tc setWidth: [column width]];
-			[tc setMinWidth: [column minWidth]];
-			[tc setMaxWidth: [column maxWidth]];
-			#ifdef GNUSTEP
-			[tc setResizable: [column isResizable]];
-			#else
-			[tc setResizingMask: [column resizingMask]];
-			#endif
-			[tc setEditable: [column isEditable]];
-			isFirstColumn = NO;
-		}
-		else
-		{
-			[tv addTableColumn: column];
-		}
-	}
+	return shouldInsertColumn;
 }
 
 /* Returns YES when every groups are displayed as stacks which can be expanded
