@@ -17,7 +17,6 @@
 #import "ETPickboard.h"
 #import "ETPickDropActionHandler.h"
 #import "ETPickDropCoordinator.h"
-#import "NSView+Etoile.h"
 #import "ETCompatibility.h"
 
 @interface NSTableColumn (Etoile) <ETColumnFragment>
