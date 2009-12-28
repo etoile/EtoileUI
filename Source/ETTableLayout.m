@@ -323,7 +323,6 @@ ETTableLayout machinery. */
 - (NSTableColumn *) createTableColumnWithIdentifier: (NSString *)property
 {
 	NSTableHeaderCell *headerCell = [[NSTableHeaderCell alloc] initTextCell: property]; // FIXME: Use display name
-	NSCell *dataCell = [[NSCell alloc] initTextCell: @""];
 	NSTableColumn *column = [[NSTableColumn alloc] initWithIdentifier: property];
 	// TODO: -compare: is really a suboptimal choice in various cases.
 	// For example, NSString provides -localizedCompare: unlike NSNumber, NSDate etc.
@@ -332,12 +331,10 @@ ETTableLayout machinery. */
 
 	[column setHeaderCell: headerCell];
 	RELEASE(headerCell);
-	[dataCell setFont: [self contentFont]];
-#ifdef GNUstep // FIXME: Probably don't needed on GNUstep either...
+
 	NSParameterAssert([[column dataCell] isKindOfClass: [NSTextFieldCell class]]);
-	[column setDataCell: dataCell];
-#endif
-	RELEASE(dataCell);
+	[[column dataCell] setFont: [self contentFont]];
+
 	[column setEditable: NO];
 	[column setSortDescriptorPrototype: sortDescriptor];
 
