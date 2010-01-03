@@ -754,19 +754,28 @@ Returns the cached drag image. */
 
 - (void) draggedImage: (NSImage *)anImage beganAt: (NSPoint)aPoint
 {
-	[super draggedImage: anImage beganAt: aPoint];
+	if ([[NSTableView class] instancesRespondToSelector: @selector(draggedImage:beganAt:)])
+	{
+		[super draggedImage: anImage beganAt: aPoint];
+	}
 	[[ETPickDropCoordinator sharedInstance] draggedImage: anImage beganAt: aPoint];
 }
 
 - (void) draggedImage: (NSImage *)anImage movedTo: (NSPoint)aPoint
 {
-	[super draggedImage: anImage movedTo: aPoint];
+	if ([[NSTableView class] instancesRespondToSelector: @selector(draggedImage:movedTo:)])
+	{
+		[super draggedImage: anImage movedTo: aPoint];
+	}
 	[[ETPickDropCoordinator sharedInstance] draggedImage: anImage movedTo: aPoint];
 }
 
 - (void) draggedImage: (NSImage *)anImage endedAt: (NSPoint)aPoint operation: (NSDragOperation)operation
 {
-	[super draggedImage: anImage endedAt: aPoint operation: operation];
+	if ([[NSTableView class] instancesRespondToSelector: @selector(draggedImage:endedAt:operation:)])
+	{
+		[super draggedImage: anImage endedAt: aPoint operation: operation];
+	}
 	[[ETPickDropCoordinator sharedInstance] draggedImage: anImage endedAt: aPoint operation: operation];
 }
 
