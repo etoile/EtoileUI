@@ -7,6 +7,7 @@
  */
 
 #import <EtoileFoundation/Macros.h>
+#import <EtoileFoundation/NSObject+HOM.h>
 #import "ETSelectTool.h"
 #import "ETApplication.h"
 #import "ETEvent.h"
@@ -30,8 +31,10 @@
 {
 	SUPERINIT
 	[self setCursor: [NSCursor pointingHandCursor]];
+	/* We use the accessors to sync the layout if needed */
 	[self setAllowsMultipleSelection: YES];
 	[self setAllowsEmptySelection: YES];
+	_removeItemsAtPickTime = YES;
 	_actionHandlerPrototype = [[ETActionHandler alloc] init];
 	_selectionAreaItem = [[ETSelectionAreaItem alloc] init];
 	return self;
@@ -64,7 +67,7 @@ of the target item. */
 - (void) setAllowsMultipleSelection: (BOOL)multiple
 {
 	_multipleSelectionAllowed = multiple;
-	// FIXME: [[self layoutOwner] syncLayoutViewWithItem: self];
+	[[[self layoutOwner] ifResponds] syncLayoutViewWithInstrument: self];
 }
 
 /** Returns whether the tool allows to have no items selected among the children 
@@ -79,7 +82,7 @@ the target item. */
 - (void) setAllowsEmptySelection: (BOOL)empty
 {
 	_emptySelectionAllowed = empty;
-	// FIXME: [[self layoutOwner] syncLayoutViewWithItem: self];
+	[[[self layoutOwner] ifResponds] syncLayoutViewWithInstrument: self];
 }
 
 /** Returns whether the dragged items should be removed immediately when they 

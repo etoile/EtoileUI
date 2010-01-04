@@ -15,12 +15,14 @@
 #import "ETLayoutItem+Scrollable.h"
 #import "ETCompatibility.h"
 
-@interface ETWidgetLayout (Private)
-- (NSInvocation *) invocationForSelector: (SEL)selector;
-- (NSView *) layoutViewWithoutScrollView;
-@end
 
 @implementation ETWidgetLayout
+
+- (void) setAttachedInstrument: (ETInstrument *)anInstrument
+{
+	[super setAttachedInstrument: anInstrument];
+	[self syncLayoutViewWithInstrument: anInstrument];
+}
 
 /** Returns YES to indicate the receiver adapts and wraps a widget as a layout.
 
@@ -51,6 +53,34 @@ See also -[ETLayout isOpaque].*/
 
 /* Layout Context & Layout View Synchronization */
 
+/** Returns the control view enclosed in the layout view if the latter is a
+scroll view, otherwise the returned view is identical to -layoutView. */
+- (NSView *) layoutViewWithoutScrollView
+{
+	id layoutView = [self layoutView];
+
+	if ([layoutView isKindOfClass: [NSScrollView class]])
+		return [layoutView documentView];
+
+	return layoutView;
+}
+
+- (id) viewForSelector: (SEL)aSelector
+{
+	id target = nil;
+
+	if ([[self layoutView] respondsToSelector: aSelector])
+	{
+		target = [self layoutView];
+	}
+	else if ([[self layoutViewWithoutScrollView] respondsToSelector: aSelector])
+	{
+		target = [self layoutViewWithoutScrollView];
+	}
+	
+	return target;
+}
+
 /** Synchronizes the widget view settings with the given item.
 
 This layout item is usually the layout context.
@@ -62,17 +92,11 @@ context is modified and needs to be mirrored on the widget view. */
 	NSParameterAssert([self layoutView] != nil);
 	NSParameterAssert([item supervisorView] != nil);
 
-	NSInvocation *inv = nil;
-	SEL doubleAction = @selector(doubleClick:);
-	
-	inv = RETAIN([self invocationForSelector: @selector(setDoubleAction:)]);
-	[inv setArgument: &doubleAction atIndex: 2];
-	[inv invoke];
-	
-	inv = RETAIN([self invocationForSelector: @selector(setTarget:)]);
-	[inv setArgument: &self atIndex: 2];
-	[inv invoke];
-	
+	NSView *widgetView = [self layoutViewWithoutScrollView];
+
+	[[widgetView ifResponds] setDoubleAction: @selector(doubleClick:)];
+	[[widgetView ifResponds] setTarget: self];	
+
 	BOOL hasVScroller = [item hasVerticalScroller];
 	BOOL hasHScroller = [item hasHorizontalScroller];
 	
@@ -81,61 +105,40 @@ context is modified and needs to be mirrored on the widget view. */
 		hasVScroller = NO;
 		hasHScroller = NO;
 	}
-	
-	inv = RETAIN([self invocationForSelector: @selector(setHasHorizontalScroller:)]);
-	[inv setArgument: &hasHScroller atIndex: 2];
-	[inv invoke];
-	
-	inv = RETAIN([self invocationForSelector: @selector(setHasVerticalScroller:)]);
-	[inv setArgument: &hasVScroller atIndex: 2];
-	[inv invoke];
-	
-	BOOL allowsEmptySelection = YES; // FIXME: [[self attachedInstrument] allowsEmptySelection];
-	BOOL allowsMultipleSelection = YES; // FIXME: [[self attachedInstrument] allowsMultipleSelection];
-	
-	inv = RETAIN([self invocationForSelector: @selector(setAllowsEmptySelection:)]);
-	[inv setArgument: &allowsEmptySelection atIndex: 2];
-	[inv invoke];
-	
-	inv = RETAIN([self invocationForSelector: @selector(setAllowsMultipleSelection:)]);
-	[inv setArgument: &allowsMultipleSelection atIndex: 2];
-	[inv invoke];
 
-	RELEASE(inv); /* Retained previously otherwise it gets released too soon */
+	[[self viewForSelector: @selector(hasVerticalScroller)] 
+			setHasVerticalScroller: hasVScroller];
+
+	[[self viewForSelector: @selector(hasHorizontalScroller)] 
+			setHasHorizontalScroller: hasHScroller];
+	
+	[self syncLayoutViewWithInstrument: [self attachedInstrument]];
 }
 
-- (NSInvocation *) invocationForSelector: (SEL)selector
-{
-	NSMethodSignature *sig = [[self layoutView] methodSignatureForSelector: selector];
-	id target = [self layoutView];
+/* Synchronizes the widget view settings with the given instrument.
 
-	if (sig == nil)
+This method is called on a regular basis each time the active instrument changes 
+and its settings need to be mirrored on the widget view.
+
+When the given instrument is nil, -allowsEmptySelection is reset to YES and 
+-allowsMultipleSelection to NO. */
+- (void) syncLayoutViewWithInstrument: (ETInstrument *)anInstrument
+{
+	NSParameterAssert([self layoutView] != nil);
+
+	BOOL allowsEmptySelection = [[self attachedInstrument] allowsEmptySelection];
+	BOOL allowsMultipleSelection = [[self attachedInstrument] allowsMultipleSelection];
+
+	if (nil == anInstrument)
 	{
-		sig = [[self layoutViewWithoutScrollView] methodSignatureForSelector: selector];
-		target = [self layoutViewWithoutScrollView];
+		allowsEmptySelection = YES;
+		allowsMultipleSelection = NO;
 	}
-
-	if (sig == nil)
-		return nil;
-
-	NSInvocation *inv = [NSInvocation invocationWithMethodSignature: sig];
-	/* Method signature doesn't embed the selector, but only type infos related to it */
-	[inv setSelector: selector];
-	[inv setTarget: target];
 	
-	return inv;
-}
+	NSView *widgetView = [self layoutViewWithoutScrollView];
 
-/** Returns the control view enclosed in the layout view if the latter is a
-scroll view, otherwise the returned view is identical to -layoutView. */
-- (NSView *) layoutViewWithoutScrollView
-{
-	id layoutView = [self layoutView];
-
-	if ([layoutView isKindOfClass: [NSScrollView class]])
-		return [layoutView documentView];
-
-	return layoutView;
+	[[widgetView ifResponds] setAllowsEmptySelection: allowsEmptySelection];
+	[[widgetView ifResponds] setAllowsMultipleSelection: allowsMultipleSelection];
 }
 
 /** <override-never />

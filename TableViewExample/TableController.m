@@ -52,7 +52,7 @@
 	ETLayoutItemGroup *tableItem = [tableContainer layoutItem];
 
 	[tableItem setLayout: [ETTableLayout layout]];
-	
+
 	[[tableItem layout] setDisplayedProperties: [NSArray arrayWithObject: @"displayName"]];
 	// FIXME: Should be... [tableItem setRepresentedPathBase: @"/"];
 	[tableContainer setRepresentedPath: @"/"];
@@ -72,7 +72,13 @@
 	ETLayoutItemGroup *tableItem2 = [tableContainer2 layoutItem];
 	ETTableLayout *tableLayout2 = [ETTableLayout layout];
 	NSArray *visibleColumnIds = [NSArray arrayWithObjects: @"displayName", @"intensity", nil];
-	
+	ETSelectTool *tool = [ETSelectTool instrument];
+
+	[tool setAllowsMultipleSelection: YES];
+	[tool setAllowsEmptySelection: NO];
+	[tool setShouldRemoveItemsAtPickTime: NO];
+
+	[tableLayout2 setAttachedInstrument: tool];	
 	[tableLayout2 setDisplayName: @"Name" forProperty: @"displayName"]; 
 	[[tableLayout2 columnForProperty: @"displayName"] setWidth: 50];
 	[tableLayout2 setDisplayName: @"Intensity" forProperty: @"intensity"]; 	
@@ -120,6 +126,9 @@
 		AUTORELEASE([[NSImageView alloc] init])]);
 
 	[[outlineItem layout] setStyle: imgViewItem forProperty: @""];
+	[[outlineItem layout] setEditable: YES forProperty: @"name"];
+	[[outlineItem layout] setAttachedInstrument: [ETSelectTool instrument]];
+	[[[outlineItem layout] attachedInstrument] setAllowsMultipleSelection: YES];
 	// FIXME: Should be... [outlineItem setRepresentedPathBase: @"/"]; /* Mandatory to handle drop */
 	[outlineContainer setRepresentedPath: @"/"];
 
