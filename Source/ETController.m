@@ -623,7 +623,7 @@ too slow given that the method tends to be invoked repeatedly.
 	{
 		if ([aUTI conformsToType: targetType])
 		{
-			[matchedDropTypes addObject: [_allowedDropTypes objectForKey: targetType]];
+			[matchedDropTypes addObjectsFromArray: [_allowedDropTypes objectForKey: targetType]];
 		}
 	}
 
