@@ -69,9 +69,12 @@ method is called by ETTableLayout when rows are dragged). */
 	NSParameterAssert(nil != item);
 
 	if ([self canDragItem: item coordinator: aPickCoordinator] == NO)
+	{
+		[aPickCoordinator reset];
 		return NO;
+	}
 
-	NSArray *selectedItems = [[item parentItem] selectedItems];
+	NSArray *selectedItems = [[item parentItem] selectedItemsInLayout];
 	ETEvent *pickInfo = [aPickCoordinator pickEvent];
 	// TODO: pickboard shouldn't be harcoded but rather customizable
 	ETPickboard *pboard = [ETPickboard localPickboard];
@@ -110,13 +113,15 @@ method is called by ETTableLayout when rows are dragged). */
 	
 	[pboard pushObject: pick];
 
-	BOOL isMove = ~([pickInfo pickingMask] & ETCopyPickingMask);
+	BOOL isMove = (([pickInfo pickingMask] & ETCopyPickingMask) == NO);
 
 	if (isMove)
 	{
 		BOOL shouldRemoveItems = YES;
+		BOOL isCut = ([pickInfo pickingMask] & ETCutPickingMask);
 
-		if ([[ETInstrument activeInstrument] respondsToSelector: @selector(shouldRemoveItemsAtPickTime)])
+		/* We always remove the items immediately when the pick is a cut */
+		if (NO == isCut && [[ETInstrument activeInstrument] respondsToSelector: @selector(shouldRemoveItemsAtPickTime)])
 		{
 			shouldRemoveItems = [[ETInstrument activeInstrument] shouldRemoveItemsAtPickTime];
 		}
@@ -426,32 +431,71 @@ When the dropped object is a pick collection, each element type is checked with
 	return NO;
 }
 
+- (ETLayoutItem *) pickedItemForTargetItem: (ETLayoutItem *)item
+{
+	if ([item isGroup] == NO)
+		return item;
+
+	NSArray *selectedItems = [(ETLayoutItemGroup *)item selectedItemsInLayout];
+
+	if ([selectedItems isEmpty])
+		return item;
+
+	return [selectedItems firstObject];
+}
+
+/** Copies the item or the selected items inside it.
+
+The copied items are put on the active pickboard.
+
+The given item is usually the first responder when this action was triggered by 
+choosing 'Copy' in the 'Edit' menu. */
 - (IBAction) copy: (id)sender onItem: (ETLayoutItem *)item
 {
 	ETLog(@"Copy receives in %@", self);
-	
-	[self handlePickItem: item coordinator: [ETPickDropCoordinator sharedInstance]];
+
+	ETEvent *event = ETEVENT([NSApp currentEvent], nil, ETCopyPickingMask);
+
+	[self handlePickItem: AUTORELEASE([[self pickedItemForTargetItem: item] deepCopy])
+	         coordinator: [ETPickDropCoordinator sharedInstanceWithEvent: event]];
 }
 
+/** Pastes the first item or pick collection present on the active pickboard 
+into the given item.
+
+The pasted items won't removed from the pickboard.
+
+The given item is usually the first responder when this action was triggered by 
+choosing 'Paste' in the 'Edit' menu. */
 - (IBAction) paste: (id)sender onItem: (ETLayoutItem *)item
 {
 	ETLog(@"Paste receives in %@", self);
 
-	ETLayoutItem *pastedItem = [[ETPickboard localPickboard] popObject];
+	ETEvent *event = ETEVENT([NSApp currentEvent], nil, ETPastePickingMask);
+	id pastedObject = AUTORELEASE([[[ETPickboard localPickboard] firstObject] deepCopy]);
 	
-	[self handleDropObject: pastedItem 
+	[self handleDropObject: pastedObject
 	               atIndex: ETUndeterminedIndex
 	                onItem: item 
-	           coordinator: [ETPickDropCoordinator sharedInstance]];
+	           coordinator: [ETPickDropCoordinator sharedInstanceWithEvent: event]];
 }
 
+/** Cuts the item or the selected items inside it.
+
+The cut items are put on the active pickboard and always removed immediately 
+from their parents.<br />
+The value returned by -shouldRemoveItemsAtPickTime on the active instrument is 
+simply ignored.
+
+The given item is usually the first responder when this action was triggered by 
+choosing 'Cut' in the 'Edit' menu. */
 - (IBAction) cut: (id)sender onItem: (ETLayoutItem *)item
 {
 	ETLog(@"Cut receives in %@", self);
 
 	ETEvent *event = ETEVENT([NSApp currentEvent], nil, ETCutPickingMask);
 		
-	[self handlePickItem: item 
+	[self handlePickItem: [self pickedItemForTargetItem: item]
 	         coordinator: [ETPickDropCoordinator sharedInstanceWithEvent: event]];
 }
 

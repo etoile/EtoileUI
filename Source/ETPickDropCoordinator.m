@@ -176,15 +176,13 @@ See also -hasBuiltInDragAndDropSupport. */
 /** Returns whether the current drop is a paste or the end of a drag. */
 - (BOOL) isPasting
 {
-	// TODO: Improve... May be ([[self pickEvent] pickingMask] & ETDragPickingMask) == NO)
-	// or ([[self dropEvent] pickingMask] & ETPastePickingMask) == NO)
-	return ([self pickEvent] == nil); 
+	return ([self pickEvent] == nil && ([[self pickEvent] pickingMask] & ETPastePickingMask)); 
 }
 
 /** Returns whether a drag is currently underway. */
 - (BOOL) isDragging
 {
-	return ([self pickEvent] != nil); 
+	return ([self pickEvent] != nil && ([[self pickEvent] pickingMask] & ETDragPickingMask)); 
 }
 
 /** Returns whether pick/drop are required and must be allowed without 
