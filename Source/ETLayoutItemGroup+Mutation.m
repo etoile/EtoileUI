@@ -408,7 +408,9 @@ inside another -begin/endMutate pair.  */
 	id item = [object isLayoutItem] ? object : [self itemWithObject: object isValue: [object isCommonObjectValue]];
 	
 	if ([object isLayoutItem] == NO)
+	{
 		ETDebugLog(@"Boxed object %@ in item %@ to be added to %@", object, item, self);
+	}
 
 	[self handleAdd: event item: item];
 }

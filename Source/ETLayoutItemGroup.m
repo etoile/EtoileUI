@@ -1875,7 +1875,9 @@ TODO: Implement and may be rename -expand or -expandStack */
 	id item = [object isLayoutItem] ? object : [self itemWithObject: object isValue: [object isCommonObjectValue]];
 	
 	if ([object isLayoutItem] == NO)
+	{
 		ETDebugLog(@"Boxed object %@ in item %@ to be added to %@", object, item, self);
+	}
 
 	[self addItem: item];
 }
@@ -1885,7 +1887,9 @@ TODO: Implement and may be rename -expand or -expandStack */
 	id item = [object isLayoutItem] ? object : [self itemWithObject: object isValue: [object isCommonObjectValue]];
 	
 	if ([object isLayoutItem] == NO)
+	{
 		ETDebugLog(@"Boxed object %@ in item %@ to be inserted in %@", object, item, self);
+	}
 
 	[self insertItem: item atIndex: index];
 }

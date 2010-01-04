@@ -2485,8 +2485,10 @@ The returned image can be overriden by calling -setIcon:.
 		icon = [self snapshotFromRect: [self bounds]];
 		
 	if (icon == nil)
+	{
 		ETDebugLog(@"Icon missing for %@", self);
-		
+	}
+	
 	return icon;
 }
 

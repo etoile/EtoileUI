@@ -168,6 +168,11 @@ double-click and deactivated on a mouse click outside of their layout boundaries
 - (void) setLayoutOwner: (ETLayout *)aLayout;
 - (ETLayout *) layoutOwner;
 
+// FIXME: Remove... clang complains about -[NSResponder performKeyEquivalent:] 
+// whose argument is NSEvent * and misses the declaration in the private category.
+// #pragma clang diagnostic ignored "-Wall" also doesn't work.
+- (BOOL) performKeyEquivalent: (ETEvent *)anEvent;
+
 @end
 
 // TODO: Evaluate... Not yet implemented.
