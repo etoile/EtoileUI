@@ -300,7 +300,10 @@ returns an ETLayoutItem. */
 	operation unless another object gets picked in the meantime. */
 - (id) firstObject
 {
-	return [[self allObjects] firstObject];
+	if ([self isEmpty])
+		return nil;
+
+	return [[self itemAtIndex: 0] representedObject];
 }
 
 /* Pick & Drop Palette */
