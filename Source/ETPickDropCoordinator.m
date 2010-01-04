@@ -87,8 +87,8 @@ event. */
 - (id) initWithEvent: (ETEvent *)anEvent
 {
 	SUPERINIT
+	[self reset];
 	ASSIGN(_event, anEvent);
-	_wereItemsRemovedAtPickTime = YES;
 	return self;
 }
 
@@ -103,14 +103,9 @@ When this modifier is pressed, drag an drop is enabled everywhere in the UI. */
 	return NSShiftKeyMask;
 }
 
-/* Keep in sync with -reset when needed */
 - (void) dealloc
 {
-	DESTROY(_event);
-	DESTROY(_dragSource);
-	DESTROY(_dragInfo);
-	DESTROY(_previousDropTarget);
-	DESTROY(_previousHoveredItem);
+	[self reset];
 	[super dealloc];
 }
 
