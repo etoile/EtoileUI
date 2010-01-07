@@ -142,16 +142,12 @@ expanded and collapsed by getting automatically a related outline arrow. */
 	[self didChangeSelectionInLayoutView];
 }
 
-// NOTE: Only for Cocoa presently but we'll be probably be used everywhere later.
-// See ETTableLayout equivalent NSTableView delegate method.
-#ifndef GNUSTEP
 - (BOOL) outlineView: (NSOutlineView *)outlineView
 	shouldEditTableColumn: (NSTableColumn *)column item: (id)item
 {
 	return [super tableView: outlineView shouldEditTableColumn: column 
 		row: [outlineView rowForItem: item]];
 }
-#endif
 
 - (int) outlineView: (NSOutlineView *)outlineView numberOfChildrenOfItem: (id)item
 {

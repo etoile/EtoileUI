@@ -238,6 +238,11 @@ property display name should usually be passed as argument. */
 	[[column headerCell] setStringValue: displayName];
 }
 
+// NOTE: Gorm doesn't create editable data cell by default unlike IB and 
+// doesn't provide a cell inspector.
+// For both GNUstep and Cocoa, new NSCell and NSTextFieldCell instances returns 
+// NO to -isEditable though.
+
 /** Returns whether the column associated with the given property is editable.
 
 By default, columns are not editable and NO is returned. */
@@ -250,6 +255,7 @@ By default, columns are not editable and NO is returned. */
 - (void) setEditable: (BOOL)flag forProperty: (NSString *)property
 {
 	NSTableColumn *column = [self tableColumnWithIdentifierAndCreateIfAbsent: property];
+	ETAssert(nil != column);
 	/* A table view cell can be edited only if both [column isEditable] and 
 	   [[column dataCell] isEditable] returns YES.
 	   -[NSTableColumn isEditable] takes priority over the cell editability. */
@@ -491,7 +497,6 @@ See ETColumnFragment protocol to customize the returned column. */
 	NSCell *dataCell = [column dataCellForRow: rowIndex];
 
 	ETAssert([dataCell font] != nil); /* Field editor won't be inserted otherwise */
-
 	return [dataCell isEditable];
 }
 
