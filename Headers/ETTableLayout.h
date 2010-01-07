@@ -27,7 +27,8 @@
 
 @end
 
-
+/** When a property is editable, a double click triggers the editing even when 
+the layout context has a valid double action set. */
 @interface ETTableLayout : ETWidgetLayout
 {
 	NSMutableDictionary *_propertyColumns;

@@ -171,6 +171,7 @@ and centers it. A strech is a scale that doesn't preserve the content proportion
 - (NSString *) name;
 - (void) setName: (NSString *)name;
 - (NSString *) displayName;
+- (void) setDisplayName: (NSString *)aName;
 
 /* Display Element */
 

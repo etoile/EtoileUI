@@ -758,6 +758,12 @@ NSObject(Model) in EtoileFoundation. */
 	return name;
 }
 
+/** Sets the name associated with the receiver with -setName:. */
+- (void) setDisplayName: (NSString *)aName
+{
+	[self setName: aName];
+}
+
 /** Returns the name associated with the layout item.
  
 The returned value can be nil or an empty string. */
@@ -766,9 +772,7 @@ The returned value can be nil or an empty string. */
 	return GET_PROPERTY(kETNameProperty);
 }
 
-/** Sets the name associated with the layout item.
- 
-The returned value can be nil or an empty string. */
+/** Sets the name associated with the layout item. */
 - (void) setName: (NSString *)name
 {
 	SET_PROPERTY(name, kETNameProperty);
