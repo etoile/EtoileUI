@@ -54,6 +54,7 @@
 	[tableItem setLayout: [ETTableLayout layout]];
 
 	[[tableItem layout] setDisplayedProperties: [NSArray arrayWithObject: @"displayName"]];
+	[[tableItem layout] setEditable: YES forProperty: @"displayName"];
 	// FIXME: Should be... [tableItem setRepresentedPathBase: @"/"];
 	[tableContainer setRepresentedPath: @"/"];
 	

@@ -250,7 +250,10 @@ By default, columns are not editable and NO is returned. */
 - (void) setEditable: (BOOL)flag forProperty: (NSString *)property
 {
 	NSTableColumn *column = [self tableColumnWithIdentifierAndCreateIfAbsent: property];
-	[[column dataCell] setEditable: flag]; // FIXME: why column setEditable: isn't enough
+	/* A table view cell can be edited only if both [column isEditable] and 
+	   [[column dataCell] isEditable] returns YES.
+	   -[NSTableColumn isEditable] takes priority over the cell editability. */
+	[[column dataCell] setEditable: flag];
 	[column setEditable: flag];	
 }
 
@@ -343,7 +346,10 @@ ETTableLayout machinery. */
 	RELEASE(headerCell);
 
 	NSParameterAssert([[column dataCell] isKindOfClass: [NSTextFieldCell class]]);
-	[[column dataCell] setFont: [self contentFont]];
+	if ([self contentFont] != nil)
+	{
+		[[column dataCell] setFont: [self contentFont]];
+	}
 
 	[column setEditable: NO];
 	[column setSortDescriptorPrototype: sortDescriptor];
@@ -465,11 +471,16 @@ See ETColumnFragment protocol to customize the returned column. */
 	[self didChangeSelectionInLayoutView];
 }
 
-// NOTE: Only for Cocoa presently but we'll be probably be used everywhere later.
-#ifndef GNUSTEP
+/* NSTableView only considers if the column is editable by default to allow 
+   or deny the editing on GNUstep. On Cocoa the data cell editability is 
+   checked when the column is editable.
+   We implement this delegate method to make the behavior the same everywhere.
+   Take note this method is only invoked when the column is editable.*/
 - (BOOL) tableView: (NSTableView *)tv
 	shouldEditTableColumn: (NSTableColumn *)column row: (int)rowIndex
 {
+	NSParameterAssert([column isEditable]);
+
 	// TODO: If we pose our own NSTableColumn subclass as an NSTableColumn 
 	// replacement class, we could provide multiple custom data cells per 
 	// column. That would useful to enable/disable the cell editing based on 
@@ -479,15 +490,35 @@ See ETColumnFragment protocol to customize the returned column. */
 	// -preparedCellAtColumn:row:
 	NSCell *dataCell = [column dataCellForRow: rowIndex];
 
-	/* NSTableView only considers if the column is editable by default to allow 
-	   or deny the editing, at least on GNUstep. And...
-	   Cocoa seems to contradict the documentation of -setDoubleAction: by 
-	   always disabling all editing if a double action is set. iirc you can take 
-	   over this behavior by implementing the present method, but that needs to 
-	   be tested since this code is currently written on GNUstep. */
+	ETAssert([dataCell font] != nil); /* Field editor won't be inserted otherwise */
+
 	return [dataCell isEditable];
 }
-#endif
+
+/* Cocoa seems to contradict the documentation of -[NSTableView setDoubleAction:] 
+   by always disabling all editing if a double action is set. 
+   To work around this issue, we override -[ETWidgetLayout doubleClick:] to 
+   trigger the editing when the clicked cell can be edited.
+   This method is the table view double action. */
+- (void) doubleClick: (id)sender
+{
+	NSTableView *tv = [self tableView];
+	NSTableColumn *tableColumn = [[tv tableColumns] objectAtIndex: [tv clickedColumn]];
+	BOOL canEdit = ([tableColumn isEditable] && 
+		[self tableView: tv shouldEditTableColumn: tableColumn row: [tv clickedRow]]);
+
+	if (canEdit)
+	{
+		[tv editColumn: [tv clickedColumn] 
+		           row: [tv clickedRow] 
+		     withEvent: [NSApp currentEvent] 
+		        select: YES];
+		return;	
+	}
+
+	/* Otherwise send the double action */
+	[super doubleClick: sender];
+}
 
 - (int) numberOfRowsInTableView: (NSTableView *)tv
 {
@@ -734,6 +765,7 @@ Returns the cached drag image. */
 }
 
 @end
+
 
 /* NSTableViewDataSource doesn't provide a way to know whether a drag has been 
    cancelled (validated or moved). ETTableLayout must be aware of dragging 
