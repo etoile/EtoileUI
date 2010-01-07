@@ -97,7 +97,7 @@
 
 /* Layout */
 
-- (ETLayout *) layout;
+- (id) layout;
 - (void) setLayout: (ETLayout *)layout;
 
 //-reloadAndUpdateAll;

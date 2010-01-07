@@ -214,7 +214,7 @@ and centers it. A strech is a scale that doesn't preserve the content proportion
 
 /* Layouting & Rendering Chain */
 
-- (ETLayout *) layout;
+- (id) layout;
 - (void) setLayout: (ETLayout *)layout;
 - (ETLayoutItem *) ancestorItemForOpaqueLayout;
 - (void) didChangeLayout: (ETLayout *)oldLayout;

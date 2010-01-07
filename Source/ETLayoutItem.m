@@ -1415,7 +1415,7 @@ You should never use this method unless you write an ETLayoutItem subclass. */
 }
 
 /** Returns the layout associated with the receiver to present its content. */
-- (ETLayout *) layout
+- (id) layout
 {
 	return GET_PROPERTY(kETLayoutProperty);
 }

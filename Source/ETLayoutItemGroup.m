@@ -1068,7 +1068,7 @@ the receiver immediate children to the base item source. */
 - (void) setHasNewLayout: (BOOL)flag { _hasNewLayout = flag; }
 
 /** Returns the layout associated with the receiver to present its content. */
-- (ETLayout *) layout
+- (id) layout
 {
 	return _layout;
 }
