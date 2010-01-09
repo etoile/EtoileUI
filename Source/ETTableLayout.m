@@ -263,6 +263,25 @@ By default, columns are not editable and NO is returned. */
 	[column setEditable: flag];	
 }
 
+/** Returns the formatter of the column associated with the given property.
+
+By default, columns have no formatters and nil returned. */
+- (NSFormatter *) formatterForProperty: (NSString *)property
+{
+	return [[[_propertyColumns objectForKey: property] dataCell] formatter];
+}
+
+/** Sets the formatter of the column associated with the given property.
+
+The object value returned by -valueForProperty: on each item must be compatible 
+with the formatter, otherwise the outcome of the formatting is unknown. */
+- (void) setFormatter: (NSFormatter *)aFormatter forProperty: (NSString *)property
+{
+	NSTableColumn *column = [self tableColumnWithIdentifierAndCreateIfAbsent: property];
+	ETAssert(nil != column);
+	[[column dataCell] setFormatter: aFormatter];
+}
+
 /** Returns the data cell of the column associated with the given property, but 
 this is temporary.
 
@@ -563,7 +582,7 @@ See ETColumnFragment protocol to customize the returned column. */
 	// custom cell has been provided, non common object values must be 
 	// converted to a string or number representation, -objectValue precisely 
 	// takes care of converting it to a string value. See -objectValue in 
-	// NSObject+Model for more details.	
+	// NSObject+Model for more details.
 	return [value objectValue];
 }
 

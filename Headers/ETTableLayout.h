@@ -51,6 +51,8 @@ the layout context has a valid double action set. */
 - (void) setDisplayName: (NSString *)displayName forProperty: (NSString *)property;
 - (BOOL) isEditableForProperty: (NSString *)property;
 - (void) setEditable: (BOOL)flag forProperty: (NSString *)property;
+- (NSFormatter *) formatterForProperty: (NSString *)property;
+- (void) setFormatter: (NSFormatter *)aFormatter forProperty: (NSString *)property;
 - (id) styleForProperty: (NSString *)property;
 - (void) setStyle: (id)style forProperty: (NSString *)property;
 - (id <ETColumnFragment>) columnForProperty: (NSString *)property;
