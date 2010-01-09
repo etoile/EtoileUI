@@ -13,6 +13,7 @@
 @end
 
 @interface ObjectManagerController (Private)
+- (id) configureLayout: (id)layoutObject;
 - (void) moveToItem: (ETLayoutItem *)item;
 - (void) checkTextualPathForMixedPath;
 @end
@@ -59,7 +60,7 @@ static NSFileManager *objectManager = nil;
 	[mainViewItem setDoubleAction: @selector(doubleClickInMainView:)];
 	[mainViewItem setHasVerticalScroller: YES];
 	[mainViewItem setHasHorizontalScroller: YES];
-	[mainViewItem setLayout: [ETIconLayout layout]];
+	[mainViewItem setLayout: [self configureLayout: [ETIconLayout layout]]];
 	[mainViewItem reloadAndUpdateLayout];
 
 	[pathViewItem setLayout: [ETLineLayout layout]];
@@ -68,6 +69,24 @@ static NSFileManager *objectManager = nil;
 	[pathViewItem setTarget: self];
 	[pathViewItem setDoubleAction: @selector(doubleClickInPathView:)];
 	[pathViewItem reloadAndUpdateLayout];
+}
+
+- (id) configureLayout: (id)layoutObject
+{
+	if ([layoutObject isKindOfClass: [ETTableLayout class]])
+	{
+		NSCell *iconCell = [[NSImageCell alloc] initImageCell: nil];
+		NSFormatter *sizeFormatter = AUTORELEASE([[ETByteSizeFormatter alloc] init]);
+
+		[layoutObject setStyle: AUTORELEASE(iconCell) forProperty: @"icon"];
+		[layoutObject setDisplayName: @"" forProperty: @"icon"];
+		[layoutObject setDisplayName: @"Name" forProperty: @"name"];
+		[layoutObject setDisplayName: @"Type" forProperty: @"fileType"];
+		[layoutObject setDisplayName: @"Size" forProperty: @"fileSize"];
+		[layoutObject setFormatter: sizeFormatter forProperty: @"fileSize"];
+		[layoutObject setDisplayName: @"Modification Date" forProperty: @"fileModificationDate"];
+	}
+	return layoutObject;
 }
 
 - (IBAction) changeLayout: (id)sender
@@ -100,19 +119,7 @@ static NSFileManager *objectManager = nil;
 
 	id layoutObject = AUTORELEASE([[layoutClass alloc] init]);
 	
-	if ([layoutObject isKindOfClass: [ETTableLayout class]])
-	{
-		NSCell *iconCell = [[NSImageCell alloc] initImageCell: nil];
-		
-		[layoutObject setStyle: AUTORELEASE(iconCell) forProperty: @"icon"];
-		[layoutObject setDisplayName: @"" forProperty: @"icon"];
-		[layoutObject setDisplayName: @"Name" forProperty: @"name"];
-		[layoutObject setDisplayName: @"Type" forProperty: @"fileType"];
-		[layoutObject setDisplayName: @"Size" forProperty: @"fileSize"];
-		[layoutObject setDisplayName: @"Modification Date" forProperty: @"fileModificationDate"];
-	}
-	
-	[mainViewItem setLayout: layoutObject];
+	[mainViewItem setLayout: [self configureLayout: layoutObject]];
 }
 
 - (IBAction) switchUsesScrollView: (id)sender
