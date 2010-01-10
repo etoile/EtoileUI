@@ -82,13 +82,6 @@ how the properties are stored. The implicit property owner is self. */
 #define HAS_PROPERTY(property) \
 	HAS_OBJECT_PROPERTY(self, property)
 
-#define NILARG_EXCEPTION_TEST(arg) \
-	if (arg == nil) \
-	{ \
-		[NSException raise: NSInvalidArgumentException format: @"For %@, " \
-			"%@ must not be nil", NSStringFromSelector(_cmd), #arg ]; \
-	} \
-
 #define ASSERT_FAIL(msg) NSAssert(NO, msg)
 #define ASSERT_INVALID_CASE ASSERT_FAIL(@"Reached invalid branch statement. e.g. the default case in a switch statement")
 
