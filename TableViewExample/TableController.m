@@ -127,7 +127,8 @@
 		AUTORELEASE([[NSImageView alloc] init])]);
 
 	[[outlineItem layout] setStyle: imgViewItem forProperty: @""];
-	[[outlineItem layout] setEditable: YES forProperty: @"name"];
+	/* icon and displayName are the properties visible by default */
+	[[outlineItem layout] setEditable: YES forProperty: @"displayName"];
 	[[outlineItem layout] setAttachedInstrument: [ETSelectTool instrument]];
 	[[[outlineItem layout] attachedInstrument] setAllowsMultipleSelection: YES];
 	// FIXME: Should be... [outlineItem setRepresentedPathBase: @"/"]; /* Mandatory to handle drop */
@@ -139,6 +140,7 @@
 
 	ETLayoutItemGroup *itemGroup = [itemFactory itemGroupWithValue: icon];
 
+	/* The name set will be returned by -displayName in addition to -name */
 	[itemGroup setValue: @"Icon!" forProperty: @"name"];
 	[itemGroup addItem: [itemFactory itemWithValue: icon]];
 	[itemGroup addItem: [itemFactory itemWithValue: icon]];
