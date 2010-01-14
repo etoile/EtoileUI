@@ -26,6 +26,16 @@
 
 @implementation NSObject (EtoileUI)
 
+/** Returns NSOrderedSame.
+
+This NSObject extension makes possible to sort any object types, even mixed 
+together, and prevent sort descriptors to raise an exception when -compare: 
+is not implemented in an NSObject subclass. */
+- (NSComparisonResult) compare: (id)anObject
+{
+	return NSOrderedSame;
+}
+
 /* Basic Properties */
 
 /** Returns the icon used to represent unknown object.

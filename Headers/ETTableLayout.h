@@ -28,7 +28,12 @@
 @end
 
 /** When a property is editable, a double click triggers the editing even when 
-the layout context has a valid double action set. */
+the layout context has a valid double action set.
+
+When the layout is sortable, on a column header click, the content is sorted by 
+reusing the sort descriptors set on the base item controller. When a property 
+has no sort descriptor with a matching key at the controller level, the sort 
+descriptor bound to the widget table column will be used (and eventually created). */
 @interface ETTableLayout : ETWidgetLayout
 {
 	NSMutableDictionary *_propertyColumns;
@@ -41,8 +46,7 @@ the layout context has a valid double action set. */
 	   table column sort descriptor prototypes. */
 	NSMutableArray *_currentSortDescriptors;
 	NSFont *_contentFont;
-
-
+	BOOL _sortable;
 }
 
 - (NSArray *) displayedProperties;
@@ -56,6 +60,9 @@ the layout context has a valid double action set. */
 - (id) styleForProperty: (NSString *)property;
 - (void) setStyle: (id)style forProperty: (NSString *)property;
 - (id <ETColumnFragment>) columnForProperty: (NSString *)property;
+
+- (void) setSortable: (BOOL)isSortable;
+- (BOOL) isSortable;
 
 - (NSFont *) contentFont;
 - (void) setContentFont: (NSFont *)aFont;

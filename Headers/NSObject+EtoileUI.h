@@ -36,6 +36,8 @@
 
 @interface NSObject (EtoileUI)
 
+- (NSComparisonResult) compare: (id)anObject;
+
 /* Basic Properties (extends Model category in EtoileFoundation) */
 
 - (NSImage *) icon;

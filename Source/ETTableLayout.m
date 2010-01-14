@@ -54,8 +54,8 @@
 
 	/* Will initialize several ivars in the layout copy */
 	[newLayout setLayoutView: [newLayout layoutView]];
-	newLayout->_currentSortDescriptors = [_currentSortDescriptors copyWithZone: aZone];
 	newLayout->_contentFont = [_contentFont copyWithZone: aZone];
+	newLayout->_sortable = _sortable;
 
 	return newLayout;
 }
@@ -93,6 +93,7 @@
 	   superclass initializer called -loadNibNamed: before returning, moreover
 	   the ivar must be reset for each new layout view. */
 	ASSIGN(_propertyColumns, [NSMutableDictionary dictionary]);
+	_sortable = YES;
 
 	/* Retain initial columns to be able to restore exactly identical columns later */	
 	FOREACH([tv tableColumns], column, NSTableColumn *)
@@ -163,10 +164,6 @@ Will raise an NSInvalidArgumentException when the properties array is nil. */
 	NILARG_EXCEPTION_TEST(properties);
 
 	NSTableView *tv = [self tableView];
-	NSArray *tableViewSortKeys = (id)[[[tv sortDescriptors] mappedCollection] key];
-
-	/* Prepare the current sort descriptors */
-	ASSIGN(_currentSortDescriptors, [NSMutableArray arrayWithArray: [tv sortDescriptors]]);
 
 	/* Remove all existing columns
 	   NOTE: We cannot enumerate [tv tableColumns] directly because we remove columns */
@@ -197,14 +194,6 @@ Will raise an NSInvalidArgumentException when the properties array is nil. */
 		if (shouldInsertColumn)
 		{
 			[tv addTableColumn: column];
-		}
-
-		BOOL usesSortDescriptorProto = ([tableViewSortKeys containsObject: property] == NO
-			&& [column sortDescriptorPrototype] != nil);
-
-		if (usesSortDescriptorProto)
-		{
-			[_currentSortDescriptors addObject: [column sortDescriptorPrototype]];
 		}
 
 		isFirstColumn = NO;
@@ -316,6 +305,20 @@ more widget backend agnostic. */
 	}
 }
 
+/** Sets whether the columns can be sorted by clicking on their headers. */
+- (void) setSortable: (BOOL)isSortable
+{
+	_sortable = isSortable;
+}
+
+/** Returns whether the columns can be sorted by clicking on their headers.
+
+By default, returns YES. */
+- (BOOL) isSortable
+{
+	return _sortable;
+}
+
 /** Returns the font used to display each row/column cell value. 
 
 By default, returns nil and uses the font set individually on each column. */
@@ -360,18 +363,29 @@ yet, it is created. */
 	return column;
 }
 
+- (NSSortDescriptor *) createSortDescriptorWithKey: (NSString *)property
+{
+	NSParameterAssert(nil != property);
+
+	 if ([property isEqual: @""])
+	 	return nil;
+
+	// TODO: -compare: is really a suboptimal choice in various cases.
+	// For example, NSString provides -localizedCompare: unlike NSNumber, NSDate etc.
+	return AUTORELEASE([[NSSortDescriptor alloc] 
+		initWithKey: property ascending: YES selector: @selector(compare:)]);
+}
+
 /** This method is only exposed to be used internally by EtoileUI.
 
 Instantiates and returns a new table column initialized to integrate with 
 ETTableLayout machinery. */
 - (NSTableColumn *) createTableColumnWithIdentifier: (NSString *)property
 {
+	NSParameterAssert(nil != property);
+
 	NSTableHeaderCell *headerCell = [[NSTableHeaderCell alloc] initTextCell: property]; // FIXME: Use display name
 	NSTableColumn *column = [[NSTableColumn alloc] initWithIdentifier: property];
-	// TODO: -compare: is really a suboptimal choice in various cases.
-	// For example, NSString provides -localizedCompare: unlike NSNumber, NSDate etc.
-	NSSortDescriptor *sortDescriptor = AUTORELEASE([[NSSortDescriptor alloc] 
-		initWithKey: property ascending: YES selector: @selector(compare:)]);
 
 	[column setHeaderCell: headerCell];
 	RELEASE(headerCell);
@@ -383,7 +397,7 @@ ETTableLayout machinery. */
 	}
 
 	[column setEditable: NO];
-	[column setSortDescriptorPrototype: sortDescriptor];
+	[column setSortDescriptorPrototype: [self createSortDescriptorWithKey: property]];
 
 	return AUTORELEASE(column);
 }
@@ -404,12 +418,18 @@ Gives the possibility to customize every table column archived with the widget
 or just instantiated by -createTableColumnWithIdentifier: and returns whether 
 the column should be inserted in the widget or not (in case the column was not 
 removed or this method handles the insertion).<br />
-By default, does nothing and returns YES.
+By default, only sets a sort descriptor prototype when there is none, and 
+returns YES.
 
 This method will be invoked every time the displayed properties change and 
 a new column not in use previously needs to be prepared. */
-- (BOOL) prepareTableColumn: (NSTableColumn *)aTableColum isFirst: (BOOL)isFirstColumn
+- (BOOL) prepareTableColumn: (NSTableColumn *)aTableColumn isFirst: (BOOL)isFirstColumn
 {
+	if ([aTableColumn sortDescriptorPrototype] == nil)
+	{
+		[aTableColumn setSortDescriptorPrototype: 
+			[self createSortDescriptorWithKey: [aTableColumn identifier]]];
+	}
 	return YES;
 }
 
@@ -748,10 +768,34 @@ See ETColumnFragment protocol to customize the returned column. */
 	return YES;
 }
 
+/* In response to a column header click, the table view updates it sort 
+descriptor array with -[NSTableView setSortDescriptors:] which in turn invokes 
+this delegate method. When -setSortDescriptors: returns, the table view calls 
+-tableView:didClickTableColumn:. */
 - (void) tableView: (NSTableView *)tv sortDescriptorsDidChange: (NSArray *)oldDescriptors
 {
-	ETLog(@"Did change sort from %@ to %@", oldDescriptors, [tv sortDescriptors]);
-	[_layoutContext sortWithSortDescriptors: [tv sortDescriptors] recursively: NO];
+	if ([self isSortable] == NO)
+		return;
+
+	NSArray *newSortDescriptors = [tv sortDescriptors];
+	NSArray *controllerSortDescriptors = [[[_layoutContext baseItem] controller] sortDescriptors];
+	NSArray *controllerSortKeys = (id)[[controllerSortDescriptors mappedCollection] key];
+	NSMutableArray *sortDescriptors = AUTORELEASE([controllerSortDescriptors mutableCopy]);
+
+	FOREACH(newSortDescriptors, descriptor, NSSortDescriptor *)
+	{
+		NSString *tableColumnSortKey = [descriptor key];
+
+		if ([controllerSortKeys containsObject: tableColumnSortKey] == NO)
+		{
+			[sortDescriptors addObject: descriptor];
+		}
+	}
+
+	ETLog(@"Controller sort %@", controllerSortDescriptors);	
+	ETLog(@"Did change sort from %@ to %@", oldDescriptors, sortDescriptors);
+
+	[_layoutContext sortWithSortDescriptors: sortDescriptors recursively: NO];
 	[tv reloadData];
 }
 
