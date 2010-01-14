@@ -187,7 +187,8 @@ Will raise an NSInvalidArgumentException when the properties array is nil. */
 
 		if (column == nil)
 		{
-			column = [self createTableColumnWithIdentifier: property];
+			column = [self tableColumnWithIdentifierAndCreateIfAbsent: property];
+			
 		}
 
 		BOOL shouldInsertColumn = [self prepareTableColumn: column 
@@ -336,6 +337,8 @@ returned by -allTableColumns. */
 	}
 }
 
+#define SA(x) [NSSet setWithArray: x]
+
 /** This method is only exposed to be used internally by EtoileUI.
 
 Returns the column associated with the given property, the column might be 
@@ -343,6 +346,9 @@ visible or not depending on -displayedProperties. If the column doesn't exist
 yet, it is created. */
 - (NSTableColumn *) tableColumnWithIdentifierAndCreateIfAbsent: (NSString *)property
 {
+	// TODO: Would be nicer with -containsCollection: or similar.
+	ETAssert([SA([[self tableView] tableColumns]) isSubsetOfSet: SA([_propertyColumns allValues])]);
+
 	NSTableColumn *column = [_propertyColumns objectForKey: property];
 
 	if (column == nil)
