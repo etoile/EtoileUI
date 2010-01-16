@@ -25,7 +25,6 @@
 
 @interface ETTableLayout (PackageVisibility)
 - (void) tableViewSelectionDidChange: (NSNotification *)notif;
-- (void) tableView: (NSTableView *)tv sortDescriptorsDidChange: (NSArray *)oldDescriptors;
 @end
 
 

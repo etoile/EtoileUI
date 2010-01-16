@@ -768,17 +768,27 @@ See ETColumnFragment protocol to customize the returned column. */
 	return YES;
 }
 
-/* In response to a column header click, the table view updates it sort 
-descriptor array with -[NSTableView setSortDescriptors:] which in turn invokes 
-this delegate method. When -setSortDescriptors: returns, the table view calls 
--tableView:didClickTableColumn:. */
-- (void) tableView: (NSTableView *)tv sortDescriptorsDidChange: (NSArray *)oldDescriptors
+/** This method is only exposed to be used internally by EtoileUI.
+
+Sorts the widget rows with the current sort descriptors and updates the display.<br />
+When a recursive sorting is requested, the layout item tree is sorted recursively.
+
+When the receiver is not sortable, returns immediately. 
+
+The current sort descriptors are collected as explained in the class description. */
+- (void) trySortRecursively: (BOOL)recursively oldSortDescriptors: (NSArray *)oldDescriptors
 {
 	if ([self isSortable] == NO)
 		return;
 
-	NSArray *newSortDescriptors = [tv sortDescriptors];
+	NSArray *newSortDescriptors = [[self tableView] sortDescriptors];
 	NSArray *controllerSortDescriptors = [[[_layoutContext baseItem] controller] sortDescriptors];
+
+	if (nil == controllerSortDescriptors)
+	{
+		controllerSortDescriptors = [NSArray array];
+	}
+
 	NSArray *controllerSortKeys = (id)[[controllerSortDescriptors mappedCollection] key];
 	NSMutableArray *sortDescriptors = AUTORELEASE([controllerSortDescriptors mutableCopy]);
 
@@ -795,8 +805,17 @@ this delegate method. When -setSortDescriptors: returns, the table view calls
 	ETLog(@"Controller sort %@", controllerSortDescriptors);	
 	ETLog(@"Did change sort from %@ to %@", oldDescriptors, sortDescriptors);
 
-	[_layoutContext sortWithSortDescriptors: sortDescriptors recursively: NO];
-	[tv reloadData];
+	[_layoutContext sortWithSortDescriptors: sortDescriptors recursively: recursively];
+	[[self tableView] reloadData];
+}
+
+/* In response to a column header click, the table view updates it sort 
+descriptor array with -[NSTableView setSortDescriptors:] which in turn invokes 
+this delegate method. When -setSortDescriptors: returns, the table view calls 
+-tableView:didClickTableColumn:. */
+- (void) tableView: (NSTableView *)tv sortDescriptorsDidChange: (NSArray *)oldDescriptors
+{
+	[self trySortRecursively: NO oldSortDescriptors: oldDescriptors];
 }
 
 - (ETLayoutItem *) doubleClickedItem
