@@ -24,20 +24,30 @@
 @implementation ETLayoutItemGroup (ETMutationHandler)
 
 /* Returns whether children have been removed, added or inserted since the last 
-   UI layout. Typically returns YES when the receiver has been reloaded but the 
-   layout hasn't yet been updated. Also returns YES when autolayout is disabled 
-   and the UI needs to be refreshed by calling -updateLayout. */
+layout update.
+
+For example, returns YES when the receiver has been reloaded but the layout 
+hasn't yet been updated.<br /> 
+Also returns YES when autolayout is disabled and the UI needs to be refreshed by 
+calling -updateLayout. */
 - (BOOL) hasNewContent
 {
 	return _hasNewContent;
 }
+	
+/* Sets whether children have been removed, added or inserted since the last 
+layout update.
 
-/* Sets whether children have been removed, added or inserted since the last UI
-   layout. -reload calls this method to indicate the receiver layout needs to be
-   updated in order that the UI reflects the latest receiver content. */
+Also invalidates any item-related caches (e.g. -arrangedItems).
+
+-reload calls this method to indicate the layout needs to be updated, otherwise 
+the UI won't reflect the latest receiver content. */
 - (void) setHasNewContent: (BOOL)flag
 {
 	_hasNewContent = flag;
+	/* When -items has changed, we invalidate our sort/filter caches */
+	DESTROY(_sortedItems);
+	DESTROY(_arrangedItems);
 }
 
 /* Would be cleaner if this mutation backend was a singleton object acting as a 

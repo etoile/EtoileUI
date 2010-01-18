@@ -31,6 +31,9 @@
 	BOOL _reloading; /* ivar used by ETMutationHandler category */
 	BOOL _hasNewContent;
 	BOOL _hasNewLayout;
+	/* Indicates whether -arrangedItems has changed since the layout was last 
+       updated. Sets to YES when the receiver is filtered and/or sorted. */
+	BOOL _hasNewArrangement;
 	BOOL _shouldMutateRepresentedObject;
 	BOOL _sorted;
 	BOOL _filtered;

@@ -120,6 +120,7 @@ See also +enablesAutolayout. */
 	_usesLayoutBasedFrame = NO;
 	_hasNewLayout = NO;
 	_hasNewContent = NO; /* Private accessors in ETMutationHandler category */
+	_hasNewArrangement = NO;
 	[self setItemScaleFactor: 1.0];
 	
 	_shouldMutateRepresentedObject = YES;
@@ -214,6 +215,7 @@ The returned copy is mutable because ETLayoutItemGroup cannot be immutable. */
 	item->_autolayout = _autolayout;
 	item->_usesLayoutBasedFrame = _usesLayoutBasedFrame;
 	item->_hasNewContent = ([item->_layoutItems isEmpty] == NO);
+	item->_hasNewArrangement = YES; // FIXME: Copy the arranged items
 	item->_hasNewLayout = YES;
 	item->_shouldMutateRepresentedObject = _shouldMutateRepresentedObject;
 	item->_sorted = _sorted;
@@ -1133,7 +1135,8 @@ frame (see -usesLayoutBasedFrame). */
 
 	ETDebugLog(@"Try update layout of %@", self);
 	
-	BOOL isNewLayoutContent = ([self hasNewContent] || [self hasNewLayout]);
+	BOOL isNewLayoutContent = ([self hasNewContent] || [self hasNewLayout] 
+		|| _hasNewArrangement);
 	
 	[[self items] makeObjectsPerformSelector: @selector(updateLayout)];
 	
@@ -1144,6 +1147,7 @@ frame (see -usesLayoutBasedFrame). */
 
 	/* Unset needs layout flags */
 	[self setHasNewContent: NO];
+	_hasNewArrangement = NO;
 	[self setHasNewLayout: NO];
 }
 
@@ -1626,8 +1630,11 @@ You should call this method to obtain the selection in most cases and not
 
 - (void) sortWithSortDescriptors: (NSArray *)descriptors recursively: (BOOL)recursively
 {
+	/* Create a new sort cache in case -setHasNewContent: invalidated it */
 	if (_sortedItems == nil)
+	{
 		_sortedItems = [_layoutItems mutableCopy];
+	}
 
 	BOOL hasValidSortDescriptors = (descriptors != nil && [descriptors isEmpty] == NO);
 	if (hasValidSortDescriptors)
@@ -1636,13 +1643,14 @@ You should call this method to obtain the selection in most cases and not
 		ASSIGN(_arrangedItems, _sortedItems);
 		_sorted = YES;
 		_filtered = NO;
+		_hasNewArrangement = YES;
 	}
 	else
 	{
 		ASSIGN(_arrangedItems, [NSMutableArray arrayWithArray: _layoutItems]);
 		_sorted = NO;
 		_filtered = NO;
-		_hasNewContent = YES;
+		_hasNewArrangement = YES;
 		return;
 	}
 
@@ -1657,8 +1665,6 @@ You should call this method to obtain the selection in most cases and not
 			                                       recursively: recursively];
 		}
 	}
-
-	_hasNewContent = YES;
 }
 
 - (void) filterWithPredicate: (NSPredicate *)predicate recursively: (BOOL)recursively
@@ -1694,15 +1700,15 @@ You should call this method to obtain the selection in most cases and not
 	{
 		ASSIGN(_arrangedItems, [itemsToFilter filteredArrayUsingPredicate: predicate]);
 		_filtered = YES;
+		_hasNewArrangement = YES;
 	}
 	else
 	{
 		ASSIGN(_arrangedItems, itemsToFilter);
 		_filtered = NO;
+		_hasNewArrangement = YES;
 	}
 	ASSIGN(_arrangedItems, [_arrangedItems arrayByAddingObjectsFromArray: itemsToExclude]);
-
-	_hasNewContent = YES;
 }
 
 /** Returns whether -arrangedItems are sorted or not.
