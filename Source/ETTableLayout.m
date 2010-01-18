@@ -269,6 +269,10 @@ with the formatter, otherwise the outcome of the formatting is unknown. */
 {
 	NSTableColumn *column = [self tableColumnWithIdentifierAndCreateIfAbsent: property];
 	ETAssert(nil != column);
+	/* We must reset the value, since on Mac OS X a new NSTextFieldCell is 
+	   initialized with 'Field' as its object value. The formatter might not 
+	   NSString as its input value. */
+	[[column dataCell] setObjectValue: nil];
 	[[column dataCell] setFormatter: aFormatter];
 }
 
@@ -553,6 +557,10 @@ See ETColumnFragment protocol to customize the returned column. */
 - (void) doubleClick: (id)sender
 {
 	NSTableView *tv = [self tableView];
+
+	if ([tv clickedRow] == -1) /* e.g. a double click on a column header */
+		return;
+
 	NSTableColumn *tableColumn = [[tv tableColumns] objectAtIndex: [tv clickedColumn]];
 	BOOL canEdit = ([tableColumn isEditable] && 
 		[self tableView: tv shouldEditTableColumn: tableColumn row: [tv clickedRow]]);
@@ -822,9 +830,10 @@ this delegate method. When -setSortDescriptors: returns, the table view calls
 {
 	NSTableView *tv = [self tableView];
 	NSArray *layoutItems = [_layoutContext arrangedItems];
-	ETLayoutItem *item = [layoutItems objectAtIndex: [tv clickedRow]];
-	
-	return item;
+
+	ETAssert([tv clickedRow] != -1);
+
+	return [layoutItems objectAtIndex: [tv clickedRow]];
 }
 
 /* Framework Private & Subclassing */
