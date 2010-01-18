@@ -386,7 +386,7 @@ expanded and collapsed by getting automatically a related outline arrow. */
 
 - (void) outlineView: (NSOutlineView *)outlineView sortDescriptorsDidChange: (NSArray *)oldDescriptors
 {
-	[self tableView: outlineView sortDescriptorsDidChange: oldDescriptors];
+	[self trySortRecursively: YES oldSortDescriptors: oldDescriptors];
 }
 
 - (ETLayoutItem *) doubleClickedItem
