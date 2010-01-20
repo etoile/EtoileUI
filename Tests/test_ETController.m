@@ -1,35 +1,11 @@
 /*
-	test_ETController.m
-
 	Copyright (C) 2007 Quentin Mathe
 
 	Author:  Quentin Mathe <qmathe@club-internet.fr>
 	Date:  November 2007
-
-	Redistribution and use in source and binary forms, with or without
-	modification, are permitted provided that the following conditions are met:
-
-	* Redistributions of source code must retain the above copyright notice,
-	  this list of conditions and the following disclaimer.
-	* Redistributions in binary form must reproduce the above copyright notice,
-	  this list of conditions and the following disclaimer in the documentation
-	  and/or other materials provided with the distribution.
-	* Neither the name of the Etoile project nor the names of its contributors
-	  may be used to endorse or promote products derived from this software
-	  without specific prior written permission.
-
-	THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
-	AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
-	IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
-	ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE
-	LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
-	CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
-	SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
-	INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
-	CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
-	ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
-	THE POSSIBILITY OF SUCH DAMAGE.
+    License:  Modified BSD (see COPYING)
  */
+
  
 #import <Foundation/Foundation.h>
 #import <AppKit/AppKit.h>
@@ -47,46 +23,51 @@
 @implementation DummyView
 @end
 
-@interface ETController (ControllerTests) <UKTest>
+@interface TestController : NSObject <UKTest>
+{
+	ETController *controller;
+}
+
 @end
 
 
-@implementation ETController (ControllerTests)
+@implementation TestController
 
-- (id) initForTest
+- (id) init
 {
-	SELFINIT
-
-	[[[ETLayoutItemFactory factory] itemGroup] setController: self];
-	RETAIN([self content]);
-	
+	SUPERINIT
+	controller = [[ETController alloc] init];
+	[[[ETLayoutItemFactory factory] itemGroup] setController: controller];
+	RETAIN([controller content]);
 	return self;
 }
 
-- (void) releaseForTest
+- (void) dealloc
 {
-	RELEASE([self content]);
+	RELEASE([controller content]);
+	DESTROY(controller);
+	[super dealloc];
 }
 
 - (NSArray *) contentArray
 {
-	return [[self content] contentArray];
+	return [[controller content] contentArray];
 }
 
 - (void) testInit
 {
-	UKTrue([[self content] isEmpty]);
+	UKTrue([[controller content] isEmpty]);
 }
 
 - (void) testNewObject
 {
-	UKNil([self newObject]);
+	UKNil([controller newObject]);
 
 	/* Test model class */
 
-	[self setObjectClass: [NSDate class]];
-	id newObject = [self newObject];
-	id newObject2 = [self newObject];
+	[controller setObjectClass: [NSDate class]];
+	id newObject = [controller newObject];
+	id newObject2 = [controller newObject];
 
 	UKObjectKindOf(newObject, NSDate);
 	UKObjectsNotSame(newObject2, newObject);
@@ -94,15 +75,15 @@
 	// returns two different dates in time.
 	UKObjectsNotEqual(newObject2, newObject); 
 
-	UKNil([self templateItem]);
+	UKNil([controller templateItem]);
 
 	/* Test item template */
 
 	id view = AUTORELEASE([DummyView new]);
 	id templateItem = [[ETLayoutItemFactory factory] itemWithView: view];
-	[self setTemplateItem: templateItem];
-	newObject = [self newObject];
-	newObject2 = [self newObject];
+	[controller setTemplateItem: templateItem];
+	newObject = [controller newObject];
+	newObject2 = [controller newObject];
 
 	UKObjectKindOf(newObject, ETLayoutItem);
 	UKObjectsNotEqual(templateItem, newObject);
@@ -118,14 +99,14 @@
 	UKObjectsNotEqual([newObject2 representedObject], [newObject representedObject]);
 
 	/* Test without object class */
-	[self setObjectClass: nil];
-	newObject = [self newObject];
-	newObject2 = [self newObject];
+	[controller setObjectClass: nil];
+	newObject = [controller newObject];
+	newObject2 = [controller newObject];
 	UKNil([newObject representedObject]);
 	UKNil([newObject2 representedObject]);
 
 	/* Test with object prototype (-objectClass must be nil) */
-	[[self templateItem] setRepresentedObject: [NSIndexSet indexSetWithIndex: 5]];
+	[[controller templateItem] setRepresentedObject: [NSIndexSet indexSetWithIndex: 5]];
 	// FIXME: represented object is nil, we need to ensure -deepCopy called
 	// by -newItem behaves correctly.
 	//UKObjectKindOf([newObject representedObject], NSIndexSet);
@@ -136,26 +117,26 @@
 
 - (void) testNewGroup
 {
-	UKNil([self newGroup]);
+	UKNil([controller newGroup]);
 
-	[self setGroupClass: [NSMutableArray class]];
+	[controller setGroupClass: [NSMutableArray class]];
 
-	id newGroup = [self newGroup];
-	id newGroup2 = [self newGroup];
+	id newGroup = [controller newGroup];
+	id newGroup2 = [controller newGroup];
 
 	UKObjectKindOf(newGroup, NSMutableArray);
 	// newGroup2 not created by sending -copy but -alloc and -init
 	UKObjectsNotSame(newGroup2, newGroup);
 
-	UKNil([self templateItem]);
+	UKNil([controller templateItem]);
 
 	/* Test item template */
 
 	id view = AUTORELEASE([DummyView new]);
 	id templateItem = AUTORELEASE([[ETLayoutItemGroup alloc] initWithView: view]);
-	[self setTemplateItemGroup: templateItem];
-	newGroup = [self newGroup];
-	newGroup2 = [self newGroup];
+	[controller setTemplateItemGroup: templateItem];
+	newGroup = [controller newGroup];
+	newGroup2 = [controller newGroup];
 
 	UKObjectKindOf(newGroup, ETLayoutItemGroup);
 	UKObjectsNotEqual(templateItem, newGroup);
@@ -170,14 +151,14 @@
 	UKObjectsNotSame([newGroup2 representedObject], [newGroup representedObject]);
 
 	/* Test without object class */
-	[self setGroupClass: nil];
-	newGroup = [self newGroup];
-	newGroup2 = [self newGroup];
+	[controller setGroupClass: nil];
+	newGroup = [controller newGroup];
+	newGroup2 = [controller newGroup];
 	UKNil([newGroup representedObject]);
 	UKNil([newGroup2 representedObject]);
 
 	/* Test with object prototype (-groupClass must be nil) */
-	[[self templateItemGroup] setRepresentedObject: [NSIndexSet indexSetWithIndex: 5]];
+	[[controller templateItemGroup] setRepresentedObject: [NSIndexSet indexSetWithIndex: 5]];
 	// FIXME: represented object is nil, we need to ensure -deepCopy called
 	// by -newItemGroup behaves correctly.
 	//UKObjectKindOf([newGroup representedObject], NSIndexSet);
@@ -188,15 +169,15 @@
 
 - (void) testAdd
 {
-	[self setObjectClass: [NSDate class]];
-	[self add: nil];
+	[controller setObjectClass: [NSDate class]];
+	[controller add: nil];
 	id item = [[self contentArray] lastObject];
 
 	UKIntsEqual(1, [[self contentArray] count]);
 	UKObjectKindOf(item, ETLayoutItem);
 	UKObjectKindOf([item representedObject], NSDate);
 
-	[self add: nil];
+	[controller add: nil];
 	id item2 = [[self contentArray] lastObject];
 
 	UKIntsEqual(2, [[self contentArray] count]);
@@ -205,22 +186,22 @@
 
 - (void) testInsert
 {
-	[self setObjectClass: [NSDate class]];
-	[self insert: nil];
+	[controller setObjectClass: [NSDate class]];
+	[controller insert: nil];
 	id item = [[self contentArray] lastObject];
 
 	UKIntsEqual(1, [[self contentArray] count]);
 	UKObjectKindOf(item, ETLayoutItem);
 	UKObjectKindOf([item representedObject], NSDate);
 
-	[self insert: nil];
+	[controller insert: nil];
 	id item2 = [[self contentArray] lastObject];
 
 	UKIntsEqual(2, [[self contentArray] count]);
 	UKObjectsNotSame(item, item2);
 
-	[[self content] setSelectionIndex: 1];
-	[self insert: nil];
+	[[controller content] setSelectionIndex: 1];
+	[controller insert: nil];
 	id item3 = [[self contentArray] objectAtIndex: 1];
 
 	UKIntsEqual(3, [[self contentArray] count]);
@@ -230,34 +211,32 @@
 
 - (void) testRemove
 {
-	[self setObjectClass: [NSDate class]];
-	[self add: nil];
-	[self add: nil];
-	id item1 = [[self contentArray] firstObject];
+	[controller setObjectClass: [NSDate class]];
+	[controller add: nil];
+	[controller add: nil];
 	id item2 = [[self contentArray] lastObject];
 
-	[self remove: nil];
+	[controller remove: nil];
 	UKIntsEqual(2, [[self contentArray] count]);
 
-	[[self content] setSelectionIndex: 1];
-	[self remove: nil];
+	[[controller content] setSelectionIndex: 1];
+	[controller remove: nil];
 	UKIntsEqual(1, [[self contentArray] count]);
-	UKFalse([[self content] containsItem: item2]);
+	UKFalse([[controller content] containsItem: item2]);
 
-	[self add: nil];
+	[controller add: nil];
 	item2 = [[self contentArray] objectAtIndex: 1];
-	[self add: nil];
-	id item3 = [[self contentArray] lastObject];
+	[controller add: nil];
 
-	[[self content] setSelectionIndex: 1];
-	[self remove: nil];
+	[[controller content] setSelectionIndex: 1];
+	[controller remove: nil];
 	UKIntsEqual(2, [[self contentArray] count]);
-	UKFalse([[self content] containsItem: item2]);
+	UKFalse([[controller content] containsItem: item2]);
 	UKObjectsNotSame(item2, [[self contentArray] firstObject]);
 	UKObjectsNotSame(item2, [[self contentArray] lastObject]);
 
-	[[self content] setSelectionIndexes: [NSIndexSet indexSetWithIndexesInRange: NSMakeRange(0, 2)]];
-	[self remove: nil];
+	[[controller content] setSelectionIndexes: [NSIndexSet indexSetWithIndexesInRange: NSMakeRange(0, 2)]];
+	[controller remove: nil];
 	UKTrue([[self contentArray] isEmpty]);
 }
 
