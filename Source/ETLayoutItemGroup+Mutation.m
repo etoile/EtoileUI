@@ -45,9 +45,14 @@ the UI won't reflect the latest receiver content. */
 - (void) setHasNewContent: (BOOL)flag
 {
 	_hasNewContent = flag;
-	/* When -items has changed, we invalidate our sort/filter caches */
-	DESTROY(_sortedItems);
-	DESTROY(_arrangedItems);
+	if (_hasNewContent)
+	{
+		/* When -items has changed, we invalidate our sort/filter caches */
+		DESTROY(_sortedItems);
+		DESTROY(_arrangedItems);
+		_filtered = NO;
+		_sorted = NO;
+	}
 }
 
 /* Would be cleaner if this mutation backend was a singleton object acting as a 

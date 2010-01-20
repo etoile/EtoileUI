@@ -1014,11 +1014,14 @@ you have to implement your own version of this method. */
 
 /** Tries to reload the content of the receiver, but only if it can be reloaded. 
 
+Won't reload when the receiver is currently sorted and/or filtered. See 
+-isSorted and -isFiltered.
+
 This method can be safely called even if the receiver has no source or doesn't 
 inherit a source from a base item. */
 - (void) reloadIfNeeded
 {
-	if ([self canReload])
+	if ([self canReload] && [self isSorted] == NO && [self isFiltered] == NO)
 		[self reload];
 }
 
@@ -1047,7 +1050,10 @@ When the source is nil, the receiver becomes empty. */
 }
 
 /** Reloads the content by removing all existing childrens and requesting all
-the receiver immediate children to the base item source. */
+the receiver immediate children to the base item source.
+
+Will cancel any any sorting and/or filtering currently done on the receiver. 
+Which means -isFiltered and -isSorted will both return NO. */
 - (void) reload
 {
 	BOOL hasSource = ([[self baseItem] source] != nil);
@@ -1669,13 +1675,21 @@ You should call this method to obtain the selection in most cases and not
 
 - (void) filterWithPredicate: (NSPredicate *)predicate recursively: (BOOL)recursively
 {
-	NSArray *itemsToFilter = (_sorted ? _sortedItems : _layoutItems);
+	NSArray *unfilteredItems = (_sorted ? _sortedItems : _layoutItems);
+	NSArray *itemsToFilter = unfilteredItems;
 	BOOL hasValidPredicate = (predicate != nil);
 	NSMutableArray *itemsToExclude = [NSMutableArray array];
-		
+
+	/* We traverse the tree structure downwards until we reach the terminal 
+	   nodes, then we filter each parent children as we walk upwards.
+	   When at least one child matches, we prevent its parent to be elimated in 
+	   the search result (even when it doesn't match) by omitting this parent in 
+	   the filtering and adding it directly to the search result. 
+	   We return and repeat the operation at the level above until we reach the 
+	   item on which the filtering was initiated. */
 	if (recursively)
 	{
-		FOREACHI(itemsToFilter, item)
+		FOREACHI(unfilteredItems, item)
 		{
 			if ([item isGroup] == NO)
 				continue;
@@ -1691,7 +1705,7 @@ You should call this method to obtain the selection in most cases and not
 
 		if ([itemsToExclude count] > 0)
 		{
-			itemsToFilter = [NSMutableArray arrayWithArray: itemsToFilter];
+			itemsToFilter = [NSMutableArray arrayWithArray: unfilteredItems];
 			[(NSMutableArray *)itemsToFilter removeObjectsInArray: itemsToExclude];
 		}
 	}
@@ -1704,7 +1718,7 @@ You should call this method to obtain the selection in most cases and not
 	}
 	else
 	{
-		ASSIGN(_arrangedItems, itemsToFilter);
+		ASSIGN(_arrangedItems, unfilteredItems);
 		_filtered = NO;
 		_hasNewArrangement = YES;
 	}
