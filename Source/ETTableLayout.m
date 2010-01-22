@@ -11,6 +11,7 @@
 #import <EtoileFoundation/NSObject+HOM.h>
 #import <EtoileFoundation/NSObject+Model.h>
 #import "ETTableLayout.h"
+#import "ETController.h"
 #import "ETGeometry.h"
 #import "ETLayoutItem.h"
 #import "ETEvent.h"
