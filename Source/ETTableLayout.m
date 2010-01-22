@@ -163,6 +163,13 @@ Will raise an NSInvalidArgumentException when the properties array is nil. */
 
 	NILARG_EXCEPTION_TEST(properties);
 
+	/* We don't want to remove and add the columns every time the layout is 
+	   updated through -renderWithItems:isNewContent:, othewise we loose 
+	   various attributes such as the column selection.
+	   e.g. this would happen every time the controller rearranges its content. */
+	if ([properties isEqual: [self displayedProperties]])
+		return;
+
 	NSTableView *tv = [self tableView];
 
 	/* Remove all existing columns
@@ -776,6 +783,30 @@ See ETColumnFragment protocol to customize the returned column. */
 	return YES;
 }
 
+- (NSArray *) customSortDescriptorsForSortDescriptors: (NSArray *)currentSortDescriptors
+{
+	if ([self isSortable] == NO)
+		return	[super customSortDescriptorsForSortDescriptors: currentSortDescriptors];
+
+	NSParameterAssert(nil != currentSortDescriptors);
+
+	NSArray *tableSortDescriptors = [[self tableView] sortDescriptors];
+	NSArray *currentSortKeys = (id)[[currentSortDescriptors mappedCollection] key];
+	NSMutableArray *sortDescriptors = AUTORELEASE([currentSortDescriptors mutableCopy]);
+
+	FOREACH(tableSortDescriptors, descriptor, NSSortDescriptor *)
+	{
+		NSString *tableColumnSortKey = [descriptor key];
+
+		if ([currentSortKeys containsObject: tableColumnSortKey] == NO)
+		{
+			[sortDescriptors addObject: descriptor];
+		}
+	}
+
+	return sortDescriptors;
+}
+
 /** This method is only exposed to be used internally by EtoileUI.
 
 Sorts the widget rows with the current sort descriptors and updates the display.<br />
@@ -789,31 +820,28 @@ The current sort descriptors are collected as explained in the class description
 	if ([self isSortable] == NO)
 		return;
 
-	NSArray *newSortDescriptors = [[self tableView] sortDescriptors];
-	NSArray *controllerSortDescriptors = [[[_layoutContext baseItem] controller] sortDescriptors];
+	ETController *controller = [[_layoutContext baseItem] controller];
+	NSArray *sortDescriptors = [controller sortDescriptors];
 
-	if (nil == controllerSortDescriptors)
+	if (nil == sortDescriptors)
 	{
-		controllerSortDescriptors = [NSArray array];
+		sortDescriptors = [NSArray array];
 	}
 
-	NSArray *controllerSortKeys = (id)[[controllerSortDescriptors mappedCollection] key];
-	NSMutableArray *sortDescriptors = AUTORELEASE([controllerSortDescriptors mutableCopy]);
+	ETLog(@"Controller sort %@", sortDescriptors);	
+	ETLog(@"Did change sort from %@ to %@", oldDescriptors, [[self tableView] sortDescriptors]);
+	
+	/* We cannot check -[ETLayoutItemGroup isFiltered] because the predicate is 
+	   provided externally (e.g. by an ETController instance). */
+	BOOL isFiltered = (nil != controller && nil != [controller filterPredicate]);
 
-	FOREACH(newSortDescriptors, descriptor, NSSortDescriptor *)
-	{
-		NSString *tableColumnSortKey = [descriptor key];
-
-		if ([controllerSortKeys containsObject: tableColumnSortKey] == NO)
-		{
-			[sortDescriptors addObject: descriptor];
-		}
-	}
-
-	ETLog(@"Controller sort %@", controllerSortDescriptors);	
-	ETLog(@"Did change sort from %@ to %@", oldDescriptors, sortDescriptors);
-
+	/* Will call back -customSortDescriptorsWithSortDescriptors: which returns 
+	   the new real sort descriptors. */
 	[_layoutContext sortWithSortDescriptors: sortDescriptors recursively: recursively];
+	if (isFiltered)
+	{
+		[_layoutContext filterWithPredicate: [controller filterPredicate] recursively: recursively];
+	}
 	[[self tableView] reloadData];
 }
 

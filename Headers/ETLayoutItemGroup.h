@@ -23,7 +23,7 @@
 {
 	NSMutableArray *_layoutItems;
 	NSMutableArray *_sortedItems;
-	NSMutableArray *_arrangedItems;
+	NSArray *_arrangedItems;
 	ETLayout *_layout;
 	SEL _doubleClickAction;
 	BOOL _autolayout;

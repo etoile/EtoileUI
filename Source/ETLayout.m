@@ -1274,4 +1274,18 @@ If you override this method, you must override -styleForProperty: too. */
 
 }
 
+/** <override-dummy /> 
+Returns the given sort descriptors.
+
+Overrides in your subclass to customize the sort descriptors used to sort the 
+the layout context.<br />
+When the sorting is recursive, the returned descriptors will be also be used  
+to sort the item subtree.
+
+See also ETController which usually provides the sort descriptors we receive. */
+- (NSArray *) customSortDescriptorsForSortDescriptors: (NSArray *)currentSortDescriptors
+{
+	return currentSortDescriptors;
+}
+
 @end

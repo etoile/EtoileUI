@@ -11,8 +11,10 @@
 #import <AppKit/AppKit.h>
 #import <EtoileFoundation/Macros.h>
 #import "ETController.h"
+#import "EtoileUIProperties.h"
 #import "ETLayoutItem.h"
 #import "ETLayoutItemGroup.h"
+#import "ETLayoutItemGroup+Mutation.h"
 #import "ETLayoutItemFactory.h"
 #import "ETCompatibility.h"
 #import <UnitKit/UnitKit.h>
@@ -26,6 +28,8 @@
 @interface TestController : NSObject <UKTest>
 {
 	ETController *controller;
+	ETLayoutItemGroup *content;
+	ETLayoutItemFactory *itemFactory;
 }
 
 @end
@@ -36,16 +40,21 @@
 - (id) init
 {
 	SUPERINIT
+
+	ASSIGN(itemFactory, [ETLayoutItemFactory factory]);
+	ASSIGN(content, [itemFactory itemGroup]);
 	controller = [[ETController alloc] init];
-	[[[ETLayoutItemFactory factory] itemGroup] setController: controller];
-	RETAIN([controller content]);
+
+	[content setController: controller];
+
 	return self;
 }
 
 - (void) dealloc
 {
-	RELEASE([controller content]);
+	DESTROY(content);
 	DESTROY(controller);
+	DESTROY(itemFactory);
 	[super dealloc];
 }
 
@@ -238,6 +247,232 @@
 	[[controller content] setSelectionIndexes: [NSIndexSet indexSetWithIndexesInRange: NSMakeRange(0, 2)]];
 	[controller remove: nil];
 	UKTrue([[self contentArray] isEmpty]);
+}
+
+- (NSSortDescriptor *) descriptorWithKey: (NSString *)aKey
+{
+	return AUTORELEASE([[NSSortDescriptor alloc] initWithKey: aKey ascending: YES]);
+}
+
+- (void) testBasicSort
+{
+	id item1 = [itemFactory itemWithRepresentedObject: @"a"];
+	id item2 = [itemFactory itemWithRepresentedObject: @"b"];
+	id item3 = [itemFactory itemWithRepresentedObject: @"c"];
+	NSArray *initialItems = A(item3, item1, item2);
+
+	[content addItems: initialItems];
+	[controller setSortDescriptors: A([self descriptorWithKey: kETRepresentedObjectProperty])];
+
+	UKObjectsEqual(A(item1, item2, item3), [content arrangedItems]);
+	UKObjectsEqual(initialItems, [content items]);
+	UKTrue([content isSorted]);
+	UKFalse([content isFiltered]);
+	UKFalse([content hasNewContent]);
+	
+	[controller setSortDescriptors: 
+		A([[[controller sortDescriptors] firstObject] reversedSortDescriptor])];
+
+	UKObjectsEqual(A(item3, item2, item1), [content arrangedItems]);
+	UKObjectsEqual(initialItems, [content items]);
+	UKTrue([content isSorted]);
+	UKFalse([content isFiltered]);
+	UKFalse([content hasNewContent]);
+
+	[controller setSortDescriptors: [NSArray array]];
+
+	UKObjectsEqual(initialItems, [content arrangedItems]);
+	UKObjectsEqual(initialItems, [content items]);
+	UKFalse([content isSorted]);
+	UKFalse([content isFiltered]);
+	UKFalse([content hasNewContent]);
+}
+
+- (void) testRecursiveSort
+{
+	id item1 = [itemFactory itemGroupWithRepresentedObject: @"a"];
+	id item2 = [itemFactory itemWithRepresentedObject: @"b"];
+	id item3 = [itemFactory itemGroupWithRepresentedObject: @"c"];
+	id item11 = [itemFactory itemWithRepresentedObject: @"A"];
+	id item12 = [itemFactory itemGroupWithRepresentedObject: @"B"];
+	id item13 = [itemFactory itemWithRepresentedObject: @"C"];
+	id item121 = [itemFactory itemWithRepresentedObject: [NSNumber numberWithInt: 8]];
+	id item122 = [itemFactory itemGroupWithRepresentedObject: [NSNumber numberWithInt: 9]];
+
+	NSArray *initialItems = A(item3, item1, item2);
+	NSArray *initialCapitalItems = A(item12, item11, item13);
+	NSArray *initialNumberItems = A(item121, item122);
+
+	[item12 addItems: initialNumberItems];
+	[item3 addItems: initialCapitalItems];
+	[content addItems: initialItems];
+	[controller setSortDescriptors: A([self descriptorWithKey: kETRepresentedObjectProperty])];
+
+	UKObjectsEqual(A(item1, item2, item3), [content arrangedItems]);
+	UKObjectsEqual(initialItems, [content items]);
+	UKTrue([content isSorted]);
+	UKFalse([content isFiltered]);
+	UKFalse([content hasNewContent]);
+	UKObjectsEqual(A(item11, item12, item13), [item3 arrangedItems]);
+	UKObjectsEqual(initialCapitalItems, [item3 items]);
+	UKTrue([item3 isSorted]);
+	UKFalse([item3 isFiltered]);
+	UKFalse([item3 hasNewContent]);
+	UKObjectsEqual(A(item121, item122), [item12 arrangedItems]);
+	UKObjectsEqual(initialNumberItems, [item12 items]);
+	UKTrue([item12 isSorted]);
+	UKFalse([item12 isFiltered]);
+	UKFalse([item12 hasNewContent]);
+	
+	[controller setSortDescriptors: 
+		A([[[controller sortDescriptors] firstObject] reversedSortDescriptor])];
+
+	UKObjectsEqual(A(item3, item2, item1), [content arrangedItems]);
+	UKObjectsEqual(initialItems, [content items]);
+	UKTrue([content isSorted]);
+	UKFalse([content isFiltered]);
+	UKFalse([content hasNewContent]);
+	UKObjectsEqual(A(item13, item12, item11), [item3 arrangedItems]);
+	UKObjectsEqual(initialCapitalItems, [item3 items]);
+	UKTrue([item3 isSorted]);
+	UKFalse([item3 isFiltered]);
+	UKFalse([item3 hasNewContent]);
+	UKObjectsEqual(A(item122, item121), [item12 arrangedItems]);
+	UKObjectsEqual(initialNumberItems, [item12 items]);
+	UKTrue([item12 isSorted]);
+	UKFalse([item12 isFiltered]);
+	UKFalse([item12 hasNewContent]);
+
+	[controller setSortDescriptors: [NSArray array]];
+
+	UKObjectsEqual(initialItems, [content arrangedItems]);
+	UKObjectsEqual(initialItems, [content items]);
+	UKFalse([content isSorted]);
+	UKFalse([content isFiltered]);
+	UKFalse([content hasNewContent]);
+	UKObjectsEqual(initialCapitalItems, [item3 arrangedItems]);
+	UKObjectsEqual(initialCapitalItems, [item3 items]);
+	UKFalse([item3 isSorted]);
+	UKFalse([item3 isFiltered]);
+	UKFalse([item3 hasNewContent]);
+	UKObjectsEqual(initialNumberItems, [item12 arrangedItems]);
+	UKObjectsEqual(initialNumberItems, [item12 items]);
+	UKFalse([item12 isSorted]);
+	UKFalse([item12 isFiltered]);
+	UKFalse([item12 hasNewContent]);
+}
+
+- (void) testBasicFilter
+{
+	id item1 = [itemFactory itemWithRepresentedObject: @"a"];
+	id item2 = [itemFactory itemWithRepresentedObject: @"b"];
+	id item3 = [itemFactory itemWithRepresentedObject: @"c"];
+	NSArray *initialItems = A(item3, item1, item2);
+
+	[content addItems: initialItems];
+	[controller setFilterPredicate: 
+		[NSPredicate predicateWithFormat: @"representedObject contains %@", @"c"]];
+
+	UKObjectsEqual(A(item3), [content arrangedItems]);
+	UKObjectsEqual(initialItems, [content items]);
+	UKFalse([content isSorted]);
+	UKTrue([content isFiltered]);
+	UKFalse([content hasNewContent]);
+	
+	[controller setFilterPredicate: 
+		[NSPredicate predicateWithFormat: @"representedObject contains %@", @"b"]];
+
+	UKObjectsEqual(A(item2), [content arrangedItems]);
+	UKObjectsEqual(initialItems, [content items]);
+	UKFalse([content isSorted]);
+	UKTrue([content isFiltered]);
+	UKFalse([content hasNewContent]);
+
+	[controller setFilterPredicate: nil];
+
+	UKObjectsEqual(initialItems, [content arrangedItems]);
+	UKObjectsEqual(initialItems, [content items]);
+	UKFalse([content isSorted]);
+	UKFalse([content isFiltered]);
+	UKFalse([content hasNewContent]);
+}
+
+- (void) testRecursiveFilter
+{
+	id item1 = [itemFactory itemGroupWithRepresentedObject: @"a"];
+	id item2 = [itemFactory itemWithRepresentedObject: @"b"];
+	id item3 = [itemFactory itemGroupWithRepresentedObject: @"c"];
+	id item11 = [itemFactory itemWithRepresentedObject: @"A"];
+	id item12 = [itemFactory itemGroupWithRepresentedObject: @"B"];
+	id item13 = [itemFactory itemWithRepresentedObject: @"C"];
+	id item121 = [itemFactory itemWithRepresentedObject: [NSNumber numberWithInt: 8]];
+	id item122 = [itemFactory itemGroupWithRepresentedObject: [NSNumber numberWithInt: 9]];
+
+	NSArray *initialItems = A(item3, item1, item2);
+	NSArray *initialCapitalItems = A(item12, item11, item13);
+	NSArray *initialNumberItems = A(item121, item122);
+
+	[item12 addItems: initialNumberItems];
+	[item3 addItems: initialCapitalItems];
+	[content addItems: initialItems];
+	/* We cannot use 'contains[c]' operator here since we are going to evaluate 
+	   numbers too and not just strings.
+	   Note: what we do could be rewritten with 'IN'. */
+	[controller setFilterPredicate: [NSPredicate predicateWithFormat: 
+		@"(representedObject == %@) OR (representedObject == %@)", @"b", @"B"]];
+
+	UKObjectsEqual(A(item3, item2), [content arrangedItems]);
+	UKObjectsEqual(initialItems, [content items]);
+	UKFalse([content isSorted]);
+	UKTrue([content isFiltered]);
+	UKFalse([content hasNewContent]);
+	UKObjectsEqual(A(item12), [item3 arrangedItems]);
+	UKObjectsEqual(initialCapitalItems, [item3 items]);
+	UKFalse([item3 isSorted]);
+	UKTrue([item3 isFiltered]);
+	UKFalse([item3 hasNewContent]);
+	UKObjectsEqual([NSArray array], [item12 arrangedItems]);
+	UKObjectsEqual(initialNumberItems, [item12 items]);
+	UKFalse([item12 isSorted]);
+	UKTrue([item12 isFiltered]);
+	UKFalse([item12 hasNewContent]);
+
+	[controller setFilterPredicate: [NSPredicate predicateWithFormat: 
+		@"representedObject IN %@", S(@"C", @"A", @"b", [NSNumber numberWithInt: 8])]];
+
+	UKObjectsEqual(A(item3, item2), [content arrangedItems]);
+	UKObjectsEqual(initialItems, [content items]);
+	UKFalse([content isSorted]);
+	UKTrue([content isFiltered]);
+	UKFalse([content hasNewContent]);
+	UKObjectsEqual(initialCapitalItems, [item3 arrangedItems]);
+	UKObjectsEqual(initialCapitalItems, [item3 items]);
+	UKFalse([item3 isSorted]);
+	UKTrue([item3 isFiltered]);
+	UKFalse([item3 hasNewContent]);
+	UKObjectsEqual(A(item121), [item12 arrangedItems]);
+	UKObjectsEqual(initialNumberItems, [item12 items]);
+	UKFalse([item12 isSorted]);
+	UKTrue([item12 isFiltered]);
+	UKFalse([item12 hasNewContent]);
+
+	[controller setFilterPredicate: nil];
+
+	UKObjectsEqual(initialItems, [content arrangedItems]);
+	UKObjectsEqual(initialItems, [content items]);
+	UKFalse([content isSorted]);
+	UKFalse([content isFiltered]);
+	UKFalse([content hasNewContent]);
+	UKObjectsEqual(initialCapitalItems, [item3 arrangedItems]);
+	UKObjectsEqual(initialCapitalItems, [item3 items]);
+	UKFalse([item3 isSorted]);
+	UKFalse([item3 isFiltered]);
+	UKFalse([item3 hasNewContent]);
+	UKObjectsEqual(initialNumberItems, [item12 arrangedItems]);
+	UKObjectsEqual(initialNumberItems, [item12 items]);
+	UKFalse([item12 isSorted]);
+	UKFalse([item12 isFiltered]);
+	UKFalse([item12 hasNewContent]);
 }
 
 @end

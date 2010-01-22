@@ -223,4 +223,8 @@ typedef enum _ETSizeConstraintStyle
 - (id) styleForProperty: (NSString *)property;
 - (void) setStyle: (id)style forProperty: (NSString *)property;
 
+/* Sorting */
+
+- (NSArray *) customSortDescriptorsForSortDescriptors: (NSArray *)currentSortDescriptors;
+
 @end

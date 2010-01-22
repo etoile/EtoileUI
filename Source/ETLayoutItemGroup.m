@@ -1634,14 +1634,18 @@ You should call this method to obtain the selection in most cases and not
 
 /* Sorting and Filtering */
 
-- (void) sortWithSortDescriptors: (NSArray *)descriptors recursively: (BOOL)recursively
+- (void) sortWithSortDescriptors: (NSArray *)sortDescriptors recursively: (BOOL)recursively
 {
+	NSParameterAssert(nil != sortDescriptors);
+
 	/* Create a new sort cache in case -setHasNewContent: invalidated it */
 	if (_sortedItems == nil)
 	{
 		_sortedItems = [_layoutItems mutableCopy];
 	}
 
+	NSArray *descriptors = 
+		[[self layout] customSortDescriptorsForSortDescriptors: sortDescriptors];
 	BOOL hasValidSortDescriptors = (descriptors != nil && [descriptors isEmpty] == NO);
 	if (hasValidSortDescriptors)
 	{
@@ -1653,11 +1657,12 @@ You should call this method to obtain the selection in most cases and not
 	}
 	else
 	{
-		ASSIGN(_arrangedItems, [NSMutableArray arrayWithArray: _layoutItems]);
+		// NOTE: -arrangedItems returns a defensive copy, but it could be less 
+		// expansive to make a single defensive copy here.
+		ASSIGN(_arrangedItems, _layoutItems);
 		_sorted = NO;
 		_filtered = NO;
 		_hasNewArrangement = YES;
-		return;
 	}
 
 	if (recursively)
@@ -1675,10 +1680,9 @@ You should call this method to obtain the selection in most cases and not
 
 - (void) filterWithPredicate: (NSPredicate *)predicate recursively: (BOOL)recursively
 {
-	NSArray *unfilteredItems = (_sorted ? _sortedItems : _layoutItems);
-	NSArray *itemsToFilter = unfilteredItems;
+	NSArray *itemsToFilter = (_sorted ? _sortedItems : _layoutItems);
 	BOOL hasValidPredicate = (predicate != nil);
-	NSMutableArray *itemsToExclude = [NSMutableArray array];
+	NSMutableSet *itemsWithMatchingDescendants = [NSMutableSet set];
 
 	/* We traverse the tree structure downwards until we reach the terminal 
 	   nodes, then we filter each parent children as we walk upwards.
@@ -1689,7 +1693,7 @@ You should call this method to obtain the selection in most cases and not
 	   item on which the filtering was initiated. */
 	if (recursively)
 	{
-		FOREACHI(unfilteredItems, item)
+		FOREACHI(itemsToFilter, item)
 		{
 			if ([item isGroup] == NO)
 				continue;
@@ -1699,30 +1703,26 @@ You should call this method to obtain the selection in most cases and not
 			BOOL hasSearchResult = ([[item arrangedItems] count] > 0);
 			if (hasSearchResult)
 			{
-				[itemsToExclude addObject: item];
+				[itemsWithMatchingDescendants addObject: item];
 			}
-		}
-
-		if ([itemsToExclude count] > 0)
-		{
-			itemsToFilter = [NSMutableArray arrayWithArray: unfilteredItems];
-			[(NSMutableArray *)itemsToFilter removeObjectsInArray: itemsToExclude];
 		}
 	}
 
 	if (hasValidPredicate)
 	{
-		ASSIGN(_arrangedItems, [itemsToFilter filteredArrayUsingPredicate: predicate]);
+		ASSIGN(_arrangedItems, [itemsToFilter filteredArrayUsingPredicate: predicate
+		                                                  ignoringObjects: itemsWithMatchingDescendants]);
 		_filtered = YES;
 		_hasNewArrangement = YES;
 	}
 	else
 	{
-		ASSIGN(_arrangedItems, unfilteredItems);
+		// NOTE: -arrangedItems returns a defensive copy, but it could be less 
+		// expansive to make a single defensive copy here.
+		ASSIGN(_arrangedItems, itemsToFilter);
 		_filtered = NO;
 		_hasNewArrangement = YES;
 	}
-	ASSIGN(_arrangedItems, [_arrangedItems arrayByAddingObjectsFromArray: itemsToExclude]);
 }
 
 /** Returns whether -arrangedItems are sorted or not.
