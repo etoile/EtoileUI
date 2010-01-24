@@ -36,7 +36,6 @@ method will reuse the action handler to be set on every created items. */
 {
 	ETLayoutItem *_fieldEditorItem;
 	ETLayoutItem *_editedItem;
-	BOOL _wasFieldEditorParentModelMutator;
 }
 
 + (Class) styleClass;

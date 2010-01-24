@@ -70,5 +70,6 @@ NSWindow methods: -setDelegate:, -setAcceptsMouseMovedEvents: and
 - (void) setActiveFieldEditorItem: (ETLayoutItem *)anItem 
                        editedItem: (ETLayoutItem *)anItem;
 - (void) removeActiveFieldEditorItem;
+- (ETLayoutItem *) hitTestFieldEditorWithEvent: (ETEvent *)anEvent;
 
 @end

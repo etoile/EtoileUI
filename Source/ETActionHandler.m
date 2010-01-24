@@ -191,17 +191,22 @@ Which actions begins and ends the text editing is up to you. */
 
 	ETLayoutItem *fieldEditorItem = [self fieldEditorItem];
 
-	NSParameterAssert(nil != fieldEditorItem);
+	ETAssert(nil != fieldEditorItem);
 
 	ETLayoutItemGroup *windowBackedItem = [item windowBackedAncestorItem];
-	_wasFieldEditorParentModelMutator = [windowBackedItem shouldMutateRepresentedObject];
-	[windowBackedItem setShouldMutateRepresentedObject: NO];
-
 	NSRect fieldEditorFrame = [item convertRect: fieldEditorRect toItem: windowBackedItem];
 	NSTextView *fieldEditor = (NSTextView *)[fieldEditorItem view];
+	// TODO: Handle non-editable properties more in a better way
+	NSString *value = [[[item subject] valueForProperty: property] stringValue];
+	NSString *formattedValue = @"Untitled";
+	
+	if (nil != value)
+	{
+		formattedValue = value;
+	}
 
 	// TODO: Use -bindXXX
-	[fieldEditor setString: [[item subject] valueForProperty: property]];
+	[fieldEditor setString: formattedValue];
 	[fieldEditor setFont: [self fontForEditingItem: item]];
 	[fieldEditorItem setFrame: fieldEditorFrame];
 	[fieldEditorItem setRepresentedObject: [ETProperty propertyWithName: property 
@@ -229,7 +234,6 @@ removes the field editor item inserted in the window backed ancestor item. */
 	}
 
 	[editionCoordinator removeActiveFieldEditorItem];
-	[[_editedItem windowBackedAncestorItem] setShouldMutateRepresentedObject: _wasFieldEditorParentModelMutator];
 
 	DESTROY(_editedItem);
 }

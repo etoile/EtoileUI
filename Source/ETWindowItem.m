@@ -1,4 +1,4 @@
-/*
+ /*
 	Copyright (C) 2007 Quentin Mathe
 
 	Author:  Quentin Mathe <qmathe@club-internet.fr>
@@ -9,6 +9,8 @@
 #import <EtoileFoundation/NSInvocation+Etoile.h>
 #import <EtoileFoundation/Macros.h>
 #import "ETWindowItem.h"
+#import "ETInstruments.h"
+#import "ETEvent.h"
 #import "ETGeometry.h"
 #import "ETLayer.h"
 #import "ETLayoutItem.h"
@@ -17,6 +19,7 @@
 #import "EtoileUIProperties.h"
 #import "ETPickDropCoordinator.h"
 #import "ETCompatibility.h"
+#import "ETView.h"
 #import "NSWindow+Etoile.h"
 
 #define NC [NSNotificationCenter defaultCenter]
@@ -500,7 +503,23 @@ An NSInvalidArgumentException is raised when any given item is nil. */
 	ASSIGN(_activeFieldEditorItem, editorItem);
 	ASSIGN(_editedItem, editedItem);
 
-	[[self firstDecoratedItem] addItem: (id)editorItem];
+	/* We must be sure the field editor won't be repositionned by its parent 
+	   item layout, that's why we don't use -addItem: (or -insertItem:atIndex:) 
+	   but -addSubview:.
+	   In -hitTestWithEvent:, we start with -hitTestFieldEditorWithEvent: then 
+	   only we try a hit test in the item tree. When a field editor is in use, 
+	   we can be sure it is returned by the hit test. 
+	   -hitTestFieldEditorWithEvent: and -addSubview: ensures we don't depend 
+	   on the item hit test order. Take note that -subviews are back-to-front
+	   and -items are front-to-back.
+	   -trySendEventToWidgetView: delivers the events to the field editor view. */
+	[[[self window] contentView] addSubview: [editorItem supervisorView]];
+	[editorItem setParentItem: [self firstDecoratedItem]];
+
+	/* Start to delegate text editing events to the text view with a basic instrument.
+	   We have no dedicated instrument and it is not very important because we 
+	   handle the raw events with a text widget provided by the widget backend. */
+	[ETInstrument setActiveInstrument: [ETInstrument instrument]];
 	[[ETInstrument activeInstrument] makeFirstResponder: [editorItem view]];
 }
 
@@ -512,9 +531,44 @@ Does nothing when there is no active field editor item in the window. */
 	if (nil == _activeFieldEditorItem)
 		return;
 
-	[[self firstDecoratedItem] removeItem: (id)_activeFieldEditorItem];
+	ETLayoutItemGroup *contentItem = [_activeFieldEditorItem parentItem];
+	NSRect editorFrame = [_activeFieldEditorItem frame];
+
+	ETAssert(nil != contentItem);
+
+	[[_activeFieldEditorItem supervisorView] removeFromSuperview];
 	DESTROY(_activeFieldEditorItem);
 	DESTROY(_editedItem);
+
+	/* Redraws recursively the item tree portion which was covered by the editor */
+	[contentItem setNeedsDisplayInRect: editorFrame];
+}
+
+- (ETLayoutItem *) hitTestFieldEditorWithEvent: (ETEvent *)anEvent
+{
+	NSParameterAssert([[anEvent windowItem] isEqual: self]);
+
+	if (nil == _activeFieldEditorItem)
+		return nil;
+
+	NSEvent *backendEvent = (NSEvent *)[anEvent backendEvent];
+	NSPoint pointInContentView = [[[self window] contentView] 
+		convertPoint: [backendEvent locationInWindow] fromView: nil];
+	
+	if (nil == [[_activeFieldEditorItem supervisorView] hitTest: pointInContentView])
+	{
+		return nil;
+	}
+
+	ETLayoutItem *contentItem = [self firstDecoratedItem];
+	NSRect rectInContentItem = ETMakeRect([anEvent locationInWindowContentItem], NSZeroSize);
+	NSPoint pointInEditorItem = [_activeFieldEditorItem convertRect: rectInContentItem
+	                                                       fromItem: (id)contentItem].origin;
+
+	[anEvent setLayoutItem: _activeFieldEditorItem];
+	[anEvent setLocationInLayoutItem: pointInEditorItem];
+
+	return _activeFieldEditorItem;
 }
 
 /* Dragging Destination (as Window delegate) */

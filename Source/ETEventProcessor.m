@@ -158,7 +158,8 @@ Returns YES when the event has been handled by EtoileUI. */
 		case NSLeftMouseDown:
 			_wasMouseDownProcessed = YES;
 			[self processMouseMovedEvent: anEvent]; /* Emit enter/exit events in case the event window is a new one */
-			[[ETInstrument updateActiveInstrumentWithEvent: anEvent] mouseDown: anEvent];
+			activeInstrument = [ETInstrument updateActiveInstrumentWithEvent: anEvent];
+			[activeInstrument mouseDown: anEvent];
 			break;
 		case NSLeftMouseUp:
 			_wasMouseDownProcessed = NO;

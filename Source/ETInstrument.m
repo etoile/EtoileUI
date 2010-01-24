@@ -481,6 +481,13 @@ You should never to call this method, only ETEventProcessor is expected to use
 it. */
 + (ETInstrument *) updateActiveInstrumentWithEvent: (ETEvent *)anEvent
 {
+	BOOL isFieldEditorEvent = ([[anEvent windowItem] hitTestFieldEditorWithEvent: anEvent] != nil);
+
+	if (isFieldEditorEvent)
+	{
+		return activeInstrument;
+	}
+
 	ETInstrument *instrumentToActivate = [[ETInstrument activeInstrument] lookUpInstrumentInHoveredItemStack];
 	[self setActiveInstrument: instrumentToActivate];
 	return instrumentToActivate;
@@ -669,6 +676,13 @@ ignored and the local root item is also returned. */
 		hitItem = [self hitItemForNil];
 		[anEvent setLayoutItem: hitItem];
 		[anEvent setLocationInLayoutItem: [anEvent location]];
+		return hitItem;
+	}
+	
+
+	hitItem = [[anEvent windowItem] hitTestFieldEditorWithEvent: anEvent];
+	if (hitItem != nil)
+	{
 		return hitItem;
 	}
 
