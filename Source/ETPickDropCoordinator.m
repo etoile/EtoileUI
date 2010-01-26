@@ -503,18 +503,12 @@ item. */
 	ASSIGN(_dragInfo, drag);
 	/* item can be nil, -itemAtLocation: doesn't return the receiver itself */
 	id item = [self dropTargetForDrag: drag]; 
-	if ([[item parentItem] indexOfItem: item] == 10)
-	{
-		ETLog(@"Blabla");
-	}
+
 	dragOp = [[item actionHandler] handleDragMoveOverItem: item 
 	                                             withItem: draggedItem
 	                                          coordinator: self];
-	
-	// NOTE: Testing non-nil layoutView is equivalent to
-	// [[self layout] layoutView] != nil
-	if (dragOp != NSDragOperationNone)// FIXME: && [[item supervisorView] layoutView] == nil)
-		[self updateDropIndicator: drag withDropTarget: item];
+
+	[self updateDropIndicator: drag withDropTarget: item];
 		
 	return dragOp;
 }

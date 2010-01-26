@@ -35,6 +35,7 @@ Initializes and returns a new icon layout. */
 	_minIconSize = NSMakeSize(16, 16);
 
 	[self setAttachedInstrument: [ETSelectAndClickTool instrument]];
+	[[self attachedInstrument] setShouldRemoveItemsAtPickTime: NO];
 
 	ETLayoutItem *templateItem = [[ETLayoutItemFactory factory] item];
 	ETIconAndLabelStyle *iconStyle = AUTORELEASE([[ETIconAndLabelStyle alloc] init]);

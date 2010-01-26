@@ -150,7 +150,38 @@ DEALLOC(DESTROY(_draggedItem))
 {
 	SUPERINIT
 	[self setCursor: [NSCursor openHandCursor]];
+	_isTranslateMode = YES;
 	return self;
+}
+
+- (id) copyWithZone: (NSZone *)aZone
+{
+	ETMoveTool *newTool = [super copyWithZone: aZone];
+	newTool->_isTranslateMode = _isTranslateMode;
+	return newTool;
+}
+
+/** Returns whether the receiver should produce translate actions rather than 
+drag actions in reaction to a drag event.<br />
+When the owner layout doesn't allow translate actions, returns NO and any value 
+previously set with -setShouldProduceTranslateActions: is ignored.
+
+For example, when the owner layout is computed, translate actions are not 
+allowed.
+
+By default, returns YES. */
+- (BOOL) shouldProduceTranslateActions
+{
+	return (_isTranslateMode && [[[self targetItem] layout] isComputedLayout] == NO);
+}
+
+/** Sets whether the receiver should produce translate actions rather than drag 
+actions in reaction to a drag event.
+
+See also -shouldProduceTranslateActions. */
+- (void) setShouldProduceTranslateActions: (BOOL)translate
+{
+	_isTranslateMode = translate;
 }
 
 // NOTE: We don't need to override -copyWithZone:
@@ -201,7 +232,7 @@ when they are expected to. */
 
 	if (startMove)
 	{
-		BOOL startTranslate = ([[[self targetItem] layout] isComputedLayout] == NO);
+		BOOL startTranslate = [self shouldProduceTranslateActions];
 
 		if (startTranslate)
 		{
@@ -235,7 +266,7 @@ when they are expected to. */
 coordinate space. */
 - (void) beginTranslateItem: (ETLayoutItem *)item atPoint: (NSPoint)aPoint
 {
-	_isTranslateMode = YES;
+	ETAssert(_isTranslateMode);
 	ASSIGN(_draggedItem, item);
 	_dragStartLoc = aPoint;
 	_lastDragLoc = _dragStartLoc;
@@ -264,6 +295,7 @@ acting upon.
 This method can be overriden to alter the broadcast. */
 - (void) translateByDelta: (NSSize)aDelta
 {
+	ETAssert(_isTranslateMode);
 	[[_draggedItem actionHandler] handleTranslateItem: _draggedItem 
                                               byDelta: aDelta];
 	// TODO: Post translate notification
@@ -272,7 +304,7 @@ This method can be overriden to alter the broadcast. */
 /** Ends the translation. */
 - (void) endTranslate
 {
-	_isTranslateMode = NO;
+	ETAssert(_isTranslateMode);
 	DESTROY(_draggedItem);
 	_dragStartLoc = NSZeroPoint;
 	_lastDragLoc = NSZeroPoint;

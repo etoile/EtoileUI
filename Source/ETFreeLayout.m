@@ -32,6 +32,7 @@ subclasses (see -[ETLayout initWithLayoutView:]). */
 	if (self != nil)
 	{
 		[self setAttachedInstrument: [ETSelectTool instrument]];
+		[[self attachedInstrument] setShouldProduceTranslateActions: YES];
 		[self setItemSizeConstraintStyle: ETSizeConstraintStyleNone];
 		_rootItem = [[ETLayoutItemGroup alloc] init];
 		[_rootItem setActionHandler: nil];

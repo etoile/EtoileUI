@@ -17,12 +17,6 @@
 
 @class ETEvent, ETLayoutItem, ETLayoutItemGroup, ETLayout, ETSelectionAreaItem;
 
-/*enum {
-	ETMoveActionTranslate,
-	ETMoveActionDrag,
-	ETMoveActionNone
-}*/
-
 /** Attached by default to ETFreeLayout
 
 The selection is stored directly in the layout item tree, each item has a 
@@ -57,6 +51,10 @@ The selection tool is quite special because it only works by default on its
 immediate children and thereby isn't really inherited as other instruments are 
 usually. However you can retarget the item on which it acts on by setting a 
 target item with -setTargetItem:.
+
+The selection tool unlike the move tool (its superclass) produces drag actions 
+and not translate actions usually, -shouldProduceTranslateActions is initialized 
+to return NO.
 */
 @interface ETSelectTool : ETMoveTool
 {

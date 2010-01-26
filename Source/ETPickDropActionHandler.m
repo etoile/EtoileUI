@@ -45,6 +45,11 @@ method is called by ETTableLayout when rows are dragged). */
 	   become nil with -handlePickItem:coordinator:. */
 	ETLayout *layout = [[item ancestorItemForOpaqueLayout] layout];
 
+	if (nil == layout || [layout isEqual: [item layout]])
+	{
+		layout = [[item parentItem] layout];
+	}
+
 	BOOL pickDisallowed = ([self handlePickItem: item coordinator: aPickCoordinator] == NO);
 
 	if (pickDisallowed)

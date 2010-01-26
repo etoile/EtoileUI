@@ -61,6 +61,7 @@ select tool to the layout which should exhibit this behavior. For example,
 ETSelectTool is attached to ETIconLayout and ETFreeLayout by default. */
 @interface ETArrowTool : ETInstrument
 {
+	@private
 	ETLayoutItem *_firstTouchedItem; /* The item initially touched on mouse down */
 	BOOL _isTrackingTouch;
 }
@@ -83,11 +84,16 @@ move, translate and drag behaviors. */
 @interface ETMoveTool : ETInstrument
 {
 	id _draggedItem;
+
+	@private
 	NSPoint _dragStartLoc; 	/** Expressed in the screen base with non-flipped coordinates */
 	NSPoint _lastDragLoc;  /** Expressed in the screen base with non-flipped coordinates */
 	NSSize _dragDelta; /** Expressed in the screen base with non-flipped coordinates */
 	BOOL _isTranslateMode;
 }
+
+- (BOOL) shouldProduceTranslateActions;
+- (void) setShouldProduceTranslateActions: (BOOL)translate;
 
 - (void) mouseUp: (ETEvent *)anEvent;
 - (void) mouseDragged: (ETEvent *)anEvent;
@@ -113,10 +119,3 @@ move, translate and drag behaviors. */
 @end
 
 //extern NSString *ETMoveToolTranslateNotification;
-
-// TODO: ETPickDropTool : ETMoveTool and ETSelectTool : ETPickDropTool
-// With -shouldProduceTranslateActions or -shouldProduceDragActions as
-// overridable hooks which check the context: key modifier etc.
-// ETFreeLayout configures the select tool to produce translate actions with 
-// -setShouldProduceTranslateActions: YES otherwise the select tool produces 
-// drag actions by default.

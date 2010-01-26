@@ -35,6 +35,7 @@
 	/* We use the accessors to sync the layout if needed */
 	[self setAllowsMultipleSelection: YES];
 	[self setAllowsEmptySelection: YES];
+	[self setShouldProduceTranslateActions: NO];
 	_removeItemsAtPickTime = YES;
 	_actionHandlerPrototype = [[ETActionHandler alloc] init];
 	_selectionAreaItem = [[ETSelectionAreaItem alloc] init];

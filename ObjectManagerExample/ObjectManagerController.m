@@ -44,12 +44,14 @@ static NSFileManager *objectManager = nil;
 	[ETUTI registerTypeWithString: myFolderUTIString 
 	                  description: nil 
 	             supertypeStrings: [NSArray array]];
-		
+
+	ETUTI *myFileUTI = [ETUTI typeWithString: myFileUTIString];
+	ETUTI *myFolderUTI = [ETUTI typeWithString: myFolderUTIString];
+
 	controller = AUTORELEASE([[ETController alloc] init]);
-	[controller setAutomaticallyRearrangesObjects: YES];
-	[controller setAllowedPickTypes: A([ETUTI typeWithString: myFileUTIString])];
-	[controller setAllowedPickTypes: A([ETUTI typeWithString: myFileUTIString], 
-		[ETUTI typeWithString: myFolderUTIString])];
+	[controller setAllowedPickTypes: A(myFileUTI, myFolderUTI)];
+	[controller setAllowedDropTypes: A(myFileUTI, myFolderUTI) 
+	                  forTargetType: myFolderUTI];
 
 	[mainViewItem setController: controller];
 	// TODO: Should probably be on the controller or the instrument.
