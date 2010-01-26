@@ -970,6 +970,20 @@ object when the view is a widget. */
 	}
 }
 
+/** Tries to resize the item view with -sizeToFit, then adjusts the receiver 
+content size to match the view size. */
+- (void) sizeToFit
+{
+	ETContentAspect contentAspect = [self contentAspect];
+
+	/* To prevent -setContentSize: to resize the view when it resizes the 
+	   supervisor view. */
+	[self setContentAspect: ETContentAspectNone];
+	[[[self view] ifResponds] sizeToFit];
+	[self setContentSize: [[self view] frame].size];
+	[self setContentAspect: contentAspect];
+}
+
 /** Returns the view associated with the receiver. */
 - (NSView *) view
 {

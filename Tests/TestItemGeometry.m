@@ -555,6 +555,20 @@ supervisor view geometry (frame). */
 		oldItemOrigin: oldOrigin oldItemPosition: oldPosition];
 }
 
+- (void) testSizeToFit
+{
+	NSRect viewFrame = NSMakeRect(30, -20, 200, 50);
+	NSRect rect = [ETLayoutItem defaultItemRect];
+
+	[item setView: AUTORELEASE([[NSTextField alloc] initWithFrame: viewFrame])];
+	[item sizeToFit];
+
+	UKSizesNotEqual(rect.size, [item contentBounds].size);
+	UKSizesNotEqual(viewFrame.size, [[item view] frame].size);
+	UKPointsEqual(NSZeroPoint, [[item view] frame].origin);
+	UKSizesEqual([item contentBounds].size, [[item view] frame].size);
+}
+
 @end
 
 
