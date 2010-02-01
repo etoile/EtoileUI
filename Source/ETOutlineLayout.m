@@ -255,14 +255,7 @@ expanded and collapsed by getting automatically a related outline arrow. */
 
 	//ETLog(@"Returns %@ as object value in outline view %@", value, outlineView);
 	
-	// NOTE: 'value' could be any objects at this point and NSCell only accepts
-	// some common object values like string and number or image for 
-	// NSImageCell. Unless a custom formatter has been set on the column or a 
-	// custom cell has been provided, non common object values must be 
-	// converted to a string or number representation, -objectValue precisely 
-	// takes care of converting it to a string value. See -objectValue in 
-	// NSObject+Model for more details.
-	return [value objectValue];
+	return value;
 }
 
 - (void) outlineView: (NSOutlineView *)outlineView 

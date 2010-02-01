@@ -14,6 +14,7 @@
 #import "ETController.h"
 #import "ETGeometry.h"
 #import "ETLayoutItem.h"
+#import "EtoileUIProperties.h"
 #import "ETEvent.h"
 #import "ETPickboard.h"
 #import "ETPickDropActionHandler.h"
@@ -382,10 +383,11 @@ yet, it is created. */
 	 if ([property isEqual: @""])
 	 	return nil;
 
+	NSString *keyPath = [NSString stringWithFormat: @"%@.%@", kETSubjectProperty, property];
 	// TODO: -compare: is really a suboptimal choice in various cases.
 	// For example, NSString provides -localizedCompare: unlike NSNumber, NSDate etc.
 	return AUTORELEASE([[NSSortDescriptor alloc] 
-		initWithKey: property ascending: YES selector: @selector(compare:)]);
+		initWithKey: keyPath ascending: YES selector: @selector(compare:)]);
 }
 
 /** This method is only exposed to be used internally by EtoileUI.
@@ -618,14 +620,12 @@ See ETColumnFragment protocol to customize the returned column. */
 	if (value == nil && ([tv numberOfColumns] == 1 || blankColumnIdentifier))
 		value = [item value];
 
-	// NOTE: 'value' could be any objects at this point and NSCell only accepts
-	// some common object values like string and number or image for 
-	// NSImageCell. Unless a custom formatter has been set on the column or a 
-	// custom cell has been provided, non common object values must be 
-	// converted to a string or number representation, -objectValue precisely 
-	// takes care of converting it to a string value. See -objectValue in 
-	// NSObject+Model for more details.
-	return [value objectValue];
+	/* 'value' could be any objects at this point. Unless a custom formatter 
+           has been set on the column or a custom cell has been provided, 
+           non-common object values are converted to a string representation by 
+	   the cell with -attributedStringValue, -stringValue or -description 
+	   in the last resort. */
+	return value;
 }
 
 - (void) tableView: (NSTableView *)tv 
