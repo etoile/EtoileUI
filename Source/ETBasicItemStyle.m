@@ -117,7 +117,7 @@ DEALLOC(DESTROY(_labelAttributes));
 	if (nil != itemLabel)
 	{
 		//ETLog(@"Try to draw label in %@ of %@", NSStringFromRect(_currentLabelRect), item);
-		[itemLabel drawInRect: _currentLabelRect withAttributes: _labelAttributes];
+		[self drawLabel: itemLabel flipped: [item isFlipped] inRect: _currentLabelRect];
 	}
 
 	if ([item isGroup] && [(ETLayoutItemGroup *)item isStack])
@@ -187,6 +187,33 @@ means you can safely use it when overriding other drawing methods. */
 	                 fromRect: NSZeroRect // Draw the entire image
 	                operation: NSCompositeSourceOver 
 	                 fraction: 1.0];
+	}
+}
+
+/** Draws a label at the origin of the current graphics coordinates. */
+- (void) drawLabel: (NSString *)aLabel flipped: (BOOL)itemFlipped inRect: (NSRect)aRect
+{
+	/* By default, -drawInRect:attributes: interprets the rect origin based on 
+	   the flipping of the focused view. 
+	   See -[NSAttributedString drawInRect:] in Cocoa doc. */
+	BOOL flipMismatch = (itemFlipped != [[NSView focusView] isFlipped]);
+
+	if (flipMismatch)
+	{
+		NSAffineTransform *xform = [NSAffineTransform transform];
+		[xform translateXBy: aRect.origin.x yBy: aRect.origin.y + aRect.size.height];
+		[xform scaleXBy: 1.0 yBy: -1.0];
+		[xform concat];
+
+		[aLabel drawInRect: ETMakeRect(NSZeroPoint, aRect.size) 
+		    withAttributes: _labelAttributes];
+
+		[xform invert];
+		[xform concat];
+	}
+	else
+	{
+		[aLabel drawInRect: aRect withAttributes: _labelAttributes];
 	}
 }
 
