@@ -25,6 +25,7 @@
 	NSMutableArray *_sortedItems;
 	NSArray *_arrangedItems;
 	ETLayout *_layout;
+	NSImage *_cachedDisplayImage;
 	SEL _doubleClickAction;
 	BOOL _autolayout;
 	BOOL _usesLayoutBasedFrame;
@@ -38,6 +39,9 @@
 	BOOL _sorted;
 	BOOL _filtered;
 	BOOL _isLayoutOwnedRootItem;
+	/* We hide the supervisor view subviews when a display cache is set. We 
+	   must restore [[[self supervisorView] wrappedView] isHidden] correctly. */
+	BOOL _wasViewHidden;
 }
 
 + (BOOL) isAutolayoutEnabled;
@@ -141,6 +145,9 @@
 - (void) render: (NSMutableDictionary *)inputValues 
       dirtyRect: (NSRect)dirtyRect 
       inContext: (id)ctxt;
+
+- (void) setCachedDisplayImage: (NSImage *)anImage;
+- (NSImage *) cachedDisplayImage;
 
 /* Selection */
 

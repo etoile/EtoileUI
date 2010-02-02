@@ -12,6 +12,7 @@
 #import <EtoileFoundation/ETCollection+HOM.h>
 #import <EtoileFoundation/Macros.h>
 #import "ETLayoutItemGroup.h"
+#import "ETBasicItemStyle.h"
 #import "ETController.h"
 #import "ETFixedLayout.h"
 #import "ETLayoutItemGroup+Mutation.h"
@@ -164,6 +165,7 @@ See also -isLayoutOwnedRootItem. */
 {
 	[self stopKVOObservationIfNeeded];
 
+	DESTROY(_cachedDisplayImage);
 	DESTROY(_layout);
 	/* Arranged and sorted items are always a children subset, we don't 
 	   have to worry about nullifying weak references their element might have. */
@@ -1255,9 +1257,20 @@ recursively on them. */
       inContext: (id)ctxt
 {
 	//ETLog(@"Render %@ dirtyRect %@ in %@", self, NSStringFromRect(dirtyRect), ctxt);
-	
+
 	NSRect drawingFrame = [self drawingFrame];
 
+	/* Use the display cache when there is one */
+	if (nil != _cachedDisplayImage)
+	{
+		NSRect frame = [self drawingFrame];
+		[[ETBasicItemStyle sharedInstance] drawImage: _cachedDisplayImage 
+		                                     flipped: [self isFlipped]
+		                                      inRect: frame];
+		return;
+	}
+
+	/* Otherwise redisplay the receiver and its descendants recursively */
 	if ([self usesLayoutBasedFrame] || NSIntersectsRect(dirtyRect, drawingFrame))
 	{
 #ifdef DEBUG_DRAWING
@@ -1278,6 +1291,9 @@ recursively on them. */
 		
 			FOREACHE(nil, item, ETLayoutItem *, e)
 			{
+				if ([item isVisible] == NO)
+					continue;
+
 				/* We intersect our dirtyRect with the drawing frame of the item to be 
 				   drawn, so the child items don't receive the drawing frame of their 
 				   parent, but their own. Also restricts the dirtyRect so it doesn't 
@@ -1374,6 +1390,30 @@ You should never need to call this method directly. */
 	/* Reset the coordinates matrix */
 	[transform invert];
 	[transform concat];
+}
+
+- (void) setCachedDisplayImage: (NSImage *)anImage
+{
+	ASSIGN(_cachedDisplayImage, anImage);
+
+	if (nil != anImage)
+	{
+		_wasViewHidden = [[[self supervisorView] wrappedView] isHidden];
+		[[[self supervisorView] subviews] setValue: [NSNumber numberWithBool: YES]
+		                                    forKey: @"hidden"];
+		//[[[[self supervisorView] subviews] map] setHidden: YES];
+	}
+	else
+	{
+		[[[self supervisorView] subviews] setValue: [NSNumber numberWithBool: NO]
+		                                    forKey: @"hidden"];
+		//[[[self supervisorView] wrappedView] setHidden: _wasViewHidden];
+	}
+}
+
+- (NSImage *) cachedDisplayImage
+{
+	return _cachedDisplayImage;
 }
 
 /** Returns the visible child items of the receiver.
