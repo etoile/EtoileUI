@@ -177,6 +177,11 @@ UI level for a photo viewer. */
 		[(ETComputedLayout *)layout setItemMargin: [sender floatValue]];
 }
 
+- (IBAction) inspectPhotoView: (id)sender
+{
+	[photoViewItem inspect: sender];
+}
+
 - (void) selectPicturesPanelDidEnd: (NSOpenPanel *)panel 
                         returnCode: (int)returnCode
                        contextInfo: (void  *)contextInfo

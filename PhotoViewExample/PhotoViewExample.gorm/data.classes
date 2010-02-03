@@ -7,13 +7,15 @@
 	    "switchUsesSource:",
 	    "switchUsesScrollView:",
 	    "scale:",
-	    "changeItemMargin:"
+	    "changeItemMargin:",
+	    "configureLayout:",
+	    "inspectPhotoView:"
 	);
 	Outlets = (
 	    viewContainer,
-	    viewMarginSlider
+	    itemMarginSlider
 	);
-	Super = NSObject;
+	Super = ETController;
     };
     ETContainer = {
 	Actions = (
@@ -22,6 +24,18 @@
 	Outlets = (
 	);
 	Super = ETView;
+    };
+    ETController = {
+	Actions = (
+	    "add:",
+	    "addNewGroup:",
+	    "insert:",
+	    "insertNewGroup:",
+	    "remove:"
+	);
+	Outlets = (
+	);
+	Super = NSObject;
     };
     ETView = {
 	Actions = (
@@ -32,10 +46,17 @@
     };
     FirstResponder = {
 	Actions = (
+	    "add:",
+	    "addNewGroup:",
+	    "changeItemMargin:",
 	    "changeLayout:",
 	    "choosePicturesAndLayout:",
+	    "configureLayout:",
+	    "insert:",
+	    "insertNewGroup:",
 	    "inspect:",
-	    "changeItemMargin:",
+	    "inspectPhotoView:",
+	    "remove:",
 	    "scale:",
 	    "switchUsesScrollView:",
 	    "switchUsesSource:"
