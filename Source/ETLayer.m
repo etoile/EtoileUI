@@ -71,7 +71,8 @@
 when a layout other than ETWindowLayout is set on the receiver. */
 - (ETWindowItem *) createRootWindowItem
 {
-	ETFullScreenWindow *fullScreenWindow = AUTORELEASE([[ETFullScreenWindow alloc] init]); 
+	ETFullScreenWindow *fullScreenWindow = AUTORELEASE([[ETFullScreenWindow alloc] init]);
+	[fullScreenWindow setLevel: NSNormalWindowLevel]; 
 	return AUTORELEASE([[ETWindowItem alloc] initWithWindow: fullScreenWindow]);
 }
 
@@ -176,7 +177,14 @@ when a layout other than ETWindowLayout is set on the receiver. */
 #ifdef DEBUG_LAYOUT
 	return NSMakeRect(100, 100, 600, 500);
 #else
+#ifdef GNUSTEP
+	NSRect frame = [[NSScreen mainScreen] visibleFrame];
+	frame.size.height -= 23;
+	return frame;
+#else
+	// FIXME: GNUstep should exclude the GNOME menu bar and task bar.
 	return [[NSScreen mainScreen] visibleFrame];
+#endif
 #endif
 }
 
