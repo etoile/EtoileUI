@@ -93,35 +93,45 @@ static NSFileManager *objectManager = nil;
 
 - (IBAction) changeLayout: (id)sender
 {
-	Class layoutClass = nil;
+	ETLayout *layout = nil;
 	
 	switch ([[sender selectedItem] tag])
 	{
 		case 0:
-			layoutClass = [ETColumnLayout class];
+			layout = [ETColumnLayout layout];
 			break;
 		case 1:
-			layoutClass = [ETLineLayout class];
+			layout = [ETLineLayout layout];
 			break;
 		case 2:
-			layoutClass = [ETFlowLayout class];
+			layout = [ETFlowLayout layout];
 			break;
 		case 3:
-			layoutClass = [ETTableLayout class];
+			layout = [ETTableLayout layout];
 			break;
 		case 4:
-			layoutClass = [ETOutlineLayout class];
+			layout = [ETOutlineLayout layout];
 			break;
 		case 5:
-			layoutClass = [ETBrowserLayout class];
+			layout = [ETBrowserLayout layout];
+			break;
+		case 6:
+			layout = [ETFreeLayout layout];
+			break;
+		case 7:
+			layout = [ETIconLayout layout];
+			break;
+		case 8:
+			layout = [ETViewModelLayout layout];
+			break;
+		case 9:
+			layout = [ETPaneLayout masterDetailLayout];
 			break;
 		default:
 			NSLog(@"Unsupported layout or unknown popup menu selection");
 	}
-
-	id layoutObject = AUTORELEASE([[layoutClass alloc] init]);
 	
-	[mainViewItem setLayout: [self configureLayout: layoutObject]];
+	[mainViewItem setLayout: [self configureLayout: layout]];
 }
 
 - (IBAction) switchUsesScrollView: (id)sender
