@@ -33,8 +33,6 @@ static NSFileManager *objectManager = nil;
 	// TODO: Set mainViewItem and pathViewItem in the nib.
 	mainViewItem = [viewContainer layoutItem];
 	pathViewItem = [pathContainer layoutItem];
-	// FIXME: Remove
-	[[viewContainer window] setAcceptsMouseMovedEvents: YES];
 
 	[self checkTextualPathForMixedPath];
 
