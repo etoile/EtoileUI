@@ -29,7 +29,7 @@ static NSFileManager *objectManager = nil;
 {
 	objectManager = [NSFileManager defaultManager];
 	
-	ASSIGN(path, @"/Users");
+	ASSIGN(path, @"/");
 	// TODO: Set mainViewItem and pathViewItem in the nib.
 	mainViewItem = [viewContainer layoutItem];
 	pathViewItem = [pathContainer layoutItem];

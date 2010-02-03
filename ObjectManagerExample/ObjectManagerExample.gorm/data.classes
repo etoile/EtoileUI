@@ -48,6 +48,7 @@
 	    "expand:",
 	    "inspect:",
 	    "inspectSelection:",
+	    "search:",
 	    "removeObject:",
 	    "scale:",
 	    "setDelegate:",
@@ -63,7 +64,8 @@
 	Actions = (
 	    "changeLayout:",
 	    "switchUsesScrollView:",
-	    "scale:"
+	    "scale:",
+	    "search:"
 	);
 	Outlets = (
 	    pathContainer,
