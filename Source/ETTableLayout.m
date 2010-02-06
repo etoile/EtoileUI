@@ -59,6 +59,10 @@
 	newLayout->_contentFont = [_contentFont copyWithZone: aZone];
 	newLayout->_sortable = _sortable;
 
+	/* The target points on a random object since the original object (the 
+	   receiver) was not archived by - [NSViewView copyWithZone:]. */
+	[[newLayout tableView] setTarget: newLayout];
+
 	return newLayout;
 }
 
