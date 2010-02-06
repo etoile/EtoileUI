@@ -224,8 +224,11 @@ The returned copy is mutable because ETLayoutItemGroup cannot be immutable. */
 	item->_filtered = _filtered;
 
 	/* We copy all object ivars except _layoutItems whose copying is delegated 
-	   to -deepCopyWithZone: */
+	   to -deepCopyWithZone:, but we create an empty array in case we are not 
+	   called by -deepCopyWithZone:. */
 
+	item->_layoutItems = [[NSMutableArray alloc] init];
+	
 	id source =  GET_PROPERTY(kETSourceProperty);
 	id sourceCopy = ([self usesRepresentedObjectAsProvider] ? (id)item : source);
 
@@ -288,6 +291,7 @@ The returned copy is mutable because ETLayoutItemGroup cannot be immutable. */
 	/* Copy Receiver */
 
 	ETLayoutItemGroup *itemCopy = [self copyWithZone: aZone];
+	DESTROY(itemCopy->_layoutItems); // TODO: a bit crude
 
 	/* Copy & Assign Children */
 

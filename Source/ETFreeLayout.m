@@ -49,6 +49,17 @@ subclasses (see -[ETLayout initWithLayoutView:]). */
 	[super dealloc];
 }
 
+- (void) setUpCopyWithZone: (NSZone *)aZone original: (ETLayout *)layoutOriginal
+{
+	/* Only to set the parent item, we don't need to synchronize the geometry */
+	[self mapRootItemIntoLayoutContext];
+
+	/* Rebuild the handles to manipulate the item copies and not their originals */
+	// TODO: May be avoid to copy the original handles in -copyWithZone:layoutContext:
+	[self updateKVOForItems: [_layoutContext arrangedItems]];
+	[self buildHandlesForItems: [_layoutContext arrangedItems]];
+}
+
 - (id) attachedInstrument
 {
 	return [super attachedInstrument];
