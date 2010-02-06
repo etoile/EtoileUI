@@ -17,7 +17,7 @@
 
 NSString *ETLayoutItemPboardType = @"ETLayoutItemPboardType"; // FIXME: replace by UTI
 
-#define PALETTE_FRAME NSMakeRect(200, 200, 400, 200)
+#define PALETTE_FRAME NSMakeRect([[NSScreen mainScreen] visibleFrame].size.width - 400, 30, 400, 200)
 #define PICKBOARD_LAYOUT ETOutlineLayout
 #define DEFAULT_PICKBOARD [self localPickboard]
 
