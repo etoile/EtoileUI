@@ -1422,6 +1422,23 @@ You should never use this method unless you write an ETLayoutItem subclass. */
 	[[self layout] syncLayoutViewWithItem: self];
 	[self updateScrollableAreaItemVisibility];
 
+	/* We must not let the tool attached to the old layout remain active, 
+	   otherwise the layout can be deallocated and this tool remains with an 
+	   invalid -layoutOwner. */
+	ETInstrument *oldTool = [oldLayout attachedInstrument];
+
+	if ([oldTool isEqual: [ETInstrument activeInstrument]])
+	{
+		ETInstrument *newTool = [[self layout] attachedInstrument];
+
+		if (newTool == nil)
+		{
+			newTool = [ETInstrument mainInstrument];
+		}
+		[ETInstrument setActiveInstrument: newTool];
+	}
+
+	/* Notify the interested parties about the layout change */
 	NSNotification *notif = [NSNotification 
 		notificationWithName: ETLayoutItemLayoutDidChangeNotification object: self];
 	id delegate = [self valueForKey: kETDelegateProperty];
