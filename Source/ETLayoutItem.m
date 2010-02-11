@@ -1485,17 +1485,29 @@ used by the styles. */
 - (NSRect) drawingFrame
 {
 	ETView *supervisorView = [self supervisorView];
+	NSRect rect;
 
 	if (supervisorView != nil && supervisorView != [self displayView])
 	{
 		NSRect contentBounds = [[self supervisorView] frame];
 		contentBounds.origin = NSZeroPoint;
-		return contentBounds;
+		rect = contentBounds;
 	}
 	else
 	{
-		return [self bounds];
+		rect = [self bounds];
 	}
+
+	ETWindowItem *windowItem = [self windowDecoratorItem];
+
+	if (nil != windowItem)
+	{
+		/* We exclude the window border and title bar because the display 
+		   view is the window content view and never the window view. */
+		rect.size = [windowItem contentRect].size;
+	}
+
+	return rect;
 }
 
 /** <override-dummy />
@@ -2523,6 +2535,8 @@ should not be expected to be nil. */
 /** Returns an image snapshot of the receiver. The snapshot is taken at the time 
 this method is called.
 
+The given rect must be expressed in the receiver coordinate space.
+
 When the receiver isn't backed by a window and has no window-backed ancestor 
 item backed either, returns nil. */
 - (NSImage *) snapshotFromRect: (NSRect)aRect
@@ -2533,8 +2547,48 @@ item backed either, returns nil. */
 		return nil;
 
 	NSRect rectInView = [self convertRect: aRect toItem: viewBackedItem];
+	ETWindowItem *windowItem = [viewBackedItem windowDecoratorItem];
+
+	if (nil != windowItem)
+	{
+		/* We exclude the window border and title bar because the display 
+		   view is the window content view and never the window view. */
+		rectInView = [windowItem convertDecoratorRectToContent: rectInView];
+	}
 
 	return AUTORELEASE([[NSImage alloc] initWithView: [viewBackedItem displayView] fromRect: rectInView]);
+}
+
+- (NSAffineTransform *) boundsTransform
+{
+	NSAffineTransform *transform = [NSAffineTransform transform];
+
+	if ([self isFlipped])
+	{
+		[transform translateXBy: 0.0 yBy: [self height]];
+		[transform scaleXBy: 1.0 yBy: -1.0];
+	}
+
+	return transform;
+}
+
+- (void) drawRect: (NSRect)aRect
+{
+	if ([self supervisorView] != nil)
+	{
+		[[self displayView] displayRectIgnoringOpacity: aRect 
+		                                     inContext: [NSGraphicsContext currentContext]];
+	}
+	else
+	{
+		NSAffineTransform *transform = [self boundsTransform];
+		[transform concat];
+
+		[self render: nil dirtyRect: aRect inContext: nil];
+
+		[transform invert];
+		[transform concat];
+	}
 }
 
 /* Events & Actions */
