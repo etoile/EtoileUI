@@ -216,25 +216,6 @@ otherwise returns NO. */
 
 @end
 
-@implementation NSResponder (EtoileUI)
-
-- (IBAction) browse: (id)sender
-{
-	[super browse: sender];
-	//[[self nextResponder] browse: sender];
-}
-
-- (IBAction) view: (id)sender
-{
-	[[self nextResponder] view: sender];
-}
-
-- (IBAction) inspect: (id)sender
-{
-	[[self nextResponder] inspect: sender];
-}
-
-@end
 
 @implementation NSImage (EtoileModel)
 - (BOOL) isCommonObjectValue { return YES; }

@@ -14,7 +14,7 @@
 
 @interface ContainerController : ETController
 {
-    IBOutlet ETContainer *viewContainer;
+	IBOutlet ETContainer *viewContainer;
 	IBOutlet NSSlider *itemMarginSlider;
 	ETLayoutItemGroup *photoViewItem;
 	NSMutableArray *images;
@@ -26,7 +26,6 @@
 - (IBAction) switchUsesScrollView: (id)sender;
 - (IBAction) scale: (id)sender;
 - (IBAction) changeItemMargin: (id)sender;
-- (IBAction) inspectPhotoView: (id)sender;
 
 - (id) configureLayout: (id)layoutObject;
 

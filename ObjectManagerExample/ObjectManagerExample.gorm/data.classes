@@ -2,28 +2,6 @@
     "## Comment" = "Do NOT change this file, Gorm maintains it";
     ETContainer = {
 	Actions = (
-	    "setSource:",
-	    "setDelegate:",
-	    "inspect:",
-	    "inspectSelection:",
-	    "copy:",
-	    "paste:",
-	    "cut:",
-	    "stack:",
-	    "setTarget:",
-	    "addObject:",
-	    "removeObject:"
-	);
-	Outlets = (
-	    _dataSource,
-	    _delegate,
-	    _target,
-	    _inspector
-	);
-	Super = ETView;
-    };
-    ETScrollView = {
-	Actions = (
 	);
 	Outlets = (
 	);
@@ -31,31 +9,22 @@
     };
     ETView = {
 	Actions = (
-	    "setRenderer:",
 	    "collapse:",
-	    "expand:"
+	    "expand:",
+	    "inspectItem:"
 	);
 	Outlets = (
-	    _renderer
 	);
 	Super = NSView;
     };
     FirstResponder = {
 	Actions = (
-	    "addObject:",
 	    "changeLayout:",
 	    "collapse:",
 	    "expand:",
-	    "inspect:",
-	    "inspectSelection:",
-	    "search:",
-	    "removeObject:",
+	    "inspectItem:",
 	    "scale:",
-	    "setDelegate:",
-	    "setRenderer:",
-	    "setSource:",
-	    "setTarget:",
-	    "stack:",
+	    "search:",
 	    "switchUsesScrollView:"
 	);
 	Super = NSObject;

@@ -71,16 +71,6 @@
 - (id <ETInspector>) inspector;
 @end
 
-/** We override actions declared on NSObject to maintain the responder chain.
-    The forwarding must now be added in NSResponder since every objects 
-	including responders like NSTableView pretends to respond to -inspect: and
-	-view: (but without doing anything). */
-@interface NSResponder (EtoileUI)
-- (IBAction) browse: (id)sender;
-- (IBAction) view: (id)sender;
-- (IBAction) inspect: (id)sender;
-@end
-
 /** See NSObject+Model in EtoileFoudation */
 @interface NSImage (EtoileModel)
 - (BOOL) isCommonObjectValue;

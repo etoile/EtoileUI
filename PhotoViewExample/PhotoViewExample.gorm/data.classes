@@ -8,8 +8,7 @@
 	    "switchUsesScrollView:",
 	    "scale:",
 	    "changeItemMargin:",
-	    "configureLayout:",
-	    "inspectPhotoView:"
+	    "configureLayout:"
 	);
 	Outlets = (
 	    viewContainer,
@@ -39,6 +38,7 @@
     };
     ETView = {
 	Actions = (
+	    "inspectItem:"
 	);
 	Outlets = (
 	);
@@ -55,7 +55,7 @@
 	    "insert:",
 	    "insertNewGroup:",
 	    "inspect:",
-	    "inspectPhotoView:",
+	    "inspectItem:",
 	    "remove:",
 	    "scale:",
 	    "switchUsesScrollView:",
