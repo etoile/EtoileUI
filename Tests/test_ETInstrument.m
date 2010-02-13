@@ -18,6 +18,7 @@
 #import "ETGeometry.h"
 #import "ETHandle.h"
 #import "ETInstrument.h"
+#import "ETLayer.h"
 #import "ETLayoutItem.h"
 #import "ETLayoutItem+Scrollable.h"
 #import "ETLayoutItemGroup.h"
@@ -201,7 +202,9 @@ a point expressed in the main item coordinates. The main item is the window cont
 	// NOTE: [[ETApp mainMenu] menuBarHeight]; returns 0 because there is no 
 	// menu bar with ukrun and a test bundle.
 	NSRect frame = [[NSScreen mainScreen] frame];
-	NSRect visibleFrame = [[NSScreen mainScreen] visibleFrame];
+	// TODO: Use [[NSScreen mainScreen] visibleFrame]; on GNUstep once 
+	// improved as explained in -rootWindowFrame.
+	NSRect visibleFrame = [(ETWindowLayer *)[itemFactory windowGroup] rootWindowFrame];
 	float menuBarHeight = frame.size.height - (visibleFrame.size.height + visibleFrame.origin.y);
 	ETEvent *evt = [self createEventAtScreenPoint: NSMakePoint(600, menuBarHeight) isFlipped: YES];
 
