@@ -198,8 +198,11 @@ a point expressed in the main item coordinates. The main item is the window cont
 
 - (void) testHitTestInWindowLayer
 {
-	BOOL isFullScreenFrame = NSEqualRects([[NSScreen mainScreen] visibleFrame], [[NSScreen mainScreen] frame]);
-	float menuBarHeight = (isFullScreenFrame ? 0 : [[ETApp mainMenu] menuBarHeight]);
+	// NOTE: [[ETApp mainMenu] menuBarHeight]; returns 0 because there is no 
+	// menu bar with ukrun and a test bundle.
+	NSRect frame = [[NSScreen mainScreen] frame];
+	NSRect visibleFrame = [[NSScreen mainScreen] visibleFrame];
+	float menuBarHeight = frame.size.height - (visibleFrame.size.height + visibleFrame.origin.y);
 	ETEvent *evt = [self createEventAtScreenPoint: NSMakePoint(600, menuBarHeight) isFlipped: YES];
 
 	UKObjectsSame([ETLayoutItem windowGroup], [instrument hitTestWithEvent: evt]);

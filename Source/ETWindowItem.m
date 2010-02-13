@@ -287,16 +287,20 @@ and make the necessary adjustments. */
 + (NSRect) convertRectToWidgetBackendScreenBase: (NSRect)rect
 {
 	ETWindowLayer *windowLayer = (ETWindowLayer *)[[ETLayoutItemFactory factory] windowGroup];
-
-	if ([windowLayer isFlipped] == NO)
-		return rect;
-
 	/* We call -rootWindowFrame on ETWindowLayer and not -frame which would 
-	   call back the current method and results in an endless recursion. */
-	float windowLayerHeight = [windowLayer rootWindowFrame].size.height;
-	float flippedY = windowLayerHeight - (rect.origin.y + rect.size.height);
+	   call back the current method and results in an endless recursion.
+	   -rootWindowFrame is expressed in screen base coordinates. */
+	NSRect windowLayerFrame = [windowLayer rootWindowFrame];
+	float y = rect.origin.y;
+	
+	if ([windowLayer isFlipped])
+	{
+		y = windowLayerFrame.size.height - (rect.origin.y + rect.size.height);
+	}
 
-	return NSMakeRect(rect.origin.x, flippedY, rect.size.width, rect.size.height);	
+	y += windowLayerFrame.origin.y;
+
+	return NSMakeRect(rect.origin.x, y, rect.size.width, rect.size.height);	
 }
 
 /** This method is only exposed to be used internally by EtoileUI.
@@ -309,16 +313,20 @@ and make the necessary adjustments. */
 + (NSRect) convertRectFromWidgetBackendScreenBase: (NSRect)windowFrame
 {
 	ETWindowLayer *windowLayer = (ETWindowLayer *)[[ETLayoutItemFactory factory] windowGroup];
-
-	if ([windowLayer isFlipped] == NO)
-		return windowFrame;
-
 	/* We call -rootWindowFrame on ETWindowLayer and not -frame which would 
-	   call back the current method and results in an endless recursion. */
-	float windowLayerHeight = [windowLayer rootWindowFrame].size.height;
-	float flippedY = windowLayerHeight - (windowFrame.origin.y + windowFrame.size.height);
+	   call back the current method and results in an endless recursion.
+	   -rootWindowFrame is expressed in screen base coordinates. */
+	NSRect windowLayerFrame = [windowLayer rootWindowFrame];
+	float y = windowFrame.origin.y;
+	
+	y -= windowLayerFrame.origin.y;
 
-	return NSMakeRect(windowFrame.origin.x, flippedY, windowFrame.size.width, windowFrame.size.height);
+	if ([windowLayer isFlipped])
+	{
+		y = windowLayerFrame.size.height - (y + windowFrame.size.height);
+	}
+
+	return NSMakeRect(windowFrame.origin.x, y, windowFrame.size.width, windowFrame.size.height);
 }
 
 - (void) handleDecorateItem: (ETUIItem *)item 
