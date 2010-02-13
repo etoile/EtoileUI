@@ -314,18 +314,9 @@ bar and that it uses flipped coordinates unless specifed otherwise on ETWindowLa
 		windowLayerLoc = [window convertBaseToScreen: [(NSEvent *)_backendEvent locationInWindow]];
 	}
 
-	/* -locationInWindow is in bottom left coordinates even when the content 
-	   view is flipped, that's why we only need to alter the point when the 
-	   window layer uses flipped coordinates. */
-	if ([[ETLayoutItem windowGroup] isFlipped])
-	{
-		// TODO: Extract screen size logic into ETWindowLayer. See also -[ETWindowItem decorationRect].
-		BOOL isFullScreenFrame = NSEqualRects([[NSScreen mainScreen] visibleFrame], [[NSScreen mainScreen] frame]);
-		float menuBarHeight = (isFullScreenFrame ? 0 : [[ETApp mainMenu] menuBarHeight]);
-		windowLayerLoc.y = [[NSScreen mainScreen] frame].size.height - windowLayerLoc.y - menuBarHeight;
-	}
+	NSRect windowLayerLocAsRect = ETMakeRect(windowLayerLoc, NSZeroSize);
 
-	return windowLayerLoc;
+	return [ETWindowItem convertRectFromWidgetBackendScreenBase: windowLayerLocAsRect].origin;
 }
 
 /* Widget Backend Integration */

@@ -72,4 +72,9 @@ NSWindow methods: -setDelegate:, -setAcceptsMouseMovedEvents: and
 - (void) removeActiveFieldEditorItem;
 - (ETLayoutItem *) hitTestFieldEditorWithEvent: (ETEvent *)anEvent;
 
+/* Framework Private */
+
++ (NSRect) convertRectToWidgetBackendScreenBase: (NSRect)rect;
++ (NSRect) convertRectFromWidgetBackendScreenBase: (NSRect)windowFrame;
+
 @end

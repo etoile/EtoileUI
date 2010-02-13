@@ -277,12 +277,14 @@ regardless of the size of the item they decorate. */
 	_shouldKeepWindowFrame = shouldKeepWindowFrame;
 }
 
-/* Converts the given rect expressed in the EtoileUI window layer coordinate 
-space to the AppKit screen coordinate space.
+/** This method is only exposed to be used internally by EtoileUI. 
+
+Converts the given rect expressed in the EtoileUI window layer coordinate space 
+to the AppKit screen coordinate space.
 
 This method will check whether the window layer (aka window group) is flipped 
 and make the necessary adjustments. */
-- (NSRect) convertRectToWidgetBackendScreenBase: (NSRect)rect
++ (NSRect) convertRectToWidgetBackendScreenBase: (NSRect)rect
 {
 	ETWindowLayer *windowLayer = (ETWindowLayer *)[[ETLayoutItemFactory factory] windowGroup];
 
@@ -297,12 +299,14 @@ and make the necessary adjustments. */
 	return NSMakeRect(rect.origin.x, flippedY, rect.size.width, rect.size.height);	
 }
 
-/* Converts the given rect expressed in the AppKit screen coordinate space to 
-the EtoileUI window layer coordinate space.
+/** This method is only exposed to be used internally by EtoileUI.
+
+Converts the given rect expressed in the AppKit screen coordinate space to the 
+EtoileUI window layer coordinate space.
 
 This method will check whether the window layer (aka window group) is flipped 
 and make the necessary adjustments. */
-- (NSRect) convertRectFromWidgetBackendScreenBase: (NSRect)windowFrame
++ (NSRect) convertRectFromWidgetBackendScreenBase: (NSRect)windowFrame
 {
 	ETWindowLayer *windowLayer = (ETWindowLayer *)[[ETLayoutItemFactory factory] windowGroup];
 
@@ -342,7 +346,7 @@ and make the necessary adjustments. */
 		
 		if ([self shouldKeepWindowFrame] == NO)
 		{
-			[_itemWindow setFrame: [self convertRectToWidgetBackendScreenBase: [decoratedView frame]]
+			[_itemWindow setFrame: [[self class] convertRectToWidgetBackendScreenBase: [decoratedView frame]]
 			              display: YES];
 		}
 	
@@ -404,7 +408,7 @@ flipped by default.
 See also -[ETItemFactory windowGroup]. */
 - (NSRect) decorationRect
 {
-	return [self convertRectFromWidgetBackendScreenBase: [_itemWindow frame]];
+	return [[self class] convertRectFromWidgetBackendScreenBase: [_itemWindow frame]];
 }
 
 /** Returns the content view rect expressed in the window coordinate space. 
@@ -449,7 +453,7 @@ This coordinate space includes the window decoration (titlebar etc.).  */
 	if ([self shouldKeepWindowFrame])
 		return;
 
-	[_itemWindow setFrame: [self convertRectToWidgetBackendScreenBase: rect] 
+	[_itemWindow setFrame: [[self class] convertRectToWidgetBackendScreenBase: rect] 
 	              display: YES];
 }
 
