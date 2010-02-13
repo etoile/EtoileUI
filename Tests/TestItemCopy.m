@@ -216,8 +216,10 @@ DEALLOC(DESTROY(itemFactory); DESTROY(item); DESTROY(itemGroup))
 	return [[self nonEqualItemProperties] arrayByAddingObjectsFromArray: A(kETControllerProperty)];
 }
 
-- (void) testEmptyBasicItemGroupCopy
+- (void) testBasicItemGroupCopy
 {
+	[itemGroup addItem: item];
+
 	ETLayoutItemGroup *newItemGroup = [itemGroup copy];
 
 	NSArray *properties = [self checkablePropertiesForItem: itemGroup];
@@ -237,7 +239,18 @@ DEALLOC(DESTROY(itemFactory); DESTROY(item); DESTROY(itemGroup))
 		UKObjectsEqual(value, copiedValue);
 	}
 
+	UKTrue([newItemGroup isEmpty]);
 	UKObjectsEqual(newItemGroup, [[newItemGroup layout] layoutContext]);
+}
+
+- (void) testItemGroupCopyAndAddItem
+{
+	ETLayoutItemGroup *newItemGroup = [itemGroup copy];
+
+	[newItemGroup addItem: item];
+
+	UKObjectsEqual(A(item), [newItemGroup items]);
+	UKObjectsEqual(A(item), [newItemGroup arrangedItems]);
 }
 
 - (void) testEmptyItemGroupCopy
