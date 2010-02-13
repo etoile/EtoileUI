@@ -114,11 +114,6 @@
 
 /* Inspecting (WARNING CODE TO BE REPLACED BY THE NEW EVENT HANDLING) */
 
-- (IBAction) inspect: (id)sender
-{
-	[[self layoutItem] inspect: sender];
-}
-
 - (IBAction) inspectSelection: (id)sender
 {
 	ETDebugLog(@"Inspect %@ selection", self);

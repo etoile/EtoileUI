@@ -59,7 +59,6 @@
 
 /* Inspecting */
 
-- (IBAction) inspect: (id)sender;
 - (IBAction) inspectSelection: (id)sender;
 
 /* Layout */

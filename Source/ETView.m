@@ -518,6 +518,16 @@ return the temporary view. */
 	return contentView;
 }
 
+/* Actions */
+
+/** Invokes -inspect: action on the receiver item. 
+
+See also -[ETActionHandler inspectItem:onItem:]. */
+- (IBAction) inspectItem: (id)sender
+{
+	[item inspect: sender];
+}
+
 /* Overriden NSView methods */
 
 #ifndef GNUSTEP

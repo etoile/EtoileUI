@@ -293,6 +293,10 @@ menu bar, otherwise builds a new instance and returns it. */
 	                action: @selector(toggleLiveDevelopment:) 
 	         keyEquivalent:@""];
 
+	[menu addItemWithTitle: _(@"Inspect Item")
+	                action: @selector(inspectItem:) 
+	         keyEquivalent: @""];
+
 	[menu addItemWithTitle: _(@"Inspect")
 	                action: @selector(inspect:) 
 	         keyEquivalent: @""];

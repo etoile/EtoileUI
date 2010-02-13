@@ -21,6 +21,7 @@
 #import "ETLayoutItemFactory.h"
 #import "ETLayoutItemGroup.h"
 #import "EtoileUIProperties.h"
+#import "NSObject+EtoileUI.h"
 #import "ETCompatibility.h"
 
 
@@ -542,6 +543,16 @@ status, when others request it. */
 	[item removeFromParent];
 	[parent addItem: item];
 	RELEASE(item);
+}
+
+/** Invokes -inspect: action on the given item.
+
+You should generally use this action in a 'Inspect' menu item rather than 
+-inspect:, otherwise when the first responder is a view, the view is 
+inspected and not the item that owns it. */
+- (void) inspectItem: (id)sender onItem: (ETLayoutItem *)item
+{
+	[item inspect: sender];
 }
 
 @end

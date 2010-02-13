@@ -102,6 +102,8 @@ method will reuse the action handler to be set on every created items. */
 - (void) bringForward: (id)sender onItem: (ETLayoutItem *)item;
 - (void) bringToFront: (id)sender onItem: (ETLayoutItem *)item;
 
+- (void) inspectItem: (id)sender onItem: (ETLayoutItem *)item;
+
 @end
 
 

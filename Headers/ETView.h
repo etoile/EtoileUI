@@ -81,4 +81,8 @@ next EtoileUI release. */
 - (NSView *) temporaryView;
 - (NSView *) contentView;
 
+/* Actions */
+
+- (IBAction) inspectItem: (id)sender;
+
 @end
