@@ -110,11 +110,13 @@ be reactivated when we exit our owner layout. */
 	[menu addItemWithSubmenu: modeSubmenu];
 
 	[modeSubmenu addItemWithTitle: _(@"Fill")
+                     state: ([self paintMode] == ETPaintModeFill)
 	                target: self
 	                action: @selector(changePaintMode:)
 	         keyEquivalent: @""];
 
 	[modeSubmenu addItemWithTitle: _(@"Stroke")
+	                 state: ([self paintMode] == ETPaintModeStroke)
 	                target: self
 	                action: @selector(changePaintMode:)
 	         keyEquivalent: @""];

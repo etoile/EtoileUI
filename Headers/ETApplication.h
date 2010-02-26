@@ -49,6 +49,8 @@ file or write a custom main() function.*/
 
 - (id) targetForAction: (SEL)aSelector to: (id)aTarget from: (id)sender;
 - (IBAction) browseLayoutItemTree: (id)sender;
+- (IBAction) toggleFrameShown: (id)sender;
+- (IBAction) toggleBoundingBoxShown: (id)sender;
 - (IBAction) toggleDevelopmentMenu: (id)sender;
 - (IBAction) toggleLiveDevelopment: (id)sender;
 
@@ -80,6 +82,11 @@ enum
 @end
 
 @interface NSMenu (Etoile)
+- (void) addItemWithTitle: (NSString *)aTitle
+                    state: (NSInteger)aState
+                   target: (id)aTarget
+                   action: (SEL)anAction
+            keyEquivalent: (NSString *)aKey;
 - (void) addItemWithTitle: (NSString *)aTitle
                    target: (id)aTarget
                    action: (SEL)anAction

@@ -46,6 +46,43 @@ NSString *ETLayoutItemLayoutDidChangeNotification = @"ETLayoutItemLayoutDidChang
 
 @implementation ETLayoutItem
 
+static BOOL showsBoundingBox = NO;
+static BOOL showsFrame = NO;
+
+/** Returns whether the bounding box is drawn.
+
+When YES, the receiver draws its bounding box as a red stroked rect. */
++ (BOOL) showsBoundingBox
+{
+	return showsBoundingBox;
+}
+
+/** Sets whether the bounding box is drawn.
+
+See also -showsBoundingBox. */
++ (void) setShowsBoundingBox: (BOOL)shows
+{
+	showsBoundingBox = shows;
+}
+
+/** Returns whether the frame is drawn.
+
+When YES, the receiver draws its frame as a blue stroked rect. */
++ (BOOL) showsFrame
+{
+	return showsFrame;
+}
+
+/** Sets whether the frame is drawn.
+
+See also -showsFrame. */
++ (void) setShowsFrame: (BOOL)shows
+{
+	showsFrame = shows;
+}
+
+/* Initialization */
+
 /** Initializes and returns a layout item.
 
 The returned item will use +defaultItemRect as its frame.
@@ -1527,6 +1564,20 @@ used by the styles. */
 	return rect;
 }
 
+- (void) drawFrameWithRect: (NSRect)aRect
+{
+	[[NSColor blueColor] setStroke];
+	[NSBezierPath setDefaultLineWidth: 1.0];
+	[NSBezierPath strokeRect: aRect];
+}
+
+- (void) drawBoundingBoxWithRect: (NSRect)aRect
+{
+	[[NSColor redColor] setStroke];
+	[NSBezierPath setDefaultLineWidth: 1.0];
+	[NSBezierPath strokeRect: aRect];
+}
+
 /** <override-dummy />
 Renders or draws the receiver in the given rendering context. 
 
@@ -1589,6 +1640,15 @@ now, the context is nil and must be ignored.  */
 #endif
 
 	[[self styleGroup] render: inputValues layoutItem: self dirtyRect: dirtyRect];
+
+	if (showsBoundingBox)
+	{
+		[self drawBoundingBoxWithRect: [self boundingBox]];
+	}
+	if (showsFrame)
+	{
+		[self drawFrameWithRect: [self bounds]];
+	}
 }
 
 /** Marks the receiver and the entire layout item tree owned by it to be 

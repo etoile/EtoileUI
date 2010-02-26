@@ -272,6 +272,21 @@ See also -_buildMainMenuIfNeeded. */
 	return [[[self mainMenu] itemAtIndex: 0] submenu];
 }
 
+- (void) addGeometryOptionsToMenu: (NSMenu *)menu
+{
+	[menu addItemWithTitle: _(@"Show Frame")
+                     state: [ETLayoutItem showsFrame]
+                    target: self
+	                action: @selector(toggleFrameShown:) 
+	         keyEquivalent: @""];
+
+	[menu addItemWithTitle: _(@"Show Bounding Box")
+	                 state: [ETLayoutItem showsBoundingBox]
+	                target: self
+	                action: @selector(toggleBoundingBoxShown:) 
+	         keyEquivalent: @""];
+}
+
 /** Returns the visible development menu if there is one already inserted in the
 menu bar, otherwise builds a new instance and returns it. */
 - (NSMenuItem *) developmentMenuItem
@@ -312,6 +327,10 @@ menu bar, otherwise builds a new instance and returns it. */
 	[menu addItemWithTitle: _(@"Browse Layout Item Tree")
 	                action: @selector(browseLayoutItemTree:) 
 	         keyEquivalent: @""];
+
+	[menu addItem: [NSMenuItem separatorItem]];
+
+	[self addGeometryOptionsToMenu: menu];
 
 	return devMenuItem;
 }
@@ -356,6 +375,10 @@ menu bar, otherwise builds a new instance and returns it. */
 	[menu addItemWithTitle: _(@"Ungroup")
 	                action: @selector(ungroup:)
 	         keyEquivalent: @""];
+
+	[menu addItem: [NSMenuItem separatorItem]];
+
+	[self addGeometryOptionsToMenu: menu];
 
 	return menuItem;
 }
@@ -634,6 +657,26 @@ represented object. */
 	[[browser panel] makeKeyAndOrderFront: self];
 }
 
+- (IBAction) toggleFrameShown: (id)sender
+{
+	[ETLayoutItem setShowsFrame: ![ETLayoutItem showsFrame]];
+	[sender setState: [ETLayoutItem showsFrame]];
+	FOREACH([[self layoutItem] items], item, ETLayoutItem *)
+	{
+		[item setNeedsDisplay: YES];
+	}
+}
+
+- (IBAction) toggleBoundingBoxShown: (id)sender
+{
+	[ETLayoutItem setShowsBoundingBox: ![ETLayoutItem showsBoundingBox]];
+	[sender setState: [ETLayoutItem showsBoundingBox]];
+	FOREACH([[self layoutItem] items], item, ETLayoutItem *)
+	{
+		[item setNeedsDisplay: YES];
+	}
+}
+
 - (IBAction) toggleDevelopmentMenu: (id)sender
 {
 	NSMenuItem *devMenuItem = (id)[[self mainMenu] 
@@ -741,6 +784,7 @@ int ETApplicationMain(int argc, const char **argv)
 
 /** Adds a menu item initialized with the given parameters to the receiver. */ 
 - (void) addItemWithTitle: (NSString *)aTitle
+                    state: (NSInteger)aState
                    target: (id)aTarget
                    action: (SEL)anAction
             keyEquivalent: (NSString *)aKey
@@ -748,7 +792,21 @@ int ETApplicationMain(int argc, const char **argv)
 	NSMenuItem *menuItem = AUTORELEASE([[NSMenuItem alloc] initWithTitle: aTitle
 		action: anAction keyEquivalent: @""]);
 	[menuItem setTarget: aTarget];
+	[menuItem setState: aState];
 	[self addItem: menuItem];
+}
+
+/** Adds a menu item initialized with the given parameters to the receiver. */ 
+- (void) addItemWithTitle: (NSString *)aTitle
+                   target: (id)aTarget
+                   action: (SEL)anAction
+            keyEquivalent: (NSString *)aKey
+{
+	[self addItemWithTitle: aTitle 
+	                 state: NSOffState 
+	                target: aTarget 
+	                action: anAction
+	         keyEquivalent: aKey];
 }
 
 /** Adds a menu item with a submenu to the receiver. 

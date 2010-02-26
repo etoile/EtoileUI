@@ -1241,18 +1241,6 @@ to control more precisely how the items get resized per layout. */
 
 /* Rendering */
 
-- (void) debugDrawingInRect: (NSRect)rect
-{
-	// NOTE: For debugging, don't remove.
-	if ([self respondsToSelector: @selector(layout)] && [[self layout] isKindOfClass: NSClassFromString(@"ETFlowLayout")])
-	{
-		[[NSColor orangeColor] set];
-		//NSRectClip([self frame]);
-		[NSBezierPath setDefaultLineWidth: 1.0];
-		[NSBezierPath strokeRect: rect];
-	}
-}
-
 /** See -[ETLayoutItem render:dirtyRect:inContext:]. The most important addition of 
 this method is to manage the drawing of children items by calling this method 
 recursively on them. */
@@ -1277,10 +1265,6 @@ recursively on them. */
 	/* Otherwise redisplay the receiver and its descendants recursively */
 	if ([self usesLayoutBasedFrame] || NSIntersectsRect(dirtyRect, drawingFrame))
 	{
-#ifdef DEBUG_DRAWING
-		[self debugDrawingInRect: dirtyRect];
-#endif
-
 	   /* We intersect our dirtyRect with our drawing frame, so we don't get 
 	      a dirtyRect that includes views of existing decorator items in case our 
 		  decorator chain isn't empty. */

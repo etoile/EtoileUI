@@ -129,6 +129,11 @@ and centers it. A strech is a scale that doesn't preserve the content proportion
 	BOOL _wasKVOStopped;
 }
 
++ (BOOL) showsBoundingBox;
++ (void) setShowsBoundingBox: (BOOL)shows;
++ (BOOL) showsFrame;
++ (void) setShowsFrame: (BOOL)shows;
+
 /* Initialization */
 
 - (id) initWithValue: (id)value;
