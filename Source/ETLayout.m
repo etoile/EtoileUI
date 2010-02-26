@@ -203,6 +203,7 @@ constraint with -setItemSizeConstraint: and -setConstrainedItemSize:. */
 	_layoutContext = nil;
 	_delegate = nil;
 	_instrument = nil;
+	ASSIGN(_dropIndicator, [ETDropIndicator sharedInstance]);
 	_isLayouting = NO;
 	_layoutSize = NSMakeSize(200, 200); /* Dummy value */
 	_layoutSizeCustomized = NO;
@@ -285,6 +286,7 @@ Returns nil by default. */
 	DESTROY(_displayViewPrototype);
 	DESTROY(_instrument);
 	DESTROY(_rootItem);
+	DESTROY(_dropIndicator);
 
 	[super dealloc];
 }
@@ -308,6 +310,7 @@ instrument copy. */
 	newLayout->_delegate = _delegate;
 	newLayout->_displayViewPrototype = [_displayViewPrototype copyWithZone: aZone];
 	newLayout->_rootItem = [_rootItem copyWithZone: aZone];
+	newLayout->_dropIndicator = RETAIN(_dropIndicator);
 	[newLayout setAttachedInstrument: [[self attachedInstrument] copyWithZone: aZone]];
 	RELEASE([newLayout attachedInstrument]);
 	newLayout->_layoutSize = _layoutSize;
@@ -878,6 +881,33 @@ it (this is subject to change though). */
 	}
 }
 
+/** <override-never />
+Renders the layout with -render:isNewContent: and marks the layout context to be 
+redisplayed.
+
+You must only invoke this method in subclasses. In all other cases, to update 
+and redisplay the layout, -[ETLayoutItem updateLayout] must be used. 
+-renderAndInvalidateDisplay unlike -updateLayout doesn't result in a recursive 
+layout update but remains limited to the receiver.
+
+Subclasses can use this method in their setters to update the receiver, every 
+time a setting changes:
+<code>
+- (void) setItemMargin: (NSUInteger)aMargin
+{
+	itemMargin = aMargin;
+	[self renderAndInvalidateDisplay];
+}
+</code> */
+- (void) renderAndInvalidateDisplay
+{
+	if ([self canRender])
+	{	
+		[self render: nil isNewContent: NO];
+		[[self layoutContext] setNeedsDisplay: YES];
+	}
+}
+
 /** Resizes layout item by scaling of the given factor the -defaultFrame 
     returned by each item, then applying the scaled rect with -setFrame:.
 	Once the scaled rect has been computed, right before applying it to the 
@@ -1273,6 +1303,28 @@ If you override this method, you must override -styleForProperty: too. */
 {
 
 }
+
+/* Pick & Drop */
+
+/** <override-never />
+Returns the drop indicator style that should be drawn to indicate hovered 
+items which are valid drop targets.
+
+By default, returns an ETDropIndicator instance. */
+- (ETDropIndicator *) dropIndicator
+{
+	return _dropIndicator;
+}
+
+/** <override-never />
+Sets the drop indicator style that should be drawn to indicate hovered 
+items which are valid drop targets. */
+- (void) setDropIndicator: (ETDropIndicator *)aStyle
+{
+	ASSIGN(_dropIndicator, aStyle);
+}
+
+/* Sorting */
 
 /** <override-dummy /> 
 Returns the given sort descriptors.

@@ -9,6 +9,7 @@
 #import <EtoileFoundation/Macros.h>
 #import "ETComputedLayout.h"
 #import "ETLayoutItem.h"
+#import "ETLayoutItemGroup.h"
 #import "ETLineFragment.h"
 #import "ETCompatibility.h"
 
@@ -21,7 +22,11 @@
 - (id <ETLayoutingContext>) layoutContext { return [super layoutContext]; }
 - (ETLayoutItem *) itemAtLocation: (NSPoint)location { return [super itemAtLocation: location]; }
 
-DEALLOC(DESTROY(_separatorTemplateItem))
+- (void) dealloc
+{
+	DESTROY(_separatorTemplateItem);
+	[super dealloc];
+}
 
 - (id) copyWithZone: (NSZone *)aZone layoutContext: (id <ETLayoutingContext>)ctxt
 {
@@ -50,15 +55,7 @@ layout update. */
 - (void) setItemMargin: (float)aMargin
 {
 	_itemMargin = aMargin;
-
-	// TODO: Evaluate whether we should add an API at ETLayout level to request 
-	// layout refresh, or rather remove this code and let the developer triggers
-	// the layout update.
-	if ([self canRender])
-	{	
-		[self render: nil isNewContent: NO];
-		[[self layoutContext] setNeedsDisplay: YES];
-	}
+	[self renderAndInvalidateDisplay];
 }
 
 /** Returns the size of the margin around each item to be layouted. */
@@ -77,6 +74,7 @@ layout update. */
 - (void) setHorizontalAligment: (ETLayoutHorizontalAlignment)anAlignment
 {
 	_horizontalAlignment = anAlignment;
+	[self renderAndInvalidateDisplay];
 }
 
 /** Returns the horizontal alignment guide 'x' coordinate relative to the layout 
@@ -99,6 +97,7 @@ guide is ignored by the layout computation.  */
 - (void) setHorizontalAlignmentGuidePosition: (float)aPosition
 {
 	_horizontalAlignmentGuidePosition = aPosition;
+	[self renderAndInvalidateDisplay];
 }
 
 /* Layout Computation */
@@ -160,6 +159,24 @@ bounding box). */
 	}
 }
 
+- (void) removePreviousSeparatorItems
+{
+	[[self rootItem] removeAllItems];
+}
+
+/* Flattens the given layout model by putting all items into a single array. */
+- (NSArray *) itemsUsedInFragments: (NSArray *)fragments
+{
+	NSMutableArray *visibleItems = [NSMutableArray array];
+
+	FOREACH(fragments, fragment, ETLineFragment *)
+	{
+		[visibleItems addObjectsFromArray: [fragment items]];
+	}
+
+	return visibleItems;
+}
+
 /** <override-never />
 Runs the layout computation.<br />
 See also -[ETLayout renderLayoutItems:isNewContent:].
@@ -185,16 +202,8 @@ The scroll view visibility is handled by this method (this is subject to change)
 {	
 	[super renderWithLayoutItems: items isNewContent: isNewContent];
 
-	NSMutableArray *spacedItems = [NSMutableArray array];
-	for (unsigned int i = 0; i < [items count]; i++)
-	{
-		[spacedItems addObject: [items objectAtIndex: i]];
-		if (i < ([items count] - 1) && [self separatorTemplateItem] != nil)
-		{
-			[spacedItems addObject: AUTORELEASE([[self separatorTemplateItem] copy])];
-		}
-	}
-	
+	[self removePreviousSeparatorItems];
+	NSArray *spacedItems = [self insertSeparatorsBetweenItems: items];
 	NSArray *layoutModel = [self generateFragmentsForItems: spacedItems];
 	/* Now computes the location of every items by relying on the line by line 
 	   decomposition already made. */
@@ -204,12 +213,9 @@ The scroll view visibility is handled by this method (this is subject to change)
 	// and unvisible layout items
 	[[self layoutContext] setVisibleItems: [NSArray array]];
 	
-	/* Adjust layout context size when it is embedded in a scroll view */
-	if ([[self layoutContext] isScrollViewShown])
+	/* Adjust layout context size (e.g. when it is embedded in a scroll view) */
+	if ([self isContentSizeLayout])
 	{
-		NSAssert([self isContentSizeLayout], 
-			@"Any layout done in a scroll view must be based on content size");
-			
 		[[self layoutContext] setContentSize: [self layoutSize]];
 		ETDebugLog(@"Layout size is %@ with layout context size %@ and clip view size %@", 
 			NSStringFromSize([self layoutSize]), 
@@ -217,15 +223,7 @@ The scroll view visibility is handled by this method (this is subject to change)
 			NSStringFromSize([[self layoutContext] visibleContentSize]));
 	}
 
-	NSMutableArray *visibleItems = [NSMutableArray array];
-	
-	/* Flatten layout model by putting all items into a single array */
-	FOREACH(layoutModel, line, ETLineFragment *)
-	{
-		[visibleItems addObjectsFromArray: [line items]];
-	}
-	
-	[[self layoutContext] setVisibleItems: visibleItems];
+	[[self layoutContext] setVisibleItems: [self itemsUsedInFragments: layoutModel]];
 }
 
 /* Fragment-based Layout */
@@ -314,18 +312,39 @@ geometrical attributes (position, size, scale etc.) accordingly. */
 - (void) setSeparatorTemplateItem: (ETLayoutItem *)separator
 {
 	ASSIGN(_separatorTemplateItem, separator);
-	
-	if ([self canRender])
-	{	
-		[self render: nil isNewContent: NO];
-		[[self layoutContext] setNeedsDisplay: YES];
-	}
+	[self renderAndInvalidateDisplay];
 }
 
 /** Returns the separator item to be drawn between each layouted item. */			
 - (ETLayoutItem *) separatorTemplateItem
 {
 	return _separatorTemplateItem;
+}
+
+- (NSArray *) insertSeparatorsBetweenItems: (NSArray *)items
+{
+	if ([self separatorTemplateItem] == nil);
+		return items;
+
+	ETAssert([self rootItem] != nil);
+
+	NSMutableArray *spacedItems = [NSMutableArray array];
+	ETLayoutItem *lastItem = [items lastObject];
+
+	FOREACH(items, item, ETLayoutItem *)
+	{
+		[spacedItems addObject: item];
+
+		if ([item isEqual: lastItem])
+			break;
+
+		ETLayoutItem *separatorItem = AUTORELEASE([[self separatorTemplateItem] copy]);
+
+		[spacedItems addObject: separatorItem];
+		[[self rootItem] addItem: separatorItem];
+	}
+
+	return items;
 }
 
 @end

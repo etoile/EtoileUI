@@ -15,7 +15,7 @@
 #import <EtoileUI/ETLayout.h>
 #import <EtoileUI/ETFragment.h>
 
-@class ETLineFragment;
+@class ETLayoutItem, ETLineFragment;
 
 /** Describes how the content is horizontally positioned inside the layout 
 context.
@@ -85,5 +85,6 @@ ETTemplateItemLayout are allowed to do. */
 
 - (void) setSeparatorTemplateItem: (ETLayoutItem *)separator;
 - (ETLayoutItem *) separatorTemplateItem;
+- (NSArray *) insertSeparatorsBetweenItems: (NSArray *)items;
 
 @end

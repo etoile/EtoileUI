@@ -13,7 +13,7 @@
 #import <Foundation/Foundation.h>
 #import <AppKit/AppKit.h>
 
-@class ETInstrument, ETLineFragment, ETLayoutItem, ETLayoutItemGroup, ETView;
+@class ETDropIndicator, ETInstrument, ETLineFragment, ETLayoutItem, ETLayoutItemGroup, ETView;
 
 /** Methods which must be implemented by an object to be layouted by any
 	ETLayout subclasses. The object whose layout items are layouted is the
@@ -101,6 +101,7 @@ typedef enum _ETSizeConstraintStyle
 	IBOutlet NSView *_displayViewPrototype;
 	ETInstrument *_instrument;
 	ETLayoutItemGroup *_rootItem; /* Lazily initialized */
+	ETDropIndicator *_dropIndicator;
 
 	BOOL _isLayouting; /* -isRendering */
 	
@@ -187,6 +188,7 @@ typedef enum _ETSizeConstraintStyle
 - (BOOL) canRender;
 - (void) render: (NSDictionary *)inputValues isNewContent: (BOOL)isNewContent;
 - (void) renderWithLayoutItems: (NSArray *)items isNewContent: (BOOL)isNewContent;
+- (void) renderAndInvalidateDisplay;
 
 - (void) resetLayoutSize;
 - (void) resizeLayoutItems: (NSArray *)items toScaleFactor: (float)factor;
@@ -222,6 +224,11 @@ typedef enum _ETSizeConstraintStyle
 - (void) setDisplayedProperties: (NSArray *)properties;
 - (id) styleForProperty: (NSString *)property;
 - (void) setStyle: (id)style forProperty: (NSString *)property;
+
+/* Pick & Drop */
+
+- (ETDropIndicator *) dropIndicator;
+- (void) setDropIndicator: (ETDropIndicator *)aStyle;
 
 /* Sorting */
 
