@@ -323,7 +323,7 @@ geometrical attributes (position, size, scale etc.) accordingly. */
 
 - (NSArray *) insertSeparatorsBetweenItems: (NSArray *)items
 {
-	if ([self separatorTemplateItem] == nil);
+	if ([self separatorTemplateItem] == nil)
 		return items;
 
 	ETAssert([self rootItem] != nil);
@@ -344,7 +344,7 @@ geometrical attributes (position, size, scale etc.) accordingly. */
 		[[self rootItem] addItem: separatorItem];
 	}
 
-	return items;
+	return spacedItems;
 }
 
 @end
