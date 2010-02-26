@@ -196,8 +196,8 @@ space is flipped, ortherwise at the bottom left corner. */
 	
 	FOREACHI(_fragments, fragment)
 	{
-		if ([fragment height] > height)
-			height = [fragment height];
+		if ([_owner rectForItem: fragment].size.height > height)
+			height = [_owner rectForItem: fragment].size.height;
 	}
 	
 	return height;
@@ -212,7 +212,7 @@ space is flipped, ortherwise at the bottom left corner. */
 
 	FOREACHI(_fragments, fragment)
 	{
-		totalFragmentWidth += [fragment width];
+		totalFragmentWidth += [_owner rectForItem: fragment].size.width;
 	}
 
 	return totalFragmentWidth + [self totalFragmentMargin];
@@ -335,7 +335,7 @@ Returns whether the line is vertical or horizontal. */
 
 	FOREACHI(_fragments, fragment)
 	{
-		totalFragmentHeight += [fragment height];
+		totalFragmentHeight += [_owner rectForItem: fragment].size.height;
 	}
 
 	return totalFragmentHeight + [self totalFragmentMargin];
@@ -355,8 +355,8 @@ Returns whether the line is vertical or horizontal. */
 
 	FOREACHI(_fragments, fragment)
 	{
-		if ([fragment width] > width)
-			width = [fragment width];
+		if ([_owner rectForItem: fragment].size.width > width)
+			width = [_owner rectForItem: fragment].size.width;
 	}
 	
 	return width;
