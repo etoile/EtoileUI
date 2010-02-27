@@ -2074,8 +2074,6 @@ See also -[ETLayout isPositional] and -[ETLayout isComputedLayout]. */
 	 // TODO: When the receiver is decorated, will invoke -setDecorationRect: 
 	 // one more time. We should eliminate this extra call.
 	[self setOrigin: rect.origin];
-
-	[[self style] didChangeItemBounds: [self contentBounds]];
 }
 
 /** Returns the current origin associated with the receiver frame. See also -frame. */
@@ -2165,26 +2163,26 @@ location in the parent item coordinate space equal to the new position value. */
 	_position = position;
 
 	// NOTE: Will probably be reworked once layout item views are drawn directly by EtoileUI.
-	if ([self shouldSyncSupervisorViewGeometry] == NO)
-		return;
-
-	BOOL hasDecorator = (_decoratorItem != nil);
-	
-	_isSyncingSupervisorViewGeometry = YES;
-	if (hasDecorator)
+	if ([self shouldSyncSupervisorViewGeometry])
 	{
-		ETDecoratorItem *lastDecoratorItem = [self lastDecoratorItem];
-		NSSize size = [lastDecoratorItem decorationRect].size;
-		NSRect movedFrame = ETMakeRect([self origin], size);
-		/* Will indirectly move the supervisor view with -setFrameOrigin: that 
-		   will in turn call back -setOrigin:. */
-		[lastDecoratorItem setDecorationRect: movedFrame];
+		BOOL hasDecorator = (_decoratorItem != nil);
+		
+		_isSyncingSupervisorViewGeometry = YES;
+		if (hasDecorator)
+		{
+			ETDecoratorItem *lastDecoratorItem = [self lastDecoratorItem];
+			NSSize size = [lastDecoratorItem decorationRect].size;
+			NSRect movedFrame = ETMakeRect([self origin], size);
+			/* Will indirectly move the supervisor view with -setFrameOrigin: that 
+			   will in turn call back -setOrigin:. */
+			[lastDecoratorItem setDecorationRect: movedFrame];
+		}
+		else
+		{
+			[[self displayView] setFrameOrigin: [self origin]];
+		}
+		_isSyncingSupervisorViewGeometry = NO;
 	}
-	else
-	{
-		[[self displayView] setFrameOrigin: [self origin]];
-	}
-	_isSyncingSupervisorViewGeometry = NO;
 
 	[self updatePersistentGeometryIfNeeded];
 }
@@ -2300,24 +2298,25 @@ If the flipped property is modified, the content bounds remains identical. */
 {
 	_contentBounds = rect;
 
-	if ([self shouldSyncSupervisorViewGeometry] == NO)
-		return;
-
-	BOOL hasDecorator = (_decoratorItem != nil);
-	
-	_isSyncingSupervisorViewGeometry = YES;
-	if (hasDecorator)
+	if ([self shouldSyncSupervisorViewGeometry])
 	{
-		NSRect decorationRect = [self decorationRectForContentBounds: [self contentBounds]];
-		_contentBounds.size = [_decoratorItem decoratedItemRectChanged: decorationRect];
+		BOOL hasDecorator = (_decoratorItem != nil);
+		
+		_isSyncingSupervisorViewGeometry = YES;
+		if (hasDecorator)
+		{
+			NSRect decorationRect = [self decorationRectForContentBounds: [self contentBounds]];
+			_contentBounds.size = [_decoratorItem decoratedItemRectChanged: decorationRect];
+		}
+		else
+		{
+			[[self displayView] setFrameSize: _contentBounds.size];
+		}
+		_isSyncingSupervisorViewGeometry = NO;
 	}
-	else
-	{
-		[[self displayView] setFrameSize: _contentBounds.size];
-	}
-	_isSyncingSupervisorViewGeometry = NO;
 
 	[self updatePersistentGeometryIfNeeded];
+	[[self styleGroup] didChangeItemBounds: _contentBounds];
 }
 
 /** Sets the content size associated with the receiver. */
