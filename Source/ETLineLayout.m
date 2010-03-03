@@ -11,6 +11,7 @@
 #import "ETLineLayout.h"
 #import "ETLineFragment.h"
 #import "ETCompatibility.h"
+#include "float.h"
 
 
 @implementation ETLineLayout
