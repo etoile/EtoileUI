@@ -32,11 +32,13 @@
 {
 	ETComputedLayout *newLayout = [super copyWithZone: aZone layoutContext: ctxt];
 
+	newLayout->_borderMargin = _borderMargin;
 	newLayout->_itemMargin = _itemMargin;
 	newLayout->_horizontalAlignment = _horizontalAlignment;
 	newLayout->_horizontalAlignmentGuidePosition = _horizontalAlignmentGuidePosition;
 	newLayout->_computesItemRectFromBoundingBox = _computesItemRectFromBoundingBox;
 	newLayout->_separatorTemplateItem = [_separatorTemplateItem copyWithZone: aZone];
+	newLayout->_separatorItemEndMargin = _separatorItemEndMargin;
 
 	return newLayout;
 }
@@ -49,6 +51,22 @@ Returns YES. */
 }
 
 /* Alignment and Margins */
+
+/** Returns the size of the inside margin along the layout context bounds. */
+- (float) borderMargin
+{
+	return _borderMargin;
+}
+
+/** Sets the size of the inside margin along the layout context bounds and 
+triggers a layout update.
+
+The presented content appears inset when a positive margin is set. */
+- (void) setBorderMargin: (float)aMargin
+{
+	_borderMargin = aMargin;
+	[self renderAndInvalidateDisplay];
+}
 
 /** Sets the size of the margin around each item to be layouted and triggers a 
 layout update. */
@@ -159,11 +177,6 @@ bounding box). */
 	}
 }
 
-- (void) removePreviousSeparatorItems
-{
-	[[self rootItem] removeAllItems];
-}
-
 /* Flattens the given layout model by putting all items into a single array. */
 - (NSArray *) itemsUsedInFragments: (NSArray *)fragments
 {
@@ -177,6 +190,14 @@ bounding box). */
 	return visibleItems;
 }
 
+- (void) adjustSeparatorItemsForLayoutSize: (NSSize)newLayoutSize
+{
+	FOREACH([[self rootItem] items], separator, ETLayoutItem *)
+	{
+		[self adjustSeparatorItem: separator forLayoutSize: newLayoutSize];
+	}
+}
+
 /** <override-never />
 Runs the layout computation.<br />
 See also -[ETLayout renderLayoutItems:isNewContent:].
@@ -186,28 +207,28 @@ yourself. If you want to update the layout, just uses
 -[ETLayoutItemGroup updateLayout]. 
 	
 You may need to override this method in your layout subclasses if you want
-to create a very special layout style. This method will sequentially invoke:
+to create a very special layout. This method will sequentially invoke:
 <list>
-<item>-resetLayoutSize
+<item>-resetLayoutSize</item>
 <item>-resizeLayoutItems:toScaleFactor:</item>
-<item>-layoutModelForLayoutItems:</item>
-<item>-computeLayoutItemLocationsForLayoutModel:</item>.
+<item>-insertSeparatorsBetweenItems:</item>
+<item>-generateFragmentsForItems:</item>
+<item>-computeLocationsForFragments:</item>
+<item>-adjustSeparatorItem:forLayoutSize:</item>
 </list>
 
 Finally once the layout is computed, this method set the layout item visibility 
-by calling -setVisibleItems: on the layout context. 
-
-The scroll view visibility is handled by this method (this is subject to change). */
+by calling -setVisibleItems: on the layout context. */
 - (void) renderWithLayoutItems: (NSArray *)items isNewContent: (BOOL)isNewContent
 {	
 	[super renderWithLayoutItems: items isNewContent: isNewContent];
 
-	[self removePreviousSeparatorItems];
 	NSArray *spacedItems = [self insertSeparatorsBetweenItems: items];
 	NSArray *layoutModel = [self generateFragmentsForItems: spacedItems];
 	/* Now computes the location of every items by relying on the line by line 
 	   decomposition already made. */
 	[self computeLocationsForFragments: layoutModel];
+	[self adjustSeparatorItemsForLayoutSize: [self layoutSize]]; 
 	
 	// TODO: May be worth to optimize by computing set intersection of visible 
 	// and unvisible layout items
@@ -229,7 +250,7 @@ The scroll view visibility is handled by this method (this is subject to change)
 /* Fragment-based Layout */
 
 /** <override-subclass />
-Overrides this method to generate a layout line based on the layout context 
+Overrides this method to generate a layout fragment based on the layout context 
 constraints. Usual layout context constraints are size, vertical and horizontal 
 scroller visibility. */
 - (ETLineFragment *) layoutFragmentWithSubsetOfItems: (NSArray *)items
@@ -238,14 +259,22 @@ scroller visibility. */
 }
 
 /** <override-dummy />
-Returns a layout model where layouts lines have been collected inside an array, 
-whose indexes indicate in which order these layout lines should be presented.
+Returns a fragment array, whose indexes indicate in which order these fragments 
+should be presented.<br />
 
-Overrides this method to generate your own layout model based on the layout 
+Overrides this method to generate your own fragment array based on the layout 
 context constraints. Usual layout context constraints are size, vertical and 
-horizontal scrollers visibility. How the layout model is structured is up to you.
+horizontal scrollers visibility. How the fragment array is structured is up to you.
 
-This layout model will be interpreted by -computeViewLocationsForLayoutModel:. */
+Any kind of object that adopts ETFragment protocol can put in the returned array.
+e.g. ETLayoutItem or ETLineFragment.
+
+You must override -computeLocationsForFragments: in a compatible way to 
+interpret the fragment array.
+
+By default, returns an empty array.<br />
+If you implement -layoutFragmentWithSubsetOfItems: in a subclass, returns the 
+resulting fragment in the array. */
 - (NSArray *) generateFragmentsForItems: (NSArray *)items
 {
 	ETLineFragment *line = [self layoutFragmentWithSubsetOfItems: items];
@@ -256,14 +285,31 @@ This layout model will be interpreted by -computeViewLocationsForLayoutModel:. *
 	return [NSArray array];
 }
 
+/** Returns the location at which the receiver should start to lay out the 
+fragments returned by -generateFragmentsForItems:.<br />
+Both border and item margins are  to compute the inset origin.
+
+You can use this method in a subclass when overriding 
+-computeLocationsForFragments: to retrieve an origin that is valid indepently of 
+the layout context flipping. For example:
+<code>
+ETLineFragment *line = [fragments firstObject];
+float totalMargin = ([self borderMargin] + [self itemMargin]) * 2;
+float contentHeight =  [line height] + totalMargin;
+
+
+[line setOrigin: [self originOfFirstFragment: line
+                            forContentHeight: contentHeight]];
+</code> */
 - (NSPoint) originOfFirstFragment: (id)aFragment 
                  forContentHeight: (float)contentHeight
 {
 	BOOL isFlipped = [_layoutContext isFlipped];
-	 /* Was just reset and equal to the layout context height at this point */
+	/* Was just reset and equal to the layout context height at this point */
 	float layoutHeight = [self layoutSize].height;
 	float itemMargin = [self itemMargin];
-	float lineY = itemMargin;
+	float borderMargin = [self borderMargin];
+	float lineY = borderMargin + itemMargin;
 	float fragmentHeight = [aFragment height];
 
 	/* The statement below looks simple but is very easy to break and hard to 
@@ -279,23 +325,15 @@ This layout model will be interpreted by -computeViewLocationsForLayoutModel:. *
 	{
 		if ([self isContentSizeLayout] && contentHeight > layoutHeight)
 		{
-			lineY = contentHeight - fragmentHeight - itemMargin;
+			lineY = contentHeight - fragmentHeight - itemMargin - borderMargin;
 		}
 		else /* contentHeight < layoutHeight */
 		{
-			lineY = layoutHeight - fragmentHeight - itemMargin;
+			lineY = layoutHeight - fragmentHeight - itemMargin - borderMargin;
 		}
-		/*if ([self isContentSizeLayout] == NO || contentHeight < layoutHeight)
-		{
-			lineY = layoutHeight - fragmentHeight - itemMargin;
-		}
-		else
-		{
-			lineY = contentHeight - fragmentHeight - itemMargin;	
-		}*/
 	}
 
-	return NSMakePoint(itemMargin, lineY);
+	return NSMakePoint(borderMargin + itemMargin, lineY);
 }
 
 /** <override-subclass />
@@ -321,12 +359,47 @@ geometrical attributes (position, size, scale etc.) accordingly. */
 	return _separatorTemplateItem;
 }
 
+/** Sets the size trimmed at each separator item extremities and triggers a 
+layout update.
+
+The separator extremities vary with its orientation vertical vs horizontal. 
+e.g. left/right with ETColumnLayout and bottom/top with ETLineLayout.<br />
+How to interpret the separator end margin value is a subclass responsability.
+
+-[ETColumn/LineLayout adjustSeparatorItem:forLayoutSize:] sums the separator end 
+margin with the item margin to compute the space around each separator.
+
+When the separator is the space, the end margin has usually no visible effects. */
+- (void) setSeparatorItemEndMargin: (float)aMargin
+{
+	_separatorItemEndMargin = aMargin;
+	[self renderAndInvalidateDisplay];
+}
+
+/** Returns the size trimmed at each separator item extremities. */
+- (float) separatorItemEndMargin
+{
+	return _separatorItemEndMargin;
+}
+
+- (void) removePreviousSeparatorItems
+{
+	[[self rootItem] removeAllItems];
+}
+
+/** Prepares and inserts separator item based on -separatorTemplateItem into the 
+root item.
+
+Separator items previously inserted by this method are automatically removed the 
+next time you call it. */
 - (NSArray *) insertSeparatorsBetweenItems: (NSArray *)items
 {
+	ETAssert([self rootItem] != nil);
+
+	[self removePreviousSeparatorItems];
+
 	if ([self separatorTemplateItem] == nil)
 		return items;
-
-	ETAssert([self rootItem] != nil);
 
 	NSMutableArray *spacedItems = [NSMutableArray array];
 	ETLayoutItem *lastItem = [items lastObject];
@@ -340,11 +413,37 @@ geometrical attributes (position, size, scale etc.) accordingly. */
 
 		ETLayoutItem *separatorItem = AUTORELEASE([[self separatorTemplateItem] copy]);
 
+		[self prepareSeparatorItem: separatorItem];
 		[spacedItems addObject: separatorItem];
 		[[self rootItem] addItem: separatorItem];
 	}
 
 	return spacedItems;
+}
+
+/** <override-dummy />
+Overrides to customize and resize template separator item copies to be inserted.
+
+The layout computation has not started when this method is called. 
+
+Take note the final separator sizing is often not possible before 
+-adjustSeparatorItem:forLayoutSize:. To determine their length or position 
+usually requires to know other element sizes that the receiver computes. */
+- (void) prepareSeparatorItem: (ETLayoutItem *)separator
+{
+
+}
+
+/** <override-dummy />
+Overrides to resize newly inserted separator items based on the item sizes and 
+layout size which were just computed.
+
+The layout size might be the same than previously in -prepareSeparatorItem:.
+
+The layout computation is finished when this method is called.  */
+- (void) adjustSeparatorItem: (ETLayoutItem *)separator forLayoutSize: (NSSize)newLayoutSize
+{
+	
 }
 
 @end

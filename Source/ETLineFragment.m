@@ -47,7 +47,7 @@ DEALLOC(DESTROY(_fragments))
 /** Returns a new autoreleased horizontal layout line filled with the given 
 fragments. */
 + (id) horizontalLineWithOwner: (id <ETLayoutFragmentOwner>)anOwner
-                fragmentMargin: (float)aMargin 
+                    itemMargin: (float)aMargin 
                       maxWidth: (float)aWidth
 {
 	return AUTORELEASE([[[self class] alloc] initWithOwner: anOwner
@@ -97,15 +97,17 @@ input. */
 
 	FOREACH(fragments, fragment, ETLayoutItem *)
 	{
-		length += _fragmentMargin + [self lengthForFragment: fragment];
+		/* The right or bottom margin must not result in a line break, we don't 
+		   include it in the sum right now. */
+		length += [self lengthForFragment: fragment];
 		
 		if (length > maxLength)
 			break;
 
 		[acceptedFragments addObject: fragment];
+		length += _fragmentMargin;
 	}
 
-	//[self setLength: length];
 	[_fragments addObjectsFromArray: acceptedFragments];
 
 	return acceptedFragments;
@@ -117,14 +119,10 @@ input. */
 	return _fragments;
 }
 
+/** Returns the fragment margin that lies between between each fragment. */
 - (float) itemMargin
 {
 	return _fragmentMargin;
-}
-
-- (void) setFragmentMargin: (float)aMargin
-{
-	_fragmentMargin = aMargin;
 }
 
 - (float) totalFragmentMargin
@@ -133,14 +131,7 @@ input. */
 }
 
 - (NSPoint) originOfFirstFragment: (id)aFragment
-{	
-	/*float fragmentY = _origin.y;
-
-	if (NO == _flipped)
-	{
-		fragmentY = _origin.y - [_owner rectForItem: aFragment].size.height;
-	}*/
-
+{
 	return NSMakePoint(_origin.x, _origin.y);
 }
 
@@ -187,13 +178,11 @@ space is flipped, ortherwise at the bottom left corner. */
 - (float) height
 {
 	float height = 0;
-	
-	/* We must look for the tallest layouted item (by line) when we are
-	   horizontally oriented. */
 
 	// FIXME: Try to make the next line works
 	// height = [[_fragments valueForKey: @"@max.height"] floatValue];
-	
+
+	/* Find the tallest fragment in the line */
 	FOREACHI(_fragments, fragment)
 	{
 		if ([_owner rectForItem: fragment].size.height > height)
@@ -206,8 +195,6 @@ space is flipped, ortherwise at the bottom left corner. */
 /** Returns the width of the line. */
 - (float) width
 {
-	/* We must compute the sum of layout item width when we are horizontally 
-	   oriented. */
 	float totalFragmentWidth = 0;
 
 	FOREACHI(_fragments, fragment)
@@ -258,11 +245,6 @@ is vertical. */
 	return [self width];
 }
 
-- (void) setLength: (float)aLength
-{
-
-}
-
 /** <override-dummy />
 Returns the lenght of the line.
 
@@ -285,25 +267,19 @@ Returns whether the line is vertical or horizontal. */
 
 @implementation ETVerticalLineFragment
 
-// FIXME: Remove
-- (float) totalFragmentMargin
-{
-	return ([_fragments count] + 1) * _fragmentMargin;
-}
-
 - (NSPoint) originOfFirstFragment: (id)aFragment
 {
 	float fragmentY = 0;
 	
 	if (_flipped)
 	{
-		 fragmentY = _origin.y + _fragmentMargin;
+		 fragmentY = _origin.y;
 	}
 	else
 	{
 		// NOTE: Next line equivalent to -lengthForFragment:
 		float fragmentHeight = [_owner rectForItem: aFragment].size.height;
-		fragmentY = _origin.y + [self height] - _fragmentMargin - fragmentHeight;
+		fragmentY = _origin.y + [self height] - fragmentHeight;
 	}
 
 	return NSMakePoint(_origin.x, fragmentY);
@@ -329,8 +305,6 @@ Returns whether the line is vertical or horizontal. */
 
 - (float) height
 {
-	/* We must compute the sum of layout item height when we are vertically 
-	   oriented. */
 	float totalFragmentHeight = 0;
 
 	FOREACHI(_fragments, fragment)
@@ -346,13 +320,11 @@ Returns whether the line is vertical or horizontal. */
 - (float) width
 {
 	float width = 0;
-	
-	/* We must look for the widest layouted item (by line) when we are
-	   vertically oriented. */
 
 	// FIXME: Try to make the next line works
 	// width = [[_fragments valueForKey: @"@max.width"] floatValue];
 
+	/* Find the widest fragment in the line */
 	FOREACHI(_fragments, fragment)
 	{
 		if ([_owner rectForItem: fragment].size.width > width)

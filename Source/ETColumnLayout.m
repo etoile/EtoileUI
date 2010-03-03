@@ -29,42 +29,15 @@
 	}
 
 	ETLineFragment *line = [ETLineFragment verticalLineWithOwner: self 
-                                                  itemMargin: [self itemMargin]
-	                                               maxHeight: layoutHeight 
-	                                               isFlipped: [_layoutContext isFlipped]];
+	                                                  itemMargin: [self itemMargin]
+	                                                   maxHeight: layoutHeight 
+	                                                   isFlipped: [_layoutContext isFlipped]];
 	NSArray *acceptedItems = [line fillWithItems: unlayoutedItems];
 
 	if ([acceptedItems isEmpty])
 		return nil;
 
 	return line;
-}
-
-- (NSPoint) originOfFirstFragment: (id)line
-{
-	BOOL isFlipped = [_layoutContext isFlipped];
-	float lineHeight = [line height];
-	float layoutHeight = [self layoutSize].height;
-	float lineY = 0; /* itemMargin already includes in the line height */
-
-	/* The statement below looks simple but is very easy to break and hard to 
-	   get right.
-	   If you ever edit, please use PhotoViewExample to test the 4 cases 
-	   exhaustively (resizing the layout context and varying item count, margin 
-	   and scaling):
-	   - [_layoutContext isFlipped] + [_layoutContext decoratorItem] == nil
-	   - [_layoutContext isFlipped] + [_layoutContext decoratorItem] == scrollable area
-	   - [_layoutContext isFlipped] == NO + [_layoutContext decoratorItem] == nil
-	   - [_layoutContext isFlipped] == NO + [_layoutContext decoratorItem] == scrollable area */
-	if (isFlipped == NO)
-	{
-		if ([self isContentSizeLayout] == NO || lineHeight < layoutHeight)
-		{
-			lineY = layoutHeight - lineHeight;
-		}
-	}
-
-	return NSMakePoint([self itemMargin], lineY);
 }
 
 - (void) computeLocationsForFragments: (NSArray *)layoutModel
@@ -76,18 +49,36 @@
 
 	ETLineFragment *line = [layoutModel lastObject];
 	float lineHeight = [line height];
+	float totalMargin = ([self borderMargin] + [self itemMargin]) * 2;
+	float contentHeight = lineHeight + totalMargin;
 
 	/* Will compute and set the item locations */
-	[line setOrigin: [self originOfFirstFragment: line]];
+	[line setOrigin: [self originOfFirstFragment: line
+	                            forContentHeight: contentHeight]];
 
 	/* Update layout size, useful when the layout context is embedded in a scroll view */
 	if ([self isContentSizeLayout])
 	{
 		/* lineHeight already includes itemMargin * 2 */
-		[self setLayoutSize: NSMakeSize([line width] + [self itemMargin] * 2, lineHeight)];
+		[self setLayoutSize: NSMakeSize([line width] + totalMargin, contentHeight)];
 	}
 
 	ETDebugLog(@"Item locations computed by layout line :%@", line);
+}
+
+static const float undeterminedWidth = 10;
+
+- (void) prepareSeparatorItem: (ETLayoutItem *)separator
+{
+	[separator setSize: NSMakeSize(undeterminedWidth, 5)];
+}
+
+- (void) adjustSeparatorItem: (ETLayoutItem *)separator forLayoutSize: (NSSize)newLayoutSize
+{
+	float totalEndMargin = [self separatorItemEndMargin];
+
+	[separator setX: totalEndMargin];
+	[separator setWidth: (newLayoutSize.width - totalEndMargin * 2)];
 }
 
 @end

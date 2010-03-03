@@ -761,7 +761,16 @@ See also -setContrainedItemSize:. */
 /** Returns whether -renderXXX methods can be invoked now. */
 - (BOOL) canRender
 {
-	return (_layoutContext != nil && [self isRendering] == NO);
+	BOOL hasValidContext = (_layoutContext != nil);
+
+	/* When the layout context is a layout */
+	if (hasValidContext && [_layoutContext isLayoutItem] == NO)
+	{
+		ETAssert([_layoutContext isComposite]);
+		hasValidContext = ([_layoutContext layoutContext] != nil);
+	}
+
+	return (hasValidContext && [self isRendering] == NO);
 }
 
 /** Returns whether the layout phase in underway.
@@ -1021,6 +1030,13 @@ context and the tree rooted in -rootItem. */
 	if (_rootItem == nil && [_layoutContext isLayoutItem] && [_layoutContext isLayoutOwnedRootItem] == NO)
 	{
 		_rootItem = [[ETLayoutItemGroup alloc] initAsLayoutOwnedRootItem];
+	}
+
+	/* When the layout context is a composite layout, the positional layout 
+	   reuses its root item */
+	if (_layoutContext != nil && [_layoutContext isLayoutItem] == NO)
+	{
+		return [_layoutContext rootItem];
 	}
 
 	return _rootItem;

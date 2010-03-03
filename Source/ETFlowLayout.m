@@ -38,15 +38,17 @@
 /** <override-dummy />
 Returns the height in which all the given fragments fits. 
 
-Item margins are included in the sum. */
+Border and item margins are included in the sum. */
 - (float) totalHeightForFragments: (NSArray *)fragments
 {
-	float totalHeight = _itemMargin;
+	float totalHeight = [self borderMargin] + [self itemMargin];
 
 	FOREACHI(fragments, fragment)
 	{
-		totalHeight += [fragment height] + _itemMargin;
+		totalHeight += [fragment height] + [self itemMargin];
 	}
+
+	totalHeight += [self borderMargin];
 
 	return totalHeight;
 }
@@ -115,7 +117,7 @@ to the items, which are expected to be already broken into lines in layoutModel.
 	}
 }
 
-/** Breaks the items into lines and returns the resulting array as a layout model. */
+/** Breaks the items into lines and returns the resulting line array. */
 - (NSArray *) generateFragmentsForItems: (NSArray *)items
 {
 	NSMutableArray *unlayoutedItems = [NSMutableArray arrayWithArray: items];
@@ -153,14 +155,16 @@ When items is empty, returns an empty layout line. */
 - (ETLineFragment *) layoutFragmentWithSubsetOfItems: (NSArray *)items
 {
 	float layoutWidth = FLT_MAX;
-	
+	float totalMargin = ([self itemMargin] + [self borderMargin]) * 2;
+
 	if ([self layoutSizeConstraintStyle] == ETSizeConstraintStyleHorizontal)
 	{
-		layoutWidth = [self layoutSize].width;
+		layoutWidth = [self layoutSize].width - totalMargin;
 	}
 
-	ETLineFragment *line = [ETLineFragment horizontalLineWithOwner: self fragmentMargin: [self itemMargin] 
-	                                                           maxWidth: layoutWidth];
+	ETLineFragment *line = [ETLineFragment horizontalLineWithOwner: self 
+	                                                    itemMargin: [self itemMargin] 
+	                                                      maxWidth: layoutWidth];
 	NSArray *acceptedItems = [line fillWithItems: items];
 	float lineLength = [line length];
 
@@ -169,7 +173,7 @@ When items is empty, returns an empty layout line. */
 	// We only touch the layout size height in -computeItemLocationsForLayoutModel:
 	if ([self isContentSizeLayout] && [self layoutSize].width < lineLength)
 	{
-		[self setLayoutSize: NSMakeSize(lineLength, [self layoutSize].height)];
+		[self setLayoutSize: NSMakeSize(lineLength + totalMargin, [self layoutSize].height)];
 	}
 
 	if ([acceptedItems isEmpty])

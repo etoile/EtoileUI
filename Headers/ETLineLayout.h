@@ -12,14 +12,10 @@
  
 #import <Foundation/Foundation.h>
 #import <AppKit/AppKit.h>
-#import <EtoileUI/ETFlowLayout.h>
+#import <EtoileUI/ETComputedLayout.h>
 
-/** ETLineLayout overrides the following property values defined by ETFlowLayout:
-<list>
-<item>itemSizeConstraintStyle to be disabled</item>
-<item>itemMargin to a 0 px border</item>
-</list> */
-@interface ETLineLayout : ETFlowLayout
+
+@interface ETLineLayout : ETComputedLayout
 {
 
 }

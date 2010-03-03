@@ -1,7 +1,5 @@
 /** <title>ETFlowLayout</title>
 
-	ETFlowLayout.m
-
 	<abstract>A layout class that organize items in an horizontal flow and
 	starts a new line each time the content width is filled.</abstract>
 
@@ -16,7 +14,6 @@
 #import <AppKit/AppKit.h>
 #import <EtoileUI/ETComputedLayout.h>
 
-@class ETLineFragment;
 
 /** ETFlowLayout overrides several property values defined by ETLayout and 
 ETComputedLayout:
@@ -27,6 +24,7 @@ ETComputedLayout:
 </list> */
 @interface ETFlowLayout : ETComputedLayout 
 {
+	@private
 	ETSizeConstraintStyle _layoutConstraint;
 	BOOL _grid;
 	BOOL _width;
