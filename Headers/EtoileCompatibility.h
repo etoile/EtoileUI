@@ -24,14 +24,3 @@
 #define GCC_VERSION (__GNUC__ * 10000 + __GNUC_MINOR__ * 100)
 #endif
 #endif // GCC_VERSION
-
-
-#ifdef GNUSTEP
-
-/* For truncf on Linux and other platforms probably...
-   #import <math.h> doesn't work on many Linux systems since truncf is often 
-   not part of this header currently. That's why we rely on GCC equivalent 
-   builtin function. */
-#define truncf(x)  __builtin_truncf(x)
-
-#endif // GNUSTEP
