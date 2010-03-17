@@ -95,7 +95,7 @@ DEALLOC(DESTROY(_labelAttributes));
 	{
 		_currentLabelRect = [self rectForLabel: itemLabel 
 		                               inFrame: [item drawingFrame] 
-		                                ofItem: item];	
+		                                ofItem: item];
 	}
 
 	NSImage *itemImage = [self imageForItem: item];
@@ -352,18 +352,22 @@ See also -maxLabelSize. */
 			rect = NSMakeRect(labelBaseX, labelBaseY, labelSizeWidth, labelSizeHeight);
 			break;
 		}
+		case ETLabelPositionInsideLeft:
+		{
+			float labelBaseX = _edgeInset;
+			float labelBaseY = (itemFrame.size.height - labelSizeHeight) / 2;
+
+			rect = NSMakeRect(labelBaseX, labelBaseY, labelSizeWidth, labelSizeHeight);
+			break;
+		}
 		case ETLabelPositionOutsideLeft:
 		{
-			float labelBaseY = 0;
+			float labelBaseX = - labelSizeWidth - _labelMargin;
+			float labelBaseY = (itemFrame.size.height - labelSizeHeight) / 2;
 			// TODO: Support max label size in a better way rather than only 
 			// allowing a width equal to the item width when no max size is set.
 
-			if ([anItem isFlipped])
-			{
-				labelBaseY = itemFrame.size.height;
-			}
-
-			rect = NSMakeRect(itemFrame.size.width + _labelMargin, labelBaseY, labelSizeWidth, labelSizeHeight);
+			rect = NSMakeRect(labelBaseX, labelBaseY, labelSizeWidth, labelSizeHeight);
 			break;
 		}
 		case ETLabelPositionInsideBottom:
