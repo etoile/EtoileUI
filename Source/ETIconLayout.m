@@ -116,13 +116,6 @@ DEALLOC(DESTROY(_itemLabelFont))
 	ASSIGN(_itemLabelFont, font);
 }
 
-/* Always returns 1 to prevent the positional layout to resize the items, the 
-icon layout does it in its own way by overriding -resizeLayoutItems:toScaleFactor:. */
-- (float) itemScaleFactor
-{
-	return 1;
-}
-
 /** Returns the icon size used when the scale factor is equal to 1. 
 
 By default, returns (32, 32).

@@ -607,6 +607,14 @@ NSAssert1(size.width >= 0 && size.height >= 0, @"For a supervisor view, the " \
 
 /* Rendering Tree */
 
+/** Returns NO.
+
+The item bouding box is used as the clip rect. */
+- (BOOL) wantsDefaultClipping
+{
+	return NO;
+}
+
 #ifdef DEBUG_DRAWING
 
 - (void) drawInvalidatedAreaWithRect: (NSRect)needsDisplayRect
@@ -740,12 +748,18 @@ GNUstep and pass it to the layout item tree as needed. */
 - (BOOL) lockFocusInRect: (NSRect)rectToRedraw
 {
 	BOOL lockFocus = [self lockFocusIfCanDraw];
+
 	if ([self wantsDefaultClipping])
 	{
 		/* No need to apply bounds transform to aRect because we get this rect 
 		   from -drawRect: which receives a rect already adjusted. */ 
 		NSRectClip(rectToRedraw);
 	}
+	else
+	{
+		[[NSBezierPath bezierPathWithRect: [item boundingBox]] setClip];
+	}
+
 	return lockFocus;
 }
 

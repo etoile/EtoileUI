@@ -260,6 +260,11 @@ needs some special redisplay policy. */
 
 }
 
+- (NSRect) boundingBox
+{
+	return [self decorationRect];
+}
+
 /** <override-subclass />
 
 To be implemented... */

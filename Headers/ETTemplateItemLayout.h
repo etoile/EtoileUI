@@ -14,7 +14,7 @@
 #import <AppKit/AppKit.h>
 #import <EtoileUI/ETLayout.h>
 
-@class ETLayoutItem;
+@class ETLayoutItem, ETBasicItemStyle;
 
 /** ETTemplateItemLayout is a layout that allows to temporarily override 
 layout item properties, in order to deeply customize the item look and behavior.
@@ -84,6 +84,8 @@ possible and how to use ETTemplateItemLayout. */
 
 /* Subclass Hooks */
 
+- (BOOL) ignoresItemScaleFactor;
+
 - (void) setUpTemplateElementsForItem: (ETLayoutItem *)item;
 - (void) setUpTemplateElementWithNewValue: (id)templateValue
                                    forKey: (NSString *)aKey
@@ -110,6 +112,7 @@ possible and how to use ETTemplateItemLayout. */
 	NSTextAlignment _itemLabelAlignment;
 	NSTextAlignment _alignment;
 	float highestLabelWidth;
+	ETBasicItemStyle *_standaloneTextStyle;
 }
 
 /*- (void) setAlignment: (NSTextAlignment)alignment;

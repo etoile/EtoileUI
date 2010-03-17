@@ -9,8 +9,11 @@
 #import <EtoileFoundation/ETCollection.h>
 #import <EtoileFoundation/Macros.h>
 #import "ETTemplateItemLayout.h"
-#import "ETFlowLayout.h"
+#import "ETBasicItemStyle.h"
 #import "ETColumnLayout.h"
+#import "ETComputedLayout.h"
+#import "ETFlowLayout.h"
+#import "ETGeometry.h"
 #import "ETLayoutItem.h"
 #import "ETLayoutItemGroup.h"
 #import "ETLayoutItemFactory.h"
@@ -196,6 +199,21 @@ original items which are replaced by the layout. */
 
 /* Subclass Hooks */
 
+/** Returns YES when the items must not be scaled automatically based on 
+[[self layoutContext] itemScaleFactor], otherwise returns NO when the receiver 
+delegates the item scaling to the positional layout.
+
+By default, returns YES.
+
+You can override this method to return NO and lets the positional layout scales 
+the items.<br />
+Alternatively a subclass can implement its own item scaling by overriding 
+-willRenderItems:. */
+- (BOOL) ignoresItemScaleFactor
+{
+	return YES;
+}
+
 // TODO: Implement NSEditor and NSEditorRegistration protocol, but in ETLayout 
 // subclasses or rather in ETLayoutItem itself?
 // Since layouts tend to encapsulate large UI chuncks, it could make sense at 
@@ -366,9 +384,12 @@ Does nothing by default. */
 	return [_layoutContext itemAtPath: path];
 }
 
+/* By default, returns 1 to prevent the positional layout to resize the items. 
+e.g. the icon layout does it in its own way by overriding -resizeLayoutItems:toScaleFactor:. */
 - (float) itemScaleFactor
 {
-	return [_layoutContext itemScaleFactor];
+
+	return ([self ignoresItemScaleFactor] ? 1.0 : [_layoutContext itemScaleFactor]);
 }
 
 - (NSSize) visibleContentSize
@@ -431,10 +452,34 @@ kETFormLayoutInset	NSZeroRect (default) or nil
 - (id) init
 {
 	SUPERINIT
-	
+
+	ETLayoutItem *templateItem = [[ETLayoutItemFactory factory] item];;
+	ETBasicItemStyle *formStyle = AUTORELEASE([[ETBasicItemStyle alloc] init]);
+
+	[self setTemplateItem: templateItem];
+	[formStyle setLabelPosition: ETLabelPositionOutsideLeft];
+	[templateItem setStyle: formStyle];
+	[templateItem setContentAspect: ETContentAspectComputed];
+	/* Icon must precede Style and View to let us snapshot the item in its 
+	   initial state. See -setUpTemplateElementWithNewValue:forKey:inItem:
+	   View must also be restored after Content Aspect, otherwise the view 
+	   geometry computation occurs two times when the items are restored. */
+	// FIXME: When View comes before Content Aspect an assertion is raised.
+	[self setTemplateKeys: A(@"style", @"contentAspect")];
 	[self setPositionalLayout: [ETColumnLayout layout]];
-	
+	[[self positionalLayout] setIsContentSizeLayout: YES];
+	[[self positionalLayout] setComputesItemRectFromBoundingBox: YES];
+
+	_standaloneTextStyle = [[ETBasicItemStyle alloc] init];
+	[_standaloneTextStyle setLabelPosition: ETLabelPositionCentered];
+
 	return self;
+}
+
+- (void) dealloc
+{
+	DESTROY(_standaloneTextStyle);
+	[super dealloc];
 }
 
 - (float) controlMargin
@@ -452,107 +497,73 @@ kETFormLayoutInset	NSZeroRect (default) or nil
 	return 300;
 }
 
-- (void) insertLabelField: (NSView *)labelField 
-                  control: (NSView *)control 
-			       inItem: (ETLayoutItem *)item
+- (ETBasicItemStyle *) standaloneTextStyle
 {
-	float labelWidth = [labelField width];
-	
-	if (labelWidth > [self maxLabelWidth])
-		labelWidth = [self maxLabelWidth];
-		
-	if (labelWidth > highestLabelWidth)
-		highestLabelWidth = labelWidth;
-		
-	//float labelY = ([item height] - ([self controlMargin] + [labelField height]));
-		
-	[labelField setX: (highestLabelWidth - labelWidth)];
-	[labelField setY: 0];//labelY];
-	[control setX: (highestLabelWidth + [self controlMargin])];
-	[control setY: 0];
-
-	float itemHeight = (control != nil ? [control height] : [labelField height]);
-	float basicItemWidth = highestLabelWidth;
-	
-	if (control != nil)
-		basicItemWidth += [control width];
-	
-	[item setHeight: itemHeight];
-	[item setWidth: basicItemWidth + [self controlMargin]];
-	/* Make the item frame the default frame, so no scaling is computed by 
-	   -resizeItem:byScaleFactor:, otherwise the default frame doesn't match 
-	   the new height and width, but the value previously set when inserting 
-	   the item template view */
-	[item setDefaultFrame: [item frame]];
-	[[item view] addSubview: labelField];
-	[[item view] addSubview: control];
-}
-
-- (NSView *) labelFieldTemplate
-{
-	NSTextField *labelField = AUTORELEASE([[NSTextField alloc] initWithFrame: NSMakeRect(0, 0, 77, 22)]);
-	
-	//[labelField setTag: LABEL_FIELD_TAG];
-	
-	[labelField setDrawsBackground: NO];
-	[labelField setBordered: NO];
-	[labelField setEditable: YES];
-	[labelField setSelectable: YES];
-	//[labelField setStringValue: _(@"Untitled")];
-	[labelField setAlignment: NSCenterTextAlignment];
-	[labelField setAutoresizingMask: NSViewNotSizable];
-	
-	return labelField;
-}
-
-- (NSView *) createControlWithView: (NSView *)view
-{
-	NSView *control = [view copy];
-	
-	//[control setTag: CONTROL_VIEW_TAG];
-	[control setAutoresizingMask: NSViewNotSizable | NSViewWidthSizable | NSViewHeightSizable];
-
-	return AUTORELEASE(control);
-}
-
-/** Returns a very dumb template item that only consists of a view.
-    The real set up of the template item is handled in 
-	-buildReplacementItemForItem: where the label field and control views are 
-	inserted, customized and layouted as subviews of the template item view. */
-- (ETLayoutItem *) templateItem
-{
-	NSView *templateView = AUTORELEASE([[NSView alloc] initWithFrame: NSMakeRect(0, 0, 200, 80)]);
-	
-	// FIXME: Figure out what we should do with that...
-	//[self setAutoresizingMask: NSViewWidthSizable];
-	//[self setAutoresizesSubviews: YES];
-
-	return [[ETLayoutItemFactory factory] itemWithView: templateView];
+	return _standaloneTextStyle;
 }
 
 - (void) setUpTemplateElementsForItem: (ETLayoutItem *)item
 {
-	ETLayoutItem *newItem = item;
-	[super setUpTemplateElementsForItem: item];
-	NSView *replacedItemView = AUTORELEASE([[item view] copy]); // Replaced by -createControlWithView:
-	NSControl *labelField = AUTORELEASE([[self labelFieldTemplate] copy]);
+	if ([item view] == nil)
+	{
+		[item setStyle: [self standaloneTextStyle]];
+	}
+	else
+	{
+		[super setUpTemplateElementsForItem: item];
+	}
+}
+
+/* -[ETTemplateLayout renderLayoutItems:isNewContent:] doesn't invoke 
+-resizeLayoutItems:toScaleFactor: unlike ETLayout, hence we override this method 
+to trigger the resizing before ETTemplateItemLayout hands the items to the 
+positional layout. */
+- (void) willRenderItems: (NSArray *)items isNewContent: (BOOL)isNewContent
+{
+	float scale = [_layoutContext itemScaleFactor];
+	if (isNewContent || scale != _previousScaleFactor)
+	{
+		[self resizeLayoutItems: items toScaleFactor: scale];
+		_previousScaleFactor = scale;
+	}
+}
+
+/** Resizes every item to the given scale by delegating it to 
+-[ETBasicItemStyle boundingSizeForItem:imageOrViewSize:].
+
+Unlike the inherited implementation, the method ignores every ETLayout 
+constraints that might be set such as -constrainedItemSize and 
+-itemSizeConstraintStyle.<br />
+
+The resizing isn't delegated to the positional layout unlike in ETTemplateItemLayout. */
+- (void) resizeLayoutItems: (NSArray *)items toScaleFactor: (float)factor
+{
+	ETBasicItemStyle *itemStyle = [[self templateItem] style];
 	
-	// FIXME: Shouldn't be needed, the autoresizing set on the template view 
-	// should be enough.
-	[newItem setAutoresizingMask: NSViewWidthSizable];
-	// FIXME: Shouldn't be needed, no autoresizing should exist on widget 
-	// items such as slider or button returned by ETLayoutItem+Factory...
-	// text field is a different case, but for the sake of consistency we may 
-	// prefer to suppress the autoresizing mask on it too.
-	[replacedItemView setAutoresizingMask: NSViewNotSizable];
-	[replacedItemView setHeight: 22];
-	//[replacedItemView setTag: CONTROL_VIEW_TAG];
-	if ([item name] != nil)
-		[labelField setStringValue: [item name]];
-	[labelField sizeToFit];
-	[self insertLabelField: labelField
-	               control: replacedItemView
-			    	inItem: newItem];
+	/* Scaling is always computed from the base image size (scaleFactor equal to 
+	   1) in order to avoid rounding error that would increase on each scale change. */
+	FOREACH(items, item, ETLayoutItem *)
+	{
+		//if ([item view] == nil)
+		//	continue;
+		
+		NSSize boundingSize = [[item style] boundingSizeForItem: item 
+		                                     imageOrViewSize: [[item view] frame].size];
+		NSRect boundingBox = ETMakeRect(NSZeroPoint, boundingSize);
+
+		// TODO: May be better to compute that in -[ETBasicItemStyle boundingBoxForItem:]
+		if ([item view] != nil)
+		{
+			boundingBox.origin.x = -boundingSize.width + [item width];
+			boundingBox.origin.y = -boundingSize.height + [item height];
+			[item setBoundingBox: boundingBox];
+		}
+		else
+		{
+			[item setSize: boundingSize];
+		}
+
+	}
 }
 
 @end
