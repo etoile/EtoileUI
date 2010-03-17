@@ -184,7 +184,7 @@ operation. e.g. <code>*anIndex = ETUndeterminedIndex</code> when anIndex was 3. 
 
 		if (needsIndexAdjustment)
 		{
-			Class dropIndicatorClass = [ETDropIndicator class]; // TODO: [[parent layout] dropIndicatorClass];
+			Class dropIndicatorClass = [[[parent layout] dropIndicator] class];
 			NSPoint pointInParent = [dropTarget convertPointToParent: dropPoint];
 			ETIndicatorPosition position = 
 				[dropIndicatorClass indicatorPositionForPoint: pointInParent

@@ -442,7 +442,14 @@ item. */
 	{
 		ETLog(@"Drop target changed from %@ to %@", _previousDropTarget, dropTarget);
 		[self removeDropIndicatorForDropTarget: _previousDropTarget];
-		indicator = AUTORELEASE([ETDropIndicator alloc]);	
+		if (dropOn)
+		{
+			indicator = [[dropTarget layout] dropIndicator];
+		}
+		else
+		{
+			indicator = [[[dropTarget parentItem] layout] dropIndicator];
+		}
 	}
 	else
 	{
