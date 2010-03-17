@@ -908,14 +908,22 @@ width and height of +[ETShape defaultShapeRect]. */
 
 /* Seperator Factory Methods */
 
+/** Returns a new layout item that uses a NSBox instance as its view.
+
+The returned separator is initially an horizontal line, but by resizing with a 
+height greater than its width, it becomes a vertical line. */
 - (ETLayoutItem *) lineSeparator
 {
-	return [self oval];
+	NSBox *separatorView = AUTORELEASE([[NSBox alloc] initWithFrame: NSMakeRect(0, 0, 50, 5)]);
+	[separatorView setBoxType: NSBoxSeparator];
+	return [self itemWithView: separatorView];
 }
+
 - (ETLayoutItem *) spaceSeparator
 {
 	return [self oval];
 }
+
 - (ETLayoutItem *) flexibleSpaceSeparator
 {
 	return [self oval];
