@@ -7,6 +7,7 @@
  */
 
 #import <EtoileFoundation/ETCollection.h>
+#import <EtoileFoundation/NSObject+HOM.h>
 #import <EtoileFoundation/Macros.h>
 #import "ETTemplateItemLayout.h"
 #import "ETBasicItemStyle.h"
@@ -467,8 +468,8 @@ kETFormLayoutInset	NSZeroRect (default) or nil
 	// FIXME: When View comes before Content Aspect an assertion is raised.
 	[self setTemplateKeys: A(@"style", @"contentAspect")];
 	[self setPositionalLayout: [ETColumnLayout layout]];
-	[[self positionalLayout] setIsContentSizeLayout: YES];
-	[[self positionalLayout] setComputesItemRectFromBoundingBox: YES];
+	[[(id)[self positionalLayout] ifResponds] setIsContentSizeLayout: YES];
+	[[(id)[self positionalLayout] ifResponds] setComputesItemRectFromBoundingBox: YES];
 
 	_standaloneTextStyle = [[ETBasicItemStyle alloc] init];
 	[_standaloneTextStyle setLabelPosition: ETLabelPositionCentered];
@@ -538,8 +539,6 @@ constraints that might be set such as -constrainedItemSize and
 The resizing isn't delegated to the positional layout unlike in ETTemplateItemLayout. */
 - (void) resizeLayoutItems: (NSArray *)items toScaleFactor: (float)factor
 {
-	ETBasicItemStyle *itemStyle = [[self templateItem] style];
-	
 	/* Scaling is always computed from the base image size (scaleFactor equal to 
 	   1) in order to avoid rounding error that would increase on each scale change. */
 	FOREACH(items, item, ETLayoutItem *)
