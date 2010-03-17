@@ -30,6 +30,7 @@
 	[photoViewItem setSource: self];
 	[photoViewItem setLayout: [self configureLayout: [ETColumnLayout layout]]];
 	[photoViewItem setHasVerticalScroller: YES];
+	[photoViewItem setHasHorizontalScroller: YES];
 
 	// FIXME: Move into an EtoileUI plist loaded by ETUTI
 	[ETUTI registerTypeWithString: @"org.etoile-project.objc.class.NSImage"
@@ -111,6 +112,7 @@ UI level for a photo viewer. */
 	{
 		[layoutObject setAttachedInstrument: [ETSelectTool instrument]];
 		[layoutObject setItemMargin: [itemMarginSlider floatValue]];
+		[layoutObject setBorderMargin: [itemMarginSlider floatValue]];
 
 		/* We override some extra settings even if the defaults defined by EtoileUI 
 		   would work for a photo viewer (see ETFlowLayout, ETLineLayout and 
@@ -175,6 +177,17 @@ UI level for a photo viewer. */
 
 	if ([layout isComputedLayout])
 		[(ETComputedLayout *)layout setItemMargin: [sender floatValue]];
+}
+
+- (IBAction) changeBorderMargin: (id)sender
+{
+	id layout = [photoViewItem layout];
+	
+	if ([layout isComposite])
+		layout = [layout positionalLayout];
+
+	if ([layout isComputedLayout])
+		[(ETComputedLayout *)layout setBorderMargin: [sender floatValue]];
 }
 
 - (void) selectPicturesPanelDidEnd: (NSOpenPanel *)panel 

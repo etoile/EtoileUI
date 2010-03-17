@@ -16,6 +16,7 @@
 {
 	IBOutlet ETContainer *viewContainer;
 	IBOutlet NSSlider *itemMarginSlider;
+	IBOutlet NSSlider *borderMarginSlider;
 	ETLayoutItemGroup *photoViewItem;
 	NSMutableArray *images;
 }
@@ -26,6 +27,7 @@
 - (IBAction) switchUsesScrollView: (id)sender;
 - (IBAction) scale: (id)sender;
 - (IBAction) changeItemMargin: (id)sender;
+- (IBAction) changeBorderMargin: (id)sender;
 
 - (id) configureLayout: (id)layoutObject;
 
