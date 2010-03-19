@@ -132,7 +132,7 @@ See -setLayoutItem:. */
 }
 
 /** Returns the event location in the layout item coordinate space, this point 
-usually corresponds to the hit test that was done by ETInstrument and 
+usually corresponds to the hit test that was done by ETTool and 
 memorized in the receiver with -setLocationInLayoutItem:.
 If -layoutItem returns nil or doesn't match the hit test of the event, a null 
 point will be returned.
@@ -144,7 +144,7 @@ See -setLayoutItem:. */
 }
 
 /** Sets the event location in the layout item coordinate space, this point 
-usually corresponds to the hit test that was done by ETInstrument and 
+usually corresponds to the hit test that was done by ETTool and 
 memorized in the receiver by calling this method.
 If -layoutItem returns nil or doesn't match the hit test of the event, a null 
 point will be returned.
@@ -159,7 +159,7 @@ See -setLayoutItem:. */
  
 The purpose of the attached item is up to the caller. If the caller API is 
 public, the purpose must be documented in this API. This would be the case with 
-an ETInstrument subclass that is available in a framework. 
+an ETTool subclass that is available in a framework. 
 TODO: Rewrite later if we finally make use of it in a different way. */
 - (void) setLayoutItem: (id)anItem
 {

@@ -34,8 +34,8 @@ Initializes and returns a new icon layout. */
 	_iconSizeForScaleFactorUnit = NSMakeSize(32, 32);
 	_minIconSize = NSMakeSize(16, 16);
 
-	[self setAttachedInstrument: [ETSelectAndClickTool instrument]];
-	[[self attachedInstrument] setShouldRemoveItemsAtPickTime: NO];
+	[self setAttachedTool: [ETSelectAndClickTool tool]];
+	[[self attachedTool] setShouldRemoveItemsAtPickTime: NO];
 
 	ETLayoutItem *templateItem = [[ETLayoutItemFactory factory] item];
 	ETIconAndLabelStyle *iconStyle = AUTORELEASE([[ETIconAndLabelStyle alloc] init]);
@@ -182,7 +182,7 @@ The resizing isn't delegated to the positional layout unlike in ETTemplateItemLa
 - (void) resizeLayoutItems: (NSArray *)items toScaleFactor: (float)factor
 {
 	id <ETFirstResponderSharingArea> editionCoordinator = 
-		[[ETTool activeInstrument] editionCoordinatorForItem: _layoutContext];
+		[[ETTool activeTool] editionCoordinatorForItem: _layoutContext];
 
 	/* We use -arrangedItems in case we receive only a subset to resize (not true currently) */
 	if ([[_layoutContext arrangedItems] containsObject: [editionCoordinator editedItem]])

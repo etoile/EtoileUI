@@ -28,7 +28,7 @@
 /** Represents an arbitrary touch action. The input device can be a mouse, a 
 stylus, one or multiple fingers etc. */
 @protocol ETTouchAction
-/** Returns the hit item set by the active instrument. */
+/** Returns the hit item set by the active tool. */
 - (ETLayoutItem *) layoutItem;
 /** See -[ETEvent locationInLayoutItem]. */
 - (NSPoint) locationInLayoutItem;
@@ -61,11 +61,11 @@ specialized actions such as cut/copy/paste with the pickingMask property, as
 explained below.
  
 With EtoileUI event handling model, layout items don't receive ETEvent objects, 
-but those events are passed to the active instrument or tool which turns them 
+but those events are passed to the active tool or tool which turns them 
 into actions. Only actions rather than raw events are delivered to the targeted 
-layout items. See ETInstrument and ETActionHandler. A layout item can also be 
+layout items. See ETTool and ETActionHandler. A layout item can also be 
 attached to the event. For example, this can be used to easily keep track of 
-the item initially targeted by the event. -[ETInstrument hitTestWithEvent:] does 
+the item initially targeted by the event. -[ETTool hitTestWithEvent:] does 
 that: the layout item on which the dispatch is expected, is attached to the 
 event.
 

@@ -33,7 +33,7 @@
 	IBOutlet ETContainer *itemGroupView;
 	IBOutlet ETContainer *propertyView;
 	IBOutlet NSPopUpButton *layoutPopup;
-	IBOutlet NSPopUpButton *instrumentPopup;
+	IBOutlet NSPopUpButton *toolPopup;
 	IBOutlet NSWindow *window;
 	IBOutlet id viewModelLayout;
 	ETLayoutItemGroup *masterViewItem;
@@ -49,7 +49,7 @@
 - (NSPanel *) panel;
 
 - (IBAction) changeLayout: (id)sender;
-- (IBAction) changeInstrument: (id)sender;
+- (IBAction) changeTool: (id)sender;
 - (IBAction) inspect: (id)sender;
 
 @end

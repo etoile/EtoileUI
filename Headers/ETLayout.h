@@ -99,7 +99,7 @@ typedef enum _ETSizeConstraintStyle
 	IBOutlet id _layoutContext; /* Weak reference */
 	IBOutlet id _delegate; /* Weak reference */
 	IBOutlet NSView *_displayViewPrototype;
-	ETTool *_instrument;
+	ETTool *_tool;
 	ETLayoutItemGroup *_rootItem; /* Lazily initialized */
 	ETDropIndicator *_dropIndicator;
 
@@ -137,10 +137,10 @@ typedef enum _ETSizeConstraintStyle
 
 /* Main Accessors */
 
-- (void) setAttachedInstrument: (ETTool *)newInstrument;
-- (id) attachedInstrument;
-- (void) didChangeAttachedInstrument: (ETTool *)oldInstrument
-                        toInstrument: (ETTool *)newInstrument;
+- (void) setAttachedTool: (ETTool *)newTool;
+- (id) attachedTool;
+- (void) didChangeAttachedTool: (ETTool *)oldTool
+                        toTool: (ETTool *)newTool;
 
 - (void) setLayoutContext: (id <ETLayoutingContext>)context;
 - (id <ETLayoutingContext>) layoutContext;

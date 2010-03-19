@@ -1,6 +1,6 @@
 /** <title>ETSelectTool</title>
 
-	<abstract>An instrument class which provides rich and customizable selection 
+	<abstract>An tool class which provides rich and customizable selection 
 	logic. ETSelectTool encapsulates selection behavior to make it 
 	reusable and uniform accross ETLayout subclasses.</abstract>
 
@@ -48,7 +48,7 @@ the select tool currently active (at parent level) will prevent it. If the
 child item is double-clicked, its select tool will get activated.
 
 The selection tool is quite special because it only works by default on its 
-immediate children and thereby isn't really inherited as other instruments are 
+immediate children and thereby isn't really inherited as other tools are 
 usually. However you can retarget the item on which it acts on by setting a 
 target item with -setTargetItem:.
 
@@ -69,18 +69,18 @@ to return NO.
 }
 
 // TODO: Implement
-//- (void) didBecomeActive: (ETInstrument *)prevInstrument;
+//- (void) didBecomeActive: (ETTool *)prevTool;
 // or
 /*- (void) willBecomeActive
 {
-	ETInstrument *activeInstrument = [ETInstrument activeInstrument];
-	BOOL isInstrumentReplacement = ([activeInstrument isSelectTool] && [[activeInstrument layoutOwner] isEqual: [self layoutOwner]]);
+	ETTool *activeTool = [ETTool activeTool];
+	BOOL isToolReplacement = ([activeTool isSelectTool] && [[activeTool layoutOwner] isEqual: [self layoutOwner]]);
 	
-	if (isInstrumentReplacement)
-		[self setAllowedDragUTIs: [activeInstrument allowedDragUTIs]];
+	if (isToolReplacement)
+		[self setAllowedDragUTIs: [activeTool allowedDragUTIs]];
 }*/
-// or rather take the values from the controller when attaching the instrument for the first time. or cache a select tool prototype in the controller? Well need a general mechanism to store tool prototypes anyway…
-// -[ETController setPrototype: forInstrumentClass:]?
+// or rather take the values from the controller when attaching the tool for the first time. or cache a select tool prototype in the controller? Well need a general mechanism to store tool prototypes anyway…
+// -[ETController setPrototype: forToolClass:]?
 
 // NOTE: May be we should alternatively allow the controller to specify the 
 // following properties...

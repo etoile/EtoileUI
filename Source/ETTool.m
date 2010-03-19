@@ -34,9 +34,9 @@
 
 @implementation ETTool
 
-static NSMutableSet *instrumentPrototypes = nil;
+static NSMutableSet *toolPrototypes = nil;
 
-/** Registers a prototype for every ETInstrument subclasses.
+/** Registers a prototype for every ETTool subclasses.
 
 The implementation won't be executed in the subclasses but only the abstract 
 base class.
@@ -46,11 +46,11 @@ You should never need to call this method.
 See also NSObject(ETAspectRegistration). */
 + (void) registerAspects
 {
-	ASSIGN(instrumentPrototypes, [NSMutableSet set]);
+	ASSIGN(toolPrototypes, [NSMutableSet set]);
 
 	FOREACH([self allSubclasses], subclass, Class)
 	{
-		[self registerInstrument: AUTORELEASE([[subclass alloc] init])];
+		[self registerTool: AUTORELEASE([[subclass alloc] init])];
 	}
 }
 
@@ -61,141 +61,141 @@ See also NSObject(ETAspectRegistration). */
 
 + (NSString *) baseClassName
 {
-	return @"Instrument";
+	return @"Tool";
 }
 
 /** Makes the given prototype available to EtoileUI facilities (inspector, etc.) 
-that allow to change an instrument at runtime.
+that allow to change an tool at runtime.
 
 Also publishes the prototype in the shared aspect repository (not yet implemented). 
 
-Raises an invalid argument exception if anInstrument class isn't a subclass of 
-ETInstrument. */
-+ (void) registerInstrument: (ETTool *)anInstrument
+Raises an invalid argument exception if anTool class isn't a subclass of 
+ETTool. */
++ (void) registerTool: (ETTool *)anTool
 {
-	if ([anInstrument isKindOfClass: [ETTool class]] == NO)
+	if ([anTool isKindOfClass: [ETTool class]] == NO)
 	{
 		[NSException raise: NSInvalidArgumentException
-		            format: @"Prototype %@ must be a subclass of ETInstrument to get "
-		                    @"registered as an instrument prototype.", anInstrument];
+		            format: @"Prototype %@ must be a subclass of ETTool to get "
+		                    @"registered as an tool prototype.", anTool];
 	}
 
-	[instrumentPrototypes addObject: anInstrument];
+	[toolPrototypes addObject: anTool];
 	// TODO: Make a class instance available as an aspect in the aspect 
 	// repository.
 }
 
-/** Returns all the instrument prototypes directly available for EtoileUI 
+/** Returns all the tool prototypes directly available for EtoileUI 
 facilities that allow to transform the UI at runtime. */
-+ (NSSet *) registeredInstruments
++ (NSSet *) registeredTools
 {
-	return AUTORELEASE([instrumentPrototypes copy]);
+	return AUTORELEASE([toolPrototypes copy]);
 }
 
-/** Returns all the instrument classes directly available for EtoileUI facilities 
+/** Returns all the tool classes directly available for EtoileUI facilities 
 that allow to transform the UI at runtime.
 
-These instrument classes are a subset of the registered instrument prototypes since 
+These tool classes are a subset of the registered tool prototypes since 
 several prototypes might share the same class. */
-+ (NSSet *) registeredInstrumentClasses
++ (NSSet *) registeredToolClasses
 {
-	return (NSSet *)[[instrumentPrototypes mappedCollection] class];
+	return (NSSet *)[[toolPrototypes mappedCollection] class];
 }
 
-/** Shows a palette which lists all the registered instruments. 
+/** Shows a palette which lists all the registered tools. 
 
-The palette is a layout item whose represented object is the ETInstrument class 
+The palette is a layout item whose represented object is the ETTool class 
 object. */
 + (void) show: (id)sender
 {
 	// FIXME: Implement
 }
 
-static ETTool *activeInstrument = nil;
+static ETTool *activeTool = nil;
 
-/** Returns the active instrument through which the events are dispatched in the 
+/** Returns the active tool through which the events are dispatched in the 
 layout item tree. */
-+ (id) activeInstrument
++ (id) activeTool
 {
-	if (activeInstrument == nil)
+	if (activeTool == nil)
 	{
-		[self setMainInstrument: [ETArrowTool instrument]];
-		ASSIGN(activeInstrument, [self mainInstrument]);
+		[self setMainTool: [ETArrowTool tool]];
+		ASSIGN(activeTool, [self mainTool]);
 	}
 
-	return activeInstrument;
+	return activeTool;
 }
 
-+ (void) notifyOfChangeFromInstrument: (ETTool *)oldInstrument 
-                         toInstrument: (ETTool *)newInstrument
++ (void) notifyOfChangeFromTool: (ETTool *)oldTool 
+                         toTool: (ETTool *)newTool
 {
 	// TODO: Post a notification
 }
 
-/** Sets the active instrument through which the events are dispatched in the 
+/** Sets the active tool through which the events are dispatched in the 
 layout item tree.
 
 Take a look at -didBecomeActive and -didBecomeInactive to react to activation 
-and deactivation in your ETInstrument subclasses.
+and deactivation in your ETTool subclasses.
 
 You should rarely need to invoke this method since EtoileUI usually 
-automatically activates instruments in response to the user's click with 
--updateActiveInstrumentWithEvent:. */
-+ (void) setActiveInstrument: (ETTool *)instrumentToActivate
+automatically activates tools in response to the user's click with 
+-updateActiveToolWithEvent:. */
++ (void) setActiveTool: (ETTool *)toolToActivate
 {
-	ETTool *instrumentToDeactivate = [ETTool activeInstrument];
+	ETTool *toolToDeactivate = [ETTool activeTool];
 
-	if ([instrumentToActivate isEqual: instrumentToDeactivate])
+	if ([toolToActivate isEqual: toolToDeactivate])
 		return;
 
-	ETDebugLog(@"Update active instrument to %@", instrumentToActivate);
+	ETDebugLog(@"Update active tool to %@", toolToActivate);
 
-	[instrumentToActivate setHoveredItemStack: [instrumentToDeactivate hoveredItemStack]];
-	[instrumentToDeactivate setHoveredItemStack: nil]; /* To detect invalid item stack more easily */
+	[toolToActivate setHoveredItemStack: [toolToDeactivate hoveredItemStack]];
+	[toolToDeactivate setHoveredItemStack: nil]; /* To detect invalid item stack more easily */
 	
-	RETAIN(instrumentToDeactivate);
-	ASSIGN(activeInstrument, instrumentToActivate);
+	RETAIN(toolToDeactivate);
+	ASSIGN(activeTool, toolToActivate);
 
-	[instrumentToDeactivate didBecomeInactive];
-	[instrumentToActivate didBecomeActive];
-	[self notifyOfChangeFromInstrument: instrumentToDeactivate 
-	                      toInstrument: instrumentToActivate];
+	[toolToDeactivate didBecomeInactive];
+	[toolToActivate didBecomeActive];
+	[self notifyOfChangeFromTool: toolToDeactivate 
+	                      toTool: toolToActivate];
 
-	RELEASE(instrumentToDeactivate);
+	RELEASE(toolToDeactivate);
 }
 
-/** Returns the instrument attached to the hovered item through its layout.
+/** Returns the tool attached to the hovered item through its layout.
 
 This insturment will usually be activated if the hovered item is clicked (on 
 mouse down precisely). */
-+ (id) activatableInstrument
++ (id) activatableTool
 {
-	return [[self activeInstrument] lookUpInstrumentInHoveredItemStack];;
+	return [[self activeTool] lookUpToolInHoveredItemStack];;
 }
 
-static ETTool *mainInstrument = nil;
+static ETTool *mainTool = nil;
 
-/** Returns the instrument to be used as active instrument when no other 
-instruments can be looked up and activated.
+/** Returns the tool to be used as active tool when no other 
+tools can be looked up and activated.
 
-The main instrument is implicitly attached to the root item in the layout item 
+The main tool is implicitly attached to the root item in the layout item 
 tree. */
-+ (id) mainInstrument
++ (id) mainTool
 {
-	return mainInstrument;
+	return mainTool;
 }
 
-/** Sets the instrument to be be used as active instrument when no other 
-instruments can be looked up and activated.
+/** Sets the tool to be be used as active tool when no other 
+tools can be looked up and activated.
 
-See also -mainInstrument. */
-+ (void) setMainInstrument: (id)anInstrument
+See also -mainTool. */
++ (void) setMainTool: (id)anTool
 {
-	ASSIGN(mainInstrument, anInstrument);
+	ASSIGN(mainTool, anTool);
 }
 
-/** Returns a new autoreleased instrument instance. */
-+ (id) instrument
+/** Returns a new autoreleased tool instance. */
++ (id) tool
 {
 	return AUTORELEASE([[self alloc] init]);
 }
@@ -228,24 +228,24 @@ See also -mainInstrument. */
 
 - (id) copyWithZone: (NSZone *)aZone
 {
-	ETTool *newInstrument = [[[self class] allocWithZone: aZone] init];
+	ETTool *newTool = [[[self class] allocWithZone: aZone] init];
 
 	// NOTE: For now, we don't copy any NSResponder property such as 
 	// -nextResponder or -menu.
 
 	/* NSCursor factory methods are shared instances */
-	ASSIGN(newInstrument->_cursor, _cursor);
-	newInstrument->_customActivation = _customActivation;
+	ASSIGN(newTool->_cursor, _cursor);
+	newTool->_customActivation = _customActivation;
 
-	return newInstrument;
+	return newTool;
 }
 
-// TODO: For each document set the editor instrument. Eventually offer a 
-// delegate method either through ETInstrument or ETDocumentManager to give 
+// TODO: For each document set the editor tool. Eventually offer a 
+// delegate method either through ETTool or ETDocumentManager to give 
 // more control over this...
-+ (void) setEditorInstrument: (id)anInstrument
++ (void) setEditorTool: (id)anTool
 {
-	//[documentLayout setAttachedInstrument: anInstrument];
+	//[documentLayout setAttachedTool: anTool];
 }
 
 // TODO: Think about...
@@ -302,7 +302,7 @@ See also -targetItem. */
 	   Here is what the ownership chain looks like with...
 	   x --> y : x owns/retains y
 	   
-	   layout context --> layout --> instrument
+	   layout context --> layout --> tool
 	         |                           |
 			 v                           |
 		child/target item <---------------
@@ -425,7 +425,7 @@ This method calls either -makeFirstKeyResponder: or -makeFirstMainResponder:. */
 /** Returns the item which is decorated by the key window in the layout item tree.
 
 The key window can be retrieved through the decorator item with 
-[[[[ETInstrument activeInstrument] keyItem] windowDecoratorItem] window]. */
+[[[[ETTool activeTool] keyItem] windowDecoratorItem] window]. */
 - (ETLayoutItem *) keyItem
 {
 	id contentView = [[ETApp keyWindow] contentView];
@@ -439,7 +439,7 @@ The key window can be retrieved through the decorator item with
 /** Returns the item which is decorated by the main window in the layout item tree.
 
 The main window can be retrieved through the decorator item with 
-[[[[ETInstrument activeInstrument] mainItem] windowDecoratorItem] window]. */
+[[[[ETTool activeTool] mainItem] windowDecoratorItem] window]. */
 - (ETLayoutItem *) mainItem
 {
 	id contentView = [[ETApp mainWindow] contentView];
@@ -464,39 +464,39 @@ Nil can be returned when the item is not inserted in the main item tree. */
 }
 
 /** <override-never />
-Updates the cursor with the one provided by the activatable instrument.
+Updates the cursor with the one provided by the activatable tool.
 
 You should never to call this method, only ETEventProcessor is expected to use 
 it. */
 + (void) updateCursorIfNeeded
 {
-	[[(ETTool *)[self activatableInstrument] cursor] set];
+	[[(ETTool *)[self activatableTool] cursor] set];
 }
 
 /** <override-never />
-Updates the active instrument with a new one looked up in the active instrument 
+Updates the active tool with a new one looked up in the active tool 
 hovered item stack.
 
 You should never to call this method, only ETEventProcessor is expected to use 
 it. */
-+ (ETTool *) updateActiveInstrumentWithEvent: (ETEvent *)anEvent
++ (ETTool *) updateActiveToolWithEvent: (ETEvent *)anEvent
 {
 	BOOL isFieldEditorEvent = ([[anEvent windowItem] hitTestFieldEditorWithEvent: anEvent] != nil);
 
 	if (isFieldEditorEvent)
 	{
-		return activeInstrument;
+		return activeTool;
 	}
 
-	ETTool *instrumentToActivate = [[ETTool activeInstrument] lookUpInstrumentInHoveredItemStack];
-	[self setActiveInstrument: instrumentToActivate];
-	return instrumentToActivate;
+	ETTool *toolToActivate = [[ETTool activeTool] lookUpToolInHoveredItemStack];
+	[self setActiveTool: toolToActivate];
+	return toolToActivate;
 }
 
 /** Returns the hovered item stack that is used internally to:
 <list>
 <item>track enter and exit in each item</item>
-<item>look up the instrument to activate</item>
+<item>look up the tool to activate</item>
 </list>
 ETEventProcessor uses it to synthetize enter/exit events.
 
@@ -504,7 +504,7 @@ You should never need to use this method. */
 - (NSMutableArray *) hoveredItemStack
 {
 	/* We do a lazy initialization to eliminate an endless recursion when the 
-	   instrument is initialized inside -[ETWindowLayout init] which is 
+	   tool is initialized inside -[ETWindowLayout init] which is 
 	   initiated by -[ETLayoutItem windowGroup]. */
 	if (_hoveredItemStack == nil)
 		_hoveredItemStack = [[NSMutableArray alloc] initWithObjects: [self hitItemForNil], nil];
@@ -520,46 +520,46 @@ You should never need to use this method. */
 	ASSIGN(_hoveredItemStack, itemStack);
 }
 
-/** Looks up and returns the instrument to be activated in the current hovered 
+/** Looks up and returns the tool to be activated in the current hovered 
 item stack.
 
 The stack is traversed upwards to the root item. The traversal ends on the 
-first layout with an instrument attached to it.
+first layout with an tool attached to it.
 
 The stack is never empty because the pointer never exits the root item which 
 covers the whole screen. 
 
 You should rarely need to override this method. */
-- (ETTool *) lookUpInstrumentInHoveredItemStack
+- (ETTool *) lookUpToolInHoveredItemStack
 {
-	ETTool *foundInstrument = nil;
-	/* The last/top object is the instrument at the lowest/deepest level in the 
+	ETTool *foundTool = nil;
+	/* The last/top object is the tool at the lowest/deepest level in the 
 	   layout item tree. */
 	NSEnumerator *e = [[self hoveredItemStack] reverseObjectEnumerator];
 	ETLayoutItem *item = nil;
 
 	while ((item = [e nextObject]) != nil)
 	{
-		ETDebugLog(@"Look up instrument at level %@ in hovered item stack", item);
+		ETDebugLog(@"Look up tool at level %@ in hovered item stack", item);
 
 		/* The top item can be an ETLayoutItem instance */
 		if ([item isGroup] == NO)
 			continue;
 		
-		foundInstrument = [[(ETLayoutItemGroup *)item layout] attachedInstrument];
-		if (foundInstrument != nil)
+		foundTool = [[(ETLayoutItemGroup *)item layout] attachedTool];
+		if (foundTool != nil)
 			break;
 	}
 
-	// NOTE: In case we attach a non-removable instrument to the root item, we 
-	// could set foundInstrument to nil.
-	BOOL overRootItem = (foundInstrument == nil);
+	// NOTE: In case we attach a non-removable tool to the root item, we 
+	// could set foundTool to nil.
+	BOOL overRootItem = (foundTool == nil);
 	if (overRootItem)
-		foundInstrument = [[self class] mainInstrument];
+		foundTool = [[self class] mainTool];
 	
-	NSParameterAssert(foundInstrument != nil);
+	NSParameterAssert(foundTool != nil);
 
-	return foundInstrument;
+	return foundTool;
 }
 
 // NOTE: The hovered items stack is rebuilt each time we enter a handle (because 
@@ -615,7 +615,7 @@ You should rarely need to override this method. */
 	}
 }
 
-/** Sets the layout to which the instrument is attached to.
+/** Sets the layout to which the tool is attached to.
 
 aLayout has ownership over the receiver, so it won't be retained. */
 - (void) setLayoutOwner: (ETLayout *)aLayout
@@ -625,26 +625,26 @@ aLayout has ownership over the receiver, so it won't be retained. */
 		[self setTargetItem: (ETLayoutItem *)[aLayout layoutContext]];
 }
 
-/** Returns the layout to which the instrument is attached to. */
+/** Returns the layout to which the tool is attached to. */
 - (ETLayout *) layoutOwner
 {
 	return _layoutOwner;
 }
 
-/** Called when the instrument becomes active, usually when the pointer enters 
+/** Called when the tool becomes active, usually when the pointer enters 
     in an area that falls under the control of a layout, to which this 
-	instrument is attached to. */
+	tool is attached to. */
 - (void) didBecomeActive
 {
-	ETDebugLog(@"Instrument %@ did become active", self);
+	ETDebugLog(@"Tool %@ did become active", self);
 }
 
-/** Called when the instrument becomes inactive, usually when the pointer exists 
-    the area that falls under the control of a layout, to which this instrument 
+/** Called when the tool becomes inactive, usually when the pointer exists 
+    the area that falls under the control of a layout, to which this tool 
 	is attached to. */
 - (void) didBecomeInactive
 {
-	ETDebugLog(@"Instrument %@ did become inactive", self);
+	ETDebugLog(@"Tool %@ did become inactive", self);
 }
 
 /** Returns the root item that -hitTestWithEvent: is expected to return when 
@@ -998,7 +998,7 @@ NO. */
 			[[aResponder actionHandler] handleKeyUp: anEvent onItem: aResponder];
 		}
 	}
-	else if ([aResponder isFirstResponderProxy]) /* For instrument */
+	else if ([aResponder isFirstResponderProxy]) /* For tool */
 	{
 		if (type == NSKeyDown)
 		{
@@ -1040,7 +1040,7 @@ NO. */
 /* Cursor */
 
 /** Sets the cursor that represents the receiver, and which replaces the 
-current cursor when the receiver is the activatable instrument. */
+current cursor when the receiver is the activatable tool. */
 - (void) setCursor: (NSCursor *)aCursor
 {
 	ASSIGN(_cursor, aCursor);

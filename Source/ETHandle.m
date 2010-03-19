@@ -11,7 +11,7 @@
 #import "ETCompatibility.h"
 #import "ETGeometry.h"
 
-NSString *kETMediatedInstrumentProperty = @"mediatedInstrument";
+NSString *kETMediatedToolProperty = @"mediatedTool";
 NSString *kETManipulatedObjectProperty = @"manipulatedObject";
 
 @implementation ETHandle
@@ -38,14 +38,14 @@ NSString *kETManipulatedObjectProperty = @"manipulatedObject";
 	return self;
 }
 
-- (ETTool *) mediatedInstrument
+- (ETTool *) mediatedTool
 {
-	return GET_PROPERTY(kETMediatedInstrumentProperty);
+	return GET_PROPERTY(kETMediatedToolProperty);
 }
 
-- (void) setMediatedInstrument: (ETTool *)anInstrument
+- (void) setMediatedTool: (ETTool *)anTool
 {
-	SET_PROPERTY(anInstrument, kETMediatedInstrumentProperty);
+	SET_PROPERTY(anTool, kETMediatedToolProperty);
 }
 
 /** Returns the object on which the receiver acts upon. */
@@ -433,14 +433,14 @@ static ETBasicHandleStyle *sharedBasicHandleStyle = nil;
 #if 0
 // NOTE: The next two methods don't seem to be useful in ETHandleGroup but only 
 // in ETHandle
-- (ETInstrument *) mediatedInstrument
+- (ETTool *) mediatedTool
 {
-	return GET_PROPERTY(kETMediatedInstrumentProperty);
+	return GET_PROPERTY(kETMediatedToolProperty);
 }
 
-- (void) setMediatedInstrument: (ETInstrument *)anInstrument
+- (void) setMediatedTool: (ETTool *)anTool
 {
-	SET_PROPERTY(anInstrument, kETMediatedInstrumentProperty);
+	SET_PROPERTY(anTool, kETMediatedToolProperty);
 }
 #endif
 

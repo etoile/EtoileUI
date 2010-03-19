@@ -18,10 +18,10 @@
 
 @implementation ETWidgetLayout
 
-- (void) setAttachedInstrument: (ETTool *)anInstrument
+- (void) setAttachedTool: (ETTool *)anTool
 {
-	[super setAttachedInstrument: anInstrument];
-	[self syncLayoutViewWithInstrument: anInstrument];
+	[super setAttachedTool: anTool];
+	[self syncLayoutViewWithTool: anTool];
 }
 
 /** Returns YES to indicate the receiver adapts and wraps a widget as a layout.
@@ -112,24 +112,24 @@ context is modified and needs to be mirrored on the widget view. */
 	[[self viewForSelector: @selector(hasHorizontalScroller)] 
 			setHasHorizontalScroller: hasHScroller];
 	
-	[self syncLayoutViewWithInstrument: [self attachedInstrument]];
+	[self syncLayoutViewWithTool: [self attachedTool]];
 }
 
-/* Synchronizes the widget view settings with the given instrument.
+/* Synchronizes the widget view settings with the given tool.
 
-This method is called on a regular basis each time the active instrument changes 
+This method is called on a regular basis each time the active tool changes 
 and its settings need to be mirrored on the widget view.
 
-When the given instrument is nil, -allowsEmptySelection is reset to YES and 
+When the given tool is nil, -allowsEmptySelection is reset to YES and 
 -allowsMultipleSelection to NO. */
-- (void) syncLayoutViewWithInstrument: (ETTool *)anInstrument
+- (void) syncLayoutViewWithTool: (ETTool *)anTool
 {
 	NSParameterAssert([self layoutView] != nil);
 
-	BOOL allowsEmptySelection = [[self attachedInstrument] allowsEmptySelection];
-	BOOL allowsMultipleSelection = [[self attachedInstrument] allowsMultipleSelection];
+	BOOL allowsEmptySelection = [[self attachedTool] allowsEmptySelection];
+	BOOL allowsMultipleSelection = [[self attachedTool] allowsMultipleSelection];
 
-	if (nil == anInstrument)
+	if (nil == anTool)
 	{
 		allowsEmptySelection = YES;
 		allowsMultipleSelection = NO;

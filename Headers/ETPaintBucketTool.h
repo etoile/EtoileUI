@@ -1,6 +1,6 @@
 /** <title>ETPaintBucketTool</title>
 
-	<abstract>An instrument class which implements the well-known paint bucket 
+	<abstract>An tool class which implements the well-known paint bucket 
 	tool present in many graphics-oriented applications.</abstract>
  
 	Copyright (C) 2008 Quentin Mathe
@@ -21,7 +21,7 @@ typedef enum _ETPaintMode
 	ETPaintModeStroke
 } ETPaintMode;
 
-/** An ETInstrument subclass that implements the very classic paint bucket tool.
+/** An ETTool subclass that implements the very classic paint bucket tool.
 
 TODO: Implement tolerance option. */
 @interface ETPaintBucketTool : ETTool

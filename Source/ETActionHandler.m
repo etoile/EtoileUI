@@ -182,7 +182,7 @@ Which actions begins and ends the text editing is up to you. */
                    inRect: (NSRect)fieldEditorRect
 {
 	id <ETFirstResponderSharingArea> editionCoordinator = 
-		[[ETTool activeInstrument] editionCoordinatorForItem: item];
+		[[ETTool activeTool] editionCoordinatorForItem: item];
 
 	if (nil == editionCoordinator)
 	{
@@ -226,7 +226,7 @@ removes the field editor item inserted in the window backed ancestor item. */
 		return;
 
 	id <ETFirstResponderSharingArea> editionCoordinator = 
-		[[ETTool activeInstrument] editionCoordinatorForItem: _editedItem];
+		[[ETTool activeTool] editionCoordinatorForItem: _editedItem];
 
 	if (nil == editionCoordinator)
 	{
@@ -240,13 +240,13 @@ removes the field editor item inserted in the window backed ancestor item. */
 }
 
 /* <override-dummy />
-Makes the clicked item the first responder of the active instrument.
+Makes the clicked item the first responder of the active tool.
 
 Overrides this method when you want to customize how simple click are handled. */
 - (void) handleClickItem: (ETLayoutItem *)item atPoint: (NSPoint)aPoint
 {
 	ETDebugLog(@"Click %@", item);
-	[[ETTool activeInstrument] makeFirstResponder: (id)item];
+	[[ETTool activeTool] makeFirstResponder: (id)item];
 }
 
 /** <override-dummy />
@@ -361,7 +361,7 @@ Tells the receiver a touch begins at a location inside the given item.<br />
 Does nothing by default and returns NO.
 
 Overrides to return YES and initiate a tracking sequence which will make the 
-active instrument invokes -handleContinueTouch:atPoint:onItem: repeatedly (even 
+active tool invokes -handleContinueTouch:atPoint:onItem: repeatedly (even 
 when the touch moves outside the given item) and finally -handleEndTouch:onItem:. 
 
 The point is expressed relative to the item received in parameter.

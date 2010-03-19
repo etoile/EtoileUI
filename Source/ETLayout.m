@@ -202,7 +202,7 @@ constraint with -setItemSizeConstraint: and -setConstrainedItemSize:. */
 	
 	_layoutContext = nil;
 	_delegate = nil;
-	_instrument = nil;
+	_tool = nil;
 	ASSIGN(_dropIndicator, [ETDropIndicator sharedInstance]);
 	_isLayouting = NO;
 	_layoutSize = NSMakeSize(200, 200); /* Dummy value */
@@ -284,7 +284,7 @@ Returns nil by default. */
 	/* Neither layout context and delegate have to be retained. 
 	   The layout context is our owner and retains us. */
 	DESTROY(_displayViewPrototype);
-	DESTROY(_instrument);
+	DESTROY(_tool);
 	DESTROY(_rootItem);
 	DESTROY(_dropIndicator);
 
@@ -298,8 +298,8 @@ The given context which might be nil will be set as the layout context on the co
 This method is ETLayout designated copier. Subclasses that want to extend 
 the copying support must invoke it instead of -copyWithZone:.
 
-Subclasses must be aware that this method calls -setAttachedInstrument: with an 
-instrument copy. */ 
+Subclasses must be aware that this method calls -setAttachedTool: with an 
+tool copy. */ 
 - (id) copyWithZone: (NSZone *)aZone layoutContext: (id <ETLayoutingContext>)ctxt
 {
 	ETLayout *newLayout = [[self class] alloc];
@@ -311,8 +311,8 @@ instrument copy. */
 	newLayout->_displayViewPrototype = [_displayViewPrototype copyWithZone: aZone];
 	newLayout->_rootItem = [_rootItem copyWithZone: aZone];
 	newLayout->_dropIndicator = RETAIN(_dropIndicator);
-	[newLayout setAttachedInstrument: [[self attachedInstrument] copyWithZone: aZone]];
-	RELEASE([newLayout attachedInstrument]);
+	[newLayout setAttachedTool: [[self attachedTool] copyWithZone: aZone]];
+	RELEASE([newLayout attachedTool]);
 	newLayout->_layoutSize = _layoutSize;
 	newLayout->_layoutSizeCustomized = _layoutSizeCustomized;
 	newLayout->_maxSizeLayout  = _maxSizeLayout;
@@ -345,8 +345,8 @@ Returns a copy of the receiver.
 
 The layout context in the copy is nil.
 
-Subclasses must be aware that this method calls -setAttachedInstrument: with an 
-instrument copy.
+Subclasses must be aware that this method calls -setAttachedTool: with an 
+tool copy.
 
 To customize the copying in a subclass, you must override 
 -copyWithZone:layoutContext:. */ 
@@ -355,64 +355,64 @@ To customize the copying in a subclass, you must override
 	return [self copyWithZone: aZone layoutContext: nil];
 }
 
-/** Returns the instrument or tool bound to the receiver. */
-- (id) attachedInstrument
+/** Returns the tool or tool bound to the receiver. */
+- (id) attachedTool
 {
-	return _instrument;
+	return _tool;
 }
 
-/** Sets the instrument or tool bound to the receiver. 
+/** Sets the tool or tool bound to the receiver. 
 
-The instrument set becomes the receiver owner. See -[ETInstrument layoutOwner].
+The tool set becomes the receiver owner. See -[ETTool layoutOwner].
 
-If the previously attached instrument was the active instrument, the new one 
-becomes the active instrument. See -[ETInstrument setActiveInstrument:].
+If the previously attached tool was the active tool, the new one 
+becomes the active tool. See -[ETTool setActiveTool:].
 
-Also invokes -didChangeAttachedInstrument:toInstrument:.  */
-- (void) setAttachedInstrument: (ETTool *)newInstrument
+Also invokes -didChangeAttachedTool:toTool:.  */
+- (void) setAttachedTool: (ETTool *)newTool
 {
-	if ([newInstrument isEqual: _instrument] == NO)
-		[_instrument setLayoutOwner: nil];
+	if ([newTool isEqual: _tool] == NO)
+		[_tool setLayoutOwner: nil];
 		
-	ETTool *oldInstrument = RETAIN(_instrument);
+	ETTool *oldTool = RETAIN(_tool);
 
-	ASSIGN(_instrument, newInstrument);
-	[newInstrument setLayoutOwner: self];
+	ASSIGN(_tool, newTool);
+	[newTool setLayoutOwner: self];
 
-	if ([oldInstrument isEqual: [ETTool activeInstrument]])
+	if ([oldTool isEqual: [ETTool activeTool]])
 	{
-		[ETTool setActiveInstrument: newInstrument];
+		[ETTool setActiveTool: newTool];
 	}
 
-	[self didChangeAttachedInstrument: oldInstrument  toInstrument: newInstrument];
+	[self didChangeAttachedTool: oldTool  toTool: newTool];
 
-	RELEASE(oldInstrument);
+	RELEASE(oldTool);
 }
 
 /** <override-dummy />
-Tells the receiver the attached instrument owned by an ancestor layout (or itself) 
-has changed. This instrument may or may not be active.
+Tells the receiver the attached tool owned by an ancestor layout (or itself) 
+has changed. This tool may or may not be active.
 
 You can override this method in subclasses to adjust the receiver layout to the 
-new instrument that can now be used to interact with the presented content. 
+new tool that can now be used to interact with the presented content. 
 
 By default, propagates the message recursively in the layout item tree through 
 the layout context arranged items.
 
 You can override this method to hide or show layout items that belong the item 
-tree returned by -[ETLayout rootItem] on an instrument change. e.g. ETFreeLayout 
+tree returned by -[ETLayout rootItem] on an tool change. e.g. ETFreeLayout 
 toggles the handle visibility when the select tool is attached (or detached) to 
 the receiver layout or any ancestor layout.
 
-The ancestor layout on which the instrument was changed can be retrieved with 
-[newInstrument layoutOwner]. */
-- (void) didChangeAttachedInstrument: (ETTool *)oldInstrument
-                        toInstrument: (ETTool *)newInstrument
+The ancestor layout on which the tool was changed can be retrieved with 
+[newTool layoutOwner]. */
+- (void) didChangeAttachedTool: (ETTool *)oldTool
+                        toTool: (ETTool *)newTool
 {
 	FOREACH([_layoutContext arrangedItems], item, ETLayoutItem *)
 	{
-		[[item layout] didChangeAttachedInstrument: oldInstrument
-		                              toInstrument: newInstrument];
+		[[item layout] didChangeAttachedTool: oldTool
+		                              toTool: newTool];
 	}
 }
 

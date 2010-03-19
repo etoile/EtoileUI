@@ -1,6 +1,6 @@
 /*  <title>ETPickDropActionHandler</title>
 
-	<abstract>Pick and drop actions produced by various instruments/tools.</abstract>
+	<abstract>Pick and drop actions produced by various tools/tools.</abstract>
 
 	Copyright (C) 2007 Quentin Mathe
  

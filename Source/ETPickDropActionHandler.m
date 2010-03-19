@@ -126,9 +126,9 @@ method is called by ETTableLayout when rows are dragged). */
 		BOOL isCut = ([pickInfo pickingMask] & ETCutPickingMask);
 
 		/* We always remove the items immediately when the pick is a cut */
-		if (NO == isCut && [[ETTool activeInstrument] respondsToSelector: @selector(shouldRemoveItemsAtPickTime)])
+		if (NO == isCut && [[ETTool activeTool] respondsToSelector: @selector(shouldRemoveItemsAtPickTime)])
 		{
-			shouldRemoveItems = [[ETTool activeInstrument] shouldRemoveItemsAtPickTime];
+			shouldRemoveItems = [[ETTool activeTool] shouldRemoveItemsAtPickTime];
 		}
 
 		if (shouldRemoveItems)
@@ -489,7 +489,7 @@ choosing 'Paste' in the 'Edit' menu. */
 
 The cut items are put on the active pickboard and always removed immediately 
 from their parents.<br />
-The value returned by -shouldRemoveItemsAtPickTime on the active instrument is 
+The value returned by -shouldRemoveItemsAtPickTime on the active tool is 
 simply ignored.
 
 The given item is usually the first responder when this action was triggered by 

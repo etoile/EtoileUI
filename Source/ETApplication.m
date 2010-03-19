@@ -138,10 +138,10 @@ root item will be made available through -[ETApplication layoutItem]. */
 
 - (NSArray *) aspectBaseClassNames
 {
-	return A(@"ETLayout", @"ETInstrument", @"ETStyle");
+	return A(@"ETLayout", @"ETTool", @"ETStyle");
 }
 
-/* Asks every aspect base class (ETLayout, ETInstrument, ETStyle etc.) to 
+/* Asks every aspect base class (ETLayout, ETTool, ETStyle etc.) to 
 register the aspects it wants to make available to EtoileUI facilities 
 (inspector, etc.) that allow to change the UI at runtime. */
 - (void) _registerAllAspects
@@ -476,7 +476,7 @@ present upstream in the next responder chain. */
 but involves a responder chain which is not exactly the same.
 
 The first key and main responder are retrieved on the active 
-instrument (see ETInstrument) rather than on the key and main windows.
+tool (see ETTool) rather than on the key and main windows.
 
 The responder chain is extended to include ETPersistencyController right after
 the application delegate when CoreObject is available. */
@@ -488,9 +488,9 @@ the application delegate when CoreObject is available. */
 	if ([aTarget respondsToSelector: aSelector])
 		return aTarget;
 
-	ETTool *instrument = [ETTool activeInstrument];
-	id firstKeyResponder = [instrument firstKeyResponder];
-	id firstMainResponder = [instrument firstMainResponder];
+	ETTool *tool = [ETTool activeTool];
+	id firstKeyResponder = [tool firstKeyResponder];
+	id firstMainResponder = [tool firstMainResponder];
 	BOOL keyAndMainIdentical = (firstKeyResponder == firstMainResponder);
 	id responder = [self targetForAction: aSelector 
 	                      firstResponder: firstKeyResponder 

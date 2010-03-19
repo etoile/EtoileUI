@@ -1,5 +1,5 @@
 /*
-	test_ETInstrument.m
+	test_ETTool.m
 
 	Copyright (C) 2009 Quentin Mathe
 
@@ -44,7 +44,7 @@
 @interface BasicEventTest : NSObject <UKTest>
 {
 	ETLayoutItemGroup *mainItem;
-	ETTool *instrument;
+	ETTool *tool;
 	ETLayoutItemFactory *itemFactory;
 }
 
@@ -65,7 +65,7 @@ coordinates or not to set the event location in the window. */
 	ASSIGN(mainItem, [ETLayoutItem itemGroup]);
 	[mainItem setFrame: NSMakeRect(0, 0, WIN_WIDTH, WIN_HEIGHT)];
 	[[ETLayoutItem windowGroup] addItem: mainItem];
-	ASSIGN(instrument, [ETTool instrument]);
+	ASSIGN(tool, [ETTool tool]);
 
 	return self;
 }
@@ -75,7 +75,7 @@ coordinates or not to set the event location in the window. */
 	[[itemFactory windowGroup] removeItem: mainItem];
 	DESTROY(mainItem); 
 	DESTROY(itemFactory); 
-	DESTROY(instrument);
+	DESTROY(tool);
 	[super dealloc];
 }
 
@@ -189,12 +189,12 @@ a point expressed in the main item coordinates. The main item is the window cont
 	//ETEvent *evtTitleBar = MAKE_EVENT(NSMakePoint(3, -5), YES, [self window]);
 	//ETEvent *evtCloseToTitleBar = [self createEventAtContentPoint: NSMakePoint(3, -([self titleBarHeight] + 1))];
 
-	UKObjectsSame([ETLayoutItem windowGroup], [instrument hitTestWithEvent: evtWithoutWindow]);
-	UKObjectsSame(mainItem, [instrument hitTestWithEvent: EVT(0, 0)]);
-	UKObjectsSame(mainItem, [instrument hitTestWithEvent: EVT(4, 4)]);
+	UKObjectsSame([ETLayoutItem windowGroup], [tool hitTestWithEvent: evtWithoutWindow]);
+	UKObjectsSame(mainItem, [tool hitTestWithEvent: EVT(0, 0)]);
+	UKObjectsSame(mainItem, [tool hitTestWithEvent: EVT(4, 4)]);
 
-	//UKObjectsSame(mainItem, [instrument hitTestWithEvent: evtTitleBar]);
-	//UKObjectsSame([ETLayoutItem windowGroup], [instrument hitTestWithEvent: evtCloseToTitleBar]);
+	//UKObjectsSame(mainItem, [tool hitTestWithEvent: evtTitleBar]);
+	//UKObjectsSame([ETLayoutItem windowGroup], [tool hitTestWithEvent: evtCloseToTitleBar]);
 }
 
 - (void) testHitTestInWindowLayer
@@ -208,11 +208,11 @@ a point expressed in the main item coordinates. The main item is the window cont
 	float menuBarHeight = frame.size.height - (visibleFrame.size.height + visibleFrame.origin.y);
 	ETEvent *evt = [self createEventAtScreenPoint: NSMakePoint(600, menuBarHeight) isFlipped: YES];
 
-	UKObjectsSame([ETLayoutItem windowGroup], [instrument hitTestWithEvent: evt]);
+	UKObjectsSame([ETLayoutItem windowGroup], [tool hitTestWithEvent: evt]);
 	UKObjectsSame([ETLayoutItem windowGroup], [evt layoutItem]);
 	UKPointsEqual(NSMakePoint(600, 0), [evt locationInLayoutItem]);
 
-	UKObjectsSame([ETLayoutItem windowGroup], [instrument hitTestWithEvent: EVT(-100, -100)]);
+	UKObjectsSame([ETLayoutItem windowGroup], [tool hitTestWithEvent: EVT(-100, -100)]);
 }
 
 // TODO: Finish to implement or remove
@@ -220,10 +220,10 @@ a point expressed in the main item coordinates. The main item is the window cont
 {
 	/*[layer setLayout: [ETFreeLayout layout]];
 
-	ETInstrument *instrument = [[layer layout] attachedInstrument];
+	ETTool *tool = [[layer layout] attachedTool];
 	
-	UKObjectKindOf(instrument, ETSelectTool);
-	UKObjectsSame([ETInstrument activeInstrument], [[layer layout] attachedInstrument]);*/	
+	UKObjectKindOf(tool, ETSelectTool);
+	UKObjectsSame([ETTool activeTool], [[layer layout] attachedTool]);*/	
 }
 
 /* This method test we react precisely as NSView to pointer events that happen on 
@@ -240,20 +240,20 @@ An F-script session is pasted at the file end to understand that more easily. */
 
 	UKTrue([mainItem isFlipped]);
 	// FIXME: Problem inside -contentItemForEvent:
-	//UKObjectsSame(item1, [instrument hitTestWithEvent: EVT(0, 0)]);
-	UKObjectsSame(item1, [instrument hitTestWithEvent: EVT(0, 1)]);
-	UKObjectsSame(mainItem, [instrument hitTestWithEvent: EVT(50, 99)]); /* Right on item1 right edge */
-	UKObjectsSame(item1, [instrument hitTestWithEvent: EVT(49, 99)]);
-	UKObjectsSame(mainItem, [instrument hitTestWithEvent: EVT(49, 100)]); /* Right on item1 bottom edge */
-	UKObjectsSame(mainItem, [instrument hitTestWithEvent: EVT(49, 101)]);
+	//UKObjectsSame(item1, [tool hitTestWithEvent: EVT(0, 0)]);
+	UKObjectsSame(item1, [tool hitTestWithEvent: EVT(0, 1)]);
+	UKObjectsSame(mainItem, [tool hitTestWithEvent: EVT(50, 99)]); /* Right on item1 right edge */
+	UKObjectsSame(item1, [tool hitTestWithEvent: EVT(49, 99)]);
+	UKObjectsSame(mainItem, [tool hitTestWithEvent: EVT(49, 100)]); /* Right on item1 bottom edge */
+	UKObjectsSame(mainItem, [tool hitTestWithEvent: EVT(49, 101)]);
 
 	[mainItem setFlipped: NO];
-	//UKObjectsSame([mainItem parentItem], [instrument hitTestWithEvent: EVT(0, 0)]);
-	UKObjectsSame(item1, [instrument hitTestWithEvent: EVT(0, 1)]);
-	UKObjectsSame(mainItem, [instrument hitTestWithEvent: EVT(50, 99)]); /* Right on item1 right edge */
-	UKObjectsSame(item1, [instrument hitTestWithEvent: EVT(49, 99)]);
-	UKObjectsSame(item1, [instrument hitTestWithEvent: EVT(49, 100)]); /* Right on item1 bottom edge */
-	UKObjectsSame(mainItem, [instrument hitTestWithEvent: EVT(49, 101)]);
+	//UKObjectsSame([mainItem parentItem], [tool hitTestWithEvent: EVT(0, 0)]);
+	UKObjectsSame(item1, [tool hitTestWithEvent: EVT(0, 1)]);
+	UKObjectsSame(mainItem, [tool hitTestWithEvent: EVT(50, 99)]); /* Right on item1 right edge */
+	UKObjectsSame(item1, [tool hitTestWithEvent: EVT(49, 99)]);
+	UKObjectsSame(item1, [tool hitTestWithEvent: EVT(49, 100)]); /* Right on item1 bottom edge */
+	UKObjectsSame(mainItem, [tool hitTestWithEvent: EVT(49, 101)]);
 }
 
 - (void) testHitTestZOrder
@@ -266,27 +266,27 @@ An F-script session is pasted at the file end to understand that more easily. */
 	[mainItem addItem: item2];
 	[mainItem addItem: item3];
 
-	UKObjectsSame(item2, [instrument hitTestWithEvent: EVT(4, 4)]);
-	UKObjectsSame(item2, [instrument hitTestWithEvent: EVT(7, 7)]);
-	UKObjectsSame(item2, [instrument hitTestWithEvent: EVT(49, 99)]);
-	UKObjectsSame(mainItem, [instrument hitTestWithEvent: EVT(49, 100)]); /* Right on item2 bottom edge */
+	UKObjectsSame(item2, [tool hitTestWithEvent: EVT(4, 4)]);
+	UKObjectsSame(item2, [tool hitTestWithEvent: EVT(7, 7)]);
+	UKObjectsSame(item2, [tool hitTestWithEvent: EVT(49, 99)]);
+	UKObjectsSame(mainItem, [tool hitTestWithEvent: EVT(49, 100)]); /* Right on item2 bottom edge */
 	
 	[item3 setHeight: 96]; /* 5 + 96 = 101 and see -testHitTestBoundaryDetection */
-	UKObjectsSame(item3, [instrument hitTestWithEvent: EVT(49, 100)]);
+	UKObjectsSame(item3, [tool hitTestWithEvent: EVT(49, 100)]);
 
 	[mainItem insertItem: item1 atIndex: 0];
-	UKObjectsSame(item2, [instrument hitTestWithEvent: EVT(4, 4)]);
-	UKObjectsSame(item1, [instrument hitTestWithEvent: EVT(7, 7)]);
-	UKObjectsSame(item1, [instrument hitTestWithEvent: EVT(49, 99)]);
-	UKObjectsSame(item3, [instrument hitTestWithEvent: EVT(49, 100)]); /* Right on item1 and item2 bottom edge */
+	UKObjectsSame(item2, [tool hitTestWithEvent: EVT(4, 4)]);
+	UKObjectsSame(item1, [tool hitTestWithEvent: EVT(7, 7)]);
+	UKObjectsSame(item1, [tool hitTestWithEvent: EVT(49, 99)]);
+	UKObjectsSame(item3, [tool hitTestWithEvent: EVT(49, 100)]); /* Right on item1 and item2 bottom edge */
 }
 
-- (void) testLookUpInstrument
+- (void) testLookUpTool
 {
 	ETLayoutItem *item1 = [ETLayoutItem rectangleWithRect: NSMakeRect(0, 0, 50, 100)];
 	[mainItem addItem: item1];
 
-	[instrument mouseDown: EVT(4, 4)];
+	[tool mouseDown: EVT(4, 4)];
 }
 
 - (void) testHitTestBoundingBox
@@ -297,17 +297,17 @@ An F-script session is pasted at the file end to understand that more easily. */
 	[mainItem addItem: item1];
 
 	/* Hit inside mainItem, outside item1 and its bounding box */
-	UKObjectsEqual(mainItem, [instrument hitTestWithEvent: EVT(70, 120)]);
+	UKObjectsEqual(mainItem, [tool hitTestWithEvent: EVT(70, 120)]);
 	/* Hit inside mainItem, outside item1 but inside its bounding box */
-	UKObjectsEqual(item1, [instrument hitTestWithEvent: EVT(55, 105)]);
+	UKObjectsEqual(item1, [tool hitTestWithEvent: EVT(55, 105)]);
 	
 	/* Shift a bit item1 to have enough space to hit test between the 
 	   top left corner of the mainItem and the origin of item1. */
 	[item1 setOrigin: NSMakePoint(20, 20)];
 	/* Hit inside mainItem, outside item1 and its bounding box */
-	UKObjectsEqual(mainItem, [instrument hitTestWithEvent: EVT([item1 x] - 15, [item1 y] - 15)]);
+	UKObjectsEqual(mainItem, [tool hitTestWithEvent: EVT([item1 x] - 15, [item1 y] - 15)]);
 	/* Hit inside mainItem, outside item1 but inside its bounding box */
-	UKObjectsEqual(item1, [instrument hitTestWithEvent: EVT([item1 x] - 5, [item1 y] - 5)]);
+	UKObjectsEqual(item1, [tool hitTestWithEvent: EVT([item1 x] - 5, [item1 y] - 5)]);
 }
 
 /* Verify that hit test only continues recursively when the event location is 
@@ -321,20 +321,20 @@ inside the content bounds. */
 	[mainItem addItem: item1];
 
 	/* Hit outside mainItem and inside item1 */
-	UKObjectsEqual([itemFactory windowGroup], [instrument hitTestWithEvent: EVT(width - 5, height - 5)]);
+	UKObjectsEqual([itemFactory windowGroup], [tool hitTestWithEvent: EVT(width - 5, height - 5)]);
 	
 	/* Shift a bit the mainItem to have enough space to hit test between the 
 	   top left corner of the window layer and the origin of the main item. */
 	[mainItem setOrigin: NSMakePoint(30, 30)];
 	/* Hit outside mainItem and inside item1 */
 	ETEvent *evt = [self createEventAtScreenPoint: NSMakePoint([mainItem x] - 5, [mainItem y] - 5) isFlipped: YES];
-	UKObjectsEqual([itemFactory windowGroup], [instrument hitTestWithEvent: evt]);
+	UKObjectsEqual([itemFactory windowGroup], [tool hitTestWithEvent: evt]);
 	
 	[mainItem setBoundingBox: NSMakeRect(-10, -10, [mainItem width], [mainItem height])];
 	/* Hit outside mainItem but inside its bounding box, and outside item1 but 
 	   inside its bounding box  */
 	evt = [self createEventAtScreenPoint: NSMakePoint([mainItem x] - 5, [mainItem y] - 5) isFlipped: YES];
-	// FIXME: UKObjectsEqual(mainItem, [instrument hitTestWithEvent: evt]);
+	// FIXME: UKObjectsEqual(mainItem, [tool hitTestWithEvent: evt]);
 	// See TODO comment in -hitTestWithEvent:
 }
 
@@ -357,7 +357,7 @@ inside the content bounds. */
 
 	/* Hit inside scrollers */
 	// FIXME: -setHasVerticalScroller: removes the window decorator.
-	//UKObjectsEqual(mainItem, [instrument hitTestWithEvent: EVT([mainItem width] - 5, [mainItem height] - 5)]);
+	//UKObjectsEqual(mainItem, [tool hitTestWithEvent: EVT([mainItem width] - 5, [mainItem height] - 5)]);
 }
 
 - (void) testTrySendEventToWidget
@@ -392,21 +392,21 @@ inside the content bounds. */
 	ETEvent *evt = EVT([item1 width] - 5, [item1 height] - 5);
 #endif
 
-	[instrument trySendEventToWidgetView: evt];
+	[tool trySendEventToWidgetView: evt];
 
 	UKTrue([evt wasDelivered]);
 	UKObjectsEqual(item1, [evt layoutItem]);
 
 	 /* Hit inside the scrollable content */
 	evt = EVT(50, 50);
-	[instrument trySendEventToWidgetView: evt];
+	[tool trySendEventToWidgetView: evt];
 
 	UKFalse([evt wasDelivered]);
 	UKObjectsEqual(item2, [evt layoutItem]);
 	
 	/* Hit outside item1 */
 	evt = EVT([item1 width] + 25, [item1 height] + 25);
-	[instrument trySendEventToWidgetView: evt];
+	[tool trySendEventToWidgetView: evt];
 
 	UKFalse([evt wasDelivered]);
 	UKObjectsEqual(mainItem, [evt layoutItem]);
@@ -420,7 +420,7 @@ inside the content bounds. */
 	   behave similarly. */
 	[item1 setBoundingBox: NSMakeRect(0, 0, [item1 width] + 30, [item1 height] + 30)];
 	evt = EVT([item1 width] + 25, [item1 height] + 25);
-	[instrument trySendEventToWidgetView: evt];
+	[tool trySendEventToWidgetView: evt];
 
 	UKFalse([evt wasDelivered]);
 	UKObjectsEqual(item1, [evt layoutItem]);
@@ -446,16 +446,16 @@ inside the content bounds. */
 	SUPERINIT
 
 	[mainItem setLayout: [ETFreeLayout layout]];
-	ASSIGN(instrument, [[mainItem layout] attachedInstrument]);
+	ASSIGN(tool, [[mainItem layout] attachedTool]);
 	ASSIGN(rootItem, [[mainItem layout] rootItem]);
 	ASSIGN(item1, [ETLayoutItem rectangleWithRect: NSMakeRect(50, 30, 50, 30)]);
 	ASSIGN(item2, [ETLayoutItem graphicsGroup]);
 	[item2 setFrame: NSMakeRect(0, 0, 100, 50)];
 	ASSIGN(item21, [ETLayoutItem rectangleWithRect: NSMakeRect(10, 10, 80, 30)]);
 
-	/* We need a active instrument in order to have -observeValueForKeyPath:XXX 
+	/* We need a active tool in order to have -observeValueForKeyPath:XXX 
 	   in ETFreeLayout reacts to a selection change by toggling the handle visibility */
-	[ETTool setActiveInstrument: instrument];
+	[ETTool setActiveTool: tool];
 	
 	[mainItem addItem: item1];
 	[item2 addItem: item21]; /* Test methods insert item2 as they want */
@@ -506,10 +506,10 @@ DEALLOC(DESTROY(rootItem); DESTROY(item1); DESTROY(item2); DESTROY(item21))
 	ETHandle *handle1 = [handleGroup1 topLeftHandle];
 
 	UKObjectKindOf(handleGroup1, ETResizeRectangle);
-	UKObjectsSame(item1, [instrument hitTestWithEvent: EVT(75, 45)]);
-	UKObjectsSame(handle1, [instrument hitTestWithEvent: EVT(47, 27)]);
-	UKObjectsSame(handle1, [instrument hitTestWithEvent: EVT(50, 30)]);
-	UKObjectsSame(handle1, [instrument hitTestWithEvent: EVT(53, 33)]);
+	UKObjectsSame(item1, [tool hitTestWithEvent: EVT(75, 45)]);
+	UKObjectsSame(handle1, [tool hitTestWithEvent: EVT(47, 27)]);
+	UKObjectsSame(handle1, [tool hitTestWithEvent: EVT(50, 30)]);
+	UKObjectsSame(handle1, [tool hitTestWithEvent: EVT(53, 33)]);
 }
 
 - (void) testHitTestHandleWithoutFlip
@@ -532,12 +532,12 @@ DEALLOC(DESTROY(rootItem); DESTROY(item1); DESTROY(item2); DESTROY(item21))
 	ETResizeRectangle *handleGroup2 = (ETResizeRectangle *)[rootItem itemAtIndex: 1];
 	ETHandle *handle2 = [handleGroup2 topRightHandle];
 
-	UKObjectsSame([handleGroup1 topLeftHandle], [instrument hitTestWithEvent: EVT(47, 27)]);
-	UKObjectsSame([handleGroup1 bottomRightHandle], [instrument hitTestWithEvent: EVT(103, 63)]);
-	UKObjectsSame(handle2, [instrument hitTestWithEvent: EVT(97, 3)]);
-	UKObjectsSame(handle2, [instrument hitTestWithEvent: EVT(100, 3)]);
-	UKObjectsSame(handle2, [instrument hitTestWithEvent: EVT(103, 3)]);
-	UKObjectsSame(handle2, [instrument hitTestWithEvent: EVT(103, 3)]);
+	UKObjectsSame([handleGroup1 topLeftHandle], [tool hitTestWithEvent: EVT(47, 27)]);
+	UKObjectsSame([handleGroup1 bottomRightHandle], [tool hitTestWithEvent: EVT(103, 63)]);
+	UKObjectsSame(handle2, [tool hitTestWithEvent: EVT(97, 3)]);
+	UKObjectsSame(handle2, [tool hitTestWithEvent: EVT(100, 3)]);
+	UKObjectsSame(handle2, [tool hitTestWithEvent: EVT(103, 3)]);
+	UKObjectsSame(handle2, [tool hitTestWithEvent: EVT(103, 3)]);
 }
 
 - (void) testHitTestHandleInTreeWithoutFlip

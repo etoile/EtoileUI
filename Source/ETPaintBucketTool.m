@@ -83,7 +83,7 @@ as stroke color and brown as fill color. */
 	_paintMode = aMode;
 }
 
-/* Outside of the boundaries doesn't count because the parent instrument will 
+/* Outside of the boundaries doesn't count because the parent tool will 
 be reactivated when we exit our owner layout. */
 - (void) mouseUp: (ETEvent *)anEvent
 {	

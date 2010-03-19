@@ -194,7 +194,7 @@ static unsigned int copyDepth = 0;
 
 /** Returns a copy of the receiver.
 
-The layout and its instrument are always copied (they cannot be shared).
+The layout and its tool are always copied (they cannot be shared).
 
 The returned copy is mutable because ETLayoutItemGroup cannot be immutable. */ 
 - (id) copyWithZone: (NSZone *)aZone
@@ -1815,7 +1815,7 @@ See also -setDoubleAction:. */
 }
 
 /** <overidde-dummy />
-Returns whether the instruments should hit test the children which intersect the 
+Returns whether the tools should hit test the children which intersect the 
 area that lies outside the receiver frame but inside its bounding box.
 
 By default, returns NO.

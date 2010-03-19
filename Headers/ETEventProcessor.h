@@ -1,7 +1,7 @@
 /** <title>ETEventProcessor</title>
 
 	<abstract>ETEventProcessor converts the events emitted by the widget backend 
-	into ETEvent objects before forwarding them to the active instrument.</abstract>
+	into ETEvent objects before forwarding them to the active tool.</abstract>
  
 	Copyright (C) 2008 Quentin Mathe
  
@@ -15,7 +15,7 @@
 
 @class ETEvent, ETUIItem, ETLayoutItem;
 
-/** The active instrument handles the dispatch in the layout item tree. */
+/** The active tool handles the dispatch in the layout item tree. */
 @interface ETEventProcessor : NSObject
 {
 

@@ -31,8 +31,8 @@ subclasses (see -[ETLayout initWithLayoutView:]). */
 	
 	if (self != nil)
 	{
-		[self setAttachedInstrument: [ETSelectTool instrument]];
-		[[self attachedInstrument] setShouldProduceTranslateActions: YES];
+		[self setAttachedTool: [ETSelectTool tool]];
+		[[self attachedTool] setShouldProduceTranslateActions: YES];
 		[self setItemSizeConstraintStyle: ETSizeConstraintStyleNone];
 		_rootItem = [[ETLayoutItemGroup alloc] init];
 		[_rootItem setActionHandler: nil];
@@ -60,21 +60,21 @@ subclasses (see -[ETLayout initWithLayoutView:]). */
 	[self buildHandlesForItems: [_layoutContext arrangedItems]];
 }
 
-- (id) attachedInstrument
+- (id) attachedTool
 {
-	return [super attachedInstrument];
+	return [super attachedTool];
 }
 
-- (void) didChangeAttachedInstrument: (ETTool *)oldInstrument 
-                        toInstrument: (ETTool*)newInstrument
+- (void) didChangeAttachedTool: (ETTool *)oldTool 
+                        toTool: (ETTool*)newTool
 {
-	NSParameterAssert(oldInstrument != newInstrument);
+	NSParameterAssert(oldTool != newTool);
 
-	/* Let the superclass tells our descendant layouts about the instrument change */
-	[super didChangeAttachedInstrument: oldInstrument toInstrument: newInstrument];
+	/* Let the superclass tells our descendant layouts about the tool change */
+	[super didChangeAttachedTool: oldTool toTool: newTool];
 
-	BOOL wereHandlesVisible = [self showsHandlesForInstrument: oldInstrument];
-	BOOL willHandlesBeVisible = [self showsHandlesForInstrument: newInstrument];
+	BOOL wereHandlesVisible = [self showsHandlesForTool: oldTool];
+	BOOL willHandlesBeVisible = [self showsHandlesForTool: newTool];
 
 	if (NO == wereHandlesVisible && willHandlesBeVisible)
 	{
@@ -87,9 +87,9 @@ subclasses (see -[ETLayout initWithLayoutView:]). */
 	// else the handle visibility remains identical
 }
 
-- (BOOL) showsHandlesForInstrument: (ETTool *)anInstrument
+- (BOOL) showsHandlesForTool: (ETTool *)anTool
 {
-	return [anInstrument isKindOfClass: [ETSelectTool class]];
+	return [anTool isKindOfClass: [ETSelectTool class]];
 }
 
 /* KVO */
@@ -120,7 +120,7 @@ subclasses (see -[ETLayout initWithLayoutView:]). */
 					     change: (NSDictionary *)change 
 						context: (void *)context
 {
-	if ([self showsHandlesForInstrument: [ETTool activeInstrument]] == NO)
+	if ([self showsHandlesForTool: [ETTool activeTool]] == NO)
 		return;
 
 	BOOL selected = [[change objectForKey: NSKeyValueChangeNewKey] boolValue];

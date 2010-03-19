@@ -1,6 +1,6 @@
-/** <title>ETInstrument</title>
+/** <title>ETTool</title>
 
-	<abstract>An instrument represents an interaction mode to handle and 
+	<abstract>An tool represents an interaction mode to handle and 
 	dispatch events turned into actions in the layout item tree .</abstract>
 
 	Copyright (C) 2008 Quentin Mathe
@@ -24,30 +24,30 @@
 @end
 
 /** Action Handlers are bound to layout items.
-    Instrument are bound to layouts.
+    Tool are bound to layouts.
 
-A main instrument is set by default for the entire layout item tree. This main 
-instrument is an ETArrowTool instance attached the root item layout. 
-Instruments can be attached to any other layouts in the layout item tree. In 
-this way, layouts can override the main instrument and the instruments attached 
+A main tool is set by default for the entire layout item tree. This main 
+tool is an ETArrowTool instance attached the root item layout. 
+Tools can be attached to any other layouts in the layout item tree. In 
+this way, layouts can override the main tool and the tools attached 
 to the layouts of their ancestor items.
 
-You can also define an editor instrument and a set of target layout items, usually 
-your document items. Each time, -setEditorInstrument: is 
-called, this instrument is attach to the layout of these items.
+You can also define an editor tool and a set of target layout items, usually 
+your document items. Each time, -setEditorTool: is 
+called, this tool is attach to the layout of these items.
 
 When the mouse enters in a layout item frame, it checks the layout bound to
-to it and activates the attached instrument if there is one.
+to it and activates the attached tool if there is one.
 	
 If -selection doesn't return nil, the selection object is inserted in front of 
 the responder chain, right before the first responder. By default, it 
 forwards the actions to all the selected objects it contains. If they cannot 
 handle an action, the action is passed to their next responders. 
 
-The instrument attached to a layout controls how instruments attached to child 
+The tool attached to a layout controls how tools attached to child 
 layouts are activated. By default, they got activated on mouse enter and 
 deactivated on mouse exit. However some intruments such as ETSelectTool 
-implement a custom policy: the instruments of child layouts are activated on 
+implement a custom policy: the tools of child layouts are activated on 
 double-click and deactivated on a mouse click outside of their layout boundaries
 (see -setDeactivateOn:). */
 @interface ETTool : NSResponder <NSCopying>
@@ -63,29 +63,29 @@ double-click and deactivated on a mouse click outside of their layout boundaries
 	BOOL _customActivation; /* Not yet used... */
 }
 
-/* Registering Instruments */
+/* Registering Tools */
 
 + (void) registerAspects;
-+ (void) registerInstrument: (ETTool *)anInstrument;
-+ (NSSet *) registeredInstruments;
-+ (NSSet *) registeredInstrumentClasses;
++ (void) registerTool: (ETTool *)anTool;
++ (NSSet *) registeredTools;
++ (NSSet *) registeredToolClasses;
 
 + (void) show: (id)sender;
 
-/* Instrument Activation */
+/* Tool Activation */
 
-+ (ETTool *) updateActiveInstrumentWithEvent: (ETEvent *)anEvent;
++ (ETTool *) updateActiveToolWithEvent: (ETEvent *)anEvent;
 + (void) updateCursorIfNeeded;
 
 /* Factory Methods */
 
-+ (id) activeInstrument;
-+ (void) setActiveInstrument: (ETTool *)anInstrument;
-+ (id) activatableInstrument;
-+ (id) mainInstrument;
-+ (void) setMainInstrument: (id)anInstrument;
++ (id) activeTool;
++ (void) setActiveTool: (ETTool *)anTool;
++ (id) activatableTool;
++ (id) mainTool;
++ (void) setMainTool: (id)anTool;
 
-+ (id) instrument;
++ (id) tool;
 
 /* Initialization */
 
@@ -162,7 +162,7 @@ double-click and deactivated on a mouse click outside of their layout boundaries
 /* Framework Private */
 
 - (NSMutableArray *) hoveredItemStack;
-- (ETTool *) lookUpInstrumentInHoveredItemStack;
+- (ETTool *) lookUpToolInHoveredItemStack;
 - (void) rebuildHoveredItemStackIfNeededForEvent: (ETEvent *)anEvent;
 
 - (void) setLayoutOwner: (ETLayout *)aLayout;
@@ -176,22 +176,22 @@ double-click and deactivated on a mouse click outside of their layout boundaries
 @end
 
 // TODO: Evaluate... Not yet implemented.
-@interface NSObject (ETInstrumentDelegate)
-- (BOOL) instrument: (ETTool *)anInstrument shouldDeactivateWithEvent: (ETEvent *)anEvent;
-- (ETTool *) instrumentToActivateWithEvent: (ETEvent *)anEvent;
+@interface NSObject (ETToolDelegate)
+- (BOOL) tool: (ETTool *)anTool shouldDeactivateWithEvent: (ETEvent *)anEvent;
+- (ETTool *) toolToActivateWithEvent: (ETEvent *)anEvent;
 @end
 
 
 /** An ETFirstResponderProxy instance is passed to 
 -[NSWindow makeFirstResponder:], when you call -setFirstKeyResponder: or 
--setFirstMainResponder: on ETInstrument with an object that is not an 
+-setFirstMainResponder: on ETTool with an object that is not an 
 NSResponder. For example, ETLayoutItem does not inherit from NSResponder, hence 
 it cannot be directly declared as the window first responder.
 
 You should not be concerned about this class which is mostly an implementation 
 detail. The only case where you might have to deal with it is when you use 
 -[NSWindow firstResponder]. Yet you should avoid NSWindow API, and rather 
-interact with the first responder through the active instrument only.
+interact with the first responder through the active tool only.
 
 This class is specific to the AppKit backend. */
 @interface ETFirstResponderProxy : NSResponder

@@ -73,13 +73,13 @@
 	ETLayoutItemGroup *tableItem2 = [tableContainer2 layoutItem];
 	ETTableLayout *tableLayout2 = [ETTableLayout layout];
 	NSArray *visibleColumnIds = [NSArray arrayWithObjects: @"displayName", @"intensity", nil];
-	ETSelectTool *tool = [ETSelectTool instrument];
+	ETSelectTool *tool = [ETSelectTool tool];
 
 	[tool setAllowsMultipleSelection: YES];
 	[tool setAllowsEmptySelection: NO];
 	[tool setShouldRemoveItemsAtPickTime: NO];
 
-	[tableLayout2 setAttachedInstrument: tool];	
+	[tableLayout2 setAttachedTool: tool];	
 	[tableLayout2 setDisplayName: @"Name" forProperty: @"displayName"]; 
 	[[tableLayout2 columnForProperty: @"displayName"] setWidth: 50];
 	[tableLayout2 setDisplayName: @"Intensity" forProperty: @"intensity"]; 	
@@ -129,8 +129,8 @@
 	[[outlineItem layout] setStyle: imgViewItem forProperty: @""];
 	/* icon and displayName are the properties visible by default */
 	[[outlineItem layout] setEditable: YES forProperty: @"displayName"];
-	[[outlineItem layout] setAttachedInstrument: [ETSelectTool instrument]];
-	[[[outlineItem layout] attachedInstrument] setAllowsMultipleSelection: YES];
+	[[outlineItem layout] setAttachedTool: [ETSelectTool tool]];
+	[[[outlineItem layout] attachedTool] setAllowsMultipleSelection: YES];
 	// FIXME: Should be... [outlineItem setRepresentedPathBase: @"/"]; /* Mandatory to handle drop */
 	[outlineContainer setRepresentedPath: @"/"];
 

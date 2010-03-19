@@ -69,7 +69,7 @@ of the target item. */
 - (void) setAllowsMultipleSelection: (BOOL)multiple
 {
 	_multipleSelectionAllowed = multiple;
-	[[[self layoutOwner] ifResponds] syncLayoutViewWithInstrument: self];
+	[[[self layoutOwner] ifResponds] syncLayoutViewWithTool: self];
 }
 
 /** Returns whether the tool allows to have no items selected among the children 
@@ -84,7 +84,7 @@ the target item. */
 - (void) setAllowsEmptySelection: (BOOL)empty
 {
 	_emptySelectionAllowed = empty;
-	[[[self layoutOwner] ifResponds] syncLayoutViewWithInstrument: self];
+	[[[self layoutOwner] ifResponds] syncLayoutViewWithTool: self];
 }
 
 /** Returns whether the dragged items should be removed immediately when they 
@@ -149,12 +149,12 @@ needed replicate other actions on each selected item. */
 }
 
 // TODO: Would be nice to simplify this a bit and try to share more with 
-// ETInstrument implementation.
-- (ETTool *) lookUpInstrumentInHoveredItemStack
+// ETTool implementation.
+- (ETTool *) lookUpToolInHoveredItemStack
 {
-	ETTool *foundInstrument = nil;
-	ETTool *parentInstrument = nil;
-	/* The last/top object is the instrument at the lowest/deepest level in the 
+	ETTool *foundTool = nil;
+	ETTool *parentTool = nil;
+	/* The last/top object is the tool at the lowest/deepest level in the 
 	   layout item tree. */
 	NSEnumerator *e = [[self hoveredItemStack] reverseObjectEnumerator];
 	ETLayoutItem *item = nil;
@@ -163,27 +163,27 @@ needed replicate other actions on each selected item. */
 
 	while ((item = [e nextObject]) != nil)
 	{
-		//ETLog(@"Look up instrument at level %@ in hovered item stack", item);
+		//ETLog(@"Look up tool at level %@ in hovered item stack", item);
 
 		/* The top item can be an ETLayoutItem instance */
 		if ([item isGroup] == NO)
 			continue;
 		
-		//ETLog(@" ---> Found instrument %@", [[(ETLayoutItemGroup *)item layout] attachedInstrument]);
+		//ETLog(@" ---> Found tool %@", [[(ETLayoutItemGroup *)item layout] attachedTool]);
 		
-		foundInstrument = [[(ETLayoutItemGroup *)item layout] attachedInstrument];
-		parentInstrument = [[[(ETLayoutItemGroup *)item parentItem] layout] attachedInstrument];
-		if (foundInstrument != nil && [[parentInstrument class] isEqual: [self class]] == NO)
+		foundTool = [[(ETLayoutItemGroup *)item layout] attachedTool];
+		parentTool = [[[(ETLayoutItemGroup *)item parentItem] layout] attachedTool];
+		if (foundTool != nil && [[parentTool class] isEqual: [self class]] == NO)
 			break;
 	}
 
-	// NOTE: In case we attach a non-removable instrument to the root item, we 
-	// could set foundInstrument to nil.
-	BOOL overRootItem = (foundInstrument == nil);
+	// NOTE: In case we attach a non-removable tool to the root item, we 
+	// could set foundTool to nil.
+	BOOL overRootItem = (foundTool == nil);
 	if (overRootItem)
-		foundInstrument = [[self class] mainInstrument];
+		foundTool = [[self class] mainTool];
 
-	return foundInstrument;
+	return foundTool;
 }
 
 /* When the hit test is inside the target item, we customize it to restrict it 
@@ -220,7 +220,7 @@ to either the target item itself or its immediate children. */
 }
 
 /* Forces the target item as hit test result when selecting an area, otherwise 
-returns anItem exactly as ETInstrument would do and let the hit test continues.
+returns anItem exactly as ETTool would do and let the hit test continues.
 
 This method is called immediately when -hitTestWithEvent:inItem: is first 
 entered. At that time, anItem is a window layer child and 
@@ -352,7 +352,7 @@ returnedItemRelativePoint is a point in the window frame rect. */
 	}
 }
 
-/* Outside of the boundaries doesn't count because the parent instrument will 
+/* Outside of the boundaries doesn't count because the parent tool will 
 be reactivated when we exit our owner layout. */
 - (void) mouseUp: (ETEvent *)anEvent
 {

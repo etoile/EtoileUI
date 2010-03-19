@@ -57,7 +57,7 @@ method will reuse the action handler to be set on every created items. */
                    inRect: (NSRect)fieldEditorFrame;
 - (void) endEditingItem;
 
-/* Instrument/Tool Actions */
+/* Tool/Tool Actions */
 
 - (void) handleClickItem: (ETLayoutItem *)item atPoint: (NSPoint)aPoint;
 - (void) handleDoubleClickItem: (ETLayoutItem *)item;

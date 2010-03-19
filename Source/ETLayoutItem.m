@@ -1462,17 +1462,17 @@ You should never use this method unless you write an ETLayoutItem subclass. */
 	/* We must not let the tool attached to the old layout remain active, 
 	   otherwise the layout can be deallocated and this tool remains with an 
 	   invalid -layoutOwner. */
-	ETTool *oldTool = [oldLayout attachedInstrument];
+	ETTool *oldTool = [oldLayout attachedTool];
 
-	if ([oldTool isEqual: [ETTool activeInstrument]])
+	if ([oldTool isEqual: [ETTool activeTool]])
 	{
-		ETTool *newTool = [[self layout] attachedInstrument];
+		ETTool *newTool = [[self layout] attachedTool];
 
 		if (newTool == nil)
 		{
-			newTool = [ETTool mainInstrument];
+			newTool = [ETTool mainTool];
 		}
-		[ETTool setActiveInstrument: newTool];
+		[ETTool setActiveTool: newTool];
 	}
 
 	/* Notify the interested parties about the layout change */
@@ -2412,7 +2412,7 @@ overwritten by the layout in use. See -setBoundingBox:. */
 extent on which hit test is done and redisplay requested. This rect must be 
 expressed in the receiver coordinate space.
 
-The bounding box is used by ETInstrument in the hit test phase. It is also used 
+The bounding box is used by ETTool in the hit test phase. It is also used 
 by -display and -setNeedsDisplay: methods to compute the dirty area that needs 
 to be refreshed. Hence it can be used by ETLayout subclasses related code to 
 increase the area which requires to be redisplayed. For example, ETHandleGroup 
@@ -2669,7 +2669,7 @@ item backed either, returns nil. */
 
 /* Events & Actions */
 
-/** Returns the action handler associated with the receiver. See ETInstrument to 
+/** Returns the action handler associated with the receiver. See ETTool to 
 know more about event handling in the layout item tree. */
 - (id) actionHandler
 {
@@ -2682,7 +2682,7 @@ know more about event handling in the layout item tree. */
 	SET_PROPERTY(anHandler, kETActionHandlerProperty);
 }
 
-/** Returns NO when the receiver should be ignored by the instruments for both 
+/** Returns NO when the receiver should be ignored by the tools for both 
 hit tests and action dispatch. By default, returns YES, otherwise NO when 
 -actionsHandler returns nil. */
 - (BOOL) acceptsActions

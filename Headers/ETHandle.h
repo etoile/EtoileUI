@@ -19,10 +19,10 @@
 
 @class ETTool; 
 
-extern NSString *kETMediatedInstrumentProperty; /** mediatedInstrument property */
+extern NSString *kETMediatedToolProperty; /** mediatedTool property */
 extern NSString *kETManipulatedObjectProperty; /** manipulatedObject property */
 
-/** A handle mediates the interaction between an instrument (usually a graphical 
+/** A handle mediates the interaction between an tool (usually a graphical 
 tool) and a graphical object.
  
 The handle is attached to a graphical object by setting the ETHandle
@@ -31,21 +31,21 @@ future, this might be extended in order to accept other type of objects that
 conforms to ETManipulatedObject protocol.
 
 The action of a handle when the user manipulates it is defined by setting the
-EtHandle mediatedInstrument property. */
+EtHandle mediatedTool property. */
  @interface ETHandle : ETLayoutItem
  {
  
  }
  
- - (ETTool *) mediatedInstrument;
- - (void) setMediatedInstrument: (ETTool *)anInstrument;
+ - (ETTool *) mediatedTool;
+ - (void) setMediatedTool: (ETTool *)anTool;
  - (id) manipulatedObject;
  - (void) setManipulatedObject: (id)anObject;
  
  @end
  
 /** Handles are rarely used alone, but in a handle group which organize and 
-present the handles in a way that helps to mediate the instrument actions. 
+present the handles in a way that helps to mediate the tool actions. 
 For example, four handles can be combined in resizing rectangle and makes 
 the resize tool more straightforward to use for the user. */
 @interface ETHandleGroup : ETLayoutItemGroup
@@ -53,8 +53,8 @@ the resize tool more straightforward to use for the user. */
 	
 }
 
-//- (ETInstrument *) mediatedInstrument;
-//- (void) setMediatedInstrument: (ETInstrument *)anInstrument;
+//- (ETTool *) mediatedTool;
+//- (void) setMediatedTool: (ETTool *)anTool;
 - (id) manipulatedObject;
 - (void) setManipulatedObject: (id)anObject;
 - (void) setNeedsDisplay: (BOOL)flag;

@@ -52,7 +52,7 @@ static NSFileManager *objectManager = nil;
 	                  forTargetType: myFolderUTI];
 
 	[mainViewItem setController: controller];
-	// TODO: Should probably be on the controller or the instrument.
+	// TODO: Should probably be on the controller or the tool.
 	//[mainViewItem setAllowsMultipleSelection: YES];
 	[mainViewItem setRepresentedPathBase: path];		
 	[mainViewItem setSource: self];

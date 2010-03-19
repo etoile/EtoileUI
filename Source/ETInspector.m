@@ -98,11 +98,11 @@
 		[[layoutPopup lastItem] setRepresentedObject: layoutClass];
 	}
 	
-	[instrumentPopup removeAllItems];
-	FOREACH([ETTool registeredInstrumentClasses], instrumentClass, ETTool *)
+	[toolPopup removeAllItems];
+	FOREACH([ETTool registeredToolClasses], toolClass, ETTool *)
 	{
-		[instrumentPopup addItemWithTitle: [instrumentClass displayName]];
-		[[instrumentPopup lastItem] setRepresentedObject: instrumentClass];
+		[toolPopup addItemWithTitle: [toolClass displayName]];
+		[[toolPopup lastItem] setRepresentedObject: toolClass];
 	}
 
 	[masterViewItem setLayout: [ETOutlineLayout layout]];
@@ -143,12 +143,12 @@
 	[[[self selectedObject] ifResponds] setLayout: [layoutClass layout]];
 }
 
-- (IBAction) changeInstrument: (id)sender
+- (IBAction) changeTool: (id)sender
 {
-	Class instrumentClass = [[sender selectedItem] representedObject];
+	Class toolClass = [[sender selectedItem] representedObject];
 	
 	[[(ETLayoutItem *)[[self selectedObject] ifResponds] layout] 
-		setAttachedInstrument: [instrumentClass instrument]];
+		setAttachedTool: [toolClass tool]];
 }
 
 - (NSArray *) inspectedObjects

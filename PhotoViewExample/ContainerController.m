@@ -110,7 +110,7 @@ UI level for a photo viewer. */
 	}
 	if ([layoutObject isKindOfClass: [ETComputedLayout class]])
 	{
-		[layoutObject setAttachedInstrument: [ETSelectTool instrument]];
+		[layoutObject setAttachedTool: [ETSelectTool tool]];
 		[layoutObject setItemMargin: [itemMarginSlider floatValue]];
 		[layoutObject setBorderMargin: [itemMarginSlider floatValue]];
 

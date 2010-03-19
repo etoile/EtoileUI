@@ -1,6 +1,6 @@
-/** <title>ETInstrument</title>
+/** <title>ETTool</title>
 
-	<abstract>An instrument represents an interaction mode to handle and 
+	<abstract>An tool represents an interaction mode to handle and 
 	dispatch events turned into actions in the layout item tree .</abstract>
  
 	Copyright (C) 2008 Quentin Mathe
@@ -34,7 +34,7 @@
 - (void) handleEndTouch: (id <ETTouchAction>)aTouch onItem: (ETLayoutItem *)item;
 @end
 
-/** A basic ETInstrument subclass which provides common UI interaction and can 
+/** A basic ETTool subclass which provides common UI interaction and can 
 be used to click, double-click, pick and drop layout items.
 
 ETArrowTool produce the actions listed in ETArrowToolActionConsumer protocol.<br />
@@ -72,7 +72,7 @@ ETSelectTool is attached to ETIconLayout and ETFreeLayout by default. */
 
 @end
 
-/* A basic ETInstrument subclass which can be used to translate a single layout 
+/* A basic ETTool subclass which can be used to translate a single layout 
 item at a time.
 
 ETMoveTool doesn't support real dragging in the sense you can only translate a 

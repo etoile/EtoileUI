@@ -47,20 +47,20 @@ DEALLOC(DESTROY(layer))
 	UKTrue(NSContainsRect([layer frame], [[NSScreen mainScreen] visibleFrame]));
 }
 
-- (void) testInitialActiveInstrument
+- (void) testInitialActiveTool
 {
-	UKObjectsSame([[layer layout] attachedInstrument], [ETTool activeInstrument]);
+	UKObjectsSame([[layer layout] attachedTool], [ETTool activeTool]);
 }
 
 - (void) testLayout
 {
 	[layer setLayout: [ETFreeLayout layout]];
 
-	ETTool *instrument = [[layer layout] attachedInstrument];
-	UKObjectKindOf(instrument, ETSelectTool);
+	ETTool *tool = [[layer layout] attachedTool];
+	UKObjectKindOf(tool, ETSelectTool);
 
 
-	//UKObjectsSame([ETInstrument activeInstrument], [[layer layout] attachedInstrument]);	
+	//UKObjectsSame([ETTool activeTool], [[layer layout] attachedTool]);	
 }
 
 @end

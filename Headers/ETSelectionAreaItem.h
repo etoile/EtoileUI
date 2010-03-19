@@ -16,7 +16,7 @@
 /** ETSelectionAreaItem is a layout item which can be used to represent any 
 selection area indepently of:
 <list>
-<item>the instrument/tool currently in use and how the selection was created</item>
+<item>the tool/tool currently in use and how the selection was created</item>
 <item>the selection shape (rectangular, circle, polygonal etc.)</item>
 </list> 
 
@@ -26,7 +26,7 @@ can be customized with -setStyle:. For example:
 [selectionAreaItem setStyle: [ETShape ovalShapeWithRect: [selectionAreaItem contentBounds]];
 </code>
 
-An ETInstrument subclass is expected to provide a prototype which can be 
+An ETTool subclass is expected to provide a prototype which can be 
 customized (color, shape, opacity etc.). See -[ETSelectionTool selectionAreaItem] 
 and ETShape to learn what you can customize.
 

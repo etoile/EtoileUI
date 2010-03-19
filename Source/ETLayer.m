@@ -254,7 +254,7 @@ You should never call this method unless you write an ETWindowLayout subclass. *
 	if (self == nil)
 		return nil;
 
-	[self setAttachedInstrument: [ETArrowTool instrument]];
+	[self setAttachedTool: [ETArrowTool tool]];
 
 	return self;
 }

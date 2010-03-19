@@ -126,7 +126,7 @@ The drag request can be handled with -[ETActionHandler handleDragItem:coordinato
 	}
 	else if (startDrag)
 	{
-		// TODO: Each pointer/instrument (in multi-pointer perspective) should 
+		// TODO: Each pointer/tool (in multi-pointer perspective) should 
 		// instantiate a new distinct coordinator.
 		[[item actionHandler] handleDragItem: item 
 			coordinator: [ETPickDropCoordinator sharedInstanceWithEvent: anEvent]];

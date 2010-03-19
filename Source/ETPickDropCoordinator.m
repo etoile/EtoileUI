@@ -56,7 +56,7 @@
 @implementation ETPickDropCoordinator
 
 // TODO: We will need to support retrieving registered coordinators per 
-// instrument/pointer when multiple pointers will be usable at the same time.
+// tool/pointer when multiple pointers will be usable at the same time.
 
 static ETPickDropCoordinator *sharedInstance = nil;
 
@@ -92,7 +92,7 @@ event. */
 	return self;
 }
 
-/** Returns the modifier that instruments should check to know when they should 
+/** Returns the modifier that tools should check to know when they should 
 ignore pick and drop allowed types.
 
 Returns NSShiftKeyMask by default.
@@ -152,9 +152,9 @@ See also -hasBuiltInDragAndDropSupport. */
 	}
 
 	ASSIGN(_dragSource, [item parentItem]);
-	if ([[ETTool activeInstrument] respondsToSelector: @selector(shouldRemoveItemsAtPickTime)])
+	if ([[ETTool activeTool] respondsToSelector: @selector(shouldRemoveItemsAtPickTime)])
 	{
-		_wereItemsRemovedAtPickTime = [[ETTool activeInstrument] shouldRemoveItemsAtPickTime];
+		_wereItemsRemovedAtPickTime = [[ETTool activeTool] shouldRemoveItemsAtPickTime];
 	}
 
 	id dragSupervisor = [[self pickEvent] window];
@@ -332,7 +332,7 @@ entering a new one. */
 - (ETLayoutItem *) dropTargetForDrag: (id <NSDraggingInfo>)dragInfo
 {
 	ETEvent *event = ETEVENT([NSApp currentEvent], dragInfo, ETDragPickingMask);
-	ETLayoutItem *dropTarget = [[ETTool instrument] hitTestWithEvent: event];
+	ETLayoutItem *dropTarget = [[ETTool tool] hitTestWithEvent: event];
 	// FIXME: We should receive the dragged item as an argument, otherwise 
 	// the next line might returns nil in case this item has already been 
 	// popped. See e.g. -performDragOperation: where the line ordering matters.
@@ -423,7 +423,7 @@ item. */
               withDropTarget: (ETLayoutItem *)dropTarget
 {
 	ETEvent *dragEvent = ETEVENT([NSApp currentEvent], dragInfo, ETDragPickingMask);
-	ETLayoutItem *hoveredItem = [[ETTool instrument] hitTestWithEvent: dragEvent];
+	ETLayoutItem *hoveredItem = [[ETTool tool] hitTestWithEvent: dragEvent];
 	BOOL dropOn = [hoveredItem isEqual: dropTarget];
 	NSPoint locRelativeToDropTarget = [dragEvent locationInLayoutItem];
 
@@ -468,7 +468,7 @@ item. */
 
 - (ETLayoutItem *) hitTest: (id <NSDraggingInfo>)dragInfo
 {
-	return [[ETTool instrument] hitTestWithEvent: 
+	return [[ETTool tool] hitTestWithEvent: 
 		ETEVENT([NSApp currentEvent], dragInfo, ETDragPickingMask)];
 }
 
@@ -627,7 +627,7 @@ item. */
 
 By default, returns YES. During in a drag session only, can return NO.
 
-See also -shouldRemoveItemsAtPickTime in ETInstrument subclasses that implements 
+See also -shouldRemoveItemsAtPickTime in ETTool subclasses that implements 
 it such as ETSelectTool. */
 - (BOOL) wereItemsRemovedAtPickTime
 {

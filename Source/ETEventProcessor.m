@@ -38,7 +38,7 @@ in use. */
 
 /** Implements in concrete subclasses to turn each raw event emitted by the run 
 loop of the widget backend into an EtoileUI-native event, then invoke the 
-related event method on the active instrument with the new ETEvent object in 
+related event method on the active tool with the new ETEvent object in 
 parameter.
 
 The implementation is expected to return YES if anEvent should be dispatched by 
@@ -102,15 +102,15 @@ when the event has to be handled by the widget backend. */
 
 - (BOOL) processKeyEvent: (ETEvent *)anEvent
 {
-	ETTool *activeInstrument = [ETTool activeInstrument];
+	ETTool *activeTool = [ETTool activeTool];
 	
 	switch ([anEvent type])
 	{
 		case NSKeyDown:
-			[activeInstrument keyDown: anEvent];
+			[activeTool keyDown: anEvent];
 			break;
 		case NSKeyUp:
-			[activeInstrument keyUp: anEvent];
+			[activeTool keyUp: anEvent];
 			break;
 		case NSFlagsChanged:
 			ETDebugLog(@"Modifiers changed to %d", [anEvent modifierFlags]);
@@ -141,7 +141,7 @@ Returns YES when the event has been handled by EtoileUI. */
 		ETDebugLog(@"Will push back event to widget backend %@", anEvent);
 		return NO;
 	}
-	ETTool *activeInstrument = [ETTool activeInstrument];
+	ETTool *activeTool = [ETTool activeTool];
 	ETWindowItem *windowItem = [anEvent windowItem];
 	BOOL hadActiveFieldEditorItem = (nil != windowItem && nil != [windowItem activeFieldEditorItem]);
 	NSWindow *window = [windowItem window];
@@ -158,12 +158,12 @@ Returns YES when the event has been handled by EtoileUI. */
 		case NSLeftMouseDown:
 			_wasMouseDownProcessed = YES;
 			[self processMouseMovedEvent: anEvent]; /* Emit enter/exit events in case the event window is a new one */
-			activeInstrument = [ETTool updateActiveInstrumentWithEvent: anEvent];
-			[activeInstrument mouseDown: anEvent];
+			activeTool = [ETTool updateActiveToolWithEvent: anEvent];
+			[activeTool mouseDown: anEvent];
 			break;
 		case NSLeftMouseUp:
 			_wasMouseDownProcessed = NO;
-			[activeInstrument mouseUp: anEvent];
+			[activeTool mouseUp: anEvent];
 			break;
 		case NSLeftMouseDragged:
 			/* When the mouse moves or resizes a window not slowly, the pointer 
@@ -174,7 +174,7 @@ Returns YES when the event has been handled by EtoileUI. */
 			{
 				return NO;
 			}
-			[activeInstrument mouseDragged: anEvent];
+			[activeTool mouseDragged: anEvent];
 			break;
 		default:
 			return NO;
@@ -188,7 +188,7 @@ Returns YES when the event has been handled by EtoileUI. */
 	// However -[NSWindow firstResponder] isn't KVO-observable prior to 10.6.
 	if (hadActiveFieldEditorItem && firstResponderChanged)
 	{
-		[activeInstrument tryRemoveFieldEditorItemWithEvent: anEvent];
+		[activeTool tryRemoveFieldEditorItemWithEvent: anEvent];
 	}
 
 	return YES;
@@ -196,7 +196,7 @@ Returns YES when the event has been handled by EtoileUI. */
 
 
 /** Synthetizes NSMouseEntered and NSMouseExited events when the mouse enters 
-and exits layout items, and pushes them to the active instrument.
+and exits layout items, and pushes them to the active tool.
 
 For each mouse moved event, the receiver will emit new events:
 <enum>
@@ -224,48 +224,48 @@ is the root item which contains both A and D.
 */
 - (void) processMouseMovedEvent: (ETEvent *)anEvent
 {
-	ETTool *instrument = [ETTool activeInstrument];
-	ETLayoutItem *hitItem = [[ETTool instrument] hitTestWithEvent: anEvent];
+	ETTool *tool = [ETTool activeTool];
+	ETLayoutItem *hitItem = [[ETTool tool] hitTestWithEvent: anEvent];
 
 	//ETLog(@"Will process mouse move on %@ and hovered item stack\n %@", 
-	//	hitItem, [instrument hoveredItemStack]);
+	//	hitItem, [tool hoveredItemStack]);
 
 	[anEvent setLayoutItem: hitItem];
 	/* We send move event before enter and exit events as AppKit does, we could 
 	   have choosen to do the reverse though. */
 	if ([anEvent type] == NSMouseMoved)
-		[instrument mouseMoved: anEvent];
+		[tool mouseMoved: anEvent];
 
 	/* We call -synthetizeMouseExitedEvent: first because the exited item must 
 	   be popped from the hovered item stack before a new one can be pushed. */
 	ETEvent *exitEvent = [self synthetizeMouseExitedEvent: anEvent];
 	ETEvent *enterEvent = [self synthetizeMouseEnteredEvent: anEvent];
 
-	NSParameterAssert([[instrument hoveredItemStack] firstObject] == [instrument hitItemForNil]);
+	NSParameterAssert([[tool hoveredItemStack] firstObject] == [tool hitItemForNil]);
 
 	/* Exit must be handled before enter because enter means the active 
-	   instrument might change and the new one may have a very different
-	   dispatch than the instrument attached to the area we exit. 
+	   tool might change and the new one may have a very different
+	   dispatch than the tool attached to the area we exit. 
 	   Different dispatch means the item on which the exit action will be 
 	   invoked is unpredictable. */
 	if (exitEvent != nil)
 	{
 		NSParameterAssert([exitEvent type] == NSMouseExited);
 
-		/* We exit the area attached to the current active instrument, hence 
+		/* We exit the area attached to the current active tool, hence 
 		   we hand the dispatch to the previously active one. */
-		[instrument mouseExited: exitEvent];
+		[tool mouseExited: exitEvent];
 	}
 	if (enterEvent != nil)
 	{
 		NSParameterAssert([enterEvent type] == NSMouseEntered);
 
-		/* The new active instrument is attached to the area we enter in, hence 
+		/* The new active tool is attached to the area we enter in, hence 
 		   we hand the dispatch to it. */
-		[(ETTool *)[ETTool activeInstrument] mouseEntered: enterEvent];
+		[(ETTool *)[ETTool activeTool] mouseEntered: enterEvent];
 	}
 
-	//ETLog(@"Did process mouse move and hovered item stack\n %@", [instrument hoveredItemStack]);
+	//ETLog(@"Did process mouse move and hovered item stack\n %@", [tool hoveredItemStack]);
 }
 
 /** Always calls -synthetizeMouseExitedEvent: first because the exited item 
@@ -279,7 +279,7 @@ also ensures the hovered item stack is valid. */
 	if (nil == [anEvent window])
 		return nil;
 
-	NSMutableArray *hoveredItemStack = [[ETTool activeInstrument] hoveredItemStack];
+	NSMutableArray *hoveredItemStack = [[ETTool activeTool] hoveredItemStack];
 
 	NSAssert([hoveredItemStack count] > 0, @"Hovered item stack must never be empty");
 
@@ -309,8 +309,8 @@ also ensures the hovered item stack is valid. */
 	if (nil == [anEvent window])
 		return nil;
 	
-	ETTool *instrument = [ETTool activeInstrument];
-	NSMutableArray *hoveredItemStack = [instrument hoveredItemStack];
+	ETTool *tool = [ETTool activeTool];
+	NSMutableArray *hoveredItemStack = [tool hoveredItemStack];
 
 	NSAssert([hoveredItemStack count] > 0, @"Hovered item stack must never be empty");
 
@@ -337,13 +337,13 @@ also ensures the hovered item stack is valid. */
 		[hoveredItemStack removeLastObject];
 
 	/* We have to cope with various border cases or lost events */
-	[instrument rebuildHoveredItemStackIfNeededForEvent: anEvent];
+	[tool rebuildHoveredItemStackIfNeededForEvent: anEvent];
 
 	return exitEvent;
 }
 
 /** Unlike other -processXXX methods, this one is called back by 
--[ETInstrument mouseDown:] where the active instrument is responsible to choose 
+-[ETTool mouseDown:] where the active tool is responsible to choose 
 the responder (layout item or widget view) on which the event is expected to be 
 dispatched. */
 - (BOOL) tryActivateItem: (ETLayoutItem *)item withEvent: (ETEvent *)anEvent

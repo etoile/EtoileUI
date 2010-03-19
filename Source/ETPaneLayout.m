@@ -66,7 +66,7 @@ If contentItem is nil, a default content item will be created. */
 	[_barItem setLayout: [ETTableLayout layout]];
 	_barPosition = ETPanePositionTop;
 	
-	[[_barItem layout] setAttachedInstrument: [ETSelectTool instrument]];
+	[[_barItem layout] setAttachedTool: [ETSelectTool tool]];
 
 	return self;
 }
@@ -507,7 +507,7 @@ The bar item is the master view and the content item is the detail view. */
 {
 	ETPaneLayout *layout = [self layout];
 	[[layout barItem] setLayout: [ETLineLayout layout]];
-	[[[layout barItem] layout] setAttachedInstrument: [ETSelectTool instrument]];
+	[[[layout barItem] layout] setAttachedTool: [ETSelectTool tool]];
 	[[layout barItem] setHasHorizontalScroller: YES];
 	return layout;
 }
@@ -516,7 +516,7 @@ The bar item is the master view and the content item is the detail view. */
 {
 	ETPaneLayout *layout = [self layout];
 	[[layout barItem] setLayout: [ETBrowserLayout layout]];
-	[[[layout barItem] layout] setAttachedInstrument: [ETSelectTool instrument]];
+	[[[layout barItem] layout] setAttachedTool: [ETSelectTool tool]];
 	[layout setBarPosition: ETPanePositionLeft];
 	return layout;
 }

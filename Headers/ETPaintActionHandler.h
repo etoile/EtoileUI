@@ -1,6 +1,6 @@
 /*  <title>ETPaintActionHandler</title>
 
-	<abstract>Paint actions produced by various instruments/tools.</abstract>
+	<abstract>Paint actions produced by various tools/tools.</abstract>
 
 	Copyright (C) 2009 Quentin Mathe
  

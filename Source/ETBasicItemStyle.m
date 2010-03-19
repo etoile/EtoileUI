@@ -133,7 +133,7 @@ DEALLOC(DESTROY(_labelAttributes));
 		[self drawSelectionIndicatorInRect: [item drawingFrame]];
 	}
 
-	if ([[[ETTool activeInstrument] firstKeyResponder] isEqual: item])
+	if ([[[ETTool activeTool] firstKeyResponder] isEqual: item])
 	{
 		[self drawFirstResponderIndicatorInRect: [item drawingFrame]];
 	}

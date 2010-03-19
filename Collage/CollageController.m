@@ -73,7 +73,7 @@
 	/* ... A less useless use case would be to replace the shape bound to it or 
 	   alter its shape as below. */
 
-	ETSelectTool *tool = [[mainItem layout] attachedInstrument];
+	ETSelectTool *tool = [[mainItem layout] attachedTool];
 	[[[tool selectionAreaItem] style] setStrokeColor: [NSColor orangeColor]];
 
 	/* Give grid-like positions to items initially */
@@ -84,7 +84,7 @@
 
 	[[itemFactory windowGroup] addItem: [mainItem deepCopy]];
 
-	/* Open an inspector that allows us to easily switch the instrument and the 
+	/* Open an inspector that allows us to easily switch the tool and the 
 	   layout in use */
 
 	[[itemFactory windowGroup] inspect: nil];
