@@ -32,7 +32,7 @@
 /* Layout Context & Layout View Synchronization */
 
 - (void) syncLayoutViewWithItem: (ETLayoutItem *)item;
-- (void) syncLayoutViewWithInstrument: (ETInstrument *)anInstrument;
+- (void) syncLayoutViewWithInstrument: (ETTool *)anInstrument;
 - (void) didChangeSelectionInLayoutView;
 - (NSArray *) selectionIndexPaths;
 

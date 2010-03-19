@@ -12,7 +12,7 @@
 #import <EtoileFoundation/Macros.h>
 #import <UnitKit/UnitKit.h>
 #import "ETFreeLayout.h"
-#import "ETInstrument.h"
+#import "ETTool.h"
 #import "ETLayer.h"
 #import "ETSelectTool.h"
 #import "ETCompatibility.h"
@@ -49,14 +49,14 @@ DEALLOC(DESTROY(layer))
 
 - (void) testInitialActiveInstrument
 {
-	UKObjectsSame([[layer layout] attachedInstrument], [ETInstrument activeInstrument]);
+	UKObjectsSame([[layer layout] attachedInstrument], [ETTool activeInstrument]);
 }
 
 - (void) testLayout
 {
 	[layer setLayout: [ETFreeLayout layout]];
 
-	ETInstrument *instrument = [[layer layout] attachedInstrument];
+	ETTool *instrument = [[layer layout] attachedInstrument];
 	UKObjectKindOf(instrument, ETSelectTool);
 
 

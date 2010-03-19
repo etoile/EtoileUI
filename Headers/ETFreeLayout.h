@@ -28,7 +28,7 @@
 
 /* Handles */
 
-- (BOOL) showsHandlesForInstrument: (ETInstrument *)anInstrument;
+- (BOOL) showsHandlesForInstrument: (ETTool *)anInstrument;
 - (void) showHandles;
 - (void) hideHandles;
 - (void) showHandlesForItem: (ETLayoutItem *)item;

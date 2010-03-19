@@ -16,7 +16,7 @@
 #import <EtoileFoundation/Macros.h>
 #import "ETInspector.h"
 #import "EtoileUIProperties.h"
-#import "ETInstrument.h"
+#import "ETTool.h"
 #import "ETViewModelLayout.h"
 #import "ETLayoutItem+Reflection.h"
 #import "ETLayoutItemGroup.h"
@@ -99,7 +99,7 @@
 	}
 	
 	[instrumentPopup removeAllItems];
-	FOREACH([ETInstrument registeredInstrumentClasses], instrumentClass, ETInstrument *)
+	FOREACH([ETTool registeredInstrumentClasses], instrumentClass, ETTool *)
 	{
 		[instrumentPopup addItemWithTitle: [instrumentClass displayName]];
 		[[instrumentPopup lastItem] setRepresentedObject: instrumentClass];

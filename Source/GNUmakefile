@@ -77,7 +77,7 @@ libEtoileUI_OBJC_FILES += \
 	ETEventProcessor.m \
 	ETTemplateItemLayout.m \
 	ETIconLayout.m \
-	ETInstrument.m \
+	ETTool.m \
 	ETSelectTool.m \
 	ETPickDropCoordinator.m \
 	ETInstruments.m \

@@ -11,7 +11,7 @@
 #import <EtoileFoundation/NSObject+Etoile.h>
 #import "ETLayout.h"
 #import "ETGeometry.h"
-#import "ETInstrument.h"
+#import "ETTool.h"
 #import "ETLayoutItemGroup.h"
 #import "ETTableLayout.h"
 #import "ETOutlineLayout.h"
@@ -369,19 +369,19 @@ If the previously attached instrument was the active instrument, the new one
 becomes the active instrument. See -[ETInstrument setActiveInstrument:].
 
 Also invokes -didChangeAttachedInstrument:toInstrument:.  */
-- (void) setAttachedInstrument: (ETInstrument *)newInstrument
+- (void) setAttachedInstrument: (ETTool *)newInstrument
 {
 	if ([newInstrument isEqual: _instrument] == NO)
 		[_instrument setLayoutOwner: nil];
 		
-	ETInstrument *oldInstrument = RETAIN(_instrument);
+	ETTool *oldInstrument = RETAIN(_instrument);
 
 	ASSIGN(_instrument, newInstrument);
 	[newInstrument setLayoutOwner: self];
 
-	if ([oldInstrument isEqual: [ETInstrument activeInstrument]])
+	if ([oldInstrument isEqual: [ETTool activeInstrument]])
 	{
-		[ETInstrument setActiveInstrument: newInstrument];
+		[ETTool setActiveInstrument: newInstrument];
 	}
 
 	[self didChangeAttachedInstrument: oldInstrument  toInstrument: newInstrument];
@@ -406,8 +406,8 @@ the receiver layout or any ancestor layout.
 
 The ancestor layout on which the instrument was changed can be retrieved with 
 [newInstrument layoutOwner]. */
-- (void) didChangeAttachedInstrument: (ETInstrument *)oldInstrument
-                        toInstrument: (ETInstrument *)newInstrument
+- (void) didChangeAttachedInstrument: (ETTool *)oldInstrument
+                        toInstrument: (ETTool *)newInstrument
 {
 	FOREACH([_layoutContext arrangedItems], item, ETLayoutItem *)
 	{

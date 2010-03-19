@@ -17,7 +17,7 @@
 #import <EtoileUI/ETActionHandler.h>
 #import <EtoileUI/ETStyle.h>
 
-@class ETInstrument; 
+@class ETTool; 
 
 extern NSString *kETMediatedInstrumentProperty; /** mediatedInstrument property */
 extern NSString *kETManipulatedObjectProperty; /** manipulatedObject property */
@@ -37,8 +37,8 @@ EtHandle mediatedInstrument property. */
  
  }
  
- - (ETInstrument *) mediatedInstrument;
- - (void) setMediatedInstrument: (ETInstrument *)anInstrument;
+ - (ETTool *) mediatedInstrument;
+ - (void) setMediatedInstrument: (ETTool *)anInstrument;
  - (id) manipulatedObject;
  - (void) setManipulatedObject: (id)anObject;
  

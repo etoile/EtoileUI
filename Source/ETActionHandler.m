@@ -16,7 +16,7 @@
 #import "ETBasicItemStyle.h"
 #import "ETEvent.h"
 #import "ETGeometry.h"
-#import "ETInstrument.h"
+#import "ETTool.h"
 #import "ETLayoutItem.h"
 #import "ETLayoutItemFactory.h"
 #import "ETLayoutItemGroup.h"
@@ -182,7 +182,7 @@ Which actions begins and ends the text editing is up to you. */
                    inRect: (NSRect)fieldEditorRect
 {
 	id <ETFirstResponderSharingArea> editionCoordinator = 
-		[[ETInstrument activeInstrument] editionCoordinatorForItem: item];
+		[[ETTool activeInstrument] editionCoordinatorForItem: item];
 
 	if (nil == editionCoordinator)
 	{
@@ -226,7 +226,7 @@ removes the field editor item inserted in the window backed ancestor item. */
 		return;
 
 	id <ETFirstResponderSharingArea> editionCoordinator = 
-		[[ETInstrument activeInstrument] editionCoordinatorForItem: _editedItem];
+		[[ETTool activeInstrument] editionCoordinatorForItem: _editedItem];
 
 	if (nil == editionCoordinator)
 	{
@@ -246,7 +246,7 @@ Overrides this method when you want to customize how simple click are handled. *
 - (void) handleClickItem: (ETLayoutItem *)item atPoint: (NSPoint)aPoint
 {
 	ETDebugLog(@"Click %@", item);
-	[[ETInstrument activeInstrument] makeFirstResponder: (id)item];
+	[[ETTool activeInstrument] makeFirstResponder: (id)item];
 }
 
 /** <override-dummy />

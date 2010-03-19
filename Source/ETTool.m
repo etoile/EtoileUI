@@ -10,7 +10,7 @@
 #import <EtoileFoundation/NSObject+Etoile.h>
 #import <EtoileFoundation/NSObject+Model.h>
 #import <EtoileFoundation/Macros.h>
-#import "ETInstrument.h"
+#import "ETTool.h"
 #import "ETEvent.h"
 #import "ETEventProcessor.h"
 #import "ETGeometry.h"
@@ -25,14 +25,14 @@
 #import "ETWindowItem.h"
 #import "ETCompatibility.h"
 
-@interface ETInstrument (Private)
+@interface ETTool (Private)
 - (BOOL) makeFirstResponder: (id)aResponder inWindow: (NSWindow *)aWindow;
 - (BOOL) performKeyEquivalent: (ETEvent *)anEvent;
 - (void) setHoveredItemStack: (NSMutableArray *)itemStack;
 @end
 
 
-@implementation ETInstrument
+@implementation ETTool
 
 static NSMutableSet *instrumentPrototypes = nil;
 
@@ -71,9 +71,9 @@ Also publishes the prototype in the shared aspect repository (not yet implemente
 
 Raises an invalid argument exception if anInstrument class isn't a subclass of 
 ETInstrument. */
-+ (void) registerInstrument: (ETInstrument *)anInstrument
++ (void) registerInstrument: (ETTool *)anInstrument
 {
-	if ([anInstrument isKindOfClass: [ETInstrument class]] == NO)
+	if ([anInstrument isKindOfClass: [ETTool class]] == NO)
 	{
 		[NSException raise: NSInvalidArgumentException
 		            format: @"Prototype %@ must be a subclass of ETInstrument to get "
@@ -111,7 +111,7 @@ object. */
 	// FIXME: Implement
 }
 
-static ETInstrument *activeInstrument = nil;
+static ETTool *activeInstrument = nil;
 
 /** Returns the active instrument through which the events are dispatched in the 
 layout item tree. */
@@ -126,8 +126,8 @@ layout item tree. */
 	return activeInstrument;
 }
 
-+ (void) notifyOfChangeFromInstrument: (ETInstrument *)oldInstrument 
-                         toInstrument: (ETInstrument *)newInstrument
++ (void) notifyOfChangeFromInstrument: (ETTool *)oldInstrument 
+                         toInstrument: (ETTool *)newInstrument
 {
 	// TODO: Post a notification
 }
@@ -141,9 +141,9 @@ and deactivation in your ETInstrument subclasses.
 You should rarely need to invoke this method since EtoileUI usually 
 automatically activates instruments in response to the user's click with 
 -updateActiveInstrumentWithEvent:. */
-+ (void) setActiveInstrument: (ETInstrument *)instrumentToActivate
++ (void) setActiveInstrument: (ETTool *)instrumentToActivate
 {
-	ETInstrument *instrumentToDeactivate = [ETInstrument activeInstrument];
+	ETTool *instrumentToDeactivate = [ETTool activeInstrument];
 
 	if ([instrumentToActivate isEqual: instrumentToDeactivate])
 		return;
@@ -173,7 +173,7 @@ mouse down precisely). */
 	return [[self activeInstrument] lookUpInstrumentInHoveredItemStack];;
 }
 
-static ETInstrument *mainInstrument = nil;
+static ETTool *mainInstrument = nil;
 
 /** Returns the instrument to be used as active instrument when no other 
 instruments can be looked up and activated.
@@ -228,7 +228,7 @@ See also -mainInstrument. */
 
 - (id) copyWithZone: (NSZone *)aZone
 {
-	ETInstrument *newInstrument = [[[self class] allocWithZone: aZone] init];
+	ETTool *newInstrument = [[[self class] allocWithZone: aZone] init];
 
 	// NOTE: For now, we don't copy any NSResponder property such as 
 	// -nextResponder or -menu.
@@ -470,7 +470,7 @@ You should never to call this method, only ETEventProcessor is expected to use
 it. */
 + (void) updateCursorIfNeeded
 {
-	[[(ETInstrument *)[self activatableInstrument] cursor] set];
+	[[(ETTool *)[self activatableInstrument] cursor] set];
 }
 
 /** <override-never />
@@ -479,7 +479,7 @@ hovered item stack.
 
 You should never to call this method, only ETEventProcessor is expected to use 
 it. */
-+ (ETInstrument *) updateActiveInstrumentWithEvent: (ETEvent *)anEvent
++ (ETTool *) updateActiveInstrumentWithEvent: (ETEvent *)anEvent
 {
 	BOOL isFieldEditorEvent = ([[anEvent windowItem] hitTestFieldEditorWithEvent: anEvent] != nil);
 
@@ -488,7 +488,7 @@ it. */
 		return activeInstrument;
 	}
 
-	ETInstrument *instrumentToActivate = [[ETInstrument activeInstrument] lookUpInstrumentInHoveredItemStack];
+	ETTool *instrumentToActivate = [[ETTool activeInstrument] lookUpInstrumentInHoveredItemStack];
 	[self setActiveInstrument: instrumentToActivate];
 	return instrumentToActivate;
 }
@@ -530,9 +530,9 @@ The stack is never empty because the pointer never exits the root item which
 covers the whole screen. 
 
 You should rarely need to override this method. */
-- (ETInstrument *) lookUpInstrumentInHoveredItemStack
+- (ETTool *) lookUpInstrumentInHoveredItemStack
 {
-	ETInstrument *foundInstrument = nil;
+	ETTool *foundInstrument = nil;
 	/* The last/top object is the instrument at the lowest/deepest level in the 
 	   layout item tree. */
 	NSEnumerator *e = [[self hoveredItemStack] reverseObjectEnumerator];
@@ -1002,11 +1002,11 @@ NO. */
 	{
 		if (type == NSKeyDown)
 		{
-			[(ETInstrument *)aResponder keyDown: anEvent];
+			[(ETTool *)aResponder keyDown: anEvent];
 		}
 		else
 		{
-			[(ETInstrument *)aResponder keyUp: anEvent];		
+			[(ETTool *)aResponder keyUp: anEvent];		
 		}
 	}
 	else /* For views and other AppKit responders */

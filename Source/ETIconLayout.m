@@ -182,7 +182,7 @@ The resizing isn't delegated to the positional layout unlike in ETTemplateItemLa
 - (void) resizeLayoutItems: (NSArray *)items toScaleFactor: (float)factor
 {
 	id <ETFirstResponderSharingArea> editionCoordinator = 
-		[[ETInstrument activeInstrument] editionCoordinatorForItem: _layoutContext];
+		[[ETTool activeInstrument] editionCoordinatorForItem: _layoutContext];
 
 	/* We use -arrangedItems in case we receive only a subset to resize (not true currently) */
 	if ([[_layoutContext arrangedItems] containsObject: [editionCoordinator editedItem]])

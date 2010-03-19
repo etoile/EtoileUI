@@ -13,7 +13,7 @@
 #import <Foundation/Foundation.h>
 #import <AppKit/AppKit.h>
 #import <EtoileUI/ETDecoratorItem.h>
-#import <EtoileUI/ETInstrument.h> /* For ETFirstResponderSharingArea */
+#import <EtoileUI/ETTool.h> /* For ETFirstResponderSharingArea */
 
 /** A decorator which can be used to put a layout item inside a window.
 

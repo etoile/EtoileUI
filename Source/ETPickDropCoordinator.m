@@ -15,7 +15,7 @@
 #import <EtoileFoundation/NSObject+Model.h>
 #import "ETPickDropCoordinator.h"
 #import "ETEvent.h"
-#import "ETInstrument.h"
+#import "ETTool.h"
 #import "ETLayoutItem.h"
 #import "ETLayoutItemGroup.h"
 #import "ETLayoutItemGroup+Mutation.h"
@@ -152,9 +152,9 @@ See also -hasBuiltInDragAndDropSupport. */
 	}
 
 	ASSIGN(_dragSource, [item parentItem]);
-	if ([[ETInstrument activeInstrument] respondsToSelector: @selector(shouldRemoveItemsAtPickTime)])
+	if ([[ETTool activeInstrument] respondsToSelector: @selector(shouldRemoveItemsAtPickTime)])
 	{
-		_wereItemsRemovedAtPickTime = [[ETInstrument activeInstrument] shouldRemoveItemsAtPickTime];
+		_wereItemsRemovedAtPickTime = [[ETTool activeInstrument] shouldRemoveItemsAtPickTime];
 	}
 
 	id dragSupervisor = [[self pickEvent] window];
@@ -332,7 +332,7 @@ entering a new one. */
 - (ETLayoutItem *) dropTargetForDrag: (id <NSDraggingInfo>)dragInfo
 {
 	ETEvent *event = ETEVENT([NSApp currentEvent], dragInfo, ETDragPickingMask);
-	ETLayoutItem *dropTarget = [[ETInstrument instrument] hitTestWithEvent: event];
+	ETLayoutItem *dropTarget = [[ETTool instrument] hitTestWithEvent: event];
 	// FIXME: We should receive the dragged item as an argument, otherwise 
 	// the next line might returns nil in case this item has already been 
 	// popped. See e.g. -performDragOperation: where the line ordering matters.
@@ -423,7 +423,7 @@ item. */
               withDropTarget: (ETLayoutItem *)dropTarget
 {
 	ETEvent *dragEvent = ETEVENT([NSApp currentEvent], dragInfo, ETDragPickingMask);
-	ETLayoutItem *hoveredItem = [[ETInstrument instrument] hitTestWithEvent: dragEvent];
+	ETLayoutItem *hoveredItem = [[ETTool instrument] hitTestWithEvent: dragEvent];
 	BOOL dropOn = [hoveredItem isEqual: dropTarget];
 	NSPoint locRelativeToDropTarget = [dragEvent locationInLayoutItem];
 
@@ -468,7 +468,7 @@ item. */
 
 - (ETLayoutItem *) hitTest: (id <NSDraggingInfo>)dragInfo
 {
-	return [[ETInstrument instrument] hitTestWithEvent: 
+	return [[ETTool instrument] hitTestWithEvent: 
 		ETEVENT([NSApp currentEvent], dragInfo, ETDragPickingMask)];
 }
 

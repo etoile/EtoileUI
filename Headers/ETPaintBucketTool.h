@@ -12,7 +12,7 @@
 
 #import <Foundation/Foundation.h>
 #import <AppKit/AppKit.h>
-#import <EtoileUI/ETInstrument.h>
+#import <EtoileUI/ETTool.h>
 
 
 typedef enum _ETPaintMode
@@ -24,7 +24,7 @@ typedef enum _ETPaintMode
 /** An ETInstrument subclass that implements the very classic paint bucket tool.
 
 TODO: Implement tolerance option. */
-@interface ETPaintBucketTool : ETInstrument
+@interface ETPaintBucketTool : ETTool
 {
 	NSColor *_fillColor;
 	NSColor *_strokeColor;

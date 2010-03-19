@@ -18,7 +18,7 @@
 
 @implementation ETWidgetLayout
 
-- (void) setAttachedInstrument: (ETInstrument *)anInstrument
+- (void) setAttachedInstrument: (ETTool *)anInstrument
 {
 	[super setAttachedInstrument: anInstrument];
 	[self syncLayoutViewWithInstrument: anInstrument];
@@ -122,7 +122,7 @@ and its settings need to be mirrored on the widget view.
 
 When the given instrument is nil, -allowsEmptySelection is reset to YES and 
 -allowsMultipleSelection to NO. */
-- (void) syncLayoutViewWithInstrument: (ETInstrument *)anInstrument
+- (void) syncLayoutViewWithInstrument: (ETTool *)anInstrument
 {
 	NSParameterAssert([self layoutView] != nil);
 

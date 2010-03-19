@@ -11,7 +11,7 @@
 #import "ETEventProcessor.h"
 #import "ETDecoratorItem.h"
 #import "ETGeometry.h"
-#import "ETInstrument.h"
+#import "ETTool.h"
 #import "ETEvent.h"
 #import "ETLayoutItem.h"
 #import "ETApplication.h"
@@ -102,7 +102,7 @@ when the event has to be handled by the widget backend. */
 
 - (BOOL) processKeyEvent: (ETEvent *)anEvent
 {
-	ETInstrument *activeInstrument = [ETInstrument activeInstrument];
+	ETTool *activeInstrument = [ETTool activeInstrument];
 	
 	switch ([anEvent type])
 	{
@@ -141,7 +141,7 @@ Returns YES when the event has been handled by EtoileUI. */
 		ETDebugLog(@"Will push back event to widget backend %@", anEvent);
 		return NO;
 	}
-	ETInstrument *activeInstrument = [ETInstrument activeInstrument];
+	ETTool *activeInstrument = [ETTool activeInstrument];
 	ETWindowItem *windowItem = [anEvent windowItem];
 	BOOL hadActiveFieldEditorItem = (nil != windowItem && nil != [windowItem activeFieldEditorItem]);
 	NSWindow *window = [windowItem window];
@@ -153,12 +153,12 @@ Returns YES when the event has been handled by EtoileUI. */
 	{
 		case NSMouseMoved:
 			[self processMouseMovedEvent: anEvent];
-			[ETInstrument updateCursorIfNeeded];
+			[ETTool updateCursorIfNeeded];
 			break;
 		case NSLeftMouseDown:
 			_wasMouseDownProcessed = YES;
 			[self processMouseMovedEvent: anEvent]; /* Emit enter/exit events in case the event window is a new one */
-			activeInstrument = [ETInstrument updateActiveInstrumentWithEvent: anEvent];
+			activeInstrument = [ETTool updateActiveInstrumentWithEvent: anEvent];
 			[activeInstrument mouseDown: anEvent];
 			break;
 		case NSLeftMouseUp:
@@ -224,8 +224,8 @@ is the root item which contains both A and D.
 */
 - (void) processMouseMovedEvent: (ETEvent *)anEvent
 {
-	ETInstrument *instrument = [ETInstrument activeInstrument];
-	ETLayoutItem *hitItem = [[ETInstrument instrument] hitTestWithEvent: anEvent];
+	ETTool *instrument = [ETTool activeInstrument];
+	ETLayoutItem *hitItem = [[ETTool instrument] hitTestWithEvent: anEvent];
 
 	//ETLog(@"Will process mouse move on %@ and hovered item stack\n %@", 
 	//	hitItem, [instrument hoveredItemStack]);
@@ -262,7 +262,7 @@ is the root item which contains both A and D.
 
 		/* The new active instrument is attached to the area we enter in, hence 
 		   we hand the dispatch to it. */
-		[(ETInstrument *)[ETInstrument activeInstrument] mouseEntered: enterEvent];
+		[(ETTool *)[ETTool activeInstrument] mouseEntered: enterEvent];
 	}
 
 	//ETLog(@"Did process mouse move and hovered item stack\n %@", [instrument hoveredItemStack]);
@@ -279,7 +279,7 @@ also ensures the hovered item stack is valid. */
 	if (nil == [anEvent window])
 		return nil;
 
-	NSMutableArray *hoveredItemStack = [[ETInstrument activeInstrument] hoveredItemStack];
+	NSMutableArray *hoveredItemStack = [[ETTool activeInstrument] hoveredItemStack];
 
 	NSAssert([hoveredItemStack count] > 0, @"Hovered item stack must never be empty");
 
@@ -309,7 +309,7 @@ also ensures the hovered item stack is valid. */
 	if (nil == [anEvent window])
 		return nil;
 	
-	ETInstrument *instrument = [ETInstrument activeInstrument];
+	ETTool *instrument = [ETTool activeInstrument];
 	NSMutableArray *hoveredItemStack = [instrument hoveredItemStack];
 
 	NSAssert([hoveredItemStack count] > 0, @"Hovered item stack must never be empty");

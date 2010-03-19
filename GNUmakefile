@@ -98,7 +98,7 @@ EtoileUI_HEADER_FILES += \
 	ETEventProcessor.h \
 	ETTemplateItemLayout.h \
 	ETIconLayout.h \
-	ETInstrument.h \
+	ETTool.h \
 	ETSelectTool.h \
 	ETPickDropCoordinator.h \
 	ETInstruments.h \

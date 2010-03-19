@@ -17,7 +17,7 @@
 #import "ETFreeLayout.h"
 #import "ETGeometry.h"
 #import "ETHandle.h"
-#import "ETInstrument.h"
+#import "ETTool.h"
 #import "ETLayer.h"
 #import "ETLayoutItem.h"
 #import "ETLayoutItem+Scrollable.h"
@@ -44,7 +44,7 @@
 @interface BasicEventTest : NSObject <UKTest>
 {
 	ETLayoutItemGroup *mainItem;
-	ETInstrument *instrument;
+	ETTool *instrument;
 	ETLayoutItemFactory *itemFactory;
 }
 
@@ -65,7 +65,7 @@ coordinates or not to set the event location in the window. */
 	ASSIGN(mainItem, [ETLayoutItem itemGroup]);
 	[mainItem setFrame: NSMakeRect(0, 0, WIN_WIDTH, WIN_HEIGHT)];
 	[[ETLayoutItem windowGroup] addItem: mainItem];
-	ASSIGN(instrument, [ETInstrument instrument]);
+	ASSIGN(instrument, [ETTool instrument]);
 
 	return self;
 }
@@ -455,7 +455,7 @@ inside the content bounds. */
 
 	/* We need a active instrument in order to have -observeValueForKeyPath:XXX 
 	   in ETFreeLayout reacts to a selection change by toggling the handle visibility */
-	[ETInstrument setActiveInstrument: instrument];
+	[ETTool setActiveInstrument: instrument];
 	
 	[mainItem addItem: item1];
 	[item2 addItem: item21]; /* Test methods insert item2 as they want */

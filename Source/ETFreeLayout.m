@@ -65,8 +65,8 @@ subclasses (see -[ETLayout initWithLayoutView:]). */
 	return [super attachedInstrument];
 }
 
-- (void) didChangeAttachedInstrument: (ETInstrument *)oldInstrument 
-                        toInstrument: (ETInstrument*)newInstrument
+- (void) didChangeAttachedInstrument: (ETTool *)oldInstrument 
+                        toInstrument: (ETTool*)newInstrument
 {
 	NSParameterAssert(oldInstrument != newInstrument);
 
@@ -87,7 +87,7 @@ subclasses (see -[ETLayout initWithLayoutView:]). */
 	// else the handle visibility remains identical
 }
 
-- (BOOL) showsHandlesForInstrument: (ETInstrument *)anInstrument
+- (BOOL) showsHandlesForInstrument: (ETTool *)anInstrument
 {
 	return [anInstrument isKindOfClass: [ETSelectTool class]];
 }
@@ -120,7 +120,7 @@ subclasses (see -[ETLayout initWithLayoutView:]). */
 					     change: (NSDictionary *)change 
 						context: (void *)context
 {
-	if ([self showsHandlesForInstrument: [ETInstrument activeInstrument]] == NO)
+	if ([self showsHandlesForInstrument: [ETTool activeInstrument]] == NO)
 		return;
 
 	BOOL selected = [[change objectForKey: NSKeyValueChangeNewKey] boolValue];

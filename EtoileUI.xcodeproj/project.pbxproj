@@ -42,7 +42,7 @@
 		60073F7910075DDC007272E6 /* ETXHTMLRenderContext.m in Sources */ = {isa = PBXBuildFile; fileRef = 60073F7710075DDC007272E6 /* ETXHTMLRenderContext.m */; };
 		60141B1D0F9355DF00014507 /* ETWidgetLayout.h in Headers */ = {isa = PBXBuildFile; fileRef = 60141B1C0F9355DF00014507 /* ETWidgetLayout.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		60141B200F9355EE00014507 /* ETWidgetLayout.m in Sources */ = {isa = PBXBuildFile; fileRef = 60141B1F0F9355EE00014507 /* ETWidgetLayout.m */; };
-		601455CB0F9722B900268FD1 /* ETInstrument.m in Sources */ = {isa = PBXBuildFile; fileRef = 60C94F610F8BB884007912D9 /* ETInstrument.m */; };
+		601455CB0F9722B900268FD1 /* ETTool.m in Sources */ = {isa = PBXBuildFile; fileRef = 60C94F610F8BB884007912D9 /* ETTool.m */; };
 		601455CC0F9722B900268FD1 /* ETComputedLayout.m in Sources */ = {isa = PBXBuildFile; fileRef = 60C27A100E66B0EA0040A41D /* ETComputedLayout.m */; };
 		601455CE0F9722B900268FD1 /* UKPluginsRegistry+Icons.m in Sources */ = {isa = PBXBuildFile; fileRef = 60364A090E40A560003377E0 /* UKPluginsRegistry+Icons.m */; };
 		601455CF0F9722B900268FD1 /* NSImage+NiceScaling.m in Sources */ = {isa = PBXBuildFile; fileRef = 60364A070E40A560003377E0 /* NSImage+NiceScaling.m */; };
@@ -205,8 +205,8 @@
 		60C76C591013682A0073C381 /* ETCompositeLayout.m in Sources */ = {isa = PBXBuildFile; fileRef = 60C76C581013682A0073C381 /* ETCompositeLayout.m */; };
 		60C76C5A1013682A0073C381 /* ETCompositeLayout.m in Sources */ = {isa = PBXBuildFile; fileRef = 60C76C581013682A0073C381 /* ETCompositeLayout.m */; };
 		60C76C6810136D0A0073C381 /* TestCompositeLayout.m in Sources */ = {isa = PBXBuildFile; fileRef = 60C76C6710136D0A0073C381 /* TestCompositeLayout.m */; };
-		60C94F600F8BB874007912D9 /* ETInstrument.h in Headers */ = {isa = PBXBuildFile; fileRef = 60C94F5E0F8BB874007912D9 /* ETInstrument.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		60C94F620F8BB884007912D9 /* ETInstrument.m in Sources */ = {isa = PBXBuildFile; fileRef = 60C94F610F8BB884007912D9 /* ETInstrument.m */; };
+		60C94F600F8BB874007912D9 /* ETTool.h in Headers */ = {isa = PBXBuildFile; fileRef = 60C94F5E0F8BB874007912D9 /* ETTool.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		60C94F620F8BB884007912D9 /* ETTool.m in Sources */ = {isa = PBXBuildFile; fileRef = 60C94F610F8BB884007912D9 /* ETTool.m */; };
 		60C94F780F8BB9B4007912D9 /* ETTemplateItemLayout.h in Headers */ = {isa = PBXBuildFile; fileRef = 60C94F760F8BB9B3007912D9 /* ETTemplateItemLayout.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		60C94F7A0F8BB9C4007912D9 /* ETTemplateItemLayout.m in Sources */ = {isa = PBXBuildFile; fileRef = 60C94F790F8BB9C4007912D9 /* ETTemplateItemLayout.m */; };
 		60CA45D30F9485BC0000B371 /* ETInstruments.m in Sources */ = {isa = PBXBuildFile; fileRef = 607A43E80F0AEA8900753B56 /* ETInstruments.m */; };
@@ -591,8 +591,8 @@
 		60C76C561013681B0073C381 /* ETCompositeLayout.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ETCompositeLayout.h; path = Headers/ETCompositeLayout.h; sourceTree = "<group>"; };
 		60C76C581013682A0073C381 /* ETCompositeLayout.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ETCompositeLayout.m; path = Source/ETCompositeLayout.m; sourceTree = "<group>"; };
 		60C76C6710136D0A0073C381 /* TestCompositeLayout.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = TestCompositeLayout.m; path = Tests/TestCompositeLayout.m; sourceTree = "<group>"; };
-		60C94F5E0F8BB874007912D9 /* ETInstrument.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ETInstrument.h; path = Headers/ETInstrument.h; sourceTree = "<group>"; };
-		60C94F610F8BB884007912D9 /* ETInstrument.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ETInstrument.m; path = Source/ETInstrument.m; sourceTree = "<group>"; };
+		60C94F5E0F8BB874007912D9 /* ETTool.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ETTool.h; path = Headers/ETTool.h; sourceTree = "<group>"; };
+		60C94F610F8BB884007912D9 /* ETTool.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ETTool.m; path = Source/ETTool.m; sourceTree = "<group>"; };
 		60C94F760F8BB9B3007912D9 /* ETTemplateItemLayout.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ETTemplateItemLayout.h; path = Headers/ETTemplateItemLayout.h; sourceTree = "<group>"; };
 		60C94F790F8BB9C4007912D9 /* ETTemplateItemLayout.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ETTemplateItemLayout.m; path = Source/ETTemplateItemLayout.m; sourceTree = "<group>"; };
 		60CA73860C494B22009D9B02 /* COPYING */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = COPYING; sourceTree = "<group>"; };
@@ -1172,8 +1172,8 @@
 				60F112BC0D363806003B2EFA /* ETEvent.m */,
 				604B5C1B0F4B472E001C25E8 /* ETEventProcessor.h */,
 				604B5C1E0F4B473F001C25E8 /* ETEventProcessor.m */,
-				60C94F5E0F8BB874007912D9 /* ETInstrument.h */,
-				60C94F610F8BB884007912D9 /* ETInstrument.m */,
+				60C94F5E0F8BB874007912D9 /* ETTool.h */,
+				60C94F610F8BB884007912D9 /* ETTool.m */,
 				607A43E50F0AEA7300753B56 /* ETInstruments.h */,
 				607A43E80F0AEA8900753B56 /* ETInstruments.m */,
 				60B27ED20FF8DAD00012BB42 /* ETPaintBucketTool.h */,
@@ -1296,7 +1296,7 @@
 				60330B590F7CEF1300A1E8C1 /* ETDecoratorItem.h in Headers */,
 				6074CA4B0F814FC50081E438 /* ETScrollableAreaItem.h in Headers */,
 				60141B1D0F9355DF00014507 /* ETWidgetLayout.h in Headers */,
-				60C94F600F8BB874007912D9 /* ETInstrument.h in Headers */,
+				60C94F600F8BB874007912D9 /* ETTool.h in Headers */,
 				60C94F780F8BB9B4007912D9 /* ETTemplateItemLayout.h in Headers */,
 				60F8C9CA0F8DF19C0069FA6C /* ETHandle.h in Headers */,
 				6077C1670F9801C5006CB3F5 /* ETLayoutItem+Scrollable.h in Headers */,
@@ -1733,7 +1733,7 @@
 				60AE4C950EED520B00DE82BC /* UKPluginsRegistry+Icons.m in Sources */,
 				60C27A110E66B0EA0040A41D /* ETComputedLayout.m in Sources */,
 				605D6DF90CE946F8009ED244 /* ETStyle.m in Sources */,
-				60C94F620F8BB884007912D9 /* ETInstrument.m in Sources */,
+				60C94F620F8BB884007912D9 /* ETTool.m in Sources */,
 				600245170CD162090023182D /* ETView.m in Sources */,
 				600243CB0CD134440023182D /* test_ETLayoutItem.m in Sources */,
 				605D6CBB0CE78335009ED244 /* test_ETView.m in Sources */,
@@ -1838,7 +1838,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				606A98FF113F072A00CC89B9 /* ETModelDescriptionRenderer.m in Sources */,
-				601455CB0F9722B900268FD1 /* ETInstrument.m in Sources */,
+				601455CB0F9722B900268FD1 /* ETTool.m in Sources */,
 				601455CC0F9722B900268FD1 /* ETComputedLayout.m in Sources */,
 				60364A0C0E40A560003377E0 /* ETLayoutItem+Factory.m in Sources */,
 				60599ADA0C772EA0007F225E /* ETFreeLayout.m in Sources */,

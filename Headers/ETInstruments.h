@@ -12,7 +12,7 @@
 
 #import <Foundation/Foundation.h>
 #import <AppKit/AppKit.h>
-#import <EtoileUI/ETInstrument.h>
+#import <EtoileUI/ETTool.h>
 
 @class ETEvent, ETLayoutItem, ETLayoutItemGroup, ETLayout, ETSelectionAreaItem;
 @protocol ETKeyInputAction, ETTouchAction;
@@ -59,7 +59,7 @@ The arrow tool doesn't select items when you click on them. If you want to
 react to mouse up events by selecting the clicked item, you can attach the 
 select tool to the layout which should exhibit this behavior. For example, 
 ETSelectTool is attached to ETIconLayout and ETFreeLayout by default. */
-@interface ETArrowTool : ETInstrument
+@interface ETArrowTool : ETTool
 {
 	@private
 	ETLayoutItem *_firstTouchedItem; /* The item initially touched on mouse down */
@@ -81,7 +81,7 @@ outside.
 
 ETMoveTool can be subclassed as ETSelectTool does to implement more evolved 
 move, translate and drag behaviors. */
-@interface ETMoveTool : ETInstrument
+@interface ETMoveTool : ETTool
 {
 	id _draggedItem;
 

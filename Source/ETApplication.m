@@ -9,7 +9,7 @@
 #import <EtoileFoundation/Macros.h>
 #import "ETApplication.h"
 #import "ETEventProcessor.h"
-#import "ETInstrument.h"
+#import "ETTool.h"
 #import "ETLayoutItemGroup.h"
 #import "ETLayoutItem+Factory.h"
 #import "ETLayoutItemBuilder.h"
@@ -488,7 +488,7 @@ the application delegate when CoreObject is available. */
 	if ([aTarget respondsToSelector: aSelector])
 		return aTarget;
 
-	ETInstrument *instrument = [ETInstrument activeInstrument];
+	ETTool *instrument = [ETTool activeInstrument];
 	id firstKeyResponder = [instrument firstKeyResponder];
 	id firstMainResponder = [instrument firstMainResponder];
 	BOOL keyAndMainIdentical = (firstKeyResponder == firstMainResponder);

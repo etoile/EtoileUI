@@ -28,7 +28,7 @@
 #import <EtoileUI/ETIconLayout.h>
 #import <EtoileUI/ETInspecting.h>
 #import <EtoileUI/ETInspector.h>
-#import <EtoileUI/ETInstrument.h>
+#import <EtoileUI/ETTool.h>
 #import <EtoileUI/ETInstruments.h>
 #import <EtoileUI/ETLayer.h>
 #import <EtoileUI/ETLayout.h>

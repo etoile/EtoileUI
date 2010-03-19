@@ -1462,17 +1462,17 @@ You should never use this method unless you write an ETLayoutItem subclass. */
 	/* We must not let the tool attached to the old layout remain active, 
 	   otherwise the layout can be deallocated and this tool remains with an 
 	   invalid -layoutOwner. */
-	ETInstrument *oldTool = [oldLayout attachedInstrument];
+	ETTool *oldTool = [oldLayout attachedInstrument];
 
-	if ([oldTool isEqual: [ETInstrument activeInstrument]])
+	if ([oldTool isEqual: [ETTool activeInstrument]])
 	{
-		ETInstrument *newTool = [[self layout] attachedInstrument];
+		ETTool *newTool = [[self layout] attachedInstrument];
 
 		if (newTool == nil)
 		{
-			newTool = [ETInstrument mainInstrument];
+			newTool = [ETTool mainInstrument];
 		}
-		[ETInstrument setActiveInstrument: newTool];
+		[ETTool setActiveInstrument: newTool];
 	}
 
 	/* Notify the interested parties about the layout change */

@@ -10,7 +10,7 @@
 #import "ETBasicItemStyle.h"
 #import "ETFreeLayout.h"
 #import "ETGeometry.h"
-#import "ETInstrument.h"
+#import "ETTool.h"
 #import "ETLayoutItemGroup.h"
 #import "ETLayoutItem.h"
 #import "EtoileUIProperties.h"
@@ -133,7 +133,7 @@ DEALLOC(DESTROY(_labelAttributes));
 		[self drawSelectionIndicatorInRect: [item drawingFrame]];
 	}
 
-	if ([[[ETInstrument activeInstrument] firstKeyResponder] isEqual: item])
+	if ([[[ETTool activeInstrument] firstKeyResponder] isEqual: item])
 	{
 		[self drawFirstResponderIndicatorInRect: [item drawingFrame]];
 	}

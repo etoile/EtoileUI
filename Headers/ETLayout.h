@@ -13,7 +13,7 @@
 #import <Foundation/Foundation.h>
 #import <AppKit/AppKit.h>
 
-@class ETDropIndicator, ETInstrument, ETLineFragment, ETLayoutItem, ETLayoutItemGroup, ETView;
+@class ETDropIndicator, ETTool, ETLineFragment, ETLayoutItem, ETLayoutItemGroup, ETView;
 
 /** Methods which must be implemented by an object to be layouted by any
 	ETLayout subclasses. The object whose layout items are layouted is the
@@ -99,7 +99,7 @@ typedef enum _ETSizeConstraintStyle
 	IBOutlet id _layoutContext; /* Weak reference */
 	IBOutlet id _delegate; /* Weak reference */
 	IBOutlet NSView *_displayViewPrototype;
-	ETInstrument *_instrument;
+	ETTool *_instrument;
 	ETLayoutItemGroup *_rootItem; /* Lazily initialized */
 	ETDropIndicator *_dropIndicator;
 
@@ -137,10 +137,10 @@ typedef enum _ETSizeConstraintStyle
 
 /* Main Accessors */
 
-- (void) setAttachedInstrument: (ETInstrument *)newInstrument;
+- (void) setAttachedInstrument: (ETTool *)newInstrument;
 - (id) attachedInstrument;
-- (void) didChangeAttachedInstrument: (ETInstrument *)oldInstrument
-                        toInstrument: (ETInstrument *)newInstrument;
+- (void) didChangeAttachedInstrument: (ETTool *)oldInstrument
+                        toInstrument: (ETTool *)newInstrument;
 
 - (void) setLayoutContext: (id <ETLayoutingContext>)context;
 - (id <ETLayoutingContext>) layoutContext;

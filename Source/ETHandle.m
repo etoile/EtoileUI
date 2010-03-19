@@ -38,12 +38,12 @@ NSString *kETManipulatedObjectProperty = @"manipulatedObject";
 	return self;
 }
 
-- (ETInstrument *) mediatedInstrument
+- (ETTool *) mediatedInstrument
 {
 	return GET_PROPERTY(kETMediatedInstrumentProperty);
 }
 
-- (void) setMediatedInstrument: (ETInstrument *)anInstrument
+- (void) setMediatedInstrument: (ETTool *)anInstrument
 {
 	SET_PROPERTY(anInstrument, kETMediatedInstrumentProperty);
 }

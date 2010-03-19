@@ -16,7 +16,7 @@
 #import "ETController.h"
 #import "ETEvent.h"
 #import "ETGeometry.h"
-#import "ETInstrument.h"
+#import "ETTool.h"
 #import "ETLayoutItemGroup.h"
 #import "ETLayoutItem.h"
 #import "EtoileUIProperties.h"
@@ -126,9 +126,9 @@ method is called by ETTableLayout when rows are dragged). */
 		BOOL isCut = ([pickInfo pickingMask] & ETCutPickingMask);
 
 		/* We always remove the items immediately when the pick is a cut */
-		if (NO == isCut && [[ETInstrument activeInstrument] respondsToSelector: @selector(shouldRemoveItemsAtPickTime)])
+		if (NO == isCut && [[ETTool activeInstrument] respondsToSelector: @selector(shouldRemoveItemsAtPickTime)])
 		{
-			shouldRemoveItems = [[ETInstrument activeInstrument] shouldRemoveItemsAtPickTime];
+			shouldRemoveItems = [[ETTool activeInstrument] shouldRemoveItemsAtPickTime];
 		}
 
 		if (shouldRemoveItems)

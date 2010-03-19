@@ -150,10 +150,10 @@ needed replicate other actions on each selected item. */
 
 // TODO: Would be nice to simplify this a bit and try to share more with 
 // ETInstrument implementation.
-- (ETInstrument *) lookUpInstrumentInHoveredItemStack
+- (ETTool *) lookUpInstrumentInHoveredItemStack
 {
-	ETInstrument *foundInstrument = nil;
-	ETInstrument *parentInstrument = nil;
+	ETTool *foundInstrument = nil;
+	ETTool *parentInstrument = nil;
 	/* The last/top object is the instrument at the lowest/deepest level in the 
 	   layout item tree. */
 	NSEnumerator *e = [[self hoveredItemStack] reverseObjectEnumerator];

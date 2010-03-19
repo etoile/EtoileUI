@@ -50,7 +50,7 @@ deactivated on mouse exit. However some intruments such as ETSelectTool
 implement a custom policy: the instruments of child layouts are activated on 
 double-click and deactivated on a mouse click outside of their layout boundaries
 (see -setDeactivateOn:). */
-@interface ETInstrument : NSResponder <NSCopying>
+@interface ETTool : NSResponder <NSCopying>
 {
 	NSMutableArray *_hoveredItemStack; /* Lazily initialized, never access directly */
 	ETLayoutItem *_targetItem;
@@ -66,7 +66,7 @@ double-click and deactivated on a mouse click outside of their layout boundaries
 /* Registering Instruments */
 
 + (void) registerAspects;
-+ (void) registerInstrument: (ETInstrument *)anInstrument;
++ (void) registerInstrument: (ETTool *)anInstrument;
 + (NSSet *) registeredInstruments;
 + (NSSet *) registeredInstrumentClasses;
 
@@ -74,13 +74,13 @@ double-click and deactivated on a mouse click outside of their layout boundaries
 
 /* Instrument Activation */
 
-+ (ETInstrument *) updateActiveInstrumentWithEvent: (ETEvent *)anEvent;
++ (ETTool *) updateActiveInstrumentWithEvent: (ETEvent *)anEvent;
 + (void) updateCursorIfNeeded;
 
 /* Factory Methods */
 
 + (id) activeInstrument;
-+ (void) setActiveInstrument: (ETInstrument *)anInstrument;
++ (void) setActiveInstrument: (ETTool *)anInstrument;
 + (id) activatableInstrument;
 + (id) mainInstrument;
 + (void) setMainInstrument: (id)anInstrument;
@@ -162,7 +162,7 @@ double-click and deactivated on a mouse click outside of their layout boundaries
 /* Framework Private */
 
 - (NSMutableArray *) hoveredItemStack;
-- (ETInstrument *) lookUpInstrumentInHoveredItemStack;
+- (ETTool *) lookUpInstrumentInHoveredItemStack;
 - (void) rebuildHoveredItemStackIfNeededForEvent: (ETEvent *)anEvent;
 
 - (void) setLayoutOwner: (ETLayout *)aLayout;
@@ -177,8 +177,8 @@ double-click and deactivated on a mouse click outside of their layout boundaries
 
 // TODO: Evaluate... Not yet implemented.
 @interface NSObject (ETInstrumentDelegate)
-- (BOOL) instrument: (ETInstrument *)anInstrument shouldDeactivateWithEvent: (ETEvent *)anEvent;
-- (ETInstrument *) instrumentToActivateWithEvent: (ETEvent *)anEvent;
+- (BOOL) instrument: (ETTool *)anInstrument shouldDeactivateWithEvent: (ETEvent *)anEvent;
+- (ETTool *) instrumentToActivateWithEvent: (ETEvent *)anEvent;
 @end
 
 

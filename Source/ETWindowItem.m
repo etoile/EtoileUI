@@ -531,8 +531,8 @@ An NSInvalidArgumentException is raised when any given item is nil. */
 	/* Start to delegate text editing events to the text view with a basic instrument.
 	   We have no dedicated instrument and it is not very important because we 
 	   handle the raw events with a text widget provided by the widget backend. */
-	[ETInstrument setActiveInstrument: [ETInstrument instrument]];
-	[[ETInstrument activeInstrument] makeFirstResponder: [editorItem view]];
+	[ETTool setActiveInstrument: [ETTool instrument]];
+	[[ETTool activeInstrument] makeFirstResponder: [editorItem view]];
 }
 
 /** Removes the item which provides text editing in the window.
