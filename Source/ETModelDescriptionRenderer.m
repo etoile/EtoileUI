@@ -125,7 +125,8 @@
 	return item;
 }
 
-- (id) renderModelt: (id)anObject 
+#if 0
+- (id) renderModel: (id)anObject 
             inLayoutItem: (ETLayoutItem *)anItem 
               withLayout: (ETLayout *)aLayout;
 {
@@ -139,6 +140,7 @@
 
 	return builtItem;
 }
+#endif
 
 - (id) renderEntityDescription: (ETEntityDescription *)aDescription
 {
