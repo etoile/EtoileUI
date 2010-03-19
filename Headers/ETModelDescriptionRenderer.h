@@ -19,15 +19,29 @@
 
 @interface ETModelDescriptionRenderer : ETTransform
 {
-
+	NSMutableDictionary *_templateItems;
 }
 
 + (id) renderer;
 
-- (id) renderModelObject: (id)anObject;
-- (id) renderModelObject: (id)anObject 
-            inLayoutItem: (ETLayoutItem *)anItem 
-              withLayout: (ETLayout *)aLayout;
+- (void) setTemplateItem: (ETLayoutItem *)anItem forIdentifier: (NSString *)anIdentifier;
+- (ETLayoutItem *) templateItemForIdentifier: (NSString *)anIdentifier;
+
+- (id) newItemForIdentifier: (NSString *)anIdentifier isGroupRequired: (BOOL)mustBeGroup;
+
+- (id) renderModel: (id)anObject;
+- (id) renderModel: (id)anObject description: (ETEntityDescription *)entityDesc;
+ 
+- (id) renderProperties: (NSArray *)properties
+            description: (ETEntityDescription *)entityDesc  
+                ofModel: (id)anObject;
+- (id) renderProperty: (NSString *)aProperty
+          description: (ETEntityDescription *)entityDesc  
+              ofModel: (id)anObject;
+
+//- (id) renderModelObject: (id)anObject 
+//            inLayoutItem: (ETLayoutItem *)anItem 
+//              withLayout: (ETLayout *)aLayout;
 
 - (id) renderEntityDescription: (ETEntityDescription *)aDescription;
 - (id) renderPropertyDescription: (ETPropertyDescription *)aDescription;
