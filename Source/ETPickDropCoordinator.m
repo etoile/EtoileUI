@@ -507,7 +507,7 @@ item. */
 		return dragOp;*/
 
 	/* Otherwise it is a drag move */
-	ASSIGN(_dragInfo, drag);
+	ASSIGN(_dragInfo, (id)drag);
 	/* item can be nil, -itemAtLocation: doesn't return the receiver itself */
 	id item = [self dropTargetForDrag: drag]; 
 
@@ -581,7 +581,7 @@ item. */
 
 	NSParameterAssert(droppedObject != nil);
 
-	ASSIGN(_dragInfo, dragInfo); // May be... ASSIGN(_dropEvent, [ETApp current
+	ASSIGN(_dragInfo, (id)dragInfo); // May be... ASSIGN(_dropEvent, [ETApp current
 	BOOL dropSuccess = [[dropTarget actionHandler] handleDropObject: droppedObject
 	                                                        atIndex: _currentDropIndex
 	                                                         onItem: dropTarget 

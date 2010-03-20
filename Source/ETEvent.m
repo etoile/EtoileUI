@@ -73,7 +73,7 @@ DEALLOC(DESTROY(_draggingInfo); DESTROY(_layoutItem); DESTROY(_backendEvent))
 
 	ASSIGN(copiedEvent->_backendEvent, _backendEvent);
 	[copiedEvent setLayoutItem: [self layoutItem]];
-	ASSIGN(copiedEvent->_draggingInfo, _draggingInfo);
+	ASSIGN(copiedEvent->_draggingInfo, (id)_draggingInfo);
 
 	copiedEvent->_type = _type;
 	[copiedEvent setPickingMask: [self pickingMask]];
