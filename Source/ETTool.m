@@ -240,6 +240,12 @@ See also -mainTool. */
 	return newTool;
 }
 
+/** Returns YES. */
+- (BOOL) isTool
+{
+	return YES;
+}
+
 // TODO: For each document set the editor tool. Eventually offer a 
 // delegate method either through ETTool or ETDocumentManager to give 
 // more control over this...
@@ -987,6 +993,12 @@ NO. */
 	if ([self performKeyEquivalent: anEvent])
 		return;
 
+	/* When the responder is tool, we are usually invoked by [ETTool keyDown/Up:].
+	   We only got the key equivalent to check, because the event has already 
+	   been dispatched on the tool. */
+	if ([aResponder isTool])
+		return;
+
 	if ([aResponder isLayoutItem])
 	{
 		if (type == NSKeyDown)
@@ -996,17 +1008,6 @@ NO. */
 		else
 		{
 			[[aResponder actionHandler] handleKeyUp: anEvent onItem: aResponder];
-		}
-	}
-	else if ([aResponder isFirstResponderProxy]) /* For tool */
-	{
-		if (type == NSKeyDown)
-		{
-			[(ETTool *)aResponder keyDown: anEvent];
-		}
-		else
-		{
-			[(ETTool *)aResponder keyUp: anEvent];		
 		}
 	}
 	else /* For views and other AppKit responders */

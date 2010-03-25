@@ -207,6 +207,13 @@ otherwise returns NO. */
 	return NO;
 }
 
+/** Returns YES if the receiver is an ETTool class or subclass instance, 
+otherwise returns NO. */
+- (BOOL) isTool
+{
+	return NO;
+}
+
 /** Returns YES if the receiver is an NSView class or subclass instance, 
 otherwise returns NO. */
 - (BOOL) isView

@@ -93,6 +93,8 @@ double-click and deactivated on a mouse click outside of their layout boundaries
 
 - (id) copyWithZone: (NSZone *)aZone;
 
+- (BOOL) isTool;
+
 /* Activation Hooks */
 
 - (void) didBecomeActive;

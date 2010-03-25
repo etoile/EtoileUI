@@ -63,6 +63,7 @@
 - (BOOL) isFirstResponderProxy;
 
 - (BOOL) isLayoutItem;
+- (BOOL) isTool;
 - (BOOL) isView;
 
 @end
