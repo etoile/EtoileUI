@@ -46,6 +46,7 @@
 #import "ETContainer.h"
 #import "ETFlowLayout.h"
 #import "ETScrollableAreaItem.h"
+#import "ETTableLayout.h"
 #import "ETCompatibility.h"
 
 #define UKRectsEqual(x, y) UKTrue(NSEqualRects(x, y))
@@ -97,51 +98,89 @@ static ETLayoutItemFactory *itemFactory = nil;
 
 - (void) testRootItem
 {
-	UKNotNil([self rootItem]);
-	UKObjectsSame([self rootItem], self);
+	ETLayoutItem *item3 = [itemFactory item];
+
+	UKObjectsSame([item3 rootItem], item3);
 	
-	id item1 = [itemFactory itemGroup];
-	id item2 = [itemFactory itemGroup];
+	ETLayoutItemGroup *item1 = [itemFactory itemGroup];
+	ETLayoutItemGroup *item2 = [itemFactory itemGroup];
 	
 	[item1 addItem: item2];
-	[item2 addItem: self];
+	[item2 addItem: item3];
 	
-	UKNotNil([item2 rootItem]);
 	UKObjectsSame([item2 rootItem], item1);
 	UKObjectsSame([item2 rootItem], [item2 parentItem]);
-	UKObjectsSame([self rootItem], item1);
+	UKObjectsSame([item3 rootItem], item1);
 }
 
-- (void) testSetParentItem
+- (void) testAttachAndDetachItemWithoutView
 {
-	id view = [[ETView alloc] initWithFrame: NSMakeRect(0, 0, 5, 10)];
-	id parentView = [[ETContainer alloc] initWithFrame: NSMakeRect(0, 0, 50, 100)];
-	id prevParentView = [[NSView alloc] initWithFrame: NSMakeRect(0, 0, 50, 100)];
-	id parentItem = [parentView layoutItem];
-	
-	[prevParentView addSubview: view];
-	[self setSupervisorView: view];
-	
-	[self setParentItem: parentItem];
-	/* -setParentItem: doesn't touch the view hierarchy */
-	UKObjectsNotSame(parentView, [[self supervisorView] superview]);
-	UKObjectsSame(prevParentView, [[self supervisorView] superview]);
-	UKObjectsSame([[self displayView] superview], [[self supervisorView] superview]);
-	[self setParentItem: nil]; /* Revert to initial state */
+	ETLayoutItem* item = [itemFactory item];
+	ETLayoutItemGroup *parentItem = [itemFactory itemGroup];
 
-	// TODO: More tests and move the following tests into standalone methods
+	[parentItem setSupervisorView: AUTORELEASE([[ETView alloc] init])];
+	[parentItem handleAttachViewOfItem: item];
+	[parentItem handleDetachViewOfItem: item];
+	UKPass();
+}
 
-	[parentItem handleAttachViewOfItem: self];
-	UKObjectsSame([[self displayView] superview], [[self supervisorView] superview]);
-	[parentItem handleDetachViewOfItem: self]; /* Revert to initial state */
+- (void) testAddAndRemoveItem
+{
+	// TODO: Test when the item has a parent item already
+	ETLayoutItem* item = [itemFactory item];
+	ETLayoutItemGroup *parentItem = [itemFactory itemGroup];
 
-	[parentItem addItem: self]; /* Will set parent layout item and update the layout */
-	UKNotNil([[self displayView] superview]); /* View must be inserted as a subview now */
-	UKObjectsSame([parentItem supervisorView], [[self displayView] superview]);	
+	[parentItem addItem: item];
+
+	UKObjectsSame(parentItem, [item parentItem]);
+	UKTrue([parentItem containsItem: item]);
+	UKNil([item supervisorView]);
+	UKNil([parentItem supervisorView]);
+
+	[parentItem removeItem: item];
+
+	UKNil([item parentItem]);
+	UKFalse([parentItem containsItem: item]);
+	UKNil([item supervisorView]);
+	UKNil([parentItem supervisorView]);
+}
+
+- (void) testAddAndRemoveItemWithView
+{
+	// TODO: Test when the item has a parent item already
+	ETLayoutItem* item = [itemFactory itemWithView: AUTORELEASE([[NSView alloc] init])];
+	ETLayoutItemGroup *parentItem = [itemFactory itemGroup];
+
+	[parentItem addItem: item];
+
+	UKNil([[parentItem supervisorView] superview]);	
+	UKObjectsSame([parentItem supervisorView], [[item supervisorView] superview]);
 	
-	[parentItem removeItem: self];
-	UKNil([[self displayView] superview]);
-	UKObjectsNotSame([parentItem supervisorView], [[self displayView] superview]);
+	[parentItem removeItem: item];
+
+	UKNil([[parentItem supervisorView] superview]);
+	UKNil([[item supervisorView] superview]);
+}
+
+- (void) testAddItemWithViewIntoOpaqueLayout
+{
+	ETLayoutItem* item = [itemFactory itemWithView: AUTORELEASE([[NSView alloc] init])];
+	ETLayoutItemGroup *parentItem = [itemFactory itemGroup];
+
+	[parentItem setLayout: [ETTableLayout layout]];
+	[parentItem addItem: item];
+
+	// FIXME: Probably update ETWidgetLayout to use -setVisibleItems:
+	//UKFalse([item isVisible]);
+	UKNil([[item supervisorView] superview]);
+	UKObjectsSame(parentItem, [item parentItem]);
+	UKTrue([parentItem containsItem: item]);
+
+	/* Switch to non-opaque layout */
+	[parentItem setLayout: [ETFlowLayout layout]];
+
+	UKTrue([item isVisible]);
+	UKObjectsSame([parentItem supervisorView], [[item supervisorView] superview]);
 }
 
 /* Verify that a parent item nullifies the weak references to itself on -dealloc. */
