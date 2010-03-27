@@ -62,6 +62,7 @@ libEtoileUI_OBJC_FILES = \
 	ETWidgetLayout.m \
 	ETWindowItem.m \
 	FSBrowserCell.m \
+	NSCell+EtoileUI.m \
 	NSImage+Etoile.m \
 	NSObject+EtoileUI.m \
 	NSView+Etoile.m \

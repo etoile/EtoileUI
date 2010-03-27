@@ -19,6 +19,7 @@
 #import "ETPickboard.h"
 #import "ETPickDropActionHandler.h"
 #import "ETPickDropCoordinator.h"
+#import "NSCell+EtoileUI.h"
 #import "ETCompatibility.h"
 
 @interface NSTableColumn (Etoile) <ETColumnFragment>
@@ -601,35 +602,52 @@ See ETColumnFragment protocol to customize the returned column. */
 	return [layoutItems count];
 }
 
+/** This method is only exposed to be used internally by EtoileUI.
+
+Retrieves the value provided by the item and returns an object value that is 
+compatible with the cell used at the given row/column intersection.  */
+- (id) objectValueForTableColumn: (NSTableColumn *)column 
+                             row: (int)rowIndex 
+                            item: (ETLayoutItem *)item
+{
+	NSParameterAssert(ETUndeterminedIndex != rowIndex);
+
+	id value = [item valueForProperty: [column identifier]];
+	BOOL blankColumnIdentifier = ([column identifier] == nil || [[column identifier] isEqual: @""]);
+	NSTableView *tv = [self tableView];
+	
+	if (value == nil && ([tv numberOfColumns] == 1 || blankColumnIdentifier))
+	{
+		value = [item value];
+	}
+
+	//ETLog(@"Returns %@ at %i in %@", value, rowIndex, [tv primitiveDescription]);
+
+	/* 'value' could be any objects at this point. 
+	    When -[NSCell formatter] returns nil, -[NSCell setObjectValue:] converts 
+	    values to a string representation with -attributedStringValue, 
+	    -stringValue or -description when the value is not compatible with the cell.
+		But we use -objectValueForObject: because on Mac OS X:
+	    -[NSCell setObjectValue:] tends to copy the object
+	    -[NSImageCell setObjectValue:] only accepts images */
+	return [[column dataCellForRow: rowIndex] objectValueForObject: value];
+}
+
 - (id) tableView: (NSTableView *)tv 
 	objectValueForTableColumn: (NSTableColumn *)column row: (int)rowIndex
 {
-	NSArray *layoutItems = [_layoutContext arrangedItems];
-	ETLayoutItem *item = nil;
+	NSArray *items = [_layoutContext arrangedItems];
 	
-	if (rowIndex >= [layoutItems count])
+	if (rowIndex >= [items count])
 	{
 		ETLog(@"WARNING: Row index %d uncoherent with number of items %d in %@", 
-			rowIndex, [layoutItems count], self);
+			rowIndex, [items count], self);
 		return nil;
 	}
 	
-	item = [layoutItems objectAtIndex: rowIndex];
-	
-	//ETLog(@"Returns %@ as object value in table view %@", [item valueForProperty: [column identifier]], tv);
-	
-	id value = [item valueForProperty: [column identifier]];
-	BOOL blankColumnIdentifier = ([column identifier] == nil || [[column identifier] isEqual: @""]);
-	
-	if (value == nil && ([tv numberOfColumns] == 1 || blankColumnIdentifier))
-		value = [item value];
-
-	/* 'value' could be any objects at this point. Unless a custom formatter 
-           has been set on the column or a custom cell has been provided, 
-           non-common object values are converted to a string representation by 
-	   the cell with -attributedStringValue, -stringValue or -description 
-	   in the last resort. */
-	return value;
+	return [self objectValueForTableColumn: column
+	                                   row: rowIndex
+	                                  item: [items objectAtIndex: rowIndex]];
 }
 
 - (void) tableView: (NSTableView *)tv 
@@ -647,7 +665,7 @@ See ETColumnFragment protocol to customize the returned column. */
 	
 	item = [layoutItems objectAtIndex: rowIndex];
 	
-	//ETLog(@"Sets %@ as object value in table view %@", value, tv);
+	//ETLog(@"Sets %@ as object value in table view %@", value, [tv primitiveDescription]);
 
 	/* Handles the case where a cell with no content is double-clicked/edited 
 	   (NSImageCell or NSLevelIndicatorCell for example), this is only needed 

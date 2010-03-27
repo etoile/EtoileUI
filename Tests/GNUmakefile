@@ -20,6 +20,7 @@ EtoileUITests_OBJC_FILES = \
 	test_ETView.m \
 	test_ETLayout.m \
 	test_ETInstrument.m \
+	TestCell.m \
 	TestCompositeLayout.m \
 	TestItemCopy.m \
 	TestItemGeometry.m \

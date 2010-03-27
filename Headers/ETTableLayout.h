@@ -78,6 +78,9 @@ descriptor bound to the widget table column will be used (and eventually created
 - (NSTableColumn *) createTableColumnWithIdentifier: (NSString *)property;
 - (BOOL) canRemoveTableColumn: (NSTableColumn *)aTableColumn;
 - (BOOL) prepareTableColumn: (NSTableColumn *)aTableColum isFirst: (BOOL)isFirstColumn;
+- (id) objectValueForTableColumn: (NSTableColumn *)column 
+                             row: (int)rowIndex 
+                            item: (ETLayoutItem *)item;
 - (void) trySortRecursively: (BOOL)recursively oldSortDescriptors: (NSArray *)oldDescriptors;
 - (NSEvent *) backendDragEvent;
 - (void) setBackendDragEvent: (NSEvent *)event;

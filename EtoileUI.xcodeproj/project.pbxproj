@@ -220,6 +220,10 @@
 		60CF74930D44E68700B4CA3D /* EtoileUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 60EF8E9D0C5E4D0600C97C41 /* EtoileUI.framework */; };
 		60CF74940D44E68700B4CA3D /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1058C7A1FEA54F0111CA2CBB /* Cocoa.framework */; };
 		60CF749A0D44E69700B4CA3D /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 29B97316FDCFA39411CA2CEA /* main.m */; };
+		60D8881E115E407D00D7A8AA /* NSCell+EtoileUI.m in Sources */ = {isa = PBXBuildFile; fileRef = 60D8881D115E407D00D7A8AA /* NSCell+EtoileUI.m */; };
+		60D8881F115E407D00D7A8AA /* NSCell+EtoileUI.m in Sources */ = {isa = PBXBuildFile; fileRef = 60D8881D115E407D00D7A8AA /* NSCell+EtoileUI.m */; };
+		60D88821115E408D00D7A8AA /* NSCell+EtoileUI.h in Headers */ = {isa = PBXBuildFile; fileRef = 60D88820115E408D00D7A8AA /* NSCell+EtoileUI.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		60D88884115E651000D7A8AA /* TestCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 60D88883115E651000D7A8AA /* TestCell.m */; };
 		60DAC87D100774F4007F143A /* ETLayoutXHTMLRenderer.h in Headers */ = {isa = PBXBuildFile; fileRef = 60DAC87B100774F4007F143A /* ETLayoutXHTMLRenderer.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		60DAC87E100774F4007F143A /* ETLayoutXHTMLRenderer.m in Sources */ = {isa = PBXBuildFile; fileRef = 60DAC87C100774F4007F143A /* ETLayoutXHTMLRenderer.m */; };
 		60DEFD2A0D4E8482008B1038 /* ETTextEditorLayout.h in Headers */ = {isa = PBXBuildFile; fileRef = 60DEFD280D4E8482008B1038 /* ETTextEditorLayout.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -608,6 +612,9 @@
 		60CF74390D449B9500B4CA3D /* MarkupEditorController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MarkupEditorController.h; path = MarkupEditor/MarkupEditorController.h; sourceTree = "<group>"; };
 		60CF743A0D449B9500B4CA3D /* MarkupEditorController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = MarkupEditorController.m; path = MarkupEditor/MarkupEditorController.m; sourceTree = "<group>"; };
 		60CF744E0D44E42A00B4CA3D /* MarkupEditor.nib */ = {isa = PBXFileReference; lastKnownFileType = wrapper.nib; name = MarkupEditor.nib; path = MarkupEditor/MarkupEditor.nib; sourceTree = "<group>"; };
+		60D8881D115E407D00D7A8AA /* NSCell+EtoileUI.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = "NSCell+EtoileUI.m"; path = "Source/NSCell+EtoileUI.m"; sourceTree = "<group>"; };
+		60D88820115E408D00D7A8AA /* NSCell+EtoileUI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "NSCell+EtoileUI.h"; path = "Headers/NSCell+EtoileUI.h"; sourceTree = "<group>"; };
+		60D88883115E651000D7A8AA /* TestCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = TestCell.m; path = Tests/TestCell.m; sourceTree = "<group>"; };
 		60DAC87B100774F4007F143A /* ETLayoutXHTMLRenderer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ETLayoutXHTMLRenderer.h; path = ../EtoileWeb/ETLayoutXHTMLRenderer.h; sourceTree = SOURCE_ROOT; };
 		60DAC87C100774F4007F143A /* ETLayoutXHTMLRenderer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ETLayoutXHTMLRenderer.m; path = ../EtoileWeb/ETLayoutXHTMLRenderer.m; sourceTree = SOURCE_ROOT; };
 		60DEFD280D4E8482008B1038 /* ETTextEditorLayout.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ETTextEditorLayout.h; path = Headers/ETTextEditorLayout.h; sourceTree = "<group>"; };
@@ -861,6 +868,7 @@
 		600243CE0CD134C40023182D /* Tests */ = {
 			isa = PBXGroup;
 			children = (
+				60D88883115E651000D7A8AA /* TestCell.m */,
 				60E7BD20107E7B3F00E7C0F2 /* TestStyle.m */,
 				60C76C6710136D0A0073C381 /* TestCompositeLayout.m */,
 				6067EB591046B4E600C39086 /* TestItemCopy.m */,
@@ -1098,6 +1106,8 @@
 		609548D40C0E313A00068CBB /* Utility & Extensions */ = {
 			isa = PBXGroup;
 			children = (
+				60D88820115E408D00D7A8AA /* NSCell+EtoileUI.h */,
+				60D8881D115E407D00D7A8AA /* NSCell+EtoileUI.m */,
 				608A5E921023216F0086F4B3 /* EtoileUIProperties.h */,
 				608A612C102378580086F4B3 /* EtoileUIProperties.m */,
 				60F363F70D183BB400FCFFDA /* NSImage+Etoile.h */,
@@ -1320,6 +1330,7 @@
 				60CDD5C4105E8DE8005E253B /* ETFragment.h in Headers */,
 				60FBB13010A0A92A00BE7E21 /* ETBasicItemStyle.h in Headers */,
 				60E989C510BC4E6400A7A29C /* ETNullLayout.h in Headers */,
+				60D88821115E408D00D7A8AA /* NSCell+EtoileUI.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1763,6 +1774,8 @@
 				60E7BD21107E7B3F00E7C0F2 /* TestStyle.m in Sources */,
 				60FBB13310A0A94600BE7E21 /* ETBasicItemStyle.m in Sources */,
 				60E989C710BC4E7100A7A29C /* ETNullLayout.m in Sources */,
+				60D8881E115E407D00D7A8AA /* NSCell+EtoileUI.m in Sources */,
+				60D88884115E651000D7A8AA /* TestCell.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1908,6 +1921,7 @@
 				66B7412C103CB03D008AF5B1 /* ETTitleBarView.m in Sources */,
 				60FBB13210A0A94600BE7E21 /* ETBasicItemStyle.m in Sources */,
 				60E989C810BC4E7100A7A29C /* ETNullLayout.m in Sources */,
+				60D8881F115E407D00D7A8AA /* NSCell+EtoileUI.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

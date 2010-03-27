@@ -223,39 +223,10 @@ expanded and collapsed by getting automatically a related outline arrow. */
 		//ETLog(@"WARNING: Get nil item in -outlineView:objectValueForTableColumn:byItem: of %@", self);
 		return nil;
 	}
-	
-	id value = [item valueForProperty: [column identifier]];
-	BOOL blankColumnIdentifier = ([column identifier] == nil || [[column identifier] isEqual: @""]);
-	
-	if (value == nil && ([[self outlineView] numberOfColumns] == 1 || blankColumnIdentifier))
-		value = [item value];
 
-#ifndef GNUSTEP
-	/* Try to convert invalid value into a dummy object value when needed 
-	   (NSImageCell on Mac OS X) */
-	NSCell *dataCell = [column dataCellForRow: [outlineView rowForItem: item]];
-	
-	if ([dataCell isKindOfClass: [NSImageCell class]]
-	 && [value isKindOfClass: [NSImage class]] == NO)
-	{
-		/* Setting an invalid value on an image cell isn't supported. To be
-		   sure, this never occurs we create a dummy image when value is nil. 
-		   It usually happens when no property exists in item for [colum identifier]. */
-		value = AUTORELEASE([[NSImage alloc] init]);
-	}
-#endif
-
-	/* Report nil value for debugging */
-	if (value == nil || ([value isEqual: [NSNull null]]
-	 && [[(NSObject *)item properties] containsObject: [column identifier]] == NO))
-	{
-		ETDebugLog(@"Item %@ has no property %@ requested by layout %@", item, 
-			[column identifier], self);
-	}
-
-	//ETLog(@"Returns %@ as object value in outline view %@", value, outlineView);
-	
-	return value;
+	return [self objectValueForTableColumn: column 
+	                                   row: [outlineView rowForItem: item]
+	                                  item: item];
 }
 
 - (void) outlineView: (NSOutlineView *)outlineView 

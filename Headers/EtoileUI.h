@@ -68,6 +68,7 @@
 #import <EtoileUI/ETViewModelLayout.h>
 #import <EtoileUI/ETWindowItem.h>
 #import <EtoileUI/FSBrowserCell.h>
+#import <EtoileUI/NSCell+EtoileUI.h>
 #import <EtoileUI/NSImage+Etoile.h>
 #import <EtoileUI/NSObject+EtoileUI.h>
 #import <EtoileUI/NSView+Etoile.h>
