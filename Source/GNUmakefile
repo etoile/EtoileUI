@@ -70,7 +70,6 @@ libEtoileUI_OBJC_FILES = \
 
 libEtoileUI_OBJC_FILES += \
 	UKPluginsRegistry+Icons.m \
-	NSBezierPathCappedBoxes.m \
 	NSImage+NiceScaling.m \
 	UKNibOwner.m
 

@@ -110,7 +110,6 @@ EtoileUI_HEADER_FILES += \
 
 EtoileUI_HEADER_FILES += \
 	EtoileCompatibility.h \
-	NSBezierPathCappedBoxes.h \
 	NSImage+NiceScaling.h \
 	UKNibOwner.h \
 	UKPluginsRegistry+Icons.h

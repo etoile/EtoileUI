@@ -53,7 +53,6 @@
 		601455D50F9722B900268FD1 /* ETScrollableAreaItem.m in Sources */ = {isa = PBXBuildFile; fileRef = 6074CA4C0F814FD60081E438 /* ETScrollableAreaItem.m */; };
 		601455D60F9722B900268FD1 /* UKNibOwner.m in Sources */ = {isa = PBXBuildFile; fileRef = 60364A080E40A560003377E0 /* UKNibOwner.m */; };
 		601455D70F9722B900268FD1 /* ETDecoratorItem.m in Sources */ = {isa = PBXBuildFile; fileRef = 60330B5A0F7CEF3400A1E8C1 /* ETDecoratorItem.m */; };
-		601455D80F9722B900268FD1 /* NSBezierPathCappedBoxes.m in Sources */ = {isa = PBXBuildFile; fileRef = 60364A060E40A560003377E0 /* NSBezierPathCappedBoxes.m */; };
 		6017849E0D670DED00A54D5A /* PhotoViewExample.nib in Resources */ = {isa = PBXBuildFile; fileRef = 6017849D0D670DED00A54D5A /* PhotoViewExample.nib */; };
 		6022404E1003DF14007D5D07 /* TestItemGeometry.m in Sources */ = {isa = PBXBuildFile; fileRef = 6022404D1003DF14007D5D07 /* TestItemGeometry.m */; };
 		60264AA50FB72D4D00D8163F /* Carbon.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 60264AA40FB72D4D00D8163F /* Carbon.framework */; };
@@ -71,7 +70,6 @@
 		60330B5B0F7CEF3500A1E8C1 /* ETDecoratorItem.m in Sources */ = {isa = PBXBuildFile; fileRef = 60330B5A0F7CEF3400A1E8C1 /* ETDecoratorItem.m */; };
 		603649FB0E40A547003377E0 /* ETLayoutItem+Factory.h in Headers */ = {isa = PBXBuildFile; fileRef = 603649F40E40A547003377E0 /* ETLayoutItem+Factory.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		603649FC0E40A547003377E0 /* ETLayoutItem+Reflection.h in Headers */ = {isa = PBXBuildFile; fileRef = 603649F50E40A547003377E0 /* ETLayoutItem+Reflection.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		603649FE0E40A547003377E0 /* NSBezierPathCappedBoxes.h in Headers */ = {isa = PBXBuildFile; fileRef = 603649F70E40A547003377E0 /* NSBezierPathCappedBoxes.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		603649FF0E40A547003377E0 /* NSImage+NiceScaling.h in Headers */ = {isa = PBXBuildFile; fileRef = 603649F80E40A547003377E0 /* NSImage+NiceScaling.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		60364A000E40A547003377E0 /* UKNibOwner.h in Headers */ = {isa = PBXBuildFile; fileRef = 603649F90E40A547003377E0 /* UKNibOwner.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		60364A010E40A547003377E0 /* UKPluginsRegistry+Icons.h in Headers */ = {isa = PBXBuildFile; fileRef = 603649FA0E40A547003377E0 /* UKPluginsRegistry+Icons.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -182,7 +180,6 @@
 		60909D660CB304D9009CAD27 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 29B97316FDCFA39411CA2CEA /* main.m */; };
 		60AE4C900EED520B00DE82BC /* ETLayoutItem+Factory.m in Sources */ = {isa = PBXBuildFile; fileRef = 60364A040E40A560003377E0 /* ETLayoutItem+Factory.m */; };
 		60AE4C910EED520B00DE82BC /* ETLayoutItem+Reflection.m in Sources */ = {isa = PBXBuildFile; fileRef = 60364A050E40A560003377E0 /* ETLayoutItem+Reflection.m */; };
-		60AE4C920EED520B00DE82BC /* NSBezierPathCappedBoxes.m in Sources */ = {isa = PBXBuildFile; fileRef = 60364A060E40A560003377E0 /* NSBezierPathCappedBoxes.m */; };
 		60AE4C930EED520B00DE82BC /* NSImage+NiceScaling.m in Sources */ = {isa = PBXBuildFile; fileRef = 60364A070E40A560003377E0 /* NSImage+NiceScaling.m */; };
 		60AE4C940EED520B00DE82BC /* UKNibOwner.m in Sources */ = {isa = PBXBuildFile; fileRef = 60364A080E40A560003377E0 /* UKNibOwner.m */; };
 		60AE4C950EED520B00DE82BC /* UKPluginsRegistry+Icons.m in Sources */ = {isa = PBXBuildFile; fileRef = 60364A090E40A560003377E0 /* UKPluginsRegistry+Icons.m */; };
@@ -470,13 +467,11 @@
 		60330B5A0F7CEF3400A1E8C1 /* ETDecoratorItem.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ETDecoratorItem.m; path = Source/ETDecoratorItem.m; sourceTree = "<group>"; };
 		603649F40E40A547003377E0 /* ETLayoutItem+Factory.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "ETLayoutItem+Factory.h"; path = "Headers/ETLayoutItem+Factory.h"; sourceTree = "<group>"; };
 		603649F50E40A547003377E0 /* ETLayoutItem+Reflection.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "ETLayoutItem+Reflection.h"; path = "Headers/ETLayoutItem+Reflection.h"; sourceTree = "<group>"; };
-		603649F70E40A547003377E0 /* NSBezierPathCappedBoxes.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = NSBezierPathCappedBoxes.h; path = Headers/NSBezierPathCappedBoxes.h; sourceTree = "<group>"; };
 		603649F80E40A547003377E0 /* NSImage+NiceScaling.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "NSImage+NiceScaling.h"; path = "Headers/NSImage+NiceScaling.h"; sourceTree = "<group>"; };
 		603649F90E40A547003377E0 /* UKNibOwner.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = UKNibOwner.h; path = Headers/UKNibOwner.h; sourceTree = "<group>"; };
 		603649FA0E40A547003377E0 /* UKPluginsRegistry+Icons.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "UKPluginsRegistry+Icons.h"; path = "Headers/UKPluginsRegistry+Icons.h"; sourceTree = "<group>"; };
 		60364A040E40A560003377E0 /* ETLayoutItem+Factory.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = "ETLayoutItem+Factory.m"; path = "Source/ETLayoutItem+Factory.m"; sourceTree = "<group>"; };
 		60364A050E40A560003377E0 /* ETLayoutItem+Reflection.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = "ETLayoutItem+Reflection.m"; path = "Source/ETLayoutItem+Reflection.m"; sourceTree = "<group>"; };
-		60364A060E40A560003377E0 /* NSBezierPathCappedBoxes.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = NSBezierPathCappedBoxes.m; path = Source/NSBezierPathCappedBoxes.m; sourceTree = "<group>"; };
 		60364A070E40A560003377E0 /* NSImage+NiceScaling.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = "NSImage+NiceScaling.m"; path = "Source/NSImage+NiceScaling.m"; sourceTree = "<group>"; };
 		60364A080E40A560003377E0 /* UKNibOwner.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = UKNibOwner.m; path = Source/UKNibOwner.m; sourceTree = "<group>"; };
 		60364A090E40A560003377E0 /* UKPluginsRegistry+Icons.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = "UKPluginsRegistry+Icons.m"; path = "Source/UKPluginsRegistry+Icons.m"; sourceTree = "<group>"; };
@@ -1203,11 +1198,9 @@
 		60F3BE9F0EE1C5B500BB9B02 /* Old */ = {
 			isa = PBXGroup;
 			children = (
-				60364A060E40A560003377E0 /* NSBezierPathCappedBoxes.m */,
 				60364A070E40A560003377E0 /* NSImage+NiceScaling.m */,
 				60364A080E40A560003377E0 /* UKNibOwner.m */,
 				60364A090E40A560003377E0 /* UKPluginsRegistry+Icons.m */,
-				603649F70E40A547003377E0 /* NSBezierPathCappedBoxes.h */,
 				603649F80E40A547003377E0 /* NSImage+NiceScaling.h */,
 				603649F90E40A547003377E0 /* UKNibOwner.h */,
 				603649FA0E40A547003377E0 /* UKPluginsRegistry+Icons.h */,
@@ -1293,7 +1286,6 @@
 				60DEFD2A0D4E8482008B1038 /* ETTextEditorLayout.h in Headers */,
 				603649FB0E40A547003377E0 /* ETLayoutItem+Factory.h in Headers */,
 				603649FC0E40A547003377E0 /* ETLayoutItem+Reflection.h in Headers */,
-				603649FE0E40A547003377E0 /* NSBezierPathCappedBoxes.h in Headers */,
 				603649FF0E40A547003377E0 /* NSImage+NiceScaling.h in Headers */,
 				60364A000E40A547003377E0 /* UKNibOwner.h in Headers */,
 				60364A010E40A547003377E0 /* UKPluginsRegistry+Icons.h in Headers */,
@@ -1695,7 +1687,6 @@
 			files = (
 				60059D221025C8BA001F95C5 /* EtoileUIProperties.m in Sources */,
 				600245120CD162090023182D /* ETColumnLayout.m in Sources */,
-				60AE4C920EED520B00DE82BC /* NSBezierPathCappedBoxes.m in Sources */,
 				6077C1790F9802E1006CB3F5 /* ETWidgetLayout.m in Sources */,
 				6077C17A0F9802E1006CB3F5 /* NSWindow+Etoile.m in Sources */,
 				60330B5B0F7CEF3500A1E8C1 /* ETDecoratorItem.m in Sources */,
@@ -1899,7 +1890,6 @@
 				601455D70F9722B900268FD1 /* ETDecoratorItem.m in Sources */,
 				60141B200F9355EE00014507 /* ETWidgetLayout.m in Sources */,
 				60EF8ECE0C5E4DD900C97C41 /* ETFlowLayout.m in Sources */,
-				601455D80F9722B900268FD1 /* NSBezierPathCappedBoxes.m in Sources */,
 				60EF8EC40C5E4DD900C97C41 /* ETTableLayout.m in Sources */,
 				6077C16B0F9801DA006CB3F5 /* ETLayoutItem+Scrollable.m in Sources */,
 				6077C16E0F980218006CB3F5 /* ETIconLayout.m in Sources */,
