@@ -67,10 +67,15 @@ invalidate, display etc. */
 	                                       representedObject: observedItem]];
 	[parentItem addItem: item];
 
+#ifdef GNUSTEP
+	// FIXME: Add -preparedCellAtColumn:row: to GNUstep.
+	UKPass();
+#else
 	NSCell *cell = [[[parentItem layout] tableView] preparedCellAtColumn: 0 row: 0];
 	ETActionHandler *actionHandler = [observedItem valueForProperty: @"actionHandler"];
 
 	UKStringsEqual([cell objectValue], [actionHandler stringValue]);
+#endif
 }
 
 @end
