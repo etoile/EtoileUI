@@ -16,11 +16,6 @@
 
 @implementation ETPaintBucketTool
 
-+ (NSString *) baseClassName
-{
-	return @"Tool";
-}
-
 /** Initializes and returns a new paint bucket tool which is set up with orange 
 as stroke color and brown as fill color. */
 - (id) init

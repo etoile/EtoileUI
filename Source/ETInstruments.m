@@ -27,11 +27,6 @@
 
 @implementation ETArrowTool
 
-+ (NSString *) baseClassName
-{
-	return @"Tool";
-}
-
 - (void) mouseDown: (ETEvent *)anEvent
 {
 	[self tryActivateItem: nil withEvent: anEvent];
@@ -140,11 +135,6 @@ The drag request can be handled with -[ETActionHandler handleDragItem:coordinato
 @implementation ETMoveTool
 
 DEALLOC(DESTROY(_draggedItem))
-
-+ (NSString *) baseClassName
-{
-	return @"Tool";
-}
 
 - (id) init
 {
