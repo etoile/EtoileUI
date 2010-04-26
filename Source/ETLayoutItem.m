@@ -1080,11 +1080,11 @@ the default frame and frame to match this view frame. */
 {
 	// NOTE: Frame and autoresizing are lost when newView is inserted into the 
 	// supervisor view.
-	NSRect newViewFrame = [newView frame];
 	unsigned int newViewAutoresizing = [newView autoresizingMask];
-	
+
 	if (newView != nil)
 	{
+		NSRect newViewFrame = [newView frame];
 		[self setUpSupervisorViewWithFrame: newViewFrame];
 		NSParameterAssert(nil != [self supervisorView]);
 
