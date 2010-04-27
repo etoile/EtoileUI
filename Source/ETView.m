@@ -331,7 +331,10 @@ to match the supervisor view size. The supervisor view may have been resized
 when the temporary view was in use. */
 - (void) tileContentView: (NSView *)view temporary: (BOOL)isTemporary
 {
-	if (view && ([item isLayoutItem] && NO == isTemporary))
+	if (nil == view)
+		return;
+
+	if ([item isLayoutItem] && NO == isTemporary)
 	{
 		/* We don't touch the autoresizing mask previously set by the user or in 
 		   -[ETLayoutItem setView:] by with -autoresizingMaskForContentAspect: */
@@ -350,7 +353,6 @@ when the temporary view was in use. */
 		
 		/* Reset autoresizing */
 		[view setAutoresizingMask: NSViewHeightSizable | NSViewWidthSizable];
-		[self setAutoresizesSubviews: YES];
 	}
 }
 

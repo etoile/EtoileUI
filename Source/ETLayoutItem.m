@@ -1078,13 +1078,13 @@ The receiver autoresizing mask will be updated to match the given view, and
 the default frame and frame to match this view frame. */
 - (void) setViewAndSync: (NSView *)newView
 {
-	// NOTE: Frame and autoresizing are lost when newView is inserted into the 
-	// supervisor view.
-	unsigned int newViewAutoresizing = [newView autoresizingMask];
-
 	if (newView != nil)
 	{
+		// NOTE: Frame and autoresizing are lost when newView is inserted into the 
+		// supervisor view.
 		NSRect newViewFrame = [newView frame];
+		unsigned int newViewAutoresizing = [newView autoresizingMask];
+
 		[self setUpSupervisorViewWithFrame: newViewFrame];
 		NSParameterAssert(nil != [self supervisorView]);
 
