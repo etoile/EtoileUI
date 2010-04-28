@@ -28,6 +28,9 @@
 
 @interface ETView (Private)
 - (void) setContentView: (NSView *)view temporary: (BOOL)temporary;
+#ifdef GNUSTEP
+- (void) viewWillDraw;
+#endif
 @end
 
 

@@ -1817,7 +1817,7 @@ If the given style is nil, the style group becomes empty. */
 	}
 }
 
-- (ETStyle *) coverStyle
+- (id) coverStyle
 {
 	return _coverStyle;
 }
