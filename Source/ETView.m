@@ -28,9 +28,6 @@
 
 @interface ETView (Private)
 - (void) setContentView: (NSView *)view temporary: (BOOL)temporary;
-#ifdef GNUSTEP
-- (void) viewWillDraw;
-#endif
 @end
 
 
@@ -721,37 +718,6 @@ Layout items are smart enough to avoid drawing their view when they have one. */
 	[super displayRectIgnoringOpacity: aRect];
 }
 
-#ifdef GNUSTEP
-
-/* Main and canonical method which is used to take control of the drawing on 
-GNUstep and pass it to the layout item tree as needed. */
-- (void) displayRectIgnoringOpacity: (NSRect)aRect 
-                          inContext: (NSGraphicsContext *)context
-{
-	//ETLog(@"-displayRectIgnoringOpacity:inContext:");
-
-	[self viewWillDraw];
-	[super displayRectIgnoringOpacity: aRect inContext: context];
-	
-	if ([self lockFocusIfCanDrawInContext: context] == NO)
-		return;
-
-	/* We always composite the rendering chain on top of each view -drawRect: 
-	   drawing sequence (triggered by display-like methods). */
-	[item render: nil dirtyRect: aRect inContext: nil];
-
-	[self unlockFocus];
-}
-
-#else
-
-- (BOOL) lockFocusInRect: (NSRect)rectToRedraw
-{
-	BOOL lockFocus = [self lockFocusIfCanDraw];
-	NSRectClip(rectToRedraw);
-	return lockFocus;
-}
-
 - (NSRect) dirtyRect
 {
 	return _rectToRedraw;
@@ -799,6 +765,40 @@ GNUstep and pass it to the layout item tree as needed. */
 
 	return [self coverStyleDirtyRectForItem: [item firstDecoratedItem] 
 	                           inParentView: (ETView *)parentView];
+}
+
+#ifdef GNUSTEP
+
+/* Main and canonical method which is used to take control of the drawing on 
+GNUstep and pass it to the layout item tree as needed. */
+- (void) displayRectIgnoringOpacity: (NSRect)aRect 
+                          inContext: (NSGraphicsContext *)context
+{
+	//ETLog(@"-displayRectIgnoringOpacity:inContext:");
+
+	if ([self canDraw] == NO)
+		return;
+
+	[self viewWillDraw];
+	[super displayRectIgnoringOpacity: aRect inContext: context];
+	
+	if ([self lockFocusIfCanDrawInContext: context] == NO)
+		return;
+
+	// FIXME: Use...
+	//NSRect adjustedDirtyRect = [self adjustedDirtyRectWithRect: aRect];
+
+	[item render: nil dirtyRect: aRect inContext: nil];
+	[self unlockFocus];
+}
+
+#else
+
+- (BOOL) lockFocusInRect: (NSRect)rectToRedraw
+{
+	BOOL lockFocus = [self lockFocusIfCanDraw];
+	NSRectClip(rectToRedraw);
+	return lockFocus;
 }
 
 // NOTE: Very often NSView instance which has been sent a display message will 

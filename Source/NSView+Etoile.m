@@ -381,6 +381,11 @@ also copied, in other words the new object is a deep copy of the receiver. */
 		}
 	}
 }
+
+- (void) viewWillDraw
+{
+	[[self subviews] makeObjectsPerformSelector: @selector(viewWillDraw)];
+}
 #endif
 
 @end

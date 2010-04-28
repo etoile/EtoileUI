@@ -79,6 +79,7 @@ This protocol is subject to change or be removed. */
 
 #ifdef GNUSTEP
 - (void) setSubviews: (NSArray *)newSubviews;
+- (void) viewWillDraw;
 #endif
 
 @end
