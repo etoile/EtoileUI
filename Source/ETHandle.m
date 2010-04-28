@@ -328,15 +328,14 @@ static ETBasicHandleStyle *sharedBasicHandleStyle = nil;
      layoutItem: (ETLayoutItem *)item 
 	  dirtyRect: (NSRect)dirtyRect;
 {
-	// FIXME: May be we should better support dirtyRect. The next drawing 
-	// methods don't take in account it and simply redraw all their content.
-	
-	[self drawHandleInRect: [item drawingFrame]];
+	NSRect bounds = [item drawingBoundsForStyle: self];
+
+	[self drawHandleInRect: bounds];
 
 	if ([item isSelected])
-		[self drawSelectionIndicatorInRect: [item drawingFrame]];
-	
-	[super render: inputValues layoutItem: item dirtyRect: dirtyRect];
+	{
+		[self drawSelectionIndicatorInRect: bounds];
+	}
 }
 
 /** Draws the interior of the handle. */
@@ -350,7 +349,7 @@ static ETBasicHandleStyle *sharedBasicHandleStyle = nil;
 
 - (void) drawSelectionIndicatorInRect: (NSRect)indicatorRect
 {
-	//ETLog(@"--- Drawing selection %@ in view %@", NSStringFromRect([item drawingFrame]), [NSView focusView]);
+	//ETLog(@"--- Drawing selection %@ in view %@", NSStringFromRect([item drawingBoundsForStyle: self]), [NSView focusView]);
 	
 	// TODO: We disable the antialiasing for the stroked rect with direct 
 	// drawing, but this code may be better moved in 

@@ -207,15 +207,14 @@ The copied shape is never hidden, even when the receiver was. */
      layoutItem: (ETLayoutItem *)item 
 	  dirtyRect: (NSRect)dirtyRect;
 {
-	// FIXME: May be we should better support dirtyRect. The next drawing 
-	// methods don't take in account it and simply redraw all their content.
+	NSRect bounds = [item drawingBoundsForStyle: self];
 
-	[self drawInRect: [item drawingFrame]];
+	[self drawInRect: bounds];
 
 	if ([item isSelected])
-		[self drawSelectionIndicatorInRect: [item drawingFrame]];
-	
-	//[super render: inputValues layoutItem: item dirtyRect: dirtyRect];
+	{
+		[self drawSelectionIndicatorInRect: bounds];
+	}
 }
 
 - (void) drawInRect: (NSRect)rect

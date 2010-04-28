@@ -208,7 +208,7 @@ inside that redisplayed area and won't be clipped by the graphics context. */
  the given indicator rect is equal to it. */
 - (void) drawSelectionIndicatorInRect: (NSRect)indicatorRect
 {
-	//ETLog(@"--- Drawing selection %@ in view %@", NSStringFromRect([item drawingFrame]), [NSView focusView]);
+	//ETLog(@"--- Drawing selection %@ in view %@", NSStringFromRect([item drawingBoundsForStyle: self]), [NSView focusView]);
 	
 	NSGraphicsContext *ctxt = [NSGraphicsContext currentContext];
 	BOOL gstateAntialias = [ctxt shouldAntialias];
@@ -285,7 +285,7 @@ overrides it to resize/scale the bezier path as needed. */
 	if (_dropOn) /* Add */
 	{
 		//NSRect hoveredRect = [_hoveredItem frame];
-		[self drawRectangularInsertionIndicatorInRect: [item drawingFrame]];
+		[self drawRectangularInsertionIndicatorInRect: [item drawingBoundsForStyle: self]];
 	}
 	else /* Insert */
 	{
@@ -379,7 +379,7 @@ overrides it to resize/scale the bezier path as needed. */
 {
 	if (_dropOn)
 	{
-		return ETMakeRect(NSZeroPoint, [_hoveredItem drawingFrame].size);
+		return ETMakeRect(NSZeroPoint, [_hoveredItem drawingBoundsForStyle: self].size);
 	}
 	else
 	{
@@ -511,7 +511,7 @@ space.  */
 	
 	[NSGraphicsContext saveGraphicsState];
 	[_color set];
-	NSRectFillUsingOperation([item drawingFrame], NSCompositeSourceOver);
+	NSRectFillUsingOperation([item drawingBoundsForStyle: self], NSCompositeSourceOver);
 	[NSGraphicsContext restoreGraphicsState];
 }
 
@@ -599,8 +599,10 @@ space.  */
 	[NSGraphicsContext saveGraphicsState];
 	
 	// The bubble uses unflipped coordinates
-	NSBezierPath *bubble = [ETSpeechBubbleStyle leftSpeechBubbleAroundRect: [item drawingFrame]];
-	NSRect bounds = NSInsetRect([bubble bounds], -6, -6); // Inset the rect to leave room for the shadow
+	NSRect itemBounds = [item drawingBoundsForStyle: self];
+	NSBezierPath *bubble = [ETSpeechBubbleStyle leftSpeechBubbleAroundRect: itemBounds];
+	 // Inset the rect to leave room for the shadow
+	NSRect bounds = NSInsetRect([bubble bounds], -6, -6);
 	
 	BOOL flipped = [item isFlipped];
 	NSAffineTransform *xform = nil;
@@ -608,17 +610,19 @@ space.  */
 	{
 		xform = [NSAffineTransform transform];
 		[xform scaleXBy: 1.0 yBy: -1.0];
-		[xform translateXBy: 0 yBy: -1 * [item drawingFrame].size.height];
+		[xform translateXBy: 0 yBy: -1 * itemBounds.size.height];
 		[xform concat];
-		bounds.origin.y = [item drawingFrame].size.height - (bounds.size.height + bounds.origin.y);
+		bounds.origin.y = itemBounds.size.height - (bounds.size.height + bounds.origin.y);
 	}
-	
+
+	// FIXME: Should be done when the style is set on the item
 	[item setBoundingBox: bounds];
 	
 #ifndef GNUSTEP
-	
+
 	// Draw shadow
 	[NSGraphicsContext saveGraphicsState];
+
 	NSShadow *shadow = [[NSShadow alloc] init];
 	[shadow setShadowOffset: NSMakeSize(2.0, -2.0)];
 	[shadow setShadowColor: [[NSColor blackColor] colorWithAlphaComponent: 0.3]];
@@ -626,20 +630,24 @@ space.  */
 	[shadow set];
 	[[NSColor whiteColor] setFill];
 	[bubble fill];
-	[NSGraphicsContext restoreGraphicsState];
-	[shadow release];
 	
+	[shadow release];
+	[NSGraphicsContext restoreGraphicsState];
+
 	// Draw gradient fill
+	NSColor *endColor = [NSColor colorWithCalibratedRed: 227.0/255.0 
+		green: 226.0/255.0 blue: 228.0/255.0 alpha: 1];
 	NSGradient *gradient = [[NSGradient alloc]initWithStartingColor: [NSColor whiteColor]
-														endingColor: [NSColor colorWithCalibratedRed: 227.0/255.0 green: 226.0/255.0 blue: 228.0/255.0 alpha: 1]];
+														endingColor: endColor];
 	[gradient drawInBezierPath: bubble angle: 90];
 	[gradient release];
-	
+
 #else
-	
+
 	// Draw plain fill
 	[[NSColor whiteColor] setFill];
 	[bubble fill];
+
 #endif
 	
 	[[[NSColor blackColor] colorWithAlphaComponent: 0.4] setStroke];

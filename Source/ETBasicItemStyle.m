@@ -89,12 +89,13 @@ DEALLOC(DESTROY(_labelAttributes));
 	_currentLabelRect = NSZeroRect;
 	_currentImageRect = NSZeroRect;
 
+	NSRect bounds = [item drawingBoundsForStyle: self];
 	NSString *itemLabel = [self labelForItem: item];
 
 	if (nil != itemLabel && ETLabelPositionNone != _labelPosition)
 	{
 		_currentLabelRect = [self rectForLabel: itemLabel 
-		                               inFrame: [item drawingFrame] 
+		                               inFrame: bounds 
 		                                ofItem: item];
 	}
 
@@ -122,7 +123,7 @@ DEALLOC(DESTROY(_labelAttributes));
 
 	if ([item isGroup] && [(ETLayoutItemGroup *)item isStack])
 	{
-		[self drawStackIndicatorInRect: [item drawingFrame]];
+		[self drawStackIndicatorInRect: bounds];
 	}
 
 	// FIXME: We should pass a hint in inputValues that lets us known whether 
@@ -130,12 +131,12 @@ DEALLOC(DESTROY(_labelAttributes));
 	// hard check on ETFreeLayout...
 	if ([item isSelected] && [[[item parentItem] layout] isKindOfClass: [ETFreeLayout layout]] == NO)
 	{
-		[self drawSelectionIndicatorInRect: [item drawingFrame]];
+		[self drawSelectionIndicatorInRect: bounds];
 	}
 
 	if ([[[ETTool activeTool] firstKeyResponder] isEqual: item])
 	{
-		[self drawFirstResponderIndicatorInRect: [item drawingFrame]];
+		[self drawFirstResponderIndicatorInRect: bounds];
 	}
 
 	[super render: inputValues layoutItem: item dirtyRect: dirtyRect];
@@ -767,8 +768,7 @@ See also -edgeInset. */
      layoutItem: (ETLayoutItem *)item 
 	  dirtyRect: (NSRect)dirtyRect
 {
-	//[super render: inputValues layoutItem: item dirtyRect: dirtyRect];
-	[self drawBorderInRect: [item drawingFrame]];
+	[self drawBorderInRect: [item drawingBoundsForStyle: self]];
 }
 
 /** Draws a border that covers the whole item frame if aRect is equal to it. */
@@ -788,7 +788,7 @@ See also -edgeInset. */
      layoutItem: (ETLayoutItem *)item 
 	  dirtyRect: (NSRect)dirtyRect
 {
-	[self drawFirstResponderIndicatorInRect: [item drawingFrame]];
+	[self drawFirstResponderIndicatorInRect: [item drawingBoundsForStyle: self]];
 }
 
 @end

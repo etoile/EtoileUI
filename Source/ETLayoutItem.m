@@ -1537,39 +1537,70 @@ See also -[ETLayoutItemGroup updateLayout].  */
 	// TODO: Implement
 }
 
-/** Returns the rect where the drawing of the layout item must occur, typically 
-used by the styles. */
-- (NSRect) drawingFrame
+static inline NSRect DrawingBoundsInWindowItem(ETWindowItem *windowItem)
 {
-	ETView *supervisorView = [self supervisorView];
+	/* We exclude the window border and title bar because the display 
+	   view is the window content view and never the window view. */
+	return ETMakeRect(NSZeroPoint, [windowItem contentRect].size);
+}
+
+/* Returns the drawing bounds for the cover style.
+
+You can draw outside of the drawing bounds in the limits of the drawing box.
+The drawing box used a negative origin expressed relatively to the drawing 
+bounds origin. */
+- (NSRect) drawingBounds
+{
+	ETWindowItem *windowItem = [self windowDecoratorItem];
 	NSRect rect;
 
-	if (supervisorView != nil && supervisorView != [self displayView])
+	if (nil != windowItem)
 	{
-		NSRect contentBounds = [[self supervisorView] frame];
-		contentBounds.origin = NSZeroPoint;
-		rect = contentBounds;
+		rect = DrawingBoundsInWindowItem(windowItem);
 	}
 	else
 	{
 		rect = [self bounds];
 	}
 
-	ETWindowItem *windowItem = [self windowDecoratorItem];
-
-	if (nil != windowItem)
-	{
-		/* We exclude the window border and title bar because the display 
-		   view is the window content view and never the window view. */
-		rect.size = [windowItem contentRect].size;
-	}
-
 	return rect;
+}
+
+/** Returns the bounds where the given style is expected to draw the item.
+
+When the style is the cover style, the drawing area is enclosed in the item 
+frame.<br />
+When the style is a content style that belongs to -styleGroup, the drawing area 
+is enclosed in the item content bounds (which might be partially clipped by 
+a decorator).
+
+When no decorator is set on the receiver, returns the same rect usually.
+
+For example, we have an item with boundingBox = { -10, -10, 170, 220 } and 
+frame = { 30, 40, 150, 200 }, then in an ETStyle subclass whose instances would 
+receive this item through -render:layoutItem:dirtyRect:
+<code>
+// bounds.origin is the current drawing context origin
+NSRect bounds = [item drawingBoundsForStyle: self]; 
+NSRect box = [item boundingBox];
+
+[NSBezierPath fillRect: bounds]; // bounds is { 0, 0, 150, 200 }
+// With a custom bounding box, you can draw outside of the drawing bounds
+[NSBezierPath strokeRect: box]; // box is { -10, -10, 170, 220 }
+</code> 
+
+See also -contentBounds, -frame, -boundingBox, -coverStyle, -styleGroup and 
+-style. */
+- (NSRect) drawingBoundsForStyle: (ETStyle *)aStyle
+{
+	BOOL isCoverStyle = (aStyle == _coverStyle);
+
+	return (isCoverStyle ? [self drawingBounds] : _contentBounds);
 }
 
 /** This method is only exposed to be used internally by EtoileUI.
 
-Returns the -coverStyle drawing area.
+Returns the -coverStyle drawing area (i.e. the clipping rect).
 
 The returned rect is the bouding box but adjusted to prevent drawing on the 
 window decorations. */
@@ -1580,10 +1611,7 @@ window decorations. */
 
 	if (nil != windowItem)
 	{
-		/* We exclude the window border and title bar because the display 
-		   view is the window content view and never the window view. */
-		rect.origin = NSZeroPoint;
-		rect.size = [windowItem contentRect].size;
+		rect = DrawingBoundsInWindowItem(windowItem);
 	}
 	else
 	{
@@ -1595,7 +1623,7 @@ window decorations. */
 
 /** This method is only exposed to be used internally by EtoileUI.
 
-Returns the -styleGroup visible drawing area.
+Returns the -styleGroup visible drawing area (i.e. the clipping rect).
 
 The returned rect is the visible content bounds. */
 - (NSRect) contentDrawingBox
