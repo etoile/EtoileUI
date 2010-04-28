@@ -30,6 +30,7 @@ NSString *kETManipulatedObjectProperty = @"manipulatedObject";
 
 	[self setActionHandler: anHandler];
 	[self setStyle: [ETBasicHandleStyle sharedInstance]];
+	[self setCoverStyle: nil]; /* Suppress the default ETLayoutItem style */
 	[self setManipulatedObject: aTarget];
 	[self setFlipped: YES];
 	//[super setFrame: NSMakeRect(-5, -5, 10, 10)];
@@ -421,7 +422,7 @@ static ETBasicHandleStyle *sharedBasicHandleStyle = nil;
 	// NOTE: Must be called before -setManipulatedObject: that sets the handle
 	// locations.
 	[self setFlipped: YES];
-	[self setStyle: nil]; /* Suppress the default ETLayoutItem style */
+	[self setCoverStyle: nil]; /* Suppress the default ETLayoutItem style */
 	[self setActionHandler: anHandler];
 	[self setManipulatedObject: aTarget];
 
@@ -535,6 +536,11 @@ or not. */
 - (BOOL) acceptsActionsForItemsOutsideOfFrame
 {
 	return YES;
+}
+
+- (NSRect) contentDrawingBox
+{
+	return [self boundingBox];
 }
 
 @end

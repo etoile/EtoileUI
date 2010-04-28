@@ -28,7 +28,6 @@ NSString * const ETSourceDidUpdateNotification = @"ETSourceDidUpdateNotification
 
 @interface ETLayoutItem (SubclassVisibility)
 - (ETView *) setUpSupervisorViewWithFrame: (NSRect)aFrame;
-- (NSRect) visibleContentBounds;
 @end
 
 @interface ETLayoutItemGroup (Private)
@@ -156,7 +155,7 @@ See also -isLayoutOwnedRootItem. */
 
 	self = [self initWithItems: nil view: nil value: nil representedObject: nil];
 	[self setActionHandler: nil];
-	[self setStyle: nil];
+	[self setCoverStyle: nil];
 
 	return self;
 }
@@ -1241,6 +1240,13 @@ to control more precisely how the items get resized per layout. */
 
 /* Rendering */
 
+/* For debugging */
+- (void) drawDirtyRectItemMarkerWithRect: (NSRect)dirtyRect
+{
+	[[[NSColor purpleColor] colorWithAlphaComponent: 0.2] setFill];
+	[NSBezierPath fillRect: dirtyRect];
+}
+
 /** See -[ETLayoutItem render:dirtyRect:inContext:]. The most important addition of 
 this method is to manage the drawing of children items by calling this method 
 recursively on them. */
@@ -1250,29 +1256,33 @@ recursively on them. */
 {
 	//ETLog(@"Render %@ dirtyRect %@ in %@", self, NSStringFromRect(dirtyRect), ctxt);
 
-	NSRect drawingFrame = [self drawingFrame];
+	NSRect contentDrawingBox = [self contentDrawingBox];
 
 	/* Use the display cache when there is one */
 	if (nil != _cachedDisplayImage)
 	{
-		NSRect frame = [self drawingFrame];
 		[[ETBasicItemStyle sharedInstance] drawImage: _cachedDisplayImage 
 		                                     flipped: [self isFlipped]
-		                                      inRect: frame];
+		                                      inRect: contentDrawingBox];
 		return;
 	}
 
 	/* Otherwise redisplay the receiver and its descendants recursively */
-	if ([self usesLayoutBasedFrame] || NSIntersectsRect(dirtyRect, drawingFrame))
+	if ([self usesLayoutBasedFrame] || NSIntersectsRect(dirtyRect, contentDrawingBox))
 	{
-	   /* We intersect our dirtyRect with our drawing frame, so we don't get 
-	      a dirtyRect that includes views of existing decorator items in case our 
-		  decorator chain isn't empty. */
-		NSRect realDirtyRect = NSIntersectionRect(dirtyRect, drawingFrame);
+	   /* We limit the redrawn area to the content bounds. We don't want to 
+	      draw over the decorators. */
+		NSRect realDirtyRect = NSIntersectionRect(dirtyRect, contentDrawingBox);
+
+		/* There is no need to set realDirtyRect with -[NSBezierPath setClip] 
+		   because the right clip rect should have been set by our supervisor 
+		   view or our parent item (when when we have no decorator). */
+		   	
 		[super render: inputValues dirtyRect: realDirtyRect inContext: ctxt];
 
 		/* Render child items (if the layout doesn't handle it) */
 
+		[NSGraphicsContext saveGraphicsState];
 		if ([[self layout] isOpaque] == NO)
 		{
 			NSEnumerator *e = [[self arrangedItems] reverseObjectEnumerator];
@@ -1287,7 +1297,7 @@ recursively on them. */
 				   parent, but their own. Also restricts the dirtyRect so it doesn't 
 				   encompass any decorators set on the item. */
 				NSRect childDirtyRect = [item convertRectFromParent: realDirtyRect];
-				childDirtyRect = NSIntersectionRect(childDirtyRect, [item drawingFrame]);
+				childDirtyRect = NSIntersectionRect(childDirtyRect, [item drawingBox]);
 
 				/* In case, dirtyRect is only a redraw rect on the parent and not on 
 				   the entire parent frame, we try to optimize by not redrawing the 
@@ -1298,10 +1308,11 @@ recursively on them. */
 				[self display: inputValues 
 						 item: item 
 					dirtyRect: childDirtyRect 
-					inContext: ctxt];
+					inContext: ctxt];;
 			}
 		}
-
+		[NSGraphicsContext restoreGraphicsState]; /* Restore the receiver clipping rect */
+	
 		/* Render the layout-specific tree if needed */
 
 		[self display: inputValues 
@@ -1309,6 +1320,7 @@ recursively on them. */
 		    dirtyRect: dirtyRect 
 		    inContext: ctxt];
 	}
+
 }
 
 /** Displays the given item by adjusting the graphic context for the drawing, 
@@ -1373,7 +1385,9 @@ You should never need to call this method directly. */
 	}
 	[transform concat];
 
+	[[NSBezierPath bezierPathWithRect: newDirtyRect] setClip];
 	[item render: inputValues dirtyRect: newDirtyRect inContext: ctxt];
+	//[self drawDirtyRectItemMarkerWithRect: newDirtyRect];
 
 	/* Reset the coordinates matrix */
 	[transform invert];

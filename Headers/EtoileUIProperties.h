@@ -21,6 +21,7 @@ extern NSString * const kETBaseItemProperty; /** baseItem property name */
 extern NSString * const kETBoundingBoxProperty; /** boudingBox property name */
 extern NSString * const kETContentBoundsProperty; /** contentBounds property name */
 extern NSString * const kETControllerProperty; /** controller property name */
+extern NSString * const kETCoverStyleProperty; /** coverStyle property name */
 extern NSString * const kETDecoratedItemProperty; /** decoratedItem property name */
 extern NSString * const kETDecoratorItemProperty; /** decoratorItem property name */
 extern NSString * const kETDefaultFrameProperty; /** defaultFrame property name */

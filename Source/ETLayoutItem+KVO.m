@@ -156,7 +156,7 @@ incorrectly reentered. */
 		kETValueProperty, kETViewProperty, kETImageProperty, kETIconProperty, 
 		kETRepresentedObjectProperty, kETSubjectProperty,  kETSelectedProperty, 
 		kETVisibleProperty, kETUTIProperty, kETSubtypeProperty, kETLayoutProperty, 
-		kETStyleGroupProperty, kETStyleProperty, kETFlippedProperty, 
+		kETStyleGroupProperty, kETStyleProperty, kETCoverStyleProperty, kETFlippedProperty, 
 		kETPersistentFrameProperty, kETFrameProperty, kETAnchorPointProperty, 
 		kETPositionProperty, kETXProperty, kETYProperty, kETWidthProperty, 
 		kETHeightProperty, kETContentBoundsProperty, kETTransformProperty, 

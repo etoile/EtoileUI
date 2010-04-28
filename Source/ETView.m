@@ -609,14 +609,6 @@ NSAssert1(size.width >= 0 && size.height >= 0, @"For a supervisor view, the " \
 
 /* Rendering Tree */
 
-/** Returns NO.
-
-The item bouding box is used as the clip rect. */
-- (BOOL) wantsDefaultClipping
-{
-	return NO;
-}
-
 #ifdef DEBUG_DRAWING
 
 - (void) drawInvalidatedAreaWithRect: (NSRect)needsDisplayRect
@@ -684,7 +676,8 @@ Layout items are smart enough to avoid drawing their view when they have one. */
 
 - (void) drawRect: (NSRect)rect
 {
-	_rectToRedraw = rect;
+	// NOTE: Rounding error prevents the assertion below to work
+	//ETAssert(NSEqualRects(rect, _rectToRedraw));
 }
 
 #ifdef GNUSTEP
@@ -733,6 +726,8 @@ GNUstep and pass it to the layout item tree as needed. */
                           inContext: (NSGraphicsContext *)context
 {
 	//ETLog(@"-displayRectIgnoringOpacity:inContext:");
+
+	[self viewWillDraw];
 	[super displayRectIgnoringOpacity: aRect inContext: context];
 	
 	if ([self lockFocusIfCanDrawInContext: context] == NO)
@@ -750,19 +745,57 @@ GNUstep and pass it to the layout item tree as needed. */
 - (BOOL) lockFocusInRect: (NSRect)rectToRedraw
 {
 	BOOL lockFocus = [self lockFocusIfCanDraw];
-
-	if ([self wantsDefaultClipping])
-	{
-		/* No need to apply bounds transform to aRect because we get this rect 
-		   from -drawRect: which receives a rect already adjusted. */ 
-		NSRectClip(rectToRedraw);
-	}
-	else
-	{
-		[[NSBezierPath bezierPathWithRect: [item boundingBox]] setClip];
-	}
-
+	NSRectClip(rectToRedraw);
 	return lockFocus;
+}
+
+- (NSRect) dirtyRect
+{
+	return _rectToRedraw;
+}
+
+- (void) viewWillDraw
+{
+	const NSRect *rects = NULL;
+	int nbOfRects = 0;
+	
+	_rectToRedraw = NSZeroRect;
+
+	[self getRectsBeingDrawn: &rects count: &nbOfRects];
+
+	for (int i = 0; i < nbOfRects; i++)
+	{
+		_rectToRedraw = NSUnionRect(_rectToRedraw, rects[i]);
+	}
+	//ETLog(@"Rect to redraw %@ for %@", NSStringFromRect(_rectToRedraw), self);
+
+	[super viewWillDraw];
+}
+
+- (NSRect) coverStyleDirtyRectForItem: (ETLayoutItem *)anItem 
+                         inParentView: (ETView *)parentView
+{
+	NSParameterAssert([anItem isLayoutItem]);
+
+	NSRect parentDirtyRect = [self convertRect: [parentView dirtyRect] 
+	                                  fromView: parentView];
+	return NSIntersectionRect(parentDirtyRect, [anItem drawingBox]);
+}
+
+- (NSRect) adjustedDirtyRectWithRect: (NSRect)dirtyRect
+{
+	BOOL shouldDrawCoverStyle = ([item decoratorItem] == nil);
+
+	if (NO == shouldDrawCoverStyle)
+		return dirtyRect;
+
+	NSView *parentView = [self superview];
+
+	if (NO == [parentView isSupervisorView])
+		return dirtyRect;
+
+	return [self coverStyleDirtyRectForItem: [item firstDecoratedItem] 
+	                           inParentView: (ETView *)parentView];
 }
 
 // NOTE: Very often NSView instance which has been sent a display message will 
@@ -773,29 +806,24 @@ GNUstep and pass it to the layout item tree as needed. */
 //_displayRectIgnoringOpacity:isVisibleRect:rectIsVisibleRectForView:
 
 /* First canonical method which is used to take control of the drawing on 
-Cocoa and pass it to the layout item tree as needed. */
-- (void) _recursiveDisplayAllDirtyWithLockFocus: (BOOL)lockFocus visRect: (NSRect)aRect
+Cocoa and pass it to the layout item tree as needed. 
+
+visibleRect is the same than [self visibleRect]. */
+- (void) _recursiveDisplayAllDirtyWithLockFocus: (BOOL)lockFocus visRect: (NSRect)visibleRect
 {
 	ETDebugLog(@"-_recursiveDisplayAllDirtyWithLockFocus:visRect: %@", self);
-	[super _recursiveDisplayAllDirtyWithLockFocus: lockFocus visRect: aRect];
 
-	/* Most of the time, the focus isn't locked. In this case, aRect is a 
-	   portion of the content view frame and no clipping is done either. */
+	if (NSEqualRects(visibleRect, NSZeroRect))
+		return;
+
+	[super _recursiveDisplayAllDirtyWithLockFocus: lockFocus visRect: visibleRect];
+
+	/* Most of the time, the focus isn't locked */
 	if ([self lockFocusInRect: _rectToRedraw])
 	{
-#ifdef DEBUG_DRAWING
-		//if ([self respondsToSelector: @selector(layout)] && [[(ETContainer *)self layout] isKindOfClass: [ETFlowLayout class]])
-		{
-			[[NSColor blackColor] set];
-			[NSBezierPath setDefaultLineWidth: 6.0];
-			[NSBezierPath strokeRect: aRect];
-		}
-#endif
+		NSRect adjustedDirtyRect = [self adjustedDirtyRectWithRect: _rectToRedraw];
 
-		/* We always composite the rendering chain on top of each view -drawRect: 
-		   drawing sequence (triggered by display-like methods). */
-		[item render: nil dirtyRect: _rectToRedraw inContext: nil];
-
+		[item render: nil dirtyRect: adjustedDirtyRect inContext: nil];
 		[self unlockFocus];
 		[[self window] flushWindow];
 	}
@@ -832,10 +860,9 @@ Cocoa and pass it to the layout item tree as needed. */
 
 	if (needsRedraw && [self lockFocusInRect: _rectToRedraw])
 	{
-		/* We always composite the rendering chain on top of each view -drawRect: 
-		   drawing sequence (triggered by display-like methods). */
-		[item render: nil dirtyRect: _rectToRedraw inContext: nil];
+		NSRect adjustedDirtyRect = [self adjustedDirtyRectWithRect: _rectToRedraw];
 
+		[item render: nil dirtyRect: adjustedDirtyRect inContext: nil];
 		[self unlockFocus];
 		[[self window] flushWindow];
 	}

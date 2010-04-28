@@ -53,14 +53,14 @@ DEALLOC(DESTROY(itemFactory); DESTROY(item))
 	NSRect sliderFrame = NSMakeRect(0, 0, 150, 20);
 
 	[item setContentAspect: ETContentAspectNone]; /* Disable any autoresizing */
-	[[item style] setLabelPosition: ETLabelPositionInsideBottom];
+	[[item coverStyle] setLabelPosition: ETLabelPositionInsideBottom];
 	[item setView: AUTORELEASE([[NSSlider alloc] initWithFrame: sliderFrame])];
 
 	/* Preconditions */
 	UKRectsEqual(sliderFrame, [[item view] frame]);
 
 	NSRect labelRect = NSMakeRect(0, 0, 300, 100);
-	NSRect viewRect = [[item style] rectForViewOfItem: item withLabelRect: labelRect];
+	NSRect viewRect = [[item coverStyle] rectForViewOfItem: item withLabelRect: labelRect];
 
 	/* sliderY = (300 - 100 - 20) / 2
 	   sliderX = (300 - 150) / 2 */

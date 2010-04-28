@@ -34,9 +34,10 @@ ETTemplateItemLayout *chatLayout = [ETTemplateItemLayout layout];
 ETLayoutItem *item = [[ETLayoutItemFactory factory] item];
 ETLayoutItemGroup *chatAreaItem = [[ETLayoutItemFactory factory] itemGroup];
 
+[item setCoverStyle: nil]
 [item setStyle: [ETSpeechBubbleStyle style]];
 [chatLayout setTemplateItem: item];
-[chatLayout setTemplateKeys: A(kETStyleProperty)];
+[chatLayout setTemplateKeys: A(kETCoverStyleProperty, kETStyleProperty)];
 [chatLayout setPositionalLayout: [ETColumnLayout layout]];
 [[chatLayout positionalLayout] setItemMargin: 15];
 

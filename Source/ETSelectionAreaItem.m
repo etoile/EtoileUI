@@ -28,6 +28,7 @@ dark gray outline, a light gray interior and an overall alpha value of 0.5. */
 	[shape setFillColor: [NSColor lightGrayColor]];
 	[shape setAlphaValue: 0.5];
 	[self setRepresentedObject: shape];
+	[self setCoverStyle: nil];
 	[self setStyle: shape];
 
     return self;

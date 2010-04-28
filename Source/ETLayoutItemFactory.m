@@ -149,7 +149,7 @@ shared style returned by -currentBarElementStyle.  */
 	NSSize initialSize = [anItem size];
 
 	[anItem setName: aLabel];
-	[anItem setStyle: aStyle];
+	[anItem setCoverStyle: aStyle];
 	[anItem setContentAspect: ETContentAspectComputed];
 	//[anItem setBoundingBox: [aStyle boundingBoxForItem: anItem]];
 	// NOTE: Must follow -setContentAspect:
@@ -176,8 +176,8 @@ shared style returned by -currentBarElementStyle.  */
 
 	if (usesFlexibleWidth)
 	{
-		[anItem setWidth: [[anItem style] boundingSizeForItem: anItem 
-		                                      imageOrViewSize: initialSize].width];
+		[anItem setWidth: [[anItem coverStyle] boundingSizeForItem: anItem 
+		                                           imageOrViewSize: initialSize].width];
 	}
 
 	return anItem;
@@ -247,7 +247,7 @@ when you request the grouping of several items. */
 - (ETLayoutItemGroup *) graphicsGroup
 {
 	ETLayoutItemGroup *itemGroup = [self itemGroup];
-	[itemGroup setStyle: AUTORELEASE([[ETGraphicsGroupStyle alloc] init])];
+	[itemGroup setCoverStyle: AUTORELEASE([[ETGraphicsGroupStyle alloc] init])];
 	[itemGroup setLayout: [ETFreeLayout layout]];
 	return itemGroup;
 }
@@ -863,6 +863,7 @@ and style. */
 	NSParameterAssert(NSEqualSizes(aRect.size, [[aShape path] bounds].size));
 	ETLayoutItem *item = [self itemWithRepresentedObject: aShape];
 	[item setStyle: aShape];
+	[item setCoverStyle: nil];
 	[item setFrame: aRect];
 	return item;
 }

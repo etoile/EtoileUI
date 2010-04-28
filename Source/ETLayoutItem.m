@@ -170,7 +170,7 @@ See also -setView:, -setValue: and -setRepresentedObject:.  */
 	[self setValue: value];
 
 	_styleGroup = [[ETStyleGroup alloc] init];
-	[self setStyle: [ETBasicItemStyle sharedInstance]];	
+	[self setCoverStyle: [ETBasicItemStyle sharedInstance]];	
 	[self setActionHandler: [ETActionHandler sharedInstance]];
 
 	ASSIGN(_transform, [NSAffineTransform transform]);
@@ -245,6 +245,7 @@ every subclass that overrides -dealloc. */
 	DESTROY(_variableProperties);
 	DESTROY(_defaultValues);
 	DESTROY(_styleGroup);
+	DESTROY(_coverStyle);
 	DESTROY(_modelObject);
 	DESTROY(_transform);
 	_parentItem = nil; /* weak reference */
@@ -278,6 +279,7 @@ Default values will be copied but not individually (shallow copy). */
 	[item setRepresentedObject: [self representedObject]]; /* Will set up the observer */
 	/* We set the style in the copy by copying the style group */
 	item->_styleGroup = [_styleGroup copyWithZone: aZone];
+	item->_coverStyle = RETAIN(_coverStyle);
 	item->_transform = [_transform copyWithZone: aZone];
 
 	/* We copy every primitive ivars except _isSyncingSupervisorViewGeometry */
@@ -986,7 +988,7 @@ object when the view is a widget. */
 		}
 		case ETContentAspectComputed:
 		{
-			return [[self style] rectForViewOfItem: self];
+			return [[self coverStyle] rectForViewOfItem: self];
 		}
 		case ETContentAspectScaleToFill:
 		case ETContentAspectScaleToFillHorizontally:
@@ -1211,13 +1213,14 @@ See -valueForProperty: for more details. */
 
 - (NSArray *) properties
 {
-	NSArray *properties = A(@"identifier", kETNameProperty, @"x", @"y", @"width", 
-		@"height", @"view", kETSelectedProperty, kETLayoutProperty, 
-		kETStyleGroupProperty, @"style", kETImageProperty, kETFrameProperty, 
+	NSArray *properties = A(kETIdentifierProperty, kETNameProperty, kETXProperty, kETYProperty, 
+		kETWidthProperty, kETHeightProperty, kETViewProperty, kETSelectedProperty, 
+		kETLayoutProperty, kETStyleGroupProperty, kETStyleProperty, 
+		kETCoverStyleProperty, kETImageProperty, kETFrameProperty, 
 		kETRepresentedObjectProperty, kETRepresentedPathBaseProperty, 
-		kETParentItemProperty, kETAutoresizingMaskProperty, kETBoundingBoxProperty, 
-		kETActionProperty, kETSubtypeProperty, kETTargetProperty, @"UIMetalevel",
-		@"UIMetalayer");
+		kETParentItemProperty, kETAutoresizingMaskProperty, 
+		kETBoundingBoxProperty, kETActionProperty, kETSubtypeProperty, 
+		kETTargetProperty, kETUIMetalevelProperty, @"UIMetalayer");
 
 	properties = [[VARIABLE_PROPERTIES allKeys] arrayByAddingObjectsFromArray: properties];
 		
@@ -1564,6 +1567,42 @@ used by the styles. */
 	return rect;
 }
 
+/** This method is only exposed to be used internally by EtoileUI.
+
+Returns the -coverStyle drawing area.
+
+The returned rect is the bouding box but adjusted to prevent drawing on the 
+window decorations. */
+- (NSRect) drawingBox
+{
+	ETWindowItem *windowItem = [self windowDecoratorItem];
+	NSRect rect;
+
+	if (nil != windowItem)
+	{
+		/* We exclude the window border and title bar because the display 
+		   view is the window content view and never the window view. */
+		rect.origin = NSZeroPoint;
+		rect.size = [windowItem contentRect].size;
+	}
+	else
+	{
+		rect = [self boundingBox];
+	}
+
+	return rect;
+}
+
+/** This method is only exposed to be used internally by EtoileUI.
+
+Returns the -styleGroup visible drawing area.
+
+The returned rect is the visible content bounds. */
+- (NSRect) contentDrawingBox
+{
+	return [self visibleContentBounds];
+}
+
 - (void) drawFrameWithRect: (NSRect)aRect
 {
 	[[NSColor blueColor] setStroke];
@@ -1576,6 +1615,17 @@ used by the styles. */
 	[[NSColor redColor] setStroke];
 	[NSBezierPath setDefaultLineWidth: 1.0];
 	[NSBezierPath strokeRect: aRect];
+}
+
+/* For debugging */
+- (void) drawViewItemMarker
+{
+	if ([self displayView] == nil)
+		return;
+
+	[[NSColor greenColor] set];
+	[NSBezierPath setDefaultLineWidth: 3.0];
+	[NSBezierPath strokeRect: [self bounds]];
 }
 
 /** <override-dummy />
@@ -1618,29 +1668,21 @@ now, the context is nil and must be ignored.  */
 {
 	//ETLog(@"Render frame %@ of %@ dirtyRect %@ in %@", 
 	//	NSStringFromRect([self drawingFrame]), self, NSStringFromRect(dirtyRect), ctxt);
-
-#ifdef DEBUG_DRAWING
-	/* For debugging the drawing of the supervisor view over the item view */
-	if ([self displayView] != nil)
-	{
-		[[NSColor greenColor] set];
-		[NSBezierPath setDefaultLineWidth: 3.0];
-		[NSBezierPath strokeRect: ETMakeRect(NSZeroPoint, [self size])];
-	}
-#endif
-
-#ifdef DEBUG_DRAWING
-	/* For debugging the drawing of the supervisor view over the item view */
-	if ([self displayView] == nil)
-	{
-		[[NSColor cyanColor] set];
-		[NSBezierPath setDefaultLineWidth: 3.0];
-		[NSBezierPath strokeRect: ETMakeRect(NSZeroPoint, [self size])];
-	}
-#endif
+	BOOL reponsibleToDrawCoverStyle = (nil == _decoratorItem);
 
 	[[self styleGroup] render: inputValues layoutItem: self dirtyRect: dirtyRect];
 
+	/* When we have no decorator, the cover style is rendered here, otherwise the 
+	   last decorator renders it (see -[ETDecoratorItem render:dirtyRect:inContext:). */
+	if (reponsibleToDrawCoverStyle)
+	{
+		[NSGraphicsContext saveGraphicsState];
+		[[NSBezierPath bezierPathWithRect: dirtyRect] setClip];
+		[_coverStyle render: inputValues layoutItem: self dirtyRect: dirtyRect];
+		[NSGraphicsContext restoreGraphicsState];
+	}
+
+	//[self drawViewItemMarker];
 	if (showsBoundingBox)
 	{
 		[self drawBoundingBoxWithRect: [self boundingBox]];
@@ -1773,6 +1815,16 @@ If the given style is nil, the style group becomes empty. */
 	{
 		[[self styleGroup] addStyle: aStyle];
 	}
+}
+
+- (ETStyle *) coverStyle
+{
+	return _coverStyle;
+}
+
+- (void) setCoverStyle: (ETStyle *)aStyle
+{
+	ASSIGN(_coverStyle, aStyle);
 }
 
 - (void) setDefaultValue: (id)aValue forProperty: (NSString *)key
@@ -2373,23 +2425,24 @@ The content coordinate space is located inside -contentBounds. */
 	return _transform;
 }
 
-/* Returns the visible portion of the content bounds in case the receiver 
-content is clipped by a decorator.
+/** This method is only exposed to be used internally by EtoileUI.
 
-The returned rect origin is equal to (0, 0) all the time unlike -contentBounds.
+Returns the visible portion of the content bounds when the receiver content is 
+clipped by a decorator, otherwise the same than -contentBounds.
 
-Private method to be used or removed later on... */
+The returned rect is expressed in the receiver content coordinate space. */
 - (NSRect) visibleContentBounds
 {
 	NSRect visibleContentBounds = [self contentBounds];
-	BOOL hasDecorator = (_decoratorItem != nil);
 
-	if (hasDecorator)
+	if (nil != _decoratorItem)
 	{
-		visibleContentBounds = [_decoratorItem visibleContentRect];
+		visibleContentBounds = [_decoratorItem visibleRect];
 	}
-
-	visibleContentBounds.origin = NSZeroPoint;
+	else
+	{
+		visibleContentBounds.origin = NSZeroPoint;
+	}
 
 	return visibleContentBounds;
 }

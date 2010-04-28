@@ -41,7 +41,7 @@ Initializes and returns a new icon layout. */
 	ETIconAndLabelStyle *iconStyle = AUTORELEASE([[ETIconAndLabelStyle alloc] init]);
 
 	[self setTemplateItem: templateItem];
-	[templateItem setStyle: iconStyle];
+	[templateItem setCoverStyle: iconStyle];
 	[templateItem setActionHandler: [ETIconAndLabelActionHandler sharedInstance]];
 	/* Will delegate the icon/image rect computation to the icon style rather 
 	   than stretching it. */
@@ -51,7 +51,7 @@ Initializes and returns a new icon layout. */
 	   View must also be restored after Content Aspect, otherwise the view 
 	   geometry computation occurs two times when the items are restored. */
 	// FIXME: When View comes before Content Aspect an assertion is raised.
-	[self setTemplateKeys: A(@"icon", @"style", @"actionHandler", @"contentAspect", @"view")];
+	[self setTemplateKeys: A(@"icon", @"coverStyle", @"actionHandler", @"contentAspect", @"view")];
 
 	return self;
 }
@@ -106,7 +106,7 @@ DEALLOC(DESTROY(_itemLabelFont))
 
 	[item setVisible: NO];
 
-	//[item setFrame: [[item style] boundingFrameForItem: item]];
+	//[item setFrame: [[item coverStyle] boundingFrameForItem: item]];
 	// FIXME: Shouldn't be needed if we set on the template view already
 	[item setAutoresizingMask: NSViewNotSizable | NSViewMinYMargin | NSViewMinXMargin |	NSViewMaxXMargin | NSViewMaxYMargin];
 }
@@ -190,10 +190,10 @@ The resizing isn't delegated to the positional layout unlike in ETTemplateItemLa
 		[editionCoordinator removeActiveFieldEditorItem];
 	}
 
-	ETIconAndLabelStyle *iconStyle = [[self templateItem] style];
+	ETIconAndLabelStyle *iconStyle = [[self templateItem] coverStyle];
 
 	/* We expect all the items to use the same style object */
-	//NSParameterAssert([[items firstObject] style] == iconStyle);
+	//NSParameterAssert([[items firstObject] coverStyle] == iconStyle);
 	
 	/* Scaling is always computed from the base image size (scaleFactor equal to 
 	   1) in order to avoid rounding error that would increase on each scale change. */
@@ -296,7 +296,7 @@ the given indicator rect. */
 
 - (void) handleClickItem: (ETLayoutItem *)item atPoint: (NSPoint)aPoint
 {
-	ETBasicItemStyle *iconStyle = [item style];
+	ETBasicItemStyle *iconStyle = [item coverStyle];
 	NSString *label = [iconStyle labelForItem: item];
 	NSRect labelRect = [iconStyle rectForLabel: label
 	                                   inFrame: [item frame]

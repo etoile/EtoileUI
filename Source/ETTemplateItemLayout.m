@@ -459,14 +459,14 @@ kETFormLayoutInset	NSZeroRect (default) or nil
 
 	[self setTemplateItem: templateItem];
 	[formStyle setLabelPosition: ETLabelPositionOutsideLeft];
-	[templateItem setStyle: formStyle];
+	[templateItem setCoverStyle: formStyle];
 	[templateItem setContentAspect: ETContentAspectComputed];
 	/* Icon must precede Style and View to let us snapshot the item in its 
 	   initial state. See -setUpTemplateElementWithNewValue:forKey:inItem:
 	   View must also be restored after Content Aspect, otherwise the view 
 	   geometry computation occurs two times when the items are restored. */
 	// FIXME: When View comes before Content Aspect an assertion is raised.
-	[self setTemplateKeys: A(@"style", @"contentAspect")];
+	[self setTemplateKeys: A(@"coverStyle", @"contentAspect")];
 	[self setPositionalLayout: [ETColumnLayout layout]];
 	[[(id)[self positionalLayout] ifResponds] setIsContentSizeLayout: YES];
 	[[(id)[self positionalLayout] ifResponds] setComputesItemRectFromBoundingBox: YES];
@@ -507,7 +507,7 @@ kETFormLayoutInset	NSZeroRect (default) or nil
 {
 	if ([item view] == nil)
 	{
-		[item setStyle: [self standaloneTextStyle]];
+		[item setCoverStyle: [self standaloneTextStyle]];
 	}
 	else
 	{
@@ -546,8 +546,8 @@ The resizing isn't delegated to the positional layout unlike in ETTemplateItemLa
 		//if ([item view] == nil)
 		//	continue;
 		
-		NSSize boundingSize = [[item style] boundingSizeForItem: item 
-		                                     imageOrViewSize: [[item view] frame].size];
+		NSSize boundingSize = [[item coverStyle] boundingSizeForItem: item 
+		                                             imageOrViewSize: [[item view] frame].size];
 		NSRect boundingBox = ETMakeRect(NSZeroPoint, boundingSize);
 
 		// TODO: May be better to compute that in -[ETBasicItemStyle boundingBoxForItem:]

@@ -113,6 +113,7 @@ and centers it. A strech is a scale that doesn't preserve the content proportion
 	ETLayoutItemGroup *_parentItem;
 	id _modelObject;
 	ETStyleGroup *_styleGroup;
+	ETStyle *_coverStyle;
 
 	NSRect _contentBounds;
 	NSPoint _position;
@@ -235,6 +236,8 @@ and centers it. A strech is a scale that doesn't preserve the content proportion
 - (void) setStyleGroup: (ETStyleGroup *)aStyle;
 - (id) style;
 - (void) setStyle: (ETStyle *)aStyle;
+- (id) coverStyle;
+- (void) setCoverStyle: (ETStyle *)aStyle;
 
 - (void) setNeedsDisplay: (BOOL)flag;
 - (void) setNeedsDisplayInRect: (NSRect)dirtyRect;
@@ -342,6 +345,12 @@ and centers it. A strech is a scale that doesn't preserve the content proportion
 - (void) beginEditingUI;
 /*- (BOOL) isEditingUI;
 - (void) commitEditingUI;*/
+
+/* Framework Private */
+
+- (NSRect) drawingBox;
+- (NSRect) contentDrawingBox;
+- (NSRect) visibleContentBounds;
 
 @end
 

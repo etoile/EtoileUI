@@ -34,9 +34,9 @@ subclasses (see -[ETLayout initWithLayoutView:]). */
 		[self setAttachedTool: [ETSelectTool tool]];
 		[[self attachedTool] setShouldProduceTranslateActions: YES];
 		[self setItemSizeConstraintStyle: ETSizeConstraintStyleNone];
-		_rootItem = [[ETLayoutItemGroup alloc] init];
+		_rootItem = [[ETLayoutItemGroup alloc] initAsLayoutOwnedRootItem];
 		[_rootItem setActionHandler: nil];
-		[_rootItem setStyle: nil];
+		[_rootItem setCoverStyle: nil];
 	}
 	
 	return self;

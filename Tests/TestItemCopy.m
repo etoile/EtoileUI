@@ -32,6 +32,8 @@
 #import "ETCompatibility.h"
 
 #define SA(x) [NSSet setWithArray: x]
+#define UKPropertiesEqual(a, b, property) \
+	printf("Test copy '%s'\n", [property UTF8String]); UKObjectsEqual(a, b); 
 
 @interface ETOutlineLayout (Private)
 - (NSOutlineView *) outlineView;
@@ -113,14 +115,13 @@ DEALLOC(DESTROY(itemFactory); DESTROY(item); DESTROY(itemGroup))
 		id value = [aView valueForProperty: property];
 		id copiedValue = [newView valueForProperty: property];
 
-		ETLog(@"'%@'", property);
-		UKObjectsEqual(value, copiedValue);
+		UKPropertiesEqual(value, copiedValue, property);
 	}
 }
 
 - (NSArray *) defaultNilItemProperties
 {
-	return A(kETNameProperty, kETIconProperty, kETImageProperty,
+	return A(kETNameProperty, kETIconProperty, kETImageProperty, kETStyleProperty,
 		kETRepresentedObjectProperty, kETRepresentedPathBaseProperty, 
 		kETSubtypeProperty, kETActionProperty, kETTargetProperty);
 }
@@ -148,8 +149,7 @@ DEALLOC(DESTROY(itemFactory); DESTROY(item); DESTROY(itemGroup))
 		id value = [item valueForProperty: property];
 		id copiedValue = [newItem valueForProperty: property];
 
-		ETLog(@"'%@'", property);
-		UKObjectsEqual(value, copiedValue);
+		UKPropertiesEqual(value, copiedValue, property);
 	}
 
 	UKNil([newItem decoratorItem]);
@@ -174,7 +174,7 @@ DEALLOC(DESTROY(itemFactory); DESTROY(item); DESTROY(itemGroup))
 	//[[item decoratorItem] setDecoratorItem: [ETWindowItem item]];
 
 	NSArray *properties = [self checkablePropertiesForItem: item];
-	NSArray *nilProperties = A(kETRepresentedPathBaseProperty);
+	NSArray *nilProperties = A(kETRepresentedPathBaseProperty, kETStyleProperty);
 	NSArray *equalProperties = [properties arrayByRemovingObjectsInArray: 
 		[[self nonEqualItemProperties] arrayByAddingObjectsFromArray: nilProperties]];
 
@@ -188,8 +188,7 @@ DEALLOC(DESTROY(itemFactory); DESTROY(item); DESTROY(itemGroup))
 		id value = [item valueForKey: property];
 		id copiedValue = [newItem valueForKey: property];
 
-		ETLog(@"'%@'", property);
-		UKObjectsEqual(value, copiedValue);
+		UKPropertiesEqual(value, copiedValue, property);
 	}
 
 	UKNil([newItem decoratedItem]);
@@ -235,8 +234,7 @@ DEALLOC(DESTROY(itemFactory); DESTROY(item); DESTROY(itemGroup))
 		id value = [itemGroup valueForKey: property];
 		id copiedValue = [newItemGroup valueForKey: property];
 
-		ETLog(@"'%@'", property);
-		UKObjectsEqual(value, copiedValue);
+		UKPropertiesEqual(value, copiedValue, property);
 	}
 
 	UKTrue([newItemGroup isEmpty]);
@@ -276,7 +274,7 @@ DEALLOC(DESTROY(itemFactory); DESTROY(item); DESTROY(itemGroup))
 	ETLayoutItemGroup *newItemGroup = [itemGroup copy];
 
 	NSArray *properties = [self checkablePropertiesForItem: itemGroup];
-	NSArray *nilProperties = A(kETDoubleClickedItemProperty);
+	NSArray *nilProperties = A(kETDoubleClickedItemProperty, kETStyleProperty);
 	NSArray *equalProperties = [properties arrayByRemovingObjectsInArray: 
 		[[self nonEqualItemGroupProperties] arrayByAddingObjectsFromArray: nilProperties]];
 
@@ -293,8 +291,7 @@ DEALLOC(DESTROY(itemFactory); DESTROY(item); DESTROY(itemGroup))
 		id value = [itemGroup valueForKey: property];
 		id copiedValue = [newItemGroup valueForKey: property];
 
-		ETLog(@"'%@'", property);
-		UKObjectsEqual(value, copiedValue);
+		UKPropertiesEqual(value, copiedValue, property);
 	}
 
 	UKObjectsEqual(newItemGroup, [[newItemGroup layout] layoutContext]);

@@ -73,7 +73,6 @@ persistency controller (when CoreObject is installed). */
 - (void) render: (NSMutableDictionary *)inputValues 
       dirtyRect: (NSRect)dirtyRect 
       inContext: (id)ctxt;
-- (NSRect) boundingBox;
 
 /* Decoration */
 

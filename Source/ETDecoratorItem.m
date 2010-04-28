@@ -77,14 +77,37 @@ By default, returns YES. */
 	}
 }
 
-// TODO: The be used when EtoileUI will draw everything by itself including 
-// the views without relying on the view hierarchy machinery.
+/* For debugging */
+- (void) drawCoverStyleMarkerWithRect: (NSRect)realDirtyRect
+{
+	[[[NSColor redColor] colorWithAlphaComponent: 0.2] set];
+	[NSBezierPath fillRect: realDirtyRect];
+}
+
+// TODO: To be used, when EtoileUI will draw everything by itself including the 
+// views without relying on the view hierarchy machinery.
+//NSRect rectInContent = [self convertDecoratorRectToContent: dirtyRect];
+//[_decoratedItem render: inputValues dirtyRect: rectInContent inContext: ctxt];
 - (void) render: (NSMutableDictionary *)inputValues 
       dirtyRect: (NSRect)dirtyRect 
       inContext: (id)ctxt
 {
-	//NSRect rectInContent = [self convertDecoratorRectToContent: dirtyRect];
-	//[_decoratedItem render: inputValues dirtyRect: rectInContent inContext: ctxt];
+	BOOL isLastDecorator = (nil != _decoratorItem);
+
+	if (isLastDecorator)
+		return;
+
+	ETLayoutItem *item = [self firstDecoratedItem];
+
+	if ([item isLayoutItem] == NO)
+		return;
+
+	/* See also -[ETLayoutItem render:dirtyRect:inContext:] */
+	[NSGraphicsContext saveGraphicsState];
+	[[NSBezierPath bezierPathWithRect: dirtyRect] setClip];
+	//[self drawCoverStyleMarkerWithRect: realDirtyRect];
+	[[item coverStyle] render: inputValues layoutItem: item dirtyRect: dirtyRect];
+	[NSGraphicsContext restoreGraphicsState];
 }
 
 /** <override-never /> 

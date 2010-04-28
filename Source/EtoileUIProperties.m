@@ -17,6 +17,7 @@ NSString * const kETBaseItemProperty = @"baseItem";
 NSString * const kETBoundingBoxProperty = @"boundingBox";
 NSString * const kETContentBoundsProperty = @"contentBounds";
 NSString * const kETControllerProperty = @"controller";
+NSString * const kETCoverStyleProperty = @"coverStyle";
 NSString * const kETDecoratedItemProperty = @"decoratedItem";
 NSString * const kETDecoratorItemProperty = @"decoratorItem";
 NSString * const kETDefaultFrameProperty = @"defaultFrame";

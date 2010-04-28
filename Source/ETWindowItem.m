@@ -419,6 +419,12 @@ See also -[ETItemFactory windowGroup]. */
 	return [[self class] convertRectFromWidgetBackendScreenBase: [_itemWindow frame]];
 }
 
+/** Returns the content view bounds. */
+- (NSRect) visibleRect
+{
+	return [[_itemWindow contentView] bounds];
+}
+
 /** Returns the content view rect expressed in the window coordinate space. 
 
 This coordinate space includes the window decoration (titlebar etc.).  */
