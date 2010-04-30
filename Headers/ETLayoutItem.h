@@ -81,7 +81,7 @@ typedef enum
 	ETContentAspectNone, 
 /** Lets the content as is. */
 	ETContentAspectComputed, 
-/** Delegates the content position and size computation to -[ETLayoutItem style]. */
+/** Delegates the content position and size computation to -[ETLayoutItem coverStyle]. */
 	ETContentAspectCentered, 
 /** Centers the content and never resizes it. */
 	ETContentAspectScaleToFit, 
@@ -137,9 +137,6 @@ and centers it. A strech is a scale that doesn't preserve the content proportion
 
 /* Initialization */
 
-- (id) initWithValue: (id)value;
-- (id) initWithRepresentedObject: (id)object;
-- (id) initWithView: (NSView *)view;
 - (id) initWithView: (NSView *)view value: (id)value representedObject: (id)repObject;
 - (id) initWithFrame: (NSRect)frame;
 

@@ -142,7 +142,7 @@
 	/* Test item template */
 
 	id view = AUTORELEASE([DummyView new]);
-	id templateItem = AUTORELEASE([[ETLayoutItemGroup alloc] initWithView: view]);
+	id templateItem = AUTORELEASE([[ETLayoutItemGroup alloc] initWithView: view value: nil representedObject: nil]);
 	[controller setTemplateItemGroup: templateItem];
 	newGroup = [controller newGroup];
 	newGroup2 = [controller newGroup];

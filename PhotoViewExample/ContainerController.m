@@ -96,8 +96,8 @@ UI level for a photo viewer. */
 {
 	if ([layoutObject isKindOfClass: [ETTableLayout class]])
 	{
-		ETLayoutItem *imgViewItem = AUTORELEASE([[ETLayoutItem alloc] initWithView: 
-			AUTORELEASE([[NSImageView alloc] init])]);
+		ETLayoutItem *imgViewItem = [[ETLayoutItemFactory factory] itemWithView: 
+			AUTORELEASE([[NSImageView alloc] init])];
 		
 		[layoutObject setStyle: imgViewItem forProperty: @"icon"];
 		[layoutObject setEditable: YES forProperty: @"name"];

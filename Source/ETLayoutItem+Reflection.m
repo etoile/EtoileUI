@@ -129,7 +129,7 @@
 	   objects. When -items will be called on the meta item, the collection 
 	   protocol will be used to transparently retrieve the represented children 
 	   items and generates all the necessary meta children items. */
-	ETLayoutItem *metaLayoutItem = AUTORELEASE([[ETLayoutItem alloc] initWithRepresentedObject: item]); 
+	ETLayoutItem *metaLayoutItem = AUTORELEASE([[ETLayoutItem alloc] initWithView: nil value: nil representedObject: item]); 
 	id propertyName = nil;
 
 	[metaLayoutItem setRepresentedObject: item];

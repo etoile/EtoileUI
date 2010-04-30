@@ -11,6 +11,7 @@
 #import <EtoileFoundation/Macros.h>
 #import "ETPickboard.h"
 #import "ETLayoutItem.h"
+#import "ETLayoutItemFactory.h"
 #import "ETOutlineLayout.h"
 #import "ETWindowItem.h"
 #import "ETCompatibility.h"
@@ -191,16 +192,13 @@ static ETPickboard *activePickboard = nil;
 	/* Push Object */
 	NSString *pickRef = [NSString stringWithFormat: @"%d", ++_pickboardRef];
 	[_pickedObjects setObject: object forKey: pickRef];
-
-	ETLayoutItem *item = [self layoutItemWithObject: object];
-	[self insertItem: item atIndex: 0];
-	RELEASE(item);
+	[self insertItem: [self layoutItemWithObject: object] atIndex: 0];
 
 	return pickRef;
 }
 
-/* Returns a retained layout item that wraps the object passed in parameter 
-based on its type. 
+/* Returns a layout item that wraps the object passed in parameter based on its 
+type. 
 
 If pickObject is an ETPickCollection, returns an ETLayoutItemGroup, otherwise 
 returns an ETLayoutItem. */
@@ -208,20 +206,19 @@ returns an ETLayoutItem. */
 {
 	if ([pickObject isKindOfClass: [ETPickCollection class]])
 	{
-		id item = [[ETLayoutItemGroup alloc] initWithRepresentedObject: pickObject];
+		ETLayoutItemGroup *item = [[ETLayoutItemFactory factory] itemGroupWithRepresentedObject: pickObject];
 
 		FOREACHI([pickObject contentArray], pickedElement)
 		{
-			id childItem = [[ETLayoutItemGroup alloc] initWithRepresentedObject: pickedElement];
+			ETLayoutItemGroup *childItem = [[ETLayoutItemFactory factory] itemGroupWithRepresentedObject: pickedElement];
 			[item addItem: childItem];
-			RELEASE(childItem);
 		}
 
 		return item;
 	}
 	else
 	{
-		return [[ETLayoutItem alloc] initWithRepresentedObject: pickObject];	
+		return [[ETLayoutItemFactory factory] itemWithRepresentedObject: pickObject];	
 	}
 }
 
@@ -243,10 +240,7 @@ returns an ETLayoutItem. */
 
 	NSString *pickRef = [NSString stringWithFormat: @"%d", ++_pickboardRef];
 	[_pickedObjects setObject: object forKey: pickRef];
-
-	ETLayoutItem *item = [self layoutItemWithObject: object];
-	[self addItem: item];
-	RELEASE(item);
+	[self addItem: [self layoutItemWithObject: object]];
 
 	return pickRef;
 }

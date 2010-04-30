@@ -142,7 +142,7 @@ an action. See -beginEditingItem:property:inRect:. */
 		[fieldEditor setUsesFontPanel: NO];
 		[fieldEditor setAllowsUndo: YES];
 
-		_fieldEditorItem = [[ETLayoutItem alloc] initWithView: fieldEditor];
+		_fieldEditorItem = [[ETLayoutItemFactory factory] itemWithView: fieldEditor];
 		[_fieldEditorItem setCoverStyle: [ETFieldEditorItemStyle sharedInstance]];
 	}
 

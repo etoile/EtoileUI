@@ -83,55 +83,15 @@ See also -showsFrame. */
 
 /* Initialization */
 
-/** Initializes and returns a layout item.
+/** You must use -[ETLayoutItemFactory item] or -[ETLayoutItemFactory itemGroup] 
+rather than this method.
 
-The returned item will use +defaultItemRect as its frame.
+Initializes and returns a layout item.
 
-You should use -[ETLayoutItemFactory item] or -[ETLayoutItemFactory itemGroup] 
-rather than this method.*/
+The returned item will use +defaultItemRect as its frame. */
 - (id) init
 {
 	return [self initWithView: nil value: nil representedObject: nil];
-}
-
-/** Initializes and returns a layout item with the given value object.<br />
-See also -setValue:.
-
-The given value can be nil.
-
-The returned item will use +defaultItemRect as its frame.
-
-You should use -[ETLayoutItemFactory itemWithValue:] or 
--[ETLayoutItemFactory itemGroupWithValue:] rather than this method. */
-- (id) initWithValue: (id)value
-{
-	return [self initWithView: nil value: value representedObject: nil];
-}
-
-/** Initializes and returns a layout item with the given represented object.<br />
-See also -setRepresentedObject:.
-
-The given represented object can be nil.
-
-The returned item will use +defaultItemRect as its frame.
-
-You should use -[ETLayoutItemFactory itemWithRepresentedObject:] or 
--[ETLayoutItemFactory itemGroupWithRepresentedObject:] rather than this method. */
-- (id) initWithRepresentedObject: (id)object
-{
-	return [self initWithView: nil value: nil representedObject: object];
-}
-
-/** Initializes and returns a layout item with the given view.<br />
-See also -setView:.
-
-The given view can be nil.
-
-You should use -[ETLayoutItemFactory itemWithView:] or 
--[ETLayoutItemFactory itemGroupWithView:] rather than this method. */
-- (id) initWithView: (NSView *)view
-{
-	return [self initWithView: view value: nil representedObject: nil];
 }
 
 /** Initializes and returns a layout item with the given frame.
@@ -146,6 +106,9 @@ You should use -[ETLayoutItemFactory itemWithFrame] or
 }
 
 /** <init />
+You must use -[ETLayoutItemFactory itemXXX] or 
+-[ETLayoutItemFactory itemGroupXXX] methods rather than this method.
+
 Initializes and returns a layout item with the given view, value object and 
 represented object. 
 

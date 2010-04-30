@@ -98,7 +98,7 @@ This height is also identical to the standard toolbar height in Aqua. */
 /** Returns a new layout item to which the given view gets bound. */
 - (ETLayoutItem *) itemWithView: (NSView *)view
 {
-	return (ETLayoutItem *)AUTORELEASE([[ETLayoutItem alloc] initWithView: view]);
+	return (ETLayoutItem *)AUTORELEASE([[ETLayoutItem alloc] initWithView: view value: nil representedObject: nil]);
 }
 
 /** Returns a new layout item which represents the given object and treats it 
@@ -112,7 +112,7 @@ you pass an NSString, the layout item properties won't include
 See also -[NSObject(Model) isCommonObjectValue] in EtoileFoundation. */
 - (ETLayoutItem *) itemWithValue: (id)value
 {
-	return (ETLayoutItem *)AUTORELEASE([[ETLayoutItem alloc] initWithValue: value]);
+	return (ETLayoutItem *)AUTORELEASE([[ETLayoutItem alloc] initWithView: nil value: value representedObject: nil]);
 }
 
 /** Returns a new layout item which represents the given object.
@@ -127,7 +127,7 @@ item itself as a represented object and the returned item will be a proxy or a
 meta representation. */
 - (ETLayoutItem *) itemWithRepresentedObject: (id)object
 {
-	return (ETLayoutItem *)AUTORELEASE([[ETLayoutItem alloc] initWithRepresentedObject: object]);
+	return (ETLayoutItem *)AUTORELEASE([[ETLayoutItem alloc] initWithView: nil value: nil representedObject: object]);
 }
 
 /** <override-never /> 
@@ -223,7 +223,7 @@ and item groups have to be labeled/named with the 'value' property.
 See also -itemWithValue:. */
 - (ETLayoutItemGroup *) itemGroupWithValue: (id)value
 {
-	return AUTORELEASE([[ETLayoutItemGroup alloc] initWithValue: value]);
+	return AUTORELEASE([[ETLayoutItemGroup alloc] initWithView: nil value: value representedObject: nil]);
 }
 
 /** Returns a new layout item group which represents the given object, usually 
@@ -236,7 +236,7 @@ possibly the Collection protocols to traverse the object graph connected to it.
 See also -itemWithRepresentedObject:. */
 - (ETLayoutItemGroup *) itemGroupWithRepresentedObject: (id)object
 {
-	return AUTORELEASE([[ETLayoutItemGroup alloc] initWithRepresentedObject: object]);
+	return AUTORELEASE([[ETLayoutItemGroup alloc] initWithView: nil value: nil representedObject: object]);
 }
 
 /** Returns a new layout item group set up as a graphics group with 
