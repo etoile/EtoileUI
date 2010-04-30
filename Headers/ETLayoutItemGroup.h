@@ -50,7 +50,6 @@
 
 /* Initialization */
 
-- (id) initWithItems: (NSArray *)layoutItems;
 - (id) initWithItems: (NSArray *)layoutItems view: (NSView *)view 
 	value: (id)value representedObject: (id)repObject;
 

@@ -99,7 +99,15 @@ See also +enablesAutolayout. */
 
 /* Initialization */
 
-/** <init /> */
+/** <init />
+You must use -[ETLayoutItemFactory itemGroupXXX] methods rather than this method.
+
+Initializes and returns a layout item groups with the given child items, view, 
+value object and represented object. 
+
+Any of the arguments can be nil.
+
+See also -[ETLayoutItem initWithView:value:representedObject:]. */
 - (id) initWithItems: (NSArray *)layoutItems view: (NSView *)view 
 	value: (id)value representedObject: (id)repObject
 {
@@ -132,16 +140,6 @@ See also +enablesAutolayout. */
 - (id) initWithView: (NSView *)view value: (id)value representedObject: (id)repObject
 {
 	return [self initWithItems: nil view: view value: value representedObject: repObject];
-}
-
-- (id) initWithItems: (NSArray *)layoutItems
-{
-	return [self initWithItems: layoutItems view: nil value: nil representedObject: nil];
-}
-
-- (id) init
-{
-	return [self initWithItems: nil];
 }
 
 /** Initializes and returns a root item to be encaspulated in a layout.
