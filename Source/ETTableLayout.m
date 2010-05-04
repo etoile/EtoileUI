@@ -524,11 +524,12 @@ See ETColumnFragment protocol to customize the returned column. */
 - (NSArray *) selectedItems
 {
 	NSIndexSet *indexes = [[self tableView] selectedRowIndexes];
+	NSEnumerator *indexEnumerator = [indexes objectEnumerator];
 	NSArray *items = [_layoutContext arrangedItems];
 	NSMutableArray *selectedItems = 
 		[NSMutableArray arrayWithCapacity: [indexes count]];
 	
-	FOREACHE(nil, index, NSNumber *, [indexes objectEnumerator])
+	FOREACHE(nil, index, NSNumber *, indexEnumerator)
 	{
 		[selectedItems addObject: [items objectAtIndex: [index intValue]]];
 	}
@@ -1014,11 +1015,12 @@ receiver. */
 - (NSArray *) visibleTableColumns
 {
 	NSIndexSet *columnIndexes = [self columnIndexesInRect: [self visibleRect]];
+	NSEnumerator *indexEnumerator = [columnIndexes objectEnumerator];
 	NSMutableArray *columns = [NSMutableArray array];
 
 	// TODO: Would be interesting to express the loop as below...
 	// return [[[self tableColumns] slicedCollection] objectAtIndex: [[columnIndexes each] intValue]];
-	FOREACHE(nil, index, NSNumber *, [columnIndexes objectEnumerator])
+	FOREACHE(nil, index, NSNumber *, indexEnumerator)
 	{
 		/* We don't use -addObject: to carry the ordering over. */
 		[columns insertObject: [[self tableColumns] objectAtIndex: [index intValue]] 

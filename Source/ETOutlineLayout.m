@@ -126,10 +126,11 @@ expanded and collapsed by getting automatically a related outline arrow. */
 - (NSArray *) selectedItems
 {
 	NSOutlineView *outlineView = [self outlineView];
-	NSIndexSet *indexes = [outlineView selectedRowIndexes];
+	NSIndexSet *indexes = [outlineView selectedRowIndexes]; 
+	NSEnumerator *indexEnumerator = [indexes objectEnumerator];
 	NSMutableArray *selectedItems = [NSMutableArray arrayWithCapacity: [indexes count]];
 	
-	FOREACHE(nil, index, NSNumber *, [indexes objectEnumerator])
+	FOREACHE(nil, index, NSNumber *, indexEnumerator)
 	{
 		[selectedItems addObject: [outlineView itemAtRow: [index intValue]]];
 	}
