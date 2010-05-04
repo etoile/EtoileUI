@@ -2108,6 +2108,7 @@ See also -[ETLayout isPositional] and -[ETLayout isComputedLayout]. */
 		/* Will indirectly resize the supervisor view with -setFrameSize: that 
 		   will in turn call back -setContentSize:. */
 		[[self lastDecoratorItem] setDecorationRect: rect];
+		[[self coverStyle] didChangeItemBounds: ETMakeRect(NSZeroPoint, rect.size)];
 	}
 	else
 	{
@@ -2402,6 +2403,15 @@ The content coordinate space is located inside -contentBounds. */
 	} 
 
 	return rectInContent;
+}
+
+/** Returns a point expressed in the receiver content coordinate space 
+equivalent to point parameter expressed in the receiver coordinate space.
+
+The content coordinate space is located inside -contentBounds. */
+- (NSPoint) convertPointToContent: (NSPoint)aPoint
+{
+	return [self convertRectToContent: ETMakeRect(aPoint, NSZeroSize)].origin;
 }
 
 /** Sets the transform applied within the content bounds. */

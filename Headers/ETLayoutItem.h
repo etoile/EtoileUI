@@ -296,6 +296,7 @@ and centers it. A strech is a scale that doesn't preserve the content proportion
 - (void) setContentSize: (NSSize)size;
 - (NSRect) convertRectFromContent: (NSRect)rect;
 - (NSRect) convertRectToContent: (NSRect)rect;
+- (NSPoint) convertPointToContent: (NSPoint)aPoint;
 - (void) setTransform: (NSAffineTransform *)aTransform;
 - (NSAffineTransform *) transform;
 

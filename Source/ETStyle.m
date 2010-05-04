@@ -242,7 +242,14 @@ inside that redisplayed area and won't be clipped by the graphics context. */
 Notifies the receiver that the styled layout item has been resized.
 
 You can override this method to alter the style state. For example, ETShape 
-overrides it to resize/scale the bezier path as needed. */
+overrides it to resize/scale the bezier path as needed.
+
+Usually the new bounds corresponds to the item content bounds.<br />
+However when the receiver style is used as a cover style, the new bounds 
+corresponds to the item size at a zero origin.
+
+See also -[ETLayoutItem contentBounds], -[ETLayoutItem size] and 
+-[ETLayoutItem coverStyle]. */
 - (void) didChangeItemBounds: (NSRect)bounds
 {
 
