@@ -528,7 +528,7 @@ See ETColumnFragment protocol to customize the returned column. */
 	NSMutableArray *selectedItems = 
 		[NSMutableArray arrayWithCapacity: [indexes count]];
 	
-	FOREACH(indexes, index, NSNumber *)
+	FOREACHE(nil, index, NSNumber *, [indexes objectEnumerator])
 	{
 		[selectedItems addObject: [items objectAtIndex: [index intValue]]];
 	}
@@ -1018,7 +1018,7 @@ receiver. */
 
 	// TODO: Would be interesting to express the loop as below...
 	// return [[[self tableColumns] slicedCollection] objectAtIndex: [[columnIndexes each] intValue]];
-	FOREACH(columnIndexes, index, NSNumber *)
+	FOREACHE(nil, index, NSNumber *, [columnIndexes objectEnumerator])
 	{
 		/* We don't use -addObject: to carry the ordering over. */
 		[columns insertObject: [[self tableColumns] objectAtIndex: [index intValue]] 
