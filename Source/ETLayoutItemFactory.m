@@ -375,7 +375,7 @@ although it is not one (it is more akin a bevel button without a label). */
 #endif
 }
 
-- (id) newItemWithViewClass: (Class)class height: (float)aHeight
+- (id) makeItemWithViewClass: (Class)class height: (float)aHeight
 {
 	id view = AUTORELEASE([[class alloc] initWithFrame: [self defaultWidgetFrameWithHeight: aHeight]]);
 
@@ -385,7 +385,7 @@ although it is not one (it is more akin a bevel button without a label). */
 /** Returns a new layout item that uses a NSButton instance as its view. */
 - (id) button
 {
-	return [self newItemWithViewClass: [NSButton class] height: [self defaultButtonHeight]];
+	return [self makeItemWithViewClass: [NSButton class] height: [self defaultButtonHeight]];
 }
 
 /** Returns a new layout item that uses a NSButton instance as its view, and 
@@ -421,7 +421,7 @@ initializes this button with the given title, target and action. */
 view. */
 - (id) radioButton
 {
-	ETLayoutItem *item = [self newItemWithViewClass: [NSButton class] 
+	ETLayoutItem *item = [self makeItemWithViewClass: [NSButton class] 
 	                                         height: [self defaultRadioButtonHeight]];
 	[(NSButton *)[item view] setButtonType: NSRadioButton];
 	return item;
@@ -444,7 +444,7 @@ Both model and property name must be valid objects when they are not nil. */
              forProperty: (NSString *)aKey
                  ofModel: (id)aModel 
 {
-	id item = [self newItemWithViewClass: [NSButton class]
+	id item = [self makeItemWithViewClass: [NSButton class]
 	                              height: [self defaultCheckboxHeight]];
 	NSButton *buttonView = (NSButton *)[item view];
 
@@ -477,7 +477,7 @@ Both model and property name must be valid objects when they are not nil. */
 and background as its view. */
 - (id) labelWithTitle: (NSString *)aTitle
 {
-	id item = [self newItemWithViewClass: [NSTextField class] 
+	id item = [self makeItemWithViewClass: [NSTextField class] 
 	                              height: [self defaultLabelHeight]];
 	NSTextField *labelField = (NSTextField *)[item view];
 
@@ -504,7 +504,7 @@ and background as its view. */
 /** Returns a new layout item that uses a NSTextField instance as its view. */
 - (id) textField
 {
-	return [self newItemWithViewClass: [NSTextField class] 
+	return [self makeItemWithViewClass: [NSTextField class] 
 	                           height: [self defaultTextFieldHeight]];
 }
 
@@ -556,7 +556,7 @@ WARNING: presently returns a scrollview if you call -view on the returned item. 
 /** Returns a new layout item that uses a NSProgressIndicator instance as its view. */
 - (id) progressIndicator
 {
-	return [self newItemWithViewClass: [NSProgressIndicator class] 
+	return [self makeItemWithViewClass: [NSProgressIndicator class] 
 	                           height: [self defaultProgressIndicatorHeight]];
 }
 
@@ -577,7 +577,7 @@ as its view. */
 - (id) horizontalSlider
 {
 	// NOTE: Might be better to invoke -horizontalSliderWithWidth:XXX.
-	return [self newItemWithViewClass: [NSSlider class]
+	return [self makeItemWithViewClass: [NSSlider class]
 	                           height: [self defaultSliderThickness]];
 }
 
@@ -590,7 +590,7 @@ as its view. */
                      forProperty: (NSString *)aKey
                          ofModel: (id)anObject
 {
-	ETLayoutItem *item = [self newItemWithViewClass: [NSSlider class]
+	ETLayoutItem *item = [self makeItemWithViewClass: [NSSlider class]
 	                                         height: [self defaultSliderThickness]];
 	NSSlider *sliderView = (NSSlider *)[item view];
 
@@ -641,7 +641,7 @@ as its view. */
 /** Returns a new layout item that uses a NSStepper instance as its view. */
 - (id) stepper
 {
-	return [self newItemWithViewClass: [NSStepper class]
+	return [self makeItemWithViewClass: [NSStepper class]
 	                           height: [self defaultStepperHeight]];
 }
 
