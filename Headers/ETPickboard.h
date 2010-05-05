@@ -47,7 +47,7 @@ extern NSString *ETLayoutItemPboardType;
 
 - (id) popObject;
 - (ETPickboardRef *) pushObject: (id)object;
-- (ETPickboardRef *) addObject: (id)object;
+- (ETPickboardRef *) appendObject: (id)object;
 - (void) removeObjectForPickboardRef: (ETPickboardRef *)ref;
 - (id) objectForPickboardRef: (ETPickboardRef *)ref;
 - (NSArray *) allObjects;

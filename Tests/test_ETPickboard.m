@@ -55,7 +55,7 @@
 	
 	pickRef = [self pushObject: string];
 	pickRef = [self pushObject: array];
-	pickRef = [self addObject: item];
+	pickRef = [self appendObject: item];
 	
 	object = [self popObject];
 	UKNotNil(object);
@@ -85,17 +85,17 @@
 	id item = [ETLayoutItem item];
 	id pickRef = nil;
 	
-	pickRef = [self addObject: string];
+	pickRef = [self appendObject: string];
 	UKNotNil(pickRef);
 	UKIntsEqual(1, [self numberOfItems]);
 	UKObjectsSame(string, [[self itemAtIndex: 0] representedObject]);
 	
-	pickRef = [self addObject: array];
+	pickRef = [self appendObject: array];
 	UKNotNil(pickRef);
 	UKIntsEqual(2, [self numberOfItems]);
 	UKObjectsSame(array, [[self itemAtIndex: 1] representedObject]);
 	
-	pickRef = [self addObject: item];
+	pickRef = [self appendObject: item];
 	UKNotNil(pickRef);
 	UKIntsEqual(3, [self numberOfItems]);
 	UKObjectsNotSame(item, [self itemAtIndex: 2]);
@@ -115,7 +115,7 @@
 	
 	pickRef1 = [self pushObject: string];
 	pickRef2 = [self pushObject: array];
-	pickRef3 = [self addObject: item];
+	pickRef3 = [self appendObject: item];
 	
 	[self removeObjectForPickboardRef: pickRef3];
 	UKFalse([[self allObjects] containsObject: item]);

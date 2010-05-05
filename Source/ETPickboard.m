@@ -187,7 +187,7 @@ static ETPickboard *activePickboard = nil;
 
 	/* Use -addObject: instead of -pushObject: if necessary */
 	if ([_pickedObjects count] == 0)
-		return [self addObject: object];
+		return [self appendObject: object];
 
 	/* Push Object */
 	NSString *pickRef = [NSString stringWithFormat: @"%d", ++_pickboardRef];
@@ -228,7 +228,7 @@ returns an ETLayoutItem. */
 	around the pickboard reference. 
 	Don't add a nil value, otherwise an invalid argument exception will be 
 	thrown. */
-- (ETPickboardRef *) addObject: (id)object
+- (ETPickboardRef *) appendObject: (id)object
 {
 	if (object == nil)
 	{
