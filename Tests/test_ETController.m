@@ -25,6 +25,16 @@
 @implementation DummyView
 @end
 
+@interface ETController (Test)
+- (id) makeObject;
+@end
+@implementation ETController (Test)
+- (id) makeObject
+{
+	return AUTORELEASE([self newObject]);
+}
+@end
+
 @interface TestController : NSObject <UKTest>
 {
 	ETController *controller;
@@ -70,13 +80,13 @@
 
 - (void) testNewObject
 {
-	UKNil([controller newObject]);
+	UKNil([controller makeObject]);
 
 	/* Test model class */
 
 	[controller setObjectClass: [NSDate class]];
-	id newObject = [controller newObject];
-	id newObject2 = [controller newObject];
+	id newObject = [controller makeObject];
+	id newObject2 = [controller makeObject];
 
 	UKObjectKindOf(newObject, NSDate);
 	UKObjectsNotSame(newObject2, newObject);
@@ -91,8 +101,8 @@
 	id view = AUTORELEASE([DummyView new]);
 	id templateItem = [[ETLayoutItemFactory factory] itemWithView: view];
 	[controller setTemplateItem: templateItem];
-	newObject = [controller newObject];
-	newObject2 = [controller newObject];
+	newObject = [controller makeObject];
+	newObject2 = [controller makeObject];
 
 	UKObjectKindOf(newObject, ETLayoutItem);
 	UKObjectsNotEqual(templateItem, newObject);
@@ -109,8 +119,8 @@
 
 	/* Test without object class */
 	[controller setObjectClass: nil];
-	newObject = [controller newObject];
-	newObject2 = [controller newObject];
+	newObject = [controller makeObject];
+	newObject2 = [controller makeObject];
 	UKNil([newObject representedObject]);
 	UKNil([newObject2 representedObject]);
 
