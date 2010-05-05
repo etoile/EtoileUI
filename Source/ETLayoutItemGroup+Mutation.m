@@ -660,7 +660,9 @@ collection part of protocol like -numberOfItemsInItemGroup:. */
 A template can be provided by a controller whose content is set to ancestor item 
 of the receiver. If such a template can be found, then the returned item is 
 created by cloning it, otherwise by simply instantiating ETLayoutItem. See also  
--[ETController setTemplateItem:]. */
+-[ETController setTemplateItem:].
+
+The returned object is retained. */
 - (id) newItem
 {
 	id item = nil;
@@ -676,11 +678,11 @@ created by cloning it, otherwise by simply instantiating ETLayoutItem. See also
 	
 	if (item != nil)
 	{
-		item = AUTORELEASE([item deepCopy]);
+		item = [item deepCopy];
 	}
 	else
 	{
-		item = [ETLayoutItem item];
+		item = [[ETLayoutItem alloc] init];
 	}
 	
 	return item;
@@ -691,7 +693,9 @@ created by cloning it, otherwise by simply instantiating ETLayoutItem. See also
 A template can be provided by a controller whose content is set to ancestor item 
 of the receiver. If such a template can be found, then the returned item is 
 created by cloning it, otherwise by simply instantiating ETLayoutItem. See also 
--[ETController setTemplateItemGroup:]. */
+-[ETController setTemplateItemGroup:].
+
+The returned object is retained. */
 - (id) newItemGroup
 {
 	id item = nil;
@@ -707,11 +711,11 @@ created by cloning it, otherwise by simply instantiating ETLayoutItem. See also
 	
 	if (item != nil)
 	{
-		item = AUTORELEASE([item deepCopy]);
+		item = [item deepCopy];
 	}
 	else
 	{
-		item = [ETLayoutItem itemGroup];
+		item = [[ETLayoutItemGroup alloc] init];
 	}
 	
 	return item;
@@ -720,7 +724,9 @@ created by cloning it, otherwise by simply instantiating ETLayoutItem. See also
 /** Creates a new ETLayoutItem or ETLayoutItemGroup object based on whether 
 object return NO or YES to -isCollection and by calling then either -newItem 
 or -newItemGroup. If isValue is equal to YES, object is bound to the item by 
-calling -setValue: rather than -setRepresentedObject:. */
+calling -setValue: rather than -setRepresentedObject:.
+
+The returned object is autoreleased. */
 - (id) itemWithObject: (id)object isValue: (BOOL)isValue
 {
 	id item = [object isCollection] ? [self newItemGroup] : [self newItem];
@@ -744,7 +750,7 @@ calling -setValue: rather than -setRepresentedObject:. */
 		}
 	}
 	
-	return item;
+	return AUTORELEASE(item);
 }
 
 @end

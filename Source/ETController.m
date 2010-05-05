@@ -360,7 +360,9 @@ To customize the copying in a subclass, you must override
 	This method is used by -add: and -insert: actions to generate the object 
 	to be inserted into the content of the controller. 
 	Take note that the autoboxing feature of -[ETLayoutItemGroup addObject:] 
-	will take care of wrapping the created object into a layout item if needed. */
+	will take care of wrapping the created object into a layout item if needed.
+
+The returned object is retained. */
 - (id) newObject
 {
 	id object = nil;
@@ -372,11 +374,11 @@ To customize the copying in a subclass, you must override
 
 	if ([self objectClass] != nil)
 	{
-		id modelObject = AUTORELEASE([[[self objectClass] alloc] init]);
+		id modelObject = [[[self objectClass] alloc] init];
 
 		if (object != nil)
 		{
-			[object setRepresentedObject: modelObject];
+			[object setRepresentedObject: AUTORELEASE(modelObject)];
 		}
 		else
 		{
@@ -395,7 +397,9 @@ To customize the copying in a subclass, you must override
 	This method is used by -addGroup: and -insertGroup: actions to generate the 
 	object to be inserted into the content of the controller. 
 	Take note that the autoboxing feature of -[ETLayoutItemGroup addObject:] 
-	will take care of wrapping the created object into a layout item if needed. */
+	will take care of wrapping the created object into a layout item if needed.
+
+The returned object is retained. */
 - (id) newGroup
 {
 	id object = nil;
@@ -407,11 +411,11 @@ To customize the copying in a subclass, you must override
 
 	if ([self groupClass] != nil)
 	{
-		id modelObject = AUTORELEASE([[[self groupClass] alloc] init]);
+		id modelObject = [[[self groupClass] alloc] init];
 
 		if (object != nil)
 		{
-			[object setRepresentedObject: modelObject];
+			[object setRepresentedObject: AUTORELEASE(modelObject)];
 		}
 		else
 		{
@@ -425,20 +429,20 @@ To customize the copying in a subclass, you must override
 /** Creates a new object by calling -newObject and adds it to the content. */
 - (void) add: (id)sender
 {
-	[[self content] addObject: [self newObject]];
+	[[self content] addObject: AUTORELEASE([self newObject])];
 }
 
 /** Creates a new object group by calling -newGroup and adds it to the content. */
 - (void) addNewGroup: (id)sender
 {
-	[[self content] addObject: [self newGroup]];
+	[[self content] addObject: AUTORELEASE([self newGroup])];
 }
 
 /** Creates a new object by calling -newGroup and inserts it to the content at 
 	-insertionIndex. */
 - (void) insert: (id)sender
 {
-	[[self content] insertObject: [self newObject] 
+	[[self content] insertObject: AUTORELEASE([self newObject])
 	                     atIndex: [self insertionIndex]];
 }
 
@@ -446,7 +450,7 @@ To customize the copying in a subclass, you must override
 	content at -insertionIndex. */
 - (void) insertNewGroup: (id)sender
 {
-	[[self content] insertObject: [self newGroup] 
+	[[self content] insertObject: AUTORELEASE([self newGroup])
 	                     atIndex: [self insertionIndex]];
 }
 
