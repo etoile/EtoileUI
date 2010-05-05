@@ -27,7 +27,6 @@ ETComputedLayout:
 	@private
 	ETSizeConstraintStyle _layoutConstraint;
 	BOOL _grid;
-	BOOL _width;
 }
 
 /* Flow Constraining and Streching */

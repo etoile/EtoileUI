@@ -88,7 +88,6 @@ move, translate and drag behaviors. */
 	@private
 	NSPoint _dragStartLoc; 	/** Expressed in the screen base with non-flipped coordinates */
 	NSPoint _lastDragLoc;  /** Expressed in the screen base with non-flipped coordinates */
-	NSSize _dragDelta; /** Expressed in the screen base with non-flipped coordinates */
 	BOOL _isTranslateMode;
 }
 
