@@ -340,7 +340,6 @@ menu bar, otherwise builds a new instance and returns it. */
 - (NSMenuItem *) arrangeMenuItem
 {
 	NSMenuItem *menuItem = (id)[[self mainMenu] itemWithTag: ETArrangeMenuTag];
-	NSMenu *menu = [menuItem submenu];
 
 	if (menuItem != nil)
 		return menuItem;
@@ -348,7 +347,7 @@ menu bar, otherwise builds a new instance and returns it. */
 	menuItem = [NSMenuItem menuItemWithTitle: _(@"Arrange")
 	                                     tag: ETArrangeMenuTag
 	                                  action: NULL];
-	menu = [menuItem submenu];
+	NSMenu *menu = [menuItem submenu];
 
 	[menu addItemWithTitle: _(@"Bring Forward")
 	                action: @selector(bringForward:)
