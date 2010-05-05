@@ -50,7 +50,7 @@
 	return [_templateItems objectForKey: anIdentifier];
 }
 
-- (id) newItemForIdentifier: (NSString *)anIdentifier isGroupRequired: (BOOL)mustBeGroup
+- (id) makeItemForIdentifier: (NSString *)anIdentifier isGroupRequired: (BOOL)mustBeGroup
 {
 	ETLayoutItem *templateItem = [self templateItemForIdentifier: anIdentifier];
 	ETLayoutItem *item = AUTORELEASE([templateItem copy]);
@@ -76,7 +76,7 @@
 - (id) renderModel: (id)anObject description: (ETEntityDescription *)entityDesc
 {
 	//NSString *identifier = [entityDesc itemIdentifier];
-	//ETLayoutItemGroup *itemGroup = [self newItemForIdentifier: identifier isGroupRequired: YES];
+	//ETLayoutItemGroup *itemGroup = [self makeItemForIdentifier: identifier isGroupRequired: YES];
 
 	return [self renderProperties: [entityDesc propertyDescriptionNames] 
 	                  description: entityDesc
@@ -117,7 +117,7 @@
 	{
 		NSString *identifier = [propertyDesc itemIdentifier];
 
-		item = [self newItemForIdentifier: identifier isGroupRequired: NO];
+		item = [self makeItemForIdentifier: identifier isGroupRequired: NO];
 		[item setName: [propertyDesc name]];
 		[item setRepresentedObject: [ETProperty propertyWithName: aProperty representedObject: anObject]];
 	}

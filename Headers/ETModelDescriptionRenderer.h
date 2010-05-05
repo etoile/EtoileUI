@@ -27,7 +27,7 @@
 - (void) setTemplateItem: (ETLayoutItem *)anItem forIdentifier: (NSString *)anIdentifier;
 - (ETLayoutItem *) templateItemForIdentifier: (NSString *)anIdentifier;
 
-- (id) newItemForIdentifier: (NSString *)anIdentifier isGroupRequired: (BOOL)mustBeGroup;
+- (id) makeItemForIdentifier: (NSString *)anIdentifier isGroupRequired: (BOOL)mustBeGroup;
 
 - (id) renderModel: (id)anObject;
 - (id) renderModel: (id)anObject description: (ETEntityDescription *)entityDesc;
