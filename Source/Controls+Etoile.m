@@ -66,7 +66,6 @@ terminology) on which actions should be dispatched. */
 	[viewCopy setTarget: [self target]];
 	[viewCopy setAction: [self action]];
 
-	RETAIN(viewCopy);
 	return viewCopy;
 }
 
