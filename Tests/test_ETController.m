@@ -27,11 +27,16 @@
 
 @interface ETController (Test)
 - (id) makeObject;
+- (id) makeGroup;
 @end
 @implementation ETController (Test)
 - (id) makeObject
 {
 	return AUTORELEASE([self newObject]);
+}
+- (id) makeGroup
+{
+	return AUTORELEASE([self newGroup]);
 }
 @end
 
@@ -136,12 +141,12 @@
 
 - (void) testNewGroup
 {
-	UKNil([controller newGroup]);
+	UKNil([controller makeGroup]);
 
 	[controller setGroupClass: [NSMutableArray class]];
 
-	id newGroup = [controller newGroup];
-	id newGroup2 = [controller newGroup];
+	id newGroup = [controller makeGroup];
+	id newGroup2 = [controller makeGroup];
 
 	UKObjectKindOf(newGroup, NSMutableArray);
 	// newGroup2 not created by sending -copy but -alloc and -init
@@ -154,8 +159,8 @@
 	id view = AUTORELEASE([DummyView new]);
 	id templateItem = AUTORELEASE([[ETLayoutItemGroup alloc] initWithView: view value: nil representedObject: nil]);
 	[controller setTemplateItemGroup: templateItem];
-	newGroup = [controller newGroup];
-	newGroup2 = [controller newGroup];
+	newGroup = [controller makeGroup];
+	newGroup2 = [controller makeGroup];
 
 	UKObjectKindOf(newGroup, ETLayoutItemGroup);
 	UKObjectsNotEqual(templateItem, newGroup);
@@ -171,8 +176,8 @@
 
 	/* Test without object class */
 	[controller setGroupClass: nil];
-	newGroup = [controller newGroup];
-	newGroup2 = [controller newGroup];
+	newGroup = [controller makeGroup];
+	newGroup2 = [controller makeGroup];
 	UKNil([newGroup representedObject]);
 	UKNil([newGroup2 representedObject]);
 

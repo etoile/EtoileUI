@@ -141,7 +141,7 @@ DEALLOC(DESTROY(itemFactory); DESTROY(item); DESTROY(itemGroup))
 	NSArray *equalProperties = [properties arrayByRemovingObjectsInArray: 
 		[[self nonEqualItemProperties] arrayByAddingObjectsFromArray: nilProperties]];
 
-	ETLayoutItem *newItem = [item copy];
+	ETLayoutItem *newItem = AUTORELEASE([item copy]);
 
 	FOREACH(equalProperties, property, NSString *)
 	{
@@ -178,7 +178,7 @@ DEALLOC(DESTROY(itemFactory); DESTROY(item); DESTROY(itemGroup))
 	NSArray *equalProperties = [properties arrayByRemovingObjectsInArray: 
 		[[self nonEqualItemProperties] arrayByAddingObjectsFromArray: nilProperties]];
 
-	ETLayoutItem *newItem = [item copy];
+	ETLayoutItem *newItem = AUTORELEASE([item copy]);
 
 	FOREACH(equalProperties, property, NSString *)
 	{
@@ -219,7 +219,7 @@ DEALLOC(DESTROY(itemFactory); DESTROY(item); DESTROY(itemGroup))
 {
 	[itemGroup addItem: item];
 
-	ETLayoutItemGroup *newItemGroup = [itemGroup copy];
+	ETLayoutItemGroup *newItemGroup = AUTORELEASE([itemGroup copy]);
 
 	NSArray *properties = [self checkablePropertiesForItem: itemGroup];
 	NSArray *nilProperties = [self defaultNilItemGroupProperties];
@@ -243,7 +243,7 @@ DEALLOC(DESTROY(itemFactory); DESTROY(item); DESTROY(itemGroup))
 
 - (void) testItemGroupCopyAndAddItem
 {
-	ETLayoutItemGroup *newItemGroup = [itemGroup copy];
+	ETLayoutItemGroup *newItemGroup = AUTORELEASE([itemGroup copy]);
 
 	[newItemGroup addItem: item];
 
@@ -271,7 +271,7 @@ DEALLOC(DESTROY(itemFactory); DESTROY(item); DESTROY(itemGroup))
 	
 	[itemGroup setLayout: [ETTableLayout layout]];
 
-	ETLayoutItemGroup *newItemGroup = [itemGroup copy];
+	ETLayoutItemGroup *newItemGroup = AUTORELEASE([itemGroup copy]);
 
 	NSArray *properties = [self checkablePropertiesForItem: itemGroup];
 	NSArray *nilProperties = A(kETDoubleClickedItemProperty, kETStyleProperty);
@@ -311,7 +311,7 @@ DEALLOC(DESTROY(itemFactory); DESTROY(item); DESTROY(itemGroup))
 
 	[itemGroup setLayout: [ETOutlineLayout layout]];
 
-	ETLayoutItemGroup *newItemGroup = [itemGroup deepCopy];
+	ETLayoutItemGroup *newItemGroup = AUTORELEASE([itemGroup deepCopy]);
 
 	UKIntsEqual(2, [newItemGroup numberOfItems]);
 	UKObjectsEqual(newItemGroup, [[newItemGroup itemAtIndex: 1] parentItem]);
@@ -343,7 +343,7 @@ DEALLOC(DESTROY(itemFactory); DESTROY(item); DESTROY(itemGroup))
 
 	[itemGroup2 setLayout: [ETOutlineLayout layout]];
 
-	ETLayoutItemGroup *newItemGroup = [itemGroup deepCopy];
+	ETLayoutItemGroup *newItemGroup = AUTORELEASE([itemGroup deepCopy]);
 
 	UKIntsEqual(4, [newItemGroup numberOfItems]);
 	UKIntsEqual(1, [(id)[newItemGroup itemAtIndex: 1] numberOfItems]);
@@ -381,7 +381,7 @@ DEALLOC(DESTROY(itemFactory); DESTROY(item); DESTROY(itemGroup))
 	[itemGroup addItem: itemGroup1];
 	[itemGroup setLayout: layout];
 
-	ETLayoutItemGroup *newItemGroup = [itemGroup deepCopy];
+	ETLayoutItemGroup *newItemGroup = AUTORELEASE([itemGroup deepCopy]);
 	ETIconLayout *layoutCopy = (id)[newItemGroup layout];
 
 	UKObjectKindOf([layoutCopy positionalLayout], ETFlowLayout);
@@ -413,7 +413,7 @@ DEALLOC(DESTROY(itemFactory); DESTROY(item); DESTROY(itemGroup))
 	[itemGroup addItem: itemGroup1];
 	[itemGroup setLayout: layout];
 
-	ETLayoutItemGroup *newItemGroup = [itemGroup deepCopy];
+	ETLayoutItemGroup *newItemGroup = AUTORELEASE([itemGroup deepCopy]);
 	ETPaneLayout *layoutCopy = (id)[newItemGroup layout];
 
 	UKNotNil([layoutCopy barItem]);
