@@ -779,7 +779,8 @@ GNUstep and pass it to the layout item tree as needed. */
 	if ([self canDraw] == NO)
 		return;
 
-	[self viewWillDraw];
+	// FIXME: We cannot call -getRectsBeingDrawn:count: now on GNUstep (crash with libobjc2)
+	//[self viewWillDraw];
 	[super displayRectIgnoringOpacity: aRect inContext: context];
 	
 	if ([self lockFocusIfCanDrawInContext: context] == NO)
