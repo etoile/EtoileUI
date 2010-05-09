@@ -54,7 +54,7 @@ persistency controller (when CoreObject is installed). */
 @interface ETUIItem : ETStyle
 {
 	ETDecoratorItem *_decoratorItem; // next decorator
-	ETView *_view;
+	IBOutlet ETView *_supervisorView;
 }
 
 + (NSRect) defaultItemRect;

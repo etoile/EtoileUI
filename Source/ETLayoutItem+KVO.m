@@ -41,7 +41,7 @@
 	}
 	else /* isRepresentedObjectChange */
 	{
-		NSParameterAssert(object == _modelObject);
+		NSParameterAssert(object == _representedObject);
 
 		if ([keyPath isEqual: @"value"] || [keyPath isEqual: @"objectValue"])
 		{

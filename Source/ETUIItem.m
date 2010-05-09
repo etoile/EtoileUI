@@ -46,7 +46,7 @@ By default, returns NO. */
 		 /* Unset the decorated item weak reference on the decorator side */
 		[self setDecoratorItem: nil];
 	}
-	DESTROY(_view);
+	DESTROY(_supervisorView);
 
 	[super dealloc];
 }
@@ -74,7 +74,7 @@ By default, returns NO. */
 	   is still valid or not.
 	   Take note the retain count is NSExtraRefCount plus one. */
 	BOOL isDeallocated = (NSExtraRefCount(self) == 0);
-	BOOL hasRetainCycle = (_view != nil);
+	BOOL hasRetainCycle = (_supervisorView != nil);
 
 #ifdef GNUSTEP
 	[super release];
@@ -84,11 +84,11 @@ By default, returns NO. */
 #endif
 
 	/* Tear down the retain cycle owned by the receiver.
-	   By releasing us, we release _view.
-	   If we got deallocated by [super release], self and _view are now
+	   By releasing us, we release _supervisorView.
+	   If we got deallocated by [super release], self and _supervisorView are now
 	   invalid and we must never use them (by sending a message for example).  */
 	if (hasRetainCycle && isDeallocated == NO
-	  && NSExtraRefCount(self) == 0 && NSExtraRefCount(_view) == 0)
+	  && NSExtraRefCount(self) == 0 && NSExtraRefCount(_supervisorView) == 0)
 	{
 		DESTROY(self);
 	}
@@ -102,8 +102,8 @@ By default, returns NO. */
 	RETAIN(decorator);
 	[self setDecoratorItem: nil];
 
-	newItem->_view = [_view copyWithZone: aZone]; // -release?
-	[newItem->_view setItemWithoutInsertingView: newItem];
+	newItem->_supervisorView = [_supervisorView copyWithZone: aZone]; // -release?
+	[newItem->_supervisorView setItemWithoutInsertingView: newItem];
 
 	// NOTE: The decorator set up below must mirror -setDecoratorItem:.
 	ETDecoratorItem *decoratorCopy = [decorator copyWithZone: aZone];
@@ -148,7 +148,7 @@ provided by the widget backend (e.g. AppKit) within a layout item tree. See
 also ETView. */
 - (id) supervisorView
 {
-	return _view;
+	return _supervisorView;
 }
 
 // TODO: Would be better to only allow -setSupervisorView: to be called once 
@@ -161,12 +161,12 @@ also ETView. */
 You should never need to call this method.
 
 See also -supervisorView:. */
-- (void) setSupervisorView: (ETView *)supervisorView sync: (ETSyncSupervisorView)syncDirection
+- (void) setSupervisorView: (ETView *)aSupervisorView sync: (ETSyncSupervisorView)syncDirection
 {
 	 /* isFlipped is also sync in -setFlipped: (see subclasses) */
-	[supervisorView setFlipped: [self isFlipped]];
-	[supervisorView setItemWithoutInsertingView: self];
-	ASSIGN(_view, supervisorView);
+	[aSupervisorView setFlipped: [self isFlipped]];
+	[aSupervisorView setItemWithoutInsertingView: self];
+	ASSIGN(_supervisorView, aSupervisorView);
 
 	BOOL hasDecorator = (_decoratorItem != nil);
 	if (hasDecorator)

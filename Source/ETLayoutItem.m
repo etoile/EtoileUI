@@ -169,7 +169,7 @@ receive KVO notifications triggered by releasing objects we observe. In the
 worst case, we can be retained/released and thereby reenter -dealloc. */
 - (void) stopKVOObservation
 {
-	[_modelObject removeObserver: self];
+	[_representedObject removeObserver: self];
 
 	NSView *view = [self view];
 
@@ -209,7 +209,7 @@ every subclass that overrides -dealloc. */
 	DESTROY(_defaultValues);
 	DESTROY(_styleGroup);
 	DESTROY(_coverStyle);
-	DESTROY(_modelObject);
+	DESTROY(_representedObject);
 	DESTROY(_transform);
 	_parentItem = nil; /* weak reference */
     
@@ -274,7 +274,7 @@ Default values will be copied but not individually (shallow copy). */
 
 	/* We adjust targets and observers to reference equivalent objects in the object graph copy */
 
-	NSView *viewCopy = [item->_view wrappedView];
+	NSView *viewCopy = [item->_supervisorView wrappedView];
 	// NOTE: -objectForKey: returns nil when the key is nil.
 	id target = GET_PROPERTY(kETTargetProperty);
 	id targetCopy = [[self objectReferencesForCopy] objectForKey: target];
@@ -818,7 +818,7 @@ object but the one provided by the represented object. */
 represented on screen by the receiver. See also -setRepresentedObject:. */
 - (id) representedObject
 {
-	return _modelObject;
+	return _representedObject;
 }
 
 /** Returns the represented object when not nil, otherwise returns the receiver.
@@ -831,7 +831,7 @@ You shouldn't have to use this method a lot since -valueForProperty: and
 [itemCollection valueForKey: @"subject.name"].  */
 - (id) subject
 {
-	return (nil != _modelObject ? _modelObject : (id)self);
+	return (nil != _representedObject ? _representedObject : (id)self);
 }
 
 - (void) syncView: (NSView *)aView withValue: (id)newValue
@@ -873,15 +873,15 @@ The item view is also synchronized with the object value of the given represente
 object when the view is a widget. */
 - (void) setRepresentedObject: (id)modelObject
 {
-	id oldObject = _modelObject;
+	id oldObject = _representedObject;
 
-	[_modelObject removeObserver: self];
+	[_representedObject removeObserver: self];
 
 	/* To ensure the values are not released before the KVO notification ends */
 	RETAIN(oldObject);	
 	NSSet *affectedKeys = [self willChangeRepresentedObjectFrom: oldObject 
 	                                                         to: modelObject];
-	ASSIGN(_modelObject, modelObject);
+	ASSIGN(_representedObject, modelObject);
 	[self didChangeValuesForKeys: affectedKeys];
 	RELEASE(oldObject);
 
@@ -1021,7 +1021,7 @@ content size to match the view size. */
 	}
 
 	[supervisorView setWrappedView: newView];
-	[self syncView: newView withRepresentedObject: _modelObject]; 
+	[self syncView: newView withRepresentedObject: _representedObject]; 
 
 	if (startObservingNewView)
 	{
@@ -1291,9 +1291,9 @@ returned type will combine both as supertypes. */
 	{
 		[supertypes addObject: subtype];
 	}
-	if (_modelObject != nil)
+	if (_representedObject != nil)
 	{
-		[supertypes addObject: [_modelObject UTI]];
+		[supertypes addObject: [_representedObject UTI]];
 	}
 
 	return [ETUTI transientTypeWithSupertypes: supertypes];
@@ -1330,7 +1330,7 @@ provided by the widget backend (e.g. AppKit) within a layout item tree. See
 also ETView. */
 - (ETView *) supervisorView
 {
-	return _view;
+	return _supervisorView;
 }
 
 /** Sets the supervisor view associated with the receiver. 

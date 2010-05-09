@@ -111,7 +111,7 @@ and centers it. A strech is a scale that doesn't preserve the content proportion
 	NSMutableDictionary *_defaultValues;
 
 	ETLayoutItemGroup *_parentItem;
-	id _modelObject;
+	id _representedObject;
 	ETStyleGroup *_styleGroup;
 	ETStyle *_coverStyle;
 
