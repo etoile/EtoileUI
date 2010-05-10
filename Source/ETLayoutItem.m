@@ -276,7 +276,7 @@ Default values will be copied but not individually (shallow copy). */
 
 	NSView *viewCopy = [item->_supervisorView wrappedView];
 	// NOTE: -objectForKey: returns nil when the key is nil.
-	id target = GET_PROPERTY(kETTargetProperty);
+	id target = [self target];
 	id targetCopy = [[self objectReferencesForCopy] objectForKey: target];
 	id viewTarget = [[[self view] ifResponds] target];
 	id viewTargetCopy = [[self objectReferencesForCopy] objectForKey: viewTarget];
@@ -290,7 +290,7 @@ Default values will be copied but not individually (shallow copy). */
 		viewTargetCopy = viewTarget;
 	}
 	[[viewCopy ifResponds] setTarget: viewTargetCopy];
-	SET_OBJECT_PROPERTY(item, targetCopy, kETTargetProperty);
+	[item setTarget: targetCopy];
 
 	if ([viewCopy isWidget]) /* See -setView:autoresizingMask and keep in sync */
 	{
@@ -2826,15 +2826,14 @@ be sent by the UI element in the EtoileUI responder chain. */
 The target is not retained. */
 - (void) setTarget: (id)aTarget
 {
-	SET_PROPERTY(aTarget, kETTargetProperty);
-	RELEASE(aTarget); // NOTE: target is a weak reference
+	SET_PROPERTY([NSValue valueWithNonretainedObject: aTarget], kETTargetProperty);
 	[[self layout] syncLayoutViewWithItem: self];
 }
 
 /** Returns the target to which actions should be sent. */
 - (id) target
 {
-	return GET_PROPERTY(kETTargetProperty);
+	return [GET_PROPERTY(kETTargetProperty) nonretainedObjectValue];
 }
 
 /** Sets the action that can be sent by the action handler associated with 

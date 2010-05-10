@@ -812,7 +812,11 @@ See also -setDelegate:. */
 /** Sets the delegate associated with the receiver. 
 
 A delegate is only useful if the receiver is a base item, otherwise it will  
-be ignored. */
+be ignored.
+
+The delegate is retained, unlike what Cocoa/GNUstep usually do.<br />
+The delegate is owned by the item and treated as a pluggable aspect to be 
+released when the item is deallocated.  */
 - (void) setDelegate: (id)delegate
 {
 	SET_PROPERTY(delegate, kETDelegateProperty);
