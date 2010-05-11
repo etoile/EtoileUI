@@ -51,7 +51,7 @@
 		601455D30F9722B900268FD1 /* ETHandle.m in Sources */ = {isa = PBXBuildFile; fileRef = 60F8C9CB0F8DF1AB0069FA6C /* ETHandle.m */; };
 		601455D40F9722B900268FD1 /* Controls+Etoile.m in Sources */ = {isa = PBXBuildFile; fileRef = 60F3BE5B0EE1C09500BB9B02 /* Controls+Etoile.m */; };
 		601455D50F9722B900268FD1 /* ETScrollableAreaItem.m in Sources */ = {isa = PBXBuildFile; fileRef = 6074CA4C0F814FD60081E438 /* ETScrollableAreaItem.m */; };
-		601455D60F9722B900268FD1 /* UKNibOwner.m in Sources */ = {isa = PBXBuildFile; fileRef = 60364A080E40A560003377E0 /* UKNibOwner.m */; };
+		601455D60F9722B900268FD1 /* ETNibOwner.m in Sources */ = {isa = PBXBuildFile; fileRef = 60364A080E40A560003377E0 /* ETNibOwner.m */; };
 		601455D70F9722B900268FD1 /* ETDecoratorItem.m in Sources */ = {isa = PBXBuildFile; fileRef = 60330B5A0F7CEF3400A1E8C1 /* ETDecoratorItem.m */; };
 		6017849E0D670DED00A54D5A /* PhotoViewExample.nib in Resources */ = {isa = PBXBuildFile; fileRef = 6017849D0D670DED00A54D5A /* PhotoViewExample.nib */; };
 		6022404E1003DF14007D5D07 /* TestItemGeometry.m in Sources */ = {isa = PBXBuildFile; fileRef = 6022404D1003DF14007D5D07 /* TestItemGeometry.m */; };
@@ -71,7 +71,7 @@
 		603649FB0E40A547003377E0 /* ETLayoutItem+Factory.h in Headers */ = {isa = PBXBuildFile; fileRef = 603649F40E40A547003377E0 /* ETLayoutItem+Factory.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		603649FC0E40A547003377E0 /* ETLayoutItem+Reflection.h in Headers */ = {isa = PBXBuildFile; fileRef = 603649F50E40A547003377E0 /* ETLayoutItem+Reflection.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		603649FF0E40A547003377E0 /* NSImage+NiceScaling.h in Headers */ = {isa = PBXBuildFile; fileRef = 603649F80E40A547003377E0 /* NSImage+NiceScaling.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		60364A000E40A547003377E0 /* UKNibOwner.h in Headers */ = {isa = PBXBuildFile; fileRef = 603649F90E40A547003377E0 /* UKNibOwner.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		60364A000E40A547003377E0 /* ETNibOwner.h in Headers */ = {isa = PBXBuildFile; fileRef = 603649F90E40A547003377E0 /* ETNibOwner.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		60364A010E40A547003377E0 /* UKPluginsRegistry+Icons.h in Headers */ = {isa = PBXBuildFile; fileRef = 603649FA0E40A547003377E0 /* UKPluginsRegistry+Icons.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		60364A0C0E40A560003377E0 /* ETLayoutItem+Factory.m in Sources */ = {isa = PBXBuildFile; fileRef = 60364A040E40A560003377E0 /* ETLayoutItem+Factory.m */; };
 		60364A0D0E40A560003377E0 /* ETLayoutItem+Reflection.m in Sources */ = {isa = PBXBuildFile; fileRef = 60364A050E40A560003377E0 /* ETLayoutItem+Reflection.m */; };
@@ -181,7 +181,7 @@
 		60AE4C900EED520B00DE82BC /* ETLayoutItem+Factory.m in Sources */ = {isa = PBXBuildFile; fileRef = 60364A040E40A560003377E0 /* ETLayoutItem+Factory.m */; };
 		60AE4C910EED520B00DE82BC /* ETLayoutItem+Reflection.m in Sources */ = {isa = PBXBuildFile; fileRef = 60364A050E40A560003377E0 /* ETLayoutItem+Reflection.m */; };
 		60AE4C930EED520B00DE82BC /* NSImage+NiceScaling.m in Sources */ = {isa = PBXBuildFile; fileRef = 60364A070E40A560003377E0 /* NSImage+NiceScaling.m */; };
-		60AE4C940EED520B00DE82BC /* UKNibOwner.m in Sources */ = {isa = PBXBuildFile; fileRef = 60364A080E40A560003377E0 /* UKNibOwner.m */; };
+		60AE4C940EED520B00DE82BC /* ETNibOwner.m in Sources */ = {isa = PBXBuildFile; fileRef = 60364A080E40A560003377E0 /* ETNibOwner.m */; };
 		60AE4C950EED520B00DE82BC /* UKPluginsRegistry+Icons.m in Sources */ = {isa = PBXBuildFile; fileRef = 60364A090E40A560003377E0 /* UKPluginsRegistry+Icons.m */; };
 		60AE4CAD0EED576000DE82BC /* test_ETController.m in Sources */ = {isa = PBXBuildFile; fileRef = 60AE4CAB0EED576000DE82BC /* test_ETController.m */; };
 		60AE4CAE0EED576000DE82BC /* test_ETLayout.m in Sources */ = {isa = PBXBuildFile; fileRef = 60AE4CAC0EED576000DE82BC /* test_ETLayout.m */; };
@@ -468,12 +468,12 @@
 		603649F40E40A547003377E0 /* ETLayoutItem+Factory.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "ETLayoutItem+Factory.h"; path = "Headers/ETLayoutItem+Factory.h"; sourceTree = "<group>"; };
 		603649F50E40A547003377E0 /* ETLayoutItem+Reflection.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "ETLayoutItem+Reflection.h"; path = "Headers/ETLayoutItem+Reflection.h"; sourceTree = "<group>"; };
 		603649F80E40A547003377E0 /* NSImage+NiceScaling.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "NSImage+NiceScaling.h"; path = "Headers/NSImage+NiceScaling.h"; sourceTree = "<group>"; };
-		603649F90E40A547003377E0 /* UKNibOwner.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = UKNibOwner.h; path = Headers/UKNibOwner.h; sourceTree = "<group>"; };
+		603649F90E40A547003377E0 /* ETNibOwner.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ETNibOwner.h; path = Headers/ETNibOwner.h; sourceTree = "<group>"; };
 		603649FA0E40A547003377E0 /* UKPluginsRegistry+Icons.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "UKPluginsRegistry+Icons.h"; path = "Headers/UKPluginsRegistry+Icons.h"; sourceTree = "<group>"; };
 		60364A040E40A560003377E0 /* ETLayoutItem+Factory.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = "ETLayoutItem+Factory.m"; path = "Source/ETLayoutItem+Factory.m"; sourceTree = "<group>"; };
 		60364A050E40A560003377E0 /* ETLayoutItem+Reflection.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = "ETLayoutItem+Reflection.m"; path = "Source/ETLayoutItem+Reflection.m"; sourceTree = "<group>"; };
 		60364A070E40A560003377E0 /* NSImage+NiceScaling.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = "NSImage+NiceScaling.m"; path = "Source/NSImage+NiceScaling.m"; sourceTree = "<group>"; };
-		60364A080E40A560003377E0 /* UKNibOwner.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = UKNibOwner.m; path = Source/UKNibOwner.m; sourceTree = "<group>"; };
+		60364A080E40A560003377E0 /* ETNibOwner.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ETNibOwner.m; path = Source/ETNibOwner.m; sourceTree = "<group>"; };
 		60364A090E40A560003377E0 /* UKPluginsRegistry+Icons.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = "UKPluginsRegistry+Icons.m"; path = "Source/UKPluginsRegistry+Icons.m"; sourceTree = "<group>"; };
 		604A32C10F9BEE680090932A /* ETPickDropCoordinator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ETPickDropCoordinator.h; path = Headers/ETPickDropCoordinator.h; sourceTree = "<group>"; };
 		604A32C40F9BEE780090932A /* ETPickDropCoordinator.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ETPickDropCoordinator.m; path = Source/ETPickDropCoordinator.m; sourceTree = "<group>"; };
@@ -1119,6 +1119,8 @@
 				607F5F060F005C5100A8CD0C /* ETGeometry.m */,
 				609F46840B41FDAF00AD2209 /* ETLineFragment.h */,
 				609F46850B41FDAF00AD2209 /* ETLineFragment.m */,
+				603649F90E40A547003377E0 /* ETNibOwner.h */,
+				60364A080E40A560003377E0 /* ETNibOwner.m */,
 				66B74129103CB03D008AF5B1 /* ETTitleBarView.h */,
 				66B7412A103CB03D008AF5B1 /* ETTitleBarView.m */,
 				60EB7C660C6155AA0066AC40 /* ETView.h */,
@@ -1199,10 +1201,8 @@
 			isa = PBXGroup;
 			children = (
 				60364A070E40A560003377E0 /* NSImage+NiceScaling.m */,
-				60364A080E40A560003377E0 /* UKNibOwner.m */,
 				60364A090E40A560003377E0 /* UKPluginsRegistry+Icons.m */,
 				603649F80E40A547003377E0 /* NSImage+NiceScaling.h */,
-				603649F90E40A547003377E0 /* UKNibOwner.h */,
 				603649FA0E40A547003377E0 /* UKPluginsRegistry+Icons.h */,
 			);
 			name = Old;
@@ -1287,7 +1287,7 @@
 				603649FB0E40A547003377E0 /* ETLayoutItem+Factory.h in Headers */,
 				603649FC0E40A547003377E0 /* ETLayoutItem+Reflection.h in Headers */,
 				603649FF0E40A547003377E0 /* NSImage+NiceScaling.h in Headers */,
-				60364A000E40A547003377E0 /* UKNibOwner.h in Headers */,
+				60364A000E40A547003377E0 /* ETNibOwner.h in Headers */,
 				60364A010E40A547003377E0 /* UKPluginsRegistry+Icons.h in Headers */,
 				60C27A0F0E66B0D80040A41D /* ETComputedLayout.h in Headers */,
 				60F3BE5A0EE1C08000BB9B02 /* Controls+Etoile.h in Headers */,
@@ -1726,7 +1726,7 @@
 				6077C1800F9802E1006CB3F5 /* ETPickboard.m in Sources */,
 				600245050CD162090023182D /* ETInspector.m in Sources */,
 				6077C1810F9802E1006CB3F5 /* ETLayoutItemGroup+Mutation.m in Sources */,
-				60AE4C940EED520B00DE82BC /* UKNibOwner.m in Sources */,
+				60AE4C940EED520B00DE82BC /* ETNibOwner.m in Sources */,
 				6077C1820F9802E1006CB3F5 /* NSImage+Etoile.m in Sources */,
 				6077C1830F9802E1006CB3F5 /* ETViewModelLayout.m in Sources */,
 				600245100CD162090023182D /* ETPaneLayout.m in Sources */,
@@ -1880,7 +1880,7 @@
 				608616100F0F9A6B0061ACFE /* ETShape.m in Sources */,
 				601455D50F9722B900268FD1 /* ETScrollableAreaItem.m in Sources */,
 				60F363FC0D183BB400FCFFDA /* NSImage+Etoile.m in Sources */,
-				601455D60F9722B900268FD1 /* UKNibOwner.m in Sources */,
+				601455D60F9722B900268FD1 /* ETNibOwner.m in Sources */,
 				60364A0D0E40A560003377E0 /* ETLayoutItem+Reflection.m in Sources */,
 				60CF717E0D42E75300B4CA3D /* ETLayoutItemGroup+Mutation.m in Sources */,
 				605D6C020CE7830A009ED244 /* ETApplication.m in Sources */,
@@ -2621,6 +2621,7 @@
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "$(SYSTEM_LIBRARY_DIR)/Frameworks/AppKit.framework/Headers/AppKit.h";
 				GCC_PREPROCESSOR_DEFINITIONS = NeXT_RUNTIME;
+				GCC_VERSION = "";
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				HEADER_SEARCH_PATHS = /usr/GNUstep/System/Library/Headers/;
@@ -2651,6 +2652,7 @@
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "$(SYSTEM_LIBRARY_DIR)/Frameworks/AppKit.framework/Headers/AppKit.h";
 				GCC_PREPROCESSOR_DEFINITIONS = NeXT_RUNTIME;
+				GCC_VERSION = "";
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				HEADER_SEARCH_PATHS = /usr/GNUstep/System/Library/Headers/;

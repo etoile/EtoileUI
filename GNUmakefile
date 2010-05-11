@@ -63,6 +63,7 @@ EtoileUI_HEADER_FILES = \
 	ETLineLayout.h \
 	ETModelDescriptionRenderer.h \
 	ETNullLayout.h \
+	ETNibOwner.h \
 	ETObjectBrowserLayout.h \
 	EtoileUI.h \
 	EtoileUIProperties.h \
@@ -111,7 +112,6 @@ EtoileUI_HEADER_FILES += \
 EtoileUI_HEADER_FILES += \
 	EtoileCompatibility.h \
 	NSImage+NiceScaling.h \
-	UKNibOwner.h \
 	UKPluginsRegistry+Icons.h
 
 

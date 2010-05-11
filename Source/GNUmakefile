@@ -38,6 +38,7 @@ libEtoileUI_OBJC_FILES = \
 	ETLineLayout.m \
 	ETModelDescriptionRenderer.m \
 	ETNullLayout.m \
+	ETNibOwner.m \
 	ETObjectBrowserLayout.m \
 	EtoileUIProperties.m \
 	ETOutlineLayout.m \
@@ -70,8 +71,7 @@ libEtoileUI_OBJC_FILES = \
 
 libEtoileUI_OBJC_FILES += \
 	UKPluginsRegistry+Icons.m \
-	NSImage+NiceScaling.m \
-	UKNibOwner.m
+	NSImage+NiceScaling.m
 
 libEtoileUI_OBJC_FILES += \
 	ETEventProcessor.m \
