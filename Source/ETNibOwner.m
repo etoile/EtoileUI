@@ -10,7 +10,10 @@
 
 #import <EtoileFoundation/Macros.h>
 #import <EtoileFoundation/ETCollection.h>
+#import <EtoileFoundation/ETCollection+HOM.h>
+#import <EtoileFoundation/ETRendering.h>
 #import "ETNibOwner.h"
+#import "NSObject+EtoileUI.h"
 #import "ETCompatibility.h"
 
 
@@ -33,6 +36,13 @@ The Nib bundle will be to be the main bundle if you pass nil. */
 	return self;
 }
 
+/** Initializes and returns a new Nib owner which uses the receiver class name 
+as the nib name to be found in the main bundle. */
+- (id) init
+{
+	return [self initWithNibName: nil bundle: nil];
+}
+
 - (void) dealloc
 {
 	DESTROY(_nibBundle);
@@ -40,6 +50,16 @@ The Nib bundle will be to be the main bundle if you pass nil. */
 	DESTROY(_topLevelObjects);
 	[super dealloc];
 }
+
+/*- (void) copyWithZone: (NSZone *)aZone
+{
+	ETController *newNibOwner = [[[self class] allocWithZone: aZone] init];
+
+	ASSIGN(newNibOwner->_nibBundle, _nibBundle);
+	ASSIGN(newNibOwner->_nibName, _nibName);
+
+	return newNibOwner;
+}*/
 
 - (BOOL) isNibLoaded
 {
@@ -105,6 +125,47 @@ See also -initWithNibName:bundle:. */
 - (NSBundle *) nibBundle
 {
     return (nil != _nibBundle ? _nibBundle : [NSBundle mainBundle]);
+}
+
+/** Returns the mutable array that stores the top level objects once the nib 
+is loaded.
+
+Only subclasses should use this method and mutate the array. */
+- (NSMutableArray *) topLevelObjects
+{
+	return _topLevelObjects;
+}
+
+- (NSArray *) topLevelItems
+{
+	NSMutableArray *topLevelItems = AUTORELEASE([_topLevelObjects mutableCopy]);
+	[[topLevelItems filter] isLayoutItem];
+	return topLevelItems;
+}
+
+- (void) rebuildTopLevelObjectsWithBuilder: (id)aBuilder
+{
+	NSInteger nbOfObjects = [_topLevelObjects count];
+
+	for (int i = 0; i < nbOfObjects; i++)
+	{
+		id newObject = [self rebuiltObjectForObject: [_topLevelObjects objectAtIndex: i] 
+		                                    builder: aBuilder];
+
+		if (nil == newObject)
+		{
+			[_topLevelObjects removeObjectAtIndex: i];
+		}
+		else /* newObject can be identical to the object at i */
+		{
+			[_topLevelObjects replaceObjectAtIndex: i withObject: newObject];
+		}
+	}
+}
+
+- (id) rebuiltObjectForObject: (id)anObject builder: (id)aBuilder
+{
+	return [aBuilder render: anObject];
 }
 
 @end

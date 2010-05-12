@@ -32,7 +32,7 @@ automatically loads the Nib file which is named just like the concrete
 ETNibOwner subclass it is an instance of.<br />
 For example, a direct instance of the ETNibOwner subclass "PreferencesPanel"
 would try to load the Nib file named "PreferencesPanel.nib". */
-@interface ETNibOwner : NSObject
+@interface ETNibOwner : NSObject //<NSCopying>
 {
 	@private
 	NSString *_nibName;
@@ -41,11 +41,18 @@ would try to load the Nib file named "PreferencesPanel.nib". */
 }
 
 - (id) initWithNibName: (NSString *)aNibName bundle: (NSBundle *)aBundle;
+- (id) init;
 
 - (NSString *) nibName;
 - (NSBundle *) nibBundle;
 
 - (BOOL) loadNib;
 - (void) didLoadNib;
+
+- (NSMutableArray *) topLevelObjects;
+- (NSArray *) topLevelItems;
+
+- (void) rebuildTopLevelObjectsWithBuilder: (id)aBuilder;
+- (id) rebuiltObjectForObject: (id)anObject builder: (id)aBuilder;
 
 @end

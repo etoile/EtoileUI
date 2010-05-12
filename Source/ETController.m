@@ -10,18 +10,26 @@
 #import <EtoileFoundation/ETCollection+HOM.h>
 #import <EtoileFoundation/ETUTI.h>
 #import "ETController.h"
+#import "ETLayoutItemBuilder.h"
 #import "ETLayoutItemGroup+Mutation.h"
 #import "ETLayoutItemGroup.h"
+#import "NSObject+EtoileUI.h"
 #import "ETCompatibility.h"
 
 
 @implementation ETController
 
 /** <init />
-Initializes and returns a new controller which automatically rearrange objects. */
-- (id) init
+Initializes and returns a new controller which automatically rearrange objects.
+
+For the Nib name and bundle arguments, see -[ETNibOwner initWithNibName:bundle:]. 
+
+You can also use it -init to create a controller. See -[ETNibOwner init]. */
+- (id) initWithNibName: (NSString *)aNibName bundle: (NSBundle *)aBundle
 {
-	SUPERINIT
+	self = [super initWithNibName: aNibName bundle: aBundle];
+	if (nil == self)
+		return nil;
 
 	_observations = [[NSMutableSet alloc] init];
 	[self setSortDescriptors: nil];
@@ -48,6 +56,7 @@ Initializes and returns a new controller which automatically rearrange objects. 
 	[self stopObservation];
 
 	DESTROY(_observations);
+	DESTROY(_nibMainContent);
 	DESTROY(_templateItem); 
 	DESTROY(_templateItemGroup); 
 	DESTROY(_objectClass); 
@@ -59,6 +68,111 @@ Initializes and returns a new controller which automatically rearrange objects. 
 	DESTROY(_editorItems);
 	
 	[super dealloc];
+}
+
+/* Nib Support */
+
+- (id) rebuiltObjectForObject: (id)anObject builder: (id)aBuilder
+{
+	if ([anObject isLayoutItem] == NO && [anObject isView] == NO)
+		return anObject;
+	
+	id newObject = [super rebuiltObjectForObject: anObject builder: aBuilder];
+
+	if ([anObject isEqual: [self nibMainContent]])
+	{
+		ETAssert([newObject isLayoutItem]);
+
+		[newObject setController: self];
+		[self setNibMainContent: nil];
+	}
+	return newObject;
+}
+
+/** Returns the Nib top level object (e.g. a window or a view) that provides the 
+item group expected to become the controller content and owner when 
+-loadNibAndReturnContent is invoked. 
+
+You shouldn't need to use this method. See -setNibMainContent:.*/
+- (id) nibMainContent
+{
+	return _nibMainContent;
+}
+
+/** Sets the Nib top level object (e.g. a window or a view) that provides the 
+item group expected to become the controller content and owner when 
+-loadNibAndReturnContent is invoked.
+
+When no item can be retrieved, -loadNibAndReturnContent renders the Nib main 
+content with -builder and uses the resulting item as the controller content.
+
+You usally don't use this method but set the related outlet in IB/Gorm. */
+- (void) setNibMainContent: (id)anObject
+{
+	if ([anObject isLayoutItem])
+	{
+		NSParameterAssert([anObject isGroup]);
+	}
+	ASSIGN(_nibMainContent, anObject);
+}
+
+/** <override-dummy />
+Renders view hierarchies reachable from the top level objects of the Nib into a 
+layout item tree with -builder.
+
+Are considered traversable the top level objects which returns YES to 
+-isLayoutItem or -isView.
+
+You can override this method to disable this behavior or extend the current one. */
+- (void) didLoadNib
+{
+	[self rebuildTopLevelObjectsWithBuilder: [self builder]];
+}
+
+/** Don't use this method but -loadNibAndReturnContent.
+
+Raises an exception. */
+- (BOOL) loadNib
+{
+	[self doesNotRecognizeSelector: _cmd];
+	return NO;
+}
+
+/** Loads the Nib file with the receiver as the File's Owner and returns the new 
+controller content on success, otherwise returns nil and logs a failure message.
+
+You must retain the returned item which owns the receiver once the method has 
+returned. Later this item can be released to release the controller.<br />
+During the Nib loading phase, the controller owns the Nib (precisely the top 
+level objects), but just before returning it transfers the ownership back to 
+the returned content (identical to -content) and releases the top level objects.
+Which means every top level objects have to inserted into the item tree in 
+-didLoadNib or retained with outlets (if you write a subclass).
+
+Raises an exception if the bundle or the Nib itself cannot be found.<br />
+Also raises an exception when the new controller content cannot be determined,  
+-nibMainContent or -content returns nil. */
+- (ETLayoutItemGroup *) loadNibAndReturnContent
+{
+	if ([self nibMainContent] == nil || [self content] == nil)
+	{
+		[NSException raise: NSInternalInconsistencyException 
+		            format: @"%@ must have a valid -nibMainContent or -content to load a Nib", self];
+		return nil;
+	}
+	
+	BOOL nibLoaded = [super loadNib];
+
+	if (NO == nibLoaded)
+		return nil;
+
+	ETAssert([_content isLayoutItem] && [_content isGroup]);
+
+	/* Give the ownership back to the content (see also -rebuiltObjectForObject:builder:) */
+	RETAIN(_content);
+	[[self topLevelObjects] removeObject: _content];
+
+	return AUTORELEASE(_content);
 }
 
 /** Returns the content object which is either a layout item group or nil.
@@ -105,6 +219,13 @@ Returns an empty array by default. */
 - (NSArray *) trackedItemPropertyNames
 {
 	return [NSArray array];
+}
+
+/* AppKit to EtoileUI Conversion */
+
+- (ETLayoutItemBuilder *) builder
+{
+	return [ETEtoileUIBuilder builder];
 }
 
 /* Observation */

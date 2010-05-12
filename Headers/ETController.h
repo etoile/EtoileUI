@@ -11,8 +11,9 @@
 
 #import <Foundation/Foundation.h>
 #import <AppKit/AppKit.h>
+#import <EtoileUI/ETNibOwner.h>
 
-@class ETLayoutItem, ETLayoutItemGroup, ETUTI;
+@class ETLayoutItem, ETLayoutItemBuilder, ETLayoutItemGroup, ETUTI;
 
 // TODO: Think about the selection marker stuff and implement it if it makes senses.
 
@@ -52,10 +53,12 @@
 	bound to the container. 
 	ETController directly sorts object of the content and doesn't maintain 
 	arranged objects as a collection distinct from the content. */
-@interface ETController : NSObject <NSCopying>
+@interface ETController : ETNibOwner <NSCopying>
 {
+	@private
 	NSMutableSet *_observations;
-	ETLayoutItemGroup *_content;
+	IBOutlet ETLayoutItemGroup *_content;
+ 	IBOutlet id _nibMainContent;
 	ETLayoutItem *_templateItem;
 	ETLayoutItemGroup *_templateItemGroup;
 	Class _objectClass;
@@ -74,6 +77,13 @@
 - (ETLayoutItemGroup *) content;
 - (void) setContent: (ETLayoutItemGroup *)content;
 - (NSArray *) trackedItemPropertyNames;
+
+/* Nib Support */
+
+- (id) nibMainContent;
+- (void) setNibMainContent: (id)anObject;
+- (ETLayoutItemGroup *) loadNibAndReturnContent;
+- (ETLayoutItemBuilder *) builder;
 
 /* Observation */
 
