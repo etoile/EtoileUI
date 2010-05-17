@@ -67,6 +67,16 @@ otherwise returns NO. */
 	return [[self superview] isKindOfClass: NSClassFromString(@"NSThemeFrame")];
 }
 
+
+/** Returns the item bound to the first supervisor view found in the view 
+ancestor hierarchy.
+
+The returned object is an ETUIItem or subclass instance. */
+- (id) owningItem
+{
+	return [[self superview] owningItem];
+}
+
 /* Copying */
 
 /** Returns a view copy of the receiver. 

@@ -223,6 +223,10 @@ Returns an empty array by default. */
 
 /* AppKit to EtoileUI Conversion */
 
+/** Returns the AppKit to EtoileUI builder that converts AppKit windows, views 
+etc. to items when a nib is loaded.
+
+By default, returns an ETEtoileUIBuilder instance. */
 - (ETLayoutItemBuilder *) builder
 {
 	return [ETEtoileUIBuilder builder];

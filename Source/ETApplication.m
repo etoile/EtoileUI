@@ -7,12 +7,14 @@
  */
 
 #import <EtoileFoundation/Macros.h>
+#import <EtoileFoundation/NSObject+HOM.h>
 #import "ETApplication.h"
 #import "ETEventProcessor.h"
 #import "ETTool.h"
 #import "ETLayoutItemGroup.h"
 #import "ETLayoutItem+Factory.h"
 #import "ETLayoutItemBuilder.h"
+#import "ETNibOwner.h"
 #import "ETObjectBrowserLayout.h"
 #import "ETLayoutItemFactory.h"
 #import "NSObject+EtoileUI.h"
@@ -35,6 +37,12 @@
 
 @implementation ETApplication
 
+- (void) dealloc
+{
+	DESTROY(_nibOwner);
+	[super dealloc];
+}
+
 /** Returns the layout item representing the application. 
 
 The method returns a local root item which is usually the window group or layer
@@ -42,6 +50,51 @@ under the application control. */
 - (ETLayoutItemGroup *) layoutItem
 {
 	return [ETLayoutItem localRootGroup];
+}
+
+/** Returns the AppKit to EtoileUI builder that converts AppKit windows, views 
+etc. to items at launch time.
+
+Will be used to process the top-level objects of the main Nib and each window 
+visible on screen when the launch is finished.
+
+By default, returns an ETEtoileUIBuilder instance. */
+- (ETLayoutItemBuilder *) builder
+{
+	return [ETEtoileUIBuilder builder];
+}
+
+/** Converts the top-level objects of the main Nib into equivalent EtoileUI 
+constructs if possible.
+
+For example, views or windows become layout item trees owned by the Nib.
+
+You can override -builder to customize the conversion. */
+- (void) rebuildMainNib
+{
+	[_nibOwner rebuildTopLevelObjectsWithBuilder: [self builder]];
+}
+
+- (void) _loadMainNib
+{
+	NSDictionary *infoDict = [[NSBundle mainBundle] infoDictionary];
+	NSString *nibName = [infoDict objectForKey: @"NSMainNibFile"];
+	BOOL hasNibNameEntry = (nil != nibName && NO == [nibName isEqual: @""]);
+
+	if (NO == hasNibNameEntry)
+		return;
+	
+	_nibOwner = [[ETNibOwner alloc] initWithNibName: nibName bundle: [NSBundle mainBundle]];
+
+	BOOL nibLoadFailed = (NO == [_nibOwner loadNibWithOwner: ETApp]);
+
+	if (nibLoadFailed)
+	{
+		[NSException raise: NSInternalInconsistencyException 
+			format: @"Failed to load main nib named '%@'. The application is " 
+			"not usable state and will terminate now.", nibName];
+		exit(1);
+	}
 }
 
 /** <override-dummy />
@@ -59,7 +112,11 @@ is not supported in -init and +sharedApplication on Cocoa).
 See also -finishLaunching which is called after -run is invoked. */
 - (void) setUp
 {
+	CREATE_AUTORELEASE_POOL(pool);
 	[self _registerAllAspects];
+	[self _instantiateAppDelegateIfSpecified];
+	[self _loadMainNib];
+	DESTROY(pool);
 }
 
 /* The order of the method calls in this method is critical, be very cautious 
@@ -79,14 +136,12 @@ launching notifications. */
 - (void) finishLaunching
 {
 #ifdef GNUSTEP
-	[self _instantiateAppDelegateIfSpecified];
 	[super finishLaunching];
 	[self _buildMainMenuIfNeeded];
 	[self _setUpAppMenu];
 #else
 	[self _buildMainMenuIfNeeded];
 	[self _setUpAppMenu];
-	[self _instantiateAppDelegateIfSpecified];
 	[super finishLaunching];
 #endif
 
@@ -728,27 +783,6 @@ int ETApplicationMain(int argc, const char **argv)
 
 	id app = [appClass sharedApplication];
  
-#ifndef GNUSTEP
-	// NOTE: The loading of the main nib is done in -[NSApplication init] on 
-	// GNUstep, unlike Cocoa where this is the responsability of 
-	// NSApplicationMain()
-	NSString *nibName = [infos objectForKey: @"NSMainNibFile"];
-	BOOL hasNibNameEntry = (nil != nibName && NO == [nibName isEqual: @""]);
-
-	if (hasNibNameEntry)
-	{
-		BOOL nibLoadFailed = (NO == [NSBundle loadNibNamed: nibName owner: ETApp]);
-
-		if (nibLoadFailed)
-		{
-			[NSException raise: NSInternalInconsistencyException 
-				format: @"Failed to load main nib named '%@'. The application is " 
-				"not usable state and will terminate now.", nibName];
-			return 1;
-		}
-	}
-#endif
-
 	[app setUp];
 	[app run];
 

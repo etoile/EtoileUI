@@ -36,6 +36,8 @@ This protocol is subject to change or be removed. */
 - (BOOL) isSupervisorView;
 - (BOOL) isWindowContentView;
 
+- (id) owningItem;
+
 /* Copying */
 
 - (id) copyWithZone: (NSZone *)zone;

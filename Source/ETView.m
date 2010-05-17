@@ -38,30 +38,6 @@
 	return [ETLayoutItem class];
 }
 
-// TODO: Move this method to ETLayoutItemFactory
-- (id) initWithLayoutView: (NSView *)layoutView
-{
-	self = [self initWithFrame: [layoutView frame]];
-	if (self == nil)
-		return nil;
-
-	id existingSuperview = [layoutView superview];
-	ETLayout *layout = [ETLayout layoutWithLayoutView: layoutView];
-	
-	if ([existingSuperview isSupervisorView])
-	{
-	   [[existingSuperview layoutItem] addItem: [self layoutItem]];
-	}
-	else /* existingSuperview isn't a view-based node in a layout item tree */
-	{
-	   [existingSuperview addSubview: self];
-	}
-
-	[[self layoutItem] setLayout: layout]; /* inject the initial view as a layout */
-
-	return self;
-}
-
 - (id) initWithFrame: (NSRect)frame
 {
 	return [self initWithFrame: frame item: nil];
@@ -260,6 +236,11 @@ A temporary view set on the receiver won't be copied. */
 }
 
 /* Basic Accessors */
+
+- (id) owningItem
+{
+	return [self layoutItem];
+}
 
 // TODO: Rename -layoutItem to -item because it can return any ETUIItem.
 

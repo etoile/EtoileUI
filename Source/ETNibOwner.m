@@ -66,16 +66,20 @@ as the nib name to be found in the main bundle. */
 	return ([_topLevelObjects isEmpty] == NO);
 }
 
-/** Loads the Nib file with the receiver as the owner and returns YES on success, 
-otherwise returns NO and logs a failure message.
+/** Loads the Nib file with the given object as the File's Owner and returns YES 
+on success, otherwise returns NO and logs a failure message.
+
+The owner must not be nil.
 
 Raises an exception if the bundle or the Nib itself cannot be found. */
-- (BOOL) loadNib
+- (BOOL) loadNibWithOwner: (id)anOwner
 {
+	NILARG_EXCEPTION_TEST(anOwner);
+
     if ([self isNibLoaded] == YES)
         return YES;
     
-    NSDictionary* nibContext = D(self, NSNibOwner, _topLevelObjects, NSNibTopLevelObjects);
+    NSDictionary* nibContext = D(anOwner, NSNibOwner, _topLevelObjects, NSNibTopLevelObjects);
 
     NSAssert1([self nibBundle] != nil, @"Failed finding bundle for NibOwner %@", self);
 
@@ -92,6 +96,15 @@ Raises an exception if the bundle or the Nib itself cannot be found. */
 	[self didLoadNib];
 
     return YES;
+}
+
+/** Loads the Nib file with the receiver as the owner and returns YES on success, 
+otherwise returns NO and logs a failure message.
+
+Raises an exception if the bundle or the Nib itself cannot be found. */
+- (BOOL) loadNib
+{
+	return [self loadNibWithOwner: self];
 }
 
 /** <override-dummy />
@@ -136,6 +149,7 @@ Only subclasses should use this method and mutate the array. */
 	return _topLevelObjects;
 }
 
+/** Returns the subset of the top-level objects which are layout items. */
 - (NSArray *) topLevelItems
 {
 	NSMutableArray *topLevelItems = AUTORELEASE([_topLevelObjects mutableCopy]);
@@ -143,26 +157,39 @@ Only subclasses should use this method and mutate the array. */
 	return topLevelItems;
 }
 
+/** Converts the top-level objects of the Nib into equivalent EtoileUI 
+constructs if possible.
+
+For example, views or windows become layout item trees owned by the Nib.
+
+The conversion is delegated to the given builder with ETRendering protocol.<br />
+The object returned by -render: replaces the original object. When the builder 
+returns nil, the original object is removed.  */
 - (void) rebuildTopLevelObjectsWithBuilder: (id)aBuilder
 {
-	NSInteger nbOfObjects = [_topLevelObjects count];
-
-	for (int i = 0; i < nbOfObjects; i++)
+	FOREACHI([NSArray arrayWithArray: _topLevelObjects], object)
 	{
-		id newObject = [self rebuiltObjectForObject: [_topLevelObjects objectAtIndex: i] 
+		id newObject = [self rebuiltObjectForObject: object 
 		                                    builder: aBuilder];
 
 		if (nil == newObject)
 		{
-			[_topLevelObjects removeObjectAtIndex: i];
+			[_topLevelObjects removeObject: object];
 		}
 		else /* newObject can be identical to the object at i */
 		{
+			NSInteger i = [_topLevelObjects indexOfObject: object];
 			[_topLevelObjects replaceObjectAtIndex: i withObject: newObject];
 		}
 	}
 }
 
+/** <override-dummy />
+Invokes -render: on the builder with the given object as argument.
+
+Can be overriden to customize how each object is handed to the builder and how 
+each object returned by the builder is handed back to 
+-rebuildTopLevelObjectsWithBuilder:. */
 - (id) rebuiltObjectForObject: (id)anObject builder: (id)aBuilder
 {
 	return [aBuilder render: anObject];

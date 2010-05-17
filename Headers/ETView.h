@@ -60,7 +60,6 @@ next EtoileUI release. */
 }
 
 - (id) initWithFrame: (NSRect)rect item: (ETUIItem *)item;
-- (id) initWithLayoutView: (NSView *)layoutView;
 
 - (NSArray *) properties;
 

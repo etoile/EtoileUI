@@ -47,6 +47,7 @@ would try to load the Nib file named "PreferencesPanel.nib". */
 - (NSBundle *) nibBundle;
 
 - (BOOL) loadNib;
+- (BOOL) loadNibWithOwner: (id)anOwner;
 - (void) didLoadNib;
 
 - (NSMutableArray *) topLevelObjects;

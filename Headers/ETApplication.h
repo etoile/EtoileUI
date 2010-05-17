@@ -10,7 +10,7 @@
 #import <Foundation/Foundation.h>
 #import <AppKit/AppKit.h>
 
-@class ETLayoutItemGroup;
+@class ETLayoutItemBuilder, ETLayoutItemGroup, ETNibOwner;
 
 #define ETApp (ETApplication *)[ETApplication sharedApplication]
 
@@ -29,13 +29,17 @@ application bundle, the specified class will be instantiated at launch time and
 sets as the application delegate. As an NSApplication-subclass delegate, it will 
 receive -applicationWillFinishLaunching: and any subsequent notifications. This 
 is available as a simple conveniency, when you don't want to rely on a main nib 
-file or write a custom main() function.*/
+file or write a custom main() function. */
 @interface ETApplication : NSApplication 
 {
+	@private
 	ETLayoutItemGroup *_windowLayer;
+	ETNibOwner *_nibOwner;
 }
 
 - (ETLayoutItemGroup *) layoutItem;
+- (ETLayoutItemBuilder *) builder;
+- (void) rebuildMainNib;
 - (NSMenu *) applicationMenu;
 
 - (void) setUp;

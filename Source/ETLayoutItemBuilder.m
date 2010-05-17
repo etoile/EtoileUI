@@ -7,6 +7,7 @@
  */
 
 #import <EtoileFoundation/Macros.h>
+#import <EtoileFoundation/ETCollection+HOM.h>
 #import "ETTemplateItemLayout.h"
 #import "ETLayoutItemBuilder.h"
 #import "ETLayoutItem.h"
@@ -45,6 +46,37 @@ DEALLOC(DESTROY(itemFactory))
 
 
 @implementation ETEtoileUIBuilder
+
+- (id) init
+{
+	SUPERINIT
+	_allowsWidgetLayout = YES;
+	return self;
+}
+
+/** Returns whether the receiver should generate ETWidgetLayout subclass 
+instances in -renderView: when possible. 
+
+See also -setAllowsWidgetLayout. */ 
+- (BOOL) allowsWidgetLayout
+{
+	return _allowsWidgetLayout;
+}
+
+/** Sets whether the receiver should generate ETWidgetLayout subclass instances 
+in -renderView: when possible.
+
+For example, let's suppose -renderView: is invoked with an outline view:
+<enum> 
+<item>if set to YES, -renderView: will return an ETLayoutItemGroup whose layout 
+is an ETOutlineLayout initialized with the NSOutlineView.</item>
+<item>if set to NO, -renderView: will return an ETLayoutItem whose view is the 
+NSOutlineView (the outline view won't become EtoileUI-driven).</item>
+</list> */ 
+- (void) setAllowsWidgetLayout: (BOOL)allowed
+{
+	_allowsWidgetLayout = allowed;
+}
 
 /** Returns items built with the given pasteboards (not yet implemented).
 
@@ -121,6 +153,11 @@ returns YES to -[ETWindowItem shouldKeepWindowFrame:].  */
 	return item;
 }
 
+- (BOOL) canBuildWidgetLayoutWithView: (NSView *)aView
+{
+	return ([[ETLayout layoutClassForLayoutView: aView] isEqual: [ETLayout class]] == NO);
+}
+
 /** Returns an item built with the given view, by traversing the subview 
 hierarchy recursively.
 
@@ -138,7 +175,11 @@ of their view hierachy (-subviews returns an empty arrary). */
 {
 	id item = nil;
 
-	if ([view isKindOfClass: [NSScrollView class]])
+	if ([self allowsWidgetLayout] && [self canBuildWidgetLayoutWithView: view])
+	{
+		item = [self renderWidgetLayoutView: view];
+	}
+	else if ([view isKindOfClass: [NSScrollView class]])
 	{
 		item = [self renderView: [view documentView]];
 		[item setDecoratorItem: [ETScrollableAreaItem itemWithScrollView: view]];
@@ -183,6 +224,24 @@ of their view hierachy (-subviews returns an empty arrary). */
 	/* Fixed layouts such as ETFreeLayout are expected to restore the 
 		   initial view frame on the item. */
 	[item setPersistentFrame: [item frame]];
+
+	return item;
+}
+
+/** Returns a new layout item group using the layout returned by
+-[ETLayout layoutWithLayoutView:]. When no matching layout exists, nil is 
+returned. */
+- (id) renderWidgetLayoutView: (id)aView
+{
+	NSUInteger initialAutoresizing = [aView autoresizingMask];
+	NSRect initialFrame = [aView frame];
+	ETLayout *layout = [ETLayout layoutWithLayoutView: aView];
+	if (nil == layout)
+		return nil;
+
+	ETLayoutItemGroup *item = [itemFactory itemGroupWithFrame: initialFrame];
+	[item setAutoresizingMask: initialAutoresizing];
+	[item setLayout: layout];
 
 	return item;
 }

@@ -979,6 +979,8 @@
 		607FBAE30FE002F000960039 /* Mediators & Controllers */ = {
 			isa = PBXGroup;
 			children = (
+				603649F90E40A547003377E0 /* ETNibOwner.h */,
+				60364A080E40A560003377E0 /* ETNibOwner.m */,
 				60CF6C800D3F739000B4CA3D /* ETController.h */,
 				60CF6C810D3F739000B4CA3D /* ETController.m */,
 			);
@@ -1119,8 +1121,6 @@
 				607F5F060F005C5100A8CD0C /* ETGeometry.m */,
 				609F46840B41FDAF00AD2209 /* ETLineFragment.h */,
 				609F46850B41FDAF00AD2209 /* ETLineFragment.m */,
-				603649F90E40A547003377E0 /* ETNibOwner.h */,
-				60364A080E40A560003377E0 /* ETNibOwner.m */,
 				66B74129103CB03D008AF5B1 /* ETTitleBarView.h */,
 				66B7412A103CB03D008AF5B1 /* ETTitleBarView.m */,
 				60EB7C660C6155AA0066AC40 /* ETView.h */,

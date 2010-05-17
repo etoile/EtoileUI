@@ -32,8 +32,12 @@ into a new builder to implement a new transform. */
 /** Generates a layout item tree from an AppKit-based application. */
 @interface ETEtoileUIBuilder: ETLayoutItemBuilder
 {
-
+	@private
+	BOOL _allowsWidgetLayout;
 }
+
+- (BOOL) allowsWidgetLayout;
+- (void) setAllowsWidgetLayout: (BOOL)allowed;
 
 - (id) renderApplication: (NSApplication *)app;
 - (id) renderPasteboards: (NSArray *)pasteboards;
@@ -41,6 +45,7 @@ into a new builder to implement a new transform. */
 - (id) renderWindows: (NSArray *)windows;
 - (id) renderWindow: (NSWindow *)window;
 - (id) renderView: (id)view;
+- (id) renderWidgetLayoutView: (id)aView;
 - (id) renderMenu: (NSMenu *)menu;
 
 @end

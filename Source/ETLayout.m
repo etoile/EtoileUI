@@ -124,7 +124,7 @@ For the view classes listed below, the substitute classes are:
 <term>NSTableView</term><desc>ETTableLayout</desc>
 <term>NSBrowserView</term><desc>ETColumnBrowserLayout</desc>
 </deflist> */
-- (Class) layoutClassForLayoutView: (NSView *)layoutView
++ (Class) layoutClassForLayoutView: (NSView *)layoutView
 {
 	Class layoutClass = nil;
 	NSView *view = layoutView;
@@ -178,7 +178,7 @@ constraint with -setItemSizeConstraint: and -setConstrainedItemSize:. */
 	if (layoutView != nil && [self isMemberOfClass: [ETLayout class]])
 	{
 		/* Find the concrete layout class to instantiate */
-		Class layoutClass = [self layoutClassForLayoutView: layoutView];
+		Class layoutClass = [[self class] layoutClassForLayoutView: layoutView];
 		
 		/* Eventually replaces the receiver by a new concrete instance */
 		if (layoutClass != nil)

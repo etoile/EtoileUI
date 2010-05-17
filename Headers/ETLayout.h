@@ -121,6 +121,8 @@ typedef enum _ETSizeConstraintStyle
 + (NSSet *) registeredLayouts;
 + (NSSet *) registeredLayoutClasses;
 
++ (Class) layoutClassForLayoutView: (NSView *)layoutView;
+
 /* Factory  Method */
 
 + (id) layout;
