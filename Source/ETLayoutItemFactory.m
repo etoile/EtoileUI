@@ -29,10 +29,26 @@
 
 @implementation ETLayoutItemFactory
 
-/** Creates and returns an autoreleased factory object. */
+static NSMapTable *factorySharedInstances = nil;
+
+/** <override-never />
+Returns the shared instance that corresponds to the receiver class. */	
 + (id) factory
 {
-	return AUTORELEASE([[self alloc] init]);
+	if (factorySharedInstances == nil)
+	{
+		ASSIGN(factorySharedInstances, [NSMapTable mapTableWithStrongToStrongObjects]);
+	}
+
+	ETLayoutItemFactory *factory = [factorySharedInstances  objectForKey: self];
+
+	if (factory == nil)
+	{
+		factory = AUTORELEASE([[self alloc] init]);
+		[factorySharedInstances setObject: factory forKey: self];
+	}
+
+	return factory;
 }
 
 - (id) init
