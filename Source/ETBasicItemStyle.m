@@ -129,7 +129,7 @@ DEALLOC(DESTROY(_labelAttributes));
 	// FIXME: We should pass a hint in inputValues that lets us known whether 
 	// we handle the selection visual clue or not, in order to eliminate the 
 	// hard check on ETFreeLayout...
-	if ([item isSelected] && [[[item parentItem] layout] isKindOfClass: [ETFreeLayout layout]] == NO)
+	if ([item isSelected] && [[[item parentItem] layout] isKindOfClass: [ETFreeLayout class]] == NO)
 	{
 		[self drawSelectionIndicatorInRect: bounds];
 	}
