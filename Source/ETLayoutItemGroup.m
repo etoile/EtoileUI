@@ -1598,7 +1598,8 @@ time interval on a subtree that consists of thousand items or more. */
 
 /** Sets the selected items in the layout item subtree attached to the receiver. 
 
-Posts an ETItemGroupSelectionDidChangeNotification. */
+Posts an ETItemGroupSelectionDidChangeNotification and marks the receiver to be 
+redisplayed. */
 - (void) setSelectionIndexPaths: (NSArray *)indexPaths
 {
 	[self applySelectionIndexPaths: [NSMutableArray arrayWithArray: indexPaths] 
@@ -1610,7 +1611,7 @@ Posts an ETItemGroupSelectionDidChangeNotification. */
 	[self didChangeSelection];
 
 	/* Reflect selection change immediately */
-	[[self supervisorView] display]; // TODO: supervisorView is probably not the best choice...
+	[self setNeedsDisplay: YES];
 }
 
 /* Tells the receiver the selection has been changed and it should post 

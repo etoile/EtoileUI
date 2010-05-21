@@ -250,7 +250,8 @@ returnedItemRelativePoint is a point in the window frame rect. */
 	NSAssert(anItem != nil, @"");
 	[super setTargetItem: anItem];
 	[anItem setSelected: NO];
-	[(ETLayoutItem *)[[self layoutOwner] layoutContext] display]; // FIXME: Ugly... because we need to erase the removed handles
+	// NOTE: Mandatory to erase the handles that might have been removed
+	[(ETLayoutItem *)[[self layoutOwner] layoutContext] setNeedsDisplay: YES];
 }
 
 - (void) mouseDragged: (ETEvent *)anEvent
