@@ -2867,7 +2867,7 @@ See also -setAction:. */
 See also -subject. */
 - (void) didChangeViewValue: (id)newValue
 {
-	ETLog(@"Did Change view value to %@", newValue);
+	//ETLog(@"Did Change view value to %@", newValue);
 	[self setValue: newValue forProperty: kETValueProperty];
 }
 

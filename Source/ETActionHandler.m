@@ -419,7 +419,7 @@ By default returns YES, except when the item is a base item, then returns NO. */
 /** Sets the item as selected and marks it to be redisplayed. */
 - (void) handleSelect: (ETLayoutItem *)item
 {
-	ETLog(@"Select %@", item);
+	//ETLog(@"Select %@", item);
 	[item setSelected: YES];
 	[item setNeedsDisplay: YES];
 
@@ -440,7 +440,7 @@ TODO: Problably remove, since it should be of any use and just adds complexity. 
 /** Sets the item as not selected and marks it to be redisplayed. */
 - (void) handleDeselect: (ETLayoutItem *)item
 {
-	ETLog(@"Deselect %@", item);
+	//ETLog(@"Deselect %@", item);
 	[item setSelected: NO];
 	[item setNeedsDisplay: YES];
 
