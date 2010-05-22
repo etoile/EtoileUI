@@ -636,7 +636,7 @@ or not. */
 	  dirtyRect: (NSRect)dirtyRect
       inContext: (id)ctxt
 {
-	//[self drawOutlineInRect: [self drawingFrame]];
+	[self drawOutlineInRect: [self contentBounds]];
 	/* Now draw the handles that are our children */
 	[super render: inputValues dirtyRect: dirtyRect inContext: ctxt];
 }
@@ -645,12 +645,16 @@ or not. */
 - (void) drawOutlineInRect: (NSRect)rect
 {
 	float gstateLineWidth = [NSBezierPath defaultLineWidth];
+	NSGraphicsContext *ctxt = [NSGraphicsContext currentContext];
+	BOOL gstateAntialias = [ctxt shouldAntialias];
+	[ctxt setShouldAntialias: NO];
 
 	[[[NSColor blackColor] colorWithAlphaComponent: 0.90] set];
 	[NSBezierPath setDefaultLineWidth: 0.0];
 	[NSBezierPath strokeRect: rect];
 
 	[NSBezierPath setDefaultLineWidth: gstateLineWidth];
+	[ctxt setShouldAntialias: gstateAntialias];
 }
 
 @end
