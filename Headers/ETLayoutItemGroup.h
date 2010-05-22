@@ -189,7 +189,7 @@
 
 - (BOOL) isOrdered;
 - (BOOL) isEmpty;
-- (unsigned int) count;
+- (NSUInteger) count;
 - (id) content;
 - (NSArray *) contentArray;
 - (void) addObject: (id)object;

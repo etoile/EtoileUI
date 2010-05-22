@@ -160,7 +160,7 @@ item, to which the receiver is bound to, has been resized. */
 	return ([_styles count] == 0);
 }
 
-- (unsigned int) count
+- (NSUInteger) count
 {
 	return [_styles count];
 }

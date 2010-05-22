@@ -1905,7 +1905,7 @@ TODO: Implement and may be rename -expand or -expandStack */
 	return ([self numberOfItems] == 0);
 }
 
-- (unsigned int) count
+- (NSUInteger) count
 {
 	return [self numberOfItems];
 }

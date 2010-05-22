@@ -64,7 +64,7 @@ shared instance. Style groups can be used as shared style objects too though.  *
 
 - (BOOL) isOrdered;
 - (BOOL) isEmpty;
-- (unsigned int) count;
+- (NSUInteger) count;
 - (NSArray *) contentArray;
 - (void) addObject: (id)anObject;
 - (void) insertObject: (id)anObject atIndex: (unsigned int)anIndex;

@@ -193,7 +193,7 @@
 - (BOOL) isEmpty;
 - (id) content;
 - (NSArray *) contentArray;
-- (unsigned int) count;
+- (NSUInteger) count;
 @end
 
 @interface NSXMLElement (ETCollectionMutation) <ETCollectionMutation>
@@ -212,7 +212,7 @@
 
 - (NSArray *) contentArray { return [self content]; }
 
-- (unsigned int) count { return [self childCount]; }
+- (NSUInteger) count { return [self childCount]; }
 
 @end
 
