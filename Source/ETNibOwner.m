@@ -163,8 +163,8 @@ constructs if possible.
 For example, views or windows become layout item trees owned by the Nib.
 
 The conversion is delegated to the given builder with ETRendering protocol.<br />
-The object returned by -render: replaces the original object. When the builder 
-returns nil, the original object is removed.  */
+The object returned by -render: replaces the original object. When 
+-rebuiltObjectForObject:builder: returns nil, the original object is removed.  */
 - (void) rebuildTopLevelObjectsWithBuilder: (id)aBuilder
 {
 	FOREACHI([NSArray arrayWithArray: _topLevelObjects], object)
@@ -185,14 +185,17 @@ returns nil, the original object is removed.  */
 }
 
 /** <override-dummy />
-Invokes -render: on the builder with the given object as argument.
+Invokes -render: on the builder with the given object as argument.<br />
+When the builder returns nil, returns the original object, otherwise returns a 
+new object.
 
 Can be overriden to customize how each object is handed to the builder and how 
 each object returned by the builder is handed back to 
 -rebuildTopLevelObjectsWithBuilder:. */
 - (id) rebuiltObjectForObject: (id)anObject builder: (id)aBuilder
 {
-	return [aBuilder render: anObject];
+	id newObject = [aBuilder render: anObject];
+	return (nil != newObject ? newObject : anObject);
 }
 
 @end
