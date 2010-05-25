@@ -15,6 +15,7 @@
 #import "ETLayoutItem+Reflection.h"
 #import "ETLayoutItem+Scrollable.h"
 #import "ETLayoutItemGroup.h"
+#import "ETNibOwner.h"
 #import "EtoileUIProperties.h"
 #import "ETOutlineLayout.h"
 #import "ETLayoutItemFactory.h"
@@ -65,29 +66,6 @@
 
 @implementation ETViewModelLayout
 
-- (id) initWithRootItem: (ETLayoutItemGroup *)rootItem 
-  firstPresentationItem: (ETLayoutItemGroup *)targetItem
-
-{
-	/* Will load the nib and call -awakeFromNib */
-	self = [super initWithRootItem: rootItem firstPresentationItem: nil];
-
-	if (self == nil)
-		return nil;
-
-	/* Don't set these in -awakeFromNib otherwise ETCompositeLayout initializer
-	   will erase them */
-	NSView *topLevelView = [propertyView superview];
-	[self setRootItem: [[ETEtoileUIBuilder builder] renderView: topLevelView]];
-	 /* Now we retain it through a layout item, the nib can release it */
-	DESTROY(topLevelView);
-	ASSIGN(_mirrorCache, [NSMapTable mapTableWithStrongToStrongObjects]);
-
-	return self;
-}
-
-DEALLOC(DESTROY(_mirrorCache))
-
 - (ETLayout *) defaultPropertyViewLayout
 {
 	ETOutlineLayout *layout = [ETOutlineLayout layout];
@@ -104,15 +82,8 @@ DEALLOC(DESTROY(_mirrorCache))
 	return layout;
 }
 
-/* Configures propertyView outlet. 
-
-Will be called before the receiver is fully initialized. */
-- (void) awakeFromNib
+- (void) prepareUI
 {
-	ETDebugLog(@"Awaking from nib for %@", self);
-
-	ASSIGN(propertyViewItem, [propertyView layoutItem]);
-
 	[propertyViewItem setLayout: [self defaultPropertyViewLayout]];
 	[propertyViewItem setDelegate: self];
 	[propertyViewItem setDoubleAction: @selector(doubleClickInPropertyView:)];
@@ -124,10 +95,54 @@ Will be called before the receiver is fully initialized. */
 	[self switchDisplayMode: popup];
 }
 
-- (NSString *) nibName
+- (BOOL) loadNibAndPrepareUI
 {
-	return @"ViewModelPrototype";
+	NSBundle *etoileUIBundle = [NSBundle bundleForClass: [self class]];
+	ETNibOwner *nibOwner = [[ETNibOwner alloc] initWithNibName:  @"ViewModelPrototype" 
+		                                                bundle: etoileUIBundle];
+	BOOL nibLoaded = [nibOwner loadNibWithOwner: self];
+
+	if (nibLoaded)
+	{
+		NSView *topLevelView = [propertyView superview];
+
+		RETAIN(topLevelView);
+		// NOTE: Safer if the view is in window as Gorm requires it
+		[topLevelView removeFromSuperview];
+
+		[self setRootItem: [[ETEtoileUIBuilder builder] renderView: topLevelView]];
+		// TODO: Remove by using propertyViewItem as outlet
+		ASSIGN(propertyViewItem, [propertyView layoutItem]);
+
+		RELEASE(topLevelView);
+	}
+	RELEASE(nibOwner);
+
+	[self prepareUI];
+
+	return nibLoaded;
 }
+
+- (id) initWithRootItem: (ETLayoutItemGroup *)rootItem 
+  firstPresentationItem: (ETLayoutItemGroup *)targetItem
+
+{
+	self = [super initWithRootItem: rootItem firstPresentationItem: nil];
+	if (self == nil)
+		return nil;
+
+	ASSIGN(_mirrorCache, [NSMapTable mapTableWithStrongToStrongObjects]);
+
+	BOOL nibLoaded = [self loadNibAndPrepareUI];
+	
+	if (NO == nibLoaded)
+	{
+		DESTROY(self);
+	}
+	return self;
+}
+
+DEALLOC(DESTROY(_mirrorCache))
 
 /* Adjusts the layout context flipping to match the our custom view converted 
 into the root item at initialization time. 
