@@ -59,7 +59,32 @@ DEALLOC(DESTROY(itemFactory); DESTROY(item))
 - (ETCompositeLayout *) createLayout
 {
 	ETLayoutItemGroup *proxy = [ETCompositeLayout defaultPresentationProxyWithFrame: [self proxyFrame]];
-	return AUTORELEASE([[ETCompositeLayout alloc] initWithRootItem: nil firstPresentationItem: proxy]);
+	ETLayoutItemGroup *rootItem = [itemFactory itemGroup];
+
+	[rootItem setFlipped: NO]; /* We want to test how -isFlipped is sync */
+
+	return AUTORELEASE([[ETCompositeLayout alloc] initWithRootItem: rootItem firstPresentationItem: proxy]);
+}
+
+- (void) testSyncFlipped
+{
+	NSArray *content = A([itemFactory verticalSlider], [itemFactory oval], [itemFactory textField]);
+	ETCompositeLayout *compositeLayout = [self createLayout];
+	ETLayoutItemGroup *rootItem = [compositeLayout rootItem];
+
+	UKFalse([rootItem isFlipped]);
+	UKTrue([item isFlipped]);
+
+	[item addItems: content];
+	[item setLayout: compositeLayout];
+
+	UKFalse([rootItem isFlipped]);
+	UKFalse([item isFlipped]);
+
+	[item setLayout: [ETFixedLayout layout]];
+
+	UKFalse([rootItem isFlipped]);
+	UKTrue([item isFlipped]);
 }
 
 - (void) testSetUpCompositeLayout

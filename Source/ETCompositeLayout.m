@@ -272,7 +272,8 @@ in -handleAddXXX which will then invoke [[B representedObject] addObject: bla]. 
 	{
 		[self makeItemStatic: _layoutContext];
 	}
-	
+
+	[_layoutContext setFlipped: [[self rootItem] isFlipped]];	
 	[self moveContentFromItem: [self rootItem] toItem: _layoutContext];
 }
 
@@ -368,11 +369,18 @@ the copying support in ETLayoutItemGroup and ETCompositeLayout/ETLayout). */
 	[super setUp];
 }
 
+/* Only sync the size, -isFlipped is sync in the reverse way in -setUp. */
+- (void) syncRootItemGeometryWithSize: (NSSize)aSize
+{
+	[[self rootItem] setSize: aSize];
+}
+
 - (void) setUp
 {
+	[self saveInitialContextState: [self initialStateProperties]];
+
 	[super setUp];
 
-	[self saveInitialContextState: [self initialStateProperties]];
 	[self prepareNewContextState];
 
 	[_layoutContext setVisibleItems: [_layoutContext items]];
