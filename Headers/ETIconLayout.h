@@ -16,6 +16,7 @@
 
 @interface ETIconLayout : ETTemplateItemLayout
 {
+	@private
 	NSFont *_itemLabelFont;
 	NSSize _iconSizeForScaleFactorUnit;
 	NSSize _minIconSize;

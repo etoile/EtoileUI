@@ -19,6 +19,7 @@
 /** The free layout requires an ETLayoutItemGroup object as the layout context. */
 @interface ETFreeLayout : ETFixedLayout
 {
+	@private
 	NSArray *_observedItems;
 }
 

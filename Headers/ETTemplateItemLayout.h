@@ -62,13 +62,13 @@ See ETFormLayout and ETIconLayout subclasses to better understand what is
 possible and how to use ETTemplateItemLayout. */
 @interface ETTemplateItemLayout : ETLayout <ETCompositeLayout, ETLayoutingContext>
 {
+	@private
 	id <ETPositionalLayout> _positionalLayout;
 	ETLayoutItem *_templateItem;
 	/* All the items that got rendered since the layout has been set up */
 	NSMutableSet *_renderedItems; 
 	NSArray *_templateKeys;
 	NSMutableDictionary *_localBindings;
-
 }
 
 - (ETLayoutItem *) templateItem;

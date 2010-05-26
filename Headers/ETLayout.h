@@ -97,23 +97,25 @@ typedef enum _ETSizeConstraintStyle
 @interface ETLayout : NSObject <NSCopying>
 {
 	id _layoutContext; /* Weak reference */
+	ETLayoutItemGroup *_rootItem; /* Lazily initialized */
+
+	@private
 	IBOutlet id delegate; /* Weak reference */
 	IBOutlet NSView *layoutView;
 	ETTool *_tool;
-	ETLayoutItemGroup *_rootItem; /* Lazily initialized */
 	ETDropIndicator *_dropIndicator;
 
-	BOOL _isLayouting; /* -isRendering */
-	
+	BOOL _isLayouting; /* -isRendering */	
 	/* Layout and Content Size in Scrollview */
 	NSSize _layoutSize;
 	BOOL _layoutSizeCustomized;
 	BOOL _maxSizeLayout;
-	
+
 	/* Items Sizing */
 	NSSize _itemSize;
 	ETSizeConstraintStyle _itemSizeConstraintStyle;
-	float _previousScaleFactor;
+	@protected
+	float _previousScaleFactor; // TODO: Remove
 }
 
 + (void) registerAspects;

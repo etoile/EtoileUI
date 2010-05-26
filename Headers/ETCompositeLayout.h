@@ -62,6 +62,7 @@
     outer decorators. */
 @interface ETCompositeLayout : ETLayout
 {
+	@private
 	ETLayoutItemGroup *_targetItem; /* a descendent of the root virtual node */
 }
 

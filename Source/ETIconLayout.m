@@ -95,14 +95,7 @@ DEALLOC(DESTROY(_itemLabelFont))
 	   snapshot with -icon */
 	[item setVisible: YES];
 
-	if (_localBindings != nil)
-	{
-		[super setUpTemplateElementsForItem: item];
-	}
-	else
-	{
-		ETLog(@"WARNING: Bindings missing in %@", self);
-	}
+	[super setUpTemplateElementsForItem: item];
 
 	[item setVisible: NO];
 

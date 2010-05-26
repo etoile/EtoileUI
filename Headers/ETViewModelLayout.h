@@ -35,6 +35,7 @@ However you shouldn't change the layout context source or invoke -reload or
 similar methods on it as required by ETCompositeLayout. */
 @interface ETViewModelLayout : ETCompositeLayout
 {
+	@private
 	IBOutlet ETView *propertyView;
 	ETLayoutItemGroup *propertyViewItem;
 	IBOutlet NSPopUpButton *popup;

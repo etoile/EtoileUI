@@ -18,6 +18,7 @@
 item tree through a text representation. */
 @interface ETTextEditorLayout : ETLayout 
 {
+	@private
 	BOOL _textRepIncludesContext;
 }
 
