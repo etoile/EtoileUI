@@ -96,7 +96,7 @@ typedef enum _ETSizeConstraintStyle
 
 @interface ETLayout : NSObject <NSCopying>
 {
-	IBOutlet id _layoutContext; /* Weak reference */
+	id _layoutContext; /* Weak reference */
 	IBOutlet id _delegate; /* Weak reference */
 	IBOutlet NSView *_displayViewPrototype;
 	ETTool *_tool;
@@ -131,7 +131,6 @@ typedef enum _ETSizeConstraintStyle
 /* Initialization */
 
 - (id) initWithLayoutView: (NSView *)layoutView;
-- (NSString *) nibName;
 
 - (id) copyWithZone: (NSZone *)aZone layoutContext: (id <ETLayoutingContext>)newContext;
 - (void) setUpCopyWithZone: (NSZone *)aZone 

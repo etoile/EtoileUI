@@ -29,6 +29,10 @@
 - (BOOL) isOpaque;
 - (BOOL) hasScrollers;
 
+/* Nib Support */
+
+- (NSString *) nibName;
+
 /* Layout Context & Layout View Synchronization */
 
 - (void) syncLayoutViewWithItem: (ETLayoutItem *)item;

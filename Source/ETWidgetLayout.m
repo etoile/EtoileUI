@@ -13,10 +13,57 @@
 #import "ETActionHandler.h"
 #import "ETLayoutItem.h"
 #import "ETLayoutItem+Scrollable.h"
+#import "ETNibOwner.h"
 #import "ETCompatibility.h"
 
 
 @implementation ETWidgetLayout
+
+- (BOOL) loadNibNamed: (NSString *)nibName
+{
+	NSBundle *bundle = [NSBundle bundleForClass: [self class]];
+	ETNibOwner *nibOwner = [[ETNibOwner alloc] initWithNibName: nibName
+		                                                bundle: bundle];
+	BOOL nibLoaded = [nibOwner loadNibWithOwner: self];
+	
+	if (nibLoaded)
+	{
+		// TODO: Remove this branch statement once the outlet has been renamed 
+		// layoutView
+		/* This outlet will be removed from its superview by -setLayoutView:. 
+		   However the nib loading doesn't send a retain when connecting it to 
+		   the outlet ivar and ASSIGN(_displayViewPrototype, protoView) in 
+		   -setLayoutView:  won't retain it either in our case, because both 
+		   members of the expression are identical. That's why we do a RETAIN 
+		   here, it simply plays the role of the ASSIGN in -setLayoutView:.
+
+		   When _displayViewPrototype will be later renamed layoutView, the nib 
+		   loading will call -setLayoutView: to connect the view to the ivar 
+		   outlet, in this case ASSIGN will play its role as expected by 
+		   retaining the view. */ 
+		RETAIN(_displayViewPrototype);
+		[self setLayoutView: _displayViewPrototype];
+	}
+	RELEASE(nibOwner);
+
+	return nibLoaded;
+}
+
+- (id) initWithLayoutView: (NSView *)layoutView
+{
+	self = [super initWithLayoutView: layoutView];
+	if (nil == self) 
+		return nil;
+
+	if ([self nibName] != nil) /* Use layout view in nib */
+	{
+		if ([self loadNibNamed: [self nibName]] == NO)
+		{
+			DESTROY(self);
+		}
+	}
+	return self;
+}
 
 - (void) setAttachedTool: (ETTool *)anTool
 {
@@ -49,6 +96,22 @@ See also -[ETLayout isOpaque].*/
 - (BOOL) isOpaque
 {
 	return YES;	
+}
+
+
+/** <overidde-dummy />
+Returns the name of the nib file the receiver should automatically load when 
+it gets instantiated.
+
+Overrides in your subclass when you want to retrieve objects stored in a nib 
+to initialize your subclass instances. e.g. you can bind the _layoutView outlet 
+to any view to make it transparently available with -layoutView. -setLayoutView: 
+will be invoked when the outlet is set.
+
+Returns nil by default. */
+- (NSString *) nibName
+{
+	return nil;
 }
 
 /* Layout Context & Layout View Synchronization */
