@@ -35,7 +35,9 @@
 	if (nil == self) 
 		return nil;
 
-	if ([self nibName] != nil) /* Use layout view in nib */
+	BOOL usesLayoutViewInNib = (nil == aView && nil != [self nibName]);
+
+	if (usesLayoutViewInNib) 
 	{
 		if ([self loadNibNamed: [self nibName]] == NO)
 		{

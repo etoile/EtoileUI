@@ -243,6 +243,8 @@ returned. */
 	[item setAutoresizingMask: initialAutoresizing];
 	[item setLayout: layout];
 
+	ETAssert([aView isEqual: [layout layoutView]] && [aView superview] != nil);
+
 	return item;
 }
 
