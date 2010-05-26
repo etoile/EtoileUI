@@ -2,12 +2,10 @@
     "## Comment" = "Do NOT change this file, Gorm maintains it";
     ETLayout = {
 	Actions = (
-	    "setDelegate:"
 	);
 	Outlets = (
-	    _layoutContext,
-	    _delegate,
-	    _displayViewPrototype
+	    delegate,
+	    layoutView
 	);
 	Super = NSObject;
     };
@@ -16,11 +14,26 @@
 	);
 	Outlets = (
 	);
+	Super = ETWidgetLayout;
+    };
+    ETTableView = {
+	Actions = (
+	);
+	Outlets = (
+	);
+	Super = NSTableView;
+    };
+    ETWidgetLayout = {
+	Actions = (
+	    "doubleClick:"
+	);
+	Outlets = (
+	);
 	Super = ETLayout;
     };
     FirstResponder = {
 	Actions = (
-	    "setDelegate:"
+	    "doubleClick:"
 	);
 	Super = NSObject;
     };

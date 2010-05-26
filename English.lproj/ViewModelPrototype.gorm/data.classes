@@ -24,12 +24,10 @@
     };
     ETLayout = {
 	Actions = (
-	    "setDelegate:"
 	);
 	Outlets = (
-	    _layoutContext,
-	    _delegate,
-	    _displayViewPrototype
+	    delegate,
+	    layoutView
 	);
 	Super = NSObject;
     };
@@ -69,7 +67,6 @@
 	    "inspect:",
 	    "inspectSelection:",
 	    "removeObject:",
-	    "setDelegate:",
 	    "setRenderer:",
 	    "setSource:",
 	    "setTarget:",

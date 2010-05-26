@@ -5,22 +5,28 @@
 	);
 	Outlets = (
 	);
-	Super = ETLayout;
+	Super = ETWidgetLayout;
     };
     ETLayout = {
 	Actions = (
-	    "setDelegate:"
 	);
 	Outlets = (
-	    _layoutContext,
-	    _delegate,
-	    _displayViewPrototype
+	    delegate,
+	    layoutView
 	);
 	Super = NSObject;
     };
+    ETWidgetLayout = {
+	Actions = (
+	    "doubleClick:"
+	);
+	Outlets = (
+	);
+	Super = ETLayout;
+    };
     FirstResponder = {
 	Actions = (
-	    "setDelegate:"
+	    "doubleClick:"
 	);
 	Super = NSObject;
     };
