@@ -99,22 +99,18 @@
 {
 	NSBundle *etoileUIBundle = [NSBundle bundleForClass: [self class]];
 	ETNibOwner *nibOwner = [[ETNibOwner alloc] initWithNibName:  @"ViewModelPrototype" 
-		                                                bundle: etoileUIBundle];
+	                                                    bundle: etoileUIBundle];
 	BOOL nibLoaded = [nibOwner loadNibWithOwner: self];
 
 	if (nibLoaded)
 	{
 		NSView *topLevelView = [propertyView superview];
 
-		RETAIN(topLevelView);
-		// NOTE: Safer if the view is in window as Gorm requires it
-		[topLevelView removeFromSuperview];
-
+		[self setLayoutView: topLevelView];
 		[self setRootItem: [[ETEtoileUIBuilder builder] renderView: topLevelView]];
+
 		// TODO: Remove by using propertyViewItem as outlet
 		ASSIGN(propertyViewItem, [propertyView layoutItem]);
-
-		RELEASE(topLevelView);
 	}
 	RELEASE(nibOwner);
 
