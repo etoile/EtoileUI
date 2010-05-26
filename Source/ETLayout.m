@@ -166,7 +166,7 @@ a class cluster.
 The returned layout has both vertical and horizontal constraint on item size 
 enabled. The size constraint is set to 256 * 256 px. You can customize item size 
 constraint with -setItemSizeConstraint: and -setConstrainedItemSize:. */
-- (id) initWithLayoutView: (NSView *)layoutView
+- (id) initWithLayoutView: (NSView *)aView
 {
 	SUPERINIT
 	
@@ -175,10 +175,10 @@ constraint with -setItemSizeConstraint: and -setConstrainedItemSize:. */
 	/* ETLayout itself takes the placeholder object role. By removing the 
 	   following if statement, concrete subclass would have the possibility
 	   to override the concrete subclass... No utility right now. */
-	if (layoutView != nil && [self isMemberOfClass: [ETLayout class]])
+	if (aView != nil && [self isMemberOfClass: [ETLayout class]])
 	{
 		/* Find the concrete layout class to instantiate */
-		Class layoutClass = [[self class] layoutClassForLayoutView: layoutView];
+		Class layoutClass = [[self class] layoutClassForLayoutView: aView];
 		
 		/* Eventually replaces the receiver by a new concrete instance */
 		if (layoutClass != nil)
@@ -187,7 +187,7 @@ constraint with -setItemSizeConstraint: and -setConstrainedItemSize:. */
 			{
 				NSZone *zone = [self zone];
 				RELEASE(self);
-				self = [[layoutClass allocWithZone: zone] initWithLayoutView: layoutView];
+				self = [[layoutClass allocWithZone: zone] initWithLayoutView: aView];
 			}
 		}
 		else /* No matching layout class */
@@ -201,7 +201,7 @@ constraint with -setItemSizeConstraint: and -setConstrainedItemSize:. */
 	/* Concrete instance initialization */
 	
 	_layoutContext = nil;
-	_delegate = nil;
+	delegate = nil;
 	_tool = nil;
 	ASSIGN(_dropIndicator, [ETDropIndicator sharedInstance]);
 	_isLayouting = NO;
@@ -214,9 +214,9 @@ constraint with -setItemSizeConstraint: and -setConstrainedItemSize:. */
 	 /* Will ensure -resizeItems:toScaleFactor: isn't called until the scale changes */
 	 _previousScaleFactor = 1.0;
 
-	if (layoutView != nil) /* Use layout view parameter */
+	if (aView != nil)
 	{
-		[self setLayoutView: layoutView];
+		[self setLayoutView: aView];
 	}
 	
 	return self;
@@ -231,7 +231,7 @@ constraint with -setItemSizeConstraint: and -setConstrainedItemSize:. */
 {
 	/* Neither layout context and delegate have to be retained. 
 	   The layout context is our owner and retains us. */
-	DESTROY(_displayViewPrototype);
+	DESTROY(layoutView);
 	DESTROY(_tool);
 	DESTROY(_rootItem);
 	DESTROY(_dropIndicator);
@@ -255,8 +255,8 @@ tool copy. */
 	/* We copy all ivars except _layoutContext and _isLayouting */
 
 	newLayout->_layoutContext = ctxt;
-	newLayout->_delegate = _delegate;
-	newLayout->_displayViewPrototype = [_displayViewPrototype copyWithZone: aZone];
+	newLayout->delegate = delegate;
+	newLayout->layoutView = [layoutView copyWithZone: aZone];
 	newLayout->_rootItem = [_rootItem copyWithZone: aZone];
 	newLayout->_dropIndicator = RETAIN(_dropIndicator);
 	[newLayout setAttachedTool: [[self attachedTool] copyWithZone: aZone]];
@@ -654,9 +654,9 @@ always returns YES. */
 The delegate is not retained.
 
 Not used presently. */
-- (void) setDelegate: (id)delegate
+- (void) setDelegate: (id)aDelegate
 {
-	_delegate = delegate;
+	delegate = aDelegate;
 }
 
 /** Returns the delegate. 
@@ -664,7 +664,7 @@ Not used presently. */
 See also -setDelegate:. */
 - (id) delegate
 {
-	return _delegate;
+	return delegate;
 }
 
 /* Item Sizing Accessors */
@@ -1034,27 +1034,13 @@ to be identical to the layout context. */
 
 - (void) setLayoutView: (NSView *)protoView
 {
-	// FIXME: Horrible hack to work around the fact Gorm doesn't support 
-	// connecting an outlet to the content view of a window. Hence we connect 
-	// _displayViewPrototype to the window embedding the view and retrieve the 
-	// layout view when this method is called during the nib awaking.
-	// This hack isn't used anymore, so it could probably be removed...
-	if ([protoView isKindOfClass: [NSWindow class]])
-	{
-		ETLog(@"NOTE: -setLayoutView: received a window as parameter");
-		ASSIGN(_displayViewPrototype, [(NSWindow *)protoView contentView]);
-	}
-	else
-	{
-		ASSIGN(_displayViewPrototype, protoView);
-	}
-
-	[_displayViewPrototype removeFromSuperview];
+	ASSIGN(layoutView, protoView);
+	[layoutView removeFromSuperview];
 }
 
 - (NSView *) layoutView
 {
-	return _displayViewPrototype;
+	return layoutView;
 }
 
 /** Returns YES if the layout view is presently visible in the layout item tree 
@@ -1084,8 +1070,6 @@ supervisor view. */
 - (void) setUpLayoutView
 {
 	NSParameterAssert(nil != _layoutContext);
-
-	id layoutView = [self layoutView];
 
 	if (nil == layoutView || [layoutView superview] != nil)
 		return;

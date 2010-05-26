@@ -25,9 +25,9 @@ unlike ETLayout.
 The returned object is always an ETFreeLayout object if layoutView is nil. If a
 layout view is passed in parameter, the returned layout can be any ETLayout
 subclasses (see -[ETLayout initWithLayoutView:]). */
-- (id) initWithLayoutView: (NSView *)layoutView
+- (id) initWithLayoutView: (NSView *)aView
 {
-	self = [super initWithLayoutView: layoutView];
+	self = [super initWithLayoutView: aView];
 	
 	if (self != nil)
 	{

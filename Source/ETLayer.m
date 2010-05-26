@@ -248,9 +248,9 @@ You should never call this method unless you write an ETWindowLayout subclass. *
 
 @implementation ETWindowLayout
 
-- (id) initWithLayoutView: (NSView *)layoutView
+- (id) initWithLayoutView: (NSView *)aView
 {
-	self = [super initWithLayoutView: layoutView];
+	self = [super initWithLayoutView: aView];
 	if (self == nil)
 		return nil;
 

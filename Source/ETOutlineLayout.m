@@ -35,9 +35,9 @@
 	return (NSOutlineView *)[super tableView];
 }
 
-- (id) initWithLayoutView: (NSView *)layoutView
+- (id) initWithLayoutView: (NSView *)aView
 {
-	self = [super initWithLayoutView: layoutView];
+	self = [super initWithLayoutView: aView];
     if (nil == self)
 		return nil;
 

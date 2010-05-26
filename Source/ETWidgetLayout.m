@@ -25,33 +25,13 @@
 	ETNibOwner *nibOwner = [[ETNibOwner alloc] initWithNibName: nibName
 		                                                bundle: bundle];
 	BOOL nibLoaded = [nibOwner loadNibWithOwner: self];
-	
-	if (nibLoaded)
-	{
-		// TODO: Remove this branch statement once the outlet has been renamed 
-		// layoutView
-		/* This outlet will be removed from its superview by -setLayoutView:. 
-		   However the nib loading doesn't send a retain when connecting it to 
-		   the outlet ivar and ASSIGN(_displayViewPrototype, protoView) in 
-		   -setLayoutView:  won't retain it either in our case, because both 
-		   members of the expression are identical. That's why we do a RETAIN 
-		   here, it simply plays the role of the ASSIGN in -setLayoutView:.
-
-		   When _displayViewPrototype will be later renamed layoutView, the nib 
-		   loading will call -setLayoutView: to connect the view to the ivar 
-		   outlet, in this case ASSIGN will play its role as expected by 
-		   retaining the view. */ 
-		RETAIN(_displayViewPrototype);
-		[self setLayoutView: _displayViewPrototype];
-	}
 	RELEASE(nibOwner);
-
 	return nibLoaded;
 }
 
-- (id) initWithLayoutView: (NSView *)layoutView
+- (id) initWithLayoutView: (NSView *)aView
 {
-	self = [super initWithLayoutView: layoutView];
+	self = [super initWithLayoutView: aView];
 	if (nil == self) 
 		return nil;
 
@@ -120,12 +100,12 @@ Returns nil by default. */
 scroll view, otherwise the returned view is identical to -layoutView. */
 - (NSView *) layoutViewWithoutScrollView
 {
-	id layoutView = [self layoutView];
+	id widgetView = [self layoutView];
 
-	if ([layoutView isKindOfClass: [NSScrollView class]])
-		return [layoutView documentView];
+	if ([widgetView isKindOfClass: [NSScrollView class]])
+		return [widgetView documentView];
 
-	return layoutView;
+	return widgetView;
 }
 
 - (id) viewForSelector: (SEL)aSelector
@@ -269,12 +249,12 @@ to a double click in the widget view. The superclass implementation must always
 be called. */
 - (void) doubleClick: (id)sender
 {
-	NSView *layoutView = [self layoutViewWithoutScrollView];
+	NSView *widgetView = [self layoutViewWithoutScrollView];
 
-	NSAssert1(layoutView != nil, @"Layout must not be nil if a double action "
+	NSAssert1(widgetView != nil, @"Layout must not be nil if a double action "
 		@"is handed by the layout %@", sender);
-	NSAssert2([sender isEqual: layoutView], @"sender %@ must be the layout "
-		@"view %@ currently in uses", sender, layoutView);
+	NSAssert2([sender isEqual: widgetView], @"sender %@ must be the layout "
+		@"view %@ currently in uses", sender, widgetView);
 
 	ETDebugLog(@"Double action in %@ with selected items %@", sender,
 		[self selectedItems]);

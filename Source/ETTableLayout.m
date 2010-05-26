@@ -130,12 +130,12 @@ You shouldn't use this method unless you need to customize the table view in a w
 not supported by ETTableLayout API. */
 - (NSTableView *) tableView
 {
-	id layoutView = [self layoutView];
+	id scrollView = [self layoutView];
 	
-	NSAssert2([layoutView isKindOfClass: [NSScrollView class]], @"Layout view "
-		@" %@ of %@ must be an NSScrollView instance", layoutView, self);
+	NSAssert2([scrollView isKindOfClass: [NSScrollView class]], @"Layout view "
+		@" %@ of %@ must be an NSScrollView instance", scrollView, self);
 
-	return [layoutView documentView];
+	return [scrollView documentView];
 }
 
 /** Returns the underlying table columns used by the table view. 

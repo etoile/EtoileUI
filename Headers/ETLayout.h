@@ -97,8 +97,8 @@ typedef enum _ETSizeConstraintStyle
 @interface ETLayout : NSObject <NSCopying>
 {
 	id _layoutContext; /* Weak reference */
-	IBOutlet id _delegate; /* Weak reference */
-	IBOutlet NSView *_displayViewPrototype;
+	IBOutlet id delegate; /* Weak reference */
+	IBOutlet NSView *layoutView;
 	ETTool *_tool;
 	ETLayoutItemGroup *_rootItem; /* Lazily initialized */
 	ETDropIndicator *_dropIndicator;
@@ -130,7 +130,7 @@ typedef enum _ETSizeConstraintStyle
 
 /* Initialization */
 
-- (id) initWithLayoutView: (NSView *)layoutView;
+- (id) initWithLayoutView: (NSView *)aView;
 
 - (id) copyWithZone: (NSZone *)aZone layoutContext: (id <ETLayoutingContext>)newContext;
 - (void) setUpCopyWithZone: (NSZone *)aZone 
@@ -168,7 +168,7 @@ typedef enum _ETSizeConstraintStyle
 - (void) setIsContentSizeLayout: (BOOL)flag;
 - (BOOL) isContentSizeLayout;
 
-- (void) setDelegate: (id)delegate;
+- (void) setDelegate: (id)aDelegate;
 - (id) delegate;
 
 /* Item Sizing Accessors */
