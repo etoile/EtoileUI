@@ -707,47 +707,6 @@ to set no represented object on a menu entry. */
 	return [self itemWithView: popUpView];
 }
 
-/* Layer Factory Methods */
-
-/** Returns a new blank layer. 
-
-See ETLayer to understand the difference between a layer and a layout item group. */
-- (ETLayer *) layer
-{
-	return (ETLayer *)AUTORELEASE([[ETLayer alloc] init]);
-}
-
-/** Returns a new layer which contains the given item as a child. */
-- (ETLayer *) layerWithItem: (ETLayoutItem *)item
-{	
-	return [self layerWithItems: [NSArray arrayWithObject: item]];
-}
-
-/** Returns a new layer which contains the given items as children. */
-- (ETLayer *) layerWithItems: (NSArray *)items
-{
-	ETLayer *layer = [[ETLayer alloc] init];
-	
-	if (layer != nil)
-	{
-		[layer addItems: items];
-	}
-	
-	return (ETLayer *)AUTORELEASE(layer);
-}
-
-// TODO: Implement
-- (ETLayer *) guideLayer
-{
-	return (ETLayer *)AUTORELEASE([[ETLayer alloc] init]);
-}
-
-// TODO: Implement
-- (ETLayer *) gridLayer
-{
-	return (ETLayer *)AUTORELEASE([[ETLayer alloc] init]);
-}
-
 /* Special Group Access Methods */
 
 /** Returns the absolute root group usually located in the UI server.

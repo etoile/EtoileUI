@@ -13,11 +13,12 @@
 #import <Foundation/Foundation.h>
 #import <AppKit/AppKit.h>
 
-@class ETLayoutItem, ETLayoutItemGroup, ETLayer, ETScrollableAreaItem, ETStyle, ETWindowItem;
+@class ETLayoutItem, ETLayoutItemGroup, ETScrollableAreaItem, ETStyle, ETWindowItem;
 
 
 @interface ETLayoutItemFactory : NSObject
 {
+	@private
 	ETStyle *_currentBarElementStyle;
 	float _currentBarElementHeight;
 }
@@ -93,14 +94,6 @@
             representedObjects: (NSArray *)entryModels 
                         target: (id)aTarget 
                         action: (SEL)aSelector;
-
-/* Layer Factory Methods */
-
-- (ETLayer *) layer;
-- (ETLayer *) layerWithItem: (ETLayoutItem *)item;
-- (ETLayer *) layerWithItems: (NSArray *)items;
-- (ETLayer *) guideLayer;
-- (ETLayer *) gridLayer;
 
 /* Special Group Access Methods */
 

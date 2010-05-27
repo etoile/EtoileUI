@@ -14,25 +14,10 @@
 #import <AppKit/AppKit.h>
 #import <EtoileUI/ETLayoutItemGroup.h>
 
-/** Each layer instance is basically a special node of the layout item tree. */
-
-@interface ETLayer : ETLayoutItemGroup 
+/** You must never subclass ETWindowLayer. */
+@interface ETWindowLayer : ETLayoutItemGroup
 {
-	//BOOL _visible;
-	BOOL _outOfFlow;
-}
-
-- (void) setMovesOutOfLayoutFlow: (BOOL)floating;
-- (BOOL) movesOutOfLayoutFlow;
-
-/*- (void) setVisible;
-- (BOOL) isVisible;*/
-
-@end
-
-
-@interface ETWindowLayer : ETLayer
-{
+	@private
 	ETWindowItem *_rootWindowItem;
 	NSMutableArray *_visibleWindows;
 }

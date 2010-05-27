@@ -20,8 +20,10 @@ extern NSString *ETLayoutItemPboardType;
 #define ETPickboardRef NSString
 
 
+/** You must never subclass ETPickboard. */
 @interface ETPickboard : ETLayoutItemGroup
 {
+	@private
 	NSMutableDictionary *_pickedObjects;
 	unsigned int _pickboardRef;
 }

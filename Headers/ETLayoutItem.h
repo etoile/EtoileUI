@@ -103,14 +103,18 @@ content height and centers it. */
 and centers it. A strech is a scale that doesn't preserve the content proportions. */
 } ETContentAspect;
 
+/** You must never subclass ETLayoutItem. */
 @interface ETLayoutItem : ETUIItem <NSCopying, ETObjectInspection, ETFragment>
 {
 	NSMutableDictionary *_variableProperties;
 	// TODO: Merge the two dictionaries or store the default values per object 
 	// in an external dictionary.
+	@private
 	NSMutableDictionary *_defaultValues;
 
+	@protected
 	ETLayoutItemGroup *_parentItem;
+	@private
 	id _representedObject;
 	ETStyleGroup *_styleGroup;
 	ETStyle *_coverStyle;

@@ -18,9 +18,10 @@
 
 @class ETController;
 
-
+/** You must never subclass ETLayoutItemGroup. */
 @interface ETLayoutItemGroup : ETLayoutItem <ETLayoutingContext, ETCollection, ETCollectionMutation>
 {
+	@private
 	NSMutableArray *_layoutItems;
 	NSMutableArray *_sortedItems;
 	NSArray *_arrangedItems;

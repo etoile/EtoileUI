@@ -16,54 +16,6 @@
 #import "NSWindow+Etoile.h"
 #import "ETCompatibility.h"
 
-#define DEFAULT_FRAME NSMakeRect(0, 0, 200, 200)
-
-
-@implementation ETLayer
-
-- (id) init
-{
-	self = [super initWithFrame: DEFAULT_FRAME];
-	if (nil == self)
-		return nil;
-
-	_visible = YES;
-	_outOfFlow = YES;
-    
-    return self;
-}
-
-/** Sets whether the layer view has its frame bound to the one of its parent 
-	container or not.
-	If you change the value to NO, the layer view will be processed during 
-	layout rendering as any other layout items. 
-	See -movesOutOfLayoutFlow for more details. */
-- (void) setMovesOutOfLayoutFlow: (BOOL)floating
-{
-	_outOfFlow = floating;
-}
-
-/** Returns whether the layer view has its frame bound to the one of its parent 
-	container. Layouts items are usually displayed in some kind of flow unlike
-	layers which are designed to float over their parent container layout.
-	Returns YES by default. */
-- (BOOL) movesOutOfLayoutFlow
-{
-	return _outOfFlow;
-}
-
-- (void) setVisible: (BOOL)visibility
-{
-	_visible = visibility;
-}
-
-- (BOOL) isVisible
-{
-	return _visible;
-}
-
-@end
-
 
 @implementation ETWindowLayer
 
@@ -157,7 +109,7 @@ when a layout other than ETWindowLayout is set on the receiver. */
 
 - (void) setLayout: (ETLayout *)aLayout
 {
-	if ([_layout isKindOfClass: [ETWindowLayout class]])
+	if ([[self layout] isKindOfClass: [ETWindowLayout class]])
 	{
 		[self hideHardWindows];
 		[self removeWindowDecoratorItems];
