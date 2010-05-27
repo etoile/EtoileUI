@@ -24,6 +24,7 @@ Non-flipped coordinates are untested with ETScrollableAreaItem i.e. when the
 decorated item returns NO to -isFlipped. */
 @interface ETScrollableAreaItem : ETDecoratorItem
 {
+	@private
 	int _oldDecoratedItemAutoresizingMask; /* Autoresizing mask to restore */
 	BOOL _ensuresContentFillsVisibleArea;
 }

@@ -24,6 +24,7 @@ NSWindow methods: -setDelegate:, -setAcceptsMouseMovedEvents: and
 -registerForDraggedTypes:. */
 @interface ETWindowItem : ETDecoratorItem <ETFirstResponderSharingArea>
 {
+	@private
 	NSWindow *_itemWindow;
 	int _oldDecoratedItemAutoresizingMask; /* Autoresizing mask to restore */
 	BOOL _usesCustomWindowTitle;

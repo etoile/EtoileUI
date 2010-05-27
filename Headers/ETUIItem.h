@@ -50,7 +50,9 @@ This process is usually executed twice. First, EtoileUI will try to find a
 responder in the item tree located in the key window, then in the item tree 
 located in the main window. When no responder has been found, then the action 
 is handed to the application object, to its delegate and finally to the 
-persistency controller (when CoreObject is installed). */
+persistency controller (when CoreObject is installed).
+
+You must never subclass ETUIItem. ETUIItem ivars must be considered private. */
 @interface ETUIItem : ETStyle
 {
 	ETDecoratorItem *_decoratorItem; // next decorator

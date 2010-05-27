@@ -38,6 +38,7 @@
  */
 @interface ETTitleBarItem : ETDecoratorItem
 {
+	@private
 	ETTitleBarView *_titleBarView;
 	NSView *_contentView;
 }

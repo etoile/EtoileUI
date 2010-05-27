@@ -35,9 +35,13 @@ to change though):
 <item>[self displayView] must return [[self decoratorItem] supervisorView]</item>
 <item>[self supervisorView] must return [[[self decoratorItem] supervisorView] wrappedView]</item>
 </list>
-However -supervisorView can be overriden to return nil. */
+However -supervisorView can be overriden to return nil. 
+
+You can write new ETDecoratorItem subclasses. However ETUIItem ivars must be 
+considered private.*/
 @interface ETDecoratorItem : ETUIItem
 {
+	@private
 	ETUIItem *_decoratedItem; // previous decorator (weak reference)
 }
 
