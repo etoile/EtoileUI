@@ -23,6 +23,7 @@ nlike NSBezierPath instances, they support boolean operations (will probably
 implemented in a another framework with a category). */
 @interface ETShape : ETStyle
 {
+	@private
 	NSBezierPath *_path;
 	NSColor *_fillColor;
 	NSColor *_strokeColor;

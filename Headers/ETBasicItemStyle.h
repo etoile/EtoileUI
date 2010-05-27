@@ -50,6 +50,7 @@ You can control the label visibility with -setLabelPosition:, ETLabelPositionNon
 makes the label invisible. */
 @interface ETBasicItemStyle : ETStyle
 {
+	@private
 	ETLabelPosition _labelPosition;
 	float _labelMargin;
 	NSDictionary *_labelAttributes;

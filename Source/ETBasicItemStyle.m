@@ -53,7 +53,7 @@ no max image and label size and no edge inset. */
 - (id) init
 {
 	SUPERINIT
-	_isSharedStyle = YES;
+	[self setIsSharedStyle: YES];
 	_labelPosition = ETLabelPositionNone;
 	ASSIGN(_labelAttributes, [[self class] standardLabelAttributes]);
 	_maxImageSize = ETNullSize;

@@ -157,6 +157,14 @@ TODO: Not really implemented yet... */
 	return _isSharedStyle;
 }
 
+/** Sets whether the receiver can be shared between several owners.
+
+TODO: Not really implemented yet... */
+- (void) setIsSharedStyle: (BOOL)shared
+{
+	_isSharedStyle = shared;
+}
+
 /** Returns the selector uses for style rendering which is equal to -render:
 if you don't override the method. 
 

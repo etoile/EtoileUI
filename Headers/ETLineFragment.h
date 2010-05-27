@@ -25,7 +25,10 @@ objects that comply to the ETFragment protocol when their layout implements the
 ETLayoutFragmentOwner protocol in a compatible way.<br />
 Take note that ETComputedLayout and its EtoileUI subclasses only accept 
 ETLayoutItem objects as arguments to -rectForItem: and -setOrigin:forItem:.<br />
-You can write subclasses and override these methods to solve this limitation. */
+You can write subclasses and override these methods to solve this limitation.
+
+It is not advised to subclass ETLineFragment. In any case, the ivars must be 
+considered private. */
 @interface ETLineFragment : NSObject <ETFragment>
 {
 	id <ETLayoutFragmentOwner>_owner;

@@ -34,6 +34,7 @@ Each layout item is initialized with its own ETStyleGroup instance and not a
 shared instance. Style groups can be used as shared style objects too though.  */
 @interface ETStyleGroup : ETStyle <ETCollectionMutation>
 {
+	@private
 	NSMutableArray *_styles;
 }
 

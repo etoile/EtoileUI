@@ -36,6 +36,7 @@ ETStyle objects are usually shared between multiple style groups
 and expect to be provided a layout item through -render:layoutItem:dirtyRect:. */
 @interface ETStyle : NSObject <ETRendering, NSCopying>
 {
+	@private
 	BOOL _isSharedStyle;
 }
 
@@ -49,6 +50,7 @@ and expect to be provided a layout item through -render:layoutItem:dirtyRect:. *
 + (id) sharedInstance;
 
 - (BOOL) isSharedStyle;
+- (void) setIsSharedStyle: (BOOL)shared;
 
 /* Copying */
 
@@ -88,6 +90,7 @@ typedef enum
 
 @interface ETDropIndicator : ETStyle
 {
+	@private
 	NSPoint _dropLocation;
 	ETLayoutItem *_hoveredItem;
 	BOOL _dropOn;
@@ -115,6 +118,7 @@ typedef enum
 
 @interface ETShadowStyle : ETStyle
 {
+	@private
 	ETStyle *_content;
 	id _shadow;
 }
@@ -125,6 +129,7 @@ typedef enum
 
 @interface ETTintStyle : ETStyle
 {
+	@private
 	ETStyle *_content;
 	NSColor *_color;
 }
@@ -142,6 +147,7 @@ typedef enum
  */
 @interface ETSpeechBubbleStyle : ETStyle
 {
+	@private
 	ETStyle *_content;
 }
 
