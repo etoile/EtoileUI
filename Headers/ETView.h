@@ -40,6 +40,7 @@ Take note that we plan to eliminate ETView and the supervisor view concept in a
 next EtoileUI release. */
 @interface ETView : NSView
 {
+	@private
 	IBOutlet ETUIItem *item;
 	// NOTE: May be remove the view ivars to make the class more lightweight
 	NSView *_wrappedView;

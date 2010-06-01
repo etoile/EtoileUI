@@ -27,6 +27,7 @@ typedef enum {
 
 @interface ETPaneLayout : ETCompositeLayout
 {
+	@private
 	ETLayoutItemGroup *_contentItem;
 	ETLayoutItemGroup *_barItem;
 	ETLayoutItem *_currentItem;

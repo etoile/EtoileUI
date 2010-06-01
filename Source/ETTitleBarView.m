@@ -1,9 +1,9 @@
 /*
- Copyright (C) 2009 Eric Wasylishen
+	Copyright (C) 2009 Eric Wasylishen
  
- Author:  Eric Wasylishen <ewasylishen@gmail.com>
- Date:  August 2009
- License:  Modified BSD  (see COPYING)
+	Author:  Eric Wasylishen <ewasylishen@gmail.com>
+	Date:  August 2009
+	License:  Modified BSD (see COPYING)
  */
 
 #import <EtoileFoundation/Macros.h> 

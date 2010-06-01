@@ -19,6 +19,7 @@
 
 @interface ETModelDescriptionRenderer : ETTransform
 {
+	@private
 	NSMutableDictionary *_templateItems;
 }
 
