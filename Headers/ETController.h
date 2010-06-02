@@ -57,8 +57,8 @@
 {
 	@private
 	NSMutableSet *_observations;
-	IBOutlet ETLayoutItemGroup *_content;
- 	IBOutlet id _nibMainContent;
+	IBOutlet ETLayoutItemGroup *content;
+ 	IBOutlet id nibMainContent;
 	ETLayoutItem *_templateItem;
 	ETLayoutItemGroup *_templateItemGroup;
 	Class _objectClass;
