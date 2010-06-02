@@ -381,7 +381,7 @@ be reactivated when we exit our owner layout. */
 
 - (void) translateByDelta: (NSSize)aDelta
 {
-	if ([_draggedItem isKindOfClass: [ETHandle class]])
+	if ([[self movedItem] isKindOfClass: [ETHandle class]])
 	{
 		[super translateByDelta: aDelta];
 	}

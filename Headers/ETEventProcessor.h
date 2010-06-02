@@ -31,6 +31,7 @@
 
 @interface ETAppKitEventProcessor : ETEventProcessor
 {
+	@private
 	NSWindow *_initialKeyWindow;
 	id _initialFirstResponder;
 	BOOL _wasMouseDownProcessed;

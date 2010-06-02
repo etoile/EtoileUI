@@ -31,6 +31,7 @@
    hovered item doesn't accept drop. */
 @interface ETPickDropCoordinator : NSObject
 {
+	@private
 	ETEvent *_event;
 	ETLayoutItem *_dragSource;
 	id <NSDraggingInfo> _dragInfo;

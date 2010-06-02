@@ -252,6 +252,14 @@ when they are expected to. */
 	return ([self isTranslating] || [self isDragging]);
 }
 
+/** Returns the layout item currently translated or dragged.
+
+Might return nil. */
+- (id) movedItem
+{
+	return _draggedItem;
+}
+
 /** Begins a translation with an item item at a given point in the target item 
 coordinate space. */
 - (void) beginTranslateItem: (ETLayoutItem *)item atPoint: (NSPoint)aPoint

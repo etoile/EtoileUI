@@ -83,9 +83,8 @@ ETMoveTool can be subclassed as ETSelectTool does to implement more evolved
 move, translate and drag behaviors. */
 @interface ETMoveTool : ETTool
 {
-	id _draggedItem;
-
 	@private
+	id _draggedItem;
 	NSPoint _dragStartLoc; 	/** Expressed in the screen base with non-flipped coordinates */
 	NSPoint _lastDragLoc;  /** Expressed in the screen base with non-flipped coordinates */
 	BOOL _isTranslateMode;
@@ -98,6 +97,7 @@ move, translate and drag behaviors. */
 - (void) mouseDragged: (ETEvent *)anEvent;
 
 - (BOOL) isMoving;
+- (id) movedItem;
 
 /* Translate Action Producer */
 

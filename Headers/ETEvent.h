@@ -78,6 +78,7 @@ return an NSEvent. Moreover the event types are the same than NSEventType enum,
 this is expected to change though. */
 @interface ETEvent : NSObject <ETKeyInputAction, ETTouchAction>
 {
+	@private
 	NSEvent *_backendEvent; // TODO: Move that in a subclass specific to each backend
 	ETLayoutItem *_layoutItem;
 	id <NSDraggingInfo> _draggingInfo; // TODO: Should be backend-agnostic, may be move in a subclass...

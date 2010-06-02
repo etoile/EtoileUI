@@ -52,6 +52,7 @@ double-click and deactivated on a mouse click outside of their layout boundaries
 (see -setDeactivateOn:). */
 @interface ETTool : NSResponder <NSCopying>
 {
+	@private
 	NSMutableArray *_hoveredItemStack; /* Lazily initialized, never access directly */
 	ETLayoutItem *_targetItem;
 	ETLayout *_layoutOwner;

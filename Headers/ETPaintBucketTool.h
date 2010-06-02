@@ -26,6 +26,7 @@ typedef enum _ETPaintMode
 TODO: Implement tolerance option. */
 @interface ETPaintBucketTool : ETTool
 {
+	@private
 	NSColor *_fillColor;
 	NSColor *_strokeColor;
 	ETPaintMode _paintMode;

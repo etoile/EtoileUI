@@ -58,6 +58,7 @@ to return NO.
 */
 @interface ETSelectTool : ETMoveTool
 {
+	@private
 	id _actionHandlerPrototype;
 	ETSelectionAreaItem *_selectionAreaItem;
 	BOOL _multipleSelectionAllowed;

@@ -34,6 +34,7 @@ is to write a factory method to build your layout items, this factory
 method will reuse the action handler to be set on every created items. */
 @interface ETActionHandler : NSObject
 {
+	@private
 	ETLayoutItem *_fieldEditorItem;
 	ETLayoutItem *_editedItem;
 }
