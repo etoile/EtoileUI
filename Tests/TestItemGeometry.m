@@ -79,10 +79,10 @@ DEALLOC(DESTROY(itemFactory); DESTROY(item))
 - (void) testNewSupervisorViewWithFrame
 {
 	NSRect frame = NSMakeRect(-300, 20, 500, 50);
-	ETView *view = AUTORELEASE([[ETView alloc] initWithFrame: frame item: nil]);
+	ETView *view = AUTORELEASE([[ETView alloc] initWithFrame: frame item: item]);
 
 	UKRectsEqual(frame, [view frame]);
-	UKRectsEqual(frame, [[view layoutItem] frame]);
+	UKRectsEqual(frame, [item frame]);
 }
 
 static unsigned int sizableMask = (NSViewWidthSizable | NSViewHeightSizable);

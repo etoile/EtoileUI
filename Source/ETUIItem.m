@@ -65,34 +65,13 @@ By default, returns NO. */
 {
 	return NSExtraRefCount(self) + 1;
 }
-#endif
 
 - (oneway void) release
 {
-	/* Note whether the next release call will deallocate the receiver, because 
-	   once the receiver is deallocated you have no way to safely learn if self
-	   is still valid or not.
-	   Take note the retain count is NSExtraRefCount plus one. */
-	BOOL isDeallocated = (NSExtraRefCount(self) == 0);
-	BOOL hasRetainCycle = (_supervisorView != nil);
-
-#ifdef GNUSTEP
-	[super release];
-#else
 	if (NSDecrementExtraRefCountWasZero(self))
 		[self dealloc];
-#endif
-
-	/* Tear down the retain cycle owned by the receiver.
-	   By releasing us, we release _supervisorView.
-	   If we got deallocated by [super release], self and _supervisorView are now
-	   invalid and we must never use them (by sending a message for example).  */
-	if (hasRetainCycle && isDeallocated == NO
-	  && NSExtraRefCount(self) == 0 && NSExtraRefCount(_supervisorView) == 0)
-	{
-		DESTROY(self);
-	}
 }
+#endif
 
 - (id) copyWithZone: (NSZone *)aZone
 {
@@ -102,7 +81,7 @@ By default, returns NO. */
 	RETAIN(decorator);
 	[self setDecoratorItem: nil];
 
-	newItem->_supervisorView = [_supervisorView copyWithZone: aZone]; // -release?
+	newItem->_supervisorView = [_supervisorView copyWithZone: aZone];
 	[newItem->_supervisorView setItemWithoutInsertingView: newItem];
 
 	// NOTE: The decorator set up below must mirror -setDecoratorItem:.

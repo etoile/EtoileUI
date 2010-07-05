@@ -11,20 +11,29 @@
 
 @implementation ContainerController
 
+- (id) init
+{
+	SUPERINIT
+	images = [[NSMutableArray alloc] init];
+	return self;
+}
+
 - (void) dealloc
 {
 	DESTROY(viewContainer);
 	DESTROY(itemMarginSlider);
-	DESTROY(photoViewItem);
 	DESTROY(images);
 	
 	[super dealloc];
 }
 
-- (void) awakeFromNib
+/* Invoked when the application is going to finish to launch because 
+the receiver is set as the application's delegate in the nib. */
+- (void) applicationWillFinishLaunching: (NSNotification *)notif
 {
-	images = [[NSMutableArray alloc] init];
-	ASSIGN(photoViewItem, [viewContainer layoutItem]);
+	/* Will turn the nib views and windows into layout item trees */
+	[ETApp rebuildMainNib];
+	photoViewItem = [viewContainer owningItem];
 
 	[photoViewItem setController: self];
 	[photoViewItem setSource: self];

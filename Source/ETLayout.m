@@ -45,7 +45,9 @@ See also NSObject(ETAspectRegistration). */
 
 	FOREACH([self allSubclasses], subclass, Class)
 	{
+		CREATE_AUTORELEASE_POOL(pool);
 		[self registerLayout: AUTORELEASE([[subclass alloc] init])];
+		DESTROY(pool);
 	}
 }
 

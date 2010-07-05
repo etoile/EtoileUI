@@ -184,6 +184,11 @@ of their view hierachy (-subviews returns an empty arrary). */
 		item = [self renderView: [view documentView]];
 		[item setDecoratorItem: [ETScrollableAreaItem itemWithScrollView: view]];
 	}
+	else if ([view isSupervisorView] && [view layoutItem] == nil)
+	{
+		item = [itemFactory performSelector: [view defaultItemFactorySelector]];
+		[item setSupervisorView: view];
+	}
 	else if ([view isSupervisorView] && [[view layoutItem] isDecoratorItem])
 	{
 		item = [[view layoutItem] firstDecoratedItem];

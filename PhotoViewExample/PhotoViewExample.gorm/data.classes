@@ -16,14 +16,6 @@
 	);
 	Super = ETController;
     };
-    ETContainer = {
-	Actions = (
-	    "inspect:"
-	);
-	Outlets = (
-	);
-	Super = ETView;
-    };
     ETController = {
 	Actions = (
 	    "add:",

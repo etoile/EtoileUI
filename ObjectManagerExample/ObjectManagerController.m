@@ -23,13 +23,26 @@ NSString *myFileUTIString = @"org.etoile.ObjectManagerExample.file";
 
 @implementation ObjectManagerController
 
+- (id) init
+{
+	SUPERINIT
+	ASSIGN(path, @"/");
+	return self;
+}
+
+DEALLOC(DESTROY(path);)
+
 static NSFileManager *objectManager = nil;
 
-- (void) awakeFromNib
+/* Invoked when the application is going to finish its launch because 
+the receiver is set as the application's delegate in the nib. */
+- (void) applicationWillFinishLaunching: (NSNotification *)notif
 {
 	objectManager = [NSFileManager defaultManager];
+
+	/* Will turn the nib views and windows into layout item trees */
+	[ETApp rebuildMainNib];
 	
-	ASSIGN(path, @"/");
 	// TODO: Set mainViewItem and pathViewItem in the nib.
 	mainViewItem = [viewContainer layoutItem];
 	pathViewItem = [pathContainer layoutItem];

@@ -33,9 +33,13 @@
 
 @implementation ETView
 
-- (Class) defaultItemClass
+/** Returns the ETLayoutItemFactory selector that creates an item which matches the 
+receiver expectations.
+
+By default, returns 'itemGroup'. */
+- (SEL) defaultItemFactorySelector
 {
-	return [ETLayoutItem class];
+	return @selector(itemGroup);
 }
 
 - (id) initWithFrame: (NSRect)frame
@@ -49,11 +53,8 @@ item.
 
 You should never need to use this method which uses internally by EtoileUI.
 
-When the item is nil, an ETLayoutItem will be instantiated and bound to the 
-receiver.
-
-The returned view uses the item autoresizing mask (see 
--[ETLayoutItem autoresizingMask]).
+When the given item is not nil, the item is updated to use the view frame and 
+autoresizing mask.
 
 See also -[ETUIItem supervisorView]. */
 - (id) initWithFrame: (NSRect)frame item: (ETUIItem *)anItem
@@ -62,27 +63,8 @@ See also -[ETUIItem supervisorView]. */
 	if (nil == self)
 		return nil;
 
-	/* In both cases, the item will be set by calling 
-	   -setItemWithoutInsertingView: that creates a retain cycle by retaining it. */
-	if (anItem != nil)
-	{
-		[anItem setSupervisorView: self sync: ETSyncSupervisorViewFromItem];
-	}
-	else
-	{
-		ETUIItem *newItem = [[[self defaultItemClass] alloc] init];
-		[newItem setSupervisorView: self sync: ETSyncSupervisorViewToItem];
-		/* -setSupervisorView: will call back -setItemWithoutInsertingView: 
-		   which retained the item, so we release it.
-
-		   In any cases, we avoid to call +layoutItem (and eliminate the last 
-		   line RELEASE as a byproduct) in order to simplify the testing of the 
-		   retain cycle with GSDebugAllocationCount([ETLayoutItem class]). By 
-		   not creating an autoreleased instance, we can ensure that releasing 
-		   the receiver will dealloc the layout item immediately and won't delay 
-		   it until the autorelease pool is deallocated. */
-		RELEASE(newItem);
-	}
+	/* Will call back -setItemWithoutInsertingView: */
+	[anItem setSupervisorView: self sync: ETSyncSupervisorViewToItem];
 	[self setAutoresizesSubviews: YES];
 
 	return self;
@@ -102,50 +84,19 @@ See also -[ETUIItem supervisorView]. */
 {
 	return NSExtraRefCount(self) + 1;
 }
-#endif
 
 - (oneway void) release
 {
-	BOOL hasRetainCycle = (item != nil);
-	/* Memorize whether the next release call will deallocate the receiver, 
-	   because once the receiver is deallocated you have no way to safely learn 
-	   if self is still valid or not.
-	   Take note the retain count is NSExtraRefCount plus one. */
-	int refCountWas = NSExtraRefCount(self);
-
-	/* Dealloc if only retained by ourself (ref count equal to zero), otherwise 
-	   decrement ref count. */
-#ifdef GNUSTEP
-	[super release];
-#else
 	if (NSDecrementExtraRefCountWasZero(self))
 		[self dealloc];
-#endif
-
-	/* Exit if we just got deallocated above. 
-	   In that case, self and item are now both deallocated and invalid 
-	   and we must never use them (by sending a message for example). */
-	BOOL isDeallocated = (refCountWas == 0);
-	if (isDeallocated)
-		return;
-
-	/* Tear down the retain cycle owned by the layout item.
-	   If we are only retained by our layout item which is also retained only 
-	   by us, DESTROY(item) will call -[ETLayoutItem dealloc] which in 
-	   turn will call back -[ETView release] and result this time in our 
-	   deallocation. */	
-	BOOL isGarbageCycle = (hasRetainCycle 
-		&& NSExtraRefCount(self) == 0 && NSExtraRefCount(item) == 0);
-	if (isGarbageCycle)
-		DESTROY(item);
 }
+#endif
 
 - (void) dealloc
 {
 	[NC removeObserver: self];
 
-	// NOTE: item (our owner) is destroyed by -release and _temporaryView
-	// is a weak reference
+	// NOTE: item (our owner) and _temporaryView are weak references
 	DESTROY(_wrappedView);
 	
 	[super dealloc];
@@ -244,26 +195,21 @@ A temporary view set on the receiver won't be copied. */
 
 // TODO: Rename -layoutItem to -item because it can return any ETUIItem.
 
-/** Returns the item representing the receiver in the layout item tree. 
-
-Never returns nil. */
+/** Returns the item that owns the receiver. */
 - (id) layoutItem
 {
-	// NOTE: We must use -primitiveDescription not to enter an infinite loop
-	// with -description calling -layoutItem
-	if (item == nil)
-	{
-		ETLog(@"WARNING: Item bound to %@ must never be nil", [self primitiveDescription]);
-	}
 	return item;
 }
 
 /** This method is only exposed to be used internally by EtoileUI.<br />
-You should must never call this method. */
+You must never call this method.
+
+Sets the item that owns the receiver. 
+
+The item isn't retained. */
 - (void) setItemWithoutInsertingView: (ETUIItem *)anItem
 {	
-	NILARG_EXCEPTION_TEST(anItem);
-	ASSIGN(item, anItem); // NOTE: Retain cycle (see -release)
+	item = anItem;
 }
 
 /** Returns the item as the supervisor view next responder. */

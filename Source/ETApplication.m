@@ -112,8 +112,13 @@ is not supported in -init and +sharedApplication on Cocoa).
 See also -finishLaunching which is called after -run is invoked. */
 - (void) setUp
 {
+	// NOTE: Local autorelease pools are used to locate memory corruption more
+	// easily. Memory corruption tend to be located in GNUstep unarchiving code.
+	// Various UI aspects involve Gorm/Nib files.
 	CREATE_AUTORELEASE_POOL(pool);
 	[self _registerAllAspects];
+	DESTROY(pool);
+	RECREATE_AUTORELEASE_POOL(pool);
 	[self _instantiateAppDelegateIfSpecified];
 	[self _loadMainNib];
 	DESTROY(pool);

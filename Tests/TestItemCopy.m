@@ -141,7 +141,7 @@ DEALLOC(DESTROY(itemFactory); DESTROY(item); DESTROY(itemGroup))
 	NSArray *equalProperties = [properties arrayByRemovingObjectsInArray: 
 		[[self nonEqualItemProperties] arrayByAddingObjectsFromArray: nilProperties]];
 
-	ETLayoutItem *newItem = AUTORELEASE([item copy]);
+	ETLayoutItem *newItem = [item copy];
 
 	FOREACH(equalProperties, property, NSString *)
 	{
@@ -158,6 +158,8 @@ DEALLOC(DESTROY(itemFactory); DESTROY(item); DESTROY(itemGroup))
 	UKNil([newItem parentItem]);
 	UKNil([newItem layout]);
 	UKNil([newItem view]);
+
+	RELEASE(newItem);
 }
 
 - (void) testItemCopy
@@ -178,7 +180,7 @@ DEALLOC(DESTROY(itemFactory); DESTROY(item); DESTROY(itemGroup))
 	NSArray *equalProperties = [properties arrayByRemovingObjectsInArray: 
 		[[self nonEqualItemProperties] arrayByAddingObjectsFromArray: nilProperties]];
 
-	ETLayoutItem *newItem = AUTORELEASE([item copy]);
+	ETLayoutItem *newItem = [item copy];
 
 	FOREACH(equalProperties, property, NSString *)
 	{
@@ -202,6 +204,8 @@ DEALLOC(DESTROY(itemFactory); DESTROY(item); DESTROY(itemGroup))
 	UKObjectsEqual([[newItem view] class], [[item view] class]);
 
 	[self checkViewCopy: [newItem supervisorView] ofView: [item supervisorView]];
+
+	RELEASE(newItem);
 }
 
 - (NSArray *) defaultNilItemGroupProperties
@@ -219,7 +223,7 @@ DEALLOC(DESTROY(itemFactory); DESTROY(item); DESTROY(itemGroup))
 {
 	[itemGroup addItem: item];
 
-	ETLayoutItemGroup *newItemGroup = AUTORELEASE([itemGroup copy]);
+	ETLayoutItemGroup *newItemGroup = [itemGroup copy];
 
 	NSArray *properties = [self checkablePropertiesForItem: itemGroup];
 	NSArray *nilProperties = [self defaultNilItemGroupProperties];
@@ -239,6 +243,8 @@ DEALLOC(DESTROY(itemFactory); DESTROY(item); DESTROY(itemGroup))
 
 	UKTrue([newItemGroup isEmpty]);
 	UKObjectsEqual(newItemGroup, [[newItemGroup layout] layoutContext]);
+
+	RELEASE(newItemGroup);
 }
 
 - (void) testItemGroupCopyAndAddItem
@@ -271,7 +277,7 @@ DEALLOC(DESTROY(itemFactory); DESTROY(item); DESTROY(itemGroup))
 	
 	[itemGroup setLayout: [ETTableLayout layout]];
 
-	ETLayoutItemGroup *newItemGroup = AUTORELEASE([itemGroup copy]);
+	ETLayoutItemGroup *newItemGroup = [itemGroup copy];
 
 	NSArray *properties = [self checkablePropertiesForItem: itemGroup];
 	NSArray *nilProperties = A(kETDoubleClickedItemProperty, kETStyleProperty);
@@ -298,6 +304,8 @@ DEALLOC(DESTROY(itemFactory); DESTROY(item); DESTROY(itemGroup))
 	UKObjectsNotEqual([[itemGroup layout] layoutView], [[newItemGroup layout] layoutView]);
 	UKObjectsEqual([[newItemGroup supervisorView] contentView], [[newItemGroup layout] layoutView]);
 	UKObjectsEqual([newItemGroup supervisorView], [[[newItemGroup layout] layoutView] superview]);
+
+	RELEASE(newItemGroup);
 }
 
 #define IPATH(cArray, length) [NSIndexPath indexPathWithIndexes: cArray length: length]
@@ -311,7 +319,7 @@ DEALLOC(DESTROY(itemFactory); DESTROY(item); DESTROY(itemGroup))
 
 	[itemGroup setLayout: [ETOutlineLayout layout]];
 
-	ETLayoutItemGroup *newItemGroup = AUTORELEASE([itemGroup deepCopy]);
+	ETLayoutItemGroup *newItemGroup = [itemGroup deepCopy];
 
 	UKIntsEqual(2, [newItemGroup numberOfItems]);
 	UKObjectsEqual(newItemGroup, [[newItemGroup itemAtIndex: 1] parentItem]);
@@ -320,6 +328,8 @@ DEALLOC(DESTROY(itemFactory); DESTROY(item); DESTROY(itemGroup))
 	UKObjectsEqual([NSIndexPath indexPathWithIndex: 1], [[newItemGroup itemAtIndex: 1] indexPath]);
 
 	UKIntsEqual(2, [[(ETOutlineLayout *)[newItemGroup layout] outlineView] numberOfRows]);
+
+	RELEASE(newItemGroup);
 }
 
 - (void) testItemTreeCopy
@@ -343,7 +353,7 @@ DEALLOC(DESTROY(itemFactory); DESTROY(item); DESTROY(itemGroup))
 
 	[itemGroup2 setLayout: [ETOutlineLayout layout]];
 
-	ETLayoutItemGroup *newItemGroup = AUTORELEASE([itemGroup deepCopy]);
+	ETLayoutItemGroup *newItemGroup = [itemGroup deepCopy];
 
 	UKIntsEqual(4, [newItemGroup numberOfItems]);
 	UKIntsEqual(1, [(id)[newItemGroup itemAtIndex: 1] numberOfItems]);
@@ -369,6 +379,8 @@ DEALLOC(DESTROY(itemFactory); DESTROY(item); DESTROY(itemGroup))
 
 	UKObjectsEqual([newItemGroup supervisorView], [[[newItemGroup itemAtIndex: 2] supervisorView] superview]);
 	UKObjectsEqual([newItemGroup supervisorView], [[[newItemGroup itemAtIndex: 3] supervisorView] superview]);
+
+	RELEASE(newItemGroup);
 }
 
 // NOTE: Test ETTemplateItemLayout copying at the same time.
@@ -381,7 +393,7 @@ DEALLOC(DESTROY(itemFactory); DESTROY(item); DESTROY(itemGroup))
 	[itemGroup addItem: itemGroup1];
 	[itemGroup setLayout: layout];
 
-	ETLayoutItemGroup *newItemGroup = AUTORELEASE([itemGroup deepCopy]);
+	ETLayoutItemGroup *newItemGroup = [itemGroup deepCopy];
 	ETIconLayout *layoutCopy = (id)[newItemGroup layout];
 
 	UKObjectKindOf([layoutCopy positionalLayout], ETFlowLayout);
@@ -397,6 +409,8 @@ DEALLOC(DESTROY(itemFactory); DESTROY(item); DESTROY(itemGroup))
 	/* This test requires the items to be resized otherwise -setVisibleItems: 
 	   receives an empty array in -renderXXX. */
 	//UKObjectsEqual([newItemGroup supervisorView], [[[newItemGroup firstItem] supervisorView] superview]);
+
+	RELEASE(newItemGroup);
 }
 
 // NOTE: Test ETCompositeLayout and ETPaneLayout copying at the same time.
@@ -413,7 +427,7 @@ DEALLOC(DESTROY(itemFactory); DESTROY(item); DESTROY(itemGroup))
 	[itemGroup addItem: itemGroup1];
 	[itemGroup setLayout: layout];
 
-	ETLayoutItemGroup *newItemGroup = AUTORELEASE([itemGroup deepCopy]);
+	ETLayoutItemGroup *newItemGroup = [itemGroup deepCopy];
 	ETPaneLayout *layoutCopy = (id)[newItemGroup layout];
 
 	UKNotNil([layoutCopy barItem]);
@@ -434,6 +448,8 @@ DEALLOC(DESTROY(itemFactory); DESTROY(item); DESTROY(itemGroup))
 	UKIntsEqual(1, [[layoutCopy contentItem] numberOfItems]);
 	UKStringsEqual(@"Ubiquity", [[[layoutCopy contentItem] firstItem] name]);
 	UKObjectsEqual([layoutCopy contentItem], [[[layoutCopy contentItem] firstItem] parentItem]);
+
+	RELEASE(newItemGroup);
 }
 
 @end

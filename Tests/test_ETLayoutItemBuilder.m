@@ -11,12 +11,13 @@
 #import <UnitKit/UnitKit.h>
 #import "ETLayoutItemBuilder.h"
 #import "ETLayoutItem.h"
-#import "ETLayoutItem+Factory.h"
+#import "ETLayoutItemGroup.h"
+#import "ETLayoutItemFactory.h"
 #import "ETView.h"
 #import "ETContainer.h"
 #import "ETCompatibility.h"
 
-@interface ETEtoileUIBuilder (UnitKitTests) <UKTest>
+@interface TestEtoileUIBuilder : NSObject <UKTest>
 @end
 
 /* NSView subclass for testing -renderView */
@@ -25,56 +26,66 @@
 @implementation CustomView
 @end
 
-@implementation ETEtoileUIBuilder (UnitKitTests)
-
-- (void) testRender
-{
-
-}
+@implementation TestEtoileUIBuilder
 
 - (void) testRenderView
 {
 	id view = AUTORELEASE([[NSView alloc] initWithFrame: NSMakeRect(0, 0, 100, 50)]);
 	id subview0 = AUTORELEASE([[NSView alloc] initWithFrame: NSMakeRect(0, 0, 100, 50)]);
 	id subview1 = AUTORELEASE([[CustomView alloc] initWithFrame: NSMakeRect(0, 0, 100, 50)]);
-	//id subview10 = AUTORELEASE([[CustomView alloc] initWithFrame: NSMakeRect(0, 0, 100, 50)]);
-	//id subview11 = AUTORELEASE([[NSView alloc] initWithFrame: NSMakeRect(0, 0, 100, 50)]);
 	id subview00 = AUTORELEASE([[NSView alloc] initWithFrame: NSMakeRect(0, 0, 100, 50)]);
-
 	id subview01 = AUTORELEASE([[ETView alloc] initWithFrame: NSMakeRect(0, 0, 100, 50)]);
 	id subview010 = AUTORELEASE([[NSView alloc] initWithFrame: NSMakeRect(0, 0, 100, 50)]);
 	id subview02 = AUTORELEASE([[ETContainer alloc] initWithFrame: NSMakeRect(0, 0, 100, 50)]);
 	id subview020 = AUTORELEASE([[NSView alloc] initWithFrame: NSMakeRect(0, 0, 100, 50)]);
-	id subview021 = AUTORELEASE([[NSView alloc] initWithFrame: NSMakeRect(0, 0, 100, 50)]);
 	
 	[view addSubview: subview0];
 	[view addSubview: subview1];
-	[subview0 addSubview: subview00];
-	
-	[subview0 addSubview: subview01];	
-	[subview01 setWrappedView: subview010];
-	[subview0 addSubview: subview02];
-	[subview02 addSubview: subview020];
-	[(ETContainer *)subview02 addItem: [ETLayoutItem itemWithView: subview021]];
 
-	id rootItem = [[ETEtoileUIBuilder builder] renderView: view];
-	id childItem = nil;
-	
+	[subview0 addSubview: subview00];
+	[subview0 addSubview: subview01];
+	[subview0 addSubview: subview02];
+
+	[subview01 setWrappedView: subview010];	
+
+	ETLayoutItemGroup *item02 = [[ETLayoutItemFactory factory] itemGroup];
+	[item02 setSupervisorView: subview02];
+	[item02 addItem: [[ETLayoutItemFactory factory] itemWithView: subview020]];
+
+	ETLayoutItemGroup *rootItem = [[ETEtoileUIBuilder builder] renderView: view];
+	id itemForSubview0 = [rootItem itemAtIndex: 0];
+	id itemForSubview1 = [rootItem itemAtIndex: 1];
+	id itemForSubview00 = [itemForSubview0 itemAtIndex: 0];
+	id itemForSubview01 = [itemForSubview0 itemAtIndex: 1];
+	id itemForSubview02 = [itemForSubview0 itemAtIndex: 2];
+	id itemForSubview020 = [itemForSubview02 itemAtIndex: 0];
+
 	UKObjectsNotSame(view, [rootItem view]);
 	UKIntsEqual([[rootItem items] count], 2);
-	/* NSView are turned into containers but NSView subclasses aren't */
-	UKObjectsNotSame(subview0, [[rootItem itemAtIndex: 0] view]);
-	UKObjectKindOf([[rootItem itemAtIndex: 0] supervisorView], ETView);
-	//UKObjectKindOf(ETContainer, [[rootItem itemAtIndex: 0] view]);
-	UKObjectsSame([[rootItem itemAtIndex: 1] view], subview1);
-	childItem = [rootItem itemAtIndex: 0];
-	UKObjectsNotSame([[childItem itemAtIndex: 0] view], subview00);
+
+	/* NSView with subviews are turned into ETView and discarded */
+	UKObjectKindOf([itemForSubview0 supervisorView], ETView);
+	UKNil([itemForSubview0 view]);
+	/* NSView without subviews are discarded */
+	UKNil([itemForSubview00 supervisorView]);
+	UKNil([itemForSubview00 view]);
+
+	/* NSView subclass are not turned into ETView, but becomes item view */
+	UKObjectsSame([itemForSubview1 view], subview1);
 	
-	UKFalse([(ETLayoutItem *)[childItem itemAtIndex: 1] isGroup]); // ETView item check
-	childItem = [childItem itemAtIndex: 2];
-	UKTrue([childItem isGroup]); // ETContainer item check
-	UKIntsEqual(1, [[childItem items] count]);
-	UKObjectsSame([[childItem itemAtIndex: 0] view], subview021);
+	/* Both ETView and ETContainer are rendered as ETLayoutItemGroup */
+	UKTrue([itemForSubview01 isGroup]);
+	UKTrue([itemForSubview02 isGroup]);
+
+	/* ETView subviews are not rendered */
+	UKObjectsSame(subview01 , [subview010 superview]);
+	UKObjectsSame(itemForSubview01, [subview010 enclosingItem]);
+
+	/* Standalone item which owns a view inserted a view hierarchy are 
+	   are inserted in the item tree when the view hierarchy is rendered */
+	UKObjectsSame(item02, itemForSubview02);
+	UKIntsEqual(1, [[itemForSubview02 items] count]);
+	UKObjectsSame(subview020, [itemForSubview020 view]);
 }
 
 @end

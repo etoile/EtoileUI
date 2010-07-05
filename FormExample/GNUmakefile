@@ -12,3 +12,4 @@ $(APP_NAME)_PRINCIPAL_CLASS = ETApplication
 $(APP_NAME)_GUI_LIBS = -lEtoileUI
 
 include $(GNUSTEP_MAKEFILES)/application.make
+-include ../../../etoile.make

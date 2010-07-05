@@ -60,6 +60,8 @@ next EtoileUI release. */
 	NSRect _rectToRedraw;
 }
 
+- (SEL) defaultItemFactorySelector;
+
 - (id) initWithFrame: (NSRect)rect item: (ETUIItem *)item;
 
 - (NSArray *) properties;

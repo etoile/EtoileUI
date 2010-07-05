@@ -1,4 +1,4 @@
-/**	<title>ETStyle/title>
+/**	<title>ETStyle</title>
 
 	<abstract>Base class to implement pluggable styles as subclasses and make 
 	possible UI styling at runtime.</abstract>

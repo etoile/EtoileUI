@@ -58,11 +58,6 @@
 
 @implementation ETContainer
 
-- (Class) defaultItemClass
-{
-	return [ETLayoutItemGroup class];
-}
-
 - (id) initWithFrame: (NSRect)rect item: (ETUIItem *)anItem
 {
 	if (anItem != nil && [anItem isLayoutItem] && [(ETLayoutItem *)anItem isGroup] == NO)

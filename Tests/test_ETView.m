@@ -33,6 +33,7 @@
 	return [self initWithFrame: NSMakeRect(0, 0, 50, 50)];
 }
 
+#if 0
 - (void) testRelease
 {
 #ifdef GNUSTEP
@@ -188,6 +189,7 @@
 	GSDebugAllocationActive(NO);
 #endif
 }
+#endif
 
 - (NSView *) dummyView
 {
@@ -220,12 +222,6 @@
 	id contentView = [self dummyView];
 	[self setWrappedView: contentView];
 	[self checkContentView: contentView];
-}
-
-- (void) testLayoutItem
-{
-	UKNotNil([self layoutItem]);
-	UKObjectsSame(self, [[self layoutItem] supervisorView]);
 }
 
 - (void) testSetLayoutItemWithoutInsertingView
