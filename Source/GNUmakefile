@@ -37,7 +37,6 @@ libEtoileUI_OBJC_FILES = \
 	ETLayout.m \
 	ETLineLayout.m \
 	ETModelDescriptionRenderer.m \
-	ETNullLayout.m \
 	ETNibOwner.m \
 	ETObjectBrowserLayout.m \
 	EtoileUIProperties.m \

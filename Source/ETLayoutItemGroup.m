@@ -1090,18 +1090,17 @@ Which means -isFiltered and -isSorted will both return NO. */
 
 - (void) assignLayout: (ETLayout *)aLayout
 {
-	NILARG_EXCEPTION_TEST(aLayout)
-
 	[_layout setLayoutContext: nil]; /* Ensures -[ETLayout tearDown] is called */
 	ASSIGN(_layout, aLayout);
+	/* We must remove the item views, otherwise they might remain visible as 
+	   subviews (think ETBrowserLayout on GNUstep which has transparent areas),  
+	   because view-based layout won't call -setVisibleItems: in -renderWithLayoutItems:XXX:. */
+	[self setVisibleItems: [NSArray array]];	
 	[self setHasNewLayout: YES];
 	[aLayout setLayoutContext: self];
 }
 
-/** Sets the layout associated with the receiver to present its content.
-
-The given layout must not be nil otherwise an NSInvalidArgumentException is 
-raised. */
+/** Sets the layout associated with the receiver to present its content. */
 - (void) setLayout: (ETLayout *)layout
 {
 	if (_layout == layout)

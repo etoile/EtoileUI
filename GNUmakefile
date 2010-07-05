@@ -62,7 +62,6 @@ EtoileUI_HEADER_FILES = \
 	ETLineFragment.h \
 	ETLineLayout.h \
 	ETModelDescriptionRenderer.h \
-	ETNullLayout.h \
 	ETNibOwner.h \
 	ETObjectBrowserLayout.h \
 	EtoileUI.h \

@@ -346,7 +346,7 @@ the receiver is set as the application's delegate in the nib. */
 		if ([[NSFileManager defaultManager] fileExistsAtPath: filePath isDirectory: &isDir] && isDir)
 		{
 			fileItem = [[ETLayoutItemFactory factory] itemGroup];
-			[fileItem setLayout: [ETNullLayout layout]];
+			[fileItem setLayout: nil];
 			[fileItem setSubtype: [ETUTI typeWithString: myFolderUTIString]];
 		}
 		else

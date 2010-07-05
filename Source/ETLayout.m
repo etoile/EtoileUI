@@ -384,20 +384,6 @@ retain the given context. */
 	if (context == nil)
 		[self tearDown];
 
-	/* We remove the display views of layout items.
-	   Take note they may be invisible by being located outside of the container 
-	   bounds.	
-	   If we don't and we switch from a computed layout to a view-based layout,
-	   they might remain visible as subviews (think ETBrowserLayout on GNUstep 
-	   which has transparent areas) because view-based layout are not required 
-	   to call -setVisibleItems: when they override -renderWithLayoutItems:XXX:. 
-	   By introducing a null layout, we would be able to move that in -tearDown. 
-	   That doesn't work presently when we switch from a nil layout to a non-nil 
-	   layout, because -setLayoutContext: nil isn't called, hence -tearDown 
-	   neither. */
-	ETDebugLog(@"Remove views of layout items currently displayed");
-	[context setVisibleItems: [NSArray array]];	
-
 	// NOTE: Avoids retain cycle by weak referencing the context
 	_layoutContext = context;
 
@@ -460,15 +446,6 @@ A semantic layout would work by delegating everything to a concrete layout.
 If you overrides this method to return YES, forwarding of all non-overidden 
 methods to the normal layout will be handled automatically (not yet implemented). */
 - (BOOL) isSemantic
-{
-	return NO;
-}
-
-/** Returns YES when the receiver is a layout that does nothing, otherwise 
-returns NO. See ETNullLayout which is the only built-in class that returns YES.
-
-By default, returns NO. */
-- (BOOL) isNull
 {
 	return NO;
 }

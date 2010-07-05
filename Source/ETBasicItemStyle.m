@@ -521,8 +521,7 @@ See also -[ETLayoutItem icon]. */
 {
 	ETLayout *layout = [anItem layout];
 
-	// TODO: Remove nil layout check once ETNullLayout is used everywhere.
-	if ((nil != layout && NO == [layout isNull]) || nil != [anItem view])
+	if (nil != layout || nil != [anItem view])
 		return nil;
 
 	return [anItem icon];
