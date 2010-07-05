@@ -420,12 +420,17 @@ initializes this button with the given image, target and action. */
 }
 
 /** Returns a new layout item that uses a NSButton instance as its view, and 
-initializes this button with the given title, target and action. */
+initializes this button with the given title, target and action.
+
+The bezel style is set to NSRoundedBezelStyle on Mac OS X. */
 - (id) buttonWithTitle: (NSString *)aTitle target: (id)aTarget action: (SEL)aSelector
 {
 	ETLayoutItem *buttonItem = [self button];
 	NSButton *buttonView = (NSButton *)[buttonItem view];
 
+#ifndef GNUSTEP
+	[buttonView setBezelStyle: NSRoundedBezelStyle];
+#endif
 	[buttonView setTitle: aTitle];
 	[buttonView setTarget: aTarget];
 	[buttonView setAction: aSelector];
