@@ -67,6 +67,10 @@
 #define CREATE_AUTORELEASE_POOL(X) \
 NSAutoreleasePool *(X) = [NSAutoreleasePool new]
 
+#define RECREATE_AUTORELEASE_POOL(X) \
+  DESTROY(X); \
+  X = [NSAutoreleasePool new]
+
 #define NSLocalizedString(key, comment) \
   [[NSBundle mainBundle] localizedStringForKey:(key) value:@"" table:nil]
 
