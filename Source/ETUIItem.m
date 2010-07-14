@@ -46,7 +46,7 @@ By default, returns NO. */
 		 /* Unset the decorated item weak reference on the decorator side */
 		[self setDecoratorItem: nil];
 	}
-	DESTROY(_supervisorView);
+	DESTROY(supervisorView);
 
 	[super dealloc];
 }
@@ -81,8 +81,8 @@ By default, returns NO. */
 	RETAIN(decorator);
 	[self setDecoratorItem: nil];
 
-	newItem->_supervisorView = [_supervisorView copyWithZone: aZone];
-	[newItem->_supervisorView setItemWithoutInsertingView: newItem];
+	newItem->supervisorView = [supervisorView copyWithZone: aZone];
+	[newItem->supervisorView setItemWithoutInsertingView: newItem];
 
 	// NOTE: The decorator set up below must mirror -setDecoratorItem:.
 	ETDecoratorItem *decoratorCopy = [decorator copyWithZone: aZone];
@@ -127,7 +127,7 @@ provided by the widget backend (e.g. AppKit) within a layout item tree. See
 also ETView. */
 - (id) supervisorView
 {
-	return _supervisorView;
+	return supervisorView;
 }
 
 // TODO: Would be better to only allow -setSupervisorView: to be called once 
@@ -145,7 +145,7 @@ See also -supervisorView:. */
 	 /* isFlipped is also sync in -setFlipped: (see subclasses) */
 	[aSupervisorView setFlipped: [self isFlipped]];
 	[aSupervisorView setItemWithoutInsertingView: self];
-	ASSIGN(_supervisorView, aSupervisorView);
+	ASSIGN(supervisorView, aSupervisorView);
 
 	BOOL hasDecorator = (_decoratorItem != nil);
 	if (hasDecorator)
@@ -168,18 +168,18 @@ You can retrieve the outermost decorator by calling -lastDecoratorItem. */
 - (ETView *) displayView
 {
 	ETUIItem *decorator = self;
-	ETView *supervisorView = [self supervisorView];
+	ETView *view = [self supervisorView];
 
 	while (decorator != nil)
 	{
 		if ([decorator supervisorView] == nil)
-			return supervisorView;
+			return view;
 
-		supervisorView = [decorator supervisorView];
+		view = [decorator supervisorView];
 		decorator = [decorator decoratorItem];
 	}
 
-	return supervisorView;
+	return view;
 }
 
 /** Looks up the view which can display a rect by climbing up the layout 

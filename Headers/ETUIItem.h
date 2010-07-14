@@ -56,7 +56,7 @@ You must never subclass ETUIItem. ETUIItem ivars must be considered private. */
 @interface ETUIItem : ETStyle
 {
 	ETDecoratorItem *_decoratorItem; // next decorator
-	IBOutlet ETView *_supervisorView;
+	IBOutlet ETView *supervisorView;
 }
 
 + (NSRect) defaultItemRect;

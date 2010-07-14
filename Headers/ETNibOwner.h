@@ -26,6 +26,24 @@ To finish the Nib loading, e.g. render the AppKit view hierarchy into a layout
 item tree, retrieve items or views, override some aspects or reorganize the 
 view hierarchy or the item tree, don't override -awakeFromNib but -didLoadNib 
 which will be called once every objects in the Nib has received -awakeFromNib.
+When a layout item tree is built in this way, both views and windows become 
+owned by the items in the resulting tree. Previously the view/window ownership 
+was in relationships such as top-level objects, subviews or content views.
+
+To render an AppKit view hierarchy packaged in a Nib into a layout item tree, 
+-rebuildTopLevelObjectsWithBuilder: can be used.<br />
+For example, ETController overrides -didLoadNib in a vein similar to:
+<code>
+- (void) didLoadNib
+{
+	[self rebuildTopLevelObjectsWithBuilder: [ETEtoileUIBuilder builder]];
+}
+</code>
+For every top-level object, when -render: on the builder returns a new object, 
+-rebuildTopLevelObjectsWithBuilder: substitutes the initial object with the new 
+one in the top-level object array (see -topLevelObjects).<br />
+When the AppKit view hierarchy to render is in the main Nib, see 
+[ETApplication-rebuildMainNib]. 
 
 On instantiation with a nil Nib name, an object which inherits from ETNibOwner 
 automatically loads the Nib file which is named just like the concrete 

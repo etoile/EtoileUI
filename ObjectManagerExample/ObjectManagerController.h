@@ -15,10 +15,8 @@
 
 @interface ObjectManagerController : NSObject 
 {
-	IBOutlet ETContainer *pathContainer;
-	IBOutlet ETContainer *viewContainer;
-	ETLayoutItemGroup *mainViewItem;
-	ETLayoutItemGroup *pathViewItem;
+	IBOutlet ETLayoutItemGroup *mainViewItem;
+	IBOutlet ETLayoutItemGroup *pathViewItem;
 	ETController *controller;
 	NSString *path;
 }

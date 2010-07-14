@@ -6,10 +6,10 @@
 	License:  Modified BSD (see COPYING)
  */
  
- #import "ContainerController.h"
+ #import "PhotoViewController.h"
 
 
-@implementation ContainerController
+@implementation PhotoViewController
 
 - (id) init
 {
@@ -20,7 +20,7 @@
 
 - (void) dealloc
 {
-	DESTROY(viewContainer);
+	DESTROY(photoView);
 	DESTROY(itemMarginSlider);
 	DESTROY(images);
 	
@@ -33,7 +33,7 @@ the receiver is set as the application's delegate in the nib. */
 {
 	/* Will turn the nib views and windows into layout item trees */
 	[ETApp rebuildMainNib];
-	photoViewItem = [viewContainer owningItem];
+	photoViewItem = [photoView owningItem];
 
 	[photoViewItem setController: self];
 	[photoViewItem setSource: self];
@@ -63,7 +63,7 @@ the receiver is set as the application's delegate in the nib. */
     // TODO: Specify image file types... [op setAllowedFileTypes: nil];
     
     [op beginSheetForDirectory: nil file: nil types: nil 
-                modalForWindow: [viewContainer window] 
+                modalForWindow: [photoView window] 
                  modalDelegate: self 
                 didEndSelector: @selector(selectPicturesPanelDidEnd:returnCode:contextInfo:)
                    contextInfo: nil];
@@ -335,7 +335,5 @@ protocol methods. */
 {
 	return A(@"icon", @"name", @"size", @"imgType", @"modificationdate");
 }
-
-// TODO: - (NSFormatter *) container: (ETContainer *)container formaterForDisplayItemProperty:
 
 @end

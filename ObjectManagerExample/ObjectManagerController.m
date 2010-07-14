@@ -42,10 +42,6 @@ the receiver is set as the application's delegate in the nib. */
 
 	/* Will turn the nib views and windows into layout item trees */
 	[ETApp rebuildMainNib];
-	
-	// TODO: Set mainViewItem and pathViewItem in the nib.
-	mainViewItem = [viewContainer layoutItem];
-	pathViewItem = [pathContainer layoutItem];
 
 	[self checkTextualPathForMixedPath];
 

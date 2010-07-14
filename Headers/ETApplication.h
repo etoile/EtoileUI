@@ -29,7 +29,19 @@ application bundle, the specified class will be instantiated at launch time and
 sets as the application delegate. As an NSApplication-subclass delegate, it will 
 receive -applicationWillFinishLaunching: and any subsequent notifications. This 
 is available as a simple conveniency, when you don't want to rely on a main nib 
-file or write a custom main() function. */
+file or write a custom main() function.
+
+ETApplication manages the main Nib top-level objects and will release them when 
+the application is terminated.
+
+To render the AppKit view hierarchy packaged in the main Nib into a layout item 
+tree, you can implement -applicationDidFinishLaunching: in the Application's 
+delegate and invoke -rebuildMainNib here. For a concrete example, see 
+PhotoViewExample and ObjectManagerExample.<br />
+Don't use -applicationWillFinishLaunching or -awakeFromNib, otherwise the view 
+hierarchy won't be in a valid state because -awakeFromNib won't have been sent 
+to all the objects in the Nib.<br />
+For other Nibs to be loaded, see ETNibOwner. */
 @interface ETApplication : NSApplication 
 {
 	@private

@@ -1988,7 +1988,7 @@ TODO: Implement and may be rename -expand or -expandStack */
 - (void) setLayoutView: (NSView *)aView
 {
 	NSView *superview = [aView superview];
-	ETView *supervisorView = [self setUpSupervisorViewWithFrame: [self frame]];
+	[self setUpSupervisorViewWithFrame: [self frame]];
 
 	NSAssert(nil == superview || [superview isEqual: supervisorView], 
 		@"A layout view should never have another superview than the layout " 

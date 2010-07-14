@@ -15,6 +15,7 @@
 #import "ETLayoutItemFactory.h"
 #import "ETView.h"
 #import "ETContainer.h"
+#import "NSView+Etoile.h"
 #import "ETCompatibility.h"
 
 @interface TestEtoileUIBuilder : NSObject <UKTest>
@@ -79,7 +80,7 @@
 
 	/* ETView subviews are not rendered */
 	UKObjectsSame(subview01 , [subview010 superview]);
-	UKObjectsSame(itemForSubview01, [subview010 enclosingItem]);
+	UKObjectsSame(itemForSubview01, [subview010 owningItem]);
 
 	/* Standalone item which owns a view inserted a view hierarchy are 
 	   are inserted in the item tree when the view hierarchy is rendered */

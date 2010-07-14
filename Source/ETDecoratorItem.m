@@ -35,11 +35,11 @@ supervisorView.
 
 If you write a subclass that uses no supervisor view, you must override this 
 initializer. */
-- (id) initWithSupervisorView: (ETView *)supervisorView
+- (id) initWithSupervisorView: (ETView *)aSupervisorView
 {
 	SUPERINIT
 
-	[self setSupervisorView: supervisorView];
+	[self setSupervisorView: aSupervisorView];
 	[self setDecoratedItem: nil];
 
 	return self;

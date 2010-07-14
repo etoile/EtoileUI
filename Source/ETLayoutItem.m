@@ -274,7 +274,7 @@ Default values will be copied but not individually (shallow copy). */
 
 	/* We adjust targets and observers to reference equivalent objects in the object graph copy */
 
-	NSView *viewCopy = [item->_supervisorView wrappedView];
+	NSView *viewCopy = [item->supervisorView wrappedView];
 	// NOTE: -objectForKey: returns nil when the key is nil.
 	id target = [self target];
 	id targetCopy = [[self objectReferencesForCopy] objectForKey: target];
@@ -891,11 +891,10 @@ object when the view is a widget. */
 
 - (ETView *) setUpSupervisorViewWithFrame: (NSRect)aFrame 
 {
-	ETView *supervisorView = [self supervisorView];
-
 	if (supervisorView != nil)
 		return supervisorView;
 
+	/* Will call back -setSupervisorView:sync: which retains the view */
 	supervisorView = [[ETView alloc] initWithFrame: aFrame item: self];
 	RELEASE(supervisorView);
 	return supervisorView;
@@ -998,7 +997,6 @@ content size to match the view size. */
 	   view in the decorator item chain. */
 - (void) setView: (NSView *)newView autoresizingMask: (ETAutoresizing)autoresizing
 {
-	ETView *supervisorView = [self supervisorView];
 	NSView *oldView = [supervisorView wrappedView];
 	BOOL stopObservingOldView = (nil != oldView && [oldView isWidget]);
 	BOOL startObservingNewView = (nil != newView && [newView isWidget]);
@@ -1012,7 +1010,7 @@ content size to match the view size. */
 	/* Insert a supervisor view if needed and adjust the new view autoresizing behavior */
 	if (nil != newView)
 	{
-		supervisorView = [self setUpSupervisorViewWithFrame: [self frame]];
+		[self setUpSupervisorViewWithFrame: [self frame]];
 		NSParameterAssert(NSEqualSizes([self contentBounds].size, [supervisorView frame].size));
 
 		[newView setAutoresizingMask: autoresizing];
@@ -1330,7 +1328,7 @@ provided by the widget backend (e.g. AppKit) within a layout item tree. See
 also ETView. */
 - (ETView *) supervisorView
 {
-	return _supervisorView;
+	return supervisorView;
 }
 
 /** Sets the supervisor view associated with the receiver. 
@@ -1344,23 +1342,23 @@ move the view to a different place in the view hierarchy.
 Throws an exception when item parameter is nil.
 
 See also -supervisorView:. */
-- (void) setSupervisorView: (ETView *)supervisorView sync: (ETSyncSupervisorView)syncDirection
+- (void) setSupervisorView: (ETView *)aSupervisorView sync: (ETSyncSupervisorView)syncDirection
 {
-	if (nil != supervisorView)
+	if (nil != aSupervisorView)
 	{
 		if (ETSyncSupervisorViewToItem == syncDirection)
 		{
-			[self setFrame: [supervisorView frame]];
-			[self setAutoresizingMask: [supervisorView autoresizingMask]];
+			[self setFrame: [aSupervisorView frame]];
+			[self setAutoresizingMask: [aSupervisorView autoresizingMask]];
 		}
 		else /* ETSyncSupervisorViewFromItem */
 		{
-			[supervisorView setFrame: [self frame]];
-			[supervisorView setAutoresizingMask: [self autoresizingMask]];
+			[aSupervisorView setFrame: [self frame]];
+			[aSupervisorView setAutoresizingMask: [self autoresizingMask]];
 		}
 	}
 
-	[super setSupervisorView: supervisorView sync: syncDirection];
+	[super setSupervisorView: aSupervisorView sync: syncDirection];
 
 	BOOL noDecorator = (_decoratorItem == nil);
 	BOOL hasParent = (_parentItem != nil);
@@ -1936,8 +1934,6 @@ event handling and drawing. If you want to alter the flipping, you must use
 {
 	// TODO: Review ETLayoutItem hierarchy to be sure flipped coordinates are 
 	// well supported.
-	ETView *supervisorView = [self supervisorView];
-	
 	if (supervisorView != nil)
 	{
 		// TODO: Enable later...
