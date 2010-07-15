@@ -543,8 +543,8 @@
 		609097010CADC366009CAD27 /* PhotoViewExample-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = "PhotoViewExample-Info.plist"; path = "PhotoViewExample/PhotoViewExample-Info.plist"; sourceTree = "<group>"; };
 		609097970CAEBC32009CAD27 /* NSObject+EtoileUI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "NSObject+EtoileUI.h"; path = "Headers/NSObject+EtoileUI.h"; sourceTree = "<group>"; };
 		609097980CAEBC32009CAD27 /* NSObject+EtoileUI.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = "NSObject+EtoileUI.m"; path = "Source/NSObject+EtoileUI.m"; sourceTree = "<group>"; };
-		60909CC90CB2DA42009CAD27 /* TableViewExample.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = TableViewExample.app; sourceTree = BUILT_PRODUCTS_DIR; };
-		60909CCB0CB2DA43009CAD27 /* TableViewExample-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = "TableViewExample-Info.plist"; path = "TableViewExample/TableViewExample-Info.plist"; sourceTree = "<group>"; };
+		60909CC90CB2DA42009CAD27 /* TableExample.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = TableExample.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		60909CCB0CB2DA43009CAD27 /* TableExample-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = "TableExample-Info.plist"; path = "TableViewExample/TableExample-Info.plist"; sourceTree = "<group>"; };
 		60909CD70CB2DAB3009CAD27 /* TableController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TableController.h; path = TableViewExample/TableController.h; sourceTree = "<group>"; };
 		60909CD80CB2DAB3009CAD27 /* TableController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = TableController.m; path = TableViewExample/TableController.m; sourceTree = "<group>"; };
 		609544AA0C0CE24D00068CBB /* ETBrowserLayout.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ETBrowserLayout.h; path = Headers/ETBrowserLayout.h; sourceTree = "<group>"; };
@@ -795,7 +795,7 @@
 				606B98C90C0AF831000AAA85 /* PhotoViewExample.app */,
 				605F0CCA0C0F400D003AE3E6 /* ObjectManagerExample.app */,
 				60539D940C240A7B006C57EC /* PaneContainerExample.app */,
-				60909CC90CB2DA42009CAD27 /* TableViewExample.app */,
+				60909CC90CB2DA42009CAD27 /* TableExample.app */,
 				60CF742A0D449A8A00B4CA3D /* MarkupEditor.app */,
 				60EEB9020F09457C00EBB632 /* Collage.app */,
 			);
@@ -1154,7 +1154,7 @@
 				605F0CCC0C0F400D003AE3E6 /* ObjectManagerExample-Info.plist */,
 				60539D960C240A7B006C57EC /* PaneContainerExample-Info.plist */,
 				609097010CADC366009CAD27 /* PhotoViewExample-Info.plist */,
-				60909CCB0CB2DA43009CAD27 /* TableViewExample-Info.plist */,
+				60909CCB0CB2DA43009CAD27 /* TableExample-Info.plist */,
 				60FC2927105C112D008D2EFF /* FormExample-Info.plist */,
 				60CF744E0D44E42A00B4CA3D /* MarkupEditor.nib */,
 				605F0CD00C0F4034003AE3E6 /* ObjectManager.nib */,
@@ -1418,9 +1418,9 @@
 			productReference = 606B98C90C0AF831000AAA85 /* PhotoViewExample.app */;
 			productType = "com.apple.product-type.application";
 		};
-		60909CC80CB2DA42009CAD27 /* TableViewExample */ = {
+		60909CC80CB2DA42009CAD27 /* TableExample */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 60909CCC0CB2DA45009CAD27 /* Build configuration list for PBXNativeTarget "TableViewExample" */;
+			buildConfigurationList = 60909CCC0CB2DA45009CAD27 /* Build configuration list for PBXNativeTarget "TableExample" */;
 			buildPhases = (
 				60909CC50CB2DA42009CAD27 /* Resources */,
 				60909CC60CB2DA42009CAD27 /* Sources */,
@@ -1431,9 +1431,9 @@
 			dependencies = (
 				60909D5F0CB30484009CAD27 /* PBXTargetDependency */,
 			);
-			name = TableViewExample;
+			name = TableExample;
 			productName = TableViewExample;
-			productReference = 60909CC90CB2DA42009CAD27 /* TableViewExample.app */;
+			productReference = 60909CC90CB2DA42009CAD27 /* TableExample.app */;
 			productType = "com.apple.product-type.application";
 		};
 		60CF74290D449A8A00B4CA3D /* MarkupEditor */ = {
@@ -1539,7 +1539,7 @@
 				605F0CC90C0F400D003AE3E6 /* ObjectManagerExample */,
 				60539D930C240A7B006C57EC /* PaneContainerExample */,
 				606B98C80C0AF831000AAA85 /* PhotoViewExample */,
-				60909CC80CB2DA42009CAD27 /* TableViewExample */,
+				60909CC80CB2DA42009CAD27 /* TableExample */,
 				60FC2924105C112D008D2EFF /* FormExample */,
 			);
 		};
@@ -2366,7 +2366,7 @@
 				GCC_PREFIX_HEADER = "$(SYSTEM_LIBRARY_DIR)/Frameworks/AppKit.framework/Headers/AppKit.h";
 				GCC_PREPROCESSOR_DEFINITIONS = NeXT_RUNTIME;
 				HEADER_SEARCH_PATHS = /usr/GNUstep/System/Library/Headers/;
-				INFOPLIST_FILE = "TableViewExample/TableViewExample-Info.plist";
+				INFOPLIST_FILE = "TableViewExample/TableExample-Info.plist";
 				INSTALL_PATH = "$(HOME)/Applications";
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
@@ -2379,7 +2379,7 @@
 					AppKit,
 				);
 				PREBINDING = NO;
-				PRODUCT_NAME = TableViewExample;
+				PRODUCT_NAME = TableExample;
 				WRAPPER_EXTENSION = app;
 				ZERO_LINK = YES;
 			};
@@ -2397,7 +2397,7 @@
 				GCC_PREFIX_HEADER = "$(SYSTEM_LIBRARY_DIR)/Frameworks/AppKit.framework/Headers/AppKit.h";
 				GCC_PREPROCESSOR_DEFINITIONS = NeXT_RUNTIME;
 				HEADER_SEARCH_PATHS = /usr/GNUstep/System/Library/Headers/;
-				INFOPLIST_FILE = "TableViewExample/TableViewExample-Info.plist";
+				INFOPLIST_FILE = "TableViewExample/TableExample-Info.plist";
 				INSTALL_PATH = "$(HOME)/Applications";
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
@@ -2410,7 +2410,7 @@
 					AppKit,
 				);
 				PREBINDING = NO;
-				PRODUCT_NAME = TableViewExample;
+				PRODUCT_NAME = TableExample;
 				WRAPPER_EXTENSION = app;
 				ZERO_LINK = NO;
 			};
@@ -2712,7 +2712,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		60909CCC0CB2DA45009CAD27 /* Build configuration list for PBXNativeTarget "TableViewExample" */ = {
+		60909CCC0CB2DA45009CAD27 /* Build configuration list for PBXNativeTarget "TableExample" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				60909CCD0CB2DA45009CAD27 /* Debug */,
