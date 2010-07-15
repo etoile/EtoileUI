@@ -16,8 +16,8 @@
 
 @interface TableController : NSObject
 {
-	IBOutlet ETContainer *tableContainer;
-	IBOutlet ETContainer *tableContainer2;
+	IBOutlet ETView *leftTableAreaView;
+	IBOutlet ETView *rightTableAreaView;
 	IBOutlet NSScrollView *outlineView;
 }
 
