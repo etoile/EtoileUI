@@ -31,7 +31,7 @@ NSArrayController isn't really needed either.
 ETController extends the traditional facilities of NSController subclasses 
 by allowing to make a distinction between Object class and Group class 
 (leaf vs branches) as very often needed by applications in the Object Manager 
-style (see also CoreObject) at both UI and model levels.</ br>
+style (see also CoreObject) at both UI and model levels.<br />
 For the UI, you can specify items templates to be cloned when a new element 
 has to be inserted/added. On the model side, you can specify the class of 
 the model objects to be instantiated.
@@ -79,7 +79,7 @@ objects as a collection distinct from the content. */
 }
 
 - (ETLayoutItemGroup *) content;
-- (void) setContent: (ETLayoutItemGroup *)content;
+- (void) setContent: (ETLayoutItemGroup *)anItem;
 - (NSArray *) trackedItemPropertyNames;
 
 /* Nib Support */
@@ -99,7 +99,7 @@ objects as a collection distinct from the content. */
 /* Copying */
 
 - (id) copyWithZone: (NSZone *)aZone content: (ETLayoutItemGroup *)newContent;
-- (void) finishDeepCopy: (ETController *)controllerCopy 
+- (void) finishDeepCopy: (ETController *)newController 
                withZone: (NSZone *)aZone 
                 content: (ETLayoutItemGroup *)newContent;
 /* Templates */

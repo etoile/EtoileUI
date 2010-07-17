@@ -364,7 +364,7 @@ This context is a key/value table which allows to retrieve arbitrary objects
 deep copy underway.
 e.g. In an item copy, you can correct a reference to a controller that belongs 
 to an ancestor item like that: 
-<code>
+<example>
 id controllerInItemCopy = [[self objectReferencesForCopy] objectForKey: [self target]];
 
 if (controllerInItemCopy != nil)
@@ -375,7 +375,7 @@ else
 {
 	ASSIGN(itemCopy->_target, _target);
 }
-</code> */
+</example> */
 - (NSMapTable *) objectReferencesForCopy
 {
 	if (nil == objectRefsForCopy)
@@ -1540,7 +1540,7 @@ When no decorator is set on the receiver, returns the same rect usually.
 For example, we have an item with boundingBox = { -10, -10, 170, 220 } and 
 frame = { 30, 40, 150, 200 }, then in an ETStyle subclass whose instances would 
 receive this item through -render:layoutItem:dirtyRect:
-<code>
+<example>
 // bounds.origin is the current drawing context origin
 NSRect bounds = [item drawingBoundsForStyle: self]; 
 NSRect box = [item boundingBox];
@@ -1548,7 +1548,7 @@ NSRect box = [item boundingBox];
 [NSBezierPath fillRect: bounds]; // bounds is { 0, 0, 150, 200 }
 // With a custom bounding box, you can draw outside of the drawing bounds
 [NSBezierPath strokeRect: box]; // box is { -10, -10, 170, 220 }
-</code> 
+</example> 
 
 See also -contentBounds, -frame, -boundingBox, -coverStyle, -styleGroup and 
 -style. */
