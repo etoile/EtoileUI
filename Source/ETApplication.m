@@ -709,6 +709,9 @@ represented object. */
 
 /* Actions */
 
+/** Opens a browser on -layoutItem.
+
+See also [ NSObject -browse: ]. */
 - (IBAction) browseLayoutItemTree: (id)sender
 {
 	ETObjectBrowser *browser = [[ETObjectBrowser alloc] init];
@@ -719,7 +722,7 @@ represented object. */
 
 /** Disables or enables the frame drawing in the layout item tree.
 
-See also [ETLayoutItem -setShowsBoundingBox:]. */
+See also [ ETLayoutItem +setShowsFrame: ].  */
 - (IBAction) toggleFrameShown: (id)sender
 {
 	[ETLayoutItem setShowsFrame: ![ETLayoutItem showsFrame]];
@@ -732,7 +735,7 @@ See also [ETLayoutItem -setShowsBoundingBox:]. */
 
 /** Disables or enables the bounding box drawing in the layout item tree.
 
-See also [ETLayoutItem -setShowsBoundingBox:]. */
+See also [ETLayoutItem +setShowsBoundingBox: ]. */
 - (IBAction) toggleBoundingBoxShown: (id)sender
 {
 	[ETLayoutItem setShowsBoundingBox: ![ETLayoutItem showsBoundingBox]];

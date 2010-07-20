@@ -90,7 +90,7 @@ enum
 	ETArrangeMenuTag, 
 };
 
-/** NSMenuItem coveniency additions. */
+/** NSMenuItem conveniency additions. */
 @interface NSMenuItem (Etoile)
 + (NSMenuItem *) menuItemWithTitle: (NSString *)aTitle 
                                tag: (int)aTag
