@@ -81,7 +81,7 @@ See also -[ETLayout isOpaque].*/
 }
 
 
-/** <overidde-dummy />
+/** <override-dummy />
 Returns the name of the nib file the receiver should automatically load when 
 it gets instantiated.
 
@@ -266,7 +266,7 @@ be called. */
 
 /* Custom Widget Subclass */
 
-/** <override-always />
+/** <override-subclass />
 Returns the widget view class required by the layout.
 
 You can use the returned class to invoke -updateWidgetView:toClass: when you 

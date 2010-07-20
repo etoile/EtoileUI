@@ -325,8 +325,8 @@ static ETBasicHandleStyle *sharedBasicHandleStyle = nil;
 }
 
 - (void) render: (NSMutableDictionary *)inputValues 
-     layoutItem: (ETLayoutItem *)item 
-	  dirtyRect: (NSRect)dirtyRect;
+     layoutItem: (ETLayoutItem *)item
+      dirtyRect: (NSRect)dirtyRect
 {
 	NSRect bounds = [item drawingBoundsForStyle: self];
 

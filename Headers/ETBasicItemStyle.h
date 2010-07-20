@@ -1,4 +1,4 @@
-/**	<title>ETBasicItemStyle/title>
+/**	<title>ETBasicItemStyle</title>
 
 	<abstract>Very generic style class to draw layout items.</abstract>
 

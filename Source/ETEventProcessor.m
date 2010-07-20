@@ -44,7 +44,7 @@ parameter.
 The implementation is expected to return YES if anEvent should be dispatched by 
 the widget backend itself, otherwise NO if only EtoileUI should be in charge of 
 displatching the event. */
-- (BOOL) processEvent: (void *)theEvent
+- (BOOL) processEvent: (void *)backendEvent
 {
 	return NO;
 }

@@ -55,7 +55,7 @@ method will reuse the action handler to be set on every created items. */
 - (void) setFieldEditorItem: (ETLayoutItem *)anItem;
 - (void) beginEditingItem: (ETLayoutItem *)item 
                  property: (NSString *)property
-                   inRect: (NSRect)fieldEditorFrame;
+                   inRect: (NSRect)fieldEditorRect;
 - (void) endEditingItem;
 
 /* Tool/Tool Actions */

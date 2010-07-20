@@ -189,9 +189,9 @@ tree. */
 tools can be looked up and activated.
 
 See also -mainTool. */
-+ (void) setMainTool: (id)anTool
++ (void) setMainTool: (id)aTool
 {
-	ASSIGN(mainTool, anTool);
+	ASSIGN(mainTool, aTool);
 }
 
 /** Returns a new autoreleased tool instance. */

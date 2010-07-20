@@ -1,7 +1,7 @@
 /** <title>ETFixedLayout</title>
 	
 	<abstract>A layout class that position items based on their persistent 
-	geometry.</asbtract>
+	geometry.</abstract>
  
 	Copyright (C) 2009 Quentin Mathe
  

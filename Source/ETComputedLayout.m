@@ -253,7 +253,7 @@ by calling -setVisibleItems: on the layout context. */
 Overrides this method to generate a layout fragment based on the layout context 
 constraints. Usual layout context constraints are size, vertical and horizontal 
 scroller visibility. */
-- (ETLineFragment *) layoutFragmentWithSubsetOfItems: (NSArray *)items
+- (ETLineFragment *) layoutFragmentWithSubsetOfItems: (NSArray *)unlayoutedItems
 {
 	return nil;
 }

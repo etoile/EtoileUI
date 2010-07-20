@@ -29,7 +29,8 @@ customize the items handed by the layout context.
 Here is a short example to create a IM-like area where each item will be 
 drawn inside a speech bubble and laid out vertically with some space around 
 each one:
-<code>
+
+<example>
 ETTemplateItemLayout *chatLayout = [ETTemplateItemLayout layout];
 ETLayoutItem *item = [[ETLayoutItemFactory factory] item];
 ETLayoutItemGroup *chatAreaItem = [[ETLayoutItemFactory factory] itemGroup];
@@ -42,7 +43,7 @@ ETLayoutItemGroup *chatAreaItem = [[ETLayoutItemFactory factory] itemGroup];
 [[chatLayout positionalLayout] setItemMargin: 15];
 
 [chatAreaItem setLayout: chatLayout];
-</code>
+</example>
 
 The item positioning and sizing is always delegated the layout returned by 
 -positionalLayout. You can pass any layout that conforms to ETPositionalLayout 

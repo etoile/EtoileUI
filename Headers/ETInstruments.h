@@ -102,7 +102,7 @@ move, translate and drag behaviors. */
 /* Translate Action Producer */
 
 - (void) beginTranslateItem: (ETLayoutItem *)item atPoint: (NSPoint)aPoint;
-- (void) translateToPoint: (NSPoint)aPoint;
+- (void) translateToPoint: (NSPoint)eventLoc;
 - (void) translateByDelta: (NSSize)aDelta;
 - (void) endTranslate;
 - (BOOL) isTranslating;

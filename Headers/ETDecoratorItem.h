@@ -47,7 +47,7 @@ considered private.*/
 
 + (id) item;
 
-- (id) initWithSupervisorView: (ETView *)supervisorView;
+- (id) initWithSupervisorView: (ETView *)aSupervisorView;
 
 - (BOOL) usesWidgetView;
 

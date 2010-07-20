@@ -1830,7 +1830,7 @@ See also -setDoubleAction:. */
 	return GET_PROPERTY(kETDoubleClickedItemProperty);
 }
 
-/** <overidde-dummy />
+/** <override-dummy />
 Returns whether the tools should hit test the children which intersect the 
 area that lies outside the receiver frame but inside its bounding box.
 

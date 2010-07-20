@@ -1,7 +1,7 @@
 /** <title>ETComputedLayout</title>
 	
 	<abstract>An abstract layout class whose subclasses position items by 
-	computing their locations based on a set of rules.</asbtract>
+	computing their locations based on a set of rules.</abstract>
  
 	Copyright (C) 2008 Quentin Mathe
  
@@ -49,7 +49,7 @@ are allowed to do.
 In a subclass, you must override at least two methods:
 <list>
 <item>-computeLocationsForFragments:</item>
-<item>-layoutFragmentWithSubsetOfItems: or -generateFragmentsForItems:</item>.
+<item>-layoutFragmentWithSubsetOfItems: or -generateFragmentsForItems:</item>
 </list>
 You can override both -layoutFragmentWithSubsetOfItems: and 
 -generateFragmentsForItems: if you need to.<br />
@@ -74,7 +74,7 @@ In the rare case where more control is required, you might want to reimplement
 
 - (float) borderMargin;
 - (void) setBorderMargin: (float)aMargin;
-- (void) setItemMargin: (float)margin;
+- (void) setItemMargin: (float)aMargin;
 - (float) itemMargin;
 - (ETLayoutHorizontalAlignment) horizontalAlignment;
 - (void) setHorizontalAligment: (ETLayoutHorizontalAlignment)anAlignment;

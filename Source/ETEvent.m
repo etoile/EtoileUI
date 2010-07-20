@@ -57,7 +57,7 @@ anEvent, event type put aside. */
 /** Returns an autoreleased EtoileUI mouse exit event which is identical to 
 anEvent, event type and layout item put aside. */
 + (ETEvent *) exitEventWithEvent: (ETEvent *)anEvent
-					  layoutItem: (ETLayoutItem *)exitedItem;
+                      layoutItem: (ETLayoutItem *)exitedItem
 {
 	ETEvent *copiedEvent = [anEvent copy];
 	copiedEvent->_type = NSMouseExited;
