@@ -52,7 +52,6 @@ For other Nibs to be loaded, see ETNibOwner. */
 - (ETLayoutItemGroup *) layoutItem;
 - (ETLayoutItemBuilder *) builder;
 - (void) rebuildMainNib;
-- (NSMenu *) applicationMenu;
 
 - (void) setUp;
 
@@ -75,7 +74,7 @@ For other Nibs to be loaded, see ETNibOwner. */
 
 int ETApplicationMain(int argc, const char **argv);
 
-
+/** Informal protocol to register related aspects (e.g. every layout). */
 @interface NSObject (ETAspectRegistration)
 /** Can be implemented by an aspect base class to trigger the automatic 
 registration of its aspect prototypes at the application launch time.
@@ -91,12 +90,14 @@ enum
 	ETArrangeMenuTag, 
 };
 
+/** NSMenuItem coveniency additions. */
 @interface NSMenuItem (Etoile)
 + (NSMenuItem *) menuItemWithTitle: (NSString *)aTitle 
                                tag: (int)aTag
                             action: (SEL)anAction;
 @end
 
+/** NSMenu conveniency additions. */
 @interface NSMenu (Etoile)
 - (void) addItemWithTitle: (NSString *)aTitle
                     state: (NSInteger)aState

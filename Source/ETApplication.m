@@ -249,6 +249,12 @@ GNUstep, a minimal main menu is always created. */
 	RELEASE(mainMenu);
 }
 
+/* Might become a public method later. */
+- (NSMenu *) applicationMenu
+{
+	return [[[self mainMenu] itemAtIndex: 0] submenu];
+}
+
 /* Creates a standard application menu by taking in account the expectations
 specific to each platform (GNUstep/Etoile and Cocoa). Only supports Mac OS X for
 now.
@@ -325,11 +331,6 @@ See also -_buildMainMenuIfNeeded. */
 		insertionIndex = [appMenu numberOfItems];
 
 	return insertionIndex;
-}
-
-- (NSMenu *) applicationMenu
-{
-	return [[[self mainMenu] itemAtIndex: 0] submenu];
 }
 
 - (void) addGeometryOptionsToMenu: (NSMenu *)menu
@@ -716,6 +717,9 @@ represented object. */
 	[[browser panel] makeKeyAndOrderFront: self];
 }
 
+/** Disables or enables the frame drawing in the layout item tree.
+
+See also [ETLayoutItem -setShowsBoundingBox:]. */
 - (IBAction) toggleFrameShown: (id)sender
 {
 	[ETLayoutItem setShowsFrame: ![ETLayoutItem showsFrame]];
@@ -726,6 +730,9 @@ represented object. */
 	}
 }
 
+/** Disables or enables the bounding box drawing in the layout item tree.
+
+See also [ETLayoutItem -setShowsBoundingBox:]. */
 - (IBAction) toggleBoundingBoxShown: (id)sender
 {
 	[ETLayoutItem setShowsBoundingBox: ![ETLayoutItem showsBoundingBox]];
@@ -736,6 +743,8 @@ represented object. */
 	}
 }
 
+/** Hides or shows the special menu that gives access to various EtoileUI 
+utilities related to debugging, introspection etc. */
 - (IBAction) toggleDevelopmentMenu: (id)sender
 {
 	NSMenuItem *devMenuItem = (id)[[self mainMenu] 
@@ -754,6 +763,10 @@ represented object. */
 	}
 }
 
+/** Switches between User mode and Developer mode to edit the application at 
+runtime.
+
+WARNING: Not yet implemented. */
 - (IBAction) toggleLiveDevelopment: (id)sender
 {
 	ETLog(@"Toggle live dev");
