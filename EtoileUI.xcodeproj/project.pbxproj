@@ -85,7 +85,6 @@
 		6051F56F100CC23E005ED827 /* ETFixedLayout.h in Headers */ = {isa = PBXBuildFile; fileRef = 6051F56D100CC23E005ED827 /* ETFixedLayout.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		6051F58F100CC264005ED827 /* ETFixedLayout.m in Sources */ = {isa = PBXBuildFile; fileRef = 6051F58E100CC264005ED827 /* ETFixedLayout.m */; };
 		6051F590100CC264005ED827 /* ETFixedLayout.m in Sources */ = {isa = PBXBuildFile; fileRef = 6051F58E100CC264005ED827 /* ETFixedLayout.m */; };
-		60539D9E0C242065006C57EC /* PaneContainerExample.nib in Resources */ = {isa = PBXBuildFile; fileRef = 60539D9C0C242065006C57EC /* PaneContainerExample.nib */; };
 		6053E12F0FFA5CB300A5EBEA /* ETPickDropActionHandler.h in Headers */ = {isa = PBXBuildFile; fileRef = 6053E12E0FFA5CB300A5EBEA /* ETPickDropActionHandler.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		6053E1310FFA5CC700A5EBEA /* ETPickDropActionHandler.m in Sources */ = {isa = PBXBuildFile; fileRef = 6053E1300FFA5CC700A5EBEA /* ETPickDropActionHandler.m */; };
 		6053E1320FFA5CC700A5EBEA /* ETPickDropActionHandler.m in Sources */ = {isa = PBXBuildFile; fileRef = 6053E1300FFA5CC700A5EBEA /* ETPickDropActionHandler.m */; };
@@ -192,6 +191,7 @@
 		60B27ED60FF8DB060012BB42 /* ETPaintBucketTool.m in Sources */ = {isa = PBXBuildFile; fileRef = 60B27ED40FF8DB060012BB42 /* ETPaintBucketTool.m */; };
 		60B5F85111EF65A200A08FF5 /* PhotoViewExample.xib in Resources */ = {isa = PBXBuildFile; fileRef = 60B5F85011EF65A200A08FF5 /* PhotoViewExample.xib */; };
 		60B5F86011EF661B00A08FF5 /* ObjectManagerExample.xib in Resources */ = {isa = PBXBuildFile; fileRef = 60B5F85F11EF661B00A08FF5 /* ObjectManagerExample.xib */; };
+		60B5F87A11EF679800A08FF5 /* PaneExample.xib in Resources */ = {isa = PBXBuildFile; fileRef = 60B5F87911EF679800A08FF5 /* PaneExample.xib */; };
 		60BB000E100A32C8001B2F37 /* EtoileWeb.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 60073C2910074B39007272E6 /* EtoileWeb.framework */; };
 		60BBFFB8100A31D8001B2F37 /* WebKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 60BBFFB7100A31D8001B2F37 /* WebKit.framework */; };
 		60C1D8AD0C2569D500E00A2E /* PaneController.m in Sources */ = {isa = PBXBuildFile; fileRef = 60C1D8AC0C2569D500E00A2E /* PaneController.m */; };
@@ -483,9 +483,8 @@
 		605153B90C1993F900B5E0E5 /* FSBrowserCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = FSBrowserCell.m; path = Source/FSBrowserCell.m; sourceTree = "<group>"; };
 		6051F56D100CC23E005ED827 /* ETFixedLayout.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ETFixedLayout.h; path = Headers/ETFixedLayout.h; sourceTree = "<group>"; };
 		6051F58E100CC264005ED827 /* ETFixedLayout.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ETFixedLayout.m; path = Source/ETFixedLayout.m; sourceTree = "<group>"; };
-		60539D940C240A7B006C57EC /* PaneContainerExample.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = PaneContainerExample.app; sourceTree = BUILT_PRODUCTS_DIR; };
-		60539D960C240A7B006C57EC /* PaneContainerExample-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = "PaneContainerExample-Info.plist"; path = "PaneExample/PaneContainerExample-Info.plist"; sourceTree = "<group>"; };
-		60539D9D0C242065006C57EC /* English */ = {isa = PBXFileReference; lastKnownFileType = wrapper.nib; name = English; path = English.lproj/PaneContainerExample.nib; sourceTree = "<group>"; };
+		60539D940C240A7B006C57EC /* PaneExample.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = PaneExample.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		60539D960C240A7B006C57EC /* PaneExample-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = "PaneExample-Info.plist"; path = "PaneExample/PaneExample-Info.plist"; sourceTree = "<group>"; };
 		6053E12E0FFA5CB300A5EBEA /* ETPickDropActionHandler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ETPickDropActionHandler.h; path = Headers/ETPickDropActionHandler.h; sourceTree = "<group>"; };
 		6053E1300FFA5CC700A5EBEA /* ETPickDropActionHandler.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ETPickDropActionHandler.m; path = Source/ETPickDropActionHandler.m; sourceTree = "<group>"; };
 		6053E1B00FFA6F3900A5EBEA /* ETPaintActionHandler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ETPaintActionHandler.h; path = Headers/ETPaintActionHandler.h; sourceTree = "<group>"; };
@@ -579,6 +578,7 @@
 		60B27ED40FF8DB060012BB42 /* ETPaintBucketTool.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ETPaintBucketTool.m; path = Source/ETPaintBucketTool.m; sourceTree = "<group>"; };
 		60B5F85011EF65A200A08FF5 /* PhotoViewExample.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = PhotoViewExample.xib; path = PhotoViewExample/PhotoViewExample.xib; sourceTree = "<group>"; };
 		60B5F85F11EF661B00A08FF5 /* ObjectManagerExample.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = ObjectManagerExample.xib; path = ObjectManagerExample/ObjectManagerExample.xib; sourceTree = "<group>"; };
+		60B5F87911EF679800A08FF5 /* PaneExample.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = PaneExample.xib; path = PaneExample/PaneExample.xib; sourceTree = "<group>"; };
 		60BB9F140EED2FD000D5E1A6 /* ChangeLog */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = ChangeLog; sourceTree = "<group>"; };
 		60BBFFB7100A31D8001B2F37 /* WebKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = WebKit.framework; path = /System/Library/Frameworks/WebKit.framework; sourceTree = "<absolute>"; };
 		60C1D8AB0C2569D500E00A2E /* PaneController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PaneController.h; path = PaneExample/PaneController.h; sourceTree = "<group>"; };
@@ -794,7 +794,7 @@
 				60FC2925105C112D008D2EFF /* FormExample.app */,
 				606B98C90C0AF831000AAA85 /* PhotoViewExample.app */,
 				605F0CCA0C0F400D003AE3E6 /* ObjectManagerExample.app */,
-				60539D940C240A7B006C57EC /* PaneContainerExample.app */,
+				60539D940C240A7B006C57EC /* PaneExample.app */,
 				60909CC90CB2DA42009CAD27 /* TableExample.app */,
 				60CF742A0D449A8A00B4CA3D /* MarkupEditor.app */,
 				60EEB9020F09457C00EBB632 /* Collage.app */,
@@ -1152,13 +1152,13 @@
 				60EEB9040F09457C00EBB632 /* Collage-Info.plist */,
 				60CF73F00D4496AD00B4CA3D /* MarkupEditor-Info.plist */,
 				605F0CCC0C0F400D003AE3E6 /* ObjectManagerExample-Info.plist */,
-				60539D960C240A7B006C57EC /* PaneContainerExample-Info.plist */,
+				60539D960C240A7B006C57EC /* PaneExample-Info.plist */,
 				609097010CADC366009CAD27 /* PhotoViewExample-Info.plist */,
 				60909CCB0CB2DA43009CAD27 /* TableExample-Info.plist */,
 				60FC2927105C112D008D2EFF /* FormExample-Info.plist */,
 				60CF744E0D44E42A00B4CA3D /* MarkupEditor.nib */,
-				60539D9C0C242065006C57EC /* PaneContainerExample.nib */,
 				60B5F85F11EF661B00A08FF5 /* ObjectManagerExample.xib */,
+				60B5F87911EF679800A08FF5 /* PaneExample.xib */,
 				60B5F85011EF65A200A08FF5 /* PhotoViewExample.xib */,
 				60062EA611EF64BA006888F8 /* TableExample.xib */,
 			);
@@ -1363,9 +1363,9 @@
 			productReference = 60073C2910074B39007272E6 /* EtoileWeb.framework */;
 			productType = "com.apple.product-type.framework";
 		};
-		60539D930C240A7B006C57EC /* PaneContainerExample */ = {
+		60539D930C240A7B006C57EC /* PaneExample */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 60539D970C240A7D006C57EC /* Build configuration list for PBXNativeTarget "PaneContainerExample" */;
+			buildConfigurationList = 60539D970C240A7D006C57EC /* Build configuration list for PBXNativeTarget "PaneExample" */;
 			buildPhases = (
 				60539D900C240A7B006C57EC /* Resources */,
 				60539D910C240A7B006C57EC /* Sources */,
@@ -1376,9 +1376,9 @@
 			dependencies = (
 				60F7145A0C5E7E7E002CA8AA /* PBXTargetDependency */,
 			);
-			name = PaneContainerExample;
+			name = PaneExample;
 			productName = PaneContainerExample;
-			productReference = 60539D940C240A7B006C57EC /* PaneContainerExample.app */;
+			productReference = 60539D940C240A7B006C57EC /* PaneExample.app */;
 			productType = "com.apple.product-type.application";
 		};
 		605F0CC90C0F400D003AE3E6 /* ObjectManagerExample */ = {
@@ -1537,7 +1537,7 @@
 				60EEB9010F09457C00EBB632 /* Collage */,
 				60CF74290D449A8A00B4CA3D /* MarkupEditor */,
 				605F0CC90C0F400D003AE3E6 /* ObjectManagerExample */,
-				60539D930C240A7B006C57EC /* PaneContainerExample */,
+				60539D930C240A7B006C57EC /* PaneExample */,
 				606B98C80C0AF831000AAA85 /* PhotoViewExample */,
 				60909CC80CB2DA42009CAD27 /* TableExample */,
 				60FC2924105C112D008D2EFF /* FormExample */,
@@ -1593,7 +1593,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				60539D9E0C242065006C57EC /* PaneContainerExample.nib in Resources */,
+				60B5F87A11EF679800A08FF5 /* PaneExample.xib in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1987,14 +1987,6 @@
 /* End PBXTargetDependency section */
 
 /* Begin PBXVariantGroup section */
-		60539D9C0C242065006C57EC /* PaneContainerExample.nib */ = {
-			isa = PBXVariantGroup;
-			children = (
-				60539D9D0C242065006C57EC /* English */,
-			);
-			name = PaneContainerExample.nib;
-			sourceTree = "<group>";
-		};
 		608EBAE2100D22AB00B36FAB /* BrowserPrototype.nib */ = {
 			isa = PBXVariantGroup;
 			children = (
@@ -2166,7 +2158,7 @@
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "$(SYSTEM_LIBRARY_DIR)/Frameworks/AppKit.framework/Headers/AppKit.h";
 				GCC_PREPROCESSOR_DEFINITIONS = NeXT_RUNTIME;
-				INFOPLIST_FILE = "PaneContainerExample-Info.plist";
+				INFOPLIST_FILE = "PaneExample/PaneExample-Info.plist";
 				INSTALL_PATH = "$(HOME)/Applications";
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
@@ -2179,7 +2171,7 @@
 					AppKit,
 				);
 				PREBINDING = NO;
-				PRODUCT_NAME = PaneContainerExample;
+				PRODUCT_NAME = PaneExample;
 				WRAPPER_EXTENSION = app;
 				ZERO_LINK = YES;
 			};
@@ -2197,7 +2189,7 @@
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "$(SYSTEM_LIBRARY_DIR)/Frameworks/AppKit.framework/Headers/AppKit.h";
 				GCC_PREPROCESSOR_DEFINITIONS = NeXT_RUNTIME;
-				INFOPLIST_FILE = "PaneContainerExample-Info.plist";
+				INFOPLIST_FILE = "PaneExample/PaneExample-Info.plist";
 				INSTALL_PATH = "$(HOME)/Applications";
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
@@ -2210,7 +2202,7 @@
 					AppKit,
 				);
 				PREBINDING = NO;
-				PRODUCT_NAME = PaneContainerExample;
+				PRODUCT_NAME = PaneExample;
 				WRAPPER_EXTENSION = app;
 				ZERO_LINK = NO;
 			};
@@ -2677,7 +2669,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		60539D970C240A7D006C57EC /* Build configuration list for PBXNativeTarget "PaneContainerExample" */ = {
+		60539D970C240A7D006C57EC /* Build configuration list for PBXNativeTarget "PaneExample" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				60539D980C240A7D006C57EC /* Debug */,

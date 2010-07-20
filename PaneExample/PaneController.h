@@ -8,22 +8,20 @@
 
 #import <Foundation/Foundation.h>
 #import <AppKit/AppKit.h>
-#import "ETContainer.h"
+#import <EtoileUI/EtoileUI.h>
 
-
+/* This example are pane support are still work-in-progress. */
 @interface PaneController : NSObject
 {
-    IBOutlet id viewContainer;
+    IBOutlet ETLayoutItemGroup *paneItemGroup;
 	IBOutlet NSView *paneView1;
 	IBOutlet NSView *paneView2;
-	IBOutlet NSView *paneView3;
-	NSMutableArray *paneItems;
+	IBOutlet ETView *paneView3;
 }
 
 - (IBAction) changeContentLayout: (id)sender;
 - (IBAction) changeSwitcherLayout: (id)sender;
 - (IBAction) changeSwitcherPosition: (id)sender;
-- (IBAction) switchUsesSource: (id)sender;
 - (IBAction) scale: (id)sender;
 
 @end

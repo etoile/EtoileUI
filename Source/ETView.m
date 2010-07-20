@@ -356,22 +356,6 @@ installed by the layout. */
 	}
 }
 
-/* Not really costly since aView is expected to have no superview normally. */
-- (BOOL) hasSupervisorViewAncestor: (NSView *)aView
-{
-	NSView *ancestorView = [aView superview];
-
-	while (nil != ancestorView)
-	{
-		if ([ancestorView isSupervisorView])
-			return YES;
-
-		ancestorView = [ancestorView superview];
-	}
-
-	return NO;
-}
-
 /* See -setWrappedView: and -setTemporaryView: documentation which explains the 
 implemented behavior. */
 - (void) setContentView: (NSView *)view temporary: (BOOL)temporary
@@ -384,7 +368,7 @@ implemented behavior. */
 	{
 		NSString *selSubstring = (temporary ? @"Temporary" : @"Wrapped");
 
-		NSAssert2([self hasSupervisorViewAncestor: view] == NO, @"You must not move "
+		NSAssert2([[view superview] isSupervisorView] == NO, @"You must not move "
 			"view %@ to a new superview without first removing it explicitely "
 			"with -[ETLayoutItem setView: nil] or -[ETView set%@View: nil]", 
 			view, selSubstring);

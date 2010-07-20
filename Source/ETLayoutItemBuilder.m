@@ -158,6 +158,18 @@ returns YES to -[ETWindowItem shouldKeepWindowFrame:].  */
 	return ([[ETLayout layoutClassForLayoutView: aView] isEqual: [ETLayout class]] == NO);
 }
 
+
+- (id) renderViews: (NSArray *)views
+{
+	NSMutableArray *items = [NSMutableArray arrayWithCapacity: [views count]];
+
+	FOREACH([NSArray arrayWithArray: views], view, NSView *)
+	{
+		[items addObject: [self renderView: view]];
+	}
+	return items;
+}
+
 /** Returns an item built with the given view, by traversing the subview 
 hierarchy recursively.
 
@@ -184,6 +196,12 @@ of their view hierachy (-subviews returns an empty arrary). */
 		item = [self renderView: [view documentView]];
 		[item setDecoratorItem: [ETScrollableAreaItem itemWithScrollView: view]];
 	}
+	else if ([view isKindOfClass: [NSBox class]])
+	{
+		item = [itemFactory itemGroupWithFrame: [view frame]];
+		[item addItems: [self renderViews: [view subviews]]];
+		// TODO: Decorate with ETGroupBoxItem/ETBoxedAreaItem
+	}
 	else if ([view isSupervisorView] && [view layoutItem] == nil)
 	{
 		item = [itemFactory performSelector: [view defaultItemFactorySelector]];
@@ -204,18 +222,8 @@ of their view hierachy (-subviews returns an empty arrary). */
 	else if ([view isMemberOfClass: [NSView class]])
 	{
 		item = [itemFactory itemGroupWithFrame: [view frame]];
-		
 		[item setFlipped: [view isFlipped]];
-
-		// NOTE: -addItem: moves subview when subviews is enumerated, hence we 
-		// have to iterate over a separate collection which isn't mutated.
-		// May be we could avoid moving subviews in -addItem: when they are 
-		// going to be reinserted at the location where they have been removed.
-		FOREACH([NSArray arrayWithArray: [view subviews]], subview, NSView *)
-		{
-			id childItem = [self renderView: subview];
-			[item addItem: childItem];
-		}
+		[item addItems: [self renderViews: [view subviews]]];
 	}
 	else
 	{

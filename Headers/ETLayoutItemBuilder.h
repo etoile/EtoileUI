@@ -29,7 +29,10 @@ into a new builder to implement a new transform. */
 @end
 
 
-/** Generates a layout item tree from an AppKit-based application. */
+/** Generates a layout item tree from an AppKit-based application.
+
+For now, NSTabView and NSSplitView are rendered into a ETLayoutItem with a view, 
+and not into a layout when -allowsWidgetLayout returns YES. */
 @interface ETEtoileUIBuilder: ETLayoutItemBuilder
 {
 	@private

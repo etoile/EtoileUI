@@ -1,74 +1,44 @@
 #import "PaneController.h"
-#import "ETLayoutItem.h"
-#import "ETColumnLayout.h"
-#import "ETFlowLayout.h"
-#import "ETLineLayout.h"
-#import "ETTableLayout.h"
-#import "ETPaneSwitcherLayout.h"
-#import "ETPaneLayout.h"
-#import "GNUstep.h"
 
 
 @implementation PaneController
 
-- (void) dealloc
+/* Invoked when the application is going to finish its launch because 
+the receiver is set as the application's delegate in the nib. */
+- (void) applicationWillFinishLaunching: (NSNotification *)notif
 {
-	DESTROY(paneItems);
-	
-	[super dealloc];
-}
-
-- (void) awakeFromNib
-{
+	ETLayoutItemFactory *itemFactory = [ETLayoutItemFactory factory];
 	ETLayoutItem *paneItem = nil;
-	
-	paneItems = [[NSMutableArray alloc] init];
-	
-	paneItem = [ETLayoutItem layoutItemWithView: paneView1];
-	[paneItem setRepresentedObject: [NSMutableDictionary dictionary]];
-	//[paneItem setName: @"Funky"];
-	[paneItem setValue: @"Funky" forProperty: @"name"];
-	[paneItem setValue: [NSImage imageNamed: @"NSApplicationIcon"] forProperty: @"icon"];
-	[paneItem setValue: [NSImage imageNamed: @"NSApplicationIcon"] forProperty: @"image"];
-	[paneItems addObject: paneItem];
-	
-	paneItem = [ETLayoutItem layoutItemWithView: paneView2];
-	[paneItem setRepresentedObject: [NSMutableDictionary dictionary]];
-	//[paneItem setName: @"Edgy"];
-	[paneItem setValue: @"Edgy" forProperty: @"name"];
-	[paneItem setValue: [NSImage imageNamed: @"NSApplicationIcon"] forProperty: @"icon"];
-	[paneItem setValue: [NSImage imageNamed: @"NSApplicationIcon"] forProperty: @"image"];
-	[paneItems addObject: paneItem];
-	
-	paneItem = [ETLayoutItem layoutItemWithView: paneView3];
-	[paneItem setRepresentedObject: [NSMutableDictionary dictionary]];
-	//[paneItem setName: @"Groovy"];
-	[paneItem setValue: @"Groovy" forProperty: @"name"];
-	[paneItem setValue: [NSImage imageNamed: @"NSApplicationIcon"] forProperty: @"icon"];
-	[paneItem setValue: [NSImage imageNamed: @"NSApplicationIcon"] forProperty: @"image"];
-	[paneItems addObject: paneItem];
-	
-    NSNotificationCenter *nc = [NSNotificationCenter defaultCenter];
-    
-    [nc addObserver: self 
-           selector: @selector(viewContainerDidResize:) 
-               name: NSViewFrameDidChangeNotification 
-             object: viewContainer];
-	
-	//[viewContainer setSource: self];
-	[viewContainer setLayout: AUTORELEASE([[ETPaneSwitcherLayout alloc] init])];
-	[viewContainer addItems: paneItems];
-}
 
-- (void) viewContainerDidResize: (NSNotification *)notif
-{
-    [viewContainer updateLayout];
+	paneItem = [[ETEtoileUIBuilder builder] renderView: paneView1];
+	[paneItem setName: @"Funky"];
+	[paneItem setIcon: [NSImage imageNamed: @"NSApplicationIcon"]];
+	[paneItem setImage: [NSImage imageNamed: @"NSApplicationIcon"]];
+	[paneItemGroup addItem: paneItem];
+
+	paneItem = [itemFactory itemWithView: paneView2];
+	[paneItem setName: @"Edgy"];
+	[paneItem setIcon: [NSImage imageNamed: @"NSApplicationIcon"]];
+	[paneItem setImage: [NSImage imageNamed: @"NSApplicationIcon"]];
+	[paneItemGroup addItem: paneItem];
+
+	[ETApp rebuildMainNib];
+
+	/* The item can be retrieved with -owningItem too */
+	paneItem = [paneView3 layoutItem];
+	[paneItem setName: @"Groovy"];
+	[paneItem setIcon: [NSImage imageNamed: @"NSApplicationIcon"]];
+	[paneItem setImage: [NSImage imageNamed: @"NSApplicationIcon"]];
+	[paneItemGroup addItem: paneItem];
+
+	[paneItemGroup setLayout: [ETPaneLayout masterDetailLayout]];
 }
 
 - (IBAction) changeLayout: (id)sender
 {
 	Class layoutClass = nil;
-	
+	id layoutObject = nil;
+
 	switch ([[sender selectedItem] tag])
 	{
 		case 0:
@@ -84,17 +54,20 @@
 			layoutClass = [ETTableLayout class];
 			break;
 		case 4:
-			layoutClass = [ETPaneSwitcherLayout class];
+			layoutObject = [ETPaneLayout masterDetailLayout];
 			break;
 		default:
 			NSLog(@"Unsupported layout or unknown popup menu selection");
 	}
-	
-	id layoutObject = AUTORELEASE([[layoutClass alloc] init]);
+
+	if (layoutObject == nil)
+	{
+		layoutObject = AUTORELEASE([[layoutClass alloc] init]);
+	}
 	
 	/*[layoutObject setUsesConstrainedItemSize: YES];
 	[layoutObject setConstrainedItemSize: NSMakeSize(150, 150)];*/
-	[viewContainer setLayout: layoutObject];
+	[paneItemGroup setLayout: layoutObject];
 }
 
 - (IBAction) changeContentLayout: (id)sender
@@ -124,7 +97,7 @@
 	
 	id layoutObject = AUTORELEASE([[layoutClass alloc] init]);
 	
-	[(ETPaneSwitcherLayout *)[viewContainer layout] setContentLayout: layoutObject];
+	[[(ETPaneLayout *)[paneItemGroup layout] contentItem] setLayout: layoutObject];
 }
 
 - (IBAction) changeSwitcherLayout: (id)sender
@@ -151,12 +124,12 @@
 	
 	id layoutObject = AUTORELEASE([[layoutClass alloc] init]);
 	
-	[(ETPaneSwitcherLayout *)[viewContainer layout] setSwitcherLayout: layoutObject];
+	[[[paneItemGroup layout] barItem] setLayout: layoutObject];
 }
 
 - (IBAction) changeSwitcherPosition: (id)sender
 {
-	int position = 1;
+	ETPanePosition position = 1;
 	
 	switch ([[sender selectedItem] tag])
 	{
@@ -176,46 +149,12 @@
 			NSLog(@"Unsupported switcher position or unknown popup menu selection");
 	}
 	
-	[(ETPaneSwitcherLayout *)[viewContainer layout] setSwitcherPosition: position];
-}
-
-- (IBAction) switchUsesSource: (id)sender
-{
-	if ([sender state] == NSOnState)
-	{
-		[viewContainer setSource: self];
-	}
-	else if ([sender state] == NSOffState)
-	{
-		[viewContainer setSource: nil];
-		[viewContainer addItems: paneItems];
-	}
-    
-    /* Flow autolayout manager doesn't take care of trigerring or updating the display. */
-    [viewContainer setNeedsDisplay: YES];  
+	[[paneItemGroup layout] setBarPosition: position];
 }
 
 - (IBAction) scale: (id)sender
 {
-	[[viewContainer layoutItem] setItemScaleFactor: [sender floatValue] / 100];
-}
-
-/* ETContainerSource informal protocol */
-
-- (int) numberOfItemsInItemGroup: (ETLayoutItemGroup *)baseItem
-{
-	NSLog(@"Returns %d as number of items in container %@", 3, container);
-	
-	return 3;
-}
-
-- (ETLayoutItem *) itemGroup: (ETLayoutItemGroup *)baseItem itemAtIndex: (int)index
-{
-	ETLayoutItem *paneItem = [paneItems objectAtIndex: index];
-	
-	NSLog(@"Returns %@ as layout item in container %@", paneItem, [baseItem supervisorView]);
-
-	return paneItem;
+	[paneItemGroup setItemScaleFactor: [sender floatValue] / 100];
 }
 
 @end
