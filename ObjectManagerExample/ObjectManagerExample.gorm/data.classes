@@ -1,5 +1,75 @@
 {
     "## Comment" = "Do NOT change this file, Gorm maintains it";
+    ETDropIndicator = {
+	Actions = (
+	);
+	Outlets = (
+	);
+	Super = ETStyle;
+    };
+    ETLayoutItem = {
+	Actions = (
+	    "setValue:",
+	    "setRepresentedObject:",
+	    "setActionHandler:",
+	    "setTarget:",
+	    "didChangeViewValue:",
+	    "didChangeRepresentedObjectValue:",
+	    "objectDidBeginEditing:",
+	    "objectDidEndEditing:"
+	);
+	Outlets = (
+	);
+	Super = ETUIItem;
+    };
+    ETLayoutItemGroup = {
+	Actions = (
+	    "setSource:",
+	    "setDelegate:",
+	    "addObject:",
+	    "removeObject:"
+	);
+	Outlets = (
+	);
+	Super = ETLayoutItem;
+    };
+    ETShadowStyle = {
+	Actions = (
+	);
+	Outlets = (
+	    _shadow
+	);
+	Super = ETStyle;
+    };
+    ETSpeechBubbleStyle = {
+	Actions = (
+	);
+	Outlets = (
+	);
+	Super = ETStyle;
+    };
+    ETStyle = {
+	Actions = (
+	);
+	Outlets = (
+	);
+	Super = NSObject;
+    };
+    ETTintStyle = {
+	Actions = (
+	);
+	Outlets = (
+	);
+	Super = ETStyle;
+    };
+    ETUIItem = {
+	Actions = (
+	);
+	Outlets = (
+	    supervisorView
+	);
+	Super = ETStyle;
+    };
     ETView = {
 	Actions = (
 	    "collapse:",
@@ -12,12 +82,24 @@
     };
     FirstResponder = {
 	Actions = (
+	    "addObject:",
 	    "changeLayout:",
 	    "collapse:",
+	    "didChangeRepresentedObjectValue:",
+	    "didChangeViewValue:",
 	    "expand:",
 	    "inspectItem:",
+	    "objectDidBeginEditing:",
+	    "objectDidEndEditing:",
+	    "removeObject:",
 	    "scale:",
 	    "search:",
+	    "setActionHandler:",
+	    "setDelegate:",
+	    "setRepresentedObject:",
+	    "setSource:",
+	    "setTarget:",
+	    "setValue:",
 	    "switchUsesScrollView:"
 	);
 	Super = NSObject;
@@ -30,8 +112,8 @@
 	    "search:"
 	);
 	Outlets = (
-	    pathContainer,
-	    viewContainer
+	    mainViewItem,
+	    pathViewItem
 	);
 	Super = NSObject;
     };
