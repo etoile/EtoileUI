@@ -411,17 +411,17 @@ static ETLayoutItemFactory *itemFactory = nil;
 - (void) testHandleDecorateItemInView
 {
 	id parentView = AUTORELEASE([[ETView alloc] initWithFrame: NSMakeRect(0, 0, 100, 50)]);
-	id parent = [itemFactory itemGroup];
-	id supervisorView = AUTORELEASE([[ETView alloc] initWithFrame: NSMakeRect(0, 0, 100, 50)]);
+	ETLayoutItemGroup *parent = [itemFactory itemGroup];
+	id mySupervisorView = AUTORELEASE([[ETView alloc] initWithFrame: NSMakeRect(0, 0, 100, 50)]);
 	id supervisorView1 = AUTORELEASE([[ETView alloc] initWithFrame: NSMakeRect(0, 0, 100, 50)]);
 	id decorator1 = [ETDecoratorItem itemWithDummySupervisorView]; //[itemFactory itemWithView: supervisorView1];
 
 	[parent setSupervisorView: parentView];
 	[parent addItem: self];
 	
-	[self setSupervisorView: supervisorView];
+	[self setSupervisorView: mySupervisorView];
 	[decorator1 setSupervisorView: supervisorView1];
-	[decorator1 handleDecorateItem: self supervisorView: supervisorView inView: parentView];
+	[decorator1 handleDecorateItem: self supervisorView: mySupervisorView inView: parentView];
 	UKNotNil([[self supervisorView] superview]);
 	/* Next line is valid with ETView instance as [decorator supervisorView] but 
 	   might not with ETView subclasses (not valid with ETScrollView instance
