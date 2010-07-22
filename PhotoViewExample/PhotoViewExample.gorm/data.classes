@@ -1,28 +1,23 @@
 {
     "## Comment" = "Do NOT change this file, Gorm maintains it";
-    ContainerController = {
-	Actions = (
-	    "choosePicturesAndLayout:",
-	    "changeLayout:",
-	    "switchUsesSource:",
-	    "switchUsesScrollView:",
-	    "scale:",
-	    "changeItemMargin:",
-	    "configureLayout:"
-	);
-	Outlets = (
-	    viewContainer,
-	    itemMarginSlider
-	);
-	Super = ETController;
-    };
     ETController = {
 	Actions = (
+	    "setNibMainContent:",
 	    "add:",
 	    "addNewGroup:",
 	    "insert:",
 	    "insertNewGroup:",
 	    "remove:"
+	);
+	Outlets = (
+	    content,
+	    nibMainContent
+	);
+	Super = ETNibOwner;
+    };
+    ETNibOwner = {
+	Actions = (
+	    "rebuildTopLevelObjectsWithBuilder:"
 	);
 	Outlets = (
 	);
@@ -40,6 +35,7 @@
 	Actions = (
 	    "add:",
 	    "addNewGroup:",
+	    "changeBorderMargin:",
 	    "changeItemMargin:",
 	    "changeLayout:",
 	    "choosePicturesAndLayout:",
@@ -48,11 +44,31 @@
 	    "insertNewGroup:",
 	    "inspect:",
 	    "inspectItem:",
+	    "rebuildTopLevelObjectsWithBuilder:",
 	    "remove:",
 	    "scale:",
+	    "setNibMainContent:",
 	    "switchUsesScrollView:",
 	    "switchUsesSource:"
 	);
 	Super = NSObject;
+    };
+    PhotoViewController = {
+	Actions = (
+	    "choosePicturesAndLayout:",
+	    "changeLayout:",
+	    "switchUsesSource:",
+	    "switchUsesScrollView:",
+	    "scale:",
+	    "changeItemMargin:",
+	    "changeBorderMargin:",
+	    "configureLayout:"
+	);
+	Outlets = (
+	    photoView,
+	    itemMarginSlider,
+	    borderMarginSlider
+	);
+	Super = ETController;
     };
 }
