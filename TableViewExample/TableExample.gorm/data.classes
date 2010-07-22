@@ -1,16 +1,5 @@
 {
     "## Comment" = "Do NOT change this file, Gorm maintains it";
-    ETContainer = {
-	Actions = (
-	);
-	Outlets = (
-	    _dataSource,
-	    _delegate,
-	    _target,
-	    _inspector
-	);
-	Super = ETView;
-    };
     ETView = {
 	Actions = (
 	    "inspectItem:",
@@ -33,8 +22,8 @@
 	Actions = (
 	);
 	Outlets = (
-	    tableContainer,
-	    tableContainer2,
+	    leftTableAreaView,
+	    rightTableAreaView,
 	    outlineView
 	);
 	Super = NSObject;

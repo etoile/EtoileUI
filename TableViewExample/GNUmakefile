@@ -3,7 +3,7 @@ include $(GNUSTEP_MAKEFILES)/common.make
 ADDITIONAL_CPPFLAGS += -std=c99
 ADDITIONAL_OBJCFLAGS += -I. 
 
-APP_NAME = TableViewExample
+APP_NAME = TableExample
 
 $(APP_NAME)_OBJC_FILES = $(wildcard *.m) ../main.m
 
