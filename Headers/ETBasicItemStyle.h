@@ -15,21 +15,43 @@
 
 @class ETLayoutItem;
 
-// TODO: Write correct enum doc
+/** Specifies the label position in the item drawing bounds as returned by 
+-[ETLayoutItem drawingForStyle:] with the style to be drawn as argument.
+
+See -setLabelPosition: and -labelPosition: */
 typedef enum
 {
+/** Don't draw the label. */
 	ETLabelPositionNone, 
-/** Lets the content aspect positions and resizes the title. */
+/** Draw the label in a rect area computed based on the drawn item content aspect. 
+
+See -[ETLayoutItem setContentAspect:] and ETContentAspect enum. */
 	ETLabelPositionContentAspect, 
-/** Lets the content as is. */
+/** Draw the label right in the center of the item drawing bounds. */
 	ETLabelPositionCentered, 
+/** Draw the label close to the left border of the item drawing bounds and 
+on the inner side. */
 	ETLabelPositionInsideLeft,
+/** Draw the label close to the left border of the item drawing bounds and 
+on the outer side. */
 	ETLabelPositionOutsideLeft,
+/** Draw the label close to the top border of the item drawing bounds and 
+on the inner side. */
 	ETLabelPositionInsideTop,
+/** Draw the label close to the top border of the item drawing bounds and 
+on the outer side. */
 	ETLabelPositionOutsideTop,
+/** Draw the label close to the right border of the item drawing bounds and 
+on the inner side. */
 	ETLabelPositionInsideRight,
+/** Draw the label close to the right border of the item drawing bounds and 
+on the outer side. */
 	ETLabelPositionOutsideRight,
+/** Draw the label close to the bottom border of the item drawing bounds and 
+on the inner side. */
 	ETLabelPositionInsideBottom,
+/** Draw the label close to the bottom border of the item drawing bounds and 
+on the outer side. */
 	ETLabelPositionOutsideBottom
 } ETLabelPosition;
 
@@ -40,8 +62,8 @@ etc.),</item>
 <item>UI visual feedback such as selected state, first responder status, etc.</item>
 </list>
 
-ETBasicItemStyle shared instance is also the only style automatically inserted 
-in -[ETLayoutItem styleGroup], when a new layout item is initialized.
+ETBasicItemStyle shared instance is also the only style automatically set 
+as -[ETLayoutItem coverStyle], when a new layout item is initialized.
 
 Tailored items build by ETLayoutItemFactory might not use ETBasicItemStyle, but 
 a custom style object.
@@ -65,10 +87,6 @@ makes the label invisible. */
 
 + (ETBasicItemStyle *) iconAndLabelBarElementStyle;
 + (ETBasicItemStyle *) styleWithLabelPosition: (ETLabelPosition)aPositionRule;
-
-- (void) render: (NSMutableDictionary *)inputValues 
-     layoutItem: (ETLayoutItem *)item 
-	  dirtyRect: (NSRect)dirtyRect;
 
 - (NSRect) currentLabelRect;
 - (NSRect) currentImageRect;
@@ -126,20 +144,28 @@ makes the label invisible. */
  
 @end
 
+/** ETGraphicsGroupStyle is a simple extension to ETBasicItemStyle that draws 
+a border around a layout item.
 
+You can use it in conjunction with ETLayoutItemGroup to show the boundaries of 
+multiple graphics elements (shapes, images etc.) grouped together. e.g. in 
+a graphics editor.
+
+See also -[ETLayoutItemFactory graphicsGroup]. */
 @interface ETGraphicsGroupStyle : ETBasicItemStyle
 {
 
 }
 
-- (void) render: (NSMutableDictionary *)inputValues 
-     layoutItem: (ETLayoutItem *)item 
-	  dirtyRect: (NSRect)dirtyRect;
-	  
 - (void) drawBorderInRect: (NSRect)aRect;
 
 @end
 
+/** ETFieldEditorItem is a simple extension to ETBasicItemStyle that draws 
+a focus ring with -[ETBasicItemStyle drawFirstResponderIndicatorInRect:].
+
+You can add it to -[ETLayoutItem styleGroup] when the item obtains the first 
+responder status and remove it when the item gives up this status. */
 @interface ETFieldEditorItemStyle : ETBasicItemStyle
 {
 
