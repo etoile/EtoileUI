@@ -438,7 +438,7 @@
 		600243B90CD133420023182D /* TestEtoileUI.bundle */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = TestEtoileUI.bundle; sourceTree = BUILT_PRODUCTS_DIR; };
 		600243C40CD133950023182D /* UnitKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UnitKit.framework; path = /Library/Frameworks/UnitKit.framework; sourceTree = "<absolute>"; };
 		600243C90CD134440023182D /* test_ETLayoutItem.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = test_ETLayoutItem.m; path = Tests/test_ETLayoutItem.m; sourceTree = "<group>"; };
-		60062EA611EF64BA006888F8 /* TableExample.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = TableExample.xib; path = TableViewExample/TableExample.xib; sourceTree = "<group>"; };
+		60062EA611EF64BA006888F8 /* TableExample.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = TableExample.xib; path = TableExample/TableExample.xib; sourceTree = "<group>"; };
 		60073C2910074B39007272E6 /* EtoileWeb.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = EtoileWeb.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		60073C2E10074B39007272E6 /* EtoileWeb-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = "EtoileWeb-Info.plist"; path = "../EtoileWeb/EtoileWeb-Info.plist"; sourceTree = "<group>"; };
 		60073E9F10074BC4007272E6 /* ETXHTMLWriter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ETXHTMLWriter.h; path = ../EtoileWeb/ETXHTMLWriter.h; sourceTree = SOURCE_ROOT; };
@@ -542,9 +542,9 @@
 		609097970CAEBC32009CAD27 /* NSObject+EtoileUI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "NSObject+EtoileUI.h"; path = "Headers/NSObject+EtoileUI.h"; sourceTree = "<group>"; };
 		609097980CAEBC32009CAD27 /* NSObject+EtoileUI.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = "NSObject+EtoileUI.m"; path = "Source/NSObject+EtoileUI.m"; sourceTree = "<group>"; };
 		60909CC90CB2DA42009CAD27 /* TableExample.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = TableExample.app; sourceTree = BUILT_PRODUCTS_DIR; };
-		60909CCB0CB2DA43009CAD27 /* TableExample-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = "TableExample-Info.plist"; path = "TableViewExample/TableExample-Info.plist"; sourceTree = "<group>"; };
-		60909CD70CB2DAB3009CAD27 /* TableController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TableController.h; path = TableViewExample/TableController.h; sourceTree = "<group>"; };
-		60909CD80CB2DAB3009CAD27 /* TableController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = TableController.m; path = TableViewExample/TableController.m; sourceTree = "<group>"; };
+		60909CCB0CB2DA43009CAD27 /* TableExample-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = "TableExample-Info.plist"; path = "TableExample/TableExample-Info.plist"; sourceTree = "<group>"; };
+		60909CD70CB2DAB3009CAD27 /* TableController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TableController.h; path = TableExample/TableController.h; sourceTree = "<group>"; };
+		60909CD80CB2DAB3009CAD27 /* TableController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = TableController.m; path = TableExample/TableController.m; sourceTree = "<group>"; };
 		609544AA0C0CE24D00068CBB /* ETBrowserLayout.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ETBrowserLayout.h; path = Headers/ETBrowserLayout.h; sourceTree = "<group>"; };
 		609544AB0C0CE24D00068CBB /* ETBrowserLayout.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ETBrowserLayout.m; path = Source/ETBrowserLayout.m; sourceTree = "<group>"; };
 		609547B70C0E032E00068CBB /* ETLayer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ETLayer.h; path = Headers/ETLayer.h; sourceTree = "<group>"; };
@@ -2350,7 +2350,7 @@
 				GCC_PREFIX_HEADER = "$(SYSTEM_LIBRARY_DIR)/Frameworks/AppKit.framework/Headers/AppKit.h";
 				GCC_PREPROCESSOR_DEFINITIONS = NeXT_RUNTIME;
 				HEADER_SEARCH_PATHS = /usr/GNUstep/System/Library/Headers/;
-				INFOPLIST_FILE = "TableViewExample/TableExample-Info.plist";
+				INFOPLIST_FILE = "TableExample/TableExample-Info.plist";
 				INSTALL_PATH = "$(HOME)/Applications";
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
@@ -2381,7 +2381,7 @@
 				GCC_PREFIX_HEADER = "$(SYSTEM_LIBRARY_DIR)/Frameworks/AppKit.framework/Headers/AppKit.h";
 				GCC_PREPROCESSOR_DEFINITIONS = NeXT_RUNTIME;
 				HEADER_SEARCH_PATHS = /usr/GNUstep/System/Library/Headers/;
-				INFOPLIST_FILE = "TableViewExample/TableExample-Info.plist";
+				INFOPLIST_FILE = "TableExample/TableExample-Info.plist";
 				INSTALL_PATH = "$(HOME)/Applications";
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",

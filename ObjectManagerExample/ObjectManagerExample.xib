@@ -10,7 +10,9 @@
 			<string key="NS.key.0">com.apple.InterfaceBuilder.CocoaPlugin</string>
 			<string key="NS.object.0">732</string>
 		</object>
-		<array class="NSMutableArray" key="IBDocument.EditedObjectIDs"/>
+		<array class="NSMutableArray" key="IBDocument.EditedObjectIDs">
+			<integer value="2"/>
+		</array>
 		<array key="IBDocument.PluginDependencies">
 			<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 		</array>
@@ -32,7 +34,7 @@
 				<int key="NSWindowBacking">2</int>
 				<string key="NSWindowRect">{{427, 53}, {652, 581}}</string>
 				<int key="NSWTFlags">1881669632</int>
-				<string key="NSWindowTitle">Window</string>
+				<string key="NSWindowTitle">ObjectManagerExample</string>
 				<string key="NSWindowClass">NSWindow</string>
 				<object class="NSMutableString" key="NSViewClass">
 					<characters key="NS.bytes">View</characters>
@@ -40,7 +42,7 @@
 				<string key="NSWindowContentMaxSize">{3.40282e+38, 3.40282e+38}</string>
 				<string key="NSWindowContentMinSize">{300, 300}</string>
 				<object class="NSView" key="NSWindowView" id="400218769">
-					<nil key="NSNextResponder"/>
+					<reference key="NSNextResponder"/>
 					<int key="NSvFlags">256</int>
 					<array class="NSMutableArray" key="NSSubviews">
 						<object class="NSCustomView" id="842087304">
@@ -134,7 +136,7 @@
 									<array class="NSMutableArray" key="NSMenuItems">
 										<object class="NSMenuItem" id="328669143">
 											<reference key="NSMenu" ref="451276786"/>
-											<string key="NSTitle">Stack</string>
+											<string key="NSTitle">Column</string>
 											<string key="NSKeyEquiv"/>
 											<int key="NSKeyEquivModMask">1048576</int>
 											<int key="NSMnemonicLoc">2147483647</int>
@@ -412,6 +414,7 @@
 						</object>
 					</array>
 					<string key="NSFrameSize">{652, 581}</string>
+					<reference key="NSSuperview"/>
 				</object>
 				<string key="NSScreenRect">{{0, 0}, {1680, 1028}}</string>
 				<string key="NSMinSize">{300, 322}</string>
@@ -2120,9 +2123,9 @@
 				<boolean value="YES" key="208.ImportedFromIB2"/>
 				<string key="209.IBPluginDependency">com.apple.InterfaceBuilder.CocoaPlugin</string>
 				<boolean value="YES" key="209.ImportedFromIB2"/>
-				<string key="21.IBEditorWindowLastContentRect">{{0, 414}, {652, 581}}</string>
+				<string key="21.IBEditorWindowLastContentRect">{{290, 4}, {652, 581}}</string>
 				<string key="21.IBPluginDependency">com.apple.InterfaceBuilder.CocoaPlugin</string>
-				<string key="21.IBWindowTemplateEditedContentRect">{{0, 414}, {652, 581}}</string>
+				<string key="21.IBWindowTemplateEditedContentRect">{{290, 4}, {652, 581}}</string>
 				<boolean value="YES" key="21.ImportedFromIB2"/>
 				<boolean value="YES" key="21.NSWindowTemplate.visibleAtLaunch"/>
 				<boolean value="YES" key="21.windowTemplate.hasMinSize"/>
@@ -2167,6 +2170,7 @@
 				<boolean value="YES" key="249.ImportedFromIB2"/>
 				<string key="254.IBPluginDependency">com.apple.InterfaceBuilder.CocoaPlugin</string>
 				<boolean value="YES" key="254.ImportedFromIB2"/>
+				<string key="255.IBEditorWindowLastContentRect">{{784, 367}, {156, 203}}</string>
 				<string key="255.IBPluginDependency">com.apple.InterfaceBuilder.CocoaPlugin</string>
 				<boolean value="YES" key="255.ImportedFromIB2"/>
 				<string key="256.IBPluginDependency">com.apple.InterfaceBuilder.CocoaPlugin</string>
