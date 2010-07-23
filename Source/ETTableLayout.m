@@ -521,6 +521,12 @@ See ETColumnFragment protocol to customize the returned column. */
 	[[self tableView] setNeedsDisplayInRect: [self displayRectOfItem: anItem]];
 }
 
+- (void) selectionDidChangeInLayoutContext
+{
+	[[self tableView] selectRowIndexes: [_layoutContext selectionIndexes]
+	              byExtendingSelection: NO];
+}
+
 - (NSArray *) selectedItems
 {
 	NSIndexSet *indexes = [[self tableView] selectedRowIndexes];

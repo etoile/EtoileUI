@@ -39,6 +39,7 @@ NSString * const ETSourceDidUpdateNotification = @"ETSourceDidUpdateNotification
 					 relativeToItem: (ETLayoutItemGroup *)pathBaseItem;
 - (void) applySelectionIndexPaths: (NSMutableArray *)indexPaths
                    relativeToItem: (ETLayoutItemGroup *)pathBaseItem;
+- (void) didChangeSelection;
 - (void) display: (NSMutableDictionary *)inputValues 
             item: (ETLayoutItem *)item 
        dirtyRect: (NSRect)dirtyRect 
@@ -207,7 +208,7 @@ The returned copy is mutable because ETLayoutItemGroup cannot be immutable. */
 		[item->_layout setUpCopyWithZone: aZone original: _layout];
 	}
 
-	/* We copy all primitive ivars except _reloading */
+	/* We copy all primitive ivars except _reloading and _changingSelection */
 
 	item->_doubleClickAction = _doubleClickAction;
 	/* Must follow -setLayout: to ensure autolayout is disabled in the copy when -setLayout: is called */
@@ -1601,6 +1602,8 @@ Posts an ETItemGroupSelectionDidChangeNotification and marks the receiver to be
 redisplayed. */
 - (void) setSelectionIndexPaths: (NSArray *)indexPaths
 {
+	_changingSelection = YES;
+
 	[self applySelectionIndexPaths: [NSMutableArray arrayWithArray: indexPaths] 
 	                relativeToItem: self];
 
@@ -1611,13 +1614,27 @@ redisplayed. */
 
 	/* Reflect selection change immediately */
 	[self setNeedsDisplay: YES];
+
+	_changingSelection = NO;
+}
+
+/** Returns YES when the selection is getting changed with -setSelectionIndex:, 
+-setSelectionIndexes: or -setSelectionIndexPaths:, otherwise returns NO. 
+
+You can use this method in ETLayout subclasses to prevent loops while 
+synchronizing the selection between a widget and the layout item tree.<br />
+See -[ETWidgetLayout didChangeSelectionInLayoutView] and 
+-[ETLayout selectionDidChangeInLayoutContext]. */
+- (BOOL) isChangingSelection
+{
+	return _changingSelection;
 }
 
 /* Tells the receiver the selection has been changed and it should post 
 ETItemGroupSelectionDidChangeNotification. 
 
 You should never use this method when you use -setSelected: on descendant items 
-rather than setSelectionXXX: methods on the receiver. Don't use -setSelected: should */
+rather than setSelectionXXX: methods on the receiver. */
 - (void) didChangeSelection
 {
 	NSNotification *notif = [NSNotification 

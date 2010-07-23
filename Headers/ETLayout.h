@@ -33,6 +33,7 @@
 - (ETView *) supervisorView;
 - (void) setNeedsDisplay: (BOOL)now;
 - (BOOL) isFlipped;
+- (BOOL) isChangingSelection;
 
 /* Required 
    The protocol doesn't truly need these methods, yet they simplify writing new 

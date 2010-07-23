@@ -43,6 +43,7 @@
 	/* We hide the supervisor view subviews when a display cache is set. We 
 	   must restore [[[self supervisorView] wrappedView] isHidden] correctly. */
 	BOOL _wasViewHidden;
+	BOOL _changingSelection;
 }
 
 + (BOOL) isAutolayoutEnabled;
@@ -157,7 +158,7 @@
 - (void) setSelectionIndexes: (NSIndexSet *)indexes;
 - (NSArray *) selectionIndexPaths;
 - (void) setSelectionIndexPaths: (NSArray *)indexPaths;
-- (void) didChangeSelection;
+- (BOOL) isChangingSelection;
 
 - (NSArray *) selectedItems;
 - (NSArray *) selectedItemsInLayout;

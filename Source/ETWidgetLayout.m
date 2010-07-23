@@ -196,7 +196,10 @@ which overrides -selectedItems. */
 {
 	ETDebugLog(@"Selection did change to %@ in layout view %@ of %@", 
 		[self selectionIndexPaths], [self layoutView], _layoutContext);
-	
+
+	if ([_layoutContext isChangingSelection])
+		return;
+
 	/* Update selection state in the layout item tree and post a notification */
 	[(id <ETWidgetLayoutingContext>)[_layoutContext ifResponds] 
 		setSelectionIndexPaths: [self selectionIndexPaths]];
