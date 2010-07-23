@@ -434,6 +434,11 @@ e.g. the icon layout does it in its own way by overriding -resizeLayoutItems:toS
 	return [_layoutContext sortWithSortDescriptors: descriptors recursively: recursively];
 }
 
+- (BOOL) isChangingSelection
+{
+	return NO;
+}
+
 @end
 
 #define CONTROL_VIEW_TAG 0
