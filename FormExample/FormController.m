@@ -129,8 +129,8 @@ static ETEntityDescription *movieEntityDesc = nil;
 
 	movieEntityDesc = [[ETEntityDescription alloc] initWithName: @"Movie"];
 
-	ETPropertyDescription *titleDesc = [ETPropertyDescription descriptionWithName: @"title" owner: movieEntityDesc];
-	ETPropertyDescription *releaseDateDesc = [ETPropertyDescription descriptionWithName: @"releaseDate" owner: movieEntityDesc];
+	ETPropertyDescription *titleDesc = [ETPropertyDescription descriptionWithName: @"title"];
+	ETPropertyDescription *releaseDateDesc = [ETPropertyDescription descriptionWithName: @"releaseDate"];
 	ETNumberRole *releaseDateRole = AUTORELEASE([[ETNumberRole alloc] init]);
 
 	[releaseDateRole setMinimum: 2000];
