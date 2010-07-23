@@ -456,6 +456,9 @@ item that just got selected and moved into the content item. */
 	[[tabItem parentItem] insertItem: visitedItemProxy atIndex: tabIndex];
 	[[self contentItem] addItem: tabItem];
 
+	/* The tab item content shouldn't appear as selected */
+	[tabItem setSelected: NO];
+
 	return visitedItemProxy;
 }
 
