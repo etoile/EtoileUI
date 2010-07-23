@@ -24,12 +24,16 @@ the receiver is set as the application's delegate in the nib. */
 
 	[ETApp rebuildMainNib];
 
+// FIXME: The gorm loading code won't instantiate the custom class (ETView) sets 
+// on the custom view.
+#ifndef GNUSTEP
 	/* The item can be retrieved with -owningItem too */
 	paneItem = [paneView3 layoutItem];
 	[paneItem setName: @"Groovy"];
 	[paneItem setIcon: [NSImage imageNamed: @"NSApplicationIcon"]];
 	[paneItem setImage: [NSImage imageNamed: @"NSApplicationIcon"]];
 	[paneItemGroup addItem: paneItem];
+#endif
 
 	[paneItemGroup setLayout: [ETPaneLayout masterDetailLayout]];
 }

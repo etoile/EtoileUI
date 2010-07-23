@@ -1,0 +1,119 @@
+{
+    "## Comment" = "Do NOT change this file, Gorm maintains it";
+    ETDropIndicator = {
+	Actions = (
+	);
+	Outlets = (
+	);
+	Super = ETStyle;
+    };
+    ETLayoutItem = {
+	Actions = (
+	    "setValue:",
+	    "setRepresentedObject:",
+	    "setActionHandler:",
+	    "setTarget:",
+	    "didChangeViewValue:",
+	    "didChangeRepresentedObjectValue:",
+	    "objectDidBeginEditing:",
+	    "objectDidEndEditing:"
+	);
+	Outlets = (
+	);
+	Super = ETUIItem;
+    };
+    ETLayoutItemGroup = {
+	Actions = (
+	    "setSource:",
+	    "setDelegate:",
+	    "addObject:",
+	    "removeObject:"
+	);
+	Outlets = (
+	);
+	Super = ETLayoutItem;
+    };
+    ETShadowStyle = {
+	Actions = (
+	);
+	Outlets = (
+	    _shadow
+	);
+	Super = ETStyle;
+    };
+    ETSpeechBubbleStyle = {
+	Actions = (
+	);
+	Outlets = (
+	);
+	Super = ETStyle;
+    };
+    ETStyle = {
+	Actions = (
+	);
+	Outlets = (
+	);
+	Super = NSObject;
+    };
+    ETTintStyle = {
+	Actions = (
+	);
+	Outlets = (
+	);
+	Super = ETStyle;
+    };
+    ETUIItem = {
+	Actions = (
+	);
+	Outlets = (
+	    supervisorView
+	);
+	Super = ETStyle;
+    };
+    ETView = {
+	Actions = (
+	    "inspectItem:"
+	);
+	Outlets = (
+	    item
+	);
+	Super = NSView;
+    };
+    FirstResponder = {
+	Actions = (
+	    "addObject:",
+	    "changeContentLayout:",
+	    "changeSwitcherLayout:",
+	    "changeSwitcherPosition:",
+	    "didChangeRepresentedObjectValue:",
+	    "didChangeViewValue:",
+	    "inspectItem:",
+	    "objectDidBeginEditing:",
+	    "objectDidEndEditing:",
+	    "removeObject:",
+	    "scale:",
+	    "setActionHandler:",
+	    "setDelegate:",
+	    "setRepresentedObject:",
+	    "setSource:",
+	    "setTarget:",
+	    "setValue:"
+	);
+	Super = NSObject;
+    };
+    PaneController = {
+	Actions = (
+	    "changeContentLayout:",
+	    "changeSwitcherLayout:",
+	    "changeSwitcherPosition:",
+	    "scale:"
+	);
+	Outlets = (
+	    paneItemGroup,
+	    paneView1,
+	    paneView2,
+	    paneView3
+	);
+	Super = NSObject;
+    };
+}
