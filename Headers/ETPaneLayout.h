@@ -32,6 +32,7 @@ typedef enum {
 	ETLayoutItemGroup *_barItem;
 	ETLayoutItem *_currentItem;
 	ETPanePosition _barPosition;
+	BOOL _isSwitching;
 }
 
 + (id) layoutWithBarItem: (ETLayoutItemGroup *)barItem contentItem: (ETLayoutItemGroup *)contentItem;
@@ -60,6 +61,7 @@ typedef enum {
 
 - (id) beginVisitingItem: (ETLayoutItem *)tabItem;
 - (void) endVisitingItem: (ETLayoutItem *)tabItem;
+- (BOOL) shouldSelectVisitedItem: (ETLayoutItem *)tabItem;
 
 @end
 

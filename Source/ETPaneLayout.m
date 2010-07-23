@@ -22,6 +22,7 @@
 #import "ETOutlineLayout.h"
 #import "ETBrowserLayout.h"
 #import "ETLayoutItemFactory.h"
+#import "EtoileUIProperties.h"
 
 @interface ETPaneLayout (Private)
 - (void) setContentItem: (ETLayoutItemGroup *)anItem;
@@ -343,11 +344,13 @@ child because it is not a bar child item. */
 	if ([self canGoToItem: anItem] == NO)
 		return NO;
 
+	_isSwitching = YES;
+
 	NSParameterAssert([anItem parentItem] != nil);
 
 	if (_currentItem != nil)
 	{
-		NSParameterAssert([_currentItem parentItem] != nil);
+		ETAssert([_currentItem parentItem] != nil);
 
 		[self endVisitingItem: _currentItem];
 		//[[self contentItem] removeItem: [_currentItem representedObject]];
@@ -355,7 +358,17 @@ child because it is not a bar child item. */
 
 	ASSIGN(_currentItem, [self beginVisitingItem: anItem]);
 
+	if ([self shouldSelectVisitedItem: _currentItem])
+	{
+		/* visitedItemGroup is usually the bar item */
+		ETLayoutItemGroup *visitedItemGroup = [_currentItem parentItem];
+		NSUInteger visitedIndex = [visitedItemGroup indexOfItem: _currentItem];
+
+		[visitedItemGroup setSelectionIndex: visitedIndex];
+	}
 	[self tileContent];
+
+	_isSwitching = NO;
 
 	return YES;
 }
@@ -364,11 +377,15 @@ child because it is not a bar child item. */
 - (void) itemGroupSelectionDidChange: (NSNotification *)notif
 {
 	ETLog(@"Pane layout %@ receives selection change from %@", self, [notif object]);
-	
+
 	NSAssert1([[notif object] isEqual: [self barItem]], @"Selection "
 		"notification must be posted by the bar item in %@", self);
 	NSAssert1([[[self barItem] selectedItems] count] == 1, @"Only a single "
 		"item  at a time must be selected in the bar item in %@", self);
+
+	/* When -goToItem: is underway and a subclass tries to update the selection */
+	if (_isSwitching)
+		return;
 
 	ETLayoutItem *barElementItem = [[[self barItem] selectedItems] firstObject];
 	[self goToItem: barElementItem];
@@ -384,6 +401,17 @@ the real items they currently represent. */
 - (void) endVisitingItem: (ETLayoutItem *)tabItem
 {
 
+}
+
+/** <override-dummy />
+Returns whether the given item should appear selected in the UI.
+
+The item is the one returned by -beginVisitingItem:.
+
+By default, returns NO. */
+- (BOOL) shouldSelectVisitedItem: (ETLayoutItem *)tabItem
+{
+	return NO;
 }
 
 /* Layouting */
@@ -451,8 +479,10 @@ item that just got selected and moved into the content item. */
 {
 	ETLayoutItem *visitedItemProxy = [self visitedItemProxyWithItem: tabItem];
 	unsigned int tabIndex = [[tabItem parentItem] indexOfItem: tabItem];
+	NSValue *frameBeforeVisit = [NSValue valueWithRect: [tabItem frame]];
 
-	[tabItem setDefaultValue: [NSValue valueWithRect: [tabItem frame]] forProperty: @"frame"];	
+	[tabItem setDefaultValue: frameBeforeVisit forProperty: kETFrameProperty];	
+
 	[[tabItem parentItem] insertItem: visitedItemProxy atIndex: tabIndex];
 	[[self contentItem] addItem: tabItem];
 
@@ -470,12 +500,18 @@ the real items they currently represent. */
 
 	ETLayoutItem *visitedItem = [tabItem representedObject];
 	unsigned int tabIndex = [[tabItem parentItem] indexOfItem: tabItem];
-	NSValue *frameBeforeVisit = [visitedItem defaultValueForProperty: @"frame"];
+	NSValue *frameBeforeVisit = [visitedItem defaultValueForProperty: kETFrameProperty];
  
 	[[tabItem parentItem] insertItem: visitedItem atIndex: tabIndex];
 	[tabItem removeFromParent];
-	[visitedItem setValue: frameBeforeVisit forProperty: @"frame"];
-	// FIXME: [visitedItem setDefaultValue: nil forProperty: @"frame"];
+
+	[visitedItem setValue: frameBeforeVisit forProperty: kETFrameProperty];
+	// FIXME: [visitedItem setDefaultValue: nil forProperty: kETFrameProperty];
+}
+
+- (BOOL) shouldSelectVisitedItem: (ETLayoutItem *)anItem
+{
+	return YES;
 }
 
 - (void) renderWithLayoutItems: (NSArray *)items isNewContent: (BOOL)isNewContent
