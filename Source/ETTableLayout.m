@@ -521,9 +521,9 @@ See ETColumnFragment protocol to customize the returned column. */
 	[[self tableView] setNeedsDisplayInRect: [self displayRectOfItem: anItem]];
 }
 
-- (void) selectionDidChangeInLayoutContext
+- (void) selectionDidChangeInLayoutContext: (id <ETItemSelection>)aSelection
 {
-	[[self tableView] selectRowIndexes: [_layoutContext selectionIndexes]
+	[[self tableView] selectRowIndexes: [aSelection selectionIndexes]
 	              byExtendingSelection: NO];
 }
 

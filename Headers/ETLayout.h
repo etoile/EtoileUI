@@ -59,6 +59,18 @@
 
 @end
 
+/** Represents a selection state in an item tree. */
+@protocol ETItemSelection
+/** See -[ETLayoutItemGroup selectionIndex]. */
+- (unsigned int) selectionIndex;
+/** See -[ETLayoutItemGroup selectionIndexes]. */
+- (NSMutableIndexSet *) selectionIndexes;
+/** See -[ETLayoutItemGroup selectionIndexPaths]. */
+- (NSArray *) selectionIndexPaths;
+/** See -[ETLayoutItemGroup selectedItems]. */
+- (NSArray *) selectedItems;
+@end
+
 @interface NSObject (ETLayoutingContextOptional)
 - (id) source;
 @end
@@ -213,7 +225,8 @@ typedef enum _ETSizeConstraintStyle
 /* Selection */
 
 - (NSArray *) selectedItems;
-- (void) selectionDidChangeInLayoutContext;
+- (void) selectionDidChangeInLayoutContext: (id <ETItemSelection>)aSelection;
+- (BOOL) isChangingSelection;
 
 /* Item Geometry and Display */
 

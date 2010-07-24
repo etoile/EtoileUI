@@ -22,7 +22,8 @@
 
 @interface ETWidgetLayout : ETLayout
 {
-
+	@private
+	BOOL _isChangingSelection;
 }
 
 - (BOOL) isWidget;

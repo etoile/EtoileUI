@@ -1596,6 +1596,27 @@ time interval on a subtree that consists of thousand items or more. */
 	}
 }
 
+/** Returns YES when a selection change initiated by -setSelectionIndex:, 
+-setSelectionIndexes: or -setSelectionIndexPaths: is underway,  otherwise 
+returns NO.
+
+During ETItemGroupSelectionDidChangeNotification and 
+-[ETLayout didChangeSelectionInLayoutContext] will return YES.
+
+You can use this method in ETLayout subclasses to prevent loops while 
+synchronizing the selection between a widget and the item tree.<br />
+See -[ETWidgetLayout didChangeSelectionInLayoutView].<br />
+e.g. Just put a guard clause at the beginning of -didChangeSelectionInLayoutView
+
+<example>
+if ([layoutContext isChangingSelection])
+	return;
+</example> */
+- (BOOL) isChangingSelection
+{
+	return _changingSelection;
+}
+
 /** Sets the selected items in the layout item subtree attached to the receiver. 
 
 Posts an ETItemGroupSelectionDidChangeNotification and marks the receiver to be 
@@ -1609,25 +1630,16 @@ redisplayed. */
 
 	/* For opaque layouts that may need to keep in sync the selection state of 
 	   their custom UI. */
-	[[self layout] selectionDidChangeInLayoutContext];
+	if ([[self layout] isChangingSelection] == NO)
+	{
+		[[self layout] selectionDidChangeInLayoutContext: self];
+	}
 	[self didChangeSelection];
 
 	/* Reflect selection change immediately */
 	[self setNeedsDisplay: YES];
 
 	_changingSelection = NO;
-}
-
-/** Returns YES when the selection is getting changed with -setSelectionIndex:, 
--setSelectionIndexes: or -setSelectionIndexPaths:, otherwise returns NO. 
-
-You can use this method in ETLayout subclasses to prevent loops while 
-synchronizing the selection between a widget and the layout item tree.<br />
-See -[ETWidgetLayout didChangeSelectionInLayoutView] and 
--[ETLayout selectionDidChangeInLayoutContext]. */
-- (BOOL) isChangingSelection
-{
-	return _changingSelection;
 }
 
 /* Tells the receiver the selection has been changed and it should post 

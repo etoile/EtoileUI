@@ -334,6 +334,20 @@ child because it is not a bar child item. */
 	return (anItem != nil && [[self barItem] containsItem: anItem]);
 }
 
+- (void) selectItemIfNeeded: (ETLayoutItem *)anItem
+{
+	/* visitedItemGroup is usually the bar item */
+	ETLayoutItemGroup *visitedItemGroup = [anItem parentItem];
+
+	if ([self shouldSelectVisitedItem: anItem] 
+	 && [visitedItemGroup isChangingSelection] == NO)
+	{
+		NSUInteger visitedIndex = [visitedItemGroup indexOfItem: anItem];
+
+		[visitedItemGroup setSelectionIndex: visitedIndex];
+	}
+}
+
 // TODO: Allows a default pane to be shown with -goToItem: -setStartItem: 
 // and -startItem.
 - (BOOL) goToItem: (ETLayoutItem *)anItem
@@ -358,14 +372,7 @@ child because it is not a bar child item. */
 
 	ASSIGN(_currentItem, [self beginVisitingItem: anItem]);
 
-	if ([self shouldSelectVisitedItem: _currentItem])
-	{
-		/* visitedItemGroup is usually the bar item */
-		ETLayoutItemGroup *visitedItemGroup = [_currentItem parentItem];
-		NSUInteger visitedIndex = [visitedItemGroup indexOfItem: _currentItem];
-
-		[visitedItemGroup setSelectionIndex: visitedIndex];
-	}
+	[self selectItemIfNeeded: _currentItem];
 	[self tileContent];
 
 	_isSwitching = NO;

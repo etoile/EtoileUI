@@ -186,6 +186,17 @@ When the given tool is nil, -allowsEmptySelection is reset to YES and
 	[[widgetView ifResponds] setAllowsMultipleSelection: allowsMultipleSelection];
 }
 
+/** Returns YES when the selection change underway was initiated by the widget, 
+otherwise returns NO.
+
+You shouldn't need this method.<br />
+EtoileUI uses it internally to prevent loops while synchronizing the selection 
+state between a widget and the item tree. */
+- (BOOL) isChangingSelection
+{
+	return _isChangingSelection;
+}
+
 /** <override-never />
 Tells the receiver that the layout view selection has changed and it needs to 
 reflect this new selection in the layout context.
@@ -194,15 +205,19 @@ Keep in mind this method is invoked by various subclasses such as ETOutlineLayou
 which overrides -selectedItems. */
 - (void) didChangeSelectionInLayoutView
 {
+	if (_isChangingSelection || [_layoutContext isChangingSelection])
+		return;
+
 	ETDebugLog(@"Selection did change to %@ in layout view %@ of %@", 
 		[self selectionIndexPaths], [self layoutView], _layoutContext);
 
-	if ([_layoutContext isChangingSelection])
-		return;
+	_isChangingSelection = YES;
 
 	/* Update selection state in the layout item tree and post a notification */
 	[(id <ETWidgetLayoutingContext>)[_layoutContext ifResponds] 
 		setSelectionIndexPaths: [self selectionIndexPaths]];
+
+	_isChangingSelection = NO;
 }
 
 /** Returns the selected item index paths expressed relative to the layout 

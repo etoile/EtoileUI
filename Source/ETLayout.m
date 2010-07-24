@@ -1086,15 +1086,29 @@ A subclass must return an empty array when no items are selected. */
 /** <override-dummy /> 
 Synchronizes the layout selection state with the layout context.
 
+The selection object provides access to the new selection state.
+
 You usually override this method if you need to reflect the selected items 
 in the layout context on the custom UI encapsulated by the receiver (usually 
 a widget layout or a less specialized opaque layout).<br />
 
 This method is called on a regular basis each time the layout context selection 
 is modified and needs to be mirrored in the receiver (e.g. in a widget view). */
-- (void) selectionDidChangeInLayoutContext
+- (void) selectionDidChangeInLayoutContext: (id <ETItemSelection>)aSelection
 {
 
+}
+
+/** <override-dummy />
+Returns NO. 
+
+Can be overriden to return YES and prevents -selectionDidChangeInLayoutContext: 
+to be called.
+
+For a concrete use case, see -[ETWidgetLayout isChangingSelection] . */
+- (BOOL) isChangingSelection
+{
+	return NO;
 }
 
 /* Item Geometry and Display */

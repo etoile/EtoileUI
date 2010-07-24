@@ -123,6 +123,12 @@ expanded and collapsed by getting automatically a related outline arrow. */
 	return [[self outlineView] rectOfRow: row];
 }
 
+- (void) selectionDidChangeInLayoutContext: (id <ETItemSelection>)aSelection
+{
+	NSIndexSet *rowIndexes = [[self outlineView] rowIndexesForItems: [aSelection selectedItems]];
+	[[self outlineView] selectRowIndexes: rowIndexes byExtendingSelection: NO];
+}
+
 - (NSArray *) selectedItems
 {
 	NSOutlineView *outlineView = [self outlineView];
