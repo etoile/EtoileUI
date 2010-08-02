@@ -59,3 +59,48 @@ See ETLineFragment (layout fragment) and ETComputedLayout (layout fragment owner
 - (NSRect) rectForItem: (id)anItem;
 - (void) setOrigin: (NSPoint)newOrigin forItem: (id)anItem;
 @end
+
+
+/** Represents a column in a layout, and to which corresponds no item in the 
+layout item tree. For example, a value list column in a ETTableLayout.
+
+The protocol allows to control the column size and how the size should be 
+treated under various circumstances:
+
+<list>
+<item>the layout is updated or resized</item>
+<item>the user resizes a column</item>
+</list>
+
+Warning: this API will probably evolve a bit. */
+@protocol ETColumnFragment
+/** Sets the column width. */
+- (void) setWidth: (NSUInteger)width;
+/** Returns the column width. */
+- (NSUInteger) width;
+/** Sets the minimum width allowed and resizes the column if the current width 
+is inferior. */
+- (void) setMinWidth: (NSUInteger)width;
+/** Returns the minimum width allowed. */
+- (NSUInteger) minWidth; 
+/** Sets the maximum allowed width and resizes the column if the current width 
+is superior. */
+- (void) setMaxWidth: (NSUInteger)width;
+/** Returns the maximum width allowed. */
+- (NSUInteger) maxWidth;
+/** Sets the resizing behavior:
+
+<deflist>
+<term>NSTableColumnNoResizing</term>
+<desc>The column cannot be resize at all</desc>
+<term>NSTableColumnAutoresizingMask</term>
+<desc>When the layout is resized, it adjusts the column size in its own way</desc>
+<term>NSTableColumnUserResizingMask</term>
+<desc>The column can be resized by the end-user</desc>
+</deflist>
+
+TODO: We should have our own enum rather than the one documented above.*/
+- (void) setResizingMask: (NSUInteger)mask;
+/** Returns the resizing behavior. See -setResizingMask:. */
+- (NSUInteger) resizingMask;
+@end

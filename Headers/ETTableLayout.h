@@ -13,19 +13,7 @@
 #import <Foundation/Foundation.h>
 #import <AppKit/AppKit.h>
 #import <EtoileUI/ETWidgetLayout.h>
-
-@protocol ETColumnFragment
-
-- (void) setWidth: (NSUInteger)width;
-- (NSUInteger) width;
-- (void) setMinWidth: (NSUInteger)width;
-- (NSUInteger) minWidth; 
-- (void) setMaxWidth: (NSUInteger)width;
-- (NSUInteger) maxWidth;
-- (void) setResizingMask: (NSUInteger)mask;
-- (NSUInteger) resizingMask;
-
-@end
+#import <EtoileUI/ETFragment.h>
 
 /** When a property is editable, a double click triggers the editing even when 
 the layout context has a valid double action set.
