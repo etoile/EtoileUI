@@ -180,7 +180,7 @@
 {
 	BOOL selected = YES;
 	NSString *path = [[sender pathToColumn: column] stringByAppendingPathComponent: title];
-	ETLayoutItem *item = [[self layoutContext] itemAtPath: path];
+	ETLayoutItem *item = [_layoutContext itemAtPath: path];
 	
 	if (selected)
 	{

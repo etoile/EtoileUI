@@ -340,7 +340,7 @@ Does nothing by default. */
 
 - (NSArray *) visibleItems
 {
-	return [_layoutContext visibleItemsForItems: [_layoutContext items]];
+	return [_layoutContext visibleItems];
 }
 
 - (void) setVisibleItems: (NSArray *)visibleItems
@@ -359,11 +359,6 @@ Does nothing by default. */
 	[_layoutContext setSize: size];
 }
 
-- (ETView *) supervisorView
-{
-	return [_layoutContext supervisorView];
-}
-
 - (void) setLayoutView: (NSView *)aLayoutView
 {
 
@@ -373,16 +368,6 @@ Does nothing by default. */
 {
  // FIXME: Remove this cast and solve this properly
 	return [(ETLayoutItem *)_layoutContext view];
-}
-
-- (ETLayoutItem *) itemAtIndexPath: (NSIndexPath *)path
-{
-	return [_layoutContext itemAtIndexPath: path];
-}
-
-- (ETLayoutItem *) itemAtPath: (NSString *)path
-{
-	return [_layoutContext itemAtPath: path];
 }
 
 /* By default, returns 1 to prevent the positional layout to resize the items. 
@@ -417,21 +402,6 @@ e.g. the icon layout does it in its own way by overriding -resizeLayoutItems:toS
 - (BOOL) isFlipped
 {
 	return [_layoutContext isFlipped];
-}
-
-- (NSArray *) visibleItemsForItems: (NSArray *)items
-{
-	return [_layoutContext visibleItemsForItems: items];
-}
-
-- (void) setVisibleItems: (NSArray *)visibleItems forItems: (NSArray *)items
-{
-	[_layoutContext setVisibleItems: visibleItems forItems: items];
-}
-
-- (void) sortWithSortDescriptors: (NSArray *)descriptors recursively: (BOOL)recursively
-{
-	return [_layoutContext sortWithSortDescriptors: descriptors recursively: recursively];
 }
 
 - (BOOL) isChangingSelection

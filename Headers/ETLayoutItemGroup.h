@@ -15,11 +15,12 @@
 #import <AppKit/AppKit.h>
 #import <EtoileUI/ETLayoutItem.h>
 #import <EtoileUI/ETLayout.h>
+#import <EtoileUI/ETWidgetLayout.h>
 
 @class ETController;
 
 /** You must never subclass ETLayoutItemGroup. */
-@interface ETLayoutItemGroup : ETLayoutItem <ETLayoutingContext, ETItemSelection, ETCollection, ETCollectionMutation>
+@interface ETLayoutItemGroup : ETLayoutItem <ETLayoutingContext, ETWidgetLayoutingContext, ETItemSelection, ETCollection, ETCollectionMutation>
 {
 	@private
 	NSMutableArray *_layoutItems;

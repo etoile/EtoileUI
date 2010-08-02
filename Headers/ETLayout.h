@@ -15,48 +15,62 @@
 
 @class ETDropIndicator, ETTool, ETLineFragment, ETLayoutItem, ETLayoutItemGroup, ETView;
 
-/** Methods which must be implemented by an object to be layouted by any
-	ETLayout subclasses. The object whose layout items are layouted is the
-	layout context (plays a role analog to the graphic context) 
-	- layout context is where the layouting occurs
-	- graphic context is where the drawing occurs */
+/** Methods which must be implemented by an object to be layouted by any 
+ETLayout subclasses. The object whose layout items are layouted is the layout 
+context (plays a role analog to the graphic context):
+
+<list>
+<item>layout context is where the layouting occurs</item>
+<item>graphic context is where the drawing occurs</item>
+</list>
+
+Some ETLayout subclasses might extend the protocol (e.g. ETWidgetLayout 
+requires the layout context to conform to ETWidgetLayoutingContext), but in 
+most cases requiring additional methods shouldn't be necessary.
+
+Although the layout context is expected to be an ETLayoutItemGroup usually, 
+it doesn't have to.<br />
+ETLayoutingContext describes how a layout is expected to interact with a layout 
+item and limit the interaction complexity between ETLayoutItemGroup and 
+ETLayout. */
 @protocol ETLayoutingContext <NSObject>
-
-/* Required */
+// TODO: Remove in favor of -arrangedItems
 - (NSArray *) items;
+/** See -[ETLayoutItemGroup arrangedItems]. */
 - (NSArray *) arrangedItems;
-- (NSArray *) visibleItems;
-- (void) setVisibleItems: (NSArray *)items;
+/** See -[ETLayoutItem size]. */
 - (NSSize) size;
+/** See -[ETLayoutItem setSize:]. */
 - (void) setSize: (NSSize)size;
+/** See -[ETLayoutItemGroup setLayoutView:]. */
 - (void) setLayoutView: (NSView *)aView;
-- (ETView *) supervisorView;
+/** See -[ETLayoutItem setNeedsDislay:]. */
 - (void) setNeedsDisplay: (BOOL)now;
+/** See -[ETLayoutItem isFlipped]. */
 - (BOOL) isFlipped;
+/** See -[ETLayoutItemGroup isChangingSelection]. */
 - (BOOL) isChangingSelection;
-
-/* Required 
-   The protocol doesn't truly need these methods, yet they simplify writing new 
-   layouts. ETBrowserLayout is the only layout currently relying on them. */
-- (ETLayoutItem *) itemAtIndexPath: (NSIndexPath *)path;
-- (ETLayoutItem *) itemAtPath: (NSString *)path;
-
-/* Required
-   May be next methods should be optional. */
+/** See -[ETLayoutItemGroup itemScaleFactor]. */
 - (float) itemScaleFactor;
-- (NSSize) visibleContentSize; /* -documentVisibleRect size */
+/** See -[ETLayoutItemGroup visibleContentSize]. */
+- (NSSize) visibleContentSize;
+/** See -[ETLayoutItem setContentSize:]. */
 - (void) setContentSize: (NSSize)size;
-//- (NSSize) contentSize;
+// TODO: Replace with -isScrollable
 - (BOOL) isScrollViewShown;
-
-/* Not sure the protocol needs to or should include the next methods */
+/** See -[ETLayoutItemGroup visibleItems]. */
 - (NSArray *) visibleItems;
+/** See -[ETLayoutItemGroup setVisibleItems:]. */
 - (void) setVisibleItems: (NSArray *)items;
-- (NSArray *) visibleItemsForItems: (NSArray *)items;
-- (void) setVisibleItems: (NSArray *)visibleItems forItems: (NSArray *)items;
-- (void) sortWithSortDescriptors: (NSArray *)descriptors recursively: (BOOL)recursively;
-//- (void) setShowsScrollView: (BOOL)scroll;
+@end
 
+/** ETLayoutingContext optional methods the layout context might implement.
+
+ETLayout subclasses must check the layout context responds to the method before 
+using it. For example, <code>[[[self layoutContext] ifResponds] source]</code>. */
+@interface NSObject (ETLayoutingContextOptional)
+/** See -[ETLayoutItemGroup source]. */
+- (id) source;
 @end
 
 /** Represents a selection state in an item tree. */
@@ -71,20 +85,28 @@
 - (NSArray *) selectedItems;
 @end
 
-@interface NSObject (ETLayoutingContextOptional)
-- (id) source;
-@end
-
 /** All subclasses which implement strictly positional layout algorithms as 
-    described in ETComputedLayout description must conform to this prococol. */
+described in ETComputedLayout description must conform to this prococol.
+
+Warning: This protocol is very much subject to change. */
 @protocol ETPositionalLayout <NSObject>
+/** See -[ETLayout copyWithZone:layoutContext:]. */
+- (id) copyWithZone: (NSZone *)aZone layoutContext: (id <ETLayoutingContext>)newContext;
+/** See -[ETLayout setLayoutContext:]. */
 - (void) setLayoutContext: (id <ETLayoutingContext>)context;
+/** See -[ETLayout layoutContext:]. */
 - (id <ETLayoutingContext>) layoutContext;
+/** See -[ETComputedLayout setBorderMargin:]. */
+- (void) setBorderMargin: (float)margin;
+/** See -[ETComputedLayout setItemMargin:]. */
 - (void) setItemMargin: (float)margin;
+/** See -[ETLayout renderWithLayoutItems:isNewContent:]. */
 - (void) renderWithLayoutItems: (NSArray *)items isNewContent: (BOOL)isNewContent;
+/** See -[ETLayout itemAtLocation:]. */
 - (ETLayoutItem *) itemAtLocation: (NSPoint)loc;
 @end
 
+/** Warning: Experimental protocol that is subject to change or be removed. */
 @protocol ETCompositeLayout
 - (id <ETPositionalLayout>) positionalLayout;
 - (void) setPositionalLayout: (id <ETPositionalLayout>)layout;
@@ -92,20 +114,23 @@
 @end
 
 // NOTE: May be this should be turned into a mask
-/** When the constraint is not ETSizeConstraintStyleNone, the item autoresizing 
+/** Describes how the layouted items are resized at the beginning of the layout 
+rendering.
+
+When the constraint is not ETSizeConstraintStyleNone, the item autoresizing 
 provided by -[ETLayoutItem autoresizingMask] won't be respected. */
 typedef enum _ETSizeConstraintStyle 
 {
+/** The items are not resized but let as is. */
 	ETSizeConstraintStyleNone,
+/** The height of the items is set to the height of -[ETLayout constrainedItemSize]. */
 	ETSizeConstraintStyleVertical,
+/** The width of the items is set to the width of -[ETLayout constrainedItemSize]. */
 	ETSizeConstraintStyleHorizontal,
+/** The size of the items are set to -[ETLayout constrainedItemSize]. */
 	ETSizeConstraintStyleVerticalHorizontal
 } ETSizeConstraintStyle;
 
-/** When you compute your layout in methods -layoutLineForLayoutItems:, 
-	-layoutModelForLayoutItems: and -computeLayoutItemLocationsForLayoutModel:
-	be careful not to reverse the item order, else selection and sorting will 
-	be messed. */
 
 @interface ETLayout : NSObject <NSCopying>
 {

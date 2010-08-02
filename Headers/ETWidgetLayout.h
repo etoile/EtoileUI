@@ -16,7 +16,14 @@
 #import <EtoileUI/ETLayout.h>
 
 @protocol ETWidgetLayoutingContext
+/** See -[ETLayoutItemGroup itemAtIndexPath:]. */
+- (ETLayoutItem *) itemAtIndexPath: (NSIndexPath *)path;
+/** See -[ETLayoutItemGroup itemAtPath:]. */
+- (ETLayoutItem *) itemAtPath: (NSString *)path;
+/** See -[ETLayoutItemGroup setSelectionIndexPaths:]. */
 - (void) setSelectionIndexPaths: (NSArray *)indexPaths;
+/** See -[ETLayoutItemGroup sortWithSortDescriptors:recursively:]. */
+- (void) sortWithSortDescriptors: (NSArray *)descriptors recursively: (BOOL)recursively;
 @end
 
 
