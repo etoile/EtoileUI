@@ -71,15 +71,13 @@ The concrete window class used is ETFullScreenWindow. */
 
 /** <init />
 Initializes and returns a new window decorator with a hard window (provided by 
-the widget backend) and its next responder. 
+the widget backend). 
 
 Unless you write a subclass, you should never use this initializer but rather 
 the factory methods.
 
-This responder is the widget window next responder and not the window item next 
-responder. The widget window is the receiver next responder.<br />
-Factory methods will initialize the receiver with -[ETLayoutItemFactory windowGroup] 
-as the next responder of the widget window.
+The widget window is inserted in the responder chain between the receiver and 
+-[ETLayoutItemFactory windowGroup].
 
 If window is nil, the receiver creates a standard widget backend window. */
 - (id) initWithWindow: (NSWindow *)window
@@ -562,6 +560,8 @@ Does nothing when there is no active field editor item in the window. */
 	[contentItem setNeedsDisplayInRect: editorFrame];
 }
 
+/** Returns the active field editor item if there is one located where the 
+event occured, otherwise returns nil. */
 - (ETLayoutItem *) hitTestFieldEditorWithEvent: (ETEvent *)anEvent
 {
 	NSParameterAssert([[anEvent windowItem] isEqual: self]);
@@ -591,10 +591,7 @@ Does nothing when there is no active field editor item in the window. */
 
 /* Dragging Destination (as Window delegate) */
 
-/** This method can be called on the receiver when a drag exits. When a 
-	view-based layout is used, existing the layout view results in entering
-	the related container, that's probably a bug because the container should
-	be fully covered by the layout view in all cases. */
+/* This method can be called on the receiver when a drag exits. */
 - (NSDragOperation) draggingEntered: (id <NSDraggingInfo>)drag
 {
 	ETDebugLog(@"Drag enter receives in dragging destination %@", self);

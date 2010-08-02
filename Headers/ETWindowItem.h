@@ -43,7 +43,6 @@ NSWindow methods: -setDelegate:, -setAcceptsMouseMovedEvents: and
 /* Initialization */
 
 - (id) initWithWindow: (NSWindow *)window;
-- (id) init;
 
 /* Main Accessors */
 
