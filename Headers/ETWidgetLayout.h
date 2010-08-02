@@ -15,6 +15,7 @@
 #import <AppKit/AppKit.h>
 #import <EtoileUI/ETLayout.h>
 
+/** Extensions to ETLayoutingContext protocol. */
 @protocol ETWidgetLayoutingContext
 /** See -[ETLayoutItemGroup itemAtIndexPath:]. */
 - (ETLayoutItem *) itemAtIndexPath: (NSIndexPath *)path;

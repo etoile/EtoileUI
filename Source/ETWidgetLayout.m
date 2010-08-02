@@ -86,7 +86,7 @@ Returns the name of the nib file the receiver should automatically load when
 it gets instantiated.
 
 Overrides in your subclass when you want to retrieve objects stored in a nib 
-to initialize your subclass instances. e.g. you can bind the _layoutView outlet 
+to initialize your subclass instances. e.g. you can bind the layoutView outlet 
 to any view to make it transparently available with -layoutView. -setLayoutView: 
 will be invoked when the outlet is set.
 
@@ -160,7 +160,7 @@ context is modified and needs to be mirrored on the widget view. */
 	[self syncLayoutViewWithTool: [self attachedTool]];
 }
 
-/* Synchronizes the widget view settings with the given tool.
+/** Synchronizes the widget view settings with the given tool.
 
 This method is called on a regular basis each time the active tool changes 
 and its settings need to be mirrored on the widget view.
@@ -201,8 +201,10 @@ state between a widget and the item tree. */
 Tells the receiver that the layout view selection has changed and it needs to 
 reflect this new selection in the layout context.
 
-Keep in mind this method is invoked by various subclasses such as ETOutlineLayout 
-which overrides -selectedItems. */
+You can call this method in subclasses on a selection change in a widget to get 
+it mirrored in the layout item tree. If needed, you can override -selectedItems 
+to provide a custom selection (e.g. ETOutlineLayout overrides it to return the 
+items that correspond to the selected rows). */
 - (void) didChangeSelectionInLayoutView
 {
 	if (_isChangingSelection || [_layoutContext isChangingSelection])
@@ -220,19 +222,16 @@ which overrides -selectedItems. */
 	_isChangingSelection = NO;
 }
 
-/** Returns the selected item index paths expressed relative to the layout 
+/** <override-never />
+Returns the selected item index paths expressed relative to the layout 
 context.
 
 This method is used to collect the selection in the layout view reported by 
 -selectedItems. For example, -didChangeSelectionInLayoutView invokes it to 
-mirror the wdiget selection state on the layout context.
+mirror the widget selection state on the layout context.
 
-You can synchronize the selection between the layout view and the layout item 
-tree with the following code: 
-<code>
-[[self layoutContext] setSelectionIndexPaths: [self selectionIndexPaths]]
-</code>
-	
+You must override -[ETLayout selectedItems] and not this method.
+
 TODO: We need more control over the way we set the selection in the layout 
 item tree. To call -setSelectionIndexPaths: presently resets the selection 
 state in every descendant item even in invisible descendants (e.g. the children 
@@ -240,7 +239,7 @@ bond to a collapsed row in an outline view). Various new methods could be
 introduced like -extendsSelectionIndexPaths: and -restrictsSelectionIndexPaths: 
 to synchronize the selection by delta for newly selected and deselected items. 
 Another possibility would be a method like -setSelectionIndexPathsInLayout:, but 
-its usefulness is more limited. */
+its usefulness would be more limited. */
 - (NSArray *) selectionIndexPaths
 {
 	NSMutableArray *indexPaths = [NSMutableArray array];
@@ -287,7 +286,7 @@ be called. */
 /** <override-subclass />
 Returns the widget view class required by the layout.
 
-You can use the returned class to invoke -updateWidgetView:toClass: when you 
+You can use the returned class to invoke -upgradeWidgetView:toClass: when you 
 override -setLayoutView:.
 
 By default, returns Nil. */
