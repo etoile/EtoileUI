@@ -20,7 +20,7 @@ instance will be set as the File's Owner proxy, and when released it will
 automatically release the Nib resources (e.g. the Nib top-level objects).
 
 When writing an EtoileUI application, the best choice is usually to use 
-ETController (or a subclass) to manage a Nib rather than ETNibOwner directly.
+[ETController] (or a subclass) to manage a Nib rather than ETNibOwner directly.
 
 To finish the Nib loading, e.g. render the AppKit view hierarchy into a layout 
 item tree, retrieve items or views, override some aspects or reorganize the 
@@ -33,12 +33,14 @@ was in relationships such as top-level objects, subviews or content views.
 To render an AppKit view hierarchy packaged in a Nib into a layout item tree, 
 -rebuildTopLevelObjectsWithBuilder: can be used.<br />
 For example, ETController overrides -didLoadNib in a vein similar to:
-<code>
+
+<example>
 - (void) didLoadNib
 {
 	[self rebuildTopLevelObjectsWithBuilder: [ETEtoileUIBuilder builder]];
 }
-</code>
+</example>
+
 For every top-level object, when -render: on the builder returns a new object, 
 -rebuildTopLevelObjectsWithBuilder: substitutes the initial object with the new 
 one in the top-level object array (see -topLevelObjects).<br />
