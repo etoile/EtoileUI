@@ -42,7 +42,7 @@ into a window. */
 The returned item can be used as a decorator to make an existing layout item 
 full screen. 
 
-The concrete window class used is ETFullScreenWindow. */
+The concrete window class used is [ETFullScreenWindow]. */
 + (ETWindowItem *) fullScreenItem
 {
 	ETWindowItem *window = [self itemWithWindow: AUTORELEASE([[ETFullScreenWindow alloc] init])];
@@ -56,7 +56,7 @@ This window has a transparent background.
 The returned item can be used as a decorator to make an existing layout item 
 full screen. 
  
-The concrete window class used is ETFullScreenWindow. */
+The concrete window class used is [ETFullScreenWindow]. */
 + (ETWindowItem *) transparentFullScreenItem
 {
 	NSWindow *window = AUTORELEASE([[ETFullScreenWindow alloc] init]);

@@ -454,7 +454,7 @@ a new column not in use previously needs to be prepared. */
 
 /** Returns the column associated with the given property.
 
-See ETColumnFragment protocol to customize the returned column. */
+See [(ETColumnFragment)] protocol to customize the returned column. */
 - (id <ETColumnFragment>) columnForProperty: (NSString *)property
 {
 	return [self tableColumnWithIdentifierAndCreateIfAbsent: property];
@@ -695,7 +695,9 @@ compatible with the cell used at the given row/column intersection.  */
 		[item setValue: value];
 }
 
-/** Returns YES. See ETLayoutPickAndDropIntegration protocol. */
+/** Returns YES. See [NSObject(ETLayoutPickAndDropIntegration)] protocol.
+
+Note: For now, private method. */
 - (BOOL) hasBuiltInDragAndDropSupport
 {
 	return YES;

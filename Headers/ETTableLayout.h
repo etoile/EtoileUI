@@ -62,10 +62,10 @@ descriptor bound to the widget table column will be used (and eventually created
 
 /* Framework Private & Subclassing */
 
-- (NSTableColumn *) tableColumnWithIdentifierAndCreateIfAbsent: (NSString *)identifier;
+- (NSTableColumn *) tableColumnWithIdentifierAndCreateIfAbsent: (NSString *)property;
 - (NSTableColumn *) createTableColumnWithIdentifier: (NSString *)property;
 - (BOOL) canRemoveTableColumn: (NSTableColumn *)aTableColumn;
-- (BOOL) prepareTableColumn: (NSTableColumn *)aTableColum isFirst: (BOOL)isFirstColumn;
+- (BOOL) prepareTableColumn: (NSTableColumn *)aTableColumn isFirst: (BOOL)isFirstColumn;
 - (id) objectValueForTableColumn: (NSTableColumn *)column 
                              row: (int)rowIndex 
                             item: (ETLayoutItem *)item;
