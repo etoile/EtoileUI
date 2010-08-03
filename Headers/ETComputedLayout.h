@@ -47,10 +47,12 @@ layout context in any way, unlike what ETCompositeLayout or ETTemplateItemLayout
 are allowed to do.
 
 In a subclass, you must override at least two methods:
+
 <list>
 <item>-computeLocationsForFragments:</item>
 <item>-layoutFragmentWithSubsetOfItems: or -generateFragmentsForItems:</item>
 </list>
+
 You can override both -layoutFragmentWithSubsetOfItems: and 
 -generateFragmentsForItems: if you need to.<br />
 If you introduce other margins than the built-in ones or want to support extra 

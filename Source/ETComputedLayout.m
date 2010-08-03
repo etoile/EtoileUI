@@ -292,7 +292,8 @@ Both border and item margins are  to compute the inset origin.
 You can use this method in a subclass when overriding 
 -computeLocationsForFragments: to retrieve an origin that is valid indepently of 
 the layout context flipping. For example:
-<code>
+
+<example>
 ETLineFragment *line = [fragments firstObject];
 float totalMargin = ([self borderMargin] + [self itemMargin]) * 2;
 float contentHeight =  [line height] + totalMargin;
@@ -300,7 +301,7 @@ float contentHeight =  [line height] + totalMargin;
 
 [line setOrigin: [self originOfFirstFragment: line
                             forContentHeight: contentHeight]];
-</code> */
+</example> */
 - (NSPoint) originOfFirstFragment: (id)aFragment 
                  forContentHeight: (float)contentHeight
 {
