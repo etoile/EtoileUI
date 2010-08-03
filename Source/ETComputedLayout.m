@@ -208,6 +208,7 @@ yourself. If you want to update the layout, just uses
 	
 You may need to override this method in your layout subclasses if you want
 to create a very special layout. This method will sequentially invoke:
+
 <list>
 <item>-resetLayoutSize</item>
 <item>-resizeLayoutItems:toScaleFactor:</item>
@@ -266,8 +267,8 @@ Overrides this method to generate your own fragment array based on the layout
 context constraints. Usual layout context constraints are size, vertical and 
 horizontal scrollers visibility. How the fragment array is structured is up to you.
 
-Any kind of object that adopts ETFragment protocol can put in the returned array.
-e.g. ETLayoutItem or ETLineFragment.
+Any kind of object that adopts [ETFragment] protocol can put in the returned array.
+e.g. [ETLayoutItem] or [ETLineFragment].
 
 You must override -computeLocationsForFragments: in a compatible way to 
 interpret the fragment array.
@@ -364,7 +365,7 @@ geometrical attributes (position, size, scale etc.) accordingly. */
 layout update.
 
 The separator extremities vary with its orientation vertical vs horizontal. 
-e.g. left/right with ETColumnLayout and bottom/top with ETLineLayout.<br />
+e.g. left/right with [ETColumnLayout] and bottom/top with [ETLineLayout].<br />
 How to interpret the separator end margin value is a subclass responsability.
 
 -[ETColumn/LineLayout adjustSeparatorItem:forLayoutSize:] sums the separator end 

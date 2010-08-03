@@ -14,7 +14,7 @@
 #import <AppKit/AppKit.h>
 #import <EtoileUI/ETComputedLayout.h>
 
-
+/** See [ETComputedLayout] API to customize ETLineLayout look and behavior. */
 @interface ETLineLayout : ETComputedLayout
 {
 

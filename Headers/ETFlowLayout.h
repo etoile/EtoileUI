@@ -15,7 +15,9 @@
 #import <EtoileUI/ETComputedLayout.h>
 
 
-/** ETFlowLayout overrides several property values defined by ETLayout and 
+/** See [ETComputedLayout] API to customize ETFlowLayout look and behavior.
+
+ETFlowLayout overrides several property values defined by ETLayout and 
 ETComputedLayout:
 <list>
 <item>itemSizeConstraintStyle to apply to width and height</item> 

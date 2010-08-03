@@ -14,8 +14,7 @@
 #import <AppKit/AppKit.h>
 #import <EtoileUI/ETTableLayout.h>
 
-/** ETTableLayout API can be used to customized ETOutlineLayout look and 
-behavior. */
+/** See [ETTableLayout] API to customize ETOutlineLayout look and behavior. */
 @interface ETOutlineLayout : ETTableLayout 
 {
 	@private
@@ -26,6 +25,6 @@ behavior. */
 
 /** The class the outline views must match to be used with ETOutlineLayout.
 
-See ETTableView documentation whose explanations also applies to ETOutlineView. */
+See [ETTableView] documentation whose explanations also applies to ETOutlineView. */
 @interface ETOutlineView : NSOutlineView
 @end

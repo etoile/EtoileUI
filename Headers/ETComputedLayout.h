@@ -43,7 +43,7 @@ The layout logic must be strictly positional and not touch anything else than
 the item geometry (position, width, height, scale, rotation etc.).
 
 Subclasses must not hide, replace or modify the item tree structure bound to the 
-layout context in any way, unlike what ETCompositeLayout or ETTemplateItemLayout 
+layout context in any way, unlike what [ETCompositeLayout] or [ETTemplateItemLayout] 
 are allowed to do.
 
 In a subclass, you must override at least two methods:
