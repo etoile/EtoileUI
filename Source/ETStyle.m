@@ -25,12 +25,12 @@ static NSMapTable *styleSharedInstances = nil;
 The implementation won't be executed in the subclasses but only the abstract 
 base class.
 
-Since ETUIItem is an ETStyle subclass, every ETLayoutItem and ETDecoratorItem 
+Since [ETUIItem] is an ETStyle subclass, every [ETLayoutItem] and [ETDecoratorItem]
 subclass will also get registered as a style (not yet true).
 
 You should never need to call this method.
 
-See also NSObject(ETAspectRegistration). */
+See also [NSObject(ETAspectRegistration)]. */
 + (void) registerAspects
 {
 	stylePrototypes = [[NSMutableSet alloc] init];
@@ -126,8 +126,8 @@ the designated initializer in a subclass.
  
 e.g. if you return an invocation like -initWithWindow: aWindow. 
 -copyWithZone: will automatically set the target to be the copy allocated with 
-[[[self class] allocWithZone: aZone] and then initializes the copy by invoking 
-the invocation. */
+<code>[[[self class] allocWithZone: aZone]</code> and then initializes the copy 
+by invoking the invocation. */
 - (NSInvocation *) initInvocationForCopyWithZone: (NSZone *)aZone
 {
 	return nil;
@@ -165,34 +165,6 @@ TODO: Not really implemented yet... */
 	_isSharedStyle = shared;
 }
 
-/** Returns the selector uses for style rendering which is equal to -render:
-if you don't override the method. 
-
-Try also to override -render: if you override this method, so you your 
-custom styles can be used in other style chains in some sort of fallback
-mode.
-
-TODO: Not really implemented yet and could be removed... */
-- (SEL) styleSelector
-{
-	return @selector(render:);
-}
-
-/** Renders the receiver in the active graphics context.
-
-You should never override this method but -render:layoutItem:dirtyRect: to 
-implement the custom drawing of the style. 
-
-This method calls -render:layoutItem:dirtyRect: and try to figure out the 
-parameter by looking up kETLayoutItemObject and kETDirtyRect in inputValues. */
-- (void) render: (NSMutableDictionary *)inputValues
-{
-	id item = [inputValues objectForKey: @"kETLayoutItemObject"];
-	NSRect dirtyRect = [[inputValues objectForKey: @"kETDirtyRect"] rectValue];
-	
-	[self render: inputValues layoutItem: item dirtyRect: dirtyRect];
-}
-
 /** <override-subclass />
 Main rendering method for the custom drawing implemented by subclasses.
     
@@ -201,13 +173,29 @@ in the role of the element on which the style is applied.
 
 item indicates in which item the receiver is rendered. Usually this item is the 
 one on which the receiver is indirectly set through -[ETLayoutItem styleGroup]. 
-However the item can be unrelated to the style or nil.
+However the item can be unrelated to the style or nil.<br />
+See -[ETLayoutItem drawingBoundsForStyle:] to retrieve the right drawing area. 
 
 dirtyRect can be used to optimize the drawing. You only need to redraw what is 
-inside that redisplayed area and won't be clipped by the graphics context. */
+inside that redisplayed area and won't be clipped by the graphics context.
+
+Here is how the method can be implemented in a subclass:
+
+<example>
+NSRect bounds = [item drawingBoundsForStyle: self];
+
+[NSGraphicsContext saveGraphicsState];
+
+// Drawing code
+[[NSColor redColor] set];
+[NSBezierPath fillRect: bounds];
+// and more...
+
+[NSGraphicsContext restoreGraphicsState];
+</example> */
 - (void) render: (NSMutableDictionary *)inputValues 
      layoutItem: (ETLayoutItem *)item 
-	  dirtyRect: (NSRect)dirtyRect
+      dirtyRect: (NSRect)dirtyRect
 {
 
 }
@@ -249,7 +237,7 @@ inside that redisplayed area and won't be clipped by the graphics context. */
 /** <override-dummy />
 Notifies the receiver that the styled layout item has been resized.
 
-You can override this method to alter the style state. For example, ETShape 
+You can override this method to alter the style state. For example, [ETShape]
 overrides it to resize/scale the bezier path as needed.
 
 Usually the new bounds corresponds to the item content bounds.<br />
@@ -261,11 +249,6 @@ See also -[ETLayoutItem contentBounds], -[ETLayoutItem size] and
 - (void) didChangeItemBounds: (NSRect)bounds
 {
 
-}
-
-- (NSRect) boundingBoxForItem: (ETLayoutItem *)anItem
-{
-	return ETMakeRect(NSZeroPoint, [anItem size]);
 }
 
 @end
@@ -539,9 +522,6 @@ space.  */
 @end
 
 
-/**
- * Draws a speech bubble around the item to which this style is applied.
- */
 @implementation ETSpeechBubbleStyle
 
 /**
