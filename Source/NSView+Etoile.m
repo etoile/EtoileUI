@@ -409,4 +409,11 @@ should be dispatched. */
 	return YES;
 }
 
+// FIXME: Quick hack to let us use a text view as an item view. 
+// See -setView:autoresizingMask:
+- (id) cell
+{
+	return nil;
+}
+
 @end
