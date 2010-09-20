@@ -17,7 +17,7 @@
 
 @interface MarkupEditorController : NSObject
 {
-    IBOutlet ETContainer *viewContainer;
+    IBOutlet ETView *viewContainer;
 	//NSString *documentPath;
 }
 

@@ -14,7 +14,6 @@
 #import "ETLayoutItemGroup.h"
 #import "ETLayoutItemFactory.h"
 #import "ETView.h"
-#import "ETContainer.h"
 #import "NSView+Etoile.h"
 #import "ETCompatibility.h"
 
@@ -37,7 +36,7 @@
 	id subview00 = AUTORELEASE([[NSView alloc] initWithFrame: NSMakeRect(0, 0, 100, 50)]);
 	id subview01 = AUTORELEASE([[ETView alloc] initWithFrame: NSMakeRect(0, 0, 100, 50)]);
 	id subview010 = AUTORELEASE([[NSView alloc] initWithFrame: NSMakeRect(0, 0, 100, 50)]);
-	id subview02 = AUTORELEASE([[ETContainer alloc] initWithFrame: NSMakeRect(0, 0, 100, 50)]);
+	id subview02 = AUTORELEASE([[ETView alloc] initWithFrame: NSMakeRect(0, 0, 100, 50)]);
 	id subview020 = AUTORELEASE([[NSView alloc] initWithFrame: NSMakeRect(0, 0, 100, 50)]);
 	
 	[view addSubview: subview0];
@@ -74,7 +73,7 @@
 	/* NSView subclass are not turned into ETView, but becomes item view */
 	UKObjectsSame([itemForSubview1 view], subview1);
 	
-	/* Both ETView and ETContainer are rendered as ETLayoutItemGroup */
+	/* ETView is rendered as ETLayoutItemGroup */
 	UKTrue([itemForSubview01 isGroup]);
 	UKTrue([itemForSubview02 isGroup]);
 

@@ -125,17 +125,4 @@
 - (ETLayoutItem *) spaceSeparator;
 - (ETLayoutItem *) flexibleSpaceSeparator;
 
-/* Deprecated (DO NOT USE, WILL BE REMOVED LATER) */
-
-- (ETLayoutItemGroup *) itemGroupWithContainer;
-
-@end
-
-
-/** Deprecated (DO NOT USE, WILL BE REMOVED LATER) */
-@interface ETUIItemFactory : ETLayoutItemFactory
-- (ETWindowItem *) itemWithWindow: (NSWindow *)window;
-- (ETWindowItem *) fullScreenWindow;
-- (ETWindowItem *) transparentFullScreenWindow;
-- (ETScrollableAreaItem *) itemWithScrollView: (NSScrollView *)scrollView;
 @end

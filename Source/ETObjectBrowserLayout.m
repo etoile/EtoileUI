@@ -40,8 +40,8 @@
 #import <EtoileFoundation/NSString+Etoile.h>
 #import <EtoileFoundation/NSObject+Model.h>
 #import "ETObjectBrowserLayout.h"
-#import "ETContainer.h"
-#import "ETLayoutItem+Factory.h"
+#import "ETView.h"
+#import "ETLayoutItemFactory.h"
 #import "ETLayoutItem+Scrollable.h"
 #import "ETOutlineLayout.h"
 #import "ETWindowItem.h"
@@ -49,7 +49,7 @@
 #import "ETCompatibility.h"
 
 #define PALETTE_FRAME NSMakeRect(200, 200, 600, 300)
-#define itemGroupView (id)[self layoutView]
+#define mainViewItem (ETLayoutItemGroup *)[(ETView *)[self layoutView] layoutItem]
 
 @interface ETObjectBrowserLayout (Private)
 - (NSArray *) displayedItemPropertiesInItemGroup: (ETLayoutItemGroup *)baseItem;
@@ -76,19 +76,19 @@
 	
 	if (self != nil)
 	{
-		id container = [[ETContainer alloc] initWithFrame: PALETTE_FRAME];
+		id mainView = [[ETView alloc] initWithFrame: PALETTE_FRAME];
 	
-		[container setLayout: AUTORELEASE([[ETOutlineLayout alloc] init])];
-		[container setSource: self];
-		[container setDelegate: self];
-		[container setDoubleAction: @selector(doubleClickInItemGroupView:)];
-		[container setTarget: self];
-		//[container setHasVerticalScroller: YES];
-		//[container setHasHorizontalScroller: YES];
-		[container setAutoresizingMask: NSViewHeightSizable | NSViewWidthSizable];
-		[self setLayoutView: container];
+		[mainViewItem setLayout: AUTORELEASE([[ETOutlineLayout alloc] init])];
+		[mainViewItem setSource: self];
+		[mainViewItem setDelegate: self];
+		[mainViewItem setDoubleAction: @selector(doubleClickInItemGroupView:)];
+		[mainViewItem setTarget: self];
+		//[mainViewItem setHasVerticalScroller: YES];
+		//[mainViewItem setHasHorizontalScroller: YES];
+		[mainViewItem setAutoresizingMask: NSViewHeightSizable | NSViewWidthSizable];
+		[self setLayoutView: mainView];
 		//[self awakeFromNib];
-		RELEASE(container);
+		RELEASE(mainView);
 	}
 	
 	return self;
@@ -107,32 +107,33 @@
 
 - (void) awakeFromNib
 {
-	[itemGroupView setLayout: AUTORELEASE([[ETOutlineLayout alloc] init])];
-	//[itemGroupView setSource: self];
-	[itemGroupView setDelegate: self];
-	[itemGroupView setDoubleAction: @selector(doubleClickInItemGroupView:)];
-	[itemGroupView setTarget: self];
+	[mainViewItem setLayout: AUTORELEASE([[ETOutlineLayout alloc] init])];
+	//[mainViewItem setSource: self];
+	[mainViewItem setDelegate: self];
+	[mainViewItem setDoubleAction: @selector(doubleClickInItemGroupView:)];
+	[mainViewItem setTarget: self];
 }
 
 - (void) renderWithLayoutItems: (NSArray *)items isNewContent: (BOOL)isNewContent
 {
-	// [itemGroupView setSource: [self browsedObject]];
-	[[(ETContainer *)itemGroupView layout] setDisplayedProperties: [self displayedItemPropertiesInItemGroup: [(ETContainer *)[self layoutView] layoutItem]]];
-	[[itemGroupView layoutItem] setRepresentedObject: [self browsedObject]];
-	[itemGroupView setSource: [itemGroupView layoutItem]];
+	
+	// [mainViewItem setSource: [self browsedObject]];
+	[[mainViewItem layout] setDisplayedProperties: [self displayedItemPropertiesInItemGroup: mainViewItem]];
+	[mainViewItem setRepresentedObject: [self browsedObject]];
+	[mainViewItem setSource: mainViewItem];
 	if (isNewContent)
 	{
-		[itemGroupView reloadAndUpdateLayout];
+		[mainViewItem reloadAndUpdateLayout];
 	}
 	else
 	{
-		[itemGroupView updateLayout];
+		[mainViewItem updateLayout];
 	}
 }
 
 - (void) doubleClickInItemGroupView: (id)sender
 {
-	ETLayoutItem *item = [[itemGroupView items] objectAtIndex: [itemGroupView selectionIndex]];
+	ETLayoutItem *item = [[mainViewItem items] objectAtIndex: [mainViewItem selectionIndex]];
 	
 	[item browse: self];
 }
@@ -218,11 +219,11 @@
 		// ETOutlineLayout, ETBrowserLayout etc.
 		if ([object isCollection] && [object isEmpty] == NO)
 		{
-			item = [ETLayoutItemGroup layoutItemWithRepresentedObject: object];
+			item = [[ETLayoutItemFactory factory] itemGroupWithRepresentedObject: object];
 		}
 		else
 		{
-			item = [ETLayoutItem layoutItemWithRepresentedObject: object];
+			item = [[ETLayoutItemFactory factory] itemWithRepresentedObject: object];
 		}
 		
 		/*if ([object respondsToSelector: @selector(title)])

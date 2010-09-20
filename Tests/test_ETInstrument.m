@@ -22,7 +22,6 @@
 #import "ETLayoutItem.h"
 #import "ETLayoutItem+Scrollable.h"
 #import "ETLayoutItemGroup.h"
-#import "ETLayoutItem+Factory.h"
 #import "ETLineLayout.h"
 #import "ETLayoutItemFactory.h"
 #import "ETWindowItem.h"
@@ -62,9 +61,9 @@ coordinates or not to set the event location in the window. */
 	SUPERINIT
 
 	ASSIGN(itemFactory, [ETLayoutItemFactory factory]);
-	ASSIGN(mainItem, [ETLayoutItem itemGroup]);
+	ASSIGN(mainItem, [itemFactory itemGroup]);
 	[mainItem setFrame: NSMakeRect(0, 0, WIN_WIDTH, WIN_HEIGHT)];
-	[[ETLayoutItem windowGroup] addItem: mainItem];
+	[[itemFactory windowGroup] addItem: mainItem];
 	ASSIGN(tool, [ETTool tool]);
 
 	return self;
@@ -189,12 +188,12 @@ a point expressed in the main item coordinates. The main item is the window cont
 	//ETEvent *evtTitleBar = MAKE_EVENT(NSMakePoint(3, -5), YES, [self window]);
 	//ETEvent *evtCloseToTitleBar = [self createEventAtContentPoint: NSMakePoint(3, -([self titleBarHeight] + 1))];
 
-	UKObjectsSame([ETLayoutItem windowGroup], [tool hitTestWithEvent: evtWithoutWindow]);
+	UKObjectsSame([itemFactory windowGroup], [tool hitTestWithEvent: evtWithoutWindow]);
 	UKObjectsSame(mainItem, [tool hitTestWithEvent: EVT(0, 0)]);
 	UKObjectsSame(mainItem, [tool hitTestWithEvent: EVT(4, 4)]);
 
 	//UKObjectsSame(mainItem, [tool hitTestWithEvent: evtTitleBar]);
-	//UKObjectsSame([ETLayoutItem windowGroup], [tool hitTestWithEvent: evtCloseToTitleBar]);
+	//UKObjectsSame([itemFactory windowGroup], [tool hitTestWithEvent: evtCloseToTitleBar]);
 }
 
 - (void) testHitTestInWindowLayer
@@ -208,11 +207,11 @@ a point expressed in the main item coordinates. The main item is the window cont
 	float menuBarHeight = frame.size.height - (visibleFrame.size.height + visibleFrame.origin.y);
 	ETEvent *evt = [self createEventAtScreenPoint: NSMakePoint(600, menuBarHeight) isFlipped: YES];
 
-	UKObjectsSame([ETLayoutItem windowGroup], [tool hitTestWithEvent: evt]);
-	UKObjectsSame([ETLayoutItem windowGroup], [evt layoutItem]);
+	UKObjectsSame([itemFactory windowGroup], [tool hitTestWithEvent: evt]);
+	UKObjectsSame([itemFactory windowGroup], [evt layoutItem]);
 	UKPointsEqual(NSMakePoint(600, 0), [evt locationInLayoutItem]);
 
-	UKObjectsSame([ETLayoutItem windowGroup], [tool hitTestWithEvent: EVT(-100, -100)]);
+	UKObjectsSame([itemFactory windowGroup], [tool hitTestWithEvent: EVT(-100, -100)]);
 }
 
 // TODO: Finish to implement or remove
@@ -235,7 +234,7 @@ See -[NSView mouse:inRect:].
 An F-script session is pasted at the file end to understand that more easily. */
 - (void) testHitTestBoundaryDetection
 {
-	ETLayoutItem *item1 = [ETLayoutItem rectangleWithRect: NSMakeRect(0, 0, 50, 100)];
+	ETLayoutItem *item1 = [itemFactory rectangleWithRect: NSMakeRect(0, 0, 50, 100)];
 	[mainItem addItem: item1];
 
 	UKTrue([mainItem isFlipped]);
@@ -258,9 +257,9 @@ An F-script session is pasted at the file end to understand that more easily. */
 
 - (void) testHitTestZOrder
 {
-	ETLayoutItem *item1 = [ETLayoutItem rectangleWithRect: NSMakeRect(5, 5, 45, 95)];
-	ETLayoutItem *item2 = [ETLayoutItem rectangleWithRect: NSMakeRect(0, 0, 50, 100)];
-	ETLayoutItem *item3 = [ETLayoutItem rectangleWithRect: NSMakeRect(5, 5, 45, 95)];
+	ETLayoutItem *item1 = [itemFactory rectangleWithRect: NSMakeRect(5, 5, 45, 95)];
+	ETLayoutItem *item2 = [itemFactory rectangleWithRect: NSMakeRect(0, 0, 50, 100)];
+	ETLayoutItem *item3 = [itemFactory rectangleWithRect: NSMakeRect(5, 5, 45, 95)];
 
 	/* Insert by Z order */
 	[mainItem addItem: item2];
@@ -283,7 +282,7 @@ An F-script session is pasted at the file end to understand that more easily. */
 
 - (void) testLookUpTool
 {
-	ETLayoutItem *item1 = [ETLayoutItem rectangleWithRect: NSMakeRect(0, 0, 50, 100)];
+	ETLayoutItem *item1 = [itemFactory rectangleWithRect: NSMakeRect(0, 0, 50, 100)];
 	[mainItem addItem: item1];
 
 	[tool mouseDown: EVT(4, 4)];
@@ -448,10 +447,10 @@ inside the content bounds. */
 	[mainItem setLayout: [ETFreeLayout layout]];
 	ASSIGN(tool, [[mainItem layout] attachedTool]);
 	ASSIGN(rootItem, [[mainItem layout] rootItem]);
-	ASSIGN(item1, [ETLayoutItem rectangleWithRect: NSMakeRect(50, 30, 50, 30)]);
-	ASSIGN(item2, [ETLayoutItem graphicsGroup]);
+	ASSIGN(item1, [itemFactory rectangleWithRect: NSMakeRect(50, 30, 50, 30)]);
+	ASSIGN(item2, [itemFactory graphicsGroup]);
 	[item2 setFrame: NSMakeRect(0, 0, 100, 50)];
-	ASSIGN(item21, [ETLayoutItem rectangleWithRect: NSMakeRect(10, 10, 80, 30)]);
+	ASSIGN(item21, [itemFactory rectangleWithRect: NSMakeRect(10, 10, 80, 30)]);
 
 	/* We need a active tool in order to have -observeValueForKeyPath:XXX 
 	   in ETFreeLayout reacts to a selection change by toggling the handle visibility */

@@ -10,7 +10,7 @@
 #import <AppKit/AppKit.h>
 #import <UnitKit/UnitKit.h>
 #import "ETPickboard.h"
-#import "ETLayoutItem+Factory.h"
+#import "ETLayoutItemFactory.h"
 #import "ETCompatibility.h"
 
 @interface ETPickboard (UnitKitTests) <UKTest>
@@ -23,7 +23,7 @@
 {
 	id string = [NSString string];
 	id array = [NSArray array];
-	id item = [ETLayoutItem item];
+	id item = [[ETLayoutItemFactory factory] item];
 	id pickRef = nil;
 	
 	pickRef = [self pushObject: string];
@@ -49,7 +49,7 @@
 {
 	id string = [NSString string];
 	id array = [NSArray array];
-	id item = [ETLayoutItem item];
+	id item = [[ETLayoutItemFactory factory] item];
 	id pickRef = nil;
 	id object = nil;
 	
@@ -82,7 +82,7 @@
 {
 	id string = [NSString string];
 	id array = [NSArray array];
-	id item = [ETLayoutItem item];
+	id item = [[ETLayoutItemFactory factory] item];
 	id pickRef = nil;
 	
 	pickRef = [self appendObject: string];
@@ -108,7 +108,7 @@
 {
 	id string = [NSString string];
 	id array = [NSArray array];
-	id item = [ETLayoutItem item];
+	id item = [[ETLayoutItemFactory factory] item];
 	id pickRef1 = nil;
 	id pickRef2 = nil;
 	id pickRef3 = nil;

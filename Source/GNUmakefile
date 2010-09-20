@@ -15,7 +15,6 @@ libEtoileUI_OBJC_FILES = \
 	ETCompositeLayout.m \
 	ETComputedLayout.m \
 	ETController.m \
-	ETContainer.m \
 	ETDecoratorItem.m \
 	ETEvent.m \
 	ETFixedLayout.m \
@@ -25,7 +24,6 @@ libEtoileUI_OBJC_FILES = \
 	ETInspector.m \
 	ETLayer.m \
 	ETLayoutItemBuilder.m \
-	ETLayoutItem+Factory.m \
 	ETLayoutItemGroup.m \
 	ETLayoutItemGroup+Mutation.m \
 	ETLayoutItem.m \

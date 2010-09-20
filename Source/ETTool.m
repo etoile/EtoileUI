@@ -16,8 +16,8 @@
 #import "ETGeometry.h"
 #import "ETActionHandler.h"
 #import "ETLayoutItem.h"
-#import "ETLayoutItem+Factory.h"
 #import "ETLayoutItemGroup.h"
+#import "ETLayoutItemFactory.h"
 #import "ETApplication.h"
 #import "ETInstruments.h"
 #import "ETLayout.h"
@@ -585,9 +585,9 @@ You should rarely need to override this method. */
 
 	// FIXME: Work around inspectors and other windows whose content view 
 	// has a layout item with no parent, when it should be a window layer child.
-	if ([newStack firstObject] != [ETLayoutItem windowGroup])
+	if ([newStack firstObject] != [[ETLayoutItemFactory factory] windowGroup])
 	{
-		[newStack insertObject: [ETLayoutItem windowGroup] atIndex: 0];
+		[newStack insertObject: [[ETLayoutItemFactory factory] windowGroup] atIndex: 0];
 	}
 
 	[self setHoveredItemStack: newStack];
@@ -658,7 +658,7 @@ the mouse is not within in a window area. For now, return -windowGroup as
 -[ETApplication layoutItem] does. */
 - (ETLayoutItem *) hitItemForNil
 {
-	return [ETLayoutItem windowGroup];
+	return [[ETLayoutItemFactory factory] windowGroup];
 }
 
 /** Returns the layout item hovered at the mouse location reported by anEvent.

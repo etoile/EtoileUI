@@ -13,7 +13,6 @@
 #import "ETGeometry.h"
 #import "ETSelectTool.h"
 #import "ETLayoutItem.h"
-#import "ETLayoutItem+Factory.h"
 #import "ETLayoutItem+Reflection.h"
 #import "ETLayoutItem+Scrollable.h"
 #import "ETLayoutItemGroup.h"

@@ -15,9 +15,9 @@
 #import "ETGeometry.h"
 #import "ETHandle.h"
 #import "ETActionHandler.h"
-#import "ETLayoutItem+Factory.h"
 #import "ETLayoutItem.h"
 #import "ETLayoutItemGroup.h"
+#import "ETLayoutItemFactory.h"
 #import "ETLayout.h"
 #import "ETSelectionAreaItem.h"
 #import "ETWidgetLayout.h"
@@ -805,7 +805,7 @@ the target item. */
 - (IBAction) group: (id)sender
 {
 	ETLayoutItemGroup *targetItem = (ETLayoutItemGroup *)[self targetItem];
-	ETLayoutItemGroup *newGroup = [ETLayoutItem graphicsGroup];
+	ETLayoutItemGroup *newGroup = [[ETLayoutItemFactory factory] graphicsGroup];
 	NSArray *children = [self selectedItems];
 
 	[ETLayoutItemGroup disablesAutolayout];

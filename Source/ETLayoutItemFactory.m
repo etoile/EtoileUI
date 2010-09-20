@@ -19,7 +19,6 @@
 #import "ETLineLayout.h"
 #import "ETScrollableAreaItem.h"
 #import "ETWindowItem.h"
-#import "ETContainer.h"
 #import "ETStyle.h"
 #import "ETShape.h"
 #import "NSWindow+Etoile.h"
@@ -908,43 +907,6 @@ height greater than its width, it becomes a vertical line. */
 - (ETLayoutItem *) flexibleSpaceSeparator
 {
 	return [self oval];
-}
-
-/* Deprecated */
-
-/** Deprecated. You must use -itemGroup now. */
-- (ETLayoutItemGroup *) itemGroupWithContainer
-{
-	ETContainer *container = AUTORELEASE([[ETContainer alloc] init]);
-	// FIXME: Remove this temporary workaround...
-	[container setAutoresizingMask: NSViewHeightSizable | NSViewWidthSizable];
-
-	return (ETLayoutItemGroup *)[container layoutItem];
-}
-
-@end
-
-
-@implementation ETUIItemFactory
-
-- (ETWindowItem *) itemWithWindow: (NSWindow *)window
-{
-	return [ETWindowItem itemWithWindow: window];
-}
-
-- (ETWindowItem *) fullScreenWindow
-{
-	return [ETWindowItem fullScreenItem];
-}
-
-- (ETWindowItem *) transparentFullScreenWindow
-{
-	return [ETWindowItem transparentFullScreenItem];
-}
-
-- (ETScrollableAreaItem *) itemWithScrollView: (NSScrollView *)scrollView
-{
-	return [ETScrollableAreaItem itemWithScrollView: scrollView];
 }
 
 @end

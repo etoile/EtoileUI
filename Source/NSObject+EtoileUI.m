@@ -13,7 +13,7 @@
 #import "NSObject+EtoileUI.h"
 #import "ETObjectBrowserLayout.h"
 #import "ETLayoutItemGroup.h"
-#import "ETLayoutItem+Factory.h"
+#import "ETLayoutItemFactory.h"
 #import "ETInspector.h"
 #import "ETViewModelLayout.h"
 #import "ETCompatibility.h"
@@ -119,7 +119,7 @@ to overriden by a third-party inspector. */
 {
 	// TODO: Should be -itemGroupWithRepresentedObject: once ETLayoutItemGroup 
 	// is able to create a container as supervisor view by itself if needed.
-	ETLayoutItemGroup *item = [ETLayoutItem itemGroup];
+	ETLayoutItemGroup *item = [[ETLayoutItemFactory factory] itemGroup];
 	ETViewModelLayout *layout = [ETViewModelLayout layout];
 
 	[item setRepresentedObject: self];
@@ -135,7 +135,7 @@ to overriden by a third-party inspector. */
 	[item setLayout: layout];
 	[item setName: [NSString stringWithFormat: _(@"Explorer %@"), [self primitiveDescription]]];
 	[item setSize: NSMakeSize(350, 500)];
-	[[ETLayoutItem windowGroup] addItem: item];
+	[[[ETLayoutItemFactory factory] windowGroup] addItem: item];
 }
 
 /* Introspection Utility */

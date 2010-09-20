@@ -12,7 +12,6 @@
 #import "ETEventProcessor.h"
 #import "ETTool.h"
 #import "ETLayoutItemGroup.h"
-#import "ETLayoutItem+Factory.h"
 #import "ETLayoutItemBuilder.h"
 #import "ETNibOwner.h"
 #import "ETObjectBrowserLayout.h"
@@ -49,7 +48,7 @@ The method returns a local root item which is usually the window group or layer
 under the application control. */
 - (ETLayoutItemGroup *) layoutItem
 {
-	return [ETLayoutItem localRootGroup];
+	return [[ETLayoutItemFactory factory] localRootGroup];
 }
 
 /** Returns the AppKit to EtoileUI builder that converts AppKit windows, views 
@@ -193,7 +192,7 @@ root item will be made available through -[ETApplication layoutItem]. */
 {
 	ETEtoileUIBuilder *builder = [ETEtoileUIBuilder builder];
 
-	[ETLayoutItemGroup setWindowGroup: [builder render: self]];
+	[[ETLayoutItemFactory factory] setWindowGroup: [builder render: self]];
 }
 
 - (NSArray *) aspectBaseClassNames

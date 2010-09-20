@@ -18,7 +18,6 @@
 #import "ETLayoutItemFactory.h"
 #import "ETWindowItem.h"
 #import "ETLayoutItemGroup.h"
-#import "ETContainer.h"
 #import "ETFlowLayout.h"
 #import "ETScrollableAreaItem.h"
 #import "ETTableLayout.h"

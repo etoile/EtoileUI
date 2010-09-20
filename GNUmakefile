@@ -38,7 +38,6 @@ EtoileUI_HEADER_FILES = \
 	ETCompositeLayout.h \
 	ETComputedLayout.h \
 	ETController.h \
-	ETContainer.h \
 	ETDecoratorItem.h \
 	ETEvent.h \
 	ETFixedLayout.h \
@@ -51,7 +50,6 @@ EtoileUI_HEADER_FILES = \
 	ETLayer.h \
 	ETLayout.h \
 	ETLayoutItemBuilder.h \
-	ETLayoutItem+Factory.h \
 	ETLayoutItemGroup.h \
 	ETLayoutItemGroup+Mutation.h \
 	ETLayoutItem.h \

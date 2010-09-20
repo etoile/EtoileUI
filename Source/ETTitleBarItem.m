@@ -11,7 +11,6 @@
 #import "ETTitleBarItem.h"
 #import "ETLayoutItem.h"
 #import "ETLayoutItemGroup.h"
-#import "ETLayoutItem+Factory.h"
 #import "ETTitleBarView.h"
 #import "ETLayoutItemFactory.h"
 #import "ETCompatibility.h"

@@ -14,7 +14,6 @@
 #import "ETApplication.h"
 #import "ETGeometry.h"
 #import "ETDecoratorItem.h"
-#import "ETLayoutItem+Factory.h"
 #import "ETView.h"
 #import "ETWindowItem.h"
 #import "NSView+Etoile.h"

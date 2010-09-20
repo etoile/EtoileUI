@@ -12,7 +12,6 @@
 #import "ETLayoutItemGroup+Mutation.h"
 #import "ETController.h"
 #import "ETEvent.h"
-#import "ETLayoutItem+Factory.h"
 #import "EtoileUIProperties.h"
 #import "ETCompatibility.h"
 

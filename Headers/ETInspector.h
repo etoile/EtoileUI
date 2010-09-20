@@ -16,7 +16,7 @@
 #import <EtoileUI/ETLayout.h>
 #import <EtoileUI/ETInspecting.h>
 
-@class ETView, ETContainer;
+@class ETView;
 
 
 @interface ETInspectorLayout : ETLayout
@@ -30,8 +30,8 @@
 
 @interface ETInspector : ETLayoutItem <ETInspector>
 {
-	IBOutlet ETContainer *itemGroupView;
-	IBOutlet ETContainer *propertyView;
+	IBOutlet ETView *itemGroupView;
+	IBOutlet ETView *propertyView;
 	IBOutlet NSPopUpButton *layoutPopup;
 	IBOutlet NSPopUpButton *toolPopup;
 	IBOutlet NSWindow *window;
