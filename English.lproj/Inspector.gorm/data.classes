@@ -1,27 +1,5 @@
 {
     "## Comment" = "Do NOT change this file, Gorm maintains it";
-    ETContainer = {
-	Actions = (
-	    "setSource:",
-	    "setDelegate:",
-	    "inspect:",
-	    "inspectSelection:",
-	    "copy:",
-	    "paste:",
-	    "cut:",
-	    "stack:",
-	    "setTarget:",
-	    "addObject:",
-	    "removeObject:"
-	);
-	Outlets = (
-	    _dataSource,
-	    _delegate,
-	    _target,
-	    _inspector
-	);
-	Super = ETView;
-    };
     ETImageStyle = {
 	Actions = (
 	);
@@ -58,13 +36,6 @@
 	    _reserved
 	);
 	Super = ETStyleRenderer;
-    };
-    ETScrollView = {
-	Actions = (
-	);
-	Outlets = (
-	);
-	Super = ETView;
     };
     ETSelection = {
 	Actions = (
