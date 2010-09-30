@@ -13,10 +13,11 @@
 #import "ETDecoratorItem.h"
 #import "ETGeometry.h"
 #import "ETLayoutItem.h"
+#import "ETLayoutItemFactory.h"
 #import "ETLayoutItemGroup.h"
 #import "ETScrollableAreaItem.h"
+#import "ETTableLayout.h"
 #import "ETUIItem.h"
-#import "ETLayoutItemFactory.h"
 #import "ETWindowItem.h"
 #import "ETCompatibility.h"
 
@@ -76,13 +77,33 @@
 
 DEALLOC(DESTROY(itemFactory); DESTROY(item))
 
-- (void) testNewSupervisorViewWithFrame
+- (void) testNewSupervisorViewWithItemAndFrame
 {
+	UKIntsEqual(ETAutoresizingNone, [item autoresizingMask]);
+
+	[item setAutoresizingMask: ETAutoresizingFlexibleWidth];
+
 	NSRect frame = NSMakeRect(-300, 20, 500, 50);
+	NSRect initialItemFrame = [item frame];
+	unsigned int initialAutoresizing = [item autoresizingMask];
+
 	ETView *view = AUTORELEASE([[ETView alloc] initWithFrame: frame item: item]);
 
-	UKRectsEqual(frame, [view frame]);
-	UKRectsEqual(frame, [item frame]);
+	UKRectsEqual(initialItemFrame, [view frame]);
+	UKRectsEqual(initialItemFrame, [item frame]);
+	UKIntsEqual(initialAutoresizing, [view autoresizingMask]);
+	UKIntsEqual(initialAutoresizing, [item autoresizingMask]);
+}
+
+- (void) testAutoresizingMaskAndSetLayout
+{
+	ETLayoutItemGroup *itemGroup = [itemFactory itemGroup];
+
+	[itemGroup setAutoresizingMask: ETAutoresizingFlexibleWidth];
+	/* Trigger the supervisor view instantiation on -setLayoutView: */
+	[itemGroup setLayout: [ETTableLayout layout]];
+
+	UKIntsEqual(ETAutoresizingFlexibleWidth, [itemGroup autoresizingMask]);
 }
 
 static unsigned int sizableMask = (NSViewWidthSizable | NSViewHeightSizable);

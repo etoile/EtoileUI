@@ -53,8 +53,8 @@ item.
 
 You should never need to use this method which uses internally by EtoileUI.
 
-When the given item is not nil, the item is updated to use the view frame and 
-autoresizing mask.
+When the item is not nil, the given frame is ignored and the item frame and 
+autoresizing mask are set on the view.
 
 See also -[ETUIItem supervisorView]. */
 - (id) initWithFrame: (NSRect)frame item: (ETUIItem *)anItem
@@ -64,7 +64,7 @@ See also -[ETUIItem supervisorView]. */
 		return nil;
 
 	/* Will call back -setItemWithoutInsertingView: */
-	[anItem setSupervisorView: self sync: ETSyncSupervisorViewToItem];
+	[anItem setSupervisorView: self sync: ETSyncSupervisorViewFromItem];
 	[self setAutoresizesSubviews: YES];
 
 	return self;
