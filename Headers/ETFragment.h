@@ -75,19 +75,19 @@ treated under various circumstances:
 Warning: this API will probably evolve a bit. */
 @protocol ETColumnFragment
 /** Sets the column width. */
-- (void) setWidth: (NSUInteger)width;
+- (void) setWidth: (float)width;
 /** Returns the column width. */
-- (NSUInteger) width;
+- (float) width;
 /** Sets the minimum width allowed and resizes the column if the current width 
 is inferior. */
-- (void) setMinWidth: (NSUInteger)width;
+- (void) setMinWidth: (float)width;
 /** Returns the minimum width allowed. */
-- (NSUInteger) minWidth; 
+- (float) minWidth; 
 /** Sets the maximum allowed width and resizes the column if the current width 
 is superior. */
-- (void) setMaxWidth: (NSUInteger)width;
+- (void) setMaxWidth: (float)width;
 /** Returns the maximum width allowed. */
-- (NSUInteger) maxWidth;
+- (float) maxWidth;
 /** Sets the resizing behavior:
 
 <deflist>
