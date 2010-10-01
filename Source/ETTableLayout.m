@@ -367,8 +367,10 @@ visible or not depending on -displayedProperties. If the column doesn't exist
 yet, it is created. */
 - (NSTableColumn *) tableColumnWithIdentifierAndCreateIfAbsent: (NSString *)property
 {
-	// TODO: Would be nicer with -containsCollection: or similar.
+	// TODO: Would be nicer with -containsCollection: or similar, and 
+	// -containsDuplicateObjects or -containsIdenticalObjects.
 	ETAssert([SA([[self tableView] tableColumns]) isSubsetOfSet: SA([_propertyColumns allValues])]);
+	ETAssert([SA([_propertyColumns allValues]) count] == [_propertyColumns count]);
 
 	NSTableColumn *column = [_propertyColumns objectForKey: property];
 
@@ -1040,3 +1042,4 @@ receiver. */
 }
 
 @end
+

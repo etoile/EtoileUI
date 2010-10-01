@@ -72,8 +72,17 @@
 	NSTableColumn *outlineColumn = [[self outlineView] outlineTableColumn];
 	BOOL shouldInsertColumn = ([[[self outlineView] tableColumns] containsObject: column] == NO);
 
+	ETAssert([[[self outlineView] tableColumns] containsObject: outlineColumn]);
+
 	if (isFirstColumn)
 	{
+		NSTableColumn *newColumn = [NSKeyedUnarchiver unarchiveObjectWithData: 
+			[NSKeyedArchiver archivedDataWithRootObject: outlineColumn]];
+
+		/* Remember the existing outline column as a copy in our cache */
+		[_propertyColumns setObject: newColumn
+		                     forKey: [outlineColumn identifier]];
+
 		[outlineColumn setIdentifier: [column identifier]];
 		[outlineColumn setDataCell: [column dataCell]];
 		[outlineColumn setHeaderCell: [column headerCell]];
@@ -86,6 +95,14 @@
 		[outlineColumn setResizingMask: [column resizingMask]];
 #endif
 		[outlineColumn setEditable: [column isEditable]];
+		[outlineColumn setSortDescriptorPrototype: [column sortDescriptorPrototype]];
+		[outlineColumn setHidden: [column isHidden]];
+		[outlineColumn setHeaderToolTip: [column headerToolTip]];
+
+		/* Replace the prepared column with the new outline column in our cache. */
+		[_propertyColumns setObject: outlineColumn
+		                     forKey: [outlineColumn identifier]];
+
 		shouldInsertColumn = NO;
 	}
 
