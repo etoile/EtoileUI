@@ -126,3 +126,13 @@
 - (ETLayoutItem *) flexibleSpaceSeparator;
 
 @end
+
+/** Line separator minimum width or height depending on the layout orientation 
+(vertical vs horizontal). */
+extern const NSUInteger kETLineSeparatorMinimumSize;
+/** Line separator item name. */
+extern NSString * const kETLineSeparatorItemIdentifier;
+/** Space item name. */
+extern NSString * const kETSpaceSeparatorItemIdentifier;
+/** Flexible space item name. */
+extern NSString * const kETFlexibleSpaceSeparatorItemIdentifier;

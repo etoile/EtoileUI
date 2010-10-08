@@ -894,19 +894,45 @@ The returned separator is initially an horizontal line, but by resizing with a
 height greater than its width, it becomes a vertical line. */
 - (ETLayoutItem *) lineSeparator
 {
-	NSBox *separatorView = AUTORELEASE([[NSBox alloc] initWithFrame: NSMakeRect(0, 0, 50, 5)]);
+	NSBox *separatorView = AUTORELEASE([[NSBox alloc] initWithFrame: NSMakeRect(0, 0, 50, kETLineSeparatorMinimumSize)]);
 	[separatorView setBoxType: NSBoxSeparator];
-	return [self itemWithView: separatorView];
+	ETLayoutItem *item = [self itemWithView: separatorView];
+	[item setName: kETLineSeparatorItemIdentifier];
+	return item;
 }
 
+/** Returns a new layout item whose size can be adjusted by a computed layout 
+based on the layout size and a minimum space size.
+
+The returned separator name is kETSpaceItemIdentitifier.
+
+See separator related methods in [ETComputedLayout] and subclasses. */
 - (ETLayoutItem *) spaceSeparator
 {
-	return [self oval];
+	ETLayoutItem *item = [self item];
+	[item setName: kETSpaceSeparatorItemIdentifier];
+	return item;
 }
 
+/** Returns a new layout item whose size can be adjusted by a computed layout 
+based on the layout size and the available space.
+
+A flexible space item can be shrinked to a zero size unlike the -spaceSeparator 
+item.
+
+The returned separator name is kETFlexibleSpaceItemIdentitifier.
+
+See separator related methods in [ETComputedLayout] and subclasses.*/
 - (ETLayoutItem *) flexibleSpaceSeparator
 {
-	return [self oval];
+	ETLayoutItem *item = [self item];
+	[item setName: kETFlexibleSpaceSeparatorItemIdentifier];
+	return item;
 }
 
 @end
+
+const NSUInteger kETLineSeparatorMinimumSize = 5;
+NSString * const kETLineSeparatorItemIdentifier = @"Line Separator";
+NSString * const kETSpaceSeparatorItemIdentifier = @"Space Separator";
+NSString * const kETFlexibleSpaceSeparatorItemIdentifier = @"Flexible Space Separator";
