@@ -11,6 +11,7 @@
 #import "ETColumnLayout.h"
 #import "ETGeometry.h"
 #import "ETLayoutItem.h"
+#import "ETLayoutItemFactory.h"
 #import "ETLineFragment.h"
 #import "ETCompatibility.h"
 #include <float.h>
@@ -40,10 +41,10 @@
 	return line;
 }
 
-- (void) computeLocationsForFragments: (NSArray *)layoutModel
+- (NSSize) computeLocationsForFragments: (NSArray *)layoutModel
 {
 	if ([layoutModel isEmpty])
-		return;
+		return NSZeroSize;
 
 	NSParameterAssert([layoutModel count] == 1);
 
@@ -56,24 +57,42 @@
 	[line setOrigin: [self originOfFirstFragment: line
 	                            forContentHeight: contentHeight]];
 
-	/* Update layout size, useful when the layout context is embedded in a scroll view */
-	if ([self isContentSizeLayout])
-	{
-		/* lineHeight already includes itemMargin * 2 */
-		[self setLayoutSize: NSMakeSize([line width] + totalMargin, contentHeight)];
-	}
-
 	ETDebugLog(@"Item locations computed by layout line :%@", line);
+
+	/* lineHeight already includes itemMargin * 2 */
+	return NSMakeSize([line width] + totalMargin, contentHeight);
 }
 
 static const float undeterminedWidth = 10;
 
 - (void) prepareSeparatorItem: (ETLayoutItem *)separator
 {
-	[separator setSize: NSMakeSize(undeterminedWidth, 5)];
+	NSString *identifier = [separator identifier];
+ 
+	if ([identifier isEqualToString: kETLineSeparatorItemIdentifier])
+	{
+		[separator setSize: NSMakeSize(undeterminedWidth, kETLineSeparatorMinimumSize)];
+	}
+	else if ([identifier isEqualToString: kETSpaceSeparatorItemIdentifier])
+	{
+		[separator setWidth: undeterminedWidth];
+	}
+	if ([identifier isEqualToString: kETFlexibleSpaceSeparatorItemIdentifier])
+	{
+		[separator setSize: NSZeroSize];
+	}
 }
 
-- (void) adjustSeparatorItem: (ETLayoutItem *)separator forLayoutSize: (NSSize)newLayoutSize
+- (NSSize) sizeOfFlexibleSeparatorItem: (ETLayoutItem *)separator 
+                  forCurrentLayoutSize: (NSSize)aLayoutSize 
+            numberOfFlexibleSeparators: (NSUInteger)nbOfFlexibleSeparators
+                         inMaxAreaSize: (NSSize)maxSize 
+{
+	return NSMakeSize(aLayoutSize.width, (maxSize.height - aLayoutSize.height) / nbOfFlexibleSeparators);
+}
+
+- (void) adjustSeparatorItem: (ETLayoutItem *)separator 
+               forLayoutSize: (NSSize)newLayoutSize
 {
 	float totalEndMargin = [self separatorItemEndMargin];
 

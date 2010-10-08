@@ -7,8 +7,10 @@
  */
 
 #import <EtoileFoundation/Macros.h>
+#import <EtoileFoundation/ETCollection+HOM.h>
 #import "ETComputedLayout.h"
 #import "ETLayoutItem.h"
+#import "ETLayoutItemFactory.h"
 #import "ETLayoutItemGroup.h"
 #import "ETLineFragment.h"
 #import "ETCompatibility.h"
@@ -190,12 +192,33 @@ bounding box). */
 	return visibleItems;
 }
 
-- (void) adjustSeparatorItemsForLayoutSize: (NSSize)newLayoutSize
+- (void) adjustSeparatorItemsForLayoutSize: (NSSize)newLayoutSize 
 {
 	FOREACH([[self rootItem] items], separator, ETLayoutItem *)
 	{
 		[self adjustSeparatorItem: separator forLayoutSize: newLayoutSize];
 	}
+}
+
+- (BOOL) sizeFlexibleSeparatorItemsForLayoutSize: (NSSize)newLayoutSize maxLayoutSize: (NSSize)maxSize
+{
+	if (newLayoutSize.width == maxSize.width && newLayoutSize.height == maxSize.height)
+		return NO;
+
+	BOOL didResize = NO;
+	NSMutableArray *flexibleSeparators = [NSMutableArray arrayWithArray: [[self rootItem] items]];
+	[[[flexibleSeparators filter] identifier] isEqualToString: kETFlexibleSpaceSeparatorItemIdentifier];
+	NSUInteger count = [flexibleSeparators count];
+
+	FOREACH(flexibleSeparators, separator, ETLayoutItem *)
+	{
+		[separator setSize: [self sizeOfFlexibleSeparatorItem: separator 
+		                                 forCurrentLayoutSize: newLayoutSize
+                                           numberOfFlexibleSeparators: count
+		                                        inMaxAreaSize: maxSize]];
+		didResize = YES;
+	}
+	return didResize;
 }
 
 /** <override-never />
@@ -218,19 +241,42 @@ to create a very special layout. This method will sequentially invoke:
 <item>-adjustSeparatorItem:forLayoutSize:</item>
 </list>
 
+If flexible separators are used, before -adjustSeparatorItemsForLayoutSize: we have:
+<list>
+<item>-sizeOfFlexibleSeparatorItem:forLayoutSize:maxLayoutSize:</item>
+<item>-computeLocationsForFragments: (a second pass if flexible separators are visible)</item>
+</list>
+
 Finally once the layout is computed, this method set the layout item visibility 
 by calling -setVisibleItems: on the layout context. */
 - (void) renderWithLayoutItems: (NSArray *)items isNewContent: (BOOL)isNewContent
-{	
+{
+	/* Will compute the initial layout size with -resetLayoutSize */	
 	[super renderWithLayoutItems: items isNewContent: isNewContent];
 
+	NSSize initialLayoutSize = [self layoutSize];
 	NSArray *spacedItems = [self insertSeparatorsBetweenItems: items];
 	NSArray *layoutModel = [self generateFragmentsForItems: spacedItems];
 	/* Now computes the location of every items by relying on the line by line 
 	   decomposition already made. */
-	[self computeLocationsForFragments: layoutModel];
-	[self adjustSeparatorItemsForLayoutSize: [self layoutSize]]; 
-	
+	NSSize newLayoutSize = [self computeLocationsForFragments: layoutModel];
+	NSArray *usedItems = [self itemsUsedInFragments: layoutModel];
+	NSSize maxSize = ([usedItems count] < [items count] ? newLayoutSize : initialLayoutSize);
+	BOOL recomputesLayout = [self sizeFlexibleSeparatorItemsForLayoutSize: newLayoutSize
+	                                                        maxLayoutSize: maxSize];
+
+	if (recomputesLayout)
+	{
+		// TODO: -generateFragmentsForItems: must be called here if we 
+		// decide to support flexible separators in ETFlowLayout or similar.
+		newLayoutSize = [self computeLocationsForFragments: layoutModel];
+		usedItems = [self itemsUsedInFragments: layoutModel];
+	}
+
+	[self adjustSeparatorItemsForLayoutSize: newLayoutSize];
+	// TODO: We should return this value rather than void
+	[self setLayoutSize: newLayoutSize];
+
 	// TODO: May be worth to optimize by computing set intersection of visible 
 	// and unvisible layout items
 	[[self layoutContext] setVisibleItems: [NSArray array]];
@@ -245,7 +291,7 @@ by calling -setVisibleItems: on the layout context. */
 			NSStringFromSize([[self layoutContext] visibleContentSize]));
 	}
 
-	[[self layoutContext] setVisibleItems: [self itemsUsedInFragments: layoutModel]];
+	[[self layoutContext] setVisibleItems: usedItems];
 }
 
 /* Fragment-based Layout */
@@ -340,10 +386,13 @@ float contentHeight =  [line height] + totalMargin;
 
 /** <override-subclass />
 Overrides this method to interpret the layout model and compute the fragments 
-geometrical attributes (position, size, scale etc.) accordingly. */
-- (void) computeLocationsForFragments: (NSArray *)layoutModel
-{
+geometrical attributes (position, size, scale etc.) accordingly.
 
+Must return the resulting layout size, in other words the minimum bouding 
+rectangle that encloses the items and include border and item margins. */
+- (NSSize) computeLocationsForFragments: (NSArray *)layoutModel
+{
+	return NSZeroSize;
 }
 
 /* Seperator support */
@@ -436,16 +485,30 @@ usually requires to know other element sizes that the receiver computes. */
 
 }
 
+- (NSSize) sizeOfFlexibleSeparatorItem: (ETLayoutItem *)separator 
+                  forCurrentLayoutSize: (NSSize)aLayoutSize 
+            numberOfFlexibleSeparators: (NSUInteger)nbOfFlexibleSeparators
+                         inMaxAreaSize: (NSSize)maxSize 
+{
+	return NSZeroSize;
+}
+
 /** <override-dummy />
 Overrides to resize newly inserted separator items based on the item sizes and 
-layout size which were just computed.
+layout size which were just computed and returns the updated layout size.
+
+Flexible separators can be adjusted to fill the space unoccupied between 
+newLayoutSize and maxSize. 
+
+If you have resized the separators in a way that doesn't change the layout 
+size, you can return newLayoutSize.
 
 The layout size might be the same than previously in -prepareSeparatorItem:.
 
 The layout computation is finished when this method is called.  */
 - (void) adjustSeparatorItem: (ETLayoutItem *)separator forLayoutSize: (NSSize)newLayoutSize
 {
-	
+
 }
 
 @end

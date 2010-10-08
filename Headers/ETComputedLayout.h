@@ -98,9 +98,9 @@ In the rare case where more control is required, you might want to reimplement
 - (NSArray *) generateFragmentsForItems: (NSArray *)items;
 - (NSPoint) originOfFirstFragment: (id)aFragment 
                  forContentHeight: (float)contentHeight;
-- (void) computeLocationsForFragments: (NSArray *)layoutModel;
+- (NSSize) computeLocationsForFragments: (NSArray *)layoutModel;
 
-/* Seperator support */
+/* Separator support */
 
 - (void) setSeparatorTemplateItem: (ETLayoutItem *)separator;
 - (ETLayoutItem *) separatorTemplateItem;
@@ -109,7 +109,10 @@ In the rare case where more control is required, you might want to reimplement
 
 - (NSArray *) insertSeparatorsBetweenItems: (NSArray *)items;
 - (void) prepareSeparatorItem: (ETLayoutItem *)separator;
-- (void) adjustSeparatorItem: (ETLayoutItem *)separator 
-               forLayoutSize: (NSSize)newLayoutSize;
+- (NSSize) sizeOfFlexibleSeparatorItem: (ETLayoutItem *)separator 
+                  forCurrentLayoutSize: (NSSize)aLayoutSize 
+            numberOfFlexibleSeparators: (NSUInteger)nbOfFlexibleSeparators
+                         inMaxAreaSize: (NSSize)maxSize;
+- (void) adjustSeparatorItem: (ETLayoutItem *)separator forLayoutSize: (NSSize)newLayoutSize;
 
 @end
