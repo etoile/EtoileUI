@@ -48,7 +48,7 @@ The method returns a local root item which is usually the window group or layer
 under the application control. */
 - (ETLayoutItemGroup *) layoutItem
 {
-	return [[ETLayoutItemFactory factory] localRootGroup];
+	return [[ETLayoutItemFactory factory] windowGroup];
 }
 
 /** Returns the AppKit to EtoileUI builder that converts AppKit windows, views 

@@ -97,14 +97,6 @@
 
 /* Special Group Access Methods */
 
-- (id) rootGroup;
-- (id) localRootGroup;
-
-- (id) screen;
-- (id) screenGroup;
-- (id) project;
-- (id) projectGroup;
-
 - (ETLayoutItemGroup *) windowGroup;
 - (void) setWindowGroup: (ETLayoutItemGroup *)windowGroup;
 
