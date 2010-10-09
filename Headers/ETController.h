@@ -76,6 +76,8 @@ objects as a collection distinct from the content. */
 	BOOL _hasNewSortDescriptors;
 	BOOL _hasNewFilterPredicate;
 	BOOL _hasNewContent;
+	BOOL _clearsFilterPredicateOnInsertion;
+	BOOL _selectsInsertedObjects;
 }
 
 - (ETLayoutItemGroup *) content;
@@ -125,13 +127,16 @@ objects as a collection distinct from the content. */
 
 - (id) nextResponder;
 
-/* Selection */
+/* Insertion */
 
-- (BOOL) setSelectionIndexes: (NSIndexSet *)selection;
-- (NSMutableIndexSet *) selectionIndexes;
-- (BOOL) setSelectionIndex: (unsigned int)index;
-- (unsigned int) selectionIndex;
+- (BOOL) canMutate;
+- (BOOL) isContentMutable;
 - (unsigned int) insertionIndex;
+- (void) insertObject: (id)anItem atIndex: (NSUInteger)index;
+- (BOOL) clearsFilterPredicateOnInsertion;
+- (void) setClearsFilterPredicateOnInsertion: (BOOL)clear;
+- (BOOL) selectsInsertedObjects;
+- (void) setSelectsInsertedObjects: (BOOL)select;
 
 /* Sorting and Filtering */
 

@@ -226,7 +226,7 @@
 
 	[[controller content] setSelectionIndex: 1];
 	[controller insert: nil];
-	id item3 = [[self contentArray] objectAtIndex: 1];
+	id item3 = [[self contentArray] objectAtIndex: 2];
 
 	UKIntsEqual(3, [[self contentArray] count]);
 	UKObjectsNotSame(item, item3);

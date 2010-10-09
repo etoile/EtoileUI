@@ -9,10 +9,12 @@
 #import <EtoileFoundation/Macros.h>
 #import <EtoileFoundation/ETCollection+HOM.h>
 #import <EtoileFoundation/ETUTI.h>
+#import <EtoileFoundation/NSObject+Model.h>
 #import "ETController.h"
 #import "ETLayoutItemBuilder.h"
 #import "ETLayoutItemGroup+Mutation.h"
 #import "ETLayoutItemGroup.h"
+#import "ETPickDropActionHandler.h" /* For ETUndeterminedIndex */
 #import "NSObject+EtoileUI.h"
 #import "ETCompatibility.h"
 
@@ -37,6 +39,8 @@ You can also use it -init to create a controller. See -[ETNibOwner init]. */
 	_allowedDropTypes = [[NSMutableDictionary alloc] init];
 	_editorItems = [[NSMutableSet alloc] init];
 	_automaticallyRearrangesObjects = YES;
+	_clearsFilterPredicateOnInsertion = YES;
+	_selectsInsertedObjects = YES;
 
 	return self;
 }
@@ -379,6 +383,8 @@ the copying support must invoke it instead of -copyWithZone:. */
 	newController->_hasNewSortDescriptors = (NO == [_sortDescriptors isEmpty]);
 	newController->_hasNewFilterPredicate = (nil != _filterPredicate);
 	newController->_hasNewContent = NO;
+	newController->_clearsFilterPredicateOnInsertion = _clearsFilterPredicateOnInsertion;
+	newController->_selectsInsertedObjects = _selectsInsertedObjects;
 
 	 /* When the copy was initially requested by -[ETLayoutItemGroup copyWithZone:], 
        -finishCopy: will be called back when the item copy is done. */
@@ -554,33 +560,31 @@ The returned object is retained. */
 /** Creates a new object by calling -newObject and adds it to the content. */
 - (void) add: (id)sender
 {
-	[[self content] addObject: AUTORELEASE([self newObject])];
+	[self insertObject: AUTORELEASE([self newObject]) atIndex: ETUndeterminedIndex];
 }
 
 /** Creates a new object group by calling -newGroup and adds it to the content. */
 - (void) addNewGroup: (id)sender
 {
-	[[self content] addObject: AUTORELEASE([self newGroup])];
+	[self insertObject: AUTORELEASE([self newGroup]) atIndex: ETUndeterminedIndex];
 }
 
 /** Creates a new object by calling -newGroup and inserts it to the content at 
-	-insertionIndex. */
+-insertionIndex. */
 - (void) insert: (id)sender
 {
-	[[self content] insertObject: AUTORELEASE([self newObject])
-	                     atIndex: [self insertionIndex]];
+	[self insertObject: AUTORELEASE([self newObject]) atIndex: [self insertionIndex]];
 }
 
 /** Creates a new object group by calling -newGroup and inserts it to the 
-	content at -insertionIndex. */
+content at -insertionIndex. */
 - (void) insertNewGroup: (id)sender
 {
-	[[self content] insertObject: AUTORELEASE([self newGroup])
-	                     atIndex: [self insertionIndex]];
+	[self insertObject: AUTORELEASE([self newGroup]) atIndex: [self insertionIndex]];
 }
 
 /** Removes all selected objects in the content. Selected objects are retrieved 
-	by calling -selectedItemsInLayout on the content. */
+by calling -selectedItemsInLayout on the content. */
 - (void) remove: (id)sender
 {
 	NSArray *selectedItems = [[self content] selectedItemsInLayout];
@@ -604,42 +608,155 @@ You can override this method in a subclass, although it should rarely be needed.
 	return [[self content] enclosingItem];
 }
 
-/* Selection */
+/* Insertion */
 
-- (BOOL) setSelectionIndexes: (NSIndexSet *)selection
+/** Returns whether remove, add and insert actions are possible.
+
+By default, returns -isContentMutable value.
+
+This method is invoked by -add:, -addNewGroup:, -insertGroup:, -insert: and 
+-remove:. You must call it in new mutation action methods you implement. For 
+example, if you implement - (IBAction) addNewMailbox: (id)sender, the code 
+should look like:
+
+<example>
+if ([self canMutate])
 {
-	[content setSelectionIndexes: selection];
+	id mailboxItem = [[self templateForType: mailboxUTI] newItemWithURL: nil options: nil];
+	[self insertItem: mailboxItem atIndex: ETUndeterminedIndex];
+}
+</example>
+
+If you want to change the return value of -canMutate based on the type of object 
+you insert, then you can implement a related method. For the example above:
+
+<example>
+- (BOOL) canMutateForMailbox
+{
+	return [self canMutate] && otherCondition;
+}
+
+- (IBAction) addNewMailbox
+{
+	if ([self canMutateForMailbox])
+	{
+		id mailboxItem = [[self templateForType: mailboxUTI] newItemWithURL: nil options: nil];
+...
+</example>
+
+More specialized methods per operation could be implemented. For example:
+<list>
+<item>-insertNewMailbox: would use -canInsertMailbox</item>
+<item>-addNewMailbox: woul use -canAddMailbox</item>
+<item>-removeCurrentMailbox: would use -canRemoveMailbox</item>
+</list>
+Alternatively -insertMailbox: and -addNewMailbox could both use -canInsertMailbox. */
+- (BOOL) canMutate
+{
+	return [self isContentMutable];
+}
+
+/** Returns whether the content item group can be mutated.
+
+When the content represented object is not a mutable collection, returns NO, 
+otherwise returns YES.
+
+You shouldn't use this method but rather -canMutate. */
+- (BOOL) isContentMutable
+{
+	if ([[self content] representedObject] != nil)
+	{
+		return [[[self content] representedObject] isMutableCollection];
+	}
+
+	/* Same as [[self content] isMutableCollection] */
 	return YES;
-}
-
-- (NSMutableIndexSet *) selectionIndexes
-{
-	return [content selectionIndexes];
-}
-	
-- (BOOL) setSelectionIndex: (unsigned int)index
-{
-	[content setSelectionIndex: index];
-	return YES;
-}
-
-- (unsigned int) selectionIndex
-{
-	return [content selectionIndex];
 }
 
 /** Returns the position in the content, at which -insert: and -insertGroup: 
-	will insert the object they create. The returned value is the last 
-	selection index in the content. */
+will insert the object they create.<br />
+The returned value is the last selection index + 1 in the content, or the 
+content count (no selection).
+
+No selection means that -selectionIndexes on the content returns an empty set.
+
+This method can be overriden to return a custom index. */
 - (unsigned int) insertionIndex
 {
 	unsigned int index = [[[self content] selectionIndexes] lastIndex];
 
 	/* No selection or no items */
-	if (index == NSNotFound)
-		index = [[self content] numberOfItems];
+	return (index != NSNotFound ? index + 1 : [[self content] numberOfItems]);
+}
 
-	return index;
+/** Removes the filtering if -clearsFilterPredicateOnInsertion is YES, inserts 
+the item at the given index and selects the inserted item if 
+-selectsInsertedObjects is YES. 
+
+You must use this method to mutate the content in new or overriden insertion 
+action methods (e.g. -add: or -insertNewGroup:).
+
+Although the inserted object is usually an ETLayoutItem or ETLayoutItemGroup 
+instance, you can pass an arbitrary object, it will get automatically boxed into 
+a layout item based on the receiver template.
+
+You can pass ETUndeterminedIndex to trigger -[ETLayoutItemGroup addObject:] on 
+the content rather than -[ETLayoutItemGroup insertObject:atIndex:].  */
+- (void) insertObject: (id)anItem atIndex: (NSUInteger)anIndex
+{
+	if ([self clearsFilterPredicateOnInsertion])
+	{
+		[self setFilterPredicate: nil];
+	}
+
+	if (ETUndeterminedIndex == anIndex)
+	{
+		[[self content] addObject: anItem];
+	}
+	else
+	{
+		[[self content] insertObject: anItem atIndex: anIndex];
+	}
+
+	if ([self selectsInsertedObjects])
+	{
+		NSUInteger selectionIndex = anIndex;
+		if (ETUndeterminedIndex == selectionIndex)
+		{
+			selectionIndex = [[self content] indexOfItem: anItem];
+		}
+		[[self content] setSelectionIndex: selectionIndex];
+	}
+}
+
+/** Returns whether the filter predicate should be discarded when a new 
+item is inserted.
+
+By default, return YES. */
+- (BOOL) clearsFilterPredicateOnInsertion
+{
+	return _clearsFilterPredicateOnInsertion;
+}
+
+/** Sets whether the filter predicate should be discarded when a new 
+item is inserted. */
+- (void) setClearsFilterPredicateOnInsertion: (BOOL)clear
+{
+	_clearsFilterPredicateOnInsertion = YES;
+}
+
+/** Returns whether new items should be selected on insertion.
+
+By default, returns YES. */
+- (BOOL) selectsInsertedObjects
+{
+	return _selectsInsertedObjects;
+}
+
+/** Sets whether new items should be selected on insertion. */
+- (void) setSelectsInsertedObjects: (BOOL)select
+{
+	_selectsInsertedObjects = select;
 }
 
 /** Returns the sort descriptors used to sort the content associated with the 
