@@ -76,10 +76,10 @@ Border and item margins are included in the sum. */
 
 /** Runs the layout computation which assigns a location in the layout context
 to the items, which are expected to be already broken into lines in layoutModel. */
-- (void) computeLocationsForFragments: (NSArray *)layoutModel
+- (NSSize) computeLocationsForFragments: (NSArray *)layoutModel
 {
 	if ([layoutModel count] == 0)
-		return;
+		return NSZeroSize;
 
 	BOOL isFlipped = [[self layoutContext] isFlipped];
 	float itemMargin = [self itemMargin];
@@ -109,12 +109,15 @@ to the items, which are expected to be already broken into lines in layoutModel.
 		ETDebugLog(@"Item locations computed at line :%@", line);
 	}
 
+	NSSize layoutSize = [self layoutSize];
+
 	/* Increase height of the content size. Used to adjust the document view 
 	   size in scroll view */
-	if (contentHeight > [self layoutSize].height)
+	if (contentHeight > layoutSize.height)
 	{
-		[self setLayoutSize: NSMakeSize([self layoutSize].width, contentHeight)];
+		layoutSize = NSMakeSize([self layoutSize].width, contentHeight);
 	}
+	return layoutSize;
 }
 
 /** Breaks the items into lines and returns the resulting line array. */
