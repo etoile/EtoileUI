@@ -10,7 +10,7 @@
 #import <EtoileFoundation/ETCollection+HOM.h>
 #import <EtoileFoundation/ETUTI.h>
 #import <EtoileFoundation/NSObject+Model.h>
-#import "ETDocumentController.h"
+#import "ETItemTemplate.h"
 #import "ETLayoutItem.h"
 #import "ETLayoutItemGroup.h"
 #import "NSObject+EtoileUI.h"
@@ -19,13 +19,21 @@
 
 @implementation ETItemTemplate
 
-- (id) templateWithItem: (ETLayoutItem *)anItem objectClass: (Class)aClass
+/** Returns a new autoreleased template based on the given item and 
+represented object class. */
++ (id) templateWithItem: (ETLayoutItem *)anItem objectClass: (Class)aClass
 {
-	return AUTORELEASE([[self class] initWithItem: anItem objectClass: aClass]);
+	return AUTORELEASE([[self alloc] initWithItem: anItem objectClass: aClass]);
 }
 
+/** <init />
+Initializes and returns a new template based on the given item and 
+represented object class.
+
+Raises an NSInvalidArgumentException if the item is nil. */
 - (id) initWithItem: (ETLayoutItem *)anItem objectClass: (Class)aClass
 {
+	NILARG_EXCEPTION_TEST(anItem);
 	SUPERINIT;
 	ASSIGN(_item, anItem);
 	ASSIGN(_objectClass, aClass);
@@ -67,8 +75,17 @@ All arguments can be nil.
 Can be overriden in subclasses. */
 - (ETLayoutItem *) newItemWithRepresentedObject: (id)anObject options: (NSDictionary *)options
 {
-	ETLayoutItem *newItem = [[self item] copy];
-	[newItem setRepresentedObject: anObject];
+	ETLayoutItem *newItem = [[self item] deepCopy];
+
+	/* We don't set the object as model when it is nil, so any existing value 
+	   or represented object already provided with the item won't be overwritten 
+	   in such case. 
+	   Value and represented object are copied when -deepCopy is called on the 
+	   template items in -[ETItemTemplate newItemWithRepresentedObject:options]. */
+	if (nil != anObject)
+	{
+		[newItem setRepresentedObject: anObject];
+	}
 	return newItem;
 }
 
@@ -85,14 +102,8 @@ All arguments can be nil.
 Can be overriden in subclasses.
 
 See also -newItemWithRepresentedObject:options:. */
-- (id) newItemWithURL: (NSURL *)aURL options: (NSDictionary *)options
+- (ETLayoutItem *) newItemWithURL: (NSURL *)aURL options: (NSDictionary *)options
 {
-	if (Nil == [self objectClass])
-	{
-		[NSException raise: NSInvalidArgumentException 
-		            format: @"-objectClass must not return Nil"];
-	}
-
 	id newInstance = [[self objectClass] alloc];
 
 	if ([newInstance conformsToProtocol: @protocol(ETDocumentCreation)])
@@ -104,7 +115,7 @@ See also -newItemWithRepresentedObject:options:. */
 		[newInstance init];
 	}
 
-	return [self newItemWithRepresentedObject: AUTORELEASE(newInstance)];
+	return [self newItemWithRepresentedObject: AUTORELEASE(newInstance) options: nil];
 }
 
 /** <override-dummy />
@@ -117,16 +128,6 @@ Can be overriden in a subclass to implement a web browser for example. */
 - (BOOL) allowsMultipleInstancesForURL: (NSURL *)aURL
 {
 	return NO;
-}
-
-/** Returns the UTI that describes the content at the given URL.
-
-Will call -[ETUTI typeWithPath:] to determine the type, can be overriden to 
-implement a tailored behavior. */
-- (ETUTI *) typeForURL: (NSURL *)aURL
-{
-	// TODO: If UTI is nil, set error.
-	return [ETUTI typeWithPath: [aURL path]];
 }
 
 @end

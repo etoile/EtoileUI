@@ -39,6 +39,7 @@ EtoileUI_HEADER_FILES = \
 	ETComputedLayout.h \
 	ETController.h \
 	ETDecoratorItem.h \
+	ETDocumentController.h \
 	ETEvent.h \
 	ETFixedLayout.h \
 	ETFlowLayout.h \
@@ -47,6 +48,7 @@ EtoileUI_HEADER_FILES = \
 	ETGeometry.h \
 	ETInspecting.h \
 	ETInspector.h \
+	ETItemTemplate.h \
 	ETLayer.h \
 	ETLayout.h \
 	ETLayoutItemBuilder.h \

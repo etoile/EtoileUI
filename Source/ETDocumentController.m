@@ -63,72 +63,24 @@ to open multiple instances of the same document (e.g. a web browser). */
 	return nil;
 }
 
-/** Returns the type of the object to be instantiated on -add:, -insert: and 
--newDocument:.
+/** Returns a retained ETLayoutItem or ETLayoutItemGroup object that presents the 
+content at the given URL.
 
-By default, returns the UTI of the object class.<br />
-See -objectClass and -setObjectClass:.
+This method doesn't create the returned item but delegates that to 
+-newItemWithURL:ofType:options:.
 
-Can be overriden to return a custom type based on a use case or a user setting. */
-- (ETUTI *) defaultType
-{
-	return [ETUTI typeWithClass: [self objectClass]];
-}
+This method is used by -openDocument: action to generate the object to be 
+inserted into the content of the controller.<br />
+You must use this method in any 'open' action methods to open a content unit 
+and mutate the controller content.
 
-/** By default, returns the class that corresponds to the given UTI. 
+See -allowsMultipleInstancesForURL: to enable repopening a content unit already 
+opened.
 
-If the UTI doesn't describe an ObjC class, returns Nil.  */
-- (Class) objectClassForType: (ETUTI *)aUTI
-{
-	return [aUTI classValue];
-}
+The returned object is retained.
 
-- (Class) validatedClass: (Class)objectClass forType: (ETUTI *)aUTI
-{
-	if (Nil == objectClass)
-	{
-		[NSException raise: NSInvalidArgumentException 
-		            format: @"-objectClassForType: returns no valid object class for the type %@", aUTI];
-	}
-	return objectClass;
-}
-
-/**
-
-All arguments can be nil. */
-- (id) newInstanceWithURL: (NSURL *)aURL ofType: (ETUTI *)aUTI options: (NSDictionary *)options
-{
-	Class objectClass = [self validatedClass: [self objectClassForType: aUTI] forType: aUTI];
-	id newInstance = [objectClass alloc];
-
-	if ([newInstance conformsToProtocol: @protocol(ETDocumentCreation)])
-	{ 
-		[newInstance initWithURL: aURL options: options];
-	}
-	else
-	{
-		[newInstance init];
-	}
-
-	if ([newInstance isCollection])
-	{
-		newInstance = [self newItemGroupWithRepresentedObject: AUTORELEASE(newInstance)];
-	}
-	else
-	{
-		newInstance = [self newItemWithRepresentedObject: AUTORELEASE(newInstance)];
-	}
-	ETAssert(nil != newInstance);
-
-	return newInstance;
-}
-
-/** 
-
-Raises a NSInvalidArgumentException if the given URL is nil, and a 
-NSInternalInconsistencyException the object class for the given type doesn't 
-conform to [ETDocumentCreation] protocol. */
-- (id) openInstanceWithURL: (NSURL *)aURL options: (NSDictionary *)options
+Raises a NSInvalidArgumentException if the given URL is nil. */
+- (id) openItemWithURL: (NSURL *)aURL options: (NSDictionary *)options
 {
 	NILARG_EXCEPTION_TEST(aURL); 
 
@@ -139,65 +91,47 @@ conform to [ETDocumentCreation] protocol. */
 			return [[self itemsForURL: aURL] firstObject];
 	}
 
-	ETUTI *uti = [self typeForURL: aURL];
-	ETAssert(nil != uti);
-	Class objectClass = [self validatedClass: [self objectClassForType: uti] forType: uti];
-	id newInstance = nil;
-
-	if ([objectClass conformsToProtocol: @protocol(ETDocumentCreation)])
-	{ 
-		newInstance = [[objectClass alloc] initWithURL: aURL options: options];
-	}
-	else
-	{
-		[NSException raise: NSInternalInconsistencyException
-		            format: @"For type %@, -objectClassForType: returned %@ that "
-		                    "does not conform to ETDocumentCreation protocol",
-		                    uti, objectClass];
-	}
-
-	if ([newInstance isCollection])
-	{
-		newInstance = [self newItemGroupWithRepresentedObject: AUTORELEASE(newInstance)];
-	}
-	else
-	{
-		newInstance = [self newItemWithRepresentedObject: AUTORELEASE(newInstance)];
-	}
-	ETAssert(nil != newInstance);
-
-	return newInstance;
+	return [self newItemWithURL: aURL 
+	                     ofType: [[self class] typeForURL: aURL] 
+	                    options: options];
 }
 
-/** <override-dummy />
-Returns whether the same document can appear multiple times on screen for 
+/** Returns whether the same document can appear multiple times on screen for 
 the given URL. 
 
-By default, returns NO.
+By default, tries to find a template that matches the content type at the given 
+URL and delegates -allowsMultipleInstancesForURL: to it. If no template can be 
+found, returns NO.
 
-Can be overriden in a subclass to implement a web browser for example. */
+You should usually override -[ETItemTemplate allowsMultipleInstancesForURL:] 
+and not this method. */
 - (BOOL) allowsMultipleInstancesForURL: (NSURL *)aURL
 {
+	ETItemTemplate *template = [self templateForType: [[self class] typeForURL: aURL]];
+
+	if (nil != template)
+		return [template allowsMultipleInstancesForURL: aURL];
+
 	return NO;
 }
 
 /** <override-dummy />
 Returns the content types the application can read or write.
 
-By default, returns an array that contains only a default type.
+By default, returns an array that contains only the current object type.
 
 Can be overriden to return multiple types if the application can view or edit 
 more than a single content type. */
 - (NSArray *) supportedTypes
 {
-	return A([self defaultType]);
+	return A([self currentObjectType]);
 }
 
 /** Returns the UTI that describes the content at the given URL.
 
 Will call -[ETUTI typeWithPath:] to determine the type, can be overriden to 
 implement a tailored behavior. */
-- (ETUTI *) typeForURL: (NSURL *)aURL
++ (ETUTI *) typeForURL: (NSURL *)aURL
 {
 	// TODO: If UTI is nil, set error.
 	return [ETUTI typeWithPath: [aURL path]];
@@ -221,12 +155,15 @@ implement a tailored behavior. */
 
 /* Actions */
 
-/** Creates a new object of the default type and adds it to the receiver content.
+/** Creates a new object of the current object type and adds it to the receiver 
+content.
 
-Will call -newInstanceWithURL:ofType:options: to create the new document. */
+Will call -newInstanceWithURL:ofType:options: to create the new document.
+
+See also -currentObjectType. */
 - (IBAction) newDocument: (id)sender
 {
-	[self newInstanceWithURL: nil ofType: [self defaultType] options: [NSDictionary dictionary]];
+	[self newItemWithURL: nil ofType: [self currentObjectType] options: [NSDictionary dictionary]];
 }
 
 /** Creates one or more objects with the URLs the user has choosen in an open 
@@ -243,11 +180,11 @@ See also [ETDocumentCreation] protocol. */
 
 	if (nil != openedItem)
 	{
-		[self setSelectionIndex: [[self content] indexOfItem: openedItem]];
+		[[self content] setSelectionIndex: [[self content] indexOfItem: openedItem]];
 		return;
 	}
 
-	[self openInstanceWithURL: url options: options];
+	[self openItemWithURL: url options: options];
 }
 
 @end

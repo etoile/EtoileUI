@@ -73,8 +73,6 @@
 
 /* Controller Coordination */
 
-- (id) newItem;
-- (id) newItemGroup;
 - (id) itemWithObject: (id)object isValue: (BOOL)isValue;
 
 @end

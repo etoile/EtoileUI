@@ -13,7 +13,19 @@
 #import <AppKit/AppKit.h>
 #import <EtoileUI/ETNibOwner.h>
 
-@class ETLayoutItem, ETLayoutItemBuilder, ETLayoutItemGroup, ETUTI;
+@class ETItemTemplate, ETLayoutItem, ETLayoutItemBuilder, ETLayoutItemGroup, ETUTI;
+
+/** This protocol is only exposed to be used internally by EtoileUI.
+
+See +[ETController basicTemplateProvider]. */
+@protocol ETTemplateProvider <NSObject>
+/** See -[ETController templateForType:]. */
+- (ETItemTemplate *) templateForType: (ETUTI *)aUTI;
+/** See -[ETController currentObjectType:]. */
+- (ETUTI *) currentObjectType;
+/** See -[ETController currentGroupType:]. */
+- (ETUTI *) currentGroupType;
+@end
 
 // TODO: Think about the selection marker stuff and implement it if it makes senses.
 
@@ -57,16 +69,13 @@ layout item instead of using the one declared in the controller bound to the con
 
 ETController directly sorts object of the content and doesn't maintain arranged 
 objects as a collection distinct from the content. */
-@interface ETController : ETNibOwner <NSCopying>
+@interface ETController : ETNibOwner <NSCopying, ETTemplateProvider>
 {
 	@private
 	NSMutableSet *_observations;
 	IBOutlet ETLayoutItemGroup *content;
  	IBOutlet id nibMainContent;
-	ETLayoutItem *_templateItem;
-	ETLayoutItemGroup *_templateItemGroup;
-	Class _objectClass;
-	Class _groupClass;
+	NSMutableDictionary *_templates;
 	NSArray *_sortDescriptors;
 	NSPredicate *_filterPredicate;
 	NSArray *_allowedPickTypes;
@@ -106,19 +115,13 @@ objects as a collection distinct from the content. */
                 content: (ETLayoutItemGroup *)newContent;
 /* Templates */
 
-- (ETLayoutItem *) templateItem;
-- (void) setTemplateItem: (ETLayoutItem *)template;
-- (ETLayoutItemGroup *) templateItemGroup;
-- (void) setTemplateItemGroup: (ETLayoutItemGroup *)template;
-- (Class) objectClass;
-- (void) setObjectClass: (Class)modelClass;
-- (Class) groupClass;
-- (void) setGroupClass: (Class)modelClass;
+- (ETItemTemplate *) templateForType: (ETUTI *)aUTI;
+- (void) setTemplate: (ETItemTemplate *)aTemplate forType: (ETUTI *)aUTI;
+- (ETUTI *) currentObjectType;
+- (ETUTI *) currentGroupType;
 
 /* Actions */
 
-- (id) newObject;
-- (id) newGroup;
 - (void) add: (id)sender;
 - (void) addNewGroup: (id)sender;
 - (void) insert: (id)sender;
@@ -129,6 +132,9 @@ objects as a collection distinct from the content. */
 
 /* Insertion */
 
+- (ETLayoutItem *) newItemWithURL: (NSURL *)aURL 
+                           ofType: (ETUTI *)aUTI 
+                          options: (NSDictionary *)options;
 - (BOOL) canMutate;
 - (BOOL) isContentMutable;
 - (unsigned int) insertionIndex;
@@ -163,5 +169,11 @@ objects as a collection distinct from the content. */
 - (void) objectDidBeginEditing: (ETLayoutItem *)anItem;
 - (void) objectDidEndEditing: (ETLayoutItem *)anItem;
 
+/* Framework Private */
+
++ (id <ETTemplateProvider>) basicTemplateProvider;
+
 @end
 
+extern ETUTI * kETTemplateObjectType;
+extern ETUTI * kETTemplateGroupType;

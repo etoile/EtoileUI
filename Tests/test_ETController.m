@@ -12,6 +12,7 @@
 #import <EtoileFoundation/Macros.h>
 #import "ETController.h"
 #import "EtoileUIProperties.h"
+#import "ETItemTemplate.h"
 #import "ETLayoutItem.h"
 #import "ETLayoutItemGroup.h"
 #import "ETLayoutItemGroup+Mutation.h"
@@ -32,11 +33,43 @@
 @implementation ETController (Test)
 - (id) makeObject
 {
-	return AUTORELEASE([self newObject]);
+	return AUTORELEASE([[[self templateForType: kETTemplateObjectType] objectClass] new]);
 }
 - (id) makeGroup
 {
-	return AUTORELEASE([self newGroup]);
+	return AUTORELEASE([[[self templateForType: kETTemplateGroupType] objectClass] new]);
+}
+- (id) makeItem
+{
+	return AUTORELEASE([self newItemWithURL: nil ofType: kETTemplateObjectType options: nil]);
+}
+- (id) makeItemGroup
+{
+	return AUTORELEASE([self newItemWithURL: nil ofType: kETTemplateGroupType options: nil]);
+}
+- (void) setObjectClass: (Class)aClass
+{
+	id oldTemplate = [self templateForType: kETTemplateObjectType];
+	id newTemplate = [ETItemTemplate templateWithItem: [oldTemplate item] objectClass: aClass];
+	[self setTemplate: newTemplate forType: kETTemplateObjectType];
+}
+- (void) setGroupClass: (Class)aClass
+{
+	id oldTemplate = [self templateForType: kETTemplateGroupType];
+	id newTemplate = [ETItemTemplate templateWithItem: [oldTemplate item] objectClass: aClass];
+	[self setTemplate: newTemplate forType: kETTemplateGroupType];
+}
+- (void) setTemplateItem: (ETLayoutItem *)anItem
+{
+	id oldTemplate = [self templateForType: kETTemplateObjectType];
+	id newTemplate = [ETItemTemplate templateWithItem: anItem objectClass: [oldTemplate objectClass]];
+	[self setTemplate: newTemplate forType: kETTemplateObjectType];
+}
+- (void) setTemplateItemGroup: (ETLayoutItemGroup *)anItem
+{
+	id oldTemplate = [self templateForType: kETTemplateGroupType];
+	id newTemplate = [ETItemTemplate templateWithItem: anItem objectClass: [oldTemplate objectClass]];
+	[self setTemplate: newTemplate forType: kETTemplateGroupType];
 }
 @end
 
@@ -94,49 +127,45 @@
 	id newObject2 = [controller makeObject];
 
 	UKObjectKindOf(newObject, NSDate);
-	UKObjectsNotSame(newObject2, newObject);
-	// newObject2 not created by sending -copy but -alloc and -init, thereby
-	// returns two different dates in time.
+	// newObject2 is created with -alloc and -init, thereby returns two different dates in time.
 	UKObjectsNotEqual(newObject2, newObject); 
-
-	UKNil([controller templateItem]);
 
 	/* Test item template */
 
 	id view = AUTORELEASE([DummyView new]);
-	id templateItem = [[ETLayoutItemFactory factory] itemWithView: view];
+	id templateItem = [itemFactory itemWithView: view];
 	[controller setTemplateItem: templateItem];
-	newObject = [controller makeObject];
-	newObject2 = [controller makeObject];
+	id newItem = [controller makeItem]; 
+	id newItem2 = [controller makeItem];
 
-	UKObjectKindOf(newObject, ETLayoutItem);
-	UKObjectsNotEqual(templateItem, newObject);
-	UKObjectKindOf([newObject view], DummyView);
-	UKObjectsNotEqual(view, [newObject view]);
-	UKObjectsNotEqual(newObject2, newObject);
-	UKObjectsNotEqual([newObject2 view], [newObject view]);
+	UKObjectKindOf(newItem, ETLayoutItem);
+	UKObjectsNotEqual(templateItem, newItem);
+	UKObjectKindOf([newItem view], DummyView);
+	UKObjectsNotEqual(view, [newItem view]);
+	UKObjectsNotEqual(newItem2, newItem);
+	UKObjectsNotEqual([newItem2 view], [newItem view]);
 
 	/* Test with object class */
-	UKObjectKindOf([newObject representedObject], NSDate);
-	// newObject2 not created by sending -copy but -alloc and -init
-	UKObjectsNotSame([newObject2 representedObject], [newObject representedObject]);
-	UKObjectsNotEqual([newObject2 representedObject], [newObject representedObject]);
+
+	UKObjectKindOf([newItem representedObject], NSDate);
+	// newObject2 is created with -alloc and -init and not -copy
+	UKObjectsNotEqual([newItem2 representedObject], [newItem representedObject]);
 
 	/* Test without object class */
-	[controller setObjectClass: nil];
-	newObject = [controller makeObject];
-	newObject2 = [controller makeObject];
-	UKNil([newObject representedObject]);
-	UKNil([newObject2 representedObject]);
 
-	/* Test with object prototype (-objectClass must be nil) */
-	[[controller templateItem] setRepresentedObject: [NSIndexSet indexSetWithIndex: 5]];
-	// FIXME: represented object is nil, we need to ensure -deepCopy called
-	// by -newItem behaves correctly.
-	//UKObjectKindOf([newObject representedObject], NSIndexSet);
-	//UKObjectsNotSame([newObject2 representedObject], [newObject representedObject]);
-	// newObject2 created by sending -copy
-	//UKObjectsEqual([newObject2 representedObject], [newObject representedObject]);
+	[controller setObjectClass: nil];
+	newItem = [controller makeItem];
+	newItem2 = [controller makeItem];
+	UKNil([newItem representedObject]);
+	UKNil([newItem2 representedObject]);
+
+	/* Test with object prototype */
+
+	// TODO: Tweak ETItemTemplate and update the code below.
+	//[[controller templateItem] setRepresentedObject: [NSIndexSet indexSetWithIndex: 5]];
+	//UKObjectKindOf([newItem representedObject], NSIndexSet);
+	//UKObjectsNotSame([newItem2 representedObject], [newItem representedObject]);
+	//UKObjectsEqual([newItem2 representedObject], [newItem representedObject]);
 }
 
 - (void) testNewGroup
@@ -149,45 +178,44 @@
 	id newGroup2 = [controller makeGroup];
 
 	UKObjectKindOf(newGroup, NSMutableArray);
-	// newGroup2 not created by sending -copy but -alloc and -init
+	// newGroup2 is created with -alloc and -init and not -copy
 	UKObjectsNotSame(newGroup2, newGroup);
-
-	UKNil([controller templateItem]);
 
 	/* Test item template */
 
 	id view = AUTORELEASE([DummyView new]);
 	id templateItem = AUTORELEASE([[ETLayoutItemGroup alloc] initWithView: view value: nil representedObject: nil]);
 	[controller setTemplateItemGroup: templateItem];
-	newGroup = [controller makeGroup];
-	newGroup2 = [controller makeGroup];
+	id newItemGroup = [controller makeItemGroup];
+	id newItemGroup2 = [controller makeItemGroup];
 
-	UKObjectKindOf(newGroup, ETLayoutItemGroup);
-	UKObjectsNotEqual(templateItem, newGroup);
-	UKObjectKindOf([newGroup view], DummyView);
-	UKObjectsNotEqual(view, [newGroup view]);
-	UKObjectsNotEqual(newGroup2, newGroup);
-	UKObjectsNotEqual([newGroup2 view], [newGroup view]);
+	UKObjectKindOf(newItemGroup, ETLayoutItemGroup);
+	UKObjectsNotEqual(templateItem, newItemGroup);
+	UKObjectKindOf([newItemGroup view], DummyView);
+	UKObjectsNotEqual(view, [newItemGroup view]);
+	UKObjectsNotEqual(newItemGroup2, newItemGroup);
+	UKObjectsNotEqual([newItemGroup2 view], [newItemGroup view]);
 
 	/* Test with object class */
-	UKObjectKindOf([newGroup representedObject], NSMutableArray);
+
+	UKObjectKindOf([newItemGroup representedObject], NSMutableArray);
 	// newGroup2 not created by sending -copy but -alloc and -init
-	UKObjectsNotSame([newGroup2 representedObject], [newGroup representedObject]);
+	UKObjectsNotSame([newItemGroup2 representedObject], [newItemGroup representedObject]);
 
 	/* Test without object class */
-	[controller setGroupClass: nil];
-	newGroup = [controller makeGroup];
-	newGroup2 = [controller makeGroup];
-	UKNil([newGroup representedObject]);
-	UKNil([newGroup2 representedObject]);
 
-	/* Test with object prototype (-groupClass must be nil) */
-	[[controller templateItemGroup] setRepresentedObject: [NSIndexSet indexSetWithIndex: 5]];
-	// FIXME: represented object is nil, we need to ensure -deepCopy called
-	// by -newItemGroup behaves correctly.
-	//UKObjectKindOf([newGroup representedObject], NSIndexSet);
-	//UKObjectsNotSame([newGroup2 representedObject], [newGroup representedObject]);
-	// newGroup2 created by sending -copy
+	[controller setGroupClass: nil];
+	newItemGroup = [controller makeItemGroup];
+	newItemGroup2 = [controller makeItemGroup];
+	UKNil([newItemGroup representedObject]);
+	UKNil([newItemGroup2 representedObject]);
+
+	/* Test with object prototype */
+
+	// TODO: Tweak ETItemTemplate and update the code below.
+	//[[controller templateItemGroup] setRepresentedObject: [NSIndexSet indexSetWithIndex: 5]];
+	//UKObjectKindOf([newItemGroup representedObject], NSIndexSet);
+	//UKObjectsNotSame([newItemGroup2 representedObject], [newItemGroup representedObject]);
 	//UKObjectsEqual([newGroup2 representedObject], [newGroup representedObject]);
 }
 
@@ -197,10 +225,15 @@
 	[controller add: nil];
 	id item = [[self contentArray] lastObject];
 
+	/* Right Item and Represented Object */
+
 	UKIntsEqual(1, [[self contentArray] count]);
 	UKObjectKindOf(item, ETLayoutItem);
 	UKObjectKindOf([item representedObject], NSDate);
 
+	/* Custom Selection (last place insert)  */
+
+	[content setSelectionIndex: 0];
 	[controller add: nil];
 	id item2 = [[self contentArray] lastObject];
 
@@ -214,9 +247,13 @@
 	[controller insert: nil];
 	id item = [[self contentArray] lastObject];
 
+	/* Right Item and Represented Object */
+
 	UKIntsEqual(1, [[self contentArray] count]);
 	UKObjectKindOf(item, ETLayoutItem);
 	UKObjectKindOf([item representedObject], NSDate);
+
+	/* Default Selection (last place insert) */
 
 	[controller insert: nil];
 	id item2 = [[self contentArray] lastObject];
@@ -224,7 +261,9 @@
 	UKIntsEqual(2, [[self contentArray] count]);
 	UKObjectsNotSame(item, item2);
 
-	[[controller content] setSelectionIndex: 1];
+	/* Custom Selection */
+
+	[content setSelectionIndex: 1];
 	[controller insert: nil];
 	id item3 = [[self contentArray] objectAtIndex: 2];
 
@@ -238,28 +277,35 @@
 	[controller setObjectClass: [NSDate class]];
 	[controller add: nil];
 	[controller add: nil];
-	id item2 = [[self contentArray] lastObject];
+	id item = [[self contentArray] lastObject];
 
-	[controller remove: nil];
-	UKIntsEqual(2, [[self contentArray] count]);
+	/* Default Selection (aka selects last inserted object) */
 
-	[[controller content] setSelectionIndex: 1];
 	[controller remove: nil];
 	UKIntsEqual(1, [[self contentArray] count]);
-	UKFalse([[controller content] containsItem: item2]);
+	UKObjectsNotEqual(item, [[self contentArray] lastObject]);
+
+	/* No Selection */
+
+	[content setSelectionIndex: 1];
+	[controller remove: nil];
+	UKIntsEqual(1, [[self contentArray] count]);
+
+	/* Valid Single Selection */
 
 	[controller add: nil];
-	item2 = [[self contentArray] objectAtIndex: 1];
 	[controller add: nil];
+	item = [[self contentArray] objectAtIndex: 1];
 
-	[[controller content] setSelectionIndex: 1];
+	[content setSelectionIndex: 1];
 	[controller remove: nil];
 	UKIntsEqual(2, [[self contentArray] count]);
-	UKFalse([[controller content] containsItem: item2]);
-	UKObjectsNotSame(item2, [[self contentArray] firstObject]);
-	UKObjectsNotSame(item2, [[self contentArray] lastObject]);
+	UKObjectsNotEqual(item, [[self contentArray] firstObject]);
+	UKObjectsNotEqual(item, [[self contentArray] lastObject]);
 
-	[[controller content] setSelectionIndexes: [NSIndexSet indexSetWithIndexesInRange: NSMakeRange(0, 2)]];
+	/* Valid Multiple Selection (batch removal) */
+
+	[content setSelectionIndexes: [NSIndexSet indexSetWithIndexesInRange: NSMakeRange(0, 2)]];
 	[controller remove: nil];
 	UKTrue([[self contentArray] isEmpty]);
 }

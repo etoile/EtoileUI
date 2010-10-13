@@ -10,6 +10,7 @@
 #import <EtoileFoundation/NSObject+Model.h>
 #import <EtoileFoundation/Macros.h>
 #import "ETLayoutItemGroup+Mutation.h"
+#import "ETItemTemplate.h"
 #import "ETController.h"
 #import "ETEvent.h"
 #import "EtoileUIProperties.h"
@@ -654,101 +655,47 @@ collection part of protocol like -numberOfItemsInItemGroup:. */
 
 /* Controller Coordination */
 
-/** Creates a new ETLayoutItem object based on a template if possible. 
- 
-A template can be provided by a controller whose content is set to ancestor item 
-of the receiver. If such a template can be found, then the returned item is 
-created by cloning it, otherwise by simply instantiating ETLayoutItem. See also  
--[ETController setTemplateItem:].
-
-The returned object is retained. */
-- (id) newItem
+- (id <ETTemplateProvider>) lookUpTemplateProvider
 {
-	id item = nil;
-	
-	if ([self valueForProperty: kETControllerProperty] != nil)
-	{
-		item = [[self valueForProperty: kETControllerProperty] templateItem];
-	}
-	else
-	{
-		item = [[[self baseItem] valueForProperty: kETControllerProperty] templateItem];
-	}
-	
-	if (item != nil)
-	{
-		item = [item deepCopy];
-	}
-	else
-	{
-		item = [[ETLayoutItem alloc] init];
-	}
-	
-	return item;
-}
+	id <ETTemplateProvider> provider = [self controller];
 
-/** Creates a new ETLayoutItemGroup object based on a template if possible. 
- 
-A template can be provided by a controller whose content is set to ancestor item 
-of the receiver. If such a template can be found, then the returned item is 
-created by cloning it, otherwise by simply instantiating ETLayoutItem. See also 
--[ETController setTemplateItemGroup:].
-
-The returned object is retained. */
-- (id) newItemGroup
-{
-	id item = nil;
-
-	if ([self valueForProperty: kETControllerProperty] != nil)
+	if (nil == provider)
 	{
-		item = [[self valueForProperty: kETControllerProperty] templateItemGroup];
+		provider = [[self baseItem] controller];
 	}
-	else
+	if (nil == provider)
 	{
-		item = [[[self baseItem] valueForProperty: kETControllerProperty] templateItemGroup];
+		provider = [ETController basicTemplateProvider];
 	}
-	
-	if (item != nil)
-	{
-		item = [item deepCopy];
-	}
-	else
-	{
-		item = [[ETLayoutItemGroup alloc] init];
-	}
-	
-	return item;
+	return provider;
 }
 
 /** Creates a new ETLayoutItem or ETLayoutItemGroup object based on whether 
-object return NO or YES to -isCollection and by calling then either -newItem 
-or -newItemGroup. If isValue is equal to YES, object is bound to the item by 
-calling -setValue: rather than -setRepresentedObject:.
+object return NO or YES to -isCollection. 
+If isValue is equal to YES, the given object is set as the value rather than a 
+represented object on the item. See -[ETLayoutItem setValue:].
+
+We delegate the item creation to the right template looked up in the receiver 
+controller or the base item controller (no receiver controller). As a last 
+resort (no base item controller), we use +[ETController basicTemplateProvider].
+See -[ETItemTemplate newItemWithRepresentedObject:options:].
 
 The returned object is autoreleased. */
 - (id) itemWithObject: (id)object isValue: (BOOL)isValue
 {
-	id item = [object isCollection] ? [self newItemGroup] : [self newItem];
-	
-	/* We don't set the object as model when it is nil, so any existing value 
-	 or represented object already provided with the item template won't be 
-	 overwritten in such case. 
-	 Value and represented object are copied when -deepCopy is called on the 
-	 template items in -newItem and -newItemGroup. */
-	if (object != nil)
+	id <ETTemplateProvider> provider = [self lookUpTemplateProvider];
+	ETUTI *type = ([object isCollection] ? [provider currentGroupType] : [provider currentObjectType]);
+	ETItemTemplate *template = [provider templateForType: type];
+	ETLayoutItem *item = [template newItemWithRepresentedObject: object options: nil];
+
+	// TODO: Move that in ETItemTemplate with a kETTemplateOptionIsValue in the options dict.
+ 	/* If the object is a simple value object rather than a true model object
+	   we don't set it as represented object but as a value. */
+	if (nil != object && isValue)
 	{
-		/* If the object is a simple value object rather than a true model object
-		 we don't set it as represented object but as a value. */
-		if (isValue)
-		{
-			[item setValue: object];
-		}
-		else
-		{
-			[item  setRepresentedObject: object];
-		}
+		[item setValue: object];
 	}
-	
+
 	return AUTORELEASE(item);
 }
 

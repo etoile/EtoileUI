@@ -11,6 +11,7 @@
 #import <EtoileFoundation/ETUTI.h>
 #import <EtoileFoundation/NSObject+Model.h>
 #import "ETController.h"
+#import "ETItemTemplate.h"
 #import "ETLayoutItemBuilder.h"
 #import "ETLayoutItemGroup+Mutation.h"
 #import "ETLayoutItemGroup.h"
@@ -21,10 +22,29 @@
 
 @implementation ETController
 
+static ETController *basicTemplateProvider = nil;
+
++ (void) initialize
+{
+	if ([ETController class] == self) 
+	{
+		kETTemplateObjectType = [ETUTI registerTypeWithString: @"org.etoile-project.etoileui.template-object"
+		                                          description: @"EtoileUI Template Object Type (see ETController)"
+		                                     supertypeStrings: [NSArray array]];
+		kETTemplateGroupType = [ETUTI registerTypeWithString: @"org.etoile-project.etoileui.template-group"
+		                                         description: @"EtoileUI Template Group Type (see ETController)"
+		                                    supertypeStrings: [NSArray array]];
+		basicTemplateProvider = [[ETController alloc] init];
+	}
+}
+
 /** <init />
 Initializes and returns a new controller which automatically rearrange objects.
 
-For the Nib name and bundle arguments, see -[ETNibOwner initWithNibName:bundle:]. 
+For the Nib name and bundle arguments, see -[ETNibOwner initWithNibName:bundle:].
+
+Automatically registers basic templates for -currentObjectType and 
+-currentGroupType. See -setTemplate:forType: and -templateForType:.
 
 You can also use it -init to create a controller. See -[ETNibOwner init]. */
 - (id) initWithNibName: (NSString *)aNibName bundle: (NSBundle *)aBundle
@@ -34,6 +54,7 @@ You can also use it -init to create a controller. See -[ETNibOwner init]. */
 		return nil;
 
 	_observations = [[NSMutableSet alloc] init];
+	_templates = [[NSMutableDictionary alloc] init];
 	[self setSortDescriptors: nil];
 	_allowedPickTypes = [[NSArray alloc] init];
 	_allowedDropTypes = [[NSMutableDictionary alloc] init];
@@ -41,6 +62,14 @@ You can also use it -init to create a controller. See -[ETNibOwner init]. */
 	_automaticallyRearrangesObjects = YES;
 	_clearsFilterPredicateOnInsertion = YES;
 	_selectsInsertedObjects = YES;
+
+	ETLayoutItem *item = AUTORELEASE([[ETLayoutItem alloc] init]);
+	ETLayoutItemGroup *itemGroup = AUTORELEASE([[ETLayoutItemGroup alloc] init]);
+
+	[self setTemplate: [ETItemTemplate templateWithItem: item objectClass: Nil]
+	          forType: [self currentObjectType]];
+	[self setTemplate: [ETItemTemplate templateWithItem: itemGroup objectClass: Nil]
+	          forType: [self currentGroupType]];
 
 	return self;
 }
@@ -61,10 +90,7 @@ You can also use it -init to create a controller. See -[ETNibOwner init]. */
 
 	DESTROY(_observations);
 	DESTROY(nibMainContent);
-	DESTROY(_templateItem); 
-	DESTROY(_templateItemGroup); 
-	DESTROY(_objectClass); 
-	DESTROY(_groupClass);
+	DESTROY(_templates); 
 	DESTROY(_sortDescriptors);
 	DESTROY(_filterPredicate);
 	DESTROY(_allowedPickTypes);
@@ -370,10 +396,7 @@ the copying support must invoke it instead of -copyWithZone:. */
 	ETController *newController = [[[self class] allocWithZone: aZone] init];
 
 	newController->_observations = [[NSMutableSet allocWithZone: aZone] init];
-	newController->_templateItem = [_templateItem copyWithZone: aZone];
-	newController->_templateItemGroup = [_templateItemGroup copyWithZone: aZone];
-	ASSIGN(newController->_objectClass, _objectClass);
-	ASSIGN(newController->_groupClass, _groupClass);
+	newController->_templates = [_templates copyWithZone: aZone];
 	newController->_sortDescriptors = [_sortDescriptors copyWithZone: aZone];
 	newController->_filterPredicate = [_filterPredicate copyWithZone: aZone];
 	newController->_allowedPickTypes = [_allowedPickTypes copyWithZone: aZone];
@@ -420,167 +443,77 @@ To customize the copying in a subclass, you must override
 
 /* Templates */
 
-/** Returns the template item used to create leaf items. This template item
-	is used as a prototype to make new layout items by 
-	-[ETLayoutItemGroup newItem].
-	This method returns nil by default and -[ETLayoutItemGroup newItem] will 
-	simply create a new ETLayoutItem instance in such case. */
-- (ETLayoutItem *) templateItem
+/** Returns the type of the template to be instantiated on -add: and -insert:.
+ 
+By default, returns kETTemplateObjectType.<br />
+
+Can be overriden to return a custom type based on a use case or a user setting.
+
+See also -setTemplate:forType:. */
+- (ETUTI *) currentObjectType
 {
-	return _templateItem;
+	return kETTemplateObjectType;
 }
 
-/** Returns the template item used to create branch items. This template item
-	is used as a prototype to make new layout item groups by 
-	-[ETLayoutItemGroup newItemGroup].
-	This method returns nil by default and -[ETLayoutItemGroup newItemGroup] 
-	will simply create a new ETLayoutItemGroup instance in such case. */
-- (ETLayoutItemGroup *) templateItemGroup
+/** Returns the type of the template to be instantiated on -addNewGroup: and 
+-insertNewGroup:.
+ 
+By default, returns kETTemplateGroupType.<br />
+
+Can be overriden to return a custom type based on a use case or a user setting.
+
+See also -setTemplate:forType:. */
+- (ETUTI *) currentGroupType
 {
-	return _templateItemGroup;
+	return kETTemplateGroupType;
 }
 
-/** Sets the template item used to create leaf items. This template item
-	is used as a prototype to make new layout items by 
-	-[ETLayoutItemGroup newItem].
-	You can pass an instance of any ETLayoutItem class or subclass. */
-- (void) setTemplateItem: (ETLayoutItem *)template
+/** Returns the template to create the right UI and model to view or edit the 
+given element type.
+
+See -newItemWithURL:ofType:options and ETItemTemplate. */
+- (ETItemTemplate *) templateForType: (ETUTI *)aUTI
 {
-	ASSIGN(_templateItem, template);
+	return [_templates objectForKey: aUTI];
 }
 
-/** Sets the template item used to create branch items. This template item
-	is used as a prototype to make new layout item groups by 
-	-[ETLayoutItemGroup newItemGroup].
-	You can pass an instance of any ETLayoutItemGroup class or subclass. */
-- (void) setTemplateItemGroup: (ETLayoutItemGroup *)template
+/** Sets the template to create the right UI and model to view or edit the given 
+element type. 
+
+See -newItemWithURL:ofType:options and ETItemTemplate. */
+- (void) setTemplate: (ETItemTemplate *)aTemplate forType: (ETUTI *)aUTI
 {
-	ASSIGN(_templateItemGroup, template);
+	[_templates setObject: aTemplate forKey: aUTI];
 }
 
-/** Returns the class used to create model objects for leaf items. */
-- (Class) objectClass
-{
-	return _objectClass;
-}
-
-/** Sets the class used to create model objects for leaf items.
-	See also -newObject. */
-- (void) setObjectClass: (Class)modelClass
-{
-	ASSIGN(_objectClass, modelClass);
-}
-
-/** Returns the group class used to create model objects for branch items.*/
-- (Class) groupClass
-{
-	return _groupClass;
-}
-/** Sets the class used to create model objects for branch items.
-	See also -newGroup. */
-- (void) setGroupClass: (Class)modelClass
-{
-	ASSIGN(_groupClass, modelClass);
-}
-
-/** Creates and returns a new object that can be either a layout item clone of 
-	-templateItem or a fresh instance of -objectClass. 
-	If both a template item and an object class are set, the returned object 
-	is a layout item with a new instance of -objectClass set as its 
-	represented object. 
-	This method is used by -add: and -insert: actions to generate the object 
-	to be inserted into the content of the controller. 
-	Take note that the autoboxing feature of -[ETLayoutItemGroup addObject:] 
-	will take care of wrapping the created object into a layout item if needed.
-
-The returned object is retained. */
-- (id) newObject
-{
-	id object = nil;
-
-	if ([self templateItem] != nil)
-	{
-		object = [content newItem]; /* Calls -templateItem */
-	}
-
-	if ([self objectClass] != nil)
-	{
-		id modelObject = [[[self objectClass] alloc] init];
-
-		if (object != nil)
-		{
-			[object setRepresentedObject: AUTORELEASE(modelObject)];
-		}
-		else
-		{
-			object = modelObject;
-		}
-	}
-
-	return object;
-}
-
-/** Creates and returns a new object group that can be either a layout item 
-	group clone of -templateItemGroup or a fresh instance of -groupClass. 
-	If both a template item group and an group class are set, the returned 
-	object is a layout item group with a new instance of -groupClass set as its 
-	represented object. 
-	This method is used by -addGroup: and -insertGroup: actions to generate the 
-	object to be inserted into the content of the controller. 
-	Take note that the autoboxing feature of -[ETLayoutItemGroup addObject:] 
-	will take care of wrapping the created object into a layout item if needed.
-
-The returned object is retained. */
-- (id) newGroup
-{
-	id object = nil;
-
-	if ([self templateItemGroup] != nil)
-	{
-		object = [content newItemGroup]; /* Calls -templateItemGroup */
-	}
-
-	if ([self groupClass] != nil)
-	{
-		id modelObject = [[[self groupClass] alloc] init];
-
-		if (object != nil)
-		{
-			[object setRepresentedObject: AUTORELEASE(modelObject)];
-		}
-		else
-		{
-			object = modelObject;
-		}
-	}
-
-	return object;
-}
-
-/** Creates a new object by calling -newObject and adds it to the content. */
+/** Creates a new object by calling -newItemWithURL:ofType:options: and adds it to the content. */
 - (void) add: (id)sender
 {
-	[self insertObject: AUTORELEASE([self newObject]) atIndex: ETUndeterminedIndex];
+	[self insertObject: AUTORELEASE([self newItemWithURL: nil ofType: kETTemplateObjectType options: nil]) 
+	           atIndex: ETUndeterminedIndex];
 }
 
-/** Creates a new object group by calling -newGroup and adds it to the content. */
+/** Creates a new object group by calling -newItemWithURL:ofType:options: and adds it to the content. */
 - (void) addNewGroup: (id)sender
 {
-	[self insertObject: AUTORELEASE([self newGroup]) atIndex: ETUndeterminedIndex];
+	[self insertObject: AUTORELEASE([self newItemWithURL: nil ofType: kETTemplateGroupType options: nil]) 
+	           atIndex: ETUndeterminedIndex];
 }
 
-/** Creates a new object by calling -newGroup and inserts it to the content at 
+/** Creates a new object by calling -newItemWithURL:ofType:options: and inserts it into the content at 
 -insertionIndex. */
 - (void) insert: (id)sender
 {
-	[self insertObject: AUTORELEASE([self newObject]) atIndex: [self insertionIndex]];
+	[self insertObject: AUTORELEASE([self newItemWithURL: nil ofType: kETTemplateObjectType options: nil])
+	           atIndex: [self insertionIndex]];
 }
 
-/** Creates a new object group by calling -newGroup and inserts it to the 
+/** Creates a new object group by calling -newItemWithURL:ofType:options: and inserts it into the 
 content at -insertionIndex. */
 - (void) insertNewGroup: (id)sender
 {
-	[self insertObject: AUTORELEASE([self newGroup]) atIndex: [self insertionIndex]];
+	[self insertObject: AUTORELEASE([self newItemWithURL: nil ofType: kETTemplateGroupType options: nil])
+	           atIndex: [self insertionIndex]];
 }
 
 /** Removes all selected objects in the content. Selected objects are retrieved 
@@ -609,6 +542,31 @@ You can override this method in a subclass, although it should rarely be needed.
 }
 
 /* Insertion */
+
+/** Returns a new retained ETLayoutItem or ETLayoutItemGroup object for the 
+given URL and options.
+
+The template to which the item instantiation is delegated is looked up based 
+on the UTI argument and the registered item templates.<br />
+See -setTemplate:forType: to register new templates.
+
+If the given URL is nil, the user action is a 'New' and not 'Open'.
+
+This method is used by -add: and -insert: actions to generate the object to be 
+inserted into the content of the controller.<br />
+You must use this method in any 'add' or 'insert' action methods to mutate the 
+controller content.
+
+Raises an NSInvalidArgumentException if the given type is nil.
+
+The returned object is retained.
+
+See also ETItemTemplate. */
+- (ETLayoutItem *) newItemWithURL: (NSURL *)aURL ofType: (ETUTI *)aUTI options: (NSDictionary *)options
+{
+	NILARG_EXCEPTION_TEST(aUTI);
+	return [[self templateForType: aUTI] newItemWithURL: aURL options: options];
+}
 
 /** Returns whether remove, add and insert actions are possible.
 
@@ -938,5 +896,18 @@ See instead -[ETLayoutItem objectDidEndEditing:]. */
 	[_editorItems removeObject: anItem];
 }
 
+/* Framework Private */
+
+/** This method is only exposed to be used internally by EtoileUI. 
+
+Returns a shared and immutable template provider in which basic templates are 
+registered for -currentObjectType and -currentGroupType. */
++ (id <ETTemplateProvider>) basicTemplateProvider
+{
+	return basicTemplateProvider;
+}
+
 @end
 
+ETUTI * kETTemplateObjectType = nil;
+ETUTI * kETTemplateGroupType = nil;

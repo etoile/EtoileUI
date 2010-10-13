@@ -18,6 +18,7 @@
 #import <EtoileUI/ETComputedLayout.h>
 #import <EtoileUI/ETController.h>
 #import <EtoileUI/ETDecoratorItem.h>
+#import <EtoileUI/ETDocumentController.h>
 #import <EtoileUI/ETEvent.h>
 #import <EtoileUI/ETFixedLayout.h>
 #import <EtoileUI/ETFlowLayout.h>
@@ -29,6 +30,7 @@
 #import <EtoileUI/ETInspector.h>
 #import <EtoileUI/ETTool.h>
 #import <EtoileUI/ETInstruments.h>
+#import <EtoileUI/ETItemTemplate.h>
 #import <EtoileUI/ETLayer.h>
 #import <EtoileUI/ETLayout.h>
 #import <EtoileUI/ETLayoutItem+KVO.h>

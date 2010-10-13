@@ -49,15 +49,12 @@ integration etc.) without having to resort to another API. */
 - (NSArray *) documentItems;
 - (id) activeItem;
 
-/* Document Creation and Template */
+/* Insertion */
 
-- (ETUTI *) defaultType;
-- (Class) objectClassForType: (ETUTI *)aUTI;
-- (id) newInstanceWithURL: (NSURL *)aURL ofType: (ETUTI *)aUTI options: (NSDictionary *)options;
-- (id) openInstanceWithURL: (NSURL *)aURL ofType: (ETUTI *)aUTI options: (NSDictionary *)options;
+- (id) openItemWithURL: (NSURL *)aURL options: (NSDictionary *)options;
 - (BOOL) allowsMultipleInstancesForURL: (NSURL *)aURL;
 
-- (ETUTI *) typeForURL: (NSURL *)aURL;
++ (ETUTI *) typeForURL: (NSURL *)aURL;
 
 - (NSError *) error;
 

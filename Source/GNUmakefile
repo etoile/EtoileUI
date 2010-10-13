@@ -16,12 +16,14 @@ libEtoileUI_OBJC_FILES = \
 	ETComputedLayout.m \
 	ETController.m \
 	ETDecoratorItem.m \
+	ETDocumentController.m \
 	ETEvent.m \
 	ETFixedLayout.m \
 	ETFlowLayout.m \
 	ETFreeLayout.m \
 	ETGeometry.m \
 	ETInspector.m \
+	ETItemTemplate.m \
 	ETLayer.m \
 	ETLayoutItemBuilder.m \
 	ETLayoutItemGroup.m \

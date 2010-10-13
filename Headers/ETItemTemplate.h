@@ -62,9 +62,5 @@ model initialization. */
 - (ETLayoutItem *) newItemWithURL: (NSURL *)aURL options: (NSDictionary *)options;
 - (BOOL) allowsMultipleInstancesForURL: (NSURL *)aURL;
 
-/* Utility */
-
-- (ETUTI *) typeForURL: (NSURL *)aURL;
-
 @end
 
