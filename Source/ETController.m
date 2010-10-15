@@ -662,6 +662,8 @@ You can pass ETUndeterminedIndex to trigger -[ETLayoutItemGroup addObject:] on
 the content rather than -[ETLayoutItemGroup insertObject:atIndex:].  */
 - (void) insertObject: (id)anItem atIndex: (NSUInteger)anIndex
 {
+	ETAssert(nil != [self content]);
+
 	if ([self clearsFilterPredicateOnInsertion])
 	{
 		[self setFilterPredicate: nil];
@@ -675,6 +677,7 @@ the content rather than -[ETLayoutItemGroup insertObject:atIndex:].  */
 	{
 		[[self content] insertObject: anItem atIndex: anIndex];
 	}
+	ETAssert(nil != [anItem parentItem]);
 
 	if ([self selectsInsertedObjects])
 	{

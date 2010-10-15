@@ -15,10 +15,6 @@
 
 @class ETLayoutItem, ETLayoutItemGroup, ETUTI;
 
-@protocol ETDocumentCreation
-- (id) initWithURL: (NSURL *)aURL options: (NSDictionary *)options;
-@end
-
 /** ETDocumentController provides a generic editor/viewer controller to manage 
 the items getting edited or viewed, where each item represents a content unit 
 (a web page, an image, a mail, a compound document etc.).<br />
@@ -51,7 +47,7 @@ integration etc.) without having to resort to another API. */
 
 /* Insertion */
 
-- (id) openItemWithURL: (NSURL *)aURL options: (NSDictionary *)options;
+- (ETLayoutItem *) openItemWithURL: (NSURL *)aURL options: (NSDictionary *)options;
 - (BOOL) allowsMultipleInstancesForURL: (NSURL *)aURL;
 
 + (ETUTI *) typeForURL: (NSURL *)aURL;

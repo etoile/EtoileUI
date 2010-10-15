@@ -11,8 +11,10 @@
 #import <EtoileFoundation/ETUTI.h>
 #import <EtoileFoundation/NSObject+Model.h>
 #import "ETDocumentController.h"
+#import "ETItemTemplate.h"
 #import "ETLayoutItem.h"
 #import "ETLayoutItemGroup.h"
+#import "ETPickDropActionHandler.h" /* For ETUndeterminedIndex */
 #import "NSObject+EtoileUI.h"
 #import "ETCompatibility.h"
 
@@ -67,7 +69,7 @@ to open multiple instances of the same document (e.g. a web browser). */
 content at the given URL.
 
 This method doesn't create the returned item but delegates that to 
--newItemWithURL:ofType:options:.
+-[ETItemTemplate newItemReadFromURL:options:].
 
 This method is used by -openDocument: action to generate the object to be 
 inserted into the content of the controller.<br />
@@ -80,7 +82,7 @@ opened.
 The returned object is retained.
 
 Raises a NSInvalidArgumentException if the given URL is nil. */
-- (id) openItemWithURL: (NSURL *)aURL options: (NSDictionary *)options
+- (ETLayoutItem *) openItemWithURL: (NSURL *)aURL options: (NSDictionary *)options
 {
 	NILARG_EXCEPTION_TEST(aURL); 
 
@@ -91,9 +93,10 @@ Raises a NSInvalidArgumentException if the given URL is nil. */
 			return [[self itemsForURL: aURL] firstObject];
 	}
 
-	return [self newItemWithURL: aURL 
-	                     ofType: [[self class] typeForURL: aURL] 
-	                    options: options];
+	ETUTI *type = [[self class] typeForURL: aURL];
+
+	return [[self templateForType: type] newItemReadFromURL: aURL 
+	                                                options: options];
 }
 
 /** Returns whether the same document can appear multiple times on screen for 
@@ -163,7 +166,10 @@ Will call -newInstanceWithURL:ofType:options: to create the new document.
 See also -currentObjectType. */
 - (IBAction) newDocument: (id)sender
 {
-	[self newItemWithURL: nil ofType: [self currentObjectType] options: [NSDictionary dictionary]];
+	ETLayoutItem *item = AUTORELEASE([self newItemWithURL: nil 
+	                                               ofType: [self currentObjectType] 
+	                                              options: [NSDictionary dictionary]]);
+	[self insertObject: item atIndex: ETUndeterminedIndex];
 }
 
 /** Creates one or more objects with the URLs the user has choosen in an open 
@@ -184,7 +190,8 @@ See also [ETDocumentCreation] protocol. */
 		return;
 	}
 
-	[self openItemWithURL: url options: options];
+	[self insertObject: AUTORELEASE([self openItemWithURL: url options: options])
+	           atIndex: ETUndeterminedIndex];
 }
 
 @end

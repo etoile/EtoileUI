@@ -55,12 +55,19 @@ model initialization. */
 
 - (Class) objectClass;
 - (ETLayoutItem *) item;
+- (NSString *) baseName;
 
 /* Template Instantiation */
 
 - (ETLayoutItem *) newItemWithRepresentedObject: (id)anObject options: (NSDictionary *)options;
 - (ETLayoutItem *) newItemWithURL: (NSURL *)aURL options: (NSDictionary *)options;
+- (ETLayoutItem *) newItemReadFromURL: (NSURL *)aURL options: (NSDictionary *)options;
+- (BOOL) writeItem: (ETLayoutItem *)anItem 
+             toURL: (NSURL *)aURL 
+           options: (NSDictionary *)options;
 - (BOOL) allowsMultipleInstancesForURL: (NSURL *)aURL;
+- (NSString *) nameFromBaseNameAndOptions: (NSDictionary *)options;
 
 @end
 
+extern NSString * const kETTemplateOptionNumberOfUntitledDocuments;

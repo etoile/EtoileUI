@@ -65,6 +65,11 @@ See also -newItemWithRepresentedObject:options:. */
 	return _item;
 }
 
+- (NSString *) baseName
+{
+	return _(@"Untitled");
+}
+
 /** Returns a new retained ETLayoutItem or ETLayoutItemGroup object with the 
 given represented object and options.
 
@@ -107,7 +112,8 @@ See also -newItemWithRepresentedObject:options:. */
 	id newInstance = [[self objectClass] alloc];
 
 	if ([newInstance conformsToProtocol: @protocol(ETDocumentCreation)])
-	{ 
+	{
+		
 		[newInstance initWithURL: aURL options: options];
 	}
 	else
@@ -116,6 +122,18 @@ See also -newItemWithRepresentedObject:options:. */
 	}
 
 	return [self newItemWithRepresentedObject: AUTORELEASE(newInstance) options: nil];
+}
+
+- (ETLayoutItem *) newItemReadFromURL: (NSURL *)aURL options: (NSDictionary *)options
+{
+	return [self newItemWithURL: aURL options: options];
+}
+
+- (BOOL) writeItem: (ETLayoutItem *)anItem 
+             toURL: (NSURL *)aURL 
+           options: (NSDictionary *)options
+{
+	return NO;
 }
 
 /** <override-dummy />
@@ -130,5 +148,21 @@ Can be overriden in a subclass to implement a web browser for example. */
 	return NO;
 }
 
+- (NSString *) nameFromBaseNameAndOptions: (NSDictionary *)options
+{
+	/*NSString *customName = [options objectForKey: kETTemplateOptionName];
+	
+	if (nil != customName)
+		return customName;*/
+
+	NSUInteger nbOfVisibleDocs = [[options objectForKey: kETTemplateOptionNumberOfUntitledDocuments] unsignedIntegerValue];
+
+	if (nbOfVisibleDocs == 0)
+		return [self baseName];
+
+	return [NSString stringWithFormat: @"%@ %u", [self baseName], nbOfVisibleDocs];
+}
+
 @end
 
+NSString * const kETTemplateOptionNumberOfUntitledDocuments = @"kETTemplateOptionNumberOfUntitledDocuments";
