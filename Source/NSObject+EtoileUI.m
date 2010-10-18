@@ -218,7 +218,7 @@ otherwise returns NO. */
 otherwise returns NO. */
 - (BOOL) isView
 {
-	return [[self class] isKindOfClass: [NSView class]];
+	return [self isKindOfClass: [NSView class]];
 }
 
 @end
