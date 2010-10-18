@@ -496,7 +496,7 @@ See -newItemWithURL:ofType:options and ETItemTemplate. */
 /** Creates a new object by calling -newItemWithURL:ofType:options: and adds it to the content. */
 - (void) add: (id)sender
 {
-	[self insertObject: AUTORELEASE([self newItemWithURL: nil ofType: kETTemplateObjectType options: nil]) 
+	[self insertObject: AUTORELEASE([self newItemWithURL: nil ofType: [self currentObjectType] options: nil]) 
 	           atIndex: ETUndeterminedIndex];
 }
 
@@ -511,7 +511,7 @@ See -newItemWithURL:ofType:options and ETItemTemplate. */
 -insertionIndex. */
 - (void) insert: (id)sender
 {
-	[self insertObject: AUTORELEASE([self newItemWithURL: nil ofType: kETTemplateObjectType options: nil])
+	[self insertObject: AUTORELEASE([self newItemWithURL: nil ofType: [self currentObjectType] options: nil])
 	           atIndex: [self insertionIndex]];
 }
 
