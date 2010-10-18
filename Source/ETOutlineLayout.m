@@ -74,6 +74,9 @@
 
 	ETAssert([[[self outlineView] tableColumns] containsObject: outlineColumn]);
 
+	/* We call the superclass implementation to create a sort descriptor if needed */
+	shouldInsertColumn &= [super prepareTableColumn: column isFirst: isFirstColumn];
+
 	if (isFirstColumn)
 	{
 		NSTableColumn *newColumn = [NSKeyedUnarchiver unarchiveObjectWithData: 
