@@ -76,6 +76,7 @@ objects as a collection distinct from the content. */
 	IBOutlet ETLayoutItemGroup *content;
  	IBOutlet id nibMainContent;
 	NSMutableDictionary *_templates;
+	ETUTI *_currentObjectType;
 	NSArray *_sortDescriptors;
 	NSPredicate *_filterPredicate;
 	NSArray *_allowedPickTypes;
@@ -118,6 +119,7 @@ objects as a collection distinct from the content. */
 - (ETItemTemplate *) templateForType: (ETUTI *)aUTI;
 - (void) setTemplate: (ETItemTemplate *)aTemplate forType: (ETUTI *)aUTI;
 - (ETUTI *) currentObjectType;
+- (void) setCurrentObjectType: (ETUTI *)aUTI;
 - (ETUTI *) currentGroupType;
 
 /* Actions */

@@ -55,6 +55,7 @@ You can also use it -init to create a controller. See -[ETNibOwner init]. */
 
 	_observations = [[NSMutableSet alloc] init];
 	_templates = [[NSMutableDictionary alloc] init];
+	ASSIGN(_currentObjectType, kETTemplateObjectType);
 	[self setSortDescriptors: nil];
 	_allowedPickTypes = [[NSArray alloc] init];
 	_allowedDropTypes = [[NSMutableDictionary alloc] init];
@@ -447,12 +448,18 @@ To customize the copying in a subclass, you must override
  
 By default, returns kETTemplateObjectType.<br />
 
-Can be overriden to return a custom type based on a use case or a user setting.
-
-See also -setTemplate:forType:. */
+See also -setCurrentObjectType: and -setTemplate:forType:. */
 - (ETUTI *) currentObjectType
 {
-	return kETTemplateObjectType;
+	return _currentObjectType;
+}
+
+/** Sets the type of the template to be instantiated on -add: and -insert:.
+ 
+See also -setTemplate:forType:. */
+- (void) setCurrentObjectType: (ETUTI *)aUTI
+{
+	ASSIGN(_currentObjectType, aUTI);
 }
 
 /** Returns the type of the template to be instantiated on -addNewGroup: and 
