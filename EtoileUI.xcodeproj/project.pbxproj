@@ -285,6 +285,10 @@
 		60FDA9A10FE58F460009686A /* ETSelectionAreaItem.h in Headers */ = {isa = PBXBuildFile; fileRef = 60FDA99F0FE58F460009686A /* ETSelectionAreaItem.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		60FDA9A30FE58F590009686A /* ETSelectionAreaItem.m in Sources */ = {isa = PBXBuildFile; fileRef = 60FDA9A20FE58F590009686A /* ETSelectionAreaItem.m */; };
 		60FDA9A40FE58F590009686A /* ETSelectionAreaItem.m in Sources */ = {isa = PBXBuildFile; fileRef = 60FDA9A20FE58F590009686A /* ETSelectionAreaItem.m */; };
+		6627F70A127E758A00E06946 /* ETItemTemplate.h in Headers */ = {isa = PBXBuildFile; fileRef = 6627F708127E758A00E06946 /* ETItemTemplate.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		6627F70B127E758A00E06946 /* ETDocumentController.h in Headers */ = {isa = PBXBuildFile; fileRef = 6627F709127E758A00E06946 /* ETDocumentController.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		6627F70E127E75B300E06946 /* ETItemTemplate.m in Sources */ = {isa = PBXBuildFile; fileRef = 6627F70C127E75B300E06946 /* ETItemTemplate.m */; };
+		6627F70F127E75B300E06946 /* ETDocumentController.m in Sources */ = {isa = PBXBuildFile; fileRef = 6627F70D127E75B300E06946 /* ETDocumentController.m */; };
 		6640BD0210A0C2E3008B7765 /* EtoileFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6640BC3310A0C1B0008B7765 /* EtoileFoundation.framework */; };
 		6640BD0510A0C2F7008B7765 /* EtoileFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6640BC3310A0C1B0008B7765 /* EtoileFoundation.framework */; };
 		6640BD0C10A0C30E008B7765 /* EtoileFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6640BC3310A0C1B0008B7765 /* EtoileFoundation.framework */; };
@@ -636,6 +640,10 @@
 		60FC29F2105C11E4008D2EFF /* FormController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = FormController.m; path = FormExample/FormController.m; sourceTree = "<group>"; };
 		60FDA99F0FE58F460009686A /* ETSelectionAreaItem.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ETSelectionAreaItem.h; path = Headers/ETSelectionAreaItem.h; sourceTree = "<group>"; };
 		60FDA9A20FE58F590009686A /* ETSelectionAreaItem.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ETSelectionAreaItem.m; path = Source/ETSelectionAreaItem.m; sourceTree = "<group>"; };
+		6627F708127E758A00E06946 /* ETItemTemplate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ETItemTemplate.h; path = Headers/ETItemTemplate.h; sourceTree = "<group>"; };
+		6627F709127E758A00E06946 /* ETDocumentController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ETDocumentController.h; path = Headers/ETDocumentController.h; sourceTree = "<group>"; };
+		6627F70C127E75B300E06946 /* ETItemTemplate.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ETItemTemplate.m; path = Source/ETItemTemplate.m; sourceTree = "<group>"; };
+		6627F70D127E75B300E06946 /* ETDocumentController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ETDocumentController.m; path = Source/ETDocumentController.m; sourceTree = "<group>"; };
 		6640BC2710A0C1B0008B7765 /* EtoileFoundation.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = EtoileFoundation.xcodeproj; path = ../EtoileFoundation/EtoileFoundation.xcodeproj; sourceTree = SOURCE_ROOT; };
 		6697A93D1044A76600456911 /* ETWebBrowserViewLayout.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ETWebBrowserViewLayout.h; path = ../EtoileWeb/ETWebBrowserViewLayout.h; sourceTree = SOURCE_ROOT; };
 		6697A93E1044A76600456911 /* ETWebBrowserViewLayout.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ETWebBrowserViewLayout.m; path = ../EtoileWeb/ETWebBrowserViewLayout.m; sourceTree = SOURCE_ROOT; };
@@ -962,6 +970,10 @@
 		607FBAE30FE002F000960039 /* Mediators & Controllers */ = {
 			isa = PBXGroup;
 			children = (
+				6627F70C127E75B300E06946 /* ETItemTemplate.m */,
+				6627F708127E758A00E06946 /* ETItemTemplate.h */,
+				6627F70D127E75B300E06946 /* ETDocumentController.m */,
+				6627F709127E758A00E06946 /* ETDocumentController.h */,
 				603649F90E40A547003377E0 /* ETNibOwner.h */,
 				60364A080E40A560003377E0 /* ETNibOwner.m */,
 				60CF6C800D3F739000B4CA3D /* ETController.h */,
@@ -1300,6 +1312,8 @@
 				60CDD5C4105E8DE8005E253B /* ETFragment.h in Headers */,
 				60FBB13010A0A92A00BE7E21 /* ETBasicItemStyle.h in Headers */,
 				60D88821115E408D00D7A8AA /* NSCell+EtoileUI.h in Headers */,
+				6627F70A127E758A00E06946 /* ETItemTemplate.h in Headers */,
+				6627F70B127E758A00E06946 /* ETDocumentController.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1891,6 +1905,8 @@
 				66B7412C103CB03D008AF5B1 /* ETTitleBarView.m in Sources */,
 				60FBB13210A0A94600BE7E21 /* ETBasicItemStyle.m in Sources */,
 				60D8881F115E407D00D7A8AA /* NSCell+EtoileUI.m in Sources */,
+				6627F70E127E75B300E06946 /* ETItemTemplate.m in Sources */,
+				6627F70F127E75B300E06946 /* ETDocumentController.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
