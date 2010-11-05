@@ -622,7 +622,7 @@ When a scrollable area item decorates the layout context, -isContentSizeLayout
 always returns YES. */
 - (BOOL) isContentSizeLayout
 {
-	if ([_layoutContext isScrollViewShown])
+	if ([_layoutContext isScrollable])
 		return YES;
 
 	return _maxSizeLayout;
@@ -764,7 +764,7 @@ To explictly update the layout, just uses -[ETLayoutItemGroup updateLayout]. */
 	   before -render. */
 	if ([self usesCustomLayoutSize] == NO)
 	{
-		if ([[self layoutContext] isScrollViewShown])
+		if ([[self layoutContext] isScrollable])
 		{
 			/* Better to request the visible rect than the container frame 
 			   which might be severely altered by the previouly set layout. */

@@ -56,8 +56,8 @@ ETLayout. */
 - (NSSize) visibleContentSize;
 /** See -[ETLayoutItem setContentSize:]. */
 - (void) setContentSize: (NSSize)size;
-// TODO: Replace with -isScrollable
-- (BOOL) isScrollViewShown;
+/** See -[ETLayoutItem(Scrollable) isScrollable]. */
+- (BOOL) isScrollable;
 /** See -[ETLayoutItemGroup visibleItems]. */
 - (NSArray *) visibleItems;
 /** See -[ETLayoutItemGroup setVisibleItems:]. */

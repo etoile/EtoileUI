@@ -75,13 +75,12 @@
 - (int) indexOfItem: (id)item;
 - (BOOL) containsItem: (ETLayoutItem *)item;
 - (int) numberOfItems;
-//- (int) indexOfItem: (ETLayoutItem *)item;
 - (void) addItems: (NSArray *)items;
 - (void) removeItems: (NSArray *)items;
 - (void) removeAllItems;
 - (NSArray *) items;
-- (NSArray *) itemsIncludingRelatedDescendants;
-- (NSArray *) itemsIncludingAllDescendants;
+- (NSArray *) descendantItemsSharingSameBaseItem;
+- (NSArray *) allDescendantItems;
 
 - (BOOL) canReload;
 - (void) reload;
@@ -133,7 +132,6 @@
 - (NSView *) view;
 - (NSSize) visibleContentSize;
 - (void) setContentSize: (NSSize)size;
-- (BOOL) isScrollViewShown;
 
 /* Item scaling */
 
@@ -161,8 +159,6 @@
 
 - (NSArray *) selectedItems;
 - (NSArray *) selectedItemsInLayout;
-- (NSArray *) selectedItemsIncludingRelatedDescendants;
-- (NSArray *) selectedItemsIncludingAllDescendants;
 
 /* Sorting and Filtering */
 

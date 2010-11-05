@@ -54,8 +54,8 @@ pretend we don't fully implement ETLayoutingContext protocol. */
 - (void) setNeedsDisplay: (BOOL)now { [super setNeedsDisplay: now]; }
 - (BOOL) isFlipped { return [super isFlipped]; }
 - (ETView *) supervisorView { return [super supervisorView]; }
-- (BOOL) isScrollViewShown { return [super isScrollViewShown]; }
 - (void) setContentSize: (NSSize)size { [super setContentSize: size]; }
+- (BOOL) isScrollable { return [super isScrollable]; }
 - (NSSize) size { return [super size]; }
 - (void) setSize: (NSSize)size { [super setSize: size]; }
 - (NSView *) view { return [super view]; }
@@ -822,20 +822,21 @@ Similar to -lastObject method for collections (see ETCollection).*/
 	return [NSArray arrayWithArray: _layoutItems];
 }
 
-/** Returns all children items under the control of the receiver. 
+/** Returns the descendant items, including the immediate children, that share 
+the same base item than the receiver. 
 
 An item is said to be under the control of an item group, when you can traverse
-the branch leading to the item without crossing a parent item declared as a base 
-item. An item group becomes a base item when a represented path base is set, in
-other words when -representedPathBase doesn't return nil. See also -isBaseItem.
+the branch leading to the item without crossing a base item. An item group 
+becomes a base item when a represented path base is set, in other words when 
+-representedPathBase doesn't return nil. See also -isBaseItem.
 
-This method collects every items the layout item subtree (excluding the
+This method collects every item in the layout item subtree (excluding the
 receiver) by doing a preorder traversal, the resulting collection is a flat list
-of every items in the tree.
+of every item in the tree.
 
 If you are interested by collecting descendant items in another traversal order, 
 you have to implement your own version of this method. */
-- (NSArray *) itemsIncludingRelatedDescendants
+- (NSArray *) descendantItemsSharingSameBaseItem
 {
 	// TODO: This code is probably quite slow by being written in a recursive 
 	// style and allocating/resizing many arrays instead of using a single 
@@ -847,7 +848,7 @@ you have to implement your own version of this method. */
 		[collectedItems addObject: item];
 
 		if ([item isGroup] && [item hasValidRepresentedPathBase] == NO)
-			[collectedItems addObjectsFromArray: [item itemsIncludingRelatedDescendants]];
+			[collectedItems addObjectsFromArray: [item descendantItemsSharingSameBaseItem]];
 	}
 
 	return collectedItems;
@@ -855,13 +856,13 @@ you have to implement your own version of this method. */
 
 /** Returns all descendant items of the receiver, including immediate children.
 
-This method collects every items the layout item subtree (excluding the
+This method collects every item in the layout item subtree (excluding the
 receiver) by doing a preorder traversal, the resulting collection is a flat list
-of every items in the tree. 
+of every item in the tree. 
 
 If you are interested in collecting descendant items in another traversal order,
 you have to implement your own version of this method. */
-- (NSArray *) itemsIncludingAllDescendants
+- (NSArray *) allDescendantItems
 {
 	// TODO: This code is probably quite slow by being written in a recursive 
 	// style and allocating/resizing many arrays instead of using a single 
@@ -873,7 +874,7 @@ you have to implement your own version of this method. */
 		[collectedItems addObject: item];
 
 		if ([item isGroup])
-			[collectedItems addObjectsFromArray: [item itemsIncludingAllDescendants]];
+			[collectedItems addObjectsFromArray: [item allDescendantItems]];
 	}
 
 	return collectedItems;
@@ -1552,24 +1553,6 @@ You should call this method to obtain the selection in most cases and not
 	{
 		return [self selectedItems];
 	}
-}
-
-/** You should rarely need to invoke this method. */
-- (NSArray *) selectedItemsIncludingRelatedDescendants
-{
-	NSArray *descendantItems = [self itemsIncludingRelatedDescendants];
-
-	return [descendantItems objectsMatchingValue: [NSNumber numberWithBool: YES] 
-	                                      forKey: @"isSelected"];
-}
-
-/** You should rarely need to invoke this method. */
-- (NSArray *) selectedItemsIncludingAllDescendants
-{
-	NSArray *descendantItems = [self itemsIncludingAllDescendants];
-
-	return [descendantItems objectsMatchingValue: [NSNumber numberWithBool: YES] 
-	                                      forKey: @"isSelected"];
 }
 
 /* Sorting and Filtering */

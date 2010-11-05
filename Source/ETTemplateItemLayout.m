@@ -389,9 +389,9 @@ e.g. the icon layout does it in its own way by overriding -resizeLayoutItems:toS
 	[_layoutContext setContentSize: size];
 }
 
-- (BOOL) isScrollViewShown
+- (BOOL) isScrollable
 {
-	return [_layoutContext isScrollViewShown];
+	return [_layoutContext isScrollable];
 }
 
 - (void) setNeedsDisplay: (BOOL)now

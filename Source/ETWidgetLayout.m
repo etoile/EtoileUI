@@ -145,7 +145,7 @@ context is modified and needs to be mirrored on the widget view. */
 	BOOL hasVScroller = [item hasVerticalScroller];
 	BOOL hasHScroller = [item hasHorizontalScroller];
 	
-	if ([item isScrollViewShown] == NO)
+	if ([item isScrollable] == NO)
 	{
 		hasVScroller = NO;
 		hasHScroller = NO;

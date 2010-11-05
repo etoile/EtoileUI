@@ -45,7 +45,7 @@
 
 - (ETLayoutItemGroup *) firstDescendantGroupForItem: (ETLayoutItemGroup *)itemGroup
 {
-	NSArray *descendants = [itemGroup itemsIncludingAllDescendants];
+	NSArray *descendants = [itemGroup allDescendantItems];
 
 	FOREACHI(descendants, item)
 	{

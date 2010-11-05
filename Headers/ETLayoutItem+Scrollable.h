@@ -37,7 +37,6 @@ scrollable area items handed to -[ETLayoutItem setDecoratorItem:] are cached. */
 - (BOOL) hasHorizontalScroller;
 - (void) setHasHorizontalScroller: (BOOL)scroll;
 - (BOOL) hasAnyVisibleScroller;
-- (BOOL) isScrollViewShown; // TODO: Remove
 
 - (BOOL) isScrollable;
 - (void) setScrollable: (BOOL)show;

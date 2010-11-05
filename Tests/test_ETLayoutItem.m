@@ -511,12 +511,12 @@ static ETLayoutItemFactory *itemFactory = nil;
 	[item0 setRepresentedPathBase: @"/myModel1"]; \
 	[item11 setRepresentedPathBase: @"/myModel3"]; \
 
-- (void) testItemsIncludingRelatedDescendants
+- (void) testDescendantItemsSharingSameBaseItem
 {
 	BUILD_TEST_TREE
 	DEFINE_BASE_ITEMS_0_11
 	
-	NSArray *items = [self itemsIncludingRelatedDescendants];
+	NSArray *items = [self descendantItemsSharingSameBaseItem];
 
 	UKIntsEqual(4, [items count]);	
 	UKTrue([items containsObject: item0]);
@@ -601,33 +601,6 @@ static ETLayoutItemFactory *itemFactory = nil;
 	UKFalse([selectedItems containsObject: item110]);
 	
 	UKTrue([selectedItems containsObject: item2]);
-}
-
-- (void) testSelectedItemsIncludingAllDescendants
-{
-	BUILD_SELECTION_TEST_TREE_self_0_10_110
-	
-	NSArray *selectedItems = [self selectedItemsIncludingAllDescendants];
-
-	UKIntsEqual(3, [selectedItems count]);	
-	UKIntsEqual([[self selectionIndexPaths] count], [selectedItems count]);
-	UKTrue([selectedItems containsObject: item0]);
-	UKTrue([selectedItems containsObject: item10]);
-	UKTrue([selectedItems containsObject: item110]);
-}
-
-- (void) testSelectedItemsIncludingRelatedDescendants
-{
-	BUILD_SELECTION_TEST_TREE_self_0_10_110
-	DEFINE_BASE_ITEMS_0_11
-	
-	NSArray *selectedItems = [self selectedItemsIncludingRelatedDescendants];
-
-	UKIntsEqual(2, [selectedItems count]);	
-	UKIntsEqual([[self selectionIndexPaths] count], [selectedItems count] + 1);
-	UKTrue([selectedItems containsObject: item0]);
-	UKTrue([selectedItems containsObject: item10]);
-	UKFalse([selectedItems containsObject: item110]);
 }
 
 @end

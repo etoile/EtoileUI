@@ -109,7 +109,7 @@ You should never need to call this method which is used internally. */
 	{
 		[self hidesScrollableAreaItem];
 	}
-	else if (showScrollableAreaItem && [self isScrollViewShown])
+	else if (showScrollableAreaItem && [self isScrollable])
 	{
 		[self unhidesScrollableAreaItem];		
 	}
@@ -144,11 +144,6 @@ NOTE: -unhidesScrollViewDecoratorItem triggers this call back. */
 	{
 		[self cacheScrollableAreaItem: (ETScrollableAreaItem *)[item decoratorItem]];
 	}
-}
-
-- (BOOL) isScrollViewShown
-{
-	return [self isScrollable];
 }
 
 - (BOOL) isScrollableAreaItemVisible
