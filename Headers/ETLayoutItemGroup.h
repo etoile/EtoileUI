@@ -58,8 +58,6 @@
 
 /* Traversing Layout Item Tree */
 
-- (NSString *) pathForIndexPath: (NSIndexPath *)path;
-- (NSIndexPath *) indexPathForPath: (NSString *)path;
 - (ETLayoutItem *) itemAtIndexPath: (NSIndexPath *)path;
 - (ETLayoutItem *) itemAtPath: (NSString *)path;
 

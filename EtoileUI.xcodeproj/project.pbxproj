@@ -218,6 +218,8 @@
 		60D8881F115E407D00D7A8AA /* NSCell+EtoileUI.m in Sources */ = {isa = PBXBuildFile; fileRef = 60D8881D115E407D00D7A8AA /* NSCell+EtoileUI.m */; };
 		60D88821115E408D00D7A8AA /* NSCell+EtoileUI.h in Headers */ = {isa = PBXBuildFile; fileRef = 60D88820115E408D00D7A8AA /* NSCell+EtoileUI.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		60D88884115E651000D7A8AA /* TestCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 60D88883115E651000D7A8AA /* TestCell.m */; };
+		60D9368A12837B9C007EFDCE /* ETDocumentController.m in Sources */ = {isa = PBXBuildFile; fileRef = 6627F70D127E75B300E06946 /* ETDocumentController.m */; };
+		60D9368B12837B9C007EFDCE /* ETItemTemplate.m in Sources */ = {isa = PBXBuildFile; fileRef = 6627F70C127E75B300E06946 /* ETItemTemplate.m */; };
 		60DAC87D100774F4007F143A /* ETLayoutXHTMLRenderer.h in Headers */ = {isa = PBXBuildFile; fileRef = 60DAC87B100774F4007F143A /* ETLayoutXHTMLRenderer.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		60DAC87E100774F4007F143A /* ETLayoutXHTMLRenderer.m in Sources */ = {isa = PBXBuildFile; fileRef = 60DAC87C100774F4007F143A /* ETLayoutXHTMLRenderer.m */; };
 		60DEFD2A0D4E8482008B1038 /* ETTextEditorLayout.h in Headers */ = {isa = PBXBuildFile; fileRef = 60DEFD280D4E8482008B1038 /* ETTextEditorLayout.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -1683,6 +1685,8 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				60D9368A12837B9C007EFDCE /* ETDocumentController.m in Sources */,
+				60D9368B12837B9C007EFDCE /* ETItemTemplate.m in Sources */,
 				60059D221025C8BA001F95C5 /* EtoileUIProperties.m in Sources */,
 				600245120CD162090023182D /* ETColumnLayout.m in Sources */,
 				6077C1790F9802E1006CB3F5 /* ETWidgetLayout.m in Sources */,
