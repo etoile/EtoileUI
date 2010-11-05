@@ -181,12 +181,14 @@ DEALLOC(DESTROY(itemFactory); DESTROY(item))
 /* We implement a basic index-based source protocol to be able to use 
    TestCompositeLayout instances like that [item setSource: self]. */
 
-- (int) numberOfItemsInItemGroup: (ETLayoutItemGroup *)baseItem
+- (int) baseItem: (ETLayoutItemGroup *)baseItem numberOfItemsInItemGroup: (ETLayoutItemGroup *)itemGroup
 {
 	return 3;
 }
 
-- (ETLayoutItem *) itemGroup: (ETLayoutItemGroup *)baseItem itemAtIndex: (int)index
+- (ETLayoutItem *) baseItem: (ETLayoutItemGroup *)baseItem 
+                itemAtIndex: (int)index
+                inItemGroup: (ETLayoutItemGroup *)itemGroup
 {
 	return [itemFactory itemWithRepresentedObject: [[self modelContent] objectAtIndex: index]];	
 }

@@ -18,7 +18,6 @@
 	IBOutlet ETLayoutItemGroup *mainViewItem;
 	IBOutlet ETLayoutItemGroup *pathViewItem;
 	ETController *controller;
-	NSString *path;
 }
 
 - (IBAction) changeLayout: (id)sender;

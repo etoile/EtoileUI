@@ -65,10 +65,6 @@
 
 - (BOOL) isReloading;
 - (NSArray *) itemsFromSource;
-- (NSArray *) itemsFromFlatSource;
-- (NSArray *) itemsFromTreeSource;
-- (NSArray *) itemsFromRepresentedObject;
-- (int) checkSourceProtocolConformance;
 - (void) sourceDidUpdate: (NSNotification *)notif;
 
 /* Controller Coordination */

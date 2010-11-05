@@ -204,24 +204,13 @@
 @end
 
 
-/** Informal flat source protocol based on child index, which can be implemented 
+/** Informal source protocol based on child index, which can be implemented 
 by the source object set with -[ETLayoutItemGroup setSource:]. */
 @interface NSObject (ETLayoutItemGroupIndexSource)
-
-- (int) numberOfItemsInItemGroup: (ETLayoutItemGroup *)baseItem;
-- (ETLayoutItem *) itemGroup: (ETLayoutItemGroup *)baseItem itemAtIndex: (int)index;
-
-@end
-		
-/** Informal tree source protocol based on index path, which can be implemented 
-by the source object set with -[ETLayoutItemGroup setSource:]. */
-@interface NSObject (ETLayoutItemGroupPathSource)
-
-- (int) itemGroup: (ETLayoutItemGroup *)baseItem
-	numberOfItemsAtPath: (NSIndexPath *)indexPath;
-- (ETLayoutItem *) itemGroup: (ETLayoutItemGroup *)baseItem 
-	itemAtPath: (NSIndexPath *)indexPath;
-
+- (int) baseItem: (ETLayoutItemGroup *)baseItem numberOfItemsInItemGroup: (ETLayoutItemGroup *)itemGroup;
+- (ETLayoutItem *) baseItem: (ETLayoutItemGroup *)baseItem 
+                itemAtIndex: (int)index 
+                inItemGroup: (ETLayoutItemGroup *)itemGroup;
 @end
 
 /** Additional methods that makes up the informal source protocol. */
@@ -257,11 +246,3 @@ You can use this method to trigger the reloading everywhere the poster object
 is used as source, without having to know the involved objects directly and 
 explicitly invoke -reload on each object. */
 extern NSString * const ETSourceDidUpdateNotification;
-
-// TODO: Documentation to be reused somewhere...
-/* In this case, each time the user enters a new level, you are in charge of
-removing then adding the proper items which are associated with the level
-requested by the user. Implementing a data source, alleviates you from this
-task, you simply need to return the items, EtoileUI will build takes care of
-building and managing the tree structure. To set a represented path base, turns
-the item group into an entry point in your model, */

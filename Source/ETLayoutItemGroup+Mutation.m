@@ -18,6 +18,9 @@
 
 @interface ETLayoutItemGroup (ETSource)
 - (BOOL) isReloading;
+- (int) checkSourceProtocolConformance;
+- (NSArray *) itemsFromSourceWithIndexProtocol;
+- (NSArray *) itemsFromRepresentedObject;
 @end
 
 
@@ -469,24 +472,10 @@ inside another -begin/endMutate pair.  */
 	switch ([self checkSourceProtocolConformance])
 	{
 		case 1:
-			ETDebugLog(@"Will -reloadFromFlatSource");
-			/* We allow the flat source protocol to return item groups that 
-			   will load their child items based on their represented object 
-			   content. */
-			if ([self isEqual: [self baseItem]])
-			{
-				return [self itemsFromFlatSource];
-			}
-			else
-			{
-				return [self itemsFromRepresentedObject];
-			}
+			ETDebugLog(@"Will -reloadFromSource");
+			return [self itemsFromSourceWithIndexProtocol];
 			break;
 		case 2:
-			ETDebugLog(@"Will -reloadFromTreeSource");
-			return [self itemsFromTreeSource];
-			break;
-		case 3:
 			ETDebugLog(@"Will -reloadFromRepresentedObject");
 			return [self itemsFromRepresentedObject];
 			break;
@@ -497,45 +486,19 @@ inside another -begin/endMutate pair.  */
 	return nil;
 }
 
-- (NSArray *) itemsFromFlatSource
+- (NSArray *) itemsFromSourceWithIndexProtocol
 {
 	ETLayoutItemGroup *baseItem = [self baseItem];
-	int nbOfItems = [[baseItem source] numberOfItemsInItemGroup: baseItem];
+	int nbOfItems = [[baseItem source] baseItem: baseItem 
+	                   numberOfItemsInItemGroup: self];
 	NSMutableArray *itemsFromSource = [NSMutableArray arrayWithCapacity: nbOfItems];
 
 	for (int i = 0; i < nbOfItems; i++)
 	{
-		ETLayoutItem *item = [[baseItem source] itemGroup: baseItem itemAtIndex: i];
-		[itemsFromSource addObject: item];
-	}
-	
-	return itemsFromSource;
-}
-
-- (NSArray *) itemsFromTreeSource
-{
-	ETLayoutItemGroup *baseItem = [self baseItem];
-	// NOTE: [self indexPathFromItem: baseItem] is equal to [baseItem indexPathForItem: self]
-	NSIndexPath *indexPath = [self indexPathFromItem: baseItem];
-	
-	ETDebugLog(@"-itemsFromTreeSource in %@", self);
-	
-	/* Request number of items to the source by passing receiver index path 
-	   expressed in a way relative to the base item */
-	int nbOfItems = [[baseItem source] itemGroup: baseItem
-	                         numberOfItemsAtPath: indexPath];
-	NSMutableArray *itemsFromSource = [NSMutableArray arrayWithCapacity: nbOfItems];
-
-	for (int i = 0; i < nbOfItems; i++)
-	{
-		NSIndexPath *indexSubpath = [indexPath indexPathByAddingIndex: i];
-		/* Request item to the source by passing item index path expressed in a
-		   way relative to the base item */
-		ETLayoutItem *item = [[baseItem source] itemGroup: baseItem 
-		                                       itemAtPath: indexSubpath];
+		ETLayoutItem *item = [[baseItem source] baseItem: baseItem 
+		                                     itemAtIndex: i 
+		                                     inItemGroup: self];
 		
-		//ETLog(@"Retrieved item %@ known by path %@", item, indexSubpath);
-
 		if (item != nil)
 		{
 			[itemsFromSource addObject: item];
@@ -543,8 +506,8 @@ inside another -begin/endMutate pair.  */
 		else
 		{
 			[NSException raise: @"ETInvalidReturnValueException" 
-				format: @"Item at path %@ returned by source %@ must not be "
-				@"nil", indexSubpath, [baseItem source]];
+				format: @"Item at index %i in %@ returned by source %@ must not be "
+				@"nil", i, self, [baseItem source]];
 		}
 	}
 	
@@ -587,60 +550,45 @@ inside another -begin/endMutate pair.  */
 	return childItems;
 }
 
-/** Returns 0 when source doesn't conform to any parts of 
-ETLayoutItemGroupIndexSource or ETLayoutItemGroupPathSource informal protocols.
+/* Returns 0 when the base item has no source or the source is invalid.
 
-Returns 1 when source conform to ETLayoutItemGroupIndexSource protocol for flat 
-collections and display of items in a linear style.
+Returns 1 when the base item source conforms to ETLayoutItemGroupIndexSource 
+protocol.
 
-Returns 2 when source conform to ETLayoutItemGroupPathSource protocol for tree 
-collections and display of items in a hiearchical style.
-
-If tree collection part of the protocol is implemented through 
--itemGroup:numberOfItemsAtPath: , ETLayoutItemGroup by default ignores flat 
-collection part of protocol like -numberOfItemsInItemGroup:. */
+Returns 2 when the represented object is expected to provide the content 
+(through the collection protocol). */
 - (int) checkSourceProtocolConformance
 {
 	id source = [[self baseItem] source];
 
-	if ([source isEqual: [self baseItem]])
+	/* We test the receiver source to support that item groups returned by 
+	   -baseItem:itemAtIndex:inItemGroup: can provide their content with 
+	   -itemsFromRepresentedObject. 
+	   In this case -itemsFromRepresentedObject has priority over 
+	   -itemsFromSourceWithIndexProtocol. */ 
+	if ([source isEqual: [self baseItem]] || [[self source] isEqual: self])
 	{
-		return 3;
+		return 2;
 	}
-	else if ([source respondsToSelector: @selector(itemGroup:numberOfItemsAtPath:)])
+	else if ([source respondsToSelector: @selector(baseItem:numberOfItemsInItemGroup:)])
 	{
-		if ([source respondsToSelector: @selector(itemGroup:itemAtPath:)])
-		{
-			return 2;
-		}
-		else
-		{
-			ETLog(@"%@ implements itemGroup:numberOfItemsAtPath: but misses "
-				  @"itemGroup:itemAtPath: as requested by "
-				  @"ETLayoutItemGroupPathSource protocol.", source);
-			return 0;
-		}
-	}
-	else if ([source respondsToSelector: @selector(numberOfItemsInItemGroup:)])
-	{
-		if ([source respondsToSelector: @selector(itemGroup:itemAtIndex:)])
+		if ([source respondsToSelector: @selector(baseItem:itemAtIndex:inItemGroup:)])
 		{
 			return 1;
 		}
 		else
 		{
-			ETLog(@"%@ implements numberOfItemsInItemGroup: but misses "
-				  @"itemGroup:itemAtIndex as  requested by "
-				  @"ETLayoutItemGroupIndexSource  protocol.", source);
+			ETLog(@"%@ implements -numberOfItemsInItemGroup: but misses "
+				  @"-baseItem:itemAtIndex:inItemGroup: as requested by "
+				  @"ETLayoutItemGroupIndexSource protocol.", source);
 			return 0;
 		}
 	}
 	else
 	{
-		ETLog(@"%@ implements neither numberOfItemsInItemGroup: nor "
-			  @"itemGroup:numberOfItemsAtPath: as requested by "
-			  @"ETLayoutItemGroupIndexSource and ETLayoutItemGroupPathSource "
-			  @"protocol.", source);
+		ETLog(@"%@ implements neither -baseItem:numberOfItemsInItemGroup: nor "
+			  @"-baseItem:itemAtIndex:inItemGroup: as requested by "
+			  @"ETLayoutItemGroupIndexSource protocol.", source);
 		return 0;
 	}
 }

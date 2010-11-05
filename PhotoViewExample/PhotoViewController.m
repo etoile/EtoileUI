@@ -35,11 +35,15 @@ the receiver is set as the application's delegate in the nib. */
 	[ETApp rebuildMainNib];
 	photoViewItem = [photoView owningItem];
 
+	/* Set up the the photo view UI */
+
 	[photoViewItem setController: self];
 	[photoViewItem setSource: self];
 	[photoViewItem setLayout: [self configureLayout: [ETColumnLayout layout]]];
 	[photoViewItem setHasVerticalScroller: YES];
 	[photoViewItem setHasHorizontalScroller: YES];
+
+	/* Declare pick and drop rules based on UTI types */
 
 	// FIXME: Move into an EtoileUI plist loaded by ETUTI
 	[ETUTI registerTypeWithString: @"org.etoile-project.objc.class.NSImage"
@@ -248,7 +252,7 @@ UI level for a photo viewer. */
 to build layout items and adds them to the photo view directly.
 
 This method sets less properties on the returned items unlike 
--itemGroup:itemAtIndex:.
+-baseItem:itemAtIndex:inItemGroup:.
 
 See -switchUsesSource: action which toggles how the photo view item content 
 is provided. The content is provided either by this method or the source 
@@ -261,7 +265,7 @@ protocol methods. */
 	
 	FOREACH(images, img, NSImage *)
 	{
-		ETLayoutItem *item = [ETLayoutItem layoutItemWithView: [self imageViewForImage: img]];
+		ETLayoutItem *item = [[ETLayoutItemFactory factory] itemWithView: [self imageViewForImage: img]];
 
 		 /* Use the image as the item model
 		 
@@ -295,23 +299,26 @@ protocol methods. */
 	return view;
 }
 
-/* ETLayoutItemGroup informal flat source protocol as a variant to 
-   -setUpLayoutItemsDirectly. 
+/* ETLayoutItemGroup Source Protocol as a variant to -setUpLayoutItemsDirectly. 
 
    Will be called back in reaction to -reloadXXX when [photoViewItem source] is 
    not nil, see -selectPicturePanelDidEnd:XXX and -switchUsesSource:. */
 
-- (int) numberOfItemsInItemGroup: (ETLayoutItemGroup *)baseItem
+- (int) baseItem: (ETLayoutItemGroup *)baseItem numberOfItemsInItemGroup: (ETLayoutItemGroup *)itemGroup
 {
 	ETLog(@"Returns %d as number of items in %@", [images count], baseItem);
 
 	return [images count];
 }
 
-- (ETLayoutItem *) itemGroup: (ETLayoutItemGroup *)baseItem itemAtIndex: (int)index
+/* Both baseItem and itemGroup are the same because the base item is photo view 
+   item which only presents images. For example, it doesn't support to group the images. */
+- (ETLayoutItem *) baseItem: (ETLayoutItemGroup *)baseItem 
+                itemAtIndex: (int)index 
+                inItemGroup: (ETLayoutItemGroup *)itemGroup
 {
 	NSImage *img = [images objectAtIndex: index];
-	ETLayoutItem *imageItem = [ETLayoutItem itemWithView: [self imageViewForImage: img]];
+	ETLayoutItem *imageItem = [[ETLayoutItemFactory factory] itemWithView: [self imageViewForImage: img]];
 	NSWorkspace *wk = [NSWorkspace sharedWorkspace];
 	NSString *appName = nil;
 	NSString *type = nil;

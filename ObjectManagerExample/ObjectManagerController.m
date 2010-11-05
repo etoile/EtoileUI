@@ -15,7 +15,6 @@
 @interface ObjectManagerController (Private)
 - (id) configureLayout: (id)layoutObject;
 - (void) moveToItem: (ETLayoutItem *)item;
-- (void) checkTextualPathForMixedPath;
 @end
 
 NSString *myFolderUTIString = @"org.etoile.ObjectManagerExample.folder";
@@ -23,27 +22,19 @@ NSString *myFileUTIString = @"org.etoile.ObjectManagerExample.file";
 
 @implementation ObjectManagerController
 
-- (id) init
-{
-	SUPERINIT
-	ASSIGN(path, @"/");
-	return self;
-}
-
-DEALLOC(DESTROY(path);)
-
-static NSFileManager *objectManager = nil;
+static NSFileManager *fileManager = nil;
+static NSString *filePathProperty = @"filePath";
 
 /* Invoked when the application is going to finish its launch because 
 the receiver is set as the application's delegate in the nib. */
 - (void) applicationWillFinishLaunching: (NSNotification *)notif
 {
-	objectManager = [NSFileManager defaultManager];
+	fileManager = [NSFileManager defaultManager];
 
 	/* Will turn the nib views and windows into layout item trees */
 	[ETApp rebuildMainNib];
 
-	[self checkTextualPathForMixedPath];
+	/* Declare pick and drop rules based on UTI types */
 
 	[ETUTI registerTypeWithString: myFileUTIString 
 	                  description: nil 
@@ -60,23 +51,34 @@ the receiver is set as the application's delegate in the nib. */
 	[controller setAllowedDropTypes: A(myFileUTI, myFolderUTI) 
 	                  forTargetType: myFolderUTI];
 
+	/* Set the start path */
+
+	[mainViewItem setValue: @"/" forProperty: filePathProperty];
+	[pathViewItem setValue: @"/" forProperty: filePathProperty];
+	
+	/* Set up the the main view UI */
+	
 	[mainViewItem setController: controller];
 	// TODO: Should probably be on the controller or the tool.
-	//[mainViewItem setAllowsMultipleSelection: YES];
-	[mainViewItem setRepresentedPathBase: path];		
+	//[mainViewItem setAllowsMultipleSelection: YES];	
 	[mainViewItem setSource: self];
 	[mainViewItem setTarget: self];
 	[mainViewItem setDoubleAction: @selector(doubleClickInMainView:)];
 	[mainViewItem setHasVerticalScroller: YES];
 	[mainViewItem setHasHorizontalScroller: YES];
 	[mainViewItem setLayout: [self configureLayout: [ETIconLayout layout]]];
-	[mainViewItem reloadAndUpdateLayout];
+
+	/* Set up the path view UI */
 
 	[pathViewItem setLayout: [ETLineLayout layout]];
 	[[pathViewItem layout] setConstrainedItemSize: NSMakeSize(64, 64)];
 	[pathViewItem setSource: self];
 	[pathViewItem setTarget: self];
 	[pathViewItem setDoubleAction: @selector(doubleClickInPathView:)];
+
+	/* Load the start path content and redisplay */
+
+	[mainViewItem reloadAndUpdateLayout];
 	[pathViewItem reloadAndUpdateLayout];
 }
 
@@ -191,210 +193,35 @@ the receiver is set as the application's delegate in the nib. */
 
 - (void) moveToItem: (ETLayoutItem *)item
 {
-	NSString *newPath = [item valueForProperty: @"filePath"];
+	NSString *newPath = [item valueForProperty: filePathProperty];
+	NSString *oldPath = [mainViewItem valueForProperty: filePathProperty];
 	
-	NSLog(@"Moving from path %@ to %@", path, newPath);
-	ASSIGN(path, newPath);
+	NSLog(@"Moving from path %@ to %@", oldPath , newPath);
 
-	// NOTE: The following is mandatory if you use tree source protocol unlike 
-	// with flat source protocol.
-	[mainViewItem setRepresentedPathBase: path];
-	
+	[mainViewItem setValue: newPath forProperty: filePathProperty];
+
 	[mainViewItem reloadAndUpdateLayout];
 	[pathViewItem reloadAndUpdateLayout];
 }
 
-/* Example with path /2/Applications/3 
+/* ETLayoutItemGroup Source Protocol */
 
-   We use recursivity to retrieve the head and moves back to the tail component
-   by component.
-   We process /2, /<filename>/Applications and /<filename>/Applications/3 and 
-   we expect /<filename>/Applications/<filename> */
-- (NSString *) textualPathForMixedPath: (NSString *)mixedPath
+- (int) baseItem: (ETLayoutItemGroup *)baseItem numberOfItemsInItemGroup: (ETLayoutItemGroup *)itemGroup
 {
-	NSString *pathGettingFixed = nil;
-	
-	/* '/2' is made of two path components */
-	if ([[mixedPath pathComponents] count] > 2)
+	if ([baseItem isEqual: mainViewItem]) /* Browsing View */
 	{
-		NSString *beginningOfPath = [self textualPathForMixedPath: [mixedPath stringByDeletingLastPathComponent]];
-		if (beginningOfPath == nil)
-		{
-			return nil;
-		}
-		pathGettingFixed = [beginningOfPath stringByAppendingPathComponent: [mixedPath lastPathComponent]];
-	}
-	else
-	{
-		pathGettingFixed = mixedPath;
-	}
+		NSString *dirPath = [itemGroup valueForProperty: filePathProperty];
+		NSArray *fileObjects = [fileManager directoryContentsAtPath: dirPath];
 
-	/* -> means moving up in the call stack... lastcall -> lastcall -1 -> lastcall - 2 */
-	NSString *componentToCheck = [pathGettingFixed lastPathComponent]; // 2 -> Applications -> 3
-	NSCharacterSet *charSet = [NSCharacterSet characterSetWithCharactersInString: componentToCheck];
-	
-	/* componentToCheck is a number, we have to modify the path */
-	if ([[NSCharacterSet decimalDigitCharacterSet] isSupersetOfSet: charSet])
-	{
-		NSString *pathBase = [pathGettingFixed stringByDeletingLastPathComponent]; // / -> /<filename>/Applications 
-		NSArray *files = [[NSFileManager defaultManager] directoryContentsAtPath: pathBase];
-		
-		if (files != nil && [files count] > 0)
-		{
-			NSString *file = [files objectAtIndex: [componentToCheck intValue]];
-			NSMutableArray *components = [[pathGettingFixed pathComponents] mutableCopy];
-			
-			[components removeLastObject]; // 2 -> 3
-			[components addObject: [file lastPathComponent]]; // <filename> -> <filename>
-			
-			pathGettingFixed = [NSString pathWithComponents: components];
-		}
-		else
-		{
-			pathGettingFixed = nil; /* Path is invalid */
-		}
-	}
-	
-	return pathGettingFixed;
-}
-
-- (void) checkTextualPathForMixedPath
-{
-#ifndef GNUSTEP			 
-	NSString *testPath = @"/2";
-	NSString *fixedPath = [self textualPathForMixedPath: testPath];
-	NSLog(@"Mixed path test: %@ -> %@", testPath, fixedPath);
-
-	testPath = @"/Developer/3";
-	fixedPath = [self textualPathForMixedPath: testPath];
-	NSLog(@"Mixed path test: %@ -> %@", testPath, fixedPath);
-
-	testPath = @"/Developer/3/Audio/1";
-	fixedPath = [self textualPathForMixedPath: testPath];
-	NSLog(@"Mixed path test: %@ -> %@", testPath, fixedPath);
-
-	testPath = @"/10/3/Audio/1";
-	fixedPath = [self textualPathForMixedPath: testPath];
-	if (nil != fixedPath)
-	{
-		NSLog(@"Mixed path test: %@ -> %@", testPath, fixedPath);
-	}
-
-	testPath = @"/1/1";
-	fixedPath = [self textualPathForMixedPath: testPath];
-	if (nil != fixedPath)
-	{
-		NSLog(@"Mixed path test: %@ -> %@", testPath, fixedPath);
-	}
-#endif
-}
-
-/* ETLayoutItemGroupSource informal protocol */
-
-/* Tree protocol */
-
-- (int) itemGroup: (ETLayoutItemGroup *)baseItem numberOfItemsAtPath: (NSIndexPath *)indexPath
-{
-	NSString *subpath = [indexPath stringByJoiningIndexPathWithSeparator: @"/"];
-	NSString *filePath = [[baseItem representedPath] stringByAppendingPathComponent: subpath];
-	
-	/* Standardize path by replacing indexes by file names */
-	filePath = [self textualPathForMixedPath: filePath];
-	
-	if ([baseItem isEqual: mainViewItem]) /* Main View */
-	{
-		NSArray *fileObjects = [objectManager directoryContentsAtPath: filePath];
-
-		//NSLog(@"Returns %d as number of items in container %@", [fileObjects count], container);
+		NSLog(@"Returns %d as number of items in %@", [fileObjects count], mainViewItem);
 		
 		return [fileObjects count];
 	}
 	else if ([baseItem isEqual: pathViewItem]) /* Path View */
 	{
-		return [self numberOfItemsInItemGroup: baseItem];
-	}
-	
-	return 0;
-}
+		NSArray *pathComponents = [[mainViewItem valueForProperty: filePathProperty] pathComponents];
 
-- (ETLayoutItem *) itemGroup: (ETLayoutItemGroup *)baseItem itemAtPath: (NSIndexPath *)indexPath
-{
-	NSWorkspace *wk = [NSWorkspace sharedWorkspace];
-	ETLayoutItem *fileItem = nil;
-
-	if ([baseItem isEqual: mainViewItem]) /* Browsing View */
-	{
-		NSString *subpath = [indexPath stringByJoiningIndexPathWithSeparator: @"/"];
-		NSString *filePath = [[baseItem representedPath] stringByAppendingPathComponent: subpath];
-	
-		/* Standardize path by replacing indexes by file names */
-		filePath = [self textualPathForMixedPath: filePath];
-		
-		NSDictionary *attributes = [objectManager fileAttributesAtPath: filePath traverseLink: NO];
-		NSImage *icon = [wk iconForFile: filePath];
-		BOOL isDir = NO;
-		
-		//NSLog(@"Found path %@ with %@", filePath, newPath);
-
-		/* Force the loading of  128 * 128 icon versions otherwise icons cannot
-		   be resized beyond 32 * 32 (when put inside an image view). */
-		[icon setSize: NSMakeSize(128, 128)];
-		if ([[NSFileManager defaultManager] fileExistsAtPath: filePath isDirectory: &isDir] && isDir)
-		{
-			fileItem = [[ETLayoutItemFactory factory] itemGroup];
-			[fileItem setLayout: nil];
-			[fileItem setSubtype: [ETUTI typeWithString: myFolderUTIString]];
-		}
-		else
-		{
-			fileItem = [[ETLayoutItemFactory factory] item];
-			[fileItem setSubtype: [ETUTI typeWithString: myFileUTIString]];
-		}
-		
-		// FIXME: better to have a method -setIdentifier: different from -setName:
-		[fileItem setName: [filePath lastPathComponent]];
-		[fileItem setIcon: icon];
-		[fileItem setValue: filePath forProperty: @"filePath"];
-		[fileItem setValue: [NSNumber numberWithInt: [attributes fileSize]] forProperty: @"fileSize"];
-		[fileItem setValue: [attributes fileType] forProperty: @"fileType"];
-		//[fileItem setValue: date forProperty: @"fileModificationDate"];
-		
-		//NSLog(@"Returns %@ as layout item in container %@", fileItem, container);
-	}
-	else if ([baseItem isEqual: pathViewItem]) /* Path View */
-	{
-		int flatIndex = [indexPath indexAtPosition: [indexPath length] - 1];
-		return [self itemGroup: baseItem itemAtIndex: flatIndex];
-	}
-
-	return fileItem;
-}
-
-- (NSArray *) displayedItemPropertiesInItemGroup: (ETLayoutItemGroup *)baseItem
-{
-	return [NSArray arrayWithObjects: @"icon", @"name", @"fileSize", @"fileType", @"fileModificationDate", nil];
-}
-
-/* Flat protocol
-
-   NOTE: only present for demonstrating purpose. It could be rewritten as part
-   of tree protocol methods implemented above. */
-
-- (int) numberOfItemsInItemGroup: (ETLayoutItemGroup *)baseItem
-{
-	if ([baseItem isEqual: mainViewItem]) /* Browsing View */
-	{
-		NSArray *fileObjects = [objectManager directoryContentsAtPath: path];
-
-		//NSLog(@"Returns %d as number of items in %@", [fileObjects count], mainViewItem);
-		
-		return [fileObjects count];
-	}
-	else if ([baseItem isEqual: pathViewItem]) /* Path View */
-	{
-		NSArray *pathComponents = [path pathComponents];
-
-		//NSLog(@"Returns %d as number of items in %@", [pathComponents count], pathViewItem);
+		NSLog(@"Returns %d as number of items in %@", [pathComponents count], pathViewItem);
 		
 		return [pathComponents count];
 	}
@@ -402,46 +229,68 @@ the receiver is set as the application's delegate in the nib. */
 	return 0;
 }
 
-- (ETLayoutItem *) itemGroup: (ETLayoutItemGroup *)baseItem itemAtIndex: (int)index
+- (ETLayoutItem *) fileItemWithPath: (NSString *)filePath
 {
-	NSWorkspace *wk = [NSWorkspace sharedWorkspace];
 	ETLayoutItem *fileItem = nil;
+	NSWorkspace *wk = [NSWorkspace sharedWorkspace];
+	NSDictionary *attributes = [fileManager fileAttributesAtPath: filePath traverseLink: NO];
+	NSImage *icon = [wk iconForFile: filePath];
+	BOOL isDir = NO;
+	
+	NSLog(@"Create file item with path %@ ", filePath);
 
+	/* Force the loading of  128 * 128 icon versions otherwise icons cannot
+	   be resized beyond 32 * 32 (when put inside an image view). */
+	[icon setSize: NSMakeSize(128, 128)];
+	if ([fileManager fileExistsAtPath: filePath isDirectory: &isDir] && isDir)
+	{
+		fileItem = [[ETLayoutItemFactory factory] itemGroup];
+		[fileItem setLayout: nil];
+		[fileItem setSubtype: [ETUTI typeWithString: myFolderUTIString]];
+	}
+	else
+	{
+		fileItem = [[ETLayoutItemFactory factory] item];
+		[fileItem setSubtype: [ETUTI typeWithString: myFileUTIString]];
+	}
+	
+	// FIXME: better to have a method -setIdentifier: different from -setName:
+	[fileItem setName: [filePath lastPathComponent]];
+	[fileItem setIcon: icon];
+	[fileItem setValue: filePath forProperty: filePathProperty];
+	[fileItem setValue: [NSNumber numberWithInt: [attributes fileSize]] forProperty: @"fileSize"];
+	[fileItem setValue: [attributes fileType] forProperty: @"fileType"];
+	//[fileItem setValue: date forProperty: @"fileModificationDate"];
+
+	return fileItem;
+}
+
+- (ETLayoutItem *) baseItem: (ETLayoutItemGroup *)baseItem 
+                itemAtIndex: (int)index 
+                inItemGroup: (ETLayoutItemGroup *)itemGroup 
+{
 	if ([baseItem isEqual: mainViewItem]) /* Browsing View */
 	{
-		NSArray *fileObjects = [objectManager directoryContentsAtPath: path];
-		NSString *filePath = [path stringByAppendingPathComponent: [fileObjects objectAtIndex: index]];
-		NSDictionary *attributes = [objectManager fileAttributesAtPath: filePath traverseLink: NO];
+		NSString *dirPath = [itemGroup valueForProperty: filePathProperty];
+		NSArray *fileNames = [fileManager directoryContentsAtPath: dirPath];
+		NSString *filePath = [dirPath stringByAppendingPathComponent: [fileNames objectAtIndex: index]];
 
-		fileItem = [[ETLayoutItemFactory factory] item];
-
-		[fileItem setValue: [filePath lastPathComponent] forProperty: @"name"];
-		[fileItem setValue: filePath forProperty: @"filePath"];
-		[fileItem setValue: [wk iconForFile: filePath] forProperty: @"icon"];
-		[fileItem setValue: [NSNumber numberWithInt: [attributes fileSize]] forProperty: @"fileSize"];
-		[fileItem setValue: [attributes fileType] forProperty: @"fileType"];
-		//[fileItem setValue: date forProperty	: @"modificationdate"];
-		
-		//NSLog(@"Returns %@ as layout item in %@", fileItem, mainViewItem);
+		return [self fileItemWithPath: filePath];		
 	}
 	else if ([baseItem isEqual: pathViewItem]) /* Path View */
 	{
-		NSArray *pathComponents = [path pathComponents];
-		NSString *filePath = [NSString pathWithComponents: [pathComponents subarrayWithRange: NSMakeRange(0, index + 1)]];
+		NSArray *pathComponents = [[mainViewItem valueForProperty: filePathProperty] pathComponents];
+		NSString *filePath = [NSString pathWithComponents: 
+			[pathComponents subarrayWithRange: NSMakeRange(0, index + 1)]];
 
-		//NSLog(@"Built path is %@ with components %@", filePath, pathComponents);
-
-		fileItem = [[ETLayoutItemFactory factory] item];
-		[fileItem setFrame: NSMakeRect(0, 0, 48, 48)];
-		[fileItem setIcon: [wk iconForFile: filePath]];
-
-		[fileItem setValue: [filePath lastPathComponent] forProperty: @"name"];
-		[fileItem setValue: filePath forProperty: @"filePath"];
-		
-		//NSLog(@"Returns %@ as layout item in %@", fileItem, pathViewItem);
+		return [self fileItemWithPath: filePath];
 	}
-	
-	return fileItem;
+	return nil;
+}
+
+- (NSArray *) displayedItemPropertiesInItemGroup: (ETLayoutItemGroup *)baseItem
+{
+	return [NSArray arrayWithObjects: @"icon", @"name", @"fileSize", @"fileType", @"fileModificationDate", nil];
 }
 
 @end
