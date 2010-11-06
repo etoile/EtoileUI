@@ -48,7 +48,8 @@ the receiver is set as the application's delegate in the nib. */
 	// FIXME: Move into an EtoileUI plist loaded by ETUTI
 	[ETUTI registerTypeWithString: @"org.etoile-project.objc.class.NSImage"
 	                  description: @"Objective-C Class"
-	             supertypeStrings: A(@"public.image")];
+	             supertypeStrings: A(@"public.image")
+	                     typeTags: nil];
 
 	[self setAutomaticallyRearrangesObjects: YES]; /* Enable automatic sorting */
 	[self setAllowedPickTypes: A([ETUTI typeWithString: @"public.image"])];

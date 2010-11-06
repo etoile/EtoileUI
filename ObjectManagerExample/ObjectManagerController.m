@@ -38,10 +38,12 @@ the receiver is set as the application's delegate in the nib. */
 
 	[ETUTI registerTypeWithString: myFileUTIString 
 	                  description: nil 
-	             supertypeStrings: [NSArray array]];
+	             supertypeStrings: [NSArray array]
+	                     typeTags: nil];
 	[ETUTI registerTypeWithString: myFolderUTIString 
 	                  description: nil 
-	             supertypeStrings: [NSArray array]];
+	             supertypeStrings: [NSArray array]
+	                     typeTags: nil];
 
 	ETUTI *myFileUTI = [ETUTI typeWithString: myFileUTIString];
 	ETUTI *myFolderUTI = [ETUTI typeWithString: myFolderUTIString];
