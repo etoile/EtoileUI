@@ -174,7 +174,7 @@ synchronize those layouts with it every time a setting changed.  */
 	if ([self isScrollableAreaItemVisible] == NO)
 		return;
 
-	ETScrollableAreaItem *scrollableAreaItem = [self firstScrollViewDecoratorItem];
+	ETScrollableAreaItem *scrollableAreaItem = [self scrollableAreaItem];
 	ETDecoratorItem *nextDecorator = [scrollableAreaItem decoratorItem];	
 		
 	[[scrollableAreaItem decoratedItem] setDecoratorItem: nextDecorator];

@@ -535,7 +535,7 @@ item tree. This item is identical to the one returned by
 -supervisorViewBackedAncestorItem. 
 
 The receiver display view itself can be returned. */
-- (ETView *) closestAncestorDisplayView
+- (ETView *) enclosingDisplayView
 {
 	ETView *displayView = [self displayView];
 
@@ -544,7 +544,7 @@ The receiver display view itself can be returned. */
 
 	if (_parentItem != nil)
 	{
-		return [_parentItem closestAncestorDisplayView];
+		return [_parentItem enclosingDisplayView];
 	}
 	else
 	{
@@ -1382,8 +1382,13 @@ See also -supervisorView:. */
 
 /** When the receiver content is presented inside scrollers, returns the 
 decorator item that owns the scrollers provided by the widget backend (e.g. 
-AppKit), otherwise returns nil. */
-- (ETScrollableAreaItem *) firstScrollViewDecoratorItem
+AppKit), otherwise returns nil.
+
+When multiple scrollable area items are present in the decorator chain, the 
+first is returned.
+
+Won't return an enclosing scrollable area item bound to an ancestor item. */
+- (ETScrollableAreaItem *) scrollableAreaItem
 {
 	id decorator = self;
 	
@@ -1398,7 +1403,11 @@ AppKit), otherwise returns nil. */
 
 /** When the receiver content is presented inside a window, returns the 
 decorator item that owns the window provided by the widget backend (e.g. 
-AppKit), otherwise returns nil. */
+AppKit), otherwise returns nil.
+
+Won't return an enclosing window item bound to an ancestor item.<br />
+To retrieve the enclosing window item, use 
+[[self windowBackedAncestorItem] windowItem]. */
 - (ETWindowItem *) windowItem
 {
 	id lastDecorator = [self lastDecoratorItem];
@@ -1702,7 +1711,7 @@ More explanations in -display. */
 	NSView *displayView = nil;
 	NSRect displayRect = [[self firstDecoratedItem] convertDisplayRect: dirtyRect 
 	                        toAncestorDisplayView: &displayView
-							rootView: [[[self closestAncestorDisplayView] window] contentView]
+							rootView: [[[self enclosingDisplayView] window] contentView]
 							parentItem: _parentItem];
 
 	[displayView setNeedsDisplayInRect: displayRect];
@@ -1737,7 +1746,7 @@ More explanations in -display. */
 	NSView *displayView = nil;
 	NSRect displayRect = [[self firstDecoratedItem] convertDisplayRect: dirtyRect
 	                        toAncestorDisplayView: &displayView
-							rootView: [[[self closestAncestorDisplayView] window] contentView]
+							rootView: [[[self enclosingDisplayView] window] contentView]
 							parentItem: _parentItem];
 	[displayView displayRect: displayRect];
 }
@@ -1748,7 +1757,7 @@ items.
 Areas can be marked as invalid with -setNeedsDisplay: and -setNeedsDisplayInRect:. */
 - (void) displayIfNeeded
 {
-	[[self closestAncestorDisplayView] displayIfNeeded];
+	[[self enclosingDisplayView] displayIfNeeded];
 }
 
 /** When the receiver is visible in an opaque layout and won't redraw by itself, 

@@ -336,7 +336,7 @@ This method calls either -makeFirstKeyResponder: or -makeFirstMainResponder:. */
 
 	if ([aResponder isLayoutItem])
 	{
-		window = [[aResponder closestAncestorDisplayView] window];
+		window = [[aResponder enclosingDisplayView] window];
 	}
 	else if ([aResponder isKindOfClass: [NSView class]])
 	{

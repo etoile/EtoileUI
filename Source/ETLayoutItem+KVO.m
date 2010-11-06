@@ -111,19 +111,19 @@ receiver is not observed.
 /* Returns the observable properties which shouldn't be observed.
 
 Non observable properties are -hasValidRepresentedPathBase, -usesWidgetView, 
--closestAncestorDisplayView, -supervisorViewBackedAncestorItem, -windowBackedAncestorItem
+-enclosingDisplayView, -supervisorViewBackedAncestorItem, -windowBackedAncestorItem
 -supervisorView, -ancestorItemForOpaqueLayout, ,-properties, -variableProperties, 
--drawingFrame, -windowItem, -firstScrollViewDecoratorItem, -origin,  
+-drawingFrame, -windowItem, -scrollableAreaItem, -origin,  
 -contentSize, and -inspector.
 
 TODO: Move into ETLayoutItem entity description. */
 + (NSSet *) nonObservableProperties
 {
 	return S(@"hasValidRepresentedPathBase", @"usesWidgetView",	
-		@"closestAncestorDisplayView", "supervisorViewBackedAncestorItem", 
+		@"enclosingDisplayView", "supervisorViewBackedAncestorItem", 
 		@"windowBackedAncestorItem", @"supervisorView", 
 		@"ancestorItemForOpaqueLayout", @"properties", @"variableProperties", 
-		@"drawingFrame", @"windowItem", @"firstScrollViewDecoratorItem", 
+		@"drawingFrame", @"windowItem", @"scrollableAreaItem", 
 		@"origin",  @"contentSize", @"inspector");
 }
 

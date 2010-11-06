@@ -159,7 +159,7 @@ and centers it. A strech is a scale that doesn't preserve the content proportion
 - (ETLayoutItemGroup *) parentItem;
 - (void) setParentItem: (ETLayoutItemGroup *)parent;
 - (void ) removeFromParent;
-- (ETView *) closestAncestorDisplayView;
+- (ETView *) enclosingDisplayView;
 - (ETLayoutItem *) supervisorViewBackedAncestorItem;
 - (id) windowBackedAncestorItem;
 
@@ -263,12 +263,12 @@ and centers it. A strech is a scale that doesn't preserve the content proportion
 - (BOOL) isFlipped;
 - (void) setFlipped: (BOOL)flip;
 
-/* Decoration */
+/* Decoration (see ETUTIItem) */
 
 - (ETView *) supervisorView;
 - (void) setSupervisorView: (ETView *)aSupervisorView sync: (ETSyncSupervisorView)syncDirection;
 
-- (ETScrollableAreaItem *) firstScrollViewDecoratorItem;
+- (ETScrollableAreaItem *) scrollableAreaItem;
 - (ETWindowItem *) windowItem;
 
 /* Sizing */
