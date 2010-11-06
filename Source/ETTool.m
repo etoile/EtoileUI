@@ -431,7 +431,7 @@ This method calls either -makeFirstKeyResponder: or -makeFirstMainResponder:. */
 /** Returns the item which is decorated by the key window in the layout item tree.
 
 The key window can be retrieved through the decorator item with 
-[[[[ETTool activeTool] keyItem] windowDecoratorItem] window]. */
+[[[[ETTool activeTool] keyItem] windowItem] window]. */
 - (ETLayoutItem *) keyItem
 {
 	id contentView = [[ETApp keyWindow] contentView];
@@ -445,7 +445,7 @@ The key window can be retrieved through the decorator item with
 /** Returns the item which is decorated by the main window in the layout item tree.
 
 The main window can be retrieved through the decorator item with 
-[[[[ETTool activeTool] mainItem] windowDecoratorItem] window]. */
+[[[[ETTool activeTool] mainItem] windowItem] window]. */
 - (ETLayoutItem *) mainItem
 {
 	id contentView = [[ETApp mainWindow] contentView];
@@ -466,7 +466,7 @@ responder status is given to a single object in this area.
 Nil can be returned when the item is not inserted in the main item tree. */
 - (id <ETFirstResponderSharingArea>) editionCoordinatorForItem: (ETLayoutItem *)anItem
 {
-	return [[anItem windowBackedAncestorItem] windowDecoratorItem];
+	return [[anItem windowBackedAncestorItem] windowItem];
 }
 
 /** <override-never />

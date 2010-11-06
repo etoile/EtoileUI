@@ -103,7 +103,7 @@ when a layout other than ETWindowLayout is set on the receiver. */
 	   in removing the window view (NSThemeFrame on Mac OS X) because 
 	   ETWindowLayer overrides -handleDetachViewOfItem:. */
 	[super handleDetachItem: item];
-	[[[item windowDecoratorItem] decoratedItem] setDecoratorItem: nil];
+	[[[item windowItem] decoratedItem] setDecoratorItem: nil];
 	RELEASE(item);
 }
 
@@ -187,7 +187,7 @@ You should never call this method unless you write an ETWindowLayout subclass. *
 {
 	FOREACH([self items], item, ETLayoutItem *)
 	{
-		[[[item windowDecoratorItem] decoratedItem] setDecoratorItem: nil];
+		[[[item windowItem] decoratedItem] setDecoratorItem: nil];
 	}
 }
 

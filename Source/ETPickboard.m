@@ -305,7 +305,7 @@ returns an ETLayoutItem. */
 /** Returns the window embedding the UI representation of the receiver. */
 - (NSWindow *) pickPalette
 {
-	return [[self windowDecoratorItem] window];
+	return [[self windowItem] window];
 }
 
 /** Brings the pickboard window to the front and makes it the first responder. */

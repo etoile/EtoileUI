@@ -111,9 +111,9 @@ receiver is not observed.
 /* Returns the observable properties which shouldn't be observed.
 
 Non observable properties are -hasValidRepresentedPathBase, -usesWidgetView, 
--closestAncestorDisplayView, -supervisorViewBackedAncestorItem, -windowBackedAncestor
+-closestAncestorDisplayView, -supervisorViewBackedAncestorItem, -windowBackedAncestorItem
 -supervisorView, -ancestorItemForOpaqueLayout, ,-properties, -variableProperties, 
--drawingFrame, -windowDecoratorItem, -firstScrollViewDecoratorItem, -origin,  
+-drawingFrame, -windowItem, -firstScrollViewDecoratorItem, -origin,  
 -contentSize, and -inspector.
 
 TODO: Move into ETLayoutItem entity description. */
@@ -123,7 +123,7 @@ TODO: Move into ETLayoutItem entity description. */
 		@"closestAncestorDisplayView", "supervisorViewBackedAncestorItem", 
 		@"windowBackedAncestorItem", @"supervisorView", 
 		@"ancestorItemForOpaqueLayout", @"properties", @"variableProperties", 
-		@"drawingFrame", @"windowDecoratorItem", @"firstScrollViewDecoratorItem", 
+		@"drawingFrame", @"windowItem", @"firstScrollViewDecoratorItem", 
 		@"origin",  @"contentSize", @"inspector");
 }
 

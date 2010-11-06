@@ -140,7 +140,7 @@ returns YES to -[ETWindowItem shouldKeepWindowFrame:].  */
 - (id) renderWindow: (NSWindow *)window
 {
 	ETLayoutItem *item = [self renderView: [window contentView]];
-	ETWindowItem *windowDecorator = [item windowDecoratorItem];
+	ETWindowItem *windowDecorator = [item windowItem];
 	BOOL isWindowDecorationNeeded = (windowDecorator == nil);
 
 	if (isWindowDecorationNeeded)

@@ -326,7 +326,7 @@
 
 - (NSWindow *) window
 {
-	return [[self windowDecoratorItem] window];
+	return [[self windowItem] window];
 }
 
 // FIXME: Implement or remove

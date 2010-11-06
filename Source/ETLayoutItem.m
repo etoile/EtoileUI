@@ -1397,9 +1397,9 @@ AppKit), otherwise returns nil. */
 }
 
 /** When the receiver content is presented inside a window, returns the 
-decorator item that ownss the window provided by the widget backend (e.g. 
+decorator item that owns the window provided by the widget backend (e.g. 
 AppKit), otherwise returns nil. */
-- (ETWindowItem *) windowDecoratorItem
+- (ETWindowItem *) windowItem
 {
 	id lastDecorator = [self lastDecoratorItem];
 	id windowDecorator = nil;
@@ -1512,7 +1512,7 @@ The drawing box used a negative origin expressed relatively to the drawing
 bounds origin. */
 - (NSRect) drawingBounds
 {
-	ETWindowItem *windowItem = [self windowDecoratorItem];
+	ETWindowItem *windowItem = [self windowItem];
 	NSRect rect;
 
 	if (nil != windowItem)
@@ -1567,7 +1567,7 @@ The returned rect is the bouding box but adjusted to prevent drawing on the
 window decorations. */
 - (NSRect) drawingBox
 {
-	ETWindowItem *windowItem = [self windowDecoratorItem];
+	ETWindowItem *windowItem = [self windowItem];
 	NSRect rect;
 
 	if (nil != windowItem)
@@ -2673,7 +2673,7 @@ item backed either, returns nil. */
 		return nil;
 
 	NSRect rectInView = [self convertRect: aRect toItem: viewBackedItem];
-	ETWindowItem *windowItem = [viewBackedItem windowDecoratorItem];
+	ETWindowItem *windowItem = [viewBackedItem windowItem];
 
 	if (nil != windowItem)
 	{

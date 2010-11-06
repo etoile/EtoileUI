@@ -80,7 +80,7 @@ coordinates or not to set the event location in the window. */
 
 - (NSWindow *) window
 {
-	return [[mainItem windowDecoratorItem] window];
+	return [[mainItem windowItem] window];
 }
 
 - (ETEvent *) createEventAtPoint: (NSPoint)loc inWindow: (NSWindow *)win
@@ -163,7 +163,7 @@ a point expressed in the main item coordinates. The main item is the window cont
 - (void) testCreateEventAtContentPoint
 {
 	ETEvent *evt = [self createEventAtContentPoint: NSZeroPoint inWindow: [self window]];
-	ETWindowItem *windowItem = [mainItem windowDecoratorItem]; 
+	ETWindowItem *windowItem = [mainItem windowItem]; 
 
 	UKPointsEqual(NSZeroPoint, [evt locationInWindowContentItem]);
 	UKPointsEqual([windowItem convertDecoratorPointFromContent: NSZeroPoint], [evt locationInWindowItem]);
