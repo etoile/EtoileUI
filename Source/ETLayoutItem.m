@@ -94,17 +94,6 @@ The returned item will use +defaultItemRect as its frame. */
 	return [self initWithView: nil value: nil representedObject: nil];
 }
 
-/** Initializes and returns a layout item with the given frame.
-
-You should use -[ETLayoutItemFactory itemWithFrame] or 
--[ETLayoutItemFactory itemGroupWithFrame:] rather than this method. */
-- (id) initWithFrame: (NSRect)frame
-{
-	self = [self initWithView: nil value: nil representedObject: nil];
-	[self setFrame: frame];
-	return self;
-}
-
 /** <init />
 You must use -[ETLayoutItemFactory itemXXX] or 
 -[ETLayoutItemFactory itemGroupXXX] methods rather than this method.

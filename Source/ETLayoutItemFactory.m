@@ -209,7 +209,9 @@ shared style returned by -currentBarElementStyle.  */
 /** Returns a new blank layout item group initialized with the given frame. */
 - (ETLayoutItemGroup *) itemGroupWithFrame: (NSRect)aRect
 {
-	return AUTORELEASE([[ETLayoutItemGroup alloc] initWithFrame: aRect]);
+	ETLayoutItem *item = AUTORELEASE([[ETLayoutItemGroup alloc] init]);
+	[item setFrame: aRect];
+	return item;
 }
 
 /** Returns a new layout item group which contains the given item as a child .

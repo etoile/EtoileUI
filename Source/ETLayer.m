@@ -30,9 +30,8 @@ when a layout other than ETWindowLayout is set on the receiver. */
 
 - (id) init
 {
-	self = [super initWithFrame: [[NSScreen mainScreen] visibleFrame]];
-	if (nil == self)
-		return nil;
+	SUPERINIT;
+	[self setFrame: [[NSScreen mainScreen] visibleFrame]];
 		
 	ASSIGN(_rootWindowItem, [self createRootWindowItem]);
 	_visibleWindows = [[NSMutableArray alloc] init];

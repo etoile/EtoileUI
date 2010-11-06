@@ -142,7 +142,6 @@ and centers it. A strech is a scale that doesn't preserve the content proportion
 /* Initialization */
 
 - (id) initWithView: (NSView *)view value: (id)value representedObject: (id)repObject;
-- (id) initWithFrame: (NSRect)frame;
 
 - (void) stopKVOObservation;
 - (void) stopKVOObservationIfNeeded;
