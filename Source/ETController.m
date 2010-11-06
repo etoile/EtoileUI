@@ -30,10 +30,12 @@ static ETController *basicTemplateProvider = nil;
 	{
 		kETTemplateObjectType = [ETUTI registerTypeWithString: @"org.etoile-project.etoileui.template-object"
 		                                          description: @"EtoileUI Template Object Type (see ETController)"
-		                                     supertypeStrings: [NSArray array]];
+		                                     supertypeStrings: [NSArray array]
+		                                             typeTags: nil];
 		kETTemplateGroupType = [ETUTI registerTypeWithString: @"org.etoile-project.etoileui.template-group"
 		                                         description: @"EtoileUI Template Group Type (see ETController)"
-		                                    supertypeStrings: [NSArray array]];
+		                                    supertypeStrings: [NSArray array]
+		                                            typeTags: nil];
 		basicTemplateProvider = [[ETController alloc] init];
 	}
 }
@@ -478,10 +480,30 @@ See also -setTemplate:forType:. */
 /** Returns the template to create the right UI and model to view or edit the 
 given element type.
 
+If no template matches the UTI exactly, looks up a template based on the UTI 
+supertypes. The supertypes are -[EUTI allSupertypes] and are tested in the 
+same order. When a template was previously bound to a supertype by calling 
+-setTemplate:forType:, this method returns it.<br />
+In case all supertypes have been tried without success, nil is returned.<br />
+This lookup mechanism is named supercasting.
+
 See -newItemWithURL:ofType:options and ETItemTemplate. */
 - (ETItemTemplate *) templateForType: (ETUTI *)aUTI
 {
-	return [_templates objectForKey: aUTI];
+	ETItemTemplate *template = [_templates objectForKey: aUTI];
+
+	if (nil != template)
+		return template;
+
+	/* Supercasting */
+	FOREACH([aUTI allSupertypes], supertype, ETUTI *)
+	{
+		template = [_templates objectForKey: supertype];
+		if (nil != template)
+			break;
+	}
+
+	return template;
 }
 
 /** Sets the template to create the right UI and model to view or edit the given 

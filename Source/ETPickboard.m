@@ -110,9 +110,8 @@ static ETPickboard *activePickboard = nil;
 /** <init \> Initializes and returns a new pickboard. */
 - (id) init
 {
-	self = [super initWithFrame: PALETTE_FRAME];
-	if (nil == self)
-		return nil;
+	SUPERINIT;
+	[self setFrame: PALETTE_FRAME];
 
 	_pickedObjects = [[NSMutableDictionary alloc] init];
 	_pickboardRef = 0;

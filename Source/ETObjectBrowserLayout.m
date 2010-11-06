@@ -39,6 +39,7 @@
 #import <EtoileFoundation/NSIndexPath+Etoile.h>
 #import <EtoileFoundation/NSString+Etoile.h>
 #import <EtoileFoundation/NSObject+Model.h>
+#import <EtoileFoundation/Macros.h>
 #import "ETObjectBrowserLayout.h"
 #import "ETView.h"
 #import "ETLayoutItemFactory.h"
@@ -278,7 +279,8 @@
 	other part of the layout item tree), the initial window will be lost. */
 - (id) init
 {
-	self = [super initWithFrame: PALETTE_FRAME];
+	SUPERINIT;
+	[self setFrame: PALETTE_FRAME];
 	
 	if (self != nil)
 	{

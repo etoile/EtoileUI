@@ -57,7 +57,7 @@ model initialization. */
 - (ETLayoutItem *) item;
 - (NSString *) baseName;
 
-/* Template Instantiation */
+/* Template Instantiation & Saving */
 
 - (ETLayoutItem *) newItemWithRepresentedObject: (id)anObject options: (NSDictionary *)options;
 - (ETLayoutItem *) newItemWithURL: (NSURL *)aURL options: (NSDictionary *)options;
@@ -65,6 +65,8 @@ model initialization. */
 - (BOOL) writeItem: (ETLayoutItem *)anItem 
              toURL: (NSURL *)aURL 
            options: (NSDictionary *)options;
+- (NSArray *) supportedTypes;
+- (NSURL *) URLFromRunningSavePanel;
 - (BOOL) allowsMultipleInstancesForURL: (NSURL *)aURL;
 - (NSString *) nameFromBaseNameAndOptions: (NSDictionary *)options;
 

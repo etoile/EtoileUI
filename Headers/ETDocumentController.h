@@ -50,14 +50,20 @@ integration etc.) without having to resort to another API. */
 - (ETLayoutItem *) openItemWithURL: (NSURL *)aURL options: (NSDictionary *)options;
 - (BOOL) allowsMultipleInstancesForURL: (NSURL *)aURL;
 
-+ (ETUTI *) typeForURL: (NSURL *)aURL;
+/* Type Determination */
 
-- (NSError *) error;
++ (ETUTI *) typeForURL: (NSURL *)aURL;
+- (ETUTI *) typeForWritingItem: (ETLayoutItem *)anItem;
 
 /* Actions */
 
 - (IBAction) newDocument: (id)sender;
 - (IBAction) openDocument: (id)sender;
+- (IBAction) saveDocument: (id)sender;
+
+/* Error Reporting */
+
+- (NSError *) error;
 
 @end
 

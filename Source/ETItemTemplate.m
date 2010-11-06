@@ -136,6 +136,51 @@ See also -newItemWithRepresentedObject:options:. */
 	return NO;
 }
 
+- (NSArray *) supportedTypes
+{
+	if ([self objectClass] != nil)
+	{
+		return A([ETUTI typeWithClass: [self objectClass]]);	
+	}
+	else if ([[self item] representedObject] != nil)
+	{
+		return A([[[self item] representedObject] UTI]);
+	}
+	else
+	{
+		// TODO: Return compound document UTI
+		return nil;
+	}
+}
+
+- (NSURL *) URLFromRunningSavePanel
+{
+	ETAssert([self supportedTypes] != nil);
+
+	NSSavePanel *sp = [NSSavePanel savePanel];
+
+	// NOTE: GNUstep supports only extensions in NSOpen/SavePanel API unlike 
+	// Cocoa which accepts UTI strings.
+#ifdef GNUSTEP
+	NSArray *fileExtensionArrays = [[[self supportedTypes] mappedCollection] fileExtensions];
+	NSMutableArray *types = [NSMutableArray array];
+
+	// TODO: Should be rewritten [[[[self supportedTypes] mappedCollection] fileExtensions] flattenedCollection]
+	FOREACH(fileExtensionArrays, extensionArray, NSArray *)
+	{
+		if ([extensionArray isEqual: [NSNull null]])
+			continue;
+
+		[types addObjectsFromArray: extensionArray];
+	}
+#else
+	NSArray *types = [[[self supportedTypes] mappedCollection] stringValue];
+#endif
+	[sp setAllowedFileTypes: types];
+
+	return ([sp runModal] == NSFileHandlingPanelOKButton ? [sp URL] : nil);
+}
+
 /** <override-dummy />
 Returns whether the same document can appear multiple times on screen for 
 the given URL. 

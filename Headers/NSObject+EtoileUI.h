@@ -66,6 +66,10 @@
 - (BOOL) isTool;
 - (BOOL) isView;
 
+/* Debugging */
+
+- (NSString *) XMLArchive;
+
 @end
 
 @interface NSObject (ETInspector) <ETObjectInspection>

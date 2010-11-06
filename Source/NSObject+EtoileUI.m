@@ -221,6 +221,30 @@ otherwise returns NO. */
 	return [self isKindOfClass: [NSView class]];
 }
 
+/* Debugging */
+
+/** Returns the receiver archived as a XML string with NSKeyedArchiver.
+
+When the receiver doesn't support NSCoding or keyed archiving, returns nil.
+
+You shouldn't use this method in your code. Just use it as a debugging 
+conveniency. */
+- (NSString *) XMLArchive
+{
+	if ([self conformsToProtocol: @protocol(NSCoding)] == NO)
+		return nil;
+
+	NSMutableData *data = [NSMutableData data];
+	NSKeyedArchiver *archiver = [[NSKeyedArchiver alloc] initForWritingWithMutableData: data];
+
+	[archiver setOutputFormat: NSPropertyListXMLFormat_v1_0];
+	[archiver encodeObject: self];
+	[archiver finishEncoding];
+	RELEASE(archiver);
+
+	return AUTORELEASE([[NSString alloc] initWithData: data encoding: NSUTF8StringEncoding]);
+}
+
 @end
 
 

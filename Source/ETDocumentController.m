@@ -15,6 +15,7 @@
 #import "ETLayoutItem.h"
 #import "ETLayoutItemGroup.h"
 #import "ETPickDropActionHandler.h" /* For ETUndeterminedIndex */
+#import "ETTool.h"
 #import "NSObject+EtoileUI.h"
 #import "ETCompatibility.h"
 
@@ -48,7 +49,7 @@ The returned array usually contains a single item, unless the application allows
 to open multiple instances of the same document (e.g. a web browser). */
 - (NSArray *) itemsForURL: (NSURL *)aURL
 {
-	NSMutableArray *items = AUTORELEASE([[self content] mutableCopy]); 
+	NSMutableArray *items = AUTORELEASE([[[self content] items] mutableCopy]); 
 	[[[items filter] valueForProperty: @"URL"] isEqual: aURL];
 	return items;
 }
@@ -62,7 +63,14 @@ to open multiple instances of the same document (e.g. a web browser). */
 // TODO: Implement
 - (id) activeItem
 {
-	return nil;
+	if ([[[self content] layout] isKindOfClass: NSClassFromString(@"ETWindowLayout")])
+	{
+		return [[ETTool activeTool] mainItem];
+	}
+	else
+	{
+		return [[self content] itemAtIndex: [[self content] selectionIndex]];
+	} 
 }
 
 /** Returns a retained ETLayoutItem or ETLayoutItemGroup object that presents the 
@@ -140,23 +148,49 @@ implement a tailored behavior. */
 	return [ETUTI typeWithPath: [aURL path]];
 }
 
-/** Returns the last error that was reported to the receiver. */
-- (NSError *) error
+/** <override-dummy />
+Returns the UTI that describes the item (or its content) to be saved or 
+written. 
+
+The returned UTI is used to look up the template to which the writing/saving 
+is delegated.
+
+By default, returns the item represented object UTI, otherwise the item UTI. */
+- (ETUTI *) typeForWritingItem: (ETLayoutItem *)anItem
 {
-	return _error;
+	NSParameterAssert(nil != anItem);
+	return [[anItem subject] UTI];
 }
 
 - (NSArray *) URLsFromRunningOpenPanel
 {
 	NSOpenPanel *op = [NSOpenPanel openPanel];
 
+	// NOTE: GNUstep supports only extensions in NSOpen/SavePanel API unlike 
+	// Cocoa which accepts UTI strings.
+#ifdef GNUSTEP
+	NSArray *fileExtensionArrays = [[[self supportedTypes] mappedCollection] fileExtensions];
+	NSMutableArray *types = [NSMutableArray array];
+
+	// TODO: Should be rewritten [[[[self supportedTypes] mappedCollection] fileExtensions] flattenedCollection]
+	FOREACH(fileExtensionArrays, extensionArray, NSArray *)
+	{
+		if ([extensionArray isEqual: [NSNull null]])
+			continue;
+
+		[types addObjectsFromArray: extensionArray];
+	}
+#else
+	NSArray *types = [[[self supportedTypes] mappedCollection] stringValue];
+#endif
+	[op setAllowedFileTypes: types];
 	[op setAllowsMultipleSelection: YES];
-	[op setAllowedFileTypes: [self supportedTypes]];
+	[op setCanChooseDirectories: YES];
+
+	ETLog(@"Will run open panel for document types %@", [op allowedFileTypes]);
 
 	return ([op runModal] == NSFileHandlingPanelOKButton ? [op URLs] : [NSArray array]);
 }
-
-/* Actions */
 
 /** Creates a new object of the current object type and adds it to the receiver 
 content.
@@ -180,18 +214,46 @@ Will call -openInstanceWithURL:options: to open the document(s).
 See also [ETDocumentCreation] protocol. */
 - (IBAction) openDocument: (id)sender
 {
-	NSURL *url = [[self URLsFromRunningOpenPanel] firstObject];
-	NSDictionary *options = nil;
-	ETLayoutItem *openedItem = [[self itemsForURL: url] firstObject];
+	NSArray *urls = [self URLsFromRunningOpenPanel];
 
+	if ([urls isEmpty])
+		return;
+
+	NSDictionary *options = nil;
+	ETLayoutItem *openedItem = nil;
+
+	/* Open each URL content */
+	FOREACH(urls, url, NSURL *)
+	{
+		openedItem = [[self itemsForURL: url] firstObject];
+
+		[self insertObject: AUTORELEASE([self openItemWithURL: url options: options])
+		           atIndex: ETUndeterminedIndex];
+	}
+
+	/* Highlight or bring to the front the last opened item */
 	if (nil != openedItem)
 	{
 		[[self content] setSelectionIndex: [[self content] indexOfItem: openedItem]];
 		return;
 	}
 
-	[self insertObject: AUTORELEASE([self openItemWithURL: url options: options])
-	           atIndex: ETUndeterminedIndex];
+}
+
+- (IBAction) saveDocument: (id)sender
+{
+	ETUTI *type =  [self typeForWritingItem: [self activeItem]]; 
+	ETAssert(nil != type);
+	ETItemTemplate *template = [self templateForType: type]; 
+	ETAssert(nil != template);
+
+	[template writeItem: [self activeItem] toURL: nil options: nil];	
+}
+
+/** Returns the last error that was reported to the receiver. */
+- (NSError *) error
+{
+	return _error;
 }
 
 @end
