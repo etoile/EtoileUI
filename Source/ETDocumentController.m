@@ -181,7 +181,7 @@ By default, returns the item represented object UTI, otherwise the item UTI. */
 		[types addObjectsFromArray: extensionArray];
 	}
 #else
-	NSArray *types = [[[self supportedTypes] mappedCollection] stringValue];
+	NSArray *types = (NSArray *)[[[self supportedTypes] mappedCollection] stringValue];
 #endif
 	[op setAllowedFileTypes: types];
 	[op setAllowsMultipleSelection: YES];

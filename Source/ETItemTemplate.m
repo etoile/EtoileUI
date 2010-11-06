@@ -174,7 +174,7 @@ See also -newItemWithRepresentedObject:options:. */
 		[types addObjectsFromArray: extensionArray];
 	}
 #else
-	NSArray *types = [[[self supportedTypes] mappedCollection] stringValue];
+	NSArray *types = (NSArray *)[[[self supportedTypes] mappedCollection] stringValue];
 #endif
 	[sp setAllowedFileTypes: types];
 
