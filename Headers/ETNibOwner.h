@@ -77,3 +77,15 @@ would try to load the Nib file named "PreferencesPanel.nib". */
 - (id) rebuiltObjectForObject: (id)anObject builder: (id)aBuilder;
 
 @end
+
+/** ETNibOwner requires a builder that implements this protocol. For example, 
+see ETEtoileUIBuilder.<br />
+ETNibOwner subclasses that overrides -rebuildTopLevelObjectsWithBuilder: or 
+-rebuiltObjectForObject:builder: might have other requirements.
+
+See also ETTransform in EtoileFoundation. */
+@interface NSObject (ETNibOwnerBuilder)
+/** Takes an object in argument and returns a new representation or the same 
+object. */
+- (id) render: (id)anObject;
+@end

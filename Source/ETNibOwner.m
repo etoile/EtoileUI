@@ -11,7 +11,6 @@
 #import <EtoileFoundation/Macros.h>
 #import <EtoileFoundation/ETCollection.h>
 #import <EtoileFoundation/ETCollection+HOM.h>
-#import <EtoileFoundation/ETRendering.h>
 #import "ETNibOwner.h"
 #import "NSObject+EtoileUI.h"
 #import "ETCompatibility.h"
@@ -162,7 +161,7 @@ constructs if possible.
 
 For example, views or windows become layout item trees owned by the Nib.
 
-The conversion is delegated to the given builder with [(ETRendering)] protocol.<br />
+The conversion is delegated to the given builder with [(ENibOwnerBuilder)] protocol.<br />
 The object returned by -render: replaces the original object. When 
 -rebuiltObjectForObject:builder: returns nil, the original object is removed.  */
 - (void) rebuildTopLevelObjectsWithBuilder: (id)aBuilder
