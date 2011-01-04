@@ -29,7 +29,12 @@ widget layouts such as ETTableLayout or ETBrowserLayout.
 By altering the scroller visibility with this category, you can be sure you 
 won't have to reconfigure the scrollable area item even when you remove it or 
 it gets removed. It will be reinserted when scrollers are reenabled, because 
-scrollable area items handed to -[ETLayoutItem setDecoratorItem:] are cached. */
+scrollable area items handed to -[ETLayoutItem setDecoratorItem:] are cached.
+
+Don't use -setScrollable: initially to make the scrollers visible, but 
+-setHasVerticalScroller: or -setHasHorizontalScroller:, -setScrollable: only 
+inserts or removes the scrollable area item.<br />
+A new scrollable area item has no visible scrollers. */
 @interface ETLayoutItem (Scrollable)
 
 - (BOOL) hasVerticalScroller;
