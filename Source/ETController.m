@@ -210,7 +210,17 @@ Also raises an exception when the new controller content cannot be determined,
 
 /** Returns the content object which is either a layout item group or nil.
 
-See also -setContent: and -[ETLayoutItemGroup controller].*/
+Can be overriden to return a descendant item of the originally set content. 
+For example:
+
+<example>
+- (ETLayoutItemGroup *) content
+{
+	return [[super content] itemForIdentifier: @"theChildItemWhichWeMutateSortAndFilter"];
+}
+</example>
+
+See also -setContent:, -[ETLayoutItemGroup controller] and -nextResponder.*/
 - (ETLayoutItemGroup *) content
 {
 	return content;
@@ -562,12 +572,13 @@ by calling -selectedItemsInLayout on the content. */
 
 /** Returns the next responder in the responder chain. 
 
-The next responder is the enclosing item of the content unless specified otherwise.
+The next responder is the enclosing item of the item to which the controller 
+is bound to.
 
 You can override this method in a subclass, although it should rarely be needed. */
 - (id) nextResponder
 {
-	return [[self content] enclosingItem];
+	return [content enclosingItem];
 }
 
 /* Insertion */
