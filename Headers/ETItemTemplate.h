@@ -55,6 +55,7 @@ model initialization. */
 
 - (Class) objectClass;
 - (ETLayoutItem *) item;
+- (ETLayoutItem *) contentItem;
 - (NSString *) baseName;
 
 /* Template Instantiation & Saving */

@@ -65,6 +65,17 @@ See also -newItemWithRepresentedObject:options:. */
 	return _item;
 }
 
+/** <override-dummy />
+Returns the item to which the represented object should be attached to.
+
+By default, returns -item.
+
+Can be overriden to return a descendant item. */
+- (ETLayoutItem *) contentItem
+{
+	return [self item];
+}
+
 - (NSString *) baseName
 {
 	return _(@"Untitled");
@@ -73,14 +84,17 @@ See also -newItemWithRepresentedObject:options:. */
 /** Returns a new retained ETLayoutItem or ETLayoutItemGroup object with the 
 given represented object and options.
 
-The returned item is a copy of -item.
+The returned item is a copy of -item.<br />
+The represented object will be attached to a copy of -contentItem.
 
 All arguments can be nil.
 
 Can be overriden in subclasses. */
 - (ETLayoutItem *) newItemWithRepresentedObject: (id)anObject options: (NSDictionary *)options
 {
-	ETLayoutItem *newItem = [[self item] deepCopy];
+	NSIndexPath *contentIndexPath = [[self contentItem] indexPathFromItem: [self item]];
+	id newItem = [[self item] deepCopy];
+	ETLayoutItem *newContentItem = ([newItem isGroup] ? [newItem itemAtIndexPath: contentIndexPath] : newItem);
 
 	/* We don't set the object as model when it is nil, so any existing value 
 	   or represented object already provided with the item won't be overwritten 
@@ -89,7 +103,7 @@ Can be overriden in subclasses. */
 	   template items in -[ETItemTemplate newItemWithRepresentedObject:options]. */
 	if (nil != anObject)
 	{
-		[newItem setRepresentedObject: anObject];
+		[newContentItem setRepresentedObject: anObject];
 	}
 	return newItem;
 }
@@ -114,11 +128,11 @@ See also -newItemWithRepresentedObject:options:. */
 	if ([newInstance conformsToProtocol: @protocol(ETDocumentCreation)])
 	{
 		
-		[newInstance initWithURL: aURL options: options];
+		newInstance = [newInstance initWithURL: aURL options: options];
 	}
 	else
 	{
-		[newInstance init];
+		newInstance = [newInstance init];
 	}
 
 	return [self newItemWithRepresentedObject: AUTORELEASE(newInstance) options: nil];
