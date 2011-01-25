@@ -174,6 +174,8 @@
 		60909D620CB304C7009CAD27 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1058C7A1FEA54F0111CA2CBB /* Cocoa.framework */; };
 		60909D630CB304C9009CAD27 /* EtoileUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 60EF8E9D0C5E4D0600C97C41 /* EtoileUI.framework */; };
 		60909D660CB304D9009CAD27 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 29B97316FDCFA39411CA2CEA /* main.m */; };
+		60928D5112EDE9EA0091A3D1 /* MarkupEditorItemFactory.m in Sources */ = {isa = PBXBuildFile; fileRef = 60928D4D12EDE9EA0091A3D1 /* MarkupEditorItemFactory.m */; };
+		60928D5212EDE9EA0091A3D1 /* AppController.m in Sources */ = {isa = PBXBuildFile; fileRef = 60928D4F12EDE9EA0091A3D1 /* AppController.m */; };
 		60AE4C910EED520B00DE82BC /* ETLayoutItem+Reflection.m in Sources */ = {isa = PBXBuildFile; fileRef = 60364A050E40A560003377E0 /* ETLayoutItem+Reflection.m */; };
 		60AE4C930EED520B00DE82BC /* NSImage+NiceScaling.m in Sources */ = {isa = PBXBuildFile; fileRef = 60364A070E40A560003377E0 /* NSImage+NiceScaling.m */; };
 		60AE4C940EED520B00DE82BC /* ETNibOwner.m in Sources */ = {isa = PBXBuildFile; fileRef = 60364A080E40A560003377E0 /* ETNibOwner.m */; };
@@ -193,6 +195,7 @@
 		60C1D8AD0C2569D500E00A2E /* PaneController.m in Sources */ = {isa = PBXBuildFile; fileRef = 60C1D8AC0C2569D500E00A2E /* PaneController.m */; };
 		60C1DA230C25715F00E00A2E /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1058C7A1FEA54F0111CA2CBB /* Cocoa.framework */; };
 		60C1DA3D0C2571EE00E00A2E /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 29B97316FDCFA39411CA2CEA /* main.m */; };
+		60C1FD1912EF26B000696D05 /* MarkupEditor.xib in Resources */ = {isa = PBXBuildFile; fileRef = 60C1FD1812EF26B000696D05 /* MarkupEditor.xib */; };
 		60C27A0F0E66B0D80040A41D /* ETComputedLayout.h in Headers */ = {isa = PBXBuildFile; fileRef = 60C27A0D0E66B0D80040A41D /* ETComputedLayout.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		60C27A110E66B0EA0040A41D /* ETComputedLayout.m in Sources */ = {isa = PBXBuildFile; fileRef = 60C27A100E66B0EA0040A41D /* ETComputedLayout.m */; };
 		60C76C571013681B0073C381 /* ETCompositeLayout.h in Headers */ = {isa = PBXBuildFile; fileRef = 60C76C561013681B0073C381 /* ETCompositeLayout.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -210,7 +213,6 @@
 		60CF717D0D42E75300B4CA3D /* ETLayoutItemGroup+Mutation.h in Headers */ = {isa = PBXBuildFile; fileRef = 60CF717B0D42E75300B4CA3D /* ETLayoutItemGroup+Mutation.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		60CF717E0D42E75300B4CA3D /* ETLayoutItemGroup+Mutation.m in Sources */ = {isa = PBXBuildFile; fileRef = 60CF717C0D42E75300B4CA3D /* ETLayoutItemGroup+Mutation.m */; };
 		60CF743B0D449B9500B4CA3D /* MarkupEditorController.m in Sources */ = {isa = PBXBuildFile; fileRef = 60CF743A0D449B9500B4CA3D /* MarkupEditorController.m */; };
-		60CF744F0D44E42A00B4CA3D /* MarkupEditor.nib in Resources */ = {isa = PBXBuildFile; fileRef = 60CF744E0D44E42A00B4CA3D /* MarkupEditor.nib */; };
 		60CF74930D44E68700B4CA3D /* EtoileUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 60EF8E9D0C5E4D0600C97C41 /* EtoileUI.framework */; };
 		60CF74940D44E68700B4CA3D /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1058C7A1FEA54F0111CA2CBB /* Cocoa.framework */; };
 		60CF749A0D44E69700B4CA3D /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 29B97316FDCFA39411CA2CEA /* main.m */; };
@@ -543,6 +545,10 @@
 		60909CCB0CB2DA43009CAD27 /* TableExample-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = "TableExample-Info.plist"; path = "TableExample/TableExample-Info.plist"; sourceTree = "<group>"; };
 		60909CD70CB2DAB3009CAD27 /* TableController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TableController.h; path = TableExample/TableController.h; sourceTree = "<group>"; };
 		60909CD80CB2DAB3009CAD27 /* TableController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = TableController.m; path = TableExample/TableController.m; sourceTree = "<group>"; };
+		60928D4D12EDE9EA0091A3D1 /* MarkupEditorItemFactory.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = MarkupEditorItemFactory.m; path = MarkupEditor/MarkupEditorItemFactory.m; sourceTree = "<group>"; };
+		60928D4E12EDE9EA0091A3D1 /* MarkupEditorItemFactory.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MarkupEditorItemFactory.h; path = MarkupEditor/MarkupEditorItemFactory.h; sourceTree = "<group>"; };
+		60928D4F12EDE9EA0091A3D1 /* AppController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = AppController.m; path = MarkupEditor/AppController.m; sourceTree = "<group>"; };
+		60928D5012EDE9EA0091A3D1 /* AppController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = AppController.h; path = MarkupEditor/AppController.h; sourceTree = "<group>"; };
 		609544AA0C0CE24D00068CBB /* ETBrowserLayout.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ETBrowserLayout.h; path = Headers/ETBrowserLayout.h; sourceTree = "<group>"; };
 		609544AB0C0CE24D00068CBB /* ETBrowserLayout.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ETBrowserLayout.m; path = Source/ETBrowserLayout.m; sourceTree = "<group>"; };
 		609547B70C0E032E00068CBB /* ETLayer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ETLayer.h; path = Headers/ETLayer.h; sourceTree = "<group>"; };
@@ -579,6 +585,7 @@
 		60BBFFB7100A31D8001B2F37 /* WebKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = WebKit.framework; path = /System/Library/Frameworks/WebKit.framework; sourceTree = "<absolute>"; };
 		60C1D8AB0C2569D500E00A2E /* PaneController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PaneController.h; path = PaneExample/PaneController.h; sourceTree = "<group>"; };
 		60C1D8AC0C2569D500E00A2E /* PaneController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = PaneController.m; path = PaneExample/PaneController.m; sourceTree = "<group>"; };
+		60C1FD1812EF26B000696D05 /* MarkupEditor.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = MarkupEditor.xib; path = MarkupEditor/MarkupEditor.xib; sourceTree = "<group>"; };
 		60C27A0D0E66B0D80040A41D /* ETComputedLayout.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ETComputedLayout.h; path = Headers/ETComputedLayout.h; sourceTree = "<group>"; };
 		60C27A100E66B0EA0040A41D /* ETComputedLayout.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ETComputedLayout.m; path = Source/ETComputedLayout.m; sourceTree = "<group>"; };
 		60C76C561013681B0073C381 /* ETCompositeLayout.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ETCompositeLayout.h; path = Headers/ETCompositeLayout.h; sourceTree = "<group>"; };
@@ -600,7 +607,6 @@
 		60CF742A0D449A8A00B4CA3D /* MarkupEditor.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = MarkupEditor.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		60CF74390D449B9500B4CA3D /* MarkupEditorController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MarkupEditorController.h; path = MarkupEditor/MarkupEditorController.h; sourceTree = "<group>"; };
 		60CF743A0D449B9500B4CA3D /* MarkupEditorController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = MarkupEditorController.m; path = MarkupEditor/MarkupEditorController.m; sourceTree = "<group>"; };
-		60CF744E0D44E42A00B4CA3D /* MarkupEditor.nib */ = {isa = PBXFileReference; lastKnownFileType = wrapper.nib; name = MarkupEditor.nib; path = MarkupEditor/MarkupEditor.nib; sourceTree = "<group>"; };
 		60D8881D115E407D00D7A8AA /* NSCell+EtoileUI.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = "NSCell+EtoileUI.m"; path = "Source/NSCell+EtoileUI.m"; sourceTree = "<group>"; };
 		60D88820115E408D00D7A8AA /* NSCell+EtoileUI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "NSCell+EtoileUI.h"; path = "Headers/NSCell+EtoileUI.h"; sourceTree = "<group>"; };
 		60D88883115E651000D7A8AA /* TestCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = TestCell.m; path = Tests/TestCell.m; sourceTree = "<group>"; };
@@ -1020,6 +1026,19 @@
 			name = "Composite Layouts";
 			sourceTree = "<group>";
 		};
+		60928D4C12EDE9950091A3D1 /* Markup Editor */ = {
+			isa = PBXGroup;
+			children = (
+				60928D4D12EDE9EA0091A3D1 /* MarkupEditorItemFactory.m */,
+				60928D4E12EDE9EA0091A3D1 /* MarkupEditorItemFactory.h */,
+				60928D4F12EDE9EA0091A3D1 /* AppController.m */,
+				60928D5012EDE9EA0091A3D1 /* AppController.h */,
+				60CF74390D449B9500B4CA3D /* MarkupEditorController.h */,
+				60CF743A0D449B9500B4CA3D /* MarkupEditorController.m */,
+			);
+			name = "Markup Editor";
+			sourceTree = "<group>";
+		};
 		609548D10C0E300F00068CBB /* Layout Items */ = {
 			isa = PBXGroup;
 			children = (
@@ -1140,8 +1159,7 @@
 				60C1D8AC0C2569D500E00A2E /* PaneController.m */,
 				60909CD70CB2DAB3009CAD27 /* TableController.h */,
 				60909CD80CB2DAB3009CAD27 /* TableController.m */,
-				60CF74390D449B9500B4CA3D /* MarkupEditorController.h */,
-				60CF743A0D449B9500B4CA3D /* MarkupEditorController.m */,
+				60928D4C12EDE9950091A3D1 /* Markup Editor */,
 			);
 			name = Examples;
 			sourceTree = "<group>";
@@ -1156,11 +1174,11 @@
 				609097010CADC366009CAD27 /* PhotoViewExample-Info.plist */,
 				60909CCB0CB2DA43009CAD27 /* TableExample-Info.plist */,
 				60FC2927105C112D008D2EFF /* FormExample-Info.plist */,
-				60CF744E0D44E42A00B4CA3D /* MarkupEditor.nib */,
 				60B5F85F11EF661B00A08FF5 /* ObjectManagerExample.xib */,
 				60B5F87911EF679800A08FF5 /* PaneExample.xib */,
 				60B5F85011EF65A200A08FF5 /* PhotoViewExample.xib */,
 				60062EA611EF64BA006888F8 /* TableExample.xib */,
+				60C1FD1812EF26B000696D05 /* MarkupEditor.xib */,
 			);
 			name = Resources;
 			sourceTree = "<group>";
@@ -1632,7 +1650,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				60CF744F0D44E42A00B4CA3D /* MarkupEditor.nib in Resources */,
+				60C1FD1912EF26B000696D05 /* MarkupEditor.xib in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1825,6 +1843,8 @@
 			files = (
 				60CF749A0D44E69700B4CA3D /* main.m in Sources */,
 				60CF743B0D449B9500B4CA3D /* MarkupEditorController.m in Sources */,
+				60928D5112EDE9EA0091A3D1 /* MarkupEditorItemFactory.m in Sources */,
+				60928D5212EDE9EA0091A3D1 /* AppController.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
