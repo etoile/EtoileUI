@@ -413,6 +413,34 @@ Whether the path begins by '/' or not doesn't modify the result. */
 	return item;
 }
 
+/** Returns the first layout item descendant on which the identifier is set. 
+
+The descendant items are retrieved with -allDescendantItems, this results in 
+a pre-order traversal.<br />
+Use this method cautiously when the item tree is big (e.g. more than 10 000 items).
+
+See also -identifier. */
+- (ETLayoutItem *) itemForIdentifier: (NSString *)anId
+{
+	return [[[self allDescendantItems] filteredArrayUsingPredicate: 
+		[NSPredicate predicateWithFormat: @"identifier == %@", anId]] firstObject];
+}
+
+/** Returns an indented tree description by traversing the tree with 
+-arrangedItems to get the children if usesArrangedItems is YES, otherwise with 
+-items.
+
+When aProperty is a valid property name, each item description includes the 
+value bound to this property.
+
+See also -[NSObject descriptionWithOptions:]. */
+- (NSString *) descriptionWithProperty: (NSString *)aProperty arranged: (BOOL)usesArrangedItems
+{
+	NSString *childKey = (usesArrangedItems ? @"arrangedItems" : @"items");
+	return [self descriptionWithOptions: [NSMutableDictionary dictionaryWithObjectsAndKeys: 
+		A(aProperty), kETDescriptionOptionValuesForKeyPaths, childKey, kETDescriptionOptionTraversalKey, nil]];
+}
+
 /** Sets the represented path base associated with the receiver. When a valid 
 represented base is set, the receiver becomes a base item. See also -isBaseItem, 
 -baseItem, -representedPath and -representedPathBase in ETLayoutItem.
