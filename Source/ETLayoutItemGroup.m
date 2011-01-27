@@ -360,10 +360,16 @@ default. */
 
 /* Traversing Layout Item Tree */
 
-/** Returns the layout item child identified by the index path paremeter 
-interpreted as relative to the receiver. */
+/** Returns the layout item child identified by the index path parameter 
+interpreted as relative to the receiver.
+
+For an empty path, returns self.<br />
+For a nil path, returns nil. */
 - (ETLayoutItem *) itemAtIndexPath: (NSIndexPath *)path
 {
+	if (nil == path)
+		return nil;
+
 	int length = [path length];
 	ETLayoutItem *item = self;
 
@@ -675,6 +681,9 @@ event handling logic. */
 	/* By safety, avoids to trigger extra updates */
 	if (GET_PROPERTY(kETSourceProperty) == source)
 		return;
+
+	NSAssert([[self layout] isKindOfClass: NSClassFromString(@"ETCompositeLayout")] == NO, 
+		@"The source must not be changed when a ETCompositeLayout is in use");
 
 	[[NSNotificationCenter defaultCenter] 
 		removeObserver: self 

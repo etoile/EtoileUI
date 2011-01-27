@@ -701,7 +701,10 @@ the index used by the parent item to reference the receiver. */
 		 && [_parentItem usesRepresentedObjectAsProvider])
 		{
 			unsigned int index = [_parentItem indexOfItem: self];
-			identifier = [parentRepObject identifierAtIndex: index];
+			if (index != NSNotFound)
+			{
+				identifier = [parentRepObject identifierAtIndex: index];
+			}
 		}
 	}
 
@@ -862,6 +865,9 @@ The item view is also synchronized with the object value of the given represente
 object when the view is a widget. */
 - (void) setRepresentedObject: (id)modelObject
 {
+	NSAssert([[self layout] isKindOfClass: NSClassFromString(@"ETCompositeLayout")] == NO, 
+		@"The represented object must not be changed when a ETCompositeLayout is in use");
+
 	id oldObject = _representedObject;
 
 	[_representedObject removeObserver: self];
