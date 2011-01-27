@@ -407,7 +407,7 @@ Whether the path begins by '/' or not doesn't modify the result. */
 		{
 			NSArray *childItems = [(ETLayoutItemGroup *)item items];
 			item = [childItems firstObjectMatchingValue: pathComp 
-			                                     forKey: kETIdentifierProperty];
+			                                     forKey: @"defaultIdentifier"];
 		}
 		else
 		{
@@ -682,8 +682,10 @@ event handling logic. */
 	if (GET_PROPERTY(kETSourceProperty) == source)
 		return;
 
-	NSAssert([[self layout] isKindOfClass: NSClassFromString(@"ETCompositeLayout")] == NO, 
-		@"The source must not be changed when a ETCompositeLayout is in use");
+	// TODO: Because ETCompositeLayout uses -setSource: in its set up, we cannot 
+	// do it in this way...
+	//NSAssert([[self layout] isKindOfClass: NSClassFromString(@"ETCompositeLayout")] == NO, 
+	//	@"The source must not be changed when a ETCompositeLayout is in use");
 
 	[[NSNotificationCenter defaultCenter] 
 		removeObserver: self 

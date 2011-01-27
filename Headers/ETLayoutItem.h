@@ -170,10 +170,10 @@ and centers it. A strech is a scale that doesn't preserve the content proportion
 - (NSString *) representedPathBase;
 - (BOOL) hasValidRepresentedPathBase;
 
-- (NSString *) identifier;
-
 /* Main Accessors */
 
+- (NSString *) identifier;
+- (void) setIdentifier: (NSString *)anId;
 - (NSString *) name;
 - (void) setName: (NSString *)name;
 - (NSString *) displayName;

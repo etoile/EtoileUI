@@ -178,8 +178,8 @@ affected. */
 	NSSet *parentDependentKeys = S(kETRootItemProperty, kETIsBaseItemProperty, 
 		kETBaseItemProperty, kETRepresentedPathProperty, kETPathProperty, 
 		kETIndexPathProperty);
-	NSSet *nameDependentKeys = S(kETIdentifierProperty, kETRepresentedPathProperty, 
-		kETPathProperty, kETDisplayNameProperty);
+	NSSet *nameDependentKeys = S(kETRepresentedPathProperty, kETPathProperty, 
+		kETDisplayNameProperty);
 	NSMutableSet *triggerKeys = [NSMutableSet set];
 	
 	if ([geometryDependentKeys containsObject: aKey])

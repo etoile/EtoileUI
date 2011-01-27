@@ -38,6 +38,7 @@ NSString *ETLayoutItemLayoutDidChangeNotification = @"ETLayoutItemLayoutDidChang
 #define VARIABLE_PROPERTIES ((NSMutableDictionary *)[self variableProperties])
 
 @interface ETLayoutItem (Private)
+- (NSString *) defaultIdentifier;
 - (void) setViewAndSync: (NSView *)newView;
 - (NSRect) bounds;
 - (void) setBoundsSize: (NSSize)size;
@@ -255,6 +256,7 @@ Default values will be copied but not individually (shallow copy). */
 	SET_OBJECT_PROPERTY_AND_RELEASE(item, [GET_PROPERTY(kETValueProperty) copyWithZone: aZone], kETValueProperty);
 	SET_OBJECT_PROPERTY(item, GET_PROPERTY(kETDefaultFrameProperty),  kETDefaultFrameProperty);
 	SET_OBJECT_PROPERTY(item, GET_PROPERTY(kETNameProperty), kETNameProperty);
+	SET_OBJECT_PROPERTY(item, GET_PROPERTY(kETIdentifierProperty), kETIdentifierProperty);
 	SET_OBJECT_PROPERTY(item, GET_PROPERTY(kETImageProperty), kETImageProperty);
 	SET_OBJECT_PROPERTY(item, GET_PROPERTY(kETIconProperty), kETIconProperty);
 	SET_OBJECT_PROPERTY(item, GET_PROPERTY(kETSubtypeProperty),  kETSubtypeProperty);
@@ -637,7 +639,7 @@ This method is equivalent to
 	if (_parentItem != nil)
 	{
 		path = [[_parentItem path] 
-			stringByAppendingPathComponent: [self identifier]];
+			stringByAppendingPathComponent: [self defaultIdentifier]];
 	}
 	
 	return path;
@@ -654,11 +656,11 @@ provided by the base item. */
 		if (_parentItem != nil)
 		{
 			path = [_parentItem representedPath];
-			path = [path stringByAppendingPathComponent: [self identifier]];
+			path = [path stringByAppendingPathComponent: [self defaultIdentifier]];
 		}
 		else
 		{
-			path = [self identifier];
+			path = [self defaultIdentifier];
 		}
 	}
 	
@@ -680,44 +682,51 @@ which are absolute paths. */
 	return GET_PROPERTY(kETRepresentedPathBaseProperty);
 }
 
-/** Returns the identifier associated with the layout item. By default, returns 
-the name.
+/* By default, returns the name.
 
 If -name returns nil or an empty string, the identifier is a string made of 
 the index used by the parent item to reference the receiver. */
-- (NSString *) identifier
+- (NSString *) defaultIdentifier
 {
-	NSString *identifier = [self name];
-	
-	if (identifier == nil || [identifier isEqual: @""])
+	if ([[self name] length] > 0)
 	{
-		id parentRepObject = [_parentItem representedObject];
+		return [self name];
+	}
+	
+	/* When the parent item uses a dictionary as represented object, try to 
+	   return the key that corresponds to the receiver */
+
+	id parentRepObject = [_parentItem representedObject];
 		
-		// TODO: Should try to retrieve -UniqueID, -UUID and -UUIDString and 
-		// simplify the if conditional.
-		/* -identifierAtIndex: is implemented by some classes like NSDictionary */
-		if ([parentRepObject isCollection] && [parentRepObject isEmpty] == NO
-		 && [parentRepObject respondsToSelector: @selector(identifierAtIndex:)]
-		 && [_parentItem usesRepresentedObjectAsProvider])
+	/* -identifierAtIndex: is implemented by some classes like NSDictionary */
+	if ([parentRepObject isCollection] && [parentRepObject isEmpty] == NO
+	 && [parentRepObject respondsToSelector: @selector(identifierAtIndex:)]
+	 && [_parentItem usesRepresentedObjectAsProvider])
+	{
+		unsigned int index = [_parentItem indexOfItem: self];
+		if (index != NSNotFound)
 		{
-			unsigned int index = [_parentItem indexOfItem: self];
-			if (index != NSNotFound)
-			{
-				identifier = [parentRepObject identifierAtIndex: index];
-			}
+			return [parentRepObject identifierAtIndex: index];
 		}
 	}
 
-	/*if (identifier == nil || [identifier isEqual: @""])	
-		identifier = [self name];*/
+	/* Otherwise returns item index */
 
-	if (identifier == nil || [identifier isEqual: @""])
-	{
-		identifier = [NSString stringWithFormat: @"%d", 
-			[(ETLayoutItemGroup *)_parentItem indexOfItem: (id)self]];
-	}
-	
-	return identifier;
+	return [NSString stringWithFormat: @"%d", [_parentItem indexOfItem: (id)self]];
+}
+
+/** Returns the identifier associated with the layout item.
+
+The returned value can be nil or an empty string. */
+- (NSString *) identifier
+{
+	return GET_PROPERTY(kETIdentifierProperty);
+}
+
+/** Sets the identifier associated with the layout item. */
+- (void) setIdentifier: (NSString *)anId
+{
+	SET_PROPERTY(anId, kETIdentifierProperty);
 }
 
 /** Returns the display name associated with the receiver. See also 
@@ -865,8 +874,10 @@ The item view is also synchronized with the object value of the given represente
 object when the view is a widget. */
 - (void) setRepresentedObject: (id)modelObject
 {
-	NSAssert([[self layout] isKindOfClass: NSClassFromString(@"ETCompositeLayout")] == NO, 
-		@"The represented object must not be changed when a ETCompositeLayout is in use");
+	// TODO: Because ETCompositeLayout uses -setRepresentedObject: in its set up, 
+	// we cannot do it in this way...
+	//NSAssert([[self layout] isKindOfClass: NSClassFromString(@"ETCompositeLayout")] == NO, 
+	//	@"The represented object must not be changed when a ETCompositeLayout is in use");
 
 	id oldObject = _representedObject;
 

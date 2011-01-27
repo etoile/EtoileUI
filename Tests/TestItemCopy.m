@@ -121,9 +121,10 @@ DEALLOC(DESTROY(itemFactory); DESTROY(item); DESTROY(itemGroup))
 
 - (NSArray *) defaultNilItemProperties
 {
-	return A(kETNameProperty, kETIconProperty, kETImageProperty, kETStyleProperty,
-		kETRepresentedObjectProperty, kETRepresentedPathBaseProperty, 
-		kETSubtypeProperty, kETActionProperty, kETTargetProperty);
+	return A(kETNameProperty, kETIconProperty, kETIdentifierProperty, 
+		kETImageProperty, kETStyleProperty,kETRepresentedObjectProperty, 
+		kETRepresentedPathBaseProperty, kETSubtypeProperty, kETActionProperty, 
+		kETTargetProperty);
 }
 
 - (NSArray *) nonEqualItemProperties
@@ -165,6 +166,7 @@ DEALLOC(DESTROY(itemFactory); DESTROY(item); DESTROY(itemGroup))
 - (void) testItemCopy
 {
 	[item setName: @"Whatever"];
+	[item setIdentifier: @"Whoever"];
 	[item setImage: [NSImage imageNamed: @"NSApplicationIcon"]];
 	[item setIcon: [[NSWorkspace sharedWorkspace] iconForFile: @"/"]];
 	[item setRepresentedObject: [NSSet set]];
@@ -280,7 +282,7 @@ DEALLOC(DESTROY(itemFactory); DESTROY(item); DESTROY(itemGroup))
 	ETLayoutItemGroup *newItemGroup = [itemGroup copy];
 
 	NSArray *properties = [self checkablePropertiesForItem: itemGroup];
-	NSArray *nilProperties = A(kETDoubleClickedItemProperty, kETStyleProperty);
+	NSArray *nilProperties = A(kETDoubleClickedItemProperty, kETIdentifierProperty, kETStyleProperty);
 	NSArray *equalProperties = [properties arrayByRemovingObjectsInArray: 
 		[[self nonEqualItemGroupProperties] arrayByAddingObjectsFromArray: nilProperties]];
 
