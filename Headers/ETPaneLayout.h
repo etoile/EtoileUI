@@ -69,6 +69,7 @@ typedef enum {
 @interface ETPaneLayout (Factory)
 
 + (ETPaneLayout *) masterDetailLayout;
++ (ETPaneLayout *) masterContentLayout;
 + (ETPaneLayout *) slideshowLayout;
 + (ETPaneLayout *) slideshowLayoutWithNavigationBar;
 + (ETPaneLayout *) drillDownLayout;

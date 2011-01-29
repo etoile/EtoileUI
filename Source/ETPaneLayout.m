@@ -197,14 +197,18 @@ If contentItem is nil, a default content item will be created. */
 
 	if (_contentItem != nil)
 	{
-		[[self rootItem] removeItem: _contentItem];
+		[[self holderItem] removeItem: _contentItem];
 	}
 
 	ASSIGN(_contentItem, anItem);
 
-	[anItem setName: @"Content item (ETPaneLayout)"]; /* For debugging */
+	if ([anItem identifier] == nil)
+	{
+		 /* For debugging */
+		[anItem setIdentifier: [NSString stringWithFormat: @"contentItem in %@", self]];
+	}
 	[anItem setAutoresizingMask: NSViewWidthSizable | NSViewHeightSizable];
-	[[self rootItem] addItem: anItem];
+	[[self holderItem] addItem: anItem];
 	[self tile];
 }
 
@@ -228,6 +232,8 @@ If contentItem is nil, a default content item will be created. */
 		[_barItem setAutoresizingMask: NSViewHeightSizable];
 	}
 	[self tile];
+	[[self barItem] updateLayout];
+	[[self contentItem] updateLayout];
 }
 
 /** Returns the bar area item which can be used to interact with the receiver. */
@@ -248,14 +254,18 @@ If contentItem is nil, a default content item will be created. */
 
 	if (_barItem != nil) 
 	{
-		[[self rootItem] removeItem: _barItem];
+		[[self holderItem] removeItem: _barItem];
 	}
 
 	ASSIGN(_barItem, anItem);
 
-	[anItem setName: @"Bar item (ETPaneLayout)"]; /* For debugging */
+	if ([anItem identifier] == nil)
+	{
+		 /* For debugging */
+		[anItem setIdentifier: [NSString stringWithFormat: @"barItem in %@", self]];
+	}
 	[anItem setAutoresizingMask: NSViewHeightSizable | NSViewWidthSizable];
-	[[self rootItem] addItem: anItem];
+	[[self holderItem] addItem: anItem];
 	[self tile];
 
 	[[NSNotificationCenter defaultCenter] 
@@ -440,6 +450,9 @@ By default, returns NO. */
 {
 	[super setUpCopyWithZone: aZone original: layoutOriginal];
 
+	if ([layoutOriginal currentItem] == nil)
+		return;
+
 	/* We figure out the visited item and current item index in the original to 
 	   look up the same item in the copy.
 	   The current item is a proxy on the item displayed in the content and 
@@ -531,6 +544,84 @@ the real items they currently represent. */
 
 @end
 
+@interface ETMasterContentPaneLayout : ETPaneLayout
+@end
+
+@implementation ETMasterContentPaneLayout
+
+- (void) setUpCopyWithZone: (NSZone *)aZone 
+                  original: (ETMasterDetailPaneLayout *)layoutOriginal
+{
+	[super setUpCopyWithZone: aZone original: layoutOriginal];
+
+	if ([layoutOriginal currentItem] == nil)
+		return;
+
+	if ([[[layoutOriginal contentItem] representedObject] isEqual: [layoutOriginal currentItem]] == NO)
+		return;
+	
+	/* We figure out the visited item and current item index in the original to 
+	   look up the same item in the copy.
+	   The represented object is not copied in a layout item, which 
+	   means we must adjust the copy of the content item to now point on 
+	   the visited item copy as represented object.  */
+	unsigned int visitedItemIndex = [[layoutOriginal barItem] indexOfItem: [layoutOriginal currentItem]];
+	ETLayoutItem *visitedItemCopy = [[self barItem] itemAtIndex: visitedItemIndex];
+
+	[[self contentItem] setRepresentedObject: visitedItemCopy];
+}
+
+- (void) setBarItem: (ETLayoutItemGroup *)barItem
+{
+	[super setBarItem: barItem];
+	[self setFirstPresentationItem: barItem];
+}
+
+- (ETLayoutItemGroup *) presentationItem
+{
+	if ([[[self contentItem] layout] isKindOfClass: [ETPaneLayout class]])
+	{
+		return [[[self contentItem] layout] barItem];
+	}
+	else
+	{
+		return [self contentItem];
+	}
+}
+
+- (id) beginVisitingItem: (ETLayoutItem *)tabItem
+{
+	ETLayoutItemGroup *presentationItem = [self presentationItem];
+
+	[presentationItem setSource: presentationItem];
+	[presentationItem setRepresentedObject: [tabItem subject]];
+	[presentationItem reloadAndUpdateLayout];
+	return tabItem;
+}
+
+/** Eliminates the given proxy items in the bar item by replacing them with 
+the real items they currently represent. */
+- (void) endVisitingItem: (ETLayoutItem *)tabItem
+{
+	[[self contentItem] setRepresentedObject: nil];
+}
+
+- (BOOL) shouldSelectVisitedItem: (ETLayoutItem *)anItem
+{
+	return YES;
+}
+
+- (void) renderWithLayoutItems: (NSArray *)items isNewContent: (BOOL)isNewContent
+{
+	if (isNewContent)
+	{
+		[self goToItem: [[self barItem] firstItem]];
+	}
+	[self tile];
+}
+
+@end
+
 
 @implementation ETPaneLayout (Factory)
 
@@ -539,6 +630,13 @@ The bar item is the master view and the content item is the detail view. */
 + (ETPaneLayout *) masterDetailLayout
 {
 	return [ETMasterDetailPaneLayout layout];
+}
+
+/** Returns a new autoreleased pane selector layout.<br />
+The bar item is the master view and the content item is the content view. */
++ (ETPaneLayout *) masterContentLayout
+{
+	return [ETMasterContentPaneLayout layout];
 }
 
 + (ETPaneLayout *) slideshowLayout
