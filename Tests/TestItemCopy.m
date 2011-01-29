@@ -311,8 +311,6 @@ DEALLOC(DESTROY(itemFactory); DESTROY(item); DESTROY(itemGroup))
 	RELEASE(newItemGroup);
 }
 
-#define IPATH(cArray, length) [NSIndexPath indexPathWithIndexes: cArray length: length]
-
 - (void) testBasicItemGroupCopyWithOutlineLayout
 {
 	ETLayoutItemGroup *itemGroup1 = [itemFactory itemGroup];
