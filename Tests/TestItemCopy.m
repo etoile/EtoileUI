@@ -124,7 +124,7 @@ DEALLOC(DESTROY(itemFactory); DESTROY(item); DESTROY(itemGroup))
 {
 	return A(kETNameProperty, kETIconProperty, kETIdentifierProperty, 
 		kETImageProperty, kETStyleProperty,kETRepresentedObjectProperty, 
-		kETRepresentedPathBaseProperty, kETSubtypeProperty, kETActionProperty, 
+		kETSubtypeProperty, kETActionProperty, 
 		kETTargetProperty);
 }
 
@@ -179,7 +179,7 @@ DEALLOC(DESTROY(itemFactory); DESTROY(item); DESTROY(itemGroup))
 	//[[item decoratorItem] setDecoratorItem: [ETWindowItem item]];
 
 	NSArray *properties = [self checkablePropertiesForItem: item];
-	NSArray *nilProperties = A(kETRepresentedPathBaseProperty, kETStyleProperty);
+	NSArray *nilProperties = A(kETStyleProperty);
 	NSArray *equalProperties = [properties arrayByRemovingObjectsInArray: 
 		[[self nonEqualItemProperties] arrayByAddingObjectsFromArray: nilProperties]];
 
@@ -272,7 +272,6 @@ DEALLOC(DESTROY(itemFactory); DESTROY(item); DESTROY(itemGroup))
 	[itemGroup setView: AUTORELEASE([[NSButton alloc] init])];
 	[itemGroup setDecoratorItem: [ETDecoratorItem itemWithDummySupervisorView]];
 
-	[itemGroup setRepresentedPathBase: @"/my/model/path"];
 	[itemGroup setSource: self];
 	[itemGroup setController: AUTORELEASE([[ETController alloc] init])];
 	[itemGroup setDelegate: self];

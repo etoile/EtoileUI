@@ -436,7 +436,7 @@ ancestor which is a base item.<br />
 Hence -[[[ETLayoutItem alloc] init] baseItem] returns nil. */
 - (ETLayoutItemGroup *) baseItem
 {
-	if ([self hasValidRepresentedPathBase])
+	if ([self isBaseItem])
 	{
 		return (ETLayoutItemGroup *)self;
 	}
@@ -448,19 +448,13 @@ Hence -[[[ETLayoutItem alloc] init] baseItem] returns nil. */
 
 /** Returns whether the receiver is a base item or not.
 
-To be a base itemn the receiver must have a valid represented path base set. 
-See -setRepresentedPathBase:. */
+To be a base item the receiver must have a source or a controller set. 
+See -[ETLayoutItemGroup setSource:] and -[ETLayoutItemGroup setController:].
+
+By default, returns NO. */
 - (BOOL) isBaseItem
 {
-	return [self hasValidRepresentedPathBase];
-}
-
-/** Returns whether the current -representedPathBase value is valid to qualify 
-the receiver as a base item. */
-- (BOOL) hasValidRepresentedPathBase
-{
-	return ([self representedPathBase] != nil 
-		&& [[self representedPathBase] isEqualToString: @""] == NO);
+	return NO;
 }
 
 /** Returns the layout item group to which the receiver belongs to. 
@@ -623,21 +617,6 @@ This method is equivalent to [[self rootItem] indexPathForItem: self]. */
 {
 	// TODO: Test whether it is worth to optimize or not
 	return [[self rootItem] indexPathForItem: self];
-}
-
-/** Returns the represented path base. By default, returns nil.
-
-With a represented path base, an ETLayoutItemGroup instance becomes a base 
-item, and its descendant items will use this path base to build their 
-represented paths (see -representedPath). This path base is valid until a 
-represented path base is set on a descendant and as such becomes a base item.
-See -[ETLayoutItemGroup setRepresentedPathBase:].
-
-Represented paths are relative to the base item unlike paths returned by -path 
-which are absolute paths. */
-- (NSString *) representedPathBase
-{
-	return GET_PROPERTY(kETRepresentedPathBaseProperty);
 }
 
 /* By default, returns the name.
@@ -1142,7 +1121,7 @@ See -valueForProperty: for more details. */
 		kETWidthProperty, kETHeightProperty, kETViewProperty, kETSelectedProperty, 
 		kETLayoutProperty, kETStyleGroupProperty, kETStyleProperty, 
 		kETCoverStyleProperty, kETImageProperty, kETFrameProperty, 
-		kETRepresentedObjectProperty, kETRepresentedPathBaseProperty, 
+		kETRepresentedObjectProperty, 
 		kETParentItemProperty, kETAutoresizingMaskProperty, 
 		kETBoundingBoxProperty, kETActionProperty, kETSubtypeProperty, 
 		kETTargetProperty, kETUIMetalevelProperty, @"UIMetalayer");

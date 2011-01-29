@@ -214,7 +214,6 @@ in -handleAddXXX which will then invoke [[B representedObject] addObject: bla]. 
 		// [dest setSource: dest or [item source]];
 		// [dest presentItems: [item items];
 		// [dest setHasNewContent: NO];
-		[dest setRepresentedPathBase: [item representedPathBase]];
 		[dest setRepresentedObject: [item representedObject]];
         if ([item usesRepresentedObjectAsProvider])
         {
@@ -327,7 +326,7 @@ in -handleAddXXX which will then invoke [[B representedObject] addObject: bla]. 
 	   the previous line won't nullify it on the presentation proxy. 
 	   To reset the represented path base to nil isn't required though. We do it  
 	   to restore the presentation proxy exactly as it was initially. */
-	[[self firstPresentationItem] setRepresentedPathBase: nil];
+	//[[self firstPresentationItem] setRepresentedPathBase: nil];
 }
 
 /* Layouting */

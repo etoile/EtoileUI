@@ -30,7 +30,6 @@ extern NSString * const kETDisplayNameProperty; /** displayName property name */
 extern NSString * const kETDoubleClickedItemProperty; /** doubleClickedItem property name */
 extern NSString * const kETFlippedProperty; /** flipped property name */
 extern NSString * const kETFrameProperty; /** frame property name */  
-extern NSString * const kETHasValidRepresentedPathBaseProperty; /** hasValidRepresentedPathBase property name */
 extern NSString * const kETHeightProperty; /** height property name */
 extern NSString * const kETIconProperty; /** icon property name */
 extern NSString * const kETIdentifierProperty; /** identifier property name */
@@ -45,12 +44,9 @@ extern NSString * const kETNameProperty; /** name property name */
 extern NSString * const kETNeedsDisplayProperty; /** needsDisplay property name */
 extern NSString * const kETNextResponderProperty; /** nextResponder property name */
 extern NSString * const kETParentItemProperty; /** parentItem property name */
-extern NSString * const kETPathProperty; /** path property name */
 extern NSString * const kETPersistentFrameProperty; /** persistentFrame property name */
 extern NSString * const kETPositionProperty; /** position property name */
 extern NSString * const kETRepresentedObjectProperty; /** representedObject property name */
-extern NSString * const kETRepresentedPathBaseProperty; /** representedPathBase property name */
-extern NSString * const kETRepresentedPathProperty; /** representedPath property name */
 extern NSString * const kETRootItemProperty; /** rootItem property name */
 extern NSString * const kETSelectedProperty; /** selected property name */
 extern NSString * const kETSourceProperty; /** source property name */

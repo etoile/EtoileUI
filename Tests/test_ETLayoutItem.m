@@ -11,6 +11,7 @@
 #import <UnitKit/UnitKit.h>
 #import <EtoileFoundation/Macros.h>
 #import <EtoileFoundation/NSIndexPath+Etoile.h>
+#import "ETController.h"
 #import "ETDecoratorItem.h"
 #import "ETGeometry.h"
 #import "ETLayoutItem.h"
@@ -508,8 +509,8 @@ static ETLayoutItemFactory *itemFactory = nil;
 	[item110 setSelected: YES]; \
 	
 #define DEFINE_BASE_ITEMS_0_11 \
-	[item0 setRepresentedPathBase: @"/myModel1"]; \
-	[item11 setRepresentedPathBase: @"/myModel3"]; \
+	[item0 setController: AUTORELEASE([[ETController alloc] init])]; \
+	[item11 setController: AUTORELEASE([[ETController alloc] init])]; \
 
 - (void) testDescendantItemsSharingSameBaseItem
 {

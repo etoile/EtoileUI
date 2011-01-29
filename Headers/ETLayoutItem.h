@@ -165,8 +165,6 @@ and centers it. A strech is a scale that doesn't preserve the content proportion
 - (NSIndexPath *) indexPathFromItem: (ETLayoutItem *)item;
 - (NSIndexPath *) indexPathForItem: (ETLayoutItem *)item;
 - (NSIndexPath *) indexPath;
-- (NSString *) representedPathBase;
-- (BOOL) hasValidRepresentedPathBase;
 
 /* Main Accessors */
 

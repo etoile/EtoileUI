@@ -258,7 +258,6 @@ The returned copy is mutable because ETLayoutItemGroup cannot be immutable. */
 		delegateCopy = delegate;
 	}
 
-	SET_OBJECT_PROPERTY(item, GET_PROPERTY(kETRepresentedPathBaseProperty), kETRepresentedPathBaseProperty);
 	SET_OBJECT_PROPERTY(item, GET_PROPERTY(kETItemScaleFactorProperty), kETItemScaleFactorProperty);
 	SET_OBJECT_PROPERTY(item, delegateCopy, kETDelegateProperty);
 
@@ -417,38 +416,6 @@ See also -[NSObject descriptionWithOptions:]. */
 		A(aProperty), kETDescriptionOptionValuesForKeyPaths, childKey, kETDescriptionOptionTraversalKey, nil]];
 }
 
-/** Sets the represented path base associated with the receiver. When a valid 
-represented base is set, the receiver becomes a base item. See also -isBaseItem, 
--baseItem, -representedPath and -representedPathBase in ETLayoutItem.
-
-The represented path base should be a navigational path into the model whose 
-content is currently presented by the receiver. In that way, it is useful to 
-keep track of your location inside the model currently browsed. Tree-related 
-methods implemented by a data source are passed paths which are subpaths of this 
-path base.
-
-A path base is only critical when a source is used, otherwise it's up to the 
-developer to track the level of navigation inside the tree structure. 
-
-You should use paths like '/', '/blabla/myModelObjectName'. You cannot pass an 
-empty string to this method or it will throw an invalid argument exception. If 
-you want no represented path base, use nil. 
-
-Without a source, you can use -setRepresentedPathBase: as a conveniency to 
-remember the represented object location within the model graph that is 
-presented by the receiver. */
-- (void) setRepresentedPathBase: (NSString *)aPath
-{
-	if ([aPath isEqual: @""])
-	{
-		[NSException raise: NSInvalidArgumentException format: @"For %@ "
-			@"-setRepresentedPathBase: argument must never be an empty string", self];
-		
-	}
-
-	SET_PROPERTY(aPath, kETRepresentedPathBaseProperty);
-}
-
 /* Manipulating Layout Item Tree */
 
 /** Handles the view visibility of child items with a role similar to 
@@ -598,8 +565,11 @@ object, then this method returns nil. */
 {
 	if ([self isBaseItem])
 		return;
+}
 
-	[self setRepresentedPathBase: @"/"];
+- (BOOL) isBaseItem
+{
+	return ([self source] != nil || [self controller] != nil);
 }
 
 /** Sets the source which provides the content displayed by the receiver. A
@@ -856,7 +826,7 @@ you have to implement your own version of this method. */
 	{
 		[collectedItems addObject: item];
 
-		if ([item isGroup] && [item hasValidRepresentedPathBase] == NO)
+		if ([item isGroup] && [item isBaseItem] == NO)
 			[collectedItems addObjectsFromArray: [item descendantItemsSharingSameBaseItem]];
 	}
 

@@ -110,7 +110,7 @@ receiver is not observed.
 
 /* Returns the observable properties which shouldn't be observed.
 
-Non observable properties are -hasValidRepresentedPathBase, -usesWidgetView, 
+Non observable properties are -usesWidgetView, 
 -enclosingDisplayView, -supervisorViewBackedAncestorItem, -windowBackedAncestorItem
 -supervisorView, -ancestorItemForOpaqueLayout, ,-properties, -variableProperties, 
 -drawingFrame, -windowItem, -scrollableAreaItem, -origin,  
@@ -119,7 +119,7 @@ Non observable properties are -hasValidRepresentedPathBase, -usesWidgetView,
 TODO: Move into ETLayoutItem entity description. */
 + (NSSet *) nonObservableProperties
 {
-	return S(@"hasValidRepresentedPathBase", @"usesWidgetView",	
+	return S(@"usesWidgetView",	
 		@"enclosingDisplayView", "supervisorViewBackedAncestorItem", 
 		@"windowBackedAncestorItem", @"supervisorView", 
 		@"ancestorItemForOpaqueLayout", @"properties", @"variableProperties", 
@@ -150,8 +150,7 @@ incorrectly reentered. */
 - (NSSet *) observableKeyPaths
 {
 	return S(kETRootItemProperty, kETBaseItemProperty, kETIsBaseItemProperty, 
-		kETParentItemProperty, kETIndexPathProperty, kETPathProperty, 
-		kETRepresentedPathProperty, kETRepresentedPathBaseProperty,
+		kETParentItemProperty, kETIndexPathProperty, 
 		kETIdentifierProperty, kETNameProperty, kETDisplayNameProperty, 
 		kETValueProperty, kETViewProperty, kETImageProperty, kETIconProperty, 
 		kETRepresentedObjectProperty, kETSubjectProperty,  kETSelectedProperty, 
@@ -172,14 +171,12 @@ affected. */
 {
 	// TODO: Take in account that -identifier can vary based on its index in
 	// its parent item or its parent represented object.
-	// The issue also exists with -indexPath, -representedPath and -path.
+	// The issue also exists with -indexPath.
 	NSSet *geometryDependentKeys = S(kETViewProperty, kETFrameProperty, 
 		kETXProperty, kETYProperty, kETWidthProperty, kETHeightProperty);
 	NSSet *parentDependentKeys = S(kETRootItemProperty, kETIsBaseItemProperty, 
-		kETBaseItemProperty, kETRepresentedPathProperty, kETPathProperty, 
-		kETIndexPathProperty);
-	NSSet *nameDependentKeys = S(kETRepresentedPathProperty, kETPathProperty, 
-		kETDisplayNameProperty);
+		kETBaseItemProperty, kETIndexPathProperty);
+	NSSet *nameDependentKeys = S(kETDisplayNameProperty);
 	NSMutableSet *triggerKeys = [NSMutableSet set];
 	
 	if ([geometryDependentKeys containsObject: aKey])
@@ -213,13 +210,6 @@ affected. */
 + (NSSet *) keyPathsForValuesAffectingUTI
 {
 	return S(kETSubtypeProperty);
-}
-
-// NOTE: The represented path varies on the 'identifier' property rather than
-// kETNameProperty... We might eventually improve that.
-+ (NSSet *) keyPathsForValuesAffectingRepresentedPath
-{
-	return S(kETParentItemProperty, kETNameProperty);
 }
 
 @end

@@ -195,7 +195,6 @@ DEALLOC(DESTROY(itemFactory); DESTROY(item))
 
 - (void) testPrepareNewContextStateWithSourceProvider
 {
-	[item setRepresentedPathBase: @"/whatever/bla"];
 	[item setSource: self];
 	[item setLayout: [self createLayout]];
 
@@ -204,18 +203,17 @@ DEALLOC(DESTROY(itemFactory); DESTROY(item))
 	UKObjectsEqual([self modelContent], [[[proxyItem items] mappedCollection] representedObject]);
 	UKObjectsEqual(self, [proxyItem source]);
 	UKNil([proxyItem representedObject]);
-	UKStringsEqual(@"/whatever/bla", [proxyItem representedPathBase]);
+	UKTrue([proxyItem isBaseItem]);
 	UKObjectsEqual(A(proxyItem), [item items]);
 	UKNil([item source]);
 	UKNil([item representedObject]);
-	// NOTE: May be we should have UKNil([item representedPathBase]);
+	// NOTE: May be we should have UKFalse([item isBaseItem]);
 }
 
 - (void) testRestoreContextStateWithSourceProvider
 {
 	ETCompositeLayout *compositeLayout = [self createLayout];
 
-	[item setRepresentedPathBase: @"/whatever/bla"];
 	[item setSource: self];
 	[item setLayout: compositeLayout];
 	[item setLayout: [ETFixedLayout layout]];
@@ -224,11 +222,11 @@ DEALLOC(DESTROY(itemFactory); DESTROY(item))
 	// TODO: May be we should ensure that UKTrue([proxyItem isEmpty]);
 	UKNil([proxyItem source]);
 	UKNil([proxyItem representedObject]);
-	UKNil([proxyItem representedPathBase]);
+	UKFalse([proxyItem isBaseItem]);
 	UKObjectsEqual([self modelContent], [[[item items] mappedCollection] representedObject]);
 	UKObjectsEqual(self, [item source]);
 	UKNil([item representedObject]);
-	UKStringsEqual(@"/whatever/bla", [item representedPathBase]);
+	UKTrue([item isBaseItem]);
 }
 
 @end

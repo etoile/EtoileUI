@@ -63,8 +63,6 @@
 
 - (NSString *) descriptionWithProperty: (NSString *)aProperty arranged: (BOOL)usesArrangedItems;
 
-- (void) setRepresentedPathBase: (NSString *)aPath;
-
 /*  Manipulating Layout Item Tree */
 
 - (void) addItem: (ETLayoutItem *)item;
