@@ -59,7 +59,6 @@
 /* Traversing Layout Item Tree */
 
 - (ETLayoutItem *) itemAtIndexPath: (NSIndexPath *)path;
-- (ETLayoutItem *) itemAtPath: (NSString *)path;
 - (ETLayoutItem *) itemForIdentifier: (NSString *)anId;
 
 - (NSString *) descriptionWithProperty: (NSString *)aProperty arranged: (BOOL)usesArrangedItems;

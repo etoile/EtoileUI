@@ -12,6 +12,7 @@
 #import <EtoileFoundation/ETCollection+HOM.h>
 #import <EtoileFoundation/ETUTI.h>
 #import <EtoileFoundation/Macros.h>
+#import <EtoileFoundation/NSIndexPath+Etoile.h>
 #import <EtoileFoundation/NSObject+Model.h>
 #import "ETController.h"
 #import "ETDecoratorItem.h"
@@ -334,6 +335,8 @@ DEALLOC(DESTROY(itemFactory); DESTROY(item); DESTROY(itemGroup))
 	RELEASE(newItemGroup);
 }
 
+#define IPATH(x) [NSIndexPath indexPathWithString: x]
+
 - (void) testItemTreeCopy
 {
 	ETLayoutItemGroup *itemGroup1 = [itemFactory itemGroup];
@@ -359,20 +362,20 @@ DEALLOC(DESTROY(itemFactory); DESTROY(item); DESTROY(itemGroup))
 
 	UKIntsEqual(4, [newItemGroup numberOfItems]);
 	UKIntsEqual(1, [(id)[newItemGroup itemAtIndex: 1] numberOfItems]);
-	UKIntsEqual(2, [(id)[newItemGroup itemAtPath: @"1/0"] numberOfItems]);
+	UKIntsEqual(2, [(id)[newItemGroup itemAtIndexPath: IPATH(@"1.0")] numberOfItems]);
 	UKIntsEqual(1, [(id)[newItemGroup itemAtIndex: 2] numberOfItems]);
-	UKIntsEqual(0, [(id)[newItemGroup itemAtPath: @"2/0"] numberOfItems]);
+	UKIntsEqual(0, [(id)[newItemGroup itemAtIndexPath: IPATH(@"2.0")] numberOfItems]);
 
 	ETOutlineLayout *layoutCopy = (ETOutlineLayout *)[[newItemGroup itemAtIndex: 2] layout];
 	UKIntsEqual(1, [[layoutCopy outlineView] numberOfRows]);
 
 	UKNotNil([newItemGroup supervisorView]);
 	UKNil([[newItemGroup itemAtIndex: 1] supervisorView]);
-	UKNil([[newItemGroup itemAtPath: @"1/0"] supervisorView]);
-	UKNil([[newItemGroup itemAtPath: @"1/0/0"] supervisorView]);
-	UKNil([[newItemGroup itemAtPath: @"1/0/1"] supervisorView]);
+	UKNil([[newItemGroup itemAtIndexPath: IPATH(@"1.0")] supervisorView]);
+	UKNil([[newItemGroup itemAtIndexPath: IPATH(@"1.0.0")] supervisorView]);
+	UKNil([[newItemGroup itemAtIndexPath: IPATH(@"1.0.1")] supervisorView]);
 	UKNotNil([[newItemGroup itemAtIndex: 2] supervisorView]);
-	UKNil([[newItemGroup itemAtPath: @"2/0"] supervisorView]);
+	UKNil([[newItemGroup itemAtIndexPath: IPATH(@"2.0")] supervisorView]);
 	UKNotNil([[newItemGroup itemAtIndex: 3] supervisorView]);
 
 	NSMutableArray *allNewItems = [NSMutableArray arrayWithArray: [newItemGroup items]];

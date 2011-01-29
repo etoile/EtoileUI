@@ -383,7 +383,7 @@ else
 #ifdef DETAILED_DESCRIPTION	
 	desc = [@"<" stringByAppendingFormat: @"%@ meta: %d id: %@, ipath: %@, "
 		@"selected: %d, repobject: %@ view: %@ frame %@>", desc, [self UIMetalevel], 
-		[self identifier], [[self indexPath] keyPath], [self isSelected], 
+		[self identifier], [self indexPath], [self isSelected], 
 		[[self representedObject] primitiveDescription], [self view], 
 		NSStringFromRect([self frame])];
 #else
@@ -625,48 +625,6 @@ This method is equivalent to [[self rootItem] indexPathForItem: self]. */
 	return [[self rootItem] indexPathForItem: self];
 }
 
-/** Returns the receiver absolute path by collecting the name of each parent 
-item until the root item is reached (when -parentItem returns nil). 
-
-This method is equivalent to 
-[[self rootItem] pathForIndexPath: [[self rootItem] indexPathForItem: self]]. */
-- (NSString *) path
-{
-	/* We rebuild the path by chaining names of the layout item tree to which 
-	   we belong. */
-	NSString *path = @"/";
-	
-	if (_parentItem != nil)
-	{
-		path = [[_parentItem path] 
-			stringByAppendingPathComponent: [self defaultIdentifier]];
-	}
-	
-	return path;
-}
-
-/** Returns the represented path which is built with the represented path base 
-provided by the base item. */
-- (NSString *) representedPath
-{
-	NSString *path = [self representedPathBase];
-	
-	if (path == nil)
-	{
-		if (_parentItem != nil)
-		{
-			path = [_parentItem representedPath];
-			path = [path stringByAppendingPathComponent: [self defaultIdentifier]];
-		}
-		else
-		{
-			path = [self defaultIdentifier];
-		}
-	}
-	
-	return path;
-}
-
 /** Returns the represented path base. By default, returns nil.
 
 With a represented path base, an ETLayoutItemGroup instance becomes a base 
@@ -712,7 +670,7 @@ the index used by the parent item to reference the receiver. */
 
 	/* Otherwise returns item index */
 
-	return [NSString stringWithFormat: @"%d", [_parentItem indexOfItem: (id)self]];
+	return [NSString stringWithFormat: @"%d", [(ETLayoutItemGroup *)_parentItem indexOfItem: (id)self]];
 }
 
 /** Returns the identifier associated with the layout item.

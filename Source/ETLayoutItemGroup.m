@@ -389,36 +389,6 @@ For a nil path, returns nil. */
 	return item;
 }
 
-/** Returns the layout item child identified by the path paremeter interpreted 
-as relative to the receiver. 
-
-Whether the path begins by '/' or not doesn't modify the result. */
-- (ETLayoutItem *) itemAtPath: (NSString *)path
-{
-	NSArray *pathComponents = [path pathComponents];
-	ETLayoutItem *item = self;
-	
-	FOREACH(pathComponents, pathComp, NSString *)
-	{
-		if (pathComp == nil || [pathComp isEqualToString: @"/"] || [pathComp isEqualToString: @""])
-			continue;
-	
-		if ([item isGroup])
-		{
-			NSArray *childItems = [(ETLayoutItemGroup *)item items];
-			item = [childItems firstObjectMatchingValue: pathComp 
-			                                     forKey: @"defaultIdentifier"];
-		}
-		else
-		{
-			item = nil;
-			break;
-		}
-	}
-
-	return item;
-}
-
 /** Returns the first layout item descendant on which the identifier is set. 
 
 The descendant items are retrieved with -allDescendantItems, this results in 
