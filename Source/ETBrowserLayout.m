@@ -47,21 +47,25 @@
 #define DEFAULT_ROW_HEIGHT 20
 
 /** ETBrowserLayout wraps AppKit NSBrowser control in term of EtoileUI architecture.
+
 	ETBrowserLayout uses by default a custom NSBrowser that displays icon and 
 	text in column rows. If you prefer a different style of row, you can 
 	replace ETBrowserCell by your own subclass of NSBrowserCell.
+
 	Defaults settings of ETBrowserLayout are:
 	- 130 px column width
 	- four visible columns max
 	- no column titles
 	- double-click replaces the path displayed in browser by putting the 
 	  content of double-clicked item in column zero.
+
       Example:
 	  /Applications/Fusion.app/Resources
 	  If you double-click 'Resources', the browser path is reset to '/' but
 	  this root path is now referencing '/Applications/Fusion.app/Resources' 
 	  and not '/'. In other words, the browser doesn't display the
-	  whole path anymore but only a portion.    
+	  whole path anymore but only a portion.  
+
 	Model encapsulated by ETLayoutItem instances is accessed through the 
 	properties classified by decreasing priority order:
 	- 'name', 'value', 'displayName' for text part of the row
@@ -74,21 +78,13 @@
 
 /* The browser delegate navigates the layout item tree by associating each cell 
    to its related item with [cell setRepresentedObject: item].
+
    Another way to navigate the layout item tree would to build index paths by
    using -[NSBrowser selectedCellInColumn:] for every columns and finding the
    index of each selected cell. The resulting index path could then be used 
    like that [browserItem itemAtIndexPath: indexPath]. However this method
    would involve to check the validity of the index path in case the layout 
-   item tree has been modified since the last reload.
-   The browser -path property cannot be used because it isn't always built from
-   'identifier' property of the layout items. It may work in some cases when 
-   'identifier' matches 'name', but never assumes this border case to be true.
-   If no name is set on a layout item, the display name will be used (instead 
-   of the identifier). Finally keep in mind, the 'identifier' property is used 
-   to construct paths in the layout item tree and you should never write 
-   code like [browserItem itemAtPath: [browser path]] in ETBrowserLayout. */
-
-
+   item tree has been modified since the last reload. */
 @implementation ETBrowserLayout
 
 - (NSString *) nibName
@@ -174,42 +170,81 @@
 
 /* Selection */
 
-// FIXME: Implements multiple selection support and sets selection by calling
-// -setSelectionIndexPaths:. 
+/* ETLayout overriden method. Called indirectly by -selectionIndexPaths in 
+   -browserSelectionDidChange. */
+- (NSArray *) selectedItems
+{
+	NSArray *selectedCells = [[self browser] selectedCells];
+	NSMutableArray *selectedItems = [NSMutableArray arrayWithCapacity: [selectedCells count]];
+	
+	FOREACH(selectedCells, aCell, NSCell *)
+	{
+		NSAssert([aCell representedObject] != nil, @"All browser cells must "
+			@"have a represented object set");
+		
+		[selectedItems addObject: [aCell representedObject]];
+	}
+
+	return selectedItems;
+}
+
+/* We catch the selection change by receiving the action in -click: in most cases.
+
+In response to user action -click is invoked, but not -browser:selectRow:inColumn: 
+and -browser:selectCellWithString:inColumn:, which are only invoked when 
+related NSBrowser methods are called. */
+- (void) browserSelectionDidChange
+{
+	[self didChangeSelectionInLayoutView];
+}
+
+- (id) loadedCellForString: (NSString *)title inColumn: (int)column
+{
+	NSCell *cell = (id)[NSNull null];
+
+	for (int i = 0; cell != nil; i++)
+	{
+		cell = [[self browser] loadedCellAtRow: i column: column];
+
+		if ([[cell stringValue] isEqualToString: title])
+		{
+			break;
+		}
+	}
+
+	return cell;
+}
+
 - (BOOL) browser: (NSBrowser *)sender selectCellWithString: (NSString *)title inColumn: (int)column
 {
-	BOOL selected = YES;
-	NSString *path = [[sender pathToColumn: column] stringByAppendingPathComponent: title];
-	ETLayoutItem *item = [_layoutContext itemAtPath: path];
-	
-	if (selected)
-	{
-		int row = [(ETLayoutItemGroup *)_layoutContext indexOfItem: item];
+	NSCell *cell = [self loadedCellForString: title inColumn: column];
+	ETLayoutItem *item = [cell representedObject];
+	int row = [[item parentItem] indexOfItem: item];
 
-		// NOTE: Not really sure that's the best way to do it		
-		[(ETLayoutItemGroup *)_layoutContext setSelectionIndex: row];
-	}
+	ETAssert(nil != item);
+
+	[[sender matrixInColumn: column] selectCellAtRow: row column: 0];
+	[self browserSelectionDidChange];
 
 	ETDebugLog(@"Cell selection did change to %@ in layout view %@ of %@", 
 		[self selectionIndexPaths], [self layoutView], _layoutContext);
 	
-	return selected;
+	return YES;
 }
 
-// FIXME: Implements multiple selection support and sets selection by calling
-// -setSelectionIndexPaths:. 
-// [sender selectedCells]; is probably helpful.
 - (BOOL) browser: (NSBrowser *)sender selectRow: (int)row inColumn: (int)column
 {
-	BOOL selected = YES;
-	
-	// NOTE: Not really sure that's the best way to do it
-	[(ETLayoutItemGroup *)_layoutContext setSelectionIndex: row];
+	ETLayoutItem *item = [[sender loadedCellAtRow: row column: column] representedObject];
+
+	ETAssert(nil != item);
+
+	[[sender matrixInColumn: column] selectCellAtRow: row column: 0];
+	[self browserSelectionDidChange];
 
 	ETDebugLog(@"Row selection did change to %@ in layout view %@ of %@", 
 		[self selectionIndexPaths], [self layoutView], _layoutContext);
 	
-	return selected;
+	return YES;
 }
 
 /* Data Source */
@@ -316,31 +351,6 @@
 	}
 }
 
-/* ETLayout overriden method. Called indirectly by -selectionIndexPaths in 
-   -browserSelectionDidChange. */
-- (NSArray *) selectedItems
-{
-	NSArray *selectedCells = [[self browser] selectedCells];
-	NSMutableArray *selectedItems = 
-		[NSMutableArray arrayWithCapacity: [selectedCells count]];
-	
-	FOREACH(selectedCells, aCell, NSCell *)
-	{
-		NSAssert([aCell representedObject] != nil, @"All browser cells must "
-			@"have a represented object set");
-		
-		[selectedItems addObject: [aCell representedObject]];
-	}
-
-	return selectedItems;
-}
-
-/* We catch the selection change by receiving the action in -click: */
-- (void) browserSelectionDidChange
-{
-	[self didChangeSelectionInLayoutView];
-}
-
 /* Actions */
 
 /* NSBrowser action */
@@ -394,44 +404,3 @@
 }
 
 @end
-
-//
-// Unused NSBrowser data source implementation
-//
-
-#if 0
-- (void) browser:(NSBrowser *)sender createRowsForColumn: (int)column inMatrix: (NSMatrix *)matrix
-{
-	NSString *path = [sender pathToColumn: column];
-	NSIndexPath *indexPath = nil;
-	int count = 0;
-	
-	if (path == nil || [path isEqual: @""])
-		path = @"/";
-	
-	indexPath = [[self layoutContext] indexPathForPath: path];
-	NSAssert(indexPath != nil, @"Index path must never be nil in -browser:numberOfRowsInColumn:");
-	
-	count = [[[self layoutContext] source] itemGroup: [self layoutContext] numberOfItemsAtPath: indexPath];
-	
-	ETDebugLog(@"Returns %d as number of items in browser view %@", count, sender);
-	
-	//NSMutableArray *columnCells = [NSMutableArray array];
-	NSSize newCellSize = [matrix cellSize];
-	
-	for (int i = 0; i < count; i ++)
-		[matrix putCell: [[sender cellPrototype] copy] atRow: i column: column];
-	
-	//ETDebugLog(@"Adds column cells %@ based on %@", columnCells, [[sender cellPrototype] copy]);
-	
-	// NOTE: Unable to make -addColumnWithCells: work so -putCell:atRow:column 
-	// is used instead
-	//[matrix addColumnWithCells: columnCells];
-	
-	newCellSize.height = DEFAULT_ROW_HEIGHT * [[self layoutContext] itemScaleFactor];
-	ETDebugLog(@"Resize %@ cell size from %@ to %@", matrix, 
-				NSStringFromSize([matrix cellSize]), 
-				NSStringFromSize(newCellSize));
-	[matrix setCellSize: newCellSize];
-}
-#endif
