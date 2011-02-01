@@ -928,8 +928,10 @@ content size to match the view size. */
 	[self setContentAspect: contentAspect];
 }
 
-/** Returns the view associated with the receiver. */
-- (NSView *) view
+/** Returns the view associated with the receiver.
+
+The view is an NSView class or subclass instance. See -setView:. */
+- (id) view
 {
 	return [[self supervisorView] wrappedView];
 }

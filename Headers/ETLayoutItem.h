@@ -180,7 +180,7 @@ and centers it. A strech is a scale that doesn't preserve the content proportion
 - (id) value;
 - (void) setValue: (id)value;
 
-- (NSView *) view;
+- (id) view;
 - (void) setView: (NSView *)newView;
 - (BOOL) usesWidgetView;
 
