@@ -7,8 +7,11 @@
  */
 
 #import <EtoileFoundation/Macros.h>
+#import <EtoileFoundation/ETCollection.h>
 #import <EtoileFoundation/NSObject+HOM.h>
 #import "ETApplication.h"
+#import "ETController.h"
+#import "EtoileUIProperties.h"
 #import "ETEventProcessor.h"
 #import "ETTool.h"
 #import "ETLayoutItemGroup.h"
@@ -386,6 +389,12 @@ menu bar, otherwise builds a new instance and returns it. */
 
 	[menu addItemWithTitle: _(@"Browse Layout Item Tree")
 	                action: @selector(browseLayoutItemTree:) 
+	         keyEquivalent: @""];
+
+	[menu addItem: [NSMenuItem separatorItem]];
+
+	[menu addItemWithTitle: _(@"Visual Search")
+	                action: @selector(showVisualSearchPanel:) 
 	         keyEquivalent: @""];
 
 	[menu addItem: [NSMenuItem separatorItem]];
@@ -772,6 +781,54 @@ WARNING: Not yet implemented. */
 - (IBAction) toggleLiveDevelopment: (id)sender
 {
 	ETLog(@"Toggle live dev");
+}
+
+- (IBAction) didChangeVisualSearchString: (id)sender
+{
+	NSString *searchString = [sender stringValue];
+	ETController *controller = [[self layoutItem] controller];
+
+	if  (nil == controller)
+	{
+		[[self layoutItem] setController: AUTORELEASE([[ETController alloc] init])];
+		controller = [[self layoutItem] controller];
+	}
+
+	if ([searchString isEqual: @""])
+	{
+		[controller setFilterPredicate: nil];
+	}
+	else
+	{
+		ETLayoutItem *searchItem = [[[self layoutItem] items] 
+			firstObjectMatchingValue: @"visualSearch" forKey: kETIdentifierProperty];
+
+		// FIXME: A ugly hack to prevent the search panel to be filtered out.
+		// We should have query object that lets us specify objects/items to 
+		// be ignored and pass it to ETLayoutItemGroup rather than the predicate.
+		RETAIN(searchItem);
+		[[self layoutItem] removeItem: searchItem];
+		[controller setFilterPredicate: [NSPredicate predicateWithFormat: @"displayName contains %@", searchString]];
+		[[self layoutItem] addItem: searchItem];
+		[[self layoutItem] updateLayout];
+		RELEASE(searchItem);
+	}
+}
+
+/** Shows a search panel to visually filter the layout item tree recursively.
+
+Any items that don't match the query is hidden until the search is cancelled. */
+- (IBAction) showVisualSearchPanel: (id)sender
+{
+	ETLayoutItemFactory *itemFactory = [ETLayoutItemFactory factory];
+	ETLayoutItem *searchFieldItem = [itemFactory textField];
+
+	[searchFieldItem setIdentifier: @"visualSearch"];
+	[searchFieldItem setSize: NSMakeSize(300, 50)];
+	[[searchFieldItem view] setAction: @selector(didChangeVisualSearchString:)];
+	[[searchFieldItem view] setTarget: self];
+
+	[[itemFactory windowGroup] addItem: searchFieldItem];
 }
 
 @end
