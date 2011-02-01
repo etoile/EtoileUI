@@ -34,9 +34,8 @@ subclasses (see -[ETLayout initWithLayoutView:]). */
 		[self setAttachedTool: [ETSelectTool tool]];
 		[[self attachedTool] setShouldProduceTranslateActions: YES];
 		[self setItemSizeConstraintStyle: ETSizeConstraintStyleNone];
-		_rootItem = [[ETLayoutItemGroup alloc] initAsLayoutOwnedRootItem];
-		[_rootItem setActionHandler: nil];
-		[_rootItem setCoverStyle: nil];
+		[[self layerItem] setActionHandler: nil];
+		[[self layerItem] setCoverStyle: nil];
 	}
 	
 	return self;
@@ -52,7 +51,7 @@ subclasses (see -[ETLayout initWithLayoutView:]). */
 - (void) setUpCopyWithZone: (NSZone *)aZone original: (ETLayout *)layoutOriginal
 {
 	/* Only to set the parent item, we don't need to synchronize the geometry */
-	[self mapRootItemIntoLayoutContext];
+	[self mapLayerItemIntoLayoutContext];
 
 	/* Rebuild the handles to manipulate the item copies and not their originals */
 	// TODO: May be avoid to copy the original handles in -copyWithZone:layoutContext:
@@ -161,7 +160,7 @@ subclasses (see -[ETLayout initWithLayoutView:]). */
 {
 	ETHandleGroup *handleGroup = AUTORELEASE([[ETResizeRectangle alloc] initWithManipulatedObject: item]);
 		
-	[[self rootItem] addItem: handleGroup];
+	[[self layerItem] addItem: handleGroup];
 	// FIXME: Should [handleGroup display]; and display should retrieve the 
 	// bounding box of the handleGroup. This bouding box would include the 
 	// handles unlike the frame.
@@ -173,7 +172,7 @@ subclasses (see -[ETLayout initWithLayoutView:]). */
 
 - (void) hideHandlesForItem: (ETLayoutItem *)item
 {
-	FOREACHI([[self rootItem] items], utilityItem)
+	FOREACHI([[self layerItem] items], utilityItem)
 	{
 		if ([utilityItem isKindOfClass: [ETHandleGroup class]] == NO)
 			continue;
@@ -182,7 +181,7 @@ subclasses (see -[ETLayout initWithLayoutView:]). */
 		{
 			[utilityItem setNeedsDisplay: YES]; /* Propagate the damaged area upwards */
 			[item setNeedsDisplay: YES];
-			[[self rootItem] removeItem: utilityItem];
+			[[self layerItem] removeItem: utilityItem];
 			break;
 		}
 	}
@@ -195,14 +194,14 @@ subclasses (see -[ETLayout initWithLayoutView:]). */
 
 - (void) buildHandlesForItems: (NSArray *)manipulatedItems
 {
-	[[self rootItem] removeAllItems];
+	[[self layerItem] removeAllItems];
 
 	FOREACH(manipulatedItems, item, ETLayoutItem *)
 	{
 		if ([item isSelected])
 		{
 			ETHandleGroup *handleGroup = AUTORELEASE([[ETResizeRectangle alloc] initWithManipulatedObject: item]);
-			[[self rootItem] addItem: handleGroup];
+			[[self layerItem] addItem: handleGroup];
 		}
 	}
 }

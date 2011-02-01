@@ -711,7 +711,7 @@ ETLayoutItemGroup can use a layout)
 
 Explicit children are the usual children returned by -[ETLayoutItemGroup items]. 
 Implicit children are the children hidden in the layout which are returned by 
-[[[anItem layout] rootItem] items].
+[[[anItem layout] layerItem] items].
 
 For the hit test phase, at each recursion level in the layout item tree, both 
 -hitTest:withEvent:inItem: and -hitTest:withEvent:inChildrenOfItem: are entered.
@@ -724,11 +724,11 @@ Hence whether or not the item has children, this method will be called. */
 
 	/* Hit in implicit children (owned by the layout)
 
-	   NOTE: We currently expect -[ETLayout rootItem] to have the same frame
+	   NOTE: We currently expect -[ETLayout layerItem] to have the same frame
 	   than anItem. */
 	ETLayoutItem *hitItem = [self hitTest: pointInParentContent
                                 withEvent: anEvent
-	                               inItem: [[anItem layout] rootItem]];
+	                               inItem: [[anItem layout] layerItem]];
 	if (hitItem != nil)
 		return hitItem;
 
@@ -833,7 +833,7 @@ Hence whether or not the item has children, this method will be called. */
 	// NOTE: We could eventually prevent the hit test success with 
 	// [anItem acceptsActions] && [anItem pointInside: itemRelativePoint] and 
 	// bypass the hit test in the entire item tree connected to an item.
-	// However because -[ETFreeLayout rootItem] has no action handler, 
+	// However because -[ETFreeLayout layerItem] has no action handler, 
 	// -acceptsActions returns NO and prevents handle hit test. The best choice 
 	// is either doesn't use -acceptActions with hit test phase or introduce 
 	// an ETNullActionHandler, so -acceptsActions can return YES for the root 
@@ -960,7 +960,7 @@ NO. */
 		return YES;
 	}
 
-	if ([item isGroup])
+	if ([item isGroup] == NO)
 		return NO;
 
 	FOREACH([(ETLayoutItemGroup *)item items], childItem, ETLayoutItem *)

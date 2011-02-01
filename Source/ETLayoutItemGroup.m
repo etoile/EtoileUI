@@ -143,14 +143,14 @@ See also -[ETLayoutItem initWithView:value:representedObject:]. */
 	return [self initWithItems: nil view: view value: value representedObject: repObject];
 }
 
-/** Initializes and returns a root item to be encaspulated in a layout.
+/** Initializes and returns a layer item to be encaspulated in a layout.
 
 You should never need to use this method.
 
-See also -isLayoutOwnedRootItem. */
-- (id) initAsLayoutOwnedRootItem
+See also -isLayerItem. */
+- (id) initAsLayerItem
 {
-	_isLayoutOwnedRootItem = YES;
+	_isLayerItem = YES;
 
 	self = [self initWithItems: nil view: nil value: nil representedObject: nil];
 	[self setActionHandler: nil];
@@ -997,11 +997,11 @@ frame (see -usesLayoutBasedFrame). */
 	
 	BOOL isNewLayoutContent = ([self hasNewContent] || [self hasNewLayout] 
 		|| _hasNewArrangement);
-	
-	[[self items] makeObjectsPerformSelector: @selector(updateLayout)];
-	
+
 	/* Delegate layout rendering to custom layout object */
 	[[self layout] render: nil isNewContent: isNewLayoutContent];
+
+	[[self items] makeObjectsPerformSelector: @selector(updateLayout)];
 
 	[self setNeedsDisplay: YES];
 
@@ -1165,7 +1165,7 @@ recursively on them. */
 		/* Render the layout-specific tree if needed */
 
 		[self display: inputValues 
-		         item: [[self layout] rootItem] 
+		         item: [[self layout] layerItem] 
 		    dirtyRect: dirtyRect 
 		    inContext: ctxt];
 	}
@@ -1204,7 +1204,7 @@ You should never need to call this method directly. */
 
 	// NOTE: On GNUstep unlike Cocoa, a nil item  will alter the coordinates 
 	// when concat/invert is executed. For example, in -render:dirtyRect:inContext: 
-	// a nil item can be returned by -[ETLayout rootItem].
+	// a nil item can be returned by -[ETLayout layerItem].
 	BOOL shouldDrawItem = (item != nil && [item displayView] == nil);
 			
 	if (shouldDrawItem == NO)
@@ -1877,11 +1877,11 @@ TODO: Implement and may be rename -expand or -expandStack */
 
 /* Framework Private */
 
-/** Returns whether the receiver is a root item encaspulated in a layout and 
+/** Returns whether the receiver is a layer item encaspulated in a layout and 
 invisible in the main layout item tree. */
-- (BOOL) isLayoutOwnedRootItem
+- (BOOL) isLayerItem
 {
-	return _isLayoutOwnedRootItem;
+	return _isLayerItem;
 }
 
 @end

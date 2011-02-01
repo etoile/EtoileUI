@@ -105,7 +105,7 @@
 	/* We create a temporary pool to released every item autoreleased or 
 	   retained by autoreleased objects.
 	   ETLayoutItemGroup initializer sets an autoreleased layout but we 
-	   want its root item to be released.
+	   want its layer item to be released.
 	   In a similar way, -addItem: updates the layout but -[ETLayout renderXXX] 
 	   methods might manipulate the items with autoreleased collections. */
 	CREATE_AUTORELEASE_POOL(layoutPool2);
@@ -124,7 +124,7 @@
 	UKIntsEqual(2, [parent retainCount]); /* Not retained by item */
 	RELEASE(view);
 	UKIntsEqual(2, [[item supervisorView] retainCount]);
-	/* We have 3 allocated items now: item, parent and [[parent layout] rootItem] */
+	/* We have 3 allocated items now: item, parent and [[parent layout] layerItem] */
 	UKIntsEqual(allocCount + 3, GSDebugAllocationCount([ETLayoutItem class])
 		+ GSDebugAllocationCount([ETLayoutItemGroup class]));
 	RELEASE(parent);
@@ -172,7 +172,7 @@
 	UKIntsEqual(2, [view1 retainCount]);
 
 	/* We have 3 items and 3 supervisor views which raises the alloc count to 6.
-	   However both parent and ancestor triggers the allocation of -[ETLayout rootItem]. 
+	   However both parent and ancestor triggers the allocation of -[ETLayout layerItem]. 
 	   Which means we must count 8 objects. */
 	UKIntsEqual(allocCount + 8, GSDebugAllocationCount([ETLayoutItem class])
 		+ GSDebugAllocationCount([ETLayoutItemGroup class])

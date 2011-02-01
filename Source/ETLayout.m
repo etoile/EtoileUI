@@ -235,7 +235,7 @@ constraint with -setItemSizeConstraint: and -setConstrainedItemSize:. */
 	   The layout context is our owner and retains us. */
 	DESTROY(layoutView);
 	DESTROY(_tool);
-	DESTROY(_rootItem);
+	DESTROY(_layerItem);
 	DESTROY(_dropIndicator);
 
 	[super dealloc];
@@ -259,7 +259,7 @@ tool copy. */
 	newLayout->_layoutContext = ctxt;
 	newLayout->delegate = delegate;
 	newLayout->layoutView = [layoutView copyWithZone: aZone];
-	newLayout->_rootItem = [_rootItem copyWithZone: aZone];
+	newLayout->_layerItem = [_layerItem copyWithZone: aZone];
 	newLayout->_dropIndicator = RETAIN(_dropIndicator);
 	[newLayout setAttachedTool: [[self attachedTool] copyWithZone: aZone]];
 	RELEASE([newLayout attachedTool]);
@@ -418,7 +418,7 @@ You must call the superclass implementation if you override this method. */
 	// Triggers scroll view display which triggers layout render in turn to 
 	// compute the content size
 	[_layoutContext setLayoutView: nil];
-	[self unmapRootItemFromLayoutContext];
+	[self unmapLayerItemFromLayoutContext];
 }
 
 /** <override-dummy />Overrides if your subclass requires extra transformation 
@@ -432,7 +432,7 @@ You must call the superclass implementation if you override this method. */
 {
 	NSParameterAssert(_layoutContext != nil);
 	[self setUpLayoutView];
-	[self mapRootItemIntoLayoutContext];
+	[self mapLayerItemIntoLayoutContext];
 }
 
 // NOTE: -isSemantic will be a public method when its role has become clearer.
@@ -589,7 +589,7 @@ in.You can restrict the layout size to your personal needs by
 {
 	//ETDebugLog(@"-setLayoutSize");
 	_layoutSize = size;
-	[self syncRootItemGeometryWithSize: size];
+	[self syncLayerItemGeometryWithSize: size];
 }
 
 /** Returns the last computed layout size.
@@ -932,81 +932,81 @@ time a setting changes:
 	See ETUIComponent to understand how an aggregate layout can be wrapped in
 	standalone and self-sufficient component which may act as live filter in 
 	the continous model object flows. */
-/** Returns the root item specific to the receiver. This layout-specific tree 
+/** Returns the layer item specific to the receiver. This layout-specific tree 
 includes additional items such as resize handles, positioning indicators etc. 
 
 These items can be composed into the semantic layout item tree, each time the 
 receiver is set on a layout context. At this point, the layout item tree visible 
 on screen is really a composite between the main item tree which owns the layout 
-context and the tree rooted in -rootItem. */
-- (ETLayoutItemGroup *) rootItem
+context and the tree rooted in -layerItem. */
+- (ETLayoutItemGroup *) layerItem
 {
-	/* A layout set on a root item encapsulated in a layout must have no root 
-	   item otherwise -[ETLayout rootItem] results in an endless recursion:
-	   -[ETFixedLayout rootItem]
-	   -[ETFixedLayout mapRootItemInLayoutContext]
+	/* A layout set on a layer item encapsulated in a layout must have no root 
+	   item otherwise -[ETLayout layerItem] results in an endless recursion:
+	   -[ETFixedLayout layerItem]
+	   -[ETFixedLayout mapLayerItemInLayoutContext]
 	   -[ETFixedLayout setUp]
 	   -[ETFixedLayout setLayoutContext:]
 	   -[ETLayoutItemGroup init]
-	   -[ETFixedLayout rootItem]
-	   -[ETFixedLayout mapRootItemInLayoutContext]
+	   -[ETFixedLayout layerItem]
+	   -[ETFixedLayout mapLayerItemInLayoutContext]
 	   -[ETFixedLayout setUp]
 	   -[ETFixedLayout setLayoutContext:]
 	   -[ETLayoutItemGroup init]
-	   That's why we check -isLayoutOwnedRootItem. */
-	if (_rootItem == nil && [_layoutContext isLayoutItem] && [_layoutContext isLayoutOwnedRootItem] == NO)
+	   That's why we check -isLayerItem. */
+	if (_layerItem == nil && [_layoutContext isLayoutItem] && [_layoutContext isLayerItem] == NO)
 	{
-		_rootItem = [[ETLayoutItemGroup alloc] initAsLayoutOwnedRootItem];
+		_layerItem = [[ETLayoutItemGroup alloc] initAsLayerItem];
 	}
 
 	/* When the layout context is a composite layout, the positional layout 
-	   reuses its root item */
+	   reuses its layer item */
 	if (_layoutContext != nil && [_layoutContext isLayoutItem] == NO)
 	{
-		return [_layoutContext rootItem];
+		return [_layoutContext layerItem];
 	}
 
-	return _rootItem;
+	return _layerItem;
 }
 
-/** Resizes the root item to the given size and sets its -isFlipped property 
+/** Resizes the layer item to the given size and sets its -isFlipped property 
 to be identical to the layout context. */
-- (void) syncRootItemGeometryWithSize: (NSSize)aSize
+- (void) syncLayerItemGeometryWithSize: (NSSize)aSize
 {
-	[[self rootItem] setFlipped: [[self layoutContext] isFlipped]];
-	/* The root item is rendered in the coordinate space of the layout context */
-	[[self rootItem] setSize: aSize];
+	[[self layerItem] setFlipped: [[self layoutContext] isFlipped]];
+	/* The layer item is rendered in the coordinate space of the layout context */
+	[[self layerItem] setSize: aSize];
 }
 
-- (void) mapRootItemIntoLayoutContext
+- (void) mapLayerItemIntoLayoutContext
 {
 	NSParameterAssert(nil != _layoutContext);
 
-	if ([self rootItem] == nil)
+	if ([self layerItem] == nil)
 		return;
 
 	ETLayoutItemGroup *layoutContext = (ETLayoutItemGroup *)[self layoutContext];
 
-	/* We don't insert the root item in the layout context, because we don't 
+	/* We don't insert the layer item in the layout context, because we don't 
 	   want to make it visible in the semantic tree. Yet to support -display 
-	   in the root item tree, we set the layout context as its parent, hence 
+	   in the layer item tree, we set the layout context as its parent, hence 
 	   redisplay requests can flow back to the closest ancestor view in the 
 	   main layout item tree. */
 	if ([layoutContext isLayoutItem])
 	{
-		[[self rootItem] setParentItem: layoutContext];
+		[[self layerItem] setParentItem: layoutContext];
 	}
 	else /* For layout composition, when the layout context is a layout */
 	{
-		[[self rootItem] setParentItem: [layoutContext rootItem]];
+		[[self layerItem] setParentItem: [layoutContext rootItem]];
 	}
 
-	[self syncRootItemGeometryWithSize: [layoutContext visibleContentSize]];
+	[self syncLayerItemGeometryWithSize: [layoutContext visibleContentSize]];
 }
 
-- (void) unmapRootItemFromLayoutContext
+- (void) unmapLayerItemFromLayoutContext
 {
-	[[self rootItem] setParentItem: nil];
+	[[self layerItem] setParentItem: nil];
 }
 
 /* Wrapping Existing View */

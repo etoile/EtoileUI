@@ -63,6 +63,7 @@
 @interface ETCompositeLayout : ETLayout
 {
 	@private
+	ETLayoutItemGroup *_rootItem;
 	ETLayoutItemGroup *_targetItem; /* a descendent of the root virtual node */
 }
 
@@ -73,7 +74,8 @@
 - (id) initWithRootItem: (ETLayoutItemGroup *)itemGroup;
 - (id) initWithRootItem: (ETLayoutItemGroup *)rootItem 
   firstPresentationItem: (ETLayoutItemGroup *)targetItem;
-  
+
+- (ETLayoutItemGroup *) rootItem;  
 - (void) setRootItem: (ETLayoutItemGroup *)anItem;
 
 - (void) renderWithLayoutItems: (NSArray *)items isNewContent: (BOOL)isNewContent;

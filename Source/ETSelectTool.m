@@ -460,12 +460,12 @@ be reactivated when we exit our owner layout. */
 
 	_newSelectionAreaUnderway = YES;
 	_localStartDragLoc = aPoint;
-	/* The root item is mapped to backgroundItem extent, so their coordinate 
+	/* The layer item is mapped to backgroundItem extent, so their coordinate 
 	   space are equal. */
 	[[self selectionAreaItem] setFrame: ETMakeRect(_localStartDragLoc, NSZeroSize)];
-	NSAssert1([backgroundLayout rootItem] != nil, @"Root item in %@ must never "
+	NSAssert1([backgroundLayout layerItem] != nil, @"Layer item in %@ must never "
 		"be nil or -beginSelectingAreaAtPoint: shouldn't have been called", backgroundLayout);
-	[(ETLayoutItemGroup *)[backgroundLayout rootItem] addItem: [self selectionAreaItem]];
+	[(ETLayoutItemGroup *)[backgroundLayout layerItem] addItem: [self selectionAreaItem]];
 }
 
 - (void) resizeSelectionAreaToRect: (NSRect)aRect
@@ -520,7 +520,7 @@ their intersection with the new selection rect. */
 	ETLayout *backgroundLayout = [(ETLayoutItemGroup *)[self targetItem] layout];
 
 	[[self selectionAreaItem] setNeedsDisplay: YES];	
-	[(ETLayoutItemGroup *)[backgroundLayout rootItem] removeItem: [self selectionAreaItem]];
+	[(ETLayoutItemGroup *)[backgroundLayout layerItem] removeItem: [self selectionAreaItem]];
 	_newSelectionAreaUnderway = NO;
 	_localStartDragLoc = NSZeroPoint; /* Debugging hint */
 

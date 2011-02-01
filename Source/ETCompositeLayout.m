@@ -83,6 +83,13 @@
 
 DEALLOC(DESTROY(_rootItem); DESTROY(_targetItem));
 
+- (id) copyWithZone: (NSZone *)aZone layoutContext: (id <ETLayoutingContext>)ctxt
+{
+	ETCompositeLayout *newLayout = [super copyWithZone: aZone layoutContext: ctxt];
+	newLayout->_rootItem = [_rootItem copyWithZone: aZone];
+	return newLayout;
+}
+
 /** Returns the holder item. */
 - (ETLayoutItemGroup *) proposedParentItemForFirstPresentationItem
 {
@@ -93,6 +100,15 @@ DEALLOC(DESTROY(_rootItem); DESTROY(_targetItem));
 - (BOOL) isScrollable
 {
 	return NO;
+}
+
+/** Returns the root item to which items that makes up the composite layout 
+belong to. 
+
+See also -setRootItem:. */
+- (ETLayoutItemGroup *) rootItem
+{
+	return _rootItem;
 }
 
 /** Sets the root item to which items that makes up the composite layout belong 
@@ -366,12 +382,6 @@ the copying support in ETLayoutItemGroup and ETCompositeLayout/ETLayout). */
 	}
 
 	[super setUp];
-}
-
-/* Only sync the size, -isFlipped is sync in the reverse way in -setUp. */
-- (void) syncRootItemGeometryWithSize: (NSSize)aSize
-{
-	[[self rootItem] setSize: aSize];
 }
 
 - (void) setUp

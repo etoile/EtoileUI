@@ -40,7 +40,7 @@
 	BOOL _shouldMutateRepresentedObject;
 	BOOL _sorted;
 	BOOL _filtered;
-	BOOL _isLayoutOwnedRootItem;
+	BOOL _isLayerItem;
 	/* We hide the supervisor view subviews when a display cache is set. We 
 	   must restore [[[self supervisorView] wrappedView] isHidden] correctly. */
 	BOOL _wasViewHidden;
@@ -194,8 +194,8 @@
 
 /* Framework Private */
 
-- (id) initAsLayoutOwnedRootItem;
-- (BOOL) isLayoutOwnedRootItem;
+- (id) initAsLayerItem;
+- (BOOL) isLayerItem;
 
 @end
 

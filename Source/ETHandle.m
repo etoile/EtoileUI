@@ -88,7 +88,7 @@ NSString *kETManipulatedObjectProperty = @"manipulatedObject";
 	   coordinates, which means we can have to convert the delta height to 
 	   the parent coordinate space.
 
-	   Root item in the layout and layout context are expected to have 
+	   Layer item in the layout and layout context are expected to have 
 	   identical -isFlipped value... we could potentially eliminate this 
 	   restriction by checking whether the layout context is flipped or not in 
 	   -[ETHandleGroup setFrame:]. */

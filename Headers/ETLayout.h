@@ -135,12 +135,12 @@ typedef enum _ETSizeConstraintStyle
 @interface ETLayout : NSObject <NSCopying>
 {
 	id _layoutContext; /* Weak reference */
-	ETLayoutItemGroup *_rootItem; /* Lazily initialized */
 
 	@private
 	IBOutlet id delegate; /* Weak reference */
 	IBOutlet NSView *layoutView;
 	ETTool *_tool;
+	ETLayoutItemGroup *_layerItem; /* Lazily initialized */
 	ETDropIndicator *_dropIndicator;
 
 	BOOL _isLayouting; /* -isRendering */	
@@ -235,10 +235,10 @@ typedef enum _ETSizeConstraintStyle
 
 /* Presentational Item Tree */
 
-- (ETLayoutItemGroup *) rootItem;
-- (void) mapRootItemIntoLayoutContext;
-- (void) unmapRootItemFromLayoutContext;
-- (void) syncRootItemGeometryWithSize: (NSSize)aSize;
+- (ETLayoutItemGroup *) layerItem;
+- (void) mapLayerItemIntoLayoutContext;
+- (void) unmapLayerItemFromLayoutContext;
+- (void) syncLayerItemGeometryWithSize: (NSSize)aSize;
 
 /* Wrapping Existing View */
 

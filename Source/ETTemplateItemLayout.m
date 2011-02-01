@@ -355,7 +355,7 @@ Does nothing by default. */
 
 - (void) setSize: (NSSize)size
 {
-	[self setLayoutSize: size]; /* To sync the root item geometry */
+	[self setLayoutSize: size]; /* To sync the layer item geometry */
 	[_layoutContext setSize: size];
 }
 
@@ -385,7 +385,7 @@ e.g. the icon layout does it in its own way by overriding -resizeLayoutItems:toS
 
 - (void) setContentSize: (NSSize)size;
 {
-	[self setLayoutSize: size]; /* To sync the root item geometry */
+	[self setLayoutSize: size]; /* To sync the layer item geometry */
 	[_layoutContext setContentSize: size];
 }
 

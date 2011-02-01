@@ -446,7 +446,7 @@ inside the content bounds. */
 
 	[mainItem setLayout: [ETFreeLayout layout]];
 	ASSIGN(tool, [[mainItem layout] attachedTool]);
-	ASSIGN(rootItem, [[mainItem layout] rootItem]);
+	ASSIGN(rootItem, [[mainItem layout] layerItem]);
 	ASSIGN(item1, [itemFactory rectangleWithRect: NSMakeRect(50, 30, 50, 30)]);
 	ASSIGN(item2, [itemFactory graphicsGroup]);
 	[item2 setFrame: NSMakeRect(0, 0, 100, 50)];
@@ -487,14 +487,14 @@ DEALLOC(DESTROY(rootItem); DESTROY(item1); DESTROY(item2); DESTROY(item21))
 	[item21 setSelected: YES];
 
 	UKIntsEqual(2, [rootItem numberOfItems]);
-	UKIntsEqual(1, [[[item2 layout] rootItem] numberOfItems]);	
+	UKIntsEqual(1, [[[item2 layout] layerItem] numberOfItems]);	
 	
 	[item2 setSelected: NO];
 	UKIntsEqual(1, [rootItem numberOfItems]);
-	UKIntsEqual(1, [[[item2 layout] rootItem] numberOfItems]);
+	UKIntsEqual(1, [[[item2 layout] layerItem] numberOfItems]);
 
 	[item21 setSelected: NO];
-	UKIntsEqual(0, [[[item2 layout] rootItem] numberOfItems]);
+	UKIntsEqual(0, [[[item2 layout] layerItem] numberOfItems]);
 }
 
 - (void) testHitTestHandle

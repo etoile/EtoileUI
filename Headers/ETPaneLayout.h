@@ -32,6 +32,7 @@ typedef enum {
 	ETLayoutItemGroup *_barItem;
 	ETLayoutItem *_currentItem;
 	ETPanePosition _barPosition;
+	float _barThickness;
 	BOOL _isSwitching;
 }
 
@@ -54,10 +55,14 @@ typedef enum {
 
 - (ETPanePosition) barPosition;
 - (void) setBarPosition: (ETPanePosition)position;
+- (float) barThickness;
+- (void) setBarThickness: (float)aThickness;
 - (void) setBarItem: (ETLayoutItemGroup *)item;
 - (ETLayoutItemGroup *) barItem;
 - (ETLayoutItemGroup *) contentItem;
 - (void) tile;
+
+/* Navigation Behavior */
 
 - (id) beginVisitingItem: (ETLayoutItem *)tabItem;
 - (void) endVisitingItem: (ETLayoutItem *)tabItem;

@@ -62,10 +62,11 @@ If contentItem is nil, a default content item will be created. */
 	{
 		[self setBarItem: [[ETLayoutItemFactory factory] itemGroup]];
 	}
-	[_barItem setAutoresizingMask: NSViewWidthSizable];
+	//[_barItem setAutoresizingMask: NSViewWidthSizable];
 	[_barItem setLayout: [ETTableLayout layout]];
 	_barPosition = ETPanePositionTop;
-	
+	_barThickness = 200;
+
 	[[_barItem layout] setAttachedTool: [ETSelectTool tool]];
 
 	return self;
@@ -110,6 +111,7 @@ If contentItem is nil, a default content item will be created. */
 	ASSIGN(_contentItem, contentItemCopy);
 	ASSIGN(_currentItem, currentItemCopy);
 	_barPosition = layoutOriginal->_barPosition;
+	_barThickness = layoutOriginal->_barThickness;
 
 	/* Replicate the observer set up in -setBarItem: */
 	[[NSNotificationCenter defaultCenter] 
@@ -119,22 +121,53 @@ If contentItem is nil, a default content item will be created. */
 			    object: _barItem];
 }
 
-- (float) barHeightOrWidth
+/** Returns the height or width to be set on the bar item in -tile.
+
+By default, returns 200.
+
+See also -setBarThickness:. */
+- (float) barThickness
 {
-	return 150;
+	return _barThickness;
+}
+
+/** Sets the height or width to be set on the bar item in -tile.
+
+When -barPosition returns ETPanePositionLeft or ETPanePositionRight, sets the 
+bar item width, otherwise sets the bar item height.  */
+- (void) setBarThickness: (float)aThickness
+{
+	_barThickness = aThickness;
 }
 
 - (void) tileContent
 {
-	if ([[self contentItem] isEmpty])
-		return;
 
-	ETLayoutItem *anItem = [[self contentItem] firstItem];
-	NSSize contentSize = [[self contentItem] size];
-	NSSize itemSize = [anItem size];
+}
 
-	[anItem setOrigin: NSMakePoint(contentSize.width / 2 - itemSize.width / 2,
-		contentSize.height / 2 - itemSize.height / 2)];
+- (float) maxAllowedBarThicknessForPosition: (ETPanePosition)aBarPosition
+{
+	NSSize maxSize = [[self holderItem] size];
+	float thickness = [self barThickness];
+
+	switch (aBarPosition)
+	{
+		case ETPanePositionTop:
+		case ETPanePositionBottom:
+			thickness = (maxSize.height > thickness ? thickness : maxSize.height);
+			break;
+		case ETPanePositionLeft:
+		case ETPanePositionRight:
+			thickness = (maxSize.width > thickness ? thickness : maxSize.width);
+			break;
+		case ETPanePositionNone:
+			thickness = 0;
+			break;
+		default:
+			ASSERT_INVALID_CASE;
+	}
+
+	return thickness;	
 }
 
 - (void) tile
@@ -144,10 +177,12 @@ If contentItem is nil, a default content item will be created. */
 		return;
 
 	// FIXME: Handle the next line in a more transparent way in ETLayout
-	[self syncRootItemGeometryWithSize: [[self layoutContext] visibleContentSize]];
-	NSSize rootSize = [[self rootItem] size];
+	[self syncLayerItemGeometryWithSize: [[self layoutContext] visibleContentSize]];
 
-	[[self contentItem] setAutoresizingMask: ETAutoresizingFlexibleWidth | ETAutoresizingFlexibleHeight];
+	NSSize rootSize = [[self holderItem] size];
+	float barThickness = [self maxAllowedBarThicknessForPosition: _barPosition];
+
+	//[[self contentItem] setAutoresizingMask: ETAutoresizingFlexibleWidth | ETAutoresizingFlexibleHeight];
 
 	if (_barPosition == ETPanePositionNone)
 	{
@@ -158,27 +193,27 @@ If contentItem is nil, a default content item will be created. */
 	}
 	else if (_barPosition == ETPanePositionTop)
 	{
-		[[self barItem] setFrame: NSMakeRect(0, 0, rootSize.width, [self barHeightOrWidth])];
-		[[self contentItem] setFrame: NSMakeRect(0, [self barHeightOrWidth], rootSize.width, rootSize.height - [self barHeightOrWidth])];
-		[[self barItem] setAutoresizingMask: ETAutoresizingFlexibleBottomMargin | ETAutoresizingFlexibleWidth];
+		[[self barItem] setFrame: NSMakeRect(0, 0, rootSize.width, barThickness)];
+		[[self contentItem] setFrame: NSMakeRect(0, barThickness, rootSize.width, rootSize.height - barThickness)];
+		//[[self barItem] setAutoresizingMask: ETAutoresizingFlexibleBottomMargin | ETAutoresizingFlexibleWidth];
 	}
 	else if (_barPosition == ETPanePositionBottom)
 	{
-		[[self barItem] setFrame: NSMakeRect(0, rootSize.height - [self barHeightOrWidth], rootSize.width, [self barHeightOrWidth])];
-		[[self contentItem] setFrame: NSMakeRect(0, 0, rootSize.width, rootSize.height - [self barHeightOrWidth])];
+		[[self barItem] setFrame: NSMakeRect(0, rootSize.height - barThickness, rootSize.width, barThickness)];
+		[[self contentItem] setFrame: NSMakeRect(0, 0, rootSize.width, rootSize.height - barThickness)];
 		[[self barItem] setAutoresizingMask: ETAutoresizingFlexibleTopMargin | ETAutoresizingFlexibleWidth];
 	}
 	else if (_barPosition == ETPanePositionLeft)
 	{
-		[[self barItem] setFrame: NSMakeRect(0, 0, [self barHeightOrWidth], rootSize.height)];
-		[[self contentItem] setFrame: NSMakeRect([self barHeightOrWidth], 0, rootSize.width - [self barHeightOrWidth], rootSize.height)];
+		[[self barItem] setFrame: NSMakeRect(0, 0, barThickness, rootSize.height)];
+		[[self contentItem] setFrame: NSMakeRect(barThickness, 0, rootSize.width - barThickness, rootSize.height)];
 		[[self barItem] setAutoresizingMask: ETAutoresizingFlexibleRightMargin | ETAutoresizingFlexibleHeight];
 
 	}
 	else if (_barPosition == ETPanePositionRight)
 	{
-		[[self barItem] setFrame: NSMakeRect(rootSize.width - [self barHeightOrWidth], 0, [self barHeightOrWidth], rootSize.height)];
-		[[self contentItem] setFrame: NSMakeRect(0, 0, rootSize.width - [self barHeightOrWidth], rootSize.height)];
+		[[self barItem] setFrame: NSMakeRect(rootSize.width - barThickness, 0, barThickness, rootSize.height)];
+		[[self contentItem] setFrame: NSMakeRect(0, 0, rootSize.width - barThickness, rootSize.height)];
 		[[self barItem] setAutoresizingMask: ETAutoresizingFlexibleLeftMargin | ETAutoresizingFlexibleHeight];
 	}
 	
@@ -475,6 +510,19 @@ By default, returns NO. */
 	[self setFirstPresentationItem: barItem];
 }
 
+- (void) tileContent
+{
+	if ([[self contentItem] isEmpty])
+		return;
+
+	ETLayoutItem *anItem = [[self contentItem] firstItem];
+	NSSize contentSize = [[self contentItem] size];
+	NSSize itemSize = [anItem size];
+
+	[anItem setOrigin: NSMakePoint(contentSize.width / 2 - itemSize.width / 2,
+		contentSize.height / 2 - itemSize.height / 2)];
+}
+
 /* Returns a new tab item that represents and replaces in the bar item the tab 
 item that just got selected and moved into the content item. */
 - (ETLayoutItem *) visitedItemProxyWithItem: (ETLayoutItem *)paneItem
@@ -548,6 +596,18 @@ the real items they currently represent. */
 @end
 
 @implementation ETMasterContentPaneLayout
+
+- (id) initWithBarItem: (ETLayoutItemGroup *)barItem contentItem: (ETLayoutItemGroup *)contentItem
+{
+	self = [super initWithBarItem: barItem contentItem: contentItem];
+	if (nil == self)
+		return nil;
+
+	[barItem setLayout: [ETOutlineLayout layout]];
+	[contentItem setLayout: [ETOutlineLayout layout]];
+
+	return self;
+}
 
 - (void) setUpCopyWithZone: (NSZone *)aZone 
                   original: (ETMasterDetailPaneLayout *)layoutOriginal

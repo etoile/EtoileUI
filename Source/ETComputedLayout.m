@@ -194,7 +194,7 @@ bounding box). */
 
 - (void) adjustSeparatorItemsForLayoutSize: (NSSize)newLayoutSize 
 {
-	FOREACH([[self rootItem] items], separator, ETLayoutItem *)
+	FOREACH([[self layerItem] items], separator, ETLayoutItem *)
 	{
 		[self adjustSeparatorItem: separator forLayoutSize: newLayoutSize];
 	}
@@ -206,7 +206,7 @@ bounding box). */
 		return NO;
 
 	BOOL didResize = NO;
-	NSMutableArray *flexibleSeparators = [NSMutableArray arrayWithArray: [[self rootItem] items]];
+	NSMutableArray *flexibleSeparators = [NSMutableArray arrayWithArray: [[self layerItem] items]];
 	[[[flexibleSeparators filter] identifier] isEqualToString: kETFlexibleSpaceSeparatorItemIdentifier];
 	NSUInteger count = [flexibleSeparators count];
 
@@ -435,17 +435,17 @@ When the separator is the space, the end margin has usually no visible effects. 
 
 - (void) removePreviousSeparatorItems
 {
-	[[self rootItem] removeAllItems];
+	[[self layerItem] removeAllItems];
 }
 
 /** Prepares and inserts separator item based on -separatorTemplateItem into the 
-root item.
+layer item.
 
 Separator items previously inserted by this method are automatically removed the 
 next time you call it. */
 - (NSArray *) insertSeparatorsBetweenItems: (NSArray *)items
 {
-	ETAssert([self rootItem] != nil);
+	ETAssert([self layerItem] != nil);
 
 	[self removePreviousSeparatorItems];
 
@@ -466,7 +466,7 @@ next time you call it. */
 
 		[self prepareSeparatorItem: separatorItem];
 		[spacedItems addObject: separatorItem];
-		[[self rootItem] addItem: separatorItem];
+		[[self layerItem] addItem: separatorItem];
 	}
 
 	return spacedItems;
