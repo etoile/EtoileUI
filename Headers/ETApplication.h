@@ -45,7 +45,6 @@ For other Nibs to be loaded, see ETNibOwner. */
 @interface ETApplication : NSApplication 
 {
 	@private
-	ETLayoutItemGroup *_windowLayer;
 	ETNibOwner *_nibOwner;
 }
 
@@ -100,6 +99,7 @@ enum
 
 /** NSMenu conveniency additions. */
 @interface NSMenu (Etoile)
+- (NSMenuItem *) lastItem;
 - (void) addItemWithTitle: (NSString *)aTitle
                     state: (NSInteger)aState
                    target: (id)aTarget

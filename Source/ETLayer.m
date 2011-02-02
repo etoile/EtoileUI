@@ -192,13 +192,19 @@ You should never call this method unless you write an ETWindowLayout subclass. *
 {
 	FOREACH([self items], item, ETLayoutItem *)
 	{
+		[item setDefaultValue: [item windowItem] forProperty: @"windowItem"];
 		[[[item windowItem] decoratedItem] setDecoratorItem: nil];
 	}
 }
 
 - (void) restoreWindowDecoratorItems
 {
-
+	FOREACH([self items], item, ETLayoutItem *)
+	{
+		[[item lastDecoratorItem] setDecoratorItem: [item defaultValueForProperty: @"windowItem"]];
+		// TODO: Remove the cached window item
+		//[item setDefaultValue: nil forProperty: @"windowItem"];
+	}
 }
 
 @end

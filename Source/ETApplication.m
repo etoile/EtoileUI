@@ -8,6 +8,7 @@
 
 #import <EtoileFoundation/Macros.h>
 #import <EtoileFoundation/ETCollection.h>
+#import <EtoileFoundation/ETCollection+HOM.h>
 #import <EtoileFoundation/NSObject+HOM.h>
 #import "ETApplication.h"
 #import "ETController.h"
@@ -350,6 +351,28 @@ See also -_buildMainMenuIfNeeded. */
 	         keyEquivalent: @""];
 }
 
+- (IBAction) changeWindowGroupLayout: (id)sender
+{
+	Class layoutClass = [sender representedObject];
+	[[[ETLayoutItemFactory factory] windowGroup] setLayout: [layoutClass layout]];
+}
+
+- (NSMenu *) layoutMenuWithTitle: (NSString *)aTitle target: (id)aTarget action: (SEL)aSelector
+{
+	NSMenu *menu = AUTORELEASE([[NSMenu alloc] initWithTitle: aTitle]);
+
+	FOREACH([ETLayout registeredLayoutClasses], layoutClass, Class)
+	{
+		[menu addItemWithTitle: [layoutClass displayName] 
+		                target: aTarget 
+		                action: aSelector 
+		         keyEquivalent: nil];
+		[[menu lastItem] setRepresentedObject: layoutClass];
+	}
+
+	return menu;
+}
+
 /** Returns the visible development menu if there is one already inserted in the
 menu bar, otherwise builds a new instance and returns it. */
 - (NSMenuItem *) developmentMenuItem
@@ -390,6 +413,14 @@ menu bar, otherwise builds a new instance and returns it. */
 	[menu addItemWithTitle: _(@"Browse Layout Item Tree")
 	                action: @selector(browseLayoutItemTree:) 
 	         keyEquivalent: @""];
+
+	[menu addItem: [NSMenuItem separatorItem]];
+
+	NSMenu *layoutMenu = [self layoutMenuWithTitle: _(@"Window Group Layout") 
+	                                        target: self 
+	                                        action: @selector(changeWindowGroupLayout:)];
+
+	[menu addItemWithSubmenu: layoutMenu];
 
 	[menu addItem: [NSMenuItem separatorItem]];
 
@@ -891,6 +922,12 @@ int ETApplicationMain(int argc, const char **argv)
 @end
 
 @implementation NSMenu (Etoile)
+
+/** Returns the last menu item. */
+- (NSMenuItem *) lastItem
+{
+	return [[self itemArray] lastObject];
+}
 
 /** Adds a menu item initialized with the given parameters to the receiver. */ 
 - (void) addItemWithTitle: (NSString *)aTitle

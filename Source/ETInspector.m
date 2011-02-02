@@ -92,14 +92,14 @@
 	ASSIGN(detailViewItem, [propertyView layoutItem]);
 
 	[layoutPopup removeAllItems];
-	FOREACH([ETLayout registeredLayoutClasses], layoutClass, ETLayout *)
+	FOREACH([ETLayout registeredLayoutClasses], layoutClass, Class)
 	{
 		[layoutPopup addItemWithTitle: [layoutClass displayName]];
 		[[layoutPopup lastItem] setRepresentedObject: layoutClass];
 	}
 	
 	[toolPopup removeAllItems];
-	FOREACH([ETTool registeredToolClasses], toolClass, ETTool *)
+	FOREACH([ETTool registeredToolClasses], toolClass, Class)
 	{
 		[toolPopup addItemWithTitle: [toolClass displayName]];
 		[[toolPopup lastItem] setRepresentedObject: toolClass];
