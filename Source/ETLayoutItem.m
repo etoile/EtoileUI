@@ -1452,6 +1452,11 @@ See also -[ETLayoutItemGroup updateLayout].  */
 	// TODO: Implement
 }
 
+- (void) updateLayoutRecursively: (BOOL)recursively
+{
+	// TODO: Implement
+}
+
 static inline NSRect DrawingBoundsInWindowItem(ETWindowItem *windowItem)
 {
 	/* We exclude the window border and title bar because the display 

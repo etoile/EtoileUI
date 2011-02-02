@@ -192,6 +192,9 @@
 		60B5F87A11EF679800A08FF5 /* PaneExample.xib in Resources */ = {isa = PBXBuildFile; fileRef = 60B5F87911EF679800A08FF5 /* PaneExample.xib */; };
 		60BB000E100A32C8001B2F37 /* EtoileWeb.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 60073C2910074B39007272E6 /* EtoileWeb.framework */; };
 		60BBFFB8100A31D8001B2F37 /* WebKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 60BBFFB7100A31D8001B2F37 /* WebKit.framework */; };
+		60C06D8912F8533800E38E99 /* ETLayoutExecutor.h in Headers */ = {isa = PBXBuildFile; fileRef = 60C06D8812F8533800E38E99 /* ETLayoutExecutor.h */; };
+		60C06D8B12F8534900E38E99 /* ETLayoutExecutor.m in Sources */ = {isa = PBXBuildFile; fileRef = 60C06D8A12F8534900E38E99 /* ETLayoutExecutor.m */; };
+		60C06D8C12F8534900E38E99 /* ETLayoutExecutor.m in Sources */ = {isa = PBXBuildFile; fileRef = 60C06D8A12F8534900E38E99 /* ETLayoutExecutor.m */; };
 		60C1D8AD0C2569D500E00A2E /* PaneController.m in Sources */ = {isa = PBXBuildFile; fileRef = 60C1D8AC0C2569D500E00A2E /* PaneController.m */; };
 		60C1DA230C25715F00E00A2E /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1058C7A1FEA54F0111CA2CBB /* Cocoa.framework */; };
 		60C1DA3D0C2571EE00E00A2E /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 29B97316FDCFA39411CA2CEA /* main.m */; };
@@ -583,6 +586,8 @@
 		60B5F87911EF679800A08FF5 /* PaneExample.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = PaneExample.xib; path = PaneExample/PaneExample.xib; sourceTree = "<group>"; };
 		60BB9F140EED2FD000D5E1A6 /* ChangeLog */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = ChangeLog; sourceTree = "<group>"; };
 		60BBFFB7100A31D8001B2F37 /* WebKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = WebKit.framework; path = /System/Library/Frameworks/WebKit.framework; sourceTree = "<absolute>"; };
+		60C06D8812F8533800E38E99 /* ETLayoutExecutor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ETLayoutExecutor.h; path = Headers/ETLayoutExecutor.h; sourceTree = "<group>"; };
+		60C06D8A12F8534900E38E99 /* ETLayoutExecutor.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ETLayoutExecutor.m; path = Source/ETLayoutExecutor.m; sourceTree = "<group>"; };
 		60C1D8AB0C2569D500E00A2E /* PaneController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PaneController.h; path = PaneExample/PaneController.h; sourceTree = "<group>"; };
 		60C1D8AC0C2569D500E00A2E /* PaneController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = PaneController.m; path = PaneExample/PaneController.m; sourceTree = "<group>"; };
 		60C1FD1812EF26B000696D05 /* MarkupEditor.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = MarkupEditor.xib; path = MarkupEditor/MarkupEditor.xib; sourceTree = "<group>"; };
@@ -1090,6 +1095,8 @@
 		609548D30C0E30D500068CBB /* Layouts */ = {
 			isa = PBXGroup;
 			children = (
+				60C06D8A12F8534900E38E99 /* ETLayoutExecutor.m */,
+				60C06D8812F8533800E38E99 /* ETLayoutExecutor.h */,
 				609F46590B41641400AD2209 /* ETLayout.h */,
 				609F465A0B41641400AD2209 /* ETLayout.m */,
 				607FBB080FE0073F00960039 /* Composite Layouts */,
@@ -1334,6 +1341,7 @@
 				60D88821115E408D00D7A8AA /* NSCell+EtoileUI.h in Headers */,
 				6627F70A127E758A00E06946 /* ETItemTemplate.h in Headers */,
 				6627F70B127E758A00E06946 /* ETDocumentController.h in Headers */,
+				60C06D8912F8533800E38E99 /* ETLayoutExecutor.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1785,6 +1793,7 @@
 				60D8881E115E407D00D7A8AA /* NSCell+EtoileUI.m in Sources */,
 				60D88884115E651000D7A8AA /* TestCell.m in Sources */,
 				602635E611AD413B007586E3 /* TestWidgetLayout.m in Sources */,
+				60C06D8C12F8534900E38E99 /* ETLayoutExecutor.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1931,6 +1940,7 @@
 				60D8881F115E407D00D7A8AA /* NSCell+EtoileUI.m in Sources */,
 				6627F70E127E75B300E06946 /* ETItemTemplate.m in Sources */,
 				6627F70F127E75B300E06946 /* ETDocumentController.m in Sources */,
+				60C06D8B12F8534900E38E99 /* ETLayoutExecutor.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
