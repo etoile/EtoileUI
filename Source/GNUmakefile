@@ -35,6 +35,7 @@ libEtoileUI_OBJC_FILES = \
 	ETLayoutItemFactory.m \
 	ETLineFragment.m \
 	ETLayout.m \
+	ETLayoutExecutor.m \
 	ETLineLayout.m \
 	ETModelDescriptionRenderer.m \
 	ETNibOwner.m \
