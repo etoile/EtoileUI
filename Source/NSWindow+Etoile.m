@@ -125,8 +125,10 @@ top left coordinates when the content view returns YES to -isFlipped.  */
 		rect.origin.y = windowFrame.size.height - (rect.origin.y + rect.size.height);	
 	}
 
-	NSParameterAssert(rect.origin.x >= 0 && rect.origin.x <= rect.size.width 
-		&& rect.origin.y >= 0 && rect.origin.y <= rect.size.height);
+	// NOTE: rect.origin is the title bar height (or bottom border height if 
+	// -isFlipped is NO) and the left border width
+	NSParameterAssert(rect.origin.x >= 0 && rect.origin.x <= windowFrame.size.width
+		&& rect.origin.y >= 0 && rect.origin.y <= windowFrame.size.height);
 
 	return rect;
 }
