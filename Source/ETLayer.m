@@ -116,14 +116,19 @@ when a layout other than ETWindowLayout is set on the receiver. */
 {
 	if ([[self layout] isKindOfClass: [ETWindowLayout class]])
 	{
-		[self hideHardWindows];
 		[self removeWindowDecoratorItems];
+		[self hideHardWindows];
 	}
 
 	if ([aLayout isKindOfClass: [ETWindowLayout class]])
 	{
-		[self showHardWindows];
+		/* Ordering matters below because a window put back on screen and 
+		   previously used in the item tree, will try to retrieve the window 
+		   item while processing the events on the layout item.
+		   ETEventProcessor uses -isWindowDecorationEvent which relies on  
+		   -[ETEvent windowItem]. */
 		[self restoreWindowDecoratorItems];
+		[self showHardWindows];
 	}
 
 	[super setLayout: aLayout];
@@ -201,7 +206,14 @@ You should never call this method unless you write an ETWindowLayout subclass. *
 {
 	FOREACH([self items], item, ETLayoutItem *)
 	{
-		[[item lastDecoratorItem] setDecoratorItem: [item defaultValueForProperty: @"windowItem"]];
+		ETWindowItem *windowItem = [item defaultValueForProperty: @"windowItem"];
+
+		/* Usually when the item wasn't present when ETWindowLayout was last used */
+		if (nil == windowItem)
+		{
+			windowItem = [ETWindowItem item];
+		}
+		[[item lastDecoratorItem] setDecoratorItem: windowItem];
 		// TODO: Remove the cached window item
 		//[item setDefaultValue: nil forProperty: @"windowItem"];
 	}
