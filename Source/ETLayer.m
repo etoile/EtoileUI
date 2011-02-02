@@ -91,7 +91,10 @@ when a layout other than ETWindowLayout is set on the receiver. */
 	// NOTE: We could eventually check whether the item to decorate already 
 	// has a window decorator before creating a new one that will be 
 	// refused by -setDecoratorItem: and hence never used. 
-	[[item lastDecoratorItem] setDecoratorItem: [ETWindowItem item]];
+	if ([[self layout] isKindOfClass: [ETWindowLayout class]])
+	{
+		[[item lastDecoratorItem] setDecoratorItem: [ETWindowItem item]];
+	}
 	RELEASE(item);
 }
 
@@ -102,7 +105,10 @@ when a layout other than ETWindowLayout is set on the receiver. */
 	   in removing the window view (NSThemeFrame on Mac OS X) because 
 	   ETWindowLayer overrides -handleDetachViewOfItem:. */
 	[super handleDetachItem: item];
-	[[[item windowItem] decoratedItem] setDecoratorItem: nil];
+	if ([[self layout] isKindOfClass: [ETWindowLayout class]])
+	{
+		[[[item windowItem] decoratedItem] setDecoratorItem: nil];
+	}
 	RELEASE(item);
 }
 
