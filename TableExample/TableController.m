@@ -127,6 +127,12 @@ NSWindow *window = [outlineView window];
 
 	/* Show the pick palette on which picked items will be put */
 	[[ETPickboard localPickboard] showPickPalette];
+
+	/* Enable pick and drop everywhere by ingoring allowed pick and drop types */
+	[[ETPickDropCoordinator sharedInstance] setPickDropEnabledForAllItems: YES];
+
+	/* Let's play a bit */
+	[ETApp toggleDevelopmentMenu: nil];
 }
 
 @end
