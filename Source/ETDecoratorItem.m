@@ -354,7 +354,7 @@ inserted as the last decorator.
 
 Take in account that parentView can be nil. */
 - (void) handleDecorateItem: (ETUIItem *)item 
-             supervisorView: (NSView *)decoratedView 
+             supervisorView: (ETView *)decoratedView 
                      inView: (ETView *)parentView 
 {
 	[self saveAndOverrideAutoresizingMaskOfDecoratedItem: item];
@@ -400,7 +400,7 @@ decorator.
 
 Take in account that parentView can be nil. */
 - (void) handleUndecorateItem: (ETUIItem *)item
-               supervisorView: (NSView *)decoratedView 
+               supervisorView: (ETView *)decoratedView 
                        inView: (ETView *)parentView 
 {
 	ETDebugLog(@"Handle undecorate with parent %@ parent view %@ item "
@@ -435,6 +435,34 @@ Sets the given item autoresizing mask to match the last decorator item. */
 {
 	[[item supervisorView] setAutoresizingMask: 
 		[[[self lastDecoratorItem] supervisorView] autoresizingMask]];
+}
+
+/** <override-dummy />
+Returns the given frame.
+
+When -setDecoratorItem: is invoked, this method is called on the new last 
+decorator.
+
+Can be overriden to return an adjusted frame.<br />
+For example, ETWindowItem returns an extended rect to include the window border. */
+- (NSRect) frameForDecoratedItemFrame: (NSRect)aFrame
+{
+	ETAssert([self decoratedItem] != nil);
+	return aFrame;
+}
+
+/** <override-dummy />
+Returns the given frame.
+
+When -setDecoratorItem: is invoked, this method is called on the previous last 
+decorator.
+
+Can be overriden to return an adjusted frame.<br />
+For example, ETWindowItem returns an shrinked rect to exclude the window border. */
+- (NSRect) frameForUndecoratedItemFrame: (NSRect)aFrame
+{
+	ETAssert([self decoratedItem] != nil);
+	return aFrame;
 }
 
 /* Private Use */

@@ -73,13 +73,15 @@ considered private.*/
 
 - (BOOL) canDecorateItem: (ETUIItem *)item;
 - (void) handleDecorateItem: (ETUIItem *)item 
-             supervisorView: (NSView *)decoratedView 
+             supervisorView: (ETView *)decoratedView 
                      inView: (ETView *)parentView;
 - (void) handleUndecorateItem: (ETUIItem *)item
-               supervisorView: (NSView *)decoratedView 
+               supervisorView: (ETView *)decoratedView 
                        inView: (ETView *)parentView;
 - (void) saveAndOverrideAutoresizingMaskOfDecoratedItem: (ETUIItem *)item;
 - (void) restoreAutoresizingMaskOfDecoratedItem: (ETUIItem *)item;
+- (NSRect) frameForDecoratedItemFrame: (NSRect)aFrame;
+- (NSRect) frameForUndecoratedItemFrame: (NSRect)aFrame;
 - (void) handleSetDecorationRect: (NSRect)rect;
 - (NSSize) decoratedItemRectChanged: (NSRect)rect;
 

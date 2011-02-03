@@ -328,8 +328,8 @@ and make the necessary adjustments. */
 }
 
 - (void) handleDecorateItem: (ETUIItem *)item 
-             supervisorView: (NSView *)decoratedView 
-                     inView: (ETView *)parentView
+             supervisorView: (ETView *)decoratedView 
+                     inView: (ETView *)parentView 
 {
 	/* -handleDecorateItem:inView: will call back 
 	   -[ETWindowItem setDecoratedView:] which overrides ETLayoutItem.
@@ -342,22 +342,18 @@ and make the necessary adjustments. */
 		
 	if (decoratedView != nil)
 	{
-		// TODO: Rather than reusing the item size as other decorator do, 
-		// ETWindowItem could extend it temporarily until it is removed. To 
-		// do so, we could add -frameToRestore to retrieve the existingFrame 
-		// in -setDecoratorItem: and -setFrameToRestore: which can be called 
-		// here. This way we could also restore the initial item position when 
-		// a window decorator is removed.
+		// FIXME: Restore the position correctly, we could use...
 		//[_itemWindow setContentSizeFromTopLeft: [decoratedView frame].size];
 		
 		if ([self shouldKeepWindowFrame] == NO)
 		{
-			[_itemWindow setFrame: [[self class] convertRectToWidgetBackendScreenBase: [decoratedView frame]]
-			              display: YES];
+			[_itemWindow setFrame: [_itemWindow frameRectForContentRect: [decoratedView frame]] display: YES];
+			//[_itemWindow setFrame: [[self class] convertRectToWidgetBackendScreenBase: [decoratedView frame]]
+			//              display: YES];
 		}
 	
-		NSSize shrinkedItemSize = [_itemWindow contentRectForFrameRect: [_itemWindow frame]].size;
-		[decoratedView setFrameSize: shrinkedItemSize];
+		//NSSize shrinkedItemSize = [_itemWindow contentRectForFrameRect: [_itemWindow frame]].size;
+		//[decoratedView setFrameSize: shrinkedItemSize];
 		/* Previous line similar to [decoratedItem setContentSize: shrinkedItemSize] */
 	}
 	[_itemWindow setContentView: (NSView *)decoratedView];	
@@ -377,7 +373,7 @@ and make the necessary adjustments. */
 }
 
 - (void) handleUndecorateItem: (ETUIItem *)item
-               supervisorView: (NSView *)decoratedView 
+               supervisorView: (ETView *)decoratedView 
                        inView: (ETView *)parentView
 {
 	[_itemWindow orderOut: self];
@@ -467,6 +463,18 @@ This coordinate space includes the window decoration (titlebar etc.).  */
 
 	[_itemWindow setFrame: [[self class] convertRectToWidgetBackendScreenBase: rect] 
 	              display: YES];
+}
+
+- (NSRect) frameForDecoratedItemFrame: (NSRect)aFrame
+{
+	ETAssert([self decoratedItem] != nil);
+	return [_itemWindow frameRectForContentRect: aFrame];
+}
+
+- (NSRect) frameForUndecoratedItemFrame: (NSRect)aFrame
+{
+	ETAssert([self decoratedItem] != nil);
+	return [_itemWindow contentRectForFrameRect: aFrame];
 }
 
 - (BOOL) isFlipped

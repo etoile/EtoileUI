@@ -281,7 +281,8 @@ model graph and remains semantic. */
 	   not give the parent view in this case but the decorator view. */
 	id parentView = [[self displayView] superview];
 	NSRect existingFrame = [[self lastDecoratorItem] decorationRect];
-	
+	NSRect proposedFrame = existingFrame;
+
 	[[self displayView] removeFromSuperview];
 
 	RETAIN(existingDecorator);
@@ -289,10 +290,15 @@ model graph and remains semantic. */
 
 	/* Dismantle existing decorator */
 	ASSIGN(_decoratorItem, nil);
+	if ([existingDecorator lastDecoratorItem] != nil)
+	{
+		proposedFrame = [[existingDecorator lastDecoratorItem] frameForUndecoratedItemFrame: existingFrame];
+	}
 	[existingDecorator setDecoratedItem: nil];
 	[existingDecorator handleUndecorateItem: self 
 	                         supervisorView: [self supervisorView]
 	                                 inView: parentView];
+
 	/* Set up new decorator */
 	[decorator setFlipped: [self isFlipped]];
 	[decorator handleDecorateItem: self
@@ -308,6 +314,10 @@ model graph and remains semantic. */
 	// that triggers -decoratedItemRectChanged:... -visibleContentRect 
 	// could then wrongly return a zero rect.
 	[decorator setDecoratedItem: self];
+	if ([decorator lastDecoratorItem] != nil)
+	{
+		proposedFrame = [[decorator lastDecoratorItem] frameForDecoratedItemFrame: proposedFrame];
+	}
 	ASSIGN(_decoratorItem, decorator);
 
 	/* When a decorator view has been resized, moved or removed, we must reflect
@@ -315,7 +325,7 @@ model graph and remains semantic. */
 	   Not updating the frame is especially visible when the view is used as a 
 	   document view within a scroll view and this scroll view frame is modified. 
 	   Switching to a layout view reveals the issue even more clearly. */
-	[self setFirstDecoratedItemFrame: existingFrame];
+	[self setFirstDecoratedItemFrame: proposedFrame];
 	[self didChangeDecoratorOfItem: self];
 
 	RELEASE(existingDecorator);

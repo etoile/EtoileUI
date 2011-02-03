@@ -333,12 +333,13 @@ and -setAutoresizingMask: can potentially erase each other. */
 
 	[item setDecoratorItem: windowDecorator];
 	NSSize contentSize = [[[windowDecorator window] contentView] frame].size;
+	NSSize windowSize = [[windowDecorator window] frameRectForContentRect: rect].size;
 
-	UKSizesEqual(rect.size, [windowDecorator decorationRect].size);
+	UKSizesEqual(windowSize, [windowDecorator decorationRect].size);
 	UKPointsNotEqual(rect.origin, [windowDecorator contentRect].origin);
 	UKSizesEqual(contentSize, [windowDecorator contentRect].size);
 	UKRectsEqual([windowDecorator contentRect], [windowDecorator visibleContentRect]);
-	UKRectsEqual(ETMakeRect([windowDecorator decorationRect].origin, rect.size), [item frame]);
+	UKRectsEqual(ETMakeRect([windowDecorator decorationRect].origin, windowSize), [item frame]);
 	UKRectsEqual(ETMakeRect(NSZeroPoint, contentSize), [item contentBounds]);
 	UKRectsEqual([windowDecorator contentRect], [item decorationRect]);
 	/* For Cocoa, the supervisor view frame origin will be (0, 0) unlike 
@@ -429,25 +430,26 @@ and -setAutoresizingMask: can potentially erase each other. */
 	/* Preconditions */
 	UKFalse([scrollDecorator hasHorizontalScroller]);
 	UKFalse([scrollDecorator hasVerticalScroller]);
-	
-	NSRect rectMinusTitleBar = NSMakeRect(rect.origin.x, rect.origin.y, 
-		rect.size.width, rect.size.height - [windowDecorator titleBarHeight]);
+
+	NSRect newFrame = [windowDecorator frameForDecoratedItemFrame: rect];	
+	NSRect newFrameMinusTitleBar = NSMakeRect(newFrame.origin.x, newFrame.origin.y, 
+		newFrame.size.width, newFrame.size.height - [windowDecorator titleBarHeight]);
 
 	UKRectsEqual([windowDecorator contentRect], [scrollDecorator decorationRect]);
-	// FIXME: Should be rect and not rectMinusTitleBar. We need to check 
+	// FIXME: Should be rect and not newFrameMinusTitleBar. We need to check 
 	// -usesLayoutBaseFrame is YES in -clipViewFrameDidChange: in order to 
 	// have the right to invoke [[decoratedItem supervisorView] setFrame:].
 	// Moreover this quick hack doesn't work on GNUstep the window has a border.
 #ifndef GNUSTEP
-	UKRectsEqual(rectMinusTitleBar, [scrollDecorator contentRect]);
+	UKRectsEqual(newFrameMinusTitleBar, [scrollDecorator contentRect]);
 #endif
-	UKRectsNotEqual(rectMinusTitleBar, [scrollDecorator visibleContentRect]);
-	UKSizesEqual(rect.size, [windowDecorator decorationRect].size);
-	UKSizesEqual(rect.size, [item size]);
+	UKRectsNotEqual(newFrameMinusTitleBar, [scrollDecorator visibleContentRect]);
+	UKSizesEqual(newFrame.size, [windowDecorator decorationRect].size);
+	UKSizesEqual(newFrame.size, [item size]);
 	/* The two tests below only holds when -ensuresContentFillsVisibleArea is YES */
-	// FIXME: Should be rect.size and not rectMinusTitleBar.size
+	// FIXME: Should be rect.size and not newFrameMinusTitleBar.size
 #ifndef GNUSTEP
-	UKRectsEqual(ETMakeRect(NSZeroPoint, rectMinusTitleBar.size), [item contentBounds]);
+	UKRectsEqual(ETMakeRect(NSZeroPoint, newFrameMinusTitleBar.size), [item contentBounds]);
 #endif
 	UKRectsEqual([scrollDecorator contentRect], [item decorationRect]);
 }
@@ -563,6 +565,7 @@ supervisor view geometry (frame). */
 	[item setDecoratorItem: [ETWindowItem item]];
 
 	NSRect newFrame = NSMakeRect(500, 700, 30, 40);
+	float titleBarHeight = [[item windowItem] titleBarHeight];
 
 	[[item supervisorView] setAutoresizingMask: NSViewWidthSizable | NSViewHeightSizable];
 	[item setFrame: newFrame];
@@ -572,7 +575,10 @@ supervisor view geometry (frame). */
 
 	[item setDecoratorItem: nil];
 
-	[self checkGeometrySynchronizationWithFrame: newFrame 
+	NSRect newFrameMinusTitleBar = NSMakeRect(newFrame.origin.x, newFrame.origin.y, 
+		newFrame.size.width, newFrame.size.height - titleBarHeight);
+
+	[self checkGeometrySynchronizationWithFrame: newFrameMinusTitleBar
 		oldItemOrigin: oldOrigin oldItemPosition: oldPosition];
 }
 
