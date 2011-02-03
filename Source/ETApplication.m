@@ -19,6 +19,7 @@
 #import "ETLayoutItemBuilder.h"
 #import "ETNibOwner.h"
 #import "ETObjectBrowserLayout.h"
+#import "ETPickboard.h"
 #import "ETLayoutItemFactory.h"
 #import "NSObject+EtoileUI.h"
 #import "NSView+Etoile.h"
@@ -72,10 +73,23 @@ constructs if possible.
 
 For example, views or windows become layout item trees owned by the Nib.
 
+For a window visible at launch time, the top-level item that was built will be 
+added to the window group. But otherwise top-level items won't have a parent item.
+
 You can override -builder to customize the conversion. */
 - (void) rebuildMainNib
 {
 	[_nibOwner rebuildTopLevelObjectsWithBuilder: [self builder]];
+
+	FOREACH([_nibOwner topLevelItems], topLevelItem, ETLayoutItem *)
+	{
+		BOOL isVisibleAtLaunchTime = [[[topLevelItem windowItem] window] isVisible];
+
+		if (isVisibleAtLaunchTime)
+		{
+			[[self layoutItem] addItem: topLevelItem];
+		}
+	}
 }
 
 - (void) _loadMainNib
@@ -416,6 +430,12 @@ menu bar, otherwise builds a new instance and returns it. */
 
 	[menu addItem: [NSMenuItem separatorItem]];
 
+	[menu addItemWithTitle: _(@"Visual Search")
+	                action: @selector(showVisualSearchPanel:) 
+	         keyEquivalent: @""];
+
+	[menu addItem: [NSMenuItem separatorItem]];
+
 	NSMenu *layoutMenu = [self layoutMenuWithTitle: _(@"Window Group Layout") 
 	                                        target: self 
 	                                        action: @selector(changeWindowGroupLayout:)];
@@ -424,10 +444,18 @@ menu bar, otherwise builds a new instance and returns it. */
 
 	[menu addItem: [NSMenuItem separatorItem]];
 
-	[menu addItemWithTitle: _(@"Visual Search")
-	                action: @selector(showVisualSearchPanel:) 
+	[menu addItemWithTitle: _(@"Cut Window")
+	                action: @selector(cutWindow:) 
 	         keyEquivalent: @""];
 
+	[menu addItemWithTitle: _(@"Copy Window")
+	                action: @selector(copyWindow:) 
+	         keyEquivalent: @""];
+
+	[menu addItemWithTitle: _(@"Paste Window")
+	                action: @selector(pasteWindow:) 
+	         keyEquivalent: @""];
+	
 	[menu addItem: [NSMenuItem separatorItem]];
 
 	[self addGeometryOptionsToMenu: menu];
@@ -860,6 +888,51 @@ Any items that don't match the query is hidden until the search is cancelled. */
 	[[searchFieldItem view] setTarget: self];
 
 	[[itemFactory windowGroup] addItem: searchFieldItem];
+}
+
+/** Cuts the item corresponding to the current key window.
+
+The cut item is put on the active pickboard. */
+- (IBAction) cutWindow: (id)sender
+{
+	ETLayoutItem *item = [[[ETTool activeTool] keyItem] windowBackedAncestorItem];
+
+	if (nil == item)
+		return;
+
+	[[ETPickboard activePickboard] pushObject: item];
+	[item removeFromParent];
+}
+
+/** Copies the item corresponding to the current key window.
+
+The copied item is put on the active pickboard. */
+- (IBAction) copyWindow: (id)sender
+{
+	ETLayoutItem *item = [[[ETTool activeTool] keyItem] windowBackedAncestorItem];
+
+	if (nil == item)
+		return;
+
+	[[ETPickboard activePickboard] pushObject: AUTORELEASE([item deepCopy])];
+	// FIXME: Ugly hack
+	[[[[[ETPickboard activePickboard] firstObject] windowItem] window] orderOut: nil];
+}
+
+/** Paste the current item on the active pickbord into the window group.
+
+See -[ETLayoutItemFactory windowGroup]. */
+- (IBAction) pasteWindow: (id)sender
+{
+	ETLayoutItemFactory *itemFactory = [ETLayoutItemFactory factory];
+	ETLayoutItem *item = [[ETPickboard activePickboard] firstObject];
+
+	if (nil == item)
+		return;
+
+	[[itemFactory windowGroup] addItem: AUTORELEASE([item deepCopy])];
+	// FIXME: Ugly hack
+	[[[[[ETPickboard activePickboard] firstObject] windowItem] window] orderOut: nil];
 }
 
 @end
