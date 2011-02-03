@@ -53,7 +53,7 @@
 - (BOOL) isDragging;
 - (BOOL) isPickDropForced;
 - (BOOL) isPickDropEnabledForAllItems;
-- (BOOL) setPickDropEnabledForAllItems: (BOOL)enabled;
+- (void) setPickDropEnabledForAllItems: (BOOL)enabled;
 - (unsigned int) modifierFlags;
 
 /* Drag Session Infos */

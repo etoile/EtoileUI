@@ -108,7 +108,7 @@ When this modifier is pressed, drag an drop is enabled everywhere in the UI. */
 	return _pickDropEnabledForAllItems;
 }
 
-- (BOOL) setPickDropEnabledForAllItems: (BOOL)enabled
+- (void) setPickDropEnabledForAllItems: (BOOL)enabled
 {
 	_pickDropEnabledForAllItems = enabled;
 }
