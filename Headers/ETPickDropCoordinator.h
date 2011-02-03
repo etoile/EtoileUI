@@ -39,6 +39,7 @@
 	ETLayoutItem *_previousHoveredItem;
 	NSInteger _currentDropIndex;
 	BOOL _wereItemsRemovedAtPickTime;
+	BOOL _pickDropEnabledForAllItems;
 }
 
 + (id) sharedInstance;
@@ -51,6 +52,8 @@
 - (BOOL) isPasting;
 - (BOOL) isDragging;
 - (BOOL) isPickDropForced;
+- (BOOL) isPickDropEnabledForAllItems;
+- (BOOL) setPickDropEnabledForAllItems: (BOOL)enabled;
 - (unsigned int) modifierFlags;
 
 /* Drag Session Infos */

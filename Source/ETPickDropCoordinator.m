@@ -103,6 +103,16 @@ When this modifier is pressed, drag an drop is enabled everywhere in the UI. */
 	return NSShiftKeyMask;
 }
 
+- (BOOL) isPickDropEnabledForAllItems
+{
+	return _pickDropEnabledForAllItems;
+}
+
+- (BOOL) setPickDropEnabledForAllItems: (BOOL)enabled
+{
+	_pickDropEnabledForAllItems = enabled;
+}
+
 - (void) dealloc
 {
 	[self reset];
@@ -191,7 +201,9 @@ checking the allowed pick and drop types.
 See also +forceEnablePickAndDropModifier. */
 - (BOOL) isPickDropForced
 {
-	return (([self modifierFlags] & [[self class] forceEnablePickAndDropModifier]) != 0);
+	BOOL isPickDropForcedByKey = 
+		(([self modifierFlags] & [[self class] forceEnablePickAndDropModifier]) != 0);
+	return (isPickDropForcedByKey || [self isPickDropEnabledForAllItems]);
 }
 
 /** Returns the current modifier flags consistently whether or not a drag 
