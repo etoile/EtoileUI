@@ -862,15 +862,11 @@ WARNING: Not yet implemented. */
 		ETLayoutItem *searchItem = [[[self layoutItem] items] 
 			firstObjectMatchingValue: @"visualSearch" forKey: kETIdentifierProperty];
 
-		// FIXME: A ugly hack to prevent the search panel to be filtered out.
+		// FIXME: The search panel is not filtered out here because 
 		// We should have query object that lets us specify objects/items to 
 		// be ignored and pass it to ETLayoutItemGroup rather than the predicate.
-		RETAIN(searchItem);
-		[[self layoutItem] removeItem: searchItem];
+		NSLog(@"Visual search item display name", [searchItem displayName]);
 		[controller setFilterPredicate: [NSPredicate predicateWithFormat: @"displayName contains %@", searchString]];
-		[[self layoutItem] addItem: searchItem];
-		[[self layoutItem] updateLayout];
-		RELEASE(searchItem);
 	}
 }
 
@@ -880,12 +876,11 @@ Any items that don't match the query is hidden until the search is cancelled. */
 - (IBAction) showVisualSearchPanel: (id)sender
 {
 	ETLayoutItemFactory *itemFactory = [ETLayoutItemFactory factory];
-	ETLayoutItem *searchFieldItem = [itemFactory textField];
+	ETLayoutItem *searchFieldItem = 
+		[itemFactory searchFieldWithTarget: self action: @selector(didChangeVisualSearchString:)];
 
 	[searchFieldItem setIdentifier: @"visualSearch"];
-	[searchFieldItem setSize: NSMakeSize(300, 50)];
-	[[searchFieldItem view] setAction: @selector(didChangeVisualSearchString:)];
-	[[searchFieldItem view] setTarget: self];
+	[searchFieldItem setSize: NSMakeSize(300, 30)];
 
 	[[itemFactory windowGroup] addItem: searchFieldItem];
 }
@@ -915,8 +910,6 @@ The copied item is put on the active pickboard. */
 		return;
 
 	[[ETPickboard activePickboard] pushObject: AUTORELEASE([item deepCopy])];
-	// FIXME: Ugly hack
-	[[[[[ETPickboard activePickboard] firstObject] windowItem] window] orderOut: nil];
 }
 
 /** Paste the current item on the active pickbord into the window group.
@@ -931,8 +924,6 @@ See -[ETLayoutItemFactory windowGroup]. */
 		return;
 
 	[[itemFactory windowGroup] addItem: AUTORELEASE([item deepCopy])];
-	// FIXME: Ugly hack
-	[[[[[ETPickboard activePickboard] firstObject] windowItem] window] orderOut: nil];
 }
 
 @end

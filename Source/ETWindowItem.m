@@ -369,7 +369,10 @@ and make the necessary adjustments. */
 		      withKeyPath: kETDisplayNameProperty
 		          options: nil];*/
 	}
-	[_itemWindow makeKeyAndOrderFront: self];
+	if (parentView != nil)
+	{
+		[_itemWindow makeKeyAndOrderFront: self];
+	}
 }
 
 - (void) handleUndecorateItem: (ETUIItem *)item

@@ -95,6 +95,8 @@ when a layout other than ETWindowLayout is set on the receiver. */
 	{
 		[[item lastDecoratorItem] setDecoratorItem: [ETWindowItem item]];
 	}
+	/* When the item has no parent item until now, the window is ordered out */
+	[[[item windowItem] window] makeKeyAndOrderFront: nil];
 	RELEASE(item);
 }
 
@@ -165,6 +167,7 @@ You should never call this method unless you write an ETWindowLayout subclass. *
 	   try to do that once all current windows have been ordered out. */
 	[[self lastDecoratorItem] setDecoratorItem: _rootWindowItem];
 	[[_rootWindowItem window] setFrame: [self rootWindowFrame] display: NO];
+	[[_rootWindowItem window] makeKeyAndOrderFront: nil];
 
 	FOREACH([ETApp windows], win, NSWindow *)
 	{
