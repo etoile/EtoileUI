@@ -42,16 +42,37 @@
 	return layoutObject;
 }
 
+#define USE_THREE_PANE_LAYOUT
+
 - (ETLayoutItemGroup *) editorViewWithSize: (NSSize)aSize controller: (ETController *)aController
 {
 	ETLayoutItemGroup *editorView = [self itemGroupWithFrame: NSMakeRect(0, 0, aSize.width, aSize.height)];
+	ETPaneLayout *layout = [ETPaneLayout masterContentLayout];
+	ETPaneLayout *detailLayout = [ETPaneLayout masterContentLayout];
 
-	[editorView setLayout: [self editorViewLayoutOfClass: [ETOutlineLayout class]]];
-	[editorView setHasVerticalScroller: YES];
-	[editorView setHasHorizontalScroller: YES];
-	[editorView setSource: editorView];
+	[[detailLayout barItem] setLayout: [self editorViewLayoutOfClass: [ETOutlineLayout class]]];
+	[detailLayout setBarThickness: 150];
+	//[[detailLayout contentItem] setLayout: [ETTextEditorLayout layout]];
+	[[detailLayout contentItem] setLayout: [ETOutlineLayout layout]];
+
+	[layout setBarThickness: 400];
+	[[layout barItem] setLayout: [self editorViewLayoutOfClass: [ETOutlineLayout class]]];
+	[[layout contentItem] setLayout: detailLayout];
+
 	// TODO: Should probably be transparent
 	[editorView setShouldMutateRepresentedObject: YES];
+	[editorView setSource: editorView];
+
+#ifdef USE_THREE_PANE_LAYOUT
+	[layout setBarPosition: ETPanePositionLeft];
+	[editorView setLayout: layout];
+	[[layout barItem] setIdentifier: @"documentContent"];
+#else
+	[editorView setLayout: [self editorViewLayoutOfClass: [ETOutlineLayout class]]];
+	[editorView setIdentifier: @"documentContent"];
+	[editorView setHasVerticalScroller: YES];
+	[editorView setHasHorizontalScroller: YES];
+#endif
 
 	return editorView;
 }
@@ -89,6 +110,7 @@
 	[editor setController: controller];
 	[editor setSize: NSMakeSize(width, height)];
 	[editor setLayout: [ETColumnLayout layout]];
+	[editor setAutoresizingMask: ETAutoresizingFlexibleWidth | ETAutoresizingFlexibleHeight];
 
 	return editor;
 }

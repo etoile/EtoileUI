@@ -31,7 +31,7 @@
 
 - (ETLayoutItemGroup *) content
 {
-	return (ETLayoutItemGroup *)[[super content] lastItem];
+	return (ETLayoutItemGroup *)[[super content] itemForIdentifier: @"documentContent"];
 }
 
 @end

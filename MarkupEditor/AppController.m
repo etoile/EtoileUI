@@ -32,8 +32,24 @@
 	/* Set the type of the documented to be created by default with 'New' in the menu */
 	[self setCurrentObjectType: [ETUTI typeWithFileExtension: @"plist"]];
 
+#define WINDOWGROUP_DOCUMENT_CONTROLLER
+#ifdef WINDOWGROUP_DOCUMENT_CONTROLLER
 	[[itemFactory windowGroup] setController: self];
-	
+#else
+	ETLayoutItemGroup *workspace = [itemFactory itemGroupWithFrame: NSMakeRect(50, 100, 1000, 700)];
+	[[itemFactory windowGroup] addItem: workspace];
+#ifdef OUTLINE_LAYOUT
+	[workspace setLayout: [ETOutlineLayout layout]];
+	[workspace setController: self];
+#else
+	[workspace setLayout: [ETPaneLayout masterDetailLayout]];
+	[[workspace layout] setBarThickness: 125];
+	[[workspace layout] setBarPosition: ETPanePositionLeft];
+	[[workspace layout] setEnsuresContentFillsVisibleArea: YES];
+	//[[[workspace layout] barItem] setLayout: [ETFlowLayout layout]];
+	[[[workspace layout] barItem] setController: self];
+#endif
+#endif
 	[self newDocument: nil];
 	
 	//[[ETPickboard localPickboard] showPickPalette];
@@ -80,7 +96,7 @@
 
 - (ETLayoutItem *) contentItem
 {
-	return [(ETLayoutItemGroup *)[self item] lastItem];
+	return [(ETLayoutItemGroup *)[self item] itemForIdentifier: @"documentContent"];
 }
 
 - (ETLayoutItem *) newItemReadFromURL: (NSURL *)URL options: (NSDictionary *)options
