@@ -34,6 +34,7 @@ typedef enum {
 	ETPanePosition _barPosition;
 	float _barThickness;
 	BOOL _isSwitching;
+	BOOL _ensuresContentFillsVisibleArea;
 }
 
 + (id) layoutWithBarItem: (ETLayoutItemGroup *)barItem contentItem: (ETLayoutItemGroup *)contentItem;
@@ -60,6 +61,8 @@ typedef enum {
 - (void) setBarItem: (ETLayoutItemGroup *)item;
 - (ETLayoutItemGroup *) barItem;
 - (ETLayoutItemGroup *) contentItem;
+- (BOOL) ensuresContentFillsVisibleArea;
+- (void) setEnsuresContentFillsVisibleArea: (BOOL)fill;
 - (void) tile;
 
 /* Navigation Behavior */

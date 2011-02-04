@@ -182,7 +182,7 @@ bar item width, otherwise sets the bar item height.  */
 	NSSize rootSize = [[self holderItem] size];
 	float barThickness = [self maxAllowedBarThicknessForPosition: _barPosition];
 
-	//[[self contentItem] setAutoresizingMask: ETAutoresizingFlexibleWidth | ETAutoresizingFlexibleHeight];
+	[[self contentItem] setAutoresizingMask: ETAutoresizingFlexibleWidth | ETAutoresizingFlexibleHeight];
 
 	if (_barPosition == ETPanePositionNone)
 	{
@@ -245,6 +245,16 @@ bar item width, otherwise sets the bar item height.  */
 	[anItem setAutoresizingMask: NSViewWidthSizable | NSViewHeightSizable];
 	[[self holderItem] addItem: anItem];
 	[self tile];
+}
+
+- (BOOL) ensuresContentFillsVisibleArea
+{
+	return _ensuresContentFillsVisibleArea;
+}
+
+- (void) setEnsuresContentFillsVisibleArea: (BOOL)fill
+{
+	_ensuresContentFillsVisibleArea = fill;
 }
 
 - (ETPanePosition) barPosition
@@ -375,7 +385,7 @@ child because it is not a bar child item. */
 
 - (BOOL) canGoToItem: (ETLayoutItem *)anItem
 {
-	return (anItem != nil && [[self barItem] containsItem: anItem]);
+	return [[self barItem] isDescendantItem: anItem];
 }
 
 - (void) selectItemIfNeeded: (ETLayoutItem *)anItem
@@ -394,13 +404,17 @@ child because it is not a bar child item. */
 
 // TODO: Allows a default pane to be shown with -goToItem: -setStartItem: 
 // and -startItem.
-- (BOOL) goToItem: (ETLayoutItem *)anItem
+- (BOOL) goToItem: (ETLayoutItem *)anItem isSelectionAction: (BOOL)isSelectionAction
 {
 	if ([self isCurrentItem: anItem])
 		return YES;
 
 	if ([self canGoToItem: anItem] == NO)
+	{
+		// TODO: Will make the selection jump back, but required when isSelectionAction is YES
+		[self selectItemIfNeeded: _currentItem];
 		return NO;
+	}
 
 	_isSwitching = YES;
 
@@ -408,7 +422,11 @@ child because it is not a bar child item. */
 
 	if (_currentItem != nil)
 	{
-		ETAssert([_currentItem parentItem] != nil);
+		// FIXME: When -reload is invoked on the bar item, e.g. -[ETMasterContentPaneLayout beginVisitingItem],
+		// _currentItem is invalid and won't have a parent item.
+		// We should probably have ETLayoutItemGroup posts a reload notif and 
+		// go to a nil item when we receive it.
+		// ETAssert([_currentItem parentItem] != nil);
 
 		[self endVisitingItem: _currentItem];
 		//[[self contentItem] removeItem: [_currentItem representedObject]];
@@ -424,6 +442,11 @@ child because it is not a bar child item. */
 	return YES;
 }
 
+- (BOOL) goToItem: (ETLayoutItem *)anItem
+{
+	return [self goToItem: anItem isSelectionAction: NO];
+}
+
 /* Propagates pane switch done in bar to content. */
 - (void) itemGroupSelectionDidChange: (NSNotification *)notif
 {
@@ -431,15 +454,15 @@ child because it is not a bar child item. */
 
 	NSAssert1([[notif object] isEqual: [self barItem]], @"Selection "
 		"notification must be posted by the bar item in %@", self);
-	NSAssert1([[[self barItem] selectedItems] count] == 1, @"Only a single "
+	NSAssert1([[[self barItem] selectedItems] count] <= 1, @"Only a single "
 		"item  at a time must be selected in the bar item in %@", self);
 
 	/* When -goToItem: is underway and a subclass tries to update the selection */
 	if (_isSwitching)
 		return;
 
-	ETLayoutItem *barElementItem = [[[self barItem] selectedItems] firstObject];
-	[self goToItem: barElementItem];
+	ETLayoutItem *barElementItem = [[[self barItem] selectedItemsInLayout] firstObject];
+	[self goToItem: barElementItem isSelectionAction: YES];
 }
 
 - (id) beginVisitingItem: (ETLayoutItem *)tabItem
@@ -510,6 +533,11 @@ By default, returns NO. */
 	[self setFirstPresentationItem: barItem];
 }
 
+- (BOOL) shouldFillContentItemWithItem: (ETLayoutItem *)anItem
+{
+	return ([self ensuresContentFillsVisibleArea] || [[anItem layout] isKindOfClass: [ETCompositeLayout class]]);
+}
+
 - (void) tileContent
 {
 	if ([[self contentItem] isEmpty])
@@ -517,10 +545,19 @@ By default, returns NO. */
 
 	ETLayoutItem *anItem = [[self contentItem] firstItem];
 	NSSize contentSize = [[self contentItem] size];
-	NSSize itemSize = [anItem size];
 
-	[anItem setOrigin: NSMakePoint(contentSize.width / 2 - itemSize.width / 2,
-		contentSize.height / 2 - itemSize.height / 2)];
+	if ([self shouldFillContentItemWithItem: anItem])
+	{
+		[anItem setSize: contentSize];
+		[anItem setOrigin: NSZeroPoint];
+	}
+	else /* Center */
+	{
+		NSSize itemSize = [anItem size];
+
+		[anItem setOrigin: NSMakePoint(contentSize.width / 2 - itemSize.width / 2,
+			contentSize.height / 2 - itemSize.height / 2)];
+	}
 }
 
 /* Returns a new tab item that represents and replaces in the bar item the tab 
