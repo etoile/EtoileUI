@@ -78,8 +78,10 @@ By default, returns NO. */
 	ETUIItem *newItem = [super copyWithZone: aZone];
 	ETDecoratorItem *decorator = _decoratorItem;
 
-	RETAIN(decorator);
-	[self setDecoratorItem: nil];
+	// NOTE: For debugging, RETAIN...RELEASE code can be uncommented to 
+	// destructure the decoration chain on copy.
+	//RETAIN(decorator);
+	//[self setDecoratorItem: nil];
 
 	newItem->supervisorView = [supervisorView copyWithZone: aZone];
 	[newItem->supervisorView setItemWithoutInsertingView: newItem];
@@ -92,8 +94,8 @@ By default, returns NO. */
 	[decoratorCopy setDecoratedItem: newItem];
 	newItem->_decoratorItem = decoratorCopy;
 
-	[self setDecoratorItem: decorator];
-	RELEASE(decorator);
+	//[self setDecoratorItem: decorator];
+	//RELEASE(decorator);
 
 	return newItem;
 }
