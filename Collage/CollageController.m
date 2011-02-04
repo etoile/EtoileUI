@@ -26,6 +26,8 @@
 	/* Shows the graphics editing related menu which contains commands like 
 	   'group', 'ungroup', 'send backward' etc. */
 	[[ETApp mainMenu] addItem: [ETApp arrangeMenuItem]];
+	/* Show the development menu, so we can play a bit */
+	[ETApp toggleDevelopmentMenu: nil];
 
 	mainItem = [itemFactory itemGroup];
 	
@@ -56,7 +58,10 @@
 	[mainItem addItem: [itemFactory textField]];
 	[mainItem addItem: [itemFactory labelWithTitle: @"Hello World!"]];
 	[mainItem addItem: [itemFactory button]];
+	[[mainItem lastItem] setSize: NSMakeSize(200, 150)];
+	//[[mainItem lastItem] setDecoratorItem: [ETTitleBarItem item]];
 	[mainItem addItem: [itemFactory rectangle]];
+	//[[mainItem lastItem] setDecoratorItem: [ETTitleBarItem item]];
 	[mainItem addItem: [itemFactory oval]];
 	[mainItem addItem: [itemFactory barElementFromItem: [itemFactory button] 
 	                                         withLabel: @"Useless"]];
@@ -80,13 +85,16 @@
 
 	ETFlowLayout *flow = [ETFlowLayout layout];
 	[flow setItemSizeConstraintStyle: ETSizeConstraintStyleNone];
-	[(ETFreeLayout *)[mainItem layout] resetItemPersistentFramesWithLayout: flow];
-
+	[[mainItem layout] resetItemPersistentFramesWithLayout: flow];
+	
+	/* Clone the main item */
 	[[itemFactory windowGroup] addItem: [mainItem deepCopy]];
+
+	/* Put a simple slider in a window */
+	[[itemFactory windowGroup] addItem: [itemFactory horizontalSlider]];
 
 	/* Open an inspector that allows us to easily switch the tool and the 
 	   layout in use */
-
 	[[itemFactory windowGroup] inspect: nil];
 	
 	// FIXME: [ETApp explore: nil];
