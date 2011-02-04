@@ -859,6 +859,25 @@ you have to implement your own version of this method. */
 	return collectedItems;
 }
 
+/** Returns whether the item is a receiver descendant item.
+
+This method is a lot more efficient than using -allDescendantItems e.g. 
+<code>[[self allDescendantItems] containsItem: anItem]</code>. */
+- (BOOL) isDescendantItem: (ETLayoutItem *)anItem
+{
+	if (nil == anItem)
+		return NO;
+
+	if ([self isEqual: [anItem parentItem]])
+	{
+		return YES;
+	}
+	else
+	{
+		return [self isDescendantItem: [anItem parentItem]];
+	}
+}
+
 /** Returns whether the receiver can be reloaded presently with -reload. */
 - (BOOL) canReload
 {

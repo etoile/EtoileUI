@@ -81,6 +81,7 @@
 - (NSArray *) items;
 - (NSArray *) descendantItemsSharingSameBaseItem;
 - (NSArray *) allDescendantItems;
+- (BOOL) isDescendantItem: (ETLayoutItem *)anItem;
 
 - (BOOL) canReload;
 - (void) reload;
