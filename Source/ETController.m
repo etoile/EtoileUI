@@ -93,7 +93,8 @@ You can also use it -init to create a controller. See -[ETNibOwner init]. */
 
 	DESTROY(_observations);
 	DESTROY(nibMainContent);
-	DESTROY(_templates); 
+	DESTROY(_templates);
+	DESTROY(_currentObjectType);
 	DESTROY(_sortDescriptors);
 	DESTROY(_filterPredicate);
 	DESTROY(_allowedPickTypes);
@@ -410,6 +411,7 @@ the copying support must invoke it instead of -copyWithZone:. */
 
 	newController->_observations = [[NSMutableSet allocWithZone: aZone] init];
 	newController->_templates = [_templates copyWithZone: aZone];
+	ASSIGN(newController->_currentObjectType, _currentObjectType);
 	newController->_sortDescriptors = [_sortDescriptors copyWithZone: aZone];
 	newController->_filterPredicate = [_filterPredicate copyWithZone: aZone];
 	newController->_allowedPickTypes = [_allowedPickTypes copyWithZone: aZone];
