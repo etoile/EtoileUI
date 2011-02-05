@@ -36,6 +36,7 @@ integration etc.) without having to resort to another API. */
 {
 	@private
 	NSError *_error;
+	NSInteger _numberOfUntitledDocuments;
 }
 
 /* Querying Controller Content */
@@ -44,6 +45,7 @@ integration etc.) without having to resort to another API. */
 - (NSArray *) itemsForURL: (NSURL *)aURL;
 - (NSArray *) documentItems;
 - (id) activeItem;
+- (NSUInteger) numberOfUntitledDocuments;
 
 /* Insertion */
 

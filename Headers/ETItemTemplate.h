@@ -61,6 +61,7 @@ model initialization. */
 /* Template Instantiation & Saving */
 
 - (ETLayoutItem *) newItemWithRepresentedObject: (id)anObject options: (NSDictionary *)options;
+- (ETLayoutItem *) newItemWithRepresentedObject: (id)anObject URL: (NSURL *)aURL options: (NSDictionary *)options;
 - (ETLayoutItem *) newItemWithURL: (NSURL *)aURL options: (NSDictionary *)options;
 - (ETLayoutItem *) newItemReadFromURL: (NSURL *)aURL options: (NSDictionary *)options;
 - (BOOL) writeItem: (ETLayoutItem *)anItem 

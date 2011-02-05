@@ -10,6 +10,7 @@
 #import <EtoileFoundation/ETCollection+HOM.h>
 #import <EtoileFoundation/ETUTI.h>
 #import <EtoileFoundation/NSObject+Model.h>
+#import <EtoileFoundation/NSObject+HOM.h>
 #import "ETItemTemplate.h"
 #import "ETLayoutItem.h"
 #import "ETLayoutItemGroup.h"
@@ -105,6 +106,29 @@ Can be overriden in subclasses. */
 	{
 		[newContentItem setRepresentedObject: anObject];
 	}
+
+	return newItem;
+}
+
+- (void) setUp: (id)item withURL: (NSURL *)aURL options: (NSDictionary *)options
+{
+	if (aURL != nil)
+	{
+		[(ETLayoutItem *)[item ifResponds] setIcon: [[NSWorkspace sharedWorkspace] iconForFile: [aURL path]]];
+		[(ETLayoutItem *)[item ifResponds] setName: [[aURL path] lastPathComponent]];
+	}
+	else
+	{
+		// TODO: Support retrieving the item template bound type through the options
+		[(ETLayoutItem *)[item ifResponds]  setIcon: [[NSWorkspace sharedWorkspace] iconForFileType: @"plist"]];
+		[(ETLayoutItem *)[item ifResponds] setName: [self nameFromBaseNameAndOptions: options]];
+	}
+}
+
+- (ETLayoutItem *) newItemWithRepresentedObject: (id)anObject URL: (NSURL *)aURL options: (NSDictionary *)options
+{
+	id newItem = [self newItemWithRepresentedObject: anObject options: options];
+	[self setUp: [newItem subject] withURL: aURL options: options];
 	return newItem;
 }
 
@@ -135,7 +159,7 @@ See also -newItemWithRepresentedObject:options:. */
 		newInstance = [newInstance init];
 	}
 
-	return [self newItemWithRepresentedObject: AUTORELEASE(newInstance) options: nil];
+	return [self newItemWithRepresentedObject: AUTORELEASE(newInstance) URL: aURL options: options];
 }
 
 - (ETLayoutItem *) newItemReadFromURL: (NSURL *)aURL options: (NSDictionary *)options
@@ -219,7 +243,7 @@ Can be overriden in a subclass to implement a web browser for example. */
 	if (nbOfVisibleDocs == 0)
 		return [self baseName];
 
-	return [NSString stringWithFormat: @"%@ %u", [self baseName], nbOfVisibleDocs];
+	return [NSString stringWithFormat: @"%@ %u", [self baseName], nbOfVisibleDocs + 1];
 }
 
 @end
