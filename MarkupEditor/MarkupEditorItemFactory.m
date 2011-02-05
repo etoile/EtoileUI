@@ -62,6 +62,8 @@
 	// TODO: Should probably be transparent
 	[editorView setShouldMutateRepresentedObject: YES];
 	[editorView setSource: editorView];
+	// FIXME: ETAutoresizingFlexibleHeight doesn't work
+	[editorView setAutoresizingMask: ETAutoresizingFlexibleWidth];// | ETAutoresizingFlexibleHeight];
 
 #ifdef USE_THREE_PANE_LAYOUT
 	[layout setBarPosition: ETPanePositionLeft];
@@ -94,6 +96,7 @@
 	[toolbar addItems: A(addButtonItem, removeButtonItem)];
 	[toolbar setLayout: [ETLineLayout layout]];
 	[[toolbar layout] setItemMargin: 12];
+	[toolbar setAutoresizingMask: ETAutoresizingFlexibleWidth];
 
 	return toolbar;
 }

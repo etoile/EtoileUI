@@ -21,6 +21,7 @@
 
 }
 
+- (IBAction) newWorkspace: (id)sender;
 - (IBAction) changeLayout: (id)sender;
 
 @end

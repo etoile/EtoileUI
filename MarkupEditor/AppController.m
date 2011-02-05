@@ -31,28 +31,34 @@
 
 	/* Set the type of the documented to be created by default with 'New' in the menu */
 	[self setCurrentObjectType: [ETUTI typeWithFileExtension: @"plist"]];
-
-#define WINDOWGROUP_DOCUMENT_CONTROLLER
-#ifdef WINDOWGROUP_DOCUMENT_CONTROLLER
 	[[itemFactory windowGroup] setController: self];
-#else
+	
+	[self newDocument: nil];
+	//[self newWorkspace: nil];
+	//[[ETPickboard localPickboard] showPickPalette];
+}
+
+//#define OUTLINE_LAYOUT_WORKSPACE
+
+- (IBAction) newWorkspace: (id)sender
+{
+	MarkupEditorItemFactory *itemFactory = [MarkupEditorItemFactory factory];
+	ETController *controller = [self copy];
 	ETLayoutItemGroup *workspace = [itemFactory itemGroupWithFrame: NSMakeRect(50, 100, 1000, 700)];
-	[[itemFactory windowGroup] addItem: workspace];
-#ifdef OUTLINE_LAYOUT
+
+#ifdef OUTLINE_LAYOUT_WORKSPACE
 	[workspace setLayout: [ETOutlineLayout layout]];
-	[workspace setController: self];
+	[workspace setController: controller;
 #else
 	[workspace setLayout: [ETPaneLayout masterDetailLayout]];
-	[[workspace layout] setBarThickness: 125];
+	[[workspace layout] setBarThickness: 200];
 	[[workspace layout] setBarPosition: ETPanePositionLeft];
 	[[workspace layout] setEnsuresContentFillsVisibleArea: YES];
 	//[[[workspace layout] barItem] setLayout: [ETFlowLayout layout]];
-	[[[workspace layout] barItem] setController: self];
+	[[[workspace layout] barItem] setController: controller];
 #endif
-#endif
-	[self newDocument: nil];
-	
-	//[[ETPickboard localPickboard] showPickPalette];
+
+	[[itemFactory windowGroup] addItem: workspace];
 }
 
 - (IBAction) changeLayout: (id)sender
@@ -110,7 +116,7 @@
 		mutabilityOption: kCFPropertyListMutableContainersAndLeaves 
 		format: &format errorDescription: NULL];
 	
-	return [self newItemWithRepresentedObject: plistNode options: options];
+	return [self newItemWithRepresentedObject: plistNode URL: URL options: options];
 }
 
 @end
@@ -123,7 +129,7 @@
 	id xmlNode = AUTORELEASE([[NSXMLDocument alloc] 
 		initWithContentsOfURL: URL options: NSXMLDocumentTidyXML error: NULL]);
 	
-	return [self newItemWithRepresentedObject: xmlNode options: options];
+	return [self newItemWithRepresentedObject: xmlNode URL: URL options: options];
 }
 
 @end
