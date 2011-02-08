@@ -49,15 +49,7 @@
 
 - (void) tile;
 
-- (void) handleDecorateItem: (ETUIItem *)item 
-             supervisorView: (ETView *)decoratedView 
-                     inView: (ETView *)parentView;
-
-- (void) handleUndecorateItem: (ETUIItem *)item
-               supervisorView: (NSView *)decoratedView 
-                       inView: (ETView *)parentView;
 - (NSRect) contentRect;
 - (void) toggleExpanded: (id)sender;
-
 
 @end
