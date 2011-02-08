@@ -20,4 +20,9 @@
 - (ETLayoutItemGroup *) editorViewWithSize: (NSSize)aSize controller: (ETController *)aController;
 - (ETLayoutItemGroup *) toolbarWithWidth: (float)aWidth controller: (ETController *)aController;
 - (ETLayoutItemGroup *) editor;
+
+- (ETCompositeLayout *) editorLayout;
+@end
+
+@interface MarkupEditorLayout : ETCompositeLayout
 @end

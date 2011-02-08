@@ -118,4 +118,29 @@
 	return editor;
 }
 
+// TODO: This method is used by -registerLayout: in -applicationDidFinishLaunching but the registered 
+// prototypes is ignored. We currently use an explicit to get it visible in 
+// the layout popup menu of the inspector.
+// Once we get the aspect repository, we won't require the explicit class which 
+// duplicates the code below.
+- (ETCompositeLayout *) editorLayout
+{
+	ETLayoutItemGroup *editor = [self editor];
+	id documentContent = [editor itemForIdentifier: @"documentContent"];
+	return [[ETCompositeLayout alloc] initWithRootItem: editor
+	                             firstPresentationItem: documentContent];
+}
+
+@end
+
+@implementation MarkupEditorLayout
+
+- (id) initWithRootItem: (ETLayoutItemGroup *)rootItem 
+  firstPresentationItem: (ETLayoutItemGroup *)targetItem
+{
+	ETLayoutItemGroup *editor = [[MarkupEditorItemFactory factory] editor];
+	id documentContent = [editor itemForIdentifier: @"documentContent"];
+	return [super initWithRootItem: editor firstPresentationItem: documentContent];
+}
+
 @end

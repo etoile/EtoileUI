@@ -12,9 +12,28 @@
 
 @implementation AppController
 
+- (void) showEditorLayoutExample
+{
+	MarkupEditorItemFactory *itemFactory = [MarkupEditorItemFactory factory];
+	ETLayoutItemGroup *item = [itemFactory itemGroupWithRepresentedObject: A(A(@"A", A(@"B")), A(@"C", @"D"))];
+
+	[item setName: @"Editor Layout as a Pluggable Aspect Example"];
+	[item setSource: item];
+	/* Let us simulate a live switch */
+	[item setLayout: [ETTableLayout layout]];
+
+	[[itemFactory windowGroup] addItem: item];
+
+	[item setLayout: [itemFactory editorLayout]];
+	[item setSize: NSMakeSize(500, 400)];
+	
+}
+
 - (void) applicationDidFinishLaunching: (NSNotification *)notif
 {
 	MarkupEditorItemFactory *itemFactory = [MarkupEditorItemFactory factory];
+
+	[ETLayout registerLayout: [itemFactory editorLayout]];
 
 	// TODO: plist should be included in EtoileFoundation UTIDefinitions.plist surely
 	[ETUTI registerTypeWithString: @"com.apple.property-list" description: @"Property List" supertypeStrings: [NSArray array] typeTags: D(A(@"plist"), kETUTITagClassFileExtension)];
@@ -34,8 +53,8 @@
 	[[itemFactory windowGroup] setController: self];
 	
 	[self newDocument: nil];
-	//[self newWorkspace: nil];
-	//[[ETPickboard localPickboard] showPickPalette];
+	[self showEditorLayoutExample];
+	[[ETPickboard localPickboard] showPickPalette];
 }
 
 //#define OUTLINE_LAYOUT_WORKSPACE
