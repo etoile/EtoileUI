@@ -191,7 +191,7 @@ usually through its enclosing scroll view getting resized. */
 }
 
 - (void) handleUndecorateItem: (ETUIItem *)item
-               supervisorView: (NSView *)decoratedView 
+               supervisorView: (ETView *)decoratedView 
                        inView: (ETView *)parentView 
 {
 	/* We must prevent the clip view to receive notifications on a document 
