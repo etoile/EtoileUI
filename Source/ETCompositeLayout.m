@@ -288,6 +288,7 @@ in -handleAddXXX which will then invoke [[B representedObject] addObject: bla]. 
 		[self makeItemStatic: _layoutContext];
 	}
 
+	[[self rootItem] setSize: [_layoutContext size]];
 	[_layoutContext setFlipped: [[self rootItem] isFlipped]];	
 	[self moveContentFromItem: [self rootItem] toItem: _layoutContext];
 }
