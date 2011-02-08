@@ -8,6 +8,7 @@
  
 #import <EtoileFoundation/Macros.h>
 #import <EtoileFoundation/ETCollection.h>
+#import <EtoileFoundation/NSObject+HOM.h>
 #import "ETPaneLayout.h"
 #import "ETCompatibility.h"
 #import "ETGeometry.h"
@@ -65,7 +66,7 @@ If contentItem is nil, a default content item will be created. */
 	//[_barItem setAutoresizingMask: NSViewWidthSizable];
 	[_barItem setLayout: [ETTableLayout layout]];
 	_barPosition = ETPanePositionTop;
-	_barThickness = 200;
+	_barThickness = 140;
 
 	[[_barItem layout] setAttachedTool: [ETSelectTool tool]];
 
@@ -216,8 +217,6 @@ bar item width, otherwise sets the bar item height.  */
 		[[self contentItem] setFrame: NSMakeRect(0, 0, rootSize.width - barThickness, rootSize.height)];
 		[[self barItem] setAutoresizingMask: ETAutoresizingFlexibleLeftMargin | ETAutoresizingFlexibleHeight];
 	}
-	
-	[self tileContent];
 }
 
 /** Returns the main area item where panes are inserted and shown. */
@@ -535,7 +534,10 @@ By default, returns NO. */
 
 - (BOOL) shouldFillContentItemWithItem: (ETLayoutItem *)anItem
 {
-	return ([self ensuresContentFillsVisibleArea] || [[anItem layout] isKindOfClass: [ETCompositeLayout class]]);
+	// FIXME: Remove the last two ugly cases
+	return ([self ensuresContentFillsVisibleArea] 
+		|| [[anItem layout] isKindOfClass: [ETCompositeLayout class]] 
+		|| [[anItem ifResponds] controller] != nil);
 }
 
 - (void) tileContent
@@ -553,10 +555,9 @@ By default, returns NO. */
 	}
 	else /* Center */
 	{
-		NSSize itemSize = [anItem size];
-
-		[anItem setOrigin: NSMakePoint(contentSize.width / 2 - itemSize.width / 2,
-			contentSize.height / 2 - itemSize.height / 2)];
+		// TODO: Shows scroller if item size > content size
+		[anItem setAnchorPoint: NSMakePoint([anItem width] * 0.5, [anItem height] * 0.5)];
+		[anItem setPosition: NSMakePoint(contentSize.width * 0.5, contentSize.height * 0.5)];
 	}
 }
 
@@ -620,11 +621,15 @@ the real items they currently represent. */
 
 - (void) renderWithLayoutItems: (NSArray *)items isNewContent: (BOOL)isNewContent
 {
+	[self tile];
 	if (isNewContent)
 	{
 		[self goToItem: [[self barItem] firstItem]];
 	}
-	[self tile];
+	/* -tileContent requires both the current item and content item frame to 
+	    have been updated, so the content item size can be use to compute 
+		position and resize the current item. */
+	[self tileContent];
 }
 
 @end
