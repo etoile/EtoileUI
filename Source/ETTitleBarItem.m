@@ -47,7 +47,7 @@
 	/* Reset autoresizing */
 	//[_contentView setAutoresizingMask: NSViewHeightSizable | NSViewWidthSizable];
 	[_titleBarView setAutoresizingMask: NSViewWidthSizable];	 
-	[[self supervisorView] setAutoresizesSubviews: YES];
+	//[[self supervisorView] setAutoresizesSubviews: YES];
 	
 	float width = [[self supervisorView] frame].size.width;
 	float height = [[self supervisorView] frame].size.height;
@@ -111,7 +111,7 @@
 }
 
 - (void) handleUndecorateItem: (ETUIItem *)item
-               supervisorView: (NSView *)decoratedView 
+               supervisorView: (ETView *)decoratedView 
                        inView: (ETView *)parentView 
 {
 	if (nil != _contentView)
@@ -134,16 +134,13 @@
 - (void) toggleExpanded: (id)sender
 {
 	if ([_titleBarView isExpanded])
-	{		
-		NSRect frame = [[self supervisorView] frame];
-		frame.size.height = 240;
-		[[self supervisorView] setFrame: frame];		
+	{
+		[[self firstDecoratedItem] setHeight: _expandedHeight];
 	}
 	else
 	{
-		NSRect frame = [[self supervisorView] frame];
-		frame.size.height = 24;
-		[[self supervisorView] setFrame: frame];
+		_expandedHeight = [[self firstDecoratedItem] height];
+		[[self firstDecoratedItem] setHeight: 24];
 	}
 }
 
