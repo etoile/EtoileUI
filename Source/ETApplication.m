@@ -865,7 +865,7 @@ WARNING: Not yet implemented. */
 		// FIXME: The search panel is not filtered out here because 
 		// We should have query object that lets us specify objects/items to 
 		// be ignored and pass it to ETLayoutItemGroup rather than the predicate.
-		NSLog(@"Visual search item display name", [searchItem displayName]);
+		ETLog(@"Visual search item display name %@", [searchItem displayName]);
 		[controller setFilterPredicate: [NSPredicate predicateWithFormat: @"displayName contains %@", searchString]];
 	}
 }
