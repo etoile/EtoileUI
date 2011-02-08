@@ -110,7 +110,12 @@
 	// displayed properties are lost on layout changes (happens only if the 
 	// user wants to customize the inspector UI).
 	[[masterViewItem layout] setDisplayedProperties: 
-		A(kETIconProperty, kETDisplayNameProperty, kETUIMetalevelProperty)];
+		A(kETIconProperty, kETDisplayNameProperty, kETIdentifierProperty, kETUIMetalevelProperty)];
+	[[masterViewItem layout] setDisplayName: @"Identifier" forProperty: kETIdentifierProperty];
+	[[masterViewItem layout] setDisplayName: @"Meta" forProperty: kETUIMetalevelProperty];
+	[[[masterViewItem layout] columnForProperty: kETDisplayNameProperty] setWidth: 140];
+	[[[masterViewItem layout] columnForProperty: kETIdentifierProperty] setWidth: 120];
+	[[[masterViewItem layout] columnForProperty: kETUIMetalevelProperty] setWidth: 30];
 	[masterViewItem setSource: masterViewItem];
 	[masterViewItem setDelegate: self];
 	[masterViewItem setDoubleAction: @selector(doubleClickInItemGroupView:)];
