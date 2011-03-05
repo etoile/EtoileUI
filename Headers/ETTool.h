@@ -18,8 +18,8 @@
 @protocol ETFirstResponderSharingArea
 - (ETLayoutItem *) activeFieldEditorItem;
 - (ETLayoutItem *) editedItem;
-- (void) setActiveFieldEditorItem: (ETLayoutItem *)anItem 
-                       editedItem: (ETLayoutItem *)anItem;
+- (void) setActiveFieldEditorItem: (ETLayoutItem *)editorItem 
+                       editedItem: (ETLayoutItem *)editedItem;
 - (void) removeActiveFieldEditorItem;
 @end
 
