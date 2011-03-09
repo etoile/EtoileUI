@@ -633,7 +633,7 @@ you insert, then you can implement a related method. For the example above:
 <example>
 - (BOOL) canMutateForMailbox
 {
-	return [self canMutate] && otherCondition;
+	return [self canMutate] &amp;&amp; otherCondition;
 }
 
 - (IBAction) addNewMailbox

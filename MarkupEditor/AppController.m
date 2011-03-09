@@ -111,7 +111,7 @@
 			NSLog(@"Unsupported layout or unknown popup menu selection");
 	}
 	
-	[[MarkupEditorItemFactory factory] setUpLayoutOfClass: layoutClass];
+	[[MarkupEditorItemFactory factory] setLayout: [layoutClass layout]];
 }
 
 @end
@@ -132,7 +132,7 @@
     
 	plistData = [NSData dataWithContentsOfURL: URL];
 	plistNode = [NSPropertyListSerialization propertyListFromData: plistData
-		mutabilityOption: kCFPropertyListMutableContainersAndLeaves 
+		mutabilityOption: NSPropertyListMutableContainersAndLeaves 
 		format: &format errorDescription: NULL];
 	
 	return [self newItemWithRepresentedObject: plistNode URL: URL options: options];
