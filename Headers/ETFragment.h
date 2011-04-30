@@ -10,7 +10,11 @@
 	License:  Modified BSD (see COPYING)
  */
 
-/* A fragment can be either:
+// NOTE: Required to get autogsdoc processes the header correctly.
+#import <Foundation/Foundation.h>
+
+/** A fragment can be either:
+
 <list>
 <item>explicit, e.g. any layout item</item>
 <item>implicit, e.g. any other layout element</item>
@@ -19,6 +23,7 @@
 A implicit fragment is typically used to model a spatial grouping, required by 
 a layout, but which contradicts the existing layout item tree organization. 
 Here are two examples:
+
 <list>
 <item>In a flow layout, the line break algorithm divides the layout items into 
 line fragments although those continue to belong to the same parent item.</item>
