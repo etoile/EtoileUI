@@ -1,4 +1,4 @@
-#import "UKPluginsRegistry+Icons.h"
+#import "ETPlugInRegistry+Icons.h"
 
 #ifdef GNUSTEP
 #define APPLICATION_SUPPORT @"ApplicationSupport"
@@ -7,7 +7,7 @@
 #endif
 
 
-@implementation UKPluginsRegistry (Icons)
+@implementation ETPlugInRegistry (Icons)
 
 - (id) loadIconForPath:(NSString*) iconPath
 {

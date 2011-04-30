@@ -111,7 +111,7 @@ EtoileUI_HEADER_FILES += \
 EtoileUI_HEADER_FILES += \
 	EtoileCompatibility.h \
 	NSImage+NiceScaling.h \
-	UKPluginsRegistry+Icons.h
+	ETPlugInRegistry+Icons.h
 
 
 EtoileUI_RESOURCE_FILES = \

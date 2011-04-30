@@ -70,7 +70,7 @@ libEtoileUI_OBJC_FILES = \
 	NSWindow+Etoile.m
 
 libEtoileUI_OBJC_FILES += \
-	UKPluginsRegistry+Icons.m \
+	ETPlugInRegistry+Icons.m \
 	NSImage+NiceScaling.m
 
 libEtoileUI_OBJC_FILES += \

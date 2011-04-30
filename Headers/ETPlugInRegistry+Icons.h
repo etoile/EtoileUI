@@ -1,9 +1,9 @@
 #import <Foundation/Foundation.h>
 #import <AppKit/AppKit.h>
-#import <EtoileFoundation/UKPluginsRegistry.h>
+#import <EtoileFoundation/ETPlugInRegistry.h>
 
 
-@interface UKPluginsRegistry (Icons)
+@interface ETPlugInRegistry (Icons)
 
 - (id) loadIconForPath:(NSString*) iconPath;
 
