@@ -1,0 +1,27 @@
+Display Redesign
+================
+
+Each view/widget set with -[ETLayoutItem setView:] is put in its own ETViewBackingWindow.
+
+ETViewBackingWindow are offscreen windows, whose drawing are redirected to a master window which corresponds to -windowBackedAncestorItem for the item on which the view is set.
+
+In the long run, we could put multiple views/widgets in the same ETViewBackingWindow, but initially that would just make things more complex.
+
+Dragging
+--------
+
+For example… If we have a table view, we have to adjust the dragged row image to  repositioned over the real window,  to do so we can override:
+-dragImage:at:offset:event:pasteboard:source:slideBack: 
+
+We probably need to sync -registerForDraggedTypes: with the master window.
+
+Drawing
+-------
+
+The tricky point is to redraw the related master window area when the widget invokes -displayXXX on itself and gets redrawn in the backing window (e.g. on a mouse up)…
+
+To intercept each redisplay, we might try to override the flush operations, and from them draw the backing window content at the item location into the master window.  We could copy the window buffer content directly into the master window (may be with NSCopyBits or similar trick).
+
+-flushWindow
+-flushWindowIfNeeded
+
