@@ -488,8 +488,8 @@ Both model and property name must be valid objects when they are not nil. */
 		NS_ENDHANDLER
 	}
 
-	[item setRepresentedObject: [ETProperty propertyWithName: aKey
-	                                       representedObject: aModel]];
+	[item setRepresentedObject: [ETPropertyViewpoint viewpointWithName: aKey
+	                                                 representedObject: aModel]];
 	[[item representedObject] setTreatsAllKeysAsProperties: YES];
 
 	return item;
@@ -626,8 +626,8 @@ as its view. */
 	[item setAutoresizingMask: ETAutoresizingNone];
 	if (nil != aKey && nil != anObject)
 	{
-		[item setRepresentedObject: [ETProperty propertyWithName: aKey
-		                                       representedObject: anObject]];
+		[item setRepresentedObject: [ETPropertyViewpoint viewpointWithName: aKey
+		                                                 representedObject: anObject]];
 		[[item representedObject] setTreatsAllKeysAsProperties: YES];
 	}
 

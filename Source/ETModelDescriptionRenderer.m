@@ -119,7 +119,7 @@
 
 		item = [self makeItemForIdentifier: identifier isGroupRequired: NO];
 		[item setName: [propertyDesc name]];
-		[item setRepresentedObject: [ETProperty propertyWithName: aProperty representedObject: anObject]];
+		[item setRepresentedObject: [ETPropertyViewpoint viewpointWithName: aProperty representedObject: anObject]];
 	}
 
 	return item;

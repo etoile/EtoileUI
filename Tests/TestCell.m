@@ -63,7 +63,7 @@ invalidate, display etc. */
 
 	[parentItem setLayout: [ETTableLayout layout]];
 	[[parentItem layout] setDisplayedProperties: A(@"value")];
-	[item setRepresentedObject: [ETProperty propertyWithName: @"actionHandler"
+	[item setRepresentedObject: [ETPropertyViewpoint viewpointWithName: @"actionHandler"
 	                                       representedObject: observedItem]];
 	[parentItem addItem: item];
 

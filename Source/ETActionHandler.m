@@ -210,8 +210,8 @@ Which actions begins and ends the text editing is up to you. */
 	[fieldEditor setString: formattedValue];
 	[fieldEditor setFont: [self fontForEditingItem: item]];
 	[fieldEditorItem setFrame: fieldEditorFrame];
-	[fieldEditorItem setRepresentedObject: [ETProperty propertyWithName: property 
-	                                                  representedObject: [item subject]]];
+	[fieldEditorItem setRepresentedObject: [ETPropertyViewpoint viewpointWithName: property 
+	                                                            representedObject: [item subject]]];
 	[editionCoordinator setActiveFieldEditorItem: fieldEditorItem
 	                                  editedItem: item];
 

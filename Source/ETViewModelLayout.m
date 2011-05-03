@@ -290,8 +290,8 @@ being returned. */
 
 	FOREACH(properties, property, NSString *)
 	{
-		[propertyViewpoints addObject: [ETProperty propertyWithName: property 
-		                                          representedObject: anObject]];
+		[propertyViewpoints addObject: [ETPropertyViewpoint viewpointWithName: property 
+		                                                    representedObject: anObject]];
 	}
 
 	return propertyViewpoints;
@@ -413,8 +413,8 @@ You must never use this method. */
 		case ETLayoutDisplayModeViewProperties:
 		case ETLayoutDisplayModeModelProperties:
 		{
-			// TODO: Should probably be... ETProperty property = repObject;
-			ETProperty *property = [clickedItem valueForProperty: @"value"];
+			// TODO: Should probably be... ETPropertyViewpoint *property = repObject;
+			ETPropertyViewpoint *property = [clickedItem valueForProperty: @"value"];
 			[[property objectValue] explore: nil];
 			break;
 		}
