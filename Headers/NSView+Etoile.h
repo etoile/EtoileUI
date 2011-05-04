@@ -72,7 +72,7 @@ This protocol is subject to change or be removed. */
 
 /* Property Value Coding */
 
-- (NSArray *) properties;
+- (NSArray *) propertyNames;
 
 /* Basic Properties */
 

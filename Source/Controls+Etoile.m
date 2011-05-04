@@ -43,7 +43,7 @@ terminology) on which actions should be dispatched. */
 
 /* Property Value Coding */
 
-- (NSArray *) properties
+- (NSArray *) propertyNames
 {
 	// NOTE: objectValue property is exposed by NSObject+Model
 	// TODO: selectedTag, selectedCell and currentEditor are read only. 
@@ -53,7 +53,7 @@ terminology) on which actions should be dispatched. */
 		@"baseWritingDirection", @"currentEditor", @"target", @"action", 
 		@"continuous", @"tag",@"refusesFirstResponder", @"ignoresMultiClick", nil]; 
 	
-	return [[super properties] arrayByAddingObjectsFromArray: properties];
+	return [[super propertyNames] arrayByAddingObjectsFromArray: properties];
 }
 @end
 
@@ -67,12 +67,12 @@ terminology) on which actions should be dispatched. */
 	return NSMakeRect(0, 0, 96, 22);
 }
 
-- (NSArray *) properties
+- (NSArray *) propertyNames
 {
 	// TODO: Declare properties.
 	NSArray *properties = [NSArray array]; 
 	
-	return [[super properties] arrayByAddingObjectsFromArray: properties];
+	return [[super propertyNames] arrayByAddingObjectsFromArray: properties];
 }
 
 @end

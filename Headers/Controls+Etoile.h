@@ -26,14 +26,14 @@
 
 /* Property Value Coding */
 
-- (NSArray *) properties;
+- (NSArray *) propertyNames;
 
 @end
 
 
 @interface NSTextField (Etoile)
 + (NSRect) defaultFrame;
-- (NSArray *) properties;
+- (NSArray *) propertyNames;
 @end
 
 @interface NSImageView (Etoile)

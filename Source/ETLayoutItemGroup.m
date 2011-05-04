@@ -342,12 +342,12 @@ The returned copy is mutable because ETLayoutItemGroup cannot be immutable. */
 
 /* Property Value Coding */
 
-- (NSArray *) properties
+- (NSArray *) propertyNames
 {
 	NSArray *properties = A(kETSourceProperty, kETDelegateProperty, 
 		kETItemScaleFactorProperty, kETDoubleClickedItemProperty);
 
-	return [[super properties] arrayByAddingObjectsFromArray: properties];
+	return [[super propertyNames] arrayByAddingObjectsFromArray: properties];
 }
 
 /** Returns YES. An ETLayoutItemGroup is always a group and a collection by 

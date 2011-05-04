@@ -64,7 +64,7 @@ next EtoileUI release. */
 
 - (id) initWithFrame: (NSRect)rect item: (ETUIItem *)item;
 
-- (NSArray *) properties;
+- (NSArray *) propertyNames;
 
 /* Basic Accessors */
 

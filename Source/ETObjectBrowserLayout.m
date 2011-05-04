@@ -254,7 +254,7 @@
 	if ([self browsedObject] == nil)
 		return [NSArray array];
 
-	return [(NSObject *)[self browsedObject] properties];
+	return [(NSObject *)[self browsedObject] propertyNames];
 }
 
 @end

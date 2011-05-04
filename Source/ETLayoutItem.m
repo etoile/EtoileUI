@@ -1059,7 +1059,7 @@ When the represented object is a layout item, the receiver is a meta layout item
 
 	/* Basic version which doesn't fetch property value beyond the represented 
 	   object, even if this represented object represents another object too. */
-	if (modelObject != nil && [[(NSObject *)modelObject properties] containsObject: key])
+	if (modelObject != nil && [[(NSObject *)modelObject propertyNames] containsObject: key])
 	{
 		if ([modelObject isLayoutItem])
 		{
@@ -1092,7 +1092,7 @@ See -valueForProperty: for more details. */
 
 	/* Basic version which doesn't propagate property editing beyond the represented 
 	   object, even if this represented object represents another object too. */
-	if (modelObject != nil && [[(NSObject *)modelObject properties] containsObject: key])
+	if (modelObject != nil && [[(NSObject *)modelObject propertyNames] containsObject: key])
 	{
 		if ([modelObject isLayoutItem])
 		{
@@ -1117,7 +1117,7 @@ See -valueForProperty: for more details. */
 	return result;
 }
 
-- (NSArray *) properties
+- (NSArray *) propertyNames
 {
 	NSArray *properties = A(kETIdentifierProperty, kETNameProperty, kETXProperty, kETYProperty, 
 		kETWidthProperty, kETHeightProperty, kETViewProperty, kETSelectedProperty, 
@@ -1130,7 +1130,7 @@ See -valueForProperty: for more details. */
 
 	properties = [[VARIABLE_PROPERTIES allKeys] arrayByAddingObjectsFromArray: properties];
 		
-	return [[super properties] arrayByAddingObjectsFromArray: properties];
+	return [[super propertyNames] arrayByAddingObjectsFromArray: properties];
 }
 
 /** Returns a dictionary representation of every property/value pairs not stored 

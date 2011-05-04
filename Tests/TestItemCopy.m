@@ -90,7 +90,7 @@ DEALLOC(DESTROY(itemFactory); DESTROY(item); DESTROY(itemGroup))
 
 - (NSArray *) nonCheckablePropertiesForAnyObject
 {
-	NSArray *rootObjectProperties = [(NSObject *)AUTORELEASE([[NSObject alloc] init]) properties];
+	NSArray *rootObjectProperties = [(NSObject *)AUTORELEASE([[NSObject alloc] init]) propertyNames];
 	return [rootObjectProperties arrayByRemovingObjectsInArray:
 		A(kETNameProperty, kETDisplayNameProperty, kETIconProperty)];
 }
@@ -98,7 +98,7 @@ DEALLOC(DESTROY(itemFactory); DESTROY(item); DESTROY(itemGroup))
 - (NSArray *) checkablePropertiesForItem: (ETUIItem *)anItem
 {
 	NSArray *excludedProperties = [self nonCheckablePropertiesForAnyObject];
-	return [[anItem properties] arrayByRemovingObjectsInArray: excludedProperties];
+	return [[anItem propertyNames] arrayByRemovingObjectsInArray: excludedProperties];
 }
 
 - (void) checkViewCopy: (ETView *)newView ofView: (ETView *)aView

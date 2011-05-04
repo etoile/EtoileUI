@@ -100,14 +100,14 @@ By default, returns NO. */
 	return newItem;
 }
 
-- (NSArray *) properties
+- (NSArray *) propertyNames
 {
 	NSArray *properties = A(kETFlippedProperty, kETDecoratorItemProperty, 
 		kETDecoratedItemProperty, @"firstDecoratedItem", @"lastDecoratorItem", 
 		@"decorationRect", @"isDecoratorItem", @"isWindowItem", 
 		@"isScrollableAreaItem", @"enclosingItem", @"supervisorView", 
 		@"shouldSyncSupervisorViewGeometry", @"usesWidgetView");
-	return [[super properties] arrayByAddingObjectsFromArray: properties];
+	return [[super propertyNames] arrayByAddingObjectsFromArray: properties];
 }
 
 /* <override-dummy /> 

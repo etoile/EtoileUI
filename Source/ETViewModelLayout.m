@@ -284,7 +284,7 @@ being returned. */
 
 - (id) entityViewPointForObject: (id)anObject
 {
-	NSArray *properties = [(NSObject *)anObject properties];
+	NSArray *properties = [(NSObject *)anObject propertyNames];
 	NSMutableArray *propertyViewpoints = 
 		[NSMutableArray arrayWithCapacity: [properties count]];
 

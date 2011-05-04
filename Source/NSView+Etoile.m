@@ -329,7 +329,7 @@ also copied, in other words the new object is a deep copy of the receiver. */
 
 /* Property Value Coding */
 
-- (NSArray *) properties
+- (NSArray *) propertyNames
 {
 	// TODO: Expose more properties
 	NSArray *properties = [NSArray arrayWithObjects: @"x", @"y", @"width", 
@@ -343,7 +343,7 @@ also copied, in other words the new object is a deep copy of the receiver. */
 		@"heightAdjustLimit", @"printJobTitle", @"mouseDownCanMoveWindow", 
 		@"needsPanelToBecomeKey", nil]; 
 	
-	return [[super properties] arrayByAddingObjectsFromArray: properties];
+	return [[super propertyNames] arrayByAddingObjectsFromArray: properties];
 }
 
 /* Basic Properties */

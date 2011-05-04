@@ -199,7 +199,7 @@
 	   meta levels 1 or 2.
 	*/
 	// NOTE: this code may be better located in -[ETLayoutItem valueForProperty:]
-	if ([[item properties] containsObject: @"property"])
+	if ([[item propertyNames] containsObject: @"property"])
 	{
 		propertyName = [metaLayoutItem valueForProperty: @"property"];
 		if (propertyName != nil)

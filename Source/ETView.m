@@ -137,11 +137,11 @@ A temporary view set on the receiver won't be copied. */
 	return viewCopy;
 }
 
-- (NSArray *) properties
+- (NSArray *) propertyNames
 {
 	NSArray *properties = A(@"item", @"wrappedView", @"temporaryView", 
 		@"contentView", @"mainView");
-	return [properties arrayByAddingObjectsFromArray: [super properties]];
+	return [properties arrayByAddingObjectsFromArray: [super propertyNames]];
 }
 
 // TODO: Rewrite the next two methods in a more sensible way
