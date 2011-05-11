@@ -530,15 +530,16 @@ See -newItemWithURL:ofType:options and ETItemTemplate. */
 /** Creates a new object by calling -newItemWithURL:ofType:options: and adds it to the content. */
 - (void) add: (id)sender
 {
-	[self insertObject: AUTORELEASE([self newItemWithURL: nil ofType: [self currentObjectType] options: nil]) 
-	           atIndex: ETUndeterminedIndex];
+	[self insertObject: AUTORELEASE([self newItemWithURL: nil ofType: [self currentObjectType] options: nil])
+	       atIndexPath: [self additionIndexPath]];
+	
 }
 
 /** Creates a new object group by calling -newItemWithURL:ofType:options: and adds it to the content. */
 - (void) addNewGroup: (id)sender
 {
-	[self insertObject: AUTORELEASE([self newItemWithURL: nil ofType: kETTemplateGroupType options: nil]) 
-	           atIndex: ETUndeterminedIndex];
+	[self insertObject: AUTORELEASE([self newItemWithURL: nil ofType: kETTemplateGroupType options: nil])
+	       atIndexPath: [self additionIndexPath]];
 }
 
 /** Creates a new object by calling -newItemWithURL:ofType:options: and inserts it into the content at 
@@ -546,7 +547,7 @@ See -newItemWithURL:ofType:options and ETItemTemplate. */
 - (void) insert: (id)sender
 {
 	[self insertObject: AUTORELEASE([self newItemWithURL: nil ofType: [self currentObjectType] options: nil])
-	           atIndex: [self insertionIndex]];
+	       atIndexPath: [self insertionIndexPath]];
 }
 
 /** Creates a new object group by calling -newItemWithURL:ofType:options: and inserts it into the 
@@ -554,7 +555,7 @@ content at -insertionIndex. */
 - (void) insertNewGroup: (id)sender
 {
 	[self insertObject: AUTORELEASE([self newItemWithURL: nil ofType: kETTemplateGroupType options: nil])
-	           atIndex: [self insertionIndex]];
+	       atIndexPath: [self insertionIndexPath]];
 }
 
 /** Removes all selected objects in the content. Selected objects are retrieved 
@@ -689,6 +690,66 @@ This method can be overriden to return a custom index. */
 	return (index != NSNotFound ? index + 1 : [[self content] numberOfItems]);
 }
 
+/** Returns the index path into the content, at which insert: and insertGroup:
+will insert the object they create.
+
+The returned value is the next sibling of the selected index in the content,
+or the content count (no selection).
+
+The selected index path for this method is the last selected item in the content. */
+- (NSIndexPath *) insertionIndexPath
+{
+	NSIndexPath *resultPath;
+	NSArray *indexPaths = [[self content] selectionIndexPaths];
+
+	//ETLog(@"selectionIndexPaths = %@", [indexPaths descriptionWithLocale: nil]);
+
+	if ([indexPaths count] > 0)
+	{
+		NSIndexPath *selectionPath = [indexPaths lastObject];
+
+		int lastIndex = [selectionPath indexAtPosition: [selectionPath length] - 1];
+		selectionPath = [selectionPath indexPathByRemovingLastIndex];
+		resultPath = [selectionPath indexPathByAddingIndex: lastIndex + 1];
+		
+	}
+	else
+	{
+		resultPath = [NSIndexPath indexPathWithIndex: [[self content] numberOfItems]];
+	}
+
+	//ETLog(@"insertionIndexPath = %@", resultPath);
+	return resultPath;
+}
+
+/** Returns the index path into the content, at which add: and addNewGroup:
+will insert the object they create.
+
+The returned value is the last child of the selected index in the content,
+the next sibling (when the selected index path is a leaf node),
+or the content count (no selection).
+
+The selected index path for this method is the last selected item in the content. */
+- (NSIndexPath *) additionIndexPath
+{
+	NSIndexPath *resultPath = [self insertionIndexPath];
+	NSArray *indexPaths = [[self content] selectionIndexPaths];
+	NSIndexPath *selectionPath = [indexPaths lastObject];
+	ETLayoutItem *selectionItem = [[self content] itemAtIndexPath: selectionPath];
+
+	// Add as a child if the selected item is a layout item group. Otherwise,
+	// we just add as the next sibling to the selected layout item.	
+	if ([selectionItem isGroup])
+	{
+
+		int lastChildIndexInSelectedItem = [(ETLayoutItemGroup *)selectionItem numberOfItems];
+		resultPath = [selectionPath indexPathByAddingIndex: lastChildIndexInSelectedItem];
+	}
+
+	//ETLog(@"additionIndexPath = %@", resultPath);
+	return resultPath;
+}
+
 /** Removes the filtering if -clearsFilterPredicateOnInsertion is YES, inserts 
 the item at the given index and selects the inserted item if 
 -selectsInsertedObjects is YES. 
@@ -729,6 +790,68 @@ the content rather than -[ETLayoutItemGroup insertObject:atIndex:].  */
 			selectionIndex = [[self content] indexOfItem: anItem];
 		}
 		[[self content] setSelectionIndex: selectionIndex];
+	}
+}
+
+/** Removes the filtering if -clearsFilterPredicateOnInsertion is YES, inserts 
+the item at the given index path and selects the inserted item if 
+-selectsInsertedObjects is YES. 
+
+You must use this method to mutate the content in new or overriden insertion 
+action methods (e.g. -add: or -insertNewGroup:).
+
+Although the inserted object is usually an ETLayoutItem or ETLayoutItemGroup 
+instance, you can pass an arbitrary object, it will get automatically boxed into 
+a layout item based on the receiver template.
+
+You can pass nil to trigger -[ETLayoutItemGroup addObject:] on 
+the content rather than -[ETLayoutItemGroup insertObject:atIndex:].  */
+- (void) insertObject: (id)anItem atIndexPath: (NSIndexPath *)anIndexPath
+{
+	NSIndexPath *selectionIndexPath = anIndexPath;
+
+	ETAssert(nil != [self content]);
+
+	if ([self clearsFilterPredicateOnInsertion])
+	{
+		[self setFilterPredicate: nil];
+	}
+
+	if (nil == anIndexPath)
+	{
+		[[self content] addObject: anItem];
+		selectionIndexPath = [NSIndexPath indexPathWithIndex: [[self content] count] - 1]; 
+	}
+	else
+	{
+		ETLayoutItemGroup *parentItem = (ETLayoutItemGroup *)[[self content]
+			itemAtIndexPath: [anIndexPath indexPathByRemovingLastIndex]];
+		NSUInteger index = [anIndexPath indexAtPosition: [anIndexPath length] - 1];
+
+		if (nil == parentItem)
+		{
+			parentItem = [self content];
+		}
+
+		ETAssert([parentItem isGroup]);
+		
+		if (NSNotFound == index)
+		{
+			ETAssert([anIndexPath length] == 0);
+			// This can only occur if [anIndexPath length] == 0,
+			// therefore this is a top-level index path
+			index = [parentItem count];
+			selectionIndexPath = [NSIndexPath indexPathWithIndex: index];
+		}
+		
+		[parentItem insertObject: anItem atIndex: index];
+	}
+
+	ETAssert(nil != [anItem parentItem]);
+
+	if ([self selectsInsertedObjects])
+	{
+		[[self content] setSelectionIndexPaths: A(anIndexPath)];
 	}
 }
 

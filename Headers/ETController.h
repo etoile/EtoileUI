@@ -140,7 +140,10 @@ objects as a collection distinct from the content. */
 - (BOOL) canMutate;
 - (BOOL) isContentMutable;
 - (unsigned int) insertionIndex;
+- (NSIndexPath *) insertionIndexPath;
+- (NSIndexPath *) additionIndexPath;
 - (void) insertObject: (id)anItem atIndex: (NSUInteger)index;
+- (void) insertObject: (id)anItem atIndexPath: (NSIndexPath *)anIndexPath;
 - (BOOL) clearsFilterPredicateOnInsertion;
 - (void) setClearsFilterPredicateOnInsertion: (BOOL)clear;
 - (BOOL) selectsInsertedObjects;
