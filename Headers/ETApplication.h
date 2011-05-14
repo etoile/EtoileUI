@@ -48,6 +48,8 @@ For other Nibs to be loaded, see ETNibOwner. */
 	ETNibOwner *_nibOwner;
 }
 
+- (NSString *) name;
+
 - (ETLayoutItemGroup *) layoutItem;
 - (ETLayoutItemBuilder *) builder;
 - (void) rebuildMainNib;

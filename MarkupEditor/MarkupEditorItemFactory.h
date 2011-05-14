@@ -17,11 +17,17 @@
 
 
 @interface MarkupEditorItemFactory : ETLayoutItemFactory
+
 - (ETLayoutItemGroup *) editorViewWithSize: (NSSize)aSize controller: (ETController *)aController;
 - (ETLayoutItemGroup *) toolbarWithWidth: (float)aWidth controller: (ETController *)aController;
 - (ETLayoutItemGroup *) editor;
 
+- (ETLayoutItemGroup *) workspaceWithControllerPrototype: (ETController *)aController;
+
+/** @taskunit Composite Layouts */
+
 - (ETCompositeLayout *) editorLayout;
+
 @end
 
 @interface MarkupEditorLayout : ETCompositeLayout

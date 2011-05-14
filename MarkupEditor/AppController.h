@@ -22,7 +22,8 @@
 }
 
 - (IBAction) newWorkspace: (id)sender;
-- (IBAction) changeLayout: (id)sender;
+
+- (void) showEditorLayoutExample;
 
 @end
 

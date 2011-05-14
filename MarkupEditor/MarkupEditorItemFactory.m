@@ -33,8 +33,8 @@
 		[layoutObject setDisplayName: @"Value" forProperty: @"stringValue"];
 		[layoutObject setDisplayName: @"Name" forProperty: @"displayName"];
 		[layoutObject setDisplayName: @"Description" forProperty: @"description"];
-		[layoutObject setDisplayedProperties: [NSArray arrayWithObjects: 
-			@"className", @"stringValue", @"description", @"displayName", nil]];
+		[layoutObject setDisplayedProperties: 
+			A(@"className", @"stringValue", @"description", @"displayName")];
 	}
 
 	[layoutObject setAttachedTool: [self toolWithMultipleAndEmptySelectionAllowed]];
@@ -116,6 +116,25 @@
 	[editor setAutoresizingMask: ETAutoresizingFlexibleWidth | ETAutoresizingFlexibleHeight];
 
 	return editor;
+}
+
+- (ETLayoutItemGroup *) workspaceWithControllerPrototype: (ETController *)aController
+{
+	ETController *controller = AUTORELEASE([aController copy]);
+	ETLayoutItemGroup *workspace = [self itemGroupWithFrame: NSMakeRect(50, 100, 1000, 700)];
+
+	// TODO: We should set the controller on the workspace rather the bar item
+	//[workspace setController: controller;
+
+	[workspace setLayout: [ETPaneLayout masterDetailLayout]];
+	[[workspace layout] setBarThickness: 200];
+	[[workspace layout] setBarPosition: ETPanePositionLeft];
+	[[workspace layout] setEnsuresContentFillsVisibleArea: YES];
+
+	//[[[workspace layout] barItem] setLayout: [ETFlowLayout layout]];
+	[[[workspace layout] barItem] setController: controller];
+
+	return workspace;
 }
 
 // TODO: This method is used by -registerLayout: in -applicationDidFinishLaunching but the registered 

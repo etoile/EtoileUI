@@ -11,6 +11,7 @@
 #import <EtoileFoundation/ETUTI.h>
 #import <EtoileFoundation/NSObject+Model.h>
 #import "ETDocumentController.h"
+#import "ETApplication.h"
 #import "ETItemTemplate.h"
 #import "ETLayoutItem.h"
 #import "ETLayoutItemGroup.h"
@@ -107,6 +108,12 @@ Raises a NSInvalidArgumentException if the given URL is nil. */
 	}
 
 	ETUTI *type = [[self class] typeForURL: aURL];
+	// TODO: Finish...
+	//NSString *summary = [NSString stringWithFormat: @"%@ cannot open document %@", 
+	//	[ETApp name], [[aURL path] lastPathComponent]];
+	//NSString *explanation = @"Unknown document type";
+
+	//[self reportErrorWithSummary: summary explanation: explanation];
 
 	return [[self templateForType: type] newItemReadFromURL: aURL 
 	                                                options: options];
@@ -233,19 +240,20 @@ See also [ETDocumentCreation] protocol. */
 	/* Open each URL content */
 	FOREACH(urls, url, NSURL *)
 	{
-		openedItem = [[self itemsForURL: url] firstObject];
+		openedItem = AUTORELEASE([self openItemWithURL: url options: options]);
 
-		[self insertObject: AUTORELEASE([self openItemWithURL: url options: options])
-		           atIndex: ETUndeterminedIndex];
+		if (openedItem == nil)
+		{
+			ETAssert([self error] != nil);
+			return;
+		}
+		// NOTE: When -openItemWithURL:options: returns an item already opened,
+		// we move it to the front too.
+		[self insertObject: openedItem atIndex: ETUndeterminedIndex];
 	}
 
-	/* Highlight or bring to the front the last opened item */
-	if (nil != openedItem)
-	{
-		[[self content] setSelectionIndex: [[self content] indexOfItem: openedItem]];
-		return;
-	}
-
+	/* Highlight the last opened item (e.g. in a table layout) */	
+	[[self content] setSelectionIndex: [[self content] indexOfItem: openedItem]];
 }
 
 - (IBAction) saveDocument: (id)sender
@@ -256,6 +264,12 @@ See also [ETDocumentCreation] protocol. */
 	ETAssert(nil != template);
 
 	[template writeItem: [self activeItem] toURL: nil options: nil];	
+}
+
+// TODO: Finish, see -openItemWithURL:
+- (void) reportErrorWithSummary: (NSString *)aSummary
+{
+	[[NSAlert alertWithError: _error] runModal];
 }
 
 /** Returns the last error that was reported to the receiver. */

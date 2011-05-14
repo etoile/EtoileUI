@@ -47,6 +47,12 @@
 	[super dealloc];
 }
 
+/** Returns the application name as visible in the menu bar. */
+- (NSString *) name
+{
+	return [[NSProcessInfo processInfo] processName];
+}
+
 /** Returns the layout item representing the application. 
 
 The method returns a local root item which is usually the window group or layer
