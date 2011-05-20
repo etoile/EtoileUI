@@ -101,11 +101,4 @@ extern NSString *ETLayoutItemPboardType;
 
 - (ETUTI *) type;
 
-/* ETCollection protocol */
-
-- (BOOL) isEmpty;
-- (id) content;
-- (NSArray *) contentArray;
-- (BOOL) isOrdered;
-
 @end

@@ -61,15 +61,5 @@ shared instance. Style groups can be used as shared style objects too though.  *
 
 - (void) didChangeItemBounds: (NSRect)bounds;
 
-/* Collection Protocol */
-
-- (BOOL) isOrdered;
-- (BOOL) isEmpty;
-- (NSUInteger) count;
-- (NSArray *) contentArray;
-- (void) addObject: (id)anObject;
-- (void) insertObject: (id)anObject atIndex: (unsigned int)anIndex;
-- (void) removeObject: (id)anObject;
-	  
 @end
 

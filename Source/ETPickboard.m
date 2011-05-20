@@ -8,6 +8,7 @@
 
 #import <EtoileFoundation/ETCollection.h>
 #import <EtoileFoundation/ETUTI.h>
+#import <EtoileFoundation/NSObject+Mixins.h>
 #import <EtoileFoundation/Macros.h>
 #import "ETPickboard.h"
 #import "ETLayoutItem.h"
@@ -317,7 +318,17 @@ returns an ETLayoutItem. */
 
 /* Picked Object Set */
 
+#pragma GCC diagnostic ignored "-Wprotocol"
+
 @implementation ETPickCollection
+
++ (void) initialize
+{
+	if (self != [ETPickCollection class])
+		return;
+
+	[self applyTraitFromClass: [ETCollectionTrait class]];
+}
 
 + (id) pickCollectionWithCollection: (id <ETCollection>)objects
 {
@@ -325,7 +336,7 @@ returns an ETLayoutItem. */
 }
 
 /** <init \> Initializes and returns a picked object set (known as a pick 
-	collection) with the objects of the collection passed in parameter. */
+collection) with the objects of the collection passed in parameter. */
 - (id) initWithCollection: (id <ETCollection>)objects
 {
 	SUPERINIT
@@ -349,7 +360,7 @@ type. */
 	return _type;
 }
 
-/* ETCollection protocol */
+/* Collection protocol */
 
 - (id) content
 {
@@ -359,11 +370,6 @@ type. */
 - (NSArray *) contentArray
 {
 	return [_pickedObjects contentArray];
-}
-
-- (BOOL) isEmpty
-{
-	return [_pickedObjects isEmpty];
 }
 
 - (BOOL) isOrdered

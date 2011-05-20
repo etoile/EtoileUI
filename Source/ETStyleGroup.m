@@ -6,6 +6,7 @@
 	License: Modified BSD (see COPYING)
  */
 
+#import <EtoileFoundation/NSObject+Mixins.h>
 #import <EtoileFoundation/Macros.h>
 #import "ETStyleGroup.h"
 #import "ETCompatibility.h"
