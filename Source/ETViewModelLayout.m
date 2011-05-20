@@ -24,46 +24,6 @@
 #import "ETCompatibility.h"
 
 
-@implementation ETInstanceVariableMirror (TraversableIvars)
-
-- (BOOL) isCollection
-{
-	return [self isObjectType];
-}
-
-/* Collection protocol */
-
-- (BOOL) isOrdered
-{
-	return NO;
-}
-
-- (BOOL) isEmpty
-{
-	if ([self isObjectType] == NO)
-		return NO;
-
-	return ([[[self valueMirror] allInstanceVariableMirrors] count] == 0);
-}
-
-- (id) content
-{
-	return [self contentArray];
-}
-
-- (NSArray *) contentArray
-{
-	return [[self valueMirror] allInstanceVariableMirrors];
-}
-
-- (NSEnumerator *) objectEnumerator
-{
-	return [[self contentArray] objectEnumerator];
-}
-
-@end
-
-
 @implementation ETViewModelLayout
 
 - (ETLayout *) defaultPropertyViewLayout

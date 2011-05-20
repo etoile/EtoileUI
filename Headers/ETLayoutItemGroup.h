@@ -128,11 +128,7 @@
 - (void) setVisibleItems: (NSArray *)items;
 - (NSArray *) visibleItemsForItems: (NSArray *)items;
 - (void) setVisibleItems: (NSArray *)visibleItems forItems: (NSArray *)items;
-- (NSSize) size;
-- (void) setSize: (NSSize)size;
-- (NSView *) view;
 - (NSSize) visibleContentSize;
-- (void) setContentSize: (NSSize)size;
 
 /* Item scaling */
 
@@ -182,16 +178,6 @@
 - (BOOL) isStacked;
 - (void) stack;
 - (void) unstack;
-
-/* Collection Protocol */
-
-- (BOOL) isOrdered;
-- (BOOL) isEmpty;
-- (NSUInteger) count;
-- (id) content;
-- (NSArray *) contentArray;
-- (void) addObject: (id)object;
-- (void) removeObject: (id)object;
 
 /* Framework Private */
 

@@ -16,13 +16,8 @@
 @class ETUTI;
 @class ETLayoutItem, ETPickboard, ETPickDropCoordinator;
 
-/** Marks an element which shouldn't be considered bound to a particular index 
-in an ordered collection or whose index isn't yet determined.
 
-Can be used to indicate a drop is not an insertion at precise index but a simple drop on. */
-extern const NSInteger ETUndeterminedIndex;
-
-
+/** ETUndeterminedIndex be used to indicate a drop is not an insertion at precise index but a simple drop on. */
 @interface ETActionHandler (ETPickDropActionHandler)
 
 /* Pick & Drop Actions */

@@ -10,7 +10,18 @@
 #import "ETStyleGroup.h"
 #import "ETCompatibility.h"
 
+#pragma GCC diagnostic ignored "-Wprotocol"
+
 @implementation ETStyleGroup
+
++ (void) initialize
+{
+	if (self != [ETStyleGroup class])
+		return;
+
+	[self applyTraitFromClass: [ETCollectionTrait class]];
+	[self applyTraitFromClass: [ETMutableCollectionTrait class]];
+}
 
 /** Initializes and returns an empty style group. */
 - (id) init
@@ -155,16 +166,6 @@ item, to which the receiver is bound to, has been resized. */
 	return YES;
 }
 
-- (BOOL) isEmpty
-{
-	return ([_styles count] == 0);
-}
-
-- (NSUInteger) count
-{
-	return [_styles count];
-}
-
 - (id) content
 {
 	return _styles;
@@ -180,12 +181,12 @@ item, to which the receiver is bound to, has been resized. */
 	[self addStyle: anObject];
 }
 
-- (void) insertObject: (id)anObject atIndex: (unsigned int)anIndex
+- (void) insertObject: (id)anObject atIndex: (NSUInteger)anIndex hint: (id)hint
 {
 	[self insertStyle: anObject atIndex: anIndex];
 }
 
-- (void) removeObject: (id)anObject
+- (void) removeObject: (id)anObject atIndex: (NSUInteger)index hint: (id)hint
 {
 	[self removeStyle: anObject];
 }

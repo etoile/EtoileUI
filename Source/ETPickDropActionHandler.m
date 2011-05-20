@@ -26,8 +26,6 @@
 #import "ETStyle.h"
 #import "ETCompatibility.h"
 
-const NSInteger ETUndeterminedIndex = -1;
-
 #define SELECTION_BY_RANGE_KEY_MASK NSShiftKeyMask
 #define SELECTION_BY_ONE_KEY_MASK NSCommandKeyMask
 

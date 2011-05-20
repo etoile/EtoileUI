@@ -8,6 +8,7 @@
 
 #import <EtoileFoundation/NSIndexPath+Etoile.h>
 #import <EtoileFoundation/NSIndexSet+Etoile.h>
+#import <EtoileFoundation/NSObject+Mixins.h>
 #import <EtoileFoundation/NSObject+Model.h>
 #import <EtoileFoundation/ETCollection+HOM.h>
 #import <EtoileFoundation/Macros.h>
@@ -21,6 +22,8 @@
 #import "ETView.h"
 #import "NSView+Etoile.h"
 #import "ETCompatibility.h"
+
+#pragma GCC diagnostic ignored "-Wprotocol"
 
 /* Notifications */
 NSString * const ETItemGroupSelectionDidChangeNotification = @"ETItemGroupSelectionDidChangeNotification";
@@ -49,16 +52,14 @@ NSString * const ETSourceDidUpdateNotification = @"ETSourceDidUpdateNotification
 
 @implementation ETLayoutItemGroup
 
-/* Ugly hacks to shut down the compiler (GCC 4.1.3 on Linux) so it doesn't 
-pretend we don't fully implement ETLayoutingContext protocol. */
-- (void) setNeedsDisplay: (BOOL)now { [super setNeedsDisplay: now]; }
-- (BOOL) isFlipped { return [super isFlipped]; }
-- (ETView *) supervisorView { return [super supervisorView]; }
-- (void) setContentSize: (NSSize)size { [super setContentSize: size]; }
-- (BOOL) isScrollable { return [super isScrollable]; }
-- (NSSize) size { return [super size]; }
-- (void) setSize: (NSSize)size { [super setSize: size]; }
-- (NSView *) view { return [super view]; }
++ (void) initialize
+{
+	if (self != [ETLayoutItemGroup class])
+		return;
+
+	[self applyTraitFromClass: [ETCollectionTrait class]];
+	[self applyTraitFromClass: [ETMutableCollectionTrait class]];
+}
 
 static BOOL globalAutolayoutEnabled = YES;
 
@@ -1823,7 +1824,7 @@ TODO: Implement and may be rename -expand or -expandStack */
 	[self addItem: item];
 }
 
-- (void) insertObject: (id)object atIndex: (unsigned int)index
+- (void) insertObject: (id)object atIndex: (unsigned int)index hint: (id)hint
 {
 	id item = [object isLayoutItem] ? object : [self itemWithObject: object isValue: [object isCommonObjectValue]];
 	
@@ -1837,7 +1838,7 @@ TODO: Implement and may be rename -expand or -expandStack */
 
 /** Removes object from the child items of the receiver, eventually trying to 
 	remove items with represented objects matching the object. */
-- (void) removeObject: (id)object
+- (void) removeObject: (id)object atIndex: (NSUInteger)index hint: (id)hint
 {
 	/* Try to remove object by matching it against child items */
 	if ([object isLayoutItem] && [self containsItem: object])

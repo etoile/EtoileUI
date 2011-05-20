@@ -60,13 +60,3 @@ similar methods on it as required by ETCompositeLayout. */
 - (void) switchDisplayMode: (id)sender;
 
 @end
-
-
-/** Collection protocol (to recursively traverse ivars whose type is object) */
-@interface ETInstanceVariableMirror (TraversableIvars) <ETCollection>
-- (BOOL) isOrdered;
-- (BOOL) isEmpty;
-- (id) content;
-- (NSArray *) contentArray;
-- (NSEnumerator *) objectEnumerator;
-@end

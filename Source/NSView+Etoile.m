@@ -6,14 +6,23 @@
 	License: Modified BSD (see COPYING)
  */
 
+#import <EtoileFoundation/NSObject+Mixins.h>
 #import <EtoileFoundation/NSObject+Model.h>
 #import "NSView+Etoile.h"
 #import "ETView.h"
 #import "NSImage+Etoile.h"
 #import "ETCompatibility.h"
 
+#pragma GCC diagnostic ignored "-Wprotocol"
 
 @implementation NSView (Etoile)
+
+/* In a a category, we cannot use +initialize */
++ (void) load
+{
+	[self applyTraitFromClass: [ETCollectionTrait class]];
+	[self applyTraitFromClass: [ETMutableCollectionTrait class]];
+}
 
 + (NSRect) defaultFrame
 {
@@ -123,11 +132,6 @@ also copied, in other words the new object is a deep copy of the receiver. */
 	return YES;
 }
 
-- (BOOL) isEmpty
-{
-	return ([[self subviews] count] == 0);
-}
-
 - (id) content
 {
 	return [self subviews];
@@ -151,7 +155,7 @@ also copied, in other words the new object is a deep copy of the receiver. */
 	}
 }
 
-- (void) insertObject: (id)object atIndex: (unsigned int)index
+- (void) insertObject: (id)object atIndex: (NSUInteger)index hint: (id)hint
 {
 	if ([object isKindOfClass: [NSView class]])
 	{
@@ -162,12 +166,12 @@ also copied, in other words the new object is a deep copy of the receiver. */
 	else
 	{
 		[NSException raise: NSInvalidArgumentException format: @"For %@ "
-			"-insertObject:atIndex: parameter %@ must be of type NSView", self, 
+			"-insertObject:atIndex:hint: parameter %@ must be of type NSView", self, 
 			object];
 	}
 }
 
-- (void) removeObject: (id)object
+- (void) removeObject: (id)object atIndex: (NSUInteger)index hint: (id)hint
 {
 	if ([object isKindOfClass: [NSView class]])
 	{
@@ -178,14 +182,14 @@ also copied, in other words the new object is a deep copy of the receiver. */
 		else
 		{
 			[NSException raise: NSInvalidArgumentException format: @"For %@ "
-				"-removeObject: parameter %@ must be a subview of the receiver", 
+				"-removeObject:atIndex:hint: parameter %@ must be a subview of the receiver", 
 				self, object];
 		}		
 	}
 	else
 	{
 		[NSException raise: NSInvalidArgumentException format: @"For %@ "
-			"-removeObject: parameter %@ must be of type NSView", self, object];
+			"-removeObject:atIndex:hint: parameter %@ must be of type NSView", self, object];
 	}	
 }
 

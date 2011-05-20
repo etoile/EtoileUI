@@ -42,16 +42,6 @@ This protocol is subject to change or be removed. */
 
 - (id) copyWithZone: (NSZone *)zone;
 
-/* Collection Protocol */
-
-- (BOOL) isOrdered;
-- (BOOL) isEmpty;
-- (id) content;
-- (NSArray *) contentArray;
-- (void) addObject: (id)view;
-- (void) insertObject: (id)view atIndex: (unsigned int)index;
-- (void) removeObject: (id)view;
-
 /* Frame Utility Methods */
 
 - (float) height;

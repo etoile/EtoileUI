@@ -11,6 +11,8 @@
 #import "ETLayoutItem.h"
 #import "ETApplication.h"
 
+#pragma GCC diagnostic ignored "-Wprotocol"
+
 #define WK [NSWorkspace sharedWorkspace]
 
 @interface COUIServer (Private)
@@ -24,6 +26,15 @@
 
 
 @implementation COUIServer
+
++ (void) initialize
+{
+	if (self != [COUIServer class])
+		return;
+
+	[self applyTraitFromClass: [ETCollectionTrait class]];
+	[self applyTraitFromClass: [ETMutableCollectionTrait class]];	
+}
 
 static COUIServer *sharedUIServer = nil;
 
@@ -220,7 +231,7 @@ DEALLOC(DESTROY(_serializerBackend); DESTROY(_storeURL))
 	return [NSArray array];
 }
 
-- (NSArray *) properties
+- (NSArray *) propertyNames
 {
 	return [NSArray array]; // FIXME
 }
@@ -228,16 +239,6 @@ DEALLOC(DESTROY(_serializerBackend); DESTROY(_storeURL))
 - (NSDictionary *) metadatas
 {
 	return nil;
-}
-
-- (BOOL) isOrdered
-{
-	return NO;
-}
-
-- (BOOL) isEmpty
-{
-	return ([[self members] count] == 0);
 }
 
 - (id) content
@@ -250,21 +251,15 @@ DEALLOC(DESTROY(_serializerBackend); DESTROY(_storeURL))
 	return [self content];
 }
 
-- (void) insertObject: (id)object atIndex: (unsigned int)index
+- (void) insertObject: (id)object atIndex: (unsigned int)index hint: (id)hint
 {
 	[self addMember: object];
 }
 
-- (void) removeObject: (id)object
+- (void) removeObject: (id)object atIndex: (NSUInteger)index hint: (id)hint
 {
 
 }
-
-- (void) addObject: (id)object
-{
-
-}
-
 
 /* Utitily methods */
 
