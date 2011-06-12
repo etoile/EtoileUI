@@ -10,6 +10,7 @@
 #import <EtoileFoundation/ETPropertyDescription.h>
 #import <EtoileFoundation/ETPropertyViewpoint.h>
 #import <EtoileFoundation/ETModelElementDescription.h>
+#import <EtoileFoundation/NSObject+DoubleDispatch.h>
 #import <EtoileFoundation/NSObject+Model.h>
 #import "ETModelDescriptionRenderer.h"
 #import "ETTemplateItemLayout.h"
@@ -21,6 +22,11 @@
 
 
 @implementation ETModelDescriptionRenderer
+
+- (NSString *) doubleDispatchPrefix
+{
+	return @"render";
+}
 
 + (id) renderer
 {
@@ -65,6 +71,11 @@
 	}
 
 	return item;
+}
+
+- (id) render: (id)anObject
+{
+	[self visit: anObject];
 }
 
 - (id) renderModel: (id)anObject

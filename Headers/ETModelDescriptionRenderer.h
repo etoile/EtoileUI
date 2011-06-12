@@ -11,13 +11,12 @@
 
 #import <Foundation/Foundation.h>
 #import <AppKit/AppKit.h>
-#import <EtoileFoundation/ETTransform.h>
 #import <EtoileFoundation/ETEntityDescription.h>
 
 @class ETPropertyDescription;
 @class ETLayout, ETLayoutItem;
 
-@interface ETModelDescriptionRenderer : ETTransform
+@interface ETModelDescriptionRenderer : NSObject
 {
 	@private
 	NSMutableDictionary *_templateItems;
@@ -30,6 +29,7 @@
 
 - (id) makeItemForIdentifier: (NSString *)anIdentifier isGroupRequired: (BOOL)mustBeGroup;
 
+- (id) render: (id)anObject;
 - (id) renderModel: (id)anObject;
 - (id) renderModel: (id)anObject description: (ETEntityDescription *)entityDesc;
  

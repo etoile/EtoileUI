@@ -8,6 +8,7 @@
 
 #import <EtoileFoundation/Macros.h>
 #import <EtoileFoundation/ETCollection+HOM.h>
+#import <EtoileFoundation/NSObject+DoubleDispatch.h>
 #import "ETTemplateItemLayout.h"
 #import "ETLayoutItemBuilder.h"
 #import "ETLayoutItem.h"
@@ -41,6 +42,21 @@ Initializes and returns the receiver builder. */
 }
 
 DEALLOC(DESTROY(itemFactory))
+
+- (NSString *) doubleDispatchPrefix
+{
+	return @"render";
+}
+
+/** Tries to build a method name based on the given object type and invoke it.
+
+See -[NSObject visit:].
+
+Built method names follows the pattern <em>render</em> + <em>object type</em>. */
+- (id) render: (id)anObject
+{
+	return [self visit: anObject];
+}
 
 @end
 
