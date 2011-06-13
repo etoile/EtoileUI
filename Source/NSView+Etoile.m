@@ -6,7 +6,7 @@
 	License: Modified BSD (see COPYING)
  */
 
-#import <EtoileFoundation/NSObject+Mixins.h>
+#import <EtoileFoundation/NSObject+Trait.h>
 #import <EtoileFoundation/NSObject+Model.h>
 #import "NSView+Etoile.h"
 #import "ETView.h"

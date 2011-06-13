@@ -8,7 +8,7 @@
 
 #import <EtoileFoundation/ETCollection.h>
 #import <EtoileFoundation/ETUTI.h>
-#import <EtoileFoundation/NSObject+Mixins.h>
+#import <EtoileFoundation/NSObject+Trait.h>
 #import <EtoileFoundation/Macros.h>
 #import "ETPickboard.h"
 #import "ETLayoutItem.h"

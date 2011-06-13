@@ -8,7 +8,7 @@
 
 #import <EtoileFoundation/NSIndexPath+Etoile.h>
 #import <EtoileFoundation/NSIndexSet+Etoile.h>
-#import <EtoileFoundation/NSObject+Mixins.h>
+#import <EtoileFoundation/NSObject+Trait.h>
 #import <EtoileFoundation/NSObject+Model.h>
 #import <EtoileFoundation/ETCollection+HOM.h>
 #import <EtoileFoundation/Macros.h>
