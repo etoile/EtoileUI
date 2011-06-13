@@ -75,7 +75,7 @@
 
 - (id) render: (id)anObject
 {
-	[self visit: anObject];
+	return [self visit: anObject];
 }
 
 - (id) renderModel: (id)anObject
