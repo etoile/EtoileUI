@@ -469,6 +469,116 @@ menu bar, otherwise builds a new instance and returns it. */
 	return devMenuItem;
 }
 
+/** Returns the visible Document menu if there is one already inserted in the 
+menu bar, otherwise builds a new instance and returns it. */
+- (NSMenuItem *) documentMenuItem
+{
+	NSMenuItem *menuItem = (id)[[self mainMenu] itemWithTag: ETDocumentMenuTag];
+
+	if (menuItem != nil)
+		return menuItem;
+
+	menuItem = [NSMenuItem menuItemWithTitle: _(@"Document")
+	                                     tag: ETDocumentMenuTag
+	                                  action: NULL];
+	NSMenu *menu = [menuItem submenu];
+
+	[menu addItemWithTitle: _(@"New")
+	                action: @selector(newDocument:)
+	         keyEquivalent: @""];
+
+	[menu addItemWithTitle: _(@"New From Template…")
+	                action: @selector(newDocumentFromTemplate:)
+	         keyEquivalent: @""];
+
+	[menu addItemWithTitle:  _(@"New Copy")
+	                action: @selector(newDocumentCopy:)
+	         keyEquivalent: @""];
+
+	[menu addItemWithTitle: _(@"Open")
+	                action: @selector(openDocument:)
+	         keyEquivalent: @""];
+
+	[menu addItemWithTitle: _(@"Open Selection")
+	                action: @selector(openSelection:)
+	         keyEquivalent: @""];
+
+	[menu addItem: [NSMenuItem separatorItem]];
+
+	[menu addItemWithTitle: _(@"Close")
+	                action: @selector(performClose:)
+	         keyEquivalent: @""];
+
+	[menu addItemWithTitle: _(@"Mark Current Version as…")
+	                action: @selector(markDocumentVersion:)
+	         keyEquivalent: @""];
+
+	[menu addItemWithTitle: _(@"Revert to…")
+	                action: @selector(revertDocumentTo:)
+	         keyEquivalent: @""];
+
+	[menu addItemWithTitle: _(@"Browse History…")
+	                action: @selector(browseDocumentHistory:)
+	         keyEquivalent: @""];
+			
+	[menu addItem: [NSMenuItem separatorItem]];
+
+	[menu addItemWithTitle: _(@"Export…")
+	                action: @selector(exportDocument:)
+	         keyEquivalent: @""];
+			
+	[menu addItem: [NSMenuItem separatorItem]];
+
+	[menu addItemWithTitle: _(@"Show Infos")
+	                action: @selector(showDocumentInfos:)
+	         keyEquivalent: @""];
+			
+	[menu addItem: [NSMenuItem separatorItem]];
+
+	[menu addItemWithTitle: _(@"Page Setup…")
+	                action: @selector(runPageLayout:)
+	         keyEquivalent: @""];
+
+	[menu addItemWithTitle: _(@"Print…")
+	                action: @selector(print:)
+	         keyEquivalent: @""];
+
+	return menuItem;
+}
+
+/** Returns the visible Insert menu if there is one already inserted in the 
+menu bar, otherwise builds a new instance and returns it. */
+- (NSMenuItem *) insertMenuItem
+{
+	NSMenuItem *menuItem = (id)[[self mainMenu] itemWithTag: ETInsertMenuTag];
+
+	if (menuItem != nil)
+		return menuItem;
+
+	menuItem = [NSMenuItem menuItemWithTitle: _(@"Insert")
+	                                     tag: ETInsertMenuTag
+	                                  action: NULL];
+	NSMenu *menu = [menuItem submenu];
+
+	[menu addItemWithTitle: _(@"Rectangle")
+	                action: @selector(insertRectangle:)
+	         keyEquivalent: @""];
+			
+	[menu addItem: [NSMenuItem separatorItem]];
+
+	[menu addItemWithTitle: _(@"Image…")
+	                action: @selector(insertImage:)
+	         keyEquivalent: @""];
+			
+	[menu addItem: [NSMenuItem separatorItem]];
+
+	[menu addItemWithTitle: _(@"Custom Object…")
+	                action: @selector(insertCustomObject:)
+	         keyEquivalent: @""];
+
+	return menuItem;
+}
+
 /** Returns the visible Arrange menu if there is one already inserted in the 
 menu bar, otherwise builds a new instance and returns it. */
 - (NSMenuItem *) arrangeMenuItem

@@ -266,6 +266,47 @@ See also [ETDocumentCreation] protocol. */
 	[template writeItem: [self activeItem] toURL: nil options: nil];	
 }
 
+- (IBAction) newDocumentFromTemplate: (id)sender
+{
+	// TODO: Implement
+}
+
+- (IBAction) newDocumentCopy: (id)sender
+{
+	// TODO: Implement
+}
+
+- (IBAction) openSelection: (id)sender
+{
+	// TODO: Implement
+}
+
+- (IBAction) markDocumentVersion: (id)sender
+{
+	// TODO: Implement
+}
+
+- (IBAction) revertDocumentTo: (id)sender
+{
+	// TODO: Implement
+}
+
+- (IBAction) browseDocumentHistory: (id)sender
+{
+	// TODO: Implement
+}
+
+
+- (IBAction) exportDocument: (id)sender
+{
+	// TODO: Implement
+}
+
+- (IBAction) showDocumentInfos: (id)sender
+{
+	// TODO: Implement
+}
+
 // TODO: Finish, see -openItemWithURL:
 - (void) reportErrorWithSummary: (NSString *)aSummary
 {

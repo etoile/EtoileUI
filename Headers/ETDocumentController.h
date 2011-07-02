@@ -57,11 +57,28 @@ integration etc.) without having to resort to another API. */
 + (ETUTI *) typeForURL: (NSURL *)aURL;
 - (ETUTI *) typeForWritingItem: (ETLayoutItem *)anItem;
 
-/* Actions */
+/* Creation Actions */
 
 - (IBAction) newDocument: (id)sender;
+- (IBAction) newDocumentFromTemplate: (id)sender;
+- (IBAction) newDocumentCopy: (id)sender;
+
+/* Opening Actions */
+
 - (IBAction) openDocument: (id)sender;
+- (IBAction) openSelection: (id)sender;
+
+/* History Actions */
+
 - (IBAction) saveDocument: (id)sender;
+- (IBAction) markDocumentVersion: (id)sender;
+- (IBAction) revertDocumentTo: (id)sender;
+- (IBAction) browseDocumentHistory: (id)sender;
+
+/* Other Actions */
+
+- (IBAction) exportDocument: (id)sender;
+- (IBAction) showDocumentInfos: (id)sender;
 
 /* Error Reporting */
 

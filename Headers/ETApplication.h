@@ -59,6 +59,8 @@ For other Nibs to be loaded, see ETNibOwner. */
 /* Menu Factory */
 
 - (NSMenuItem *) developmentMenuItem;
+- (NSMenuItem *) documentMenuItem;
+- (NSMenuItem *) insertMenuItem;
 - (NSMenuItem *) arrangeMenuItem;
 
 /* Actions */
@@ -89,6 +91,8 @@ e.g. ETLayout will register ETTableLayout, ETIconLayout instances etc. */
 enum 
 {
 	ETDevelopmentMenuTag = 30000,
+	ETDocumentMenuTag,
+	ETInsertMenuTag,
 	ETArrangeMenuTag, 
 };
 
