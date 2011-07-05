@@ -8,6 +8,7 @@
 
 #import <EtoileFoundation/Macros.h>
 #import "ETShape.h"
+#import "NSObject+EtoileUI.h"
 #import "ETCompatibility.h"
 #import "ETLayoutItem.h"
 
