@@ -112,7 +112,9 @@ The copied shape is never hidden, even when the receiver was. */
 
 - (void) setPath: (NSBezierPath *)aPath
 {
+	[self willChangeValueForProperty: @"path"];
 	ASSIGN(_path, aPath);
+	[self didChangeValueForProperty: @"path"];
 }
 
 - (NSRect) bounds
@@ -122,6 +124,7 @@ The copied shape is never hidden, even when the receiver was. */
 
 - (void) setBounds: (NSRect)aRect
 {
+	[self willChangeValueForProperty: @"bounds"];
 	if (_resizeSelector != NULL)
 	{
 		NSBezierPath *resizedPath = [self providedPathWithRect: aRect];
@@ -134,6 +137,7 @@ The copied shape is never hidden, even when the receiver was. */
 		// TODO: Scale with an affine transform. We should add a method 
 		// -[NSAffineTransform scaleFromRect:toRect:]
 	}
+	[self didChangeValueForProperty: @"bounds"];
 }
 
 - (NSBezierPath *) providedPathWithRect: (NSRect)aRect
@@ -160,7 +164,9 @@ The copied shape is never hidden, even when the receiver was. */
 
 - (void) setPathResizeSelector: (SEL)aSelector
 {
+	[self willChangeValueForProperty: @"pathResizeSelector"];
 	_resizeSelector = aSelector;
+	[self didChangeValueForProperty: @"pathResizeSelector"];
 }
 
 - (NSColor *) fillColor
@@ -170,7 +176,9 @@ The copied shape is never hidden, even when the receiver was. */
 
 - (void) setFillColor: (NSColor *)color
 {
+	[self willChangeValueForProperty: @"fillColor"];
 	ASSIGN(_fillColor, [color copy]);
+	[self didChangeValueForProperty: @"fillColor"];
 }
 
 - (NSColor *) strokeColor
@@ -180,7 +188,9 @@ The copied shape is never hidden, even when the receiver was. */
 
 - (void) setStrokeColor: (NSColor *)color
 {
+	[self willChangeValueForProperty: @"strokeColor"];
 	ASSIGN(_strokeColor, [color copy]);
+	[self didChangeValueForProperty: @"strokeColor"];
 }
 
 - (float) alphaValue
@@ -190,7 +200,9 @@ The copied shape is never hidden, even when the receiver was. */
 
 - (void) setAlphaValue: (float)newAlpha
 {
+	[self willChangeValueForProperty: @"alphaValue"];
     _alpha = newAlpha;
+	[self didChangeValueForProperty: @"alphaValue"];
 }
 
 - (BOOL) hidden
@@ -200,7 +212,9 @@ The copied shape is never hidden, even when the receiver was. */
 
 - (void) setHidden: (BOOL)flag
 {
+	[self willChangeValueForProperty: @"hidden"];
     _hidden = flag;
+	[self didChangeValueForProperty: @"hidden"];
 }
 
 - (void) render: (NSMutableDictionary *)inputValues 

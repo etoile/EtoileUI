@@ -489,6 +489,13 @@ status, when others request it. */
 	return NO;
 }
 
+- (void) insertRectangle: (id)sender onItem: (ETLayoutItem *)item
+{
+	ETLayoutItemGroup *parent = ([item isGroup] ? (ETLayoutItemGroup *)item : [item parentItem]);
+
+	[parent addItem: [[ETLayoutItemFactory factory] rectangle]];
+}
+
 - (void) sendBackward: (id)sender onItem: (ETLayoutItem *)item
 {
 	ETLayoutItemGroup *parent = [item parentItem];

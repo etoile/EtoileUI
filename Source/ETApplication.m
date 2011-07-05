@@ -140,8 +140,7 @@ See also -finishLaunching which is called after -run is invoked. */
 	// Various UI aspects involve Gorm/Nib files.
 	CREATE_AUTORELEASE_POOL(pool);
 	[self _registerAllAspects];
-	DESTROY(pool);
-	RECREATE_AUTORELEASE_POOL(pool);
+	//RECREATE_AUTORELEASE_POOL(pool);
 	[self _instantiateAppDelegateIfSpecified];
 	[self _loadMainNib];
 	DESTROY(pool);

@@ -33,21 +33,37 @@
 	ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
 	THE POSSIBILITY OF SUCH DAMAGE.
  */
+ 
+/* CoreObject (aka ObjectMerging) Support */
+ 
+#define OBJECTMERGING
+
+#ifdef OBJECTMERGING
+#  define BASEOBJECT COObject
+#else
+#  define BASEOBJECT NSObject
+#endif
+
+/* How we get GNUstep.h */
 
 #ifndef GNUSTEP
-#import <EtoileUI/GNUstep.h>
+#import <EtoileFoundation/GNUstep.h>
 #else
 // NOTE: Temporary hack until GNUstep Base includes KVO header in Foundation.h
 #import <Foundation/NSKeyValueObserving.h>
 #endif
-//#define DEBUG_DRAWING
-// TODO: Should be improved to rely on a logging class.
+
+/* Logging Additions */
+
+// TODO: Should be improved to rely on a logging class. Probably move to EtoileFoundation too.
 #ifdef DEBUG_LOG
 #define ETDebugLog ETLog
 #else
 #define ETDebugLog(format, args...)
 #endif
 #define ETLog NSLog
+
+/* Properties Read and Write Macros */
 
 /* Macros to read and write the local properties that belongs the given object 
 without exposing how the properties are stored. */
@@ -81,9 +97,15 @@ how the properties are stored. The implicit property owner is self. */
 	GET_OBJECT_PROPERTY(self, property)
 #define HAS_PROPERTY(property) \
 	HAS_OBJECT_PROPERTY(self, property)
+	
+/* Assertions */
 
+// TODO: Move to EtoileFoundation as ETAssertFail()
 #define ASSERT_FAIL(msg) NSAssert(NO, msg)
+// TODO: Use ETAssertUnreachable() instead
 #define ASSERT_INVALID_CASE ASSERT_FAIL(@"Reached invalid branch statement. e.g. the default case in a switch statement")
+
+/* For debugging */
 
 //#define DEBUG_DRAWING
 

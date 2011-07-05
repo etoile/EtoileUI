@@ -98,6 +98,8 @@ method will reuse the action handler to be set on every created items. */
 - (BOOL) resignFirstResponder;
 - (BOOL) acceptsFirstMouse;
 
+- (void) insertRectangle: (id)sender onItem: (ETLayoutItem *)item;
+
 - (void) sendBackward: (id)sender onItem: (ETLayoutItem *)item;
 - (void) sendToBack: (id)sender onItem: (ETLayoutItem *)item;
 - (void) bringForward: (id)sender onItem: (ETLayoutItem *)item;

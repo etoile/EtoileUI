@@ -730,7 +730,7 @@ on the selection elements, when the receiver becomes the first responder. */
 		stringByAppendingString: @"onItem:"]);
 	if ([_actionHandlerPrototype respondsToSelector: twoParamSelector])
 		return YES;
-		
+
 	/*if ([_actionHandlerPrototype respondsToSelector: aSelector])
 		return YES;*/
 
@@ -761,9 +761,18 @@ on the selection elements, when the receiver becomes the first responder. */
 		return;
 	}
 
-	FOREACH([self selectedItems], item, ETLayoutItem *)
+	ETLog(@"Forward %@", inv);
+
+	if ([[self selectedItems] isEmpty])
 	{
-			[inv invokeWithTarget: item];
+		[inv invokeWithTarget: [self targetItem]];
+	}
+	else
+	{
+		FOREACH([self selectedItems], item, ETLayoutItem *)
+		{
+				[inv invokeWithTarget: item];
+		}
 	}
 }
 

@@ -13,7 +13,9 @@
 #import "ETGeometry.h"
 #import "ETLayoutItem.h"
 #import "EtoileUIProperties.h"
-#import "ETCompatibility.h"
+#ifdef OBJECTMERGING
+#import <ObjectMerging/COEditingContext.h>
+#endif
 
 @implementation ETStyle
 
@@ -115,6 +117,17 @@ Returns the shared instance that corresponds to the receiver class. */
 
 	return style;
 }
+
+/*- (id) init
+{
+	COEditingContext *ctxt = [COEditingContext currentContext];
+
+	self = [super initWithUUID: [ETUUID UUID]
+	         entityDescription: [[ctxt modelRepository] entityDescriptionForClass: [self class]]
+	                   context: ctxt
+	                   isFault: NO];
+	return self;
+}*/
 
 /** <override-dummy />
 Returns the initializer invocation used by -copyWithZone: to create a new 
