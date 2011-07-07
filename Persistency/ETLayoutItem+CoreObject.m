@@ -33,6 +33,19 @@
 	}
 }
 
+- (void) becomePersistentInContext: (COEditingContext *)aContext rootObject: (COObject *)aRootObject
+{
+	[super becomePersistentInContext: aContext rootObject: aRootObject];
+
+	// TODO: Leverage the model description rather than hardcoding the aspects
+	// TODO: Implement some strategy to recover in the case these aspects 
+	// are already used as embedded objects in another root object. 
+	ETAssert([[self coverStyle] isPersistent] == NO || [[self coverStyle] isRoot]);
+	[[self coverStyle] becomePersistentInContext: aContext rootObject: aRootObject];
+	ETAssert([[self styleGroup] isPersistent] == NO || [[self styleGroup] isRoot]);
+	[[self styleGroup] becomePersistentInContext: aContext rootObject: aRootObject];
+}
+
 @end
 
 @implementation ETLayoutItemGroup (CoreObject)
@@ -63,6 +76,19 @@
 	}
 
 	return collectedItems;
+}
+
+- (void) becomePersistentInContext: (COEditingContext *)aContext rootObject: (COObject *)aRootObject
+{
+	[super becomePersistentInContext: aContext rootObject: aRootObject];
+
+	// TODO: Implement some strategy to recover in the case these items or aspects
+	// are already used as embedded objects in another root object.
+	for (ETLayoutItem *item in _layoutItems)
+	{
+		ETAssert([item isPersistent] == NO || [item isRoot]);
+		[item becomePersistentInContext: aContext rootObject: aRootObject];
+	}
 }
 
 @end

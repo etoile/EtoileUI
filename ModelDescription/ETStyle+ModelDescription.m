@@ -45,7 +45,7 @@
 	// For subclasses that don't override -newEntityDescription, we must not add the 
 	// property descriptions that we will inherit through the parent (the 
 	// 'MyClassName' entity description).
-	if ([[desc name] isEqual: [ETStyle className]] == NO) 
+	if ([[desc name] isEqual: [ETShape className]] == NO) 
 		return desc;
 
 	ETPropertyDescription *path = [ETPropertyDescription descriptionWithName: @"path" type: (id)@"NSBezierPath"];
@@ -57,8 +57,6 @@
 	ETPropertyDescription *hidden = [ETPropertyDescription descriptionWithName: @"hidden" type: (id)@"BOOL"];
 
 	[desc setPropertyDescriptions: A(path, bounds, pathResizeSel, fillColor, strokeColor, alpha, hidden)];
-
-	[desc setAbstract: YES];
 
 	return desc;
 }

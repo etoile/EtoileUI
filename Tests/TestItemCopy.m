@@ -91,6 +91,10 @@ DEALLOC(DESTROY(itemFactory); DESTROY(item); DESTROY(itemGroup))
 - (NSArray *) nonCheckablePropertiesForAnyObject
 {
 	NSArray *rootObjectProperties = [(NSObject *)AUTORELEASE([[NSObject alloc] init]) propertyNames];
+
+	// FIXME: Hack to work around -[COObject newEntityDescription] issue.
+	rootObjectProperties = [rootObjectProperties arrayByAddingObjectsFromArray: A(@"parentContainer", @"parentCollections")];
+
 	return [rootObjectProperties arrayByRemovingObjectsInArray:
 		A(kETNameProperty, kETDisplayNameProperty, kETIconProperty)];
 }

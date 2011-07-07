@@ -11,13 +11,20 @@
 #import <EtoileUI/ETLayoutItemGroup.h>
 #import <EtoileUI/ETLayoutItemFactory.h>
 
-@class COEditingContext;
+@class COEditingContext, COObject;
 
 @interface ETLayoutItem (CoreObject) 
 /** Returns the owning compound document, or nil if the receiver is not persisted. 
 
 The owning compound document is an ancestor item. */
 - (ETLayoutItemGroup *) compoundDocument;
+/**  This method is only exposed to be used internally by EtoileUI.
+
+Makes the receiver persistent by inserting it into the given editing context as 
+described in -[COObject becomePersistentInContext:rootObject:].
+
+Aspects (style, layout etc.) are made persistent if needed. */
+- (void) becomePersistentInContext: (COEditingContext *)aContext rootObject: (COObject *)aRootObject;
 @end
 
 @interface ETLayoutItemGroup (CoreObject) 
@@ -28,6 +35,13 @@ The owning compound document is an ancestor item. */
 When a compound document is collected, its subtree is not visited.<br />
 The receiver is not included in the returned set. */
 - (NSSet *) descendantCompoundDocuments;
+/**  This method is only exposed to be used internally by EtoileUI.
+
+Makes the receiver persistent by inserting it into the given editing context as 
+described in -[COObject becomePersistentInContext:rootObject:].
+
+All descendant items and aspects (style, layout etc.) are made persistent if needed. */
+- (void) becomePersistentInContext: (COEditingContext *)aContext rootObject: (COObject *)aRootObject;
 @end
 
 @interface ETLayoutItemFactory (CoreObject) 

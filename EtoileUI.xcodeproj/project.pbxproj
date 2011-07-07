@@ -299,6 +299,7 @@
 		60FB0AE813C3347200C2AB94 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1058C7A1FEA54F0111CA2CBB /* Cocoa.framework */; };
 		60FB0AE913C3348000C2AB94 /* ObjectMerging.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 60FB0A2D13C3304A00C2AB94 /* ObjectMerging.framework */; };
 		60FB0AEC13C3349000C2AB94 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1058C7A1FEA54F0111CA2CBB /* Cocoa.framework */; };
+		60FB0BFA13C509A700C2AB94 /* TestPersistency.m in Sources */ = {isa = PBXBuildFile; fileRef = 60FB0BF913C509A700C2AB94 /* TestPersistency.m */; };
 		60FBB13010A0A92A00BE7E21 /* ETBasicItemStyle.h in Headers */ = {isa = PBXBuildFile; fileRef = 60FBB12F10A0A92A00BE7E21 /* ETBasicItemStyle.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		60FBB13210A0A94600BE7E21 /* ETBasicItemStyle.m in Sources */ = {isa = PBXBuildFile; fileRef = 60FBB13110A0A94600BE7E21 /* ETBasicItemStyle.m */; };
 		60FBB13310A0A94600BE7E21 /* ETBasicItemStyle.m in Sources */ = {isa = PBXBuildFile; fileRef = 60FBB13110A0A94600BE7E21 /* ETBasicItemStyle.m */; };
@@ -701,6 +702,7 @@
 		60F8C9C80F8DF19B0069FA6C /* ETHandle.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ETHandle.h; path = Headers/ETHandle.h; sourceTree = "<group>"; };
 		60F8C9CB0F8DF1AB0069FA6C /* ETHandle.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ETHandle.m; path = Source/ETHandle.m; sourceTree = "<group>"; };
 		60FB0A2613C3304A00C2AB94 /* ObjectMerging4.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = ObjectMerging4.xcodeproj; path = ../ObjectMerging/ObjectMerging4.xcodeproj; sourceTree = SOURCE_ROOT; };
+		60FB0BF913C509A700C2AB94 /* TestPersistency.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = TestPersistency.m; path = Tests/TestPersistency.m; sourceTree = "<group>"; };
 		60FBB12F10A0A92A00BE7E21 /* ETBasicItemStyle.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ETBasicItemStyle.h; path = Headers/ETBasicItemStyle.h; sourceTree = "<group>"; };
 		60FBB13110A0A94600BE7E21 /* ETBasicItemStyle.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ETBasicItemStyle.m; path = Source/ETBasicItemStyle.m; sourceTree = "<group>"; };
 		60FC2925105C112D008D2EFF /* FormExample.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = FormExample.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -947,6 +949,7 @@
 		600243CE0CD134C40023182D /* Tests */ = {
 			isa = PBXGroup;
 			children = (
+				60FB0BF913C509A700C2AB94 /* TestPersistency.m */,
 				602635E511AD413B007586E3 /* TestWidgetLayout.m */,
 				60D88883115E651000D7A8AA /* TestCell.m */,
 				60E7BD20107E7B3F00E7C0F2 /* TestStyle.m */,
@@ -1951,6 +1954,7 @@
 				60A6583B13B0D71D000A6EB6 /* ETUIItem+ModelDescription.m in Sources */,
 				60A6584613B0DD2A000A6EB6 /* ETLayoutItem+CoreObject.m in Sources */,
 				60A6586113B0EFEF000A6EB6 /* ETStyle+ModelDescription.m in Sources */,
+				60FB0BFA13C509A700C2AB94 /* TestPersistency.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
