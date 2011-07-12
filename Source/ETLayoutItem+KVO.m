@@ -112,7 +112,7 @@ receiver is not observed.
 
 Non observable properties are -usesWidgetView, 
 -enclosingDisplayView, -supervisorViewBackedAncestorItem, -windowBackedAncestorItem
--supervisorView, -ancestorItemForOpaqueLayout, ,-properties, -variableProperties, 
+-supervisorView, -ancestorItemForOpaqueLayout, ,-properties, -variableStorage, 
 -drawingFrame, -windowItem, -scrollableAreaItem, -origin,  
 -contentSize, and -inspector.
 
@@ -122,7 +122,7 @@ TODO: Move into ETLayoutItem entity description. */
 	return S(@"usesWidgetView",	
 		@"enclosingDisplayView", "supervisorViewBackedAncestorItem", 
 		@"windowBackedAncestorItem", @"supervisorView", 
-		@"ancestorItemForOpaqueLayout", @"properties", @"variableProperties", 
+		@"ancestorItemForOpaqueLayout", @"properties", @"variableStorage", 
 		@"drawingFrame", @"windowItem", @"scrollableAreaItem", 
 		@"origin",  @"contentSize", @"inspector");
 }
