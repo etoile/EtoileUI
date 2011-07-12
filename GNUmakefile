@@ -83,6 +83,7 @@ EtoileUI_HEADER_FILES = \
 	ETTitleBarItem.h \
 	ETTitleBarView.h \
 	ETUIItem.h \
+	ETUIObject.h \
 	ETView.h \
 	ETViewModelLayout.h \
 	ETWidgetLayout.h \
