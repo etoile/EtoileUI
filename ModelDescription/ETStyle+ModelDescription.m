@@ -17,17 +17,16 @@
 
 + (ETEntityDescription *) newEntityDescription
 {
-	ETEntityDescription *desc = [self newBasicEntityDescription];
+	ETEntityDescription *entity = [self newBasicEntityDescription];
 
-	// For subclasses that don't override -newEntityDescription, we must not add the 
-	// property descriptions that we will inherit through the parent (the 
-	// 'MyClassName' entity description).
-	if ([[desc name] isEqual: [ETStyle className]] == NO) 
-		return desc;
+	// For subclasses that don't override -newEntityDescription, we must not add 
+	// the property descriptions that we will inherit through the parent.
+	if ([[entity name] isEqual: [ETStyle className]] == NO) 
+		return entity;
 
 	// Nothing to declare for now
 
-	return desc;
+	return entity;
 }
 
 @end
@@ -40,13 +39,12 @@
 
 + (ETEntityDescription *) newEntityDescription
 {
-	ETEntityDescription *desc = [self newBasicEntityDescription];
+	ETEntityDescription *entity = [self newBasicEntityDescription];
 
-	// For subclasses that don't override -newEntityDescription, we must not add the 
-	// property descriptions that we will inherit through the parent (the 
-	// 'MyClassName' entity description).
-	if ([[desc name] isEqual: [ETShape className]] == NO) 
-		return desc;
+	// For subclasses that don't override -newEntityDescription, we must not add 
+	// the property descriptions that we will inherit through the parent
+	if ([[entity name] isEqual: [ETShape className]] == NO) 
+		return entity;
 
 	ETPropertyDescription *path = [ETPropertyDescription descriptionWithName: @"path" type: (id)@"NSBezierPath"];
 	ETPropertyDescription *bounds = [ETPropertyDescription descriptionWithName: @"bounds" type: (id)@"NSRect"];
@@ -56,9 +54,12 @@
 	ETPropertyDescription *alpha = [ETPropertyDescription descriptionWithName: @"alphaValue" type: (id)@"NSColor"];
 	ETPropertyDescription *hidden = [ETPropertyDescription descriptionWithName: @"hidden" type: (id)@"BOOL"];
 
-	[desc setPropertyDescriptions: A(path, bounds, pathResizeSel, fillColor, strokeColor, alpha, hidden)];
+	NSArray *persistentProperties = A(path, bounds, pathResizeSel, fillColor, strokeColor, alpha, hidden);
 
-	return desc;
+	[[persistentProperties mappedCollection] setPersistent: YES];
+	[entity setPropertyDescriptions: persistentProperties];
+
+	return entity;
 }
 
 @end
