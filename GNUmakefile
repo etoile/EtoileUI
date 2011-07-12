@@ -88,7 +88,6 @@ EtoileUI_HEADER_FILES = \
 	ETWidgetLayout.h \
 	ETWindowItem.h \
 	FSBrowserCell.h \
-	GNUstep.h \
 	NSCell+EtoileUI.h \
 	NSImage+Etoile.h \
 	NSObject+EtoileUI.h \
