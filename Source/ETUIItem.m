@@ -100,6 +100,20 @@ By default, returns NO. */
 	return newItem;
 }
 
+// FIXME: Horrible hack to return -[NSObject(Model) propertyNames] rather than 
+// letting COObject returns redundant entity-declared properties.
+// Allow EtoileUI test suite to pass all tests (it doesn't work well when 
+// -propertyNames returns redundant properties).
+- (NSArray *) NSObjectAndCOObjectPropertyNames
+{
+	return [NSArray arrayWithObjects: @"parentCollections", @"parentContainer",
+		@"icon", @"displayName", @"className", 
+		@"stringValue", @"objectValue", @"isCollection", @"isGroup", 
+		@"isMutable", @"isMutableCollection", @"isCommonObjectValue", 
+		@"isNumber", @"isString", @"isClass", @"description", 
+		@"primitiveDescription", nil];
+}
+
 - (NSArray *) propertyNames
 {
 	NSArray *properties = A(kETFlippedProperty, kETDecoratorItemProperty, 
@@ -107,7 +121,7 @@ By default, returns NO. */
 		@"decorationRect", @"isDecoratorItem", @"isWindowItem", 
 		@"isScrollableAreaItem", @"enclosingItem", @"supervisorView", 
 		@"shouldSyncSupervisorViewGeometry", @"usesWidgetView");
-	return [[super propertyNames] arrayByAddingObjectsFromArray: properties];
+	return [[self NSObjectAndCOObjectPropertyNames] arrayByAddingObjectsFromArray: properties];
 }
 
 /* <override-dummy /> 

@@ -106,8 +106,7 @@ and centers it. A strech is a scale that doesn't preserve the content proportion
 /** You must never subclass ETLayoutItem. */
 @interface ETLayoutItem : ETUIItem <NSCopying, ETObjectInspection, ETFragment>
 {
-	NSMutableDictionary *_variableProperties;
-	// TODO: Merge the two dictionaries or store the default values per object 
+	// TODO: Merge into _variableStorage or store the default values per object 
 	// in an external dictionary.
 	@private
 	NSMutableDictionary *_defaultValues;
@@ -200,7 +199,7 @@ and centers it. A strech is a scale that doesn't preserve the content proportion
 - (id) valueForProperty: (NSString *)key;
 - (BOOL) setValue: (id)value forProperty: (NSString *)key;
 - (NSArray *) propertyNames;
-- (NSDictionary *) variableProperties;
+- (NSMapTable *) variableProperties;
 
 - (BOOL) isLayoutItem;
 - (BOOL) isGroup;

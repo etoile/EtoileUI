@@ -118,36 +118,10 @@ Returns the shared instance that corresponds to the receiver class. */
 	return style;
 }
 
-/** <override-dummy />
-Returns the initializer invocation used by -copyWithZone: to create a new 
-instance. 
-
-This method returns nil. You can override it to return a custom invocation and 
-in this way shares complex initialization logic between -copyWithZone: and 
-the designated initializer in a subclass.
- 
-e.g. if you return an invocation like -initWithWindow: aWindow. 
--copyWithZone: will automatically set the target to be the copy allocated with 
-<code>[[[self class] allocWithZone: aZone]</code> and then initializes the copy 
-by invoking the invocation. */
-- (NSInvocation *) initInvocationForCopyWithZone: (NSZone *)aZone
-{
-	return nil;
-}
-
 - (id) copyWithZone: (NSZone *)aZone
 {
-	NSInvocation *initInvocation = [self initInvocationForCopyWithZone: aZone];
-	ETStyle *newStyle = [[self class] alloc];
-	
-	if (nil != initInvocation)
-	{
-		[initInvocation invokeWithTarget: newStyle];
-		[initInvocation getReturnValue: &newStyle];
-	}
-
+	ETStyle *newStyle = [super copyWithZone: aZone];
 	newStyle->_isSharedStyle = _isSharedStyle;
-
 	return newStyle;
 }
 

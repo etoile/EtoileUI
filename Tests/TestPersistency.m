@@ -28,12 +28,14 @@
 
 #define UKRectsEqual(x, y) UKTrue(NSEqualRects(x, y))
 #define UKRectsNotEqual(x, y) UKFalse(NSEqualRects(x, y))
+#define UKPointsEqual(x, y) UKTrue(NSEqualPoints(x, y))
+#define UKPointsNotEqual(x, y) UKFalse(NSEqualPoints(x, y))
+#define UKSizesEqual(x, y) UKTrue(NSEqualSizes(x, y))
 
 @interface TestPersistency : NSObject <UKTest>
 {
 	COEditingContext *ctxt;
 	ETLayoutItemFactory *itemFactory;
-	ETLayoutItem *item;
 }
 
 @end
@@ -44,11 +46,10 @@
 {
 	SUPERINIT
 	ASSIGN(itemFactory, [ETLayoutItemFactory factory]);
-	ASSIGN(item, [itemFactory item]);
 	return self;
 }
 
-DEALLOC(DESTROY(itemFactory); DESTROY(item))
+DEALLOC(DESTROY(itemFactory);)
 
 - (COEditingContext *) createContext
 {
@@ -126,6 +127,49 @@ DEALLOC(DESTROY(itemFactory); DESTROY(item))
 	UKRectsEqual(rect, [shape2 bounds]);
 
 	[self checkValidityForNewPersistentObject: shape2 isFault: NO];
+}
+
+- (void) testBasicLayoutItemSerialization
+{
+	NSRect rect = NSMakeRect(50, 20, 400, 300);
+	ETLayoutItem *item = [itemFactory item];
+
+	[item setFrame: rect];
+	[item setCoverStyle: [ETShape rectangleShape]];
+	[[item coverStyle] setFillColor: [NSColor redColor]];
+
+	UKSizesEqual(rect.size, [[item roundTripValueForProperty: @"contentBounds"] rectValue].size);
+	UKPointsEqual([item position], [[item roundTripValueForProperty: @"position"] pointValue]);
+	//UKObjectsEqual([NSColor redColor], [[item roundTripValueForProperty: @"coverStyle"] fillColor]);
+}
+
+- (void) testBasicItemPersistency
+{
+	[self recreateContext];
+
+	NSRect rect = NSMakeRect(50, 20, 400, 300);
+	ETLayoutItem *item = [itemFactory item];
+	[item setFrame: rect];
+	ETUUID *uuid = [item UUID];
+
+	UKNotNil(uuid);
+
+	[item becomePersistentInContext: ctxt rootObject: item];
+	[self checkValidityForNewPersistentObject: item isFault: NO];
+
+	[ctxt commit];
+	[self recreateContext];
+
+	ETLayoutItem *newItem = (id)[ctxt objectWithUUID: uuid];
+
+	UKNotNil(newItem);
+	UKObjectsNotSame(item, newItem);
+	UKRectsEqual([item contentBounds], [newItem contentBounds]);
+	UKPointsEqual([item position], [newItem position]);
+	UKPointsEqual([item anchorPoint], [newItem anchorPoint]);
+	UKRectsEqual([item frame], [newItem frame]);
+
+	[self checkValidityForNewPersistentObject: newItem isFault: NO];
 }
 
 @end

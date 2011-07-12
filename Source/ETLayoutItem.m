@@ -7,6 +7,7 @@
  */
 
 #import <EtoileFoundation/NSIndexPath+Etoile.h>
+#import <EtoileFoundation/NSMapTable+Etoile.h>
 #import <EtoileFoundation/NSObject+Etoile.h>
 #import <EtoileFoundation/NSObject+HOM.h>
 #import <EtoileFoundation/NSObject+Model.h>
@@ -34,8 +35,6 @@
 NSString *ETLayoutItemLayoutDidChangeNotification = @"ETLayoutItemLayoutDidChangeNotification";
 
 #define DETAILED_DESCRIPTION
-/* Don't forget that -variableProperties creates the property dictionary */
-#define VARIABLE_PROPERTIES ((NSMutableDictionary *)[self variableProperties])
 
 @interface ETLayoutItem (Private)
 - (NSString *) defaultIdentifier;
@@ -112,9 +111,6 @@ See also -setView:, -setValue: and -setRepresentedObject:.  */
 {
     SUPERINIT
 
-	// TODO: Examine common use cases and see whether we should pass a 
-	// capacity hint to improve performances.
-	_variableProperties = [[NSMutableDictionary alloc] init];
 	_defaultValues = [[NSMutableDictionary alloc] init];
 
 	_parentItem = nil;
@@ -195,7 +191,6 @@ every subclass that overrides -dealloc. */
 {
 	[self stopKVOObservationIfNeeded];
 
-	DESTROY(_variableProperties);
 	DESTROY(_defaultValues);
 	DESTROY(_styleGroup);
 	DESTROY(_coverStyle);
@@ -218,7 +213,6 @@ Default values will be copied but not individually (shallow copy). */
 {
 	ETLayoutItem *item = [super copyWithZone: aZone];
 
-	item->_variableProperties = [[NSMutableDictionary alloc] init];
 	item->_defaultValues = [_defaultValues mutableCopyWithZone: aZone];
 
 	// NOTE: Geometry synchronization logic in setters such as setFlippedView: 
@@ -1128,20 +1122,9 @@ See -valueForProperty: for more details. */
 		kETBoundingBoxProperty, kETActionProperty, kETSubtypeProperty, 
 		kETTargetProperty, kETUIMetalevelProperty, @"UIMetalayer");
 
-	properties = [[VARIABLE_PROPERTIES allKeys] arrayByAddingObjectsFromArray: properties];
+	properties = [[[self variableStorage] allKeys] arrayByAddingObjectsFromArray: properties];
 		
 	return [[super propertyNames] arrayByAddingObjectsFromArray: properties];
-}
-
-/** Returns a dictionary representation of every property/value pairs not stored 
-in ivars.
- 
-Unless you write a subclass or reflection code, you should never need this 
-method, but use the property accessors or Property Value Coding methods to read 
-and write the receiver properties. */
-- (NSDictionary *) variableProperties
-{
-	return _variableProperties;
 }
 
 /** Returns YES, see [NSObject(EtoileUI) -isLayoutItem] */

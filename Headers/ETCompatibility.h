@@ -65,21 +65,23 @@
 
 /* Properties Read and Write Macros */
 
+#define VARIABLE_STORAGE _variableStorage
+
 /* Macros to read and write the local properties that belongs the given object 
 without exposing how the properties are stored. */
 #define SET_OBJECT_PROPERTY(object, value, property) \
 	if (value != nil) \
 	{ \
-		[object->_variableProperties setObject: value forKey: property]; \
+		[object->VARIABLE_STORAGE setObject: value forKey: property]; \
 	} \
 	else \
 	{ \
-		[object->_variableProperties removeObjectForKey: property]; \
+		[object->VARIABLE_STORAGE removeObjectForKey: property]; \
 	}
 #define GET_OBJECT_PROPERTY(object, property) \
-	[object->_variableProperties objectForKey: property]
+	[object->VARIABLE_STORAGE objectForKey: property]
 #define HAS_OBJECT_PROPERTY(object, property) \
-	([object->_variableProperties objectForKey: property] != nil)
+	([object->VARIABLE_STORAGE objectForKey: property] != nil)
 
 #define SET_OBJECT_PROPERTY_AND_RELEASE(object, value, property) \
 do { \

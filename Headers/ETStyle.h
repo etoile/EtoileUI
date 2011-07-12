@@ -13,9 +13,7 @@
 #import <Foundation/Foundation.h>
 #import <AppKit/AppKit.h>
 #import <EtoileUI/ETCompatibility.h>
-#ifdef OBJECTMERGING
-#import <ObjectMerging/COObject.h>
-#endif
+#import <EtoileUI/ETUIObject.h>
 
 @class ETLayoutItem;
 
@@ -40,7 +38,7 @@ This method is usually called indirectly like that:
 ETStyle objects are usually shared between multiple style groups 
 (or other owners) . Thereby they don't know on which UI areas they are applied 
 and expect to be provided a layout item through -render:layoutItem:dirtyRect:. */
-@interface ETStyle : BASEOBJECT <NSCopying>
+@interface ETStyle : ETUIObject <NSCopying>
 {
 	@private
 	BOOL _isSharedStyle;
@@ -57,10 +55,6 @@ and expect to be provided a layout item through -render:layoutItem:dirtyRect:. *
 
 - (BOOL) isSharedStyle;
 - (void) setIsSharedStyle: (BOOL)shared;
-
-/* Copying */
-
-- (NSInvocation *) initInvocationForCopyWithZone: (NSZone *)aZone;
 
 /* Style Rendering */
 
