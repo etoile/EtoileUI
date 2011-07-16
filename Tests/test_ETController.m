@@ -184,7 +184,7 @@
 	/* Test item template */
 
 	id view = AUTORELEASE([DummyView new]);
-	id templateItem = AUTORELEASE([[ETLayoutItemGroup alloc] initWithView: view value: nil representedObject: nil]);
+	id templateItem = AUTORELEASE([[ETLayoutItemGroup alloc] initWithView: view coverStyle: nil actionHandler: nil]);
 	[controller setTemplateItemGroup: templateItem];
 	id newItemGroup = [controller makeItemGroup];
 	id newItemGroup2 = [controller makeItemGroup];

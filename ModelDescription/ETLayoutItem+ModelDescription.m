@@ -49,7 +49,9 @@
 	// TODO: Declare the numerous derived (implicitly transient) properties we have
 
 	/* Transient properties: 	
-	   _isSyncingSupervisorViewGeometry, _scrollViewShown, _wasKVOStopped */
+	   _isSyncingSupervisorViewGeometry, _scrollViewShown, _wasKVOStopped
+	   
+	   Hmm, _scrollViewShow ought to be persisted. */
 
 	NSArray *persistentProperties = A(parentItem, repObject, styleGroup, 
 		coverStyle, contentBounds, position, anchorPoint, autoresizing, 

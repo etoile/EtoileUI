@@ -91,23 +91,27 @@ Initializes and returns a layout item.
 The returned item will use +defaultItemRect as its frame. */
 - (id) init
 {
-	return [self initWithView: nil value: nil representedObject: nil];
+	return [self initWithView: nil 
+	               coverStyle: [ETBasicItemStyle sharedInstance] 
+	            actionHandler: [ETActionHandler sharedInstance]];
 }
 
 /** <init />
 You must use -[ETLayoutItemFactory itemXXX] or 
 -[ETLayoutItemFactory itemGroupXXX] methods rather than this method.
 
-Initializes and returns a layout item with the given view, value object and 
-represented object. 
+Initializes and returns a layout item with the given view, cover style and 
+action handler. 
 
 Any of the arguments can be nil.
 
 When the given view is nil, the returned item will use +defaultItemRect as its 
 frame.
 
-See also -setView:, -setValue: and -setRepresentedObject:.  */
-- (id) initWithView: (NSView *)view value: (id)value representedObject: (id)repObject
+See also -setView:, -setCoverStyle: and -setActionHandler:.  */
+- (id) initWithView: (NSView *)view 
+         coverStyle: (ETStyle *)aStyle 
+      actionHandler: (ETActionHandler *)aHandler
 {
     SUPERINIT
 
@@ -115,12 +119,9 @@ See also -setView:, -setValue: and -setRepresentedObject:.  */
 
 	_parentItem = nil;
 
-	[self setRepresentedObject: repObject];
-	[self setValue: value];
-
 	_styleGroup = [[ETStyleGroup alloc] init];
-	[self setCoverStyle: [ETBasicItemStyle sharedInstance]];	
-	[self setActionHandler: [ETActionHandler sharedInstance]];
+	[self setCoverStyle: aStyle];	
+	[self setActionHandler: aHandler];
 
 	ASSIGN(_transform, [NSAffineTransform transform]);
 	 /* Will be overriden by -setView: when the view is not nil */

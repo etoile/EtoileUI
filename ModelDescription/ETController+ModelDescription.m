@@ -8,6 +8,29 @@
 
 #import <EtoileFoundation/EtoileFoundation.h>
 #import "ETController.h"
+#import "ETNibOwner.h"
+
+@interface ETNibOwner (ModelDescription)
+@end
+
+@implementation ETNibOwner (ModelDescription)
+
++ (ETEntityDescription *) newEntityDescription
+{
+	ETEntityDescription *entity = [self newBasicEntityDescription];
+
+	// For subclasses that don't override -newEntityDescription, we must not add 
+	// the property descriptions that we will inherit through the parent
+	if ([[entity name] isEqual: [ETNibOwner className]] == NO) 
+		return entity;
+
+	// TODO: Declare the property descriptions
+
+	return entity;
+}
+
+@end
+
 
 @interface ETController (ModelDescription)
 @end

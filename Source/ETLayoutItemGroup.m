@@ -101,29 +101,17 @@ See also +enablesAutolayout. */
 
 /* Initialization */
 
-/** <init />
-You must use -[ETLayoutItemFactory itemGroupXXX] methods rather than this method.
-
-Initializes and returns a layout item groups with the given child items, view, 
-value object and represented object. 
-
-Any of the arguments can be nil.
-
-See also -[ETLayoutItem initWithView:value:representedObject:]. */
-- (id) initWithItems: (NSArray *)layoutItems view: (NSView *)view 
-	value: (id)value representedObject: (id)repObject
+- (id) initWithView: (NSView *)view 
+         coverStyle: (ETStyle *)aStyle 
+      actionHandler: (ETActionHandler *)aHandler
 {
-    self = [super initWithView: view value: value representedObject: repObject];
+    self = [super initWithView: view coverStyle: aStyle actionHandler: aHandler];
 	if (nil == self)
 		return nil;
 
 	_layoutItems = [[NSMutableArray alloc] init];
 	_sortedItems = nil;
 	_arrangedItems = nil;
-	if (layoutItems != nil)
-	{
-		[self addItems: layoutItems];
-	}
 
 	[self assignLayout: [ETFixedLayout layout]];
 	_autolayout = YES;
@@ -138,12 +126,6 @@ See also -[ETLayoutItem initWithView:value:representedObject:]. */
     return self;
 }
 
-/* Overriden ETLayoutItem designated initializer */
-- (id) initWithView: (NSView *)view value: (id)value representedObject: (id)repObject
-{
-	return [self initWithItems: nil view: view value: value representedObject: repObject];
-}
-
 /** Initializes and returns a layer item to be encaspulated in a layout.
 
 You should never need to use this method.
@@ -152,11 +134,7 @@ See also -isLayerItem. */
 - (id) initAsLayerItem
 {
 	_isLayerItem = YES;
-
-	self = [self initWithItems: nil view: nil value: nil representedObject: nil];
-	[self setActionHandler: nil];
-	[self setCoverStyle: nil];
-
+	self = [self initWithView: nil coverStyle: nil actionHandler: nil];
 	return self;
 }
 

@@ -16,21 +16,22 @@ NSString *kETManipulatedObjectProperty = @"manipulatedObject";
 
 @implementation ETHandle
 
-- (id) initWithView: (NSView *)view value: (id)value representedObject: (id)repObject
+- (id) initWithView: (NSView *)view 
+         coverStyle: (ETStyle *)aStyle 
+      actionHandler: (ETActionHandler *)aHandler
 {
 	return nil;
 }
 
-- (id) initWithActionHandler: (ETActionHandler *)anHandler 
+- (id) initWithActionHandler: (ETActionHandler *)aHandler 
            manipulatedObject: (id)aTarget
 {
-	self = [super initWithView: nil value: nil representedObject: nil];
+	/* Pass a nil cover style to suppress the default item style */
+	self = [super initWithView: nil coverStyle: nil actionHandler: aHandler];
 	if (self == nil)
 		return nil;
 
-	[self setActionHandler: anHandler];
-	[self setStyle: [ETBasicHandleStyle sharedInstance]];
-	[self setCoverStyle: nil]; /* Suppress the default ETLayoutItem style */
+	[self setStyle: [ETBasicHandleStyle sharedInstance]]; 
 	[self setManipulatedObject: aTarget];
 	[self setFlipped: YES];
 	//[super setFrame: NSMakeRect(-5, -5, 10, 10)];
@@ -391,7 +392,9 @@ static ETBasicHandleStyle *sharedBasicHandleStyle = nil;
 
 @implementation ETHandleGroup
 
-- (id) initWithItems: (NSArray *)layoutItems view: (NSView *)view value: (id)value representedObject: (id)repObject
+- (id) initWithView: (NSView *)view 
+         coverStyle: (ETStyle *)aStyle 
+      actionHandler: (ETActionHandler *)aHandler
 {
 	return nil;
 }
@@ -400,7 +403,7 @@ static ETBasicHandleStyle *sharedBasicHandleStyle = nil;
 	AUTORELEASE([[ETHandle alloc] initWithActionHandler: [x sharedInstance] \
 	                                  manipulatedObject: self])
 
-- (id) initWithActionHandler: (ETActionHandler *)anHandler 
+- (id) initWithActionHandler: (ETActionHandler *)aHandler 
            manipulatedObject: (id)aTarget
 {
 	NSArray *handles = A(HANDLE(ETTopLeftHandleActionHandler), 
@@ -413,16 +416,16 @@ static ETBasicHandleStyle *sharedBasicHandleStyle = nil;
                          HANDLE(ETBottomHandleActionHandler));
 	//NSArray *handles = A(HANDLE(ETTopLeftHandleActionHandler));
 
-	// NOTE: -setManipulatedObject: will set aTarget as a representedObject
-	self = [super initWithItems: handles view: nil value: nil representedObject: nil];
+	/* Pass a nil cover style to suppress the default item style */
+	self = [super initWithView: nil coverStyle: nil actionHandler: aHandler];
 	if (self == nil)
 		return nil;
 
+	[self addItems: handles];
 	// NOTE: Must be called before -setManipulatedObject: that sets the handle
 	// locations.
 	[self setFlipped: YES];
-	[self setCoverStyle: nil]; /* Suppress the default ETLayoutItem style */
-	[self setActionHandler: anHandler];
+	// NOTE: -setManipulatedObject: will set aTarget as a representedObject
 	[self setManipulatedObject: aTarget];
 
 	return self;

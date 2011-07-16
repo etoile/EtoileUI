@@ -19,7 +19,7 @@
 
 @class ETUTI;
 @class ETView, ETLayout, ETLayoutItemGroup, 
-ETDecoratorItem, ETScrollableAreaItem, ETWindowItem, ETStyleGroup;
+ETDecoratorItem, ETScrollableAreaItem, ETWindowItem, ETActionHandler, ETStyleGroup;
 @protocol ETInspector;
 
 /** Describes how the item is resized when its parent item is resized.
@@ -140,7 +140,9 @@ and centers it. A strech is a scale that doesn't preserve the content proportion
 
 /* Initialization */
 
-- (id) initWithView: (NSView *)view value: (id)value representedObject: (id)repObject;
+- (id) initWithView: (NSView *)view 
+         coverStyle: (ETStyle *)aStyle 
+      actionHandler: (ETActionHandler *)aHandler;
 
 - (void) stopKVOObservation;
 - (void) stopKVOObservationIfNeeded;

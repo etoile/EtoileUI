@@ -13,17 +13,29 @@
 #import <Foundation/Foundation.h>
 #import <AppKit/AppKit.h>
 
-@class ETLayoutItem, ETLayoutItemGroup, ETScrollableAreaItem, ETStyle, ETWindowItem;
+@class ETLayoutItem, ETLayoutItemGroup, ETScrollableAreaItem, ETWindowItem, 
+ETStyle, ETActionHandler;
 
 
 @interface ETLayoutItemFactory : NSObject
 {
 	@private
+	BOOL _isCreatingRootObject;
+	ETStyle *_currentCoverStyle;
+	ETActionHandler *_currentActionHandler;
 	ETStyle *_currentBarElementStyle;
 	float _currentBarElementHeight;
 }
 
 + (id) factory;
+
+/** Aspect Sharing Boundaries and Persistency */
+
+- (void) beginRootObject;
+- (void) endRootObject;
+- (BOOL) isCreatingRootObject;
+- (ETStyle *) currentCoverStyle;
+- (ETActionHandler *) currentActionHandler;
 
 /* Bar Building Settings */
 

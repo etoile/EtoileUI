@@ -46,6 +46,12 @@
 	[[self styleGroup] becomePersistentInContext: aContext rootObject: aRootObject];
 }
 
+- (void) awakeFromFetch
+{
+	// TODO: May be reset the bounding box if not persisted
+	//_boundingBox = ETNullRect;
+}
+
 @end
 
 @implementation ETLayoutItemGroup (CoreObject)
@@ -82,6 +88,7 @@
 {
 	[super becomePersistentInContext: aContext rootObject: aRootObject];
 
+	// TODO: Leverage the model description rather than hardcoding the aspects
 	// TODO: Implement some strategy to recover in the case these items or aspects
 	// are already used as embedded objects in another root object.
 	for (ETLayoutItem *item in _layoutItems)
@@ -89,6 +96,17 @@
 		ETAssert([item isPersistent] == NO || [item isRoot]);
 		[item becomePersistentInContext: aContext rootObject: aRootObject];
 	}
+	ETAssert([[self controller] isPersistent] == NO || [[self controller] isRoot]);
+	[[self controller] becomePersistentInContext: aContext rootObject: aRootObject];
+	// TODO: Move layout to ETLayoutItem once well supported
+	ETAssert([[self layout] isPersistent] == NO || [[self layout] isRoot]);
+	[[self layout] becomePersistentInContext: aContext rootObject: aRootObject];
+}
+
+- (void) setItems: (NSArray *)items
+{
+	DESTROY(_layoutItems);
+	_layoutItems = [items mutableCopy];
 }
 
 @end
@@ -105,6 +123,7 @@
 	COEditingContext *ctxt = (aCtxt != nil ? aCtxt : [COEditingContext currentContext]);
 	return [ctxt insertObjectWithClass: [ETLayoutItemGroup class]];
 }
+
 @end
 
 #endif

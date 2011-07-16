@@ -14,6 +14,7 @@
 
 #import <Foundation/Foundation.h>
 #import <AppKit/AppKit.h>
+#import <EtoileUI/ETUIObject.h>
 
 /** You can use ETNibOwner or a subclass instance to easily load a nib, the 
 instance will be set as the File's Owner proxy, and when released it will 
@@ -52,7 +53,7 @@ automatically loads the Nib file which is named just like the concrete
 ETNibOwner subclass it is an instance of.<br />
 For example, a direct instance of the ETNibOwner subclass "PreferencesPanel"
 would try to load the Nib file named "PreferencesPanel.nib". */
-@interface ETNibOwner : NSObject //<NSCopying>
+@interface ETNibOwner : ETUIObject //<NSCopying>
 {
 	@private
 	NSString *_nibName;

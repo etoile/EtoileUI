@@ -43,14 +43,11 @@
 
 @implementation ETInspector
 
-- (id) init
+- (id) initWithView: (NSView *)view 
+         coverStyle: (ETStyle *)aStyle 
+      actionHandler: (ETActionHandler *)aHandler
 {
-	return [self initWithView: nil value: nil representedObject: nil];
-}
-
-- (ETLayoutItem *) initWithView: (NSView *)view value: (id)value representedObject: (id)repObject
-{
-	self = (ETInspector *)[super initWithView: view value: value representedObject: repObject];
+	self = [super initWithView: view coverStyle: aStyle actionHandler: aHandler];
 	
 	if (self != nil)
 	{

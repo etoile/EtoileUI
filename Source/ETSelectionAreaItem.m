@@ -16,9 +16,12 @@
 /** <init />
 Intializes and returns a selection area item based on a rectangle shape with a 
 dark gray outline, a light gray interior and an overall alpha value of 0.5. */
-- (id) initWithView: (NSView *)view value: (id)value representedObject: (id)repObject
+- (id) initWithView: (NSView *)view 
+         coverStyle: (ETStyle *)aStyle 
+      actionHandler: (ETActionHandler *)aHandler
 {
-	self = [super initWithView: view value: value representedObject: repObject];
+	/* Pass a nil cover style to suppress the default item style */
+	self = [super initWithView: view coverStyle: nil actionHandler: aHandler];
 	if (self == nil)
 		return nil;
 	
@@ -28,7 +31,6 @@ dark gray outline, a light gray interior and an overall alpha value of 0.5. */
 	[shape setFillColor: [NSColor lightGrayColor]];
 	[shape setAlphaValue: 0.5];
 	[self setRepresentedObject: shape];
-	[self setCoverStyle: nil];
 	[self setStyle: shape];
 
     return self;

@@ -51,11 +51,6 @@
 + (void) enablesAutolayout;
 + (void) disablesAutolayout;
 
-/* Initialization */
-
-- (id) initWithItems: (NSArray *)layoutItems view: (NSView *)view 
-	value: (id)value representedObject: (id)repObject;
-
 /* Traversing Layout Item Tree */
 
 - (ETLayoutItem *) itemAtIndexPath: (NSIndexPath *)path;

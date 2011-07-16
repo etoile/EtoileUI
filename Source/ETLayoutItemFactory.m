@@ -60,8 +60,82 @@ Returns the shared instance that corresponds to the receiver class. */
 
 - (void) dealloc
 {
+	DESTROY(_currentCoverStyle);
+	DESTROY(_currentActionHandler);
 	DESTROY(_currentBarElementStyle);
 	[super dealloc];
+}
+
+/** Declares a new root object scope.
+
+Can be used to look up shared aspects to set on an item.
+
+For example, cover style or action handler are shared aspects usually.
+
+For each shared aspect, each root object should use its own instance. Aspects 
+should usually be shared within a root object graph, but not between several 
+root objects.<br />
+To share an aspect between several root objects, the aspect has to be turned 
+into a root object.
+
+When -isCreatingRootObject returns NO, you should use +sharedInstance on the 
+aspect class to get the shared aspect. See -currentCoverStyle and 
+-currentActionHandler as examples. */
+- (void) beginRootObject
+{
+	NSAssert(_isCreatingRootObject == NO, @"You must call -endRootObject to declare a new root object now");
+	ETAssert(_currentCoverStyle == nil);
+	ETAssert(_currentActionHandler == nil);
+	_isCreatingRootObject = YES;
+}
+
+/** Ends the current root object scope.
+
+See -beginRootObject. */
+- (void) endRootObject
+{
+	_isCreatingRootObject = NO;
+	DESTROY(_currentCoverStyle);
+	DESTROY(_currentActionHandler);
+}
+
+/** Returns whether -beginRootObject has been called but not yet balanced by 
+-endRootObject.
+
+By default, returns NO. */
+- (BOOL) isCreatingRootObject
+{
+	return _isCreatingRootObject;
+}
+
+/** Returns the shared cover style in the current root object graph.
+
+See also -beginRootObject. */
+- (ETStyle *) currentCoverStyle
+{
+	if ([self isCreatingRootObject] == NO)
+		return [ETBasicItemStyle sharedInstance];
+
+	if (_currentCoverStyle == nil)
+	{
+		_currentCoverStyle = [[ETBasicItemStyle alloc] init];
+	}
+	return _currentCoverStyle;
+}
+
+/** Returns the shared action handler in the current root object graph.
+
+See also -beginRootObject. */
+- (ETActionHandler *) currentActionHandler
+{
+	if ([self isCreatingRootObject] == NO)
+		return [ETActionHandler sharedInstance];
+
+	if (_currentActionHandler == nil)
+	{
+		_currentActionHandler = [[ETActionHandler alloc] init];
+	}
+	return _currentActionHandler;
 }
 
 /* Bar Building Settings */
@@ -107,13 +181,15 @@ This height is also identical to the standard toolbar height in Aqua. */
 /** Return a new blank layout item. */
 - (ETLayoutItem *) item
 {
-	return (ETLayoutItem *)AUTORELEASE([[ETLayoutItem alloc] init]);
+	return [self itemWithView: nil];
 }
 
 /** Returns a new layout item to which the given view gets bound. */
 - (ETLayoutItem *) itemWithView: (NSView *)view
 {
-	return (ETLayoutItem *)AUTORELEASE([[ETLayoutItem alloc] initWithView: view value: nil representedObject: nil]);
+	return (ETLayoutItem *)AUTORELEASE([[ETLayoutItem alloc] initWithView: view
+                                                               coverStyle: [self currentCoverStyle]
+	                                                        actionHandler: [self currentActionHandler]]);
 }
 
 /** Returns a new layout item which represents the given object and treats it 
@@ -127,7 +203,9 @@ you pass an NSString, the layout item properties won't include
 See also -[NSObject(Model) isCommonObjectValue] in EtoileFoundation. */
 - (ETLayoutItem *) itemWithValue: (id)value
 {
-	return (ETLayoutItem *)AUTORELEASE([[ETLayoutItem alloc] initWithView: nil value: value representedObject: nil]);
+	ETLayoutItem *item = [self item];
+	[item setValue: value];
+	return item;
 }
 
 /** Returns a new layout item which represents the given object.
@@ -142,7 +220,9 @@ item itself as a represented object and the returned item will be a proxy or a
 meta representation. */
 - (ETLayoutItem *) itemWithRepresentedObject: (id)object
 {
-	return (ETLayoutItem *)AUTORELEASE([[ETLayoutItem alloc] initWithView: nil value: nil representedObject: object]);
+	ETLayoutItem *item = [self item];
+	[item setRepresentedObject: object];
+	return item;
 }
 
 /** <override-never /> 
@@ -203,13 +283,15 @@ shared style returned by -currentBarElementStyle.  */
 /** Returns a new blank layout item group. */
 - (ETLayoutItemGroup *) itemGroup
 {
-	return AUTORELEASE([[ETLayoutItemGroup alloc] init]);
+	return AUTORELEASE([[ETLayoutItemGroup alloc] initWithView: nil 
+	                                                coverStyle: [self currentCoverStyle]
+	                                             actionHandler: [self currentActionHandler]]);
 }
 
 /** Returns a new blank layout item group initialized with the given frame. */
 - (ETLayoutItemGroup *) itemGroupWithFrame: (NSRect)aRect
 {
-	ETLayoutItemGroup *item = AUTORELEASE([[ETLayoutItemGroup alloc] init]);
+	ETLayoutItemGroup *item = [self itemGroup];
 	[item setFrame: aRect];
 	return item;
 }
@@ -225,7 +307,9 @@ An NSInvalidArgumentException will be raised if you pass nil. */
 /** Returns a new layout item group which contains the given items as children. */ 
 - (ETLayoutItemGroup *) itemGroupWithItems: (NSArray *)items
 {
-	return AUTORELEASE([[ETLayoutItemGroup alloc] initWithItems: items view: nil value: nil representedObject: nil]);
+	ETLayoutItemGroup *itemGroup = [self itemGroup];
+	[itemGroup addItems: items];
+	return itemGroup;
 }
 
 /** Returns a new layout item group which represents the given object and 
@@ -240,7 +324,9 @@ and item groups have to be labeled/named with the 'value' property.
 See also -itemWithValue:. */
 - (ETLayoutItemGroup *) itemGroupWithValue: (id)value
 {
-	return AUTORELEASE([[ETLayoutItemGroup alloc] initWithView: nil value: value representedObject: nil]);
+	ETLayoutItemGroup *itemGroup = [self itemGroup];
+	[itemGroup setValue: value];
+	return itemGroup;
 }
 
 /** Returns a new layout item group which represents the given object, usually 
@@ -253,7 +339,9 @@ possibly the Collection protocols to traverse the object graph connected to it.
 See also -itemWithRepresentedObject:. */
 - (ETLayoutItemGroup *) itemGroupWithRepresentedObject: (id)object
 {
-	return AUTORELEASE([[ETLayoutItemGroup alloc] initWithView: nil value: nil representedObject: object]);
+	ETLayoutItemGroup *itemGroup = [self itemGroup];
+	[itemGroup setRepresentedObject: object];
+	return itemGroup;
 }
 
 /** Returns a new layout item group set up as a graphics group with 

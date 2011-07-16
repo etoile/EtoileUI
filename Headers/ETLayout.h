@@ -12,6 +12,7 @@
 
 #import <Foundation/Foundation.h>
 #import <AppKit/AppKit.h>
+#import <EtoileUI/ETUIObject.h>
 
 @class ETDropIndicator, ETTool, ETLineFragment, ETLayoutItem, ETLayoutItemGroup, ETView;
 
@@ -132,7 +133,7 @@ typedef enum _ETSizeConstraintStyle
 } ETSizeConstraintStyle;
 
 
-@interface ETLayout : NSObject <NSCopying>
+@interface ETLayout : ETUIObject <NSCopying>
 {
 	id _layoutContext; /* Weak reference */
 

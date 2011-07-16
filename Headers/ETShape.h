@@ -37,7 +37,9 @@ implemented in a another framework with a category). */
 
 + (ETShape *) shapeWithBezierPath: (NSBezierPath *)aPath;
 + (ETShape *) rectangleShapeWithRect: (NSRect)aRect;
++ (ETShape *) rectangleShape;
 + (ETShape *) ovalShapeWithRect: (NSRect)aRect;
++ (ETShape *) ovalShape;
 
 - (id) initWithBezierPath: (NSBezierPath *)aPath;
 

@@ -20,6 +20,7 @@
 #import <ObjectMerging/COObject.h>
 #import <ObjectMerging/COStore.h>
 #import "ETActionHandler.h"
+#import "ETController.h"
 #import "ETLayoutItem.h"
 #import "ETLayoutItemFactory.h"
 #import "ETLayoutItemGroup.h"
@@ -129,14 +130,21 @@ DEALLOC(DESTROY(itemFactory);)
 	[self checkValidityForNewPersistentObject: shape2 isFault: NO];
 }
 
-- (void) testBasicLayoutItemSerialization
+- (ETLayoutItem *) basicItemWithRect: (NSRect)rect
 {
-	NSRect rect = NSMakeRect(50, 20, 400, 300);
 	ETLayoutItem *item = [itemFactory item];
 
 	[item setFrame: rect];
 	[item setCoverStyle: [ETShape rectangleShape]];
 	[[item coverStyle] setFillColor: [NSColor redColor]];
+
+	return item;
+}
+
+- (void) testBasicItemSerialization
+{
+	NSRect rect = NSMakeRect(50, 20, 400, 300);
+	ETLayoutItem *item = [self basicItemWithRect: rect];
 
 	UKSizesEqual(rect.size, [[item roundTripValueForProperty: @"contentBounds"] rectValue].size);
 	UKPointsEqual([item position], [[item roundTripValueForProperty: @"position"] pointValue]);
@@ -170,6 +178,83 @@ DEALLOC(DESTROY(itemFactory);)
 	UKRectsEqual([item frame], [newItem frame]);
 
 	[self checkValidityForNewPersistentObject: newItem isFault: NO];
+}
+
+- (ETLayoutItemGroup *) basicItemGroupWithRect: (NSRect)rect
+{
+	[itemFactory beginRootObject];
+
+	ETLayoutItem *item = [self basicItemWithRect: NSMakeRect(10, 10, 50, 50)];
+	ETLayoutItemGroup *itemGroup = [itemFactory itemGroupWithItems: A(item)];
+	ETController *controller = AUTORELEASE([[ETController alloc] init]);
+
+	[itemGroup setFrame: rect];
+	[itemGroup setShouldMutateRepresentedObject: YES];
+	[itemGroup setController: controller];
+
+	[itemFactory endRootObject];
+
+	return itemGroup;
+}
+
+- (void) testBasicItemGroupSerialization
+{
+	NSRect rect = NSMakeRect(50, 20, 400, 300);
+	ETLayoutItemGroup *itemGroup = [self basicItemGroupWithRect: rect];
+
+	UKSizesEqual(rect.size, [[itemGroup roundTripValueForProperty: @"contentBounds"] rectValue].size);
+	UKPointsEqual([itemGroup position], [[itemGroup roundTripValueForProperty: @"position"] pointValue]);
+	UKTrue([[itemGroup roundTripValueForProperty: @"shouldMutateRepresentedObject"] boolValue]);
+}
+
+- (void) testBasicItemGroupPersistency
+{
+	[self recreateContext];
+
+	NSRect rect = NSMakeRect(50, 20, 400, 300);
+	ETLayoutItemGroup *itemGroup = [self basicItemGroupWithRect: rect];
+	ETLayoutItem *item = [itemGroup firstItem];
+	ETController *controller = [itemGroup controller];
+
+	ETUUID *uuid = [itemGroup UUID];
+
+	UKNotNil(uuid);
+	UKNotNil([item UUID]);
+
+	[itemGroup becomePersistentInContext: ctxt rootObject: itemGroup];
+	[self checkValidityForNewPersistentObject: itemGroup isFault: NO];
+	[self checkValidityForNewPersistentObject: item isFault: NO];
+	[self checkValidityForNewPersistentObject: controller isFault: NO];
+
+	[ctxt commit];
+	[self recreateContext];
+
+	ETLayoutItemGroup *newItemGroup = (id)[ctxt objectWithUUID: uuid];
+	ETLayoutItem *newItem = (id)[ctxt objectWithUUID: [item UUID]];
+	ETController *newController = (id)[ctxt objectWithUUID: [controller UUID]];
+
+	UKNotNil(newItemGroup);
+	UKObjectsNotSame(itemGroup, newItemGroup);
+	UKRectsEqual([itemGroup contentBounds], [newItemGroup contentBounds]);
+	UKPointsEqual([itemGroup position], [newItemGroup position]);
+	UKPointsEqual([itemGroup anchorPoint], [newItemGroup anchorPoint]);
+	UKRectsEqual([itemGroup frame], [newItemGroup frame]);
+	UKObjectsEqual(A(newItem), [newItemGroup items]);
+	UKObjectsEqual(newController, [newItemGroup controller]);
+
+	UKNotNil(newController);
+	UKObjectsEqual(newItemGroup, [newController content]);
+
+	UKNotNil(newItem);
+	UKObjectsNotSame(item, newItem);
+	UKRectsEqual([item contentBounds], [newItem contentBounds]);
+	UKPointsEqual([item position], [newItem position]);
+	UKPointsEqual([item anchorPoint], [newItem anchorPoint]);
+	UKRectsEqual([item frame], [newItem frame]);
+
+	[self checkValidityForNewPersistentObject: newItemGroup isFault: NO];
+	[self checkValidityForNewPersistentObject: newItem isFault: NO];
+	[self checkValidityForNewPersistentObject: newController isFault: NO];
 }
 
 @end
