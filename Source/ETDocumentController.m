@@ -174,6 +174,21 @@ By default, returns the item represented object UTI, otherwise the item UTI. */
 	return [[anItem subject] UTI];
 }
 
+- (void) didOpenDocumentItem: (ETLayoutItem *)anItem
+{
+
+}
+
+- (void) didCreateDocumentItem: (ETLayoutItem *)anItem
+{
+
+}
+
+- (void) willCloseDocumentItem: (ETLayoutItem *)anItem
+{
+
+}
+
 - (NSArray *) URLsFromRunningOpenPanel
 {
 	NSOpenPanel *op = [NSOpenPanel openPanel];
@@ -219,6 +234,7 @@ See also -currentObjectType. */
 	                                              options: options]);
 	[self insertObject: item atIndex: ETUndeterminedIndex];
 	_numberOfUntitledDocuments++;
+	[self didCreateDocumentItem: item];
 }
 
 /** Creates one or more objects with the URLs the user has choosen in an open 
@@ -254,6 +270,7 @@ See also [ETDocumentCreation] protocol. */
 
 	/* Highlight the last opened item (e.g. in a table layout) */	
 	[[self content] setSelectionIndex: [[self content] indexOfItem: openedItem]];
+	[self didOpenDocumentItem: openedItem];
 }
 
 - (IBAction) saveDocument: (id)sender
@@ -269,16 +286,19 @@ See also [ETDocumentCreation] protocol. */
 - (IBAction) newDocumentFromTemplate: (id)sender
 {
 	// TODO: Implement
+	//[self didCreateDocumentItem: item];
 }
 
 - (IBAction) newDocumentCopy: (id)sender
 {
 	// TODO: Implement
+	//[self didCreateDocumentItem: item];
 }
 
 - (IBAction) openSelection: (id)sender
 {
 	// TODO: Implement
+	//[self didOpenDocumentItem: item];
 }
 
 - (IBAction) markDocumentVersion: (id)sender
@@ -296,6 +316,11 @@ See also [ETDocumentCreation] protocol. */
 	// TODO: Implement
 }
 
+- (IBAction) close: (id)sender
+{
+	[self willCloseDocumentItem: [self activeItem]];
+	[[self activeItem] removeFromParent];
+}
 
 - (IBAction) exportDocument: (id)sender
 {

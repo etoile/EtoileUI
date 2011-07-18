@@ -39,7 +39,7 @@ integration etc.) without having to resort to another API. */
 	NSInteger _numberOfUntitledDocuments;
 }
 
-/* Querying Controller Content */
+/** @taskunit Querying Controller Content */
 
 - (NSArray *) itemsForType: (ETUTI *)aUTI;
 - (NSArray *) itemsForURL: (NSURL *)aURL;
@@ -47,40 +47,47 @@ integration etc.) without having to resort to another API. */
 - (id) activeItem;
 - (NSUInteger) numberOfUntitledDocuments;
 
-/* Insertion */
+/** @taskunit Insertion */
 
 - (ETLayoutItem *) openItemWithURL: (NSURL *)aURL options: (NSDictionary *)options;
 - (BOOL) allowsMultipleInstancesForURL: (NSURL *)aURL;
 
-/* Type Determination */
+/** @taskunit Type Determination */
 
 + (ETUTI *) typeForURL: (NSURL *)aURL;
 - (ETUTI *) typeForWritingItem: (ETLayoutItem *)anItem;
 
-/* Creation Actions */
+/** @taskunit Notifications */
+
+- (void) didOpenDocumentItem: (ETLayoutItem *)anItem;
+- (void) didCreateDocumentItem: (ETLayoutItem *)anItem;
+- (void) willCloseDocumentItem: (ETLayoutItem *)anItem;
+
+/** @taskunit Creation Actions */
 
 - (IBAction) newDocument: (id)sender;
 - (IBAction) newDocumentFromTemplate: (id)sender;
 - (IBAction) newDocumentCopy: (id)sender;
 
-/* Opening Actions */
+/** @taskunit Opening Actions */
 
 - (IBAction) openDocument: (id)sender;
 - (IBAction) openSelection: (id)sender;
 
-/* History Actions */
+/** @taskunit History Actions */
 
 - (IBAction) saveDocument: (id)sender;
 - (IBAction) markDocumentVersion: (id)sender;
 - (IBAction) revertDocumentTo: (id)sender;
 - (IBAction) browseDocumentHistory: (id)sender;
 
-/* Other Actions */
+/** @taskunit Other Actions */
 
+- (IBAction) close: (id)sender;
 - (IBAction) exportDocument: (id)sender;
 - (IBAction) showDocumentInfos: (id)sender;
 
-/* Error Reporting */
+/** @taskunit Error Reporting */
 
 - (NSError *) error;
 
