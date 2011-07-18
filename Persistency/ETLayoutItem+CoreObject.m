@@ -44,6 +44,8 @@
 	[[self coverStyle] becomePersistentInContext: aContext rootObject: aRootObject];
 	ETAssert([[self styleGroup] isPersistent] == NO || [[self styleGroup] isRoot]);
 	[[self styleGroup] becomePersistentInContext: aContext rootObject: aRootObject];
+	ETAssert([[self actionHandler] isPersistent] == NO || [[self actionHandler] isRoot]);
+	[[self actionHandler] becomePersistentInContext: aContext rootObject: aRootObject];
 }
 
 - (void) awakeFromFetch
