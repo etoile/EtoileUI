@@ -55,6 +55,7 @@ the UI won't reflect the latest receiver content. */
 		DESTROY(_arrangedItems);
 		_filtered = NO;
 		_sorted = NO;
+		[self didChangeValueForProperty: @"items"];
 	}
 }
 
@@ -154,6 +155,12 @@ inside another -begin/endMutate pair.  */
 
 		[self handleAttachItem: item];
 		[_layoutItems addObject: item];
+#ifdef OBJECTMERGING
+		if ([self isPersistent])
+		{
+			[item becomePersistentInContext: [self editingContext] rootObject: [self rootObject]];
+		}
+#endif
 		[self setHasNewContent: YES];
 		if ([self canUpdateLayout])
 			[self updateLayout];
@@ -220,6 +227,12 @@ inside another -begin/endMutate pair.  */
 
 		[self handleAttachItem: item];
 		[_layoutItems insertObject: item atIndex: index];
+#ifdef OBJECTMERGING
+		if ([self isPersistent])
+		{
+			[item becomePersistentInContext: [self editingContext] rootObject: [self rootObject]];
+		}
+#endif
 		[self setHasNewContent: YES];
 		if ([self canUpdateLayout])
 			[self updateLayout];
