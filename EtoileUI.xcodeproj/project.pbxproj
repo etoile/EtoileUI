@@ -75,6 +75,9 @@
 		60311D640CFB9A84001A699E /* NSWindow+Etoile.m in Sources */ = {isa = PBXBuildFile; fileRef = 60311D620CFB9A84001A699E /* NSWindow+Etoile.m */; };
 		60330B590F7CEF1300A1E8C1 /* ETDecoratorItem.h in Headers */ = {isa = PBXBuildFile; fileRef = 60330B570F7CEF1300A1E8C1 /* ETDecoratorItem.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		60330B5B0F7CEF3500A1E8C1 /* ETDecoratorItem.m in Sources */ = {isa = PBXBuildFile; fileRef = 60330B5A0F7CEF3400A1E8C1 /* ETDecoratorItem.m */; };
+		6035ACC113D59C27005B2280 /* ETStyle+CoreObject.m in Sources */ = {isa = PBXBuildFile; fileRef = 6035ACBF13D59C27005B2280 /* ETStyle+CoreObject.m */; };
+		6035ACC213D59C27005B2280 /* ETStyle+CoreObject.h in Headers */ = {isa = PBXBuildFile; fileRef = 6035ACC013D59C27005B2280 /* ETStyle+CoreObject.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		6035ACC313D59C27005B2280 /* ETStyle+CoreObject.m in Sources */ = {isa = PBXBuildFile; fileRef = 6035ACBF13D59C27005B2280 /* ETStyle+CoreObject.m */; };
 		603649FC0E40A547003377E0 /* ETLayoutItem+Reflection.h in Headers */ = {isa = PBXBuildFile; fileRef = 603649F50E40A547003377E0 /* ETLayoutItem+Reflection.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		603649FF0E40A547003377E0 /* NSImage+NiceScaling.h in Headers */ = {isa = PBXBuildFile; fileRef = 603649F80E40A547003377E0 /* NSImage+NiceScaling.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		60364A000E40A547003377E0 /* ETNibOwner.h in Headers */ = {isa = PBXBuildFile; fileRef = 603649F90E40A547003377E0 /* ETNibOwner.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -193,9 +196,8 @@
 		60A54AC513D0825000261FDC /* ETController+CoreObject.h in Headers */ = {isa = PBXBuildFile; fileRef = 60A54AC313D0825000261FDC /* ETController+CoreObject.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		60A54AC613D0825000261FDC /* ETController+CoreObject.m in Sources */ = {isa = PBXBuildFile; fileRef = 60A54AC213D0824F00261FDC /* ETController+CoreObject.m */; };
 		60A54C1313D2273F00261FDC /* ETLayout+CoreObject.m in Sources */ = {isa = PBXBuildFile; fileRef = 60A54C1113D2273F00261FDC /* ETLayout+CoreObject.m */; };
-		60A54C1413D2273F00261FDC /* ETLayout+CoreObject.h in Headers */ = {isa = PBXBuildFile; fileRef = 60A54C1213D2273F00261FDC /* ETLayout+CoreObject.h */; };
+		60A54C1413D2273F00261FDC /* ETLayout+CoreObject.h in Headers */ = {isa = PBXBuildFile; fileRef = 60A54C1213D2273F00261FDC /* ETLayout+CoreObject.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		60A54C1513D2273F00261FDC /* ETLayout+CoreObject.m in Sources */ = {isa = PBXBuildFile; fileRef = 60A54C1113D2273F00261FDC /* ETLayout+CoreObject.m */; };
-		60A54C1613D2273F00261FDC /* ETLayout+CoreObject.h in Headers */ = {isa = PBXBuildFile; fileRef = 60A54C1213D2273F00261FDC /* ETLayout+CoreObject.h */; };
 		60A6583B13B0D71D000A6EB6 /* ETUIItem+ModelDescription.m in Sources */ = {isa = PBXBuildFile; fileRef = 60A6583A13B0D71D000A6EB6 /* ETUIItem+ModelDescription.m */; };
 		60A6583C13B0D71D000A6EB6 /* ETUIItem+ModelDescription.m in Sources */ = {isa = PBXBuildFile; fileRef = 60A6583A13B0D71D000A6EB6 /* ETUIItem+ModelDescription.m */; };
 		60A6584613B0DD2A000A6EB6 /* ETLayoutItem+CoreObject.m in Sources */ = {isa = PBXBuildFile; fileRef = 60A6584413B0DD2A000A6EB6 /* ETLayoutItem+CoreObject.m */; };
@@ -542,6 +544,8 @@
 		60311D620CFB9A84001A699E /* NSWindow+Etoile.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = "NSWindow+Etoile.m"; path = "Source/NSWindow+Etoile.m"; sourceTree = "<group>"; };
 		60330B570F7CEF1300A1E8C1 /* ETDecoratorItem.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ETDecoratorItem.h; path = Headers/ETDecoratorItem.h; sourceTree = "<group>"; };
 		60330B5A0F7CEF3400A1E8C1 /* ETDecoratorItem.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ETDecoratorItem.m; path = Source/ETDecoratorItem.m; sourceTree = "<group>"; };
+		6035ACBF13D59C27005B2280 /* ETStyle+CoreObject.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = "ETStyle+CoreObject.m"; path = "Persistency/ETStyle+CoreObject.m"; sourceTree = "<group>"; };
+		6035ACC013D59C27005B2280 /* ETStyle+CoreObject.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "ETStyle+CoreObject.h"; path = "Persistency/ETStyle+CoreObject.h"; sourceTree = "<group>"; };
 		603649F50E40A547003377E0 /* ETLayoutItem+Reflection.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "ETLayoutItem+Reflection.h"; path = "Headers/ETLayoutItem+Reflection.h"; sourceTree = "<group>"; };
 		603649F80E40A547003377E0 /* NSImage+NiceScaling.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "NSImage+NiceScaling.h"; path = "Headers/NSImage+NiceScaling.h"; sourceTree = "<group>"; };
 		603649F90E40A547003377E0 /* ETNibOwner.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ETNibOwner.h; path = Headers/ETNibOwner.h; sourceTree = "<group>"; };
@@ -1316,6 +1320,8 @@
 				60A54AC213D0824F00261FDC /* ETController+CoreObject.m */,
 				60A54C1213D2273F00261FDC /* ETLayout+CoreObject.h */,
 				60A54C1113D2273F00261FDC /* ETLayout+CoreObject.m */,
+				6035ACC013D59C27005B2280 /* ETStyle+CoreObject.h */,
+				6035ACBF13D59C27005B2280 /* ETStyle+CoreObject.m */,
 			);
 			name = Persistency;
 			sourceTree = "<group>";
@@ -1403,7 +1409,6 @@
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				60A54C1613D2273F00261FDC /* ETLayout+CoreObject.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1503,6 +1508,7 @@
 				60B1945F13C8D8A50013E0BB /* ETUIObject.h in Headers */,
 				60A54AC513D0825000261FDC /* ETController+CoreObject.h in Headers */,
 				60A54C1413D2273F00261FDC /* ETLayout+CoreObject.h in Headers */,
+				6035ACC213D59C27005B2280 /* ETStyle+CoreObject.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2025,6 +2031,7 @@
 				60A54AC613D0825000261FDC /* ETController+CoreObject.m in Sources */,
 				60A54C1513D2273F00261FDC /* ETLayout+CoreObject.m in Sources */,
 				603D7D0B13D363BA007AABE2 /* ETActionHandler+ModelDescription.m in Sources */,
+				6035ACC313D59C27005B2280 /* ETStyle+CoreObject.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2191,6 +2198,7 @@
 				60A54AC413D0825000261FDC /* ETController+CoreObject.m in Sources */,
 				60A54C1313D2273F00261FDC /* ETLayout+CoreObject.m in Sources */,
 				603D7D0A13D363BA007AABE2 /* ETActionHandler+ModelDescription.m in Sources */,
+				6035ACC113D59C27005B2280 /* ETStyle+CoreObject.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

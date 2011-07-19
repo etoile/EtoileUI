@@ -8,6 +8,7 @@
 
 #import <EtoileFoundation/EtoileFoundation.h>
 #import "ETStyle.h"
+#import "ETStyleGroup.h"
 #import "ETShape.h"
 
 @interface ETStyle (ModelDescrition)
@@ -25,6 +26,35 @@
 		return entity;
 
 	// Nothing to declare for now
+
+	return entity;
+}
+
+@end
+
+@interface ETStyleGroup (ModelDescrition)
+@end
+
+@implementation ETStyleGroup (ModelDescription)
+
++ (ETEntityDescription *) newEntityDescription
+{
+	ETEntityDescription *entity = [self newBasicEntityDescription];
+
+	// For subclasses that don't override -newEntityDescription, we must not add 
+	// the property descriptions that we will inherit through the parent.
+	if ([[entity name] isEqual: [ETStyleGroup className]] == NO) 
+		return entity;
+
+	ETPropertyDescription *styles = [ETPropertyDescription descriptionWithName: @"styles" type: (id)@"ETStyle"];
+	[styles setMultivalued: YES];
+	[styles setOrdered: YES];
+	ETPropertyDescription *firstStyle = [ETPropertyDescription descriptionWithName: @"firstStyle" type: (id)@"ETStyle"];
+	ETPropertyDescription *lastStyle = [ETPropertyDescription descriptionWithName: @"lastStyle" type: (id)@"ETStyle"];
+
+	[styles setPersistent: YES];
+
+	[entity setPropertyDescriptions: A(styles, firstStyle, lastStyle)];
 
 	return entity;
 }
