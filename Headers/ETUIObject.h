@@ -38,5 +38,8 @@
 /** @taskunit Persistency */
 
 - (void) commit;
+#ifndef OBJECTMERGING
+- (void) didChangeValueForProperty: (NSString *)aKey;
+#endif
 
 @end

@@ -127,5 +127,13 @@ user interaction. */
 #endif
 }
 
+#ifndef OBJECTMERGING
+- (void) didChangeValueForProperty: (NSString *)aKey
+{
+
+}
+#endif
+
+
 @end
 
