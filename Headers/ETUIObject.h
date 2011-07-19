@@ -23,6 +23,10 @@
 #endif
 }
 
+/** @taskunit Aspect Sharing */
+
+- (BOOL) isShared;
+
 /** @taskunit Copying */
 
 - (NSInvocation *) initInvocationForCopyWithZone: (NSZone *)aZone;
@@ -30,5 +34,9 @@
 /** @taskunit Properties */
 
 - (NSMapTable *) variableStorage;
+
+/** @taskunit Persistency */
+
+- (void) commit;
 
 @end

@@ -118,27 +118,36 @@ Returns the shared instance that corresponds to the receiver class. */
 	return style;
 }
 
+- (id) init
+{
+	SUPERINIT;
+	_isShared = YES;
+	return self;
+}
+
 - (id) copyWithZone: (NSZone *)aZone
 {
 	ETStyle *newStyle = [super copyWithZone: aZone];
-	newStyle->_isSharedStyle = _isSharedStyle;
+	newStyle->_isShared = _isShared;
 	return newStyle;
 }
 
 /** Returns whether the receiver can be shared between several owners.
 
-TODO: Not really implemented yet... */
-- (BOOL) isSharedStyle
+By default, returns YES.
+
+See also -setIsShared:. */
+- (BOOL) isShared
 {
-	return _isSharedStyle;
+	return _isShared;
 }
 
 /** Sets whether the receiver can be shared between several owners.
 
-TODO: Not really implemented yet... */
-- (void) setIsSharedStyle: (BOOL)shared
+See also -isShared. */
+- (void) setIsShared: (BOOL)shared
 {
-	_isSharedStyle = shared;
+	_isShared = shared;
 }
 
 /** <override-subclass />

@@ -106,6 +106,15 @@ The copied shape is never hidden, even when the receiver was. */
 	return newShape;
 }
 
+/** Returns NO to indicate the receiver can never be shared between several 
+owners.
+
+See also -[ETUIObject isShared] and -[ETStyle isShared]. */
+- (BOOL) isShared
+{
+	return NO;
+}
+
 - (NSBezierPath *) path
 {
 	return _path;

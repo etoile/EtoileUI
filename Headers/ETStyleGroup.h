@@ -31,18 +31,21 @@ Both basic styles and style groups can be inserted in a style group, which
 means a style can be also organized in a tree structure. 
 
 Each layout item is initialized with its own ETStyleGroup instance and not a 
-shared instance. Style groups can be used as shared style objects too though.  */
+shared instance. Style groups can be used as shared style objects too, but by 
+default they return NO for -isShared unlike ETStyle.  */
 @interface ETStyleGroup : ETStyle <ETCollectionMutation>
 {
 	@private
 	NSMutableArray *_styles;
 }
 
+/** @taskunit Initialization */
+
 - (id) init;
 - (id) initWithStyle: (ETStyle *)aStyle;
 - (id) initWithCollection: (id <ETCollection>)styles;
 
-/* Style Collection */
+/** @taskunit Style Collection */
 
 - (void) addStyle: (ETStyle *)aStyle;
 - (void) insertStyle: (ETStyle *)aStyle atIndex: (int)anIndex;
@@ -53,7 +56,7 @@ shared instance. Style groups can be used as shared style objects too though.  *
 - (id) firstStyleOfClass: (Class)aStyleClass;
 - (id) lastStyle;
 
-/* Style Rendering */
+/** @taskunit Style Rendering */
 
 - (void) render: (NSMutableDictionary *)inputValues 
      layoutItem: (ETLayoutItem *)item 

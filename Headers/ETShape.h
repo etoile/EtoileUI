@@ -20,7 +20,10 @@
 directly by a layout, but ETLayout subclasses interact with them indirectly 
 through layout items. A shape is made of a path and optional style and transform. U
 nlike NSBezierPath instances, they support boolean operations (will probably 
-implemented in a another framework with a category). */
+implemented in a another framework with a category).
+
+Shapes cannot be used as shared style objects, -[ETShape isShared] always 
+returns NO unlike ETStyle. */
 @interface ETShape : ETStyle
 {
 	@private
@@ -42,6 +45,8 @@ implemented in a another framework with a category). */
 + (ETShape *) ovalShape;
 
 - (id) initWithBezierPath: (NSBezierPath *)aPath;
+
+- (BOOL) isShared;
 
 - (NSBezierPath *) path;
 - (void) setPath: (NSBezierPath *)aPath;

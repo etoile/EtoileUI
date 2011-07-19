@@ -252,7 +252,7 @@ Subclasses must be aware that this method calls -setAttachedTool: with an
 tool copy. */ 
 - (id) copyWithZone: (NSZone *)aZone layoutContext: (id <ETLayoutingContext>)ctxt
 {
-	ETLayout *newLayout = [[self class] alloc];
+	ETLayout *newLayout = [super copyWithZone: aZone];
 
 	/* We copy all ivars except _layoutContext and _isLayouting */
 

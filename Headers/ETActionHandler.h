@@ -12,6 +12,7 @@
 
 #import <Foundation/Foundation.h>
 #import <AppKit/AppKit.h>
+#import <EtoileUI/ETUIObject.h>
 
 // WARNING: Unstable API.
 
@@ -32,7 +33,7 @@ For an ETActionHandler subclass, you usually use a single shared instance
 accross all the layout items to which it is bound. To do so, a possibility 
 is to write a factory method to build your layout items, this factory 
 method will reuse the action handler to be set on every created items. */
-@interface ETActionHandler : NSObject
+@interface ETActionHandler : ETUIObject
 {
 	@private
 	ETLayoutItem *_fieldEditorItem;
@@ -43,13 +44,17 @@ method will reuse the action handler to be set on every created items. */
 
 + (id) sharedInstance;
 
-/* Editing */
+/** @taskunit Aspect Sharing */
+
+- (BOOL) isShared;
+
+/** @taskunit Editing */
 
 - (void) beginEditingForItem: (ETLayoutItem *)item;
 - (void) discardEditingForItem: (ETLayoutItem *)item;
 - (BOOL) commitEditingForItem: (ETLayoutItem *)item;
 
-/* Text Editing */
+/** @taskunit Text Editing */
 
 - (ETLayoutItem *) fieldEditorItem;
 - (void) setFieldEditorItem: (ETLayoutItem *)anItem;
@@ -58,7 +63,7 @@ method will reuse the action handler to be set on every created items. */
                    inRect: (NSRect)fieldEditorRect;
 - (void) endEditingItem;
 
-/* Tool/Tool Actions */
+/** @taskunit Tool/Tool Actions */
 
 - (void) handleClickItem: (ETLayoutItem *)item atPoint: (NSPoint)aPoint;
 - (void) handleDoubleClickItem: (ETLayoutItem *)item;
@@ -69,19 +74,19 @@ method will reuse the action handler to be set on every created items. */
 - (void) handleEnterChildItem: (ETLayoutItem *)childItem;
 - (void) handleExitChildItem: (ETLayoutItem *)childItem;
 
-/* Key Actions */
+/** @taskunit Key Actions */
 
 - (BOOL) handleKeyEquivalent: (id <ETKeyInputAction>)keyInput onItem: (ETLayoutItem *)item;
 - (void) handleKeyUp: (id <ETKeyInputAction>)keyInput onItem: (ETLayoutItem *)item;
 - (void) handleKeyDown: (id <ETKeyInputAction>)keyInput onItem: (ETLayoutItem *)item;
 
-/* Touch Tracking Actions */
+/** @taskunit Touch Tracking Actions */
 
 - (BOOL) handleBeginTouch: (id <ETTouchAction>)aTouch atPoint: (NSPoint)aPoint onItem: (ETLayoutItem *)item;
 - (void) handleContinueTouch: (id <ETTouchAction>)aTouch atPoint: (NSPoint)aPoint onItem: (ETLayoutItem *)item;
 - (void) handleEndTouch: (id <ETTouchAction>)aTouch onItem: (ETLayoutItem *)item;
 
-/* Select Actions */
+/** @taskunit Select Actions */
 
 //ETSelectTool produced actions.
 //-canSelectIndexes:onItem:
@@ -91,7 +96,7 @@ method will reuse the action handler to be set on every created items. */
 - (BOOL) canDeselect: (ETLayoutItem *)item;
 - (void) handleDeselect: (ETLayoutItem *)item;
 
-/* Generic Actions */
+/** @taskunit Generic Actions */
 
 - (BOOL) acceptsFirstResponder;
 - (BOOL) becomeFirstResponder;

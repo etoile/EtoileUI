@@ -41,6 +41,7 @@ in the given style collection. */
 - (id) initWithCollection: (id <ETCollection>)styles
 {
 	SUPERINIT
+	[self setIsShared: NO];
 	if (styles != nil)
 	{
 		_styles = [[styles contentArray] mutableCopy];

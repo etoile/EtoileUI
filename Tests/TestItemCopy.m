@@ -137,7 +137,8 @@ DEALLOC(DESTROY(itemFactory); DESTROY(item); DESTROY(itemGroup))
 	return A(kETDisplayNameProperty, kETDecoratorItemProperty, 
 		kETDecoratedItemProperty, @"firstDecoratedItem", @"lastDecoratorItem", 
 		@"enclosingItem", @"supervisorView", kETViewProperty, 
-		kETParentItemProperty, kETStyleGroupProperty, kETLayoutProperty);
+		kETParentItemProperty, kETStyleGroupProperty, kETLayoutProperty,
+		kETCoverStyleProperty, kETActionHandlerProperty);
 }
 
 - (void) testBasicItemCopy

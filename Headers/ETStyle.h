@@ -41,7 +41,7 @@ and expect to be provided a layout item through -render:layoutItem:dirtyRect:. *
 @interface ETStyle : ETUIObject <NSCopying>
 {
 	@private
-	BOOL _isSharedStyle;
+	BOOL _isShared;
 }
 
 + (void) registerAspects;
@@ -53,8 +53,10 @@ and expect to be provided a layout item through -render:layoutItem:dirtyRect:. *
 
 + (id) sharedInstance;
 
-- (BOOL) isSharedStyle;
-- (void) setIsSharedStyle: (BOOL)shared;
+/** @taskunit Aspect Sharing */
+
+- (BOOL) isShared;
+- (void) setIsShared: (BOOL)shared;
 
 /* Style Rendering */
 

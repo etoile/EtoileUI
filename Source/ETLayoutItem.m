@@ -202,6 +202,26 @@ every subclass that overrides -dealloc. */
     [super dealloc];
 }
 
+- (id) copyAspect: (ETUIObject *)anAspect withZone: (NSZone *)aZone
+{
+	if ([anAspect isShared])
+	{
+		id newAspect = RETAIN([[self objectReferencesForCopy] objectForKey: anAspect]);
+
+		if (newAspect == nil)
+		{
+			newAspect = [anAspect copyWithZone: aZone];
+			[[self objectReferencesForCopy] setObject: newAspect 
+			                                   forKey: anAspect];
+		}
+		return newAspect;
+	}
+	else
+	{
+		return [anAspect copyWithZone: aZone];
+	}
+}
+
 /** Returns a shallow copy of the receiver without copying the view, the styles, 
 	the represented object and the children items if the receiver is an 
 	ETLayoutItemGroup related classes. 
@@ -227,7 +247,7 @@ Default values will be copied but not individually (shallow copy). */
 	[item setRepresentedObject: [self representedObject]]; /* Will set up the observer */
 	/* We set the style in the copy by copying the style group */
 	item->_styleGroup = [_styleGroup copyWithZone: aZone];
-	item->_coverStyle = RETAIN(_coverStyle);
+	item->_coverStyle = [self copyAspect: _coverStyle withZone: aZone];
 	item->_transform = [_transform copyWithZone: aZone];
 
 	/* We copy every primitive ivars except _isSyncingSupervisorViewGeometry */
@@ -255,7 +275,7 @@ Default values will be copied but not individually (shallow copy). */
 	SET_OBJECT_PROPERTY(item, GET_PROPERTY(kETImageProperty), kETImageProperty);
 	SET_OBJECT_PROPERTY(item, GET_PROPERTY(kETIconProperty), kETIconProperty);
 	SET_OBJECT_PROPERTY(item, GET_PROPERTY(kETSubtypeProperty),  kETSubtypeProperty);
-	SET_OBJECT_PROPERTY(item, GET_PROPERTY(kETActionHandlerProperty), kETActionHandlerProperty);
+	SET_OBJECT_PROPERTY_AND_RELEASE(item, [self copyAspect: GET_PROPERTY(kETActionHandlerProperty) withZone: aZone], kETActionHandlerProperty);
 	SET_OBJECT_PROPERTY(item, GET_PROPERTY(kETActionProperty), kETActionProperty);
 
 	/* We adjust targets and observers to reference equivalent objects in the object graph copy */

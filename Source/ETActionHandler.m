@@ -77,6 +77,14 @@ static NSMutableDictionary *sharedActionHandlers = nil;
 	[super dealloc];
 }
 
+/** Returns YES to indicate the receiver can be shared between several owners.
+
+See also -[ETUIObject isShared]. */
+- (BOOL) isShared
+{
+	return YES;
+}
+
 /* Editing */
 
 /** <override-dummy />
@@ -494,6 +502,7 @@ status, when others request it. */
 	ETLayoutItemGroup *parent = ([item isGroup] ? (ETLayoutItemGroup *)item : [item parentItem]);
 
 	[parent addItem: [[ETLayoutItemFactory factory] rectangle]];
+	[item commit];
 }
 
 - (void) sendBackward: (id)sender onItem: (ETLayoutItem *)item

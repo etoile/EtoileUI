@@ -70,6 +70,18 @@
 }
 
 /** <override-dummy />
+Returns whether the receiver can be shared between several owners.
+
+By default, returns NO.
+
+Can be overriden to return YES, a computed value or an ivar value. For example, 
+see -[ETStyle setIsShared:]. */
+- (BOOL) isShared
+{
+	return NO;
+}
+
+/** <override-dummy />
 Returns the initializer invocation used by -copyWithZone: to create a new 
 instance. 
 
@@ -95,6 +107,24 @@ and write the receiver properties. */
 - (NSMapTable *) variableStorage
 {
 	return _variableStorage;
+}
+
+/** <override-never />
+Does nothing by default.
+
+If built with CoreObject support, commits changes in the editing context related 
+to the receiver root object.
+
+Will be called by ETActionHandler methods that make changes in response to the 
+user interaction. */
+- (void) commit
+{
+#ifdef OBJECTMERGING
+	COObject *rootObject = [self rootObject];
+	ETAssert(rootObject != nil);
+	ETAssert([rootObject editingContext] != nil);
+	[[rootObject editingContext] commit];
+#endif
 }
 
 @end

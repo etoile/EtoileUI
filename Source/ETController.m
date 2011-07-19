@@ -407,7 +407,7 @@ This method is ETController designated copier. Subclasses that want to extend
 the copying support must invoke it instead of -copyWithZone:. */
 - (id) copyWithZone: (NSZone *)aZone content: (ETLayoutItemGroup *)newContent
 {
-	ETController *newController = [[[self class] allocWithZone: aZone] init];
+	ETController *newController = [super copyWithZone: aZone];
 
 	newController->_observations = [[NSMutableSet allocWithZone: aZone] init];
 	newController->_templates = [_templates copyWithZone: aZone];
