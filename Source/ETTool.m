@@ -699,7 +699,15 @@ ignored and the local root item is also returned. */
 	                 inItem: (ETLayoutItemGroup *)testedItem];
 	[anEvent setLayoutItem: hitItem];
 
-	NSParameterAssert(hitItem != nil && [anEvent layoutItem] == hitItem);
+	/* Fall back when the tested item has no action handler */
+	if (hitItem == nil && [testedItem acceptsActions] == NO)
+	{
+		hitItem = [self hitItemForNil];
+		[anEvent setLayoutItem: hitItem];
+		[anEvent setLocationInLayoutItem: [anEvent location]];
+	}
+
+	ETAssert(hitItem != nil && [anEvent layoutItem] == hitItem);
 
 	return hitItem;
 }
