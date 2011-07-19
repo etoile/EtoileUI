@@ -40,11 +40,11 @@
 	// TODO: Leverage the model description rather than hardcoding the aspects
 	// TODO: Implement some strategy to recover in the case these aspects 
 	// are already used as embedded objects in another root object. 
-	ETAssert([[self coverStyle] isPersistent] == NO || [[self coverStyle] isRoot]);
+	ETAssert([[self coverStyle] isShared] || [[self coverStyle] isPersistent] == NO || [[self coverStyle] isRoot]);
 	[[self coverStyle] becomePersistentInContext: aContext rootObject: aRootObject];
 	ETAssert([[self styleGroup] isPersistent] == NO || [[self styleGroup] isRoot]);
 	[[self styleGroup] becomePersistentInContext: aContext rootObject: aRootObject];
-	ETAssert([[self actionHandler] isPersistent] == NO || [[self actionHandler] isRoot]);
+	ETAssert([[self actionHandler] isShared] || [[self actionHandler] isPersistent] == NO || [[self actionHandler] isRoot]);
 	[[self actionHandler] becomePersistentInContext: aContext rootObject: aRootObject];
 }
 
