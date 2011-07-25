@@ -35,6 +35,9 @@
 
 - (void) becomePersistentInContext: (COEditingContext *)aContext rootObject: (COObject *)aRootObject
 {
+	if ([self isPersistent])
+		return;
+
 	[super becomePersistentInContext: aContext rootObject: aRootObject];
 
 	// TODO: Leverage the model description rather than hardcoding the aspects
@@ -88,6 +91,9 @@
 
 - (void) becomePersistentInContext: (COEditingContext *)aContext rootObject: (COObject *)aRootObject
 {
+	if ([self isPersistent])
+		return;
+
 	[super becomePersistentInContext: aContext rootObject: aRootObject];
 
 	// TODO: Leverage the model description rather than hardcoding the aspects

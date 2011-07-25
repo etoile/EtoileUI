@@ -36,7 +36,7 @@
  
 /* CoreObject (aka ObjectMerging) Support */
  
-//#define OBJECTMERGING
+#define OBJECTMERGING
 
 #ifdef OBJECTMERGING
 #  define BASEOBJECT COObject

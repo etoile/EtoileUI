@@ -19,6 +19,9 @@
 
 - (void) becomePersistentInContext: (COEditingContext *)aContext rootObject: (COObject *)aRootObject
 {
+	if ([self isPersistent])
+		return;
+
 	[super becomePersistentInContext: aContext rootObject: aRootObject];
 
 	// TODO: Support item template persistency
