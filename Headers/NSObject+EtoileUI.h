@@ -66,11 +66,6 @@
 - (BOOL) isTool;
 - (BOOL) isView;
 
-/** @taskunit CoreObject Integration */
-
-- (void) willChangeValueForProperty: (NSString *)key;
-- (void) didChangeValueForProperty: (NSString *)key;
-
 /* Debugging */
 
 - (NSString *) XMLArchive;

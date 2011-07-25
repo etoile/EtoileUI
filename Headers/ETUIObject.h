@@ -39,6 +39,7 @@
 
 - (void) commit;
 #ifndef OBJECTMERGING
+- (void) willChangeValueForProperty: (NSString *)aKey;
 - (void) didChangeValueForProperty: (NSString *)aKey;
 #endif
 

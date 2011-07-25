@@ -7,7 +7,9 @@
  */
 
 #import <EtoileFoundation/Macros.h>
+#import <EtoileFoundation/ETEntityDescription.h>
 #import <EtoileFoundation/ETCollection+HOM.h>
+#import <EtoileFoundation/ETModelDescriptionRepository.h>
 #import <EtoileFoundation/NSObject+Etoile.h>
 #import "ETStyle.h"
 #import "ETGeometry.h"
@@ -18,6 +20,21 @@
 #endif
 
 @implementation ETStyle
+
++ (BOOL) automaticallyNotifiesObserversForKey: (NSString *)theKey 
+{
+	ETEntityDescription *entity = [[ETModelDescriptionRepository mainRepository] 
+		entityDescriptionForClass: self];
+
+    if ([[entity propertyDescriptionNames] containsObject: theKey]) 
+	{
+		return NO;
+    } 
+	else 
+	{
+		return [super automaticallyNotifiesObserversForKey: theKey];
+    }
+}
 
 static NSMutableSet *stylePrototypes = nil;
 static NSMapTable *styleSharedInstances = nil;
@@ -147,7 +164,9 @@ See also -setIsShared:. */
 See also -isShared. */
 - (void) setIsShared: (BOOL)shared
 {
+	[self willChangeValueForProperty: @"isShared"];
 	_isShared = shared;
+	[self didChangeValueForProperty: @"isShared"];
 }
 
 /** <override-subclass />

@@ -24,6 +24,16 @@
 	[self applyTraitFromClass: [ETMutableCollectionTrait class]];
 }
 
++ (NSSet *) keyPathsForValuesAffectingLastStyle
+{
+    return S(@"styles");
+}
+
++ (NSSet *) keyPathsForValuesAffectingFirstStyle
+{
+    return S(@"styles");
+}
+
 /** Initializes and returns an empty style group. */
 - (id) init
 {
@@ -71,25 +81,33 @@ in the given style collection. */
 /** Add the style. */
 - (void) addStyle: (ETStyle *)aStyle
 {
+	[self willChangeValueForProperty: @"styles"];
 	[_styles addObject: aStyle];
+	[self didChangeValueForProperty: @"styles"];
 }
 
 /** Inserts a style at the given index. */
 - (void) insertStyle: (ETStyle *)aStyle atIndex: (int)anIndex
 {
+	[self willChangeValueForProperty: @"styles"];
 	[_styles insertObject: aStyle atIndex: anIndex];
+	[self didChangeValueForProperty: @"styles"];
 }
 
 /** Removes the given style. */
 - (void) removeStyle: (ETStyle *)aStyle
 {
+	[self willChangeValueForProperty: @"styles"];
 	[_styles removeObject: aStyle];
+	[self didChangeValueForProperty: @"styles"];
 }
 
 /** Removes all the styles. */
 - (void) removeAllStyles
 {
+	[self willChangeValueForProperty: @"styles"];
 	[_styles removeAllObjects];
+	[self didChangeValueForProperty: @"styles"];
 }
 
 /** Returns whether the receiver contains a style equal to the given style. */

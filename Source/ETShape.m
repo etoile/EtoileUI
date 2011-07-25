@@ -22,6 +22,11 @@ typedef NSBezierPath* (*PathProviderFunction)(id, SEL, NSRect);
 
 @implementation ETShape
 
++ (NSSet *) keyPathsForValuesAffectingBounds
+{
+    return S(@"path");
+}
+
 static NSRect shapeFactoryRect = {{ 0, 0 }, { 150, 100 }};
 
 + (NSRect) defaultShapeRect
@@ -104,6 +109,25 @@ The copied shape is never hidden, even when the receiver was. */
 	newShape->_alpha = _alpha;
 	newShape->_resizeSelector = _resizeSelector;
 	return newShape;
+}
+
+- (id) valueForUndefinedKey: (NSString *)key
+{
+	if ([key isEqualToString: @"pathResizeSelector"])
+	{
+		SEL sel = [self pathResizeSelector];
+		return [NSValue valueWithBytes: &sel objCType: @encode(SEL)];
+	}
+	return [super valueForUndefinedKey: key];
+}
+
+- (void) setValue: (id)value forUndefinedKey: (NSString *)key
+{
+	if ([key isEqualToString: @"pathResizeSelector"])
+	{
+		[self setPathResizeSelector: (SEL)[value pointerValue]];
+	}
+	[super setValue: value forUndefinedKey: key];;
 }
 
 /** Returns NO to indicate the receiver can never be shared between several 

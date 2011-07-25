@@ -300,6 +300,11 @@ Overrides this method when you want to customize how double-click are handled. *
 	[self handleTranslateItem: item byDelta: delta];
 }
 
+- (void) beginTranslateItem: (ETLayoutItem *)item
+{
+
+}
+
 - (void) handleTranslateItem: (ETLayoutItem *)item byDelta: (NSSize)delta
 {
 	NSRect prevBoundingFrame = [item convertRectToParent: [item boundingBox]];
@@ -313,6 +318,11 @@ Overrides this method when you want to customize how double-click are handled. *
 	[[item parentItem] displayIfNeeded];
 
 	//ETLog(@"Translate dirty rect %@", NSStringFromRect(dirtyRect));
+}
+
+- (void) endTranslateItem: (ETLayoutItem *)item
+{
+	[item commit];
 }
 
 /** <override-dummy />
@@ -518,6 +528,8 @@ status, when others request it. */
 	[item removeFromParent];
 	[parent insertItem: item atIndex: currentIndex - 1];
 	RELEASE(item);
+
+	[item commit];
 }
 
 - (void) sendToBack: (id)sender onItem: (ETLayoutItem *)item
@@ -531,6 +543,8 @@ status, when others request it. */
 	[item removeFromParent];
 	[parent insertItem: item atIndex: 0];
 	RELEASE(item);
+
+	[item commit];
 }
 
 - (void) bringForward: (id)sender onItem: (ETLayoutItem *)item
@@ -546,6 +560,8 @@ status, when others request it. */
 	[item removeFromParent];
 	[parent insertItem: item atIndex: currentIndex + 1];
 	RELEASE(item);
+
+	[item commit];
 }
 
 - (void) bringToFront: (id)sender onItem: (ETLayoutItem *)item
@@ -559,6 +575,8 @@ status, when others request it. */
 	[item removeFromParent];
 	[parent addItem: item];
 	RELEASE(item);
+
+	[item commit];
 }
 
 /** Invokes -inspect: action on the given item.

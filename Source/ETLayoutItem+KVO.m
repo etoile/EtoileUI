@@ -18,7 +18,23 @@
 
 + (BOOL) automaticallyNotifiesObserversForKey: (NSString *)theKey 
 {
-    if ([theKey isEqualToString: kETSelectedProperty]) 
+	// FIXME: Properties in the variable storage are not handled correctly, 
+	// we wrongly return YES.
+	// TODO: We should use the entity description here, rather than listing 
+	// the properties. That would solve the previous issue too.
+	NSSet *manuallyNotifiedProperties = S(kETParentItemProperty, 
+		kETValueProperty, kETRepresentedObjectProperty, kETNameProperty, 
+		kETCoverStyleProperty, kETStyleGroupProperty, kETViewProperty, 
+		kETActionHandlerProperty,
+		kETSelectedProperty,
+		kETFlippedProperty, kETAnchorPointProperty, kETPositionProperty, kETContentBoundsProperty, 
+		kETAutoresizingMaskProperty, kETContentAspectProperty, kETTransformProperty, kETBoundingBoxProperty, 
+		kETDefaultFrameProperty, kETPersistentFrameProperty, 
+		kETImageProperty, kETIconProperty, 
+		kETActionProperty, kETTargetProperty, 
+		kETInspectorProperty);
+
+    if ([manuallyNotifiedProperties containsObject: theKey]) 
 	{
 		return NO;
     } 
@@ -81,7 +97,7 @@ receiver is not observed.
 	   TODO: We probably can remove that once our model object (e.g. COObject, 
 	   COFile etc.) correctly override -observableKeyPaths. */
 	[affectedKeys addObjectsFromArray: A(kETDisplayNameProperty, kETValueProperty, 
-		kETIconProperty, kETRepresentedObjectProperty, kETSubjectProperty)];
+		kETIconProperty, kETSubjectProperty)];
 	[affectedKeys unionSet: [oldObject observableKeyPaths]];
 	[affectedKeys unionSet: [newObject observableKeyPaths]];
 	if (nil == oldObject || nil == newObject)

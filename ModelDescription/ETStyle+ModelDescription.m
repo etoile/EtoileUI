@@ -84,10 +84,11 @@
 	ETPropertyDescription *alpha = [ETPropertyDescription descriptionWithName: @"alphaValue" type: (id)@"NSColor"];
 	ETPropertyDescription *hidden = [ETPropertyDescription descriptionWithName: @"hidden" type: (id)@"BOOL"];
 
-	NSArray *persistentProperties = A(path, bounds, pathResizeSel, fillColor, strokeColor, alpha, hidden);
+	NSArray *transientProperties = A(bounds);
+	NSArray *persistentProperties = A(path, pathResizeSel, fillColor, strokeColor, alpha, hidden);
 
 	[[persistentProperties mappedCollection] setPersistent: YES];
-	[entity setPropertyDescriptions: persistentProperties];
+	[entity setPropertyDescriptions: [persistentProperties arrayByAddingObjectsFromArray: transientProperties]];
 
 	return entity;
 }

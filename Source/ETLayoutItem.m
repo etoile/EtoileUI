@@ -492,7 +492,9 @@ to manipulate the item collection that belongs to the parent. */
 	//ETDebugLog(@"For item %@ with supervisor view %@, modify the parent item from "
 	//	"%@ to %@", self, [self supervisorView], _parentItem, parent, self);
 	NSParameterAssert(parent != self);
+	[self willChangeValueForProperty: kETParentItemProperty];
 	_parentItem = parent;
+	[self didChangeValueForProperty: kETParentItemProperty];
 }
 
 /** Detaches the receiver from the item group it belongs to.
@@ -678,7 +680,9 @@ The returned value can be nil or an empty string. */
 /** Sets the identifier associated with the layout item. */
 - (void) setIdentifier: (NSString *)anId
 {
+	[self willChangeValueForProperty: kETIdentifierProperty];	
 	SET_PROPERTY(anId, kETIdentifierProperty);
+	[self didChangeValueForProperty: kETIdentifierProperty];	
 }
 
 /** Returns the display name associated with the receiver. See also 
@@ -730,7 +734,9 @@ The returned value can be nil or an empty string. */
 /** Sets the name associated with the layout item. */
 - (void) setName: (NSString *)name
 {
+	[self willChangeValueForProperty: kETNameProperty];	
 	SET_PROPERTY(name, kETNameProperty);
+	[self didChangeValueForProperty: kETNameProperty];	
 }
 
 /** Returns a value object, that can be used when a single property has to be 
@@ -763,8 +769,10 @@ object but the one provided by the represented object. */
 			@"be a common object value to be set in %@", value, self];
 		return;
 	}*/
-	
+
+	[self willChangeValueForProperty: kETValueProperty];	
 	SET_PROPERTY(value, kETValueProperty);
+	[self didChangeValueForProperty: kETValueProperty];	
 }
 
 /** Returns the model object which embeds the data to be displayed and 
@@ -836,11 +844,20 @@ object when the view is a widget. */
 	[_representedObject removeObserver: self];
 
 	/* To ensure the values are not released before the KVO notification ends */
-	RETAIN(oldObject);	
+	RETAIN(oldObject);
+	[self willChangeValueForProperty: kETRepresentedObjectProperty];
 	NSSet *affectedKeys = [self willChangeRepresentedObjectFrom: oldObject 
 	                                                         to: modelObject];
 	ASSIGN(_representedObject, modelObject);
+	/* Affected keys contain represented object properties, and the Core object 
+	   editing context must not be notified about these, otherwise identically 
+	   named ETLayoutItem properties would uselessly persisted when they haven't 
+	   changed (e.g. icon).
+	   For these represented object properties and derived item properties 
+	   (e.g. icon), we use -didChangeValuesForKeys: to post pure KVO 
+	   notifications.   */
 	[self didChangeValuesForKeys: affectedKeys];
+	[self didChangeValueForProperty: kETRepresentedObjectProperty];
 	RELEASE(oldObject);
 
 	[self syncView: [self view] withRepresentedObject: modelObject];
@@ -961,6 +978,8 @@ The view is an NSView class or subclass instance. See -setView:. */
 	BOOL stopObservingOldView = (nil != oldView && [oldView isWidget]);
 	BOOL startObservingNewView = (nil != newView && [newView isWidget]);
 
+	[self willChangeValueForProperty: kETViewProperty];
+
 	if (stopObservingOldView)
 	{
 		[[(id <ETWidget>)oldView cell] removeObserver: self forKeyPath: @"objectValue"];
@@ -992,6 +1011,8 @@ The view is an NSView class or subclass instance. See -setView:. */
 		                                   options: NSKeyValueObservingOptionNew
 		                                   context: NULL];
 	}
+
+	[self didChangeValueForProperty: kETViewProperty];
 }
 
 /** Sets the view associated with the receiver. This view is commonly a widget 
@@ -1050,7 +1071,9 @@ See also -[NSView(Etoile) isWidget]. */
 - (void) setValue: (id)value forUndefinedKey: (NSString *)key
 {
 	//ETLog(@"NOTE: -setValue:forUndefinedKey: %@ called in %@", key, self);
+	[self willChangeValueForProperty: key];
 	SET_PROPERTY(value, key);
+	[self didChangeValueForProperty: key];
 }
 
 /* Property Value Coding */
@@ -1201,6 +1224,7 @@ value you might have set is lost too and won't be restored by switching back to
 the previous layout in use. */
 - (void) setVisible: (BOOL)visible
 {
+	[self willChangeValueForProperty: kETVisibleProperty];
 	_visible = visible;
 	if (visible)
 	{
@@ -1212,6 +1236,7 @@ the previous layout in use. */
 		[_parentItem handleDetachViewOfItem: self];
 		ETDebugLog(@"Removed view at %@", NSStringFromRect([self frame]));
 	}
+	[self willChangeValueForProperty: kETVisibleProperty];
 }
 
 /** Returns whether the receiver should be displayed or not. See also -setVisible:. */
@@ -1256,7 +1281,9 @@ when the receiver is a "pure UI object" without a represented object bound to it
 {
 	/* Check type aggressively in case the user passes a string */
 	NSParameterAssert([aUTI isKindOfClass: [ETUTI class]]);
+	[self willChangeValueForProperty: kETSubtypeProperty];
 	SET_PROPERTY(aUTI, kETSubtypeProperty);
+	[self didChangeValueForProperty: kETSubtypeProperty];
 }
 
 /** Returns the receiver subtype.
@@ -1421,9 +1448,12 @@ useless currently. */
 - (void) setLayout: (ETLayout *)aLayout
 {
 	ETLayout *oldLayout = GET_PROPERTY(kETLayoutProperty);
+
 	RETAIN(oldLayout);
+	[self willChangeValueForProperty: kETLayoutProperty];
 	SET_PROPERTY(aLayout, kETLayoutProperty);
 	[self didChangeLayout: oldLayout];
+	[self didChangeValueForProperty: kETLayoutProperty];
 	RELEASE(oldLayout);
 }
 
@@ -1747,7 +1777,9 @@ The styles inside the style group control the drawing of the receiver.<br />
 See ETStyle to understand how to customize the layout item look. */
 - (void) setStyleGroup: (ETStyleGroup *)aStyle
 {
+	[self willChangeValueForProperty: kETStyleGroupProperty];
 	ASSIGN(_styleGroup, aStyle);
+	[self didChangeValueForProperty: kETStyleGroupProperty];
 }
 
 /** Returns the first style inside the style group. */
@@ -1776,7 +1808,9 @@ If the given style is nil, the style group becomes empty. */
 
 - (void) setCoverStyle: (ETStyle *)aStyle
 {
+	[self willChangeValueForProperty: kETCoverStyleProperty];
 	ASSIGN(_coverStyle, aStyle);
+	[self didChangeValueForProperty: kETCoverStyleProperty];
 }
 
 - (void) setDefaultValue: (id)aValue forProperty: (NSString *)key
@@ -1923,9 +1957,11 @@ You must never alter the supervisor view directly with -[ETView setFlipped:]. */
 	if (flip == _flipped)
 		return;
 
+	[self willChangeValueForProperty: kETFlippedProperty];
 	_flipped = flip;
 	[[self supervisorView] setFlipped: flip];
 	[[self decoratorItem] setFlipped: flip];
+	[self didChangeValueForProperty: kETFlippedProperty];
 }
 
 /** Returns a point expressed in the receiver coordinate space equivalent to
@@ -2018,7 +2054,9 @@ frame is returned by -frame in all cases, hence when ETFreeLayout is in use,
 /** Sets the persistent frame associated with the receiver. See -persistentFrame. */
 - (void) setPersistentFrame: (NSRect) frame
 {
+	[self willChangeValueForProperty: kETPersistentFrameProperty];
 	SET_PROPERTY([NSValue valueWithRect: frame], kETPersistentFrameProperty);
+	[self didChangeValueForProperty: kETPersistentFrameProperty];
 }
 
 - (void) updatePersistentGeometryIfNeeded
@@ -2139,7 +2177,9 @@ anchor must be expressed in the receiver content coordinate space. */
 - (void) setAnchorPoint: (NSPoint)anchor
 {
 	ETDebugLog(@"Set anchor point to %@ - %@", NSStringFromPoint(anchor), self);
+	[self willChangeValueForProperty: kETAnchorPointProperty];
 	SET_PROPERTY([NSValue valueWithPoint: anchor], kETAnchorPointProperty);
+	[self didChangeValueForProperty: kETAnchorPointProperty];
 }
 
 /** Returns the current position associated with the receiver frame. The 
@@ -2163,6 +2203,7 @@ frame). When the position is set, the frame is moved to have the anchor point
 location in the parent item coordinate space equal to the new position value. */  
 - (void) setPosition: (NSPoint)position
 {
+	[self willChangeValueForProperty: kETPositionProperty];
 	_position = position;
 
 	// NOTE: Will probably be reworked once layout item views are drawn directly by EtoileUI.
@@ -2188,6 +2229,7 @@ location in the parent item coordinate space equal to the new position value. */
 	}
 
 	[self updatePersistentGeometryIfNeeded];
+	[self didChangeValueForProperty: kETPositionProperty];
 }
 
 /** Returns the current size associated with the receiver frame. See also -frame. */       
@@ -2299,6 +2341,7 @@ translations are cumulative.
 If the flipped property is modified, the content bounds remains identical. */
 - (void) setContentBounds: (NSRect)rect
 {
+	[self willChangeValueForProperty: kETContentBoundsProperty];
 	_contentBounds = rect;
 
 	if ([self shouldSyncSupervisorViewGeometry])
@@ -2320,6 +2363,7 @@ If the flipped property is modified, the content bounds remains identical. */
 
 	[self updatePersistentGeometryIfNeeded];
 	[[self styleGroup] didChangeItemBounds: _contentBounds];
+	[self didChangeValueForProperty: kETContentBoundsProperty];
 }
 
 /** Sets the content size associated with the receiver. */
@@ -2376,7 +2420,9 @@ The content coordinate space is located inside -contentBounds. */
 /** Sets the transform applied within the content bounds. */
 - (void) setTransform: (NSAffineTransform *)aTransform
 {
+	[self willChangeValueForProperty: kETTransformProperty];
 	ASSIGN(_transform, aTransform);
+	[self didChangeValueForProperty: kETTransformProperty];
 }
 
 /** Returns the transform applied within the content bounds. */
@@ -2435,7 +2481,9 @@ fully enclosed in the receiver frame.
 The bounding box must be always be greater or equal to the receiver frame. */
 - (void) setBoundingBox: (NSRect)extent
 {
+	[self willChangeValueForProperty: kETBoundingBoxProperty];
 	_boundingBox = extent;
+	[self didChangeValueForProperty: kETBoundingBoxProperty];
 }
 
 /** Returns the default frame associated with the receiver. See -setDefaultFrame:. */
@@ -2457,11 +2505,15 @@ frame to match. The default frame is not touched by layout-related transforms
 When the layout item gets instantiated, the value is set to the initial item 
 frame. */
 - (void) setDefaultFrame: (NSRect)frame
-{ 
+{
+	[self willChangeValueForProperty: kETDefaultFrameProperty];
 	SET_PROPERTY([NSValue valueWithRect: frame], kETDefaultFrameProperty);
 	/* Update display view frame only if needed */
 	if (NSEqualRects(frame, [self frame]) == NO)
+	{
 		[self restoreDefaultFrame];
+	}
+	[self didChangeValueForProperty: kETDefaultFrameProperty];
 }
 
 /** Modifies the frame associated with the receiver to match the current default 
@@ -2489,6 +2541,8 @@ decorator and not by the receiver autoresizing mask directly.
 TODO: Autoresizing mask isn't yet supported when the receiver has no view. */
 - (void) setAutoresizingMask: (ETAutoresizing)aMask
 {
+	[self willChangeValueForProperty: kETAutoresizingMaskProperty];
+
 	_autoresizingMask = aMask;
 
 	if ([self shouldSyncSupervisorViewGeometry] == NO)
@@ -2505,6 +2559,8 @@ TODO: Autoresizing mask isn't yet supported when the receiver has no view. */
 		[[self supervisorView] setAutoresizingMask: aMask];
 	}
 	_isSyncingSupervisorViewGeometry = NO;
+
+	[self didChangeValueForProperty: kETAutoresizingMaskProperty];
 }
 
 /** Returns that the content aspect that describes how the content looks when 
@@ -2525,6 +2581,8 @@ match the new content aspect.
 See ETContentAspect enum. */
 - (void) setContentAspect: (ETContentAspect)anAspect
 {
+	[self willChangeValueForProperty: kETContentAspectProperty];
+
 	_contentAspect = anAspect;
 
 	if ([self view] != nil)
@@ -2534,6 +2592,8 @@ See ETContentAspect enum. */
 		                                   contentAspect: anAspect 
 		                                      boundsSize: _contentBounds.size]];
 	}
+
+	[self didChangeValueForProperty: kETContentAspectProperty];
 }
 
 /** Returns the image representation associated with the receiver.
@@ -2568,7 +2628,9 @@ If img is nil, then the default behavior of -image is restored and the returned
 image should not be expected to be nil. */
 - (void) setImage: (NSImage *)img
 {
+	[self willChangeValueForProperty: kETImageProperty];
 	SET_PROPERTY(img, kETImageProperty);
+	[self didChangeValueForProperty: kETImageProperty];
 }
 
 // NOTE: May be we should have -displayIcon (or -customIcon, -setCustomIcon:) to 
@@ -2618,7 +2680,9 @@ If img is nil, then the default behavior of -icon is restored and the icon image
 should not be expected to be nil. */
 - (void) setIcon: (NSImage *)img
 {
+	[self willChangeValueForProperty: kETIconProperty];
 	SET_PROPERTY(img, kETIconProperty);
+	[self didChangeValueForProperty: kETIconProperty];
 }
 
 /** Returns an image snapshot of the receiver. The snapshot is taken at the time 
@@ -2692,7 +2756,9 @@ know more about event handling in the layout item tree. */
 /** Sets the action handler associated with the receiver. */
 - (void) setActionHandler: (id)anHandler
 {
+	[self willChangeValueForProperty: kETActionHandlerProperty];
 	SET_PROPERTY(anHandler, kETActionHandlerProperty);
+	[self didChangeValueForProperty: kETActionHandlerProperty];
 }
 
 /** Returns NO when the receiver should be ignored by the tools for both 
@@ -2785,8 +2851,10 @@ be sent by the UI element in the EtoileUI responder chain. */
 The target is not retained. */
 - (void) setTarget: (id)aTarget
 {
+	[self willChangeValueForProperty: kETTargetProperty];
 	SET_PROPERTY([NSValue valueWithNonretainedObject: aTarget], kETTargetProperty);
 	[[self layout] syncLayoutViewWithItem: self];
+	[self didChangeValueForProperty: kETTargetProperty];
 }
 
 /** Returns the target to which actions should be sent. */
@@ -2802,9 +2870,11 @@ This won't alter the action set on the receiver view, both are completely
 distinct. */
 - (void) setAction: (SEL)aSelector
 {
+	[self willChangeValueForProperty: kETActionProperty];
 	/* NULL and nil are the same, so a NULL selector removes any existing entry */
 	SET_PROPERTY(NSStringFromSelector(aSelector), kETActionProperty);
 	[[self layout] syncLayoutViewWithItem: self];
+	[self didChangeValueForProperty: kETActionProperty];
 }
 
 /** Returns the action that can be sent by the action handler associated with 
@@ -2905,7 +2975,9 @@ returns nil.
 /** Sets the custom inspector associated with the receiver. */
 - (void) setInspector: (id <ETInspector>)inspector
 {
+	[self willChangeValueForProperty: kETInspectorProperty];
 	SET_PROPERTY(inspector, kETInspectorProperty);
+	[self didChangeValueForProperty: kETInspectorProperty];
 }
 
 /* Live Development */

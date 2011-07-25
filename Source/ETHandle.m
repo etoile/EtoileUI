@@ -72,6 +72,12 @@ NSString *kETManipulatedObjectProperty = @"manipulatedObject";
 	return NO;
 }
 
+- (void) endTranslateItem: (ETHandle *)handle
+{
+	ETHandleGroup *handleGroup = [handle manipulatedObject];
+	[[handleGroup manipulatedObject] commit];
+}
+
 @end
 
 @implementation ETBottomLeftHandleActionHandler

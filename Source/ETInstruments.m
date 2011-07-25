@@ -268,6 +268,8 @@ coordinate space. */
 	ASSIGN(_draggedItem, item);
 	_dragStartLoc = aPoint;
 	_lastDragLoc = _dragStartLoc;
+
+	[[_draggedItem actionHandler] beginTranslateItem: _draggedItem];
 }
 
 /** Translates the item, on which the receiver is currently acting upon, to the 
@@ -302,6 +304,8 @@ This method can be overriden to alter the broadcast. */
 /** Ends the translation. */
 - (void) endTranslate
 {
+	[[_draggedItem actionHandler] endTranslateItem: _draggedItem];
+
 	ETAssert(_isTranslateMode);
 	DESTROY(_draggedItem);
 	_dragStartLoc = NSZeroPoint;

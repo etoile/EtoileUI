@@ -71,4 +71,4 @@
 
 @end
 
-// NOTE: ETFixedLayout uses ETLayout model description
+// NOTE: ETFixedLayout, ETFreeLayout uses ETLayout model description

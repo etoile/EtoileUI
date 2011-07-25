@@ -8,6 +8,7 @@
 
 #import <Foundation/Foundation.h>
 #import <EtoileUI/ETLayout.h>
+#import <EtoileUI/ETFreeLayout.h>
 
 @class COEditingContext, COObject;
 
@@ -17,4 +18,7 @@
 Makes the receiver persistent by inserting it into the given editing context as 
 described in -[COObject becomePersistentInContext:rootObject:]. */
 - (void) becomePersistentInContext: (COEditingContext *)aContext rootObject: (COObject *)aRootObject;
+@end
+
+@interface ETFreeLayout (CoreObject)
 @end

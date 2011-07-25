@@ -19,6 +19,7 @@ extern NSString * const kETAnchorPointProperty; /** anchorPoint property name */
 extern NSString * const kETAutoresizingMaskProperty; /** autoresizingMask property name */
 extern NSString * const kETBaseItemProperty; /** baseItem property name */
 extern NSString * const kETBoundingBoxProperty; /** boudingBox property name */
+extern NSString * const kETContentAspectProperty; /** contentAspect property name */
 extern NSString * const kETContentBoundsProperty; /** contentBounds property name */
 extern NSString * const kETControllerProperty; /** controller property name */
 extern NSString * const kETCoverStyleProperty; /** coverStyle property name */

@@ -15,6 +15,7 @@ NSString * const kETAnchorPointProperty = @"anchorPoint";
 NSString * const kETAutoresizingMaskProperty = @"autoresizingMask";
 NSString * const kETBaseItemProperty = @"baseItem";
 NSString * const kETBoundingBoxProperty = @"boundingBox";
+NSString * const kETContentAspectProperty = @"contentAspect";
 NSString * const kETContentBoundsProperty = @"contentBounds";
 NSString * const kETControllerProperty = @"controller";
 NSString * const kETCoverStyleProperty = @"coverStyle";

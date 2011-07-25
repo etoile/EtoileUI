@@ -221,22 +221,6 @@ otherwise returns NO. */
 	return [self isKindOfClass: [NSView class]];
 }
 
-/** Does nothing.
-
-See -[COObject willChangeValueForProperty:]. */
-- (void) willChangeValueForProperty:(NSString *)key
-{
-
-}
-
-/** Does nothing.
-
-See -[COObject didChangeValueForProperty:]. */
-- (void) didChangeValueForProperty:(NSString *)key
-{
-
-}
-
 /* Debugging */
 
 /** Returns the receiver archived as a XML string with NSKeyedArchiver.

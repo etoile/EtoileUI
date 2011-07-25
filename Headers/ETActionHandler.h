@@ -68,7 +68,9 @@ method will reuse the action handler to be set on every created items. */
 - (void) handleClickItem: (ETLayoutItem *)item atPoint: (NSPoint)aPoint;
 - (void) handleDoubleClickItem: (ETLayoutItem *)item;
 - (void) handleDragItem: (ETLayoutItem *)item byDelta: (NSSize)delta;
+- (void) beginTranslateItem: (ETLayoutItem *)item;
 - (void) handleTranslateItem: (ETLayoutItem *)item byDelta: (NSSize)delta;
+- (void) endTranslateItem: (ETLayoutItem *)item;
 - (void) handleEnterItem: (ETLayoutItem *)item;
 - (void) handleExitItem: (ETLayoutItem *)item;
 - (void) handleEnterChildItem: (ETLayoutItem *)childItem;

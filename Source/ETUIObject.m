@@ -128,12 +128,18 @@ user interaction. */
 }
 
 #ifndef OBJECTMERGING
+
+- (void) willChangeValueForProperty: (NSString *)aKey
+{
+	[self willChangeValueForKey: aKey];
+}
+
 - (void) didChangeValueForProperty: (NSString *)aKey
 {
-
+	[self didChangeValueForKey: aKey];
 }
-#endif
 
+#endif
 
 @end
 
