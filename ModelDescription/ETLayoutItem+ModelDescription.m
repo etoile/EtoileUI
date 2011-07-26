@@ -88,6 +88,7 @@
 	// TODO: Move to ETLayoutItem and update ETLayout description as necessary
 	ETPropertyDescription *layout = [ETPropertyDescription descriptionWithName: @"layout" type: (id)@"ETLayout"];
 	[layout setOpposite: (id)@"ETLayout.layoutContext"];
+	ETPropertyDescription *autolayout = [ETPropertyDescription descriptionWithName: @"autolayout" type: (id)@"BOOL"];
 
 	ETPropertyDescription *source = [ETPropertyDescription descriptionWithName: @"source" type: (id)@"NSObject"];
 	ETPropertyDescription *delegate = [ETPropertyDescription descriptionWithName: @"delegate" type: (id)@"NSObject"];
@@ -118,12 +119,12 @@
 	   doubleClickedItem, acceptsActionsForItemsOutsideOfFrame */
 	   
 	/* Ignored properties:
-	   _autolayout (deprecated), _usesLayoutBasedFrame (unsupported), 
-	   _isLayerItem (unsupported)
+	   _usesLayoutBasedFrame (unsupported), _isLayerItem (unsupported)
 	   isStack (unsupported), isStacked (unsupported) */
 
-	NSArray *persistentProperties = A(items, layout, source, delegate, controller, 
-		doubleClickAction, shouldMutateRepObject, itemScaleFactor, wasViewHidden);
+	NSArray *persistentProperties = A(items, layout, autolayout, source, 
+		delegate, controller, doubleClickAction, shouldMutateRepObject, 
+		itemScaleFactor, wasViewHidden);
 
 	[[persistentProperties mappedCollection] setPersistent: YES];
 	[entity setPropertyDescriptions: persistentProperties];

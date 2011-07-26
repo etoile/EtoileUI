@@ -56,6 +56,7 @@ the UI won't reflect the latest receiver content. */
 		_filtered = NO;
 		_sorted = NO;
 		[self didChangeValueForProperty: @"items"];
+		[self setNeedsDisplay: YES];
 	}
 }
 
