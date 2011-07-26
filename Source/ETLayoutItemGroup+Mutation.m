@@ -26,7 +26,7 @@
 
 @implementation ETLayoutItemGroup (ETMutationHandler)
 
-/* Returns whether children have been removed, added or inserted since the last 
+/** Returns whether children have been removed, added or inserted since the last 
 layout update.
 
 For example, returns YES when the receiver has been reloaded but the layout 
@@ -38,7 +38,7 @@ calling -updateLayout. */
 	return _hasNewContent;
 }
 	
-/* Sets whether children have been removed, added or inserted since the last 
+/** Sets whether children have been removed, added or inserted since the last 
 layout update.
 
 Also invalidates any item-related caches (e.g. -arrangedItems).
@@ -67,39 +67,41 @@ the UI won't reflect the latest receiver content. */
    future refactoring in perspective. */
 static 	BOOL _coalescingMutation = NO;
 
-/* Returns whether no model mutations should happen on all represented objects 
-   bound to layout items. This is valid for represented objects at every levels 
-   in the layout item tree, in other words model mutations aren't just suspended 
-   for the receiver.
-   If the return value is YES, the mutation handler method
-   -handleInsertItem:atIndex: will skip calling 
-   -handleModelInsert:item:atIndex: until -endCoalescingModelMutation has been 
-   called. This means a node added, removed or inserted into the layout item 
-   tree won't result in a collection change on the model side, for example a 
-   move into another collection for the represented object bound the node. 
-   That's commonly used for preventing the propagation of the implicit removal 
-   from the existing parent item that occurs when a layout item is 
-   inserted/added to a new parent. */
+/** Returns whether no model mutations should happen on all represented objects 
+bound to layout items. This is valid for represented objects at every levels 
+in the layout item tree, in other words model mutations aren't just suspended 
+for the receiver.
+
+If the return value is YES, the mutation handler method 
+-handleInsertItem:atIndex: will skip calling -mutateRepresentedObjectForInsertedItem: 
+until -endCoalescingModelMutation has been called. This means a node added, 
+removed or inserted into the layout item tree won't result in a collection 
+change on the model side, for example a move into another collection for the 
+represented object bound the node. 
+
+That's commonly used for preventing the propagation of the implicit removal from 
+the existing parent item that occurs when a layout item is inserted/added to a 
+new parent. */
 - (BOOL) isCoalescingModelMutation
 {
 	return _coalescingMutation;
 }
 
-/* Signals model mutations must be discarded until -endCoalescingModelMutation 
-   gets called. */
+/** Signals model mutations must be discarded until -endCoalescingModelMutation 
+gets called. */
 - (void) beginCoalescingModelMutation
 {
 	_coalescingMutation = YES;
 }
 
-/* Signals model mutations must be handled normally by creating a model 
-   mutation for each layout item mutation. */
+/** Signals model mutations must be handled normally by creating a model 
+mutation for each layout item mutation. */
 - (void) endCoalescingModelMutation
 {
 	_coalescingMutation = NO;
 }
 
-/* Disables the autolayout and returns whether the autolayout was previously 
+/** Disables the autolayout and returns whether the autolayout was previously 
 enabled.
 
 You must pair every -beginMutate with an -endMutate:.
@@ -112,7 +114,7 @@ See also -endMutate:. */
 	return wasAutolayoutEnabled;
 }
 
-/* Restores autolayout to its previous value, marks the receiver has having 
+/** Restores autolayout to its previous value, marks the receiver has having 
 new content and triggers a layout update.
 
 You must pass the value returned by -beginMutate: in parameter.
@@ -289,6 +291,10 @@ inside another -begin/endMutate pair.  */
 
 /* Collection Protocol Backend */
 
+/** Returns the object boxed into a layout item if needed.
+
+If the object is a valid item, no boxing occurs and the item object is returned 
+as is, otherwise the returned item uses the object as a represented object. */
 - (ETLayoutItem *) boxObject: (id)object
 {
 	ETLayoutItem *item = [object isLayoutItem] ? object : [self itemWithObject: object isValue: [object isCommonObjectValue]];
@@ -354,43 +360,46 @@ inside another -begin/endMutate pair.  */
 	return itemsFromSource;
 }
 
-/* Makes the represented object returns layout items as a source would but only
-   turning immediate children into ETLayoutItem or ETLayoutItemGroup instances. 
-   An empty array of items is returned when the represented object isn't a 
-   collection. This method is only invoked if thereceivertem bound to the 
-   represented object is an item group. */
+/** Makes the represented object returns layout items as a source would but only
+turning immediate children into ETLayoutItem or ETLayoutItemGroup instances.
+
+An empty array of items is returned when the represented object isn't a 
+collection. 
+
+This method is only invoked if the receiver item bound to the represented object 
+is an item group. */
 - (NSArray *) itemsFromRepresentedObject
 {
-	NSMutableArray *childItems = nil;
+	NSMutableArray *items = nil;
 	id repObject = [self representedObject];
 	
 	if ([repObject isCollection])
 	{
-		// TODO: Replace existing code once ETCollection is implemented everywhere
-		//id repObject = [self representedObject];
-		//NSEnumerator *e = [repObject objectEnumerator];
-		//NSMutableArray = [NSMutableArray arrayWithCapacity: [repObject count]];
-		NSArray *contentObjects = [repObject contentArray];
-		NSEnumerator *e = [contentObjects objectEnumerator];
-		id childRepObject = nil;
-		
-		childItems = [NSMutableArray arrayWithCapacity: [contentObjects count]];
-		
-		while ((childRepObject = [e nextObject]) != nil)
+		items = [NSMutableArray arrayWithCapacity: [repObject count]];
+		// TODO: Generalize to other keyed collections... Add -isKeyed to ETCollection.
+		BOOL isKeyedCollection = [repObject isKindOfClass: [NSDictionary class]];
+
+		if (isKeyedCollection)
 		{
-			[childItems addObject: [self itemWithObject: childRepObject isValue: NO]];
-			//[self handleAddItem: [self itemWithObject: childRepObject isValue: NO]];
+			repObject = [repObject arrayRepresentation];
+		}
+
+		for (id object in repObject)
+		{
+			[items addObject: [self itemWithObject: object isValue: NO]];
+			// NOTE: Would it be a good idea to use...
+			//[self handleAddItem: [self itemWithObject: object isValue: NO]];
 		}
 	}
 	else
 	{
-		childItems = [NSArray array];
+		items = [NSArray array];
 	}
 	
-	return childItems;
+	return items;
 }
 
-/* Returns 0 when the base item has no source or the source is invalid.
+/** Returns 0 when the base item has no source or the source is invalid.
 
 Returns 1 when the base item source conforms to ETLayoutItemGroupIndexSource 
 protocol.
@@ -433,8 +442,10 @@ Returns 2 when the represented object is expected to provide the content
 	}
 }
 
-/* The receiver registers itself as an observer on the source object in 
--setSource:. See also ETSourceDidUpdateNotification.*/
+/** Note: The receiver registers itself as an observer on the source object in 
+-setSource:. 
+
+See also ETSourceDidUpdateNotification.*/
 - (void) sourceDidUpdate: (NSNotification *)notif
 {
 	NSParameterAssert([notif object] == [self source]);
