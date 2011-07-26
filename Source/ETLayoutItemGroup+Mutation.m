@@ -72,7 +72,7 @@ static 	BOOL _coalescingMutation = NO;
    in the layout item tree, in other words model mutations aren't just suspended 
    for the receiver.
    If the return value is YES, the mutation handler method
-   -handleInsert:item:atIndex: will skip calling 
+   -handleInsertItem:atIndex: will skip calling 
    -handleModelInsert:item:atIndex: until -endCoalescingModelMutation has been 
    called. This means a node added, removed or inserted into the layout item 
    tree won't result in a collection change on the model side, for example a 
@@ -131,303 +131,157 @@ inside another -begin/endMutate pair.  */
 
 /* Element Mutation Handler */
 
-- (BOOL) handleAdd: (ETEvent *)event item: (ETLayoutItem *)item
+- (void) handleAddItem: (ETLayoutItem *)item
 {
-	//ETDebugLog(@"Add item in %@", self);
-	
 	if ([[item parentItem] isEqual: self])
 	{
 		ETLog(@"WARNING: Trying to add item %@ to the item group %@ it "
 			@"already belongs to", item, self);
-		return NO;
+		return;
 	}
-	
-	BOOL validatedAdd = YES;
 
 	/* Don't touch the model when it is turned into layout items in the reload 
 	   phase. We must be sure we won't trigger model updates that would result 
 	   in a new UI update/reload when it's already underway. */
 	if ([self isReloading] == NO)
-		validatedAdd = [self handleModelAdd: nil item: item];
-	
-	if (validatedAdd)
 	{
-		[self beginCoalescingModelMutation];
-
-		[self handleAttachItem: item];
-		[_layoutItems addObject: item];
-#ifdef OBJECTMERGING
-		if ([self isPersistent])
-		{
-			[item becomePersistentInContext: [self editingContext] rootObject: [self rootObject]];
-		}
-#endif
-		[self setHasNewContent: YES];
-		if ([self canUpdateLayout])
-			[self updateLayout];
-
-		[self endCoalescingModelMutation];
+		[self mutateRepresentedObjectForAddedItem: item];
 	}
+		
+	[self beginCoalescingModelMutation];
 
-	return validatedAdd;
+	[self handleAttachItem: item];
+	[_layoutItems addObject: item];
+#ifdef OBJECTMERGING
+	if ([self isPersistent])
+	{
+		[item becomePersistentInContext: [self editingContext] rootObject: [self rootObject]];
+	}
+#endif
+	[self setHasNewContent: YES];
+	if ([self canUpdateLayout])
+		[self updateLayout];
+
+	[self endCoalescingModelMutation];
 }
 
-- (BOOL) handleModelAdd: (ETEvent *)event item: (ETLayoutItem *)item;
+- (BOOL) isValidMutationForRepresentedObject: (id)repObject
+{
+	return ([[self baseItem] shouldMutateRepresentedObject] && [repObject isMutableCollection]);
+}
+
+- (void) mutateRepresentedObjectForAddedItem: (ETLayoutItem *)item;
 {
 	id repObject = [self representedObject];
-	// FIXME: Implement
-	//BOOL isValidElementType = NO;
-	BOOL validatedMutate = YES;
 
-	// FIXME: Rewrite the code below once the source protocol is rethough or 
-	// eliminate.
-	/*if ([PROVIDER_SOURCE respondsToSelector: @selector(container:addItems:atPath:operation:)])
-	{
-		NSArray *items = [NSArray arrayWithObject: item];
+	if ([self isValidMutationForRepresentedObject: repObject] == NO)
+		return;
 
-		validatedMutate = [PROVIDER_SOURCE container: PROVIDER_CONTAINER 
-			addItems: items atPath: [self indexPath] operation: event];
-	}
-	else if ([PROVIDER_SOURCE respondsToSelector: @selector(container:insertItems:atPaths:operation:)])
-	{
-		NSArray *items = [NSArray arrayWithObject: item];
-		NSIndexPath *indexPath = [[self indexPath] indexPathByAddingIndex: [self count]];
-		NSArray *indexPaths = [NSArray arrayWithObject: indexPath];
-				
-		validatedMutate = [PROVIDER_SOURCE container: PROVIDER_CONTAINER 
-			insertItems: items atPaths: indexPaths operation: event];
-	}*/
-	if (validatedMutate && [[self baseItem] shouldMutateRepresentedObject] 
-	 && [repObject isMutableCollection])
-	{
-		ETDebugLog(@"Add %@ in represented object %@", [item representedObject], 
-			repObject);
-		[repObject addObject: [item representedObject]];
-	}
-	
-	return validatedMutate;
+	ETDebugLog(@"Add %@ in represented object %@", [item representedObject], repObject);
+	[repObject addObject: [item representedObject]];
 }
 
-- (BOOL) handleInsert: (ETEvent *)event item: (ETLayoutItem *)item atIndex: (int)index
+- (void) handleInsertItem: (ETLayoutItem *)item atIndex: (int)index
 {
 	if ([[item parentItem] isEqual: self])
 	{
 		ETLog(@"WARNING: Trying to insert item %@ in the item group %@ it "
 			@"already belongs to", item, self);
-		return NO;
+		return;
 	}
-	
-	BOOL validatedInsert = YES;
-	
+
 	if ([self isReloading] == NO)
-		validatedInsert = [self handleModelInsert: nil item: item atIndex: index];
-	
-	if (validatedInsert)
 	{
-		[self beginCoalescingModelMutation];
-
-		[self handleAttachItem: item];
-		[_layoutItems insertObject: item atIndex: index];
-#ifdef OBJECTMERGING
-		if ([self isPersistent])
-		{
-			[item becomePersistentInContext: [self editingContext] rootObject: [self rootObject]];
-		}
-#endif
-		[self setHasNewContent: YES];
-		if ([self canUpdateLayout])
-			[self updateLayout];
-
-		[self endCoalescingModelMutation];
+		[self mutateRepresentedObjectForInsertedItem: item atIndex: index];
 	}
 
-	return validatedInsert;
+	[self beginCoalescingModelMutation];
 
-// NOTE: The code below is kept as an example to implement selection caching 
-// at later time if better performance are necessary.
-#if 0	
-	NSMutableIndexSet *indexes = [self selectionIndexes];
-	
-	/* In this example, 1 means selected and 0 unselected.
-       () represents old item index shifted by insertion
-	   
-       Item index      0   1   2   3   4
-       Item selected   0   1   0   1   0
-   
-       When you call shiftIndexesStartingAtIndex: 2 by: 1, you get:
-       Item index      0   1   2   3   4
-       Item selected   0   1   0   0   1  0
-       Now by inserting an item at 2:
-       Item index      0   1   2  (2) (3) (4)
-       Item selected   0   1   0   0   1   0
-		   
-       That's precisely the selections state we expect once item at index 2
-       has been removed. */
-	
-	[item setParentItem: nil];
+	[self handleAttachItem: item];
 	[_layoutItems insertObject: item atIndex: index];
-	[indexes shiftIndexesStartingAtIndex: index by: 1];
-	[self setSelectionIndexes: indexes];
+#ifdef OBJECTMERGING
+	if ([self isPersistent])
+	{
+		[item becomePersistentInContext: [self editingContext] rootObject: [self rootObject]];
+	}
 #endif
+	[self setHasNewContent: YES];
+	if ([self canUpdateLayout])
+		[self updateLayout];
+
+	[self endCoalescingModelMutation];
 }
 
-- (BOOL) handleModelInsert: (ETEvent *)event item: (ETLayoutItem *)item atIndex: (int)index
+- (void) mutateRepresentedObjectForInsertedItem: (ETLayoutItem *)item atIndex: (int)index
 {
 	id repObject = [self representedObject];
-	// FIXME: Implement
-	//BOOL isValidElementType = NO;
-	BOOL validatedMutate = YES;
 
-	// FIXME: Rewrite the code below once the source protocol is rethough or 
-	// eliminate.		
-	/*if ([PROVIDER_SOURCE respondsToSelector: @selector(container:insertItems:atPaths:operation:)])
-	{
-		NSArray *items = [NSArray arrayWithObject: item];
-		NSIndexPath *indexPath = [[self indexPath] indexPathByAddingIndex: index];
-		NSArray *indexPaths = [NSArray arrayWithObject: indexPath];
+	if ([self isValidMutationForRepresentedObject: repObject] == NO)
+		return;
 
-		validatedMutate = [PROVIDER_SOURCE container: PROVIDER_CONTAINER 
-			insertItems: items atPaths: indexPaths operation: event];
-	}*/
-	if (validatedMutate && [[self baseItem] shouldMutateRepresentedObject] 
-	 && [repObject isMutableCollection])
-	{
-		ETDebugLog(@"Insert %@ in represented object %@ at index %d", 
-			[item representedObject], repObject, index);
-		[repObject insertObject: [item representedObject] atIndex: index];
-	}
-	
-	return validatedMutate;
+	ETDebugLog(@"Insert %@ in represented object %@ at index %d", 
+		[item representedObject], repObject, index);
+	[repObject insertObject: [item representedObject] atIndex: index];
 }
 
-- (BOOL) handleRemove: (ETEvent *)event item: (ETLayoutItem *)item
+- (void) handleRemoveItem: (ETLayoutItem *)item
 {
 	/* Very important to return immediately, -handleDetachItem: execution would 
 	   lead to a weird behavior: the item parent item would be set to nil. */
 	if ([[item parentItem] isEqual: self] == NO)
-		return NO;
-
-	BOOL validatedRemove = YES;
+		return;
 
 	/* Take note that -reload calls -removeAllItems. 
 	   See -handleAdd:item: to know more. */	
 	if ([self isReloading] == NO && [self isCoalescingModelMutation] == NO)
-		validatedRemove = [self handleModelRemove: nil item: item];
-
-	if (validatedRemove)
 	{
-		[self beginCoalescingModelMutation];
-
-		[self handleDetachItem: item];
-		[_layoutItems removeObject: item];
-		[self setHasNewContent: YES];
-		if ([self canUpdateLayout])
-			[self updateLayout];
-
-		[self endCoalescingModelMutation];
+		[self mutateRepresentedObjectForRemovedItem: item];
 	}
-	
-	return validatedRemove;
 
-// NOTE: The code below is kept as an example to implement selection caching 
-// at later time if better performance are necessary.
-#if 0	
-	NSMutableIndexSet *indexes = [self selectionIndexes];
-	int removedIndex = [self indexOfItem: item];
-	
-	if ([indexes containsIndex: removedIndex])
-	{
-		/* In this example, 1 means selected and 0 unselected.
-		
-		   Item index      0   1   2   3   4
-		   Item selected   0   1   0   1   0
-		   
-		   When you call shiftIndexesStartingAtIndex: 3 by: -1, you get:
-		   Item index      0   1   2   3   4
-		   Item selected   0   1   1   0   0
-		   Now by removing item 2:
-		   Item index      0   1   3   4
-		   Item selected   0   1   1   0   0
-		   		   
-		   That's precisely the selections state we expect once item at index 2
-		   has been removed. */
-		[indexes shiftIndexesStartingAtIndex: removedIndex + 1 by: -1];
-		
-		/* Verify basic shitfing errors before really updating the selection */
-		if ([[self selectionIndexes] containsIndex: removedIndex + 1])
-		{
-			NSAssert([indexes containsIndex: removedIndex], 
-				@"Item at the index of the removal must remain selected because it was previously");
-		}
-		if ([[self selectionIndexes] containsIndex: removedIndex - 1])
-		{
-			NSAssert([indexes containsIndex: removedIndex - 1], 
-				@"Item before the index of the removal must remain selected because it was previously");
-		}
-		if ([[self selectionIndexes] containsIndex: removedIndex + 1] == NO)
-		{
-			NSAssert([indexes containsIndex: removedIndex] == NO, 
-				@"Item at the index of the removal must not be selected because it wasn't previously");
-		}
-		if ([[self selectionIndexes] containsIndex: removedIndex - 1] == NO)
-		{
-			NSAssert([indexes containsIndex: removedIndex - 1] == NO, 
-				@"Item before the index of the removal must not be selected because it wasn't previously");
-		}
-		[self setSelectionIndexes: indexes];
-	}
-#endif
+	[self beginCoalescingModelMutation];
 
+	[self handleDetachItem: item];
+	[_layoutItems removeObject: item];
+	[self setHasNewContent: YES];
+	if ([self canUpdateLayout])
+		[self updateLayout];
+
+	[self endCoalescingModelMutation];
 }
 
-- (BOOL) handleModelRemove: (ETEvent *)event item: (ETLayoutItem *)item
+- (void) mutateRepresentedObjectForRemovedItem: (ETLayoutItem *)item
 {
 	id repObject = [self representedObject];
-	 // FIXME: Implement
-	//BOOL isValidElementType = NO;
-	BOOL validatedMutate = YES;
 
-	// FIXME: Rewrite the code below once the source protocol is rethough or 
-	// eliminate.		
-	/*if ([PROVIDER_SOURCE respondsToSelector: @selector(container:removeItemsAtPaths:operation:)])
-	{
-		NSArray *indexPaths = [NSArray arrayWithObject: [item indexPath]];
+	if ([self isValidMutationForRepresentedObject: repObject] == NO)
+		return;
 
-		validatedMutate = [PROVIDER_SOURCE container: PROVIDER_CONTAINER 
-			removeItemsAtPaths: indexPaths operation: event];
-	}*/
-	if (validatedMutate && [[self baseItem] shouldMutateRepresentedObject] 
-	 && [repObject isMutableCollection])
-	{
-		ETDebugLog(@"Remove %@ in represented object %@", [item representedObject], 
-			repObject);
-		[repObject removeObject: [item representedObject]];
-	}
-	
-	return validatedMutate;
+	ETDebugLog(@"Remove %@ in represented object %@", [item representedObject], 
+		repObject);
+	[repObject removeObject: [item representedObject]];
 }
 
 /* Set Mutation Handlers */
 
-- (void) handleAdd: (ETEvent *)event items: (NSArray *)items
+- (void) handleAddItems: (NSArray *)items
 {
 	BOOL wasAutolayoutEnabled = [self beginMutate];
 
 	FOREACH(items, item, ETLayoutItem *)
 	{
-		[self handleAdd: event item: item];
+		[self handleAddItem: item];
 	}
 
 	[self endMutate: wasAutolayoutEnabled];
 }
 
-- (void) handleRemove: (ETEvent *)event items: (NSArray *)items
+- (void) handleRemoveItems: (NSArray *)items
 {
 	BOOL wasAutolayoutEnabled = [self beginMutate];
 
 	FOREACH(items, item, ETLayoutItem *)
 	{
-		[self handleRemove: event item: item];
+		[self handleRemoveItem: item];
 	}
 
 	[self endMutate: wasAutolayoutEnabled];
@@ -435,43 +289,15 @@ inside another -begin/endMutate pair.  */
 
 /* Collection Protocol Backend */
 
-- (void) handleAdd: (ETEvent *)event object: (id)object
+- (ETLayoutItem *) boxObject: (id)object
 {
-	id item = [object isLayoutItem] ? object : [self itemWithObject: object isValue: [object isCommonObjectValue]];
+	ETLayoutItem *item = [object isLayoutItem] ? object : [self itemWithObject: object isValue: [object isCommonObjectValue]];
 	
 	if ([object isLayoutItem] == NO)
 	{
-		ETDebugLog(@"Boxed object %@ in item %@ to be added to %@", object, item, self);
+		ETDebugLog(@"Boxed object %@ in item %@ to be inserted in %@", object, item, self);
 	}
-
-	[self handleAdd: event item: item];
-}
-
-- (void) handleInsert: (ETEvent *)event object: (id)object
-{
-
-}
-
-- (void) handleRemove: (ETEvent *)event object: (id)object
-{
-	/* Try to remove object by matching it against child items */
-	if ([object isLayoutItem] && [self containsItem: object])
-	{
-		[self handleRemove: event item: object];
-	}
-	else
-	{
-		/* Remove items with boxed object matching the object to remove */	
-		NSArray *itemsMatchedByRepObject = nil;
-		
-		itemsMatchedByRepObject = [[self items] 
-			objectsMatchingValue: object forKey: @"representedObject"];
-		[self handleRemove: event items: itemsMatchedByRepObject];
-		
-		itemsMatchedByRepObject = [[self items] 
-			objectsMatchingValue: object forKey: @"value"];
-		[self handleRemove: event items: itemsMatchedByRepObject];
-	}
+	return item;
 }
 
 /* Providing */
@@ -553,7 +379,7 @@ inside another -begin/endMutate pair.  */
 		while ((childRepObject = [e nextObject]) != nil)
 		{
 			[childItems addObject: [self itemWithObject: childRepObject isValue: NO]];
-			//[self handleAdd: nil item: [self itemWithObject: childRepObject isValue: NO]];
+			//[self handleAddItem: [self itemWithObject: childRepObject isValue: NO]];
 		}
 	}
 	else

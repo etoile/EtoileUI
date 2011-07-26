@@ -680,21 +680,21 @@ See also -setSource:, -isBaseItem and -nextResponder. */
 - (void) addItem: (ETLayoutItem *)item
 {
 	//ETDebugLog(@"Add item in %@", self);
-	[self handleAdd: nil item: item];
+	[self handleAddItem: item];
 }
 
 /** Inserts the given item in the receiver children at a precise index. */
 - (void) insertItem: (ETLayoutItem *)item atIndex: (int)index
 {
 	//ETDebuLog(@"Insert item in %@", self);
-	[self handleInsert: nil item: item atIndex: index];
+	[self handleInsertItem: item atIndex: index];
 }
 
 /** Removes the given item from the receiver children. */
 - (void) removeItem: (ETLayoutItem *)item
 {
 	//ETDebugLog(@"Remove item in %@", self);
-	[self handleRemove: nil item: item];
+	[self handleRemoveItem: item];
 }
 
 /** Removes the child item at the given index in the receiver children. */
@@ -734,14 +734,14 @@ Similar to -lastObject method for collections (see ETCollection).*/
 - (void) addItems: (NSArray *)items
 {
 	//ETDebugLog(@"Add items in %@", self);
-	[self handleAdd: nil items: items];
+	[self handleAddItems: items];
 }
 
 /** Removes the given child items from the receiver children. */
 - (void) removeItems: (NSArray *)items
 {
 	//ETDebugLog(@"Remove items in %@", self);
-	[self handleRemove: nil items: items];
+	[self handleRemoveItems: items];
 }
 
 /** Removes all the receiver child items. */
@@ -749,7 +749,7 @@ Similar to -lastObject method for collections (see ETCollection).*/
 {
 	//ETDebugLog(@"Remove all items in %@", self);
 	// FIXME: Temporary solution which is quite slow
-	[self handleRemove: nil items: [self items]];
+	[self handleRemoveItems: [self items]];
 }
 
 // FIXME: (id) parameter rather than (ETLayoutItem *) turns off compiler 
@@ -1792,26 +1792,12 @@ TODO: Implement and may be rename -expand or -expandStack */
 	-templateItemGroup is retrieved (-isGroup returns YES). */
 - (void) addObject: (id)object
 {
-	id item = [object isLayoutItem] ? object : [self itemWithObject: object isValue: [object isCommonObjectValue]];
-	
-	if ([object isLayoutItem] == NO)
-	{
-		ETDebugLog(@"Boxed object %@ in item %@ to be added to %@", object, item, self);
-	}
-
-	[self addItem: item];
+	[self addItem: [self boxObject: object]];
 }
 
 - (void) insertObject: (id)object atIndex: (unsigned int)index hint: (id)hint
 {
-	id item = [object isLayoutItem] ? object : [self itemWithObject: object isValue: [object isCommonObjectValue]];
-	
-	if ([object isLayoutItem] == NO)
-	{
-		ETDebugLog(@"Boxed object %@ in item %@ to be inserted in %@", object, item, self);
-	}
-
-	[self insertItem: item atIndex: index];
+	[self insertItem: [self boxObject: object] atIndex: index];
 }
 
 /** Removes object from the child items of the receiver, eventually trying to 

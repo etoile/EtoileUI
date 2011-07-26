@@ -1,6 +1,6 @@
 /** <title>ETLayoutItemGroup+Mutation</title>
 
-	<abstract>Description forthcoming.</abstract>
+	<abstract>Handling of Mutations on Layout Item Tree, Model Graph and Source.</abstract>
  
 	Author:  Quentin Mathe <qmathe@club-internet.fr>
 	Date:  January 2007
@@ -34,6 +34,8 @@
    like -addItem, removeItem:, -insertItem:atIndex: etc. */
 @interface ETLayoutItemGroup (ETMutationHandler)
 
+/** @taskunit Mutation Coordination */
+
 - (BOOL) hasNewContent;
 - (void) setHasNewContent: (BOOL)flag;
 - (BOOL) isCoalescingModelMutation;
@@ -42,32 +44,32 @@
 - (BOOL) beginMutate;
 - (void) endMutate: (BOOL)wasAutolayoutEnabled;
 
-/* Mutation Backend
-   Handling of Mutations on Layout Item Tree, Model Graph and Source  */
+/** @taskunit Mutation Actions */
 
-- (BOOL) handleAdd: (ETEvent *)event item: (ETLayoutItem *)item;
-- (BOOL) handleModelAdd: (ETEvent *)event item: (ETLayoutItem *)item;
-- (BOOL) handleInsert: (ETEvent *)event item: (ETLayoutItem *)item atIndex: (int)index;
-- (BOOL) handleModelInsert: (ETEvent *)event item: (ETLayoutItem *)item atIndex: (int)index;
-- (BOOL) handleRemove: (ETEvent *)event item: (ETLayoutItem *)item;
-- (BOOL) handleModelRemove: (ETEvent *)event item: (ETLayoutItem *)item;
+- (void) handleAddItem: (ETLayoutItem *)item;
+- (void) handleInsertItem: (ETLayoutItem *)item atIndex: (int)index;
+- (void) handleRemoveItem: (ETLayoutItem *)item;
 
-- (void) handleAdd: (ETEvent *)event items: (NSArray *)items;
-- (void) handleRemove: (ETEvent *)event items: (NSArray *)items;
+- (void) handleAddItems: (NSArray *)items;
+- (void) handleRemoveItems: (NSArray *)items;
 
-/* Collection Protocol Backend */
+/** @taskunit Model Mutation */
 
-- (void) handleAdd: (ETEvent *)event object: (id)object;
-- (void) handleInsert: (ETEvent *)event object: (id)object;
-- (void) handleRemove: (ETEvent *)event object: (id)object;
+- (void) mutateRepresentedObjectForAddedItem: (ETLayoutItem *)item;
+- (void) mutateRepresentedObjectForInsertedItem: (ETLayoutItem *)item atIndex: (int)index;
+- (void) mutateRepresentedObjectForRemovedItem: (ETLayoutItem *)item;
+
+/** @taskunit Autoboxing */
+
+- (ETLayoutItem *) boxObject: (id)object;
 	
-/* Providing */
+/** @taskunit Providing */
 
 - (BOOL) isReloading;
 - (NSArray *) itemsFromSource;
 - (void) sourceDidUpdate: (NSNotification *)notif;
 
-/* Controller Coordination */
+/** @taskunit Controller Coordination */
 
 - (id) itemWithObject: (id)object isValue: (BOOL)isValue;
 
