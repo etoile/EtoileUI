@@ -173,8 +173,6 @@ UI level for a photo viewer. */
 		//[photoViewItem setHasVerticalScroller: NO];
 		//[photoViewItem setHasHorizontalScroller: NO];
 	}
-	
-	[photoViewItem updateLayout]; 
 }
 
 - (IBAction) scale: (id)sender

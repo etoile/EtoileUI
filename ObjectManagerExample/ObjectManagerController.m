@@ -157,11 +157,6 @@ the receiver is set as the application's delegate in the nib. */
 		[mainViewItem setHasVerticalScroller: NO];
 		//[mainViewItem setHasHorizontalScroller: NO];
 	}
-	
-	[mainViewItem updateLayout];
-    
-    /* Flow autolayout manager doesn't take care of trigerring or updating the display. */
-    [mainViewItem setNeedsDisplay: YES];  
 }
 
 - (IBAction) scale: (id)sender

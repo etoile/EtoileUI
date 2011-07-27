@@ -28,6 +28,9 @@
 
 - (void) addItem: (ETLayoutItem *)anItem;
 - (void) removeItem: (ETLayoutItem *)anItem;
+- (void) removeItems: (NSSet *)items;
+- (void) removeAllItems;
+- (BOOL) isEmpty;
 
 /** @taskunit Executing Layout Updates */
 

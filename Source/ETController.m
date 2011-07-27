@@ -945,7 +945,7 @@ the default one based on
 		[content filterWithPredicate: [self filterPredicate] recursively: YES];
 
 	if (_hasNewContent || _hasNewSortDescriptors || _hasNewFilterPredicate)
-		[content updateLayout];
+		[content updateLayout]; // FIXME: Should be [content setNeedsLayoutUpdate];
 }
 
 /** Returns whether -rearrangeObjects should be automatically called when 

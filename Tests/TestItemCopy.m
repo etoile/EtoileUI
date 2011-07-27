@@ -21,6 +21,7 @@
 #import "ETIconLayout.h"
 #import "ETLayoutItem.h"
 #import "ETLayoutItemGroup.h"
+#import "ETLayoutExecutor.h"
 #import "EtoileUIProperties.h"
 #import "ETPaneLayout.h"
 #import "ETScrollableAreaItem.h"
@@ -399,6 +400,7 @@ DEALLOC(DESTROY(itemFactory); DESTROY(item); DESTROY(itemGroup))
 	[itemGroup addItem: item];
 	[itemGroup addItem: itemGroup1];
 	[itemGroup setLayout: layout];
+	[itemGroup updateLayoutIfNeeded];
 
 	ETLayoutItemGroup *newItemGroup = [itemGroup deepCopy];
 	ETIconLayout *layoutCopy = (id)[newItemGroup layout];
@@ -433,6 +435,7 @@ DEALLOC(DESTROY(itemFactory); DESTROY(item); DESTROY(itemGroup))
 	[itemGroup addItem: item1];
 	[itemGroup addItem: itemGroup1];
 	[itemGroup setLayout: layout];
+	[itemGroup updateLayoutIfNeeded];
 
 	ETLayoutItemGroup *newItemGroup = [itemGroup deepCopy];
 	ETPaneLayout *layoutCopy = (id)[newItemGroup layout];

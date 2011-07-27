@@ -22,6 +22,7 @@
 #import "ETLayoutItem+KVO.h"
 #import "ETLayoutItem+Reflection.h"
 #import "ETLayoutItem+Scrollable.h"
+#import "ETLayoutExecutor.h"
 #import "EtoileUIProperties.h"
 #import "ETScrollableAreaItem.h"
 #import "ETStyleGroup.h"
@@ -198,7 +199,8 @@ every subclass that overrides -dealloc. */
 	DESTROY(_representedObject);
 	DESTROY(_transform);
 	_parentItem = nil; /* weak reference */
-    
+	[[ETLayoutExecutor sharedInstance] removeItem: self];
+
     [super dealloc];
 }
 
@@ -1489,6 +1491,30 @@ See also -[ETLayoutItemGroup updateLayout].  */
 - (void) updateLayoutRecursively: (BOOL)recursively
 {
 	// TODO: Implement
+}
+
+/** Updates the layouts, previously marked with -setNeedsLayoutUpdate, in the 
+entire item tree.
+
+For ETLayoutItemGroup, won't be limited to the item subtree. */
+- (void) updateLayoutIfNeeded
+{
+	[[ETLayoutExecutor sharedInstance] execute];
+}
+
+/** Returns whether the layout is going to be updated in the interval between 
+the current and the  next event. */
+- (BOOL) needsLayoutUpdate
+{
+	return [[ETLayoutExecutor sharedInstance] containsItem: self];
+}
+
+/** Marks the receiver to have its layout updated and be redisplayed in the 
+interval between the current and the next event. */
+- (void) setNeedsLayoutUpdate
+{
+	[[ETLayoutExecutor sharedInstance] addItem: (id)self];
+	[self setNeedsDisplay: YES];
 }
 
 static inline NSRect DrawingBoundsInWindowItem(ETWindowItem *windowItem)

@@ -350,6 +350,7 @@ inside the content bounds. */
 	// FIXME: The precondition won't work without a layout or if we move 
 	// -setLayout: before the two previous lines.
 	[mainItem setLayout: [ETLineLayout layout]];
+	[mainItem updateLayoutIfNeeded];
 
 	/* Precondition */
 	UKRectsEqual(contentRect, [mainItem contentBounds]);

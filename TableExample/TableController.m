@@ -102,7 +102,6 @@ burden involved by a data source. */
 	[outlineItem addItem: [itemFactory itemWithValue: icon]];
 	
 	[outlineItem setAutolayout: YES];
-	[outlineItem updateLayout];
 }
 
 /* Invoked when the application is going to finish its launch because 

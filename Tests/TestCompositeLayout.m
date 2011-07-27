@@ -96,6 +96,7 @@ DEALLOC(DESTROY(itemFactory); DESTROY(item))
 
 	[item addItems: content];
 	[item setLayout: layout];
+	[item updateLayoutIfNeeded];
 
 	UKIntsEqual(3, [[proxyLayout tableView] numberOfRows]);
 	UKNotNil([item supervisorView]);

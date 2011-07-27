@@ -105,11 +105,8 @@
 //-reloadAndUpdateAll;
 - (void) reloadAndUpdateLayout;
 - (void) updateLayout;
+- (void) updateLayoutRecursively: (BOOL)recursively;
 - (BOOL) canUpdateLayout;
-// FIXME: Implement methods below
-/*- (BOOL) canApplyLayout; // would replace -canUpdateLayout
-- (void) applyLayout;
-- (void) setNeedsLayout: (BOOL)needsLayout;*/
 
 - (BOOL) isAutolayout;
 - (void) setAutolayout: (BOOL)flag;

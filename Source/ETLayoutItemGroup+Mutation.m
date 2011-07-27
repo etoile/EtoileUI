@@ -66,15 +66,7 @@ the UI won't reflect the latest receiver content. */
 		return;
 
 	[self setHasNewContent: YES];
-	if ([self canUpdateLayout])
-	{
-		/* Will trigger a redisplay */
-		[self updateLayout];
-	}
-	else
-	{
-		[self setNeedsDisplay: YES];
-	}
+	[self setNeedsLayoutUpdate];
 }
 
 /* Would be cleaner if this mutation backend was a singleton object acting as a 

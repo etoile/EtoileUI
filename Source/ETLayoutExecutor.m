@@ -64,6 +64,30 @@ See also -addItem:. */
 	[_scheduledItems removeObject: anItem];
 }
 
+/** Unschedules the given items as needing a layout update.
+
+See also -removeItem: and -addItem:. */
+- (void) removeItems: (NSSet *)items
+{
+	[_scheduledItems minusSet: items];
+}
+
+/** Unschedules all the items previously added as needing a layout update. */
+- (void) removeAllItems
+{
+	[_scheduledItems removeAllObjects];
+}
+
+/** Returns YES when no layout update is scheduled (no dirty items). */
+- (BOOL) isEmpty
+{
+	return[_scheduledItems isEmpty];
+}
+
+/** Inserts the item in the queue, in a way that ensures flexible items have 
+their layout updated before their parent item if the latter is flexible.
+
+A flexible item is a item which returns YES to -[ETLayoutItem usesLayoutBasedFrame]. */
 - (void) insertItem: (ETLayoutItem *)anItem 
 inFlexibleItemQueue: (NSMutableArray *)flexibleItemQueue
 {
@@ -83,7 +107,7 @@ inFlexibleItemQueue: (NSMutableArray *)flexibleItemQueue
 
 		if (isQueuedItemPredecessor)
 		{
-			// NOTE: Queued item is moved to i + 1
+			// NOTE: queuedItem is moved to i + 1
 			[flexibleItemQueue insertObject: anItem atIndex: i];
 			break;
 		}
@@ -99,6 +123,14 @@ inFlexibleItemQueue: (NSMutableArray *)flexibleItemQueue
 	RELEASE(anItem);
 }
 
+/** Schedules a parent item to have its layout updated.
+
+If the item hasn't been processed as a dirty item (not in the dirty items or not 
+checked by the iteration in -executeWithDirtyItems: yet), then it is marked as 
+dirty.<br />
+Otherwise the item might have to be moved to a new position in the flexible item 
+queue (if it uses a layout based frame), to ensure its will receive its layout 
+update once all its children have receive their own.   */
 - (void) scheduleParentItem: (ETLayoutItemGroup *)parentItem 
                   processed: (BOOL)hasBeenProcessed
         inFlexibleItemQueue: (NSMutableArray *)flexibleItemQueue
@@ -115,7 +147,7 @@ inFlexibleItemQueue: (NSMutableArray *)flexibleItemQueue
 	}
 	else
 	{
-		// If parent item uses a layout based frame, it must come afterits child 
+		// If parent item uses a layout based frame, it must come after its child 
 		// in the flexibleFrameItems array because there is a dependency on  its 
 		// child frame to compute its own.
 		// We can ensure that by adding it the dirty items not yet processed.
@@ -123,6 +155,8 @@ inFlexibleItemQueue: (NSMutableArray *)flexibleItemQueue
 	}
 }
 
+/** Reorders the dirty items and marks additional items as dirty to respect the 
+layout update constraints, then tells the reordered items to update their layout. */
 - (void) executeWithDirtyItems: (NSSet *)scheduledItems
 {
 	NSMutableSet *dirtyItems = [NSMutableSet setWithSet: scheduledItems];
@@ -138,6 +172,8 @@ inFlexibleItemQueue: (NSMutableArray *)flexibleItemQueue
 		{
 			[self insertItem: item inFlexibleItemQueue: flexibleItemQueue];
 
+			/* When a dirty item uses a layout based frame, its parent 
+			   needs a layout update, in other words to be marked as dirty. */
 			[self scheduleParentItem: [item parentItem] 
 			               processed: [processedItems containsObject: [item parentItem]]
 			     inFlexibleItemQueue: flexibleItemQueue
@@ -152,6 +188,8 @@ inFlexibleItemQueue: (NSMutableArray *)flexibleItemQueue
 		[processedItems addObject: item];
 	}
 
+	ETLog(@"UPDATE LAYOUT -- Flexible items %i -- Non flexible items %i", 
+		[flexibleItemQueue count], [nonFlexibleItems count]);
 	[[flexibleItemQueue mappedCollection] updateLayoutRecursively: NO];
 	[[nonFlexibleItems mappedCollection] updateLayoutRecursively: NO];
 }

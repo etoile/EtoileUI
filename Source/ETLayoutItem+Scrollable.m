@@ -39,7 +39,9 @@ can be owned either by the receiver or its layout.
 
 Even if both vertical and horizontal scroller are made invisible, this method
 won't remove the scrollable area decorator managed by the receiver from the 
-decorator chain. */
+decorator chain.
+
+Marks the receiver as needing a layout update. */
 - (void) setHasVerticalScroller: (BOOL)scroll
 {
 	if (scroll)
@@ -50,6 +52,7 @@ decorator chain. */
 
 	/* Update NSBrowser, NSOutlineView enclosing scroll view etc. */
 	[[self layout] syncLayoutViewWithItem: self];
+	[self setNeedsLayoutUpdate];
 }
 
 /** Returns YES when the horizontal scroller of the current scrollable area 
@@ -64,7 +67,9 @@ can be owned either by the receiver or its layout.
 
 Even if both vertical and horizontal scrollers are made invisible, this method
 won't remove the scrollable area decorator managed by the receiver from the 
-decorator chain. */
+decorator chain.
+
+Marks the receiver as needing a layout update. */
 - (void) setHasHorizontalScroller: (BOOL)scroll
 {
 	if (scroll)
@@ -75,6 +80,7 @@ decorator chain. */
 
 	/* Update NSBrowser, NSOutlineView enclosing scroll view etc. */
 	[[self layout] syncLayoutViewWithItem: self];
+	[self setNeedsLayoutUpdate];
 }
 
 /** Returns whether the horizontal scroller, the vertical scroller or both are 

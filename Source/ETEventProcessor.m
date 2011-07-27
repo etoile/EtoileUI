@@ -14,6 +14,7 @@
 #import "ETTool.h"
 #import "ETEvent.h"
 #import "ETLayoutItem.h"
+#import "ETLayoutExecutor.h"
 #import "ETApplication.h"
 #import "ETView.h"
 #import "ETCompatibility.h"
@@ -82,6 +83,7 @@ when the event has to be handled by the widget backend. */
 - (BOOL) processEvent: (void *)theEvent
 {
 	ETEvent *nativeEvent = ETEVENT((NSEvent *)theEvent, nil, ETNonePickingMask);
+	BOOL isHandled = NO;
 
 	switch ([(NSEvent *)theEvent type])
 	{
@@ -89,15 +91,20 @@ when the event has to be handled by the widget backend. */
 		case NSLeftMouseDown:
 		case NSLeftMouseUp:
 		case NSLeftMouseDragged:
-			return [self processMouseEvent: nativeEvent];
+			isHandled = [self processMouseEvent: nativeEvent];
 		case NSKeyDown:
 		case NSKeyUp:
 		case NSFlagsChanged:
-			return [self processKeyEvent: nativeEvent];
+			isHandled = [self processKeyEvent: nativeEvent];
+			break;
 		// FIXME: Handle more event types...
 		default:
-			return NO;
+			break;
 	}
+
+	[[ETLayoutExecutor sharedInstance] execute];
+
+	return isHandled;
 }
 
 - (BOOL) processKeyEvent: (ETEvent *)anEvent

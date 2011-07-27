@@ -18,6 +18,7 @@
 #import "ETFixedLayout.h"
 #import "ETLayoutItemGroup+Mutation.h"
 #import "ETLayoutItem+Scrollable.h"
+#import "ETLayoutExecutor.h"
 #import "EtoileUIProperties.h"
 #import "ETView.h"
 #import "NSView+Etoile.h"
@@ -161,6 +162,10 @@ See also -isLayerItem. */
 		   notification that would retain/release us in a change dictionary. */
 		child->_parentItem = nil;
 	}
+	if (n > 0 && [[ETLayoutExecutor sharedInstance] isEmpty] == NO)
+	{
+		[[ETLayoutExecutor sharedInstance] removeItems: [NSSet setWithArray: _layoutItems]];
+	}
 	DESTROY(_layoutItems);
 	[self setSource: nil]; /* Tear down the receiver as a source observer */
 
@@ -301,7 +306,7 @@ The returned copy is mutable because ETLayoutItemGroup cannot be immutable. */
 	   the receiver had received none until now.  */
 	if ([[itemCopy layout] isWidget])
 	{
-		[itemCopy updateLayout]; // TODO: Should be setNeedsUpdateLayout:
+		[itemCopy updateLayout]; // FIXME: Should use [itemCopy setNeedsLayoutUpdate];
 	}
 	else if ([[itemCopy layout] isOpaque] == NO) /* We don't need a true layout update */
 	{
@@ -617,8 +622,7 @@ event handling logic. */
 		[self makeBaseItemIfNeeded];
 
 	[self tryReloadWithSource: source]; /* Resets any particular state like selection */
-	if ([self canUpdateLayout])
-		[self updateLayout];
+	[self setNeedsLayoutUpdate];
 
 	[[NSNotificationCenter defaultCenter] 
 		   addObserver: self
@@ -966,8 +970,7 @@ Which means -isFiltered and -isSorted will both return NO. */
 	RELEASE(oldLayout);
 	
 	[self setAutolayout: wasAutolayoutEnabled];
-	if ([self canUpdateLayout])
-		[self updateLayout];
+	[self setNeedsLayoutUpdate];
 }
 
 /** Attempts to reload the children items from the source and updates the layout 
@@ -980,13 +983,25 @@ by asking the first ancestor item with an opaque layout to do so. */
 
 /** Updates recursively each layout in the item tree owned by the receiver.
 
-The layout update starts on the leaf descendant items, is carried upward 
-through the tree structure back to the receiver itself, whose layout is the last 
-updated. This postorder processing is necessary because a parent layout 
-computation might depend on one or several child item properties which are 
-dynamically computed. For example, an item can use a layout which alters its 
-frame (see -usesLayoutBasedFrame). */
+See -updateLayoutRecursively:. */
 - (void) updateLayout
+{
+	[self updateLayoutRecursively: YES];
+}
+
+/** Updates each layout in the immediate children (recursively is NO) or in the 
+whole item subtree (recursively is YES) owned by the receiver. 
+
+When recursively is YES, does a bottom-up layout update, by propagating it first 
+downwards.<br />
+Layout updates start on the terminal descendant items, then are carried upwards 
+through the tree structure back to the receiver, whose layout is the last 
+updated.<br />
+A bottom-up update is used because a parent layout computation might depend on 
+child item properties. For example, an item can use a layout which touches its 
+frame (see -usesLayoutBasedFrame). */
+- (void) updateLayoutRecursively: (BOOL)recursively
+
 {
 	if ([self layout] == nil)
 		return;
@@ -999,8 +1014,10 @@ frame (see -usesLayoutBasedFrame). */
 	/* Delegate layout rendering to custom layout object */
 	[[self layout] render: nil isNewContent: isNewLayoutContent];
 
-	[[self items] makeObjectsPerformSelector: @selector(updateLayout)];
-
+	if (recursively)
+	{
+		[[self items] makeObjectsPerformSelector: @selector(updateLayout)];
+	}
 	[self setNeedsDisplay: YES];
 
 	/* Unset needs layout flags */
@@ -1076,13 +1093,14 @@ See also -setItemScaleFactor:. */
 
 This scale factor only applies to the immediate children.
 
+Updates the layout immediately unlike most methods.
+
 See -[ETLayout setItemSizeConstraintStyle:] and -[ETLayout setConstrainedItemSize:] 
 to control more precisely how the items get resized per layout. */
 - (void) setItemScaleFactor: (float)aFactor
 {
 	SET_PROPERTY([NSNumber numberWithFloat: aFactor], kETItemScaleFactorProperty);
-	if ([self canUpdateLayout])
-		[self updateLayout];
+	[self updateLayout];
 }
 
 /* Rendering */

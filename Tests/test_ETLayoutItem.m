@@ -17,6 +17,7 @@
 #import "ETLayoutItem.h"
 #import "ETLayoutItem+Reflection.h"
 #import "ETLayoutItemFactory.h"
+#import "ETLayoutExecutor.h"
 #import "ETWindowItem.h"
 #import "ETLayoutItemGroup.h"
 #import "ETFlowLayout.h"
@@ -153,6 +154,7 @@ static ETLayoutItemFactory *itemFactory = nil;
 
 	/* Switch to non-opaque layout */
 	[parentItem setLayout: [ETFlowLayout layout]];
+	[parentItem updateLayoutIfNeeded];
 
 	UKTrue([item isVisible]);
 	UKObjectsSame([parentItem supervisorView], [[item supervisorView] superview]);
@@ -166,6 +168,8 @@ static ETLayoutItemFactory *itemFactory = nil;
 	id item1 = [[ETLayoutItem alloc] init];
 
 	[item addItems: A(item0, item1)];
+	/* Required to get RELEASE(item) deallocates the item */
+	[[ETLayoutExecutor sharedInstance] removeItem: item];
 
 	RELEASE(item);
 	/* The next tests ensure the parent item was correctly reset to nil, 
