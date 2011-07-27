@@ -48,9 +48,9 @@ like -addItem, removeItem:, -insertItem:atIndex: etc. */
 
 /** @taskunit Mutation Actions */
 
-- (void) handleAddItem: (ETLayoutItem *)item;
-- (void) handleInsertItem: (ETLayoutItem *)item atIndex: (int)index;
-- (void) handleRemoveItem: (ETLayoutItem *)item;
+- (void) handleAddItem: (ETLayoutItem *)item moreComing: (BOOL)moreComing;
+- (void) handleInsertItem: (ETLayoutItem *)item atIndex: (int)index moreComing: (BOOL)moreComing;
+- (void) handleRemoveItem: (ETLayoutItem *)item moreComing: (BOOL)moreComing;
 
 - (void) handleAddItems: (NSArray *)items;
 - (void) handleRemoveItems: (NSArray *)items;

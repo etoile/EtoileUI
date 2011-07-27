@@ -7,6 +7,7 @@
  */
 
 #import <EtoileFoundation/ETCollection.h>
+#import <EtoileFoundation/ETKeyValuePair.h>
 #import <EtoileFoundation/NSObject+Model.h>
 #import <EtoileFoundation/Macros.h>
 #import "ETLayoutItemGroup+Mutation.h"
