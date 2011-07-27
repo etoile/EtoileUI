@@ -39,6 +39,7 @@ like -addItem, removeItem:, -insertItem:atIndex: etc. */
 
 - (BOOL) hasNewContent;
 - (void) setHasNewContent: (BOOL)flag;
+- (void) didChangeContentWithMoreComing: (BOOL)moreComing;
 - (BOOL) isCoalescingModelMutation;
 - (void) beginCoalescingModelMutation;
 - (void) endCoalescingModelMutation;

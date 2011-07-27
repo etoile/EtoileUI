@@ -56,6 +56,22 @@ the UI won't reflect the latest receiver content. */
 		_filtered = NO;
 		_sorted = NO;
 		[self didChangeValueForProperty: @"items"];
+	}
+}
+
+- (void) didChangeContentWithMoreComing: (BOOL)moreComing
+{
+	if (moreComing)
+		return;
+
+	[self setHasNewContent: YES];
+	if ([self canUpdateLayout])
+	{
+		/* Will trigger a redisplay */
+		[self updateLayout];
+	}
+	else
+	{
 		[self setNeedsDisplay: YES];
 	}
 }
@@ -124,16 +140,13 @@ won't happen. For example, this would be case on invoking -endMutate: nested
 inside another -begin/endMutate pair.  */
 - (void) endMutate: (BOOL)wasAutolayoutEnabled
 {
-	[self setHasNewContent: YES];
 	[self setAutolayout: wasAutolayoutEnabled];
-
-	if ([self canUpdateLayout])
-		[self updateLayout];
+	[self didChangeContentWithMoreComing: NO];
 }
 
 /* Element Mutation Handler */
 
-- (void) handleAddItem: (ETLayoutItem *)item
+- (void) handleAddItem: (ETLayoutItem *)item moreComing: (BOOL)moreComing
 {
 	if ([[item parentItem] isEqual: self])
 	{
@@ -160,9 +173,7 @@ inside another -begin/endMutate pair.  */
 		[item becomePersistentInContext: [self editingContext] rootObject: [self rootObject]];
 	}
 #endif
-	[self setHasNewContent: YES];
-	if ([self canUpdateLayout])
-		[self updateLayout];
+	[self didChangeContentWithMoreComing: moreComing];
 
 	[self endCoalescingModelMutation];
 }
@@ -183,7 +194,7 @@ inside another -begin/endMutate pair.  */
 	[repObject addObject: [item representedObject]];
 }
 
-- (void) handleInsertItem: (ETLayoutItem *)item atIndex: (int)index
+- (void) handleInsertItem: (ETLayoutItem *)item atIndex: (int)index moreComing: (BOOL)moreComing
 {
 	if ([[item parentItem] isEqual: self])
 	{
@@ -207,9 +218,7 @@ inside another -begin/endMutate pair.  */
 		[item becomePersistentInContext: [self editingContext] rootObject: [self rootObject]];
 	}
 #endif
-	[self setHasNewContent: YES];
-	if ([self canUpdateLayout])
-		[self updateLayout];
+	[self didChangeContentWithMoreComing: moreComing];
 
 	[self endCoalescingModelMutation];
 }
@@ -226,7 +235,7 @@ inside another -begin/endMutate pair.  */
 	[repObject insertObject: [item representedObject] atIndex: index];
 }
 
-- (void) handleRemoveItem: (ETLayoutItem *)item
+- (void) handleRemoveItem: (ETLayoutItem *)item moreComing: (BOOL)moreComing
 {
 	/* Very important to return immediately, -handleDetachItem: execution would 
 	   lead to a weird behavior: the item parent item would be set to nil. */
@@ -244,9 +253,7 @@ inside another -begin/endMutate pair.  */
 
 	[self handleDetachItem: item];
 	[_layoutItems removeObject: item];
-	[self setHasNewContent: YES];
-	if ([self canUpdateLayout])
-		[self updateLayout];
+	[self didChangeContentWithMoreComing: moreComing];
 
 	[self endCoalescingModelMutation];
 }
@@ -271,7 +278,7 @@ inside another -begin/endMutate pair.  */
 
 	FOREACH(items, item, ETLayoutItem *)
 	{
-		[self handleAddItem: item];
+		[self handleAddItem: item moreComing: YES];
 	}
 
 	[self endMutate: wasAutolayoutEnabled];
@@ -283,7 +290,7 @@ inside another -begin/endMutate pair.  */
 
 	FOREACH(items, item, ETLayoutItem *)
 	{
-		[self handleRemoveItem: item];
+		[self handleRemoveItem: item moreComing: YES];
 	}
 
 	[self endMutate: wasAutolayoutEnabled];

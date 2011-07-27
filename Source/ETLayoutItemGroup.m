@@ -680,21 +680,21 @@ See also -setSource:, -isBaseItem and -nextResponder. */
 - (void) addItem: (ETLayoutItem *)item
 {
 	//ETDebugLog(@"Add item in %@", self);
-	[self handleAddItem: item];
+	[self handleAddItem: item moreComing: NO];
 }
 
 /** Inserts the given item in the receiver children at a precise index. */
 - (void) insertItem: (ETLayoutItem *)item atIndex: (int)index
 {
 	//ETDebuLog(@"Insert item in %@", self);
-	[self handleInsertItem: item atIndex: index];
+	[self handleInsertItem: item atIndex: index moreComing: NO];
 }
 
 /** Removes the given item from the receiver children. */
 - (void) removeItem: (ETLayoutItem *)item
 {
 	//ETDebugLog(@"Remove item in %@", self);
-	[self handleRemoveItem: item];
+	[self handleRemoveItem: item moreComing: NO];
 }
 
 /** Removes the child item at the given index in the receiver children. */
