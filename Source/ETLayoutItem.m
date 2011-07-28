@@ -199,7 +199,7 @@ every subclass that overrides -dealloc. */
 	DESTROY(_representedObject);
 	DESTROY(_transform);
 	_parentItem = nil; /* weak reference */
-	[[ETLayoutExecutor sharedInstance] removeItem: self];
+	[[ETLayoutExecutor sharedInstance] removeItem: (id)self];
 
     [super dealloc];
 }
