@@ -131,12 +131,20 @@ and centers it. A strech is a scale that doesn't preserve the content proportion
 	BOOL _isSyncingSupervisorViewGeometry;
 	BOOL _scrollViewShown; /* Used by ETLayoutItem+Scrollable */
 	BOOL _wasKVOStopped;
+	@protected
+	BOOL _isDeallocating;
 }
 
 + (BOOL) showsBoundingBox;
 + (void) setShowsBoundingBox: (BOOL)shows;
 + (BOOL) showsFrame;
 + (void) setShowsFrame: (BOOL)shows;
+
+/** @taskunit Autolayout */
+
++ (BOOL) isAutolayoutEnabled;
++ (void) enablesAutolayout;
++ (void) disablesAutolayoutIncludingNeedsUpdate: (BOOL)markingDisabled;
 
 /* Initialization */
 

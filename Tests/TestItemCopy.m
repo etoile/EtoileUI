@@ -81,6 +81,7 @@
 - (id) init
 {
 	SUPERINIT
+	[[ETLayoutExecutor sharedInstance] removeAllItems];
 	ASSIGN(itemFactory, [ETLayoutItemFactory factory]);
 	item = [[ETLayoutItem alloc] init];
 	itemGroup = [[ETLayoutItemGroup alloc] init];

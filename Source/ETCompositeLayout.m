@@ -400,14 +400,10 @@ the copying support in ETLayoutItemGroup and ETCompositeLayout/ETLayout). */
 {
 	[super tearDown];
 
-	[ETLayoutItemGroup disablesAutolayout];
-
 	[self restoreContextState];
 	[self restoreInitialContextState: [self initialStateProperties]];
 
 	[_layoutContext setVisibleItems: [_layoutContext items]];
-
-	[ETLayoutItemGroup enablesAutolayout];
 }
 
 - (void) renderWithLayoutItems: (NSArray *)items isNewContent: (BOOL)isNewContent

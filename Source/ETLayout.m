@@ -973,9 +973,19 @@ context and the tree rooted in -layerItem. */
 to be identical to the layout context. */
 - (void) syncLayerItemGeometryWithSize: (NSSize)aSize
 {
+	if (_isLayouting)
+	{
+		[ETLayoutItem enablesAutolayout];
+	}
+
 	[[self layerItem] setFlipped: [[self layoutContext] isFlipped]];
 	/* The layer item is rendered in the coordinate space of the layout context */
 	[[self layerItem] setSize: aSize];
+
+	if (_isLayouting)
+	{
+		[ETLayoutItem disablesAutolayoutIncludingNeedsUpdate: YES];
+	}
 }
 
 - (void) mapLayerItemIntoLayoutContext

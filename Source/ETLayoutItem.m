@@ -82,6 +82,48 @@ See also -showsFrame. */
 	showsFrame = shows;
 }
 
+static BOOL globalAutolayoutEnabled = YES;
+static BOOL needsUpdateLayoutDisabled = NO;
+
+/** Returns whether automatic layout updates are enabled. 
+
+If YES, items on which -setNeedsLayoutUpdate was invoked, will receive 
+-updateLayoutRecursively: in the interval between the current event and the 
+next event.<br />
+	
+By default, returns YES to eleminate the need to use -updateLayout. */
++ (BOOL) isAutolayoutEnabled;
+{
+	return globalAutolayoutEnabled;
+}
+
+/** Enables automatic layout updates in the interval between the current event 
+and the next event. 
+
+See also +disablesAutolayout. */
++ (void) enablesAutolayout;
+{
+	globalAutolayoutEnabled = YES;
+	needsUpdateLayoutDisabled = NO;
+}
+
+/** Disables automatic layout updates in the interval between the current event 
+and the next event.
+
+When YES is passed as markingDisabled, EtoileUI stops to track items that need 
+a layout update. So -setNeedsLayoutUpdate does nothing then, the method returns 
+immediately.<br />
+When NO is passed, the automatic layout update are disabled, but 
+-setNeedsLayoutUpdate works normally. Before the next event, +enablesAutolayout 
+can be called to entirely cancel +disablesAutolayoutIncludingNeedsUpdate:.
+
+See also +enablesAutolayout. */
++ (void) disablesAutolayoutIncludingNeedsUpdate: (BOOL)markingDisabled
+{
+	globalAutolayoutEnabled = NO;
+	needsUpdateLayoutDisabled = markingDisabled;
+}
+
 /* Initialization */
 
 /** You must use -[ETLayoutItemFactory item] or -[ETLayoutItemFactory itemGroup] 
@@ -191,6 +233,7 @@ You must call -stopKVOObservationIfNeeded right at the beginning of -dealloc in
 every subclass that overrides -dealloc. */
 - (void) dealloc
 {
+	_isDeallocating = YES;
 	[self stopKVOObservationIfNeeded];
 
 	DESTROY(_defaultValues);
@@ -199,7 +242,6 @@ every subclass that overrides -dealloc. */
 	DESTROY(_representedObject);
 	DESTROY(_transform);
 	_parentItem = nil; /* weak reference */
-	[[ETLayoutExecutor sharedInstance] removeItem: (id)self];
 
     [super dealloc];
 }
@@ -1510,9 +1552,14 @@ the current and the  next event. */
 }
 
 /** Marks the receiver to have its layout updated and be redisplayed in the 
-interval between the current and the next event. */
+interval between the current and the next event.
+
+See also +disablesAutolayoutIncludingNeedsUpdate:. */
 - (void) setNeedsLayoutUpdate
 {
+	if (needsUpdateLayoutDisabled || _isDeallocating)
+		return;
+
 	[[ETLayoutExecutor sharedInstance] addItem: (id)self];
 	[self setNeedsDisplay: YES];
 }
@@ -1977,7 +2024,9 @@ event handling and drawing. If you want to alter the flipping, you must use
 This method updates the supervisor view and the decorator chain to match the 
 flipping of the receiver.
 
-You must never alter the supervisor view directly with -[ETView setFlipped:]. */
+You must never alter the supervisor view directly with -[ETView setFlipped:].
+
+Marks the receiver as needing a layout update. */
 - (void) setFlipped: (BOOL)flip
 {
 	if (flip == _flipped)
@@ -1987,6 +2036,7 @@ You must never alter the supervisor view directly with -[ETView setFlipped:]. */
 	_flipped = flip;
 	[[self supervisorView] setFlipped: flip];
 	[[self decoratorItem] setFlipped: flip];
+	[self setNeedsLayoutUpdate];
 	[self didChangeValueForProperty: kETFlippedProperty];
 }
 
@@ -2117,6 +2167,9 @@ See also -setPersistentFrame: */
 /** Sets the current frame and also the persistent frame if the layout of the 
 parent item is positional and non-computed such as ETFreeLayout.
 
+Marks the receiver as needing a layout update. Marks the parent item too, when 
+the receiver has no decorator.
+
 See also -[ETLayout isPositional] and -[ETLayout isComputedLayout]. */
 - (void) setFrame: (NSRect)rect
 {
@@ -2226,7 +2279,9 @@ position is expressed in the parent item coordinate space. See also
 When -setPosition: is called, the position is applied relative to -anchorPoint. 
 position must be expressed in the parent item coordinate space (exactly as the 
 frame). When the position is set, the frame is moved to have the anchor point 
-location in the parent item coordinate space equal to the new position value. */  
+location in the parent item coordinate space equal to the new position value.
+
+Marks the parent item as needing a layout update. */  
 - (void) setPosition: (NSPoint)position
 {
 	[self willChangeValueForProperty: kETPositionProperty];
@@ -2255,6 +2310,7 @@ location in the parent item coordinate space equal to the new position value. */
 	}
 
 	[self updatePersistentGeometryIfNeeded];
+	[_parentItem setNeedsLayoutUpdate];
 	[self didChangeValueForProperty: kETPositionProperty];
 }
 
@@ -2364,7 +2420,10 @@ to translate the coordinate system used to draw the receiver. The receiver
 transform, which might include a translation too, won't be altered. Both 
 translations are cumulative.
 
-If the flipped property is modified, the content bounds remains identical. */
+If the flipped property is modified, the content bounds remains identical.
+
+Marks the receiver as needing a layout update. Marks the parent item too, when 
+the receiver has no decorator.  */
 - (void) setContentBounds: (NSRect)rect
 {
 	[self willChangeValueForProperty: kETContentBoundsProperty];
@@ -2389,6 +2448,11 @@ If the flipped property is modified, the content bounds remains identical. */
 
 	[self updatePersistentGeometryIfNeeded];
 	[[self styleGroup] didChangeItemBounds: _contentBounds];
+	[self setNeedsLayoutUpdate];
+	if (_decoratorItem == nil)
+	{
+		[_parentItem setNeedsLayoutUpdate];
+	}
 	[self didChangeValueForProperty: kETContentBoundsProperty];
 }
 
@@ -2443,11 +2507,19 @@ The content coordinate space is located inside -contentBounds. */
 	return [self convertRectToContent: ETMakeRect(aPoint, NSZeroSize)].origin;
 }
 
-/** Sets the transform applied within the content bounds. */
+/** Sets the transform applied within the content bounds.
+
+Marks the receiver as needing a layout update. Marks the parent item too, when 
+the receiver has no decorator. */
 - (void) setTransform: (NSAffineTransform *)aTransform
 {
 	[self willChangeValueForProperty: kETTransformProperty];
 	ASSIGN(_transform, aTransform);
+	[self setNeedsLayoutUpdate];
+	if (_decoratorItem == nil)
+	{
+		[_parentItem setNeedsLayoutUpdate];
+	}
 	[self didChangeValueForProperty: kETTransformProperty];
 }
 
@@ -2504,11 +2576,19 @@ increase the area which requires to be redisplayed. For example, ETHandleGroup
 calls -setBoundingBox: on its manipulated object, because its handles are not 
 fully enclosed in the receiver frame.
 
-The bounding box must be always be greater or equal to the receiver frame. */
+The bounding box must be always be greater or equal to the receiver frame.
+
+Marks the receiver as needing a layout update. Marks the parent item too, when 
+the receiver has no decorator. */
 - (void) setBoundingBox: (NSRect)extent
 {
 	[self willChangeValueForProperty: kETBoundingBoxProperty];
 	_boundingBox = extent;
+	[self setNeedsLayoutUpdate];
+	if (_decoratorItem == nil)
+	{
+		[_parentItem setNeedsLayoutUpdate];
+	}
 	[self didChangeValueForProperty: kETBoundingBoxProperty];
 }
 
@@ -2564,6 +2644,9 @@ the receiver itself).<br />
 When the receiver has a decorator, the content autoresizing is controlled by the 
 decorator and not by the receiver autoresizing mask directly.
 
+Marks the receiver as needing a layout update. Marks the parent item too, when 
+the receiver has no decorator.
+
 TODO: Autoresizing mask isn't yet supported when the receiver has no view. */
 - (void) setAutoresizingMask: (ETAutoresizing)aMask
 {
@@ -2585,6 +2668,12 @@ TODO: Autoresizing mask isn't yet supported when the receiver has no view. */
 		[[self supervisorView] setAutoresizingMask: aMask];
 	}
 	_isSyncingSupervisorViewGeometry = NO;
+
+	[self setNeedsLayoutUpdate];
+	if (_decoratorItem == nil)
+	{
+		[_parentItem setNeedsLayoutUpdate];
+	}
 
 	[self didChangeValueForProperty: kETAutoresizingMaskProperty];
 }

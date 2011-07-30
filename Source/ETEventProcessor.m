@@ -102,7 +102,10 @@ when the event has to be handled by the widget backend. */
 			break;
 	}
 
-	[[ETLayoutExecutor sharedInstance] execute];
+	if ([ETLayoutItem isAutolayoutEnabled])
+	{
+		[[ETLayoutExecutor sharedInstance] execute];
+	}
 
 	return isHandled;
 }

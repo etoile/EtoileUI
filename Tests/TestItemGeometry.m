@@ -12,6 +12,7 @@
 #import <EtoileFoundation/Macros.h>
 #import "ETDecoratorItem.h"
 #import "ETGeometry.h"
+#import "ETLayoutExecutor.h"
 #import "ETLayoutItem.h"
 #import "ETLayoutItemFactory.h"
 #import "ETLayoutItemGroup.h"
@@ -70,6 +71,7 @@
 - (id) init
 {
 	SUPERINIT
+	[[ETLayoutExecutor sharedInstance] removeAllItems];
 	ASSIGN(itemFactory, [ETLayoutItemFactory factory]);
 	item = [[ETLayoutItem alloc] init];
 	return self;

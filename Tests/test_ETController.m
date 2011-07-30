@@ -13,6 +13,7 @@
 #import "ETController.h"
 #import "EtoileUIProperties.h"
 #import "ETItemTemplate.h"
+#import "ETLayoutExecutor.h"
 #import "ETLayoutItem.h"
 #import "ETLayoutItemGroup.h"
 #import "ETLayoutItemGroup+Mutation.h"
@@ -89,6 +90,7 @@
 {
 	SUPERINIT
 
+	[[ETLayoutExecutor sharedInstance] removeAllItems];
 	ASSIGN(itemFactory, [ETLayoutItemFactory factory]);
 	ASSIGN(content, [itemFactory itemGroup]);
 	controller = [[ETController alloc] init];

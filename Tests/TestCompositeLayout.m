@@ -17,6 +17,7 @@
 #import "ETLayout.h"
 #import "ETLayoutItem.h"
 #import "ETLayoutItemGroup.h"
+#import "ETLayoutExecutor.h"
 #import "ETPaneLayout.h"
 #import "ETTableLayout.h"
 #import "ETUIItem.h"
@@ -44,6 +45,7 @@
 - (id) init
 {
 	SUPERINIT
+	[[ETLayoutExecutor sharedInstance] removeAllItems];
 	ASSIGN(itemFactory, [ETLayoutItemFactory factory]);
 	item = [[ETLayoutItemGroup alloc] init];
 	return self;
@@ -250,6 +252,7 @@ DEALLOC(DESTROY(itemFactory); DESTROY(item))
 {
 	SUPERINIT
 
+	[[ETLayoutExecutor sharedInstance] removeAllItems];
 	[item setAutolayout: NO];
 	ASSIGN(layout, [ETPaneLayout masterDetailLayout]);
 	barItem = [layout barItem]; /* layout will retains us */

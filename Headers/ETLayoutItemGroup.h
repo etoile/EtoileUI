@@ -47,10 +47,6 @@
 	BOOL _changingSelection;
 }
 
-+ (BOOL) isAutolayoutEnabled;
-+ (void) enablesAutolayout;
-+ (void) disablesAutolayout;
-
 /* Traversing Layout Item Tree */
 
 - (ETLayoutItem *) itemAtIndexPath: (NSIndexPath *)path;
@@ -102,7 +98,6 @@
 - (id) layout;
 - (void) setLayout: (ETLayout *)layout;
 
-//-reloadAndUpdateAll;
 - (void) reloadAndUpdateLayout;
 - (void) updateLayout;
 - (void) updateLayoutRecursively: (BOOL)recursively;

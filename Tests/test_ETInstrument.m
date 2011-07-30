@@ -22,6 +22,7 @@
 #import "ETLayoutItem.h"
 #import "ETLayoutItem+Scrollable.h"
 #import "ETLayoutItemGroup.h"
+#import "ETLayoutExecutor.h"
 #import "ETLineLayout.h"
 #import "ETLayoutItemFactory.h"
 #import "ETWindowItem.h"
@@ -60,6 +61,7 @@ coordinates or not to set the event location in the window. */
 {
 	SUPERINIT
 
+	[[ETLayoutExecutor sharedInstance] removeAllItems];
 	ASSIGN(itemFactory, [ETLayoutItemFactory factory]);
 	ASSIGN(mainItem, [itemFactory itemGroup]);
 	[mainItem setFrame: NSMakeRect(0, 0, WIN_WIDTH, WIN_HEIGHT)];
@@ -72,7 +74,7 @@ coordinates or not to set the event location in the window. */
 - (void) dealloc
 {
 	[[itemFactory windowGroup] removeItem: mainItem];
-	DESTROY(mainItem); 
+	DESTROY(mainItem);
 	DESTROY(itemFactory); 
 	DESTROY(tool);
 	[super dealloc];

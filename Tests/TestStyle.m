@@ -11,6 +11,7 @@
 #import <UnitKit/UnitKit.h>
 #import <EtoileFoundation/Macros.h>
 #import "ETBasicItemStyle.h"
+#import "ETLayoutExecutor.h"
 #import "ETLayoutItem.h"
 #import "ETLayoutItemFactory.h"
 #import "ETCompatibility.h"
@@ -35,6 +36,7 @@
 - (id) init
 {
 	SUPERINIT
+	[[ETLayoutExecutor sharedInstance] removeAllItems];
 	ASSIGN(itemFactory, [ETLayoutItemFactory factory]);
 	item = [[ETLayoutItem alloc] init];
 	[item setFrame: NSMakeRect(100, 50, 300, 200)];

@@ -62,44 +62,6 @@ NSString * const ETSourceDidUpdateNotification = @"ETSourceDidUpdateNotification
 	[self applyTraitFromClass: [ETMutableCollectionTrait class]];
 }
 
-static BOOL globalAutolayoutEnabled = YES;
-
-/** Returns YES if mutating the content of layout items by calling -addItem:, 
--insertItem:atIndex:, -removeItem: etc. triggers a layout update and a 
-redisplay, otherwise returns NO when you must call -updateLayout by yourself 
-after mutating the content. 
-	
-By default, returns YES, hence there is usually no need to call -updateLayout 
-and marks child items or their parent item for redisplay. */
-+ (BOOL) isAutolayoutEnabled;
-{
-	return globalAutolayoutEnabled;
-}
-
-/** Enables automatic layout update and redisplay when mutating the content of 
-layout items by calling -addItem:, -insertItem:atIndex:, -removeItem: etc.
-
-If you need to add, remove or insert a large set of child items, in order to 
-only recompute the layout once and also avoid a lot of extra redisplay, you 
-should disable the autolayout, and restore it later when mutating the layout 
-item to which the children belong to is finished. 
-
-Take note that enabling the autolayout doesn't trigger a layout update, so 
--updateLayout must be called when autolayout is disabled or was just restored. */
-+ (void) enablesAutolayout;
-{
-	globalAutolayoutEnabled = YES;
-}
-
-/** Disables automatic layout update and redisplay when mutating layout item
-content by calling -addItem:, -insertItem:atIndex:, -removeItem: etc. 
-
-See also +enablesAutolayout. */
-+ (void) disablesAutolayout
-{
-	globalAutolayoutEnabled = NO;
-}
-
 /* Initialization */
 
 - (id) initWithView: (NSView *)view 
@@ -141,6 +103,7 @@ See also -isLayerItem. */
 
 - (void) dealloc
 {
+	_isDeallocating = YES;
 	[self stopKVOObservationIfNeeded];
 
 	DESTROY(_cachedDisplayImage);
@@ -164,7 +127,9 @@ See also -isLayerItem. */
 	}
 	if (n > 0 && [[ETLayoutExecutor sharedInstance] isEmpty] == NO)
 	{
-		[[ETLayoutExecutor sharedInstance] removeItems: [NSSet setWithArray: _layoutItems]];
+		NSSet *itemSet = [[NSSet alloc] initWithArray: _layoutItems];
+		[(ETLayoutExecutor *)[ETLayoutExecutor sharedInstance] removeItems: itemSet];
+		RELEASE(itemSet);
 	}
 	DESTROY(_layoutItems);
 	[self setSource: nil]; /* Tear down the receiver as a source observer */
@@ -599,7 +564,9 @@ By setting a source, the receiver represented path base is automatically set to
 '/' unless another path was set previously. If you pass nil to get rid of a 
 source, the represented path base isn't reset to nil but keeps its actual value 
 in order to maintain it as a base item and avoid unpredictable changes to the 
-event handling logic. */
+event handling logic.
+
+Marks the receiver as needing a layout update. */
 - (void) setSource: (id)source
 {
 	/* By safety, avoids to trigger extra updates */
@@ -875,7 +842,11 @@ Won't reload when the receiver is currently sorted and/or filtered. See
 -isSorted and -isFiltered.
 
 This method can be safely called even if the receiver has no source or doesn't 
-inherit a source from a base item. */
+inherit a source from a base item.
+
+Marks the receiver as needing a layout update, if a reload occurs.
+
+See also -reload. */
 - (void) reloadIfNeeded
 {
 	if ([self canReload] && [self isSorted] == NO && [self isFiltered] == NO)
@@ -910,7 +881,9 @@ When the source is nil, the receiver becomes empty. */
 the receiver immediate children to the base item source.
 
 Will cancel any any sorting and/or filtering currently done on the receiver. 
-Which means -isFiltered and -isSorted will both return NO. */
+Which means -isFiltered and -isSorted will both return NO.
+
+Marks the receiver as needing a layout update. */
 - (void) reload
 {
 	BOOL hasSource = ([[self baseItem] source] != nil);
@@ -1007,12 +980,20 @@ frame (see -usesLayoutBasedFrame). */
 		return;
 
 	ETDebugLog(@"Try update layout of %@", self);
-	
+
+	BOOL wasAutolayoutEnabled = [ETLayoutItem isAutolayoutEnabled];
 	BOOL isNewLayoutContent = ([self hasNewContent] || [self hasNewLayout] 
 		|| _hasNewArrangement);
 
+	[ETLayoutItem disablesAutolayoutIncludingNeedsUpdate: YES];
+
 	/* Delegate layout rendering to custom layout object */
 	[[self layout] render: nil isNewContent: isNewLayoutContent];
+
+	if (wasAutolayoutEnabled)
+	{
+		[ETLayoutItem enablesAutolayout];
+	}
 
 	if (recursively)
 	{
@@ -1029,7 +1010,7 @@ frame (see -usesLayoutBasedFrame). */
 /** Returns whether -updateLayout can be safely called now. */
 - (BOOL) canUpdateLayout
 {
-	return globalAutolayoutEnabled && [self isAutolayout] && ![self isReloading] && ![[self layout] isRendering];
+	return [self isAutolayout] && ![self isReloading] && ![[self layout] isRendering];
 }
 
 /** Returns YES if mutating the receiver content by calling -addItem:, 

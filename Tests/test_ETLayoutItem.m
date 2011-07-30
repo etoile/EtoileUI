@@ -20,6 +20,7 @@
 #import "ETLayoutExecutor.h"
 #import "ETWindowItem.h"
 #import "ETLayoutItemGroup.h"
+#import "ETLayoutExecutor.h";
 #import "ETFlowLayout.h"
 #import "ETScrollableAreaItem.h"
 #import "ETTableLayout.h"
@@ -49,6 +50,7 @@ static ETLayoutItemFactory *itemFactory = nil;
 - (id) initForTest
 {
 	self = [self init];
+	[[ETLayoutExecutor sharedInstance] removeAllItems];
 	itemFactory = [ETLayoutItemFactory factory];
 	return self;
 }

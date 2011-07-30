@@ -817,8 +817,6 @@ the target item. */
 	ETLayoutItemGroup *newGroup = [[ETLayoutItemFactory factory] graphicsGroup];
 	NSArray *children = [self selectedItems];
 
-	[ETLayoutItemGroup disablesAutolayout];
-
 	NSRect unionFrame = ETUnionRectWithObjectsAndSelector(children, @selector(frame));
 	[newGroup setFrame: unionFrame];
 	[newGroup setLayout: [ETFreeLayout layout]];
@@ -837,10 +835,12 @@ the target item. */
 		[item setSelected: NO];
 		[newGroup addItem: item];
 	}
-	
-	[ETLayoutItemGroup enablesAutolayout];
 
+	/* We use -updateLayout rather than -setNeedsUpdateLayout to ensure the 
+	   CoreObject commit record the latest item positions and sizes (but not sure it's important). */
 	[targetItem updateLayout];
+	// FIXME: Doesn't make sense to call -setNeedsDisplayInRect: if we update 
+	// the layout, -setNeedsDisplay: is invoked on the target item then
 	[targetItem setNeedsDisplayInRect: NSUnionRect(unionFrame, [newGroup frame])];
 
 	[targetItem commit];
@@ -897,8 +897,6 @@ target item. */
 	NSMutableArray *inlinedGroups = [NSMutableArray array];
 	NSMutableArray *inlinedItems = [NSMutableArray array];
 
-	[ETLayoutItemGroup disablesAutolayout];
-
 	FOREACHI([self selectedItems], item)
 	{
 		if ([item isGroup] == NO)
@@ -909,11 +907,13 @@ target item. */
 		[inlinedItems addObjectsFromArray: [item items]];
 		[self inlineGroup: item];
 	}
-	
-	[ETLayoutItemGroup enablesAutolayout];
 
 	NSRect oldUnionFrame = ETUnionRectWithObjectsAndSelector(inlinedGroups, @selector(frame));
+	/* We use -updateLayout rather than -setNeedsUpdateLayout to ensure the 
+	   CoreObject commit record the latest item positions and sizes (but not sure it's important). */
 	[targetItem updateLayout];
+	// FIXME: Doesn't make sense to call -setNeedsDisplayInRect: if we update 
+	// the layout, -setNeedsDisplay: is invoked on the target item then
 	NSRect newUnionFrame = ETUnionRectWithObjectsAndSelector(inlinedItems, @selector(frame));
 	[targetItem setNeedsDisplayInRect: NSUnionRect(oldUnionFrame, newUnionFrame)];
 

@@ -307,6 +307,9 @@ Overrides this method when you want to customize how double-click are handled. *
 
 - (void) handleTranslateItem: (ETLayoutItem *)item byDelta: (NSSize)delta
 {
+	/* We don't want to relayout and redisplay the whole parent item */
+	[ETLayoutItem disablesAutolayoutIncludingNeedsUpdate: YES];
+
 	NSRect prevBoundingFrame = [item convertRectToParent: [item boundingBox]];
 
 	[item setPosition: ETSumPointAndSize([item position], delta)];
@@ -316,6 +319,8 @@ Overrides this method when you want to customize how double-click are handled. *
 	NSRect dirtyRect = NSUnionRect(newBoundingFrame, prevBoundingFrame);
 	[[item parentItem] setNeedsDisplayInRect: dirtyRect];
 	[[item parentItem] displayIfNeeded];
+
+	[ETLayoutItem enablesAutolayout];
 
 	//ETLog(@"Translate dirty rect %@", NSStringFromRect(dirtyRect));
 }

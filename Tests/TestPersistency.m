@@ -21,6 +21,7 @@
 #import <ObjectMerging/COStore.h>
 #import "ETActionHandler.h"
 #import "ETController.h"
+#import "ETLayoutExecutor.h"
 #import "ETLayoutItem.h"
 #import "ETLayoutItemFactory.h"
 #import "ETLayoutItemGroup.h"
@@ -46,6 +47,7 @@
 - (id) init
 {
 	SUPERINIT
+	[[ETLayoutExecutor sharedInstance] removeAllItems];
 	ASSIGN(itemFactory, [ETLayoutItemFactory factory]);
 	return self;
 }
