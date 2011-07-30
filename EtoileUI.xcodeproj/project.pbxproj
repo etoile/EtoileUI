@@ -221,6 +221,12 @@
 		60B5F85111EF65A200A08FF5 /* PhotoViewExample.xib in Resources */ = {isa = PBXBuildFile; fileRef = 60B5F85011EF65A200A08FF5 /* PhotoViewExample.xib */; };
 		60B5F86011EF661B00A08FF5 /* ObjectManagerExample.xib in Resources */ = {isa = PBXBuildFile; fileRef = 60B5F85F11EF661B00A08FF5 /* ObjectManagerExample.xib */; };
 		60B5F87A11EF679800A08FF5 /* PaneExample.xib in Resources */ = {isa = PBXBuildFile; fileRef = 60B5F87911EF679800A08FF5 /* PaneExample.xib */; };
+		60B6E2F813E4635D0087879C /* ETAspectCategory.h in Headers */ = {isa = PBXBuildFile; fileRef = 60B6E2F413E4635D0087879C /* ETAspectCategory.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		60B6E2F913E4635D0087879C /* ETAspectCategory.m in Sources */ = {isa = PBXBuildFile; fileRef = 60B6E2F513E4635D0087879C /* ETAspectCategory.m */; };
+		60B6E2FA13E4635D0087879C /* ETAspectRepository.h in Headers */ = {isa = PBXBuildFile; fileRef = 60B6E2F613E4635D0087879C /* ETAspectRepository.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		60B6E2FB13E4635D0087879C /* ETAspectRepository.m in Sources */ = {isa = PBXBuildFile; fileRef = 60B6E2F713E4635D0087879C /* ETAspectRepository.m */; };
+		60B6E2FD13E4635D0087879C /* ETAspectCategory.m in Sources */ = {isa = PBXBuildFile; fileRef = 60B6E2F513E4635D0087879C /* ETAspectCategory.m */; };
+		60B6E2FF13E4635D0087879C /* ETAspectRepository.m in Sources */ = {isa = PBXBuildFile; fileRef = 60B6E2F713E4635D0087879C /* ETAspectRepository.m */; };
 		60BB000E100A32C8001B2F37 /* EtoileWeb.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 60073C2910074B39007272E6 /* EtoileWeb.framework */; };
 		60BBFFB8100A31D8001B2F37 /* WebKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 60BBFFB7100A31D8001B2F37 /* WebKit.framework */; };
 		60C06D8912F8533800E38E99 /* ETLayoutExecutor.h in Headers */ = {isa = PBXBuildFile; fileRef = 60C06D8812F8533800E38E99 /* ETLayoutExecutor.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -675,6 +681,10 @@
 		60B5F85011EF65A200A08FF5 /* PhotoViewExample.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = PhotoViewExample.xib; path = PhotoViewExample/PhotoViewExample.xib; sourceTree = "<group>"; };
 		60B5F85F11EF661B00A08FF5 /* ObjectManagerExample.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = ObjectManagerExample.xib; path = ObjectManagerExample/ObjectManagerExample.xib; sourceTree = "<group>"; };
 		60B5F87911EF679800A08FF5 /* PaneExample.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = PaneExample.xib; path = PaneExample/PaneExample.xib; sourceTree = "<group>"; };
+		60B6E2F413E4635D0087879C /* ETAspectCategory.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ETAspectCategory.h; path = AspectRepository/ETAspectCategory.h; sourceTree = "<group>"; };
+		60B6E2F513E4635D0087879C /* ETAspectCategory.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ETAspectCategory.m; path = AspectRepository/ETAspectCategory.m; sourceTree = "<group>"; };
+		60B6E2F613E4635D0087879C /* ETAspectRepository.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ETAspectRepository.h; path = AspectRepository/ETAspectRepository.h; sourceTree = "<group>"; };
+		60B6E2F713E4635D0087879C /* ETAspectRepository.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ETAspectRepository.m; path = AspectRepository/ETAspectRepository.m; sourceTree = "<group>"; };
 		60BB9F140EED2FD000D5E1A6 /* ChangeLog */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = ChangeLog; sourceTree = "<group>"; };
 		60BBFFB7100A31D8001B2F37 /* WebKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = WebKit.framework; path = /System/Library/Frameworks/WebKit.framework; sourceTree = "<absolute>"; };
 		60C06D8812F8533800E38E99 /* ETLayoutExecutor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ETLayoutExecutor.h; path = Headers/ETLayoutExecutor.h; sourceTree = "<group>"; };
@@ -1063,6 +1073,7 @@
 				607FBAE30FE002F000960039 /* Mediators & Controllers */,
 				607FBAD90FE0020200960039 /* Styles & Shapes */,
 				607FBAE40FE0032A00960039 /* Tree Transforms */,
+				60B6E30013E463670087879C /* Aspect Repository */,
 				609548D40C0E313A00068CBB /* Utility & Extensions */,
 				605D6BFF0CE7830A009ED244 /* ETApplication.h */,
 				605D6C000CE7830A009ED244 /* ETApplication.m */,
@@ -1326,6 +1337,17 @@
 			name = Persistency;
 			sourceTree = "<group>";
 		};
+		60B6E30013E463670087879C /* Aspect Repository */ = {
+			isa = PBXGroup;
+			children = (
+				60B6E2F413E4635D0087879C /* ETAspectCategory.h */,
+				60B6E2F513E4635D0087879C /* ETAspectCategory.m */,
+				60B6E2F613E4635D0087879C /* ETAspectRepository.h */,
+				60B6E2F713E4635D0087879C /* ETAspectRepository.m */,
+			);
+			name = "Aspect Repository";
+			sourceTree = "<group>";
+		};
 		60C58F50100669A90037B9E2 /* Resources */ = {
 			isa = PBXGroup;
 			children = (
@@ -1509,6 +1531,8 @@
 				60A54AC513D0825000261FDC /* ETController+CoreObject.h in Headers */,
 				60A54C1413D2273F00261FDC /* ETLayout+CoreObject.h in Headers */,
 				6035ACC213D59C27005B2280 /* ETStyle+CoreObject.h in Headers */,
+				60B6E2F813E4635D0087879C /* ETAspectCategory.h in Headers */,
+				60B6E2FA13E4635D0087879C /* ETAspectRepository.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2032,6 +2056,8 @@
 				60A54C1513D2273F00261FDC /* ETLayout+CoreObject.m in Sources */,
 				603D7D0B13D363BA007AABE2 /* ETActionHandler+ModelDescription.m in Sources */,
 				6035ACC313D59C27005B2280 /* ETStyle+CoreObject.m in Sources */,
+				60B6E2FD13E4635D0087879C /* ETAspectCategory.m in Sources */,
+				60B6E2FF13E4635D0087879C /* ETAspectRepository.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2199,6 +2225,8 @@
 				60A54C1313D2273F00261FDC /* ETLayout+CoreObject.m in Sources */,
 				603D7D0A13D363BA007AABE2 /* ETActionHandler+ModelDescription.m in Sources */,
 				6035ACC113D59C27005B2280 /* ETStyle+CoreObject.m in Sources */,
+				60B6E2F913E4635D0087879C /* ETAspectCategory.m in Sources */,
+				60B6E2FB13E4635D0087879C /* ETAspectRepository.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
