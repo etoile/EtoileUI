@@ -92,6 +92,7 @@ when the event has to be handled by the widget backend. */
 		case NSLeftMouseUp:
 		case NSLeftMouseDragged:
 			isHandled = [self processMouseEvent: nativeEvent];
+			break;
 		case NSKeyDown:
 		case NSKeyUp:
 		case NSFlagsChanged:
