@@ -172,6 +172,11 @@ in various EtoileUI builtin facilities such as an inspector. */
 	NSRange range = NSMakeRange(prefixLength, 
 		[className length] - (prefixLength + classSuffixLength));
 
+	if (range.length == 0)
+	{
+		return [self baseClassName];
+	}
+
 	return [className substringWithRange: range];
 }
 
