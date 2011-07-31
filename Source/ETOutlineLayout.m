@@ -134,7 +134,7 @@ expanded and collapsed by getting automatically a related outline arrow. */
 - (ETLayoutItem *) itemAtLocation: (NSPoint)location
 {
 	int row = [[self outlineView] rowAtPoint: location];
-	return (row != ETUndeterminedIndex ? [[self outlineView] itemAtRow: row] : nil);
+	return (row != -1 ? [[self outlineView] itemAtRow: row] : nil);
 }
 
 - (NSRect) displayRectOfItem: (ETLayoutItem *)item

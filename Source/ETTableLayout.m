@@ -505,7 +505,7 @@ See [(ETColumnFragment)] protocol to customize the returned column. */
 {
 	int row = [[self tableView] rowAtPoint: location];
 	
-	if (ETUndeterminedIndex != row)
+	if (-1 != row)
 		return [[_layoutContext arrangedItems] objectAtIndex: row];
 	
 	return nil;
@@ -619,8 +619,7 @@ compatible with the cell used at the given row/column intersection.  */
                              row: (int)rowIndex 
                             item: (ETLayoutItem *)item
 {
-	NSParameterAssert(ETUndeterminedIndex != rowIndex);
-
+	NSParameterAssert(-1 != rowIndex && ETUndeterminedIndex != rowIndex);
 	id value = [item valueForProperty: [column identifier]];
 	BOOL blankColumnIdentifier = ([column identifier] == nil || [[column identifier] isEqual: @""]);
 	NSTableView *tv = [self tableView];
@@ -736,6 +735,7 @@ Note: For now, private method. */
 				  proposedRow: (int)row 
 	    proposedDropOperation: (NSTableViewDropOperation)op 
 {
+	NSParameterAssert(row != -1);
 	ETLayoutItem *dropTarget = (ETLayoutItem *)_layoutContext;
 
 	if (ETUndeterminedIndex != row && NSTableViewDropOn == op)
@@ -779,7 +779,7 @@ Note: For now, private method. */
 			dropOp = NSTableViewDropOn;
 			dropRow = [[_layoutContext arrangedItems] indexOfObject: validDropTarget];
 
-			if (NSNotFound == dropRow) /* NSNotFound is not ETUndeterminedIndex */
+			if (ETUndeterminedIndex == dropRow)
 			{
 				ETLog(@"WARNING: Drop target %@ doesn't belong to %@", validDropTarget, _layoutContext);
 				return NSDragOperationNone;
