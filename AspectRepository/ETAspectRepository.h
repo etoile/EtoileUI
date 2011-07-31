@@ -24,6 +24,9 @@ You shouldn't use the superclass API to interact with a repository. */
 {
 
 }
+/** @taskunit Initialization */
+
++ (id) mainRepository;
 
 /** @taskunit Accessing and Managing Categories */
 

@@ -14,6 +14,22 @@
 
 @implementation ETAspectRepository
 
+static ETAspectRepository *mainRepo = nil;
+
++ (void) initialize
+{
+	if (self != [ETAspectRepository  class])
+		return;
+
+	mainRepo = [[[self class] alloc] initWithName: _(@"Main Aspect Repository")];
+}
+
+/** Returns the main aspect repository persistent and shared between processes (not yet). */
++ (id) mainRepository
+{
+	return mainRepo;
+}
+
 /** Returns the category kown by the given name. */
 - (id) aspectCategoryNamed: (NSString *)aName
 {
@@ -40,6 +56,12 @@ The category name is used as the aspect key to lookup the category to be removed
 - (NSArray *) categoryNames
 {
 	return [self aspectKeys];
+}
+
+/** Returns NO. */
+- (BOOL) isKeyed
+{
+	return NO;
 }
 
 @end

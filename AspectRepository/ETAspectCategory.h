@@ -10,6 +10,8 @@
 
 #import <Foundation/Foundation.h>
 #import <AppKit/AppKit.h>
+#import <EtoileFoundation/ETCollection.h>
+#import <EtoileUI/ETUIObject.h>
 
 /** @group Aspect Repository
 
@@ -32,8 +34,12 @@ NSColor *cyanColor = [category resolvedAspectForKey: @"lightblue"];
 </example>
 
 In the example above, the last line returns [NSColor cyanColor] and 
-<em>lightblue</em> is the alias (or semantic aspect).<br /> */
-@interface ETAspectCategory : NSObject
+<em>lightblue</em> is the alias (or semantic aspect).<br />
+
+For the collection protocol, -containsObject: and -containsCollection: operate 
+both over the -aspects collection. In other words, ETKeyValuePair objects are 
+invalid arguments. */
+@interface ETAspectCategory : ETUIObject <ETCollection, ETCollectionMutation>
 {
 	@protected
 	NSMutableArray *_aspects; /* An array of ETKeyValuePair */
@@ -44,7 +50,8 @@ In the example above, the last line returns [NSColor cyanColor] and
 
 /** @taskunit Initialization */
 
-- (id) initWithDictionary: (NSDictionary *)dict;
+- (id) initWithName: (NSString *)aName dictionary: (NSDictionary *)aDict;
+- (id) initWithName: (NSString *)aName;
 - (id) init;
 
 /** @taskunit Basic Properties */
@@ -53,6 +60,8 @@ In the example above, the last line returns [NSColor cyanColor] and
 
 Must not be nil. */
 @property (retain, nonatomic) NSString *name;
+/** Returns the category name. */
+@property (readonly, nonatomic) NSString *displayName;
 
 /** @taskunit Accessing and Managing Aspects */
 

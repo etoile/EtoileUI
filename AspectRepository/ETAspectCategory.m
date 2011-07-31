@@ -10,28 +10,41 @@
 #import <EtoileFoundation/ETKeyValuePair.h>
 #import <EtoileFoundation/ETUTI.h>
 #import <EtoileFoundation/NSObject+Model.h>
+#import <EtoileFoundation/NSObject+Trait.h>
 #import <EtoileFoundation/Macros.h>
 #import "ETAspectCategory.h"
 #import "ETCompatibility.h"
 
+#pragma GCC diagnostic ignored "-Wprotocol"
 
 @implementation ETAspectCategory
 
 @synthesize name, allowedAspectTypes;
 
++ (void) initialize
+{
+	if (self != [ETAspectCategory class])
+		return;
+
+	[self applyTraitFromClass: [ETCollectionTrait class]];
+	[self applyTraitFromClass: [ETMutableCollectionTrait class]];
+}
+
 /** Returns the UTI type at the top of the type hierarchy which can be used to 
 represent we accept any object as a valid aspect. */
 + (ETUTI *) anyType
 {
-	return [ETUTI typeWithString: @"public.data"];
+	// TODO: We should return a supertype common to both NSObject UTI and public.data
+	return [ETUTI typeWithClass: [NSObject class]];
 }
 
 /** <init />
-Initializes and returns a new category whose content includes the given 
-dictionary entries.
+Initializes and returns a new category whose content includes the dictionary 
+entries.
 
-The string value of +anyType is set as the category name. */
-- (id) initWithDictionary: (NSDictionary *)aDict
+If the given name is nil, the string value of +anyType is set as the category 
+name. */
+- (id) initWithName: (NSString *)aName dictionary: (NSDictionary *)aDict
 {
 	SUPERINIT;
 	if (nil == aDict)
@@ -43,14 +56,32 @@ The string value of +anyType is set as the category name. */
 		_aspects = [[aDict arrayRepresentation] mutableCopy];
 	}
 	allowedAspectTypes = [[NSSet alloc] initWithObjects: [[self class] anyType], nil];
-	ASSIGN(name, [[[self class] anyType] stringValue]);
+	if (aName == nil)
+	{
+		ASSIGN(name, [[[self class] anyType] stringValue]);
+	}
+	else
+	{
+		ASSIGN(name, aName);
+	}
 	return self;
 }
 
-/** Initializes and returns a new empty category. */
+/** Initializes and returns a new empty category.
+
+See -initWithName:dictionary:. */
+- (id) initWithName: (NSString *)aName
+{
+	return [self initWithName: aName dictionary: nil];
+}
+
+
+/** Initializes and returns a new empty category.
+
+See -initWithName:dictionary:. */
 - (id) init
 {
-	return [self initWithDictionary: nil];
+	return [self initWithName: nil dictionary: nil];
 }
 
 - (void) dealloc
@@ -65,6 +96,11 @@ The string value of +anyType is set as the category name. */
 {
 	NILARG_EXCEPTION_TEST(aName);
 	ASSIGN(name, aName);
+}
+
+- (NSString *) displayName
+{
+	return [self name];
 }
 
 /** Returns the aspect bound to the given key.
@@ -85,6 +121,59 @@ See also -setAspect:forKey:. */
 	return nil;
 }
 
+- (BOOL) isValidAspect: (id)anAspect
+{
+	BOOL isAspectAliasedName = ([anAspect isString] && [anAspect hasPrefix: @"@"]);
+
+	if (isAspectAliasedName)
+		return YES;
+
+	if ([[self allowedAspectTypes] isEmpty])
+		return YES;
+
+	ETUTI *aspectType = [ETUTI typeWithClass: [anAspect class]];
+	BOOL isValidAspect = NO;
+
+	for (ETUTI *allowedType in [self allowedAspectTypes])
+	{
+		if ([aspectType conformsToType: allowedType])
+		{
+			isValidAspect = YES;
+			break;
+		}
+	}
+
+	return isValidAspect;
+}
+
+- (void) insertAspect: (id)anAspect forKey: (NSString *)aKey atIndex: (NSUInteger)anIndex
+{
+	NILARG_EXCEPTION_TEST(anAspect);
+	NILARG_EXCEPTION_TEST(aKey);
+
+	if ([self isValidAspect: anAspect] == NO)
+	{
+		ETUTI *aspectType = [ETUTI typeWithClass: [anAspect class]];
+
+		[NSException raise: NSInvalidArgumentException 
+		            format: @"Cannot insert %@. Aspect type %@ not allowed in %@",
+		                    anAspect, aspectType, self];
+	}
+
+	ETKeyValuePair *pair = [[ETKeyValuePair alloc] initWithKey: aKey value: anAspect];
+
+	if (anIndex == ETUndeterminedIndex)
+	{
+		[_aspects addObject: pair];
+	}
+	else
+	{
+		[_aspects insertObject: pair atIndex: anIndex];
+	}
+
+	RELEASE(pair);
+}
+
 /** Sets the aspect bound to the given key.
 
 Aspects are kept ordered. The aspect is then inserted in last position "rather 
@@ -99,9 +188,8 @@ See the example in the ETAspectCategory description
 and -resolvedAspectForKey:. */
 - (void) setAspect: (id)anAspect forKey: (NSString *)aKey
 {
-	ETKeyValuePair *pair = [[ETKeyValuePair alloc] initWithKey: aKey value: anAspect];
-	[_aspects addObject: pair];
-	RELEASE(pair);
+	// TODO: Pass the right index if the key is already present
+	[self insertAspect: anAspect forKey: aKey atIndex: ETUndeterminedIndex];
 }
 
 /** Removes the aspect bound to the given key. */
@@ -138,6 +226,90 @@ See also -aspectForKey:. */
 	}
 
 	return value;
+}
+
+/** @taskunit Collection Protocols */
+
+/** Returns YES. */
+- (BOOL) isOrdered
+{
+	return YES;
+}
+
+/** Returns YES. */
+- (BOOL) isKeyed
+{
+	return YES;
+}
+
+/** Returns a key-value pair collection as an array copy.
+
+See ETKeyValuePair. */
+- (NSArray *) arrayRepresentation
+{
+	return [NSArray arrayWithArray: _aspects];
+}
+
+/** Returns a key-value pair collection.
+
+See ETKeyValuePair. */
+- (id) content
+{
+	return _aspects;
+}
+
+/** Returns the same than -aspects. */
+- (id) contentArray
+{
+	return [NSArray arrayWithArray: [self aspects]];
+}
+
+/** Returns the enumerator that corresponds to -aspects. */
+- (NSEnumerator *) objectEnumerator
+{
+	return [[self aspects] objectEnumerator];
+}
+
+- (void) insertObject: (id)object atIndex: (NSUInteger)index hint: (id)hint
+{
+	id aspect = object;
+	NSString *key = nil;
+
+	if ([hint isKeyValuePair])
+	{
+		aspect = [hint value];
+		key = [hint key];
+		ETAssert(object == nil || object == aspect);
+	}
+	else
+	{
+		// TODO: Add a counter to support multiple Untitled aspects
+		key = @"Untitled";
+	}
+
+	[self insertAspect: aspect forKey: key atIndex: index];
+}
+
+- (void) removeObject: (id)object atIndex: (NSUInteger)index hint: (id)hint
+{
+	id aspect = object;
+	NSString *key = nil;
+
+	if ([hint isKeyValuePair])
+	{
+		aspect = [hint value];
+		key = [hint key];
+		ETAssert(object == nil || object == aspect);
+	}
+
+	if (index == ETUndeterminedIndex)
+	{
+		[self removeAspectForKey: key];
+	}
+	else
+	{
+		[_aspects removeObjectAtIndex: index];
+	}
 }
 
 @end
