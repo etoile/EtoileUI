@@ -376,15 +376,13 @@ is an item group. */
 	if ([repObject isCollection])
 	{
 		items = [NSMutableArray arrayWithCapacity: [repObject count]];
-		// TODO: Generalize to other keyed collections... Add -isKeyed to ETCollection.
-		BOOL isKeyedCollection = [repObject isKindOfClass: [NSDictionary class]];
 
-		if (isKeyedCollection)
+		if ([repObject isKeyed])
 		{
 			repObject = [repObject arrayRepresentation];
 		}
 
-		for (id object in repObject)
+		for (id object in [repObject objectEnumerator])
 		{
 			[items addObject: [self itemWithObject: object isValue: NO]];
 			// NOTE: Would it be a good idea to use...
