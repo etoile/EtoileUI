@@ -235,7 +235,7 @@ content view has no ETUIItem bound to it, returns nil. */
 		/* The backend window can be an open/save panel without an EtoileUI 
 		   representation, that's why we do the next checks only when 
 		   windowItem is not nil. */ 
-		NSParameterAssert([(NSEvent *)_backendEvent window] == [windowItem window]);
+		NSParameterAssert([self window] == [windowItem window]);
 		NSParameterAssert([windowItem isFlipped] == [contentItem isFlipped]);
 	}
 	else
@@ -263,7 +263,7 @@ When the event has no associated window, returns a null point. */
 	if (windowItem == nil)
 		return ETNullPoint;
 
-	NSPoint windowItemLoc = [(NSEvent *)_backendEvent locationInWindow];
+	NSPoint windowItemLoc = [self locationInWindow];
 	if ([windowItem isFlipped])
 	{
 		windowItemLoc.y = [windowItem decorationRect].size.height - windowItemLoc.y;
@@ -301,16 +301,16 @@ This coordinate space is equivalent the screen coordinate space, minus the menu
 bar and that it uses flipped coordinates unless specifed otherwise on ETWindowLayer. */
 - (NSPoint) location
 {
-	NSWindow *window = [(NSEvent *)_backendEvent window];
+	NSWindow *window = [self window];
 	NSPoint windowLayerLoc = ETNullPoint;
 
 	if (window == nil)
 	{
-		windowLayerLoc = [(NSEvent *)_backendEvent locationInWindow];
+		windowLayerLoc = [self locationInWindow];
 	}
 	else
 	{
-		windowLayerLoc = [window convertBaseToScreen: [(NSEvent *)_backendEvent locationInWindow]];
+		windowLayerLoc = [window convertBaseToScreen: [self locationInWindow]];
 	}
 
 	NSRect windowLayerLocAsRect = ETMakeRect(windowLayerLoc, NSZeroSize);
@@ -324,7 +324,7 @@ bar and that it uses flipped coordinates unless specifed otherwise on ETWindowLa
 This includes the resize indicator which overlaps the content view on Mac OS X. */
 - (BOOL) isWindowDecorationEvent
 {
-	NSWindow *window = [(NSEvent *)_backendEvent window];
+	NSWindow *window = [self window];
 
 	if (window == nil)
 		return NO;
@@ -369,16 +369,23 @@ other widget backends that might be written in future. */
 occured. The returned value is backend-specific. */
 - (int) windowNumber
 {
-	return [(NSEvent *)_backendEvent windowNumber];
+	int number = [[self window] windowNumber];
+
+	if (_draggingInfo == nil)
+	{
+		ETAssert(number == [(NSEvent *)_backendEvent windowNumber]);
+	}
+
+	return number;
 }
 
 /** Returns the window content view bound to the content item. */
 - (id) contentView
 {
-	return [[(NSEvent *)_backendEvent window] contentView];
+	return [[self window] contentView];
 }
 
-/* Deprecated */
+/* Private */
 
 /** Returns the location of the pointer expressed in non-flipped coordinates 
 relative to the window content.
@@ -386,13 +393,24 @@ relative to the window content.
 For the AppKit backend, the window content is the content view. */
 - (NSPoint) locationInWindow
 {
+	if (_draggingInfo != nil)
+	{
+		ETAssert([_draggingInfo draggingDestinationWindow] != nil);
+		return [_draggingInfo draggingLocation];
+	}
 	return [(NSEvent *)_backendEvent locationInWindow];
 }
 
 - (NSWindow *) window
 {
+	if (_draggingInfo != nil)
+	{
+		return [_draggingInfo draggingDestinationWindow];
+	}
 	return [(NSEvent *)_backendEvent window];
 }
+
+/* Deprecated */
 
 /** Returns the object that contains all the drag or drop infos, if the current 
 event has triggered a drag or drop action. */
