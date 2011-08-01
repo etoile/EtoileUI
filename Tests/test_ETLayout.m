@@ -36,21 +36,21 @@
 
 + (void) testDisplayName
 {
-	UKStringsEqual(@"", [self displayName]);
+	UKStringsEqual(@"Layout", [self displayName]);
 	UKStringsEqual(@"Table", [ETTableLayout displayName]);
 	UKStringsEqual(@"Bird Table Bird", [WXYBirdTableBirdBird displayName]);
 }
 
 + (void) testStripClassName
 {
-	UKStringsEqual(@"", [self stripClassName]);
+	UKStringsEqual(@"Layout", [self stripClassName]);
 	UKStringsEqual(@"Table", [ETTableLayout stripClassName]);
 	UKStringsEqual(@"BirdTableBird", [WXYBirdTableBirdBird stripClassName]);
 }
 
 + (void) testAspectName
 {
-	UKStringsEqual(@"", [self aspectName]);
+	UKStringsEqual(@"layout", [self aspectName]);
 	UKStringsEqual(@"table", [ETTableLayout aspectName]);
 	UKStringsEqual(@"birdTableBird", [WXYBirdTableBirdBird aspectName]);
 }
