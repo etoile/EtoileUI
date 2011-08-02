@@ -48,18 +48,26 @@ like -addItem, removeItem:, -insertItem:atIndex: etc. */
 
 /** @taskunit Mutation Actions */
 
-- (void) handleAddItem: (ETLayoutItem *)item moreComing: (BOOL)moreComing;
-- (void) handleInsertItem: (ETLayoutItem *)item atIndex: (int)index moreComing: (BOOL)moreComing;
-- (void) handleRemoveItem: (ETLayoutItem *)item moreComing: (BOOL)moreComing;
+- (void) handleInsertItem: (ETLayoutItem *)item 
+                  atIndex: (int)index 
+                     hint: (id)hint 
+               moreComing: (BOOL)moreComing;
+- (void) handleRemoveItem: (ETLayoutItem *)item 
+                  atIndex: (int)index 
+                     hint: (id)hint 
+               moreComing: (BOOL)moreComing;
 
 - (void) handleAddItems: (NSArray *)items;
 - (void) handleRemoveItems: (NSArray *)items;
 
 /** @taskunit Model Mutation */
 
-- (void) mutateRepresentedObjectForAddedItem: (ETLayoutItem *)item;
-- (void) mutateRepresentedObjectForInsertedItem: (ETLayoutItem *)item atIndex: (int)index;
-- (void) mutateRepresentedObjectForRemovedItem: (ETLayoutItem *)item;
+- (void) mutateRepresentedObjectForInsertedItem: (ETLayoutItem *)item 
+                                        atIndex: (int)index 
+                                           hint: (id)hint;
+- (void) mutateRepresentedObjectForRemovedItem: (ETLayoutItem *)item
+                                        atIndex: (int)index 
+                                           hint: (id)hint;
 
 /** @taskunit Autoboxing */
 

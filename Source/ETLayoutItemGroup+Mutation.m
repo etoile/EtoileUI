@@ -139,56 +139,18 @@ inside another -begin/endMutate pair.  */
 
 /* Element Mutation Handler */
 
-- (void) handleAddItem: (ETLayoutItem *)item moreComing: (BOOL)moreComing
-{
-	if ([[item parentItem] isEqual: self])
-	{
-		ETLog(@"WARNING: Trying to add item %@ to the item group %@ it "
-			@"already belongs to", item, self);
-		return;
-	}
-
-	/* Don't touch the model when it is turned into layout items in the reload 
-	   phase. We must be sure we won't trigger model updates that would result 
-	   in a new UI update/reload when it's already underway. */
-	if ([self isReloading] == NO)
-	{
-		[self mutateRepresentedObjectForAddedItem: item];
-	}
-		
-	[self beginCoalescingModelMutation];
-
-	[self handleAttachItem: item];
-	[_layoutItems addObject: item];
-#ifdef OBJECTMERGING
-	if ([self isPersistent])
-	{
-		[item becomePersistentInContext: [self editingContext] rootObject: [self rootObject]];
-	}
-#endif
-	[self didChangeContentWithMoreComing: moreComing];
-
-	[self endCoalescingModelMutation];
-}
-
 - (BOOL) isValidMutationForRepresentedObject: (id)repObject
 {
 	return ([[self baseItem] shouldMutateRepresentedObject] && [repObject isMutableCollection]);
 }
 
-- (void) mutateRepresentedObjectForAddedItem: (ETLayoutItem *)item;
+- (void) handleInsertItem: (ETLayoutItem *)item 
+                  atIndex: (int)index 
+                     hint: (id)hint 
+               moreComing: (BOOL)moreComing
 {
-	id repObject = [self representedObject];
+	NSParameterAssert(item != nil);
 
-	if ([self isValidMutationForRepresentedObject: repObject] == NO)
-		return;
-
-	ETDebugLog(@"Add %@ in represented object %@", [item representedObject], repObject);
-	[repObject addObject: [item representedObject]];
-}
-
-- (void) handleInsertItem: (ETLayoutItem *)item atIndex: (int)index moreComing: (BOOL)moreComing
-{
 	if ([[item parentItem] isEqual: self])
 	{
 		ETLog(@"WARNING: Trying to insert item %@ in the item group %@ it "
@@ -198,13 +160,14 @@ inside another -begin/endMutate pair.  */
 
 	if ([self isReloading] == NO)
 	{
-		[self mutateRepresentedObjectForInsertedItem: item atIndex: index];
+		[self mutateRepresentedObjectForInsertedItem: item atIndex: index hint: hint];
 	}
 
 	[self beginCoalescingModelMutation];
 
 	[self handleAttachItem: item];
-	[_layoutItems insertObject: item atIndex: index];
+	/* For ETUndeterminedIndex, will use -addObject: */
+	[_layoutItems insertObject: item atIndex: index hint: nil];
 #ifdef OBJECTMERGING
 	if ([self isPersistent])
 	{
@@ -216,7 +179,9 @@ inside another -begin/endMutate pair.  */
 	[self endCoalescingModelMutation];
 }
 
-- (void) mutateRepresentedObjectForInsertedItem: (ETLayoutItem *)item atIndex: (int)index
+- (void) mutateRepresentedObjectForInsertedItem: (ETLayoutItem *)item 
+                                        atIndex: (int)index 
+                                           hint: (id)hint
 {
 	id repObject = [self representedObject];
 
@@ -225,11 +190,16 @@ inside another -begin/endMutate pair.  */
 
 	ETDebugLog(@"Insert %@ in represented object %@ at index %d", 
 		[item representedObject], repObject, index);
-	[repObject insertObject: [item representedObject] atIndex: index];
+	[repObject insertObject: [item representedObject] atIndex: index hint: hint];
 }
 
-- (void) handleRemoveItem: (ETLayoutItem *)item moreComing: (BOOL)moreComing
+- (void) handleRemoveItem: (ETLayoutItem *)item
+                  atIndex: (int)index 
+                     hint: (id)hint 
+               moreComing: (BOOL)moreComing
 {
+	NSParameterAssert(item != nil);
+
 	/* Very important to return immediately, -handleDetachItem: execution would 
 	   lead to a weird behavior: the item parent item would be set to nil. */
 	if ([[item parentItem] isEqual: self] == NO)
@@ -239,19 +209,22 @@ inside another -begin/endMutate pair.  */
 	   See -handleAdd:item: to know more. */	
 	if ([self isReloading] == NO && [self isCoalescingModelMutation] == NO)
 	{
-		[self mutateRepresentedObjectForRemovedItem: item];
+		[self mutateRepresentedObjectForRemovedItem: item atIndex: index hint: hint];
 	}
 
 	[self beginCoalescingModelMutation];
 
 	[self handleDetachItem: item];
-	[_layoutItems removeObject: item];
+	/* For ETUndeterminedIndex, will use -removeObject: */
+	[_layoutItems removeObject: item atIndex: index hint: nil];
 	[self didChangeContentWithMoreComing: moreComing];
 
 	[self endCoalescingModelMutation];
 }
 
 - (void) mutateRepresentedObjectForRemovedItem: (ETLayoutItem *)item
+                                        atIndex: (int)index 
+                                           hint: (id)hint
 {
 	id repObject = [self representedObject];
 
@@ -260,7 +233,7 @@ inside another -begin/endMutate pair.  */
 
 	ETDebugLog(@"Remove %@ in represented object %@", [item representedObject], 
 		repObject);
-	[repObject removeObject: [item representedObject]];
+	[repObject removeObject: [item representedObject] atIndex: index hint: hint];
 }
 
 /* Set Mutation Handlers */
@@ -271,7 +244,7 @@ inside another -begin/endMutate pair.  */
 
 	FOREACH(items, item, ETLayoutItem *)
 	{
-		[self handleAddItem: item moreComing: YES];
+		[self handleInsertItem: item atIndex: ETUndeterminedIndex hint: nil moreComing: YES];
 	}
 
 	[self endMutate: wasAutolayoutEnabled];
@@ -283,7 +256,7 @@ inside another -begin/endMutate pair.  */
 
 	FOREACH(items, item, ETLayoutItem *)
 	{
-		[self handleRemoveItem: item moreComing: YES];
+		[self handleRemoveItem: item atIndex: ETUndeterminedIndex hint: nil moreComing: YES];
 	}
 
 	[self endMutate: wasAutolayoutEnabled];

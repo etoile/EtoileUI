@@ -651,28 +651,28 @@ See also -setSource:, -isBaseItem and -nextResponder. */
 - (void) addItem: (ETLayoutItem *)item
 {
 	//ETDebugLog(@"Add item in %@", self);
-	[self handleAddItem: item moreComing: NO];
+	[self handleInsertItem: item atIndex: ETUndeterminedIndex hint: nil moreComing: NO];
 }
 
 /** Inserts the given item in the receiver children at a precise index. */
 - (void) insertItem: (ETLayoutItem *)item atIndex: (int)index
 {
 	//ETDebuLog(@"Insert item in %@", self);
-	[self handleInsertItem: item atIndex: index moreComing: NO];
+	[self handleInsertItem: item atIndex: index hint: nil moreComing: NO];
 }
 
 /** Removes the given item from the receiver children. */
 - (void) removeItem: (ETLayoutItem *)item
 {
 	//ETDebugLog(@"Remove item in %@", self);
-	[self handleRemoveItem: item moreComing: NO];
+	[self handleRemoveItem: item atIndex: ETUndeterminedIndex hint: nil moreComing: NO];
 }
 
 /** Removes the child item at the given index in the receiver children. */
 - (void) removeItemAtIndex: (int)index
 {
 	ETLayoutItem *item = [_layoutItems objectAtIndex: index];
-	[self removeItem: item];
+	[self handleRemoveItem: item atIndex: index hint: nil moreComing: NO];
 }
 
 /** Returns the child item at the given index in the receiver children. */
@@ -1796,7 +1796,7 @@ TODO: Implement and may be rename -expand or -expandStack */
 
 - (void) insertObject: (id)object atIndex: (unsigned int)index hint: (id)hint
 {
-	[self insertItem: [self boxObject: object] atIndex: index];
+	[self handleInsertItem: [self boxObject: object] atIndex: index hint: hint moreComing: NO];
 }
 
 /** Removes object from the child items of the receiver, eventually trying to 
@@ -1806,10 +1806,12 @@ TODO: Implement and may be rename -expand or -expandStack */
 	/* Try to remove object by matching it against child items */
 	if ([object isLayoutItem] && [self containsItem: object])
 	{
-		[self removeItem: object];
+		[self handleRemoveItem: object atIndex: index hint: hint moreComing: NO];
 	}
 	else
 	{
+		// TODO: Belongs to ETLayoutItemGroup+Mutation. Needs to be reworked.
+
 		/* Remove items with boxed object matching the object to remove */	
 		NSArray *itemsMatchedByRepObject = nil;
 		
