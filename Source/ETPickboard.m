@@ -138,13 +138,27 @@ static ETPickboard *activePickboard = nil;
 
 /* Pickboard Interaction */
 
-/** Removes the first element in the pickboard and returns it. */
+/** Removes the first element in the pickboard and returns it.
+
+See also -popObjectAsPickCollection:. */
 - (id) popObject
+{
+	return [self popObjectAsPickCollection: NO];
+}
+
+/** Removes the first element in the pickboard and returns it.
+
+If boxed is YES, returns a pick collection in all cases. When the element is not 
+a pick collection, it is boxed into one.
+If boxed is NO, returns nil when the pickboard is empty. */
+- (id) popObjectAsPickCollection: (BOOL)boxed
 {
 	[self checkPickboardValidity];
 
-	if ([self numberOfItems] == 0)
-		return nil;
+	if ([self isEmpty])
+	{
+		return (boxed ? [ETPickCollection pickCollectionWithCollection: [NSArray array]] : nil);
+	}
 
 	// NOTE: pickedObject is represented by topItem in the pickboard. Take note 
 	// that pickedObject can be a layout item.
@@ -165,8 +179,13 @@ static ETPickboard *activePickboard = nil;
 	RETAIN(pickedObject);
 	[self removeItemAtIndex: 0];
 	[_pickedObjects removeObjectForKey: [pickRefs objectAtIndex: 0]];
+	AUTORELEASE(pickedObject);
 
-	return AUTORELEASE(pickedObject);
+	if (boxed && [pickedObject isKindOfClass: [ETPickCollection class]] == NO)
+	{
+		pickedObject = [ETPickCollection pickCollectionWithCollection: A(pickedObject)];
+	}
+	return pickedObject;
 }
 
 /** Inserts an object as the first element in the pickboard and returns a 
@@ -290,14 +309,35 @@ returns an ETLayoutItem. */
 }
 
 /** Returns the first element on the pickboard.
-	The first element is the one which will be inserted on the next drop 
-	operation unless another object gets picked in the meantime. */
+
+See also -firstObjectAsPickCollection:. */
 - (id) firstObject
 {
-	if ([self isEmpty])
-		return nil;
+	return [self firstObjectAsPickCollection: NO];
+}
 
-	return [[self itemAtIndex: 0] representedObject];
+/** Returns the first element on the pickboard.
+
+The first element is the one which will be inserted on the next drop operation 
+unless another object gets picked in the meantime.
+
+If boxed is YES, returns a pick collection in all cases. When the element is not 
+a pick collection, it is boxed into one.<br />
+If boxed is NO, returns nil when the pickboard is empty. */
+- (id) firstObjectAsPickCollection: (BOOL)boxed
+{
+	if ([self isEmpty])
+	{
+		return (boxed ? [ETPickCollection pickCollectionWithCollection: [NSArray array]] : nil);
+	}
+
+	id firstObject = [[self firstItem] representedObject];
+
+	if (boxed == YES && [firstObject isKindOfClass: [ETPickCollection class]] == NO)
+	{
+		firstObject = [ETPickCollection pickCollectionWithCollection: A(firstObject)];
+	}
+	return firstObject;
 }
 
 /* Pick & Drop Palette */
@@ -341,7 +381,7 @@ collection) with the objects of the collection passed in parameter. */
 {
 	SUPERINIT
 	ASSIGN(_pickedObjects, [objects contentArray]);
-	ASSIGN(_type, [ETUTI transientTypeWithSupertypes: [(NSObject *)objects valueForKey: @"type"]]);
+	ASSIGN(_type, [ETUTI transientTypeWithSupertypes: [(NSObject *)objects valueForKey: @"UTI"]]);
 	return self;
 }
 

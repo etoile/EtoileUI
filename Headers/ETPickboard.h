@@ -28,7 +28,7 @@ extern NSString *ETLayoutItemPboardType;
 	unsigned int _pickboardRef;
 }
 
-/* Factory Methods */
+/** @taskunit Factory Methods */
 
 /** Returns the system-wide pickboard which is used by default accross Etoile
     environment. */
@@ -45,17 +45,19 @@ extern NSString *ETLayoutItemPboardType;
 + (ETPickboard *) activePickboard;
 + (void) setActivePickboard: (ETPickboard *)pickboard;
 
-/* Pickboard Interaction */
+/** @taskunit Pickboard Interaction */
 
 - (id) popObject;
+- (id) popObjectAsPickCollection: (BOOL)boxed;
 - (ETPickboardRef *) pushObject: (id)object;
 - (ETPickboardRef *) appendObject: (id)object;
 - (void) removeObjectForPickboardRef: (ETPickboardRef *)ref;
 - (id) objectForPickboardRef: (ETPickboardRef *)ref;
 - (NSArray *) allObjects;
 - (id) firstObject;
+- (id) firstObjectAsPickCollection: (BOOL)boxed;
 
-/* Pick & Drop Palette */
+/* @taskunit Pick and Drop Palette */
 
 - (NSWindow *) pickPalette;
 - (void) showPickPalette;
