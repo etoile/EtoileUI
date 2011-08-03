@@ -166,6 +166,13 @@
 - (void) stack;
 - (void) unstack;
 
+/** @taskunit Additions to ETCollectionMutation */
+
+- (ETLayoutItem *) insertObject: (id)object 
+                        atIndex: (unsigned int)index 
+                           hint: (id)hint 
+                   boxingForced: (BOOL)boxingForced;
+
 /* Framework Private */
 
 - (id) initAsLayerItem;
