@@ -1796,7 +1796,14 @@ TODO: Implement and may be rename -expand or -expandStack */
 
 - (void) insertObject: (id)object atIndex: (unsigned int)index hint: (id)hint
 {
-	[self handleInsertItem: [self boxObject: object] atIndex: index hint: hint moreComing: NO];
+	[self insertObject: object atIndex: index hint: hint boxingForced: NO];
+}
+
+- (ETLayoutItem *) insertObject: (id)object atIndex: (unsigned int)index hint: (id)hint boxingForced: (BOOL)boxingForced
+{
+	id insertedItem = [self boxObject: object forced: boxingForced];
+	[self handleInsertItem: insertedItem atIndex: index hint: hint moreComing: NO];
+	return insertedItem;
 }
 
 /** Removes object from the child items of the receiver, eventually trying to 

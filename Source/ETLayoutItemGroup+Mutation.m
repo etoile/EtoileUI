@@ -190,7 +190,10 @@ inside another -begin/endMutate pair.  */
 
 	ETDebugLog(@"Insert %@ in represented object %@ at index %d", 
 		[item representedObject], repObject, index);
-	[repObject insertObject: [item representedObject] atIndex: index hint: hint];
+
+	[repObject insertObject: ([item representedObject] == hint ? nil : [item representedObject])
+	                atIndex: index 
+	                   hint: hint];
 }
 
 - (void) handleRemoveItem: (ETLayoutItem *)item
@@ -267,15 +270,20 @@ inside another -begin/endMutate pair.  */
 /** Returns the object boxed into a layout item if needed.
 
 If the object is a valid item, no boxing occurs and the item object is returned 
-as is, otherwise the returned item uses the object as a represented object. */
-- (ETLayoutItem *) boxObject: (id)object
+as is, otherwise the returned item uses the object as a represented object.
+
+When boxingForced is YES, the boxing occurs in all cases, if the object is an 
+item, it is used as a represented object bound to the returned item. */
+- (ETLayoutItem *) boxObject: (id)object forced: (BOOL)boxingForced
 {
-	ETLayoutItem *item = [object isLayoutItem] ? object : [self itemWithObject: object isValue: [object isCommonObjectValue]];
-	
-	if ([object isLayoutItem] == NO)
+	if (boxingForced == NO && [object isLayoutItem])
 	{
-		ETDebugLog(@"Boxed object %@ in item %@ to be inserted in %@", object, item, self);
+	 	return object;
 	}
+
+	ETLayoutItem *item = [self itemWithObject: object isValue: [object isCommonObjectValue]];
+
+	ETDebugLog(@"Boxed object %@ in item %@ to be inserted in %@", object, item, self);
 	return item;
 }
 

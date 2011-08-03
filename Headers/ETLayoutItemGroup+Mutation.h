@@ -71,7 +71,7 @@ like -addItem, removeItem:, -insertItem:atIndex: etc. */
 
 /** @taskunit Autoboxing */
 
-- (ETLayoutItem *) boxObject: (id)object;
+- (ETLayoutItem *) boxObject: (id)object forced: (BOOL)boxingForced;
 	
 /** @taskunit Providing */
 
