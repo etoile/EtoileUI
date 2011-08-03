@@ -1791,7 +1791,7 @@ TODO: Implement and may be rename -expand or -expandStack */
 	-templateItemGroup is retrieved (-isGroup returns YES). */
 - (void) addObject: (id)object
 {
-	[self addItem: [self boxObject: object]];
+	[self addItem: [self boxObject: object forced: NO]];
 }
 
 - (void) insertObject: (id)object atIndex: (unsigned int)index hint: (id)hint
