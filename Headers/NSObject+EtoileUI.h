@@ -11,6 +11,7 @@
  
 #import <Foundation/Foundation.h>
 #import <AppKit/AppKit.h>
+#import <EtoileFoundation/ETKeyValuePair.h>
 #import <EtoileUI/ETInspecting.h>
 
 /** EtoileUI binds to all objects a visual representation. In many cases, such
@@ -79,4 +80,8 @@
 /** See NSObject+Model in EtoileFoudation */
 @interface NSImage (EtoileModel)
 - (BOOL) isCommonObjectValue;
+@end
+
+@interface ETKeyValuePair (EtoileUI)
+- (NSImage *) icon;
 @end

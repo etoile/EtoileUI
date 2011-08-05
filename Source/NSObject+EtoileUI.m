@@ -256,3 +256,9 @@ conveniency. */
 @implementation NSImage (EtoileModel)
 - (BOOL) isCommonObjectValue { return YES; }
 @end
+
+@implementation ETKeyValuePair (EtoileUI)
+/** Returns the icon bound to the -value object. */
+- (NSImage *) icon { return [[self value] icon]; }
+@end
+
