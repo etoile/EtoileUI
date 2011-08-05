@@ -151,6 +151,7 @@ EtoileUI_RESOURCE_FILES = \
 EtoileUI_RESOURCE_FILES += \
 	English.lproj/RevertToPanel.gorm
 
+
 include $(GNUSTEP_MAKEFILES)/aggregate.make
 -include ../../etoile.make
 -include etoile.make
@@ -160,23 +161,3 @@ include $(GNUSTEP_MAKEFILES)/bundle.make
 else
 include $(GNUSTEP_MAKEFILES)/framework.make
 endif
-
-before-all::
-	$(ECHO_NOTHING) \
-	for headerDir in $(OTHER_HEADER_DIRS); do \
-		for header in `ls -1 $$headerDir/*.h`; do \
-			if [ ! -e Headers/`basename $$header` ]; then \
-				ln -s ../$$header Headers; \
-			fi; \
-		done; \
-	done \
-	$(END_ECHO)
-
-before-clean::
-	$(ECHO_NOTHING) \
-	for header in `ls -1 Headers/*.h`; do \
-		if [ -L $$header ]; then \
-			rm $$header; \
-		fi; \
-	done \
-	$(END_ECHO)
