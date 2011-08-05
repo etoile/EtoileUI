@@ -167,7 +167,7 @@ See also -hasBuiltInDragAndDropSupport. */
 	ETAssert(_dragSource == nil);
 
 	// TODO: Might be better to use the base item or the parent item...
-	ASSIGN(_dragSource, [aLayout layoutContext]);
+	ASSIGN(_dragSource, (ETLayoutItem *)[aLayout layoutContext]);
 	ETAssert(_dragSource != nil);
 
 	if ([[ETTool activeTool] respondsToSelector: @selector(shouldRemoveItemsAtPickTime)])

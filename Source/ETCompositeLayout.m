@@ -361,7 +361,8 @@ the copying support in ETLayoutItemGroup and ETCompositeLayout/ETLayout). */
 	ETLayoutItem *firstPresentationItemCopy = 
 		[[self proposedParentItemForFirstPresentationItem] itemAtIndexPath: indexPath];
 
-	ASSIGN(_targetItem, firstPresentationItemCopy);
+	// TODO: May be ETAssert([firstPresententionItemCopy isGroup])
+	ASSIGN(_targetItem, (ETLayoutItemGroup *)firstPresentationItemCopy);
 
 	/* When the content is not routed, both the original 'items' are 'source'
 	   are stored in the default values. However -[ETLayoutItem copyWithZone:] 

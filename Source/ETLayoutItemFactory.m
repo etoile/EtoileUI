@@ -822,7 +822,7 @@ to set no represented object on a menu entry. */
 
 /* Special Group Access Methods */
 
-static ETWindowLayer *windowLayer = nil;
+static ETLayoutItemGroup *windowLayer = nil;
 
 /** Returns the item group representing all windows in the current work 
 context or application. */
