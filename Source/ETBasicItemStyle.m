@@ -78,6 +78,11 @@ DEALLOC(DESTROY(_labelAttributes));
 	return newStyle;
 }
 
+- (NSImage *) icon
+{
+	return [NSImage imageNamed: @"leaf"];
+}
+
 - (void) render: (NSMutableDictionary *)inputValues 
      layoutItem: (ETLayoutItem *)item 
       dirtyRect: (NSRect)dirtyRect
@@ -763,6 +768,11 @@ See also -edgeInset. */
 
 @implementation ETGraphicsGroupStyle
 
+- (NSImage *) icon
+{
+	return [NSImage imageNamed: @"layers-group"];
+}
+
 - (void) render: (NSMutableDictionary *)inputValues 
      layoutItem: (ETLayoutItem *)item 
 	  dirtyRect: (NSRect)dirtyRect
@@ -782,6 +792,11 @@ See also -edgeInset. */
 
 
 @implementation ETFieldEditorItemStyle
+
+- (NSImage *) icon
+{
+	return [NSImage imageNamed: @"selection-input"];
+}
 
 - (void) render: (NSMutableDictionary *)inputValues 
      layoutItem: (ETLayoutItem *)item 

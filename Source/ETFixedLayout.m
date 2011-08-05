@@ -15,6 +15,11 @@
 
 @implementation ETFixedLayout
 
+- (NSImage *) icon
+{
+	return [NSImage imageNamed: @"pin.png"];
+}
+
 /** Always returns YES since items are positioned based on their persistent 
 geometry. */
 - (BOOL) isPositional

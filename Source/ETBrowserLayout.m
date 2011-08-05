@@ -87,6 +87,12 @@
    item tree has been modified since the last reload. */
 @implementation ETBrowserLayout
 
+- (NSImage *) icon
+{
+	// TODO: Rather use layout-3
+	return [NSImage imageNamed: @"ui-breadcrumb.png"];
+}
+
 - (NSString *) nibName
 {
 	return @"BrowserPrototype";

@@ -11,6 +11,8 @@
 #import <EtoileUI/Controls+Etoile.h>
 #import <EtoileUI/ETActionHandler.h>
 #import <EtoileUI/ETApplication.h>
+#import <EtoileUI/ETAspectCategory.h>
+#import <EtoileUI/ETAspectRepository.h>
 #import <EtoileUI/ETBasicItemStyle.h>
 #import <EtoileUI/ETBrowserLayout.h>
 #import <EtoileUI/ETCompatibility.h>

@@ -46,6 +46,7 @@ invalid arguments. */
 	@private
 	NSSet *allowedAspectTypes;
 	NSString *name;
+	NSImage *icon;
 }
 
 /** @taskunit Initialization */
@@ -62,6 +63,8 @@ Must not be nil. */
 @property (retain, nonatomic) NSString *name;
 /** Returns the category name. */
 @property (readonly, nonatomic) NSString *displayName;
+/** The category icon. */
+@property (retain, nonatomic) NSImage *icon;
 
 /** @taskunit Accessing and Managing Aspects */
 

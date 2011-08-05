@@ -10,6 +10,7 @@
 #import <EtoileFoundation/ETCollection+HOM.h>
 #import <EtoileFoundation/NSObject+Etoile.h>
 #import "ETLayout.h"
+#import "ETAspectRepository.h"
 #import "ETGeometry.h"
 #import "ETTool.h"
 #import "ETLayoutItemGroup.h"
@@ -43,7 +44,22 @@ See also NSObject(ETAspectRegistration). */
 {
 	ASSIGN(layoutPrototypes, [NSMutableSet set]);
 
-	FOREACH([self allSubclasses], subclass, Class)
+	NSArray *skippedClasses = A(NSClassFromString(@"ETWidgetLayout"), 
+		NSClassFromString(@"ETObjectBrowserLayout"), 
+		NSClassFromString(@"ETInspectorLayout"), 
+		NSClassFromString(@"ETWindowLayout"), 
+		NSClassFromString(@"ETTemplateItemLayout"), 
+		NSClassFromString(@"ETCompositeLayout"),
+		NSClassFromString(@"ETPaneLayout"),
+		NSClassFromString(@"ETComputedLayout"),
+		NSClassFromString(@"ETMasterDetailPaneLayout"),
+		NSClassFromString(@"ETMasterContentPaneLayout"),
+		NSClassFromString(@"ETFormLayout"),
+		NSClassFromString(@"ETViewModelLayout"),
+		NSClassFromString(@"ETTextEditorLayout"));
+	NSArray *subclasses = [[self allSubclasses] arrayByRemovingObjectsInArray: skippedClasses];
+
+	FOREACH(subclasses, subclass, Class)
 	{
 		CREATE_AUTORELEASE_POOL(pool);
 		[self registerLayout: AUTORELEASE([[subclass alloc] init])];
@@ -79,8 +95,16 @@ Raises an invalid argument exception if aLayout class isn't a subclass of ETLayo
 	}
 
 	[layoutPrototypes addObject: aLayout];
-	// TODO: Make a class instance available as an aspect in the aspect 
-	// repository.
+
+	ETAspectCategory *category = [[ETAspectRepository mainRepository] aspectCategoryNamed: _(@"Layout")];
+
+	if (category == nil)
+	{
+		category = [[ETAspectCategory alloc] initWithName: _(@"Layout")];
+		[category setIcon: [NSImage imageNamed: @"layout-design"]];
+		[[ETAspectRepository mainRepository] addAspectCategory: category];
+	}
+	[category setAspect: aLayout forKey: [[aLayout class] displayName]];
 }
 
 /** Returns all the layout prototypes directly available for EtoileUI facilities 
@@ -303,6 +327,11 @@ To customize the copying in a subclass, you must override
 - (id) copyWithZone: (NSZone *)aZone
 {
 	return [self copyWithZone: aZone layoutContext: nil];
+}
+
+- (NSImage *) icon
+{
+	return [NSImage imageNamed: @"ui-layered-pane"];
 }
 
 /** Returns the tool or tool bound to the receiver. */

@@ -11,6 +11,7 @@
 #import <EtoileFoundation/NSObject+Model.h>
 #import "ETLayoutItemFactory.h"
 #import "ETActionHandler.h"
+#import "ETAspectRepository.h"
 #import "ETBasicItemStyle.h"
 #import "ETFreeLayout.h"
 #import "ETGeometry.h"
@@ -187,9 +188,11 @@ This height is also identical to the standard toolbar height in Aqua. */
 /** Returns a new layout item to which the given view gets bound. */
 - (ETLayoutItem *) itemWithView: (NSView *)view
 {
-	return (ETLayoutItem *)AUTORELEASE([[ETLayoutItem alloc] initWithView: view
-                                                               coverStyle: [self currentCoverStyle]
-	                                                        actionHandler: [self currentActionHandler]]);
+	ETLayoutItem *item = AUTORELEASE([[ETLayoutItem alloc] initWithView: view
+                                                             coverStyle: [self currentCoverStyle]
+	                                                      actionHandler: [self currentActionHandler]]);
+	[item setIcon: [NSImage imageNamed: @"leaf"]];
+	return item;
 }
 
 /** Returns a new layout item which represents the given object and treats it 
@@ -283,9 +286,11 @@ shared style returned by -currentBarElementStyle.  */
 /** Returns a new blank layout item group. */
 - (ETLayoutItemGroup *) itemGroup
 {
-	return AUTORELEASE([[ETLayoutItemGroup alloc] initWithView: nil 
-	                                                coverStyle: [self currentCoverStyle]
-	                                             actionHandler: [self currentActionHandler]]);
+	ETLayoutItemGroup *item = AUTORELEASE([[ETLayoutItemGroup alloc] initWithView: nil 
+	                                                                   coverStyle: [self currentCoverStyle]
+	                                                                actionHandler: [self currentActionHandler]]);
+	[item setIcon: [NSImage imageNamed: @"leaf-plant"]];
+	return item;
 }
 
 /** Returns a new blank layout item group initialized with the given frame. */
@@ -354,6 +359,7 @@ when you request the grouping of several items. */
 	ETLayoutItemGroup *itemGroup = [self itemGroup];
 	[itemGroup setCoverStyle: AUTORELEASE([[ETGraphicsGroupStyle alloc] init])];
 	[itemGroup setLayout: [ETFreeLayout layout]];
+	[itemGroup setIcon: [NSImage imageNamed: @"layers-group"]];
 	return itemGroup;
 }
 
@@ -490,7 +496,9 @@ although it is not one (it is more akin a bevel button without a label). */
 /** Returns a new layout item that uses a NSButton instance as its view. */
 - (id) button
 {
-	return [self makeItemWithViewClass: [NSButton class] height: [self defaultButtonHeight]];
+	ETLayoutItem *item = [self makeItemWithViewClass: [NSButton class] height: [self defaultButtonHeight]];
+	[item setIcon: [NSImage imageNamed: @"ui-button.png"]];
+	return item;
 }
 
 /** Returns a new layout item that uses a NSButton instance as its view, and 
@@ -505,7 +513,9 @@ initializes this button with the given image, target and action. */
 	[buttonView setAction: aSelector];
 	[buttonView setTitle: nil];
 
-	return [self itemWithView: buttonView];
+	ETLayoutItem *item = [self itemWithView: buttonView];
+	[item setIcon: [NSImage imageNamed: @"ui-button.png"]];
+	return item;
 }
 
 /** Returns a new layout item that uses a NSButton instance as its view, and 
@@ -607,6 +617,7 @@ and background as its view. */
 	// item size could be cleaner. Eventually rethink -itemWithView: a bit 
 	// and/or modify this method.
 	[item setSize: [labelField frame].size];
+	[item setIcon: [NSImage imageNamed: @"ui-label"]];
 
 	return item;
 }
@@ -614,8 +625,10 @@ and background as its view. */
 /** Returns a new layout item that uses a NSTextField instance as its view. */
 - (id) textField
 {
-	return [self makeItemWithViewClass: [NSTextField class] 
-	                           height: [self defaultTextFieldHeight]];
+	ETLayoutItem *item = [self makeItemWithViewClass: [NSTextField class] 
+	                                          height: [self defaultTextFieldHeight]];
+	[item setIcon: [NSImage imageNamed: @"ui-text-field"]];
+	return item;
 }
 
 /** Returns a new layout item that uses a NSSearchField instance as its view, and 
@@ -666,8 +679,10 @@ WARNING: presently returns a scrollview if you call -view on the returned item. 
 /** Returns a new layout item that uses a NSProgressIndicator instance as its view. */
 - (id) progressIndicator
 {
-	return [self makeItemWithViewClass: [NSProgressIndicator class] 
-	                           height: [self defaultProgressIndicatorHeight]];
+	ETLayoutItem *item = [self makeItemWithViewClass: [NSProgressIndicator class] 
+	                                          height: [self defaultProgressIndicatorHeight]];
+	[item setIcon: [NSImage imageNamed: @"ui-progress-bar"]];
+	return item;
 }
 
 /** Returns a new layout item that uses a vertically oriented NSSlider instance 
@@ -679,7 +694,9 @@ as its view. */
 	frame.size.width = [self defaultSliderThickness];
 	NSSlider *sliderView = AUTORELEASE([[NSSlider alloc] initWithFrame: frame]);
 
-	return [self itemWithView: sliderView];
+	ETLayoutItem *item = [self itemWithView: sliderView];
+	[item setIcon: [NSImage imageNamed: @"ui-slider-vertical-050"]];
+	return item;
 }
 
 /** Returns a new layout item that uses a horizontally oriented NSSlider instance 
@@ -687,8 +704,10 @@ as its view. */
 - (id) horizontalSlider
 {
 	// NOTE: Might be better to invoke -horizontalSliderWithWidth:XXX.
-	return [self makeItemWithViewClass: [NSSlider class]
-	                           height: [self defaultSliderThickness]];
+	ETLayoutItem *item = [self makeItemWithViewClass: [NSSlider class]
+	                                          height: [self defaultSliderThickness]];
+	[item setIcon: [NSImage imageNamed: @"ui-slider-050"]];
+	return item;
 }
 
 - (id) horizontalSliderWithWidth: (float)aWidth
@@ -871,8 +890,10 @@ bezier path. The shape is used as both the represented object and the style. */
 width and height of the given rect. */
 - (ETLayoutItem *) rectangleWithRect: (NSRect)aRect
 {
-	return [self itemWithShape: [ETShape rectangleShapeWithRect: ETMakeRect(NSZeroPoint, aRect.size)] 
-	                   inFrame: aRect];
+	ETLayoutItem *item = [self itemWithShape: [ETShape rectangleShapeWithRect: ETMakeRect(NSZeroPoint, aRect.size)] 
+	                                 inFrame: aRect];
+	[item setIcon: [NSImage imageNamed: @"layer-shape"]];
+	return item;
 }
 
 /** Returns a new layout item which represents a rectangular shape with the 
@@ -940,6 +961,33 @@ See separator related methods in [ETComputedLayout] and subclasses.*/
 	ETLayoutItem *item = [self item];
 	[item setName: kETFlexibleSpaceSeparatorItemIdentifier];
 	return item;
+}
+
++ (void) registerAspects
+{
+	ETLayoutItemFactory *factory = [self factory];
+	ETAspectCategory *category = [[ETAspectRepository mainRepository] aspectCategoryNamed: _(@"Items")];
+
+	if (category == nil)
+	{
+		category = [[ETAspectCategory alloc] initWithName: _(@"Items")];
+		[category setIcon: [NSImage imageNamed: @"leaf-yellow"]];
+		[[ETAspectRepository mainRepository] addAspectCategory: category];
+	}
+
+	[category setAspect: [factory item] forKey: _(@"Blank Item")];
+	[category setAspect: [factory itemGroup] forKey: _(@"Blank Item Group")];
+	
+	[category setAspect: [factory buttonWithTitle: _(@"Button") target: nil action: NULL] 
+	             forKey: _(@"Push Button")];
+	[category setAspect: [factory labelWithTitle: @"Untitled"] forKey: _(@"Label")];
+	[category setAspect: [factory textField] forKey: _(@"Text Field")];
+	[category setAspect: [factory horizontalSlider] forKey: _(@"Horizontal Slider")];
+	[category setAspect: [factory verticalSlider] forKey: _(@"Vertical Slider")];
+	[category setAspect: [factory progressIndicator] forKey: _(@"Progress Indicator")];
+
+ 	[category setAspect: [factory graphicsGroup] forKey: _(@"Graphics Group")];
+	[category setAspect: [factory rectangle] forKey: _(@"Rectangle")];
 }
 
 @end

@@ -62,3 +62,9 @@ NSString * const kETWidthProperty = @"width";
 NSString * const kETXProperty = @"x";
 NSString * const kETYProperty = @"y";
 
+NSString * const kETPickMetadataWasUsedAsRepresentedObject = @"wasUsedAsRepresentedObject";
+NSString * const kETPickMetadataPickIndex = @"pickIndex";
+NSString * const kETPickMetadataDraggedItems = @"draggedItems";
+NSString * const kETPickMetadataCurrentDraggedItem = @"currentDraggedItem";
+
+NSString * const kETPickMetadataProperty = @"pickMetadata";

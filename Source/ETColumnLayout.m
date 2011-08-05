@@ -19,6 +19,11 @@
 
 @implementation ETColumnLayout
 
+- (NSImage *) icon
+{
+	return [NSImage imageNamed: @"ui-split-panel-vertical.png"];
+}
+
 /** Returns a line fragment filled with items to layout. */
 - (ETLineFragment *) layoutFragmentWithSubsetOfItems: (NSArray *)unlayoutedItems
 {

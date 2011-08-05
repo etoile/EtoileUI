@@ -35,6 +35,11 @@
 	return self;
 }
 
+- (NSImage *) icon
+{
+	return [NSImage imageNamed: @"ui-flow"];
+}
+
 /** <override-dummy />
 Returns the height in which all the given fragments fits. 
 

@@ -69,6 +69,11 @@ DEALLOC(DESTROY(_itemLabelFont))
 	return layoutCopy;
 }
 
+- (NSImage *) icon
+{
+	return [NSImage imageNamed: @"picture--pencil.png"];
+}
+
 - (void) setUpTemplateElementWithNewValue: (id)templateValue
                                    forKey: (NSString *)aKey
                                    inItem: (ETLayoutItem *)anItem
@@ -229,6 +234,11 @@ The resizing isn't delegated to the positional layout unlike in ETTemplateItemLa
 	[self setEdgeInset: 7];
 
 	return self;
+}
+
+- (NSImage *) icon
+{
+	return [NSImage imageNamed: @"picture--pencil.png"];
 }
 
 /** Always returns the item display name. */

@@ -24,6 +24,11 @@
 	[self applyTraitFromClass: [ETMutableCollectionTrait class]];
 }
 
++ (NSString *) baseClassName
+{
+	return @"StyleGroup";
+}
+
 + (NSSet *) keyPathsForValuesAffectingLastStyle
 {
     return S(@"styles");
@@ -74,6 +79,11 @@ in the given style collection. */
 	ETStyleGroup *newStyle = [super copyWithZone: aZone];
 	newStyle->_styles = [_styles mutableCopyWithZone: aZone];
 	return newStyle;
+}
+
+- (NSImage *) icon
+{
+	return [NSImage imageNamed: @"layers-stack"];
 }
 
 /* Style Collection */

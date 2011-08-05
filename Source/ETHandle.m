@@ -331,6 +331,11 @@ static ETBasicHandleStyle *sharedBasicHandleStyle = nil;
 	return sharedBasicHandleStyle;
 }
 
+- (NSImage *) icon
+{
+	return [NSImage imageNamed: @"layer-select-point"];
+}
+
 - (void) render: (NSMutableDictionary *)inputValues 
      layoutItem: (ETLayoutItem *)item
       dirtyRect: (NSRect)dirtyRect

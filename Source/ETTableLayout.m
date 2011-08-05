@@ -82,6 +82,11 @@
 	[[[self tableView] tableColumnWithIdentifier: @"icon"] setEditable: NO];
 }
 
+- (NSImage *) icon
+{
+	return [NSImage imageNamed: @"ui-list-box-blue"];
+}
+
 - (Class) widgetViewClass
 {
 	return [ETTableView class];
@@ -749,8 +754,10 @@ Note: For now, private method. */
 	
 	id draggedObject = [[ETPickboard localPickboard] firstObject];
 	NSInteger dropIndex = (NSTableViewDropAbove == op ? row : ETUndeterminedIndex);
+	id hint = [[ETPickDropCoordinator sharedInstance] hintFromObject: &draggedObject];
 	ETLayoutItem *validDropTarget = 
 		[[dropTarget actionHandler] handleValidateDropObject: draggedObject
+		                                                hint: hint
 		                                             atPoint: ETNullPoint
 		                                       proposedIndex: &dropIndex
 	                                                  onItem: dropTarget
@@ -801,7 +808,8 @@ Note: For now, private method. */
     ETDebugLog(@"Accept drop in %@ drag mask %d drop op %d", _layoutContext, 
 		[info draggingSourceOperationMask], op);
 
-	id droppedObject = [[ETPickboard localPickboard] popObject];
+	NSDictionary *metadata = [[ETPickboard localPickboard] firstObjectMetadata];
+	id droppedObject = [[ETPickboard localPickboard] popObjectAsPickCollection: YES];
 	ETLayoutItemGroup *dropTarget = _layoutContext;
 	
 	if (op == NSTableViewDropOn)
@@ -809,12 +817,11 @@ Note: For now, private method. */
 		dropTarget = [[dropTarget arrangedItems] objectAtIndex: row];
 	}
 
-	[[dropTarget actionHandler] handleDropObject: droppedObject 
-	                                     atIndex: row
-	                                      onItem: dropTarget
-	                                 coordinator: [ETPickDropCoordinator sharedInstance]];
-
-	return YES;
+	return [[dropTarget actionHandler] handleDropCollection: droppedObject
+	                                               metadata: metadata
+	                                                atIndex: row
+	                                                 onItem: dropTarget
+	                                            coordinator: [ETPickDropCoordinator sharedInstance]];
 }
 
 - (NSArray *) customSortDescriptorsForSortDescriptors: (NSArray *)currentSortDescriptors

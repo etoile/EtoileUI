@@ -40,6 +40,7 @@
 	NSInteger _currentDropIndex;
 	BOOL _wereItemsRemovedAtPickTime;
 	BOOL _pickDropEnabledForAllItems;
+	NSUInteger _insertionShift;
 }
 
 + (id) sharedInstance;
@@ -62,14 +63,18 @@
 
 - (ETLayoutItem *) dragSource;
 - (unsigned int) dragModifierFlags;
-- (unsigned int) dragOperationMask; // TODO: Rename -dropOperationMask?
-- (NSPoint) dragLocationInWindow;
+- (unsigned int) dragOperationMaskForDestinationItem: (ETLayoutItem *)item;
+- (NSPoint) dragLocationInDestinationItem: (ETLayoutItem *)item;
 
 /* Drop Insertion */
 
 - (BOOL) wereItemsRemovedAtPickTime;
-- (void) itemGroup: (ETLayoutItemGroup *)itemGroup 
-	insertDroppedObject: (id)movedObject atIndex: (int)index;
+- (id) hintFromObject: (id *)anObject;
+- (void) insertDroppedObject: (id)droppedObject 
+                        hint: (id)aHint
+                    metadata: (NSDictionary *)metadata
+                     atIndex: (NSUInteger)index
+                 inItemGroup: (ETLayoutItemGroup *)itemGroup;
 
 /* AppKit Interface (should be in a concrete subclass) */
 

@@ -66,3 +66,27 @@ extern NSString * const kETWidthProperty; /** width property name */
 extern NSString * const kETXProperty; /** x property name */
 extern NSString * const kETYProperty; /** y property name */
 
+/* Pickboard Item Metadata */
+
+extern NSString * const kETPickMetadataWasUsedAsRepresentedObject; /** Boolean metadata property (optional).
+
+If YES, a dropped item will be inserted as a represented object (being boxed 
+by -[ETLayoutItemGroup insertObject:atIndex:hint:box:]). */
+extern NSString * const kETPickMetadataPickIndex; /** Number metadata property (required).
+
+For the item on which the pick occured, the index in the parent item it 
+belonged to.  */
+extern NSString * const kETPickMetadataDraggedItems; /** Array metadata property (optional).
+
+When the pick operation is a drag, tracks the picked items.<br />
+For custom objects put on the pickboard, allows to retrieve the original items 
+on drop. If both the drag source and drop target uses the same base item, the 
+items can be moved (rather than creating new ones).  */
+extern NSString * const kETPickMetadataCurrentDraggedItem; /** ETLayoutItem metadata property (optional).
+
+When enumerating a pick collection, the dragged item that corresponds to the 
+dropped object in -[ETActionHandler handleDropObject:hint:metadata:atIndex:coordinator]. */
+
+/* Private Pickboard Item Properties */
+
+extern NSString * const kETPickMetadataProperty; /** pickMetadata property name */

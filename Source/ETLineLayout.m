@@ -18,6 +18,11 @@
 
 @implementation ETLineLayout
 
+- (NSImage *) icon
+{
+	return [NSImage imageNamed: @"ui-split-panel.png"];
+}
+
 /** Returns a line fragment filled with items to layout. */
 - (ETLineFragment *) layoutFragmentWithSubsetOfItems: (NSArray *)items
 {

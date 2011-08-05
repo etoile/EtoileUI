@@ -19,7 +19,7 @@
 
 @implementation ETAspectCategory
 
-@synthesize name, allowedAspectTypes;
+@synthesize name, allowedAspectTypes, icon;
 
 + (void) initialize
 {
@@ -64,6 +64,7 @@ name. */
 	{
 		ASSIGN(name, aName);
 	}
+	ASSIGN(icon, [NSImage imageNamed: @"box"]);
 	return self;
 }
 
@@ -89,6 +90,7 @@ See -initWithName:dictionary:. */
 	DESTROY(_aspects);
 	DESTROY(allowedAspectTypes);
 	DESTROY(name);
+	DESTROY(icon);
 	[super dealloc];
 }
 

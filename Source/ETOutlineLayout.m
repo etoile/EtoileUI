@@ -47,6 +47,11 @@
 	return self;
 }
 
+- (NSImage *) icon
+{
+	return [NSImage imageNamed: @"ui-scroll-pane-tree"];
+}
+
 - (NSString *) nibName
 {
 	return @"OutlinePrototype";
@@ -293,13 +298,15 @@ expanded and collapsed by getting automatically a related outline arrow. */
 {
     ETDebugLog(@"Accept drop in %@", _layoutContext);
 
-	id droppedObject = [[ETPickboard localPickboard] popObject];
+	NSDictionary *metadata = [[ETPickboard localPickboard] firstObjectMetadata];
+	id droppedObject = [[ETPickboard localPickboard] popObjectAsPickCollection: YES];
 	ETLayoutItem *dropTarget = (item != nil ? item : _layoutContext);
 
-	return [[dropTarget actionHandler] handleDropObject: droppedObject
-	                                            atIndex: index
-	                                             onItem: dropTarget
-		                                    coordinator: [ETPickDropCoordinator sharedInstance]];
+	return [[dropTarget actionHandler] handleDropCollection: droppedObject
+	                                               metadata: metadata
+	                                                atIndex: index
+	                                                 onItem: dropTarget
+		                                        coordinator: [ETPickDropCoordinator sharedInstance]];
 }
 
 - (NSDragOperation) outlineView: (NSOutlineView *)outlineView 
@@ -314,8 +321,10 @@ expanded and collapsed by getting automatically a related outline arrow. */
 	
 	id draggedObject = [[ETPickboard localPickboard] firstObject];
 	int dropIndex = index;
+	id hint = [[ETPickDropCoordinator sharedInstance] hintFromObject: &draggedObject];
 	ETLayoutItem *validDropTarget = 
 		[[dropTarget actionHandler] handleValidateDropObject: draggedObject
+		                                                hint: hint
 		                                             atPoint: ETNullPoint
 		                                       proposedIndex: &dropIndex
 	                                                  onItem: dropTarget

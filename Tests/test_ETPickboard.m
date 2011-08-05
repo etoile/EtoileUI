@@ -19,6 +19,16 @@
 
 @implementation ETPickboard (UnitKitTests)
 
+- (id) pushObject: (id)anObject
+{
+	return [self pushObject: anObject metadata: nil];
+}
+
+- (id) appendObject: (id)anObject
+{
+	return [self appendObject: anObject metadata: nil];
+}
+
 - (void) testPushObject
 {
 	id string = [NSString string];

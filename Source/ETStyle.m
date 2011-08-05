@@ -12,9 +12,11 @@
 #import <EtoileFoundation/ETModelDescriptionRepository.h>
 #import <EtoileFoundation/NSObject+Etoile.h>
 #import "ETStyle.h"
+#import "ETAspectRepository.h"
 #import "ETGeometry.h"
 #import "ETLayoutItem.h"
 #import "EtoileUIProperties.h"
+#import "NSObject+EtoileUI.h"
 #ifdef OBJECTMERGING
 #import <ObjectMerging/COEditingContext.h>
 #endif
@@ -94,8 +96,16 @@ Raises an invalid argument exception if aStyle class isn't a subclass of ETStyle
 	}
 
 	[stylePrototypes addObject: aStyle];
-	// TODO: Make a class instance available as an aspect in the aspect 
-	// repository.
+
+	ETAspectCategory *category = [[ETAspectRepository mainRepository] aspectCategoryNamed: _(@"Style")];
+
+	if (category == nil)
+	{
+		category = [[ETAspectCategory alloc] initWithName: _(@"Style")];
+		[category setIcon: [NSImage imageNamed: @"layer-transparent"]];
+		[[ETAspectRepository mainRepository] addAspectCategory: category];
+	}
+	[category setAspect: aStyle forKey: [[aStyle class] displayName]];
 }
 
 /** Returns all the style prototypes directly available for EtoileUI facilities 
@@ -147,6 +157,11 @@ Returns the shared instance that corresponds to the receiver class. */
 	ETStyle *newStyle = [super copyWithZone: aZone];
 	newStyle->_isShared = _isShared;
 	return newStyle;
+}
+
+- (NSImage *) icon
+{
+	return [NSImage imageNamed: @"layer-transparent"];
 }
 
 /** Returns whether the receiver can be shared between several owners.
@@ -261,6 +276,11 @@ See also -[ETLayoutItem contentBounds], -[ETLayoutItem size] and
 
 @implementation ETDropIndicator
 
++ (NSString *) baseClassName
+{
+	return @"DropIndicator";
+}
+
 // NOTE: -copyWithZone: implementation can be omitted, the ivars are transient.
 
 - (id) initWithLocation: (NSPoint)dropLocation 
@@ -274,6 +294,11 @@ See also -[ETLayoutItem contentBounds], -[ETLayoutItem size] and
 	_dropOn = dropOn;
 
 	return self;
+}
+
+- (NSImage *) icon
+{
+	return [NSImage imageNamed: @"arrow-270"];
 }
 
 // FIXME: Handle layout orientation, only works with horizontal layout
@@ -450,6 +475,11 @@ space.  */
 	return self;
 }
 
+- (NSImage *) icon
+{
+	return [NSImage imageNamed: @"edit-shadow"];
+}
+
 - (void) render: (NSMutableDictionary *)inputValues 
      layoutItem: (ETLayoutItem *)item 
 	  dirtyRect: (NSRect)dirtyRect
@@ -493,6 +523,11 @@ space.  */
 	ASSIGN(_content, style);
 	_color = [[NSColor colorWithDeviceRed:0.005 green:0.0 blue:0.01 alpha:0.7] retain];
 	return self;
+}
+
+- (NSImage *) icon
+{
+	return [NSImage imageNamed: @"layer-shade"];
 }
 
 - (void) setColor: (NSColor *)color
@@ -589,6 +624,11 @@ space.  */
 	SUPERINIT;
 	ASSIGN(_content, style);
 	return self;
+}
+
+- (NSImage *) icon
+{
+	return [NSImage imageNamed: @"balloon-left"];
 }
 
 - (void) render: (NSMutableDictionary *)inputValues 

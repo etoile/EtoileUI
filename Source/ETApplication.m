@@ -120,6 +120,22 @@ You can override -builder to customize the conversion. */
 	}
 }
 
+/* Register icons and images bundled with EtoileUI as named images. */
+- (void) _registerAdditionalImages
+{
+	NSBundle *etoileUIBundle = [NSBundle bundleForClass: [self class]]; 
+	NSArray *imagePaths = [etoileUIBundle pathsForResourcesOfType: @"png" inDirectory: nil];
+
+	imagePaths = [imagePaths arrayByAddingObjectsFromArray: 
+		[etoileUIBundle pathsForResourcesOfType: @"tiff" inDirectory: nil]];
+
+	for (NSString *path in imagePaths)
+	{
+		NSImage *img = [[NSImage alloc] initWithContentsOfFile: path];
+		[img setName: [[path lastPathComponent] stringByDeletingPathExtension]];
+	}
+}
+
 /** <override-dummy />
 Will be called just before -run is invoked.
 
@@ -139,6 +155,7 @@ See also -finishLaunching which is called after -run is invoked. */
 	// easily. Memory corruption tend to be located in GNUstep unarchiving code.
 	// Various UI aspects involve Gorm/Nib files.
 	CREATE_AUTORELEASE_POOL(pool);
+	[self _registerAdditionalImages];
 	[self _registerAllAspects];
 	//RECREATE_AUTORELEASE_POOL(pool);
 	[self _instantiateAppDelegateIfSpecified];
@@ -232,6 +249,7 @@ register the aspects it wants to make available to EtoileUI facilities
 	{ 
 		[NSClassFromString(className) registerAspects];
 	}
+	[ETLayoutItemFactory registerAspects];
 }
 
 /* If -mainMenu returns nil, builds a new main menu with -_createApplicationMenu
@@ -1010,7 +1028,7 @@ The cut item is put on the active pickboard. */
 	if (nil == item)
 		return;
 
-	[[ETPickboard activePickboard] pushObject: item];
+	[[ETPickboard activePickboard] pushObject: item metadata: nil];
 	[item removeFromParent];
 }
 
@@ -1024,7 +1042,7 @@ The copied item is put on the active pickboard. */
 	if (nil == item)
 		return;
 
-	[[ETPickboard activePickboard] pushObject: AUTORELEASE([item deepCopy])];
+	[[ETPickboard activePickboard] pushObject: AUTORELEASE([item deepCopy]) metadata: nil];
 }
 
 /** Paste the current item on the active pickbord into the window group.

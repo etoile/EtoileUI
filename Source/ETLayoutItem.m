@@ -163,7 +163,7 @@ See also -setView:, -setCoverStyle: and -setActionHandler:.  */
 	_parentItem = nil;
 
 	_styleGroup = [[ETStyleGroup alloc] init];
-	[self setCoverStyle: aStyle];	
+	[self setCoverStyle: aStyle];
 	[self setActionHandler: aHandler];
 
 	ASSIGN(_transform, [NSAffineTransform transform]);

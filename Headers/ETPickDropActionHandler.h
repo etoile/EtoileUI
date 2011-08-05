@@ -14,30 +14,42 @@
 #import <EtoileUI/ETActionHandler.h>
 
 @class ETUTI;
-@class ETLayoutItem, ETPickboard, ETPickDropCoordinator;
+@class ETLayoutItem, ETPickboard, ETPickCollection, ETPickDropCoordinator;
 
 
 /** ETUndeterminedIndex be used to indicate a drop is not an insertion at precise index but a simple drop on. */
 @interface ETActionHandler (ETPickDropActionHandler)
 
-/* Pick & Drop Actions */
+/** @taskunit Pick and Drop Actions */
 
 - (BOOL) handlePickItem: (ETLayoutItem *)item coordinator: (id)aPickCoordinator;
 - (BOOL) handleDragItem: (ETLayoutItem *)item coordinator: (id)aPickCoordinator;
 - (ETLayoutItem *) handleValidateDropObject: (id)droppedObject
+                                       hint: (id)aHint
                                     atPoint: (NSPoint)dropPoint
                               proposedIndex: (NSInteger *)anIndex
                                      onItem: (ETLayoutItem *)dropTarget
                                 coordinator: (ETPickDropCoordinator *)aPickCoordinator;
 - (BOOL) handleDropObject: (id)droppedObject
+                     hint: (id)aHint
+                 metadata: (NSDictionary *)metadata
                   atIndex: (NSInteger)anIndex
-                   onItem: (ETLayoutItem *)dropTargetItem 
-              coordinator: (ETPickDropCoordinator *)aPickDropCoordinator;
+                   onItem: (ETLayoutItem *)dropTarget
+			  coordinator: (ETPickDropCoordinator *)aPickCoordinator;
+			  
+/** @taskunit Pick Collection Drop */
 
-/* Pick and Drop Filtering */
+- (BOOL) handleDropCollection: (ETPickCollection *)aPickCollection
+                     metadata: (NSDictionary *)metadata
+                      atIndex: (NSInteger)anIndex
+                       onItem: (ETLayoutItem *)dropTarget
+			      coordinator: (ETPickDropCoordinator *)aPickCoordinator;
+
+/** @taskunit Pick and Drop Filtering */
 
 - (NSArray *) allowedPickTypesForItem: (ETLayoutItem *)item;
 - (NSArray *) allowedDropTypesForItem: (ETLayoutItem *)item;
+- (id) pickedObjectForItem: (ETLayoutItem *)item;
 - (BOOL) canDragItem: (ETLayoutItem *)item
          coordinator: (ETPickDropCoordinator *)aPickCoordinator;
 - (BOOL) canDropObject: (id)droppedObject
@@ -45,9 +57,13 @@
                 onItem: (ETLayoutItem *)dropTarget
            coordinator: (ETPickDropCoordinator *)aPickCoordinator;
 
-- (unsigned int) draggingSourceOperationMaskForLocal: (BOOL)isLocal;
+- (unsigned int) dragOperationMaskForDestinationItem: (ETLayoutItem *)item
+                                         coordinator: (ETPickDropCoordinator *)aPickCoordinator;
 
-/* Drag Destination Feedback */
+- (BOOL) boxingForcedForDroppedItem: (ETLayoutItem *)droppedItem 
+                           metadata: (NSDictionary *)metadata;
+
+/** @taskunit Drag Destination Feedback */
 
 - (NSDragOperation) handleDragMoveOverItem: (ETLayoutItem *)item 
                                   withItem: (ETLayoutItem *)draggedItem
@@ -63,7 +79,7 @@
                 wasCancelled: (BOOL)cancelled
                  coordinator: (id)aPickCoordinator;
 
-/* Drag Source Feedback */
+/** @taskunit Drag Source Feedback */
 
 - (void) handleDragItem: (ETLayoutItem *)draggedItem 
            beginAtPoint: (NSPoint)aPoint 
@@ -76,7 +92,7 @@
            wasCancelled: (BOOL)cancelled
             coordinator: (id)aPickCoordinator;
 
-/* Cut, Copy and Paste Compatibility */
+/** @taskunit Cut, Copy and Paste Compatibility */
 
 - (IBAction) copy: (id)sender onItem: (ETLayoutItem *)item;
 - (IBAction) paste: (id)sender onItem: (ETLayoutItem *)item;

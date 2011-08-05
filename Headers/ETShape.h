@@ -27,6 +27,7 @@ returns NO unlike ETStyle. */
 @interface ETShape : ETStyle
 {
 	@private
+	NSImage *_icon;
 	NSBezierPath *_path;
 	NSColor *_fillColor;
 	NSColor *_strokeColor;

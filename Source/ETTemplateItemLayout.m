@@ -458,6 +458,11 @@ kETFormLayoutInset	NSZeroRect (default) or nil
 	[super dealloc];
 }
 
+- (NSImage *) icon
+{
+	return [NSImage imageNamed: @"ui-scroll-pane-form"];
+}
+
 - (float) controlMargin
 {
 	return 10;

@@ -9,6 +9,7 @@
 #import <EtoileFoundation/Macros.h>
 #import <EtoileFoundation/ETCollection.h>
 #import <EtoileFoundation/ETCollection+HOM.h>
+#import <EtoileFoundation/ETKeyValuePair.h>
 #import <EtoileFoundation/ETUTI.h>
 #import <EtoileFoundation/NSObject+Etoile.h>
 #import <EtoileFoundation/NSObject+Model.h>
@@ -78,10 +79,11 @@ method is called by ETTableLayout when rows are dragged). */
 	}
 
 	NSArray *selectedItems = [[item parentItem] selectedItemsInLayout];
-	ETEvent *pickInfo = [aPickCoordinator pickEvent];
+	NSUInteger pickingMask = [[aPickCoordinator pickEvent] pickingMask];
 	// TODO: pickboard shouldn't be harcoded but rather customizable
 	ETPickboard *pboard = [ETPickboard localPickboard];
 	id pick = nil;
+	BOOL wasUsedAsRepObject = NO;
 
 	/* If the dragged item is part of a selection which includes more than
 	   one item, we put a pick collection on pickboard. But if the dragged
@@ -89,9 +91,10 @@ method is called by ETTableLayout when rows are dragged). */
 	   the pickboard. */
 	if ([selectedItems count] > 1 && [selectedItems containsObject: item])
 	{
+		// TODO: Should use -pickedObjectForItem:
 		NSArray *pickedItems = nil;
 		
-		if ([pickInfo pickingMask] & ETCopyPickingMask)
+		if (pickingMask & ETCopyPickingMask)
 		{
 			pickedItems = [selectedItems valueForKey: @"deepCopy"];
 			[pickedItems makeObjectsPerformSelector: @selector(release)];
@@ -104,24 +107,41 @@ method is called by ETTableLayout when rows are dragged). */
 	}
 	else
 	{
-		if ([pickInfo pickingMask] & ETCopyPickingMask)
+		id pickedObject = [self pickedObjectForItem: item];
+		//id hint = [self pickedHintForItem: item];
+
+		if ([pickedObject isEqual: [item representedObject]])
 		{
-			pick = AUTORELEASE([item deepCopy]);
+			wasUsedAsRepObject = YES;
+		}
+
+		if (pickingMask & ETCopyPickingMask)
+		{
+			pick = AUTORELEASE([pickedObject deepCopy]);
 		}
 		else /* ETPickPickingMask or ETCutPickingMask */
 		{
-			pick = item;
+			pick = pickedObject;
 		}
 	}
-	
-	[pboard pushObject: pick];
 
-	BOOL isMove = (([pickInfo pickingMask] & ETCopyPickingMask) == NO);
+	NSUInteger pickIndex = [[item parentItem] indexOfItem: item];
+	NSMapTable *draggedItems = [NSMapTable mapTableWithStrongToStrongObjects];
+
+	[draggedItems setObject: item
+	                 forKey: pick];
+
+	[pboard pushObject: pick 
+	          metadata: D([NSNumber numberWithUnsignedInteger: pickIndex], kETPickMetadataPickIndex,
+			              [NSNumber numberWithBool: wasUsedAsRepObject], kETPickMetadataWasUsedAsRepresentedObject,
+			              draggedItems, kETPickMetadataDraggedItems)];
+
+	BOOL isMove = ((pickingMask & ETCopyPickingMask) == NO);
 
 	if (isMove)
 	{
 		BOOL shouldRemoveItems = YES;
-		BOOL isCut = ([pickInfo pickingMask] & ETCutPickingMask);
+		BOOL isCut = (pickingMask & ETCutPickingMask);
 
 		/* We always remove the items immediately when the pick is a cut */
 		if (NO == isCut && [[ETTool activeTool] respondsToSelector: @selector(shouldRemoveItemsAtPickTime)])
@@ -163,6 +183,7 @@ When the given index is equal to ETUndeterminedIndex, the drop operation is a
 are allowed to change the drop index which might also represent a new drop 
 operation. e.g. <code>*anIndex = ETUndeterminedIndex</code> when anIndex was 3. */
 - (ETLayoutItem *) handleValidateDropObject: (id)droppedObject
+                                       hint: (id)aHint
                                     atPoint: (NSPoint)dropPoint
                               proposedIndex: (NSInteger *)anIndex
                                      onItem: (ETLayoutItem *)dropTarget
@@ -208,7 +229,7 @@ operation. e.g. <code>*anIndex = ETUndeterminedIndex</code> when anIndex was 3. 
 		}
 	}
 
-	//ETLog(@"DROP - Validate drop %@ at %i on %@ in %@", droppedObject, *anIndex, dropTarget, self);
+	ETLog(@"DROP - Validate drop %@ at %i on %@ in %@", droppedObject, *anIndex, dropTarget, self);
 
 	return dropTarget;
 }
@@ -228,11 +249,55 @@ target).
 You can override this method to change how drop is handled. e.g. You might 
 want to support dropping object on drop targets without requiring them to be 
 item groups and reacts to that appropriately. */
+- (BOOL) handleDropCollection: (ETPickCollection *)aPickCollection
+                     metadata: (NSDictionary *)metadata
+                      atIndex: (NSInteger)anIndex
+                       onItem: (ETLayoutItem *)dropTarget
+			      coordinator: (ETPickDropCoordinator *)aPickCoordinator
+{
+	// NOTE: To keep the order of the picked objects a reverse enumerator is 
+	// used to balance the shifting of the last inserted object occurring on each insertion
+	NSEnumerator *e = [[aPickCollection contentArray] reverseObjectEnumerator];
+	BOOL result = NO;
+
+	FOREACHE(nil, object, id, e)
+	{
+		id hint = [aPickCoordinator hintFromObject: &object];
+
+		result |= [self handleDropObject: object 
+		                            hint: hint
+		                        metadata: metadata
+		                         atIndex: anIndex 
+		                          onItem: dropTarget 
+		                     coordinator: aPickCoordinator];
+	}
+	return result;
+}
+
+/** Inserts the dropped object at the given index in the drop target and 
+returns YES on success and NO otherwise (e.g. an invalid index).
+
+When the index is ETUndeterminedIndex, the dropped object is inserted as the 
+last element in the drop target collection.
+
+The dropped object can be a pick collection. See ETPickCollection.
+
+The existing implementation requires drop targets to return YES to -isGroup and 
+can unbox pick collections transparently (it inserts the elements into the drop 
+target).
+
+You can override this method to change how drop is handled. e.g. You might 
+want to support dropping object on drop targets without requiring them to be 
+item groups and reacts to that appropriately. */
 - (BOOL) handleDropObject: (id)droppedObject
+                     hint: (id)aHint
+                 metadata: (NSDictionary *)metadata
                   atIndex: (NSInteger)anIndex
                    onItem: (ETLayoutItem *)dropTarget
 			  coordinator: (ETPickDropCoordinator *)aPickCoordinator
 {
+	// TODO: Improve insertion of arbitrary objects. All objects can be
+	// dropped (NSArray, NSString, NSWindow, NSImage, NSObject, Class etc.)
 	NSParameterAssert([dropTarget isGroup]);
 
 	ETLog(@"DROP - Handle drop %@ at %i on %@ in %@", droppedObject, anIndex, dropTarget, self);
@@ -244,10 +309,11 @@ item groups and reacts to that appropriately. */
 		insertionIndex = [(ETLayoutItemGroup *)dropTarget numberOfItems];
 	}
 
-	/* Will unbox a pick collection transparently */
-	/*return*/ [aPickCoordinator itemGroup: (ETLayoutItemGroup *)dropTarget
-		           insertDroppedObject: droppedObject 
-		                       atIndex: insertionIndex];
+	[aPickCoordinator insertDroppedObject: droppedObject 
+	                                 hint: aHint
+	                             metadata: metadata
+	                              atIndex: insertionIndex
+	                          inItemGroup: (ETLayoutItemGroup *)dropTarget];
 	return YES;
 }
 
@@ -263,9 +329,47 @@ item groups and reacts to that appropriately. */
 	return NO;
 }
 
-- (unsigned int) draggingSourceOperationMaskForLocal: (BOOL)isLocal
+/** <override-dummy />
+Overrides to control how the dropped object is inserted: move, copy, link, etc.
+
+This method is called on the action handler bound to the drag source item.
+
+The destination item is usally the drop target, if 
+-handleDropObject:onItem:atIndex:coordinator: doesn't insert the dropped object 
+elsewhere.
+
+You can use it to easily detect a local drop (a drag that begins and ends in the 
+drag source). If <code>[[item baseItem] isEqual: [aPickCoordinator dragSource]]</code> 
+evaluates to YES, then it is a local drop.
+
+Take note that the destination item is the hint. It can be nil when the 
+drop occurs in another application, or sometimes on a native widget without 
+EtoileUI pick and drop integration (e.g. from a table layout to a text view).
+
+By default, returns NSDragOperationEvery. */
+- (unsigned int) dragOperationMaskForDestinationItem: (ETLayoutItem *)item
+                                         coordinator: (ETPickDropCoordinator *)aPickCoordinator
 {
+	// NOTE: Cocoa uses NSDragOperationCopy | NSDragOperationLink | NSDragOperationGeneric | NSDragOperationPrivate
 	return NSDragOperationEvery;
+}
+
+/** <override-dummy />
+Returns whether the item must be inserted as a represented object in the drop target. 
+
+By default, returns NO.
+
+Can be overriden to return a custom value. A common choice would be:
+
+<example>
+return [[metadata objectForKey: kETPickMetadataWasUsedAsRepresentedObject] boolValue];
+</example>
+
+See also -[ETLayoutItemGroup insertObject:atIndex:hint:boxingForced:]. */
+- (BOOL) boxingForcedForDroppedItem: (ETLayoutItem *)droppedItem 
+                           metadata: (NSDictionary *)metadata
+{
+	return NO;
 }
 
 /* Drag Source Feedback */
@@ -313,7 +417,7 @@ feedback), when a dragged item moves over drop target area. */
 	if ([self canDropObject: draggedItem atIndex: ETUndeterminedIndex onItem: item coordinator: aPickCoordinator] == NO)
 		return NSDragOperationNone;
 	
-	return [aPickCoordinator dragOperationMask];
+	return [aPickCoordinator dragOperationMaskForDestinationItem: item];
 }
 
 /** Allows to provide item with extra drop target behavior (e.g. custom visual 
@@ -327,7 +431,7 @@ feedback), when a dragged item enters the drop target area. */
 	if ([self canDropObject: draggedItem atIndex: ETUndeterminedIndex onItem: item coordinator: aPickCoordinator] == NO)
 		return NSDragOperationNone;
 	
-	return [aPickCoordinator dragOperationMask];
+	return [aPickCoordinator dragOperationMaskForDestinationItem: item];
 }
 
 /** Allows to provide item with extra drop target behavior (e.g. custom visual 
@@ -378,6 +482,30 @@ item of the given item. */
 	return [controller allowedDropTypesForTargetType: uti];
 }
 
+/** <override-dummy />
+Returns the object to be placed on the pickboard.
+
+Can be overriden to return a custom object.
+Avoid to return a copied object, otherwise the copy cursor badge won't be shown 
+and the picked object might be unclear to the user.
+
+By default, returns the represented object, or the item when no represented 
+object is bound to it. */
+- (id) pickedObjectForItem: (ETLayoutItem *)item
+{
+	id repObject = [item representedObject];
+
+	if (repObject == nil)
+		return item;
+
+	return repObject;
+}
+
+- (id) pickedHintForItem: (ETLayoutItem *)item
+{
+	return ([[item representedObject] isKeyValuePair] ? [item representedObject] : nil);
+}
+
 /** Returns whether the item is draggable.
 
 Returns YES when the item conforms to a pick type returned by 
@@ -410,12 +538,13 @@ Returns YES when the dropped object conforms to a drop type returned
 by -allowedDropTypesForItem: for the drop target, otherwise returns NO.
 
 When the dropped object is a pick collection, each element type is checked with 
--conformsToType:. */
+-conformsToType: (not yet). */
 - (BOOL) canDropObject: (id)droppedObject
                atIndex: (NSInteger)dropIndex 
                 onItem: (ETLayoutItem *)dropTarget
            coordinator: (ETPickDropCoordinator *)aPickCoordinator
 {
+	return YES;
 	if ([droppedObject isEqual: dropTarget])
 		return NO;
 
@@ -476,11 +605,12 @@ choosing 'Paste' in the 'Edit' menu. */
 
 	ETEvent *event = ETEVENT([NSApp currentEvent], nil, ETPastePickingMask);
 	id pastedObject = AUTORELEASE([[[ETPickboard localPickboard] firstObject] deepCopy]);
-	
-	[self handleDropObject: pastedObject
-	               atIndex: ETUndeterminedIndex
-	                onItem: item 
-	           coordinator: [ETPickDropCoordinator sharedInstanceWithEvent: event]];
+
+	[self handleDropCollection: pastedObject
+	                  metadata: [[ETPickboard localPickboard] firstObjectMetadata]
+	                   atIndex: ETUndeterminedIndex
+	                    onItem: item 
+	               coordinator: [ETPickDropCoordinator sharedInstanceWithEvent: event]];
 }
 
 /** Cuts the item or the selected items inside it.

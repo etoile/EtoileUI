@@ -59,6 +59,11 @@ subclasses (see -[ETLayout initWithLayoutView:]). */
 	[self buildHandlesForItems: [_layoutContext arrangedItems]];
 }
 
+- (NSImage *) icon
+{
+	return [NSImage imageNamed: @"zone--pencil.png"];
+}
+
 - (id) attachedTool
 {
 	return [super attachedTool];

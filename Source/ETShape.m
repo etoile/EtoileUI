@@ -15,12 +15,18 @@
 typedef NSBezierPath* (*PathProviderFunction)(id, SEL, NSRect);
 
 @interface ETShape (Private)
+- (void) setIcon: (NSImage *)anIcon;
 - (NSBezierPath *) providedPathWithRect: (NSRect)aRect;
 - (id) pathProvider;
 @end
 
 
 @implementation ETShape
+
++ (NSString *) baseClassName
+{
+	return @"Shape";
+}
 
 + (NSSet *) keyPathsForValuesAffectingBounds
 {
@@ -51,6 +57,7 @@ static NSRect shapeFactoryRect = {{ 0, 0 }, { 150, 100 }};
 	NSBezierPath *path = [NSBezierPath bezierPathWithRect: aRect];
 	ETShape *shape = AUTORELEASE([[self alloc] initWithBezierPath: path]);
 	[shape setPathResizeSelector: @selector(bezierPathWithRect:)];
+	[shape setIcon: [NSImage imageNamed: @"layer-shape"]];
 	return shape;
 }
 
@@ -66,6 +73,7 @@ static NSRect shapeFactoryRect = {{ 0, 0 }, { 150, 100 }};
 	NSBezierPath *path = [NSBezierPath bezierPathWithOvalInRect: aRect];
 	ETShape *shape = AUTORELEASE([[self alloc] initWithBezierPath: path]);
 	[shape setPathResizeSelector: @selector(bezierPathWithOvalInRect:)];
+	[shape setIcon: [NSImage imageNamed: @"layer-shape-ellipse"]];
 	return shape;
 }
 
@@ -80,6 +88,7 @@ static NSRect shapeFactoryRect = {{ 0, 0 }, { 150, 100 }};
 {
 	SUPERINIT
 
+	ASSIGN(_icon, [NSImage imageNamed: @"layer-shape-curve"]);
 	[self setPath: aPath];
 	[self setFillColor: [NSColor darkGrayColor]];
 	[self setStrokeColor: [NSColor lightGrayColor]];
@@ -89,8 +98,14 @@ static NSRect shapeFactoryRect = {{ 0, 0 }, { 150, 100 }};
     return self;
 }
 
+- (id) init
+{
+	return [self initWithBezierPath: nil];
+}
+
 - (void) dealloc
 {
+	DESTROY(_icon);
 	DESTROY(_path);
     DESTROY(_fillColor);
     DESTROY(_strokeColor);
@@ -103,6 +118,7 @@ The copied shape is never hidden, even when the receiver was. */
 - (id) copyWithZone: (NSZone *)aZone
 {
 	ETShape *newShape = [super copyWithZone: aZone];
+	newShape->_icon = RETAIN(_icon);
 	newShape->_path = [_path copyWithZone: aZone];
 	newShape->_fillColor = [_fillColor copyWithZone: aZone];
 	newShape->_strokeColor = [_strokeColor copyWithZone: aZone];
@@ -127,7 +143,17 @@ The copied shape is never hidden, even when the receiver was. */
 	{
 		[self setPathResizeSelector: (SEL)[value pointerValue]];
 	}
-	[super setValue: value forUndefinedKey: key];;
+	[super setValue: value forUndefinedKey: key];
+}
+
+- (NSImage *) icon
+{
+	return _icon;
+}
+
+- (void) setIcon: (NSImage *)anIcon
+{
+	ASSIGN(_icon, anIcon);
 }
 
 /** Returns NO to indicate the receiver can never be shared between several 

@@ -11,6 +11,7 @@
 #import <EtoileFoundation/NSObject+Trait.h>
 #import <EtoileFoundation/Macros.h>
 #import "ETPickboard.h"
+#import "EtoileUIProperties.h"
 #import "ETLayoutItem.h"
 #import "ETLayoutItemFactory.h"
 #import "ETOutlineLayout.h"
@@ -23,20 +24,14 @@ NSString *ETLayoutItemPboardType = @"ETLayoutItemPboardType"; // FIXME: replace 
 #define PICKBOARD_LAYOUT ETOutlineLayout
 #define DEFAULT_PICKBOARD [self localPickboard]
 
-@interface ETPickboard (Private)
-- (ETLayoutItem *) layoutItemWithObject: (id)object;
-@end
-
 
 @implementation ETPickboard
-
-/* Factory methods */
 
 // TODO: Must be provided by UIServer (CoreObject backend)
 static ETPickboard *systemPickboard = nil;
 
-/** Returns the system-wide pickboard which is used by default accross Etoile
-    environment. Also known as Shelf overlay. */
+/** Returns the system-wide pickboard which is used by default accross Etoile 
+environment. Also known as Shelf overlay. */
 + (ETPickboard *) systemPickboard
 {
 	if (systemPickboard == nil)
@@ -49,7 +44,7 @@ static ETPickboard *systemPickboard = nil;
 }
 
 /** Returns a pickboard restricted to the active project. This pickboard isn't
-    accessible in another project. */
+accessible in another project. */
 + (ETPickboard *) projectPickboard
 {
 	// FIXME: Implement
@@ -59,10 +54,11 @@ static ETPickboard *systemPickboard = nil;
 static ETPickboard *localPickboard = nil;
 
 /** Returns the local pickboard which only exists in the process where it had 
-	been initially requested. This pickboard isn't available externally to other
-	processes. 
-	Local pickboards are non-persistent, they expire when the lifetime of their
-	owner process ends. */
+been initially requested. This pickboard isn't available externally to other
+processes. 
+
+Local pickboards are non-persistent, they expire when the lifetime of their
+owner process ends. */
 + (ETPickboard *) localPickboard
 {
 	if (localPickboard == nil)
@@ -86,8 +82,9 @@ static ETPickboard *activePickboard = nil;
 + (ETPickboard *) activePickboard
 {
 	if (activePickboard == nil)
+	{
 		[self setActivePickboard: DEFAULT_PICKBOARD];
-
+	}
 	return activePickboard;
 }
 
@@ -188,13 +185,38 @@ If boxed is NO, returns nil when the pickboard is empty. */
 	return pickedObject;
 }
 
-/** Inserts an object as the first element in the pickboard and returns a 
-	pickboard transaction reference that uniquely identifies the pick and drop
-	operation underway. You can later retrieve the pushed object by keeping 
-	around the pickboard reference. 
-	Don't push a nil value, otherwise an invalid argument exception will be 
-	thrown. */
-- (ETPickboardRef *) pushObject: (id)object
+
+/* Returns a layout item that wraps the object passed in parameter based on its 
+type. 
+
+If pickObject is an ETPickCollection, returns an ETLayoutItemGroup, otherwise 
+returns an ETLayoutItem. */
+- (ETLayoutItem *) pickboardItemWithObject: (id)pickObject metadata: (NSDictionary *)metadata
+{
+	ETLayoutItem *item = nil;
+
+	if ([pickObject isKindOfClass: [ETPickCollection class]])
+	{
+		item = [[ETLayoutItemFactory factory] itemGroupWithRepresentedObject: pickObject];
+
+		FOREACHI([pickObject contentArray], pickedElement)
+		{
+			ETLayoutItemGroup *childItem = [[ETLayoutItemFactory factory] itemGroupWithRepresentedObject: pickedElement];
+			[(ETLayoutItemGroup *)item addItem: childItem];
+		}
+	}
+	else
+	{
+		item = [[ETLayoutItemFactory factory] itemWithRepresentedObject: pickObject];	
+	}
+
+	[item setValue: metadata 
+	   forProperty: kETPickMetadataProperty];
+
+	return item;
+}
+
+- (ETPickboardRef *) insertObject: (id)object metadata: (NSDictionary *)metadata atIndex: (NSUInteger)index 
 {
 	if (object == nil)
 	{
@@ -204,71 +226,47 @@ If boxed is NO, returns nil when the pickboard is empty. */
 	}
 	[self checkPickboardValidity];
 
-	/* Use -addObject: instead of -pushObject: if necessary */
-	if ([_pickedObjects count] == 0)
-		return [self appendObject: object];
-
-	/* Push Object */
 	NSString *pickRef = [NSString stringWithFormat: @"%d", ++_pickboardRef];
+
 	[_pickedObjects setObject: object forKey: pickRef];
-	[self insertItem: [self layoutItemWithObject: object] atIndex: 0];
+
+	[self insertItem: [self pickboardItemWithObject: object metadata: metadata] 
+	         atIndex: index];
 
 	return pickRef;
 }
 
-/* Returns a layout item that wraps the object passed in parameter based on its 
-type. 
+/** Inserts an object as the first element in the pickboard and returns a 
+pickboard transaction reference that uniquely identifies the pick and drop
+operation underway. 
 
-If pickObject is an ETPickCollection, returns an ETLayoutItemGroup, otherwise 
-returns an ETLayoutItem. */
-- (ETLayoutItem *) layoutItemWithObject: (id)pickObject
+You can later retrieve the pushed object by keeping around the pickboard reference. 
+
+Don't push a nil value, otherwise an invalid argument exception will be thrown. */
+- (ETPickboardRef *) pushObject: (id)object metadata: (NSDictionary *)metadata
 {
-	if ([pickObject isKindOfClass: [ETPickCollection class]])
-	{
-		ETLayoutItemGroup *item = [[ETLayoutItemFactory factory] itemGroupWithRepresentedObject: pickObject];
-
-		FOREACHI([pickObject contentArray], pickedElement)
-		{
-			ETLayoutItemGroup *childItem = [[ETLayoutItemFactory factory] itemGroupWithRepresentedObject: pickedElement];
-			[item addItem: childItem];
-		}
-
-		return item;
-	}
-	else
-	{
-		return [[ETLayoutItemFactory factory] itemWithRepresentedObject: pickObject];	
-	}
+	return [self insertObject: object metadata: metadata atIndex: 0];
 }
 
-/** Adds an object as the last element in the pickboard and returns a 
-	pickboard transaction reference that uniquely identifies the pick and drop
-	operation underway. You can later retrieve the added object by keeping 
-	around the pickboard reference. 
-	Don't add a nil value, otherwise an invalid argument exception will be 
-	thrown. */
-- (ETPickboardRef *) appendObject: (id)object
+/** Adds an object as the last element in the pickboard and returns a pickboard
+transaction reference that uniquely identifies the pick and dropoperation 
+underway. 
+ 
+You can later retrieve the added object by keeping around the pickboard reference. 
+
+Don't add a nil value, otherwise an invalid argument exception will be thrown. */
+- (ETPickboardRef *) appendObject: (id)object metadata: (NSDictionary *)metadata
 {
-	if (object == nil)
-	{
-		[NSException raise: NSInvalidArgumentException format: @"For %@ "
-			@"-addObject argument must never be nil", self];
-		
-	}
-	[self checkPickboardValidity];
-
-	NSString *pickRef = [NSString stringWithFormat: @"%d", ++_pickboardRef];
-	[_pickedObjects setObject: object forKey: pickRef];
-	[self addItem: [self layoutItemWithObject: object]];
-
-	return pickRef;
+	return [self insertObject: object metadata: metadata atIndex: [self count]];
 }
 
 /** Removes a previously picked object identified by 'ref' from the pickboard. 
-	Every time you put an object on a pickboard, the target pickboard returns a 
-	reference making later operations on this object more convenient. 
-	Throws an invalid argument exception when ref is nil or no object is 
-	identified by ref in the pickboard. */
+
+Every time you put an object on a pickboard, the target pickboard returns a 
+reference making later operations on this object more convenient. 
+
+Throws an invalid argument exception when ref is nil or no object is identified 
+by ref in the pickboard. */
 - (void) removeObjectForPickboardRef: (ETPickboardRef *)ref
 {
 	if (ref == nil)
@@ -294,9 +292,9 @@ returns an ETLayoutItem. */
 }
 
 /** Returns a previously picked object bound to the pickboard transaction
-	reference 'ref'. Every time you put an object on a pickboard, the 
-	target pickboard returns a reference making later retrieval more 
-	convenient. */
+reference 'ref'. Every time you put an object on a pickboard, the 
+target pickboard returns a reference making later retrieval more 
+convenient. */
 - (id) objectForPickboardRef: (ETPickboardRef *)ref
 {
 	return [_pickedObjects objectForKey: ref];
@@ -340,6 +338,12 @@ If boxed is NO, returns nil when the pickboard is empty. */
 	return firstObject;
 }
 
+/** Returns the pick metadata attached to the first element on the pickboard. */
+- (NSDictionary *) firstObjectMetadata
+{
+	return [[self firstItem] valueForProperty: kETPickMetadataProperty];
+}
+
 /* Pick & Drop Palette */
 
 /** Returns the window embedding the UI representation of the receiver. */
@@ -351,12 +355,11 @@ If boxed is NO, returns nil when the pickboard is empty. */
 /** Brings the pickboard window to the front and makes it the first responder. */
 - (void) showPickPalette
 {
-	[[self pickPalette] makeKeyAndOrderFront: self];
+	[[[self windowItem] window] makeKeyAndOrderFront: self];
 }
 
 @end
 
-/* Picked Object Set */
 
 #pragma GCC diagnostic ignored "-Wprotocol"
 
