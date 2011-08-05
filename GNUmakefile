@@ -27,10 +27,14 @@ endif
 
 EtoileUI_HEADER_FILES_DIR = Headers
 
+OTHER_HEADER_DIRS = AspectRepository Persistency
+
 EtoileUI_HEADER_FILES = \
 	Controls+Etoile.h \
 	ETActionHandler.h \
 	ETApplication.h \
+	ETAspectCategory.h \
+	ETAspectRepository.h \
 	ETBasicItemStyle.h \
 	ETBrowserLayout.h \
 	ETColumnLayout.h \
@@ -113,6 +117,28 @@ EtoileUI_HEADER_FILES += \
 	NSImage+NiceScaling.h \
 	ETPlugInRegistry+Icons.h
 
+EtoileUI_OBJC_FILES += \
+	AspectRepository/ETAspectCategory.m \
+	AspectRepository/ETAspectRepository.m
+
+ifeq ($(objectmerging), yes)
+
+EtoileUI_OBJC_FILES += \
+	ModelDescription/ETActionHandler+ModelDescription.m \
+	ModelDescription/ETController+ModelDescription.m \
+	ModelDescription/ETDecoratorItem+ModelDescription.m \
+	ModelDescription/ETLayoutItem+ModelDescription.m \
+	ModelDescription/ETLayout+ModelDescription.m \
+	ModelDescription/ETStyle+ModelDescription.m \
+	ModelDescription/ETUIItem+ModelDescription.m
+
+EtoileUI_OBJC_FILES += \
+	Persistency/ETController+CoreObject.m \
+	Persistency/ETLayout+CoreObject.m \
+	Persistency/ETLayoutItem+CoreObject.m \
+	Persistency/ETStyle+CoreObject.m
+
+endif
 
 EtoileUI_RESOURCE_FILES = \
 	English.lproj/Inspector.gorm \
@@ -125,7 +151,6 @@ EtoileUI_RESOURCE_FILES = \
 EtoileUI_RESOURCE_FILES += \
 	English.lproj/RevertToPanel.gorm
 
-
 include $(GNUSTEP_MAKEFILES)/aggregate.make
 -include ../../etoile.make
 -include etoile.make
@@ -135,3 +160,23 @@ include $(GNUSTEP_MAKEFILES)/bundle.make
 else
 include $(GNUSTEP_MAKEFILES)/framework.make
 endif
+
+before-all::
+	$(ECHO_NOTHING) \
+	for headerDir in $(OTHER_HEADER_DIRS); do \
+		for header in `ls -1 $$headerDir/*.h`; do \
+			if [ ! -e Headers/`basename $$header` ]; then \
+				ln -s ../$$header Headers; \
+			fi; \
+		done; \
+	done \
+	$(END_ECHO)
+
+before-clean::
+	$(ECHO_NOTHING) \
+	for header in `ls -1 Headers/*.h`; do \
+		if [ -L $$header ]; then \
+			rm $$header; \
+		fi; \
+	done \
+	$(END_ECHO)
