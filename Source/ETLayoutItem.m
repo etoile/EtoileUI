@@ -246,24 +246,48 @@ every subclass that overrides -dealloc. */
     [super dealloc];
 }
 
-- (id) copyAspect: (ETUIObject *)anAspect withZone: (NSZone *)aZone
+- (id) copyAspect: (ETUIObject *)anAspect withZone: (NSZone *)aZone item: (ETLayoutItem *)newItem
 {
+	id newAspect = nil;
+	BOOL isAliasedCopy = NO;
+
 	if ([anAspect isShared])
 	{
-		id newAspect = RETAIN([[self objectReferencesForCopy] objectForKey: anAspect]);
+		newAspect = RETAIN([[self objectReferencesForCopy] objectForKey: anAspect]);
 
 		if (newAspect == nil)
 		{
-			newAspect = [anAspect copyWithZone: aZone];
+			if ([anAspect respondsToSelector: @selector(copyWithZone:item:isAliasedCopy:)])
+			{
+				newAspect = [(ETStyle *)anAspect copyWithZone: aZone item: newItem isAliasedCopy: &isAliasedCopy];
+			}
+			else
+			{
+				newAspect = [anAspect copyWithZone: aZone];
+			}
 			[[self objectReferencesForCopy] setObject: newAspect 
 			                                   forKey: anAspect];
 		}
-		return newAspect;
 	}
 	else
 	{
-		return [anAspect copyWithZone: aZone];
+			if ([anAspect respondsToSelector: @selector(copyWithZone:item:isAliasedCopy:)])
+			{
+				newAspect = [(ETStyle *)anAspect copyWithZone: aZone item: newItem isAliasedCopy: &isAliasedCopy];
+			}
+			else
+			{
+				newAspect = [anAspect copyWithZone: aZone];
+			}
+			
 	}
+	return newAspect;
+}
+
+- (id) objectReferenceInCopyForObject: (id)anObject
+{
+	id newObject = [[self objectReferencesForCopy] objectForKey: anObject];
+	return (newObject != nil ? newObject : anObject);
 }
 
 /** Returns a shallow copy of the receiver without copying the view, the styles, 
@@ -278,6 +302,8 @@ Default values will be copied but not individually (shallow copy). */
 {
 	ETLayoutItem *item = [super copyWithZone: aZone];
 
+	[self beginCopy];
+
 	item->_defaultValues = [_defaultValues mutableCopyWithZone: aZone];
 
 	// NOTE: Geometry synchronization logic in setters such as setFlippedView: 
@@ -288,10 +314,10 @@ Default values will be copied but not individually (shallow copy). */
 	
 	/* We copy all object ivars except _parentItem */
 
-	[item setRepresentedObject: [self representedObject]]; /* Will set up the observer */
 	/* We set the style in the copy by copying the style group */
-	item->_styleGroup = [_styleGroup copyWithZone: aZone];
-	item->_coverStyle = [self copyAspect: _coverStyle withZone: aZone];
+	BOOL isAliasedCopy = NO;
+	item->_styleGroup = [_styleGroup copyWithZone: aZone item: item isAliasedCopy: &isAliasedCopy];
+	item->_coverStyle = [self copyAspect: _coverStyle withZone: aZone item: item];
 	item->_transform = [_transform copyWithZone: aZone];
 
 	/* We copy every primitive ivars except _isSyncingSupervisorViewGeometry */
@@ -319,7 +345,7 @@ Default values will be copied but not individually (shallow copy). */
 	SET_OBJECT_PROPERTY(item, GET_PROPERTY(kETImageProperty), kETImageProperty);
 	SET_OBJECT_PROPERTY(item, GET_PROPERTY(kETIconProperty), kETIconProperty);
 	SET_OBJECT_PROPERTY(item, GET_PROPERTY(kETSubtypeProperty),  kETSubtypeProperty);
-	SET_OBJECT_PROPERTY_AND_RELEASE(item, [self copyAspect: GET_PROPERTY(kETActionHandlerProperty) withZone: aZone], kETActionHandlerProperty);
+	SET_OBJECT_PROPERTY_AND_RELEASE(item, [self copyAspect: GET_PROPERTY(kETActionHandlerProperty) withZone: aZone item: item], kETActionHandlerProperty);
 	SET_OBJECT_PROPERTY(item, GET_PROPERTY(kETActionProperty), kETActionProperty);
 
 	/* We adjust targets and observers to reference equivalent objects in the object graph copy */
@@ -353,10 +379,20 @@ Default values will be copied but not individually (shallow copy). */
 			                            options: NSKeyValueObservingOptionNew
 		                                    context: NULL];
 	}
-	
+
+	/* We copy the represented object last in case it holds a reference on 
+	   another aspect (e.g. shape items use the same shape object in 'style' 
+	   and 'representedObject' properties) */
+
+	 /* Will set up the observer */
+	[item setRepresentedObject: [self objectReferenceInCopyForObject: [self representedObject]]];
+
+	[self endCopy];
+
 	return item;
 }
 
+/** Must never be called in a subclass. */
 - (id) deepCopy
 {
 	return [self deepCopyWithZone: NSDefaultMallocZone()];
@@ -404,35 +440,9 @@ Default values will be copied but not individually (shallow copy). */
 	return item;
 }
 
-static NSMapTable *objectRefsForCopy = nil;
-
-/** Returns a context which binds objects/values in the original object graph to 
-their new equivalent objects/values in the resulting copy. 
-
-This context is a key/value table which allows to retrieve arbitrary objects 
-(usually they are controller) that were copied by an ancestor layout item in the 
-deep copy underway.
-e.g. In an item copy, you can correct a reference to a controller that belongs 
-to an ancestor item like that: 
-<example>
-id controllerInItemCopy = [[self objectReferencesForCopy] objectForKey: [self target]];
-
-if (controllerInItemCopy != nil)
+- (BOOL) isCopyNode
 {
-	ASSIGN(itemCopy->_target, controllerInItemCopy);
-}
-else
-{
-	ASSIGN(itemCopy->_target, _target);
-}
-</example> */
-- (NSMapTable *) objectReferencesForCopy
-{
-	if (nil == objectRefsForCopy)
-	{
-		ASSIGN(objectRefsForCopy, [NSMapTable mapTableWithStrongToStrongObjects]);
-	}
-	return objectRefsForCopy;
+	return YES;
 }
 
 - (NSString *) description

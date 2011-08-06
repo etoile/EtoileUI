@@ -74,11 +74,24 @@ in the given style collection. */
 	[super dealloc];
 }
 
-- (id) copyWithZone: (NSZone *)aZone
+- (id) copyWithZone: (NSZone *)aZone 
+               item: (ETLayoutItem *)newItem 
+      isAliasedCopy: (BOOL *)isAliasedCopy
 {
-	ETStyleGroup *newStyle = [super copyWithZone: aZone];
-	newStyle->_styles = [_styles mutableCopyWithZone: aZone];
-	return newStyle;
+	ETStyleGroup *newStyleGroup = [super copyWithZone: aZone item: newItem isAliasedCopy: isAliasedCopy];
+
+	if (*isAliasedCopy)
+		return newStyleGroup;
+
+	newStyleGroup->_styles = [[NSMutableArray alloc] initWithCapacity: [_styles count]];
+
+	for (ETStyle *style in _styles)
+	{
+		BOOL isAliasedElementCopy = NO;
+		ETStyle *newStyle = ([style isShared] ? style : [style copyWithZone: aZone item: newItem isAliasedCopy: &isAliasedElementCopy]);
+		[newStyleGroup->_styles addObject: newStyle];
+	}
+	return newStyleGroup;
 }
 
 - (NSImage *) icon

@@ -73,6 +73,7 @@ By default, returns NO. */
 }
 #endif
 
+// TODO: We should probably use -copyWithZone:item:. 
 - (id) copyWithZone: (NSZone *)aZone
 {
 	ETUIItem *newItem = [super copyWithZone: aZone];

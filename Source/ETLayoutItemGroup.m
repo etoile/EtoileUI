@@ -137,8 +137,6 @@ See also -isLayerItem. */
 	[super dealloc];
 }
 
-static unsigned int copyDepth = 0;
-
 /** Returns a copy of the receiver.
 
 The layout and its tool are always copied (they cannot be shared).
@@ -146,10 +144,12 @@ The layout and its tool are always copied (they cannot be shared).
 The returned copy is mutable because ETLayoutItemGroup cannot be immutable. */ 
 - (id) copyWithZone: (NSZone *)aZone
 {
-	BOOL isDeepCopy = (copyDepth > 0);
+	BOOL isDeepCopy = ([self currentCopyNode] == self);
 	// FIXME: NSParameterAssert([childItems isMutableCollection]);
 
 	ETLayoutItemGroup *item = [super copyWithZone: aZone];
+
+	[self beginCopy];
 
 	item->_layout = [_layout copyWithZone: aZone layoutContext: item];
 	if (NO == isDeepCopy)
@@ -210,29 +210,14 @@ The returned copy is mutable because ETLayoutItemGroup cannot be immutable. */
 	SET_OBJECT_PROPERTY(item, GET_PROPERTY(kETItemScaleFactorProperty), kETItemScaleFactorProperty);
 	SET_OBJECT_PROPERTY(item, delegateCopy, kETDelegateProperty);
 
+	[self endCopy];
+
 	return item;
-}
-
-- (void) beginDeepCopy
-{
-	copyDepth++;
-}
-
-- (void) endDeepCopy
-{
-	copyDepth--;
-
-	BOOL isCopyFinished = (0 == copyDepth);
-
-	if (isCopyFinished)
-	{
-		[[self objectReferencesForCopy] removeAllObjects];
-	}
 }
 
 - (id) deepCopyWithZone: (NSZone *)aZone
 {
-	[self beginDeepCopy]; /* Marks the copy starts with us */
+	[self beginCopy]; /* Marks the copy starts with us */
 
 	/* Copy Receiver */
 
@@ -281,7 +266,7 @@ The returned copy is mutable because ETLayoutItemGroup cannot be immutable. */
 		                 forItems: childrenCopy];
 	}
 
-	[self endDeepCopy]; /* Reset the context if the copy started with us */
+	[self endCopy]; /* Reset the context if the copy started with us */
 	
 	//ETLog(@"Make deep copy %@ + %@ of %@ + %@ at depth %i", itemCopy, 
 	//	[itemCopy controller], self, [self controller], copyDepth);

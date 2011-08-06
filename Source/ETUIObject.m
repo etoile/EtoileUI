@@ -50,6 +50,23 @@
 
 #endif
 
+/** All ETUIObject subclasses must write their copier method in a way that 
+precisely matches the method calls order shown below:
+
+<example>
+id newObject = [super copyWithZone: aZone];
+
+[self beginCopy];
+// Code
+[self endCopy];
+
+return newObject;
+</example>
+
+You must insert no code before -beginCopy and after -endCopy.
+
+Between -beginCopy and -endCopy, you can use -currentCopyNode and 
+-objectReferencesForCopy. */
 - (id) copyWithZone: (NSZone *)aZone
 {
 #ifdef OBJECTMERGING
@@ -60,13 +77,106 @@
 #endif
 	NSInvocation *initInvocation = [self initInvocationForCopyWithZone: aZone];
 
+	[self beginCopy];
+
 	if (nil != initInvocation)
 	{
 		[initInvocation invokeWithTarget: newObject];
 		[initInvocation getReturnValue: &newObject];
 	}
 
+	[self endCopy];
+
 	return newObject;
+}
+
+static NSMutableArray *copyNodeStack = nil;
+static unsigned int copySteps = 0;
+
+- (void) beginCopy
+{
+	if (copyNodeStack == nil)
+	{
+		copyNodeStack = [[NSMutableArray alloc] init];	
+	}
+
+	if ([self isCopyNode])
+	{
+		[copyNodeStack addObject: self];
+	}
+	copySteps++;
+}
+
+- (void) endCopy
+{
+	if ([self isCopyNode])
+	{
+		[copyNodeStack removeLastObject];
+	}
+	copySteps--;
+
+	BOOL isCopyFinished = (0 == [copyNodeStack count] && 0 == copySteps);
+
+	if (isCopyFinished)
+	{
+		[copyNodeStack removeAllObjects];
+		[[self objectReferencesForCopy] removeAllObjects];
+	}
+}
+
+/** This method is only exposed to be used internally by EtoileUI.
+
+Returns whether copying this object makes it the current copy node. See 
+-currentCopyNode.
+
+By default, returns NO.
+
+Overriden by ETLayoutItem to return YES. */
+- (BOOL) isCopyNode
+{
+	return NO;
+}
+
+/** Returns the current copy node.
+
+In EtoileUI, returns the layout item currently being copied.
+
+For example, can be called in a ETStyle subclass designated copier to get the 
+item that transitively refers to this style object. */
+- (id) currentCopyNode
+{
+	return [copyNodeStack lastObject];
+}
+
+static NSMapTable *objectRefsForCopy = nil;
+
+/** Returns a context which binds objects/values in the original object graph to 
+their new equivalent objects/values in the resulting copy. 
+
+This context is a key/value table which allows to retrieve arbitrary objects 
+(usually they are controller) that were copied by an ancestor layout item in the 
+deep copy underway.
+e.g. In an item copy, you can correct a reference to a controller that belongs 
+to an ancestor item like that: 
+<example>
+id controllerInItemCopy = [[self objectReferencesForCopy] objectForKey: [self target]];
+
+if (controllerInItemCopy != nil)
+{
+	ASSIGN(itemCopy->_target, controllerInItemCopy);
+}
+else
+{
+	ASSIGN(itemCopy->_target, _target);
+}
+</example> */
+- (NSMapTable *) objectReferencesForCopy
+{
+	if (nil == objectRefsForCopy)
+	{
+		ASSIGN(objectRefsForCopy, [NSMapTable mapTableWithStrongToStrongObjects]);
+	}
+	return objectRefsForCopy;
 }
 
 - (NSString *) description

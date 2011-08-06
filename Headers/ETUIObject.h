@@ -29,6 +29,12 @@
 
 /** @taskunit Copying */
 
+- (id) copyWithZone: (NSZone *)aZone;
+- (void) beginCopy;
+- (void) endCopy;
+- (BOOL) isCopyNode;
+- (id) currentCopyNode;
+- (NSMapTable *) objectReferencesForCopy;
 - (NSInvocation *) initInvocationForCopyWithZone: (NSZone *)aZone;
 
 /** @taskunit Properties */

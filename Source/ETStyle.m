@@ -151,12 +151,47 @@ Returns the shared instance that corresponds to the receiver class. */
 	_isShared = YES;
 	return self;
 }
+/** <override-dummy />
+Returns a copy of the receiver.<br />
+
+When not nil, newItem will be used to return the correct reference in the object 
+graph copy, if the style has been copied previously while copying the item tree 
+bound to newItem.<br />
+This is used even when a style is not shared, because properties such as 
+<em>representedObject</em> can refer to a non-shared style.
+
+This method is ETStyle designated copier. Subclasses that want to extend 
+the copying support must invoke it instead of -copyWithZone:.
+
+Subclasses must be aware that this method calls -setAttachedTool: with an 
+tool copy. */ 
+- (id) copyWithZone: (NSZone *)aZone 
+               item: (ETLayoutItem *)newItem 
+      isAliasedCopy: (BOOL *)isAliasedCopy
+{
+	NSParameterAssert(isAliasedCopy != NULL);
+
+	NSMapTable *objectRefsForCopy = [newItem objectReferencesForCopy];
+	ETStyle *refInCopy = [objectRefsForCopy objectForKey: self];
+
+	if (refInCopy != nil)
+	{
+		*isAliasedCopy = YES;
+		return refInCopy;
+	}
+
+	*isAliasedCopy = NO;
+
+	ETStyle *newStyle = [super copyWithZone: aZone];
+	[objectRefsForCopy setObject: newStyle forKey: self];
+	newStyle->_isShared = _isShared;
+	return newStyle;
+}
 
 - (id) copyWithZone: (NSZone *)aZone
 {
-	ETStyle *newStyle = [super copyWithZone: aZone];
-	newStyle->_isShared = _isShared;
-	return newStyle;
+	BOOL isAliasedCopy = NO;
+	return [self copyWithZone: aZone item: nil isAliasedCopy: &isAliasedCopy];
 }
 
 - (NSImage *) icon

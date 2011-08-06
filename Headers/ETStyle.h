@@ -49,6 +49,10 @@ and expect to be provided a layout item through -render:layoutItem:dirtyRect:. *
 + (NSSet *) registeredStyles;
 + (NSSet *) registeredStyleClasses;
 
+- (id) copyWithZone: (NSZone *)aZone 
+               item: (ETLayoutItem *)newItem 
+      isAliasedCopy: (BOOL *)isAliasedCopy;
+
 /* Factory Method */
 
 + (id) sharedInstance;
