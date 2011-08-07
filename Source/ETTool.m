@@ -670,23 +670,20 @@ ignored and the local root item is also returned. */
 - (ETLayoutItem *) hitTestWithEvent: (ETEvent *)anEvent
 {
 	ETLayoutItem *testedItem = [[anEvent contentItem] firstDecoratedItem];
-	ETLayoutItem *hitItem = nil;
-	// TODO: May be try to use -pointInside:useBoundingBox: rather than NSMouseInRect()
+	ETLayoutItem *rootItem = [self hitItemForNil];
 	BOOL isOutsideItem = (testedItem != nil 
-		&& NSMouseInRect([anEvent location], [testedItem frame], [testedItem isFlipped]) == NO);
-	BOOL isImplicitWindowLayer = (testedItem == nil || isOutsideItem);
+		&& NSMouseInRect([anEvent location], [testedItem frame], [rootItem isFlipped]) == NO);
+	BOOL hitImplicitWindowGroup = (testedItem == nil || isOutsideItem);
 
-	/* Mouse is not over a window or the content view is not a container. */
-	if (isImplicitWindowLayer)
+	/* Mouse is not over a window or the content view is not a ETView object */
+	if (hitImplicitWindowGroup)
 	{
-		hitItem = [self hitItemForNil];
-		[anEvent setLayoutItem: hitItem];
+		[anEvent setLayoutItem: rootItem];
 		[anEvent setLocationInLayoutItem: [anEvent location]];
-		return hitItem;
+		return rootItem;
 	}
-	
 
-	hitItem = [[anEvent windowItem] hitTestFieldEditorWithEvent: anEvent];
+	ETLayoutItem *hitItem = [[anEvent windowItem] hitTestFieldEditorWithEvent: anEvent];
 	if (hitItem != nil)
 	{
 		return hitItem;
@@ -702,7 +699,7 @@ ignored and the local root item is also returned. */
 	/* Fall back when the tested item has no action handler */
 	if (hitItem == nil && [testedItem acceptsActions] == NO)
 	{
-		hitItem = [self hitItemForNil];
+		hitItem = rootItem;
 		[anEvent setLayoutItem: hitItem];
 		[anEvent setLocationInLayoutItem: [anEvent location]];
 	}
@@ -779,7 +776,7 @@ Hence whether or not the item has children, this method will be called. */
 		return;
 
 	ETUIItem *decorator = [anItem decoratorItemAtPoint: aPoint];
-	BOOL isInside = [anItem pointInside: aPoint useBoundingBox: YES];
+	BOOL isInside = [anItem pointInside: aPoint useBoundingBox: ([anItem windowItem] == nil)];
 
 	ETLog(@"Will try hit test at %@, decorator %@, isInside %d in %@", 
 		NSStringFromPoint(aPoint), [decorator primitiveDescription], isInside, anItem);
@@ -796,9 +793,8 @@ Hence whether or not the item has children, this method will be called. */
 	if (anItem == nil)
 		return nil;
 
-	//[self logEvent: anEvent ofType: NSLeftMouseDown atPoint: itemRelativePoint inItem: anItem];
-
-	BOOL isOutside = ([anItem pointInside: itemRelativePoint useBoundingBox: YES] == NO);
+	BOOL useBoundingBox = ([anItem windowItem] == nil);
+	BOOL isOutside = ([anItem pointInside: itemRelativePoint useBoundingBox: useBoundingBox] == NO);
 	
 	if (isOutside)
 		return nil;
