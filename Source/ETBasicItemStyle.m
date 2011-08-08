@@ -73,6 +73,8 @@ DEALLOC(DESTROY(_labelAttributes));
 	if (*isAliasedCopy)
 		return newStyle;
 
+	[self beginCopy];
+
 	newStyle->_labelAttributes = [_labelAttributes copyWithZone: aZone];
 	newStyle->_labelPosition = _labelPosition;
 	newStyle->_labelMargin = _labelMargin;
@@ -80,6 +82,7 @@ DEALLOC(DESTROY(_labelAttributes));
 	newStyle->_maxImageSize = _maxImageSize;
 	newStyle->_edgeInset = _edgeInset;
 
+	[self endCopy];
 	return newStyle;
 }
 

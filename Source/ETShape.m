@@ -124,6 +124,8 @@ The copied shape is never hidden, even when the receiver was. */
 	if (*isAliasedCopy)
 		return newShape;
 
+	[self beginCopy];
+
 	newShape->_icon = RETAIN(_icon);
 	newShape->_path = [_path copyWithZone: aZone];
 	newShape->_fillColor = [_fillColor copyWithZone: aZone];
@@ -131,6 +133,7 @@ The copied shape is never hidden, even when the receiver was. */
 	newShape->_alpha = _alpha;
 	newShape->_resizeSelector = _resizeSelector;
 
+	[self endCopy];
 	return newShape;
 }
 

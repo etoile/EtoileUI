@@ -83,6 +83,8 @@ in the given style collection. */
 	if (*isAliasedCopy)
 		return newStyleGroup;
 
+	[self beginCopy];
+
 	newStyleGroup->_styles = [[NSMutableArray alloc] initWithCapacity: [_styles count]];
 
 	for (ETStyle *style in _styles)
@@ -91,6 +93,8 @@ in the given style collection. */
 		ETStyle *newStyle = ([style isShared] ? style : [style copyWithZone: aZone item: newItem isAliasedCopy: &isAliasedElementCopy]);
 		[newStyleGroup->_styles addObject: newStyle];
 	}
+
+	[self endCopy];
 	return newStyleGroup;
 }
 

@@ -50,11 +50,41 @@
 
 #endif
 
-/** All ETUIObject subclasses must write their copier method in a way that 
-precisely matches the method calls order shown below:
+/** Calls -copyWithZone:isAliasedCopy:. */
+- (id) copyWithZone: (NSZone *)aZone
+{
+	BOOL isAliasedCopy = NO;
+	return [self copyWithZone: aZone isAliasedCopy: &isAliasedCopy];
+}
+
+
+/** <override-dummy />
+
+Returns a copy of the receiver.
+
+You must pass a non-null isAliasedCopy pointer. On return, the boolean value 
+will identicate whether a new object was allocated or an alias was returned.<br />
+When copying a object graph, if a ETUIObject instance has been copied at least 
+one time, then subsequent -copyWithZone: invocations return this copy rather 
+than allocating a new object, and isAliasedCopy is set to YES. 
+
+This method is ETUIObject designated copier. Subclasses that want to extend 
+the copying support must invoke it instead of -copyWithZone:.
+
+A subclass can provide a new designated copier API, but the implementation must 
+invoke -copyWithZone:isAliasedCopy: on the superclass.<br />
+Designated copier overriding rules are identical to the designated initializer 
+rules.
+
+All ETUIObject subclasses must write their copier method in a way that 
+precisely matches the template shown below:
 
 <example>
-id newObject = [super copyWithZone: aZone];
+// isAliasedCopy is the argument the copy method receives
+id newObject = [super copyWithZone: aZone isAliasedCopy: isAliasedCopy];
+
+if (*isAliasedCopy)
+	return newObject;
 
 [self beginCopy];
 // Code
@@ -67,8 +97,21 @@ You must insert no code before -beginCopy and after -endCopy.
 
 Between -beginCopy and -endCopy, you can use -currentCopyNode and 
 -objectReferencesForCopy. */
-- (id) copyWithZone: (NSZone *)aZone
+- (id) copyWithZone: (NSZone *)aZone isAliasedCopy: (BOOL *)isAliasedCopy
 {
+	NSParameterAssert(isAliasedCopy != NULL);
+
+	NSMapTable *objectRefsForCopy = [self objectReferencesForCopy];
+	ETUIObject *refInCopy = [objectRefsForCopy objectForKey: self];
+
+	if (refInCopy != nil)
+	{
+		*isAliasedCopy = YES;
+		return refInCopy;
+	}
+
+	*isAliasedCopy = NO;
+
 #ifdef OBJECTMERGING
 	ETUIObject *newObject = [super copyWithZone: aZone];
 #else
@@ -84,6 +127,7 @@ Between -beginCopy and -endCopy, you can use -currentCopyNode and
 		[initInvocation invokeWithTarget: newObject];
 		[initInvocation getReturnValue: &newObject];
 	}
+	[objectRefsForCopy setObject: newObject forKey: self];
 
 	[self endCopy];
 

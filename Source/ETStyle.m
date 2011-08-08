@@ -169,29 +169,22 @@ tool copy. */
                item: (ETLayoutItem *)newItem 
       isAliasedCopy: (BOOL *)isAliasedCopy
 {
-	NSParameterAssert(isAliasedCopy != NULL);
+	ETStyle *newStyle = [super copyWithZone: aZone isAliasedCopy: isAliasedCopy];
 
-	NSMapTable *objectRefsForCopy = [newItem objectReferencesForCopy];
-	ETStyle *refInCopy = [objectRefsForCopy objectForKey: self];
+	if (*isAliasedCopy)
+		return newStyle;
 
-	if (refInCopy != nil)
-	{
-		*isAliasedCopy = YES;
-		return refInCopy;
-	}
+	[self beginCopy];
 
-	*isAliasedCopy = NO;
-
-	ETStyle *newStyle = [super copyWithZone: aZone];
-	[objectRefsForCopy setObject: newStyle forKey: self];
 	newStyle->_isShared = _isShared;
+
+	[self endCopy];
 	return newStyle;
 }
 
-- (id) copyWithZone: (NSZone *)aZone
+- (id) copyWithZone: (NSZone *)aZone isAliasedCopy: (BOOL *)isAliasedCopy
 {
-	BOOL isAliasedCopy = NO;
-	return [self copyWithZone: aZone item: nil isAliasedCopy: &isAliasedCopy];
+	return [self copyWithZone: aZone item: nil isAliasedCopy: isAliasedCopy];
 }
 
 - (NSImage *) icon

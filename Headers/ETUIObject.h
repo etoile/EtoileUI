@@ -29,6 +29,7 @@
 
 /** @taskunit Copying */
 
+- (id) copyWithZone: (NSZone *)aZone isAliasedCopy: (BOOL *)isAliasedCopy;
 - (id) copyWithZone: (NSZone *)aZone;
 - (void) beginCopy;
 - (void) endCopy;
