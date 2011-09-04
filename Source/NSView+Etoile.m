@@ -17,8 +17,10 @@
 
 @implementation NSView (Etoile)
 
-/* In a a category, we cannot use +initialize */
-+ (void) load
+/* In a a category, we cannot use +initialize. We also cannot
+   use +load, as there is no guarantee any of the referenced
+   classes (except our base class) exists yet. */
++ (void) _setUpEtoileUITraits
 {
 	[self applyTraitFromClass: [ETCollectionTrait class]];
 	[self applyTraitFromClass: [ETMutableCollectionTrait class]];

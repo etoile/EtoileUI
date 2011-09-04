@@ -155,6 +155,7 @@ See also -finishLaunching which is called after -run is invoked. */
 	// easily. Memory corruption tend to be located in GNUstep unarchiving code.
 	// Various UI aspects involve Gorm/Nib files.
 	CREATE_AUTORELEASE_POOL(pool);
+	[NSView _setUpEtoileUITraits];
 	[self _registerAdditionalImages];
 	[self _registerAllAspects];
 	//RECREATE_AUTORELEASE_POOL(pool);

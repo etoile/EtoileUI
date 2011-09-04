@@ -28,6 +28,7 @@ This protocol is subject to change or be removed. */
 
 
 @interface NSView (Etoile) <NSCopying, ETCollection, ETCollectionMutation>
++ (void)_setUpEtoileUITraits;
 
 + (NSRect) defaultFrame;
 
