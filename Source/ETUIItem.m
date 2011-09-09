@@ -73,11 +73,14 @@ By default, returns NO. */
 }
 #endif
 
-// TODO: We should probably use -copyWithZone:item:. 
-- (id) copyWithZone: (NSZone *)aZone
+- (id) copyWithZone: (NSZone *)aZone 
+             copier: (ETCopier *)aCopier 
+      isAliasedCopy: (BOOL *)isAliasedCopy
 {
-	ETUIItem *newItem = [super copyWithZone: aZone];
+	ETUIItem *newItem = [super copyWithZone: aZone copier: aCopier isAliasedCopy: isAliasedCopy];
 	ETDecoratorItem *decorator = _decoratorItem;
+
+	[aCopier beginCopyFromObject: self toObject: newItem];
 
 	// NOTE: For debugging, RETAIN...RELEASE code can be uncommented to 
 	// destructure the decoration chain on copy.
@@ -97,6 +100,8 @@ By default, returns NO. */
 
 	//[self setDecoratorItem: decorator];
 	//RELEASE(decorator);
+
+	[aCopier endCopy];
 
 	return newItem;
 }

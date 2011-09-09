@@ -65,15 +65,15 @@ no max image and label size and no edge inset. */
 DEALLOC(DESTROY(_labelAttributes));
 
 - (id) copyWithZone: (NSZone *)aZone 
-               item: (ETLayoutItem *)newItem 
+             copier: (ETCopier *)aCopier 
       isAliasedCopy: (BOOL *)isAliasedCopy
 {
-	ETBasicItemStyle *newStyle = [super copyWithZone: aZone item: newItem isAliasedCopy: isAliasedCopy];
+	ETBasicItemStyle *newStyle = [super copyWithZone: aZone copier: aCopier isAliasedCopy: isAliasedCopy];
 
 	if (*isAliasedCopy)
 		return newStyle;
 
-	[self beginCopy];
+	[aCopier beginCopyFromObject: self toObject: newStyle];
 
 	newStyle->_labelAttributes = [_labelAttributes copyWithZone: aZone];
 	newStyle->_labelPosition = _labelPosition;
@@ -82,7 +82,7 @@ DEALLOC(DESTROY(_labelAttributes));
 	newStyle->_maxImageSize = _maxImageSize;
 	newStyle->_edgeInset = _edgeInset;
 
-	[self endCopy];
+	[aCopier endCopy];
 	return newStyle;
 }
 

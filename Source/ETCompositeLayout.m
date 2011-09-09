@@ -377,7 +377,8 @@ the copying support in ETLayoutItemGroup and ETCompositeLayout/ETLayout). */
 
 		NSParameterAssert([initialItemTree isEqual: initialItemTreeAlias]);
 
-		NSArray *initialItemTreeCopy = [[initialItemTree mappedCollection] deepCopyWithZone: aZone];			
+		// FIXME: Pass the current copier
+		NSArray *initialItemTreeCopy = [[initialItemTree mappedCollection] deepCopyWithCopier: [ETCopier copier]];			
 		[_layoutContext setDefaultValue: initialItemTreeCopy
 		                    forProperty: @"items"];
 		RELEASE(initialItemTree);

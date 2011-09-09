@@ -69,7 +69,8 @@ returned instance (usually in a subclass initializer). */
 	ETTemplateItemLayout *layoutCopy = [super copyWithZone: aZone layoutContext: ctxt];
 
 	layoutCopy->_positionalLayout = [(ETLayout *)_positionalLayout copyWithZone: aZone layoutContext: layoutCopy];
-	layoutCopy->_templateItem = [_templateItem deepCopyWithZone: aZone];
+	// FIXME: Pass the current copier
+	layoutCopy->_templateItem = [_templateItem deepCopyWithCopier: [ETCopier copier]];
 	layoutCopy->_templateKeys = [_templateKeys copyWithZone: aZone];
 	layoutCopy->_localBindings = [_localBindings mutableCopyWithZone: aZone];
 	// TODO: Set up the bindings per item in -setUpCopyWithZone:

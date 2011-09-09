@@ -20,6 +20,7 @@
 @class ETUTI;
 @class ETView, ETLayout, ETLayoutItemGroup, 
 ETDecoratorItem, ETScrollableAreaItem, ETWindowItem, ETActionHandler, ETStyleGroup;
+@class ETCopier;
 @protocol ETInspector;
 
 /** Describes how the item is resized when its parent item is resized.
@@ -104,7 +105,7 @@ and centers it. A strech is a scale that doesn't preserve the content proportion
 } ETContentAspect;
 
 /** You must never subclass ETLayoutItem. */
-@interface ETLayoutItem : ETUIItem <NSCopying, ETObjectInspection, ETFragment>
+@interface ETLayoutItem : ETUIItem <ETObjectInspection, ETFragment>
 {
 	// TODO: Merge into _variableStorage or store the default values per object 
 	// in an external dictionary.
@@ -156,7 +157,7 @@ and centers it. A strech is a scale that doesn't preserve the content proportion
 - (void) stopKVOObservationIfNeeded;
 - (id) copyWithZone: (NSZone *)aZone;
 - (id) deepCopy;
-- (id) deepCopyWithZone: (NSZone *)aZone;
+- (id) deepCopyWithCopier: (ETCopier *)aCopier;
 
 /* Layout Item Tree */
 

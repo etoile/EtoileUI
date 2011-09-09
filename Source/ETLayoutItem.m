@@ -27,6 +27,7 @@
 #import "ETScrollableAreaItem.h"
 #import "ETStyleGroup.h"
 #import "ETView.h"
+#import "ETUIObject.h"
 #import "ETWindowItem.h"
 #import "NSImage+Etoile.h"
 #import "NSView+Etoile.h"
@@ -246,48 +247,25 @@ every subclass that overrides -dealloc. */
     [super dealloc];
 }
 
-- (id) copyAspect: (ETUIObject *)anAspect withZone: (NSZone *)aZone item: (ETLayoutItem *)newItem
+- (id) copyAspect: (ETUIObject *)anAspect withCopier: (ETCopier *)aCopier
 {
 	id newAspect = nil;
 	BOOL isAliasedCopy = NO;
 
 	if ([anAspect isShared])
 	{
-		newAspect = RETAIN([[self objectReferencesForCopy] objectForKey: anAspect]);
+		newAspect = RETAIN([[aCopier objectReferencesForCopy] objectForKey: anAspect]);
 
 		if (newAspect == nil)
 		{
-			if ([anAspect respondsToSelector: @selector(copyWithZone:item:isAliasedCopy:)])
-			{
-				newAspect = [(ETStyle *)anAspect copyWithZone: aZone item: newItem isAliasedCopy: &isAliasedCopy];
-			}
-			else
-			{
-				newAspect = [anAspect copyWithZone: aZone];
-			}
-			[[self objectReferencesForCopy] setObject: newAspect 
-			                                   forKey: anAspect];
+			newAspect = [anAspect copyWithZone: NSDefaultMallocZone() copier: aCopier isAliasedCopy: &isAliasedCopy];
 		}
 	}
 	else
 	{
-			if ([anAspect respondsToSelector: @selector(copyWithZone:item:isAliasedCopy:)])
-			{
-				newAspect = [(ETStyle *)anAspect copyWithZone: aZone item: newItem isAliasedCopy: &isAliasedCopy];
-			}
-			else
-			{
-				newAspect = [anAspect copyWithZone: aZone];
-			}
-			
+			newAspect = [anAspect copyWithZone: NSDefaultMallocZone() copier: aCopier isAliasedCopy: &isAliasedCopy];
 	}
 	return newAspect;
-}
-
-- (id) objectReferenceInCopyForObject: (id)anObject
-{
-	id newObject = [[self objectReferencesForCopy] objectForKey: anObject];
-	return (newObject != nil ? newObject : anObject);
 }
 
 /** Returns a shallow copy of the receiver without copying the view, the styles, 
@@ -298,11 +276,14 @@ every subclass that overrides -dealloc. */
 	TODO: Implement decorators copying that is currently missing.
 	
 Default values will be copied but not individually (shallow copy). */
-- (id) copyWithZone: (NSZone *)aZone
+- (id) copyWithZone: (NSZone *)aZone 
+             copier: (ETCopier *)aCopier 
+      isAliasedCopy: (BOOL *)isAliasedCopy
+             isDeep: (BOOL)isDeepCopy
 {
-	ETLayoutItem *item = [super copyWithZone: aZone];
+	ETLayoutItem *item = [super copyWithZone: aZone copier: aCopier isAliasedCopy: isAliasedCopy];
 
-	[self beginCopy];
+	[aCopier beginCopyFromObject: self toObject: item];
 
 	item->_defaultValues = [_defaultValues mutableCopyWithZone: aZone];
 
@@ -315,9 +296,9 @@ Default values will be copied but not individually (shallow copy). */
 	/* We copy all object ivars except _parentItem */
 
 	/* We set the style in the copy by copying the style group */
-	BOOL isAliasedCopy = NO;
-	item->_styleGroup = [_styleGroup copyWithZone: aZone item: item isAliasedCopy: &isAliasedCopy];
-	item->_coverStyle = [self copyAspect: _coverStyle withZone: aZone item: item];
+	BOOL isAliasedAspectCopy = NO;
+	item->_styleGroup = [_styleGroup copyWithZone: aZone copier: aCopier isAliasedCopy: &isAliasedAspectCopy];
+	item->_coverStyle = [self copyAspect: _coverStyle withCopier: aCopier];
 	item->_transform = [_transform copyWithZone: aZone];
 
 	/* We copy every primitive ivars except _isSyncingSupervisorViewGeometry */
@@ -345,7 +326,7 @@ Default values will be copied but not individually (shallow copy). */
 	SET_OBJECT_PROPERTY(item, GET_PROPERTY(kETImageProperty), kETImageProperty);
 	SET_OBJECT_PROPERTY(item, GET_PROPERTY(kETIconProperty), kETIconProperty);
 	SET_OBJECT_PROPERTY(item, GET_PROPERTY(kETSubtypeProperty),  kETSubtypeProperty);
-	SET_OBJECT_PROPERTY_AND_RELEASE(item, [self copyAspect: GET_PROPERTY(kETActionHandlerProperty) withZone: aZone item: item], kETActionHandlerProperty);
+	SET_OBJECT_PROPERTY_AND_RELEASE(item, [self copyAspect: GET_PROPERTY(kETActionHandlerProperty) withCopier: aCopier], kETActionHandlerProperty);
 	SET_OBJECT_PROPERTY(item, GET_PROPERTY(kETActionProperty), kETActionProperty);
 
 	/* We adjust targets and observers to reference equivalent objects in the object graph copy */
@@ -353,9 +334,9 @@ Default values will be copied but not individually (shallow copy). */
 	NSView *viewCopy = [item->supervisorView wrappedView];
 	// NOTE: -objectForKey: returns nil when the key is nil.
 	id target = [self target];
-	id targetCopy = [[self objectReferencesForCopy] objectForKey: target];
+	id targetCopy = [[aCopier objectReferencesForCopy] objectForKey: target];
 	id viewTarget = [[[self view] ifResponds] target];
-	id viewTargetCopy = [[self objectReferencesForCopy] objectForKey: viewTarget];
+	id viewTargetCopy = [[aCopier objectReferencesForCopy] objectForKey: viewTarget];
 
 	if (nil == targetCopy)
 	{
@@ -385,17 +366,24 @@ Default values will be copied but not individually (shallow copy). */
 	   and 'representedObject' properties) */
 
 	 /* Will set up the observer */
-	[item setRepresentedObject: [self objectReferenceInCopyForObject: [self representedObject]]];
+	[item setRepresentedObject: [aCopier objectReferenceInCopyForObject: [self representedObject]]];
 
-	[self endCopy];
+	[aCopier endCopy];
 
 	return item;
+}
+
+- (id) copyWithZone: (NSZone *)aZone 
+             copier: (ETCopier *)aCopier 
+      isAliasedCopy: (BOOL *)isAliasedCopy
+{
+	return [self copyWithZone: aZone copier: aCopier isAliasedCopy: isAliasedCopy isDeep: NO];
 }
 
 /** Must never be called in a subclass. */
 - (id) deepCopy
 {
-	return [self deepCopyWithZone: NSDefaultMallocZone()];
+	return [self deepCopyWithCopier: [ETCopier copier]];
 }
 
 /** Returns a deep copy of the receiver by copying the view and all its 
@@ -406,9 +394,10 @@ Default values will be copied but not individually (shallow copy). */
 	children items). 
 	TODO: Implement styles copying that is currently missing (decorators too in 
 	-copyWithZone:). */
-- (id) deepCopyWithZone: (NSZone *)aZone
+- (id) deepCopyWithCopier: (ETCopier *)aCopier
 {
-	ETLayoutItem *item = [self copyWithZone: aZone];
+	BOOL isAliasedCopy = NO;
+	ETLayoutItem *item = [self copyWithZone: NSDefaultMallocZone() copier: aCopier isAliasedCopy: &isAliasedCopy isDeep: YES];
 
 #if 0
 	id repObjectCopy = nil;

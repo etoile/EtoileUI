@@ -75,26 +75,36 @@ in the given style collection. */
 }
 
 - (id) copyWithZone: (NSZone *)aZone 
-               item: (ETLayoutItem *)newItem 
+             copier: (ETCopier *)aCopier 
       isAliasedCopy: (BOOL *)isAliasedCopy
 {
-	ETStyleGroup *newStyleGroup = [super copyWithZone: aZone item: newItem isAliasedCopy: isAliasedCopy];
+	ETStyleGroup *newStyleGroup = [super copyWithZone: aZone copier: aCopier isAliasedCopy: isAliasedCopy];
 
 	if (*isAliasedCopy)
 		return newStyleGroup;
 
-	[self beginCopy];
+	[aCopier beginCopyFromObject: self toObject: newStyleGroup];
+	BOOL isNewRoot = [aCopier isNewRoot];
 
 	newStyleGroup->_styles = [[NSMutableArray alloc] initWithCapacity: [_styles count]];
 
 	for (ETStyle *style in _styles)
 	{
 		BOOL isAliasedElementCopy = NO;
-		ETStyle *newStyle = ([style isShared] ? style : [style copyWithZone: aZone item: newItem isAliasedCopy: &isAliasedElementCopy]);
+		ETStyle *newStyle = nil;
+
+		if ([style isRoot] || (isNewRoot == NO && [style isShared]))
+		{
+			newStyle = style;
+		}
+		else
+		{
+			newStyle = [style copyWithZone: aZone copier: aCopier isAliasedCopy: &isAliasedElementCopy];
+		}
 		[newStyleGroup->_styles addObject: newStyle];
 	}
 
-	[self endCopy];
+	[aCopier endCopy];
 	return newStyleGroup;
 }
 

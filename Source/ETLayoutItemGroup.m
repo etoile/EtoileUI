@@ -31,7 +31,12 @@ NSString * const ETItemGroupSelectionDidChangeNotification = @"ETItemGroupSelect
 NSString * const ETSourceDidUpdateNotification = @"ETSourceDidUpdateNotification";
 
 @interface ETLayoutItem (SubclassVisibility)
+- (id) copyWithZone: (NSZone *)aZone 
+             copier: (ETCopier *)aCopier 
+      isAliasedCopy: (BOOL *)isAliasedCopy
+             isDeep: (BOOL)isDeepCopy;
 - (ETView *) setUpSupervisorViewWithFrame: (NSRect)aFrame;
+
 @end
 
 @interface ETLayoutItemGroup (Private)
@@ -142,14 +147,14 @@ See also -isLayerItem. */
 The layout and its tool are always copied (they cannot be shared).
 
 The returned copy is mutable because ETLayoutItemGroup cannot be immutable. */ 
-- (id) copyWithZone: (NSZone *)aZone
+- (id) copyWithZone: (NSZone *)aZone 
+             copier: (ETCopier *)aCopier 
+      isAliasedCopy: (BOOL *)isAliasedCopy
+	         isDeep: (BOOL)isDeepCopy
 {
-	BOOL isDeepCopy = ([self currentCopyNode] == self);
-	// FIXME: NSParameterAssert([childItems isMutableCollection]);
+	ETLayoutItemGroup *item = [super copyWithZone: aZone copier: aCopier isAliasedCopy: isAliasedCopy isDeep: isDeepCopy];
 
-	ETLayoutItemGroup *item = [super copyWithZone: aZone];
-
-	[self beginCopy];
+	[aCopier beginCopyFromObject: self toObject: item];
 
 	item->_layout = [_layout copyWithZone: aZone layoutContext: item];
 	if (NO == isDeepCopy)
@@ -193,14 +198,14 @@ The returned copy is mutable because ETLayoutItemGroup cannot be immutable. */
 
 	if (nil != controllerCopy)
 	{
-		[[self objectReferencesForCopy] setObject: controllerCopy forKey: controller];
+		[[aCopier objectReferencesForCopy] setObject: controllerCopy forKey: controller];
 	}
 	SET_OBJECT_PROPERTY_AND_RELEASE(item, controllerCopy, kETControllerProperty);
 
 	/* We copy all variables properties */
 
 	id delegate = GET_PROPERTY(kETDelegateProperty);
-	id delegateCopy = [[self objectReferencesForCopy] objectForKey: delegate];
+	id delegateCopy = [[aCopier objectReferencesForCopy] objectForKey: delegate];
 
 	if (nil == delegateCopy)
 	{
@@ -210,28 +215,29 @@ The returned copy is mutable because ETLayoutItemGroup cannot be immutable. */
 	SET_OBJECT_PROPERTY(item, GET_PROPERTY(kETItemScaleFactorProperty), kETItemScaleFactorProperty);
 	SET_OBJECT_PROPERTY(item, delegateCopy, kETDelegateProperty);
 
-	[self endCopy];
+	[aCopier endCopy];
 
 	return item;
 }
 
-- (id) deepCopyWithZone: (NSZone *)aZone
+- (id) deepCopyWithCopier: (ETCopier *)aCopier
 {
-	[self beginCopy]; /* Marks the copy starts with us */
+	BOOL isAliasedCopy = NO;
+	NSZone *aZone = NSDefaultMallocZone();
+	ETLayoutItemGroup *itemCopy = [self copyWithZone: aZone copier: aCopier isAliasedCopy: &isAliasedCopy isDeep: YES];
 
-	/* Copy Receiver */
+	[aCopier beginCopyFromObject: self toObject: itemCopy];
 
-	ETLayoutItemGroup *itemCopy = [self copyWithZone: aZone];
 	DESTROY(itemCopy->_layoutItems); // TODO: a bit crude
 
 	/* Copy & Assign Children */
 
 	NSMutableArray *childrenCopy = [[NSMutableArray alloc] initWithCapacity: [_layoutItems count]];
-	NSMapTable *objectRefsForCopy = [self objectReferencesForCopy];
+	NSMapTable *objectRefsForCopy = [aCopier objectReferencesForCopy];
 
 	FOREACH(_layoutItems, child, ETLayoutItem *)
 	{
-		ETLayoutItem *childCopy = [child deepCopyWithZone: aZone];
+		ETLayoutItem *childCopy = [child deepCopyWithCopier: aCopier];
 
 		[childrenCopy addObject: childCopy];
 		childCopy->_parentItem = itemCopy; /* Weak reference */
@@ -266,7 +272,7 @@ The returned copy is mutable because ETLayoutItemGroup cannot be immutable. */
 		                 forItems: childrenCopy];
 	}
 
-	[self endCopy]; /* Reset the context if the copy started with us */
+	[aCopier endCopy]; /* Reset the context if the copy started with us */
 	
 	//ETLog(@"Make deep copy %@ + %@ of %@ + %@ at depth %i", itemCopy, 
 	//	[itemCopy controller], self, [self controller], copyDepth);
