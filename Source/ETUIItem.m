@@ -73,11 +73,14 @@ By default, returns NO. */
 }
 #endif
 
-- (id) copyWithZone: (NSZone *)aZone 
-             copier: (ETCopier *)aCopier 
-      isAliasedCopy: (BOOL *)isAliasedCopy
+- (id) copyWithCopier: (ETCopier *)aCopier
 {
-	ETUIItem *newItem = [super copyWithZone: aZone copier: aCopier isAliasedCopy: isAliasedCopy];
+	ETUIItem *newItem = [super copyWithCopier: aCopier];
+
+	if ([aCopier isAliasedCopy])
+		return newItem;
+
+	NSZone *zone = [aCopier zone];
 	ETDecoratorItem *decorator = _decoratorItem;
 
 	[aCopier beginCopyFromObject: self toObject: newItem];
@@ -87,11 +90,11 @@ By default, returns NO. */
 	//RETAIN(decorator);
 	//[self setDecoratorItem: nil];
 
-	newItem->supervisorView = [supervisorView copyWithZone: aZone];
+	newItem->supervisorView = [supervisorView copyWithZone: zone];
 	[newItem->supervisorView setItemWithoutInsertingView: newItem];
 
 	// NOTE: The decorator set up below must mirror -setDecoratorItem:.
-	ETDecoratorItem *decoratorCopy = [decorator copyWithZone: aZone];
+	ETDecoratorItem *decoratorCopy = [decorator copyWithCopier: aCopier];
 	[decoratorCopy handleDecorateItem: newItem 
 	                   supervisorView: [newItem supervisorView] 
 	                           inView: nil];

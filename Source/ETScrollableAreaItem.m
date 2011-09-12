@@ -118,16 +118,19 @@ into a scrollable area. */
 	[super dealloc];
 }
 
-- (id) copyWithZone: (NSZone *)aZone
+- (id) copyWithCopier: (ETCopier *)aCopier
 {
-	ETScrollableAreaItem *item = [super copyWithZone: aZone];
+	ETScrollableAreaItem *newItem = [super copyWithCopier: aCopier];
+
+	if ([aCopier isAliasedCopy])
+		return newItem;
 
 	// NOTE: May be we shouldn't copy this mask when the copy was started on the 
 	// receiver and not on a decorated item.
-	item->_oldDecoratedItemAutoresizingMask = _oldDecoratedItemAutoresizingMask;
-	item->_ensuresContentFillsVisibleArea = _ensuresContentFillsVisibleArea;
+	newItem->_oldDecoratedItemAutoresizingMask = _oldDecoratedItemAutoresizingMask;
+	newItem->_ensuresContentFillsVisibleArea = _ensuresContentFillsVisibleArea;
 
-	return item;
+	return newItem;
 }
 
 /** Ensures the content fills the clip view area when the latter is resized, 

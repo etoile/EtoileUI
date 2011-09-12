@@ -74,13 +74,12 @@ in the given style collection. */
 	[super dealloc];
 }
 
-- (id) copyWithZone: (NSZone *)aZone 
-             copier: (ETCopier *)aCopier 
+- (id) copyWithCopier: (ETCopier *)aCopier 
       isAliasedCopy: (BOOL *)isAliasedCopy
 {
-	ETStyleGroup *newStyleGroup = [super copyWithZone: aZone copier: aCopier isAliasedCopy: isAliasedCopy];
+	ETStyleGroup *newStyleGroup = [super copyWithCopier: aCopier ];
 
-	if (*isAliasedCopy)
+	if ([aCopier isAliasedCopy])
 		return newStyleGroup;
 
 	[aCopier beginCopyFromObject: self toObject: newStyleGroup];
@@ -90,7 +89,6 @@ in the given style collection. */
 
 	for (ETStyle *style in _styles)
 	{
-		BOOL isAliasedElementCopy = NO;
 		ETStyle *newStyle = nil;
 
 		if ([style isRoot] || (isNewRoot == NO && [style isShared]))
@@ -99,7 +97,7 @@ in the given style collection. */
 		}
 		else
 		{
-			newStyle = [style copyWithZone: aZone copier: aCopier isAliasedCopy: &isAliasedElementCopy];
+			newStyle = [style copyWithCopier: aCopier];
 		}
 		[newStyleGroup->_styles addObject: newStyle];
 	}

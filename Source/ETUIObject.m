@@ -7,6 +7,7 @@
  */
 
 #import <EtoileFoundation/Macros.h>
+#import <EtoileFoundation/ETCollection.h>
 #import <EtoileFoundation/NSObject+Model.h>
 #import "ETUIObject.h"
 #import "ETCompatibility.h"
@@ -33,13 +34,18 @@
 
 #else
 
-- (id) init
+- (id) basicInit
 {
 	SUPERINIT;
 	// TODO: Examine common use cases and see whether we should pass a 
 	// capacity hint to improve performances.
 	_variableStorage = [[NSMapTable alloc] init];
 	return self;
+}
+
+- (id) init
+{
+	return [self basicInit];
 }
 
 - (void) dealloc
@@ -50,13 +56,19 @@
 
 #endif
 
-/** Calls -copyWithZone:isAliasedCopy:. */
+/** Calls -copyWithCopier:.
+
+The zone argument is currently ignored. */
 - (id) copyWithZone: (NSZone *)aZone
 {
-	BOOL isAliasedCopy = NO;
-	return [self copyWithZone: aZone copier: [ETCopier copier] isAliasedCopy: &isAliasedCopy];
+	// NOTE: If the zone matters in some code, implement -[ETCopier setZone:]
+	return [self copyWithCopier: [ETCopier copier]];
 }
 
+- (id) basicCopyWithZone: (NSZone *)aZone
+{
+	return [super copyWithZone: aZone];
+}
 
 /** <override-dummy />
 
@@ -97,30 +109,20 @@ You must insert no code before -beginCopy and after -endCopy.
 
 Between -beginCopy and -endCopy, you can use -currentCopyNode and 
 -objectReferencesForCopy. */
-- (id) copyWithZone: (NSZone *)aZone 
-             copier: (ETCopier *)aCopier 
-      isAliasedCopy: (BOOL *)isAliasedCopy
+- (id) copyWithCopier: (ETCopier *)aCopier
 {
-	NSParameterAssert(isAliasedCopy != NULL);
+	/* Return aliased copy */
 
-	NSMapTable *objectRefsForCopy = [aCopier objectReferencesForCopy];
-	ETUIObject *refInCopy = [objectRefsForCopy objectForKey: self];
+	id refInCopy = [aCopier lookUpAliasedCopyForObject: self];
+
 
 	if (refInCopy != nil)
-	{
-		*isAliasedCopy = YES;
 		return refInCopy;
-	}
 
-	*isAliasedCopy = NO;
+	/* Or create a copy */
 
-#ifdef OBJECTMERGING
-	ETUIObject *newObject = [super copyWithZone: aZone];
-#else
-	ETUIObject *newObject = [[self class] allocWithZone: aZone];
-	newObject->_variableStorage = [[NSMapTable alloc] init];
-#endif
-	NSInvocation *initInvocation = [self initInvocationForCopyWithZone: aZone];
+	ETUIObject *newObject = [aCopier allocCopyForObject: self];
+	NSInvocation *initInvocation = [self initInvocationForCopyWithZone: [aCopier zone]];
 
 	[aCopier beginCopyFromObject: self toObject: newObject];
 
@@ -129,7 +131,6 @@ Between -beginCopy and -endCopy, you can use -currentCopyNode and
 		[initInvocation invokeWithTarget: newObject];
 		[initInvocation getReturnValue: &newObject];
 	}
-	[objectRefsForCopy setObject: newObject forKey: self];
 
 	[aCopier endCopy];
 
@@ -266,6 +267,7 @@ user interaction. */
 	currentNewNodeStack = [[NSMutableArray alloc] init];
 	currentNodeStack = [[NSMutableArray alloc] init];
 	currentObjectStack = [[NSMutableArray alloc] init];
+	currentAliasedCopies = [[NSMutableSet alloc] init];
 	ASSIGN(objectRefsForCopy, [NSMapTable mapTableWithStrongToStrongObjects]);
 	return self;
 }
@@ -282,23 +284,83 @@ user interaction. */
 	DESTROY(currentNewNodeStack);
 	DESTROY(currentNodeStack);
 	DESTROY(currentObjectStack);
+	DESTROY(lastCopiedObject);
+	DESTROY(currentAliasedCopies);
 	DESTROY(objectRefsForCopy);
 	[super dealloc];
 }
 
+- (id) allocCopyForObject: (id)anObject
+{
+	BOOL wasCopierUsedPreviously = ([objectRefsForCopy objectForKey: anObject] != nil);
+
+	if (wasCopierUsedPreviously)
+	{
+		[NSException raise: NSGenericException 
+		            format: @"Copier %@ has been used previously and cannot be reused", self];
+	}
+
+	// FIXME: Shouldn't require ETUIObject
+#ifdef OBJECTMERGING
+	ETUIObject *newObject = [anObject basicCopyWithZone: [self zone]];
+#else
+	/* -basicInit creates the variable storage map table */
+	ETUIObject *newObject = [[[anObject class] allocWithZone: [self zone]] basicInit];
+#endif
+	[objectRefsForCopy setObject: newObject forKey: anObject];
+	return newObject;
+}
+
+/** Returns a reference in the object graph copy if the object has been copied 
+previously, otherwise returns nil.
+
+After invoking -lookUpAliasedCopyForObject:, -isAliasedCopy can be used to check 
+whether the last copied object is a aliased copy that was returned by this method. */
+- (id) lookUpAliasedCopyForObject: (id)anObject
+{
+	id newObject = [objectRefsForCopy objectForKey: anObject];
+
+	if (newObject != nil)
+	{
+		[currentAliasedCopies addObject: newObject];
+	}
+	return newObject;
+}
+
+- (id) lastCopiedObject
+{
+	return ([currentObjectStack isEmpty] ? lastCopiedObject : [currentObjectStack lastObject]);
+}
+
+/** Returns whether the last copied object is a reference alias on a previously 
+made copy of the same object. */
+- (BOOL) isAliasedCopy
+{
+	return [currentAliasedCopies containsObject: [self lastCopiedObject]];
+}
+
 - (void) beginCopyFromObject: (id)anObject toObject: (id)newObject
 {
+	BOOL sourceRootObjectMismatch = ([currentObjectStack count] == 0 
+		&& sourceRootObject != nil && sourceRootObject != anObject);
+
+	if (sourceRootObjectMismatch)
+	{
+		[NSException raise: NSGenericException 
+		            format: @"First copied object %@ doesn't match the source root object %@ of %@", 
+		                    anObject, sourceRootObject, self];
+	}
 	// FIXME: ETAssert(sourceRootObject != nil);
 	
 	copier = self;
 	[currentObjectStack addObject: anObject];
+	ASSIGN(lastCopiedObject, anObject);
 
 	if ([anObject isCopyNode])
 	{
 		[currentNewNodeStack addObject: newObject];
 		[currentNodeStack addObject: anObject];
 	}
-	copySteps++;
 }
 
 - (void) endCopy
@@ -309,18 +371,13 @@ user interaction. */
 		[currentNodeStack removeLastObject];
 	}
 	[currentObjectStack removeLastObject];
-	copySteps--;
+	ASSIGN(lastCopiedObject, [currentObjectStack lastObject]);
 
-	BOOL isCopyFinished = (0 == [currentObjectStack count] 
-		&& 0 == [currentNewNodeStack count] && 0 == copySteps);
+	BOOL isCopyFinished = (0 == [currentObjectStack count]);
 
 	if (isCopyFinished)
 	{
-		ETAssert([currentNewNodeStack count] == [currentNodeStack count]);
-		[currentNewNodeStack removeAllObjects];
-		[currentNodeStack removeAllObjects];
-		[currentObjectStack removeAllObjects];
-		[objectRefsForCopy removeAllObjects];
+		ETAssert([currentNewNodeStack isEmpty] && [currentNodeStack isEmpty]);
 		copier = nil;
 	}
 }
@@ -399,6 +456,12 @@ else
 {
 	id newObject = [objectRefsForCopy objectForKey: anObject];
 	return (newObject != nil ? newObject : anObject);
+}
+
+/** Returns the default malloc zone. */
+- (NSZone *) zone
+{
+	return NSDefaultMallocZone();
 }
 
 @end

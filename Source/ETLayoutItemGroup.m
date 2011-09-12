@@ -31,10 +31,7 @@ NSString * const ETItemGroupSelectionDidChangeNotification = @"ETItemGroupSelect
 NSString * const ETSourceDidUpdateNotification = @"ETSourceDidUpdateNotification";
 
 @interface ETLayoutItem (SubclassVisibility)
-- (id) copyWithZone: (NSZone *)aZone 
-             copier: (ETCopier *)aCopier 
-      isAliasedCopy: (BOOL *)isAliasedCopy
-             isDeep: (BOOL)isDeepCopy;
+- (id) copyWithCopier: (ETCopier *)aCopier isDeep: (BOOL)isDeepCopy;
 - (ETView *) setUpSupervisorViewWithFrame: (NSRect)aFrame;
 
 @end
@@ -147,19 +144,21 @@ See also -isLayerItem. */
 The layout and its tool are always copied (they cannot be shared).
 
 The returned copy is mutable because ETLayoutItemGroup cannot be immutable. */ 
-- (id) copyWithZone: (NSZone *)aZone 
-             copier: (ETCopier *)aCopier 
-      isAliasedCopy: (BOOL *)isAliasedCopy
-	         isDeep: (BOOL)isDeepCopy
+- (id) copyWithCopier: (ETCopier *)aCopier isDeep: (BOOL)isDeepCopy
 {
-	ETLayoutItemGroup *item = [super copyWithZone: aZone copier: aCopier isAliasedCopy: isAliasedCopy isDeep: isDeepCopy];
+	ETLayoutItemGroup *item = [super copyWithCopier: aCopier isDeep: isDeepCopy];
+
+	if ([aCopier isAliasedCopy])
+		return item;
+
+	NSZone *zone = [aCopier zone];
 
 	[aCopier beginCopyFromObject: self toObject: item];
 
-	item->_layout = [_layout copyWithZone: aZone layoutContext: item];
+	item->_layout = [_layout copyWithZone: zone layoutContext: item];
 	if (NO == isDeepCopy)
 	{
-		[item->_layout setUpCopyWithZone: aZone original: _layout];
+		[item->_layout setUpCopyWithZone: zone original: _layout];
 	}
 
 	/* We copy all primitive ivars except _reloading and _changingSelection */
@@ -179,7 +178,7 @@ The returned copy is mutable because ETLayoutItemGroup cannot be immutable. */
 	   to -deepCopyWithZone:, but we create an empty array in case we are not 
 	   called by -deepCopyWithZone:. */
 
-	item->_layoutItems = [[NSMutableArray alloc] init];
+	item->_layoutItems = [[NSMutableArray allocWithZone: zone] init];
 	
 	id source =  GET_PROPERTY(kETSourceProperty);
 	id sourceCopy = ([self usesRepresentedObjectAsProvider] ? (id)item : source);
@@ -194,7 +193,7 @@ The returned copy is mutable because ETLayoutItemGroup cannot be immutable. */
 
 	ETController *controller = GET_PROPERTY(kETControllerProperty);
 	ETLayoutItemGroup *contentCopy = (isDeepCopy ? (ETLayoutItemGroup *)nil : item);
-	ETController *controllerCopy = [controller copyWithZone: aZone content: contentCopy];
+	ETController *controllerCopy = [controller copyWithZone: zone content: contentCopy];
 
 	if (nil != controllerCopy)
 	{
@@ -222,9 +221,12 @@ The returned copy is mutable because ETLayoutItemGroup cannot be immutable. */
 
 - (id) deepCopyWithCopier: (ETCopier *)aCopier
 {
-	BOOL isAliasedCopy = NO;
-	NSZone *aZone = NSDefaultMallocZone();
-	ETLayoutItemGroup *itemCopy = [self copyWithZone: aZone copier: aCopier isAliasedCopy: &isAliasedCopy isDeep: YES];
+	ETLayoutItemGroup *itemCopy = [self copyWithCopier: aCopier isDeep: YES];
+
+	if ([aCopier isAliasedCopy])
+		return itemCopy;
+
+	NSZone *zone = NSDefaultMallocZone();
 
 	[aCopier beginCopyFromObject: self toObject: itemCopy];
 
@@ -232,7 +234,7 @@ The returned copy is mutable because ETLayoutItemGroup cannot be immutable. */
 
 	/* Copy & Assign Children */
 
-	NSMutableArray *childrenCopy = [[NSMutableArray alloc] initWithCapacity: [_layoutItems count]];
+	NSMutableArray *childrenCopy = [[NSMutableArray allocWithZone: zone] initWithCapacity: [_layoutItems count]];
 	NSMapTable *objectRefsForCopy = [aCopier objectReferencesForCopy];
 
 	FOREACH(_layoutItems, child, ETLayoutItem *)
@@ -250,12 +252,12 @@ The returned copy is mutable because ETLayoutItemGroup cannot be immutable. */
 
 	/* Finish Copy Layout and Controller */
 
-	[itemCopy->_layout setUpCopyWithZone: aZone original: _layout];
+	[itemCopy->_layout setUpCopyWithZone: zone original: _layout];
 
 	ETController *controller = GET_PROPERTY(kETControllerProperty);
 	ETController *controllerCopy = GET_OBJECT_PROPERTY(itemCopy, kETControllerProperty);
 
-	[controller finishDeepCopy: controllerCopy withZone: aZone content: itemCopy];
+	[controller finishDeepCopy: controllerCopy withZone: zone content: itemCopy];
 
 	/* We need to update the layout to have the content reloaded in widget layouts
 	   Which means the item copy will then receive a layout update even in case 

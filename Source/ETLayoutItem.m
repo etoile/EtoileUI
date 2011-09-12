@@ -250,7 +250,6 @@ every subclass that overrides -dealloc. */
 - (id) copyAspect: (ETUIObject *)anAspect withCopier: (ETCopier *)aCopier
 {
 	id newAspect = nil;
-	BOOL isAliasedCopy = NO;
 
 	if ([anAspect isShared])
 	{
@@ -258,12 +257,12 @@ every subclass that overrides -dealloc. */
 
 		if (newAspect == nil)
 		{
-			newAspect = [anAspect copyWithZone: NSDefaultMallocZone() copier: aCopier isAliasedCopy: &isAliasedCopy];
+			newAspect = [anAspect copyWithCopier: aCopier];
 		}
 	}
 	else
 	{
-			newAspect = [anAspect copyWithZone: NSDefaultMallocZone() copier: aCopier isAliasedCopy: &isAliasedCopy];
+			newAspect = [anAspect copyWithCopier: aCopier];
 	}
 	return newAspect;
 }
@@ -276,16 +275,18 @@ every subclass that overrides -dealloc. */
 	TODO: Implement decorators copying that is currently missing.
 	
 Default values will be copied but not individually (shallow copy). */
-- (id) copyWithZone: (NSZone *)aZone 
-             copier: (ETCopier *)aCopier 
-      isAliasedCopy: (BOOL *)isAliasedCopy
-             isDeep: (BOOL)isDeepCopy
+- (id) copyWithCopier: (ETCopier *)aCopier isDeep: (BOOL)isDeepCopy
 {
-	ETLayoutItem *item = [super copyWithZone: aZone copier: aCopier isAliasedCopy: isAliasedCopy];
+	ETLayoutItem *item = [super copyWithCopier: aCopier];
+
+	if ([aCopier isAliasedCopy])
+		return item;
+
+	NSZone *zone = [aCopier zone];
 
 	[aCopier beginCopyFromObject: self toObject: item];
 
-	item->_defaultValues = [_defaultValues mutableCopyWithZone: aZone];
+	item->_defaultValues = [_defaultValues mutableCopyWithZone: zone];
 
 	// NOTE: Geometry synchronization logic in setters such as setFlippedView: 
 	// and -setAutoresizingMask: is not required to make a copy, because all 
@@ -296,10 +297,9 @@ Default values will be copied but not individually (shallow copy). */
 	/* We copy all object ivars except _parentItem */
 
 	/* We set the style in the copy by copying the style group */
-	BOOL isAliasedAspectCopy = NO;
-	item->_styleGroup = [_styleGroup copyWithZone: aZone copier: aCopier isAliasedCopy: &isAliasedAspectCopy];
+	item->_styleGroup = [_styleGroup copyWithCopier: aCopier];
 	item->_coverStyle = [self copyAspect: _coverStyle withCopier: aCopier];
-	item->_transform = [_transform copyWithZone: aZone];
+	item->_transform = [_transform copyWithZone: zone];
 
 	/* We copy every primitive ivars except _isSyncingSupervisorViewGeometry */
 
@@ -319,7 +319,7 @@ Default values will be copied but not individually (shallow copy). */
 
 	/* We copy all variables properties except kETTargetProperty */
 
-	SET_OBJECT_PROPERTY_AND_RELEASE(item, [GET_PROPERTY(kETValueProperty) copyWithZone: aZone], kETValueProperty);
+	SET_OBJECT_PROPERTY_AND_RELEASE(item, [GET_PROPERTY(kETValueProperty) copyWithZone: zone], kETValueProperty);
 	SET_OBJECT_PROPERTY(item, GET_PROPERTY(kETDefaultFrameProperty),  kETDefaultFrameProperty);
 	SET_OBJECT_PROPERTY(item, GET_PROPERTY(kETNameProperty), kETNameProperty);
 	SET_OBJECT_PROPERTY(item, GET_PROPERTY(kETIdentifierProperty), kETIdentifierProperty);
@@ -373,11 +373,9 @@ Default values will be copied but not individually (shallow copy). */
 	return item;
 }
 
-- (id) copyWithZone: (NSZone *)aZone 
-             copier: (ETCopier *)aCopier 
-      isAliasedCopy: (BOOL *)isAliasedCopy
+- (id) copyWithCopier: (ETCopier *)aCopier 
 {
-	return [self copyWithZone: aZone copier: aCopier isAliasedCopy: isAliasedCopy isDeep: NO];
+	return [self copyWithCopier: aCopier isDeep: NO];
 }
 
 /** Must never be called in a subclass. */
@@ -396,8 +394,7 @@ Default values will be copied but not individually (shallow copy). */
 	-copyWithZone:). */
 - (id) deepCopyWithCopier: (ETCopier *)aCopier
 {
-	BOOL isAliasedCopy = NO;
-	ETLayoutItem *item = [self copyWithZone: NSDefaultMallocZone() copier: aCopier isAliasedCopy: &isAliasedCopy isDeep: YES];
+	ETLayoutItem *item = [self copyWithCopier: aCopier isDeep: YES];
 
 #if 0
 	id repObjectCopy = nil;

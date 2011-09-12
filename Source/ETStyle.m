@@ -152,13 +152,11 @@ Returns the shared instance that corresponds to the receiver class. */
 	return self;
 }
 
-- (id) copyWithZone: (NSZone *)aZone 
-             copier: (ETCopier *)aCopier 
-      isAliasedCopy: (BOOL *)isAliasedCopy
+- (id) copyWithCopier: (ETCopier *)aCopier
 {
-	ETStyle *newStyle = [super copyWithZone: aZone copier: aCopier isAliasedCopy: isAliasedCopy];
+	ETStyle *newStyle = [super copyWithCopier: aCopier];
 
-	if (*isAliasedCopy)
+	if ([aCopier isAliasedCopy])
 		return newStyle;
 
 	[aCopier beginCopyFromObject: self toObject: newStyle];

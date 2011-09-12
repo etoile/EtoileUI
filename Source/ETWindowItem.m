@@ -161,9 +161,12 @@ If window is nil, the receiver creates a standard widget backend window. */
 	return inv;
 }
 
-- (id) copyWithZone: (NSZone *)aZone
+- (id) copyWithCopier: (ETCopier *)aCopier
 {
-	ETWindowItem *newItem = [super copyWithZone: aZone];
+	ETWindowItem *newItem = [super copyWithCopier: aCopier];
+
+	if ([aCopier isAliasedCopy])
+		return newItem;
 
 	// NOTE: The copying logic is largely handled with -initWithInvocationForCopyWithZone:
 

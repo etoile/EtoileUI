@@ -31,9 +31,7 @@
 
 /** @taskunit Copying */
 
-- (id) copyWithZone: (NSZone *)aZone 
-             copier: (ETCopier *)aCopier 
-      isAliasedCopy: (BOOL *)isAliasedCopy;
+- (id) copyWithCopier: (ETCopier *)aCopier;
 - (id) copyWithZone: (NSZone *)aZone;
 - (NSInvocation *) initInvocationForCopyWithZone: (NSZone *)aZone;
 
@@ -57,6 +55,8 @@
 - (BOOL) isCopyNode;
 @end
 
+/** A copier is a single use object. Each time, you start an object graph copy 
+with -copyWithCopier, you must pass a new copier. */
 @interface ETCopier : NSObject
 {
 	id destinationRootObject;
@@ -64,7 +64,8 @@
 	NSMutableArray *currentNewNodeStack;
 	NSMutableArray *currentNodeStack;
 	NSMutableArray *currentObjectStack; /* The objects being copied in the source object graph */
-	NSUInteger copySteps;
+	NSMutableSet *currentAliasedCopies;
+	id lastCopiedObject;
 	NSMapTable *objectRefsForCopy;
 }
 
@@ -74,6 +75,12 @@
 + (id) copierWithNewRoot;
 + (id) copierWithDestinationRootObject: (id)aRootObject;
 - (id) initWithDestinationRootObject: (id)aRootObject;
+
+/** @taskunit Copy Allocation */
+
+- (id) allocCopyForObject: (id)anObject;
+- (id) lookUpAliasedCopyForObject: (id)anObject;
+- (BOOL) isAliasedCopy;
 
 /** @taskunit Copy Control */
 
@@ -95,6 +102,10 @@
 
 - (NSMapTable *) objectReferencesForCopy;
 - (id) objectReferenceInCopyForObject: (id)anObject;
+
+/** @taskunit Zone */
+
+- (NSZone *) zone;
 
 /** @taskunit Framework Private */
 
