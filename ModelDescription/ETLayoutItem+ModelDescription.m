@@ -35,6 +35,10 @@
 	ETPropertyDescription *styleGroup = [ETPropertyDescription descriptionWithName: @"styleGroup" type: (id)@"ETStyleGroup"];
 	ETPropertyDescription *coverStyle = [ETPropertyDescription descriptionWithName: @"coverStyle" type: (id)@"ETStyle"];
 	ETPropertyDescription *actionHandler = [ETPropertyDescription descriptionWithName: @"actionHandler" type: (id)@"ETActionHandler"];
+	ETPropertyDescription *action = [ETPropertyDescription descriptionWithName: @"action" type: (id)@"SEL"];
+	/* We persist a target id rather than the raw target, because we have no 
+	   way to uniquely identify objects which are not items such as views */
+	ETPropertyDescription *targetId = [ETPropertyDescription descriptionWithName: @"viewTargetId" type: (id)@"NSString"];
 	ETPropertyDescription *contentBounds = [ETPropertyDescription descriptionWithName: @"contentBounds" type: (id)@"NSRect"];
 	ETPropertyDescription *position = [ETPropertyDescription descriptionWithName: @"position" type: (id)@"NSPoint"];
 	ETPropertyDescription *anchorPoint = [ETPropertyDescription descriptionWithName: @"anchorPoint" type: (id)@"NSPoint"];
@@ -57,8 +61,8 @@
 	   Hmm, _scrollViewShow ought to be persisted. */
 
 	NSArray *persistentProperties = A(parentItem, repObject, view, viewTargetId, styleGroup, 
-		coverStyle, actionHandler, contentBounds, position, anchorPoint, autoresizing, 
-		contentAspect, boundingBox, flipped, selected, visible);
+		coverStyle, actionHandler, action, targetId, contentBounds, position, 
+		anchorPoint, autoresizing, contentAspect, boundingBox, flipped, selected, visible);
 
 	[[persistentProperties mappedCollection] setPersistent: YES];
 	[entity setPropertyDescriptions: persistentProperties];

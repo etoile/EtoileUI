@@ -53,10 +53,8 @@
 	[[self actionHandler] becomePersistentInContext: aContext rootObject: aRootObject];
 }
 
-- (NSString *) viewTargetId
+- (NSString *) targetIdForTarget: (id)target
 {
-	id target = [[self view] target];
-
 	if ([target isLayoutItem])
 	{
 		return [[target UUID] stringValue];
@@ -65,8 +63,27 @@
 	{
 		return [@"_" stringByAppendingString: [[[target owningItem] UUID] stringValue]];
 	}
-
 	return nil;
+}
+
+- (NSString *) targetId
+{
+	return [self targetIdForTarget: [self target]];
+}
+
+- (void) setTargetId: (NSString *)anId
+{
+	if (anId == nil)
+		return;
+
+	/* The target might not be deserialized at this point, hence we look up the 
+	   target in -awakeFromFetch once the entire object graph has been deserialized */
+	[_variableStorage setObject: anId forKey: @"targetId"];
+}
+
+- (NSString *) viewTargetId
+{
+	return [self targetIdForTarget: [[[self view] ifResponds] target]];
 }
 
 - (void) setViewTargetId: (NSString *)anId
@@ -79,31 +96,28 @@
 	[_variableStorage setObject: anId forKey: @"viewTargetId"];
 }
 
-// TODO: Serialize and restore item targets properly e.g. -[ETLayoutItem target] can return a view
-- (void) restoreViewAndItemTargets
+- (void) restoreTargetFromId: (NSString *)targetId on: (id)sender
 {
-	id target = [_variableStorage objectForKey: @"viewTargetId"];
+	/* sender must repond to -setTarget:, see ETWidget protocol */
+	if ([targetId isString] == NO || [sender isWidget] == NO)
+		return;
 
-	if ([target isString])
+	BOOL isViewTarget = [targetId hasPrefix: @"_"];
+
+	if (isViewTarget)
 	{
-		BOOL isViewTarget = [target hasPrefix: @"_"];
+		ETUUID *uuid = [ETUUID UUIDWithString: [targetId substringFromIndex: 1]];
+		ETLayoutItem *targetItem = (ETLayoutItem *)[[self editingContext] objectWithUUID: uuid];
 
-		if (isViewTarget)
-		{
-			ETUUID *uuid = [ETUUID UUIDWithString: [target substringFromIndex: 1]];
-			ETLayoutItem *targetItem = (ETLayoutItem *)[[self editingContext] objectWithUUID: uuid];
-
-			[[self view] setTarget: [targetItem view]];
-		}
-		else
-		{
-			ETUUID *uuid = [ETUUID UUIDWithString: target];
-			ETLayoutItem *targetItem = (ETLayoutItem *)[[self editingContext] objectWithUUID: uuid];
-
-			[[self view] setTarget: targetItem];
-		}
+		[sender setTarget: [targetItem view]];
 	}
-	[_variableStorage removeObjectForKey: @"viewTargetId"];
+	else
+	{
+		ETUUID *uuid = [ETUUID UUIDWithString: targetId];
+		ETLayoutItem *targetItem = (ETLayoutItem *)[[self editingContext] objectWithUUID: uuid];
+
+		[sender setTarget: targetItem];
+	}
 }
 
 - (void) awakeFromFetch
@@ -111,7 +125,14 @@
 	// TODO: May be reset the bounding box if not persisted
 	//_boundingBox = ETNullRect;
 
-	[self restoreViewAndItemTargets];
+	NSString *targetId = [_variableStorage objectForKey: @"targetId"];
+	NSString *viewTargetId = [_variableStorage objectForKey: @"viewTargetId"];
+
+	[self restoreTargetFromId: targetId on: self];
+	[self restoreTargetFromId: viewTargetId on: [self view]];
+
+	[_variableStorage removeObjectForKey: @"targetId"];
+	[_variableStorage removeObjectForKey: @"viewTargetId"];
 }
 
 @end
