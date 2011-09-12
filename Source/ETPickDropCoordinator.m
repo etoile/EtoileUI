@@ -339,11 +339,10 @@ When the pick and drop operation is not a drag, returns a ETNullPoint too. */
 	if ([self isDragging] && [[item rootItem] isEqual: [[self dragSource] rootItem]] == NO)
 		return ETNullPoint;
 
-	ETLayoutItemGroup *windowGroup = [[ETLayoutItemFactory factory] windowGroup];
 	ETEvent *currentDragEvent = ETEVENT([NSApp currentEvent], _dragInfo, ETDragPickingMask);
 
-	return [item convertRect: ETMakeRect([currentDragEvent location], NSZeroSize)
-	                fromItem: windowGroup].origin;
+	return [item convertRect: ETMakeRect([currentDragEvent locationInWindowItem], NSZeroSize)
+	                fromItem: [item windowBackedAncestorItem]].origin;
 }
 
 /* NSDraggingSource informal protocol */
