@@ -259,6 +259,59 @@ DEALLOC(DESTROY(itemFactory);)
 	[self checkValidityForNewPersistentObject: newController isFault: NO];
 }
 
+- (void) testWidgetItemPersistency
+{
+	[self recreateContext];
+
+	NSRect rect = NSMakeRect(50, 20, 400, 300);
+
+	ETLayoutItem *sliderItem = [itemFactory horizontalSlider];
+	ETLayoutItem *buttonItem = [itemFactory buttonWithTitle: @"Picturesque" 
+	                                           target: [sliderItem view] 
+	                                           action: @selector(print:)];
+	ETLayoutItemGroup *itemGroup = [itemFactory itemGroupWithItems: A(buttonItem, sliderItem)];
+
+	[[sliderItem view] setAction: @selector(close:)];
+	[[sliderItem view] setTarget: itemGroup];
+	[buttonItem setFrame: rect];
+
+	UKNotNil([buttonItem UUID]);
+	UKNotNil([sliderItem UUID]);
+	UKNotNil([itemGroup UUID]);
+
+	[itemGroup becomePersistentInContext: ctxt rootObject: itemGroup];
+	[self checkValidityForNewPersistentObject: buttonItem isFault: NO];
+	[self checkValidityForNewPersistentObject: sliderItem isFault: NO];
+	[self checkValidityForNewPersistentObject: itemGroup isFault: NO];
+
+	[ctxt commit];
+	[self recreateContext];
+
+	ETLayoutItem *newButtonItem = (id)[ctxt objectWithUUID: [buttonItem UUID]];
+	ETLayoutItem *newSliderItem = (id)[ctxt objectWithUUID: [sliderItem UUID]];
+	ETLayoutItem *newItemGroup = (id)[ctxt objectWithUUID: [itemGroup UUID]];
+
+	UKNotNil(newButtonItem);
+	UKObjectsNotSame(buttonItem, newButtonItem);
+	UKObjectKindOf([newButtonItem view], NSButton);
+	UKRectsEqual(rect, [newButtonItem frame]);
+	UKStringsEqual(@"Picturesque", [[newButtonItem view] title]);
+	UKObjectsEqual([newSliderItem view], [[newButtonItem view] target]);
+	UKTrue(@selector(print:) == [[newButtonItem view] action]);
+
+	UKNotNil(newSliderItem);
+	UKObjectsNotSame(sliderItem, newSliderItem);
+	UKObjectKindOf([newSliderItem view], NSSlider);
+	UKRectsNotEqual(rect, [newSliderItem frame]);
+	UKObjectsEqual(newItemGroup, [[newSliderItem view] target]);
+	UKTrue(@selector(close:) == [[newSliderItem view] action]);
+
+	[self checkValidityForNewPersistentObject: newButtonItem isFault: NO];
+	[self checkValidityForNewPersistentObject: newSliderItem isFault: NO];
+	[self checkValidityForNewPersistentObject: newItemGroup isFault: NO];
+}
+
+
 @end
 
 #endif

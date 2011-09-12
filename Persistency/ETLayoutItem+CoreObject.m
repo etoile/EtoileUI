@@ -13,6 +13,8 @@
 #import <ObjectMerging/COEditingContext.h>
 #import <ObjectMerging/COObject.h>
 #import "ETLayoutItem+CoreObject.h"
+#import "NSObject+EtoileUI.h"
+#import "NSView+Etoile.h"
 
 
 @implementation ETLayoutItem (CoreObject) 
@@ -51,10 +53,65 @@
 	[[self actionHandler] becomePersistentInContext: aContext rootObject: aRootObject];
 }
 
+- (NSString *) viewTargetId
+{
+	id target = [[self view] target];
+
+	if ([target isLayoutItem])
+	{
+		return [[target UUID] stringValue];
+	}
+	else if ([target isView])
+	{
+		return [@"_" stringByAppendingString: [[[target owningItem] UUID] stringValue]];
+	}
+
+	return nil;
+}
+
+- (void) setViewTargetId: (NSString *)anId
+{
+	if (anId == nil)
+		return;
+
+	/* The target might not be deserialized at this point, hence we look up the 
+	   target in -awakeFromFetch once the entire object graph has been deserialized */
+	[_variableStorage setObject: anId forKey: @"viewTargetId"];
+}
+
+// TODO: Serialize and restore item targets properly e.g. -[ETLayoutItem target] can return a view
+- (void) restoreViewAndItemTargets
+{
+	id target = [_variableStorage objectForKey: @"viewTargetId"];
+
+	if ([target isString])
+	{
+		BOOL isViewTarget = [target hasPrefix: @"_"];
+
+		if (isViewTarget)
+		{
+			ETUUID *uuid = [ETUUID UUIDWithString: [target substringFromIndex: 1]];
+			ETLayoutItem *targetItem = (ETLayoutItem *)[[self editingContext] objectWithUUID: uuid];
+
+			[[self view] setTarget: [targetItem view]];
+		}
+		else
+		{
+			ETUUID *uuid = [ETUUID UUIDWithString: target];
+			ETLayoutItem *targetItem = (ETLayoutItem *)[[self editingContext] objectWithUUID: uuid];
+
+			[[self view] setTarget: targetItem];
+		}
+	}
+	[_variableStorage removeObjectForKey: @"viewTargetId"];
+}
+
 - (void) awakeFromFetch
 {
 	// TODO: May be reset the bounding box if not persisted
 	//_boundingBox = ETNullRect;
+
+	[self restoreViewAndItemTargets];
 }
 
 @end

@@ -30,6 +30,8 @@
 	[parentItem setIsContainer: YES];
 	[parentItem setOpposite: (id)@"ETLayoutItemGroup.items"];
 	ETPropertyDescription *repObject = [ETPropertyDescription descriptionWithName: @"representedObject" type: (id)@"NSObject"];
+	ETPropertyDescription *view = [ETPropertyDescription descriptionWithName: @"view" type: (id)@"NSView"];
+	ETPropertyDescription *viewTargetId = [ETPropertyDescription descriptionWithName: @"viewTargetId" type: (id)@"NSString"];
 	ETPropertyDescription *styleGroup = [ETPropertyDescription descriptionWithName: @"styleGroup" type: (id)@"ETStyleGroup"];
 	ETPropertyDescription *coverStyle = [ETPropertyDescription descriptionWithName: @"coverStyle" type: (id)@"ETStyle"];
 	ETPropertyDescription *actionHandler = [ETPropertyDescription descriptionWithName: @"actionHandler" type: (id)@"ETActionHandler"];
@@ -54,7 +56,7 @@
 	   
 	   Hmm, _scrollViewShow ought to be persisted. */
 
-	NSArray *persistentProperties = A(parentItem, repObject, styleGroup, 
+	NSArray *persistentProperties = A(parentItem, repObject, view, viewTargetId, styleGroup, 
 		coverStyle, actionHandler, contentBounds, position, anchorPoint, autoresizing, 
 		contentAspect, boundingBox, flipped, selected, visible);
 
