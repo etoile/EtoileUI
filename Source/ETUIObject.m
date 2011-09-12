@@ -32,6 +32,11 @@
 
 }
 
+- (id) basicCopyWithZone: (NSZone *)aZone
+{
+	return [super copyWithZone: aZone];
+}
+
 #else
 
 - (id) basicInit
@@ -63,11 +68,6 @@ The zone argument is currently ignored. */
 {
 	// NOTE: If the zone matters in some code, implement -[ETCopier setZone:]
 	return [self copyWithCopier: [ETCopier copier]];
-}
-
-- (id) basicCopyWithZone: (NSZone *)aZone
-{
-	return [super copyWithZone: aZone];
 }
 
 /** <override-dummy />

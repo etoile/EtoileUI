@@ -74,8 +74,7 @@ in the given style collection. */
 	[super dealloc];
 }
 
-- (id) copyWithCopier: (ETCopier *)aCopier 
-      isAliasedCopy: (BOOL *)isAliasedCopy
+- (id) copyWithCopier: (ETCopier *)aCopier
 {
 	ETStyleGroup *newStyleGroup = [super copyWithCopier: aCopier ];
 
