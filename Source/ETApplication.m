@@ -564,6 +564,66 @@ menu bar, otherwise builds a new instance and returns it. */
 	return menuItem;
 }
 
+/** Returns the visible Edit menu if there is one already inserted in the 
+menu bar, otherwise builds a new instance and returns it. */
+- (NSMenuItem *) editMenuItem
+{
+	NSMenuItem *menuItem = (id)[[self mainMenu] itemWithTag: ETEditMenuTag];
+
+	if (menuItem != nil)
+		return menuItem;
+
+	menuItem = [NSMenuItem menuItemWithTitle: _(@"Edit")
+	                                     tag: ETEditMenuTag
+	                                  action: NULL];
+	NSMenu *menu = [menuItem submenu];
+
+	[menu addItemWithTitle: _(@"Undo")
+	                action: @selector(undo:)
+	         keyEquivalent: @"z"];
+
+	[menu addItemWithTitle: _(@"Redo")
+	                action: @selector(redo:)
+	         keyEquivalent: @"Z"];
+
+	[menu addItem: [NSMenuItem separatorItem]];
+
+	[menu addItemWithTitle: _(@"Cut")
+	                action: @selector(cut:)
+	         keyEquivalent: @"x"];
+
+	[menu addItemWithTitle: _(@"Copy")
+	                action: @selector(copy:)
+	         keyEquivalent: @"c"];
+
+	[menu addItemWithTitle: _(@"Paste")
+	                action: @selector(paste:)
+	         keyEquivalent: @"v"];
+
+	[menu addItemWithTitle: _(@"Delete")
+	                action: @selector(delete:)
+	         keyEquivalent: @""];
+
+	[menu addItemWithTitle: _(@"Duplicate")
+	                action: @selector(duplicate:)
+	         keyEquivalent: @""];
+
+	[menu addItem: [NSMenuItem separatorItem]];
+
+	[menu addItemWithTitle: _(@"Select All")
+	                action: @selector(selectAll:)
+	         keyEquivalent: @"a"];
+
+	[menu addItem: [NSMenuItem separatorItem]];
+
+	[menu addItemWithTitle: _(@"Special Characters")
+	                action: @selector(selectAll:)
+	         keyEquivalent: @"t"];
+	[[menu lastItem] setKeyEquivalentModifierMask: NSCommandKeyMask & NSAlternateKeyMask];
+
+	return menuItem;
+}
+
 /** Returns the visible Insert menu if there is one already inserted in the 
 menu bar, otherwise builds a new instance and returns it. */
 - (NSMenuItem *) insertMenuItem

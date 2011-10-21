@@ -60,6 +60,7 @@ For other Nibs to be loaded, see ETNibOwner. */
 
 - (NSMenuItem *) developmentMenuItem;
 - (NSMenuItem *) documentMenuItem;
+- (NSMenuItem *) editMenuItem;
 - (NSMenuItem *) insertMenuItem;
 - (NSMenuItem *) arrangeMenuItem;
 
@@ -92,6 +93,7 @@ enum
 {
 	ETDevelopmentMenuTag = 30000,
 	ETDocumentMenuTag,
+	ETEditMenuTag,
 	ETInsertMenuTag,
 	ETArrangeMenuTag, 
 };
