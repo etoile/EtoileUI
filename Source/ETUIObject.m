@@ -223,6 +223,11 @@ user interaction. */
 
 #ifndef OBJECTMERGING
 
+- (id) commitTrack
+{
+	return nil;
+}
+
 - (BOOL) isRoot
 {
 	return NO;

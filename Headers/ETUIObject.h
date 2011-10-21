@@ -43,6 +43,7 @@
 
 - (void) commit;
 #ifndef OBJECTMERGING
+- (id) commitTrack;
 - (BOOL) isRoot;
 - (void) willChangeValueForProperty: (NSString *)aKey;
 - (void) didChangeValueForProperty: (NSString *)aKey;

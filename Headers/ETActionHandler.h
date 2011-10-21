@@ -114,6 +114,11 @@ method will reuse the action handler to be set on every created items. */
 
 - (void) inspectItem: (id)sender onItem: (ETLayoutItem *)item;
 
+/** @taskunit History Actions */
+
+- (void) undo: (id)sender onItem: (ETLayoutItem *)item;
+- (void) redo: (id)sender onItem: (ETLayoutItem *)item;
+
 @end
 
 
