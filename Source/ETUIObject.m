@@ -214,6 +214,9 @@ user interaction. */
 - (void) commit
 {
 #ifdef OBJECTMERGING
+	if ([self isPersistent] == NO)
+		return;
+
 	COObject *rootObject = [self rootObject];
 	ETAssert(rootObject != nil);
 	ETAssert([rootObject editingContext] != nil);
