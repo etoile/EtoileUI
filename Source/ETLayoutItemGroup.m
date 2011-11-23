@@ -1074,7 +1074,7 @@ to control more precisely how the items get resized per layout. */
 - (void) setItemScaleFactor: (float)aFactor
 {
 	SET_PROPERTY([NSNumber numberWithFloat: aFactor], kETItemScaleFactorProperty);
-	[self updateLayout];
+	[self setNeedsLayoutUpdate];
 }
 
 /* Rendering */
