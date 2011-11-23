@@ -223,8 +223,9 @@ layout context, based on the rules or policy of the given layout. */
 	// FIXME: -setLayout: won't recompute every item frames, only the visible 
 	// items are relayouted.
 	[layoutContext setLayout: layout];
+	[layoutContext updateLayoutRecursively: NO];
 
-	/* Sync the persistent frames with the frames just computed by -setLayout: */
+	/* Sync the persistent frames with the frames just computed */
 	FOREACH([layoutContext items], item, ETLayoutItem *)
 	{
 		[item setPersistentFrame: [item frame]];
