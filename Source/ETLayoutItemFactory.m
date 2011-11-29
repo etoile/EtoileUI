@@ -258,11 +258,11 @@ shared style returned by -currentBarElementStyle.  */
 	BOOL isUntitledButtonView = (isButtonView && ([view title] == nil || [[view title] isEqual: @""]));
 	BOOL isImageOnlyButtonView = (isButtonView && isUntitledButtonView && [view image] != nil);
 	BOOL needsButtonBehavior = (isImageOnlyButtonView || nil != [anItem image]);
-	BOOL usesFlexibleWidth = (nil != view && NO == isImageOnlyButtonView);
 
 	if (isImageOnlyButtonView)
 	{
-		[anItem setImage: [(NSButton *)view image]];
+		/* We replace the icon set in -itemWithView: and -buttonWithXXX */
+		[anItem setIcon: [(NSButton *)view image]];
 		[anItem setAction: [(NSControl *)view action]];
 		[anItem setTarget: [(NSControl *)view target]];
 		[anItem setView: nil];
@@ -271,6 +271,11 @@ shared style returned by -currentBarElementStyle.  */
 	{
 		[anItem setActionHandler: [ETButtonItemActionHandler sharedInstance]];
 	}
+
+	// TODO: Might not work well if the button view has a title, because the 
+	// item will be resized to the button size. Not sure it is the best choice.
+	BOOL isLabelled = (aLabel != nil || [aLabel isEqual: @""] == NO);
+	BOOL usesFlexibleWidth = (nil != view || isLabelled);
 
 	if (usesFlexibleWidth)
 	{
