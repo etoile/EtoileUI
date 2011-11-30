@@ -101,19 +101,34 @@ Makes the item view the first responder or the item itself when there is no view
 }
 
 /** <override-dummy />
-Discards any pending changes in the item view. */
+Discards any pending changes in the item view or its enclosing layout view. */
 - (void) discardEditingForItem: (ETLayoutItem *)item
 {
-	[[[item view] ifResponds] discardEditing];
+	id layoutView = [[[item ancestorItemForOpaqueLayout] layout] layoutView];
+
+	if (layoutView != nil)
+	{
+		[[layoutView ifResponds] discardEditing];	
+	}
+	else
+	{
+		[[[item view] ifResponds] discardEditing];
+	}
 }
 
 /** <override-dummy />
-Tries to commit any pending changes in the item view.
+Tries to commit any pending changes in the item view or its enclosing layout view.
 
 Always returns YES when the item has no view. */
 - (BOOL) commitEditingForItem: (ETLayoutItem *)item
 {
-	if ([[item view] respondsToSelector: @selector(commitEditing)])
+	id layoutView = [[[item ancestorItemForOpaqueLayout] layout] layoutView];
+
+	if (layoutView != nil && [layoutView respondsToSelector: @selector(commitEditing)])
+	{
+		return [layoutView commitEditing];
+	}
+	else if ([[item view] respondsToSelector: @selector(commitEditing)])
 	{
 		return [[item view] commitEditing];
 	}
@@ -614,7 +629,17 @@ See also -[ETUIObject commitTrack] and -[COObject commitTrack]. */
 
 	if (track != nil)
 	{
+		ETLayoutItem *persistentRootItem = (ETLayoutItem *)[item rootObject];
+		NSPoint position = [persistentRootItem position];
+
 		[track undo];
+
+		/* When the persistent root item is the window content, the current 
+		   position in the UI takes over the persisted position. */
+		if (persistentRootItem != nil && [persistentRootItem windowItem] != nil)
+		{
+			[persistentRootItem setPosition: position];
+		}
 	}
 	else
 	{
@@ -637,7 +662,17 @@ See also -[ETUIObject commitTrack] and -[COObject commitTrack]. */
 
 	if (track != nil)
 	{
+		ETLayoutItem *persistentRootItem = (ETLayoutItem *)[item rootObject];
+		NSPoint position = [persistentRootItem position];
+
 		[track redo];
+
+		/* When the persistent root item is the window content, the current 
+		   position in the UI takes over the persisted position. */
+		if (persistentRootItem != nil && [persistentRootItem windowItem] != nil)
+		{
+			[persistentRootItem setPosition: position];
+		}
 	}
 	else
 	{

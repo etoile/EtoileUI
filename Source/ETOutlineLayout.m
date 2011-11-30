@@ -174,6 +174,11 @@ expanded and collapsed by getting automatically a related outline arrow. */
 	[self didChangeSelectionInLayoutView];
 }
 
+- (ETLayoutItem *) itemAtRow: (int)rowIndex
+{
+	return [[self outlineView] itemAtRow: rowIndex];
+}
+
 - (BOOL) outlineView: (NSOutlineView *)outlineView
 	shouldEditTableColumn: (NSTableColumn *)column item: (id)item
 {

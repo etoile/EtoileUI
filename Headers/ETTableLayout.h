@@ -66,6 +66,7 @@ descriptor bound to the widget table column will be used (and eventually created
 - (NSTableColumn *) createTableColumnWithIdentifier: (NSString *)property;
 - (BOOL) canRemoveTableColumn: (NSTableColumn *)aTableColumn;
 - (BOOL) prepareTableColumn: (NSTableColumn *)aTableColumn isFirst: (BOOL)isFirstColumn;
+- (ETLayoutItem *) itemAtRow: (int)rowIndex;
 - (id) objectValueForTableColumn: (NSTableColumn *)column 
                              row: (int)rowIndex 
                             item: (ETLayoutItem *)item;

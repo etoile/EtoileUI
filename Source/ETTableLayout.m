@@ -578,6 +578,23 @@ See [(ETColumnFragment)] protocol to customize the returned column. */
 	return [dataCell isEditable];
 }
 
+- (ETLayoutItem *) itemAtRow: (int)rowIndex
+{
+	return [[_layoutContext arrangedItems] objectAtIndex: rowIndex];
+}
+
+- (void) controlTextDidBeginEditing: (NSNotification *)aNotification
+{
+	ETLayoutItem *editedItem = [self itemAtRow: [[self tableView] editedRow]];
+	[editedItem objectDidBeginEditing: [[aNotification userInfo] objectForKey: @"NSFieldEditor"]];
+}
+
+- (void) controlTextDidEndEditing:(NSNotification *)aNotification
+{
+	ETLayoutItem *editedItem = [self itemAtRow: [[self tableView] editedRow]];
+	[editedItem objectDidEndEditing: [[aNotification userInfo] objectForKey: @"NSFieldEditor"]];
+}
+
 /* Cocoa seems to contradict the documentation of -[NSTableView setDoubleAction:] 
    by always disabling all editing if a double action is set. 
    To work around this issue, we override -[ETWidgetLayout doubleClick:] to 
