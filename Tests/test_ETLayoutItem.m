@@ -15,7 +15,6 @@
 #import "ETDecoratorItem.h"
 #import "ETGeometry.h"
 #import "ETLayoutItem.h"
-#import "ETLayoutItem+Reflection.h"
 #import "ETLayoutItemFactory.h"
 #import "ETLayoutExecutor.h"
 #import "ETWindowItem.h"
@@ -261,78 +260,6 @@ static ETLayoutItemFactory *itemFactory = nil;
 	UKObjectsEqual(indexPath10, [item110 indexPathFromItem: item1]);
 	
 	UKObjectsEqual(indexPath0, [item110 indexPathFromItem: item11]);
-}
-
-- (void) testUIMetalevel
-{
-	id item = [itemFactory item];
-	id item1 = [itemFactory itemWithRepresentedObject: nil];
-	id item2 = [itemFactory itemWithRepresentedObject: item1];
-	id item3 = [itemFactory itemWithRepresentedObject: 
-		[NSImage imageNamed: @"NSApplication"]];
-	id item4 = [itemFactory itemWithRepresentedObject: item2];
-	id item5 = [itemFactory itemWithRepresentedObject: 
-		AUTORELEASE([[ETView alloc] initWithFrame: NSMakeRect(0, 0, 100, 50)])];	
-	
-	UKIntsEqual(0, [item UIMetalevel]);
-	UKIntsEqual(0, [item1 UIMetalevel]);
-	UKIntsEqual(1, [item2 UIMetalevel]);
-	UKIntsEqual(0, [item3 UIMetalevel]);
-	UKIntsEqual(2, [item4 UIMetalevel]);
-	UKIntsEqual(1, [item5 UIMetalevel]);
-}
-
-/*  Test tree model:
-
-	- root item					(0)
-		- item 0				(2)
-			- item 00			(1)
-				- item 000		(4)
-					- item 0000	(4)
-					- item 0001	(0)
-				- item 001		(2)
-		- item 1				(0)
-			- item 10			(0)
-		
-	Expected metalayers:
-	- (0) item root, 1, 10
-	- (2) item 0, 00, 001
-	- (4) item 000, 0000, 0001 */
-- (void) testUIMetalayer
-{
-	id itemM0 = [itemFactory item];
-	id itemM1 = [itemFactory itemWithRepresentedObject: itemM0];
-	id itemM2 = [itemFactory itemWithRepresentedObject: itemM1];
-	id itemM3 = [itemFactory itemWithRepresentedObject: itemM2];
-
-	id item = [itemFactory itemGroup];
-	id item0 = [itemFactory itemGroupWithRepresentedObject: itemM1];
-	id item00 = [itemFactory itemGroupWithRepresentedObject: itemM0];
-	id item000 = [itemFactory itemGroupWithRepresentedObject: itemM3];
-	id item0000 = [itemFactory itemWithRepresentedObject: itemM3];
-	id item0001 = [itemFactory item];
-	id item001 = [itemFactory itemWithRepresentedObject: itemM1];
-	id item1 = [itemFactory itemGroup];
-	id item10 = [itemFactory item];
-	
-	[item addItem: item0];
-	[item0 addItem: item00];
-	[item00 addItem: item000];
-	[item000 addItem: item0000];
-	[item000 addItem: item0001];
-	[item00 addItem: item001];
-	[item addItem: item1];
-	[item1 addItem: item10];	
-	
-	UKIntsEqual(0, [item UIMetalayer]);
-	UKIntsEqual(0, [item1 UIMetalayer]);
-	UKIntsEqual(0, [item10 UIMetalayer]);
-	UKIntsEqual(2, [item0 UIMetalayer]);
-	UKIntsEqual(2, [item00 UIMetalayer]);
-	UKIntsEqual(2, [item001 UIMetalayer]);
-	UKIntsEqual(4, [item000 UIMetalayer]);
-	UKIntsEqual(4, [item0000 UIMetalayer]);
-	UKIntsEqual(4, [item0001 UIMetalayer]);
 }
 
 - (void) testSetDecoratorItem

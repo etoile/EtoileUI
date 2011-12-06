@@ -18,7 +18,6 @@
 #import "EtoileUIProperties.h"
 #import "ETTool.h"
 #import "ETViewModelLayout.h"
-#import "ETLayoutItem+Reflection.h"
 #import "ETLayoutItemGroup.h"
 #import "ETOutlineLayout.h"
 #import "ETLayoutItemBuilder.h"
@@ -107,12 +106,10 @@
 	// displayed properties are lost on layout changes (happens only if the 
 	// user wants to customize the inspector UI).
 	[[masterViewItem layout] setDisplayedProperties: 
-		A(kETIconProperty, kETDisplayNameProperty, kETIdentifierProperty, kETUIMetalevelProperty)];
+		A(kETIconProperty, kETDisplayNameProperty, kETIdentifierProperty)];
 	[[masterViewItem layout] setDisplayName: @"Identifier" forProperty: kETIdentifierProperty];
-	[[masterViewItem layout] setDisplayName: @"Meta" forProperty: kETUIMetalevelProperty];
 	[[[masterViewItem layout] columnForProperty: kETDisplayNameProperty] setWidth: 140];
 	[[[masterViewItem layout] columnForProperty: kETIdentifierProperty] setWidth: 120];
-	[[[masterViewItem layout] columnForProperty: kETUIMetalevelProperty] setWidth: 30];
 	[masterViewItem setSource: masterViewItem];
 	[masterViewItem setDelegate: self];
 	[masterViewItem setDoubleAction: @selector(doubleClickInItemGroupView:)];
@@ -183,15 +180,13 @@
 		return;
 
 	NSString *name = [inspectedItem displayName];
-	NSString *inspectorTitle = nil;
 	
 	[self setRepresentedObject: inspectedItem];
 	
 	if ([name length] > 25)
 		name = [[name substringToIndex: 25] stringByAppendingString: @"…"];
-	inspectorTitle = [NSString stringWithFormat: @"%@ (M%d UI)", name,
-		[self UIMetalayer]];
-	[[self window] setTitle: inspectorTitle];
+
+	[[self window] setTitle: name];
 }
 
 - (NSWindow *) window

@@ -57,7 +57,6 @@ extern NSString * const kETSubjectProperty; /** subject property name */
 extern NSString * const kETSubtypeProperty; /** subtype property name */
 extern NSString * const kETTargetProperty; /** actionHandler property name */
 extern NSString * const kETTransformProperty; /** transform property name */
-extern NSString * const kETUIMetalevelProperty; /** UIMetalevel property name */
 extern NSString * const kETUTIProperty; /** UTI property name */
 extern NSString * const kETValueProperty; /** value property name */
 extern NSString * const kETViewProperty; /** view property name */

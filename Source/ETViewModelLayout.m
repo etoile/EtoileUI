@@ -12,7 +12,6 @@
 #import <EtoileFoundation/NSObject+Model.h>
 #import "ETViewModelLayout.h"
 #import "ETLayoutItemBuilder.h"
-#import "ETLayoutItem+Reflection.h"
 #import "ETLayoutItem+Scrollable.h"
 #import "ETLayoutItemGroup.h"
 #import "ETNibOwner.h"
@@ -136,7 +135,7 @@ inspected as model. */
 	ETLayoutItem *contentProxyItem = (ETLayoutItemGroup *)[self layoutContext];
 
 	if ([self shouldInspectRepresentedObjectAsView] 
-	 && [contentProxyItem isMetaLayoutItem])
+	 && [contentProxyItem isMetaItem])
 	{
 		contentProxyItem = [contentProxyItem representedObject];
 	}

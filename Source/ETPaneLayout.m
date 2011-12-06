@@ -14,7 +14,6 @@
 #import "ETGeometry.h"
 #import "ETSelectTool.h"
 #import "ETLayoutItem.h"
-#import "ETLayoutItem+Reflection.h"
 #import "ETLayoutItem+Scrollable.h"
 #import "ETLayoutItemGroup.h"
 #import "ETLineLayout.h"
@@ -601,7 +600,7 @@ item that just got selected and moved into the content item. */
 the real items they currently represent. */
 - (void) endVisitingItem: (ETLayoutItem *)tabItem
 {
-	NSParameterAssert([tabItem isMetaLayoutItem]);
+	NSParameterAssert([tabItem isMetaItem]);
 
 	ETLayoutItem *visitedItem = [tabItem representedObject];
 	unsigned int tabIndex = [[tabItem parentItem] indexOfItem: tabItem];

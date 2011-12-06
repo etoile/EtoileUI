@@ -60,7 +60,6 @@ EtoileUI_HEADER_FILES = \
 	ETLayoutItemGroup+Mutation.h \
 	ETLayoutItem.h \
 	ETLayoutItem+KVO.h \
-	ETLayoutItem+Reflection.h \
 	ETLayoutItem+Scrollable.h \
 	ETLayoutItemFactory.h \
 	ETLineFragment.h \

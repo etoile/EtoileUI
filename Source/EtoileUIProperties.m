@@ -53,7 +53,6 @@ NSString * const kETSubjectProperty = @"subject";
 NSString * const kETSubtypeProperty = @"subtype";
 NSString * const kETTargetProperty = @"target";
 NSString * const kETTransformProperty = @"transform";
-NSString * const kETUIMetalevelProperty = @"UIMetalevel";
 NSString * const kETUTIProperty = @"UTI";
 NSString * const kETValueProperty = @"value";
 NSString * const kETViewProperty = @"view";

@@ -20,7 +20,6 @@
 #import "ETInspector.h"
 #import "ETLayoutItemGroup.h"
 #import "ETLayoutItem+KVO.h"
-#import "ETLayoutItem+Reflection.h"
 #import "ETLayoutItem+Scrollable.h"
 #import "ETLayoutExecutor.h"
 #import "EtoileUIProperties.h"
@@ -436,8 +435,8 @@ Default values will be copied but not individually (shallow copy). */
 	NSString *desc = [super description];
 
 #ifdef DETAILED_DESCRIPTION	
-	desc = [@"<" stringByAppendingFormat: @"%@ meta: %d id: %@, ipath: %@, "
-		@"selected: %d, repobject: %@ view: %@ frame %@>", desc, [self UIMetalevel], 
+	desc = [@"<" stringByAppendingFormat: @"%@ id: %@, ipath: %@, "
+		@"selected: %d, repobject: %@ view: %@ frame %@>", desc, 
 		[self identifier], [self indexPath], [self isSelected], 
 		[[self representedObject] primitiveDescription], [self view], 
 		NSStringFromRect([self frame])];
@@ -835,6 +834,19 @@ You shouldn't have to use this method a lot since -valueForProperty: and
 	return (nil != _representedObject ? _representedObject : (id)self);
 }
 
+/** Returns whether the represented object is ETLayoutItem object or not. */
+- (BOOL) isMetaItem
+{
+	// FIXME: Defining the item as a meta item when a view is the represented 
+	// object allows to read and write view values when the item is modified
+	// with PVC. If the item is declared as a normal item, PVC will apply to
+	// the item itself for all properties common to NSView and ETLayoutItem 
+	// (mostly frame related properties).
+	// See also -valueForProperty and -setValue:forProperty:
+	return ([[self representedObject] isKindOfClass: [ETLayoutItem class]]
+		|| [[self representedObject] isKindOfClass: [NSView class]]);
+}
+
 - (void) syncView: (NSView *)aView withValue: (id)newValue
 {
 	if (nil == aView || NO == [aView isWidget])
@@ -868,7 +880,7 @@ by NSObject+Model in EtoileFoundation. */
 on screen by the receiver.
 
 Take note modelObject can be any objects including an ETLayoutItem instance, in 
-this case the receiver becomes a meta item and returns YES for -isMetaLayoutItem.
+this case the receiver becomes a meta item and returns YES for -isMetaItem.
 
 The item view is also synchronized with the object value of the given represented 
 object when the view is a widget. */
@@ -2732,7 +2744,7 @@ image should not be expected to be nil. */
 // eliminate the lack of symetry between -icon and -setIcon:.
 /** Returns the image to be displayed when the receiver must be represented in a 
 symbolic style. This icon is commonly used by some layouts and also if the 
-receiver represents another layout item (when -isMetaLayoutItem returns YES).
+receiver represents another layout item (when -isMetaItem returns YES).
 
 By default, this method returns by decreasing order of priority:
 <enum>
