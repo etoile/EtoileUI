@@ -36,6 +36,9 @@
 #define SA(x) [NSSet setWithArray: x]
 #define UKPropertiesEqual(a, b, property) \
 	printf("Test copy '%s'\n", [property UTF8String]); UKObjectsEqual(a, b); 
+// NOTE: We abuse UKObjectsSame() by using it to test boolean property equality
+#define UKPropertiesSame(a, b, property) \
+	printf("Test copy '%s'\n", [property UTF8String]); UKObjectsSame(a, b);
 
 @interface ETOutlineLayout (Private)
 - (NSOutlineView *) outlineView;
@@ -126,29 +129,47 @@ DEALLOC(DESTROY(itemFactory); DESTROY(item); DESTROY(itemGroup))
 	}
 }
 
+- (NSArray *) basicNilItemProperties
+{
+	return  A(kETBaseItemProperty, kETRootItemProperty, kETIdentifierProperty, 
+		kETValueProperty, kETStyleProperty, @"targetId", @"viewTargetId", kETInspectorProperty);
+}
+
 - (NSArray *) defaultNilItemProperties
 {
-	return A(kETNameProperty, kETIconProperty, kETIdentifierProperty, 
-		kETImageProperty, kETStyleProperty,kETRepresentedObjectProperty, 
-		kETSubtypeProperty, kETActionProperty, 
-		kETTargetProperty);
+	return [A(kETNameProperty, kETIconProperty,  kETImageProperty, 
+		kETRepresentedObjectProperty, kETSubjectProperty, kETSubtypeProperty, 
+		kETActionProperty, kETTargetProperty) arrayByAddingObjectsFromArray: [self basicNilItemProperties]];
 }
 
 - (NSArray *) nonEqualItemProperties
 {
 	return A(kETDisplayNameProperty, kETDecoratorItemProperty, 
 		kETDecoratedItemProperty, @"firstDecoratedItem", @"lastDecoratorItem", 
-		@"enclosingItem", @"supervisorView", kETViewProperty, 
-		kETParentItemProperty, kETStyleGroupProperty, kETLayoutProperty,
+		@"enclosingItem", @"supervisorView", kETViewProperty, kETNextResponderProperty, 
+		kETParentItemProperty, kETRootItemProperty, kETStyleGroupProperty, kETLayoutProperty,
 		kETCoverStyleProperty, kETActionHandlerProperty);
+}
+
+- (NSArray *) identicalItemProperties
+{
+	return A(@"shouldSyncSupervisorView");
+}
+
+- (NSArray *) nonIdenticalItemProperties
+{
+	return A(@"shouldSyncSupervisorView");
 }
 
 - (void) testBasicItemCopy
 {
 	NSArray *properties = [self checkablePropertiesForItem: item];
 	NSArray *nilProperties = [self defaultNilItemProperties];
+	NSArray *nonIdenticalProperties = [self nonIdenticalItemProperties];
+	NSArray *nonEqualOrIdenticalProperties = [[self nonEqualItemProperties] 
+		arrayByAddingObjectsFromArray: nonIdenticalProperties];
 	NSArray *equalProperties = [properties arrayByRemovingObjectsInArray: 
-		[[self nonEqualItemProperties] arrayByAddingObjectsFromArray: nilProperties]];
+		[nonEqualOrIdenticalProperties arrayByAddingObjectsFromArray: nilProperties]];
 
 	ETLayoutItem *newItem = [item copy];
 
@@ -186,9 +207,12 @@ DEALLOC(DESTROY(itemFactory); DESTROY(item); DESTROY(itemGroup))
 	//[[item decoratorItem] setDecoratorItem: [ETWindowItem item]];
 
 	NSArray *properties = [self checkablePropertiesForItem: item];
-	NSArray *nilProperties = A(kETStyleProperty);
+	NSArray *nilProperties = [self basicNilItemProperties];
+	NSArray *nonIdenticalProperties = [self nonIdenticalItemProperties];
+	NSArray *nonEqualOrIdenticalProperties = [[self nonEqualItemProperties] 
+		arrayByAddingObjectsFromArray: nonIdenticalProperties];
 	NSArray *equalProperties = [properties arrayByRemovingObjectsInArray: 
-		[[self nonEqualItemProperties] arrayByAddingObjectsFromArray: nilProperties]];
+		[nonEqualOrIdenticalProperties arrayByAddingObjectsFromArray: nilProperties]];
 
 	ETLayoutItem *newItem = [item copy];
 
@@ -221,12 +245,12 @@ DEALLOC(DESTROY(itemFactory); DESTROY(item); DESTROY(itemGroup))
 - (NSArray *) defaultNilItemGroupProperties
 {
 	return [[self defaultNilItemProperties] arrayByAddingObjectsFromArray:
-		A(kETDelegateProperty, kETSourceProperty, kETDoubleClickedItemProperty)];
+		A(kETDelegateProperty, kETSourceProperty, kETDoubleClickedItemProperty, @"doubleAction")];
 }
 
 - (NSArray *) nonEqualItemGroupProperties
 {
-	return [[self nonEqualItemProperties] arrayByAddingObjectsFromArray: A(kETControllerProperty)];
+	return [[self nonEqualItemProperties] arrayByAddingObjectsFromArray: A(@"items", kETControllerProperty)];
 }
 
 - (void) testBasicItemGroupCopy
@@ -237,8 +261,11 @@ DEALLOC(DESTROY(itemFactory); DESTROY(item); DESTROY(itemGroup))
 
 	NSArray *properties = [self checkablePropertiesForItem: itemGroup];
 	NSArray *nilProperties = [self defaultNilItemGroupProperties];
+	NSArray *nonIdenticalProperties = [self nonIdenticalItemProperties];
+	NSArray *nonEqualOrIdenticalProperties = [[self nonEqualItemGroupProperties] 
+		arrayByAddingObjectsFromArray: nonIdenticalProperties];
 	NSArray *equalProperties = [properties arrayByRemovingObjectsInArray: 
-		[[self nonEqualItemGroupProperties] arrayByAddingObjectsFromArray: nilProperties]];
+		[nonEqualOrIdenticalProperties arrayByAddingObjectsFromArray: nilProperties]];
 
 	FOREACH(equalProperties, property, NSString *)
 	{
@@ -289,9 +316,13 @@ DEALLOC(DESTROY(itemFactory); DESTROY(item); DESTROY(itemGroup))
 	ETLayoutItemGroup *newItemGroup = [itemGroup copy];
 
 	NSArray *properties = [self checkablePropertiesForItem: itemGroup];
-	NSArray *nilProperties = A(kETDoubleClickedItemProperty, kETIdentifierProperty, kETStyleProperty);
+	NSArray *nilProperties = [[self basicNilItemProperties] 
+		arrayByAddingObjectsFromArray: A(kETDoubleClickedItemProperty,  @"doubleAction")];
+	NSArray *nonIdenticalProperties = [self nonIdenticalItemProperties];
+	NSArray *nonEqualOrIdenticalProperties = [[self nonEqualItemGroupProperties] 
+		arrayByAddingObjectsFromArray: nonIdenticalProperties];
 	NSArray *equalProperties = [properties arrayByRemovingObjectsInArray: 
-		[[self nonEqualItemGroupProperties] arrayByAddingObjectsFromArray: nilProperties]];
+		[nonEqualOrIdenticalProperties arrayByAddingObjectsFromArray: nilProperties]];
 
 	// FIXME: -hasVerticallScroller automatically creates a cached scrollable
 	// area item and is called -[ETWidgetLayout syncLayoutViewWithItem:].

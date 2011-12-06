@@ -52,8 +52,9 @@ See +[ETLayoutItemGroup compoundDocumentWithEditingContext:] and
 - (ETLayoutItemGroup *) compoundDocument;
 /** Creates a compound document in the given editing context.
 
-A compound document is ETLayoutItemGroup instance inserted inside a 
-COEditingContext and marked as a root object.
+A compound document is ETLayoutItemGroup instance bound to a ETCompoundDocument 
+entity description, inserted inside a COEditingContext and marked as a root 
+object.
 
 When added to a compound document, any descendant item and its subtree become 
 embedded core objects. */

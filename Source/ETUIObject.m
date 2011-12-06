@@ -8,6 +8,8 @@
 
 #import <EtoileFoundation/Macros.h>
 #import <EtoileFoundation/ETCollection.h>
+#import <EtoileFoundation/ETEntityDescription.h>
+#import <EtoileFoundation/ETModelDescriptionRepository.h>
 #import <EtoileFoundation/NSObject+Model.h>
 #import "ETUIObject.h"
 #import "ETCompatibility.h"
@@ -190,6 +192,34 @@ by invoking the invocation. */
 - (NSInvocation *) initInvocationForCopyWithZone: (NSZone *)aZone
 {
 	return nil;
+}
+
+// FIXME: Horrible hack to return -[NSObject(Model) propertyNames] rather than 
+// letting COObject returns redundant entity-declared properties.
+// Allow EtoileUI test suite to pass all tests (it doesn't work well when 
+// -propertyNames returns redundant properties).
+- (NSArray *) NSObjectPropertyNames
+{
+	return [NSArray arrayWithObjects: @"icon", @"displayName", @"className", 
+		@"stringValue", @"objectValue", @"isCollection", @"isGroup", 
+		@"isMutable", @"isMutableCollection", @"isCommonObjectValue", 
+		@"isNumber", @"isString", @"isClass", @"description", 
+		@"primitiveDescription", nil];
+}
+
+- (ETEntityDescription *) entityDescription
+{
+#ifdef OBJECTMERGING
+	 return [super entityDescription];
+#else
+	 return [[ETModelDescriptionRepository mainRepository] entityDescriptionForClass: [self class]];
+#endif
+}
+
+- (NSArray *) propertyNames
+{
+	return [[self NSObjectPropertyNames] 
+		arrayByAddingObjectsFromArray: [[self entityDescription] allPropertyDescriptionNames]];
 }
 
 /** Returns a dictionary representation of every property/value pairs not stored 

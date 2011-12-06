@@ -37,4 +37,19 @@
 
 @end
 
+@implementation ETShape (CoreObject)
+
+- (NSValue *) serializedPathResizeSelector
+{
+	SEL sel = [self pathResizeSelector];
+	return [NSValue valueWithBytes: &sel objCType: @encode(SEL)];
+}
+
+- (void) setSerializedPathResizeSelector: (NSValue *)value
+{
+	[self setPathResizeSelector: (SEL)[value pointerValue]];
+}
+
+@end
+
 #endif

@@ -66,12 +66,12 @@
 	return nil;
 }
 
-- (NSString *) targetId
+- (NSString *) serializedTargetId
 {
 	return [self targetIdForTarget: [self target]];
 }
 
-- (void) setTargetId: (NSString *)anId
+- (void) setSerializedTargetId: (NSString *)anId
 {
 	if (anId == nil)
 		return;
@@ -81,12 +81,12 @@
 	[_variableStorage setObject: anId forKey: @"targetId"];
 }
 
-- (NSString *) viewTargetId
+- (NSString *) serializedViewTargetId
 {
 	return [self targetIdForTarget: [[[self view] ifResponds] target]];
 }
 
-- (void) setViewTargetId: (NSString *)anId
+- (void) setSerializedViewTargetId: (NSString *)anId
 {
 	if (anId == nil)
 		return;
@@ -189,7 +189,7 @@
 	[[self layout] becomePersistentInContext: aContext rootObject: aRootObject];
 }
 
-- (void) setItems: (NSArray *)items
+- (void) setSerializedItems: (NSArray *)items
 {
 	DESTROY(_layoutItems);
 	_layoutItems = [items mutableCopy];
@@ -207,7 +207,7 @@
 - (ETLayoutItemGroup *) compoundDocumentWithEditingContext: (COEditingContext *)aCtxt
 {
 	COEditingContext *ctxt = (aCtxt != nil ? aCtxt : [COEditingContext currentContext]);
-	return [ctxt insertObjectWithClass: [ETLayoutItemGroup class]];
+	return [ctxt insertObjectWithEntityName: @"ETCompoundDocument"];
 }
 
 @end

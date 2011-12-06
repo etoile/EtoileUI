@@ -15,11 +15,16 @@
 #import "ETItemTemplate.h"
 #import "ETLayoutItem.h"
 #import "ETLayoutItemGroup.h"
+#import "ETLayoutItemFactory.h"
 #import "ETPickDropActionHandler.h" /* For ETUndeterminedIndex */
+#import "ETTableLayout.h"
+#import "ETOutlineLayout.h"
 #import "ETTool.h"
 #import "NSObject+EtoileUI.h"
 #import "ETCompatibility.h"
-
+#ifdef OBJECTMERGING
+#import <ObjectMerging/COHistoryTrack.h>
+#endif
 
 @implementation ETDocumentController
 
@@ -313,7 +318,30 @@ See also [ETDocumentCreation] protocol. */
 
 - (IBAction) browseDocumentHistory: (id)sender
 {
-	// TODO: Implement
+#ifdef OBJECTMERGING
+	COHistoryTrack *track = [[COHistoryTrack alloc] initTrackWithObject: [self activeItem] 
+	                                                   containedObjects: YES];
+	//ETLayoutItemGroup *browser = [[ETLayoutItemFactory factory] itemGroupWithRepresentedObject: track];
+	ETLayoutItemGroup *browser = [[ETLayoutItemFactory factory] itemGroupWithRepresentedObject: [[[track nodes] mappedCollection] underlyingRevision]];
+	ETOutlineLayout *layout = [ETOutlineLayout layout];
+
+	[layout setContentFont: [NSFont controlContentFontOfSize: [NSFont smallSystemFontSize]]];
+	[layout setDisplayedProperties: A(@"revisionNumber", @"UUID", @"type", @"date", @"objectUUID", @"properties")];
+	[layout setDisplayName: @"Revision Number" forProperty: @"revisionNumber"];
+	[layout setDisplayName: @"Revision UUID" forProperty: @"UUID"];
+	[layout setDisplayName: @"Date" forProperty: @"date"];
+	[layout setDisplayName: @"Type" forProperty: @"type"];
+	[layout setDisplayName: @"Object UUID" forProperty: @"objectUUID"];
+	[layout setDisplayName: @"Properties" forProperty: @"properties"];
+	[[layout columnForProperty: @"properties"] setWidth: 200];
+
+	[browser setSource: browser];
+	[browser setLayout: layout];
+	[browser setSize: NSMakeSize(700, 400)];
+	[browser reload];
+
+	[[[ETLayoutItemFactory factory] windowGroup] addItem: browser];
+#endif
 }
 
 - (IBAction) close: (id)sender

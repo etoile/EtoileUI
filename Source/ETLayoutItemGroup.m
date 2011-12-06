@@ -163,7 +163,7 @@ The returned copy is mutable because ETLayoutItemGroup cannot be immutable. */
 
 	/* We copy all primitive ivars except _reloading and _changingSelection */
 
-	item->_doubleClickAction = _doubleClickAction;
+	item->_doubleAction = _doubleAction;
 	/* Must follow -setLayout: to ensure autolayout is disabled in the copy when -setLayout: is called */
 	item->_autolayout = _autolayout;
 	item->_usesLayoutBasedFrame = _usesLayoutBasedFrame;
@@ -280,16 +280,6 @@ The returned copy is mutable because ETLayoutItemGroup cannot be immutable. */
 	//	[itemCopy controller], self, [self controller], copyDepth);
 
 	return itemCopy;
-}
-
-/* Property Value Coding */
-
-- (NSArray *) propertyNames
-{
-	NSArray *properties = A(kETSourceProperty, kETDelegateProperty, 
-		kETItemScaleFactorProperty, kETDoubleClickedItemProperty);
-
-	return [[super propertyNames] arrayByAddingObjectsFromArray: properties];
 }
 
 /** Returns YES. An ETLayoutItemGroup is always a group and a collection by 
@@ -1659,7 +1649,7 @@ can be retrieved by calling -doubleClickedItem on the sender in your action
 method. */
 - (void) setDoubleAction: (SEL)selector
 {
-	_doubleClickAction = selector;
+	_doubleAction = selector;
 	[[self layout] syncLayoutViewWithItem: self];
 }
 
@@ -1669,7 +1659,7 @@ double click within the receiver area.
 See also -setDoubleAction:. */
 - (SEL) doubleAction
 {
-	return _doubleClickAction;
+	return _doubleAction;
 }
 
 /** Returns the last child item on which a double click occurs. */

@@ -207,7 +207,6 @@ and centers it. A strech is a scale that doesn't preserve the content proportion
 
 - (id) valueForProperty: (NSString *)key;
 - (BOOL) setValue: (id)value forProperty: (NSString *)key;
-- (NSArray *) propertyNames;
 
 - (BOOL) isLayoutItem;
 - (BOOL) isGroup;

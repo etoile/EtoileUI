@@ -1195,22 +1195,6 @@ See -valueForProperty: for more details. */
 	return result;
 }
 
-- (NSArray *) propertyNames
-{
-	NSArray *properties = A(kETIdentifierProperty, kETNameProperty, kETXProperty, kETYProperty, 
-		kETWidthProperty, kETHeightProperty, kETViewProperty, kETSelectedProperty, 
-		kETLayoutProperty, kETStyleGroupProperty, kETStyleProperty, 
-		kETCoverStyleProperty, kETImageProperty, kETFrameProperty, 
-		kETRepresentedObjectProperty, 
-		kETParentItemProperty, kETAutoresizingMaskProperty, 
-		kETBoundingBoxProperty, kETActionProperty, kETSubtypeProperty, 
-		kETTargetProperty, kETUIMetalevelProperty, @"UIMetalayer");
-
-	properties = [[[self variableStorage] allKeys] arrayByAddingObjectsFromArray: properties];
-		
-	return [[super propertyNames] arrayByAddingObjectsFromArray: properties];
-}
-
 /** Returns YES, see [NSObject(EtoileUI) -isLayoutItem] */
 - (BOOL) isLayoutItem
 {
@@ -3055,7 +3039,7 @@ See also -objectDidEndEditing:. */
 {
 	// NOTE: We implement NSEditorRegistration to allow the view which are 
 	// bound to an item with -bind:toObject:XXX to notify the controller transparently.
-	[[[self baseItem] controller] objectDidBeginEditing: anEditor];
+	[[[self baseItem] controller] objectDidBeginEditing: self];
 }
 
 /** Notifies the item the editing underway ended.
@@ -3069,7 +3053,7 @@ You must invoke it in an action handler method when you have previously call
 See also -objectDidBeginEditing:. */
 - (void) objectDidEndEditing: (id)anEditor
 { 	
-	[[[self baseItem] controller] objectDidEndEditing: anEditor];
+	[[[self baseItem] controller] objectDidEndEditing: self];
 }
 
 /** Returns the custom inspector associated with the receiver. By default, 

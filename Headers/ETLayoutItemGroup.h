@@ -28,7 +28,7 @@
 	NSArray *_arrangedItems;
 	ETLayout *_layout;
 	NSImage *_cachedDisplayImage;
-	SEL _doubleClickAction;
+	SEL _doubleAction;
 	BOOL _autolayout;
 	BOOL _usesLayoutBasedFrame;
 	BOOL _reloading; /* ivar used by ETMutationHandler category */

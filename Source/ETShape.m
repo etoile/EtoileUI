@@ -139,25 +139,6 @@ See also -[ETUIObject copyWithZone:copier:isAliasedCopy:]. */
 	return newShape;
 }
 
-- (id) valueForUndefinedKey: (NSString *)key
-{
-	if ([key isEqualToString: @"pathResizeSelector"])
-	{
-		SEL sel = [self pathResizeSelector];
-		return [NSValue valueWithBytes: &sel objCType: @encode(SEL)];
-	}
-	return [super valueForUndefinedKey: key];
-}
-
-- (void) setValue: (id)value forUndefinedKey: (NSString *)key
-{
-	if ([key isEqualToString: @"pathResizeSelector"])
-	{
-		[self setPathResizeSelector: (SEL)[value pointerValue]];
-	}
-	[super setValue: value forUndefinedKey: key];
-}
-
 - (NSImage *) icon
 {
 	return _icon;
