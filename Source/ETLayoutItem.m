@@ -2851,6 +2851,41 @@ item backed either, returns nil. */
 	}
 }
 
+/* Filtering */
+
+- (BOOL) matchesPredicate: (NSPredicate *)aPredicate
+{
+	id subject = [self subject];
+	BOOL isValidMatch = NO;
+
+	@try
+	{
+		// TODO: Better custom evaluation with a wrapper object that 
+		// redirects -valueForKeyPath: use to -valueForProperty: on the 
+		// common object value or dev collection (such as NSArray, NSSet etc.). 
+		// Add -propertyAccessingProxy to NSObject to return this wrapper object.
+		// Take note that NSPredicate cannot be told to use -valueForProperty:.
+		if ([subject isCommonObjectValue])
+		{
+			isValidMatch = [aPredicate evaluateWithObject: self];
+		}
+		else
+		{
+			isValidMatch = [aPredicate evaluateWithObject: subject];
+		}
+	}
+	@catch (NSException *exception)
+	{
+		if ([[exception name] isEqualToString: NSUndefinedKeyException])
+		{
+			return NO;
+		}
+		@throw;
+	}
+
+	return isValidMatch;
+}
+
 /* Events & Actions */
 
 /** Returns the action handler associated with the receiver. See ETTool to 

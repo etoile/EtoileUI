@@ -324,6 +324,10 @@ and centers it. A strech is a scale that doesn't preserve the content proportion
                     boundsSize: (NSSize)maxSize;
 - (void) sizeToFit;
 
+/** @taskunit Filtering */
+
+- (BOOL) matchesPredicate: (NSPredicate *)aPredicate;
+
 /* Events & Actions */
 
 - (id) actionHandler;

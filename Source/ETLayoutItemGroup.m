@@ -1569,6 +1569,25 @@ redisplayed. */
 	}
 }
 
+// TODO: We could improve -[NSArray filterWithPredicate:ignoringObjects:] to 
+// to support the custom evaluator (here -matchesPredicate:).
+- (NSArray *) filteredItemsWithItems: (NSArray *)itemsToFilter
+                      usingPredicate: (NSPredicate *)aPredicate
+                       ignoringItems: (NSSet *)ignoredItems
+{
+	NSMutableArray *newArray = [NSMutableArray arrayWithCapacity: [itemsToFilter count]];
+
+	for (ETLayoutItem *item in itemsToFilter)
+	{
+		if ([ignoredItems containsObject: item] || [item matchesPredicate: aPredicate])
+		{
+			[newArray addObject: item];
+		}
+	}
+
+	return newArray;
+}
+
 - (void) filterWithPredicate: (NSPredicate *)predicate recursively: (BOOL)recursively
 {
 	NSArray *itemsToFilter = (_sorted ? _sortedItems : _layoutItems);
@@ -1601,8 +1620,9 @@ redisplayed. */
 
 	if (hasValidPredicate)
 	{
-		ASSIGN(_arrangedItems, [itemsToFilter filteredArrayUsingPredicate: predicate
-		                                                  ignoringObjects: itemsWithMatchingDescendants]);
+		ASSIGN(_arrangedItems, [self filteredItemsWithItems: itemsToFilter
+		                                     usingPredicate: predicate
+		                                      ignoringItems: itemsWithMatchingDescendants]);
 		_filtered = YES;
 		_hasNewArrangement = YES;
 	}
