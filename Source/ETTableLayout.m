@@ -586,13 +586,13 @@ See [(ETColumnFragment)] protocol to customize the returned column. */
 - (void) controlTextDidBeginEditing: (NSNotification *)aNotification
 {
 	ETLayoutItem *editedItem = [self itemAtRow: [[self tableView] editedRow]];
-	[editedItem objectDidBeginEditing: [[aNotification userInfo] objectForKey: @"NSFieldEditor"]];
+	[editedItem objectDidBeginEditing: [self tableView]];
 }
 
 - (void) controlTextDidEndEditing:(NSNotification *)aNotification
 {
-	ETLayoutItem *editedItem = [self itemAtRow: [[self tableView] editedRow]];
-	[editedItem objectDidEndEditing: [[aNotification userInfo] objectForKey: @"NSFieldEditor"]];
+	/* See -tableView:setObjectValue:forTableColumn:row, or its equivalent in 
+	   NSOutlineView, which will invoke -objectDidEndEditing: */
 }
 
 /* Cocoa seems to contradict the documentation of -[NSTableView setDoubleAction:] 
@@ -715,7 +715,13 @@ compatible with the cell used at the given row/column intersection.  */
 	BOOL blankColumnIdentifier = [column identifier] == nil || [[column identifier] isEqual: @""];
 	
 	if (result == NO && ([tv numberOfColumns] == 1 || blankColumnIdentifier))
+	{
 		[item setValue: value];
+	}
+
+	ETLayoutItem *editedItem = [self itemAtRow: [tv editedRow]];
+
+	[editedItem objectDidEndEditing: tv];
 }
 
 /** Returns YES. See [NSObject(ETLayoutPickAndDropIntegration)] protocol.

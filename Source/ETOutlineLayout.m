@@ -293,7 +293,13 @@ expanded and collapsed by getting automatically a related outline arrow. */
 	BOOL blankColumnIdentifier = [column identifier] == nil || [[column identifier] isEqual: @""];
 	
 	if (result == NO && ([[self outlineView] numberOfColumns] == 1 || blankColumnIdentifier))
+	{
 		[item setValue: value];
+	}
+
+	ETLayoutItem *editedItem = [self itemAtRow: [outlineView editedRow]];
+
+	[editedItem objectDidEndEditing: outlineView];
 
 	//ETLog(@"Sets %@ as object value in outline view %@", value, outlineView);
 }

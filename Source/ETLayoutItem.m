@@ -3084,6 +3084,7 @@ editing termination by the controller.<br />
 See also -objectDidEndEditing:. */
 - (void) objectDidBeginEditing: (id)anEditor
 {
+	NSParameterAssert(anEditor != nil);
 	// NOTE: We implement NSEditorRegistration to allow the view which are 
 	// bound to an item with -bind:toObject:XXX to notify the controller transparently.
 	[[[self baseItem] controller] objectDidBeginEditing: self];
@@ -3100,6 +3101,7 @@ You must invoke it in an action handler method when you have previously call
 See also -objectDidBeginEditing:. */
 - (void) objectDidEndEditing: (id)anEditor
 { 	
+	NSParameterAssert(anEditor != nil);
 	[[[self baseItem] controller] objectDidEndEditing: self];
 }
 
