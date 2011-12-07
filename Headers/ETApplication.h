@@ -93,6 +93,7 @@ enum
 {
 	ETDevelopmentMenuTag = 30000,
 	ETDocumentMenuTag,
+	ETObjectMenuTag, /* Used in Object Managers */
 	ETEditMenuTag,
 	ETInsertMenuTag,
 	ETArrangeMenuTag, 
