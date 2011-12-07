@@ -237,7 +237,7 @@ See also -currentObjectType. */
 	ETLayoutItem *item = AUTORELEASE([self newItemWithURL: nil 
 	                                               ofType: [self currentObjectType] 
 	                                              options: options]);
-	[self insertObject: item atIndex: ETUndeterminedIndex];
+	[self insertItem: item atIndex: ETUndeterminedIndex];
 	_numberOfUntitledDocuments++;
 	[self didCreateDocumentItem: item];
 }
@@ -270,7 +270,7 @@ See also [ETDocumentCreation] protocol. */
 		}
 		// NOTE: When -openItemWithURL:options: returns an item already opened,
 		// we move it to the front too.
-		[self insertObject: openedItem atIndex: ETUndeterminedIndex];
+		[self insertItem: openedItem atIndex: ETUndeterminedIndex];
 	}
 
 	/* Highlight the last opened item (e.g. in a table layout) */	

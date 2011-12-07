@@ -530,7 +530,7 @@ See -newItemWithURL:ofType:options and ETItemTemplate. */
 /** Creates a new object by calling -newItemWithURL:ofType:options: and adds it to the content. */
 - (void) add: (id)sender
 {
-	[self insertObject: AUTORELEASE([self newItemWithURL: nil ofType: [self currentObjectType] options: nil])
+	[self insertItem: AUTORELEASE([self newItemWithURL: nil ofType: [self currentObjectType] options: nil])
 	       atIndexPath: [self additionIndexPath]];
 	
 }
@@ -538,7 +538,7 @@ See -newItemWithURL:ofType:options and ETItemTemplate. */
 /** Creates a new object group by calling -newItemWithURL:ofType:options: and adds it to the content. */
 - (void) addNewGroup: (id)sender
 {
-	[self insertObject: AUTORELEASE([self newItemWithURL: nil ofType: kETTemplateGroupType options: nil])
+	[self insertItem: AUTORELEASE([self newItemWithURL: nil ofType: kETTemplateGroupType options: nil])
 	       atIndexPath: [self additionIndexPath]];
 }
 
@@ -546,7 +546,7 @@ See -newItemWithURL:ofType:options and ETItemTemplate. */
 -insertionIndex. */
 - (void) insert: (id)sender
 {
-	[self insertObject: AUTORELEASE([self newItemWithURL: nil ofType: [self currentObjectType] options: nil])
+	[self insertItem: AUTORELEASE([self newItemWithURL: nil ofType: [self currentObjectType] options: nil])
 	       atIndexPath: [self insertionIndexPath]];
 }
 
@@ -554,7 +554,7 @@ See -newItemWithURL:ofType:options and ETItemTemplate. */
 content at -insertionIndex. */
 - (void) insertNewGroup: (id)sender
 {
-	[self insertObject: AUTORELEASE([self newItemWithURL: nil ofType: kETTemplateGroupType options: nil])
+	[self insertItem: AUTORELEASE([self newItemWithURL: nil ofType: kETTemplateGroupType options: nil])
 	       atIndexPath: [self insertionIndexPath]];
 }
 
@@ -763,7 +763,7 @@ a layout item based on the receiver template.
 
 You can pass ETUndeterminedIndex to trigger -[ETLayoutItemGroup addObject:] on 
 the content rather than -[ETLayoutItemGroup insertObject:atIndex:].  */
-- (void) insertObject: (id)anItem atIndex: (NSUInteger)anIndex
+- (void) insertItem: (ETLayoutItem *)anItem atIndex: (NSUInteger)anIndex
 {
 	ETAssert(nil != [self content]);
 
@@ -806,7 +806,7 @@ a layout item based on the receiver template.
 
 You can pass nil to trigger -[ETLayoutItemGroup addObject:] on 
 the content rather than -[ETLayoutItemGroup insertObject:atIndex:].  */
-- (void) insertObject: (id)anItem atIndexPath: (NSIndexPath *)anIndexPath
+- (void) insertItem: (ETLayoutItem *)anItem atIndexPath: (NSIndexPath *)anIndexPath
 {
 	NSIndexPath *selectionIndexPath = anIndexPath;
 
