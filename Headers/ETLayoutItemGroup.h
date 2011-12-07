@@ -143,6 +143,7 @@
 
 - (NSArray *) selectedItems;
 - (NSArray *) selectedItemsInLayout;
+- (void) setSelectedItems: (NSArray *)items;
 
 /* Sorting and Filtering */
 

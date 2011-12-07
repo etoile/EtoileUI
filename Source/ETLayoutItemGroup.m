@@ -1514,6 +1514,15 @@ You should call this method to obtain the selection in most cases and not
 	}
 }
 
+/** Sets the selected items in the layout item subtree attached to the receiver. 
+
+Posts an ETItemGroupSelectionDidChangeNotification and marks the receiver to be 
+redisplayed. */
+- (void) setSelectedItems: (NSArray *)items
+{
+	[self setSelectionIndexPaths: (id)[[items mappedCollection] indexPathFromItem: self]];
+}
+
 /* Sorting and Filtering */
 
 - (void) sortWithSortDescriptors: (NSArray *)sortDescriptors recursively: (BOOL)recursively
