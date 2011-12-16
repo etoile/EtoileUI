@@ -50,11 +50,12 @@
 		[ETPropertyDescription descriptionWithName: @"content" type: (id)@"ETLayoutItemGroup"];
 	[content setOpposite: (id)@"ETLayoutItemGroup.controller"];
 
-	/* Transient properties
+	/* Transient ivars
 	   content (weak ref) */
+	NSArray *persistentProperties = A(content);
 
-	[entity setPropertyDescriptions: A(content)];
-
+	[[persistentProperties mappedCollection] setPersistent: YES];
+	[entity setPropertyDescriptions: persistentProperties];
 
 	return entity;
 }

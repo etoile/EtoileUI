@@ -13,6 +13,7 @@
 #import <ObjectMerging/COEditingContext.h>
 #import <ObjectMerging/COObject.h>
 #import "ETLayoutItem+CoreObject.h"
+#import "ETView.h"
 #import "NSObject+EtoileUI.h"
 #import "NSView+Etoile.h"
 
@@ -120,10 +121,21 @@
 	}
 }
 
+- (void) setSerializedView: (NSView *)newView
+{
+	/* We use -setView: to recreate supervisorView which is transient and set 
+	   up the state and object value observers.
+	   
+	   Will involve a unnecessary -syncView:withRepresentedObject: call. */
+	[self setView: newView];
+}
+
 - (void) awakeFromFetch
 {
 	// TODO: May be reset the bounding box if not persisted
 	//_boundingBox = ETNullRect;
+
+	/* Restore target and action on both the receiver item and its view */
 
 	NSString *targetId = [_variableStorage objectForKey: @"targetId"];
 	NSString *viewTargetId = [_variableStorage objectForKey: @"viewTargetId"];
