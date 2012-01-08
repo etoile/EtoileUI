@@ -14,6 +14,9 @@
 #import "ETCompatibility.h"
 
 #pragma GCC diagnostic ignored "-Wprotocol"
+// TODO: Once a new Gui release has been made, we can remove our 
+// -setSubviews: implementation
+#pragma GCC diagnostic ignored "-Wobjc-protocol-method-implementation"
 
 @implementation NSView (Etoile)
 
