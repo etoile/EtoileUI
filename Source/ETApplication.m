@@ -619,7 +619,7 @@ menu bar, otherwise builds a new instance and returns it. */
 	[menu addItemWithTitle: _(@"Special Characters")
 	                action: @selector(selectAll:)
 	         keyEquivalent: @"t"];
-	[[menu lastItem] setKeyEquivalentModifierMask: NSCommandKeyMask & NSAlternateKeyMask];
+	[[menu lastItem] setKeyEquivalentModifierMask: NSCommandKeyMask | NSAlternateKeyMask];
 
 	return menuItem;
 }
