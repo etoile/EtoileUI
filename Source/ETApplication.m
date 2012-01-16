@@ -586,6 +586,10 @@ menu bar, otherwise builds a new instance and returns it. */
 	                action: @selector(redo:)
 	         keyEquivalent: @"Z"];
 
+	[menu addItemWithTitle: _(@"Show Undo History")
+	                action: @selector(browseUndoHistory:)
+	         keyEquivalent: @""];
+
 	[menu addItem: [NSMenuItem separatorItem]];
 
 	[menu addItemWithTitle: _(@"Cut")

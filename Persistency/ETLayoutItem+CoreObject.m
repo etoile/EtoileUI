@@ -13,6 +13,7 @@
 #import <ObjectMerging/COEditingContext.h>
 #import <ObjectMerging/COObject.h>
 #import "ETLayoutItem+CoreObject.h"
+#import "ETOutlineLayout.h"
 #import "ETView.h"
 #import "NSObject+EtoileUI.h"
 #import "NSView+Etoile.h"
@@ -220,6 +221,30 @@
 {
 	COEditingContext *ctxt = (aCtxt != nil ? aCtxt : [COEditingContext currentContext]);
 	return [ctxt insertObjectWithEntityName: @"ETCompoundDocument"];
+}
+
+- (ETLayoutItemGroup *) historyBrowserWithRepresentedObject: (id <ETCollection>)trackOrRevs
+{
+
+	ETLayoutItemGroup *browser = [[ETLayoutItemFactory factory] itemGroupWithRepresentedObject: trackOrRevs];
+	ETOutlineLayout *layout = [ETOutlineLayout layout];
+
+	[layout setContentFont: [NSFont controlContentFontOfSize: [NSFont smallSystemFontSize]]];
+	[layout setDisplayedProperties: A(@"revisionNumber", @"UUID", @"type", @"date", @"objectUUID", @"properties")];
+	[layout setDisplayName: @"Revision Number" forProperty: @"revisionNumber"];
+	[layout setDisplayName: @"Revision UUID" forProperty: @"UUID"];
+	[layout setDisplayName: @"Date" forProperty: @"date"];
+	[layout setDisplayName: @"Type" forProperty: @"type"];
+	[layout setDisplayName: @"Object UUID" forProperty: @"objectUUID"];
+	[layout setDisplayName: @"Properties" forProperty: @"properties"];
+	[[layout columnForProperty: @"properties"] setWidth: 200];
+
+	[browser setSource: browser];
+	[browser setLayout: layout];
+	[browser setSize: NSMakeSize(700, 400)];
+	[browser reload];
+
+	return browser;
 }
 
 @end

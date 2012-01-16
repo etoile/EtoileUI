@@ -88,6 +88,14 @@ e.g. ETLayout will register ETTableLayout, ETIconLayout instances etc. */
 - (void) registerAspects;
 @end
 
+/** Informal protocol to implement menu actions, usually in the topmost controller. */
+@interface NSObject (ETStandardMenuActions)
+/** Can be implemented to show a history browser opened on the main undo track.
+
+See -[ETLayoutItemFactory historyBrowserWithRepresentedObject:] and COTrack in 
+CoreObject. */
+- (IBAction) browseUndoHistory: (id)sender;
+@end
 
 enum 
 {
