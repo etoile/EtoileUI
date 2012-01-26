@@ -213,7 +213,7 @@ This notification is posted when a selection related method such as
 notification, or when the selection is modified by the user, in this last case 
 the poster object will always be a base item. */
 extern NSString * const ETItemGroupSelectionDidChangeNotification;
-/** Notification observed by ETLayoutItemGroup, ETUIMediator and other classes 
+/** Notification observed by ETLayoutItemGroup and other classes 
 on which a source can be set. When the notification is received, the layout 
 item tree that belongs to the receiver is automatically reloaded. 
 

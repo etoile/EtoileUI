@@ -431,6 +431,16 @@ See also ETSourceDidUpdateNotification.*/
 	[self reloadIfNeeded];
 }
 
+/** Note: The receiver registers itself as an observer on the represented object 
+in -setReprestedObject:. 
+
+See also ETCollectionDidUpdateNotification.*/
+- (void) representedObjectCollectionDidUpdate: (NSNotification *)notif
+{
+	NSParameterAssert([notif object] == [self representedObject]);
+	[self reloadIfNeeded];
+}
+
 /* Controller Coordination */
 
 - (id <ETTemplateProvider>) lookUpTemplateProvider

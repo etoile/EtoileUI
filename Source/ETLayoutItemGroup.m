@@ -134,7 +134,8 @@ See also -isLayerItem. */
 		RELEASE(itemSet);
 	}
 	DESTROY(_layoutItems);
-	[self setSource: nil]; /* Tear down the receiver as a source observer */
+	/* Tear down the receiver as a source and represented object observer */
+	[[NSNotificationCenter defaultCenter] removeObserver: self];
 
 	[super dealloc];
 }
@@ -439,9 +440,23 @@ holds when the layout item tree is built directly from the represented object by
 the mean of ETCollection protocol. */
 - (void) setRepresentedObject: (id)model
 {
+	[[NSNotificationCenter defaultCenter] removeObserver: self 
+	                                                name: ETCollectionDidUpdateNotification
+	                                              object: [self representedObject]];
+
 	[super setRepresentedObject: model];
+
+	if (model != nil)
+	{
+		[[NSNotificationCenter defaultCenter] addObserver: self 
+		                                         selector: @selector(representedObjectCollectionDidUpdate:) 
+		                                             name: ETCollectionDidUpdateNotification 
+		                                           object: model];
+	}
 	if ([self usesRepresentedObjectAsProvider])
+	{
 		[self setHasNewContent: YES];
+	}
 }
 
 /** Returns YES when the item tree mutation are propagated to the represented
@@ -569,16 +584,19 @@ Marks the receiver as needing a layout update. */
 	SET_PROPERTY(source, kETSourceProperty);
 
 	if (source != nil)
+	{
 		[self makeBaseItemIfNeeded];
-
+	}
 	[self tryReloadWithSource: source]; /* Resets any particular state like selection */
 	[self setNeedsLayoutUpdate];
-
-	[[NSNotificationCenter defaultCenter] 
-		   addObserver: self
-	          selector: @selector(sourceDidUpdate:)
-		          name: ETSourceDidUpdateNotification 
-			    object: source];
+	if (source != nil && source != self)
+	{
+		[[NSNotificationCenter defaultCenter] 
+			addObserver: self
+		       selector: @selector(sourceDidUpdate:)
+			       name: ETSourceDidUpdateNotification 
+		         object: source];
+	}
 }
 
 /** Returns the delegate associated with the receiver. 
