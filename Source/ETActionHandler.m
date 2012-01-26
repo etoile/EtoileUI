@@ -24,11 +24,6 @@
 #import "NSObject+EtoileUI.h"
 #import "ETCompatibility.h"
 
-@interface NSResponder (Undo)
-- (IBAction) undo: (id)sender;
-- (IBAction) redo: (id)sender;
-@end
-
 
 @implementation ETActionHandler
 
@@ -612,72 +607,6 @@ inspected and not the item that owns it. */
 - (void) inspectItem: (id)sender onItem: (ETLayoutItem *)item
 {
 	[item inspect: sender];
-}
-
-/** Looks up a commit track on the item or its represented object when there 
-is one bound to the item.
-
-If the commit track is valid, -undo is sent to the track, otherwise the next 
-responder receives the undo action, and so on until a responder handles it. 
-
-Can be overriden in subclasses to implement another strategy.
-
-See also -[ETUIObject commitTrack] and -[COObject commitTrack]. */
-- (void) undo: (id)sender onItem: (ETLayoutItem *)item
-{
-	id track = [[[item subject] ifResponds] commitTrack];
-
-	if (track != nil)
-	{
-		ETLayoutItem *persistentRootItem = (ETLayoutItem *)[item rootObject];
-		NSPoint position = [persistentRootItem position];
-
-		[track undo];
-
-		/* When the persistent root item is the window content, the current 
-		   position in the UI takes over the persisted position. */
-		if (persistentRootItem != nil && [persistentRootItem windowItem] != nil)
-		{
-			[persistentRootItem setPosition: position];
-		}
-	}
-	else
-	{
-		[[item nextResponder] undo: sender];
-	}
-}
-
-/** Looks up a commit track on the item or its represented object when there 
-is one bound to the item.
-
-If the commit track is valid, -redo is sent to the track, otherwise the next 
-responder receives the redo action, and so on until a responder handles it.
-
-Can be overriden in subclasses to implement another strategy.
-
-See also -[ETUIObject commitTrack] and -[COObject commitTrack]. */
-- (void) redo: (id)sender onItem: (ETLayoutItem *)item
-{
-	id track = [[[item subject] ifResponds] commitTrack];
-
-	if (track != nil)
-	{
-		ETLayoutItem *persistentRootItem = (ETLayoutItem *)[item rootObject];
-		NSPoint position = [persistentRootItem position];
-
-		[track redo];
-
-		/* When the persistent root item is the window content, the current 
-		   position in the UI takes over the persisted position. */
-		if (persistentRootItem != nil && [persistentRootItem windowItem] != nil)
-		{
-			[persistentRootItem setPosition: position];
-		}
-	}
-	else
-	{
-		[[item nextResponder] redo: sender];
-	}
 }
 
 @end

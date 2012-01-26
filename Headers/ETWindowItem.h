@@ -21,7 +21,10 @@ With the AppKit widget backend, the window is an NSWindow object.
 
 Once the window is managed by a window item, you must not call the following 
 NSWindow methods: -setDelegate:, -setAcceptsMouseMovedEvents: and 
--registerForDraggedTypes:. */
+-registerForDraggedTypes:.
+
+The NSWindow object is not in the EtoileUI responder chain, but common actions 
+such as -performClose: are forwarded to the NSWindow. */
 @interface ETWindowItem : ETDecoratorItem <ETFirstResponderSharingArea>
 {
 	@private
@@ -61,8 +64,6 @@ NSWindow methods: -setDelegate:, -setAcceptsMouseMovedEvents: and
 - (BOOL) acceptsDecoratorItem: (ETDecoratorItem *)item;
 - (BOOL) canDecorateItem: (id)item;
 
-- (id) nextResponder;
-
 /* First Responder Sharing Area */
 
 - (ETLayoutItem *) activeFieldEditorItem;
@@ -71,6 +72,12 @@ NSWindow methods: -setDelegate:, -setAcceptsMouseMovedEvents: and
                        editedItem: (ETLayoutItem *)editedItem;
 - (void) removeActiveFieldEditorItem;
 - (ETLayoutItem *) hitTestFieldEditorWithEvent: (ETEvent *)anEvent;
+
+/** @taskunit Actions */
+
+- (IBAction) performClose:(id)sender;
+- (IBAction) performMiniaturize:(id)sender;
+- (IBAction) performZoom:(id)sender;
 
 /* Framework Private */
 

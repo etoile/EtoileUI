@@ -755,8 +755,7 @@ menu bar, otherwise builds a new instance and returns it. */
 }
 
 /* When a window is the first key or main responder, it must not be tested as 
-target directly, but indirectly through its content item where it will be 
-present upstream in the next responder chain. */
+target directly. */
 - (id) _replacementResponderForFirstResponder: (id)aResponder
 {
 	if ([aResponder isKindOfClass: [NSWindow class]] && [[aResponder contentView] isSupervisorView])
@@ -789,6 +788,13 @@ present upstream in the next responder chain. */
 		 && [[(ETLayoutItem *)responder actionHandler] respondsToSelector: twoParamSelector])
 		{
 			return responder;
+		}
+
+		/* When we reach a window whose content item is key, we don't check the 
+		   next responders above in the item tree. */
+		if (isMainChain == NO && [responder conformsToProtocol: @protocol(ETFirstResponderSharingArea)])
+		{
+			return nil;
 		}
 
 		responder = [responder nextResponder];
@@ -844,41 +850,6 @@ the application delegate when CoreObject is available. */
 		}
 	}
 
-	ETLayoutItemGroup *windowGroup = [[ETLayoutItemFactory factory] windowGroup];
-	responder = [self targetForAction: aSelector 
-	                   firstResponder: windowGroup
-	                           isMain: YES];
-
-	if (responder != nil)
-	{
-		//ETLog(@"Found responder %@ for %@", responder, NSStringFromSelector(aSelector));
-		return responder;
-	}
-
-	/* In the long run, we might want to make things simpler and only rely on 
-	   -nextResponder to model the responder chain. This would eliminate the 
-	   code below. 
-	   The hardcoded responder chain below is present to ensure a better 
-	   compatibility with existing GNUstep/Cocoa code.
-	   We already have controllers in the responder chain, that's why a pure 
-	   EtoileUI responder chain would probably skip the app and window delegates.
-	 
-	   widget window -> window group -> window group controller -> app object -> persistency controller 
-	
-	   Both the persistency controller and the window group controller could be 
-	   used as document manager in a document editor. To make the overall 
-	   architecture even simpler, we could remove ETPersistencyController as 
-	   the last responder, turn it into an ETController subclass and set it as 
-	   the window group controller. Object Managers and Document Editor might 
-	   have needs that vary a bit in term of CoreObject integration, so we 
-	   could provide specialized ETPersistencyController subclasses (but 
-	   ETPersistencyController might support well enough with a richer API). 
-	   The managed documents can be any node in the layout item tree and not 
-	   just the nodes owned by the window group (as in NSDocument architecture).
-	   ETPersistencyController was initially positioned upstream to mimic 
-	   NSDocumentManager and as a way to prevent the framework user to draw any 
-	   assumption on where the documents are located in the layout item tree. */
-
 	if ([self respondsToSelector: aSelector])
 	{
 		return self;
@@ -899,12 +870,6 @@ the application delegate when CoreObject is available. */
     {
 		return [NSDocumentController sharedDocumentController];
     } */
-
-	Class persistencyControllerClass = NSClassFromString(@"ETPersistencyController");
-	if ([[persistencyControllerClass sharedInstance] respondsToSelector: aSelector])
-	{
-		return [persistencyControllerClass sharedInstance]; 
-	}
 
 	return nil;
 }

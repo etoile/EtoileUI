@@ -494,14 +494,6 @@ This coordinate space includes the window decoration (titlebar etc.).  */
 	[_decoratorItem setFlipped: flipped];	
 }
 
-/** Returns the widget backend window as the next responder. */
-- (id) nextResponder
-{
-	// NOTE: See -targetForAction:to:from: to understand how ETApplication
-	// simulates [_itemWindow setNextResponder: [itemFactory windowGroup]]
-	return _itemWindow;
-}
-
 /* First Responder Sharing Area */
 
 /** Returns the item owning the field editor which has the first responder 
@@ -601,6 +593,26 @@ event occured, otherwise returns nil. */
 	[anEvent setLocationInLayoutItem: pointInEditorItem];
 
 	return _activeFieldEditorItem;
+}
+
+/* Actions */
+
+/** Forwards the action to the underlying window object. */
+- (IBAction) performClose:(id)sender
+{
+	[_itemWindow performClose: sender];
+}
+
+/** Forwards the action to the underlying window object. */
+- (IBAction) performMiniaturize:(id)sender
+{
+	[_itemWindow performMiniaturize: sender];
+}
+
+/** Forwards the action to the underlying window object. */
+- (IBAction) performZoom:(id)sender
+{
+	[_itemWindow performZoom: sender];
 }
 
 /* Dragging Destination (as Window delegate) */
