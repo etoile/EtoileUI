@@ -14,7 +14,6 @@
 #import "ETApplication.h"
 #import "ETItemTemplate.h"
 #import "ETLayoutItem.h"
-#import "ETLayoutItem+CoreObject.h"
 #import "ETLayoutItemGroup.h"
 #import "ETLayoutItemFactory.h"
 #import "ETPickDropActionHandler.h" /* For ETUndeterminedIndex */
@@ -25,6 +24,7 @@
 #import "ETCompatibility.h"
 #ifdef OBJECTMERGING
 #import <ObjectMerging/COHistoryTrack.h>
+#import "CoreObjectUI.h"
 #endif
 
 @implementation ETDocumentController

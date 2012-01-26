@@ -59,7 +59,4 @@ object.
 When added to a compound document, any descendant item and its subtree become 
 embedded core objects. */
 - (ETLayoutItemGroup *) compoundDocumentWithEditingContext: (COEditingContext *)aCtxt;
-/** Returns a new layout item group which shows the history provided by the 
-represented object, usually a CORevision object collection or a COTrack. */
-- (ETLayoutItemGroup *) historyBrowserWithRepresentedObject: (id <ETCollection>)trackOrRevs;
 @end
