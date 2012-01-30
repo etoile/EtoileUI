@@ -38,6 +38,10 @@
 /** @taskunit Properties */
 
 - (NSMapTable *) variableStorage;
+#ifndef OBJECTMERGING
+- (id) primitiveValueForKey: (NSString *)key;
+- (void) setPrimitiveValue: (id)value forKey: (NSString *)key;
+#endif
 
 /** @taskunit Persistency */
 

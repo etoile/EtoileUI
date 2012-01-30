@@ -322,7 +322,7 @@ See also [ETDocumentCreation] protocol. */
 #ifdef OBJECTMERGING
 	id rootObject = [self activeItem];
 	ETLayoutItemGroup *browser = [[ETLayoutItemFactory factory] 
-		historyBrowserWithRepresentedObject: (id)[[[[rootObject track] contentArray] mappedCollection] revision]];
+		historyBrowserWithRepresentedObject: [rootObject commitTrack]];
 
 	[[[ETLayoutItemFactory factory] windowGroup] addItem: browser];
 #endif

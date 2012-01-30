@@ -311,6 +311,35 @@ DEALLOC(DESTROY(itemFactory);)
 	[self checkValidityForNewPersistentObject: newItemGroup isFault: NO];
 }
 
+- (void) testItemGroupUndoRedo
+{
+	[self recreateContext];
+
+	NSRect rect = NSMakeRect(50, 20, 400, 300);
+	ETLayoutItemGroup *itemGroup = [self basicItemGroupWithRect: rect];
+	ETLayoutItem *item = [itemGroup firstItem];
+
+	[itemGroup becomePersistentInContext: ctxt rootObject: itemGroup];
+	[ctxt commit];
+
+	// Create a rectangle and commit
+	[[itemGroup actionHandler] insertRectangle: nil onItem: itemGroup];
+
+	ETLayoutItem *rectItem = [itemGroup lastItem];
+
+	[self checkValidityForNewPersistentObject: rectItem isFault: NO];
+
+	[[itemGroup commitTrack] undo];
+
+	UKIntsEqual(1, [itemGroup numberOfItems]);
+	UKObjectsSame([itemGroup lastItem], item);
+
+	[[itemGroup commitTrack] redo];
+
+	UKIntsEqual(2, [itemGroup numberOfItems]);
+	UKObjectsNotSame([itemGroup lastItem], rectItem);
+	UKObjectsEqual([[itemGroup lastItem] UUID], [rectItem UUID]);
+}
 
 @end
 

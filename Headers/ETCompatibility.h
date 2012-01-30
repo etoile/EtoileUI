@@ -70,18 +70,11 @@
 /* Macros to read and write the local properties that belongs the given object 
 without exposing how the properties are stored. */
 #define SET_OBJECT_PROPERTY(object, value, property) \
-	if (value != nil) \
-	{ \
-		[object->VARIABLE_STORAGE setObject: value forKey: property]; \
-	} \
-	else \
-	{ \
-		[object->VARIABLE_STORAGE removeObjectForKey: property]; \
-	}
+	[object setPrimitiveValue: value forKey: property];
 #define GET_OBJECT_PROPERTY(object, property) \
-	[object->VARIABLE_STORAGE objectForKey: property]
+	[object primitiveValueForKey: property]
 #define HAS_OBJECT_PROPERTY(object, property) \
-	([object->VARIABLE_STORAGE objectForKey: property] != nil)
+	([object primitiveValueForKey: property] != nil)
 
 #define SET_OBJECT_PROPERTY_AND_RELEASE(object, value, property) \
 do { \

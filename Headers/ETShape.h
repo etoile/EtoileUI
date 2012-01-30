@@ -31,7 +31,7 @@ returns NO unlike ETStyle. */
 	NSBezierPath *_path;
 	NSColor *_fillColor;
 	NSColor *_strokeColor;
-	float _alpha;
+	float _alphaValue;
 	BOOL _hidden;
 	SEL _resizeSelector;
 }

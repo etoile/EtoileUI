@@ -132,7 +132,7 @@ See also -[ETUIObject copyWithZone:copier:isAliasedCopy:]. */
 	newShape->_path = [_path copyWithZone: zone];
 	newShape->_fillColor = [_fillColor copyWithZone: zone];
 	newShape->_strokeColor = [_strokeColor copyWithZone: zone];
-	newShape->_alpha = _alpha;
+	newShape->_alphaValue = _alphaValue;
 	newShape->_resizeSelector = _resizeSelector;
 
 	[aCopier endCopy];
@@ -248,13 +248,13 @@ See also -[ETUIObject isShared] and -[ETStyle isShared]. */
 
 - (float) alphaValue
 {
-    return _alpha;
+    return _alphaValue;
 }
 
 - (void) setAlphaValue: (float)newAlpha
 {
 	[self willChangeValueForProperty: @"alphaValue"];
-    _alpha = newAlpha;
+    _alphaValue = newAlpha;
 	[self didChangeValueForProperty: @"alphaValue"];
 }
 

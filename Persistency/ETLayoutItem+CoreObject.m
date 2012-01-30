@@ -131,6 +131,19 @@
 	[self setView: newView];
 }
 
+/* Required otherwise the bounds returned by -boundingBox might be serialized 
+since -serializedValueForProperty: doesn't use the direct ivar access. */
+- (id) serializedBoundingBox
+{
+	return [NSValue valueWithRect: _boundingBox];
+}
+
+/* Required to set up the KVO observation. */
+- (void) setSerializedRepresentedObject: (id)aRepObject
+{
+	[self setRepresentedObject: aRepObject];
+}
+
 - (void) awakeFromFetch
 {
 	// TODO: May be reset the bounding box if not persisted
@@ -146,6 +159,11 @@
 
 	[_variableStorage removeObjectForKey: @"targetId"];
 	[_variableStorage removeObjectForKey: @"viewTargetId"];
+}
+
+- (void)didReload
+{
+	[self setNeedsDisplay: YES];
 }
 
 @end

@@ -233,6 +233,20 @@ and write the receiver properties. */
 	return _variableStorage;
 }
 
+#ifndef OBJECTMERGING
+- (id)primitiveValueForKey: (NSString *)key
+{
+	id value = [_variableStorage objectForKey: key];
+	return (value == [NSNull null] ? nil : value);
+}
+
+- (void) setPrimitiveValue: (id)value forKey: (NSString *)key
+{
+	[_variableStorage setObject: (value == nil ? [NSNull null] : value)
+						 forKey: key];
+}
+#endif
+
 /** <override-never />
 Does nothing by default.
 
