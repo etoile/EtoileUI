@@ -179,6 +179,16 @@ expanded and collapsed by getting automatically a related outline arrow. */
 	return [[self outlineView] itemAtRow: rowIndex];
 }
 
+- (BOOL) outlineView: (NSOutlineView *)outlineView isGroupItem: (id)item
+{
+	return [super tableView: outlineView isGroupRow: [outlineView rowForItem: item]];
+}
+
+- (BOOL) outlineView: (NSOutlineView *)outlineView shouldSelectItem: (id)item
+{
+	return [super tableView: outlineView shouldSelectRow: [outlineView rowForItem: item]];
+}
+
 - (BOOL) outlineView: (NSOutlineView *)outlineView
 	shouldEditTableColumn: (NSTableColumn *)column item: (id)item
 {

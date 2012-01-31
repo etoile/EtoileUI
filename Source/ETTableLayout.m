@@ -555,6 +555,16 @@ See [(ETColumnFragment)] protocol to customize the returned column. */
 	[self didChangeSelectionInLayoutView];
 }
 
+- (BOOL) tableView: (NSTableView *)tableView isGroupRow: (NSInteger)rowIndex
+{
+	return ([[self itemAtRow: rowIndex] isSelectable] == NO);
+}
+
+- (BOOL) tableView: (NSTableView *)aTableView shouldSelectRow: (NSInteger)rowIndex
+{
+	return [[self itemAtRow: rowIndex] isSelectable];
+}
+
 /* NSTableView only considers if the column is editable by default to allow 
    or deny the editing on GNUstep. On Cocoa the data cell editability is 
    checked when the column is editable.

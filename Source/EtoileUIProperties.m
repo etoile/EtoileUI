@@ -46,6 +46,7 @@ NSString * const kETPositionProperty = @"position";
 NSString * const kETRepresentedObjectProperty = @"representedObject";
 NSString * const kETRootItemProperty = @"rootItem";
 NSString * const kETSelectedProperty = @"selected";
+NSString * const kETSelectableProperty = @"selectable";
 NSString * const kETSourceProperty = @"source";
 NSString * const kETStyleGroupProperty = @"styleGroup";
 NSString * const kETStyleProperty = @"style";

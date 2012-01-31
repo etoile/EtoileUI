@@ -179,6 +179,7 @@ See also -setView:, -setCoverStyle: and -setActionHandler:.  */
 	[self setDefaultFrame: frame];
 	[self setViewAndSync: view];
 
+	_selectable = YES;
 	[self setFlipped: YES]; /* -setFlipped: must follow -setSupervisorView: */
 	_visible = YES;
 
@@ -311,6 +312,7 @@ Default values will be copied but not individually (shallow copy). */
 	item->_autoresizingMask = _autoresizingMask;
 	item->_boundingBox = _boundingBox;
 	item->_flipped = _flipped;
+	item->_selectable = _selectable;
 	item->_selected = _selected;
 	item->_visible = _visible;
 	item->_contentAspect = _contentAspect;
@@ -1228,10 +1230,12 @@ ETLayoutItemGroup).
 This method doesn't post an ETItemGroupSelectionDidChangeNotification unlike 
 the previously mentioned ETLayoutItemGroup methods.
 
-The new selection state won't be apparent until a redisplay occurs. */
+The new selection state won't be apparent until a redisplay occurs.
+
+If -isSelectable returns NO, the new selection state is not set. */
 - (void) setSelected: (BOOL)selected
 {
-	if (selected == _selected)
+	if (selected == _selected || [self isSelectable] == NO)
 		return;
 
 	[self willChangeValueForKey: kETSelectedProperty];
@@ -1244,6 +1248,38 @@ The new selection state won't be apparent until a redisplay occurs. */
 - (BOOL) isSelected
 {
 	return _selected;
+}
+
+/** Sets whether the receiver can be selected.
+
+If selectable is NO, resets the <em>selected</em> property to NO.
+
+Layouts can customize the item appearance based on -isSelectable. For instance, 
+ETTableLayout or ETOutlineLayout turn such items into group rows.
+
+See also -setSelected, -isSelected and -isSelectable. */
+- (void) setSelectable: (BOOL)selectable
+{
+	if (selectable == _selectable)
+		return;
+
+	[self willChangeValueForKey: kETSelectableProperty];
+	_selectable = selectable;
+	if (selectable == NO)
+	{
+		[self setSelected: NO];
+	}
+	[self didChangeValueForKey: kETSelectableProperty];
+}
+
+/** Returns whether the receiver can be selected. 
+
+By default, returns YES.
+
+See also -setSelectable:. */
+- (BOOL) isSelectable
+{
+	return _selectable;
 }
 
 - (BOOL) canBecomeVisible

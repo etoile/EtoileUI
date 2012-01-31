@@ -60,6 +60,7 @@
 	// not to be read-only, because ETLayoutItem introduces -setFlipped:.
 	ETPropertyDescription *flipped = [ETPropertyDescription descriptionWithName: @"flipped" type: (id)@"BOOL"];
 	ETPropertyDescription *selected = [ETPropertyDescription descriptionWithName: @"selected" type: (id)@"BOOL"];
+	ETPropertyDescription *selectable = [ETPropertyDescription descriptionWithName: @"selectable" type: (id)@"BOOL"];
 	ETPropertyDescription *visible = [ETPropertyDescription descriptionWithName: @"visible" type: (id)@"BOOL"];
 	// TODO: The subtype UTI is declared transient because we have to work out how to persist ETUTI.
 	ETPropertyDescription *subtype = [ETPropertyDescription descriptionWithName: @"subtype" type: (id)@"ETUTI"];
@@ -93,7 +94,8 @@
 	NSArray *persistentProperties = A(parentItem, identifier, name, image, icon, 
 		repObject, value, view, viewTargetId, styleGroup, coverStyle, 
 		actionHandler, action, targetId, contentBounds, position, anchorPoint, 
-		persistentFrame, autoresizing, contentAspect, boundingBox, flipped, selected, visible);
+		persistentFrame, autoresizing, contentAspect, boundingBox, flipped, 
+		selected, selectable, visible);
 	NSArray *transientProperties = A(baseItem, rootItem, indexPath, 
 		isBaseItem, subject, style, frame, x, y, width, height, target, 
 		acceptsActions, inspector, subtype);

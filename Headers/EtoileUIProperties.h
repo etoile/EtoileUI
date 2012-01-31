@@ -50,6 +50,7 @@ extern NSString * const kETPositionProperty; /** position property name */
 extern NSString * const kETRepresentedObjectProperty; /** representedObject property name */
 extern NSString * const kETRootItemProperty; /** rootItem property name */
 extern NSString * const kETSelectedProperty; /** selected property name */
+extern NSString * const kETSelectableProperty; /** selectable property name */
 extern NSString * const kETSourceProperty; /** source property name */
 extern NSString * const kETStyleGroupProperty; /** styleGroup property name */
 extern NSString * const kETStyleProperty; /** style property name */
