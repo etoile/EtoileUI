@@ -251,20 +251,29 @@ and write the receiver properties. */
 Does nothing by default.
 
 If built with CoreObject support, commits changes in the editing context related 
-to the receiver root object.
+to the receiver root object, and returns the resulting revisions (the commit 
+involves all the root objects listed in -[COEditingContext changedObjects]).
 
 Will be called by ETActionHandler methods that make changes in response to the 
 user interaction. */
-- (void) commit
+- (NSArray *) commit
+{
+	return [self commitWithType: nil shortDescription: nil];
+}
+
+- (NSArray *)commitWithType: (NSString *)type
+           shortDescription: (NSString *)shortDescription
 {
 #ifdef OBJECTMERGING
 	if ([self isPersistent] == NO)
-		return;
+		return nil;
 
 	COObject *rootObject = [self rootObject];
 	ETAssert(rootObject != nil);
 	ETAssert([rootObject editingContext] != nil);
-	[[rootObject editingContext] commit];
+	return [[rootObject editingContext] commitWithType: type shortDescription: shortDescription];
+#else
+	return nil;
 #endif
 }
 

@@ -75,7 +75,7 @@ NSString *kETManipulatedObjectProperty = @"manipulatedObject";
 - (void) endTranslateItem: (ETHandle *)handle
 {
 	ETHandleGroup *handleGroup = [handle manipulatedObject];
-	[[handleGroup manipulatedObject] commit];
+	[[handleGroup manipulatedObject] commitWithType: @"Handle Move" shortDescription: @"Resized item"];
 }
 
 @end

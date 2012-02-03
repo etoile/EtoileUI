@@ -342,7 +342,7 @@ Overrides this method when you want to customize how double-click are handled. *
 
 - (void) endTranslateItem: (ETLayoutItem *)item
 {
-	[item commit];
+	[item commitWithType: @"Item Move" shortDescription: @"Translated item"];
 }
 
 /** <override-dummy />
@@ -532,7 +532,7 @@ status, when others request it. */
 	ETLayoutItemGroup *parent = ([item isGroup] ? (ETLayoutItemGroup *)item : [item parentItem]);
 
 	[parent addItem: [[ETLayoutItemFactory factory] rectangle]];
-	[item commit];
+	[item commitWithType: @"Item Insertion" shortDescription: @"Created Rectangle"];
 }
 
 - (void) sendBackward: (id)sender onItem: (ETLayoutItem *)item

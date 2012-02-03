@@ -45,7 +45,9 @@
 
 /** @taskunit Persistency */
 
-- (void) commit;
+- (NSArray *) commit;
+- (NSArray *)commitWithType: (NSString *)type
+           shortDescription: (NSString *)shortDescription;
 #ifndef OBJECTMERGING
 - (id) commitTrack;
 - (BOOL) isRoot;
