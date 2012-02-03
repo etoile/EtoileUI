@@ -472,8 +472,14 @@ The returned object is autoreleased. */
 - (id) itemWithObject: (id)object isValue: (BOOL)isValue
 {
 	id <ETTemplateProvider> provider = [self lookUpTemplateProvider];
-	ETUTI *type = ([object isCollection] ? [provider currentGroupType] : [provider currentObjectType]);
+	ETUTI *type = [object UTI];
 	ETItemTemplate *template = [provider templateForType: type];
+
+	if (template == nil)
+	{
+		type = ([object isCollection] ? [provider currentGroupType] : [provider currentObjectType]);
+		template = [provider templateForType: type];
+	}
 	ETLayoutItem *item = [template newItemWithRepresentedObject: object options: nil];
 
 	// TODO: Move that in ETItemTemplate with a kETTemplateOptionIsValue in the options dict.
