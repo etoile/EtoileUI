@@ -342,7 +342,7 @@ Overrides this method when you want to customize how double-click are handled. *
 
 - (void) endTranslateItem: (ETLayoutItem *)item
 {
-	[item commitWithType: @"Item Move" shortDescription: @"Translated item"];
+	[item commitWithType: @"Item Move" shortDescription: @"Translated Item"];
 }
 
 /** <override-dummy />
@@ -549,7 +549,7 @@ status, when others request it. */
 	[parent insertItem: item atIndex: currentIndex - 1];
 	RELEASE(item);
 
-	[item commit];
+	[item commitWithType: @"Item Reordering" shortDescription: @"Sent Item backward"];
 }
 
 - (void) sendToBack: (id)sender onItem: (ETLayoutItem *)item
@@ -564,7 +564,7 @@ status, when others request it. */
 	[parent insertItem: item atIndex: 0];
 	RELEASE(item);
 
-	[item commit];
+	[item commitWithType: @"Item Reordering" shortDescription: @"Sent Item to the back"];
 }
 
 - (void) bringForward: (id)sender onItem: (ETLayoutItem *)item
@@ -581,7 +581,7 @@ status, when others request it. */
 	[parent insertItem: item atIndex: currentIndex + 1];
 	RELEASE(item);
 
-	[item commit];
+	[item commitWithType: @"Item Reordering" shortDescription: @"Bring Item forward"];
 }
 
 - (void) bringToFront: (id)sender onItem: (ETLayoutItem *)item
@@ -596,7 +596,7 @@ status, when others request it. */
 	[parent addItem: item];
 	RELEASE(item);
 
-	[item commit];
+	[item commitWithType: @"Item Reordering" shortDescription: @"Bring Item to the front"];
 }
 
 /** Invokes -inspect: action on the given item.

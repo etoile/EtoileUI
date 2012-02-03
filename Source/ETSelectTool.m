@@ -843,7 +843,7 @@ the target item. */
 	// the layout, -setNeedsDisplay: is invoked on the target item then
 	[targetItem setNeedsDisplayInRect: NSUnionRect(unionFrame, [newGroup frame])];
 
-	[targetItem commit];
+	[targetItem commitWithType: @"Item Regrouping" shortDescription: @"Group Items"];
 }
 
 /* Removes the given group from its parent item and moves its child item into 
@@ -871,8 +871,6 @@ that parent. */
 	}
 
 	[aGroup removeFromParent];
-
-	[parent commit];
 }
 
 /* NOTE: We could implement -inlineGroup:intoItem: to support inlining a group 
@@ -917,7 +915,7 @@ target item. */
 	NSRect newUnionFrame = ETUnionRectWithObjectsAndSelector(inlinedItems, @selector(frame));
 	[targetItem setNeedsDisplayInRect: NSUnionRect(oldUnionFrame, newUnionFrame)];
 
-	[targetItem commit];
+	[targetItem commitWithType: @"Item Regrouping" shortDescription: @"Ungroup Items"];
 }
 
 @end
