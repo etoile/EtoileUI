@@ -177,13 +177,21 @@ See also -[ETUIObject isShared] and -[ETStyle isShared]. */
 
 - (void) setBounds: (NSRect)aRect
 {
+	BOOL isSameBounds = (NSEqualSizes([_path bounds].size, aRect.size)
+		&& NSEqualPoints([_path bounds].origin, aRect.origin));
+
+	if (isSameBounds)
+		return;
+
 	[self willChangeValueForProperty: @"bounds"];
 	if (_resizeSelector != NULL)
 	{
 		NSBezierPath *resizedPath = [self providedPathWithRect: aRect];
 
 		if (resizedPath != nil)
+		{
 			[self setPath: resizedPath];
+		}
 	}
 	else
 	{
