@@ -1473,12 +1473,17 @@ redisplayed. */
 	[self applySelectionIndexPaths: [NSMutableArray arrayWithArray: indexPaths] 
 	                relativeToItem: self];
 
+	ETLayout *layout = [[self ancestorItemForOpaqueLayout] layout];
+
 	/* For opaque layouts that may need to keep in sync the selection state of 
 	   their custom UI. */
-	if ([[self layout] isChangingSelection] == NO)
+	if ([layout isChangingSelection] == NO)
 	{
-		[[self layout] selectionDidChangeInLayoutContext: self];
+		[layout selectionDidChangeInLayoutContext: self];
 	}
+	// TODO: Evaluate whether we should send -didChangeSelection on 
+	// -ancestorItemForOpaqueLayout too
+	// TODO: [[self controllerItem] didChangeSelection];
 	[self didChangeSelection];
 
 	/* Reflect selection change immediately */
