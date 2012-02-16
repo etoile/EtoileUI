@@ -163,6 +163,7 @@ since -serializedValueForProperty: doesn't use the direct ivar access. */
 
 - (void)didReload
 {
+	[[self layout] didReload];
 	[self setNeedsDisplay: YES];
 }
 
