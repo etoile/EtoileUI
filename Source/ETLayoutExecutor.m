@@ -167,8 +167,14 @@ layout update constraints, then tells the reordered items to update their layout
 	while ([dirtyItems count] > 0)
 	{
 		ETLayoutItem *item = [dirtyItems anyObject];
+		ETLayoutItem *opaqueItem = [item ancestorItemForOpaqueLayout];
+		BOOL hasOpaqueAncestorItem = (opaqueItem != item && opaqueItem != nil);
 
-		if ([[item ifResponds] usesLayoutBasedFrame])
+		if (hasOpaqueAncestorItem)
+		{
+			[dirtyItems addObject: opaqueItem];
+		}
+		else if ([[item ifResponds] usesLayoutBasedFrame])
 		{
 			[self insertItem: item inFlexibleItemQueue: flexibleItemQueue];
 
