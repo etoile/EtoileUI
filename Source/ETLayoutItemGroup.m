@@ -508,12 +508,6 @@ object, then this method returns nil. */
 	return GET_PROPERTY(kETSourceProperty);
 }
 
-- (void) makeBaseItemIfNeeded
-{
-	if ([self isBaseItem])
-		return;
-}
-
 - (BOOL) isBaseItem
 {
 	return ([self source] != nil || [self controller] != nil);
@@ -583,10 +577,6 @@ Marks the receiver as needing a layout update. */
 
 	SET_PROPERTY(source, kETSourceProperty);
 
-	if (source != nil)
-	{
-		[self makeBaseItemIfNeeded];
-	}
 	[self tryReloadWithSource: source]; /* Resets any particular state like selection */
 	[self setNeedsLayoutUpdate];
 	if (source != nil && source != self)
@@ -641,11 +631,11 @@ See also -setSource:, -isBaseItem and -nextResponder. */
 {
 	SET_PROPERTY(aController, kETControllerProperty);
 	[aController setContent: self];
+}
 
-	if (aController != nil)
-	{
-		[self makeBaseItemIfNeeded];
-	}
+- (ETLayoutItemGroup *) controllerItem
+{
+	return ([self controller] != nil ? [self controller] : [_parentItem controllerItem]);
 }
 
 /** Adds the given item to the receiver children. */
@@ -1155,7 +1145,7 @@ recursively on them. */
 				[self display: inputValues 
 						 item: item 
 					dirtyRect: childDirtyRect 
-					inContext: ctxt];;
+					inContext: ctxt];
 			}
 		}
 		[NSGraphicsContext restoreGraphicsState]; /* Restore the receiver clipping rect */
@@ -1167,7 +1157,6 @@ recursively on them. */
 		    dirtyRect: dirtyRect 
 		    inContext: ctxt];
 	}
-
 }
 
 /** Displays the given item by adjusting the graphic context for the drawing, 
@@ -1873,8 +1862,11 @@ TODO: Implement and may be rename -expand or -expandStack */
 - (void) setLayoutView: (NSView *)aView
 {
 	NSView *superview = [aView superview];
-	[self setUpSupervisorViewWithFrame: [self frame]];
 
+	if (aView != nil)
+	{
+		[self setUpSupervisorViewWithFrame: [self frame]];
+	}
 	NSAssert(nil == superview || [superview isEqual: supervisorView], 
 		@"A layout view should never have another superview than the layout " 
 		 "context supervisor view or nil.");

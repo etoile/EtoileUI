@@ -162,6 +162,7 @@ and centers it. A strech is a scale that doesn't preserve the content proportion
 /* Layout Item Tree */
 
 - (id) rootItem;
+- (ETLayoutItemGroup *) controllerItem;
 - (ETLayoutItemGroup *) baseItem;
 - (BOOL) isBaseItem;
 - (ETLayoutItemGroup *) parentItem;

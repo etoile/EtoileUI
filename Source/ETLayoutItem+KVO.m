@@ -166,7 +166,7 @@ incorrectly reentered. */
 - (NSSet *) observableKeyPaths
 {
 	return S(kETRootItemProperty, kETBaseItemProperty, kETIsBaseItemProperty, 
-		kETParentItemProperty, kETIndexPathProperty, 
+		kETControllerItemProperty, kETParentItemProperty, kETIndexPathProperty, 
 		kETIdentifierProperty, kETNameProperty, kETDisplayNameProperty, 
 		kETValueProperty, kETViewProperty, kETImageProperty, kETIconProperty, 
 		kETRepresentedObjectProperty, kETSubjectProperty,  kETSelectedProperty, kETSelectableProperty, 
@@ -191,7 +191,7 @@ affected. */
 	NSSet *geometryDependentKeys = S(kETViewProperty, kETFrameProperty, 
 		kETXProperty, kETYProperty, kETWidthProperty, kETHeightProperty);
 	NSSet *parentDependentKeys = S(kETRootItemProperty, kETIsBaseItemProperty, 
-		kETBaseItemProperty, kETIndexPathProperty);
+		kETBaseItemProperty, kETControllerItemProperty, kETIndexPathProperty);
 	NSSet *nameDependentKeys = S(kETDisplayNameProperty);
 	NSMutableSet *triggerKeys = [NSMutableSet set];
 	

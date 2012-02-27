@@ -502,6 +502,11 @@ Hence -[[[ETLayoutItem alloc] init] baseItem] returns nil. */
 	}
 }
 
+- (ETLayoutItemGroup *) controllerItem
+{
+	return [_parentItem controllerItem];
+}
+
 /** Returns whether the receiver is a base item or not.
 
 To be a base item the receiver must have a source or a controller set. 
