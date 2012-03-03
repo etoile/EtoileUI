@@ -13,6 +13,7 @@
 #import "ETLayoutItemGroup.h"
 #import "ETTitleBarView.h"
 #import "ETLayoutItemFactory.h"
+#import "NSView+Etoile.h"
 #import "ETCompatibility.h"
 
 #define NC [NSNotificationCenter defaultCenter]
@@ -44,10 +45,12 @@
 
 - (void) tile
 {
-	/* Reset autoresizing */
-	//[_contentView setAutoresizingMask: NSViewHeightSizable | NSViewWidthSizable];
-	[_titleBarView setAutoresizingMask: NSViewWidthSizable];	 
-	//[[self supervisorView] setAutoresizesSubviews: YES];
+	ETAssert([[self supervisorView] autoresizesSubviews]);
+
+	/* Don't set _contentView autoresizing mask here, because 
+	   -saveAndOverrideAutoresizingMaskOfDecoratedItem: does it at the right time */;
+	[_titleBarView setAutoresizingMask: 
+		([self isFlipped] ? NSViewWidthSizable : NSViewMinYMargin | NSViewWidthSizable)];	 
 	
 	float width = [[self supervisorView] frame].size.width;
 	float height = [[self supervisorView] frame].size.height;
@@ -55,32 +58,16 @@
 	NSRect contentFrame;
 	NSRect titleBarFrame;
 	
-	if (_contentView != nil)	 
-	{	 
-		if ([self isFlipped])	 
-		{	 
-			titleBarFrame = NSMakeRect(0, 0, width, barHeight);
-			contentFrame = NSMakeRect(0, barHeight, width, height -barHeight);
-		}	 
-		else	 
-		{	 
-			titleBarFrame = NSMakeRect(0, 0, width, barHeight);
-			contentFrame = NSMakeRect(0, barHeight, width, height -barHeight);
-		}	 
+	if ([self isFlipped])	 
+	{
+		titleBarFrame = NSMakeRect(0, 0, width, barHeight);
+		contentFrame = NSMakeRect(0, barHeight, width, height - barHeight);
 	}	 
 	else	 
-	{	 
-		if ([self isFlipped])	 
-		{
-			titleBarFrame = NSMakeRect(0, 0, width, barHeight);
-			contentFrame = NSMakeRect(0, barHeight, width, height -barHeight);
-		}	 
-		else	 
-		{
-			titleBarFrame = NSMakeRect(0, 0, width, barHeight);
-			contentFrame = NSMakeRect(0, barHeight, width, height -barHeight);
-		}	 
-	}	 
+	{
+		titleBarFrame = NSMakeRect(0, height - barHeight, width, barHeight);
+		contentFrame = NSMakeRect(0, 0, width, height - barHeight);	
+	}
 	
 	[_titleBarView setFrame: titleBarFrame];
 	[_contentView setFrame: contentFrame];
@@ -99,14 +86,18 @@
 		}
 		_contentView = decoratedView;
 		[[self supervisorView] addSubview: _contentView];
+		//[[self supervisorView] setWrappedView: decoratedView];
 	}
-	
+
 	if ([item isLayoutItem])
 	{
 		[_titleBarView setTitleString: [(ETLayoutItem *)item displayName]];
 	}
-	[self tile];	 
+	[self tile];
 
+	/* -handleDecorateItem:supervisorView:inView: ensures 
+	   [[item supervisorView] autoresizingMask] is set to NSViewWidthSizable and 
+	   NSViewHeightSizable by -saveAndOverrideAutoresizingMaskOfDecoratedItem: */
 	[super handleDecorateItem: item supervisorView: nil inView: parentView];
 }
 
@@ -117,30 +108,59 @@
 	if (nil != _contentView)
 	{
 		[_contentView removeFromSuperview];
+		//[[self supervisorView] setWrappedView: nil];
 		_contentView = nil;
 	}
 	[self tile];
 	[super handleUndecorateItem: item supervisorView: nil inView: parentView];
 }
 
-- (NSRect) contentRect
-{	
-	NSRect frame = [[self supervisorView] frame];
-	//frame.size.height += [_titleBarView frame].size.height;
-	//frame.origin.y -= [_titleBarView frame].size.height;
-	return frame;
-}
-
 - (void) toggleExpanded: (id)sender
 {
 	if ([_titleBarView isExpanded])
 	{
-		[[self firstDecoratedItem] setHeight: _expandedHeight];
+		ETLayoutItem *item = [self firstDecoratedItem];
+
+		[item setHeight: _expandedHeight];
+		[_contentView setAutoresizingMask: NSViewHeightSizable | NSViewWidthSizable];
+
+		/* We retile the subviews in case [self isFlipped] returns NO */ 
+		//[self tile];
+		if ([self isFlipped] == NO)
+		{
+			[_contentView setY: 0];
+			[_titleBarView setY: [_contentView height]];
+		}
+
+		// NOTE: See note in the else block...
+		[item setNeedsLayoutUpdate];
+		[[item parentItem] setNeedsLayoutUpdate];
 	}
 	else
 	{
+		/* We don't draw the bottom border when the item is collapsed, except 
+		   when the item is the last one. By substracting one pixel to the title 
+		   bar height, we can hide the bottom border. */
+		ETLayoutItem *item = [self firstDecoratedItem];
+		BOOL isLastItem = ([item isEqual: [[item parentItem] lastItem]]);
+		
 		_expandedHeight = [[self firstDecoratedItem] height];
-		[[self firstDecoratedItem] setHeight: 24];
+
+		[_contentView setAutoresizingMask: NSViewNotSizable];
+		[item setHeight: (isLastItem ? 24 : 24 - 1)];
+
+		/* We retile the subviews in case [self isFlipped] returns NO */ 
+		if ([self isFlipped] == NO)
+		{
+			[_contentView setY: -([_contentView height] + 1)];
+			[_titleBarView setY: -1];
+		}
+
+		// NOTE: Because we have the content view not sizable when the title 
+		// bar item supervisor view is resized, it doesn't resize the decorated 
+		// item bound to the content view.
+		[item setNeedsLayoutUpdate];
+		[[item parentItem] setNeedsLayoutUpdate];
 	}
 }
 
