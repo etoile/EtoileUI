@@ -188,17 +188,23 @@ Also raises an exception when the new controller content cannot be determined,
 -nibMainContent or -content returns nil. */
 - (ETLayoutItemGroup *) loadNibAndReturnContent
 {
-	if ([self nibMainContent] == nil || [self content] == nil)
+	BOOL nibLoaded = [super loadNib];
+
+	if (NO == nibLoaded)
+		return nil;
+
+	if ([self nibMainContent] == nil && [self content] == nil)
 	{
 		[NSException raise: NSInternalInconsistencyException 
 		            format: @"%@ must have a valid -nibMainContent or -content to load a Nib", self];
 		return nil;
 	}
-	
-	BOOL nibLoaded = [super loadNib];
-
-	if (NO == nibLoaded)
+	/* Either the nibMainContent was not rebuilt to produce a new content or 
+	   the content outlet was not set. */
+	if ([self content] == nil)
+	{
 		return nil;
+	}
 
 	ETAssert([content isLayoutItem] && [content isGroup]);
 
