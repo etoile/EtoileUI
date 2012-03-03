@@ -18,7 +18,31 @@
 
 /** You can use ETNibOwner or a subclass instance to easily load a nib, the 
 instance will be set as the File's Owner proxy, and when released it will 
-automatically release the Nib resources (e.g. the Nib top-level objects).
+automatically release the Nib resources (e.g. the Nib top-level objects). 
+
+Once a nib owner has been instantiated, the nib isn't loaded until -loadNib 
+is invoked.<br />
+In the example below, we show how to use ETNibOwner:
+
+<example>
+// First declare a ETNibOwner subclass to manage the nib
+@interface InspectorNibOwner : ETNibOwner
+@end
+
+@implementation InspectorNibOwner
+- (void) didLoadNib
+{
+	NSLog(@"Inspector nib is now loaded and awaken");
+}
+@end
+</example>
+
+<example>
+// Then use InspectorNibOwner to load the nib
+InspectorNibOwner *nibOwner = [[InspectorNibOwner alloc] initWithNibName: @"Inspector" bundle: nil];
+
+[nibOwner loadNib]; // Will invoke -didLoadNib 
+</example>
 
 When writing an EtoileUI application, the best choice is usually to use 
 [ETController] (or a subclass) to manage a Nib rather than ETNibOwner directly.
