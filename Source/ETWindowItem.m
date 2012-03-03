@@ -462,9 +462,16 @@ This coordinate space includes the window decoration (titlebar etc.).  */
 		-[ETLayoutItem setContentBounds:]
 		... 
 		-[ETView setFrame:] -- the window content view
-		-[NSWindow setFrame:display:] */
+		-[NSWindow setFrame:display:]
+		
+		 What is explained above holds when there is no NSToolbar in use, 
+		 otherwise -decorationSizeForContentSize: computes the size wrongly 
+		 because the NSWindow state is not consistent, so we check -inLiveResize
+		 to return immediately when:
+		 - the user is resizing the window
+		 - the resize is animated (see -setFrame:display:animate:) */
 
-	if ([self shouldKeepWindowFrame])
+	if ([_itemWindow inLiveResize] || [self shouldKeepWindowFrame])
 		return;
 
 	[_itemWindow setFrame: [[self class] convertRectToWidgetBackendScreenBase: rect] 
