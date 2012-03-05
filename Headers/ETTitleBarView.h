@@ -21,6 +21,7 @@
 	@private
 	id _target;
 	SEL _action;
+	BOOL _highlighted;
 }
 
 - (id) initWithFrame: (NSRect)frame;
