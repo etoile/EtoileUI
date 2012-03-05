@@ -49,7 +49,6 @@
 
 - (void) tile;
 
-- (NSRect) contentRect;
 - (void) toggleExpanded: (id)sender;
 
 @end
