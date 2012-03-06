@@ -81,7 +81,7 @@
 - (id) renderModel: (id)anObject
 {
 	//ETEntityDescription *entityDesc = [ETReflection reflectModel: anObject];
-	return [self renderModel: anObject description: [[anObject class] newEntityDescription]];
+	return [self renderModel: anObject description: AUTORELEASE([[anObject class] newEntityDescription])];
 }
 
 - (id) renderModel: (id)anObject description: (ETEntityDescription *)entityDesc
