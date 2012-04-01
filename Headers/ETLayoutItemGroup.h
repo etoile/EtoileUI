@@ -1,10 +1,10 @@
 /** <title>ETLayoutItemGroup</title>
-	
-	<abstract>A layout item tree node which can contain arbitrary 
+
+	<abstract>A layout item tree node which can contain arbitrary
 	ETLayoutItem subclass instances.</abstract>
- 
+
 	Copyright (C) 2007 Quentin Mathe
- 
+
 	Author:  Quentin Mathe <qmathe@club-internet.fr>
 	Date:  May 2007
 	License: Modified BSD (see COPYING)
@@ -34,14 +34,14 @@
 	BOOL _reloading; /* ivar used by ETMutationHandler category */
 	BOOL _hasNewContent;
 	BOOL _hasNewLayout;
-	/* Indicates whether -arrangedItems has changed since the layout was last 
+	/* Indicates whether -arrangedItems has changed since the layout was last
        updated. Sets to YES when the receiver is filtered and/or sorted. */
 	BOOL _hasNewArrangement;
 	BOOL _shouldMutateRepresentedObject;
 	BOOL _sorted;
 	BOOL _filtered;
 	BOOL _isLayerItem;
-	/* We hide the supervisor view subviews when a display cache is set. We 
+	/* We hide the supervisor view subviews when a display cache is set. We
 	   must restore [[[self supervisorView] wrappedView] isHidden] correctly. */
 	BOOL _wasViewHidden;
 	BOOL _changingSelection;
@@ -124,8 +124,8 @@
 
 /* Rendering */
 
-- (void) render: (NSMutableDictionary *)inputValues 
-      dirtyRect: (NSRect)dirtyRect 
+- (void) render: (NSMutableDictionary *)inputValues
+      dirtyRect: (NSRect)dirtyRect
       inContext: (id)ctxt;
 
 - (void) setCachedDisplayImage: (NSImage *)anImage;
@@ -133,8 +133,8 @@
 
 /* Selection */
 
-- (unsigned int) selectionIndex;
-- (void) setSelectionIndex: (unsigned int)index;
+- (NSUInteger) selectionIndex;
+- (void) setSelectionIndex: (NSUInteger)index;
 - (NSMutableIndexSet *) selectionIndexes;
 - (void) setSelectionIndexes: (NSIndexSet *)indexes;
 - (NSArray *) selectionIndexPaths;
@@ -169,9 +169,9 @@
 
 /** @taskunit Additions to ETCollectionMutation */
 
-- (ETLayoutItem *) insertObject: (id)object 
-                        atIndex: (unsigned int)index 
-                           hint: (id)hint 
+- (ETLayoutItem *) insertObject: (id)object
+                        atIndex: (NSUInteger)index
+                           hint: (id)hint
                    boxingForced: (BOOL)boxingForced;
 
 /* Framework Private */
@@ -182,12 +182,12 @@
 @end
 
 
-/** Informal source protocol based on child index, which can be implemented 
+/** Informal source protocol based on child index, which can be implemented
 by the source object set with -[ETLayoutItemGroup setSource:]. */
 @interface NSObject (ETLayoutItemGroupIndexSource)
 - (int) baseItem: (ETLayoutItemGroup *)baseItem numberOfItemsInItemGroup: (ETLayoutItemGroup *)itemGroup;
-- (ETLayoutItem *) baseItem: (ETLayoutItemGroup *)baseItem 
-                itemAtIndex: (int)index 
+- (ETLayoutItem *) baseItem: (ETLayoutItemGroup *)baseItem
+                itemAtIndex: (int)index
                 inItemGroup: (ETLayoutItemGroup *)itemGroup;
 @end
 
@@ -196,31 +196,31 @@ by the source object set with -[ETLayoutItemGroup setSource:]. */
 - (NSArray *) displayedItemPropertiesInItemGroup: (ETLayoutItemGroup *)itemGroup;
 @end
 
-/** Informal delegate protocol that can be implemented by the object set with 
+/** Informal delegate protocol that can be implemented by the object set with
 -[ETLayoutItemGroup setDelegate:]. */
 @interface NSObject (ETLayoutItemGroupDelegate)
 /** Delegate method that corresponds to ETItemGroupSelectionDidChangeNotification. */
 - (void) itemGroupSelectionDidChange: (NSNotification *)notif;
 @end
 
-/** Notification posted by ETLayoutItemGroup and subclasses in reply to 
-selection change in the layout item tree connected to the poster object. The 
-poster object is always an item group and can be retrieved through 
+/** Notification posted by ETLayoutItemGroup and subclasses in reply to
+selection change in the layout item tree connected to the poster object. The
+poster object is always an item group and can be retrieved through
 -[NSNotification object].
 
-This notification is posted when a selection related method such as 
--setSelectionIndexPaths: has been called on the object associated with the 
-notification, or when the selection is modified by the user, in this last case 
+This notification is posted when a selection related method such as
+-setSelectionIndexPaths: has been called on the object associated with the
+notification, or when the selection is modified by the user, in this last case
 the poster object will always be a base item. */
 extern NSString * const ETItemGroupSelectionDidChangeNotification;
-/** Notification observed by ETLayoutItemGroup and other classes 
-on which a source can be set. When the notification is received, the layout 
-item tree that belongs to the receiver is automatically reloaded. 
+/** Notification observed by ETLayoutItemGroup and other classes
+on which a source can be set. When the notification is received, the layout
+item tree that belongs to the receiver is automatically reloaded.
 
-This notification is only delivered when the poster is equal to the source 
+This notification is only delivered when the poster is equal to the source
 object of the observer.
 
-You can use this method to trigger the reloading everywhere the poster object 
-is used as source, without having to know the involved objects directly and 
+You can use this method to trigger the reloading everywhere the poster object
+is used as source, without having to know the involved objects directly and
 explicitly invoke -reload on each object. */
 extern NSString * const ETSourceDidUpdateNotification;

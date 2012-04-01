@@ -46,9 +46,9 @@ NSString * const ETSourceDidUpdateNotification = @"ETSourceDidUpdateNotification
 - (void) applySelectionIndexPaths: (NSMutableArray *)indexPaths
                    relativeToItem: (ETLayoutItemGroup *)pathBaseItem;
 - (void) didChangeSelection;
-- (void) display: (NSMutableDictionary *)inputValues 
-            item: (ETLayoutItem *)item 
-       dirtyRect: (NSRect)dirtyRect 
+- (void) display: (NSMutableDictionary *)inputValues
+            item: (ETLayoutItem *)item
+       dirtyRect: (NSRect)dirtyRect
        inContext: (id)ctxt;
 @end
 
@@ -66,8 +66,8 @@ NSString * const ETSourceDidUpdateNotification = @"ETSourceDidUpdateNotification
 
 /* Initialization */
 
-- (id) initWithView: (NSView *)view 
-         coverStyle: (ETStyle *)aStyle 
+- (id) initWithView: (NSView *)view
+         coverStyle: (ETStyle *)aStyle
       actionHandler: (ETActionHandler *)aHandler
 {
     self = [super initWithView: view coverStyle: aStyle actionHandler: aHandler];
@@ -85,7 +85,7 @@ NSString * const ETSourceDidUpdateNotification = @"ETSourceDidUpdateNotification
 	_hasNewContent = NO; /* Private accessors in ETMutationHandler category */
 	_hasNewArrangement = NO;
 	[self setItemScaleFactor: 1.0];
-	
+
 	_shouldMutateRepresentedObject = YES;
 
     return self;
@@ -110,20 +110,20 @@ See also -isLayerItem. */
 
 	DESTROY(_cachedDisplayImage);
 	DESTROY(_layout);
-	/* Arranged and sorted items are always a children subset, we don't 
+	/* Arranged and sorted items are always a children subset, we don't
 	   have to worry about nullifying weak references their element might have. */
 	DESTROY(_arrangedItems);
 	DESTROY(_sortedItems);
-	/* We now nullify the weak references our children hold. 
-	   We don't use FOREACH to avoid -objectEnumerator which would retain the 
-	   children and make the memory management more complex to test in the tree 
-	   structure since the returned enumerator is autoreleased and won't 
+	/* We now nullify the weak references our children hold.
+	   We don't use FOREACH to avoid -objectEnumerator which would retain the
+	   children and make the memory management more complex to test in the tree
+	   structure since the returned enumerator is autoreleased and won't
 	   release the children before the autorelease pool is popped. */
 	int n = [_layoutItems count];
 	for (int i = 0; i < n; i++)
 	{
 		ETLayoutItem *child = [_layoutItems objectAtIndex: i];
-		/* We bypass -setParentItem: to be sure we won't be trigger a KVO 
+		/* We bypass -setParentItem: to be sure we won't be trigger a KVO
 		   notification that would retain/release us in a change dictionary. */
 		child->_parentItem = nil;
 	}
@@ -144,7 +144,7 @@ See also -isLayerItem. */
 
 The layout and its tool are always copied (they cannot be shared).
 
-The returned copy is mutable because ETLayoutItemGroup cannot be immutable. */ 
+The returned copy is mutable because ETLayoutItemGroup cannot be immutable. */
 - (id) copyWithCopier: (ETCopier *)aCopier isDeep: (BOOL)isDeepCopy
 {
 	ETLayoutItemGroup *item = [super copyWithCopier: aCopier isDeep: isDeepCopy];
@@ -175,21 +175,21 @@ The returned copy is mutable because ETLayoutItemGroup cannot be immutable. */
 	item->_sorted = _sorted;
 	item->_filtered = _filtered;
 
-	/* We copy all object ivars except _layoutItems whose copying is delegated 
-	   to -deepCopyWithZone:, but we create an empty array in case we are not 
+	/* We copy all object ivars except _layoutItems whose copying is delegated
+	   to -deepCopyWithZone:, but we create an empty array in case we are not
 	   called by -deepCopyWithZone:. */
 
 	item->_layoutItems = [[NSMutableArray allocWithZone: zone] init];
-	
+
 	id source =  GET_PROPERTY(kETSourceProperty);
 	id sourceCopy = ([self usesRepresentedObjectAsProvider] ? (id)item : source);
 
 	SET_OBJECT_PROPERTY(item, sourceCopy, kETSourceProperty);
 	/* Set up an observer as -setSource: does */
-	[[NSNotificationCenter defaultCenter] 
+	[[NSNotificationCenter defaultCenter]
 		   addObserver: item
 	          selector: @selector(sourceDidUpdate:)
-		          name: ETSourceDidUpdateNotification 
+		          name: ETSourceDidUpdateNotification
 			    object: sourceCopy];
 
 	ETController *controller = GET_PROPERTY(kETControllerProperty);
@@ -261,7 +261,7 @@ The returned copy is mutable because ETLayoutItemGroup cannot be immutable. */
 	[controller finishDeepCopy: controllerCopy withZone: zone content: itemCopy];
 
 	/* We need to update the layout to have the content reloaded in widget layouts
-	   Which means the item copy will then receive a layout update even in case 
+	   Which means the item copy will then receive a layout update even in case
 	   the receiver had received none until now.  */
 	if ([[itemCopy layout] isWidget])
 	{
@@ -276,14 +276,14 @@ The returned copy is mutable because ETLayoutItemGroup cannot be immutable. */
 	}
 
 	[aCopier endCopy]; /* Reset the context if the copy started with us */
-	
-	//ETLog(@"Make deep copy %@ + %@ of %@ + %@ at depth %i", itemCopy, 
+
+	//ETLog(@"Make deep copy %@ + %@ of %@ + %@ at depth %i", itemCopy,
 	//	[itemCopy controller], self, [self controller], copyDepth);
 
 	return itemCopy;
 }
 
-/** Returns YES. An ETLayoutItemGroup is always a group and a collection by 
+/** Returns YES. An ETLayoutItemGroup is always a group and a collection by
 default. */
 - (BOOL) isGroup
 {
@@ -292,7 +292,7 @@ default. */
 
 /* Traversing Layout Item Tree */
 
-/** Returns the layout item child identified by the index path parameter 
+/** Returns the layout item child identified by the index path parameter
 interpreted as relative to the receiver.
 
 For an empty path, returns self.<br />
@@ -308,7 +308,7 @@ For a nil path, returns nil. */
 	for (unsigned int i = 0; i < length; i++)
 	{
 		if ([item isGroup])
-		{		
+		{
 			item = [(ETLayoutItemGroup *)item itemAtIndex: [path indexAtPosition: i]];
 		}
 		else
@@ -321,45 +321,45 @@ For a nil path, returns nil. */
 	return item;
 }
 
-/** Returns the first layout item descendant on which the identifier is set. 
+/** Returns the first layout item descendant on which the identifier is set.
 
-The descendant items are retrieved with -allDescendantItems, this results in 
+The descendant items are retrieved with -allDescendantItems, this results in
 a pre-order traversal.<br />
 Use this method cautiously when the item tree is big (e.g. more than 10 000 items).
 
 See also -identifier. */
 - (ETLayoutItem *) itemForIdentifier: (NSString *)anId
 {
-	return [[[self allDescendantItems] filteredArrayUsingPredicate: 
+	return [[[self allDescendantItems] filteredArrayUsingPredicate:
 		[NSPredicate predicateWithFormat: @"identifier == %@", anId]] firstObject];
 }
 
-/** Returns an indented tree description by traversing the tree with 
--arrangedItems to get the children if usesArrangedItems is YES, otherwise with 
+/** Returns an indented tree description by traversing the tree with
+-arrangedItems to get the children if usesArrangedItems is YES, otherwise with
 -items.
 
-When aProperty is a valid property name, each item description includes the 
+When aProperty is a valid property name, each item description includes the
 value bound to this property.
 
 See also -[NSObject descriptionWithOptions:]. */
 - (NSString *) descriptionWithProperty: (NSString *)aProperty arranged: (BOOL)usesArrangedItems
 {
 	NSString *childKey = (usesArrangedItems ? @"arrangedItems" : @"items");
-	return [self descriptionWithOptions: [NSMutableDictionary dictionaryWithObjectsAndKeys: 
+	return [self descriptionWithOptions: [NSMutableDictionary dictionaryWithObjectsAndKeys:
 		A(aProperty), kETDescriptionOptionValuesForKeyPaths, childKey, kETDescriptionOptionTraversalKey, nil]];
 }
 
 /* Manipulating Layout Item Tree */
 
-/** Handles the view visibility of child items with a role similar to 
--setVisibleItems: that is called by layouts. 
+/** Handles the view visibility of child items with a role similar to
+-setVisibleItems: that is called by layouts.
 
-This method is called when you insert an item in an item group with a layout 
-which doesn't require an update in that case, otherwise the view insertion is 
-managed by requesting a layout update which ultimately calls back 
--setVisibleItems:. 
+This method is called when you insert an item in an item group with a layout
+which doesn't require an update in that case, otherwise the view insertion is
+managed by requesting a layout update which ultimately calls back
+-setVisibleItems:.
 
-NOTE: Having a null layout class may be a solution to get rid of 
+NOTE: Having a null layout class may be a solution to get rid of
 -handleAttachViewOfItem: and -handleDetachViewOfItem:. */
 - (void) handleAttachViewOfItem: (ETLayoutItem *)item
 {
@@ -371,14 +371,14 @@ NOTE: Having a null layout class may be a solution to get rid of
 
 	BOOL isAlreadyAttached = [[itemDisplayView superview] isEqual: [_parentItem supervisorView]];
 
-	/* We don't want to change the subview ordering when we simply switch 
+	/* We don't want to change the subview ordering when we simply switch
 	   the visibility */
 	if (isAlreadyAttached)
 		return;
 
 	[itemDisplayView removeFromSuperview];
 
-	/* Only insert the item view if the layout is a fixed/free layout. 
+	/* Only insert the item view if the layout is a fixed/free layout.
 	   TODO: Probably make more explicit the nil layout check. */
 	if ([[self layout] isOpaque] == NO)
 	{
@@ -400,7 +400,7 @@ item is made a child item of the receiver. This method is available to be
 overriden in subclasses that want to extend or modify the item insertion
 behavior.
 
-The default implementation takes to care to remove item from any existing parent 
+The default implementation takes to care to remove item from any existing parent
 item, then updates the parent item reference to be the receiver.<br />
 You must always call the superclass implementation.
 
@@ -440,7 +440,7 @@ holds when the layout item tree is built directly from the represented object by
 the mean of ETCollection protocol. */
 - (void) setRepresentedObject: (id)model
 {
-	[[NSNotificationCenter defaultCenter] removeObserver: self 
+	[[NSNotificationCenter defaultCenter] removeObserver: self
 	                                                name: ETCollectionDidUpdateNotification
 	                                              object: [self representedObject]];
 
@@ -448,9 +448,9 @@ the mean of ETCollection protocol. */
 
 	if (model != nil)
 	{
-		[[NSNotificationCenter defaultCenter] addObserver: self 
-		                                         selector: @selector(representedObjectCollectionDidUpdate:) 
-		                                             name: ETCollectionDidUpdateNotification 
+		[[NSNotificationCenter defaultCenter] addObserver: self
+		                                         selector: @selector(representedObjectCollectionDidUpdate:)
+		                                             name: ETCollectionDidUpdateNotification
 		                                           object: model];
 	}
 	if ([self usesRepresentedObjectAsProvider])
@@ -465,7 +465,7 @@ the layout item tree onto the model object graph. By default, this method
 returns YES.
 
 Mutations are triggered by calling children or collection related methods
-like -addItem:, -insertItem:atIndex:, removeItem:, addObject: etc. 
+like -addItem:, -insertItem:atIndex:, removeItem:, addObject: etc.
 
 <strong>The returned value is meaningful only if the receiver is a base item.
 In this case, the value applies to all related descendant items (by being
@@ -476,9 +476,9 @@ looked up by descendant items).</strong> */
 }
 
 /** Sets whether the layout item tree mutation are propagated to the represented
-object or not. 
+object or not.
 
-<strong>The value set is meaningful only if the receiver is a base item, 
+<strong>The value set is meaningful only if the receiver is a base item,
 otherwise the value is simply ignored.</strong>  */
 - (void) setShouldMutateRepresentedObject: (BOOL)flag
 {
@@ -489,8 +489,8 @@ otherwise the value is simply ignored.</strong>  */
 elements of the represented object collection into ETLayoutItem or
 ETLayoutItemGroup instances.
 
-To use represented objects as providers in the layout item tree connected to 
-the receiver, you have to set the source of the receiver to be the receiver 
+To use represented objects as providers in the layout item tree connected to
+the receiver, you have to set the source of the receiver to be the receiver
 itself. The code would be something like <example>
 [itemGroupsetSource: itemGroup]</example>. */
 - (BOOL) usesRepresentedObjectAsProvider
@@ -528,34 +528,34 @@ So you can write you own data source object by implementing either:
 </list></item>
 </enum>
 
-Another common solution is to use the receiver itself as a source, in that 
-case -usesRepresentedObjectAsProvider returns YES. And the receiver will 
-generate the layout item tree bound to it by retrieving any child objects of the 
-represented object (through ETCollection protocol) and wrapping them into 
-ETLayoutItem or ETLayoutItemGroup objects based on whether these childs 
+Another common solution is to use the receiver itself as a source, in that
+case -usesRepresentedObjectAsProvider returns YES. And the receiver will
+generate the layout item tree bound to it by retrieving any child objects of the
+represented object (through ETCollection protocol) and wrapping them into
+ETLayoutItem or ETLayoutItemGroup objects based on whether these childs
 implements ETCollection or not.
 
 You can also combine these abilities with an off-the-shelf controller object like
 ETController. See -setController to do so. This brings extra flexibility such as:
 <list>
 <item>template item and item group for the generated layout items</item>
-<item>easy to use add, insert and remove actions with template model object and 
+<item>easy to use add, insert and remove actions with template model object and
 model group for the represented objects to insert wrapped in layout items</item>
 <item>sorting</item>
 <item>searching</item>
 </list>
 
-Finally when -source returns nil, it's always possible to build and manage a 
+Finally when -source returns nil, it's always possible to build and manage a
 layout item tree structure in a static fashion by yourself.
 
-When the new source is set, the content is immediately reloaded, and the layout 
-updated unless the autolayout is disabled. Finally an 
+When the new source is set, the content is immediately reloaded, and the layout
+updated unless the autolayout is disabled. Finally an
 ETSourceDidUpdateNotification is posted.
 
-By setting a source, the receiver represented path base is automatically set to 
-'/' unless another path was set previously. If you pass nil to get rid of a 
-source, the represented path base isn't reset to nil but keeps its actual value 
-in order to maintain it as a base item and avoid unpredictable changes to the 
+By setting a source, the receiver represented path base is automatically set to
+'/' unless another path was set previously. If you pass nil to get rid of a
+source, the represented path base isn't reset to nil but keeps its actual value
+in order to maintain it as a base item and avoid unpredictable changes to the
 event handling logic.
 
 Marks the receiver as needing a layout update. */
@@ -565,14 +565,14 @@ Marks the receiver as needing a layout update. */
 	if (GET_PROPERTY(kETSourceProperty) == source)
 		return;
 
-	// TODO: Because ETCompositeLayout uses -setSource: in its set up, we cannot 
+	// TODO: Because ETCompositeLayout uses -setSource: in its set up, we cannot
 	// do it in this way...
-	//NSAssert([[self layout] isKindOfClass: NSClassFromString(@"ETCompositeLayout")] == NO, 
+	//NSAssert([[self layout] isKindOfClass: NSClassFromString(@"ETCompositeLayout")] == NO,
 	//	@"The source must not be changed when a ETCompositeLayout is in use");
 
-	[[NSNotificationCenter defaultCenter] 
-		removeObserver: self 
-		          name: ETSourceDidUpdateNotification 
+	[[NSNotificationCenter defaultCenter]
+		removeObserver: self
+		          name: ETSourceDidUpdateNotification
 			    object: GET_PROPERTY(kETSourceProperty)];
 
 	SET_PROPERTY(source, kETSourceProperty);
@@ -581,15 +581,15 @@ Marks the receiver as needing a layout update. */
 	[self setNeedsLayoutUpdate];
 	if (source != nil && source != self)
 	{
-		[[NSNotificationCenter defaultCenter] 
+		[[NSNotificationCenter defaultCenter]
 			addObserver: self
 		       selector: @selector(sourceDidUpdate:)
-			       name: ETSourceDidUpdateNotification 
+			       name: ETSourceDidUpdateNotification
 		         object: source];
 	}
 }
 
-/** Returns the delegate associated with the receiver. 
+/** Returns the delegate associated with the receiver.
 
 See also -setDelegate:. */
 - (id) delegate
@@ -597,33 +597,33 @@ See also -setDelegate:. */
 	return GET_PROPERTY(kETDelegateProperty);
 }
 
-/** Sets the delegate associated with the receiver. 
+/** Sets the delegate associated with the receiver.
 
-A delegate is only useful if the receiver is a base item, otherwise it will  
+A delegate is only useful if the receiver is a base item, otherwise it will
 be ignored.
 
 The delegate is retained, unlike what Cocoa/GNUstep usually do.<br />
-The delegate is owned by the item and treated as a pluggable aspect to be 
+The delegate is owned by the item and treated as a pluggable aspect to be
 released when the item is deallocated.  */
 - (void) setDelegate: (id)delegate
 {
 	SET_PROPERTY(delegate, kETDelegateProperty);
 }
 
-/** Returns the controller which allows to customize the overall UI interaction 
+/** Returns the controller which allows to customize the overall UI interaction
 with the receiver item tree.
 
-When the controller is not nil, the receiver is both a base item and the 
+When the controller is not nil, the receiver is both a base item and the
 controller content. */
 - (ETController *) controller
 {
 	return GET_PROPERTY(kETControllerProperty);
 }
 
-/** Sets the controller which allows to customize the overall UI interaction 
+/** Sets the controller which allows to customize the overall UI interaction
 with the receiver item tree.
 
-When the given controller is not nil, it is inserted as the next responder and 
+When the given controller is not nil, it is inserted as the next responder and
 the receiver becomes both a base item and the controller content.
 
 See also -setSource:, -isBaseItem and -nextResponder. */
@@ -685,7 +685,7 @@ Similar to -firstObject method for collections (see ETCollection).*/
 /** Returns the last receiver child item.
 
 Shortcut method equivalent to [self itemAtIndex: [self numberOfItems] - 1].
-	
+
 Similar to -lastObject method for collections (see ETCollection).*/
 - (ETLayoutItem *) lastItem
 {
@@ -714,8 +714,8 @@ Similar to -lastObject method for collections (see ETCollection).*/
 	[self handleRemoveItems: [self items]];
 }
 
-// FIXME: (id) parameter rather than (ETLayoutItem *) turns off compiler 
-// conflicts with menu item protocol which also implements this method. 
+// FIXME: (id) parameter rather than (ETLayoutItem *) turns off compiler
+// conflicts with menu item protocol which also implements this method.
 // Fix compiler.
 
 /** Returns the index of the given child item in the receiver children. */
@@ -742,24 +742,24 @@ Similar to -lastObject method for collections (see ETCollection).*/
 	return [NSArray arrayWithArray: _layoutItems];
 }
 
-/** Returns the descendant items, including the immediate children, that share 
-the same base item than the receiver. 
+/** Returns the descendant items, including the immediate children, that share
+the same base item than the receiver.
 
 An item is said to be under the control of an item group, when you can traverse
-the branch leading to the item without crossing a base item. An item group 
-becomes a base item when a represented path base is set, in other words when 
+the branch leading to the item without crossing a base item. An item group
+becomes a base item when a represented path base is set, in other words when
 -representedPathBase doesn't return nil. See also -isBaseItem.
 
 This method collects every item in the layout item subtree (excluding the
 receiver) by doing a preorder traversal, the resulting collection is a flat list
 of every item in the tree.
 
-If you are interested by collecting descendant items in another traversal order, 
+If you are interested by collecting descendant items in another traversal order,
 you have to implement your own version of this method. */
 - (NSArray *) descendantItemsSharingSameBaseItem
 {
-	// TODO: This code is probably quite slow by being written in a recursive 
-	// style and allocating/resizing many arrays instead of using a single 
+	// TODO: This code is probably quite slow by being written in a recursive
+	// style and allocating/resizing many arrays instead of using a single
 	// linked list. Test whether optimization are needed or not really...
 	NSMutableArray *collectedItems = [NSMutableArray array];
 
@@ -778,14 +778,14 @@ you have to implement your own version of this method. */
 
 This method collects every item in the layout item subtree (excluding the
 receiver) by doing a preorder traversal, the resulting collection is a flat list
-of every item in the tree. 
+of every item in the tree.
 
 If you are interested in collecting descendant items in another traversal order,
 you have to implement your own version of this method. */
 - (NSArray *) allDescendantItems
 {
-	// TODO: This code is probably quite slow by being written in a recursive 
-	// style and allocating/resizing many arrays instead of using a single 
+	// TODO: This code is probably quite slow by being written in a recursive
+	// style and allocating/resizing many arrays instead of using a single
 	// linked list. Test whether optimization are needed or not really ...
 	NSMutableArray *collectedItems = [NSMutableArray array];
 
@@ -802,7 +802,7 @@ you have to implement your own version of this method. */
 
 /** Returns whether the item is a receiver descendant item.
 
-This method is a lot more efficient than using -allDescendantItems e.g. 
+This method is a lot more efficient than using -allDescendantItems e.g.
 <code>[[self allDescendantItems] containsItem: anItem]</code>. */
 - (BOOL) isDescendantItem: (ETLayoutItem *)anItem
 {
@@ -827,12 +827,12 @@ This method is a lot more efficient than using -allDescendantItems e.g.
 	return hasSource && ![self isReloading];
 }
 
-/** Tries to reload the content of the receiver, but only if it can be reloaded. 
+/** Tries to reload the content of the receiver, but only if it can be reloaded.
 
-Won't reload when the receiver is currently sorted and/or filtered. See 
+Won't reload when the receiver is currently sorted and/or filtered. See
 -isSorted and -isFiltered.
 
-This method can be safely called even if the receiver has no source or doesn't 
+This method can be safely called even if the receiver has no source or doesn't
 inherit a source from a base item.
 
 Marks the receiver as needing a layout update, if a reload occurs.
@@ -850,7 +850,7 @@ When the source is nil, the receiver becomes empty. */
 - (void) tryReloadWithSource: (id)aSource
 {
 	NSParameterAssert([self isReloading] == NO);
-	
+
 	ETDebugLog(@"Try reload %@", self);
 
 	BOOL wasAutolayoutEnabled = [self isAutolayout];
@@ -871,7 +871,7 @@ When the source is nil, the receiver becomes empty. */
 /** Reloads the content by removing all existing childrens and requesting all
 the receiver immediate children to the base item source.
 
-Will cancel any any sorting and/or filtering currently done on the receiver. 
+Will cancel any any sorting and/or filtering currently done on the receiver.
 Which means -isFiltered and -isSorted will both return NO.
 
 Marks the receiver as needing a layout update. */
@@ -885,7 +885,7 @@ Marks the receiver as needing a layout update. */
 	}
 	else
 	{
-		ETLog(@"WARNING: Impossible to reload %@ because the base item miss " 
+		ETLog(@"WARNING: Impossible to reload %@ because the base item miss "
 			@"a source %@", self, [[self baseItem] source]);
 	}
 }
@@ -906,10 +906,10 @@ Marks the receiver as needing a layout update. */
 {
 	[_layout setLayoutContext: nil]; /* Ensures -[ETLayout tearDown] is called */
 	ASSIGN(_layout, aLayout);
-	/* We must remove the item views, otherwise they might remain visible as 
-	   subviews (think ETBrowserLayout on GNUstep which has transparent areas),  
+	/* We must remove the item views, otherwise they might remain visible as
+	   subviews (think ETBrowserLayout on GNUstep which has transparent areas),
 	   because view-based layout won't call -setVisibleItems: in -renderWithLayoutItems:XXX:. */
-	[self setVisibleItems: [NSArray array]];	
+	[self setVisibleItems: [NSArray array]];
 	[self setHasNewLayout: YES];
 	[aLayout setLayoutContext: self];
 }
@@ -921,23 +921,23 @@ Marks the receiver as needing a layout update. */
 		return;
 
 	//ETDebugLog(@"Modify layout from %@ to %@ in %@", _layout, layout, self);
-	
+
 	ETLayout *oldLayout = RETAIN(_layout);
 	BOOL wasAutolayoutEnabled = [self isAutolayout];
-	
+
 	/* Disable autolayout to avoid spurious updates triggered by stuff like
 	   view/container frame modification on layout view insertion */
 	[self setAutolayout: NO];
-	
+
 	[self assignLayout: layout];
 	[self didChangeLayout: oldLayout];
 	RELEASE(oldLayout);
-	
+
 	[self setAutolayout: wasAutolayoutEnabled];
 	[self setNeedsLayoutUpdate];
 }
 
-/** Attempts to reload the children items from the source and updates the layout 
+/** Attempts to reload the children items from the source and updates the layout
 by asking the first ancestor item with an opaque layout to do so. */
 - (void) reloadAndUpdateLayout
 {
@@ -953,16 +953,16 @@ See -updateLayoutRecursively:. */
 	[self updateLayoutRecursively: YES];
 }
 
-/** Updates each layout in the immediate children (recursively is NO) or in the 
-whole item subtree (recursively is YES) owned by the receiver. 
+/** Updates each layout in the immediate children (recursively is NO) or in the
+whole item subtree (recursively is YES) owned by the receiver.
 
-When recursively is YES, does a bottom-up layout update, by propagating it first 
+When recursively is YES, does a bottom-up layout update, by propagating it first
 downwards.<br />
-Layout updates start on the terminal descendant items, then are carried upwards 
-through the tree structure back to the receiver, whose layout is the last 
+Layout updates start on the terminal descendant items, then are carried upwards
+through the tree structure back to the receiver, whose layout is the last
 updated.<br />
-A bottom-up update is used because a parent layout computation might depend on 
-child item properties. For example, an item can use a layout which touches its 
+A bottom-up update is used because a parent layout computation might depend on
+child item properties. For example, an item can use a layout which touches its
 frame (see -usesLayoutBasedFrame). */
 - (void) updateLayoutRecursively: (BOOL)recursively
 
@@ -973,7 +973,7 @@ frame (see -usesLayoutBasedFrame). */
 	ETDebugLog(@"Try update layout of %@", self);
 
 	BOOL wasAutolayoutEnabled = [ETLayoutItem isAutolayoutEnabled];
-	BOOL isNewLayoutContent = ([self hasNewContent] || [self hasNewLayout] 
+	BOOL isNewLayoutContent = ([self hasNewContent] || [self hasNewLayout]
 		|| _hasNewArrangement);
 
 	[ETLayoutItem disablesAutolayoutIncludingNeedsUpdate: YES];
@@ -1004,47 +1004,47 @@ frame (see -usesLayoutBasedFrame). */
 	return [self isAutolayout] && ![self isReloading] && ![[self layout] isRendering];
 }
 
-/** Returns YES if mutating the receiver content by calling -addItem:, 
-    -insertItem:atIndex:, -removeItem: etc. triggers a layout update and a 
-	redisplay, otherwise returns NO when you must call -updateLayout by yourself 
-	after mutating the receiver content. 
-	By default, returns YES, hence there is usually no need to call 
+/** Returns YES if mutating the receiver content by calling -addItem:,
+    -insertItem:atIndex:, -removeItem: etc. triggers a layout update and a
+	redisplay, otherwise returns NO when you must call -updateLayout by yourself
+	after mutating the receiver content.
+	By default, returns YES, hence there is usually no need to call
 	-updateLayout and marks the receiver or a parent item for redisplay. */
 - (BOOL) isAutolayout
 {
 	return _autolayout;
 }
 
-/** Sets whether mutating the receiver content by calling -addItem:, 
-    -insertItem:atIndex:, -removeItem: etc. triggers a layout update and a 
+/** Sets whether mutating the receiver content by calling -addItem:,
+    -insertItem:atIndex:, -removeItem: etc. triggers a layout update and a
 	redisplay.
-	If you need to add, remove or insert a large set of child items, in order 
-	to only recompute the layout once and also avoid a lot of extra redisplay, 
-	you should disable the autolayout, and restore it later after mutating 
-	the receiver children in meantime. Take note that enabling the autolayout 
-	doesn't trigger a layout update, so -updateLayout must be called when 
+	If you need to add, remove or insert a large set of child items, in order
+	to only recompute the layout once and also avoid a lot of extra redisplay,
+	you should disable the autolayout, and restore it later after mutating
+	the receiver children in meantime. Take note that enabling the autolayout
+	doesn't trigger a layout update, so -updateLayout must be called when
 	autolayout is disabled or was just restored. */
 - (void) setAutolayout: (BOOL)flag
 {
 	_autolayout = flag;
 }
 
-/** Returns YES if the item frame may vary with the layout of the child items 
-    that makes up the content, otherwise returns NO if the frame is static and 
-	will always remain identical after updating the layout. By default, returns 
+/** Returns YES if the item frame may vary with the layout of the child items
+    that makes up the content, otherwise returns NO if the frame is static and
+	will always remain identical after updating the layout. By default, returns
 	NO.
-	This method is used by the drawing code of the layout item tree to know 
-	if the whole receiver content must be redrawn subsequently to a layout 
+	This method is used by the drawing code of the layout item tree to know
+	if the whole receiver content must be redrawn subsequently to a layout
 	change. */
 - (BOOL) usesLayoutBasedFrame
 {
 	return _usesLayoutBasedFrame;
 }
 
-/** Sets to YES to indicate that the item frame may vary with the layout of the 
-    child items that makes up the content, otherwise sets to NO if the frame is 
+/** Sets to YES to indicate that the item frame may vary with the layout of the
+    child items that makes up the content, otherwise sets to NO if the frame is
 	static and will always remain identical after updating the layout.
-	You rarely need to invoke this method unless you write a layout that alter 
+	You rarely need to invoke this method unless you write a layout that alter
 	the frame of its layout context. */
 - (void) setUsesLayoutBasedFrame: (BOOL)flag
 {
@@ -1053,7 +1053,7 @@ frame (see -usesLayoutBasedFrame). */
 
 /* Item scaling */
 
-/** Returns the scale factor applied to each item when the layout supports it. 
+/** Returns the scale factor applied to each item when the layout supports it.
 
 See also -setItemScaleFactor:. */
 - (float) itemScaleFactor
@@ -1067,7 +1067,7 @@ This scale factor only applies to the immediate children.
 
 Updates the layout immediately unlike most methods.
 
-See -[ETLayout setItemSizeConstraintStyle:] and -[ETLayout setConstrainedItemSize:] 
+See -[ETLayout setItemSizeConstraintStyle:] and -[ETLayout setConstrainedItemSize:]
 to control more precisely how the items get resized per layout. */
 - (void) setItemScaleFactor: (float)aFactor
 {
@@ -1084,11 +1084,11 @@ to control more precisely how the items get resized per layout. */
 	[NSBezierPath fillRect: dirtyRect];
 }
 
-/** See -[ETLayoutItem render:dirtyRect:inContext:]. The most important addition of 
-this method is to manage the drawing of children items by calling this method 
+/** See -[ETLayoutItem render:dirtyRect:inContext:]. The most important addition of
+this method is to manage the drawing of children items by calling this method
 recursively on them. */
-- (void) render: (NSMutableDictionary *)inputValues 
-      dirtyRect: (NSRect)dirtyRect 
+- (void) render: (NSMutableDictionary *)inputValues
+      dirtyRect: (NSRect)dirtyRect
       inContext: (id)ctxt
 {
 	//ETLog(@"Render %@ dirtyRect %@ in %@", self, NSStringFromRect(dirtyRect), ctxt);
@@ -1098,7 +1098,7 @@ recursively on them. */
 	/* Use the display cache when there is one */
 	if (nil != _cachedDisplayImage)
 	{
-		[[ETBasicItemStyle sharedInstance] drawImage: _cachedDisplayImage 
+		[[ETBasicItemStyle sharedInstance] drawImage: _cachedDisplayImage
 		                                     flipped: [self isFlipped]
 		                                      inRect: contentDrawingBox];
 		return;
@@ -1107,14 +1107,14 @@ recursively on them. */
 	/* Otherwise redisplay the receiver and its descendants recursively */
 	if ([self usesLayoutBasedFrame] || NSIntersectsRect(dirtyRect, contentDrawingBox))
 	{
-	   /* We limit the redrawn area to the content bounds. We don't want to 
+	   /* We limit the redrawn area to the content bounds. We don't want to
 	      draw over the decorators. */
 		NSRect realDirtyRect = NSIntersectionRect(dirtyRect, contentDrawingBox);
 
-		/* There is no need to set realDirtyRect with -[NSBezierPath setClip] 
-		   because the right clip rect should have been set by our supervisor 
+		/* There is no need to set realDirtyRect with -[NSBezierPath setClip]
+		   because the right clip rect should have been set by our supervisor
 		   view or our parent item (when when we have no decorator). */
-		   	
+
 		[super render: inputValues dirtyRect: realDirtyRect inContext: ctxt];
 
 		/* Render child items (if the layout doesn't handle it) */
@@ -1123,81 +1123,81 @@ recursively on them. */
 		if ([[self layout] isOpaque] == NO)
 		{
 			NSEnumerator *e = [[self arrangedItems] reverseObjectEnumerator];
-		
+
 			FOREACHE(nil, item, ETLayoutItem *, e)
 			{
 				if ([item isVisible] == NO)
 					continue;
 
-				/* We intersect our dirtyRect with the drawing frame of the item to be 
-				   drawn, so the child items don't receive the drawing frame of their 
-				   parent, but their own. Also restricts the dirtyRect so it doesn't 
+				/* We intersect our dirtyRect with the drawing frame of the item to be
+				   drawn, so the child items don't receive the drawing frame of their
+				   parent, but their own. Also restricts the dirtyRect so it doesn't
 				   encompass any decorators set on the item. */
 				NSRect childDirtyRect = [item convertRectFromParent: realDirtyRect];
 				childDirtyRect = NSIntersectionRect(childDirtyRect, [item drawingBox]);
 
-				/* In case, dirtyRect is only a redraw rect on the parent and not on 
-				   the entire parent frame, we try to optimize by not redrawing the 
+				/* In case, dirtyRect is only a redraw rect on the parent and not on
+				   the entire parent frame, we try to optimize by not redrawing the
 				   items that lies outside of the dirtyRect. */
 				if (NSEqualRects(childDirtyRect, NSZeroRect))
 					continue;
 
-				[self display: inputValues 
-						 item: item 
-					dirtyRect: childDirtyRect 
+				[self display: inputValues
+						 item: item
+					dirtyRect: childDirtyRect
 					inContext: ctxt];
 			}
 		}
 		[NSGraphicsContext restoreGraphicsState]; /* Restore the receiver clipping rect */
-	
+
 		/* Render the layout-specific tree if needed */
 
-		[self display: inputValues 
-		         item: [[self layout] layerItem] 
-		    dirtyRect: dirtyRect 
+		[self display: inputValues
+		         item: [[self layout] layerItem]
+		    dirtyRect: dirtyRect
 		    inContext: ctxt];
 	}
 }
 
-/** Displays the given item by adjusting the graphic context for the drawing, 
-then calling -render:dirtyRect:inContext: on it, and finally restoring the 
-graphic context. 
+/** Displays the given item by adjusting the graphic context for the drawing,
+then calling -render:dirtyRect:inContext: on it, and finally restoring the
+graphic context.
 
 Take note this method doesn't save and restore the graphics state.
 
 newDirtyRect is expressed in the given item coordinate space.
 
 You should never need to call this method directly. */
-- (void) display: (NSMutableDictionary *)inputValues 
-            item: (ETLayoutItem *)item 
-       dirtyRect: (NSRect)newDirtyRect 
+- (void) display: (NSMutableDictionary *)inputValues
+            item: (ETLayoutItem *)item
+       dirtyRect: (NSRect)newDirtyRect
        inContext: (id)ctxt
 {
-	 /* When the item has a view, it waits to be asked to draw directly by its 
-	    view before rendering anything. 
-		To explain it in a more detailed but complex way... If a parent item 
-		indirectly requests to draw the item by asking us to redraw, we decline 
-		and wait the control return to the view who initiated the drawing and 
+	 /* When the item has a view, it waits to be asked to draw directly by its
+	    view before rendering anything.
+		To explain it in a more detailed but complex way... If a parent item
+		indirectly requests to draw the item by asking us to redraw, we decline
+		and wait the control return to the view who initiated the drawing and
 		this view asks the item view to draw itself as a subview.
 		Hence we only draw child items with no display view (no supervisor view
 		as a byproduct).
-		
-		FIXME: Verifying the item has no supervisor view isn't enough, because it 
-		may be enclosed in a view owned by a decorator. In such case, this view 
-		will be asked to draw by the view hierarchy and overwrite the item 
-		drawing since it occurs below it (in a superview). 
-		
+
+		FIXME: Verifying the item has no supervisor view isn't enough, because it
+		may be enclosed in a view owned by a decorator. In such case, this view
+		will be asked to draw by the view hierarchy and overwrite the item
+		drawing since it occurs below it (in a superview).
+
 		See also INTERLEAVED_DRAWING in ETView. */
 
-	// NOTE: On GNUstep unlike Cocoa, a nil item  will alter the coordinates 
-	// when concat/invert is executed. For example, in -render:dirtyRect:inContext: 
+	// NOTE: On GNUstep unlike Cocoa, a nil item  will alter the coordinates
+	// when concat/invert is executed. For example, in -render:dirtyRect:inContext:
 	// a nil item can be returned by -[ETLayout layerItem].
 	BOOL shouldDrawItem = (item != nil && [item displayView] == nil);
-			
+
 	if (shouldDrawItem == NO)
 		return;
 
-#ifdef DEBUG_DRAWING		
+#ifdef DEBUG_DRAWING
 	NSRect itemRect = [item convertRectFromParent: [item frame]];
 	[[NSColor yellowColor] set];
 	[NSBezierPath setDefaultLineWidth: 4.0];
@@ -1205,8 +1205,8 @@ You should never need to call this method directly. */
 #endif
 
 	NSAffineTransform *transform = [NSAffineTransform transform];
-	
-	/* Modify coordinate matrix when the layout item doesn't use a view for 
+
+	/* Modify coordinate matrix when the layout item doesn't use a view for
 	   drawing. */
 	if ([item supervisorView] == nil)
 	{
@@ -1292,9 +1292,9 @@ items, that don't belong to it, as children. */
 /** Sets the visible child items of the receiver, by taking care of inserting
 and removing the item display views based on the visibility of the layout items.
 
-This method is typically called by the layout of the receiver once the layout 
-rendering is finished, in order to adjust the visibility of views and update the 
-visible property of the child items. You shouldn't need to call this method by 
+This method is typically called by the layout of the receiver once the layout
+rendering is finished, in order to adjust the visibility of views and update the
+visible property of the child items. You shouldn't need to call this method by
 yourself (see -visibleItemsForItems:). */
 - (void) setVisibleItems: (NSArray *)visibleItems forItems: (NSArray *)items
 {
@@ -1306,23 +1306,23 @@ yourself (see -visibleItemsForItems:). */
 
 /* Selection */
 
-/** Returns the index of the first selected item which is an immediate child of 
-the receiver. If there is none, returns NSNotFound. 
+/** Returns the index of the first selected item which is an immediate child of
+the receiver. If there is none, returns NSNotFound.
 
 Calling this method is equivalent to [[self selectionIndexes] firstIndex].
 
 Take note that -selectionIndexPaths may return one or multiple values when this
 method returns NSNotFound. See -selectionIndexes also. */
-- (unsigned int) selectionIndex
+- (NSUInteger) selectionIndex
 {
 	return [[self selectionIndexes] firstIndex];
 }
 
-/** Sets the selected item identified by index in the receiver and discards any 
+/** Sets the selected item identified by index in the receiver and discards any
 existing selection index paths previously set.
 
 Posts an ETItemGroupSelectionDidChangeNotification. */
-- (void) setSelectionIndex: (unsigned int)index
+- (void) setSelectionIndex: (NSUInteger)index
 {
 	ETDebugLog(@"Modify selection index from %d to %d of %@", [self selectionIndex], index, self);
 
@@ -1330,17 +1330,17 @@ Posts an ETItemGroupSelectionDidChangeNotification. */
 	NSAssert1(index >= 0, @"-setSelectionIndex: parameter must not be a negative value like %d", index);
 
 	NSMutableIndexSet *indexes = [NSMutableIndexSet indexSet];
-	
+
 	if (index != NSNotFound)
 		[indexes addIndex: index];
 
 	[self setSelectionIndexes: indexes];
 }
 
-/** Returns all indexes matching selected items which are immediate children of 
+/** Returns all indexes matching selected items which are immediate children of
 the receiver.
 
-Put in another way, the method returns the first index of all index paths with a 
+Put in another way, the method returns the first index of all index paths with a
 length equal one. */
 - (NSMutableIndexSet *) selectionIndexes
 {
@@ -1355,7 +1355,7 @@ length equal one. */
 	return indexes;
 }
 
-/** Sets the selected items identified by indexes in the receiver and discards 
+/** Sets the selected items identified by indexes in the receiver and discards
 any existing selection index paths previously set.
 
 Posts an ETItemGroupSelectionDidChangeNotification. */
@@ -1391,7 +1391,7 @@ Posts an ETItemGroupSelectionDidChangeNotification. */
 }
 
 
-/** Returns the index paths of selected items in layout item subtree of the the 
+/** Returns the index paths of selected items in layout item subtree of the the
 receiver. */
 - (NSArray *) selectionIndexPaths
 {
@@ -1402,15 +1402,15 @@ receiver. */
 	return indexPaths;
 }
 
-/** Selects every descendant items which match the index paths passed in 
+/** Selects every descendant items which match the index paths passed in
 parameter and deselects all other descendant items of the receiver.
 
-TODO: This is crude because we deselect everything without taking care of base 
+TODO: This is crude because we deselect everything without taking care of base
 items we encounter during the recursive traversal of the subtree... See
 -[ETLayout setSelectionIndexPaths:] to understand the issue more thoroughly.
 Moreover the method is surely extremly slow if called many times within a short
 time interval on a subtree that consists of thousand items or more. */
-- (void) applySelectionIndexPaths: (NSMutableArray *)indexPaths 
+- (void) applySelectionIndexPaths: (NSMutableArray *)indexPaths
                    relativeToItem: (ETLayoutItemGroup *)pathBaseItem
 {
 	FOREACHI([self items], item)
@@ -1430,14 +1430,14 @@ time interval on a subtree that consists of thousand items or more. */
 	}
 }
 
-/** Returns YES when a selection change initiated by -setSelectionIndex:, 
--setSelectionIndexes: or -setSelectionIndexPaths: is underway,  otherwise 
+/** Returns YES when a selection change initiated by -setSelectionIndex:,
+-setSelectionIndexes: or -setSelectionIndexPaths: is underway,  otherwise
 returns NO.
 
-During ETItemGroupSelectionDidChangeNotification and 
+During ETItemGroupSelectionDidChangeNotification and
 -[ETLayout didChangeSelectionInLayoutContext] will return YES.
 
-You can use this method in ETLayout subclasses to prevent loops while 
+You can use this method in ETLayout subclasses to prevent loops while
 synchronizing the selection between a widget and the item tree.<br />
 See -[ETWidgetLayout didChangeSelectionInLayoutView].<br />
 e.g. Just put a guard clause at the beginning of -didChangeSelectionInLayoutView
@@ -1451,26 +1451,26 @@ if ([layoutContext isChangingSelection])
 	return _changingSelection;
 }
 
-/** Sets the selected items in the layout item subtree attached to the receiver. 
+/** Sets the selected items in the layout item subtree attached to the receiver.
 
-Posts an ETItemGroupSelectionDidChangeNotification and marks the receiver to be 
+Posts an ETItemGroupSelectionDidChangeNotification and marks the receiver to be
 redisplayed. */
 - (void) setSelectionIndexPaths: (NSArray *)indexPaths
 {
 	_changingSelection = YES;
 
-	[self applySelectionIndexPaths: [NSMutableArray arrayWithArray: indexPaths] 
+	[self applySelectionIndexPaths: [NSMutableArray arrayWithArray: indexPaths]
 	                relativeToItem: self];
 
 	ETLayout *layout = [[self ancestorItemForOpaqueLayout] layout];
 
-	/* For opaque layouts that may need to keep in sync the selection state of 
+	/* For opaque layouts that may need to keep in sync the selection state of
 	   their custom UI. */
 	if ([layout isChangingSelection] == NO)
 	{
 		[layout selectionDidChangeInLayoutContext: self];
 	}
-	// TODO: Evaluate whether we should send -didChangeSelection on 
+	// TODO: Evaluate whether we should send -didChangeSelection on
 	// -ancestorItemForOpaqueLayout too
 	// TODO: [[self controllerItem] didChangeSelection];
 	[self didChangeSelection];
@@ -1481,33 +1481,33 @@ redisplayed. */
 	_changingSelection = NO;
 }
 
-/* Tells the receiver the selection has been changed and it should post 
-ETItemGroupSelectionDidChangeNotification. 
+/* Tells the receiver the selection has been changed and it should post
+ETItemGroupSelectionDidChangeNotification.
 
-You should never use this method when you use -setSelected: on descendant items 
+You should never use this method when you use -setSelected: on descendant items
 rather than setSelectionXXX: methods on the receiver. */
 - (void) didChangeSelection
 {
-	NSNotification *notif = [NSNotification 
+	NSNotification *notif = [NSNotification
 		notificationWithName: ETItemGroupSelectionDidChangeNotification object: self];
-	
+
 	if ([[self delegate] respondsToSelector: @selector(itemGroupSelectionDidChange:)])
 		[[self delegate] itemGroupSelectionDidChange: notif];
-	
+
 	[[NSNotificationCenter defaultCenter] postNotification: notif];
 }
 
-/** Returns the selected child items belonging to the receiver. 
+/** Returns the selected child items belonging to the receiver.
 
-The returned collection only includes immediate children, other selected 
+The returned collection only includes immediate children, other selected
 descendant items below these childrens in the layout item subtree are excluded. */
 - (NSArray *) selectedItems
 {
-	return [[self items] objectsMatchingValue: [NSNumber numberWithBool: YES] 
+	return [[self items] objectsMatchingValue: [NSNumber numberWithBool: YES]
 	                                   forKey: @"isSelected"];
 }
 
-/** Returns selected descendant items reported by the active layout through 
+/** Returns selected descendant items reported by the active layout through
 -[ETLayout selectedItems].
 
 You should call this method to obtain the selection in most cases and not
@@ -1526,9 +1526,9 @@ You should call this method to obtain the selection in most cases and not
 	}
 }
 
-/** Sets the selected items in the layout item subtree attached to the receiver. 
+/** Sets the selected items in the layout item subtree attached to the receiver.
 
-Posts an ETItemGroupSelectionDidChangeNotification and marks the receiver to be 
+Posts an ETItemGroupSelectionDidChangeNotification and marks the receiver to be
 redisplayed. */
 - (void) setSelectedItems: (NSArray *)items
 {
@@ -1547,7 +1547,7 @@ redisplayed. */
 		_sortedItems = [_layoutItems mutableCopy];
 	}
 
-	NSArray *descriptors = 
+	NSArray *descriptors =
 		[[self layout] customSortDescriptorsForSortDescriptors: sortDescriptors];
 	BOOL hasValidSortDescriptors = (descriptors != nil && [descriptors isEmpty] == NO);
 	if (hasValidSortDescriptors)
@@ -1560,7 +1560,7 @@ redisplayed. */
 	}
 	else
 	{
-		// NOTE: -arrangedItems returns a defensive copy, but it could be less 
+		// NOTE: -arrangedItems returns a defensive copy, but it could be less
 		// expansive to make a single defensive copy here.
 		ASSIGN(_arrangedItems, _layoutItems);
 		_sorted = NO;
@@ -1574,14 +1574,14 @@ redisplayed. */
 		{
 			if ([item isGroup] == NO)
 				continue;
-				
+
 			[(ETLayoutItemGroup *)item sortWithSortDescriptors: descriptors
 			                                       recursively: recursively];
 		}
 	}
 }
 
-// TODO: We could improve -[NSArray filterWithPredicate:ignoringObjects:] to 
+// TODO: We could improve -[NSArray filterWithPredicate:ignoringObjects:] to
 // to support the custom evaluator (here -matchesPredicate:).
 - (NSArray *) filteredItemsWithItems: (NSArray *)itemsToFilter
                       usingPredicate: (NSPredicate *)aPredicate
@@ -1606,12 +1606,12 @@ redisplayed. */
 	BOOL hasValidPredicate = (predicate != nil);
 	NSMutableSet *itemsWithMatchingDescendants = [NSMutableSet set];
 
-	/* We traverse the tree structure downwards until we reach the terminal 
+	/* We traverse the tree structure downwards until we reach the terminal
 	   nodes, then we filter each parent children as we walk upwards.
-	   When at least one child matches, we prevent its parent to be elimated in 
-	   the search result (even when it doesn't match) by omitting this parent in 
-	   the filtering and adding it directly to the search result. 
-	   We return and repeat the operation at the level above until we reach the 
+	   When at least one child matches, we prevent its parent to be elimated in
+	   the search result (even when it doesn't match) by omitting this parent in
+	   the filtering and adding it directly to the search result.
+	   We return and repeat the operation at the level above until we reach the
 	   item on which the filtering was initiated. */
 	if (recursively)
 	{
@@ -1619,8 +1619,8 @@ redisplayed. */
 		{
 			if ([item isGroup] == NO)
 				continue;
-				
-			[(ETLayoutItemGroup *)item filterWithPredicate: predicate 
+
+			[(ETLayoutItemGroup *)item filterWithPredicate: predicate
 			                                   recursively: recursively];
 			BOOL hasSearchResult = ([[item arrangedItems] count] > 0);
 			if (hasSearchResult)
@@ -1640,7 +1640,7 @@ redisplayed. */
 	}
 	else
 	{
-		// NOTE: -arrangedItems returns a defensive copy, but it could be less 
+		// NOTE: -arrangedItems returns a defensive copy, but it could be less
 		// expansive to make a single defensive copy here.
 		ASSIGN(_arrangedItems, itemsToFilter);
 		_filtered = NO;
@@ -1664,7 +1664,7 @@ See also -filterWithPredicate:recursively:. */
 	return _filtered;
 }
 
-/** Returns an array with the child items currently sorted and filtered, 
+/** Returns an array with the child items currently sorted and filtered,
 otherwise returns an array identical to -items.
 
 If the receiver has not been sorted or filtered yet, returns a nil array. */
@@ -1682,11 +1682,11 @@ If the receiver has not been sorted or filtered yet, returns a nil array. */
 
 /* Actions */
 
-/** Returns the action that can be sent by the action handler, typically on a 
+/** Returns the action that can be sent by the action handler, typically on a
 double click within the receiver area.
 
-For a double action, the sender will be the receiver. The double clicked item 
-can be retrieved by calling -doubleClickedItem on the sender in your action 
+For a double action, the sender will be the receiver. The double clicked item
+can be retrieved by calling -doubleClickedItem on the sender in your action
 method. */
 - (void) setDoubleAction: (SEL)selector
 {
@@ -1694,8 +1694,8 @@ method. */
 	[[self layout] syncLayoutViewWithItem: self];
 }
 
-/** Sets the action that can be sent by the action handler, typically on a 
-double click within the receiver area. 
+/** Sets the action that can be sent by the action handler, typically on a
+double click within the receiver area.
 
 See also -setDoubleAction:. */
 - (SEL) doubleAction
@@ -1710,22 +1710,22 @@ See also -setDoubleAction:. */
 }
 
 /** <override-dummy />
-Returns whether the tools should hit test the children which intersect the 
+Returns whether the tools should hit test the children which intersect the
 area that lies outside the receiver frame but inside its bounding box.
 
 By default, returns NO.
 
-You can override this method to implement control points external to the 
+You can override this method to implement control points external to the
 receiver area as ETHandleGroup do. */
 - (BOOL) acceptsActionsForItemsOutsideOfFrame
 {
 	return NO;
 }
 
-/** Returns the next responder in the responder chain. 
+/** Returns the next responder in the responder chain.
 
-When a controller is set, the next responder is the controller rather than the 
-parent item. The enclosing item becomes the next responder of the controller. 
+When a controller is set, the next responder is the controller rather than the
+parent item. The enclosing item becomes the next responder of the controller.
 See -[ETController nextResponder]. */
 - (id) nextResponder
 {
@@ -1798,39 +1798,39 @@ TODO: Implement and may be rename -expand or -expandStack */
 	return [self items];
 }
 
-/** Adds object to the child items of the receiver, eventually autoboxing the 
+/** Adds object to the child items of the receiver, eventually autoboxing the
 	object if needed.
 	If the object is a layout item, it is added directly to the layout items as
 	it would be by calling -addItem:. If the object isn't an instance of some
-	ETLayoutItem subclass, it gets autoboxed into a layout item that is then 
-	added to the child items. 
-	Autoboxing means the object is set as the represented object (or value) of 
-	the item to be added. If the object replies YES to -isGroup, an 
-	ETLayoutItemGroup instance is created instead of instantiating a simple 
-	ETLayoutItem. 
-	Also if the receiver or the base item bound to it has a container, the 
-	instantiated item could also be either a deep copy of -templateItem or 
+	ETLayoutItem subclass, it gets autoboxed into a layout item that is then
+	added to the child items.
+	Autoboxing means the object is set as the represented object (or value) of
+	the item to be added. If the object replies YES to -isGroup, an
+	ETLayoutItemGroup instance is created instead of instantiating a simple
+	ETLayoutItem.
+	Also if the receiver or the base item bound to it has a container, the
+	instantiated item could also be either a deep copy of -templateItem or
 	-templateItemGroup when such template are available (not nil). -templateItem
-	is retrieved when object returns NO to -isGroup, otherwise 
+	is retrieved when object returns NO to -isGroup, otherwise
 	-templateItemGroup is retrieved (-isGroup returns YES). */
 - (void) addObject: (id)object
 {
 	[self insertObject: object atIndex: ETUndeterminedIndex hint: nil boxingForced: NO];
 }
 
-- (void) insertObject: (id)object atIndex: (unsigned int)index hint: (id)hint
+- (void) insertObject: (id)object atIndex: (NSUInteger)index hint: (id)hint
 {
 	[self insertObject: object atIndex: index hint: hint boxingForced: NO];
 }
 
-- (ETLayoutItem *) insertObject: (id)object atIndex: (unsigned int)index hint: (id)hint boxingForced: (BOOL)boxingForced
+- (ETLayoutItem *) insertObject: (id)object atIndex: (NSUInteger)index hint: (id)hint boxingForced: (BOOL)boxingForced
 {
 	id insertedItem = [self boxObject: object forced: boxingForced];
 	[self handleInsertItem: insertedItem atIndex: index hint: hint moreComing: NO];
 	return insertedItem;
 }
 
-/** Removes object from the child items of the receiver, eventually trying to 
+/** Removes object from the child items of the receiver, eventually trying to
 	remove items with represented objects matching the object. */
 - (void) removeObject: (id)object atIndex: (NSUInteger)index hint: (id)hint
 {
@@ -1843,14 +1843,14 @@ TODO: Implement and may be rename -expand or -expandStack */
 	{
 		// TODO: Belongs to ETLayoutItemGroup+Mutation. Needs to be reworked.
 
-		/* Remove items with boxed object matching the object to remove */	
+		/* Remove items with boxed object matching the object to remove */
 		NSArray *itemsMatchedByRepObject = nil;
-		
-		itemsMatchedByRepObject = [[self items] 
+
+		itemsMatchedByRepObject = [[self items]
 			objectsMatchingValue: object forKey: @"representedObject"];
 		[self removeItems: itemsMatchedByRepObject];
-		
-		itemsMatchedByRepObject = [[self items] 
+
+		itemsMatchedByRepObject = [[self items]
 			objectsMatchingValue: object forKey: @"value"];
 		[self removeItems: itemsMatchedByRepObject];
 	}
@@ -1867,8 +1867,8 @@ TODO: Implement and may be rename -expand or -expandStack */
 	{
 		[self setUpSupervisorViewWithFrame: [self frame]];
 	}
-	NSAssert(nil == superview || [superview isEqual: supervisorView], 
-		@"A layout view should never have another superview than the layout " 
+	NSAssert(nil == superview || [superview isEqual: supervisorView],
+		@"A layout view should never have another superview than the layout "
 		 "context supervisor view or nil.");
 
 	[aView removeFromSuperview];
@@ -1889,14 +1889,14 @@ TODO: Implement and may be rename -expand or -expandStack */
 {
 	/* Notify view and decorator item chain */
 	[super beginEditingUI];
-	
+
 	/* Notify children */
 	[[self items] makeObjectsPerformSelector: @selector(beginEditingUI)];
 }
 
 /* Framework Private */
 
-/** Returns whether the receiver is a layer item encaspulated in a layout and 
+/** Returns whether the receiver is a layer item encaspulated in a layout and
 invisible in the main layout item tree. */
 - (BOOL) isLayerItem
 {
