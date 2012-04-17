@@ -12,11 +12,11 @@ VERSION = 0.4.1
 EtoileUI_LIBRARIES_DEPEND_UPON += -lm -lEtoileFoundation \
 	$(GUI_LIBS) $(FND_LIBS) $(OBJC_LIBS) $(SYSTEM_LIBS)
 
-EtoileUI_SUBPROJECTS = Source CoreObjectBackend
+EtoileUI_SUBPROJECTS = Source #CoreObjectBackend
 
-ADDITIONAL_CPPFLAGS += -DCOREOBJECT=1
-ADDITIONAL_OBJCFLAGS += -DCOREOBJECT=1
-EtoileUI_LIBRARIES_DEPEND_UPON += -lCoreObject -lEtoileSerialize
+#ADDITIONAL_CPPFLAGS += -DCOREOBJECT=1
+#ADDITIONAL_OBJCFLAGS += -DCOREOBJECT=1
+EtoileUI_LIBRARIES_DEPEND_UPON += #-lCoreObject
 
 ifeq ($(test), yes)
 	BUNDLE_NAME = $(FRAMEWORK_NAME)
@@ -72,7 +72,6 @@ EtoileUI_HEADER_FILES = \
 	ETOutlineLayout.h \
 	ETPaintBucketTool.h \
 	ETPaneLayout.h \
-	ETPersistencyController.h \
 	ETPaintActionHandler.h \
 	ETPickDropActionHandler.h \
 	ETPickboard.h \
@@ -147,8 +146,8 @@ EtoileUI_RESOURCE_FILES = \
 	English.lproj/ViewModelPrototype.gorm
 
 # CoreObject Extensions
-EtoileUI_RESOURCE_FILES += \
-	English.lproj/RevertToPanel.gorm
+#EtoileUI_RESOURCE_FILES += \
+#	English.lproj/RevertToPanel.gorm
 
 
 include $(GNUSTEP_MAKEFILES)/aggregate.make

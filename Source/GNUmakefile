@@ -2,7 +2,6 @@ include $(GNUSTEP_MAKEFILES)/common.make
 
 SUBPROJECT_NAME = libEtoileUI
 
-ADDITIONAL_OBJCFLAGS = 
 libEtoileUI_OBJCFLAGS += -std=c99
 
 libEtoileUI_OBJC_FILES = \
@@ -43,7 +42,6 @@ libEtoileUI_OBJC_FILES = \
 	ETOutlineLayout.m \
 	ETPaintBucketTool.m \
 	ETPaneLayout.m \
-	ETPersistencyController.m \
 	ETPaintActionHandler.m \
 	ETPickDropActionHandler.m \
 	ETPickboard.m \
