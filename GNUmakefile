@@ -9,7 +9,7 @@ FRAMEWORK_NAME = EtoileUI
 PROJECT_NAME = $(FRAMEWORK_NAME)
 VERSION = 0.4.1
 
-EtoileUI_LIBRARIES_DEPEND_UPON += -lm -lEtoileFoundation \
+EtoileUI_LIBRARIES_DEPEND_UPON += -lm -lEtoileFoundation -lIconKit \
 	$(GUI_LIBS) $(FND_LIBS) $(OBJC_LIBS) $(SYSTEM_LIBS)
 
 EtoileUI_SUBPROJECTS = Source
