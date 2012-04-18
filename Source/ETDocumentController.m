@@ -22,8 +22,8 @@
 #import "ETTool.h"
 #import "NSObject+EtoileUI.h"
 #import "ETCompatibility.h"
-#ifdef OBJECTMERGING
-#import <ObjectMerging/COHistoryTrack.h>
+#ifdef COREOBJECT
+#import <CoreObject/COHistoryTrack.h>
 #import "CoreObjectUI.h"
 #endif
 
@@ -319,7 +319,7 @@ See also [ETDocumentCreation] protocol. */
 
 - (IBAction) browseDocumentHistory: (id)sender
 {
-#ifdef OBJECTMERGING
+#ifdef COREOBJECT
 	id rootObject = [self activeItem];
 	ETLayoutItemGroup *browser = [[ETLayoutItemFactory factory] 
 		historyBrowserWithRepresentedObject: [rootObject commitTrack]];

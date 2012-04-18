@@ -12,22 +12,25 @@ VERSION = 0.4.1
 EtoileUI_LIBRARIES_DEPEND_UPON += -lm -lEtoileFoundation \
 	$(GUI_LIBS) $(FND_LIBS) $(OBJC_LIBS) $(SYSTEM_LIBS)
 
-EtoileUI_SUBPROJECTS = Source #CoreObjectBackend
+EtoileUI_SUBPROJECTS = Source
 
-#ADDITIONAL_CPPFLAGS += -DCOREOBJECT=1
-#ADDITIONAL_OBJCFLAGS += -DCOREOBJECT=1
-EtoileUI_LIBRARIES_DEPEND_UPON += #-lCoreObject
+export coreobject ?= yes
+
+ifeq ($(coreobject), yes)
+  ADDITIONAL_CPPFLAGS += -DCOREOBJECT=1
+  ADDITIONAL_OBJCFLAGS += -DCOREOBJECT=1
+  EtoileUI_LIBRARIES_DEPEND_UPON += -lCoreObject
+endif
 
 ifeq ($(test), yes)
-	BUNDLE_NAME = $(FRAMEWORK_NAME)
-
-	EtoileUI_SUBPROJECTS += Tests
-	EtoileUI_LDFLAGS += -lUnitKit $(EtoileUI_LIBRARIES_DEPEND_UPON)
+  BUNDLE_NAME = $(FRAMEWORK_NAME)
+  EtoileUI_SUBPROJECTS += Tests
+  EtoileUI_LDFLAGS += -lUnitKit $(EtoileUI_LIBRARIES_DEPEND_UPON)
 endif
 
 EtoileUI_HEADER_FILES_DIR = Headers
 
-OTHER_HEADER_DIRS = AspectRepository Persistency
+OTHER_HEADER_DIRS = AspectRepository CoreObjectUI Persistency
 
 EtoileUI_HEADER_FILES = \
 	Controls+Etoile.h \
@@ -108,7 +111,13 @@ EtoileUI_HEADER_FILES += \
 	ETHandle.h
 
 EtoileUI_HEADER_FILES += \
-	COUIServer.h
+	CoreObjectUI.h
+
+EtoileUI_HEADER_FILES += \
+	ETController+CoreObject.h \
+	ETLayout+CoreObject.h \
+	ETLayoutItem+CoreObject.h \
+	ETStyle+CoreObject.h
 
 EtoileUI_HEADER_FILES += \
 	EtoileCompatibility.h \
@@ -119,7 +128,10 @@ EtoileUI_OBJC_FILES += \
 	AspectRepository/ETAspectCategory.m \
 	AspectRepository/ETAspectRepository.m
 
-ifeq ($(objectmerging), yes)
+ifeq ($(coreobject), yes)
+
+EtoileUI_OBJC_FILES += \
+	CoreObjectUI/CoreObjectUI.m \
 
 EtoileUI_OBJC_FILES += \
 	ModelDescription/ETActionHandler+ModelDescription.m \
@@ -144,11 +156,6 @@ EtoileUI_RESOURCE_FILES = \
 	English.lproj/OutlinePrototype.gorm \
 	English.lproj/TablePrototype.gorm \
 	English.lproj/ViewModelPrototype.gorm
-
-# CoreObject Extensions
-#EtoileUI_RESOURCE_FILES += \
-#	English.lproj/RevertToPanel.gorm
-
 
 include $(GNUSTEP_MAKEFILES)/aggregate.make
 -include ../../etoile.make

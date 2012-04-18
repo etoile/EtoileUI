@@ -9,12 +9,12 @@
 
 #import "ETCompatibility.h"
 
-#ifdef OBJECTMERGING
+#ifdef COREOBJECT
 
-#import <ObjectMerging/COObject.h>
-#import <ObjectMerging/COGroup.h>
-#import <ObjectMerging/COContainer.h>
-#import <ObjectMerging/COTrack.h>
+#import <CoreObject/COObject.h>
+#import <CoreObject/COGroup.h>
+#import <CoreObject/COContainer.h>
+#import <CoreObject/COTrack.h>
 #import <IconKit/IconKit.h>
 #import "CoreObjectUI.h"
 #import "ETLayoutItemGroup.h"

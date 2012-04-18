@@ -168,7 +168,7 @@ inside another -begin/endMutate pair.  */
 	[self handleAttachItem: item];
 	/* For ETUndeterminedIndex, will use -addObject: */
 	[_layoutItems insertObject: item atIndex: index hint: nil];
-#ifdef OBJECTMERGING
+#ifdef COREOBJECT
 	if ([self isPersistent])
 	{
 		[item becomePersistentInContext: [self editingContext] rootObject: [self rootObject]];

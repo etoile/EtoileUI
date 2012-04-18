@@ -8,10 +8,10 @@
 
 #import "ETCompatibility.h"
 
-#ifdef OBJECTMERGING
+#ifdef COREOBJECT
 
-#import <ObjectMerging/COEditingContext.h>
-#import <ObjectMerging/COObject.h>
+#import <CoreObject/COEditingContext.h>
+#import <CoreObject/COObject.h>
 #import "ETLayout+CoreObject.h"
 #import "ETLayoutItemGroup.h"
 #import "ETSelectTool.h"

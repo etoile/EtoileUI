@@ -17,8 +17,8 @@
 #import "ETLayoutItem.h"
 #import "EtoileUIProperties.h"
 #import "NSObject+EtoileUI.h"
-#ifdef OBJECTMERGING
-#import <ObjectMerging/COEditingContext.h>
+#ifdef COREOBJECT
+#import <CoreObject/COEditingContext.h>
 #endif
 
 @implementation ETStyle

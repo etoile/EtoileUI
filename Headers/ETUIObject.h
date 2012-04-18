@@ -11,8 +11,8 @@
 #import <Foundation/Foundation.h>
 #import <AppKit/AppKit.h>
 #import <EtoileUI/ETCompatibility.h>
-#ifdef OBJECTMERGING
-#import <ObjectMerging/COObject.h>
+#ifdef COREOBJECT
+#import <CoreObject/COObject.h>
 #endif
 
 @class ETCopier;
@@ -20,7 +20,7 @@
 @interface ETUIObject : BASEOBJECT <NSCopying>
 {
 	@protected
-#ifndef OBJECTMERGING
+#ifndef COREOBJECT
 	NSMapTable *_variableStorage;
 #endif
 }
@@ -38,7 +38,7 @@
 /** @taskunit Properties */
 
 - (NSMapTable *) variableStorage;
-#ifndef OBJECTMERGING
+#ifndef COREOBJECT
 - (id) primitiveValueForKey: (NSString *)key;
 - (void) setPrimitiveValue: (id)value forKey: (NSString *)key;
 #endif
@@ -48,7 +48,7 @@
 - (NSArray *) commit;
 - (NSArray *)commitWithType: (NSString *)type
            shortDescription: (NSString *)shortDescription;
-#ifndef OBJECTMERGING
+#ifndef COREOBJECT
 - (id) commitTrack;
 - (BOOL) isRoot;
 - (void) willChangeValueForProperty: (NSString *)aKey;

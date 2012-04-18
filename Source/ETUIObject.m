@@ -17,7 +17,7 @@
 
 @implementation ETUIObject
 
-#ifdef OBJECTMERGING
+#ifdef COREOBJECT
 
 // FIXME: We probably shouldn't need to override the awake methods below.
 // The problem boils down to preventing the COObject implementation to 
@@ -209,7 +209,7 @@ by invoking the invocation. */
 
 - (ETEntityDescription *) entityDescription
 {
-#ifdef OBJECTMERGING
+#ifdef COREOBJECT
 	 return [super entityDescription];
 #else
 	 return [[ETModelDescriptionRepository mainRepository] entityDescriptionForClass: [self class]];
@@ -233,7 +233,7 @@ and write the receiver properties. */
 	return _variableStorage;
 }
 
-#ifndef OBJECTMERGING
+#ifndef COREOBJECT
 - (id)primitiveValueForKey: (NSString *)key
 {
 	id value = [_variableStorage objectForKey: key];
@@ -264,7 +264,7 @@ user interaction. */
 - (NSArray *)commitWithType: (NSString *)type
            shortDescription: (NSString *)shortDescription
 {
-#ifdef OBJECTMERGING
+#ifdef COREOBJECT
 	if ([self isPersistent] == NO)
 		return nil;
 
@@ -277,7 +277,7 @@ user interaction. */
 #endif
 }
 
-#ifndef OBJECTMERGING
+#ifndef COREOBJECT
 
 - (id) commitTrack
 {
@@ -362,7 +362,7 @@ user interaction. */
 	}
 
 	// FIXME: Shouldn't require ETUIObject
-#ifdef OBJECTMERGING
+#ifdef COREOBJECT
 	ETUIObject *newObject = [anObject basicCopyWithZone: [self zone]];
 #else
 	/* -basicInit creates the variable storage map table */

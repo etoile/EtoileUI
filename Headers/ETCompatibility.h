@@ -34,11 +34,9 @@
 	THE POSSIBILITY OF SUCH DAMAGE.
  */
  
-/* CoreObject (aka ObjectMerging) Support */
+/* CoreObject Support */
  
-//#define OBJECTMERGING
-
-#ifdef OBJECTMERGING
+#ifdef COREOBJECT
 #  define BASEOBJECT COObject
 #else
 #  define BASEOBJECT NSObject
