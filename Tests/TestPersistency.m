@@ -8,7 +8,7 @@
 
 #import "ETCompatibility.h"
 
-#ifdef OBJECTMERGING
+#ifdef COREOBJECT
 
 #import <Foundation/Foundation.h>
 #import <AppKit/AppKit.h>
@@ -16,9 +16,9 @@
 #import <EtoileFoundation/Macros.h>
 #import <EtoileFoundation/ETPropertyViewpoint.h>
 #import <EtoileFoundation/NSObject+Model.h>
-#import <ObjectMerging/COEditingContext.h>
-#import <ObjectMerging/COObject.h>
-#import <ObjectMerging/COStore.h>
+#import <CoreObject/COEditingContext.h>
+#import <CoreObject/COObject.h>
+#import <CoreObject/COStore.h>
 #import "ETActionHandler.h"
 #import "ETController.h"
 #import "ETLayoutExecutor.h"
