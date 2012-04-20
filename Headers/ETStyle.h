@@ -136,7 +136,7 @@ drop validation time. */
 {
 	@private
 	ETStyle *_content;
-	id _shadow;
+	NSShadow *_shadow;
 }
 + (id) shadowWithStyle: (ETStyle *)style;
 - (id) initWithStyle: (ETStyle *)style;

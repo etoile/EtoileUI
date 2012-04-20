@@ -102,7 +102,7 @@ If window is nil, the receiver creates a standard widget backend window. */
 			ETLog(@"WARNING: The window delegate %@ will be replaced by %@ "
 				"-initWithWindow:", [_itemWindow delegate], self);
 		}
-		[_itemWindow setDelegate: self];
+		[_itemWindow setDelegate: (id)self];
 		[_itemWindow setAcceptsMouseMovedEvents: YES];
 		[_itemWindow registerForDraggedTypes: A(ETLayoutItemPboardType)];
 		_usesCustomWindowTitle = ([self isUntitled] == NO);

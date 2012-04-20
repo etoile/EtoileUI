@@ -572,14 +572,14 @@
 			isa = PBXContainerItemProxy;
 			containerPortal = 6084048815415CB2002F91A1 /* CoreObject.xcodeproj */;
 			proxyType = 1;
-			remoteGlobalIDString = 6686BDAB12592BDA0065DE1A /* CoreObject */;
+			remoteGlobalIDString = 6686BDAB12592BDA0065DE1A;
 			remoteInfo = CoreObject;
 		};
 		608404E015415D7D002F91A1 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 6084048815415CB2002F91A1 /* CoreObject.xcodeproj */;
 			proxyType = 1;
-			remoteGlobalIDString = 6686BDAB12592BDA0065DE1A /* CoreObject */;
+			remoteGlobalIDString = 6686BDAB12592BDA0065DE1A;
 			remoteInfo = CoreObject;
 		};
 		60909D5E0CB30484009CAD27 /* PBXContainerItemProxy */ = {
@@ -3186,7 +3186,7 @@
 				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
 				HEADER_SEARCH_PATHS = $SRCROOT/Headers;
 				LD_RUNPATH_SEARCH_PATHS = "$(PROJECT_DIR)/../EtoileFoundation/build/$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME) $(PROJECT_DIR)/../CoreObject/build/$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME) $(PROJECT_DIR)/../IconKit/build/$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)";
-				SDKROOT = macosx10.5;
+				SDKROOT = macosx10.6;
 				WARNING_CFLAGS = (
 					"-Wall",
 					"-Wno-unused-value",

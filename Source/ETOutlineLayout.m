@@ -25,6 +25,9 @@
 
 @interface ETTableLayout (PackageVisibility)
 - (void) tableViewSelectionDidChange: (NSNotification *)notif;
+- (BOOL) tableView: (NSTableView *)tableView isGroupRow: (NSInteger)row;
+- (BOOL) tableView: (NSTableView *)tableView shouldSelectRow: (NSInteger)row;
+- (BOOL) tableView:(NSTableView *)aTableView shouldEditTableColumn: (NSTableColumn *)aTableColumn row: (NSInteger)row;
 @end
 
 
@@ -477,7 +480,7 @@ expanded and collapsed by getting automatically a related outline arrow. */
 	NSParameterAssert(NSEqualPoints([event locationInWindow], pointInWindow));
 #endif
 
-	[[self dataSource] setBackendDragEvent: event];
+	[(ETTableLayout *)[self dataSource] setBackendDragEvent: event];
 
 	return YES;
 }
@@ -488,7 +491,7 @@ expanded and collapsed by getting automatically a related outline arrow. */
                                     event: (NSEvent *)dragEvent
                                    offset: (NSPointPointer)imgOffset
 {
-	BOOL isNewDrag = (nil == [[self dataSource] dragImage]);
+	BOOL isNewDrag = (nil == [(ETTableLayout *)[self dataSource] dragImage]);
 
 	if (isNewDrag)
 	{
@@ -496,7 +499,7 @@ expanded and collapsed by getting automatically a related outline arrow. */
 			tableColumns: columns event: dragEvent offset: imgOffset];
 	}
 
-	return [[self dataSource] dragImage];
+	return [(ETOutlineLayout *)[self dataSource] dragImage];
 }
 
 /* On Mac OS X, -[NSOutlineView -dragImage:at:offset:event:pasteboard:source:slideback:] 

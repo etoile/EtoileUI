@@ -12,6 +12,7 @@
 #import "ETDecoratorItem.h"
 #import "ETGeometry.h"
 #import "ETLayoutItem.h"
+#import "ETLayoutItemGroup.h"
 #import "EtoileUIProperties.h"
 #import "ETView.h"
 #import "ETScrollableAreaItem.h"

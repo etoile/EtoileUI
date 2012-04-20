@@ -125,8 +125,8 @@
 	// NOTE: When a table view is archived/unarchived on GNUstep, a nil data 
 	// source or delegate in the initial instance becomes the table view itself 
 	// in the unarchived instance.
-	[tv setDataSource: self];
-	[tv setDelegate: self];
+	[tv setDataSource: (id)self];
+	[tv setDelegate: (id)self];
 }
 
 /** Returns the table view enclosed in the scroll view returned by -layoutView.
@@ -1034,7 +1034,7 @@ Returns the cached drag image. */
 	NSParameterAssert(NSEqualPoints([event locationInWindow], pointInWindow));
 #endif
 
-	[[self dataSource] setBackendDragEvent: event];
+	[(ETTableLayout *)[self dataSource] setBackendDragEvent: event];
 
 	return YES;
 }
@@ -1044,7 +1044,7 @@ Returns the cached drag image. */
                                     event: (NSEvent *)dragEvent
                                    offset: (NSPointPointer)imgOffset
 {
-	BOOL isNewDrag = (nil == [[self dataSource] dragImage]);
+	BOOL isNewDrag = (nil == [(ETTableLayout *)[self dataSource] dragImage]);
 
 	if (isNewDrag)
 	{
@@ -1052,7 +1052,7 @@ Returns the cached drag image. */
 			tableColumns: columns event: dragEvent offset: imgOffset];
 	}
 
-	return [[self dataSource] dragImage];
+	return [(ETTableLayout *)[self dataSource] dragImage];
 }
 
 @end

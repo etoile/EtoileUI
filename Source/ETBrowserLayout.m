@@ -111,7 +111,7 @@
 	[browser setTarget: self];
 	
 	if ([browser delegate] == nil)
-		[browser setDelegate: self];
+		[browser setDelegate: (id)self];
 }
 
 - (NSBrowser *) browser
@@ -141,7 +141,7 @@
 	if (isNewContent)
 	{
 		if ([browserView delegate] == nil)
-			[browserView setDelegate: self];
+			[browserView setDelegate: (id)self];
 
 		// NOTE: -loadColumnZero reloads browser context unlike -setPath: @"/"
 		[browserView loadColumnZero];

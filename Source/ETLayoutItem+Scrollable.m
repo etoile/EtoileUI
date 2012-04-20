@@ -14,7 +14,7 @@
 #import "ETCompatibility.h"
 
 /* First instance created by calling private method -cachedScrollViewDecoratorItem */
-const NSString *kETCachedScrollableAreaDecoratorItem = @"cachedScrollViewDecoratorItem";
+NSString * const kETCachedScrollableAreaDecoratorItem = @"cachedScrollViewDecoratorItem";
 
 @interface ETLayoutItem (ScrollablePrivate)
 - (void) hidesScrollableAreaItem;

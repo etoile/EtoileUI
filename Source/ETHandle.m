@@ -100,7 +100,7 @@ NSString *kETManipulatedObjectProperty = @"manipulatedObject";
 	   restriction by checking whether the layout context is flipped or not in 
 	   -[ETHandleGroup setFrame:]. */
 	NSParameterAssert([[handleGroup parentItem] isFlipped] 
-		== [[[handleGroup manipulatedObject] parentItem] isFlipped]);
+		== [[(ETLayoutItem *)[handleGroup manipulatedObject] parentItem] isFlipped]);
 	if ([[handleGroup parentItem] isFlipped] != [handleGroup isFlipped])
 		deltaHeight = -deltaHeight;
 
@@ -475,12 +475,12 @@ static ETBasicHandleStyle *sharedBasicHandleStyle = nil;
 
 - (NSPoint) anchorPoint
 {
-	return [GET_PROPERTY(kETManipulatedObjectProperty) anchorPoint];
+	return [(ETLayoutItem *)GET_PROPERTY(kETManipulatedObjectProperty) anchorPoint];
 }
 
 - (void) setAnchorPoint: (NSPoint)anchor
 {
-	return [GET_PROPERTY(kETManipulatedObjectProperty) setAnchorPoint: anchor];
+	return [(ETLayoutItem *)GET_PROPERTY(kETManipulatedObjectProperty) setAnchorPoint: anchor];
 }
 
 - (NSPoint) position
@@ -490,7 +490,7 @@ static ETBasicHandleStyle *sharedBasicHandleStyle = nil;
 
 - (void) setPosition: (NSPoint)aPosition
 {
-	[GET_PROPERTY(kETManipulatedObjectProperty) setPosition: aPosition];
+	[(ETLayoutItem *)GET_PROPERTY(kETManipulatedObjectProperty) setPosition: aPosition];
 	[self updateHandleLocations];
 }
 
