@@ -126,6 +126,7 @@
 		606B98CF0C0AF898000AAA85 /* PhotoViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 606B97490C0AF283000AAA85 /* PhotoViewController.m */; };
 		606B9C490C0B17D6000AAA85 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 29B97316FDCFA39411CA2CEA /* main.m */; };
 		606B9C5E0C0B18A3000AAA85 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1058C7A1FEA54F0111CA2CBB /* Cocoa.framework */; };
+		607345C615416B79002558C7 /* CoreObject.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6084048F15415CB2002F91A1 /* CoreObject.framework */; };
 		6074CA4B0F814FC50081E438 /* ETScrollableAreaItem.h in Headers */ = {isa = PBXBuildFile; fileRef = 6074CA490F814FC50081E438 /* ETScrollableAreaItem.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		6074CA4D0F814FD60081E438 /* ETScrollableAreaItem.m in Sources */ = {isa = PBXBuildFile; fileRef = 6074CA4C0F814FD60081E438 /* ETScrollableAreaItem.m */; };
 		6077C1670F9801C5006CB3F5 /* ETLayoutItem+Scrollable.h in Headers */ = {isa = PBXBuildFile; fileRef = 6077C1660F9801C5006CB3F5 /* ETLayoutItem+Scrollable.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -1089,6 +1090,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				605AD43513BF8D8500755772 /* EtoileFoundation.framework in Frameworks */,
+				607345C615416B79002558C7 /* CoreObject.framework in Frameworks */,
 				605AD43613BF8D8500755772 /* EtoileUI.framework in Frameworks */,
 				60FB0AE813C3347200C2AB94 /* Cocoa.framework in Frameworks */,
 			);
