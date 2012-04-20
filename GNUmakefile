@@ -17,8 +17,6 @@ EtoileUI_SUBPROJECTS = Source
 export coreobject ?= yes
 
 ifeq ($(coreobject), yes)
-  ADDITIONAL_CPPFLAGS += -DCOREOBJECT=1
-  ADDITIONAL_OBJCFLAGS += -DCOREOBJECT=1
   EtoileUI_LIBRARIES_DEPEND_UPON += -lCoreObject
 endif
 
