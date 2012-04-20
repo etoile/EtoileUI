@@ -74,9 +74,3 @@
 #import <EtoileUI/NSObject+EtoileUI.h>
 #import <EtoileUI/NSView+Etoile.h>
 #import <EtoileUI/NSWindow+Etoile.h>
-
-#ifdef COREOBJECT
-#import <EtoileUI/ETPersistencyController.h>
-#import <EtoileUI/COUIServer.h>
-#endif
-
