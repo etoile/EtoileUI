@@ -33,6 +33,10 @@
 
 - (IBAction) browse: (id)sender;
 
+/** @taskunit GNUstep Compatibility */
+
+- (BOOL) inLiveResize;
+
 @end
 
 
