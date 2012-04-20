@@ -635,7 +635,7 @@ See also -setSource:, -isBaseItem and -nextResponder. */
 
 - (ETLayoutItemGroup *) controllerItem
 {
-	return ([self controller] != nil ? [self controller] : [_parentItem controllerItem]);
+	return ([self controller] != nil ? self : [_parentItem controllerItem]);
 }
 
 /** Adds the given item to the receiver children. */
