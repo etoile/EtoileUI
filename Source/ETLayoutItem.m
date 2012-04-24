@@ -3123,7 +3123,7 @@ the first responder or the item when there is no view. */
 /** Notifies the item it has begun to be edited.
 
 This method is usually invoked by the item view or the action handler to allow  
-the item to notify the base item controller about the editing.
+the item to notify the controller item controller about the editing.
 
 You can invoke it in an action handler method when you want the possibility  
 to react with -commitEditingForItem: or -discardEditingForItem: to an early 
@@ -3135,13 +3135,13 @@ See also -objectDidEndEditing:. */
 	NSParameterAssert(anEditor != nil);
 	// NOTE: We implement NSEditorRegistration to allow the view which are 
 	// bound to an item with -bind:toObject:XXX to notify the controller transparently.
-	[[[self baseItem] controller] objectDidBeginEditing: self];
+	[[[self controllerItem] controller] objectDidBeginEditing: self];
 }
 
 /** Notifies the item the editing underway ended.
 
 This method is usually invoked by the item view or the action handler to allow  
-the item to notify the base item controller about the editing.
+the item to notify the controller item controller about the editing.
 
 You must invoke it in an action handler method when you have previously call 
 -objectDidBeginEditing and your editor has finished to edit a property.<br />
@@ -3150,7 +3150,7 @@ See also -objectDidBeginEditing:. */
 - (void) objectDidEndEditing: (id)anEditor
 { 	
 	NSParameterAssert(anEditor != nil);
-	[[[self baseItem] controller] objectDidEndEditing: self];
+	[[[self controllerItem] controller] objectDidEndEditing: self];
 }
 
 /** Returns the custom inspector associated with the receiver. By default, 

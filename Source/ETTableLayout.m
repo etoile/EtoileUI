@@ -894,7 +894,7 @@ The current sort descriptors are collected as explained in the class description
 	if ([self isSortable] == NO)
 		return;
 
-	ETController *controller = [[_layoutContext baseItem] controller];
+	ETController *controller = [[_layoutContext controllerItem] controller];
 	NSArray *sortDescriptors = [controller sortDescriptors];
 
 	if (nil == sortDescriptors)

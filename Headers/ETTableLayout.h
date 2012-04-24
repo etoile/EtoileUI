@@ -19,7 +19,7 @@
 the layout context has a valid double action set.
 
 When the layout is sortable, on a column header click, the content is sorted by 
-reusing the sort descriptors set on the base item controller. When a property 
+reusing the sort descriptors set on the controller item controller. When a property 
 has no sort descriptor with a matching key at the controller level, the sort 
 descriptor bound to the widget table column will be used (and eventually created). */
 @interface ETTableLayout : ETWidgetLayout
