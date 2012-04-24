@@ -445,12 +445,11 @@ See also ETCollectionDidUpdateNotification.*/
 
 - (id <ETTemplateProvider>) lookUpTemplateProvider
 {
-	id <ETTemplateProvider> provider = [self controller];
+	id <ETTemplateProvider> provider = [[self controllerItem] controller];
 
-	if (nil == provider)
-	{
-		provider = [[self baseItem] controller];
-	}
+	// NOTE: If needed, we could introduce a overridable method 
+	// -[ETController templateProviderFallback] (or -templateProvider that 
+	// returns self) that makes possible to reuse parent controller templates.
 	if (nil == provider)
 	{
 		provider = [ETController basicTemplateProvider];
