@@ -273,12 +273,12 @@ Overrides this method when you want to customize how simple click are handled. *
 }
 
 /** <override-dummy />
-Tries to send the double action bound to the base item or the parent item. The
-parent item is used when double action is set on the base item. 
+Tries to send the double action bound to the controller item or the parent item. 
+The parent item is used when double action is not set on the controller item. 
 
 Each time a target can receive the action, the -doubleClickedItem property is 
-updated on the base item or the parent item, otherwise it is set to nil, then 
-the action is sent.
+updated on the controller item or the parent item, otherwise it is set to nil, 
+then the action is sent.
 
 Overrides this method when you want to customize how double-click are handled. */
 - (void) handleDoubleClickItem: (ETLayoutItem *)item
@@ -287,9 +287,9 @@ Overrides this method when you want to customize how double-click are handled. *
 
 	ETLayoutItemGroup *itemGroup = [item parentItem];
 	
-	if ([[item baseItem] doubleAction] != NULL)
+	if ([[item controllerItem] doubleAction] != NULL)
 	{
-		itemGroup = [item baseItem];
+		itemGroup = [item controllerItem];
 	}
 
 	BOOL foundTarget = ([ETApp targetForAction: [itemGroup doubleAction] 
@@ -462,7 +462,7 @@ By default returns YES, except when the item is a base item, then returns NO. */
 	[item setNeedsDisplay: YES];
 
 	// TODO: Cache the selection in the controller if there is one
-	//[[[item baseItem] controller] addSelectedObject: item];
+	//[[[item controllerItem] controller] addSelectedObject: item];
 }
 
 /** Returns whether item can be deselected or not. 
@@ -483,7 +483,7 @@ TODO: Problably remove, since it should be of any use and just adds complexity. 
 	[item setNeedsDisplay: YES];
 
 	// TODO: May be cache in the controller... 
-	//[[[item baseItem] controller] removeSelectedObject: item];
+	//[[[item controllerItem] controller] removeSelectedObject: item];
 }
 
 /* Generic Actions */
