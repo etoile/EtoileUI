@@ -123,12 +123,12 @@ You should never need to call this method which is used internally. */
 
 - (void) cacheScrollableAreaItem: (ETScrollableAreaItem *)decorator
 {
-	SET_PROPERTY(decorator, kETCachedScrollableAreaDecoratorItem);
+	[self setPrimitiveValue: decorator forKey: kETCachedScrollableAreaDecoratorItem];
 }
 
 - (ETScrollableAreaItem *) cachedScrollableAreaItem
 {
-	ETScrollableAreaItem *decorator = GET_PROPERTY(kETCachedScrollableAreaDecoratorItem);
+	ETScrollableAreaItem *decorator = [self primitiveValueForKey: kETCachedScrollableAreaDecoratorItem];
 
 	if (nil == decorator)
 	{

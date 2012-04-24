@@ -48,9 +48,6 @@
 
 #ifndef GNUSTEP
 #import <EtoileFoundation/GNUstep.h>
-#else
-// NOTE: Temporary hack until GNUstep Base includes KVO header in Foundation.h
-#import <Foundation/NSKeyValueObserving.h>
 #endif
 
 /* Logging Additions */
@@ -63,36 +60,6 @@
 #endif
 #define ETLog NSLog
 
-/* Properties Read and Write Macros */
-
-#define VARIABLE_STORAGE _variableStorage
-
-/* Macros to read and write the local properties that belongs the given object 
-without exposing how the properties are stored. */
-#define SET_OBJECT_PROPERTY(object, value, property) \
-	[object setPrimitiveValue: value forKey: property];
-#define GET_OBJECT_PROPERTY(object, property) \
-	[object primitiveValueForKey: property]
-#define HAS_OBJECT_PROPERTY(object, property) \
-	([object primitiveValueForKey: property] != nil)
-
-#define SET_OBJECT_PROPERTY_AND_RELEASE(object, value, property) \
-do { \
-	id __val = value; \
-	SET_OBJECT_PROPERTY(object, __val, property); \
-	RELEASE(__val); \
-} while (0)
-
-
-/* Macros to read and write the receiver local properties without exposing 
-how the properties are stored. The implicit property owner is self. */
-#define SET_PROPERTY(value, property) \
-	SET_OBJECT_PROPERTY(self, value, property)
-#define GET_PROPERTY(property) \
-	GET_OBJECT_PROPERTY(self, property)
-#define HAS_PROPERTY(property) \
-	HAS_OBJECT_PROPERTY(self, property)
-	
 /* Assertions */
 
 // TODO: Move to EtoileFoundation as ETAssertFail()

@@ -181,10 +181,10 @@ The returned copy is mutable because ETLayoutItemGroup cannot be immutable. */
 
 	item->_layoutItems = [[NSMutableArray allocWithZone: zone] init];
 
-	id source =  GET_PROPERTY(kETSourceProperty);
+	id source =  [self primitiveValueForKey: kETSourceProperty];
 	id sourceCopy = ([self usesRepresentedObjectAsProvider] ? (id)item : source);
 
-	SET_OBJECT_PROPERTY(item, sourceCopy, kETSourceProperty);
+	[item setPrimitiveValue: sourceCopy forKey: kETSourceProperty];
 	/* Set up an observer as -setSource: does */
 	[[NSNotificationCenter defaultCenter]
 		   addObserver: item
@@ -192,7 +192,7 @@ The returned copy is mutable because ETLayoutItemGroup cannot be immutable. */
 		          name: ETSourceDidUpdateNotification
 			    object: sourceCopy];
 
-	ETController *controller = GET_PROPERTY(kETControllerProperty);
+	ETController *controller = [self primitiveValueForKey: kETControllerProperty];
 	ETLayoutItemGroup *contentCopy = (isDeepCopy ? (ETLayoutItemGroup *)nil : item);
 	ETController *controllerCopy = [controller copyWithZone: zone content: contentCopy];
 
@@ -200,11 +200,12 @@ The returned copy is mutable because ETLayoutItemGroup cannot be immutable. */
 	{
 		[[aCopier objectReferencesForCopy] setObject: controllerCopy forKey: controller];
 	}
-	SET_OBJECT_PROPERTY_AND_RELEASE(item, controllerCopy, kETControllerProperty);
+	[item setPrimitiveValue: controllerCopy forKey: kETControllerProperty];
+	RELEASE(controllerCopy);
 
 	/* We copy all variables properties */
 
-	id delegate = GET_PROPERTY(kETDelegateProperty);
+	id delegate = [self primitiveValueForKey: kETDelegateProperty];
 	id delegateCopy = [[aCopier objectReferencesForCopy] objectForKey: delegate];
 
 	if (nil == delegateCopy)
@@ -212,8 +213,8 @@ The returned copy is mutable because ETLayoutItemGroup cannot be immutable. */
 		delegateCopy = delegate;
 	}
 
-	SET_OBJECT_PROPERTY(item, GET_PROPERTY(kETItemScaleFactorProperty), kETItemScaleFactorProperty);
-	SET_OBJECT_PROPERTY(item, delegateCopy, kETDelegateProperty);
+	[item setPrimitiveValue: [self primitiveValueForKey: kETItemScaleFactorProperty] forKey: kETItemScaleFactorProperty];
+	[item setPrimitiveValue: delegateCopy forKey: kETDelegateProperty];
 
 	[aCopier endCopy];
 
@@ -255,8 +256,8 @@ The returned copy is mutable because ETLayoutItemGroup cannot be immutable. */
 
 	[itemCopy->_layout setUpCopyWithZone: zone original: _layout];
 
-	ETController *controller = GET_PROPERTY(kETControllerProperty);
-	ETController *controllerCopy = GET_OBJECT_PROPERTY(itemCopy, kETControllerProperty);
+	ETController *controller = [self primitiveValueForKey: kETControllerProperty];
+	ETController *controllerCopy = [itemCopy primitiveValueForKey: kETControllerProperty];
 
 	[controller finishDeepCopy: controllerCopy withZone: zone content: itemCopy];
 
@@ -505,7 +506,7 @@ receiver handles the layout item tree directly without the help of a source
 object, then this method returns nil. */
 - (id) source
 {
-	return GET_PROPERTY(kETSourceProperty);
+	return [self primitiveValueForKey: kETSourceProperty];
 }
 
 - (BOOL) isBaseItem
@@ -562,7 +563,7 @@ Marks the receiver as needing a layout update. */
 - (void) setSource: (id)source
 {
 	/* By safety, avoids to trigger extra updates */
-	if (GET_PROPERTY(kETSourceProperty) == source)
+	if ([self primitiveValueForKey: kETSourceProperty] == source)
 		return;
 
 	// TODO: Because ETCompositeLayout uses -setSource: in its set up, we cannot
@@ -573,9 +574,9 @@ Marks the receiver as needing a layout update. */
 	[[NSNotificationCenter defaultCenter]
 		removeObserver: self
 		          name: ETSourceDidUpdateNotification
-			    object: GET_PROPERTY(kETSourceProperty)];
+			    object: [self primitiveValueForKey: kETSourceProperty]];
 
-	SET_PROPERTY(source, kETSourceProperty);
+	[self setPrimitiveValue: source forKey: kETSourceProperty];
 
 	[self tryReloadWithSource: source]; /* Resets any particular state like selection */
 	[self setNeedsLayoutUpdate];
@@ -594,7 +595,7 @@ Marks the receiver as needing a layout update. */
 See also -setDelegate:. */
 - (id) delegate
 {
-	return GET_PROPERTY(kETDelegateProperty);
+	return [self primitiveValueForKey: kETDelegateProperty];
 }
 
 /** Sets the delegate associated with the receiver.
@@ -607,7 +608,7 @@ The delegate is owned by the item and treated as a pluggable aspect to be
 released when the item is deallocated.  */
 - (void) setDelegate: (id)delegate
 {
-	SET_PROPERTY(delegate, kETDelegateProperty);
+	[self setPrimitiveValue: delegate forKey: kETDelegateProperty];
 }
 
 /** Returns the controller which allows to customize the overall UI interaction
@@ -617,7 +618,7 @@ When the controller is not nil, the receiver is both a base item and the
 controller content. */
 - (ETController *) controller
 {
-	return GET_PROPERTY(kETControllerProperty);
+	return [self primitiveValueForKey: kETControllerProperty];
 }
 
 /** Sets the controller which allows to customize the overall UI interaction
@@ -629,7 +630,7 @@ the receiver becomes both a base item and the controller content.
 See also -setSource:, -isBaseItem and -nextResponder. */
 - (void) setController: (ETController *)aController
 {
-	SET_PROPERTY(aController, kETControllerProperty);
+	[self setPrimitiveValue: aController forKey: kETControllerProperty];
 	[aController setContent: self];
 }
 
@@ -1058,7 +1059,7 @@ frame (see -usesLayoutBasedFrame). */
 See also -setItemScaleFactor:. */
 - (float) itemScaleFactor
 {
-	return [GET_PROPERTY(kETItemScaleFactorProperty) floatValue];
+	return [[self primitiveValueForKey: kETItemScaleFactorProperty] floatValue];
 }
 
 /** Sets the scale factor applied to each item when the layout supports it.
@@ -1071,7 +1072,7 @@ See -[ETLayout setItemSizeConstraintStyle:] and -[ETLayout setConstrainedItemSiz
 to control more precisely how the items get resized per layout. */
 - (void) setItemScaleFactor: (float)aFactor
 {
-	SET_PROPERTY([NSNumber numberWithFloat: aFactor], kETItemScaleFactorProperty);
+	[self setPrimitiveValue: [NSNumber numberWithFloat: aFactor] forKey: kETItemScaleFactorProperty];
 	[self setNeedsLayoutUpdate];
 }
 
@@ -1706,7 +1707,7 @@ See also -setDoubleAction:. */
 /** Returns the last child item on which a double click occurs. */
 - (ETLayoutItem *) doubleClickedItem
 {
-	return GET_PROPERTY(kETDoubleClickedItemProperty);
+	return [self primitiveValueForKey: kETDoubleClickedItemProperty];
 }
 
 /** <override-dummy />
