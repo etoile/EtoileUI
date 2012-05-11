@@ -462,6 +462,9 @@ inside the content bounds. */
 	[mainItem addItem: item1];
 	[item2 addItem: item21]; /* Test methods insert item2 as they want */
 
+	/* For handle creation on selection change, we must run -[ETFreeLayout updateKVOForItems:] */
+	[mainItem updateLayoutIfNeeded];
+
 	return self;
 }
 
@@ -488,6 +491,8 @@ DEALLOC(DESTROY(rootItem); DESTROY(item1); DESTROY(item2); DESTROY(item21))
 	[mainItem addItem: item2];
 	[item2 setSelected: YES];
 	[item21 setSelected: YES];
+
+	[mainItem updateLayoutIfNeeded];
 
 	UKIntsEqual(2, [rootItem numberOfItems]);
 	UKIntsEqual(1, [[[item2 layout] layerItem] numberOfItems]);	
@@ -527,6 +532,8 @@ DEALLOC(DESTROY(rootItem); DESTROY(item1); DESTROY(item2); DESTROY(item21))
 	[item1 setSelected: YES];
 	[item2 setSelected: YES];
 	[item21 setSelected: YES];
+
+	[mainItem updateLayoutIfNeeded];
 
 	UKIntsEqual(2, [rootItem numberOfItems]);
 
