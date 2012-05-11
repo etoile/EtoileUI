@@ -78,6 +78,13 @@ See also -removeItem: and -addItem:. */
 	[_scheduledItems removeAllObjects];
 }
 
+/** Returns whether the item is scheduled to have its layout updated when 
+the control returns to the run loop. */
+- (BOOL) containsItem: (ETLayoutItem *)anItem
+{
+	return [_scheduledItems containsObject: anItem];
+}
+
 /** Returns YES when no layout update is scheduled (no dirty items). */
 - (BOOL) isEmpty
 {

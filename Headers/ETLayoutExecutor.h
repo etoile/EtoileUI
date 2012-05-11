@@ -30,6 +30,7 @@
 - (void) removeItem: (ETLayoutItem *)anItem;
 - (void) removeItems: (NSSet *)items;
 - (void) removeAllItems;
+- (BOOL) containsItem: (ETLayoutItem *)anItem;
 - (BOOL) isEmpty;
 
 /** @taskunit Executing Layout Updates */
