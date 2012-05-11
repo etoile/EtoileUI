@@ -36,8 +36,6 @@
  
 /* CoreObject Support */
 
-#define COREOBJECT
- 
 #ifdef COREOBJECT
 #  define BASEOBJECT COObject
 #else

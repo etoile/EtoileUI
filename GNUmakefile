@@ -18,6 +18,7 @@ export coreobject ?= yes
 
 ifeq ($(coreobject), yes)
   EtoileUI_LIBRARIES_DEPEND_UPON += -lCoreObject
+  EtoileUI_CPP_FLAGS += -DCOREOBJECT
 endif
 
 ifeq ($(test), yes)
