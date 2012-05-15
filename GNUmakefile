@@ -156,6 +156,8 @@ EtoileUI_RESOURCE_FILES = \
 	English.lproj/TablePrototype.gorm \
 	English.lproj/ViewModelPrototype.gorm
 
+EtoileUI_RESOURCE_FILES += $(wildcard Images/FugueIcons/*.png)
+
 include $(GNUSTEP_MAKEFILES)/aggregate.make
 -include ../../etoile.make
 -include etoile.make
