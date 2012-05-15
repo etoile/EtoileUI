@@ -395,10 +395,6 @@ This method calls either -makeFirstKeyResponder: or -makeFirstMainResponder:. */
 	if ([responder isKindOfClass: [NSResponder class]] == NO)
 		responder = [ETFirstResponderProxy responderProxyWithObject: aResponder];
 
-	if ([responder isKindOfClass: [NSView class]])
-	{
-
-	}
 	BOOL isNowFirstResponder = [aWindow makeFirstResponder: responder];
 	/* We must retain the responder because -[NSWindow makeFirstResponder:] 
 	   doesn't do it and nobody will retain ETFirstResponderProxy instances 
