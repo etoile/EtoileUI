@@ -448,7 +448,7 @@ child because it is not a bar child item. */
 /* Propagates pane switch done in bar to content. */
 - (void) itemGroupSelectionDidChange: (NSNotification *)notif
 {
-	ETLog(@"Pane layout %@ receives selection change from %@", self, [notif object]);
+	//ETLog(@"Pane layout %@ receives selection change from %@", self, [notif object]);
 
 	NSAssert1([[notif object] isEqual: [self barItem]], @"Selection "
 		"notification must be posted by the bar item in %@", self);

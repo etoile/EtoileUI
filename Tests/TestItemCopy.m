@@ -465,6 +465,9 @@ DEALLOC(DESTROY(itemFactory); DESTROY(item); DESTROY(itemGroup))
 	ETLayoutItem *item1 = [itemFactory item];
 	ETPaneLayout *layout = [ETPaneLayout masterDetailLayout];
 
+	/* We set icons to prevent warnings by -visitedItemProxyForItem: */
+	[[A(item, item1, itemGroup1) mappedCollection] setIcon: [NSImage imageNamed: @"NSApplicationIcon"]];
+
 	[item setName: @"Ubiquity"];
 	[item1 setName: @"Hilarity"];
 	[itemGroup addItem: item];
