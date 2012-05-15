@@ -24,7 +24,7 @@
 // instantiate multivalued collections behind our back. Perhaps rework 
 // ETLayoutItemGroup to let ETUIObject or COObject handle that.
 
-- (void) awakeFromInsert
+- (void) didCreate
 {
 
 }
