@@ -23,6 +23,7 @@
 #import "ETLayout.h"
 #import "ETView.h"
 #import "ETWindowItem.h"
+#import "NSObject+EtoileUI.h"
 #import "ETCompatibility.h"
 
 @interface ETTool (Private)
@@ -366,10 +367,23 @@ This method calls either -makeFirstKeyResponder: or -makeFirstMainResponder:. */
 
 - (BOOL) makeFirstResponder: (id)aResponder inWindow: (NSWindow *)aWindow
 {
+	/* For becoming first responder, views must belong to a valid window but 
+	   there are no such constraints for tools and layout items. */
+	BOOL isResponderView = ([aResponder isView]);
+
 	if (aWindow == nil)
 	{
-		ETLog(@"WARNING: Try to make first responder %@ wich is not currently"
-			"located in a window", aResponder);
+		if (isResponderView)
+		{
+			ETLog(@"WARNING: For becoming first responder, view %@ must be "
+			   "located in a window", aResponder);
+		}
+		return NO;
+	}
+	if (isResponderView && [(NSView *)aResponder window] != aWindow)
+	{
+		ETLog(@"WARNING: For becoming first responder, view %@ must be "
+			   "located in key or main window", aResponder);
 		return NO;
 	}
 
@@ -381,6 +395,10 @@ This method calls either -makeFirstKeyResponder: or -makeFirstMainResponder:. */
 	if ([responder isKindOfClass: [NSResponder class]] == NO)
 		responder = [ETFirstResponderProxy responderProxyWithObject: aResponder];
 
+	if ([responder isKindOfClass: [NSView class]])
+	{
+
+	}
 	BOOL isNowFirstResponder = [aWindow makeFirstResponder: responder];
 	/* We must retain the responder because -[NSWindow makeFirstResponder:] 
 	   doesn't do it and nobody will retain ETFirstResponderProxy instances 
