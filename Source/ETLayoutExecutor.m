@@ -201,8 +201,8 @@ layout update constraints, then tells the reordered items to update their layout
 		[processedItems addObject: item];
 	}
 
-	ETLog(@"UPDATE LAYOUT -- Flexible items %i -- Non flexible items %i", 
-		[flexibleItemQueue count], [nonFlexibleItems count]);
+	//ETLog(@"UPDATE LAYOUT -- Flexible items %i -- Non flexible items %i", 
+	//	[flexibleItemQueue count], [nonFlexibleItems count]);
 	[[flexibleItemQueue mappedCollection] updateLayoutRecursively: NO];
 	[[nonFlexibleItems mappedCollection] updateLayoutRecursively: NO];
 }
