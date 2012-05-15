@@ -308,7 +308,7 @@ DEALLOC(DESTROY(itemFactory); DESTROY(item); DESTROY(itemGroup))
 	[itemGroup setView: AUTORELEASE([[NSButton alloc] init])];
 	[itemGroup setDecoratorItem: [ETDecoratorItem itemWithDummySupervisorView]];
 
-	[itemGroup setSource: self];
+	[itemGroup setSource: itemGroup];
 	[itemGroup setController: AUTORELEASE([[ETController alloc] init])];
 	[itemGroup setDelegate: self];
 	[itemGroup setDoubleAction: @selector(boum:)];
@@ -326,6 +326,7 @@ DEALLOC(DESTROY(itemFactory); DESTROY(item); DESTROY(itemGroup))
 	NSArray *equalProperties = [properties arrayByRemovingObjectsInArray: 
 		[nonEqualOrIdenticalProperties arrayByAddingObjectsFromArray: nilProperties]];
 
+	equalProperties = [equalProperties arrayByRemovingObjectsInArray: A(kETSourceProperty)];
 	// FIXME: -hasVerticallScroller automatically creates a cached scrollable
 	// area item and is called -[ETWidgetLayout syncLayoutViewWithItem:].
 	// -hasVerticalScroller should just return NO in this case.
@@ -342,6 +343,7 @@ DEALLOC(DESTROY(itemFactory); DESTROY(item); DESTROY(itemGroup))
 		UKPropertiesEqual(value, copiedValue, property);
 	}
 
+	UKObjectsEqual(newItemGroup, [newItemGroup source]);
 	UKObjectsEqual(newItemGroup, [[newItemGroup layout] layoutContext]);
 	UKObjectsNotEqual([[itemGroup layout] layoutView], [[newItemGroup layout] layoutView]);
 	UKObjectsEqual([[newItemGroup supervisorView] contentView], [[newItemGroup layout] layoutView]);
