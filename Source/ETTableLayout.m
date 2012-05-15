@@ -530,6 +530,15 @@ See [(ETColumnFragment)] protocol to customize the returned column. */
 
 - (void) selectionDidChangeInLayoutContext: (id <ETItemSelection>)aSelection
 {
+	BOOL tableViewNotYetReloaded = [_layoutContext needsLayoutUpdate];
+
+	/* When the new content is not visible yet in the table view
+
+	   Note: On GNUstep, selectRowXXX methods raise an exception when the row 
+	   selection request is invalid. */
+	if (tableViewNotYetReloaded)
+		return;
+
 	[[self tableView] selectRowIndexes: [aSelection selectionIndexes]
 	              byExtendingSelection: NO];
 }
