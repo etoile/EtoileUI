@@ -8,6 +8,7 @@
 
 #import <EtoileFoundation/Macros.h>
 #import <EtoileFoundation/ETCollection.h>
+#import <EtoileFoundation/NSObject+HOM.h>
 #import "ETEventProcessor.h"
 #import "ETDecoratorItem.h"
 #import "ETGeometry.h"
@@ -63,6 +64,16 @@ and handled by a widget view associated with item, and NO otherwise. */
 - (BOOL) trySendEvent: (ETEvent *)anEvent toWidgetViewOfItem: (ETLayoutItem *)item
 {
 	return NO;
+}
+
+- (id) delegate
+{
+	return _delegate;
+}
+
+- (void) setDelegate: (id)aDelegate
+{
+	_delegate = aDelegate;
 }
 
 @end
@@ -431,8 +442,17 @@ dispatched. */
 }
 
 /* This is similar to the logic implemented by -[NSWindow sendEvent:]. */
-- (void) sendEvent: (NSEvent *)evt toView: (NSView *)aView
+- (void) sendEvent: (ETEvent *)event toView: (NSView *)aView
 {
+	BOOL sent = [[[self delegate] ifResponds] eventProcessor: self 
+	                                               sendEvent: event 
+	                                                  toView: aView];
+
+	if (sent)
+		return;
+
+	NSEvent *evt = (NSEvent *)[event backendEvent];
+
 	switch ([evt type])
 	{
 		case NSLeftMouseDown:
@@ -517,7 +537,7 @@ If item is nil, returns NO immediately. */
 		BOOL isVisibleSubview = ([widgetSubview window] != nil);
 		if (isVisibleSubview) /* For opaque layout that cover item views */
 		{
-			[self sendEvent: [anEvent backendEvent] toView: widgetSubview];
+			[self sendEvent: anEvent toView: widgetSubview];
 			return YES;
 		}
 	}
