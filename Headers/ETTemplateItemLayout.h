@@ -108,17 +108,44 @@ possible and how to use ETTemplateItemLayout. */
 @end
 
 
+/** Describes how the form is horizontally positioned inside the layout 
+context.
+
+ETFormLayout resets -[ETComputedLayout horizontalAlignment] to 
+ETLayoutHorizontalAlignmentGuided, in order to right align the labels at the 
+left of the guide, and to left align the views at the right of the guide. 
+Which means we cannot use the positional layout to control how the whole content 
+is aligned. */
+typedef enum
+{
+	ETFormLayoutAlignmentCenter,
+/** Centers the content horizontally in the layout context.
+
+Also means the inset is interpreted as a left and right inset.  */
+	ETFormLayoutAlignmentLeft,
+/** Shifts the content as much as possible towards the left edge of the layout context.
+
+Also means the inset is interpreted as a left inset. */
+	ETFormLayoutAlignmentRight,
+/** Shifts the content as much as possible towards the right edge of the layout context.
+
+Also means the inset is interpreted as a right inset. */
+} ETFormLayoutAlignment;
+
 @interface ETFormLayout : ETTemplateItemLayout
 {
 	NSFont *_itemLabelFont;
 	NSTextAlignment _itemLabelAlignment;
-	NSTextAlignment _alignment;
+	ETFormLayoutAlignment _alignment;
 	float highestLabelWidth;
+	float _currentMaxLabelWidth;
+	float _currentMaxCombinedBoundingWidth;
 	ETBasicItemStyle *_standaloneTextStyle;
 }
 
-/*- (void) setAlignment: (NSTextAlignment)alignment;
-- (void) setItemLabelFont: (NSFont *)font;
+- (ETFormLayoutAlignment) alignment;
+- (void) setAlignment: (ETFormLayoutAlignment)alignment;
+/*- (void) setItemLabelFont: (NSFont *)font;
 - (void) setItemLabelAlignment: (NSTextAlignment)alignment;
 -setInsertSeparatorBetweenGroups*/
 

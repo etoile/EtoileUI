@@ -527,19 +527,19 @@
 			remoteGlobalIDString = 60EF8E9C0C5E4D0600C97C41;
 			remoteInfo = EtoileUI;
 		};
+		6023544915B86AA600CA49D0 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 6640BC2710A0C1B0008B7765 /* EtoileFoundation.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 6072CF691360E144003256C5 /* PlugInExample.plugin */;
+			remoteInfo = PlugInExample;
+		};
 		605AD42F13BF8D8500755772 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 29B97313FDCFA39411CA2CEA /* Project object */;
 			proxyType = 1;
 			remoteGlobalIDString = 60EF8E9C0C5E4D0600C97C41;
 			remoteInfo = EtoileUI;
-		};
-		6066924413716226009209CA /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 6640BC2710A0C1B0008B7765 /* EtoileFoundation.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = 6072CF691360E144003256C5;
-			remoteInfo = PlugInExample;
 		};
 		60793B2C105C1658005E4F39 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -1799,7 +1799,7 @@
 				6640BC3110A0C1B0008B7765 /* EtoileXML.framework */,
 				6640BC3310A0C1B0008B7765 /* EtoileFoundation.framework */,
 				6640BC3510A0C1B0008B7765 /* TestEtoileFoundation.bundle */,
-				6066924513716226009209CA /* PlugInExample.plugin */,
+				6023544A15B86AA600CA49D0 /* PlugInExample.plugin */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -2181,11 +2181,11 @@
 /* End PBXProject section */
 
 /* Begin PBXReferenceProxy section */
-		6066924513716226009209CA /* PlugInExample.plugin */ = {
+		6023544A15B86AA600CA49D0 /* PlugInExample.plugin */ = {
 			isa = PBXReferenceProxy;
 			fileType = wrapper.cfbundle;
 			path = PlugInExample.plugin;
-			remoteRef = 6066924413716226009209CA /* PBXContainerItemProxy */;
+			remoteRef = 6023544915B86AA600CA49D0 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
 		6084048F15415CB2002F91A1 /* CoreObject.framework */ = {

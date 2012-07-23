@@ -29,7 +29,7 @@
 	
 	// NOTE: If you want a form organized on a line rather in a stack:
 	// [layout setPositionalLayout: [ETLineLayout layout]];
-	[[layout positionalLayout] setItemMargin: 10];
+	//[[layout positionalLayout] setItemMargin: 10];
 	
 	return layout;
 }
@@ -53,8 +53,10 @@
 	ETLayoutItem *textFieldItem = [itemFactory textField];
 
 	[sliderItem setName: @"Voice Volume:"];
+	[sliderItem setWidth: 200];
 	[buttonItem setName: @"Customize:"];
 	[textFieldItem setName: @"Title & Author:"];
+	[textFieldItem setWidth: 300];
 
 	[firstSectionItem addItem: textFieldItem];
 	[firstSectionItem setLayout: [self createFormLayout]];
@@ -72,47 +74,55 @@
 	[[itemFactory windowGroup] addItem: itemGroup];
 }
 
-- (void) applicationDidFinishLaunching: (NSNotification *)notif
+- (void) buildSingleSectionForm
 {
-#if 0
-	[ETLayoutItem setShowsBoundingBox: YES];
-	[ETLayoutItem setShowsFrame: YES];
-
 	ETLayoutItemFactory *itemFactory = [ETLayoutItemFactory factory];
 	ETLayoutItemGroup *itemGroup = [itemFactory itemGroup];
-	ETLayoutItem *sectionLabelItem = [itemFactory item];
+	ETLayoutItem *labelItem = [itemFactory labelWithTitle: @"Untitled"];
+	ETLayoutItem *primitiveItem = [itemFactory item];
 	ETLayoutItem *sliderItem = [itemFactory horizontalSlider];
 	ETLayoutItem *buttonItem = [itemFactory button];
-	//ETLayoutItem *progressIndicatorItem = [itemFactory progressIndicator];
-	//ETLayoutItem *checkboxItem = [itemFactory checkbox];
+	ETLayoutItem *progressIndicatorItem = [itemFactory progressIndicator];
+	ETLayoutItem *checkboxItem = [itemFactory checkboxWithLabel: @"Walk now..." 
+		target: nil action: NULL forProperty: @"" ofModel: nil];
 	ETLayoutItem *textFieldItem = [itemFactory textField];
-
-	//[itemGroup setRepresentedPath: @"/"]; /* Mandatory to handle drop */
 	
-	[sectionLabelItem setName: @"Editing:"];
-	[sliderItem setName: @"My Slider:"];
-	[buttonItem setName: @"My Mysterious Clickability:"];
-	[textFieldItem setName: @"Book Title & Author"];
+	/* When no name is set, the item tends to be invisible, because the label  
+	   is too long... -[ETBasicItemStyle labelForItem:] returns the instance 
+	   description. */
+	[labelItem setName: @"Label:"];
+	[primitiveItem setName: @"Primitive Item:"];
+	[sliderItem setName: @"Slider:"];
+	[buttonItem setName: @"Button:"];
+	[progressIndicatorItem setName: @"Progress Indicator:"];
+	[checkboxItem setName: @"Checkbox:"];
+	[textFieldItem setName: @"TextField:"];
 
-	[itemGroup addItem: sectionLabelItem];
+	[sliderItem setWidth: 200];
+	[textFieldItem setWidth: 300];
+
+	[itemGroup addItem: labelItem];
+	[itemGroup addItem: primitiveItem];
 	[itemGroup addItem: sliderItem];
 	[itemGroup addItem: buttonItem];
-	/*[itemGroup addItem: progressIndicatorItem];
-	[itemGroup addItem: checkboxItem];*/
+	[itemGroup addItem: progressIndicatorItem];
+	[itemGroup addItem: checkboxItem];
 	[itemGroup addItem: textFieldItem];
 	//[textFieldItem setAutoresizingMask: NSViewHeightSizable | NSViewWidthSizable];
 
 	[itemGroup setFrame: NSMakeRect(0, 0, 500, 400)];
 	[itemGroup setLayout: [self createFormLayout]];
-	
-	/*id slider = AUTORELEASE([[NSSlider alloc] initWithFrame: NSMakeRect(0, 0, 80, 50)]);
-	
-	[slider setAutoresizingMask: NSViewHeightSizable | NSViewWidthSizable];
-	[[itemGroup supervisorView] addSubview:	slider];*/
-	
+
 	[[itemFactory windowGroup] addItem: itemGroup];
-#endif
-	[self buildMultipleSectionForm];
+}
+
+- (void) applicationDidFinishLaunching: (NSNotification *)notif
+{
+	[ETLayoutItem setShowsBoundingBox: YES];
+	[ETLayoutItem setShowsFrame: YES];
+
+	[self buildSingleSectionForm];
+	//[self buildMultipleSectionForm];
 }
 
 @end

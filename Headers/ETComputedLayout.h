@@ -17,6 +17,10 @@
 
 @class ETLayoutItem, ETLineFragment;
 
+@protocol ETAlignmentHint
+- (float) alignmentHintForLayout: (ETLayout *)aLayout;
+@end
+
 /** Describes how the content is horizontally positioned inside the layout 
 context.
 

@@ -381,7 +381,7 @@ float contentHeight =  [line height] + totalMargin;
 		}
 	}
 
-	return NSMakePoint(borderMargin + itemMargin, lineY);
+	return NSMakePoint(borderMargin + [self horizontalAlignmentGuidePosition] + itemMargin, lineY);
 }
 
 /** <override-subclass />

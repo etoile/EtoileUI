@@ -435,6 +435,7 @@ kETFormLayoutInset	NSZeroRect (default) or nil
 
 	[self setTemplateItem: templateItem];
 	[formStyle setLabelPosition: ETLabelPositionOutsideLeft];
+	[formStyle setLabelMargin: 10];
 	[templateItem setCoverStyle: formStyle];
 	[templateItem setContentAspect: ETContentAspectComputed];
 	/* Icon must precede Style and View to let us snapshot the item in its 
@@ -444,11 +445,14 @@ kETFormLayoutInset	NSZeroRect (default) or nil
 	// FIXME: When View comes before Content Aspect an assertion is raised.
 	[self setTemplateKeys: A(@"coverStyle", @"contentAspect")];
 	[self setPositionalLayout: [ETColumnLayout layout]];
-	[[(id)[self positionalLayout] ifResponds] setIsContentSizeLayout: YES];
-	[[(id)[self positionalLayout] ifResponds] setComputesItemRectFromBoundingBox: YES];
+	//[[(id)[self positionalLayout] ifResponds] setIsContentSizeLayout: YES];
+	// FIXME: The line below is needed only if we align the labels on the left
+	//[[(id)[self positionalLayout] ifResponds] setComputesItemRectFromBoundingBox: YES];
 
+	_alignment = ETFormLayoutAlignmentRight;
 	_standaloneTextStyle = [[ETBasicItemStyle alloc] init];
-	[_standaloneTextStyle setLabelPosition: ETLabelPositionCentered];
+	[_standaloneTextStyle setLabelMargin: 10];
+	[_standaloneTextStyle setLabelPosition: ETLabelPositionOutsideLeft];//ETLabelPositionCentered];
 
 	return self;
 }
@@ -464,9 +468,9 @@ kETFormLayoutInset	NSZeroRect (default) or nil
 	return [NSImage imageNamed: @"ui-scroll-pane-form"];
 }
 
-- (float) controlMargin
+- (float) labelMargin
 {
-	return 10;
+	return [[[self templateItem] coverStyle] labelMargin];
 }
 
 - (float) formElementMargin
@@ -477,6 +481,16 @@ kETFormLayoutInset	NSZeroRect (default) or nil
 - (float) maxLabelWidth
 {
 	return 300;
+}
+
+- (ETFormLayoutAlignment) alignment
+{
+	return _alignment;
+}
+
+- (void) setAlignment: (ETFormLayoutAlignment)alignment
+{
+	_alignment = alignment;
 }
 
 - (ETBasicItemStyle *) standaloneTextStyle
@@ -520,30 +534,65 @@ constraints that might be set such as -constrainedItemSize and
 The resizing isn't delegated to the positional layout unlike in ETTemplateItemLayout. */
 - (void) resizeLayoutItems: (NSArray *)items toScaleFactor: (float)factor
 {
+	_currentMaxLabelWidth = 0;
+	/* For this method, the bounding box width is the item frame width summed  
+	   with the label width (positioned to the left outside).
+
+	   The combined bounding width below sums the widest item frame and label 
+	   width, both frame and label can belong to distinct items. From this 
+	   aggregate width, we compute the remaining space on the left and right,  
+	   then the horizontal guide position (for ETColumnLayout). */
+	_currentMaxCombinedBoundingWidth = 0;
+
+	float maxItemWidth = 0;
+
 	/* Scaling is always computed from the base image size (scaleFactor equal to 
 	   1) in order to avoid rounding error that would increase on each scale change. */
 	FOREACH(items, item, ETLayoutItem *)
 	{
-		//if ([item view] == nil)
-		//	continue;
-		
+		/* When no view is present, we use the item size to get a valid 
+		   boundingSize and be able to compute labelWidth */
+		NSSize viewOrItemSize = ([item view] != nil ? [[item view] frame].size : [item size]);
 		NSSize boundingSize = [[item coverStyle] boundingSizeForItem: item 
-		                                             imageOrViewSize: [[item view] frame].size];
+		                                             imageOrViewSize: viewOrItemSize];
 		NSRect boundingBox = ETMakeRect(NSZeroPoint, boundingSize);
+		float labelWidth = boundingSize.width - [item width];
+
+		if (labelWidth > _currentMaxLabelWidth)
+		{
+			_currentMaxLabelWidth = labelWidth;
+		}
+		if (boundingSize.width > maxItemWidth)
+		{
+			maxItemWidth = viewOrItemSize.width;
+		}
 
 		// TODO: May be better to compute that in -[ETBasicItemStyle boundingBoxForItem:]
-		if ([item view] != nil)
-		{
-			boundingBox.origin.x = -boundingSize.width + [item width];
-			boundingBox.origin.y = -boundingSize.height + [item height];
-			[item setBoundingBox: boundingBox];
-		}
-		else
-		{
-			[item setSize: boundingSize];
-		}
-
+		boundingBox.origin.x = -boundingSize.width + [item width];
+		boundingBox.origin.y = -boundingSize.height + [item height];
+		[item setBoundingBox: boundingBox];
 	}
+
+	_currentMaxCombinedBoundingWidth = _currentMaxLabelWidth + maxItemWidth;
+
+	float remainingSpace = [self layoutContext].size.width - _currentMaxCombinedBoundingWidth;
+	float inset = 0; /* ETFormLayoutAlignmentLeft */
+
+	if ([self alignment] == ETFormLayoutAlignmentCenter)
+	{
+		inset = remainingSpace * 0.5;
+	}
+	else if ([self alignment] == ETFormLayoutAlignmentRight)
+	{
+		inset = remainingSpace;
+	}
+
+	[[(id)[self positionalLayout] ifResponds] setHorizontalAlignmentGuidePosition: inset + _currentMaxLabelWidth];
+}
+
+- (float) alignmentHintForLayout: (ETComputedLayout *)aLayout
+{
+	return _currentMaxLabelWidth;
 }
 
 @end

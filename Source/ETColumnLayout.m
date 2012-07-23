@@ -65,7 +65,7 @@
 	ETDebugLog(@"Item locations computed by layout line :%@", line);
 
 	/* lineHeight already includes itemMargin * 2 */
-	return NSMakeSize([line width] + totalMargin, contentHeight);
+	return NSMakeSize([self horizontalAlignmentGuidePosition] + [line width] + totalMargin, contentHeight);
 }
 
 static const float undeterminedWidth = 10;
