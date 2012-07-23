@@ -335,9 +335,10 @@ See also -maxLabelSize. */
 	NSParameterAssert(nil != aLabel);
 	NSParameterAssert(nil != anItem);
 
+	NSSize boundingSize = [anItem boundingBox].size;
 	NSSize labelSize = [aLabel sizeWithAttributes: _labelAttributes];
-	float maxLabelWidth = (_maxLabelSize.width != ETNullSize.width ? _maxLabelSize.width : itemFrame.size.width);
-	float maxLabelHeight = (_maxLabelSize.height != ETNullSize.height ? _maxLabelSize.height : itemFrame.size.height);
+	float maxLabelWidth = (_maxLabelSize.width != ETNullSize.width ? _maxLabelSize.width : boundingSize.width);
+	float maxLabelHeight = (_maxLabelSize.height != ETNullSize.height ? _maxLabelSize.height : boundingSize.height);
 	float labelSizeWidth = MIN(labelSize.width, maxLabelWidth);
 	float labelSizeHeight = MIN(labelSize.height, maxLabelHeight);
 	NSRect rect = ETNullRect;
