@@ -53,24 +53,25 @@
 	ETLayoutItem *textFieldItem = [itemFactory textField];
 
 	[sliderItem setName: @"Voice Volume:"];
-	[sliderItem setWidth: 200];
-	[buttonItem setName: @"Customize:"];
+	[buttonItem setName: @"Random and Untitled Button:"];
 	[textFieldItem setName: @"Title & Author:"];
+
+	[sliderItem setWidth: 200];
 	[textFieldItem setWidth: 300];
 
 	[firstSectionItem addItem: textFieldItem];
 	[firstSectionItem setLayout: [self createFormLayout]];
 	[secondSectionItem addItems: A(sliderItem, buttonItem)];
 	[secondSectionItem setLayout: [self createFormLayout]];
-	
+
 	[itemGroup addItems: A(firstSectionItem, secondSectionItem)];
 
 	[itemGroup setFrame: NSMakeRect(0, 0, 500, 400)];
 	[itemGroup setLayout: [ETColumnLayout layout]];
-	[[itemGroup layout] setBorderMargin: 10];
-	[[itemGroup layout] setSeparatorItemEndMargin: 15];
+	//[[itemGroup layout] setBorderMargin: 10];
+	[[itemGroup layout] setSeparatorItemEndMargin: 30];
 	[[itemGroup layout] setSeparatorTemplateItem: [itemFactory lineSeparator]];
-	
+
 	[[itemFactory windowGroup] addItem: itemGroup];
 }
 
@@ -122,7 +123,7 @@
 	[ETLayoutItem setShowsFrame: YES];
 
 	[self buildSingleSectionForm];
-	//[self buildMultipleSectionForm];
+	[self buildMultipleSectionForm];
 }
 
 @end

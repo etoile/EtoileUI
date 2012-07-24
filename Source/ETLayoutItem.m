@@ -82,8 +82,7 @@ See also -showsFrame. */
 	showsFrame = shows;
 }
 
-static BOOL globalAutolayoutEnabled = YES;
-static BOOL needsUpdateLayoutDisabled = NO;
+static NSInteger autolayoutEnabled = 0;
 
 /** Returns whether automatic layout updates are enabled. 
 
@@ -91,10 +90,10 @@ If YES, items on which -setNeedsLayoutUpdate was invoked, will receive
 -updateLayoutRecursively: in the interval between the current event and the 
 next event.<br />
 	
-By default, returns YES to eleminate the need to use -updateLayout. */
+By default, returns YES to eliminate the need to use -updateLayout. */
 + (BOOL) isAutolayoutEnabled;
 {
-	return globalAutolayoutEnabled;
+	return (autolayoutEnabled == 0);
 }
 
 /** Enables automatic layout updates in the interval between the current event 
@@ -103,25 +102,25 @@ and the next event.
 See also +disablesAutolayout. */
 + (void) enablesAutolayout;
 {
-	globalAutolayoutEnabled = YES;
-	needsUpdateLayoutDisabled = NO;
+	autolayoutEnabled--;
 }
 
 /** Disables automatic layout updates in the interval between the current event 
 and the next event.
 
-When YES is passed as markingDisabled, EtoileUI stops to track items that need 
-a layout update. So -setNeedsLayoutUpdate does nothing then, the method returns 
-immediately.<br />
-When NO is passed, the automatic layout update are disabled, but 
--setNeedsLayoutUpdate works normally. Before the next event, +enablesAutolayout 
-can be called to entirely cancel +disablesAutolayoutIncludingNeedsUpdate:.
+EtoileUI also stops to track items that need a layout update. So 
+-setNeedsLayoutUpdate does nothing then, the method returns immediately.
+
+Before the next event, +enablesAutolayout can be called to entirely cancel 
++disablesAutolayoutIncludingNeedsUpdate:.<br />
+You can nest these method invocations, but automatic layout won't be restored 
+until +enablesAutolayout has been called the same number of times than 
++disablesAutolayoutIncludingNeedsUpdate:.
 
 See also +enablesAutolayout. */
-+ (void) disablesAutolayoutIncludingNeedsUpdate: (BOOL)markingDisabled
++ (void) disablesAutolayout
 {
-	globalAutolayoutEnabled = NO;
-	needsUpdateLayoutDisabled = markingDisabled;
+	autolayoutEnabled++;
 }
 
 /* Initialization */
@@ -1594,10 +1593,10 @@ the current and the  next event. */
 /** Marks the receiver to have its layout updated and be redisplayed in the 
 interval between the current and the next event.
 
-See also +disablesAutolayoutIncludingNeedsUpdate:. */
+See also +disablesAutolayout. */
 - (void) setNeedsLayoutUpdate
 {
-	if (needsUpdateLayoutDisabled || _isDeallocating)
+	if ([ETLayoutItem isAutolayoutEnabled] == NO || _isDeallocating)
 		return;
 
 	[[ETLayoutExecutor sharedInstance] addItem: (id)self];

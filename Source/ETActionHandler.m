@@ -323,7 +323,7 @@ Overrides this method when you want to customize how double-click are handled. *
 - (void) handleTranslateItem: (ETLayoutItem *)item byDelta: (NSSize)delta
 {
 	/* We don't want to relayout and redisplay the whole parent item */
-	[ETLayoutItem disablesAutolayoutIncludingNeedsUpdate: YES];
+	[ETLayoutItem disablesAutolayout];
 
 	NSRect prevBoundingFrame = [item convertRectToParent: [item boundingBox]];
 

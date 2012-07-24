@@ -973,19 +973,15 @@ frame (see -usesLayoutBasedFrame). */
 
 	ETDebugLog(@"Try update layout of %@", self);
 
-	BOOL wasAutolayoutEnabled = [ETLayoutItem isAutolayoutEnabled];
 	BOOL isNewLayoutContent = ([self hasNewContent] || [self hasNewLayout]
 		|| _hasNewArrangement);
 
-	[ETLayoutItem disablesAutolayoutIncludingNeedsUpdate: YES];
+	[ETLayoutItem disablesAutolayout];
 
 	/* Delegate layout rendering to custom layout object */
 	[[self layout] render: nil isNewContent: isNewLayoutContent];
 
-	if (wasAutolayoutEnabled)
-	{
-		[ETLayoutItem enablesAutolayout];
-	}
+	[ETLayoutItem enablesAutolayout];
 
 	if (recursively)
 	{

@@ -449,7 +449,7 @@ kETFormLayoutInset	NSZeroRect (default) or nil
 	// FIXME: The line below is needed only if we align the labels on the left
 	//[[(id)[self positionalLayout] ifResponds] setComputesItemRectFromBoundingBox: YES];
 
-	_alignment = ETFormLayoutAlignmentRight;
+	_alignment = ETFormLayoutAlignmentCenter;
 	_standaloneTextStyle = [[ETBasicItemStyle alloc] init];
 	[_standaloneTextStyle setLabelMargin: 10];
 	[_standaloneTextStyle setLabelPosition: ETLabelPositionOutsideLeft];//ETLabelPositionCentered];

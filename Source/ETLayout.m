@@ -1002,6 +1002,11 @@ context and the tree rooted in -layerItem. */
 to be identical to the layout context. */
 - (void) syncLayerItemGeometryWithSize: (NSSize)aSize
 {
+	/* Autolayout is disabled during a layout change or update, so we temporarily 
+	   enable it because -layerItem requires a layout update.
+	   This won't work when +disablesAutolayout has been used just before by the 
+	   framework user (this behavior is consistent, so the user shouldn't 
+	   be surprised). */
 	if (_isLayouting)
 	{
 		[ETLayoutItem enablesAutolayout];
@@ -1013,7 +1018,7 @@ to be identical to the layout context. */
 
 	if (_isLayouting)
 	{
-		[ETLayoutItem disablesAutolayoutIncludingNeedsUpdate: YES];
+		[ETLayoutItem disablesAutolayout];
 	}
 }
 

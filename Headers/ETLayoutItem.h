@@ -146,7 +146,7 @@ and centers it. A strech is a scale that doesn't preserve the content proportion
 
 + (BOOL) isAutolayoutEnabled;
 + (void) enablesAutolayout;
-+ (void) disablesAutolayoutIncludingNeedsUpdate: (BOOL)markingDisabled;
++ (void) disablesAutolayout;
 
 /* Initialization */
 
