@@ -313,7 +313,7 @@ protocol methods. */
 /* Both baseItem and itemGroup are the same because the base item is photo view 
    item which only presents images. For example, it doesn't support to group the images. */
 - (ETLayoutItem *) baseItem: (ETLayoutItemGroup *)baseItem 
-                itemAtIndex: (int)index 
+                itemAtIndex: (NSUInteger)index 
                 inItemGroup: (ETLayoutItemGroup *)itemGroup
 {
 	NSImage *img = [images objectAtIndex: index];

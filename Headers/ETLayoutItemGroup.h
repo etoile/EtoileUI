@@ -57,10 +57,10 @@
 /*  Manipulating Layout Item Tree */
 
 - (void) addItem: (ETLayoutItem *)item;
-- (void) insertItem: (ETLayoutItem *)item atIndex: (int)index;
+- (void) insertItem: (ETLayoutItem *)item atIndex: (NSUInteger)index;
 - (void) removeItem: (ETLayoutItem *)item;
-- (void) removeItemAtIndex: (int)index;
-- (ETLayoutItem *) itemAtIndex: (int)index;
+- (void) removeItemAtIndex: (NSUInteger)index;
+- (ETLayoutItem *) itemAtIndex: (NSUInteger)index;
 - (ETLayoutItem *) firstItem;
 - (ETLayoutItem *) lastItem;
 - (int) indexOfItem: (id)item;
@@ -187,7 +187,7 @@ by the source object set with -[ETLayoutItemGroup setSource:]. */
 @interface NSObject (ETLayoutItemGroupIndexSource)
 - (int) baseItem: (ETLayoutItemGroup *)baseItem numberOfItemsInItemGroup: (ETLayoutItemGroup *)itemGroup;
 - (ETLayoutItem *) baseItem: (ETLayoutItemGroup *)baseItem
-                itemAtIndex: (int)index
+                itemAtIndex: (NSUInteger)index
                 inItemGroup: (ETLayoutItemGroup *)itemGroup;
 @end
 

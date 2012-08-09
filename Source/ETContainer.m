@@ -174,7 +174,7 @@
 }
 
 /** See -[ETLayoutItemGroup insertItem:atIndex:] */
-- (void) insertItem: (ETLayoutItem *)anItem atIndex: (int)index
+- (void) insertItem: (ETLayoutItem *)anItem atIndex: (NSUInteger)index
 {
 	[(ETLayoutItemGroup *)[self layoutItem] insertItem: anItem atIndex: index];
 }
@@ -186,13 +186,13 @@
 }
 
 /** See -[ETLayoutItemGroup removeItem:atIndex:] */
-- (void) removeItemAtIndex: (int)index
+- (void) removeItemAtIndex: (NSUInteger)index
 {
 	[(ETLayoutItemGroup *)[self layoutItem] removeItemAtIndex: index];
 }
 
 /** See -[ETLayoutItemGroup itemAtIndex:] */
-- (ETLayoutItem *) itemAtIndex: (int)index
+- (ETLayoutItem *) itemAtIndex: (NSUInteger)index
 {
 	return [(ETLayoutItemGroup *)[self layoutItem] itemAtIndex: index];
 }
@@ -447,7 +447,7 @@
 	return AUTORELEASE([_selection mutableCopy]);
 }
 
-- (void) setSelectionIndex: (int)index
+- (void) setSelectionIndex: (NSUInteger)index
 {
 	int numberOfItems = [[self items] count];
 	

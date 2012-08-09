@@ -263,7 +263,7 @@ the receiver is set as the application's delegate in the nib. */
 }
 
 - (ETLayoutItem *) baseItem: (ETLayoutItemGroup *)baseItem 
-                itemAtIndex: (int)index 
+                itemAtIndex: (NSUInteger)index 
                 inItemGroup: (ETLayoutItemGroup *)itemGroup 
 {
 	if ([baseItem isEqual: mainViewItem]) /* Browsing View */

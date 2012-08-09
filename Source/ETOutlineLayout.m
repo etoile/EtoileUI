@@ -318,7 +318,7 @@ expanded and collapsed by getting automatically a related outline arrow. */
 }
 
 - (BOOL) outlineView: (NSOutlineView *)outlineView 
-	acceptDrop: (id < NSDraggingInfo >)info item: (id)item childIndex: (int)index
+	acceptDrop: (id < NSDraggingInfo >)info item: (id)item childIndex: (NSUInteger)index
 {
     ETDebugLog(@"Accept drop in %@", _layoutContext);
 
@@ -336,7 +336,7 @@ expanded and collapsed by getting automatically a related outline arrow. */
 - (NSDragOperation) outlineView: (NSOutlineView *)outlineView 
                    validateDrop: (id < NSDraggingInfo >)info 
                    proposedItem: (id)item 
-             proposedChildIndex: (int)index
+             proposedChildIndex: (NSUInteger)index
 {
 	ETLayoutItem *dropTarget = (item != nil ? item : _layoutContext);
 

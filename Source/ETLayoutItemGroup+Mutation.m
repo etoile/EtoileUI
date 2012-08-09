@@ -145,7 +145,7 @@ inside another -begin/endMutate pair.  */
 }
 
 - (void) handleInsertItem: (ETLayoutItem *)item 
-                  atIndex: (int)index 
+                  atIndex: (NSUInteger)index 
                      hint: (id)hint 
                moreComing: (BOOL)moreComing
 {
@@ -180,7 +180,7 @@ inside another -begin/endMutate pair.  */
 }
 
 - (void) mutateRepresentedObjectForInsertedItem: (ETLayoutItem *)item 
-                                        atIndex: (int)index 
+                                        atIndex: (NSUInteger)index 
                                            hint: (id)hint
 {
 	id repObject = [self representedObject];
@@ -197,7 +197,7 @@ inside another -begin/endMutate pair.  */
 }
 
 - (void) handleRemoveItem: (ETLayoutItem *)item
-                  atIndex: (int)index 
+                  atIndex: (NSUInteger)index 
                      hint: (id)hint 
                moreComing: (BOOL)moreComing
 {
@@ -226,7 +226,7 @@ inside another -begin/endMutate pair.  */
 }
 
 - (void) mutateRepresentedObjectForRemovedItem: (ETLayoutItem *)item
-                                        atIndex: (int)index 
+                                        atIndex: (NSUInteger)index 
                                            hint: (id)hint
 {
 	id repObject = [self representedObject];

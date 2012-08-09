@@ -75,10 +75,10 @@
 /* Layout Item Tree */
 
 - (void) addItem: (ETLayoutItem *)item;
-- (void) insertItem: (ETLayoutItem *)item atIndex: (int)index;
+- (void) insertItem: (ETLayoutItem *)item atIndex: (NSUInteger)index;
 - (void) removeItem: (ETLayoutItem *)item;
-- (void) removeItemAtIndex: (int)index;
-- (ETLayoutItem *) itemAtIndex: (int)index;
+- (void) removeItemAtIndex: (NSUInteger)index;
+- (ETLayoutItem *) itemAtIndex: (NSUInteger)index;
 - (int) indexOfItem: (ETLayoutItem *)item;
 - (BOOL) containsItem: (ETLayoutItem *)item;
 - (int) numberOfItems;

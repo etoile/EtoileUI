@@ -647,7 +647,7 @@ See also -setSource:, -isBaseItem and -nextResponder. */
 }
 
 /** Inserts the given item in the receiver children at a precise index. */
-- (void) insertItem: (ETLayoutItem *)item atIndex: (int)index
+- (void) insertItem: (ETLayoutItem *)item atIndex: (NSUInteger)index
 {
 	//ETDebuLog(@"Insert item in %@", self);
 	[self handleInsertItem: item atIndex: index hint: nil moreComing: NO];
@@ -661,14 +661,14 @@ See also -setSource:, -isBaseItem and -nextResponder. */
 }
 
 /** Removes the child item at the given index in the receiver children. */
-- (void) removeItemAtIndex: (int)index
+- (void) removeItemAtIndex: (NSUInteger)index
 {
 	ETLayoutItem *item = [_layoutItems objectAtIndex: index];
 	[self handleRemoveItem: item atIndex: index hint: nil moreComing: NO];
 }
 
 /** Returns the child item at the given index in the receiver children. */
-- (ETLayoutItem *) itemAtIndex: (int)index
+- (ETLayoutItem *) itemAtIndex: (NSUInteger)index
 {
 	return [_layoutItems objectAtIndex: index];
 }

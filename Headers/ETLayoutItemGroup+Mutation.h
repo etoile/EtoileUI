@@ -49,11 +49,11 @@ like -addItem, removeItem:, -insertItem:atIndex: etc. */
 /** @taskunit Mutation Actions */
 
 - (void) handleInsertItem: (ETLayoutItem *)item 
-                  atIndex: (int)index 
+                  atIndex: (NSUInteger)index 
                      hint: (id)hint 
                moreComing: (BOOL)moreComing;
 - (void) handleRemoveItem: (ETLayoutItem *)item 
-                  atIndex: (int)index 
+                  atIndex: (NSUInteger)index 
                      hint: (id)hint 
                moreComing: (BOOL)moreComing;
 
@@ -63,10 +63,10 @@ like -addItem, removeItem:, -insertItem:atIndex: etc. */
 /** @taskunit Model Mutation */
 
 - (void) mutateRepresentedObjectForInsertedItem: (ETLayoutItem *)item 
-                                        atIndex: (int)index 
+                                        atIndex: (NSUInteger)index 
                                            hint: (id)hint;
 - (void) mutateRepresentedObjectForRemovedItem: (ETLayoutItem *)item
-                                        atIndex: (int)index 
+                                        atIndex: (NSUInteger)index 
                                            hint: (id)hint;
 
 /** @taskunit Autoboxing */
