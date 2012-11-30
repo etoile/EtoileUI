@@ -819,7 +819,7 @@ the object will be treated as a value or a represented object. */
                      atIndex: (NSUInteger)index
                  inItemGroup: (ETLayoutItemGroup *)itemGroup 
 {
-	ETLog(@"DROP - Insert dropped object %@ at %d into %@", droppedObject, index, itemGroup);
+	ETLog(@"DROP - Insert dropped object %@ at %d into %@", droppedObject, (int)index, itemGroup);
 
 	id insertedHint = aHint;
 	id insertedObject = [self insertedObjectForDroppedObject: droppedObject

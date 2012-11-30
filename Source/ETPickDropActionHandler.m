@@ -229,7 +229,7 @@ operation. e.g. <code>*anIndex = ETUndeterminedIndex</code> when anIndex was 3. 
 		}
 	}
 
-	ETLog(@"DROP - Validate drop %@ at %i on %@ in %@", droppedObject, *anIndex, dropTarget, self);
+	ETLog(@"DROP - Validate drop %@ at %i on %@ in %@", droppedObject, (int)*anIndex, dropTarget, self);
 
 	return dropTarget;
 }
@@ -300,7 +300,7 @@ item groups and reacts to that appropriately. */
 	// dropped (NSArray, NSString, NSWindow, NSImage, NSObject, Class etc.)
 	NSParameterAssert([dropTarget isGroup]);
 
-	ETLog(@"DROP - Handle drop %@ at %i on %@ in %@", droppedObject, anIndex, dropTarget, self);
+	ETLog(@"DROP - Handle drop %@ at %i on %@ in %@", droppedObject, (int)anIndex, dropTarget, self);
 	
 	NSInteger insertionIndex = anIndex;
 

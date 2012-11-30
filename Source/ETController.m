@@ -688,9 +688,9 @@ content count (no selection).
 No selection means that -selectionIndexes on the content returns an empty set.
 
 This method can be overriden to return a custom index. */
-- (unsigned int) insertionIndex
+- (NSInteger) insertionIndex
 {
-	unsigned int index = [[[self content] selectionIndexes] lastIndex];
+	NSInteger index = [[[self content] selectionIndexes] lastIndex];
 
 	/* No selection or no items */
 	return (index != NSNotFound ? index + 1 : [[self content] numberOfItems]);

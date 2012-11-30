@@ -318,7 +318,7 @@ expanded and collapsed by getting automatically a related outline arrow. */
 }
 
 - (BOOL) outlineView: (NSOutlineView *)outlineView 
-	acceptDrop: (id < NSDraggingInfo >)info item: (id)item childIndex: (NSUInteger)index
+	acceptDrop: (id < NSDraggingInfo >)info item: (id)item childIndex: (int)index
 {
     ETDebugLog(@"Accept drop in %@", _layoutContext);
 
@@ -336,15 +336,15 @@ expanded and collapsed by getting automatically a related outline arrow. */
 - (NSDragOperation) outlineView: (NSOutlineView *)outlineView 
                    validateDrop: (id < NSDraggingInfo >)info 
                    proposedItem: (id)item 
-             proposedChildIndex: (NSUInteger)index
+             proposedChildIndex: (int)index
 {
 	ETLayoutItem *dropTarget = (item != nil ? item : _layoutContext);
 
-    ETLog(@"Validate drop item %@ atIndex %d with dragging source %@ in %@", 
-		[item primitiveDescription], index, [[info draggingSource] primitiveDescription], _layoutContext);
+    ETLog(@"Validate drop item %@ atIndex %ld with dragging source %@ in %@", 
+		[item primitiveDescription], (long)index, [[info draggingSource] primitiveDescription], _layoutContext);
 	
 	id draggedObject = [[ETPickboard localPickboard] firstObject];
-	int dropIndex = index;
+	NSInteger dropIndex = index;
 	id hint = [[ETPickDropCoordinator sharedInstance] hintFromObject: &draggedObject];
 	ETLayoutItem *validDropTarget = 
 		[[dropTarget actionHandler] handleValidateDropObject: draggedObject
@@ -373,7 +373,7 @@ expanded and collapsed by getting automatically a related outline arrow. */
 
 		[outlineView setDropItem: dropItem dropChildIndex: dropIndex];
 
-		ETLog(@"Retarget drop to %i in %@", dropIndex, dropItem);
+		ETLog(@"Retarget drop to %ld in %@", (NSUInteger)dropIndex, dropItem);
 	}
 
 	return NSDragOperationEvery;

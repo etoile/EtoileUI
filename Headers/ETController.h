@@ -139,7 +139,7 @@ objects as a collection distinct from the content. */
                           options: (NSDictionary *)options;
 - (BOOL) canMutate;
 - (BOOL) isContentMutable;
-- (unsigned int) insertionIndex;
+- (NSInteger) insertionIndex;
 - (NSIndexPath *) insertionIndexPath;
 - (NSIndexPath *) additionIndexPath;
 - (void) insertItem: (ETLayoutItem *)anItem atIndex: (NSUInteger)index;

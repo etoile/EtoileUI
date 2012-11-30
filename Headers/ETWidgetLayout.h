@@ -50,7 +50,7 @@
 /* Actions */
 
 - (ETLayoutItem *) doubleClickedItem;
-- (void) doubleClick: (id)sender;
+- (IBAction) doubleClick: (id)sender;
 
 /* Custom Widget Subclass */
 

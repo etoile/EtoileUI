@@ -720,7 +720,7 @@ Similar to -lastObject method for collections (see ETCollection).*/
 // Fix compiler.
 
 /** Returns the index of the given child item in the receiver children. */
-- (int) indexOfItem: (id)item
+- (NSInteger) indexOfItem: (id)item
 {
 	return [_layoutItems indexOfObject: item];
 }
@@ -1358,15 +1358,15 @@ any existing selection index paths previously set.
 Posts an ETItemGroupSelectionDidChangeNotification. */
 - (void) setSelectionIndexes: (NSIndexSet *)indexes
 {
-	int numberOfItems = [[self items] count];
-	int lastSelectionIndex = [[self selectionIndexes] lastIndex];
+	NSInteger numberOfItems = [[self items] count];
+	NSInteger lastSelectionIndex = [[self selectionIndexes] lastIndex];
 
 	ETDebugLog(@"Set selection indexes to %@ in %@", indexes, self);
 
 	if (lastSelectionIndex > (numberOfItems - 1) && lastSelectionIndex != NSNotFound) /* NSNotFound is a big value and not -1 */
 	{
-		ETLog(@"WARNING: Try to set selection index %d when %@ only contains %d items",
-			  lastSelectionIndex, self, numberOfItems);
+		ETLog(@"WARNING: Try to set selection index %ld when %@ only contains %ld items",
+			  (long)lastSelectionIndex, self, (long)numberOfItems);
 		return;
 	}
 

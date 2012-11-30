@@ -63,7 +63,7 @@
 - (ETLayoutItem *) itemAtIndex: (NSUInteger)index;
 - (ETLayoutItem *) firstItem;
 - (ETLayoutItem *) lastItem;
-- (int) indexOfItem: (id)item;
+- (NSInteger) indexOfItem: (id)item;
 - (BOOL) containsItem: (ETLayoutItem *)item;
 - (int) numberOfItems;
 - (void) addItems: (NSArray *)items;

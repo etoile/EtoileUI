@@ -569,7 +569,7 @@ See [(ETColumnFragment)] protocol to customize the returned column. */
 	return ([[self itemAtRow: rowIndex] isSelectable] == NO);
 }
 
-- (BOOL) tableView: (NSTableView *)aTableView shouldSelectRow: (NSInteger)rowIndex
+- (BOOL) tableView: (NSTableView *)aTableView shouldSelectRow: (int)rowIndex
 {
 	return [[self itemAtRow: rowIndex] isSelectable];
 }
@@ -690,7 +690,7 @@ compatible with the cell used at the given row/column intersection.  */
 	if (rowIndex >= [items count])
 	{
 		ETLog(@"WARNING: Row index %d uncoherent with number of items %d in %@", 
-			rowIndex, [items count], self);
+			rowIndex, (int)[items count], self);
 		return nil;
 	}
 	
@@ -708,7 +708,7 @@ compatible with the cell used at the given row/column intersection.  */
 	if (rowIndex >= [layoutItems count])
 	{
 		ETLog(@"WARNING: Row index %d uncoherent with number of items %d in %@", 
-			rowIndex, [layoutItems count], self);
+			rowIndex, (int)[layoutItems count], self);
 		return;
 	}
 	
@@ -836,7 +836,7 @@ Note: For now, private method. */
 		}
 		[tv setDropRow: dropRow dropOperation: dropOp];
 
-		ETLog(@"Retarget drop to %i with op %i", dropRow, dropOp);
+		ETLog(@"Retarget drop to %i with op %i", (int)dropRow, (int)dropOp);
 	}
 
 	return NSDragOperationEvery;

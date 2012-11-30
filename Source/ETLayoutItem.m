@@ -709,7 +709,7 @@ the index used by the parent item to reference the receiver. */
 	 && [parentRepObject respondsToSelector: @selector(identifierAtIndex:)]
 	 && [_parentItem usesRepresentedObjectAsProvider])
 	{
-		unsigned int index = [_parentItem indexOfItem: self];
+		NSInteger index = [_parentItem indexOfItem: self];
 		if (index != NSNotFound)
 		{
 			return [parentRepObject identifierAtIndex: index];
