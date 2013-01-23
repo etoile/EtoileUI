@@ -305,7 +305,7 @@ protocol methods. */
 
 - (int) baseItem: (ETLayoutItemGroup *)baseItem numberOfItemsInItemGroup: (ETLayoutItemGroup *)itemGroup
 {
-	ETLog(@"Returns %d as number of items in %@", [images count], baseItem);
+	ETLog(@"Returns %d as number of items in %@", (int)[images count], baseItem);
 
 	return [images count];
 }

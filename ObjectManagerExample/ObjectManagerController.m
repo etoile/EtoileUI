@@ -210,7 +210,7 @@ the receiver is set as the application's delegate in the nib. */
 		NSString *dirPath = [itemGroup valueForProperty: filePathProperty];
 		NSArray *fileObjects = [fileManager directoryContentsAtPath: dirPath];
 
-		NSLog(@"Returns %d as number of items in %@", [fileObjects count], mainViewItem);
+		NSLog(@"Returns %d as number of items in %@", (int)[fileObjects count], mainViewItem);
 		
 		return [fileObjects count];
 	}
@@ -218,7 +218,7 @@ the receiver is set as the application's delegate in the nib. */
 	{
 		NSArray *pathComponents = [[mainViewItem valueForProperty: filePathProperty] pathComponents];
 
-		NSLog(@"Returns %d as number of items in %@", [pathComponents count], pathViewItem);
+		NSLog(@"Returns %d as number of items in %@", (int)[pathComponents count], pathViewItem);
 		
 		return [pathComponents count];
 	}
