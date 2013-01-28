@@ -185,7 +185,7 @@ top left coordinates when the content view returns YES to -isFlipped.  */
 }
 
 - (id) initWithContentRect: (NSRect)contentRect 
-                 styleMask: (unsigned int)windowStyle
+                 styleMask: (NSUInteger)windowStyle
                    backing: (NSBackingStoreType)bufferingType 
                      defer: (BOOL)deferCreation
 {
