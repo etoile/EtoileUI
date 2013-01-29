@@ -23,6 +23,8 @@ Mac OS X support
 EtoileUI is supported on Mac OS X, some parts rely on GNUstep private API or the GNU runtime and they might be less well implemented on Mac OS X.
 An Xcode project is bundled to build both EtoileFoundation and EtoileUI on Mac OS X. This project can also be used to build all the EtoileUI examples.
 
+**Warning:** Xcode 4 is required to build the project.
+
 
 Developer Notes
 ===============

@@ -3,7 +3,7 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 45;
+	objectVersion = 46;
 	objects = {
 
 /* Begin PBXBuildFile section */
@@ -534,6 +534,41 @@
 			remoteGlobalIDString = 6072CF691360E144003256C5;
 			remoteInfo = PlugInExample;
 		};
+		6037730F16B8010D00B7EEB5 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 6037730616B8010D00B7EEB5 /* UnitKit.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 8DC2EF5B0486A6940098B216;
+			remoteInfo = UnitKit;
+		};
+		6037731116B8010D00B7EEB5 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 6037730616B8010D00B7EEB5 /* UnitKit.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = AE923B2C05C3B1CE00549058;
+			remoteInfo = ukrun;
+		};
+		6037731316B8010D00B7EEB5 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 6037730616B8010D00B7EEB5 /* UnitKit.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = AE923B3605C3B1DF00549058;
+			remoteInfo = UnitKitTests;
+		};
+		6037731516B8010D00B7EEB5 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 6037730616B8010D00B7EEB5 /* UnitKit.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = AE70B65405F7100400D56367;
+			remoteInfo = TestBundle;
+		};
+		6037731716B8010D00B7EEB5 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 6037730616B8010D00B7EEB5 /* UnitKit.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = AEBED01906AFADB000451E26;
+			remoteInfo = TestFramework;
+		};
 		605AD42F13BF8D8500755772 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 29B97313FDCFA39411CA2CEA /* Project object */;
@@ -590,12 +625,33 @@
 			remoteGlobalIDString = 60EF8E9C0C5E4D0600C97C41;
 			remoteInfo = EtoileUI;
 		};
+		60B83279164A5FF60083A192 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 6084048815415CB2002F91A1 /* CoreObject.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 60988F15163B6B7A009C4F21;
+			remoteInfo = SQLClient;
+		};
+		60B8327B164A5FF60083A192 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 6084048815415CB2002F91A1 /* CoreObject.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 6019B880163BFD8400D1986F;
+			remoteInfo = Performance;
+		};
 		60BB0008100A32BC001B2F37 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 29B97313FDCFA39411CA2CEA /* Project object */;
 			proxyType = 1;
 			remoteGlobalIDString = 60073C2810074B39007272E6;
 			remoteInfo = EtoileWeb;
+		};
+		60C2100D16755264002E03AE /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 6084048815415CB2002F91A1 /* CoreObject.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 60C913B3165BBED000E0C5F4;
+			remoteInfo = BasicPersistence;
 		};
 		60CF74370D449B6E00B4CA3D /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -750,6 +806,7 @@
 		603649F90E40A547003377E0 /* ETNibOwner.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ETNibOwner.h; path = Headers/ETNibOwner.h; sourceTree = "<group>"; };
 		60364A070E40A560003377E0 /* NSImage+NiceScaling.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = "NSImage+NiceScaling.m"; path = "Source/NSImage+NiceScaling.m"; sourceTree = "<group>"; };
 		60364A080E40A560003377E0 /* ETNibOwner.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ETNibOwner.m; path = Source/ETNibOwner.m; sourceTree = "<group>"; };
+		6037730616B8010D00B7EEB5 /* UnitKit.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = UnitKit.xcodeproj; path = ../UnitKit/Source/UnitKit.xcodeproj; sourceTree = "<group>"; };
 		603D7D0913D363BA007AABE2 /* ETActionHandler+ModelDescription.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = "ETActionHandler+ModelDescription.m"; path = "ModelDescription/ETActionHandler+ModelDescription.m"; sourceTree = "<group>"; };
 		604A32C10F9BEE680090932A /* ETPickDropCoordinator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ETPickDropCoordinator.h; path = Headers/ETPickDropCoordinator.h; sourceTree = "<group>"; };
 		604A32C40F9BEE780090932A /* ETPickDropCoordinator.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ETPickDropCoordinator.m; path = Source/ETPickDropCoordinator.m; sourceTree = "<group>"; };
@@ -1211,6 +1268,7 @@
 		29B97314FDCFA39411CA2CEA /* FlowAutolayoutExample */ = {
 			isa = PBXGroup;
 			children = (
+				6037730616B8010D00B7EEB5 /* UnitKit.xcodeproj */,
 				6640BC2710A0C1B0008B7765 /* EtoileFoundation.xcodeproj */,
 				6084048815415CB2002F91A1 /* CoreObject.xcodeproj */,
 				60D4704B14C5D25000129CD4 /* IconKit.xcodeproj */,
@@ -1319,6 +1377,18 @@
 				603D7D0913D363BA007AABE2 /* ETActionHandler+ModelDescription.m */,
 			);
 			name = "Model Descriptions";
+			sourceTree = "<group>";
+		};
+		6037730716B8010D00B7EEB5 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				6037731016B8010D00B7EEB5 /* UnitKit.framework */,
+				6037731216B8010D00B7EEB5 /* ukrun */,
+				6037731416B8010D00B7EEB5 /* UnitKitTests.bundle */,
+				6037731616B8010D00B7EEB5 /* TestBundle.bundle */,
+				6037731816B8010D00B7EEB5 /* TestFramework.framework */,
+			);
+			name = Products;
 			sourceTree = "<group>";
 		};
 		605AD42813BF8D5C00755772 /* Compound Document Editor */ = {
@@ -1465,8 +1535,11 @@
 			isa = PBXGroup;
 			children = (
 				6084048F15415CB2002F91A1 /* CoreObject.framework */,
+				60B8327A164A5FF60083A192 /* SQLClient.framework */,
+				60B8327C164A5FF60083A192 /* Performance.framework */,
 				6084049115415CB2002F91A1 /* Test */,
 				6084049315415CB2002F91A1 /* StoreTest */,
+				60C2100E16755264002E03AE /* BasicPersistence */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -2135,10 +2208,11 @@
 			isa = PBXProject;
 			attributes = {
 				BuildIndependentTargetsInParallel = NO;
+				LastUpgradeCheck = 0450;
 				ORGANIZATIONNAME = "Étoilé";
 			};
 			buildConfigurationList = C01FCF4E08A954540054247B /* Build configuration list for PBXProject "EtoileUI" */;
-			compatibilityVersion = "Xcode 3.1";
+			compatibilityVersion = "Xcode 3.2";
 			developmentRegion = English;
 			hasScannedForEncodings = 1;
 			knownRegions = (
@@ -2161,6 +2235,10 @@
 				{
 					ProductGroup = 60D4704C14C5D25000129CD4 /* Products */;
 					ProjectRef = 60D4704B14C5D25000129CD4 /* IconKit.xcodeproj */;
+				},
+				{
+					ProductGroup = 6037730716B8010D00B7EEB5 /* Products */;
+					ProjectRef = 6037730616B8010D00B7EEB5 /* UnitKit.xcodeproj */;
 				},
 			);
 			projectRoot = "";
@@ -2188,6 +2266,41 @@
 			remoteRef = 6023544915B86AA600CA49D0 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
+		6037731016B8010D00B7EEB5 /* UnitKit.framework */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.framework;
+			path = UnitKit.framework;
+			remoteRef = 6037730F16B8010D00B7EEB5 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		6037731216B8010D00B7EEB5 /* ukrun */ = {
+			isa = PBXReferenceProxy;
+			fileType = "compiled.mach-o.executable";
+			path = ukrun;
+			remoteRef = 6037731116B8010D00B7EEB5 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		6037731416B8010D00B7EEB5 /* UnitKitTests.bundle */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.cfbundle;
+			path = UnitKitTests.bundle;
+			remoteRef = 6037731316B8010D00B7EEB5 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		6037731616B8010D00B7EEB5 /* TestBundle.bundle */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.cfbundle;
+			path = TestBundle.bundle;
+			remoteRef = 6037731516B8010D00B7EEB5 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		6037731816B8010D00B7EEB5 /* TestFramework.framework */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.framework;
+			path = TestFramework.framework;
+			remoteRef = 6037731716B8010D00B7EEB5 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
 		6084048F15415CB2002F91A1 /* CoreObject.framework */ = {
 			isa = PBXReferenceProxy;
 			fileType = wrapper.framework;
@@ -2207,6 +2320,27 @@
 			fileType = "compiled.mach-o.executable";
 			path = StoreTest;
 			remoteRef = 6084049215415CB2002F91A1 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		60B8327A164A5FF60083A192 /* SQLClient.framework */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.framework;
+			path = SQLClient.framework;
+			remoteRef = 60B83279164A5FF60083A192 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		60B8327C164A5FF60083A192 /* Performance.framework */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.framework;
+			path = Performance.framework;
+			remoteRef = 60B8327B164A5FF60083A192 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		60C2100E16755264002E03AE /* BasicPersistence */ = {
+			isa = PBXReferenceProxy;
+			fileType = "compiled.mach-o.executable";
+			path = BasicPersistence;
+			remoteRef = 60C2100D16755264002E03AE /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
 		60D4705014C5D25000129CD4 /* IconKit.framework */ = {
@@ -2933,6 +3067,7 @@
 		600243BC0CD133420023182D /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
 				INSTALL_PATH = "$(USER_LIBRARY_DIR)/Bundles";
 				PRODUCT_NAME = TestEtoileUI;
 			};
@@ -2941,6 +3076,7 @@
 		600243BD0CD133420023182D /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
 				INSTALL_PATH = "$(USER_LIBRARY_DIR)/Bundles";
 				PRODUCT_NAME = TestEtoileUI;
 			};
@@ -2949,7 +3085,7 @@
 		60073C2F10074B3A007272E6 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				COPY_PHASE_STRIP = NO;
+				COMBINE_HIDPI_IMAGES = YES;
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
 				FRAMEWORK_VERSION = A;
@@ -2962,6 +3098,7 @@
 		60073C3010074B3A007272E6 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
 				FRAMEWORK_VERSION = A;
@@ -2974,6 +3111,7 @@
 		60539D980C240A7D006C57EC /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
 				INFOPLIST_FILE = "PaneExample/PaneExample-Info.plist";
 				INSTALL_PATH = "$(HOME)/Applications";
 				PRODUCT_NAME = PaneExample;
@@ -2983,6 +3121,7 @@
 		60539D990C240A7D006C57EC /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
 				INFOPLIST_FILE = "PaneExample/PaneExample-Info.plist";
 				INSTALL_PATH = "$(HOME)/Applications";
 				PRODUCT_NAME = PaneExample;
@@ -2992,6 +3131,7 @@
 		605AD43813BF8D8500755772 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
 				INFOPLIST_FILE = "../../Services/Private/$(PRODUCT_NAME)/DocumentEditor-Info.plist";
 				INSTALL_PATH = "$(HOME)/Applications";
 				PRODUCT_NAME = Worktable;
@@ -3001,6 +3141,7 @@
 		605AD43913BF8D8500755772 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
 				INFOPLIST_FILE = "../../Services/Private/$(PRODUCT_NAME)/DocumentEditor-Info.plist";
 				INSTALL_PATH = "$(HOME)/Applications";
 				PRODUCT_NAME = Worktable;
@@ -3010,6 +3151,7 @@
 		605F0CCE0C0F400E003AE3E6 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
 				INFOPLIST_FILE = "ObjectManagerExample/ObjectManagerExample-Info.plist";
 				INSTALL_PATH = "$(HOME)/Applications";
 				PRODUCT_NAME = ObjectManagerExample;
@@ -3019,6 +3161,7 @@
 		605F0CCF0C0F400E003AE3E6 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
 				INFOPLIST_FILE = "ObjectManagerExample/ObjectManagerExample-Info.plist";
 				INSTALL_PATH = "$(HOME)/Applications";
 				PRODUCT_NAME = ObjectManagerExample;
@@ -3028,6 +3171,7 @@
 		606B98CD0C0AF832000AAA85 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
 				INFOPLIST_FILE = "PhotoViewExample/PhotoViewExample-Info.plist";
 				INSTALL_PATH = "$(HOME)/Applications";
 				PRODUCT_NAME = PhotoViewExample;
@@ -3037,6 +3181,7 @@
 		606B98CE0C0AF832000AAA85 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
 				INFOPLIST_FILE = "PhotoViewExample/PhotoViewExample-Info.plist";
 				INSTALL_PATH = "$(HOME)/Applications";
 				PRODUCT_NAME = PhotoViewExample;
@@ -3046,6 +3191,7 @@
 		60909CCD0CB2DA45009CAD27 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
 				INFOPLIST_FILE = "TableExample/TableExample-Info.plist";
 				INSTALL_PATH = "$(HOME)/Applications";
 				PRODUCT_NAME = TableExample;
@@ -3055,6 +3201,7 @@
 		60909CCE0CB2DA45009CAD27 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
 				INFOPLIST_FILE = "TableExample/TableExample-Info.plist";
 				INSTALL_PATH = "$(HOME)/Applications";
 				PRODUCT_NAME = TableExample;
@@ -3064,6 +3211,7 @@
 		60CF742E0D449A8A00B4CA3D /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
 				INFOPLIST_FILE = "MarkupEditor/MarkupEditor-Info.plist";
 				INSTALL_PATH = "$(HOME)/Applications";
 				PRODUCT_NAME = MarkupEditor;
@@ -3073,6 +3221,7 @@
 		60CF742F0D449A8A00B4CA3D /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
 				INFOPLIST_FILE = "MarkupEditor/MarkupEditor-Info.plist";
 				INSTALL_PATH = "$(HOME)/Applications";
 				PRODUCT_NAME = MarkupEditor;
@@ -3082,6 +3231,7 @@
 		60EEB9050F09457E00EBB632 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
 				INFOPLIST_FILE = "Collage/Collage-Info.plist";
 				INSTALL_PATH = "$(HOME)/Applications";
 				PRODUCT_NAME = Collage;
@@ -3091,6 +3241,7 @@
 		60EEB9060F09457E00EBB632 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
 				INFOPLIST_FILE = "Collage/Collage-Info.plist";
 				INSTALL_PATH = "$(HOME)/Applications";
 				PRODUCT_NAME = Collage;
@@ -3100,7 +3251,7 @@
 		60EF8EA00C5E4D0800C97C41 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				COPY_PHASE_STRIP = NO;
+				COMBINE_HIDPI_IMAGES = YES;
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
 				FRAMEWORK_VERSION = A;
@@ -3113,6 +3264,7 @@
 		60EF8EA10C5E4D0800C97C41 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
 				FRAMEWORK_VERSION = A;
@@ -3125,23 +3277,9 @@
 		60FC2928105C112E008D2EFF /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ALWAYS_SEARCH_USER_PATHS = NO;
-				COPY_PHASE_STRIP = NO;
-				GCC_DYNAMIC_NO_PIC = NO;
-				GCC_ENABLE_FIX_AND_CONTINUE = YES;
-				GCC_MODEL_TUNING = G5;
-				GCC_OPTIMIZATION_LEVEL = 0;
-				GCC_PRECOMPILE_PREFIX_HEADER = YES;
-				GCC_PREFIX_HEADER = "$(SYSTEM_LIBRARY_DIR)/Frameworks/AppKit.framework/Headers/AppKit.h";
+				COMBINE_HIDPI_IMAGES = YES;
 				INFOPLIST_FILE = "FormExample/FormExample-Info.plist";
 				INSTALL_PATH = "$(HOME)/Applications";
-				OTHER_LDFLAGS = (
-					"-framework",
-					Foundation,
-					"-framework",
-					AppKit,
-				);
-				PREBINDING = NO;
 				PRODUCT_NAME = FormExample;
 			};
 			name = Debug;
@@ -3149,24 +3287,10 @@
 		60FC2929105C112E008D2EFF /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ALWAYS_SEARCH_USER_PATHS = NO;
-				COPY_PHASE_STRIP = YES;
-				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
-				GCC_ENABLE_FIX_AND_CONTINUE = NO;
-				GCC_MODEL_TUNING = G5;
-				GCC_PRECOMPILE_PREFIX_HEADER = YES;
-				GCC_PREFIX_HEADER = "$(SYSTEM_LIBRARY_DIR)/Frameworks/AppKit.framework/Headers/AppKit.h";
-				INFOPLIST_FILE = "FormExample-Info.plist";
+				COMBINE_HIDPI_IMAGES = YES;
+				INFOPLIST_FILE = "FormExample/FormExample-Info.plist";
 				INSTALL_PATH = "$(HOME)/Applications";
-				OTHER_LDFLAGS = (
-					"-framework",
-					Foundation,
-					"-framework",
-					AppKit,
-				);
-				PREBINDING = NO;
 				PRODUCT_NAME = FormExample;
-				ZERO_LINK = NO;
 			};
 			name = Release;
 		};
@@ -3174,25 +3298,11 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ARCHS = "$(NATIVE_ARCH_ACTUAL)";
-				FRAMEWORK_SEARCH_PATHS = (
-					"$(PROJECT_DIR)/../EtoileFoundation/build/$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)",
-					"$(PROJECT_DIR)/../CoreObject/build/$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)",
-					"$(PROJECT_DIR)/../IconKit/build/$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)",
-					$BUILT_PRODUCTS_DIR,
-				);
 				GCC_C_LANGUAGE_STANDARD = c99;
 				GCC_OPTIMIZATION_LEVEL = 0;
-				GCC_PRECOMPILE_PREFIX_HEADER = YES;
-				GCC_PREFIX_HEADER = "$(SYSTEM_LIBRARY_DIR)/Frameworks/AppKit.framework/Headers/AppKit.h";
-				GCC_PREPROCESSOR_DEFINITIONS = NeXT_RUNTIME;
-				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
-				HEADER_SEARCH_PATHS = $SRCROOT/Headers;
-				LD_RUNPATH_SEARCH_PATHS = "$(PROJECT_DIR)/../EtoileFoundation/build/$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME) $(PROJECT_DIR)/../CoreObject/build/$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME) $(PROJECT_DIR)/../IconKit/build/$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)";
-				SDKROOT = macosx10.6;
-				WARNING_CFLAGS = (
-					"-Wall",
-					"-Wno-unused-value",
-				);
+				MACOSX_DEPLOYMENT_TARGET = 10.6;
+				SDKROOT = macosx;
+				WARNING_CFLAGS = "-Wall";
 			};
 			name = Debug;
 		};
@@ -3200,20 +3310,10 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ARCHS = "$(ARCHS_STANDARD_32_64_BIT)";
-				FRAMEWORK_SEARCH_PATHS = (
-					"$(PROJECT_DIR)/../EtoileFoundation/$BUILT_PRODUCTS_DIR",
-					$BUILT_PRODUCTS_DIR,
-				);
 				GCC_C_LANGUAGE_STANDARD = c99;
-				GCC_PRECOMPILE_PREFIX_HEADER = YES;
-				GCC_PREFIX_HEADER = "$(SYSTEM_LIBRARY_DIR)/Frameworks/AppKit.framework/Headers/AppKit.h";
-				GCC_PREPROCESSOR_DEFINITIONS = NeXT_RUNTIME;
-				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
-				SDKROOT = macosx10.5;
-				WARNING_CFLAGS = (
-					"-Wall",
-					"-Wno-unused-value",
-				);
+				MACOSX_DEPLOYMENT_TARGET = 10.6;
+				SDKROOT = macosx;
+				WARNING_CFLAGS = "-Wall";
 			};
 			name = Release;
 		};
