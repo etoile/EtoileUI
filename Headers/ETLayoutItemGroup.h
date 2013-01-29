@@ -65,7 +65,7 @@
 - (ETLayoutItem *) lastItem;
 - (NSInteger) indexOfItem: (id)item;
 - (BOOL) containsItem: (ETLayoutItem *)item;
-- (int) numberOfItems;
+- (NSInteger) numberOfItems;
 - (void) addItems: (NSArray *)items;
 - (void) removeItems: (NSArray *)items;
 - (void) removeAllItems;

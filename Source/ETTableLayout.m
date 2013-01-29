@@ -790,9 +790,9 @@ Note: For now, private method. */
 		dropTarget = [[_layoutContext arrangedItems] objectAtIndex: row];
 	}
 
-	ETLog(@"Validate drop on %@ with dragging source %@ in %@ drag mask %d drop op %d", 
+	ETLog(@"Validate drop on %@ with dragging source %@ in %@ drag mask %lu drop op %lu",
 		[dropTarget primitiveDescription], [[info draggingSource] primitiveDescription], 
-		_layoutContext, [info draggingSourceOperationMask], op);
+		_layoutContext, (unsigned long)[info draggingSourceOperationMask], (unsigned long)op);
 	
 	id draggedObject = [[ETPickboard localPickboard] firstObject];
 	NSInteger dropIndex = (NSTableViewDropAbove == op ? row : ETUndeterminedIndex);
@@ -994,7 +994,7 @@ Returns the cached drag image. */
 
 - (unsigned int) draggingSourceOperationMaskForLocal: (BOOL)isLocal
 {
-	return [[ETPickDropCoordinator sharedInstance] draggingSourceOperationMaskForLocal: isLocal];
+	return [(ETPickDropCoordinator *)[ETPickDropCoordinator sharedInstance] draggingSourceOperationMaskForLocal: isLocal];
 }
 
 - (void) draggedImage: (NSImage *)anImage beganAt: (NSPoint)aPoint

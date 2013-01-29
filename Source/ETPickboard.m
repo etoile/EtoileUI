@@ -129,8 +129,8 @@ static ETPickboard *activePickboard = nil;
 - (void) checkPickboardValidity
 {
 	NSAssert3([_pickedObjects count] == [self numberOfItems], @"Picked "
-		@"objects count %d and number of items %d for pickboard %@ must be "
-		@"equal", [_pickedObjects count], [self numberOfItems], self);
+		@"objects count %ld and number of items %ld for pickboard %@ must be "
+		@"equal", (long)[_pickedObjects count], (long)[self numberOfItems], self);
 }
 
 /* Pickboard Interaction */

@@ -163,12 +163,16 @@ top left coordinates when the content view returns YES to -isFlipped.  */
 	[[browser panel] makeKeyAndOrderFront: self];
 }
 
+#ifdef GNUSTEP
+
 /** Returns NO. */
 - (BOOL) inLiveResize
 {
 	// FIXME: GNUstep should implement this method
 	return NO;
 }
+
+#endif
 
 @end
 

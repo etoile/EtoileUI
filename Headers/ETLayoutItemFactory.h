@@ -27,7 +27,7 @@ ETStyle, ETActionHandler;
 	float _currentBarElementHeight;
 }
 
-+ (id) factory;
++ (instancetype) factory;
 
 /** Aspect Sharing Boundaries and Persistency */
 
@@ -83,7 +83,7 @@ ETStyle, ETActionHandler;
              forProperty: (NSString *)aKey
                  ofModel: (id)aModel; 
 - (id) labelWithTitle: (NSString *)aTitle;
-- (id) textField;
+- (ETLayoutItem *) textField;
 - (id) searchFieldWithTarget: (id)aTarget action: (SEL)aSelector;
 - (id) textView;
 - (id) progressIndicator;

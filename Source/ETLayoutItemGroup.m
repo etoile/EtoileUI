@@ -732,7 +732,7 @@ Similar to -lastObject method for collections (see ETCollection).*/
 }
 
 /** Returns how many child items the receiver includes. */
-- (int) numberOfItems
+- (NSInteger) numberOfItems
 {
 	return [_layoutItems count];
 }
@@ -1324,7 +1324,7 @@ Posts an ETItemGroupSelectionDidChangeNotification. */
 	ETDebugLog(@"Modify selection index from %d to %d of %@", [self selectionIndex], index, self);
 
 	/* Check new selection validity */
-	NSAssert1(index >= 0, @"-setSelectionIndex: parameter must not be a negative value like %d", index);
+	NSAssert1(index >= 0, @"-setSelectionIndex: parameter must not be a negative value like %lu", (unsigned long)index);
 
 	NSMutableIndexSet *indexes = [NSMutableIndexSet indexSet];
 

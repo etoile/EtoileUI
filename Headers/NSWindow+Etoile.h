@@ -11,7 +11,7 @@
 
 #import <Foundation/Foundation.h>
 #import <AppKit/AppKit.h>
-
+#import <EtoileUI/ETCompatibility.h>
 
 @interface NSWindow (Etoile) <NSCopying>
 
@@ -35,7 +35,9 @@
 
 /** @taskunit GNUstep Compatibility */
 
+#ifdef GNUSTEP
 - (BOOL) inLiveResize;
+#endif
 
 @end
 

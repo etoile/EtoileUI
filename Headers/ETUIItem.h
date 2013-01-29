@@ -64,7 +64,7 @@ You must never subclass ETUIItem. ETUIItem ivars must be considered private. */
 - (BOOL) usesWidgetView;
 
 - (BOOL) isFlipped;
-- (id) supervisorView;
+- (ETView *) supervisorView;
 - (void) setSupervisorView: (ETView *)aView sync: (ETSyncSupervisorView)syncDirection;
 - (void) setSupervisorView: (ETView *)aView;
 - (ETView *) displayView;

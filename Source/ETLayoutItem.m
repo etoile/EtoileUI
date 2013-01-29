@@ -718,7 +718,7 @@ the index used by the parent item to reference the receiver. */
 
 	/* Otherwise returns item index */
 
-	return [NSString stringWithFormat: @"%d", [(ETLayoutItemGroup *)_parentItem indexOfItem: (id)self]];
+	return [NSString stringWithFormat: @"%ld", (long)[(ETLayoutItemGroup *)_parentItem indexOfItem: (id)self]];
 }
 
 /** Returns the identifier associated with the layout item.
@@ -2700,7 +2700,7 @@ TODO: Autoresizing mask isn't yet supported when the receiver has no view. */
 	// TODO: Might be reduce to a single line with [super setAutoresizingMask: aMask];
 	if (nil != _decoratorItem)
 	{
-		[[self lastDecoratorItem] setAutoresizingMask: aMask];
+		[(ETDecoratorItem *)[self lastDecoratorItem] setAutoresizingMask: aMask];
 	}
 	else
 	{
@@ -2741,7 +2741,7 @@ See ETContentAspect enum. */
 
 	if ([self view] != nil)
 	{
-		[[self view] setAutoresizingMask: [self autoresizingMaskForContentAspect: anAspect]];
+		[(NSView *)[self view] setAutoresizingMask: [self autoresizingMaskForContentAspect: anAspect]];
 		[[self view] setFrame: [self contentRectWithRect: [[self view] frame] 
 		                                   contentAspect: anAspect 
 		                                      boundsSize: _contentBounds.size]];

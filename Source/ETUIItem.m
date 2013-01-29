@@ -62,7 +62,7 @@ By default, returns NO. */
 	return self;
 }
 
-- (unsigned int) retainCount
+- (NSUInteger) retainCount
 {
 	return NSExtraRefCount(self) + 1;
 }
@@ -127,7 +127,7 @@ You shouldn't use this method unless you write a subclass.
 The supervisor view is used internally by EtoileUI to support views or widgets 
 provided by the widget backend (e.g. AppKit) within a layout item tree. See 
 also ETView. */
-- (id) supervisorView
+- (ETView *) supervisorView
 {
 	return supervisorView;
 }

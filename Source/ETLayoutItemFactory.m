@@ -628,7 +628,7 @@ and background as its view. */
 }
 
 /** Returns a new layout item that uses a NSTextField instance as its view. */
-- (id) textField
+- (ETLayoutItem *) textField
 {
 	ETLayoutItem *item = [self makeItemWithViewClass: [NSTextField class] 
 	                                          height: [self defaultTextFieldHeight]];

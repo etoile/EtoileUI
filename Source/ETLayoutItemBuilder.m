@@ -260,9 +260,9 @@ of their view hierachy (-subviews returns an empty arrary). */
 /** Returns a new layout item group using the layout returned by
 -[ETLayout layoutWithLayoutView:]. When no matching layout exists, nil is 
 returned. */
-- (id) renderWidgetLayoutView: (id)aView
+- (id) renderWidgetLayoutView: (NSView *)aView
 {
-	NSUInteger initialAutoresizing = [aView autoresizingMask];
+	NSUInteger initialAutoresizing = (NSUInteger)[aView autoresizingMask];
 	NSRect initialFrame = [aView frame];
 	ETLayout *layout = [ETLayout layoutWithLayoutView: aView];
 	if (nil == layout)

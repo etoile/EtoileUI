@@ -431,7 +431,7 @@ expanded and collapsed by getting automatically a related outline arrow. */
 
 - (unsigned int) draggingSourceOperationMaskForLocal: (BOOL)isLocal
 {
-	return [[ETPickDropCoordinator sharedInstance] draggingSourceOperationMaskForLocal: isLocal];
+	return [(ETPickDropCoordinator *)[ETPickDropCoordinator sharedInstance] draggingSourceOperationMaskForLocal: isLocal];
 }
 
 - (void) draggedImage: (NSImage *)anImage beganAt: (NSPoint)aPoint

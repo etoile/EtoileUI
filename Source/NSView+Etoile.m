@@ -43,11 +43,11 @@
 {
 	NSRect frame = [self frame];
 	NSString *viewDesc = [NSString stringWithFormat: @" x: %.1f y: %.1f "
-		"width: %.1f height: %.1f flipped: %i hidden: %i autoresizing: %i "
-		"autoresize: %i subviews: %i superview: %@ window: %@", frame.origin.x, 
+		"width: %.1f height: %.1f flipped: %i hidden: %i autoresizing: %lu "
+		"autoresize: %i subviews: %ld superview: %@ window: %@", frame.origin.x, 
 		frame.origin.y, frame.size.width, frame.size.height, 
-		[self isFlipped], [self isHidden], [self autoresizingMask], 
-		[self autoresizesSubviews], [[self subviews] count], 
+		[self isFlipped], [self isHidden], (unsigned long)[self autoresizingMask],
+		[self autoresizesSubviews], (long)[[self subviews] count],
 		[[self superview] primitiveDescription], 
 		[[self window] primitiveDescription]];
 

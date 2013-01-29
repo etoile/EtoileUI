@@ -588,7 +588,7 @@ item. */
 	dragOp = [[item actionHandler] handleDragMoveOverItem: item 
 	                                             withItem: draggedItem
 	                                          coordinator: self];
-	NSLog(@"Drag op %i", dragOp);
+	NSLog(@"Drag op %lu", (unsigned long)dragOp);
 	[self updateDropIndicator: drag withDropTarget: item];
 		
 	return dragOp;

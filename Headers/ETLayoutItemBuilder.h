@@ -46,7 +46,7 @@ and not into a layout when -allowsWidgetLayout returns YES. */
 - (id) renderWindows: (NSArray *)windows;
 - (id) renderWindow: (NSWindow *)window;
 - (id) renderView: (id)view;
-- (id) renderWidgetLayoutView: (id)aView;
+- (id) renderWidgetLayoutView: (NSView *)aView;
 - (id) renderMenu: (NSMenu *)menu;
 
 @end

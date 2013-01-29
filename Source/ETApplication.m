@@ -21,6 +21,7 @@
 #import "ETObjectBrowserLayout.h"
 #import "ETPickboard.h"
 #import "ETLayoutItemFactory.h"
+#import "ETWindowItem.h"
 #import "NSObject+EtoileUI.h"
 #import "NSView+Etoile.h"
 #import "ETCompatibility.h"

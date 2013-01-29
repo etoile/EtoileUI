@@ -80,7 +80,7 @@ See also -[ETUIItem supervisorView]. */
 	return self;
 }
 
-- (unsigned int) retainCount
+- (NSUInteger) retainCount
 {
 	return NSExtraRefCount(self) + 1;
 }
@@ -637,7 +637,7 @@ Layout items are smart enough to avoid drawing their view when they have one. */
 - (void) viewWillDraw
 {
 	const NSRect *rects = NULL;
-	int nbOfRects = 0;
+	NSInteger nbOfRects = 0;
 	
 	_rectToRedraw = NSZeroRect;
 

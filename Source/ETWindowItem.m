@@ -399,7 +399,7 @@ and make the necessary adjustments. */
 }
 
 /** Returns nil. */
-- (id) supervisorView
+- (ETView *) supervisorView
 {
 	return nil;
 }

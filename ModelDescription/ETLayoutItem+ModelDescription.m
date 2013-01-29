@@ -25,7 +25,7 @@
 		return entity;
 
 	// TODO: What should we do with _defaultValues?
-	ETPropertyDescription *defaultFrame = [ETPropertyDescription descriptionWithName: @"defaultFrame" type: (id)@"NSRect"];
+	//ETPropertyDescription *defaultFrame = [ETPropertyDescription descriptionWithName: @"defaultFrame" type: (id)@"NSRect"];
 
 	/* Persistent Properties */
 

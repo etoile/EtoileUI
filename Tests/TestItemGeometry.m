@@ -130,7 +130,7 @@ static unsigned int sizableMask = (NSViewWidthSizable | NSViewHeightSizable);
 {
 	UKIntsEqual(initialMask, [item autoresizingMask]);
 	UKIntsEqual(initialMask, [[item supervisorView] autoresizingMask]);
-	UKIntsEqual(sizableMask, [[item view] autoresizingMask]);
+	UKIntsEqual(sizableMask, [(NSView *)[item view] autoresizingMask]);
 	
 	[item setViewAndSync: nil];
 	
@@ -191,7 +191,7 @@ and -setAutoresizingMask: can potentially erase each other. */
 	UKIntsEqual(weirdMask, [item autoresizingMask]);
 	UKTrue(weirdMask == [item autoresizingMask]);
 	UKIntsEqual(sizableMask, [[item supervisorView] autoresizingMask]);
-	UKIntsEqual(sizableMask, [[item view] autoresizingMask]);
+	UKIntsEqual(sizableMask, [(NSView *)[item view] autoresizingMask]);
 	UKIntsEqual(weirdMask, [[[item decoratorItem] supervisorView] autoresizingMask]);
 }
 
@@ -203,7 +203,7 @@ and -setAutoresizingMask: can potentially erase each other. */
 
 	UKIntsEqual(weirdMask, [item autoresizingMask]);
 	UKIntsEqual(weirdMask, [[item supervisorView] autoresizingMask]);
-	UKIntsEqual(sizableMask, [[item view] autoresizingMask]);
+	UKIntsEqual(sizableMask, [(NSView *)[item view] autoresizingMask]);
 }
 
 - (void) testAutoresizingMaskWithScrollableAreaItem
@@ -213,7 +213,7 @@ and -setAutoresizingMask: can potentially erase each other. */
 
 	UKIntsEqual(weirdMask, [item autoresizingMask]);
 	UKIntsEqual(NSViewNotSizable, [[item supervisorView] autoresizingMask]);
-	UKIntsEqual(sizableMask, [[item view] autoresizingMask]);
+	UKIntsEqual(sizableMask, [(NSView *)[item view] autoresizingMask]);
 	UKIntsEqual(weirdMask, [[[item decoratorItem] supervisorView] autoresizingMask]);
 }
 

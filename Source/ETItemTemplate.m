@@ -243,7 +243,7 @@ Can be overriden in a subclass to implement a web browser for example. */
 	if (nbOfVisibleDocs == 0)
 		return [self baseName];
 
-	return [NSString stringWithFormat: @"%@ %u", [self baseName], nbOfVisibleDocs + 1];
+	return [NSString stringWithFormat: @"%@ %lu", [self baseName], (unsigned long)nbOfVisibleDocs + 1];
 }
 
 @end
