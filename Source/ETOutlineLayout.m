@@ -373,7 +373,7 @@ expanded and collapsed by getting automatically a related outline arrow. */
 
 		[outlineView setDropItem: dropItem dropChildIndex: dropIndex];
 
-		ETLog(@"Retarget drop to %ld in %@", (NSUInteger)dropIndex, dropItem);
+		ETLog(@"Retarget drop to %ld in %@", (long)dropIndex, dropItem);
 	}
 
 	return NSDragOperationEvery;
