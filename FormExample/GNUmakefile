@@ -9,7 +9,7 @@ $(APP_NAME)_OBJC_FILES = $(wildcard *.m)
 
 $(APP_NAME)_PRINCIPAL_CLASS = ETApplication
 
-$(APP_NAME)_GUI_LIBS = -lEtoileUI
+$(APP_NAME)_GUI_LIBS = -lEtoileFoundation -lEtoileUI
 
 include $(GNUSTEP_MAKEFILES)/application.make
 -include ../../../etoile.make

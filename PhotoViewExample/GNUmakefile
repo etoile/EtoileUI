@@ -13,7 +13,7 @@ $(APP_NAME)_MAIN_MODEL_FILE = $(APP_NAME).gorm
 
 $(APP_NAME)_RESOURCE_FILES = $(APP_NAME).gorm
 
-$(APP_NAME)_GUI_LIBS = -lEtoileUI
+$(APP_NAME)_GUI_LIBS = -lEtoileFoundation -lEtoileUI
 
 include $(GNUSTEP_MAKEFILES)/application.make
 -include ../../../etoile.make
