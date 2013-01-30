@@ -580,8 +580,12 @@ supervisor view geometry (frame). */
 	NSRect newFrameMinusTitleBar = NSMakeRect(newFrame.origin.x, newFrame.origin.y, 
 		newFrame.size.width, newFrame.size.height - titleBarHeight);
 
+#ifndef GNUSTEP
+	// FIXME: We should compute newFrameMinusWindowBorder because on GNUstep
+	// we usually have a window border.
 	[self checkGeometrySynchronizationWithFrame: newFrameMinusTitleBar
 		oldItemOrigin: oldOrigin oldItemPosition: oldPosition];
+#endif
 }
 
 - (void) testSizeToFit
