@@ -15,9 +15,9 @@
 @interface ETStyleGroup (CoreObject) 
 /**  This method is only exposed to be used internally by EtoileUI.
 
-Makes the receiver persistent by inserting it into the given editing context as 
-described in -[COObject becomePersistentInContext:rootObject:]. */
-- (void) becomePersistentInContext: (COEditingContext *)aContext rootObject: (COObject *)aRootObject;
+Makes the receiver persistent by inserting it into the given persistent root as 
+described in -[COObject becomePersistentInContext:]. */
+- (void) becomePersistentInContext: (COPersistentRoot *)aContext;
 @end
 
 @interface ETShape (CoreObject) 

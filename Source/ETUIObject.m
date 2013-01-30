@@ -270,8 +270,8 @@ user interaction. */
 
 	COObject *rootObject = [self rootObject];
 	ETAssert(rootObject != nil);
-	ETAssert([rootObject editingContext] != nil);
-	return [[rootObject editingContext] commitWithType: type shortDescription: shortDescription];
+	ETAssert([rootObject persistentRoot] != nil);
+	return [[rootObject persistentRoot] commitWithType: type shortDescription: shortDescription];
 #else
 	return nil;
 #endif

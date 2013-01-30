@@ -171,7 +171,7 @@ inside another -begin/endMutate pair.  */
 #ifdef COREOBJECT
 	if ([self isPersistent])
 	{
-		[item becomePersistentInContext: [self editingContext] rootObject: [self rootObject]];
+		[item becomePersistentInContext: [self persistentRoot]];
 	}
 #endif
 	[self didChangeContentWithMoreComing: moreComing];

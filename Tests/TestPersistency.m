@@ -117,7 +117,7 @@ DEALLOC(DESTROY(itemFactory);)
 
 	UKNotNil(uuid);
 
-	[shape becomePersistentInContext: ctxt rootObject: shape];
+	[shape becomePersistentInContext: ctxt];
 	[self checkValidityForNewPersistentObject: shape isFault: NO];
 
 	[ctxt commit];
@@ -164,7 +164,7 @@ DEALLOC(DESTROY(itemFactory);)
 
 	UKNotNil(uuid);
 
-	[item becomePersistentInContext: ctxt rootObject: item];
+	[item becomePersistentInContext: ctxt];
 	[self checkValidityForNewPersistentObject: item isFault: NO];
 
 	[ctxt commit];
@@ -223,7 +223,7 @@ DEALLOC(DESTROY(itemFactory);)
 	UKNotNil(uuid);
 	UKNotNil([item UUID]);
 
-	[itemGroup becomePersistentInContext: ctxt rootObject: itemGroup];
+	[itemGroup becomePersistentInContext: ctxt];
 	[self checkValidityForNewPersistentObject: itemGroup isFault: NO];
 	[self checkValidityForNewPersistentObject: item isFault: NO];
 	[self checkValidityForNewPersistentObject: controller isFault: NO];
@@ -279,7 +279,7 @@ DEALLOC(DESTROY(itemFactory);)
 	UKNotNil([sliderItem UUID]);
 	UKNotNil([itemGroup UUID]);
 
-	[itemGroup becomePersistentInContext: ctxt rootObject: itemGroup];
+	[itemGroup becomePersistentInContext: ctxt];
 	[self checkValidityForNewPersistentObject: buttonItem isFault: NO];
 	[self checkValidityForNewPersistentObject: sliderItem isFault: NO];
 	[self checkValidityForNewPersistentObject: itemGroup isFault: NO];
@@ -319,7 +319,7 @@ DEALLOC(DESTROY(itemFactory);)
 	ETLayoutItemGroup *itemGroup = [self basicItemGroupWithRect: rect];
 	ETLayoutItem *item = [itemGroup firstItem];
 
-	[itemGroup becomePersistentInContext: ctxt rootObject: itemGroup];
+	[itemGroup becomePersistentInContext: ctxt];
 	[ctxt commit];
 
 	// Create a rectangle and commit

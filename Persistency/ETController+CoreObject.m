@@ -17,12 +17,12 @@
 
 @implementation ETController (CoreObject)
 
-- (void) becomePersistentInContext: (COEditingContext *)aContext rootObject: (COObject *)aRootObject
+- (void) becomePersistentInContext: (COPersistentRoot *)aContext
 {
 	if ([self isPersistent])
 		return;
 
-	[super becomePersistentInContext: aContext rootObject: aRootObject];
+	[super becomePersistentInContext: aContext];
 
 	// TODO: Support item template persistency
 	// TODO: Implement some strategy to recover in the case these items or aspects

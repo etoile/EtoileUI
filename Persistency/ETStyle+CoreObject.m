@@ -17,12 +17,12 @@
 
 @implementation ETStyleGroup (CoreObject)
 
-- (void) becomePersistentInContext: (COEditingContext *)aContext rootObject: (COObject *)aRootObject
+- (void) becomePersistentInContext: (COPersistentRoot *)aContext
 {
 	if ([self isPersistent])
 		return;
 
-	[super becomePersistentInContext: aContext rootObject: aRootObject];
+	[super becomePersistentInContext: aContext];
 
 	// TODO: Leverage the model description rather than hardcoding the aspects
 	// TODO: Implement some strategy to recover in the case these aspects 
@@ -30,7 +30,7 @@
 	for (ETStyle *style in _styles)
 	{
 		ETAssert([style isShared] || [style isPersistent] == NO || [style isRoot]);
-		[style becomePersistentInContext: aContext rootObject: aRootObject];
+		[style becomePersistentInContext: aContext];
 	}
 
 }

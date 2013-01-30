@@ -37,22 +37,22 @@
 	}
 }
 
-- (void) becomePersistentInContext: (COEditingContext *)aContext rootObject: (COObject *)aRootObject
+- (void) becomePersistentInContext: (COPersistentRoot *)aContext
 {
 	if ([self isPersistent])
 		return;
 
-	[super becomePersistentInContext: aContext rootObject: aRootObject];
+	[super becomePersistentInContext: aContext];
 
 	// TODO: Leverage the model description rather than hardcoding the aspects
 	// TODO: Implement some strategy to recover in the case these aspects 
 	// are already used as embedded objects in another root object. 
 	ETAssert([[self coverStyle] isShared] || [[self coverStyle] isPersistent] == NO || [[self coverStyle] isRoot]);
-	[[self coverStyle] becomePersistentInContext: aContext rootObject: aRootObject];
+	[[self coverStyle] becomePersistentInContext: aContext];
 	ETAssert([[self styleGroup] isPersistent] == NO || [[self styleGroup] isRoot]);
-	[[self styleGroup] becomePersistentInContext: aContext rootObject: aRootObject];
+	[[self styleGroup] becomePersistentInContext: aContext];
 	ETAssert([[self actionHandler] isShared] || [[self actionHandler] isPersistent] == NO || [[self actionHandler] isRoot]);
-	[[self actionHandler] becomePersistentInContext: aContext rootObject: aRootObject];
+	[[self actionHandler] becomePersistentInContext: aContext];
 }
 
 - (NSString *) targetIdForTarget: (id)target
@@ -109,14 +109,14 @@
 	if (isViewTarget)
 	{
 		ETUUID *uuid = [ETUUID UUIDWithString: [targetId substringFromIndex: 1]];
-		ETLayoutItem *targetItem = (ETLayoutItem *)[[self editingContext] objectWithUUID: uuid];
+		ETLayoutItem *targetItem = (ETLayoutItem *)[[self persistentRoot] objectWithUUID: uuid];
 
 		[sender setTarget: [targetItem view]];
 	}
 	else
 	{
 		ETUUID *uuid = [ETUUID UUIDWithString: targetId];
-		ETLayoutItem *targetItem = (ETLayoutItem *)[[self editingContext] objectWithUUID: uuid];
+		ETLayoutItem *targetItem = (ETLayoutItem *)[[self persistentRoot] objectWithUUID: uuid];
 
 		[sender setTarget: targetItem];
 	}
@@ -199,12 +199,12 @@ since -serializedValueForProperty: doesn't use the direct ivar access. */
 	return collectedItems;
 }
 
-- (void) becomePersistentInContext: (COEditingContext *)aContext rootObject: (COObject *)aRootObject
+- (void) becomePersistentInContext: (COPersistentRoot *)aContext
 {
 	if ([self isPersistent])
 		return;
 
-	[super becomePersistentInContext: aContext rootObject: aRootObject];
+	[super becomePersistentInContext: aContext];
 
 	// TODO: Leverage the model description rather than hardcoding the aspects
 	// TODO: Implement some strategy to recover in the case these items or aspects
@@ -212,13 +212,13 @@ since -serializedValueForProperty: doesn't use the direct ivar access. */
 	for (ETLayoutItem *item in _layoutItems)
 	{
 		ETAssert([item isPersistent] == NO || [item isRoot]);
-		[item becomePersistentInContext: aContext rootObject: aRootObject];
+		[item becomePersistentInContext: aContext];
 	}
 	ETAssert([[self controller] isPersistent] == NO || [[self controller] isRoot]);
-	[[self controller] becomePersistentInContext: aContext rootObject: aRootObject];
+	[[self controller] becomePersistentInContext: aContext];
 	// TODO: Move layout to ETLayoutItem once well supported
 	ETAssert([[self layout] isPersistent] == NO || [[self layout] isRoot]);
-	[[self layout] becomePersistentInContext: aContext rootObject: aRootObject];
+	[[self layout] becomePersistentInContext: aContext];
 }
 
 - (void) setSerializedItems: (NSArray *)items
