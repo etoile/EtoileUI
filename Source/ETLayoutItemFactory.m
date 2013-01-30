@@ -875,7 +875,7 @@ TODO: Finish to implement, the returned group is empty currently... */
 and style. */
 - (ETLayoutItem *) itemWithShape: (ETShape *)aShape inFrame: (NSRect)aRect
 {
-	NSParameterAssert(NSEqualSizes(aRect.size, [[aShape path] bounds].size));
+	NSParameterAssert(ETSizeEqualToSize(aRect.size, [[aShape path] bounds].size));
 	ETLayoutItem *item = [self itemWithRepresentedObject: aShape];
 	[item setStyle: aShape];
 	[item setCoverStyle: nil];

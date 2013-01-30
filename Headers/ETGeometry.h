@@ -41,6 +41,20 @@ static inline NSRect ETMakeRect(NSPoint origin, NSSize size)
 	return NSMakeRect(origin.x, origin.y, size.width, size.height);
 }
 
+#ifdef GNUSTEP
+#define ETSizeEqualToSize NSEqualSizes
+#else
+/** Returns whether the sizes are equal or precisely almost equal.
+ 
+To be considered equal, the size variation must remain smaller than FLT_EPSILON.
+ 
+On Mac OS X, NSEqualsSize tests exact equality unlike GNUstep implementation. */
+static inline BOOL ETSizeEqualToSize(NSSize size1, NSSize size2)
+{
+	return ((size1.width - size2.width <= FLT_EPSILON) && (size1.height - size2.height <= FLT_EPSILON));
+}
+#endif
+
 /** Returns a rect that uses aSize as its size and centered inside the given rect.
 
 The returned rect is expressed relative the given rect parent coordinate space.<br />

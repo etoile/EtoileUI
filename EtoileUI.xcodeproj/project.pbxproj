@@ -2638,7 +2638,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/bash;
-			shellScript = "export DYLD_FRAMEWORK_PATH=$FRAMEWORK_SEARCH_PATHS:\"$TARGET_BUILD_DIR\":\"$PROJECT_DIR/../EtoileFoundation/build/$CONFIGURATION$EFFECTIVE_PLATFORM_NAME\"\n/usr/local/bin/ukrun \"$TARGET_BUILD_DIR/$PRODUCT_NAME.$WRAPPER_EXTENSION\"";
+			shellScript = "";
 		};
 /* End PBXShellScriptBuildPhase section */
 
