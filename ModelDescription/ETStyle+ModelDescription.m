@@ -25,7 +25,9 @@
 	if ([[entity name] isEqual: [ETStyle className]] == NO) 
 		return entity;
 
-	// Nothing to declare for now
+	ETPropertyDescription *isShared = [ETPropertyDescription descriptionWithName: @"isShared" type: (id)@"BOOL"];
+
+	[entity addPropertyDescription: isShared];
 
 	return entity;
 }

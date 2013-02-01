@@ -18,7 +18,8 @@
 #import <EtoileFoundation/NSObject+Model.h>
 #import <CoreObject/COEditingContext.h>
 #import <CoreObject/COObject.h>
-#import <CoreObject/COStore.h>
+#import <CoreObject/COPersistentRoot.h>
+#import <CoreObject/COSQLStore.h>
 #import "ETActionHandler.h"
 #import "ETController.h"
 #import "ETLayoutExecutor.h"
@@ -44,20 +45,42 @@
 
 @implementation TestPersistency
 
+- (NSURL *)storeURL
+{
+	return [NSURL fileURLWithPath: [@"~/TestEtoileUIStore.sqlite" stringByExpandingTildeInPath]];
+}
+
+- (void)deleteStore
+{
+	if ([[NSFileManager defaultManager] fileExistsAtPath: [[self storeURL] path]] == NO)
+		return;
+	
+	NSError *error = nil;
+	[[NSFileManager defaultManager] removeItemAtPath: [[self storeURL] path]
+	                                           error: &error];
+	ETAssert(error == nil);
+}
+
 - (id) init
 {
 	SUPERINIT
+	/* Delete existing db file in case -dealloc didn't run */
+	[self deleteStore];
 	[[ETLayoutExecutor sharedInstance] removeAllItems];
 	ASSIGN(itemFactory, [ETLayoutItemFactory factory]);
 	return self;
 }
 
-DEALLOC(DESTROY(itemFactory);)
+- (void)dealloc
+{
+	DESTROY(itemFactory);
+	[self deleteStore];
+	[super dealloc];
+}
 
 - (COEditingContext *) createContext
 {
-	COStore *store = [[COStore alloc] initWithURL: [NSURL fileURLWithPath: 
-		[@"~/TestEtoileUIStore.sqlitedb" stringByExpandingTildeInPath]]];
+	COStore *store = [[COSQLStore alloc] initWithURL: [self storeURL]];
 	COEditingContext *context = [[COEditingContext alloc] initWithStore: store];
 	RELEASE(store);
 	return context;
@@ -77,7 +100,7 @@ DEALLOC(DESTROY(itemFactory);)
 	//UKFalse([obj isRoot]);
 	UKFalse([obj isDamaged]);
 
-	UKObjectsSame(ctxt, [obj editingContext]);
+	UKObjectsSame(ctxt, [[obj persistentRoot] parentContext]);
 	UKTrue([[ctxt loadedObjects] containsObject: obj]);
 	UKObjectsSame(obj, [ctxt objectWithUUID: [obj UUID]]);
 }
@@ -113,17 +136,16 @@ DEALLOC(DESTROY(itemFactory);)
 
 	NSRect rect = NSMakeRect(50, 20, 400, 300);
 	ETShape *shape = [ETShape rectangleShapeWithRect: rect];
-	ETUUID *uuid = [shape UUID];
+	ETUUID *uuid = [[ctxt insertNewPersistentRootWithRootObject: shape] persistentRootUUID];
 
 	UKNotNil(uuid);
 
-	[shape becomePersistentInContext: ctxt];
 	[self checkValidityForNewPersistentObject: shape isFault: NO];
 
 	[ctxt commit];
 	[self recreateContext];
 
-	ETShape *shape2 = (id)[ctxt objectWithUUID: uuid];
+	ETShape *shape2 = [[ctxt persistentRootForUUID: uuid] rootObject];
 
 	UKNotNil(shape2);
 	UKObjectsNotSame(shape, shape2);
@@ -157,20 +179,26 @@ DEALLOC(DESTROY(itemFactory);)
 {
 	[self recreateContext];
 
+	[itemFactory beginRootObject];
+
 	NSRect rect = NSMakeRect(50, 20, 400, 300);
 	ETLayoutItem *item = [itemFactory item];
 	[item setFrame: rect];
-	ETUUID *uuid = [item UUID];
+
+	[itemFactory endRootObject];
+
+	NSSet *itemAndAspects = S(item, [item actionHandler], [item styleGroup], [item coverStyle]);
+	ETUUID *uuid = [[ctxt insertNewPersistentRootWithRootObject: item] persistentRootUUID];
 
 	UKNotNil(uuid);
+	UKObjectsEqual(itemAndAspects, [[item persistentRoot] insertedObjects]);
 
-	[item becomePersistentInContext: ctxt];
 	[self checkValidityForNewPersistentObject: item isFault: NO];
 
 	[ctxt commit];
 	[self recreateContext];
 
-	ETLayoutItem *newItem = (id)[ctxt objectWithUUID: uuid];
+	ETLayoutItem *newItem = [[ctxt persistentRootForUUID: uuid] rootObject];
 
 	UKNotNil(newItem);
 	UKObjectsNotSame(item, newItem);
@@ -218,12 +246,10 @@ DEALLOC(DESTROY(itemFactory);)
 	ETLayoutItem *item = [itemGroup firstItem];
 	ETController *controller = [itemGroup controller];
 
-	ETUUID *uuid = [itemGroup UUID];
-
+	ETUUID *uuid = [[ctxt insertNewPersistentRootWithRootObject: itemGroup] persistentRootUUID];
+	
 	UKNotNil(uuid);
-	UKNotNil([item UUID]);
 
-	[itemGroup becomePersistentInContext: ctxt];
 	[self checkValidityForNewPersistentObject: itemGroup isFault: NO];
 	[self checkValidityForNewPersistentObject: item isFault: NO];
 	[self checkValidityForNewPersistentObject: controller isFault: NO];
@@ -231,9 +257,9 @@ DEALLOC(DESTROY(itemFactory);)
 	[ctxt commit];
 	[self recreateContext];
 
-	ETLayoutItemGroup *newItemGroup = (id)[ctxt objectWithUUID: uuid];
-	ETLayoutItem *newItem = (id)[ctxt objectWithUUID: [item UUID]];
-	ETController *newController = (id)[ctxt objectWithUUID: [controller UUID]];
+	ETLayoutItemGroup *newItemGroup = [[ctxt persistentRootForUUID: uuid] rootObject];
+	ETLayoutItem *newItem = (id)[[newItemGroup persistentRoot] objectWithUUID: [item UUID]];
+	ETController *newController = (id)[[newItemGroup persistentRoot] objectWithUUID: [controller UUID]];
 
 	UKNotNil(newItemGroup);
 	UKObjectsNotSame(itemGroup, newItemGroup);
@@ -264,6 +290,8 @@ DEALLOC(DESTROY(itemFactory);)
 	[self recreateContext];
 
 	NSRect rect = NSMakeRect(50, 20, 400, 300);
+	
+	[itemFactory beginRootObject];
 
 	ETLayoutItem *sliderItem = [itemFactory horizontalSlider];
 	ETLayoutItem *buttonItem = [itemFactory buttonWithTitle: @"Picturesque" 
@@ -274,12 +302,15 @@ DEALLOC(DESTROY(itemFactory);)
 	[[sliderItem view] setAction: @selector(close:)];
 	[[sliderItem view] setTarget: itemGroup];
 	[buttonItem setFrame: rect];
+	
+	[itemFactory endRootObject];
 
 	UKNotNil([buttonItem UUID]);
 	UKNotNil([sliderItem UUID]);
 	UKNotNil([itemGroup UUID]);
 
-	[itemGroup becomePersistentInContext: ctxt];
+	ETUUID *uuid = [[ctxt insertNewPersistentRootWithRootObject: itemGroup] persistentRootUUID];
+
 	[self checkValidityForNewPersistentObject: buttonItem isFault: NO];
 	[self checkValidityForNewPersistentObject: sliderItem isFault: NO];
 	[self checkValidityForNewPersistentObject: itemGroup isFault: NO];
@@ -287,9 +318,9 @@ DEALLOC(DESTROY(itemFactory);)
 	[ctxt commit];
 	[self recreateContext];
 
-	ETLayoutItem *newButtonItem = (id)[ctxt objectWithUUID: [buttonItem UUID]];
-	ETLayoutItem *newSliderItem = (id)[ctxt objectWithUUID: [sliderItem UUID]];
-	ETLayoutItem *newItemGroup = (id)[ctxt objectWithUUID: [itemGroup UUID]];
+	ETLayoutItem *newItemGroup = (id)[[ctxt persistentRootForUUID: uuid] rootObject];
+	ETLayoutItem *newButtonItem = (id)[[newItemGroup persistentRoot] objectWithUUID: [buttonItem UUID]];
+	ETLayoutItem *newSliderItem = (id)[[newItemGroup persistentRoot] objectWithUUID: [sliderItem UUID]];
 
 	UKNotNil(newButtonItem);
 	UKObjectsNotSame(buttonItem, newButtonItem);
@@ -319,7 +350,7 @@ DEALLOC(DESTROY(itemFactory);)
 	ETLayoutItemGroup *itemGroup = [self basicItemGroupWithRect: rect];
 	ETLayoutItem *item = [itemGroup firstItem];
 
-	[itemGroup becomePersistentInContext: ctxt];
+	[[ctxt insertNewPersistentRootWithRootObject: itemGroup] persistentRootUUID];
 	[ctxt commit];
 
 	// Create a rectangle and commit

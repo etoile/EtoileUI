@@ -109,6 +109,14 @@ By default, returns NO. */
 	return _isCreatingRootObject;
 }
 
+/** Sets the item that provides the shared aspects for building bew objects. */
+- (void) setAspectProviderItem: (ETLayoutItem *)anItem
+{
+	ASSIGN(_currentCoverStyle, [anItem coverStyle]);
+	ASSIGN(_currentActionHandler, [anItem actionHandler]);
+	_isCreatingRootObject = (anItem != nil);
+}
+
 /** Returns the shared cover style in the current root object graph.
 
 See also -beginRootObject. */

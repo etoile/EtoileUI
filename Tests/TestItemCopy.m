@@ -100,8 +100,8 @@ DEALLOC(DESTROY(itemFactory); DESTROY(item); DESTROY(itemGroup))
 	// FIXME: Remove parentContainer and parentCollections 
 	rootObjectProperties = [rootObjectProperties arrayByAddingObjectsFromArray: 
 		A(@"modificationDate", @"creationDate", @"lastVersionDescription", 
-		@"tagDescription", @"typeDescription", @"parentContainer", @"parentCollections")];
-
+		@"tagDescription", @"typeDescription", @"parentContainer", @"parentCollections", @"tags")];
+	
 	return [rootObjectProperties arrayByRemovingObjectsInArray:
 		A(kETNameProperty, kETDisplayNameProperty, kETIconProperty)];
 }

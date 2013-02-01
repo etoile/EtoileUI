@@ -301,6 +301,13 @@ user interaction. */
 
 #endif
 
+// FIXME: COObject relationship consistency is disabled because it doesn't
+// work on a collection accessor that return immutable copies.
+- (void) updateRelationshipConsistencyForProperty: (NSString *)key oldValue: (id)oldValue
+{
+	
+}
+
 @end
 
 

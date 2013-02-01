@@ -55,6 +55,7 @@ static NSMutableDictionary *sharedActionHandlers = nil;
 		                         forKey: className];
 	}
 
+	ETAssert([handler isPersistent] == NO);
 	return handler;
 }
 
@@ -530,8 +531,11 @@ status, when others request it. */
 - (void) insertRectangle: (id)sender onItem: (ETLayoutItem *)item
 {
 	ETLayoutItemGroup *parent = ([item isGroup] ? (ETLayoutItemGroup *)item : [item parentItem]);
+	ETLayoutItemFactory *itemFactory = [ETLayoutItemFactory factory];
 
-	[parent addItem: [[ETLayoutItemFactory factory] rectangle]];
+	[itemFactory setAspectProviderItem: parent];
+	[parent addItem: [itemFactory rectangle]];
+	[itemFactory setAspectProviderItem: nil];
 	[item commitWithType: @"Item Insertion" shortDescription: @"Created Rectangle"];
 }
 

@@ -24,9 +24,6 @@
 	if ([[entity name] isEqual: [ETLayoutItem className]] == NO) 
 		return entity;
 
-	// TODO: What should we do with _defaultValues?
-	//ETPropertyDescription *defaultFrame = [ETPropertyDescription descriptionWithName: @"defaultFrame" type: (id)@"NSRect"];
-
 	/* Persistent Properties */
 
 	ETPropertyDescription *parentItem = [ETPropertyDescription descriptionWithName: @"parentItem" type: (id)@"ETLayoutItemGroup"];
@@ -56,6 +53,8 @@
 	ETPropertyDescription *autoresizing = [ETPropertyDescription descriptionWithName: @"autoresizingMask" type: (id)@"NSUInteger"];
 	ETPropertyDescription *contentAspect = [ETPropertyDescription descriptionWithName: @"contentAspect" type: (id)@"NSUInteger"];
 	ETPropertyDescription *boundingBox = [ETPropertyDescription descriptionWithName: @"boundingBox" type: (id)@"NSRect"];
+	// TODO: What should we do with _defaultValues?
+	ETPropertyDescription *defaultFrame = [ETPropertyDescription descriptionWithName: @"defaultFrame" type: (id)@"NSRect"];
 	// TODO: We should move flipped to ETUIItem. We need to override it though 
 	// not to be read-only, because ETLayoutItem introduces -setFlipped:.
 	ETPropertyDescription *flipped = [ETPropertyDescription descriptionWithName: @"flipped" type: (id)@"BOOL"];
@@ -94,8 +93,8 @@
 	NSArray *persistentProperties = A(parentItem, identifier, name, image, icon, 
 		repObject, value, view, viewTargetId, styleGroup, coverStyle, 
 		actionHandler, action, targetId, contentBounds, position, anchorPoint, 
-		persistentFrame, autoresizing, contentAspect, boundingBox, flipped, 
-		selected, selectable, visible);
+		persistentFrame, autoresizing, contentAspect, boundingBox, defaultFrame,
+		flipped, selected, selectable, visible);
 	NSArray *transientProperties = A(baseItem, rootItem, indexPath, 
 		isBaseItem, subject, style, frame, x, y, width, height, target, 
 		acceptsActions, inspector, subtype);

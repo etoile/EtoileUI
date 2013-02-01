@@ -34,6 +34,7 @@ ETStyle, ETActionHandler;
 - (void) beginRootObject;
 - (void) endRootObject;
 - (BOOL) isCreatingRootObject;
+- (void) setAspectProviderItem: (ETLayoutItem *)anItem;
 - (ETStyle *) currentCoverStyle;
 - (ETActionHandler *) currentActionHandler;
 
