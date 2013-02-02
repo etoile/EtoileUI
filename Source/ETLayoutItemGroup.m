@@ -140,6 +140,11 @@ See also -isLayerItem. */
 	[super dealloc];
 }
 
+- (BOOL)validateProposedFirstResponder:(NSResponder *)responder forEvent:(NSEvent *)event
+{
+	return YES;
+}
+
 /** Returns a copy of the receiver.
 
 The layout and its tool are always copied (they cannot be shared).
@@ -331,6 +336,10 @@ Use this method cautiously when the item tree is big (e.g. more than 10 000 item
 See also -identifier. */
 - (ETLayoutItem *) itemForIdentifier: (NSString *)anId
 {
+	if ([[self identifier] isEqual: anId])
+	{
+		return self;
+	}
 	return [[[self allDescendantItems] filteredArrayUsingPredicate:
 		[NSPredicate predicateWithFormat: @"identifier == %@", anId]] firstObject];
 }
