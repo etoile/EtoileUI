@@ -68,6 +68,8 @@
 	[self deleteStore];
 	[[ETLayoutExecutor sharedInstance] removeAllItems];
 	ASSIGN(itemFactory, [ETLayoutItemFactory factory]);
+	/* Just to ensure COREOBJECT preprocessor macro gives us the correct base class (see ETUIObject.h) */
+	ETAssert([[[ETUIObject class] superclass] isEqual: [COObject class]]);
 	return self;
 }
 

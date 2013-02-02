@@ -3,6 +3,9 @@ include $(GNUSTEP_MAKEFILES)/common.make
 SUBPROJECT_NAME = libEtoileUI
 
 libEtoileUI_OBJCFLAGS += -std=c99
+libEtoileUI_CPP_FLAGS += -DCOREOBJECT
+libEtoileUI_OBJCFLAGS += -DCOREOBJECT
+libEtoileUI_CFLAGS += -DCOREOBJECT
 
 libEtoileUI_OBJC_FILES = \
 	Controls+Etoile.m \

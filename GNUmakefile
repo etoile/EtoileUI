@@ -19,17 +19,18 @@ export coreobject ?= yes
 ifeq ($(coreobject), yes)
   EtoileUI_LIBRARIES_DEPEND_UPON += -lCoreObject
   EtoileUI_CPP_FLAGS += -DCOREOBJECT
+  EtoileUI_OBJCFLAGS += -DCOREOBJECT
+  EtoileUI_CFLAGS += -DCOREOBJECT
 endif
 
 ifeq ($(test), yes)
   BUNDLE_NAME = $(FRAMEWORK_NAME)
-  EtoileUI_SUBPROJECTS += Tests
   EtoileUI_LDFLAGS += -lUnitKit $(EtoileUI_LIBRARIES_DEPEND_UPON)
 endif
 
 EtoileUI_HEADER_FILES_DIR = Headers
 
-OTHER_HEADER_DIRS = AspectRepository CoreObjectUI Persistency
+OTHER_HEADER_DIRS = AspectRepository CoreObjectUI Persistency UIBuilder
 
 EtoileUI_HEADER_FILES = \
 	Controls+Etoile.h \
@@ -119,6 +120,9 @@ EtoileUI_HEADER_FILES += \
 	ETStyle+CoreObject.h
 
 EtoileUI_HEADER_FILES += \
+	ETLayoutItem+UIBuilder.h
+
+EtoileUI_HEADER_FILES += \
 	EtoileCompatibility.h \
 	NSImage+NiceScaling.h \
 	ETPlugInRegistry+Icons.h
@@ -128,7 +132,6 @@ EtoileUI_OBJC_FILES += \
 	AspectRepository/ETAspectRepository.m
 
 ifeq ($(coreobject), yes)
-
 EtoileUI_OBJC_FILES += \
 	CoreObjectUI/CoreObjectUI.m \
 
@@ -146,9 +149,34 @@ EtoileUI_OBJC_FILES += \
 	Persistency/ETLayout+CoreObject.m \
 	Persistency/ETLayoutItem+CoreObject.m \
 	Persistency/ETStyle+CoreObject.m
-
 endif
 
+EtoileUI_OBJC_FILES += \
+	UIBuilder/ETLayoutItem+UIBuilder.m
+
+ifeq ($(test), yes)
+EtoileUI_OBJC_FILES += \
+	Tests/test_ETLayer.m \
+	Tests/test_ETLayoutItem.m \
+	Tests/test_ETLayoutItemBuilder.m \
+	Tests/test_ETPickboard.m \
+	Tests/test_ETController.m \
+	Tests/test_ETView.m \
+	Tests/test_ETLayout.m \
+	Tests/test_ETInstrument.m \
+	Tests/TestCell.m \
+	Tests/TestCompositeLayout.m \
+	Tests/TestItemCopy.m \
+	Tests/TestItemGeometry.m \
+	Tests/TestStyle.m \
+	Tests/TestWidgetLayout.m
+
+ifeq ($(coreobject), yes)
+EtoileUI_OBJC_FILES += \
+	Tests/TestPersistency.m
+endif
+endif
+ 
 EtoileUI_RESOURCE_FILES = \
 	English.lproj/Inspector.gorm \
 	English.lproj/BrowserPrototype.gorm \
