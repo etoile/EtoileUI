@@ -504,7 +504,7 @@ NSAssert1(size.width >= 0 && size.height >= 0, @"For a supervisor view, the " \
 #endif
 
 #ifdef DEBUG_LAYOUT
-- (void) setAutoresizingMask: (unsigned int)mask
+- (void) setAutoresizingMask: (NSUInteger)mask
 {
 	ETLog(@"Will alter resizing mask from %d to %d %@", [self autoresizingMask], 
 		mask, self);

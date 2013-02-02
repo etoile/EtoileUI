@@ -61,7 +61,7 @@ to be resized. */
 /** Keeps both the top margin and the height fixed but allows the bottom margin 
 to be resized. */
 };
-typedef unsigned int ETAutoresizing;
+typedef NSUInteger ETAutoresizing;
 
 /** Describes how the content looks when the layout item is resized.
 

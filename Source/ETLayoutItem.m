@@ -3092,7 +3092,7 @@ See also -subject. */
 /** Updates the view 'object value' property when the represented object value changed. */
 - (void) didChangeRepresentedObjectValue: (id)newValue
 {
-	ETLog(@"Did Change represented object value to %@", newValue);
+	//ETLog(@"Did Change represented object value to %@", newValue);
 	[self syncView: [self view] withValue: newValue];
 }
 
