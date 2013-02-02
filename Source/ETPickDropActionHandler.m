@@ -274,6 +274,12 @@ item groups and reacts to that appropriately. */
 	return result;
 }
 
+- (void) commitDropOnItem: (ETLayoutItem *)dropTarget
+{
+	// TODO: Attempt to look up a short description from the metadata
+	[dropTarget commitWithType: @"Item Insertion" shortDescription: @"Drop object"];
+}
+
 /** Inserts the dropped object at the given index in the drop target and 
 returns YES on success and NO otherwise (e.g. an invalid index).
 
@@ -314,6 +320,10 @@ item groups and reacts to that appropriately. */
 	                             metadata: metadata
 	                              atIndex: insertionIndex
 	                          inItemGroup: (ETLayoutItemGroup *)dropTarget];
+
+	[self performSelector: @selector(commitDropOnItem:)
+	           withObject: dropTarget
+				afterDelay: 0.1];
 	return YES;
 }
 
