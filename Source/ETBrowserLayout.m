@@ -221,7 +221,7 @@ related NSBrowser methods are called. */
 	return cell;
 }
 
-- (BOOL) browser: (NSBrowser *)sender selectCellWithString: (NSString *)title inColumn: (int)column
+- (BOOL) browser: (NSBrowser *)sender selectCellWithString: (NSString *)title inColumn: (NSInteger)column
 {
 	NSCell *cell = [self loadedCellForString: title inColumn: column];
 	ETLayoutItem *item = [cell representedObject];
@@ -238,7 +238,7 @@ related NSBrowser methods are called. */
 	return YES;
 }
 
-- (BOOL) browser: (NSBrowser *)sender selectRow: (int)row inColumn: (int)column
+- (BOOL) browser: (NSBrowser *)sender selectRow: (NSInteger)row inColumn: (NSInteger)column
 {
 	ETLayoutItem *item = [[sender loadedCellAtRow: row column: column] representedObject];
 
@@ -255,7 +255,7 @@ related NSBrowser methods are called. */
 
 /* Data Source */
 
-- (int) browser: (NSBrowser *)sender numberOfRowsInColumn: (int)column
+- (NSInteger) browser: (NSBrowser *)sender numberOfRowsInColumn: (NSInteger)column
 {
 	ETLayoutItemGroup *item = nil;
 	BOOL isFirstColumn = (0 == column);
@@ -273,7 +273,7 @@ related NSBrowser methods are called. */
 	NSAssert(item != nil, @"Parent item must never be nil in -browser:numberOfRowsInColumn:");
 	NSAssert([item isGroup], @"Parent item must always be of ETLayoutItemGroup class kind");
 
-	int nbOfItems = [[item arrangedItems] count];
+	NSInteger nbOfItems = [[item arrangedItems] count];
 	BOOL isFirstAccess = (0 == nbOfItems);
 
 	if (isFirstAccess)
@@ -289,8 +289,8 @@ related NSBrowser methods are called. */
 
 - (void) browser: (NSBrowser *)sender 
  willDisplayCell: (id)cell 
-           atRow: (int)row 
-          column: (int)column
+           atRow: (NSInteger)row 
+          column: (NSInteger)column
 {
 	ETLayoutItemGroup *item = nil;
 	BOOL isFirstColumn = (0 == column);

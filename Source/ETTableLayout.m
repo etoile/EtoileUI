@@ -569,7 +569,7 @@ See [(ETColumnFragment)] protocol to customize the returned column. */
 	return ([[self itemAtRow: rowIndex] isSelectable] == NO);
 }
 
-- (BOOL) tableView: (NSTableView *)aTableView shouldSelectRow: (int)rowIndex
+- (BOOL) tableView: (NSTableView *)aTableView shouldSelectRow: (NSInteger)rowIndex
 {
 	return [[self itemAtRow: rowIndex] isSelectable];
 }
@@ -580,7 +580,7 @@ See [(ETColumnFragment)] protocol to customize the returned column. */
    We implement this delegate method to make the behavior the same everywhere.
    Take note this method is only invoked when the column is editable.*/
 - (BOOL) tableView: (NSTableView *)tv
-	shouldEditTableColumn: (NSTableColumn *)column row: (int)rowIndex
+	shouldEditTableColumn: (NSTableColumn *)column row: (NSInteger)rowIndex
 {
 	NSParameterAssert([column isEditable]);
 
@@ -643,7 +643,7 @@ See [(ETColumnFragment)] protocol to customize the returned column. */
 	[super doubleClick: sender];
 }
 
-- (int) numberOfRowsInTableView: (NSTableView *)tv
+- (NSInteger) numberOfRowsInTableView: (NSTableView *)tv
 {
 	NSArray *layoutItems = [_layoutContext arrangedItems];
 	
@@ -657,7 +657,7 @@ See [(ETColumnFragment)] protocol to customize the returned column. */
 Retrieves the value provided by the item and returns an object value that is 
 compatible with the cell used at the given row/column intersection.  */
 - (id) objectValueForTableColumn: (NSTableColumn *)column 
-                             row: (int)rowIndex 
+                             row: (NSInteger)rowIndex 
                             item: (ETLayoutItem *)item
 {
 	NSParameterAssert(-1 != rowIndex && ETUndeterminedIndex != rowIndex);
@@ -683,14 +683,14 @@ compatible with the cell used at the given row/column intersection.  */
 }
 
 - (id) tableView: (NSTableView *)tv 
-	objectValueForTableColumn: (NSTableColumn *)column row: (int)rowIndex
+	objectValueForTableColumn: (NSTableColumn *)column row: (NSInteger)rowIndex
 {
 	NSArray *items = [_layoutContext arrangedItems];
 	
 	if (rowIndex >= [items count])
 	{
 		ETLog(@"WARNING: Row index %d uncoherent with number of items %d in %@", 
-			rowIndex, (int)[items count], self);
+			(int)rowIndex, (int)[items count], self);
 		return nil;
 	}
 	
@@ -700,7 +700,7 @@ compatible with the cell used at the given row/column intersection.  */
 }
 
 - (void) tableView: (NSTableView *)tv 
-	setObjectValue: (id)value forTableColumn: (NSTableColumn *)column row: (int)rowIndex
+	setObjectValue: (id)value forTableColumn: (NSTableColumn *)column row: (NSInteger)rowIndex
 {
 	NSArray *layoutItems = [_layoutContext arrangedItems];
 	ETLayoutItem *item = nil;
@@ -708,7 +708,7 @@ compatible with the cell used at the given row/column intersection.  */
 	if (rowIndex >= [layoutItems count])
 	{
 		ETLog(@"WARNING: Row index %d uncoherent with number of items %d in %@", 
-			rowIndex, (int)[layoutItems count], self);
+			(int)rowIndex, (int)[layoutItems count], self);
 		return;
 	}
 	
@@ -779,7 +779,7 @@ Note: For now, private method. */
 
 - (NSDragOperation) tableView:(NSTableView*)tv 
                  validateDrop: (id <NSDraggingInfo>)info 
-				  proposedRow: (int)row 
+				  proposedRow: (NSInteger)row 
 	    proposedDropOperation: (NSTableViewDropOperation)op 
 {
 	NSParameterAssert(row != -1);
@@ -844,7 +844,7 @@ Note: For now, private method. */
 
 - (BOOL) tableView: (NSTableView *)aTableView 
         acceptDrop: (id <NSDraggingInfo>)info 
-               row: (int)row 
+               row: (NSInteger)row 
 	 dropOperation: (NSTableViewDropOperation)op
 {
     ETDebugLog(@"Accept drop in %@ drag mask %d drop op %d", _layoutContext, 
