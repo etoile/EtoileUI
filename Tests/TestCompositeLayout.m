@@ -190,7 +190,7 @@ DEALLOC(DESTROY(itemFactory); DESTROY(item))
 }
 
 - (ETLayoutItem *) baseItem: (ETLayoutItemGroup *)baseItem 
-                itemAtIndex: (int)index
+                itemAtIndex: (NSUInteger)index
                 inItemGroup: (ETLayoutItemGroup *)itemGroup
 {
 	return [itemFactory itemWithRepresentedObject: [[self modelContent] objectAtIndex: index]];	

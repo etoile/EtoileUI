@@ -374,8 +374,10 @@ inside the content bounds. */
 	[item1 addItem: item2];
 	[item1 setHasVerticalScroller: YES];
 	[item1 setHasHorizontalScroller: YES];
+#ifndef GNUSTEP
 	/* To turn off the new scroller style on Mac OS X 10.7 and above */
 	[[[[item1 scrollableAreaItem] scrollView] ifResponds] setScrollerStyle: NSScrollerStyleLegacy];
+#endif
 
 	/* Hit inside the scrollers */
 #ifdef GNUSTEP

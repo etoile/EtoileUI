@@ -27,4 +27,9 @@ EtoileUITests_OBJC_FILES = \
 	TestStyle.m \
 	TestWidgetLayout.m
 
+ifeq ($(coreobject), yes)
+EtoileUITests_OBJC_FILES += \
+	TestPersistency.m
+endif
+
 include $(GNUSTEP_MAKEFILES)/subproject.make
