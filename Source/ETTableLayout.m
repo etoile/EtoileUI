@@ -75,7 +75,11 @@
 	   custom table view provided as a replacement to the builtin prototype. */
 
 	// NOTE: Gorm doesn't allow to set the table view resizing style unlike IB
+#ifdef GNUSTEP
 	[[self tableView] setAutoresizesAllColumnsToFit: NO];
+#else
+	[[self tableView] setColumnAutoresizingStyle: NSTableViewNoColumnAutoresizing];
+#endif
 	 // TODO: Remove next line by modifying GNUstep to match Cocoa behavior
 	[[self tableView] setVerticalMotionCanBeginDrag: YES];
 	/* Enable double-click */
@@ -424,7 +428,9 @@ ETTableLayout machinery. */
 
 	[column setEditable: NO];
 	[column setSortDescriptorPrototype: [self createSortDescriptorWithKey: property]];
-
+#ifndef GNUSTEP
+	[column setResizingMask: NSTableColumnUserResizingMask];
+#endif
 	return AUTORELEASE(column);
 }
 
