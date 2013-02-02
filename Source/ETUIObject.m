@@ -289,6 +289,11 @@ user interaction. */
 	return NO;
 }
 
+- (BOOL) isPersistent
+{
+	return NO;
+}
+
 - (void) willChangeValueForProperty: (NSString *)aKey
 {
 	[self willChangeValueForKey: aKey];
