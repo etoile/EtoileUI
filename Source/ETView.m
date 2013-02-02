@@ -821,6 +821,8 @@ Cocoa and pass it to the layout item tree as needed. */
 - (void) keyUp: (NSEvent *)theEvent { }
 - (void) flagsChanged: (NSEvent *)theEvent { }
 #ifndef GNUSTEP
+- (BOOL) validateProposedFirstResponder: (NSResponder *)responder forEvent: (NSEvent *)event { return YES; }
+- (BOOL) wantsForwardedScrollEventsForAxis: (NSEventGestureAxis)axis { return NO; }
 - (void) tabletPoint: (NSEvent *)theEvent { }
 - (void) tabletProximity: (NSEvent *)theEvent { }
 - (void) cursorUpdate: (NSEvent *)event { }
