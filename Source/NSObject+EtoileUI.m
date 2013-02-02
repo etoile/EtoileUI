@@ -138,6 +138,15 @@ to overriden by a third-party inspector. */
 	[[[ETLayoutItemFactory factory] windowGroup] addItem: item];
 }
 
+/** Shows a source code editor to view or edit receiver class source code.
+ 
+For recompilable classes (implemented in Smalltalk), the editor lets you edit 
+and compile the code, otherwise the source code is read-only e.g. for Objective-C. */
+- (IBAction) editCode: (id)sender
+{
+
+}
+
 /* Introspection Utility */
 
 /** Returns the display name used to present the receiver or its instances in 

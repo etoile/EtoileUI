@@ -49,6 +49,7 @@
 - (IBAction) view: (id)sender;
 - (IBAction) inspect: (id)sender;
 - (IBAction) explore: (id)sender;
+- (IBAction) editCode: (id)sender;
 
 /* Introspection Utility
 
