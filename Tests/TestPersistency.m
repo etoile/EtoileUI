@@ -330,14 +330,14 @@
 	UKRectsEqual(rect, [newButtonItem frame]);
 	UKStringsEqual(@"Picturesque", [[newButtonItem view] title]);
 	UKObjectsEqual([newSliderItem view], [[newButtonItem view] target]);
-	UKTrue(@selector(print:) == [[newButtonItem view] action]);
+	UKTrue(sel_isEqual(@selector(print:), [[newButtonItem view] action]));
 
 	UKNotNil(newSliderItem);
 	UKObjectsNotSame(sliderItem, newSliderItem);
 	UKObjectKindOf([newSliderItem view], NSSlider);
 	UKRectsNotEqual(rect, [newSliderItem frame]);
 	UKObjectsEqual(newItemGroup, [[newSliderItem view] target]);
-	UKTrue(@selector(close:) == [[newSliderItem view] action]);
+	UKTrue(sel_isEqual(@selector(close:), [[newSliderItem view] action]));
 
 	[self checkValidityForNewPersistentObject: newButtonItem isFault: NO];
 	[self checkValidityForNewPersistentObject: newSliderItem isFault: NO];
