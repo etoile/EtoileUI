@@ -51,6 +51,7 @@
 #ifndef COREOBJECT
 - (id) commitTrack;
 - (BOOL) isRoot;
+- (BOOL) isPersistent;
 - (void) willChangeValueForProperty: (NSString *)aKey;
 - (void) didChangeValueForProperty: (NSString *)aKey;
 #endif
