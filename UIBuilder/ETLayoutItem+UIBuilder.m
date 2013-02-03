@@ -42,10 +42,12 @@
 	if ([widget respondsToSelector: @selector(setName:)])
 	{
 		[(ETLayoutItem *)widget setName: aName];
+		[[self representedItem] didChangeValueForProperty: kETNameProperty];
 	}
 	else if ([widget respondsToSelector: @selector(setTitle:)])
 	{
 		[widget setTitle: aName];
+		[[self representedItem] didChangeValueForProperty: kETViewProperty];
 	}
 	[[self representedItem] commit];
 }
@@ -68,6 +70,10 @@
 - (void)setUIBuilderAction: (NSString *)anAction
 {
 	[[self UIBuilderWidgetElement] setAction: NSSelectorFromString(anAction)];
+	if ([[self UIBuilderWidgetElement] isView])
+	{
+		[[self representedItem] didChangeValueForProperty: kETViewProperty];
+	}
 	[[self representedItem] commit];
 }
 
@@ -88,6 +94,10 @@
 	}
 
 	[[self UIBuilderWidgetElement] setTarget: target];
+	if ([[self UIBuilderWidgetElement] isView])
+	{
+		[[self representedItem] didChangeValueForProperty: kETViewProperty];
+	}
 	[[self representedItem] commit];
 }
 
