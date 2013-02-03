@@ -429,19 +429,17 @@ menu bar, otherwise builds a new instance and returns it. */
 
 	/* Builds and inserts menu items into the new dev menu */
 
-	[menu addItemWithTitle: _(@"Live Development") 
+	[menu addItemWithTitle: _(@"Toggle Live Development") 
 	                action: @selector(toggleLiveDevelopment:) 
-	         keyEquivalent:@""];
+	         keyEquivalent: @""];
 
-	[menu addItemWithTitle: _(@"Inspect Item")
+	[menu addItem: [NSMenuItem separatorItem]];
+
+	[menu addItemWithTitle: _(@"Inspect")
 	                action: @selector(inspectItem:) 
 	         keyEquivalent: @""];
 
-	[menu addItemWithTitle: _(@"Inspect")
-	                action: @selector(inspect:) 
-	         keyEquivalent: @""];
-
-	[menu addItemWithTitle:  _(@"Inspect Selection")
+	/*[menu addItemWithTitle:  _(@"Inspect Selection")
 	                action: @selector(inspectSelection:) 
 	         keyEquivalent: @""];
 
@@ -451,7 +449,7 @@ menu bar, otherwise builds a new instance and returns it. */
 
 	[menu addItemWithTitle: _(@"Browse Layout Item Tree")
 	                action: @selector(browseLayoutItemTree:) 
-	         keyEquivalent: @""];
+	         keyEquivalent: @""];*/
 
 	[menu addItem: [NSMenuItem separatorItem]];
 
