@@ -240,6 +240,17 @@ since -serializedValueForProperty: doesn't use the direct ivar access. */
 	_layoutItems = [items mutableCopy];
 }
 
+- (NSString *)serializedController
+{
+	return NSStringFromClass([[self controller] class]);
+}
+
+- (void)setSerializedController: (NSString *)aClassName
+{
+	Class controllerClass = NSClassFromString(aClassName);
+	[self setController: [[controllerClass new] autorelease]];
+}
+
 @end
 
 @implementation ETLayoutItemFactory (CoreObject)
