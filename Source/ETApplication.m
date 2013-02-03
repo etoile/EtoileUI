@@ -409,6 +409,13 @@ See also -_buildMainMenuIfNeeded. */
 		[[menu lastItem] setRepresentedObject: layoutClass];
 	}
 
+	Class layoutClass = NSClassFromString(@"ETWindowLayout");
+	[menu addItemWithTitle: [layoutClass displayName]
+		        target: aTarget 
+		        action: aSelector 
+		 keyEquivalent: nil];
+	[[menu lastItem] setRepresentedObject: layoutClass];
+
 	return menu;
 }
 
