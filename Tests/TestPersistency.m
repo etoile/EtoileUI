@@ -10,6 +10,7 @@
 
 #ifdef COREOBJECT
 
+#import <objc/runtime.h>
 #import <Foundation/Foundation.h>
 #import <AppKit/AppKit.h>
 #import <UnitKit/UnitKit.h>
@@ -22,6 +23,7 @@
 #import <CoreObject/COSQLStore.h>
 #import "ETActionHandler.h"
 #import "ETController.h"
+#import "ETGeometry.h"
 #import "ETLayoutExecutor.h"
 #import "ETLayoutItem.h"
 #import "ETLayoutItemFactory.h"
@@ -328,6 +330,7 @@
 	UKObjectsNotSame(buttonItem, newButtonItem);
 	UKObjectKindOf([newButtonItem view], NSButton);
 	UKRectsEqual(rect, [newButtonItem frame]);
+	UKRectsEqual(ETMakeRect(NSZeroPoint, rect.size), [[newButtonItem view] frame]);
 	UKStringsEqual(@"Picturesque", [[newButtonItem view] title]);
 	UKObjectsEqual([newSliderItem view], [[newButtonItem view] target]);
 	UKTrue(sel_isEqual(@selector(print:), [[newButtonItem view] action]));
@@ -336,11 +339,58 @@
 	UKObjectsNotSame(sliderItem, newSliderItem);
 	UKObjectKindOf([newSliderItem view], NSSlider);
 	UKRectsNotEqual(rect, [newSliderItem frame]);
+	//UKRectsEqual(ETMakeRect(NSZeroPoint, rect.size), [[newSliderItem view] frame]);
 	UKObjectsEqual(newItemGroup, [[newSliderItem view] target]);
 	UKTrue(sel_isEqual(@selector(close:), [[newSliderItem view] action]));
 
 	[self checkValidityForNewPersistentObject: newButtonItem isFault: NO];
 	[self checkValidityForNewPersistentObject: newSliderItem isFault: NO];
+	[self checkValidityForNewPersistentObject: newItemGroup isFault: NO];
+}
+
+// TODO: Improve to test geometry issues more exhaustively and be less verbose
+- (void) testResizeWidgetItem
+{
+	[self recreateContext];
+	
+	NSRect rect = NSMakeRect(50, 20, 400, 300);
+	
+	[itemFactory beginRootObject];
+
+	ETLayoutItem *buttonItem = [itemFactory buttonWithTitle: @"Picturesque"
+													 target: nil
+													 action: @selector(print:)];
+	ETLayoutItemGroup *itemGroup = [itemFactory itemGroupWithItem: buttonItem];
+	
+	[buttonItem setFrame: rect];
+	
+	[itemFactory endRootObject];
+	
+	UKNotNil([buttonItem UUID]);
+	UKNotNil([itemGroup UUID]);
+	
+	ETUUID *uuid = [[ctxt insertNewPersistentRootWithRootObject: itemGroup] persistentRootUUID];
+	
+	[self checkValidityForNewPersistentObject: buttonItem isFault: NO];
+	[self checkValidityForNewPersistentObject: itemGroup isFault: NO];
+	
+	[ctxt commit];
+	
+	NSSize lastSize = NSMakeSize(100, 400);
+	
+	[buttonItem setSize: lastSize];
+
+	[ctxt commit];
+
+	[self recreateContext];
+	
+	ETLayoutItem *newItemGroup = (id)[[ctxt persistentRootForUUID: uuid] rootObject];
+	ETLayoutItem *newButtonItem = (id)[[newItemGroup persistentRoot] objectWithUUID: [buttonItem UUID]];
+	
+	UKRectsEqual(ETMakeRect(rect.origin, lastSize), [newButtonItem frame]);
+	UKRectsEqual(ETMakeRect(NSZeroPoint, lastSize), [[newButtonItem view] frame]);
+
+	[self checkValidityForNewPersistentObject: newButtonItem isFault: NO];
 	[self checkValidityForNewPersistentObject: newItemGroup isFault: NO];
 }
 

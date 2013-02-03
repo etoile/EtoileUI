@@ -124,11 +124,12 @@
 
 - (void) setSerializedView: (NSView *)newView
 {
-	/* We use -setView: to recreate supervisorView which is transient and set 
-	   up the state and object value observers.
-	   
-	   Will involve a unnecessary -syncView:withRepresentedObject: call. */
-	[self setView: newView];
+	if (newView == nil)
+		return;
+
+	/* The item geometry might not be deserialized at this point, hence we set 
+	   the view in -awakeFromFetch once the entire object graph has been deserialized */
+	[_variableStorage setObject: newView forKey: @"serializedView"];
 }
 
 /* Required otherwise the bounds returned by -boundingBox might be serialized 
@@ -148,6 +149,18 @@ since -serializedValueForProperty: doesn't use the direct ivar access. */
 {
 	// TODO: May be reset the bounding box if not persisted
 	//_boundingBox = ETNullRect;
+	
+	/* We use -setView: to recreate supervisorView which is transient and set
+	   up the state and object value observers.
+	 
+	   Will involve a unnecessary -syncView:withRepresentedObject: call. */
+	NSView *serializedView = [_variableStorage objectForKey: @"serializedView"];
+
+	if (serializedView != nil)
+	{
+		[self setView: serializedView];
+	}
+	[_variableStorage removeObjectForKey: @"serializedView"];
 
 	/* Restore target and action on both the receiver item and its view */
 
