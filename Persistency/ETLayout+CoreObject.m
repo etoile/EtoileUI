@@ -32,6 +32,16 @@
 	//[[self dropIndicator] becomePersistentInContext: aContext];
 }
 
+- (NSString *) serializedAttachedTool
+{
+	return NSStringFromClass([[self attachedTool] class]);
+}
+
+- (void) setSerializedAttachedTool: (NSString *)aToolClassName
+{
+	[self setAttachedTool: [[NSClassFromString(aToolClassName) new] autorelease]];
+}
+
 - (void) awakeFromFetch
 {
 	[super awakeFromFetch];

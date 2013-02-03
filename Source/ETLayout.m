@@ -350,6 +350,8 @@ becomes the active tool. See -[ETTool setActiveTool:].
 Also invokes -didChangeAttachedTool:toTool:.  */
 - (void) setAttachedTool: (ETTool *)newTool
 {
+	[self willChangeValueForProperty: @"attachedTool"];
+
 	if ([newTool isEqual: _tool] == NO)
 		[_tool setLayoutOwner: nil];
 		
@@ -363,6 +365,7 @@ Also invokes -didChangeAttachedTool:toTool:.  */
 		[ETTool setActiveTool: newTool];
 	}
 
+	[self didChangeValueForProperty: @"attachedTool"];
 	[self didChangeAttachedTool: oldTool  toTool: newTool];
 
 	RELEASE(oldTool);

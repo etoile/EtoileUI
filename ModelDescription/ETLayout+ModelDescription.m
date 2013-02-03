@@ -54,12 +54,12 @@
 
 	/* Transient properties
 	   _tool, _dropIndicator, _isLayouting */
-	NSArray *transientProperties = A(tool, dropIndicator, layerItem);
+	NSArray *transientProperties = A(dropIndicator, layerItem);
 
 	// TODO: Support tool persistence... Rarely needed though.
 	// TODO: We need a direct ivar access to persist the layer item
 	// TODO: Evaluate whether we should support drop indicator persistence
-	NSArray *persistentProperties = A(context, delegate, layoutView,  
+	NSArray *persistentProperties = A(tool, context, delegate, layoutView,  
 		layoutSize, isContentSizeLayout, layoutSizeCustomized, itemSize, itemSizeConstraintStyle);
 
 	[[persistentProperties mappedCollection] setPersistent: YES];
