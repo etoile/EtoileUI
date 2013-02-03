@@ -326,9 +326,6 @@ related NSBrowser methods are called. */
 	// way is probably to provide a delegate method.
 	id value = [childItem valueForProperty: kETDisplayNameProperty];
 
-	NSAssert2(value != nil, @"Item %@ returns nil value in browser view %@ "
-		@"and display name must never be nil", childItem, self);
-
 	ETDebugLog(@"Returns %@ as object value in browser view %@", value, sender);
 	
 	/* See -tableView:objectValueForTableColumn:row: in ETTableLayout to 
