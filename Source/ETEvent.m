@@ -395,7 +395,10 @@ For the AppKit backend, the window content is the content view. */
 {
 	if (_draggingInfo != nil)
 	{
+#ifndef GNUSTEP
+		// FIXME: Evaluate this assertion on both Mac OS X and GNUstep
 		ETAssert([_draggingInfo draggingDestinationWindow] != nil);
+#endif
 		return [_draggingInfo draggingLocation];
 	}
 	return [(NSEvent *)_backendEvent locationInWindow];
