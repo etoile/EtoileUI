@@ -152,9 +152,23 @@
 	[masterViewItem setDelegate: self];
 	[masterViewItem setDoubleAction: @selector(doubleClickInItemGroupView:)];
 	[masterViewItem setTarget: self];
+	[masterViewItem setSelectionIndex: 0];
 
 	[detailViewItem setLayout: [ETViewModelLayout layout]];
 	[(id)[detailViewItem layout] setShouldInspectRepresentedObjectAsView: YES];
+}
+
+- (void) updatePopup: (NSPopUpButton *)popup forAspect: (id)anAspect
+{
+	if (anAspect != nil)
+	{
+		[popup selectItemWithTitle: [[anAspect class] displayName]];
+		[popup setEnabled: YES];
+	}
+	else
+	{
+		[popup setEnabled: NO];
+	}
 }
 
 - (void) itemGroupSelectionDidChange: (NSNotification *)notif
@@ -163,6 +177,9 @@
 
 	ETLayoutItem *selectedItem = [[masterViewItem selectedItemsInLayout] firstObject];
 	ETLayoutItem *inspectedItem = [selectedItem representedObject];
+
+	[self updatePopup: layoutPopup forAspect: [inspectedItem layout]];
+	[self updatePopup: toolPopup forAspect: [[inspectedItem layout] attachedTool]];
 
 	[detailViewItem setRepresentedObject: inspectedItem];
 	[detailViewItem updateLayout];
