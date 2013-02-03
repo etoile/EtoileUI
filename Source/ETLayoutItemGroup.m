@@ -640,8 +640,14 @@ See also -setSource:, -isBaseItem and -nextResponder. */
 - (void) setController: (ETController *)aController
 {
 	[self willChangeValueForProperty: kETControllerProperty];
+
 	[self setPrimitiveValue: aController forKey: kETControllerProperty];
 	[aController setContent: self];
+
+	if ([self isPersistent])
+	{
+		[aController becomePersistentInContext: [self persistentRoot]];
+	}
 	[self didChangeValueForProperty: kETControllerProperty];
 }
 
