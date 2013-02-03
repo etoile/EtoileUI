@@ -38,6 +38,15 @@
 	[layout setDisplayName: @"Type" forProperty: @"typeName"];
 	[layout setEditable: YES forProperty: @"value"];
 
+	[[layout columnForProperty: @"property"] setWidth: 150];
+	[[layout columnForProperty: @"name"] setWidth: 150];
+
+	[[layout columnForProperty: @"identifier"] setWidth: 150];
+	[[layout columnForProperty: @"typeName"] setWidth: 150];
+
+	[[layout columnForProperty: @"value"] setWidth: 1000];
+	[[layout columnForProperty: @"description"] setWidth: 1000];
+
 	return layout;
 }
 
