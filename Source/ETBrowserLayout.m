@@ -330,7 +330,11 @@ related NSBrowser methods are called. */
 	
 	/* See -tableView:objectValueForTableColumn:row: in ETTableLayout to 
 	   understand -objectValue use. */
-	[cell setStringValue: [value objectValue]];
+	if ([value objectValue] != nil)
+	{
+		// NOTE: For Mac OS X, -setStringValue: on FSBrowserCell asserts on nil.
+		[cell setStringValue: [value objectValue]];
+	}
 
 	if ([cell isKindOfClass: [NSBrowserCell class]])
 	{
