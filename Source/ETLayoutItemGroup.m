@@ -639,8 +639,10 @@ the receiver becomes both a base item and the controller content.
 See also -setSource:, -isBaseItem and -nextResponder. */
 - (void) setController: (ETController *)aController
 {
+	[self willChangeValueForProperty: kETControllerProperty];
 	[self setPrimitiveValue: aController forKey: kETControllerProperty];
 	[aController setContent: self];
+	[self didChangeValueForProperty: kETControllerProperty];
 }
 
 - (ETLayoutItemGroup *) controllerItem
@@ -935,6 +937,8 @@ Marks the receiver as needing a layout update. */
 	ETLayout *oldLayout = RETAIN(_layout);
 	BOOL wasAutolayoutEnabled = [self isAutolayout];
 
+	[self willChangeValueForProperty: kETLayoutProperty];
+
 	/* Disable autolayout to avoid spurious updates triggered by stuff like
 	   view/container frame modification on layout view insertion */
 	[self setAutolayout: NO];
@@ -945,6 +949,8 @@ Marks the receiver as needing a layout update. */
 
 	[self setAutolayout: wasAutolayoutEnabled];
 	[self setNeedsLayoutUpdate];
+
+	[self didChangeValueForProperty: kETLayoutProperty];
 }
 
 /** Attempts to reload the children items from the source and updates the layout
