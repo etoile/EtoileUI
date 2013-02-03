@@ -679,7 +679,7 @@ See also -setSource:, -isBaseItem and -nextResponder. */
 }
 
 /** Returns the child item at the given index in the receiver children. */
-- (ETLayoutItem *) itemAtIndex: (NSUInteger)index
+- (ETLayoutItem *) itemAtIndex: (NSInteger)index
 {
 	return [_layoutItems objectAtIndex: index];
 }

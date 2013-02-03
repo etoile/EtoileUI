@@ -60,7 +60,7 @@
 - (void) insertItem: (ETLayoutItem *)item atIndex: (NSUInteger)index;
 - (void) removeItem: (ETLayoutItem *)item;
 - (void) removeItemAtIndex: (NSUInteger)index;
-- (ETLayoutItem *) itemAtIndex: (NSUInteger)index;
+- (ETLayoutItem *) itemAtIndex: (NSInteger)index;
 - (ETLayoutItem *) firstItem;
 - (ETLayoutItem *) lastItem;
 - (NSInteger) indexOfItem: (id)item;
