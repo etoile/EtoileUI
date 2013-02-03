@@ -11,14 +11,18 @@
 	Actions = (
 	    "changeLayout:",
 	    "inspect:",
-	    "stack:"
+	    "stack:",
+	    "editController:",
+	    "editModel:",
+	    "changeTool:"
 	);
 	Outlets = (
 	    itemGroupView,
 	    propertyView,
 	    layoutPopup,
 	    window,
-	    viewModelLayout
+	    viewModelLayout,
+	    toolPopup
 	);
 	Super = ETLayoutItem;
     };
@@ -30,10 +34,10 @@
 	    "setRepresentedObject:"
 	);
 	Outlets = (
-	    _value,
-	    _modelObject,
-	    _view,
-	    _reserved
+	    "_value",
+	    "_modelObject",
+	    "_view",
+	    "_reserved"
 	);
 	Super = ETStyleRenderer;
     };
@@ -41,7 +45,7 @@
 	Actions = (
 	);
 	Outlets = (
-	    _hidden
+	    "_hidden"
 	);
 	Super = NSObject;
     };
@@ -59,7 +63,7 @@
 	    "expand:"
 	);
 	Outlets = (
-	    _renderer
+	    "_renderer"
 	);
 	Super = NSView;
     };
@@ -68,11 +72,14 @@
 	    "addObject:",
 	    "changeLayout:",
 	    "collapse:",
+	    "editController:",
+	    "editModel:",
 	    "expand:",
 	    "initWithRepresentedObject:",
 	    "initWithValue:",
 	    "inspect:",
 	    "inspectSelection:",
+	    "changeTool:",
 	    "removeObject:",
 	    "setDelegate:",
 	    "setRenderer:",
