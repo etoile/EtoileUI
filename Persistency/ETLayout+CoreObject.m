@@ -39,7 +39,7 @@
 
 - (void) setSerializedAttachedTool: (NSString *)aToolClassName
 {
-	[self setAttachedTool: [[NSClassFromString(aToolClassName) new] autorelease]];
+	[self setAttachedTool: [NSClassFromString(aToolClassName) tool]];
 }
 
 - (void) awakeFromFetch
@@ -58,8 +58,8 @@
 {
 	[super awakeFromFetch];
 
-	[self setAttachedTool: [ETSelectTool tool]];
-	[[self attachedTool] setShouldProduceTranslateActions: YES];
+	//[self setAttachedTool: [ETSelectTool tool]];
+	[[[self attachedTool] ifResponds] setShouldProduceTranslateActions: YES];
 	[[self layerItem] setActionHandler: nil];
 	[[self layerItem] setCoverStyle: nil];
 
