@@ -34,7 +34,7 @@ when a layout other than ETWindowLayout is set on the receiver. */
 	[self setFrame: [[NSScreen mainScreen] visibleFrame]];
 		
 	ASSIGN(_rootWindowItem, [self createRootWindowItem]);
-	_visibleWindows = [[NSMutableArray alloc] init];
+	_hiddenWindows = [[NSMutableArray alloc] init];
 	[self setLayout: [ETWindowLayout layout]];
 
 	return self;
@@ -44,7 +44,7 @@ when a layout other than ETWindowLayout is set on the receiver. */
 {
 	[self stopKVOObservationIfNeeded];
 	DESTROY(_rootWindowItem); 
-	DESTROY(_visibleWindows);
+	DESTROY(_hiddenWindows);
 	[super dealloc];
 }
 
@@ -118,8 +118,10 @@ when a layout other than ETWindowLayout is set on the receiver. */
 {
 	if ([[self layout] isKindOfClass: [ETWindowLayout class]])
 	{
-		[self removeWindowDecoratorItems];
+		/* -hideHardWindows must be called first, because visible windows 
+		   are going to changed once window decorators have been removed. */
 		[self hideHardWindows];
+		[self removeWindowDecoratorItems];
 	}
 
 	if ([aLayout isKindOfClass: [ETWindowLayout class]])
@@ -158,8 +160,6 @@ the receiver.
 You should never call this method unless you write an ETWindowLayout subclass. */
 - (void) hideHardWindows
 {
-	[_visibleWindows removeAllObjects];
-
 	/* Display our root window before ordering out all visible windows, 
 	   it literally covers the small delay that might be needed to order out the 
 	   current windows.
@@ -176,7 +176,7 @@ You should never call this method unless you write an ETWindowLayout subclass. *
 			if ([win isVisible] && [win isSystemPrivateWindow] == NO)
 			{
 				ETDebugLog(@"%@ will order out %@", self, win);
-				[_visibleWindows addObject: win];
+				[_hiddenWindows addObject: win];
 				[win orderOut: self];
 			}
 		}	
@@ -189,10 +189,12 @@ items owned by the receiver.
 You should never call this method unless you write an ETWindowLayout subclass. */
 - (void) showHardWindows
 {
-	FOREACH(_visibleWindows, win, NSWindow *)
+	FOREACH(_hiddenWindows, win, NSWindow *)
 	{
 		[win orderFront: self];
 	}
+	[_hiddenWindows removeAllObjects];
+
 	[self removeDecoratorItem: _rootWindowItem]; /* Order out the root window */
 }
 
@@ -217,8 +219,7 @@ You should never call this method unless you write an ETWindowLayout subclass. *
 			windowItem = [ETWindowItem item];
 		}
 		[[item lastDecoratorItem] setDecoratorItem: windowItem];
-		// TODO: Remove the cached window item
-		//[item setDefaultValue: nil forProperty: @"windowItem"];
+		[item setDefaultValue: nil forProperty: @"windowItem"];
 	}
 }
 

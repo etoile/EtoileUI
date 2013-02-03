@@ -19,7 +19,7 @@
 {
 	@private
 	ETWindowItem *_rootWindowItem;
-	NSMutableArray *_visibleWindows;
+	NSMutableArray *_hiddenWindows;
 }
 
 - (void) hideHardWindows;
