@@ -1927,7 +1927,15 @@ If the given style is nil, the style group becomes empty. */
 
 - (void) setDefaultValue: (id)aValue forProperty: (NSString *)key
 {
-	[_defaultValues setObject: aValue forKey: key];
+	if (aValue == nil)
+	{
+	
+		[_defaultValues removeObjectForKey: key];
+	}
+	else
+	{
+		[_defaultValues setObject: aValue forKey: key];
+	}
 }
 
 - (id) defaultValueForProperty: (NSString *)key
@@ -3040,10 +3048,13 @@ be sent by the UI element in the EtoileUI responder chain. */
 The target is not retained. */
 - (void) setTarget: (id)aTarget
 {
+	/* For target persistency, we mark targetId as updated (see ETLayoutItem+CoreObject) */
+	[self willChangeValueForProperty: @"targetId"];
 	[self willChangeValueForProperty: kETTargetProperty];
 	[self setPrimitiveValue: [NSValue valueWithNonretainedObject: aTarget] forKey: kETTargetProperty];
 	[[self layout] syncLayoutViewWithItem: self];
 	[self didChangeValueForProperty: kETTargetProperty];
+	[self didChangeValueForProperty: @"targetId"];
 }
 
 /** Returns the target to which actions should be sent. */
