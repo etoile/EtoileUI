@@ -517,11 +517,14 @@ positional layout. */
 - (void) willRenderItems: (NSArray *)items isNewContent: (BOOL)isNewContent
 {
 	float scale = [_layoutContext itemScaleFactor];
+
 	if (isNewContent || scale != _previousScaleFactor)
 	{
 		[self resizeLayoutItems: items toScaleFactor: scale];
 		_previousScaleFactor = scale;
 	}
+	[self adjustAlignmentForMaxLabelWidth: _currentMaxLabelWidth
+	                         maxItemWidth: _currentMaxItemWidth];
 }
 
 /** Resizes every item to the given scale by delegating it to 
@@ -535,16 +538,7 @@ The resizing isn't delegated to the positional layout unlike in ETTemplateItemLa
 - (void) resizeLayoutItems: (NSArray *)items toScaleFactor: (float)factor
 {
 	_currentMaxLabelWidth = 0;
-	/* For this method, the bounding box width is the item frame width summed  
-	   with the label width (positioned to the left outside).
-
-	   The combined bounding width below sums the widest item frame and label 
-	   width, both frame and label can belong to distinct items. From this 
-	   aggregate width, we compute the remaining space on the left and right,  
-	   then the horizontal guide position (for ETColumnLayout). */
-	_currentMaxCombinedBoundingWidth = 0;
-
-	float maxItemWidth = 0;
+	_currentMaxItemWidth = 0;
 
 	/* Scaling is always computed from the base image size (scaleFactor equal to 
 	   1) in order to avoid rounding error that would increase on each scale change. */
@@ -562,9 +556,9 @@ The resizing isn't delegated to the positional layout unlike in ETTemplateItemLa
 		{
 			_currentMaxLabelWidth = labelWidth;
 		}
-		if (boundingSize.width > maxItemWidth)
+		if (boundingSize.width > _currentMaxItemWidth)
 		{
-			maxItemWidth = viewOrItemSize.width;
+			_currentMaxItemWidth = viewOrItemSize.width;
 		}
 
 		// TODO: May be better to compute that in -[ETBasicItemStyle boundingBoxForItem:]
@@ -572,12 +566,23 @@ The resizing isn't delegated to the positional layout unlike in ETTemplateItemLa
 		boundingBox.origin.y = -boundingSize.height + [item height];
 		[item setBoundingBox: boundingBox];
 	}
+}
 
-	_currentMaxCombinedBoundingWidth = _currentMaxLabelWidth + maxItemWidth;
+- (void)adjustAlignmentForMaxLabelWidth: (float)maxLabelWidth
+                           maxItemWidth: (float)maxItemWidth
+{
+	/* For this method, the bounding box width is the item frame width summed
+	   with the label width (positioned to the left outside).
 
-	float remainingSpace = [self layoutContext].size.width - _currentMaxCombinedBoundingWidth;
+	   The combined bounding width below sums the widest item frame and label 
+	   width, both frame and label can belong to distinct items. From this 
+	   aggregate width, we compute the remaining space on the left and right,  
+	   then the horizontal guide position (for ETColumnLayout). */
+	float maxCombinedBoundingWidth = maxLabelWidth + maxItemWidth;
+	
+	float remainingSpace = [self layoutContext].size.width - maxCombinedBoundingWidth;
 	float inset = 0; /* ETFormLayoutAlignmentLeft */
-
+	
 	if ([self alignment] == ETFormLayoutAlignmentCenter)
 	{
 		inset = remainingSpace * 0.5;
@@ -586,8 +591,8 @@ The resizing isn't delegated to the positional layout unlike in ETTemplateItemLa
 	{
 		inset = remainingSpace;
 	}
-
-	[[(id)[self positionalLayout] ifResponds] setHorizontalAlignmentGuidePosition: inset + _currentMaxLabelWidth];
+	
+	[[(id)[self positionalLayout] ifResponds] setHorizontalAlignmentGuidePosition: inset + maxLabelWidth];
 }
 
 - (float) alignmentHintForLayout: (ETComputedLayout *)aLayout
