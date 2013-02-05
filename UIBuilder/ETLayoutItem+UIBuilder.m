@@ -67,6 +67,17 @@
 	return nil;
 }
 
+- (void)setUIBuilderIdentifier: (NSString *)anId
+{
+	[[self representedItem] setIdentifier: anId];
+	[[self representedItem] commit];
+}
+
+- (NSString *)UIBuilderIdentifier
+{
+	return [[self representedItem] identifier];
+}
+
 - (void)setUIBuilderAction: (NSString *)anAction
 {
 	[[self UIBuilderWidgetElement] setAction: NSSelectorFromString(anAction)];
@@ -96,7 +107,7 @@
 	[[self UIBuilderWidgetElement] setTarget: target];
 	if ([[self UIBuilderWidgetElement] isView])
 	{
-		[[self representedItem] didChangeValueForProperty: kETViewProperty];
+		[[self representedItem] didChangeValueForProperty: @"viewTargetId"];
 	}
 	[[self representedItem] commit];
 }
@@ -104,14 +115,20 @@
 - (NSString *)UIBuilderTarget
 {
 	id target = [[self UIBuilderWidgetElement] target];
-	id widgetElement = ([target isLayoutItem] ? target : [[target ifResponds] owningItem]);
 
-	if (widgetElement == nil)
+	if (target == nil)
+		return nil;
+
+	ETLayoutItem *targetItem = ([target isLayoutItem] ? target : [[target ifResponds] owningItem]);
+
+	NSLog(@"Found target %@", target);
+
+	if (targetItem == nil)
 	{
-		NSLog(@"WARNING: Found no identifier for target %@", target);
+		NSLog(@"WARNING: Found no identifier for target %@", targetItem);
 		return nil;
 	}
-	return [widgetElement identifier];
+	return [targetItem identifier];
 }
 
 

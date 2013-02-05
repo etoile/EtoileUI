@@ -17,6 +17,8 @@
 
 - (void)setUIBuilderName: (NSString *)aName;
 - (NSString *)UIBuilderName;
+- (void)setUIBuilderIdentifier: (NSString *)anId;
+- (NSString *)UIBuilderIdentifier;
 
 - (void)setUIBuilderAction: (NSString *)anAction;
 - (NSString *)UIBuilderAction;
