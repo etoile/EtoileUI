@@ -238,8 +238,15 @@
 	
 	[self setRepresentedObject: inspectedItem];
 	
+	if (name == nil)
+	{
+		name = @"";
+	}
+
 	if ([name length] > 25)
+	{
 		name = [[name substringToIndex: 25] stringByAppendingString: @"…"];
+	}
 
 	[[self window] setTitle: name];
 }
