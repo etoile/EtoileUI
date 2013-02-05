@@ -139,7 +139,7 @@ Also means the inset is interpreted as a right inset. */
 	ETFormLayoutAlignment _alignment;
 	float highestLabelWidth;
 	float _currentMaxLabelWidth;
-	float _currentMaxCombinedBoundingWidth;
+	float _currentMaxItemWidth;
 	ETBasicItemStyle *_standaloneTextStyle;
 }
 
