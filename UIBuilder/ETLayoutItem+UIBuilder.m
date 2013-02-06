@@ -90,7 +90,7 @@
 
 - (NSString *)UIBuilderAction
 {
-	return NSStringFromSelector([[self UIBuilderWidgetElement] action]);
+	return NSStringFromSelector([[[self UIBuilderWidgetElement] ifResponds] action]);
 }
 
 - (void)setUIBuilderTarget: (NSString *)aTargetId
@@ -114,7 +114,7 @@
 
 - (NSString *)UIBuilderTarget
 {
-	id target = [[self UIBuilderWidgetElement] target];
+	id target = [[[self UIBuilderWidgetElement] ifResponds] target];
 
 	if (target == nil)
 		return nil;
