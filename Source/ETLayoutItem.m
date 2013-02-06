@@ -1603,6 +1603,12 @@ See also +disablesAutolayout. */
 	[self setNeedsDisplay: YES];
 }
 
+/** Returns NO. See -[ETLayoutItemGroup usesLayoutBasedFrame]. */
+- (BOOL) usesLayoutBasedFrame
+{
+	return NO;
+}
+
 static inline NSRect DrawingBoundsInWindowItem(ETWindowItem *windowItem)
 {
 	/* We exclude the window border and title bar because the display 

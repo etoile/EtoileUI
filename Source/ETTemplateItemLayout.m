@@ -556,7 +556,7 @@ The resizing isn't delegated to the positional layout unlike in ETTemplateItemLa
 		{
 			_currentMaxLabelWidth = labelWidth;
 		}
-		if (boundingSize.width > _currentMaxItemWidth)
+		if (viewOrItemSize.width > _currentMaxItemWidth)
 		{
 			_currentMaxItemWidth = viewOrItemSize.width;
 		}
@@ -579,7 +579,7 @@ The resizing isn't delegated to the positional layout unlike in ETTemplateItemLa
 	   aggregate width, we compute the remaining space on the left and right,  
 	   then the horizontal guide position (for ETColumnLayout). */
 	float maxCombinedBoundingWidth = maxLabelWidth + maxItemWidth;
-	
+
 	float remainingSpace = [self layoutContext].size.width - maxCombinedBoundingWidth;
 	float inset = 0; /* ETFormLayoutAlignmentLeft */
 	
@@ -591,13 +591,19 @@ The resizing isn't delegated to the positional layout unlike in ETTemplateItemLa
 	{
 		inset = remainingSpace;
 	}
-	
-	[[(id)[self positionalLayout] ifResponds] setHorizontalAlignmentGuidePosition: inset + maxLabelWidth];
+
+	[self setHorizontalAlignmentGuidePosition: inset + maxLabelWidth];
 }
 
 - (float) alignmentHintForLayout: (ETComputedLayout *)aLayout
 {
-	return _currentMaxLabelWidth;
+	return [(ETComputedLayout *)[self positionalLayout] horizontalAlignmentGuidePosition];
+}
+
+- (void) setHorizontalAlignmentGuidePosition: (float)aPosition
+{
+	//NSLog(@"New guide position %0.2f for %@", aPosition, [[self layoutContext] identifier]);
+	[[self positionalLayout] setHorizontalAlignmentGuidePosition: aPosition];
 }
 
 @end

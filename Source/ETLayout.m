@@ -953,6 +953,11 @@ time a setting changes:
 	}
 }
 
+- (BOOL) isLayoutExecutionItemDependent
+{
+	return NO;
+}
+
 /* Presentational Item Tree */
 
 /** Returns a layout item when the receiver is an aggregate layout which 

@@ -13,6 +13,7 @@
 #import <Foundation/Foundation.h>
 #import <AppKit/AppKit.h>
 #import <EtoileUI/ETLayout.h>
+#import <EtoileUI/ETComputedLayout.h>
 
 @class ETLayoutItem, ETBasicItemStyle;
 
@@ -132,7 +133,7 @@ Also means the inset is interpreted as a left inset. */
 Also means the inset is interpreted as a right inset. */
 } ETFormLayoutAlignment;
 
-@interface ETFormLayout : ETTemplateItemLayout
+@interface ETFormLayout : ETTemplateItemLayout <ETAlignmentHint>
 {
 	NSFont *_itemLabelFont;
 	NSTextAlignment _itemLabelAlignment;
@@ -148,5 +149,8 @@ Also means the inset is interpreted as a right inset. */
 /*- (void) setItemLabelFont: (NSFont *)font;
 - (void) setItemLabelAlignment: (NSTextAlignment)alignment;
 -setInsertSeparatorBetweenGroups*/
+
+- (float) alignmentHintForLayout: (ETLayout *)aLayout;
+- (void) setHorizontalAlignmentGuidePosition: (float)aPosition;
 
 @end

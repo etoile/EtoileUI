@@ -101,6 +101,8 @@ Warning: This protocol is very much subject to change. */
 - (void) setBorderMargin: (float)margin;
 /** See -[ETComputedLayout setItemMargin:]. */
 - (void) setItemMargin: (float)margin;
+/** See -[ETComputedLayout setHorizontalAlignmentGuidePosition:]. */
+- (void) setHorizontalAlignmentGuidePosition: (float)aPosition;
 /** See -[ETLayout renderWithLayoutItems:isNewContent:]. */
 - (void) renderWithLayoutItems: (NSArray *)items isNewContent: (BOOL)isNewContent;
 /** See -[ETLayout itemAtLocation:]. */
@@ -233,6 +235,8 @@ typedef enum _ETSizeConstraintStyle
 
 - (void) resetLayoutSize;
 - (void) resizeLayoutItems: (NSArray *)items toScaleFactor: (float)factor;
+
+- (BOOL) isLayoutExecutionItemDependent;
 
 /* Presentational Item Tree */
 

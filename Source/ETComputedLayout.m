@@ -15,6 +15,8 @@
 #import "ETLineFragment.h"
 #import "ETCompatibility.h"
 
+float ETAlignmentHintNone = FLT_MIN;
+
 
 @implementation ETComputedLayout
 
@@ -118,6 +120,60 @@ guide is ignored by the layout computation.  */
 {
 	_horizontalAlignmentGuidePosition = aPosition;
 	[self renderAndInvalidateDisplay];
+}
+
+- (BOOL) usesAlignmentHint
+{
+	return _usesAlignmentHint;
+}
+
+- (void) setUsesAlignmentHint: (BOOL)usesHint
+{
+	_usesAlignmentHint = usesHint;
+}
+
+- (BOOL) isLayoutExecutionItemDependent
+{
+	return [self usesAlignmentHint];
+}
+
+- (float) horizontalAlignmentGuidePositionForItems: (NSArray *)items
+{
+	float guidePosition = ETAlignmentHintNone;
+
+	for (ETLayoutItem *item in items)
+	{
+		float hint = ETAlignmentHintNone;
+
+		if ([[item layout] conformsToProtocol: @protocol(ETAlignmentHint)])
+		{
+			hint = [[item layout] alignmentHintForLayout: self];
+		}
+		
+		if (hint != ETAlignmentHintNone && hint > guidePosition)
+		{
+			guidePosition = hint;
+		}
+	}
+	return guidePosition;
+}
+
+- (void) adjustHorizontalAlignmentGuidePositionForItems: (NSArray *)items
+{
+	if ([self usesAlignmentHint] == NO)
+		return;
+
+	float guidePosition = [self horizontalAlignmentGuidePositionForItems: items];
+
+	if (guidePosition == ETAlignmentHintNone)
+		return;
+
+	NSLog(@"Computed guide position %0.2f", guidePosition);
+
+	for (ETLayoutItem *item in items)
+	{
+		[[[item layout] ifResponds] setHorizontalAlignmentGuidePosition: guidePosition];
+	}
 }
 
 /* Layout Computation */
@@ -253,6 +309,8 @@ by calling -setVisibleItems: on the layout context. */
 {
 	/* Will compute the initial layout size with -resetLayoutSize */	
 	[super renderWithLayoutItems: items isNewContent: isNewContent];
+
+	[self adjustHorizontalAlignmentGuidePositionForItems: items];
 
 	NSSize initialLayoutSize = [self layoutSize];
 	NSArray *spacedItems = [self insertSeparatorsBetweenItems: items];

@@ -13,6 +13,7 @@
 #import "ETLayoutExecutor.h"
 #import "ETLayoutItem.h"
 #import "ETLayoutItemGroup.h"
+#import "ETLayout.h"
 #import "ETCompatibility.h"
 
 
@@ -91,10 +92,16 @@ the control returns to the run loop. */
 	return[_scheduledItems isEmpty];
 }
 
+/** Returns whether the parent layout depends on the given item layout result. */
+- (BOOL) isFlexibleItem: (ETLayoutItem *)anItem
+{
+	return ([anItem usesLayoutBasedFrame] || [[[anItem parentItem] layout] isLayoutExecutionItemDependent]);
+}
+
 /** Inserts the item in the queue, in a way that ensures flexible items have 
 their layout updated before their parent item if the latter is flexible.
 
-A flexible item is a item which returns YES to -[ETLayoutItem usesLayoutBasedFrame]. */
+A flexible item is a item which returns YES to -isFlexibleItem:. */
 - (void) insertItem: (ETLayoutItem *)anItem 
 inFlexibleItemQueue: (NSMutableArray *)flexibleItemQueue
 {
@@ -147,7 +154,7 @@ update once all its children have receive their own.   */
 	if (hasBeenProcessed)
 	{
 		// Same as [flexibleFrameItems containsObject: parentItem]
-		if ([parentItem usesLayoutBasedFrame] == NO)
+		if ([self isFlexibleItem: parentItem] == NO)
 			return;
 
 		[self insertItem: parentItem inFlexibleItemQueue: flexibleItemQueue];
@@ -181,13 +188,13 @@ layout update constraints, then tells the reordered items to update their layout
 		{
 			[dirtyItems addObject: opaqueItem];
 		}
-		else if ([[item ifResponds] usesLayoutBasedFrame])
+		else if ([self isFlexibleItem: item])
 		{
 			[self insertItem: item inFlexibleItemQueue: flexibleItemQueue];
 
 			/* When a dirty item uses a layout based frame, its parent 
 			   needs a layout update, in other words to be marked as dirty. */
-			[self scheduleParentItem: [item parentItem] 
+			[self scheduleParentItem: [item parentItem]
 			               processed: [processedItems containsObject: [item parentItem]]
 			     inFlexibleItemQueue: flexibleItemQueue
 			              dirtyItems: dirtyItems];

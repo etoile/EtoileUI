@@ -17,6 +17,8 @@
 
 @class ETLayoutItem, ETLineFragment;
 
+extern float ETAlignmentHintNone;
+
 @protocol ETAlignmentHint
 - (float) alignmentHintForLayout: (ETLayout *)aLayout;
 @end
@@ -71,6 +73,7 @@ In the rare case where more control is required, you might want to reimplement
 	float _itemMargin;
 	ETLayoutHorizontalAlignment _horizontalAlignment;
 	float _horizontalAlignmentGuidePosition;
+	BOOL _usesAlignmentHint;
 	ETLayoutItem *_separatorTemplateItem;
 	float _separatorItemEndMargin;
 	BOOL _computesItemRectFromBoundingBox;
@@ -86,6 +89,8 @@ In the rare case where more control is required, you might want to reimplement
 - (void) setHorizontalAligment: (ETLayoutHorizontalAlignment)anAlignment;
 - (float) horizontalAlignmentGuidePosition;
 - (void) setHorizontalAlignmentGuidePosition: (float)aPosition;
+- (BOOL) usesAlignmentHint;
+- (void) setUsesAlignmentHint: (BOOL)usesHint;
 
 /* Layout Computation */
 
