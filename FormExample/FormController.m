@@ -45,7 +45,7 @@
 - (void) buildMultipleSectionForm
 {
 	ETLayoutItemFactory *itemFactory = [ETLayoutItemFactory factory];
-	ETLayoutItemGroup *itemGroup = [itemFactory itemGroup];
+	ETLayoutItemGroup *itemGroup = [itemFactory itemGroupWithFrame: NSMakeRect(0, 0, 500, 400)];
 	ETLayoutItemGroup *firstSectionItem = [itemFactory itemGroupWithFrame: NSMakeRect(0, 0, 500, 200)];
 	ETLayoutItemGroup *secondSectionItem = [itemFactory itemGroupWithFrame: NSMakeRect(0, 0, 500, 200)];
 	ETLayoutItem *sliderItem = [itemFactory horizontalSlider];
@@ -60,17 +60,23 @@
 	[textFieldItem setWidth: 300];
 
 	[firstSectionItem addItem: textFieldItem];
+	[firstSectionItem setAutoresizingMask: ETAutoresizingFlexibleWidth];
 	[firstSectionItem setLayout: [self createFormLayout]];
+	[firstSectionItem setIdentifier: @"section1"];
+
 	[secondSectionItem addItems: A(sliderItem, buttonItem)];
+	[secondSectionItem setAutoresizingMask: ETAutoresizingFlexibleWidth];
 	[secondSectionItem setLayout: [self createFormLayout]];
+	[secondSectionItem setIdentifier: @"section2"];
 
 	[itemGroup addItems: A(firstSectionItem, secondSectionItem)];
 
-	[itemGroup setFrame: NSMakeRect(0, 0, 500, 400)];
 	[itemGroup setLayout: [ETColumnLayout layout]];
 	//[[itemGroup layout] setBorderMargin: 10];
 	[[itemGroup layout] setSeparatorItemEndMargin: 30];
 	[[itemGroup layout] setSeparatorTemplateItem: [itemFactory lineSeparator]];
+	[[itemGroup layout] setUsesAlignmentHint: YES];
+	[itemGroup setIdentifier: @"form"];
 
 	[[itemFactory windowGroup] addItem: itemGroup];
 }
@@ -133,7 +139,7 @@
 
 static ETEntityDescription *movieEntityDesc = nil;
 
-+ (ETEntityDescription *) entityDescription
++ (ETEntityDescription *) newEntityDescription
 {
 	if (nil != movieEntityDesc)
 		return movieEntityDesc;
