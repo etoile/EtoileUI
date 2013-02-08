@@ -11,12 +11,15 @@
 @interface Movie : NSObject
 {
 	NSString *title;
-	NSUInteger releaseDate;
+	NSDate *releaseDate;
+	NSInteger runningTime;
 }
 
-+ (Movie *) movieWithTitle: (NSString *)aTitle releaseDate: (NSUInteger)aDate;
-- (NSString *) title;
-- (NSUInteger) releaseDate;
++ (Movie *) movie;
+
+@property (nonatomic, retain) NSString *title;
+@property (nonatomic, retain) NSDate *releaseDate;
+@property (nonatomic, assign) NSInteger runningTime;
 
 @end
 
@@ -34,10 +37,30 @@
 	return layout;
 }
 
-- (void) buildUIFromModelDescription
+- (NSDate *)dateWithYear: (NSInteger)aYear month: (NSInteger)aMonth day: (NSInteger)aDay
 {
-	Movie *movie = [Movie movieWithTitle: @"Gran Torino" releaseDate: 2008];
-	ETLayoutItemGroup *itemGroup = [[ETModelDescriptionRenderer renderer] renderModel: movie];
+	NSCalendar *gregorian = [[NSCalendar alloc] initWithCalendarIdentifier: NSGregorianCalendar];
+	NSDateComponents *comps = [[NSDateComponents alloc] init];
+
+	[comps setDay: aDay];
+	[comps setMonth: aMonth];
+	[comps setYear: aYear];
+
+	return [gregorian dateFromComponents:comps];
+}
+
+- (Movie *)randomMovie
+{
+	Movie *movie = [Movie movie];
+	[movie setTitle: @"Gran Torino"];
+	[movie setReleaseDate: [self dateWithYear: 2008 month: 0 day: 0]];
+	[movie setRunningTime: 300];
+	return movie;
+}
+
+- (void) buildFormFromModelDescription
+{
+	ETLayoutItemGroup *itemGroup = [[ETModelDescriptionRenderer renderer] renderObject: [self randomMovie]];
 	
 	[[[ETLayoutItemFactory factory] windowGroup] addItem: itemGroup];
 }
@@ -123,19 +146,34 @@
 	[[itemFactory windowGroup] addItem: itemGroup];
 }
 
+- (void) showFormGeneratedMetamodelEditor
+{
+	[[[ETModelDescriptionRepository mainRepository] descriptionForName: @"ETEntityDescription"] view: nil];
+	//[[[ETModelDescriptionRepository mainRepository] descriptionForName: @"ETPropertyDescription"] view: nil];
+	//[[[ETModelDescriptionRepository mainRepository] descriptionForName: @"ETPackageDescription"] view: nil];
+}
+
 - (void) applicationDidFinishLaunching: (NSNotification *)notif
 {
 	[ETLayoutItem setShowsBoundingBox: YES];
 	[ETLayoutItem setShowsFrame: YES];
 
-	[self buildSingleSectionForm];
+	/*[self buildSingleSectionForm];
 	[self buildMultipleSectionForm];
+	[self buildFormFromModelDescription];*/
+
+	[self showFormGeneratedMetamodelEditor];
+
+	/*ETLayoutItemGroup *editor = [[ETLayoutItemFactory factory] collectionEditorWithSize: NSMakeSize(400, 500) representedObject: nil controller: self];
+	[[[ETLayoutItemFactory factory] windowGroup] addItem: editor];*/
 }
 
 @end
 
 
 @implementation Movie
+
+@synthesize title, releaseDate, runningTime;
 
 static ETEntityDescription *movieEntityDesc = nil;
 
@@ -146,39 +184,35 @@ static ETEntityDescription *movieEntityDesc = nil;
 
 	movieEntityDesc = [[ETEntityDescription alloc] initWithName: @"Movie"];
 
-	ETPropertyDescription *titleDesc = [ETPropertyDescription descriptionWithName: @"title"];
-	ETPropertyDescription *releaseDateDesc = [ETPropertyDescription descriptionWithName: @"releaseDate"];
-	ETNumberRole *releaseDateRole = AUTORELEASE([[ETNumberRole alloc] init]);
+	ETPropertyDescription *title = [ETPropertyDescription descriptionWithName: @"title" type: (id)@"NSString"];
 
+	ETPropertyDescription *releaseDate = [ETPropertyDescription descriptionWithName: @"releaseDate" type: (id)@"NSDate"];
+	ETNumberRole *releaseDateRole = AUTORELEASE([[ETNumberRole alloc] init]);
 	[releaseDateRole setMinimum: 2000];
 	[releaseDateRole setMaximum: 2010];
-	[releaseDateDesc setRole: releaseDateRole];
+	[releaseDate setRole: releaseDateRole];
 
-	[movieEntityDesc setPropertyDescriptions: A(titleDesc, releaseDateDesc)];
+	ETPropertyDescription *runningTime = [ETPropertyDescription descriptionWithName: @"runningTime" type: (id)@"NSInteger"];
+	ETNumberRole *runningTimeRole = AUTORELEASE([[ETNumberRole alloc] init]);
+	[runningTimeRole setMinimum: 2000];
+	[runningTimeRole setMaximum: 2010];
+	[runningTime setRole: runningTimeRole];
+
+	[movieEntityDesc setPropertyDescriptions: A(title, runningTime)];
 
 	return movieEntityDesc;
 }
 
-+ (Movie *) movieWithTitle: (NSString *)aTitle releaseDate: (NSUInteger)aDate
++ (Movie *) movie
 {
-	Movie *newMovie = AUTORELEASE([[self alloc] init]);
-
-	ASSIGN(newMovie->title, aTitle);
-	newMovie->releaseDate = aDate;
-
-	return newMovie;
+	return AUTORELEASE([[self alloc] init]);
 }
 
-DEALLOC(DESTROY(title))
-
-- (NSString *) title
+- (void) dealloc
 {
-	return title;
-}
-
-- (NSUInteger) releaseDate
-{
-	return releaseDate;
+	DESTROY(title);
+	DESTROY(releaseDate);
+	[super dealloc];
 }
 
 @end
