@@ -906,6 +906,7 @@ object when the view is a widget. */
 
 	id oldObject = _representedObject;
 
+	_isSettingRepresentedObject = YES;
 	[_representedObject removeObserver: self];
 
 	/* To ensure the values are not released before the KVO notification ends */
@@ -927,6 +928,7 @@ object when the view is a widget. */
 
 	[self syncView: [self view] withRepresentedObject: modelObject];
 	[modelObject addObserver: self];
+	_isSettingRepresentedObject = NO;
 }
 
 - (ETView *) setUpSupervisorViewWithFrame: (NSRect)aFrame 
@@ -3103,6 +3105,11 @@ See also -subject. */
 - (void) didChangeViewValue: (id)newValue
 {
 	//ETLog(@"Did Change view value to %@", newValue);
+
+	/* Don't update the represented object while setting it */
+	if (_isSettingRepresentedObject)
+		return;
+
 	[self setValue: newValue forProperty: kETValueProperty];
 }
 
