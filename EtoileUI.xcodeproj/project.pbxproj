@@ -84,6 +84,7 @@
 		6037760716BD846900B7EEB5 /* ETLayoutItem+UIBuilder.h in Headers */ = {isa = PBXBuildFile; fileRef = 6037760416BD846600B7EEB5 /* ETLayoutItem+UIBuilder.h */; };
 		6037760816BD846900B7EEB5 /* ETLayoutItem+UIBuilder.m in Sources */ = {isa = PBXBuildFile; fileRef = 6037760516BD846700B7EEB5 /* ETLayoutItem+UIBuilder.m */; };
 		6037760916BD846900B7EEB5 /* ETLayoutItem+UIBuilder.m in Sources */ = {isa = PBXBuildFile; fileRef = 6037760516BD846700B7EEB5 /* ETLayoutItem+UIBuilder.m */; };
+		6037769316BE7BAB00B7EEB5 /* TestWindowLayout.m in Sources */ = {isa = PBXBuildFile; fileRef = 6037769216BE7BA900B7EEB5 /* TestWindowLayout.m */; };
 		603D7D0A13D363BA007AABE2 /* ETActionHandler+ModelDescription.m in Sources */ = {isa = PBXBuildFile; fileRef = 603D7D0913D363BA007AABE2 /* ETActionHandler+ModelDescription.m */; };
 		603D7D0B13D363BA007AABE2 /* ETActionHandler+ModelDescription.m in Sources */ = {isa = PBXBuildFile; fileRef = 603D7D0913D363BA007AABE2 /* ETActionHandler+ModelDescription.m */; };
 		604A32C20F9BEE680090932A /* ETPickDropCoordinator.h in Headers */ = {isa = PBXBuildFile; fileRef = 604A32C10F9BEE680090932A /* ETPickDropCoordinator.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -813,6 +814,7 @@
 		6037730616B8010D00B7EEB5 /* UnitKit.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = UnitKit.xcodeproj; path = ../UnitKit/Source/UnitKit.xcodeproj; sourceTree = "<group>"; };
 		6037760416BD846600B7EEB5 /* ETLayoutItem+UIBuilder.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "ETLayoutItem+UIBuilder.h"; path = "UIBuilder/ETLayoutItem+UIBuilder.h"; sourceTree = "<group>"; };
 		6037760516BD846700B7EEB5 /* ETLayoutItem+UIBuilder.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = "ETLayoutItem+UIBuilder.m"; path = "UIBuilder/ETLayoutItem+UIBuilder.m"; sourceTree = "<group>"; };
+		6037769216BE7BA900B7EEB5 /* TestWindowLayout.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = TestWindowLayout.m; path = Tests/TestWindowLayout.m; sourceTree = "<group>"; };
 		603D7D0913D363BA007AABE2 /* ETActionHandler+ModelDescription.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = "ETActionHandler+ModelDescription.m"; path = "ModelDescription/ETActionHandler+ModelDescription.m"; sourceTree = "<group>"; };
 		604A32C10F9BEE680090932A /* ETPickDropCoordinator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ETPickDropCoordinator.h; path = Headers/ETPickDropCoordinator.h; sourceTree = "<group>"; };
 		604A32C40F9BEE780090932A /* ETPickDropCoordinator.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ETPickDropCoordinator.m; path = Source/ETPickDropCoordinator.m; sourceTree = "<group>"; };
@@ -1334,6 +1336,7 @@
 			children = (
 				60FB0BF913C509A700C2AB94 /* TestPersistency.m */,
 				602635E511AD413B007586E3 /* TestWidgetLayout.m */,
+				6037769216BE7BA900B7EEB5 /* TestWindowLayout.m */,
 				60D88883115E651000D7A8AA /* TestCell.m */,
 				60E7BD20107E7B3F00E7C0F2 /* TestStyle.m */,
 				60C76C6710136D0A0073C381 /* TestCompositeLayout.m */,
@@ -1614,11 +1617,11 @@
 		609548D30C0E30D500068CBB /* Layouts */ = {
 			isa = PBXGroup;
 			children = (
-				60C06D8A12F8534900E38E99 /* ETLayoutExecutor.m */,
+				607FBB080FE0073F00960039 /* Composite Layouts */,
 				60C06D8812F8533800E38E99 /* ETLayoutExecutor.h */,
+				60C06D8A12F8534900E38E99 /* ETLayoutExecutor.m */,
 				609F46590B41641400AD2209 /* ETLayout.h */,
 				609F465A0B41641400AD2209 /* ETLayout.m */,
-				607FBB080FE0073F00960039 /* Composite Layouts */,
 				609548D20C0E305600068CBB /* Widget Layouts */,
 				60C27A0D0E66B0D80040A41D /* ETComputedLayout.h */,
 				60C27A100E66B0EA0040A41D /* ETComputedLayout.m */,
@@ -2755,6 +2758,7 @@
 				60B6E2FF13E4635D0087879C /* ETAspectRepository.m in Sources */,
 				60D46FD514C5CDE900129CD4 /* CoreObjectUI.m in Sources */,
 				6037760916BD846900B7EEB5 /* ETLayoutItem+UIBuilder.m in Sources */,
+				6037769316BE7BAB00B7EEB5 /* TestWindowLayout.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
