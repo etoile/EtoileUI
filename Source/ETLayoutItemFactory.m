@@ -13,15 +13,18 @@
 #import "ETActionHandler.h"
 #import "ETAspectRepository.h"
 #import "ETBasicItemStyle.h"
+#import "ETColumnLayout.h"
 #import "ETFreeLayout.h"
 #import "ETGeometry.h"
 #import "ETLayoutItemGroup.h"
+#import "ETLayoutItem+Scrollable.h"
 #import "ETLayer.h"
 #import "ETLineLayout.h"
 #import "ETScrollableAreaItem.h"
 #import "ETWindowItem.h"
 #import "ETStyle.h"
 #import "ETShape.h"
+#import "ETTableLayout.h"
 #import "NSWindow+Etoile.h"
 #include <float.h>
 #import "ETCompatibility.h"
@@ -395,6 +398,50 @@ The returned bar has a flexible width and a fixed height. */
 	return itemGroup;
 }
 
+- (ETLayoutItemGroup *) collectionEditorWithSize: (NSSize)aSize
+                               representedObject: (id <ETCollection>)aCollection
+                                      controller: (id)aController
+{
+	ETLayoutItemGroup *editor = [self itemGroupWithFrame: ETMakeRect(NSZeroPoint, aSize)];
+
+#ifdef GNUSTEP
+	ETLayoutItem *plusButton = [self buttonWithTitle: @"+" target: aController action: @selector(add:)];
+	ETLayoutItem *minusButton = [self buttonWithTitle: @"-" target: aController action: @selector(remove:)];
+#else
+	ETLayoutItem *plusButton = [self buttonWithImage: [NSImage imageNamed: NSImageNameAddTemplate] target: aController action: @selector(add:)];
+	ETLayoutItem *minusButton = [self buttonWithImage: [NSImage imageNamed: NSImageNameRemoveTemplate] target: aController action: @selector(remove:)];
+	[[[plusButton view] cell] setBezelStyle: NSSmallSquareBezelStyle];
+	[[[minusButton view] cell] setBezelStyle: NSSmallSquareBezelStyle];
+#endif
+	// TODO: Perhaps rather provide -smallButtonWithImage:target:action:
+	[plusButton setFrame: [self defaultSmallImageButtonFrame]];
+	[minusButton setFrame: [self defaultSmallImageButtonFrame]];
+	// FIXME: Set better identifiers perhaps and use constants
+	[plusButton setIdentifier: @"plusButton"];
+	[minusButton setIdentifier: @"minusButton"];
+	
+	ETLayoutItemGroup *buttonBar = [self horizontalBarWithSize: NSMakeSize(aSize.width, [plusButton height])];
+	NSRect browserFrame = NSMakeRect(0, 0, aSize.width, aSize.height - [plusButton height]);
+	ETLayoutItemGroup *browser = [self itemGroupWithFrame: browserFrame];
+
+	// FIXME: Set a better identifiers perhap and use a constant
+	[buttonBar setIdentifier: @"bar"];
+	[buttonBar setAutoresizingMask: ETAutoresizingFlexibleWidth];
+	[buttonBar addItems: A(plusButton, minusButton)];
+
+	[browser setAutoresizingMask: ETAutoresizingFlexibleWidth];
+	[browser setLayout: [ETTableLayout layout]];
+	[browser setHasVerticalScroller: YES];
+	[browser setRepresentedObject: aCollection];
+	[browser setSource: browser];
+
+	[editor setIdentifier: @"collectionEditor"];
+	[editor setLayout: [ETColumnLayout layout]];
+	[editor addItems: A(browser, buttonBar)];
+
+	return editor;
+}
+
 /* Widget Factory Methods */
 
 /** Returns the basic rect used by the methods that returns widget-based items. 
@@ -419,6 +466,17 @@ although it is not one (it is more akin a bevel button without a label). */
 {
 	NSRect frame = [self defaultWidgetFrame];
 	frame.size = NSMakeSize(53, 53);
+	return frame;
+}
+
+- (NSRect) defaultSmallImageButtonFrame
+{
+	NSRect frame = [self defaultWidgetFrame];
+#ifdef GNUSTEP
+	frame.size = NSMakeSize(24, 24);
+#else
+	frame.size = NSMakeSize(23, 23);
+#endif
 	return frame;
 }
 
@@ -586,24 +644,40 @@ Both model and property name must be valid objects when they are not nil. */
 	[buttonView setTarget: aTarget];
 	[buttonView setAction: aSelector];
 
-	if (nil != aKey || nil != aModel)
+	if (aModel == nil)
+		return item;
+
+	if (aKey == nil)
 	{
-		/* Will raise an NSUndefinedKeyException when the model has no such key  */
-		NS_DURING
-
-			[aModel valueForKey: aKey];
-
-		NS_HANDLER
-			[NSException raise: NSInvalidArgumentException format: @"To be used as a "
-				"checkbox model, %@ must be KVC-compliant for %@", aModel, aKey];
-		NS_ENDHANDLER
+		[NSException raise: NSInvalidArgumentException
+					format: @"Missing property for checkbox model %@", aModel];
 	}
+
+	/* Will raise an NSUndefinedKeyException when the model has no such key  */
+	NS_DURING
+
+		[aModel valueForKey: aKey];
+
+	NS_HANDLER
+		[NSException raise: NSInvalidArgumentException format: @"To be used as a "
+			"checkbox model, %@ must be KVC-compliant for %@", aModel, aKey];
+	NS_ENDHANDLER
+
 
 	[item setRepresentedObject: [ETPropertyViewpoint viewpointWithName: aKey
 	                                                 representedObject: aModel]];
 	[[item representedObject] setTreatsAllKeysAsProperties: YES];
 
 	return item;
+}
+
+/** <override-never />
+Returns a new layout item that uses a NSButton of type NSSwitchButton as its view.
+ 
+See also -checkboxWithLabel:target:action:forProperty:ofModel:. */
+- (id) checkBox
+{
+	return [self checkboxWithLabel: @"" target: nil action: NULL forProperty: nil ofModel: nil];
 }
 
 /** Returns a new label item that uses a NSTextField without border 

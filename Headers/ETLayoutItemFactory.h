@@ -12,6 +12,7 @@
 
 #import <Foundation/Foundation.h>
 #import <AppKit/AppKit.h>
+#import <EtoileFoundation/EtoileFoundation.h>
 
 @class ETLayoutItem, ETLayoutItemGroup, ETScrollableAreaItem, ETWindowItem, 
 ETStyle, ETActionHandler;
@@ -72,6 +73,10 @@ ETStyle, ETActionHandler;
 
 - (ETLayoutItemGroup *) horizontalBarWithSize: (NSSize)aSize;
 
+- (ETLayoutItemGroup *) collectionEditorWithSize: (NSSize)aSize
+                               representedObject: (id <ETCollection>)aCollection
+                                      controller: (id)aController;
+
 /* Leaf Widget Factory Methods */
 
 - (id) button;
@@ -82,7 +87,8 @@ ETStyle, ETActionHandler;
                   target: (id)aTarget 
                   action: (SEL)aSelector
              forProperty: (NSString *)aKey
-                 ofModel: (id)aModel; 
+                 ofModel: (id)aModel;
+- (id) checkBox;
 - (id) labelWithTitle: (NSString *)aTitle;
 - (ETLayoutItem *) textField;
 - (id) searchFieldWithTarget: (id)aTarget action: (SEL)aSelector;
