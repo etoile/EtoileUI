@@ -11,51 +11,32 @@
 
 #import <Foundation/Foundation.h>
 #import <AppKit/AppKit.h>
-#import <EtoileFoundation/ETEntityDescription.h>
+#import <EtoileFoundation/EtoileFoundation.h>
 
 @class ETPropertyDescription;
-@class ETLayout, ETLayoutItem;
+@class ETLayout, ETLayoutItem, ETLayoutItemFactory;
 
 @interface ETModelDescriptionRenderer : NSObject
 {
 	@private
+	ETModelDescriptionRepository *_repository;
+	ETLayoutItemFactory *_itemFactory;
 	NSMutableDictionary *_templateItems;
+	NSMutableDictionary *_additionalTemplateIdentifiers;
 }
+
+/** @taskunit Initialization */
 
 + (id) renderer;
 
+/** @taskunit Providing UI Templates */
+
 - (void) setTemplateItem: (ETLayoutItem *)anItem forIdentifier: (NSString *)anIdentifier;
 - (ETLayoutItem *) templateItemForIdentifier: (NSString *)anIdentifier;
+- (void) setTemplateIdentifier: (NSString *)anIdentifier forRoleClass: (Class)aClass;
+- (NSString *) templateIdentifierForRoleClass: (Class)aClass;
 
-- (id) makeItemForIdentifier: (NSString *)anIdentifier isGroupRequired: (BOOL)mustBeGroup;
-
-- (id) render: (id)anObject;
-- (id) renderModel: (id)anObject;
-- (id) renderModel: (id)anObject description: (ETEntityDescription *)entityDesc;
- 
-- (id) renderProperties: (NSArray *)properties
-            description: (ETEntityDescription *)entityDesc  
-                ofModel: (id)anObject;
-- (id) renderProperty: (NSString *)aProperty
-          description: (ETEntityDescription *)entityDesc  
-              ofModel: (id)anObject;
-
-//- (id) renderModelObject: (id)anObject 
-//            inLayoutItem: (ETLayoutItem *)anItem 
-//              withLayout: (ETLayout *)aLayout;
-
-- (id) renderEntityDescription: (ETEntityDescription *)aDescription;
-- (id) renderPropertyDescription: (ETPropertyDescription *)aDescription;
-
-/* There is no need to support an explicit method like:
--setInlineModel:(BOOL)forProperty:ofDescription:
-
-because this can be achieved by rebinding the item identifier for the given 
-property of a description with a method like:
--setCustomIdentifier: @"table" forProperty: "name" ofDescription:  person
-By using 'table', an item group will be generated based on the entity 
-description rather than a leaf item based on the attribute or relationship 
-description. */
+- (id) renderObject: (id)anObject;
 
 @end
 
