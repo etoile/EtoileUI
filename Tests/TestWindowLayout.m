@@ -17,11 +17,13 @@
 #import "ETLayoutItemFactory.h"
 #import "ETLayoutItemGroup.h"
 #import "ETLayoutItem.h"
+#import "ETSelectTool.h"
 #import "ETWindowItem.h"
 
 @interface TestWindowLayout : NSObject <UKTest>
 {
 	ETLayoutItemFactory *itemFactory;
+	ETLayoutItemGroup *windowGroup;
 	ETLayoutItemGroup *itemGroup;
 	ETLayoutItem *item;
 }
@@ -35,6 +37,10 @@
 {
 	SUPERINIT
 	ASSIGN(itemFactory, [ETLayoutItemFactory factory]);
+	/* -[ETLayoutItemGroup windowGroup] instantiates the window group as below but just once. 
+	   To ignore state changes due to previous tests, we allocate a new ETWindowLayer directly. */
+	ASSIGN(windowGroup, [itemFactory windowGroup]);
+	windowGroup = [ETWindowLayer new];
 	ASSIGN(itemGroup, [itemFactory itemGroup]);
 	ASSIGN(item, [itemFactory item]);
 	return self;
@@ -43,15 +49,33 @@
 - (void) dealloc
 {
 	DESTROY(itemFactory);
+	DESTROY(windowGroup);
 	DESTROY(itemGroup);
 	DESTROY(item);
 	[super dealloc];
 }
 
+- (void) testFrame
+{
+	UKTrue(NSContainsRect([[NSScreen mainScreen] frame], [windowGroup frame]));
+	UKTrue(NSContainsRect([windowGroup frame], [[NSScreen mainScreen] visibleFrame]));
+}
+
+- (void) testInitialActiveTool
+{
+	// FIXME: UKObjectsSame([[windowGroup layout] attachedTool], [ETTool activeTool]);
+}
+
+- (void) testFreeLayout
+{
+	[windowGroup setLayout: [ETFreeLayout layout]];
+
+	UKObjectKindOf([[windowGroup layout] attachedTool], ETSelectTool);
+	// FIXME: UKObjectsSame([ETTool activeTool], [[windowGroup layout] attachedTool]);
+}
+
 - (void) checkSwitchBackToWindowLayoutFromLayout: (ETLayout *)aLayout
 {
-	ETLayoutItemGroup *windowGroup = [itemFactory windowGroup];
-
 	[windowGroup addItems: A(item, itemGroup)];
 
 	NSWindow *itemWindow = [[item windowItem] window];
@@ -95,4 +119,3 @@
 }
 
 @end
-
