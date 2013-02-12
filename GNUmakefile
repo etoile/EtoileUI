@@ -12,8 +12,6 @@ VERSION = 0.4.1
 EtoileUI_LIBRARIES_DEPEND_UPON += -lm -lEtoileFoundation -lIconKit \
 	$(GUI_LIBS) $(FND_LIBS) $(OBJC_LIBS) $(SYSTEM_LIBS)
 
-EtoileUI_SUBPROJECTS = Source
-
 export coreobject ?= yes
 
 ifeq ($(coreobject), yes)
@@ -127,32 +125,19 @@ EtoileUI_HEADER_FILES += \
 	NSImage+NiceScaling.h \
 	ETPlugInRegistry+Icons.h
 
-EtoileUI_OBJC_FILES += \
-	AspectRepository/ETAspectCategory.m \
-	AspectRepository/ETAspectRepository.m
+EtoileUI_OBJC_FILES += $(wildcard Source/*.m)
+
+EtoileUI_OBJC_FILES += $(wildcard AspectRepository/*.m)
+
+EtoileUI_OBJC_FILES += $(wildcard UIBuilder/*.m)
 
 ifeq ($(coreobject), yes)
-EtoileUI_OBJC_FILES += \
-	CoreObjectUI/CoreObjectUI.m \
+EtoileUI_OBJC_FILES += $(wildcard CoreObjectUI/*.m)
 
-EtoileUI_OBJC_FILES += \
-	ModelDescription/ETActionHandler+ModelDescription.m \
-	ModelDescription/ETController+ModelDescription.m \
-	ModelDescription/ETDecoratorItem+ModelDescription.m \
-	ModelDescription/ETLayoutItem+ModelDescription.m \
-	ModelDescription/ETLayout+ModelDescription.m \
-	ModelDescription/ETStyle+ModelDescription.m \
-	ModelDescription/ETUIItem+ModelDescription.m
+EtoileUI_OBJC_FILES += $(wildcard ModelDescription/*.m)
 
-EtoileUI_OBJC_FILES += \
-	Persistency/ETController+CoreObject.m \
-	Persistency/ETLayout+CoreObject.m \
-	Persistency/ETLayoutItem+CoreObject.m \
-	Persistency/ETStyle+CoreObject.m
+EtoileUI_OBJC_FILES += $(wildcard Persistency/*.m)
 endif
-
-EtoileUI_OBJC_FILES += \
-	UIBuilder/ETLayoutItem+UIBuilder.m
 
 ifeq ($(test), yes)
 EtoileUI_OBJC_FILES += \
@@ -169,7 +154,8 @@ EtoileUI_OBJC_FILES += \
 	Tests/TestItemCopy.m \
 	Tests/TestItemGeometry.m \
 	Tests/TestStyle.m \
-	Tests/TestWidgetLayout.m
+	Tests/TestWidgetLayout.m \
+	Tests/TestWindowLayout.m
 
 ifeq ($(coreobject), yes)
 EtoileUI_OBJC_FILES += \
