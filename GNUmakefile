@@ -48,14 +48,13 @@ endif
 
 ifeq ($(test), yes)
 EtoileUI_OBJC_FILES += \
-	Tests/test_ETLayer.m \
-	Tests/test_ETLayoutItem.m \
-	Tests/test_ETLayoutItemBuilder.m \
-	Tests/test_ETPickboard.m \
-	Tests/test_ETController.m \
-	Tests/test_ETView.m \
-	Tests/test_ETLayout.m \
-	Tests/test_ETInstrument.m \
+	Tests/TestLayoutItem.m \
+	Tests/TestLayoutItemBuilder.m \
+	Tests/TestPickboard.m \
+	Tests/TestController.m \
+	Tests/TestSupervisorView.m \
+	Tests/TestLayout.m \
+	Tests/TestTool.m \
 	Tests/TestCell.m \
 	Tests/TestCompositeLayout.m \
 	Tests/TestItemCopy.m \
