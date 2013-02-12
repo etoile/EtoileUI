@@ -21,6 +21,7 @@
 #import <CoreObject/COObject.h>
 #import <CoreObject/COPersistentRoot.h>
 #import <CoreObject/COSQLStore.h>
+#import "EtoileUIProperties.h"
 #import "ETActionHandler.h"
 #import "ETController.h"
 #import "ETGeometry.h"
@@ -287,6 +288,14 @@
 	[self checkValidityForNewPersistentObject: newItemGroup isFault: NO];
 	[self checkValidityForNewPersistentObject: newItem isFault: NO];
 	[self checkValidityForNewPersistentObject: newController isFault: NO];
+}
+
+- (void) testViewRoundtrip
+{
+	ETLayoutItem *item = [itemFactory textField];
+	NSView *newView = [item roundTripValueForProperty: kETViewProperty];
+
+	UKNil([newView superview]);
 }
 
 - (void) testWidgetItemPersistency

@@ -127,6 +127,7 @@
 	if (newView == nil)
 		return;
 
+	NSParameterAssert([newView superview] == nil);
 	/* The item geometry might not be deserialized at this point, hence we set 
 	   the view in -awakeFromFetch once the entire object graph has been deserialized */
 	[_variableStorage setObject: newView forKey: @"serializedView"];
