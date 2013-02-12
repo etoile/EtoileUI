@@ -481,7 +481,6 @@
 		60F365930D18651700FCFFDA /* ETViewModelLayout.m in Sources */ = {isa = PBXBuildFile; fileRef = 60F3658F0D18651700FCFFDA /* ETViewModelLayout.m */; };
 		60F3BE5A0EE1C08000BB9B02 /* Controls+Etoile.h in Headers */ = {isa = PBXBuildFile; fileRef = 60F3BE580EE1C08000BB9B02 /* Controls+Etoile.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		60F3BE5D0EE1C09500BB9B02 /* Controls+Etoile.m in Sources */ = {isa = PBXBuildFile; fileRef = 60F3BE5B0EE1C09500BB9B02 /* Controls+Etoile.m */; };
-		60F3BE630EE1C0A600BB9B02 /* ETPersistencyController.h in Headers */ = {isa = PBXBuildFile; fileRef = 60F3BE610EE1C0A600BB9B02 /* ETPersistencyController.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		60F714130C5E7DA8002CA8AA /* EtoileUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 60EF8E9D0C5E4D0600C97C41 /* EtoileUI.framework */; };
 		60F8C9CA0F8DF19C0069FA6C /* ETHandle.h in Headers */ = {isa = PBXBuildFile; fileRef = 60F8C9C80F8DF19B0069FA6C /* ETHandle.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		60F8C9CC0F8DF1AB0069FA6C /* ETHandle.m in Sources */ = {isa = PBXBuildFile; fileRef = 60F8C9CB0F8DF1AB0069FA6C /* ETHandle.m */; };
@@ -1080,8 +1079,6 @@
 		60F3658F0D18651700FCFFDA /* ETViewModelLayout.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ETViewModelLayout.m; path = Source/ETViewModelLayout.m; sourceTree = "<group>"; };
 		60F3BE580EE1C08000BB9B02 /* Controls+Etoile.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "Controls+Etoile.h"; path = "Headers/Controls+Etoile.h"; sourceTree = "<group>"; };
 		60F3BE5B0EE1C09500BB9B02 /* Controls+Etoile.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = "Controls+Etoile.m"; path = "Source/Controls+Etoile.m"; sourceTree = "<group>"; };
-		60F3BE5C0EE1C09500BB9B02 /* ETPersistencyController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ETPersistencyController.m; path = Source/ETPersistencyController.m; sourceTree = "<group>"; };
-		60F3BE610EE1C0A600BB9B02 /* ETPersistencyController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ETPersistencyController.h; path = Headers/ETPersistencyController.h; sourceTree = "<group>"; };
 		60F8C9C80F8DF19B0069FA6C /* ETHandle.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ETHandle.h; path = Headers/ETHandle.h; sourceTree = "<group>"; };
 		60F8C9CB0F8DF1AB0069FA6C /* ETHandle.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ETHandle.m; path = Source/ETHandle.m; sourceTree = "<group>"; };
 		60FB0BF913C509A700C2AB94 /* TestPersistency.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = TestPersistency.m; path = Tests/TestPersistency.m; sourceTree = "<group>"; };
@@ -1433,7 +1430,6 @@
 				605D6BFF0CE7830A009ED244 /* ETApplication.h */,
 				605D6C000CE7830A009ED244 /* ETApplication.m */,
 				602F8DE60CE1F9610042F6C0 /* ETInspecting.h */,
-				607FBAE50FE003D500960039 /* CoreObject Integration */,
 				607FBAE00FE0024700960039 /* Deprecated (or soon to be) */,
 			);
 			name = EtoileUI;
@@ -1510,15 +1506,6 @@
 				6000978E0FAB479500622E5D /* ETModelDescriptionRenderer.m */,
 			);
 			name = "Tree Transforms";
-			sourceTree = "<group>";
-		};
-		607FBAE50FE003D500960039 /* CoreObject Integration */ = {
-			isa = PBXGroup;
-			children = (
-				60F3BE610EE1C0A600BB9B02 /* ETPersistencyController.h */,
-				60F3BE5C0EE1C09500BB9B02 /* ETPersistencyController.m */,
-			);
-			name = "CoreObject Integration";
 			sourceTree = "<group>";
 		};
 		607FBB080FE0073F00960039 /* Composite Layouts */ = {
@@ -1953,7 +1940,6 @@
 				60364A000E40A547003377E0 /* ETNibOwner.h in Headers */,
 				60C27A0F0E66B0D80040A41D /* ETComputedLayout.h in Headers */,
 				60F3BE5A0EE1C08000BB9B02 /* Controls+Etoile.h in Headers */,
-				60F3BE630EE1C0A600BB9B02 /* ETPersistencyController.h in Headers */,
 				607F5F020F005A8E00A8CD0C /* ETGeometry.h in Headers */,
 				6086160D0F0F9A560061ACFE /* ETShape.h in Headers */,
 				604B5C1D0F4B472E001C25E8 /* ETEventProcessor.h in Headers */,
