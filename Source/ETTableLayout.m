@@ -653,7 +653,7 @@ See [(ETColumnFragment)] protocol to customize the returned column. */
 {
 	NSArray *layoutItems = [_layoutContext arrangedItems];
 	
-	ETDebugLog(@"Returns %d as number of items in table view %@", [layoutItems count], tv);
+	ETDebugLog(@"Returns %lu as number of items in table view %@", (unsigned long)[layoutItems count], [tv primitiveDescription]);
 	
 	return [layoutItems count];
 }
@@ -779,8 +779,16 @@ Note: For now, private method. */
 	                                             event: backendEvent
 	                                            offset: &point]);
 
-	return [[draggedItem actionHandler] handleDragItem: draggedItem 
+	BOOL result = [[draggedItem actionHandler] handleDragItem: draggedItem
 		coordinator: [ETPickDropCoordinator sharedInstanceWithEvent: dragEvent]];
+
+	/* If -shouldRemoveItemsAtPickTime is YES, dragged items are removed now 
+	   but still visible in the table view.
+	   In such a case, -reloadData is critical to ensure
+	   -tableView:objectValueForTableColum:row: receives valid rows. For Mac OS 
+	   X 10.8, this method is called through -preparedCellAtColumn:row:. */
+	[tv reloadData];
+	return result;
 }
 
 - (NSDragOperation) tableView:(NSTableView*)tv 
@@ -796,9 +804,9 @@ Note: For now, private method. */
 		dropTarget = [[_layoutContext arrangedItems] objectAtIndex: row];
 	}
 
-	ETLog(@"Validate drop on %@ with dragging source %@ in %@ drag mask %lu drop op %lu",
-		[dropTarget primitiveDescription], [[info draggingSource] primitiveDescription], 
-		_layoutContext, (unsigned long)[info draggingSourceOperationMask], (unsigned long)op);
+	ETDebugLog(@"Validate drop at %ld on %@ with dragging source %@ in %@ drag mask %lu drop op %lu",
+		(long)row, [dropTarget primitiveDescription], [[info draggingSource] primitiveDescription],
+		[_layoutContext primitiveDescription], (unsigned long)[info draggingSourceOperationMask], (unsigned long)op);
 	
 	id draggedObject = [[ETPickboard localPickboard] firstObject];
 	NSInteger dropIndex = (NSTableViewDropAbove == op ? row : ETUndeterminedIndex);
@@ -827,7 +835,7 @@ Note: For now, private method. */
 		if ([validDropTarget isEqual: _layoutContext])
 		{
 			dropOp = (ETUndeterminedIndex == dropIndex ? NSTableViewDropOn : NSTableViewDropAbove);
-			dropRow = dropIndex;
+			dropRow = (ETUndeterminedIndex == dropIndex ? -1 : dropIndex);
 		}
 		else
 		{
@@ -840,9 +848,10 @@ Note: For now, private method. */
 				return NSDragOperationNone;
 			}
 		}
+		ETAssert(dropRow != ETUndeterminedIndex);
 		[tv setDropRow: dropRow dropOperation: dropOp];
 
-		ETLog(@"Retarget drop to %i with op %i", (int)dropRow, (int)dropOp);
+		ETDebugLog(@"Retarget drop to %ld with op %lu", (long)dropRow, (unsigned long)dropOp);
 	}
 
 	return NSDragOperationEvery;

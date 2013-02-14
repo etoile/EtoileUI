@@ -404,8 +404,13 @@ expanded and collapsed by getting automatically a related outline arrow. */
 	NSAssert3([items containsObject: draggedItem], @"Dragged items %@ must "
 		@"contain clicked item %@ in %@", items, draggedItem, self);
 
-	return [[draggedItem actionHandler] handleDragItem: draggedItem 
+	BOOL result = [[draggedItem actionHandler] handleDragItem: draggedItem
 		coordinator: [ETPickDropCoordinator sharedInstanceWithEvent: dragEvent]];
+	
+	/* See -reloadData call comment in 
+	  -[ETTableLayout tableView:writeRowsWithIndexes:toPasteboard:] */
+	[outlineView reloadData];
+	return result;
 }
 
 - (void) outlineView: (NSOutlineView *)outlineView sortDescriptorsDidChange: (NSArray *)oldDescriptors
