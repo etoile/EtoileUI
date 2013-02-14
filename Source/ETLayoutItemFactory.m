@@ -437,6 +437,7 @@ The returned bar has a flexible width and a fixed height. */
 
 	[editor setIdentifier: @"collectionEditor"];
 	[editor setLayout: [ETColumnLayout layout]];
+	[editor setController: aController];
 	[editor addItems: A(browser, buttonBar)];
 
 	return editor;
