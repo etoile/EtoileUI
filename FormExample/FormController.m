@@ -23,6 +23,17 @@
 
 @end
 
+@interface MovieCollection : NSObject <ETCollection, ETCollectionMutation>
+{
+	NSString *name;
+	NSArray *movies;
+}
+
+@property (nonatomic, retain) NSString *name;
+@property (nonatomic, copy) NSArray *movies;
+
+@end
+
 
 @implementation FormController
 
@@ -146,11 +157,21 @@
 	[[itemFactory windowGroup] addItem: itemGroup];
 }
 
-- (void) showFormGeneratedMetamodelEditor
+- (void) showFormGeneratedMetamodelEditors
 {
 	[[[ETModelDescriptionRepository mainRepository] descriptionForName: @"ETEntityDescription"] view: nil];
 	//[[[ETModelDescriptionRepository mainRepository] descriptionForName: @"ETPropertyDescription"] view: nil];
 	//[[[ETModelDescriptionRepository mainRepository] descriptionForName: @"ETPackageDescription"] view: nil];
+}
+
+- (void) showFormGeneratedItemAndAspectEditors
+{
+	ETLayoutItem *layoutEntityItem = [[ETModelDescriptionRenderer renderer] renderObject: [ETTableLayout layout]];
+	[[[ETLayoutItemFactory factory] windowGroup] addItem: layoutEntityItem];
+	
+	ETLayoutItem *entityItem = [[ETModelDescriptionRenderer renderer] renderObject: layoutEntityItem];
+	[entityItem setHasVerticalScroller: YES];
+	[[[ETLayoutItemFactory factory] windowGroup] addItem: entityItem];
 }
 
 - (void) applicationDidFinishLaunching: (NSNotification *)notif
@@ -162,7 +183,8 @@
 	[self buildMultipleSectionForm];
 	[self buildFormFromModelDescription];*/
 
-	[self showFormGeneratedMetamodelEditor];
+	[self showFormGeneratedMetamodelEditors];
+	//[self showFormGeneratedItemAndAspectEditors];
 
 	/*ETLayoutItemGroup *editor = [[ETLayoutItemFactory factory] collectionEditorWithSize: NSMakeSize(400, 500) representedObject: nil controller: self];
 	[[[ETLayoutItemFactory factory] windowGroup] addItem: editor];*/
@@ -212,6 +234,40 @@ static ETEntityDescription *movieEntityDesc = nil;
 {
 	DESTROY(title);
 	DESTROY(releaseDate);
+	[super dealloc];
+}
+
+@end
+
+
+@implementation MovieCollection
+
+@synthesize name, movies;
+
++ (ETEntityDescription *) newEntityDescription
+{
+	ETEntityDescription *entity = [self newBasicEntityDescription];
+	
+	// For subclasses that don't override -newEntityDescription, we must not add
+	// the property descriptions that we will inherit through the parent
+	if ([[entity name] isEqual: [MovieCollection className]] == NO)
+		return entity;
+	
+	ETPropertyDescription *name = [ETPropertyDescription descriptionWithName: @"name" type: (id)@"NSString"];
+	
+	ETPropertyDescription *movies = [ETPropertyDescription descriptionWithName: @"movies" type: (id)@"Movie"];
+	ETRelationshipRole *moviesRole = AUTORELEASE([[ETRelationshipRole alloc] init]);
+	[movies setRole: moviesRole];
+	
+	[entity setPropertyDescriptions: A(name, movies)];
+	
+	return entity;
+}
+
+- (void) dealloc
+{
+	DESTROY(name);
+	DESTROY(movies);
 	[super dealloc];
 }
 
