@@ -49,6 +49,7 @@ For other Nibs to be loaded, see ETNibOwner. */
 }
 
 - (NSString *) name;
+- (NSImage *) icon;
 
 - (ETLayoutItemGroup *) layoutItem;
 - (ETLayoutItemBuilder *) builder;

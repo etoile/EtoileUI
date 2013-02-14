@@ -71,7 +71,7 @@ burden involved by a data source. */
 	[tableItem addObject: @"Blue"];
 	[tableItem addObject: [NSNumber numberWithInt: 3]];
 	/* Value will be image object description */
-	[tableItem addObject: [NSImage imageNamed: @"NSApplication"]];
+	[tableItem addObject: [ETApp icon]];
 }
 
 /* An item group using a custom outline layout based on an existing outline view */
