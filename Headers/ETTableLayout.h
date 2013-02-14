@@ -74,6 +74,7 @@ descriptor bound to the widget table column will be used (and eventually created
 - (NSEvent *) backendDragEvent;
 - (void) setBackendDragEvent: (NSEvent *)event;
 - (NSImage *) dragImage;
+- (NSCell *) preparedCellAtColumn: (NSInteger)column row: (NSInteger)row;
 
 @end
 

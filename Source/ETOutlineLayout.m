@@ -461,6 +461,11 @@ expanded and collapsed by getting automatically a related outline arrow. */
 	[[ETPickDropCoordinator sharedInstance] draggedImage: anImage endedAt: aPoint operation: operation];
 }
 
+- (ETTableLayout *) layoutOwner
+{
+	return (ETTableLayout *)[self dataSource];
+}
+
 /* We implement this method only because [NSApp currentEvent] in 
    -outlineView:writeItems:toPasteboard: isn't the expected mouse down/dragged 
    event that triggered the drag when the mouse is moved/dragged very quickly. */
@@ -480,7 +485,7 @@ expanded and collapsed by getting automatically a related outline arrow. */
 	NSParameterAssert(NSEqualPoints([event locationInWindow], pointInWindow));
 #endif
 
-	[(ETTableLayout *)[self dataSource] setBackendDragEvent: event];
+	[[self layoutOwner] setBackendDragEvent: event];
 
 	return YES;
 }
@@ -491,7 +496,7 @@ expanded and collapsed by getting automatically a related outline arrow. */
                                     event: (NSEvent *)dragEvent
                                    offset: (NSPointPointer)imgOffset
 {
-	BOOL isNewDrag = (nil == [(ETTableLayout *)[self dataSource] dragImage]);
+	BOOL isNewDrag = (nil == [[self layoutOwner] dragImage]);
 
 	if (isNewDrag)
 	{
@@ -499,7 +504,7 @@ expanded and collapsed by getting automatically a related outline arrow. */
 			tableColumns: columns event: dragEvent offset: imgOffset];
 	}
 
-	return [(ETOutlineLayout *)[self dataSource] dragImage];
+	return [[self layoutOwner] dragImage];
 }
 
 /* On Mac OS X, -[NSOutlineView -dragImage:at:offset:event:pasteboard:source:slideback:] 
@@ -549,6 +554,12 @@ in a similar way. */
 	}
 
 	return indexes;
+}
+
+- (NSCell *) preparedCellAtColumn: (NSInteger)column row: (NSInteger)row
+{
+	NSCell *cell = [[self layoutOwner] preparedCellAtColumn: column row: row];
+	return (cell != nil ? cell : [super preparedCellAtColumn: column row: row]);
 }
 
 @end

@@ -983,6 +983,54 @@ Returns the cached drag image. */
 	return _dragImage;
 }
 
+/** This method is only exposed to be used internally by EtoileUI.
+ 
+Returns the cell substituting for the given view in this layout. */
+- (NSCell *) cellForView: (NSView *)aView
+{
+	if (aView == nil)
+		return nil;
+	
+	NSCell *cell = [[aView ifResponds] cell];
+	
+	if ([cell isKindOfClass: [NSTextFieldCell class]])
+	{
+		cell = [[cell copy] autorelease];
+		[cell setBordered: NO];
+	}
+	else if ([aView isKindOfClass: [NSTextView class]])
+	{
+		NSCell *defaultTextCell =
+			[(NSTableColumn *)[self columnForProperty: kETDisplayNameProperty] dataCell];
+		
+		cell = [[defaultTextCell copy] autorelease];
+	}
+	else if ([aView isKindOfClass: [NSImageView class]])
+	{
+		NSCell *defaultImageCell =
+			[(NSTableColumn *)[self columnForProperty: kETIconProperty] dataCell];
+		
+		cell = [[defaultImageCell copy] autorelease];
+	}
+	
+	return cell;
+}
+
+/** This method is only exposed to be used internally by EtoileUI.
+ 
+Returns the cell to be used at the given column and row intersection in this layout. */
+- (NSCell *) preparedCellAtColumn: (NSInteger)column row: (NSInteger)row
+{
+	NSTableColumn *tableColumn = [[[self tableView] tableColumns] objectAtIndex: column];
+	NSCell *cell = nil;
+	
+	if ([[tableColumn identifier] isEqual: kETValueProperty])
+	{
+		cell = [self cellForView: [[self itemAtRow: row] view]];
+	}
+	return cell;
+}
+
 @end
 
 
@@ -1030,6 +1078,11 @@ Returns the cached drag image. */
 	[[ETPickDropCoordinator sharedInstance] draggedImage: anImage endedAt: aPoint operation: operation];
 }
 
+- (ETTableLayout *) layoutOwner
+{
+	return (ETTableLayout *)[self dataSource];
+}
+
 /* We implement this method only because [NSApp currentEvent] in 
    -tableView:writeRowsWithIndexes:toPasteboard: isn't the expected mouse down/dragged 
    event that triggered the drag when the mouse is moved/dragged very quickly. */
@@ -1049,7 +1102,7 @@ Returns the cached drag image. */
 	NSParameterAssert(NSEqualPoints([event locationInWindow], pointInWindow));
 #endif
 
-	[(ETTableLayout *)[self dataSource] setBackendDragEvent: event];
+	[[self layoutOwner] setBackendDragEvent: event];
 
 	return YES;
 }
@@ -1059,7 +1112,7 @@ Returns the cached drag image. */
                                     event: (NSEvent *)dragEvent
                                    offset: (NSPointPointer)imgOffset
 {
-	BOOL isNewDrag = (nil == [(ETTableLayout *)[self dataSource] dragImage]);
+	BOOL isNewDrag = (nil == [[self layoutOwner] dragImage]);
 
 	if (isNewDrag)
 	{
@@ -1067,7 +1120,13 @@ Returns the cached drag image. */
 			tableColumns: columns event: dragEvent offset: imgOffset];
 	}
 
-	return [(ETTableLayout *)[self dataSource] dragImage];
+	return [[self layoutOwner] dragImage];
+}
+
+- (NSCell *) preparedCellAtColumn: (NSInteger)column row: (NSInteger)row
+{
+	NSCell *cell = [[self layoutOwner] preparedCellAtColumn: column row: row];
+	return (cell != nil ? cell : [super preparedCellAtColumn: column row: row]);
 }
 
 @end
