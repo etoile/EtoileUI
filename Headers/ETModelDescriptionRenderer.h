@@ -12,6 +12,7 @@
 #import <Foundation/Foundation.h>
 #import <AppKit/AppKit.h>
 #import <EtoileFoundation/EtoileFoundation.h>
+#import "ETController.h"
 
 @class ETPropertyDescription;
 @class ETLayout, ETLayoutItem, ETLayoutItemFactory;
@@ -42,4 +43,8 @@
 
 @interface ETEntityDescription (EtoileUI)
 - (void) view: (id)sender;
+@end
+
+@interface ETPropertyCollectionController : ETController
+- (IBAction) edit: (id)sender;
 @end

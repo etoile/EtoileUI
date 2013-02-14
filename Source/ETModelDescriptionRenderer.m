@@ -13,11 +13,14 @@
 #import <EtoileFoundation/NSObject+DoubleDispatch.h>
 #import <EtoileFoundation/NSObject+Model.h>
 #import "ETModelDescriptionRenderer.h"
+#import "ETController.h"
 #import "ETTemplateItemLayout.h"
 #import "ETLayout.h"
 #import "ETLayoutItem.h"
 #import "ETLayoutItemFactory.h"
 #import "ETLayoutItemGroup.h"
+#import "EtoileUIProperties.h"
+#import "ETOutlineLayout.h"
 #import "ETCompatibility.h"
 
 
@@ -130,8 +133,80 @@
 	[item setLayout: [self defaultFormLayout]];
 	[item setIdentifier: @"entity"];
 	[item setRepresentedObject: anObject];
+	//[item setController: [[ETEntityInspectorController new] autorelease]];
+	//[item setShouldMutateRepresentedObject: NO];
 
 	return item;
+}
+
+- (NSString *) groupingKeyPath
+{
+	return @"owner";
+}
+
+- (ETLayoutItemGroup *)newItemGroupForGroupingName: (NSString *)aName
+{
+	ETLayoutItemGroup *itemGroup = [[_itemFactory itemGroup] retain];
+	[itemGroup setName: aName];
+	return itemGroup;
+}
+
+- (ETPropertyDescription *)propertyDescriptionForItem: (ETLayoutItem *)aPropertyItem
+{
+	id repObject = [aPropertyItem representedObject];
+	ETPropertyDescription *propertyDesc = repObject;
+
+	if ([repObject isKindOfClass: [ETPropertyViewpoint class]])
+	{
+		ETEntityDescription *entityDesc = [self entityDescriptionForObject: [repObject representedObject]];
+		propertyDesc = [entityDesc propertyDescriptionForName: [repObject name]];
+	}
+	
+	if ([propertyDesc isKindOfClass: [ETPropertyDescription class]] == NO)
+	{
+		return nil;
+	}
+	return propertyDesc;
+}
+
+// TODO: Add a mechanism to return a display name for a grouping value either
+// to the metamodel (e.g. ETPropertyDescription) or to ETModelDescriptionRenderer
+// through registered blocks per value class.
+- (NSString *)displayNameForGroupingValue: (id)aGroupingValue
+{
+	if ([aGroupingValue isEntityDescription])
+	{
+		// TODO: Support returning the full name too
+		return [[_repository classForEntityDescription: aGroupingValue] displayName];
+	}
+	return [aGroupingValue displayName];
+}
+
+- (NSArray *) generateItemGroupsForPropertyItems: (NSArray *)propertyItems
+                                 groupingKeyPath: (NSString *)aKeyPath
+{
+	NILARG_EXCEPTION_TEST(aKeyPath);
+	// FIXME: Use a ordered NSMutableDictionary (for now we depend on NSMapTable implicit ordering)
+	NSMapTable *itemGroupsByName = [NSMapTable mapTableWithStrongToStrongObjects];
+	
+	for (ETLayoutItem *item in propertyItems)
+	{
+		ETPropertyDescription *propertyDesc = [self propertyDescriptionForItem: item];
+
+		if (propertyDesc == nil)
+			continue;
+
+		NSString *name = [self displayNameForGroupingValue: [propertyDesc valueForKeyPath: aKeyPath]];
+
+		if ([itemGroupsByName objectForKey: name] == nil)
+		{
+			[itemGroupsByName setObject: [[self newItemGroupForGroupingName: name] autorelease]
+			                     forKey: name];
+		}
+
+		[(ETLayoutItemGroup *)[itemGroupsByName objectForKey: name] addItem: item];
+	}
+	return [itemGroupsByName allValues];
 }
 
 /** To render a subset of the property descriptions, just call 
@@ -140,14 +215,24 @@
   
 {
 	ETLayoutItemGroup *entityItem = [self entityItemWithRepresentedObject: anObject];
-	
+	NSMutableArray *propertyItems = [NSMutableArray array];
+
 	for (ETPropertyDescription *description in [anEntityDesc allPropertyDescriptions])
 	{
 		//if ([description isMultivalued] == NO || [description isRelationship] == NO)
 		//	continue;
 
-		[entityItem addItem: [self renderObject: anObject propertyDescription: description]];
+		[propertyItems addObject: [self renderObject: anObject propertyDescription: description]];
 	}
+
+	NSArray *items = propertyItems;
+
+	if ([self groupingKeyPath] != nil)
+	{
+		items = [self generateItemGroupsForPropertyItems: propertyItems
+		                                 groupingKeyPath: [self groupingKeyPath]];
+	}
+	[entityItem addItems: items];
 	[entityItem setName: [anEntityDesc name]];
 	
 	return entityItem;
@@ -204,9 +289,13 @@
                                                ofObject: (id)anObject
 {
 	NSSize size = NSMakeSize(300, 100);//[self defaultFrameForEntityItem].size;
+	ETPropertyCollectionController *controller = [[ETPropertyCollectionController new] autorelease];
 	ETLayoutItemGroup *editor = [_itemFactory collectionEditorWithSize: size
 							                         representedObject: aCollection
-									                        controller: nil];
+									                        controller: controller];
+	[editor setDoubleAction: @selector(edit:)];
+	[editor setTarget: controller];
+
 	return editor;
 }
 
@@ -282,6 +371,32 @@
 	}
 }
 
+- (BOOL) isTextItem: (ETLayoutItem *)anItem
+{
+	// TODO: Move to ETLayoutItemFactory or ETLayoutItem
+	return ([[anItem view] isKindOfClass: [NSTextField class]] || [[anItem view] isKindOfClass: [NSTextView class]]);
+}
+
+- (void) prepareViewOfNewItem: (ETLayoutItem *)item forAttributeDescription: (ETPropertyDescription *)aPropertyDesc
+{
+	[[[item view] ifResponds] setEditable: ([aPropertyDesc isReadOnly] == NO)];
+	if ([self isTextItem: item])
+	{
+		[[[item view] ifResponds] setSelectable: YES];
+		// FIXME: On Mac OS X, resigning the first responder status in a cell
+		// that is selectable causes -setStringValue: on the cell to be called
+		// even in case -isEditable is NO.
+		// A possible workaround is to check whether the old value is the same
+		// than the new value for the KVO poster or observer (see NSCell+Etoile
+		// and ETLayoutItem)
+		[[[item view] ifResponds] setEnabled: ([aPropertyDesc isReadOnly] == NO)];
+	}
+	else
+	{
+		[[[item view] ifResponds] setEnabled: ([aPropertyDesc isReadOnly] == NO)];
+	}
+}
+
 - (ETLayoutItem *) newItemForAttributeDescription: (ETPropertyDescription *)aPropertyDesc ofObject: (id)anObject
 {
 	ETLayoutItem *templateItem = [self templateItemForPropertyDescription: aPropertyDesc];
@@ -290,6 +405,9 @@
 
 	[item setRepresentedObject: [ETPropertyViewpoint viewpointWithName: [aPropertyDesc name]
 													 representedObject: anObject]];
+
+	[self prepareViewOfNewItem: item forAttributeDescription: aPropertyDesc];
+
 	return item;
 }
 
@@ -298,10 +416,34 @@
 
 @implementation ETEntityDescription (EtoileUI)
 
+- (ETOutlineLayout *)defaultOutlineLayoutForInspector
+{
+	ETOutlineLayout *layout = [ETOutlineLayout layout];
+
+	[layout setDisplayedProperties: A(kETIconProperty, kETDisplayNameProperty, kETValueProperty)];
+	[[layout columnForProperty: kETDisplayNameProperty] setWidth: 250];
+	[[layout columnForProperty: kETValueProperty] setWidth: 250];
+
+	return layout;
+}
+
 - (void) view: (id)sender
 {
 	//ETLayoutItem *entityItem = [[ETModelDescriptionRenderer renderer] renderObject: self];
 	ETLayoutItem *entityItem = [[ETModelDescriptionRenderer renderer] renderObject: self];
+	[entityItem setLayout: [self defaultOutlineLayoutForInspector]];
+	[[[ETLayoutItemFactory factory] windowGroup] addItem: entityItem];
+}
+
+@end
+
+@implementation ETPropertyCollectionController
+
+- (IBAction) edit: (id)sender
+{
+	ETLayoutItem *item = [sender doubleClickedItem];
+	ETLayoutItemGroup *entityItem = [[ETModelDescriptionRenderer renderer] renderObject: [item representedObject]];
+
 	[[[ETLayoutItemFactory factory] windowGroup] addItem: entityItem];
 }
 
