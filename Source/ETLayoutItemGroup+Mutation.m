@@ -487,6 +487,7 @@ The returned object is autoreleased. */
 	if (nil != object && isValue)
 	{
 		[item setValue: object];
+		[item setRepresentedObject: nil];
 	}
 
 	return AUTORELEASE(item);
