@@ -79,7 +79,6 @@
 		603649FF0E40A547003377E0 /* NSImage+NiceScaling.h in Headers */ = {isa = PBXBuildFile; fileRef = 603649F80E40A547003377E0 /* NSImage+NiceScaling.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		60364A000E40A547003377E0 /* ETNibOwner.h in Headers */ = {isa = PBXBuildFile; fileRef = 603649F90E40A547003377E0 /* ETNibOwner.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		6037760616BD846900B7EEB5 /* ETLayoutItem+UIBuilder.h in Headers */ = {isa = PBXBuildFile; fileRef = 6037760416BD846600B7EEB5 /* ETLayoutItem+UIBuilder.h */; };
-		6037760716BD846900B7EEB5 /* ETLayoutItem+UIBuilder.h in Headers */ = {isa = PBXBuildFile; fileRef = 6037760416BD846600B7EEB5 /* ETLayoutItem+UIBuilder.h */; };
 		6037760816BD846900B7EEB5 /* ETLayoutItem+UIBuilder.m in Sources */ = {isa = PBXBuildFile; fileRef = 6037760516BD846700B7EEB5 /* ETLayoutItem+UIBuilder.m */; };
 		6037760916BD846900B7EEB5 /* ETLayoutItem+UIBuilder.m in Sources */ = {isa = PBXBuildFile; fileRef = 6037760516BD846700B7EEB5 /* ETLayoutItem+UIBuilder.m */; };
 		6037769316BE7BAB00B7EEB5 /* TestWindowLayout.m in Sources */ = {isa = PBXBuildFile; fileRef = 6037769216BE7BA900B7EEB5 /* TestWindowLayout.m */; };
@@ -228,6 +227,10 @@
 		609F5B6416CA9E8900683BD9 /* TestPickboard.m in Sources */ = {isa = PBXBuildFile; fileRef = 609F5B5D16CA9E8800683BD9 /* TestPickboard.m */; };
 		609F5B6516CA9E8900683BD9 /* TestSupervisorView.m in Sources */ = {isa = PBXBuildFile; fileRef = 609F5B5E16CA9E8800683BD9 /* TestSupervisorView.m */; };
 		609F5B6616CA9E8900683BD9 /* TestTool.m in Sources */ = {isa = PBXBuildFile; fileRef = 609F5B5F16CA9E8800683BD9 /* TestTool.m */; };
+		609F5B6816CD412A00683BD9 /* TestItemProvider.m in Sources */ = {isa = PBXBuildFile; fileRef = 609F5B6716CD412900683BD9 /* TestItemProvider.m */; };
+		609F5B6A16CDB8FA00683BD9 /* AppKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 609F5B6916CDB8F300683BD9 /* AppKit.framework */; };
+		609F5B6C16CDB90800683BD9 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 609F5B6B16CDB90400683BD9 /* Foundation.framework */; };
+		609F5B9016CDBE6500683BD9 /* TestEtoileUI-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 609F5B8F16CDBE6400683BD9 /* TestEtoileUI-Info.plist */; };
 		60A54AC413D0825000261FDC /* ETController+CoreObject.m in Sources */ = {isa = PBXBuildFile; fileRef = 60A54AC213D0824F00261FDC /* ETController+CoreObject.m */; };
 		60A54AC513D0825000261FDC /* ETController+CoreObject.h in Headers */ = {isa = PBXBuildFile; fileRef = 60A54AC313D0825000261FDC /* ETController+CoreObject.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		60A54AC613D0825000261FDC /* ETController+CoreObject.m in Sources */ = {isa = PBXBuildFile; fileRef = 60A54AC213D0824F00261FDC /* ETController+CoreObject.m */; };
@@ -488,7 +491,6 @@
 		60F8C9DB0F8DF3200069FA6C /* ETInstruments.m in Sources */ = {isa = PBXBuildFile; fileRef = 607A43E80F0AEA8900753B56 /* ETInstruments.m */; };
 		60FB0AE513C3345A00C2AB94 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1058C7A1FEA54F0111CA2CBB /* Cocoa.framework */; };
 		60FB0AE813C3347200C2AB94 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1058C7A1FEA54F0111CA2CBB /* Cocoa.framework */; };
-		60FB0AEC13C3349000C2AB94 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1058C7A1FEA54F0111CA2CBB /* Cocoa.framework */; };
 		60FB0BFA13C509A700C2AB94 /* TestPersistency.m in Sources */ = {isa = PBXBuildFile; fileRef = 60FB0BF913C509A700C2AB94 /* TestPersistency.m */; };
 		60FBB13010A0A92A00BE7E21 /* ETBasicItemStyle.h in Headers */ = {isa = PBXBuildFile; fileRef = 60FBB12F10A0A92A00BE7E21 /* ETBasicItemStyle.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		60FBB13210A0A94600BE7E21 /* ETBasicItemStyle.m in Sources */ = {isa = PBXBuildFile; fileRef = 60FBB13110A0A94600BE7E21 /* ETBasicItemStyle.m */; };
@@ -935,6 +937,10 @@
 		609F5B5D16CA9E8800683BD9 /* TestPickboard.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = TestPickboard.m; path = Tests/TestPickboard.m; sourceTree = "<group>"; };
 		609F5B5E16CA9E8800683BD9 /* TestSupervisorView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = TestSupervisorView.m; path = Tests/TestSupervisorView.m; sourceTree = "<group>"; };
 		609F5B5F16CA9E8800683BD9 /* TestTool.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = TestTool.m; path = Tests/TestTool.m; sourceTree = "<group>"; };
+		609F5B6716CD412900683BD9 /* TestItemProvider.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = TestItemProvider.m; path = Tests/TestItemProvider.m; sourceTree = "<group>"; };
+		609F5B6916CDB8F300683BD9 /* AppKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AppKit.framework; path = System/Library/Frameworks/AppKit.framework; sourceTree = SDKROOT; };
+		609F5B6B16CDB90400683BD9 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
+		609F5B8F16CDBE6400683BD9 /* TestEtoileUI-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "TestEtoileUI-Info.plist"; sourceTree = "<group>"; };
 		60A54AC213D0824F00261FDC /* ETController+CoreObject.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = "ETController+CoreObject.m"; path = "Persistency/ETController+CoreObject.m"; sourceTree = "<group>"; };
 		60A54AC313D0825000261FDC /* ETController+CoreObject.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "ETController+CoreObject.h"; path = "Persistency/ETController+CoreObject.h"; sourceTree = "<group>"; };
 		60A54C1113D2273F00261FDC /* ETLayout+CoreObject.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = "ETLayout+CoreObject.m"; path = "Persistency/ETLayout+CoreObject.m"; sourceTree = "<group>"; };
@@ -1112,12 +1118,13 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				60D4705414C5D25E00129CD4 /* IconKit.framework in Frameworks */,
+				60264AA50FB72D4D00D8163F /* Carbon.framework in Frameworks */,
+				609F5B6C16CDB90800683BD9 /* Foundation.framework in Frameworks */,
+				609F5B6A16CDB8FA00683BD9 /* AppKit.framework in Frameworks */,
+				600243C50CD133950023182D /* UnitKit.framework in Frameworks */,
 				6640BD0510A0C2F7008B7765 /* EtoileFoundation.framework in Frameworks */,
 				608404AA15415CD9002F91A1 /* CoreObject.framework in Frameworks */,
-				600243C50CD133950023182D /* UnitKit.framework in Frameworks */,
-				60FB0AEC13C3349000C2AB94 /* Cocoa.framework in Frameworks */,
-				60264AA50FB72D4D00D8163F /* Carbon.framework in Frameworks */,
+				60D4705414C5D25E00129CD4 /* IconKit.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1271,6 +1278,8 @@
 		29B97314FDCFA39411CA2CEA /* FlowAutolayoutExample */ = {
 			isa = PBXGroup;
 			children = (
+				609F5B6B16CDB90400683BD9 /* Foundation.framework */,
+				609F5B6916CDB8F300683BD9 /* AppKit.framework */,
 				6037730616B8010D00B7EEB5 /* UnitKit.xcodeproj */,
 				6640BC2710A0C1B0008B7765 /* EtoileFoundation.xcodeproj */,
 				6084048815415CB2002F91A1 /* CoreObject.xcodeproj */,
@@ -1307,6 +1316,7 @@
 				60E4ECCD13E961E000FDA05D /* Images */,
 				60CA73860C494B22009D9B02 /* COPYING */,
 				60EF8E9E0C5E4D0600C97C41 /* EtoileUI-Info.plist */,
+				609F5B8F16CDBE6400683BD9 /* TestEtoileUI-Info.plist */,
 				608EBAE2100D22AB00B36FAB /* BrowserPrototype.nib */,
 				608EBAE4100D22AB00B36FAB /* Inspector.nib */,
 				608EBAE6100D22AB00B36FAB /* OutlinePrototype.nib */,
@@ -1334,6 +1344,7 @@
 				609F5B5916CA9E8800683BD9 /* TestController.m */,
 				6067EB591046B4E600C39086 /* TestItemCopy.m */,
 				6022404D1003DF14007D5D07 /* TestItemGeometry.m */,
+				609F5B6716CD412900683BD9 /* TestItemProvider.m */,
 				609F5B5A16CA9E8800683BD9 /* TestLayout.m */,
 				609F5B5B16CA9E8800683BD9 /* TestLayoutItem.m */,
 				609F5B5C16CA9E8800683BD9 /* TestLayoutItemBuilder.m */,
@@ -1563,10 +1574,10 @@
 				6077C16A0F9801DA006CB3F5 /* ETLayoutItem+Scrollable.m */,
 				6037760416BD846600B7EEB5 /* ETLayoutItem+UIBuilder.h */,
 				6037760516BD846700B7EEB5 /* ETLayoutItem+UIBuilder.m */,
-				60CF717C0D42E75300B4CA3D /* ETLayoutItemGroup+Mutation.m */,
 				609548CE0C0E300500068CBB /* ETLayoutItemGroup.h */,
 				609548CF0C0E300500068CBB /* ETLayoutItemGroup.m */,
 				60CF717B0D42E75300B4CA3D /* ETLayoutItemGroup+Mutation.h */,
+				60CF717C0D42E75300B4CA3D /* ETLayoutItemGroup+Mutation.m */,
 				609547B70C0E032E00068CBB /* ETLayer.h */,
 				609547B80C0E032E00068CBB /* ETLayer.m */,
 				60F8C9C80F8DF19B0069FA6C /* ETHandle.h */,
@@ -1879,7 +1890,6 @@
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				6037760716BD846900B7EEB5 /* ETLayoutItem+UIBuilder.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2458,6 +2468,7 @@
 				6084046F15415C8E002F91A1 /* tick-small.png in Resources */,
 				6084047015415C8E002F91A1 /* tags-label.png in Resources */,
 				6084047115415C8E002F91A1 /* tags.png in Resources */,
+				609F5B9016CDBE6500683BD9 /* TestEtoileUI-Info.plist in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2741,6 +2752,7 @@
 				609F5B6416CA9E8900683BD9 /* TestPickboard.m in Sources */,
 				609F5B6516CA9E8900683BD9 /* TestSupervisorView.m in Sources */,
 				609F5B6616CA9E8900683BD9 /* TestTool.m in Sources */,
+				609F5B6816CD412A00683BD9 /* TestItemProvider.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -3066,6 +3078,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				COMBINE_HIDPI_IMAGES = YES;
+				INFOPLIST_FILE = "TestEtoileUI-Info.plist";
 				INSTALL_PATH = "$(USER_LIBRARY_DIR)/Bundles";
 				PRODUCT_NAME = TestEtoileUI;
 			};
@@ -3075,6 +3088,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				COMBINE_HIDPI_IMAGES = YES;
+				INFOPLIST_FILE = "TestEtoileUI-Info.plist";
 				INSTALL_PATH = "$(USER_LIBRARY_DIR)/Bundles";
 				PRODUCT_NAME = TestEtoileUI;
 			};
