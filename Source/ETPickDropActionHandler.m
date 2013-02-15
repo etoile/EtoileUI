@@ -20,6 +20,7 @@
 #import "ETTool.h"
 #import "ETLayoutItemGroup.h"
 #import "ETLayoutItem.h"
+#import "ETLayoutExecutor.h"
 #import "EtoileUIProperties.h"
 #import "ETPickboard.h"
 #import "ETPickDropCoordinator.h"
@@ -161,13 +162,16 @@ method is called by ETTableLayout when rows are dragged). */
 			{
 				[pick removeFromParent];
 			}
+			/* See similar call comment in 
+			   -[ETPickDropCoordinator prepareInsertionForObject:metadata:atIndex:inItemGroup:] */
+			[[ETLayoutExecutor sharedInstance] execute];
 		}
 	}
 
 	return YES;
 }
 
-/** Returns the drop target item when -canDropObject:atIndex:onItem:coordinator: 
+/** Returns the drop target item when -canDropObject:atIndex:onItem:coordinator:
 returns YES, otherwise returns nil to denote an invalid drop or the drop target 
 parent in case the object can be dropped on it.
 
@@ -179,7 +183,7 @@ You can override this method to implement other drop validation rules, which
 cannot be expressed with -allowedPickTypesForItem: and -allowedDropTypesForItem: 
 whose UTIs are usually declared at the controller level.<br />
 When the given index is equal to ETUndeterminedIndex, the drop operation is a 
-'drop on'the drop target, otherwise the drop operation is 'drop insertion'. You 
+'drop on' the drop target, otherwise the drop operation is 'drop insertion'. You 
 are allowed to change the drop index which might also represent a new drop 
 operation. e.g. <code>*anIndex = ETUndeterminedIndex</code> when anIndex was 3. */
 - (ETLayoutItem *) handleValidateDropObject: (id)droppedObject
@@ -229,7 +233,8 @@ operation. e.g. <code>*anIndex = ETUndeterminedIndex</code> when anIndex was 3. 
 		}
 	}
 
-	ETLog(@"DROP - Validate drop %@ at %i on %@ in %@", droppedObject, (int)*anIndex, dropTarget, self);
+	ETDebugLog(@"DROP - Validate drop %@ at %ld on %@ in %@", [droppedObject primitiveDescription],
+		(long)*anIndex, [dropTarget primitiveDescription], self);
 
 	return dropTarget;
 }
@@ -306,7 +311,7 @@ item groups and reacts to that appropriately. */
 	// dropped (NSArray, NSString, NSWindow, NSImage, NSObject, Class etc.)
 	NSParameterAssert([dropTarget isGroup]);
 
-	ETLog(@"DROP - Handle drop %@ at %i on %@ in %@", droppedObject, (int)anIndex, dropTarget, self);
+	ETDebugLog(@"DROP - Handle drop %@ at %i on %@ in %@", droppedObject, (int)anIndex, dropTarget, self);
 	
 	NSInteger insertionIndex = anIndex;
 
@@ -321,6 +326,8 @@ item groups and reacts to that appropriately. */
 	                              atIndex: insertionIndex
 	                          inItemGroup: (ETLayoutItemGroup *)dropTarget];
 
+	// FIXME: We use this delayed commit to ensure the commit occurs at the
+	// ending of the drop handling
 	[self performSelector: @selector(commitDropOnItem:)
 	           withObject: dropTarget
 				afterDelay: 0.1];
@@ -409,7 +416,7 @@ See also -[ETLayoutItemGroup insertObject:atIndex:hint:boxingForced:]. */
 	{
 		id draggedObject = [[ETPickboard localPickboard] popObject];
 		
-		ETLog(@"Cancelled drag of %@ receives in dragging source %@", 
+		ETDebugLog(@"Cancelled drag of %@ receives in dragging source %@",
 			draggedObject, self);
 	}
 }

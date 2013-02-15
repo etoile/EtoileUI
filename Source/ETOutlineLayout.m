@@ -340,8 +340,8 @@ expanded and collapsed by getting automatically a related outline arrow. */
 {
 	ETLayoutItem *dropTarget = (item != nil ? item : _layoutContext);
 
-    ETLog(@"Validate drop item %@ atIndex %ld with dragging source %@ in %@", 
-		[item primitiveDescription], (long)index, [[info draggingSource] primitiveDescription], _layoutContext);
+    ETDebugLog(@"Validate drop item %@ at %ld with dragging source %@ in %@", [item primitiveDescription],
+		(long)index, [[info draggingSource] primitiveDescription], [_layoutContext primitiveDescription]);
 	
 	id draggedObject = [[ETPickboard localPickboard] firstObject];
 	NSInteger dropIndex = index;
@@ -373,7 +373,7 @@ expanded and collapsed by getting automatically a related outline arrow. */
 
 		[outlineView setDropItem: dropItem dropChildIndex: dropIndex];
 
-		ETLog(@"Retarget drop to %ld in %@", (long)dropIndex, dropItem);
+		ETDebugLog(@"Retarget drop to %ld in %@", (long)dropIndex, dropItem);
 	}
 
 	return NSDragOperationEvery;
@@ -404,13 +404,8 @@ expanded and collapsed by getting automatically a related outline arrow. */
 	NSAssert3([items containsObject: draggedItem], @"Dragged items %@ must "
 		@"contain clicked item %@ in %@", items, draggedItem, self);
 
-	BOOL result = [[draggedItem actionHandler] handleDragItem: draggedItem
+	return [[draggedItem actionHandler] handleDragItem: draggedItem
 		coordinator: [ETPickDropCoordinator sharedInstanceWithEvent: dragEvent]];
-	
-	/* See -reloadData call comment in 
-	  -[ETTableLayout tableView:writeRowsWithIndexes:toPasteboard:] */
-	[outlineView reloadData];
-	return result;
 }
 
 - (void) outlineView: (NSOutlineView *)outlineView sortDescriptorsDidChange: (NSArray *)oldDescriptors

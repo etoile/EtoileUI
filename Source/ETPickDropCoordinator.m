@@ -21,6 +21,7 @@
 #import "ETGeometry.h"
 #import "EtoileUIProperties.h"
 #import "ETTool.h"
+#import "ETLayoutExecutor.h"
 #import "ETLayoutItem.h"
 #import "ETLayoutItemFactory.h"
 #import "ETLayoutItemGroup.h"
@@ -715,8 +716,9 @@ it such as ETSelectTool. */
                                  atIndex: (NSUInteger)index
                              inItemGroup: (ETLayoutItemGroup *)itemGroup
 {
+	NSParameterAssert(droppedObject != nil);
 	NSParameterAssert(nil != itemGroup);
-	NSParameterAssert(index >= 0);
+	NSParameterAssert(index >= 0 && index <= [itemGroup count]);
 
 	BOOL isShiftComputed = (_insertionShift != ETUndeterminedIndex);
 
@@ -737,17 +739,31 @@ it such as ETSelectTool. */
 
 	NSMapTable *draggedItems = [metadata objectForKey: kETPickMetadataDraggedItems];
 	ETAssert(draggedItems != nil);
-	ETLayoutItem *targetedItem = ([itemGroup count] > index ? [itemGroup itemAtIndex: index] : nil);
+	ETLayoutItem *targetedItem = (index < [itemGroup count] ? [itemGroup itemAtIndex: index] : nil);
 
 	RETAIN(targetedItem);
 	NSUInteger oldIndex = index;
+	ETAssert(targetedItem != nil || index == [itemGroup count]);
 
 	// NOTE: NSMapTable doesn't support the collection protocol yet
 	[[[draggedItems allValues] mappedCollection] removeFromParent];
+	/* If the run loop is is not run or run in a special mode (event tracking 
+	   for dragging), automatic layout doesn't happen... But at the same time, 
+	   widget layouts must be updated to ensure controls such table views 
+	   track a valid item tree, otherwise data source or delegate methods can 
+	   receives invalid row indexes bound to the items just removed.
+	   So updating the layout ensures we call -reloadData on the widget view. */
+	[[ETLayoutExecutor sharedInstance] execute];
 
-	NSUInteger newIndex = [itemGroup indexOfItem: targetedItem];
+	/* If the items were removed at pick time and some items among the dragged 
+	   items belonged to itemGroup, -removeFromParent might have change the 
+	   targeted item index. 
+	   If the insertion index was the same than the item group count, the count 
+	   might have change due -removeFromParent too. */
+	NSUInteger newIndex = (targetedItem != nil ? [itemGroup indexOfItem: targetedItem] : [itemGroup count]);
 	RELEASE(targetedItem);
 
+	 /* If the targeted item is nil, because the item group was empty, newIndex is NSNotFound */
 	_insertionShift = (newIndex != NSNotFound ? oldIndex - newIndex : 0);
 	ETAssert(_insertionShift >= 0);
 
@@ -812,14 +828,19 @@ item is inserted.</item>
 
 See ETController to set the template item and 
 -[NSObject(Model) isCommonObjectValue] in EtoileFoundation to know whether 
-the object will be treated as a value or a represented object. */
+the object will be treated as a value or a represented object.
+ 
+The insertion index must not be ETUndeterminedIndex, otherwise an invalid 
+argument exception is raised. */
 - (void) insertDroppedObject: (id)droppedObject 
                         hint: (id)aHint 
                     metadata: (NSDictionary *)metadata
                      atIndex: (NSUInteger)index
                  inItemGroup: (ETLayoutItemGroup *)itemGroup 
 {
-	ETLog(@"DROP - Insert dropped object %@ at %d into %@", droppedObject, (int)index, itemGroup);
+	INVALIDARG_EXCEPTION_TEST(index, index != ETUndeterminedIndex);
+
+	ETDebugLog(@"DROP - Insert dropped object %@ at %d into %@", droppedObject, (int)index, itemGroup);
 
 	id insertedHint = aHint;
 	id insertedObject = [self insertedObjectForDroppedObject: droppedObject

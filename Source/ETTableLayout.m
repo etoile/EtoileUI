@@ -784,10 +784,16 @@ Note: For now, private method. */
 
 	/* If -shouldRemoveItemsAtPickTime is YES, dragged items are removed now 
 	   but still visible in the table view.
-	   In such a case, -reloadData is critical to ensure
+	   In such a case, -reloadData is critical for the next redisplay to ensure 
 	   -tableView:objectValueForTableColum:row: receives valid rows. For Mac OS 
-	   X 10.8, this method is called through -preparedCellAtColumn:row:. */
-	[tv reloadData];
+	   X 10.8, this method is called through -preparedCellAtColumn:row:.
+	   ETPickDropCoordinator and ETPickDropActionHandler triggers immediate 
+	   layout updates using ETLayoutExecutor on item removal at pick time to get 
+	   -reloadData called back.
+	   The problem is less critical for ETOutlineLayout because data source 
+	   and delegate methods receives an item in argument rather than a row index. */
+	ETAssert([tv numberOfRows] == [[_layoutContext arrangedItems] count]);
+
 	return result;
 }
 
@@ -862,8 +868,9 @@ Note: For now, private method. */
                row: (NSInteger)row 
 	 dropOperation: (NSTableViewDropOperation)op
 {
-    ETDebugLog(@"Accept drop in %@ drag mask %d drop op %d", _layoutContext, 
-		[info draggingSourceOperationMask], op);
+    ETDebugLog(@"Accept drop at %ld in %@ drag mask %lu drop op %lu", (long)row,
+		[_layoutContext primitiveDescription], (unsigned long)[info draggingSourceOperationMask],
+		(unsigned long)op);
 
 	NSDictionary *metadata = [[ETPickboard localPickboard] firstObjectMetadata];
 	id droppedObject = [[ETPickboard localPickboard] popObjectAsPickCollection: YES];
