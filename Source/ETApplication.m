@@ -54,15 +54,12 @@
 	return [[NSProcessInfo processInfo] processName];
 }
 
-#ifdef GNUSTEP
-#  define NSImageNameApplicationIcon @"NSApplicationIcon"
-#endif
-
-/** Returns the application icon from the application bundle. */
+/** Returns the application icon from  -applicationIconImage. */
 - (NSImage *) icon;
 {
-	return [NSImage imageNamed: NSImageNameApplicationIcon];
+	return [self applicationIconImage];
 }
+
 /** Returns the layout item representing the application. 
 
 The method returns a local root item which is usually the window group or layer
