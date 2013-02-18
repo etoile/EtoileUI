@@ -13,6 +13,7 @@
 #import "ETLayoutExecutor.h"
 #import "ETLayoutItem.h"
 #import "ETLayoutItemGroup.h"
+#import "ETLayoutItemGroup+Mutation.h"
 #import "ETLayout.h"
 #import "ETCompatibility.h"
 
@@ -169,6 +170,27 @@ update once all its children have receive their own.   */
 	}
 }
 
+/** Marks the opaque item as having new content to get hierarchical widget 
+layouts such as ETOutlineLayout calls -reloadData. 
+ 
+-reloadData will show any mutation on a descendant item content.
+
+We let the descendant item marked as having new content, although most widget 
+layouts won't use that. Future layout updates involving non-opaque layouts on 
+this item will reset hasNewContent (the layout update extra work due to 
+hasNewContent is going to be minimal). */
+- (void)updateHasNewContentForOpaqueItem: (ETLayoutItem *)opaqueItem
+                          descendantItem: (ETLayoutItem *)item
+{
+	if ([opaqueItem isGroup] == NO || [item isGroup] == NO)
+		return;
+
+	BOOL hasNewContent = ([(ETLayoutItemGroup *)opaqueItem hasNewContent]
+		|| [(ETLayoutItemGroup *)item hasNewContent]);
+
+	[(ETLayoutItemGroup *)opaqueItem setHasNewContent: hasNewContent];
+}
+
 /** Reorders the dirty items and marks additional items as dirty to respect the 
 layout update constraints, then tells the reordered items to update their layout. */
 - (void) executeWithDirtyItems: (NSSet *)scheduledItems
@@ -187,6 +209,7 @@ layout update constraints, then tells the reordered items to update their layout
 		if (hasOpaqueAncestorItem)
 		{
 			[dirtyItems addObject: opaqueItem];
+			[self updateHasNewContentForOpaqueItem: opaqueItem descendantItem: item];
 		}
 		else if ([self isFlexibleItem: item])
 		{
