@@ -80,19 +80,19 @@ treated under various circumstances:
 Warning: this API will probably evolve a bit. */
 @protocol ETColumnFragment
 /** Sets the column width. */
-- (void) setWidth: (float)width;
+- (void) setWidth: (CGFloat)width;
 /** Returns the column width. */
-- (float) width;
+- (CGFloat) width;
 /** Sets the minimum width allowed and resizes the column if the current width 
 is inferior. */
-- (void) setMinWidth: (float)width;
+- (void) setMinWidth: (CGFloat)width;
 /** Returns the minimum width allowed. */
-- (float) minWidth; 
+- (CGFloat) minWidth;
 /** Sets the maximum allowed width and resizes the column if the current width 
 is superior. */
-- (void) setMaxWidth: (float)width;
+- (void) setMaxWidth: (CGFloat)width;
 /** Returns the maximum width allowed. */
-- (float) maxWidth;
+- (CGFloat) maxWidth;
 /** Sets the resizing behavior:
 
 <deflist>
