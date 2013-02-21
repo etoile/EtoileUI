@@ -1125,9 +1125,14 @@ recursively on them. */
 	/* Otherwise redisplay the receiver and its descendants recursively */
 	if ([self usesLayoutBasedFrame] || NSIntersectsRect(dirtyRect, contentDrawingBox))
 	{
-	   /* We limit the redrawn area to the content bounds. We don't want to
-	      draw over the decorators. */
-		NSRect realDirtyRect = NSIntersectionRect(dirtyRect, contentDrawingBox);
+		NSRect realDirtyRect = dirtyRect;
+
+		/* We limit the redrawn area to the content bounds. We don't want to
+		   draw over the decorators. */
+		if (_decoratorItem != nil)
+		{
+			realDirtyRect = NSIntersectionRect(dirtyRect, contentDrawingBox);
+		}
 
 		/* There is no need to set realDirtyRect with -[NSBezierPath setClip]
 		   because the right clip rect should have been set by our supervisor
