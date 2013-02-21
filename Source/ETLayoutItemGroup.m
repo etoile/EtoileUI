@@ -1104,41 +1104,38 @@ to control more precisely how the items get resized per layout. */
 
 /** See -[ETLayoutItem render:dirtyRect:inContext:]. The most important addition of
 this method is to manage the drawing of children items by calling this method
-recursively on them. */
+recursively on them.
+ 
+The supervisor view or parent item intersects the dirty rect against the 
+receiver drawing box just before calling -render:dirtyRect:inContext:. Which 
+means the dirty rect needs no adjustments. */
 - (void) render: (NSMutableDictionary *)inputValues
       dirtyRect: (NSRect)dirtyRect
       inContext: (id)ctxt
 {
 	//ETLog(@"Render %@ dirtyRect %@ in %@", self, NSStringFromRect(dirtyRect), ctxt);
 
-	NSRect contentDrawingBox = [self contentDrawingBox];
+	/* Using the drawing box, we limit the redrawn area to the cover style area 
+	   or the content bounds in case a decorator is set (we don't want to draw 
+	   over the decorators). */
+	NSRect drawingBox = [self drawingBox];
 
 	/* Use the display cache when there is one */
 	if (nil != _cachedDisplayImage)
 	{
 		[[ETBasicItemStyle sharedInstance] drawImage: _cachedDisplayImage
 		                                     flipped: [self isFlipped]
-		                                      inRect: contentDrawingBox];
+		                                      inRect: drawingBox];
 		return;
 	}
 
 	/* Otherwise redisplay the receiver and its descendants recursively */
-	if ([self usesLayoutBasedFrame] || NSIntersectsRect(dirtyRect, contentDrawingBox))
+	if ([self usesLayoutBasedFrame] || NSIntersectsRect(dirtyRect, drawingBox))
 	{
-		NSRect realDirtyRect = dirtyRect;
-
-		/* We limit the redrawn area to the content bounds. We don't want to
-		   draw over the decorators. */
-		if (_decoratorItem != nil)
-		{
-			realDirtyRect = NSIntersectionRect(dirtyRect, contentDrawingBox);
-		}
-
-		/* There is no need to set realDirtyRect with -[NSBezierPath setClip]
+		/* There is no need to set dirtyRect with -[NSBezierPath setClip]
 		   because the right clip rect should have been set by our supervisor
-		   view or our parent item (when when we have no decorator). */
-
-		[super render: inputValues dirtyRect: realDirtyRect inContext: ctxt];
+		   view or our parent item (when when we have no decorator) */
+		[super render: inputValues dirtyRect: dirtyRect inContext: ctxt];
 
 		/* Render child items (if the layout doesn't handle it) */
 
@@ -1156,7 +1153,7 @@ recursively on them. */
 				   drawn, so the child items don't receive the drawing frame of their
 				   parent, but their own. Also restricts the dirtyRect so it doesn't
 				   encompass any decorators set on the item. */
-				NSRect childDirtyRect = [item convertRectFromParent: realDirtyRect];
+				NSRect childDirtyRect = [item convertRectFromParent: dirtyRect];
 				childDirtyRect = NSIntersectionRect(childDirtyRect, [item drawingBox]);
 
 				/* In case, dirtyRect is only a redraw rect on the parent and not on
