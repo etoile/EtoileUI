@@ -15,6 +15,7 @@
 #import "ETModelDescriptionRenderer.h"
 #import "ETController.h"
 #import "ETTemplateItemLayout.h"
+#import "ETItemTemplate.h"
 #import "ETLayout.h"
 #import "ETLayoutItem.h"
 #import "ETLayoutItemFactory.h"
@@ -305,16 +306,26 @@
 	return [anObject valueForProperty: [aPropertyDesc name]];
 }
 
-- (ETLayoutItemGroup *) relationshipEditorForCollection: (id <ETCollection>)aCollection
-                                               ofObject: (id)anObject
+- (ETLayoutItemGroup *) editorForRelationshipDescription: (ETPropertyDescription *)aPropertyDesc
+                                                ofObject: (id)anObject
 {
-	NSSize size = NSMakeSize(300, 100);//[self defaultFrameForEntityItem].size;
+	id collection = [self representedObjectForToManyRelationshipDescription: aPropertyDesc
+	                                                               ofObject: anObject];
+	Class relationshipClass = [_repository classForEntityDescription: [aPropertyDesc type]];
+	ETAssert(relationshipClass != Nil);
+	ETItemTemplate *template = [ETItemTemplate templateWithItem: [_itemFactory item]
+	                                                objectClass: relationshipClass];
 	ETPropertyCollectionController *controller = [[ETPropertyCollectionController new] autorelease];
+	
+	[controller setTemplate: template forType: [controller currentObjectType]];
+
+	NSSize size = NSMakeSize(300, 100);//[self defaultFrameForEntityItem].size;
 	ETLayoutItemGroup *editor = [_itemFactory collectionEditorWithSize: size
-							                         representedObject: aCollection
+							                         representedObject: collection
 									                        controller: controller];
-	[editor setDoubleAction: @selector(edit:)];
-	[editor setTarget: controller];
+
+	[[controller content] setDoubleAction: @selector(edit:)];
+	[[controller content] setTarget: controller];
 
 	return editor;
 }
@@ -329,16 +340,15 @@
 	{
 		ETLayoutItem *templateItem = [self templateItemForPropertyDescription: aPropertyDesc];
 		BOOL isToManyRelationship = [aPropertyDesc isMultivalued];
-		id repObject = nil;
 
 		if (isToManyRelationship)
 		{
-			repObject = [self representedObjectForToManyRelationshipDescription: aPropertyDesc ofObject: anObject];
-			item = [self relationshipEditorForCollection: repObject ofObject: anObject];
+
+			item = [self editorForRelationshipDescription: aPropertyDesc ofObject: anObject];
 		}
 		else
 		{
-			repObject = [self representedObjectForToOneRelationshipDescription: aPropertyDesc ofObject: anObject];
+			id repObject = [self representedObjectForToOneRelationshipDescription: aPropertyDesc ofObject: anObject];
 			item = AUTORELEASE([templateItem copy]);
 			[item setRepresentedObject: repObject];
 		}

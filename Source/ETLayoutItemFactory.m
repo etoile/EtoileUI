@@ -398,6 +398,39 @@ The returned bar has a flexible width and a fixed height. */
 	return itemGroup;
 }
 
+/** Returns a new layout item group including a collection browser and buttons 
+ to edit the collection content using actions such as <em>Add</em> and
+<em>Remove</em>.
+ 
+Most items that make up the collection editor can be retrieved using 
+-[ETLayoutItemGroup itemForIdentifier:] on the returned item group:
+
+<deflist>
+<item>collectionEditor</item><desc>the returned item group that encloses the 
+collection editor UI</desc>
+<item>browser</item><desc>the item group that presents the collection content</desc>
+<item>bar</item><desc>the item group that contains the buttons at the bottom of 
+the browser</desc>
+<item>plusButton</item><desc>the item that calls the -add: action</desc>
+<item>minusButton</item><desc>the item that calls the -remove: action</desc>
+</deflist>
+ 
+The bar that contains the buttons can be customized as desired. Just retrieve it 
+using the right item identifier, and remove or add items to the returned item 
+group.<br />
+For actions, the items in the bar must use the controller as the target
+usually (a nil target is not going to work to send a message to the controller, 
+because the controller is not in the bar responder chain).
+ 
+The controller is bound to the browser item. For setting actions or double 
+actions, once the method returns, just follow this example:
+ 
+<example>
+[[controller content] setDoubleAction: @selector(edit:)];
+[[controller content] setTarget: controller];
+</example>
+ 
+The returned collection editor has a flexible width and a fixed height. */
 - (ETLayoutItemGroup *) collectionEditorWithSize: (NSSize)aSize
                                representedObject: (id <ETCollection>)aCollection
                                       controller: (id)aController
@@ -434,10 +467,11 @@ The returned bar has a flexible width and a fixed height. */
 	[browser setHasVerticalScroller: YES];
 	[browser setRepresentedObject: aCollection];
 	[browser setSource: browser];
+	[browser setController: aController];
 
 	[editor setIdentifier: @"collectionEditor"];
 	[editor setLayout: [ETColumnLayout layout]];
-	[editor setController: aController];
+
 	[editor addItems: A(browser, buttonBar)];
 
 	return editor;
