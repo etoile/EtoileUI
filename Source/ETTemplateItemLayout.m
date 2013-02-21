@@ -459,8 +459,17 @@ kETFormLayoutInset	NSZeroRect (default) or nil
 
 - (void) dealloc
 {
+	DESTROY(_itemLabelFont);
 	DESTROY(_standaloneTextStyle);
 	[super dealloc];
+}
+
+- (id) copyWithZone: (NSZone *)aZone layoutContext: (id <ETLayoutingContext>)ctxt
+{
+	ETFormLayout *layoutCopy = [super copyWithZone: aZone layoutContext: ctxt];
+	// TODO: Implement
+	ETAssertUnreachable();
+	return layoutCopy;
 }
 
 - (NSImage *) icon
@@ -547,6 +556,7 @@ The resizing isn't delegated to the positional layout unlike in ETTemplateItemLa
 		/* When no view is present, we use the item size to get a valid 
 		   boundingSize and be able to compute labelWidth */
 		NSSize viewOrItemSize = ([item view] != nil ? [[item view] frame].size : [item size]);
+		ETAssert([item coverStyle] != nil);
 		NSSize boundingSize = [[item coverStyle] boundingSizeForItem: item 
 		                                             imageOrViewSize: viewOrItemSize];
 		NSRect boundingBox = ETMakeRect(NSZeroPoint, boundingSize);
