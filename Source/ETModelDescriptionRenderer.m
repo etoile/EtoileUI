@@ -43,6 +43,7 @@
 	_additionalTemplateIdentifiers = [NSMutableDictionary new];
 	ASSIGN(_repository, [ETModelDescriptionRepository mainRepository]);
 	ASSIGN(_itemFactory, [ETLayoutItemFactory factory]);
+	ASSIGN(_entityLayout, [self defaultFormLayout]);
 
 	[self registerDefaultTemplateItems];
 	[self registerDefaultRoleTemplateIdentifiers];
@@ -55,6 +56,8 @@
 	DESTROY(_templateItems);
 	DESTROY(_repository);
 	DESTROY(_itemFactory);
+	DESTROY(_entityLayout);
+	DESTROY(_groupingKeyPath);
 	[super dealloc];
 }
 
@@ -105,6 +108,16 @@
 	[self setTemplateIdentifier: @"popUpMenu" forRoleClass: [ETMultiOptionsRole class]];
 }
 
+- (void) setEntityLayout: (ETLayout *)aLayout
+{
+	ASSIGN(_entityLayout, aLayout);
+}
+
+- (ETLayout *) entityLayout
+{
+	return _entityLayout;
+}
+
 - (ETEntityDescription *) entityDescriptionForObject: (id)anObject
 {
 	return [[self repository] entityDescriptionForClass: [anObject class]];
@@ -130,6 +143,8 @@
 {
 	ETLayoutItemGroup *item = [[ETLayoutItemFactory factory] itemGroupWithFrame: [self defaultFrameForEntityItem]];
 
+	// TODO: Finish to implement ETTemplateItemLayout and ETFormLayout copy
+	//[item setLayout: [[[self entityLayout] copy] autorelease]];
 	[item setLayout: [self defaultFormLayout]];
 	[item setIdentifier: @"entity"];
 	[item setRepresentedObject: anObject];
@@ -139,9 +154,14 @@
 	return item;
 }
 
+- (void) setGroupingKeyPath: (NSString *)aKeyPath
+{
+	ASSIGN(_groupingKeyPath, aKeyPath);
+}
+
 - (NSString *) groupingKeyPath
 {
-	return @"owner";
+	return _groupingKeyPath;
 }
 
 - (ETLayoutItemGroup *)newItemGroupForGroupingName: (NSString *)aName
@@ -431,7 +451,7 @@
 {
 	//ETLayoutItem *entityItem = [[ETModelDescriptionRenderer renderer] renderObject: self];
 	ETLayoutItem *entityItem = [[ETModelDescriptionRenderer renderer] renderObject: self];
-	[entityItem setLayout: [self defaultOutlineLayoutForInspector]];
+	//[entityItem setLayout: [self defaultOutlineLayoutForInspector]];
 	[[[ETLayoutItemFactory factory] windowGroup] addItem: entityItem];
 }
 

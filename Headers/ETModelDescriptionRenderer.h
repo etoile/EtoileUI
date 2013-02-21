@@ -15,7 +15,7 @@
 #import "ETController.h"
 
 @class ETPropertyDescription;
-@class ETLayout, ETLayoutItem, ETLayoutItemFactory;
+@class ETFormLayout, ETLayout, ETLayoutItem, ETLayoutItemFactory;
 
 @interface ETModelDescriptionRenderer : NSObject
 {
@@ -24,6 +24,8 @@
 	ETLayoutItemFactory *_itemFactory;
 	NSMutableDictionary *_templateItems;
 	NSMutableDictionary *_additionalTemplateIdentifiers;
+	ETLayout *_entityLayout;
+	NSString *_groupingKeyPath;
 }
 
 /** @taskunit Initialization */
@@ -36,6 +38,18 @@
 - (ETLayoutItem *) templateItemForIdentifier: (NSString *)anIdentifier;
 - (void) setTemplateIdentifier: (NSString *)anIdentifier forRoleClass: (Class)aClass;
 - (NSString *) templateIdentifierForRoleClass: (Class)aClass;
+
+/** @taskunit Customizing Generated UI */
+
+- (ETFormLayout *) defaultFormLayout;
+
+- (void) setEntityLayout: (ETLayout *)aLayout;
+- (ETLayout *) entityLayout;
+
+- (void) setGroupingKeyPath: (NSString *)aKeyPath;
+- (NSString *) groupingKeyPath;
+
+/** @taskunit Generating Form UI */
 
 - (id) renderObject: (id)anObject;
 
