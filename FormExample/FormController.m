@@ -15,7 +15,8 @@
 	NSInteger runningTime;
 }
 
-+ (Movie *) movie;
++ (id) movie;
++ (id) randomMovie;
 
 @property (nonatomic, retain) NSString *title;
 @property (nonatomic, retain) NSDate *releaseDate;
@@ -28,6 +29,8 @@
 	NSString *name;
 	NSArray *movies;
 }
+
++ (id) randomCollection;
 
 @property (nonatomic, retain) NSString *name;
 @property (nonatomic, copy) NSArray *movies;
@@ -48,30 +51,10 @@
 	return layout;
 }
 
-- (NSDate *)dateWithYear: (NSInteger)aYear month: (NSInteger)aMonth day: (NSInteger)aDay
-{
-	NSCalendar *gregorian = [[NSCalendar alloc] initWithCalendarIdentifier: NSGregorianCalendar];
-	NSDateComponents *comps = [[NSDateComponents alloc] init];
-
-	[comps setDay: aDay];
-	[comps setMonth: aMonth];
-	[comps setYear: aYear];
-
-	return [gregorian dateFromComponents:comps];
-}
-
-- (Movie *)randomMovie
-{
-	Movie *movie = [Movie movie];
-	[movie setTitle: @"Gran Torino"];
-	[movie setReleaseDate: [self dateWithYear: 2008 month: 0 day: 0]];
-	[movie setRunningTime: 300];
-	return movie;
-}
-
 - (void) buildFormFromModelDescription
 {
-	ETLayoutItemGroup *itemGroup = [[ETModelDescriptionRenderer renderer] renderObject: [self randomMovie]];
+	ETLayoutItemGroup *itemGroup =
+		[[ETModelDescriptionRenderer renderer] renderObject: [MovieCollection randomCollection]];
 	
 	[[[ETLayoutItemFactory factory] windowGroup] addItem: itemGroup];
 }
@@ -174,14 +157,15 @@
 	[[[ETLayoutItemFactory factory] windowGroup] addItem: entityItem];
 }
 
+
 - (void) applicationDidFinishLaunching: (NSNotification *)notif
 {
 	[ETLayoutItem setShowsBoundingBox: YES];
 	[ETLayoutItem setShowsFrame: YES];
 
-	/*[self buildSingleSectionForm];
+	[self buildSingleSectionForm];
 	[self buildMultipleSectionForm];
-	[self buildFormFromModelDescription];*/
+	[self buildFormFromModelDescription];
 
 	[self showFormGeneratedMetamodelEditors];
 	//[self showFormGeneratedItemAndAspectEditors];
@@ -230,6 +214,32 @@ static ETEntityDescription *movieEntityDesc = nil;
 	return AUTORELEASE([[self alloc] init]);
 }
 
++ (NSString *) randomMovieName
+{
+	return [S(@"Gran Torino", @"2046", @"Still Life", @"Blade Runner", @"Reborn Black Tomatoes") anyObject];
+}
+
++ (NSDate *)dateWithYear: (NSInteger)aYear month: (NSInteger)aMonth day: (NSInteger)aDay
+{
+	NSCalendar *gregorian = [[NSCalendar alloc] initWithCalendarIdentifier: NSGregorianCalendar];
+	NSDateComponents *comps = [[NSDateComponents alloc] init];
+	
+	[comps setDay: aDay];
+	[comps setMonth: aMonth];
+	[comps setYear: aYear];
+	
+	return [gregorian dateFromComponents:comps];
+}
+
++ (Movie *) randomMovie
+{
+	Movie *movie = [self movie];
+	[movie setTitle: [self randomMovieName]];
+	[movie setReleaseDate: [self dateWithYear: 2008 month: 0 day: 0]];
+	[movie setRunningTime: 300];
+	return movie;
+}
+
 - (void) dealloc
 {
 	DESTROY(title);
@@ -256,12 +266,21 @@ static ETEntityDescription *movieEntityDesc = nil;
 	ETPropertyDescription *name = [ETPropertyDescription descriptionWithName: @"name" type: (id)@"NSString"];
 	
 	ETPropertyDescription *movies = [ETPropertyDescription descriptionWithName: @"movies" type: (id)@"Movie"];
+	[movies setMultivalued: YES];
 	ETRelationshipRole *moviesRole = AUTORELEASE([[ETRelationshipRole alloc] init]);
 	[movies setRole: moviesRole];
 	
 	[entity setPropertyDescriptions: A(name, movies)];
 	
 	return entity;
+}
+
++ (id) randomCollection
+{
+	MovieCollection *collection = [[MovieCollection new] autorelease];
+	[collection setName: @"Random American Movies"];
+	[collection setMovies: A([Movie randomMovie], [Movie randomMovie])];
+	return collection;
 }
 
 - (void) dealloc
