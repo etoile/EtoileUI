@@ -2637,6 +2637,7 @@ Marks the receiver as needing a layout update. Marks the parent item too, when
 the receiver has no decorator. */
 - (void) setBoundingBox: (NSRect)extent
 {
+	NSParameterAssert(NSContainsRect(extent, [self bounds]) || NSEqualRects(NSZeroRect, [self bounds]));
 	[self willChangeValueForProperty: kETBoundingBoxProperty];
 	_boundingBox = extent;
 	[self setNeedsLayoutUpdate];

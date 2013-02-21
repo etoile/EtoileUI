@@ -331,7 +331,7 @@ inside the content bounds. */
 	ETEvent *evt = [self createEventAtScreenPoint: NSMakePoint([mainItem x] - 5, [mainItem y] - 5) isFlipped: YES];
 	UKObjectsEqual([itemFactory windowGroup], [tool hitTestWithEvent: evt]);
 	
-	[mainItem setBoundingBox: NSMakeRect(-10, -10, [mainItem width], [mainItem height])];
+	[mainItem setBoundingBox: NSMakeRect(-10, -10, [mainItem width] + 10, [mainItem height] + 10)];
 	/* Hit outside mainItem but inside its bounding box, and outside item1 but 
 	   inside its bounding box  */
 	evt = [self createEventAtScreenPoint: NSMakePoint([mainItem x] - 5, [mainItem y] - 5) isFlipped: YES];
