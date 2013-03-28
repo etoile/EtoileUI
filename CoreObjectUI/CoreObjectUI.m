@@ -13,7 +13,8 @@
 
 #import <CoreObject/COObject.h>
 #import <CoreObject/COGroup.h>
-#import <CoreObject/COContainer.h>
+#import <CoreObject/COLibrary.h>
+#import <CoreObject/COTag.h>
 #import <CoreObject/COTrack.h>
 #import <IconKit/IconKit.h>
 #import "CoreObjectUI.h"
