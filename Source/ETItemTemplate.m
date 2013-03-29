@@ -249,3 +249,40 @@ Can be overriden in a subclass to implement a web browser for example. */
 @end
 
 NSString * const kETTemplateOptionNumberOfUntitledDocuments = @"kETTemplateOptionNumberOfUntitledDocuments";
+NSString * const kETTemplateOptionPersistentObjectContext = @"kETTemplateOptionPersistentObjectContext";
+
+
+#ifdef COREOBJECT
+@implementation COObject (ETItemTemplate)
+
+- (id) initWithURL: (NSURL *)aURL options: (NSDictionary *)options
+{
+	self = [self init];
+	if (self == nil)
+		return nil;
+
+	id <COPersistentObjectContext> context =
+	[options objectForKey: kETTemplateOptionPersistentObjectContext];
+	
+	if (context == nil)
+	{
+		DESTROY(self);
+		return nil;
+	}
+	
+	BOOL isEditingContext =
+		[context respondsToSelector: @selector(insertNewPersistentRootWithRootObject:)];
+	
+	if (isEditingContext)
+	{
+		[(COEditingContext *)context insertNewPersistentRootWithRootObject: self];
+	}
+	else
+	{
+		[self becomePersistentInContext: (COPersistentRoot *)context];
+	}
+	return self;
+}
+
+@end
+#endif

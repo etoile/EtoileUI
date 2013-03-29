@@ -13,6 +13,7 @@
 #import <AppKit/AppKit.h>
 #import <EtoileUI/ETNibOwner.h>
 
+@protocol COPersistentObjectContext;
 @class ETItemTemplate, ETLayoutItem, ETLayoutItemBuilder, ETLayoutItemGroup, ETUTI;
 
 /** This protocol is only exposed to be used internally by EtoileUI.
@@ -77,6 +78,7 @@ objects as a collection distinct from the content. */
  	IBOutlet id nibMainContent;
 	NSMutableDictionary *_templates;
 	ETUTI *_currentObjectType;
+	id <COPersistentObjectContext> _persistentObjectContext;
 	NSArray *_sortDescriptors;
 	NSPredicate *_filterPredicate;
 	NSArray *_allowedPickTypes;
@@ -122,6 +124,11 @@ objects as a collection distinct from the content. */
 - (void) setCurrentObjectType: (ETUTI *)aUTI;
 - (ETUTI *) currentGroupType;
 
+/** @taskunit Persistent Object Context */
+
+- (id <COPersistentObjectContext>) persistentObjectContext;
+- (void) setPersistentObjectContext: (id <COPersistentObjectContext>)aContext;
+
 /* Actions */
 
 - (void) add: (id)sender;
@@ -137,6 +144,7 @@ objects as a collection distinct from the content. */
 - (ETLayoutItem *) newItemWithURL: (NSURL *)aURL 
                            ofType: (ETUTI *)aUTI 
                           options: (NSDictionary *)options;
+- (NSDictionary *) defaultOptions;
 - (BOOL) canMutate;
 - (BOOL) isContentMutable;
 - (NSInteger) insertionIndex;

@@ -95,6 +95,7 @@ You can also use it -init to create a controller. See -[ETNibOwner init]. */
 	DESTROY(nibMainContent);
 	DESTROY(_templates);
 	DESTROY(_currentObjectType);
+	DESTROY(_persistentObjectContext);
 	DESTROY(_sortDescriptors);
 	DESTROY(_filterPredicate);
 	DESTROY(_allowedPickTypes);
@@ -410,7 +411,9 @@ The observed object must not be nil. */
 /** Returns a receiver copy which uses the given content.
 
 This method is ETController designated copier. Subclasses that want to extend 
-the copying support must invoke it instead of -copyWithZone:. */
+the copying support must invoke it instead of -copyWithZone:.
+ 
+The persistent object context is retained in the copy. */
 - (id) copyWithZone: (NSZone *)aZone content: (ETLayoutItemGroup *)newContent
 {
 	ETController *newController = [super copyWithZone: aZone];
@@ -418,6 +421,7 @@ the copying support must invoke it instead of -copyWithZone:. */
 	newController->_observations = [[NSMutableSet allocWithZone: aZone] init];
 	newController->_templates = [_templates copyWithZone: aZone];
 	ASSIGN(newController->_currentObjectType, _currentObjectType);
+	ASSIGN(newController->_persistentObjectContext, _persistentObjectContext);
 	newController->_sortDescriptors = [_sortDescriptors copyWithZone: aZone];
 	newController->_filterPredicate = [_filterPredicate copyWithZone: aZone];
 	newController->_allowedPickTypes = [_allowedPickTypes copyWithZone: aZone];
@@ -533,35 +537,68 @@ See -newItemWithURL:ofType:options and ETItemTemplate. */
 	[_templates setObject: aTemplate forKey: aUTI];
 }
 
+/** Returns the object that manages persistency.
+
+The returned context is usually either a COPersistentRoot for inserting new 
+inner objects inside a given persistent root, or a COEditingContext for 
+inserting new root objects along their persistent roots. 
+ 
+Can be overriden to return the right context based on the circumstances. For 
+example, based on the current selection (a persistent object vs no selection), 
+a persistent root or the editing context could be returned. */
+- (id <COPersistentObjectContext>) persistentObjectContext
+{
+	return _persistentObjectContext;
+}
+
+/** Sets the object that manages persistency.
+ 
+If the given object doesn't conform to the protocol, raises an 
+NSInvalidArgumentException.
+
+See -persistentObjectContext for more details. */
+- (void) setPersistentObjectContext: (id <COPersistentObjectContext>)aContext
+{
+	INVALIDARG_EXCEPTION_TEST(aContext, [(id <NSObject>)aContext conformsToProtocol: NSProtocolFromString(@"COPersistentObjectContext")]);
+	ASSIGN(_persistentObjectContext, aContext);
+}
+
 /** Creates a new object by calling -newItemWithURL:ofType:options: and adds it to the content. */
 - (void) add: (id)sender
 {
-	[self insertItem: AUTORELEASE([self newItemWithURL: nil ofType: [self currentObjectType] options: nil])
-	       atIndexPath: [self additionIndexPath]];
-	
+	ETLayoutItem *item = AUTORELEASE([self newItemWithURL: nil
+	                                               ofType: [self  currentObjectType]
+	                                              options: [self defaultOptions]]);
+	[self insertItem: item atIndexPath: [self additionIndexPath]];
 }
 
 /** Creates a new object group by calling -newItemWithURL:ofType:options: and adds it to the content. */
 - (void) addNewGroup: (id)sender
 {
-	[self insertItem: AUTORELEASE([self newItemWithURL: nil ofType: kETTemplateGroupType options: nil])
-	       atIndexPath: [self additionIndexPath]];
+	ETLayoutItem *item = AUTORELEASE([self newItemWithURL: nil
+	                                               ofType: kETTemplateGroupType
+	                                              options: [self defaultOptions]]);
+	[self insertItem: item atIndexPath: [self additionIndexPath]];
 }
 
 /** Creates a new object by calling -newItemWithURL:ofType:options: and inserts it into the content at 
 -insertionIndex. */
 - (void) insert: (id)sender
 {
-	[self insertItem: AUTORELEASE([self newItemWithURL: nil ofType: [self currentObjectType] options: nil])
-	       atIndexPath: [self insertionIndexPath]];
+	ETLayoutItem *item = AUTORELEASE([self newItemWithURL: nil
+	                                               ofType: [self  currentObjectType]
+	                                              options: [self defaultOptions]]);
+	[self insertItem: item atIndexPath: [self insertionIndexPath]];
 }
 
 /** Creates a new object group by calling -newItemWithURL:ofType:options: and inserts it into the 
 content at -insertionIndex. */
 - (void) insertNewGroup: (id)sender
 {
-	[self insertItem: AUTORELEASE([self newItemWithURL: nil ofType: kETTemplateGroupType options: nil])
-	       atIndexPath: [self insertionIndexPath]];
+	ETLayoutItem *item = AUTORELEASE([self newItemWithURL: nil
+	                                               ofType: kETTemplateGroupType
+	                                              options: [self defaultOptions]]);
+	[self insertItem: item atIndexPath: [self insertionIndexPath]];
 }
 
 /** Removes all selected objects in the content. Selected objects are retrieved 
@@ -617,6 +654,20 @@ See also ETItemTemplate. */
 	return [[self templateForType: aUTI] newItemWithURL: aURL options: options];
 }
 
+/** Returns the current options that controls the content mutation.
+
+A common option is kETTemplateOptionPersistentObjectContext (bound to 
+-persistentObjectContext).
+ 
+When calling methods that includes a <em>options</em> argument such as 
+-newItemWithURL:ofType:options:, you must use -defaultOptions for the argument. 
+
+Extra options can be added to the returned dictionary. */
+- (NSDictionary *)defaultOptions
+{
+	return D([self persistentObjectContext], kETTemplateOptionPersistentObjectContext);
+}
+
 /** Returns whether remove, add and insert actions are possible.
 
 By default, returns -isContentMutable value.
@@ -629,7 +680,7 @@ should look like:
 <example>
 if ([self canMutate])
 {
-	id mailboxItem = [[self templateForType: mailboxUTI] newItemWithURL: nil options: nil];
+	id mailboxItem = [[self templateForType: mailboxUTI] newItemWithURL: nil options: [self defaultOptions]];
 	[self insertItem: mailboxItem atIndex: ETUndeterminedIndex];
 }
 </example>
@@ -647,7 +698,7 @@ you insert, then you can implement a related method. For the example above:
 {
 	if ([self canMutateForMailbox])
 	{
-		id mailboxItem = [[self templateForType: mailboxUTI] newItemWithURL: nil options: nil];
+		id mailboxItem = [[self templateForType: mailboxUTI] newItemWithURL: nil options: [self defaultOptions]];
 ...
 </example>
 

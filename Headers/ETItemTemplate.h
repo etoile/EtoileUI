@@ -12,7 +12,10 @@
 #import <Foundation/Foundation.h>
 #import <AppKit/AppKit.h>
 #import <EtoileUI/ETController.h>
-
+#import <EtoileUI/ETCompatibility.h>
+#ifdef COREOBJECT
+#import <CoreObject/COEditingContext.h>
+#endif
 @class ETLayoutItem, ETLayoutItemGroup, ETUTI;
 
 @protocol ETDocumentCreation
@@ -47,18 +50,20 @@ model initialization. */
 	ETLayoutItem *_item;
 }
 
+/** @taskunit Initialization */
+
 + (id) templateWithItem: (ETLayoutItem *)anItem objectClass: (Class)aClass;
 
 - (id) initWithItem: (ETLayoutItem *)anItem objectClass: (Class)aClass;
 
-/* Properties */
+/** @taskunit Properties */
 
 - (Class) objectClass;
 - (ETLayoutItem *) item;
 - (ETLayoutItem *) contentItem;
 - (NSString *) baseName;
 
-/* Template Instantiation & Saving */
+/** @taskunit Template Instantiation & Saving */
 
 - (ETLayoutItem *) newItemWithRepresentedObject: (id)anObject options: (NSDictionary *)options;
 - (ETLayoutItem *) newItemWithRepresentedObject: (id)anObject URL: (NSURL *)aURL options: (NSDictionary *)options;
@@ -75,3 +80,19 @@ model initialization. */
 @end
 
 extern NSString * const kETTemplateOptionNumberOfUntitledDocuments;
+extern NSString * const kETTemplateOptionPersistentObjectContext;
+
+#ifdef COREOBJECT
+/** COObject category to implement ETDocumentCreation and integrate COObject 
+instantiation into ETItemTemplate. */
+@interface COObject (ETItemTemplate) <ETDocumentCreation>
+/** <override-never />
+Inserts the receiver into the persistent object context passed among the options.
+
+Based on the context type, the receiver is inserted as a root object (along a 
+new persistent root) or as a inner object into the context. 
+
+If the options contains no custom context, does the same than -init. */
+- (id) initWithURL: (NSURL *)aURL options: (NSDictionary *)options;
+@end
+#endif
