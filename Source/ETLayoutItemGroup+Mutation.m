@@ -479,6 +479,11 @@ The returned object is autoreleased. */
 		type = ([object isCollection] ? [provider currentGroupType] : [provider currentObjectType]);
 		template = [provider templateForType: type];
 	}
+	if (template == nil)
+	{
+		[NSException raise: NSInternalInconsistencyException
+		            format: @"Found no template in %@ for %@", provider, type];
+	}
 	ETLayoutItem *item = [template newItemWithRepresentedObject: object options: nil];
 
 	// TODO: Move that in ETItemTemplate with a kETTemplateOptionIsValue in the options dict.
@@ -490,6 +495,7 @@ The returned object is autoreleased. */
 		[item setRepresentedObject: nil];
 	}
 
+	ETAssert(item != nil);
 	return AUTORELEASE(item);
 }
 
