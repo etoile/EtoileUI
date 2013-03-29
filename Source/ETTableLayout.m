@@ -736,6 +736,8 @@ compatible with the cell used at the given row/column intersection.  */
 	if (value == nil)
 		return;
 	
+	// TODO: We should call -objectWithObjectValue: in a way symetric to
+	// objectValueForObject: in -tableView:objectValueForTableColumn:row:.
 	BOOL result = [item setValue: value forProperty: [column identifier]];
 	BOOL blankColumnIdentifier = [column identifier] == nil || [[column identifier] isEqual: @""];
 	
