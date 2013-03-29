@@ -842,7 +842,7 @@ This method is a lot more efficient than using -allDescendantItems e.g.
 {
 	BOOL hasSource = ([[self baseItem] source] != nil);
 
-	return hasSource && ![self isReloading];
+	return (hasSource && [self isReloading] == NO && [self isMutating] == NO);
 }
 
 /** Tries to reload the content of the receiver, but only if it can be reloaded.

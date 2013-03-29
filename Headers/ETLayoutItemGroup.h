@@ -32,6 +32,7 @@
 	BOOL _autolayout;
 	BOOL _usesLayoutBasedFrame;
 	BOOL _reloading; /* ivar used by ETMutationHandler category */
+	BOOL _mutating; /* ivar used by ETMutationHandler category */
 	BOOL _hasNewContent;
 	BOOL _hasNewLayout;
 	/* Indicates whether -arrangedItems has changed since the layout was last

@@ -137,6 +137,16 @@ inside another -begin/endMutate pair.  */
 	[self didChangeContentWithMoreComing: NO];
 }
 
+/** Returns whether an item is being inserted or removed among the receiver 
+items (descendant items not being taken in account).
+
+If -representedObjectDidUpdate is called back, the receiver must not be reloaded. 
+To do so, -canReload checks -isMutating. */
+- (BOOL) isMutating
+{
+	return _mutating;
+}
+
 /* Element Mutation Handler */
 
 - (BOOL) isValidMutationForRepresentedObject: (id)repObject
@@ -158,6 +168,8 @@ inside another -begin/endMutate pair.  */
 		return;
 	}
 
+	_mutating = YES;
+
 	if ([self isReloading] == NO)
 	{
 		[self mutateRepresentedObjectForInsertedItem: item atIndex: index hint: hint];
@@ -177,6 +189,8 @@ inside another -begin/endMutate pair.  */
 	[self didChangeContentWithMoreComing: moreComing];
 
 	[self endCoalescingModelMutation];
+
+	_mutating = NO;
 }
 
 - (void) mutateRepresentedObjectForInsertedItem: (ETLayoutItem *)item 
@@ -208,6 +222,8 @@ inside another -begin/endMutate pair.  */
 	if ([[item parentItem] isEqual: self] == NO)
 		return;
 
+	_mutating = YES;
+
 	/* Take note that -reload calls -removeAllItems. 
 	   See -handleAdd:item: to know more. */	
 	if ([self isReloading] == NO && [self isCoalescingModelMutation] == NO)
@@ -223,6 +239,8 @@ inside another -begin/endMutate pair.  */
 	[self didChangeContentWithMoreComing: moreComing];
 
 	[self endCoalescingModelMutation];
+
+	_mutating = NO;
 }
 
 - (void) mutateRepresentedObjectForRemovedItem: (ETLayoutItem *)item
