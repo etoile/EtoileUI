@@ -45,6 +45,7 @@ like -addItem, removeItem:, -insertItem:atIndex: etc. */
 - (void) endCoalescingModelMutation;
 - (BOOL) beginMutate;
 - (void) endMutate: (BOOL)wasAutolayoutEnabled;
+- (BOOL) isMutating;
 
 /** @taskunit Mutation Actions */
 
