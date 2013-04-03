@@ -46,6 +46,11 @@
 
 @implementation COObject (EtoileUI)
 
++ (NSArray *) menuItems
+{
+	return [NSArray array];
+}
+
 - (NSImage *) icon
 {
 	return [[IKIcon iconWithIdentifier: @"document-x-generic"] image];
@@ -191,14 +196,28 @@
 	return browser;
 }
 
+- (NSString *) trackTitleForRepresentedObject: (id)trackOrRevs
+{
+	if ([trackOrRevs isTrack])
+	{
+		return [NSString stringWithFormat: _(@"%@ History"),[trackOrRevs displayName]];
+	}
+	else
+	{
+		return _(@"Undetermined Revision or Track Node Collection");
+	}
+}
+
 - (ETLayoutItemGroup *) historyBrowserWithRepresentedObject: (id <ETCollection>)trackOrRevs
+                                                      title: (NSString *)aTitle
 {
 	/* We set the controller on the track view so it can access the track nodes */
 	ETController *controller = AUTORELEASE([[ETHistoryBrowserController alloc] init]);
 	ETLayoutItemGroup *topBar = [self historyBrowserTopBarWithController: controller];
 	ETLayoutItemGroup *trackView = [self historyBrowserTrackViewWithRepresentedObject: trackOrRevs controller: controller];
 	ETLayoutItemGroup *browser = [self itemGroupWithItems: A(topBar, trackView)];
-
+	
+	[browser setName: (aTitle != nil ? aTitle : [self trackTitleForRepresentedObject: trackOrRevs])];
 	[browser setAutoresizingMask: ETAutoresizingFlexibleWidth | ETAutoresizingFlexibleHeight];
 	[browser setLayout: [ETColumnLayout layout]];
 

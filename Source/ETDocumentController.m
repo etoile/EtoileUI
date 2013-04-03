@@ -322,7 +322,8 @@ See also [ETDocumentCreation] protocol. */
 #ifdef COREOBJECT
 	COObject *rootObject = [self activeItem];
 	ETLayoutItemGroup *browser = [[ETLayoutItemFactory factory] 
-		historyBrowserWithRepresentedObject: [rootObject commitTrack]];
+		historyBrowserWithRepresentedObject: [rootObject commitTrack]
+		                              title: nil];
 
 	[[[ETLayoutItemFactory factory] windowGroup] addItem: browser];
 #endif
