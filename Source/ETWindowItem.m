@@ -330,6 +330,51 @@ and make the necessary adjustments. */
 	return NSMakeRect(windowFrame.origin.x, y, windowFrame.size.width, windowFrame.size.height);
 }
 
+- (void) updateWindowFrameForDecoratedView: (ETView *)decoratedView
+{
+	if (decoratedView == nil)
+		return;
+
+	// FIXME: Restore the position correctly, we could use...
+	//[_itemWindow setContentSizeFromTopLeft: [decoratedView frame].size];
+		
+	if ([self shouldKeepWindowFrame] == NO)
+	{
+		[_itemWindow setFrame: [_itemWindow frameRectForContentRect: [decoratedView frame]] display: YES];
+		//[_itemWindow setFrame: [[self class] convertRectToWidgetBackendScreenBase: [decoratedView frame]]
+		//              display: YES];
+	}
+	
+	//NSSize shrinkedItemSize = [_itemWindow contentRectForFrameRect: [_itemWindow frame]].size;
+	//[decoratedView setFrameSize: shrinkedItemSize];
+	/* Previous line similar to [decoratedItem setContentSize: shrinkedItemSize] */
+}
+
+- (void) didUndecorateItem: (ETUIItem *)item
+{
+	BOOL usesTitleBinding = ([_itemWindow infoForBinding: NSTitleBinding] != nil);
+
+	[_itemWindow orderOut: self];
+	[_itemWindow unbind: NSTitleBinding];
+	if (usesTitleBinding)
+	{
+		[_itemWindow setTitle: @""];
+	}
+}
+
+- (void) didDecorateItem: (ETUIItem *)item
+{
+	// TODO: Write a test to ensure the binding is updated when intermediate
+	// decorators are bound to a new decorated item.
+	if ([self usesCustomWindowTitle] == NO && [[item firstDecoratedItem] isLayoutItem])
+	{
+		[_itemWindow bind: NSTitleBinding
+		         toObject: [item firstDecoratedItem]
+		      withKeyPath: kETDisplayNameProperty
+		          options: nil];
+	}
+}
+
 - (void) handleDecorateItem: (ETUIItem *)item 
              supervisorView: (ETView *)decoratedView 
                      inView: (ETView *)parentView 
@@ -343,48 +388,23 @@ and make the necessary adjustments. */
 	   decorator is a view  (box, scroll view etc.). */
 	[super handleDecorateItem: item supervisorView: nil inView: nil];
 		
-	if (decoratedView != nil)
-	{
-		// FIXME: Restore the position correctly, we could use...
-		//[_itemWindow setContentSizeFromTopLeft: [decoratedView frame].size];
-		
-		if ([self shouldKeepWindowFrame] == NO)
-		{
-			[_itemWindow setFrame: [_itemWindow frameRectForContentRect: [decoratedView frame]] display: YES];
-			//[_itemWindow setFrame: [[self class] convertRectToWidgetBackendScreenBase: [decoratedView frame]]
-			//              display: YES];
-		}
-	
-		//NSSize shrinkedItemSize = [_itemWindow contentRectForFrameRect: [_itemWindow frame]].size;
-		//[decoratedView setFrameSize: shrinkedItemSize];
-		/* Previous line similar to [decoratedItem setContentSize: shrinkedItemSize] */
-	}
+	[self updateWindowFrameForDecoratedView: decoratedView];
 	[_itemWindow setContentView: (NSView *)decoratedView];	
 
-	// TODO: Update the binding when intermediate decorators are bound to a new 
-	// decorated item.
-	if ([self usesCustomWindowTitle] == NO && [[item firstDecoratedItem] isLayoutItem])
-	{
-		// FIXME: We have a crash later because the observed object can be 
-		// released without any way to let us know.
-		/*[_itemWindow bind: NSTitleBinding
-		         toObject: [item firstDecoratedItem]
-		      withKeyPath: kETDisplayNameProperty
-		          options: nil];*/
-	}
-	if (parentView != nil)
-	{
-		[_itemWindow makeKeyAndOrderFront: self];
-	}
+	if (parentView == nil)
+		return;
+
+	[_itemWindow makeKeyAndOrderFront: self];
 }
 
 - (void) handleUndecorateItem: (ETUIItem *)item
                supervisorView: (ETView *)decoratedView 
                        inView: (ETView *)parentView
 {
-	[_itemWindow orderOut: self];
-	[_itemWindow unbind: NSTitleBinding];
-	[super handleUndecorateItem: item supervisorView: decoratedView inView: parentView];
+	/* For calling -restoreAutoresizingMaskOfDecoratedItem: */
+	[super handleUndecorateItem: item supervisorView: nil inView: nil];
+
+	[_itemWindow setContentView: nil];
 }
 
 - (void) saveAndOverrideAutoresizingMaskOfDecoratedItem: (ETUIItem *)item
@@ -401,6 +421,7 @@ and make the necessary adjustments. */
 /** Returns nil. */
 - (ETView *) supervisorView
 {
+	ETAssert([super supervisorView] == nil);
 	return nil;
 }
 

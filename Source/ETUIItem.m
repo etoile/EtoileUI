@@ -300,6 +300,7 @@ model graph and remains semantic. */
 	[existingDecorator handleUndecorateItem: self 
 	                         supervisorView: [self supervisorView]
 	                                 inView: parentView];
+	[self didRemoveDecoratorItem: existingDecorator];
 
 	/* Set up new decorator */
 	[decorator setFlipped: [self isFlipped]];
@@ -321,6 +322,7 @@ model graph and remains semantic. */
 		proposedFrame = [[decorator lastDecoratorItem] frameForDecoratedItemFrame: proposedFrame];
 	}
 	ASSIGN(_decoratorItem, decorator);
+	[self didAddDecoratorItem: decorator];
 
 	/* When a decorator view has been resized, moved or removed, we must reflect
 	   it on the decorated view which may not have been resized.
@@ -328,7 +330,6 @@ model graph and remains semantic. */
 	   document view within a scroll view and this scroll view frame is modified. 
 	   Switching to a layout view reveals the issue even more clearly. */
 	[self setFirstDecoratedItemFrame: proposedFrame];
-	[self didChangeDecoratorOfItem: self];
 
 	RELEASE(existingDecorator);
 	RELEASE(decorator);
@@ -413,6 +414,18 @@ Returns the decoration rect associated with the receiver. */
 	{
 		return [[self supervisorView] frame];
 	}
+}
+
+/** <override-dummy /> */
+- (void) didDecorateItem: (ETUIItem *)item
+{
+	
+}
+
+/** <override-dummy /> */
+- (void) didUndecorateItem: (ETUIItem *)item
+{
+	
 }
 
 /** Returns whether the receiver is a decorator item.
@@ -515,12 +528,27 @@ The next responder is the enclosing item unless specified otherwise. */
 
 /* Framework Private */
 
-/** <override-dummy /> */
-- (void) didChangeDecoratorOfItem: (ETUIItem *)item
+- (void)didRemoveDecoratorItem: (ETDecoratorItem *)aDecorator
 {
-
+	ETDecoratorItem *decorator = aDecorator;
+	
+	while (decorator != nil)
+	{
+		[decorator didUndecorateItem: self];
+		decorator = [decorator decoratorItem];
+	}
 }
 
+- (void)didAddDecoratorItem: (ETDecoratorItem *)aDecorator
+{
+	ETDecoratorItem *decorator = aDecorator;
+	
+	while (decorator != nil)
+	{
+		[decorator didDecorateItem: self];
+		decorator = [decorator decoratorItem];
+	}
+}
 
 /* Default implementation inherited by ETLayoutItem but overriden by ETDecoratorItem */
 - (ETUIItem *) decoratedItemAtPoint: (NSPoint)aPoint

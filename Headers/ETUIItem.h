@@ -59,24 +59,32 @@ You must never subclass ETUIItem. ETUIItem ivars must be considered private. */
 	IBOutlet ETView *supervisorView;
 }
 
+/** @taskunit Default Settings */
+
 + (NSRect) defaultItemRect;
 
-- (BOOL) usesWidgetView;
+/** @taskunit Supervisor View and View */
 
+- (BOOL) usesWidgetView;
 - (BOOL) isFlipped;
 - (ETView *) supervisorView;
 - (void) setSupervisorView: (ETView *)aView sync: (ETSyncSupervisorView)syncDirection;
 - (void) setSupervisorView: (ETView *)aView;
 - (ETView *) displayView;
+
+/** @taskunit UI Editing */
+
 - (void) beginEditingUI;
 /*- (BOOL) isEditingUI;
 - (void) commitEditingUI;*/
+
+/** @taskunit Drawing */
 
 - (void) render: (NSMutableDictionary *)inputValues 
       dirtyRect: (NSRect)dirtyRect 
       inContext: (id)ctxt;
 
-/* Decoration */
+/** @taskunit Accessing and Manipulating Decoration */
 
 - (ETDecoratorItem *) decoratorItem;
 - (void) setDecoratorItem: (ETDecoratorItem *)decorator;
@@ -89,23 +97,29 @@ You must never subclass ETUIItem. ETUIItem ivars must be considered private. */
 
 - (ETUIItem *) decoratorItemAtPoint: (NSPoint)aPoint;
 
+/** @taskunit Decoration Notifications */
+
+- (void) didDecorateItem: (ETUIItem *)item;
+- (void) didUndecorateItem: (ETUIItem *)item;
+
+/** @taskunit Decoration Type Querying */
+
 - (BOOL) isDecoratorItem;
 - (BOOL) isWindowItem;
 - (BOOL) isScrollableAreaItem;
 
-/* Enclosing Item */
+/** @taskunit Enclosing Item */
 
 - (id) enclosingItem;
 - (NSRect) convertRectToEnclosingItem: (NSRect)aRect;
 - (NSPoint) convertPointToEnclosingItem: (NSPoint)aPoint;
 
-/* Actions */
+/** @taskunit Actions */
 
 - (id) nextResponder;
 
-/* Framework Private */
+/** @taskunit Framework Private */
 
-- (void) didChangeDecoratorOfItem: (ETUIItem *)item;
 - (BOOL) shouldSyncSupervisorViewGeometry;
 - (NSRect) convertDisplayRect: (NSRect)rect 
         toAncestorDisplayView: (NSView **)aView 

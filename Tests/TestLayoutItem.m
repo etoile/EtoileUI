@@ -73,6 +73,38 @@ static ETLayoutItemFactory *itemFactory = nil;
 	[item22 addItem: item221];
 }*/
 
+- (void) testRetainCountForItemCreation
+{
+
+	id item = [itemFactory item];
+	id itemGroup = [itemFactory itemGroup];
+
+	/* Force the layout executor to release the item (the item was scheduled due 
+	   to geometry initialization) */
+	CREATE_AUTORELEASE_POOL(pool);
+	[[ETLayoutExecutor sharedInstance] removeItems: S(item, itemGroup)];
+	DESTROY(pool);
+
+	UKIntsEqual(1, [item retainCount]);
+	UKIntsEqual(1, [itemGroup retainCount]);
+}
+
+- (void) testRetainCountForItemMutation
+{
+	id item = [itemFactory item];
+	id itemGroup = [itemFactory itemGroup];
+	
+	[itemGroup addItem: item];
+	[itemGroup removeItem: item];
+
+	CREATE_AUTORELEASE_POOL(pool);
+	[[ETLayoutExecutor sharedInstance] removeItems: S(item, itemGroup)];
+	DESTROY(pool);
+
+	UKIntsEqual(1, [item retainCount]);
+	UKIntsEqual(1, [itemGroup retainCount]);
+}
+
 - (void) testRootItem
 {
 	ETLayoutItem *item3 = [itemFactory item];
