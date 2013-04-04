@@ -220,6 +220,7 @@
 		60909D660CB304D9009CAD27 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 29B97316FDCFA39411CA2CEA /* main.m */; };
 		60928D5112EDE9EA0091A3D1 /* MarkupEditorItemFactory.m in Sources */ = {isa = PBXBuildFile; fileRef = 60928D4D12EDE9EA0091A3D1 /* MarkupEditorItemFactory.m */; };
 		60928D5212EDE9EA0091A3D1 /* AppController.m in Sources */ = {isa = PBXBuildFile; fileRef = 60928D4F12EDE9EA0091A3D1 /* AppController.m */; };
+		609C01E3170C34F500D01AAB /* TestWindowItem.m in Sources */ = {isa = PBXBuildFile; fileRef = 609C01E2170C34F300D01AAB /* TestWindowItem.m */; };
 		609F5B6016CA9E8900683BD9 /* TestController.m in Sources */ = {isa = PBXBuildFile; fileRef = 609F5B5916CA9E8800683BD9 /* TestController.m */; };
 		609F5B6116CA9E8900683BD9 /* TestLayout.m in Sources */ = {isa = PBXBuildFile; fileRef = 609F5B5A16CA9E8800683BD9 /* TestLayout.m */; };
 		609F5B6216CA9E8900683BD9 /* TestLayoutItem.m in Sources */ = {isa = PBXBuildFile; fileRef = 609F5B5B16CA9E8800683BD9 /* TestLayoutItem.m */; };
@@ -916,6 +917,7 @@
 		609548CF0C0E300500068CBB /* ETLayoutItemGroup.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ETLayoutItemGroup.m; path = Source/ETLayoutItemGroup.m; sourceTree = "<group>"; wrapsLines = 0; };
 		609549810C0E462500068CBB /* ETOutlineLayout.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ETOutlineLayout.h; path = Headers/ETOutlineLayout.h; sourceTree = "<group>"; };
 		609549820C0E462500068CBB /* ETOutlineLayout.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ETOutlineLayout.m; path = Source/ETOutlineLayout.m; sourceTree = "<group>"; };
+		609C01E2170C34F300D01AAB /* TestWindowItem.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = TestWindowItem.m; path = Tests/TestWindowItem.m; sourceTree = "<group>"; };
 		609F46590B41641400AD2209 /* ETLayout.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ETLayout.h; path = Headers/ETLayout.h; sourceTree = "<group>"; };
 		609F465A0B41641400AD2209 /* ETLayout.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ETLayout.m; path = Source/ETLayout.m; sourceTree = "<group>"; };
 		609F465C0B41642900AD2209 /* ETFlowLayout.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ETFlowLayout.h; path = Headers/ETFlowLayout.h; sourceTree = "<group>"; };
@@ -1355,6 +1357,7 @@
 				609F5B5F16CA9E8800683BD9 /* TestTool.m */,
 				602635E511AD413B007586E3 /* TestWidgetLayout.m */,
 				6037769216BE7BA900B7EEB5 /* TestWindowLayout.m */,
+				609C01E2170C34F300D01AAB /* TestWindowItem.m */,
 			);
 			name = Tests;
 			sourceTree = "<group>";
@@ -2753,6 +2756,7 @@
 				609F5B6516CA9E8900683BD9 /* TestSupervisorView.m in Sources */,
 				609F5B6616CA9E8900683BD9 /* TestTool.m in Sources */,
 				609F5B6816CD412A00683BD9 /* TestItemProvider.m in Sources */,
+				609C01E3170C34F500D01AAB /* TestWindowItem.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
