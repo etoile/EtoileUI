@@ -96,8 +96,9 @@ makes the label invisible. */
 - (void) drawImage: (NSImage *)itemImage 
            flipped: (BOOL)itemFlipped 
             inRect: (NSRect)aRect;
-- (void) drawLabel: (NSString *)aLabel 
-           flipped: (BOOL)itemFlipped 
+- (void) drawLabel: (NSString *)aLabel
+        attributes: (NSDictionary *)attributes
+           flipped: (BOOL)itemFlipped
             inRect: (NSRect)aRect;
 - (void) drawStackIndicatorInRect: (NSRect)indicatorRect;
 - (void) drawFirstResponderIndicatorInRect: (NSRect)indicatorRect;
@@ -112,6 +113,7 @@ makes the label invisible. */
 - (void) setLabelMargin: (float)aMargin;
 - (NSDictionary *) labelAttributes;
 - (void) setLabelAttributes: (NSDictionary *)stringAttributes;
+- (NSDictionary *) labelAttributesForDrawingItem: (ETLayoutItem *)item;
 
 - (NSRect) rectForLabel: (NSString *)aLabel 
                 inFrame: (NSRect)itemFrame 

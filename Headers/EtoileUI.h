@@ -64,6 +64,7 @@
 #import <EtoileUI/ETTemplateItemLayout.h>
 #import <EtoileUI/ETTextEditorLayout.h>
 #import <EtoileUI/ETTitleBarItem.h>
+#import <EtoileUI/ETTokenLayout.h>
 #import <EtoileUI/ETUIItem.h>
 #import <EtoileUI/ETLayoutItemFactory.h>
 #import <EtoileUI/ETViewModelLayout.h>

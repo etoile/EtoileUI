@@ -28,11 +28,13 @@ endif
 
 EtoileUI_HEADER_FILES_DIR = Headers
 
-OTHER_HEADER_DIRS = AspectRepository CoreObjectUI Persistency UIBuilder
+OTHER_HEADER_DIRS = Layouts AspectRepository CoreObjectUI Persistency UIBuilder
 
 EtoileUI_HEADER_FILES = $(notdir $(wildcard Headers/*.h))
 
 EtoileUI_OBJC_FILES += $(wildcard Source/*.m)
+
+EtoileUI_OBJC_FILES += $(wildcard Layouts/*.m)
 
 EtoileUI_OBJC_FILES += $(wildcard AspectRepository/*.m)
 

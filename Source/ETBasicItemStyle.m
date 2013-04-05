@@ -128,8 +128,14 @@ DEALLOC(DESTROY(_labelAttributes));
 
 	if (nil != itemLabel)
 	{
-		//ETLog(@"Try to draw label in %@ of %@", NSStringFromRect(_currentLabelRect), item);
-		[self drawLabel: itemLabel flipped: [item isFlipped] inRect: _currentLabelRect];
+		if ([[item identifier] isEqual: @"collectionEditor"])
+		{
+			ETLog(@"Try to draw label in %@ of %@", NSStringFromRect(_currentLabelRect), item);
+		}
+		[self drawLabel: itemLabel
+		     attributes: [self labelAttributesForDrawingItem: item]
+		        flipped: [item isFlipped]
+		         inRect: _currentLabelRect];
 	}
 
 	if ([item isGroup] && [(ETLayoutItemGroup *)item isStack])
@@ -203,12 +209,18 @@ means you can safely use it when overriding other drawing methods. */
 }
 
 /** Draws a label at the origin of the current graphics coordinates. */
-- (void) drawLabel: (NSString *)aLabel flipped: (BOOL)itemFlipped inRect: (NSRect)aRect
+- (void) drawLabel: (NSString *)aLabel
+        attributes: (NSDictionary *)attributes
+           flipped: (BOOL)itemFlipped
+            inRect: (NSRect)aRect
 {
 	/* By default, -drawInRect:attributes: interprets the rect origin based on 
 	   the flipping of the focused view. 
 	   See -[NSAttributedString drawInRect:] in Cocoa doc. */
 	BOOL flipMismatch = (itemFlipped != [[NSView focusView] isFlipped]);
+
+	[[NSColor redColor] setFill];
+	NSRectFill(NSMakeRect(-200, 0, 200, 100));
 
 	if (flipMismatch)
 	{
@@ -326,6 +338,11 @@ See also -maxLabelSize. */
 - (void) setLabelAttributes: (NSDictionary *)stringAttributes
 {
 	ASSIGN(_labelAttributes, stringAttributes);
+}
+
+- (NSDictionary *) labelAttributesForDrawingItem: (ETLayoutItem *)item
+{
+	return _labelAttributes;
 }
 
 - (NSRect) rectForLabel: (NSString *)aLabel 
