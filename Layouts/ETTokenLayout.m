@@ -26,7 +26,7 @@
 @implementation ETTokenLayout
 
 /** <init />
-Initializes and returns a new icon layout. */
+Initializes and returns a new token layout. */
 - (id) init
 {
 	SUPERINIT
@@ -198,12 +198,19 @@ The resizing isn't delegated to the positional layout unlike in ETTemplateItemLa
 
 + (NSDictionary *) standardLabelAttributes
 {
-	return D([NSFont labelFontOfSize: 12], NSFontAttributeName);
+	return D([NSFont labelFontOfSize: 13], NSFontAttributeName);
+}
+
++ (NSDictionary *) defaultSelectedLabelAttributes
+{
+	NSMutableDictionary *newAttributes = [[[self standardLabelAttributes] mutableCopy] autorelease];
+	[newAttributes setObject: [NSColor whiteColor] forKey: NSForegroundColorAttributeName];
+	return [[newAttributes copy] autorelease];
 }
 
 + (NSColor *) defaultTintColor
 {
-	return [[NSColor colorWithCalibratedRed: 0.5 green: 0.1 blue: 0.7 alpha: 0.8] highlightWithLevel: 0.6];
+	return [NSColor colorWithCalibratedRed: 0.5 green: 0.1 blue: 0.7 alpha: 0.8];
 }
 
 - (id) init
@@ -211,7 +218,7 @@ The resizing isn't delegated to the positional layout unlike in ETTemplateItemLa
 	SUPERINIT
 
 	ASSIGN(_tintColor, [[self class] defaultTintColor]);
-	[self setSelectedAttributesFromAttributes: [self labelAttributes]];
+	[self setSelectedLabelAttributes: [[self class] defaultSelectedLabelAttributes]];
 
 	NSSize maxLabelSize = [self maxLabelSize];
 
@@ -227,7 +234,6 @@ The resizing isn't delegated to the positional layout unlike in ETTemplateItemLa
 - (void) dealloc
 {
 	DESTROY(_tintColor);
-	DESTROY(_selectedLabelAttributes);
 	[super dealloc];
 }
 
@@ -241,7 +247,6 @@ The resizing isn't delegated to the positional layout unlike in ETTemplateItemLa
 	[aCopier beginCopyFromObject: self toObject: newStyle];
 	
 	newStyle->_tintColor = [_tintColor copyWithZone: [aCopier zone]];
-	newStyle->_selectedLabelAttributes = [_selectedLabelAttributes copyWithZone: [aCopier zone]];
 
 	[aCopier endCopy];
 	return newStyle;
@@ -295,7 +300,7 @@ The resizing isn't delegated to the positional layout unlike in ETTemplateItemLa
 	}
 
 	[self drawRoundedTokenInRect: [item drawingBoundsForStyle: self]
-	                  isSelected: [self drawsItemAsSelected: item]];
+	                  isSelected: [self shouldDrawItemAsSelected: item]];
 
 	if (nil != itemLabel)
 	{
@@ -306,34 +311,6 @@ The resizing isn't delegated to the positional layout unlike in ETTemplateItemLa
 	{
 		[self drawFirstResponderIndicatorInRect: bounds];
 	}*/
-}
-
-- (void) setSelectedAttributesFromAttributes: (NSDictionary *)stringAttributes
-{
-	NSMutableDictionary *newAttributes = [[stringAttributes mutableCopy] autorelease];
-	
-	NSFont *font = [stringAttributes objectForKey: NSFontAttributeName];
-	NSFont *boldFont = [[NSFontManager sharedFontManager] convertFont: font
-	                                                      toHaveTrait: NSBoldFontMask];
-
-	[newAttributes setObject: boldFont forKey: NSFontAttributeName];
-	[newAttributes setObject: [NSColor whiteColor] forKey: NSForegroundColorAttributeName];
-
-	ASSIGNCOPY(_selectedLabelAttributes, newAttributes);
-}
-
-- (void) setLabelAttributes: (NSDictionary *)stringAttributes
-{
-	[super setLabelAttributes: stringAttributes];
-	[self setSelectedAttributesFromAttributes: stringAttributes];
-}
-
-- (BOOL) drawsItemAsSelected: (ETLayoutItem *)item 
-{
-	// FIXME: We should pass a hint in inputValues that lets us known whether
-	// we handle the selection visual clue or not, in order to eliminate the
-	// hard check on ETFreeLayout...
-	return ([item isSelected] && [[(ETLayoutItem *)[item parentItem] layout] isKindOfClass: NSClassFromString(@"ETFreeLayout")] == NO);
 }
 
 /** Draws a rounded rectangle that covers the given rect area. */
@@ -348,16 +325,18 @@ The resizing isn't delegated to the positional layout unlike in ETTemplateItemLa
 
 	if (isSelected)
 	{
-		[[_tintColor shadowWithLevel: 0.8] setFill];
+		[[_tintColor shadowWithLevel: 0.4] setFill];
 		[path fill];
-		[[_tintColor shadowWithLevel: 0.8] setStroke];
+		[[_tintColor shadowWithLevel: 0.2] setStroke];
 		[path stroke];
 	}
 	else
 	{
-		[_tintColor setFill];
+		NSColor *highlightedTintColor = [_tintColor highlightWithLevel: 0.6];
+	
+		[highlightedTintColor setFill];
 		[path fill];
-		[[_tintColor shadowWithLevel: 0.2] setStroke];
+		[[highlightedTintColor shadowWithLevel: 0.5] setStroke];
 		[path stroke];
 	}
 
@@ -371,19 +350,16 @@ The resizing isn't delegated to the positional layout unlike in ETTemplateItemLa
 
 - (NSFont *) defaultFieldEditorFont
 {
-	return [NSFont labelFontOfSize: 12];
+	return [NSFont labelFontOfSize: 13];
 }
 
-- (void) handleClickItem: (ETLayoutItem *)item atPoint: (NSPoint)aPoint
+- (void) handleDoubleClickItem: (ETLayoutItem *)item
 {
 	ETBasicItemStyle *iconStyle = [item coverStyle];
 	NSString *label = [iconStyle labelForItem: item];
 	NSRect labelRect = [iconStyle rectForLabel: label
 	                                   inFrame: [item frame]
-	                                    ofItem: item];
-
-	if (NSPointInRect(aPoint, labelRect) == NO)
-		return;								
+	                                    ofItem: item];							
 
 	NSSize labelSize = [label sizeWithAttributes: [iconStyle labelAttributes]];
 	float lineHeight = labelSize.height;
@@ -410,7 +386,7 @@ The resizing isn't delegated to the positional layout unlike in ETTemplateItemLa
 	}
 	labelRect.size = labelSize;
 
-	[self beginEditingItem: item property: kETNameProperty inRect: labelRect];
+	[self beginEditingItem: item property: kETValueProperty inRect: labelRect];
 }
 
 @end

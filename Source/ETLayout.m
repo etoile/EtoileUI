@@ -1297,7 +1297,7 @@ If you override this method, you must override -styleForProperty: too. */
 
 }
 
-/* Pick & Drop */
+/* Item State Indicators */
 
 /** <override-never />
 Returns the drop indicator style that should be drawn to indicate hovered 
@@ -1315,6 +1315,21 @@ items which are valid drop targets. */
 - (void) setDropIndicator: (ETDropIndicator *)aStyle
 {
 	ASSIGN(_dropIndicator, aStyle);
+}
+
+/** <override-dummy />
+Returns NO when styles can draw selection indicators for selected items, 
+otherwise returns YES.
+ 
+Some layouts such as ETFreeLayout shows the selection using additional items 
+(e.g. ETHandleGroup).
+ 
+By default, returns NO.
+ 
+See also -[ETBasicItemStyle shouldDrawItemAsSelected:]. */
+- (BOOL) preventsDrawingItemSelectionIndicator
+{
+	return NO;
 }
 
 /* Sorting */

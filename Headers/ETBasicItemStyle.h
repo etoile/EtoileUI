@@ -76,6 +76,7 @@ makes the label invisible. */
 	ETLabelPosition _labelPosition;
 	float _labelMargin;
 	NSDictionary *_labelAttributes;
+	NSDictionary *_selectedLabelAttributes;
 	NSSize _maxLabelSize;
 	NSSize _maxImageSize;
 	float _edgeInset;
@@ -103,6 +104,8 @@ makes the label invisible. */
 - (void) drawStackIndicatorInRect: (NSRect)indicatorRect;
 - (void) drawFirstResponderIndicatorInRect: (NSRect)indicatorRect;
 
+- (BOOL) shouldDrawItemAsSelected: (ETLayoutItem *)item;
+
 /* Label */
 
 - (void) setMaxLabelSize: (NSSize)aSize;
@@ -113,6 +116,8 @@ makes the label invisible. */
 - (void) setLabelMargin: (float)aMargin;
 - (NSDictionary *) labelAttributes;
 - (void) setLabelAttributes: (NSDictionary *)stringAttributes;
+- (NSDictionary *) selectedLabelAttributes;
+- (void) setSelectedLabelAttributes: (NSDictionary *)stringAttributes;
 - (NSDictionary *) labelAttributesForDrawingItem: (ETLayoutItem *)item;
 
 - (NSRect) rectForLabel: (NSString *)aLabel 

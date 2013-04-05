@@ -64,6 +64,11 @@ subclasses (see -[ETLayout initWithLayoutView:]). */
 	return [NSImage imageNamed: @"zone--pencil.png"];
 }
 
+- (BOOL) preventsDrawingItemSelectionIndicator
+{
+	return YES;
+}
+
 - (id) attachedTool
 {
 	return [super attachedTool];

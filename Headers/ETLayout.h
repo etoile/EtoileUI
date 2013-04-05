@@ -271,10 +271,11 @@ typedef enum _ETSizeConstraintStyle
 - (id) styleForProperty: (NSString *)property;
 - (void) setStyle: (id)style forProperty: (NSString *)property;
 
-/* Pick & Drop */
+/* Item State Indicators */
 
 - (ETDropIndicator *) dropIndicator;
 - (void) setDropIndicator: (ETDropIndicator *)aStyle;
+- (BOOL) preventsDrawingItemSelectionIndicator;
 
 /* Sorting */
 

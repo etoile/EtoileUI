@@ -8,7 +8,6 @@
 
 #import <EtoileFoundation/Macros.h>
 #import "ETBasicItemStyle.h"
-#import "ETFreeLayout.h"
 #import "ETGeometry.h"
 #import "ETTool.h"
 #import "ETLayoutItemGroup.h"
@@ -62,7 +61,7 @@ no max image and label size and no edge inset. */
 	return self;
 }
 
-DEALLOC(DESTROY(_labelAttributes));
+DEALLOC(DESTROY(_labelAttributes); DESTROY(_selectedLabelAttributes));
 
 - (id) copyWithCopier: (ETCopier *)aCopier 
 {
@@ -74,6 +73,7 @@ DEALLOC(DESTROY(_labelAttributes));
 	[aCopier beginCopyFromObject: self toObject: newStyle];
 
 	newStyle->_labelAttributes = [_labelAttributes copyWithZone: [aCopier zone]];
+	newStyle->_selectedLabelAttributes = [_selectedLabelAttributes copyWithZone: [aCopier zone]];
 	newStyle->_labelPosition = _labelPosition;
 	newStyle->_labelMargin = _labelMargin;
 	newStyle->_maxLabelSize = _maxLabelSize;
@@ -143,10 +143,7 @@ DEALLOC(DESTROY(_labelAttributes));
 		[self drawStackIndicatorInRect: bounds];
 	}
 
-	// FIXME: We should pass a hint in inputValues that lets us known whether 
-	// we handle the selection visual clue or not, in order to eliminate the 
-	// hard check on ETFreeLayout...
-	if ([item isSelected] && [[[item parentItem] layout] isKindOfClass: [ETFreeLayout class]] == NO)
+	if ([self shouldDrawItemAsSelected: item])
 	{
 		[self drawSelectionIndicatorInRect: bounds];
 	}
@@ -230,14 +227,14 @@ means you can safely use it when overriding other drawing methods. */
 		[xform concat];
 
 		[aLabel drawInRect: ETMakeRect(NSZeroPoint, aRect.size) 
-		    withAttributes: _labelAttributes];
+		    withAttributes: attributes];
 
 		[xform invert];
 		[xform concat];
 	}
 	else
 	{
-		[aLabel drawInRect: aRect withAttributes: _labelAttributes];
+		[aLabel drawInRect: aRect withAttributes: attributes];
 	}
 }
 
@@ -287,6 +284,25 @@ rect is equal to it. */
 	[NSGraphicsContext restoreGraphicsState];
 }
 
+/** Returns whether the given item should be drawn using a selection indicator 
+or some visual cue about the selected state.
+
+You can call -shouldDrawItemAsSelected: in any ETBasicItemStyle methods that 
+receive a layout item in argument such as -render:layoutItem:dirtyRect:, 
+-imageForItem:, -rectForLabel: etc. to change the geometry or the rendered 
+content based on the item selection status.
+
+Can be overriden to base the selection drawing on additional criterias.
+Any subclass implementation should remain reasonably fast, because this method 
+is called quite a lot.
+ 
+See also -drawSelectionIndicatorInRect:, -[ETLayout preventsDrawingItemSelectionIndicator] 
+and -[ETLayoutItem isSelected]. */
+- (BOOL) shouldDrawItemAsSelected: (ETLayoutItem *)item
+{
+	return ([item isSelected] && [[[item parentItem] layout] preventsDrawingItemSelectionIndicator] == NO);
+}
+
 /** Returns the max allowed size to draw to the label.
 
 When the label size is superior to this max size, 
@@ -328,21 +344,46 @@ See also -maxLabelSize. */
 	_labelMargin = aMargin;
 }
 
-/** Returns the string attributes used to draw the label. */
+/** Returns the string attributes used to draw the label.
+ 
+See also -labelAttributesForDrawingItem:. */
 - (NSDictionary *) labelAttributes
 {
 	return _labelAttributes;
 }
 
-/** Sets the string attributes used to draw the label. */
+/** Sets the string attributes used to draw the label. 
+ 
+See also -labelAttributesForDrawingItem:. */
 - (void) setLabelAttributes: (NSDictionary *)stringAttributes
 {
 	ASSIGN(_labelAttributes, stringAttributes);
 }
 
+/** Sets the string attributes used to draw the label for a selected item.
+ 
+See also -labelAttributesForDrawingItem:. */
+- (void) setSelectedLabelAttributes: (NSDictionary *)stringAttributes
+{
+	ASSIGN(_selectedLabelAttributes, stringAttributes);
+}
+
+/** Returns the string attributes used to draw the label for a selected item.
+
+By default, returns nil to indicate no custom attributes are set.
+ 
+See also -labelAttributesForDrawingItem:. */
+- (NSDictionary *) selectedLabelAttributes
+{
+	return _selectedLabelAttributes;
+}
+
 - (NSDictionary *) labelAttributesForDrawingItem: (ETLayoutItem *)item
 {
-	return _labelAttributes;
+	if (_selectedLabelAttributes == nil)
+		return _labelAttributes;
+
+	return ([self shouldDrawItemAsSelected: item] ? _selectedLabelAttributes : _labelAttributes);
 }
 
 - (NSRect) rectForLabel: (NSString *)aLabel 

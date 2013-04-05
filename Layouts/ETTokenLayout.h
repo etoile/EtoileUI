@@ -36,7 +36,6 @@
 {
 	@private
 	NSColor *_tintColor;
-	NSDictionary *_selectedLabelAttributes;
 }
 
 - (void) setTintColor: (NSColor *)color;
