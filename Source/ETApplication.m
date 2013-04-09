@@ -815,22 +815,8 @@ target directly. */
 	return responder;
 }
 
-/** Returns the target in a way similar to -[NSApplication targetForAction:to:from] 
-but involves a responder chain which is not exactly the same.
-
-The first key and main responder are retrieved on the active 
-tool (see ETTool) rather than on the key and main windows.
-
-The responder chain is extended to include ETPersistencyController right after
-the application delegate when CoreObject is available. */
-- (id) targetForAction: (SEL)aSelector to: (id)aTarget from: (id)sender
+- (id) targetInResponderChainForAction: (SEL)aSelector from: (id)sender
 {
-	if (aSelector == NULL)
-		return nil;
-	
-	if ([aTarget respondsToSelector: aSelector])
-		return aTarget;
-
 	ETTool *tool = [ETTool activeTool];
 	id firstKeyResponder = [tool firstKeyResponder];
 	id firstMainResponder = [tool firstMainResponder];
@@ -867,10 +853,9 @@ the application delegate when CoreObject is available. */
 		return self;
 	}
 
-	id delegate = [self delegate];
-	if (delegate != nil && [delegate respondsToSelector: aSelector])
+	if ([self delegate] != nil && [[self delegate] respondsToSelector: aSelector])
 	{
-		return delegate;
+		return [self delegate];
 	}
 
 	/* EtoileUI is not compatible with NSDocument architecture that's why 
@@ -884,6 +869,25 @@ the application delegate when CoreObject is available. */
     } */
 
 	return nil;
+}
+
+/** Returns the target in a way similar to -[NSApplication targetForAction:to:from] 
+but involves a responder chain which is not exactly the same.
+
+The first key and main responder are retrieved on the active 
+tool (see ETTool) rather than on the key and main windows.
+
+The responder chain is extended to include ETPersistencyController right after
+the application delegate when CoreObject is available. */
+- (id) targetForAction: (SEL)aSelector to: (id)aTarget from: (id)sender
+{
+	if (aSelector == NULL)
+		return nil;
+	
+	if (aTarget == nil)
+		return [self targetInResponderChainForAction: aSelector from: sender];
+
+	return ([aTarget respondsToSelector: aSelector] ? aTarget : nil);
 }
 
 #ifdef GNUSTEP

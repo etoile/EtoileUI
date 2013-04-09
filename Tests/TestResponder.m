@@ -102,10 +102,9 @@
 
 	[[ETTool activeTool] makeFirstResponder: (id)item];
 
-	// FIXME: UKObjectsSame(item, [[ETTool activeTool] firstMainResponder]);
+	UKObjectsSame(item, [[ETTool activeTool] firstMainResponder]);
 }
 
-#if 0
 - (void) testFirstResponderLookup
 {
 	[self prepareFirstResponder];
@@ -125,7 +124,6 @@
 	UKNil([ETApp targetForAction: @selector(add:) to: mainItem from: nil]);
 	UKObjectsSame(controller, [ETApp targetForAction: @selector(addNewGroup:) to: controller from: nil]);
 }
-#endif
 
 - (void) testSendAction
 {

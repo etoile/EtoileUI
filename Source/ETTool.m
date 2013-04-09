@@ -389,16 +389,9 @@ This method calls either -makeFirstKeyResponder: or -makeFirstMainResponder:. */
 
 	id responder = aResponder;
 
-	/* -makeFirstResponder: argument must a NSResponder, otherwise the receiver 
-	   window becomes the first responder on the AppKit side. We solve the issue 
-	   by wrapping the responder in a proxy when needed. */
-	if ([responder isKindOfClass: [NSResponder class]] == NO)
-		responder = [ETFirstResponderProxy responderProxyWithObject: aResponder];
-
 	BOOL isNowFirstResponder = [aWindow makeFirstResponder: responder];
 	/* We must retain the responder because -[NSWindow makeFirstResponder:] 
-	   doesn't do it and nobody will retain ETFirstResponderProxy instances 
-	   beside us. */
+	   doesn't do it (not so sure anymore). */
 	if (isNowFirstResponder)
 	{
 		if ([_firstMainResponder isLayoutItem])
@@ -418,23 +411,13 @@ This method calls either -makeFirstKeyResponder: or -makeFirstMainResponder:. */
 /** Returns the first responder in the current key window. */
 - (id) firstKeyResponder
 {
-	id responder = [[ETApp keyWindow] firstResponder];
-	
-	if ([responder isKindOfClass: [ETFirstResponderProxy class]])
-		responder = [responder object];
-		
-	return responder;
+	return [[ETApp keyWindow] firstResponder];
 }
 
 /** Returns the first responder in the current main window. */
 - (id) firstMainResponder
 {
-	id responder = [[ETApp mainWindow] firstResponder];
-	
-	if ([responder isKindOfClass: [ETFirstResponderProxy class]])
-		responder = [responder object];
-		
-	return responder;
+	return [[ETApp mainWindow] firstResponder];
 }
 
 - (BOOL) isFirstKeyResponderStillValid
@@ -1077,134 +1060,6 @@ current cursor when the receiver is the activatable tool. */
 - (NSMenu *) menuRepresentation
 {
 	return nil;
-}
-
-@end
-
-
-@implementation ETFirstResponderProxy
-
-- (id) initWithObject: (id)anObject
-{
-	SUPERINIT
-	ASSIGN(_object, anObject);
-	return self;
-}
-
-/** Initializes and returns an autoreleased responder proxy which adapts 
-anObject to NSResponder interface.
-
-The returned instance will consume most NSResponder messages you send to it 
-without forwarding them to anObject. Only -acceptsFirstResponder, 
--becomeFirstResponder and -resignsFirstResponder are forwarded. */
-+ (ETFirstResponderProxy *) responderProxyWithObject: (id)anObject
-{
-	return AUTORELEASE([[self alloc] initWithObject: anObject]);
-}
-
-DEALLOC(DESTROY(_object))
-
-/** Returns whether anObject is equal to either -object or the receiver. */
-- (BOOL) isEqual: (id)anObject
-{
-	if ([anObject isEqual: _object])
-		return YES;
-
-	return [super isEqual: anObject];
-}
-
-- (BOOL) isFirstResponderProxy
-{
-	return YES;
-}
-
-/** Returns whether the real object is a layout item or not. */
-- (BOOL) isLayoutItem
-{
-	/* We cannot use -forwardInvocation: here because -isLayoutItem is 
-	   first declared on NSObject. */
-	return [_object isLayoutItem];
-}
-
-/** Returns the real object which is represented by the receiver. */
-- (id) object
-{
-	return _object;
-}
-
-- (id) nextResponder
-{
-	return [_object nextResponder];
-}
-
-#define RESPONDER_FORWARD(methodName) \
-	if ([_object respondsToSelector: @selector(methodName)])\
-	{\
-		return [_object methodName];\
-	}\
-	else if ([_object isLayoutItem])\
-	{\
-		return [[_object actionHandler] methodName];\
-	}\
-\
-	return [super methodName];\
-
-/** Forwards -acceptsFirstResponder to the real object, or to the action handler 
-bound to it in case the real object is a layout item. */
-- (BOOL) acceptsFirstResponder
-{
-	RESPONDER_FORWARD(acceptsFirstResponder)
-}
-
-/** Forwards -becomeFirstResponder to the real object, or to the action handler 
-bound to it in case the real object is a layout item. */
-- (BOOL) becomeFirstResponder
-{
-	RETAIN(self);
-	RESPONDER_FORWARD(becomeFirstResponder)
-}
-
-/** Forwards -resignFirstResponder to the real object, or to the action handler 
-bound to it in case the real object is a layout item. */
-- (BOOL) resignFirstResponder
-{
-	RESPONDER_FORWARD(resignFirstResponder)
-	DESTROY(self);
-}
-
-- (BOOL) respondsToSelector: (SEL)aSelector
-{
-	/* Take over superclass implementations by checking _object first. */
-	if ([_object respondsToSelector: aSelector])
-		return YES;
-
-	if ([super respondsToSelector: aSelector])
-		return YES;
-
-	return NO;
-}
-
-- (NSMethodSignature *) methodSignatureForSelector: (SEL)aSelector
-{
-	NSMethodSignature *sig = [_object methodSignatureForSelector: aSelector];
-
-	if (sig == nil)
-	{
-		sig = [super methodSignatureForSelector: aSelector];
-	}
-
-	return sig;
-}
-
-- (void) forwardInvocation: (NSInvocation *)inv
-{
-	if ([self respondsToSelector: [inv selector]] == NO)
-	{
-		[self doesNotRecognizeSelector: [inv selector]];
-		return;
-	}
-
-	[inv invokeWithTarget: _object];
 }
 
 @end
