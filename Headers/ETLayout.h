@@ -99,6 +99,8 @@ Warning: This protocol is very much subject to change. */
 - (id <ETLayoutingContext>) layoutContext;
 /** See -[ETComputedLayout setBorderMargin:]. */
 - (void) setBorderMargin: (float)margin;
+/** See -[ETComputedLayout itemMargin:]. */
+- (float) itemMargin;
 /** See -[ETComputedLayout setItemMargin:]. */
 - (void) setItemMargin: (float)margin;
 /** See -[ETComputedLayout setHorizontalAlignmentGuidePosition:]. */

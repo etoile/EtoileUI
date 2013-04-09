@@ -12,6 +12,7 @@
 #import <EtoileUI/ETTemplateItemLayout.h>
 #import <EtoileUI/ETActionHandler.h>
 #import <EtoileUI/ETBasicItemStyle.h>
+#import <EtoileUI/ETSelectTool.h>
 
 /** ETIconLayout is a layout that mimicks a Mac OS X Finder-like icon view 
 by overriding the existing item aspects as described below:
@@ -127,4 +128,16 @@ The cover style doesn't have to be an ETIconAndLabelStyle instance.
 It is usually used in conjunction with ETIconAndLabelStyle and ETIconLayout. */
 @interface ETIconAndLabelActionHandler : ETActionHandler
 - (void) handleClickItem: (ETLayoutItem *)item atPoint: (NSPoint)aPoint;
+@end
+
+// TODO: Find a better name...
+@interface ETSelectAndClickTool : ETSelectTool
+{
+@private
+	BOOL _ignoresBackgroundClick;
+}
+
+- (BOOL) ignoresBackgroundClick;
+- (void) setIgnoresBackgroundClick: (BOOL)noBackgroundClick;
+
 @end

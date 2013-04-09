@@ -15,12 +15,7 @@
 #import "ETLayoutItem.h"
 #import "ETLayoutItemFactory.h"
 #import "EtoileUIProperties.h"
-#import "ETSelectTool.h"
 #import "ETCompatibility.h"
-
-// TODO: Find a better name...
-@interface ETSelectAndClickTool : ETSelectTool
-@end
 
 
 @implementation ETIconLayout
@@ -341,6 +336,23 @@ the given indicator rect. */
 
 @implementation ETSelectAndClickTool
 
+- (id) init
+{
+	SUPERINIT;
+	_ignoresBackgroundClick = YES;
+	return self;
+}
+
+- (BOOL) ignoresBackgroundClick
+{
+	return _ignoresBackgroundClick;
+}
+
+- (void) setIgnoresBackgroundClick: (BOOL)noBackgroundClick
+{
+	_ignoresBackgroundClick = noBackgroundClick;
+}
+
 - (void) handleClickWithEvent: (ETEvent *)anEvent
 {
 	[self alterSelectionWithEvent: anEvent];
@@ -350,7 +362,7 @@ the given indicator rect. */
 	// NOTE: May be replace next line by ([[item layout] isEqual: [self layoutOwner]);
 	BOOL backgroundClick = ([item isEqual: [self targetItem]]);
 	
-	if (backgroundClick)
+	if (backgroundClick && [self ignoresBackgroundClick])
 		return;
 
 	/* Allow to edit the item label or open the item */
