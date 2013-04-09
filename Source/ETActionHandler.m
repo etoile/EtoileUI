@@ -326,8 +326,8 @@ NSControl or NSTextField. */
 {
 	ETAssert(_editedItem != nil);
 
-	id <ETFirstResponderSharingArea> editionCoordinator =
-		[[ETTool activeTool] editionCoordinatorForItem: _editedItem];
+	//id <ETFirstResponderSharingArea> editionCoordinator =
+	//	[[ETTool activeTool] editionCoordinatorForItem: _editedItem];
 	NSInteger movement =
 		[[[aNotification userInfo] objectForKey: @"NSTextMovement"] unsignedIntegerValue];
 	

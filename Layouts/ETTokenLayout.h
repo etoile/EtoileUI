@@ -50,10 +50,5 @@
 @end
 
 @interface ETTokenBackgroundActionHandler : ETActionHandler
-{
-
-}
-
-- (void) handleClickItem: (ETLayoutItem *)item;
-
+- (void) handleClickItem: (ETLayoutItem *)item atPoint: (NSPoint)aPoint;
 @end

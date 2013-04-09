@@ -414,10 +414,10 @@ See also -[ETLayoutItemGroup insertObject:atIndex:hint:boxingForced:]. */
 
 	if (cancelled)
 	{
-		id draggedObject = [[ETPickboard localPickboard] popObject];
+		//id draggedObject = [[ETPickboard localPickboard] popObject];
 		
 		ETDebugLog(@"Cancelled drag of %@ receives in dragging source %@",
-			draggedObject, self);
+			[[ETPickboard localPickboard] popObject], self);
 	}
 }
 

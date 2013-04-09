@@ -13,16 +13,13 @@
 #import "ETComputedLayout.h"
 #import "ETGeometry.h"
 #import "ETEvent.h"
+#import "ETIconLayout.h"
 #import "ETLayoutItem.h"
 #import "ETLayoutItemGroup.h"
 #import "ETLayoutItemFactory.h"
 #import "EtoileUIProperties.h"
 #import "ETSelectTool.h"
 #import "ETCompatibility.h"
-
-// TODO: Find a better name...
-@interface ETSelectAndClickTool : ETSelectTool
-@end
 
 
 @implementation ETTokenLayout
