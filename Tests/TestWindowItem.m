@@ -1,8 +1,8 @@
 /*
-	Copyright (C) 2007 Quentin Mathe
+	Copyright (C) 2013 Quentin Mathe
 
 	Author:  Quentin Mathe <quentin.mathe@gmail.com>
-	Date:  October 2007
+	Date:  April 2013
 	License:  Modified BSD (see COPYING)
  */
 
