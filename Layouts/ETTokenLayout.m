@@ -11,8 +11,10 @@
 #import "ETTokenLayout.h"
 #import "ETBasicItemStyle.h"
 #import "ETComputedLayout.h"
+#import "ETGeometry.h"
 #import "ETEvent.h"
 #import "ETLayoutItem.h"
+#import "ETLayoutItemGroup.h"
 #import "ETLayoutItemFactory.h"
 #import "EtoileUIProperties.h"
 #import "ETSelectTool.h"
@@ -35,6 +37,7 @@ Initializes and returns a new token layout. */
 
 	[self setAttachedTool: [ETSelectAndClickTool tool]];
 	[[self attachedTool] setShouldRemoveItemsAtPickTime: NO];
+	[[self attachedTool] setIgnoresBackgroundClick: NO];
 
 	ETLayoutItem *templateItem = [[ETLayoutItemFactory factory] item];
 	ETTokenStyle *tokenStyle = [ETTokenStyle new];
@@ -67,6 +70,21 @@ DEALLOC(DESTROY(_itemLabelFont))
 	layoutCopy->_maxTokenWidth = _maxTokenWidth;
 
 	return layoutCopy;
+}
+
+- (void) setUp
+{
+	[super setUp];
+
+	// FIXME: Should use a new ETLayout API that memorizes the context state
+	[(id)[self layoutContext] setActionHandler: AUTORELEASE([ETTokenBackgroundActionHandler new])];
+}
+
+- (void) tearDown
+{
+	[super tearDown];
+	
+	// TODO: Implement
 }
 
 - (NSImage *) icon
@@ -138,6 +156,11 @@ positional layout. */
 	}
 }
 
+/* Edge inset are not supported per edge, so we just use the width of 
+   -boundingSizeForItem:imageOrViewSize:. However the height we use might not 
+   always match the expectations of other methods such as 
+   -[ETBasicItemStyle rectForLabel:inFrame:ofItem:]. For example, 
+   ETLabelPositionCentered works fine, but other label positioning won't. */
 - (CGFloat) tokenWidthForItem: (ETLayoutItem *)item tokenStyle: (ETTokenStyle *)tokenStyle
 {
 	CGFloat labelBasedWidth = [tokenStyle boundingSizeForItem: item
@@ -225,7 +248,7 @@ The resizing isn't delegated to the positional layout unlike in ETTemplateItemLa
 	maxLabelSize.width = 150;
 	[self setMaxLabelSize: maxLabelSize];
 	[self setLabelPosition: ETLabelPositionCentered];
-	[self setLabelMargin: 8];
+	[self setLabelMargin: 0];
 	[self setEdgeInset: 7];
 
 	return self;
@@ -287,24 +310,19 @@ The resizing isn't delegated to the positional layout unlike in ETTemplateItemLa
 
 	// FIXME: May be we should better support dirtyRect. The next drawing
 	// methods don't take in account it and simply redraw all their content.
-	NSRect labelRect = NSZeroRect;
-	
 	NSRect bounds = [item drawingBoundsForStyle: self];
 	NSString *itemLabel = [self labelForItem: item];
-	
-	if (nil != itemLabel)
-	{
-		labelRect = [self rectForLabel: itemLabel
-		                               inFrame: bounds
-		                                ofItem: item];
-	}
 
-	[self drawRoundedTokenInRect: [item drawingBoundsForStyle: self]
+	[self drawRoundedTokenInRect: bounds
 	                  isSelected: [self shouldDrawItemAsSelected: item]];
 
 	if (nil != itemLabel)
 	{
-		[self drawLabel: itemLabel attributes: [self labelAttributesForDrawingItem: item] flipped: [item isFlipped] inRect: labelRect];
+		// NOTE: For the label rect, see -[ETTokenLayout tokenWidthForItem:tokenStyle:]
+		[self drawLabel: itemLabel
+		     attributes: [self labelAttributesForDrawingItem: item]
+		        flipped: [item isFlipped]
+		         inRect: [self rectForLabel: itemLabel inFrame: bounds ofItem: item]];
 	}
 	
 	/*if ([[[ETTool activeTool] firstKeyResponder] isEqual: item])
@@ -353,40 +371,82 @@ The resizing isn't delegated to the positional layout unlike in ETTemplateItemLa
 	return [NSFont labelFontOfSize: 13];
 }
 
+- (ETLayoutItem *) fieldEditorItem
+{
+	ETLayoutItem *fieldEditorItem = [super fieldEditorItem];
+	[(NSTextView *)[fieldEditorItem view] setAlignment: NSCenterTextAlignment];
+	return fieldEditorItem;
+}
+
 - (void) handleDoubleClickItem: (ETLayoutItem *)item
 {
-	ETBasicItemStyle *iconStyle = [item coverStyle];
-	NSString *label = [iconStyle labelForItem: item];
-	NSRect labelRect = [iconStyle rectForLabel: label
-	                                   inFrame: [item frame]
-	                                    ofItem: item];							
-
-	NSSize labelSize = [label sizeWithAttributes: [iconStyle labelAttributes]];
-	float lineHeight = labelSize.height;
-	BOOL nbOfLines = 1;
-
-	/* Limit the editing width to the max label width */
-	if (labelSize.width > labelRect.size.width)
-	{
-		labelSize.width = labelRect.size.width;
-		nbOfLines = 2;
-		labelSize.height = lineHeight * nbOfLines; /* Add an extra line */
-	}
-
-	/* We need some extra width to fit the label into the field editor */
-	labelSize.width += 11;
-
-	/* Resize the field editor and compute its new location */
-	labelRect.origin.x -= (labelSize.width - labelRect.size.width) * 0.5;
-	// TODO: To be compensated in -beginEditingItem:property:inRect: when 
-	// the window backed item is flipped.
-	if ([item isFlipped] == NO)
-	{
-		labelRect.origin.y -= lineHeight * (nbOfLines - 1);
-	}
-	labelRect.size = labelSize;
+	NSRect labelRect = [item drawingBoundsForStyle: [item coverStyle]];
 
 	[self beginEditingItem: item property: kETValueProperty inRect: labelRect];
+}
+
+@end
+
+@implementation ETTokenBackgroundActionHandler
+
+- (NSFont *) defaultFieldEditorFont
+{
+	return [NSFont labelFontOfSize: 13];
+}
+
+- (ETLayoutItem *) fieldEditorItem
+{
+	ETLayoutItem *fieldEditorItem = [super fieldEditorItem];
+	/*[(NSTextView *)[fieldEditorItem view] setDrawsBackground: NO];
+	[(NSTextView *)[fieldEditorItem view] setFocusRingType: NSFocusRingTypeNone];*/
+	return fieldEditorItem;
+}
+
+// TODO: Should work correctly if the item is not a group too.
+- (void) handleClickItem: (ETLayoutItem *)item atPoint: (NSPoint)aPoint
+{
+	CGFloat labelWidth = [[[item layout] class] defaultMinTokenWidth] + 80;
+	CGFloat labelHeight = [[[item layout] class] defaultTokenHeight];
+	ETLayoutItem *lastItem = [(ETLayoutItemGroup *)item lastItem];
+	NSPoint labelOrigin = NSZeroPoint;
+
+	if (lastItem != nil)
+	{
+		id <ETPositionalLayout> layout = [(ETTokenLayout *)[item layout] positionalLayout];
+	
+		labelOrigin.x = [lastItem x] + [lastItem width] + [layout itemMargin];
+		labelOrigin.y = [lastItem y];
+	}
+
+	BOOL placeFieldEditorOnNewRow = ([item width] - labelOrigin.x < labelWidth);
+
+	if (placeFieldEditorOnNewRow)
+	{
+		labelOrigin = NSMakePoint(0, [lastItem y] + [lastItem height]);
+	}
+
+	[self beginEditingItem: item
+	              property: kETValueProperty
+	                inRect: NSMakeRect(labelOrigin.x, labelOrigin.y, labelWidth, labelHeight)];
+}
+
+/* Disable double-click behavior inherited from the superclass. */
+- (void) handleDoubleClickItem: (ETLayoutItem *)item
+{
+
+}
+
+// TODO: Should work correctly if the item is not a group too.
+- (void) endEditingItem: (ETLayoutItem *)editedItem
+{
+	// FIXME: [super endEditingItem: editedItem];
+	
+	BOOL isValidValue = ([editedItem value] != nil && [[editedItem value] isEqual: @""] == NO);
+
+	if (isValidValue)
+	{
+		[(ETLayoutItemGroup *)editedItem addItem: [[ETLayoutItemFactory factory] itemWithValue: [editedItem value]]];
+	}
 }
 
 @end

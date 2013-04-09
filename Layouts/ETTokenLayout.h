@@ -45,7 +45,15 @@
 
 @end
 
-
 @interface ETTokenActionHandler : ETActionHandler
-- (void) handleClickItem: (ETLayoutItem *)item atPoint: (NSPoint)aPoint;
+- (void) handleDoubleClickItem: (ETLayoutItem *)item;
+@end
+
+@interface ETTokenBackgroundActionHandler : ETActionHandler
+{
+
+}
+
+- (void) handleClickItem: (ETLayoutItem *)item;
+
 @end
