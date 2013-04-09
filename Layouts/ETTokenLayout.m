@@ -439,7 +439,7 @@ The resizing isn't delegated to the positional layout unlike in ETTemplateItemLa
 // TODO: Should work correctly if the item is not a group too.
 - (void) endEditingItem: (ETLayoutItem *)editedItem
 {
-	// FIXME: [super endEditingItem: editedItem];
+	[super endEditingItem: editedItem];
 	
 	BOOL isValidValue = ([editedItem value] != nil && [[editedItem value] isEqual: @""] == NO);
 

@@ -8,6 +8,7 @@
 
 #import <EtoileFoundation/Macros.h>
 #import "ETDecoratorItem.h"
+#import "ETActionHandler.h" /* For +sharedFallbackResponder */
 #import "ETGeometry.h"
 #import "ETUIItem.h"
 #import "ETView.h"
@@ -48,6 +49,42 @@ initializer. */
 - (id) init
 {
 	return nil;
+}
+
+- (BOOL) respondsToSelector: (SEL)aSelector
+{
+	if ([super respondsToSelector: aSelector])
+		return YES;
+	
+	if ([[ETActionHandler sharedFallbackResponder] respondsToSelector: aSelector])
+		return YES;
+	
+	return NO;
+}
+
+- (NSMethodSignature *) methodSignatureForSelector: (SEL)aSelector
+{
+	NSMethodSignature *sig = [super methodSignatureForSelector: aSelector];
+	
+	if (sig == nil)
+	{
+		sig = [[ETActionHandler sharedFallbackResponder] methodSignatureForSelector: aSelector];
+	}
+	
+	return sig;
+}
+
+- (void) forwardInvocation: (NSInvocation *)inv
+{
+	SEL selector = [inv selector];
+	
+	if ([self respondsToSelector: selector] == NO)
+	{
+		[self doesNotRecognizeSelector: selector];
+		return;
+	}
+	
+	[inv invokeWithTarget: [ETActionHandler sharedFallbackResponder]];
 }
 
 // NOTE: -copyWithZone: implementation can be omitted, the ivars are transient.

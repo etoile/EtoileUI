@@ -72,10 +72,57 @@ static NSMutableDictionary *sharedActionHandlers = nil;
 	// expect it to be nil.
 	if (nil != _editedItem)
 	{
-		[self endEditingItem];
+		[self endEditingItem: _editedItem];
 	}
 	DESTROY(_fieldEditorItem);
 	[super dealloc];
+}
+
+static NSResponder *sharedFallbackResponder = nil;
+
++ (id) sharedFallbackResponder
+{
+	if (sharedFallbackResponder == nil)
+	{
+		sharedFallbackResponder = [NSResponder new];
+	}
+	return sharedFallbackResponder;
+}
+
+- (BOOL) respondsToSelector: (SEL)aSelector
+{
+	if ([super respondsToSelector: aSelector])
+		return YES;
+	
+	if ([[ETActionHandler sharedFallbackResponder] respondsToSelector: aSelector])
+		return YES;
+
+	return NO;
+}
+
+- (NSMethodSignature *) methodSignatureForSelector: (SEL)aSelector
+{
+	NSMethodSignature *sig = [super methodSignatureForSelector: aSelector];
+	
+	if (sig == nil)
+	{
+		sig = [[ETActionHandler sharedFallbackResponder] methodSignatureForSelector: aSelector];
+	}
+	
+	return sig;
+}
+
+- (void) forwardInvocation: (NSInvocation *)inv
+{
+	SEL selector = [inv selector];
+
+	if ([self respondsToSelector: selector] == NO)
+	{
+		[self doesNotRecognizeSelector: selector];
+		return;
+	}
+
+	[inv invokeWithTarget: [ETActionHandler sharedFallbackResponder]];
 }
 
 /** Returns YES to indicate the receiver can be shared between several owners.
@@ -233,6 +280,7 @@ Which actions begins and ends the text editing is up to you. */
 	// TODO: Use -bindXXX
 	[fieldEditor setString: formattedValue];
 	[fieldEditor setFont: [self fontForEditingItem: item]];
+	[fieldEditor setDelegate: (id <NSTextViewDelegate>)self];
 	[fieldEditorItem setFrame: fieldEditorFrame];
 	[fieldEditorItem setRepresentedObject: [ETPropertyViewpoint viewpointWithName: property 
 	                                                            representedObject: [item subject]]];
@@ -244,7 +292,7 @@ Which actions begins and ends the text editing is up to you. */
 
 /** Ends the text editing started with -beginEditingItem:property:inRect: and 
 removes the field editor item inserted in the window backed ancestor item. */
-- (void) endEditingItem
+- (void) endEditingItem: (ETLayoutItem *)editedItem
 {
 	if (nil == _editedItem)
 		return;
@@ -261,6 +309,40 @@ removes the field editor item inserted in the window backed ancestor item. */
 	[editionCoordinator removeActiveFieldEditorItem];
 
 	DESTROY(_editedItem);
+}
+
+/** When -beginEditingItem:property:inRect: was called, this method is invoked 
+each time the text editing can end, because a control character such newline or 
+tab was typed.
+ 
+By default, the implementation calls -endEditingItem: on NSReturnTextMovement. 
+For NSTabTextMovement and NSBackTabTextMovement, the first responder is passed 
+to the next or previous key view. See ETFirstResponderSharingArea.
+ 
+If the AppKit manages the text editing (NSControl used as an item view),
+this method is not invoked, the delegate method is called directly on the 
+NSControl or NSTextField. */
+- (void) textDidEndEditing: (NSNotification *)aNotification
+{
+	ETAssert(_editedItem != nil);
+
+	id <ETFirstResponderSharingArea> editionCoordinator =
+		[[ETTool activeTool] editionCoordinatorForItem: _editedItem];
+	NSInteger movement =
+		[[[aNotification userInfo] objectForKey: @"NSTextMovement"] unsignedIntegerValue];
+	
+	if (movement == NSReturnTextMovement)
+    {
+		[self endEditingItem: _editedItem];
+    }
+	else if (movement == NSTabTextMovement)
+	{
+		// TODO: [editionCoordinator selectKeyViewFollowingView: self];
+	}
+	else if (movement == NSBacktabTextMovement)
+	{
+		// TODO: [editionCoordinator selectKeyViewPrecedingView: self];
+    }
 }
 
 /* <override-dummy />

@@ -1132,6 +1132,11 @@ DEALLOC(DESTROY(_object))
 	return _object;
 }
 
+- (id) nextResponder
+{
+	return [_object nextResponder];
+}
+
 #define RESPONDER_FORWARD(methodName) \
 	if ([_object respondsToSelector: @selector(methodName)])\
 	{\

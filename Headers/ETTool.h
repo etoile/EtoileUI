@@ -208,6 +208,8 @@ This class is specific to the AppKit backend. */
 - (BOOL) isLayoutItem;
 - (id) object;
 
+- (id) nextResponder;
+
 - (BOOL) acceptsFirstResponder;
 - (BOOL) becomeFirstResponder;
 - (BOOL) resignFirstResponder;

@@ -63,6 +63,7 @@
 		602635E611AD413B007586E3 /* TestWidgetLayout.m in Sources */ = {isa = PBXBuildFile; fileRef = 602635E511AD413B007586E3 /* TestWidgetLayout.m */; };
 		60264AA50FB72D4D00D8163F /* Carbon.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 60264AA40FB72D4D00D8163F /* Carbon.framework */; };
 		60264AA60FB72D4D00D8163F /* Carbon.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 60264AA40FB72D4D00D8163F /* Carbon.framework */; };
+		602EA7A31712E17D00D499A9 /* TestResponder.m in Sources */ = {isa = PBXBuildFile; fileRef = 602EA7A11712CFAC00D499A9 /* TestResponder.m */; };
 		602F8B270CE1CA3E0042F6C0 /* ETCompatibility.h in Headers */ = {isa = PBXBuildFile; fileRef = 602F8B260CE1CA3E0042F6C0 /* ETCompatibility.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		602F8DE70CE1F9610042F6C0 /* ETInspecting.h in Headers */ = {isa = PBXBuildFile; fileRef = 602F8DE60CE1F9610042F6C0 /* ETInspecting.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		603112E80CF448D2001A699E /* ETPickboard.h in Headers */ = {isa = PBXBuildFile; fileRef = 603112E60CF448D2001A699E /* ETPickboard.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -797,6 +798,7 @@
 		6022404D1003DF14007D5D07 /* TestItemGeometry.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = TestItemGeometry.m; path = Tests/TestItemGeometry.m; sourceTree = "<group>"; };
 		602635E511AD413B007586E3 /* TestWidgetLayout.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = TestWidgetLayout.m; path = Tests/TestWidgetLayout.m; sourceTree = "<group>"; };
 		60264AA40FB72D4D00D8163F /* Carbon.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Carbon.framework; path = /System/Library/Frameworks/Carbon.framework; sourceTree = "<absolute>"; };
+		602EA7A11712CFAC00D499A9 /* TestResponder.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = TestResponder.m; path = Tests/TestResponder.m; sourceTree = "<group>"; };
 		602F8B260CE1CA3E0042F6C0 /* ETCompatibility.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ETCompatibility.h; path = Headers/ETCompatibility.h; sourceTree = "<group>"; };
 		602F8DE60CE1F9610042F6C0 /* ETInspecting.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ETInspecting.h; path = Headers/ETInspecting.h; sourceTree = "<group>"; };
 		603112E60CF448D2001A699E /* ETPickboard.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ETPickboard.h; path = Headers/ETPickboard.h; sourceTree = "<group>"; };
@@ -1357,6 +1359,7 @@
 				609F5B5C16CA9E8800683BD9 /* TestLayoutItemBuilder.m */,
 				60FB0BF913C509A700C2AB94 /* TestPersistency.m */,
 				609F5B5D16CA9E8800683BD9 /* TestPickboard.m */,
+				602EA7A11712CFAC00D499A9 /* TestResponder.m */,
 				60E7BD20107E7B3F00E7C0F2 /* TestStyle.m */,
 				609F5B5E16CA9E8800683BD9 /* TestSupervisorView.m */,
 				609F5B5F16CA9E8800683BD9 /* TestTool.m */,
@@ -2766,6 +2769,7 @@
 				609F5B6816CD412A00683BD9 /* TestItemProvider.m in Sources */,
 				609C01E3170C34F500D01AAB /* TestWindowItem.m in Sources */,
 				6037769B170ED730001C3BCF /* ETTokenLayout.m in Sources */,
+				602EA7A31712E17D00D499A9 /* TestResponder.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

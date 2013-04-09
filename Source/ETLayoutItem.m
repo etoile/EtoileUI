@@ -3002,10 +3002,13 @@ be sent by the UI element in the EtoileUI responder chain. */
 {
 	if ([super respondsToSelector: aSelector])
 		return YES;
-		
+
 	SEL twoParamSelector = NSSelectorFromString([NSStringFromSelector(aSelector) 
 		stringByAppendingString: @"onItem:"]);
 	if ([[self actionHandler] respondsToSelector: twoParamSelector])
+		return YES;
+
+	if ([[self actionHandler] respondsToSelector: aSelector])
 		return YES;
 
 	return NO;
@@ -3014,7 +3017,7 @@ be sent by the UI element in the EtoileUI responder chain. */
 - (NSMethodSignature *) methodSignatureForSelector: (SEL)aSelector
 {
 	NSMethodSignature *sig = [super methodSignatureForSelector: aSelector];
-	
+
 	if (sig == nil)
 	{
 		SEL twoParamSelector = NSSelectorFromString([NSStringFromSelector(aSelector) 
@@ -3023,33 +3026,42 @@ be sent by the UI element in the EtoileUI responder chain. */
 		sig = [[self actionHandler] methodSignatureForSelector: twoParamSelector];
 	}
 
+	if (sig == nil)
+	{
+		sig = [[self actionHandler] methodSignatureForSelector: aSelector];
+	}
+
 	return sig;
 }
 
 - (void) forwardInvocation: (NSInvocation *)inv
 {
 	SEL selector = [inv selector];
-
-	if ([self respondsToSelector: selector] == NO)
-	{
-		[self doesNotRecognizeSelector: selector];
-		return;
-	}
-
 	SEL twoParamSelector = NSSelectorFromString([NSStringFromSelector(selector) 
 		stringByAppendingString: @"onItem:"]);
-	NSInvocation *twoParamInv = nil;
-	id sender = nil;
 	id actionHandler = [self primitiveValueForKey: kETActionHandlerProperty];
-	
-	[inv getArgument: &sender atIndex: 2];
-	twoParamInv = [NSInvocation invocationWithMethodSignature: 
-	[actionHandler methodSignatureForSelector: twoParamSelector]];
-	[twoParamInv setSelector: twoParamSelector];
-	[twoParamInv setArgument: &sender atIndex: 2];
-	[twoParamInv setArgument: &self atIndex: 3];
 
-	[twoParamInv invokeWithTarget: actionHandler];
+	if ([actionHandler respondsToSelector: twoParamSelector])
+	{
+		id sender = nil;
+
+		[inv getArgument: &sender atIndex: 2];
+		NSInvocation *twoParamInv = [NSInvocation invocationWithMethodSignature:
+			[actionHandler methodSignatureForSelector: twoParamSelector]];
+		[twoParamInv setSelector: twoParamSelector];
+		[twoParamInv setArgument: &sender atIndex: 2];
+		[twoParamInv setArgument: &self atIndex: 3];
+
+		[twoParamInv invokeWithTarget: actionHandler];
+	}
+	else if ([actionHandler respondsToSelector: selector])
+	{
+		[inv invokeWithTarget: actionHandler];
+	}
+	else
+	{
+		[self doesNotRecognizeSelector: selector];
+	}
 }
 
 /** Sets the target to which actions should be sent.
