@@ -113,7 +113,7 @@ You can also use it -init to create a controller. See -[ETNibOwner init]. */
 	return [[ETActionHandler sharedFallbackResponder] respondsToSelector: aSelector];
 }
 
-- (id)forwardingTargetForSelector:(SEL)aSelector
+- (id) forwardingTargetForSelector:(SEL)aSelector
 {
 	return [ETActionHandler sharedFallbackResponder];
 }
