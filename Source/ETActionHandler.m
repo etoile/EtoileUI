@@ -280,7 +280,7 @@ Which actions begins and ends the text editing is up to you. */
 	// TODO: Use -bindXXX
 	[fieldEditor setString: formattedValue];
 	[fieldEditor setFont: [self fontForEditingItem: item]];
-	[fieldEditor setDelegate: (id <NSTextViewDelegate>)self];
+	[fieldEditor setDelegate: (id)self];
 	[fieldEditorItem setFrame: fieldEditorFrame];
 	[fieldEditorItem setRepresentedObject: [ETPropertyViewpoint viewpointWithName: property 
 	                                                            representedObject: [item subject]]];
