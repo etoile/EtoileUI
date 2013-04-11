@@ -36,6 +36,74 @@ Also means the inset is interpreted as a left inset. */
 Also means the inset is interpreted as a right inset. */
 } ETFormLayoutAlignment;
 
+/** ETFormLayout is a layout that allows to present an existing item tree in a 
+form UI.
+
+Form UI is UI pattern that present labelled widgets or views in a column. 
+Usually the label is positioned on the left and the widget or view on the right.
+ 
+By default, ETFormLayout uses a ETColumnLayout as its positional layout.
+ 
+You can control the overall form alignment using -setFormAlignement:. 
+
+ETFormLayout lets you control the built form precisely. The first time a 
+ETFormLayout is updated using -renderLayoutItems:isNewContent:, it calls 
+-[ETTemplateItemLayout prepareNewItems:]. All the item changes made at this time 
+remains until the layout is removed or -restoreAllItems is called.<br />
+If new layout updates occur, these item adjustments are not recomputed, the 
+positional layout just receives the update and recompute the item positions as 
+usual.
+ 
+As explained in ETTemplateItemLayout,
+-[ETTemplateItemLayout setUpTemplateElementsForItem:] overrides the item 
+properties based on -templateItem and -templateKeys. For each template key, 
+the template item value bound to this key is mirrored on the item (using 
+Key-Value-Coding).
+ 
+Some form arrangements are common:
+
+<list>
+<item>Centered and untouched item widths</item>
+<item>Left aligned and flexible item widths</item>
+<item>Left aligned and fixed item widths</item>
+</list>
+ 
+These arrangements can be reproduced by setting <em>width</em> and/or
+<em>autoresizingMask</em> as template keys and proper values on the template 
+item.
+ 
+For the first case (as commonly in Mac OS X preferences panel), there is nothing 
+to do, it is the default settings. Just create a ETFormLayout and assign it.
+
+For the second case (as seen in Xcode 4 inspector):
+
+<example>
+ETFormLayout *layout = [ETFormLayout layout];
+ETLayoutItemGroup *paneItem = [[ETLayoutItemFactory factory] itemGroup];
+
+[layout setAlignment: ETFormLayoutAlignmentLeft];
+[[layout templateItem] setAutoresizingMask: ETAutoresizingFlexibleWidth];
+[layout setTemplateKeys: [[layout templateKeys] arrayByAddingObject: kETAutoresizingMaskProperty]];
+ 
+[paneItem setLayout: layout];
+</example> 
+ 
+For the third case:
+
+<example>
+ETFormLayout *layout = [ETFormLayout layout];
+ETLayoutItemGroup *paneItem = [[ETLayoutItemFactory factory] itemGroup];
+
+[layout setAlignment: ETFormLayoutAlignmentLeft];
+[[layout templateItem] setWidth: 250];
+[layout setTemplateKeys: [[layout templateKeys] arrayByAddingObject: kETWidthProperty]];
+ 
+[paneItem setLayout: layout];
+</example>
+ 
+If you customize both the autoresizing mask and the width, this means the items 
+are all resized to the same width -setUpTemplateElementsForItem:, but their 
+width remain flexible in case the UI is resized later. */
 @interface ETFormLayout : ETTemplateItemLayout <ETAlignmentHint>
 {
 	@private
