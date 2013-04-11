@@ -54,6 +54,7 @@
 #import <EtoileUI/ETPickDropActionHandler.h>
 #import <EtoileUI/ETPickDropCoordinator.h>
 #import <EtoileUI/ETPickboard.h>
+#import <EtoileUI/ETResponder.h>
 #import <EtoileUI/ETSelectTool.h>
 #import <EtoileUI/ETSelectionAreaItem.h>
 #import <EtoileUI/ETShape.h>
