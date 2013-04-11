@@ -61,6 +61,7 @@ EtoileUI_OBJC_FILES += \
 	Tests/TestTool.m \
 	Tests/TestCell.m \
 	Tests/TestCompositeLayout.m \
+	Tests/TestFormLayout.m \
 	Tests/TestItemCopy.m \
 	Tests/TestItemGeometry.m \
 	Tests/TestItemProvider.m \

@@ -127,6 +127,7 @@
 		605F348217158F6000E9355A /* ETResponder.h in Headers */ = {isa = PBXBuildFile; fileRef = 605F348017158F6000E9355A /* ETResponder.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		605F348317158F6000E9355A /* ETResponder.m in Sources */ = {isa = PBXBuildFile; fileRef = 605F348117158F6000E9355A /* ETResponder.m */; };
 		605F348417158F6D00E9355A /* ETResponder.m in Sources */ = {isa = PBXBuildFile; fileRef = 605F348117158F6000E9355A /* ETResponder.m */; };
+		605F354B17172DF600E9355A /* TestFormLayout.m in Sources */ = {isa = PBXBuildFile; fileRef = 605F354A17172DF600E9355A /* TestFormLayout.m */; };
 		6067EB5A1046B4E600C39086 /* TestItemCopy.m in Sources */ = {isa = PBXBuildFile; fileRef = 6067EB591046B4E600C39086 /* TestItemCopy.m */; };
 		606A98D3113F052A00CC89B9 /* ETModelDescriptionRenderer.h in Headers */ = {isa = PBXBuildFile; fileRef = 600097910FAB47A600622E5D /* ETModelDescriptionRenderer.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		606A98FF113F072A00CC89B9 /* ETModelDescriptionRenderer.m in Sources */ = {isa = PBXBuildFile; fileRef = 6000978E0FAB479500622E5D /* ETModelDescriptionRenderer.m */; };
@@ -861,6 +862,8 @@
 		605F0CCC0C0F400D003AE3E6 /* ObjectManagerExample-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = "ObjectManagerExample-Info.plist"; path = "ObjectManagerExample/ObjectManagerExample-Info.plist"; sourceTree = "<group>"; };
 		605F348017158F6000E9355A /* ETResponder.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ETResponder.h; path = Base/ETResponder.h; sourceTree = "<group>"; };
 		605F348117158F6000E9355A /* ETResponder.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ETResponder.m; path = Base/ETResponder.m; sourceTree = "<group>"; };
+		605F354A17172DF600E9355A /* TestFormLayout.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = TestFormLayout.m; path = Tests/TestFormLayout.m; sourceTree = "<group>"; };
+		605F354C1717305500E9355A /* TestCommon.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = TestCommon.h; path = Tests/TestCommon.h; sourceTree = "<group>"; };
 		6067EB591046B4E600C39086 /* TestItemCopy.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = TestItemCopy.m; path = Tests/TestItemCopy.m; sourceTree = "<group>"; };
 		606B97480C0AF283000AAA85 /* PhotoViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PhotoViewController.h; path = PhotoViewExample/PhotoViewController.h; sourceTree = "<group>"; };
 		606B97490C0AF283000AAA85 /* PhotoViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = PhotoViewController.m; path = PhotoViewExample/PhotoViewController.m; sourceTree = "<group>"; };
@@ -1353,9 +1356,11 @@
 		600243CE0CD134C40023182D /* Tests */ = {
 			isa = PBXGroup;
 			children = (
+				605F354C1717305500E9355A /* TestCommon.h */,
 				60D88883115E651000D7A8AA /* TestCell.m */,
 				60C76C6710136D0A0073C381 /* TestCompositeLayout.m */,
 				609F5B5916CA9E8800683BD9 /* TestController.m */,
+				605F354A17172DF600E9355A /* TestFormLayout.m */,
 				6067EB591046B4E600C39086 /* TestItemCopy.m */,
 				6022404D1003DF14007D5D07 /* TestItemGeometry.m */,
 				609F5B6716CD412900683BD9 /* TestItemProvider.m */,
@@ -2787,6 +2792,7 @@
 				6037769B170ED730001C3BCF /* ETTokenLayout.m in Sources */,
 				602EA7A31712E17D00D499A9 /* TestResponder.m in Sources */,
 				605F348417158F6D00E9355A /* ETResponder.m in Sources */,
+				605F354B17172DF600E9355A /* TestFormLayout.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

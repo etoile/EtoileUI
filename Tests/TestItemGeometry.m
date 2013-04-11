@@ -155,10 +155,6 @@ and -setAutoresizingMask: can potentially erase each other. */
 
 	ASSIGN(item, [itemFactory itemWithView: textField]);
 	[self checkViewAutoresizingMask: weirdMask];
-
-	// TODO: We should probably set an autoresizing mask on returned widget item.
-	/*ASSIGN(item, [itemFactory textField]);						   
-	[self checkViewAutoresizingMask: sizableMask];*/
 }
 
 - (void) testAutoresizingMaskForSupervisorViewRemoval
@@ -215,6 +211,16 @@ and -setAutoresizingMask: can potentially erase each other. */
 	UKIntsEqual(NSViewNotSizable, [[item supervisorView] autoresizingMask]);
 	UKIntsEqual(sizableMask, [(NSView *)[item view] autoresizingMask]);
 	UKIntsEqual(weirdMask, [[[item decoratorItem] supervisorView] autoresizingMask]);
+}
+
+- (void) testResizeItemView
+{
+	ETLayoutItem *textItem = [itemFactory textField];
+	NSSize size =  NSMakeSize(1000, 200);
+
+	[textItem setSize: size];
+
+	UKSizesEqual(size, [[textItem view] frame].size);
 }
 
 - (void) testConvertRectToParent

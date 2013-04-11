@@ -135,20 +135,21 @@ Also means the inset is interpreted as a right inset. */
 
 @interface ETFormLayout : ETTemplateItemLayout <ETAlignmentHint>
 {
-	NSFont *_itemLabelFont;
-	NSTextAlignment _itemLabelAlignment;
+	@private
 	ETFormLayoutAlignment _alignment;
 	float highestLabelWidth;
 	float _currentMaxLabelWidth;
 	float _currentMaxItemWidth;
-	ETBasicItemStyle *_standaloneTextStyle;
 }
+
+/** @taskunit Label and Form Alignment */
 
 - (ETFormLayoutAlignment) alignment;
 - (void) setAlignment: (ETFormLayoutAlignment)alignment;
-/*- (void) setItemLabelFont: (NSFont *)font;
-- (void) setItemLabelAlignment: (NSTextAlignment)alignment;
--setInsertSeparatorBetweenGroups*/
+- (NSFont *) itemLabelFont;
+- (void) setItemLabelFont: (NSFont *)aFont;
+
+/** @taskunit Shared Alignment Support */
 
 - (float) alignmentHintForLayout: (ETLayout *)aLayout;
 - (void) setHorizontalAlignmentGuidePosition: (float)aPosition;

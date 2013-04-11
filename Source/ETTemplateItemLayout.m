@@ -74,7 +74,9 @@ returned instance (usually in a subclass initializer). */
 	layoutCopy->_templateItem = [_templateItem deepCopyWithCopier: [ETCopier copier]];
 	layoutCopy->_templateKeys = [_templateKeys copyWithZone: aZone];
 	layoutCopy->_localBindings = [_localBindings mutableCopyWithZone: aZone];
+
 	// TODO: Set up the bindings per item in -setUpCopyWithZone:
+	ETAssertUnreachable();
 
 	return layoutCopy;
 }
@@ -438,38 +440,21 @@ kETFormLayoutInset	NSZeroRect (default) or nil
 	[formStyle setLabelPosition: ETLabelPositionOutsideLeft];
 	[formStyle setLabelMargin: 10];
 	[templateItem setCoverStyle: formStyle];
-	[templateItem setContentAspect: ETContentAspectComputed];
-	/* Icon must precede Style and View to let us snapshot the item in its 
-	   initial state. See -setUpTemplateElementWithNewValue:forKey:inItem:
-	   View must also be restored after Content Aspect, otherwise the view 
-	   geometry computation occurs two times when the items are restored. */
-	// FIXME: When View comes before Content Aspect an assertion is raised.
-	[self setTemplateKeys: A(@"coverStyle", @"contentAspect")];
+
+	[self setTemplateKeys: A(@"coverStyle")];
 	[self setPositionalLayout: [ETColumnLayout layout]];
+	// TODO: As an option... Forms should support resizing themselves automatically based on their content.
 	//[[(id)[self positionalLayout] ifResponds] setIsContentSizeLayout: YES];
-	// FIXME: The line below is needed only if we align the labels on the left
-	//[[(id)[self positionalLayout] ifResponds] setComputesItemRectFromBoundingBox: YES];
 
 	_alignment = ETFormLayoutAlignmentCenter;
-	_standaloneTextStyle = [[ETBasicItemStyle alloc] init];
-	[_standaloneTextStyle setLabelMargin: 10];
-	[_standaloneTextStyle setLabelPosition: ETLabelPositionOutsideLeft];//ETLabelPositionCentered];
 
 	return self;
-}
-
-- (void) dealloc
-{
-	DESTROY(_itemLabelFont);
-	DESTROY(_standaloneTextStyle);
-	[super dealloc];
 }
 
 - (id) copyWithZone: (NSZone *)aZone layoutContext: (id <ETLayoutingContext>)ctxt
 {
 	ETFormLayout *layoutCopy = [super copyWithZone: aZone layoutContext: ctxt];
-	// TODO: Implement
-	ETAssertUnreachable();
+	layoutCopy->_alignment = _alignment;
 	return layoutCopy;
 }
 
@@ -481,11 +466,6 @@ kETFormLayoutInset	NSZeroRect (default) or nil
 - (float) labelMargin
 {
 	return [[[self templateItem] coverStyle] labelMargin];
-}
-
-- (float) formElementMargin
-{
-	return 5;
 }
 
 - (float) maxLabelWidth
@@ -503,21 +483,30 @@ kETFormLayoutInset	NSZeroRect (default) or nil
 	_alignment = alignment;
 }
 
-- (ETBasicItemStyle *) standaloneTextStyle
+- (NSFont *) itemLabelFont
 {
-	return _standaloneTextStyle;
+	NSDictionary *attributes = [[[[self templateItem] coverStyle] ifResponds] labelAttributes];
+
+	if (attributes == nil)
+		return nil;
+
+	return [NSFont fontWithName: [attributes objectForKey: NSFontAttributeName]
+	                       size: [[attributes objectForKey: NSFontSizeAttribute] floatValue]];
 }
 
-- (void) setUpTemplateElementsForItem: (ETLayoutItem *)item
+- (void) setItemLabelFont: (NSFont *)aFont
 {
-	if ([item view] == nil)
-	{
-		[item setCoverStyle: [self standaloneTextStyle]];
-	}
-	else
-	{
-		[super setUpTemplateElementsForItem: item];
-	}
+	ETAssert([[[self templateItem] coverStyle] isKindOfClass: [ETBasicItemStyle class]]);
+	NSMutableDictionary *attributes = [[[[[self templateItem] coverStyle]
+		labelAttributes] mutableCopy] autorelease];
+
+	if (attributes == nil)
+		return;
+
+	[attributes setObject: [aFont fontName] forKey: NSFontAttributeName];
+	[attributes setObject: [NSNumber numberWithFloat: [aFont pointSize]] forKey: NSFontSizeAttribute];
+
+	[[[self templateItem] coverStyle] setLabelAttributes: attributes];
 }
 
 /* -[ETTemplateLayout renderLayoutItems:isNewContent:] doesn't invoke 
