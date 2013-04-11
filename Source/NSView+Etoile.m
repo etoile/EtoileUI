@@ -9,6 +9,7 @@
 #import <EtoileFoundation/NSObject+Trait.h>
 #import <EtoileFoundation/NSObject+Model.h>
 #import "NSView+Etoile.h"
+#import "ETResponder.h"
 #import "ETView.h"
 #import "NSImage+Etoile.h"
 #import "ETCompatibility.h"
@@ -89,6 +90,18 @@ The returned object is an ETUIItem or subclass instance. */
 - (id) owningItem
 {
 	return [[self superview] owningItem];
+}
+
+/** Returns the first responder sharing area of -owningItem. */
+- (id <ETFirstResponderSharingArea>) firstResponderSharingArea
+{
+	return [[self owningItem] firstResponderSharingArea];
+}
+
+/** Returns the edition coordinator of -owningItem. */
+- (id <ETEditionCoordinator>) editionCoordinator
+{
+	return [[self owningItem] editionCoordinator];
 }
 
 /* Copying */

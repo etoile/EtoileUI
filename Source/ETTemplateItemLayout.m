@@ -22,6 +22,7 @@
 #import "ETCompatibility.h"
 
 #define _layoutContext (id <ETLayoutingContext>)_layoutContext
+#pragma GCC diagnostic ignored "-Wprotocol"
 
 
 @implementation ETTemplateItemLayout

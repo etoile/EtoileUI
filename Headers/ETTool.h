@@ -12,16 +12,9 @@
 
 #import <Foundation/Foundation.h>
 #import <AppKit/AppKit.h>
+#import <EtoileUI/ETResponder.h>
 
 @class ETEvent, ETLayoutItem, ETLayoutItemGroup, ETLayout;
-
-@protocol ETFirstResponderSharingArea
-- (ETLayoutItem *) activeFieldEditorItem;
-- (ETLayoutItem *) editedItem;
-- (void) setActiveFieldEditorItem: (ETLayoutItem *)editorItem 
-                       editedItem: (ETLayoutItem *)editedItem;
-- (void) removeActiveFieldEditorItem;
-@end
 
 /** Action Handlers are bound to layout items.
     Tool are bound to layouts.
@@ -50,7 +43,7 @@ deactivated on mouse exit. However some intruments such as ETSelectTool
 implement a custom policy: the tools of child layouts are activated on 
 double-click and deactivated on a mouse click outside of their layout boundaries
 (see -setDeactivateOn:). */
-@interface ETTool : NSResponder <NSCopying>
+@interface ETTool : NSResponder <NSCopying, ETResponder>
 {
 	@private
 	NSMutableArray *_hoveredItemStack; /* Lazily initialized, never access directly */
@@ -114,8 +107,6 @@ double-click and deactivated on a mouse click outside of their layout boundaries
 - (ETLayoutItem *) keyItem;
 - (ETLayoutItem *) mainItem;
 
-- (id <ETFirstResponderSharingArea>) editionCoordinatorForItem: (ETLayoutItem *)anItem;
-
 /* Hit Test */
 
 - (ETLayoutItem *) hitItemForNil;
@@ -151,8 +142,6 @@ double-click and deactivated on a mouse click outside of their layout boundaries
 - (void) keyDown: (ETEvent *)anEvent;
 - (void) keyUp: (ETEvent *)anEvent;
 
-- (BOOL) isFirstResponderProxy;
-
 /* Cursor */
 
 - (void) setCursor: (NSCursor *)aCursor;
@@ -176,10 +165,4 @@ double-click and deactivated on a mouse click outside of their layout boundaries
 // #pragma clang diagnostic ignored "-Wall" also doesn't work.
 - (BOOL) performKeyEquivalent: (ETEvent *)anEvent;
 
-@end
-
-// TODO: Evaluate... Not yet implemented.
-@interface NSObject (ETToolDelegate)
-- (BOOL) tool: (ETTool *)anTool shouldDeactivateWithEvent: (ETEvent *)anEvent;
-- (ETTool *) toolToActivateWithEvent: (ETEvent *)anEvent;
 @end

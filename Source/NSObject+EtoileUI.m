@@ -209,11 +209,6 @@ the aspect repository. */
 #endif
 }
 
-- (BOOL) isFirstResponderProxy
-{
-	return NO;
-}
-
 /** Returns YES if the receiver is an ETLayoutItem class or subclass instance, 
 otherwise returns NO. */
 - (BOOL) isLayoutItem

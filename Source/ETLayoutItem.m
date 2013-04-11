@@ -25,6 +25,7 @@
 #import "EtoileUIProperties.h"
 #import "ETScrollableAreaItem.h"
 #import "ETStyleGroup.h"
+#import "ETTool.h"
 #import "ETView.h"
 #import "ETUIObject.h"
 #import "ETWindowItem.h"

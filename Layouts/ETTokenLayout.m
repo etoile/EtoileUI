@@ -189,13 +189,12 @@ becomes the token width.
 The resizing isn't delegated to the positional layout unlike in ETTemplateItemLayout. */
 - (void) resizeLayoutItems: (NSArray *)items toScaleFactor: (float)factor
 {
-	id <ETFirstResponderSharingArea> editionCoordinator = 
-		[[ETTool activeTool] editionCoordinatorForItem: _layoutContext];
+	id <ETFirstResponderSharingArea> responderArea = [_layoutContext firstResponderSharingArea];
 
 	/* We use -arrangedItems in case we receive only a subset to resize (not true currently) */
-	if ([[_layoutContext arrangedItems] containsObject: [editionCoordinator editedItem]])
+	if ([[_layoutContext arrangedItems] containsObject: [responderArea editedItem]])
 	{
-		[editionCoordinator removeActiveFieldEditorItem];
+		[responderArea removeActiveFieldEditorItem];
 	}
 
 	ETTokenStyle *tokenStyle = [[self templateItem] coverStyle];

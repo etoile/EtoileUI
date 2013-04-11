@@ -14,15 +14,26 @@
 #import "ETLayoutItem.h"
 #import "ETLayoutItemGroup.h"
 #import "EtoileUIProperties.h"
-#import "ETView.h"
+#import "ETResponder.h"
 #import "ETScrollableAreaItem.h"
+#import "ETView.h"
 #import "ETWindowItem.h"
 #import "NSObject+EtoileUI.h"
 #import "NSView+Etoile.h"
 #import "ETCompatibility.h"
 
+#pragma GCC diagnostic ignored "-Wprotocol"
+
 
 @implementation ETUIItem
+
++ (void) initialize
+{
+	if (self != [ETUIItem class])
+		return;
+
+	[self applyTraitFromClass: [ETResponderTrait class]];
+}
 
 /** Returns a rect value that subclasses can used to initalize new items, when 
 both size and position are undetermined in the initialization context. */

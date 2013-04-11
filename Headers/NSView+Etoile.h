@@ -13,6 +13,8 @@
 #import <AppKit/AppKit.h>
 #import <EtoileFoundation/ETCollection.h>
 
+@protocol ETFirstResponderSharingArea, ETEditionCoordinator;
+
 /** See -isWidget.
 
 This protocol is subject to change or be removed. */
@@ -38,6 +40,8 @@ This protocol is subject to change or be removed. */
 - (BOOL) isWindowContentView;
 
 - (id) owningItem;
+- (id <ETFirstResponderSharingArea>) firstResponderSharingArea;
+- (id <ETEditionCoordinator>) editionCoordinator;
 
 /* Copying */
 

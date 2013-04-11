@@ -13,6 +13,7 @@
 #import <Foundation/Foundation.h>
 #import <AppKit/AppKit.h>
 #import <EtoileUI/ETUIObject.h>
+#import <EtoileUI/ETResponder.h>
 
 @class ETDropIndicator, ETTool, ETLineFragment, ETLayoutItem, ETLayoutItemGroup, ETView;
 
@@ -34,7 +35,7 @@ it doesn't have to.<br />
 ETLayoutingContext describes how a layout is expected to interact with a layout 
 item and limit the interaction complexity between ETLayoutItemGroup and 
 ETLayout. */
-@protocol ETLayoutingContext <NSObject>
+@protocol ETLayoutingContext <NSObject, ETResponder>
 // TODO: Remove in favor of -arrangedItems
 - (NSArray *) items;
 /** See -[ETLayoutItemGroup arrangedItems]. */

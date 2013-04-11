@@ -13,7 +13,9 @@
 #import <Foundation/Foundation.h>
 #import <AppKit/AppKit.h>
 #import <EtoileUI/ETDecoratorItem.h>
-#import <EtoileUI/ETTool.h> /* For ETFirstResponderSharingArea */
+#import <EtoileUI/ETResponder.h>
+
+@class ETEvent;
 
 /** A decorator which can be used to put a layout item inside a window.
 
@@ -35,6 +37,7 @@ such as -performClose: are forwarded to the NSWindow. */
 	BOOL _shouldKeepWindowFrame;
 	ETLayoutItem *_activeFieldEditorItem;
 	ETLayoutItem *_editedItem;
+	id _oldFirstResponder;
 }
 
 /* Factory Methods */

@@ -20,6 +20,7 @@
 #import "ETLayoutItem.h"
 #import "ETLayoutItemFactory.h"
 #import "ETLayoutItemGroup.h"
+#import "ETResponder.h"
 #import "EtoileUIProperties.h"
 #import "NSObject+EtoileUI.h"
 #import "ETCompatibility.h"
@@ -252,12 +253,11 @@ Which actions begins and ends the text editing is up to you. */
                  property: (NSString *)property 
                    inRect: (NSRect)fieldEditorRect
 {
-	id <ETFirstResponderSharingArea> editionCoordinator = 
-		[[ETTool activeTool] editionCoordinatorForItem: item];
+	id <ETFirstResponderSharingArea> responderArea = [item firstResponderSharingArea];
 
-	if (nil == editionCoordinator)
+	if (nil == responderArea)
 	{
-		ETLog(@"WARNING: Found no coordinator to edit %@", item);
+		ETLog(@"WARNING: Found no first responder sharing area to edit %@", item);
 		return;
 	}
 
@@ -284,8 +284,8 @@ Which actions begins and ends the text editing is up to you. */
 	[fieldEditorItem setFrame: fieldEditorFrame];
 	[fieldEditorItem setRepresentedObject: [ETPropertyViewpoint viewpointWithName: property 
 	                                                            representedObject: [item subject]]];
-	[editionCoordinator setActiveFieldEditorItem: fieldEditorItem
-	                                  editedItem: item];
+	[responderArea setActiveFieldEditorItem: fieldEditorItem
+	                             editedItem: item];
 
 	ASSIGN(_editedItem, item);
 }
@@ -297,16 +297,15 @@ removes the field editor item inserted in the window backed ancestor item. */
 	if (nil == _editedItem)
 		return;
 
-	id <ETFirstResponderSharingArea> editionCoordinator = 
-		[[ETTool activeTool] editionCoordinatorForItem: _editedItem];
+	id <ETFirstResponderSharingArea> responderArea = [_editedItem firstResponderSharingArea];
 
-	if (nil == editionCoordinator)
+	if (nil == responderArea)
 	{
-		ETLog(@"WARNING: Found no coordinator to edit %@", _editedItem);
+		ETLog(@"WARNING: Found no first responder sharing area to edit %@", _editedItem);
 		return;
 	}
 
-	[editionCoordinator removeActiveFieldEditorItem];
+	[responderArea removeActiveFieldEditorItem];
 
 	DESTROY(_editedItem);
 }
@@ -326,8 +325,6 @@ NSControl or NSTextField. */
 {
 	ETAssert(_editedItem != nil);
 
-	//id <ETFirstResponderSharingArea> editionCoordinator =
-	//	[[ETTool activeTool] editionCoordinatorForItem: _editedItem];
 	NSInteger movement =
 		[[[aNotification userInfo] objectForKey: @"NSTextMovement"] unsignedIntegerValue];
 	
@@ -337,11 +334,11 @@ NSControl or NSTextField. */
     }
 	else if (movement == NSTabTextMovement)
 	{
-		// TODO: [editionCoordinator selectKeyViewFollowingView: self];
+		// TODO: [[_editedItem firstResponderSharingArea] selectKeyViewFollowingView: self];
 	}
 	else if (movement == NSBacktabTextMovement)
 	{
-		// TODO: [editionCoordinator selectKeyViewPrecedingView: self];
+		// TODO: [[_editedItem firstResponderSharingArea] selectKeyViewPrecedingView: self];
     }
 }
 

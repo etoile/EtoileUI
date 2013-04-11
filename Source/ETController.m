@@ -16,8 +16,11 @@
 #import "ETLayoutItemGroup+Mutation.h"
 #import "ETLayoutItemGroup.h"
 #import "ETPickDropActionHandler.h" /* For ETUndeterminedIndex */
+#import "ETResponder.h"
 #import "NSObject+EtoileUI.h"
 #import "ETCompatibility.h"
+
+#pragma GCC diagnostic ignored "-Wprotocol"
 
 
 @implementation ETController
@@ -28,6 +31,8 @@ static ETController *basicTemplateProvider = nil;
 {
 	if ([ETController class] == self) 
 	{
+		[self applyTraitFromClass: [ETResponderTrait class]];
+	
 		kETTemplateObjectType = [ETUTI registerTypeWithString: @"org.etoile-project.etoileui.template-object"
 		                                          description: @"EtoileUI Template Object Type (see ETController)"
 		                                     supertypeStrings: [NSArray array]

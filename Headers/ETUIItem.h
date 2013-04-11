@@ -12,6 +12,7 @@
 
 #import <Foundation/Foundation.h>
 #import <AppKit/AppKit.h>
+#import <EtoileUI/ETResponder.h>
 #import <EtoileUI/ETStyle.h>
 
 @class ETDecoratorItem, ETLayoutItemGroup, ETView;
@@ -53,7 +54,7 @@ is handed to the application object, to its delegate and finally to the
 persistency controller (when CoreObject is installed).
 
 You must never subclass ETUIItem. ETUIItem ivars must be considered private. */
-@interface ETUIItem : ETStyle
+@interface ETUIItem : ETStyle <ETResponder>
 {
 	ETDecoratorItem *_decoratorItem; // next decorator
 	IBOutlet ETView *supervisorView;

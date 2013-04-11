@@ -147,6 +147,7 @@ If window is nil, the receiver creates a standard widget backend window. */
 		RELEASE(_itemWindow);
 	}
 	DESTROY(_itemWindow);  /* Balance first retain call */
+	DESTROY(_oldFirstResponder);
 
 	[super dealloc];
 }
@@ -623,6 +624,20 @@ event occured, otherwise returns nil. */
 	return _activeFieldEditorItem;
 }
 
+- (void) windowDidUpdate: (NSNotification *)notification
+{
+	NSWindow *window = [notification object];
+	ETAssert(window == _itemWindow);
+	id newFirstResponder = [window firstResponder];
+
+	if (_oldFirstResponder == newFirstResponder)
+		return;
+
+	ASSIGN(_oldFirstResponder, newFirstResponder);
+
+	[[_oldFirstResponder editionCoordinator] didResignFirstResponder: _oldFirstResponder];
+	[[newFirstResponder editionCoordinator] didBecomeFirstResponder: newFirstResponder];
+}
 /* Actions */
 
 /** Forwards the action to the underlying window object. */

@@ -26,6 +26,8 @@
 #import "NSObject+EtoileUI.h"
 #import "ETCompatibility.h"
 
+#pragma GCC diagnostic ignored "-Wprotocol"
+
 @interface ETTool (Private)
 - (BOOL) makeFirstResponder: (id)aResponder inWindow: (NSWindow *)aWindow;
 - (BOOL) performKeyEquivalent: (ETEvent *)anEvent;
@@ -34,6 +36,14 @@
 
 
 @implementation ETTool
+
++ (void) initialize
+{
+	if (self != [ETTool class])
+		return;
+	
+	[self applyTraitFromClass: [ETResponderTrait class]];
+}
 
 static NSMutableSet *toolPrototypes = nil;
 
@@ -451,19 +461,6 @@ The main window can be retrieved through the decorator item with
 		return nil;
 
 	return [contentView layoutItem];
-}
-
-/** <override-never />
-Returns the object that represents the area where the first responder status 
-is shared and the given item located.
-
-The returned object coordinates the field editor use to ensure the first 
-responder status is given to a single object in this area.
-
-Nil can be returned when the item is not inserted in the main item tree. */
-- (id <ETFirstResponderSharingArea>) editionCoordinatorForItem: (ETLayoutItem *)anItem
-{
-	return [[anItem windowBackedAncestorItem] windowItem];
 }
 
 /** <override-never />
@@ -1032,11 +1029,6 @@ NO. */
 - (void) keyUp: (ETEvent *)anEvent
 {
 	[self tryPerformKeyEquivalentAndSendKeyEvent: anEvent toResponder: [self firstKeyResponder]];
-}
-
-- (BOOL) isFirstResponderProxy
-{
-	return YES;
 }
 
 /* Cursor */
