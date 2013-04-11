@@ -7,7 +7,7 @@
  */
 
 #import "TestCommon.h"
-#import "ETTemplateItemLayout.h"
+#import "ETFormLayout.h"
 #import "ETLayoutItem.h"
 #import "ETLayoutItemFactory.h"
 #import "ETLayoutItemGroup.h"
