@@ -14,7 +14,7 @@
 #import <EtoileFoundation/NSObject+Model.h>
 #import "ETModelDescriptionRenderer.h"
 #import "ETController.h"
-#import "ETTemplateItemLayout.h"
+#import "ETFormLayout.h"
 #import "ETItemTemplate.h"
 #import "ETLayout.h"
 #import "ETLayoutItem.h"
@@ -119,6 +119,16 @@
 	return _entityLayout;
 }
 
+- (void) setEntityItemFrame: (NSRect)aRect
+{
+	_entityItemFrame = aRect;
+}
+
+- (NSRect) entityItemFrame
+{
+	return _entityItemFrame;
+}
+
 - (ETEntityDescription *) entityDescriptionForObject: (id)anObject
 {
 	return [[self repository] entityDescriptionForClass: [anObject class]];
@@ -142,7 +152,13 @@
 
 - (ETLayoutItemGroup *)entityItemWithRepresentedObject: (id)anObject
 {
-	ETLayoutItemGroup *item = [[ETLayoutItemFactory factory] itemGroupWithFrame: [self defaultFrameForEntityItem]];
+	NSRect itemFrame = [self entityItemFrame];
+
+	if (NSIsEmptyRect(itemFrame))
+	{
+		itemFrame = [self defaultFrameForEntityItem];
+	}
+	ETLayoutItemGroup *item = [[ETLayoutItemFactory factory] itemGroupWithFrame: itemFrame];
 
 	// TODO: Finish to implement ETTemplateItemLayout and ETFormLayout copy
 	//[item setLayout: [[[self entityLayout] copy] autorelease]];

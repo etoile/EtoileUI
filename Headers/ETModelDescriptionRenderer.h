@@ -25,6 +25,7 @@
 	NSMutableDictionary *_templateItems;
 	NSMutableDictionary *_additionalTemplateIdentifiers;
 	ETLayout *_entityLayout;
+	NSRect _entityItemFrame;
 	NSString *_groupingKeyPath;
 }
 
@@ -45,6 +46,8 @@
 
 - (void) setEntityLayout: (ETLayout *)aLayout;
 - (ETLayout *) entityLayout;
+- (void) setEntityItemFrame: (NSRect)aRect;
+- (NSRect) entityItemFrame;
 
 - (void) setGroupingKeyPath: (NSString *)aKeyPath;
 - (NSString *) groupingKeyPath;
