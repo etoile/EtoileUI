@@ -668,6 +668,7 @@ Not used presently. */
 - (void) setDelegate: (id)aDelegate
 {
 	delegate = aDelegate;
+	[self renderAndInvalidateDisplay];
 }
 
 /** Returns the delegate. 
