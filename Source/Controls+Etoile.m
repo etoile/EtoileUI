@@ -6,6 +6,7 @@
 	License:  Modified BSD (see COPYING)
  */
 
+#import <EtoileFoundation/ETCollection+HOM.h>
 #import <EtoileFoundation/NSObject+Model.h>
 #import <EtoileFoundation/Macros.h>
 #import "Controls+Etoile.h"
@@ -97,12 +98,23 @@ terminology) on which actions should be dispatched. */
 
 - (id) copyWithZone: (NSZone *)aZone
 {
-	NSPopUpButton *popUpCopy = [super copyWithZone: aZone];
 	unsigned int nbOfItems = [self numberOfItems];
+	NSArray *repObjects = [[[self itemArray] mappedCollection] representedObject];
+
+	/* Since -[NSPopUpButton setMenu: nil] doesn't work, we remove all represented 
+	   objects to prevent their encoding in -[NSView(Etoile) copyWithZone:] */
+	[[[self itemArray] mappedCollection] setRepresentedObject: nil];
+
+	NSPopUpButton *popUpCopy = [super copyWithZone: aZone];
 
 	for (int i = 0; i < nbOfItems; i++)
 	{
-		id repObject = [[self itemAtIndex: i] representedObject];
+		id repObject = [repObjects objectAtIndex: i];
+
+		if ([repObject isEqual: [NSNull null]])
+			continue;
+
+		[[self itemAtIndex: i] setRepresentedObject: repObject];
 		[[popUpCopy itemAtIndex: i] setRepresentedObject: repObject];
 	}
 
