@@ -26,3 +26,7 @@ item tree through a text representation. */
 - (void) setTextRepresentationIncludesLayoutContext: (BOOL)flag;
 
 @end
+
+@interface NSObject (ETTextEditorLayoutDelegate)
+- (BOOL) layout: (ETTextEditorLayout *)aLayout prepareTextView: (NSTextView *)aTextView;
+@end

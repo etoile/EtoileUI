@@ -48,6 +48,11 @@
 	}
 }
 
+- (BOOL) prepareTextView
+{
+	return [[[self delegate] ifResponds] layout: self prepareTextView: [self textView]];
+}
+
 - (void) renderWithLayoutItems: (NSArray *)items isNewContent: (BOOL)isNewContent
 {
 	// FIXME: Even when the context content/collection isn't mutated, the 
@@ -55,7 +60,14 @@
 	// the text view has to be updated. The same issue probably arises in 
 	// ETTableLayout if we start to observe changes in the model to trigger 
 	// -reloadData transparently. Think about that...
-	if (NO == isNewContent)
+	//if (NO == isNewContent)
+	//	return;
+
+	[[self textView] setString: @""];
+
+	BOOL containsText = [self prepareTextView];
+
+	if (containsText)
 		return;
 
 	[[self textView] setString: [self textRepresentationFromItems: items]];
@@ -71,6 +83,7 @@
 - (void) setTextRepresentationIncludesLayoutContext: (BOOL)flag
 {
 	_textRepIncludesContext = flag;
+	[self renderAndInvalidateDisplay];
 }
 
 @end
