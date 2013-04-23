@@ -478,7 +478,12 @@ static ETBasicHandleStyle *sharedBasicHandleStyle = nil;
 
 - (NSPoint) anchorPoint
 {
-	return [(ETLayoutItem *)[self primitiveValueForKey: kETManipulatedObjectProperty] anchorPoint];
+	id manipulatedObject = [self primitiveValueForKey: kETManipulatedObjectProperty];
+
+	if (manipulatedObject == nil)
+		return NSZeroPoint;
+
+	return [(ETLayoutItem *)manipulatedObject anchorPoint];
 }
 
 - (void) setAnchorPoint: (NSPoint)anchor
@@ -488,7 +493,12 @@ static ETBasicHandleStyle *sharedBasicHandleStyle = nil;
 
 - (NSPoint) position
 {
-	return [(ETLayoutItem *)[self primitiveValueForKey: kETManipulatedObjectProperty] position];
+	id manipulatedObject = [self primitiveValueForKey: kETManipulatedObjectProperty];
+
+	if (manipulatedObject == nil)
+		return NSZeroPoint;
+
+	return [(ETLayoutItem *)manipulatedObject position];
 }
 
 - (void) setPosition: (NSPoint)aPosition
@@ -500,12 +510,19 @@ static ETBasicHandleStyle *sharedBasicHandleStyle = nil;
 /** Returns the content bounds associated with the receiver. */
 - (NSRect) contentBounds
 {
-	NSRect manipulatedFrame = [[self primitiveValueForKey: kETManipulatedObjectProperty] frame];
+	id manipulatedObject = [self primitiveValueForKey: kETManipulatedObjectProperty];
+
+	if (manipulatedObject == nil)
+		return NSZeroRect;
+ 
+	NSRect manipulatedFrame = [(ETLayoutItem *)manipulatedObject frame];
+	ETAssert(manipulatedFrame.size.width >= 0 && manipulatedFrame.size.height >= 0);
 	return ETMakeRect(NSZeroPoint, manipulatedFrame.size);
 }
 
 - (void) setContentBounds: (NSRect)rect
 {
+	NSParameterAssert(rect.size.width >= 0 && rect.size.height >= 0);
 	NSRect manipulatedFrame = ETMakeRect([[self primitiveValueForKey: kETManipulatedObjectProperty] origin], rect.size);
 	[[self primitiveValueForKey: kETManipulatedObjectProperty] setFrame: manipulatedFrame];
 	[self updateHandleLocations];
@@ -513,7 +530,14 @@ static ETBasicHandleStyle *sharedBasicHandleStyle = nil;
 
 - (NSRect) frame
 {
-	return [[self primitiveValueForKey: kETManipulatedObjectProperty] frame];
+	id manipulatedObject = [self primitiveValueForKey: kETManipulatedObjectProperty];
+
+	if (manipulatedObject == nil)
+		return NSZeroRect;
+ 
+	NSRect frame = [(ETLayoutItem *)manipulatedObject frame];
+	ETAssert(frame.size.width >= 0 && frame.size.height >= 0);
+	return frame;
 }
 
 // NOTE: We need to figure out what we really needs. For example,
@@ -522,6 +546,7 @@ static ETBasicHandleStyle *sharedBasicHandleStyle = nil;
 // probably want to cache the bounding box value in an ivar too.
 - (void) setFrame: (NSRect)frame
 {
+	NSParameterAssert(frame.size.width >= 0 && frame.size.height >= 0);
 	[[self primitiveValueForKey: kETManipulatedObjectProperty] setFrame: frame];
 	[self updateHandleLocations];
 }
@@ -541,7 +566,7 @@ or not. */
 }
 
 - (void) updateHandleLocations
-{ 
+{
 	[self setBoundingBox: NSInsetRect([self contentBounds], -10.0, -10.0)];
 	//NSRect localBoundingBox = ETUnionRectWithObjectsAndSelector([self items], @selector(frame));
 	

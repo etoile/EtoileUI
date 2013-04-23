@@ -2230,6 +2230,7 @@ See also -[ETLayout isPositional] and -[ETLayout isComputedLayout]. */
 - (void) setFrame: (NSRect)rect
 {
 	NSParameterAssert(_isSyncingSupervisorViewGeometry == NO);
+	NSParameterAssert(rect.size.width >= 0 && rect.size.height >= 0);
 
 	ETDebugLog(@"-setFrame: %@ on %@", NSStringFromRect(rect), self); 
 
@@ -2482,6 +2483,7 @@ Marks the receiver as needing a layout update. Marks the parent item too, when
 the receiver has no decorator.  */
 - (void) setContentBounds: (NSRect)rect
 {
+	NSParameterAssert(rect.size.width >= 0 && rect.size.height >= 0);
 	[self willChangeValueForProperty: kETContentBoundsProperty];
 	_contentBounds = rect;
 
