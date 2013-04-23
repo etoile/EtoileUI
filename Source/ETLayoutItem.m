@@ -1708,16 +1708,14 @@ The returned rect is the visible content bounds. */
 
 - (void) drawFrameWithRect: (NSRect)aRect
 {
-	[[NSColor blueColor] setStroke];
-	[NSBezierPath setDefaultLineWidth: 1.0];
-	[NSBezierPath strokeRect: aRect];
+	[[NSColor blueColor] set];
+	NSFrameRectWithWidth(aRect, 1.0);
 }
 
 - (void) drawBoundingBoxWithRect: (NSRect)aRect
 {
-	[[NSColor redColor] setStroke];
-	[NSBezierPath setDefaultLineWidth: 1.0];
-	[NSBezierPath strokeRect: aRect];
+	[[NSColor redColor] set];
+	NSFrameRectWithWidth(aRect, 1.0);
 }
 
 /* For debugging */
@@ -1727,8 +1725,7 @@ The returned rect is the visible content bounds. */
 		return;
 
 	[[NSColor greenColor] set];
-	[NSBezierPath setDefaultLineWidth: 3.0];
-	[NSBezierPath strokeRect: [self bounds]];
+	NSFrameRectWithWidth([self bounds], 3.0);
 }
 
 /** <override-dummy />
