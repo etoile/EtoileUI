@@ -244,10 +244,11 @@ NSRect bounds = [item drawingBoundsForStyle: self];
 	   NOTE: May be we should adjust pixel boundaries per edge and only if 
 	   needed to get a perfect drawing... */
 	NSRect normalizedIndicatorRect = NSInsetRect(NSIntegralRect(indicatorRect), 0.5, 0.5);
+	NSBezierPath *indicatorPath = [NSBezierPath bezierPathWithRect: normalizedIndicatorRect];
 
 	/* Draw the interior */
 	[[[NSColor lightGrayColor] colorWithAlphaComponent: 0.45] setFill];
-	[NSBezierPath fillRect: normalizedIndicatorRect];
+	[indicatorPath fill];
 
 	/* Draw the outline
 	   FIXME: Cannot get the outline precisely aligned on pixel boundaries for 
@@ -255,8 +256,8 @@ NSRect bounds = [item drawingBoundsForStyle: self];
 	   of the outline isn't drawn most of the time and the image drawn 
 	   underneath seems to wrongly extend beyond the border. */
 	[[[NSColor darkGrayColor] colorWithAlphaComponent: 0.55] setStroke];
-	[NSBezierPath setDefaultLineWidth: 1.0];
-	[NSBezierPath strokeRect: normalizedIndicatorRect];
+	[indicatorPath setLineWidth: 1.0];
+	[indicatorPath stroke];
 
 	[ctxt setShouldAntialias: gstateAntialias];
 }
@@ -347,32 +348,24 @@ See also -[ETLayoutItem contentBounds], -[ETLayoutItem size] and
 
 - (void) drawVerticalInsertionIndicatorInRect: (NSRect)indicatorRect
 {
-	// NOTE: On Mac OS X, the graphics state doesn't save NSBezierPath 
-	// attributes such as +defaultLineWidth unlike what Cocoa Drawing said.
-	[NSGraphicsContext saveGraphicsState];
+	NSBezierPath *indicatorPath = [NSBezierPath bezierPathWithRect: indicatorRect];
 
 	[[self color] setFill];
-	[NSBezierPath setDefaultLineWidth: [self thickness] / 2];
-	[NSBezierPath fillRect: indicatorRect];
+	[indicatorPath setLineWidth: [self thickness] / 2];
+	[indicatorPath fill];
 	/*[NSBezierPath strokeLineFromPoint: NSMakePoint(indicatorLineX, NSMinY(hoveredRect))
 							  toPoint: NSMakePoint(indicatorLineX, NSMaxY(hoveredRect))];*/
-
-	[NSGraphicsContext restoreGraphicsState];
 	
 	_prevInsertionIndicatorRect = indicatorRect;
 }
 
 - (void) drawRectangularInsertionIndicatorInRect: (NSRect)indicatorRect
 {
-	// NOTE: On Mac OS X, the graphics state doesn't save NSBezierPath 
-	// attributes such as +defaultLineWidth unlike what Cocoa Drawing said.
-	[NSGraphicsContext saveGraphicsState];
+	NSBezierPath *indicatorPath = [NSBezierPath bezierPathWithRect: indicatorRect];
 
 	[[self color] setStroke];
-	[NSBezierPath setDefaultLineWidth: [self thickness]];
-	[NSBezierPath strokeRect: indicatorRect];
-	
-	[NSGraphicsContext restoreGraphicsState];
+	[indicatorPath setLineWidth: [self thickness]];
+	[indicatorPath stroke];
 
 	_prevInsertionIndicatorRect = indicatorRect;
 }

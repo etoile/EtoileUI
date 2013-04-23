@@ -380,7 +380,7 @@ static ETBasicHandleStyle *sharedBasicHandleStyle = nil;
 	   GNUstep. With the current code which works well on Cocoa, the top border 
 	   of the outline isn't drawn most of the time and the image drawn 
 	   underneath seems to wrongly extend beyond the border. */
-	[NSBezierPath setDefaultLineWidth: 1.0];
+	
 	[[[NSColor darkGrayColor] colorWithAlphaComponent: 0.55] set];
 #ifdef USE_BEZIER_PATH
 	// FIXME: NSFrameRectWithWidthUsingOperation() seems to be broken. It 
@@ -388,7 +388,10 @@ static ETBasicHandleStyle *sharedBasicHandleStyle = nil;
 	// of 1.0
 	NSFrameRectWithWidthUsingOperation(normalizedIndicatorRect, 0.0, NSCompositeSourceOver);
 #else
-	[NSBezierPath strokeRect: normalizedIndicatorRect];
+
+	NSBezierPath *indicatorPath = [NSBezierPath bezierPathWithRect: normalizedIndicatorRect];
+	[indicatorPath setLineWidth: 1.0];
+	[indicatorPath stroke];
 #endif
 
 	[[NSGraphicsContext currentContext] setShouldAntialias: gstateAntialias];
@@ -658,16 +661,13 @@ or not. */
 /** Draws a rectangular outline. */
 - (void) drawOutlineInRect: (NSRect)rect
 {
-	float gstateLineWidth = [NSBezierPath defaultLineWidth];
 	NSGraphicsContext *ctxt = [NSGraphicsContext currentContext];
 	BOOL gstateAntialias = [ctxt shouldAntialias];
 	[ctxt setShouldAntialias: NO];
 
 	[[[NSColor blackColor] colorWithAlphaComponent: 0.90] set];
-	[NSBezierPath setDefaultLineWidth: 0.0];
-	[NSBezierPath strokeRect: rect];
+	NSFrameRectWithWidthUsingOperation(rect, 0.0, NSCompositeSourceOver);
 
-	[NSBezierPath setDefaultLineWidth: gstateLineWidth];
 	[ctxt setShouldAntialias: gstateAntialias];
 }
 

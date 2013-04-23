@@ -1220,8 +1220,7 @@ You should never need to call this method directly. */
 #ifdef DEBUG_DRAWING
 	NSRect itemRect = [item convertRectFromParent: [item frame]];
 	[[NSColor yellowColor] set];
-	[NSBezierPath setDefaultLineWidth: 4.0];
-	[NSBezierPath strokeRect: itemRect];
+	NSFrameRectWithWidth(itemRect, 4.0);
 #endif
 
 	NSAffineTransform *transform = [NSAffineTransform transform];

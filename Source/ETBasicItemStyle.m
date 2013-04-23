@@ -258,7 +258,7 @@ the given indicator rect is equal to it. */
 
 	/* Draw the outline */
 	[[[NSColor yellowColor] colorWithAlphaComponent: 0.55] setStroke];
-	[NSBezierPath setDefaultLineWidth: 1.0];
+	[roundedRectPath setLineWidth: 1.0];
 	[roundedRectPath stroke];
 
 	[ctxt setShouldAntialias: gstateAntialias];
@@ -277,8 +277,9 @@ rect is equal to it. */
 #else
 	/* For debugging, this code draws it with a square look... */
 	[[[NSColor keyboardFocusIndicatorColor] colorWithAlphaComponent: 0.8] setStroke];
-	[NSBezierPath setDefaultLineWidth: 6.0];
-	[NSBezierPath strokeRect: indicatorRect];
+	NSBezierPath *indicatorPath = [NSBezierPath bezierPathWithRect: indicatorRect];
+	[indicatorPath setLineWidth: 6.0];
+	[indicator stroke];
 #endif
 
 	[NSGraphicsContext restoreGraphicsState];
@@ -848,9 +849,8 @@ See also -edgeInset. */
 /** Draws a border that covers the whole item frame if aRect is equal to it. */
 - (void) drawBorderInRect: (NSRect)aRect
 {
-	[[NSColor darkGrayColor] setStroke];
-	[NSBezierPath setDefaultLineWidth: 1.0];
-	[NSBezierPath strokeRect: aRect];
+	[[NSColor darkGrayColor] set];
+	NSFrameRectWithWidth(aRect, 1.0);
 }
 
 @end
