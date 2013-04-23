@@ -279,7 +279,7 @@ rect is equal to it. */
 	[[[NSColor keyboardFocusIndicatorColor] colorWithAlphaComponent: 0.8] setStroke];
 	NSBezierPath *indicatorPath = [NSBezierPath bezierPathWithRect: indicatorRect];
 	[indicatorPath setLineWidth: 6.0];
-	[indicator stroke];
+	[indicatorPath stroke];
 #endif
 
 	[NSGraphicsContext restoreGraphicsState];
