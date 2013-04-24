@@ -81,7 +81,7 @@ or just  calls -editionCoordinator on -nextResponder. */
 	if ([self isFieldEditor])
 	{
 		ETAssert([self delegate] != nil);
-		return [[self delegate] candidateFocusedItem];
+		return [(NSView *)[self delegate] candidateFocusedItem];
 	}
 	return [self candidateFocusedItem];
 }
