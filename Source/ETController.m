@@ -1139,7 +1139,7 @@ See instead -[ETLayoutItem objectDidEndEditing:]. */
 	[_editorItems removeObject: anItem];
 }
 
-- (ETLayoutItem *) focusedItem
+- (ETLayoutItem *) candidateFocusedItem
 {
 	return nil;
 }

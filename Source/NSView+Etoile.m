@@ -104,8 +104,8 @@ The returned object is an ETUIItem or subclass instance. */
 	return [[self owningItem] editionCoordinator];
 }
 
-/** Returns -owingItem. */
-- (ETLayoutItem *) focusedItem
+/** Returns the candidate focused item of -owingItem. */
+- (ETLayoutItem *) candidateFocusedItem
 {
 	return [self owningItem];
 }

@@ -69,6 +69,7 @@ such as -performClose: are forwarded to the NSWindow. */
 
 /* First Responder Sharing Area */
 
+- (ETLayoutItem *) focusedItem;
 - (ETLayoutItem *) activeFieldEditorItem;
 - (ETLayoutItem *) editedItem;
 - (void) setActiveFieldEditorItem: (ETLayoutItem *)editorItem 

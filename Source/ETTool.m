@@ -463,6 +463,12 @@ The main window can be retrieved through the decorator item with
 	return [contentView layoutItem];
 }
 
+/* Returns nil or the candidate focused item from the target item. */
+- (ETLayoutItem *) candidateFocusedItem
+{
+	return [[self nextResponder] candidateFocusedItem];
+}
+
 /** <override-never />
 Updates the cursor with the one provided by the activatable tool.
 

@@ -525,6 +525,28 @@ This coordinate space includes the window decoration (titlebar etc.).  */
 
 /* First Responder Sharing Area */
 
+- (ETLayoutItem *) focusedItem
+{
+	// NOTE: NSResponder conforms to ETResponder (see ETResponder.m)
+	return [[_itemWindow firstResponder] candidateFocusedItem];
+}
+
+- (void) postFocusedItemChangeNotificationIfNeeded
+{
+
+	ETLayoutItem *newFocusedItem = [self focusedItem];
+
+	if (_oldFocusedItem == newFocusedItem)
+		return;
+
+	/* For a field editor, the delegate is the edited text view, so we retrieve 
+	   the focused item using -[NSText focusedItem] on this delegate. */
+	[[_oldFocusedItem editionCoordinator] didResignFocusedItem: _oldFocusedItem];
+	[[newFocusedItem editionCoordinator] didBecomeFocusedItem: newFocusedItem];
+
+	ASSIGN(_oldFocusedItem, newFocusedItem);
+}
+
 /** Returns the item owning the field editor which has the first responder 
 status, or nil when no text editing is underway in the window. */
 - (ETLayoutItem *) activeFieldEditorItem
@@ -622,22 +644,6 @@ event occured, otherwise returns nil. */
 	[anEvent setLocationInLayoutItem: pointInEditorItem];
 
 	return _activeFieldEditorItem;
-}
-
-- (void) postFocusedItemChangeNotificationIfNeeded
-{
-	// NOTE: NSResponder conforms to ETResponder (see ETResponder.m)
-	ETLayoutItem *newFocusedItem = [(id <ETResponder>)[_itemWindow firstResponder] focusedItem];
-
-	if (_oldFocusedItem == newFocusedItem)
-		return;
-
-	/* For a field editor, the delegate is the edited text view, so we retrieve 
-	   the focused item using -[NSText focusedItem] on this delegate. */
-	[[_oldFocusedItem editionCoordinator] didResignFocusedItem: _oldFocusedItem];
-	[[newFocusedItem editionCoordinator] didBecomeFocusedItem: newFocusedItem];
-
-	ASSIGN(_oldFocusedItem, newFocusedItem);
 }
 
 /* Actions */

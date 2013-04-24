@@ -43,7 +43,7 @@ This protocol is subject to change or be removed. */
 - (id) owningItem;
 - (id <ETFirstResponderSharingArea>) firstResponderSharingArea;
 - (id <ETEditionCoordinator>) editionCoordinator;
-- (ETLayoutItem *) focusedItem;
+- (ETLayoutItem *) candidateFocusedItem;
 
 /* Copying */
 

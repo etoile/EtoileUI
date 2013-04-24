@@ -118,7 +118,7 @@ You must never subclass ETUIItem. ETUIItem ivars must be considered private. */
 /** @taskunit Actions */
 
 - (id) nextResponder;
-- (ETLayoutItem *) focusedItem;
+- (ETLayoutItem *) candidateFocusedItem;
 
 /** @taskunit Framework Private */
 

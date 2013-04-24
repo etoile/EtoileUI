@@ -50,9 +50,6 @@ or just  calls -editionCoordinator on -nextResponder. */
 
 @end
 
-// TODO: Move into AppKitWidgetBackend
-@interface NSResponder (ETResponderTrait) <ETResponder>
-@end
 
 @implementation  NSResponder (ETResponderTrait)
 
@@ -66,7 +63,7 @@ or just  calls -editionCoordinator on -nextResponder. */
 	return nil;
 }
 
-- (ETLayoutItem *) focusedItem
+- (ETLayoutItem *) candidateFocusedItem
 {
 	return nil;
 }
@@ -77,16 +74,16 @@ or just  calls -editionCoordinator on -nextResponder. */
 @interface NSText (ETResponder)
 @end
 
-@implementation  NSText
+@implementation  NSText (ETResponder)
 
-- (ETLayoutItem *) focusedItem
+- (ETLayoutItem *) candidateFocusedItem
 {
 	if ([self isFieldEditor])
 	{
 		ETAssert([self delegate] != nil);
-		return [[self delegate] focusedItem];
+		return [[self delegate] candidateFocusedItem];
 	}
-	return [self focusedItem];
+	return [self candidateFocusedItem];
 }
 
 @end

@@ -538,10 +538,10 @@ The next responder is the enclosing item unless specified otherwise. */
 }
 
 /** <override-dummy />
-Returns the enclosing item. */
-- (ETLayoutItem *) focusedItem
+Returns the candidate focused item of the enclosing item. */
+- (ETLayoutItem *) candidateFocusedItem
 {
-	return [self enclosingItem];
+	return [[self enclosingItem] candidateFocusedItem];
 }
 
 /* Framework Private */

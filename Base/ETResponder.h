@@ -23,10 +23,34 @@ ETUIItem subclasses can implement this protocol.
 You shouldn't need to implement this protocol unless you implement a new 
 ETDecoratorItem subclass similar to ETWindowItem. */
 @protocol ETFirstResponderSharingArea <NSObject>
+/** Returns the item that currently has the focus from the user standpoint. */
+- (ETLayoutItem *) focusedItem;
+/** Returns the item that serves as a field editor in the item tree presently.
+
+When no editing is underway, returns nil. */
 - (ETLayoutItem *) activeFieldEditorItem;
+/** Returns the item whose subject is currently edited.
+
+The edited item is usually an item representing a model object whose content 
+or properties have begun being edited using 
+-[ETActionHandler beginEditingItem:property:inRect:].
+
+If the edited value is presented in a text view (or text field), the edited item 
+doesn't always represent the item that owns this text view, but can be another  
+item used to present the value elswhere in the UI.
+ 
+When no editing is underway, returns nil. */
 - (ETLayoutItem *) editedItem;
+/** Inserts the item that serves field editor into the item tree at the 
+beginning of the editing targeting the given edited item.
+ 
+See -[ETActionHandler beginEditingItem:property:inRect:]. */
 - (void) setActiveFieldEditorItem: (ETLayoutItem *)editorItem 
                        editedItem: (ETLayoutItem *)editedItem;
+/** Removes the item that serves as field editor from the item tree at the 
+end of the editing.
+ 
+See -[ETActionHandler endEditingItem:]. */
 - (void) removeActiveFieldEditorItem;
 @end
 
@@ -75,11 +99,12 @@ interaction among multiple UI objects present in their area. See
 /** This method is only exposed to be used internally by Etoile. For reacting to 
 focused item changes, use ETEditionCoordinator.
  
-Returns the item that has the focus from the user standpoint.
+From the user standpoint, returns the item that accepts the focus in the 
+responder chain.
  
 The returned item must be identical to the receiver or encloses it in the item 
 tree. */
-- (id) focusedItem;
+- (ETLayoutItem *) candidateFocusedItem;
 
 @end
 
@@ -101,4 +126,8 @@ to which the trait is applied. */
 - (id <ETFirstResponderSharingArea>) firstResponderSharingArea;
 - (id <ETEditionCoordinator>) editionCoordinator;
 
+@end
+
+// TODO: Move into AppKitWidgetBackend
+@interface NSResponder (ETResponderTrait) <ETResponder>
 @end

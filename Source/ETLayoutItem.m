@@ -3192,7 +3192,7 @@ See also -objectDidBeginEditing:. */
 /** Returns self.
  
 See -[ETResponder focusedItem]. */
-- (ETLayoutItem *) focusedItem
+- (ETLayoutItem *) candidateFocusedItem
 {
 	return self;
 }
