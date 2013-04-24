@@ -1139,6 +1139,11 @@ See instead -[ETLayoutItem objectDidEndEditing:]. */
 	[_editorItems removeObject: anItem];
 }
 
+- (ETLayoutItem *) focusedItem
+{
+	return nil;
+}
+
 /* Framework Private */
 
 /** This method is only exposed to be used internally by EtoileUI. 

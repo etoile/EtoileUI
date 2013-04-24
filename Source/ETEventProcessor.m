@@ -183,6 +183,7 @@ Returns YES when the event has been handled by EtoileUI. */
 			[self processMouseMovedEvent: anEvent]; /* Emit enter/exit events in case the event window is a new one */
 			activeTool = [ETTool updateActiveToolWithEvent: anEvent];
 			[activeTool mouseDown: anEvent];
+			//NSLog(@"First responder from %@ to %@", [_initialFirstResponder primitiveDescription], [[window firstResponder] primitiveDescription]);
 			break;
 		case NSLeftMouseUp:
 			_wasMouseDownProcessed = NO;
@@ -203,8 +204,9 @@ Returns YES when the event has been handled by EtoileUI. */
 			return NO;
 	}
 
-	id firstResponder = [window firstResponder];
-	BOOL firstResponderChanged = (_initialFirstResponder != firstResponder);
+	[windowItem postFocusedItemChangeNotificationIfNeeded];
+
+	BOOL firstResponderChanged = (_initialFirstResponder != [window firstResponder]);
 
 	// NOTE: A better way to do that might be to use KVO on -[NSWindow firstResponder] 
 	// with ETWindowItem and reacts to the change immediately.

@@ -104,6 +104,12 @@ The returned object is an ETUIItem or subclass instance. */
 	return [[self owningItem] editionCoordinator];
 }
 
+/** Returns -owingItem. */
+- (ETLayoutItem *) focusedItem
+{
+	return [self owningItem];
+}
+
 /* Copying */
 
 /** Returns a view copy of the receiver. 

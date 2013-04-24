@@ -147,7 +147,7 @@ If window is nil, the receiver creates a standard widget backend window. */
 		RELEASE(_itemWindow);
 	}
 	DESTROY(_itemWindow);  /* Balance first retain call */
-	DESTROY(_oldFirstResponder);
+	DESTROY(_oldFocusedItem);
 
 	[super dealloc];
 }
@@ -624,20 +624,22 @@ event occured, otherwise returns nil. */
 	return _activeFieldEditorItem;
 }
 
-- (void) windowDidUpdate: (NSNotification *)notification
+- (void) postFocusedItemChangeNotificationIfNeeded
 {
-	NSWindow *window = [notification object];
-	ETAssert(window == _itemWindow);
-	id newFirstResponder = [window firstResponder];
+	// NOTE: NSResponder conforms to ETResponder (see ETResponder.m)
+	ETLayoutItem *newFocusedItem = [(id <ETResponder>)[_itemWindow firstResponder] focusedItem];
 
-	if (_oldFirstResponder == newFirstResponder)
+	if (_oldFocusedItem == newFocusedItem)
 		return;
 
-	ASSIGN(_oldFirstResponder, newFirstResponder);
+	/* For a field editor, the delegate is the edited text view, so we retrieve 
+	   the focused item using -[NSText focusedItem] on this delegate. */
+	[[_oldFocusedItem editionCoordinator] didResignFocusedItem: _oldFocusedItem];
+	[[newFocusedItem editionCoordinator] didBecomeFocusedItem: newFocusedItem];
 
-	[[_oldFirstResponder editionCoordinator] didResignFirstResponder: _oldFirstResponder];
-	[[newFirstResponder editionCoordinator] didBecomeFirstResponder: newFirstResponder];
+	ASSIGN(_oldFocusedItem, newFocusedItem);
 }
+
 /* Actions */
 
 /** Forwards the action to the underlying window object. */

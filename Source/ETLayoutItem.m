@@ -3189,6 +3189,14 @@ See also -objectDidBeginEditing:. */
 	[[[self controllerItem] controller] objectDidEndEditing: self];
 }
 
+/** Returns self.
+ 
+See -[ETResponder focusedItem]. */
+- (ETLayoutItem *) focusedItem
+{
+	return self;
+}
+
 /** Returns the custom inspector associated with the receiver. By default, 
 returns nil.
 

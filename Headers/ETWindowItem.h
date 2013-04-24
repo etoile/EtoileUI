@@ -37,7 +37,7 @@ such as -performClose: are forwarded to the NSWindow. */
 	BOOL _shouldKeepWindowFrame;
 	ETLayoutItem *_activeFieldEditorItem;
 	ETLayoutItem *_editedItem;
-	id _oldFirstResponder;
+	ETLayoutItem *_oldFocusedItem;
 }
 
 /* Factory Methods */
@@ -86,5 +86,6 @@ such as -performClose: are forwarded to the NSWindow. */
 
 + (NSRect) convertRectToWidgetBackendScreenBase: (NSRect)rect;
 + (NSRect) convertRectFromWidgetBackendScreenBase: (NSRect)windowFrame;
+- (void) postFocusedItemChangeNotificationIfNeeded;
 
 @end

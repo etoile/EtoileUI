@@ -41,8 +41,8 @@ but ignores similar changes in areas controlled by other editor coordinators
  
 Your ETController subclasses can implement this protocol. */
 @protocol ETEditionCoordinator <NSObject>
-- (void) didBecomeFirstResponder: (id)aResponder;
-- (void) didResignFirstResponder: (id)aResponder;
+- (void) didBecomeFocusedItem: (ETLayoutItem *)anItem;
+- (void) didResignFocusedItem: (ETLayoutItem *)anItem;
 @end
 
 /** Protocol to declare an object as a responder.
@@ -72,6 +72,15 @@ interaction among multiple UI objects present in their area. See
 - (id <ETFirstResponderSharingArea>) firstResponderSharingArea;
 /** See -[ETResponderTrait editionCoordinator]. */
 - (id <ETEditionCoordinator>) editionCoordinator;
+/** This method is only exposed to be used internally by Etoile. For reacting to 
+focused item changes, use ETEditionCoordinator.
+ 
+Returns the item that has the focus from the user standpoint.
+ 
+The returned item must be identical to the receiver or encloses it in the item 
+tree. */
+- (id) focusedItem;
+
 @end
 
 /** A trait providing a basic implementation for all ETResponder methods.

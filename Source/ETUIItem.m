@@ -537,6 +537,13 @@ The next responder is the enclosing item unless specified otherwise. */
 	return [self enclosingItem];
 }
 
+/** <override-dummy />
+Returns the enclosing item. */
+- (ETLayoutItem *) focusedItem
+{
+	return [self enclosingItem];
+}
+
 /* Framework Private */
 
 - (void)didRemoveDecoratorItem: (ETDecoratorItem *)aDecorator

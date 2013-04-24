@@ -13,6 +13,7 @@
 #import <AppKit/AppKit.h>
 #import <EtoileFoundation/ETCollection.h>
 
+@class ETLayoutItem;
 @protocol ETFirstResponderSharingArea, ETEditionCoordinator;
 
 /** See -isWidget.
@@ -42,6 +43,7 @@ This protocol is subject to change or be removed. */
 - (id) owningItem;
 - (id <ETFirstResponderSharingArea>) firstResponderSharingArea;
 - (id <ETEditionCoordinator>) editionCoordinator;
+- (ETLayoutItem *) focusedItem;
 
 /* Copying */
 

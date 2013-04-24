@@ -66,4 +66,28 @@ or just  calls -editionCoordinator on -nextResponder. */
 	return nil;
 }
 
+- (ETLayoutItem *) focusedItem
+{
+	return nil;
+}
+
 @end
+
+// TODO: Move into AppKitWidgetBackend
+@interface NSText (ETResponder)
+@end
+
+@implementation  NSText
+
+- (ETLayoutItem *) focusedItem
+{
+	if ([self isFieldEditor])
+	{
+		ETAssert([self delegate] != nil);
+		return [[self delegate] focusedItem];
+	}
+	return [self focusedItem];
+}
+
+@end
+
