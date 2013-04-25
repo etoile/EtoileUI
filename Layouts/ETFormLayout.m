@@ -35,6 +35,8 @@
 
 	[self setTemplateKeys: A(@"coverStyle")];
 	[self setPositionalLayout: [ETColumnLayout layout]];
+	[[self positionalLayout] setBorderMargin: 4];
+	[[self positionalLayout] setItemMargin: 4];
 	// TODO: As an option... Forms should support resizing themselves automatically based on their content.
 	//[[(id)[self positionalLayout] ifResponds] setIsContentSizeLayout: YES];
 
@@ -46,10 +48,8 @@
 - (id) copyWithZone: (NSZone *)aZone layoutContext: (id <ETLayoutingContext>)ctxt
 {
 	ETFormLayout *layoutCopy = [super copyWithZone: aZone layoutContext: ctxt];
-	layoutCopy->_alignment = _alignment;
 
-	// TODO: Finish to implement copy in ETTemplateItemLayout
-	ETAssertUnreachable();
+	layoutCopy->_alignment = _alignment;
 
 	return layoutCopy;
 }

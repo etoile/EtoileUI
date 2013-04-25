@@ -67,10 +67,10 @@ possible and how to use ETTemplateItemLayout. */
 	@private
 	id <ETPositionalLayout> _positionalLayout;
 	ETLayoutItem *_templateItem;
-	/* All the items that got rendered since the layout has been set up */
-	NSMutableSet *_renderedItems; 
 	NSArray *_templateKeys;
 	NSMutableDictionary *_localBindings;
+	/* All the items that got rendered since the layout has been set up */
+	NSMutableSet *_renderedItems;
 }
 
 - (ETLayoutItem *) templateItem;

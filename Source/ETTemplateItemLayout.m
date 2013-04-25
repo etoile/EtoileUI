@@ -48,9 +48,9 @@ returned instance (usually in a subclass initializer). */
 	
 	[self setPositionalLayout: [ETFlowLayout layout]];
 	[(ETFlowLayout *)_positionalLayout setItemSizeConstraintStyle: ETSizeConstraintStyleNone];
-	_renderedItems = [[NSMutableSet alloc] init];
 	_templateKeys = [[NSArray alloc] init];
 	_localBindings = [[NSMutableDictionary alloc] init];
+	_renderedItems = [[NSMutableSet alloc] init];
 
 	return self;
 }
@@ -60,8 +60,8 @@ returned instance (usually in a subclass initializer). */
 	DESTROY(_positionalLayout);
 	DESTROY(_templateItem);
 	DESTROY(_templateKeys);
-	DESTROY(_renderedItems);
 	DESTROY(_localBindings);
+	DESTROY(_renderedItems);
 	[super dealloc];
 }
 
@@ -74,8 +74,7 @@ returned instance (usually in a subclass initializer). */
 	layoutCopy->_templateItem = [_templateItem deepCopyWithCopier: [ETCopier copier]];
 	layoutCopy->_templateKeys = [_templateKeys copyWithZone: aZone];
 	layoutCopy->_localBindings = [_localBindings mutableCopyWithZone: aZone];
-
-	// TODO: Set up the bindings per item in -setUpCopyWithZone:
+	/* Rendered items are set up in -setUpCopyWithZone:original: */
 
 	return layoutCopy;
 }
@@ -94,6 +93,7 @@ returned instance (usually in a subclass initializer). */
 		NSParameterAssert(itemCopy != nil);
 		NSParameterAssert([itemCopy parentItem] == _layoutContext);
 
+		[self setUpKVOForItem: itemCopy];
 		[_renderedItems addObject: itemCopy];
 	}
 }
