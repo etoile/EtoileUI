@@ -26,6 +26,7 @@
 	NSMutableDictionary *_additionalTemplateIdentifiers;
 	ETLayout *_entityLayout;
 	NSRect _entityItemFrame;
+	NSArray *_renderedPropertyNames;
 	NSString *_groupingKeyPath;
 }
 
@@ -49,12 +50,16 @@
 - (void) setEntityItemFrame: (NSRect)aRect;
 - (NSRect) entityItemFrame;
 
+- (void) setRenderedPropertyNames: (NSArray *)propertyNames;
+- (NSArray *) renderedPropertyNames;
 - (void) setGroupingKeyPath: (NSString *)aKeyPath;
 - (NSString *) groupingKeyPath;
 
 /** @taskunit Generating Form UI */
 
 - (id) renderObject: (id)anObject;
+- (id) renderObject: (id)anObject displayName: (NSString *)aName
+	propertyDescriptions: (NSArray *)propertyDescs;
 
 @end
 

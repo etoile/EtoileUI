@@ -45,6 +45,7 @@
 	ASSIGN(_repository, [ETModelDescriptionRepository mainRepository]);
 	ASSIGN(_itemFactory, [ETLayoutItemFactory factory]);
 	ASSIGN(_entityLayout, [self defaultFormLayout]);
+	_renderedPropertyNames = [NSArray new];
 
 	[self registerDefaultTemplateItems];
 	[self registerDefaultRoleTemplateIdentifiers];
@@ -58,6 +59,7 @@
 	DESTROY(_repository);
 	DESTROY(_itemFactory);
 	DESTROY(_entityLayout);
+	DESTROY(_renderedPropertyNames);
 	DESTROY(_groupingKeyPath);
 	[super dealloc];
 }
@@ -146,8 +148,7 @@
 
 - (ETFormLayout *) defaultFormLayout
 {
-	ETFormLayout *layout = [ETFormLayout layout];
-	return layout;
+	return [ETFormLayout layout];
 }
 
 - (ETLayoutItemGroup *)entityItemWithRepresentedObject: (id)anObject
@@ -160,15 +161,36 @@
 	}
 	ETLayoutItemGroup *item = [[ETLayoutItemFactory factory] itemGroupWithFrame: itemFrame];
 
-	// TODO: Finish to implement ETTemplateItemLayout and ETFormLayout copy
-	//[item setLayout: [[[self entityLayout] copy] autorelease]];
-	[item setLayout: [self defaultFormLayout]];
+	[item setLayout: [[[self entityLayout] copy] autorelease]];
 	[item setIdentifier: @"entity"];
 	[item setRepresentedObject: anObject];
 	//[item setController: [[ETEntityInspectorController new] autorelease]];
 	//[item setShouldMutateRepresentedObject: NO];
 
 	return item;
+}
+
+/** Returns the names of the property descriptions to render for an object 
+passed to -renderObject: and related methods.
+ 
+See also -renderedPropertyNames. */
+- (void) setRenderedPropertyNames: (NSArray *)propertyNames
+{
+	ASSIGNCOPY(_renderedPropertyNames, propertyNames);
+}
+
+/** Returns the names of the property descriptions to render for an object 
+passed to -renderObject: and related methods.
+
+If an empty an array is returned, all the property descriptions bound the 
+entity description of the object are rendered.
+ 
+By default, returns an empty array. 
+ 
+See also -setRenderedPropertyNames:. */
+- (NSArray *) renderedPropertyNames
+{
+	return _renderedPropertyNames;
 }
 
 - (void) setGroupingKeyPath: (NSString *)aKeyPath
@@ -251,15 +273,34 @@
 	return [[[aPropertyDesc name] stringByCapitalizingFirstLetter] stringBySpacingCapitalizedWords];
 }
 
+- (NSArray *) renderedPropertyDescriptionsForEntityDescription: (ETEntityDescription *)anEntityDesc
+{
+	if ([[self renderedPropertyNames] isEmpty])
+		return [anEntityDesc allPropertyDescriptions];
+
+	NSMutableArray *propertyDescs = [NSMutableArray array];
+	
+	for (NSString *property in [self renderedPropertyNames])
+	{
+		[propertyDescs addObject: [anEntityDesc propertyDescriptionForName: property]];
+	}
+	return propertyDescs;
+}
+
 /** To render a subset of the property descriptions, just call 
--renderObject:propertyDescriptions: directly. */
+-renderObject:displayName:propertyDescriptions: directly. */
 - (id) renderObject: (id)anObject entityDescription: (ETEntityDescription *)anEntityDesc
-  
+{
+	NSArray *propertyDescs = [self renderedPropertyDescriptionsForEntityDescription: anEntityDesc];
+	return [self renderObject: anObject displayName: [anEntityDesc name] propertyDescriptions: propertyDescs];
+}
+
+- (id) renderObject: (id)anObject displayName: (NSString *)aName propertyDescriptions: (NSArray *)propertyDescs
 {
 	ETLayoutItemGroup *entityItem = [self entityItemWithRepresentedObject: anObject];
 	NSMutableArray *propertyItems = [NSMutableArray array];
 
-	for (ETPropertyDescription *description in [anEntityDesc allPropertyDescriptions])
+	for (ETPropertyDescription *description in propertyDescs)
 	{
 		//if ([description isMultivalued] == NO || [description isRelationship] == NO)
 		//	continue;
@@ -275,7 +316,7 @@
 		                                 groupingKeyPath: [self groupingKeyPath]];
 	}
 	[entityItem addItems: items];
-	[entityItem setName: [anEntityDesc name]];
+	[entityItem setName: aName];
 	
 	return entityItem;
 }
