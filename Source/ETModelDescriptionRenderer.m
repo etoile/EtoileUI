@@ -246,6 +246,11 @@
 	return [itemGroupsByName allValues];
 }
 
+- (NSString *) labelForPropertyDescription: (ETPropertyDescription *)aPropertyDesc
+{
+	return [[[aPropertyDesc name] stringByCapitalizingFirstLetter] stringBySpacingCapitalizedWords];
+}
+
 /** To render a subset of the property descriptions, just call 
 -renderObject:propertyDescriptions: directly. */
 - (id) renderObject: (id)anObject entityDescription: (ETEntityDescription *)anEntityDesc
@@ -287,7 +292,7 @@
 	{
 		item = [self newItemForAttributeDescription: aPropertyDesc ofObject: anObject];
 	}
-	[item setName: [aPropertyDesc name]];
+	[item setName: [self labelForPropertyDescription: aPropertyDesc]];
 
 	return item;
 }
