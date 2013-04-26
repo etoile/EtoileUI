@@ -45,11 +45,32 @@
 
 - (NSRect) contentRect
 {
-	if (_contentView == nil)
+	if (_contentView == nil || [self isExpanded] == NO)
 	{
 		return NSZeroRect;
 	}
 	return [_contentView frame];
+}
+
+- (NSRect) visibleRect
+{
+	if ([self isExpanded] == NO)
+		return NSZeroRect;
+
+	NSRect rect = [self contentRect];
+	NSRect visibleRect = NSMakeRect(0, 0, rect.size.width, rect.size.height);
+	ETAssert(NSEqualRects(visibleRect, [_contentView bounds]));
+	return visibleRect;
+}
+
+- (NSRect) visibleContentRect
+{
+	return [self contentRect];
+}
+
+- (NSSize) decoratedItemRectChanged: (NSRect)rect
+{
+	return [super decoratedItemRectChanged: ([self isExpanded] ? rect : NSZeroRect)];
 }
 
 /** Returns the height of the title bar or zero when no title bar is used. */
@@ -62,12 +83,13 @@
 - (void) tile
 {
 	ETAssert([[self supervisorView] autoresizesSubviews]);
+	NSRect initialFrame = [[self supervisorView] frame];
 
 	/* Don't set _contentView autoresizing mask here, because 
-	   -saveAndOverrideAutoresizingMaskOfDecoratedItem: does it at the right time */;
+	   -saveAndOverrideAutoresizingMaskOfDecoratedItem: does it at the right time */
 	[_titleBarView setAutoresizingMask: 
-		([self isFlipped] ? NSViewWidthSizable : NSViewMinYMargin | NSViewWidthSizable)];	 
-	
+		([self isFlipped] ? NSViewWidthSizable : NSViewMinYMargin | NSViewWidthSizable)];
+
 	float width = [[self supervisorView] frame].size.width;
 	float height = [[self supervisorView] frame].size.height;
 	float barHeight = [self titleBarHeight];
@@ -87,6 +109,10 @@
 	
 	[_titleBarView setFrame: titleBarFrame];
 	[_contentView setFrame: contentFrame];
+	
+	/* Ensure not accidental supervisor view resizing occurs. This could mess up 
+	   our content view position or size through autoresizing. */
+	ETAssert(NSEqualRects(initialFrame, [[self supervisorView] frame]));
 }
 
 - (NSRect) frameForDecoratedItemFrame: (NSRect)aFrame
@@ -134,6 +160,11 @@
 	[super handleUndecorateItem: item supervisorView: nil inView: parentView];
 }
 
+- (BOOL) isExpanded
+{
+	return [_titleBarView isExpanded];
+}
+
 - (void) toggleExpanded: (id)sender
 {
 	if ([_titleBarView isExpanded])
@@ -143,8 +174,7 @@
 		[item setHeight: _expandedHeight];
 		[_contentView setAutoresizingMask: NSViewHeightSizable | NSViewWidthSizable];
 
-		/* We retile the subviews in case [self isFlipped] returns NO */ 
-		//[self tile];
+		/* We retile the subviews in case [self isFlipped] returns NO */
 		if ([self isFlipped] == NO)
 		{
 			[_contentView setY: 0];

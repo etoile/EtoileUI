@@ -49,6 +49,7 @@
 
 - (CGFloat) titleBarHeight;
 - (void) tile;
+- (BOOL) isExpanded;
 
 - (void) toggleExpanded: (id)sender;
 

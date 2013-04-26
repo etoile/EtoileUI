@@ -428,6 +428,28 @@ and -setAutoresizingMask: can potentially erase each other. */
 	UKRectsEqual([scrollDecorator contentRect], [item decorationRect]);
 }
 
+- (void) testTitleBarGeometry
+{
+	ETTitleBarItem *titleBarItem = [ETTitleBarItem item];
+	ETLayoutItemGroup *itemGroup = [itemFactory itemGroup];
+	NSRect rect = [ETLayoutItem defaultItemRect];// NSMakeRect(0, 0, 1000, 3000);
+
+	// FIXME: Nil title exception if -setName: is not called.
+	[itemGroup setName: @"Untitled"];
+	[itemGroup setDecoratorItem: titleBarItem];
+	
+	NSRect contentRect = ETMakeRect(NSMakePoint(0, [titleBarItem titleBarHeight]), rect.size);
+	NSRect newFrame = rect;
+	newFrame.size.height += [titleBarItem titleBarHeight];
+
+	UKRectsEqual(newFrame, [titleBarItem decorationRect]);
+	UKRectsEqual(contentRect, [titleBarItem contentRect]);
+	UKRectsEqual(contentRect, [titleBarItem visibleContentRect]);
+	UKRectsEqual(newFrame, [itemGroup frame]);
+	UKRectsEqual(ETMakeRect(NSZeroPoint, rect.size), [itemGroup contentBounds]);
+	UKRectsEqual([titleBarItem contentRect], [itemGroup decorationRect]);
+}
+
 - (void) testTitleBarGeometryForContentSizeLayout
 {
 	ETTitleBarItem *titleBarItem = [ETTitleBarItem item];
