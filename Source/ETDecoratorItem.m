@@ -78,9 +78,9 @@ By default, returns YES. */
 {
 	/* All the items in a decorator chain have the same -isFlipped value, no 
 	   need to use NSMouseInRect. */
-	BOOL isInside = NSMouseInRect(aPoint, [self visibleContentRect], [self isFlipped]);
+	BOOL isInsideContent = NSMouseInRect(aPoint, [self visibleContentRect], [self isFlipped]);
 
-	if (isInside && _decoratedItem != nil)
+	if (isInsideContent && _decoratedItem != nil)
 	{
 		NSPoint contentRelativePoint = [self convertDecoratorPointToVisibleContent: aPoint];
 		return [_decoratedItem decoratedItemAtPoint: contentRelativePoint];
