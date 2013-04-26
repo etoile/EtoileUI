@@ -739,7 +739,12 @@ When you want to use Layouting related methods, you must check this method
 returns YES. When NO is returned, wait until it returns YES.  */
 - (BOOL) isRendering
 {
-	return _isLayouting;
+	/* The second check avoids to execute -renderLayoutItems:isNewContent: 
+	   on a positional layout inside 
+	   -[ETTemplateItemLayout renderLayoutItems:isNewContent:], because 
+	   -setHorizontalAlignmentGuidePosition: was called and in turn called 
+	   -renderAndInvalidDisplay. */
+	return (_isLayouting || [[_layoutContext ifResponds] isRendering]);
 }
 
 /** Requests the items to present to the layout context, then renders the 
