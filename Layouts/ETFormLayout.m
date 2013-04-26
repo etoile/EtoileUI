@@ -162,6 +162,20 @@ The resizing isn't delegated to the positional layout unlike in ETTemplateItemLa
 - (void) adjustAlignmentForMaxLabelWidth: (float)maxLabelWidth
                             maxItemWidth: (float)maxItemWidth
 {
+	BOOL isAutoresizedForm = [(ETComputedLayout *)[self positionalLayout] isContentSizeLayout];
+
+	/* When the item group that represents the form UI is resized to enclose 
+	   all the items without additional space (border and item margins put aside), 
+	   we must not set a guide position otherwise the items appear shifted to 
+	   the left inside the form UI.
+	   The guide position is based on the initial item group size. If the item 
+	   group is resized, it just becomes meaningless. */
+	if (isAutoresizedForm)
+	{
+		[self setHorizontalAlignmentGuidePosition: maxLabelWidth];
+		return;
+	}
+
 	/* For this method, the bounding box width is the item frame width summed
 	   with the label width (positioned to the left outside).
 
@@ -193,7 +207,7 @@ The resizing isn't delegated to the positional layout unlike in ETTemplateItemLa
 
 - (void) setHorizontalAlignmentGuidePosition: (float)aPosition
 {
-	//NSLog(@"New guide position %0.2f for %@", aPosition, [[self layoutContext] identifier]);
+	NSLog(@"New guide position %0.2f for %@", aPosition, [(id)[self layoutContext] identifier]);
 	[[self positionalLayout] setHorizontalAlignmentGuidePosition: aPosition];
 }
 
