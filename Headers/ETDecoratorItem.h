@@ -38,7 +38,11 @@ to change though):
 However -supervisorView can be overriden to return nil. 
 
 You can write new ETDecoratorItem subclasses. However ETUIItem ivars must be 
-considered private.*/
+considered private.
+ 
+If you don't present the decorated view as the wrapped view of the supervisor 
+view, you must override -contentRect at least. You might also override 
+-visibleRect and -visibleContentRect in some cases as ETScrollableAreaItem does. */
 @interface ETDecoratorItem : ETUIItem
 {
 	@private

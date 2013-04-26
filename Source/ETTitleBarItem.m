@@ -43,6 +43,22 @@
 	return [self initWithSupervisorView: nil];
 }
 
+- (NSRect) contentRect
+{
+	if (_contentView == nil)
+	{
+		return NSZeroRect;
+	}
+	return [_contentView frame];
+}
+
+/** Returns the height of the title bar or zero when no title bar is used. */
+- (CGFloat) titleBarHeight
+{
+	return 24;
+	//return [self decorationRect].size.height - [self contentRect].size.height;
+}
+
 - (void) tile
 {
 	ETAssert([[self supervisorView] autoresizesSubviews]);
@@ -54,7 +70,7 @@
 	
 	float width = [[self supervisorView] frame].size.width;
 	float height = [[self supervisorView] frame].size.height;
-	float barHeight = 24;
+	float barHeight = [self titleBarHeight];
 	NSRect contentFrame;
 	NSRect titleBarFrame;
 	
@@ -72,29 +88,36 @@
 	[_titleBarView setFrame: titleBarFrame];
 	[_contentView setFrame: contentFrame];
 }
-	
+
+- (NSRect) frameForDecoratedItemFrame: (NSRect)aFrame
+{
+	NSRect contentRect = aFrame;
+	NSRect decorationRect = aFrame;
+	decorationRect.size.height += [self titleBarHeight];
+	return decorationRect;
+}
+
+- (void) updateFrameForDecoratedView: (ETView *)decoratedView
+{
+	[[self supervisorView] setFrame: [self frameForDecoratedItemFrame: [decoratedView frame]]];
+}
 
 - (void) handleDecorateItem: (ETUIItem *)item 
              supervisorView: (ETView *)decoratedView 
                      inView: (ETView *)parentView 
 {
-	if (decoratedView != _contentView)
-	{
-		if (nil != _contentView)
-		{
-			[_contentView removeFromSuperview];
-		}
-		_contentView = decoratedView;
-		[[self supervisorView] addSubview: _contentView];
-		//[[self supervisorView] setWrappedView: decoratedView];
-	}
+	NSParameterAssert(_contentView == nil);
 
 	if ([item isLayoutItem])
 	{
 		[_titleBarView setTitleString: [(ETLayoutItem *)item displayName]];
 	}
-	[self tile];
+	/* Prevent -tile to resize the decorated view at decoration time */
+	[self updateFrameForDecoratedView: decoratedView];
 
+	_contentView = decoratedView;
+	[[self supervisorView] addSubview: _contentView];
+	[self tile];
 	/* -handleDecorateItem:supervisorView:inView: ensures 
 	   [[item supervisorView] autoresizingMask] is set to NSViewWidthSizable and 
 	   NSViewHeightSizable by -saveAndOverrideAutoresizingMaskOfDecoratedItem: */
@@ -105,12 +128,8 @@
                supervisorView: (ETView *)decoratedView 
                        inView: (ETView *)parentView 
 {
-	if (nil != _contentView)
-	{
-		[_contentView removeFromSuperview];
-		//[[self supervisorView] setWrappedView: nil];
-		_contentView = nil;
-	}
+	[_contentView removeFromSuperview];
+	_contentView = nil;
 	[self tile];
 	[super handleUndecorateItem: item supervisorView: nil inView: parentView];
 }

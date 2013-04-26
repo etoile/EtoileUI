@@ -10,6 +10,7 @@
 #import <AppKit/AppKit.h>
 #import <UnitKit/UnitKit.h>
 #import <EtoileFoundation/Macros.h>
+#import "ETColumnLayout.h"
 #import "ETDecoratorItem.h"
 #import "ETGeometry.h"
 #import "ETLayoutExecutor.h"
@@ -18,6 +19,7 @@
 #import "ETLayoutItemGroup.h"
 #import "ETScrollableAreaItem.h"
 #import "ETTableLayout.h"
+#import "ETTitleBarItem.h"
 #import "ETUIItem.h"
 #import "ETWindowItem.h"
 #import "ETCompatibility.h"
@@ -424,6 +426,25 @@ and -setAutoresizingMask: can potentially erase each other. */
 	/* The two tests below only holds when -ensuresContentFillsVisibleArea is YES */
 	UKRectsEqual(ETMakeRect(NSZeroPoint, rect.size), [item contentBounds]);
 	UKRectsEqual([scrollDecorator contentRect], [item decorationRect]);
+}
+
+- (void) testTitleBarGeometryForContentSizeLayout
+{
+	ETTitleBarItem *titleBarItem = [ETTitleBarItem item];
+	NSRect rect = [ETLayoutItem defaultItemRect];
+	ETLayoutItemGroup *itemGroup = [itemFactory itemGroup];
+
+	[[itemGroup layout] setIsContentSizeLayout: YES];
+	// FIXME: Nil title exception if -setName: is not called.
+	[itemGroup setName: @"Untitled"];
+	[itemGroup setDecoratorItem: titleBarItem];
+
+	NSRect contentRect = ETMakeRect(NSMakePoint(0, [titleBarItem titleBarHeight]), rect.size);
+	NSRect newFrame = rect;
+	newFrame.size.height += [titleBarItem titleBarHeight];
+
+	UKRectsEqual(contentRect, [titleBarItem contentRect]);
+	UKRectsEqual(newFrame, [itemGroup frame]);
 }
 
 - (void) testTooManyDecoratorGeometry

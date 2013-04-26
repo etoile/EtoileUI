@@ -47,6 +47,7 @@
 - (id) initWithSupervisorView: (ETView *)supervisorView;
 - (id) init;
 
+- (CGFloat) titleBarHeight;
 - (void) tile;
 
 - (void) toggleExpanded: (id)sender;
