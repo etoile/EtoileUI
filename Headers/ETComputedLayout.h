@@ -71,6 +71,7 @@ In the rare case where more control is required, you might want to reimplement
 	@private
 	float _borderMargin;
 	float _itemMargin;
+	BOOL _autoresizesItemToFill;
 	ETLayoutHorizontalAlignment _horizontalAlignment;
 	float _horizontalAlignmentGuidePosition;
 	BOOL _usesAlignmentHint;
@@ -85,6 +86,8 @@ In the rare case where more control is required, you might want to reimplement
 - (void) setBorderMargin: (float)aMargin;
 - (void) setItemMargin: (float)aMargin;
 - (float) itemMargin;
+- (BOOL) autoresizesItemToFill;
+- (void) setAutoresizesItemToFill: (BOOL)stretchToFill;
 - (ETLayoutHorizontalAlignment) horizontalAlignment;
 - (void) setHorizontalAligment: (ETLayoutHorizontalAlignment)anAlignment;
 - (float) horizontalAlignmentGuidePosition;

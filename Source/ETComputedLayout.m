@@ -38,6 +38,7 @@ float ETAlignmentHintNone = FLT_MIN;
 
 	newLayout->_borderMargin = _borderMargin;
 	newLayout->_itemMargin = _itemMargin;
+	newLayout->_autoresizesItemToFill = _autoresizesItemToFill;
 	newLayout->_horizontalAlignment = _horizontalAlignment;
 	newLayout->_horizontalAlignmentGuidePosition = _horizontalAlignmentGuidePosition;
 	newLayout->_computesItemRectFromBoundingBox = _computesItemRectFromBoundingBox;
@@ -84,6 +85,16 @@ layout update. */
 - (float) itemMargin
 {
 	return _itemMargin;
+}
+
+- (BOOL) autoresizesItemToFill
+{
+	return _autoresizesItemToFill;
+}
+
+- (void) setAutoresizesItemToFill: (BOOL)stretchToFill
+{
+	_autoresizesItemToFill = stretchToFill;
 }
 
 /** Returns the content horizontal alignment in the layout context area. */
@@ -174,6 +185,34 @@ guide is ignored by the layout computation.  */
 	{
 		[[[item layout] ifResponds] setHorizontalAlignmentGuidePosition: guidePosition];
 	}
+}
+
+- (CGFloat) maxWidthForItems: (NSArray *)items
+{
+	CGFloat maxWidth = 0;
+	
+	for (ETLayoutItem *item in items)
+	{
+		CGFloat width = [item width];
+		
+		if (width > maxWidth)
+		{
+			maxWidth = width;
+		}
+	}
+	return maxWidth;
+}
+
+- (void) adjustWidthForItems: (NSArray *)items
+{
+	if ([self autoresizesItemToFill] == NO)
+		return;
+
+	CGFloat maxWidth = [self maxWidthForItems: items];
+
+	NSLog(@"Computed max width %0.2f", maxWidth);
+
+	[(ETLayoutItem *)[items mappedCollection] setWidth: maxWidth];
 }
 
 /* Layout Computation */
@@ -277,6 +316,11 @@ bounding box). */
 	return didResize;
 }
 
+- (ETLayoutItem *) itemForLayoutContext
+{
+	return ([(id)[self layoutContext] isLayoutItem] ? (id)[self layoutContext]: (id)[(id)[self layoutContext] layoutContext]);
+}
+
 /** <override-never />
 Runs the layout computation.<br />
 See also -[ETLayout renderLayoutItems:isNewContent:].
@@ -307,10 +351,13 @@ Finally once the layout is computed, this method set the layout item visibility
 by calling -setVisibleItems: on the layout context. */
 - (void) renderWithLayoutItems: (NSArray *)items isNewContent: (BOOL)isNewContent
 {
+	//NSLog(@" === UPDATE LAYOUT - %@ === ", [[self itemForLayoutContext] identifier]);
+
 	/* Will compute the initial layout size with -resetLayoutSize */	
 	[super renderWithLayoutItems: items isNewContent: isNewContent];
 
 	[self adjustHorizontalAlignmentGuidePositionForItems: items];
+	[self adjustWidthForItems: items];
 
 	NSSize initialLayoutSize = [self layoutSize];
 	NSArray *spacedItems = [self insertSeparatorsBetweenItems: items];
