@@ -38,6 +38,7 @@
 
 - (void) setTemplateItem: (ETLayoutItem *)anItem forIdentifier: (NSString *)anIdentifier;
 - (ETLayoutItem *) templateItemForIdentifier: (NSString *)anIdentifier;
+- (NSArray *) templateItems;
 - (void) setTemplateIdentifier: (NSString *)anIdentifier forRoleClass: (Class)aClass;
 - (NSString *) templateIdentifierForRoleClass: (Class)aClass;
 

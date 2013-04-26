@@ -13,6 +13,7 @@
 #import <EtoileFoundation/NSObject+DoubleDispatch.h>
 #import <EtoileFoundation/NSObject+Model.h>
 #import "ETModelDescriptionRenderer.h"
+#import "ETColumnLayout.h"
 #import "ETController.h"
 #import "ETFormLayout.h"
 #import "ETItemTemplate.h"
@@ -21,6 +22,7 @@
 #import "ETLayoutItemFactory.h"
 #import "ETLayoutItemGroup.h"
 #import "EtoileUIProperties.h"
+#import "ETTitleBarItem.h"
 #import "ETOutlineLayout.h"
 #import "ETCompatibility.h"
 
@@ -79,11 +81,37 @@
 	return [_templateItems objectForKey: anIdentifier];
 }
 
+/** Returns all the template items.
+
+This can be used to customize properties on multiple template items at the same 
+time. For example:
+ 
+<example>
+[[renderer templateItems] mappedCollection] setWidth: 150];
+</example> */
+- (NSArray *) templateItems
+{
+	return [_templateItems allValues];
+}
+
+- (NSSize) defaultItemSize
+{
+	return NSMakeSize(300, 100);
+}
+
 - (ETLayoutItem *) textFieldTemplateItem
 {
 	ETLayoutItem *item = [_itemFactory textField];
-	[item setWidth: 300];
+	[item setWidth: [self defaultItemSize].width];
 	return item;
+}
+
+- (ETLayoutItemGroup *) collectionEditorTemplateItem
+{
+	ETLayoutItemGroup *editor = [_itemFactory collectionEditorWithSize: [self defaultItemSize]
+							                         representedObject: nil
+									                        controller: nil];
+	return editor;
 }
 
 - (void) registerDefaultTemplateItems
@@ -93,6 +121,7 @@
 	[self setTemplateItem: [_itemFactory horizontalSlider] forIdentifier: @"slider"];
 	// TODO: Implement -textFieldAndStepper first
 	//[self setTemplateItem: [_itemFactory textFieldAndStepper] forIdentifier: @"stepper"];
+	[self setTemplateItem: [self collectionEditorTemplateItem] forIdentifier: @"collectionEditor"];
 }
 
 - (void) setTemplateIdentifier: (NSString *)anIdentifier forRoleClass: (Class)aClass
@@ -129,6 +158,11 @@
 - (NSRect) entityItemFrame
 {
 	return _entityItemFrame;
+}
+
+- (BOOL) autoresizesEntityItem
+{
+	return NSIsEmptyRect([self entityItemFrame]);
 }
 
 - (ETEntityDescription *) entityDescriptionForObject: (id)anObject
@@ -205,8 +239,14 @@ See also -setRenderedPropertyNames:. */
 
 - (ETLayoutItemGroup *)newItemGroupForGroupingName: (NSString *)aName
 {
-	ETLayoutItemGroup *itemGroup = [[_itemFactory itemGroup] retain];
+	ETLayoutItemGroup *itemGroup = [[_itemFactory itemGroupWithFrame: NSMakeRect(0, 0, 500, 200)] retain];
+	[itemGroup setAutoresizingMask: ETAutoresizingFlexibleWidth];
 	[itemGroup setName: aName];
+	[itemGroup setIdentifier: [[aName lowercaseString] stringByAppendingString: @" (grouping)"]];
+	[itemGroup setLayout: [[[self entityLayout] copy] autorelease]];
+	[[[itemGroup layout] positionalLayout] setIsContentSizeLayout: YES];
+	//[itemGroup setUsesLayoutBasedFrame: YES];
+	[itemGroup setDecoratorItem: [ETTitleBarItem item]];
 	return itemGroup;
 }
 
@@ -268,6 +308,14 @@ See also -setRenderedPropertyNames:. */
 	return [itemGroupsByName allValues];
 }
 
+- (ETLayout *) groupingLayout
+{
+	ETColumnLayout *layout = [ETColumnLayout layout];
+	[layout setUsesAlignmentHint: YES];
+	[layout setIsContentSizeLayout: YES];
+	return layout;
+}
+
 - (NSString *) labelForPropertyDescription: (ETPropertyDescription *)aPropertyDesc
 {
 	return [[[aPropertyDesc name] stringByCapitalizingFirstLetter] stringBySpacingCapitalizedWords];
@@ -314,6 +362,8 @@ See also -setRenderedPropertyNames:. */
 	{
 		items = [self generateItemGroupsForPropertyItems: propertyItems
 		                                 groupingKeyPath: [self groupingKeyPath]];
+		[entityItem setLayout: [self groupingLayout]];
+		[entityItem setUsesLayoutBasedFrame: YES];
 	}
 	[entityItem addItems: items];
 	[entityItem setName: aName];
@@ -368,6 +418,7 @@ See also -setRenderedPropertyNames:. */
 	return [anObject valueForProperty: [aPropertyDesc name]];
 }
 
+#ifdef AVOID_COLLECTION_EDITOR_TEMPLATE_COPY
 - (ETLayoutItemGroup *) editorForRelationshipDescription: (ETPropertyDescription *)aPropertyDesc
                                                 ofObject: (id)anObject
 {
@@ -381,8 +432,7 @@ See also -setRenderedPropertyNames:. */
 	
 	[controller setTemplate: template forType: [controller currentObjectType]];
 
-	NSSize size = NSMakeSize(300, 100);//[self defaultFrameForEntityItem].size;
-	ETLayoutItemGroup *editor = [_itemFactory collectionEditorWithSize: size
+	ETLayoutItemGroup *editor = [_itemFactory collectionEditorWithSize: [self defaultItemSize]
 							                         representedObject: collection
 									                        controller: controller];
 
@@ -391,6 +441,32 @@ See also -setRenderedPropertyNames:. */
 
 	return editor;
 }
+#else
+- (ETLayoutItemGroup *) editorForRelationshipDescription: (ETPropertyDescription *)aPropertyDesc
+                                                ofObject: (id)anObject
+{
+
+	ETLayoutItemGroup *editor = [[self templateItemForIdentifier: @"collectionEditor"] deepCopy];
+	ETLayoutItemGroup *browser = (id)[editor itemForIdentifier: @"browser"];
+	id collection = [self representedObjectForToManyRelationshipDescription: aPropertyDesc
+	                                                               ofObject: anObject];
+
+	[browser setRepresentedObject: collection];
+
+	ETPropertyCollectionController *controller = (id)[browser controller];
+	Class relationshipClass = [_repository classForEntityDescription: [aPropertyDesc type]];
+	ETAssert(relationshipClass != Nil);
+	ETItemTemplate *template = [ETItemTemplate templateWithItem: [_itemFactory item]
+	                                                objectClass: relationshipClass];
+
+	[controller setTemplate: template forType: [controller currentObjectType]];
+
+	[[controller content] setDoubleAction: @selector(edit:)];
+	[[controller content] setTarget: controller];
+
+	return editor;
+}
+#endif
 
 - (ETLayoutItemGroup *) newItemForRelationshipDescription: (ETPropertyDescription *)aPropertyDesc
                                                  ofObject: (id)anObject
@@ -521,10 +597,23 @@ See also -setRenderedPropertyNames:. */
 
 - (void) view: (id)sender
 {
-	//ETLayoutItem *entityItem = [[ETModelDescriptionRenderer renderer] renderObject: self];
-	ETLayoutItem *entityItem = [[ETModelDescriptionRenderer renderer] renderObject: self];
+	ETModelDescriptionRenderer *renderer = [ETModelDescriptionRenderer renderer];
+
+	[renderer setGroupingKeyPath: @"owner"];
+
+	[ETLayoutItem disablesAutolayout];
+
+	ETLayoutItem *entityItem = [renderer renderObject: self];
+
+	[[entityItem layout] setAutoresizesItemToFill: YES];
+	[[entityItem itemAtIndex: 0] updateLayoutRecursively: NO];
+	[[entityItem itemAtIndex: 1] updateLayoutRecursively: NO];
+	[entityItem updateLayoutRecursively: NO];
+
 	//[entityItem setLayout: [self defaultOutlineLayoutForInspector]];
 	[[[ETLayoutItemFactory factory] windowGroup] addItem: entityItem];
+	
+	[ETLayoutItem enablesAutolayout];
 }
 
 @end
