@@ -158,6 +158,8 @@
 		6077C1830F9802E1006CB3F5 /* ETViewModelLayout.m in Sources */ = {isa = PBXBuildFile; fileRef = 60F3658F0D18651700FCFFDA /* ETViewModelLayout.m */; };
 		6077C1FE0F980516006CB3F5 /* EtoileUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 60EF8E9D0C5E4D0600C97C41 /* EtoileUI.framework */; };
 		6077C1FF0F980525006CB3F5 /* EtoileUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 60EF8E9D0C5E4D0600C97C41 /* EtoileUI.framework */; };
+		6077D2071729EC3F009CE93C /* ETTitleBarItem.m in Sources */ = {isa = PBXBuildFile; fileRef = 66B74126103CB008008AF5B1 /* ETTitleBarItem.m */; };
+		6077D2161729ECCF009CE93C /* ETTitleBarView.m in Sources */ = {isa = PBXBuildFile; fileRef = 66B7412A103CB03D008AF5B1 /* ETTitleBarView.m */; };
 		60793A50105C125A005E4F39 /* EtoileUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 60EF8E9D0C5E4D0600C97C41 /* EtoileUI.framework */; };
 		60793AC5105C1263005E4F39 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 29B97316FDCFA39411CA2CEA /* main.m */; };
 		607F5F020F005A8E00A8CD0C /* ETGeometry.h in Headers */ = {isa = PBXBuildFile; fileRef = 607F5F000F005A8E00A8CD0C /* ETGeometry.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -2806,6 +2808,8 @@
 				605F354B17172DF600E9355A /* TestFormLayout.m in Sources */,
 				605F35511717562A00E9355A /* ETFormLayout.m in Sources */,
 				60A7927E171B803600348EC7 /* TestView.m in Sources */,
+				6077D2071729EC3F009CE93C /* ETTitleBarItem.m in Sources */,
+				6077D2161729ECCF009CE93C /* ETTitleBarView.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
