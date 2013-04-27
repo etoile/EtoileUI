@@ -450,23 +450,34 @@ and -setAutoresizingMask: can potentially erase each other. */
 	UKRectsEqual([titleBarItem contentRect], [itemGroup decorationRect]);
 }
 
+- (void) testTitleBarHitTest
+{
+	ETTitleBarItem *titleBarItem = [ETTitleBarItem item];
+
+	// FIXME: Nil title exception if -setName: is not called.
+	[item setName: @"Untitled"];
+	[item setDecoratorItem: titleBarItem];
+
+	UKObjectsSame(titleBarItem, [item decoratorItemAtPoint: NSMakePoint(5, 5)]);
+	UKObjectsSame(item, [item decoratorItemAtPoint: NSMakePoint(5, [titleBarItem titleBarHeight] + 1)]);
+}
+
 - (void) testTitleBarGeometryForContentSizeLayout
 {
 	ETTitleBarItem *titleBarItem = [ETTitleBarItem item];
-	NSRect rect = [ETLayoutItem defaultItemRect];
 	ETLayoutItemGroup *itemGroup = [itemFactory itemGroup];
-
-	[[itemGroup layout] setIsContentSizeLayout: YES];
+	NSRect rect = [ETLayoutItem defaultItemRect];// NSMakeRect(0, 0, 1000, 3000);
+	
 	// FIXME: Nil title exception if -setName: is not called.
 	[itemGroup setName: @"Untitled"];
 	[itemGroup setDecoratorItem: titleBarItem];
-
+	
 	NSRect contentRect = ETMakeRect(NSMakePoint(0, [titleBarItem titleBarHeight]), rect.size);
 	NSRect newFrame = rect;
 	newFrame.size.height += [titleBarItem titleBarHeight];
-
+	
+	UKRectsEqual(newFrame, [titleBarItem decorationRect]);
 	UKRectsEqual(contentRect, [titleBarItem contentRect]);
-	UKRectsEqual(newFrame, [itemGroup frame]);
 }
 
 - (void) testTooManyDecoratorGeometry
