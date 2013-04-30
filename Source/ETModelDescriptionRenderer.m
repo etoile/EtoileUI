@@ -12,6 +12,7 @@
 #import <EtoileFoundation/ETModelElementDescription.h>
 #import <EtoileFoundation/NSObject+DoubleDispatch.h>
 #import <EtoileFoundation/NSObject+Model.h>
+#import <EtoileFoundation/NSString+Etoile.h>
 #import "ETModelDescriptionRenderer.h"
 #import "ETColumnLayout.h"
 #import "ETController.h"
@@ -244,7 +245,8 @@ See also -setRenderedPropertyNames:. */
 	[itemGroup setName: aName];
 	[itemGroup setIdentifier: [[aName lowercaseString] stringByAppendingString: @" (grouping)"]];
 	[itemGroup setLayout: [[[self entityLayout] copy] autorelease]];
-	[[[itemGroup layout] positionalLayout] setIsContentSizeLayout: YES];
+	// TODO: Surely declare -setIsContentSizeLayout in ETPositionalLayout protocol
+	[(ETLayout *)[[itemGroup layout] positionalLayout] setIsContentSizeLayout: YES];
 	//[itemGroup setUsesLayoutBasedFrame: YES];
 	[itemGroup setDecoratorItem: [ETTitleBarItem item]];
 	return itemGroup;
@@ -603,11 +605,11 @@ See also -setRenderedPropertyNames:. */
 
 	[ETLayoutItem disablesAutolayout];
 
-	ETLayoutItem *entityItem = [renderer renderObject: self];
+	ETLayoutItemGroup *entityItem = [renderer renderObject: self];
 
 	[[entityItem layout] setAutoresizesItemToFill: YES];
-	[[entityItem itemAtIndex: 0] updateLayoutRecursively: NO];
-	[[entityItem itemAtIndex: 1] updateLayoutRecursively: NO];
+	[(id)[entityItem itemAtIndex: 0] updateLayoutRecursively: NO];
+	[(id)[entityItem itemAtIndex: 1] updateLayoutRecursively: NO];
 	[entityItem updateLayoutRecursively: NO];
 
 	//[entityItem setLayout: [self defaultOutlineLayoutForInspector]];
