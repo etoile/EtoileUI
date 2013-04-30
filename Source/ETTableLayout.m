@@ -801,39 +801,45 @@ Note: For now, private method. */
 
 - (NSDragOperation) tableView:(NSTableView*)tv 
                  validateDrop: (id <NSDraggingInfo>)info 
-				  proposedRow: (NSInteger)row 
-	    proposedDropOperation: (NSTableViewDropOperation)op 
+                  proposedRow: (NSInteger)row
+        proposedDropOperation: (NSTableViewDropOperation)op 
 {
-	NSParameterAssert(row != -1);
+	// NOTE: Use positiveRow in this method and never the original row value.
+	// When no row exists at the drop point, we can receive either -1 or a row 
+	// index computed using the row height. Both GNustep and Mac OS X behavior 
+	// have varied over time in this regard.
+	NSInteger positiveRow = (row != -1 ? row : ETUndeterminedIndex);
+	ETAssert(positiveRow >= 0);
 	ETLayoutItem *dropTarget = (ETLayoutItem *)_layoutContext;
 
-	if (ETUndeterminedIndex != row && NSTableViewDropOn == op)
+	if (ETUndeterminedIndex != positiveRow && NSTableViewDropOn == op)
 	{
-		dropTarget = [[_layoutContext arrangedItems] objectAtIndex: row];
+		dropTarget = [[_layoutContext arrangedItems] objectAtIndex: positiveRow];
 	}
 
-	ETDebugLog(@"Validate drop at %ld on %@ with dragging source %@ in %@ drag mask %lu drop op %lu",
+	ETDebugLog(@"TABLE - Validate drop at %ld on %@ with dragging source %@ in %@ drag mask %lu drop op %lu",
 		(long)row, [dropTarget primitiveDescription], [[info draggingSource] primitiveDescription],
 		[_layoutContext primitiveDescription], (unsigned long)[info draggingSourceOperationMask], (unsigned long)op);
 	
 	id draggedObject = [[ETPickboard localPickboard] firstObject];
-	NSInteger dropIndex = (NSTableViewDropAbove == op ? row : ETUndeterminedIndex);
+	NSInteger dropIndex = (NSTableViewDropAbove == op ? positiveRow : ETUndeterminedIndex);
 	id hint = [[ETPickDropCoordinator sharedInstance] hintFromObject: &draggedObject];
 	ETLayoutItem *validDropTarget = 
 		[[dropTarget actionHandler] handleValidateDropObject: draggedObject
 		                                                hint: hint
 		                                             atPoint: ETNullPoint
 		                                       proposedIndex: &dropIndex
-	                                                  onItem: dropTarget
-	                                             coordinator: [ETPickDropCoordinator sharedInstance]];
+	                                                      onItem: dropTarget
+	                                                 coordinator: [ETPickDropCoordinator sharedInstance]];
 
 	/* -handleValidateXXX can return nil, the drop target, the drop target parent or another child */	
 	if (nil == validDropTarget)
 	{
 		return NSDragOperationNone;
 	}
+	ETDebugLog(@"TABLE - Drop target %@ for proposed %@", [validDropTarget primitiveDescription], [dropTarget primitiveDescription]);
 
-	BOOL isRetargeted = ([validDropTarget isEqual: dropTarget] == NO || dropIndex != row);
+	BOOL isRetargeted = ([validDropTarget isEqual: dropTarget] == NO || dropIndex != positiveRow);
 
 	if (isRetargeted)
 	{
@@ -859,33 +865,38 @@ Note: For now, private method. */
 		ETAssert(dropRow != ETUndeterminedIndex);
 		[tv setDropRow: dropRow dropOperation: dropOp];
 
-		ETDebugLog(@"Retarget drop to %ld with op %lu", (long)dropRow, (unsigned long)dropOp);
+		ETDebugLog(@"TABLE - Retarget drop to %ld with op %lu", (long)dropRow, (unsigned long)dropOp);
 	}
 
+	ETDebugLog(@"TABLE - End validate");
 	return NSDragOperationEvery;
 }
 
 - (BOOL) tableView: (NSTableView *)aTableView 
         acceptDrop: (id <NSDraggingInfo>)info 
                row: (NSInteger)row 
-	 dropOperation: (NSTableViewDropOperation)op
+     dropOperation: (NSTableViewDropOperation)op
 {
-    ETDebugLog(@"Accept drop at %ld in %@ drag mask %lu drop op %lu", (long)row,
+	ETDebugLog(@"TABLE - Accept drop at %ld in %@ drag mask %lu drop op %lu", (long)row,
 		[_layoutContext primitiveDescription], (unsigned long)[info draggingSourceOperationMask],
 		(unsigned long)op);
 
+	// NOTE: Use positiveRow in this method and never the original row value.
+	// See similar comment in -tableView:validateDrop:proposedRow:proposedDropOperation:
+	NSInteger positiveRow = (row != -1 ? row : ETUndeterminedIndex);
+	ETAssert(positiveRow >= 0);
 	NSDictionary *metadata = [[ETPickboard localPickboard] firstObjectMetadata];
 	id droppedObject = [[ETPickboard localPickboard] popObjectAsPickCollection: YES];
 	ETLayoutItemGroup *dropTarget = _layoutContext;
 	
-	if (op == NSTableViewDropOn)
+	if (positiveRow != ETUndeterminedIndex && op == NSTableViewDropOn)
 	{
-		dropTarget = [[dropTarget arrangedItems] objectAtIndex: row];
+		dropTarget = [[dropTarget arrangedItems] objectAtIndex: positiveRow];
 	}
 
 	return [[dropTarget actionHandler] handleDropCollection: droppedObject
 	                                               metadata: metadata
-	                                                atIndex: row
+	                                                atIndex: positiveRow
 	                                                 onItem: dropTarget
 	                                            coordinator: [ETPickDropCoordinator sharedInstance]];
 }

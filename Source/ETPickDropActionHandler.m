@@ -193,6 +193,8 @@ operation. e.g. <code>*anIndex = ETUndeterminedIndex</code> when anIndex was 3. 
                                      onItem: (ETLayoutItem *)dropTarget
                                 coordinator: (ETPickDropCoordinator *)aPickCoordinator
 {
+	//ETLog(@"DROP - Begin validate drop %@ at %ld on %@ in %@", [droppedObject primitiveDescription], (long)*anIndex, [dropTarget primitiveDescription], self);
+
 	BOOL canDrop = [self canDropObject: droppedObject
 	                           atIndex: *anIndex
 	                            onItem: dropTarget
@@ -201,6 +203,7 @@ operation. e.g. <code>*anIndex = ETUndeterminedIndex</code> when anIndex was 3. 
 
 	if (retargetDrop)
 	{
+		//NSLog(@"Retarget drop in action handler");
 		ETLayoutItemGroup *parent = [dropTarget parentItem];
 		NSInteger dropTargetIndex = [parent indexOfItem: dropTarget]; /* drop above or before */
 		BOOL needsIndexAdjustment = (ETIsNullPoint(dropPoint) == NO);
@@ -233,7 +236,7 @@ operation. e.g. <code>*anIndex = ETUndeterminedIndex</code> when anIndex was 3. 
 		}
 	}
 
-	ETDebugLog(@"DROP - Validate drop %@ at %ld on %@ in %@", [droppedObject primitiveDescription],
+	ETDebugLog(@"DROP - End validate drop %@ at %ld on %@ in %@", [droppedObject primitiveDescription],
 		(long)*anIndex, [dropTarget primitiveDescription], self);
 
 	return dropTarget;
@@ -258,7 +261,7 @@ item groups and reacts to that appropriately. */
                      metadata: (NSDictionary *)metadata
                       atIndex: (NSInteger)anIndex
                        onItem: (ETLayoutItem *)dropTarget
-			      coordinator: (ETPickDropCoordinator *)aPickCoordinator
+                  coordinator: (ETPickDropCoordinator *)aPickCoordinator
 {
 	// NOTE: To keep the order of the picked objects a reverse enumerator is 
 	// used to balance the shifting of the last inserted object occurring on each insertion
@@ -305,7 +308,7 @@ item groups and reacts to that appropriately. */
                  metadata: (NSDictionary *)metadata
                   atIndex: (NSInteger)anIndex
                    onItem: (ETLayoutItem *)dropTarget
-			  coordinator: (ETPickDropCoordinator *)aPickCoordinator
+              coordinator: (ETPickDropCoordinator *)aPickCoordinator
 {
 	// TODO: Improve insertion of arbitrary objects. All objects can be
 	// dropped (NSArray, NSString, NSWindow, NSImage, NSObject, Class etc.)
