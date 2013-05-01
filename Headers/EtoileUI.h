@@ -40,6 +40,7 @@
 #import <EtoileUI/ETLayoutItem+Scrollable.h>
 #import <EtoileUI/ETLayoutItem.h>
 #import <EtoileUI/ETLayoutItemBuilder.h>
+#import <EtoileUI/ETLayoutItem+UIBuilder.h>
 #import <EtoileUI/ETLayoutItemGroup+Mutation.h>
 #import <EtoileUI/ETLayoutItemGroup.h>
 #import <EtoileUI/ETLineFragment.h>
@@ -69,6 +70,7 @@
 #import <EtoileUI/ETTokenLayout.h>
 #import <EtoileUI/ETUIItem.h>
 #import <EtoileUI/ETLayoutItemFactory.h>
+#import <EtoileUI/ETUIBuilderItemFactory.h>
 #import <EtoileUI/ETViewModelLayout.h>
 #import <EtoileUI/ETWindowItem.h>
 #import <EtoileUI/FSBrowserCell.h>
