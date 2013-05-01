@@ -117,7 +117,6 @@
 
 - (NSRect) frameForDecoratedItemFrame: (NSRect)aFrame
 {
-	NSRect contentRect = aFrame;
 	NSRect decorationRect = aFrame;
 	decorationRect.size.height += [self titleBarHeight];
 	return decorationRect;
