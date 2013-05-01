@@ -230,12 +230,12 @@ constraint with -setItemSizeConstraint: and -setConstrainedItemSize:. */
 	delegate = nil;
 	_tool = nil;
 	ASSIGN(_dropIndicator, [ETDropIndicator sharedInstance]);
-	_isLayouting = NO;
+	_isRendering = NO;
 	_layoutSize = NSMakeSize(200, 200); /* Dummy value */
-	_layoutSizeCustomized = NO;
-	_maxSizeLayout = NO;
-	_itemSize = NSMakeSize(256, 256); /* Default max item size */
-	/* By default both width and height must be equal or inferior to related _itemSize values */
+	_usesCustomLayoutSize = NO;
+	_isContentSizeLayout = NO;
+	_constrainedItemSize = NSMakeSize(256, 256); /* Default max item size */
+	/* By default both width and height must be equal or inferior to related _constrainedItemSize values */
 	_itemSizeConstraintStyle = ETSizeConstraintStyleNone;
 	 /* Will ensure -resizeItems:toScaleFactor: isn't called until the scale changes */
 	 _previousScaleFactor = 1.0;
@@ -278,7 +278,7 @@ tool copy. */
 {
 	ETLayout *newLayout = [super copyWithZone: aZone];
 
-	/* We copy all ivars except _layoutContext and _isLayouting */
+	/* We copy all ivars except _layoutContext and _isRendering */
 
 	newLayout->_layoutContext = ctxt;
 	newLayout->delegate = delegate;
@@ -288,9 +288,9 @@ tool copy. */
 	[newLayout setAttachedTool: [[self attachedTool] copyWithZone: aZone]];
 	RELEASE([newLayout attachedTool]);
 	newLayout->_layoutSize = _layoutSize;
-	newLayout->_layoutSizeCustomized = _layoutSizeCustomized;
-	newLayout->_maxSizeLayout  = _maxSizeLayout;
-	newLayout->_itemSize = _itemSize;
+	newLayout->_usesCustomLayoutSize = _usesCustomLayoutSize;
+	newLayout->_isContentSizeLayout  = _isContentSizeLayout;
+	newLayout->_constrainedItemSize = _constrainedItemSize;
 	newLayout->_itemSizeConstraintStyle = _itemSizeConstraintStyle;
 	newLayout->_previousScaleFactor = _previousScaleFactor;
 
@@ -597,13 +597,13 @@ See also -isScrollable and ETLayoutItem(Scrollable). */
 	-setUsesCustomLayoutSize: with NO as parameter. */ 
 - (void) setUsesCustomLayoutSize: (BOOL)flag
 {
-	_layoutSizeCustomized = flag;
+	_usesCustomLayoutSize = flag;
 }
 
 /** Returns whether a custom area size where the layout should be rendered. */
 - (BOOL) usesCustomLayoutSize
 {
-	return _layoutSizeCustomized;
+	return _usesCustomLayoutSize;
 }
 
 /** Sets the newly computed layout size.
@@ -644,7 +644,7 @@ See also -isContentSizeLayout:. */
 - (void) setIsContentSizeLayout: (BOOL)flag
 {
 	//ETDebugLog(@"-setContentSizeLayout");
-	_maxSizeLayout = flag;
+	_isContentSizeLayout = flag;
 }
 
 /** Returns whether the layout context can be resized, when its current size is 
@@ -657,7 +657,7 @@ always returns YES. */
 	if ([_layoutContext isScrollable])
 		return YES;
 
-	return _maxSizeLayout;
+	return _isContentSizeLayout;
 }
 
 /** Sets the delegate.
@@ -706,7 +706,7 @@ Whether the width, the height or both are resized is controlled by
 See also setItemSizeConstraintStyle: and -resizeLayoutItems:toScaleFactor:. */
 - (void) setConstrainedItemSize: (NSSize)size
 {
-	_itemSize = size;
+	_constrainedItemSize = size;
 }
 
 /** Returns the width and/or height to which the items should be resized when 
@@ -715,7 +715,7 @@ their width and/or height is greater than the returned one.
 See also -setContrainedItemSize:. */
 - (NSSize) constrainedItemSize
 {
-	return _itemSize;
+	return _constrainedItemSize;
 }
 
 /** Returns whether -renderXXX methods can be invoked now. */
@@ -744,7 +744,7 @@ returns YES. When NO is returned, wait until it returns YES.  */
 	   -[ETTemplateItemLayout renderLayoutItems:isNewContent:], because 
 	   -setHorizontalAlignmentGuidePosition: was called and in turn called 
 	   -renderAndInvalidDisplay. */
-	return (_isLayouting || [[_layoutContext ifResponds] isRendering]);
+	return (_isRendering || [[_layoutContext ifResponds] isRendering]);
 }
 
 /** Requests the items to present to the layout context, then renders the 
@@ -773,7 +773,7 @@ To explictly update the layout, just uses -[ETLayoutItemGroup updateLayout]. */
 	if ([self canRender] == NO)
 		return;
 
-	_isLayouting = YES;
+	_isRendering = YES;
 
 	/* When the number of layout items is zero and doesn't vary, no layout 
 	   update is necessary */
@@ -783,7 +783,7 @@ To explictly update the layout, just uses -[ETLayoutItemGroup updateLayout]. */
 
 	[self renderWithLayoutItems: [_layoutContext arrangedItems] isNewContent: isNewContent];
 
-	_isLayouting = NO;
+	_isRendering = NO;
 }
 
 /** Sets the layout size to the unlayouted content size of the layout context,
@@ -1021,7 +1021,7 @@ to be identical to the layout context. */
 	   This won't work when +disablesAutolayout has been used just before by the 
 	   framework user (this behavior is consistent, so the user shouldn't 
 	   be surprised). */
-	if (_isLayouting)
+	if (_isRendering)
 	{
 		[ETLayoutItem enablesAutolayout];
 	}
@@ -1030,7 +1030,7 @@ to be identical to the layout context. */
 	/* The layer item is rendered in the coordinate space of the layout context */
 	[[self layerItem] setSize: aSize];
 
-	if (_isLayouting)
+	if (_isRendering)
 	{
 		[ETLayoutItem disablesAutolayout];
 	}

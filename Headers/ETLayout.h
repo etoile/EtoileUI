@@ -149,14 +149,14 @@ typedef enum _ETSizeConstraintStyle
 	ETLayoutItemGroup *_layerItem; /* Lazily initialized */
 	ETDropIndicator *_dropIndicator;
 
-	BOOL _isLayouting; /* -isRendering */	
+	BOOL _isRendering;
 	/* Layout and Content Size in Scrollview */
 	NSSize _layoutSize;
-	BOOL _layoutSizeCustomized;
-	BOOL _maxSizeLayout;
+	BOOL _usesCustomLayoutSize;
+	BOOL _isContentSizeLayout;
 
 	/* Items Sizing */
-	NSSize _itemSize;
+	NSSize _constrainedItemSize;
 	ETSizeConstraintStyle _itemSizeConstraintStyle;
 	@protected
 	float _previousScaleFactor; // TODO: Remove
