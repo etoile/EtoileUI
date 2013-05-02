@@ -78,7 +78,7 @@
 - (ETLayoutItemGroup *) rootItem;  
 - (void) setRootItem: (ETLayoutItemGroup *)anItem;
 
-- (void) renderWithLayoutItems: (NSArray *)items isNewContent: (BOOL)isNewContent;
+- (void) renderWithItems: (NSArray *)items isNewContent: (BOOL)isNewContent;
 
 - (id) firstPresentationItem;
 - (void) setFirstPresentationItem: (ETLayoutItemGroup *)targetItem;

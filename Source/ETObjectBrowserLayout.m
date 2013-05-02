@@ -115,7 +115,7 @@
 	[mainViewItem setTarget: self];
 }
 
-- (void) renderWithLayoutItems: (NSArray *)items isNewContent: (BOOL)isNewContent
+- (void) renderWithItems: (NSArray *)items isNewContent: (BOOL)isNewContent
 {
 	
 	// [mainViewItem setSource: [self browsedObject]];

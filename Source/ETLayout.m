@@ -622,7 +622,7 @@ in.You can restrict the layout size to your personal needs by
 /** Returns the last computed layout size.
 
 The layout area size is usually computed every time 
--renderWithLayoutItems:isNewContent: is invoked with a new content. */
+-renderWithItems:isNewContent: is invoked with a new content. */
 - (NSSize) layoutSize
 {
 	return _layoutSize;
@@ -704,7 +704,7 @@ returns YES. When NO is returned, wait until it returns YES.  */
 }
 
 /** Requests the items to present to the layout context, then renders the 
-layout with -renderWithLayoutItems:isNewContent:.
+layout with -renderWithItems:isNewContent:.
 
 Layout items can be requested in two styles: 
 <list>
@@ -730,7 +730,7 @@ To explictly update the layout, just uses -[ETLayoutItemGroup updateLayout]. */
 		return;
 
 	_isRendering = YES;
-	[self renderWithLayoutItems: [_layoutContext arrangedItems] isNewContent: isNewContent];
+	[self renderWithItems: [_layoutContext arrangedItems] isNewContent: isNewContent];
 	_isRendering = NO;
 }
 
@@ -777,7 +777,7 @@ Any layout item which belongs to the layout context, but not present in the item
 array argument, can be ignored in the layout logic implemented by subclasses.<br />
 This optimization is not yet used and a subclass is not required to comply to 
 it (this is subject to change though). */
-- (void) renderWithLayoutItems: (NSArray *)items isNewContent: (BOOL)isNewContent
+- (void) renderWithItems: (NSArray *)items isNewContent: (BOOL)isNewContent
 {	
 	ETDebugLog(@"Render layout items: %@", items);
 
@@ -980,7 +980,7 @@ hierarchy of the layout item tree. */
 }
 
 /** <override-dummy />
-You should call this method in -renderWithLayoutItems:isNewContent: if you 
+You should call this method in -renderWithItems:isNewContent: if you 
 write a view-based layout subclass.
 
 This method may be overriden by subclasses to handle view-specific configuration 

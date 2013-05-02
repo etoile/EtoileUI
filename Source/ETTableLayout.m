@@ -475,7 +475,7 @@ See [(ETColumnFragment)] protocol to customize the returned column. */
 
 /* Layouting */
 
-- (void) renderWithLayoutItems: (NSArray *)items isNewContent: (BOOL)isNewContent
+- (void) renderWithItems: (NSArray *)items isNewContent: (BOOL)isNewContent
 {
 	if ([_layoutContext supervisorView] == nil)
 	{

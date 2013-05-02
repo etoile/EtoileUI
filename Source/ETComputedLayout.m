@@ -349,12 +349,12 @@ If flexible separators are used, before -adjustSeparatorItemsForLayoutSize: we h
 
 Finally once the layout is computed, this method set the layout item visibility 
 by calling -setVisibleItems: on the layout context. */
-- (void) renderWithLayoutItems: (NSArray *)items isNewContent: (BOOL)isNewContent
+- (void) renderWithItems: (NSArray *)items isNewContent: (BOOL)isNewContent
 {
 	//NSLog(@" === UPDATE LAYOUT - %@ === ", [[self itemForLayoutContext] identifier]);
 
 	/* Will compute the initial layout size with -resetLayoutSize */	
-	[super renderWithLayoutItems: items isNewContent: isNewContent];
+	[super renderWithItems: items isNewContent: isNewContent];
 
 	[self adjustHorizontalAlignmentGuidePositionForItems: items];
 	[self adjustWidthForItems: items];

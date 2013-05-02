@@ -121,7 +121,7 @@
 
 /* Layouting */
 
-- (void) renderWithLayoutItems: (NSArray *)items isNewContent: (BOOL)isNewContent
+- (void) renderWithItems: (NSArray *)items isNewContent: (BOOL)isNewContent
 {
 	NSBrowser *browserView = [self browser];
 	

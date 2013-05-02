@@ -106,8 +106,8 @@ Warning: This protocol is very much subject to change. */
 - (void) setItemMargin: (float)margin;
 /** See -[ETComputedLayout setHorizontalAlignmentGuidePosition:]. */
 - (void) setHorizontalAlignmentGuidePosition: (float)aPosition;
-/** See -[ETLayout renderWithLayoutItems:isNewContent:]. */
-- (void) renderWithLayoutItems: (NSArray *)items isNewContent: (BOOL)isNewContent;
+/** See -[ETLayout renderWithItems:isNewContent:]. */
+- (void) renderWithItems: (NSArray *)items isNewContent: (BOOL)isNewContent;
 /** See -[ETLayout itemAtLocation:]. */
 - (ETLayoutItem *) itemAtLocation: (NSPoint)loc;
 @end
@@ -116,7 +116,7 @@ Warning: This protocol is very much subject to change. */
 @protocol ETCompositeLayout
 - (id <ETComputableLayout>) positionalLayout;
 - (void) setPositionalLayout: (id <ETComputableLayout>)layout;
-- (void) renderWithLayoutItems: (NSArray *)items isNewContent: (BOOL)isNewContent;
+- (void) renderWithItems: (NSArray *)items isNewContent: (BOOL)isNewContent;
 @end
 
 @interface ETLayout : ETUIObject <NSCopying>
@@ -203,7 +203,7 @@ Warning: This protocol is very much subject to change. */
 - (BOOL) isRendering;
 - (BOOL) canRender;
 - (void) render: (NSDictionary *)inputValues isNewContent: (BOOL)isNewContent;
-- (void) renderWithLayoutItems: (NSArray *)items isNewContent: (BOOL)isNewContent;
+- (void) renderWithItems: (NSArray *)items isNewContent: (BOOL)isNewContent;
 - (void) renderAndInvalidateDisplay;
 
 - (void) resetLayoutSize;

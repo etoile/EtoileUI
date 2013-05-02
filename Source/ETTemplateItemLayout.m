@@ -311,7 +311,7 @@ Does nothing by default. */
 
 /* Layouting */
 
-- (void) renderWithLayoutItems: (NSArray *)items isNewContent: (BOOL)isNewContent
+- (void) renderWithItems: (NSArray *)items isNewContent: (BOOL)isNewContent
 {
 	if (isNewContent)
 	{
@@ -326,7 +326,7 @@ Does nothing by default. */
 	[self willRenderItems: items isNewContent: isNewContent];
 	/* Visibility of replaced and replacement items is handled in 
 	   -setVisibleItems: */
-	[[self positionalLayout] renderWithLayoutItems: items isNewContent: isNewContent];
+	[[self positionalLayout] renderWithItems: items isNewContent: isNewContent];
 }
 
 /* Layouting Context Protocol (used by our positional layout delegate) */

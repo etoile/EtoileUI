@@ -102,7 +102,7 @@ In the rare case where more control is required, you might want to reimplement
 - (NSRect) rectForItem: (ETLayoutItem *)anItem;
 - (void) setOrigin: (NSPoint)newOrigin forItem: (ETLayoutItem *)anItem;
 
-- (void) renderWithLayoutItems: (NSArray *)items isNewContent: (BOOL)isNewContent;
+- (void) renderWithItems: (NSArray *)items isNewContent: (BOOL)isNewContent;
 
 /* Fragment-based Layout */
 

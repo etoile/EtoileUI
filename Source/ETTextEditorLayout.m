@@ -53,7 +53,7 @@
 	return [[[self delegate] ifResponds] layout: self prepareTextView: [self textView]];
 }
 
-- (void) renderWithLayoutItems: (NSArray *)items isNewContent: (BOOL)isNewContent
+- (void) renderWithItems: (NSArray *)items isNewContent: (BOOL)isNewContent
 {
 	// FIXME: Even when the context content/collection isn't mutated, the 
 	// text content might have changed in one or several nodes. Which means 

@@ -240,9 +240,9 @@ layout context, based on the rules or policy of the given layout. */
 	RELEASE(self);
 }
 
-- (void) renderWithLayoutItems: (NSArray *)items isNewContent: (BOOL)isNewContent
+- (void) renderWithItems: (NSArray *)items isNewContent: (BOOL)isNewContent
 {
-	[super renderWithLayoutItems: items isNewContent: isNewContent];
+	[super renderWithItems: items isNewContent: isNewContent];
 	if (isNewContent)
 	{
 		[self updateKVOForItems: items];

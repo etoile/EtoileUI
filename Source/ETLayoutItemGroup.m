@@ -926,7 +926,7 @@ Marks the receiver as needing a layout update. */
 	ASSIGN(_layout, aLayout);
 	/* We must remove the item views, otherwise they might remain visible as
 	   subviews (think ETBrowserLayout on GNUstep which has transparent areas),
-	   because view-based layout won't call -setVisibleItems: in -renderWithLayoutItems:XXX:. */
+	   because view-based layout won't call -setVisibleItems: in -renderWithItems:XXX:. */
 	[self setVisibleItems: [NSArray array]];
 	[self setHasNewLayout: YES];
 	[aLayout setLayoutContext: self];

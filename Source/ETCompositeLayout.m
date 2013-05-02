@@ -408,7 +408,7 @@ the copying support in ETLayoutItemGroup and ETCompositeLayout/ETLayout). */
 	[_layoutContext setVisibleItems: [_layoutContext items]];
 }
 
-- (void) renderWithLayoutItems: (NSArray *)items isNewContent: (BOOL)isNewContent
+- (void) renderWithItems: (NSArray *)items isNewContent: (BOOL)isNewContent
 {
 	ETLayoutItemGroup *presentationProxy = [self firstPresentationItem];
 

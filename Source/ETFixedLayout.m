@@ -45,10 +45,10 @@ geometry and not computed by the receiver. */
 	[self loadPersistentFramesForItems: [[self layoutContext] items]];
 }
 
-- (void) renderWithLayoutItems: (NSArray *)items isNewContent: (BOOL)isNewContent
+- (void) renderWithItems: (NSArray *)items isNewContent: (BOOL)isNewContent
 {
 
-	[super renderWithLayoutItems: items isNewContent: isNewContent];
+	[super renderWithItems: items isNewContent: isNewContent];
 
 	// TODO: May be worth to optimize computing the set union between the 
 	// previously and newly rendered items. Roughly something like...

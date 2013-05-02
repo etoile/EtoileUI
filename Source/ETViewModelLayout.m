@@ -295,7 +295,7 @@ being returned. */
 }
 
 // FIXME: Remove
-- (void) renderWithLayoutItems: (NSArray *)items isNewContent: (BOOL)isNewContent
+- (void) renderWithItems: (NSArray *)items isNewContent: (BOOL)isNewContent
 {
 	if ([propertyViewItem canReload])
 	{

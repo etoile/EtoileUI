@@ -488,7 +488,7 @@ By default, returns NO. */
 
 /* Layouting */
 
-- (void) renderWithLayoutItems: (NSArray *)items isNewContent: (BOOL)isNewContent
+- (void) renderWithItems: (NSArray *)items isNewContent: (BOOL)isNewContent
 {
 	[self tile];
 }
@@ -618,7 +618,7 @@ the real items they currently represent. */
 	return YES;
 }
 
-- (void) renderWithLayoutItems: (NSArray *)items isNewContent: (BOOL)isNewContent
+- (void) renderWithItems: (NSArray *)items isNewContent: (BOOL)isNewContent
 {
 	[self tile];
 	if (isNewContent)
@@ -712,7 +712,7 @@ the real items they currently represent. */
 	return YES;
 }
 
-- (void) renderWithLayoutItems: (NSArray *)items isNewContent: (BOOL)isNewContent
+- (void) renderWithItems: (NSArray *)items isNewContent: (BOOL)isNewContent
 {
 	if (isNewContent)
 	{
