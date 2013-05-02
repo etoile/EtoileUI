@@ -730,15 +730,7 @@ To explictly update the layout, just uses -[ETLayoutItemGroup updateLayout]. */
 		return;
 
 	_isRendering = YES;
-
-	/* When the number of layout items is zero and doesn't vary, no layout 
-	   update is necessary */
-	// TODO: Try some optimizations, in the vein of...
-	// if ([[[self layoutContext] items] count] == 0 && _nbOfItemCache != [[[self layoutContext] items] count])
-	//	 return;
-
 	[self renderWithLayoutItems: [_layoutContext arrangedItems] isNewContent: isNewContent];
-
 	_isRendering = NO;
 }
 
@@ -805,7 +797,7 @@ it (this is subject to change though). */
 	   resizing must be forced in all cases. */
 	if (scale != _previousScaleFactor)
 	{
-		[self resizeLayoutItems: items toScaleFactor: scale];
+		[self resizeItems: items toScaleFactor: scale];
 		_previousScaleFactor = scale;
 	}
 }
@@ -844,8 +836,8 @@ Overrides this method to support a custom resizing policy bound to
 -[ETLayoutContext itemScaleFactor].
  
 See also -[ETLayoutItemGroup itemScaleFactor] and 
--[ETPositionalLayout resizeLayoutItems:toScaleFactor:]. */
-- (void) resizeLayoutItems: (NSArray *)items toScaleFactor: (float)factor
+-[ETPositionalLayout resizeItems:toScaleFactor:]. */
+- (void) resizeItems: (NSArray *)items toScaleFactor: (float)factor
 {
 
 }

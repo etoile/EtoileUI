@@ -111,7 +111,7 @@ rect width or height is superior to the allowed maximum value.
 If -itemSizeConstraintStyle returns ETConstraintStyleNone, the layout will 
 respect the autoresizing mask returned by -[ETLayoutItem autoresizingMask], 
 otherwise it won't. */
-- (void) resizeLayoutItems: (NSArray *)items toScaleFactor: (float)factor
+- (void) resizeItems: (NSArray *)items toScaleFactor: (float)factor
 {
 	if ([self itemSizeConstraintStyle] == ETSizeConstraintStyleNone)
 		return;

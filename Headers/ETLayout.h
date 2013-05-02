@@ -207,7 +207,7 @@ Warning: This protocol is very much subject to change. */
 - (void) renderAndInvalidateDisplay;
 
 - (void) resetLayoutSize;
-- (void) resizeLayoutItems: (NSArray *)items toScaleFactor: (float)factor;
+- (void) resizeItems: (NSArray *)items toScaleFactor: (float)factor;
 
 - (BOOL) isLayoutExecutionItemDependent;
 

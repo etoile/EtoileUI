@@ -157,7 +157,7 @@ positional layout. */
 	float scale = [_layoutContext itemScaleFactor];
 	if (isNewContent || scale != _previousScaleFactor)
 	{
-		[self resizeLayoutItems: items toScaleFactor: scale];
+		[self resizeItems: items toScaleFactor: scale];
 		_previousScaleFactor = scale;
 	}
 }
@@ -172,7 +172,7 @@ However when the scaled icon size is smaller than -minIconSize, this latter
 value becomes the image size used to compute to the new item size.
 
 The resizing isn't delegated to the positional layout unlike in ETTemplateItemLayout. */
-- (void) resizeLayoutItems: (NSArray *)items toScaleFactor: (float)factor
+- (void) resizeItems: (NSArray *)items toScaleFactor: (float)factor
 {
 	id <ETFirstResponderSharingArea> responderArea = [_layoutContext firstResponderSharingArea];
 

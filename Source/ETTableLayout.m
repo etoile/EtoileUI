@@ -484,8 +484,8 @@ See [(ETColumnFragment)] protocol to customize the returned column. */
 		return;
 	}
 
-	[self resizeLayoutItems: items 
-	          toScaleFactor: [_layoutContext itemScaleFactor]];
+	[self resizeItems: items 
+	    toScaleFactor: [_layoutContext itemScaleFactor]];
 
 	/* Only reload from the data source if the layout item tree visible in the 
 	   table/outline view has been mutated */
@@ -499,7 +499,7 @@ See [(ETColumnFragment)] protocol to customize the returned column. */
 	}
 }
 
-- (void) resizeLayoutItems: (NSArray *)items toScaleFactor: (float)factor
+- (void) resizeItems: (NSArray *)items toScaleFactor: (float)factor
 {
 	// NOTE: Always recompute row height from the original one to avoid really
 	// value shifting quickly because of rounding.

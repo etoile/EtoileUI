@@ -52,6 +52,6 @@ subclasses. */
 - (ETSizeConstraintStyle) itemSizeConstraintStyle;
 - (void) setConstrainedItemSize: (NSSize)size;
 - (NSSize) constrainedItemSize;
-- (void) resizeLayoutItems: (NSArray *)items toScaleFactor: (float)factor;
+- (void) resizeItems: (NSArray *)items toScaleFactor: (float)factor;
 
 @end

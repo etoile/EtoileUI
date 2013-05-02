@@ -148,7 +148,7 @@
 	}
 }
 
-- (void) resizeLayoutItems: (NSArray *)items toScaleFactor: (float)factor
+- (void) resizeItems: (NSArray *)items toScaleFactor: (float)factor
 {
 	// NOTE: Always recompute row height from the original one to avoid really
 	// value shifting quickly because of rounding.

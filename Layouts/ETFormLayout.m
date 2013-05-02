@@ -110,7 +110,7 @@ positional layout. */
 
 	if (isNewContent || scale != _previousScaleFactor)
 	{
-		[self resizeLayoutItems: items toScaleFactor: scale];
+		[self resizeItems: items toScaleFactor: scale];
 		_previousScaleFactor = scale;
 	}
 	[self adjustAlignmentForMaxLabelWidth: _currentMaxLabelWidth
@@ -125,7 +125,7 @@ constraints that might be set such as -constrainedItemSize and
 -itemSizeConstraintStyle.<br />
 
 The resizing isn't delegated to the positional layout unlike in ETTemplateItemLayout. */
-- (void) resizeLayoutItems: (NSArray *)items toScaleFactor: (float)factor
+- (void) resizeItems: (NSArray *)items toScaleFactor: (float)factor
 {
 	_currentMaxLabelWidth = 0;
 	_currentMaxItemWidth = 0;
