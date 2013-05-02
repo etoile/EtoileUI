@@ -139,37 +139,41 @@ Warning: This protocol is very much subject to change. */
 	float _previousScaleFactor; // TODO: Remove
 }
 
+/** @taskunit Aspect Registration */
+
 + (void) registerAspects;
 + (void) registerLayout: (ETLayout *)aLayout;
 + (NSSet *) registeredLayouts;
 + (NSSet *) registeredLayoutClasses;
 
+/** @taskunit Initialization */
+
 + (Class) layoutClassForLayoutView: (NSView *)layoutView;
-
-/* Factory  Method */
-
 + (id) layout;
 + (id) layoutWithLayoutView: (NSView *)view;
-
-/* Initialization */
-
 - (id) initWithLayoutView: (NSView *)aView;
+
+/** @taskunit Copying */
 
 - (id) copyWithZone: (NSZone *)aZone layoutContext: (id <ETLayoutingContext>)newContext;
 - (void) setUpCopyWithZone: (NSZone *)aZone 
                   original: (ETLayout *)layoutOriginal;
 
-/* Main Accessors */
+/** @taskunit Attached Tool */
 
 - (void) setAttachedTool: (ETTool *)newTool;
 - (id) attachedTool;
 - (void) didChangeAttachedTool: (ETTool *)oldTool
                         toTool: (ETTool *)newTool;
 
+/** @taskunit Layout Context */
+
 - (void) setLayoutContext: (id <ETLayoutingContext>)context;
 - (id <ETLayoutingContext>) layoutContext;
 - (void) tearDown;
 - (void) setUp;
+
+/** @taskunit Type Querying */
 
 - (BOOL) isComposite;
 - (BOOL) isPositional;
@@ -180,78 +184,83 @@ Warning: This protocol is very much subject to change. */
 
 - (BOOL) hasScrollers;
 
-/* Size And Utility Accessors */
+/** @taskunit Layout Size Control and Feedback */
 
 - (void) setUsesCustomLayoutSize: (BOOL)flag;
 - (BOOL) usesCustomLayoutSize;
 - (void) setLayoutSize: (NSSize)size;
 - (NSSize) layoutSize;
-// Not sure the two next methods will be kept public
 - (void) setIsContentSizeLayout: (BOOL)flag;
 - (BOOL) isContentSizeLayout;
+- (BOOL) isAllContentVisible;
+//- (void) adjustLayoutSizeToContentSize;
+
+/** @taskunit Delegate */
 
 - (void) setDelegate: (id)aDelegate;
 - (id) delegate;
 
-/* Sizing Methods */
-
-- (BOOL) isAllContentVisible;
-//- (void) adjustLayoutSizeToContentSize;
-
-/* Layouting */
+/** @taskunit Requesting Internal Layout Updates */
 
 - (BOOL) isRendering;
 - (BOOL) canRender;
-- (void) render: (NSDictionary *)inputValues isNewContent: (BOOL)isNewContent;
-- (void) renderWithItems: (NSArray *)items isNewContent: (BOOL)isNewContent;
 - (void) renderAndInvalidateDisplay;
 
+/** @taskunit Layouting */
+
+- (void) renderWithItems: (NSArray *)items isNewContent: (BOOL)isNewContent;
 - (void) resetLayoutSize;
 - (void) resizeItems: (NSArray *)items toScaleFactor: (float)factor;
 
+/** @taskunit Layout Update Dependencies */
+
 - (BOOL) isLayoutExecutionItemDependent;
 
-/* Presentational Item Tree */
+/** @taskunit Presentational Item Tree */
 
 - (ETLayoutItemGroup *) layerItem;
 - (void) mapLayerItemIntoLayoutContext;
 - (void) unmapLayerItemFromLayoutContext;
 - (void) syncLayerItemGeometryWithSize: (NSSize)aSize;
 
-/* Wrapping Existing View */
+/** @taskunit Wrapping Existing View */
 
 - (void) setLayoutView: (NSView *)protoView;
 - (NSView *) layoutView;
 - (void) setUpLayoutView;
 - (void) syncLayoutViewWithItem: (ETLayoutItem *)item;
 
-/* Selection */
+/** @taskunit Selection */
 
 - (NSArray *) selectedItems;
 - (void) selectionDidChangeInLayoutContext: (id <ETItemSelection>)aSelection;
 - (BOOL) isChangingSelection;
 
-/* Item Geometry and Display */
+/** @taskunit Item Geometry and Display */
 
 - (ETLayoutItem *) itemAtLocation: (NSPoint)location;
 - (NSRect) displayRectOfItem: (ETLayoutItem *)item;
 - (void) setNeedsDisplayForItem: (ETLayoutItem *)item;
 
-/* Item Property Display */
+/** @taskunit Item Property Display */
 
 - (NSArray *) displayedProperties;
 - (void) setDisplayedProperties: (NSArray *)properties;
 - (id) styleForProperty: (NSString *)property;
 - (void) setStyle: (id)style forProperty: (NSString *)property;
 
-/* Item State Indicators */
+/** @taskunit Item State Indicators */
 
 - (ETDropIndicator *) dropIndicator;
 - (void) setDropIndicator: (ETDropIndicator *)aStyle;
 - (BOOL) preventsDrawingItemSelectionIndicator;
 
-/* Sorting */
+/** @taskunit Sorting */
 
 - (NSArray *) customSortDescriptorsForSortDescriptors: (NSArray *)currentSortDescriptors;
+
+/** @taskunit Framework Private */
+
+- (void) render: (NSDictionary *)inputValues isNewContent: (BOOL)isNewContent;
 
 @end
