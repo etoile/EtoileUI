@@ -105,4 +105,42 @@ static const float undeterminedWidth = 10;
 	[separator setWidth: (newLayoutSize.width - totalEndMargin * 2)];
 }
 
+- (void) resizeItems: (NSArray *)items
+    forNewLayoutSize: (NSSize)newLayoutSize
+             oldSize: (NSSize)oldLayoutSize
+{
+	NSMutableArray *flexibleItems = [NSMutableArray arrayWithCapacity: [items count]];
+	CGFloat oldHeightOfAllFlexibleItems = 0;
+
+	for (ETLayoutItem *item in items)
+	{
+		ETAutoresizing autoresizing = [item autoresizingMask];
+
+		if (autoresizing & ETAutoresizingFlexibleHeight)
+		{
+			[flexibleItems addObject: item];
+			oldHeightOfAllFlexibleItems += [item height];
+		}
+	
+		NSRect frame = [item frame];
+
+		ETAutoresize(&frame.origin.x, &frame.size.width,
+					 NO,
+					 (autoresizing & ETAutoresizingFlexibleWidth),
+					 NO,
+					 newLayoutSize.width, oldLayoutSize.width);
+		
+		[item setWidth: frame.size.width];
+	}
+
+	CGFloat heightResizeAmount = (newLayoutSize.height - oldLayoutSize.height);
+	CGFloat flexibleHeightAmount = (oldHeightOfAllFlexibleItems + heightResizeAmount);
+
+	for (ETLayoutItem *item in flexibleItems)
+	{
+		CGFloat resizeFactor = ([item height] / oldHeightOfAllFlexibleItems);
+		[item setHeight: flexibleHeightAmount * resizeFactor];
+	}
+}
+
 @end

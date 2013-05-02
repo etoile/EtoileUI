@@ -703,8 +703,10 @@ returns YES. When NO is returned, wait until it returns YES.  */
 	return (_isRendering || [[_layoutContext ifResponds] isRendering]);
 }
 
-/** Requests the items to present to the layout context, then renders the 
-layout with -renderWithItems:isNewContent:.
+/** This method is only exposed to be used internally by EtoileUI.
+
+Requests the items to present to the layout context, then renders the layout 
+with -renderWithItems:isNewContent:.
 
 Layout items can be requested in two styles: 
 <list>
@@ -719,7 +721,7 @@ implemented).
 You should rarely need to use this method. ETLayoutItemGroup does it 
 transparently.<br />
 To explictly update the layout, just uses -[ETLayoutItemGroup updateLayout]. */
-- (void) render: (NSDictionary *)inputValues isNewContent: (BOOL)isNewContent
+- (void) render: (BOOL)isNewContent
 {
 	if (_layoutContext == nil)
 	{
@@ -765,8 +767,8 @@ To explictly update the layout, just uses -[ETLayoutItemGroup updateLayout]. */
 
 /** <override-dummy />
 Renders the layout.<br />
-This is a skeleton implementation which only invokes -resetLayoutSize: and 
--resizeLayoutItems:toScaleFactor:.
+This is a skeleton implementation which only invokes -resetLayoutSize:, 
+-resizeItems:forNewLayoutSize:oldSize: and -resizeLayoutItems:toScaleFactor:.
 
 You can reuse this implementation in your subclass or not.
 
@@ -782,8 +784,14 @@ it (this is subject to change though). */
 	ETDebugLog(@"Render layout items: %@", items);
 
 	float scale = [[self layoutContext] itemScaleFactor];
+	//NSSize oldLayoutSize = [self layoutSize];
 
 	[self resetLayoutSize];
+	// TODO: Turn on
+	//[self resizeItems: items
+	// forNewLayoutSize: [self layoutSize]
+	//          oldSize: oldLayoutSize];
+
 	// TODO: This is a welcome optimization that avoids unecessary computations, 
 	// however this shouldn't be mandatory. Currently this is used as a 
 	// workaround to handle the fact that the default frame isn't updated if 
@@ -824,7 +832,7 @@ time a setting changes:
 {
 	if ([self canRender])
 	{	
-		[self render: nil isNewContent: NO];
+		[self render: NO];
 		[[self layoutContext] setNeedsDisplay: YES];
 	}
 }
@@ -838,6 +846,23 @@ Overrides this method to support a custom resizing policy bound to
 See also -[ETLayoutItemGroup itemScaleFactor] and 
 -[ETPositionalLayout resizeItems:toScaleFactor:]. */
 - (void) resizeItems: (NSArray *)items toScaleFactor: (float)factor
+{
+
+}
+
+/** <override-dummy />
+Does nothing.
+ 
+Overrides this method to support a custom resizing policy bound to   
+-[ETLayoutContext size] or -[ETLayoutContext visibleContentSize].
+ 
+Subclasses such as ETFixedLayout or ETComputedLayout implements a autoresizing 
+policy based on -[ETLayoutItem autoresizing].
+ 
+See also -[ETLayoutItemGroup contentSize]. */
+- (void) resizeItems: (NSArray *)items
+    forNewLayoutSize: (NSSize)newLayoutSize
+             oldSize: (NSSize)oldLayoutSize
 {
 
 }

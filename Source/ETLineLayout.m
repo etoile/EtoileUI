@@ -12,6 +12,7 @@
 #import "ETLayoutItem.h"
 #import "ETLayoutItemFactory.h"
 #import "ETLineFragment.h"
+#import "ETGeometry.h"
 #import "ETCompatibility.h"
 #include "float.h"
 
@@ -114,6 +115,44 @@ given layout area size. */
 		[separator setHeight: newLayoutSize.height];
 	}
 
+}
+
+- (void) resizeItems: (NSArray *)items
+    forNewLayoutSize: (NSSize)newLayoutSize
+             oldSize: (NSSize)oldLayoutSize
+{
+	NSMutableArray *flexibleItems = [NSMutableArray arrayWithCapacity: [items count]];
+	CGFloat oldWidthOfAllFlexibleItems = 0;
+
+	for (ETLayoutItem *item in items)
+	{
+		ETAutoresizing autoresizing = [item autoresizingMask];
+
+		if (autoresizing & ETAutoresizingFlexibleWidth)
+		{
+			[flexibleItems addObject: item];
+			oldWidthOfAllFlexibleItems += [item width];
+		}
+	
+		NSRect frame = [item frame];
+
+		ETAutoresize(&frame.origin.y, &frame.size.height,
+					 NO,
+					 (autoresizing & ETAutoresizingFlexibleHeight),
+					 NO,
+					 newLayoutSize.height, oldLayoutSize.height);
+		
+		[item setHeight: frame.size.height];
+	}
+
+	CGFloat widthResizeAmount = (newLayoutSize.width - oldLayoutSize.width);
+	CGFloat flexibleWidthAmount = (oldWidthOfAllFlexibleItems + widthResizeAmount);
+
+	for (ETLayoutItem *item in flexibleItems)
+	{
+		CGFloat resizeFactor = ([item width] / oldWidthOfAllFlexibleItems);
+		[item setWidth: flexibleWidthAmount * resizeFactor];
+	}
 }
 
 @end

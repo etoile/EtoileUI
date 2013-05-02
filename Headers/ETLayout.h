@@ -210,6 +210,9 @@ Warning: This protocol is very much subject to change. */
 
 - (void) renderWithItems: (NSArray *)items isNewContent: (BOOL)isNewContent;
 - (void) resetLayoutSize;
+- (void) resizeItems: (NSArray *)items
+    forNewLayoutSize: (NSSize)newLayoutSize
+             oldSize: (NSSize)oldLayoutSize;
 - (void) resizeItems: (NSArray *)items toScaleFactor: (float)factor;
 
 /** @taskunit Layout Update Dependencies */
@@ -261,6 +264,6 @@ Warning: This protocol is very much subject to change. */
 
 /** @taskunit Framework Private */
 
-- (void) render: (NSDictionary *)inputValues isNewContent: (BOOL)isNewContent;
+- (void) render: (BOOL)isNewContent;
 
 @end

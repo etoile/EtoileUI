@@ -1000,7 +1000,7 @@ frame (see -usesLayoutBasedFrame). */
 	[ETLayoutItem disablesAutolayout];
 
 	/* Delegate layout rendering to custom layout object */
-	[[self layout] render: nil isNewContent: isNewLayoutContent];
+	[(ETLayout *)[self layout] render: isNewLayoutContent];
 
 	[ETLayoutItem enablesAutolayout];
 

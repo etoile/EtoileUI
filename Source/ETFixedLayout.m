@@ -60,6 +60,50 @@ geometry and not computed by the receiver. */
 	[[self layoutContext] setVisibleItems: items];
 }
 
+- (void) resizeItems: (NSArray *)items
+    forNewLayoutSize: (NSSize)newLayoutSize
+             oldSize: (NSSize)oldLayoutSize
+{
+	for (ETLayoutItem *item in items)
+	{
+		[self resizeItem: item forNewLayoutSize: newLayoutSize oldSize: oldLayoutSize];
+	}
+}
+
+- (void) resizeItem: (ETLayoutItem *)anItem
+   forNewLayoutSize: (NSSize)newLayoutSize
+            oldSize: (NSSize)oldLayoutSize
+{
+	ETAutoresizing autoresizing = [anItem autoresizingMask];
+
+	if (autoresizing == ETAutoresizingNone)
+		return;
+
+	NSRect frame = [anItem frame];
+
+	ETAutoresize(&frame.origin.x, &frame.size.width,
+	             (autoresizing & ETAutoresizingFlexibleLeftMargin),
+	             (autoresizing & ETAutoresizingFlexibleWidth),
+	             (autoresizing & ETAutoresizingFlexibleRightMargin),
+				 oldLayoutSize.width, newLayoutSize.width);
+		
+	BOOL flipped = ([[self layoutContext] isFlipped]);
+	BOOL minMarginAutoresizing =
+		(flipped ? ETAutoresizingFlexibleTopMargin : ETAutoresizingFlexibleBottomMargin);
+	BOOL maxMarginAutoresizing =
+		(flipped ? ETAutoresizingFlexibleBottomMargin : ETAutoresizingFlexibleTopMargin);
+
+	ETAutoresize(&frame.origin.y, &frame.size.height,
+	             (autoresizing & minMarginAutoresizing),
+	             (autoresizing & ETAutoresizingFlexibleHeight),
+	             (autoresizing & maxMarginAutoresizing),
+				 newLayoutSize.height, oldLayoutSize.height);
+	
+	NSRect roundedFrame = NSIntegralRect(frame);
+
+	[anItem setFrame: roundedFrame];
+}
+
 /** Synchronizes the frames of every layout items provided by the layout 
 context, with their persistent frame values.
 

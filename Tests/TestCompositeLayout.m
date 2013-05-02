@@ -296,7 +296,7 @@ DEALLOC(DESTROY(layout))
 
 	 /* Forces layout update (currently disabled) but only in 'item' and not 
 	    'contentItem' and 'barItem' children. Will invoke -goToItem:. */
-	[layout render: nil isNewContent: YES];
+	[layout render: YES];
 
 	UKObjectsEqual(A(sliderItem), [[layout contentItem] items]);
 	UKObjectsEqual([layout contentItem], [sliderItem parentItem]);

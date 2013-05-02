@@ -65,7 +65,7 @@ If you introduce other margins than the built-in ones or want to support extra
 empty areas in the layout, you probably need to override 
 -originOfFirstFragment:forContentHeight: too.<br />
 In the rare case where more control is required, you might want to reimplement 
--renderLayoutItems:isNewContent:.  */
+-renderWithItems:isNewContent:.  */
 @interface ETComputedLayout : ETPositionalLayout <ETComputableLayout, ETLayoutFragmentOwner>
 {
 	@private
