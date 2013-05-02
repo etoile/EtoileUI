@@ -91,7 +91,7 @@ using it. For example, <code>[[[self layoutContext] ifResponds] source]</code>. 
 described in ETComputedLayout description must conform to this prococol.
 
 Warning: This protocol is very much subject to change. */
-@protocol ETPositionalLayout <NSObject>
+@protocol ETComputableLayout <NSObject>
 /** See -[ETLayout copyWithZone:layoutContext:]. */
 - (id) copyWithZone: (NSZone *)aZone layoutContext: (id <ETLayoutingContext>)newContext;
 /** See -[ETLayout setLayoutContext:]. */
@@ -114,8 +114,8 @@ Warning: This protocol is very much subject to change. */
 
 /** Warning: Experimental protocol that is subject to change or be removed. */
 @protocol ETCompositeLayout
-- (id <ETPositionalLayout>) positionalLayout;
-- (void) setPositionalLayout: (id <ETPositionalLayout>)layout;
+- (id <ETComputableLayout>) positionalLayout;
+- (void) setPositionalLayout: (id <ETComputableLayout>)layout;
 - (void) renderWithLayoutItems: (NSArray *)items isNewContent: (BOOL)isNewContent;
 @end
 

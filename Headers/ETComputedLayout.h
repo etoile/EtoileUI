@@ -66,7 +66,7 @@ empty areas in the layout, you probably need to override
 -originOfFirstFragment:forContentHeight: too.<br />
 In the rare case where more control is required, you might want to reimplement 
 -renderLayoutItems:isNewContent:.  */
-@interface ETComputedLayout : ETLayout <ETPositionalLayout, ETLayoutFragmentOwner>
+@interface ETComputedLayout : ETLayout <ETComputableLayout, ETLayoutFragmentOwner>
 {
 	@private
 	float _borderMargin;

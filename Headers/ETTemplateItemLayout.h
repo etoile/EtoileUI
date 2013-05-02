@@ -65,7 +65,7 @@ possible and how to use ETTemplateItemLayout. */
 @interface ETTemplateItemLayout : ETLayout <ETCompositeLayout, ETLayoutingContext>
 {
 	@private
-	id <ETPositionalLayout> _positionalLayout;
+	id <ETComputableLayout> _positionalLayout;
 	ETLayoutItem *_templateItem;
 	NSArray *_templateKeys;
 	NSMutableDictionary *_localBindings;
@@ -82,8 +82,8 @@ possible and how to use ETTemplateItemLayout. */
                toItemWithKeyPath: (NSString *)itemProperty;
 - (void) unbindTemplateItem;
 
-- (id <ETPositionalLayout>) positionalLayout;
-- (void) setPositionalLayout: (id <ETPositionalLayout>)layout;
+- (id <ETComputableLayout>) positionalLayout;
+- (void) setPositionalLayout: (id <ETComputableLayout>)layout;
 
 /* Subclass Hooks */
 

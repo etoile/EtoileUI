@@ -408,7 +408,7 @@ The resizing isn't delegated to the positional layout unlike in ETTemplateItemLa
 
 	if (lastItem != nil)
 	{
-		id <ETPositionalLayout> layout = [(ETTokenLayout *)[item layout] positionalLayout];
+		id <ETComputableLayout> layout = [(ETTokenLayout *)[item layout] positionalLayout];
 	
 		labelOrigin.x = [lastItem x] + [lastItem width] + [layout itemMargin];
 		labelOrigin.y = [lastItem y];

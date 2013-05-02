@@ -495,7 +495,7 @@ items by either:
 Fixed coordinates are encoded in persistentFrame property of ETLayoutItem. */
 - (BOOL) isPositional
 {
-	return [self conformsToProtocol: @protocol(ETPositionalLayout)];
+	return [self conformsToProtocol: @protocol(ETComputableLayout)];
 }
 
 - (BOOL) isComposite

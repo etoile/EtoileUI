@@ -190,12 +190,12 @@ original items which are replaced by the layout. */
 	[self setUpKVOForItem: item];
 }
 
-- (id <ETPositionalLayout>) positionalLayout
+- (id <ETComputableLayout>) positionalLayout
 {
 	return _positionalLayout;
 }
 
-- (void) setPositionalLayout: (id <ETPositionalLayout>)layout
+- (void) setPositionalLayout: (id <ETComputableLayout>)layout
 {
 	[layout setLayoutContext: self];
 	ASSIGN(_positionalLayout, layout);
