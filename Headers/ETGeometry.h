@@ -157,3 +157,10 @@ static inline NSPoint ETSumPointAndSize(NSPoint aPoint, NSSize aSize)
 
 extern NSRect ETUnionRectWithObjectsAndSelector(NSArray *itemArray, SEL rectSelector);
 
+extern void ETAutoresize(CGFloat *position,
+				         CGFloat *size,
+                         BOOL minMarginFlexible,
+                         BOOL maxMarginFlexible,
+                         BOOL sizeFlexible,
+                         CGFloat newContainerSize,
+                         CGFloat oldContainerSize);

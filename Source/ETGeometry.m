@@ -87,3 +87,68 @@ NSRect ETUnionRectWithObjectsAndSelector(NSArray *itemArray, SEL rectSelector)
 
 	return rect;
 }
+
+/* This method is based on autoresize() function in GNUstep GUI */
+void ETAutoresize(CGFloat *position,
+				  CGFloat *size,
+                  BOOL minMarginFlexible,
+                  BOOL maxMarginFlexible,
+                  BOOL sizeFlexible,
+                  CGFloat newContainerSize,
+                  CGFloat oldContainerSize)
+{
+	CGFloat containerResizeAmount = newContainerSize - oldContainerSize;
+	CGFloat oldSize = *size;
+	CGFloat oldPosition = *position;
+	CGFloat flexibleSizeAmount = 0.0;
+
+	if (sizeFlexible)
+	{
+		flexibleSizeAmount += oldSize;
+	}
+	if (minMarginFlexible)
+	{
+		flexibleSizeAmount += oldPosition;
+	}
+	if (maxMarginFlexible)
+	{
+		flexibleSizeAmount += oldContainerSize - oldPosition - oldSize;
+	}
+	
+	BOOL isUpsizing = (flexibleSizeAmount > 0.0);
+
+	if (isUpsizing)
+    {
+		assert(flexibleSizeAmount >= containerResizeAmount);
+		CGFloat resizeFactor = (containerResizeAmount / flexibleSizeAmount);
+		
+		if (sizeFlexible)
+		{
+			*size += resizeFactor * oldSize;
+		}
+		if (minMarginFlexible)
+		{
+			*position += resizeFactor * oldPosition;
+		}
+    }
+	else 
+    {
+		int nbOfFlexibleRegions = ((sizeFlexible ? 1 : 0)
+			+ (minMarginFlexible ? 1 : 0) + (maxMarginFlexible ? 1 : 0));
+		
+		if (nbOfFlexibleRegions > 0)
+		{
+			CGFloat resizeAmount = (containerResizeAmount / nbOfFlexibleRegions);
+			assert(resizeAmount <= 0.0);
+			
+			if (sizeFlexible)
+			{
+				*size += resizeAmount;
+			}
+			if (minMarginFlexible)
+			{
+				*position += resizeAmount;
+			}
+		}
+    }
+}
