@@ -12,10 +12,10 @@
 
 #import <Foundation/Foundation.h>
 #import <AppKit/AppKit.h>
-#import <EtoileUI/ETLayout.h>
+#import <EtoileUI/ETPositionalLayout.h>
 
 
-@interface ETFixedLayout : ETLayout
+@interface ETFixedLayout : ETPositionalLayout
 {
 
 }

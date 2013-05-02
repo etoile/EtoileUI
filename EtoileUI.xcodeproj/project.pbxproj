@@ -162,6 +162,9 @@
 		6077D2161729ECCF009CE93C /* ETTitleBarView.m in Sources */ = {isa = PBXBuildFile; fileRef = 66B7412A103CB03D008AF5B1 /* ETTitleBarView.m */; };
 		60793A50105C125A005E4F39 /* EtoileUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 60EF8E9D0C5E4D0600C97C41 /* EtoileUI.framework */; };
 		60793AC5105C1263005E4F39 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 29B97316FDCFA39411CA2CEA /* main.m */; };
+		607DF9A6173279CD00C8CB30 /* ETPositionalLayout.h in Headers */ = {isa = PBXBuildFile; fileRef = 607DF9A4173279CD00C8CB30 /* ETPositionalLayout.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		607DF9A7173279CD00C8CB30 /* ETPositionalLayout.m in Sources */ = {isa = PBXBuildFile; fileRef = 607DF9A5173279CD00C8CB30 /* ETPositionalLayout.m */; };
+		607DF9A81732821600C8CB30 /* ETPositionalLayout.m in Sources */ = {isa = PBXBuildFile; fileRef = 607DF9A5173279CD00C8CB30 /* ETPositionalLayout.m */; };
 		607F5F020F005A8E00A8CD0C /* ETGeometry.h in Headers */ = {isa = PBXBuildFile; fileRef = 607F5F000F005A8E00A8CD0C /* ETGeometry.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		607F5F070F005C5100A8CD0C /* ETGeometry.m in Sources */ = {isa = PBXBuildFile; fileRef = 607F5F060F005C5100A8CD0C /* ETGeometry.m */; };
 		607F5F080F005C5100A8CD0C /* ETGeometry.m in Sources */ = {isa = PBXBuildFile; fileRef = 607F5F060F005C5100A8CD0C /* ETGeometry.m */; };
@@ -888,6 +891,8 @@
 		6077C1700F98022C006CB3F5 /* ETIconLayout.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ETIconLayout.h; path = Headers/ETIconLayout.h; sourceTree = "<group>"; };
 		607A43E50F0AEA7300753B56 /* ETInstruments.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ETInstruments.h; path = Headers/ETInstruments.h; sourceTree = "<group>"; };
 		607A43E80F0AEA8900753B56 /* ETInstruments.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ETInstruments.m; path = Source/ETInstruments.m; sourceTree = "<group>"; };
+		607DF9A4173279CD00C8CB30 /* ETPositionalLayout.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ETPositionalLayout.h; path = Layouts/ETPositionalLayout.h; sourceTree = "<group>"; };
+		607DF9A5173279CD00C8CB30 /* ETPositionalLayout.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ETPositionalLayout.m; path = Layouts/ETPositionalLayout.m; sourceTree = "<group>"; };
 		607F5F000F005A8E00A8CD0C /* ETGeometry.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ETGeometry.h; path = Headers/ETGeometry.h; sourceTree = "<group>"; };
 		607F5F060F005C5100A8CD0C /* ETGeometry.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ETGeometry.m; path = Source/ETGeometry.m; sourceTree = "<group>"; };
 		607FBAEC0FE0050100960039 /* ETStyleGroup.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ETStyleGroup.h; path = Headers/ETStyleGroup.h; sourceTree = "<group>"; };
@@ -1662,6 +1667,8 @@
 				60C06D8A12F8534900E38E99 /* ETLayoutExecutor.m */,
 				609F46590B41641400AD2209 /* ETLayout.h */,
 				609F465A0B41641400AD2209 /* ETLayout.m */,
+				607DF9A4173279CD00C8CB30 /* ETPositionalLayout.h */,
+				607DF9A5173279CD00C8CB30 /* ETPositionalLayout.m */,
 				609548D20C0E305600068CBB /* Widget Layouts */,
 				60C27A0D0E66B0D80040A41D /* ETComputedLayout.h */,
 				60C27A100E66B0EA0040A41D /* ETComputedLayout.m */,
@@ -2056,6 +2063,7 @@
 				605F348217158F6000E9355A /* ETResponder.h in Headers */,
 				605F354F1717562500E9355A /* ETFormLayout.h in Headers */,
 				60D25603172ECA44004062CF /* ETUIBuilderItemFactory.h in Headers */,
+				607DF9A6173279CD00C8CB30 /* ETPositionalLayout.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2827,6 +2835,7 @@
 				6077D2071729EC3F009CE93C /* ETTitleBarItem.m in Sources */,
 				6077D2161729ECCF009CE93C /* ETTitleBarView.m in Sources */,
 				60D25606172ECA59004062CF /* ETUIBuilderItemFactory.m in Sources */,
+				607DF9A81732821600C8CB30 /* ETPositionalLayout.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -3001,6 +3010,7 @@
 				605F348317158F6000E9355A /* ETResponder.m in Sources */,
 				605F35501717562500E9355A /* ETFormLayout.m in Sources */,
 				60D25604172ECA44004062CF /* ETUIBuilderItemFactory.m in Sources */,
+				607DF9A7173279CD00C8CB30 /* ETPositionalLayout.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

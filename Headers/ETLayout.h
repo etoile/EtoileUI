@@ -119,25 +119,6 @@ Warning: This protocol is very much subject to change. */
 - (void) renderWithLayoutItems: (NSArray *)items isNewContent: (BOOL)isNewContent;
 @end
 
-// NOTE: May be this should be turned into a mask
-/** Describes how the layouted items are resized at the beginning of the layout 
-rendering.
-
-When the constraint is not ETSizeConstraintStyleNone, the item autoresizing 
-provided by -[ETLayoutItem autoresizingMask] won't be respected. */
-typedef enum _ETSizeConstraintStyle 
-{
-/** The items are not resized but let as is. */
-	ETSizeConstraintStyleNone,
-/** The height of the items is set to the height of -[ETLayout constrainedItemSize]. */
-	ETSizeConstraintStyleVertical,
-/** The width of the items is set to the width of -[ETLayout constrainedItemSize]. */
-	ETSizeConstraintStyleHorizontal,
-/** The size of the items are set to -[ETLayout constrainedItemSize]. */
-	ETSizeConstraintStyleVerticalHorizontal
-} ETSizeConstraintStyle;
-
-
 @interface ETLayout : ETUIObject <NSCopying>
 {
 	id _layoutContext; /* Weak reference */
@@ -154,10 +135,6 @@ typedef enum _ETSizeConstraintStyle
 	NSSize _layoutSize;
 	BOOL _usesCustomLayoutSize;
 	BOOL _isContentSizeLayout;
-
-	/* Items Sizing */
-	NSSize _constrainedItemSize;
-	ETSizeConstraintStyle _itemSizeConstraintStyle;
 	@protected
 	float _previousScaleFactor; // TODO: Remove
 }
@@ -215,13 +192,6 @@ typedef enum _ETSizeConstraintStyle
 
 - (void) setDelegate: (id)aDelegate;
 - (id) delegate;
-
-/* Item Sizing Accessors */
-
-- (void) setItemSizeConstraintStyle: (ETSizeConstraintStyle)constraint;
-- (ETSizeConstraintStyle) itemSizeConstraintStyle;
-- (void) setConstrainedItemSize: (NSSize)size;
-- (NSSize) constrainedItemSize;
 
 /* Sizing Methods */
 

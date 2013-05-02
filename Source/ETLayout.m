@@ -234,11 +234,8 @@ constraint with -setItemSizeConstraint: and -setConstrainedItemSize:. */
 	_layoutSize = NSMakeSize(200, 200); /* Dummy value */
 	_usesCustomLayoutSize = NO;
 	_isContentSizeLayout = NO;
-	_constrainedItemSize = NSMakeSize(256, 256); /* Default max item size */
-	/* By default both width and height must be equal or inferior to related _constrainedItemSize values */
-	_itemSizeConstraintStyle = ETSizeConstraintStyleNone;
 	 /* Will ensure -resizeItems:toScaleFactor: isn't called until the scale changes */
-	 _previousScaleFactor = 1.0;
+	_previousScaleFactor = 1.0;
 
 	if (aView != nil)
 	{
@@ -290,8 +287,6 @@ tool copy. */
 	newLayout->_layoutSize = _layoutSize;
 	newLayout->_usesCustomLayoutSize = _usesCustomLayoutSize;
 	newLayout->_isContentSizeLayout  = _isContentSizeLayout;
-	newLayout->_constrainedItemSize = _constrainedItemSize;
-	newLayout->_itemSizeConstraintStyle = _itemSizeConstraintStyle;
 	newLayout->_previousScaleFactor = _previousScaleFactor;
 
 	return newLayout;
@@ -679,45 +674,6 @@ See also -setDelegate:. */
 	return delegate;
 }
 
-/* Item Sizing Accessors */
-
-/** Sets how the item is resized based on the constrained item size.
-
-See ETSizeConstraintStyle enum. */
-- (void) setItemSizeConstraintStyle: (ETSizeConstraintStyle)constraint
-{
-	_itemSizeConstraintStyle = constraint;
-}
-
-/** Returns how the item is resized based on the constrained item size.
-
-See ETSizeConstraintStyle enum. */
-- (ETSizeConstraintStyle) itemSizeConstraintStyle
-{
-	return _itemSizeConstraintStyle;
-}
-
-/** Sets the width and/or height to which the items should be resized when their 
-width and/or is greater than the given one.
-
-Whether the width, the height or both are resized is controlled by 
--itemSizeConstraintStyle.
-
-See also setItemSizeConstraintStyle: and -resizeLayoutItems:toScaleFactor:. */
-- (void) setConstrainedItemSize: (NSSize)size
-{
-	_constrainedItemSize = size;
-}
-
-/** Returns the width and/or height to which the items should be resized when 
-their width and/or height is greater than the returned one.
-
-See also -setContrainedItemSize:. */
-- (NSSize) constrainedItemSize
-{
-	return _constrainedItemSize;
-}
-
 /** Returns whether -renderXXX methods can be invoked now. */
 - (BOOL) canRender
 {
@@ -847,8 +803,7 @@ it (this is subject to change though). */
 	// coupled to ETLayoutItemGroup.
 	/* Only scale if needed, but if a constraint exists on item width or height, 
 	   resizing must be forced in all cases. */
-	if (scale != _previousScaleFactor 
-	 || [self itemSizeConstraintStyle] != ETSizeConstraintStyleNone)
+	if (scale != _previousScaleFactor)
 	{
 		[self resizeLayoutItems: items toScaleFactor: scale];
 		_previousScaleFactor = scale;
@@ -882,81 +837,17 @@ time a setting changes:
 	}
 }
 
-/** Resizes layout item by scaling of the given factor the -defaultFrame 
-    returned by each item, then applying the scaled rect with -setFrame:.
-	Once the scaled rect has been computed, right before applying it to the 
-	item, this method checks for the item size contraint. If the size constraint 
-	is ETSizeConstraintStyleNone, the scaled rect is used as is. For other 
-	size constraint values, the scaled rect is checked against 
-	-constrainedItemSize for either width, height or both, then altered if the 
-	rect width or height is superior to the allowed maximum value. 
-	If -itemSizeConstraintStyle returns ETConstraintStyleNone, the layout will 
-	respect the autoresizing mask returned by -[ETLayoutItem autoresizingMask],
-	otherwise it won't. */
+/** <override-dummy />
+Does nothing.
+ 
+Overrides this method to support a custom resizing policy bound to   
+-[ETLayoutContext itemScaleFactor].
+ 
+See also -[ETLayoutItemGroup itemScaleFactor] and 
+-[ETPositionalLayout resizeLayoutItems:toScaleFactor:]. */
 - (void) resizeLayoutItems: (NSArray *)items toScaleFactor: (float)factor
 {
-	FOREACH(items, item, ETLayoutItem *)
-	{
-		/* Scaling is always computed from item default frame rather than
-		   current item view size (or  item display area size) in order to
-		   avoid rounding error that would increase on each scale change 
-		   because of size width and height expressed as float. */
-		NSRect itemFrame = ETScaleRect([item defaultFrame], factor);
-		
-		/* Apply item size constraint if needed */
-		if ([self itemSizeConstraintStyle] != ETSizeConstraintStyleNone 
-		 && (itemFrame.size.width > [self constrainedItemSize].width
-		 || itemFrame.size.height > [self constrainedItemSize].height))
-		{ 
-			BOOL isVerticalResize = NO;
-			
-			if ([self itemSizeConstraintStyle] == ETSizeConstraintStyleVerticalHorizontal)
-			{
-				if (itemFrame.size.height > itemFrame.size.width)
-				{
-					isVerticalResize = YES;
-				}
-				else /* Horizontal resize */
-				{
-					isVerticalResize = NO;
-				}
-			}
-			else if ([self itemSizeConstraintStyle] == ETSizeConstraintStyleVertical
-			      && itemFrame.size.height > [self constrainedItemSize].height)
-			{
-				isVerticalResize = YES;	
-			}
-			else if ([self itemSizeConstraintStyle] == ETSizeConstraintStyleHorizontal
-			      && itemFrame.size.width > [self constrainedItemSize].width)
-			{
-				isVerticalResize = NO; /* Horizontal resize */
-			}
-			
-			if (isVerticalResize)
-			{
-				float maxItemHeight = [self constrainedItemSize].height;
-				float heightDifferenceRatio = maxItemHeight / itemFrame.size.height;
-				
-				itemFrame.size.height = maxItemHeight;
-				itemFrame.size.width *= heightDifferenceRatio;
-					
-			}
-			else /* Horizontal resize */
-			{
-				float maxItemWidth = [self constrainedItemSize].width;
-				float widthDifferenceRatio = maxItemWidth / itemFrame.size.width;
-				
-				itemFrame.size.width = maxItemWidth;
-				itemFrame.size.height *= widthDifferenceRatio;				
-			}
-		}
-		
-		/* Apply Scaling */
-		itemFrame.origin = [item origin];
-		[item setFrame: itemFrame];
-		ETDebugLog(@"Scale %@ to %@", NSStringFromRect([item defaultFrame]), 
-			NSStringFromRect(ETScaleRect([item defaultFrame], factor)));
-	}
+
 }
 
 - (BOOL) isLayoutExecutionItemDependent

@@ -12,7 +12,7 @@
 
 #import <Foundation/Foundation.h>
 #import <AppKit/AppKit.h>
-#import <EtoileUI/ETLayout.h>
+#import <EtoileUI/ETPositionalLayout.h>
 #import <EtoileUI/ETFragment.h>
 
 @class ETLayoutItem, ETLineFragment;
@@ -66,7 +66,7 @@ empty areas in the layout, you probably need to override
 -originOfFirstFragment:forContentHeight: too.<br />
 In the rare case where more control is required, you might want to reimplement 
 -renderLayoutItems:isNewContent:.  */
-@interface ETComputedLayout : ETLayout <ETComputableLayout, ETLayoutFragmentOwner>
+@interface ETComputedLayout : ETPositionalLayout <ETComputableLayout, ETLayoutFragmentOwner>
 {
 	@private
 	float _borderMargin;
