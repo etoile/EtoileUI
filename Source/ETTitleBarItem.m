@@ -30,6 +30,7 @@
 	
 	_titleBarView = AUTORELEASE([[ETTitleBarView alloc] init]);
 	[[self supervisorView] addSubview: _titleBarView];
+	[[self supervisorView] setAutoresizesSubviews: YES];
 	[_titleBarView setTarget: self];
 	[_titleBarView setAction: @selector(toggleExpanded:)];
 	

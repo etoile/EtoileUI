@@ -1095,15 +1095,13 @@ the default frame and frame to match this view frame. */
 		// NOTE: Frame and autoresizing are lost when newView is inserted into the 
 		// supervisor view.
 		NSRect newViewFrame = [newView frame];
-		unsigned int newViewAutoresizing = [newView autoresizingMask];
 
 		[self setUpSupervisorViewWithFrame: newViewFrame];
 		NSParameterAssert(nil != [self supervisorView]);
 
 		[self setContentAspect: ETContentAspectStretchToFill];
 		[self setDefaultFrame: newViewFrame];
-		// FIXME: Convert to ETAutoresizing by checking -isFlipped.
-		[self setAutoresizingMask: newViewAutoresizing];
+		[self setAutoresizingMask: [newView autoresizingMask]];
 	}
 	[self setView: newView autoresizingMask: [self autoresizingMaskForContentAspect: [self contentAspect]]];
 }

@@ -59,11 +59,8 @@
 		601455D50F9722B900268FD1 /* ETScrollableAreaItem.m in Sources */ = {isa = PBXBuildFile; fileRef = 6074CA4C0F814FD60081E438 /* ETScrollableAreaItem.m */; };
 		601455D60F9722B900268FD1 /* ETNibOwner.m in Sources */ = {isa = PBXBuildFile; fileRef = 60364A080E40A560003377E0 /* ETNibOwner.m */; };
 		601455D70F9722B900268FD1 /* ETDecoratorItem.m in Sources */ = {isa = PBXBuildFile; fileRef = 60330B5A0F7CEF3400A1E8C1 /* ETDecoratorItem.m */; };
-		6022404E1003DF14007D5D07 /* TestItemGeometry.m in Sources */ = {isa = PBXBuildFile; fileRef = 6022404D1003DF14007D5D07 /* TestItemGeometry.m */; };
-		602635E611AD413B007586E3 /* TestWidgetLayout.m in Sources */ = {isa = PBXBuildFile; fileRef = 602635E511AD413B007586E3 /* TestWidgetLayout.m */; };
 		60264AA50FB72D4D00D8163F /* Carbon.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 60264AA40FB72D4D00D8163F /* Carbon.framework */; };
 		60264AA60FB72D4D00D8163F /* Carbon.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 60264AA40FB72D4D00D8163F /* Carbon.framework */; };
-		602EA7A31712E17D00D499A9 /* TestResponder.m in Sources */ = {isa = PBXBuildFile; fileRef = 602EA7A11712CFAC00D499A9 /* TestResponder.m */; };
 		602F8B270CE1CA3E0042F6C0 /* ETCompatibility.h in Headers */ = {isa = PBXBuildFile; fileRef = 602F8B260CE1CA3E0042F6C0 /* ETCompatibility.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		602F8DE70CE1F9610042F6C0 /* ETInspecting.h in Headers */ = {isa = PBXBuildFile; fileRef = 602F8DE60CE1F9610042F6C0 /* ETInspecting.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		603112E80CF448D2001A699E /* ETPickboard.h in Headers */ = {isa = PBXBuildFile; fileRef = 603112E60CF448D2001A699E /* ETPickboard.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -82,7 +79,6 @@
 		6037760616BD846900B7EEB5 /* ETLayoutItem+UIBuilder.h in Headers */ = {isa = PBXBuildFile; fileRef = 6037760416BD846600B7EEB5 /* ETLayoutItem+UIBuilder.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		6037760816BD846900B7EEB5 /* ETLayoutItem+UIBuilder.m in Sources */ = {isa = PBXBuildFile; fileRef = 6037760516BD846700B7EEB5 /* ETLayoutItem+UIBuilder.m */; };
 		6037760916BD846900B7EEB5 /* ETLayoutItem+UIBuilder.m in Sources */ = {isa = PBXBuildFile; fileRef = 6037760516BD846700B7EEB5 /* ETLayoutItem+UIBuilder.m */; };
-		6037769316BE7BAB00B7EEB5 /* TestWindowLayout.m in Sources */ = {isa = PBXBuildFile; fileRef = 6037769216BE7BA900B7EEB5 /* TestWindowLayout.m */; };
 		60377698170ED730001C3BCF /* ETTokenLayout.h in Headers */ = {isa = PBXBuildFile; fileRef = 60377696170ED730001C3BCF /* ETTokenLayout.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		6037769A170ED730001C3BCF /* ETTokenLayout.m in Sources */ = {isa = PBXBuildFile; fileRef = 60377697170ED730001C3BCF /* ETTokenLayout.m */; };
 		6037769B170ED730001C3BCF /* ETTokenLayout.m in Sources */ = {isa = PBXBuildFile; fileRef = 60377697170ED730001C3BCF /* ETTokenLayout.m */; };
@@ -127,11 +123,9 @@
 		605F348217158F6000E9355A /* ETResponder.h in Headers */ = {isa = PBXBuildFile; fileRef = 605F348017158F6000E9355A /* ETResponder.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		605F348317158F6000E9355A /* ETResponder.m in Sources */ = {isa = PBXBuildFile; fileRef = 605F348117158F6000E9355A /* ETResponder.m */; };
 		605F348417158F6D00E9355A /* ETResponder.m in Sources */ = {isa = PBXBuildFile; fileRef = 605F348117158F6000E9355A /* ETResponder.m */; };
-		605F354B17172DF600E9355A /* TestFormLayout.m in Sources */ = {isa = PBXBuildFile; fileRef = 605F354A17172DF600E9355A /* TestFormLayout.m */; };
 		605F354F1717562500E9355A /* ETFormLayout.h in Headers */ = {isa = PBXBuildFile; fileRef = 605F354D1717562300E9355A /* ETFormLayout.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		605F35501717562500E9355A /* ETFormLayout.m in Sources */ = {isa = PBXBuildFile; fileRef = 605F354E1717562400E9355A /* ETFormLayout.m */; };
 		605F35511717562A00E9355A /* ETFormLayout.m in Sources */ = {isa = PBXBuildFile; fileRef = 605F354E1717562400E9355A /* ETFormLayout.m */; };
-		6067EB5A1046B4E600C39086 /* TestItemCopy.m in Sources */ = {isa = PBXBuildFile; fileRef = 6067EB591046B4E600C39086 /* TestItemCopy.m */; };
 		606A98D3113F052A00CC89B9 /* ETModelDescriptionRenderer.h in Headers */ = {isa = PBXBuildFile; fileRef = 600097910FAB47A600622E5D /* ETModelDescriptionRenderer.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		606A98FF113F072A00CC89B9 /* ETModelDescriptionRenderer.m in Sources */ = {isa = PBXBuildFile; fileRef = 6000978E0FAB479500622E5D /* ETModelDescriptionRenderer.m */; };
 		606B98CF0C0AF898000AAA85 /* PhotoViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 606B97490C0AF283000AAA85 /* PhotoViewController.m */; };
@@ -165,6 +159,27 @@
 		607DF9A6173279CD00C8CB30 /* ETPositionalLayout.h in Headers */ = {isa = PBXBuildFile; fileRef = 607DF9A4173279CD00C8CB30 /* ETPositionalLayout.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		607DF9A7173279CD00C8CB30 /* ETPositionalLayout.m in Sources */ = {isa = PBXBuildFile; fileRef = 607DF9A5173279CD00C8CB30 /* ETPositionalLayout.m */; };
 		607DF9A81732821600C8CB30 /* ETPositionalLayout.m in Sources */ = {isa = PBXBuildFile; fileRef = 607DF9A5173279CD00C8CB30 /* ETPositionalLayout.m */; };
+		607DF9C81733D04600C8CB30 /* TestAutoresizing.m in Sources */ = {isa = PBXBuildFile; fileRef = 607DF9A91732C33200C8CB30 /* TestAutoresizing.m */; };
+		607DF9C91733D04600C8CB30 /* TestCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 60D88883115E651000D7A8AA /* TestCell.m */; };
+		607DF9CA1733D04600C8CB30 /* TestCompositeLayout.m in Sources */ = {isa = PBXBuildFile; fileRef = 60C76C6710136D0A0073C381 /* TestCompositeLayout.m */; };
+		607DF9CB1733D04600C8CB30 /* TestController.m in Sources */ = {isa = PBXBuildFile; fileRef = 609F5B5916CA9E8800683BD9 /* TestController.m */; };
+		607DF9CC1733D04600C8CB30 /* TestFormLayout.m in Sources */ = {isa = PBXBuildFile; fileRef = 605F354A17172DF600E9355A /* TestFormLayout.m */; };
+		607DF9CD1733D04600C8CB30 /* TestItemCopy.m in Sources */ = {isa = PBXBuildFile; fileRef = 6067EB591046B4E600C39086 /* TestItemCopy.m */; };
+		607DF9CE1733D04600C8CB30 /* TestItemGeometry.m in Sources */ = {isa = PBXBuildFile; fileRef = 6022404D1003DF14007D5D07 /* TestItemGeometry.m */; };
+		607DF9CF1733D04600C8CB30 /* TestItemProvider.m in Sources */ = {isa = PBXBuildFile; fileRef = 609F5B6716CD412900683BD9 /* TestItemProvider.m */; };
+		607DF9D01733D04600C8CB30 /* TestLayout.m in Sources */ = {isa = PBXBuildFile; fileRef = 609F5B5A16CA9E8800683BD9 /* TestLayout.m */; };
+		607DF9D11733D04600C8CB30 /* TestLayoutItem.m in Sources */ = {isa = PBXBuildFile; fileRef = 609F5B5B16CA9E8800683BD9 /* TestLayoutItem.m */; };
+		607DF9D21733D04600C8CB30 /* TestLayoutItemBuilder.m in Sources */ = {isa = PBXBuildFile; fileRef = 609F5B5C16CA9E8800683BD9 /* TestLayoutItemBuilder.m */; };
+		607DF9D31733D04600C8CB30 /* TestPersistency.m in Sources */ = {isa = PBXBuildFile; fileRef = 60FB0BF913C509A700C2AB94 /* TestPersistency.m */; };
+		607DF9D41733D04600C8CB30 /* TestPickboard.m in Sources */ = {isa = PBXBuildFile; fileRef = 609F5B5D16CA9E8800683BD9 /* TestPickboard.m */; };
+		607DF9D51733D04600C8CB30 /* TestResponder.m in Sources */ = {isa = PBXBuildFile; fileRef = 602EA7A11712CFAC00D499A9 /* TestResponder.m */; };
+		607DF9D61733D04600C8CB30 /* TestStyle.m in Sources */ = {isa = PBXBuildFile; fileRef = 60E7BD20107E7B3F00E7C0F2 /* TestStyle.m */; };
+		607DF9D71733D04600C8CB30 /* TestSupervisorView.m in Sources */ = {isa = PBXBuildFile; fileRef = 609F5B5E16CA9E8800683BD9 /* TestSupervisorView.m */; };
+		607DF9D81733D04600C8CB30 /* TestTool.m in Sources */ = {isa = PBXBuildFile; fileRef = 609F5B5F16CA9E8800683BD9 /* TestTool.m */; };
+		607DF9D91733D04600C8CB30 /* TestView.m in Sources */ = {isa = PBXBuildFile; fileRef = 60A7927D171B803600348EC7 /* TestView.m */; };
+		607DF9DA1733D04600C8CB30 /* TestWidgetLayout.m in Sources */ = {isa = PBXBuildFile; fileRef = 602635E511AD413B007586E3 /* TestWidgetLayout.m */; };
+		607DF9DB1733D04600C8CB30 /* TestWindowLayout.m in Sources */ = {isa = PBXBuildFile; fileRef = 6037769216BE7BA900B7EEB5 /* TestWindowLayout.m */; };
+		607DF9DC1733D04600C8CB30 /* TestWindowItem.m in Sources */ = {isa = PBXBuildFile; fileRef = 609C01E2170C34F300D01AAB /* TestWindowItem.m */; };
 		607F5F020F005A8E00A8CD0C /* ETGeometry.h in Headers */ = {isa = PBXBuildFile; fileRef = 607F5F000F005A8E00A8CD0C /* ETGeometry.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		607F5F070F005C5100A8CD0C /* ETGeometry.m in Sources */ = {isa = PBXBuildFile; fileRef = 607F5F060F005C5100A8CD0C /* ETGeometry.m */; };
 		607F5F080F005C5100A8CD0C /* ETGeometry.m in Sources */ = {isa = PBXBuildFile; fileRef = 607F5F060F005C5100A8CD0C /* ETGeometry.m */; };
@@ -236,15 +251,6 @@
 		60909D660CB304D9009CAD27 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 29B97316FDCFA39411CA2CEA /* main.m */; };
 		60928D5112EDE9EA0091A3D1 /* MarkupEditorItemFactory.m in Sources */ = {isa = PBXBuildFile; fileRef = 60928D4D12EDE9EA0091A3D1 /* MarkupEditorItemFactory.m */; };
 		60928D5212EDE9EA0091A3D1 /* AppController.m in Sources */ = {isa = PBXBuildFile; fileRef = 60928D4F12EDE9EA0091A3D1 /* AppController.m */; };
-		609C01E3170C34F500D01AAB /* TestWindowItem.m in Sources */ = {isa = PBXBuildFile; fileRef = 609C01E2170C34F300D01AAB /* TestWindowItem.m */; };
-		609F5B6016CA9E8900683BD9 /* TestController.m in Sources */ = {isa = PBXBuildFile; fileRef = 609F5B5916CA9E8800683BD9 /* TestController.m */; };
-		609F5B6116CA9E8900683BD9 /* TestLayout.m in Sources */ = {isa = PBXBuildFile; fileRef = 609F5B5A16CA9E8800683BD9 /* TestLayout.m */; };
-		609F5B6216CA9E8900683BD9 /* TestLayoutItem.m in Sources */ = {isa = PBXBuildFile; fileRef = 609F5B5B16CA9E8800683BD9 /* TestLayoutItem.m */; };
-		609F5B6316CA9E8900683BD9 /* TestLayoutItemBuilder.m in Sources */ = {isa = PBXBuildFile; fileRef = 609F5B5C16CA9E8800683BD9 /* TestLayoutItemBuilder.m */; };
-		609F5B6416CA9E8900683BD9 /* TestPickboard.m in Sources */ = {isa = PBXBuildFile; fileRef = 609F5B5D16CA9E8800683BD9 /* TestPickboard.m */; };
-		609F5B6516CA9E8900683BD9 /* TestSupervisorView.m in Sources */ = {isa = PBXBuildFile; fileRef = 609F5B5E16CA9E8800683BD9 /* TestSupervisorView.m */; };
-		609F5B6616CA9E8900683BD9 /* TestTool.m in Sources */ = {isa = PBXBuildFile; fileRef = 609F5B5F16CA9E8800683BD9 /* TestTool.m */; };
-		609F5B6816CD412A00683BD9 /* TestItemProvider.m in Sources */ = {isa = PBXBuildFile; fileRef = 609F5B6716CD412900683BD9 /* TestItemProvider.m */; };
 		609F5B6A16CDB8FA00683BD9 /* AppKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 609F5B6916CDB8F300683BD9 /* AppKit.framework */; };
 		609F5B6C16CDB90800683BD9 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 609F5B6B16CDB90400683BD9 /* Foundation.framework */; };
 		609F5B9016CDBE6500683BD9 /* TestEtoileUI-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 609F5B8F16CDBE6400683BD9 /* TestEtoileUI-Info.plist */; };
@@ -261,7 +267,6 @@
 		60A6584813B0DD2A000A6EB6 /* ETLayoutItem+CoreObject.m in Sources */ = {isa = PBXBuildFile; fileRef = 60A6584413B0DD2A000A6EB6 /* ETLayoutItem+CoreObject.m */; };
 		60A6586113B0EFEF000A6EB6 /* ETStyle+ModelDescription.m in Sources */ = {isa = PBXBuildFile; fileRef = 60A6586013B0EFEF000A6EB6 /* ETStyle+ModelDescription.m */; };
 		60A6586213B0EFEF000A6EB6 /* ETStyle+ModelDescription.m in Sources */ = {isa = PBXBuildFile; fileRef = 60A6586013B0EFEF000A6EB6 /* ETStyle+ModelDescription.m */; };
-		60A7927E171B803600348EC7 /* TestView.m in Sources */ = {isa = PBXBuildFile; fileRef = 60A7927D171B803600348EC7 /* TestView.m */; };
 		60ADAB921410EC1A003EACF1 /* arrow-270.png in Resources */ = {isa = PBXBuildFile; fileRef = 60ADAB511410EC1A003EACF1 /* arrow-270.png */; };
 		60ADAB931410EC1A003EACF1 /* balloon-left.png in Resources */ = {isa = PBXBuildFile; fileRef = 60ADAB521410EC1A003EACF1 /* balloon-left.png */; };
 		60ADAB941410EC1A003EACF1 /* balloon-white-left.png in Resources */ = {isa = PBXBuildFile; fileRef = 60ADAB531410EC1A003EACF1 /* balloon-white-left.png */; };
@@ -423,7 +428,6 @@
 		60C76C571013681B0073C381 /* ETCompositeLayout.h in Headers */ = {isa = PBXBuildFile; fileRef = 60C76C561013681B0073C381 /* ETCompositeLayout.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		60C76C591013682A0073C381 /* ETCompositeLayout.m in Sources */ = {isa = PBXBuildFile; fileRef = 60C76C581013682A0073C381 /* ETCompositeLayout.m */; };
 		60C76C5A1013682A0073C381 /* ETCompositeLayout.m in Sources */ = {isa = PBXBuildFile; fileRef = 60C76C581013682A0073C381 /* ETCompositeLayout.m */; };
-		60C76C6810136D0A0073C381 /* TestCompositeLayout.m in Sources */ = {isa = PBXBuildFile; fileRef = 60C76C6710136D0A0073C381 /* TestCompositeLayout.m */; };
 		60C94F600F8BB874007912D9 /* ETTool.h in Headers */ = {isa = PBXBuildFile; fileRef = 60C94F5E0F8BB874007912D9 /* ETTool.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		60C94F620F8BB884007912D9 /* ETTool.m in Sources */ = {isa = PBXBuildFile; fileRef = 60C94F610F8BB884007912D9 /* ETTool.m */; };
 		60C94F780F8BB9B4007912D9 /* ETTemplateItemLayout.h in Headers */ = {isa = PBXBuildFile; fileRef = 60C94F760F8BB9B3007912D9 /* ETTemplateItemLayout.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -449,14 +453,12 @@
 		60D8881E115E407D00D7A8AA /* NSCell+EtoileUI.m in Sources */ = {isa = PBXBuildFile; fileRef = 60D8881D115E407D00D7A8AA /* NSCell+EtoileUI.m */; };
 		60D8881F115E407D00D7A8AA /* NSCell+EtoileUI.m in Sources */ = {isa = PBXBuildFile; fileRef = 60D8881D115E407D00D7A8AA /* NSCell+EtoileUI.m */; };
 		60D88821115E408D00D7A8AA /* NSCell+EtoileUI.h in Headers */ = {isa = PBXBuildFile; fileRef = 60D88820115E408D00D7A8AA /* NSCell+EtoileUI.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		60D88884115E651000D7A8AA /* TestCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 60D88883115E651000D7A8AA /* TestCell.m */; };
 		60D9368A12837B9C007EFDCE /* ETDocumentController.m in Sources */ = {isa = PBXBuildFile; fileRef = 6627F70D127E75B300E06946 /* ETDocumentController.m */; };
 		60D9368B12837B9C007EFDCE /* ETItemTemplate.m in Sources */ = {isa = PBXBuildFile; fileRef = 6627F70C127E75B300E06946 /* ETItemTemplate.m */; };
 		60DAC87D100774F4007F143A /* ETLayoutXHTMLRenderer.h in Headers */ = {isa = PBXBuildFile; fileRef = 60DAC87B100774F4007F143A /* ETLayoutXHTMLRenderer.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		60DAC87E100774F4007F143A /* ETLayoutXHTMLRenderer.m in Sources */ = {isa = PBXBuildFile; fileRef = 60DAC87C100774F4007F143A /* ETLayoutXHTMLRenderer.m */; };
 		60DEFD2A0D4E8482008B1038 /* ETTextEditorLayout.h in Headers */ = {isa = PBXBuildFile; fileRef = 60DEFD280D4E8482008B1038 /* ETTextEditorLayout.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		60DEFD2B0D4E8482008B1038 /* ETTextEditorLayout.m in Sources */ = {isa = PBXBuildFile; fileRef = 60DEFD290D4E8482008B1038 /* ETTextEditorLayout.m */; };
-		60E7BD21107E7B3F00E7C0F2 /* TestStyle.m in Sources */ = {isa = PBXBuildFile; fileRef = 60E7BD20107E7B3F00E7C0F2 /* TestStyle.m */; };
 		60E7D5D90F99F951007AEAA6 /* ETSelectTool.h in Headers */ = {isa = PBXBuildFile; fileRef = 60E7D5D80F99F951007AEAA6 /* ETSelectTool.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		60E7D5DB0F99F961007AEAA6 /* ETSelectTool.m in Sources */ = {isa = PBXBuildFile; fileRef = 60E7D5DA0F99F961007AEAA6 /* ETSelectTool.m */; };
 		60E7D5DC0F99F961007AEAA6 /* ETSelectTool.m in Sources */ = {isa = PBXBuildFile; fileRef = 60E7D5DA0F99F961007AEAA6 /* ETSelectTool.m */; };
@@ -512,7 +514,6 @@
 		60F8C9DB0F8DF3200069FA6C /* ETInstruments.m in Sources */ = {isa = PBXBuildFile; fileRef = 607A43E80F0AEA8900753B56 /* ETInstruments.m */; };
 		60FB0AE513C3345A00C2AB94 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1058C7A1FEA54F0111CA2CBB /* Cocoa.framework */; };
 		60FB0AE813C3347200C2AB94 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1058C7A1FEA54F0111CA2CBB /* Cocoa.framework */; };
-		60FB0BFA13C509A700C2AB94 /* TestPersistency.m in Sources */ = {isa = PBXBuildFile; fileRef = 60FB0BF913C509A700C2AB94 /* TestPersistency.m */; };
 		60FBB13010A0A92A00BE7E21 /* ETBasicItemStyle.h in Headers */ = {isa = PBXBuildFile; fileRef = 60FBB12F10A0A92A00BE7E21 /* ETBasicItemStyle.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		60FBB13210A0A94600BE7E21 /* ETBasicItemStyle.m in Sources */ = {isa = PBXBuildFile; fileRef = 60FBB13110A0A94600BE7E21 /* ETBasicItemStyle.m */; };
 		60FBB13310A0A94600BE7E21 /* ETBasicItemStyle.m in Sources */ = {isa = PBXBuildFile; fileRef = 60FBB13110A0A94600BE7E21 /* ETBasicItemStyle.m */; };
@@ -893,6 +894,7 @@
 		607A43E80F0AEA8900753B56 /* ETInstruments.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ETInstruments.m; path = Source/ETInstruments.m; sourceTree = "<group>"; };
 		607DF9A4173279CD00C8CB30 /* ETPositionalLayout.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ETPositionalLayout.h; path = Layouts/ETPositionalLayout.h; sourceTree = "<group>"; };
 		607DF9A5173279CD00C8CB30 /* ETPositionalLayout.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ETPositionalLayout.m; path = Layouts/ETPositionalLayout.m; sourceTree = "<group>"; };
+		607DF9A91732C33200C8CB30 /* TestAutoresizing.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = TestAutoresizing.m; path = Tests/TestAutoresizing.m; sourceTree = "<group>"; };
 		607F5F000F005A8E00A8CD0C /* ETGeometry.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ETGeometry.h; path = Headers/ETGeometry.h; sourceTree = "<group>"; };
 		607F5F060F005C5100A8CD0C /* ETGeometry.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ETGeometry.m; path = Source/ETGeometry.m; sourceTree = "<group>"; };
 		607FBAEC0FE0050100960039 /* ETStyleGroup.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ETStyleGroup.h; path = Headers/ETStyleGroup.h; sourceTree = "<group>"; };
@@ -1376,6 +1378,7 @@
 			isa = PBXGroup;
 			children = (
 				605F354C1717305500E9355A /* TestCommon.h */,
+				607DF9A91732C33200C8CB30 /* TestAutoresizing.m */,
 				60D88883115E651000D7A8AA /* TestCell.m */,
 				60C76C6710136D0A0073C381 /* TestCompositeLayout.m */,
 				609F5B5916CA9E8800683BD9 /* TestController.m */,
@@ -2787,22 +2790,15 @@
 				60B27ED60FF8DB060012BB42 /* ETPaintBucketTool.m in Sources */,
 				6053E1320FFA5CC700A5EBEA /* ETPickDropActionHandler.m in Sources */,
 				6053E1B40FFA6F5800A5EBEA /* ETPaintActionHandler.m in Sources */,
-				6022404E1003DF14007D5D07 /* TestItemGeometry.m in Sources */,
 				6051F58F100CC264005ED827 /* ETFixedLayout.m in Sources */,
 				60C76C5A1013682A0073C381 /* ETCompositeLayout.m in Sources */,
-				60C76C6810136D0A0073C381 /* TestCompositeLayout.m in Sources */,
 				608A5DC310231D500086F4B3 /* ETLayoutItem+KVO.m in Sources */,
-				6067EB5A1046B4E600C39086 /* TestItemCopy.m in Sources */,
-				60E7BD21107E7B3F00E7C0F2 /* TestStyle.m in Sources */,
 				60FBB13310A0A94600BE7E21 /* ETBasicItemStyle.m in Sources */,
 				60D8881E115E407D00D7A8AA /* NSCell+EtoileUI.m in Sources */,
-				60D88884115E651000D7A8AA /* TestCell.m in Sources */,
-				602635E611AD413B007586E3 /* TestWidgetLayout.m in Sources */,
 				60C06D8C12F8534900E38E99 /* ETLayoutExecutor.m in Sources */,
 				60A6583B13B0D71D000A6EB6 /* ETUIItem+ModelDescription.m in Sources */,
 				60A6584613B0DD2A000A6EB6 /* ETLayoutItem+CoreObject.m in Sources */,
 				60A6586113B0EFEF000A6EB6 /* ETStyle+ModelDescription.m in Sources */,
-				60FB0BFA13C509A700C2AB94 /* TestPersistency.m in Sources */,
 				601296A913C7482500980F16 /* ETController+ModelDescription.m in Sources */,
 				601296AA13C7482500980F16 /* ETLayout+ModelDescription.m in Sources */,
 				601296AE13C7491100980F16 /* ETLayoutItem+ModelDescription.m in Sources */,
@@ -2816,26 +2812,34 @@
 				60B6E2FF13E4635D0087879C /* ETAspectRepository.m in Sources */,
 				60D46FD514C5CDE900129CD4 /* CoreObjectUI.m in Sources */,
 				6037760916BD846900B7EEB5 /* ETLayoutItem+UIBuilder.m in Sources */,
-				6037769316BE7BAB00B7EEB5 /* TestWindowLayout.m in Sources */,
-				609F5B6016CA9E8900683BD9 /* TestController.m in Sources */,
-				609F5B6116CA9E8900683BD9 /* TestLayout.m in Sources */,
-				609F5B6216CA9E8900683BD9 /* TestLayoutItem.m in Sources */,
-				609F5B6316CA9E8900683BD9 /* TestLayoutItemBuilder.m in Sources */,
-				609F5B6416CA9E8900683BD9 /* TestPickboard.m in Sources */,
-				609F5B6516CA9E8900683BD9 /* TestSupervisorView.m in Sources */,
-				609F5B6616CA9E8900683BD9 /* TestTool.m in Sources */,
-				609F5B6816CD412A00683BD9 /* TestItemProvider.m in Sources */,
-				609C01E3170C34F500D01AAB /* TestWindowItem.m in Sources */,
 				6037769B170ED730001C3BCF /* ETTokenLayout.m in Sources */,
-				602EA7A31712E17D00D499A9 /* TestResponder.m in Sources */,
 				605F348417158F6D00E9355A /* ETResponder.m in Sources */,
-				605F354B17172DF600E9355A /* TestFormLayout.m in Sources */,
 				605F35511717562A00E9355A /* ETFormLayout.m in Sources */,
-				60A7927E171B803600348EC7 /* TestView.m in Sources */,
 				6077D2071729EC3F009CE93C /* ETTitleBarItem.m in Sources */,
 				6077D2161729ECCF009CE93C /* ETTitleBarView.m in Sources */,
 				60D25606172ECA59004062CF /* ETUIBuilderItemFactory.m in Sources */,
 				607DF9A81732821600C8CB30 /* ETPositionalLayout.m in Sources */,
+				607DF9C81733D04600C8CB30 /* TestAutoresizing.m in Sources */,
+				607DF9C91733D04600C8CB30 /* TestCell.m in Sources */,
+				607DF9CA1733D04600C8CB30 /* TestCompositeLayout.m in Sources */,
+				607DF9CB1733D04600C8CB30 /* TestController.m in Sources */,
+				607DF9CC1733D04600C8CB30 /* TestFormLayout.m in Sources */,
+				607DF9CD1733D04600C8CB30 /* TestItemCopy.m in Sources */,
+				607DF9CE1733D04600C8CB30 /* TestItemGeometry.m in Sources */,
+				607DF9CF1733D04600C8CB30 /* TestItemProvider.m in Sources */,
+				607DF9D01733D04600C8CB30 /* TestLayout.m in Sources */,
+				607DF9D11733D04600C8CB30 /* TestLayoutItem.m in Sources */,
+				607DF9D21733D04600C8CB30 /* TestLayoutItemBuilder.m in Sources */,
+				607DF9D31733D04600C8CB30 /* TestPersistency.m in Sources */,
+				607DF9D41733D04600C8CB30 /* TestPickboard.m in Sources */,
+				607DF9D51733D04600C8CB30 /* TestResponder.m in Sources */,
+				607DF9D61733D04600C8CB30 /* TestStyle.m in Sources */,
+				607DF9D71733D04600C8CB30 /* TestSupervisorView.m in Sources */,
+				607DF9D81733D04600C8CB30 /* TestTool.m in Sources */,
+				607DF9D91733D04600C8CB30 /* TestView.m in Sources */,
+				607DF9DA1733D04600C8CB30 /* TestWidgetLayout.m in Sources */,
+				607DF9DB1733D04600C8CB30 /* TestWindowLayout.m in Sources */,
+				607DF9DC1733D04600C8CB30 /* TestWindowItem.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

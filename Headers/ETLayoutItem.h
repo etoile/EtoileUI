@@ -51,13 +51,13 @@ to be resized. */
 	ETAutoresizingFlexibleRightMargin = NSViewMaxXMargin,
 /** Keeps both the left margin and the width fixed but allows the right margin 
 to be resized. */
-	ETAutoresizingFlexibleTopMargin = NSViewMinYMargin,
+	ETAutoresizingFlexibleTopMargin = NSViewMaxYMargin,
 /** Keeps both the bottom margin and the height fixed but allows the top margin 
 to be resized. */
 	ETAutoresizingFlexibleHeight = NSViewHeightSizable,
 /** Keeps both the bottom margin and the top margin fixed but allows the height 
 to be resized. */
-	ETAutoresizingFlexibleBottomMargin = NSViewMaxYMargin
+	ETAutoresizingFlexibleBottomMargin = NSViewMinYMargin
 /** Keeps both the top margin and the height fixed but allows the bottom margin 
 to be resized. */
 };

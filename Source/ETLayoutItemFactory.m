@@ -314,6 +314,8 @@ shared style returned by -currentBarElementStyle.  */
 {
 	ETLayoutItemGroup *item = [self itemGroup];
 	[item setFrame: aRect];
+	// NOTE: Could be better to tweak ETLayoutItemGroup designated initializer.
+	[[item layout] resetLayoutSize];
 	return item;
 }
 

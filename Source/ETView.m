@@ -65,7 +65,7 @@ See also -[ETUIItem supervisorView]. */
 
 	/* Will call back -setItemWithoutInsertingView: */
 	[anItem setSupervisorView: self sync: ETSyncSupervisorViewFromItem];
-	[self setAutoresizesSubviews: YES];
+	[self setAutoresizesSubviews: NO];
 
 	return self;
 }
@@ -374,9 +374,6 @@ implemented behavior. */
 			view, selSubstring);
 	}
 
-	/* Ensure the resizing of all subviews is handled automatically */
-	[self setAutoresizesSubviews: YES];
-
 	if (temporary) /* Temporary view setter */
 	{
 		NSParameterAssert(_wrappedView == nil || [_wrappedView superview] == self);
@@ -410,6 +407,9 @@ implemented behavior. */
 
 		}
 	}
+	
+	/* Ensure the resizing of all subviews is handled automatically if needed */
+	[self setAutoresizesSubviews: (view != nil)];
 }
 
 /** Returns the current content view which is either the wrapped view or 
@@ -451,6 +451,16 @@ NSAssert1(size.width >= 0 && size.height >= 0, @"For a supervisor view, the " \
 #define CHECKSIZE(size)
 #endif
 
+- (void) updateLayoutForLiveResize
+{
+	BOOL isLiveWindowResize = ([self inLiveResize] && [[self window] contentView] == self);
+	
+	if (isLiveWindowResize)
+	{
+		[(ETLayoutItem *)item updateLayoutRecursively: YES];
+	}
+}
+
 - (void) setFrame: (NSRect)frame
 {
 	CHECKSIZE(frame.size)
@@ -467,6 +477,7 @@ NSAssert1(size.width >= 0 && size.height >= 0, @"For a supervisor view, the " \
 	{
 		[(ETLayoutItem *)item setContentSize: frame.size];
 	}
+	[self updateLayoutForLiveResize];
 }
 
 /* GNUstep doesn't rely on -setFrameSize: in -setFrame: unlike Cocoa, so we 
@@ -488,6 +499,7 @@ NSAssert1(size.width >= 0 && size.height >= 0, @"For a supervisor view, the " \
 	{
 		[(ETLayoutItem *)item setContentSize: size];
 	}
+	[self updateLayoutForLiveResize];
 }
 
 - (void) setFrameOrigin: (NSPoint)origin

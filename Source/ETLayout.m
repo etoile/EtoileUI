@@ -458,6 +458,9 @@ You must call the superclass implementation if you override this method. */
 - (void) setUp
 {
 	NSParameterAssert(_layoutContext != nil);
+	/* Reset the layout size to ensure -resizeItems:forNewLayoutSize:oldSize: 
+	   receives a valid old size (neither zero or computed for a previous layout context). */
+	[self resetLayoutSize];
 	[self setUpLayoutView];
 	[self mapLayerItemIntoLayoutContext];
 }
@@ -784,14 +787,12 @@ it (this is subject to change though). */
 	ETDebugLog(@"Render layout items: %@", items);
 
 	float scale = [[self layoutContext] itemScaleFactor];
-	//NSSize oldLayoutSize = [self layoutSize];
+	NSSize oldLayoutSize = [self layoutSize];
 
 	[self resetLayoutSize];
-	// TODO: Turn on
-	//[self resizeItems: items
-	// forNewLayoutSize: [self layoutSize]
-	//          oldSize: oldLayoutSize];
-
+	[self resizeItems: items
+	 forNewLayoutSize: [self layoutSize]
+	          oldSize: (isNewContent ? [self layoutSize] : oldLayoutSize)];
 	// TODO: This is a welcome optimization that avoids unecessary computations, 
 	// however this shouldn't be mandatory. Currently this is used as a 
 	// workaround to handle the fact that the default frame isn't updated if 
