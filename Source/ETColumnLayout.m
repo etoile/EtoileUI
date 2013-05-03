@@ -109,6 +109,9 @@ static const float undeterminedWidth = 10;
     forNewLayoutSize: (NSSize)newLayoutSize
              oldSize: (NSSize)oldLayoutSize
 {
+	if (NSEqualSizes(newLayoutSize, oldLayoutSize))
+		return;
+
 	NSMutableArray *flexibleItems = [NSMutableArray arrayWithCapacity: [items count]];
 	CGFloat oldHeightOfAllFlexibleItems = 0;
 

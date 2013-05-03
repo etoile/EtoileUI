@@ -64,6 +64,9 @@ geometry and not computed by the receiver. */
     forNewLayoutSize: (NSSize)newLayoutSize
              oldSize: (NSSize)oldLayoutSize
 {
+	if (NSEqualSizes(newLayoutSize, oldLayoutSize))
+		return;
+
 	for (ETLayoutItem *item in items)
 	{
 		[self resizeItem: item forNewLayoutSize: newLayoutSize oldSize: oldLayoutSize];
@@ -85,7 +88,7 @@ geometry and not computed by the receiver. */
 	             (autoresizing & ETAutoresizingFlexibleLeftMargin),
 	             (autoresizing & ETAutoresizingFlexibleWidth),
 	             (autoresizing & ETAutoresizingFlexibleRightMargin),
-				 oldLayoutSize.width, newLayoutSize.width);
+				 newLayoutSize.width, oldLayoutSize.width);
 		
 	BOOL flipped = ([[self layoutContext] isFlipped]);
 	BOOL minMarginAutoresizing =

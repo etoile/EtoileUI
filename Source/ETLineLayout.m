@@ -121,6 +121,9 @@ given layout area size. */
     forNewLayoutSize: (NSSize)newLayoutSize
              oldSize: (NSSize)oldLayoutSize
 {
+	if (NSEqualSizes(newLayoutSize, oldLayoutSize));
+		return;
+
 	NSMutableArray *flexibleItems = [NSMutableArray arrayWithCapacity: [items count]];
 	CGFloat oldWidthOfAllFlexibleItems = 0;
 
