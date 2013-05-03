@@ -92,8 +92,8 @@ NSRect ETUnionRectWithObjectsAndSelector(NSArray *itemArray, SEL rectSelector)
 void ETAutoresize(CGFloat *position,
 				  CGFloat *size,
                   BOOL minMarginFlexible,
-                  BOOL maxMarginFlexible,
                   BOOL sizeFlexible,
+                  BOOL maxMarginFlexible,
                   CGFloat newContainerSize,
                   CGFloat oldContainerSize)
 {
@@ -119,7 +119,7 @@ void ETAutoresize(CGFloat *position,
 
 	if (isUpsizing)
     {
-		assert(flexibleSizeAmount >= containerResizeAmount);
+		//assert(flexibleSizeAmount >= containerResizeAmount);
 		CGFloat resizeFactor = (containerResizeAmount / flexibleSizeAmount);
 		
 		if (sizeFlexible)
@@ -139,7 +139,7 @@ void ETAutoresize(CGFloat *position,
 		if (nbOfFlexibleRegions > 0)
 		{
 			CGFloat resizeAmount = (containerResizeAmount / nbOfFlexibleRegions);
-			assert(resizeAmount <= 0.0);
+			//assert(resizeAmount <= 0.0);
 			
 			if (sizeFlexible)
 			{

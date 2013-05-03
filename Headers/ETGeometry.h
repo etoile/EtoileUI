@@ -160,7 +160,7 @@ extern NSRect ETUnionRectWithObjectsAndSelector(NSArray *itemArray, SEL rectSele
 extern void ETAutoresize(CGFloat *position,
 				         CGFloat *size,
                          BOOL minMarginFlexible,
-                         BOOL maxMarginFlexible,
                          BOOL sizeFlexible,
+                         BOOL maxMarginFlexible,
                          CGFloat newContainerSize,
                          CGFloat oldContainerSize);
