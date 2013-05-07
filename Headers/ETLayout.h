@@ -133,6 +133,7 @@ Warning: This protocol is very much subject to change. */
 	BOOL _isRendering;
 	/* Layout and Content Size in Scrollview */
 	NSSize _layoutSize;
+	NSSize _proposedLayoutSize;
 	BOOL _usesCustomLayoutSize;
 	BOOL _isContentSizeLayout;
 	@protected

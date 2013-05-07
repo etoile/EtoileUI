@@ -85,14 +85,25 @@ static const float undeterminedHeight = 10;
 	}
 }
 
+- (void) prepareFlexibleItem: (ETLayoutItem *)anItem
+{
+	[anItem setWidth: 0];
+}
+
+/** Returns YES if the item autoresizing mask includes ETAutoresizingFlexibleWidth. */ 
+- (BOOL) isFlexibleItem: (ETLayoutItem *)anItem
+{
+	return [anItem autoresizingMask] & ETAutoresizingFlexibleWidth;
+}
+
 /** Returns a suggested size to adjust the flexible space separators for the 
 given layout area size. */ 
-- (NSSize) sizeOfFlexibleSeparatorItem: (ETLayoutItem *)separator 
-                  forCurrentLayoutSize: (NSSize)aLayoutSize 
-            numberOfFlexibleSeparators: (NSUInteger)nbOfFlexibleSeparators
-                         inMaxAreaSize: (NSSize)maxSize 
+- (NSSize) sizeOfFlexibleItem: (ETLayoutItem *)anItem
+         forCurrentLayoutSize: (NSSize)aLayoutSize 
+        numberOfFlexibleItems: (NSUInteger)nbOfFlexibleItems
+                inMaxAreaSize: (NSSize)maxSize 
 {
-	return NSMakeSize((maxSize.width - aLayoutSize.width) / nbOfFlexibleSeparators, aLayoutSize.height);
+	return NSMakeSize((maxSize.width - aLayoutSize.width) / nbOfFlexibleItems, [anItem height]);
 }
 
 - (void) adjustSeparatorItem: (ETLayoutItem *)separator forLayoutSize: (NSSize)newLayoutSize
@@ -124,19 +135,9 @@ given layout area size. */
 	if (NSEqualSizes(newLayoutSize, oldLayoutSize))
 		return;
 
-	NSMutableArray *flexibleItems = [NSMutableArray arrayWithCapacity: [items count]];
-	CGFloat oldWidthOfAllFlexibleItems = 0;
-
 	for (ETLayoutItem *item in items)
 	{
 		ETAutoresizing autoresizing = [item autoresizingMask];
-
-		if (autoresizing & ETAutoresizingFlexibleWidth)
-		{
-			[flexibleItems addObject: item];
-			oldWidthOfAllFlexibleItems += [item width];
-		}
-	
 		NSRect frame = [item frame];
 
 		ETAutoresize(&frame.origin.y, &frame.size.height,
@@ -146,15 +147,6 @@ given layout area size. */
 					 newLayoutSize.height, oldLayoutSize.height);
 		
 		[item setHeight: frame.size.height];
-	}
-
-	CGFloat widthResizeAmount = (newLayoutSize.width - oldLayoutSize.width);
-	CGFloat flexibleWidthAmount = (oldWidthOfAllFlexibleItems + widthResizeAmount);
-
-	for (ETLayoutItem *item in flexibleItems)
-	{
-		CGFloat resizeFactor = ([item width] / oldWidthOfAllFlexibleItems);
-		[item setWidth: flexibleWidthAmount * resizeFactor];
 	}
 }
 

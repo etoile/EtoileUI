@@ -766,6 +766,7 @@ To explictly update the layout, just uses -[ETLayoutItemGroup updateLayout]. */
 			[self setLayoutSize: [[self layoutContext] size]];
 		}
 	}
+	_proposedLayoutSize = [self layoutSize];
 }
 
 /** <override-dummy />
@@ -787,14 +788,14 @@ it (this is subject to change though). */
 	ETDebugLog(@"Render layout items: %@", items);
 
 	float scale = [[self layoutContext] itemScaleFactor];
-	NSSize oldLayoutSize = [self layoutSize];
+	NSSize oldProposedLayoutSize = _proposedLayoutSize;
 
 	[self resetLayoutSize];
 	[self resizeItems: items
 	 forNewLayoutSize: [self layoutSize]
-	          oldSize: (isNewContent ? [self layoutSize] : oldLayoutSize)];
+	          oldSize: (isNewContent ? [self layoutSize] : oldProposedLayoutSize)];
 	// TODO: This is a welcome optimization that avoids unecessary computations, 
-	// however this shouldn't be mandatory. Currently this is used as a 
+	// however this shouldn't be mandatory. Currently this is used as a
 	// workaround to handle the fact that the default frame isn't updated if 
 	// -setFrame: is called. The correct fix is probably to update the default 
 	// frame in -setFrame: when the item is managed by a non-computed layout. 

@@ -295,22 +295,47 @@ bounding box). */
 	}
 }
 
-- (BOOL) sizeFlexibleSeparatorItemsForLayoutSize: (NSSize)newLayoutSize maxLayoutSize: (NSSize)maxSize
+- (void) prepareFlexibleItem: (ETLayoutItem *)anItem
+{
+
+}
+
+- (void) prepareFlexibleItemsInItems: (NSArray *)items
+{
+	for (ETLayoutItem *item in items)
+	{
+		if ([self isFlexibleItem: item] == NO)
+			continue;
+
+		[self prepareFlexibleItem: item];
+	}
+}
+
+- (BOOL) isFlexibleItem: (ETLayoutItem *)anItem
+{
+	return NO;
+}
+
+- (BOOL) sizeFlexibleItemsInItems: (NSArray *)items
+                    forLayoutSize: (NSSize)newLayoutSize
+                    maxLayoutSize: (NSSize)maxSize
 {
 	if (newLayoutSize.width == maxSize.width && newLayoutSize.height == maxSize.height)
 		return NO;
 
 	BOOL didResize = NO;
-	NSMutableArray *flexibleSeparators = [NSMutableArray arrayWithArray: [[self layerItem] items]];
-	[[[flexibleSeparators filter] identifier] isEqualToString: kETFlexibleSpaceSeparatorItemIdentifier];
-	NSUInteger count = [flexibleSeparators count];
-
-	FOREACH(flexibleSeparators, separator, ETLayoutItem *)
+	NSArray *flexibleItems = [items filteredCollectionWithBlock: ^ BOOL (ETLayoutItem *item)
 	{
-		[separator setSize: [self sizeOfFlexibleSeparatorItem: separator 
-		                                 forCurrentLayoutSize: newLayoutSize
-                                           numberOfFlexibleSeparators: count
-		                                        inMaxAreaSize: maxSize]];
+		return [self isFlexibleItem: item];
+	}];
+	NSUInteger count = [flexibleItems count];
+
+	for (ETLayoutItem * flexibleItem in flexibleItems)
+	{
+		[flexibleItem setSize: [self sizeOfFlexibleItem: flexibleItem
+		                           forCurrentLayoutSize: newLayoutSize
+                                  numberOfFlexibleItems: count
+		                                  inMaxAreaSize: maxSize]];
 		didResize = YES;
 	}
 	return didResize;
@@ -358,6 +383,8 @@ by calling -setVisibleItems: on the layout context. */
 
 	[self adjustHorizontalAlignmentGuidePositionForItems: items];
 	[self adjustWidthForItems: items];
+	
+	[self prepareFlexibleItemsInItems: items];
 
 	NSSize initialLayoutSize = [self layoutSize];
 	NSArray *spacedItems = [self insertSeparatorsBetweenItems: items];
@@ -367,8 +394,9 @@ by calling -setVisibleItems: on the layout context. */
 	NSSize newLayoutSize = [self computeLocationsForFragments: layoutModel];
 	NSArray *usedItems = [self itemsUsedInFragments: layoutModel];
 	NSSize maxSize = ([usedItems count] < [items count] ? newLayoutSize : initialLayoutSize);
-	BOOL recomputesLayout = [self sizeFlexibleSeparatorItemsForLayoutSize: newLayoutSize
-	                                                        maxLayoutSize: maxSize];
+	BOOL recomputesLayout = [self sizeFlexibleItemsInItems: usedItems
+	                                         forLayoutSize: newLayoutSize
+	                                         maxLayoutSize: maxSize];
 
 	if (recomputesLayout)
 	{
@@ -590,10 +618,10 @@ usually requires to know other element sizes that the receiver computes. */
 
 }
 
-- (NSSize) sizeOfFlexibleSeparatorItem: (ETLayoutItem *)separator 
-                  forCurrentLayoutSize: (NSSize)aLayoutSize 
-            numberOfFlexibleSeparators: (NSUInteger)nbOfFlexibleSeparators
-                         inMaxAreaSize: (NSSize)maxSize 
+- (NSSize) sizeOfFlexibleItem: (ETLayoutItem *)anItem
+         forCurrentLayoutSize: (NSSize)aLayoutSize 
+        numberOfFlexibleItems: (NSUInteger)nbOfFlexibleItems
+                inMaxAreaSize: (NSSize)maxSize 
 {
 	return NSZeroSize;
 }

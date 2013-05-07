@@ -789,12 +789,8 @@ WARNING: presently returns a scrollview if you call -view on the returned item. 
 	[scrollview setDocumentView: textView];
 	RELEASE(textView);
 	[scrollview setHasVerticalScroller: YES];
-	[scrollview setAutoresizingMask: NSViewWidthSizable | NSViewHeightSizable];
 	/* Finally reinsert the text view as a scroll view */
 	ETLayoutItem *textViewItem = [self itemWithView: scrollview];
-	/* The item supervisor view must be resized if the enclosing container is 
-	   resized. */
-	[textViewItem setAutoresizingMask: NSViewWidthSizable | NSViewHeightSizable];
 
 	NSParameterAssert([textView superview] != nil);
 	return textViewItem;
@@ -1077,13 +1073,14 @@ based on the layout size and the available space.
 A flexible space item can be shrinked to a zero size unlike the -spaceSeparator 
 item.
 
-The returned separator name is kETFlexibleSpaceItemIdentitifier.
+The returned separator identifier is kETFlexibleSpaceItemIdentitifier.
 
 See separator related methods in [ETComputedLayout] and subclasses.*/
 - (ETLayoutItem *) flexibleSpaceSeparator
 {
 	ETLayoutItem *item = [self item];
-	[item setName: kETFlexibleSpaceSeparatorItemIdentifier];
+	[item setIdentifier: kETFlexibleSpaceSeparatorItemIdentifier];
+	[item setAutoresizingMask: ETAutoresizingFlexibleWidth | ETAutoresizingFlexibleHeight];
 	return item;
 }
 

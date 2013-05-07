@@ -80,7 +80,7 @@ In the rare case where more control is required, you might want to reimplement
 	BOOL _computesItemRectFromBoundingBox;
 }
 
-/* Alignment and Margins */
+/** @taskunit Alignment and Margins */
 
 - (float) borderMargin;
 - (void) setBorderMargin: (float)aMargin;
@@ -95,7 +95,7 @@ In the rare case where more control is required, you might want to reimplement
 - (BOOL) usesAlignmentHint;
 - (void) setUsesAlignmentHint: (BOOL)usesHint;
 
-/* Layout Computation */
+/** @taskunit Layout Computation */
 
 - (BOOL) computesItemRectFromBoundingBox;
 - (void) setComputesItemRectFromBoundingBox: (BOOL)usesBoundingBox;
@@ -104,7 +104,7 @@ In the rare case where more control is required, you might want to reimplement
 
 - (void) renderWithItems: (NSArray *)items isNewContent: (BOOL)isNewContent;
 
-/* Fragment-based Layout */
+/** @taskunit Fragment-based Layout */
 
 - (ETLineFragment *) layoutFragmentWithSubsetOfItems: (NSArray *)unlayoutedItems;
 - (NSArray *) generateFragmentsForItems: (NSArray *)items;
@@ -112,7 +112,16 @@ In the rare case where more control is required, you might want to reimplement
                  forContentHeight: (float)contentHeight;
 - (NSSize) computeLocationsForFragments: (NSArray *)layoutModel;
 
-/* Separator support */
+/** @taskunit Flexible Items */
+
+- (void) prepareFlexibleItem: (ETLayoutItem *)anItem;
+- (BOOL) isFlexibleItem: (ETLayoutItem *)anItem;
+- (NSSize) sizeOfFlexibleItem: (ETLayoutItem *)anItem
+         forCurrentLayoutSize: (NSSize)aLayoutSize 
+        numberOfFlexibleItems: (NSUInteger)nbOfFlexibleItems
+                inMaxAreaSize: (NSSize)maxSize;
+
+/** @taskunit Separator support */
 
 - (void) setSeparatorTemplateItem: (ETLayoutItem *)separator;
 - (ETLayoutItem *) separatorTemplateItem;
@@ -121,10 +130,7 @@ In the rare case where more control is required, you might want to reimplement
 
 - (NSArray *) insertSeparatorsBetweenItems: (NSArray *)items;
 - (void) prepareSeparatorItem: (ETLayoutItem *)separator;
-- (NSSize) sizeOfFlexibleSeparatorItem: (ETLayoutItem *)separator 
-                  forCurrentLayoutSize: (NSSize)aLayoutSize 
-            numberOfFlexibleSeparators: (NSUInteger)nbOfFlexibleSeparators
-                         inMaxAreaSize: (NSSize)maxSize;
+
 - (void) adjustSeparatorItem: (ETLayoutItem *)separator forLayoutSize: (NSSize)newLayoutSize;
 
 @end
