@@ -168,23 +168,33 @@
 	ETLayoutItem *inspectItem = [self buttonWithIconNamed: @"list-add"
 	                                               target: aController
 	                                               action: @selector(inspectSelection:)];
-	ETLayoutItem *searchFieldItem = [self searchFieldWithTarget: aController
-	                                                     action: @selector(filter:)];
+	ETLayoutItem *searchItem = [self searchFieldWithTarget: aController
+	                                                action: @selector(filter:)];
+	ETLayoutItem *viewItem = [self viewPopUpWithController: aController];
+	ETLayoutItem *repoItem = [self aspectRepositoryPopUpWithController: aController];
+	ETLayoutItemGroup *rightItemGroup = [self itemGroup];
 
-	[(NSSearchFieldCell *)[[searchFieldItem view] cell] setSendsSearchStringImmediately: YES];
+	[(NSSearchFieldCell *)[[searchItem view] cell] setSendsSearchStringImmediately: YES];
 
 	[itemGroup setIdentifier: @"inspectorTopBar"];
 	[itemGroup setWidth: [self defaultBrowserSize].width];
 	[itemGroup setHeight: [self defaultIconAndLabelBarHeight]];
+	[itemGroup setAutoresizingMask: ETAutoresizingFlexibleWidth];
 	[itemGroup setLayout: [ETLineLayout layout]];
+	[[itemGroup layout] setSeparatorTemplateItem: [self flexibleSpaceSeparator]];
+
+	[rightItemGroup setLayout: [ETLineLayout layout]];
+	[[rightItemGroup layout] setIsContentSizeLayout: YES];
+
+	[rightItemGroup addItems:
+	 	A([self barElementFromItem: viewItem withLabel: _(@"View")],
+		  [self barElementFromItem: repoItem withLabel: _(@"Aspect Repository")],
+		  [self barElementFromItem: searchItem withLabel: _(@"Filter")])];
 
 	[itemGroup addItems:
 		A([self barElementFromItem: inspectItem withLabel: _(@"Inspect")],
-		[self barElementFromItem: [self viewPopUpWithController: aController] withLabel: _(@"View")],
-		[self barElementFromItem: [self aspectRepositoryPopUpWithController: aController] withLabel: _(@"Aspect Repository")],
-		[self barElementFromItem: searchFieldItem withLabel: _(@"Filter")])];
-	[itemGroup updateLayout];
-	
+		  rightItemGroup)];
+
 	return itemGroup;
 }
 
