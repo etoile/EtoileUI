@@ -51,9 +51,7 @@
 	ETAssert(NSEqualRects(NSMakeRect(0, 0, 50, 50), [ETLayoutItem defaultItemRect]));
 	
 	ASSIGN(itemFactory, [ETLayoutItemFactory factory]);
-	//ASSIGN(itemGroup, [itemFactory itemGroupWithFrame: NSMakeRect(0, 0, 500, 400)]);
-	ASSIGN(itemGroup, [itemFactory itemGroup]);
-	[itemGroup setSize: NSMakeSize(500, 400)];
+	ASSIGN(itemGroup, [itemFactory itemGroupWithFrame: NSMakeRect(0, 0, 500, 400)]);
 	ETAssert([[itemGroup layout] isKindOfClass: [ETFixedLayout class]]);
 	return self;
 }
@@ -84,9 +82,29 @@
 	UKSizesEqual(NSMakeSize(100, 200), [[itemGroup layout] layoutSize]);
 }
 
-- (void) testWindowResize
+- (void) testLayoutSizeBoundToContentSizeForWindowResize
 {
+	NSSize itemGroupSize = [itemGroup size];
+
+	[[itemFactory windowGroup] addItem: itemGroup];
 	
+	ETAssert(itemGroupSize.width == [itemGroup width]);
+	ETAssert(itemGroupSize.height < [itemGroup height]);
+	
+	ETLayoutItem *textFieldItem = [itemFactory textField];
+	NSRect textFieldFrame = NSMakeRect(20, 40, 100, 200);
+
+	[textFieldItem setFrame: textFieldFrame];
+	[textFieldItem setAutoresizingMask: ETAutoresizingFlexibleHeight];
+
+	[itemGroup addItem: textFieldItem];
+	[itemGroup setHeight: [itemGroup height] + 200];
+	[itemGroup updateLayout];
+	
+	NSRect upTextFieldFrame = textFieldFrame;
+	upTextFieldFrame.size.height += 200;
+
+	UKRectsEqual(upTextFieldFrame, [textFieldItem frame]);
 }
 
 - (void) testFixedLayoutWithoutAutoresizedItems

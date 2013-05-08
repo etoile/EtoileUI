@@ -755,16 +755,7 @@ To explictly update the layout, just uses -[ETLayoutItemGroup updateLayout]. */
 	   before -render. */
 	if ([self usesCustomLayoutSize] == NO)
 	{
-		if ([[self layoutContext] isScrollable])
-		{
-			/* Better to request the visible rect than the container frame 
-			   which might be severely altered by the previouly set layout. */
-			[self setLayoutSize: [[self layoutContext] visibleContentSize]];
-		}
-		else /* Using content layout size without scroll view is supported */
-		{
-			[self setLayoutSize: [[self layoutContext] size]];
-		}
+		[self setLayoutSize: [[self layoutContext] visibleContentSize]];
 	}
 	_proposedLayoutSize = [self layoutSize];
 }
@@ -793,7 +784,7 @@ it (this is subject to change though). */
 	[self resetLayoutSize];
 	[self resizeItems: items
 	 forNewLayoutSize: [self layoutSize]
-	          oldSize: (isNewContent ? [self layoutSize] : oldProposedLayoutSize)];
+	          oldSize: oldProposedLayoutSize];
 	// TODO: This is a welcome optimization that avoids unecessary computations, 
 	// however this shouldn't be mandatory. Currently this is used as a
 	// workaround to handle the fact that the default frame isn't updated if 
