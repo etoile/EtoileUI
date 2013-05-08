@@ -315,8 +315,16 @@ shared style returned by -currentBarElementStyle.  */
 	ETLayoutItemGroup *item = [self itemGroup];
 	[item setFrame: aRect];
 	// NOTE: Could be better to tweak ETLayoutItemGroup designated initializer.
-	[[item layout] resetLayoutSize];
+	// Don't use -resetLayoutSize that doesn't work for ETTemplateItemLayout.
+	[item updateLayoutRecursively: NO];
 	return item;
+}
+
+/** Returns a new blank layout item group initialized with an origin at zero and 
+the given size. */
+- (ETLayoutItemGroup *) itemGroupWithSize: (NSSize)aSize
+{
+	return [self itemGroupWithFrame: ETMakeRect(NSZeroPoint, aSize)];
 }
 
 /** Returns a new layout item group which contains the given item as a child .
