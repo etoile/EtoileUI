@@ -64,6 +64,7 @@ ETStyle, ETActionHandler;
 
 - (ETLayoutItemGroup *) itemGroup;
 - (ETLayoutItemGroup *) itemGroupWithFrame: (NSRect)aRect;
+- (ETLayoutItemGroup *) itemGroupWithSize: (NSSize)aSize;
 - (ETLayoutItemGroup *) itemGroupWithItem: (ETLayoutItem *)item;
 - (ETLayoutItemGroup *) itemGroupWithItems: (NSArray *)items;
 - (ETLayoutItemGroup *) itemGroupWithValue: (id)value;
