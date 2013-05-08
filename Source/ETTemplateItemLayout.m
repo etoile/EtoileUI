@@ -249,6 +249,12 @@ when they get deallocated. */
 	}*/
 }
 
+- (void) setUp
+{
+	[super setUp];
+	[(ETLayout *)[self positionalLayout] resetLayoutSize];
+}
+
 - (void) tearDown
 {
 	[self restoreAllItems];
