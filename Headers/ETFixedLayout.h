@@ -17,11 +17,21 @@
 
 @interface ETFixedLayout : ETPositionalLayout
 {
-
+	@private
+	BOOL _autoresizesItem;
 }
+
+/** @taskunit Type Querying */
 
 - (BOOL) isPositional;
 - (BOOL) isComputedLayout;
+
+/** @taskunit Autoresizing */
+
+- (BOOL) autoresizesItems;
+- (void) setAutoresizesItems: (BOOL)autoresize;
+
+/** @taskunit Persistent Item Frames */
 
 - (void) loadPersistentFramesForItems: (NSArray *)items;
 

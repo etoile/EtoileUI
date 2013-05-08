@@ -120,6 +120,16 @@ static const float undeterminedWidth = 10;
     forNewLayoutSize: (NSSize)newLayoutSize
              oldSize: (NSSize)oldLayoutSize
 {
+	/* For a collapsed ETTitleBarItem, the decorated item content bounds is set zero */
+	BOOL collapsing = NSEqualSizes(NSZeroSize, newLayoutSize);
+	BOOL expanding = NSEqualSizes(NSZeroSize, oldLayoutSize);
+
+	if (collapsing || expanding)
+		return;
+
+	NSParameterAssert(NSEqualSizes(ETNullSize, oldLayoutSize) == NO);
+	NSParameterAssert(NSEqualSizes(NSZeroSize, newLayoutSize) == NO && NSEqualSizes(NSZeroSize, oldLayoutSize) == NO);
+	
 	if (NSEqualSizes(newLayoutSize, oldLayoutSize))
 		return;
 
@@ -127,7 +137,18 @@ static const float undeterminedWidth = 10;
 	{
 		ETAutoresizing autoresizing = [item autoresizingMask];
 		NSRect frame = [item frame];
+		BOOL isItemClipped = (NSMaxX(frame) > MAX(newLayoutSize.width, oldLayoutSize.width)
+			|| NSMaxY(frame) > MAX(newLayoutSize.height, oldLayoutSize.height));
 
+		if (isItemClipped)
+		{
+			[NSException raise: NSInternalInconsistencyException
+						format: @"Layout size (%@ -> %@) clips autoresized item %@. "
+			                     "You should usually increase the size passed to "
+			                     "+[ETLayoutItemFactory itemGroupWithFrame:] for "
+			                     "the layout context.",
+			                    NSStringFromSize(oldLayoutSize), NSStringFromSize(newLayoutSize), item];
+		}
 		ETAutoresize(&frame.origin.x, &frame.size.width,
 					 NO,
 					 (autoresizing & ETAutoresizingFlexibleWidth),

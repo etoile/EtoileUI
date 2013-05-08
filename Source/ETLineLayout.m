@@ -132,8 +132,15 @@ given layout area size. */
     forNewLayoutSize: (NSSize)newLayoutSize
              oldSize: (NSSize)oldLayoutSize
 {
-	if (NSEqualSizes(newLayoutSize, oldLayoutSize))
+	/* For a collapsed ETTitleBarItem, the decorated item content bounds is set zero */
+	BOOL collapsing = NSEqualSizes(NSZeroSize, newLayoutSize);
+	BOOL expanding = NSEqualSizes(NSZeroSize, oldLayoutSize);
+	
+	if (collapsing || expanding)
 		return;
+	
+	NSParameterAssert(NSEqualSizes(ETNullSize, oldLayoutSize) == NO);
+	NSParameterAssert(NSEqualSizes(NSZeroSize, newLayoutSize) == NO && NSEqualSizes(NSZeroSize, oldLayoutSize) == NO);
 
 	for (ETLayoutItem *item in items)
 	{

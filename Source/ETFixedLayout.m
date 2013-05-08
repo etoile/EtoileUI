@@ -15,6 +15,25 @@
 
 @implementation ETFixedLayout
 
+- (id) initWithLayoutView: (NSView *)aView
+{
+	self = [super initWithLayoutView: aView];
+	if (self == nil)
+		return nil;
+
+	_autoresizesItem = YES;
+	return self;
+}
+
+- (id) copyWithZone: (NSZone *)aZone layoutContext: (id <ETLayoutingContext>)ctxt
+{
+	ETFixedLayout *newLayout = [super copyWithZone: aZone layoutContext: ctxt];
+
+	newLayout->_autoresizesItem = _autoresizesItem;
+
+	return newLayout;
+}
+
 - (NSImage *) icon
 {
 	return [NSImage imageNamed: @"pin.png"];
@@ -64,10 +83,23 @@ geometry and not computed by the receiver. */
     forNewLayoutSize: (NSSize)newLayoutSize
              oldSize: (NSSize)oldLayoutSize
 {
-	NSLog(@"Resize items for new layout size %@ old size %@",
-		NSStringFromSize(newLayoutSize), NSStringFromSize(oldLayoutSize));
+	//NSLog(@"Resize items for new layout size %@ old size %@",
+	//	NSStringFromSize(newLayoutSize), NSStringFromSize(oldLayoutSize));
+
+	/* For a collapsed ETTitleBarItem, the decorated item content bounds is set zero */
+	BOOL collapsing = NSEqualSizes(NSZeroSize, newLayoutSize);
+	BOOL expanding = NSEqualSizes(NSZeroSize, oldLayoutSize);
+	
+	if (collapsing || expanding)
+		return;
+	
+	NSParameterAssert(NSEqualSizes(ETNullSize, oldLayoutSize) == NO);
+	NSParameterAssert(NSEqualSizes(NSZeroSize, newLayoutSize) == NO && NSEqualSizes(NSZeroSize, oldLayoutSize) == NO);
 
 	if (NSEqualSizes(newLayoutSize, oldLayoutSize))
+		return;
+
+	if ([self autoresizesItems] == NO)
 		return;
 
 	for (ETLayoutItem *item in items)
@@ -108,6 +140,16 @@ geometry and not computed by the receiver. */
 	NSRect roundedFrame = NSIntegralRect(frame);
 
 	[anItem setFrame: roundedFrame];
+}
+
+- (BOOL) autoresizesItems
+{
+	return _autoresizesItem;
+}
+
+- (void) setAutoresizesItems: (BOOL)autoresize
+{
+	_autoresizesItem = autoresize;
 }
 
 /** Synchronizes the frames of every layout items provided by the layout 

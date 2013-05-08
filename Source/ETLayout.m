@@ -232,6 +232,7 @@ constraint with -setItemSizeConstraint: and -setConstrainedItemSize:. */
 	ASSIGN(_dropIndicator, [ETDropIndicator sharedInstance]);
 	_isRendering = NO;
 	_layoutSize = NSMakeSize(200, 200); /* Dummy value */
+	_proposedLayoutSize = ETNullSize;
 	_usesCustomLayoutSize = NO;
 	_isContentSizeLayout = NO;
 	 /* Will ensure -resizeItems:toScaleFactor: isn't called until the scale changes */
@@ -782,9 +783,12 @@ it (this is subject to change though). */
 	NSSize oldProposedLayoutSize = _proposedLayoutSize;
 
 	[self resetLayoutSize];
-	[self resizeItems: items
-	 forNewLayoutSize: [self layoutSize]
-	          oldSize: oldProposedLayoutSize];
+	if ([self isContentSizeLayout] == NO)
+	{
+		[self resizeItems: items
+		 forNewLayoutSize: [self layoutSize]
+		          oldSize: oldProposedLayoutSize];
+	}
 	// TODO: This is a welcome optimization that avoids unecessary computations, 
 	// however this shouldn't be mandatory. Currently this is used as a
 	// workaround to handle the fact that the default frame isn't updated if 
