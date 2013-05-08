@@ -28,6 +28,7 @@
 	NSRect _entityItemFrame;
 	NSArray *_renderedPropertyNames;
 	NSString *_groupingKeyPath;
+	BOOL _usesContentSizeLayout;
 }
 
 /** @taskunit Initialization */

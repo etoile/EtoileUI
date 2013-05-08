@@ -238,15 +238,15 @@ See also -setRenderedPropertyNames:. */
 	return _groupingKeyPath;
 }
 
-- (ETLayoutItemGroup *)newItemGroupForGroupingName: (NSString *)aName
+- (ETLayoutItemGroup *)newItemGroupForGroupingName: (NSString *)aName width: (CGFloat)aWidth
 {
-	ETLayoutItemGroup *itemGroup = [[_itemFactory itemGroupWithFrame: NSMakeRect(0, 0, 500, 200)] retain];
+	ETLayoutItemGroup *itemGroup = [[_itemFactory itemGroupWithSize: NSMakeSize(aWidth, 150)] retain];
 	[itemGroup setAutoresizingMask: ETAutoresizingFlexibleWidth];
 	[itemGroup setName: aName];
 	[itemGroup setIdentifier: [[aName lowercaseString] stringByAppendingString: @" (grouping)"]];
 	[itemGroup setLayout: [[[self entityLayout] copy] autorelease]];
 	// TODO: Surely declare -setIsContentSizeLayout in ETPositionalLayout protocol
-	[(ETLayout *)[[itemGroup layout] positionalLayout] setIsContentSizeLayout: YES];
+	[(ETLayout *)[[itemGroup layout] positionalLayout] setIsContentSizeLayout: _usesContentSizeLayout];
 	//[itemGroup setUsesLayoutBasedFrame: YES];
 	[itemGroup setDecoratorItem: [ETTitleBarItem item]];
 	return itemGroup;
@@ -285,6 +285,7 @@ See also -setRenderedPropertyNames:. */
 
 - (NSArray *) generateItemGroupsForPropertyItems: (NSArray *)propertyItems
                                  groupingKeyPath: (NSString *)aKeyPath
+                                        maxWidth: (CGFloat)anItemWidth
 {
 	NILARG_EXCEPTION_TEST(aKeyPath);
 	// FIXME: Use a ordered NSMutableDictionary (for now we depend on NSMapTable implicit ordering)
@@ -301,7 +302,7 @@ See also -setRenderedPropertyNames:. */
 
 		if ([itemGroupsByName objectForKey: name] == nil)
 		{
-			[itemGroupsByName setObject: [[self newItemGroupForGroupingName: name] autorelease]
+			[itemGroupsByName setObject: [[self newItemGroupForGroupingName: name width: anItemWidth] autorelease]
 			                     forKey: name];
 		}
 
@@ -314,7 +315,7 @@ See also -setRenderedPropertyNames:. */
 {
 	ETColumnLayout *layout = [ETColumnLayout layout];
 	[layout setUsesAlignmentHint: YES];
-	[layout setIsContentSizeLayout: YES];
+	[layout setIsContentSizeLayout: _usesContentSizeLayout];
 	return layout;
 }
 
@@ -363,7 +364,8 @@ See also -setRenderedPropertyNames:. */
 	if ([self groupingKeyPath] != nil)
 	{
 		items = [self generateItemGroupsForPropertyItems: propertyItems
-		                                 groupingKeyPath: [self groupingKeyPath]];
+		                                 groupingKeyPath: [self groupingKeyPath]
+		                                        maxWidth: [entityItem width]];
 		[entityItem setLayout: [self groupingLayout]];
 		[entityItem setUsesLayoutBasedFrame: YES];
 	}

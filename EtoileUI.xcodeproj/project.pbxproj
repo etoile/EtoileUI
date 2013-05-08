@@ -61,6 +61,27 @@
 		601455D70F9722B900268FD1 /* ETDecoratorItem.m in Sources */ = {isa = PBXBuildFile; fileRef = 60330B5A0F7CEF3400A1E8C1 /* ETDecoratorItem.m */; };
 		60264AA50FB72D4D00D8163F /* Carbon.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 60264AA40FB72D4D00D8163F /* Carbon.framework */; };
 		60264AA60FB72D4D00D8163F /* Carbon.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 60264AA40FB72D4D00D8163F /* Carbon.framework */; };
+		602A750E17390EAC004A87D4 /* TestAutoresizing.m in Sources */ = {isa = PBXBuildFile; fileRef = 607DF9A91732C33200C8CB30 /* TestAutoresizing.m */; };
+		602A750F17390EC8004A87D4 /* TestCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 60D88883115E651000D7A8AA /* TestCell.m */; };
+		602A751017390EED004A87D4 /* TestCompositeLayout.m in Sources */ = {isa = PBXBuildFile; fileRef = 60C76C6710136D0A0073C381 /* TestCompositeLayout.m */; };
+		602A751117390F01004A87D4 /* TestController.m in Sources */ = {isa = PBXBuildFile; fileRef = 609F5B5916CA9E8800683BD9 /* TestController.m */; };
+		602A751717390F26004A87D4 /* TestLayoutItem.m in Sources */ = {isa = PBXBuildFile; fileRef = 609F5B5B16CA9E8800683BD9 /* TestLayoutItem.m */; };
+		602A751817390F26004A87D4 /* TestLayoutItemBuilder.m in Sources */ = {isa = PBXBuildFile; fileRef = 609F5B5C16CA9E8800683BD9 /* TestLayoutItemBuilder.m */; };
+		602A751917390F26004A87D4 /* TestPersistency.m in Sources */ = {isa = PBXBuildFile; fileRef = 60FB0BF913C509A700C2AB94 /* TestPersistency.m */; };
+		602A751A17390F26004A87D4 /* TestPickboard.m in Sources */ = {isa = PBXBuildFile; fileRef = 609F5B5D16CA9E8800683BD9 /* TestPickboard.m */; };
+		602A751B17390F26004A87D4 /* TestResponder.m in Sources */ = {isa = PBXBuildFile; fileRef = 602EA7A11712CFAC00D499A9 /* TestResponder.m */; };
+		602A751C17390F6C004A87D4 /* TestFormLayout.m in Sources */ = {isa = PBXBuildFile; fileRef = 605F354A17172DF600E9355A /* TestFormLayout.m */; };
+		602A751D17390F6C004A87D4 /* TestItemCopy.m in Sources */ = {isa = PBXBuildFile; fileRef = 6067EB591046B4E600C39086 /* TestItemCopy.m */; };
+		602A751E17390F6C004A87D4 /* TestItemGeometry.m in Sources */ = {isa = PBXBuildFile; fileRef = 6022404D1003DF14007D5D07 /* TestItemGeometry.m */; };
+		602A751F17390F6C004A87D4 /* TestItemProvider.m in Sources */ = {isa = PBXBuildFile; fileRef = 609F5B6716CD412900683BD9 /* TestItemProvider.m */; };
+		602A752017390F6C004A87D4 /* TestLayout.m in Sources */ = {isa = PBXBuildFile; fileRef = 609F5B5A16CA9E8800683BD9 /* TestLayout.m */; };
+		602A752117390F6C004A87D4 /* TestStyle.m in Sources */ = {isa = PBXBuildFile; fileRef = 60E7BD20107E7B3F00E7C0F2 /* TestStyle.m */; };
+		602A752217390F6C004A87D4 /* TestSupervisorView.m in Sources */ = {isa = PBXBuildFile; fileRef = 609F5B5E16CA9E8800683BD9 /* TestSupervisorView.m */; };
+		602A752317390F6C004A87D4 /* TestTool.m in Sources */ = {isa = PBXBuildFile; fileRef = 609F5B5F16CA9E8800683BD9 /* TestTool.m */; };
+		602A752417390F6C004A87D4 /* TestView.m in Sources */ = {isa = PBXBuildFile; fileRef = 60A7927D171B803600348EC7 /* TestView.m */; };
+		602A752517390F6C004A87D4 /* TestWidgetLayout.m in Sources */ = {isa = PBXBuildFile; fileRef = 602635E511AD413B007586E3 /* TestWidgetLayout.m */; };
+		602A752617390F6C004A87D4 /* TestWindowLayout.m in Sources */ = {isa = PBXBuildFile; fileRef = 6037769216BE7BA900B7EEB5 /* TestWindowLayout.m */; };
+		602A752717390F6C004A87D4 /* TestWindowItem.m in Sources */ = {isa = PBXBuildFile; fileRef = 609C01E2170C34F300D01AAB /* TestWindowItem.m */; };
 		602F8B270CE1CA3E0042F6C0 /* ETCompatibility.h in Headers */ = {isa = PBXBuildFile; fileRef = 602F8B260CE1CA3E0042F6C0 /* ETCompatibility.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		602F8DE70CE1F9610042F6C0 /* ETInspecting.h in Headers */ = {isa = PBXBuildFile; fileRef = 602F8DE60CE1F9610042F6C0 /* ETInspecting.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		603112E80CF448D2001A699E /* ETPickboard.h in Headers */ = {isa = PBXBuildFile; fileRef = 603112E60CF448D2001A699E /* ETPickboard.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -159,27 +180,6 @@
 		607DF9A6173279CD00C8CB30 /* ETPositionalLayout.h in Headers */ = {isa = PBXBuildFile; fileRef = 607DF9A4173279CD00C8CB30 /* ETPositionalLayout.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		607DF9A7173279CD00C8CB30 /* ETPositionalLayout.m in Sources */ = {isa = PBXBuildFile; fileRef = 607DF9A5173279CD00C8CB30 /* ETPositionalLayout.m */; };
 		607DF9A81732821600C8CB30 /* ETPositionalLayout.m in Sources */ = {isa = PBXBuildFile; fileRef = 607DF9A5173279CD00C8CB30 /* ETPositionalLayout.m */; };
-		607DF9C81733D04600C8CB30 /* TestAutoresizing.m in Sources */ = {isa = PBXBuildFile; fileRef = 607DF9A91732C33200C8CB30 /* TestAutoresizing.m */; };
-		607DF9C91733D04600C8CB30 /* TestCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 60D88883115E651000D7A8AA /* TestCell.m */; };
-		607DF9CA1733D04600C8CB30 /* TestCompositeLayout.m in Sources */ = {isa = PBXBuildFile; fileRef = 60C76C6710136D0A0073C381 /* TestCompositeLayout.m */; };
-		607DF9CB1733D04600C8CB30 /* TestController.m in Sources */ = {isa = PBXBuildFile; fileRef = 609F5B5916CA9E8800683BD9 /* TestController.m */; };
-		607DF9CC1733D04600C8CB30 /* TestFormLayout.m in Sources */ = {isa = PBXBuildFile; fileRef = 605F354A17172DF600E9355A /* TestFormLayout.m */; };
-		607DF9CD1733D04600C8CB30 /* TestItemCopy.m in Sources */ = {isa = PBXBuildFile; fileRef = 6067EB591046B4E600C39086 /* TestItemCopy.m */; };
-		607DF9CE1733D04600C8CB30 /* TestItemGeometry.m in Sources */ = {isa = PBXBuildFile; fileRef = 6022404D1003DF14007D5D07 /* TestItemGeometry.m */; };
-		607DF9CF1733D04600C8CB30 /* TestItemProvider.m in Sources */ = {isa = PBXBuildFile; fileRef = 609F5B6716CD412900683BD9 /* TestItemProvider.m */; };
-		607DF9D01733D04600C8CB30 /* TestLayout.m in Sources */ = {isa = PBXBuildFile; fileRef = 609F5B5A16CA9E8800683BD9 /* TestLayout.m */; };
-		607DF9D11733D04600C8CB30 /* TestLayoutItem.m in Sources */ = {isa = PBXBuildFile; fileRef = 609F5B5B16CA9E8800683BD9 /* TestLayoutItem.m */; };
-		607DF9D21733D04600C8CB30 /* TestLayoutItemBuilder.m in Sources */ = {isa = PBXBuildFile; fileRef = 609F5B5C16CA9E8800683BD9 /* TestLayoutItemBuilder.m */; };
-		607DF9D31733D04600C8CB30 /* TestPersistency.m in Sources */ = {isa = PBXBuildFile; fileRef = 60FB0BF913C509A700C2AB94 /* TestPersistency.m */; };
-		607DF9D41733D04600C8CB30 /* TestPickboard.m in Sources */ = {isa = PBXBuildFile; fileRef = 609F5B5D16CA9E8800683BD9 /* TestPickboard.m */; };
-		607DF9D51733D04600C8CB30 /* TestResponder.m in Sources */ = {isa = PBXBuildFile; fileRef = 602EA7A11712CFAC00D499A9 /* TestResponder.m */; };
-		607DF9D61733D04600C8CB30 /* TestStyle.m in Sources */ = {isa = PBXBuildFile; fileRef = 60E7BD20107E7B3F00E7C0F2 /* TestStyle.m */; };
-		607DF9D71733D04600C8CB30 /* TestSupervisorView.m in Sources */ = {isa = PBXBuildFile; fileRef = 609F5B5E16CA9E8800683BD9 /* TestSupervisorView.m */; };
-		607DF9D81733D04600C8CB30 /* TestTool.m in Sources */ = {isa = PBXBuildFile; fileRef = 609F5B5F16CA9E8800683BD9 /* TestTool.m */; };
-		607DF9D91733D04600C8CB30 /* TestView.m in Sources */ = {isa = PBXBuildFile; fileRef = 60A7927D171B803600348EC7 /* TestView.m */; };
-		607DF9DA1733D04600C8CB30 /* TestWidgetLayout.m in Sources */ = {isa = PBXBuildFile; fileRef = 602635E511AD413B007586E3 /* TestWidgetLayout.m */; };
-		607DF9DB1733D04600C8CB30 /* TestWindowLayout.m in Sources */ = {isa = PBXBuildFile; fileRef = 6037769216BE7BA900B7EEB5 /* TestWindowLayout.m */; };
-		607DF9DC1733D04600C8CB30 /* TestWindowItem.m in Sources */ = {isa = PBXBuildFile; fileRef = 609C01E2170C34F300D01AAB /* TestWindowItem.m */; };
 		607F5F020F005A8E00A8CD0C /* ETGeometry.h in Headers */ = {isa = PBXBuildFile; fileRef = 607F5F000F005A8E00A8CD0C /* ETGeometry.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		607F5F070F005C5100A8CD0C /* ETGeometry.m in Sources */ = {isa = PBXBuildFile; fileRef = 607F5F060F005C5100A8CD0C /* ETGeometry.m */; };
 		607F5F080F005C5100A8CD0C /* ETGeometry.m in Sources */ = {isa = PBXBuildFile; fileRef = 607F5F060F005C5100A8CD0C /* ETGeometry.m */; };
@@ -2819,27 +2819,27 @@
 				6077D2161729ECCF009CE93C /* ETTitleBarView.m in Sources */,
 				60D25606172ECA59004062CF /* ETUIBuilderItemFactory.m in Sources */,
 				607DF9A81732821600C8CB30 /* ETPositionalLayout.m in Sources */,
-				607DF9C81733D04600C8CB30 /* TestAutoresizing.m in Sources */,
-				607DF9C91733D04600C8CB30 /* TestCell.m in Sources */,
-				607DF9CA1733D04600C8CB30 /* TestCompositeLayout.m in Sources */,
-				607DF9CB1733D04600C8CB30 /* TestController.m in Sources */,
-				607DF9CC1733D04600C8CB30 /* TestFormLayout.m in Sources */,
-				607DF9CD1733D04600C8CB30 /* TestItemCopy.m in Sources */,
-				607DF9CE1733D04600C8CB30 /* TestItemGeometry.m in Sources */,
-				607DF9CF1733D04600C8CB30 /* TestItemProvider.m in Sources */,
-				607DF9D01733D04600C8CB30 /* TestLayout.m in Sources */,
-				607DF9D11733D04600C8CB30 /* TestLayoutItem.m in Sources */,
-				607DF9D21733D04600C8CB30 /* TestLayoutItemBuilder.m in Sources */,
-				607DF9D31733D04600C8CB30 /* TestPersistency.m in Sources */,
-				607DF9D41733D04600C8CB30 /* TestPickboard.m in Sources */,
-				607DF9D51733D04600C8CB30 /* TestResponder.m in Sources */,
-				607DF9D61733D04600C8CB30 /* TestStyle.m in Sources */,
-				607DF9D71733D04600C8CB30 /* TestSupervisorView.m in Sources */,
-				607DF9D81733D04600C8CB30 /* TestTool.m in Sources */,
-				607DF9D91733D04600C8CB30 /* TestView.m in Sources */,
-				607DF9DA1733D04600C8CB30 /* TestWidgetLayout.m in Sources */,
-				607DF9DB1733D04600C8CB30 /* TestWindowLayout.m in Sources */,
-				607DF9DC1733D04600C8CB30 /* TestWindowItem.m in Sources */,
+				602A750E17390EAC004A87D4 /* TestAutoresizing.m in Sources */,
+				602A750F17390EC8004A87D4 /* TestCell.m in Sources */,
+				602A751017390EED004A87D4 /* TestCompositeLayout.m in Sources */,
+				602A751117390F01004A87D4 /* TestController.m in Sources */,
+				602A751717390F26004A87D4 /* TestLayoutItem.m in Sources */,
+				602A751817390F26004A87D4 /* TestLayoutItemBuilder.m in Sources */,
+				602A751917390F26004A87D4 /* TestPersistency.m in Sources */,
+				602A751A17390F26004A87D4 /* TestPickboard.m in Sources */,
+				602A751B17390F26004A87D4 /* TestResponder.m in Sources */,
+				602A751C17390F6C004A87D4 /* TestFormLayout.m in Sources */,
+				602A751D17390F6C004A87D4 /* TestItemCopy.m in Sources */,
+				602A751E17390F6C004A87D4 /* TestItemGeometry.m in Sources */,
+				602A751F17390F6C004A87D4 /* TestItemProvider.m in Sources */,
+				602A752017390F6C004A87D4 /* TestLayout.m in Sources */,
+				602A752117390F6C004A87D4 /* TestStyle.m in Sources */,
+				602A752217390F6C004A87D4 /* TestSupervisorView.m in Sources */,
+				602A752317390F6C004A87D4 /* TestTool.m in Sources */,
+				602A752417390F6C004A87D4 /* TestView.m in Sources */,
+				602A752517390F6C004A87D4 /* TestWidgetLayout.m in Sources */,
+				602A752617390F6C004A87D4 /* TestWindowLayout.m in Sources */,
+				602A752717390F6C004A87D4 /* TestWindowItem.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

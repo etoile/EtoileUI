@@ -53,9 +53,15 @@
 
 - (void) buildFormFromModelDescription
 {
-	ETLayoutItemGroup *itemGroup =
-		[[ETModelDescriptionRenderer renderer] renderObject: [MovieCollection randomCollection]];
+	ETModelDescriptionRenderer *renderer = [ETModelDescriptionRenderer renderer];
+
+	[[[renderer entityLayout] positionalLayout] setIsContentSizeLayout: YES];
+
+	ETLayoutItemGroup *itemGroup = [renderer renderObject: [MovieCollection randomCollection]];
 	
+	//[itemGroup setUsesLayoutBasedFrame: YES];
+	[itemGroup updateLayout];
+
 	[[[ETLayoutItemFactory factory] windowGroup] addItem: itemGroup];
 }
 
@@ -63,8 +69,8 @@
 {
 	ETLayoutItemFactory *itemFactory = [ETLayoutItemFactory factory];
 	ETLayoutItemGroup *itemGroup = [itemFactory itemGroupWithFrame: NSMakeRect(0, 0, 500, 400)];
-	ETLayoutItemGroup *firstSectionItem = [itemFactory itemGroupWithFrame: NSMakeRect(0, 0, 500, 200)];
-	ETLayoutItemGroup *secondSectionItem = [itemFactory itemGroupWithFrame: NSMakeRect(0, 0, 500, 200)];
+	ETLayoutItemGroup *firstSectionItem = [itemFactory itemGroupWithFrame: NSMakeRect(0, 0, 500, 400)];
+	ETLayoutItemGroup *secondSectionItem = [itemFactory itemGroupWithFrame: NSMakeRect(0, 0, 500, 400)];
 	ETLayoutItem *sliderItem = [itemFactory horizontalSlider];
 	ETLayoutItem *buttonItem = [itemFactory button];
 	ETLayoutItem *textFieldItem = [itemFactory textField];
@@ -96,6 +102,8 @@
 	[itemGroup setIdentifier: @"form"];
 
 	[[itemFactory windowGroup] addItem: itemGroup];
+
+	[itemGroup inspectUI: nil];
 }
 
 - (void) buildSingleSectionForm
@@ -165,10 +173,11 @@
 
 	[self buildSingleSectionForm];
 	[self buildMultipleSectionForm];
+	return;
 	[self buildFormFromModelDescription];
 
 	[self showFormGeneratedMetamodelEditors];
-	//[self showFormGeneratedItemAndAspectEditors];
+	[self showFormGeneratedItemAndAspectEditors];
 
 	/*ETLayoutItemGroup *editor = [[ETLayoutItemFactory factory] collectionEditorWithSize: NSMakeSize(400, 500) representedObject: nil controller: self];
 	[[[ETLayoutItemFactory factory] windowGroup] addItem: editor];*/
