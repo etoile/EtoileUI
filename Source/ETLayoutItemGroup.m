@@ -100,6 +100,7 @@ See also -isLayerItem. */
 {
 	_isLayerItem = YES;
 	self = [self initWithView: nil coverStyle: nil actionHandler: nil];
+	[[self layout] setAutoresizesItems: NO];
 	return self;
 }
 
@@ -998,22 +999,32 @@ frame (see -usesLayoutBasedFrame). */
 		|| _hasNewArrangement);
 
 	[ETLayoutItem disablesAutolayout];
-
-	/* Delegate layout rendering to custom layout object */
 	[(ETLayout *)[self layout] render: isNewLayoutContent];
-
 	[ETLayoutItem enablesAutolayout];
+	
+	BOOL needsSecondPass = [[self layout] isLayoutExecutionItemDependent];
 
 	if (recursively)
 	{
-		[[self items] makeObjectsPerformSelector: @selector(updateLayout)];
+		for (ETLayoutItem *item in [self items])
+		{
+			[item updateLayoutRecursively: YES];
+			needsSecondPass |= ([[item layout] isContentSizeLayout] && [item isScrollable] == NO);
+		}
 	}
+	
+	if (needsSecondPass)
+	{
+		[ETLayoutItem disablesAutolayout];
+		[(ETLayout *)[self layout] render: isNewLayoutContent];
+		[ETLayoutItem enablesAutolayout];
+	}
+	
 	[self setNeedsDisplay: YES];
-
-	/* Unset needs layout flags */
 	[self setHasNewContent: NO];
 	_hasNewArrangement = NO;
 	[self setHasNewLayout: NO];
+	[[ETLayoutExecutor sharedInstance] removeItem: (id)self];
 }
 
 /** Returns whether -updateLayout can be safely called now. */
