@@ -93,7 +93,7 @@
 
 - (NSSize) defaultInspectorSize
 {
-	return NSMakeSize(400, 800);
+	return NSMakeSize(700, 800);
 }
 
 - (NSSize) defaultInspectorBodySize
@@ -122,12 +122,13 @@
 {
 	ETLayoutItemGroup *topBar = [self inspectorTopBarWithController: aController];
 	ETLayoutItemGroup *body = [self inspectorBodyWithObject: anObject controller: aController];
-	ETLayoutItemGroup *inspector = [self itemGroupWithItems: A(topBar, body)];
+	ETLayoutItemGroup *inspector = [self itemGroupWithSize: [self defaultInspectorSize]];
 
+	[inspector setIdentifier: @"inspector"];
 	[inspector setAutoresizingMask: ETAutoresizingFlexibleWidth | ETAutoresizingFlexibleHeight];
 	[inspector setLayout: [ETColumnLayout layout]];
-	[inspector setSize: [self defaultInspectorSize]];
 	[inspector setController: aController];
+	[inspector addItems: A(topBar, body)];
 
 	ETLog(@"\n%@\n", [inspector descriptionWithOptions: [NSMutableDictionary dictionaryWithObjectsAndKeys: 
 		A(@"frame", @"autoresizingMask"), kETDescriptionOptionValuesForKeyPaths,
@@ -164,7 +165,8 @@
 
 - (ETLayoutItemGroup *) inspectorTopBarWithController: (id)aController
 {
-	ETLayoutItemGroup *itemGroup = [self itemGroup];
+	NSSize size = NSMakeSize([self defaultBrowserSize].width, [self defaultIconAndLabelBarHeight]);
+	ETLayoutItemGroup *itemGroup = [self itemGroupWithSize: size];
 	ETLayoutItem *inspectItem = [self buttonWithIconNamed: @"list-add"
 	                                               target: aController
 	                                               action: @selector(inspectSelection:)];
@@ -177,8 +179,6 @@
 	[(NSSearchFieldCell *)[[searchItem view] cell] setSendsSearchStringImmediately: YES];
 
 	[itemGroup setIdentifier: @"inspectorTopBar"];
-	[itemGroup setWidth: [self defaultBrowserSize].width];
-	[itemGroup setHeight: [self defaultIconAndLabelBarHeight]];
 	[itemGroup setAutoresizingMask: ETAutoresizingFlexibleWidth];
 	[itemGroup setLayout: [ETLineLayout layout]];
 	[[itemGroup layout] setSeparatorTemplateItem: [self flexibleSpaceSeparator]];
@@ -195,22 +195,25 @@
 		A([self barElementFromItem: inspectItem withLabel: _(@"Inspect")],
 		  rightItemGroup)];
 
+	/*[rightItemGroup updateLayoutRecursively: NO];
+	[itemGroup updateLayoutRecursively: NO];*/
+
 	return itemGroup;
 }
 
 - (ETLayoutItemGroup *) inspectorBodyWithObject: (id)anObject
                                      controller: (id)aController
 {
-	ETLayoutItemGroup *body = [self itemGroupWithRepresentedObject: anObject];
+	ETLayoutItemGroup *body = [self itemGroupWithSize: [self defaultInspectorBodySize]];
 	ETLayoutItemGroup *browser = [self browserWithObject: anObject
 	                                          controller: aController];
 	ETLayoutItemGroup *basicInspector = [self basicInspectorWithObject: anObject
 	                                                              size: [self defaultBasicInspectorSize]
 	                                                        controller: aController];
 
+	[body setRepresentedObject: anObject];
 	[body setIdentifier: @"inspectorBody"];
 	[body setAutoresizingMask: ETAutoresizingFlexibleWidth | ETAutoresizingFlexibleHeight];
-	[body setSize: [self defaultInspectorBodySize]]; // FIXME: Avoid negative size if -setSize: is not called
 	[body setLayout: [ETColumnLayout layout]];
 	[body addItems: A(browser, basicInspector)];
 
@@ -220,11 +223,11 @@
 - (ETLayoutItemGroup *) browserWithObject: (id)anObject
                                controller: (id)aController
 {
-	ETLayoutItemGroup *itemGroup = [self itemGroupWithRepresentedObject: anObject];
-	
+	ETLayoutItemGroup *itemGroup = [self itemGroupWithSize: [self defaultBrowserSize]];
+
+	[itemGroup setRepresentedObject: anObject];
 	[itemGroup setIdentifier: @"browser"];
 	[itemGroup setAutoresizingMask: ETAutoresizingFlexibleWidth];
-	[itemGroup setSize: [self defaultBrowserSize]];
 	[itemGroup setLayout: [self defaultMasterViewLayout]];
 	[itemGroup setSource: itemGroup];
 	[itemGroup setDelegate: aController];
@@ -239,13 +242,12 @@
                                             size: (NSSize)aSize
                                       controller: (id)aController
 {
-	ETLayoutItemGroup *itemGroup = [self itemGroup];
+	ETLayoutItemGroup *itemGroup = [self itemGroupWithSize: aSize];
 	ETLayoutItemGroup *header = [self basicInspectorHeaderWithObject: anObject controller: aController];
 	ETLayoutItemGroup *pane = [self basicInspectorContentWithObject: anObject controller: aController];
 
 	[itemGroup setIdentifier: @"basicInspector"];
 	[itemGroup setAutoresizingMask: ETAutoresizingFlexibleWidth | ETAutoresizingFlexibleHeight];
-	[itemGroup setSize: aSize];
 	[itemGroup setLayout: [ETColumnLayout layout]];
 	[itemGroup addItems: A(header, pane)];
 
@@ -275,7 +277,8 @@
 
 - (ETLayoutItemGroup *) basicInspectorHeaderWithObject: (id)anObject controller: (id)aController
 {
-	ETLayoutItemGroup *itemGroup = [self itemGroup];
+	NSSize size = NSMakeSize([self defaultBasicInspectorSize].width, 80);
+	ETLayoutItemGroup *itemGroup = [self itemGroupWithSize: size];
 	ETFormLayout *formLayout = [ETFormLayout layout];
 	ETLayoutItem *aspectPopUpItem = [self aspectPopUpWithController: aController];
 	ETLayoutItem *typeFieldItem = [self typeField];
@@ -283,7 +286,6 @@
 	// TODO: Perhaps use aspectInspector
 	[itemGroup setIdentifier: @"basicInspectorHeader"];
 	[itemGroup setAutoresizingMask: ETAutoresizingFlexibleWidth];
-	[itemGroup setSize: NSMakeSize([self defaultBasicInspectorSize].width, 80)];
 	// TODO: Remove -setSize: and just uses -setIsContentSizeLayout:
 	//[formLayout setIsContentSizeLayout: YES];
 	[itemGroup setLayout: formLayout];
