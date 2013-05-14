@@ -22,11 +22,11 @@ When the layout is sortable, on a column header click, the content is sorted by
 reusing the sort descriptors set on the controller item controller. When a property 
 has no sort descriptor with a matching key at the controller level, the sort 
 descriptor bound to the widget table column will be used (and eventually created). */
-@interface ETTableLayout : ETWidgetLayout
+@interface ETTableLayout : ETWidgetLayout <ETItemPropertyLayout>
 {
 	NSMutableDictionary *_propertyColumns;
-	NSImage *_dragImage; /* Cached drag image generated before the items are removed */
-
+	/* Cached drag image generated before the items are removed */
+	NSImage *_dragImage;
 	@private
 	/* The widget event which initiated the drag when there is one underway */
 	NSEvent *_backendDragEvent;
@@ -36,6 +36,8 @@ descriptor bound to the widget table column will be used (and eventually created
 	NSFont *_contentFont;
 	BOOL _sortable;
 }
+
+/** @taskunit Item Property Display */
 
 - (NSArray *) displayedProperties;
 - (void) setDisplayedProperties: (NSArray *)properties;
@@ -49,18 +51,22 @@ descriptor bound to the widget table column will be used (and eventually created
 - (void) setStyle: (id)style forProperty: (NSString *)property;
 - (id <ETColumnFragment>) columnForProperty: (NSString *)property;
 
+/** @taskunit Sorting */
+
 - (void) setSortable: (BOOL)isSortable;
 - (BOOL) isSortable;
+
+/** @taskunit Fonts */
 
 - (NSFont *) contentFont;
 - (void) setContentFont: (NSFont *)aFont;
 
-/* Widget Backend Access */
+/** @taskunit Widget Backend Access */
 
 - (NSArray *) allTableColumns;
 - (NSTableView *) tableView;
 
-/* Framework Private & Subclassing */
+/** @taskunit Framework Private & Subclassing */
 
 - (NSTableColumn *) tableColumnWithIdentifierAndCreateIfAbsent: (NSString *)property;
 - (NSTableColumn *) createTableColumnWithIdentifier: (NSString *)property;

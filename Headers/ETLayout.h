@@ -87,6 +87,48 @@ using it. For example, <code>[[[self layoutContext] ifResponds] source]</code>. 
 - (NSArray *) selectedItems;
 @end
 
+@protocol ETItemPropertyLayout
+/** Returns the laid out item properties that should be visible in the layout.
+
+Implements this method in your subclasses to return which properties are 
+presented by the layout.<br />
+You can choose to make the ordering in the property array reflects the order 
+in which properties are presented by the layout.
+
+If no properties are displayed, must return an empty array. */
+- (NSArray *) displayedProperties;
+/** Sets the laid out item properties that should be visible in the layout.
+
+Implements this method in your subclasses to adjust which properties are 
+presented by the layout.<br />
+You can choose to make the order in which properties are presented by the 
+layout reflect the ordering in the property array. */
+- (void) setDisplayedProperties: (NSArray *)properties;
+/** <override-dummy /> 
+Returns an arbitrary style object used to draw the given property in the layout. 
+
+The returned style object type is determined by each subclass. Usually the 
+style will simply be an ETLayoutItem or ETStyle instance.
+
+Implements in your subclass to return a style object per property and documents 
+the class or type of the returned object. Several properties can share the 
+same style object. */
+- (id) styleForProperty: (NSString *)property;
+/** Sets a style object to should be used to present the given property in the 
+layout. 
+
+The accepted style object type is determined by each subclass. Usually the 
+style will simply be an ETLayoutItem or ETStyle instance.<br />
+Subclasses must raise an exception when the style object type doesn't match 
+their expectation or cannot be used in conjunction with the given property.
+
+Implements in your subclass to adjust the style per property and documents the 
+class or type of the accepted object. Suclasses can use the given style directly 
+or interpret/convert it. e.g. ETTableLayout converts ETLayoutItem into NSCell 
+(internal representation only relevant to the AppKit widget backend). */
+- (void) setStyle: (id)style forProperty: (NSString *)property;
+@end
+
 /** All subclasses which implement strictly positional layout algorithms as 
 described in ETComputedLayout description must conform to this prococol.
 
@@ -241,13 +283,6 @@ Warning: This protocol is very much subject to change. */
 - (ETLayoutItem *) itemAtLocation: (NSPoint)location;
 - (NSRect) displayRectOfItem: (ETLayoutItem *)item;
 - (void) setNeedsDisplayForItem: (ETLayoutItem *)item;
-
-/** @taskunit Item Property Display */
-
-- (NSArray *) displayedProperties;
-- (void) setDisplayedProperties: (NSArray *)properties;
-- (id) styleForProperty: (NSString *)property;
-- (void) setStyle: (id)style forProperty: (NSString *)property;
 
 /** @taskunit Item State Indicators */
 
