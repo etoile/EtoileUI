@@ -86,8 +86,6 @@
 		602F8DE70CE1F9610042F6C0 /* ETInspecting.h in Headers */ = {isa = PBXBuildFile; fileRef = 602F8DE60CE1F9610042F6C0 /* ETInspecting.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		603112E80CF448D2001A699E /* ETPickboard.h in Headers */ = {isa = PBXBuildFile; fileRef = 603112E60CF448D2001A699E /* ETPickboard.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		603112E90CF448D2001A699E /* ETPickboard.m in Sources */ = {isa = PBXBuildFile; fileRef = 603112E70CF448D2001A699E /* ETPickboard.m */; };
-		603119500CF8B993001A699E /* ETObjectBrowserLayout.h in Headers */ = {isa = PBXBuildFile; fileRef = 6031194E0CF8B993001A699E /* ETObjectBrowserLayout.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		603119510CF8B993001A699E /* ETObjectBrowserLayout.m in Sources */ = {isa = PBXBuildFile; fileRef = 6031194F0CF8B993001A699E /* ETObjectBrowserLayout.m */; };
 		60311D630CFB9A84001A699E /* NSWindow+Etoile.h in Headers */ = {isa = PBXBuildFile; fileRef = 60311D610CFB9A84001A699E /* NSWindow+Etoile.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		60311D640CFB9A84001A699E /* NSWindow+Etoile.m in Sources */ = {isa = PBXBuildFile; fileRef = 60311D620CFB9A84001A699E /* NSWindow+Etoile.m */; };
 		60330B590F7CEF1300A1E8C1 /* ETDecoratorItem.h in Headers */ = {isa = PBXBuildFile; fileRef = 60330B570F7CEF1300A1E8C1 /* ETDecoratorItem.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -163,7 +161,6 @@
 		6077C1710F98022C006CB3F5 /* ETIconLayout.h in Headers */ = {isa = PBXBuildFile; fileRef = 6077C1700F98022C006CB3F5 /* ETIconLayout.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		6077C1790F9802E1006CB3F5 /* ETWidgetLayout.m in Sources */ = {isa = PBXBuildFile; fileRef = 60141B1F0F9355EE00014507 /* ETWidgetLayout.m */; };
 		6077C17A0F9802E1006CB3F5 /* NSWindow+Etoile.m in Sources */ = {isa = PBXBuildFile; fileRef = 60311D620CFB9A84001A699E /* NSWindow+Etoile.m */; };
-		6077C17B0F9802E1006CB3F5 /* ETObjectBrowserLayout.m in Sources */ = {isa = PBXBuildFile; fileRef = 6031194F0CF8B993001A699E /* ETObjectBrowserLayout.m */; };
 		6077C17C0F9802E1006CB3F5 /* ETWindowItem.m in Sources */ = {isa = PBXBuildFile; fileRef = 60CF6C7B0D3F6ECF00B4CA3D /* ETWindowItem.m */; };
 		6077C17D0F9802E1006CB3F5 /* ETTextEditorLayout.m in Sources */ = {isa = PBXBuildFile; fileRef = 60DEFD290D4E8482008B1038 /* ETTextEditorLayout.m */; };
 		6077C17E0F9802E1006CB3F5 /* ETController.m in Sources */ = {isa = PBXBuildFile; fileRef = 60CF6C810D3F739000B4CA3D /* ETController.m */; };
@@ -820,8 +817,6 @@
 		602F8DE60CE1F9610042F6C0 /* ETInspecting.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ETInspecting.h; path = Headers/ETInspecting.h; sourceTree = "<group>"; };
 		603112E60CF448D2001A699E /* ETPickboard.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ETPickboard.h; path = Headers/ETPickboard.h; sourceTree = "<group>"; };
 		603112E70CF448D2001A699E /* ETPickboard.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ETPickboard.m; path = Source/ETPickboard.m; sourceTree = "<group>"; };
-		6031194E0CF8B993001A699E /* ETObjectBrowserLayout.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ETObjectBrowserLayout.h; path = Headers/ETObjectBrowserLayout.h; sourceTree = "<group>"; };
-		6031194F0CF8B993001A699E /* ETObjectBrowserLayout.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ETObjectBrowserLayout.m; path = Source/ETObjectBrowserLayout.m; sourceTree = "<group>"; };
 		60311D610CFB9A84001A699E /* NSWindow+Etoile.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "NSWindow+Etoile.h"; path = "Headers/NSWindow+Etoile.h"; sourceTree = "<group>"; };
 		60311D620CFB9A84001A699E /* NSWindow+Etoile.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = "NSWindow+Etoile.m"; path = "Source/NSWindow+Etoile.m"; sourceTree = "<group>"; };
 		60330B570F7CEF1300A1E8C1 /* ETDecoratorItem.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ETDecoratorItem.h; path = Headers/ETDecoratorItem.h; sourceTree = "<group>"; };
@@ -1580,8 +1575,6 @@
 				60C76C561013681B0073C381 /* ETCompositeLayout.h */,
 				60C76C581013682A0073C381 /* ETCompositeLayout.m */,
 				606B98A40C0AF669000AAA85 /* Pane Layouts */,
-				6031194E0CF8B993001A699E /* ETObjectBrowserLayout.h */,
-				6031194F0CF8B993001A699E /* ETObjectBrowserLayout.m */,
 				60F3658E0D18651700FCFFDA /* ETViewModelLayout.h */,
 				60F3658F0D18651700FCFFDA /* ETViewModelLayout.m */,
 				60DEFD280D4E8482008B1038 /* ETTextEditorLayout.h */,
@@ -2009,7 +2002,6 @@
 				605D6D430CE93732009ED244 /* ETLayoutItemBuilder.h in Headers */,
 				605D6DF60CE946F8009ED244 /* ETStyle.h in Headers */,
 				603112E80CF448D2001A699E /* ETPickboard.h in Headers */,
-				603119500CF8B993001A699E /* ETObjectBrowserLayout.h in Headers */,
 				60311D630CFB9A84001A699E /* NSWindow+Etoile.h in Headers */,
 				60F363FB0D183BB400FCFFDA /* NSImage+Etoile.h in Headers */,
 				60F365920D18651700FCFFDA /* ETViewModelLayout.h in Headers */,
@@ -2736,7 +2728,6 @@
 				6077C1790F9802E1006CB3F5 /* ETWidgetLayout.m in Sources */,
 				6077C17A0F9802E1006CB3F5 /* NSWindow+Etoile.m in Sources */,
 				60330B5B0F7CEF3500A1E8C1 /* ETDecoratorItem.m in Sources */,
-				6077C17B0F9802E1006CB3F5 /* ETObjectBrowserLayout.m in Sources */,
 				600244FF0CD162090023182D /* ETBrowserLayout.m in Sources */,
 				60F3BE5D0EE1C09500BB9B02 /* Controls+Etoile.m in Sources */,
 				6077C17C0F9802E1006CB3F5 /* ETWindowItem.m in Sources */,
@@ -2957,7 +2948,6 @@
 				601455D40F9722B900268FD1 /* Controls+Etoile.m in Sources */,
 				60EF8EC70C5E4DD900C97C41 /* NSView+Etoile.m in Sources */,
 				60EF8ECB0C5E4DD900C97C41 /* ETBrowserLayout.m in Sources */,
-				603119510CF8B993001A699E /* ETObjectBrowserLayout.m in Sources */,
 				608616100F0F9A6B0061ACFE /* ETShape.m in Sources */,
 				601455D50F9722B900268FD1 /* ETScrollableAreaItem.m in Sources */,
 				60F363FC0D183BB400FCFFDA /* NSImage+Etoile.m in Sources */,

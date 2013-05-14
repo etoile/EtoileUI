@@ -125,7 +125,6 @@ Warning: This protocol is very much subject to change. */
 
 	@private
 	IBOutlet id delegate; /* Weak reference */
-	IBOutlet NSView *layoutView;
 	ETTool *_tool;
 	ETLayoutItemGroup *_layerItem; /* Lazily initialized */
 	ETDropIndicator *_dropIndicator;
@@ -227,11 +226,8 @@ Warning: This protocol is very much subject to change. */
 - (void) unmapLayerItemFromLayoutContext;
 - (void) syncLayerItemGeometryWithSize: (NSSize)aSize;
 
-/** @taskunit Wrapping Existing View */
+/** @taskunit Widget Wrapping Support */
 
-- (void) setLayoutView: (NSView *)protoView;
-- (NSView *) layoutView;
-- (void) setUpLayoutView;
 - (void) syncLayoutViewWithItem: (ETLayoutItem *)item;
 
 /** @taskunit Selection */

@@ -11,7 +11,6 @@
 #import <EtoileFoundation/NSObject+Model.h>
 #import <EtoileFoundation/NSString+Etoile.h>
 #import "NSObject+EtoileUI.h"
-#import "ETObjectBrowserLayout.h"
 #import "ETLayoutItemGroup.h"
 #import "ETLayoutItemFactory.h"
 #import "ETInspector.h"
@@ -55,11 +54,8 @@ navigate the whole Étoilé environment object graph (including outside the
 application the browsed object is part of). */
 - (IBAction) browse: (id)sender
 {
-	ETObjectBrowser *browser = [[ETObjectBrowser alloc] init]; // FIXME: Leak
-
+	// FIXME: Implement
 	ETDebugLog(@"browse %@", self);
-	[browser setBrowsedObject: self];
-	[[browser panel] makeKeyAndOrderFront: self];
 }
 
 /** Shows the layout item representing the receiver by enforcing referential 

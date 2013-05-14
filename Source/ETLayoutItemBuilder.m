@@ -264,7 +264,7 @@ returned. */
 {
 	NSUInteger initialAutoresizing = (NSUInteger)[aView autoresizingMask];
 	NSRect initialFrame = [aView frame];
-	ETLayout *layout = [ETLayout layoutWithLayoutView: aView];
+	ETWidgetLayout *layout = [ETLayout layoutWithLayoutView: aView];
 	if (nil == layout)
 		return nil;
 

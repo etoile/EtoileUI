@@ -25,34 +25,48 @@
 - (void) sortWithSortDescriptors: (NSArray *)descriptors recursively: (BOOL)recursively;
 @end
 
-
+/** A layout view can be inserted in a superview bound to a parent item and
+yet not be visible.<br />
+For example, if an ancestor item of the parent uses an opaque layout, the layout
+view can be inserted in the parent view but the parent view (or another ancestor 
+superview which owns it) might not be inserted as a subview in the visible view 
+hierarchy of the layout item tree. */
 @interface ETWidgetLayout : ETLayout
 {
 	@private
+	IBOutlet NSView *layoutView;
 	BOOL _isChangingSelection;
 }
+
+/** @taskunit Attribute and Type Querying */
 
 - (BOOL) isWidget;
 - (BOOL) isOpaque;
 - (BOOL) hasScrollers;
 
-/* Nib Support */
+/** @taskunit Nib Support */
 
 - (NSString *) nibName;
 
-/* Layout Context & Layout View Synchronization */
+/** @taskunit Layout View */
 
+- (void) setLayoutView: (NSView *)aView;
+- (NSView *) layoutView;
+- (void) setUpLayoutView;
 - (void) syncLayoutViewWithItem: (ETLayoutItem *)item;
 - (void) syncLayoutViewWithTool: (ETTool *)anTool;
+
+/** @taskunit Selection */
+
 - (void) didChangeSelectionInLayoutView;
 - (NSArray *) selectionIndexPaths;
 
-/* Actions */
+/** @taskunit Actions */
 
 - (ETLayoutItem *) doubleClickedItem;
 - (IBAction) doubleClick: (id)sender;
 
-/* Custom Widget Subclass */
+/** @taskunit Custom Widget Subclass */
 
 - (Class) widgetViewClass;
 - (void) upgradeWidgetView: (id)widgetView toClass: (Class)aClass;

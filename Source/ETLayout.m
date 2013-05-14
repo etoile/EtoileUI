@@ -45,7 +45,6 @@ See also NSObject(ETAspectRegistration). */
 	ASSIGN(layoutPrototypes, [NSMutableSet set]);
 
 	NSArray *skippedClasses = A(NSClassFromString(@"ETWidgetLayout"), 
-		NSClassFromString(@"ETObjectBrowserLayout"), 
 		NSClassFromString(@"ETInspectorLayout"), 
 		NSClassFromString(@"ETWindowLayout"), 
 		NSClassFromString(@"ETTemplateItemLayout"), 
@@ -240,7 +239,7 @@ constraint with -setItemSizeConstraint: and -setConstrainedItemSize:. */
 
 	if (aView != nil)
 	{
-		[self setLayoutView: aView];
+		[[self ifResponds] setLayoutView: aView];
 	}
 	
 	return self;
@@ -255,7 +254,6 @@ constraint with -setItemSizeConstraint: and -setConstrainedItemSize:. */
 {
 	/* Neither layout context and delegate have to be retained. 
 	   The layout context is our owner and retains us. */
-	DESTROY(layoutView);
 	DESTROY(_tool);
 	DESTROY(_layerItem);
 	DESTROY(_dropIndicator);
@@ -280,11 +278,9 @@ tool copy. */
 
 	newLayout->_layoutContext = ctxt;
 	newLayout->delegate = delegate;
-	newLayout->layoutView = [layoutView copyWithZone: aZone];
 	newLayout->_layerItem = [_layerItem copyWithZone: aZone];
 	newLayout->_dropIndicator = RETAIN(_dropIndicator);
-	[newLayout setAttachedTool: [[self attachedTool] copyWithZone: aZone]];
-	RELEASE([newLayout attachedTool]);
+	newLayout->_tool = [_tool copyWithZone: aZone];
 	newLayout->_layoutSize = _layoutSize;
 	newLayout->_usesCustomLayoutSize = _usesCustomLayoutSize;
 	newLayout->_isContentSizeLayout  = _isContentSizeLayout;
@@ -439,13 +435,6 @@ You must call the superclass implementation if you override this method. */
 - (void) tearDown
 {
 	NSParameterAssert(_layoutContext != nil);
-	/* Don't forget to remove existing layout view if we switch from a layout 
-	   which reuses a native AppKit control like table layout. */
-	// NOTE: Be careful of layout instances which can share a common class but 
-	// all differ by their unique layout view prototype.
-	// Triggers scroll view display which triggers layout render in turn to 
-	// compute the content size
-	[_layoutContext setLayoutView: nil];
 	[self unmapLayerItemFromLayoutContext];
 }
 
@@ -462,7 +451,6 @@ You must call the superclass implementation if you override this method. */
 	/* Reset the layout size to ensure -resizeItems:forNewLayoutSize:oldSize: 
 	   receives a valid old size (neither zero or computed for a previous layout context). */
 	[self resetLayoutSize];
-	[self setUpLayoutView];
 	[self mapLayerItemIntoLayoutContext];
 }
 
@@ -972,54 +960,6 @@ to be identical to the layout context. */
 	[[self layerItem] setParentItem: nil];
 }
 
-/* Wrapping Existing View */
-
-- (void) setLayoutView: (NSView *)protoView
-{
-	ASSIGN(layoutView, protoView);
-	[layoutView removeFromSuperview];
-}
-
-- (NSView *) layoutView
-{
-	return layoutView;
-}
-
-/** Returns YES if the layout view is presently visible in the layout item tree 
-of the layout context, otherwise returns NO.
-
-A layout view can be inserted in a superview bound to a parent item and 
-yet not be visible.<br />
-For example, if an ancestor item of the parent uses an opaque layout, the layout 
-view can be inserted in the parent view but the parent view (or another ancestor 
-superview which owns it) might not be inserted as a subview in the visible view 
-hierarchy of the layout item tree. */
-- (BOOL) isLayoutViewInUse
-{
-	// NOTE: A visible view hierarchy is always rooted in a window, itself bound 
-	// to the layout item representing the content view.
-	return ([[self layoutView] window] == nil);
-}
-
-/** <override-dummy />
-You should call this method in -renderWithItems:isNewContent: if you 
-write a view-based layout subclass.
-
-This method may be overriden by subclasses to handle view-specific configuration 
-before the view gets injected in the layout context. You must then call the 
-superclass method to let the layout view be inserted in the layout context 
-supervisor view. */
-- (void) setUpLayoutView
-{
-	NSParameterAssert(nil != _layoutContext);
-
-	if (nil == layoutView || [layoutView superview] != nil)
-		return;
-
-	[layoutView setAutoresizingMask: NSViewHeightSizable | NSViewWidthSizable];
-	[_layoutContext setLayoutView: layoutView];
-}
-
 /** <override-dummy />
 See -[ETWidgetLayout syncLayoutViewWithItem:] */
 - (void) syncLayoutViewWithItem: (ETLayoutItem *)item
@@ -1139,7 +1079,7 @@ styles, view etc. For example, ETTableLayout overrides this method to invalidate
 the row associated with the given item. */
 - (void) setNeedsDisplayForItem: (ETLayoutItem *)anItem
 {
-	[[self layoutView] setNeedsDisplayInRect: [self displayRectOfItem: anItem]];
+	[[[self ifResponds] layoutView] setNeedsDisplayInRect: [self displayRectOfItem: anItem]];
 }
 
 /* Item Property Display */

@@ -12,11 +12,11 @@
 
 #import <Foundation/Foundation.h>
 #import <AppKit/AppKit.h>
-#import <EtoileUI/ETLayout.h>
+#import <EtoileUI/ETWidgetLayout.h>
 
 /** Widely unfinished layout that allows to view and potentially edit a layout 
 item tree through a text representation. */
-@interface ETTextEditorLayout : ETLayout 
+@interface ETTextEditorLayout : ETWidgetLayout
 {
 	@private
 	BOOL _textRepIncludesContext;

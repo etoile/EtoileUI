@@ -148,7 +148,7 @@ Makes the item view the first responder or the item itself when there is no view
 Discards any pending changes in the item view or its enclosing layout view. */
 - (void) discardEditingForItem: (ETLayoutItem *)item
 {
-	id layoutView = [[[item ancestorItemForOpaqueLayout] layout] layoutView];
+	id layoutView = [[[[item ancestorItemForOpaqueLayout] layout] ifResponds] layoutView];
 
 	if (layoutView != nil)
 	{

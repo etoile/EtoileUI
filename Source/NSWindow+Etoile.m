@@ -8,7 +8,6 @@
 
 #import "NSWindow+Etoile.h"
 #import "ETGeometry.h"
-#import "ETObjectBrowserLayout.h"
 #import "ETCompatibility.h"
 
 #define WINDOW_CONTENT_RECT NSMakeRect(200, 200, 600, 300)
@@ -156,11 +155,8 @@ top left coordinates when the content view returns YES to -isFlipped.  */
 
 - (IBAction) browse: (id)sender
 {
-	ETObjectBrowser *browser = [[ETObjectBrowser alloc] init];
-
+	// FIXME: Implement
 	ETDebugLog(@"browse %@", self);
-	[browser setBrowsedObject: [self contentView]];
-	[[browser panel] makeKeyAndOrderFront: self];
 }
 
 #ifdef GNUSTEP

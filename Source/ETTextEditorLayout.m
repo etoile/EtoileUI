@@ -30,6 +30,12 @@
 	return self;
 }
 
+/** Returns NO. */
+- (BOOL) hasScrollers
+{
+	return NO;
+}
+
 - (NSTextView *) textView
 {
 	return (NSTextView *)[self layoutView];

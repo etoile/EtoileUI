@@ -18,7 +18,6 @@
 #import "ETLayoutItemGroup.h"
 #import "ETLayoutItemBuilder.h"
 #import "ETNibOwner.h"
-#import "ETObjectBrowserLayout.h"
 #import "ETPickboard.h"
 #import "ETLayoutItemFactory.h"
 #import "ETWindowItem.h"
@@ -957,13 +956,10 @@ represented object. */
 
 /** Opens a browser on -layoutItem.
 
-See also [ NSObject -browse: ]. */
+See also -[NSObject browse:]. */
 - (IBAction) browseLayoutItemTree: (id)sender
 {
-	ETObjectBrowser *browser = [[ETObjectBrowser alloc] init];
-
-	[browser setBrowsedObject: [self layoutItem]];
-	[[browser panel] makeKeyAndOrderFront: self];
+	// FIXME: Implement
 }
 
 /** Disables or enables the frame drawing in the layout item tree.

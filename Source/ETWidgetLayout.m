@@ -14,6 +14,7 @@
 #import "ETLayoutItem.h"
 #import "ETLayoutItem+Scrollable.h"
 #import "ETNibOwner.h"
+#import "NSView+Etoile.h"
 #import "ETCompatibility.h"
 
 
@@ -45,6 +46,39 @@
 		}
 	}
 	return self;
+}
+
+- (void) dealloc
+{
+	DESTROY(layoutView);
+	[super dealloc];
+}
+
+- (id) copyWithZone: (NSZone *)aZone layoutContext: (id <ETLayoutingContext>)ctxt
+{
+	ETWidgetLayout *newLayout = [super copyWithZone: aZone layoutContext: ctxt];
+	newLayout->layoutView = [layoutView copyWithZone: aZone];
+	return newLayout;
+}
+
+- (void) setUpCopyWithZone: (NSZone *)aZone
+                  original: (ETLayout *)layoutOriginal
+{
+	[super setUpCopyWithZone: aZone original: layoutOriginal];
+	[self syncLayoutViewWithTool: [self attachedTool]];
+}
+
+- (void) setUp
+{
+	[super setUp];
+	[self setUpLayoutView];
+}
+
+- (void) tearDown
+{
+	[super tearDown];
+	NSParameterAssert([self layoutContext] != nil);
+	[[self layoutContext] setLayoutView: nil];
 }
 
 - (void) setAttachedTool: (ETTool *)anTool
@@ -80,7 +114,6 @@ See also -[ETLayout isOpaque].*/
 	return YES;	
 }
 
-
 /** <override-dummy />
 Returns the name of the nib file the receiver should automatically load when 
 it gets instantiated.
@@ -96,7 +129,38 @@ Returns nil by default. */
 	return nil;
 }
 
-/* Layout Context & Layout View Synchronization */
+#pragma mark Layout View
+#pragma mark -
+
+- (void) setLayoutView: (NSView *)aView
+{
+	ASSIGN(layoutView, aView);
+	[layoutView removeFromSuperview];
+}
+
+- (NSView *) layoutView
+{
+	return layoutView;
+}
+
+/** <override-dummy />
+Adjusts the layout view settings and inserts it into the layout context.
+ 
+You should never need to call this method, -[ETLayout setUp] does it.
+
+Can be overriden by subclasses to adjust the view settings. You must then call 
+the superclass method to let the layout view be inserted in the context 
+supervisor view. */
+- (void) setUpLayoutView
+{
+	NSParameterAssert(nil != [self layoutContext]);
+
+	if (nil == layoutView || [layoutView superview] != nil)
+		return;
+
+	[layoutView setAutoresizingMask: NSViewHeightSizable | NSViewWidthSizable];
+	[[self layoutContext] setLayoutView: layoutView];
+}
 
 /** Returns the control view enclosed in the layout view if the latter is a
 scroll view, otherwise the returned view is identical to -layoutView. */
@@ -186,6 +250,9 @@ When the given tool is nil, -allowsEmptySelection is reset to YES and
 	[[widgetView ifResponds] setAllowsMultipleSelection: allowsMultipleSelection];
 }
 
+#pragma mark Selection
+#pragma mark -
+
 /** Returns YES when the selection change underway was initiated by the widget, 
 otherwise returns NO.
 
@@ -207,16 +274,16 @@ to provide a custom selection (e.g. ETOutlineLayout overrides it to return the
 items that correspond to the selected rows). */
 - (void) didChangeSelectionInLayoutView
 {
-	if (_isChangingSelection || [_layoutContext isChangingSelection])
+	if (_isChangingSelection || [[self layoutContext] isChangingSelection])
 		return;
 
 	ETDebugLog(@"Selection did change to %@ in layout view %@ of %@", 
-		[self selectionIndexPaths], [self layoutView], _layoutContext);
+		[self selectionIndexPaths], [self layoutView], [self layoutContext]);
 
 	_isChangingSelection = YES;
 
 	/* Update selection state in the layout item tree and post a notification */
-	[(id <ETWidgetLayoutingContext>)[_layoutContext ifResponds] 
+	[(id <ETWidgetLayoutingContext>)[(id)[self layoutContext] ifResponds]
 		setSelectionIndexPaths: [self selectionIndexPaths]];
 
 	_isChangingSelection = NO;
@@ -246,13 +313,14 @@ its usefulness would be more limited. */
 
 	FOREACH([self selectedItems], item, ETLayoutItem *)
 	{
-		[indexPaths addObject: [item indexPathFromItem: _layoutContext]];
+		[indexPaths addObject: [item indexPathFromItem: (ETLayoutItem *)[self layoutContext]]];
 	}
 
 	return indexPaths;
 }
 
-/* Actions */
+#pragma mark Actions
+#pragma mark -
 
 /** <override-subclass />
 Overrides to return the item that was last double-clicked in the layout view. */
@@ -281,7 +349,8 @@ be called. */
 	[[(ETLayoutItemGroup *)[self layoutContext] actionHandler] handleDoubleClickItem: [self doubleClickedItem]];
 }
 
-/* Custom Widget Subclass */
+#pragma mark Custom Widget Subclass
+#pragma mark -
 
 /** <override-subclass />
 Returns the widget view class required by the layout.

@@ -1116,14 +1116,14 @@ provided by the widget backend. */
 /** Returns whether the view used by the receiver is a widget. 
 
 Also returns YES when the receiver uses a layout view which is a widget 
-provided by the widget backend. See -[ETLayout layoutView].
+provided by the widget backend. See -[ETLayout isWidget].
 
 See also -[NSView(Etoile) isWidget]. */
 - (BOOL) usesWidgetView
 {
 	// NOTE: The next line would work too...
 	//return ([self view] != nil || [[[self layout] layoutView] isWidget]);
-	return ([[self view] isWidget] || [[[self layout] layoutView] isWidget]);
+	return ([[self view] isWidget] || [[self layout] isWidget]);
 }
 
 /* Key Value Coding */
