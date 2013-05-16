@@ -28,7 +28,7 @@ endif
 
 EtoileUI_HEADER_FILES_DIR = Headers
 
-OTHER_HEADER_DIRS = Base WidgetBackends Layouts AspectRepository CoreObjectUI Persistency UIBuilder
+OTHER_HEADER_DIRS = Base WidgetBackends/AppKit Layouts AspectRepository CoreObjectUI Persistency UIBuilder
 
 EtoileUI_HEADER_FILES = $(notdir $(wildcard Headers/*.h))
 
