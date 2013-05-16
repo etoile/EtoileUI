@@ -947,6 +947,12 @@ and a stepper on the right side. */
 		target: nil action: NULL forProperty: nil ofModel: nil];
 }
 
+- (ETLayoutItem *) popUpMenu
+{
+	return [self popUpMenuWithItemTitles: [NSArray array]
+		representedObjects: [NSArray array] target: nil action: NULL];
+}
+
 // TODO: -popUpMenuWithTitleXXX should return an ETLayoutItemGroup whose layout 
 // is ETPopUpMenuLayout.
 // Then we could add a method -popUpMenuWithTitle:items:target:action:.

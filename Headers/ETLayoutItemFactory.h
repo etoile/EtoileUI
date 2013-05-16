@@ -118,6 +118,7 @@ ETStyle, ETActionHandler;
                                   action: (SEL)aSelector
                              forProperty: (NSString *)aKey
                                  ofModel: (id)anObject;
+- (ETLayoutItem *) popUpMenu;
 - (id) popUpMenuWithItemTitles: (NSArray *)entryTitles 
             representedObjects: (NSArray *)entryModels 
                         target: (id)aTarget 

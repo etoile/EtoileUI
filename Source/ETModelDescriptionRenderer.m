@@ -121,12 +121,20 @@ time. For example:
 	return item;
 }
 
+- (ETLayoutItem *) popUpMenuTemplateItem
+{
+	ETLayoutItem *item = [_itemFactory popUpMenu];
+	[item setWidth: [self defaultItemSize].width];
+	return item;
+}
+
 - (void) registerDefaultTemplateItems
 {
 	[self setTemplateItem: [_itemFactory checkBox] forIdentifier: @"checkBox"];
 	[self setTemplateItem: [self textFieldTemplateItem] forIdentifier: @"textField"];
 	[self setTemplateItem: [_itemFactory horizontalSlider] forIdentifier: @"slider"];
 	[self setTemplateItem: [self numberPickerTemplateItem] forIdentifier: @"numberPicker"];
+	[self setTemplateItem: [self popUpMenuTemplateItem] forIdentifier: @"popUpMenu"];
 	[self setTemplateItem: [self collectionEditorTemplateItem] forIdentifier: @"collectionEditor"];
 }
 
@@ -565,6 +573,12 @@ See also -setRenderedPropertyNames:. */
 	return ([[anItem view] isKindOfClass: [NSTextField class]] || [[anItem view] isKindOfClass: [NSTextView class]]);
 }
 
+- (BOOL) isPopUpMenuItem: (ETLayoutItem *)anItem
+{
+	// TODO: Move to ETLayoutItemFactory or ETLayoutItem
+	return ([[anItem view] isKindOfClass: [NSPopUpButton class]]);
+}
+
 - (void) prepareViewOfNewItem: (ETLayoutItem *)item forAttributeDescription: (ETPropertyDescription *)aPropertyDesc
 {
 	[[[item view] ifResponds] setEditable: ([aPropertyDesc isReadOnly] == NO)];
@@ -577,6 +591,29 @@ See also -setRenderedPropertyNames:. */
 		// A possible workaround is to check whether the old value is the same
 		// than the new value for the KVO poster or observer (see NSCell+Etoile
 		// and ETLayoutItem)
+		[[[item view] ifResponds] setEnabled: ([aPropertyDesc isReadOnly] == NO)];
+	}
+	else if ([self isPopUpMenuItem: item])
+	{
+		NSArray *options = [[aPropertyDesc role] allowedOptions];
+		NSArray *entryTitles = (id)[[options mappedCollection] key];
+		NSArray *entryModels = (id)[[options mappedCollection] value];
+		NSPopUpButton *popUpView = [item view];
+
+		// TODO: Pop up set up to be removed once ETPopUpMenuLayout is available
+		[popUpView addItemsWithTitles: entryTitles];
+		
+		for (int i = 0; i < [popUpView numberOfItems] && i < [entryModels count]; i++)
+		{
+			id repObject = [entryModels objectAtIndex: i];
+			
+			if ([repObject isEqual: [NSNull null]])
+			{
+				repObject = nil;
+			}
+			[[popUpView itemAtIndex: i] setRepresentedObject: repObject];
+		}
+
 		[[[item view] ifResponds] setEnabled: ([aPropertyDesc isReadOnly] == NO)];
 	}
 	else

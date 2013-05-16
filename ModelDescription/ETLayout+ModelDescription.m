@@ -51,9 +51,15 @@
 	ETPropertyDescription *usesCustomLayoutSize =
 		[ETPropertyDescription descriptionWithName: @"usesCustomLayoutSize" type: (id)@"BOOL"];	
 	ETPropertyDescription *constrainedItemSize =
-		[ETPropertyDescription descriptionWithName: @"constrainedItemSize" type: (id)@"NSSize"];	
+		[ETPropertyDescription descriptionWithName: @"constrainedItemSize" type: (id)@"NSSize"];
 	ETPropertyDescription *itemSizeConstraintStyle = 
-		[ETPropertyDescription descriptionWithName: @"itemSizeConstraintStyle" type: (id)@"NSUInteger"];	
+		[ETPropertyDescription descriptionWithName: @"itemSizeConstraintStyle" type: (id)@"NSUInteger"];
+	[itemSizeConstraintStyle setRole: AUTORELEASE([ETMultiOptionsRole new])];
+	[[itemSizeConstraintStyle role] setAllowedOptions:
+	 	[D(@(ETSizeConstraintStyleNone), @"ETSizeConstraintStyleNone",
+		   @(ETSizeConstraintStyleVertical), @"ETSizeConstraintStyleVertical",
+		   @(ETSizeConstraintStyleHorizontal), @"ETSizeConstraintStyleHorizontal",
+		   @(ETSizeConstraintStyleVerticalHorizontal), @"ETSizeConstraintStyleVerticalHorizontal") arrayRepresentation]];
 
 	// TODO: Declare the numerous derived (implicitly transient) properties we have 
 
