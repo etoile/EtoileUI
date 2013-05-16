@@ -47,6 +47,7 @@
 #import <EtoileUI/ETLineLayout.h>
 #import <EtoileUI/ETModelDescriptionRenderer.h>
 #import <EtoileUI/ETNibOwner.h>
+#import <EtoileUI/ETNumberPicker.h>
 #import <EtoileUI/EtoileUIProperties.h>
 #import <EtoileUI/ETOutlineLayout.h>
 #import <EtoileUI/ETPaintBucketTool.h>

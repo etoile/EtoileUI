@@ -119,8 +119,7 @@ time. For example:
 	[self setTemplateItem: [_itemFactory checkBox] forIdentifier: @"checkBox"];
 	[self setTemplateItem: [self textFieldTemplateItem] forIdentifier: @"textField"];
 	[self setTemplateItem: [_itemFactory horizontalSlider] forIdentifier: @"slider"];
-	// TODO: Implement -textFieldAndStepper first
-	//[self setTemplateItem: [_itemFactory textFieldAndStepper] forIdentifier: @"stepper"];
+	[self setTemplateItem: [_itemFactory numberPicker] forIdentifier: @"numberPicker"];
 	[self setTemplateItem: [self collectionEditorTemplateItem] forIdentifier: @"collectionEditor"];
 }
 
@@ -136,7 +135,7 @@ time. For example:
 
 - (void) registerDefaultRoleTemplateIdentifiers
 {
-	[self setTemplateIdentifier: @"slider" forRoleClass: [ETNumberRole class]];
+	[self setTemplateIdentifier: @"numberPicker" forRoleClass: [ETNumberRole class]];
 	[self setTemplateIdentifier: @"popUpMenu" forRoleClass: [ETMultiOptionsRole class]];
 }
 
@@ -526,6 +525,11 @@ See also -setRenderedPropertyNames:. */
 	return [aType isEqual: [_repository descriptionForName: @"BOOL"]];
 }
 
+- (BOOL)isNumberType: (ETEntityDescription *)aType
+{
+	return [S(@"NSInteger", @"NSUInteger", @"float", @"CGFloat") containsObject: [aType name]];
+}
+
 - (ETLayoutItem *) templateItemForPropertyDescription: (ETPropertyDescription *)aPropertyDesc
 {
 	ETLayoutItem *templateItem = [self templateItemForIdentifier:
@@ -537,6 +541,10 @@ See also -setRenderedPropertyNames:. */
 	if ([self isBooleanType: [aPropertyDesc type]])
 	{
 		return [self templateItemForIdentifier: @"checkBox"];
+	}
+	else if ([self isNumberType: [aPropertyDesc type]])
+	{
+		return [self templateItemForIdentifier: @"numberPicker"];
 	}
 	else
 	{

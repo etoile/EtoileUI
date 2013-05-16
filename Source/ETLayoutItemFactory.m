@@ -20,6 +20,7 @@
 #import "ETLayoutItem+Scrollable.h"
 #import "ETLayer.h"
 #import "ETLineLayout.h"
+#import "ETNumberPicker.h"
 #import "ETScrollableAreaItem.h"
 #import "ETWindowItem.h"
 #import "ETStyle.h"
@@ -898,16 +899,52 @@ as its view. */
 /** Returns a new layout item that uses a NSStepper instance as its view. */
 - (id) stepper
 {
+	// TODO: Finish to implement or remove
 	return [self makeItemWithViewClass: [NSStepper class]
 	                           height: [self defaultStepperHeight]];
 }
 
 /** Returns a new layout item that uses a view whose subviews are a text field 
 and a stepper on the right side. */
-- (id) textFieldAndStepper
+- (ETLayoutItem *) numberPickerWithWidth: (CGFloat)aWidth
+                                minValue: (CGFloat)min
+                                maxValue: (CGFloat)max
+                            initialValue: (CGFloat)aValue
+                                  target: (id)aTarget
+                                  action: (SEL)aSelector
+                             forProperty: (NSString *)aKey
+                                 ofModel: (id)anObject
 {
-	// TODO: Implement
-	return nil;
+	NSRect frame = [self defaultWidgetFrameWithHeight: [self defaultStepperHeight]];
+	ETNumberPicker *picker = AUTORELEASE([[ETNumberPicker alloc]
+		initWithFrame: frame textFieldHeight: [self defaultTextFieldHeight]]);
+	ETLayoutItem *item = [self itemWithView: picker];
+	
+	[[picker stepper] setMinValue: min];
+	[[picker stepper] setMaxValue: max];
+
+	[[picker textField] setFloatValue: aValue];
+	[[picker textField] setTarget: aTarget];
+	[[picker textField] setAction: aSelector];
+
+	[item setWidth: aWidth];
+	[item setAutoresizingMask: ETAutoresizingFlexibleWidth];
+
+	if (nil != aKey && nil != anObject)
+	{
+		[item setRepresentedObject: [ETPropertyViewpoint viewpointWithName: aKey
+		                                                 representedObject: anObject]];
+		[[item representedObject] setTreatsAllKeysAsProperties: YES];
+	}
+	
+	return item;
+}
+
+- (ETLayoutItem *) numberPicker
+{
+	return [self numberPickerWithWidth: [self defaultWidgetFrame].size.width
+		minValue: CGFLOAT_MIN maxValue: CGFLOAT_MAX initialValue: 0
+		target: nil action: NULL forProperty: nil ofModel: nil];
 }
 
 // TODO: -popUpMenuWithTitleXXX should return an ETLayoutItemGroup whose layout 

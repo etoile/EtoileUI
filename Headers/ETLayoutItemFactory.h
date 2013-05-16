@@ -109,7 +109,15 @@ ETStyle, ETActionHandler;
                      forProperty: (NSString *)aKey
                          ofModel: (id)anObject;
 - (id) stepper;
-- (id) textFieldAndStepper;
+- (ETLayoutItem *) numberPicker;
+- (ETLayoutItem *) numberPickerWithWidth: (CGFloat)aWidth
+                                minValue: (CGFloat)min
+                                maxValue: (CGFloat)max
+                            initialValue: (CGFloat)aValue
+                                  target: (id)aTarget
+                                  action: (SEL)aSelector
+                             forProperty: (NSString *)aKey
+                                 ofModel: (id)anObject;
 - (id) popUpMenuWithItemTitles: (NSArray *)entryTitles 
             representedObjects: (NSArray *)entryModels 
                         target: (id)aTarget 

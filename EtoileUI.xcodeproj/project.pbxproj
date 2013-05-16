@@ -145,6 +145,9 @@
 		605F354F1717562500E9355A /* ETFormLayout.h in Headers */ = {isa = PBXBuildFile; fileRef = 605F354D1717562300E9355A /* ETFormLayout.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		605F35501717562500E9355A /* ETFormLayout.m in Sources */ = {isa = PBXBuildFile; fileRef = 605F354E1717562400E9355A /* ETFormLayout.m */; };
 		605F35511717562A00E9355A /* ETFormLayout.m in Sources */ = {isa = PBXBuildFile; fileRef = 605F354E1717562400E9355A /* ETFormLayout.m */; };
+		6063FD5D1744CD9300E4350E /* ETNumberPicker.h in Headers */ = {isa = PBXBuildFile; fileRef = 6063FD5B1744CD9300E4350E /* ETNumberPicker.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		6063FD5E1744CD9300E4350E /* ETNumberPicker.m in Sources */ = {isa = PBXBuildFile; fileRef = 6063FD5C1744CD9300E4350E /* ETNumberPicker.m */; };
+		6063FD5F1744CD9B00E4350E /* ETNumberPicker.m in Sources */ = {isa = PBXBuildFile; fileRef = 6063FD5C1744CD9300E4350E /* ETNumberPicker.m */; };
 		606A98D3113F052A00CC89B9 /* ETModelDescriptionRenderer.h in Headers */ = {isa = PBXBuildFile; fileRef = 600097910FAB47A600622E5D /* ETModelDescriptionRenderer.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		606A98FF113F072A00CC89B9 /* ETModelDescriptionRenderer.m in Sources */ = {isa = PBXBuildFile; fileRef = 6000978E0FAB479500622E5D /* ETModelDescriptionRenderer.m */; };
 		606B98CF0C0AF898000AAA85 /* PhotoViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 606B97490C0AF283000AAA85 /* PhotoViewController.m */; };
@@ -877,6 +880,8 @@
 		605F354C1717305500E9355A /* TestCommon.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = TestCommon.h; path = Tests/TestCommon.h; sourceTree = "<group>"; };
 		605F354D1717562300E9355A /* ETFormLayout.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ETFormLayout.h; path = Layouts/ETFormLayout.h; sourceTree = "<group>"; };
 		605F354E1717562400E9355A /* ETFormLayout.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ETFormLayout.m; path = Layouts/ETFormLayout.m; sourceTree = "<group>"; };
+		6063FD5B1744CD9300E4350E /* ETNumberPicker.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ETNumberPicker.h; path = WidgetBackends/AppKit/ETNumberPicker.h; sourceTree = "<group>"; };
+		6063FD5C1744CD9300E4350E /* ETNumberPicker.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ETNumberPicker.m; path = WidgetBackends/AppKit/ETNumberPicker.m; sourceTree = "<group>"; };
 		6067EB591046B4E600C39086 /* TestItemCopy.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = TestItemCopy.m; path = Tests/TestItemCopy.m; sourceTree = "<group>"; };
 		606B97480C0AF283000AAA85 /* PhotoViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PhotoViewController.h; path = PhotoViewExample/PhotoViewController.h; sourceTree = "<group>"; };
 		606B97490C0AF283000AAA85 /* PhotoViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = PhotoViewController.m; path = PhotoViewExample/PhotoViewController.m; sourceTree = "<group>"; };
@@ -1468,6 +1473,7 @@
 				60A54AC113D0822700261FDC /* Persistency */,
 				601296B013C7495000980F16 /* Model Descriptions */,
 				29B97317FDCFA39411CA2CEA /* Resources */,
+				6063FD591744CD5100E4350E /* Widget Backends */,
 				605F347F17158F4100E9355A /* Base */,
 				6074CA560F8151380081E438 /* Decorator Items */,
 				60E7D63E0F9A032A007AEAA6 /* Events & Instruments */,
@@ -1499,6 +1505,23 @@
 				605F348117158F6000E9355A /* ETResponder.m */,
 			);
 			name = Base;
+			sourceTree = "<group>";
+		};
+		6063FD591744CD5100E4350E /* Widget Backends */ = {
+			isa = PBXGroup;
+			children = (
+				6063FD5A1744CD6B00E4350E /* AppKit */,
+			);
+			name = "Widget Backends";
+			sourceTree = "<group>";
+		};
+		6063FD5A1744CD6B00E4350E /* AppKit */ = {
+			isa = PBXGroup;
+			children = (
+				6063FD5B1744CD9300E4350E /* ETNumberPicker.h */,
+				6063FD5C1744CD9300E4350E /* ETNumberPicker.m */,
+			);
+			name = AppKit;
 			sourceTree = "<group>";
 		};
 		606B98A40C0AF669000AAA85 /* Pane Layouts */ = {
@@ -2067,6 +2090,7 @@
 				60D25603172ECA44004062CF /* ETUIBuilderItemFactory.h in Headers */,
 				607DF9A6173279CD00C8CB30 /* ETPositionalLayout.h in Headers */,
 				60C4F5871742406600AA10F8 /* ETUIBuilderController.h in Headers */,
+				6063FD5D1744CD9300E4350E /* ETNumberPicker.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2840,6 +2864,7 @@
 				602A752617390F6C004A87D4 /* TestWindowLayout.m in Sources */,
 				602A752717390F6C004A87D4 /* TestWindowItem.m in Sources */,
 				60C4F5891742406A00AA10F8 /* ETUIBuilderController.m in Sources */,
+				6063FD5F1744CD9B00E4350E /* ETNumberPicker.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -3015,6 +3040,7 @@
 				60D25604172ECA44004062CF /* ETUIBuilderItemFactory.m in Sources */,
 				607DF9A7173279CD00C8CB30 /* ETPositionalLayout.m in Sources */,
 				60C4F5881742406600AA10F8 /* ETUIBuilderController.m in Sources */,
+				6063FD5E1744CD9300E4350E /* ETNumberPicker.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
