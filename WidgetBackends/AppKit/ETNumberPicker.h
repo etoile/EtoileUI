@@ -23,4 +23,10 @@
 - (NSTextField *) textField;
 - (NSStepper *) stepper;
 
+- (double) minValue;
+- (void) setMinValue: (double)aValue;
+- (double) maxValue;
+- (void) setMaxValue: (double)aValue;
+- (void) setDoubleValue: (double)aValue;
+
 @end

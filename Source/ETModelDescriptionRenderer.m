@@ -114,12 +114,19 @@ time. For example:
 	return editor;
 }
 
+- (ETLayoutItem *) numberPickerTemplateItem
+{
+	ETLayoutItem *item = [_itemFactory numberPicker];
+	[item setWidth: [self defaultItemSize].width];
+	return item;
+}
+
 - (void) registerDefaultTemplateItems
 {
 	[self setTemplateItem: [_itemFactory checkBox] forIdentifier: @"checkBox"];
 	[self setTemplateItem: [self textFieldTemplateItem] forIdentifier: @"textField"];
 	[self setTemplateItem: [_itemFactory horizontalSlider] forIdentifier: @"slider"];
-	[self setTemplateItem: [_itemFactory numberPicker] forIdentifier: @"numberPicker"];
+	[self setTemplateItem: [self numberPickerTemplateItem] forIdentifier: @"numberPicker"];
 	[self setTemplateItem: [self collectionEditorTemplateItem] forIdentifier: @"collectionEditor"];
 }
 

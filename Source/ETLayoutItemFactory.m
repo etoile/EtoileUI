@@ -907,9 +907,9 @@ as its view. */
 /** Returns a new layout item that uses a view whose subviews are a text field 
 and a stepper on the right side. */
 - (ETLayoutItem *) numberPickerWithWidth: (CGFloat)aWidth
-                                minValue: (CGFloat)min
-                                maxValue: (CGFloat)max
-                            initialValue: (CGFloat)aValue
+                                minValue: (double)min
+                                maxValue: (double)max
+                            initialValue: (double)aValue
                                   target: (id)aTarget
                                   action: (SEL)aSelector
                              forProperty: (NSString *)aKey
@@ -920,15 +920,15 @@ and a stepper on the right side. */
 		initWithFrame: frame textFieldHeight: [self defaultTextFieldHeight]]);
 	ETLayoutItem *item = [self itemWithView: picker];
 	
-	[[picker stepper] setMinValue: min];
-	[[picker stepper] setMaxValue: max];
+	[picker setMinValue: min];
+	[picker setMaxValue: max];
+	[picker setDoubleValue: aValue];
 
-	[[picker textField] setFloatValue: aValue];
 	[[picker textField] setTarget: aTarget];
 	[[picker textField] setAction: aSelector];
 
 	[item setWidth: aWidth];
-	[item setAutoresizingMask: ETAutoresizingFlexibleWidth];
+	[item setAutoresizingMask: ETAutoresizingNone];
 
 	if (nil != aKey && nil != anObject)
 	{
@@ -943,7 +943,7 @@ and a stepper on the right side. */
 - (ETLayoutItem *) numberPicker
 {
 	return [self numberPickerWithWidth: [self defaultWidgetFrame].size.width
-		minValue: CGFLOAT_MIN maxValue: CGFLOAT_MAX initialValue: 0
+		minValue: -DBL_MAX maxValue: DBL_MAX initialValue: 0
 		target: nil action: NULL forProperty: nil ofModel: nil];
 }
 
