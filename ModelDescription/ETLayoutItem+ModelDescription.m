@@ -99,6 +99,11 @@
 		isBaseItem, subject, style, frame, x, y, width, height, target, 
 		acceptsActions, inspector, subtype);
 
+	// TODO: Use frame, position, anchorPoint
+	[entity setUIBuilderPropertyNames: (id)[[A(identifier, name, image, icon,
+		target, action, x, y, width, height, autoresizing, contentAspect,
+		flipped, selected, selectable, visible) mappedCollection] name]];
+
 	[[persistentProperties mappedCollection] setPersistent: YES];
 	[entity setPropertyDescriptions: [persistentProperties arrayByAddingObjectsFromArray: transientProperties]];
 
@@ -142,7 +147,7 @@
 	ETPropertyDescription *doubleAction = 
 		[ETPropertyDescription descriptionWithName: @"doubleAction" type: (id)@"SEL"];
 	ETPropertyDescription *shouldMutateRepObject = 
-		[ETPropertyDescription descriptionWithName: @"shouldMutateRepresentedObject" type: (id)@"SEL"];
+		[ETPropertyDescription descriptionWithName: @"shouldMutateRepresentedObject" type: (id)@"BOOL"];
 	ETPropertyDescription *itemScaleFactor = 
 		[ETPropertyDescription descriptionWithName: @"itemScaleFactor" type: (id)@"float"];
 	// NOTE: _wasViewHidden must be persisted. If YES at deserialization, we 
@@ -174,6 +179,9 @@
 		itemScaleFactor, wasViewHidden);
 	NSArray *transientProperties = A(doubleClickedItem);
 
+	[entity setUIBuilderPropertyNames: (id)[[A(layout, delegate, doubleAction,
+		shouldMutateRepObject, itemScaleFactor) mappedCollection] name]];
+	
 	[[persistentProperties mappedCollection] setPersistent: YES];
 	[entity setPropertyDescriptions: [persistentProperties arrayByAddingObjectsFromArray: transientProperties]];
 

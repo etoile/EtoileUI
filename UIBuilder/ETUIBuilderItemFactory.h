@@ -27,7 +27,9 @@
 - (ETLayoutItemGroup *) basicInspectorWithObject: (id)anObject
                                             size: (NSSize)aSize
                                       controller: (id)aController;
-
+- (ETLayoutItemGroup *) basicInspectorContentWithObject: (id)anObject
+                                             controller: (id)aController
+                                             aspectName: (NSString *)anAspectName;
 @end
 
 

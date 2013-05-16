@@ -20,6 +20,7 @@
 #import "ETLayoutItem.h"
 #import "ETLayoutItemGroup.h"
 #import "ETLineLayout.h"
+#import "ETUIBuilderController.h"
 #import "ETModelDescriptionRenderer.h"
 #import "ETOutlineLayout.h"
 #import "NSObject+EtoileUI.h"
@@ -145,8 +146,10 @@
 		                                             target: aController 
 		                                             action: @selector(changePresentationViewFromPopUp:)];
 
-	// FIXME: [aController setViewPopUpItem: popUpItem];
+	[aController setViewPopUpItem: popUpItem];
+	[popUpItem sizeToFit];
 	[[popUpItem view] selectItemAtIndex: 2];
+
 	return popUpItem;
 }
 
@@ -159,7 +162,9 @@
 		                                             action: @selector(changePresentationViewFromPopUp:)];
 
 	// FIXME: [aController setViewPopUpItem: popUpItem];
+	[popUpItem sizeToFit];
 	[[popUpItem view] selectItemAtIndex: 2];
+
 	return popUpItem;
 }
 
@@ -211,7 +216,6 @@
 	                                                              size: [self defaultBasicInspectorSize]
 	                                                        controller: aController];
 
-	[body setRepresentedObject: anObject];
 	[body setIdentifier: @"inspectorBody"];
 	[body setAutoresizingMask: ETAutoresizingFlexibleWidth | ETAutoresizingFlexibleHeight];
 	[body setLayout: [ETColumnLayout layout]];
@@ -235,6 +239,8 @@
 	[itemGroup setTarget: aController];
 	[itemGroup setSelectionIndex: 0];
 
+	[aController setBrowserItem: itemGroup];
+
 	return itemGroup;
 }
 
@@ -244,27 +250,34 @@
 {
 	ETLayoutItemGroup *itemGroup = [self itemGroupWithSize: aSize];
 	ETLayoutItemGroup *header = [self basicInspectorHeaderWithObject: anObject controller: aController];
-	ETLayoutItemGroup *pane = [self basicInspectorContentWithObject: anObject controller: aController];
+	ETLayoutItemGroup *pane = [self basicInspectorContentWithObject: anObject controller: aController aspectName: @"layout"];
 
 	[itemGroup setIdentifier: @"basicInspector"];
 	[itemGroup setAutoresizingMask: ETAutoresizingFlexibleWidth | ETAutoresizingFlexibleHeight];
 	[itemGroup setLayout: [ETColumnLayout layout]];
 	[itemGroup addItems: A(header, pane)];
 
+	[aController setAspectInspectorItem: itemGroup];
+	[aController setItemFactory: self];
+
 	return itemGroup;
 }
 
 - (ETLayoutItem *) aspectPopUpWithController: (id)aController
 {
-	NSArray *choices = A(_(@"Browser"), _(@"Inspector"), _(@"Browser and Inspector"));
+	NSArray *choices = A(_(@"Overview"), _(@"Layout"), _(@"Represented Object"),
+		_(@"Controller"), _(@"Cover Style"), _(@"Style Group"),
+		_(@"Action Handler"), _(@"Tool"));
+	NSArray *representedProperties = A(@"self", @"layout", @"representedObject",
+		@"controller", @"coverStyle", @"styleGroup", @"actionHandler", @"layout.attachedTool");
 	ETLayoutItem *popUpItem = [self popUpMenuWithItemTitles: choices
-		                                 representedObjects: [NSArray array]
+		                                 representedObjects: representedProperties
 		                                             target: aController 
-		                                             action: @selector(changePresentationViewFromPopUp:)];
+		                                             action: @selector(changeAspectPaneFromPopUp:)];
 
 	[popUpItem setName: _(@"Aspect")];
-	// FIXME: [aController setViewPopUpItem: popUpItem];
-	[[popUpItem view] selectItemAtIndex: 2];
+	[aController setAspectPopUpItem: popUpItem];
+	[[popUpItem view] selectItemAtIndex: 1];
 	return popUpItem;
 }
 
@@ -296,16 +309,26 @@
 
 - (NSArray *) presentedPropertyNamesForAspectName: (NSString *)anAspectName ofObject: (id)anObject
 {
-	return [[(ETLayoutItem *)anObject entityDescription] allUIBuilderPropertyNames];
+	// NOTE: We use -valueForKey: to support using @"self" as a key
+	if ([anObject valueForKeyPath: anAspectName] == nil)
+	{
+		return [NSArray array];
+	}
+	return [[[anObject valueForKeyPath: anAspectName] entityDescription] allUIBuilderPropertyNames];
 }
 
 - (ETLayoutItemGroup *) basicInspectorContentWithObject: (id)anObject
                                              controller: (id)aController
+                                             aspectName: (NSString *)anAspectName
 {
-	[renderer setRenderedPropertyNames: [self presentedPropertyNamesForAspectName: _(@"Layout")
-	                                                                     ofObject: [(ETLayoutItem *)anObject layout]]];
+	NSParameterAssert(anObject != nil);
+	NSParameterAssert(aController != nil);
+	NSParameterAssert(anAspectName != nil);
 
-	ETLayoutItemGroup *itemGroup = [renderer renderObject: [(ETLayoutItem *)anObject layout]];
+	[renderer setRenderedPropertyNames: [self presentedPropertyNamesForAspectName: anAspectName
+	                                                                     ofObject: anObject]];
+
+	ETLayoutItemGroup *itemGroup = [renderer renderObject: [anObject valueForKeyPath: anAspectName]];
 	NSSize size = [self defaultBasicInspectorSize];
 	
 	size.height -= 80;
@@ -331,7 +354,7 @@
 - (IBAction) inspectUI: (id)sender
 {
 	ETLayoutItemGroup *inspector = [[ETUIBuilderItemFactory factory]
-		inspectorWithObject: self controller: nil];
+		inspectorWithObject: self controller: AUTORELEASE([ETUIBuilderController new])];
 
 	[[[ETUIBuilderItemFactory factory] windowGroup] addItem: inspector];
 }

@@ -48,7 +48,6 @@
 	ASSIGN(_repository, [ETModelDescriptionRepository mainRepository]);
 	ASSIGN(_itemFactory, [ETLayoutItemFactory factory]);
 	ASSIGN(_entityLayout, [self defaultFormLayout]);
-	_renderedPropertyNames = [NSArray new];
 
 	[self registerDefaultTemplateItems];
 	[self registerDefaultRoleTemplateIdentifiers];
@@ -217,10 +216,12 @@ See also -renderedPropertyNames. */
 /** Returns the names of the property descriptions to render for an object 
 passed to -renderObject: and related methods.
 
-If an empty an array is returned, all the property descriptions bound the 
-entity description of the object are rendered.
+If an empty an array is returned, no property descriptions is rendered.
  
-By default, returns an empty array. 
+If nil is returned, all the property descriptions bound the entity description 
+of the object are rendered
+ 
+By default, returns nil. 
  
 See also -setRenderedPropertyNames:. */
 - (NSArray *) renderedPropertyNames
@@ -326,7 +327,7 @@ See also -setRenderedPropertyNames:. */
 
 - (NSArray *) renderedPropertyDescriptionsForEntityDescription: (ETEntityDescription *)anEntityDesc
 {
-	if ([[self renderedPropertyNames] isEmpty])
+	if ([self renderedPropertyNames] == nil)
 		return [anEntityDesc allPropertyDescriptions];
 
 	NSMutableArray *propertyDescs = [NSMutableArray array];

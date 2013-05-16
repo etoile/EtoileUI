@@ -422,6 +422,9 @@
 		60C1FD1912EF26B000696D05 /* MarkupEditor.xib in Resources */ = {isa = PBXBuildFile; fileRef = 60C1FD1812EF26B000696D05 /* MarkupEditor.xib */; };
 		60C27A0F0E66B0D80040A41D /* ETComputedLayout.h in Headers */ = {isa = PBXBuildFile; fileRef = 60C27A0D0E66B0D80040A41D /* ETComputedLayout.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		60C27A110E66B0EA0040A41D /* ETComputedLayout.m in Sources */ = {isa = PBXBuildFile; fileRef = 60C27A100E66B0EA0040A41D /* ETComputedLayout.m */; };
+		60C4F5871742406600AA10F8 /* ETUIBuilderController.h in Headers */ = {isa = PBXBuildFile; fileRef = 60C4F5851742406600AA10F8 /* ETUIBuilderController.h */; };
+		60C4F5881742406600AA10F8 /* ETUIBuilderController.m in Sources */ = {isa = PBXBuildFile; fileRef = 60C4F5861742406600AA10F8 /* ETUIBuilderController.m */; };
+		60C4F5891742406A00AA10F8 /* ETUIBuilderController.m in Sources */ = {isa = PBXBuildFile; fileRef = 60C4F5861742406600AA10F8 /* ETUIBuilderController.m */; };
 		60C76C571013681B0073C381 /* ETCompositeLayout.h in Headers */ = {isa = PBXBuildFile; fileRef = 60C76C561013681B0073C381 /* ETCompositeLayout.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		60C76C591013682A0073C381 /* ETCompositeLayout.m in Sources */ = {isa = PBXBuildFile; fileRef = 60C76C581013682A0073C381 /* ETCompositeLayout.m */; };
 		60C76C5A1013682A0073C381 /* ETCompositeLayout.m in Sources */ = {isa = PBXBuildFile; fileRef = 60C76C581013682A0073C381 /* ETCompositeLayout.m */; };
@@ -1065,6 +1068,8 @@
 		60C1FD1812EF26B000696D05 /* MarkupEditor.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = MarkupEditor.xib; path = MarkupEditor/MarkupEditor.xib; sourceTree = "<group>"; };
 		60C27A0D0E66B0D80040A41D /* ETComputedLayout.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ETComputedLayout.h; path = Headers/ETComputedLayout.h; sourceTree = "<group>"; };
 		60C27A100E66B0EA0040A41D /* ETComputedLayout.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ETComputedLayout.m; path = Source/ETComputedLayout.m; sourceTree = "<group>"; };
+		60C4F5851742406600AA10F8 /* ETUIBuilderController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ETUIBuilderController.h; path = UIBuilder/ETUIBuilderController.h; sourceTree = "<group>"; };
+		60C4F5861742406600AA10F8 /* ETUIBuilderController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ETUIBuilderController.m; path = UIBuilder/ETUIBuilderController.m; sourceTree = "<group>"; };
 		60C76C561013681B0073C381 /* ETCompositeLayout.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ETCompositeLayout.h; path = Headers/ETCompositeLayout.h; sourceTree = "<group>"; };
 		60C76C581013682A0073C381 /* ETCompositeLayout.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ETCompositeLayout.m; path = Source/ETCompositeLayout.m; sourceTree = "<group>"; };
 		60C76C6710136D0A0073C381 /* TestCompositeLayout.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = TestCompositeLayout.m; path = Tests/TestCompositeLayout.m; sourceTree = "<group>"; };
@@ -1792,6 +1797,8 @@
 				6037760516BD846700B7EEB5 /* ETLayoutItem+UIBuilder.m */,
 				60D25601172ECA44004062CF /* ETUIBuilderItemFactory.h */,
 				60D25602172ECA44004062CF /* ETUIBuilderItemFactory.m */,
+				60C4F5851742406600AA10F8 /* ETUIBuilderController.h */,
+				60C4F5861742406600AA10F8 /* ETUIBuilderController.m */,
 			);
 			name = "UI Builder";
 			sourceTree = "<group>";
@@ -2059,6 +2066,7 @@
 				605F354F1717562500E9355A /* ETFormLayout.h in Headers */,
 				60D25603172ECA44004062CF /* ETUIBuilderItemFactory.h in Headers */,
 				607DF9A6173279CD00C8CB30 /* ETPositionalLayout.h in Headers */,
+				60C4F5871742406600AA10F8 /* ETUIBuilderController.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2831,6 +2839,7 @@
 				602A752517390F6C004A87D4 /* TestWidgetLayout.m in Sources */,
 				602A752617390F6C004A87D4 /* TestWindowLayout.m in Sources */,
 				602A752717390F6C004A87D4 /* TestWindowItem.m in Sources */,
+				60C4F5891742406A00AA10F8 /* ETUIBuilderController.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -3005,6 +3014,7 @@
 				605F35501717562500E9355A /* ETFormLayout.m in Sources */,
 				60D25604172ECA44004062CF /* ETUIBuilderItemFactory.m in Sources */,
 				607DF9A7173279CD00C8CB30 /* ETPositionalLayout.m in Sources */,
+				60C4F5881742406600AA10F8 /* ETUIBuilderController.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
