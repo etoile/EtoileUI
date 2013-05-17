@@ -114,10 +114,12 @@ ETStyle, ETActionHandler;
                                 minValue: (CGFloat)min
                                 maxValue: (CGFloat)max
                             initialValue: (CGFloat)aValue
-                                  target: (id)aTarget
-                                  action: (SEL)aSelector
                              forProperty: (NSString *)aKey
                                  ofModel: (id)anObject;
+- (ETLayoutItem *) sizeEditorWithWidth: (CGFloat)aWidth
+                      forWidthProperty: (NSString *)aWidthKey
+                        heightProperty: (NSString *)aHeightKey
+                               ofModel: (id)anObject;
 - (ETLayoutItem *) popUpMenu;
 - (id) popUpMenuWithItemTitles: (NSArray *)entryTitles 
             representedObjects: (NSArray *)entryModels 

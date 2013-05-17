@@ -121,6 +121,12 @@ time. For example:
 	return item;
 }
 
+- (ETLayoutItem *) sizeEditorTemplateItem
+{
+	ETLayoutItem *item = [_itemFactory sizeEditorWithWidth: [self defaultItemSize].width forWidthProperty: nil heightProperty: nil ofModel: nil];
+	return item;
+}
+
 - (ETLayoutItem *) popUpMenuTemplateItem
 {
 	ETLayoutItem *item = [_itemFactory popUpMenu];
@@ -134,6 +140,7 @@ time. For example:
 	[self setTemplateItem: [self textFieldTemplateItem] forIdentifier: @"textField"];
 	[self setTemplateItem: [_itemFactory horizontalSlider] forIdentifier: @"slider"];
 	[self setTemplateItem: [self numberPickerTemplateItem] forIdentifier: @"numberPicker"];
+	[self setTemplateItem: [self sizeEditorTemplateItem] forIdentifier: @"sizeEditor"];
 	[self setTemplateItem: [self popUpMenuTemplateItem] forIdentifier: @"popUpMenu"];
 	[self setTemplateItem: [self collectionEditorTemplateItem] forIdentifier: @"collectionEditor"];
 }
@@ -545,6 +552,12 @@ See also -setRenderedPropertyNames:. */
 	return [S(@"NSInteger", @"NSUInteger", @"float", @"CGFloat") containsObject: [aType name]];
 }
 
+- (BOOL)isSizeType: (ETEntityDescription *)aType
+{
+	NSParameterAssert(aType != nil);
+	return [aType isEqual: [_repository descriptionForName: @"NSSize"]];
+}
+
 - (ETLayoutItem *) templateItemForPropertyDescription: (ETPropertyDescription *)aPropertyDesc
 {
 	ETLayoutItem *templateItem = [self templateItemForIdentifier:
@@ -560,6 +573,10 @@ See also -setRenderedPropertyNames:. */
 	else if ([self isNumberType: [aPropertyDesc type]])
 	{
 		return [self templateItemForIdentifier: @"numberPicker"];
+	}
+	else if ([self isSizeType: [aPropertyDesc type]])
+	{
+		return [self templateItemForIdentifier: @"sizeEditor"];
 	}
 	else
 	{
@@ -626,7 +643,7 @@ See also -setRenderedPropertyNames:. */
 {
 	ETLayoutItem *templateItem = [self templateItemForPropertyDescription: aPropertyDesc];
 	ETAssert(templateItem != nil);
-	ETLayoutItem *item = AUTORELEASE([templateItem copy]);
+	ETLayoutItem *item = AUTORELEASE([templateItem deepCopy]);
 
 	[item setRepresentedObject: [ETPropertyViewpoint viewpointWithName: [aPropertyDesc name]
 													 representedObject: anObject]];

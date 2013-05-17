@@ -904,14 +904,19 @@ as its view. */
 	                           height: [self defaultStepperHeight]];
 }
 
+- (ETLayoutItem *) numberPicker
+{
+	return [self numberPickerWithWidth: [self defaultWidgetFrame].size.width
+		minValue: -DBL_MAX maxValue: DBL_MAX initialValue: 0
+		forProperty: nil ofModel: nil];
+}
+
 /** Returns a new layout item that uses a view whose subviews are a text field 
 and a stepper on the right side. */
 - (ETLayoutItem *) numberPickerWithWidth: (CGFloat)aWidth
                                 minValue: (double)min
                                 maxValue: (double)max
                             initialValue: (double)aValue
-                                  target: (id)aTarget
-                                  action: (SEL)aSelector
                              forProperty: (NSString *)aKey
                                  ofModel: (id)anObject
 {
@@ -923,9 +928,6 @@ and a stepper on the right side. */
 	[picker setMinValue: min];
 	[picker setMaxValue: max];
 	[picker setDoubleValue: aValue];
-
-	[[picker textField] setTarget: aTarget];
-	[[picker textField] setAction: aSelector];
 
 	[item setWidth: aWidth];
 	[item setAutoresizingMask: ETAutoresizingNone];
@@ -940,11 +942,50 @@ and a stepper on the right side. */
 	return item;
 }
 
-- (ETLayoutItem *) numberPicker
+- (NSRect) boundingBoxForItem: (ETLayoutItem *)item
 {
-	return [self numberPickerWithWidth: [self defaultWidgetFrame].size.width
-		minValue: -DBL_MAX maxValue: DBL_MAX initialValue: 0
-		target: nil action: NULL forProperty: nil ofModel: nil];
+	NSSize boundingSize = [[item coverStyle] boundingSizeForItem: item
+												 imageOrViewSize: [item size]];
+	NSRect boundingBox = ETMakeRect(NSZeroPoint, boundingSize);
+
+	// TODO: May be better to compute that in -[ETBasicItemStyle boundingBoxForItem:]
+	boundingBox.origin.x = ([item width] - boundingSize.width) / 2;
+
+	return boundingBox;
+}
+
+- (ETLayoutItem *) sizeEditorWithWidth: (CGFloat)aWidth
+                      forWidthProperty: (NSString *)aWidthKey
+                        heightProperty: (NSString *)aHeightKey
+                               ofModel: (id)anObject
+{
+	ETLayoutItem *widthPicker = [self numberPickerWithWidth: aWidth / 2
+		minValue: 0 maxValue: CGFLOAT_MAX initialValue: 0
+		forProperty: aWidthKey ofModel: anObject];
+	ETLayoutItem *heightPicker = [self numberPickerWithWidth: aWidth / 2
+		minValue: 0 maxValue: CGFLOAT_MAX initialValue: 0
+		forProperty: aHeightKey ofModel: anObject];
+	ETBasicItemStyle *coverStyle = AUTORELEASE([ETBasicItemStyle new]);
+	
+	[widthPicker setName: _(@"Width")];
+	[coverStyle setLabelPosition: ETLabelPositionOutsideBottom];
+	[widthPicker setCoverStyle: coverStyle];
+	[widthPicker setBoundingBox: [self boundingBoxForItem: widthPicker]];
+
+	[heightPicker setName: _(@"Height")];
+	[coverStyle setLabelPosition: ETLabelPositionOutsideBottom];
+	[heightPicker setCoverStyle: coverStyle];
+	[heightPicker setBoundingBox: [self boundingBoxForItem: heightPicker]];
+
+	NSSize size = NSMakeSize(aWidth, [widthPicker boundingBox].size.height);
+	ETLayoutItemGroup *editor = [self itemGroupWithSize: size];
+
+	[editor setLayout: [ETLineLayout layout]];
+	[[editor layout] setComputesItemRectFromBoundingBox: YES];
+	[editor addItems: A(widthPicker, heightPicker)];
+	[editor updateLayout];
+
+	return editor;
 }
 
 - (ETLayoutItem *) popUpMenu

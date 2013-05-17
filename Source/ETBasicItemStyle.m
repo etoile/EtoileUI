@@ -132,6 +132,10 @@ DEALLOC(DESTROY(_labelAttributes); DESTROY(_selectedLabelAttributes));
 		{
 			ETLog(@"Try to draw label in %@ of %@", NSStringFromRect(_currentLabelRect), item);
 		}
+		if ([[item name] isEqual: @"Width"])
+		{
+			ETLog(@"Try to draw label in %@ of %@", NSStringFromRect(_currentLabelRect), item);
+		}
 		[self drawLabel: itemLabel
 		     attributes: [self labelAttributesForDrawingItem: item]
 		        flipped: [item isFlipped]
@@ -234,6 +238,8 @@ means you can safely use it when overriding other drawing methods. */
 	}
 	else
 	{
+		[[NSColor yellowColor] setFill];
+		NSRectFill(aRect);
 		[aLabel drawInRect: aRect withAttributes: attributes];
 	}
 }
@@ -418,7 +424,7 @@ See also -labelAttributesForDrawingItem:. */
 			}
 			else
 			{
-				labelBaseY = itemFrame.size.height + _labelMargin + labelSizeHeight;
+				labelBaseY = itemFrame.size.height + _labelMargin;
 			}
 				
 			rect = NSMakeRect(labelBaseX, labelBaseY, labelSizeWidth, labelSizeHeight);
@@ -466,7 +472,7 @@ See also -labelAttributesForDrawingItem:. */
 
 			if ([anItem isFlipped])
 			{
-				labelBaseY = itemFrame.size.height + _labelMargin + labelSizeHeight;
+				labelBaseY = itemFrame.size.height + _labelMargin;
 			}
 			else
 			{
