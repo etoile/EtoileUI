@@ -116,10 +116,14 @@ ETStyle, ETActionHandler;
                             initialValue: (CGFloat)aValue
                              forProperty: (NSString *)aKey
                                  ofModel: (id)anObject;
-- (ETLayoutItem *) sizeEditorWithWidth: (CGFloat)aWidth
-                      forWidthProperty: (NSString *)aWidthKey
-                        heightProperty: (NSString *)aHeightKey
-                               ofModel: (id)anObject;
+- (ETLayoutItemGroup *) pointEditorWithWidth: (CGFloat)aWidth
+                                forXProperty: (NSString *)aXKey
+                                   yProperty: (NSString *)aYKey
+                                     ofModel: (id)anObject;
+- (ETLayoutItemGroup *) sizeEditorWithWidth: (CGFloat)aWidth
+                           forWidthProperty: (NSString *)aWidthKey
+                             heightProperty: (NSString *)aHeightKey
+                                    ofModel: (id)anObject;
 - (ETLayoutItem *) popUpMenu;
 - (id) popUpMenuWithItemTitles: (NSArray *)entryTitles 
             representedObjects: (NSArray *)entryModels 

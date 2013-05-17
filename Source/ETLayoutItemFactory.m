@@ -954,36 +954,69 @@ and a stepper on the right side. */
 	return boundingBox;
 }
 
-- (ETLayoutItem *) sizeEditorWithWidth: (CGFloat)aWidth
-                      forWidthProperty: (NSString *)aWidthKey
-                        heightProperty: (NSString *)aHeightKey
-                               ofModel: (id)anObject
+- (ETLayoutItemGroup *) numberPairEditorWithWidth: (CGFloat)aWidth
+                                 forFirstProperty: (NSString *)aFirstKey
+                                   secondProperty: (NSString *)aSecondKey
+                                          ofModel: (id)anObject
 {
-	ETLayoutItem *widthPicker = [self numberPickerWithWidth: aWidth / 2
+	ETLayoutItem *firstPicker = [self numberPickerWithWidth: aWidth / 2
 		minValue: 0 maxValue: CGFLOAT_MAX initialValue: 0
-		forProperty: aWidthKey ofModel: anObject];
-	ETLayoutItem *heightPicker = [self numberPickerWithWidth: aWidth / 2
+		forProperty: aFirstKey ofModel: anObject];
+	ETLayoutItem *secondPicker = [self numberPickerWithWidth: aWidth / 2
 		minValue: 0 maxValue: CGFLOAT_MAX initialValue: 0
-		forProperty: aHeightKey ofModel: anObject];
+		forProperty: aSecondKey ofModel: anObject];
 	ETBasicItemStyle *coverStyle = AUTORELEASE([ETBasicItemStyle new]);
-	
-	[widthPicker setName: _(@"Width")];
-	[coverStyle setLabelPosition: ETLabelPositionOutsideBottom];
-	[widthPicker setCoverStyle: coverStyle];
-	[widthPicker setBoundingBox: [self boundingBoxForItem: widthPicker]];
 
-	[heightPicker setName: _(@"Height")];
+	// FIXME: If no name is set, the number pickers are not visible
+	[firstPicker setName: _(@"1")];
 	[coverStyle setLabelPosition: ETLabelPositionOutsideBottom];
-	[heightPicker setCoverStyle: coverStyle];
-	[heightPicker setBoundingBox: [self boundingBoxForItem: heightPicker]];
+	[firstPicker setCoverStyle: coverStyle];
+	[firstPicker setBoundingBox: [self boundingBoxForItem: firstPicker]];
 
-	NSSize size = NSMakeSize(aWidth, [widthPicker boundingBox].size.height);
+	[secondPicker setName: _(@"2")];
+	[coverStyle setLabelPosition: ETLabelPositionOutsideBottom];
+	[secondPicker setCoverStyle: coverStyle];
+	[secondPicker setBoundingBox: [self boundingBoxForItem: secondPicker]];
+
+	NSSize size = NSMakeSize(aWidth, [firstPicker boundingBox].size.height);
 	ETLayoutItemGroup *editor = [self itemGroupWithSize: size];
 
 	[editor setLayout: [ETLineLayout layout]];
 	[[editor layout] setComputesItemRectFromBoundingBox: YES];
-	[editor addItems: A(widthPicker, heightPicker)];
+	[editor addItems: A(firstPicker, secondPicker)];
 	[editor updateLayout];
+
+	return editor;
+}
+
+- (ETLayoutItemGroup *) pointEditorWithWidth: (CGFloat)aWidth
+                                forXProperty: (NSString *)aXKey
+                                   yProperty: (NSString *)aYKey
+                                     ofModel: (id)anObject
+{
+	ETLayoutItemGroup *editor = [self numberPairEditorWithWidth: aWidth
+	                                           forFirstProperty: aXKey
+	                                             secondProperty: aYKey
+	                                                    ofModel: anObject];
+
+	[[editor firstItem] setName: _(@"X")];
+	[[editor lastItem] setName: _(@"Y")];
+
+	return editor;
+}
+
+- (ETLayoutItemGroup *) sizeEditorWithWidth: (CGFloat)aWidth
+                           forWidthProperty: (NSString *)aWidthKey
+                             heightProperty: (NSString *)aHeightKey
+                                    ofModel: (id)anObject
+{
+	ETLayoutItemGroup *editor = [self numberPairEditorWithWidth: aWidth
+	                                           forFirstProperty: aWidthKey
+	                                             secondProperty: aHeightKey
+	                                                    ofModel: anObject];
+
+	[[editor firstItem] setName: _(@"Width")];
+	[[editor lastItem] setName: _(@"Height")];
 
 	return editor;
 }
