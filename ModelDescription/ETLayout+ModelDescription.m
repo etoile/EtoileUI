@@ -9,9 +9,13 @@
 #import <EtoileFoundation/EtoileFoundation.h>
 #import "ETLayout.h"
 #import "ETComputedLayout.h"
+#import "ETPositionalLayout.h"
 
 // NOTE: ETFixedLayout, ETFreeLayout uses ETLayout model description
 @interface ETLayout (ModelDescription)
+@end
+
+@interface ETPositionalLayout (ModelDescription)
 @end
 
 @interface ETComputedLayout (ModelDescription)
@@ -50,16 +54,7 @@
 		[ETPropertyDescription descriptionWithName: @"isContentSizeLayout" type: (id)@"BOOL"];
 	ETPropertyDescription *usesCustomLayoutSize =
 		[ETPropertyDescription descriptionWithName: @"usesCustomLayoutSize" type: (id)@"BOOL"];	
-	ETPropertyDescription *constrainedItemSize =
-		[ETPropertyDescription descriptionWithName: @"constrainedItemSize" type: (id)@"NSSize"];
-	ETPropertyDescription *itemSizeConstraintStyle = 
-		[ETPropertyDescription descriptionWithName: @"itemSizeConstraintStyle" type: (id)@"NSUInteger"];
-	[itemSizeConstraintStyle setRole: AUTORELEASE([ETMultiOptionsRole new])];
-	[[itemSizeConstraintStyle role] setAllowedOptions:
-	 	[D(@(ETSizeConstraintStyleNone), @"ETSizeConstraintStyleNone",
-		   @(ETSizeConstraintStyleVertical), @"ETSizeConstraintStyleVertical",
-		   @(ETSizeConstraintStyleHorizontal), @"ETSizeConstraintStyleHorizontal",
-		   @(ETSizeConstraintStyleVerticalHorizontal), @"ETSizeConstraintStyleVerticalHorizontal") arrayRepresentation]];
+
 
 	// TODO: Declare the numerous derived (implicitly transient) properties we have 
 
@@ -71,10 +66,9 @@
 	// TODO: We need a direct ivar access to persist the layer item
 	// TODO: Evaluate whether we should support drop indicator persistence
 	NSArray *persistentProperties = A(attachedTool, context, delegate, layoutView,
-		layoutSize, isContentSizeLayout, usesCustomLayoutSize, constrainedItemSize, itemSizeConstraintStyle);
+		layoutSize, isContentSizeLayout, usesCustomLayoutSize);
 
-	[entity setUIBuilderPropertyNames: (id)[[A(delegate, dropIndicator, isContentSizeLayout,
-		constrainedItemSize, itemSizeConstraintStyle) mappedCollection] name]];
+	[entity setUIBuilderPropertyNames: (id)[[A(delegate, dropIndicator, isContentSizeLayout) mappedCollection] name]];
 
 	[[persistentProperties mappedCollection] setPersistent: YES];
 	[entity setPropertyDescriptions: 
@@ -84,6 +78,45 @@
 }
 
 @end
+
+
+@implementation ETPositionalLayout (ModelDescription)
+
++ (ETEntityDescription *) newEntityDescription
+{
+	ETEntityDescription *entity = [self newBasicEntityDescription];
+	
+	// For subclasses that don't override -newEntityDescription, we must not add
+	// the property descriptions that we will inherit through the parent
+	if ([[entity name] isEqual: [ETPositionalLayout className]] == NO)
+		return entity;
+
+	ETPropertyDescription *constrainedItemSize =
+		[ETPropertyDescription descriptionWithName: @"constrainedItemSize" type: (id)@"NSSize"];
+	ETPropertyDescription *itemSizeConstraintStyle = 
+		[ETPropertyDescription descriptionWithName: @"itemSizeConstraintStyle" type: (id)@"NSUInteger"];
+	[itemSizeConstraintStyle setRole: AUTORELEASE([ETMultiOptionsRole new])];
+	[[itemSizeConstraintStyle role] setAllowedOptions:
+	 	[D(@(ETSizeConstraintStyleNone), _(@"None"),
+		   @(ETSizeConstraintStyleVertical), _(@"Vertical"),
+		   @(ETSizeConstraintStyleHorizontal), _(@"Horizontal"),
+		   @(ETSizeConstraintStyleVerticalHorizontal), _(@"Vertical and Horizontal")) arrayRepresentation]];
+
+	NSArray *transientProperties = [NSArray array];
+	NSArray *persistentProperties = A(constrainedItemSize, itemSizeConstraintStyle);
+
+	[entity setUIBuilderPropertyNames: (id)[[A(constrainedItemSize,
+		itemSizeConstraintStyle) mappedCollection] name]];
+
+	[[persistentProperties mappedCollection] setPersistent: YES];
+	[entity setPropertyDescriptions: 
+		[persistentProperties arrayByAddingObjectsFromArray: transientProperties]];
+	
+	return entity;
+}
+
+@end
+
 
 
 @implementation ETComputedLayout (ModelDescription)
