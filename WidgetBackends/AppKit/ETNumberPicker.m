@@ -55,6 +55,11 @@ be smaller or equal to the frame height. */
 	[self addSubview: textField];
 	[self addSubview: stepper];
 
+	/*[stepper bind: NSValueBinding
+	     toObject: self
+	  withKeyPath: @"doubleValue"
+	      options: nil];*/
+
 	return self;
 }
 
@@ -106,6 +111,11 @@ terminology) on which actions should be dispatched. */
 	[[self stepper] setMaxValue: aValue];
 }
 
+- (double) doubleValue
+{
+	return [[self textField] doubleValue];
+}
+
 - (void) setDoubleValue: (double)aValue
 {
 	[[self textField] setDoubleValue: aValue];
@@ -153,6 +163,7 @@ terminology) on which actions should be dispatched. */
 - (void) setObjectValue: (id)aValue
 {
 	[[self textField] setObjectValue: aValue];
+	[[self stepper] setObjectValue: aValue];
 }
 
 - (NSActionCell *) cell
