@@ -283,33 +283,54 @@ conveniency. */
 	NSParameterAssert([S(@"NSRect", @"NSSize", @"NSPoint") containsObject: aScalarType]);
 
 	NSString *capitalizedFieldName = [aFieldName stringByCapitalizingFirstLetter];
-	NSString *newSelectorName = [aKey stringByAppendingString: capitalizedFieldName];
-	SEL newSelector = NSSelectorFromString(newSelectorName);
+	NSString *newGetterName = [aKey stringByAppendingString: capitalizedFieldName];
+	SEL newGetterSelector = NSSelectorFromString(newGetterName);
+	ETAssert(newGetterSelector != NULL);
 	
-	if ([self respondsToSelector: newSelector])
+	if ([self respondsToSelector: newGetterSelector])
 	{
-		return newSelectorName;
+		return newGetterName;
 	}
 		 
-	NSString *builtInSelectorName =
+	NSString *builtInGetterName =
 		[NSString stringWithFormat: @"synthesized%@%@Accessor", aScalarType, capitalizedFieldName];
-	SEL builtInSelector = NSSelectorFromString(builtInSelectorName);
-	ETAssert(builtInSelector != nil);
-	Method builtInMethod = class_getInstanceMethod([self class], builtInSelector);
-	IMP builtInMethodIMP = method_getImplementation(builtInMethod);
-	const char *typeEncoding = method_getTypeEncoding(builtInMethod);
+	SEL builtInGetterSelector = NSSelectorFromString(builtInGetterName);
+	ETAssert(builtInGetterSelector != nil);
+	Method builtInGetter = class_getInstanceMethod([self class], builtInGetterSelector);
+	IMP builtInGetterIMP = method_getImplementation(builtInGetter);
+	ETAssert (builtInGetterIMP != NULL);
+	const char *getterTypeEncoding = method_getTypeEncoding(builtInGetter);
 
-	ETAssert (builtInMethodIMP != NULL);
+	BOOL success = class_addMethod([self class], newGetterSelector, builtInGetterIMP, getterTypeEncoding);
+	
+	if (success == NO)
+		return NO;
+	
+	// TODO: Don't install for a read-only property description
+	NSString *capitalizedKey = [aKey stringByCapitalizingFirstLetter];
+	NSString *newSetterName =
+		[NSString stringWithFormat: @"set%@%@:", capitalizedKey, capitalizedFieldName];
+	SEL newSetterSelector = NSSelectorFromString(newSetterName);
+	ETAssert(newSetterSelector != NULL);
+	
+	NSString *builtInSetterName =
+		[NSString stringWithFormat: @"synthesized%@%@Accessor:", aScalarType, capitalizedFieldName];
+	SEL builtInSetterSelector = NSSelectorFromString(builtInSetterName);
+	ETAssert(builtInSetterSelector != nil);
+	Method builtInSetter = class_getInstanceMethod([self class], builtInSetterSelector);
+	IMP builtInSetterIMP = method_getImplementation(builtInSetter);
+	ETAssert (builtInSetterIMP != NULL);
+	const char *setterTypeEncoding = method_getTypeEncoding(builtInSetter);
 
-	BOOL success = class_addMethod([self class], newSelector, builtInMethodIMP, typeEncoding);
+	success = class_addMethod([self class], newSetterSelector, builtInSetterIMP, setterTypeEncoding);
 	
 	if (success == NO)
 		return NO;
 
-	[self addPropertyDescriptionWithName: newSelectorName
-	                                type: aScalarType
+	[self addPropertyDescriptionWithName: newGetterName
+	                                type: @"float"
 	                        inRepository: aRepository];
-	return newSelectorName;
+	return newGetterName;
 }
 
 - (CGFloat) synthesizedNSPointXAccessor
@@ -319,13 +340,33 @@ conveniency. */
 	
 	return [[self valueForKey: scalarKey] pointValue].x;
 }
-
 - (CGFloat) synthesizedNSPointYAccessor
 {
 	NSString *key = NSStringFromSelector(_cmd);
 	NSString *scalarKey = [key substringToIndex: [key length] - 1];
 	
 	return [[self valueForKey: scalarKey] pointValue].y;
+}
+
+- (void) synthesizedNSPointXAccessor: (CGFloat)x
+{
+	NSString *key = NSStringFromSelector(_cmd);
+
+	NSString *scalarKey = [key substringFromIndex: 3 toIndex: [key length] - 2];
+	scalarKey = [scalarKey stringByLowercasingFirstLetter];
+	NSPoint point = NSMakePoint(x, [[self valueForKey: scalarKey] pointValue].y);
+	
+	return [self setValue: [NSValue valueWithPoint: point] forKey: scalarKey];
+}
+
+- (void) synthesizedNSPointYAccessor: (CGFloat)y
+{
+	NSString *key = NSStringFromSelector(_cmd);
+	NSString *scalarKey = [key substringFromIndex: 3 toIndex: [key length] - 2];
+	scalarKey = [scalarKey stringByLowercasingFirstLetter];
+	NSPoint point = NSMakePoint([[self valueForKey: scalarKey] pointValue].x, y);
+	
+	return [self setValue: [NSValue valueWithPoint: point] forKey: scalarKey];
 }
 
 - (CGFloat) synthesizedNSSizeWidthAccessor
@@ -342,6 +383,26 @@ conveniency. */
 	NSString *scalarKey = [key substringToIndex: [key length] - 6];
 	
 	return [[self valueForKey: scalarKey] sizeValue].height;
+}
+
+- (void) synthesizedNSSizeWidthAccessor: (CGFloat)width
+{
+	NSString *key = NSStringFromSelector(_cmd);
+	NSString *scalarKey = [key substringFromIndex: 3 toIndex: [key length] - 6];
+	scalarKey = [scalarKey stringByLowercasingFirstLetter];
+	NSSize size = NSMakeSize(width, [[self valueForKey: scalarKey] sizeValue].height);
+	
+	return [self setValue: [NSValue valueWithSize: size] forKey: scalarKey];
+}
+
+- (void) synthesizedNSSizeHeightAccessor: (CGFloat)height
+{
+	NSString *key = NSStringFromSelector(_cmd);
+	NSString *scalarKey = [key substringFromIndex: 3 toIndex: [key length] - 7];
+	scalarKey = [scalarKey stringByLowercasingFirstLetter];
+	NSSize size = NSMakeSize([[self valueForKey: scalarKey] sizeValue].width, height);
+	
+	return [self setValue: [NSValue valueWithSize: size] forKey: scalarKey];
 }
 
 - (CGFloat) synthesizedNSRectXAccessor
@@ -374,6 +435,50 @@ conveniency. */
 	NSString *scalarKey = [key substringToIndex: [key length] - 6];
 	
 	return [[self valueForKey: scalarKey] rectValue].size.height;
+}
+
+- (void) synthesizedNSRectXAccessor: (CGFloat)x
+{
+	NSString *key = NSStringFromSelector(_cmd);
+	NSString *scalarKey = [key substringFromIndex: 3 toIndex: [key length] - 2];
+	scalarKey = [scalarKey stringByLowercasingFirstLetter];
+	NSRect oldRect = [[self valueForKey: scalarKey] rectValue];
+	NSRect newRect = NSMakeRect(x, oldRect.origin.y, oldRect.size.width, oldRect.size.height);
+	
+	return [self setValue: [NSValue valueWithRect: newRect] forKey: scalarKey];
+}
+
+- (void) synthesizedNSRectYAccessor: (CGFloat)y
+{
+	NSString *key = NSStringFromSelector(_cmd);
+	NSString *scalarKey = [key substringFromIndex: 3 toIndex: [key length] - 2];
+	scalarKey = [scalarKey stringByLowercasingFirstLetter];
+	NSRect oldRect = [[self valueForKey: scalarKey] rectValue];
+	NSRect newRect = NSMakeRect(oldRect.origin.x, y, oldRect.size.width, oldRect.size.height);
+	
+	return [self setValue: [NSValue valueWithRect: newRect] forKey: scalarKey];
+}
+
+- (void) synthesizedNSRectWidthAccessor: (CGFloat)width
+{
+	NSString *key = NSStringFromSelector(_cmd);
+	NSString *scalarKey = [key substringFromIndex: 3 toIndex: [key length] - 6];
+	scalarKey = [scalarKey stringByLowercasingFirstLetter];
+	NSRect oldRect = [[self valueForKey: scalarKey] rectValue];
+	NSRect newRect = NSMakeRect(oldRect.origin.x, oldRect.origin.y, width, oldRect.size.height);
+	
+	return [self setValue: [NSValue valueWithRect: newRect] forKey: scalarKey];
+}
+
+- (void) synthesizedNSRectHeightAccessor: (CGFloat)height
+{
+	NSString *key = NSStringFromSelector(_cmd);
+	NSString *scalarKey = [key substringFromIndex: 3 toIndex: [key length] - 7];
+	scalarKey = [scalarKey stringByLowercasingFirstLetter];
+	NSRect oldRect = [[self valueForKey: scalarKey] rectValue];
+	NSRect newRect = NSMakeRect(oldRect.origin.x, oldRect.origin.y, oldRect.size.width, height);
+	
+	return [self setValue: [NSValue valueWithRect: newRect] forKey: scalarKey];
 }
 
 @end
