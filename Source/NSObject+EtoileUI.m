@@ -7,6 +7,7 @@
  */
 
 #import <EtoileFoundation/Macros.h>
+#import <EtoileFoundation/ETModelDescriptionRepository.h>
 #import <EtoileFoundation/NSObject+Etoile.h>
 #import <EtoileFoundation/NSObject+Model.h>
 #import <EtoileFoundation/NSString+Etoile.h>
@@ -16,6 +17,7 @@
 #import "ETInspector.h"
 #import "ETViewModelLayout.h"
 #import "ETCompatibility.h"
+#include <objc/runtime.h>
 
 @interface NSObject (EtoileUIPrivate)
 + (NSString *) stripClassName;
@@ -248,6 +250,130 @@ conveniency. */
 	RELEASE(archiver);
 
 	return AUTORELEASE([[NSString alloc] initWithData: data encoding: NSUTF8StringEncoding]);
+}
+
+
+#pragma mark Scalar Editing Accessors
+#pragma mark -
+
+- (void) addPropertyDescriptionWithName: (NSString *)aProperty
+                                   type: (NSString *)aType
+                           inRepository: (ETModelDescriptionRepository *)aRepository
+{
+	ETPropertyDescription *propertyDesc =
+		[ETPropertyDescription descriptionWithName: aProperty
+		                                      type: [aRepository descriptionForName: aType]];
+	ETEntityDescription *entityDesc = [aRepository entityDescriptionForClass: [self class]];
+
+	[entityDesc addPropertyDescription: propertyDesc];
+	[aRepository addDescription: propertyDesc];
+
+	NSMutableArray *warnings = [NSMutableArray array];
+	[aRepository checkConstraints: warnings];
+	// FIXME: ETAssert([warnings isEmpty]);
+}
+
+- (id) synthesizeAccessorsForFieldName: (NSString *)aFieldName
+                      ofScalarProperty: (NSString *)aKey
+                                  type: (NSString *)aScalarType
+                          inRepository: (ETModelDescriptionRepository *)aRepository
+{
+	NSParameterAssert(aFieldName != nil);
+	NSParameterAssert(aKey != nil);
+	NSParameterAssert([S(@"NSRect", @"NSSize", @"NSPoint") containsObject: aScalarType]);
+
+	NSString *capitalizedFieldName = [aFieldName stringByCapitalizingFirstLetter];
+	NSString *newSelectorName = [aKey stringByAppendingString: capitalizedFieldName];
+	SEL newSelector = NSSelectorFromString(newSelectorName);
+	
+	if ([self respondsToSelector: newSelector])
+	{
+		return newSelectorName;
+	}
+		 
+	NSString *builtInSelectorName =
+		[NSString stringWithFormat: @"synthesized%@%@Accessor", aScalarType, capitalizedFieldName];
+	SEL builtInSelector = NSSelectorFromString(builtInSelectorName);
+	ETAssert(builtInSelector != nil);
+	Method builtInMethod = class_getInstanceMethod([self class], builtInSelector);
+	IMP builtInMethodIMP = method_getImplementation(builtInMethod);
+	const char *typeEncoding = method_getTypeEncoding(builtInMethod);
+
+	ETAssert (builtInMethodIMP != NULL);
+
+	BOOL success = class_addMethod([self class], newSelector, builtInMethodIMP, typeEncoding);
+	
+	if (success == NO)
+		return NO;
+
+	[self addPropertyDescriptionWithName: newSelectorName
+	                                type: aScalarType
+	                        inRepository: aRepository];
+	return newSelectorName;
+}
+
+- (CGFloat) synthesizedNSPointXAccessor
+{
+	NSString *key = NSStringFromSelector(_cmd);
+	NSString *scalarKey = [key substringToIndex: [key length] - 1];
+	
+	return [[self valueForKey: scalarKey] pointValue].x;
+}
+
+- (CGFloat) synthesizedNSPointYAccessor
+{
+	NSString *key = NSStringFromSelector(_cmd);
+	NSString *scalarKey = [key substringToIndex: [key length] - 1];
+	
+	return [[self valueForKey: scalarKey] pointValue].y;
+}
+
+- (CGFloat) synthesizedNSSizeWidthAccessor
+{
+	NSString *key = NSStringFromSelector(_cmd);
+	NSString *scalarKey = [key substringToIndex: [key length] - 5];
+
+	return [[self valueForKey: scalarKey] sizeValue].width;
+}
+
+- (CGFloat) synthesizedNSSizeHeightAccessor
+{
+	NSString *key = NSStringFromSelector(_cmd);
+	NSString *scalarKey = [key substringToIndex: [key length] - 6];
+	
+	return [[self valueForKey: scalarKey] sizeValue].height;
+}
+
+- (CGFloat) synthesizedNSRectXAccessor
+{
+	NSString *key = NSStringFromSelector(_cmd);
+	NSString *scalarKey = [key substringToIndex: [key length] - 1];
+	
+	return [[self valueForKey: scalarKey] rectValue].origin.x;
+}
+
+- (CGFloat) synthesizedNSRectYAccessor
+{
+	NSString *key = NSStringFromSelector(_cmd);
+	NSString *scalarKey = [key substringToIndex: [key length] - 1];
+	
+	return [[self valueForKey: scalarKey] rectValue].origin.y;
+}
+
+- (CGFloat) synthesizedNSRectWidthAccessor
+{
+	NSString *key = NSStringFromSelector(_cmd);
+	NSString *scalarKey = [key substringToIndex: [key length] - 5];
+
+	return [[self valueForKey: scalarKey] rectValue].size.width;
+}
+
+- (CGFloat) synthesizedNSRectHeightAccessor
+{
+	NSString *key = NSStringFromSelector(_cmd);
+	NSString *scalarKey = [key substringToIndex: [key length] - 6];
+	
+	return [[self valueForKey: scalarKey] rectValue].size.height;
 }
 
 @end

@@ -14,6 +14,8 @@
 #import <EtoileFoundation/ETKeyValuePair.h>
 #import <EtoileUI/ETInspecting.h>
 
+@class ETModelDescriptionRepository;
+
 /** EtoileUI binds to all objects a visual representation. In many cases, such
 	representations are created only on demand.
 	Any UI objects like (ETView, ETLayoutItem etc.) responds to -view: by 
@@ -69,6 +71,13 @@
 /* Debugging */
 
 - (NSString *) XMLArchive;
+
+/** @taskunit Synthesizing Scalar Field Accessors */
+
+- (id) synthesizeAccessorsForFieldName: (NSString *)aFieldName
+                      ofScalarProperty: (NSString *)aKey
+                                  type: (NSString *)aScalarType
+                          inRepository: (ETModelDescriptionRepository *)aRepository;
 
 @end
 
