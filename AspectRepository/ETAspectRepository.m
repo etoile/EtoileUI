@@ -21,13 +21,18 @@ static ETAspectRepository *mainRepo = nil;
 	if (self != [ETAspectRepository  class])
 		return;
 
-	mainRepo = [[[self class] alloc] initWithName: _(@"Main Aspect Repository")];
+	mainRepo = [[[self class] alloc] initWithName: _(@"Main")];
 }
 
 /** Returns the main aspect repository persistent and shared between processes (not yet). */
 + (id) mainRepository
 {
 	return mainRepo;
+}
+
+- (NSString *) displayName
+{
+	return [NSString stringWithFormat: @"%@ %@", [self name], _(@"Aspect Repository")];
 }
 
 /** Returns the category kown by the given name. */
