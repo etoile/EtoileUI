@@ -999,6 +999,7 @@ and a stepper on the right side. */
 	                                             secondProperty: aYKey
 	                                                    ofModel: anObject];
 
+	[editor setIdentifier: @"pointEditor"];
 	[[editor firstItem] setName: _(@"X")];
 	[[editor lastItem] setName: _(@"Y")];
 
@@ -1015,6 +1016,7 @@ and a stepper on the right side. */
 	                                             secondProperty: aHeightKey
 	                                                    ofModel: anObject];
 
+	[editor setIdentifier: @"sizeEditor"];
 	[[editor firstItem] setName: _(@"Width")];
 	[[editor lastItem] setName: _(@"Height")];
 
