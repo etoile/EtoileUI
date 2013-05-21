@@ -25,8 +25,6 @@
 
 @implementation ETController
 
-static ETController *basicTemplateProvider = nil;
-
 + (void) initialize
 {
 	if ([ETController class] == self) 
@@ -41,7 +39,6 @@ static ETController *basicTemplateProvider = nil;
 		                                         description: @"EtoileUI Template Group Type (see ETController)"
 		                                    supertypeStrings: [NSArray array]
 		                                            typeTags: nil];
-		basicTemplateProvider = [[ETController alloc] init];
 	}
 }
 
@@ -1146,12 +1143,21 @@ See instead -[ETLayoutItem objectDidEndEditing:]. */
 
 /* Framework Private */
 
+static ETController *basicTemplateProvider = nil;
+
 /** This method is only exposed to be used internally by EtoileUI. 
 
 Returns a shared and immutable template provider in which basic templates are 
 registered for -currentObjectType and -currentGroupType. */
 + (id <ETTemplateProvider>) basicTemplateProvider
 {
+	if (basicTemplateProvider == nil)
+	{
+		// NOTE: Must not be instantiated in +initialize otherwise several
+		// ETUIObject subclass instances are initialized before all the model
+		// descriptions are registered.
+		basicTemplateProvider = [[ETController alloc] init];
+	}
 	return basicTemplateProvider;
 }
 

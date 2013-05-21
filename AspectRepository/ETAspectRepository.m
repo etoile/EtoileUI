@@ -16,17 +16,13 @@
 
 static ETAspectRepository *mainRepo = nil;
 
-+ (void) initialize
-{
-	if (self != [ETAspectRepository  class])
-		return;
-
-	mainRepo = [[[self class] alloc] initWithName: _(@"Main")];
-}
-
 /** Returns the main aspect repository persistent and shared between processes (not yet). */
 + (id) mainRepository
 {
+	if (mainRepo == nil)
+	{
+		mainRepo = [[[self class] alloc] initWithName: _(@"Main")];
+	}
 	return mainRepo;
 }
 
