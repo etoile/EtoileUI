@@ -1072,7 +1072,7 @@ The view is an NSView class or subclass instance. See -setView:. */
 	{
 		[[(id <ETWidget>)newView cell] addObserver: self 
 		                                forKeyPath: @"objectValue"
-		                                   options: NSKeyValueObservingOptionNew
+		                                   options: NSKeyValueObservingOptionNew | NSKeyValueObservingOptionOld
 	                                           context: NULL];
 		[[(id <ETWidget>)newView cell] addObserver: self 
 		                                forKeyPath: @"state"

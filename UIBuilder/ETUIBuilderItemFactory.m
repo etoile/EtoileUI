@@ -13,11 +13,14 @@
 #import <EtoileFoundation/Macros.h>
 #import <IconKit/IconKit.h>
 #import "ETUIBuilderItemFactory.h"
+#import "ETAspectCategory.h"
+#import "ETAspectRepository.h"
 #import "EtoileUIProperties.h"
 #import "ETColumnLayout.h"
 #import "ETController.h"
 #import "ETFormLayout.h"
 #import "ETLayoutItem.h"
+#import "ETLayoutItem+Scrollable.h"
 #import "ETLayoutItemGroup.h"
 #import "ETLineLayout.h"
 #import "ETUIBuilderController.h"
@@ -34,7 +37,7 @@
 {
 	SUPERINIT;
 	ASSIGN(renderer, [ETModelDescriptionRenderer renderer]);
-	[renderer setGroupingKeyPath: @"owner"];
+	//[renderer setGroupingKeyPath: @"owner"];
 	return self;
 }
 
@@ -60,7 +63,7 @@
 	// displayed properties are lost on layout changes (happens only if the
 	// user wants to customize the inspector UI).
 	[layout setDisplayedProperties: A(kETIconProperty, @"UIBuilderName",
-		@"UIBuilderIdentifier", @"UIBuilderAction", @"UIBuilderTarget",
+		kETIdentifierProperty, @"UIBuilderAction", @"UIBuilderTarget",
 		@"UIBuilderModel", @"UIBuilderController")];
 
 	/* Actions are stored as strings in ETLayoutItem variable storage. So we
@@ -69,21 +72,21 @@
 	   -[ETLayoutItem target] checks whether this property is set just before
 	   returning the target. */
 	[layout setDisplayName: @"Name" forProperty: @"UIBuilderName"];
-	[layout setDisplayName: @"Identifier" forProperty: @"UIBuilderIdentifier"];
+	[layout setDisplayName: @"Identifier" forProperty: kETIdentifierProperty];
 	[layout setDisplayName: @"Action" forProperty: @"UIBuilderAction"];
 	[layout setDisplayName: @"Target" forProperty: @"UIBuilderTarget"];
 	[layout setDisplayName: @"Model" forProperty: @"UIBuilderModel"];
 	[layout setDisplayName: @"Controller" forProperty: @"UIBuilderController"];
 	
 	[[layout columnForProperty: @"UIBuilderName"] setWidth: 140];
-	[[layout columnForProperty: @"UIBuilderIdentifier"] setWidth: 120];
+	[[layout columnForProperty: kETIdentifierProperty] setWidth: 120];
 	[[layout columnForProperty: @"UIBuilderTarget"] setWidth: 100];
 	[[layout columnForProperty: @"UIBuilderAction"] setWidth: 100];
 	[[layout columnForProperty: @"UIBuilderModel"] setWidth: 100];
 	[[layout columnForProperty: @"UIBuilderController"] setWidth: 120];
 
 	[layout setEditable: YES forProperty: @"UIBuilderName"];
-	[layout setEditable: YES forProperty: @"UIBuilderIdentifier"];
+	[layout setEditable: YES forProperty: kETIdentifierProperty];
 	[layout setEditable: YES forProperty: @"UIBuilderAction"];
 	[layout setEditable: YES forProperty: @"UIBuilderTarget"];
 	[layout setEditable: YES forProperty: @"UIBuilderModel"];
@@ -94,7 +97,7 @@
 
 - (NSSize) defaultInspectorSize
 {
-	return NSMakeSize(700, 800);
+	return NSMakeSize(700, 1000);
 }
 
 - (NSSize) defaultInspectorBodySize
@@ -114,7 +117,7 @@
 - (NSSize) defaultBasicInspectorSize
 {
 	NSSize size = [self defaultInspectorBodySize];
-	size.height = 500;
+	size.height = 800;
 	return size;
 }
 
@@ -125,11 +128,11 @@
 	ETLayoutItemGroup *body = [self inspectorBodyWithObject: anObject controller: aController];
 	ETLayoutItemGroup *inspector = [self itemGroupWithSize: [self defaultInspectorSize]];
 
+	[inspector addItems: A(topBar, body)];
 	[inspector setIdentifier: @"inspector"];
 	[inspector setAutoresizingMask: ETAutoresizingFlexibleWidth | ETAutoresizingFlexibleHeight];
 	[inspector setLayout: [ETColumnLayout layout]];
 	[inspector setController: aController];
-	[inspector addItems: A(topBar, body)];
 
 	ETLog(@"\n%@\n", [inspector descriptionWithOptions: [NSMutableDictionary dictionaryWithObjectsAndKeys: 
 		A(@"frame", @"autoresizingMask"), kETDescriptionOptionValuesForKeyPaths,
@@ -153,17 +156,26 @@
 	return popUpItem;
 }
 
+- (NSArray *) allAspectRepositories
+{
+	NSArray *repos = [[[ETAspectRepository mainRepository]
+		aspectCategoryNamed: _(@"Aspect Repository")] aspects];
+
+	return [A([ETAspectRepository mainRepository]) arrayByAddingObjectsFromArray: repos];
+}
+
 - (ETLayoutItem *) aspectRepositoryPopUpWithController: (id)aController
 {
-	NSArray *choices = A(_(@"Browser"), _(@"Inspector"), _(@"Browser and Inspector"));
+	NSArray *aspectRepos = [self allAspectRepositories];
+	NSArray *choices = (id)[[aspectRepos mappedCollection] name];
 	ETLayoutItem *popUpItem = [self popUpMenuWithItemTitles: choices
-		                                 representedObjects: [NSArray array]
+		                                 representedObjects: aspectRepos
 		                                             target: aController 
-		                                             action: @selector(changePresentationViewFromPopUp:)];
+		                                             action: @selector(changeAspectRepositoryFromPopUp:)];
 
-	// FIXME: [aController setViewPopUpItem: popUpItem];
+	[aController setAspectPopUpItem: popUpItem];
 	[popUpItem sizeToFit];
-	[[popUpItem view] selectItemAtIndex: 2];
+	[[popUpItem view] selectItemAtIndex: 0];
 
 	return popUpItem;
 }
@@ -233,6 +245,7 @@
 	[itemGroup setIdentifier: @"browser"];
 	[itemGroup setAutoresizingMask: ETAutoresizingFlexibleWidth];
 	[itemGroup setLayout: [self defaultMasterViewLayout]];
+	[itemGroup setHasVerticalScroller: YES];
 	[itemGroup setSource: itemGroup];
 	[itemGroup setDelegate: aController];
 	[itemGroup setDoubleAction: @selector(doubleClickInItemGroupView:)];
@@ -324,6 +337,10 @@
 	NSParameterAssert(anObject != nil);
 	NSParameterAssert(aController != nil);
 	NSParameterAssert(anAspectName != nil);
+
+	ETEntityDescription *rootEntity = [[renderer repository] descriptionForName: @"Object"];
+
+	[(ETObjectValueFormatter *)[renderer formatterForType: rootEntity] setDelegate: aController];
 
 	[renderer setRenderedPropertyNames: [self presentedPropertyNamesForAspectName: anAspectName
 	                                                                     ofObject: anObject]];

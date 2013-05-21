@@ -10,6 +10,7 @@
 #import <EtoileFoundation/ETPropertyDescription.h>
 #import <EtoileFoundation/ETPropertyViewpoint.h>
 #import <EtoileFoundation/ETModelElementDescription.h>
+#import <EtoileFoundation/ETModelDescriptionRepository.h>
 #import <EtoileFoundation/NSObject+DoubleDispatch.h>
 #import <EtoileFoundation/NSObject+Model.h>
 #import <EtoileFoundation/NSString+Etoile.h>
@@ -25,8 +26,12 @@
 #import "EtoileUIProperties.h"
 #import "ETTitleBarItem.h"
 #import "ETOutlineLayout.h"
+#import "NSObject+EtoileUI.h"
+#import "NSView+Etoile.h"
 #import "ETCompatibility.h"
 
+@interface ETPopUpButtonTarget : NSObject
+@end
 
 @implementation ETModelDescriptionRenderer
 
@@ -45,12 +50,14 @@
 	SUPERINIT
 	_templateItems = [NSMutableDictionary new];
 	_additionalTemplateIdentifiers = [NSMutableDictionary new];
+	_formattersByType = [NSMutableDictionary new];
 	ASSIGN(_repository, [ETModelDescriptionRepository mainRepository]);
 	ASSIGN(_itemFactory, [ETLayoutItemFactory factory]);
 	ASSIGN(_entityLayout, [self defaultFormLayout]);
 
 	[self registerDefaultTemplateItems];
 	[self registerDefaultRoleTemplateIdentifiers];
+	[self registerDefaultFormatters];
 
 	return self;
 }
@@ -60,6 +67,7 @@
 	DESTROY(_templateItems);
 	DESTROY(_repository);
 	DESTROY(_itemFactory);
+	DESTROY(_formattersByType);
 	DESTROY(_entityLayout);
 	DESTROY(_renderedPropertyNames);
 	DESTROY(_groupingKeyPath);
@@ -103,6 +111,7 @@ time. For example:
 {
 	ETLayoutItem *item = [_itemFactory textField];
 	[item setWidth: [self defaultItemSize].width];
+	[[[[item view] cell] ifResponds] setPlaceholderString: @"Nil"];
 	return item;
 }
 
@@ -141,6 +150,7 @@ time. For example:
 		[pointEditor height] + [sizeEditor height]);
 	ETLayoutItemGroup *editor = [_itemFactory itemGroupWithSize: size];
 
+	[editor setIdentifier: @"rectEditor"];
 	[editor setLayout: [ETColumnLayout layout]];
 	[editor addItems: A(pointEditor, sizeEditor)];
 
@@ -182,6 +192,12 @@ time. For example:
 {
 	[self setTemplateIdentifier: @"numberPicker" forRoleClass: [ETNumberRole class]];
 	[self setTemplateIdentifier: @"popUpMenu" forRoleClass: [ETMultiOptionsRole class]];
+}
+
+- (void) registerDefaultFormatters
+{
+	[self setFormatter: AUTORELEASE([ETObjectValueFormatter new])
+	           forType: [_repository descriptionForName: @"Object"]];
 }
 
 - (void) setEntityLayout: (ETLayout *)aLayout
@@ -362,6 +378,26 @@ See also -setRenderedPropertyNames:. */
 	[layout setUsesAlignmentHint: YES];
 	[layout setIsContentSizeLayout: _usesContentSizeLayout];
 	return layout;
+}
+
+
+- (NSFormatter *) formatterForType: (ETEntityDescription *)aType
+{
+	ETEntityDescription *type = aType;
+	NSFormatter *formatter = nil;
+	
+	do
+	{
+		formatter = [_formattersByType objectForKey: [aType name]];
+	}
+	while ((type = [type parent]) != nil);
+
+	return formatter;
+}
+
+- (void) setFormatter: (NSFormatter *)aFormatter forType: (ETEntityDescription *)aType
+{
+	[_formattersByType setObject: aFormatter forKey: [aType name]];
 }
 
 - (NSString *) labelForPropertyDescription: (ETPropertyDescription *)aPropertyDesc
@@ -633,10 +669,48 @@ See also -setRenderedPropertyNames:. */
 	return ([[anItem view] isKindOfClass: [NSTextField class]] || [[anItem view] isKindOfClass: [NSTextView class]]);
 }
 
+- (BOOL) isPointEditorItem: (ETLayoutItem *)anItem
+{
+	return ([[anItem identifier] isEqual: @"pointEditor"]);
+}
+
+- (BOOL) isSizeEditorItem: (ETLayoutItem *)anItem
+{
+	return ([[anItem identifier] isEqual: @"sizeEditor"]);
+}
+
+- (BOOL) isRectEditorItem: (ETLayoutItem *)anItem
+{
+	return ([[anItem identifier] isEqual: @"rectEditor"]);
+}
+
 - (BOOL) isPopUpMenuItem: (ETLayoutItem *)anItem
 {
 	// TODO: Move to ETLayoutItemFactory or ETLayoutItem
 	return ([[anItem view] isKindOfClass: [NSPopUpButton class]]);
+}
+
+- (void) prepareViewpointWithRepresentedObject: (id)anObject
+                                        onItem: (ETLayoutItem *)item
+                       forAttributeDescription: (ETPropertyDescription *)aPropertyDesc
+                               scalarFieldName: (NSString *)aFieldName
+{
+	NSParameterAssert(anObject != nil);
+	NSParameterAssert(item != nil);
+	NSString *synthesizedName = [anObject synthesizeAccessorsForFieldName: aFieldName
+	                                                     ofScalarProperty: [aPropertyDesc name]
+	                                                                 type: [[aPropertyDesc type] name]
+	                                                         inRepository: [self repository]];
+	ETAssert(synthesizedName != nil);
+
+	// TODO: Ugly -[ETLayoutItem frame] hack to remove
+	if ([[aPropertyDesc name] isEqual: @"frame"])
+	{
+		synthesizedName = aFieldName;
+	}
+
+	[item setRepresentedObject: [ETPropertyViewpoint viewpointWithName: synthesizedName
+	                                                 representedObject: anObject]];
 }
 
 - (void) prepareViewOfNewItem: (ETLayoutItem *)item forAttributeDescription: (ETPropertyDescription *)aPropertyDesc
@@ -644,6 +718,7 @@ See also -setRenderedPropertyNames:. */
 	[[[item view] ifResponds] setEditable: ([aPropertyDesc isReadOnly] == NO)];
 	if ([self isTextItem: item])
 	{
+		[[[item view] ifResponds] setFormatter: [self formatterForType: [aPropertyDesc type]]];
 		[[[item view] ifResponds] setSelectable: YES];
 		// FIXME: On Mac OS X, resigning the first responder status in a cell
 		// that is selectable causes -setStringValue: on the cell to be called
@@ -653,12 +728,57 @@ See also -setRenderedPropertyNames:. */
 		// and ETLayoutItem)
 		[[[item view] ifResponds] setEnabled: ([aPropertyDesc isReadOnly] == NO)];
 	}
+	else if ([self isPointEditorItem: item])
+	{
+		[self prepareViewpointWithRepresentedObject: [[item representedObject] representedObject]
+		                                     onItem: [(ETLayoutItemGroup *)item firstItem]
+		                    forAttributeDescription: aPropertyDesc
+		                            scalarFieldName: @"x"];
+		[self prepareViewpointWithRepresentedObject: [[item representedObject] representedObject]
+		                                     onItem: [(ETLayoutItemGroup *)item lastItem]
+		                    forAttributeDescription: aPropertyDesc
+		                            scalarFieldName: @"y"];
+	}
+	else if ([self isSizeEditorItem: item])
+	{
+		[self prepareViewpointWithRepresentedObject: [[item representedObject] representedObject]
+		                                     onItem: [(ETLayoutItemGroup *)item firstItem]
+		                    forAttributeDescription: aPropertyDesc
+		                            scalarFieldName: @"width"];
+		[self prepareViewpointWithRepresentedObject: [[item representedObject] representedObject]
+		                                     onItem: [(ETLayoutItemGroup *)item lastItem]
+		                    forAttributeDescription: aPropertyDesc
+		                            scalarFieldName: @"height"];
+	}
+	else if ([self isRectEditorItem: item])
+	{
+		ETLayoutItemGroup *pointEditor = (id)[(ETLayoutItemGroup *)item firstItem];
+		ETLayoutItemGroup *sizeEditor = (id)[(ETLayoutItemGroup *)item lastItem];
+
+		[self prepareViewpointWithRepresentedObject: [[item representedObject] representedObject]
+		                                     onItem: [pointEditor firstItem]
+		                    forAttributeDescription: aPropertyDesc
+		                            scalarFieldName: @"x"];
+		[self prepareViewpointWithRepresentedObject: [[item representedObject] representedObject]
+		                                     onItem: [pointEditor lastItem]
+		                    forAttributeDescription: aPropertyDesc
+		                            scalarFieldName: @"y"];
+		[self prepareViewpointWithRepresentedObject: [[item representedObject] representedObject]
+		                                     onItem: [sizeEditor firstItem]
+		                    forAttributeDescription: aPropertyDesc
+		                            scalarFieldName: @"width"];
+		[self prepareViewpointWithRepresentedObject: [[item representedObject] representedObject]
+		                                     onItem: [sizeEditor lastItem]
+		                    forAttributeDescription: aPropertyDesc
+		                            scalarFieldName: @"height"];
+	}
 	else if ([self isPopUpMenuItem: item])
 	{
 		NSArray *options = [[aPropertyDesc role] allowedOptions];
 		NSArray *entryTitles = (id)[[options mappedCollection] key];
 		NSArray *entryModels = (id)[[options mappedCollection] value];
 		NSPopUpButton *popUpView = [item view];
+		id currentValue = [item valueForProperty: kETValueProperty];
 
 		// TODO: Pop up set up to be removed once ETPopUpMenuLayout is available
 		[popUpView addItemsWithTitles: entryTitles];
@@ -672,8 +792,16 @@ See also -setRenderedPropertyNames:. */
 				repObject = nil;
 			}
 			[[popUpView itemAtIndex: i] setRepresentedObject: repObject];
+
+			if ([currentValue isEqual: repObject])
+			{
+				[popUpView selectItemAtIndex: i];
+			}
 		}
 
+		[popUpView setTarget: [ETPopUpButtonTarget sharedInstance]];
+		[popUpView setAction: @selector(changeSelectedItemInPopUp:)];
+	
 		[[[item view] ifResponds] setEnabled: ([aPropertyDesc isReadOnly] == NO)];
 	}
 	else
@@ -743,6 +871,125 @@ See also -setRenderedPropertyNames:. */
 	ETLayoutItemGroup *entityItem = [[ETModelDescriptionRenderer renderer] renderObject: [item representedObject]];
 
 	[[[ETLayoutItemFactory factory] windowGroup] addItem: entityItem];
+}
+
+@end
+
+@implementation ETFormatter
+
+- (NSString *) stringForObjectValue: (id)aValue
+{
+	NSLog(@"Value %@ class %@", aValue, [aValue class]);
+	NSString *string = NSStringFromClass([aValue class]);
+
+	NSLog(@"String %@ class %@", string, [string class]);
+
+	if (aValue == nil)
+	{
+		return nil;
+	}
+	else 
+	{
+		return NSStringFromClass([aValue class]);
+	}
+}
+
+- (BOOL) getObjectValue: (id *)anObject forString: (NSString *)aString errorDescription: (NSString **)error
+{
+	id value = [NSClassFromString(aString) new];
+
+	if (value == nil)
+	{
+		*anObject = @"";
+		//*error = [NSString stringWithFormat: _(@"Found no aspect or class for %@"), string];
+		//error = &string;
+		return NO;
+	}
+	else
+	{
+		*anObject = value;
+		return YES;
+	}
+}
+
+@end
+
+@implementation ETObjectValueFormatter
+
+- (NSString *) stringForObjectValue: (id)aValue
+{
+	/* If a text field presents an entity object, no empty strings must be 
+	   passed to NSStringFromClass(), otherwise the text field shows a NSString 
+	   subclass as the entity type. */
+	if (aValue == nil || [aValue isString])
+		return aValue;
+
+	id string = [[self delegate] formatter: self stringForObjectValue: aValue];
+
+	if (string == nil)
+	{
+		string = NSStringFromClass([aValue class]);
+	}
+	return string;
+}
+
+- (BOOL) getObjectValue: (id *)anObject forString: (NSString *)aString errorDescription: (NSString **)error
+{
+	NSString *string = [aString copy];
+
+	if (string == nil)
+		return NO;
+
+	NSString *validatedString = [[self delegate] formatter: self stringValueForString: string];
+
+	if (validatedString == nil && NSClassFromString(string) != Nil)
+	{
+		validatedString = string;
+	}
+	
+	if (validatedString == nil)
+	{
+		//*error = [NSString stringWithFormat: _(@"Found no aspect or class for %@"), string];
+		//error = &string;
+		return NO;
+	}
+	else
+	{
+		*anObject = validatedString;
+		return YES;
+	}
+}
+
+@end
+
+// NOTE: ETPopUpButtonTarget propagates the change, because KVO on
+// -[NSPopUpButton objectValue] doesn't work. If it was working, we could just
+// change -[ETLayoutItem didChangeViewValue: to call a method
+// -[NSCell valueForObjectValue:] which would be overriden in a
+// NSPopUpButtonCell category to return the menu item represented object based
+// on the selection index provided as the object value.
+@implementation ETPopUpButtonTarget
+
+static ETPopUpButtonTarget *sharedInstance = nil;
+
++ (void) initialize
+{
+	if (self != [ETPopUpButtonTarget class])
+		return;
+
+	sharedInstance = [ETPopUpButtonTarget new];
+}
+
++ (id) sharedInstance
+{
+	return sharedInstance;
+}
+
+- (IBAction) changeSelectedItemInPopUp: (id)sender
+{
+	ETLayoutItem *popUpItem = [sender owningItem];
+	ETAssert(popUpItem != nil);
+	[popUpItem didChangeViewValue: [[sender selectedItem] representedObject]];
 }
 
 @end

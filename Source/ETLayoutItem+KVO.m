@@ -44,6 +44,15 @@
     }
 }
 
+/* When NSTextFieldCell receives the focus and it uses a nil value, it calls 
+-[NSCell setStringValue:] using an empty string, then emits a KVO notification 
+that contains this empty string as the new value. */
+- (BOOL) isNewValue: (id)newValue comparedToOldValue: (id)oldValue
+{
+	return ((oldValue == nil && [newValue isEqual: @""])
+		|| ([oldValue isEqual: @""] && newValue == nil));
+}
+
 - (void) observeValueForKeyPath: (NSString *)keyPath ofObject: (id)object 
 	change: (NSDictionary *)change context: (void *)context
 {
@@ -53,7 +62,14 @@
 	if (isWidgetViewChange)
 	{
 		NSParameterAssert([keyPath isEqual: @"objectValue"] || [keyPath isEqual: @"state"]);
-		[self didChangeViewValue: [change objectForKey: NSKeyValueChangeNewKey]];
+
+		id newValue = [change objectForKey: NSKeyValueChangeNewKey];
+		id oldValue = [change objectForKey: NSKeyValueChangeOldKey];
+
+		if ([self isNewValue: newValue comparedToOldValue: oldValue] == NO)
+			return;
+	
+		[self didChangeViewValue: newValue];
 	}
 	else /* isRepresentedObjectChange */
 	{
@@ -189,7 +205,8 @@ affected. */
 	// its parent item or its parent represented object.
 	// The issue also exists with -indexPath.
 	NSSet *geometryDependentKeys = S(kETViewProperty, kETFrameProperty, 
-		kETXProperty, kETYProperty, kETWidthProperty, kETHeightProperty);
+		kETXProperty, kETYProperty, kETWidthProperty, kETHeightProperty,
+		@"positionX", @"positionY");
 	NSSet *parentDependentKeys = S(kETRootItemProperty, kETIsBaseItemProperty, 
 		kETBaseItemProperty, kETControllerItemProperty, kETIndexPathProperty);
 	NSSet *nameDependentKeys = S(kETDisplayNameProperty);

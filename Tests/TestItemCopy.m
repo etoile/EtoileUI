@@ -134,14 +134,15 @@ DEALLOC(DESTROY(itemFactory); DESTROY(item); DESTROY(itemGroup))
 - (NSArray *) basicNilItemProperties
 {
 	return  A(kETBaseItemProperty, kETRootItemProperty, kETIdentifierProperty, 
-		kETValueProperty, kETStyleProperty, @"targetId", @"viewTargetId", kETInspectorProperty);
+		kETValueProperty, kETStyleProperty, @"targetId", @"viewTargetId",
+		kETInspectorProperty, @"UIBuilderTarget", @"UIBuilderAction");
 }
 
 - (NSArray *) defaultNilItemProperties
 {
 	return [A(kETNameProperty, kETIconProperty,  kETImageProperty, 
 		kETRepresentedObjectProperty, kETSubjectProperty, kETSubtypeProperty, 
-		kETActionProperty, kETTargetProperty) arrayByAddingObjectsFromArray: [self basicNilItemProperties]];
+		kETActionProperty, kETTargetProperty, @"UIBuilderName") arrayByAddingObjectsFromArray: [self basicNilItemProperties]];
 }
 
 - (NSArray *) nonEqualItemProperties
@@ -202,6 +203,7 @@ DEALLOC(DESTROY(itemFactory); DESTROY(item); DESTROY(itemGroup))
 	[item setIcon: [[NSWorkspace sharedWorkspace] iconForFile: @"/"]];
 	[item setRepresentedObject: [NSSet set]];
 	[item setSubtype: [ETUTI typeWithClass: [NSSet class]]];
+	// NOTE: -UIBuilderTarget and -UIBuilderAction still returns nil and NULL
 	[item setTarget: self];
 	[item setAction: @selector(wibble:)];
 	[item setView: AUTORELEASE([[NSButton alloc] init])];
@@ -217,7 +219,7 @@ DEALLOC(DESTROY(itemFactory); DESTROY(item); DESTROY(itemGroup))
 		[nonEqualOrIdenticalProperties arrayByAddingObjectsFromArray: nilProperties]];
 
 	ETLayoutItem *newItem = [item copy];
-
+	
 	FOREACH(equalProperties, property, NSString *)
 	{
 		/* We don't want to check the properties on the represented object but 

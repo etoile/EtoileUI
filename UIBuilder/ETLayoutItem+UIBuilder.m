@@ -24,15 +24,9 @@
 
 @implementation ETLayoutItem (UIBuilder)
 
-- (ETLayoutItem *)representedItem
-{
-	return [self representedObject];
-}
-
 - (id)UIBuilderWidgetElement
 {
-	ETLayoutItem *representedItem = [self representedObject];
-	return ([representedItem view] != nil ? [representedItem view] : representedItem);
+	return ([self view] != nil ? [self view] : self);
 }
 
 - (void)setUIBuilderName: (NSString *)aName
@@ -42,14 +36,14 @@
 	if ([widget respondsToSelector: @selector(setName:)])
 	{
 		[(ETLayoutItem *)widget setName: aName];
-		[[self representedItem] didChangeValueForProperty: kETNameProperty];
+		[self didChangeValueForProperty: kETNameProperty];
 	}
 	else if ([widget respondsToSelector: @selector(setTitle:)])
 	{
 		[widget setTitle: aName];
-		[[self representedItem] didChangeValueForProperty: kETViewProperty];
+		[self didChangeValueForProperty: kETViewProperty];
 	}
-	[[self representedItem] commit];
+	[self commit];
 }
 
 - (NSString *)UIBuilderName
@@ -67,25 +61,14 @@
 	return nil;
 }
 
-- (void)setUIBuilderIdentifier: (NSString *)anId
-{
-	[[self representedItem] setIdentifier: anId];
-	[[self representedItem] commit];
-}
-
-- (NSString *)UIBuilderIdentifier
-{
-	return [[self representedItem] identifier];
-}
-
 - (void)setUIBuilderAction: (NSString *)anAction
 {
 	[[self UIBuilderWidgetElement] setAction: NSSelectorFromString(anAction)];
 	if ([[self UIBuilderWidgetElement] isView])
 	{
-		[[self representedItem] didChangeValueForProperty: kETViewProperty];
+		[self didChangeValueForProperty: kETViewProperty];
 	}
-	[[self representedItem] commit];
+	[self commit];
 }
 
 - (NSString *)UIBuilderAction
@@ -95,7 +78,9 @@
 
 - (void)setUIBuilderTarget: (NSString *)aTargetId
 {
-	id target = [[[self representedItem] controllerItem] itemForIdentifier: aTargetId];
+	return;
+
+	id target = [[self controllerItem] itemForIdentifier: aTargetId];
 
 	if (target == nil)
 	{
@@ -107,13 +92,15 @@
 	[[self UIBuilderWidgetElement] setTarget: target];
 	if ([[self UIBuilderWidgetElement] isView])
 	{
-		[[self representedItem] didChangeValueForProperty: @"viewTargetId"];
+		[self didChangeValueForProperty: @"viewTargetId"];
 	}
-	[[self representedItem] commit];
+	[self commit];
 }
 
 - (NSString *)UIBuilderTarget
 {
+	return nil;
+
 	id target = [[[self UIBuilderWidgetElement] ifResponds] target];
 
 	if (target == nil)
@@ -136,18 +123,18 @@
 {
 	id repObject = [[NSClassFromString(aModel) new] autorelease];
 
-	[[self representedItem] setRepresentedObject: repObject];
-	[[self representedItem] commit];
+	[self setRepresentedObject: repObject];
+	[self commit];
 }
 
 - (NSString *)UIBuilderModel
 {
-	return [[[self representedItem] representedObject] className];
+	return [[self representedObject] className];
 }
 
 - (void)setUIBuilderController: (NSString *)aController
 {
-	if ([[self representedItem] isGroup] == NO)
+	if ([self isGroup] == NO)
 	{
 		NSLog(@"WARNING: Item must be a ETLayoutItemGroup to have a controller %@", aController);
 		return;
@@ -162,13 +149,13 @@
 	}
 	ETController *controller = [[controllerClass new] autorelease];
 	
-	[(ETLayoutItemGroup *)[self representedItem] setController: controller];
-	[[self representedItem] commit];
+	[(ETLayoutItemGroup *)self setController: controller];
+	[self commit];
 }
 
 - (NSString *)UIBuilderController
 {
-	return [[[[self representedItem] ifResponds] controller] className];
+	return [[[self ifResponds] controller] className];
 }
 
 @end

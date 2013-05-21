@@ -32,7 +32,7 @@
 	ETPropertyDescription *identifier = [ETPropertyDescription descriptionWithName: @"identifier" type: (id)@"NSString"];
 	ETPropertyDescription *name = [ETPropertyDescription descriptionWithName: @"name" type: (id)@"NSString"];
 	ETPropertyDescription *image = [ETPropertyDescription descriptionWithName: @"image" type: (id)@"NSImage"];
-	ETPropertyDescription *icon = [ETPropertyDescription descriptionWithName: @"image" type: (id)@"NSImage"];
+	ETPropertyDescription *icon = [ETPropertyDescription descriptionWithName: @"icon" type: (id)@"NSImage"];
 	ETPropertyDescription *repObject = [ETPropertyDescription descriptionWithName: @"representedObject" type: (id)@"NSObject"];
 	ETPropertyDescription *value = [ETPropertyDescription descriptionWithName: @"value" type: (id)@"NSObject"];
 	ETPropertyDescription *view = [ETPropertyDescription descriptionWithName: @"view" type: (id)@"NSView"];
@@ -52,6 +52,17 @@
 	//ETPropertyDescription *transform = [ETPropertyDescription descriptionWithName: @"transform" type: (id)@"NSAffineTransform"];
 	ETPropertyDescription *autoresizing = [ETPropertyDescription descriptionWithName: @"autoresizingMask" type: (id)@"NSUInteger"];
 	ETPropertyDescription *contentAspect = [ETPropertyDescription descriptionWithName: @"contentAspect" type: (id)@"NSUInteger"];
+	[contentAspect setRole: AUTORELEASE([ETMultiOptionsRole new])];
+	[[contentAspect role] setAllowedOptions:
+	 [D(@(ETContentAspectNone), _(@"None"),
+		@(ETContentAspectComputed), _(@"Computed by Cover Style"),
+		@(ETContentAspectCentered), _(@"Centered"),
+		@(ETContentAspectScaleToFit), _(@"Scale To Fit"),
+		@(ETContentAspectScaleToFill), _(@"Scale to Fill"),
+		@(ETContentAspectScaleToFillHorizontally), _(@"Scale To Fill Horizontally"),
+		@(ETContentAspectScaleToFillVertically), _(@"Scale to Fill Vertically"),
+		@(ETContentAspectStretchToFill), _(@"Stretch to Fill"))
+			arrayRepresentation]];
 	ETPropertyDescription *boundingBox = [ETPropertyDescription descriptionWithName: @"boundingBox" type: (id)@"NSRect"];
 	// TODO: What should we do with _defaultValues?
 	ETPropertyDescription *defaultFrame = [ETPropertyDescription descriptionWithName: @"defaultFrame" type: (id)@"NSRect"];
@@ -85,6 +96,12 @@
 	// TODO: We should persist the inspector but how... We should use a better type than NSObject.
 	ETPropertyDescription *inspector = [ETPropertyDescription descriptionWithName: @"inspector" type: (id)@"NSObject"];
 
+	/* Transient UI Builder Properties */
+
+	ETPropertyDescription *UIBuilderName = [ETPropertyDescription descriptionWithName: @"UIBuilderName" type: (id)@"NSString"];
+	ETPropertyDescription *UIBuilderTarget = [ETPropertyDescription descriptionWithName: @"UIBuilderTarget" type: (id)@"NSObject"];
+	ETPropertyDescription *UIBuilderAction = [ETPropertyDescription descriptionWithName: @"UIBuilderAction" type: (id)@"SEL"];
+
 	/* Transient ivars: 	
 	   _isSyncingSupervisorViewGeometry, _scrollViewShown, _wasKVOStopped
 	   
@@ -97,11 +114,11 @@
 		flipped, selected, selectable, visible);
 	NSArray *transientProperties = A(baseItem, rootItem, indexPath, 
 		isBaseItem, subject, style, frame, x, y, width, height, target, 
-		acceptsActions, inspector, subtype);
+		acceptsActions, inspector, subtype, UIBuilderName, UIBuilderTarget, UIBuilderAction);
 
-	// TODO: Use frame, position, anchorPoint
-	[entity setUIBuilderPropertyNames: (id)[[A(identifier, name, image, icon,
-		target, action, x, y, width, height, autoresizing, contentAspect,
+	[entity setUIBuilderPropertyNames: (id)[[A(identifier, UIBuilderName,
+		image, icon, UIBuilderTarget, UIBuilderAction,
+		frame, position, anchorPoint, autoresizing, contentAspect,
 		flipped, selected, selectable, visible) mappedCollection] name]];
 
 	[[persistentProperties mappedCollection] setPersistent: YES];
@@ -179,7 +196,7 @@
 		itemScaleFactor, wasViewHidden);
 	NSArray *transientProperties = A(doubleClickedItem);
 
-	[entity setUIBuilderPropertyNames: (id)[[A(layout, delegate, doubleAction,
+	[entity setUIBuilderPropertyNames: (id)[[A(delegate, doubleAction,
 		shouldMutateRepObject, itemScaleFactor) mappedCollection] name]];
 	
 	[[persistentProperties mappedCollection] setPersistent: YES];

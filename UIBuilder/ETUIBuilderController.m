@@ -11,8 +11,10 @@
 #import <EtoileFoundation/Macros.h>
 #import "ETUIBuilderController.h"
 #import "ETApplication.h"
+#import "ETAspectRepository.h"
 #import "ETLayoutItem.h"
 #import "ETLayoutItemGroup.h"
+#import "ETModelDescriptionRenderer.h" /* For ETObjectValueFormatter */
 #import "ETUIBuilderItemFactory.h"
 
 @implementation ETUIBuilderController
@@ -27,7 +29,25 @@
 	DESTROY(_aspectInspectorItem);
 	DESTROY(_viewPopUpItem);
 	DESTROY(_aspectPopUpItem);
+	DESTROY(_aspectRepository);
 	[super dealloc];
+}
+
+- (void) setContent: (ETLayoutItemGroup *)anItem
+{
+	if ([self content] != nil)
+	{
+		[self stopObserveObject: [[self content] itemForIdentifier: @"browser"]
+		    forNotificationName: ETItemGroupSelectionDidChangeNotification];
+	}
+	[super setContent: anItem];
+
+	if (anItem != nil)
+	{
+		[self startObserveObject: [anItem itemForIdentifier: @"browser"]
+		     forNotificationName: ETItemGroupSelectionDidChangeNotification
+		                selector: @selector(browserSelectionDidChange:)];
+	}
 }
 
 - (ETLayoutItemGroup *) bodyItem
@@ -45,15 +65,32 @@
 	return [[[[self browserItem] selectedItemsInLayout] mappedCollection] representedObject];
 }
 
+- (void) browserSelectionDidChange: (NSNotification *)aNotif
+{
+	ETLog(@"Did change selection in %@", [aNotif object]);
+	[self changeAspectPaneFromPopUp: nil];
+}
+
 - (id) inspectedObject
 {
 	NSArray *selectedObjects = [self selectedObjects];
+	BOOL isSingleSelection = ([selectedObjects count] == 1);
+	BOOL isMultipleSelection = ([selectedObjects count] > 1);
 	
-	if ([selectedObjects isEmpty])
+	if (isSingleSelection)
+	{
+		return [selectedObjects firstObject];
+	}
+	else if (isMultipleSelection)
+	{
+		// TODO: Implement a proxy that provides an union view over several
+		// model objects for editing
+		return [selectedObjects firstObject];
+	}
+	else
 	{
 		return [[self browserItem] representedObject];
 	}
-	return [selectedObjects firstObject];
 }
 
 - (void) showItem: (ETLayoutItem *)anItem
@@ -117,6 +154,35 @@
 
 	[[self aspectInspectorItem] removeItem: [self aspectPaneItem]];
 	[[self aspectInspectorItem] addItem: newAspectPaneItem];
+}
+
+- (IBAction) changeAspectRepositoryFromPopUp: (id)sender
+{
+	
+}
+
+- (NSString *) formatter: (ETObjectValueFormatter *)aFormatter stringForObjectValue: (id)aValue
+{
+	/*BOOL isAspectFromRepository = ([aValue respondsToSelector: @selector(instantiatedAspectName)]
+		&& [aValue instantiatedAspectName] != nil);
+
+	if (isAspectFromRepository)
+	{
+		return [aValue instantiatedAspectName];
+	}*/
+	return nil;
+}
+
+- (id) formatter: (ETObjectValueFormatter *)aFormatter objectValueForString: (NSString *)aString
+{
+	/*BOOL isAspectFromRepository = ([aValue respondsToSelector: @selector(instantiatedAspectName)]
+		&& [aValue instantiatedAspectName] != nil);
+
+	if (isAspectFromRepository)
+	{
+		return [aValue instantiatedAspectName];
+	}*/
+	return nil;
 }
 
 @end

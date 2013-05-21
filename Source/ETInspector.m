@@ -88,7 +88,7 @@
 	// displayed properties are lost on layout changes (happens only if the
 	// user wants to customize the inspector UI).
 	[layout setDisplayedProperties: A(kETIconProperty, @"UIBuilderName",
-		@"UIBuilderIdentifier", @"UIBuilderAction", @"UIBuilderTarget",
+		kETIdentifierProperty, @"UIBuilderAction", @"UIBuilderTarget",
 		@"UIBuilderModel", @"UIBuilderController")];
 
 	/* Actions are stored as strings in ETLayoutItem variable storage. So we
@@ -97,21 +97,21 @@
 	 -[ETLayoutItem target] checks whether this property is set just before
 	 returning the target. */
 	[layout setDisplayName: @"Name" forProperty: @"UIBuilderName"];
-	[layout setDisplayName: @"Identifier" forProperty: @"UIBuilderIdentifier"];
+	[layout setDisplayName: @"Identifier" forProperty: kETIdentifierProperty];
 	[layout setDisplayName: @"Action" forProperty: @"UIBuilderAction"];
 	[layout setDisplayName: @"Target" forProperty: @"UIBuilderTarget"];
 	[layout setDisplayName: @"Model" forProperty: @"UIBuilderModel"];
 	[layout setDisplayName: @"Controller" forProperty: @"UIBuilderController"];
 	
 	[[layout columnForProperty: @"UIBuilderName"] setWidth: 140];
-	[[layout columnForProperty: @"UIBuilderIdentifier"] setWidth: 120];
+	[[layout columnForProperty: kETIdentifierProperty] setWidth: 120];
 	[[layout columnForProperty: @"UIBuilderTarget"] setWidth: 100];
 	[[layout columnForProperty: @"UIBuilderAction"] setWidth: 100];
 	[[layout columnForProperty: @"UIBuilderModel"] setWidth: 100];
 	[[layout columnForProperty: @"UIBuilderController"] setWidth: 120];
 
 	[layout setEditable: YES forProperty: @"UIBuilderName"];
-	[layout setEditable: YES forProperty: @"UIBuilderIdentifier"];
+	[layout setEditable: YES forProperty: kETIdentifierProperty];
 	[layout setEditable: YES forProperty: @"UIBuilderAction"];
 	[layout setEditable: YES forProperty: @"UIBuilderTarget"];
 	[layout setEditable: YES forProperty: @"UIBuilderModel"];
