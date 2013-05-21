@@ -25,6 +25,10 @@
 
 	ETPropertyDescription *fieldEditorItem = 
 		[ETPropertyDescription descriptionWithName: @"fieldEditorItem" type: (id)@"ETLayoutItem"];
+	// TODO: Remove (turn this property into a persistent one)
+	[fieldEditorItem setReadOnly: YES];
+
+	[entity setUIBuilderPropertyNames: A([fieldEditorItem name])];
 
 	[entity setPropertyDescriptions: A(fieldEditorItem)];
 
