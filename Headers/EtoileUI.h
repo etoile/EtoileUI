@@ -8,6 +8,11 @@
 	License: Modified BSD (see COPYING)
  */
 
+/* Additions */
+
+#import <EtoileUI/ETItemValueTransformer.h>
+#import <EtoileUI/ETObjectValueFormatter.h>
+
 #import <EtoileUI/Controls+Etoile.h>
 #import <EtoileUI/ETActionHandler.h>
 #import <EtoileUI/ETApplication.h>
@@ -49,7 +54,6 @@
 #import <EtoileUI/ETNibOwner.h>
 #import <EtoileUI/ETNumberPicker.h>
 #import <EtoileUI/EtoileUIProperties.h>
-#import <EtoileUI/ETObjectValueFormatter.h>
 #import <EtoileUI/ETOutlineLayout.h>
 #import <EtoileUI/ETPaintBucketTool.h>
 #import <EtoileUI/ETPaneLayout.h>
