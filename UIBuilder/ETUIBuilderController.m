@@ -17,6 +17,9 @@
 
 @implementation ETUIBuilderController
 
+@synthesize itemFactory = _itemFactory, browserItem = _browserItem, aspectInspectorItem = _aspectInspectorItem, 
+	viewPopUpItem = _viewPopUpItem, aspectPopUpItem = _aspectPopUpItem;
+
 - (void) dealloc
 {
 	DESTROY(_itemFactory);

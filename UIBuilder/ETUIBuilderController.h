@@ -34,11 +34,10 @@
 @property (nonatomic, retain) ETLayoutItemGroup *aspectInspectorItem;
 @property (nonatomic, retain) ETLayoutItem *viewPopUpItem;
 @property (nonatomic, retain) ETLayoutItem *aspectPopUpItem;
-@property (nonatomic, readonly) id selectedObject;
 
 /** @taskunit Selection Interaction */
 
-- (NSArray *) selectedObjects;
+@property (nonatomic, readonly) NSArray *selectedObjects;
 
 /** @taskunit Actions */
 

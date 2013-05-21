@@ -111,9 +111,9 @@ ETStyle, ETActionHandler;
 - (id) stepper;
 - (ETLayoutItem *) numberPicker;
 - (ETLayoutItem *) numberPickerWithWidth: (CGFloat)aWidth
-                                minValue: (CGFloat)min
-                                maxValue: (CGFloat)max
-                            initialValue: (CGFloat)aValue
+                                minValue: (double)min
+                                maxValue: (double)max
+                            initialValue: (double)aValue
                              forProperty: (NSString *)aKey
                                  ofModel: (id)anObject;
 - (ETLayoutItemGroup *) pointEditorWithWidth: (CGFloat)aWidth
