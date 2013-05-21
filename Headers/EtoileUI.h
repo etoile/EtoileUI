@@ -49,6 +49,7 @@
 #import <EtoileUI/ETNibOwner.h>
 #import <EtoileUI/ETNumberPicker.h>
 #import <EtoileUI/EtoileUIProperties.h>
+#import <EtoileUI/ETObjectValueFormatter.h>
 #import <EtoileUI/ETOutlineLayout.h>
 #import <EtoileUI/ETPaintBucketTool.h>
 #import <EtoileUI/ETPaneLayout.h>

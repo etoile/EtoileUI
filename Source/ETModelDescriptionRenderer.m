@@ -23,6 +23,7 @@
 #import "ETLayoutItem.h"
 #import "ETLayoutItemFactory.h"
 #import "ETLayoutItemGroup.h"
+#import "ETObjectValueFormatter.h"
 #import "EtoileUIProperties.h"
 #import "ETTitleBarItem.h"
 #import "ETOutlineLayout.h"
@@ -871,93 +872,6 @@ See also -setRenderedPropertyNames:. */
 	ETLayoutItemGroup *entityItem = [[ETModelDescriptionRenderer renderer] renderObject: [item representedObject]];
 
 	[[[ETLayoutItemFactory factory] windowGroup] addItem: entityItem];
-}
-
-@end
-
-@implementation ETFormatter
-
-- (NSString *) stringForObjectValue: (id)aValue
-{
-	NSLog(@"Value %@ class %@", aValue, [aValue class]);
-	NSString *string = NSStringFromClass([aValue class]);
-
-	NSLog(@"String %@ class %@", string, [string class]);
-
-	if (aValue == nil)
-	{
-		return nil;
-	}
-	else 
-	{
-		return NSStringFromClass([aValue class]);
-	}
-}
-
-- (BOOL) getObjectValue: (id *)anObject forString: (NSString *)aString errorDescription: (NSString **)error
-{
-	id value = [NSClassFromString(aString) new];
-
-	if (value == nil)
-	{
-		*anObject = @"";
-		//*error = [NSString stringWithFormat: _(@"Found no aspect or class for %@"), string];
-		//error = &string;
-		return NO;
-	}
-	else
-	{
-		*anObject = value;
-		return YES;
-	}
-}
-
-@end
-
-@implementation ETObjectValueFormatter
-
-- (NSString *) stringForObjectValue: (id)aValue
-{
-	/* If a text field presents an entity object, no empty strings must be 
-	   passed to NSStringFromClass(), otherwise the text field shows a NSString 
-	   subclass as the entity type. */
-	if (aValue == nil || [aValue isString])
-		return aValue;
-
-	id string = [[self delegate] formatter: self stringForObjectValue: aValue];
-
-	if (string == nil)
-	{
-		string = NSStringFromClass([aValue class]);
-	}
-	return string;
-}
-
-- (BOOL) getObjectValue: (id *)anObject forString: (NSString *)aString errorDescription: (NSString **)error
-{
-	NSString *string = [aString copy];
-
-	if (string == nil)
-		return NO;
-
-	NSString *validatedString = [[self delegate] formatter: self stringValueForString: string];
-
-	if (validatedString == nil && NSClassFromString(string) != Nil)
-	{
-		validatedString = string;
-	}
-	
-	if (validatedString == nil)
-	{
-		//*error = [NSString stringWithFormat: _(@"Found no aspect or class for %@"), string];
-		//error = &string;
-		return NO;
-	}
-	else
-	{
-		*anObject = validatedString;
-		return YES;
-	}
 }
 
 @end

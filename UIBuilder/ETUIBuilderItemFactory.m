@@ -25,6 +25,7 @@
 #import "ETLineLayout.h"
 #import "ETUIBuilderController.h"
 #import "ETModelDescriptionRenderer.h"
+#import "ETObjectValueFormatter.h"
 #import "ETOutlineLayout.h"
 #import "NSObject+EtoileUI.h"
 #import "NSView+Etoile.h"

@@ -14,7 +14,7 @@
 #import "ETAspectRepository.h"
 #import "ETLayoutItem.h"
 #import "ETLayoutItemGroup.h"
-#import "ETModelDescriptionRenderer.h" /* For ETObjectValueFormatter */
+#import "ETObjectValueFormatter.h"
 #import "ETUIBuilderItemFactory.h"
 
 @implementation ETUIBuilderController
