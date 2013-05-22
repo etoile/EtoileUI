@@ -61,6 +61,7 @@ extern NSString * const kETTargetProperty; /** actionHandler property name */
 extern NSString * const kETTransformProperty; /** transform property name */
 extern NSString * const kETUTIProperty; /** UTI property name */
 extern NSString * const kETValueProperty; /** value property name */
+extern NSString * const kETValueKeyProperty; /** valueKey property name */
 extern NSString * const kETViewProperty; /** view property name */
 extern NSString * const kETVisibleProperty; /** visible property name */
 extern NSString * const kETWidthProperty; /** width property name */

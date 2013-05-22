@@ -188,6 +188,8 @@ and centers it. A strech is a scale that doesn't preserve the content proportion
 
 /* Display Element */
 
+- (id) valueKey;
+- (void) setValueKey: (NSString *)aValue;
 - (id) value;
 - (void) setValue: (id)value;
 

@@ -134,7 +134,7 @@ DEALLOC(DESTROY(itemFactory); DESTROY(item); DESTROY(itemGroup))
 - (NSArray *) basicNilItemProperties
 {
 	return  A(kETBaseItemProperty, kETRootItemProperty, kETIdentifierProperty, 
-		kETValueProperty, kETStyleProperty, @"targetId", @"viewTargetId",
+		kETValueProperty, kETValueKeyProperty, kETStyleProperty, @"targetId", @"viewTargetId",
 		kETInspectorProperty, @"UIBuilderTarget", @"UIBuilderAction");
 }
 

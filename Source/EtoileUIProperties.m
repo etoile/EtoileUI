@@ -57,6 +57,7 @@ NSString * const kETTargetProperty = @"target";
 NSString * const kETTransformProperty = @"transform";
 NSString * const kETUTIProperty = @"UTI";
 NSString * const kETValueProperty = @"value";
+NSString * const kETValueKeyProperty = @"valueKey";
 NSString * const kETViewProperty = @"view";
 NSString * const kETVisibleProperty = @"visible";
 NSString * const kETWidthProperty = @"width";

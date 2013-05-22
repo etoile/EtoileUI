@@ -338,6 +338,7 @@ Default values will be copied but not individually (shallow copy). */
 	[item setPrimitiveValue: [self primitiveValueForKey: kETIdentifierProperty] forKey: kETIdentifierProperty];
 	[item setPrimitiveValue: [self primitiveValueForKey: kETImageProperty] forKey: kETImageProperty];
 	[item setPrimitiveValue: [self primitiveValueForKey: kETIconProperty] forKey: kETIconProperty];
+	[item setPrimitiveValue: [self primitiveValueForKey: kETValueKeyProperty] forKey: kETValueKeyProperty];
 	[item setPrimitiveValue: [self primitiveValueForKey: kETSubtypeProperty] forKey:  kETSubtypeProperty];
 	[item setPrimitiveValue: [self primitiveValueForKey: kETActionProperty] forKey: kETActionProperty];
 
@@ -794,6 +795,18 @@ The returned value can be nil or an empty string. */
 	[self willChangeValueForProperty: kETNameProperty];	
 	[self setPrimitiveValue: name forKey: kETNameProperty];
 	[self didChangeValueForProperty: kETNameProperty];	
+}
+
+- (id) valueKey
+{
+	return [self primitiveValueForKey: kETValueKeyProperty];
+}
+
+- (void) setValueKey: (NSString *)aKey
+{
+	[self willChangeValueForProperty: kETValueKeyProperty];
+	[self setPrimitiveValue: aKey forKey: kETValueKeyProperty];
+	[self didChangeValueForProperty: kETValueKeyProperty];
 }
 
 /** Returns a value object, that can be used when a single property has to be 

@@ -34,6 +34,7 @@
 	ETPropertyDescription *image = [ETPropertyDescription descriptionWithName: @"image" type: (id)@"NSImage"];
 	ETPropertyDescription *icon = [ETPropertyDescription descriptionWithName: @"icon" type: (id)@"NSImage"];
 	ETPropertyDescription *repObject = [ETPropertyDescription descriptionWithName: @"representedObject" type: (id)@"NSObject"];
+	ETPropertyDescription *valueKey = [ETPropertyDescription descriptionWithName: @"valueKey" type: (id)@"NSString"];
 	ETPropertyDescription *value = [ETPropertyDescription descriptionWithName: @"value" type: (id)@"NSObject"];
 	ETPropertyDescription *view = [ETPropertyDescription descriptionWithName: @"view" type: (id)@"NSView"];
 	ETPropertyDescription *viewTargetId = [ETPropertyDescription descriptionWithName: @"viewTargetId" type: (id)@"NSString"];
@@ -108,7 +109,7 @@
 	   Hmm, _scrollViewShow ought to be persisted. */
 
 	NSArray *persistentProperties = A(parentItem, identifier, name, image, icon, 
-		repObject, value, view, viewTargetId, styleGroup, coverStyle, 
+		repObject, valueKey, value, view, viewTargetId, styleGroup, coverStyle,
 		actionHandler, action, targetId, contentBounds, position, anchorPoint, 
 		persistentFrame, autoresizing, contentAspect, boundingBox, defaultFrame,
 		flipped, selected, selectable, visible);
@@ -117,7 +118,7 @@
 		acceptsActions, inspector, subtype, UIBuilderName, UIBuilderTarget, UIBuilderAction);
 
 	[entity setUIBuilderPropertyNames: (id)[[A(identifier, UIBuilderName,
-		image, icon, UIBuilderTarget, UIBuilderAction,
+		image, icon, valueKey, UIBuilderTarget, UIBuilderAction,
 		frame, position, anchorPoint, autoresizing, contentAspect,
 		flipped, selected, selectable, visible) mappedCollection] name]];
 
