@@ -48,7 +48,7 @@
 /* When NSTextFieldCell receives the focus and it uses a nil value, it calls 
 -[NSCell setStringValue:] using an empty string, then emits a KVO notification 
 that contains this empty string as the new value. */
-- (BOOL) isNewValue: (id)newValue comparedToOldValue: (id)oldValue
+- (BOOL) ignoresChangeForNewValue: (id)newValue oldValue: (id)oldValue
 {
 	return ((oldValue == nil && [newValue isEqual: @""])
 		|| ([oldValue isEqual: @""] && newValue == nil));
@@ -67,7 +67,7 @@ that contains this empty string as the new value. */
 		id newValue = [change objectForKey: NSKeyValueChangeNewKey];
 		id oldValue = [change objectForKey: NSKeyValueChangeOldKey];
 
-		if ([self isNewValue: newValue comparedToOldValue: oldValue] == NO)
+		if ([self ignoresChangeForNewValue: newValue oldValue: oldValue])
 			return;
 	
 		[self didChangeViewValue: newValue];

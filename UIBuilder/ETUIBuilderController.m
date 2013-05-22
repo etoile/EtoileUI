@@ -162,7 +162,7 @@
 	
 }
 
-- (NSString *) formatter: (ETObjectValueFormatter *)aFormatter stringForObjectValue: (id)aValue
+- (NSString *) formatter: (ETObjectValueFormatter *)aFormatter stringValueForString: (id)aValue
 {
 	/*BOOL isAspectFromRepository = ([aValue respondsToSelector: @selector(instantiatedAspectName)]
 		&& [aValue instantiatedAspectName] != nil);
