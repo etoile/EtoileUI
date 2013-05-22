@@ -658,6 +658,14 @@ See [(ETColumnFragment)] protocol to customize the returned column. */
 	return [layoutItems count];
 }
 
+- (NSString *) propertyForColumn: (NSTableColumn *)column
+{
+	NSString *identifier = [column identifier];
+	BOOL blankColumnIdentifier = (identifier == nil || [identifier isEqual: @""]);
+
+	return (blankColumnIdentifier ? kETValueProperty : identifier);
+}
+
 /** This method is only exposed to be used internally by EtoileUI.
 
 Retrieves the value provided by the item and returns an object value that is 
@@ -667,16 +675,9 @@ compatible with the cell used at the given row/column intersection.  */
                             item: (ETLayoutItem *)item
 {
 	NSParameterAssert(-1 != rowIndex && ETUndeterminedIndex != rowIndex);
-	id value = [item valueForProperty: [column identifier]];
-	BOOL blankColumnIdentifier = ([column identifier] == nil || [[column identifier] isEqual: @""]);
-	NSTableView *tv = [self tableView];
-	
-	if (value == nil && ([tv numberOfColumns] == 1 || blankColumnIdentifier))
-	{
-		value = [item value];
-	}
+	id value = [item valueForProperty: [self propertyForColumn: column]];
 
-	//ETLog(@"Returns %@ at %i in %@", value, rowIndex, [tv primitiveDescription]);
+	//ETLog(@"Returns %@ at %i in %@", value, rowIndex, [[self tableView] primitiveDescription]);
 
 	/* 'value' could be any objects at this point. 
 	    When -[NSCell formatter] returns nil, -[NSCell setObjectValue:] converts 
@@ -705,21 +706,14 @@ compatible with the cell used at the given row/column intersection.  */
 	                                  item: [items objectAtIndex: rowIndex]];
 }
 
-- (void) tableView: (NSTableView *)tv 
-	setObjectValue: (id)value forTableColumn: (NSTableColumn *)column row: (NSInteger)rowIndex
+/** This method is only exposed to be used internally by EtoileUI.
+
+Sets the value on the the item based on the object value of the cell used at the 
+given row/column intersection.  */
+- (void) setObjectValue: (id)value
+         forTableColumn: (NSTableColumn *)column
+                   item: (ETLayoutItem *)item
 {
-	NSArray *layoutItems = [_layoutContext arrangedItems];
-	ETLayoutItem *item = nil;
-	
-	if (rowIndex >= [layoutItems count])
-	{
-		ETLog(@"WARNING: Row index %d uncoherent with number of items %d in %@", 
-			(int)rowIndex, (int)[layoutItems count], self);
-		return;
-	}
-	
-	item = [layoutItems objectAtIndex: rowIndex];
-	
 	//ETLog(@"Sets %@ as object value in table view %@", value, [tv primitiveDescription]);
 
 	/* Handles the case where a cell with no content is double-clicked/edited 
@@ -738,17 +732,27 @@ compatible with the cell used at the given row/column intersection.  */
 	
 	// TODO: We should call -objectWithObjectValue: in a way symetric to
 	// objectValueForObject: in -tableView:objectValueForTableColumn:row:.
-	BOOL result = [item setValue: value forProperty: [column identifier]];
-	BOOL blankColumnIdentifier = [column identifier] == nil || [[column identifier] isEqual: @""];
+	[item setValue: value forProperty: [self propertyForColumn: column]];
+
+	ETLayoutItem *editedItem = [self itemAtRow: [[self tableView] editedRow]];
+	[editedItem objectDidEndEditing: [self tableView]];
+}
+
+- (void) tableView: (NSTableView *)tv 
+	setObjectValue: (id)value forTableColumn: (NSTableColumn *)column row: (NSInteger)rowIndex
+{
+	NSArray *items = [_layoutContext arrangedItems];
 	
-	if (result == NO && ([tv numberOfColumns] == 1 || blankColumnIdentifier))
+	if (rowIndex >= [items count])
 	{
-		[item setValue: value];
+		ETLog(@"WARNING: Row index %d uncoherent with number of items %d in %@", 
+			(int)rowIndex, (int)[items count], self);
+		return;
 	}
-
-	ETLayoutItem *editedItem = [self itemAtRow: [tv editedRow]];
-
-	[editedItem objectDidEndEditing: tv];
+	
+	[self setObjectValue: value
+	      forTableColumn: column
+	                item: [items objectAtIndex: rowIndex]];
 }
 
 /** Returns YES. See [NSObject(ETLayoutPickAndDropIntegration)] protocol.

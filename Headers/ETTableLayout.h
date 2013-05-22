@@ -76,6 +76,9 @@ descriptor bound to the widget table column will be used (and eventually created
 - (id) objectValueForTableColumn: (NSTableColumn *)column 
                              row: (NSInteger)rowIndex 
                             item: (ETLayoutItem *)item;
+- (void) setObjectValue: (id)value
+         forTableColumn: (NSTableColumn *)column
+                   item: (ETLayoutItem *)item;
 - (void) trySortRecursively: (BOOL)recursively oldSortDescriptors: (NSArray *)oldDescriptors;
 - (NSEvent *) backendDragEvent;
 - (void) setBackendDragEvent: (NSEvent *)event;

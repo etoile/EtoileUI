@@ -55,9 +55,9 @@
 	UKObjectsEqual(@"Blue", [stringItem value]);
 	UKObjectsEqual([NSNumber numberWithInt: 3], [numberItem value]);
 
-	UKNil([imgItem representedObject]);
-	UKNil([stringItem representedObject]);
-	UKNil([numberItem representedObject]);
+	UKObjectsSame([imgItem value], [imgItem representedObject]);
+	UKObjectsSame([stringItem value], [stringItem representedObject]);
+	UKObjectsSame([numberItem value], [numberItem representedObject]);
 }
 	 
 - (void) testAutoboxingWithRepresentedObject
@@ -72,11 +72,11 @@
 	ETLayoutItem *collectionItem = [itemGroup itemAtIndex: 1];
 
 	UKNotNil([objectItem representedObject]);
-	UKNil([objectItem value]);
+	UKObjectsSame([objectItem representedObject], [objectItem value]);
 	UKFalse([objectItem isGroup]);
 
 	UKNotNil([collectionItem representedObject]);
-	UKNil([collectionItem value]);
+	UKObjectsSame([collectionItem representedObject], [collectionItem value]);
 	UKTrue([collectionItem isGroup]);
 }
 

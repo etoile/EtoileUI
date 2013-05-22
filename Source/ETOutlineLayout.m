@@ -288,33 +288,7 @@ expanded and collapsed by getting automatically a related outline arrow. */
 		return;
 	}
 
-	/* Handles the case where a cell with no content is double-clicked/edited 
-	   (NSImageCell or NSLevelIndicatorCell for example), this is only needed 
-	   on GNUstep, because Cocoa won't let the editing happens in such case 
-	   even if -isEditable returns YES for the cell. Moreover
-	   -[NSImageCell isEditable] returns NO by default on Cocoa unlike GNUstep.
-
-	   TODO: Don't call -setValue:forProperty: if the property is read-only. In 
-	   theory, this should never happen since the cell shouldn't be editable if 
-	   the property is read-only. But having a safety check, wouldn't hurt and 
-	   also presently we don't modify the editable state of the cell depending 
-	   on the characterics of the property. */
-	if (value == nil)
-		return;
-	
-	BOOL result = [item setValue: value forProperty: [column identifier]];
-	BOOL blankColumnIdentifier = [column identifier] == nil || [[column identifier] isEqual: @""];
-	
-	if (result == NO && ([[self outlineView] numberOfColumns] == 1 || blankColumnIdentifier))
-	{
-		[item setValue: value];
-	}
-
-	ETLayoutItem *editedItem = [self itemAtRow: [outlineView editedRow]];
-
-	[editedItem objectDidEndEditing: outlineView];
-
-	//ETLog(@"Sets %@ as object value in outline view %@", value, outlineView);
+	[self setObjectValue: value forTableColumn: column item: item];
 }
 
 - (BOOL) outlineView: (NSOutlineView *)outlineView 

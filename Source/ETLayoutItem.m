@@ -797,11 +797,15 @@ The returned value can be nil or an empty string. */
 	[self didChangeValueForProperty: kETNameProperty];	
 }
 
+/** Sets a value key to describe which property of the represented object is 
+exposed through -value and -setValue:. */
 - (id) valueKey
 {
 	return [self primitiveValueForKey: kETValueKeyProperty];
 }
 
+/** Returns a value key to describe which property of the represented object is
+exposed through -value and -setValue:. */
 - (void) setValueKey: (NSString *)aKey
 {
 	[self willChangeValueForProperty: kETValueKeyProperty];
@@ -809,40 +813,54 @@ The returned value can be nil or an empty string. */
 	[self didChangeValueForProperty: kETValueKeyProperty];
 }
 
-/** Returns a value object, that can be used when a single property has to be 
-displayed. See also -setValue:. */
+/** Returns a value object based on -valueKey.
+
+The method returns the result of -valueForProperty: for the value key.
+For a nil value key, the represented object is returned (without resorting to 
+-valueForProperty:).
+
+For items that presents a single property in the UI, using -value and -valueKey 
+is a good choice. For example, a text field or a slider presenting a 
+common object value or a property belonging to the represent object.
+ 
+See also -setValue:. */
 - (id) value
 {
-	return [self primitiveValueForKey: kETValueProperty];
+	NSString *valueKey = [self valueKey];
+	return (valueKey != nil ? [self valueForProperty: valueKey] : [self representedObject]);
 }
 
-/** Sets a value object.<br />
+/** Sets a value object based on -valueKey.
+
+The method uses -setValue:forProperty: to set the value object for the value key.
+For a nil value key, the represented object is set (without resorting to 
+-setValue:forProperty:). See -setRepresentedObject.
+ 
 Styles or layouts can use it to show the receiver with a basic value 
-representation or when they restrict their presentation to a single property.
+representation or when they restrict their presentation to a single property.<br />
+e.g. a table layout with a single column, or a positional layout letting items  
+draw their value through ETBasicItemStyle. To know how the value can be presented, 
+see ETLayout and ETStyle subclasses.
 
-e.g. a table layout with a single column or a simple positional layout where 
-ETBasicItemStyle will try to draw the value. To know how the value can be 
-presented, see ETLayout and ETStyle subclasses.
-
-The value object is typically a string, a number or an image.
-
-If the represented object declares a property 'value', both 
-[receiver valueForProperty: @"value"] and 
-[receiver setValue: anObject forProperty: @"value"] won't access your value 
-object but the one provided by the represented object. */
+If -valueKey is not nil and the represented object declares a property 'value', 
+both <code>[receiver valueForProperty: @"value"]</code> and 
+<code>[receiver setValue: anObject forProperty: @"value"]</code> access the 
+receiver value and not the one provided by the represented object, as usually 
+expected for -valueForProperty: and -setValue:forProperty:.
+ 
+See also -value. */
 - (void) setValue: (id)value
 {
-	// TODO: Should we restrict what values can be accepted...
-	/*if ([value isCommonObjectValue] == NO)
-	{
-		[NSException raise: NSInvalidArgumentException format: @"Value %@ must "
-			@"be a common object value to be set in %@", value, self];
-		return;
-	}*/
+	NSString *valueKey = [self valueKey];
 
-	[self willChangeValueForProperty: kETValueProperty];	
-	[self setPrimitiveValue: value forKey: kETValueProperty];
-	[self didChangeValueForProperty: kETValueProperty];	
+	if (valueKey != nil)
+	{
+		[self setValue: value forProperty: valueKey];
+	}
+	else
+	{
+		[self setRepresentedObject: value];
+	}
 }
 
 /** Returns the model object which embeds the data to be displayed and 
@@ -1189,12 +1207,12 @@ When the represented object is a layout item, the receiver is a meta layout item
 (see -isMetaItem and -[NSObject(ETLayoutItem) isLayoutItem]). */
 - (id) valueForProperty: (NSString *)key
 {
+	NILARG_EXCEPTION_TEST(key);
 	id modelObject = [self representedObject];
 	id value = nil;
+	BOOL isAccessingValue = ([self valueKey] != nil && [key isEqualToString: kETValueProperty]);
 
-	/* Basic version which doesn't fetch property value beyond the represented 
-	   object, even if this represented object represents another object too. */
-	if (modelObject != nil && [[(NSObject *)modelObject propertyNames] containsObject: key])
+	if (isAccessingValue == NO && [[(id)modelObject propertyNames] containsObject: key])
 	{
 		if ([modelObject isLayoutItem])
 		{
@@ -1226,9 +1244,11 @@ When the represented object is a layout item, the receiver is a meta layout item
 See -valueForProperty: for more details. */
 - (BOOL) setValue: (id)value forProperty: (NSString *)key
 {
+	NILARG_EXCEPTION_TEST(key);
 	id modelObject = [self representedObject];
 	id convertedValue = value;
 	ETItemValueTransformer *transformer = [self valueTransformerForProperty: key];
+	BOOL isAccessingValue = ([self valueKey] != nil && [key isEqualToString: kETValueProperty]);
 	BOOL result = YES;
 
 	if (transformer!= nil)
@@ -1238,9 +1258,7 @@ See -valueForProperty: for more details. */
 	                                                   ofItem: self];
 	}
 
-	/* Basic version which doesn't propagate property editing beyond the represented 
-	   object, even if this represented object represents another object too. */
-	if (modelObject != nil && [[(NSObject *)modelObject propertyNames] containsObject: key])
+	if (isAccessingValue == NO && [[(NSObject *)modelObject propertyNames] containsObject: key])
 	{
 		if ([modelObject isLayoutItem])
 		{
@@ -1258,9 +1276,6 @@ See -valueForProperty: for more details. */
 	{
 		[self setValue: convertedValue forKey: key];
 	}
-	
-	// FIXME: Implement
-	//[self didChangeValueForKey: key];
 
 	return result;
 }

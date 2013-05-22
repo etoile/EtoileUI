@@ -502,17 +502,8 @@ The returned object is autoreleased. */
 		[NSException raise: NSInternalInconsistencyException
 		            format: @"Found no template in %@ for %@", provider, type];
 	}
+
 	ETLayoutItem *item = [template newItemWithRepresentedObject: object options: nil];
-
-	// TODO: Move that in ETItemTemplate with a kETTemplateOptionIsValue in the options dict.
- 	/* If the object is a simple value object rather than a true model object
-	   we don't set it as represented object but as a value. */
-	if (nil != object && isValue)
-	{
-		[item setValue: object];
-		[item setRepresentedObject: nil];
-	}
-
 	ETAssert(item != nil);
 	return AUTORELEASE(item);
 }
