@@ -18,6 +18,7 @@
 #import "ETBasicItemStyle.h"
 #import "ETGeometry.h"
 #import "ETInspector.h"
+#import "ETItemValueTransformer.h"
 #import "ETLayoutItemGroup.h"
 #import "ETLayoutItem+KVO.h"
 #import "ETLayoutItem+Scrollable.h"
@@ -322,9 +323,11 @@ Default values will be copied but not individually (shallow copy). */
 	/* We copy all variables properties except kETTargetProperty */
 
 	id valueCopy = [[self primitiveValueForKey: kETValueProperty] copyWithZone: zone];
+	id valueTransformersCopy = [[self primitiveValueForKey: @"valueTransformers"] copyWithZone: zone];
 	id actionHandlerCopy = [self copyAspect: [self primitiveValueForKey: kETActionHandlerProperty] withCopier: aCopier];
 
 	[item setPrimitiveValue: valueCopy forKey: kETValueProperty];
+	[item setPrimitiveValue: valueTransformersCopy forKey: @"valueTransformers"];
 	[item setPrimitiveValue: actionHandlerCopy forKey: kETActionHandlerProperty];
 
 	RELEASE(valueCopy);
@@ -1195,9 +1198,13 @@ When the represented object is a layout item, the receiver is a meta layout item
 	else
 	{
 		value = [self valueForKey: key];
-	}	
-	
-	return value;
+	}
+
+	ETItemValueTransformer *transformer = [self valueTransformerForProperty: key];
+
+	return (transformer == nil ? value : [transformer transformedValue: value
+	                                                            forKey: key
+	                                                            ofItem: self]);
 }
 
 /** Sets a value identified by key of the model object returned by 
@@ -1207,7 +1214,16 @@ See -valueForProperty: for more details. */
 - (BOOL) setValue: (id)value forProperty: (NSString *)key
 {
 	id modelObject = [self representedObject];
+	id convertedValue = value;
+	ETItemValueTransformer *transformer = [self valueTransformerForProperty: key];
 	BOOL result = YES;
+
+	if (transformer!= nil)
+	{
+		convertedValue = [transformer reverseTransformedValue: value
+		                                               forKey: key
+	                                                   ofItem: self];
+	}
 
 	/* Basic version which doesn't propagate property editing beyond the represented 
 	   object, even if this represented object represents another object too. */
@@ -1215,25 +1231,55 @@ See -valueForProperty: for more details. */
 	{
 		if ([modelObject isLayoutItem])
 		{
-			[modelObject setValue: value forKey: key];
+			[modelObject setValue: convertedValue forKey: key];
 		}
 		else
 		{
 			/* We  cannot use -setValue:forKey here because many classes such as 
 			   NSArray, NSDictionary etc. overrides KVC accessors with their own 
 			   semantic. */
-			result = [modelObject setValue: value forProperty: key];
+			result = [modelObject setValue: convertedValue forProperty: key];
 		}
 	}
 	else
 	{
-		[self setValue: value forKey: key];
+		[self setValue: convertedValue forKey: key];
 	}
 	
 	// FIXME: Implement
 	//[self didChangeValueForKey: key];
-	
+
 	return result;
+}
+
+/** Returns the value transformer registered for the given property. 
+
+-valueForProperty: converts the value just before returning it by using 
+-[ETItemValueTransformer transformValue:forKey:ofItem:] if a transformer is 
+registered for the property.
+ 
+-setValue:forProperty: converts the value just before returning it by using 
+-[ETItemValueTransformer receverTransformValue:forKey:ofItem:] if a transformer 
+is registered for the property.*/
+- (ETItemValueTransformer *) valueTransformerForProperty: (NSString *)key
+{
+	return [[self primitiveValueForKey: @"valueTransformers"] objectForKey: key];
+}
+
+/** Registers the value transformer for the given property.
+ 
+See also -valueTransformerForProperty:. */
+- (void) setValueTransformer: (ETItemValueTransformer *)aValueTransformer
+                 forProperty: (NSString *)key;
+{
+	NSMutableDictionary *transformers = [self primitiveValueForKey: @"valueTransformers"];
+
+	if (transformers == nil)
+	{
+		transformers = [NSMutableDictionary dictionary];
+		[self setPrimitiveValue: transformers forKey: @"valueTransformers"];
+	}
+	[transformers setObject: aValueTransformer forKey: key];
 }
 
 /** Returns YES, see [NSObject(EtoileUI) -isLayoutItem] */

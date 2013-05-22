@@ -18,7 +18,7 @@
 #import <EtoileUI/ETUIItem.h>
 
 @class ETUTI;
-@class ETView, ETLayout, ETLayoutItemGroup, 
+@class ETItemValueTransformer, ETView, ETLayout, ETLayoutItemGroup,
 ETDecoratorItem, ETScrollableAreaItem, ETWindowItem, ETActionHandler, ETStyleGroup;
 @class ETCopier;
 @protocol ETInspector, ETWidget;
@@ -212,6 +212,9 @@ and centers it. A strech is a scale that doesn't preserve the content proportion
 
 - (id) valueForProperty: (NSString *)key;
 - (BOOL) setValue: (id)value forProperty: (NSString *)key;
+- (ETItemValueTransformer *) valueTransformerForProperty: (NSString *)key;
+- (void) setValueTransformer: (ETItemValueTransformer *)aValueTransformer
+                 forProperty: (NSString *)key;
 
 - (BOOL) isLayoutItem;
 - (BOOL) isGroup;
