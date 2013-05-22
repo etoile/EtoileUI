@@ -11,6 +11,7 @@
 #import <EtoileFoundation/Macros.h>
 #import "ETLayoutItem+KVO.h"
 #import "EtoileUIProperties.h"
+#import "ETWidget.h"
 #import "NSView+Etoile.h"
 
 

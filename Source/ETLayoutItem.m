@@ -28,6 +28,7 @@
 #import "ETTool.h"
 #import "ETView.h"
 #import "ETUIObject.h"
+#import "ETWidget.h"
 #import "ETWindowItem.h"
 #import "NSImage+Etoile.h"
 #import "NSView+Etoile.h"
@@ -38,7 +39,7 @@ NSString *ETLayoutItemLayoutDidChangeNotification = @"ETLayoutItemLayoutDidChang
 
 #define DETAILED_DESCRIPTION
 
-@interface ETLayoutItem (Private)
+@interface ETLayoutItem (Private) <ETWidget>
 - (NSString *) defaultIdentifier;
 - (void) setViewAndSync: (NSView *)newView;
 - (NSRect) bounds;
@@ -1124,6 +1125,20 @@ See also -[NSView(Etoile) isWidget]. */
 	// NOTE: The next line would work too...
 	//return ([self view] != nil || [[[self layout] layoutView] isWidget]);
 	return ([[self view] isWidget] || [[self layout] isWidget]);
+}
+
+/** Returns a widget proxy for target/action and value related settings.
+ 
+You should use this proxy to control the widget settings rather than setting 
+them directly on the view.
+
+If -view is nil, the widget proxy holds the settings for the item. You can use 
+-widget to access these settings in an action handler or a covery style (for 
+example, if you are implementing a new widget using custom ETStyle and 
+ETActionHandler objects without resorting to a widget from the backend). */
+- (id <ETWidget>) widget
+{
+	return ([[self view] isWidget] ? [self view] : self);
 }
 
 /* Key Value Coding */

@@ -109,6 +109,9 @@
 		6043D08C174BE66C002103CC /* ETObjectValueFormatter.m in Sources */ = {isa = PBXBuildFile; fileRef = 6043D088174BE66C002103CC /* ETObjectValueFormatter.m */; };
 		6043D08D174C2C35002103CC /* ETObjectValueFormatter.m in Sources */ = {isa = PBXBuildFile; fileRef = 6043D088174BE66C002103CC /* ETObjectValueFormatter.m */; };
 		6043D08E174C2C37002103CC /* ETItemValueTransformer.m in Sources */ = {isa = PBXBuildFile; fileRef = 6043D086174BE66C002103CC /* ETItemValueTransformer.m */; };
+		6043D0DC174CEA6E002103CC /* ETWidget.h in Headers */ = {isa = PBXBuildFile; fileRef = 6043D0DA174CEA6E002103CC /* ETWidget.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		6043D0DD174CEA6E002103CC /* ETWidget.m in Sources */ = {isa = PBXBuildFile; fileRef = 6043D0DB174CEA6E002103CC /* ETWidget.m */; };
+		6043D0DE174CEA73002103CC /* ETWidget.m in Sources */ = {isa = PBXBuildFile; fileRef = 6043D0DB174CEA6E002103CC /* ETWidget.m */; };
 		604A32C20F9BEE680090932A /* ETPickDropCoordinator.h in Headers */ = {isa = PBXBuildFile; fileRef = 604A32C10F9BEE680090932A /* ETPickDropCoordinator.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		604A32C50F9BEE780090932A /* ETPickDropCoordinator.m in Sources */ = {isa = PBXBuildFile; fileRef = 604A32C40F9BEE780090932A /* ETPickDropCoordinator.m */; };
 		604A32C60F9BEE780090932A /* ETPickDropCoordinator.m in Sources */ = {isa = PBXBuildFile; fileRef = 604A32C40F9BEE780090932A /* ETPickDropCoordinator.m */; };
@@ -850,6 +853,8 @@
 		6043D086174BE66C002103CC /* ETItemValueTransformer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ETItemValueTransformer.m; path = Additions/ETItemValueTransformer.m; sourceTree = "<group>"; };
 		6043D087174BE66C002103CC /* ETObjectValueFormatter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ETObjectValueFormatter.h; path = Additions/ETObjectValueFormatter.h; sourceTree = "<group>"; };
 		6043D088174BE66C002103CC /* ETObjectValueFormatter.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ETObjectValueFormatter.m; path = Additions/ETObjectValueFormatter.m; sourceTree = "<group>"; };
+		6043D0DA174CEA6E002103CC /* ETWidget.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ETWidget.h; path = Base/ETWidget.h; sourceTree = "<group>"; };
+		6043D0DB174CEA6E002103CC /* ETWidget.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ETWidget.m; path = Base/ETWidget.m; sourceTree = "<group>"; };
 		604A32C10F9BEE680090932A /* ETPickDropCoordinator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ETPickDropCoordinator.h; path = Headers/ETPickDropCoordinator.h; sourceTree = "<group>"; };
 		604A32C40F9BEE780090932A /* ETPickDropCoordinator.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ETPickDropCoordinator.m; path = Source/ETPickDropCoordinator.m; sourceTree = "<group>"; };
 		604B5C1B0F4B472E001C25E8 /* ETEventProcessor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ETEventProcessor.h; path = Headers/ETEventProcessor.h; sourceTree = "<group>"; };
@@ -1513,6 +1518,8 @@
 				607FBAF60FE005E900960039 /* ETUIItem.m */,
 				605F348017158F6000E9355A /* ETResponder.h */,
 				605F348117158F6000E9355A /* ETResponder.m */,
+				6043D0DA174CEA6E002103CC /* ETWidget.h */,
+				6043D0DB174CEA6E002103CC /* ETWidget.m */,
 			);
 			name = Base;
 			sourceTree = "<group>";
@@ -2107,6 +2114,7 @@
 				6063FD5D1744CD9300E4350E /* ETNumberPicker.h in Headers */,
 				6043D089174BE66C002103CC /* ETItemValueTransformer.h in Headers */,
 				6043D08B174BE66C002103CC /* ETObjectValueFormatter.h in Headers */,
+				6043D0DC174CEA6E002103CC /* ETWidget.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2883,6 +2891,7 @@
 				6063FD5F1744CD9B00E4350E /* ETNumberPicker.m in Sources */,
 				6043D08D174C2C35002103CC /* ETObjectValueFormatter.m in Sources */,
 				6043D08E174C2C37002103CC /* ETItemValueTransformer.m in Sources */,
+				6043D0DE174CEA73002103CC /* ETWidget.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -3061,6 +3070,7 @@
 				6063FD5E1744CD9300E4350E /* ETNumberPicker.m in Sources */,
 				6043D08A174BE66C002103CC /* ETItemValueTransformer.m in Sources */,
 				6043D08C174BE66C002103CC /* ETObjectValueFormatter.m in Sources */,
+				6043D0DD174CEA6E002103CC /* ETWidget.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

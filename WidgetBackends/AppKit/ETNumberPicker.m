@@ -8,6 +8,7 @@
 
 #import <EtoileFoundation/Macros.h>
 #import "ETNumberPicker.h"
+#import "NSView+Etoile.h"
 
 static const NSInteger textFieldTag = 1;
 static const NSInteger stepperTag = 2;
@@ -87,6 +88,12 @@ terminology) on which actions should be dispatched. */
 	NSNumberFormatter *formatter = [[self textField] formatter];
 	ETAssert(formatter != nil);
 	return formatter;
+}
+
+- (void) setFormatter: (NSNumberFormatter *)aFormatter
+{
+	NSParameterAssert([aFormatter isKindOfClass: [NSNumberFormatter class]]);
+	[[self textField] setFormatter: aFormatter];
 }
 
 - (double) minValue

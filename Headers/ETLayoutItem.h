@@ -21,7 +21,7 @@
 @class ETView, ETLayout, ETLayoutItemGroup, 
 ETDecoratorItem, ETScrollableAreaItem, ETWindowItem, ETActionHandler, ETStyleGroup;
 @class ETCopier;
-@protocol ETInspector;
+@protocol ETInspector, ETWidget;
 
 /** Describes how the item is resized when its parent item is resized.
 
@@ -194,6 +194,7 @@ and centers it. A strech is a scale that doesn't preserve the content proportion
 - (id) view;
 - (void) setView: (NSView *)newView;
 - (BOOL) usesWidgetView;
+- (id <ETWidget>) widget;
 
 - (NSImage *) image;
 - (void) setImage: (NSImage *)img;

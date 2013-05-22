@@ -8,7 +8,7 @@
 
 #import <Foundation/Foundation.h>
 #import <AppKit/AppKit.h>
-#import <EtoileUI/NSView+Etoile.h>
+#import <EtoileUI/ETWidget.h>
 
 /** @group AppKit Widget Backend
  

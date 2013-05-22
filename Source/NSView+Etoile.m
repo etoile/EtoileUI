@@ -11,6 +11,7 @@
 #import "NSView+Etoile.h"
 #import "ETResponder.h"
 #import "ETView.h"
+#import "ETWidget.h"
 #import "NSImage+Etoile.h"
 #import "ETCompatibility.h"
 
