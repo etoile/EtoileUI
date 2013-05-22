@@ -13,6 +13,10 @@
 #import <EtoileUI/ETItemValueTransformer.h>
 #import <EtoileUI/ETObjectValueFormatter.h>
 
+/* Base */
+
+#import <EtoileUI/ETWidget.h>
+
 #import <EtoileUI/Controls+Etoile.h>
 #import <EtoileUI/ETActionHandler.h>
 #import <EtoileUI/ETApplication.h>
