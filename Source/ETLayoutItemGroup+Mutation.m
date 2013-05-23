@@ -359,6 +359,21 @@ item, it is used as a represented object bound to the returned item. */
 	return itemsFromSource;
 }
 
+/** Returns NO when the given collection is not the represented object dominant 
+collection or if the collection is immutable.
+
+For both cases, the collection doesn't require a proxy to be mutated. */
+- (BOOL) needsMutableCollectionProxyForKey: (NSString *)aValueKey
+                                     value: (id <ETCollection>)aCollection
+{
+	/* In some cases, represented object accessors returns a proxy object that 
+	   can be the represented object itself (e.g. -[ETLayoutItem subject]) */
+	BOOL isDominantCollection = (aValueKey == nil || aCollection == [self representedObject]);
+
+	// TODO: Detect if the represented object implements mutation accessors for the given key
+	return (isDominantCollection == NO);
+}
+
 /** Makes the represented object returns layout items as a source would but only
 turning immediate children into ETLayoutItem or ETLayoutItemGroup instances.
 
@@ -374,12 +389,22 @@ is an item group. */
 	
 	if ([value isCollection])
 	{
+		if ([self needsMutableCollectionProxyForKey: [self valueKey] value: value])
+		{
+			value = [ETCollectionViewpoint viewpointWithName: [self valueKey]
+			                               representedObject: [self representedObject]];
+			[self setPrimitiveValue: value forKey: @"viewpoint"];
+		}
+		else
+		{
+			[self setPrimitiveValue: nil forKey: @"viewpoint"];
+		}
 		items = [NSMutableArray arrayWithCapacity: [value count]];
 
-		if ([value isKeyed])
+		/*if ([value isKeyed])
 		{
 			value = [value arrayRepresentation];
-		}
+		}*/
 
 		for (id object in [value objectEnumerator])
 		{

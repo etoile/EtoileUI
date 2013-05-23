@@ -443,6 +443,22 @@ Symetric method to -handleAttachItem: */
 	[self handleDetachViewOfItem: item];
 }
 
+- (id) value
+{
+	ETCollectionViewpoint *viewpoint = [self primitiveValueForKey: @"viewpoint"];
+	return (viewpoint != nil ? viewpoint : [super value]);
+}
+
+- (void) setValueKey: (NSString *)aKey
+{
+	[super setValueKey: aKey];
+	/* Recreate a collection viewpoint if needed */
+	if ([self usesRepresentedObjectAsProvider])
+	{
+		[self setHasNewContent: YES];
+	}
+}
+
 /** See -[ETLayoutItemGroup setRepresentedObject:].
 
 If necessary, marks the receiver as having new content to be layouted, otherwise
