@@ -295,7 +295,7 @@ conveniency. */
 	NSString *builtInGetterName =
 		[NSString stringWithFormat: @"synthesized%@%@Accessor", aScalarType, capitalizedFieldName];
 	SEL builtInGetterSelector = NSSelectorFromString(builtInGetterName);
-	ETAssert(builtInGetterSelector != nil);
+	ETAssert(builtInGetterSelector != NULL);
 	Method builtInGetter = class_getInstanceMethod([self class], builtInGetterSelector);
 	IMP builtInGetterIMP = method_getImplementation(builtInGetter);
 	ETAssert (builtInGetterIMP != NULL);
@@ -316,7 +316,7 @@ conveniency. */
 	NSString *builtInSetterName =
 		[NSString stringWithFormat: @"synthesized%@%@Accessor:", aScalarType, capitalizedFieldName];
 	SEL builtInSetterSelector = NSSelectorFromString(builtInSetterName);
-	ETAssert(builtInSetterSelector != nil);
+	ETAssert(builtInSetterSelector != NULL);
 	Method builtInSetter = class_getInstanceMethod([self class], builtInSetterSelector);
 	IMP builtInSetterIMP = method_getImplementation(builtInSetter);
 	ETAssert (builtInSetterIMP != NULL);
