@@ -31,6 +31,7 @@
 #import "ETUIObject.h"
 #import "ETWidget.h"
 #import "ETWindowItem.h"
+#import "NSCell+EtoileUI.h"
 #import "NSImage+Etoile.h"
 #import "NSView+Etoile.h"
 #import "ETCompatibility.h"
@@ -896,33 +897,22 @@ You shouldn't have to use this method a lot since -valueForProperty: and
 		|| [[self representedObject] isKindOfClass: [NSView class]]);
 }
 
+/* -value is not implemented by every object unlike -objectValue which is implemented
+by NSObject+Model in EtoileFoundation. */
 - (void) syncView: (NSView *)aView withValue: (id)newValue
 {
 	if (nil == aView || NO == [aView isWidget])
 		return;
 
-	[(id <ETWidget>)aView setObjectValue: newValue];
-}
+	NSCell *cell = [(id <ETWidget>)aView cell];
 
-/* -value is not implemented by every object unlike -objectValue which is implemented 
-by NSObject+Model in EtoileFoundation. */
-- (void) syncView: (NSView *)aView withRepresentedObject: (id)anObject
-{
-	if (nil == anObject)
+	/* For instance, -[NSScrollView cell] returns nil */
+	if (cell == nil)
 		return;
 
-	id value = nil;
+	//ETLog(@"Got object value %@ for %@", [[cell objectValueForObject: newValue] class], [newValue class]);
 
-	if ([anObject respondsToSelector: @selector(value)])
-	{
-		value = [anObject value];
-	}
-	else
-	{
-		value = [anObject objectValue];
-	}
-
-	[self syncView: aView withValue: value];
+	[(id <ETWidget>)aView setObjectValue: [cell objectValueForObject: newValue]];
 }
 
 /** Sets the model object which embeds the data to be displayed and represented 
@@ -962,7 +952,9 @@ object when the view is a widget. */
 	[self didChangeValueForProperty: kETRepresentedObjectProperty];
 	RELEASE(oldObject);
 
-	[self syncView: [self view] withRepresentedObject: modelObject];
+	/* Don't pass -value otherwise -[representedObject value] is not retrieved 
+	   if -valueKey is nil (for example, ETPropertyViewpoint implements -value). */
+	[self syncView: [self view] withValue: [self valueForProperty: kETValueProperty]];
 	[modelObject addObserver: self];
 	_isSettingRepresentedObject = NO;
 }
@@ -1101,7 +1093,7 @@ The view is an NSView class or subclass instance. See -setView:. */
 	}
 
 	[supervisorView setWrappedView: newView];
-	[self syncView: newView withRepresentedObject: _representedObject]; 
+	[self syncView: newView withValue: [self valueForProperty: kETValueProperty]];
 
 	if (startObservingNewView)
 	{
