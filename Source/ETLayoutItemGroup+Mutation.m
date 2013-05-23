@@ -149,9 +149,9 @@ To do so, -canReload checks -isMutating. */
 
 /* Element Mutation Handler */
 
-- (BOOL) isValidMutationForRepresentedObject: (id)repObject
+- (BOOL) isValidMutationForValue: (id)aValue
 {
-	return ([[self baseItem] shouldMutateRepresentedObject] && [repObject isMutableCollection]);
+	return ([[self baseItem] shouldMutateRepresentedObject] && [aValue isMutableCollection]);
 }
 
 - (void) handleInsertItem: (ETLayoutItem *)item 
@@ -197,17 +197,17 @@ To do so, -canReload checks -isMutating. */
                                         atIndex: (NSUInteger)index 
                                            hint: (id)hint
 {
-	id repObject = [self representedObject];
+	id value = [self value];
 
-	if ([self isValidMutationForRepresentedObject: repObject] == NO)
+	if ([self isValidMutationForValue: value] == NO)
 		return;
 
-	ETDebugLog(@"Insert %@ in represented object %@ at index %d", 
-		[item representedObject], repObject, index);
+	ETDebugLog(@"Insert %@ in %@ at index %d of represented object %@",
+		[item value], value, index, repObject);
 
-	[repObject insertObject: ([item representedObject] == hint ? nil : [item representedObject])
-	                atIndex: index 
-	                   hint: hint];
+	[value insertObject: ([item value] == hint ? nil : [item value])
+	            atIndex: index 
+	               hint: hint];
 }
 
 - (void) handleRemoveItem: (ETLayoutItem *)item
@@ -247,14 +247,14 @@ To do so, -canReload checks -isMutating. */
                                         atIndex: (NSUInteger)index 
                                            hint: (id)hint
 {
-	id repObject = [self representedObject];
+	id value = [self value];
 
-	if ([self isValidMutationForRepresentedObject: repObject] == NO)
+	if ([self isValidMutationForValue: value] == NO)
 		return;
 
-	ETDebugLog(@"Remove %@ in represented object %@", [item representedObject], 
-		repObject);
-	[repObject removeObject: [item representedObject] atIndex: index hint: hint];
+	ETDebugLog(@"Remove %@ in %@ of represented object %@", [item value], value, repObject);
+
+	[value removeObject: [item value] atIndex: index hint: hint];
 }
 
 /* Set Mutation Handlers */
@@ -322,7 +322,7 @@ item, it is used as a represented object bound to the returned item. */
 			break;
 		case 2:
 			ETDebugLog(@"Will -reloadFromRepresentedObject");
-			return [self itemsFromRepresentedObject];
+			return [self itemsFromValue];
 			break;
 		default:
 			ETLog(@"WARNING: source protocol is incorrectly supported by %@.", [self source]);
@@ -367,21 +367,21 @@ collection.
 
 This method is only invoked if the receiver item bound to the represented object 
 is an item group. */
-- (NSArray *) itemsFromRepresentedObject
+- (NSArray *) itemsFromValue
 {
 	NSMutableArray *items = nil;
-	id repObject = [self representedObject];
+	id value = [self value];
 	
-	if ([repObject isCollection])
+	if ([value isCollection])
 	{
-		items = [NSMutableArray arrayWithCapacity: [repObject count]];
+		items = [NSMutableArray arrayWithCapacity: [value count]];
 
-		if ([repObject isKeyed])
+		if ([value isKeyed])
 		{
-			repObject = [repObject arrayRepresentation];
+			value = [value arrayRepresentation];
 		}
 
-		for (id object in [repObject objectEnumerator])
+		for (id object in [value objectEnumerator])
 		{
 			[items addObject: [self itemWithObject: object isValue: NO]];
 			// NOTE: Would it be a good idea to use...

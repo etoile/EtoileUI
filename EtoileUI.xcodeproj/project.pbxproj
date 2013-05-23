@@ -112,6 +112,8 @@
 		6043D0DC174CEA6E002103CC /* ETWidget.h in Headers */ = {isa = PBXBuildFile; fileRef = 6043D0DA174CEA6E002103CC /* ETWidget.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		6043D0DD174CEA6E002103CC /* ETWidget.m in Sources */ = {isa = PBXBuildFile; fileRef = 6043D0DB174CEA6E002103CC /* ETWidget.m */; };
 		6043D0DE174CEA73002103CC /* ETWidget.m in Sources */ = {isa = PBXBuildFile; fileRef = 6043D0DB174CEA6E002103CC /* ETWidget.m */; };
+		6043D1AF174E26B6002103CC /* TestItemValue.m in Sources */ = {isa = PBXBuildFile; fileRef = 6043D1AE174E26B5002103CC /* TestItemValue.m */; };
+		6043D1B1174E27D3002103CC /* TestCommon.m in Sources */ = {isa = PBXBuildFile; fileRef = 6043D1B0174E27D3002103CC /* TestCommon.m */; };
 		604A32C20F9BEE680090932A /* ETPickDropCoordinator.h in Headers */ = {isa = PBXBuildFile; fileRef = 604A32C10F9BEE680090932A /* ETPickDropCoordinator.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		604A32C50F9BEE780090932A /* ETPickDropCoordinator.m in Sources */ = {isa = PBXBuildFile; fileRef = 604A32C40F9BEE780090932A /* ETPickDropCoordinator.m */; };
 		604A32C60F9BEE780090932A /* ETPickDropCoordinator.m in Sources */ = {isa = PBXBuildFile; fileRef = 604A32C40F9BEE780090932A /* ETPickDropCoordinator.m */; };
@@ -855,6 +857,8 @@
 		6043D088174BE66C002103CC /* ETObjectValueFormatter.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ETObjectValueFormatter.m; path = Additions/ETObjectValueFormatter.m; sourceTree = "<group>"; };
 		6043D0DA174CEA6E002103CC /* ETWidget.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ETWidget.h; path = Base/ETWidget.h; sourceTree = "<group>"; };
 		6043D0DB174CEA6E002103CC /* ETWidget.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ETWidget.m; path = Base/ETWidget.m; sourceTree = "<group>"; };
+		6043D1AE174E26B5002103CC /* TestItemValue.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = TestItemValue.m; path = Tests/TestItemValue.m; sourceTree = "<group>"; };
+		6043D1B0174E27D3002103CC /* TestCommon.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = TestCommon.m; path = Tests/TestCommon.m; sourceTree = "<group>"; };
 		604A32C10F9BEE680090932A /* ETPickDropCoordinator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ETPickDropCoordinator.h; path = Headers/ETPickDropCoordinator.h; sourceTree = "<group>"; };
 		604A32C40F9BEE780090932A /* ETPickDropCoordinator.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ETPickDropCoordinator.m; path = Source/ETPickDropCoordinator.m; sourceTree = "<group>"; };
 		604B5C1B0F4B472E001C25E8 /* ETEventProcessor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ETEventProcessor.h; path = Headers/ETEventProcessor.h; sourceTree = "<group>"; };
@@ -1398,6 +1402,7 @@
 			isa = PBXGroup;
 			children = (
 				605F354C1717305500E9355A /* TestCommon.h */,
+				6043D1B0174E27D3002103CC /* TestCommon.m */,
 				607DF9A91732C33200C8CB30 /* TestAutoresizing.m */,
 				60D88883115E651000D7A8AA /* TestCell.m */,
 				60C76C6710136D0A0073C381 /* TestCompositeLayout.m */,
@@ -1406,6 +1411,7 @@
 				6067EB591046B4E600C39086 /* TestItemCopy.m */,
 				6022404D1003DF14007D5D07 /* TestItemGeometry.m */,
 				609F5B6716CD412900683BD9 /* TestItemProvider.m */,
+				6043D1AE174E26B5002103CC /* TestItemValue.m */,
 				609F5B5A16CA9E8800683BD9 /* TestLayout.m */,
 				609F5B5B16CA9E8800683BD9 /* TestLayoutItem.m */,
 				609F5B5C16CA9E8800683BD9 /* TestLayoutItemBuilder.m */,
@@ -2892,6 +2898,8 @@
 				6043D08D174C2C35002103CC /* ETObjectValueFormatter.m in Sources */,
 				6043D08E174C2C37002103CC /* ETItemValueTransformer.m in Sources */,
 				6043D0DE174CEA73002103CC /* ETWidget.m in Sources */,
+				6043D1AF174E26B6002103CC /* TestItemValue.m in Sources */,
+				6043D1B1174E27D3002103CC /* TestCommon.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

@@ -17,3 +17,16 @@
 #define UKPointsNotEqual(x, y) UKFalse(NSEqualPoints(x, y))
 #define UKSizesEqual(x, y) UKTrue(NSEqualSizes(x, y))
 #define UKSizesNotEqual(x, y) UKFalse(NSEqualSizes(x, y))
+
+/* A simple model object for testing purpose */
+@interface Person : NSObject
+{
+	NSString *_name;
+	NSDictionary *_emails;
+	NSArray *_groupNames;
+}
+
+@property (nonatomic, retain) NSString *name;
+@property (nonatomic, copy) NSDictionary *emails;
+@property (nonatomic, retain) NSArray *groupNames;
+@end

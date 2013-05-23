@@ -55,6 +55,7 @@ endif
 ifeq ($(test), yes)
 EtoileUI_OBJC_FILES += \
 	Tests/TestAutoresizing.m \
+	Tests/TestCommon.m \
 	Tests/TestLayoutItem.m \
 	Tests/TestLayoutItemBuilder.m \
 	Tests/TestPickboard.m \
@@ -68,6 +69,7 @@ EtoileUI_OBJC_FILES += \
 	Tests/TestItemCopy.m \
 	Tests/TestItemGeometry.m \
 	Tests/TestItemProvider.m \
+	Tests/TestItemValue.m \
 	Tests/TestResponder.m \
 	Tests/TestStyle.m \
 	Tests/TestWidgetLayout.m \
