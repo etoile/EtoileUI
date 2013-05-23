@@ -884,17 +884,12 @@ You shouldn't have to use this method a lot since -valueForProperty: and
 	return (nil != _representedObject ? _representedObject : (id)self);
 }
 
-/** Returns whether the represented object is ETLayoutItem object or not. */
+/** Returns whether the value is ETLayoutItem object or not.
+ 
+See also -value, -valueKey and -representedObject. */
 - (BOOL) isMetaItem
 {
-	// FIXME: Defining the item as a meta item when a view is the represented 
-	// object allows to read and write view values when the item is modified
-	// with PVC. If the item is declared as a normal item, PVC will apply to
-	// the item itself for all properties common to NSView and ETLayoutItem 
-	// (mostly frame related properties).
-	// See also -valueForProperty and -setValue:forProperty:
-	return ([[self representedObject] isKindOfClass: [ETLayoutItem class]]
-		|| [[self representedObject] isKindOfClass: [NSView class]]);
+	return ([[self value] isKindOfClass: [ETLayoutItem class]]);
 }
 
 /* -value is not implemented by every object unlike -objectValue which is implemented
