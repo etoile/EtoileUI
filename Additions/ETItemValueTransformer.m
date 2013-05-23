@@ -25,7 +25,7 @@
                  forKey: (NSString *)key
                  ofItem: (ETLayoutItem *)item
 {
-	if (_transformBlock != nil)
+	if (_transformBlock != NULL)
 	{
 		return _transformBlock(value, key, item);
 	}
@@ -36,7 +36,7 @@
                         forKey: (NSString *)key
                         ofItem: (ETLayoutItem *)item
 {
-	if (_reverseTransformBlock != nil)
+	if (_reverseTransformBlock != NULL)
 	{
 		return _reverseTransformBlock(value, key, item);
 	}
