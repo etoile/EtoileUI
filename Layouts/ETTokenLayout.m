@@ -441,7 +441,7 @@ The resizing isn't delegated to the positional layout unlike in ETTemplateItemLa
 
 	if (isValidValue)
 	{
-		[(ETLayoutItemGroup *)editedItem addItem: [[ETLayoutItemFactory factory] itemWithValue: [editedItem value]]];
+		[(ETLayoutItemGroup *)editedItem addItem: [[ETLayoutItemFactory factory] itemWithRepresentedObject: [editedItem value]]];
 	}
 }
 

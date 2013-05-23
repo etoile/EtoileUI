@@ -207,22 +207,6 @@ This height is also identical to the standard toolbar height in Aqua. */
 	return item;
 }
 
-/** Returns a new layout item which represents the given object and treats it 
-as a simple value rather than a full-blown model object.
-
-A simple value means the properties of the given object are not exposed by the 
-layout item, as it would be with the case with a represented object. e.g. if 
-you pass an NSString, the layout item properties won't include
--[NSString allPropertyNames] but only the 'value' property.
-
-See also -[NSObject(Model) isCommonObjectValue] in EtoileFoundation. */
-- (ETLayoutItem *) itemWithValue: (id)value
-{
-	ETLayoutItem *item = [self item];
-	[item setValue: value];
-	return item;
-}
-
 /** Returns a new layout item which represents the given object.
 
 The represented object is a model object in an MVC perspective, the layout item 
@@ -341,23 +325,6 @@ An NSInvalidArgumentException will be raised if you pass nil. */
 {
 	ETLayoutItemGroup *itemGroup = [self itemGroup];
 	[itemGroup addItems: items];
-	return itemGroup;
-}
-
-/** Returns a new layout item group which represents the given object and 
-treats it as a simple value rather than a full-blown model object.
-
-NOTE: This method is still under evaluation. You should rarely need to use it.   
-It is useful to organize multiple value items in a hierarchical structure 
-with a layout such as ETOutlineLayout. e.g a single column might be allowed to 
-be visible at a time, then this column is usually bound to the 'value' property 
-and item groups have to be labeled/named with the 'value' property.
-
-See also -itemWithValue:. */
-- (ETLayoutItemGroup *) itemGroupWithValue: (id)value
-{
-	ETLayoutItemGroup *itemGroup = [self itemGroup];
-	[itemGroup setValue: value];
 	return itemGroup;
 }
 
@@ -829,12 +796,15 @@ as its view. */
 }
 
 /** Returns a new layout item that uses a horizontally oriented NSSlider instance 
-as its view. */
+as its view.
+
+The slider minimum value is set to 0, the maximum value to 100 and the initial 
+value to 50. */
 - (id) horizontalSlider
 {
 	// NOTE: Might be better to invoke -horizontalSliderWithWidth:XXX.
-	ETLayoutItem *item = [self makeItemWithViewClass: [NSSlider class]
-	                                          height: [self defaultSliderThickness]];
+	ETLayoutItem *item = [self horizontalSliderWithWidth: [self defaultWidgetFrame].size.width
+		minValue: 0 maxValue: 100 initialValue: 50 target: nil action: NULL];
 	[item setIcon: [NSImage imageNamed: @"ui-slider-050"]];
 	return item;
 }

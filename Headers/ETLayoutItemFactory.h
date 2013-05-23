@@ -51,7 +51,6 @@ ETStyle, ETActionHandler;
 
 - (ETLayoutItem *) item;
 - (ETLayoutItem *) itemWithView: (NSView *)view;
-- (ETLayoutItem *) itemWithValue: (id)value;
 - (ETLayoutItem *) itemWithRepresentedObject: (id)object;
 
 - (ETLayoutItem *) barElementFromItem: (ETLayoutItem *)anItem 
@@ -67,7 +66,6 @@ ETStyle, ETActionHandler;
 - (ETLayoutItemGroup *) itemGroupWithSize: (NSSize)aSize;
 - (ETLayoutItemGroup *) itemGroupWithItem: (ETLayoutItem *)item;
 - (ETLayoutItemGroup *) itemGroupWithItems: (NSArray *)items;
-- (ETLayoutItemGroup *) itemGroupWithValue: (id)value;
 - (ETLayoutItemGroup *) itemGroupWithRepresentedObject: (id)object;
 
 - (ETLayoutItemGroup *) graphicsGroup;

@@ -896,7 +896,7 @@ See also -value, -valueKey and -representedObject. */
 by NSObject+Model in EtoileFoundation. */
 - (void) syncView: (NSView *)aView withValue: (id)newValue
 {
-	if (nil == aView || NO == [aView isWidget])
+	if ([self representedObject] == nil || aView == nil || [aView isWidget] == NO)
 		return;
 
 	NSCell *cell = [(id <ETWidget>)aView cell];
@@ -3194,7 +3194,7 @@ See also -subject. */
 	//ETLog(@"Did Change view value to %@", newValue);
 
 	/* Don't update the represented object while setting it */
-	if (_isSettingRepresentedObject)
+	if (_isSettingRepresentedObject || [self representedObject] == nil)
 		return;
 
 	[self setValue: newValue forProperty: kETValueProperty];
