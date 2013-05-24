@@ -69,8 +69,8 @@
 		[ETPropertyDescription descriptionWithName: @"selectsInsertedObjects" type: (id)@"BOOL"];
 	ETPropertyDescription *sortDescriptors =
 		[ETPropertyDescription descriptionWithName: @"sortDescriptors" type: (id)@"NSSortDescriptor"];
-	[templates setMultivalued: YES];
-	[templates setOrdered: YES];
+	[sortDescriptors setMultivalued: YES];
+	[sortDescriptors setOrdered: YES];
 	ETPropertyDescription *filterPredicate =
 		[ETPropertyDescription descriptionWithName: @"filterPredicate" type: (id)@"NSPredicate"];
 	ETPropertyDescription *automaticallyRearranges =
