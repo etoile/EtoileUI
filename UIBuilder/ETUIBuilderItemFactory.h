@@ -9,6 +9,7 @@
 #import <Foundation/Foundation.h>
 #import <AppKit/AppKit.h>
 #import <EtoileUI/ETLayoutItemFactory.h>
+#import <EtoileUI/ETApplication.h>
 
 @class ETModelDescriptionRenderer;
 
@@ -20,6 +21,9 @@
 	@private
 	ETModelDescriptionRenderer *renderer;
 }
+
+- (ETLayoutItemGroup *) editorWithObject: (id)anObject
+                              controller: (id)aController;
 
 - (ETLayoutItemGroup *) inspectorWithObject: (id)anObject
                                  controller: (id)aController;
@@ -35,4 +39,9 @@
 
 @interface NSObject (UIBuilder)
 - (IBAction) inspectUI: (id)sender;
+@end
+
+@interface ETApplication (UIBuilder)
+- (IBAction) startEditingKeyWindowUI: (id)sender;
+- (IBAction) stopEditingKeyWindowUI: (id)sender;
 @end

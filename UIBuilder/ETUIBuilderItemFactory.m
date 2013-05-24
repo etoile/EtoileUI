@@ -19,6 +19,7 @@
 #import "ETColumnLayout.h"
 #import "ETController.h"
 #import "ETFormLayout.h"
+#import "ETGeometry.h"
 #import "ETLayoutItem.h"
 #import "ETLayoutItem+Scrollable.h"
 #import "ETLayoutItemGroup.h"
@@ -27,6 +28,8 @@
 #import "ETModelDescriptionRenderer.h"
 #import "ETObjectValueFormatter.h"
 #import "ETOutlineLayout.h"
+#import "ETStyleGroup.h"
+#import "ETTool.h"
 #import "NSObject+EtoileUI.h"
 #import "NSView+Etoile.h"
 #import "ETCompatibility.h"
@@ -101,6 +104,18 @@
 	return NSMakeSize(700, 1000);
 }
 
+- (NSSize) defaultEditorSize
+{
+	return NSMakeSize(1300, 1000);
+}
+
+- (NSSize) defaultEditorBodySize
+{
+	NSSize size = [self defaultEditorSize];
+	size.height -= [self defaultIconAndLabelBarHeight];
+	return size;
+}
+
 - (NSSize) defaultInspectorBodySize
 {
 	NSSize size = [self defaultInspectorSize];
@@ -120,6 +135,102 @@
 	NSSize size = [self defaultInspectorBodySize];
 	size.height = 800;
 	return size;
+}
+
+- (ETLayoutItemGroup *) editorWithObject: (id)anObject
+                              controller: (id)aController
+{
+	ETLayoutItemGroup *topBar = [self editorTopBarWithController: aController];
+	ETLayoutItemGroup *editorBody = [self editorBodyWithEditedItem: anObject controller: aController];
+	ETLayoutItemGroup *editor = [self itemGroupWithSize: [self defaultEditorSize]];
+
+	[editor addItems: A(topBar, editorBody)];
+	[editor setIdentifier: @"editor"];
+	[editor setAutoresizingMask: ETAutoresizingFlexibleWidth | ETAutoresizingFlexibleHeight];
+	[editor setLayout: [ETColumnLayout layout]];
+	[editor setController: aController];
+
+	ETLog(@"\n%@\n", [editor descriptionWithOptions: [NSMutableDictionary dictionaryWithObjectsAndKeys:
+		A(@"frame", @"autoresizingMask"), kETDescriptionOptionValuesForKeyPaths,
+		@"items", kETDescriptionOptionTraversalKey, nil]]);
+
+	return editor;
+}
+
+- (ETLayoutItemGroup *) editorTopBarWithController: (id)aController
+{
+	NSSize size = NSMakeSize([self defaultEditorSize].width, [self defaultIconAndLabelBarHeight]);
+	ETLayoutItemGroup *itemGroup = [self itemGroupWithSize: size];
+	ETLayoutItem *runItem = [self buttonWithIconNamed: @"media-playback-start"
+	                                           target: aController
+	                                           action: @selector(toggleTestUI:)];
+	ETLayoutItem *exitItem = [self buttonWithIconNamed: @"media-playback-stop"
+	                                           target: nil
+	                                           action: @selector(stopEditingKeyWindowUI:)];
+	ETLayoutItem *searchItem = [self searchFieldWithTarget: aController
+	                                                action: @selector(filter:)];
+	ETLayoutItem *viewItem = [self viewPopUpWithController: aController];
+	ETLayoutItem *repoItem = [self aspectRepositoryPopUpWithController: aController];
+	ETLayoutItemGroup *leftItemGroup = [self itemGroup];
+	ETLayoutItemGroup *rightItemGroup = [self itemGroup];
+
+	[(NSSearchFieldCell *)[[searchItem view] cell] setSendsSearchStringImmediately: YES];
+
+	[itemGroup setIdentifier: @"editorTopBar"];
+	[itemGroup setAutoresizingMask: ETAutoresizingFlexibleWidth];
+	[itemGroup setLayout: [ETLineLayout layout]];
+	[[itemGroup layout] setSeparatorTemplateItem: [self flexibleSpaceSeparator]];
+
+	[leftItemGroup setLayout: [ETLineLayout layout]];
+	[[leftItemGroup layout] setIsContentSizeLayout: YES];
+
+	[leftItemGroup addItems:
+		A([self barElementFromItem: runItem withLabel: _(@"Run")],
+		  [self barElementFromItem: exitItem withLabel: _(@"Stop UI Editing")])];	
+
+	[rightItemGroup setLayout: [ETLineLayout layout]];
+	[[rightItemGroup layout] setIsContentSizeLayout: YES];
+
+	[rightItemGroup addItems:
+	 	A([self barElementFromItem: viewItem withLabel: _(@"View")],
+		  [self barElementFromItem: repoItem withLabel: _(@"Aspect Repository")],
+		  [self barElementFromItem: searchItem withLabel: _(@"Filter")])];
+
+	[itemGroup addItems: A(leftItemGroup, rightItemGroup)];
+
+	return itemGroup;
+}
+
+- (ETLayoutItemGroup *) editorBodyWithEditedItem: (ETLayoutItem *)anEditedItem
+                                      controller: (id)aController
+{
+	ETLayoutItemGroup *body = [self itemGroupWithSize: [self defaultEditorBodySize]];
+	ETLayoutItemGroup *contentArea = [self contentAreaWithEditedItem: anEditedItem];
+	ETLayoutItemGroup *inspectorBody = [self inspectorBodyWithObject: anEditedItem
+	                                                      controller: aController];
+
+	[body setIdentifier: @"editorBody"];
+	[body setAutoresizingMask: ETAutoresizingFlexibleWidth | ETAutoresizingFlexibleHeight];
+	[body setLayout: [ETLineLayout layout]];
+	[body addItems: A(contentArea, inspectorBody)];
+
+	return body;
+}
+
+- (ETLayoutItemGroup *) contentAreaWithEditedItem: (ETLayoutItem *)anEditedItem
+{
+	ETLayoutItemGroup *contentArea = [self itemGroupWithSize: NSMakeSize([self defaultEditorSize].width - [self defaultInspectorSize].width, [self defaultInspectorBodySize].height)];
+
+	// FIXME: [[contentArea styleGroup] addStyle: [ETTintStyle tintWithStyle: nil color: [NSColor greenColor]]];
+	[contentArea setIdentifier: @"contentArea"];
+	[contentArea setAutoresizingMask: ETAutoresizingFlexibleWidth | ETAutoresizingFlexibleHeight];
+	[contentArea addItem: anEditedItem];
+
+	// TODO: Could use -[body setContentAspect: ETContentAspectCentered] for a single item
+	[anEditedItem setFrame: ETCenteredRect([anEditedItem size], [contentArea frame])];
+	[anEditedItem setAutoresizingMask: ETAutoresizingFlexibleLeftMargin | ETAutoresizingFlexibleRightMargin | ETAutoresizingFlexibleTopMargin | ETAutoresizingFlexibleBottomMargin];
+
+	return contentArea;
 }
 
 - (ETLayoutItemGroup *) inspectorWithObject: (id)anObject
@@ -379,3 +490,29 @@
 
 @end
 
+
+@implementation ETApplication (UIBuilder)
+
+/** Starts the UI Builder to edit the key window UI. */
+- (IBAction) startEditingKeyWindowUI: (id)sender
+{
+	ETLayoutItem *editedItem = [[[ETTool activeTool] keyItem] windowBackedAncestorItem];
+	ETLayoutItemGroup *editor = [[ETUIBuilderItemFactory factory]
+		editorWithObject: editedItem controller: AUTORELEASE([ETUIBuilderController new])];
+
+	[[[ETUIBuilderItemFactory factory] windowGroup] addItem: editor];
+}
+
+/** Stops the UI Builder that is editing the key window UI. */
+- (IBAction) stopEditingKeyWindowUI: (id)sender
+{
+	ETLayoutItemGroup *editor = [[[ETTool activeTool] keyItem] windowBackedAncestorItem];
+	ETLayoutItemGroup *contentArea = (ETLayoutItemGroup *)[editor itemForIdentifier: @"contentArea"];
+	ETAssert([contentArea numberOfItems] == 1);
+	ETLayoutItem *editedItem = [contentArea lastItem];
+
+	[[[ETUIBuilderItemFactory factory] windowGroup] addItem: editedItem];
+	[[[ETUIBuilderItemFactory factory] windowGroup] removeItem: editor];
+}
+
+@end

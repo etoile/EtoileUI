@@ -442,7 +442,7 @@ menu bar, otherwise builds a new instance and returns it. */
 	/* Builds and inserts menu items into the new dev menu */
 
 	[menu addItemWithTitle: _(@"Start Editing Window UI") 
-	                action: @selector(startEditingUI:)
+	                action: @selector(startEditingKeyWindowUI:)
 	         keyEquivalent: @""];
 
 	[menu addItem: [NSMenuItem separatorItem]];
@@ -1041,13 +1041,16 @@ utilities related to debugging, introspection etc. */
 	}
 }
 
-/** Switches between User mode and Developer mode to edit the application at 
-runtime.
-
-WARNING: Not yet implemented. */
-- (IBAction) toggleLiveDevelopment: (id)sender
+/** Calls -inspectUI: on the root item.  */
+- (IBAction) inspectWindowGroupUI: (id)sender
 {
-	ETLog(@"Toggle live dev");
+	[[self layoutItem] inspectUI: sender];
+}
+
+/** Calls -inspectUI: on the item backed by the key window. */
+- (IBAction) inspectKeyWindowUI: (id)sender
+{
+	[[[[ETTool activeTool] keyItem] windowBackedAncestorItem] inspectUI: sender];
 }
 
 - (IBAction) didChangeVisualSearchString: (id)sender
