@@ -515,4 +515,16 @@
 	[[[ETUIBuilderItemFactory factory] windowGroup] removeItem: editor];
 }
 
+/** Calls -inspectUI: on the root item.  */
+- (IBAction) inspectWindowGroupUI: (id)sender
+{
+	[[self layoutItem] inspectUI: sender];
+}
+
+/** Calls -inspectUI: on the item backed by the key window. */
+- (IBAction) inspectKeyWindowUI: (id)sender
+{
+	[[[[ETTool activeTool] keyItem] windowBackedAncestorItem] inspectUI: sender];
+}
+
 @end

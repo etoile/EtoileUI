@@ -72,7 +72,6 @@ For other Nibs to be loaded, see ETNibOwner. */
 - (IBAction) toggleFrameShown: (id)sender;
 - (IBAction) toggleBoundingBoxShown: (id)sender;
 - (IBAction) toggleDevelopmentMenu: (id)sender;
-- (IBAction) toggleLiveDevelopment: (id)sender;
 - (IBAction) showVisualSearchPanel: (id)sender;
 
 @end

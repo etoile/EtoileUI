@@ -1041,18 +1041,6 @@ utilities related to debugging, introspection etc. */
 	}
 }
 
-/** Calls -inspectUI: on the root item.  */
-- (IBAction) inspectWindowGroupUI: (id)sender
-{
-	[[self layoutItem] inspectUI: sender];
-}
-
-/** Calls -inspectUI: on the item backed by the key window. */
-- (IBAction) inspectKeyWindowUI: (id)sender
-{
-	[[[[ETTool activeTool] keyItem] windowBackedAncestorItem] inspectUI: sender];
-}
-
 - (IBAction) didChangeVisualSearchString: (id)sender
 {
 	NSString *searchString = [sender stringValue];
