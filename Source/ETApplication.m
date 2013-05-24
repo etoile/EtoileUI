@@ -441,27 +441,59 @@ menu bar, otherwise builds a new instance and returns it. */
 
 	/* Builds and inserts menu items into the new dev menu */
 
-	[menu addItemWithTitle: _(@"Toggle Live Development") 
-	                action: @selector(toggleLiveDevelopment:) 
+	[menu addItemWithTitle: _(@"Start Editing Window UI") 
+	                action: @selector(startEditingUI:)
 	         keyEquivalent: @""];
 
 	[menu addItem: [NSMenuItem separatorItem]];
 
-	[menu addItemWithTitle: _(@"Inspect")
-	                action: @selector(inspectItem:) 
+	[menu addItemWithTitle: _(@"Inspect Window Group UI")
+	                action: @selector(inspectWindowGroupUI:)
+	         keyEquivalent: @""];
+	
+	[menu addItemWithTitle: _(@"Inspect Window UI")
+	                action: @selector(inspectKeyWindowUI:)
+	         keyEquivalent: @""];
+	
+	[menu addItem: [NSMenuItem separatorItem]];
+	
+	[menu addItemWithTitle: _(@"Inspect UI")
+	                action: @selector(inspectItem:)
+	         keyEquivalent: @""];
+	
+	[menu addItemWithTitle: _(@"Inspect Model")
+	                action: @selector(inspectModel:)
+	         keyEquivalent: @""];
+	
+	[menu addItemWithTitle: _(@"Inspect Metamodel")
+	                action: @selector(inspectMetamodel:)
+	         keyEquivalent: @""];
+	
+	// TODO: Decide if we should rather use a submenu 'Inspect Selection Aspects'
+	
+	[menu addItem: [NSMenuItem separatorItem]];
+	
+	[menu addItemWithTitle: _(@"Inspect Object For UI")
+	                action: @selector(inspectModel:)
+	         keyEquivalent: @""];
+	
+	[menu addItemWithTitle:  _(@"Inspect Object For Model")
+	                action: @selector(inspectModel:)
 	         keyEquivalent: @""];
 
-	/*[menu addItemWithTitle:  _(@"Inspect Selection")
-	                action: @selector(inspectSelection:) 
+	[menu addItem: [NSMenuItem separatorItem]];
+
+	[menu addItemWithTitle: _(@"New Object From Template…") 
+	                action: @selector(showUIBuilderAspectRepository:)
 	         keyEquivalent: @""];
 
-	[menu addItemWithTitle: _(@"Browse")
-	                action: @selector(browse:) 
+	[menu addItemWithTitle: _(@"New Object From Type…") 
+	                action: @selector(showUIBuilderAspectRepository:)
 	         keyEquivalent: @""];
 
-	[menu addItemWithTitle: _(@"Browse Layout Item Tree")
-	                action: @selector(browseLayoutItemTree:) 
-	         keyEquivalent: @""];*/
+	[menu addItemWithTitle: _(@"Show UI Aspect Repository") 
+	                action: @selector(showUIBuilderAspectRepository:)
+	         keyEquivalent: @""];
 
 	[menu addItem: [NSMenuItem separatorItem]];
 
@@ -493,6 +525,7 @@ menu bar, otherwise builds a new instance and returns it. */
 	
 	[menu addItem: [NSMenuItem separatorItem]];
 
+	// TODO: Don't add geometry options if visible in Arrange menu already
 	[self addGeometryOptionsToMenu: menu];
 
 	return devMenuItem;
