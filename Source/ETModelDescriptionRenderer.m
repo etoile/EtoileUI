@@ -505,34 +505,9 @@ See also -setRenderedPropertyNames:. */
 	return [anObject valueForProperty: [aPropertyDesc name]];
 }
 
-#ifdef AVOID_COLLECTION_EDITOR_TEMPLATE_COPY
 - (ETLayoutItemGroup *) editorForRelationshipDescription: (ETPropertyDescription *)aPropertyDesc
                                                 ofObject: (id)anObject
 {
-	id collection = [self representedObjectForToManyRelationshipDescription: aPropertyDesc
-	                                                               ofObject: anObject];
-	Class relationshipClass = [_repository classForEntityDescription: [aPropertyDesc type]];
-	ETAssert(relationshipClass != Nil);
-	ETItemTemplate *template = [ETItemTemplate templateWithItem: [_itemFactory item]
-	                                                objectClass: relationshipClass];
-	ETPropertyCollectionController *controller = [[ETPropertyCollectionController new] autorelease];
-	
-	[controller setTemplate: template forType: [controller currentObjectType]];
-
-	ETLayoutItemGroup *editor = [_itemFactory collectionEditorWithSize: [self defaultItemSize]
-							                         representedObject: collection
-									                        controller: controller];
-
-	[[controller content] setDoubleAction: @selector(edit:)];
-	[[controller content] setTarget: controller];
-
-	return editor;
-}
-#else
-- (ETLayoutItemGroup *) editorForRelationshipDescription: (ETPropertyDescription *)aPropertyDesc
-                                                ofObject: (id)anObject
-{
-
 	ETLayoutItemGroup *editor = [[self templateItemForIdentifier: @"collectionEditor"] deepCopy];
 	ETLayoutItemGroup *browser = (id)[editor itemForIdentifier: @"browser"];
 	id collection = [self representedObjectForToManyRelationshipDescription: aPropertyDesc
@@ -553,7 +528,6 @@ See also -setRenderedPropertyNames:. */
 
 	return editor;
 }
-#endif
 
 - (ETLayoutItemGroup *) newItemForRelationshipDescription: (ETPropertyDescription *)aPropertyDesc
                                                  ofObject: (id)anObject
