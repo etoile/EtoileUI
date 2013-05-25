@@ -181,6 +181,8 @@
 
 	UKObjectsEqual([person groupNames], [[[itemGroup items] mappedCollection] representedObject]);
 	UKObjectsEqual([person groupNames], [[[itemGroup items] mappedCollection] value]);
+	/* The represented object is a simple string that doesn't implement -value 
+	   so -valueForProperty: retrieves the value from the item. */
 	UKObjectsEqual([person groupNames], [[[itemGroup items] mappedCollection] valueForProperty: kETValueProperty]);
 	UKNil([[itemGroup firstItem] valueForProperty: @"groupNames"]);
 }
@@ -208,6 +210,76 @@
 	UKFalse([[person groupNames] containsObject: @"Nowhere"]);
 	UKFalse([[itemGroup value] containsObject: @"Nowhere"]);
 	UKObjectsEqual([person groupNames], [[[itemGroup items] mappedCollection] representedObject]);
+}
+
+- (void) testItemGroupValueKeyForDictionary
+{
+	[itemGroup setRepresentedObject: person];
+	[itemGroup setValueKey: @"emails"];
+	[itemGroup setSource: itemGroup];
+
+	/* We call -content on the value in case -value returns a collection viewpoint.
+	   Turning ETCollectionViewpoint into a proxy could be interesting, methods 
+	   such as as -isEqual: , -objectAtIndex: etc. would work. */
+	UKObjectsEqual([person emails], [[itemGroup value] content]);
+	UKObjectsEqual([person emails], [itemGroup valueForProperty: @"emails"]);
+	UKObjectsEqual([person emails], [[itemGroup valueForProperty: kETValueProperty] content]);
+
+	UKIntsEqual([[person emails] count], [itemGroup numberOfItems]);
+
+	NSArray *pairs = [[person emails] arrayRepresentation];
+	NSArray *pairValues = [[person emails] allValues];
+	NSArray *items = [itemGroup items];
+
+	UKObjectsEqual(SA(pairs), SA([[items mappedCollection] representedObject]));
+	UKObjectsEqual(SA(pairs), SA((id)[[items mappedCollection] value]));
+	/* The represented object is a key-value pair that implements -value so 
+	   -valueForProperty: retrieves the value from the represented object. */
+	UKObjectsEqual(SA(pairValues), SA([[items mappedCollection] valueForProperty: kETValueProperty]));
+
+	ETLayoutItem *someItem = [itemGroup firstItem];
+	
+	UKNil([someItem valueForProperty: @"emails"]);
+
+	NSString *pairKey = [someItem valueForProperty: @"key"];
+	NSString *pairValue = [someItem valueForProperty: @"value"];
+
+	UKTrue([[person emails] containsKey: pairKey]);
+	UKTrue([[person emails] containsObject: pairValue]);
+	UKObjectsEqual(pairValue, [[person emails] objectForKey: pairKey]);
+	UKTrue([pairs containsObject: [ETKeyValuePair pairWithKey: pairKey value: pairValue]]);
+}
+
+- (void) testItemGroupValueKeyForDictionaryMutation
+{
+	[itemGroup setRepresentedObject: person];
+	[itemGroup setValueKey: @"emails"];
+	[itemGroup setSource: itemGroup];
+	
+	NSUInteger count = [itemGroup count];
+	ETKeyValuePair *pair = [ETKeyValuePair pairWithKey: @"Cave" value: @"john@timetravel.com"];
+
+	ASSIGN(item, [itemFactory itemWithRepresentedObject: pair]);
+
+	[itemGroup insertItem: item atIndex: 1];
+
+	NSArray *pairs = [[person emails] arrayRepresentation];
+	
+	UKIntsEqual(count + 1, [[person emails] count]);
+	UKObjectsEqual([pair value], [[person emails] objectForKey: [pair key]]);
+	UKTrue([pairs containsObject: pair]);
+	UKObjectsEqual([pair value], [[[itemGroup value] content] objectForKey: [pair key]]);
+	UKObjectsEqual(SA(pairs), SA([[[itemGroup items] mappedCollection] representedObject]));
+
+	[itemGroup removeItem: item];
+
+	pairs = [[person emails] arrayRepresentation];
+	
+	UKIntsEqual(count, [[person emails] count]);
+	UKNil([[person emails] objectForKey: [pair key]]);
+	UKFalse([pairs containsObject: pair]);
+	UKNil([[[itemGroup value] content] objectForKey: [pair key]]);
+	UKObjectsEqual(SA(pairs), SA([[[itemGroup items] mappedCollection] representedObject]));
 }
 
 - (void) testItemGroupValueForItemAsRepresentedObject

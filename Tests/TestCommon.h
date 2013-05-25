@@ -11,6 +11,8 @@
 #import <UnitKit/UnitKit.h>
 #import <EtoileFoundation/Macros.h>
 
+#define SA(x) [NSSet setWithArray: x]
+
 #define UKRectsEqual(x, y) UKTrue(NSEqualRects(x, y))
 #define UKRectsNotEqual(x, y) UKFalse(NSEqualRects(x, y))
 #define UKPointsEqual(x, y) UKTrue(NSEqualPoints(x, y))

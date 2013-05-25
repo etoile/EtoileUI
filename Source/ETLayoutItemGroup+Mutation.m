@@ -195,19 +195,28 @@ To do so, -canReload checks -isMutating. */
 
 - (void) mutateRepresentedObjectForInsertedItem: (ETLayoutItem *)item 
                                         atIndex: (NSUInteger)index 
-                                           hint: (id)hint
+                                           hint: (id)aHint
 {
-	id value = [self value];
+	id parentValue = [self value];
 
-	if ([self isValidMutationForValue: value] == NO)
+	if ([self isValidMutationForValue: parentValue] == NO)
 		return;
 
-	ETDebugLog(@"Insert %@ in %@ at index %d of represented object %@",
-		[item value], value, index, repObject);
+	id value = [item value];
 
-	[value insertObject: ([item value] == hint ? nil : [item value])
-	            atIndex: index 
-	               hint: hint];
+	ETDebugLog(@"Insert %@ in %@ at index %d of represented object %@",
+		value, parentValue, index, repObject);
+
+	id insertedValue = value;
+	id hint = aHint;
+
+	if ([value isKeyValuePair])
+	{
+		insertedValue = [(ETKeyValuePair *)value value];
+		hint = value;
+	}
+
+	[parentValue insertObject: insertedValue atIndex: index hint: hint];
 }
 
 - (void) handleRemoveItem: (ETLayoutItem *)item
@@ -245,16 +254,27 @@ To do so, -canReload checks -isMutating. */
 
 - (void) mutateRepresentedObjectForRemovedItem: (ETLayoutItem *)item
                                         atIndex: (NSUInteger)index 
-                                           hint: (id)hint
+                                           hint: (id)aHint
 {
-	id value = [self value];
+	id parentValue = [self value];
 
-	if ([self isValidMutationForValue: value] == NO)
+	if ([self isValidMutationForValue: parentValue] == NO)
 		return;
 
-	ETDebugLog(@"Remove %@ in %@ of represented object %@", [item value], value, repObject);
+	id value = [item value];
 
-	[value removeObject: [item value] atIndex: index hint: hint];
+	ETDebugLog(@"Remove %@ in %@ of represented object %@", value, parentValue, repObject);
+
+	id insertedValue = value;
+	id hint = aHint;
+	
+	if ([value isKeyValuePair])
+	{
+		insertedValue = [(ETKeyValuePair *)value value];
+		hint = value;
+	}
+
+	[parentValue removeObject: insertedValue atIndex: index hint: hint];
 }
 
 /* Set Mutation Handlers */
@@ -401,10 +421,12 @@ is an item group. */
 		}
 		items = [NSMutableArray arrayWithCapacity: [value count]];
 
-		/*if ([value isKeyed])
+		if ([value isKeyed])
 		{
-			value = [value arrayRepresentation];
-		}*/
+			/* Use -content in case value is a ETCollectionViewpoint that 
+			   doesn't implement -arrayRepresentation. */
+			value = [[value content] arrayRepresentation];
+		}
 
 		for (id object in [value objectEnumerator])
 		{
