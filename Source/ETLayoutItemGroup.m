@@ -1527,7 +1527,7 @@ redisplayed. */
 	_changingSelection = NO;
 }
 
-/* Tells the receiver the selection has been changed and it should post
+/** Tells the receiver the selection has been changed and it should post
 ETItemGroupSelectionDidChangeNotification.
 
 You should never use this method when you use -setSelected: on descendant items
