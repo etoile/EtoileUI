@@ -17,6 +17,10 @@
 
 #import <EtoileUI/ETWidget.h>
 
+/* UI Builder */
+
+#import <EtoileUI/ETUIBuilderItemFactory.h>
+
 #import <EtoileUI/Controls+Etoile.h>
 #import <EtoileUI/ETActionHandler.h>
 #import <EtoileUI/ETApplication.h>
