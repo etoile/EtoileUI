@@ -39,7 +39,7 @@ In the example above, the last line returns [NSColor cyanColor] and
 For the collection protocol, -containsObject: and -containsCollection: operate 
 both over the -aspects collection. In other words, ETKeyValuePair objects are 
 invalid arguments. */
-@interface ETAspectCategory : ETUIObject <ETCollection, ETCollectionMutation>
+@interface ETAspectCategory : ETUIObject <ETKeyedCollection, ETCollectionMutation>
 {
 	@protected
 	NSMutableArray *_aspects; /* An array of ETKeyValuePair */

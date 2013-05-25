@@ -246,7 +246,7 @@ See also -aspectForKey:. */
 
 /** Returns a key-value pair collection as an array copy.
 
-See ETKeyValuePair. */
+See ETKeyValuePair and ETKeyedCollection. */
 - (NSArray *) arrayRepresentation
 {
 	return [NSArray arrayWithArray: _aspects];

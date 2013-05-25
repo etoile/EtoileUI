@@ -423,9 +423,7 @@ is an item group. */
 
 		if ([value isKeyed])
 		{
-			/* Use -content in case value is a ETCollectionViewpoint that 
-			   doesn't implement -arrayRepresentation. */
-			value = [[value content] arrayRepresentation];
+			value = [value arrayRepresentation];
 		}
 
 		for (id object in [value objectEnumerator])
