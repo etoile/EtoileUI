@@ -28,6 +28,7 @@
 #import "ETModelDescriptionRenderer.h"
 #import "ETObjectValueFormatter.h"
 #import "ETOutlineLayout.h"
+#import "ETSelectTool.h"
 #import "ETStyleGroup.h"
 #import "ETTool.h"
 #import "NSObject+EtoileUI.h"
@@ -150,6 +151,8 @@
 	[editor setLayout: [ETColumnLayout layout]];
 	[editor setController: aController];
 
+	[aController setEditedItem: anObject];
+
 	ETLog(@"\n%@\n", [editor descriptionWithOptions: [NSMutableDictionary dictionaryWithObjectsAndKeys:
 		A(@"frame", @"autoresizingMask"), kETDescriptionOptionValuesForKeyPaths,
 		@"items", kETDescriptionOptionTraversalKey, nil]]);
@@ -205,6 +208,7 @@
                                       controller: (id)aController
 {
 	ETLayoutItemGroup *body = [self itemGroupWithSize: [self defaultEditorBodySize]];
+	ETLayoutItemGroup *picker = [self objectPicker];
 	ETLayoutItemGroup *contentArea = [self contentAreaWithEditedItem: anEditedItem];
 	ETLayoutItemGroup *inspectorBody = [self inspectorBodyWithObject: anEditedItem
 	                                                      controller: aController];
@@ -212,7 +216,7 @@
 	[body setIdentifier: @"editorBody"];
 	[body setAutoresizingMask: ETAutoresizingFlexibleWidth | ETAutoresizingFlexibleHeight];
 	[body setLayout: [ETLineLayout layout]];
-	[body addItems: A(contentArea, inspectorBody)];
+	[body addItems: A(picker, contentArea, inspectorBody)];
 
 	return body;
 }
@@ -473,6 +477,34 @@
 - (ETLayoutItemGroup *) inspectorPaneWithObject: (id)anObject forAspectName: (NSString *)anAspectName
 {
 	return nil;
+}
+
+- (ETLayoutItemGroup *) objectPicker
+{
+	ETLayoutItemGroup *picker = [self itemGroupWithRepresentedObject: [ETAspectRepository mainRepository]];
+	ETController *controller = AUTORELEASE([[ETController alloc] init]);
+	ETSelectTool *tool = [ETSelectTool tool];
+
+	[tool setAllowsMultipleSelection: YES];
+	[tool setAllowsEmptySelection: NO];
+	[tool setShouldRemoveItemsAtPickTime: NO];
+
+	//ETItemTemplate *template = [controller templateForType: [controller currentObjectType]];
+
+	// FIXME: [[template item] setActionHandler: [ETAspectTemplateActionHandler sharedInstance]];
+	[controller setAllowedPickTypes: A([ETUTI typeWithClass: [NSObject class]])];
+
+	//[picker setActionHandler: [ETAspectTemplateActionHandler sharedInstance]];
+	[picker setSize: NSMakeSize(300, [self defaultEditorBodySize].height)];
+	[picker setController: controller];
+	[picker setSource: picker];
+	[picker setLayout: [ETOutlineLayout layout]];
+	[[picker layout] setAttachedTool: tool];
+	[[picker layout] setDisplayedProperties: A(kETIconProperty, kETDisplayNameProperty)];
+	[picker setHasVerticalScroller: YES];
+	[picker reloadAndUpdateLayout];
+
+	return picker;
 }
 
 @end

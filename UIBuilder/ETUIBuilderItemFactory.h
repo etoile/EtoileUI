@@ -34,6 +34,9 @@
 - (ETLayoutItemGroup *) basicInspectorContentWithObject: (id)anObject
                                              controller: (id)aController
                                              aspectName: (NSString *)anAspectName;
+
+- (ETLayoutItemGroup *) objectPicker;
+
 @end
 
 

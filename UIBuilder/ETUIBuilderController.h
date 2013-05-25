@@ -18,11 +18,13 @@
 @interface ETUIBuilderController : ETController
 {
 	ETUIBuilderItemFactory *_itemFactory;
+	ETLayoutItem *_editedItem;
 	ETLayoutItemGroup *_browserItem;
 	ETLayoutItemGroup *_aspectInspectorItem;
 	ETLayoutItem *_viewPopUpItem;
 	ETLayoutItem *_aspectPopUpItem;
 	ETAspectRepository *_aspectRepository;
+	BOOL _isChangingSelection;
 }
 
 /** @taskunit Inspector Pane Factory */
@@ -31,6 +33,9 @@
 
 /** @taskunit Accessing UI */
 
+@property (nonatomic, readonly) ETLayoutItemGroup *objectPickerItem;
+@property (nonatomic, readonly) ETLayoutItemGroup *contentAreaItem;
+@property (nonatomic, retain) ETLayoutItem *editedItem;
 @property (nonatomic, retain) ETLayoutItemGroup *browserItem;
 @property (nonatomic, retain) ETLayoutItemGroup *aspectInspectorItem;
 @property (nonatomic, retain) ETLayoutItem *viewPopUpItem;

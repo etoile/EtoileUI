@@ -19,13 +19,14 @@
 
 @implementation ETUIBuilderController
 
-@synthesize itemFactory = _itemFactory, browserItem = _browserItem,
+@synthesize itemFactory = _itemFactory, editedItem = _editedItem, browserItem = _browserItem,
 	aspectInspectorItem = _aspectInspectorItem, viewPopUpItem = _viewPopUpItem,
 	aspectPopUpItem = _aspectPopUpItem, aspectRepository = _aspectRepository;
 
 - (void) dealloc
 {
 	DESTROY(_itemFactory);
+	DESTROY(_editedItem);
 	DESTROY(_browserItem);
 	DESTROY(_aspectInspectorItem);
 	DESTROY(_viewPopUpItem);
@@ -56,6 +57,33 @@
 	return (id)[[self content] itemForIdentifier: @"inspectorBody"];
 }
 
+- (ETLayoutItemGroup *) objectPickerItem
+{
+	return (id)[[self content] itemForIdentifier: @"objectPicker"];
+}
+
+- (ETLayoutItemGroup *) contentAreaItem
+{
+	return (id)[[self content] itemForIdentifier: @"contentArea"];
+}
+
+- (void) setEditedItem: (ETLayoutItem *)anItem
+{
+	if (_editedItem != nil)
+	{
+		[self stopObserveObject: _editedItem
+		    forNotificationName: ETItemGroupSelectionDidChangeNotification];		
+	}
+	ASSIGN(_editedItem, anItem);
+
+	if (anItem != nil)
+	{
+		[self startObserveObject: [self editedItem]
+		     forNotificationName: ETItemGroupSelectionDidChangeNotification
+		                selector: @selector(editedItemSelectionDidChange:)];
+	}
+}
+
 - (ETLayoutItemGroup *) aspectPaneItem
 {
 	return (id)[[self aspectInspectorItem] itemForIdentifier: @"basicInspectorContent"];
@@ -69,6 +97,44 @@
 - (void) browserSelectionDidChange: (NSNotification *)aNotif
 {
 	ETLog(@"Did change selection in %@", [aNotif object]);
+
+	if (_isChangingSelection)
+		return;
+
+	_isChangingSelection = YES;
+
+	NSArray *selectionIndexPaths = [[self browserItem] selectionIndexPaths];
+
+	[(ETLayoutItemGroup *)[[self editedItem] ifResponds] setSelectionIndexPaths: selectionIndexPaths];
+	[self didChangeSelectionToIndexPaths: selectionIndexPaths];
+	
+	_isChangingSelection = NO;
+}
+
+- (void) editedItemSelectionDidChange: (NSNotification *)aNotif
+{
+	ETLog(@"Did change selection in %@", [aNotif object]);
+
+	if (_isChangingSelection)
+		return;
+
+	_isChangingSelection = YES;
+
+	NSArray *selectionIndexPaths = [[[self editedItem] ifResponds] selectionIndexPaths];
+
+	if (selectionIndexPaths == nil)
+	{
+		selectionIndexPaths = [NSArray array];
+	}
+	[[self browserItem] setSelectionIndexPaths: selectionIndexPaths];
+	[self didChangeSelectionToIndexPaths: selectionIndexPaths];
+
+	_isChangingSelection = NO;
+}
+
+- (void) didChangeSelectionToIndexPaths: (NSArray *)indexPaths
+{
+	NSParameterAssert(indexPaths != nil);
 	[self changeAspectPaneFromPopUp: nil];
 }
 
