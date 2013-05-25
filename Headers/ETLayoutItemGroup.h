@@ -177,6 +177,7 @@
 
 /* Framework Private */
 
+- (void) didChangeSelection;
 - (id) initAsLayerItem;
 - (BOOL) isLayerItem;
 
