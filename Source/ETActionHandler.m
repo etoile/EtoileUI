@@ -539,10 +539,8 @@ By default returns YES, except when the item is a base item, then returns NO. */
 {
 	//ETLog(@"Select %@", item);
 	[item setSelected: YES];
+	[[item parentItem] didChangeSelection];
 	[item setNeedsDisplay: YES];
-
-	// TODO: Cache the selection in the controller if there is one
-	//[[[item controllerItem] controller] addSelectedObject: item];
 }
 
 /** Returns whether item can be deselected or not. 
@@ -560,10 +558,8 @@ TODO: Problably remove, since it should be of any use and just adds complexity. 
 {
 	//ETLog(@"Deselect %@", item);
 	[item setSelected: NO];
+	[[item parentItem] didChangeSelection];
 	[item setNeedsDisplay: YES];
-
-	// TODO: May be cache in the controller... 
-	//[[[item controllerItem] controller] removeSelectedObject: item];
 }
 
 /* Generic Actions */
