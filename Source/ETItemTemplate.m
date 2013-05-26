@@ -24,20 +24,45 @@
 represented object class. */
 + (id) templateWithItem: (ETLayoutItem *)anItem objectClass: (Class)aClass
 {
-	return AUTORELEASE([[self alloc] initWithItem: anItem objectClass: aClass]);
+	return AUTORELEASE([[self alloc] initWithItem: anItem objectClass: aClass entityName: nil]);
+}
+
+/** Returns a new autoreleased template based on the given item and 
+entity name for the represented object. */
++ (id) templateWithItem: (ETLayoutItem *)anItem entityName: (NSString *)anEntityName
+{
+	return AUTORELEASE([[self alloc] initWithItem: anItem objectClass: Nil entityName: anEntityName]);
 }
 
 /** <init />
 Initializes and returns a new template based on the given item and 
-represented object class.
+represented object class (or entity name as an alternative).
+
+You cannot provide both an object class and an entity name at the same time, 
+at least one argument must be nil, otherwise an NSInvalidArgumentException is 
+raised.
 
 Raises an NSInvalidArgumentException if the item is nil. */
-- (id) initWithItem: (ETLayoutItem *)anItem objectClass: (Class)aClass
+- (id) initWithItem: (ETLayoutItem *)anItem
+        objectClass: (Class)aClass
+         entityName: (NSString *)anEntityName
 {
 	NILARG_EXCEPTION_TEST(anItem);
+
+	BOOL isInvalidArgCombo = (aClass != Nil && anEntityName != nil);
+
+	if (isInvalidArgCombo)
+	{
+		[NSException raise: NSInvalidArgumentException
+		            format: @"At least one of the argument among the object "
+		                     "class %@ and entity name %@ must be nil.",
+		                    aClass, anEntityName];
+	}
+
 	SUPERINIT;
 	ASSIGN(_item, anItem);
 	ASSIGN(_objectClass, aClass);
+	ASSIGN(_entityName, anEntityName);
 	return self;
 }
 
@@ -45,17 +70,28 @@ Raises an NSInvalidArgumentException if the item is nil. */
 {
 	DESTROY(_item);
 	DESTROY(_objectClass);
+	DESTROY(_entityName);
 	[super dealloc];
 }
 
-/** Returns the represented object template class
+/** Returns the represented object template class.
 
 Can return Nil. 
 
-See also -newItemWithURL:options:. */
+See also -newItemWithURL:options: and -objectClassWithOptions:. */
 - (Class) objectClass
 {
 	return _objectClass;
+}
+
+/** Returns the template entity name for the represented object.
+ 
+Can return Nil.
+ 
+See also -newItemWithURL:options: and -objectClassWithOptions:. */
+- (NSString *) entityName
+{
+	return _entityName;
 }
 
 /** Returns the template item.
@@ -80,6 +116,36 @@ Can be overriden to return a descendant item. */
 - (NSString *) baseName
 {
 	return _(@"Untitled");
+}
+
+/** <override-dummy />
+Returns the object class to be instantiated for the given options.
+ 
+The default implementation returns -objectClass if not nil, otherwise it looks 
+up an object class for -entityName in the model description repository bound to 
+kETTemplateOptionModelDescriptionRepository in the options dictionary.
+
+If no entity description is registered for the entity name in the model 
+description repository, raises an NSInternalInconsistencyException. */
+- (Class) objectClassWithOptions: (NSDictionary *)options
+{
+	if ([self objectClass] != Nil)
+		return [self objectClass];
+
+	if ([self entityName] == nil)
+		return nil;
+
+	ETModelDescriptionRepository *repo =
+		[options objectForKey: kETTemplateOptionModelDescriptionRepository];
+	ETEntityDescription *entity = [repo descriptionForName: [self entityName]];
+
+	if (entity == nil)
+	{
+		[NSException raise: NSInternalInconsistencyException
+					format: @"Found no valid entity description for entity name %@ in %@",
+		                   [self entityName], repo];
+	}
+	return [repo classForEntityDescription: entity];
 }
 
 /** Returns a new retained ETLayoutItem or ETLayoutItemGroup object with the 
@@ -135,8 +201,9 @@ Can be overriden in subclasses. */
 /** Returns a new retained ETLayoutItem or ETLayoutItemGroup object for the 
 given URL and options.
 
-If -objectClass is not Nil, a represented object is instantiated with -init or 
--initWithURL:options: if the object class conforms to ETDocumentCreation protocol.
+If -objectClassWithOptions: doesn't return Nil, a represented object is 
+instantiated with -init or -initWithURL:options: if the object class conforms to 
+ETDocumentCreation protocol.
 
 If the given URL is nil, the user action is a 'New' and not 'Open'.
 
@@ -147,7 +214,7 @@ Can be overriden in subclasses.
 See also -newItemWithRepresentedObject:options:. */
 - (ETLayoutItem *) newItemWithURL: (NSURL *)aURL options: (NSDictionary *)options
 {
-	id newInstance = [[self objectClass] alloc];
+	id newInstance = [[self objectClassWithOptions: options] alloc];
 
 	if ([newInstance conformsToProtocol: @protocol(ETDocumentCreation)])
 	{
@@ -250,7 +317,7 @@ Can be overriden in a subclass to implement a web browser for example. */
 
 NSString * const kETTemplateOptionNumberOfUntitledDocuments = @"kETTemplateOptionNumberOfUntitledDocuments";
 NSString * const kETTemplateOptionPersistentObjectContext = @"kETTemplateOptionPersistentObjectContext";
-
+NSString * const kETTemplateOptionModelDescriptionRepository = @"kETTemplateOptionModelDescriptionRepository";
 
 #ifdef COREOBJECT
 @implementation COObject (ETItemTemplate)

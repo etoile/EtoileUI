@@ -47,24 +47,30 @@ model initialization. */
 {
 	@private
 	Class _objectClass;
+	NSString *_entityName;
 	ETLayoutItem *_item;
 }
 
 /** @taskunit Initialization */
 
 + (id) templateWithItem: (ETLayoutItem *)anItem objectClass: (Class)aClass;
++ (id) templateWithItem: (ETLayoutItem *)anItem entityName: (NSString *)anEntityName;
 
-- (id) initWithItem: (ETLayoutItem *)anItem objectClass: (Class)aClass;
+- (id) initWithItem: (ETLayoutItem *)anItem
+        objectClass: (Class)aClass
+         entityName: (NSString *)anEntityName;
 
 /** @taskunit Properties */
 
 - (Class) objectClass;
+- (NSString *) entityName;
 - (ETLayoutItem *) item;
 - (ETLayoutItem *) contentItem;
 - (NSString *) baseName;
 
 /** @taskunit Template Instantiation & Saving */
 
+- (Class) objectClassWithOptions: (NSDictionary *)options;
 - (ETLayoutItem *) newItemWithRepresentedObject: (id)anObject options: (NSDictionary *)options;
 - (ETLayoutItem *) newItemWithRepresentedObject: (id)anObject URL: (NSURL *)aURL options: (NSDictionary *)options;
 - (ETLayoutItem *) newItemWithURL: (NSURL *)aURL options: (NSDictionary *)options;
@@ -81,6 +87,7 @@ model initialization. */
 
 extern NSString * const kETTemplateOptionNumberOfUntitledDocuments;
 extern NSString * const kETTemplateOptionPersistentObjectContext;
+extern NSString * const kETTemplateOptionModelDescriptionRepository;
 
 #ifdef COREOBJECT
 /** COObject category to implement ETDocumentCreation and integrate COObject 

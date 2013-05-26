@@ -672,7 +672,9 @@ See also ETItemTemplate. */
 /** Returns the current options that controls the content mutation.
 
 A common option is kETTemplateOptionPersistentObjectContext (bound to 
--persistentObjectContext).
+-persistentObjectContext). Another one is 
+kETTemplateOptionModelDescriptionRepository that is retrieved against the 
+persistent object context.
  
 When calling methods that includes a <em>options</em> argument such as 
 -newItemWithURL:ofType:options:, you must use -defaultOptions for the argument. 
@@ -680,7 +682,14 @@ When calling methods that includes a <em>options</em> argument such as
 Extra options can be added to the returned dictionary. */
 - (NSDictionary *)defaultOptions
 {
-	return D([self persistentObjectContext], kETTemplateOptionPersistentObjectContext);
+	ETModelDescriptionRepository *repo = nil;
+
+#ifdef COREOBJECT
+	repo = [[[self persistentObjectContext] editingContext] modelRepository];
+#endif
+
+	return D([self persistentObjectContext], kETTemplateOptionPersistentObjectContext, 
+			 repo, kETTemplateOptionModelDescriptionRepository);
 }
 
 /** Returns whether remove, add and insert actions are possible.
