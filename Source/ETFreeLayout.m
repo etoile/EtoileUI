@@ -129,8 +129,9 @@ subclasses (see -[ETLayout initWithLayoutView:]). */
 					     change: (NSDictionary *)change 
 						context: (void *)context
 {
-	if ([self showsHandlesForTool: [ETTool activeTool]] == NO)
-		return;
+	// FIXME: This doesn't prevent to work correctly in the UI builder
+	//if ([self showsHandlesForTool: [ETTool activeTool]] == NO)
+	//	return;
 
 	BOOL selected = [[change objectForKey: NSKeyValueChangeNewKey] boolValue];
 	

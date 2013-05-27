@@ -320,7 +320,7 @@ See also -setRenderedPropertyNames:. */
 	id repObject = [aPropertyItem representedObject];
 	ETPropertyDescription *propertyDesc = repObject;
 
-	if ([repObject isKindOfClass: [ETPropertyViewpoint class]])
+	if ([repObject isKindOfClass: [ETMutableObjectViewpoint class]])
 	{
 		ETEntityDescription *entityDesc = [self entityDescriptionForObject: [repObject representedObject]];
 		propertyDesc = [entityDesc propertyDescriptionForName: [repObject name]];
@@ -685,8 +685,8 @@ See also -setRenderedPropertyNames:. */
 		synthesizedName = aFieldName;
 	}
 
-	[item setRepresentedObject: [ETPropertyViewpoint viewpointWithName: synthesizedName
-	                                                 representedObject: anObject]];
+	[item setRepresentedObject: [ETMutableObjectViewpoint viewpointWithName: synthesizedName
+	                                                      representedObject: anObject]];
 }
 
 - (void) prepareViewOfNewItem: (ETLayoutItem *)item forAttributeDescription: (ETPropertyDescription *)aPropertyDesc
@@ -792,8 +792,8 @@ See also -setRenderedPropertyNames:. */
 	ETAssert(templateItem != nil);
 	ETLayoutItem *item = AUTORELEASE([templateItem deepCopy]);
 
-	[item setRepresentedObject: [ETPropertyViewpoint viewpointWithName: [aPropertyDesc name]
-													 representedObject: anObject]];
+	[item setRepresentedObject: [ETMutableObjectViewpoint viewpointWithName: [aPropertyDesc name]
+													      representedObject: anObject]];
 
 	[self prepareViewOfNewItem: item forAttributeDescription: aPropertyDesc];
 

@@ -7,7 +7,7 @@
  */
 
 #import <EtoileFoundation/Macros.h>
-#import <EtoileFoundation/ETPropertyViewpoint.h>
+#import <EtoileFoundation/ETMutableObjectViewpoint.h>
 #import <EtoileFoundation/NSObject+Model.h>
 #import "ETLayoutItemFactory.h"
 #import "ETActionHandler.h"
@@ -677,9 +677,9 @@ Both model and property name must be valid objects when they are not nil. */
 	NS_ENDHANDLER
 
 
-	[item setRepresentedObject: [ETPropertyViewpoint viewpointWithName: aKey
-	                                                 representedObject: aModel]];
-	[[item representedObject] setTreatsAllKeysAsProperties: YES];
+	[item setRepresentedObject: [ETMutableObjectViewpoint viewpointWithName: aKey
+	                                                      representedObject: aModel]];
+	[[item representedObject] setUsesKeyValueCodingForAccessingValueProperties: YES];
 
 	return item;
 }
@@ -832,9 +832,9 @@ value to 50. */
 	[item setAutoresizingMask: ETAutoresizingNone];
 	if (nil != aKey && nil != anObject)
 	{
-		[item setRepresentedObject: [ETPropertyViewpoint viewpointWithName: aKey
-		                                                 representedObject: anObject]];
-		[[item representedObject] setTreatsAllKeysAsProperties: YES];
+		[item setRepresentedObject: [ETMutableObjectViewpoint viewpointWithName: aKey
+		                                                      representedObject: anObject]];
+		[[item representedObject] setUsesKeyValueCodingForAccessingValueProperties: YES];
 	}
 
 	return item;
@@ -904,9 +904,9 @@ and a stepper on the right side. */
 
 	if (nil != aKey && nil != anObject)
 	{
-		[item setRepresentedObject: [ETPropertyViewpoint viewpointWithName: aKey
-		                                                 representedObject: anObject]];
-		[[item representedObject] setTreatsAllKeysAsProperties: YES];
+		[item setRepresentedObject: [ETMutableObjectViewpoint viewpointWithName: aKey
+		                                                      representedObject: anObject]];
+		[[item representedObject] setUsesKeyValueCodingForAccessingValueProperties: YES];
 	}
 	
 	return item;

@@ -814,12 +814,20 @@ exposed through -value and -setValue:. */
 	[self didChangeValueForProperty: kETValueKeyProperty];
 }
 
+- (BOOL) isViewpoint: (id)anObject
+{
+	return [anObject conformsToProtocol: @protocol(ETPropertyViewpoint)];
+}
+
 /** Returns a value object based on -valueKey.
 
 The method returns the result of -valueForProperty: for the value key.
 For a nil value key, the represented object is returned (without resorting to 
 -valueForProperty:).
-
+ 
+If the represented object is a viewpoint, then the viewpoint value is returned 
+rather than returning the item represented object. See -[ETPropertyViewpoint value:].
+ 
 For items that presents a single property in the UI, using -value and -valueKey 
 is a good choice. For example, a text field or a slider presenting a 
 common object value or a property belonging to the represent object.
@@ -828,7 +836,19 @@ See also -setValue:. */
 - (id) value
 {
 	NSString *valueKey = [self valueKey];
-	return (valueKey != nil ? [self valueForProperty: valueKey] : [self representedObject]);
+
+	if (valueKey != nil)
+	{
+		return [self valueForProperty: valueKey];
+	}
+	else if ([self isViewpoint: [self representedObject]])
+	{
+		return [[self representedObject] value];
+	}
+	else
+	{
+		return [self representedObject];
+	}
 }
 
 /** Sets a value object based on -valueKey.
@@ -836,6 +856,9 @@ See also -setValue:. */
 The method uses -setValue:forProperty: to set the value object for the value key.
 For a nil value key, the represented object is set (without resorting to 
 -setValue:forProperty:). See -setRepresentedObject.
+ 
+If the represented object is a viewpoint, then the viewpoint value is set rather 
+than setting the item represented object. See -[ETPropertyViewpoint setValue:].
  
 Styles or layouts can use it to show the receiver with a basic value 
 representation or when they restrict their presentation to a single property.<br />
@@ -857,6 +880,10 @@ See also -value. */
 	if (valueKey != nil)
 	{
 		[self setValue: value forProperty: valueKey];
+	}
+	else if ([self isViewpoint: [self representedObject]])
+	{
+		[(id <ETPropertyViewpoint>)[self representedObject] setValue: value];
 	}
 	else
 	{
@@ -1179,6 +1206,15 @@ ETActionHandler objects without resorting to a widget from the backend). */
 }
 
 /* Property Value Coding */
+
+
+/** Returns YES.
+ 
+See -[ETPropertyValueCoding requiresKeyValueCodingForAccessingProperties]. */
+- (BOOL) requiresKeyValueCodingForAccessingProperties
+{
+	return YES;
+}
 
 /** Returns a value of the model object -representedObject, usually by calling
 -valueForProperty: on the represented object. If the represented object is a 

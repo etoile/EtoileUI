@@ -107,7 +107,7 @@
 - (void) testTextItemValueSynchronization
 {
 	[textItem setRepresentedObject:
-		[ETPropertyViewpoint viewpointWithName: @"placeName" representedObject: self]];
+		[ETMutableObjectViewpoint viewpointWithName: @"placeName" representedObject: self]];
 
 	UKStringsEqual(@"Kyoto", [[textItem view] stringValue]);
 
@@ -119,7 +119,7 @@
 - (void) testCopy
 {
 	[textItem setRepresentedObject:
-	 	[ETPropertyViewpoint viewpointWithName: @"placeName" representedObject: self]];
+	 	[ETMutableObjectViewpoint viewpointWithName: @"placeName" representedObject: self]];
 
 	/* Prepare the form UI now (don't wait the layout executor) */
 	[mainItem updateLayout];

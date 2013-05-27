@@ -10,7 +10,7 @@
 #import <AppKit/AppKit.h>
 #import <UnitKit/UnitKit.h>
 #import <EtoileFoundation/Macros.h>
-#import <EtoileFoundation/ETPropertyViewpoint.h>
+#import <EtoileFoundation/ETMutableObjectViewpoint.h>
 #import <EtoileFoundation/NSObject+Model.h>
 #import "ETActionHandler.h"
 #import "ETLayoutItem.h"
@@ -63,8 +63,8 @@ invalidate, display etc. */
 
 	[parentItem setLayout: [ETTableLayout layout]];
 	[[parentItem layout] setDisplayedProperties: A(@"value")];
-	[item setRepresentedObject: [ETPropertyViewpoint viewpointWithName: @"actionHandler"
-	                                       representedObject: observedItem]];
+	[item setRepresentedObject: [ETMutableObjectViewpoint viewpointWithName: @"actionHandler"
+	                                                      representedObject: observedItem]];
 	[parentItem addItem: item];
 
 #ifdef GNUSTEP

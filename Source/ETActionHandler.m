@@ -7,7 +7,7 @@
  */
 
 #import <EtoileFoundation/Macros.h>
-#import <EtoileFoundation/ETPropertyViewpoint.h>
+#import <EtoileFoundation/ETMutableObjectViewpoint.h>
 #import <EtoileFoundation/NSObject+HOM.h>
 #import <EtoileFoundation/NSObject+Etoile.h>
 #import <EtoileFoundation/NSObject+Model.h>
@@ -282,8 +282,8 @@ Which actions begins and ends the text editing is up to you. */
 	[fieldEditor setFont: [self fontForEditingItem: item]];
 	[fieldEditor setDelegate: (id)self];
 	[fieldEditorItem setFrame: fieldEditorFrame];
-	[fieldEditorItem setRepresentedObject: [ETPropertyViewpoint viewpointWithName: property 
-	                                                            representedObject: [item subject]]];
+	[fieldEditorItem setRepresentedObject: [ETMutableObjectViewpoint viewpointWithName: property 
+	                                                                 representedObject: [item subject]]];
 	[responderArea setActiveFieldEditorItem: fieldEditorItem
 	                             editedItem: item];
 

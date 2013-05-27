@@ -212,6 +212,7 @@ and centers it. A strech is a scale that doesn't preserve the content proportion
 - (id) subject;
 - (BOOL) isMetaItem;
 
+- (BOOL) requiresKeyValueCodingForAccessingProperties;
 - (id) valueForProperty: (NSString *)key;
 - (BOOL) setValue: (id)value forProperty: (NSString *)key;
 - (ETItemValueTransformer *) valueTransformerForProperty: (NSString *)key;

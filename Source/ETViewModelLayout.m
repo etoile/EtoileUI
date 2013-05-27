@@ -8,7 +8,7 @@
 
 #import <EtoileFoundation/Macros.h>
 #import <EtoileFoundation/ETCollection.h>
-#import <EtoileFoundation/ETPropertyViewpoint.h>
+#import <EtoileFoundation/ETMutableObjectViewpoint.h>
 #import <EtoileFoundation/NSObject+Model.h>
 #import "ETViewModelLayout.h"
 #import "ETLayoutItemBuilder.h"
@@ -257,7 +257,7 @@ being returned. */
 
 	FOREACH(properties, property, NSString *)
 	{
-		[propertyViewpoints addObject: [ETPropertyViewpoint viewpointWithName: property 
+		[propertyViewpoints addObject: [ETMutableObjectViewpoint viewpointWithName: property
 		                                                    representedObject: anObject]];
 	}
 
@@ -381,7 +381,7 @@ You must never use this method. */
 		case ETLayoutDisplayModeModelProperties:
 		{
 			// TODO: Should probably be... ETPropertyViewpoint *property = repObject;
-			ETPropertyViewpoint *property = [clickedItem valueForProperty: @"value"];
+			ETMutableObjectViewpoint *property = [clickedItem valueForProperty: @"value"];
 			[[property objectValue] explore: nil];
 			break;
 		}
