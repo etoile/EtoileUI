@@ -17,6 +17,7 @@
        provideItemForName: (NSString *)aName;
 - (id) UIStateRestoration: (ETUIStateRestoration *)restoration
           loadItemForUUID: (ETUUID *)aUUID;
+@optional
 - (void) UIStateRestoration: (ETUIStateRestoration *)restoration
                 didLoadItem: (id)anItem;
 @end

@@ -49,7 +49,12 @@
 
 - (NSDictionary *) settings
 {
-	return [[NSUserDefaults standardUserDefaults] objectForKey: [self keyForUserDefaults]];
+	NSDictionary *settings = [[NSUserDefaults standardUserDefaults] objectForKey: [self keyForUserDefaults]];
+	if (settings == nil)
+	{
+		settings = [NSDictionary dictionary];
+	}
+	return settings;
 }
 
 - (void) setSettings: (NSDictionary *)settings
@@ -59,7 +64,8 @@
 
 - (ETUUID *) persistentItemUUIDForName: (NSString *)aName
 {
-	return [ETUUID UUIDWithString: [[self settings] objectForKey: aName]];
+	NSString *UUIDString = [[self settings] objectForKey: aName];
+	return (UUIDString != nil ? [ETUUID UUIDWithString: UUIDString] : nil);
 }
 
 - (void) setPersistentItemUUID: (ETUUID *)aUUID forName: (NSString *)aName
@@ -71,6 +77,9 @@
 
 - (id) loadItemForUUID: (ETUUID *)aUUID
 {
+	if (aUUID == nil)
+		return nil;
+
 	return [[(id)[self delegate] ifResponds] UIStateRestoration: self
 	                                            loadItemForUUID: aUUID];
 }
