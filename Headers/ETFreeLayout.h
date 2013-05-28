@@ -21,6 +21,7 @@
 {
 	@private
 	NSArray *_observedItems;
+	BOOL _areHandlesHidden;
 }
 
 /* KVO */

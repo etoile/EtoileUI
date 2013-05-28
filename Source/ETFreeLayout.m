@@ -48,6 +48,13 @@ subclasses (see -[ETLayout initWithLayoutView:]). */
 	[super dealloc];
 }
 
+- (id) copyWithZone: (NSZone *)aZone layoutContext: (id <ETLayoutingContext>)ctxt
+{
+	ETFreeLayout *newLayout = [super copyWithZone: aZone layoutContext: ctxt];
+	newLayout->_areHandlesHidden = _areHandlesHidden;
+	return newLayout;
+}
+
 - (void) setUpCopyWithZone: (NSZone *)aZone original: (ETLayout *)layoutOriginal
 {
 	/* Only to set the parent item, we don't need to synchronize the geometry */
@@ -88,10 +95,12 @@ subclasses (see -[ETLayout initWithLayoutView:]). */
 	if (NO == wereHandlesVisible && willHandlesBeVisible)
 	{
 		[self showHandles];
+		_areHandlesHidden = NO;
 	}
 	else if (wereHandlesVisible && NO == willHandlesBeVisible)
 	{
 		[self hideHandles];
+		_areHandlesHidden = YES;
 	}
 	// else the handle visibility remains identical
 }
@@ -129,9 +138,13 @@ subclasses (see -[ETLayout initWithLayoutView:]). */
 					     change: (NSDictionary *)change 
 						context: (void *)context
 {
-	// FIXME: This doesn't prevent to work correctly in the UI builder
-	//if ([self showsHandlesForTool: [ETTool activeTool]] == NO)
-	//	return;
+	/* If the closest attached tool among the ancestor items is not the 
+	   selection tool, this implies the handles are hidden.
+	   The active tool doesn't matter here. For example, it could be an arrow 
+	   tool attached an inspector pane, and yet the handles must remain visible 
+	   for the free layout. */
+	if (_areHandlesHidden)
+		return;
 
 	BOOL selected = [[change objectForKey: NSKeyValueChangeNewKey] boolValue];
 	
