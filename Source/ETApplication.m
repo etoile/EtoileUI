@@ -20,6 +20,7 @@
 #import "ETNibOwner.h"
 #import "ETPickboard.h"
 #import "ETLayoutItemFactory.h"
+#import "ETUIStateRestoration.h"
 #import "ETWindowItem.h"
 #import "NSObject+EtoileUI.h"
 #import "NSView+Etoile.h"
@@ -41,10 +42,32 @@
 
 @implementation ETApplication
 
+- (id) init
+{
+	SUPERINIT;
+	_UIStateRestoration = [ETUIStateRestoration new];
+	return self;
+}
+
 - (void) dealloc
 {
 	DESTROY(_nibOwner);
+	DESTROY(_UIStateRestoration);
 	[super dealloc];
+}
+
+- (ETUIStateRestoration *) UIStateRestoration
+{
+	return _UIStateRestoration;
+}
+
+- (void) setDelegate: (id)aDelegate
+{
+	if ((id)[[self UIStateRestoration] delegate] == (id)[self delegate])
+	{
+		[[self UIStateRestoration] setDelegate: aDelegate];
+	}
+	[super setDelegate: aDelegate];
 }
 
 /** Returns the application name as visible in the menu bar. */

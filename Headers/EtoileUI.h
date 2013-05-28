@@ -15,6 +15,7 @@
 
 /* Base */
 
+#import <EtoileUI/ETUIStateRestoration.h>
 #import <EtoileUI/ETWidget.h>
 
 /* UI Builder */

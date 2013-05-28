@@ -114,6 +114,8 @@
 		6043D0DE174CEA73002103CC /* ETWidget.m in Sources */ = {isa = PBXBuildFile; fileRef = 6043D0DB174CEA6E002103CC /* ETWidget.m */; };
 		6043D1AF174E26B6002103CC /* TestItemValue.m in Sources */ = {isa = PBXBuildFile; fileRef = 6043D1AE174E26B5002103CC /* TestItemValue.m */; };
 		6043D1B1174E27D3002103CC /* TestCommon.m in Sources */ = {isa = PBXBuildFile; fileRef = 6043D1B0174E27D3002103CC /* TestCommon.m */; };
+		6043D3F2175424B1002103CC /* ETUIStateRestoration.h in Headers */ = {isa = PBXBuildFile; fileRef = 6043D3F0175424B1002103CC /* ETUIStateRestoration.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		6043D3F3175424B1002103CC /* ETUIStateRestoration.m in Sources */ = {isa = PBXBuildFile; fileRef = 6043D3F1175424B1002103CC /* ETUIStateRestoration.m */; };
 		604A32C20F9BEE680090932A /* ETPickDropCoordinator.h in Headers */ = {isa = PBXBuildFile; fileRef = 604A32C10F9BEE680090932A /* ETPickDropCoordinator.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		604A32C50F9BEE780090932A /* ETPickDropCoordinator.m in Sources */ = {isa = PBXBuildFile; fileRef = 604A32C40F9BEE780090932A /* ETPickDropCoordinator.m */; };
 		604A32C60F9BEE780090932A /* ETPickDropCoordinator.m in Sources */ = {isa = PBXBuildFile; fileRef = 604A32C40F9BEE780090932A /* ETPickDropCoordinator.m */; };
@@ -859,6 +861,8 @@
 		6043D0DB174CEA6E002103CC /* ETWidget.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ETWidget.m; path = Base/ETWidget.m; sourceTree = "<group>"; };
 		6043D1AE174E26B5002103CC /* TestItemValue.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = TestItemValue.m; path = Tests/TestItemValue.m; sourceTree = "<group>"; };
 		6043D1B0174E27D3002103CC /* TestCommon.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = TestCommon.m; path = Tests/TestCommon.m; sourceTree = "<group>"; };
+		6043D3F0175424B1002103CC /* ETUIStateRestoration.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ETUIStateRestoration.h; path = Base/ETUIStateRestoration.h; sourceTree = "<group>"; };
+		6043D3F1175424B1002103CC /* ETUIStateRestoration.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ETUIStateRestoration.m; path = Base/ETUIStateRestoration.m; sourceTree = "<group>"; };
 		604A32C10F9BEE680090932A /* ETPickDropCoordinator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ETPickDropCoordinator.h; path = Headers/ETPickDropCoordinator.h; sourceTree = "<group>"; };
 		604A32C40F9BEE780090932A /* ETPickDropCoordinator.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ETPickDropCoordinator.m; path = Source/ETPickDropCoordinator.m; sourceTree = "<group>"; };
 		604B5C1B0F4B472E001C25E8 /* ETEventProcessor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ETEventProcessor.h; path = Headers/ETEventProcessor.h; sourceTree = "<group>"; };
@@ -1526,6 +1530,8 @@
 				605F348117158F6000E9355A /* ETResponder.m */,
 				6043D0DA174CEA6E002103CC /* ETWidget.h */,
 				6043D0DB174CEA6E002103CC /* ETWidget.m */,
+				6043D3F0175424B1002103CC /* ETUIStateRestoration.h */,
+				6043D3F1175424B1002103CC /* ETUIStateRestoration.m */,
 			);
 			name = Base;
 			sourceTree = "<group>";
@@ -2121,6 +2127,7 @@
 				6043D089174BE66C002103CC /* ETItemValueTransformer.h in Headers */,
 				6043D08B174BE66C002103CC /* ETObjectValueFormatter.h in Headers */,
 				6043D0DC174CEA6E002103CC /* ETWidget.h in Headers */,
+				6043D3F2175424B1002103CC /* ETUIStateRestoration.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -3079,6 +3086,7 @@
 				6043D08A174BE66C002103CC /* ETItemValueTransformer.m in Sources */,
 				6043D08C174BE66C002103CC /* ETObjectValueFormatter.m in Sources */,
 				6043D0DD174CEA6E002103CC /* ETWidget.m in Sources */,
+				6043D3F3175424B1002103CC /* ETUIStateRestoration.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

@@ -10,7 +10,7 @@
 #import <Foundation/Foundation.h>
 #import <AppKit/AppKit.h>
 
-@class ETLayoutItemBuilder, ETLayoutItemGroup, ETNibOwner;
+@class ETLayoutItemBuilder, ETLayoutItemGroup, ETNibOwner, ETUIStateRestoration;
 
 #define ETApp (ETApplication *)[ETApplication sharedApplication]
 
@@ -46,7 +46,12 @@ For other Nibs to be loaded, see ETNibOwner. */
 {
 	@private
 	ETNibOwner *_nibOwner;
+	ETUIStateRestoration *_UIStateRestoration;
 }
+
+/** @taskunit UI State Restoration */
+
+- (ETUIStateRestoration *) UIStateRestoration;
 
 - (NSString *) name;
 - (NSImage *) icon;
