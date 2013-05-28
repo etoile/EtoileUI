@@ -205,7 +205,7 @@
 - (IBAction) changePresentationViewFromPopUp: (id)sender
 {
 	ETAssert(_viewPopUpItem != nil);
-	[self changePresentationViewToMenuItem: [[_viewPopUpItem view] selectedItem]];
+	[self changePresentationViewToMenuItem: (NSMenuItem *)[[_viewPopUpItem view] selectedItem]];
 }
 
 - (IBAction) changeAspectPaneFromPopUp: (id)sender
