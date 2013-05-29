@@ -21,16 +21,78 @@
 
 - (void) applicationDidFinishLaunching: (NSNotification *)notif
 {
-	ETLayoutItemFactory *itemFactory = [ETLayoutItemFactory factory];
+	[self prepareMenus];
+	[self prepareUI];
+}
 
+- (void) prepareMenus
+{
 	/* Shows the graphics editing related menu which contains commands like 
 	   'group', 'ungroup', 'send backward' etc. */
 	[[ETApp mainMenu] addItem: [ETApp arrangeMenuItem]];
 	/* Show the development menu, so we can play a bit */
 	[ETApp toggleDevelopmentMenu: nil];
+}
 
-	mainItem = [itemFactory itemGroup];
+- (void) prepareUI
+{
+	ETLayoutItemFactory *itemFactory = [ETLayoutItemFactory factory];
+	ETLayoutItem *collageItem =
+		[[ETApp UIStateRestoration] provideItemForName: [self collagePersistentUIName]];
+
+	/* Show the main collage item (restored from the CoreObject store if the UI 
+	   has been edited in a previous application use) */
+	[[itemFactory windowGroup] addItem: collageItem];
 	
+	/* Clone the collage item */
+	//[[itemFactory windowGroup] addItem: [[self collageItem] deepCopy]];
+
+	/* Put a simple slider in a window */
+	[[itemFactory windowGroup] addItem: [itemFactory horizontalSlider]];
+
+	/* Open an inspector that allows us to easily switch the tool and the 
+	   layout in use */
+	[[itemFactory windowGroup] setController: [ETController new]];
+	[[itemFactory windowGroup] inspectUI: nil];
+}
+
+- (id) UIStateRestoration: (ETUIStateRestoration *)restoration
+       provideItemForName: (NSString *)aName
+{
+	if ([aName isEqual: [self collagePersistentUIName]])
+	{
+		return [self collageItem];
+	}
+	return nil;
+}
+
+- (id) UIStateRestoration: (ETUIStateRestoration *)restoration
+          loadItemForUUID: (ETUUID *)aUUID
+{
+	return [[[ETUIBuilderItemFactory factory] editingContext] objectWithUUID: aUUID]; 
+}
+
+- (void) UIStateRestoration: (ETUIStateRestoration *)restoration
+                didLoadItem: (id)anItem
+{
+	ETLog(@"Restored UI %@ for %@", anItem, [anItem persistentUIName]);
+}
+
+- (NSString *) collagePersistentUIName
+{
+	return @"collage";
+}
+
+- (ETLayoutItemGroup *) collageItem
+{
+	ETLayoutItemFactory *itemFactory = [ETLayoutItemFactory factory];
+	
+	[itemFactory beginRootObject];
+
+	ETLayoutItemGroup *mainItem = [itemFactory itemGroup];
+	
+	[mainItem setPersistentUIName: [self collagePersistentUIName]];
+
 	/* Set up main item to behave like a very basic compound document editor */
 
 	// NOTE: Uncomment next line to test the example with a content coordinate 
@@ -45,7 +107,7 @@
 	
 	/* Insert a bit of everything as content (widgets and shapes) */
 
-	ETLayoutItem *imageItem = [itemFactory itemWithValue: [self appImage]];
+	ETLayoutItem *imageItem = [itemFactory itemWithRepresentedObject: [self appImage]];
 	ETLayoutItem *buttonItem = [itemFactory buttonWithImage: [self appImage] 
 	                                                 target: self 
 	                                                 action: @selector(bing:)];
@@ -56,6 +118,7 @@
 
 	[mainItem addItem: [itemFactory horizontalSlider]];
 	[mainItem addItem: [itemFactory textField]];
+#if 0
 	[mainItem addItem: [itemFactory labelWithTitle: @"Hello World!"]];
 	[mainItem addItem: [itemFactory button]];
 	[[mainItem lastItem] setSize: NSMakeSize(200, 150)];
@@ -74,7 +137,7 @@
 	/* Selection rubber-band is a layout item too, which means we can use it 
 	   in the same way than other shape-based items... */
 	[mainItem addItem: AUTORELEASE([[ETSelectionAreaItem alloc] init])];
-
+#endif
 	/* ... A less useless use case would be to replace the shape bound to it or 
 	   alter its shape as below. */
 
@@ -87,17 +150,9 @@
 	[flow setItemSizeConstraintStyle: ETSizeConstraintStyleNone];
 	[[mainItem layout] resetItemPersistentFramesWithLayout: flow];
 	
-	/* Clone the main item */
-	[[itemFactory windowGroup] addItem: [mainItem deepCopy]];
-
-	/* Put a simple slider in a window */
-	[[itemFactory windowGroup] addItem: [itemFactory horizontalSlider]];
-
-	/* Open an inspector that allows us to easily switch the tool and the 
-	   layout in use */
-	[[itemFactory windowGroup] inspect: nil];
+	[itemFactory endRootObject];
 	
-	// FIXME: [ETApp explore: nil];
+	return mainItem;
 }
 
 - (void) bing: (id)sender

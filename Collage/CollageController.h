@@ -17,9 +17,9 @@
 #import <EtoileUI/EtoileUI.h>
 
 
-@interface CollageController : NSObject
+@interface CollageController : NSObject <ETUIStateRestorationDelegate>
 {
-	ETLayoutItemGroup *mainItem;
+
 }
 
 @end
