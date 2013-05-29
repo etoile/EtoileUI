@@ -55,6 +55,34 @@
 	[[self actionHandler] becomePersistentInContext: aContext];
 }
 
+#pragma mark UI Persistency
+#pragma mark -
+
+- (NSString *) persistentUIName
+{
+	return [self primitiveValueForKey: @"persistentUIName"];
+}
+
+- (void) setPersistentUIName: (NSString *)aName
+{
+	[self setPrimitiveValue: aName forKey: @"persistentUIName"];
+}
+
+- (ETLayoutItem *) persistentUIItem
+{
+	if ([self persistentUIName] != nil)
+	{
+		return self;
+	}
+	else
+	{
+		return [_parentItem parentItem];
+	}
+}
+
+#pragma mark Persistency Support
+#pragma mark -
+
 - (NSString *) targetIdForTarget: (id)target
 {
 	if ([target isLayoutItem])

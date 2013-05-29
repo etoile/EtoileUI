@@ -13,7 +13,10 @@
 
 @class COEditingContext, COObject;
 
-@interface ETLayoutItem (CoreObject) 
+@interface ETLayoutItem (CoreObject)
+
+/** @taskunit Item Persistency */
+
 /** Returns the owning compound document, or nil if the receiver is not persisted. 
 
 The owning compound document is an ancestor item. */
@@ -25,6 +28,13 @@ described in -[COObject becomePersistentInContext:].
 
 Aspects (style, layout etc.) are made persistent if needed. */
 - (void) becomePersistentInContext: (COPersistentRoot *)aContext;
+
+/** @taskunit UI Persistency */
+
+- (NSString *) persistentUIName;
+- (void) setPersistentUIName: (NSString *)aName;
+- (ETLayoutItem *) persistentUIItem;
+
 @end
 
 @interface ETLayoutItemGroup (CoreObject) 
