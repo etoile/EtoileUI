@@ -18,6 +18,12 @@
 #import <EtoileUI/ETUIStateRestoration.h>
 #import <EtoileUI/ETWidget.h>
 
+/* Core Object */
+
+#ifdef COREOBJECT
+#import <EtoileUI/ETLayoutItem+CoreObject.h>
+#endif
+
 /* UI Builder */
 
 #import <EtoileUI/ETUIBuilderItemFactory.h>

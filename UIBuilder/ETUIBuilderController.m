@@ -9,13 +9,16 @@
 #import <EtoileFoundation/ETCollection+HOM.h>
 #import <EtoileFoundation/NSObject+HOM.h>
 #import <EtoileFoundation/Macros.h>
+#import <CoreObject/COEditingContext.h>
 #import "ETUIBuilderController.h"
 #import "ETApplication.h"
 #import "ETAspectRepository.h"
 #import "ETLayoutItem.h"
 #import "ETLayoutItemGroup.h"
+#import "ETLayoutItem+CoreObject.h"
 #import "ETObjectValueFormatter.h"
 #import "ETUIBuilderItemFactory.h"
+#import "ETUIStateRestoration.h"
 
 @implementation ETUIBuilderController
 
@@ -67,14 +70,47 @@
 	return (id)[[self content] itemForIdentifier: @"contentArea"];
 }
 
+- (void) presentTransientEditingAlertIfNeededForItem: (ETLayoutItem *)anItem
+{
+	if ([anItem persistentUIItem] != nil)
+		return;
+
+	NSString *msg = _(@"This UI item doesn't support persisting UI editing "
+		"for the current application.");
+	NSString *extra = _(@"You can explicitly save UI changes in a new document, "
+						"but the changes won't be visible on the next application launch.");
+
+	NSAlert *alert = [NSAlert alertWithMessageText: msg defaultButton: nil
+		alternateButton: nil otherButton: nil informativeTextWithFormat: @""];
+	[alert setInformativeText: extra];
+
+	[alert runModal];
+}
+
+- (void) preparePersistentItemForEditedItem: (ETLayoutItem *)anItem
+{
+	if ([[self editedItem] isPersistent])
+		return;
+
+	ETLayoutItem *persistentUIItem = [anItem persistentUIItem];
+
+	[(id)[self persistentObjectContext]
+		insertNewPersistentRootWithRootObject: persistentUIItem];
+	[[ETApp UIStateRestoration] setPersistentItemUUID: [persistentUIItem UUID]
+	                                          forName: [persistentUIItem persistentUIName]];
+}
+
 - (void) setEditedItem: (ETLayoutItem *)anItem
 {
+	[self presentTransientEditingAlertIfNeededForItem: anItem];
+
 	if (_editedItem != nil)
 	{
 		[self stopObserveObject: _editedItem
 		    forNotificationName: ETItemGroupSelectionDidChangeNotification];		
 	}
 	ASSIGN(_editedItem, anItem);
+	[self preparePersistentItemForEditedItem: anItem];
 
 	if (anItem != nil)
 	{

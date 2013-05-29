@@ -19,8 +19,11 @@
 @interface ETUIBuilderItemFactory : ETLayoutItemFactory
 {
 	@private
-	ETModelDescriptionRenderer *renderer;
+	ETModelDescriptionRenderer *_renderer;
+	COEditingContext *_editingContext;
 }
+
+@property (nonatomic, readonly) COEditingContext *editingContext;
 
 - (ETLayoutItemGroup *) editorWithObject: (id)anObject
                               controller: (id)aController;

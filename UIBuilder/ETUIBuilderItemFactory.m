@@ -11,6 +11,8 @@
 #import <EtoileFoundation/NSObject+Model.h>
 #import <EtoileFoundation/NSString+Etoile.h>
 #import <EtoileFoundation/Macros.h>
+#import <CoreObject/COEditingContext.h>
+#import <CoreObject/COSQLStore.h>
 #import <IconKit/IconKit.h>
 #import "ETUIBuilderItemFactory.h"
 #import "ETAspectCategory.h"
@@ -38,17 +40,22 @@
 
 @implementation ETUIBuilderItemFactory
 
+@synthesize editingContext = _editingContext;
+
 - (id) init
 {
 	SUPERINIT;
-	ASSIGN(renderer, [ETModelDescriptionRenderer renderer]);
+	ASSIGN(_renderer, [ETModelDescriptionRenderer renderer]);
 	//[renderer setGroupingKeyPath: @"owner"];
+	COStore *store = AUTORELEASE([[COSQLStore alloc] initWithURL: [NSURL URLWithString: @"~/UIBuilderStore.sqlite"]]);
+	_editingContext = [[COEditingContext alloc] initWithStore: store];
 	return self;
 }
 
 - (void) dealloc
 {
-	DESTROY(renderer);
+	DESTROY(_renderer);
+	DESTROY(_editingContext);
 	[super dealloc];
 }
 
@@ -150,7 +157,8 @@
 	[editor setAutoresizingMask: ETAutoresizingFlexibleWidth | ETAutoresizingFlexibleHeight];
 	[editor setLayout: [ETColumnLayout layout]];
 	[editor setController: aController];
-
+	
+	[aController setPersistentObjectContext: _editingContext];
 	[aController setEditedItem: anObject];
 
 	ETLog(@"\n%@\n", [editor descriptionWithOptions: [NSMutableDictionary dictionaryWithObjectsAndKeys:
@@ -249,6 +257,8 @@
 	[inspector setAutoresizingMask: ETAutoresizingFlexibleWidth | ETAutoresizingFlexibleHeight];
 	[inspector setLayout: [ETColumnLayout layout]];
 	[inspector setController: aController];
+
+	[aController setPersistentObjectContext: _editingContext];
 
 	ETLog(@"\n%@\n", [inspector descriptionWithOptions: [NSMutableDictionary dictionaryWithObjectsAndKeys: 
 		A(@"frame", @"autoresizingMask"), kETDescriptionOptionValuesForKeyPaths,
@@ -454,14 +464,14 @@
 	NSParameterAssert(aController != nil);
 	NSParameterAssert(anAspectName != nil);
 
-	ETEntityDescription *rootEntity = [[renderer repository] descriptionForName: @"Object"];
+	ETEntityDescription *rootEntity = [[_renderer repository] descriptionForName: @"Object"];
 
-	[(ETObjectValueFormatter *)[renderer formatterForType: rootEntity] setDelegate: aController];
+	[(ETObjectValueFormatter *)[_renderer formatterForType: rootEntity] setDelegate: aController];
 
-	[renderer setRenderedPropertyNames: [self presentedPropertyNamesForAspectName: anAspectName
+	[_renderer setRenderedPropertyNames: [self presentedPropertyNamesForAspectName: anAspectName
 	                                                                     ofObject: anObject]];
 
-	ETLayoutItemGroup *itemGroup = [renderer renderObject: [anObject valueForKeyPath: anAspectName]];
+	ETLayoutItemGroup *itemGroup = [_renderer renderObject: [anObject valueForKeyPath: anAspectName]];
 	NSSize size = [self defaultBasicInspectorSize];
 	
 	size.height -= 80;
