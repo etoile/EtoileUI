@@ -25,10 +25,12 @@
 #import "ETActionHandler.h"
 #import "ETController.h"
 #import "ETGeometry.h"
+#import "ETFreeLayout.h"
 #import "ETLayoutExecutor.h"
 #import "ETLayoutItem.h"
 #import "ETLayoutItemFactory.h"
 #import "ETLayoutItemGroup.h"
+#import "ETSelectTool.h"
 #import "ETStyle.h"
 #import "ETShape.h"
 
@@ -273,6 +275,7 @@
 	UKPointsEqual([itemGroup anchorPoint], [newItemGroup anchorPoint]);
 	UKRectsEqual([itemGroup frame], [newItemGroup frame]);
 	UKObjectsEqual(A(newItem), [newItemGroup items]);
+	UKObjectsEqual(A(newItem), [newItemGroup arrangedItems]);
 	UKObjectsEqual(newController, [newItemGroup controller]);
 
 	UKNotNil(newController);
@@ -431,6 +434,61 @@
 	UKIntsEqual(2, [itemGroup numberOfItems]);
 	UKObjectsNotSame([itemGroup lastItem], rectItem);
 	UKObjectsEqual([[itemGroup lastItem] UUID], [rectItem UUID]);
+}
+
+- (void) testFreeLayout
+{
+	[self recreateContext];
+	
+	[itemFactory beginRootObject];
+
+	ETLayoutItem *item = [self basicItemWithRect: NSMakeRect(10, 10, 50, 50)];
+	ETLayoutItem *buttonItem = [itemFactory button];
+	ETLayoutItemGroup *itemGroup = [itemFactory itemGroupWithItems: A(item, buttonItem)];
+
+	[itemGroup setLayout: [ETFreeLayout layout]];
+	[itemGroup addItem: buttonItem];
+	[itemGroup setSelectionIndex: 1];
+
+	[itemFactory endRootObject];
+
+	ETUUID *uuid = [[ctxt insertNewPersistentRootWithRootObject: itemGroup] persistentRootUUID];
+
+	[self checkValidityForNewPersistentObject: buttonItem isFault: NO];
+	[self checkValidityForNewPersistentObject: itemGroup isFault: NO];
+	[self checkValidityForNewPersistentObject: item isFault: NO];
+
+	[ctxt commit];
+
+	NSLog(@"Serialized layout: %@", [[itemGroup layout] serializedRepresentation]);
+
+	[self recreateContext];
+
+	ETLayoutItemGroup *newItemGroup = (id)[[ctxt persistentRootForUUID: uuid] rootObject];
+	ETLayoutItem *newItem = (id)[[newItemGroup persistentRoot] objectWithUUID: [item UUID]];
+	ETLayoutItem *newButtonItem = (id)[[newItemGroup persistentRoot] objectWithUUID: [buttonItem UUID]];
+
+	UKTrue([newButtonItem isSelected]);
+	UKIntsEqual(1, [newItemGroup selectionIndex]);
+	UKNotNil([[newItemGroup layout] handleGroupForItem: newButtonItem]);
+	UKNil([[newItemGroup layout] handleGroupForItem: newItem]);
+	UKIntsEqual(1, [[[newItemGroup layout] layerItem] numberOfItems]);
+
+	UKObjectKindOf([[newItemGroup layout] attachedTool], ETSelectTool);
+	UKTrue([[[newItemGroup layout] attachedTool] shouldProduceTranslateActions]);
+
+	[[[newItemGroup layout] attachedTool] makeSingleSelectionWithItem: newItem];
+
+	UKFalse([newButtonItem isSelected]);
+	UKIntsEqual(0, [newItemGroup selectionIndex]);
+	UKNil([[newItemGroup layout] handleGroupForItem: newButtonItem]);
+	UKNotNil([[newItemGroup layout] handleGroupForItem: newItem]);
+	UKIntsEqual(1, [[[newItemGroup layout] layerItem] numberOfItems]);
+
+	[self checkValidityForNewPersistentObject: newItemGroup isFault: NO];
+	// FIXME: the bounding box is damaged due to the selection
+	//[self checkValidityForNewPersistentObject: newItem isFault: NO];
+	[self checkValidityForNewPersistentObject: newButtonItem isFault: NO]; 
 }
 
 @end

@@ -230,6 +230,19 @@ subclasses (see -[ETLayout initWithLayoutView:]). */
 	}
 }
 
+- (ETLayoutItemGroup *) handleGroupForItem: (ETLayoutItem *)aManipulatedItem
+{
+	for (ETLayoutItem *item in [self layerItem])
+	{
+		// TODO: Should check -isHandleGroup
+		if ([item isGroup] && [(ETHandleGroup *)item manipulatedObject] == aManipulatedItem)
+		{
+			return (ETLayoutItemGroup *)item;
+		}
+	}
+	return nil;
+}
+
 /** Recomputes new persistent frames for every layout items provided by the 
 layout context, based on the rules or policy of the given layout. */
 - (void) resetItemPersistentFramesWithLayout: (ETComputedLayout *)layout

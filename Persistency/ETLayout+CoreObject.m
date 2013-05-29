@@ -54,25 +54,18 @@
 
 @implementation ETFreeLayout (CoreObject)
 
-- (void) awakeFromFetch
+- (void) didLoad
 {
-	[super awakeFromFetch];
+	[super didLoad];
 
 	//[self setAttachedTool: [ETSelectTool tool]];
 	[[[self attachedTool] ifResponds] setShouldProduceTranslateActions: YES];
 	[[self layerItem] setActionHandler: nil];
 	[[self layerItem] setCoverStyle: nil];
-
+	
 	/* Because the layer item is recreated, it must be installed too (see -[ETLayout setUp]) */
 	[self mapLayerItemIntoLayoutContext];
 
-	/* Rebuild the handles to manipulate the item copies and not their originals */
-	[self updateKVOForItems: [_layoutContext arrangedItems]];
-	[self buildHandlesForItems: [_layoutContext arrangedItems]];
-}
-
-- (void) didReload
-{
 	/* Rebuild the handles to manipulate the item copies and not their originals */
 	[self updateKVOForItems: [_layoutContext arrangedItems]];
 	[self buildHandlesForItems: [_layoutContext arrangedItems]];

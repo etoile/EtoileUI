@@ -36,6 +36,7 @@
 - (void) showHandlesForItem: (ETLayoutItem *)item;
 - (void) hideHandlesForItem: (ETLayoutItem *)item;
 - (void) buildHandlesForItems: (NSArray *)manipulatedItems;
+- (ETLayoutItemGroup *) handleGroupForItem: (ETLayoutItem *)item;
 
 - (void) resetItemPersistentFramesWithLayout: (ETComputedLayout *)layout;
 
