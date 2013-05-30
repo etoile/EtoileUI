@@ -44,6 +44,8 @@ EtoileUI_OBJC_FILES += $(wildcard AspectRepository/*.m)
 
 EtoileUI_OBJC_FILES += $(wildcard UIBuilder/*.m)
 
+EtoileUI_OBJC_FILES += $(wildcard WidgetBackends/AppKit/*.m)
+
 ifeq ($(coreobject), yes)
 EtoileUI_OBJC_FILES += $(wildcard CoreObjectUI/*.m)
 
