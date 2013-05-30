@@ -11,7 +11,7 @@
 #import <EtoileUI/ETLayoutItemFactory.h>
 #import <EtoileUI/ETApplication.h>
 
-@class ETModelDescriptionRenderer;
+@class ETModelDescriptionRenderer, COEditingContext;
 
 /** @group UI Builder
  
