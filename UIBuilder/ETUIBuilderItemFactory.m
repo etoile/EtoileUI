@@ -520,7 +520,7 @@
 @end
 
 
-@implementation NSObject (UIBuilder)
+@implementation NSObject (ETUIBuilder)
 
 - (IBAction) inspectUI: (id)sender
 {
@@ -533,7 +533,7 @@
 @end
 
 
-@implementation ETApplication (UIBuilder)
+@implementation ETApplication (ETUIBuilder)
 
 /** Starts the UI Builder to edit the key window UI. */
 - (IBAction) startEditingKeyWindowUI: (id)sender

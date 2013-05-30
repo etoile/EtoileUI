@@ -43,11 +43,11 @@
 @end
 
 
-@interface NSObject (UIBuilder)
+@interface NSObject (ETUIBuilder)
 - (IBAction) inspectUI: (id)sender;
 @end
 
-@interface ETApplication (UIBuilder)
+@interface ETApplication (ETUIBuilder)
 - (IBAction) startEditingKeyWindowUI: (id)sender;
 - (IBAction) stopEditingKeyWindowUI: (id)sender;
 @end
