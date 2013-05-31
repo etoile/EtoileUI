@@ -202,9 +202,8 @@ incorrectly reentered. */
 affected. */
 + (NSSet *) keyPathsForValuesAffectingValueForKey: (NSString *)aKey
 {
-	// TODO: Take in account that -identifier can vary based on its index in
+	// TODO: Take in account that -indexPath can vary based on its index in
 	// its parent item or its parent represented object.
-	// The issue also exists with -indexPath.
 	NSSet *geometryDependentKeys = S(kETViewProperty, kETFrameProperty, 
 		kETXProperty, kETYProperty, kETWidthProperty, kETHeightProperty,
 		@"positionX", @"positionY");

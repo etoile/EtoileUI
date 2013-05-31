@@ -3241,8 +3241,8 @@ See also -subject. */
 {
 	//ETLog(@"Did Change view value to %@", newValue);
 
-	/* Don't update the represented object while setting it */
-	if (_isSettingRepresentedObject || [self representedObject] == nil)
+	/* Don't update the represented object while setting it or updating it */
+	if (_isSettingRepresentedObject || _isSyncingViewValue || [self representedObject] == nil)
 		return;
 
 	[self setValue: newValue forProperty: kETValueProperty];
@@ -3252,7 +3252,9 @@ See also -subject. */
 - (void) didChangeRepresentedObjectValue: (id)newValue
 {
 	//ETLog(@"Did Change represented object value to %@", newValue);
+	_isSyncingViewValue = YES;
 	[self syncView: [self view] withValue: newValue];
+	_isSyncingViewValue = NO;
 }
 
 /* Editing */
