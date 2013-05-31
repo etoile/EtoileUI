@@ -130,11 +130,11 @@ DEALLOC(DESTROY(_labelAttributes); DESTROY(_selectedLabelAttributes));
 	{
 		if ([[item identifier] isEqual: @"collectionEditor"])
 		{
-			ETLog(@"Try to draw label in %@ of %@", NSStringFromRect(_currentLabelRect), item);
+			//ETLog(@"Try to draw label in %@ of %@", NSStringFromRect(_currentLabelRect), item);
 		}
 		if ([[item name] isEqual: @"Width"])
 		{
-			ETLog(@"Try to draw label in %@ of %@", NSStringFromRect(_currentLabelRect), item);
+			//ETLog(@"Try to draw label in %@ of %@", NSStringFromRect(_currentLabelRect), item);
 		}
 		[self drawLabel: itemLabel
 		     attributes: [self labelAttributesForDrawingItem: item]
