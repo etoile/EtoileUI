@@ -164,8 +164,13 @@ Returns YES when the event has been handled by EtoileUI. */
 		ETDebugLog(@"Will push back event to widget backend %@", anEvent);
 		return NO;
 	}
-	ETTool *activeTool = [ETTool activeTool];
-	ETWindowItem *windowItem = [anEvent windowItem];
+
+	ETTool *initialActiveTool = RETAIN([ETTool activeTool]);
+	ETTool *activeTool = initialActiveTool;
+	/* The window item must be retained to prevent crashes if the first 
+	   decorated item is removed from the item tree or moved to another part.
+	   For example, see -stopEditingKeyWindowUI:. */
+	ETWindowItem *windowItem = RETAIN([anEvent windowItem]);
 	BOOL hadActiveFieldEditorItem = (nil != windowItem && nil != [windowItem activeFieldEditorItem]);
 	NSWindow *window = [windowItem window];
 
@@ -180,7 +185,8 @@ Returns YES when the event has been handled by EtoileUI. */
 			break;
 		case NSLeftMouseDown:
 			_wasMouseDownProcessed = YES;
-			[self processMouseMovedEvent: anEvent]; /* Emit enter/exit events in case the event window is a new one */
+			/* Emit enter/exit events in case the event window is a new one */
+			[self processMouseMovedEvent: anEvent]; 
 			activeTool = [ETTool updateActiveToolWithEvent: anEvent];
 			[activeTool mouseDown: anEvent];
 			//NSLog(@"First responder from %@ to %@", [_initialFirstResponder primitiveDescription], [[window firstResponder] primitiveDescription]);
@@ -216,6 +222,9 @@ Returns YES when the event has been handled by EtoileUI. */
 		[activeTool tryRemoveFieldEditorItemWithEvent: anEvent];
 	}
 
+	ETAssert(initialActiveTool == activeTool || [anEvent type] == NSLeftMouseDown);
+	RELEASE(initialActiveTool);
+	RELEASE(windowItem);
 	return YES;
 }
 

@@ -361,6 +361,8 @@ and make the necessary adjustments. */
 	{
 		[_itemWindow setTitle: @""];
 	}
+	[self removeActiveFieldEditorItem];
+	DESTROY(_oldFocusedItem);
 }
 
 - (void) didDecorateItem: (ETUIItem *)item
@@ -533,6 +535,13 @@ This coordinate space includes the window decoration (titlebar etc.).  */
 
 - (void) postFocusedItemChangeNotificationIfNeeded
 {
+	BOOL isUnused = ([[self firstDecoratedItem] isLayoutItem] == NO);
+
+	if (isUnused)
+	{
+		ETAssert(_oldFocusedItem == nil);
+		return;
+	}
 
 	ETLayoutItem *newFocusedItem = [self focusedItem];
 
