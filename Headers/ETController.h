@@ -175,13 +175,17 @@ objects as a collection distinct from the content. */
 - (NSArray *) allowedDropTypesForTargetType: (ETUTI *)aUTI;
 - (void) setAllowedDropTypes: (NSArray *)UTIs forTargetType: (ETUTI *)targetUTI;
 
-/* Editing (NSEditor and NSEditorRegistration Protocols) */
+/* Editing */
 
 - (BOOL) isEditing;
 - (BOOL) commitEditing;
 - (void) discardEditing;
-- (void) objectDidBeginEditing: (ETLayoutItem *)anItem;
-- (void) objectDidEndEditing: (ETLayoutItem *)anItem;
+- (void) subjectDidBeginEditingForItem: (ETLayoutItem *)anItem
+                              property: (NSString *)aKey;
+- (void) subjectDidChangeValueForItem: (ETLayoutItem *)anItem
+                             property: (NSString *)aKey;
+- (void) subjectDidEndEditingForItem: (ETLayoutItem *)anItem
+                            property: (NSString *)aKey;
 
 /* Framework Private */
 

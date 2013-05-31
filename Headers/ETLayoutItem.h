@@ -134,6 +134,7 @@ and centers it. A strech is a scale that doesn't preserve the content proportion
 	BOOL _scrollViewShown; /* Used by ETLayoutItem+Scrollable */
 	BOOL _wasKVOStopped;
 	BOOL _isSettingRepresentedObject;
+	BOOL _isEditing; /* Used by ETLayoutItem+AppKit */
 	@protected
 	BOOL _isDeallocating;
 }
@@ -159,6 +160,10 @@ and centers it. A strech is a scale that doesn't preserve the content proportion
 - (void) stopKVOObservationIfNeeded;
 - (id) deepCopy;
 - (id) deepCopyWithCopier: (ETCopier *)aCopier;
+
+/** @taskunit Description */
+
+- (NSString *) shortDescription;
 
 /* Layout Item Tree */
 
@@ -354,13 +359,13 @@ and centers it. A strech is a scale that doesn't preserve the content proportion
 - (void) didChangeViewValue: (id)newValue;
 - (void) didChangeRepresentedObjectValue: (id)newValue;
 
-/* Editing (NSEditor and NSEditorRegistration Protocols) */
+/* Editing */
 
 - (void) beginEditing;
 - (void) discardEditing;
 - (BOOL) commitEditing;
-- (void) objectDidBeginEditing: (id)anEditor;
-- (void) objectDidEndEditing: (id)anEditor;
+- (void) subjectDidBeginEditingForProperty: (NSString *)aKey;
+- (void) subjectDidEndEditingForProperty: (NSString *)aKey;
 
 - (id <ETInspector>) inspector;
 - (void) setInspector: (id <ETInspector>)inspector;

@@ -319,8 +319,8 @@ For NSTabTextMovement and NSBackTabTextMovement, the first responder is passed
 to the next or previous key view. See ETFirstResponderSharingArea.
  
 If the AppKit manages the text editing (NSControl used as an item view),
-this method is not invoked, the delegate method is called directly on the 
-NSControl or NSTextField. */
+this method is not invoked. The field editor just calls -textDidEndEditing: on 
+the NSControl or NSTextField. */
 - (void) textDidEndEditing: (NSNotification *)aNotification
 {
 	ETAssert(_editedItem != nil);

@@ -14,6 +14,7 @@
 #import "ETController.h"
 #import "ETGeometry.h"
 #import "ETLayoutItem.h"
+#import "ETLayoutItem+AppKit.h"
 #import "EtoileUIProperties.h"
 #import "ETEvent.h"
 #import "ETPickboard.h"
@@ -608,16 +609,31 @@ See [(ETColumnFragment)] protocol to customize the returned column. */
 	return [[_layoutContext arrangedItems] objectAtIndex: rowIndex];
 }
 
+- (ETLayoutItem *) editedItem
+{
+	return [self itemAtRow: [[self tableView] editedRow]];
+}
+
+- (NSString *) editedProperty
+{
+	return  [[[self tableView] tableColumns] objectAtIndex: [[self tableView] editedColumn]];
+}
+
 - (void) controlTextDidBeginEditing: (NSNotification *)aNotification
 {
-	ETLayoutItem *editedItem = [self itemAtRow: [[self tableView] editedRow]];
-	[editedItem objectDidBeginEditing: [self tableView]];
+	[[self editedItem] setEditing: YES];
+	[[self editedItem] subjectDidBeginEditingForProperty: [self editedProperty]];
 }
 
 - (void) controlTextDidEndEditing:(NSNotification *)aNotification
 {
-	/* See -tableView:setObjectValue:forTableColumn:row, or its equivalent in 
-	   NSOutlineView, which will invoke -objectDidEndEditing: */
+	/* If the user hasn't typed anything, just ignore the notification.
+	   See -[ETLayoutItem controlTextDidEndEditing:]. */
+	if ([[self editedItem] isEditing] == NO)
+		return;
+
+	[[self editedItem] subjectDidEndEditingForProperty: [self editedProperty]];
+	[[self editedItem] setEditing: NO];
 }
 
 /* Cocoa seems to contradict the documentation of -[NSTableView setDoubleAction:] 
@@ -733,9 +749,6 @@ given row/column intersection.  */
 	// TODO: We should call -objectWithObjectValue: in a way symetric to
 	// objectValueForObject: in -tableView:objectValueForTableColumn:row:.
 	[item setValue: value forProperty: [self propertyForColumn: column]];
-
-	ETLayoutItem *editedItem = [self itemAtRow: [[self tableView] editedRow]];
-	[editedItem objectDidEndEditing: [self tableView]];
 }
 
 - (void) tableView: (NSTableView *)tv 

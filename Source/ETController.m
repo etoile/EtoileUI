@@ -15,6 +15,7 @@
 #import "ETLayoutItemBuilder.h"
 #import "ETLayoutItemGroup+Mutation.h"
 #import "ETLayoutItemGroup.h"
+#import "ETLayoutItem.h"
 #import "ETPickDropActionHandler.h" /* For ETUndeterminedIndex */
 #import "ETResponder.h"
 #import "NSObject+EtoileUI.h"
@@ -1127,12 +1128,24 @@ All the editors get unregistered. */
 }
 
 /** Notifies the controller the given item has begun to be edited.
+ 
+For text editing, -objectDidBeginEditing: is called only if the user types 
+something. If the focus changes before the user has typed anything, 
+-objectDidEndEditing: is sent (and no -objectDidBeginEditing: is ever sent).
 
 You should never need to invoke this method.<br />
 See instead -[ETLayoutItem objectDidBeginEditing:]. */
-- (void) objectDidBeginEditing: (ETLayoutItem *)anItem
+- (void) subjectDidBeginEditingForItem: (ETLayoutItem *)anItem
+                              property: (NSString *)aKey
 {
+	ETLog(@" ---> Begin editing for %@ - %@ ", [anItem shortDescription], aKey);
 	[_editorItems addObject: anItem];
+}
+
+- (void) subjectDidChangeValueForItem: (ETLayoutItem *)anItem
+                             property: (NSString *)aKey
+{
+	ETLog(@"Change value for %@ - %@", [anItem shortDescription], aKey);
 }
 
 /** Notifies the controller the editing which was underway in the given item 
@@ -1140,8 +1153,10 @@ has ended.
 
 You should never need to invoke this method.<br />
 See instead -[ETLayoutItem objectDidEndEditing:]. */
-- (void) objectDidEndEditing: (ETLayoutItem *)anItem
+- (void) subjectDidEndEditingForItem: (ETLayoutItem *)anItem
+                            property: (NSString *)aKey
 {
+	ETLog(@" <--- End editing for %@ - %@ ", [anItem shortDescription], aKey);
 	[_editorItems removeObject: anItem];
 }
 

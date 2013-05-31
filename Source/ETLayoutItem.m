@@ -16,6 +16,7 @@
 #import "ETLayoutItem.h"
 #import "ETActionHandler.h"
 #import "ETBasicItemStyle.h"
+#import "ETController.h"
 #import "ETGeometry.h"
 #import "ETInspector.h"
 #import "ETItemValueTransformer.h"
@@ -373,6 +374,7 @@ Default values will be copied but not individually (shallow copy). */
 		                                 forKeyPath: @"state"
 			                            options: NSKeyValueObservingOptionNew
 		                                    context: NULL];
+		[[viewCopy ifResponds] setDelegate: item];
 	}
 
 	/* We copy the represented object last in case it holds a reference on 
@@ -461,6 +463,14 @@ Default values will be copied but not individually (shallow copy). */
 #endif
 	
 	return desc;
+}
+
+- (NSString *) shortDescription
+{
+	return [@"<" stringByAppendingFormat: @"%@ id: %@, selected: %d, repObject: %@ "
+		@"view: %@ frame: %@>", [super description], [self identifier], [self isSelected],
+		[[self representedObject] primitiveDescription], [[self view] primitiveDescription],
+		NSStringFromRect([self frame])];
 }
 
 /** Returns the root item of the layout item tree to which the receiver belongs 
@@ -1101,6 +1111,7 @@ The view is an NSView class or subclass instance. See -setView:. */
 	{
 		[[(id <ETWidget>)oldView cell] removeObserver: self forKeyPath: @"objectValue"];
 		[[(id <ETWidget>)oldView cell] removeObserver: self forKeyPath: @"state"];
+		[[oldView ifResponds] setDelegate: nil];
 	}
 
 	/* Insert a supervisor view if needed and adjust the new view autoresizing behavior */
@@ -1127,6 +1138,7 @@ The view is an NSView class or subclass instance. See -setView:. */
 		                                forKeyPath: @"state"
 		                                   options: NSKeyValueObservingOptionNew
 		                                   context: NULL];
+		[[newView ifResponds] setDelegate: self];
 	}
 
 	[self didChangeValueForProperty: kETViewProperty];
@@ -3276,12 +3288,11 @@ to react with -commitEditingForItem: or -discardEditingForItem: to an early
 editing termination by the controller.<br />
 
 See also -objectDidEndEditing:. */
-- (void) objectDidBeginEditing: (id)anEditor
+- (void) subjectDidBeginEditingForProperty: (NSString *)aKey
 {
-	NSParameterAssert(anEditor != nil);
 	// NOTE: We implement NSEditorRegistration to allow the view which are 
 	// bound to an item with -bind:toObject:XXX to notify the controller transparently.
-	[[[self controllerItem] controller] objectDidBeginEditing: self];
+	[[[self controllerItem] controller] subjectDidBeginEditingForItem: self property: aKey];
 }
 
 /** Notifies the item the editing underway ended.
@@ -3293,10 +3304,9 @@ You must invoke it in an action handler method when you have previously call
 -objectDidBeginEditing and your editor has finished to edit a property.<br />
 
 See also -objectDidBeginEditing:. */
-- (void) objectDidEndEditing: (id)anEditor
+- (void) subjectDidEndEditingForProperty: (NSString *)aKey
 { 	
-	NSParameterAssert(anEditor != nil);
-	[[[self controllerItem] controller] objectDidEndEditing: self];
+	[[[self controllerItem] controller] subjectDidEndEditingForItem: self property: aKey];
 }
 
 /** Returns self.
