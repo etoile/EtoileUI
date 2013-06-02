@@ -71,7 +71,14 @@
 - (void) setPersistentItemUUID: (ETUUID *)aUUID forName: (NSString *)aName
 {
 	NSMutableDictionary *settings = AUTORELEASE([[self settings] mutableCopy]);
-	[settings setObject: [aUUID stringValue] forKey: aName];
+	if (aUUID == nil)
+	{
+		[settings removeObjectForKey: aName];
+	}
+	else
+	{
+		[settings setObject: [aUUID stringValue] forKey: aName];
+	}
 	[self setSettings: settings];
 }
 
@@ -116,6 +123,9 @@ user application defaults. */
 		[self didLoadItem: item];
 		return item;
 	}
+
+	ETLog(@"Found no persistent UI for %@", aName);
+	[self setPersistentItemUUID: nil forName: aName];
 
 	item = [self transientItemForName: aName];
 
