@@ -133,6 +133,9 @@
 	[sliderItem setWidth: 200];
 	[textFieldItem setWidth: 300];
 
+		ETLayoutItem *item = [[ETLayoutItemFactory factory] sizeEditorWithWidth: 100 forWidthProperty: nil heightProperty: nil ofModel: nil];
+	
+	[itemGroup addItem: item];
 	[itemGroup addItem: labelItem];
 	[itemGroup addItem: primitiveItem];
 	[itemGroup addItem: sliderItem];
@@ -170,6 +173,9 @@
 {
 	[ETLayoutItem setShowsBoundingBox: YES];
 	[ETLayoutItem setShowsFrame: YES];
+
+	ETLayoutItem *item = [[ETLayoutItemFactory factory] sizeEditorWithWidth: 100 forWidthProperty: nil heightProperty: nil ofModel: nil];
+	[[[ETLayoutItemFactory factory] windowGroup] addItem: item];
 
 	[self buildSingleSectionForm];
 	[self buildMultipleSectionForm];

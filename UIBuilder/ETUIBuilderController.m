@@ -89,9 +89,9 @@
 	[alert runModal];
 }
 
-- (void) preparePersistentItemForEditedItem: (ETLayoutItem *)anItem
+- (void) preparePersistentItemForDocumentContentItem: (ETLayoutItem *)anItem
 {
-	if ([[self documentContentItem] isPersistent])
+	if ([anItem isPersistent])
 		return;
 
 	ETLayoutItem *persistentUIItem = [anItem persistentUIItem];
@@ -114,13 +114,13 @@
 		    forNotificationName: ETItemGroupSelectionDidChangeNotification];		
 	}
 	ASSIGN(_documentContentItem, anItem);
-	[self preparePersistentItemForEditedItem: anItem];
+	[self preparePersistentItemForDocumentContentItem: anItem];
 
 	if (anItem != nil)
 	{
 		[self startObserveObject: [self documentContentItem]
 		     forNotificationName: ETItemGroupSelectionDidChangeNotification
-		                selector: @selector(editedItemSelectionDidChange:)];
+		                selector: @selector(documentContentItemSelectionDidChange:)];
 	}
 }
 
@@ -151,7 +151,7 @@
 	_isChangingSelection = NO;
 }
 
-- (void) editedItemSelectionDidChange: (NSNotification *)aNotif
+- (void) documentContentItemSelectionDidChange: (NSNotification *)aNotif
 {
 	ETLog(@"Did change selection in %@", [aNotif object]);
 
@@ -271,7 +271,7 @@
 // NOTE: This method isn't needed if we use a ETItemValueTransformer
 - (NSString *) formatter: (ETObjectValueFormatter *)aFormatter stringForObjectValue: (id)aValue
 {
-	if ([_editedProperty isEqual: @"target"])
+	if ([[self editedProperty] isEqual: @"target"])
 	{
 		return [aValue identifier];
 	}
@@ -281,17 +281,15 @@
 	}
 }
 
-// NOTE: To retrieve the edited item...
-//[[[[ETTool activeTool] keyItem] firstResponderSharingArea] editedItem];
 - (NSString *) formatter: (ETObjectValueFormatter *)aFormatter stringValueForString: (id)aValue
 {
-	BOOL isEditing = (_editedProperty != nil);
+	BOOL isEditing = ([self editedProperty] != nil);
 
 	/* The empty string is a valid value so we don't return nil (the value represents nil) */
 	if ([aValue isEqual: @""] || isEditing == NO)
 		return aValue;
 
-	if ([_editedProperty isEqual: @"target"])
+	if ([[self editedProperty] isEqual: @"target"])
 	{
 		if ([[self documentContentItem] isGroup] == NO)
 			return nil;
@@ -304,7 +302,7 @@
 	else
 	{
 		ETAspectCategory *category =
-			[[self aspectRepository] aspectCategoryNamed: _editedProperty];
+			[[self aspectRepository] aspectCategoryNamed: [self editedProperty]];
 
 		return([category aspectForKey: aValue] != nil ? aValue : nil);
 	}
@@ -317,12 +315,6 @@
 	ETEntityDescription *entityDesc = [repo entityDescriptionForClass: [anItem subject]];
 	
 	return [entityDesc propertyDescriptionForName: aName];
-}
-
-- (void) subjectDidBeginEditingForItem: (ETLayoutItem *)anItem property: (NSString *)aKey
-{
-	[super subjectDidBeginEditingForItem: anItem property: aKey];
-	ASSIGN(_editedProperty, aKey);
 }
 
 - (void) subjectDidEndEditingForItem: (ETLayoutItem *)anItem property: (NSString *)aKey
@@ -339,8 +331,6 @@
 
 	[[[self persistentObjectContext] editingContext] commitWithType: @"Property Change"
 	                                               shortDescription: description];
-
-	DESTROY(_editedProperty);
 }
 
 @end

@@ -65,8 +65,8 @@ burden involved by a data source. */
 	[[tableItem layout] setDisplayedProperties: [NSArray arrayWithObject: @"displayName"]];
 	[[tableItem layout] setEditable: YES forProperty: @"displayName"];
 	
-	[tableItem addItem: [itemFactory itemWithValue: @"Red"]];
-	[tableItem addItem: [itemFactory itemWithValue: @"Green"]];
+	[tableItem addItem: [itemFactory itemWithRepresentedObject: @"Red"]];
+	[tableItem addItem: [itemFactory itemWithRepresentedObject: @"Green"]];
 	/* Illustrate autoboxing of objects into layout items */
 	[tableItem addObject: @"Blue"];
 	[tableItem addObject: [NSNumber numberWithInt: 3]];
@@ -92,14 +92,14 @@ burden involved by a data source. */
 	   each -addItem: call */
 	[outlineItem setAutolayout: NO];
 
-	ETLayoutItemGroup *itemGroup = [itemFactory itemGroupWithValue: icon];
+	ETLayoutItemGroup *itemGroup = [itemFactory itemGroupWithRepresentedObject: icon];
 
 	/* The name set will be returned by -displayName in addition to -name */
 	[itemGroup setValue: @"Icon!" forProperty: @"name"];
-	[itemGroup addItem: [itemFactory itemWithValue: icon]];
-	[itemGroup addItem: [itemFactory itemWithValue: icon]];
+	[itemGroup addItem: [itemFactory itemWithRepresentedObject: icon]];
+	[itemGroup addItem: [itemFactory itemWithRepresentedObject: icon]];
 	[outlineItem addItem: itemGroup];
-	[outlineItem addItem: [itemFactory itemWithValue: icon]];
+	[outlineItem addItem: [itemFactory itemWithRepresentedObject: icon]];
 	
 	[outlineItem setAutolayout: YES];
 }

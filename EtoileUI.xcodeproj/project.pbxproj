@@ -61,27 +61,6 @@
 		601455D70F9722B900268FD1 /* ETDecoratorItem.m in Sources */ = {isa = PBXBuildFile; fileRef = 60330B5A0F7CEF3400A1E8C1 /* ETDecoratorItem.m */; };
 		60264AA50FB72D4D00D8163F /* Carbon.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 60264AA40FB72D4D00D8163F /* Carbon.framework */; };
 		60264AA60FB72D4D00D8163F /* Carbon.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 60264AA40FB72D4D00D8163F /* Carbon.framework */; };
-		602A750E17390EAC004A87D4 /* TestAutoresizing.m in Sources */ = {isa = PBXBuildFile; fileRef = 607DF9A91732C33200C8CB30 /* TestAutoresizing.m */; };
-		602A750F17390EC8004A87D4 /* TestCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 60D88883115E651000D7A8AA /* TestCell.m */; };
-		602A751017390EED004A87D4 /* TestCompositeLayout.m in Sources */ = {isa = PBXBuildFile; fileRef = 60C76C6710136D0A0073C381 /* TestCompositeLayout.m */; };
-		602A751117390F01004A87D4 /* TestController.m in Sources */ = {isa = PBXBuildFile; fileRef = 609F5B5916CA9E8800683BD9 /* TestController.m */; };
-		602A751717390F26004A87D4 /* TestLayoutItem.m in Sources */ = {isa = PBXBuildFile; fileRef = 609F5B5B16CA9E8800683BD9 /* TestLayoutItem.m */; };
-		602A751817390F26004A87D4 /* TestLayoutItemBuilder.m in Sources */ = {isa = PBXBuildFile; fileRef = 609F5B5C16CA9E8800683BD9 /* TestLayoutItemBuilder.m */; };
-		602A751917390F26004A87D4 /* TestPersistency.m in Sources */ = {isa = PBXBuildFile; fileRef = 60FB0BF913C509A700C2AB94 /* TestPersistency.m */; };
-		602A751A17390F26004A87D4 /* TestPickboard.m in Sources */ = {isa = PBXBuildFile; fileRef = 609F5B5D16CA9E8800683BD9 /* TestPickboard.m */; };
-		602A751B17390F26004A87D4 /* TestResponder.m in Sources */ = {isa = PBXBuildFile; fileRef = 602EA7A11712CFAC00D499A9 /* TestResponder.m */; };
-		602A751C17390F6C004A87D4 /* TestFormLayout.m in Sources */ = {isa = PBXBuildFile; fileRef = 605F354A17172DF600E9355A /* TestFormLayout.m */; };
-		602A751D17390F6C004A87D4 /* TestItemCopy.m in Sources */ = {isa = PBXBuildFile; fileRef = 6067EB591046B4E600C39086 /* TestItemCopy.m */; };
-		602A751E17390F6C004A87D4 /* TestItemGeometry.m in Sources */ = {isa = PBXBuildFile; fileRef = 6022404D1003DF14007D5D07 /* TestItemGeometry.m */; };
-		602A751F17390F6C004A87D4 /* TestItemProvider.m in Sources */ = {isa = PBXBuildFile; fileRef = 609F5B6716CD412900683BD9 /* TestItemProvider.m */; };
-		602A752017390F6C004A87D4 /* TestLayout.m in Sources */ = {isa = PBXBuildFile; fileRef = 609F5B5A16CA9E8800683BD9 /* TestLayout.m */; };
-		602A752117390F6C004A87D4 /* TestStyle.m in Sources */ = {isa = PBXBuildFile; fileRef = 60E7BD20107E7B3F00E7C0F2 /* TestStyle.m */; };
-		602A752217390F6C004A87D4 /* TestSupervisorView.m in Sources */ = {isa = PBXBuildFile; fileRef = 609F5B5E16CA9E8800683BD9 /* TestSupervisorView.m */; };
-		602A752317390F6C004A87D4 /* TestTool.m in Sources */ = {isa = PBXBuildFile; fileRef = 609F5B5F16CA9E8800683BD9 /* TestTool.m */; };
-		602A752417390F6C004A87D4 /* TestView.m in Sources */ = {isa = PBXBuildFile; fileRef = 60A7927D171B803600348EC7 /* TestView.m */; };
-		602A752517390F6C004A87D4 /* TestWidgetLayout.m in Sources */ = {isa = PBXBuildFile; fileRef = 602635E511AD413B007586E3 /* TestWidgetLayout.m */; };
-		602A752617390F6C004A87D4 /* TestWindowLayout.m in Sources */ = {isa = PBXBuildFile; fileRef = 6037769216BE7BA900B7EEB5 /* TestWindowLayout.m */; };
-		602A752717390F6C004A87D4 /* TestWindowItem.m in Sources */ = {isa = PBXBuildFile; fileRef = 609C01E2170C34F300D01AAB /* TestWindowItem.m */; };
 		602F8B270CE1CA3E0042F6C0 /* ETCompatibility.h in Headers */ = {isa = PBXBuildFile; fileRef = 602F8B260CE1CA3E0042F6C0 /* ETCompatibility.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		602F8DE70CE1F9610042F6C0 /* ETInspecting.h in Headers */ = {isa = PBXBuildFile; fileRef = 602F8DE60CE1F9610042F6C0 /* ETInspecting.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		603112E80CF448D2001A699E /* ETPickboard.h in Headers */ = {isa = PBXBuildFile; fileRef = 603112E60CF448D2001A699E /* ETPickboard.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -112,10 +91,34 @@
 		6043D0DC174CEA6E002103CC /* ETWidget.h in Headers */ = {isa = PBXBuildFile; fileRef = 6043D0DA174CEA6E002103CC /* ETWidget.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		6043D0DD174CEA6E002103CC /* ETWidget.m in Sources */ = {isa = PBXBuildFile; fileRef = 6043D0DB174CEA6E002103CC /* ETWidget.m */; };
 		6043D0DE174CEA73002103CC /* ETWidget.m in Sources */ = {isa = PBXBuildFile; fileRef = 6043D0DB174CEA6E002103CC /* ETWidget.m */; };
-		6043D1AF174E26B6002103CC /* TestItemValue.m in Sources */ = {isa = PBXBuildFile; fileRef = 6043D1AE174E26B5002103CC /* TestItemValue.m */; };
 		6043D1B1174E27D3002103CC /* TestCommon.m in Sources */ = {isa = PBXBuildFile; fileRef = 6043D1B0174E27D3002103CC /* TestCommon.m */; };
 		6043D3F2175424B1002103CC /* ETUIStateRestoration.h in Headers */ = {isa = PBXBuildFile; fileRef = 6043D3F0175424B1002103CC /* ETUIStateRestoration.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		6043D3F3175424B1002103CC /* ETUIStateRestoration.m in Sources */ = {isa = PBXBuildFile; fileRef = 6043D3F1175424B1002103CC /* ETUIStateRestoration.m */; };
+		6043D3F41755751C002103CC /* ETUIStateRestoration.m in Sources */ = {isa = PBXBuildFile; fileRef = 6043D3F1175424B1002103CC /* ETUIStateRestoration.m */; };
+		6043D3F51755751F002103CC /* ETUIStateRestoration.m in Sources */ = {isa = PBXBuildFile; fileRef = 6043D3F1175424B1002103CC /* ETUIStateRestoration.m */; };
+		6043D46817564BB2002103CC /* TestAutoresizing.m in Sources */ = {isa = PBXBuildFile; fileRef = 607DF9A91732C33200C8CB30 /* TestAutoresizing.m */; };
+		6043D46917564BB2002103CC /* TestCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 60D88883115E651000D7A8AA /* TestCell.m */; };
+		6043D46A17564BB2002103CC /* TestCompositeLayout.m in Sources */ = {isa = PBXBuildFile; fileRef = 60C76C6710136D0A0073C381 /* TestCompositeLayout.m */; };
+		6043D46B17564BB2002103CC /* TestController.m in Sources */ = {isa = PBXBuildFile; fileRef = 609F5B5916CA9E8800683BD9 /* TestController.m */; };
+		6043D46C17564BB2002103CC /* TestFormLayout.m in Sources */ = {isa = PBXBuildFile; fileRef = 605F354A17172DF600E9355A /* TestFormLayout.m */; };
+		6043D46D17564BB2002103CC /* TestItemCopy.m in Sources */ = {isa = PBXBuildFile; fileRef = 6067EB591046B4E600C39086 /* TestItemCopy.m */; };
+		6043D46E17564BB2002103CC /* TestItemGeometry.m in Sources */ = {isa = PBXBuildFile; fileRef = 6022404D1003DF14007D5D07 /* TestItemGeometry.m */; };
+		6043D46F17564BB2002103CC /* TestItemProvider.m in Sources */ = {isa = PBXBuildFile; fileRef = 609F5B6716CD412900683BD9 /* TestItemProvider.m */; };
+		6043D47017564BB2002103CC /* TestItemValue.m in Sources */ = {isa = PBXBuildFile; fileRef = 6043D1AE174E26B5002103CC /* TestItemValue.m */; };
+		6043D47117564BB2002103CC /* TestLayout.m in Sources */ = {isa = PBXBuildFile; fileRef = 609F5B5A16CA9E8800683BD9 /* TestLayout.m */; };
+		6043D47217564BB2002103CC /* TestLayoutItem.m in Sources */ = {isa = PBXBuildFile; fileRef = 609F5B5B16CA9E8800683BD9 /* TestLayoutItem.m */; };
+		6043D47317564BB2002103CC /* TestLayoutItemBuilder.m in Sources */ = {isa = PBXBuildFile; fileRef = 609F5B5C16CA9E8800683BD9 /* TestLayoutItemBuilder.m */; };
+		6043D47417564BB2002103CC /* TestPersistency.m in Sources */ = {isa = PBXBuildFile; fileRef = 60FB0BF913C509A700C2AB94 /* TestPersistency.m */; };
+		6043D47517564BB2002103CC /* TestPickboard.m in Sources */ = {isa = PBXBuildFile; fileRef = 609F5B5D16CA9E8800683BD9 /* TestPickboard.m */; };
+		6043D47617564BB2002103CC /* TestResponder.m in Sources */ = {isa = PBXBuildFile; fileRef = 602EA7A11712CFAC00D499A9 /* TestResponder.m */; };
+		6043D47717564BB2002103CC /* TestStyle.m in Sources */ = {isa = PBXBuildFile; fileRef = 60E7BD20107E7B3F00E7C0F2 /* TestStyle.m */; };
+		6043D47817564BB2002103CC /* TestSupervisorView.m in Sources */ = {isa = PBXBuildFile; fileRef = 609F5B5E16CA9E8800683BD9 /* TestSupervisorView.m */; };
+		6043D47917564BB2002103CC /* TestTool.m in Sources */ = {isa = PBXBuildFile; fileRef = 609F5B5F16CA9E8800683BD9 /* TestTool.m */; };
+		6043D47A17564BB2002103CC /* TestView.m in Sources */ = {isa = PBXBuildFile; fileRef = 60A7927D171B803600348EC7 /* TestView.m */; };
+		6043D47B17564BB2002103CC /* TestWidgetLayout.m in Sources */ = {isa = PBXBuildFile; fileRef = 602635E511AD413B007586E3 /* TestWidgetLayout.m */; };
+		6043D47C17564BB2002103CC /* TestWindowLayout.m in Sources */ = {isa = PBXBuildFile; fileRef = 6037769216BE7BA900B7EEB5 /* TestWindowLayout.m */; };
+		6043D47D17564BB2002103CC /* TestWindowItem.m in Sources */ = {isa = PBXBuildFile; fileRef = 609C01E2170C34F300D01AAB /* TestWindowItem.m */; };
+		6043D4C51756BFDD002103CC /* ETLayoutItem+AppKit.h in Headers */ = {isa = PBXBuildFile; fileRef = 6043D4C31756BFD8002103CC /* ETLayoutItem+AppKit.h */; };
+		6043D4C61756BFDD002103CC /* ETLayoutItem+AppKit.m in Sources */ = {isa = PBXBuildFile; fileRef = 6043D4C41756BFD9002103CC /* ETLayoutItem+AppKit.m */; };
 		604A32C20F9BEE680090932A /* ETPickDropCoordinator.h in Headers */ = {isa = PBXBuildFile; fileRef = 604A32C10F9BEE680090932A /* ETPickDropCoordinator.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		604A32C50F9BEE780090932A /* ETPickDropCoordinator.m in Sources */ = {isa = PBXBuildFile; fileRef = 604A32C40F9BEE780090932A /* ETPickDropCoordinator.m */; };
 		604A32C60F9BEE780090932A /* ETPickDropCoordinator.m in Sources */ = {isa = PBXBuildFile; fileRef = 604A32C40F9BEE780090932A /* ETPickDropCoordinator.m */; };
@@ -863,6 +866,8 @@
 		6043D1B0174E27D3002103CC /* TestCommon.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = TestCommon.m; path = Tests/TestCommon.m; sourceTree = "<group>"; };
 		6043D3F0175424B1002103CC /* ETUIStateRestoration.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ETUIStateRestoration.h; path = Base/ETUIStateRestoration.h; sourceTree = "<group>"; };
 		6043D3F1175424B1002103CC /* ETUIStateRestoration.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ETUIStateRestoration.m; path = Base/ETUIStateRestoration.m; sourceTree = "<group>"; };
+		6043D4C31756BFD8002103CC /* ETLayoutItem+AppKit.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "ETLayoutItem+AppKit.h"; path = "WidgetBackends/AppKit/ETLayoutItem+AppKit.h"; sourceTree = "<group>"; };
+		6043D4C41756BFD9002103CC /* ETLayoutItem+AppKit.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = "ETLayoutItem+AppKit.m"; path = "WidgetBackends/AppKit/ETLayoutItem+AppKit.m"; sourceTree = "<group>"; };
 		604A32C10F9BEE680090932A /* ETPickDropCoordinator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ETPickDropCoordinator.h; path = Headers/ETPickDropCoordinator.h; sourceTree = "<group>"; };
 		604A32C40F9BEE780090932A /* ETPickDropCoordinator.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ETPickDropCoordinator.m; path = Source/ETPickDropCoordinator.m; sourceTree = "<group>"; };
 		604B5C1B0F4B472E001C25E8 /* ETEventProcessor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ETEventProcessor.h; path = Headers/ETEventProcessor.h; sourceTree = "<group>"; };
@@ -1549,6 +1554,8 @@
 			children = (
 				6063FD5B1744CD9300E4350E /* ETNumberPicker.h */,
 				6063FD5C1744CD9300E4350E /* ETNumberPicker.m */,
+				6043D4C31756BFD8002103CC /* ETLayoutItem+AppKit.h */,
+				6043D4C41756BFD9002103CC /* ETLayoutItem+AppKit.m */,
 			);
 			name = AppKit;
 			sourceTree = "<group>";
@@ -2128,6 +2135,7 @@
 				6043D08B174BE66C002103CC /* ETObjectValueFormatter.h in Headers */,
 				6043D0DC174CEA6E002103CC /* ETWidget.h in Headers */,
 				6043D3F2175424B1002103CC /* ETUIStateRestoration.h in Headers */,
+				6043D4C51756BFDD002103CC /* ETLayoutItem+AppKit.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2879,34 +2887,35 @@
 				6077D2161729ECCF009CE93C /* ETTitleBarView.m in Sources */,
 				60D25606172ECA59004062CF /* ETUIBuilderItemFactory.m in Sources */,
 				607DF9A81732821600C8CB30 /* ETPositionalLayout.m in Sources */,
-				602A750E17390EAC004A87D4 /* TestAutoresizing.m in Sources */,
-				602A750F17390EC8004A87D4 /* TestCell.m in Sources */,
-				602A751017390EED004A87D4 /* TestCompositeLayout.m in Sources */,
-				602A751117390F01004A87D4 /* TestController.m in Sources */,
-				602A751717390F26004A87D4 /* TestLayoutItem.m in Sources */,
-				602A751817390F26004A87D4 /* TestLayoutItemBuilder.m in Sources */,
-				602A751917390F26004A87D4 /* TestPersistency.m in Sources */,
-				602A751A17390F26004A87D4 /* TestPickboard.m in Sources */,
-				602A751B17390F26004A87D4 /* TestResponder.m in Sources */,
-				602A751C17390F6C004A87D4 /* TestFormLayout.m in Sources */,
-				602A751D17390F6C004A87D4 /* TestItemCopy.m in Sources */,
-				602A751E17390F6C004A87D4 /* TestItemGeometry.m in Sources */,
-				602A751F17390F6C004A87D4 /* TestItemProvider.m in Sources */,
-				602A752017390F6C004A87D4 /* TestLayout.m in Sources */,
-				602A752117390F6C004A87D4 /* TestStyle.m in Sources */,
-				602A752217390F6C004A87D4 /* TestSupervisorView.m in Sources */,
-				602A752317390F6C004A87D4 /* TestTool.m in Sources */,
-				602A752417390F6C004A87D4 /* TestView.m in Sources */,
-				602A752517390F6C004A87D4 /* TestWidgetLayout.m in Sources */,
-				602A752617390F6C004A87D4 /* TestWindowLayout.m in Sources */,
-				602A752717390F6C004A87D4 /* TestWindowItem.m in Sources */,
 				60C4F5891742406A00AA10F8 /* ETUIBuilderController.m in Sources */,
 				6063FD5F1744CD9B00E4350E /* ETNumberPicker.m in Sources */,
 				6043D08D174C2C35002103CC /* ETObjectValueFormatter.m in Sources */,
 				6043D08E174C2C37002103CC /* ETItemValueTransformer.m in Sources */,
 				6043D0DE174CEA73002103CC /* ETWidget.m in Sources */,
-				6043D1AF174E26B6002103CC /* TestItemValue.m in Sources */,
 				6043D1B1174E27D3002103CC /* TestCommon.m in Sources */,
+				6043D3F41755751C002103CC /* ETUIStateRestoration.m in Sources */,
+				6043D46817564BB2002103CC /* TestAutoresizing.m in Sources */,
+				6043D46917564BB2002103CC /* TestCell.m in Sources */,
+				6043D46A17564BB2002103CC /* TestCompositeLayout.m in Sources */,
+				6043D46B17564BB2002103CC /* TestController.m in Sources */,
+				6043D46C17564BB2002103CC /* TestFormLayout.m in Sources */,
+				6043D46D17564BB2002103CC /* TestItemCopy.m in Sources */,
+				6043D46E17564BB2002103CC /* TestItemGeometry.m in Sources */,
+				6043D46F17564BB2002103CC /* TestItemProvider.m in Sources */,
+				6043D47017564BB2002103CC /* TestItemValue.m in Sources */,
+				6043D47117564BB2002103CC /* TestLayout.m in Sources */,
+				6043D47217564BB2002103CC /* TestLayoutItem.m in Sources */,
+				6043D47317564BB2002103CC /* TestLayoutItemBuilder.m in Sources */,
+				6043D47417564BB2002103CC /* TestPersistency.m in Sources */,
+				6043D47517564BB2002103CC /* TestPickboard.m in Sources */,
+				6043D47617564BB2002103CC /* TestResponder.m in Sources */,
+				6043D47717564BB2002103CC /* TestStyle.m in Sources */,
+				6043D47817564BB2002103CC /* TestSupervisorView.m in Sources */,
+				6043D47917564BB2002103CC /* TestTool.m in Sources */,
+				6043D47A17564BB2002103CC /* TestView.m in Sources */,
+				6043D47B17564BB2002103CC /* TestWidgetLayout.m in Sources */,
+				6043D47C17564BB2002103CC /* TestWindowLayout.m in Sources */,
+				6043D47D17564BB2002103CC /* TestWindowItem.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -3086,7 +3095,8 @@
 				6043D08A174BE66C002103CC /* ETItemValueTransformer.m in Sources */,
 				6043D08C174BE66C002103CC /* ETObjectValueFormatter.m in Sources */,
 				6043D0DD174CEA6E002103CC /* ETWidget.m in Sources */,
-				6043D3F3175424B1002103CC /* ETUIStateRestoration.m in Sources */,
+				6043D3F51755751F002103CC /* ETUIStateRestoration.m in Sources */,
+				6043D4C61756BFDD002103CC /* ETLayoutItem+AppKit.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

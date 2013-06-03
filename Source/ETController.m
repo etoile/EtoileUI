@@ -18,6 +18,7 @@
 #import "ETLayoutItem.h"
 #import "ETPickDropActionHandler.h" /* For ETUndeterminedIndex */
 #import "ETResponder.h"
+#import "ETTool.h" /* For -editedItem */
 #import "NSObject+EtoileUI.h"
 #import "ETCompatibility.h"
 
@@ -64,7 +65,8 @@ You can also use it -init to create a controller. See -[ETNibOwner init]. */
 	[self setSortDescriptors: nil];
 	_allowedPickTypes = [[NSArray alloc] init];
 	_allowedDropTypes = [[NSMutableDictionary alloc] init];
-	_editorItems = [[NSMutableSet alloc] init];
+	_editedItems = [[NSMutableArray alloc] init];
+	_editableProperties = [[NSMutableArray alloc] init];
 	_automaticallyRearrangesObjects = YES;
 	_clearsFilterPredicateOnInsertion = YES;
 	_selectsInsertedObjects = YES;
@@ -103,7 +105,8 @@ You can also use it -init to create a controller. See -[ETNibOwner init]. */
 	DESTROY(_filterPredicate);
 	DESTROY(_allowedPickTypes);
 	DESTROY(_allowedDropTypes);
-	DESTROY(_editorItems);
+	DESTROY(_editedItems);
+	DESTROY(_editableProperties);
 	
 	[super dealloc];
 }
@@ -442,7 +445,8 @@ The persistent object context is retained in the copy. */
 	newController->_filterPredicate = [_filterPredicate copyWithZone: aZone];
 	newController->_allowedPickTypes = [_allowedPickTypes copyWithZone: aZone];
 	newController->_allowedDropTypes = [_allowedDropTypes mutableCopyWithZone: aZone];
-	newController->_editorItems = [[NSMutableSet allocWithZone: aZone] init];
+	newController->_editedItems = [[NSMutableArray allocWithZone: aZone] init];
+	newController->_editableProperties = [[NSMutableArray allocWithZone: aZone] init];
 	newController->_automaticallyRearrangesObjects = _automaticallyRearrangesObjects;
 	newController->_hasNewSortDescriptors = (NO == [_sortDescriptors isEmpty]);
 	newController->_hasNewFilterPredicate = (nil != _filterPredicate);
@@ -1091,55 +1095,59 @@ too slow given that the method tends to be invoked repeatedly.
 	[_allowedDropTypes setObject: UTIs forKey: targetUTI];
 }
 
-/* Editing (NSEditor and NSEditorRegistration Protocols) */
+/* Editing */
 
-/** Returns YES when one or several editors are registered, otherwise NO. */
+/** Returns YES when one or several edited items are registered, otherwise NO.
+
+See -allEditedItems. */
 - (BOOL) isEditing
 {
-	return ([_editorItems isEmpty] == NO);
+	return ([_editedItems isEmpty] == NO);
 }
 
-/** Tries to commit all the pending changes existing the current editors that 
-were previously registered with -objectDidBeginEditing:.
+/** Tries to commit all the pending changes existing for the current edited 
+items that were previously registered with 
+-subjectDidBeginEditingForItem:property:.
 
 When all pending changes have been committed and all editors have been 
 unregistered returns YES, otherwise returns NO. */
 - (BOOL) commitEditing
 {
-	FOREACH(_editorItems, item, ETLayoutItem *)
+	FOREACH(_editedItems, item, ETLayoutItem *)
 	{
 		if ([item commitEditing] == NO)
 		{
 			return NO;
 		}
-		[_editorItems removeObject: item];
+		[_editedItems removeObject: item];
 	}
 	return YES;
 }
 
-/** Discards all the pending changes existing the current editors that 
-were previously registered with -objectDidBeginEditing:.
+/** Discards all the pending changes existing the current edited items that 
+were previously registered with -subjectDidBeginEditingForItem:property:.
 
-All the editors get unregistered. */
+All the edited items get unregistered. */
 - (void) discardEditing
 {
-	[[_editorItems map] discardEditing];
-	[_editorItems removeAllObjects];	
+	[[_editedItems mappedCollection] discardEditing];
+	[_editedItems removeAllObjects];
 }
 
 /** Notifies the controller the given item has begun to be edited.
  
-For text editing, -objectDidBeginEditing: is called only if the user types 
-something. If the focus changes before the user has typed anything, 
--objectDidEndEditing: is sent (and no -objectDidBeginEditing: is ever sent).
+For text editing, -subjectDidBeginEditingForItem:property is called only if the 
+user types something. If the focus changes before the user has typed anything, 
+-subjectDidEndEditingForItem:property: is sent (and no 
+-subjectDidBeginEditingForItem:property: is ever sent).
 
 You should never need to invoke this method.<br />
-See instead -[ETLayoutItem objectDidBeginEditing:]. */
+See instead -[ETLayoutItem subjectDidBeginEditingForProperty:fieldEditorItem:]. */
 - (void) subjectDidBeginEditingForItem: (ETLayoutItem *)anItem
                               property: (NSString *)aKey
 {
 	ETLog(@" ---> Begin editing for %@ - %@ ", [anItem shortDescription], aKey);
-	[_editorItems addObject: anItem];
+	[_editedItems addObject: anItem];
 }
 
 - (void) subjectDidChangeValueForItem: (ETLayoutItem *)anItem
@@ -1152,12 +1160,82 @@ See instead -[ETLayoutItem objectDidBeginEditing:]. */
 has ended.
 
 You should never need to invoke this method.<br />
-See instead -[ETLayoutItem objectDidEndEditing:]. */
+See instead -[ETLayoutItem subjectDidEndEditingForProperty:]. */
 - (void) subjectDidEndEditingForItem: (ETLayoutItem *)anItem
                             property: (NSString *)aKey
 {
 	ETLog(@" <--- End editing for %@ - %@ ", [anItem shortDescription], aKey);
-	[_editorItems removeObject: anItem];
+	[_editedItems removeObject: anItem];
+}
+
+/** Returns the current edited layout item.
+
+If the edited item doesn't belong to this controller, returns nil. This happens 
+if the focus is in a first responder sharing area that is managed by another 
+controller (either a controller bound to a descendant item or a controller in 
+located elsewhere in the item tree).
+ 
+You can use this method in action or delegate methods implemented in your
+controller subclass.
+ 
+The edited item is not the same as the editor item. If the editing is not 
+managed entirely by the widget backend (in other words was initiated by using 
+-[ETActionHandler beginEditingItem:property:inRect:]), the editor item can be 
+retrieved through
+<code>[[self editedItem] firstResponderSharingArea] activeFieldEditorItem]</code>.*/
+- (id) editedItem
+{
+	ETLayoutItem *editedItem =
+		[[[[ETTool activeTool] keyItem] firstResponderSharingArea] editedItem];
+
+	return ([_editedItems containsObject: editedItem] ? editedItem : nil);
+}
+
+/** Returns the current edited property for -editedItem.
+ 
+If the edited item is nil, returns nil too.
+
+You can use this method in action or delegate methods implemented in your 
+controller subclass. */
+- (NSString *) editedProperty
+{
+	ETLayoutItem *editedItem =
+		[[[[ETTool activeTool] keyItem] firstResponderSharingArea] editedItem];
+
+	if ([_editedItems containsObject: editedItem] == NO)
+		return nil;
+
+	return [[self allEditedProperties] objectAtIndex: [_editedItems indexOfObject: editedItem]];
+}
+
+/** <override-never />
+Returns the edited items for all the first responder sharing areas managed
+by this controller.
+ 
+In most cases, returns a single item, because the controller is located inside a 
+first responder sharing area or is at the same level (which means there is a 
+single focused item that translates into a single edited item).
+First responder sharing areas cannot be nested. 
+ 
+A controller bound to -[ETLayoutItemGroup windowGroup] is going to manage 
+multiple edited items for all windows (aka first responder sharing areas) that 
+don't have a controller bound to them.
+ 
+Edited items are not the same editor items, see the explanations in -editedItem. */
+- (NSArray *) allEditedItems
+{
+	return AUTORELEASE([_editedItems copy]);
+}
+
+/** <override-never />
+Returns the edited properties for all the first responder sharing areas
+managed by this controller.
+ 
+The explanations concerning the number of returned objects for -allEditedItems 
+apply to -allEditedProperties in the same way. */
+- (NSArray *) allEditedProperties
+{
+	return AUTORELEASE([_editableProperties copy]);
 }
 
 - (ETLayoutItem *) candidateFocusedItem

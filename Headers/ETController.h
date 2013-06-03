@@ -84,7 +84,8 @@ objects as a collection distinct from the content. */
 	NSPredicate *_filterPredicate;
 	NSArray *_allowedPickTypes;
 	NSMutableDictionary *_allowedDropTypes; /* Allowed drop UTIs by drop target UTIs */
-	NSMutableSet *_editorItems;
+	NSMutableArray *_editedItems;
+	NSMutableArray *_editableProperties;
 	BOOL _automaticallyRearrangesObjects;
 	BOOL _hasNewSortDescriptors;
 	BOOL _hasNewFilterPredicate;
@@ -186,6 +187,10 @@ objects as a collection distinct from the content. */
                              property: (NSString *)aKey;
 - (void) subjectDidEndEditingForItem: (ETLayoutItem *)anItem
                             property: (NSString *)aKey;
+- (id) editedItem;
+- (NSString *) editedProperty;
+- (NSArray *) allEditedItems;
+- (NSArray *) allEditedProperties;
 
 /* Framework Private */
 
