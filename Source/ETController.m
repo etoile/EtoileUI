@@ -1120,6 +1120,7 @@ unregistered returns YES, otherwise returns NO. */
 			return NO;
 		}
 		[_editedItems removeObject: item];
+		[_editableProperties removeObjectAtIndex: [_editedItems indexOfObject: item]];
 	}
 	return YES;
 }
@@ -1132,6 +1133,7 @@ All the edited items get unregistered. */
 {
 	[[_editedItems mappedCollection] discardEditing];
 	[_editedItems removeAllObjects];
+	[_editableProperties removeAllObjects];
 }
 
 /** Notifies the controller the given item has begun to be edited.
@@ -1148,6 +1150,7 @@ See instead -[ETLayoutItem subjectDidBeginEditingForProperty:fieldEditorItem:]. 
 {
 	ETLog(@" ---> Begin editing for %@ - %@ ", [anItem shortDescription], aKey);
 	[_editedItems addObject: anItem];
+	[_editableProperties addObject: aKey];
 }
 
 - (void) subjectDidChangeValueForItem: (ETLayoutItem *)anItem
@@ -1166,6 +1169,7 @@ See instead -[ETLayoutItem subjectDidEndEditingForProperty:]. */
 {
 	ETLog(@" <--- End editing for %@ - %@ ", [anItem shortDescription], aKey);
 	[_editedItems removeObject: anItem];
+	[_editableProperties removeObject: aKey];
 }
 
 /** Returns the current edited layout item.

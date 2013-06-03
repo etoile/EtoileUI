@@ -10,12 +10,17 @@
 #import <AppKit/AppKit.h>
 #import <EtoileUI/ETController.h>
 
-@class ETUIBuilderItemFactory, ETAspectRepository;
+@class ETUIBuilderItemFactory, ETAspectRepository, ETItemValueTransformer;
+
+@protocol ETUIBuilderEditionCoordinator
+- (ETLayoutItem *) documentContentItem;
+- (ETAspectRepository *) aspectRepository;
+@end
 
 /** @group UI Builder
  
 @abstract Main controller for the UI builder inspector and object browser. */
-@interface ETUIBuilderController : ETController
+@interface ETUIBuilderController : ETController <ETUIBuilderEditionCoordinator>
 {
 	ETUIBuilderItemFactory *_itemFactory;
 	ETLayoutItem *_documentContentItem;
@@ -24,6 +29,7 @@
 	ETLayoutItem *_viewPopUpItem;
 	ETLayoutItem *_aspectPopUpItem;
 	ETAspectRepository *_aspectRepository;
+	ETItemValueTransformer *_relationshipValueTransformer;
 	BOOL _isChangingSelection;
 	NSString *_editedProperty;
 }
@@ -31,6 +37,10 @@
 /** @taskunit Inspector Pane Factory */
 
 @property (nonatomic, retain) ETUIBuilderItemFactory *itemFactory;
+
+/** @taskunit Querying */
+
+@property (nonatomic, readonly) BOOL isUIBuilderController;
 
 /** @taskunit Accessing UI */
 
@@ -63,5 +73,11 @@ For the editor, this item is enclosed inside the content area item. */
 - (IBAction) changePresentationViewFromPopUp: (id)sender;
 - (IBAction) changeAspectPaneFromPopUp: (id)sender;
 - (IBAction) changeAspectRepositoryFromPopUp: (id)sender;
+
+/** @taskunit Editing */
+
+/** Returns a value transformer that searches items inside -documentContentItem 
+and aspects inside -aspectRepository. */
+@property (nonatomic, readonly) ETItemValueTransformer *relationshipValueTransformer;
 
 @end

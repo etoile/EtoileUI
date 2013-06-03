@@ -14,6 +14,7 @@
 #import "ETUIBuilderController.h"
 #import "ETApplication.h"
 #import "ETAspectRepository.h"
+#import "ETItemValueTransformer.h"
 #import "ETLayoutItem.h"
 #import "ETLayoutItemGroup.h"
 #import "ETLayoutItem+CoreObject.h"
@@ -26,7 +27,17 @@
 
 @synthesize itemFactory = _itemFactory, documentContentItem = _documentContentItem, browserItem = _browserItem,
 	aspectInspectorItem = _aspectInspectorItem, viewPopUpItem = _viewPopUpItem,
-	aspectPopUpItem = _aspectPopUpItem, aspectRepository = _aspectRepository;
+	aspectPopUpItem = _aspectPopUpItem, aspectRepository = _aspectRepository, relationshipValueTransformer = _relationshipValueTransformer;
+
+- (id) initWithNibName: (NSString *)aNibName bundle: (NSBundle *)aBundle
+{
+	self = [super initWithNibName: aNibName bundle: aBundle];
+	if (nil == self)
+		return nil;
+
+	_relationshipValueTransformer = [self newRelationshipValueTransformer];
+	return self;
+}
 
 - (void) dealloc
 {
@@ -37,6 +48,7 @@
 	DESTROY(_viewPopUpItem);
 	DESTROY(_aspectPopUpItem);
 	DESTROY(_aspectRepository);
+	DESTROY(_relationshipValueTransformer);
 	[super dealloc];
 }
 
@@ -268,19 +280,56 @@
 	
 }
 
-// NOTE: This method isn't needed if we use a ETItemValueTransformer
-- (NSString *) formatter: (ETObjectValueFormatter *)aFormatter stringForObjectValue: (id)aValue
+- (ETItemValueTransformer *) newRelationshipValueTransformer
 {
-	if ([[self editedProperty] isEqual: @"target"])
+	ETItemValueTransformer *transformer = [ETItemValueTransformer new];
+
+	[transformer setTransformBlock: ^id (id value, NSString *key, ETLayoutItem *item)
 	{
-		return [aValue identifier];
-	}
-	else
+		if ([key isEqual: @"target"])
+		{
+			return [value identifier];
+		}
+		else
+		{
+			return [[value ifResponds] instantiatedAspectName];
+		}
+	}];
+
+	[transformer setReverseTransformBlock: ^id (id value, NSString *key, ETLayoutItem *item)
 	{
-		return [[aValue ifResponds] instantiatedAspectName];
-	}
+		if ([value isEqual: @""] || [value isEqual: @"nil"] || [value isEqual: @"Nil"])
+			return nil;
+
+		id controller = [[item controllerItem] controller];
+
+		if ([self conformsToProtocol: @protocol(ETUIBuilderEditionCoordinator)] == NO)
+			return nil;
+
+		if ([key isEqual: @"target"])
+		{
+
+			if ([[controller documentContentItem] isGroup] == NO)
+				return nil;
+			
+			if ([(ETLayoutItemGroup *)[controller documentContentItem] itemForIdentifier: value] == nil)
+				return nil;
+			
+			return value;
+		}
+		else
+		{
+			ETAspectCategory *category = [[controller aspectRepository] aspectCategoryNamed: key];
+			return ([category aspectForKey: value] != nil ? value : nil);
+		}
+	}];
+
+	return transformer;
 }
 
+/* There is no need to implement -formatter:stringForObjectValue: because
+   -[ETLayoutItem valueForProperty:] does the transformation through
+   -[ETLayoutItem valueTransformerForProperty:]. */
 - (NSString *) formatter: (ETObjectValueFormatter *)aFormatter stringValueForString: (id)aValue
 {
 	BOOL isEditing = ([self editedProperty] != nil);
@@ -289,23 +338,9 @@
 	if ([aValue isEqual: @""] || isEditing == NO)
 		return aValue;
 
-	if ([[self editedProperty] isEqual: @"target"])
-	{
-		if ([[self documentContentItem] isGroup] == NO)
-			return nil;
-
-		if ([(ETLayoutItemGroup *)[self documentContentItem] itemForIdentifier: aValue] == nil)
-			return nil;
-
-		return aValue;
-	}
-	else
-	{
-		ETAspectCategory *category =
-			[[self aspectRepository] aspectCategoryNamed: [self editedProperty]];
-
-		return([category aspectForKey: aValue] != nil ? aValue : nil);
-	}
+	return [[self relationshipValueTransformer] reverseTransformedValue: aValue
+	                                                             forKey: [self editedProperty]
+	                                                             ofItem: [self editedItem]];
 }
 
 - (ETPropertyDescription *)propertyDescriptionForName: (NSString *)aName
