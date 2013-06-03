@@ -365,7 +365,8 @@ and centers it. A strech is a scale that doesn't preserve the content proportion
 - (void) beginEditing;
 - (void) discardEditing;
 - (BOOL) commitEditing;
-- (void) subjectDidBeginEditingForProperty: (NSString *)aKey;
+- (void) subjectDidBeginEditingForProperty: (NSString *)aKey
+                           fieldEditorItem: (ETLayoutItem *)aFieldEditorItem;
 - (void) subjectDidEndEditingForProperty: (NSString *)aKey;
 
 - (id <ETInspector>) inspector;

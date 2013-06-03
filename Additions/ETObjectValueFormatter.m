@@ -31,6 +31,10 @@
 	return string;
 }
 
+/** This method is called on each key press, if the string represents a valid value 
+value, it returns YES to indicate the user can stop the editing, otherwise it 
+returns NO to indicate the user must continue the editing (hitting the return key 
+doesn't abort the editing). */
 - (BOOL) getObjectValue: (id *)anObject forString: (NSString *)aString errorDescription: (NSString **)error
 {
 	NSString *string = [aString copy];

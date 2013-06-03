@@ -15,17 +15,18 @@
 
 @interface ETLayoutItem (UIBuilder)
 
-- (void)setUIBuilderName: (NSString *)aName;
-- (NSString *)UIBuilderName;
+- (NSString *) UIBuilderAction;
+- (void) setUIBuilderAction: (NSString *)aString;
 
-- (void)setUIBuilderAction: (NSString *)anAction;
-- (NSString *)UIBuilderAction;
-- (void)setUIBuilderTarget: (NSString *)aTargetId;
-- (NSString *)UIBuilderTarget;
 
 - (void)setUIBuilderModel: (NSString *)aModel;
 - (NSString *)UIBuilderModel;
 - (void)setUIBuilderController: (NSString *)aController;
 - (NSString *)UIBuilderController;
 
+@end
+
+@interface ETUIObject (UIBuilder)
+- (NSString *) instantiatedAspectName;
+- (void) setInstantiatedAspectName: (NSString *)aName;
 @end

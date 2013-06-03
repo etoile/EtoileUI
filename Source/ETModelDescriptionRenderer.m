@@ -404,7 +404,7 @@ See also -setRenderedPropertyNames:. */
 
 - (NSString *) labelForPropertyDescription: (ETPropertyDescription *)aPropertyDesc
 {
-	return [[[aPropertyDesc name] stringByCapitalizingFirstLetter] stringBySpacingCapitalizedWords];
+	return [aPropertyDesc displayName];
 }
 
 - (NSArray *) renderedPropertyDescriptionsForEntityDescription: (ETEntityDescription *)anEntityDesc

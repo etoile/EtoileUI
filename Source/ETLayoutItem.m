@@ -366,13 +366,15 @@ Default values will be copied but not individually (shallow copy). */
 
 	if ([viewCopy isWidget]) /* See -setView:autoresizingMask and keep in sync */
 	{
+		NSUInteger options = (NSKeyValueObservingOptionOld | NSKeyValueObservingOptionNew);
+
 		[[(id <ETWidget>)viewCopy cell] addObserver: item
 		                                 forKeyPath: @"objectValue"
-			                            options: NSKeyValueObservingOptionNew
+		                                    options: options
 		                                    context: NULL];
 		[[(id <ETWidget>)viewCopy cell] addObserver: item
 		                                 forKeyPath: @"state"
-			                            options: NSKeyValueObservingOptionNew
+		                                    options: options
 		                                    context: NULL];
 		[[viewCopy ifResponds] setDelegate: item];
 	}
@@ -803,7 +805,7 @@ The returned value can be nil or an empty string. */
 /** Sets the name associated with the layout item. */
 - (void) setName: (NSString *)name
 {
-	[self willChangeValueForProperty: kETNameProperty];	
+	[self willChangeValueForProperty: kETNameProperty];
 	[self setPrimitiveValue: name forKey: kETNameProperty];
 	[self didChangeValueForProperty: kETNameProperty];	
 }
@@ -1130,13 +1132,14 @@ The view is an NSView class or subclass instance. See -setView:. */
 
 	if (startObservingNewView)
 	{
+		NSUInteger options = (NSKeyValueObservingOptionOld | NSKeyValueObservingOptionNew);
 		[[(id <ETWidget>)newView cell] addObserver: self 
 		                                forKeyPath: @"objectValue"
-		                                   options: NSKeyValueObservingOptionNew | NSKeyValueObservingOptionOld
-	                                           context: NULL];
+		                                   options: options
+	                                       context: NULL];
 		[[(id <ETWidget>)newView cell] addObserver: self 
 		                                forKeyPath: @"state"
-		                                   options: NSKeyValueObservingOptionNew
+		                                   options: options
 		                                   context: NULL];
 		[[newView ifResponds] setDelegate: self];
 	}
@@ -1193,12 +1196,12 @@ You should use this proxy to control the widget settings rather than setting
 them directly on the view.
 
 If -view is nil, the widget proxy holds the settings for the item. You can use 
--widget to access these settings in an action handler or a covery style (for 
+-widget to access these settings in an action handler or a cover style (for 
 example, if you are implementing a new widget using custom ETStyle and 
 ETActionHandler objects without resorting to a widget from the backend). */
 - (id <ETWidget>) widget
 {
-	return ([[self view] isWidget] ? [self view] : self);
+	return self;
 }
 
 /* Key Value Coding */
@@ -3185,7 +3188,6 @@ be sent by the UI element in the EtoileUI responder chain. */
 		[self doesNotRecognizeSelector: selector];
 	}
 }
-
 /** Sets the target to which actions should be sent.
 
 The target is not retained. */
@@ -3194,8 +3196,15 @@ The target is not retained. */
 	/* For target persistency, we mark targetId as updated (see ETLayoutItem+CoreObject) */
 	[self willChangeValueForProperty: @"targetId"];
 	[self willChangeValueForProperty: kETTargetProperty];
+	
 	[self setPrimitiveValue: [NSValue valueWithNonretainedObject: aTarget] forKey: kETTargetProperty];
+
+	if ([[self view] isWidget])
+	{
+		[[self view] setTarget: aTarget];
+	}
 	[[self layout] syncLayoutViewWithItem: self];
+
 	[self didChangeValueForProperty: kETTargetProperty];
 	[self didChangeValueForProperty: @"targetId"];
 }
@@ -3203,6 +3212,11 @@ The target is not retained. */
 /** Returns the target to which actions should be sent. */
 - (id) target
 {
+	id target = ([[self view] isWidget] ? [[self view] target] : nil);
+	
+	if (target != nil)
+		return target;
+
 	return [[self primitiveValueForKey: kETTargetProperty] nonretainedObjectValue];
 }
 
@@ -3214,10 +3228,19 @@ distinct. */
 - (void) setAction: (SEL)aSelector
 {
 	[self willChangeValueForProperty: kETActionProperty];
+	[self willChangeValueForProperty: @"UIBuilderAction"];
+
 	/* NULL and nil are the same, so a NULL selector removes any existing entry */
 	[self setPrimitiveValue: NSStringFromSelector(aSelector) forKey: kETActionProperty];
+
+	if ([[self view] isWidget])
+	{
+		[(id <ETWidget>)[self view] setAction: aSelector];
+	}
 	[[self layout] syncLayoutViewWithItem: self];
+
 	[self didChangeValueForProperty: kETActionProperty];
+	[self didChangeValueForProperty: @"UIBuilderAction"];
 }
 
 /** Returns the action that can be sent by the action handler associated with 
@@ -3226,6 +3249,11 @@ the receiver.
 See also -setAction:. */
 - (SEL) action
 {
+	SEL sel = ([[self view] isWidget] ? [(id <ETWidget>)[self view] action] : NULL);
+
+	if (sel != nil)
+		return sel;
+
 	NSString *selString = [self primitiveValueForKey: kETActionProperty];
 
 	if (selString == nil)
@@ -3291,7 +3319,10 @@ editing termination by the controller.<br />
 
 See also -objectDidEndEditing:. */
 - (void) subjectDidBeginEditingForProperty: (NSString *)aKey
+                           fieldEditorItem: (ETLayoutItem *)aFieldEditorItem
 {
+	[[self firstResponderSharingArea] setActiveFieldEditorItem: aFieldEditorItem
+													editedItem: self];
 	// NOTE: We implement NSEditorRegistration to allow the view which are 
 	// bound to an item with -bind:toObject:XXX to notify the controller transparently.
 	[[[self controllerItem] controller] subjectDidBeginEditingForItem: self property: aKey];
@@ -3307,8 +3338,10 @@ You must invoke it in an action handler method when you have previously call
 
 See also -objectDidBeginEditing:. */
 - (void) subjectDidEndEditingForProperty: (NSString *)aKey
-{ 	
+{
+	[[self firstResponderSharingArea] removeActiveFieldEditorItem];
 	[[[self controllerItem] controller] subjectDidEndEditingForItem: self property: aKey];
+	
 }
 
 /** Returns self.

@@ -51,7 +51,8 @@ that contains this empty string as the new value. */
 - (BOOL) ignoresChangeForNewValue: (id)newValue oldValue: (id)oldValue
 {
 	return ((oldValue == nil && [newValue isEqual: @""])
-		|| ([oldValue isEqual: @""] && newValue == nil));
+		|| ([oldValue isEqual: @""] && newValue == nil)
+		|| ([oldValue isEqual: newValue]));
 }
 
 - (void) observeValueForKeyPath: (NSString *)keyPath ofObject: (id)object 

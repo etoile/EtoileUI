@@ -111,25 +111,9 @@
 	[_variableStorage setObject: anId forKey: @"targetId"];
 }
 
-- (NSString *) serializedViewTargetId
+- (void) restoreTargetFromId: (NSString *)targetId
 {
-	return [self targetIdForTarget: [[[self view] ifResponds] target]];
-}
-
-- (void) setSerializedViewTargetId: (NSString *)anId
-{
-	if (anId == nil)
-		return;
-
-	/* The target might not be deserialized at this point, hence we look up the 
-	   target in -awakeFromFetch once the entire object graph has been deserialized */
-	[_variableStorage setObject: anId forKey: @"viewTargetId"];
-}
-
-- (void) restoreTargetFromId: (NSString *)targetId on: (id)sender
-{
-	/* sender must repond to -setTarget:, see ETWidget protocol */
-	if ([targetId isString] == NO || [sender isWidget] == NO)
+	if ([targetId isString] == NO)
 		return;
 
 	BOOL isViewTarget = [targetId hasPrefix: @"_"];
@@ -139,14 +123,14 @@
 		ETUUID *uuid = [ETUUID UUIDWithString: [targetId substringFromIndex: 1]];
 		ETLayoutItem *targetItem = (ETLayoutItem *)[[self persistentRoot] objectWithUUID: uuid];
 
-		[sender setTarget: [targetItem view]];
+		[self setTarget: [targetItem view]];
 	}
 	else
 	{
 		ETUUID *uuid = [ETUUID UUIDWithString: targetId];
 		ETLayoutItem *targetItem = (ETLayoutItem *)[[self persistentRoot] objectWithUUID: uuid];
 
-		[sender setTarget: targetItem];
+		[self setTarget: targetItem];
 	}
 }
 
@@ -191,16 +175,10 @@ since -serializedValueForProperty: doesn't use the direct ivar access. */
 	}
 	[_variableStorage removeObjectForKey: @"serializedView"];
 
-	/* Restore target and action on both the receiver item and its view */
+	/* Restore target and action on the receiver item or its view */
 
-	NSString *targetId = [_variableStorage objectForKey: @"targetId"];
-	NSString *viewTargetId = [_variableStorage objectForKey: @"viewTargetId"];
-
-	[self restoreTargetFromId: targetId on: self];
-	[self restoreTargetFromId: viewTargetId on: [self view]];
-
+	[self restoreTargetFromId: [_variableStorage objectForKey: @"targetId"]];
 	[_variableStorage removeObjectForKey: @"targetId"];
-	[_variableStorage removeObjectForKey: @"viewTargetId"];
 }
 
 - (void)didReload

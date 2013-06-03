@@ -37,7 +37,6 @@
 	ETPropertyDescription *valueKey = [ETPropertyDescription descriptionWithName: @"valueKey" type: (id)@"NSString"];
 	ETPropertyDescription *value = [ETPropertyDescription descriptionWithName: @"value" type: (id)@"NSObject"];
 	ETPropertyDescription *view = [ETPropertyDescription descriptionWithName: @"view" type: (id)@"NSView"];
-	ETPropertyDescription *viewTargetId = [ETPropertyDescription descriptionWithName: @"viewTargetId" type: (id)@"NSString"];
 	ETPropertyDescription *styleGroup = [ETPropertyDescription descriptionWithName: @"styleGroup" type: (id)@"ETStyleGroup"];
 	ETPropertyDescription *coverStyle = [ETPropertyDescription descriptionWithName: @"coverStyle" type: (id)@"ETStyle"];
 	ETPropertyDescription *actionHandler = [ETPropertyDescription descriptionWithName: @"actionHandler" type: (id)@"ETActionHandler"];
@@ -99,9 +98,8 @@
 
 	/* Transient UI Builder Properties */
 
-	ETPropertyDescription *UIBuilderName = [ETPropertyDescription descriptionWithName: @"UIBuilderName" type: (id)@"NSString"];
-	ETPropertyDescription *UIBuilderTarget = [ETPropertyDescription descriptionWithName: @"UIBuilderTarget" type: (id)@"NSObject"];
 	ETPropertyDescription *UIBuilderAction = [ETPropertyDescription descriptionWithName: @"UIBuilderAction" type: (id)@"SEL"];
+	[UIBuilderAction setDisplayName: @"Action"];
 
 	/* Transient ivars: 	
 	   _isSyncingSupervisorViewGeometry, _scrollViewShown, _wasKVOStopped
@@ -109,16 +107,16 @@
 	   Hmm, _scrollViewShow ought to be persisted. */
 
 	NSArray *persistentProperties = A(parentItem, identifier, name, image, icon, 
-		repObject, valueKey, value, view, viewTargetId, styleGroup, coverStyle,
+		repObject, valueKey, value, view, styleGroup, coverStyle,
 		actionHandler, action, targetId, contentBounds, position, anchorPoint, 
 		persistentFrame, autoresizing, contentAspect, boundingBox, defaultFrame,
 		flipped, selected, selectable, visible);
 	NSArray *transientProperties = A(baseItem, rootItem, indexPath, 
 		isBaseItem, subject, style, frame, x, y, width, height, target, 
-		acceptsActions, inspector, subtype, UIBuilderName, UIBuilderTarget, UIBuilderAction);
+		acceptsActions, inspector, subtype, UIBuilderAction);
 
-	[entity setUIBuilderPropertyNames: (id)[[A(identifier, UIBuilderName,
-		image, icon, valueKey, UIBuilderTarget, UIBuilderAction,
+	[entity setUIBuilderPropertyNames: (id)[[A(identifier, name, 
+		image, icon, valueKey, target, UIBuilderAction, 
 		frame, position, anchorPoint, autoresizing, contentAspect,
 		flipped, selected, selectable, visible) mappedCollection] name]];
 

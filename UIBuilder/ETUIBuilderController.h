@@ -25,6 +25,7 @@
 	ETLayoutItem *_aspectPopUpItem;
 	ETAspectRepository *_aspectRepository;
 	BOOL _isChangingSelection;
+	NSString *_editedProperty;
 }
 
 /** @taskunit Inspector Pane Factory */

@@ -7,6 +7,7 @@
  */
 
 #import <EtoileFoundation/ETCollection+HOM.h>
+#import <EtoileFoundation/ETPropertyViewpoint.h>
 #import <EtoileFoundation/NSObject+HOM.h>
 #import <EtoileFoundation/Macros.h>
 #import <CoreObject/COEditingContext.h>
@@ -16,6 +17,7 @@
 #import "ETLayoutItem.h"
 #import "ETLayoutItemGroup.h"
 #import "ETLayoutItem+CoreObject.h"
+#import "ETLayoutItem+UIBuilder.h"
 #import "ETObjectValueFormatter.h"
 #import "ETUIBuilderItemFactory.h"
 #import "ETUIStateRestoration.h"
@@ -93,6 +95,8 @@
 		return;
 
 	ETLayoutItem *persistentUIItem = [anItem persistentUIItem];
+
+	ETLog(@" === Turned %@ into a persistent UI === ", [persistentUIItem shortDescription]);
 
 	[(id)[self persistentObjectContext]
 		insertNewPersistentRootWithRootObject: persistentUIItem];
@@ -264,28 +268,79 @@
 	
 }
 
-- (NSString *) formatter: (ETObjectValueFormatter *)aFormatter stringValueForString: (id)aValue
+// NOTE: This method isn't needed if we use a ETItemValueTransformer
+- (NSString *) formatter: (ETObjectValueFormatter *)aFormatter stringForObjectValue: (id)aValue
 {
-	/*BOOL isAspectFromRepository = ([aValue respondsToSelector: @selector(instantiatedAspectName)]
-		&& [aValue instantiatedAspectName] != nil);
-
-	if (isAspectFromRepository)
+	if ([_editedProperty isEqual: @"target"])
 	{
-		return [aValue instantiatedAspectName];
-	}*/
-	return nil;
+		return [aValue identifier];
+	}
+	else
+	{
+		return [[aValue ifResponds] instantiatedAspectName];
+	}
 }
 
-- (id) formatter: (ETObjectValueFormatter *)aFormatter objectValueForString: (NSString *)aString
+// NOTE: To retrieve the edited item...
+//[[[[ETTool activeTool] keyItem] firstResponderSharingArea] editedItem];
+- (NSString *) formatter: (ETObjectValueFormatter *)aFormatter stringValueForString: (id)aValue
 {
-	/*BOOL isAspectFromRepository = ([aValue respondsToSelector: @selector(instantiatedAspectName)]
-		&& [aValue instantiatedAspectName] != nil);
+	BOOL isEditing = (_editedProperty != nil);
 
-	if (isAspectFromRepository)
+	/* The empty string is a valid value so we don't return nil (the value represents nil) */
+	if ([aValue isEqual: @""] || isEditing == NO)
+		return aValue;
+
+	if ([_editedProperty isEqual: @"target"])
 	{
-		return [aValue instantiatedAspectName];
-	}*/
-	return nil;
+		if ([[self editedItem] isGroup] == NO)
+			return nil;
+
+		if ([(ETLayoutItemGroup *)[self editedItem] itemForIdentifier: aValue] == nil)
+			return nil;
+
+		return aValue;
+	}
+	else
+	{
+		ETAspectCategory *category =
+			[[self aspectRepository] aspectCategoryNamed: _editedProperty];
+
+		return([category aspectForKey: aValue] != nil ? aValue : nil);
+	}
+}
+
+- (ETPropertyDescription *)propertyDescriptionForName: (NSString *)aName
+                                           editedItem: (ETLayoutItem *)anItem
+{
+	ETModelDescriptionRepository *repo = [[[self persistentObjectContext] editingContext] modelRepository];
+	ETEntityDescription *entityDesc = [repo entityDescriptionForClass: [anItem subject]];
+	
+	return [entityDesc propertyDescriptionForName: aName];
+}
+
+- (void) subjectDidBeginEditingForItem: (ETLayoutItem *)anItem property: (NSString *)aKey
+{
+	[super subjectDidBeginEditingForItem: anItem property: aKey];
+	ASSIGN(_editedProperty, aKey);
+}
+
+- (void) subjectDidEndEditingForItem: (ETLayoutItem *)anItem property: (NSString *)aKey
+{
+	// TODO: For the inspector, detect if the item argument is not a meta-item.
+	[super subjectDidEndEditingForItem: anItem property: aKey];
+
+	ETLayoutItem *editedObject = ([[anItem subject] conformsToProtocol: @protocol(ETPropertyViewpoint)] ? [[anItem subject] representedObject] : [anItem representedObject]);
+
+	if ([editedObject isPersistent] == NO)
+		return;
+
+	NSString *description = [NSString stringWithFormat: @"Edited property %@", aKey];
+
+	[[[self persistentObjectContext] editingContext] commitWithType: @"Property Change"
+	                                               shortDescription: description];
+
+	DESTROY(_editedProperty);
 }
 
 @end

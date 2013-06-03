@@ -578,12 +578,14 @@ An NSInvalidArgumentException is raised when any given item is nil. */
 - (void) setActiveFieldEditorItem: (ETLayoutItem *)editorItem
                        editedItem: (ETLayoutItem *)editedItem
 {
-	NILARG_EXCEPTION_TEST(editorItem);
 	NILARG_EXCEPTION_TEST(editedItem);
 	[self removeActiveFieldEditorItem];
 
 	ASSIGN(_activeFieldEditorItem, editorItem);
 	ASSIGN(_editedItem, editedItem);
+
+	if (editorItem == nil)
+		return;
 
 	/* We must be sure the field editor won't be repositionned by its parent 
 	   item layout, that's why we don't use -addItem: (or -insertItem:atIndex:) 
@@ -610,6 +612,8 @@ An NSInvalidArgumentException is raised when any given item is nil. */
 Does nothing when there is no active field editor item in the window. */
 - (void) removeActiveFieldEditorItem
 {
+	DESTROY(_editedItem);
+
 	if (nil == _activeFieldEditorItem)
 		return;
 
@@ -620,7 +624,6 @@ Does nothing when there is no active field editor item in the window. */
 
 	[[_activeFieldEditorItem supervisorView] removeFromSuperview];
 	DESTROY(_activeFieldEditorItem);
-	DESTROY(_editedItem);
 
 	/* Redraws recursively the item tree portion which was covered by the editor */
 	[contentItem setNeedsDisplayInRect: editorFrame];

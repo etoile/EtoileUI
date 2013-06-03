@@ -932,11 +932,12 @@ but involves a responder chain which is not exactly the same.
 The first key and main responder are retrieved on the active 
 tool (see ETTool) rather than on the key and main windows.
 
-The responder chain is extended to include ETPersistencyController right after
-the application delegate when CoreObject is available. */
+If the sender is a layout item, returns nil if the item view is a widget. We 
+prevent two actions to be sent at the same time, in case an action is set 
+on the item view.*/
 - (id) targetForAction: (SEL)aSelector to: (id)aTarget from: (id)sender
 {
-	if (aSelector == NULL)
+	if (aSelector == NULL || [[[sender ifResponds] view] isWidget])
 		return nil;
 	
 	if (aTarget == nil)

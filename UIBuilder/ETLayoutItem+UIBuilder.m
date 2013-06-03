@@ -24,100 +24,20 @@
 
 @implementation ETLayoutItem (UIBuilder)
 
+- (NSString *) UIBuilderAction
+{
+	return NSStringFromSelector([self action]);
+}
+
+- (void) setUIBuilderAction: (NSString *)aString
+{
+	[self setAction: NSSelectorFromString(aString)];
+}
+
 - (id)UIBuilderWidgetElement
 {
 	return ([self view] != nil ? [self view] : self);
 }
-
-- (void)setUIBuilderName: (NSString *)aName
-{
-	id widget = [self UIBuilderWidgetElement];
-
-	if ([widget respondsToSelector: @selector(setName:)])
-	{
-		[(ETLayoutItem *)widget setName: aName];
-		[self didChangeValueForProperty: kETNameProperty];
-	}
-	else if ([widget respondsToSelector: @selector(setTitle:)])
-	{
-		[widget setTitle: aName];
-		[self didChangeValueForProperty: kETViewProperty];
-	}
-	[self commit];
-}
-
-- (NSString *)UIBuilderName
-{
-	id widget = [self UIBuilderWidgetElement];
-
-	if ([widget respondsToSelector: @selector(name)])
-	{
-		return [(ETLayoutItem *)widget name];
-	}
-	else if ([widget respondsToSelector: @selector(title)])
-	{
-		return [widget title];
-	}
-	return nil;
-}
-
-- (void)setUIBuilderAction: (NSString *)anAction
-{
-	[[self UIBuilderWidgetElement] setAction: NSSelectorFromString(anAction)];
-	if ([[self UIBuilderWidgetElement] isView])
-	{
-		[self didChangeValueForProperty: kETViewProperty];
-	}
-	[self commit];
-}
-
-- (NSString *)UIBuilderAction
-{
-	return NSStringFromSelector([[[self UIBuilderWidgetElement] ifResponds] action]);
-}
-
-- (void)setUIBuilderTarget: (NSString *)aTargetId
-{
-	return;
-
-	id target = [[self controllerItem] itemForIdentifier: aTargetId];
-
-	if (target == nil)
-	{
-		NSLog(@"WARNING: Found no target for identifier %@ under controller item %@",
-			aTargetId, [self controllerItem]);
-		return;
-	}
-
-	[[self UIBuilderWidgetElement] setTarget: target];
-	if ([[self UIBuilderWidgetElement] isView])
-	{
-		[self didChangeValueForProperty: @"viewTargetId"];
-	}
-	[self commit];
-}
-
-- (NSString *)UIBuilderTarget
-{
-	return nil;
-
-	id target = [[[self UIBuilderWidgetElement] ifResponds] target];
-
-	if (target == nil)
-		return nil;
-
-	ETLayoutItem *targetItem = ([target isLayoutItem] ? target : [[target ifResponds] owningItem]);
-
-	NSLog(@"Found target %@", target);
-
-	if (targetItem == nil)
-	{
-		NSLog(@"WARNING: Found no identifier for target %@", targetItem);
-		return nil;
-	}
-	return [targetItem identifier];
-}
-
 
 - (void)setUIBuilderModel: (NSString *)aModel
 {
@@ -156,6 +76,20 @@
 - (NSString *)UIBuilderController
 {
 	return [[[self ifResponds] controller] className];
+}
+
+@end
+
+@implementation ETUIObject (UIBuilder)
+
+- (NSString *) instantiatedAspectName
+{
+	return nil;
+}
+
+- (void) setInstantiatedAspectName: (NSString *)aName
+{
+	
 }
 
 @end

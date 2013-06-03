@@ -74,33 +74,29 @@
 	// TODO: Figure out a nice way to restore the layout as is because
 	// displayed properties are lost on layout changes (happens only if the
 	// user wants to customize the inspector UI).
-	[layout setDisplayedProperties: A(kETIconProperty, @"UIBuilderName",
-		kETIdentifierProperty, @"UIBuilderAction", @"UIBuilderTarget",
-		@"UIBuilderModel", @"UIBuilderController")];
+	[layout setDisplayedProperties: A(kETIconProperty, kETIdentifierProperty,
+		@"UIBuilderAction", kETTargetProperty, @"UIBuilderModel", @"UIBuilderController")];
 
 	/* Actions are stored as strings in ETLayoutItem variable storage. So we
 	   don't need to use a custom property unlike for expressing targets as
 	   strings. To do so, we introduce a targetIdentifier property and
 	   -[ETLayoutItem target] checks whether this property is set just before
 	   returning the target. */
-	[layout setDisplayName: @"Name" forProperty: @"UIBuilderName"];
 	[layout setDisplayName: @"Identifier" forProperty: kETIdentifierProperty];
 	[layout setDisplayName: @"Action" forProperty: @"UIBuilderAction"];
-	[layout setDisplayName: @"Target" forProperty: @"UIBuilderTarget"];
+	[layout setDisplayName: @"Target" forProperty: kETTargetProperty];
 	[layout setDisplayName: @"Model" forProperty: @"UIBuilderModel"];
 	[layout setDisplayName: @"Controller" forProperty: @"UIBuilderController"];
 	
-	[[layout columnForProperty: @"UIBuilderName"] setWidth: 140];
 	[[layout columnForProperty: kETIdentifierProperty] setWidth: 120];
-	[[layout columnForProperty: @"UIBuilderTarget"] setWidth: 100];
+	[[layout columnForProperty: @"target"] setWidth: 100];
 	[[layout columnForProperty: @"UIBuilderAction"] setWidth: 100];
 	[[layout columnForProperty: @"UIBuilderModel"] setWidth: 100];
 	[[layout columnForProperty: @"UIBuilderController"] setWidth: 120];
 
-	[layout setEditable: YES forProperty: @"UIBuilderName"];
 	[layout setEditable: YES forProperty: kETIdentifierProperty];
 	[layout setEditable: YES forProperty: @"UIBuilderAction"];
-	[layout setEditable: YES forProperty: @"UIBuilderTarget"];
+	[layout setEditable: YES forProperty: kETTargetProperty];
 	[layout setEditable: YES forProperty: @"UIBuilderModel"];
 	[layout setEditable: YES forProperty: @"UIBuilderController"];
 
@@ -161,9 +157,9 @@
 	[aController setPersistentObjectContext: _editingContext];
 	[aController setEditedItem: anObject];
 
-	ETLog(@"\n%@\n", [editor descriptionWithOptions: [NSMutableDictionary dictionaryWithObjectsAndKeys:
+	/*ETLog(@"\n%@\n", [editor descriptionWithOptions: [NSMutableDictionary dictionaryWithObjectsAndKeys:
 		A(@"frame", @"autoresizingMask"), kETDescriptionOptionValuesForKeyPaths,
-		@"items", kETDescriptionOptionTraversalKey, nil]]);
+		@"items", kETDescriptionOptionTraversalKey, nil]]);*/
 
 	return editor;
 }
@@ -260,9 +256,9 @@
 
 	[aController setPersistentObjectContext: _editingContext];
 
-	ETLog(@"\n%@\n", [inspector descriptionWithOptions: [NSMutableDictionary dictionaryWithObjectsAndKeys: 
+	/*ETLog(@"\n%@\n", [inspector descriptionWithOptions: [NSMutableDictionary dictionaryWithObjectsAndKeys:
 		A(@"frame", @"autoresizingMask"), kETDescriptionOptionValuesForKeyPaths,
-		@"items", kETDescriptionOptionTraversalKey, nil]]);
+		@"items", kETDescriptionOptionTraversalKey, nil]]);*/
 
 	return inspector;
 }

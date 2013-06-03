@@ -622,7 +622,8 @@ See [(ETColumnFragment)] protocol to customize the returned column. */
 - (void) controlTextDidBeginEditing: (NSNotification *)aNotification
 {
 	[[self editedItem] setEditing: YES];
-	[[self editedItem] subjectDidBeginEditingForProperty: [self editedProperty]];
+	[[self editedItem] subjectDidBeginEditingForProperty: [self editedProperty]
+	                                     fieldEditorItem: nil];
 }
 
 - (void) controlTextDidEndEditing:(NSNotification *)aNotification

@@ -251,7 +251,8 @@ shared style returned by -currentBarElementStyle.  */
 
 	id view = [anItem view];
 	BOOL isButtonView = [view isMemberOfClass: [NSButton class]]; 
-	BOOL isUntitledButtonView = (isButtonView && ([view title] == nil || [[view title] isEqual: @""]));
+	BOOL isUntitledButtonView =
+		(isButtonView && ([view title] == nil || [[view title] isEqual: @""] || [view imagePosition] == NSImageOnly));
 	BOOL isImageOnlyButtonView = (isButtonView && isUntitledButtonView && [view image] != nil);
 	BOOL needsButtonBehavior = (isImageOnlyButtonView || nil != [anItem image]);
 
@@ -591,14 +592,16 @@ initializes this button with the given image, target and action. */
 {
 	NSButton *buttonView = AUTORELEASE([[NSButton alloc] initWithFrame: [self defaultImageButtonFrame]]);
 
-	[buttonView setImagePosition: NSImageOnly];
 	[buttonView setImage: anImage];
 	[buttonView setTarget: aTarget];
 	[buttonView setAction: aSelector];
 	[buttonView setTitle: nil];
-
+	/* -setTitle: resets the image position */
+	[buttonView setImagePosition: NSImageOnly];
+	
 	ETLayoutItem *item = [self itemWithView: buttonView];
 	[item setIcon: [NSImage imageNamed: @"ui-button.png"]];
+	ETAssert([buttonView imagePosition] == NSImageOnly);
 	return item;
 }
 
