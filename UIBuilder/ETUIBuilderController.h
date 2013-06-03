@@ -18,7 +18,7 @@
 @interface ETUIBuilderController : ETController
 {
 	ETUIBuilderItemFactory *_itemFactory;
-	ETLayoutItem *_editedItem;
+	ETLayoutItem *_documentContentItem;
 	ETLayoutItemGroup *_browserItem;
 	ETLayoutItemGroup *_aspectInspectorItem;
 	ETLayoutItem *_viewPopUpItem;
@@ -35,8 +35,14 @@
 /** @taskunit Accessing UI */
 
 @property (nonatomic, readonly) ETLayoutItemGroup *objectPickerItem;
+/** The editing area that presents and contains the document content item. */
 @property (nonatomic, readonly) ETLayoutItemGroup *contentAreaItem;
-@property (nonatomic, retain) ETLayoutItem *editedItem;
+/** The edited or inspected UI root item (the document model object).
+
+For the inspector, this item is the browser item represented object (aka the 
+inspected item).<br />
+For the editor, this item is enclosed inside the content area item. */
+@property (nonatomic, retain) ETLayoutItem *documentContentItem;
 @property (nonatomic, retain) ETLayoutItemGroup *browserItem;
 @property (nonatomic, retain) ETLayoutItemGroup *aspectInspectorItem;
 @property (nonatomic, retain) ETLayoutItem *viewPopUpItem;

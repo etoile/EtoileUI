@@ -24,14 +24,14 @@
 
 @implementation ETUIBuilderController
 
-@synthesize itemFactory = _itemFactory, editedItem = _editedItem, browserItem = _browserItem,
+@synthesize itemFactory = _itemFactory, documentContentItem = _documentContentItem, browserItem = _browserItem,
 	aspectInspectorItem = _aspectInspectorItem, viewPopUpItem = _viewPopUpItem,
 	aspectPopUpItem = _aspectPopUpItem, aspectRepository = _aspectRepository;
 
 - (void) dealloc
 {
 	DESTROY(_itemFactory);
-	DESTROY(_editedItem);
+	DESTROY(_documentContentItem);
 	DESTROY(_browserItem);
 	DESTROY(_aspectInspectorItem);
 	DESTROY(_viewPopUpItem);
@@ -91,7 +91,7 @@
 
 - (void) preparePersistentItemForEditedItem: (ETLayoutItem *)anItem
 {
-	if ([[self editedItem] isPersistent])
+	if ([[self documentContentItem] isPersistent])
 		return;
 
 	ETLayoutItem *persistentUIItem = [anItem persistentUIItem];
@@ -104,21 +104,21 @@
 	                                          forName: [persistentUIItem persistentUIName]];
 }
 
-- (void) setEditedItem: (ETLayoutItem *)anItem
+- (void) setDocumentContentItem: (ETLayoutItem *)anItem
 {
 	[self presentTransientEditingAlertIfNeededForItem: anItem];
 
-	if (_editedItem != nil)
+	if (_documentContentItem != nil)
 	{
-		[self stopObserveObject: _editedItem
+		[self stopObserveObject: _documentContentItem
 		    forNotificationName: ETItemGroupSelectionDidChangeNotification];		
 	}
-	ASSIGN(_editedItem, anItem);
+	ASSIGN(_documentContentItem, anItem);
 	[self preparePersistentItemForEditedItem: anItem];
 
 	if (anItem != nil)
 	{
-		[self startObserveObject: [self editedItem]
+		[self startObserveObject: [self documentContentItem]
 		     forNotificationName: ETItemGroupSelectionDidChangeNotification
 		                selector: @selector(editedItemSelectionDidChange:)];
 	}
@@ -145,7 +145,7 @@
 
 	NSArray *selectionIndexPaths = [[self browserItem] selectionIndexPaths];
 
-	[(ETLayoutItemGroup *)[[self editedItem] ifResponds] setSelectionIndexPaths: selectionIndexPaths];
+	[(ETLayoutItemGroup *)[[self documentContentItem] ifResponds] setSelectionIndexPaths: selectionIndexPaths];
 	[self didChangeSelectionToIndexPaths: selectionIndexPaths];
 	
 	_isChangingSelection = NO;
@@ -160,7 +160,7 @@
 
 	_isChangingSelection = YES;
 
-	NSArray *selectionIndexPaths = [[[self editedItem] ifResponds] selectionIndexPaths];
+	NSArray *selectionIndexPaths = [[[self documentContentItem] ifResponds] selectionIndexPaths];
 
 	if (selectionIndexPaths == nil)
 	{
@@ -293,10 +293,10 @@
 
 	if ([_editedProperty isEqual: @"target"])
 	{
-		if ([[self editedItem] isGroup] == NO)
+		if ([[self documentContentItem] isGroup] == NO)
 			return nil;
 
-		if ([(ETLayoutItemGroup *)[self editedItem] itemForIdentifier: aValue] == nil)
+		if ([(ETLayoutItemGroup *)[self documentContentItem] itemForIdentifier: aValue] == nil)
 			return nil;
 
 		return aValue;

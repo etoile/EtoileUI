@@ -155,7 +155,7 @@
 	[editor setController: aController];
 	
 	[aController setPersistentObjectContext: _editingContext];
-	[aController setEditedItem: anObject];
+	[aController setDocumentContentItem: anObject];
 
 	/*ETLog(@"\n%@\n", [editor descriptionWithOptions: [NSMutableDictionary dictionaryWithObjectsAndKeys:
 		A(@"frame", @"autoresizingMask"), kETDescriptionOptionValuesForKeyPaths,
