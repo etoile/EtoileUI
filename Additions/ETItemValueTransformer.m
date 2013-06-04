@@ -47,6 +47,13 @@
 	return entity;
 }
 
+- (id) init
+{
+	SUPERINIT
+	ASSIGN(_name, _(@"Untitled"));
+	return self;
+}
+
 - (void) dealloc
 {
 	DESTROY(_name);
@@ -55,6 +62,11 @@
 	DESTROY(_transformCode);
 	DESTROY(_reverseTransformCode);
 	[super dealloc];
+}
+
+- (NSString *) displayName
+{
+	return [self name];
 }
 
 - (id) transformedValue: (id)value

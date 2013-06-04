@@ -31,7 +31,10 @@ For use cases, see ETLayoutItem and -[ETLayoutItem valueTransformerForProperty:]
 	NSString *_reverseTransformCode;
 }
 
+/** @taskunit Name */
+
 @property (nonatomic, retain) NSString *name;
+@property (nonatomic, readonly) NSString *displayName;
 
 /** @taskunit Transformation Methods */
 
