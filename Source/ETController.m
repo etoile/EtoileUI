@@ -438,12 +438,12 @@ The persistent object context is retained in the copy. */
 	ETController *newController = [super copyWithZone: aZone];
 
 	newController->_observations = [[NSMutableSet allocWithZone: aZone] init];
-	newController->_templates = [_templates copyWithZone: aZone];
+	newController->_templates = [_templates mutableCopyWithZone: aZone];
 	ASSIGN(newController->_currentObjectType, _currentObjectType);
 	ASSIGN(newController->_persistentObjectContext, _persistentObjectContext);
-	newController->_sortDescriptors = [_sortDescriptors copyWithZone: aZone];
+	newController->_sortDescriptors = [_sortDescriptors mutableCopyWithZone: aZone];
 	newController->_filterPredicate = [_filterPredicate copyWithZone: aZone];
-	newController->_allowedPickTypes = [_allowedPickTypes copyWithZone: aZone];
+	newController->_allowedPickTypes = [_allowedPickTypes mutableCopyWithZone: aZone];
 	newController->_allowedDropTypes = [_allowedDropTypes mutableCopyWithZone: aZone];
 	newController->_editedItems = [[NSMutableArray allocWithZone: aZone] init];
 	newController->_editableProperties = [[NSMutableArray allocWithZone: aZone] init];
