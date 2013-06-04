@@ -34,6 +34,10 @@
 	ETPropertyDescription *image = [ETPropertyDescription descriptionWithName: @"image" type: (id)@"NSImage"];
 	ETPropertyDescription *icon = [ETPropertyDescription descriptionWithName: @"icon" type: (id)@"NSImage"];
 	ETPropertyDescription *repObject = [ETPropertyDescription descriptionWithName: @"representedObject" type: (id)@"NSObject"];
+	ETPropertyDescription *valueTransformers = [ETPropertyDescription descriptionWithName: @"valueTransformers" type: (id)@"ETItemValueTransformer"];
+	[valueTransformers setMultivalued: YES];
+	[valueTransformers setOrdered: NO];
+	[valueTransformers setShowsItemDetails: YES];
 	ETPropertyDescription *valueKey = [ETPropertyDescription descriptionWithName: @"valueKey" type: (id)@"NSString"];
 	ETPropertyDescription *value = [ETPropertyDescription descriptionWithName: @"value" type: (id)@"NSObject"];
 	ETPropertyDescription *view = [ETPropertyDescription descriptionWithName: @"view" type: (id)@"NSView"];
@@ -107,7 +111,7 @@
 	   Hmm, _scrollViewShow ought to be persisted. */
 
 	NSArray *persistentProperties = A(parentItem, identifier, name, image, icon, 
-		repObject, valueKey, value, view, styleGroup, coverStyle,
+		repObject, valueTransformers, valueKey, value, view, styleGroup, coverStyle,
 		actionHandler, action, targetId, contentBounds, position, anchorPoint, 
 		persistentFrame, autoresizing, contentAspect, boundingBox, defaultFrame,
 		flipped, selected, selectable, visible);
@@ -124,6 +128,19 @@
 	[entity setPropertyDescriptions: [persistentProperties arrayByAddingObjectsFromArray: transientProperties]];
 
 	return entity;
+}
+
+- (NSDictionary *) valueTransformers
+{
+	NSDictionary *transformers = [self primitiveValueForKey: @"valueTransformers"];
+	return (transformers != nil ? transformers : [NSDictionary dictionary]);
+}
+			
+- (void) setValueTransformers: (NSDictionary *)transformers
+{
+	[self willChangeValueForProperty: @"valueTransformers"];
+	[self setPrimitiveValue: transformers forKey: @"valueTransformers"];
+	[self didChangeValueForProperty: @"valueTransformers"];
 }
 
 @end
