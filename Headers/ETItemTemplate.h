@@ -88,6 +88,7 @@ model initialization. */
 extern NSString * const kETTemplateOptionNumberOfUntitledDocuments;
 extern NSString * const kETTemplateOptionPersistentObjectContext;
 extern NSString * const kETTemplateOptionModelDescriptionRepository;
+extern NSString * const kETTemplateOptionKeyValuePairKey;
 
 #ifdef COREOBJECT
 /** COObject category to implement ETDocumentCreation and integrate COObject 

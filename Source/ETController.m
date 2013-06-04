@@ -687,14 +687,27 @@ When calling methods that includes a <em>options</em> argument such as
 Extra options can be added to the returned dictionary. */
 - (NSDictionary *)defaultOptions
 {
+	NSMutableDictionary *options = [NSMutableDictionary dictionary];
 	ETModelDescriptionRepository *repo = nil;
 
 #ifdef COREOBJECT
 	repo = [[[self persistentObjectContext] editingContext] modelRepository];
 #endif
 
-	return D([self persistentObjectContext], kETTemplateOptionPersistentObjectContext, 
-			 repo, kETTemplateOptionModelDescriptionRepository);
+	if ([self persistentObjectContext] != nil)
+	{
+		[options setObject: [self persistentObjectContext]
+		            forKey: kETTemplateOptionPersistentObjectContext];
+	}
+	if (repo != nil)
+	{
+		[options setObject: repo forKey: kETTemplateOptionModelDescriptionRepository];
+	}
+	if ([[[self content] value] isKeyed])
+	{
+		[options setObject: [self insertionKey] forKey: kETTemplateOptionKeyValuePairKey];
+	}
+	return AUTORELEASE([options copy]);
 }
 
 /** Returns whether remove, add and insert actions are possible.
@@ -758,6 +771,24 @@ You shouldn't use this method but rather -canMutate. */
 
 	/* Same as [[self content] isMutableCollection] */
 	return YES;
+}
+
+/** <override-dummy />
+Returns the insertion key used for a keyed collection content.
+
+If the representedObject bound to the controller content returns YES to -isKeyed, 
+the insertion key is included in -defaultOptions, and passed to 
+-[ETItemTemplate newItemWithURL:options:]. The new item then usually uses a 
+ETKeyValuePair object as its represented object.
+
+By default, returns <em>Unknown</em>.
+
+Can be overriden to return a custom value but must not return nil.
+ 
+See kETTemplateOptionKeyValuePairKey. */
+- (NSString *) insertionKey
+{
+	return _(@"Unknown");
 }
 
 /** Returns the position in the content, at which -insert: and -insertGroup: 

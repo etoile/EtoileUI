@@ -152,6 +152,7 @@ objects as a collection distinct from the content. */
 - (NSInteger) insertionIndex;
 - (NSIndexPath *) insertionIndexPath;
 - (NSIndexPath *) additionIndexPath;
+- (NSString *) insertionKey;
 - (void) insertItem: (ETLayoutItem *)anItem atIndex: (NSUInteger)index;
 - (void) insertItem: (ETLayoutItem *)anItem atIndexPath: (NSIndexPath *)anIndexPath;
 - (BOOL) clearsFilterPredicateOnInsertion;

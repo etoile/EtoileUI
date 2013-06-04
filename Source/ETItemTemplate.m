@@ -204,6 +204,10 @@ given URL and options.
 If -objectClassWithOptions: doesn't return Nil, a represented object is 
 instantiated with -init or -initWithURL:options: if the object class conforms to 
 ETDocumentCreation protocol.
+ 
+If the options includes kETTemplateOptionKeyValuePairKey, the new 
+represented object is wrapped in a ETKeyValuePair object. The option value
+becomes the pair key.
 
 If the given URL is nil, the user action is a 'New' and not 'Open'.
 
@@ -226,7 +230,16 @@ See also -newItemWithRepresentedObject:options:. */
 		newInstance = [newInstance init];
 	}
 
-	return [self newItemWithRepresentedObject: AUTORELEASE(newInstance) URL: aURL options: options];
+	id representedObject = AUTORELEASE(newInstance);
+	NSString *pairKey = [options objectForKey: kETTemplateOptionKeyValuePairKey];
+
+	if (pairKey != nil)
+	{
+		ETAssert([pairKey isString]);
+		representedObject = [ETKeyValuePair pairWithKey: pairKey value: newInstance];
+	}
+
+	return [self newItemWithRepresentedObject: representedObject URL: aURL options: options];
 }
 
 - (ETLayoutItem *) newItemReadFromURL: (NSURL *)aURL options: (NSDictionary *)options
@@ -318,6 +331,7 @@ Can be overriden in a subclass to implement a web browser for example. */
 NSString * const kETTemplateOptionNumberOfUntitledDocuments = @"kETTemplateOptionNumberOfUntitledDocuments";
 NSString * const kETTemplateOptionPersistentObjectContext = @"kETTemplateOptionPersistentObjectContext";
 NSString * const kETTemplateOptionModelDescriptionRepository = @"kETTemplateOptionModelDescriptionRepository";
+NSString * const kETTemplateOptionKeyValuePairKey = @"kETTemplateOptionKeyValuePairKey";
 
 #ifdef COREOBJECT
 @implementation COObject (ETItemTemplate)
