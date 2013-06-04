@@ -24,9 +24,14 @@ For use cases, see ETLayoutItem and -[ETLayoutItem valueTransformerForProperty:]
 @interface ETItemValueTransformer : NSValueTransformer
 {
 	@private
+	NSString *_name;
 	ETItemValueTransformBlock _transformBlock;
 	ETItemValueTransformBlock _reverseTransformBlock;
+	NSString *_transformCode;
+	NSString *_reverseTransformCode;
 }
+
+@property (nonatomic, retain) NSString *name;
 
 /** @taskunit Transformation Methods */
 
@@ -74,5 +79,10 @@ item, and returns a new reversed value.
 This block provides a behavior equivalent to 
  -reverseTransformedValue:forKey:ofItem:, but doesn't require any subclassing. */
 @property (nonatomic, copy) ETItemValueTransformBlock reverseTransformBlock;
+
+/** @taskunit Runtime Code Editing */
+
+@property (nonatomic, retain) NSString *transformCode;
+@property (nonatomic, retain) NSString *reverseTransformCode;
 
 @end
