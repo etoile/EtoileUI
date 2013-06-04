@@ -10,6 +10,7 @@
 #import "ETColumnLayout.h"
 #import "ETFixedLayout.h"
 #import "ETLayout.h"
+#import "ETLayoutExecutor.h"
 #import "ETLayoutItemGroup.h"
 #import "ETLayoutItemFactory.h"
 #import "ETLayoutItem.h"
@@ -49,7 +50,8 @@
 	SUPERINIT
 	[self exchangeDefaultItemRectImplementations];
 	ETAssert(NSEqualRects(NSMakeRect(0, 0, 50, 50), [ETLayoutItem defaultItemRect]));
-	
+
+	[[ETLayoutExecutor sharedInstance] removeAllItems];
 	ASSIGN(itemFactory, [ETLayoutItemFactory factory]);
 	ASSIGN(itemGroup, [itemFactory itemGroupWithFrame: NSMakeRect(0, 0, 500, 400)]);
 	ETAssert([[itemGroup layout] isKindOfClass: [ETFixedLayout class]]);
@@ -336,6 +338,34 @@
 	UKRectsEqual(textFieldFrame, [textFieldItem frame]);
 	UKRectsEqual(textViewFrame, [textViewItem frame]);
 	UKRectsEqual(otherItemFrame, [otherItem frame]);
+}
+
+- (void) testItemCopy
+{
+	[itemGroup setLayout: [ETColumnLayout layout]];
+
+	ETLayoutItem *item = [itemFactory item];
+	NSRect itemFrame = [item frame];
+
+	[item setAutoresizingMask: ETAutoresizingFlexibleWidth];	
+	[itemGroup addItems: A(item)];
+	
+	[itemGroup setWidth: [itemGroup width] + 100];
+
+	ETLayoutItemGroup *newItemGroup = [itemGroup deepCopy];
+	ETLayoutItem *newItem = [newItemGroup firstItem];
+
+	UKTrue([newItemGroup needsLayoutUpdate]);
+	UKRectsEqual([item frame], [newItem frame]);
+
+	/* Applies autoresizing to both the original item and its copy */
+	[[ETLayoutExecutor sharedInstance] execute];
+
+	NSRect newItemFrame = itemFrame;
+	newItemFrame.size.width += 100;
+	
+	UKRectsEqual(newItemFrame, [item frame]);
+	UKRectsEqual(newItemFrame, [newItem frame]);
 }
 
 @end

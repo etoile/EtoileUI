@@ -387,6 +387,15 @@ Default values will be copied but not individually (shallow copy). */
 	[item setRepresentedObject: [aCopier objectReferenceInCopyForObject: [self representedObject]]];
 
 	[aCopier endCopy];
+	
+	if ([self needsLayoutUpdate])
+	{
+		/* For autoresizing among other things. 
+		  We cannot just call -updateLayoutRecursively:, it would mean sending 
+		  -copy to an item group would prevent items, added between the copy 
+		  message and the layout execution, to be autoresized. */
+		[item setNeedsLayoutUpdate];
+	}
 
 	return item;
 }

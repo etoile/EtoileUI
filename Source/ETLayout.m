@@ -282,6 +282,8 @@ tool copy. */
 	newLayout->_dropIndicator = RETAIN(_dropIndicator);
 	newLayout->_tool = [_tool copyWithZone: aZone];
 	newLayout->_layoutSize = _layoutSize;
+	/* Must be copied to ensure autoresizing receives a correct old size */
+	newLayout->_proposedLayoutSize = _proposedLayoutSize;
 	newLayout->_usesCustomLayoutSize = _usesCustomLayoutSize;
 	newLayout->_isContentSizeLayout  = _isContentSizeLayout;
 	newLayout->_previousScaleFactor = _previousScaleFactor;
@@ -304,6 +306,10 @@ You can call the superclass implementation or not. */
 {
 	NSParameterAssert(_layoutContext != nil);
 	[self setUp];
+	// TODO: Implement -setUpCopyWithZone:original: in subclasses or change
+	// -setUp to -setUp: (BOOL)resetLayoutSize.
+	_layoutSize = layoutOriginal->_layoutSize;
+	_proposedLayoutSize = layoutOriginal ->_layoutSize;
 }
 
 /** <override-never />
