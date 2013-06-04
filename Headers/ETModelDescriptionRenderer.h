@@ -27,7 +27,7 @@
 	NSMutableDictionary *_formattersByType;
 	ETLayout *_entityLayout;
 	NSRect _entityItemFrame;
-	NSArray *_renderedPropertyNames;
+	NSMutableDictionary *_renderedPropertyNames;
 	NSString *_groupingKeyPath;
 	BOOL _usesContentSizeLayout;
 }
@@ -57,8 +57,9 @@
 - (void) setEntityItemFrame: (NSRect)aRect;
 - (NSRect) entityItemFrame;
 
-- (void) setRenderedPropertyNames: (NSArray *)propertyNames;
-- (NSArray *) renderedPropertyNames;
+- (void) setRenderedPropertyNames: (NSArray *)propertyNames
+             forEntityDescription: (ETEntityDescription *)anEntityDesc;
+- (NSArray *) renderedPropertyNamesForEntityDescription: (ETEntityDescription *)anEntityDesc;
 - (void) setGroupingKeyPath: (NSString *)aKeyPath;
 - (NSString *) groupingKeyPath;
 

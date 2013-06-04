@@ -56,6 +56,7 @@
 	ASSIGN(_repository, [ETModelDescriptionRepository mainRepository]);
 	ASSIGN(_itemFactory, [ETLayoutItemFactory factory]);
 	ASSIGN(_entityLayout, [self defaultFormLayout]);
+	_renderedPropertyNames = [NSMutableDictionary new];
 
 	[self registerDefaultTemplateItems];
 	[self registerDefaultRoleTemplateIdentifiers];
@@ -119,9 +120,11 @@ time. For example:
 
 - (ETLayoutItemGroup *) collectionEditorTemplateItem
 {
+	ETPropertyCollectionController *controller =
+		AUTORELEASE([ETPropertyCollectionController new]);
 	ETLayoutItemGroup *editor = [_itemFactory collectionEditorWithSize: [self defaultItemSize]
-							                         representedObject: nil
-									                        controller: nil];
+							                         representedObject: [NSArray array]
+									                        controller: controller];
 	return editor;
 }
 
@@ -271,8 +274,10 @@ passed to -renderObject: and related methods.
  
 See also -renderedPropertyNames. */
 - (void) setRenderedPropertyNames: (NSArray *)propertyNames
+             forEntityDescription: (ETEntityDescription *)anEntityDesc
+
 {
-	ASSIGNCOPY(_renderedPropertyNames, propertyNames);
+	[_renderedPropertyNames setObject: propertyNames forKey: [anEntityDesc fullName]];
 }
 
 /** Returns the names of the property descriptions to render for an object 
@@ -286,9 +291,9 @@ of the object are rendered
 By default, returns nil. 
  
 See also -setRenderedPropertyNames:. */
-- (NSArray *) renderedPropertyNames
+- (NSArray *) renderedPropertyNamesForEntityDescription: (ETEntityDescription *)anEntityDesc
 {
-	return _renderedPropertyNames;
+	return [_renderedPropertyNames objectForKey: [anEntityDesc fullName]];
 }
 
 - (void) setGroupingKeyPath: (NSString *)aKeyPath
@@ -409,12 +414,14 @@ See also -setRenderedPropertyNames:. */
 
 - (NSArray *) renderedPropertyDescriptionsForEntityDescription: (ETEntityDescription *)anEntityDesc
 {
-	if ([self renderedPropertyNames] == nil)
+	NSArray *propertyNames = [self renderedPropertyNamesForEntityDescription: anEntityDesc];
+
+	if (propertyNames == nil)
 		return [anEntityDesc allPropertyDescriptions];
 
 	NSMutableArray *propertyDescs = [NSMutableArray array];
 	
-	for (NSString *property in [self renderedPropertyNames])
+	for (NSString *property in propertyNames)
 	{
 		[propertyDescs addObject: [anEntityDesc propertyDescriptionForName: property]];
 	}
@@ -502,7 +509,22 @@ See also -setRenderedPropertyNames:. */
 {
 	// TODO: Provide basic alternative as an option
 	//return [NSString stringWithFormat: @"To-many Relationship (%@)", [[aPropertyDesc type] name]];
-	return [anObject valueForProperty: [aPropertyDesc name]];
+	// TODO: Detect dominant collection
+	//return [anObject valueForProperty: [aPropertyDesc name]];
+	id relationshipValue =
+		[ETCollectionViewpoint viewpointWithName: [aPropertyDesc name]representedObject: anObject];
+	return relationshipValue;
+}
+
+- (ETModelDescriptionRenderer *) rendererForItemDetailsInSize: (NSSize)aSize
+{
+	// TODO: Use -copy if possible
+	ETModelDescriptionRenderer *renderer = AUTORELEASE([ETModelDescriptionRenderer new]);
+
+	renderer->_formattersByType = [_formattersByType mutableCopy];
+	[renderer setEntityItemFrame: NSMakeRect(0, 0, aSize.width, aSize.height)];
+
+	return renderer;
 }
 
 - (ETLayoutItemGroup *) editorForRelationshipDescription: (ETPropertyDescription *)aPropertyDesc
@@ -510,12 +532,17 @@ See also -setRenderedPropertyNames:. */
 {
 	ETLayoutItemGroup *editor = [[self templateItemForIdentifier: @"collectionEditor"] deepCopy];
 	ETLayoutItemGroup *browser = (id)[editor itemForIdentifier: @"browser"];
-	id collection = [self representedObjectForToManyRelationshipDescription: aPropertyDesc
-	                                                               ofObject: anObject];
-
-	[browser setRepresentedObject: collection];
+	ETAssert(browser != nil);
+	// FIXME: Use the code below
+	//id collection = [self representedObjectForToManyRelationshipDescription: aPropertyDesc
+	//                                                               ofObject: anObject];
+	//[browser setRepresentedObject: collection];
+	[browser setRepresentedObject: anObject];
+	[browser setValueKey: [aPropertyDesc name]];
+	[browser reload];
 
 	ETPropertyCollectionController *controller = (id)[browser controller];
+	ETAssert(controller != nil);
 	Class relationshipClass = [_repository classForEntityDescription: [aPropertyDesc type]];
 	ETAssert(relationshipClass != Nil);
 	ETItemTemplate *template = [ETItemTemplate templateWithItem: [_itemFactory item]
@@ -526,6 +553,21 @@ See also -setRenderedPropertyNames:. */
 	[[controller content] setDoubleAction: @selector(edit:)];
 	[[controller content] setTarget: controller];
 
+	if ([aPropertyDesc showsItemDetails])
+	{
+		NSSize detailedItemSize = NSMakeSize([editor width], 200);
+		ETModelDescriptionRenderer *renderer =
+			[self rendererForItemDetailsInSize: detailedItemSize];
+		id value = [anObject valueForProperty: [aPropertyDesc name]];
+		ETLayoutItemGroup *detailedItem =
+		[renderer renderObject: value displayName: nil propertyDescriptions: [[aPropertyDesc type] allPropertyDescriptions]];
+		
+		[detailedItem setIdentifier: @"details"];
+
+		[editor addItem: detailedItem];
+		//[editor addItem: [_itemFactory horizontalSlider]];
+		[editor setHeight: [editor height] + [detailedItem height]];
+	}
 	return editor;
 }
 
@@ -534,34 +576,54 @@ See also -setRenderedPropertyNames:. */
 {
 	id value = [anObject valueForProperty: [aPropertyDesc name]];
 	ETLayoutItemGroup *item = nil;
+	ETLayoutItem *templateItem = [self templateItemForPropertyDescription: aPropertyDesc];
+	BOOL isToManyRelationship = [aPropertyDesc isMultivalued];
 
-	if ([self rendersRelationshipAsAttributeForPropertyDescription: aPropertyDesc])
+	if (isToManyRelationship)
 	{
-		ETLayoutItem *templateItem = [self templateItemForPropertyDescription: aPropertyDesc];
-		BOOL isToManyRelationship = [aPropertyDesc isMultivalued];
-
-		if (isToManyRelationship)
+		if ([self rendersRelationshipAsAttributeForPropertyDescription: aPropertyDesc])
 		{
-
 			item = [self editorForRelationshipDescription: aPropertyDesc ofObject: anObject];
 		}
 		else
+		{
+			/* If we have a value that is a subtype of the property description 
+			   type, -renderObject: returns an editor that allows to edit all 
+			   properties unlike -renderObject:entityDescription:. */
+			if (value != nil)
+			{
+				item = [self renderObject: value];
+			}
+			else
+			{
+				item = [self renderObject: value entityDescription: [aPropertyDesc type]];
+			}
+		}
+	}
+	else
+	{
+		if ([self rendersRelationshipAsAttributeForPropertyDescription: aPropertyDesc])
 		{
 			id repObject = [self representedObjectForToOneRelationshipDescription: aPropertyDesc ofObject: anObject];
 			item = AUTORELEASE([templateItem copy]);
 			[item setRepresentedObject: repObject];
 		}
-		return item;
+		else
+		{
+			/* If we have a value that is a subtype of the property description 
+			   type, -renderObject: returns an editor that allows to edit all 
+			   properties unlike -renderObject:entityDescription:. */
+			if (value != nil)
+			{
+				item = [self renderObject: value];
+			}
+			else
+			{
+				item = [self renderObject: value entityDescription: [aPropertyDesc type]];
+			}
+		}
 	}
-	
-	if (value != nil)
-	{
-		item = [self renderObject: value];
-	}
-	else
-	{
-		item = [self renderObject: value entityDescription: [aPropertyDesc type]];
-	}
+
 	return item;
 }
 

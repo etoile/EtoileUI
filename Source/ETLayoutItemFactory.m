@@ -414,6 +414,9 @@ The returned collection editor has a flexible width and a fixed height. */
                                representedObject: (id <ETCollection>)aCollection
                                       controller: (id)aController
 {
+	NILARG_EXCEPTION_TEST(aCollection);
+	NILARG_EXCEPTION_TEST(aController);
+
 	ETLayoutItemGroup *editor = [self itemGroupWithFrame: ETMakeRect(NSZeroPoint, aSize)];
 
 #ifdef GNUSTEP
@@ -441,6 +444,7 @@ The returned collection editor has a flexible width and a fixed height. */
 	[buttonBar setAutoresizingMask: ETAutoresizingFlexibleWidth];
 	[buttonBar addItems: A(plusButton, minusButton)];
 
+	[browser setIdentifier: @"browser"];
 	[browser setAutoresizingMask: ETAutoresizingFlexibleWidth];
 	[browser setLayout: [ETTableLayout layout]];
 	[browser setHasVerticalScroller: YES];

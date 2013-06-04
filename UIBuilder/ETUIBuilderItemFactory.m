@@ -384,8 +384,9 @@
                                       controller: (id)aController
 {
 	ETLayoutItemGroup *itemGroup = [self itemGroupWithSize: aSize];
-	ETLayoutItemGroup *header = [self basicInspectorHeaderWithObject: anObject controller: aController];
-	ETLayoutItemGroup *pane = [self basicInspectorContentWithObject: anObject controller: aController aspectName: @"layout"];
+	NSString *aspectKeyPath = @"self";
+	ETLayoutItemGroup *header = [self basicInspectorHeaderWithObject: anObject controller: aController aspectName: aspectKeyPath];
+	ETLayoutItemGroup *pane = [self basicInspectorContentWithObject: anObject controller: aController aspectName: aspectKeyPath];
 
 	[itemGroup setIdentifier: @"basicInspector"];
 	[itemGroup setAutoresizingMask: ETAutoresizingFlexibleWidth | ETAutoresizingFlexibleHeight];
@@ -399,12 +400,12 @@
 }
 
 - (ETLayoutItem *) aspectPopUpWithController: (id)aController
+                          selectedAspectName: (NSString *)anAspectName
 {
-	NSArray *choices = A(_(@"Overview"), _(@"Layout"), _(@"Represented Object"),
-		_(@"Controller"), _(@"Cover Style"), _(@"Style Group"),
-		_(@"Action Handler"), _(@"Tool"));
-	NSArray *representedProperties = A(@"self", @"layout", @"representedObject",
-		@"controller", @"coverStyle", @"styleGroup", @"actionHandler", @"layout.attachedTool");
+	NSArray *choices = A(_(@"Overview"), _(@"Widget"), _(@"Value Transformers"), 
+		_(@"Represented Object"), _(@"Controller"),  _(@"Layout"),
+		_(@"Cover Style"), _(@"Style Group"), _(@"Action Handler"), _(@"Tool"));
+	NSArray *representedProperties = A(@"self", @"widget", @"valueTransformers", @"representedObject", @"controller", @"layout", @"coverStyle", @"styleGroup", @"actionHandler", @"layout.attachedTool");
 	ETLayoutItem *popUpItem = [self popUpMenuWithItemTitles: choices
 		                                 representedObjects: representedProperties
 		                                             target: aController 
@@ -412,7 +413,7 @@
 
 	[popUpItem setName: _(@"Aspect")];
 	[aController setAspectPopUpItem: popUpItem];
-	[[popUpItem view] selectItemAtIndex: 1];
+	[[popUpItem view] selectItemAtIndex: [representedProperties indexOfObject: anAspectName]];
 	return popUpItem;
 }
 
@@ -423,12 +424,15 @@
 	return typeField;
 }
 
-- (ETLayoutItemGroup *) basicInspectorHeaderWithObject: (id)anObject controller: (id)aController
+- (ETLayoutItemGroup *) basicInspectorHeaderWithObject: (id)anObject
+                                            controller: (id)aController
+                                            aspectName: (NSString *)anAspectName
 {
 	NSSize size = NSMakeSize([self defaultBasicInspectorSize].width, 80);
 	ETLayoutItemGroup *itemGroup = [self itemGroupWithSize: size];
 	ETFormLayout *formLayout = [ETFormLayout layout];
-	ETLayoutItem *aspectPopUpItem = [self aspectPopUpWithController: aController];
+	ETLayoutItem *aspectPopUpItem = [self aspectPopUpWithController: aController
+	                                             selectedAspectName: anAspectName];
 	ETLayoutItem *typeFieldItem = [self typeField];
 	
 	// TODO: Perhaps use aspectInspector
@@ -449,8 +453,25 @@
 	{
 		return [NSArray array];
 	}
+	if ([anAspectName isEqual: @"valueTransformers"])
+	{
+		return A(@"valueTransformers");
+	}
+	else if ([anAspectName isEqual: @"widget"])
+	{
+		return A(@"title", @"objectValue",  @"minValue", @"maxValue", @"formatter");
+	}
 	return [[[anObject valueForKeyPath: anAspectName] entityDescription] allUIBuilderPropertyNames];
 }
+
+- (id) editedObjectForAspectedName: (NSString *)anAspectName ofObject: (id)anObject
+{
+	if ([anAspectName isEqual: @"valueTransformers"])
+		return anObject;
+
+	return [anObject valueForKeyPath: anAspectName];
+}
+
 
 - (ETLayoutItemGroup *) basicInspectorContentWithObject: (id)anObject
                                              controller: (id)aController
@@ -465,9 +486,21 @@
 	[(ETObjectValueFormatter *)[_renderer formatterForType: rootEntity] setDelegate: aController];
 
 	[_renderer setRenderedPropertyNames: [self presentedPropertyNamesForAspectName: anAspectName
-	                                                                     ofObject: anObject]];
+	                                                                     ofObject: anObject]
+	               forEntityDescription: [anObject entityDescription]];
 
-	ETLayoutItemGroup *itemGroup = [_renderer renderObject: [anObject valueForKeyPath: anAspectName]];
+	if ([anAspectName isEqual: @"valueTransformers"])
+	{
+		[[_renderer templateItemForIdentifier: @"collectionEditor"]
+		 	setWidth: [self defaultBasicInspectorSize].width];
+		[[_renderer templateItemForIdentifier: @"collectionEditor"] updateLayoutRecursively: YES];
+		[_renderer setEntityLayout: [ETColumnLayout layout]];
+		[(ETColumnLayout *)[_renderer entityLayout] setHorizontalAligment: ETLayoutHorizontalAlignmentRight];
+	}
+	//[renderer setEntityItemFrame: NSMakeRect(0, 0, [self defaultBasicInspectorSize].width, 600)];
+
+	id editedObject = [self editedObjectForAspectedName: anAspectName ofObject: anObject];
+	ETLayoutItemGroup *itemGroup = [_renderer renderObject: editedObject];
 	NSSize size = [self defaultBasicInspectorSize];
 	
 	size.height -= 80;
