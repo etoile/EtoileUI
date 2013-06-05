@@ -3274,7 +3274,7 @@ See also -setAction:. */
 {
 	SEL sel = ([[self view] isWidget] ? [(id <ETWidget>)[self view] action] : NULL);
 
-	if (sel != nil)
+	if (sel != NULL)
 		return sel;
 
 	NSString *selString = [self primitiveValueForKey: kETActionProperty];

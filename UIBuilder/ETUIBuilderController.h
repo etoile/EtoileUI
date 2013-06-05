@@ -31,16 +31,12 @@
 	ETAspectRepository *_aspectRepository;
 	ETItemValueTransformer *_relationshipValueTransformer;
 	BOOL _isChangingSelection;
-	NSString *_editedProperty;
+	BOOL _isUIBuilderController;
 }
 
 /** @taskunit Inspector Pane Factory */
 
 @property (nonatomic, retain) ETUIBuilderItemFactory *itemFactory;
-
-/** @taskunit Querying */
-
-@property (nonatomic, readonly) BOOL isUIBuilderController;
 
 /** @taskunit Accessing UI */
 

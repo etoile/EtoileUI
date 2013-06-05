@@ -27,7 +27,8 @@
 
 @synthesize itemFactory = _itemFactory, documentContentItem = _documentContentItem, browserItem = _browserItem,
 	aspectInspectorItem = _aspectInspectorItem, viewPopUpItem = _viewPopUpItem,
-	aspectPopUpItem = _aspectPopUpItem, aspectRepository = _aspectRepository, relationshipValueTransformer = _relationshipValueTransformer;
+	aspectPopUpItem = _aspectPopUpItem, aspectRepository = _aspectRepository, 
+	relationshipValueTransformer = _relationshipValueTransformer;
 
 - (id) initWithNibName: (NSString *)aNibName bundle: (NSBundle *)aBundle
 {

@@ -33,7 +33,7 @@ NSString * const ETSourceDidUpdateNotification = @"ETSourceDidUpdateNotification
 @interface ETLayoutItem (SubclassVisibility)
 - (id) copyWithCopier: (ETCopier *)aCopier isDeep: (BOOL)isDeepCopy;
 - (ETView *) setUpSupervisorViewWithFrame: (NSRect)aFrame;
-
+- (Class)viewpointClassForProperty: (NSString *)aProperty ofObject: (id)anObject;
 @end
 
 @interface ETLayoutItemGroup (Private)
