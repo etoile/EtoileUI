@@ -230,16 +230,20 @@ See also -newItemWithRepresentedObject:options:. */
 		newInstance = [newInstance init];
 	}
 
-	id representedObject = AUTORELEASE(newInstance);
+	id value = AUTORELEASE(newInstance);
 	NSString *pairKey = [options objectForKey: kETTemplateOptionKeyValuePairKey];
 
 	if (pairKey != nil)
 	{
+		id parentCollection = [options objectForKey: kETTemplateOptionParentRepresentedObject];
+		ETAssert([parentCollection isCollection]);
 		ETAssert([pairKey isString]);
-		representedObject = [ETKeyValuePair pairWithKey: pairKey value: newInstance];
+
+		value = [ETKeyValuePair pairWithKey: pairKey value: newInstance];
+		[value setRepresentedObject: parentCollection];
 	}
 
-	return [self newItemWithRepresentedObject: representedObject URL: aURL options: options];
+	return [self newItemWithRepresentedObject: value URL: aURL options: options];
 }
 
 - (ETLayoutItem *) newItemReadFromURL: (NSURL *)aURL options: (NSDictionary *)options
@@ -332,6 +336,7 @@ NSString * const kETTemplateOptionNumberOfUntitledDocuments = @"kETTemplateOptio
 NSString * const kETTemplateOptionPersistentObjectContext = @"kETTemplateOptionPersistentObjectContext";
 NSString * const kETTemplateOptionModelDescriptionRepository = @"kETTemplateOptionModelDescriptionRepository";
 NSString * const kETTemplateOptionKeyValuePairKey = @"kETTemplateOptionKeyValuePairKey";
+NSString * const kETTemplateOptionParentRepresentedObject = @"kETTemplateOptionParentRepresentedObject";
 
 #ifdef COREOBJECT
 @implementation COObject (ETItemTemplate)

@@ -674,6 +674,27 @@ See also ETItemTemplate. */
 	return [[self templateForType: aUTI] newItemWithURL: aURL options: options];
 }
 
+- (NSString *) insertionKeyForCollection: (id <ETKeyedCollection>)aCollection
+{
+	NSString *key = [self insertionKey];
+	NSString *uniqueKey = key;
+	NSUInteger counter = 0;
+	BOOL isUsed = NO;
+
+	do
+	{
+		if (counter > 0)
+		{
+			uniqueKey = [NSString stringWithFormat: @"%@ %lu", key, counter];
+		}
+		// TODO: Remove the content call once -objectForKey: is included in ETKeyedCollection
+		isUsed = ([[aCollection content] objectForKey: uniqueKey] != nil);
+		counter++;
+	} while (isUsed);
+
+	return uniqueKey;
+}
+
 /** Returns the current options that controls the content mutation.
 
 A common option is kETTemplateOptionPersistentObjectContext (bound to 
@@ -693,6 +714,8 @@ Extra options can be added to the returned dictionary. */
 #ifdef COREOBJECT
 	repo = [[[self persistentObjectContext] editingContext] modelRepository];
 #endif
+	
+	id representedObject = [[self content] representedObject];
 
 	if ([self persistentObjectContext] != nil)
 	{
@@ -703,10 +726,16 @@ Extra options can be added to the returned dictionary. */
 	{
 		[options setObject: repo forKey: kETTemplateOptionModelDescriptionRepository];
 	}
-	if ([[[self content] value] isKeyed])
+	if ([representedObject isKeyed])
 	{
-		[options setObject: [self insertionKey] forKey: kETTemplateOptionKeyValuePairKey];
+		[options setObject: [self insertionKeyForCollection: representedObject]
+		            forKey: kETTemplateOptionKeyValuePairKey];
 	}
+	if (representedObject != nil)
+	{
+		[options setObject: representedObject forKey: kETTemplateOptionParentRepresentedObject];
+	}
+
 	return AUTORELEASE([options copy]);
 }
 

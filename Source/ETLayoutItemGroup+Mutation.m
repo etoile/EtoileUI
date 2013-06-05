@@ -197,15 +197,14 @@ To do so, -canReload checks -isMutating. */
                                         atIndex: (NSUInteger)index 
                                            hint: (id)aHint
 {
-	id parentValue = [self representedObject];
+	id parentCollection = [self representedObject];
 
-	if ([self isValidMutationForRepresentedObject: parentValue] == NO)
+	if ([self isValidMutationForRepresentedObject: parentCollection] == NO)
 		return;
 
 	id value = [item representedObject];
 
-	ETDebugLog(@"Insert %@ in %@ at index %d of represented object %@",
-		value, parentValue, index, repObject);
+	ETDebugLog(@"Insert %@ in %@ at %d of %@", value, parentCollection, index, self);
 
 	id insertedValue = value;
 	id hint = aHint;
@@ -216,7 +215,7 @@ To do so, -canReload checks -isMutating. */
 		hint = value;
 	}
 
-	[parentValue insertObject: insertedValue atIndex: index hint: hint];
+	[parentCollection insertObject: insertedValue atIndex: index hint: hint];
 }
 
 - (void) handleRemoveItem: (ETLayoutItem *)item
@@ -256,14 +255,14 @@ To do so, -canReload checks -isMutating. */
                                         atIndex: (NSUInteger)index 
                                            hint: (id)aHint
 {
-	id parentValue = [self representedObject];
+	id parentCollection = [self representedObject];
 
-	if ([self isValidMutationForRepresentedObject: parentValue] == NO)
+	if ([self isValidMutationForRepresentedObject: parentCollection] == NO)
 		return;
 
 	id value = [item representedObject];
 
-	ETDebugLog(@"Remove %@ in %@ of represented object %@", value, parentValue, repObject);
+	ETDebugLog(@"Remove %@ in %@ of %@", value, parentCollection, self);
 
 	id insertedValue = value;
 	id hint = aHint;
@@ -274,7 +273,7 @@ To do so, -canReload checks -isMutating. */
 		hint = value;
 	}
 
-	[parentValue removeObject: insertedValue atIndex: index hint: hint];
+	[parentCollection removeObject: insertedValue atIndex: index hint: hint];
 }
 
 /* Set Mutation Handlers */
@@ -390,18 +389,23 @@ is an item group. */
 - (NSArray *) itemsFromRepresentedObject
 {
 	NSMutableArray *items = nil;
-	id value = [self representedObject];
+	id representedObject = [self representedObject];
 	
-	if ([value isCollection])
+	if ([representedObject isCollection])
 	{
-		items = [NSMutableArray arrayWithCapacity: [value count]];
+		id collection = representedObject;
 
-		if ([value isKeyed])
+		if ([collection isKeyed])
 		{
-			value = [value arrayRepresentation];
+			// NOTE: This section must remains in sync with -[ETItemTemplate newItemWithURL:options:]
+			collection = [collection arrayRepresentation];
+			[[collection mappedCollection] setRepresentedObject: representedObject];
 		}
+		ETAssert([representedObject count] == [collection count]);
 
-		for (id object in [value objectEnumerator])
+		items = [NSMutableArray arrayWithCapacity: [collection count]];
+
+		for (id object in collection)
 		{
 			[items addObject: [self itemWithObject: object isValue: NO]];
 			// NOTE: Would it be a good idea to use...
