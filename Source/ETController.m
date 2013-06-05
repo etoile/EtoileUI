@@ -726,7 +726,7 @@ Extra options can be added to the returned dictionary. */
 	{
 		[options setObject: repo forKey: kETTemplateOptionModelDescriptionRepository];
 	}
-	if ([representedObject isKeyed])
+	if ([representedObject isCollection] && [(id <ETCollection>)representedObject isKeyed])
 	{
 		[options setObject: [self insertionKeyForCollection: representedObject]
 		            forKey: kETTemplateOptionKeyValuePairKey];
