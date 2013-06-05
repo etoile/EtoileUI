@@ -819,11 +819,22 @@ The returned value can be nil or an empty string. */
 	[self didChangeValueForProperty: kETNameProperty];	
 }
 
+- (BOOL) isViewpoint: (id)anObject
+{
+	return [anObject conformsToProtocol: @protocol(ETPropertyViewpoint)];
+}
+
 /** Sets a value key to describe which property of the represented object is 
 exposed through -value and -setValue:. */
 - (id) valueKey
 {
-	return [self primitiveValueForKey: kETValueKeyProperty];
+	BOOL usesViewpoint = [self isViewpoint: [self representedObject]];
+	return (usesViewpoint ? [[self representedObject] name] : nil);
+}
+
+- (Class) viewpointClassForProperty: (NSString *)aKey ofObject: (id)anObject
+{
+	return [ETMutableObjectViewpoint class];
 }
 
 /** Returns a value key to describe which property of the represented object is
@@ -831,13 +842,24 @@ exposed through -value and -setValue:. */
 - (void) setValueKey: (NSString *)aKey
 {
 	[self willChangeValueForProperty: kETValueKeyProperty];
-	[self setPrimitiveValue: aKey forKey: kETValueKeyProperty];
-	[self didChangeValueForProperty: kETValueKeyProperty];
-}
 
-- (BOOL) isViewpoint: (id)anObject
-{
-	return [anObject conformsToProtocol: @protocol(ETPropertyViewpoint)];
+	id representedObject = nil;
+	
+	if (aKey != nil)
+	{
+		Class viewpointClass = [self viewpointClassForProperty: aKey
+		                                              ofObject: [self representedObject]];
+		representedObject = [viewpointClass viewpointWithName: aKey
+		                                    representedObject: [self representedObject]];
+	}
+	else if ([self isViewpoint: [self representedObject]])
+	{
+		representedObject = [(id <ETPropertyViewpoint>)[self representedObject] representedObject];
+	}
+	
+	[self setRepresentedObject: representedObject];
+
+	[self didChangeValueForProperty: kETValueKeyProperty];
 }
 
 /** Returns a value object based on -valueKey.
@@ -859,10 +881,6 @@ See also -setValue:. */
 	NSString *valueKey = [self valueKey];
 
 	if (valueKey != nil)
-	{
-		return [self valueForProperty: valueKey];
-	}
-	else if ([self isViewpoint: [self representedObject]])
 	{
 		return [[self representedObject] value];
 	}
@@ -901,10 +919,6 @@ See also -value. */
 	if (valueKey != nil)
 	{
 		[self setValue: value forProperty: valueKey];
-	}
-	else if ([self isViewpoint: [self representedObject]])
-	{
-		[(id <ETPropertyViewpoint>)[self representedObject] setValue: value];
 	}
 	else
 	{

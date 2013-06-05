@@ -443,20 +443,19 @@ Symetric method to -handleAttachItem: */
 	[self handleDetachViewOfItem: item];
 }
 
-- (id) value
+- (BOOL) isCollectionViewpoint: (id)anObject
 {
-	ETCollectionViewpoint *viewpoint = [self primitiveValueForKey: @"viewpoint"];
-	return (viewpoint != nil ? viewpoint : [super value]);
+	return ([anObject isCollection]
+		&& [anObject conformsToProtocol: @protocol(ETPropertyViewpoint)]);
 }
 
-- (void) setValueKey: (NSString *)aKey
+- (Class) viewpointClassForProperty: (NSString *)aKey ofObject: (id)anObject
 {
-	[super setValueKey: aKey];
-	/* Recreate a collection viewpoint if needed */
-	if ([self usesRepresentedObjectAsProvider])
+	if ([[anObject valueForKey: aKey] isCollection])
 	{
-		[self setHasNewContent: YES];
+		return [ETCollectionViewpoint class];
 	}
+	return [super viewpointClassForProperty: aKey ofObject: anObject];
 }
 
 /** See -[ETLayoutItemGroup setRepresentedObject:].

@@ -66,20 +66,25 @@
 {
 	[item setRepresentedObject: person];
 	[item setValueKey: @"name"];
-	
+
+	UKObjectKindOf([item representedObject], ETMutableObjectViewpoint);
 	UKObjectsEqual([person name], [item value]);
-	UKObjectsEqual([person name], [item valueForProperty: @"name"]);
+	/* -valueForProperty: exposes the viewpoint value properties and -[ETLayoutItem value] */
+	UKNil([item valueForProperty: @"name"]);
 	UKObjectsEqual([person name], [item valueForProperty: kETValueProperty]);
+	UKObjectKindOf([item valueForProperty: @"self"], NSString);
 }
 
 - (void) testItemValueKeyForCollection
 {
 	[item setRepresentedObject: person];
 	[item setValueKey: @"groupNames"];
-	
+
+	UKObjectKindOf([item representedObject], [ETMutableObjectViewpoint class]);
 	UKObjectsEqual([person groupNames], [item value]);
-	UKObjectsEqual([person groupNames], [item valueForProperty: @"groupNames"]);
+	UKNil([item valueForProperty: @"groupNames"]);
 	UKObjectsEqual([person groupNames], [item valueForProperty: kETValueProperty]);
+	UKObjectKindOf([item valueForProperty: @"self"], NSArray);
 }
 
 - (void) testItemWidgetValue
@@ -158,10 +163,13 @@
 	[itemGroup setRepresentedObject: person];
 	[itemGroup setValueKey: @"name"];
 	[itemGroup setSource: itemGroup];
-	
+
+	UKObjectKindOf([itemGroup representedObject], ETMutableObjectViewpoint);
 	UKObjectsEqual([person name], [itemGroup value]);
-	UKObjectsEqual([person name], [itemGroup valueForProperty: @"name"]);
+	/* -valueForProperty: exposes the viewpoint value properties and -[ETLayoutItem value] */
 	UKObjectsEqual([person name], [itemGroup valueForProperty: kETValueProperty]);
+	UKNil([itemGroup valueForProperty: @"name"]);
+	UKObjectKindOf([itemGroup valueForProperty: @"self"], NSString);
 }
 
 - (void) testItemGroupValueKeyForCollection
@@ -170,12 +178,14 @@
 	[itemGroup setValueKey: @"groupNames"];
 	[itemGroup setSource: itemGroup];
 
+	UKObjectKindOf([itemGroup representedObject], ETCollectionViewpoint);
 	/* We call -content on the value in case -value returns a collection viewpoint.
 	   Turning ETCollectionViewpoint into a proxy could be interesting, methods 
 	   such as as -isEqual: , -objectAtIndex: etc. would work. */
 	UKObjectsEqual([person groupNames], [[itemGroup value] content]);
-	UKObjectsEqual([person groupNames], [itemGroup valueForProperty: @"groupNames"]);
-	UKObjectsEqual([person groupNames], [[itemGroup valueForProperty: kETValueProperty] content]);
+	UKNil([itemGroup valueForProperty: @"groupNames"]);
+	UKObjectsEqual([person groupNames], [itemGroup valueForProperty: kETValueProperty]);
+	UKObjectKindOf([itemGroup valueForProperty: @"self"], NSArray);
 
 	UKIntsEqual([[person groupNames] count], [itemGroup numberOfItems]);
 
@@ -222,7 +232,7 @@
 	   Turning ETCollectionViewpoint into a proxy could be interesting, methods 
 	   such as as -isEqual: , -objectAtIndex: etc. would work. */
 	UKObjectsEqual([person emails], [[itemGroup value] content]);
-	UKObjectsEqual([person emails], [itemGroup valueForProperty: @"emails"]);
+	UKNil([itemGroup valueForProperty: @"emails"]);
 	UKObjectsEqual([person emails], [[itemGroup valueForProperty: kETValueProperty] content]);
 
 	UKIntsEqual([[person emails] count], [itemGroup numberOfItems]);

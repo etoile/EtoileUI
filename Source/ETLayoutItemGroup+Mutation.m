@@ -149,9 +149,9 @@ To do so, -canReload checks -isMutating. */
 
 /* Element Mutation Handler */
 
-- (BOOL) isValidMutationForValue: (id)aValue
+- (BOOL) isValidMutationForRepresentedObject: (id)anObject
 {
-	return ([[self baseItem] shouldMutateRepresentedObject] && [aValue isMutableCollection]);
+	return ([[self baseItem] shouldMutateRepresentedObject] && [anObject isMutableCollection]);
 }
 
 - (void) handleInsertItem: (ETLayoutItem *)item 
@@ -197,12 +197,12 @@ To do so, -canReload checks -isMutating. */
                                         atIndex: (NSUInteger)index 
                                            hint: (id)aHint
 {
-	id parentValue = [self value];
+	id parentValue = [self representedObject];
 
-	if ([self isValidMutationForValue: parentValue] == NO)
+	if ([self isValidMutationForRepresentedObject: parentValue] == NO)
 		return;
 
-	id value = [item value];
+	id value = [item representedObject];
 
 	ETDebugLog(@"Insert %@ in %@ at index %d of represented object %@",
 		value, parentValue, index, repObject);
@@ -256,12 +256,12 @@ To do so, -canReload checks -isMutating. */
                                         atIndex: (NSUInteger)index 
                                            hint: (id)aHint
 {
-	id parentValue = [self value];
+	id parentValue = [self representedObject];
 
-	if ([self isValidMutationForValue: parentValue] == NO)
+	if ([self isValidMutationForRepresentedObject: parentValue] == NO)
 		return;
 
-	id value = [item value];
+	id value = [item representedObject];
 
 	ETDebugLog(@"Remove %@ in %@ of represented object %@", value, parentValue, repObject);
 
@@ -342,7 +342,7 @@ item, it is used as a represented object bound to the returned item. */
 			break;
 		case 2:
 			ETDebugLog(@"Will -reloadFromRepresentedObject");
-			return [self itemsFromValue];
+			return [self itemsFromRepresentedObject];
 			break;
 		default:
 			ETLog(@"WARNING: source protocol is incorrectly supported by %@.", [self source]);
@@ -379,21 +379,6 @@ item, it is used as a represented object bound to the returned item. */
 	return itemsFromSource;
 }
 
-/** Returns NO when the given collection is not the represented object dominant 
-collection or if the collection is immutable.
-
-For both cases, the collection doesn't require a proxy to be mutated. */
-- (BOOL) needsMutableCollectionProxyForKey: (NSString *)aValueKey
-                                     value: (id <ETCollection>)aCollection
-{
-	/* In some cases, represented object accessors returns a proxy object that 
-	   can be the represented object itself (e.g. -[ETLayoutItem subject]) */
-	BOOL isDominantCollection = (aValueKey == nil || aCollection == [self representedObject]);
-
-	// TODO: Detect if the represented object implements mutation accessors for the given key
-	return (isDominantCollection == NO);
-}
-
 /** Makes the represented object returns layout items as a source would but only
 turning immediate children into ETLayoutItem or ETLayoutItemGroup instances.
 
@@ -402,23 +387,13 @@ collection.
 
 This method is only invoked if the receiver item bound to the represented object 
 is an item group. */
-- (NSArray *) itemsFromValue
+- (NSArray *) itemsFromRepresentedObject
 {
 	NSMutableArray *items = nil;
-	id value = [self value];
+	id value = [self representedObject];
 	
 	if ([value isCollection])
 	{
-		if ([self needsMutableCollectionProxyForKey: [self valueKey] value: value])
-		{
-			value = [ETCollectionViewpoint viewpointWithName: [self valueKey]
-			                               representedObject: [self representedObject]];
-			[self setPrimitiveValue: value forKey: @"viewpoint"];
-		}
-		else
-		{
-			[self setPrimitiveValue: nil forKey: @"viewpoint"];
-		}
 		items = [NSMutableArray arrayWithCapacity: [value count]];
 
 		if ([value isKeyed])
