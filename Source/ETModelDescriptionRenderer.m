@@ -527,6 +527,13 @@ See also -setRenderedPropertyNames:. */
 	return renderer;
 }
 
+- (NSArray *) displayedPropertiesForRelationshipDescription: (ETPropertyDescription *)aPropertyDesc
+                                                   ofObject: (id)anObject
+{
+	NSArray *properties = [aPropertyDesc detailedPropertyNames];
+	return properties;
+}
+
 - (ETLayoutItemGroup *) editorForRelationshipDescription: (ETPropertyDescription *)aPropertyDesc
                                                 ofObject: (id)anObject
 {
@@ -568,6 +575,32 @@ See also -setRenderedPropertyNames:. */
 		//[editor addItem: [_itemFactory horizontalSlider]];
 		[editor setHeight: [editor height] + [detailedItem height]];
 	}
+	else
+	{
+		[[browser layout] setDisplayedProperties: [aPropertyDesc detailedPropertyNames]];
+		for (NSString *property in [[browser layout] displayedProperties])
+		{
+			ETPropertyDescription *propertyDesc =
+				[[aPropertyDesc owner] propertyDescriptionForName: property];
+			
+			if (propertyDesc == nil)
+				continue;
+			
+			[[browser layout] setDisplayName: [aPropertyDesc displayName]
+			                     forProperty: property];
+			[[browser layout] setEditable: ([aPropertyDesc isReadOnly] == NO)
+			                  forProperty: property];
+		}
+	}
+	
+	if ([[[browser value] ifResponds] isKeyed])
+	{
+		NSArray *pairProperties = [[browser layout] displayedProperties];
+		[[browser layout] setDisplayedProperties: [pairProperties arrayByAddingObject: @"key"]];
+		[[browser layout] setDisplayName: @"Key" forProperty: @"key"];
+		[[browser layout] setEditable: YES forProperty: @"key"];
+	}
+
 	return editor;
 }
 
