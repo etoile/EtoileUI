@@ -151,6 +151,9 @@ update once all its children have receive their own.   */
         inFlexibleItemQueue: (NSMutableArray *)flexibleItemQueue
                  dirtyItems: (NSMutableSet *)dirtyItems
 {
+	if (parentItem == nil)
+		return;
+
 	/* If the parent item has already been processed as a dirty item */
 	if (hasBeenProcessed)
 	{
