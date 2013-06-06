@@ -135,14 +135,15 @@ DEALLOC(DESTROY(itemFactory); DESTROY(item); DESTROY(itemGroup))
 {
 	return  A(kETBaseItemProperty, kETRootItemProperty, kETIdentifierProperty, 
 		kETValueProperty, kETValueKeyProperty, kETStyleProperty, @"targetId",
-		kETInspectorProperty, @"UIBuilderTarget", @"UIBuilderAction");
+		kETInspectorProperty, @"title", @"formatter");
 }
 
 - (NSArray *) defaultNilItemProperties
 {
 	return [A(kETNameProperty, kETIconProperty,  kETImageProperty, 
 		kETRepresentedObjectProperty, kETSubjectProperty, kETSubtypeProperty, 
-		kETActionProperty, kETTargetProperty, @"UIBuilderName") arrayByAddingObjectsFromArray: [self basicNilItemProperties]];
+		kETActionProperty, kETTargetProperty, @"UIBuilderAction")
+			arrayByAddingObjectsFromArray: [self basicNilItemProperties]];
 }
 
 - (NSArray *) nonEqualItemProperties

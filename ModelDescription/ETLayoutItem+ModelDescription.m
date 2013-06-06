@@ -38,6 +38,7 @@
 	[valueTransformers setMultivalued: YES];
 	[valueTransformers setOrdered: NO];
 	[valueTransformers setShowsItemDetails: YES];
+	[valueTransformers setDetailedPropertyNames: A(@"name", @"transformCode", @"reverseTransformCode")];
 	ETPropertyDescription *valueKey = [ETPropertyDescription descriptionWithName: @"valueKey" type: (id)@"NSString"];
 	ETPropertyDescription *value = [ETPropertyDescription descriptionWithName: @"value" type: (id)@"NSObject"];
 	ETPropertyDescription *view = [ETPropertyDescription descriptionWithName: @"view" type: (id)@"NSView"];
@@ -100,6 +101,14 @@
 	// TODO: We should persist the inspector but how... We should use a better type than NSObject.
 	ETPropertyDescription *inspector = [ETPropertyDescription descriptionWithName: @"inspector" type: (id)@"NSObject"];
 
+	/* Widget Additional Properties */
+	
+	ETPropertyDescription *title = [ETPropertyDescription descriptionWithName: @"title" type: (id)@"NSString"];
+	ETPropertyDescription *formatter = [ETPropertyDescription descriptionWithName: @"formatter" type: (id)@"NSObject"];
+	ETPropertyDescription *objectValue = [ETPropertyDescription descriptionWithName: @"objectValue" type: (id)@"NSObject"];
+	ETPropertyDescription *minValue = [ETPropertyDescription descriptionWithName: @"minValue" type: (id)@"double"];
+	ETPropertyDescription *maxValue = [ETPropertyDescription descriptionWithName: @"maxValue" type: (id)@"double"];
+
 	/* Transient UI Builder Properties */
 
 	ETPropertyDescription *UIBuilderAction = [ETPropertyDescription descriptionWithName: @"UIBuilderAction" type: (id)@"SEL"];
@@ -115,9 +124,14 @@
 		actionHandler, action, targetId, contentBounds, position, anchorPoint, 
 		persistentFrame, autoresizing, contentAspect, boundingBox, defaultFrame,
 		flipped, selected, selectable, visible);
+	// TODO: title, objectValue, formatter, minValue and maxValue should
+	// be declared among the persistent properties or we should support to
+	// override the entity description bound to ETLayoutItem (making possible 
+	// to redeclare these properties as persistent if no view is used).
 	NSArray *transientProperties = A(baseItem, rootItem, indexPath, 
 		isBaseItem, subject, style, frame, x, y, width, height, target, 
-		acceptsActions, inspector, subtype, UIBuilderAction);
+		acceptsActions, inspector, subtype, title, objectValue, formatter,
+		minValue, maxValue, UIBuilderAction);
 
 	[entity setUIBuilderPropertyNames: (id)[[A(identifier, name, 
 		image, icon, valueKey, target, UIBuilderAction, 
@@ -181,6 +195,7 @@
 		[ETPropertyDescription descriptionWithName: @"doubleAction" type: (id)@"SEL"];
 	ETPropertyDescription *shouldMutateRepObject = 
 		[ETPropertyDescription descriptionWithName: @"shouldMutateRepresentedObject" type: (id)@"BOOL"];
+	[shouldMutateRepObject setDisplayName: @"Mutate Represented Object"];
 	ETPropertyDescription *itemScaleFactor = 
 		[ETPropertyDescription descriptionWithName: @"itemScaleFactor" type: (id)@"float"];
 	// NOTE: _wasViewHidden must be persisted. If YES at deserialization, we 
