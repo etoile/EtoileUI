@@ -412,6 +412,7 @@
 		                                             action: @selector(changeAspectPaneFromPopUp:)];
 
 	[popUpItem setName: _(@"Aspect")];
+	[popUpItem sizeToFit];
 	[aController setAspectPopUpItem: popUpItem];
 	[[popUpItem view] selectItemAtIndex: [representedProperties indexOfObject: anAspectName]];
 	return popUpItem;
