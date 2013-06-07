@@ -21,7 +21,7 @@
 #import "ETItemTemplate.h"
 #import "ETLayout.h"
 #import "ETLayoutItem.h"
-#import "ETLayoutItem+Scrollable.h
+#import "ETLayoutItem+Scrollable.h"
 #import "ETLayoutItemFactory.h"
 #import "ETLayoutItemGroup.h"
 #import "ETObjectValueFormatter.h"
