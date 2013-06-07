@@ -20,6 +20,7 @@
 {
 	@private
 	ETModelDescriptionRenderer *_renderer;
+	ETModelDescriptionRenderer *_valueTransformerRenderer;
 	COEditingContext *_editingContext;
 }
 

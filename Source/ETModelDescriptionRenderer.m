@@ -21,6 +21,7 @@
 #import "ETItemTemplate.h"
 #import "ETLayout.h"
 #import "ETLayoutItem.h"
+#import "ETLayoutItem+Scrollable.h
 #import "ETLayoutItemFactory.h"
 #import "ETLayoutItemGroup.h"
 #import "ETObjectValueFormatter.h"
@@ -56,7 +57,7 @@
 	ASSIGN(_repository, [ETModelDescriptionRepository mainRepository]);
 	ASSIGN(_itemFactory, [ETLayoutItemFactory factory]);
 	ASSIGN(_entityLayout, [self defaultFormLayout]);
-	_renderedPropertyNames = [NSMutableDictionary new];
+	_renderedPropertyNames = [NSArray new];
 
 	[self registerDefaultTemplateItems];
 	[self registerDefaultRoleTemplateIdentifiers];
@@ -87,7 +88,7 @@
 	[_templateItems setObject: anItem forKey: anIdentifier];
 }
 
-- (ETLayoutItem *) templateItemForIdentifier: (NSString *)anIdentifier
+- (id) templateItemForIdentifier: (NSString *)anIdentifier
 {
 	return [_templateItems objectForKey: anIdentifier];
 }
@@ -247,7 +248,9 @@ time. For example:
 
 - (ETFormLayout *) defaultFormLayout
 {
-	return [ETFormLayout layout];
+	ETFormLayout *layout = [ETFormLayout layout];
+	[layout setIsContentSizeLayout: YES];
+	return layout;
 }
 
 - (ETLayoutItemGroup *)entityItemWithRepresentedObject: (id)anObject
@@ -274,10 +277,8 @@ passed to -renderObject: and related methods.
  
 See also -renderedPropertyNames. */
 - (void) setRenderedPropertyNames: (NSArray *)propertyNames
-             forEntityDescription: (ETEntityDescription *)anEntityDesc
-
 {
-	[_renderedPropertyNames setObject: propertyNames forKey: [anEntityDesc fullName]];
+	ASSIGNCOPY(_renderedPropertyNames, propertyNames);
 }
 
 /** Returns the names of the property descriptions to render for an object 
@@ -291,9 +292,9 @@ of the object are rendered
 By default, returns nil. 
  
 See also -setRenderedPropertyNames:. */
-- (NSArray *) renderedPropertyNamesForEntityDescription: (ETEntityDescription *)anEntityDesc
+- (NSArray *) renderedPropertyNames
 {
-	return [_renderedPropertyNames objectForKey: [anEntityDesc fullName]];
+	return _renderedPropertyNames;
 }
 
 - (void) setGroupingKeyPath: (NSString *)aKeyPath
@@ -308,34 +309,18 @@ See also -setRenderedPropertyNames:. */
 
 - (ETLayoutItemGroup *)newItemGroupForGroupingName: (NSString *)aName width: (CGFloat)aWidth
 {
-	ETLayoutItemGroup *itemGroup = [[_itemFactory itemGroupWithSize: NSMakeSize(aWidth, 150)] retain];
+	NSParameterAssert(aName != nil);
+	ETLayoutItemGroup *itemGroup = [[_itemFactory itemGroupWithSize: NSMakeSize(aWidth, 1000)] retain];
 	[itemGroup setAutoresizingMask: ETAutoresizingFlexibleWidth];
 	[itemGroup setName: aName];
 	[itemGroup setIdentifier: [[aName lowercaseString] stringByAppendingString: @" (grouping)"]];
 	[itemGroup setLayout: [[[self entityLayout] copy] autorelease]];
 	// TODO: Surely declare -setIsContentSizeLayout in ETPositionalLayout protocol
-	[(ETLayout *)[[itemGroup layout] positionalLayout] setIsContentSizeLayout: _usesContentSizeLayout];
+	// because [[itemGroup layout] setIsContentSizeLayout: YES] does nothing.
+	[(ETLayout *)[[itemGroup layout] positionalLayout] setIsContentSizeLayout: YES];//_usesContentSizeLayout];
 	//[itemGroup setUsesLayoutBasedFrame: YES];
 	[itemGroup setDecoratorItem: [ETTitleBarItem item]];
 	return itemGroup;
-}
-
-- (ETPropertyDescription *)propertyDescriptionForItem: (ETLayoutItem *)aPropertyItem
-{
-	id repObject = [aPropertyItem representedObject];
-	ETPropertyDescription *propertyDesc = repObject;
-
-	if ([repObject isKindOfClass: [ETMutableObjectViewpoint class]])
-	{
-		ETEntityDescription *entityDesc = [self entityDescriptionForObject: [repObject representedObject]];
-		propertyDesc = [entityDesc propertyDescriptionForName: [repObject name]];
-	}
-	
-	if ([propertyDesc isKindOfClass: [ETPropertyDescription class]] == NO)
-	{
-		return nil;
-	}
-	return propertyDesc;
 }
 
 // TODO: Add a mechanism to return a display name for a grouping value either
@@ -343,6 +328,8 @@ See also -setRenderedPropertyNames:. */
 // through registered blocks per value class.
 - (NSString *)displayNameForGroupingValue: (id)aGroupingValue
 {
+	NSParameterAssert(aGroupingValue != nil);
+
 	if ([aGroupingValue isEntityDescription])
 	{
 		// TODO: Support returning the full name too
@@ -352,30 +339,39 @@ See also -setRenderedPropertyNames:. */
 }
 
 - (NSArray *) generateItemGroupsForPropertyItems: (NSArray *)propertyItems
+                            propertyDescriptions: (NSArray *)propertyDescs
                                  groupingKeyPath: (NSString *)aKeyPath
                                         maxWidth: (CGFloat)anItemWidth
 {
 	NILARG_EXCEPTION_TEST(aKeyPath);
+	NSParameterAssert([propertyItems count] == [propertyDescs count]);
 	// FIXME: Use a ordered NSMutableDictionary (for now we depend on NSMapTable implicit ordering)
 	NSMapTable *itemGroupsByName = [NSMapTable mapTableWithStrongToStrongObjects];
 	
-	for (ETLayoutItem *item in propertyItems)
+	[propertyItems enumerateObjectsUsingBlock: ^ (id item, NSUInteger i, BOOL *stop)
 	{
-		ETPropertyDescription *propertyDesc = [self propertyDescriptionForItem: item];
+		id groupingValue = [[propertyDescs objectAtIndex: i] valueForKeyPath: aKeyPath];
+		NSString *name = [self displayNameForGroupingValue: groupingValue];
+		ETLayoutItemGroup *itemGroup = [itemGroupsByName objectForKey: name];
 
-		if (propertyDesc == nil)
-			continue;
-
-		NSString *name = [self displayNameForGroupingValue: [propertyDesc valueForKeyPath: aKeyPath]];
-
-		if ([itemGroupsByName objectForKey: name] == nil)
+		if (itemGroup == nil)
 		{
-			[itemGroupsByName setObject: [[self newItemGroupForGroupingName: name width: anItemWidth] autorelease]
-			                     forKey: name];
+			itemGroup = [[self newItemGroupForGroupingName: name width: anItemWidth] autorelease];
+			[itemGroupsByName setObject: itemGroup forKey: name];
 		}
+		[itemGroup addItem: item];
+	}];
+	
+	NSLog(@"Old size %@", NSStringFromSize([[[itemGroupsByName allValues] firstObject] size]));
+	[[[itemGroupsByName allValues] mappedCollection] updateLayoutRecursively: YES];
+	NSLog(@"New size %@", NSStringFromSize([[[itemGroupsByName allValues] firstObject] size]));
 
-		[(ETLayoutItemGroup *)[itemGroupsByName objectForKey: name] addItem: item];
+	for (ETLayoutItemGroup *itemGroup in [itemGroupsByName allValues])
+	{
+		[(ETLayout *)[[itemGroup layout] positionalLayout] setIsContentSizeLayout: NO];
+		[itemGroup setWidth: anItemWidth];
 	}
+
 	return [itemGroupsByName allValues];
 }
 
@@ -383,7 +379,7 @@ See also -setRenderedPropertyNames:. */
 {
 	ETColumnLayout *layout = [ETColumnLayout layout];
 	[layout setUsesAlignmentHint: YES];
-	[layout setIsContentSizeLayout: _usesContentSizeLayout];
+	[layout setIsContentSizeLayout: YES];//_usesContentSizeLayout];
 	return layout;
 }
 
@@ -414,7 +410,7 @@ See also -setRenderedPropertyNames:. */
 
 - (NSArray *) renderedPropertyDescriptionsForEntityDescription: (ETEntityDescription *)anEntityDesc
 {
-	NSArray *propertyNames = [self renderedPropertyNamesForEntityDescription: anEntityDesc];
+	NSArray *propertyNames = [self renderedPropertyNames];
 
 	if (propertyNames == nil)
 		return [anEntityDesc allPropertyDescriptions];
@@ -454,12 +450,33 @@ See also -setRenderedPropertyNames:. */
 	if ([self groupingKeyPath] != nil)
 	{
 		items = [self generateItemGroupsForPropertyItems: propertyItems
+		                            propertyDescriptions: propertyDescs
 		                                 groupingKeyPath: [self groupingKeyPath]
 		                                        maxWidth: [entityItem width]];
 		[entityItem setLayout: [self groupingLayout]];
 		[entityItem setUsesLayoutBasedFrame: YES];
 	}
+
+	NSRect entityItemFrame = [entityItem frame];
+
 	[entityItem addItems: items];
+	/* If -groupingLayout -entityLayout returns YES for -isContentSizeLayout, 
+	   this layout update resizes the entity item to enclose its content */
+	//if ([[[self entityItem] layout] isContentSizeLayout])
+	//{
+		[entityItem updateLayoutRecursively: YES];
+	//if (
+
+	if ([entityItem height] > entityItemFrame.size.height)
+	{
+		[entityItem setHasVerticalScroller: YES];
+		[entityItem setHeight: entityItemFrame.size.height];
+	}
+	if ([[entityItem layout] isComputedLayout])
+	{
+		[(ETLayoutItem *)[propertyItems mappedCollection] setAutoresizingMask: ETAutoresizingFlexibleWidth];
+	}
+
 	[entityItem setName: aName];
 	
 	return entityItem;
@@ -534,7 +551,7 @@ See also -setRenderedPropertyNames:. */
 	return properties;
 }
 
-- (ETLayoutItemGroup *) editorForRelationshipDescription: (ETPropertyDescription *)aPropertyDesc
+- (ETLayoutItemGroup *) editorForRelationshipDescription: (ETPropertyDescription *)aRelationshipDesc
                                                 ofObject: (id)anObject
 {
 	ETLayoutItemGroup *editor = [[self templateItemForIdentifier: @"collectionEditor"] deepCopy];
@@ -545,12 +562,12 @@ See also -setRenderedPropertyNames:. */
 	//                                                               ofObject: anObject];
 	//[browser setRepresentedObject: collection];
 	[browser setRepresentedObject: anObject];
-	[browser setValueKey: [aPropertyDesc name]];
+	[browser setValueKey: [aRelationshipDesc name]];
 	[browser reload];
 
 	ETPropertyCollectionController *controller = (id)[browser controller];
 	ETAssert(controller != nil);
-	Class relationshipClass = [_repository classForEntityDescription: [aPropertyDesc type]];
+	Class relationshipClass = [_repository classForEntityDescription: [aRelationshipDesc type]];
 	ETAssert(relationshipClass != Nil);
 	ETItemTemplate *template = [ETItemTemplate templateWithItem: [_itemFactory item]
 	                                                objectClass: relationshipClass];
@@ -560,16 +577,17 @@ See also -setRenderedPropertyNames:. */
 	[[controller content] setDoubleAction: @selector(edit:)];
 	[[controller content] setTarget: controller];
 
-	if ([aPropertyDesc showsItemDetails])
+	if ([aRelationshipDesc showsItemDetails])
 	{
 		NSSize detailedItemSize = NSMakeSize([editor width], 200);
 		ETModelDescriptionRenderer *renderer =
 			[self rendererForItemDetailsInSize: detailedItemSize];
-		id value = [anObject valueForProperty: [aPropertyDesc name]];
+		id value = [anObject valueForProperty: [aRelationshipDesc name]];
 		ETLayoutItemGroup *detailedItem =
-		[renderer renderObject: value displayName: nil propertyDescriptions: [[aPropertyDesc type] allPropertyDescriptions]];
+		[renderer renderObject: value displayName: nil propertyDescriptions: [[aRelationshipDesc type] allPropertyDescriptions]];
 		
 		[detailedItem setIdentifier: @"details"];
+		[detailedItem setAutoresizingMask: ETAutoresizingFlexibleWidth];
 
 		[editor addItem: detailedItem];
 		//[editor addItem: [_itemFactory horizontalSlider]];
@@ -577,18 +595,16 @@ See also -setRenderedPropertyNames:. */
 	}
 	else
 	{
-		[[browser layout] setDisplayedProperties: [aPropertyDesc detailedPropertyNames]];
+		[[browser layout] setDisplayedProperties: [aRelationshipDesc detailedPropertyNames]];
 		for (NSString *property in [[browser layout] displayedProperties])
 		{
 			ETPropertyDescription *propertyDesc =
-				[[aPropertyDesc owner] propertyDescriptionForName: property];
+				[[aRelationshipDesc type] propertyDescriptionForName: property];
+			ETAssert(propertyDesc != nil);
 			
-			if (propertyDesc == nil)
-				continue;
-			
-			[[browser layout] setDisplayName: [aPropertyDesc displayName]
+			[[browser layout] setDisplayName: [propertyDesc displayName]
 			                     forProperty: property];
-			[[browser layout] setEditable: ([aPropertyDesc isReadOnly] == NO)
+			[[browser layout] setEditable: ([propertyDesc isReadOnly] == NO)
 			                  forProperty: property];
 		}
 	}

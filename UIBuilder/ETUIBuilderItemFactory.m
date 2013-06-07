@@ -36,7 +36,7 @@
 #import "NSObject+EtoileUI.h"
 #import "NSView+Etoile.h"
 #import "ETCompatibility.h"
-
+#include <math.h>
 
 @implementation ETUIBuilderItemFactory
 
@@ -45,16 +45,18 @@
 - (id) init
 {
 	SUPERINIT;
-	ASSIGN(_renderer, [ETModelDescriptionRenderer renderer]);
-	//[renderer setGroupingKeyPath: @"owner"];
 	COStore *store = AUTORELEASE([[COSQLStore alloc] initWithURL: [NSURL URLWithString: @"~/UIBuilderStore.sqlite"]]);
 	_editingContext = [[COEditingContext alloc] initWithStore: store];
+	_renderer = [self newRenderer];
+	[_renderer setGroupingKeyPath: @"owner"];
+	_valueTransformerRenderer = [self newValueTransformerRenderer];
 	return self;
 }
 
 - (void) dealloc
 {
 	DESTROY(_renderer);
+	DESTROY(_valueTransformerRenderer);
 	DESTROY(_editingContext);
 	[super dealloc];
 }
@@ -137,7 +139,22 @@
 - (NSSize) defaultBasicInspectorSize
 {
 	NSSize size = [self defaultInspectorBodySize];
-	size.height = 800;
+	// NOTE: The height must be an integral value to prevent drawing artifacts.
+	size.height = floorf((size.height / 10.) * 8.);
+	return size;
+}
+
+- (NSSize) defaultBasicInspectorHeaderSize
+{
+	NSSize size = [self defaultBasicInspectorSize];
+	size.height = 80;
+	return size;
+}
+
+- (NSSize) defaultBasicInspectorContentSize
+{
+	NSSize size = [self defaultBasicInspectorSize];
+	size.height -= [self defaultBasicInspectorHeaderSize].height;
 	return size;
 }
 
@@ -429,8 +446,7 @@
                                             controller: (id)aController
                                             aspectName: (NSString *)anAspectName
 {
-	NSSize size = NSMakeSize([self defaultBasicInspectorSize].width, 80);
-	ETLayoutItemGroup *itemGroup = [self itemGroupWithSize: size];
+	ETLayoutItemGroup *itemGroup = [self itemGroupWithSize: [self defaultBasicInspectorHeaderSize]];
 	ETFormLayout *formLayout = [ETFormLayout layout];
 	ETLayoutItem *aspectPopUpItem = [self aspectPopUpWithController: aController
 	                                             selectedAspectName: anAspectName];
@@ -473,6 +489,38 @@
 	return [anObject valueForKeyPath: anAspectName];
 }
 
+- (ETModelDescriptionRenderer *) newRenderer
+{
+	return [ETModelDescriptionRenderer new];
+}
+
+- (ETModelDescriptionRenderer *) newValueTransformerRenderer
+{
+	ETModelDescriptionRenderer *renderer = [self newRenderer];
+	ETLayoutItemGroup *collectionEditor =
+		[renderer templateItemForIdentifier: @"collectionEditor"];
+
+	[collectionEditor setWidth: [self defaultBasicInspectorSize].width];
+
+	ETColumnLayout *layout = [ETColumnLayout layout];
+
+	[layout setHorizontalAligment: ETLayoutHorizontalAlignmentRight];
+	[renderer setEntityLayout: layout];
+
+	return renderer;
+}
+
+- (ETModelDescriptionRenderer *) rendererForAspectName: (NSString *)anAspectName
+{
+	ETAssert(_renderer != nil);
+	ETAssert(_valueTransformerRenderer != nil);
+
+	if ([anAspectName isEqual: @"valueTransformers"])
+	{
+		return _valueTransformerRenderer;
+	}
+	return _renderer;
+}
 
 - (ETLayoutItemGroup *) basicInspectorContentWithObject: (id)anObject
                                              controller: (id)aController
@@ -482,34 +530,20 @@
 	NSParameterAssert(aController != nil);
 	NSParameterAssert(anAspectName != nil);
 
-	ETEntityDescription *rootEntity = [[_renderer repository] descriptionForName: @"Object"];
+	ETModelDescriptionRenderer *renderer = [self rendererForAspectName: anAspectName];
+	ETEntityDescription *rootEntity = [[renderer repository] descriptionForName: @"Object"];
 
-	[(ETObjectValueFormatter *)[_renderer formatterForType: rootEntity] setDelegate: aController];
-
-	[_renderer setRenderedPropertyNames: [self presentedPropertyNamesForAspectName: anAspectName
-	                                                                     ofObject: anObject]
-	               forEntityDescription: [anObject entityDescription]];
-
-	if ([anAspectName isEqual: @"valueTransformers"])
-	{
-		[[_renderer templateItemForIdentifier: @"collectionEditor"]
-		 	setWidth: [self defaultBasicInspectorSize].width];
-		[[_renderer templateItemForIdentifier: @"collectionEditor"] updateLayoutRecursively: YES];
-		[_renderer setEntityLayout: [ETColumnLayout layout]];
-		[(ETColumnLayout *)[_renderer entityLayout] setHorizontalAligment: ETLayoutHorizontalAlignmentRight];
-	}
-	//[renderer setEntityItemFrame: NSMakeRect(0, 0, [self defaultBasicInspectorSize].width, 600)];
+	[[renderer formatterForType: rootEntity] setDelegate: aController];
+	[renderer setRenderedPropertyNames: [self presentedPropertyNamesForAspectName: anAspectName
+	                                                                     ofObject: anObject]];
+	[renderer setEntityItemFrame: ETMakeRect(NSZeroPoint, [self defaultBasicInspectorContentSize])];
 
 	id editedObject = [self editedObjectForAspectedName: anAspectName ofObject: anObject];
-	ETLayoutItemGroup *itemGroup = [_renderer renderObject: editedObject];
-	NSSize size = [self defaultBasicInspectorSize];
-	
-	size.height -= 80;
+	ETLayoutItemGroup *itemGroup = [renderer renderObject: editedObject];
 
 	// TODO: Perhaps use aspectInspector
 	[itemGroup setIdentifier: @"basicInspectorContent"];
 	[itemGroup setAutoresizingMask: ETAutoresizingFlexibleWidth | ETAutoresizingFlexibleHeight];
-	[itemGroup setSize: size];
 
 	return itemGroup;
 }

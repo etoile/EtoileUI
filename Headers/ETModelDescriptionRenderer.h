@@ -27,7 +27,7 @@
 	NSMutableDictionary *_formattersByType;
 	ETLayout *_entityLayout;
 	NSRect _entityItemFrame;
-	NSMutableDictionary *_renderedPropertyNames;
+	NSArray *_renderedPropertyNames;
 	NSString *_groupingKeyPath;
 	BOOL _usesContentSizeLayout;
 }
@@ -43,7 +43,7 @@
 /** @taskunit Providing UI Templates */
 
 - (void) setTemplateItem: (ETLayoutItem *)anItem forIdentifier: (NSString *)anIdentifier;
-- (ETLayoutItem *) templateItemForIdentifier: (NSString *)anIdentifier;
+- (id) templateItemForIdentifier: (NSString *)anIdentifier;
 - (NSArray *) templateItems;
 - (void) setTemplateIdentifier: (NSString *)anIdentifier forRoleClass: (Class)aClass;
 - (NSString *) templateIdentifierForRoleClass: (Class)aClass;
@@ -57,15 +57,14 @@
 - (void) setEntityItemFrame: (NSRect)aRect;
 - (NSRect) entityItemFrame;
 
-- (void) setRenderedPropertyNames: (NSArray *)propertyNames
-             forEntityDescription: (ETEntityDescription *)anEntityDesc;
-- (NSArray *) renderedPropertyNamesForEntityDescription: (ETEntityDescription *)anEntityDesc;
+- (void) setRenderedPropertyNames: (NSArray *)propertyNames;
+- (NSArray *) renderedPropertyNames;
 - (void) setGroupingKeyPath: (NSString *)aKeyPath;
 - (NSString *) groupingKeyPath;
 
 /** @taskunit Customizing Value Editing */
 
-- (NSFormatter *) formatterForType: (ETEntityDescription *)aType;
+- (id) formatterForType: (ETEntityDescription *)aType;
 - (void) setFormatter: (NSFormatter *)aFormatter forType: (ETEntityDescription *)aType;
 
 /** @taskunit Generating Form UI */
