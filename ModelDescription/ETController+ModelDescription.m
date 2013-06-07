@@ -71,6 +71,7 @@
 		[ETPropertyDescription descriptionWithName: @"sortDescriptors" type: (id)@"NSSortDescriptor"];
 	[sortDescriptors setMultivalued: YES];
 	[sortDescriptors setOrdered: YES];
+	[sortDescriptors setDetailedPropertyNames: A(@"key", @"ascending", @"selector")];
 	ETPropertyDescription *filterPredicate =
 		[ETPropertyDescription descriptionWithName: @"filterPredicate" type: (id)@"NSPredicate"];
 	ETPropertyDescription *automaticallyRearranges =
