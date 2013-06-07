@@ -267,7 +267,7 @@ root item will be made available through -[ETApplication layoutItem]. */
 
 - (NSArray *) aspectBaseClassNames
 {
-	return A(@"ETLayout", @"ETTool", @"ETStyle");
+	return A(@"ETLayout", @"ETTool", @"ETStyle", @"ETItemValueTransformer");
 }
 
 /* Asks every aspect base class (ETLayout, ETTool, ETStyle etc.) to 

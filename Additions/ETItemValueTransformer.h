@@ -89,3 +89,15 @@ This block provides a behavior equivalent to
 @property (nonatomic, retain) NSString *reverseTransformCode;
 
 @end
+
+
+@interface ETBooleanFromMaskValueTransformer : ETItemValueTransformer
+{
+	NSUInteger _editedBitValue;
+}
+
+@property (nonatomic, assign) NSUInteger editedBitValue;
+
+@end
+
+extern NSString * const kETBooleanFromMaskValueTransformerName;

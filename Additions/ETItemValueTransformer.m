@@ -47,6 +47,16 @@
 	return entity;
 }
 
++ (void) registerAspects
+{
+	// TODO: It's a bit useless to register value transformers in this way.
+	// For ETBooleanFromMaskValueTransformer, the client must copy it or we
+	// must override -valueTransformerForName: to return copy
+	// value transformers that support/require copy.
+	[self setValueTransformer: AUTORELEASE([ETBooleanFromMaskValueTransformer new])
+	                  forName: kETBooleanFromMaskValueTransformerName];
+}
+
 - (id) init
 {
 	SUPERINIT
@@ -93,3 +103,44 @@
 
 @end
 
+
+NSString * const kETBooleanFromMaskValueTransformerName = @"kETBooleanFromMaskValueTransformerName";
+
+@implementation ETBooleanFromMaskValueTransformer
+
+@synthesize editedBitValue = _editedBitValue;
+
+- (id) init
+{
+	SUPERINIT;
+	[self setName: kETBooleanFromMaskValueTransformerName];
+	return self;
+}
+
+- (id) transformedValue: (id)value
+                 forKey: (NSString *)key
+                 ofItem: (ETLayoutItem *)item
+{
+	return [NSNumber numberWithBool: ([value unsignedIntegerValue] & [self editedBitValue])];
+}
+
+- (id) reverseTransformedValue: (id)value
+                        forKey: (NSString *)key
+                        ofItem: (ETLayoutItem *)item
+{
+	BOOL boolValue = [value boolValue];
+	NSUInteger mask = [[item valueForProperty: key] unsignedIntegerValue];
+
+	if (boolValue)
+	{
+		mask |= [self editedBitValue];
+	}
+	else
+	{
+		mask &= ~[self editedBitValue];
+	}
+
+	return  [NSNumber numberWithUnsignedInteger: mask];
+}
+
+@end
