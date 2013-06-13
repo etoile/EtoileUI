@@ -709,10 +709,13 @@ Extra options can be added to the returned dictionary. */
 - (NSDictionary *)defaultOptions
 {
 	NSMutableDictionary *options = [NSMutableDictionary dictionary];
-	ETModelDescriptionRepository *repo = nil;
+	ETModelDescriptionRepository *repo = [ETModelDescriptionRepository mainRepository];
 
 #ifdef COREOBJECT
-	repo = [[[self persistentObjectContext] editingContext] modelRepository];
+	if ([self persistentObjectContext] != nil)
+	{
+		repo = [[[self persistentObjectContext] editingContext] modelRepository];
+	}
 #endif
 	
 	id representedObject = [[self content] representedObject];
@@ -731,7 +734,7 @@ Extra options can be added to the returned dictionary. */
 		[options setObject: [self insertionKeyForCollection: representedObject]
 		            forKey: kETTemplateOptionKeyValuePairKey];
 	}
-	if (representedObject != nil)
+	if (representedObject != nil && [[self content] usesRepresentedObjectAsProvider])
 	{
 		[options setObject: representedObject forKey: kETTemplateOptionParentRepresentedObject];
 	}

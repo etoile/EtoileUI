@@ -8,6 +8,7 @@
 
 #import <EtoileFoundation/ETCollection.h>
 #import <EtoileFoundation/ETKeyValuePair.h>
+#import <EtoileFoundation/ETIndexValuePair.h>
 #import <EtoileFoundation/NSObject+Model.h>
 #import <EtoileFoundation/Macros.h>
 #import "ETLayoutItemGroup+Mutation.h"
@@ -214,6 +215,16 @@ To do so, -canReload checks -isMutating. */
 		insertedValue = [(ETKeyValuePair *)value value];
 		hint = value;
 	}
+	if ([value isIndexValuePair])
+	{
+		insertedValue = [(ETIndexValuePair *)value value];
+		hint = value;
+		if ([(ETIndexValuePair *)value index] == ETUndeterminedIndex)
+		{
+			[(ETIndexValuePair *)value setIndex: index];
+		}
+		ETAssert(index == [(ETIndexValuePair *)value index]);
+	}
 
 	[parentCollection insertObject: insertedValue atIndex: index hint: hint];
 }
@@ -252,8 +263,8 @@ To do so, -canReload checks -isMutating. */
 }
 
 - (void) mutateRepresentedObjectForRemovedItem: (ETLayoutItem *)item
-                                        atIndex: (NSUInteger)index 
-                                           hint: (id)aHint
+                                       atIndex: (NSUInteger)index 
+                                          hint: (id)aHint
 {
 	id parentCollection = [self representedObject];
 
@@ -271,6 +282,13 @@ To do so, -canReload checks -isMutating. */
 	{
 		insertedValue = [(ETKeyValuePair *)value value];
 		hint = value;
+	}
+	if ([value isIndexValuePair])
+	{
+		insertedValue = [(ETIndexValuePair *)value value];
+		hint = value;
+		/* For -removeItem:, index is undetermined and doesn't match the value index */
+		ETAssert(index == [(ETIndexValuePair *)value index] || index == ETUndeterminedIndex);
 	}
 
 	[parentCollection removeObject: insertedValue atIndex: index hint: hint];
@@ -395,11 +413,10 @@ is an item group. */
 	{
 		id collection = representedObject;
 
-		if ([collection isKeyed])
+		if ([collection isKeyed] || [collection isKindOfClass: [ETCollectionViewpoint class]])
 		{
 			// NOTE: This section must remains in sync with -[ETItemTemplate newItemWithURL:options:]
-			collection = [collection arrayRepresentation];
-			[[collection mappedCollection] setRepresentedObject: representedObject];
+			collection = [collection viewpointArray];
 		}
 		ETAssert([representedObject count] == [collection count]);
 
@@ -474,7 +491,7 @@ See also ETSourceDidUpdateNotification.*/
 }
 
 /** Note: The receiver registers itself as an observer on the represented object 
-in -setReprestedObject:. 
+in -setReprenstedObject:. 
 
 See also ETCollectionDidUpdateNotification.*/
 - (void) representedObjectCollectionDidUpdate: (NSNotification *)notif

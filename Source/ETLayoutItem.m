@@ -834,7 +834,8 @@ exposed through -value and -setValue:. */
 
 - (Class) viewpointClassForProperty: (NSString *)aKey ofObject: (id)anObject
 {
-	return [ETMutableObjectViewpoint class];
+	Class viewpointClass = [[[anObject class] ifResponds] mutableViewpointClass];
+	return (viewpointClass != Nil ? viewpointClass : [ETMutableObjectViewpoint class]);
 }
 
 /** Returns a value key to describe which property of the represented object is
@@ -1312,7 +1313,7 @@ See -valueForProperty: for more details. */
 	BOOL isAccessingValue = ([self valueKey] != nil && [key isEqualToString: kETValueProperty]);
 	BOOL result = YES;
 
-	if (transformer!= nil)
+	if (transformer != nil)
 	{
 		convertedValue = [transformer reverseTransformedValue: value
 		                                               forKey: key

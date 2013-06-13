@@ -7,8 +7,12 @@
  */
 
 #import <EtoileFoundation/EtoileFoundation.h>
+#import "ETItemTemplate.h"
 
-@interface NSSortDescriptor (ModelDescription)
+@interface NSSortDescriptor (ModelDescription) <ETDocumentCreation>
+@end
+
+@interface NSSortDescriptorMutableViewpointTrait : NSObject
 @end
 
 @implementation NSSortDescriptor (ModelDescription)
@@ -26,17 +30,72 @@
 
 	ETPropertyDescription *ascending = [ETPropertyDescription descriptionWithName: @"ascending" type: (id)@"BOOL"];
 	ETPropertyDescription *key = [ETPropertyDescription descriptionWithName: @"key" type: (id)@"NSString"];
-	ETPropertyDescription *selector = [ETPropertyDescription descriptionWithName: @"selector" type: (id)@"SEL"];
+	/* Key-Value Coding doesn't support SEL, so we expose a custom property */
+	ETPropertyDescription *selectorString = [ETPropertyDescription descriptionWithName: @"selectorString" type: (id)@"NSString"];
+	[selectorString setDerived: YES];
+	[selectorString setDisplayName: @"Selector"];
 
 	/* NSSortDescriptor is persistent, but the properties are declared transient 
 	   because we use keyed archiving to persist it (it is not a COObject). */
-	NSArray *transientProperties = A(ascending, key, selector);
+	NSArray *transientProperties = A(ascending, key, selectorString);
 
 	[entity setUIBuilderPropertyNames: (id)[[transientProperties mappedCollection] name]];
 
 	[entity setPropertyDescriptions: transientProperties];
 
 	return entity;
+}
+
++ (Class) mutableViewpointClass
+{
+	return [NSSortDescriptorMutableViewpointTrait class];
+}
+
+/* ETItemTemplate uses ETDocumentCreation protocol to instantiate a new sort descriptor. */
+- (id) initWithURL: (NSURL *)aURL options: (NSDictionary *)options
+{
+	return [self initWithKey: @"unknown" ascending: YES];
+}
+
+- (NSString *)selectorString
+{
+	return NSStringFromSelector([self selector]);
+}
+@end
+
+
+@implementation NSSortDescriptorMutableViewpointTrait
+
+- (void) setAscending: (BOOL)ascending
+{
+	NSSortDescriptor *sortDescriptor =
+		[NSSortDescriptor sortDescriptorWithKey: [[self value] key]
+		                              ascending: ascending
+	                                   selector: [[self value] selector]];
+	[self setValue: sortDescriptor];
+}
+
+- (void) setKey: (NSString *)aKey
+{
+	NSSortDescriptor *sortDescriptor =
+		[NSSortDescriptor sortDescriptorWithKey: aKey
+		                              ascending: [[self value] ascending]
+	                                   selector: [[self value] selector]];
+	[self setValue: sortDescriptor];
+}
+
+- (void) setSelector: (SEL)aSelector
+{
+	NSSortDescriptor *sortDescriptor =
+		[NSSortDescriptor sortDescriptorWithKey: [[self value] key]
+		                              ascending: [[self value] ascending]
+	                                   selector: aSelector];
+	[self setValue: sortDescriptor];
+}
+
+- (void) setSelectorString: (NSString *)aString
+{
+	[self setSelector: NSSelectorFromString(aString)];
 }
 
 @end

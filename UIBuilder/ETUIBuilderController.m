@@ -7,7 +7,7 @@
  */
 
 #import <EtoileFoundation/ETCollection+HOM.h>
-#import <EtoileFoundation/ETPropertyViewpoint.h>
+#import <EtoileFoundation/ETViewpoint.h>
 #import <EtoileFoundation/NSObject+HOM.h>
 #import <EtoileFoundation/Macros.h>
 #import <CoreObject/COEditingContext.h>

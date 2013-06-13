@@ -7,7 +7,10 @@
  */
 
 #import <EtoileFoundation/Macros.h>
+#import <EtoileFoundation/ETCollection.h>
 #import <EtoileFoundation/ETCollection+HOM.h>
+#import <EtoileFoundation/ETIndexValuePair.h>
+#import <EtoileFoundation/ETMutableObjectViewpoint.h>
 #import <EtoileFoundation/ETUTI.h>
 #import <EtoileFoundation/NSObject+Model.h>
 #import <EtoileFoundation/NSObject+HOM.h>
@@ -198,6 +201,52 @@ Can be overriden in subclasses. */
 	return newItem;
 }
 
+/** If aParentCollection is nil, this method returns immediately. For example, 
+when -usesRepresentedObjectAsProvider on the controller content returns NO. */
+- (id) mutableObjectForRepresentedObject: (id)newObject
+                      ofParentCollection: (id <ETCollection>)aParentCollection
+                                 options: (NSDictionary *)options
+{
+	if (aParentCollection == nil)
+		return newObject;
+
+	NSParameterAssert([(NSObject *)aParentCollection isMutableCollection]);
+	Class viewpointTraitClass = [[[newObject class] ifResponds] mutableViewpointClass];
+	NSString *pairKey = [options objectForKey: kETTemplateOptionKeyValuePairKey];
+
+	// TODO: Implement -viewpointClassForObject:, NSDictionary returns
+	// ETKeyValuePair and ETCollectionViewpoint returns either ETKeyValuePair
+	// from the content or ETIndexValuePair... An alternative would be:
+	// -newViewpointWithKey:(index:)value:representedObject: to be implemented
+	// only in NSMutableDictionary and ETCollectionViewpoint. We can decide if
+	// the key represents an index or not based on whether the collection
+	// viewpoint returns YES or NO to -isKeyed.
+	// Both -viewpointClassForObject: and -newViewpointWithKey:value:representedObject:
+	// can be evaluated with -ifResponds
+	if ([aParentCollection isKeyed] && pairKey != nil)
+	{
+		ETAssert([pairKey isString]);
+
+		ETKeyValuePair *pair = [ETKeyValuePair pairWithKey: pairKey value: newObject];
+		[pair setRepresentedObject: aParentCollection];
+		return pair;
+	}
+	else if ([[(id)aParentCollection ifResponds] isIndexValuePairCollection] && viewpointTraitClass != Nil)
+	{
+		/* The index is set at insertion time in 
+		   -mutateRepresentedObjectForInsertedItem:atIndex:hint: */
+		return AUTORELEASE([[ETIndexValuePair alloc]
+			initWithIndex: ETUndeterminedIndex value: newObject representedObject: aParentCollection]);
+	}
+					
+	/* The mutable object viewpoint mutates the parent collection itself.
+	   For example, editing a sort descriptor in a collection, means replacing 
+	   the sort descriptor in the collection each time a sort descriptor property 
+	   is edited. */
+	return newObject;
+}
+
+
 /** Returns a new retained ETLayoutItem or ETLayoutItemGroup object for the 
 given URL and options.
 
@@ -229,19 +278,11 @@ See also -newItemWithRepresentedObject:options:. */
 	{
 		newInstance = [newInstance init];
 	}
+	id parentObject = [options objectForKey: kETTemplateOptionParentRepresentedObject];
+	id value = [self mutableObjectForRepresentedObject: newInstance
+									   ofParentCollection: parentObject options: options];
 
-	id value = AUTORELEASE(newInstance);
-	NSString *pairKey = [options objectForKey: kETTemplateOptionKeyValuePairKey];
 
-	if (pairKey != nil)
-	{
-		id parentCollection = [options objectForKey: kETTemplateOptionParentRepresentedObject];
-		ETAssert([parentCollection isCollection]);
-		ETAssert([pairKey isString]);
-
-		value = [ETKeyValuePair pairWithKey: pairKey value: newInstance];
-		[value setRepresentedObject: parentCollection];
-	}
 
 	return [self newItemWithRepresentedObject: value URL: aURL options: options];
 }

@@ -269,6 +269,8 @@
 		60928D5212EDE9EA0091A3D1 /* AppController.m in Sources */ = {isa = PBXBuildFile; fileRef = 60928D4F12EDE9EA0091A3D1 /* AppController.m */; };
 		609DE8401761C86900F486FD /* NSSortDescriptor+ModelDescription.m in Sources */ = {isa = PBXBuildFile; fileRef = 609DE83F1761C86900F486FD /* NSSortDescriptor+ModelDescription.m */; };
 		609DE8411761C86900F486FD /* NSSortDescriptor+ModelDescription.m in Sources */ = {isa = PBXBuildFile; fileRef = 609DE83F1761C86900F486FD /* NSSortDescriptor+ModelDescription.m */; };
+		609DE8431761D0C000F486FD /* ETUTI+ModelDescription.m in Sources */ = {isa = PBXBuildFile; fileRef = 609DE8421761D0C000F486FD /* ETUTI+ModelDescription.m */; };
+		609DE8441761D0C000F486FD /* ETUTI+ModelDescription.m in Sources */ = {isa = PBXBuildFile; fileRef = 609DE8421761D0C000F486FD /* ETUTI+ModelDescription.m */; };
 		609F5B6A16CDB8FA00683BD9 /* AppKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 609F5B6916CDB8F300683BD9 /* AppKit.framework */; };
 		609F5B6C16CDB90800683BD9 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 609F5B6B16CDB90400683BD9 /* Foundation.framework */; };
 		609F5B9016CDBE6500683BD9 /* TestEtoileUI-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 609F5B8F16CDBE6400683BD9 /* TestEtoileUI-Info.plist */; };
@@ -985,6 +987,7 @@
 		609549820C0E462500068CBB /* ETOutlineLayout.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ETOutlineLayout.m; path = Source/ETOutlineLayout.m; sourceTree = "<group>"; };
 		609C01E2170C34F300D01AAB /* TestWindowItem.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = TestWindowItem.m; path = Tests/TestWindowItem.m; sourceTree = "<group>"; };
 		609DE83F1761C86900F486FD /* NSSortDescriptor+ModelDescription.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = "NSSortDescriptor+ModelDescription.m"; path = "ModelDescription/NSSortDescriptor+ModelDescription.m"; sourceTree = "<group>"; };
+		609DE8421761D0C000F486FD /* ETUTI+ModelDescription.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = "ETUTI+ModelDescription.m"; path = "ModelDescription/ETUTI+ModelDescription.m"; sourceTree = "<group>"; };
 		609F46590B41641400AD2209 /* ETLayout.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ETLayout.h; path = Headers/ETLayout.h; sourceTree = "<group>"; };
 		609F465A0B41641400AD2209 /* ETLayout.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ETLayout.m; path = Source/ETLayout.m; sourceTree = "<group>"; };
 		609F465C0B41642900AD2209 /* ETFlowLayout.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ETFlowLayout.h; path = Headers/ETFlowLayout.h; sourceTree = "<group>"; };
@@ -1472,6 +1475,7 @@
 				601296A713C7482500980F16 /* ETController+ModelDescription.m */,
 				603D7D0913D363BA007AABE2 /* ETActionHandler+ModelDescription.m */,
 				609DE83F1761C86900F486FD /* NSSortDescriptor+ModelDescription.m */,
+				609DE8421761D0C000F486FD /* ETUTI+ModelDescription.m */,
 			);
 			name = "Model Descriptions";
 			sourceTree = "<group>";
@@ -2921,6 +2925,7 @@
 				6043D47C17564BB2002103CC /* TestWindowLayout.m in Sources */,
 				6043D47D17564BB2002103CC /* TestWindowItem.m in Sources */,
 				609DE8411761C86900F486FD /* NSSortDescriptor+ModelDescription.m in Sources */,
+				609DE8441761D0C000F486FD /* ETUTI+ModelDescription.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -3103,6 +3108,7 @@
 				6043D3F51755751F002103CC /* ETUIStateRestoration.m in Sources */,
 				6043D4C61756BFDD002103CC /* ETLayoutItem+AppKit.m in Sources */,
 				609DE8401761C86900F486FD /* NSSortDescriptor+ModelDescription.m in Sources */,
+				609DE8431761D0C000F486FD /* ETUTI+ModelDescription.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

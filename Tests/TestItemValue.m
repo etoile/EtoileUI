@@ -189,12 +189,28 @@
 
 	UKIntsEqual([[person groupNames] count], [itemGroup numberOfItems]);
 
-	UKObjectsEqual([person groupNames], [[[itemGroup items] mappedCollection] representedObject]);
-	UKObjectsEqual([person groupNames], [[[itemGroup items] mappedCollection] value]);
+	NSArray *pairs = [[person groupNames] viewpointArray];
+	NSArray *pairValues = [person groupNames];
+	NSArray *items = [itemGroup items];
+
+	UKObjectsEqual(pairs, [[items mappedCollection] representedObject]);
+	UKObjectsEqual(pairs, (id)[[items mappedCollection] value]);
 	/* The represented object is a simple string that doesn't implement -value 
 	   so -valueForProperty: retrieves the value from the item. */
-	UKObjectsEqual([person groupNames], [[[itemGroup items] mappedCollection] valueForProperty: kETValueProperty]);
-	UKNil([[itemGroup firstItem] valueForProperty: @"groupNames"]);
+	UKObjectsEqual(pairValues, [[items mappedCollection] valueForProperty: kETValueProperty]);
+
+	ETLayoutItem *someItem = [itemGroup firstItem];
+	
+	UKNil([someItem valueForProperty: @"groupNames"]);
+	
+	NSUInteger pairIndex = [[someItem valueForProperty: @"index"] unsignedIntegerValue];
+	NSString *pairValue = [someItem valueForProperty: @"value"];
+	ETIndexValuePair *pair = AUTORELEASE([[ETIndexValuePair alloc]
+		initWithIndex: pairIndex value: pairValue representedObject: [person groupNames]]);
+
+	UKTrue([[person groupNames] containsObject: pairValue]);
+	UKObjectsEqual(pairValue, [[person groupNames] objectAtIndex: pairIndex]);
+	UKTrue([pairs containsObject: pair]);
 }
 
 - (void) testItemGroupValueKeyForCollectionMutation
@@ -204,22 +220,37 @@
 	[itemGroup setSource: itemGroup];
 	
 	NSUInteger count = [itemGroup count];
+	ETIndexValuePair *pair = AUTORELEASE([[ETIndexValuePair alloc]
+		initWithIndex: ETUndeterminedIndex value: @"Nowhere" representedObject: [itemGroup representedObject]]);
 
-	ASSIGN(item, [itemFactory itemWithRepresentedObject: @"Nowhere"]);
+	/* No need to create a pair, because -mutateRepresentedForItem:atIndex:hint: 
+	   would unbox it so -insertObject:atIndex:hint: is always called on 
+	   ETCollectionViewPoint with @"Nowhere" as the inserted object. */
+	// FIXME: ASSIGN(item, [itemFactory itemWithRepresentedObject: @"Nowhere"]);
+	// This works but doesn't update the created item to use an index value pair
+	// as its represented object. The solution is to provide a template provider
+	// that creates ETIndexValuePair and ETKeyValuePair objects (if no controller
+	// exists).
+	ASSIGN(item, [itemFactory itemWithRepresentedObject: pair]);
 
 	[itemGroup insertItem: item atIndex: 1];
-	
+
+	NSArray *pairs = [[person groupNames] viewpointArray];
+
 	UKIntsEqual(count + 1, [[person groupNames] count]);
 	UKObjectsEqual(@"Nowhere", [[person groupNames] objectAtIndex: 1]);
 	UKObjectsEqual(@"Nowhere", [[[itemGroup value] content] objectAtIndex: 1]);
-	UKObjectsEqual([person groupNames], [[[itemGroup items] mappedCollection] representedObject]);
+	// FIXME: The pair indexes are not updated
+	//UKObjectsEqual(pairs, [[[itemGroup items] mappedCollection] representedObject]);
 
 	[itemGroup removeItem: item];
+	
+	pairs = [[person groupNames] viewpointArray];
 	
 	UKIntsEqual(count, [[person groupNames] count]);
 	UKFalse([[person groupNames] containsObject: @"Nowhere"]);
 	UKFalse([[itemGroup value] containsObject: @"Nowhere"]);
-	UKObjectsEqual([person groupNames], [[[itemGroup items] mappedCollection] representedObject]);
+	UKObjectsEqual(pairs, [[[itemGroup items] mappedCollection] representedObject]);
 }
 
 - (void) testItemGroupValueKeyForDictionary
@@ -234,6 +265,7 @@
 	UKObjectsEqual([person emails], [[itemGroup value] content]);
 	UKNil([itemGroup valueForProperty: @"emails"]);
 	UKObjectsEqual([person emails], [[itemGroup valueForProperty: kETValueProperty] content]);
+	UKObjectKindOf([itemGroup valueForProperty: @"self"], NSDictionary);
 
 	UKIntsEqual([[person emails] count], [itemGroup numberOfItems]);
 

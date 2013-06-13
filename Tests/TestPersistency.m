@@ -15,7 +15,7 @@
 #import <AppKit/AppKit.h>
 #import <UnitKit/UnitKit.h>
 #import <EtoileFoundation/Macros.h>
-#import <EtoileFoundation/ETPropertyViewpoint.h>
+#import <EtoileFoundation/ETViewpoint.h>
 #import <EtoileFoundation/NSObject+Model.h>
 #import <CoreObject/COEditingContext.h>
 #import <CoreObject/COObject.h>

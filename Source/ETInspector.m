@@ -12,7 +12,7 @@
 #import <EtoileFoundation/NSIndexPath+Etoile.h>
 #import <EtoileFoundation/NSString+Etoile.h>
 #import <EtoileFoundation/ETCollection.h>
-#import <EtoileFoundation/ETPropertyViewpoint.h>
+#import <EtoileFoundation/ETViewpoint.h>
 #import <EtoileFoundation/Macros.h>
 #import "ETInspector.h"
 #import "EtoileUIProperties.h"

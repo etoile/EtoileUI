@@ -8,7 +8,7 @@
 
 #import <EtoileFoundation/Macros.h>
 #import <EtoileFoundation/ETPropertyDescription.h>
-#import <EtoileFoundation/ETPropertyViewpoint.h>
+#import <EtoileFoundation/ETViewpoint.h>
 #import <EtoileFoundation/ETModelElementDescription.h>
 #import <EtoileFoundation/ETModelDescriptionRepository.h>
 #import <EtoileFoundation/NSObject+DoubleDispatch.h>
@@ -202,8 +202,17 @@ time. For example:
 
 - (void) registerDefaultFormatters
 {
+	NSArray *numberTypeNames = A(@"NSNumber", @"NSInteger", @"NSUInteger",
+		@"float", @"double", @"BOOL", @"Boolean", @"Number");
+
 	[self setFormatter: AUTORELEASE([ETObjectValueFormatter new])
 	           forType: [_repository descriptionForName: @"Object"]];
+
+	for (NSString *typeName in numberTypeNames)
+	{
+		[self setFormatter: AUTORELEASE([NSNumberFormatter new])
+		           forType: [_repository descriptionForName: typeName]];
+	}
 }
 
 - (void) setEntityLayout: (ETLayout *)aLayout
@@ -557,23 +566,18 @@ See also -setRenderedPropertyNames:. */
 	ETLayoutItemGroup *editor = [[self templateItemForIdentifier: @"collectionEditor"] deepCopy];
 	ETLayoutItemGroup *browser = (id)[editor itemForIdentifier: @"browser"];
 	ETAssert(browser != nil);
-	// FIXME: Use the code below
-	//id collection = [self representedObjectForToManyRelationshipDescription: aPropertyDesc
-	//                                                               ofObject: anObject];
-	//[browser setRepresentedObject: collection];
+	
+	// NOTE:  We could add -representedObjectForToManyRelationshipDescription:ofObject:
 	[browser setRepresentedObject: anObject];
 	[browser setValueKey: [aRelationshipDesc name]];
 	[browser reload];
 
 	ETPropertyCollectionController *controller = (id)[browser controller];
 	ETAssert(controller != nil);
-	Class relationshipClass = [_repository classForEntityDescription: [aRelationshipDesc type]];
-	ETAssert(relationshipClass != Nil);
 	ETItemTemplate *template = [ETItemTemplate templateWithItem: [_itemFactory item]
-	                                                objectClass: relationshipClass];
+	                                                 entityName: [[aRelationshipDesc type] name]];
 
 	[controller setTemplate: template forType: [controller currentObjectType]];
-
 	[[controller content] setDoubleAction: @selector(edit:)];
 	[[controller content] setTarget: controller];
 
@@ -605,6 +609,8 @@ See also -setRenderedPropertyNames:. */
 			[[browser layout] setDisplayName: [propertyDesc displayName]
 			                     forProperty: property];
 			[[browser layout] setEditable: ([propertyDesc isReadOnly] == NO)
+			                  forProperty: property];
+			[[browser layout] setFormatter: [self formatterForType: [propertyDesc type]]
 			                  forProperty: property];
 		}
 	}

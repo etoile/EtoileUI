@@ -55,6 +55,8 @@
 		[ETPropertyDescription descriptionWithName: @"templates" type: (id)@"ETItemTemplate"];
 	[templates setMultivalued: YES];
 	[templates setOrdered: NO];
+	// TODO: Implement ETItemTemplate model description and display 'key' as 'Target UTI'
+	//[templates setDetailedPropertyNames: A(@"item", @"objectClass", @"entityName")];
 	ETPropertyDescription *currentObjectType =
 		[ETPropertyDescription descriptionWithName: @"currentObjectType" type: (id)@"ETUTI"];
 	ETPropertyDescription *currentGroupType =
@@ -71,7 +73,7 @@
 		[ETPropertyDescription descriptionWithName: @"sortDescriptors" type: (id)@"NSSortDescriptor"];
 	[sortDescriptors setMultivalued: YES];
 	[sortDescriptors setOrdered: YES];
-	[sortDescriptors setDetailedPropertyNames: A(@"key", @"ascending", @"selector")];
+	[sortDescriptors setDetailedPropertyNames: A(@"key", @"ascending", @"selectorString")];
 	ETPropertyDescription *filterPredicate =
 		[ETPropertyDescription descriptionWithName: @"filterPredicate" type: (id)@"NSPredicate"];
 	ETPropertyDescription *automaticallyRearranges =
@@ -80,10 +82,13 @@
 		[ETPropertyDescription descriptionWithName: @"allowedPickTypes" type: (id)@"ETUTI"];
 	[allowedPickTypes setMultivalued: YES];
 	[allowedPickTypes setOrdered: YES];
+	[allowedPickTypes setDetailedPropertyNames: A(@"stringValue", @"classValue")];
 	ETPropertyDescription *allowedDropTypes =
 		[ETPropertyDescription descriptionWithName: @"allowedDropTypes" type: (id)@"ETUTI"];
 	[allowedDropTypes setMultivalued: YES];
 	[allowedDropTypes setOrdered: NO];
+	// TODO: Display 'key' as 'Target UTI'
+	[allowedDropTypes setDetailedPropertyNames: A(@"stringValue", @"classValue")];
 
 	/* Transient Properties */
 
