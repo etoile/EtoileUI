@@ -6,6 +6,7 @@
 	License: Modified BSD (see COPYING)
  */
 
+#import <Foundation/Foundation.h>
 #import <EtoileFoundation/EtoileFoundation.h>
 #import "ETItemTemplate.h"
 
@@ -63,15 +64,38 @@
 }
 @end
 
+#ifdef GNUSTEP
+@interface NSSortDescriptor (EtoileUI)
++ (id) sortDescriptorWithKey: (NSString *)aKey ascending: (BOOL)ascending selector: (SEL)aSelector;
+@end
+
+@implementation NSSortDescriptor (EtoileUI)
++ (id) sortDescriptorWithKey: (NSString *)aKey ascending: (BOOL)ascending selector: (SEL)aSelector
+{
+	return AUTORELEASE([[self alloc] initWithKey: aKey ascending: ascending selector: aSelector]);
+}
+@end
+#endif
 
 @implementation NSSortDescriptorMutableViewpointTrait
+
+- (id) value
+{
+	[self doesNotRecognizeSelector: _cmd];
+	return nil;
+}
+
+- (void) setValue: (id)aValue
+{
+	[self doesNotRecognizeSelector: _cmd];
+}
 
 - (void) setAscending: (BOOL)ascending
 {
 	NSSortDescriptor *sortDescriptor =
 		[NSSortDescriptor sortDescriptorWithKey: [[self value] key]
 		                              ascending: ascending
-	                                   selector: [[self value] selector]];
+	                                       selector: [[self value] selector]];
 	[self setValue: sortDescriptor];
 }
 
@@ -80,7 +104,7 @@
 	NSSortDescriptor *sortDescriptor =
 		[NSSortDescriptor sortDescriptorWithKey: aKey
 		                              ascending: [[self value] ascending]
-	                                   selector: [[self value] selector]];
+	                                       selector: [[self value] selector]];
 	[self setValue: sortDescriptor];
 }
 
@@ -89,7 +113,7 @@
 	NSSortDescriptor *sortDescriptor =
 		[NSSortDescriptor sortDescriptorWithKey: [[self value] key]
 		                              ascending: [[self value] ascending]
-	                                   selector: aSelector];
+	                                       selector: aSelector];
 	[self setValue: sortDescriptor];
 }
 
@@ -99,3 +123,4 @@
 }
 
 @end
+
