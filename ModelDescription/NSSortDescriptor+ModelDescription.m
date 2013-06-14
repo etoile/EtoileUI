@@ -16,6 +16,12 @@
 @interface NSSortDescriptorMutableViewpointTrait : NSObject
 @end
 
+@interface NSSortDescriptorMutableViewpointTrait (ETViewpoint)
+- (id) value;
+- (void) setValue: (id)aValue;
+@end
+
+
 @implementation NSSortDescriptor (ModelDescription)
 
 + (ETEntityDescription *) newEntityDescription
@@ -79,23 +85,12 @@
 
 @implementation NSSortDescriptorMutableViewpointTrait
 
-- (id) value
-{
-	[self doesNotRecognizeSelector: _cmd];
-	return nil;
-}
-
-- (void) setValue: (id)aValue
-{
-	[self doesNotRecognizeSelector: _cmd];
-}
-
 - (void) setAscending: (BOOL)ascending
 {
 	NSSortDescriptor *sortDescriptor =
 		[NSSortDescriptor sortDescriptorWithKey: [[self value] key]
 		                              ascending: ascending
-	                                       selector: [[self value] selector]];
+	                                   selector: [[self value] selector]];
 	[self setValue: sortDescriptor];
 }
 
@@ -104,7 +99,7 @@
 	NSSortDescriptor *sortDescriptor =
 		[NSSortDescriptor sortDescriptorWithKey: aKey
 		                              ascending: [[self value] ascending]
-	                                       selector: [[self value] selector]];
+	                                   selector: [[self value] selector]];
 	[self setValue: sortDescriptor];
 }
 
@@ -113,7 +108,7 @@
 	NSSortDescriptor *sortDescriptor =
 		[NSSortDescriptor sortDescriptorWithKey: [[self value] key]
 		                              ascending: [[self value] ascending]
-	                                       selector: aSelector];
+	                                   selector: aSelector];
 	[self setValue: sortDescriptor];
 }
 
