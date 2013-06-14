@@ -24,6 +24,7 @@
 #import "ETLayoutItem+Scrollable.h"
 #import "ETLayoutItemFactory.h"
 #import "ETLayoutItemGroup.h"
+#import "ETModelBuilderUI.h" // FIXME: Remove
 #import "ETObjectValueFormatter.h"
 #import "EtoileUIProperties.h"
 #import "ETTitleBarItem.h"
@@ -57,7 +58,8 @@
 	ASSIGN(_repository, [ETModelDescriptionRepository mainRepository]);
 	ASSIGN(_itemFactory, [ETLayoutItemFactory factory]);
 	ASSIGN(_entityLayout, [self defaultFormLayout]);
-	_renderedPropertyNames = [NSArray new];
+	/* See -setRendererPropertyNames: */
+	_renderedPropertyNames = nil;
 
 	[self registerDefaultTemplateItems];
 	[self registerDefaultRoleTemplateIdentifiers];
@@ -258,7 +260,7 @@ time. For example:
 - (ETFormLayout *) defaultFormLayout
 {
 	ETFormLayout *layout = [ETFormLayout layout];
-	[layout setIsContentSizeLayout: YES];
+	[(ETLayout *)[layout positionalLayout] setIsContentSizeLayout: YES];
 	return layout;
 }
 
@@ -597,9 +599,10 @@ See also -setRenderedPropertyNames:. */
 		//[editor addItem: [_itemFactory horizontalSlider]];
 		[editor setHeight: [editor height] + [detailedItem height]];
 	}
-	else
+	else if ([[aRelationshipDesc detailedPropertyNames] isEmpty] == NO)
 	{
 		[[browser layout] setDisplayedProperties: [aRelationshipDesc detailedPropertyNames]];
+
 		for (NSString *property in [[browser layout] displayedProperties])
 		{
 			ETPropertyDescription *propertyDesc =
@@ -611,7 +614,7 @@ See also -setRenderedPropertyNames:. */
 			[[browser layout] setEditable: ([propertyDesc isReadOnly] == NO)
 			                  forProperty: property];
 			[[browser layout] setFormatter: [self formatterForType: [propertyDesc type]]
-			                  forProperty: property];
+			                   forProperty: property];
 		}
 	}
 	
@@ -919,49 +922,17 @@ See also -setRenderedPropertyNames:. */
 
 @end
 
-
-@implementation ETEntityDescription (EtoileUI)
-
-- (ETOutlineLayout *)defaultOutlineLayoutForInspector
-{
-	ETOutlineLayout *layout = [ETOutlineLayout layout];
-
-	[layout setDisplayedProperties: A(kETIconProperty, kETDisplayNameProperty, kETValueProperty)];
-	[[layout columnForProperty: kETDisplayNameProperty] setWidth: 250];
-	[[layout columnForProperty: kETValueProperty] setWidth: 250];
-
-	return layout;
-}
-
-- (void) view: (id)sender
-{
-	ETModelDescriptionRenderer *renderer = [ETModelDescriptionRenderer renderer];
-
-	[renderer setGroupingKeyPath: @"owner"];
-
-	[ETLayoutItem disablesAutolayout];
-
-	ETLayoutItemGroup *entityItem = [renderer renderObject: self];
-
-	[[entityItem layout] setAutoresizesItemToFill: YES];
-	[(id)[entityItem itemAtIndex: 0] updateLayoutRecursively: NO];
-	[(id)[entityItem itemAtIndex: 1] updateLayoutRecursively: NO];
-	[entityItem updateLayoutRecursively: NO];
-
-	//[entityItem setLayout: [self defaultOutlineLayoutForInspector]];
-	[[[ETLayoutItemFactory factory] windowGroup] addItem: entityItem];
-	
-	[ETLayoutItem enablesAutolayout];
-}
-
-@end
-
 @implementation ETPropertyCollectionController
 
 - (IBAction) edit: (id)sender
 {
 	ETLayoutItem *item = [sender doubleClickedItem];
-	ETLayoutItemGroup *entityItem = [[ETModelDescriptionRenderer renderer] renderObject: [item representedObject]];
+	ETLayoutItemGroup *entityItem = [[[item representedObject] ifResponds] itemRepresentation];
+
+	if (entityItem == nil)
+	{
+		entityItem = [[ETModelDescriptionRenderer renderer] renderObject: self];
+	}
 
 	[[[ETLayoutItemFactory factory] windowGroup] addItem: entityItem];
 }

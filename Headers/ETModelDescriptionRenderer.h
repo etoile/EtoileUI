@@ -75,11 +75,6 @@
 
 @end
 
-@interface ETEntityDescription (EtoileUI)
-- (void) view: (id)sender;
-@end
-
 @interface ETPropertyCollectionController : ETController
 - (IBAction) edit: (id)sender;
 @end
-

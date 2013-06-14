@@ -514,6 +514,10 @@ menu bar, otherwise builds a new instance and returns it. */
 	                action: @selector(showUIBuilderAspectRepository:)
 	         keyEquivalent: @""];
 
+	[menu addItemWithTitle: _(@"New Package Description…") 
+	                action: @selector(newPackageDescription:)
+	         keyEquivalent: @""];
+
 	[menu addItemWithTitle: _(@"Show UI Aspect Repository") 
 	                action: @selector(showUIBuilderAspectRepository:)
 	         keyEquivalent: @""];
@@ -1063,6 +1067,11 @@ utilities related to debugging, introspection etc. */
 		[[self mainMenu] removeItem: devMenuItem];
 		[sender setTitle: _(@"Show Development Menu")];
 	}
+}
+
+- (IBAction) newPackageDescription: (id)sender
+{
+	[[ETPackageDescription descriptionWithName: @"Untitled"] view: sender];
 }
 
 - (IBAction) didChangeVisualSearchString: (id)sender
