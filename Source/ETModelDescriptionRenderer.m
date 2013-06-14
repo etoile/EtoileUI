@@ -55,6 +55,7 @@
 	_templateItems = [NSMutableDictionary new];
 	_additionalTemplateIdentifiers = [NSMutableDictionary new];
 	_formattersByType = [NSMutableDictionary new];
+	_valueTransformersByType = [NSMutableDictionary new];
 	ASSIGN(_repository, [ETModelDescriptionRepository mainRepository]);
 	ASSIGN(_itemFactory, [ETLayoutItemFactory factory]);
 	ASSIGN(_entityLayout, [self defaultFormLayout]);
@@ -74,6 +75,7 @@
 	DESTROY(_repository);
 	DESTROY(_itemFactory);
 	DESTROY(_formattersByType);
+	DESTROY(_valueTransformersByType);
 	DESTROY(_entityLayout);
 	DESTROY(_renderedPropertyNames);
 	DESTROY(_groupingKeyPath);
@@ -414,6 +416,26 @@ See also -setRenderedPropertyNames:. */
 	[_formattersByType setObject: aFormatter forKey: [aType name]];
 }
 
+- (ETItemValueTransformer *) valueTransformerForType: (ETEntityDescription *)aType
+{
+	ETEntityDescription *type = aType;
+	ETItemValueTransformer *transformer = nil;
+	
+	do
+	{
+		transformer = [_valueTransformersByType objectForKey: [aType name]];
+	}
+	while ((type = [type parent]) != nil);
+
+	return transformer;
+}
+
+- (void) setValueTransformer: (ETItemValueTransformer *)aTransformer
+                     forType: (ETEntityDescription *)aType
+{
+	[_valueTransformersByType setObject: aTransformer forKey: [aType name]];
+}
+
 - (NSString *) labelForPropertyDescription: (ETPropertyDescription *)aPropertyDesc
 {
 	return [aPropertyDesc displayName];
@@ -527,9 +549,11 @@ See also -setRenderedPropertyNames:. */
 - (id) representedObjectForToOneRelationshipDescription: (ETPropertyDescription *)aPropertyDesc
                                                ofObject: (id)anObject
 {
-	// TODO: Possibility to edit the type to override the existing object
-	// with a new entity/class object.
-	return [NSString stringWithFormat: @"To-one Relationship (%@)", [[aPropertyDesc type] name]];
+	// TODO: Provide basic alternative as an option
+	//return [NSString stringWithFormat: @"To-one Relationship (%@)", [[aPropertyDesc type] name]];;
+	id relationshipValue =
+		[ETMutableObjectViewpoint viewpointWithName: [aPropertyDesc name]representedObject: anObject];
+	return relationshipValue;
 }
 
 - (id) representedObjectForToManyRelationshipDescription: (ETPropertyDescription *)aPropertyDesc
@@ -580,6 +604,7 @@ See also -setRenderedPropertyNames:. */
 	                                                 entityName: [[aRelationshipDesc type] name]];
 
 	[controller setTemplate: template forType: [controller currentObjectType]];
+	[controller setModelDescriptionRepository: [self repository]];
 	[[controller content] setDoubleAction: @selector(edit:)];
 	[[controller content] setTarget: controller];
 
@@ -665,6 +690,8 @@ See also -setRenderedPropertyNames:. */
 			id repObject = [self representedObjectForToOneRelationshipDescription: aPropertyDesc ofObject: anObject];
 			item = AUTORELEASE([templateItem copy]);
 			[item setRepresentedObject: repObject];
+			ETAssert([[item valueKey] isEqual: [aPropertyDesc name]]);
+			[self prepareViewOfNewItem: item forAttributeDescription: aPropertyDesc];
 		}
 		else
 		{
@@ -814,6 +841,18 @@ See also -setRenderedPropertyNames:. */
 	[[[item view] ifResponds] setEditable: ([aPropertyDesc isReadOnly] == NO)];
 	if ([self isTextItem: item])
 	{
+		ETItemValueTransformer *transformer =
+			[self valueTransformerForType: [aPropertyDesc type]];
+
+		if (transformer != nil)
+		{
+			/* No need to set the same transformer for 'value', in this precise case 
+			   ETLayoutItem uses  the value key to look up the transformer in 
+			   -setValue:forProperty:. */
+			[item setValueTransformer: [self valueTransformerForType: [aPropertyDesc type]]
+			              forProperty: [aPropertyDesc name]];
+		}
+
 		[[[item view] ifResponds] setFormatter: [self formatterForType: [aPropertyDesc type]]];
 		[[[item view] ifResponds] setSelectable: YES];
 		// FIXME: On Mac OS X, resigning the first responder status in a cell
@@ -923,6 +962,26 @@ See also -setRenderedPropertyNames:. */
 @end
 
 @implementation ETPropertyCollectionController
+
+@synthesize modelDescriptionRepository = _modelDescriptionRepository;
+
+- (void) dealloc
+{
+	DESTROY(_modelDescriptionRepository);
+	[super dealloc];
+}
+
+- (NSDictionary *)defaultOptions
+{
+	NSMutableDictionary *options = AUTORELEASE([[super defaultOptions] mutableCopy]);
+
+	ETAssert([self modelDescriptionRepository] != nil);
+	
+	[options setObject: [self modelDescriptionRepository]
+				forKey: kETTemplateOptionModelDescriptionRepository];
+
+	return AUTORELEASE([options copy]);
+}
 
 - (IBAction) edit: (id)sender
 {

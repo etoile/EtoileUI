@@ -15,7 +15,7 @@
 #import "ETController.h"
 
 @class ETPropertyDescription, ETEntityDescription;
-@class ETFormLayout, ETLayout, ETLayoutItem, ETLayoutItemFactory;
+@class ETFormLayout, ETLayout, ETLayoutItem, ETLayoutItemFactory, ETItemValueTransformer;
 
 @interface ETModelDescriptionRenderer : NSObject
 {
@@ -25,6 +25,7 @@
 	NSMutableDictionary *_templateItems;
 	NSMutableDictionary *_additionalTemplateIdentifiers;
 	NSMutableDictionary *_formattersByType;
+	NSMutableDictionary *_valueTransformersByType;
 	ETLayout *_entityLayout;
 	NSRect _entityItemFrame;
 	NSArray *_renderedPropertyNames;
@@ -48,6 +49,8 @@
 - (void) setTemplateIdentifier: (NSString *)anIdentifier forRoleClass: (Class)aClass;
 - (NSString *) templateIdentifierForRoleClass: (Class)aClass;
 
+- (NSSize) defaultItemSize;
+
 /** @taskunit Customizing Generated UI */
 
 - (ETFormLayout *) defaultFormLayout;
@@ -66,6 +69,9 @@
 
 - (id) formatterForType: (ETEntityDescription *)aType;
 - (void) setFormatter: (NSFormatter *)aFormatter forType: (ETEntityDescription *)aType;
+- (ETItemValueTransformer *) valueTransformerForType: (ETEntityDescription *)aType;
+- (void) setValueTransformer: (ETItemValueTransformer *)aTransformer
+                     forType: (ETEntityDescription *)aType;
 
 /** @taskunit Generating Form UI */
 
@@ -76,5 +82,13 @@
 @end
 
 @interface ETPropertyCollectionController : ETController
+{
+	@private
+	ETModelDescriptionRepository *_modelDescriptionRepository;
+}
+
+@property (nonatomic, retain) ETModelDescriptionRepository *modelDescriptionRepository;
+
 - (IBAction) edit: (id)sender;
+
 @end
