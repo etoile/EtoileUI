@@ -66,12 +66,6 @@ See also NSObject(ETAspectRegistration). */
 	}
 }
 
-/** Returns ET. */
-+ (NSString *) typePrefix
-{
-	return @"ET";
-}
-
 /** Returns 'Layout'. */
 + (NSString *) baseClassName
 {

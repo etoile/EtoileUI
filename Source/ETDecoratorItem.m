@@ -30,6 +30,14 @@
 	return AUTORELEASE([[self alloc] initWithSupervisorView: nil]);
 }
 
+/** Returns 'Item'.
+ 
+This means +[ETDecoratorItem displayName] returns 'Decorator'. */
++ (NSString *) baseClassName
+{
+	return @"Item";
+}
+
 /** <init />
 Initializes and returns a new decorator whose decoration border is provided by 
 supervisorView.

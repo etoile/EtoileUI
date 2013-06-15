@@ -155,7 +155,7 @@ and compile the code, otherwise the source code is read-only e.g. for Objective-
 in various EtoileUI builtin facilities such as an inspector. */
 + (NSString *) displayName
 {
-	return [[self stripClassName] stringBySpacingCapitalizedWords];
+	return [[self stripTypePrefix] stringBySpacingCapitalizedWords];
 }
 
 /** Overrides. */
@@ -164,13 +164,33 @@ in various EtoileUI builtin facilities such as an inspector. */
 	return @"Object";
 }
 
-/* Removes collision prefix and base suffix of class names. */
+/* Removes type prefix of class names. */
++ (NSString *) stripTypePrefix
+{
+	NSString *className = [self className];
+	
+	if (([[self typePrefix] length] > 0 && [className hasPrefix: [self typePrefix]] == NO))
+	{
+		ETLog(@"Type prefix %@ doesn't match class name %@ ", [self typePrefix], className);
+		return className;
+	}
+	
+	// TODO: Implement -stringByRemovingPrefix: and use it.
+	unsigned int prefixLength = [[self typePrefix] length];
+	NSRange range = NSMakeRange(prefixLength, [className length] - prefixLength);
+	
+	return [className substringWithRange: range];
+}
+
+/* Removes type prefix and base suffix of class names.
+ 
+If +baseClassName returns an empty string, the type prefix is removed. */
 + (NSString *) stripClassName
 {
 	NSString *className = [self className];
 
-	if ([className hasPrefix: [self typePrefix]] == NO 
-	 || [className hasSuffix: [self baseClassName]] == NO)
+	if (([[self typePrefix] length] > 0 && [className hasPrefix: [self typePrefix]] == NO)
+	 || ([[self baseClassName] length] > 0 && [className hasSuffix: [self baseClassName]] == NO))
 	{
 		ETLog(@"Type prefix %@ or base class name %@ doesn't match class name %@ ",
 			[self typePrefix], [self baseClassName], className);

@@ -17,6 +17,12 @@
 
 @implementation ETUIObject
 
+/** Returns ET. */
++ (NSString *) typePrefix
+{
+	return @"ET";
+}
+
 #ifdef COREOBJECT
 
 // FIXME: We probably shouldn't need to override the awake methods below.

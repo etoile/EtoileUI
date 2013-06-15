@@ -413,16 +413,30 @@ is an item group. */
 	{
 		id collection = representedObject;
 
+		/* Project the collection to get represented objects for future children */
 		if ([collection isKeyed] || [collection isKindOfClass: [ETCollectionViewpoint class]])
 		{
 			// NOTE: This section must remains in sync with -[ETItemTemplate newItemWithURL:options:]
-			collection = [collection viewpointArray];
+			if ([collection respondsToSelector: @selector(viewpointArray)])
+			{
+				collection = [collection viewpointArray];
+			}
+			else
+			{
+				collection = [collection arrayRepresentation];
+			}
 		}
 		ETAssert([representedObject count] == [collection count]);
 
 		items = [NSMutableArray arrayWithCapacity: [collection count]];
 
-		for (id object in collection)
+		/* Don't enumerate the collection directly. For keyed collections, this 
+		   is critical since the enumeration applies to the keys or key-value 
+		   pairs (ETAspectCategory and ETAspectRepository whose -content is a 
+		   key-value pair array). Enumerating key-value pairs rather than 
+		   the keyed collection values is supported but must be decided at 
+		   projection time (see above). */
+		for (id object in [collection objectEnumerator])
 		{
 			[items addObject: [self itemWithObject: object isValue: NO]];
 			// NOTE: Would it be a good idea to use...

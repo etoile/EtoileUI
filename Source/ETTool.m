@@ -65,11 +65,6 @@ See also NSObject(ETAspectRegistration). */
 	}
 }
 
-+ (NSString *) typePrefix
-{
-	return @"ET";
-}
-
 + (NSString *) baseClassName
 {
 	return @"Tool";

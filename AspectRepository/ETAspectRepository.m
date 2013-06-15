@@ -59,7 +59,11 @@ The category name is used as the aspect key to lookup the category to be removed
 	return [self aspectKeys];
 }
 
-/** Returns NO. */
+/** Returns NO.
+ 
+This ensures the aspect repository doesn't return the aspect categories wrapped 
+into key-value pairs bound to -[ETLayoutItemGroup items] (if the aspect 
+repository is the item group represented object). */
 - (BOOL) isKeyed
 {
 	return NO;

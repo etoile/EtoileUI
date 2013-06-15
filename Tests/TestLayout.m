@@ -40,8 +40,8 @@
 + (void) testDisplayName
 {
 	UKStringsEqual(@"Layout", [self displayName]);
-	UKStringsEqual(@"Table", [ETTableLayout displayName]);
-	UKStringsEqual(@"Bird Table Bird", [WXYBirdTableBirdBird displayName]);
+	UKStringsEqual(@"Table Layout", [ETTableLayout displayName]);
+	UKStringsEqual(@"Bird Table Bird Bird", [WXYBirdTableBirdBird displayName]);
 }
 
 + (void) testStripClassName

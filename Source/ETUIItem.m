@@ -35,6 +35,14 @@
 	[self applyTraitFromClass: [ETResponderTrait class]];
 }
 
+/** Returns an empty string to indicate +stripClassName (and +displayName) 
+should return the entire subclass name, unless the subclass overrides 
+-baseClassName (e.g. ETDecoratorItem). */
++ (NSString *) baseClassName
+{
+	return @"";
+}
+
 /** Returns a rect value that subclasses can used to initalize new items, when 
 both size and position are undetermined in the initialization context. */
 + (NSRect) defaultItemRect

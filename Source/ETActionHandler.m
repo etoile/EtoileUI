@@ -28,6 +28,12 @@
 
 @implementation ETActionHandler
 
+/** Returns 'ActionHandler'. */
++ (NSString *) baseClassName
+{
+	return @"ActionHandler";
+}
+
 /** <override-dummy />
 Returns the style class that can be used together with the receiver class.
 
