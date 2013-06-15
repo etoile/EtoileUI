@@ -194,7 +194,7 @@
 	NSArray *items = [itemGroup items];
 
 	UKObjectsEqual(pairs, [[items mappedCollection] representedObject]);
-	UKObjectsEqual(pairs, (id)[[items mappedCollection] value]);
+	UKObjectsEqual(pairValues, (id)[[items mappedCollection] value]);
 	/* The represented object is a simple string that doesn't implement -value 
 	   so -valueForProperty: retrieves the value from the item. */
 	UKObjectsEqual(pairValues, [[items mappedCollection] valueForProperty: kETValueProperty]);
@@ -202,6 +202,7 @@
 	ETLayoutItem *someItem = [itemGroup firstItem];
 	
 	UKNil([someItem valueForProperty: @"groupNames"]);
+	UKTrue([[[someItem representedObject] propertyNames] containsObject: kETValueProperty]);
 	
 	NSUInteger pairIndex = [[someItem valueForProperty: @"index"] unsignedIntegerValue];
 	NSString *pairValue = [someItem valueForProperty: @"value"];
@@ -274,7 +275,7 @@
 	NSArray *items = [itemGroup items];
 
 	UKObjectsEqual(SA(pairs), SA([[items mappedCollection] representedObject]));
-	UKObjectsEqual(SA(pairs), SA((id)[[items mappedCollection] value]));
+	UKObjectsEqual(SA(pairValues), SA((id)[[items mappedCollection] value]));
 	/* The represented object is a key-value pair that implements -value so 
 	   -valueForProperty: retrieves the value from the represented object. */
 	UKObjectsEqual(SA(pairValues), SA([[items mappedCollection] valueForProperty: kETValueProperty]));

@@ -14,6 +14,7 @@
 #import "NSObject+EtoileUI.h"
 #import "ETLayoutItemGroup.h"
 #import "ETLayoutItemFactory.h"
+#import "ETModelDescriptionRenderer.h"
 #import "ETInspector.h"
 #import "ETViewModelLayout.h"
 #import "ETCompatibility.h"
@@ -60,6 +61,13 @@ application the browsed object is part of). */
 	ETDebugLog(@"browse %@", self);
 }
 
+- (ETLayoutItemGroup *) itemRepresentation
+{
+	ETLayoutItemGroup *entityItem = [[ETModelDescriptionRenderer renderer] renderObject: self];
+	[entityItem setAutoresizingMask: ETAutoresizingFlexibleWidth];
+	return entityItem;
+}
+
 /** Shows the layout item representing the receiver by enforcing referential 
 stability (more commonly named spatiality in the case of UI objects).
 
@@ -75,11 +83,7 @@ the receiver with the object registry. Then this layout item is	made visible
 and active as described in the previous paragraph. */
 - (IBAction) view: (id)sender
 {
-	// TODO: Implement. Request the type (UTI) of the receiver, the looks up
-	// in the aspect repository which item template should be used to create a
-	// UI represention of the receiver. Simply copy the template and set the 
-	// receiver as the represented object, then attach the copied item to the 
-	// window group.
+	[[[ETLayoutItemFactory factory] windowGroup] addItem: [self itemRepresentation]];
 }
 
 /** Shows an inspector which provides informations about the receiver. 

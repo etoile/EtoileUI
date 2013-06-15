@@ -358,9 +358,10 @@ See also -setRenderedPropertyNames:. */
 {
 	NILARG_EXCEPTION_TEST(aKeyPath);
 	NSParameterAssert([propertyItems count] == [propertyDescs count]);
-	// FIXME: Use a ordered NSMutableDictionary (for now we depend on NSMapTable implicit ordering)
-	NSMapTable *itemGroupsByName = [NSMapTable mapTableWithStrongToStrongObjects];
-	
+	NSMutableDictionary *itemGroupsByName = [NSMutableDictionary dictionary];
+	/* To ensure the grouping section ordering respect the property item ordering */
+	NSMutableArray *groupNames = [NSMutableArray array];
+
 	[propertyItems enumerateObjectsUsingBlock: ^ (id item, NSUInteger i, BOOL *stop)
 	{
 		id groupingValue = [[propertyDescs objectAtIndex: i] valueForKeyPath: aKeyPath];
@@ -370,7 +371,9 @@ See also -setRenderedPropertyNames:. */
 		if (itemGroup == nil)
 		{
 			itemGroup = [[self newItemGroupForGroupingName: name width: anItemWidth] autorelease];
+
 			[itemGroupsByName setObject: itemGroup forKey: name];
+			[groupNames addObject: name];
 		}
 		[itemGroup addItem: item];
 	}];
@@ -379,13 +382,15 @@ See also -setRenderedPropertyNames:. */
 	[[[itemGroupsByName allValues] mappedCollection] updateLayoutRecursively: YES];
 	NSLog(@"New size %@", NSStringFromSize([[[itemGroupsByName allValues] firstObject] size]));
 
-	for (ETLayoutItemGroup *itemGroup in [itemGroupsByName allValues])
+	for (NSString *name in groupNames)
 	{
+		ETLayoutItemGroup *itemGroup = [itemGroupsByName objectForKey: name];
+
 		[(ETLayout *)[[itemGroup layout] positionalLayout] setIsContentSizeLayout: NO];
 		[itemGroup setWidth: anItemWidth];
 	}
 
-	return [itemGroupsByName allValues];
+	return [itemGroupsByName objectsForKeys: groupNames notFoundMarker: [NSNull null]];
 }
 
 - (ETLayout *) groupingLayout
@@ -846,11 +851,7 @@ See also -setRenderedPropertyNames:. */
 
 		if (transformer != nil)
 		{
-			/* No need to set the same transformer for 'value', in this precise case 
-			   ETLayoutItem uses  the value key to look up the transformer in 
-			   -setValue:forProperty:. */
-			[item setValueTransformer: [self valueTransformerForType: [aPropertyDesc type]]
-			              forProperty: [aPropertyDesc name]];
+			[item setValueTransformer: transformer forProperty: kETValueProperty];
 		}
 
 		[[[item view] ifResponds] setFormatter: [self formatterForType: [aPropertyDesc type]]];

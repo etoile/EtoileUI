@@ -821,6 +821,11 @@ The returned value can be nil or an empty string. */
 
 - (BOOL) isViewpoint: (id)anObject
 {
+	return [anObject conformsToProtocol: @protocol(ETViewpoint)];
+}
+
+- (BOOL) isPropertyViewpoint: (id)anObject
+{
 	return [anObject conformsToProtocol: @protocol(ETPropertyViewpoint)];
 }
 
@@ -828,7 +833,7 @@ The returned value can be nil or an empty string. */
 exposed through -value and -setValue:. */
 - (id) valueKey
 {
-	BOOL usesViewpoint = [self isViewpoint: [self representedObject]];
+	BOOL usesViewpoint = [self isPropertyViewpoint: [self representedObject]];
 	return (usesViewpoint ? [[self representedObject] name] : nil);
 }
 
@@ -855,7 +860,7 @@ exposed through -value and -setValue:. */
 	}
 	else if ([self isViewpoint: [self representedObject]])
 	{
-		representedObject = [(id <ETPropertyViewpoint>)[self representedObject] representedObject];
+		representedObject = [(id <ETViewpoint>)[self representedObject] representedObject];
 	}
 	
 	[self setRepresentedObject: representedObject];
@@ -879,9 +884,7 @@ common object value or a property belonging to the represent object.
 See also -setValue:. */
 - (id) value
 {
-	NSString *valueKey = [self valueKey];
-
-	if (valueKey != nil)
+	if ([self isViewpoint: [self representedObject]])
 	{
 		return [[self representedObject] value];
 	}
@@ -915,11 +918,9 @@ expected for -valueForProperty: and -setValue:forProperty:.
 See also -value. */
 - (void) setValue: (id)value
 {
-	NSString *valueKey = [self valueKey];
-
-	if (valueKey != nil)
+	if ([self isViewpoint: [self representedObject]])
 	{
-		[self setValue: value forProperty: valueKey];
+		[[self representedObject] setValue: value];
 	}
 	else
 	{
@@ -1272,9 +1273,12 @@ When the represented object is a layout item, the receiver is a meta layout item
 	NILARG_EXCEPTION_TEST(key);
 	id modelObject = [self representedObject];
 	id value = nil;
-	BOOL isAccessingValue = ([self valueKey] != nil && [key isEqualToString: kETValueProperty]);
 
-	if (isAccessingValue == NO && [[(id)modelObject propertyNames] containsObject: key])
+	/* If the represented object declares no 'value' property, then the returned 
+	   value is the represented object. For a string set as the value or 
+	   represented object, -[ETLayoutItem valueForProperty: @"value"] 
+	   evaluates to -[ETLayoutItem value]. */
+	if ([[(id)modelObject propertyNames] containsObject: key])
 	{
 		if ([modelObject isLayoutItem])
 		{
@@ -1310,9 +1314,10 @@ See -valueForProperty: for more details. */
 	id modelObject = [self representedObject];
 	id convertedValue = value;
 	ETItemValueTransformer *transformer = [self valueTransformerForProperty: key];
-	BOOL isAccessingValue = ([self valueKey] != nil && [key isEqualToString: kETValueProperty]);
 	BOOL result = YES;
 
+	/* If the key is 'value', the method is reentered through -setValue: so 
+	   the value transformer will be look up for both 'value' and the value key. */
 	if (transformer != nil)
 	{
 		convertedValue = [transformer reverseTransformedValue: value
@@ -1320,7 +1325,7 @@ See -valueForProperty: for more details. */
 	                                                   ofItem: self];
 	}
 
-	if (isAccessingValue == NO && [[(NSObject *)modelObject propertyNames] containsObject: key])
+	if ([[(NSObject *)modelObject propertyNames] containsObject: key])
 	{
 		if ([modelObject isLayoutItem])
 		{
@@ -1357,11 +1362,17 @@ is registered for the property.*/
 }
 
 /** Registers the value transformer for the given property.
- 
+
+If the value transformer is nil, it is unregistered.
+
+For a nil key, raises a NSInvalidArgumentException.
+
 See also -valueTransformerForProperty:. */
 - (void) setValueTransformer: (ETItemValueTransformer *)aValueTransformer
                  forProperty: (NSString *)key;
 {
+	NILARG_EXCEPTION_TEST(key);
+
 	NSMutableDictionary *transformers = [self primitiveValueForKey: @"valueTransformers"];
 
 	if (transformers == nil)
