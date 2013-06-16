@@ -21,6 +21,7 @@ See -[ETLayoutItem widget]. */
 - (void) setAction: (SEL)aSelector;
 - (id) objectValue;
 - (void) setObjectValue: (id)aValue;
+- (void) takeObjectValueFrom: (id)sender;
 /** Returns the widget formatter.
  
 If the widget is the item, then returns the formatter for -objectValue. 

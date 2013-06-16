@@ -175,6 +175,11 @@ terminology) on which actions should be dispatched. */
 	[[self stepper] setObjectValue: aValue];
 }
 
+- (void) takeObjectValueFrom: (id)sender
+{
+	[self setObjectValue: [sender objectValue]];
+}
+
 - (NSActionCell *) cell
 {
 	return [[self textField] cell];

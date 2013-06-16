@@ -90,6 +90,11 @@
 	}
 }
 
+- (void) takeObjectValueFrom: (id)sender
+{
+	[self setObjectValue: [sender objectValue]];
+}
+
 - (id) formatter
 {
 	if ([self view] != nil)
