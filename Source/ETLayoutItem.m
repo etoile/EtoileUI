@@ -1105,13 +1105,31 @@ content size to match the view size. */
 - (void) sizeToFit
 {
 	ETContentAspect contentAspect = [self contentAspect];
+	NSView *view = [self view];
+	NSSize imgOrViewSize = NSZeroSize;
 
-	/* To prevent -setContentSize: to resize the view when it resizes the 
-	   supervisor view. */
-	[self setContentAspect: ETContentAspectNone];
-	[[[self view] ifResponds] sizeToFit];
-	[self setContentSize: [[self view] frame].size];
-	[self setContentAspect: contentAspect];
+	if (view != nil)
+	{
+		/* To prevent -setContentSize: to resize the view when it resizes the 
+		   supervisor view. */
+		[self setContentAspect: ETContentAspectNone];
+		[[[self view] ifResponds] sizeToFit];
+		[self setContentSize: [view frame].size];
+		[self setContentAspect: contentAspect];
+
+		imgOrViewSize = [[self view] frame].size;
+	}
+	else if ([self icon] != nil)
+	{
+		imgOrViewSize = [[self icon] size];
+	}
+	else
+	{
+		return;
+	}
+
+	[self setWidth: [[self coverStyle] boundingSizeForItem: self
+	                                       imageOrViewSize: imgOrViewSize].width];
 }
 
 /** Returns the view associated with the receiver.

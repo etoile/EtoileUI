@@ -197,7 +197,7 @@
 	ETLayoutItem *runItem = [self buttonWithIconNamed: @"media-playback-start"
 	                                           target: aController
 	                                           action: @selector(toggleTestUI:)];
-	ETLayoutItem *exitItem = [self buttonWithIconNamed: @"media-playback-stop"
+	ETLayoutItem *exitItem = [self buttonWithIconNamed: @"system-restart"
 	                                           target: nil
 	                                           action: @selector(stopEditingKeyWindowUI:)];
 	ETLayoutItem *searchItem = [self searchFieldWithTarget: aController
@@ -218,7 +218,7 @@
 	[[leftItemGroup layout] setIsContentSizeLayout: YES];
 
 	[leftItemGroup addItems:
-		A([self barElementFromItem: runItem withLabel: _(@"Run")],
+		A([self barElementFromItem: runItem withLabel: _(@"Test")],
 		  [self barElementFromItem: exitItem withLabel: _(@"Stop UI Editing")])];	
 
 	[rightItemGroup setLayout: [ETLineLayout layout]];

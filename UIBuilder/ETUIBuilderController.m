@@ -11,6 +11,7 @@
 #import <EtoileFoundation/NSObject+HOM.h>
 #import <EtoileFoundation/Macros.h>
 #import <CoreObject/COEditingContext.h>
+#import <IconKit/IKIcon.h>
 #import "ETUIBuilderController.h"
 #import "ETApplication.h"
 #import "ETAspectRepository.h"
@@ -20,6 +21,7 @@
 #import "ETLayoutItem+CoreObject.h"
 #import "ETLayoutItem+UIBuilder.h"
 #import "ETObjectValueFormatter.h"
+#import "ETSelectTool.h"
 #import "ETUIBuilderItemFactory.h"
 #import "ETUIStateRestoration.h"
 
@@ -341,9 +343,42 @@
 	
 }
 
+- (BOOL) isEditingUI
+{
+	ETTool *documentContentTool = [[[self documentContentItem] layout] attachedTool];
+	return ([self isStandaloneInspector] == NO
+		&& [documentContentTool isKindOfClass: [ETSelectTool class]]);
+}
+
 - (IBAction) toggleTestUI: (id)sender
 {
+	NSParameterAssert([sender isKindOfClass: [ETLayoutItem class]]);
+	ETAssert([self isStandaloneInspector] == NO);
+
+	BOOL beginTestUI = [self isEditingUI];
+
+	// TODO: We should attach the editing tool and switch it on
+	// -contentAreaItem rather than -documentContentItem
+	if (beginTestUI)
+	{
+		[[[self documentContentItem] layout] setAttachedTool: [ETArrowTool tool]];
 	
+		[sender setIcon: [[IKIcon iconWithIdentifier: @"media-playback-stop"] image]];
+		[sender setTitle: _(@"Stop Test")];
+		[sender sizeToFit];
+	}
+	else /* end test UI */
+	{
+		ETSelectTool *editionTool = [ETSelectTool tool];
+		
+		// NOTE: See -[ETFreeLayout init]
+		[editionTool setShouldProduceTranslateActions: YES];
+		[[[self documentContentItem] layout] setAttachedTool: editionTool];
+
+		[sender setIcon: [[IKIcon iconWithIdentifier: @"media-playback-start"] image]];
+		[sender setTitle: _(@"Test")];
+		[sender sizeToFit];
+	}
 }
 
 - (id <ETUIBuilderEditionCoordinator>) editionCoordinator
