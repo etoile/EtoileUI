@@ -616,7 +616,7 @@ See [(ETColumnFragment)] protocol to customize the returned column. */
 
 - (NSString *) editedProperty
 {
-	return  [[[self tableView] tableColumns] objectAtIndex: [[self tableView] editedColumn]];
+	return  [[[[self tableView] tableColumns] objectAtIndex: [[self tableView] editedColumn]] identifier];
 }
 
 - (void) controlTextDidBeginEditing: (NSNotification *)aNotification

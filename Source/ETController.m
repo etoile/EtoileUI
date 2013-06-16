@@ -1211,6 +1211,7 @@ See instead -[ETLayoutItem subjectDidBeginEditingForProperty:fieldEditorItem:]. 
 - (void) subjectDidBeginEditingForItem: (ETLayoutItem *)anItem
                               property: (NSString *)aKey
 {
+	NSParameterAssert([aKey isKindOfClass: [NSString class]]);
 	ETLog(@" ---> Begin editing for %@ - %@ ", [anItem shortDescription], aKey);
 	[_editedItems addObject: anItem];
 	[_editableProperties addObject: aKey];
@@ -1219,6 +1220,7 @@ See instead -[ETLayoutItem subjectDidBeginEditingForProperty:fieldEditorItem:]. 
 - (void) subjectDidChangeValueForItem: (ETLayoutItem *)anItem
                              property: (NSString *)aKey
 {
+	NSParameterAssert([aKey isKindOfClass: [NSString class]]);
 	ETLog(@"Change value for %@ - %@", [anItem shortDescription], aKey);
 }
 
@@ -1230,6 +1232,7 @@ See instead -[ETLayoutItem subjectDidEndEditingForProperty:]. */
 - (void) subjectDidEndEditingForItem: (ETLayoutItem *)anItem
                             property: (NSString *)aKey
 {
+	NSParameterAssert([aKey isKindOfClass: [NSString class]]);
 	ETLog(@" <--- End editing for %@ - %@ ", [anItem shortDescription], aKey);
 	[_editedItems removeObject: anItem];
 	[_editableProperties removeObject: aKey];
