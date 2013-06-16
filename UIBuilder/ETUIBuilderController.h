@@ -12,7 +12,7 @@
 
 @class ETUIBuilderItemFactory, ETAspectRepository, ETItemValueTransformer;
 
-@protocol ETUIBuilderEditionCoordinator
+@protocol ETUIBuilderEditionCoordinator <ETEditionCoordinator>
 - (ETLayoutItem *) documentContentItem;
 - (ETAspectRepository *) aspectRepository;
 @end
@@ -30,9 +30,12 @@
 	ETLayoutItem *_aspectPopUpItem;
 	ETAspectRepository *_aspectRepository;
 	ETItemValueTransformer *_relationshipValueTransformer;
+	ETItemValueTransformer *_typeValueTransformer;
 	BOOL _isChangingSelection;
 	BOOL _isUIBuilderController;
 }
+
+@property (nonatomic, readonly) BOOL isStandaloneInspector;
 
 /** @taskunit Inspector Pane Factory */
 
@@ -72,8 +75,13 @@ For the editor, this item is enclosed inside the content area item. */
 
 /** @taskunit Editing */
 
+/** Returns self. */
+@property (nonatomic, readonly) id <ETUIBuilderEditionCoordinator> editionCoordinator;
 /** Returns a value transformer that searches items inside -documentContentItem 
 and aspects inside -aspectRepository. */
 @property (nonatomic, readonly) ETItemValueTransformer *relationshipValueTransformer;
+@property (nonatomic, readonly) ETItemValueTransformer *typeValueTransformer;
+
+- (id) typeObjectForAspectName: (NSString *)aspectName ofObject: (id)anObject;
 
 @end

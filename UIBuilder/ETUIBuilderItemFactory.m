@@ -22,10 +22,12 @@
 #import "ETController.h"
 #import "ETFormLayout.h"
 #import "ETGeometry.h"
+#import "ETItemTemplate.h"
 #import "ETLayoutItem.h"
 #import "ETLayoutItem+Scrollable.h"
 #import "ETLayoutItemGroup.h"
 #import "ETLineLayout.h"
+#import "ETUIBuilderBrowserController.h"
 #import "ETUIBuilderController.h"
 #import "ETModelDescriptionRenderer.h"
 #import "ETObjectValueFormatter.h"
@@ -33,6 +35,7 @@
 #import "ETSelectTool.h"
 #import "ETStyleGroup.h"
 #import "ETTool.h"
+#import "ETWidget.h"
 #import "NSObject+EtoileUI.h"
 #import "NSView+Etoile.h"
 #import "ETCompatibility.h"
@@ -67,7 +70,7 @@
 	return [self buttonWithImage: icon target: aTarget action: anAction];
 }
 
-- (ETLayout *) defaultMasterViewLayout
+- (ETLayout *) defaultMasterViewLayoutWithController: (ETUIBuilderController *)aController
 {
 	ETOutlineLayout *layout = [ETOutlineLayout layout];
 
@@ -91,7 +94,7 @@
 	[layout setDisplayName: @"Controller" forProperty: @"UIBuilderController"];
 	
 	[[layout columnForProperty: kETIdentifierProperty] setWidth: 120];
-	[[layout columnForProperty: @"target"] setWidth: 100];
+	[[layout columnForProperty: kETTargetProperty] setWidth: 100];
 	[[layout columnForProperty: @"UIBuilderAction"] setWidth: 100];
 	[[layout columnForProperty: @"UIBuilderModel"] setWidth: 100];
 	[[layout columnForProperty: @"UIBuilderController"] setWidth: 120];
@@ -101,6 +104,12 @@
 	[layout setEditable: YES forProperty: kETTargetProperty];
 	[layout setEditable: YES forProperty: @"UIBuilderModel"];
 	[layout setEditable: YES forProperty: @"UIBuilderController"];
+
+	ETObjectValueFormatter *formatter = AUTORELEASE([ETObjectValueFormatter new]);
+
+	[formatter setDelegate: aController];
+
+	[layout setFormatter: formatter forProperty: kETTargetProperty];
 
 	return layout;
 }
@@ -379,11 +388,20 @@
                                controller: (id)aController
 {
 	ETLayoutItemGroup *itemGroup = [self itemGroupWithSize: [self defaultBrowserSize]];
+	ETUIBuilderBrowserController *browserController = AUTORELEASE([ETUIBuilderBrowserController new]);
+	ETItemTemplate *objectTemplate = [browserController templateForType: [browserController currentObjectType]];
+	ETItemTemplate *groupTemplate = [browserController templateForType: [browserController currentGroupType]];
 
+	[[objectTemplate item] setValueTransformer: [aController relationshipValueTransformer]
+	                               forProperty: kETTargetProperty];
+	[[groupTemplate item] setValueTransformer: [aController relationshipValueTransformer]
+	                              forProperty: kETTargetProperty];
+
+	[itemGroup setController: browserController];
 	[itemGroup setRepresentedObject: anObject];
 	[itemGroup setIdentifier: @"browser"];
 	[itemGroup setAutoresizingMask: ETAutoresizingFlexibleWidth];
-	[itemGroup setLayout: [self defaultMasterViewLayout]];
+	[itemGroup setLayout: [self defaultMasterViewLayoutWithController: aController]];
 	[itemGroup setHasVerticalScroller: YES];
 	[itemGroup setSource: itemGroup];
 	[itemGroup setDelegate: aController];
@@ -435,10 +453,24 @@
 	return popUpItem;
 }
 
-- (ETLayoutItem *) typeField
+- (ETLayoutItem *) typeFieldWithController: (id)aController
+                                aspectName: (NSString *)anAspectName
+                                  ofObject: (id)anObject
 {
 	ETLayoutItem *typeField = [self textField];
+	ETObjectValueFormatter *formatter = AUTORELEASE([ETObjectValueFormatter new]);
+	
+	[formatter setDelegate: aController];
+
+	[typeField setValueTransformer: [aController typeValueTransformer]
+	                   forProperty: kETValueProperty];
+	[[typeField widget] setFormatter: formatter];
+	// FIXME: Won't work with ETTool because the aspect name is a key path
+	[typeField setRepresentedObject:
+	 	[aController typeObjectForAspectName: anAspectName ofObject: anObject]];
 	[typeField setName: _(@"Type")];
+	[typeField setIdentifier: @"typeField"];
+
 	return typeField;
 }
 
@@ -450,8 +482,10 @@
 	ETFormLayout *formLayout = [ETFormLayout layout];
 	ETLayoutItem *aspectPopUpItem = [self aspectPopUpWithController: aController
 	                                             selectedAspectName: anAspectName];
-	ETLayoutItem *typeFieldItem = [self typeField];
-	
+	ETLayoutItem *typeFieldItem = [self typeFieldWithController: aController
+	                                                 aspectName: anAspectName
+	                                                   ofObject: anObject];
+
 	// TODO: Perhaps use aspectInspector
 	[itemGroup setIdentifier: @"basicInspectorHeader"];
 	[itemGroup setAutoresizingMask: ETAutoresizingFlexibleWidth];
@@ -477,6 +511,14 @@
 	else if ([anAspectName isEqual: @"widget"])
 	{
 		return A(@"title", @"objectValue",  @"minValue", @"maxValue", @"formatter");
+	}
+	else if ([anAspectName isEqual: @"layout.attachedTool"])
+	{
+		// FIXME: Remove once ETTool is a persistent subclass of ETUIObject
+		ETTool *tool = [anObject valueForKeyPath: anAspectName];
+		ETEntityDescription *entityDesc =
+			[[[self editingContext] modelRepository] entityDescriptionForClass: [tool class]];
+		return [entityDesc allUIBuilderPropertyNames];
 	}
 	return [[[anObject valueForKeyPath: anAspectName] entityDescription] allUIBuilderPropertyNames];
 }
@@ -533,6 +575,8 @@
 	ETModelDescriptionRenderer *renderer = [self rendererForAspectName: anAspectName];
 	ETEntityDescription *rootEntity = [[renderer repository] descriptionForName: @"Object"];
 
+	[renderer setValueTransformer: [aController relationshipValueTransformer]
+	                      forType: rootEntity];
 	[[renderer formatterForType: rootEntity] setDelegate: aController];
 	[renderer setRenderedPropertyNames: [self presentedPropertyNamesForAspectName: anAspectName
 	                                                                     ofObject: anObject]];

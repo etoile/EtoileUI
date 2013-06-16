@@ -23,6 +23,7 @@
 		return aValue;
 
 	id string = [[self delegate] formatter: self stringForObjectValue: aValue];
+	ETAssert(string == nil || [string isKindOfClass: [NSString class]]);
 
 	if (string == nil)
 	{
@@ -43,6 +44,7 @@ doesn't abort the editing). */
 		return NO;
 
 	NSString *validatedString = [[self delegate] formatter: self stringValueForString: string];
+	ETAssert(validatedString == nil || [validatedString isKindOfClass: [NSString class]]);
 
 	if (validatedString == nil && NSClassFromString(string) != Nil)
 	{

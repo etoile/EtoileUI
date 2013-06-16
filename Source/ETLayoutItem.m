@@ -1320,8 +1320,10 @@ See -valueForProperty: for more details. */
 	   the value transformer will be look up for both 'value' and the value key. */
 	if (transformer != nil)
 	{
+		NSString *editedKey = ([key isEqual: kETValueProperty] ? [self valueKey] : key);
+		ETAssert(editedKey != nil);
 		convertedValue = [transformer reverseTransformedValue: value
-		                                               forKey: key
+		                                               forKey: editedKey
 	                                                   ofItem: self];
 	}
 
@@ -3228,6 +3230,9 @@ be sent by the UI element in the EtoileUI responder chain. */
 The target is not retained. */
 - (void) setTarget: (id)aTarget
 {
+	// NOTE: For missing value transformation
+	NSParameterAssert([aTarget isKindOfClass: [NSString class]] == NO);
+
 	/* For target persistency, we mark targetId as updated (see ETLayoutItem+CoreObject) */
 	[self willChangeValueForProperty: @"targetId"];
 	[self willChangeValueForProperty: kETTargetProperty];

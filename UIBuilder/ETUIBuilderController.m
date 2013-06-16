@@ -28,7 +28,8 @@
 @synthesize itemFactory = _itemFactory, documentContentItem = _documentContentItem, browserItem = _browserItem,
 	aspectInspectorItem = _aspectInspectorItem, viewPopUpItem = _viewPopUpItem,
 	aspectPopUpItem = _aspectPopUpItem, aspectRepository = _aspectRepository, 
-	relationshipValueTransformer = _relationshipValueTransformer;
+	relationshipValueTransformer = _relationshipValueTransformer,
+	typeValueTransformer = _typeValueTransformer;
 
 - (id) initWithNibName: (NSString *)aNibName bundle: (NSBundle *)aBundle
 {
@@ -37,6 +38,7 @@
 		return nil;
 
 	_relationshipValueTransformer = [self newRelationshipValueTransformer];
+	_typeValueTransformer = [self newTypeValueTransformer];
 	return self;
 }
 
@@ -50,6 +52,7 @@
 	DESTROY(_aspectPopUpItem);
 	DESTROY(_aspectRepository);
 	DESTROY(_relationshipValueTransformer);
+	DESTROY(_typeValueTransformer);
 	[super dealloc];
 }
 
@@ -70,6 +73,11 @@
 	}
 }
 
+- (BOOL) isStandaloneInspector
+{
+	return (_documentContentItem == nil);
+}
+
 - (ETLayoutItemGroup *) bodyItem
 {
 	return (id)[[self content] itemForIdentifier: @"inspectorBody"];
@@ -83,6 +91,16 @@
 - (ETLayoutItemGroup *) contentAreaItem
 {
 	return (id)[[self content] itemForIdentifier: @"contentArea"];
+}
+
+- (ETLayoutItem *) documentContentItem
+{
+	if ([self isStandaloneInspector])
+	{
+		ETAssert([[self browserItem] representedObject] != nil);
+		return [[self browserItem] representedObject];
+	}
+	return _documentContentItem;
 }
 
 - (void) presentTransientEditingAlertIfNeededForItem: (ETLayoutItem *)anItem
@@ -142,6 +160,16 @@
 	return (id)[[self aspectInspectorItem] itemForIdentifier: @"basicInspectorContent"];
 }
 
+- (ETLayoutItemGroup *) aspectInspectorHeaderItem
+{
+	return (id)[[self aspectInspectorItem] itemForIdentifier: @"basicInspectorHeader"];
+}
+
+- (ETLayoutItem *) typeFieldItem
+{
+	return (id)[[self aspectInspectorHeaderItem] itemForIdentifier: @"typeField"];
+}
+
 - (NSArray *) selectedObjects
 {
 	return [[[[self browserItem] selectedItemsInLayout] mappedCollection] representedObject];
@@ -158,7 +186,10 @@
 
 	NSArray *selectionIndexPaths = [[self browserItem] selectionIndexPaths];
 
-	[(ETLayoutItemGroup *)[[self documentContentItem] ifResponds] setSelectionIndexPaths: selectionIndexPaths];
+	if ([self isStandaloneInspector] == NO)
+	{
+		[(ETLayoutItemGroup *)[[self documentContentItem] ifResponds] setSelectionIndexPaths: selectionIndexPaths];
+	}
 	[self didChangeSelectionToIndexPaths: selectionIndexPaths];
 	
 	_isChangingSelection = NO;
@@ -168,7 +199,7 @@
 {
 	ETLog(@"Did change selection in %@", [aNotif object]);
 
-	if (_isChangingSelection)
+	if (_isChangingSelection || [self isStandaloneInspector])
 		return;
 
 	_isChangingSelection = YES;
@@ -261,24 +292,89 @@
 	[self changePresentationViewToMenuItem: (NSMenuItem *)[[_viewPopUpItem view] selectedItem]];
 }
 
-- (IBAction) changeAspectPaneFromPopUp: (id)sender
+- (id) typeObjectForAspectName: (NSString *)aspectName ofObject: (id)anObject
+{
+	if ([aspectName isEqual: @"valueTransformers"])
+	{
+		return @" - ";
+	}
+	return [ETMutableObjectViewpoint viewpointWithName: aspectName
+		                             representedObject: anObject];
+}
+
+- (NSString *) currentAspectName
 {
 	ETAssert(_aspectPopUpItem != nil);
-	ETAssert([self itemFactory] != nil);
+	return [[[_aspectPopUpItem view] selectedItem] representedObject];
+}
 
-	NSString *aspectName = [[[_aspectPopUpItem view] selectedItem] representedObject];
+- (void) reloadAspectPane
+{
+	ETAssert([self itemFactory] != nil);
 	ETLayoutItemGroup *newAspectPaneItem =
 		[[self itemFactory] basicInspectorContentWithObject: [self inspectedObject]
 		                                         controller: self
-		                                         aspectName: aspectName];
+		                                         aspectName: [self currentAspectName]];
 
 	[[self aspectInspectorItem] removeItem: [self aspectPaneItem]];
 	[[self aspectInspectorItem] addItem: newAspectPaneItem];
 }
 
+- (void) reloadTypeField
+{
+	ETAssert([self typeFieldItem] != nil);
+	// FIXME: Won't work with ETTool because the aspect name is a key path
+	id typeObject = [self typeObjectForAspectName: [self currentAspectName]
+	                                     ofObject: [self inspectedObject]];
+
+	[[self typeFieldItem] setRepresentedObject: typeObject];
+}
+
+- (IBAction) changeAspectPaneFromPopUp: (id)sender
+{
+	[self reloadAspectPane];
+	[self reloadTypeField];
+}
+
 - (IBAction) changeAspectRepositoryFromPopUp: (id)sender
 {
 	
+}
+
+- (id <ETUIBuilderEditionCoordinator>) editionCoordinator
+{
+	return self;
+}
+
+- (ETItemValueTransformer *) newTypeValueTransformer
+{
+	ETItemValueTransformer *transformer = [ETItemValueTransformer new];
+
+	[transformer setTransformBlock: ^id (id value, NSString *key, ETLayoutItem *item)
+	{
+		NSString *aspectName = [[value ifResponds] instantiatedAspectName];
+
+		return (aspectName != nil ? aspectName : NSStringFromClass([value class]));
+	}];
+
+	[transformer setReverseTransformBlock: ^id (id value, NSString *key, ETLayoutItem *item)
+	{
+		if ([value isEqual: @""] || [value isEqual: @"nil"] || [value isEqual: @"Nil"])
+			return nil;
+
+		id controller = [[item controllerItem] controller];
+
+		if ([self conformsToProtocol: @protocol(ETUIBuilderEditionCoordinator)] == NO)
+			return nil;
+
+		ETAspectCategory *category = [[controller aspectRepository] aspectCategoryNamed: key];
+		id aspect = [category aspectForKey: value];
+		
+		return (aspect != nil ? aspect : AUTORELEASE([NSClassFromString(value) new]));
+
+	}];
+
+	return transformer;
 }
 
 - (ETItemValueTransformer *) newRelationshipValueTransformer
@@ -302,26 +398,23 @@
 		if ([value isEqual: @""] || [value isEqual: @"nil"] || [value isEqual: @"Nil"])
 			return nil;
 
-		id controller = [[item controllerItem] controller];
+		id controller = [[[item controllerItem] controller] editionCoordinator];
 
-		if ([self conformsToProtocol: @protocol(ETUIBuilderEditionCoordinator)] == NO)
+		if ([controller conformsToProtocol: @protocol(ETUIBuilderEditionCoordinator)] == NO)
 			return nil;
 
 		if ([key isEqual: @"target"])
 		{
-
 			if ([[controller documentContentItem] isGroup] == NO)
 				return nil;
-			
-			if ([(ETLayoutItemGroup *)[controller documentContentItem] itemForIdentifier: value] == nil)
-				return nil;
-			
-			return value;
+
+			return [[[controller documentContentItem] ifResponds] itemForIdentifier: value];
+
 		}
 		else
 		{
 			ETAspectCategory *category = [[controller aspectRepository] aspectCategoryNamed: key];
-			return ([category aspectForKey: value] != nil ? value : nil);
+			return [category aspectForKey: value];
 		}
 	}];
 
@@ -339,9 +432,10 @@
 	if ([aValue isEqual: @""] || isEditing == NO)
 		return aValue;
 
-	return [[self relationshipValueTransformer] reverseTransformedValue: aValue
-	                                                             forKey: [self editedProperty]
-	                                                             ofItem: [self editedItem]];
+	id result = [[self relationshipValueTransformer] reverseTransformedValue: aValue
+	                                                                  forKey: [self editedProperty]
+	                                                                  ofItem: [self editedItem]];
+	return (result != nil ? aValue : nil);
 }
 
 - (ETPropertyDescription *)propertyDescriptionForName: (NSString *)aName
@@ -357,6 +451,12 @@
 {
 	// TODO: For the inspector, detect if the item argument is not a meta-item.
 	[super subjectDidEndEditingForItem: anItem property: aKey];
+	
+	if ([anItem isEqual: [self typeFieldItem]])
+	{
+		[self reloadAspectPane];
+		return;
+	}
 
 	ETLayoutItem *editedObject = ([[anItem subject] conformsToProtocol: @protocol(ETPropertyViewpoint)] ? [[anItem subject] representedObject] : [anItem representedObject]);
 
@@ -367,6 +467,16 @@
 
 	[[[self persistentObjectContext] editingContext] commitWithType: @"Property Change"
 	                                               shortDescription: description];
+}
+
+- (void) didBecomeFocusedItem: (ETLayoutItem *)anItem
+{
+	
+}
+
+- (void) didResignFocusedItem: (ETLayoutItem *)anItem
+{
+	
 }
 
 @end
