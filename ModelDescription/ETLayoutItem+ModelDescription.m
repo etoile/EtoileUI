@@ -113,6 +113,7 @@
 
 	ETPropertyDescription *UIBuilderAction = [ETPropertyDescription descriptionWithName: @"UIBuilderAction" type: (id)@"SEL"];
 	[UIBuilderAction setDisplayName: @"Action"];
+	ETPropertyDescription *attachedTool = [ETPropertyDescription descriptionWithName: @"attachedTool" type: (id)@"ETTool"];
 
 	/* Transient ivars: 	
 	   _isSyncingSupervisorViewGeometry, _scrollViewShown, _wasKVOStopped
@@ -131,7 +132,7 @@
 	NSArray *transientProperties = A(baseItem, rootItem, indexPath, 
 		isBaseItem, subject, style, frame, x, y, width, height, target, 
 		acceptsActions, inspector, subtype, title, objectValue, formatter,
-		minValue, maxValue, UIBuilderAction);
+		minValue, maxValue, UIBuilderAction, attachedTool);
 
 	[entity setUIBuilderPropertyNames: (id)[[A(identifier, name, 
 		image, icon, valueKey, target, UIBuilderAction, 

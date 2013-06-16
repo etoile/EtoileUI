@@ -341,6 +341,11 @@
 	
 }
 
+- (IBAction) toggleTestUI: (id)sender
+{
+	
+}
+
 - (id <ETUIBuilderEditionCoordinator>) editionCoordinator
 {
 	return self;

@@ -440,7 +440,7 @@
 	NSArray *choices = A(_(@"Overview"), _(@"Widget"), _(@"Value Transformers"), 
 		_(@"Represented Object"), _(@"Controller"),  _(@"Layout"),
 		_(@"Cover Style"), _(@"Style Group"), _(@"Action Handler"), _(@"Tool"));
-	NSArray *representedProperties = A(@"self", @"widget", @"valueTransformers", @"representedObject", @"controller", @"layout", @"coverStyle", @"styleGroup", @"actionHandler", @"layout.attachedTool");
+	NSArray *representedProperties = A(@"self", @"widget", @"valueTransformers", @"representedObject", @"controller", @"layout", @"coverStyle", @"styleGroup", @"actionHandler", @"attachedTool");
 	ETLayoutItem *popUpItem = [self popUpMenuWithItemTitles: choices
 		                                 representedObjects: representedProperties
 		                                             target: aController 
@@ -500,7 +500,7 @@
 - (NSArray *) presentedPropertyNamesForAspectName: (NSString *)anAspectName ofObject: (id)anObject
 {
 	// NOTE: We use -valueForKey: to support using @"self" as a key
-	if ([anObject valueForKeyPath: anAspectName] == nil)
+	if ([anObject valueForKey: anAspectName] == nil)
 	{
 		return [NSArray array];
 	}
@@ -512,15 +512,15 @@
 	{
 		return A(@"title", @"objectValue",  @"minValue", @"maxValue", @"formatter");
 	}
-	else if ([anAspectName isEqual: @"layout.attachedTool"])
+	else if ([anAspectName isEqual: @"attachedTool"])
 	{
 		// FIXME: Remove once ETTool is a persistent subclass of ETUIObject
-		ETTool *tool = [anObject valueForKeyPath: anAspectName];
+		ETTool *tool = [anObject valueForKey: anAspectName];
 		ETEntityDescription *entityDesc =
 			[[[self editingContext] modelRepository] entityDescriptionForClass: [tool class]];
 		return [entityDesc allUIBuilderPropertyNames];
 	}
-	return [[[anObject valueForKeyPath: anAspectName] entityDescription] allUIBuilderPropertyNames];
+	return [[[anObject valueForKey: anAspectName] entityDescription] allUIBuilderPropertyNames];
 }
 
 - (id) editedObjectForAspectedName: (NSString *)anAspectName ofObject: (id)anObject

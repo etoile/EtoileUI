@@ -13,7 +13,12 @@
 #import <AppKit/AppKit.h>
 #import <EtoileUI/ETLayoutItem.h>
 
+@class ETTool;
+
 @interface ETLayoutItem (UIBuilder)
+
+- (ETTool *) attachedTool;
+- (void) setAttachedTool: (ETTool *)aTool;
 
 - (NSString *) UIBuilderAction;
 - (void) setUIBuilderAction: (NSString *)aString;

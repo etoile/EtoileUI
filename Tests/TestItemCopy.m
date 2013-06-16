@@ -135,7 +135,7 @@ DEALLOC(DESTROY(itemFactory); DESTROY(item); DESTROY(itemGroup))
 {
 	return  A(kETBaseItemProperty, kETRootItemProperty, kETIdentifierProperty, 
 		kETValueProperty, kETValueKeyProperty, kETStyleProperty, @"targetId",
-		kETInspectorProperty, @"title", @"formatter");
+		kETInspectorProperty, @"title", @"formatter", @"attachedTool");
 }
 
 - (NSArray *) defaultNilItemProperties

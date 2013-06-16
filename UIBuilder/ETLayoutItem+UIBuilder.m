@@ -24,6 +24,16 @@
 
 @implementation ETLayoutItem (UIBuilder)
 
+- (ETTool *) attachedTool
+{
+	return [[self layout] attachedTool];
+}
+
+- (void) setAttachedTool: (ETTool *)aTool
+{
+	[[self layout] setAttachedTool: aTool];
+}
+
 - (NSString *) UIBuilderAction
 {
 	return NSStringFromSelector([self action]);

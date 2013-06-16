@@ -72,6 +72,7 @@ For the editor, this item is enclosed inside the content area item. */
 - (IBAction) changePresentationViewFromPopUp: (id)sender;
 - (IBAction) changeAspectPaneFromPopUp: (id)sender;
 - (IBAction) changeAspectRepositoryFromPopUp: (id)sender;
+- (IBAction) toggleTestUI: (id)sender;
 
 /** @taskunit Editing */
 
