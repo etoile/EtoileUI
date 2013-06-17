@@ -19,14 +19,18 @@
 Nil can be returned. */
 - (id) objectValueForObject: (id)anObject
 {
+	id objectValue = nil;
+
 	if ([self type] ==  NSImageCellType)
 	{
-		return ([anObject isKindOfClass: [NSImage class]] ? anObject: nil);
+		objectValue = ([anObject isKindOfClass: [NSImage class]] ? anObject: nil);
 	}
 	else
 	{
-		return ([anObject isCommonObjectValue] ? anObject : [anObject objectValue]);
+		objectValue = ([anObject isCommonObjectValue] ? anObject : [anObject objectValue]);
 	}
+	ETAssert(objectValue == nil || [objectValue conformsToProtocol: @protocol(NSCopying)]);
+	return objectValue;
 }
 
 @end
