@@ -117,6 +117,10 @@ in the given style collection. */
 {
 	[self willChangeValueForProperty: @"styles"];
 	[_styles addObject: aStyle];
+	if ([self isPersistent])
+	{
+		[aStyle becomePersistentInContext: [self persistentRoot]];
+	}
 	[self didChangeValueForProperty: @"styles"];
 }
 
@@ -125,6 +129,10 @@ in the given style collection. */
 {
 	[self willChangeValueForProperty: @"styles"];
 	[_styles insertObject: aStyle atIndex: anIndex];
+	if ([self isPersistent])
+	{
+		[aStyle becomePersistentInContext: [self persistentRoot]];
+	}
 	[self didChangeValueForProperty: @"styles"];
 }
 

@@ -1000,6 +1000,10 @@ object when the view is a widget. */
 	NSSet *affectedKeys = [self willChangeRepresentedObjectFrom: oldObject 
 	                                                         to: modelObject];
 	ASSIGN(_representedObject, modelObject);
+	if ([self isPersistent])
+	{
+		[modelObject becomePersistentInContext: [self persistentRoot]];
+	}
 	/* Affected keys contain represented object properties, and the Core object 
 	   editing context must not be notified about these, otherwise identically 
 	   named ETLayoutItem properties would uselessly persisted when they haven't 
@@ -2108,6 +2112,10 @@ If the given style is nil, the style group becomes empty. */
 {
 	[self willChangeValueForProperty: kETCoverStyleProperty];
 	ASSIGN(_coverStyle, aStyle);
+	if ([self isPersistent])
+	{
+		[aStyle becomePersistentInContext: [self persistentRoot]];
+	}
 	[self didChangeValueForProperty: kETCoverStyleProperty];
 }
 
@@ -3144,6 +3152,10 @@ know more about event handling in the layout item tree. */
 {
 	[self willChangeValueForProperty: kETActionHandlerProperty];
 	[self setPrimitiveValue: anHandler forKey: kETActionHandlerProperty];
+	if ([self isPersistent])
+	{
+		[anHandler becomePersistentInContext: [self persistentRoot]];
+	}
 	[self didChangeValueForProperty: kETActionHandlerProperty];
 }
 

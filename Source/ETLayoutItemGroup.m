@@ -968,6 +968,10 @@ Marks the receiver as needing a layout update. */
 	[self assignLayout: layout];
 	[self didChangeLayout: oldLayout];
 	RELEASE(oldLayout);
+	if ([self isPersistent])
+	{
+		[layout becomePersistentInContext: [self persistentRoot]];
+	}
 
 	[self setAutolayout: wasAutolayoutEnabled];
 	[self setNeedsLayoutUpdate];
