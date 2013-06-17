@@ -523,8 +523,10 @@ See also -setRenderedPropertyNames:. */
 - (id) renderObject: (id)anObject propertyDescription: (ETPropertyDescription *)aPropertyDesc
 {
 	ETLayoutItem *item = nil;
-	
-	if ([aPropertyDesc isRelationship])
+
+	// FIXME: Support four cases: attribute, collection/multivalued attribute,
+	// to-one relationship, to-many relationship
+	if ([aPropertyDesc isRelationship] || [aPropertyDesc isMultivalued])
 	{
 		item = [self newItemForRelationshipDescription: aPropertyDesc ofObject: anObject];
 	}
@@ -613,6 +615,13 @@ See also -setRenderedPropertyNames:. */
 	[[controller content] setDoubleAction: @selector(edit:)];
 	[[controller content] setTarget: controller];
 
+	BOOL isKeyedCollection = [[browser representedObject] isKeyed];
+	BOOL isMutableCollection = [[browser representedObject] isMutableCollection];
+	
+	[[browser layout] setDisplayedProperties: A(@"value")];
+	[[browser layout] setDisplayName: @"Value" forProperty: @"value"];
+	[[browser layout] setEditable: isMutableCollection forProperty: @"value"];
+
 	if ([aRelationshipDesc showsItemDetails])
 	{
 		NSSize detailedItemSize = NSMakeSize([editor width], 200);
@@ -647,13 +656,16 @@ See also -setRenderedPropertyNames:. */
 			                   forProperty: property];
 		}
 	}
-	
-	if ([[[browser value] ifResponds] isKeyed])
+
+	/* For a keyed-collection, the 'key' columns is always visible, if you 
+	   don't want it, add a transient property to the model that returns 
+	   the objects from the keyed collection e.g. [NSDictionary allValues]. */
+	if (isKeyedCollection)
 	{
-		NSArray *pairProperties = [[browser layout] displayedProperties];
-		[[browser layout] setDisplayedProperties: [pairProperties arrayByAddingObject: @"key"]];
+		NSArray *properties = [[browser layout] displayedProperties];
+		[[browser layout] setDisplayedProperties: [A(@"key") arrayByAddingObjectsFromArray: properties]];
 		[[browser layout] setDisplayName: @"Key" forProperty: @"key"];
-		[[browser layout] setEditable: YES forProperty: @"key"];
+		[[browser layout] setEditable: isMutableCollection forProperty: @"key"];
 	}
 
 	return editor;
