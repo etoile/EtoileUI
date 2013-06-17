@@ -11,6 +11,7 @@
 #import <Foundation/Foundation.h>
 #import <AppKit/AppKit.h>
 #import <EtoileUI/ETAspectCategory.h>
+#import <EtoileUI/ETActionHandler.h>
 
 /** @group Aspect Repository
 
@@ -35,4 +36,8 @@ You shouldn't use the superclass API to interact with a repository. */
 - (void) removeAspectCategory: (ETAspectCategory *)aCategory;
 - (NSArray *) categoryNames;
 
+@end
+
+
+@interface ETAspectTemplateActionHandler : ETActionHandler
 @end

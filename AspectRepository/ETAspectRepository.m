@@ -9,6 +9,8 @@
 #import <Foundation/Foundation.h>
 #import <AppKit/AppKit.h>
 #import "ETAspectRepository.h"
+#import "EtoileUIProperties.h"
+#import "ETPickDropCoordinator.h"
 #import "ETCompatibility.h"
 
 
@@ -67,6 +69,29 @@ repository is the item group represented object). */
 - (BOOL) isKeyed
 {
 	return NO;
+}
+
+@end
+
+
+@implementation ETAspectTemplateActionHandler
+
+- (unsigned int) dragOperationMaskForDestinationItem: (ETLayoutItem *)item
+                                         coordinator: (ETPickDropCoordinator *)aPickCoordinator
+{
+	BOOL isDragInsideSource = (item != nil && [[item baseItem] isEqual: [aPickCoordinator dragSource]]);
+	
+	if (isDragInsideSource)
+	{
+		return NSDragOperationMove;
+	}
+	return NSDragOperationCopy;
+}
+
+- (BOOL) boxingForcedForDroppedItem: (ETLayoutItem *)droppedItem
+                           metadata: (NSDictionary *)metadata
+{
+	return [[metadata objectForKey: kETPickMetadataWasUsedAsRepresentedObject] boolValue];
 }
 
 @end

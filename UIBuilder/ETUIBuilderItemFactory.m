@@ -597,27 +597,33 @@
 	return nil;
 }
 
-- (ETLayoutItemGroup *) objectPicker
+- (ETTool *) pickerTool
 {
-	ETLayoutItemGroup *picker = [self itemGroupWithRepresentedObject: [ETAspectRepository mainRepository]];
-	ETController *controller = AUTORELEASE([[ETController alloc] init]);
 	ETSelectTool *tool = [ETSelectTool tool];
-
+	
 	[tool setAllowsMultipleSelection: YES];
 	[tool setAllowsEmptySelection: NO];
 	[tool setShouldRemoveItemsAtPickTime: NO];
 
-	//ETItemTemplate *template = [controller templateForType: [controller currentObjectType]];
+	return tool;
+}
 
-	// FIXME: [[template item] setActionHandler: [ETAspectTemplateActionHandler sharedInstance]];
+- (ETLayoutItemGroup *) objectPicker
+{
+	ETLayoutItemGroup *picker = [self itemGroupWithRepresentedObject: [ETAspectRepository mainRepository]];
+	ETController *controller = AUTORELEASE([[ETController alloc] init]);
+	ETItemTemplate *template = [controller templateForType: [controller currentObjectType]];
+
+	[[template item] setActionHandler: [ETAspectTemplateActionHandler sharedInstance]];
+	[picker setActionHandler: [ETAspectTemplateActionHandler sharedInstance]];
+
 	[controller setAllowedPickTypes: A([ETUTI typeWithClass: [NSObject class]])];
 
-	//[picker setActionHandler: [ETAspectTemplateActionHandler sharedInstance]];
 	[picker setSize: NSMakeSize(300, [self defaultEditorBodySize].height)];
 	[picker setController: controller];
 	[picker setSource: picker];
 	[picker setLayout: [ETOutlineLayout layout]];
-	[[picker layout] setAttachedTool: tool];
+	[[picker layout] setAttachedTool: [self pickerTool]];
 	[[picker layout] setDisplayedProperties: A(kETIconProperty, kETDisplayNameProperty)];
 	[picker setHasVerticalScroller: YES];
 	[picker reloadAndUpdateLayout];
