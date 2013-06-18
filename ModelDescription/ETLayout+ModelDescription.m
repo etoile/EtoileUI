@@ -205,7 +205,11 @@
 	// the property descriptions that we will inherit through the parent
 	if ([[entity name] isEqual: [ETTableLayout className]] == NO)
 		return entity;
-	
+
+	ETPropertyDescription *propertyColumns =
+		[ETPropertyDescription descriptionWithName: @"propertyColumns" type: (id)@"NSTableColumn"];
+	[propertyColumns setMultivalued: YES];
+	[propertyColumns setReadOnly: YES];
 	ETPropertyDescription *displayedProperties =
 		[ETPropertyDescription descriptionWithName: @"displayedProperties" type: (id)@"NSString"];
 	[displayedProperties setMultivalued: YES];
@@ -237,10 +241,8 @@
 
 	// FIXME: NSArray *transientProperties = A(displayedProperties, editableProperties,
 	//	formatters, styles, columns, sortable, contentFont);
-	NSArray *transientProperties = A(displayedProperties,
-		formatters, sortable, contentFont);
-	// FIXME: Declare PropertyColumns as a persistent property
-	NSArray *persistentProperties = [NSArray array];
+	NSArray *transientProperties = A(displayedProperties, formatters);
+	NSArray *persistentProperties = A(propertyColumns, sortable, contentFont);
 	
 	[entity setUIBuilderPropertyNames: (id)[[transientProperties mappedCollection] name]];
 
@@ -249,6 +251,15 @@
 		[persistentProperties arrayByAddingObjectsFromArray: transientProperties]];
 	
 	return entity;
+}
+
+/* This method is exposed to ensure the property visibility as declared in 
+the metamodel. We need to persist _propertyColumns, so we declare a related 
+property description, but the persisted value is returned by -serializedPropertyColumns, 
+so -propertyColumns is never used unless the user inspects the object. */
+- (NSDictionary *) propertyColumns
+{
+	return _propertyColumns;
 }
 
 - (NSDictionary *) formatters

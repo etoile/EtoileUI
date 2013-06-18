@@ -495,7 +495,6 @@
 	if ([anItem isEqual: [self typeFieldItem]])
 	{
 		[self reloadAspectPane];
-		return;
 	}
 
 	ETLayoutItem *editedObject = ([[anItem subject] conformsToProtocol: @protocol(ETPropertyViewpoint)] ? [[anItem subject] representedObject] : [anItem representedObject]);
