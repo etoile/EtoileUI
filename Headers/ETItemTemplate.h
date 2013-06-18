@@ -43,7 +43,7 @@ flexibility.
 The client object invokes -newItemWithURL:options: to get a new instance. 
 -newItemWithURL:options: in turn uses ETDocumentCreation to delegate the 
 model initialization. */
-@interface ETItemTemplate : NSObject
+@interface ETItemTemplate : ETUIObject
 {
 	@private
 	Class _objectClass;

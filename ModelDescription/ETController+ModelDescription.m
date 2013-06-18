@@ -8,6 +8,7 @@
 
 #import <EtoileFoundation/EtoileFoundation.h>
 #import "ETController.h"
+#import "ETItemTemplate.h"
 #import "ETNibOwner.h"
 
 @interface ETNibOwner (ModelDescription)
@@ -55,8 +56,8 @@
 		[ETPropertyDescription descriptionWithName: @"templates" type: (id)@"ETItemTemplate"];
 	[templates setMultivalued: YES];
 	[templates setOrdered: NO];
-	// TODO: Implement ETItemTemplate model description and display 'key' as 'Target UTI'
-	//[templates setDetailedPropertyNames: A(@"item", @"objectClass", @"entityName")];
+	// TODO: Display 'key' as 'Target UTI' or 'UTI'
+	[templates setDetailedPropertyNames: A(@"item", @"objectClass", @"entityName")];
 	ETPropertyDescription *currentObjectType =
 		[ETPropertyDescription descriptionWithName: @"currentObjectType" type: (id)@"ETUTI"];
 	ETPropertyDescription *currentGroupType =
@@ -144,6 +145,60 @@
 	[entity setPropertyDescriptions:
 	 	[persistentProperties arrayByAddingObjectsFromArray: transientProperties]];
 
+	return entity;
+}
+
+@end
+
+@interface ETItemTemplate (ModelDescription)
+@end
+
+@implementation ETItemTemplate (ModelDescription)
+
++ (ETEntityDescription *) newEntityDescription
+{
+	ETEntityDescription *entity = [self newBasicEntityDescription];
+	
+	// For subclasses that don't override -newEntityDescription, we must not add
+	// the property descriptions that we will inherit through the parent
+	if ([[entity name] isEqual: [ETItemTemplate className]] == NO)
+		return entity;
+	
+	/* Persistent Properties */
+
+	ETPropertyDescription *objectClass =
+		[ETPropertyDescription descriptionWithName: @"objectClass" type: (id)@"NSObject"];
+	[objectClass setReadOnly: YES];
+	ETPropertyDescription *entityName =
+		[ETPropertyDescription descriptionWithName: @"entityName" type: (id)@"NSString"];
+	[entityName setReadOnly: YES];
+	ETPropertyDescription *item =
+		[ETPropertyDescription descriptionWithName: @"item" type: (id)@"ETLayoutItem"];
+	[item setReadOnly: YES];
+
+	/* Transient Properties */
+	
+	ETPropertyDescription *contentItem =
+		[ETPropertyDescription descriptionWithName: @"contentItem" type: (id)@"ETLayoutItem"];
+	[contentItem setReadOnly: YES];
+	ETPropertyDescription *baseName =
+		[ETPropertyDescription descriptionWithName: @"baseName" type: (id)@"NSString"];
+	[baseName setReadOnly: YES];
+	ETPropertyDescription *supportedTypes =
+		[ETPropertyDescription descriptionWithName: @"supportedTypes" type: (id)@"ETUTI"];
+	[supportedTypes setMultivalued: YES];
+	[supportedTypes setOrdered: YES];
+	[supportedTypes setReadOnly: YES];
+	
+	NSArray *transientProperties = A(contentItem, baseName, supportedTypes);
+	NSArray *persistentProperties =  A(objectClass, entityName, item);
+	
+	[entity setUIBuilderPropertyNames: (id)[[A(objectClass, entityName, item) mappedCollection] name]];
+	
+	[[persistentProperties mappedCollection] setPersistent: YES];
+	[entity setPropertyDescriptions:
+		[persistentProperties arrayByAddingObjectsFromArray: transientProperties]];
+	
 	return entity;
 }
 
