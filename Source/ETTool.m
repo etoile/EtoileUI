@@ -649,17 +649,25 @@ aLayout has ownership over the receiver, so it won't be retained. */
 	return _layoutOwner;
 }
 
-/** Called when the tool becomes active, usually when the pointer enters 
-    in an area that falls under the control of a layout, to which this 
-	tool is attached to. */
+/** <override-dummy />
+Called when the tool becomes active, usually when the pointer enters in an
+area that falls under the control of a layout, to which this tool is attached to.
+ 
+This method is also called for the new active tool on -setActiveTool:.
+ 
+You must call the superclass implementation if you override this method. */
 - (void) didBecomeActive
 {
 	ETDebugLog(@"Tool %@ did become active", self);
 }
 
-/** Called when the tool becomes inactive, usually when the pointer exists 
-    the area that falls under the control of a layout, to which this tool 
-	is attached to. */
+/** <override-dummy />
+Called when the tool becomes inactive, usually when the pointer exists the
+area that falls under the control of a layout, to which this tool is attached to.
+ 
+This method is also called for the previous active tool on -setActiveTool:.
+ 
+You must call the superclass implementation if you override this method. */
 - (void) didBecomeInactive
 {
 	ETDebugLog(@"Tool %@ did become inactive", self);

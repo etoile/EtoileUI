@@ -57,6 +57,13 @@ DEALLOC(DESTROY(_actionHandlerPrototype); DESTROY(_selectionAreaItem));
 	return newTool;
 }
 
+- (void) didBecomeInactive
+{
+	[super didBecomeInactive];
+	/* Clear all the select tool state */
+	[self endSelectingArea];
+}
+
 /** Returns whether the tool can be used to select several items among the 
 children of the target item. */
 - (BOOL) allowsMultipleSelection

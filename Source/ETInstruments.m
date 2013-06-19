@@ -27,6 +27,13 @@
 
 @implementation ETArrowTool
 
+- (void) didBecomeInactive
+{
+	[super didBecomeInactive];
+	DESTROY(_firstTouchedItem);
+	_isTrackingTouch = NO;
+}
+
 - (void) mouseDown: (ETEvent *)anEvent
 {
 	[self tryActivateItem: nil withEvent: anEvent];
@@ -149,6 +156,12 @@ DEALLOC(DESTROY(_draggedItem))
 	ETMoveTool *newTool = [super copyWithZone: aZone];
 	newTool->_isTranslateMode = _isTranslateMode;
 	return newTool;
+}
+
+- (void) didBecomeInactive
+{
+	[super didBecomeInactive];
+	[self clearMoveState];
 }
 
 /** Returns whether the receiver should produce translate actions rather than 
@@ -301,15 +314,20 @@ This method can be overriden to alter the broadcast. */
 	// TODO: Post translate notification
 }
 
+- (void) clearMoveState
+{
+	DESTROY(_draggedItem);
+	_dragStartLoc = NSZeroPoint;
+	_lastDragLoc = NSZeroPoint;
+}
+
 /** Ends the translation. */
 - (void) endTranslate
 {
 	[[_draggedItem actionHandler] endTranslateItem: _draggedItem];
 
 	ETAssert(_isTranslateMode);
-	DESTROY(_draggedItem);
-	_dragStartLoc = NSZeroPoint;
-	_lastDragLoc = NSZeroPoint;
+	[self clearMoveState];
 }
 
 /** Returns whether an item is currently translated by the receiver. */
