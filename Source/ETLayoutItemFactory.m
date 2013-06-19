@@ -23,6 +23,7 @@
 #import "ETNumberPicker.h"
 #import "ETScrollableAreaItem.h"
 #import "ETWindowItem.h"
+#import "ETSelectTool.h"
 #import "ETStyle.h"
 #import "ETShape.h"
 #import "ETTableLayout.h"
@@ -438,6 +439,9 @@ The returned collection editor has a flexible width and a fixed height. */
 	ETLayoutItemGroup *buttonBar = [self horizontalBarWithSize: NSMakeSize(aSize.width, [plusButton height])];
 	NSRect browserFrame = NSMakeRect(0, 0, aSize.width, aSize.height - [plusButton height]);
 	ETLayoutItemGroup *browser = [self itemGroupWithFrame: browserFrame];
+	ETSelectTool *selectionTool = [ETSelectTool tool];
+
+	[selectionTool setAllowsMultipleSelection: YES];
 
 	// FIXME: Set a better identifiers perhap and use a constant
 	[buttonBar setIdentifier: @"bar"];
@@ -447,6 +451,7 @@ The returned collection editor has a flexible width and a fixed height. */
 	[browser setIdentifier: @"browser"];
 	[browser setAutoresizingMask: ETAutoresizingFlexibleWidth];
 	[browser setLayout: [ETTableLayout layout]];
+	[[browser layout] setAttachedTool: selectionTool];
 	[browser setHasVerticalScroller: YES];
 	[browser setRepresentedObject: aCollection];
 	[browser setSource: browser];
