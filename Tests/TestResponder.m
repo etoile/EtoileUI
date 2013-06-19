@@ -25,6 +25,9 @@
 - (void) bip: (id)sender onItem: (ETLayoutItem *)anItem;
 @end
 
+@interface ETFirstResponderActionHandler : ETActionHandler
+@end
+
 /* This gives us access to the first main and key responders since we cannot 
    use -makeMainWindow since main or key are resigned immediately while running 
    tests (at least from Xcode because the test process runs in background). */
@@ -73,7 +76,8 @@
 {
 	item = [itemFactory item];
 	scrollableAreaItem = [ETScrollableAreaItem item];
-	
+
+	[item setActionHandler: [ETFirstResponderActionHandler sharedInstance]];
 	[item setDecoratorItem: scrollableAreaItem];
 
 	mainItem = [itemFactory itemGroupWithItems: A(item)];
@@ -167,6 +171,14 @@
 
 @end
 
+@implementation ETFirstResponderActionHandler
+
+- (BOOL) acceptsFirstResponder
+{
+	return YES;
+}
+
+@end
 
 @implementation ETBipActionHandler
 

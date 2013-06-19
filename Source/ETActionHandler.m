@@ -574,7 +574,7 @@ TODO: Problably remove, since it should be of any use and just adds complexity. 
 bound to can become first responder. By default, returns NO. */
 - (BOOL) acceptsFirstResponder
 {
-	return YES;
+	return NO;
 }
 
 /** Tells the receiver that the item to which it is bound is asked to become 

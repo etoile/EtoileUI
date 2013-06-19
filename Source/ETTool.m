@@ -406,9 +406,13 @@ This method calls either -makeFirstKeyResponder: or -makeFirstMainResponder:. */
 		return NO;
 	}
 
-	id responder = aResponder;
+	/* -[NSWindow makeFirstResponder:] calls -resignFirstResponder and 
+	   -becomeFirstResponder but not -acceptsFirstResponder according to Cocoa 
+	   API documentation (unlike GNUstep behavior). */
+	if ([aResponder acceptsFirstResponder] == NO)
+		return NO;
 
-	BOOL isNowFirstResponder = [aWindow makeFirstResponder: responder];
+	BOOL isNowFirstResponder = [aWindow makeFirstResponder: aResponder];
 	/* We must retain the responder because -[NSWindow makeFirstResponder:] 
 	   doesn't do it (not so sure anymore). */
 	if (isNowFirstResponder)
@@ -417,10 +421,10 @@ This method calls either -makeFirstKeyResponder: or -makeFirstMainResponder:. */
 		{
 			[_firstMainResponder setNeedsDisplay: YES];
 		}
-		ASSIGN(_firstMainResponder, responder);
-		if ([responder isLayoutItem])
+		ASSIGN(_firstMainResponder, aResponder);
+		if ([aResponder isLayoutItem])
 		{
-			[responder setNeedsDisplay: YES];
+			[aResponder setNeedsDisplay: YES];
 		}
 	}
 
