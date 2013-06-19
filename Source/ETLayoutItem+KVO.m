@@ -10,6 +10,7 @@
 #import <EtoileFoundation/NSObject+Model.h>
 #import <EtoileFoundation/Macros.h>
 #import "ETLayoutItem+KVO.h"
+#import "ETLayoutItemGroup.h"
 #import "EtoileUIProperties.h"
 #import "ETWidget.h"
 #import "NSView+Etoile.h"
@@ -244,6 +245,33 @@ affected. */
 + (NSSet *) keyPathsForValuesAffectingUTI
 {
 	return S(kETSubtypeProperty);
+}
+
+@end
+
+@interface ETLayoutItemGroup (KVO)
+@end
+
+@implementation ETLayoutItemGroup (KVO)
+
++ (BOOL) automaticallyNotifiesObserversForKey: (NSString *)theKey
+{
+	NSSet *manuallyNotifiedProperties = S(@"items");
+	
+    if ([manuallyNotifiedProperties containsObject: theKey])
+	{
+		return NO;
+    } 
+	else 
+	{
+		return [super automaticallyNotifiesObserversForKey: theKey];
+    }
+}
+
+- (NSSet *) observableKeyPaths
+{
+	NSSet *keyPaths = S(@"selectionIndexPaths", @"selectedItems", @"selectedItemsInLayout");
+	return [[super observableKeyPaths] setByAddingObjectsFromSet: keyPaths];
 }
 
 @end

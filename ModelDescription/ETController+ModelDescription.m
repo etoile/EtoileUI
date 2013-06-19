@@ -57,6 +57,7 @@
 	[templates setMultivalued: YES];
 	[templates setOrdered: NO];
 	// TODO: Display 'key' as 'Target UTI' or 'UTI'
+	[templates setShowsItemDetails: YES];
 	[templates setDetailedPropertyNames: A(@"item", @"objectClass", @"entityName")];
 	ETPropertyDescription *currentObjectType =
 		[ETPropertyDescription descriptionWithName: @"currentObjectType" type: (id)@"ETUTI"];

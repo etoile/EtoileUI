@@ -57,6 +57,8 @@ the UI won't reflect the latest receiver content. */
 		DESTROY(_arrangedItems);
 		_filtered = NO;
 		_sorted = NO;
+		// TODO: Move -willChangeForProperty: just before the mutation
+		[self willChangeValueForProperty: @"items"];
 		[self didChangeValueForProperty: @"items"];
 	}
 }

@@ -8,6 +8,7 @@
 
 #import <EtoileFoundation/Macros.h>
 #import <EtoileFoundation/ETPropertyDescription.h>
+#import <EtoileFoundation/ETUnionViewpoint.h>
 #import <EtoileFoundation/ETViewpoint.h>
 #import <EtoileFoundation/ETModelElementDescription.h>
 #import <EtoileFoundation/ETModelDescriptionRepository.h>
@@ -130,6 +131,8 @@ time. For example:
 	ETLayoutItemGroup *editor = [_itemFactory collectionEditorWithSize: [self defaultItemSize]
 							                         representedObject: [NSArray array]
 									                        controller: controller];
+	NSFont *smallFont = [NSFont controlContentFontOfSize: [NSFont smallSystemFontSize]];
+	[[[[editor itemForIdentifier: @"browser"] layout] ifResponds] setContentFont: smallFont];
 	return editor;
 }
 
@@ -627,10 +630,24 @@ See also -setRenderedPropertyNames:. */
 		NSSize detailedItemSize = NSMakeSize([editor width], 200);
 		ETModelDescriptionRenderer *renderer =
 			[self rendererForItemDetailsInSize: detailedItemSize];
-		id value = [anObject valueForProperty: [aRelationshipDesc name]];
-		ETLayoutItemGroup *detailedItem =
-		[renderer renderObject: value displayName: nil propertyDescriptions: [[aRelationshipDesc type] allPropertyDescriptions]];
-		
+		id relationshipValue = [anObject valueForProperty: [aRelationshipDesc name]];
+		ETAssert([relationshipValue isCollection]);
+		ETLayoutItemGroup *detailedItem = [renderer renderObject: nil displayName: nil propertyDescriptions: [[aRelationshipDesc type] allPropertyDescriptions]];
+
+		for (ETLayoutItem *propertyItem in detailedItem)
+		{
+			/* -newItemForAttributeDescription:ofObject: has set a property 
+			   viewpoint but without a represented object */
+			NSString *propertyName = [[propertyItem representedObject] name];
+			ETAssert(propertyName != nil);
+			// TODO: Should be 'arrangedItems'
+			ETUnionViewpoint *unionViewpoint = [ETUnionViewpoint viewpointWithName: @"selectedItemsInLayout" representedObject: browser];
+	
+			[unionViewpoint setContentKeyPath:
+			 	[NSString stringWithFormat: @"subject.%@", propertyName]];
+			[propertyItem setRepresentedObject: unionViewpoint];
+		}
+	
 		[detailedItem setIdentifier: @"details"];
 		[detailedItem setAutoresizingMask: ETAutoresizingFlexibleWidth];
 

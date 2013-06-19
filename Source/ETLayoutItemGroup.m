@@ -1507,6 +1507,8 @@ redisplayed. */
 - (void) setSelectionIndexPaths: (NSArray *)indexPaths
 {
 	_changingSelection = YES;
+	[self willChangeValueForKey: @"selectedItems"];
+	[self willChangeValueForKey: @"selectedItemsInLayout"];
 
 	[self applySelectionIndexPaths: [NSMutableArray arrayWithArray: indexPaths]
 	                relativeToItem: self];
@@ -1527,6 +1529,8 @@ redisplayed. */
 	/* Reflect selection change immediately */
 	[self setNeedsDisplay: YES];
 
+	[self didChangeValueForKey: @"selectedItems"];
+	[self didChangeValueForKey: @"selectedItemsInLayout"];
 	_changingSelection = NO;
 }
 
