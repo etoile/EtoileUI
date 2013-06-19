@@ -25,6 +25,8 @@
 
 @implementation ETModelBuilderController
 
+@synthesize relationshipValueTransformer = _relationshipValueTransformer;
+
 - (ETModelDescriptionRepository *) repository
 {
 	return [ETModelDescriptionRepository mainRepository];
