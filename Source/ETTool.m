@@ -8,6 +8,7 @@
 
 #import <EtoileFoundation/ETCollection+HOM.h>
 #import <EtoileFoundation/NSObject+Etoile.h>
+#import <EtoileFoundation/NSObject+HOM.h>
 #import <EtoileFoundation/NSObject+Model.h>
 #import <EtoileFoundation/Macros.h>
 #import "ETTool.h"
@@ -143,16 +144,28 @@ layout item tree.
 
 Take a look at -didBecomeActive and -didBecomeInactive to react to activation 
 and deactivation in your ETTool subclasses.
+ 
+If the tool has become active, returns the tool passed in argument, otherwise 
+returns the previously active tool. A tool bound to an item that returns YES 
+to -[ETLayoutItem usesWidgetView] cannot become active.
 
 You should rarely need to invoke this method since EtoileUI usually 
 automatically activates tools in response to the user's click with 
 -updateActiveToolWithEvent:. */
-+ (void) setActiveTool: (ETTool *)toolToActivate
++ (ETTool *) setActiveTool: (ETTool *)toolToActivate
 {
+	/* -layoutOwner can be nil at this point e.g. for the default main tool or 
+	   if the user sets a custom tool not bound to any layout. */
+	if ([[toolToActivate layoutOwner] isWidget])
+		 return activeTool;
+
+	/* Prevent the user to set a tool on an item using a widget view */
+	NSParameterAssert([[(id)[[toolToActivate layoutOwner] layoutContext] ifResponds] usesWidgetView] == NO);
+
 	ETTool *toolToDeactivate = [ETTool activeTool];
 
 	if ([toolToActivate isEqual: toolToDeactivate])
-		return;
+		return activeTool;
 
 	ETDebugLog(@"Update active tool to %@", toolToActivate);
 
@@ -168,6 +181,7 @@ automatically activates tools in response to the user's click with
 	                      toTool: toolToActivate];
 
 	RELEASE(toolToDeactivate);
+	return toolToActivate;
 }
 
 /** Returns the tool attached to the hovered item through its layout.
@@ -476,7 +490,7 @@ it. */
 
 /** <override-never />
 Updates the active tool with a new one looked up in the active tool 
-hovered item stack.
+hovered item stack, and returns the resulting active tool.
 
 You should never to call this method, only ETEventProcessor is expected to use 
 it. */
@@ -490,8 +504,7 @@ it. */
 	}
 
 	ETTool *toolToActivate = [[ETTool activeTool] lookUpToolInHoveredItemStack];
-	[self setActiveTool: toolToActivate];
-	return toolToActivate;
+	return [self setActiveTool: toolToActivate];
 }
 
 /** Returns the hovered item stack that is used internally to:

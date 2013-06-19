@@ -248,6 +248,10 @@ constraint with -setItemSizeConstraint: and -setConstrainedItemSize:. */
 {
 	/* Neither layout context and delegate have to be retained. 
 	   The layout context is our owner and retains us. */
+	
+	/* If the layoutOwner weak reference is not reset, passing this tool to 
+	   +[ETTool setActiveTool:] can cause a crash. */
+	[_tool setLayoutOwner: nil];
 	DESTROY(_tool);
 	DESTROY(_layerItem);
 	DESTROY(_dropIndicator);
@@ -275,6 +279,7 @@ tool copy. */
 	newLayout->_layerItem = [_layerItem copyWithZone: aZone];
 	newLayout->_dropIndicator = RETAIN(_dropIndicator);
 	newLayout->_tool = [_tool copyWithZone: aZone];
+	[newLayout->_tool setLayoutOwner: newLayout];
 	newLayout->_layoutSize = _layoutSize;
 	/* Must be copied to ensure autoresizing receives a correct old size */
 	newLayout->_proposedLayoutSize = _proposedLayoutSize;
@@ -329,6 +334,7 @@ To customize the copying in a subclass, you must override
 /** Returns the tool or tool bound to the receiver. */
 - (id) attachedTool
 {
+	ETAssert(_tool == nil || [_tool layoutOwner] == self);
 	return _tool;
 }
 

@@ -74,7 +74,7 @@ double-click and deactivated on a mouse click outside of their layout boundaries
 /* Factory Methods */
 
 + (id) activeTool;
-+ (void) setActiveTool: (ETTool *)toolToActivate;
++ (ETTool *) setActiveTool: (ETTool *)toolToActivate;
 + (id) activatableTool;
 + (id) mainTool;
 + (void) setMainTool: (id)aTool;
