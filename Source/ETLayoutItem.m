@@ -2894,6 +2894,15 @@ the receiver has no decorator.
 TODO: Autoresizing mask isn't yet supported when the receiver has no view. */
 - (void) setAutoresizingMask: (ETAutoresizing)aMask
 {
+	// TODO: Add the same check to -[ETPositionalLayout setIsContentSizeLayout] and
+	// possibly an extra check in -resizeItems:forNewLayoutSize:newLayoutSize:oldSize:
+	if ([(ETLayout *)[[[self layout] ifResponds] positionalLayout] isContentSizeLayout]
+	 && (aMask & (ETAutoresizingFlexibleWidth | ETAutoresizingFlexibleHeight)))
+	{
+		ETLog(@" === WARNING: ETAutoresizingFlexibleWidth or ETAutoresizingFlexibleHeight "
+			   "are not supported for %@ if %@ controls the content size (see "
+			   "-isContentSizeLayout) === ", self, [self layout]);
+	}
 	[self willChangeValueForProperty: kETAutoresizingMaskProperty];
 
 	_autoresizingMask = aMask;
