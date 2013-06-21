@@ -318,6 +318,7 @@
 		                                         controller: self
 		                                         aspectName: [self currentAspectName]];
 
+	[newAspectPaneItem setWidth: [[self aspectInspectorItem] width]];
 	[[self aspectInspectorItem] removeItem: [self aspectPaneItem]];
 	[[self aspectInspectorItem] addItem: newAspectPaneItem];
 }

@@ -19,6 +19,7 @@
 #import "ETColumnLayout.h"
 #import "ETController.h"
 #import "ETFormLayout.h"
+#import "ETGeometry.h"
 #import "ETItemTemplate.h"
 #import "ETLayout.h"
 #import "ETLayoutItem.h"
@@ -62,6 +63,7 @@
 	ASSIGN(_entityLayout, [self defaultFormLayout]);
 	/* See -setRendererPropertyNames: */
 	_renderedPropertyNames = nil;
+	_itemSize = [self defaultItemSize];
 
 	[self registerDefaultTemplateItems];
 	[self registerDefaultRoleTemplateIdentifiers];
@@ -113,13 +115,27 @@ time. For example:
 
 - (NSSize) defaultItemSize
 {
+	// TODO: Perhaps support returning a derived item size
+	//NSRect itemFrame = [self validFrameForEntityItem];
+	//return NSMakeSize(itemFrame.size.width - 300, 100);
 	return NSMakeSize(300, 100);
+}
+
+- (void) setItemSize: (NSSize)aSize
+{
+	_itemSize = aSize;
+	[(ETLayoutItem *)[[self templateItems] mappedCollection] setWidth: [self itemSize].width];
+}
+
+- (NSSize) itemSize
+{
+	return _itemSize;
 }
 
 - (ETLayoutItem *) textFieldTemplateItem
 {
 	ETLayoutItem *item = [_itemFactory textField];
-	[item setWidth: [self defaultItemSize].width];
+	[item setWidth: [self itemSize].width];
 	[[[[item view] cell] ifResponds] setPlaceholderString: @"Nil"];
 	return item;
 }
@@ -139,19 +155,19 @@ time. For example:
 - (ETLayoutItem *) numberPickerTemplateItem
 {
 	ETLayoutItem *item = [_itemFactory numberPicker];
-	[item setWidth: [self defaultItemSize].width];
+	[item setWidth: [self itemSize].width];
 	return item;
 }
 
 - (ETLayoutItem *) pointEditorTemplateItem
 {
-	ETLayoutItem *item = [_itemFactory pointEditorWithWidth: [self defaultItemSize].width forXProperty: nil yProperty: nil ofModel: nil];
+	ETLayoutItem *item = [_itemFactory pointEditorWithWidth: [self itemSize].width forXProperty: nil yProperty: nil ofModel: nil];
 	return item;
 }
 
 - (ETLayoutItem *) sizeEditorTemplateItem
 {
-	ETLayoutItem *item = [_itemFactory sizeEditorWithWidth: [self defaultItemSize].width forWidthProperty: nil heightProperty: nil ofModel: nil];
+	ETLayoutItem *item = [_itemFactory sizeEditorWithWidth: [self itemSize].width forWidthProperty: nil heightProperty: nil ofModel: nil];
 	return item;
 }
 
@@ -159,7 +175,7 @@ time. For example:
 {
 	ETLayoutItem *pointEditor = [self pointEditorTemplateItem];
 	ETLayoutItem *sizeEditor = [self sizeEditorTemplateItem];
-	NSSize size = NSMakeSize([self defaultItemSize].width,
+	NSSize size = NSMakeSize([self itemSize].width,
 		[pointEditor height] + [sizeEditor height]);
 	ETLayoutItemGroup *editor = [_itemFactory itemGroupWithSize: size];
 
@@ -170,11 +186,10 @@ time. For example:
 	return editor;
 }
 
-
 - (ETLayoutItem *) popUpMenuTemplateItem
 {
 	ETLayoutItem *item = [_itemFactory popUpMenu];
-	[item setWidth: [self defaultItemSize].width];
+	[item setWidth: [self itemSize].width];
 	return item;
 }
 
@@ -235,6 +250,12 @@ time. For example:
 - (void) setEntityItemFrame: (NSRect)aRect
 {
 	_entityItemFrame = aRect;
+
+	// TODO: We should support something similar to the code below.
+	// Perhaps add a delegate method -renderer:itemSizeForEntityItemFrame:, or
+	// tell the user he can override this method in this way.
+	//CGFloat newItemWidth = [self itemSize].width;
+	//[(ETLayoutItem *)[[self templateItems] mappedCollection] setWidth: newItemWidth];
 }
 
 - (NSRect) entityItemFrame
@@ -242,9 +263,14 @@ time. For example:
 	return _entityItemFrame;
 }
 
-- (BOOL) autoresizesEntityItem
+- (BOOL) usesContentSizeLayout
 {
-	return NSIsEmptyRect([self entityItemFrame]);
+	return _usesContentSizeLayout;
+}
+
+- (void) setUsesContentSizeLayout: (BOOL)isContentSizeLayout
+{
+	_usesContentSizeLayout = isContentSizeLayout;
 }
 
 - (ETEntityDescription *) entityDescriptionForObject: (id)anObject
@@ -262,24 +288,46 @@ time. For example:
 	return NSMakeRect(0, 0, 500, 600);
 }
 
-- (ETFormLayout *) defaultFormLayout
-{
-	ETFormLayout *layout = [ETFormLayout layout];
-	[(ETLayout *)[layout positionalLayout] setIsContentSizeLayout: YES];
-	return layout;
-}
-
-- (ETLayoutItemGroup *)entityItemWithRepresentedObject: (id)anObject
+- (NSRect) validFrameForEntityItem
 {
 	NSRect itemFrame = [self entityItemFrame];
-
+	
 	if (NSIsEmptyRect(itemFrame))
 	{
 		itemFrame = [self defaultFrameForEntityItem];
 	}
-	ETLayoutItemGroup *item = [[ETLayoutItemFactory factory] itemGroupWithFrame: itemFrame];
+	return itemFrame;
+}
 
-	[item setLayout: [[[self entityLayout] copy] autorelease]];
+- (ETFormLayout *) defaultFormLayout
+{
+	return [ETFormLayout layout];
+}
+
+// TODO: Surely declare -setIsContentSizeLayout in ETPositionalLayout protocol
+// because [[itemGroup layout] setIsContentSizeLayout: YES] does nothing.
+- (void) setIsContentSizeLayout: (BOOL)isContentSizeLayout forLayout: (ETLayout *)aLayout
+{
+	ETLayout *positionalLayout =
+		([aLayout isPositional] ? aLayout : [[aLayout ifResponds] positionalLayout]);
+	
+	[positionalLayout setIsContentSizeLayout: isContentSizeLayout];
+}
+
+- (id) prepareEntityLayout: (ETLayout *)aLayout
+{
+	// TODO: Should use -isContentSizeLayout instead of just YES
+	[self setIsContentSizeLayout: YES forLayout: aLayout];
+	return aLayout;
+}
+
+- (ETLayoutItemGroup *)entityItemWithRepresentedObject: (id)anObject
+{
+	NSRect itemFrame = [self validFrameForEntityItem];
+	ETLayoutItemGroup *item = [[ETLayoutItemFactory factory] itemGroupWithFrame: itemFrame];
+	ETAssert(NSEqualRects([item frame], itemFrame));
+
+	[item setLayout: [self prepareEntityLayout: [[[self entityLayout] copy] autorelease]]];
 	[item setIdentifier: @"entity"];
 	[item setRepresentedObject: anObject];
 	//[item setController: [[ETEntityInspectorController new] autorelease]];
@@ -330,11 +378,7 @@ See also -setRenderedPropertyNames:. */
 	[itemGroup setAutoresizingMask: ETAutoresizingFlexibleWidth];
 	[itemGroup setName: aName];
 	[itemGroup setIdentifier: [[aName lowercaseString] stringByAppendingString: @" (grouping)"]];
-	[itemGroup setLayout: [[[self entityLayout] copy] autorelease]];
-	// TODO: Surely declare -setIsContentSizeLayout in ETPositionalLayout protocol
-	// because [[itemGroup layout] setIsContentSizeLayout: YES] does nothing.
-	[(ETLayout *)[[itemGroup layout] positionalLayout] setIsContentSizeLayout: YES];//_usesContentSizeLayout];
-	//[itemGroup setUsesLayoutBasedFrame: YES];
+	[itemGroup setLayout: [self prepareEntityLayout: [[[self entityLayout] copy] autorelease]]];
 	[itemGroup setDecoratorItem: [ETTitleBarItem item]];
 	return itemGroup;
 }
@@ -400,10 +444,10 @@ See also -setRenderedPropertyNames:. */
 {
 	ETColumnLayout *layout = [ETColumnLayout layout];
 	[layout setUsesAlignmentHint: YES];
-	[layout setIsContentSizeLayout: YES];//_usesContentSizeLayout];
+	// TODO: Should use -isContentSizeLayout instead of just YES
+	[layout setIsContentSizeLayout: YES];
 	return layout;
 }
-
 
 - (NSFormatter *) formatterForType: (ETEntityDescription *)aType
 {
@@ -501,17 +545,36 @@ See also -setRenderedPropertyNames:. */
 	NSRect entityItemFrame = [entityItem frame];
 
 	[entityItem addItems: items];
-	/* If -groupingLayout -entityLayout returns YES for -isContentSizeLayout, 
-	   this layout update resizes the entity item to enclose its content */
-	//if ([[[self entityItem] layout] isContentSizeLayout])
-	//{
-		[entityItem updateLayoutRecursively: YES];
-	//if (
 
-	if ([entityItem height] > entityItemFrame.size.height)
+	/* If -groupingLayout or -entityLayout returns YES for -isContentSizeLayout, 
+	   this layout update resizes the entity item to enclose its content.
+	   This is needed until we can apply -isContentSizeLayout to the height 
+	   without touching the width. */
+	[entityItem updateLayoutRecursively: YES];
+	/* At this point, if -isContentSizeLayout was YES but -usesContentSizeLayout 
+	   is NO, it means we just wanted to adjust the height to the content size. */
+	if ([self usesContentSizeLayout] == NO)
+	{
+		/* This applies to detail view items too, but for a detail view we 
+		   reset the height. For an entity item, we don't resize the height, 
+		   in case we want to show a vertical scroller (see below).
+		   See also -editorForRelationshipDescription:ofObject: and 
+		   -rendererForItemDetailsInSize:. */
+		[self setIsContentSizeLayout: NO forLayout: [entityItem layout]];
+		[entityItem setWidth: [self entityItemFrame].size.width];
+	}
+	/* If we have adjusted the height and no items are clipped horizontally, 
+	   all items should be visible at this point. */
+	ETAssert([[entityItem visibleItems] isEqual: [entityItem items]]);
+
+	if ([entityItem height] > entityItemFrame.size.height || ([self groupingKeyPath] != nil))
 	{
 		[entityItem setHasVerticalScroller: YES];
+		// TODO: Should handle that more cleanly... Could use 
+		//[[entityItem scrollableAreaItem] setEnsuresContentFillsVisibleArea: YES];
+		[[[[entityItem scrollableAreaItem] scrollView] documentView] setAutoresizesSubviews: YES];
 		[entityItem setHeight: entityItemFrame.size.height];
+		[entityItem updateLayoutRecursively: YES];
 	}
 	if ([[entityItem layout] isComputedLayout])
 	{
@@ -580,11 +643,16 @@ See also -setRenderedPropertyNames:. */
 
 - (ETModelDescriptionRenderer *) rendererForItemDetailsInSize: (NSSize)aSize
 {
-	// TODO: Use -copy if possible
+	// TODO: Use -copy if possible. But this wouldn't work well for
+	// -newValueTransformerRender that alters the entity item layout and the
+	// collection editor size.
 	ETModelDescriptionRenderer *renderer = AUTORELEASE([ETModelDescriptionRenderer new]);
 
 	renderer->_formattersByType = [_formattersByType mutableCopy];
 	[renderer setEntityItemFrame: NSMakeRect(0, 0, aSize.width, aSize.height)];
+	[renderer setItemSize: NSMakeSize(aSize.width - 200, [self itemSize].height)];
+	// TODO: Should use ETContentSizeLayoutVertical or similar
+	//[renderer setUsesContentSizeLayout: YES];
 
 	return renderer;
 }
@@ -632,8 +700,14 @@ See also -setRenderedPropertyNames:. */
 			[self rendererForItemDetailsInSize: detailedItemSize];
 		id relationshipValue = [anObject valueForProperty: [aRelationshipDesc name]];
 		ETAssert([relationshipValue isCollection]);
-		ETLayoutItemGroup *detailedItem = [renderer renderObject: nil displayName: nil propertyDescriptions: [[aRelationshipDesc type] allPropertyDescriptions]];
+		// TODO: Use UI Builder property names to look up
+		NSArray *detailedPropertyDescs = [[aRelationshipDesc type]
+			propertyDescriptionsForNames: [aRelationshipDesc detailedPropertyNames]];
+		ETLayoutItemGroup *detailedItem =
+			[renderer renderObject: nil displayName: nil propertyDescriptions: detailedPropertyDescs];
 
+		/* The width has already been reset
+		[detailedItem setHeight: [renderer entityItemFrame].size.height];*/
 		for (ETLayoutItem *propertyItem in detailedItem)
 		{
 			/* -newItemForAttributeDescription:ofObject: has set a property 
@@ -652,7 +726,6 @@ See also -setRenderedPropertyNames:. */
 		[detailedItem setAutoresizingMask: ETAutoresizingFlexibleWidth];
 
 		[editor addItem: detailedItem];
-		//[editor addItem: [_itemFactory horizontalSlider]];
 		[editor setHeight: [editor height] + [detailedItem height]];
 	}
 	else if ([[aRelationshipDesc detailedPropertyNames] isEmpty] == NO)

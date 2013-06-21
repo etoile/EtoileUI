@@ -572,6 +572,10 @@
 	NSParameterAssert(aController != nil);
 	NSParameterAssert(anAspectName != nil);
 
+	/* For the 'valueTransformers' aspect, we use a custom render that returns 
+	   an entity item using a column layout and not a form layout. This explains 
+	   how the collection editor spans the whole width without a form label.
+	   However the collection editor has a detail view which uses a form layout. */
 	ETModelDescriptionRenderer *renderer = [self rendererForAspectName: anAspectName];
 	ETEntityDescription *rootEntity = [[renderer repository] descriptionForName: @"Object"];
 
@@ -587,8 +591,10 @@
 
 	// TODO: Perhaps use aspectInspector
 	[itemGroup setIdentifier: @"basicInspectorContent"];
+	[(ETLayout *)[[[itemGroup layout] ifResponds] positionalLayout] setIsContentSizeLayout: NO];
 	[itemGroup setAutoresizingMask: ETAutoresizingFlexibleWidth | ETAutoresizingFlexibleHeight];
 
+	ETAssert([itemGroup frame].size.width == [self defaultBasicInspectorContentSize].width);
 	return itemGroup;
 }
 	 

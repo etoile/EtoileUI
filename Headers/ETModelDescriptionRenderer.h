@@ -28,6 +28,7 @@
 	NSMutableDictionary *_valueTransformersByType;
 	ETLayout *_entityLayout;
 	NSRect _entityItemFrame;
+	NSSize _itemSize;
 	NSArray *_renderedPropertyNames;
 	NSString *_groupingKeyPath;
 	BOOL _usesContentSizeLayout;
@@ -50,6 +51,8 @@
 - (NSString *) templateIdentifierForRoleClass: (Class)aClass;
 
 - (NSSize) defaultItemSize;
+- (NSSize) itemSize;
+- (void) setItemSize: (NSSize)aSize;
 
 /** @taskunit Customizing Generated UI */
 
@@ -59,6 +62,8 @@
 - (ETLayout *) entityLayout;
 - (void) setEntityItemFrame: (NSRect)aRect;
 - (NSRect) entityItemFrame;
+- (BOOL) usesContentSizeLayout;
+- (void) setUsesContentSizeLayout: (BOOL)isContentSizeLayout;
 
 - (void) setRenderedPropertyNames: (NSArray *)propertyNames;
 - (NSArray *) renderedPropertyNames;
