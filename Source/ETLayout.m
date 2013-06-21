@@ -632,16 +632,28 @@ not enough to let the layout present the items in its own way.
 The only common case where -isContentSizeLayout should return YES is when the 
 layout context is scrollable, and ETLayout does it transparently. Which means 
 you very rarely need to use this method.
+ 
+If -isContentSizeLayout is YES, the items are not autoresized.
+ 
+Each time this method is called, the layout size is reset. This means resizing 
+the layout context prior to -setIsContentSizeLayout: NO won't autoresize the 
+items for the layout update at the end of the current event. If you want to 
+autoresize the items, you must resize the layout context when 
+-isContentSizeLayout returns NO (and ensure -isContentSizeLayout won't be 
+switched again until the end of the currrent event).
 
 See also -isContentSizeLayout:. */
 - (void) setIsContentSizeLayout: (BOOL)flag
 {
 	//ETDebugLog(@"-setContentSizeLayout");
 	_isContentSizeLayout = flag;
+	[self resetLayoutSize];
 }
 
 /** Returns whether the layout context can be resized, when its current size is 
 not enough to let the layout present the items in its own way. 
+
+If -isContentSizeLayout is YES, the items are not autoresized.
 
 When a scrollable area item decorates the layout context, -isContentSizeLayout 
 always returns YES. */
