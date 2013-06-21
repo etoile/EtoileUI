@@ -1028,7 +1028,7 @@ frame (see -usesLayoutBasedFrame). */
 		for (ETLayoutItem *item in [self items])
 		{
 			[item updateLayoutRecursively: YES];
-			needsSecondPass |= ([[item layout] isContentSizeLayout] && [item isScrollable] == NO);
+			needsSecondPass |= ([[[item layout] positionalLayout] isContentSizeLayout] && [item isScrollable] == NO);
 		}
 	}
 	

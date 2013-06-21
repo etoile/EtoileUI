@@ -42,8 +42,14 @@ form UI.
 Form UI is UI pattern that present labelled widgets or views in a column. 
 Usually the label is positioned on the left and the widget or view on the right.
  
-By default, ETFormLayout uses a ETColumnLayout as its positional layout.
+By default, ETFormLayout uses a ETColumnLayout as its positional layout. To 
+ensure all the form UI items are visible without manually resizing the item 
+group bound to ETFormLayout, you can do the following:
  
+<example>
+[[[self positionalLayout] setIsContentSizeLayout: YES];
+</example>
+
 You can control the overall form alignment using -setFormAlignement:. 
 
 ETFormLayout lets you control the built form precisely. The first time a 

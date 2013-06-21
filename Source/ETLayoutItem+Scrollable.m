@@ -9,6 +9,7 @@
 #import <EtoileFoundation/Macros.h>
 #import "ETLayoutItem+Scrollable.h"
 #import "ETLayout.h"
+#import "ETPositionalLayout.h"
 #import "ETScrollableAreaItem.h"
 #import "NSObject+EtoileUI.h"
 #import "ETCompatibility.h"
@@ -172,7 +173,7 @@ synchronize those layouts with it every time a setting changed.  */
 	{
 		[[self layout] syncLayoutViewWithItem: self];	
 	}
-	[[self layout] setIsContentSizeLayout: YES];
+	[[(ETLayout *)[self layout] positionalLayout] setIsContentSizeLayout: YES];
 }
 
 - (void) hidesScrollableAreaItem 
@@ -188,7 +189,7 @@ synchronize those layouts with it every time a setting changed.  */
 	{
 		[[self layout] syncLayoutViewWithItem: self];	
 	}
-	[[self layout] setIsContentSizeLayout: NO];
+	[[(ETLayout *)[self layout] positionalLayout] setIsContentSizeLayout: NO];
 }
 
 /** Returns wether the receiver content is enclosed in a scrollable area.

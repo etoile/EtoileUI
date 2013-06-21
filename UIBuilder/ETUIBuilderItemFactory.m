@@ -492,7 +492,7 @@
 	[itemGroup setIdentifier: @"basicInspectorHeader"];
 	[itemGroup setAutoresizingMask: ETAutoresizingFlexibleWidth];
 	// TODO: Remove -setSize: and just uses -setIsContentSizeLayout:
-	//[formLayout setIsContentSizeLayout: YES];
+	//[[formLayout positionalLayout] setIsContentSizeLayout: YES];
 	[itemGroup setLayout: formLayout];
 	[itemGroup addItems: A(aspectPopUpItem, typeFieldItem)];
 
@@ -593,7 +593,7 @@
 
 	// TODO: Perhaps use aspectInspector
 	[itemGroup setIdentifier: @"basicInspectorContent"];
-	[(ETLayout *)[[[itemGroup layout] ifResponds] positionalLayout] setIsContentSizeLayout: NO];
+	[[[itemGroup layout] positionalLayout] setIsContentSizeLayout: NO];
 	[itemGroup setAutoresizingMask: ETAutoresizingFlexibleWidth | ETAutoresizingFlexibleHeight];
 
 	ETAssert([itemGroup frame].size.width == [self defaultBasicInspectorContentSize].width);

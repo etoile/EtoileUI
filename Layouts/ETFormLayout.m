@@ -37,8 +37,6 @@
 	[self setPositionalLayout: [ETColumnLayout layout]];
 	[[self positionalLayout] setBorderMargin: 4];
 	[[self positionalLayout] setItemMargin: 4];
-	// TODO: As an option... Forms should support resizing themselves automatically based on their content.
-	//[[(id)[self positionalLayout] ifResponds] setIsContentSizeLayout: YES];
 
 	_alignment = ETFormLayoutAlignmentCenter;
 
@@ -162,7 +160,7 @@ The resizing isn't delegated to the positional layout unlike in ETTemplateItemLa
 - (void) adjustAlignmentForMaxLabelWidth: (float)maxLabelWidth
                             maxItemWidth: (float)maxItemWidth
 {
-	BOOL isAutoresizedForm = [(ETComputedLayout *)[self positionalLayout] isContentSizeLayout];
+	BOOL isAutoresizedForm = [[self positionalLayout] isContentSizeLayout];
 
 	/* When the item group that represents the form UI is resized to enclose 
 	   all the items without additional space (border and item margins put aside), 

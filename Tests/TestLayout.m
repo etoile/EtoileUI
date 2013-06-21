@@ -94,7 +94,7 @@
 {
 	ETColumnLayout *layout = [ETColumnLayout layout];
 	
-	[layout setIsContentSizeLayout: YES];
+	[[layout positionalLayout] setIsContentSizeLayout: YES];
 	[itemGroup setLayout: layout];
 
 	ETLayoutItem *textItem = [itemFactory textField];

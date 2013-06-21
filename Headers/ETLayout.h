@@ -16,6 +16,7 @@
 #import <EtoileUI/ETResponder.h>
 
 @class ETDropIndicator, ETTool, ETLineFragment, ETLayoutItem, ETLayoutItemGroup, ETView;
+@class ETPositionalLayout;
 
 /** Methods which must be implemented by an object to be layouted by any 
 ETLayout subclasses. The object whose layout items are layouted is the layout 
@@ -134,6 +135,10 @@ described in ETComputedLayout description must conform to this prococol.
 
 Warning: This protocol is very much subject to change. */
 @protocol ETComputableLayout <NSObject>
+/** See -[ETPositionalLayout setIsContentSizeLayout]. */
+- (void) setIsContentSizeLayout: (BOOL)flag;
+/** See -[ETPositionalLayout isContentSizeLayout]. */
+- (BOOL) isContentSizeLayout;
 /** See -[ETLayout copyWithZone:layoutContext:]. */
 - (id) copyWithZone: (NSZone *)aZone layoutContext: (id <ETLayoutingContext>)newContext;
 /** See -[ETLayout setLayoutContext:]. */
@@ -176,7 +181,6 @@ Warning: This protocol is very much subject to change. */
 	NSSize _layoutSize;
 	NSSize _proposedLayoutSize;
 	BOOL _usesCustomLayoutSize;
-	BOOL _isContentSizeLayout;
 	@protected
 	float _previousScaleFactor; // TODO: Remove
 }
@@ -232,10 +236,8 @@ Warning: This protocol is very much subject to change. */
 - (BOOL) usesCustomLayoutSize;
 - (void) setLayoutSize: (NSSize)size;
 - (NSSize) layoutSize;
-- (void) setIsContentSizeLayout: (BOOL)flag;
-- (BOOL) isContentSizeLayout;
 - (BOOL) isAllContentVisible;
-//- (void) adjustLayoutSizeToContentSize;
+- (ETPositionalLayout *) positionalLayout;
 
 /** @taskunit Delegate */
 

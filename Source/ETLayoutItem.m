@@ -24,6 +24,7 @@
 #import "ETLayoutItem+KVO.h"
 #import "ETLayoutItem+Scrollable.h"
 #import "ETLayoutExecutor.h"
+#import "ETPositionalLayout.h"
 #import "EtoileUIProperties.h"
 #import "ETScrollableAreaItem.h"
 #import "ETStyleGroup.h"
@@ -2937,7 +2938,7 @@ TODO: Autoresizing mask isn't yet supported when the receiver has no view. */
 {
 	// TODO: Add the same check to -[ETPositionalLayout setIsContentSizeLayout] and
 	// possibly an extra check in -resizeItems:forNewLayoutSize:newLayoutSize:oldSize:
-	if ([(ETLayout *)[[[self layout] ifResponds] positionalLayout] isContentSizeLayout]
+	if ([[(ETLayout *)[self layout] positionalLayout] isContentSizeLayout]
 	 && (aMask & (ETAutoresizingFlexibleWidth | ETAutoresizingFlexibleHeight)))
 	{
 		ETLog(@" === WARNING: ETAutoresizingFlexibleWidth or ETAutoresizingFlexibleHeight "

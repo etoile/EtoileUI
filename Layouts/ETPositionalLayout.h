@@ -40,11 +40,17 @@ subclasses. */
 	@private
 	NSSize _constrainedItemSize;
 	ETSizeConstraintStyle _itemSizeConstraintStyle;
+	BOOL _isContentSizeLayout;
 }
 
 /** @taskunit Initialization */
 
 - (id) init;
+
+/** @taskunit Layout Size Control and Feedback */
+
+- (void) setIsContentSizeLayout: (BOOL)flag;
+- (BOOL) isContentSizeLayout;
 
 /** @taskunit Item Sizing */
 

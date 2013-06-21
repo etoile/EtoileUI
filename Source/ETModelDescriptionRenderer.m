@@ -26,6 +26,7 @@
 #import "ETLayoutItem+Scrollable.h"
 #import "ETLayoutItemFactory.h"
 #import "ETLayoutItemGroup.h"
+#import "ETPositionalLayout.h"
 #import "ETModelBuilderUI.h" // FIXME: Remove
 #import "ETObjectValueFormatter.h"
 #import "EtoileUIProperties.h"
@@ -308,7 +309,7 @@ time. For example:
 // because [[itemGroup layout] setIsContentSizeLayout: YES] does nothing.
 - (void) setIsContentSizeLayout: (BOOL)isContentSizeLayout forLayout: (ETLayout *)aLayout
 {
-	ETLayout *positionalLayout =
+	ETPositionalLayout *positionalLayout =
 		([aLayout isPositional] ? aLayout : [[aLayout ifResponds] positionalLayout]);
 	
 	[positionalLayout setIsContentSizeLayout: isContentSizeLayout];
@@ -433,7 +434,7 @@ See also -setRenderedPropertyNames:. */
 	{
 		ETLayoutItemGroup *itemGroup = [itemGroupsByName objectForKey: name];
 
-		[(ETLayout *)[[itemGroup layout] positionalLayout] setIsContentSizeLayout: NO];
+		[[[itemGroup layout] positionalLayout] setIsContentSizeLayout: NO];
 		[itemGroup setWidth: anItemWidth];
 	}
 

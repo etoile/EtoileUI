@@ -16,6 +16,7 @@
 #import "ETLayoutItemGroup.h"
 #import "ETTableLayout.h"
 #import "ETOutlineLayout.h"
+#import "ETPositionalLayout.h"
 #import "ETBrowserLayout.h"
 #import "NSObject+EtoileUI.h"
 #import "NSView+Etoile.h"
@@ -227,7 +228,6 @@ constraint with -setItemSizeConstraint: and -setConstrainedItemSize:. */
 	_layoutSize = NSMakeSize(200, 200); /* Dummy value */
 	_proposedLayoutSize = ETNullSize;
 	_usesCustomLayoutSize = NO;
-	_isContentSizeLayout = NO;
 	 /* Will ensure -resizeItems:toScaleFactor: isn't called until the scale changes */
 	_previousScaleFactor = 1.0;
 
@@ -284,7 +284,6 @@ tool copy. */
 	/* Must be copied to ensure autoresizing receives a correct old size */
 	newLayout->_proposedLayoutSize = _proposedLayoutSize;
 	newLayout->_usesCustomLayoutSize = _usesCustomLayoutSize;
-	newLayout->_isContentSizeLayout  = _isContentSizeLayout;
 	newLayout->_previousScaleFactor = _previousScaleFactor;
 
 	return newLayout;
@@ -626,43 +625,17 @@ The layout area size is usually computed every time
 	return _layoutSize;
 }
 
-/** Sets whether the layout context can be resized, when its current size is 
-not enough to let the layout present the items in its own way. 
-
-The only common case where -isContentSizeLayout should return YES is when the 
-layout context is scrollable, and ETLayout does it transparently. Which means 
-you very rarely need to use this method.
+/** <override-dummy />Returns nil.
  
-If -isContentSizeLayout is YES, the items are not autoresized.
+Can be overriden by subclasses to return the positional layout used to present 
+the items.
  
-Each time this method is called, the layout size is reset. This means resizing 
-the layout context prior to -setIsContentSizeLayout: NO won't autoresize the 
-items for the layout update at the end of the current event. If you want to 
-autoresize the items, you must resize the layout context when 
--isContentSizeLayout returns NO (and ensure -isContentSizeLayout won't be 
-switched again until the end of the currrent event).
-
-See also -isContentSizeLayout:. */
-- (void) setIsContentSizeLayout: (BOOL)flag
+Subclasses can return the receiver.
+ 
+See ETPositionalLayout and -[ETPositionalLayout positionalLayout]. */
+- (ETPositionalLayout *) positionalLayout
 {
-	//ETDebugLog(@"-setContentSizeLayout");
-	_isContentSizeLayout = flag;
-	[self resetLayoutSize];
-}
-
-/** Returns whether the layout context can be resized, when its current size is 
-not enough to let the layout present the items in its own way. 
-
-If -isContentSizeLayout is YES, the items are not autoresized.
-
-When a scrollable area item decorates the layout context, -isContentSizeLayout 
-always returns YES. */
-- (BOOL) isContentSizeLayout
-{
-	if ([_layoutContext isScrollable])
-		return YES;
-
-	return _isContentSizeLayout;
+	return nil;
 }
 
 /** Sets the delegate.
@@ -789,7 +762,7 @@ it (this is subject to change though). */
 	NSSize oldProposedLayoutSize = _proposedLayoutSize;
 
 	[self resetLayoutSize];
-	if ([self isContentSizeLayout] == NO)
+	if ([(ETPositionalLayout *)[self ifResponds] isContentSizeLayout] == NO)
 	{
 		[self resizeItems: items
 		 forNewLayoutSize: [self layoutSize]

@@ -53,8 +53,6 @@
 	// NOTE: layoutSize is not transient, it is usually computed but can be customized
 	ETPropertyDescription *layoutSize = 
 		[ETPropertyDescription descriptionWithName: @"layoutSize" type: (id)@"NSSize"];
-	ETPropertyDescription *isContentSizeLayout = 
-		[ETPropertyDescription descriptionWithName: @"isContentSizeLayout" type: (id)@"BOOL"];
 	ETPropertyDescription *usesCustomLayoutSize =
 		[ETPropertyDescription descriptionWithName: @"usesCustomLayoutSize" type: (id)@"BOOL"];	
 
@@ -69,9 +67,9 @@
 	// TODO: We need a direct ivar access to persist the layer item
 	// TODO: Evaluate whether we should support drop indicator persistence
 	NSArray *persistentProperties = A(attachedTool, context, delegate, layoutView,
-		layoutSize, isContentSizeLayout, usesCustomLayoutSize);
+		layoutSize, usesCustomLayoutSize);
 
-	[entity setUIBuilderPropertyNames: (id)[[A(delegate, dropIndicator, isContentSizeLayout) mappedCollection] name]];
+	[entity setUIBuilderPropertyNames: (id)[[A(delegate, dropIndicator) mappedCollection] name]];
 
 	[[persistentProperties mappedCollection] setPersistent: YES];
 	[entity setPropertyDescriptions: 
@@ -94,6 +92,8 @@
 	if ([[entity name] isEqual: [ETPositionalLayout className]] == NO)
 		return entity;
 
+	ETPropertyDescription *isContentSizeLayout =
+		[ETPropertyDescription descriptionWithName: @"isContentSizeLayout" type: (id)@"BOOL"];
 	ETPropertyDescription *constrainedItemSize =
 		[ETPropertyDescription descriptionWithName: @"constrainedItemSize" type: (id)@"NSSize"];
 	ETPropertyDescription *itemSizeConstraintStyle = 
@@ -106,9 +106,10 @@
 		   @(ETSizeConstraintStyleVerticalHorizontal), _(@"Vertical and Horizontal")) arrayRepresentation]];
 
 	NSArray *transientProperties = [NSArray array];
-	NSArray *persistentProperties = A(constrainedItemSize, itemSizeConstraintStyle);
+	NSArray *persistentProperties = A(isContentSizeLayout,
+		constrainedItemSize, itemSizeConstraintStyle);
 
-	[entity setUIBuilderPropertyNames: (id)[[A(constrainedItemSize,
+	[entity setUIBuilderPropertyNames: (id)[[A(isContentSizeLayout, constrainedItemSize,
 		itemSizeConstraintStyle) mappedCollection] name]];
 
 	[[persistentProperties mappedCollection] setPersistent: YES];
