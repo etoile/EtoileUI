@@ -572,9 +572,9 @@ to manipulate the item collection that belongs to the parent. */
 	//ETDebugLog(@"For item %@ with supervisor view %@, modify the parent item from "
 	//	"%@ to %@", self, [self supervisorView], _parentItem, parent, self);
 	NSParameterAssert(parent != self);
-	[self willChangeValueForProperty: kETParentItemProperty];
+	[self willChangeValueForKey: kETParentItemProperty];
 	_parentItem = parent;
-	[self didChangeValueForProperty: kETParentItemProperty];
+	[self didChangeValueForKey: kETParentItemProperty];
 }
 
 /** Detaches the receiver from the item group it belongs to.
@@ -2535,7 +2535,20 @@ location in the parent item coordinate space equal to the new position value.
 Marks the parent item as needing a layout update. */  
 - (void) setPosition: (NSPoint)position
 {
-	[self willChangeValueForProperty: kETPositionProperty];
+	/* Prevent damage notifications for CoreObject during object loading */
+	if (NSEqualPoints(_position, position))
+		return;
+
+	BOOL isRoot = [self isRoot];
+
+	if (isRoot)
+	{
+		[self willChangeValueForKey: kETPositionProperty];
+	}
+	else
+	{
+		[self willChangeValueForProperty: kETPositionProperty];
+	}
 	_position = position;
 
 	// NOTE: Will probably be reworked once layout item views are drawn directly by EtoileUI.
@@ -2562,7 +2575,14 @@ Marks the parent item as needing a layout update. */
 
 	[self updatePersistentGeometryIfNeeded];
 	[_parentItem setNeedsLayoutUpdate];
-	[self didChangeValueForProperty: kETPositionProperty];
+	if (isRoot)
+	{
+		[self didChangeValueForKey: kETPositionProperty];
+	}
+	else
+	{
+		[self didChangeValueForProperty: kETPositionProperty];
+	}
 }
 
 /** Returns the current size associated with the receiver frame. See also -frame. */       
@@ -2678,6 +2698,11 @@ the receiver has no decorator.  */
 - (void) setContentBounds: (NSRect)rect
 {
 	NSParameterAssert(rect.size.width >= 0 && rect.size.height >= 0);
+
+	/* Prevent damage notifications for CoreObject during object loading */
+	if (NSEqualRects(_contentBounds, rect))
+		return;
+
 	[self willChangeValueForProperty: kETContentBoundsProperty];
 	_contentBounds = rect;
 
@@ -2835,6 +2860,13 @@ the receiver has no decorator. */
 - (void) setBoundingBox: (NSRect)extent
 {
 	NSParameterAssert(NSContainsRect(extent, [self bounds]) || NSEqualRects(NSZeroRect, [self bounds]));
+
+	/* Prevent damage notifications for CoreObject during object loading.
+	   For -[ETFreeLayout didLoad], -[ETHandleGroup setBoundingBox:] will call 
+	   -setBoundingBox: on manipulated persistent items. */
+	if (NSEqualRects(_boundingBox, extent))
+		return;
+
 	[self willChangeValueForProperty: kETBoundingBoxProperty];
 	_boundingBox = extent;
 	[self setNeedsLayoutUpdate];

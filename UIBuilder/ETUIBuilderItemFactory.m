@@ -170,6 +170,7 @@
 - (ETLayoutItemGroup *) editorWithObject: (id)anObject
                               controller: (id)aController
 {
+	ETAssert([_editingContext hasChanges] == NO);
 	ETLayoutItemGroup *topBar = [self editorTopBarWithController: aController];
 	ETLayoutItemGroup *editorBody = [self editorBodyWithEditedItem: anObject controller: aController];
 	ETLayoutItemGroup *editor = [self itemGroupWithSize: [self defaultEditorSize]];
@@ -179,7 +180,7 @@
 	[editor setAutoresizingMask: ETAutoresizingFlexibleWidth | ETAutoresizingFlexibleHeight];
 	[editor setLayout: [ETColumnLayout layout]];
 	[editor setController: aController];
-	
+
 	[aController setPersistentObjectContext: _editingContext];
 	[aController setDocumentContentItem: anObject];
 
@@ -270,6 +271,7 @@
 - (ETLayoutItemGroup *) inspectorWithObject: (id)anObject
                                  controller: (id)aController
 {
+	ETAssert([_editingContext hasChanges] == NO);
 	ETLayoutItemGroup *topBar = [self inspectorTopBarWithController: aController];
 	ETLayoutItemGroup *body = [self inspectorBodyWithObject: anObject controller: aController];
 	ETLayoutItemGroup *inspector = [self itemGroupWithSize: [self defaultInspectorSize]];

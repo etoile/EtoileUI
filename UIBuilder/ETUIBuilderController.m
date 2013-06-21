@@ -125,7 +125,14 @@
 - (void) preparePersistentItemForDocumentContentItem: (ETLayoutItem *)anItem
 {
 	if ([anItem isPersistent])
+	{
+		ETAssert([[self persistentObjectContext] hasChanges]);
+		/* If the item was persistent, we don't want to commit changes resulting 
+		   from presenting the item into the editor (e.g. persistent frame and 
+		   autoresizing mask). */
+		[[self persistentObjectContext] discardAllChanges];
 		return;
+	}
 
 	ETLayoutItem *persistentUIItem = [anItem persistentUIItem];
 

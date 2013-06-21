@@ -245,6 +245,10 @@ since -serializedValueForProperty: doesn't use the direct ivar access. */
 {
 	DESTROY(_layoutItems);
 	_layoutItems = [items mutableCopy];
+	for (ETLayoutItem *item in items)
+	{
+		item->_parentItem = self;
+	}
 }
 
 @end
