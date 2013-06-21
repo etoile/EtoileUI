@@ -84,7 +84,7 @@ NSString * const ETSourceDidUpdateNotification = @"ETSourceDidUpdateNotification
 	_hasNewLayout = NO;
 	_hasNewContent = NO; /* Private accessors in ETMutationHandler category */
 	_hasNewArrangement = NO;
-	[self setItemScaleFactor: 1.0];
+	[self setPrimitiveValue: [NSNumber numberWithFloat: 1.0] forKey: kETItemScaleFactorProperty];
 
 	_shouldMutateRepresentedObject = YES;
 
@@ -1120,7 +1120,11 @@ to control more precisely how the items get resized per layout. */
 - (void) setItemScaleFactor: (float)aFactor
 {
 	[self setPrimitiveValue: [NSNumber numberWithFloat: aFactor] forKey: kETItemScaleFactorProperty];
-	[self setNeedsLayoutUpdate];
+	/* Don't use -setNeedsUpdateLayout, because this method is usually triggered
+	   by widget actions, and continuous widgets (such as NSSlider) don't run 
+	   the run loop while emitting actions continuously. This would delay the 
+	   scaling visibility until the user stops to manipulate the slider. */
+	[self updateLayoutRecursively: NO];
 }
 
 /* Rendering */
