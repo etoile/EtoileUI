@@ -305,20 +305,10 @@ time. For example:
 	return [ETFormLayout layout];
 }
 
-// TODO: Surely declare -setIsContentSizeLayout in ETPositionalLayout protocol
-// because [[itemGroup layout] setIsContentSizeLayout: YES] does nothing.
-- (void) setIsContentSizeLayout: (BOOL)isContentSizeLayout forLayout: (ETLayout *)aLayout
-{
-	ETPositionalLayout *positionalLayout =
-		([aLayout isPositional] ? aLayout : [[aLayout ifResponds] positionalLayout]);
-	
-	[positionalLayout setIsContentSizeLayout: isContentSizeLayout];
-}
-
 - (id) prepareEntityLayout: (ETLayout *)aLayout
 {
 	// TODO: Should use -isContentSizeLayout instead of just YES
-	[self setIsContentSizeLayout: YES forLayout: aLayout];
+	[[aLayout positionalLayout] setIsContentSizeLayout: YES];
 	return aLayout;
 }
 
@@ -561,7 +551,7 @@ See also -setRenderedPropertyNames:. */
 		   in case we want to show a vertical scroller (see below).
 		   See also -editorForRelationshipDescription:ofObject: and 
 		   -rendererForItemDetailsInSize:. */
-		[self setIsContentSizeLayout: NO forLayout: [entityItem layout]];
+		[[[entityItem layout] positionalLayout] setIsContentSizeLayout: NO];
 		[entityItem setWidth: [self entityItemFrame].size.width];
 	}
 	/* If we have adjusted the height and no items are clipped horizontally, 
