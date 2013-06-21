@@ -2860,7 +2860,9 @@ Marks the receiver as needing a layout update. Marks the parent item too, when
 the receiver has no decorator. */
 - (void) setBoundingBox: (NSRect)extent
 {
-	NSParameterAssert(NSContainsRect(extent, [self bounds]) || NSEqualRects(NSZeroRect, [self bounds]));
+	NSRect bounds = [self bounds];
+	// NOTE: NSContainsRect returns NO if the width or height are 0
+	NSParameterAssert(NSContainsRect(extent, bounds) || bounds.size.width == 0 || bounds.size.height == 0);
 
 	/* Prevent damage notifications for CoreObject during object loading.
 	   For -[ETFreeLayout didLoad], -[ETHandleGroup setBoundingBox:] will call 
