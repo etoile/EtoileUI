@@ -1094,7 +1094,15 @@ the default one based on
 		[content filterWithPredicate: [self filterPredicate] recursively: YES];
 
 	if (_hasNewContent || _hasNewSortDescriptors || _hasNewFilterPredicate)
-		[content setNeedsLayoutUpdate];
+	{
+		// FIXME: Looks -setNeedsUpdateLayout doesn't work here. In
+		// ObjectManagerExample, the layout are not updated in ETIconLayout and
+		// and in ETTableLayout there is a crash because the table view still
+		// presents -item rather than -arrangedItems. Wierdly we also lost
+		// the focus in the search field.
+		//[content setNeedsLayoutUpdate];
+		[content updateLayoutRecursively: YES];
+	}
 }
 
 /** Returns whether -rearrangeObjects should be automatically called when 
