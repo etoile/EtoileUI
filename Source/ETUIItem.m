@@ -276,10 +276,10 @@ From the returned item viewpoint, the receiver is the decorated item. */
 	return _decoratorItem;
 }
 
+/* Overriden in ETLayoutItem */
 - (void) setFirstDecoratedItemFrame: (NSRect)frame
 {
-	if ([[self firstDecoratedItem] isLayoutItem])
-		[[self firstDecoratedItem] setFrame: frame];
+
 }
 
 /** Sets the item that decorates the receiver.
@@ -348,7 +348,7 @@ model graph and remains semantic. */
 	   Not updating the frame is especially visible when the view is used as a 
 	   document view within a scroll view and this scroll view frame is modified. 
 	   Switching to a layout view reveals the issue even more clearly. */
-	[self setFirstDecoratedItemFrame: proposedFrame];
+	[[self firstDecoratedItem]  setFirstDecoratedItemFrame: proposedFrame];
 
 	RELEASE(existingDecorator);
 	RELEASE(decorator);

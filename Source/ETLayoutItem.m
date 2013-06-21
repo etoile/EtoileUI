@@ -1626,6 +1626,15 @@ See also -supervisorView:. */
 	[super setDecoratorItem: decorator];
 }
 
+/* Called from -[ETUIItem setDecoratorItem:] */
+- (void) setFirstDecoratedItemFrame: (NSRect)frame
+{
+	if (_isDeallocating)
+		return;
+
+	[self setFrame: frame];
+}
+
 /** When the receiver content is presented inside scrollers, returns the 
 decorator item that owns the scrollers provided by the widget backend (e.g. 
 AppKit), otherwise returns nil.
