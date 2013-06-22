@@ -497,16 +497,15 @@ item. */
 - (ETDropIndicator *) dropIndicatorForNewDropTarget: (ETLayoutItem *)dropTarget
                                            isDropOn: (BOOL)dropOn
 {
-	ETDropIndicator *indicator = nil;
+	BOOL isInvalidDrop = (dropTarget == nil);
 
-	if (dropOn)
-	{
-		indicator = [[dropTarget layout] dropIndicator];
-	}
-
+	if (isInvalidDrop)
+		return nil;
+		
+	ETDropIndicator *indicator = (dropOn ? [[dropTarget layout] dropIndicator] : nil);
 	ETLayoutItem *parentItem = [dropTarget parentItem];
 
-	while (indicator == nil)
+	while (indicator == nil && parentItem != nil)
 	{
 		indicator = [[parentItem layout] dropIndicator];
 		parentItem = [dropTarget parentItem];
@@ -517,6 +516,9 @@ item. */
 	return indicator;
 }
 
+/* The drop target can be nil if 
+-handleValidateDropObject:hint:atPoint:proposedIndex:onItem:coordinator: has 
+returned nil. */
 - (void) updateDropIndicator: (id <NSDraggingInfo>)dragInfo
               withDropTarget: (ETLayoutItem *)dropTarget
 {
@@ -547,12 +549,19 @@ item. */
 	{
 		indicator = [self dropIndicatorForDropTarget: dropTarget];
 	}
-	[indicator initWithLocation: locRelativeToDropTarget hoveredItem: hoveredItem isDropTarget: dropOn];
 
-	[self insertDropIndicator: indicator forDropTarget: dropTarget];
-	[self redisplayDropIndicatorIfNeeded: indicator 
-	                       forDropTarget: dropTarget 
-	                               force: NO];
+	BOOL isValidDrop = (dropTarget != nil);
+
+	if (isValidDrop)
+	{
+		ETAssert(indicator != nil);
+		[indicator initWithLocation: locRelativeToDropTarget hoveredItem: hoveredItem isDropTarget: dropOn];
+
+		[self insertDropIndicator: indicator forDropTarget: dropTarget];
+		[self redisplayDropIndicatorIfNeeded: indicator 
+		                       forDropTarget: dropTarget 
+	 	                               force: NO];
+	}
 
 	/* For the next time */
 	ASSIGN(_previousDropTarget, dropTarget);
