@@ -1003,7 +1003,8 @@ object when the view is a widget. */
 	ASSIGN(_representedObject, modelObject);
 	if ([self isPersistent])
 	{
-		[modelObject becomePersistentInContext: [self persistentRoot]];
+		/* A NSArray or NSMutableString doesn't become a persistent entity */
+		[[modelObject ifResponds] becomePersistentInContext: [self persistentRoot]];
 	}
 	/* Affected keys contain represented object properties, and the Core object 
 	   editing context must not be notified about these, otherwise identically 

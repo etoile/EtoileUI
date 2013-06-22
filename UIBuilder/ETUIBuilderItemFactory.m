@@ -514,6 +514,12 @@
 	{
 		return A(@"title", @"objectValue",  @"minValue", @"maxValue", @"formatter");
 	}
+	else if ([anAspectName isEqual: @"representedObject"])
+	{
+		/* Tell the model description renderer to render all the property 
+		   descriptions of the represented object entity description. */
+		return nil;
+	}
 	else if ([anAspectName isEqual: @"attachedTool"])
 	{
 		// FIXME: Remove once ETTool is a persistent subclass of ETUIObject
