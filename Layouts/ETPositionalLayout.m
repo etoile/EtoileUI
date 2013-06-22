@@ -144,6 +144,14 @@ See also -setContrainedItemSize:. */
 	return _constrainedItemSize;
 }
 
+/** Returns YES if -[ETLayout shouldResizeItemsToScaleFactor:] requests the 
+scaling or if -itemSizeConstraintStyle is not ETSizeConstraintStyleNone. */
+- (BOOL) shouldResizeItemsToScaleFactor: (CGFloat)aFactor
+{
+	return ([super shouldResizeItemsToScaleFactor: aFactor]
+		|| [self itemSizeConstraintStyle] != ETSizeConstraintStyleNone);
+}
+
 /** Resizes layout items by scaling -[ETLayoutItem defaultFrame] to the given 
 factor.
  

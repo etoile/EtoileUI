@@ -779,7 +779,7 @@ it (this is subject to change though). */
 	// coupled to ETLayoutItemGroup.
 	/* Only scale if needed, but if a constraint exists on item width or height, 
 	   resizing must be forced in all cases. */
-	if (scale != _previousScaleFactor)
+	if ([self shouldResizeItemsToScaleFactor: scale])
 	{
 		[self resizeItems: items toScaleFactor: scale];
 		_previousScaleFactor = scale;
@@ -811,6 +811,17 @@ time a setting changes:
 		[self render: NO];
 		[[self layoutContext] setNeedsDisplay: YES];
 	}
+}
+
+/** <override-dummy />
+Returns YES if the scale factor has changed since the last rendering.
+ 
+Can be overriden to decide about scaling the items or not on more conditions. 
+For example, ETPositionalLayout overrides it to return YES if vertical or 
+horizontal size constraints are set. */
+- (BOOL) shouldResizeItemsToScaleFactor: (CGFloat)aFactor
+{
+	return (aFactor != _previousScaleFactor);
 }
 
 /** <override-dummy />

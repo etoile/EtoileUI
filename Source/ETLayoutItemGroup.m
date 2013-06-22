@@ -1123,7 +1123,9 @@ to control more precisely how the items get resized per layout. */
 	/* Don't use -setNeedsUpdateLayout, because this method is usually triggered
 	   by widget actions, and continuous widgets (such as NSSlider) don't run 
 	   the run loop while emitting actions continuously. This would delay the 
-	   scaling visibility until the user stops to manipulate the slider. */
+	   scaling visibility until the user stops to manipulate the slider. 
+	   In the future, -[ETLayoutExecutor execute] could be called by
+	   -[ETApp sendAction:from:to:] to support using -setNeedsUpdateLayout here. */
 	[self updateLayoutRecursively: NO];
 }
 

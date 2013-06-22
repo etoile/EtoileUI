@@ -257,6 +257,7 @@ Warning: This protocol is very much subject to change. */
 - (void) resizeItems: (NSArray *)items
     forNewLayoutSize: (NSSize)newLayoutSize
              oldSize: (NSSize)oldLayoutSize;
+- (BOOL) shouldResizeItemsToScaleFactor: (CGFloat)aFactor;
 - (void) resizeItems: (NSArray *)items toScaleFactor: (float)factor;
 
 /** @taskunit Layout Update Dependencies */
