@@ -49,7 +49,7 @@ Must be overriden to return the right prefix in subclasses, otherwise the
 application initialization will abort to prevent 
 <code>[[ETAppbuilder] render: ETApp]</code> from returning nil later on.
  
-See +[NSObject(EtoileUI typePrefix]. */
+See +[NSObject typePrefix]. */
 + (NSString *) typePrefix
 {
 	return @"ET";
