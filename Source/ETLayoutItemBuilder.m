@@ -113,17 +113,17 @@ handles that. */
 	return nil;
 }
 
-/** Returns the window layer built with the elements (windows, pasteboards) 
-that makes up the given application object. */
+/** Returns items built with the elements (windows, pasteboards) that makes up 
+the given application object. */
 - (id) renderApplication: (NSApplication *)app
 {
-	ETLayoutItemGroup *windowLayer = [itemFactory windowGroup];
+	NSMutableArray *items = [NSMutableArray array];
 	NSArray *pasteboards = A([NSPasteboard generalPasteboard]);
 
-	[windowLayer addItems: [self renderWindows: [app windows]]];
-	[windowLayer addItems: [self renderPasteboards: pasteboards]];
+	[items addObjectsFromArray: [self renderWindows: [app windows]]];
+	[items addObjectsFromArray: [self renderPasteboards: pasteboards]];
 
-	return windowLayer;	
+	return items;
 }
 
 /** Returns items built with the given windows. */

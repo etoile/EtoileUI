@@ -131,8 +131,6 @@ ETStyle, ETActionHandler;
 /* Special Group Access Methods */
 
 - (ETLayoutItemGroup *) windowGroup;
-- (void) setWindowGroup: (ETLayoutItemGroup *)windowGroup;
-
 - (id) pickboardGroup;
 
 /* Shape Factory Methods */

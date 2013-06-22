@@ -171,6 +171,7 @@ Returns YES when the event has been handled by EtoileUI. */
 	   decorated item is removed from the item tree or moved to another part.
 	   For example, see -stopEditingKeyWindowUI:. */
 	ETWindowItem *windowItem = RETAIN([anEvent windowItem]);
+	ETAssert([windowItem enclosingItem] != nil);
 	BOOL hadActiveFieldEditorItem = (nil != windowItem && nil != [windowItem activeFieldEditorItem]);
 	NSWindow *window = [windowItem window];
 

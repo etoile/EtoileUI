@@ -42,8 +42,22 @@
 
 @implementation ETApplication
 
+/** <override-subclass />
+Returns <em>ET</em>.
+ 
+Must be overriden to return the right prefix in subclasses, otherwise the 
+application initialization will abort to prevent 
+<code>[[ETAppbuilder] render: ETApp]</code> from returning nil later on.
+ 
+See +[NSObject(EtoileUI typePrefix]. */
++ (NSString *) typePrefix
+{
+	return @"ET";
+}
+
 - (id) init
 {
+	ETAssert([[self className] hasPrefix: [[self class] typePrefix]]);
 	SUPERINIT;
 	_UIStateRestoration = [ETUIStateRestoration new];
 	return self;
@@ -260,9 +274,18 @@ the window and view hierarchy, in order to ouput a new layout item tree whose
 root item will be made available through -[ETApplication layoutItem]. */
 - (void) _buildLayoutItemTree
 {
-	ETEtoileUIBuilder *builder = [ETEtoileUIBuilder builder];
+	return;
+	NSArray *items = [(ETLayoutItemBuilder *)[ETEtoileUIBuilder builder] render: self];
+	ETAssert(items != nil);
+	ETLayoutItemGroup *itemGroup = [[ETLayoutItemFactory factory] windowGroup];
 
-	[[ETLayoutItemFactory factory] setWindowGroup: [builder render: self]];
+	for (ETLayoutItem *item in items)
+	{
+		if ([itemGroup containsItem: item])
+			continue;
+
+		[itemGroup addItem: item];
+	}
 }
 
 - (NSArray *) aspectBaseClassNames

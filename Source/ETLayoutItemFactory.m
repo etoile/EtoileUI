@@ -1059,21 +1059,11 @@ context or application. */
 {
 	if (windowLayer == nil)
 	{
-		ASSIGN(windowLayer, [[ETWindowLayer alloc] init]);
-		RELEASE(windowLayer);
+		windowLayer = [ETWindowLayer new];
 		[windowLayer setName: _(@"Windows")];
 	}
 	
 	return windowLayer;
-}
-
-/** Sets the item group representing all windows in the current work context or 
-application. 
-
-It is usually advised to pass an ETWindowLayer instance in parameter. */
-- (void) setWindowGroup: (ETLayoutItemGroup *)windowGroup
-{
-	ASSIGN(windowLayer, windowGroup);
 }
 
 static ETLayoutItemGroup *pickboardGroup = nil;

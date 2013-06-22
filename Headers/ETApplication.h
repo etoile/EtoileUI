@@ -49,6 +49,8 @@ For other Nibs to be loaded, see ETNibOwner. */
 	ETUIStateRestoration *_UIStateRestoration;
 }
 
++ (NSString *) typePrefix;
+
 /** @taskunit UI State Restoration */
 
 - (ETUIStateRestoration *) UIStateRestoration;
