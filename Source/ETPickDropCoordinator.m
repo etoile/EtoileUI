@@ -494,6 +494,29 @@ item. */
 	[dropTarget displayRect: [indicator currentIndicatorRect]];
 }
 
+- (ETDropIndicator *) dropIndicatorForNewDropTarget: (ETLayoutItem *)dropTarget
+                                           isDropOn: (BOOL)dropOn
+{
+	ETDropIndicator *indicator = nil;
+
+	if (dropOn)
+	{
+		indicator = [[dropTarget layout] dropIndicator];
+	}
+
+	ETLayoutItem *parentItem = [dropTarget parentItem];
+
+	while (indicator == nil)
+	{
+		indicator = [[parentItem layout] dropIndicator];
+		parentItem = [dropTarget parentItem];
+	}
+	NSAssert(indicator != nil, @"[[[ETLayoutItemFactory windowGroup] layout] dropIndicator] "
+		"should never return nil since the layout is never nil (otherwise nothing  "
+		"is visible on screen)");
+	return indicator;
+}
+
 - (void) updateDropIndicator: (id <NSDraggingInfo>)dragInfo
               withDropTarget: (ETLayoutItem *)dropTarget
 {
@@ -517,14 +540,8 @@ item. */
 	{
 		ETLog(@"Drop target changed from %@ to %@", _previousDropTarget, dropTarget);
 		[self removeDropIndicatorForDropTarget: _previousDropTarget];
-		if (dropOn)
-		{
-			indicator = [[dropTarget layout] dropIndicator];
-		}
-		else
-		{
-			indicator = [[[dropTarget parentItem] layout] dropIndicator];
-		}
+		indicator = [self dropIndicatorForNewDropTarget: dropTarget isDropOn: dropOn];
+
 	}
 	else
 	{
