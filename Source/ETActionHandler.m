@@ -220,7 +220,7 @@ an action. See -beginEditingItem:property:inRect:. */
 		[fieldEditor setUsesFontPanel: NO];
 		[fieldEditor setAllowsUndo: YES];
 
-		_fieldEditorItem = [[ETLayoutItemFactory factory] itemWithView: fieldEditor];
+		ASSIGN(_fieldEditorItem, [[ETLayoutItemFactory factory] itemWithView: fieldEditor]);
 		[_fieldEditorItem setCoverStyle: [ETFieldEditorItemStyle sharedInstance]];
 	}
 
