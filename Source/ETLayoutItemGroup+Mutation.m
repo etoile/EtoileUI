@@ -394,6 +394,7 @@ item, it is used as a represented object bound to the returned item. */
 				@"nil", i, self, [baseItem source]];
 		}
 	}
+	[self didChangeContentWithMoreComing: NO];
 	
 	return itemsFromSource;
 }

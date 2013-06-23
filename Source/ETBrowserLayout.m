@@ -115,10 +115,55 @@
 		if ([browserView delegate] == nil)
 			[browserView setDelegate: (id)self];
 
-		// FIXME: We should reload all the columns and not just the last column,
-		// then reset the selection correctly based on the previously selected
-		// represented objects.
-		[browserView reloadColumn: [browserView lastColumn]];
+		/* These selected items correspond to the represented objects retain by 
+		   the browser cells and don't reflect the current item tree state since 
+		   we are reloading the browser to match this new tree state. */
+		NSArray *selectedItems = [self selectedItems];
+		/* Multiple selection is only supported in the last column. 
+		   Single selection is supported in the last column or the column before 
+		   the last */
+		BOOL isMultipleSelection =  ([selectedItems count] > 1);
+		NSInteger lastPathComponentColumn = 0;
+		ETLayoutItem *lastPathComponentItem = nil;
+
+		if (isMultipleSelection)
+		{
+			NSInteger columnBeforeLast = ([browserView selectedColumn] - 1);
+			NSInteger parentSelectedRow = [browserView selectedRowInColumn: columnBeforeLast];
+
+			lastPathComponentColumn = columnBeforeLast;
+			lastPathComponentItem = [[browserView loadedCellAtRow: parentSelectedRow
+			                                               column: columnBeforeLast] representedObject];
+		}
+		else
+		{
+			lastPathComponentColumn = [browserView selectedColumn];
+			lastPathComponentItem = [[self selectedItems] lastObject];
+		}
+
+		/* Find the item index path in the new item tree state */
+		NSIndexPath *selectionIndexPath =
+			[(ETLayoutItemGroup *)[self layoutContext] indexPathForItem: lastPathComponentItem];
+
+		[browserView reloadColumn: 0];
+
+		for (int i = 0; i <= lastPathComponentColumn; i++)
+		{
+			if (selectionIndexPath == nil || [selectionIndexPath length] == 0)
+				break;
+
+			[browserView selectRow: [selectionIndexPath indexAtPosition: i] inColumn: i];
+		}
+
+		if (isMultipleSelection == NO)
+			return;
+		
+		/* Finally recreates the multiple selection */
+		for (ETLayoutItem *item in selectedItems)
+		{
+			[browserView selectRow: [[item parentItem] indexOfItem: item]
+			              inColumn: [browserView lastColumn]];
+		}
 	}
 }
 
