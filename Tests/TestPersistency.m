@@ -26,6 +26,7 @@
 #import "ETController.h"
 #import "ETGeometry.h"
 #import "ETFreeLayout.h"
+#import "ETItemTemplate.h"
 #import "ETLayoutExecutor.h"
 #import "ETLayoutItem.h"
 #import "ETLayoutItemFactory.h"
@@ -442,6 +443,80 @@
 	UKIntsEqual(2, [itemGroup numberOfItems]);
 	UKObjectsNotSame([itemGroup lastItem], rectItem);
 	UKObjectsEqual([[itemGroup lastItem] UUID], [rectItem UUID]);
+}
+
+- (void) testControllerPersistency
+{
+	[self recreateContext];
+
+	[itemFactory beginRootObject];
+
+	ETLayoutItemGroup *itemGroup = [itemFactory itemGroup];
+	ETController *controller = AUTORELEASE([ETController new]);
+
+	[itemGroup setShouldMutateRepresentedObject: YES];
+	[itemGroup setController: controller];
+
+	ETItemTemplate *objectTemplate =
+		[ETItemTemplate templateWithItem: [itemFactory textField] entityName: @"COBookmark"];
+	ETUTI *URLType = [ETUTI typeWithString: @"public.url"];
+	ETItemTemplate *groupTemplate =
+		[ETItemTemplate templateWithItem: [itemFactory itemGroup] objectClass: [NSMutableArray class]];
+
+	[controller setCurrentObjectType: URLType];
+	[controller setTemplate: objectTemplate forType: URLType];
+	[controller setTemplate: groupTemplate forType: [controller currentGroupType]];
+
+	NSSortDescriptor *sortDescriptor1 =
+		[NSSortDescriptor sortDescriptorWithKey: @"name" ascending: YES];
+	NSSortDescriptor *sortDescriptor2 =
+		[NSSortDescriptor sortDescriptorWithKey: @"creationDate" ascending: NO selector: @selector(compare:)];
+	NSPredicate *predicate = [NSPredicate predicateWithFormat: @"URL.absoluteString CONTAINS 'etoile-project.org'"];
+
+	[controller setSortDescriptors: A(sortDescriptor1, sortDescriptor2)];
+	[controller setFilterPredicate: predicate];
+
+	[itemFactory endRootObject];
+
+	ETUUID *uuid = [[ctxt insertNewPersistentRootWithRootObject: itemGroup] persistentRootUUID];
+	
+	UKNotNil(uuid);
+	
+	[self checkValidityForNewPersistentObject: itemGroup isFault: NO];
+	[self checkValidityForNewPersistentObject: controller isFault: NO];
+	
+	[ctxt commit];
+	[self recreateContext];
+	
+	ETLayoutItemGroup *newItemGroup = [[ctxt persistentRootForUUID: uuid] rootObject];
+	ETController *newController = (id)[[newItemGroup persistentRoot] objectWithUUID: [controller UUID]];
+	ETItemTemplate *newObjectTemplate = [newController templateForType: URLType];
+	ETItemTemplate *newGroupTemplate = [newController templateForType: [newController currentGroupType]];
+
+	UKNotNil(newController);
+	UKObjectsEqual(newController, [newItemGroup controller]);
+	UKObjectsEqual(newItemGroup, [newController content]);
+
+	UKObjectsEqual(URLType, [newController currentObjectType]);
+	UKObjectsEqual([controller currentGroupType], [newController currentGroupType]);
+	UKObjectsEqual(objectTemplate, newObjectTemplate);
+	UKObjectsEqual(groupTemplate, newGroupTemplate);
+
+	UKObjectKindOf([[newObjectTemplate item] view], NSTextField);
+	UKNil([newObjectTemplate objectClass]);
+	UKStringsEqual([objectTemplate entityName], [newObjectTemplate entityName]);
+	
+	UKTrue([[newGroupTemplate item] isGroup]);
+	UKTrue([(ETLayoutItemGroup *)[newGroupTemplate item] isEmpty]);
+	UKTrue([[newGroupTemplate objectClass] isSubclassOfClass: [NSMutableArray class]]);
+	UKNil([newGroupTemplate entityName]);
+
+	UKObjectsEqual(predicate, [newController filterPredicate]);
+	UKObjectsEqual(A(sortDescriptor1, sortDescriptor2), [newController sortDescriptors]);
+	UKObjectsEqual(predicate, [newController filterPredicate]);
+
+	[self checkValidityForNewPersistentObject: newItemGroup isFault: NO];
+	[self checkValidityForNewPersistentObject: newController isFault: NO];
 }
 
 - (void) testFreeLayout

@@ -13,6 +13,7 @@
 #import "ETController.h"
 #import "ETItemTemplate.h"
 #import "ETLayoutItemBuilder.h"
+#import "ETLayoutItemFactory.h"
 #import "ETLayoutItemGroup+Mutation.h"
 #import "ETLayoutItemGroup.h"
 #import "ETLayoutItem.h"
@@ -71,12 +72,14 @@ You can also use it -init to create a controller. See -[ETNibOwner init]. */
 	_clearsFilterPredicateOnInsertion = YES;
 	_selectsInsertedObjects = YES;
 
-	ETLayoutItem *item = AUTORELEASE([[ETLayoutItem alloc] init]);
-	ETLayoutItemGroup *itemGroup = AUTORELEASE([[ETLayoutItemGroup alloc] init]);
+	/* If the controller instantiation is done inside the scope of a -beginRootObject 
+	   and -endRootObject pair in the framework user code, the controller can 
+	   become persistent because the template items use no shared aspects. */
+	ETLayoutItemFactory *itemFactory = [ETLayoutItemFactory factory];
 
-	[self setTemplate: [ETItemTemplate templateWithItem: item objectClass: Nil]
+	[self setTemplate: [ETItemTemplate templateWithItem: [itemFactory item] objectClass: Nil]
 	          forType: [self currentObjectType]];
-	[self setTemplate: [ETItemTemplate templateWithItem: itemGroup objectClass: Nil]
+	[self setTemplate: [ETItemTemplate templateWithItem: [itemFactory itemGroup] objectClass: Nil]
 	          forType: [self currentGroupType]];
 
 	return self;
@@ -555,6 +558,10 @@ See -newItemWithURL:ofType:options and ETItemTemplate. */
 - (void) setTemplate: (ETItemTemplate *)aTemplate forType: (ETUTI *)aUTI
 {
 	[_templates setObject: aTemplate forKey: aUTI];
+	if ([self isPersistent])
+	{
+		[aTemplate becomePersistentInContext: [self persistentRoot]];
+	}
 }
 
 /** Returns the object that manages persistency.

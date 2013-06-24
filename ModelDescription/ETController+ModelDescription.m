@@ -128,12 +128,11 @@
 	NSArray *transientProperties = A(nibMainContent, builder, currentGroupType,
 		nextResponder, defaultOptions, canMutate, isContentMutable,
 		insertionIndex, insertionIndexPath, additionIndexPath, isEditing);
-	NSArray *persistentProperties = A(content);
+	NSArray *persistentProperties = A(content, templates, currentObjectType,
+		clearsFilterPredicate, selectsInsertedObjects, sortDescriptors, filterPredicate,
+		automaticallyRearranges);
 	// FIXME: Using all persistent properties is not yet tested...
-	NSArray *futurePersistentProperties = A(content, templates, currentObjectType,
-		persistentObjectContext, clearsFilterPredicate,
-		selectsInsertedObjects, sortDescriptors, filterPredicate,
-		automaticallyRearranges, allowedPickTypes, allowedDropTypes);
+	NSArray *futurePersistentProperties = A(persistentObjectContext, allowedPickTypes, allowedDropTypes);
 	
 	transientProperties = [transientProperties arrayByAddingObjectsFromArray: futurePersistentProperties];
 
@@ -147,6 +146,32 @@
 	 	[persistentProperties arrayByAddingObjectsFromArray: transientProperties]];
 
 	return entity;
+}
+
+- (NSDictionary *) templates
+{
+	return _templates;
+}
+
+- (void) setTemplates: (NSDictionary *)templates
+{
+	[self willChangeValueForProperty: @"templates"];
+	RELEASE(_templates);
+	_templates = [templates mutableCopy];
+	[self didChangeValueForProperty: @"templates"];
+}
+
+- (NSDictionary *) allowedDropTypes
+{
+	return _allowedDropTypes;
+}
+
+- (void) setAllowedDropTypes: (NSDictionary *)allowedDropTypes
+{
+	[self willChangeValueForProperty: @"allowedDropTypes"];
+	RELEASE(_allowedDropTypes);
+	_allowedDropTypes = [allowedDropTypes mutableCopy];
+	[self didChangeValueForProperty: @"allowedDropTypes"];
 }
 
 @end

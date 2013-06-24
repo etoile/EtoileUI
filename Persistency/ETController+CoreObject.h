@@ -8,6 +8,7 @@
 
 #import <Foundation/Foundation.h>
 #import <EtoileUI/ETController.h>
+#import <EtoileUI/ETItemTemplate.h>
 
 @class COEditingContext, COObject;
 
@@ -16,5 +17,13 @@
  
 Makes the receiver persistent by inserting it into the given persistent root as
 described in -[COObject becomePersistentInContext:]. */
+- (void) becomePersistentInContext: (COPersistentRoot *)aContext;
+@end
+
+@interface ETItemTemplate (CoreObject)
+/**  This method is only exposed to be used internally by EtoileUI.
+ 
+ Makes the receiver persistent by inserting it into the given persistent root as
+ described in -[COObject becomePersistentInContext:]. */
 - (void) becomePersistentInContext: (COPersistentRoot *)aContext;
 @end

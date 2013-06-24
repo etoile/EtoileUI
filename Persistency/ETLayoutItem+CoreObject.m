@@ -44,9 +44,11 @@
 
 	[super becomePersistentInContext: aContext];
 
+	//[[self representedObject] becomePersistentInContext: aContext];
+
 	// TODO: Leverage the model description rather than hardcoding the aspects
 	// TODO: Implement some strategy to recover in the case these aspects 
-	// are already used as embedded objects in another root object. 
+	// are already used as embedded objects in another root object.
 	ETAssert([[self coverStyle] isShared] || [[self coverStyle] isPersistent] == NO || [[self coverStyle] isRoot]);
 	[[self coverStyle] becomePersistentInContext: aContext];
 	ETAssert([[self styleGroup] isPersistent] == NO || [[self styleGroup] isRoot]);
