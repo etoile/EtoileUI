@@ -81,7 +81,11 @@ or just  calls -editionCoordinator on -nextResponder. */
 	if ([self isFieldEditor])
 	{
 		ETAssert([self delegate] != nil);
-		return [(NSView *)[self delegate] candidateFocusedItem];
+	
+		/* The delegate is either a view (for a native widget such as a text 
+		   field or table view) or an action handler for other editable items 
+		   that implements editability using ETActionHandler API. */
+		return [(id)[self delegate] candidateFocusedItem];
 	}
 	return [self candidateFocusedItem];
 }
