@@ -354,6 +354,10 @@ This method calls either -makeFirstKeyResponder: or -makeFirstMainResponder:. */
 {
 	NSWindow *window = nil;
 
+	if (aResponder == nil)
+	{
+		window = [ETApp keyWindow];
+	}
 	if ([aResponder isLayoutItem])
 	{
 		window = [[aResponder enclosingDisplayView] window];
@@ -409,7 +413,7 @@ This method calls either -makeFirstKeyResponder: or -makeFirstMainResponder:. */
 	/* -[NSWindow makeFirstResponder:] calls -resignFirstResponder and 
 	   -becomeFirstResponder but not -acceptsFirstResponder according to Cocoa 
 	   API documentation (unlike GNUstep behavior). */
-	if ([aResponder acceptsFirstResponder] == NO)
+	if (aResponder != nil && [aResponder acceptsFirstResponder] == NO)
 		return NO;
 
 	BOOL isNowFirstResponder = [aWindow makeFirstResponder: aResponder];
