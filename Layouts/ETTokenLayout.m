@@ -11,6 +11,7 @@
 #import "ETTokenLayout.h"
 #import "ETBasicItemStyle.h"
 #import "ETComputedLayout.h"
+#import "ETController.h"
 #import "ETGeometry.h"
 #import "ETEvent.h"
 #import "ETIconLayout.h"
@@ -23,6 +24,8 @@
 
 
 @implementation ETTokenLayout
+
+@synthesize itemLabelFont = _itemLabelFont, maxTokenWidth = _maxTokenWidth;
 
 /** <init />
 Initializes and returns a new token layout. */
@@ -57,12 +60,18 @@ Initializes and returns a new token layout. */
 	return self;
 }
 
-DEALLOC(DESTROY(_itemLabelFont))
+- (void) dealloc
+{
+	DESTROY(_editedProperty);
+	DESTROY(_itemLabelFont);
+	[super dealloc];
+}
 
 - (id) copyWithZone: (NSZone *)aZone layoutContext: (id <ETLayoutingContext>)ctxt
 {
 	ETTokenLayout *layoutCopy = [super copyWithZone: aZone layoutContext: ctxt];
-	
+
+	layoutCopy->_editedProperty = [_editedProperty copyWithZone: aZone];
 	layoutCopy->_itemLabelFont = [_itemLabelFont copyWithZone: aZone];
 	layoutCopy->_maxTokenWidth = _maxTokenWidth;
 
@@ -89,9 +98,14 @@ DEALLOC(DESTROY(_itemLabelFont))
 	return [NSImage imageNamed: @"picture--pencil.png"];
 }
 
-- (void) setItemTitleFont: (NSFont *)font
+- (NSString *) editedProperty
 {
-	ASSIGN(_itemLabelFont, font);
+	return [[[self templateItem] actionHandler] editedProperty];
+}
+
+- (void) setEditedProperty: (NSString *)aProperty
+{
+	[[[self templateItem] actionHandler] setEditedProperty: aProperty];
 }
 
 /** <override-dummy />
@@ -119,24 +133,6 @@ See also -setMaxTokenWidth:. */
 + (CGFloat) defaultMaxTokenWidth
 {
 	return 200.;
-}
-
-/** Returns the maximum token width allowed.
- 
-By default, returns -defaultMaxTokenWidth.
- 
-See also -resizeLayoutItems:toScaleFactor:. */
-- (CGFloat) maxTokenWidth
-{
-	return _maxTokenWidth;
-}
-
-/** Sets the maximum token width allowed.
- 
-See also -maxTokenWidth. */
-- (void) setMaxTokenWidth: (CGFloat)aWidth
-{
-	_maxTokenWidth = aWidth;
 }
 
 /* -[ETTemplateLayout renderLayoutItems:isNewContent:] doesn't invoke 
@@ -215,6 +211,8 @@ The resizing isn't delegated to the positional layout unlike in ETTemplateItemLa
 
 @implementation ETTokenStyle
 
+@synthesize tintColor = _tintColor;
+
 + (NSDictionary *) standardLabelAttributes
 {
 	return D([NSFont labelFontOfSize: 13], NSFontAttributeName);
@@ -279,23 +277,13 @@ The resizing isn't delegated to the positional layout unlike in ETTemplateItemLa
 /** Always returns the item display name. */
 - (NSString *) labelForItem: (ETLayoutItem *)anItem
 {
-	return [anItem displayName];
+	return [anItem valueForProperty: kETDisplayNameProperty];
 }
 
 /** Always returns nil. */
 - (NSImage *) imageForItem: (ETLayoutItem *)anItem
 {
 	return nil;
-}
-
-- (void) setTintColor: (NSColor *)color
-{
-	ASSIGN(_tintColor, color);
-}
-
-- (NSColor *) tintColor
-{
-	return _tintColor;
 }
 
 - (void) render: (NSMutableDictionary *)inputValues
@@ -362,6 +350,36 @@ The resizing isn't delegated to the positional layout unlike in ETTemplateItemLa
 
 @implementation ETTokenActionHandler
 
+@synthesize editedProperty = _editedProperty;
+
+- (id) init
+{
+	SUPERINIT
+	ASSIGN(_editedProperty, kETValueProperty);
+	return self;
+}
+
+- (void) dealloc
+{
+	DESTROY(_editedProperty);
+	[super dealloc];
+}
+
+- (id) copyWithCopier: (ETCopier *)aCopier
+{
+	ETTokenActionHandler *newHandler = [super copyWithCopier: aCopier];
+	
+	if ([aCopier isAliasedCopy])
+		return newHandler;
+	
+	[aCopier beginCopyFromObject: self toObject: newHandler];
+	
+	newHandler->_editedProperty = RETAIN(_editedProperty);
+	
+	[aCopier endCopy];
+	return newHandler;
+}
+
 - (NSFont *) defaultFieldEditorFont
 {
 	return [NSFont labelFontOfSize: 13];
@@ -378,7 +396,7 @@ The resizing isn't delegated to the positional layout unlike in ETTemplateItemLa
 {
 	NSRect labelRect = [item drawingBoundsForStyle: [item coverStyle]];
 
-	[self beginEditingItem: item property: kETValueProperty inRect: labelRect];
+	[self beginEditingItem: item property: [self editedProperty] inRect: labelRect];
 }
 
 @end
@@ -393,14 +411,19 @@ The resizing isn't delegated to the positional layout unlike in ETTemplateItemLa
 - (ETLayoutItem *) fieldEditorItem
 {
 	ETLayoutItem *fieldEditorItem = [super fieldEditorItem];
-	/*[(NSTextView *)[fieldEditorItem view] setDrawsBackground: NO];
-	[(NSTextView *)[fieldEditorItem view] setFocusRingType: NSFocusRingTypeNone];*/
+	[(NSTextView *)[fieldEditorItem view] setDrawsBackground: NO];
+	[(NSTextView *)[fieldEditorItem view] setFocusRingType: NSFocusRingTypeNone];
 	return fieldEditorItem;
 }
 
 // TODO: Should work correctly if the item is not a group too.
 - (void) handleClickItem: (ETLayoutItem *)item atPoint: (NSPoint)aPoint
 {
+	NSParameterAssert([[item layout] isKindOfClass: [ETTokenLayout class]]);
+
+	if ([self isEditing])
+		return;
+
 	CGFloat labelWidth = [[[item layout] class] defaultMinTokenWidth] + 80;
 	CGFloat labelHeight = [[[item layout] class] defaultTokenHeight];
 	ETLayoutItem *lastItem = [(ETLayoutItemGroup *)item lastItem];
@@ -422,7 +445,7 @@ The resizing isn't delegated to the positional layout unlike in ETTemplateItemLa
 	}
 
 	[self beginEditingItem: item
-	              property: kETValueProperty
+	              property: nil
 	                inRect: NSMakeRect(labelOrigin.x, labelOrigin.y, labelWidth, labelHeight)];
 }
 
@@ -435,14 +458,36 @@ The resizing isn't delegated to the positional layout unlike in ETTemplateItemLa
 // TODO: Should work correctly if the item is not a group too.
 - (void) endEditingItem: (ETLayoutItem *)editedItem
 {
-	[super endEditingItem: editedItem];
-	
-	BOOL isValidValue = ([editedItem value] != nil && [[editedItem value] isEqual: @""] == NO);
+	NSParameterAssert([[editedItem layout] isKindOfClass: [ETTokenLayout class]]);
+	ETLayoutItem *fieldEditorItem =
+		[[editedItem firstResponderSharingArea] activeFieldEditorItem];
+	ETAssert(fieldEditorItem != nil);
+
+	id value = AUTORELEASE([[[fieldEditorItem  view] string] copy]);
+	BOOL isValidValue = (value != nil && [value isEqual: @""] == NO);
 
 	if (isValidValue)
 	{
-		[(ETLayoutItemGroup *)editedItem addItem: [[ETLayoutItemFactory factory] itemWithRepresentedObject: [editedItem value]]];
+		ETController *controller = [[(ETLayoutItemGroup *)editedItem controllerItem] controller];
+
+		// TODO: Attempt to handle the missing controller case transparently
+		if (controller != nil)
+		{
+			[controller add: nil];
+			
+			ETLayoutItem *newItem = [[controller content] lastItem];
+			NSString *editedProperty = [[editedItem layout] editedProperty];
+
+			[[newItem subject] setValue: value forProperty: editedProperty];
+			ETAssert([value isEqual: [[newItem subject] valueForProperty: editedProperty]]);
+		}
+		else
+		{
+			[(ETLayoutItemGroup *)editedItem addObject: value];
+		}
 	}
+
+	[super endEditingItem: editedItem];
 }
 
 @end

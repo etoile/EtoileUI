@@ -22,6 +22,7 @@
 #import "ETLayoutItemGroup.h"
 #import "ETResponder.h"
 #import "EtoileUIProperties.h"
+#import "ETWidget.h"
 #import "NSObject+EtoileUI.h"
 #import "ETCompatibility.h"
 
@@ -247,18 +248,59 @@ See also -fieldEditorItem. */
 	return font;
 }
 
+/* Returns the item whose editing is underway and was initiated using the action 
+handler, otherwise returns nil.
+ 
+-[NSText candidateFocusedItem] calls this method. */
+- (ETLayoutItem *) candidateFocusedItem
+{
+	return _editedItem;
+}
+
+/** Returns whether an editing using the field editor item is underway (in 
+the same first responder sharing area).
+
+You can use this method to ensure no editing is underway before calling 
+-beginEditingItem:property:inRect:. */
+- (BOOL) isEditing
+{
+	return (_editedItem != nil);
+}
+
 /** Starts a text editing session in the given rect.
 
 This method prepares the field editor item with the property value returned by 
 the provided item, then inserts it in the window backed ancestor item where 
 the item is located.
 
+If -isEditing returns YES, you can call this method, otherwise you shouldn't. 
+So you should add a check at the beginning of the code that starts the editing 
+and aborts immediately if -isEditing is NO.
+
 To end the text editing, invoke -endEditingItem.<br />
-Which actions begins and ends the text editing is up to you. */
+Which actions begins and ends the text editing is up to you.
+ 
+If the property is nil, you can override -endEditingItem: to retrieve the edited 
+value directly from the field editor item:
+ 
+<example>
+- (void) endEditingItem: (ETLayoutItem *)editedItem
+{
+	ETLayoutItem *fieldEditorItem =
+ 		[[editedItem firstResponderSharingArea] activeFieldEditorItem];
+
+	[someObject setDate: [[[[fieldEditorItem view] string] copy] autorelease]];
+
+ 	[super endEditingItem: editedItem];
+}
+</example>
+ 
+For a nil item, raises a NSInvalidArgumentException. */
 - (void) beginEditingItem: (ETLayoutItem *)item 
                  property: (NSString *)property 
                    inRect: (NSRect)fieldEditorRect
 {
+	NILARG_EXCEPTION_TEST(item);
 	id <ETFirstResponderSharingArea> responderArea = [item firstResponderSharingArea];
 
 	if (nil == responderArea)
@@ -270,40 +312,57 @@ Which actions begins and ends the text editing is up to you. */
 	ETLayoutItem *fieldEditorItem = [self fieldEditorItem];
 
 	ETAssert(nil != fieldEditorItem);
+	ETAssert(_editedItem == nil && _editedItemProperty == nil);
 
 	ETLayoutItemGroup *windowBackedItem = [item windowBackedAncestorItem];
 	NSRect fieldEditorFrame = [item convertRect: fieldEditorRect toItem: windowBackedItem];
 	NSTextView *fieldEditor = (NSTextView *)[fieldEditorItem view];
-	// TODO: Handle non-editable properties more in a better way
-	NSString *value = [[[item subject] valueForProperty: property] stringValue];
-	NSString *formattedValue = @"Untitled";
+	NSString *value = (property != nil ? [[[item subject] valueForProperty: property] stringValue] : nil);
+	NSString *formattedValue = _(@"Untitled");
 	
 	if (nil != value)
 	{
 		formattedValue = value;
 	}
 
-	// TODO: Use -bindXXX
 	[fieldEditor setString: formattedValue];
 	[fieldEditor setFont: [self fontForEditingItem: item]];
 	[fieldEditor setDelegate: (id)self];
 	[fieldEditorItem setFrame: fieldEditorFrame];
-	[fieldEditorItem setRepresentedObject: [ETMutableObjectViewpoint viewpointWithName: property 
-	                                                                 representedObject: [item subject]]];
 	[responderArea setActiveFieldEditorItem: fieldEditorItem
 	                             editedItem: item];
 
 	ASSIGN(_editedItem, item);
+	ASSIGN(_editedItemProperty, property);
 }
 
-/** Ends the text editing started with -beginEditingItem:property:inRect: and 
-removes the field editor item inserted in the window backed ancestor item. */
+/** Ends the text editing started with -beginEditingItem:property:inRect:, 
+updates the value of the edited property on the edited item subject, and
+removes the field editor item inserted in the window backed ancestor item.
+ 
+If the edited property was nil for -beginEditingItem:property:inRect:, the 
+edited item subject is not updated in any way.
+ 
+If you override this method, you must call the superclass implementation. 
+ 
+As long as the superclass implementation has not been called, the field editor 
+item remains accessible through 
+<code>[editedItem firstResponderSharingArea] activeFieldEditorItem]</code>.
+To retrieve the field editor item string content, just call -value on it. */
 - (void) endEditingItem: (ETLayoutItem *)editedItem
 {
 	if (nil == _editedItem)
 		return;
 
 	id <ETFirstResponderSharingArea> responderArea = [_editedItem firstResponderSharingArea];
+	/* -[NSText string] returns a mutable string */
+	id value = AUTORELEASE([[(NSText *)[[responderArea activeFieldEditorItem] view] string] copy]);
+
+	if (_editedItemProperty != nil)
+	{
+		[[_editedItem subject] setValue: value forProperty: _editedItemProperty];
+		ETAssert([value isEqual: [[_editedItem subject] valueForProperty: _editedItemProperty]]);
+	}
 
 	if (nil == responderArea)
 	{
@@ -314,6 +373,7 @@ removes the field editor item inserted in the window backed ancestor item. */
 	[responderArea removeActiveFieldEditorItem];
 
 	DESTROY(_editedItem);
+	DESTROY(_editedItemProperty);
 }
 
 /** When -beginEditingItem:property:inRect: was called, this method is invoked 
@@ -333,12 +393,11 @@ the NSControl or NSTextField. */
 
 	NSInteger movement =
 		[[[aNotification userInfo] objectForKey: @"NSTextMovement"] unsignedIntegerValue];
-	
-	if (movement == NSReturnTextMovement)
-    {
-		[self endEditingItem: _editedItem];
-    }
-	else if (movement == NSTabTextMovement)
+
+	[self endEditingItem: _editedItem];
+
+	// TODO: Support all possible text movements correctly
+	if (movement == NSTabTextMovement)
 	{
 		// TODO: [[_editedItem firstResponderSharingArea] selectKeyViewFollowingView: self];
 	}

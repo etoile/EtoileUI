@@ -38,6 +38,7 @@ method will reuse the action handler to be set on every created items. */
 	@private
 	ETLayoutItem *_fieldEditorItem;
 	ETLayoutItem *_editedItem;
+	NSString *_editedItemProperty;
 }
 
 + (Class) styleClass;
@@ -62,6 +63,7 @@ method will reuse the action handler to be set on every created items. */
                  property: (NSString *)property
                    inRect: (NSRect)fieldEditorRect;
 - (void) endEditingItem: (ETLayoutItem *)editedItem;
+- (BOOL) isEditing;
 
 /** @taskunit Tool/Tool Actions */
 

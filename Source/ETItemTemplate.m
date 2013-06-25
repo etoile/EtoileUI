@@ -389,7 +389,7 @@ NSString * const kETTemplateOptionParentRepresentedObject = @"kETTemplateOptionP
 		return nil;
 
 	id <COPersistentObjectContext> context =
-	[options objectForKey: kETTemplateOptionPersistentObjectContext];
+		[options objectForKey: kETTemplateOptionPersistentObjectContext];
 	
 	if (context == nil)
 	{
