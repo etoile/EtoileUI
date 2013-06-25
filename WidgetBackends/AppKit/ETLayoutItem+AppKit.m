@@ -8,6 +8,7 @@
 
 #import <EtoileFoundation/Macros.h>
 #import "ETLayoutItem+AppKit.h"
+#import "EtoileUIProperties.h"
 
 @implementation ETLayoutItem (ETAppKitWidgetBackend)
 
@@ -35,7 +36,7 @@
 	{
 		valueKey = [(id <ETPropertyViewpoint>)[self representedObject] name];
 	}
-	return valueKey;
+	return (valueKey != nil ? valueKey : kETValueProperty);
 }
 
 - (void) controlTextDidBeginEditing: (NSNotification *)notif
