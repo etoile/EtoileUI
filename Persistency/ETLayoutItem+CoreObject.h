@@ -34,6 +34,8 @@ Aspects (style, layout etc.) are made persistent if needed. */
 - (NSString *) persistentUIName;
 - (void) setPersistentUIName: (NSString *)aName;
 - (ETLayoutItem *) persistentUIItem;
+- (BOOL) isEditingUI;
+- (void) setEditingUI: (BOOL)editing;
 
 @end
 

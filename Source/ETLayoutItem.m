@@ -2541,16 +2541,7 @@ Marks the parent item as needing a layout update. */
 	if (NSEqualPoints(_position, position))
 		return;
 
-	BOOL isRoot = [self isRoot];
-
-	if (isRoot)
-	{
-		[self willChangeValueForKey: kETPositionProperty];
-	}
-	else
-	{
-		[self willChangeValueForProperty: kETPositionProperty];
-	}
+	[self willChangeValueForEmbeddingProperty: kETPositionProperty];
 	_position = position;
 
 	// NOTE: Will probably be reworked once layout item views are drawn directly by EtoileUI.
@@ -2577,14 +2568,7 @@ Marks the parent item as needing a layout update. */
 
 	[self updatePersistentGeometryIfNeeded];
 	[_parentItem setNeedsLayoutUpdate];
-	if (isRoot)
-	{
-		[self didChangeValueForKey: kETPositionProperty];
-	}
-	else
-	{
-		[self didChangeValueForProperty: kETPositionProperty];
-	}
+	[self didChangeValueForEmbeddingProperty: kETPositionProperty];
 }
 
 /** Returns the current size associated with the receiver frame. See also -frame. */       
@@ -2705,7 +2689,7 @@ the receiver has no decorator.  */
 	if (NSEqualRects(_contentBounds, rect))
 		return;
 
-	[self willChangeValueForProperty: kETContentBoundsProperty];
+	[self willChangeValueForEmbeddingProperty: kETContentBoundsProperty];
 	_contentBounds = rect;
 
 	if ([self shouldSyncSupervisorViewGeometry])
@@ -2732,7 +2716,7 @@ the receiver has no decorator.  */
 	{
 		[_parentItem setNeedsLayoutUpdate];
 	}
-	[self didChangeValueForProperty: kETContentBoundsProperty];
+	[self didChangeValueForEmbeddingProperty: kETContentBoundsProperty];
 }
 
 /** Sets the content size associated with the receiver. */
@@ -3508,6 +3492,30 @@ returns nil.
 
 	/* Notify decorator item chain */
 	[[self decoratorItem] beginEditingUI];
+}
+
+- (void) willChangeValueForEmbeddingProperty: (NSString *)aKey
+{
+	if ([self isRoot] && _isEditingUI == NO)
+	{
+		[self willChangeValueForKey: aKey];
+	}
+	else
+	{
+		[self willChangeValueForProperty: aKey];
+	}
+}
+
+- (void) didChangeValueForEmbeddingProperty: (NSString *)aKey
+{
+	if ([self isRoot] && _isEditingUI == NO)
+	{
+		[self didChangeValueForKey: aKey];
+	}
+	else
+	{
+		[self didChangeValueForProperty: aKey];
+	}
 }
 
 @end

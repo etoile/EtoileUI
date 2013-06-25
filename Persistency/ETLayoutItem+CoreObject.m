@@ -13,6 +13,7 @@
 #import <CoreObject/COEditingContext.h>
 #import <CoreObject/COObject.h>
 #import "ETLayoutItem+CoreObject.h"
+#import "EtoileUIProperties.h"
 #import "ETOutlineLayout.h"
 #import "ETView.h"
 #import "NSObject+EtoileUI.h"
@@ -82,8 +83,60 @@
 	}
 }
 
+- (BOOL) isEditingUI
+{
+	return _isEditingUI;
+}
+
+- (void) setEditingUI: (BOOL)editing
+{
+	_isEditingUI = editing;
+}
+
 #pragma mark Persistency Support
 #pragma mark -
+
+- (NSValue *) serializedPosition
+{
+	id value = nil;
+	
+	if ([self isRoot])
+	{
+		value = [self primitiveValueForKey: @"initialPosition"];
+	}
+	
+	return (value == nil ? [self valueForKey: kETPositionProperty] : value);
+}
+
+- (void) setSerializedPosition: (NSValue *)aValue
+{
+	if ([self isRoot])
+	{
+		[self setPrimitiveValue: aValue forKey: @"initialPosition"];
+	}
+	[self setPosition: [aValue pointValue]];
+}
+
+- (NSValue *) serializedContentBounds
+{
+	id value = nil;
+
+	if ([self isRoot])
+	{
+		value = [self primitiveValueForKey: @"initialContentBounds"];
+	}
+
+	return (value == nil ? [self valueForKey: kETContentBoundsProperty] : value);
+}
+
+- (void) setSerializedContentBounds: (NSValue *)aValue
+{
+	if ([self isRoot])
+	{
+		[self setPrimitiveValue: aValue forKey: @"initialContentBounds"];
+	}
+	[self setContentBounds: [aValue rectValue]];
+}
 
 - (NSString *) targetIdForTarget: (id)target
 {
