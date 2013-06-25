@@ -220,8 +220,8 @@ means you can safely use it when overriding other drawing methods. */
 	   See -[NSAttributedString drawInRect:] in Cocoa doc. */
 	BOOL flipMismatch = (itemFlipped != [[NSView focusView] isFlipped]);
 
-	[[NSColor redColor] setFill];
-	NSRectFill(NSMakeRect(-200, 0, 200, 100));
+	/*[[NSColor redColor] setFill];
+	NSRectFill(NSMakeRect(-200, 0, 200, 100));*/
 
 	if (flipMismatch)
 	{
@@ -238,8 +238,8 @@ means you can safely use it when overriding other drawing methods. */
 	}
 	else
 	{
-		[[NSColor yellowColor] setFill];
-		NSRectFill(aRect);
+		/*[[NSColor yellowColor] setFill];
+		NSRectFill(aRect);*/
 		[aLabel drawInRect: aRect withAttributes: attributes];
 	}
 }
