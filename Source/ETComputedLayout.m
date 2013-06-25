@@ -151,18 +151,21 @@ guide is ignored by the layout computation.  */
 - (float) horizontalAlignmentGuidePositionForItems: (NSArray *)items
 {
 	float guidePosition = ETAlignmentHintNone;
+	CGFloat maxCombinedBoundingWidth = 0;
 
 	for (ETLayoutItem *item in items)
 	{
 		float hint = ETAlignmentHintNone;
-
+		CGFloat combinedBoundingWidth = 0;
+		
 		if ([[item layout] conformsToProtocol: @protocol(ETAlignmentHint)])
 		{
+			combinedBoundingWidth = [[item layout] maxCombinedBoundingWidth];
 			hint = [[item layout] alignmentHintForLayout: self];
 		}
-		
-		if (hint != ETAlignmentHintNone && hint > guidePosition)
+		if (combinedBoundingWidth > maxCombinedBoundingWidth && hint != ETAlignmentHintNone)
 		{
+			maxCombinedBoundingWidth = combinedBoundingWidth;
 			guidePosition = hint;
 		}
 	}

@@ -21,6 +21,7 @@ extern float ETAlignmentHintNone;
 
 @protocol ETAlignmentHint
 - (float) alignmentHintForLayout: (ETLayout *)aLayout;
+- (CGFloat) maxCombinedBoundingWidth;
 @end
 
 /** Describes how the content is horizontally positioned inside the layout 

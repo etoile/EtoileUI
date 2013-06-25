@@ -129,6 +129,7 @@ width remain flexible in case the UI is resized later. */
 /** @taskunit Shared Alignment Support */
 
 - (float) alignmentHintForLayout: (ETLayout *)aLayout;
+- (CGFloat) maxCombinedBoundingWidth;
 - (void) setHorizontalAlignmentGuidePosition: (float)aPosition;
 
 @end

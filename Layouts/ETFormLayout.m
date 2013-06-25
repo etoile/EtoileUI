@@ -157,6 +157,16 @@ The resizing isn't delegated to the positional layout unlike in ETTemplateItemLa
 	}
 }
 
+/** Returns an aggregate width that sums the widest item frame and label width, 
+both frame and label can belong to distinct items.
+ 
+This returned value is computed in -resizeItems:toScaleFactor:. If no layout 
+update has been run yet, the returned value is meaningless. */
+- (CGFloat) maxCombinedBoundingWidth
+{
+	return _currentMaxLabelWidth + _currentMaxItemWidth;
+}
+
 - (void) adjustAlignmentForMaxLabelWidth: (float)maxLabelWidth
                             maxItemWidth: (float)maxItemWidth
 {
@@ -181,9 +191,7 @@ The resizing isn't delegated to the positional layout unlike in ETTemplateItemLa
 	   width, both frame and label can belong to distinct items. From this 
 	   aggregate width, we compute the remaining space on the left and right,  
 	   then the horizontal guide position (for ETColumnLayout). */
-	float maxCombinedBoundingWidth = maxLabelWidth + maxItemWidth;
-
-	float remainingSpace = [self layoutContext].size.width - maxCombinedBoundingWidth;
+	float remainingSpace = [self layoutContext].size.width - [self maxCombinedBoundingWidth];
 	float inset = 0; /* ETFormLayoutAlignmentLeft */
 	
 	if ([self alignment] == ETFormLayoutAlignmentCenter)
