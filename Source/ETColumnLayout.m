@@ -10,6 +10,7 @@
 #import <EtoileFoundation/ETCollection.h>
 #import "ETColumnLayout.h"
 #import "ETGeometry.h"
+#import "ETLayoutExecutor.h"
 #import "ETLayoutItem.h"
 #import "ETLayoutItemFactory.h"
 #import "ETLineFragment.h"
@@ -133,6 +134,10 @@ static const float undeterminedWidth = 10;
 	if (NSEqualSizes(newLayoutSize, oldLayoutSize))
 		return;
 
+	NSLog(@"Resize column from %@ to %@ for %@ - %@", NSStringFromSize(oldLayoutSize),
+		NSStringFromSize(newLayoutSize), [(id)[self layoutContext] primitiveDescription],
+		[[(id)[self layoutContext] ifResponds] identifier]);
+
 	for (ETLayoutItem *item in items)
 	{
 		ETAutoresizing autoresizing = [item autoresizingMask];
@@ -156,6 +161,10 @@ static const float undeterminedWidth = 10;
 					 newLayoutSize.width, oldLayoutSize.width);
 		
 		[item setWidth: frame.size.width];
+		/* For a non-recursive update, the resize must trigger a layout update. 
+		   Layout updates are bracketed inside +disableAutolayout and
+		   +enableAutolayout. As a result, -setNeedsLayoutUpdate is disabled. */
+		[[ETLayoutExecutor sharedInstance] addItem: (id)item];
 	}
 }
 

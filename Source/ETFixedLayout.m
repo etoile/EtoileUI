@@ -9,6 +9,7 @@
 #import <EtoileFoundation/Macros.h>
 #import "ETFixedLayout.h"
 #import "ETGeometry.h"
+#import "ETLayoutExecutor.h"
 #import "ETLayoutItem.h"
 #import "ETCompatibility.h"
 
@@ -140,6 +141,10 @@ geometry and not computed by the receiver. */
 	NSRect roundedFrame = NSIntegralRect(frame);
 
 	[anItem setFrame: roundedFrame];
+	/* For a non-recursive update, the resize must trigger a layout update.
+	   Layout updates are bracketed inside +disableAutolayout and
+	   +enableAutolayout. As a result, -setNeedsLayoutUpdate is disabled. */
+	[[ETLayoutExecutor sharedInstance] addItem: (id)anItem];
 }
 
 - (BOOL) autoresizesItems

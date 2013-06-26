@@ -241,12 +241,6 @@ layout update constraints, then tells the reordered items to update their layout
 	[[nonFlexibleItems mappedCollection] updateLayoutRecursively: NO];
 }
 
-- (void) resetDirtyItems
-{
-	RELEASE(_scheduledItems);
-	_scheduledItems = [[NSMutableSet alloc] init];
-}
-
 /** Executes the layout updates previously scheduled.
 
 Additional layout updates that might be scheduled while running this method 
@@ -255,10 +249,14 @@ will be executed too.
 On return, no scheduled items remain. */
 - (void) execute
 {
-	while ([_scheduledItems isEmpty] == NO)
+	while ([self isEmpty] == NO)
 	{
-		[self executeWithDirtyItems: _scheduledItems];
-		[self resetDirtyItems];
+		NSSet *dirtyItems = [_scheduledItems copy];
+
+		[_scheduledItems removeAllObjects];
+		[self executeWithDirtyItems: dirtyItems];
+
+		RELEASE(dirtyItems);
 	}
 }
 

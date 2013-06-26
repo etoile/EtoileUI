@@ -9,6 +9,7 @@
 #import <EtoileFoundation/Macros.h>
 #import <EtoileFoundation/ETCollection.h>
 #import "ETLineLayout.h"
+#import "ETLayoutExecutor.h"
 #import "ETLayoutItem.h"
 #import "ETLayoutItemFactory.h"
 #import "ETLineFragment.h"
@@ -142,6 +143,13 @@ given layout area size. */
 	NSParameterAssert(NSEqualSizes(ETNullSize, oldLayoutSize) == NO);
 	NSParameterAssert(NSEqualSizes(NSZeroSize, newLayoutSize) == NO && NSEqualSizes(NSZeroSize, oldLayoutSize) == NO);
 
+	if (NSEqualSizes(newLayoutSize, oldLayoutSize))
+		return;
+
+	NSLog(@"Resize line from %@ to %@ for %@ - %@", NSStringFromSize(oldLayoutSize),
+		NSStringFromSize(newLayoutSize), [(id)[self layoutContext] primitiveDescription],
+		[[(id)[self layoutContext] ifResponds] identifier]);
+
 	for (ETLayoutItem *item in items)
 	{
 		ETAutoresizing autoresizing = [item autoresizingMask];
@@ -154,6 +162,10 @@ given layout area size. */
 					 newLayoutSize.height, oldLayoutSize.height);
 		
 		[item setHeight: frame.size.height];
+		/* For a non-recursive update, the resize must trigger a layout update. 
+		   Layout updates are bracketed inside +disableAutolayout and
+		   +enableAutolayout. As a result, -setNeedsLayoutUpdate is disabled. */
+		[[ETLayoutExecutor sharedInstance] addItem: (id)item];
 	}
 }
 

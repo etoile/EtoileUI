@@ -13,6 +13,7 @@
 #import "ETAspectRepository.h"
 #import "ETGeometry.h"
 #import "ETTool.h"
+#import "ETLayoutExecutor.h"
 #import "ETLayoutItemGroup.h"
 #import "ETTableLayout.h"
 #import "ETOutlineLayout.h"
@@ -911,24 +912,23 @@ context and the tree rooted in -layerItem. */
 to be identical to the layout context. */
 - (void) syncLayerItemGeometryWithSize: (NSSize)aSize
 {
-	/* Autolayout is disabled during a layout change or update, so we temporarily 
-	   enable it because -layerItem requires a layout update.
-	   This won't work when +disablesAutolayout has been used just before by the 
-	   framework user (this behavior is consistent, so the user shouldn't 
-	   be surprised). */
-	if (_isRendering)
-	{
-		[ETLayoutItem enablesAutolayout];
-	}
-
 	[[self layerItem] setFlipped: [[self layoutContext] isFlipped]];
 	/* The layer item is rendered in the coordinate space of the layout context */
 	[[self layerItem] setSize: aSize];
+	
+	/* For a flexible parent item, the layer item is flexible due to 
+	   -isLayoutExecutionItemDependent evaluated against the parent in
+	   -[ETLayoutExecutor isFlexibleItem:], so we must not schedule the layer 
+	   item in this case (to prevent scheduling in the executor). 
+	   A better solution would be to ensure all layer items are non-flexible 
+	   e.g. -isLayoutLayer could be added to ETLayoutItemGroup and checked in 
+	   -isFlexibleItem: (their resizing is managed by the owning layout). */
+	if (_isRendering || [self layerItem] == nil)
+		return;
 
-	if (_isRendering)
-	{
-		[ETLayoutItem disablesAutolayout];
-	}
+	/* Autolayout is disabled during a layout change or update, so we mark 
+	  -layerItem as requiring a layout update (-setNeedsLayoutUpdate won't work). */
+	[[ETLayoutExecutor sharedInstance] addItem: (id)[self layerItem]];
 }
 
 - (void) mapLayerItemIntoLayoutContext
