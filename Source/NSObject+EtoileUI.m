@@ -238,6 +238,13 @@ otherwise returns NO. */
 	return NO;
 }
 
+/** Returns YES if the receiver is an ETLayout class or subclass instance,
+otherwise returns NO. */
+- (BOOL) isLayout
+{
+	return NO;
+}
+
 /** Returns YES if the receiver is an ETTool class or subclass instance, 
 otherwise returns NO. */
 - (BOOL) isTool

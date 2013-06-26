@@ -65,6 +65,7 @@
 /* Event Dispatch */
 
 - (BOOL) isLayoutItem;
+- (BOOL) isLayout;
 - (BOOL) isTool;
 - (BOOL) isView;
 

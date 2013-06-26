@@ -1077,28 +1077,6 @@ frame (see -usesLayoutBasedFrame). */
 	_autolayout = flag;
 }
 
-/** Returns YES if the item frame may vary with the layout of the child items
-    that makes up the content, otherwise returns NO if the frame is static and
-	will always remain identical after updating the layout. By default, returns
-	NO.
-	This method is used by the drawing code of the layout item tree to know
-	if the whole receiver content must be redrawn subsequently to a layout
-	change. */
-- (BOOL) usesLayoutBasedFrame
-{
-	return _usesLayoutBasedFrame;
-}
-
-/** Sets to YES to indicate that the item frame may vary with the layout of the
-    child items that makes up the content, otherwise sets to NO if the frame is
-	static and will always remain identical after updating the layout.
-	You rarely need to invoke this method unless you write a layout that alter
-	the frame of its layout context. */
-- (void) setUsesLayoutBasedFrame: (BOOL)flag
-{
-	_usesLayoutBasedFrame = flag;
-}
-
 /* Item scaling */
 
 /** Returns the scale factor applied to each item when the layout supports it.

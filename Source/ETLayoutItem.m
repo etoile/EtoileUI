@@ -1769,7 +1769,7 @@ See also -[ETLayoutItemGroup updateLayout].  */
 
 - (void) updateLayoutRecursively: (BOOL)recursively
 {
-	// TODO: Implement
+	[[ETLayoutExecutor sharedInstance] removeItem: (id)self];
 }
 
 /** Updates the layouts, previously marked with -setNeedsLayoutUpdate, in the 

@@ -326,6 +326,11 @@ To customize the copying in a subclass, you must override
 	return [self copyWithZone: aZone layoutContext: nil];
 }
 
+- (BOOL) isLayout
+{
+	return YES;
+}
+
 - (NSImage *) icon
 {
 	return [NSImage imageNamed: @"ui-layered-pane"];
@@ -683,8 +688,11 @@ returns YES. When NO is returned, wait until it returns YES.  */
 	   on a positional layout inside 
 	   -[ETTemplateItemLayout renderLayoutItems:isNewContent:], because 
 	   -setHorizontalAlignmentGuidePosition: was called and in turn called 
-	   -renderAndInvalidDisplay. */
-	return (_isRendering || [[_layoutContext ifResponds] isRendering]);
+	   -renderAndInvalidDisplay.
+
+	   Don't use -ifResponds to support testing item creation retain count 
+	   easily (see TestLayoutItem.m). */
+	return (_isRendering || ([_layoutContext isLayout] && [(ETLayout *)_layoutContext isRendering]));
 }
 
 /** This method is only exposed to be used internally by EtoileUI.
@@ -923,7 +931,7 @@ to be identical to the layout context. */
 	   A better solution would be to ensure all layer items are non-flexible 
 	   e.g. -isLayoutLayer could be added to ETLayoutItemGroup and checked in 
 	   -isFlexibleItem: (their resizing is managed by the owning layout). */
-	if (_isRendering || [self layerItem] == nil)
+	if ([self isRendering] || [self layerItem] == nil)
 		return;
 
 	/* Autolayout is disabled during a layout change or update, so we mark 

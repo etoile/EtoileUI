@@ -97,7 +97,8 @@ the control returns to the run loop. */
 /** Returns whether the parent layout depends on the given item layout result. */
 - (BOOL) isFlexibleItem: (ETLayoutItem *)anItem
 {
-	return ([anItem usesLayoutBasedFrame] || [[[anItem layout] positionalLayout] isContentSizeLayout] || [[[anItem parentItem] layout] isLayoutExecutionItemDependent]);
+	return (([[[anItem layout] positionalLayout] isContentSizeLayout] && [anItem isScrollable] == NO)
+		|| [[[anItem parentItem] layout] isLayoutExecutionItemDependent]);
 }
 
 /** Inserts the item in the queue, in a way that ensures flexible items have 

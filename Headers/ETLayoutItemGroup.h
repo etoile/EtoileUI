@@ -106,8 +106,6 @@
 
 - (BOOL) isAutolayout;
 - (void) setAutolayout: (BOOL)flag;
-- (BOOL) usesLayoutBasedFrame;
-- (void) setUsesLayoutBasedFrame: (BOOL)flag;
 
 /* Layouting Context Protocol */
 

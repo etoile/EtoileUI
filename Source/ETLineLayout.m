@@ -164,7 +164,10 @@ given layout area size. */
 		[item setHeight: frame.size.height];
 		/* For a non-recursive update, the resize must trigger a layout update. 
 		   Layout updates are bracketed inside +disableAutolayout and
-		   +enableAutolayout. As a result, -setNeedsLayoutUpdate is disabled. */
+		   +enableAutolayout. As a result, -setNeedsLayoutUpdate is disabled.
+		   If a recursive update is underway, the item will be automatically 
+		   unscheduled when reached by the recursive traversal (just before  
+		   -updateLayoutRecursively: returns for this item). */
 		[[ETLayoutExecutor sharedInstance] addItem: (id)item];
 	}
 }

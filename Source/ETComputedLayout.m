@@ -9,6 +9,7 @@
 #import <EtoileFoundation/Macros.h>
 #import <EtoileFoundation/ETCollection+HOM.h>
 #import "ETComputedLayout.h"
+#import "ETLayoutExecutor.h"
 #import "ETLayoutItem.h"
 #import "ETLayoutItemFactory.h"
 #import "ETLayoutItemGroup.h"
@@ -216,6 +217,13 @@ guide is ignored by the layout computation.  */
 	NSLog(@"Computed max width %0.2f", maxWidth);
 
 	[(ETLayoutItem *)[items mappedCollection] setWidth: maxWidth];
+	/* For a non-recursive update, the resize must trigger a layout update. 
+	   Layout updates are bracketed inside +disableAutolayout and
+	   +enableAutolayout. As a result, -setNeedsLayoutUpdate is disabled.
+	   If a recursive update is underway, the items will be automatically 
+	   unscheduled when reached by the recursive traversal (just before  
+	   -updateLayoutRecursively: returns for each item). */
+	[[ETLayoutExecutor sharedInstance] addItems: items];
 }
 
 /* Layout Computation */
@@ -339,6 +347,13 @@ bounding box). */
 		                           forCurrentLayoutSize: newLayoutSize
                                   numberOfFlexibleItems: count
 		                                  inMaxAreaSize: maxSize]];
+		/* For a non-recursive update, the resize must trigger a layout update. 
+		   Layout updates are bracketed inside +disableAutolayout and
+		   +enableAutolayout. As a result, -setNeedsLayoutUpdate is disabled.
+		   If a recursive update is underway, the item will be automatically 
+		   unscheduled when reached by the recursive traversal (just before  
+		   -updateLayoutRecursively: returns for this item). */
+		[[ETLayoutExecutor sharedInstance] addItem: (id)flexibleItem];
 		didResize = YES;
 	}
 	return didResize;
