@@ -186,7 +186,6 @@ See also -setView:, -setCoverStyle: and -setActionHandler:.  */
 
 	_selectable = YES;
 	[self setFlipped: YES]; /* -setFlipped: must follow -setSupervisorView: */
-	_visible = YES;
 
     return self;
 }
@@ -1496,6 +1495,9 @@ value you might have set is lost too and won't be restored by switching back to
 the previous layout in use. */
 - (void) setVisible: (BOOL)visible
 {
+	if (_visible == visible)
+		return;
+
 	[self willChangeValueForProperty: kETVisibleProperty];
 	_visible = visible;
 	if (visible)

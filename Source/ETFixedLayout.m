@@ -67,7 +67,6 @@ geometry and not computed by the receiver. */
 
 - (void) renderWithItems: (NSArray *)items isNewContent: (BOOL)isNewContent
 {
-
 	[super renderWithItems: items isNewContent: isNewContent];
 	[[self layoutContext] setVisibleItems: items];
 }

@@ -396,9 +396,16 @@ DEALLOC(DESTROY(itemFactory); DESTROY(item); DESTROY(itemGroup))
 	[itemGroup10 addItem: item101];
 	[itemGroup addItem: itemGroup2];
 	[itemGroup2 addItem: itemGroup20];
+	/* Create a superview hierarchy from item3 to itemGroup */
 	[itemGroup addItem: item3];
 
+	/* Layout view insertion doesn't call -handleAttachViewOfItem:, the 
+	   superview is nil until a layout update occurs. */
 	[itemGroup2 setLayout: [ETOutlineLayout layout]];
+	
+	/* We must update the layouts to mark the items as visible, otherwise 
+	   -setVisibleItems:forItems: in -deepCopy does not recreate the view hierarchy. */
+	[itemGroup updateLayoutRecursively: YES];
 
 	ETLayoutItemGroup *newItemGroup = [itemGroup deepCopy];
 
@@ -424,8 +431,11 @@ DEALLOC(DESTROY(itemFactory); DESTROY(item); DESTROY(itemGroup))
 	[[allNewItems filter] isNotVisible];
 	// FIXME: UKObjectsEqual(A(itemGroup20), allNewItems);
 
-	UKObjectsEqual([newItemGroup supervisorView], [[[newItemGroup itemAtIndex: 2] supervisorView] superview]);
-	UKObjectsEqual([newItemGroup supervisorView], [[[newItemGroup itemAtIndex: 3] supervisorView] superview]);
+	ETLayoutItem *newOutlineItem = [newItemGroup itemAtIndex: 2] ;
+	ETLayoutItem *newButtonItem = [newItemGroup itemAtIndex: 3];
+
+	UKObjectsEqual([newItemGroup supervisorView], [[newOutlineItem supervisorView] superview]);
+	UKObjectsEqual([newItemGroup supervisorView], [[newButtonItem supervisorView] superview]);
 
 	RELEASE(newItemGroup);
 }

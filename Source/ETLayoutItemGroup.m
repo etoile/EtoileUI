@@ -276,10 +276,13 @@ The returned copy is mutable because ETLayoutItemGroup cannot be immutable. */
 	}
 	else if ([[itemCopy layout] isOpaque] == NO) /* We don't need a true layout update */
 	{
-		// NOTE: Might be better to iterate over the visible items backed by a
-		// supervisor view and do [[item supervisorView] addSubview: childSupervisorView]
-		[itemCopy setVisibleItems: [itemCopy visibleItemsForItems: childrenCopy]
-		                 forItems: childrenCopy];
+		for (ETLayoutItem *childCopy in childrenCopy)
+		{
+			if ([childCopy isVisible] == NO)
+				continue;
+
+			[itemCopy handleAttachViewOfItem: childCopy];
+		}
 	}
 
 	[aCopier endCopy]; /* Reset the context if the copy started with us */
@@ -362,22 +365,22 @@ See also -[NSObject descriptionWithOptions:]. */
 
 /* Manipulating Layout Item Tree */
 
-/** Handles the view visibility of child items with a role similar to
--setVisibleItems: that is called by layouts.
+/** Inserts the display view of the given item into the receiver view.
 
-This method is called when you insert an item in an item group with a layout
-which doesn't require an update in that case, otherwise the view insertion is
-managed by requesting a layout update which ultimately calls back
--setVisibleItems:.
-
-NOTE: Having a null layout class may be a solution to get rid of
--handleAttachViewOfItem: and -handleDetachViewOfItem:. */
+This method is used by -setVisibleItems: to manage view insertion.
+ 
+See also -handleDetachViewOfItem: and -[ETUItem displayView]. */
 - (void) handleAttachViewOfItem: (ETLayoutItem *)item
 {
+	// TODO: For now, item group mutation calls this method and causes item
+	// views to be attached immediately... In the future, we could skip calling
+	// -handleAttachViewOfItem: at mutation time and just wait the layout update
+	// to insert it (since all layouts call -setVisibleItems:). Not yet sure though...
 	ETView *itemDisplayView = [item displayView];
+	BOOL noViewToAttach = (itemDisplayView == nil);
 
 	// NOTE: -[NSView addSuview: nil] results in an exception.
-	if (itemDisplayView == nil || [item isVisible] == NO) /* No view to attach */
+	if (noViewToAttach)
 		return;
 
 	BOOL isAlreadyAttached = [[itemDisplayView superview] isEqual: [_parentItem supervisorView]];
@@ -397,7 +400,11 @@ NOTE: Having a null layout class may be a solution to get rid of
 	}
 }
 
-/** Symetric method to -handleAttachViewOfItem: */
+/** Removes the display view of the given view from the receiver view.
+
+This method is used by -setVisibleItems: to manage view removal.
+ 
+See also -handleAttachViewOfItem: and -[ETUIItem displayView]. */
 - (void) handleDetachViewOfItem: (ETLayoutItem *)item
 {
 	if ([item displayView] == nil) /* No view to detach */
