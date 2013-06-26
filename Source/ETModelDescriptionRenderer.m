@@ -530,7 +530,6 @@ See also -setRenderedPropertyNames:. */
 		                                 groupingKeyPath: [self groupingKeyPath]
 		                                        maxWidth: [entityItem width]];
 		[entityItem setLayout: [self groupingLayout]];
-		[entityItem setUsesLayoutBasedFrame: YES];
 	}
 
 	NSRect entityItemFrame = [entityItem frame];

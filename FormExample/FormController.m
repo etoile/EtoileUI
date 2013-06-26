@@ -58,8 +58,7 @@
 	[[[renderer entityLayout] positionalLayout] setIsContentSizeLayout: YES];
 
 	ETLayoutItemGroup *itemGroup = [renderer renderObject: [MovieCollection randomCollection]];
-	
-	//[itemGroup setUsesLayoutBasedFrame: YES];
+
 	[itemGroup updateLayout];
 
 	[[[ETLayoutItemFactory factory] windowGroup] addItem: itemGroup];
