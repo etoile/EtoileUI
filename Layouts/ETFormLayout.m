@@ -213,7 +213,7 @@ update has been run yet, the returned value is meaningless. */
 
 - (void) setHorizontalAlignmentGuidePosition: (float)aPosition
 {
-	NSLog(@"New guide position %0.2f for %@", aPosition, [(id)[self layoutContext] identifier]);
+	//NSLog(@"New guide position %0.2f for %@", aPosition, [(id)[self layoutContext] identifier]);
 	[[self positionalLayout] setHorizontalAlignmentGuidePosition: aPosition];
 }
 

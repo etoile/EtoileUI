@@ -182,7 +182,7 @@ guide is ignored by the layout computation.  */
 	if (guidePosition == ETAlignmentHintNone)
 		return;
 
-	NSLog(@"Computed guide position %0.2f", guidePosition);
+	//NSLog(@"Computed guide position %0.2f", guidePosition);
 
 	for (ETLayoutItem *item in items)
 	{
