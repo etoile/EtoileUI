@@ -299,9 +299,10 @@ conveniency. */
 	[entityDesc addPropertyDescription: propertyDesc];
 	[aRepository addDescription: propertyDesc];
 
-	NSMutableArray *warnings = [NSMutableArray array];
-	[aRepository checkConstraints: warnings];
-	// FIXME: ETAssert([warnings isEmpty]);
+	// FIXME: Call constraint check elsewhere because it's very slow.
+	// NSMutableArray *warnings = [NSMutableArray array];
+	//[aRepository checkConstraints: warnings];
+	// ETAssert([warnings isEmpty]);
 }
 
 - (id) synthesizeAccessorsForFieldName: (NSString *)aFieldName
