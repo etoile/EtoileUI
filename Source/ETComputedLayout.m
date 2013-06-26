@@ -427,10 +427,6 @@ by calling -setVisibleItems: on the layout context. */
 	[self adjustSeparatorItemsForLayoutSize: newLayoutSize];
 	// TODO: We should return this value rather than void
 	[self setLayoutSize: newLayoutSize];
-
-	// TODO: May be worth to optimize by computing set intersection of visible 
-	// and unvisible layout items
-	[[self layoutContext] setVisibleItems: [NSArray array]];
 	
 	/* Adjust layout context size (e.g. when it is embedded in a scroll view) */
 	if ([self isContentSizeLayout])

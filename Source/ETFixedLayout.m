@@ -69,14 +69,6 @@ geometry and not computed by the receiver. */
 {
 
 	[super renderWithItems: items isNewContent: isNewContent];
-
-	// TODO: May be worth to optimize computing the set union between the 
-	// previously and newly rendered items. Roughly something like...
-	// NSSet unionSet = [prevRenderedItems setByAddingObjectsFromArray: items];
-	// [[self layoutContext] setVisibileItems: items 
-	//                               forItems: unionSet];
-
-	//[[self layoutContext] setVisibleItems: [NSArray array]];
 	[[self layoutContext] setVisibleItems: items];
 }
 
