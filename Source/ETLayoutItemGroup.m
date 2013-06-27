@@ -1006,6 +1006,7 @@ frame (see -usesFlexibleLayoutFrame). */
 	
 	ETDebugLog(@"Try update layout of %@", self);
 
+	ETAssert([self canUpdateLayout]);
 	BOOL isNewLayoutContent = ([self hasNewContent] || [self hasNewLayout]
 		|| _hasNewArrangement);
 

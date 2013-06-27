@@ -103,9 +103,8 @@
 - (void) setLayout: (ETLayout *)layout;
 - (void) updateLayout;
 - (void) updateLayoutRecursively: (BOOL)recursively;
-- (BOOL) canUpdateLayout;
 
-/** @taskunit Item scaling */
+/** @taskunit Item Scaling */
 
 - (float) itemScaleFactor;
 - (void) setItemScaleFactor: (float)aFactor;
