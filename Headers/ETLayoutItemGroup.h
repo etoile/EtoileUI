@@ -78,19 +78,17 @@
 - (NSArray *) allDescendantItems;
 - (BOOL) isDescendantItem: (ETLayoutItem *)anItem;
 
-/** @@taskunit Reloading Items from Represented Object or Source */
-
-- (BOOL) canReload;
-- (void) reload;
-- (void) reloadIfNeeded;
-
-/** @taskunit Controlling Content Mutation and Item Reloading */
+/** @taskunit Controlling Content Mutation and Item Providing */
 
 - (BOOL) shouldMutateRepresentedObject;
 - (void) setShouldMutateRepresentedObject: (BOOL)flag;
 - (BOOL) usesRepresentedObjectAsProvider;
 - (id) source;
 - (void) setSource: (id)source;
+
+/** @@taskunit Reloading Items from Represented Object or Source */
+
+- (void) reloadIfNeeded;
  
 /** @taskunit Controller and Delegate */
 
@@ -103,8 +101,6 @@
 
 - (id) layout;
 - (void) setLayout: (ETLayout *)layout;
-
-- (void) reloadAndUpdateLayout;
 - (void) updateLayout;
 - (void) updateLayoutRecursively: (BOOL)recursively;
 - (BOOL) canUpdateLayout;
@@ -119,9 +115,6 @@
 - (void) render: (NSMutableDictionary *)inputValues
       dirtyRect: (NSRect)dirtyRect
       inContext: (id)ctxt;
-
-- (void) setCachedDisplayImage: (NSImage *)anImage;
-- (NSImage *) cachedDisplayImage;
 
 /** @taskunit Selection */
 
@@ -168,6 +161,8 @@
 
 /** @taskunit Framework Private */
 
+- (BOOL) canReload;
+- (void) reload;
 - (void) handleAttachItem: (ETLayoutItem *)item;
 - (void) handleAttachViewOfItem: (ETLayoutItem *)item;
 - (void) handleDetachItem: (ETLayoutItem *)item;
@@ -175,6 +170,10 @@
 - (void) didChangeSelection;
 - (id) initAsLayerItem;
 - (BOOL) isLayerItem;
+
+/** @taskunit Deprecated */
+
+- (void) reloadAndUpdateLayout;
 
 @end
 

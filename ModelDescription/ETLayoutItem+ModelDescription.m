@@ -209,7 +209,7 @@
 	// TODO: Declare the numerous derived (implicitly transient) properties we have 
 	// descendantItemsSharingSameBaseItem, allDescendantItems, firstItem, 
 	// lastItem, numberOfItems, canReload, canUpdateLayout, layoutView, 
-	// visibleItems, visibleContentSize, cachedDisplayImage, selectionIndex, 
+	// visibleItems, visibleContentSize, selectionIndex, 
 	// selectionIndexes, selectionIndexPaths, selectedItems, selectedInLayout, 
 	// acceptsActionsForItemsOutsideOfFrame
 

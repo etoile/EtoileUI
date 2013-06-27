@@ -1003,7 +1003,7 @@ frame (see -usesFlexibleLayoutFrame). */
 {
 	if ([self layout] == nil)
 		return;
-
+	
 	ETDebugLog(@"Try update layout of %@", self);
 
 	BOOL isNewLayoutContent = ([self hasNewContent] || [self hasNewLayout]
@@ -1038,7 +1038,7 @@ frame (see -usesFlexibleLayoutFrame). */
 	[[ETLayoutExecutor sharedInstance] removeItem: (id)self];
 }
 
-/** Returns whether -updateLayout can be safely called now. */
+/* Returns whether -updateLayout can be safely called now. */
 - (BOOL) canUpdateLayout
 {
 	return ([self isReloading] == NO && [[self layout] isRendering] == NO);
