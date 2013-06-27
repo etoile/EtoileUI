@@ -154,8 +154,9 @@ automatically activates tools in response to the user's click with
 -updateActiveToolWithEvent:. */
 + (ETTool *) setActiveTool: (ETTool *)toolToActivate
 {
-	/* -layoutOwner can be nil at this point e.g. for the default main tool or 
-	   if the user sets a custom tool not bound to any layout. */
+	/* -layoutOwner can be nil at this point e.g. for the default main tool or
+	   if the user sets a custom tool not bound to any layout.
+	   See also -lookUpToolInHoveredItemStack. */
 	if ([[toolToActivate layoutOwner] isWidget])
 		 return activeTool;
 
@@ -555,12 +556,9 @@ You should rarely need to override this method. */
 - (ETTool *) lookUpToolInHoveredItemStack
 {
 	ETTool *foundTool = nil;
-	/* The last/top object is the tool at the lowest/deepest level in the 
-	   layout item tree. */
-	NSEnumerator *e = [[self hoveredItemStack] reverseObjectEnumerator];
-	ETLayoutItem *item = nil;
 
-	while ((item = [e nextObject]) != nil)
+	/* The last/top object is the tool at the lowest/deepest level in the item tree */
+	for (ETLayoutItem *item in [[self hoveredItemStack] reverseObjectEnumerator])
 	{
 		ETDebugLog(@"Look up tool at level %@ in hovered item stack", item);
 
@@ -568,19 +566,18 @@ You should rarely need to override this method. */
 		if ([item isGroup] == NO)
 			continue;
 		
-		foundTool = [[(ETLayoutItemGroup *)item layout] attachedTool];
-		if (foundTool != nil)
+		foundTool = [[item layout] attachedTool];
+
+		/* Don't activate tool bound to a widget layout (see also +setActiveTool:) */
+		if (foundTool != nil && [[foundTool layoutOwner] isWidget] == NO)
 			break;
 	}
 
-	// NOTE: In case we attach a non-removable tool to the root item, we 
-	// could set foundTool to nil.
+	// TODO: We could forbid setting a nil tool on the root item.
 	BOOL overRootItem = (foundTool == nil);
-	if (overRootItem)
-		foundTool = [[self class] mainTool];
-	
-	NSParameterAssert(foundTool != nil);
 
+	foundTool = (overRootItem ? [[self class] mainTool] : foundTool);
+	ETAssert(foundTool != nil);
 	return foundTool;
 }
 

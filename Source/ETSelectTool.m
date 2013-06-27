@@ -155,20 +155,16 @@ needed replicate other actions on each selected item. */
 	[self makeFirstMainResponder: self];
 }
 
-// TODO: Would be nice to simplify this a bit and try to share more with 
-// ETTool implementation.
+// TODO: Would be nice to merge with ETTool implementation.
 - (ETTool *) lookUpToolInHoveredItemStack
 {
 	ETTool *foundTool = nil;
 	ETTool *parentTool = nil;
-	/* The last/top object is the tool at the lowest/deepest level in the 
-	   layout item tree. */
-	NSEnumerator *e = [[self hoveredItemStack] reverseObjectEnumerator];
-	ETLayoutItem *item = nil;
 
-	//ETLog(@"Hovered item stack %@", [self hoveredItemStack]);
+	//ETLog(@"Begin look up in hovered item stack %@", [self hoveredItemStack]);
 
-	while ((item = [e nextObject]) != nil)
+	/* The last/top object is the tool at the lowest/deepest level in the item tree */
+	for (ETLayoutItem *item in [[self hoveredItemStack] reverseObjectEnumerator])
 	{
 		//ETLog(@"Look up tool at level %@ in hovered item stack", item);
 
@@ -176,21 +172,23 @@ needed replicate other actions on each selected item. */
 		if ([item isGroup] == NO)
 			continue;
 		
-		//ETLog(@" ---> Found tool %@", [[(ETLayoutItemGroup *)item layout] attachedTool]);
+		//ETLog(@" ---> Found tool %@", [[item layout] attachedTool]);
 		
-		foundTool = [[(ETLayoutItemGroup *)item layout] attachedTool];
-		parentTool = [[[(ETLayoutItemGroup *)item parentItem] layout] attachedTool];
-		if (foundTool != nil && [[parentTool class] isEqual: [self class]] == NO)
+		foundTool = [[item layout] attachedTool];
+		parentTool = [[[item parentItem] layout] attachedTool];
+
+		/* Don't activate tool bound to a widget layout (see also +setActiveTool:) 
+		   and prevent nested tool activation. */
+		if (foundTool != nil && [[foundTool layoutOwner] isWidget] == NO
+		 && [[parentTool class] isEqual: [self class]] == NO)
+		{
 			break;
+		}
 	}
 
-	// NOTE: In case we attach a non-removable tool to the root item, we 
-	// could set foundTool to nil.
+	// TODO: We could forbid setting a nil tool on the root item.
 	BOOL overRootItem = (foundTool == nil);
-	if (overRootItem)
-		foundTool = [[self class] mainTool];
-
-	return foundTool;
+	return (overRootItem ? [[self class] mainTool] : foundTool);
 }
 
 /* When the hit test is inside the target item, we customize it to restrict it 
