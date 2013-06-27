@@ -30,7 +30,6 @@
 	NSImage *_cachedDisplayImage;
 	SEL _doubleAction;
 	BOOL _autolayout;
-	BOOL _usesLayoutBasedFrame;
 	BOOL _reloading; /* ivar used by ETMutationHandler category */
 	BOOL _mutating; /* ivar used by ETMutationHandler category */
 	BOOL _hasNewContent;

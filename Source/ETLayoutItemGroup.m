@@ -80,7 +80,6 @@ NSString * const ETSourceDidUpdateNotification = @"ETSourceDidUpdateNotification
 
 	[self assignLayout: [ETFixedLayout layout]];
 	_autolayout = YES;
-	_usesLayoutBasedFrame = NO;
 	_hasNewLayout = NO;
 	_hasNewContent = NO; /* Private accessors in ETMutationHandler category */
 	_hasNewArrangement = NO;
@@ -173,7 +172,6 @@ The returned copy is mutable because ETLayoutItemGroup cannot be immutable. */
 	item->_doubleAction = _doubleAction;
 	/* Must follow -setLayout: to ensure autolayout is disabled in the copy when -setLayout: is called */
 	item->_autolayout = _autolayout;
-	item->_usesLayoutBasedFrame = _usesLayoutBasedFrame;
 	item->_hasNewContent = ([item->_layoutItems isEmpty] == NO);
 	item->_hasNewArrangement = YES; // FIXME: Copy the arranged items
 	item->_hasNewLayout = YES;
@@ -1012,7 +1010,7 @@ through the tree structure back to the receiver, whose layout is the last
 updated.<br />
 A bottom-up update is used because a parent layout computation might depend on
 child item properties. For example, an item can use a layout which touches its
-frame (see -usesLayoutBasedFrame). */
+frame (see -usesFlexibleLayoutFrame). */
 - (void) updateLayoutRecursively: (BOOL)recursively
 
 {
@@ -1151,7 +1149,7 @@ means the dirty rect needs no adjustments. */
 	}
 
 	/* Otherwise redisplay the receiver and its descendants recursively */
-	if ([self usesLayoutBasedFrame] || NSIntersectsRect(dirtyRect, drawingBox))
+	if ([self usesFlexibleLayoutFrame] || NSIntersectsRect(dirtyRect, drawingBox))
 	{
 		/* There is no need to set dirtyRect with -[NSBezierPath setClip]
 		   because the right clip rect should have been set by our supervisor
@@ -1925,6 +1923,14 @@ TODO: Implement and may be rename -expand or -expandStack */
 - (NSSize) visibleContentSize
 {
 	return [self visibleContentBounds].size;
+}
+
+/** This method is only exposed to be used internally by EtoileUI.
+ 
+Returns whether the frame can be resized by the layout bound to the receiver. */
+- (BOOL) usesFlexibleLayoutFrame
+{
+	return ([[_layout positionalLayout] isContentSizeLayout] && [self isScrollable] == NO);
 }
 
 /* Live Development */

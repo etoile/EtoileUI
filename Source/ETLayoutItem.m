@@ -1803,12 +1803,6 @@ See also +disablesAutolayout. */
 	[self setNeedsDisplay: YES];
 }
 
-/** Returns NO. See -[ETLayoutItemGroup usesLayoutBasedFrame]. */
-- (BOOL) usesLayoutBasedFrame
-{
-	return NO;
-}
-
 static inline NSRect DrawingBoundsInWindowItem(ETWindowItem *windowItem)
 {
 	/* We exclude the window border and title bar because the display 
@@ -2449,6 +2443,17 @@ See also -[ETLayout isPositional] and -[ETLayout isComputedLayout]. */
 	 // TODO: When the receiver is decorated, will invoke -setDecorationRect: 
 	 // one more time. We should eliminate this extra call.
 	[self setOrigin: rect.origin];
+}
+
+/** <override-dummy />
+This method is only exposed to be used internally by EtoileUI.
+
+Returns NO.
+ 
+See -[ETLayoutItemGroup usesFlexibleLayoutFrame]. */
+- (BOOL) usesFlexibleLayoutFrame
+{
+	return NO;
 }
 
 /** Returns the current origin associated with the receiver frame. See also -frame. */
