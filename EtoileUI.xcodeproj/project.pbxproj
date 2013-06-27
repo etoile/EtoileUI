@@ -297,6 +297,8 @@
 		60A6584813B0DD2A000A6EB6 /* ETLayoutItem+CoreObject.m in Sources */ = {isa = PBXBuildFile; fileRef = 60A6584413B0DD2A000A6EB6 /* ETLayoutItem+CoreObject.m */; };
 		60A6586113B0EFEF000A6EB6 /* ETStyle+ModelDescription.m in Sources */ = {isa = PBXBuildFile; fileRef = 60A6586013B0EFEF000A6EB6 /* ETStyle+ModelDescription.m */; };
 		60A6586213B0EFEF000A6EB6 /* ETStyle+ModelDescription.m in Sources */ = {isa = PBXBuildFile; fileRef = 60A6586013B0EFEF000A6EB6 /* ETStyle+ModelDescription.m */; };
+		60AA9B96177C524B001919C2 /* ETViewpoint+ModelDescription.m in Sources */ = {isa = PBXBuildFile; fileRef = 60AA9B95177C524A001919C2 /* ETViewpoint+ModelDescription.m */; };
+		60AA9B97177C524F001919C2 /* ETViewpoint+ModelDescription.m in Sources */ = {isa = PBXBuildFile; fileRef = 60AA9B95177C524A001919C2 /* ETViewpoint+ModelDescription.m */; };
 		60ADAB921410EC1A003EACF1 /* arrow-270.png in Resources */ = {isa = PBXBuildFile; fileRef = 60ADAB511410EC1A003EACF1 /* arrow-270.png */; };
 		60ADAB931410EC1A003EACF1 /* balloon-left.png in Resources */ = {isa = PBXBuildFile; fileRef = 60ADAB521410EC1A003EACF1 /* balloon-left.png */; };
 		60ADAB941410EC1A003EACF1 /* balloon-white-left.png in Resources */ = {isa = PBXBuildFile; fileRef = 60ADAB531410EC1A003EACF1 /* balloon-white-left.png */; };
@@ -1038,6 +1040,7 @@
 		60A6584413B0DD2A000A6EB6 /* ETLayoutItem+CoreObject.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = "ETLayoutItem+CoreObject.m"; path = "Persistency/ETLayoutItem+CoreObject.m"; sourceTree = "<group>"; };
 		60A6586013B0EFEF000A6EB6 /* ETStyle+ModelDescription.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = "ETStyle+ModelDescription.m"; path = "ModelDescription/ETStyle+ModelDescription.m"; sourceTree = "<group>"; };
 		60A7927D171B803600348EC7 /* TestView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = TestView.m; path = Tests/TestView.m; sourceTree = "<group>"; };
+		60AA9B95177C524A001919C2 /* ETViewpoint+ModelDescription.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = "ETViewpoint+ModelDescription.m"; path = "ModelDescription/ETViewpoint+ModelDescription.m"; sourceTree = "<group>"; };
 		60ADAB511410EC1A003EACF1 /* arrow-270.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "arrow-270.png"; path = "Images/FugueIcons/arrow-270.png"; sourceTree = "<group>"; };
 		60ADAB521410EC1A003EACF1 /* balloon-left.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "balloon-left.png"; path = "Images/FugueIcons/balloon-left.png"; sourceTree = "<group>"; };
 		60ADAB531410EC1A003EACF1 /* balloon-white-left.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "balloon-white-left.png"; path = "Images/FugueIcons/balloon-white-left.png"; sourceTree = "<group>"; };
@@ -1492,6 +1495,7 @@
 				603D7D0913D363BA007AABE2 /* ETActionHandler+ModelDescription.m */,
 				609DE83F1761C86900F486FD /* NSSortDescriptor+ModelDescription.m */,
 				609DE8421761D0C000F486FD /* ETUTI+ModelDescription.m */,
+				60AA9B95177C524A001919C2 /* ETViewpoint+ModelDescription.m */,
 			);
 			name = "Model Descriptions";
 			sourceTree = "<group>";
@@ -2963,6 +2967,7 @@
 				607675F7176B0F33009FA5F2 /* ETModelBuilderRelationshipController.m in Sources */,
 				607675FC176B10E1009FA5F2 /* ETModelBuilderUI.m in Sources */,
 				607676E8176DD411009FA5F2 /* ETUIBuilderBrowserController.m in Sources */,
+				60AA9B97177C524F001919C2 /* ETViewpoint+ModelDescription.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -3149,6 +3154,7 @@
 				607675F6176B0F2A009FA5F2 /* ETModelBuilderRelationshipController.m in Sources */,
 				607675FB176B10D6009FA5F2 /* ETModelBuilderUI.m in Sources */,
 				607676E7176DD411009FA5F2 /* ETUIBuilderBrowserController.m in Sources */,
+				60AA9B96177C524B001919C2 /* ETViewpoint+ModelDescription.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
