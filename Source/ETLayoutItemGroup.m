@@ -1292,28 +1292,27 @@ You should never need to call this method directly. */
 	return _cachedDisplayImage;
 }
 
-/** Returns the visible child items of the receiver.
-
-This is a shortcut method for -visibleItemsForItems:. */
+/** Returns the receiver visible child items. */
 - (NSArray *) visibleItems
 {
 	return [self visibleItemsForItems: [self items]];
 }
 
-/** Sets the visible child items of the receiver, by taking care of inserting
-and removing the item display views based on the visibility of the layout items.
+/** Sets the receiver visible child items, and mutates the view hierarchy when 
+some items use a view.
+ 
+Views are inserted or removed to match the item visibility.
 
-This is a shortcut method for -visibleItemsForItems:. */
+This method is invoked by the receiver layout just before 
+-[ETLayout renderWithItems:isNewContent:] returns, to adjust the visibility of 
+views and update each item visible property.<br />
+You shouldn't need to call this method by yourself. */
 - (void) setVisibleItems: (NSArray *)visibleItems
 {
 	return [self setVisibleItems: visibleItems forItems: [self items]];
 }
 
-/** Returns the visible child items of the receiver.
-
-You shouldn't need to call this method by yourself, unless you write an
-ETCompositeLayout subclass which usually requires the receiver displays layout
-items, that don't belong to it, as children. */
+/* See -visibleItems. */
 - (NSArray *) visibleItemsForItems: (NSArray *)items
 {
 	NSMutableArray *visibleItems = [NSMutableArray array];
@@ -1327,13 +1326,7 @@ items, that don't belong to it, as children. */
 	return visibleItems;
 }
 
-/** Sets the visible child items of the receiver, by taking care of inserting
-and removing the item display views based on the visibility of the layout items.
-
-This method is typically called by the layout of the receiver once the layout
-rendering is finished, in order to adjust the visibility of views and update the
-visible property of the child items. You shouldn't need to call this method by
-yourself (see -visibleItemsForItems:). */
+/* See -setVisibleItems:. */
 - (void) setVisibleItems: (NSArray *)visibleItems forItems: (NSArray *)items
 {
 	FOREACH(items, item, ETLayoutItem *)

@@ -47,14 +47,16 @@
 	BOOL _changingSelection;
 }
 
-/* Traversing Layout Item Tree */
+/** @taskunit Traversing the Layout Item Tree */
 
 - (ETLayoutItem *) itemAtIndexPath: (NSIndexPath *)path;
 - (ETLayoutItem *) itemForIdentifier: (NSString *)anId;
 
+/** @taskunit Debugging */
+
 - (NSString *) descriptionWithProperty: (NSString *)aProperty arranged: (BOOL)usesArrangedItems;
 
-/*  Manipulating Layout Item Tree */
+/** @taskunit Accessing and Mutating Items */
 
 - (void) addItem: (ETLayoutItem *)item;
 - (void) insertItem: (ETLayoutItem *)item atIndex: (NSUInteger)index;
@@ -70,30 +72,35 @@
 - (void) removeItems: (NSArray *)items;
 - (void) removeAllItems;
 - (NSArray *) items;
+
+/** @taskunit Accessing Descendant Items */
+
 - (NSArray *) descendantItemsSharingSameBaseItem;
 - (NSArray *) allDescendantItems;
 - (BOOL) isDescendantItem: (ETLayoutItem *)anItem;
+
+/** @@taskunit Reloading Items from Represented Object or Source */
 
 - (BOOL) canReload;
 - (void) reload;
 - (void) reloadIfNeeded;
 
-- (void) handleAttachItem: (ETLayoutItem *)item;
-- (void) handleAttachViewOfItem: (ETLayoutItem *)item;
-- (void) handleDetachItem: (ETLayoutItem *)item;
-- (void) handleDetachViewOfItem: (ETLayoutItem *)item;
+/** @taskunit Controlling Content Mutation and Item Reloading */
 
 - (BOOL) shouldMutateRepresentedObject;
 - (void) setShouldMutateRepresentedObject: (BOOL)flag;
 - (BOOL) usesRepresentedObjectAsProvider;
 - (id) source;
 - (void) setSource: (id)source;
+ 
+/** @taskunit Controller and Delegate */
+
 - (id) delegate;
 - (void) setDelegate: (id)delegate;
 - (ETController *) controller;
 - (void) setController: (ETController *)aController;
 
-/* Layout */
+/** @taskunit Layout */
 
 - (id) layout;
 - (void) setLayout: (ETLayout *)layout;
@@ -106,21 +113,12 @@
 - (BOOL) isAutolayout;
 - (void) setAutolayout: (BOOL)flag;
 
-/* Layouting Context Protocol */
-
-- (void) setLayoutView: (NSView *)aView;
-- (NSArray *) visibleItems;
-- (void) setVisibleItems: (NSArray *)items;
-- (NSArray *) visibleItemsForItems: (NSArray *)items;
-- (void) setVisibleItems: (NSArray *)visibleItems forItems: (NSArray *)items;
-- (NSSize) visibleContentSize;
-
-/* Item scaling */
+/** @taskunit Item scaling */
 
 - (float) itemScaleFactor;
 - (void) setItemScaleFactor: (float)aFactor;
 
-/* Rendering */
+/** @taskunit Drawing */
 
 - (void) render: (NSMutableDictionary *)inputValues
       dirtyRect: (NSRect)dirtyRect
@@ -129,7 +127,7 @@
 - (void) setCachedDisplayImage: (NSImage *)anImage;
 - (NSImage *) cachedDisplayImage;
 
-/* Selection */
+/** @taskunit Selection */
 
 - (NSUInteger) selectionIndex;
 - (void) setSelectionIndex: (NSUInteger)index;
@@ -143,7 +141,7 @@
 - (NSArray *) selectedItemsInLayout;
 - (void) setSelectedItems: (NSArray *)items;
 
-/* Sorting and Filtering */
+/** @taskunit Sorting and Filtering */
 
 - (void) sortWithSortDescriptors: (NSArray *)descriptors recursively: (BOOL)recursively;
 - (void) filterWithPredicate: (NSPredicate *)predicate recursively: (BOOL)recursively;
@@ -151,7 +149,7 @@
 - (BOOL) isSorted;
 - (BOOL) isFiltered;
 
-/* Actions */
+/** @taskunit Actions */
 
 - (void) setDoubleAction: (SEL)selector;
 - (SEL) doubleAction;
@@ -165,8 +163,19 @@
                            hint: (id)hint
                    boxingForced: (BOOL)boxingForced;
 
-/* Framework Private */
+/** @taskunit Layouting Context Protocol */
 
+- (void) setLayoutView: (NSView *)aView;
+- (NSArray *) visibleItems;
+- (void) setVisibleItems: (NSArray *)items;
+- (NSSize) visibleContentSize;
+
+/** @taskunit Framework Private */
+
+- (void) handleAttachItem: (ETLayoutItem *)item;
+- (void) handleAttachViewOfItem: (ETLayoutItem *)item;
+- (void) handleDetachItem: (ETLayoutItem *)item;
+- (void) handleDetachViewOfItem: (ETLayoutItem *)item;
 - (void) didChangeSelection;
 - (id) initAsLayerItem;
 - (BOOL) isLayerItem;
