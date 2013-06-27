@@ -92,7 +92,7 @@ makes the label invisible. */
 - (NSRect) currentLabelRect;
 - (NSRect) currentImageRect;
 
-/* Drawing */
+/** @taskunit Drawing */
 
 - (void) drawImage: (NSImage *)itemImage 
            flipped: (BOOL)itemFlipped 
@@ -105,6 +105,7 @@ makes the label invisible. */
 - (void) drawFirstResponderIndicatorInRect: (NSRect)indicatorRect;
 
 - (BOOL) shouldDrawItemAsSelected: (ETLayoutItem *)item;
+- (BOOL) shouldDrawItemAsStack: (ETLayoutItem *)item;
 
 /* Label */
 
@@ -125,7 +126,7 @@ makes the label invisible. */
                  ofItem: (ETLayoutItem *)anItem;
 - (NSString *) labelForItem: (ETLayoutItem *)anItem;
 
-/* Image */
+/** @taskunit Image */
 
 - (NSImage *) imageForItem: (ETLayoutItem *)anItem;
 
@@ -138,7 +139,7 @@ makes the label invisible. */
                  ofItem: (ETLayoutItem *)anItem
           withLabelRect: (NSRect)labelRect;
 
-/* View/Widget */
+/** @taskunit View/Widget */
 
 - (NSRect) rectForViewOfItem: (ETLayoutItem *)anItem;
 - (NSRect) rectForViewOfItem: (ETLayoutItem *)anItem

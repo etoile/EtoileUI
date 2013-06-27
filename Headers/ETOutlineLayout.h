@@ -17,8 +17,7 @@
 /** See [ETTableLayout] API to customize ETOutlineLayout look and behavior. */
 @interface ETOutlineLayout : ETTableLayout 
 {
-	@private
-	BOOL _treatsGroupsAsStacks; // TODO: Implement or remove (see implementation)
+
 }
 
 @end

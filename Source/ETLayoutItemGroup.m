@@ -1779,40 +1779,6 @@ See -[ETController nextResponder]. */
 	return [super nextResponder];
 }
 
-/* Stacking */
-
-/** Returns whether the receiver is currently a stack.
-
-TODO: Implement */
-- (BOOL) isStack
-{
-	return NO;
-}
-
-/** Returns YES when the receiver is a collapsed stack, otherwise returns NO.
-
-TODO: Implement */
-- (BOOL) isStacked
-{
-	return NO;
-}
-
-/** Collapses the receiver as a stack.
-
-TODO: Implement and may be rename -collapse or -collapseStack */
-- (void) stack
-{
-
-}
-
-/** Expands the receiver as a stack.
-
-TODO: Implement and may be rename -expand or -expandStack */
-- (void) unstack
-{
-
-}
-
 /* Collection Protocol */
 
 - (BOOL) isOrdered

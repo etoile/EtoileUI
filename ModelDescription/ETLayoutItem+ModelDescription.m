@@ -220,8 +220,7 @@
 	   _changingSelection */
 	   
 	/* Ignored ivars and properties:
-	   _usesLayoutBasedFrame (unsupported), _isLayerItem (unsupported)
-	   isStack (unsupported), isStacked (unsupported) */
+	   _isLayerItem (unsupported) */
 
 	NSArray *persistentProperties = A(items, layout, autolayout, source, 
 		delegate, controller, doubleAction, shouldMutateRepObject, 

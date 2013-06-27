@@ -158,13 +158,6 @@
 - (ETLayoutItem *) doubleClickedItem;
 - (BOOL) acceptsActionsForItemsOutsideOfFrame;
 
-/* Stacking */
-
-- (BOOL) isStack;
-- (BOOL) isStacked;
-- (void) stack;
-- (void) unstack;
-
 /** @taskunit Additions to ETCollectionMutation */
 
 - (ETLayoutItem *) insertObject: (id)object

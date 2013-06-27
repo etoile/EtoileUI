@@ -44,8 +44,6 @@
     if (nil == self)
 		return nil;
 
-	_treatsGroupsAsStacks = YES;
-
 	NSParameterAssert([[self outlineView] isKindOfClass: [ETOutlineView class]]);
 	return self;
 }
@@ -118,25 +116,6 @@
 	}
 
 	return shouldInsertColumn;
-}
-
-/* Returns YES when every groups are displayed as stacks which can be expanded
-and collapsed by clicking on their related outline arrows. 
-
-When only stacks can be expanded and collapsed (in other words when only 
-stack-related rows have an outline arrow), returns NO. 
-
-By default, returns YES. */
-- (BOOL) treatsGroupsAsStacks
-{
-	return _treatsGroupsAsStacks;
-}
-
-/* Sets whether the receiver handles every groups as stacks which can be 
-expanded and collapsed by getting automatically a related outline arrow. */
-- (void) setTreatsGroupsAsStacks: (BOOL)flag
-{
-	_treatsGroupsAsStacks = flag;
 }
 
 - (ETLayoutItem *) itemAtLocation: (NSPoint)location

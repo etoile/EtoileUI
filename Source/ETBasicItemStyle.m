@@ -142,7 +142,7 @@ DEALLOC(DESTROY(_labelAttributes); DESTROY(_selectedLabelAttributes));
 		         inRect: _currentLabelRect];
 	}
 
-	if ([item isGroup] && [(ETLayoutItemGroup *)item isStack])
+	if ([self shouldDrawItemAsStack: item])
 	{
 		[self drawStackIndicatorInRect: bounds];
 	}
@@ -303,11 +303,29 @@ Can be overriden to base the selection drawing on additional criterias.
 Any subclass implementation should remain reasonably fast, because this method 
 is called quite a lot.
  
-See also -drawSelectionIndicatorInRect:, -[ETLayout preventsDrawingItemSelectionIndicator] 
-and -[ETLayoutItem isSelected]. */
+See also -[ETStyle drawSelectionIndicatorInRect:], 
+-[ETLayout preventsDrawingItemSelectionIndicator] and -[ETLayoutItem isSelected]. */
 - (BOOL) shouldDrawItemAsSelected: (ETLayoutItem *)item
 {
 	return ([item isSelected] && [[[item parentItem] layout] preventsDrawingItemSelectionIndicator] == NO);
+}
+
+/** <override-dummy />Returns whether the given item should be drawn using a 
+stack indicator or some visual cue about the stacked state.
+
+You can call -shouldDrawItemAsStack: in any ETBasicItemStyle methods that 
+receive a layout item in argument such as -render:layoutItem:dirtyRect:, 
+-imageForItem:, -rectForLabel: etc. to change the geometry or the rendered 
+content based on the item stacking status.
+
+By default, returns NO. Can be overriden to provide the stack drawing criterias.
+Any subclass implementation should remain reasonably fast, because this method 
+is called quite a lot.
+ 
+See also -drawStrackIndicatorInRect:. */
+- (BOOL) shouldDrawItemAsStack: (ETLayoutItem *)item
+{
+	return NO;
 }
 
 /** Returns the max allowed size to draw to the label.
