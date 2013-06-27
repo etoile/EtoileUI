@@ -88,10 +88,6 @@ burden involved by a data source. */
 	[[outlineItem layout] setAttachedTool: [ETSelectTool tool]];
 	[[[outlineItem layout] attachedTool] setAllowsMultipleSelection: YES];
 
-	/* This line is optional and simply avoids to update outlineItem on 
-	   each -addItem: call */
-	[outlineItem setAutolayout: NO];
-
 	ETLayoutItemGroup *itemGroup = [itemFactory itemGroupWithRepresentedObject: icon];
 
 	/* The name set will be returned by -displayName in addition to -name */
@@ -100,8 +96,6 @@ burden involved by a data source. */
 	[itemGroup addItem: [itemFactory itemWithRepresentedObject: icon]];
 	[outlineItem addItem: itemGroup];
 	[outlineItem addItem: [itemFactory itemWithRepresentedObject: icon]];
-	
-	[outlineItem setAutolayout: YES];
 }
 
 /* Invoked when the application is going to finish its launch because 

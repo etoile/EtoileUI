@@ -29,7 +29,6 @@
 	ETLayout *_layout;
 	NSImage *_cachedDisplayImage;
 	SEL _doubleAction;
-	BOOL _autolayout;
 	BOOL _reloading; /* ivar used by ETMutationHandler category */
 	BOOL _mutating; /* ivar used by ETMutationHandler category */
 	BOOL _hasNewContent;
@@ -109,9 +108,6 @@
 - (void) updateLayout;
 - (void) updateLayoutRecursively: (BOOL)recursively;
 - (BOOL) canUpdateLayout;
-
-- (BOOL) isAutolayout;
-- (void) setAutolayout: (BOOL)flag;
 
 /** @taskunit Item scaling */
 

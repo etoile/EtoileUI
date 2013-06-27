@@ -79,7 +79,6 @@ NSString * const ETSourceDidUpdateNotification = @"ETSourceDidUpdateNotification
 	_arrangedItems = nil;
 
 	[self assignLayout: [ETFixedLayout layout]];
-	_autolayout = YES;
 	_hasNewLayout = NO;
 	_hasNewContent = NO; /* Private accessors in ETMutationHandler category */
 	_hasNewArrangement = NO;
@@ -170,8 +169,6 @@ The returned copy is mutable because ETLayoutItemGroup cannot be immutable. */
 	/* We copy all primitive ivars except _reloading and _changingSelection */
 
 	item->_doubleAction = _doubleAction;
-	/* Must follow -setLayout: to ensure autolayout is disabled in the copy when -setLayout: is called */
-	item->_autolayout = _autolayout;
 	item->_hasNewContent = ([item->_layoutItems isEmpty] == NO);
 	item->_hasNewArrangement = YES; // FIXME: Copy the arranged items
 	item->_hasNewLayout = YES;
@@ -892,10 +889,7 @@ When the source is nil, the receiver becomes empty. */
 
 	ETDebugLog(@"Try reload %@", self);
 
-	BOOL wasAutolayoutEnabled = [self isAutolayout];
-
 	_reloading = YES;
-	[self setAutolayout: NO];
 
 	[self removeAllItems];
 	if (nil != aSource)
@@ -903,7 +897,6 @@ When the source is nil, the receiver becomes empty. */
 		[self addItems: [self itemsFromSource]];
 	}
 
-	[self setAutolayout: wasAutolayoutEnabled];
 	_reloading = NO;
 }
 
@@ -962,13 +955,8 @@ Marks the receiver as needing a layout update. */
 	//ETDebugLog(@"Modify layout from %@ to %@ in %@", _layout, layout, self);
 
 	ETLayout *oldLayout = RETAIN(_layout);
-	BOOL wasAutolayoutEnabled = [self isAutolayout];
 
 	[self willChangeValueForProperty: kETLayoutProperty];
-
-	/* Disable autolayout to avoid spurious updates triggered by stuff like
-	   view/container frame modification on layout view insertion */
-	[self setAutolayout: NO];
 
 	[self assignLayout: layout];
 	[self didChangeLayout: oldLayout];
@@ -978,7 +966,6 @@ Marks the receiver as needing a layout update. */
 		[layout becomePersistentInContext: [self persistentRoot]];
 	}
 
-	[self setAutolayout: wasAutolayoutEnabled];
 	[self setNeedsLayoutUpdate];
 
 	[self didChangeValueForProperty: kETLayoutProperty];
@@ -1054,32 +1041,7 @@ frame (see -usesFlexibleLayoutFrame). */
 /** Returns whether -updateLayout can be safely called now. */
 - (BOOL) canUpdateLayout
 {
-	return [self isAutolayout] && ![self isReloading] && ![[self layout] isRendering];
-}
-
-/** Returns YES if mutating the receiver content by calling -addItem:,
-    -insertItem:atIndex:, -removeItem: etc. triggers a layout update and a
-	redisplay, otherwise returns NO when you must call -updateLayout by yourself
-	after mutating the receiver content.
-	By default, returns YES, hence there is usually no need to call
-	-updateLayout and marks the receiver or a parent item for redisplay. */
-- (BOOL) isAutolayout
-{
-	return _autolayout;
-}
-
-/** Sets whether mutating the receiver content by calling -addItem:,
-    -insertItem:atIndex:, -removeItem: etc. triggers a layout update and a
-	redisplay.
-	If you need to add, remove or insert a large set of child items, in order
-	to only recompute the layout once and also avoid a lot of extra redisplay,
-	you should disable the autolayout, and restore it later after mutating
-	the receiver children in meantime. Take note that enabling the autolayout
-	doesn't trigger a layout update, so -updateLayout must be called when
-	autolayout is disabled or was just restored. */
-- (void) setAutolayout: (BOOL)flag
-{
-	_autolayout = flag;
+	return ([self isReloading] == NO && [[self layout] isRendering] == NO);
 }
 
 /* Item scaling */

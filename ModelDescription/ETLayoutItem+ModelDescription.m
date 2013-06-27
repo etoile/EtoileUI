@@ -184,7 +184,6 @@
 	// TODO: Move to ETLayoutItem and update ETLayout description as necessary
 	ETPropertyDescription *layout = [ETPropertyDescription descriptionWithName: @"layout" type: (id)@"ETLayout"];
 	[layout setOpposite: (id)@"ETLayout.layoutContext"];
-	ETPropertyDescription *autolayout = [ETPropertyDescription descriptionWithName: @"autolayout" type: (id)@"BOOL"];
 
 	ETPropertyDescription *source = [ETPropertyDescription descriptionWithName: @"source" type: (id)@"NSObject"];
 	ETPropertyDescription *delegate = [ETPropertyDescription descriptionWithName: @"delegate" type: (id)@"NSObject"];
@@ -222,9 +221,8 @@
 	/* Ignored ivars and properties:
 	   _isLayerItem (unsupported) */
 
-	NSArray *persistentProperties = A(items, layout, autolayout, source, 
-		delegate, controller, doubleAction, shouldMutateRepObject, 
-		itemScaleFactor, wasViewHidden);
+	NSArray *persistentProperties = A(items, layout, source, delegate, controller,
+		doubleAction, shouldMutateRepObject, itemScaleFactor, wasViewHidden);
 	NSArray *transientProperties = A(doubleClickedItem);
 
 	[entity setUIBuilderPropertyNames: (id)[[A(delegate, doubleAction,

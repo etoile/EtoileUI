@@ -113,33 +113,6 @@ mutation for each layout item mutation. */
 	_coalescingMutation = NO;
 }
 
-/** Disables the autolayout and returns whether the autolayout was previously 
-enabled.
-
-You must pair every -beginMutate with an -endMutate:.
-
-See also -endMutate:. */
-- (BOOL) beginMutate
-{
-	BOOL wasAutolayoutEnabled = [self isAutolayout];
-	[self setAutolayout: NO];
-	return wasAutolayoutEnabled;
-}
-
-/** Restores autolayout to its previous value, marks the receiver has having 
-new content and triggers a layout update.
-
-You must pass the value returned by -beginMutate: in parameter.
-
-When wasAutolayoutEnabled or +isAutolayoutEnabled are NO, the layout update 
-won't happen. For example, this would be case on invoking -endMutate: nested 
-inside another -begin/endMutate pair.  */
-- (void) endMutate: (BOOL)wasAutolayoutEnabled
-{
-	[self setAutolayout: wasAutolayoutEnabled];
-	[self didChangeContentWithMoreComing: NO];
-}
-
 /** Returns whether an item is being inserted or removed among the receiver 
 items (descendant items not being taken in account).
 
@@ -300,26 +273,20 @@ To do so, -canReload checks -isMutating. */
 
 - (void) handleAddItems: (NSArray *)items
 {
-	BOOL wasAutolayoutEnabled = [self beginMutate];
-
-	FOREACH(items, item, ETLayoutItem *)
+	for (ETLayoutItem *item in items)
 	{
 		[self handleInsertItem: item atIndex: ETUndeterminedIndex hint: nil moreComing: YES];
 	}
-
-	[self endMutate: wasAutolayoutEnabled];
+	[self didChangeContentWithMoreComing: NO];
 }
 
 - (void) handleRemoveItems: (NSArray *)items
 {
-	BOOL wasAutolayoutEnabled = [self beginMutate];
-
-	FOREACH(items, item, ETLayoutItem *)
+	for (ETLayoutItem *item in items)
 	{
 		[self handleRemoveItem: item atIndex: ETUndeterminedIndex hint: nil moreComing: YES];
 	}
-
-	[self endMutate: wasAutolayoutEnabled];
+	[self didChangeContentWithMoreComing: NO];
 }
 
 /* Collection Protocol Backend */

@@ -253,7 +253,6 @@ DEALLOC(DESTROY(itemFactory); DESTROY(item))
 	SUPERINIT
 
 	[[ETLayoutExecutor sharedInstance] removeAllItems];
-	[item setAutolayout: NO];
 	ASSIGN(layout, [ETPaneLayout masterDetailLayout]);
 	barItem = [layout barItem]; /* layout will retains us */
 
