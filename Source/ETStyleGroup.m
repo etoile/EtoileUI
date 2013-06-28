@@ -117,7 +117,7 @@ in the given style collection. */
 {
 	[self willChangeValueForProperty: @"styles"];
 	[_styles addObject: aStyle];
-	if ([self isPersistent])
+	if ([self isPersistent] && [aStyle isKindOfClass: [ETDropIndicator class]] == NO)
 	{
 		[aStyle becomePersistentInContext: [self persistentRoot]];
 	}
