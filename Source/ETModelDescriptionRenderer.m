@@ -568,7 +568,8 @@ See also -setRenderedPropertyNames:. */
 	}
 	if ([[entityItem layout] isComputedLayout])
 	{
-		[(ETLayoutItem *)[propertyItems mappedCollection] setAutoresizingMask: ETAutoresizingFlexibleWidth];
+		// FIXME: Disable if grouping is used
+		//[(ETLayoutItem *)[propertyItems mappedCollection] setAutoresizingMask: ETAutoresizingFlexibleWidth];
 	}
 
 	[entityItem setName: aName];
