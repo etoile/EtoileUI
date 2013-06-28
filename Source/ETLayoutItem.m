@@ -581,7 +581,7 @@ to manipulate the item collection that belongs to the parent. */
 
 You are in charge of retaining the receiver, otherwise it could be deallocated 
 if no other objects retains it. */
-- (void ) removeFromParent
+- (void) removeFromParent
 {
 	if (_parentItem != nil)
 	{
