@@ -648,6 +648,8 @@ choosing 'Copy' in the 'Edit' menu. */
 	ETEvent *event = ETEVENT([NSApp currentEvent], nil, ETCopyPickingMask);
 
 	[self handlePickItem: AUTORELEASE([[self pickedItemForTargetItem: item] deepCopy])
+	       forceItemPick: [[[ETTool activeTool] ifResponds] forcesItemPick]
+	shouldRemoveItemsNow: NO
 	         coordinator: [ETPickDropCoordinator sharedInstanceWithEvent: event]];
 }
 
@@ -687,7 +689,9 @@ choosing 'Cut' in the 'Edit' menu. */
 
 	ETEvent *event = ETEVENT([NSApp currentEvent], nil, ETCutPickingMask);
 		
-	[self handlePickItem: [self pickedItemForTargetItem: item]
+	[self handlePickItem: AUTORELEASE([[self pickedItemForTargetItem: item] deepCopy])
+	       forceItemPick: [[[ETTool activeTool] ifResponds] forcesItemPick]
+	shouldRemoveItemsNow: YES
 	         coordinator: [ETPickDropCoordinator sharedInstanceWithEvent: event]];
 }
 

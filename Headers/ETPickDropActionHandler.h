@@ -55,7 +55,8 @@
 
 - (NSArray *) allowedPickTypesForItem: (ETLayoutItem *)item;
 - (NSArray *) allowedDropTypesForItem: (ETLayoutItem *)item;
-- (id) pickedObjectForItem: (ETLayoutItem *)item;
+- (NSArray *) pickedObjectsForItems: (NSArray *)items
+               shouldRemoveItemsNow: (BOOL *)shouldRemoveItems;
 - (BOOL) canDragItem: (ETLayoutItem *)item
          coordinator: (ETPickDropCoordinator *)aPickCoordinator;
 - (BOOL) canDropObject: (id)droppedObject
