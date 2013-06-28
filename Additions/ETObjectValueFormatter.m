@@ -8,6 +8,7 @@
 
 #import <EtoileFoundation/Macros.h>
 #import <EtoileFoundation/NSObject+Model.h>
+#import <EtoileFoundation/NSObject+HOM.h>
 #import "ETObjectValueFormatter.h"
 
 @implementation ETObjectValueFormatter
@@ -22,7 +23,7 @@
 	if (aValue == nil || [aValue isString])
 		return aValue;
 
-	id string = [[self delegate] formatter: self stringForObjectValue: aValue];
+	id string = [[(id)[self delegate] ifResponds] formatter: self stringForObjectValue: aValue];
 	ETAssert(string == nil || [string isKindOfClass: [NSString class]]);
 
 	if (string == nil)

@@ -8,6 +8,8 @@
 
 #import <Foundation/Foundation.h>
 
+@protocol ETObjectValueFormatterDelegate;
+
 /** @group Utilities
 
 ETObjectValueFormatter doesn't turn strings into their object 
@@ -38,12 +40,12 @@ widget proxy). */
 	id _delegate;
 }
 
-@property (assign, nonatomic) id delegate;
+@property (assign, nonatomic) id <ETObjectValueFormatterDelegate> delegate;
 
 @end
 
-@interface NSObject (ETObjectValueFormatterDelegate)
-- (NSString *) formatter: (ETObjectValueFormatter *)aFormatter stringForObjectValue: (id)aValue;
+@protocol ETObjectValueFormatterDelegate <NSObject>
 - (id) formatter: (ETObjectValueFormatter *)aFormatter stringValueForString: (NSString *)aString;
+@optional
+- (NSString *) formatter: (ETObjectValueFormatter *)aFormatter stringForObjectValue: (id)aValue;
 @end
-

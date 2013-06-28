@@ -9,6 +9,7 @@
 #import <Foundation/Foundation.h>
 #import <AppKit/AppKit.h>
 #import <EtoileUI/ETController.h>
+#import <EtoileUI/ETObjectValueFormatter.h>
 
 @class ETUIBuilderItemFactory, ETAspectRepository, ETItemValueTransformer;
 
@@ -20,7 +21,7 @@
 /** @group UI Builder
  
 @abstract Main controller for the UI builder inspector and object browser. */
-@interface ETUIBuilderController : ETController <ETUIBuilderEditionCoordinator>
+@interface ETUIBuilderController : ETController <ETUIBuilderEditionCoordinator, ETObjectValueFormatterDelegate>
 {
 	ETUIBuilderItemFactory *_itemFactory;
 	ETLayoutItem *_documentContentItem;
