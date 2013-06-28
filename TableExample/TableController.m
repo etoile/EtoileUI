@@ -25,6 +25,7 @@ burden involved by a data source. */
 	[tool setAllowsMultipleSelection: YES];
 	[tool setAllowsEmptySelection: NO];
 	[tool setShouldRemoveItemsAtPickTime: NO];
+	[tool setForcesItemPick: YES];
 
 	[tableLayout2 setAttachedTool: tool];	
 	[tableLayout2 setDisplayName: @"Name" forProperty: @"displayName"]; 
@@ -52,6 +53,8 @@ burden involved by a data source. */
 	[item setValue: @"Blue" forProperty: @"name"];
 	[item setValue: NUMBER(0) forProperty: @"intensity"];	
 	[tableItem2 addItem: item];
+	
+	[tableItem2 setIdentifier: @"topLeftTable"];
 }
 
 /* An item group based on a single column table layout */
@@ -72,6 +75,8 @@ burden involved by a data source. */
 	[tableItem addObject: [NSNumber numberWithInt: 3]];
 	/* Value will be image object description */
 	[tableItem addObject: [ETApp icon]];
+	
+	[tableItem setIdentifier: @"topRightTable"];
 }
 
 /* An item group using a custom outline layout based on an existing outline view */
@@ -87,6 +92,7 @@ burden involved by a data source. */
 	[[outlineItem layout] setEditable: YES forProperty: @"displayName"];
 	[[outlineItem layout] setAttachedTool: [ETSelectTool tool]];
 	[[[outlineItem layout] attachedTool] setAllowsMultipleSelection: YES];
+	[[[outlineItem layout] attachedTool] setForcesItemPick: YES];
 
 	ETLayoutItemGroup *itemGroup = [itemFactory itemGroupWithRepresentedObject: icon];
 
@@ -96,6 +102,8 @@ burden involved by a data source. */
 	[itemGroup addItem: [itemFactory itemWithRepresentedObject: icon]];
 	[outlineItem addItem: itemGroup];
 	[outlineItem addItem: [itemFactory itemWithRepresentedObject: icon]];
+
+	[outlineItem setIdentifier: @"bottomLeftOutline"];
 }
 
 /* Invoked when the application is going to finish its launch because 

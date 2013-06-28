@@ -139,7 +139,6 @@ would be messed up. */
 	DESTROY(_previousDropTarget);
 	DESTROY(_previousHoveredItem);
 	_currentDropIndex = ETUndeterminedIndex;
-	_wereItemsRemovedAtPickTime = YES;
 	_insertionShift = ETUndeterminedIndex;
 }
 
@@ -157,8 +156,9 @@ When the item is presented in an opaque layout which returns YES to
 -hasBuiltInDragAndDropSupport, returns immediately.
 
 See also -hasBuiltInDragAndDropSupport. */
-- (void) beginDragItem: (ETLayoutItem *)item image: (NSImage *)customDragImage 
-	inLayout: (ETLayout *)aLayout
+- (void) beginDragItem: (ETLayoutItem *)item
+                 image: (NSImage *)customDragImage
+              inLayout: (ETLayout *)aLayout
 {
 	NILARG_EXCEPTION_TEST(item);
 	NILARG_EXCEPTION_TEST(aLayout);
@@ -170,11 +170,6 @@ See also -hasBuiltInDragAndDropSupport. */
 	// TODO: Might be better to use the base item or the parent item...
 	ASSIGN(_dragSource, (ETLayoutItem *)[aLayout layoutContext]);
 	ETAssert(_dragSource != nil);
-
-	if ([[ETTool activeTool] respondsToSelector: @selector(shouldRemoveItemsAtPickTime)])
-	{
-		_wereItemsRemovedAtPickTime = [[ETTool activeTool] shouldRemoveItemsAtPickTime];
-	}
 
 	if ([[aLayout ifResponds] hasBuiltInDragAndDropSupport])
 	{
@@ -368,6 +363,7 @@ the cases described above. */
 	                                                                  coordinator: self];
 }
 
+/* This method is called in all cases including by ETWidgetLayout. */
 - (void) draggedImage: (NSImage *)anImage beganAt: (NSPoint)aPoint
 {
 	NSPoint itemRelativeLoc = aPoint; // FIXME: Relative...
@@ -377,6 +373,7 @@ the cases described above. */
 	                                      coordinator: self];
 }
 
+/* This method is called in all cases including by ETWidgetLayout. */
 - (void) draggedImage: (NSImage *)draggedImage movedTo: (NSPoint)screenPoint
 {
 	ETLayoutItem *dropTarget = [self dropTargetForDrag: _dragInfo];
@@ -386,6 +383,8 @@ the cases described above. */
 	                                      coordinator: self];
 }
 
+/* This method is called in all cases including by ETWidgetLayout and it is
+reponsible to pop the object from the pickboard.  */
 - (void) draggedImage: (NSImage *)anImage
               endedAt: (NSPoint)aPoint 
             operation: (NSDragOperation)operation
@@ -396,6 +395,7 @@ the cases described above. */
 	                                        endAtItem: dropTarget
 	                                     wasCancelled: (operation == NSDragOperationNone)
 	                                      coordinator: self];
+	[[ETPickboard localPickboard] popObject];
 	[self reset];
 }
 
@@ -595,12 +595,27 @@ returned nil. */
 
 /* NSDraggingDestionation informal protocol */
 
+- (ETLayoutItem *) draggedItem
+{
+	id draggedObject = [[ETPickboard localPickboard] firstObject];
+	NSDictionary *metadata = [[ETPickboard localPickboard] firstObjectMetadata];
+	ETLayoutItem *draggedItem =
+		[[metadata objectForKey: kETPickMetadataDraggedItems] objectForKey: draggedObject];
+	
+	return draggedItem;
+}
+
+/* This method is not called for a ETWidgetLayout. For example, ETTableLayout 
+manages the drop validation in 
+-tableView:validateDrop:proposedRow:proposedDropOperation: rather than calling 
+-handleDragMoveOverItemWithItem:coordinator:. */
 - (NSDragOperation) draggingUpdated: (id <NSDraggingInfo>)drag
 {
 	/* First try whether it is a drag enter or exit */
 
-	ETLayoutItem *draggedItem = [[ETPickboard localPickboard] firstObject];
 	NSDragOperation dragOp = NSDragOperationEvery;
+
+	// TODO: Finish to implement
 	/*BOOL isEnterExit = [self synthetizeIfNeededDragEnterAndExit: drag 
 		withItem: draggedItem andReturnsDragEnterOperation: &dragOp];
 
@@ -608,39 +623,41 @@ returned nil. */
 		return dragOp;*/
 
 	/* Otherwise it is a drag move */
+
 	ASSIGN(_dragInfo, (id)drag);
 	/* item can be nil, -itemAtLocation: doesn't return the receiver itself */
-	id item = [self dropTargetForDrag: drag]; 
+	id item = [self dropTargetForDrag: drag];
+	
+	/* Finally handle the drag update */
 
 	dragOp = [[item actionHandler] handleDragMoveOverItem: item 
-	                                             withItem: draggedItem
+	                                             withItem: [self draggedItem]
 	                                          coordinator: self];
-	NSLog(@"Drag op %lu", (unsigned long)dragOp);
+
 	[self updateDropIndicator: drag withDropTarget: item];
 		
 	return dragOp;
 }
 
-
+/* This method is not called for a ETWidgetLayout. */
 - (NSDragOperation) draggingEntered: (id <NSDraggingInfo>)drag
 {
 	/* item can be nil, -itemAtLocation: doesn't return the receiver itself */
 	id item = [self dropTargetForDrag: drag];
-	id draggedItem = [[ETPickboard localPickboard] firstObject];
 
 	// NOTE: We don't need to call -insertDropIndicator:forDropTarget: because 
 	// -draggedEntered: is immediately followed by -draggingUpdated:.
 
-	return 	[[item actionHandler] handleDragEnterItem: item withItem: draggedItem coordinator:	self];
+	return 	[[item actionHandler] handleDragEnterItem: item withItem: [self draggedItem] coordinator:	self];
 }
 
+/* This method is not called for a ETWidgetLayout. */
 - (void) draggingExited: (id <NSDraggingInfo>)drag
 {
 	ETLayoutItem *item = _previousDropTarget;
-	ETLayoutItem *draggedItem = [[ETPickboard localPickboard] firstObject];
 		
 	[[item actionHandler] handleDragExitItem: item
-	                                withItem: draggedItem 
+	                                withItem: [self draggedItem]
 	                             coordinator: [ETPickDropCoordinator sharedInstance]];
 
 	// NOTE: To handle the case where we exit a window without entering a new 
@@ -650,18 +667,17 @@ returned nil. */
 	[self updateDropIndicator: drag withDropTarget: [self dropTargetForDrag: drag]];
 }
 
+/* This method is not called for a ETWidgetLayout. */
 - (void) draggingEnded: (id <NSDraggingInfo>)drag
 {
 	/* item can be nil, -itemAtLocation: doesn't return the receiver itself */
 	id item = [self dropTargetForDrag: drag];
-	id draggedItem = [[ETPickboard localPickboard] firstObject];
 	
 	[[item actionHandler] handleDragEndAtItem: item 
-	                                 withItem: draggedItem 
+	                                 withItem: [self draggedItem]
 	                             wasCancelled: YES 
 	                              coordinator: [ETPickDropCoordinator sharedInstance]];
 
-	[[ETPickboard localPickboard] popObject];
 	[self cleanUpAfterDragOperation: drag withLastDropTarget: item];
 	/*[self removeDropIndicatorForDropTarget: item];*/
 	[self redisplayDropIndicatorIfNeeded: [self dropIndicatorForDropTarget: item]
@@ -670,16 +686,21 @@ returned nil. */
 	[self reset];
 }
 
+/* This method is not called for a ETWidgetLayout. */
 - (BOOL) prepareForDragOperation: (id <NSDraggingInfo>)drag
 {
 	return YES;
 }
 
+/* This method is not called for a ETWidgetLayout. For example, ETTableLayout
+processes the drop in
+-tableView:acceptDrop:row:dropOperation: rather than calling -performDragOperation. */
 - (BOOL) performDragOperation: (id <NSDraggingInfo>)dragInfo
 {
 	ETLayoutItem *dropTarget = [self dropTargetForDrag: dragInfo];
 	NSDictionary *metadata = [[ETPickboard localPickboard] firstObjectMetadata];
-	id droppedObject = [[ETPickboard localPickboard] popObjectAsPickCollection: YES];
+	/* The dropped object is popped in -draggingEnded: */
+	id droppedObject = [[ETPickboard localPickboard] firstObjectAsPickCollection: YES];
 
 	NSParameterAssert(droppedObject != nil);
 
@@ -692,20 +713,22 @@ returned nil. */
 	return dropSuccess;
 }
 
-/* This method is called in replacement of -draggingEnded: when a drop has 
-   occured. That's why it's not enough to clean insertion indicator in
-   -draggingEnded:. Both methods called -handleDragEnd:forItem: on the 
-   drop target item. */
+/* This method is not called for a ETWidgetLayout. 
+ 
+The dropped object is popped in -draggingEnded:.
+ 
+This method is called in replacement of -draggingEnded: when a drop has occured. 
+That's why it's not enough to clean insertion indicator in -draggingEnded:. 
+Both methods called -handleDragEnd:forItem: on the drop target item. */
 - (void) concludeDragOperation: (id <NSDraggingInfo>)dragInfo
 {
 	/* item can be nil, -itemAtLocation: doesn't return the receiver itself */
 	 // FIXME: We should cache the drop target rather than retrieving it like 
 	 // that because the dragged item is nil now in -dropTargetForDrag:.
 	ETLayoutItem *hoveredItem = [self dropTargetForDrag: dragInfo];
-	ETPickboard *droppedItem = [[ETPickboard localPickboard] firstObject];
-		
+
 	[[hoveredItem actionHandler] handleDragEndAtItem: hoveredItem 
-	                                        withItem: droppedItem 
+	                                        withItem: [self draggedItem]
 	                                    wasCancelled: NO 
 	                                     coordinator: self];
 	[self cleanUpAfterDragOperation: dragInfo withLastDropTarget: _previousDropTarget];//hoveredItem];
@@ -726,15 +749,38 @@ returned nil. */
 
 /* Drop Insertion */
 
-/** Returns whether the dragged items were removed immediately when they were picked.
-
-By default, returns YES. During in a drag session only, can return NO.
-
-See also -shouldRemoveItemsAtPickTime in ETTool subclasses that implements 
-it such as ETSelectTool. */
-- (BOOL) wereItemsRemovedAtPickTime
+- (ETLayoutItem *) insertionIndexItemForProposedIndex: (NSUInteger)index
+                                          inItemGroup: (ETLayoutItemGroup *)itemGroup
+                                     withDraggedItems: (NSArray *)draggedItems
 {
-	return _wereItemsRemovedAtPickTime;
+	NSSet *draggedItemSet = [NSSet setWithArray: draggedItems];
+	NSInteger candidateIndex = index;
+	ETLayoutItem *candidateIndexItem = nil;
+
+	/* If the proposed index is the last item index + 1, we return nil to 
+	   indicate the dropped item must be inserted at the end.
+	   If the final candidate index is before the first item, we return the 
+	   item group to indicate the dropped item must be inserted at the beginning. */
+	while (candidateIndex < [itemGroup count])
+	{
+		candidateIndexItem = [itemGroup itemAtIndex: candidateIndex];
+
+		if ([draggedItemSet containsObject: candidateIndexItem] == NO)
+		{
+			break;
+		}
+		candidateIndex++;
+	}
+
+	if (candidateIndex == 0)
+	{
+		candidateIndexItem = itemGroup;
+	}
+	else if (candidateIndex == [itemGroup count])
+	{
+		candidateIndexItem = nil;
+	}
+	return candidateIndexItem;
 }
 
 - (NSUInteger) prepareInsertionForObject: (id)droppedObject 
@@ -744,16 +790,24 @@ it such as ETSelectTool. */
 {
 	NSParameterAssert(droppedObject != nil);
 	NSParameterAssert(nil != itemGroup);
-	NSParameterAssert(index >= 0 && index <= [itemGroup count]);
-
+	
 	BOOL isShiftComputed = (_insertionShift != ETUndeterminedIndex);
+	NSUInteger insertionIndex = (isShiftComputed ? index - _insertionShift : index);
 
+	ETAssert(insertionIndex >= 0 && insertionIndex <= [itemGroup count]);
+	
+	/* (1) Return the computed insertion index if this method has been called 
+	   previously, or continue to compute it */
+	
 	if (isShiftComputed)
-	{
-		return index - _insertionShift;
-	}
+		return insertionIndex;
+	
+	/* (2) If the dragged items have been removed at pick time, the operation 
+	   is not a move or doesn't concern a UI item, there is nothing to do and adjust */
+	
+	BOOL wereItemsRemoved = [[metadata objectForKey: kETPickMetadataWereItemsRemoved] boolValue];
 
-	if ([self wereItemsRemovedAtPickTime] || [droppedObject isLayoutItem] == NO)
+	if (wereItemsRemoved || [droppedObject isLayoutItem] == NO)
 		return index;
 
 	NSDragOperation op = [self dragOperationMaskForDestinationItem: itemGroup];
@@ -761,15 +815,19 @@ it such as ETSelectTool. */
 	if ((op & NSDragOperationMove) == NO)
 		return index;
 
-	 /* Dragged items are still visible where the pick occurred */
+	/* (3) If the dragged items are still visible where the pick occurred, the 
+	   insertion index must be computed */
 
 	NSMapTable *draggedItems = [metadata objectForKey: kETPickMetadataDraggedItems];
 	ETAssert(draggedItems != nil);
-	ETLayoutItem *targetedItem = (index < [itemGroup count] ? [itemGroup itemAtIndex: index] : nil);
-
-	RETAIN(targetedItem);
-	NSUInteger oldIndex = index;
-	ETAssert(targetedItem != nil || index == [itemGroup count]);
+	/* Find the item at the insertion index but adjusted to compensate the 
+	   dragged item bremoval. Some dragged items can belong to the item group 
+	   argument, while some others can belong to other item groups (for instance, 
+	   if the drag was initiated in an outline view) */
+	ETLayoutItem *insertionIndexItem =
+		[self insertionIndexItemForProposedIndex: index
+	                                 inItemGroup: itemGroup
+	                            withDraggedItems: [draggedItems allValues]];
 
 	// NOTE: NSMapTable doesn't support the collection protocol yet
 	[[[draggedItems allValues] mappedCollection] removeFromParent];
@@ -780,20 +838,31 @@ it such as ETSelectTool. */
 	   receives invalid row indexes bound to the items just removed.
 	   So updating the layout ensures we call -reloadData on the widget view. */
 	[[ETLayoutExecutor sharedInstance] execute];
+	
+	/* Now that the dragged items have been removed, the insertion index item 
+	   won't move inside the item group argument and the correct insertion index 
+	   can be known. */
+	BOOL isAddition = (insertionIndexItem == nil);
+	BOOL isPreprend = (insertionIndexItem == itemGroup);
 
-	/* If the items were removed at pick time and some items among the dragged 
-	   items belonged to itemGroup, -removeFromParent might have change the 
-	   targeted item index. 
-	   If the insertion index was the same than the item group count, the count 
-	   might have change due -removeFromParent too. */
-	NSUInteger newIndex = (targetedItem != nil ? [itemGroup indexOfItem: targetedItem] : [itemGroup count]);
-	RELEASE(targetedItem);
+	if (isAddition)
+	{
+		insertionIndex = [itemGroup count];
+	}
+	else if (isPreprend)
+	{
+		insertionIndex = 0;
+	}
+	else
+	{
+		insertionIndex = [itemGroup indexOfItem: insertionIndexItem];
+	}
 
-	 /* If the targeted item is nil, because the item group was empty, newIndex is NSNotFound */
-	_insertionShift = (newIndex != NSNotFound ? oldIndex - newIndex : 0);
+	_insertionShift = index - insertionIndex;
 	ETAssert(_insertionShift >= 0);
+	ETAssert(insertionIndex >= 0);
 
-	return index - _insertionShift;
+	return insertionIndex;
 }
 
 - (id) insertedObjectForDroppedObject: (id)droppedObject 
@@ -868,18 +937,15 @@ argument exception is raised. */
 
 	ETDebugLog(@"DROP - Insert dropped object %@ at %d into %@", droppedObject, (int)index, itemGroup);
 
+	NSUInteger insertionIndex = [self prepareInsertionForObject: droppedObject
+	                                                   metadata: metadata 
+	                                                    atIndex: index 
+	                                                inItemGroup: itemGroup];
 	id insertedHint = aHint;
 	id insertedObject = [self insertedObjectForDroppedObject: droppedObject
 	                                                    hint: &insertedHint
 	                                             inItemGroup: itemGroup];
-												
 	ETAssert(insertedObject != nil);
-
-	NSUInteger insertionIndex = [self prepareInsertionForObject: insertedObject 
-	                                                   metadata: metadata 
-	                                                    atIndex: index 
-	                                                inItemGroup: itemGroup];
-
 	BOOL box = ([insertedObject isLayoutItem] 
 		&& [[itemGroup actionHandler] boxingForcedForDroppedItem: insertedObject 
 		                                                metadata: metadata]);

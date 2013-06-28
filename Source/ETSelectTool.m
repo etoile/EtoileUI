@@ -51,6 +51,7 @@ DEALLOC(DESTROY(_actionHandlerPrototype); DESTROY(_selectionAreaItem));
 	[newTool setAllowsEmptySelection: [self allowsEmptySelection]];
 	[newTool setAllowsMultipleSelection: [self allowsMultipleSelection]];
 	newTool->_removeItemsAtPickTime = _removeItemsAtPickTime;
+	newTool->_forcesItemPick = _forcesItemPick;
 	ASSIGN(newTool->_actionHandlerPrototype, _actionHandlerPrototype);
 	newTool->_selectionAreaItem = [_selectionAreaItem copyWithZone: aZone];
 
@@ -110,6 +111,20 @@ get picked. */
 - (void) setShouldRemoveItemsAtPickTime: (BOOL)flag
 {
 	_removeItemsAtPickTime = flag;
+}
+
+/** Returns whether the picked items should be pushed on the pickboard rather 
+than their represented objects. */
+- (BOOL) forcesItemPick
+{
+	return _forcesItemPick;
+}
+
+/** Sets whether the picked items should be pushed on the pickboard rather than 
+their represented objects. */
+- (void) setForcesItemPick: (BOOL)forceItemPick;
+{
+	_forcesItemPick = forceItemPick;
 }
 
 /** Returns the selection area item. By default, it returns an 

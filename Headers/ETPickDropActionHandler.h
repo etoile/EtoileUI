@@ -22,8 +22,14 @@
 
 /** @taskunit Pick and Drop Actions */
 
-- (BOOL) handlePickItem: (ETLayoutItem *)item coordinator: (id)aPickCoordinator;
-- (BOOL) handleDragItem: (ETLayoutItem *)item coordinator: (id)aPickCoordinator;
+- (BOOL) handlePickItem: (ETLayoutItem *)item
+          forceItemPick: (BOOL)forceItemPick
+   shouldRemoveItemsNow: (BOOL)shouldRemoveItems
+            coordinator: (id)aPickCoordinator;
+- (BOOL) handleDragItem: (ETLayoutItem *)item
+          forceItemPick: (BOOL)forceItemPick
+   shouldRemoveItemsNow: (BOOL)shouldRemoveItems
+            coordinator: (id)aPickCoordinator;
 - (ETLayoutItem *) handleValidateDropObject: (id)droppedObject
                                        hint: (id)aHint
                                     atPoint: (NSPoint)dropPoint

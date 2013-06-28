@@ -68,5 +68,6 @@ NSString * const kETPickMetadataWasUsedAsRepresentedObject = @"wasUsedAsRepresen
 NSString * const kETPickMetadataPickIndex = @"pickIndex";
 NSString * const kETPickMetadataDraggedItems = @"draggedItems";
 NSString * const kETPickMetadataCurrentDraggedItem = @"currentDraggedItem";
+NSString * const  kETPickMetadataWereItemsRemoved = @"wereRemoved";
 
 NSString * const kETPickMetadataProperty = @"pickMetadata";

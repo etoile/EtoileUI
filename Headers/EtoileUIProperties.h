@@ -88,6 +88,11 @@ extern NSString * const kETPickMetadataCurrentDraggedItem; /** ETLayoutItem meta
 
 When enumerating a pick collection, the dragged item that corresponds to the 
 dropped object in -[ETActionHandler handleDropObject:hint:metadata:atIndex:coordinator]. */
+extern NSString * const  kETPickMetadataWereItemsRemoved; /** Boolean Number metadata property (required).
+														   
+Indicates whether the dragged items were removed immediately when they were picked.
+														   
+See also -shouldRemoveItemsAtPickTime in ETTool subclasses that implements it such as ETSelectTool. */
 
 /* Private Pickboard Item Properties */
 

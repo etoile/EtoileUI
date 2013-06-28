@@ -38,7 +38,6 @@
 	ETLayoutItem *_previousDropTarget;
 	ETLayoutItem *_previousHoveredItem;
 	NSInteger _currentDropIndex;
-	BOOL _wereItemsRemovedAtPickTime;
 	BOOL _pickDropEnabledForAllItems;
 	NSUInteger _insertionShift;
 }
@@ -47,9 +46,9 @@
 + (id) sharedInstanceWithEvent: (ETEvent *)anEvent;
 + (unsigned int) forceEnablePickAndDropModifier;
 
-- (void) beginDragItem: (ETLayoutItem *)item image: (NSImage *)customDragImage 
-	inLayout: (ETLayout *)aLayout;
-
+- (void) beginDragItem: (ETLayoutItem *)item
+                 image: (NSImage *)customDragImage
+              inLayout: (ETLayout *)aLayout;
 - (BOOL) isPasting;
 - (BOOL) isDragging;
 - (BOOL) isPickDropForced;
@@ -68,7 +67,6 @@
 
 /* Drop Insertion */
 
-- (BOOL) wereItemsRemovedAtPickTime;
 - (id) hintFromObject: (id *)anObject;
 - (void) insertDroppedObject: (id)droppedObject 
                         hint: (id)aHint

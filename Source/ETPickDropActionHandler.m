@@ -39,7 +39,10 @@ session.
 
 This method can be called by the layout to synthetize a new drag (e.g. this 
 method is called by ETTableLayout when rows are dragged). */
-- (BOOL) handleDragItem: (ETLayoutItem *)item coordinator: (id)aPickCoordinator
+- (BOOL) handleDragItem: (ETLayoutItem *)item
+          forceItemPick: (BOOL)forceItemPick
+   shouldRemoveItemsNow: (BOOL)shouldRemoveItems
+            coordinator: (id)aPickCoordinator
 {
 	/* Find right now the layout which presents the item, its parent item might 
 	   become nil with -handlePickItem:coordinator:. */
@@ -50,7 +53,10 @@ method is called by ETTableLayout when rows are dragged). */
 		layout = [[item parentItem] layout];
 	}
 
-	BOOL pickDisallowed = ([self handlePickItem: item coordinator: aPickCoordinator] == NO);
+	BOOL pickDisallowed = ([self handlePickItem: item
+	                              forceItemPick: forceItemPick
+	                       shouldRemoveItemsNow: shouldRemoveItems
+	                                coordinator: aPickCoordinator] == NO);
 
 	if (pickDisallowed)
 		return NO;
@@ -65,11 +71,43 @@ method is called by ETTableLayout when rows are dragged). */
 	//NSData *data = [NSKeyedArchiver archivedDataWithRootObject: item];
 	//[pboard setData: data forType: ETLayoutItemPboardType];
 
-	[aPickCoordinator beginDragItem: item image: nil inLayout: layout];
+	[aPickCoordinator beginDragItem: item image: nil  inLayout: layout];
 	return YES;
 }
 
-- (BOOL) handlePickItem: (ETLayoutItem *)item coordinator: (id)aPickCoordinator
+/* If the dragged item is part of a selection which includes more than one item, 
+we put a pick collection on pickboard. But if the dragged item isn't part of the 
+selection, we don't put the selected items on the pickboard. */
+- (NSArray *) pickedItemsForItem: (ETLayoutItem *)item
+{
+	NSArray *selectedItems = [[item parentItem] selectedItemsInLayout];
+	BOOL isPickingSelection = ([selectedItems count] > 1 && [selectedItems containsObject: item]);
+	return (isPickingSelection ? selectedItems : A(item));
+}
+
+- (BOOL) removePickedItems: (NSArray *)pickedItems
+    accordingToPickingMask: (NSUInteger)pickingMask
+           shouldRemoveNow: (BOOL)shouldRemoveNow
+{
+	BOOL isMove = ((pickingMask & ETCopyPickingMask) == NO);
+	/* We always remove the items immediately when the pick is a cut */
+	BOOL isCut = (pickingMask & ETCutPickingMask);
+
+	if ((isMove && shouldRemoveNow) || isCut)
+	{
+		[[pickedItems mappedCollection] removeFromParent];
+		/* See similar call comment in 
+			-[ETPickDropCoordinator prepareInsertionForObject:metadata:atIndex:inItemGroup:] */
+		[[ETLayoutExecutor sharedInstance] execute];
+		return YES;
+	}
+	return NO;
+}
+
+- (BOOL) handlePickItem: (ETLayoutItem *)item
+          forceItemPick: (BOOL)forceItemPick
+   shouldRemoveItemsNow: (BOOL)shouldRemoveItems
+            coordinator: (id)aPickCoordinator
 {
 	NSParameterAssert(nil != item);
 
@@ -78,96 +116,64 @@ method is called by ETTableLayout when rows are dragged). */
 		[aPickCoordinator reset];
 		return NO;
 	}
-
-	NSArray *selectedItems = [[item parentItem] selectedItemsInLayout];
+	
 	NSUInteger pickingMask = [[aPickCoordinator pickEvent] pickingMask];
-	// TODO: pickboard shouldn't be harcoded but rather customizable
-	ETPickboard *pboard = [ETPickboard localPickboard];
-	id pick = nil;
-	BOOL wasUsedAsRepObject = NO;
+	NSArray *pickedItems = [self pickedItemsForItem: item];
+	BOOL wasUsedAsRepObject = (forceItemPick == NO);
+	BOOL shouldRemoveNow = shouldRemoveItems;
+	NSArray *proposedPickedObjects = [self pickedObjectsForItems: pickedItems
+								                          forceItemPick: forceItemPick
+	                                              shouldRemoveItemsNow: &shouldRemoveNow];
+	NSMutableArray *pickedObjects =
+		[NSMutableArray arrayWithCapacity: [proposedPickedObjects count]];
+	NSMapTable *draggedItems = [NSMapTable mapTableWithStrongToStrongObjects];
 
-	/* If the dragged item is part of a selection which includes more than
-	   one item, we put a pick collection on pickboard. But if the dragged
-	   item isn't part of the selection, we don't put the selected items on
-	   the pickboard. */
-	if ([selectedItems count] > 1 && [selectedItems containsObject: item])
+	ETAssert([proposedPickedObjects count] == [pickedItems count]);
+
+	for (int i = 0; i < [proposedPickedObjects count]; i++)
 	{
-		// TODO: Should use -pickedObjectForItem:
-		NSArray *pickedItems = nil;
+		ETLayoutItem *draggedItem = [pickedItems objectAtIndex: i];
+		id pickedObject = [proposedPickedObjects objectAtIndex: i];
+		// TODO: Support hint among metadata
+		//id hint = [self pickedHintForItem: item];
+		
+		if ([pickedObject isEqual: [NSNull null]])
+			continue;
 		
 		if (pickingMask & ETCopyPickingMask)
 		{
-			pickedItems = [selectedItems valueForKey: @"deepCopy"];
-			[pickedItems makeObjectsPerformSelector: @selector(release)];
+			pickedObject  = AUTORELEASE([pickedObject deepCopy]);
 		}
-		else /* ETPickPickingMask or ETCutPickingMask */
-		{
-			pickedItems = selectedItems;
-		}
-		pick = [ETPickCollection pickCollectionWithCollection: pickedItems];
+
+		[pickedObjects addObject: pickedObject];
+		[draggedItems setObject: draggedItem forKey: pickedObject];
+	}
+
+	// TODO: pickboard shouldn't be harcoded but rather customizable
+	ETPickboard *pboard = [ETPickboard localPickboard];
+	id pushedObject = nil;
+	
+	if ([pickedObjects count] == 1)
+	{
+		pushedObject = [pickedObjects lastObject];
 	}
 	else
 	{
-		id pickedObject = [self pickedObjectForItem: item];
-		//id hint = [self pickedHintForItem: item];
-
-		if ([pickedObject isEqual: [item representedObject]])
-		{
-			wasUsedAsRepObject = YES;
-		}
-
-		if (pickingMask & ETCopyPickingMask)
-		{
-			pick = AUTORELEASE([pickedObject deepCopy]);
-		}
-		else /* ETPickPickingMask or ETCutPickingMask */
-		{
-			pick = pickedObject;
-		}
+		pushedObject = [ETPickCollection pickCollectionWithCollection: pickedObjects];
 	}
 
+	/* DraggedItems retains both the picked objects and items even if they get removed now */
+	BOOL wereItemsRemoved = [self removePickedItems: [draggedItems allValues]
+	                         accordingToPickingMask: pickingMask
+	                                shouldRemoveNow: shouldRemoveNow];
 	NSUInteger pickIndex = [[item parentItem] indexOfItem: item];
-	NSMapTable *draggedItems = [NSMapTable mapTableWithStrongToStrongObjects];
+	NSDictionary *metadata =
+		D([NSNumber numberWithUnsignedInteger: pickIndex], kETPickMetadataPickIndex,
+		  [NSNumber numberWithBool: wasUsedAsRepObject], kETPickMetadataWasUsedAsRepresentedObject,
+		  draggedItems, kETPickMetadataDraggedItems,
+		  [NSNumber numberWithBool: wereItemsRemoved], kETPickMetadataWereItemsRemoved);
 
-	[draggedItems setObject: item
-	                 forKey: pick];
-
-	[pboard pushObject: pick 
-	          metadata: D([NSNumber numberWithUnsignedInteger: pickIndex], kETPickMetadataPickIndex,
-			              [NSNumber numberWithBool: wasUsedAsRepObject], kETPickMetadataWasUsedAsRepresentedObject,
-			              draggedItems, kETPickMetadataDraggedItems)];
-
-	BOOL isMove = ((pickingMask & ETCopyPickingMask) == NO);
-
-	if (isMove)
-	{
-		BOOL shouldRemoveItems = YES;
-		BOOL isCut = (pickingMask & ETCutPickingMask);
-
-		/* We always remove the items immediately when the pick is a cut */
-		if (NO == isCut && [[ETTool activeTool] respondsToSelector: @selector(shouldRemoveItemsAtPickTime)])
-		{
-			shouldRemoveItems = [[ETTool activeTool] shouldRemoveItemsAtPickTime];
-		}
-
-		if (shouldRemoveItems)
-		{
-			if ([pick isKindOfClass: [ETPickCollection class]])
-			{
-				// FIXME: Doesn't work on Mac OS X 
-				// [[[pick contentArray] map] removeFromParent];
-				[[pick contentArray] makeObjectsPerformSelector: @selector(removeFromParent)];
-			}
-			else
-			{
-				[pick removeFromParent];
-			}
-			/* See similar call comment in 
-			   -[ETPickDropCoordinator prepareInsertionForObject:metadata:atIndex:inItemGroup:] */
-			[[ETLayoutExecutor sharedInstance] execute];
-		}
-	}
-
+	[pboard pushObject: pushedObject metadata: metadata];
 	return YES;
 }
 
@@ -394,7 +400,21 @@ See also -[ETLayoutItemGroup insertObject:atIndex:hint:boxingForced:]. */
 
 /* Drag Source Feedback */
 
-- (void) handleDragItem: (ETLayoutItem *)draggedItem 
+/** <override-dummy />Overrides to provide source UI feedback in reaction to the 
+beginning of a drag.
+ 
+You can override -handleDragItem:endAtItem:wasCancelled:coordinator: to clean 
+any state related to the UI feedback you were providing during the drag.
+ 
+This method does nothing and must not be overriden to implement drag and drop 
+related operations such as inserting or removing objects in the pickboard, 
+model or UI.<br />
+You must use -handlePickItem:forceItemPick:shouldRemoveItemsNow:coordinator: 
+and related methods instead.
+ 
+This method does iniate the drag either, initiating the drag is the role of 
+-handleDragItem:forceItemPick:shouldRemoveItemsNow:coordinator:. */
+- (void) handleDragItem: (ETLayoutItem *)draggedItem
            beginAtPoint: (NSPoint)aPoint 
             coordinator: (id)aPickCoordinator
 {
@@ -417,17 +437,17 @@ See also -[ETLayoutItemGroup insertObject:atIndex:hint:boxingForced:]. */
 
 	if (cancelled)
 	{
-		//id draggedObject = [[ETPickboard localPickboard] popObject];
-		
 		ETDebugLog(@"Cancelled drag of %@ receives in dragging source %@",
-			[[ETPickboard localPickboard] popObject], self);
+			[[ETPickboard localPickboard] firstObject], self);
 	}
 }
 
 /** Drag Destination Feedback */
 
 /** Allows to provide item with extra drop target behavior (e.g. custom visual 
-feedback), when a dragged item moves over drop target area. */
+feedback), when a dragged item moves over drop target area.
+ 
+This method is not called for a destination inside a ETWidgetLayout. */
 - (NSDragOperation) handleDragMoveOverItem: (ETLayoutItem *)item 
                                   withItem: (ETLayoutItem *)draggedItem
                                coordinator: (id)aPickCoordinator
@@ -441,7 +461,9 @@ feedback), when a dragged item moves over drop target area. */
 }
 
 /** Allows to provide item with extra drop target behavior (e.g. custom visual 
-feedback), when a dragged item enters the drop target area. */
+feedback), when a dragged item enters the drop target area.
+
+This method is not called for a destination inside a ETWidgetLayout. */
 - (NSDragOperation) handleDragEnterItem: (ETLayoutItem *)item
                                withItem: (ETLayoutItem *)draggedItem
                             coordinator: (id)aPickCoordinator
@@ -455,7 +477,9 @@ feedback), when a dragged item enters the drop target area. */
 }
 
 /** Allows to provide item with extra drop target behavior (e.g. custom visual 
-feedback), when a dragged item exits the drop target area. */
+feedback), when a dragged item exits the drop target area. 
+ 
+This method is not called for a destination inside a ETWidgetLayout. */
 - (void) handleDragExitItem: (ETLayoutItem *)item
                    withItem: (ETLayoutItem *)draggedItem
                 coordinator: (id)aPickCoordinator
@@ -465,7 +489,9 @@ feedback), when a dragged item exits the drop target area. */
 }
 
 /** Allows to provide item with extra drop target behavior (e.g. custom visual 
-feedback), when a drag results in a drop or is cancelled on the drop target area. */
+feedback), when a drag results in a drop or is cancelled on the drop target area.
+ 
+This method is not called for a destination inside a ETWidgetLayout. */
 - (void) handleDragEndAtItem: (ETLayoutItem *)item
                     withItem: (ETLayoutItem *)draggedItem
                 wasCancelled: (BOOL)cancelled
@@ -511,14 +537,27 @@ and the picked object might be unclear to the user.
 
 By default, returns the represented object, or the item when no represented 
 object is bound to it. */
-- (id) pickedObjectForItem: (ETLayoutItem *)item
+- (NSArray *) pickedObjectsForItems: (NSArray *)items
+               shouldRemoveItemsNow: (BOOL *)shouldRemoveItems
 {
-	id repObject = [item representedObject];
+	NSMutableArray *pickedObjects = [NSMutableArray array];
 
-	if (repObject == nil)
-		return item;
+	for (ETLayoutItem *item in items)
+	{
+		id repObject = [item representedObject];
+		[pickedObjects addObject: (repObject == nil ? [NSNull null] : repObject)];
+	}
+	return pickedObjects;
+}
 
-	return repObject;
+- (NSArray *) pickedObjectsForItems: (NSArray *)items
+                      forceItemPick: (BOOL)forceItemPick
+               shouldRemoveItemsNow: (BOOL *)shouldRemoveItems
+{
+	if (forceItemPick)
+		return items;
+
+	return [self pickedObjectsForItems: items shouldRemoveItemsNow: shouldRemoveItems];
 }
 
 - (id) pickedHintForItem: (ETLayoutItem *)item

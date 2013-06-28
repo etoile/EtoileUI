@@ -17,6 +17,7 @@
 #import "ETLayoutItemGroup.h"
 #import "ETPickboard.h"
 #import "ETPickDropCoordinator.h"
+#import "ETSelectTool.h"
 #import "ETCompatibility.h"
 
 @interface NSOutlineView (EtoileUI)
@@ -357,8 +358,12 @@
 	NSAssert3([items containsObject: draggedItem], @"Dragged items %@ must "
 		@"contain clicked item %@ in %@", items, draggedItem, self);
 
+	ETTool *pickTool = ([self attachedTool] != nil ? [self attachedTool] : [ETTool activeTool]);
+	ETPickDropCoordinator *coordinator = [ETPickDropCoordinator sharedInstanceWithEvent: dragEvent];
 	return [[draggedItem actionHandler] handleDragItem: draggedItem
-		coordinator: [ETPickDropCoordinator sharedInstanceWithEvent: dragEvent]];
+	                                     forceItemPick: [[pickTool ifResponds] forcesItemPick]
+	                              shouldRemoveItemsNow: [[pickTool ifResponds] shouldRemoveItemsAtPickTime]
+	                                       coordinator: coordinator];
 }
 
 - (void) outlineView: (NSOutlineView *)outlineView sortDescriptorsDidChange: (NSArray *)oldDescriptors

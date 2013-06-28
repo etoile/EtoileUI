@@ -20,6 +20,7 @@
 #import "ETPickboard.h"
 #import "ETPickDropActionHandler.h"
 #import "ETPickDropCoordinator.h"
+#import "ETSelectTool.h"
 #import "NSCell+EtoileUI.h"
 #import "ETCompatibility.h"
 
@@ -799,8 +800,12 @@ Note: For now, private method. */
 	                                             event: backendEvent
 	                                            offset: &point]);
 
+	ETTool *pickTool = ([self attachedTool] != nil ? [self attachedTool] : [ETTool activeTool]);
+	ETPickDropCoordinator *coordinator = [ETPickDropCoordinator sharedInstanceWithEvent: dragEvent];
 	BOOL result = [[draggedItem actionHandler] handleDragItem: draggedItem
-		coordinator: [ETPickDropCoordinator sharedInstanceWithEvent: dragEvent]];
+	                                     forceItemPick: [[pickTool ifResponds] forcesItemPick]
+	                              shouldRemoveItemsNow: [[pickTool ifResponds] shouldRemoveItemsAtPickTime]
+	                                       coordinator: coordinator];
 
 	/* If -shouldRemoveItemsAtPickTime is YES, dragged items are removed now 
 	   but still visible in the table view.

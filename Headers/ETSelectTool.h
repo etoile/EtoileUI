@@ -64,6 +64,7 @@ to return NO.
 	BOOL _multipleSelectionAllowed;
 	BOOL _emptySelectionAllowed;
 	BOOL _removeItemsAtPickTime;
+	BOOL _forcesItemPick;
 	BOOL _newSelectionAreaUnderway; // NOTE: May be move up to ETArrowTool
 	NSPoint _localStartDragLoc; /** Expressed in hit/background item base with non-flipped coordinates */
 	NSPoint _localLastDragLoc; /** Expressed in hit/background item base with non-flipped coordinates */
@@ -91,6 +92,8 @@ to return NO.
 - (void) setAllowsEmptySelection: (BOOL)empty;
 - (BOOL) shouldRemoveItemsAtPickTime;
 - (void) setShouldRemoveItemsAtPickTime: (BOOL)flag;
+- (BOOL) forcesItemPick;
+- (void) setForcesItemPick: (BOOL)forceItemPick;
 //- (ETMoveAction) shouldProduceMoveAction;
 //- (void) setShouldProduceMoveAction: (ETMoveAction)actionType;
 

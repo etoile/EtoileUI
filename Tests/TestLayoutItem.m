@@ -214,6 +214,14 @@ static ETLayoutItemFactory *itemFactory = nil;
 	RELEASE(item1);
 }
 
+- (void) testIndexOfMissingItem
+{
+	ETLayoutItem *item = [itemFactory item];
+	ETLayoutItemGroup *itemGroup = [itemFactory itemGroup];
+
+	UKTrue([itemGroup indexOfItem: item] == NSNotFound);
+}
+
 - (void) testIndexPathForItem
 {
 	id item = [itemFactory itemGroup];

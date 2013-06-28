@@ -39,7 +39,7 @@ be used to click, double-click, pick and drop layout items.
 
 ETArrowTool produce the actions listed in ETArrowToolActionConsumer protocol.<br />
 When -handleBeginTouch:atPoint:onItem: returns YES in an action handler, 
--handleClickItem:atPoint:, -handleDoubleClickItem: and -handleDragItem: are not 
+-handleClickItem:atPoint:, -handleDoubleClickItem: and -handleDragItem: are not
 emitted by the tool.
 
 You should generally use the more high-level methods in the action handler 

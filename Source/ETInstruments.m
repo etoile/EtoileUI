@@ -20,6 +20,7 @@
 #import "ETLayout.h"
 #import "ETPickDropActionHandler.h"
 #import "ETPickDropCoordinator.h"
+#import "ETSelectTool.h" /* For Pick and Drop Integration */
 #import "ETCompatibility.h"
 
 #define SELECTION_BY_RANGE_KEY_MASK NSShiftKeyMask
@@ -104,7 +105,8 @@ pointer. */
 
 /** Delivers a drag request to the item currently hovered by the pointer.
 
-The drag request can be handled with -[ETActionHandler handleDragItem:coordinator:]. */
+The drag request can be handled with 
+ -[ETActionHandler handleDragItem:forceItemPick:shouldRemoveItemsNow:coordinator:]. */
 - (void) mouseDragged: (ETEvent *)anEvent
 {
 	/* Don't try to activate an item or remove the field editor. We does that
@@ -130,8 +132,11 @@ The drag request can be handled with -[ETActionHandler handleDragItem:coordinato
 	{
 		// TODO: Each pointer/tool (in multi-pointer perspective) should 
 		// instantiate a new distinct coordinator.
-		[[item actionHandler] handleDragItem: item 
-			coordinator: [ETPickDropCoordinator sharedInstanceWithEvent: anEvent]];
+		ETTool *pickTool = [ETTool activeTool];
+		[[item actionHandler] handleDragItem: item
+							   forceItemPick: [[pickTool ifResponds] forcesItemPick]
+		                shouldRemoveItemsNow: [[pickTool ifResponds] shouldRemoveItemsAtPickTime]
+		                         coordinator: [ETPickDropCoordinator sharedInstanceWithEvent: anEvent]];
 		[anEvent markAsDelivered];
 	}
 }
@@ -340,7 +345,10 @@ This method can be overriden to alter the broadcast. */
 
 - (void) beginDragItem: (ETLayoutItem *)item withEvent: (ETEvent *)anEvent
 {
+	ETTool *pickTool = [ETTool activeTool];
 	[[item actionHandler] handleDragItem: item
+	                       forceItemPick: [[pickTool ifResponds] forcesItemPick]
+	                shouldRemoveItemsNow: [[pickTool ifResponds] shouldRemoveItemsAtPickTime]
 	                         coordinator: [ETPickDropCoordinator sharedInstanceWithEvent: anEvent]];
 
 	// FIXME: Would be better to use... but we need the coordinator calls back 
