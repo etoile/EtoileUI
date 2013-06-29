@@ -1119,7 +1119,11 @@ static ETPopUpButtonTarget *sharedInstance = nil;
 {
 	ETLayoutItem *popUpItem = [sender owningItem];
 	ETAssert(popUpItem != nil);
+	// TODO: Move this logic to -[ETApplication sendAction:to:from:]
+	[popUpItem subjectDidBeginEditingForProperty: [(id)popUpItem editedProperty]
+	                             fieldEditorItem: nil];
 	[popUpItem didChangeViewValue: [[sender selectedItem] representedObject]];
+	[popUpItem subjectDidEndEditingForProperty: [(id)popUpItem editedProperty]];
 }
 
 @end
