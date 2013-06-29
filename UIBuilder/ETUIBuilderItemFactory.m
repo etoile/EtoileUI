@@ -460,13 +460,10 @@
                                   ofObject: (id)anObject
 {
 	ETLayoutItem *typeField = [self textField];
-	ETObjectValueFormatter *formatter = AUTORELEASE([ETObjectValueFormatter new]);
-	
-	[formatter setDelegate: aController];
 
 	[typeField setValueTransformer: [aController typeValueTransformer]
 	                   forProperty: kETValueProperty];
-	[[typeField widget] setFormatter: formatter];
+	[[typeField widget] setFormatter: [aController typeValueFormatter]];
 	// FIXME: Won't work with ETTool because the aspect name is a key path
 	[typeField setRepresentedObject:
 	 	[aController typeObjectForAspectName: anAspectName ofObject: anObject]];
@@ -586,10 +583,18 @@
 	   However the collection editor has a detail view which uses a form layout. */
 	ETModelDescriptionRenderer *renderer = [self rendererForAspectName: anAspectName];
 	ETEntityDescription *rootEntity = [[renderer repository] descriptionForName: @"Object"];
+	ETEntityDescription *imageEntity = [[renderer repository] descriptionForName: @"NSImage"];
 
 	[renderer setValueTransformer: [aController relationshipValueTransformer]
 	                      forType: rootEntity];
-	[[renderer formatterForType: rootEntity] setDelegate: aController];
+	[renderer setFormatter: [aController relationshipValueFormatter]
+	               forType: rootEntity];
+
+	[renderer setValueTransformer: [aController imageValueTransformer]
+	                      forType: imageEntity];
+	[renderer setFormatter: [aController imageValueFormatter]
+	               forType: imageEntity];
+
 	[renderer setRenderedPropertyNames: [self presentedPropertyNamesForAspectName: anAspectName
 	                                                                     ofObject: anObject]];
 	[renderer setEntityItemFrame: ETMakeRect(NSZeroPoint, [self defaultBasicInspectorContentSize])];

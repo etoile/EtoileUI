@@ -31,6 +31,7 @@
 	ETLayoutItem *_aspectPopUpItem;
 	ETAspectRepository *_aspectRepository;
 	ETItemValueTransformer *_relationshipValueTransformer;
+	ETItemValueTransformer *_imageValueTransformer;
 	ETItemValueTransformer *_typeValueTransformer;
 	BOOL _isChangingSelection;
 	BOOL _isUIBuilderController;
@@ -82,7 +83,11 @@ For the editor, this item is enclosed inside the content area item. */
 /** Returns a value transformer that searches items inside -documentContentItem 
 and aspects inside -aspectRepository. */
 @property (nonatomic, readonly) ETItemValueTransformer *relationshipValueTransformer;
+@property (nonatomic, readonly) ETObjectValueFormatter *relationshipValueFormatter;
+@property (nonatomic, readonly) ETItemValueTransformer *imageValueTransformer;
+@property (nonatomic, readonly) ETObjectValueFormatter *imageValueFormatter;
 @property (nonatomic, readonly) ETItemValueTransformer *typeValueTransformer;
+@property (nonatomic, readonly) ETObjectValueFormatter *typeValueFormatter;
 
 - (id) typeObjectForAspectName: (NSString *)aspectName ofObject: (id)anObject;
 

@@ -31,6 +31,7 @@
 	aspectInspectorItem = _aspectInspectorItem, viewPopUpItem = _viewPopUpItem,
 	aspectPopUpItem = _aspectPopUpItem, aspectRepository = _aspectRepository, 
 	relationshipValueTransformer = _relationshipValueTransformer,
+	imageValueTransformer = _imageValueTransformer,
 	typeValueTransformer = _typeValueTransformer;
 
 - (id) initWithNibName: (NSString *)aNibName bundle: (NSBundle *)aBundle
@@ -40,6 +41,7 @@
 		return nil;
 
 	_relationshipValueTransformer = [self newRelationshipValueTransformer];
+	_imageValueTransformer = [self newImageValueTransformer];
 	_typeValueTransformer = [self newTypeValueTransformer];
 	return self;
 }
@@ -54,6 +56,7 @@
 	DESTROY(_aspectPopUpItem);
 	DESTROY(_aspectRepository);
 	DESTROY(_relationshipValueTransformer);
+	DESTROY(_imageValueTransformer);
 	DESTROY(_typeValueTransformer);
 	[super dealloc];
 }
@@ -417,9 +420,21 @@
 
 		ETAspectCategory *category = [[controller aspectRepository] aspectCategoryNamed: key];
 		id aspect = [category aspectForKey: value];
-		
-		return (aspect != nil ? aspect : AUTORELEASE([NSClassFromString(value) new]));
 
+		/* For instantiating an aspect such as a ETController, 
+		   that points to other aspects that can be shared instances (for 
+		   example the cover style of [ETItemTemplate item]) */
+		// FIXME: Won't work for other item factories (e.g. ETUIBuilderItemFactory)
+		// Introduce +beginRootObject that is replicated as -beginRootObject on
+		// all existing factories. An approach such as -[ETController initWithItemFactory:]
+		// doesn't sound really solid.
+		[[ETLayoutItemFactory factory] beginRootObject];
+		
+		aspect = (aspect != nil ? aspect : AUTORELEASE([NSClassFromString(value) new]));
+		
+		[[ETLayoutItemFactory factory] endRootObject];
+		
+		return aspect;
 	}];
 
 	return transformer;
@@ -469,6 +484,62 @@
 	return transformer;
 }
 
+- (ETItemValueTransformer *) newImageValueTransformer
+{
+	ETItemValueTransformer *transformer = [ETItemValueTransformer new];
+
+	[transformer setTransformBlock: ^id (id value, NSString *key, ETLayoutItem *item)
+	{
+		NSParameterAssert([value isKindOfClass: [NSImage class]]);
+		return [value name];
+	}];
+
+	[transformer setReverseTransformBlock: ^id (id value, NSString *key, ETLayoutItem *item)
+	{
+		if ([value isEqual: @""] || [value isEqual: @"nil"] || [value isEqual: @"Nil"])
+			return nil;
+
+		NSImage *image = [NSImage imageNamed: value];
+		
+		if (image == nil)
+		{
+			image = AUTORELEASE([[NSImage alloc] initWithContentsOfFile: value]);
+		}
+		return image;
+	}];
+
+	return transformer;
+}
+
+- (ETObjectValueFormatter *) typeValueFormatter
+{
+	ETObjectValueFormatter *formatter = AUTORELEASE([ETObjectValueFormatter new]);
+	[formatter setName: @"type"];
+	[formatter setDelegate: self];
+	return formatter;
+}
+
+- (ETObjectValueFormatter *) relationshipValueFormatter
+{
+	ETObjectValueFormatter *formatter = AUTORELEASE([ETObjectValueFormatter new]);
+	[formatter setName: @"relationship"];
+	[formatter setDelegate: self];
+	return formatter;
+}
+
+- (ETObjectValueFormatter *) imageValueFormatter
+{
+	ETObjectValueFormatter *formatter = AUTORELEASE([ETObjectValueFormatter new]);
+	[formatter setName: @"image"];
+	[formatter setDelegate: self];
+	return formatter;
+}
+
+- (ETItemValueTransformer *) valueTransformerForFormatter: (ETObjectValueFormatter *)aFormatter
+{
+	return [self valueForKey: [[aFormatter name] stringByAppendingString: @"ValueTransformer"]];
+}
+
 /* There is no need to implement -formatter:stringForObjectValue: because
    -[ETLayoutItem valueForProperty:] does the transformation through
    -[ETLayoutItem valueTransformerForProperty:]. */
@@ -480,9 +551,10 @@
 	if ([aValue isEqual: @""] || isEditing == NO)
 		return aValue;
 
-	id result = [[self relationshipValueTransformer] reverseTransformedValue: aValue
-	                                                                  forKey: [self editedProperty]
-	                                                                  ofItem: [self editedItem]];
+	ETItemValueTransformer *valueTransformer = [self valueTransformerForFormatter: aFormatter];
+	id result = [valueTransformer reverseTransformedValue: aValue
+	                                               forKey: [self editedProperty]
+	                                               ofItem: [self editedItem]];
 	return (result != nil ? aValue : nil);
 }
 
@@ -506,6 +578,10 @@
 	}
 
 	ETLayoutItem *editedObject = ([[anItem subject] conformsToProtocol: @protocol(ETPropertyViewpoint)] ? [[anItem subject] representedObject] : [anItem representedObject]);
+	
+	/* For properties such as autoresizingMask or contentAspect that doesn't 
+	   mark the item as needing a redisplay on a change. */
+	[[editedObject ifResponds] setNeedsDisplay: YES];
 
 	if ([editedObject isPersistent] == NO)
 		return;
