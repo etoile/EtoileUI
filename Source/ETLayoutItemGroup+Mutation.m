@@ -70,6 +70,13 @@ the UI won't reflect the latest receiver content. */
 
 	[self setHasNewContent: YES];
 	[self setNeedsLayoutUpdate];
+	[self didUpdateContent];
+}
+
+- (void) didUpdateContent
+{
+	[[NSNotificationCenter defaultCenter]
+		postNotificationName: ETCollectionDidUpdateNotification object: self];
 }
 
 /* Would be cleaner if this mutation backend was a singleton object acting as a 
