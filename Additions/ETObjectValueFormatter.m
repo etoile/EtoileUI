@@ -13,7 +13,13 @@
 
 @implementation ETObjectValueFormatter
 
-@synthesize delegate = _delegate;
+@synthesize delegate = _delegate, name = _name;
+
+- (void) dealloc
+{
+	DESTROY(_name);
+	[super dealloc];
+}
 
 - (NSString *) stringForObjectValue: (id)aValue
 {

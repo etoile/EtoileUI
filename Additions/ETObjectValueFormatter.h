@@ -37,9 +37,11 @@ widget proxy). */
 @interface ETObjectValueFormatter : NSFormatter
 {
 	@private
+	NSString *_name;
 	id _delegate;
 }
 
+@property (retain, nonatomic) NSString *name;
 @property (assign, nonatomic) id <ETObjectValueFormatterDelegate> delegate;
 
 @end
