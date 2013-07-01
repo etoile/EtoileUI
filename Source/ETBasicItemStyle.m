@@ -527,6 +527,13 @@ See also -labelAttributesForDrawingItem:. */
 			rect = NSMakeRect(labelBaseX, labelBaseY, labelSizeWidth, labelSizeHeight);
 			break;
 		}
+		case ETLabelPositionInsideRight:
+		case ETLabelPositionOutsideRight:
+		case ETLabelPositionContentAspect:
+		{
+			ETLog(@"Label position cases not yet implemented for -rectForLabel:inFrame:ofItem");
+			break;
+		}
 		case ETLabelPositionNone:
 			return NSZeroRect;
 		default:
