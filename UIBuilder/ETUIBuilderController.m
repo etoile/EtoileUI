@@ -582,6 +582,10 @@
 	/* For properties such as autoresizingMask or contentAspect that doesn't 
 	   mark the item as needing a redisplay on a change. */
 	[[editedObject ifResponds] setNeedsDisplay: YES];
+	/* For aspect properties such -[ETBasicItemStyle labelPosition], we need to 
+	   mark the selected objects (selected items in -documentContentItem) as
+	   needing a redisplay on a change. */
+	[[[self selectedObjects] mappedCollection] setNeedsDisplay: YES];
 
 	if ([editedObject isPersistent] == NO)
 		return;
