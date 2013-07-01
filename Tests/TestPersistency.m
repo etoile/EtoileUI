@@ -23,6 +23,7 @@
 #import <CoreObject/COSQLStore.h>
 #import "EtoileUIProperties.h"
 #import "ETActionHandler.h"
+#import "ETBasicItemStyle.h"
 #import "ETController.h"
 #import "ETGeometry.h"
 #import "ETFreeLayout.h"
@@ -160,6 +161,48 @@
 	UKRectsEqual(rect, [shape2 bounds]);
 
 	[self checkValidityForNewPersistentObject: shape2 isFault: NO];
+}
+
+- (void) testBasicItemStylePersistency
+{
+	[self recreateContext];
+	
+	ETBasicItemStyle *style = [ETBasicItemStyle new];
+	
+	[style setLabelPosition: ETLabelPositionInsideTop];
+	[style setLabelMargin: 5];
+	[style setMaxImageSize: NSMakeSize(50, 100)];
+	[style setEdgeInset: 10];
+
+	ETUUID *uuid = [[ctxt insertNewPersistentRootWithRootObject: style] persistentRootUUID];
+
+	UKNotNil(uuid);
+	
+	[self checkValidityForNewPersistentObject: style isFault: NO];
+	
+	[ctxt commit];
+	[self recreateContext];
+	
+	ETBasicItemStyle *style2 = [[ctxt persistentRootForUUID: uuid] rootObject];
+	
+	UKNotNil(style2);
+	UKObjectsNotSame(style, style2);
+
+	UKIntsEqual(ETLabelPositionInsideTop, [style2 labelPosition]);
+	UKIntsEqual(5, [style2 labelMargin]);
+	UKSizesEqual([style maxLabelSize], [style2 maxLabelSize]);
+	UKSizesEqual(NSMakeSize(50, 100), [style2 maxImageSize]);
+	UKIntsEqual(10, [style2 edgeInset]);
+
+	NSRect labelRect = [style2 rectForLabel: @"Whatever"
+	                                inFrame: NSMakeRect(0, 0, 200, 20)
+	                                 ofItem: [itemFactory item]];
+	
+	UKTrue(labelRect.size.width > 10);
+	/* Font size must be big enough to ensure label height is bigger than 10px */
+	UKTrue(labelRect.size.height > 10);
+
+	[self checkValidityForNewPersistentObject: style2 isFault: NO];
 }
 
 - (ETLayoutItem *) basicItemWithRect: (NSRect)rect

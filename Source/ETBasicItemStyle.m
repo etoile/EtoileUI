@@ -222,6 +222,8 @@ means you can safely use it when overriding other drawing methods. */
 
 	/*[[NSColor redColor] setFill];
 	NSRectFill(NSMakeRect(-200, 0, 200, 100));*/
+	[[NSColor redColor] setFill];
+	NSRectFill(aRect);
 
 	if (flipMismatch)
 	{
@@ -334,7 +336,9 @@ When the label size is superior to this max size,
 -rectForLabel:ofItem: will shrink the label drawing area to this size. */
 - (void) setMaxLabelSize: (NSSize)aSize
 {
+	[self willChangeValueForProperty: @"maxLabelSize"];
 	_maxLabelSize = aSize;
+	[self didChangeValueForProperty: @"maxLabelSize"];
 }
 
 /** Sets the max allowed size to draw the label.
@@ -354,7 +358,9 @@ See also -maxLabelSize. */
 /** Sets the title position. */
 - (void) setLabelPosition: (ETLabelPosition)aPositionRule
 {
+	[self willChangeValueForProperty: @"labelPosition"];
 	_labelPosition = aPositionRule;
+	[self didChangeValueForProperty: @"labelPosition"];
 }
 
 /** Returns the margin between the item label and the item content. */
@@ -382,7 +388,9 @@ See also -labelAttributesForDrawingItem:. */
 See also -labelAttributesForDrawingItem:. */
 - (void) setLabelAttributes: (NSDictionary *)stringAttributes
 {
+	[self willChangeValueForProperty: @"labelAttributes"];
 	ASSIGN(_labelAttributes, stringAttributes);
+	[self didChangeValueForProperty: @"labelAttributes"];
 }
 
 /** Sets the string attributes used to draw the label for a selected item.
@@ -390,7 +398,9 @@ See also -labelAttributesForDrawingItem:. */
 See also -labelAttributesForDrawingItem:. */
 - (void) setSelectedLabelAttributes: (NSDictionary *)stringAttributes
 {
+	[self willChangeValueForProperty: @"selectedLabelAttributes"];
 	ASSIGN(_selectedLabelAttributes, stringAttributes);
+	[self didChangeValueForProperty: @"selectedLabelAttributes"];
 }
 
 /** Returns the string attributes used to draw the label for a selected item.
@@ -431,6 +441,23 @@ See also -labelAttributesForDrawingItem:. */
 		case ETLabelPositionCentered:
 			rect = ETCenteredRect(labelSize, itemFrame);
 			break;
+		case ETLabelPositionInsideTop:
+		{
+			CGFloat labelBaseX = (itemFrame.size.width - labelSizeWidth) / 2;
+			CGFloat labelBaseY = 0;
+
+			if ([anItem isFlipped])
+			{
+				labelBaseY = _edgeInset;
+			}
+			else
+			{
+				labelBaseY = itemFrame.size.height - labelSizeHeight - _edgeInset;
+			}
+				
+			rect = NSMakeRect(labelBaseX, labelBaseY, labelSizeWidth, labelSizeHeight);
+			break;
+		}
 		case ETLabelPositionOutsideTop:
 		{
 			CGFloat labelBaseX = (itemFrame.size.width - labelSizeWidth) / 2;
@@ -636,7 +663,9 @@ When the image size is superior to this max size,
 See also -maxImageSize. */
 - (void) setMaxImageSize: (NSSize)aSize
 {
+	[self willChangeValueForProperty: @"maxImageSize"];
 	_maxImageSize = aSize;
+	[self didChangeValueForProperty: @"maxImageSize"];
 }
 
 /** <override-never />
@@ -850,7 +879,9 @@ the content bounds in subclasses. */
 See also -edgeInset. */
 - (void) setEdgeInset: (CGFloat)anInset
 {
+	[self willChangeValueForProperty: @"edgeInset"];
 	_edgeInset = anInset;
+	[self willChangeValueForProperty: @"edgetInset"];
 }
 
 @end

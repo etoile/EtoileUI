@@ -108,8 +108,7 @@
 	[entity setUIBuilderPropertyNames: (id)[[A(edgeInset, labelPosition,
 		labelMargin, maxLabelSize, maxImageSize) mappedCollection] name]];
 
-	// TODO: Turn on once the persistency test suite is updated
-	//[[persistentProperties mappedCollection] setPersistent: YES];
+	[[persistentProperties mappedCollection] setPersistent: YES];
 	[entity setPropertyDescriptions:
 		[persistentProperties arrayByAddingObjectsFromArray: transientProperties]];
 
