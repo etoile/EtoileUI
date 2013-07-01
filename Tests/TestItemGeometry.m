@@ -627,7 +627,7 @@ supervisor view geometry (frame). */
 	[item setDecoratorItem: [ETWindowItem item]];
 
 	NSRect newFrame = NSMakeRect(500, 700, 30, 40);
-	float titleBarHeight = [[item windowItem] titleBarHeight];
+	CGFloat titleBarHeight = [[item windowItem] titleBarHeight];
 
 	[[item supervisorView] setAutoresizingMask: NSViewWidthSizable | NSViewHeightSizable];
 	[item setFrame: newFrame];

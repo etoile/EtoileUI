@@ -254,12 +254,12 @@ See also -[ETUIObject isShared] and -[ETStyle isShared]. */
 	[self didChangeValueForProperty: @"strokeColor"];
 }
 
-- (float) alphaValue
+- (CGFloat) alphaValue
 {
     return _alphaValue;
 }
 
-- (void) setAlphaValue: (float)newAlpha
+- (void) setAlphaValue: (CGFloat)newAlpha
 {
 	[self willChangeValueForProperty: @"alphaValue"];
     _alphaValue = newAlpha;
@@ -294,7 +294,7 @@ See also -[ETUIObject isShared] and -[ETStyle isShared]. */
 
 - (void) drawInRect: (NSRect)rect
 {
-	float alpha = [self alphaValue];
+	CGFloat alpha = [self alphaValue];
 	[[[self fillColor] colorWithAlphaComponent: alpha] setFill];
 	[[[self strokeColor] colorWithAlphaComponent: alpha] setStroke];
 	[[self path] fill];

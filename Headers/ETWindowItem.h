@@ -57,7 +57,7 @@ such as -performClose: are forwarded to the NSWindow. */
 - (BOOL) isUntitled;
 - (BOOL) shouldKeepWindowFrame;
 - (void) setShouldKeepWindowFrame: (BOOL)shouldKeepWindowFrame;
-- (float) titleBarHeight;
+- (CGFloat) titleBarHeight;
 
 /* Customized Decorator Methods */
 

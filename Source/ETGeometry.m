@@ -19,8 +19,8 @@ NSRect ETScaledRect(NSSize aSize, NSRect inRect, ETContentAspect anAspect)
 	NSRect newRect = ETMakeRect(NSZeroPoint, aSize);
 	BOOL fillHorizontally = (ETContentAspectScaleToFillHorizontally == anAspect);
 	BOOL fillVertically = (ETContentAspectScaleToFillVertically == anAspect);
-	float widthRatio = inRect.size.width / aSize.width;	
-	float heightRatio = inRect.size.height / aSize.height;
+	CGFloat widthRatio = inRect.size.width / aSize.width;	
+	CGFloat heightRatio = inRect.size.height / aSize.height;
 	BOOL hasPortraitOrientation = (widthRatio > heightRatio);
 
 	if (ETContentAspectScaleToFill == anAspect)

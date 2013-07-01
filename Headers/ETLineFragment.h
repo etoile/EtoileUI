@@ -34,35 +34,35 @@ considered private. */
 	id <ETLayoutFragmentOwner>_owner;
 	NSMutableArray *_fragments;
 	NSPoint _origin;
-	float _fragmentMargin;
-	float _maxWidth;
-	float _maxHeight;
+	CGFloat _fragmentMargin;
+	CGFloat _maxWidth;
+	CGFloat _maxHeight;
 	BOOL _flipped;
 }
 
 + (id) horizontalLineWithOwner: (id <ETLayoutFragmentOwner>)anOwner
-                    itemMargin: (float)aMargin 
-                      maxWidth: (float)aWidth;
+                    itemMargin: (CGFloat)aMargin 
+                      maxWidth: (CGFloat)aWidth;
 + (id) verticalLineWithOwner: (id <ETLayoutFragmentOwner>)anOwner
-                  itemMargin: (float)aMargin 
-                   maxHeight: (float)aHeight
+                  itemMargin: (CGFloat)aMargin 
+                   maxHeight: (CGFloat)aHeight
                    isFlipped: (BOOL)isFlipped;
 
 - (NSArray *) fillWithItems: (NSArray *)fragments;
 - (NSArray *) items;
-- (float) itemMargin;
+- (CGFloat) itemMargin;
 
 - (NSPoint) origin;
 - (void) setOrigin: (NSPoint)location;
-- (float) height;
-- (float) width;
+- (CGFloat) height;
+- (CGFloat) width;
 
-- (float) maxWidth;
-- (float) maxHeight;
-- (float) maxLength;
+- (CGFloat) maxWidth;
+- (CGFloat) maxHeight;
+- (CGFloat) maxLength;
 
-- (float) length;
-- (float) thickness;
+- (CGFloat) length;
+- (CGFloat) thickness;
 - (BOOL) isVerticallyOriented;
 
 @end

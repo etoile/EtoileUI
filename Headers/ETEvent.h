@@ -34,9 +34,9 @@ stylus, one or multiple fingers etc. */
 - (NSPoint) locationInLayoutItem;
 // TODO: Support the methods below.
 /*- (NSPoint) tilt;
-- (float) pressure;
-- (float) rotation;
-- (float) tangentialPressure;
+- (CGFloat) pressure;
+- (CGFloat) rotation;
+- (CGFloat) tangentialPressure;
 - (NSArray *) touchedLayoutItems;*/
 @end
 

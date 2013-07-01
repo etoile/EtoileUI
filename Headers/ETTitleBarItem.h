@@ -41,7 +41,7 @@
 	@private
 	ETTitleBarView *_titleBarView;
 	NSView *_contentView;
-	float _expandedHeight;
+	CGFloat _expandedHeight;
 }
 
 - (id) initWithSupervisorView: (ETView *)supervisorView;

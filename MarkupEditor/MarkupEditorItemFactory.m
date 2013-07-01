@@ -79,7 +79,7 @@
 	return editorView;
 }
 
-- (ETLayoutItemGroup *) toolbarWithWidth: (float)aWidth controller: (ETController *)aController
+- (ETLayoutItemGroup *) toolbarWithWidth: (CGFloat)aWidth controller: (ETController *)aController
 {
 	ETLayoutItem *addButtonItem = [self buttonWithTitle: _(@"Add Node") 
 	                                             target: aController
@@ -103,8 +103,8 @@
 
 - (ETLayoutItemGroup *) editor
 {
-	float width = 800;
-	float height = 700;
+	CGFloat width = 800;
+	CGFloat height = 700;
 	ETController *controller = AUTORELEASE([[MarkupEditorController alloc] init]);
 	ETLayoutItemGroup *toolbar = [self toolbarWithWidth: width controller: controller];
 	ETLayoutItemGroup *editorView = [self editorViewWithSize: NSMakeSize(width, height - [toolbar height]) controller: controller];

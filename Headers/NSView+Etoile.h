@@ -37,14 +37,14 @@
 
 /* Frame Utility Methods */
 
-- (float) height;
-- (float) width;
-- (void) setHeight: (float)height;
-- (void) setWidth: (float)width;
-- (float) x;
-- (float) y;
-- (void) setX: (float)x;
-- (void) setY: (float)y;
+- (CGFloat) height;
+- (CGFloat) width;
+- (void) setHeight: (CGFloat)height;
+- (void) setWidth: (CGFloat)width;
+- (CGFloat) x;
+- (CGFloat) y;
+- (void) setX: (CGFloat)x;
+- (void) setY: (CGFloat)y;
 
 - (void) setFrameSizeFromTopLeft: (NSSize)size;
 - (void) setHeightFromTopLeft: (int)height;

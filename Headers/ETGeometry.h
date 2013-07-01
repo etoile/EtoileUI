@@ -70,10 +70,10 @@ The resulting rect is equal to { 25, 50, 50, 100 }.
 The returned rect origin is valid whether or not your coordinate space is flipped. */
 static inline NSRect ETCenteredRect(NSSize aSize, NSRect inRect)
 {
-	float xOffset = aSize.width * 0.5;
-	float x = NSMidX(inRect) - xOffset;
-	float yOffset = aSize.height  * 0.5;
-	float y = NSMidY(inRect) - yOffset;
+	CGFloat xOffset = aSize.width * 0.5;
+	CGFloat x = NSMidX(inRect) - xOffset;
+	CGFloat yOffset = aSize.height  * 0.5;
+	CGFloat y = NSMidY(inRect) - yOffset;
 
 	return NSMakeRect(x, y, aSize.width, aSize.height);
 }
@@ -88,7 +88,7 @@ The returned rect origin is valid whether or not your coordinate space is flippe
 extern NSRect ETScaledRect(NSSize aSize, NSRect inRect, ETContentAspect anAspect);
 
 /** Returns a size with a width and height multiplied by the given factor. */
-static inline NSSize ETScaleSize(NSSize size, float factor)
+static inline NSSize ETScaleSize(NSSize size, CGFloat factor)
 {	
 	size.width *= factor;
 	size.height *= factor;
@@ -98,7 +98,7 @@ static inline NSSize ETScaleSize(NSSize size, float factor)
 
 /** Returns a rect with a width and height multiplied by the given factor and 
 by shifting the origin to retain the original rect center location. */
-static inline NSRect ETScaleRect(NSRect frame, float factor)
+static inline NSRect ETScaleRect(NSRect frame, CGFloat factor)
 {
 	NSSize prevSize = frame.size;
 	
@@ -115,10 +115,10 @@ static inline NSRect ETScaleRect(NSRect frame, float factor)
 needed. */
 static inline NSRect ETStandardizeRect(NSRect rect)
 {
-	float minX = NSMinX(rect);
-	float minY = NSMinY(rect);
-	float width = NSWidth(rect);
-	float height = NSHeight(rect);
+	CGFloat minX = NSMinX(rect);
+	CGFloat minY = NSMinY(rect);
+	CGFloat width = NSWidth(rect);
+	CGFloat height = NSHeight(rect);
 
 	if (width < 0)
 	{

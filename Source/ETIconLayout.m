@@ -154,7 +154,7 @@ to trigger the resizing before ETTemplateItemLayout hands the items to the
 positional layout. */
 - (void) willRenderItems: (NSArray *)items isNewContent: (BOOL)isNewContent
 {
-	float scale = [_layoutContext itemScaleFactor];
+	CGFloat scale = [_layoutContext itemScaleFactor];
 	if (isNewContent || scale != _previousScaleFactor)
 	{
 		[self resizeItems: items toScaleFactor: scale];
@@ -172,7 +172,7 @@ However when the scaled icon size is smaller than -minIconSize, this latter
 value becomes the image size used to compute to the new item size.
 
 The resizing isn't delegated to the positional layout unlike in ETTemplateItemLayout. */
-- (void) resizeItems: (NSArray *)items toScaleFactor: (float)factor
+- (void) resizeItems: (NSArray *)items toScaleFactor: (CGFloat)factor
 {
 	id <ETFirstResponderSharingArea> responderArea = [_layoutContext firstResponderSharingArea];
 
@@ -189,8 +189,8 @@ The resizing isn't delegated to the positional layout unlike in ETTemplateItemLa
 	
 	/* Scaling is always computed from the base image size (scaleFactor equal to 
 	   1) in order to avoid rounding error that would increase on each scale change. */
-	float iconWidth = MAX(_iconSizeForScaleFactorUnit.width * factor, _minIconSize.width);
-	float iconHeight = MAX(_iconSizeForScaleFactorUnit.height * factor, _minIconSize.height);
+	CGFloat iconWidth = MAX(_iconSizeForScaleFactorUnit.width * factor, _minIconSize.width);
+	CGFloat iconHeight = MAX(_iconSizeForScaleFactorUnit.height * factor, _minIconSize.height);
 	NSSize iconSize = NSMakeSize(iconWidth, iconHeight);
 
 	// TODO: We need to reduce the label margin when the icon size drops below 
@@ -303,7 +303,7 @@ the given indicator rect. */
 		return;								
 
 	NSSize labelSize = [label sizeWithAttributes: [iconStyle labelAttributes]];
-	float lineHeight = labelSize.height;
+	CGFloat lineHeight = labelSize.height;
 	BOOL nbOfLines = 1;
 
 	/* Limit the editing width to the max label width */

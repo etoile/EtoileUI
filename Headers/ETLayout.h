@@ -54,7 +54,7 @@ ETLayout. */
 /** See -[ETLayoutItemGroup isChangingSelection]. */
 - (BOOL) isChangingSelection;
 /** See -[ETLayoutItemGroup itemScaleFactor]. */
-- (float) itemScaleFactor;
+- (CGFloat) itemScaleFactor;
 /** See -[ETLayoutItemGroup visibleContentSize]. */
 - (NSSize) visibleContentSize;
 /** See -[ETLayoutItem setContentSize:]. */
@@ -146,13 +146,13 @@ Warning: This protocol is very much subject to change. */
 /** See -[ETLayout layoutContext:]. */
 - (id <ETLayoutingContext>) layoutContext;
 /** See -[ETComputedLayout setBorderMargin:]. */
-- (void) setBorderMargin: (float)margin;
+- (void) setBorderMargin: (CGFloat)margin;
 /** See -[ETComputedLayout itemMargin:]. */
-- (float) itemMargin;
+- (CGFloat) itemMargin;
 /** See -[ETComputedLayout setItemMargin:]. */
-- (void) setItemMargin: (float)margin;
+- (void) setItemMargin: (CGFloat)margin;
 /** See -[ETComputedLayout setHorizontalAlignmentGuidePosition:]. */
-- (void) setHorizontalAlignmentGuidePosition: (float)aPosition;
+- (void) setHorizontalAlignmentGuidePosition: (CGFloat)aPosition;
 /** See -[ETLayout renderWithItems:isNewContent:]. */
 - (void) renderWithItems: (NSArray *)items isNewContent: (BOOL)isNewContent;
 /** See -[ETLayout itemAtLocation:]. */
@@ -182,7 +182,7 @@ Warning: This protocol is very much subject to change. */
 	NSSize _proposedLayoutSize;
 	BOOL _usesCustomLayoutSize;
 	@protected
-	float _previousScaleFactor; // TODO: Remove
+	CGFloat _previousScaleFactor; // TODO: Remove
 }
 
 /** @taskunit Aspect Registration */
@@ -258,7 +258,7 @@ Warning: This protocol is very much subject to change. */
     forNewLayoutSize: (NSSize)newLayoutSize
              oldSize: (NSSize)oldLayoutSize;
 - (BOOL) shouldResizeItemsToScaleFactor: (CGFloat)aFactor;
-- (void) resizeItems: (NSArray *)items toScaleFactor: (float)factor;
+- (void) resizeItems: (NSArray *)items toScaleFactor: (CGFloat)factor;
 
 /** @taskunit Layout Update Dependencies */
 

@@ -71,7 +71,7 @@ new object is a shallow copy of the receiver.*/
 - (void) setFrameSizeFromTopLeft: (NSSize)size
 {
 	NSRect frameRect = ETMakeRect([self frame].origin, size);
-	float heightDelta = [self frame].size.height - frameRect.size.height;
+	CGFloat heightDelta = [self frame].size.height - frameRect.size.height;
 	
 	frameRect.origin.y += heightDelta;
 

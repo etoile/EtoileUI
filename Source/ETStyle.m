@@ -329,7 +329,7 @@ See also -[ETLayoutItem contentBounds], -[ETLayoutItem size] and
 }
 
 /** Returns the line width to used to draw the indicator. */
-- (float) thickness
+- (CGFloat) thickness
 {
 	return 8.0;
 }
@@ -373,8 +373,8 @@ See also -[ETLayoutItem contentBounds], -[ETLayoutItem size] and
 {
 	// NOTE: Should we use... -[[item layout] displayRectOfItem: hoveredItem];
 	NSRect hoveredRect = [_hoveredItem frame];
-	float indicatorWidth = 4.0;
-	float indicatorLineX = 0.0;
+	CGFloat indicatorWidth = 4.0;
+	CGFloat indicatorLineX = 0.0;
 
 	/* Decides whether to draw on left or right border of hovered item */
 	switch ([[self class] indicatorPositionForPoint: _dropLocation 
@@ -433,7 +433,7 @@ space.  */
 + (ETIndicatorPosition) indicatorPositionForPoint: (NSPoint)dropPoint
                                     nearItemFrame: (NSRect)itemRect
 {
-	float itemMiddleWidth = itemRect.origin.x + itemRect.size.width / 2;
+	CGFloat itemMiddleWidth = itemRect.origin.x + itemRect.size.width / 2;
 
 	if (dropPoint.x >= itemMiddleWidth)
 	{
@@ -569,7 +569,7 @@ space.  */
  */
 + (NSBezierPath *)leftSpeechBubbleAroundRect: (NSRect)rect
 {
-	const float radius = 9.0;
+	const CGFloat radius = 9.0;
 	NSBezierPath *path = [NSBezierPath bezierPath];
 	
 	// Add some padding to the inner rectangle

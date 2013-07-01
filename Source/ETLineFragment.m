@@ -22,9 +22,9 @@
 
 /* <init /> */
 - (id) initWithOwner: (id <ETLayoutFragmentOwner>)anOwner 
-      fragmentMargin: (float)aMargin 
-            maxWidth: (float)aWidth
-           maxHeight: (float)aHeight
+      fragmentMargin: (CGFloat)aMargin 
+            maxWidth: (CGFloat)aWidth
+           maxHeight: (CGFloat)aHeight
            isFlipped: (BOOL)isFlipped
 {
 	SUPERINIT;
@@ -47,8 +47,8 @@ DEALLOC(DESTROY(_fragments))
 /** Returns a new autoreleased horizontal layout line filled with the given 
 fragments. */
 + (id) horizontalLineWithOwner: (id <ETLayoutFragmentOwner>)anOwner
-                    itemMargin: (float)aMargin 
-                      maxWidth: (float)aWidth
+                    itemMargin: (CGFloat)aMargin 
+                      maxWidth: (CGFloat)aWidth
 {
 	return AUTORELEASE([[[self class] alloc] initWithOwner: anOwner
 		fragmentMargin: aMargin maxWidth: aWidth maxHeight: FLT_MAX isFlipped: YES]);
@@ -57,8 +57,8 @@ fragments. */
 /** Returns a new autoreleased vertical layout line filled with the given 
 fragments. */
 + (id) verticalLineWithOwner: (id <ETLayoutFragmentOwner>)anOwner
-                  itemMargin: (float)aMargin 
-                   maxHeight: (float)aHeight
+                  itemMargin: (CGFloat)aMargin 
+                   maxHeight: (CGFloat)aHeight
                    isFlipped: (BOOL)isFlipped
 {
 	return AUTORELEASE([[ETVerticalLineFragment alloc] initWithOwner: anOwner
@@ -77,7 +77,7 @@ fragments. */
     return desc;
 }
 
-- (float) lengthForFragment: (id)aFragment
+- (CGFloat) lengthForFragment: (id)aFragment
 {
 	NSRect rect = [_owner rectForItem: aFragment];
 	return [self isVerticallyOriented] ? rect.size.height : rect.size.width;
@@ -92,8 +92,8 @@ input. */
 - (NSArray *) fillWithItems: (NSArray *)fragments
 {
 	NSMutableArray *acceptedFragments = [NSMutableArray arrayWithCapacity: [fragments count]];
-	float length = 0;
-	float maxLength = [self maxLength];
+	CGFloat length = 0;
+	CGFloat maxLength = [self maxLength];
 
 	FOREACH(fragments, fragment, ETLayoutItem *)
 	{
@@ -120,12 +120,12 @@ input. */
 }
 
 /** Returns the fragment margin that lies between between each fragment. */
-- (float) itemMargin
+- (CGFloat) itemMargin
 {
 	return _fragmentMargin;
 }
 
-- (float) totalFragmentMargin
+- (CGFloat) totalFragmentMargin
 {
 	return ([_fragments count] - 1) * _fragmentMargin;
 }
@@ -175,9 +175,9 @@ space is flipped, ortherwise at the bottom left corner. */
 }
 
 /** Returns the height of the line. */
-- (float) height
+- (CGFloat) height
 {
-	float height = 0;
+	CGFloat height = 0;
 
 	// FIXME: Try to make the next line works
 	// height = [[_fragments valueForKey: @"@max.height"] floatValue];
@@ -193,9 +193,9 @@ space is flipped, ortherwise at the bottom left corner. */
 }
 
 /** Returns the width of the line. */
-- (float) width
+- (CGFloat) width
 {
-	float totalFragmentWidth = 0;
+	CGFloat totalFragmentWidth = 0;
 
 	FOREACHI(_fragments, fragment)
 	{
@@ -210,7 +210,7 @@ space is flipped, ortherwise at the bottom left corner. */
 /** Returns the max width to which the receiver can be stretched to.
 
 See -maxLength. */
-- (float) maxWidth
+- (CGFloat) maxWidth
 {
 	return _maxWidth;
 }
@@ -218,7 +218,7 @@ See -maxLength. */
 /** Returns the max height to which the receiver can be stretched to.
 
 See -maxLength. */
-- (float) maxHeight
+- (CGFloat) maxHeight
 {
 	return _maxHeight;
 }
@@ -230,7 +230,7 @@ When the receiver length reaches the max length, it starts to refuse fragments.
 
 The max length is the max width when the line is horizontal, the max height when 
 the line is vertical. */
-- (float) maxLength
+- (CGFloat) maxLength
 {
 	return _maxWidth;
 }
@@ -240,7 +240,7 @@ Returns the lenght of the line.
 
 The length is the width when the line is horizontal, the height when the line 
 is vertical. */
-- (float) length
+- (CGFloat) length
 {
 	return [self width];
 }
@@ -250,7 +250,7 @@ Returns the lenght of the line.
 
 The thickness is the height when the line is horizontal, the width when the line 
 is vertical. */
-- (float) thickness
+- (CGFloat) thickness
 {
 	return [self height];
 }
@@ -269,7 +269,7 @@ Returns whether the line is vertical or horizontal. */
 
 - (NSPoint) originOfFirstFragment: (id)aFragment
 {
-	float fragmentY = 0;
+	CGFloat fragmentY = 0;
 	
 	if (_flipped)
 	{
@@ -278,7 +278,7 @@ Returns whether the line is vertical or horizontal. */
 	else
 	{
 		// NOTE: Next line equivalent to -lengthForFragment:
-		float fragmentHeight = [_owner rectForItem: aFragment].size.height;
+		CGFloat fragmentHeight = [_owner rectForItem: aFragment].size.height;
 		fragmentY = _origin.y + [self height] - fragmentHeight;
 	}
 
@@ -289,7 +289,7 @@ Returns whether the line is vertical or horizontal. */
 {
 	NSPoint nextOrigin = aFragmentOrigin;
 	// NOTE: Next line could use -lengthForFragment:
-	float advancement = [_owner rectForItem: aFragment].size.height + _fragmentMargin;
+	CGFloat advancement = [_owner rectForItem: aFragment].size.height + _fragmentMargin;
 
 	if (_flipped)
 	{
@@ -303,9 +303,9 @@ Returns whether the line is vertical or horizontal. */
 	return nextOrigin;	
 }
 
-- (float) height
+- (CGFloat) height
 {
-	float totalFragmentHeight = 0;
+	CGFloat totalFragmentHeight = 0;
 
 	FOREACHI(_fragments, fragment)
 	{
@@ -317,9 +317,9 @@ Returns whether the line is vertical or horizontal. */
 	// [[_fragments valueForKey: @"@sum.height"] floatValue] + [self totalFragmentMargin];
 }
 
-- (float) width
+- (CGFloat) width
 {
-	float width = 0;
+	CGFloat width = 0;
 
 	// FIXME: Try to make the next line works
 	// width = [[_fragments valueForKey: @"@max.width"] floatValue];
@@ -334,17 +334,17 @@ Returns whether the line is vertical or horizontal. */
 	return width;
 }
 
-- (float) maxLength
+- (CGFloat) maxLength
 {
 	return _maxHeight;
 }
 
-- (float) length
+- (CGFloat) length
 {
 	return [self height];
 }
 
-- (float) thickness
+- (CGFloat) thickness
 {
 	return [self width];
 }

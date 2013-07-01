@@ -141,7 +141,7 @@ to trigger the resizing before ETTemplateItemLayout hands the items to the
 positional layout. */
 - (void) willRenderItems: (NSArray *)items isNewContent: (BOOL)isNewContent
 {
-	float scale = [_layoutContext itemScaleFactor];
+	CGFloat scale = [_layoutContext itemScaleFactor];
 	if (isNewContent || scale != _previousScaleFactor)
 	{
 		[self resizeItems: items toScaleFactor: scale];
@@ -183,7 +183,7 @@ When the computed token width is greater than -maxTokenWidth, the latter value
 becomes the token width.
 
 The resizing isn't delegated to the positional layout unlike in ETTemplateItemLayout. */
-- (void) resizeItems: (NSArray *)items toScaleFactor: (float)factor
+- (void) resizeItems: (NSArray *)items toScaleFactor: (CGFloat)factor
 {
 	id <ETFirstResponderSharingArea> responderArea = [_layoutContext firstResponderSharingArea];
 

@@ -501,11 +501,11 @@ See [(ETColumnFragment)] protocol to customize the returned column. */
 	}
 }
 
-- (void) resizeItems: (NSArray *)items toScaleFactor: (float)factor
+- (void) resizeItems: (NSArray *)items toScaleFactor: (CGFloat)factor
 {
 	// NOTE: Always recompute row height from the original one to avoid really
 	// value shifting quickly because of rounding.
-	float rowHeight = DEFAULT_ROW_HEIGHT * factor;
+	CGFloat rowHeight = DEFAULT_ROW_HEIGHT * factor;
 	
 	/* Enforce a minimal row height to avoid redisplay crashes especially */
 	if (rowHeight < 1.0)

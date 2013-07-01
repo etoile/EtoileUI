@@ -43,8 +43,8 @@ implements ETCollection protocol or not. */
 
 - (NSPoint) origin;
 - (void) setOrigin: (NSPoint)location;
-- (float) height;
-- (float) width;
+- (CGFloat) height;
+- (CGFloat) width;
 
 @end
 

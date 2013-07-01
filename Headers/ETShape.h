@@ -31,7 +31,7 @@ returns NO unlike ETStyle. */
 	NSBezierPath *_path;
 	NSColor *_fillColor;
 	NSColor *_strokeColor;
-	float _alphaValue;
+	CGFloat _alphaValue;
 	BOOL _hidden;
 	SEL _resizeSelector;
 }
@@ -61,8 +61,8 @@ returns NO unlike ETStyle. */
 - (NSColor *) strokeColor;
 - (void) setStrokeColor: (NSColor *)color;
 
-- (float) alphaValue;
-- (void) setAlphaValue: (float)newAlpha;
+- (CGFloat) alphaValue;
+- (void) setAlphaValue: (CGFloat)newAlpha;
 
 - (BOOL) hidden;
 - (void) setHidden: (BOOL)flag;

@@ -167,7 +167,7 @@ rect width or height is superior to the allowed maximum value.
 If -itemSizeConstraintStyle returns ETConstraintStyleNone, the layout will 
 respect the autoresizing mask returned by -[ETLayoutItem autoresizingMask], 
 otherwise it won't. */
-- (void) resizeItems: (NSArray *)items toScaleFactor: (float)factor
+- (void) resizeItems: (NSArray *)items toScaleFactor: (CGFloat)factor
 {
 	if ([self itemSizeConstraintStyle] == ETSizeConstraintStyleNone)
 		return;
@@ -211,8 +211,8 @@ otherwise it won't. */
 			
 			if (isVerticalResize)
 			{
-				float maxItemHeight = [self constrainedItemSize].height;
-				float heightDifferenceRatio = maxItemHeight / itemFrame.size.height;
+				CGFloat maxItemHeight = [self constrainedItemSize].height;
+				CGFloat heightDifferenceRatio = maxItemHeight / itemFrame.size.height;
 				
 				itemFrame.size.height = maxItemHeight;
 				itemFrame.size.width *= heightDifferenceRatio;
@@ -220,8 +220,8 @@ otherwise it won't. */
 			}
 			else /* Horizontal resize */
 			{
-				float maxItemWidth = [self constrainedItemSize].width;
-				float widthDifferenceRatio = maxItemWidth / itemFrame.size.width;
+				CGFloat maxItemWidth = [self constrainedItemSize].width;
+				CGFloat widthDifferenceRatio = maxItemWidth / itemFrame.size.width;
 				
 				itemFrame.size.width = maxItemWidth;
 				itemFrame.size.height *= widthDifferenceRatio;				

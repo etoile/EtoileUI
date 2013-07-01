@@ -311,14 +311,14 @@ and centers it. A strech is a scale that doesn't preserve the content proportion
 - (void) setPosition: (NSPoint)position;
 - (NSSize) size;
 - (void) setSize: (NSSize)size;
-- (float) x;
-- (void) setX: (float)x;
-- (float) y;
-- (void) setY: (float)y;
-- (float) height;
-- (void) setHeight: (float)height;
-- (float) width;
-- (void) setWidth: (float)width;
+- (CGFloat) x;
+- (void) setX: (CGFloat)x;
+- (CGFloat) y;
+- (void) setY: (CGFloat)y;
+- (CGFloat) height;
+- (void) setHeight: (CGFloat)height;
+- (CGFloat) width;
+- (void) setWidth: (CGFloat)width;
 
 - (NSRect) contentBounds;
 - (void) setContentBounds: (NSRect)rect;

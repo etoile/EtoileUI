@@ -57,7 +57,7 @@
 	return [NSImage imageNamed: @"ui-scroll-pane-form"];
 }
 
-- (float) maxLabelWidth
+- (CGFloat) maxLabelWidth
 {
 	return 300;
 }
@@ -104,7 +104,7 @@ to trigger the resizing before ETTemplateItemLayout hands the items to the
 positional layout. */
 - (void) willRenderItems: (NSArray *)items isNewContent: (BOOL)isNewContent
 {
-	float scale = [[self layoutContext] itemScaleFactor];
+	CGFloat scale = [[self layoutContext] itemScaleFactor];
 
 	if (isNewContent || scale != _previousScaleFactor)
 	{
@@ -123,7 +123,7 @@ constraints that might be set such as -constrainedItemSize and
 -itemSizeConstraintStyle.<br />
 
 The resizing isn't delegated to the positional layout unlike in ETTemplateItemLayout. */
-- (void) resizeItems: (NSArray *)items toScaleFactor: (float)factor
+- (void) resizeItems: (NSArray *)items toScaleFactor: (CGFloat)factor
 {
 	_currentMaxLabelWidth = 0;
 	_currentMaxItemWidth = 0;
@@ -139,7 +139,7 @@ The resizing isn't delegated to the positional layout unlike in ETTemplateItemLa
 		NSSize boundingSize = [[item coverStyle] boundingSizeForItem: item 
 		                                             imageOrViewSize: viewOrItemSize];
 		NSRect boundingBox = ETMakeRect(NSZeroPoint, boundingSize);
-		float labelWidth = boundingSize.width - [item width];
+		CGFloat labelWidth = boundingSize.width - [item width];
 
 		if (labelWidth > _currentMaxLabelWidth)
 		{
@@ -167,8 +167,8 @@ update has been run yet, the returned value is meaningless. */
 	return _currentMaxLabelWidth + _currentMaxItemWidth;
 }
 
-- (void) adjustAlignmentForMaxLabelWidth: (float)maxLabelWidth
-                            maxItemWidth: (float)maxItemWidth
+- (void) adjustAlignmentForMaxLabelWidth: (CGFloat)maxLabelWidth
+                            maxItemWidth: (CGFloat)maxItemWidth
 {
 	BOOL isAutoresizedForm = [[self positionalLayout] isContentSizeLayout];
 
@@ -191,8 +191,8 @@ update has been run yet, the returned value is meaningless. */
 	   width, both frame and label can belong to distinct items. From this 
 	   aggregate width, we compute the remaining space on the left and right,  
 	   then the horizontal guide position (for ETColumnLayout). */
-	float remainingSpace = [self layoutContext].size.width - [self maxCombinedBoundingWidth];
-	float inset = 0; /* ETFormLayoutAlignmentLeft */
+	CGFloat remainingSpace = [self layoutContext].size.width - [self maxCombinedBoundingWidth];
+	CGFloat inset = 0; /* ETFormLayoutAlignmentLeft */
 	
 	if ([self alignment] == ETFormLayoutAlignmentCenter)
 	{
@@ -206,12 +206,12 @@ update has been run yet, the returned value is meaningless. */
 	[self setHorizontalAlignmentGuidePosition: inset + maxLabelWidth];
 }
 
-- (float) alignmentHintForLayout: (ETComputedLayout *)aLayout
+- (CGFloat) alignmentHintForLayout: (ETComputedLayout *)aLayout
 {
 	return [(ETComputedLayout *)[self positionalLayout] horizontalAlignmentGuidePosition];
 }
 
-- (void) setHorizontalAlignmentGuidePosition: (float)aPosition
+- (void) setHorizontalAlignmentGuidePosition: (CGFloat)aPosition
 {
 	//NSLog(@"New guide position %0.2f for %@", aPosition, [(id)[self layoutContext] identifier]);
 	[[self positionalLayout] setHorizontalAlignmentGuidePosition: aPosition];

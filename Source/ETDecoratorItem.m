@@ -292,8 +292,8 @@ See also -convertDecoratorRectToContent:. */
 {
 	NSRect decorationRect = [self decorationRect];
 	NSRect contentRect = [self visibleContentRect];
-	float widthOffset = decorationRect.size.width - contentRect.size.width;
-	float heightOffset = decorationRect.size.height - contentRect.size.height;
+	CGFloat widthOffset = decorationRect.size.width - contentRect.size.width;
+	CGFloat heightOffset = decorationRect.size.height - contentRect.size.height;
 
 	return NSMakeSize(aSize.width + widthOffset, aSize.height + heightOffset);
 }

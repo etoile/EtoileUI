@@ -114,9 +114,9 @@ width remain flexible in case the UI is resized later. */
 {
 	@private
 	ETFormLayoutAlignment _alignment;
-	float highestLabelWidth;
-	float _currentMaxLabelWidth;
-	float _currentMaxItemWidth;
+	CGFloat highestLabelWidth;
+	CGFloat _currentMaxLabelWidth;
+	CGFloat _currentMaxItemWidth;
 }
 
 /** @taskunit Label and Form Alignment */
@@ -128,8 +128,8 @@ width remain flexible in case the UI is resized later. */
 
 /** @taskunit Shared Alignment Support */
 
-- (float) alignmentHintForLayout: (ETLayout *)aLayout;
+- (CGFloat) alignmentHintForLayout: (ETLayout *)aLayout;
 - (CGFloat) maxCombinedBoundingWidth;
-- (void) setHorizontalAlignmentGuidePosition: (float)aPosition;
+- (void) setHorizontalAlignmentGuidePosition: (CGFloat)aPosition;
 
 @end

@@ -28,7 +28,7 @@
 /** Returns a line fragment filled with items to layout. */
 - (ETLineFragment *) layoutFragmentWithSubsetOfItems: (NSArray *)unlayoutedItems
 {
-	float layoutHeight = [self layoutSize].height;
+	CGFloat layoutHeight = [self layoutSize].height;
 
 	if ([self isContentSizeLayout])
 	{
@@ -55,9 +55,9 @@
 	NSParameterAssert([layoutModel count] == 1);
 
 	ETLineFragment *line = [layoutModel lastObject];
-	float lineHeight = [line height];
-	float totalMargin = ([self borderMargin] + [self itemMargin]) * 2;
-	float contentHeight = lineHeight + totalMargin;
+	CGFloat lineHeight = [line height];
+	CGFloat totalMargin = ([self borderMargin] + [self itemMargin]) * 2;
+	CGFloat contentHeight = lineHeight + totalMargin;
 
 	/* Will compute and set the item locations */
 	[line setOrigin: [self originOfFirstFragment: line
@@ -69,7 +69,7 @@
 	return NSMakeSize([self horizontalAlignmentGuidePosition] + [line width] + totalMargin, contentHeight);
 }
 
-static const float undeterminedWidth = 10;
+static const CGFloat undeterminedWidth = 10;
 
 - (void) prepareSeparatorItem: (ETLayoutItem *)separator
 {
@@ -111,7 +111,7 @@ static const float undeterminedWidth = 10;
 - (void) adjustSeparatorItem: (ETLayoutItem *)separator 
                forLayoutSize: (NSSize)newLayoutSize
 {
-	float totalEndMargin = [self separatorItemEndMargin];
+	CGFloat totalEndMargin = [self separatorItemEndMargin];
 
 	[separator setX: totalEndMargin];
 	[separator setWidth: (newLayoutSize.width - totalEndMargin * 2)];

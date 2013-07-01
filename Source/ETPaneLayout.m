@@ -126,7 +126,7 @@ If contentItem is nil, a default content item will be created. */
 By default, returns 200.
 
 See also -setBarThickness:. */
-- (float) barThickness
+- (CGFloat) barThickness
 {
 	return _barThickness;
 }
@@ -135,7 +135,7 @@ See also -setBarThickness:. */
 
 When -barPosition returns ETPanePositionLeft or ETPanePositionRight, sets the 
 bar item width, otherwise sets the bar item height.  */
-- (void) setBarThickness: (float)aThickness
+- (void) setBarThickness: (CGFloat)aThickness
 {
 	_barThickness = aThickness;
 }
@@ -145,10 +145,10 @@ bar item width, otherwise sets the bar item height.  */
 
 }
 
-- (float) maxAllowedBarThicknessForPosition: (ETPanePosition)aBarPosition
+- (CGFloat) maxAllowedBarThicknessForPosition: (ETPanePosition)aBarPosition
 {
 	NSSize maxSize = [[self holderItem] size];
-	float thickness = [self barThickness];
+	CGFloat thickness = [self barThickness];
 
 	switch (aBarPosition)
 	{
@@ -180,7 +180,7 @@ bar item width, otherwise sets the bar item height.  */
 	[self syncLayerItemGeometryWithSize: [[self layoutContext] visibleContentSize]];
 
 	NSSize rootSize = [[self holderItem] size];
-	float barThickness = [self maxAllowedBarThicknessForPosition: _barPosition];
+	CGFloat barThickness = [self maxAllowedBarThicknessForPosition: _barPosition];
 
 	[[self contentItem] setAutoresizingMask: ETAutoresizingFlexibleWidth | ETAutoresizingFlexibleHeight];
 

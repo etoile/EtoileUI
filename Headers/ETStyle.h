@@ -117,7 +117,7 @@ drop validation time. */
             hoveredItem: (ETLayoutItem *)hoveredItem
            isDropTarget: (BOOL)dropOn;
 
-- (float) thickness;
+- (CGFloat) thickness;
 - (NSColor *) color;
 
 - (void) drawVerticalInsertionIndicatorInRect: (NSRect)indicatorRect;

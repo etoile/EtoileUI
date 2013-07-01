@@ -106,8 +106,8 @@
 
 /** @taskunit Item Scaling */
 
-- (float) itemScaleFactor;
-- (void) setItemScaleFactor: (float)aFactor;
+- (CGFloat) itemScaleFactor;
+- (void) setItemScaleFactor: (CGFloat)aFactor;
 
 /** @taskunit Drawing */
 

@@ -220,50 +220,50 @@ also copied, in other words the new object is a deep copy of the receiver. */
 
 /* Utility Methods */
 
-- (float) height
+- (CGFloat) height
 {
 	return [self frame].size.height;
 }
 
-- (float) width
+- (CGFloat) width
 {
 	return [self frame].size.width;
 }
 
-- (void) setHeight: (float)height
+- (void) setHeight: (CGFloat)height
 {
-	float width = [self  width];
+	CGFloat width = [self  width];
 	
 	[self setFrameSize: NSMakeSize(width, height)];
 }
 
-- (void) setWidth: (float)width
+- (void) setWidth: (CGFloat)width
 {
-	float height = [self height];
+	CGFloat height = [self height];
 	
 	[self setFrameSize: NSMakeSize(width, height)];
 }
 
-- (float) x
+- (CGFloat) x
 {
 	return [self frame].origin.x;
 }
 
-- (float) y
+- (CGFloat) y
 {
 	return [self frame].origin.y;
 }
 
-- (void) setX: (float)x
+- (void) setX: (CGFloat)x
 {
-	float y = [self  y];
+	CGFloat y = [self  y];
 	
 	[self setFrameOrigin: NSMakePoint(x, y)];
 }
 
-- (void) setY: (float)y
+- (void) setY: (CGFloat)y
 {
-	float x = [self x];
+	CGFloat x = [self x];
 	
 	[self setFrameOrigin: NSMakePoint(x, y)];
 }
@@ -278,7 +278,7 @@ also copied, in other words the new object is a deep copy of the receiver. */
 - (void) setFrameSizeFromTopLeft: (NSSize)size
 {
 	NSView *superview = [self superview];
-	float delta = [self height] - size.height;
+	CGFloat delta = [self height] - size.height;
 	
 	if (superview == nil || [superview isFlipped] == NO)
 		[self setY: [self y] + delta];
@@ -323,7 +323,7 @@ also copied, in other words the new object is a deep copy of the receiver. */
 - (void) setFrameSizeFromBottomLeft: (NSSize)size
 {
 	NSView *superview = [self superview];
-	float delta = [self height] - size.height;
+	CGFloat delta = [self height] - size.height;
 	
 	if (superview != nil && [superview isFlipped])
 		[self setY: [self y] + delta];

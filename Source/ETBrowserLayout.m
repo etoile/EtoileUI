@@ -167,11 +167,11 @@
 	}
 }
 
-- (void) resizeItems: (NSArray *)items toScaleFactor: (float)factor
+- (void) resizeItems: (NSArray *)items toScaleFactor: (CGFloat)factor
 {
 	// NOTE: Always recompute row height from the original one to avoid really
 	// value shifting quickly because of rounding.
-	//float rowHeight = DEFAULT_ROW_HEIGHT * factor;
+	//CGFloat rowHeight = DEFAULT_ROW_HEIGHT * factor;
 	int numberOfCols = [[self browser] numberOfVisibleColumns];
 	NSMatrix *columnMatrix = nil;
 

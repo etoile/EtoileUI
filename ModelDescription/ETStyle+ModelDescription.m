@@ -96,10 +96,10 @@
 		   @(ETLabelPositionOutsideRight), _(@"Outside Right"),
 		   @(ETLabelPositionInsideBottom), _(@"Inside Bottom"),
 		   @(ETLabelPositionOutsideBottom), _(@"Outside Bottom")) arrayRepresentation]];
-	ETPropertyDescription *labelMargin = [ETPropertyDescription descriptionWithName: @"labelMargin" type: (id)@"float"];
+	ETPropertyDescription *labelMargin = [ETPropertyDescription descriptionWithName: @"labelMargin" type: (id)@"CGFloat"];
 	ETPropertyDescription *maxLabelSize = [ETPropertyDescription descriptionWithName: @"maxLabelSize" type: (id)@"NSSize"];
 	ETPropertyDescription *maxImageSize = [ETPropertyDescription descriptionWithName: @"maxImageSize" type: (id)@"NSSize"];
-	ETPropertyDescription *edgeInset = [ETPropertyDescription descriptionWithName: @"edgeInset" type: (id)@"float"];
+	ETPropertyDescription *edgeInset = [ETPropertyDescription descriptionWithName: @"edgeInset" type: (id)@"CGFloat"];
 
 	NSArray *transientProperties = [NSArray array];
 	NSArray *persistentProperties = A(labelPosition, labelMargin, maxLabelSize,
@@ -138,7 +138,7 @@
 	ETPropertyDescription *pathResizeSel = [ETPropertyDescription descriptionWithName: @"pathResizeSelector" type: (id)@"SEL"];
 	ETPropertyDescription *fillColor = [ETPropertyDescription descriptionWithName: @"fillColor" type: (id)@"NSColor"];
 	ETPropertyDescription *strokeColor = [ETPropertyDescription descriptionWithName: @"strokeColor" type: (id)@"NSColor"];
-	ETPropertyDescription *alpha = [ETPropertyDescription descriptionWithName: @"alphaValue" type: (id)@"float"];
+	ETPropertyDescription *alpha = [ETPropertyDescription descriptionWithName: @"alphaValue" type: (id)@"CGFloat"];
 	ETPropertyDescription *hidden = [ETPropertyDescription descriptionWithName: @"hidden" type: (id)@"BOOL"];
 
 	NSArray *transientProperties = A(bounds);

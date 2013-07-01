@@ -86,7 +86,7 @@ NSString *kETManipulatedObjectProperty = @"manipulatedObject";
 {
 	ETHandleGroup *handleGroup = [handle manipulatedObject];
 	NSRect manipulatedFrame = [handleGroup frame];
-	float deltaHeight = delta.height;
+	CGFloat deltaHeight = delta.height;
 	
 	[handleGroup setNeedsDisplay: YES]; /* Invalid existing rect */
 
@@ -131,7 +131,7 @@ NSString *kETManipulatedObjectProperty = @"manipulatedObject";
 {
 	ETHandleGroup *handleGroup = [handle manipulatedObject];
 	NSRect manipulatedFrame = [handleGroup frame];
-	float deltaHeight = delta.height;
+	CGFloat deltaHeight = delta.height;
 
 	[handleGroup setNeedsDisplay: YES];
 
@@ -163,7 +163,7 @@ NSString *kETManipulatedObjectProperty = @"manipulatedObject";
 {
 	ETHandleGroup *handleGroup = [handle manipulatedObject];
 	NSRect manipulatedFrame = [handleGroup frame];
-	float deltaHeight = delta.height;
+	CGFloat deltaHeight = delta.height;
 	
 	[handleGroup setNeedsDisplay: YES];
 
@@ -196,7 +196,7 @@ NSString *kETManipulatedObjectProperty = @"manipulatedObject";
 {
 	ETHandleGroup *handleGroup = [handle manipulatedObject];
 	NSRect manipulatedFrame = [handleGroup frame];
-	float deltaHeight = delta.height;
+	CGFloat deltaHeight = delta.height;
 
 	[handleGroup setNeedsDisplay: YES];
 
@@ -265,7 +265,7 @@ NSString *kETManipulatedObjectProperty = @"manipulatedObject";
 {
 	ETHandleGroup *handleGroup = [handle manipulatedObject];
 	NSRect manipulatedFrame = [handleGroup frame];
-	float deltaHeight = delta.height;
+	CGFloat deltaHeight = delta.height;
 	
 	[handleGroup setNeedsDisplay: YES];
 	
@@ -295,7 +295,7 @@ NSString *kETManipulatedObjectProperty = @"manipulatedObject";
 {
 	ETHandleGroup *handleGroup = [handle manipulatedObject];
 	NSRect manipulatedFrame = [handleGroup frame];
-	float deltaHeight = delta.height;
+	CGFloat deltaHeight = delta.height;
 	
 	[handleGroup setNeedsDisplay: YES];
 	

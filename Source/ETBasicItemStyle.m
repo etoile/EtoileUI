@@ -358,13 +358,13 @@ See also -maxLabelSize. */
 }
 
 /** Returns the margin between the item label and the item content. */
-- (float) labelMargin
+- (CGFloat) labelMargin
 {
 	return _labelMargin;
 }
 
 /** Sets the margin between the item label and the item content. */
-- (void) setLabelMargin: (float)aMargin
+- (void) setLabelMargin: (CGFloat)aMargin
 {
 	_labelMargin = aMargin;
 }
@@ -420,10 +420,10 @@ See also -labelAttributesForDrawingItem:. */
 
 	NSSize boundingSize = [anItem boundingBox].size;
 	NSSize labelSize = [aLabel sizeWithAttributes: _labelAttributes];
-	float maxLabelWidth = (_maxLabelSize.width != ETNullSize.width ? _maxLabelSize.width : boundingSize.width);
-	float maxLabelHeight = (_maxLabelSize.height != ETNullSize.height ? _maxLabelSize.height : boundingSize.height);
-	float labelSizeWidth = MIN(labelSize.width, maxLabelWidth);
-	float labelSizeHeight = MIN(labelSize.height, maxLabelHeight);
+	CGFloat maxLabelWidth = (_maxLabelSize.width != ETNullSize.width ? _maxLabelSize.width : boundingSize.width);
+	CGFloat maxLabelHeight = (_maxLabelSize.height != ETNullSize.height ? _maxLabelSize.height : boundingSize.height);
+	CGFloat labelSizeWidth = MIN(labelSize.width, maxLabelWidth);
+	CGFloat labelSizeHeight = MIN(labelSize.height, maxLabelHeight);
 	NSRect rect = ETNullRect;
 
 	switch (_labelPosition)
@@ -433,8 +433,8 @@ See also -labelAttributesForDrawingItem:. */
 			break;
 		case ETLabelPositionOutsideTop:
 		{
-			float labelBaseX = (itemFrame.size.width - labelSizeWidth) / 2;
-			float labelBaseY = 0;
+			CGFloat labelBaseX = (itemFrame.size.width - labelSizeWidth) / 2;
+			CGFloat labelBaseY = 0;
 
 			if ([anItem isFlipped])
 			{
@@ -450,16 +450,16 @@ See also -labelAttributesForDrawingItem:. */
 		}
 		case ETLabelPositionInsideLeft:
 		{
-			float labelBaseX = _edgeInset;
-			float labelBaseY = (itemFrame.size.height - labelSizeHeight) / 2;
+			CGFloat labelBaseX = _edgeInset;
+			CGFloat labelBaseY = (itemFrame.size.height - labelSizeHeight) / 2;
 
 			rect = NSMakeRect(labelBaseX, labelBaseY, labelSizeWidth, labelSizeHeight);
 			break;
 		}
 		case ETLabelPositionOutsideLeft:
 		{
-			float labelBaseX = - labelSizeWidth - _labelMargin;
-			float labelBaseY = (itemFrame.size.height - labelSizeHeight) / 2;
+			CGFloat labelBaseX = - labelSizeWidth - _labelMargin;
+			CGFloat labelBaseY = (itemFrame.size.height - labelSizeHeight) / 2;
 			// TODO: Support max label size in a better way rather than only 
 			// allowing a width equal to the item width when no max size is set.
 
@@ -468,8 +468,8 @@ See also -labelAttributesForDrawingItem:. */
 		}
 		case ETLabelPositionInsideBottom:
 		{
-			float labelBaseX = (itemFrame.size.width - labelSizeWidth) / 2;
-			float labelBaseY = 0;
+			CGFloat labelBaseX = (itemFrame.size.width - labelSizeWidth) / 2;
+			CGFloat labelBaseY = 0;
 
 			if ([anItem isFlipped])
 			{
@@ -485,8 +485,8 @@ See also -labelAttributesForDrawingItem:. */
 		}
 		case ETLabelPositionOutsideBottom:
 		{
-			float labelBaseX = (itemFrame.size.width - labelSizeWidth) / 2;
-			float labelBaseY = 0;
+			CGFloat labelBaseX = (itemFrame.size.width - labelSizeWidth) / 2;
+			CGFloat labelBaseY = 0;
 
 			if ([anItem isFlipped])
 			{
@@ -540,18 +540,18 @@ with -[ETLayoutItem setBoundingBox:]. */
 	NSParameterAssert(nil != anItem);
 
 	BOOL noView = ([anItem view] == nil);
-	float maxImgWidth = (noView && _maxImageSize.width != ETNullSize.width ? _maxImageSize.width : imgSize.width);
-	float maxImgHeight = (noView && _maxImageSize.height != ETNullSize.height ? _maxImageSize.height : imgSize.height);
-	float imgWidth = MIN(imgSize.width, maxImgWidth);
-	float imgHeight = MIN(imgSize.height, maxImgHeight);
+	CGFloat maxImgWidth = (noView && _maxImageSize.width != ETNullSize.width ? _maxImageSize.width : imgSize.width);
+	CGFloat maxImgHeight = (noView && _maxImageSize.height != ETNullSize.height ? _maxImageSize.height : imgSize.height);
+	CGFloat imgWidth = MIN(imgSize.width, maxImgWidth);
+	CGFloat imgHeight = MIN(imgSize.height, maxImgHeight);
 
 	NSSize labelSize = [[self labelForItem: anItem] sizeWithAttributes: _labelAttributes];
-	float maxLabelWidth = (_maxLabelSize.width != ETNullSize.width ? _maxLabelSize.width : labelSize.width);
-	float maxLabelHeight = (_maxLabelSize.height != ETNullSize.height ? _maxLabelSize.height : labelSize.height);
-	float labelWidth = MIN(labelSize.width, maxLabelWidth);
-	float labelHeight = MIN(labelSize.height, maxLabelHeight);
+	CGFloat maxLabelWidth = (_maxLabelSize.width != ETNullSize.width ? _maxLabelSize.width : labelSize.width);
+	CGFloat maxLabelHeight = (_maxLabelSize.height != ETNullSize.height ? _maxLabelSize.height : labelSize.height);
+	CGFloat labelWidth = MIN(labelSize.width, maxLabelWidth);
+	CGFloat labelHeight = MIN(labelSize.height, maxLabelHeight);
 
-	float insetSpace = _edgeInset * 2;
+	CGFloat insetSpace = _edgeInset * 2;
 
 	switch (_labelPosition)
 	{
@@ -563,8 +563,8 @@ with -[ETLayoutItem setBoundingBox:]. */
 		/* We ignore the label margin in that case */	
 		case ETLabelPositionCentered:
 		{
-			float width = MAX(labelWidth, imgWidth);
-			float height = MAX(labelHeight, imgHeight);
+			CGFloat width = MAX(labelWidth, imgWidth);
+			CGFloat height = MAX(labelHeight, imgHeight);
 
 			return NSMakeSize(width + insetSpace, height + insetSpace);
 		}
@@ -573,11 +573,11 @@ with -[ETLayoutItem setBoundingBox:]. */
 		case ETLabelPositionInsideBottom:
 		case ETLabelPositionOutsideBottom:
 		{
-			float width = MAX(labelWidth, imgWidth);
+			CGFloat width = MAX(labelWidth, imgWidth);
 			/* In ETLabelPositionOutsideBottom/Top, the bottom edge inset is between 
 			   the image and the label margin but the final height is the same.
 			   The height computation below corresponds to ETLabelPositionInsideBottom. */
-			float height = imgHeight + _labelMargin + labelHeight;
+			CGFloat height = imgHeight + _labelMargin + labelHeight;
 
 			return NSMakeSize(width + insetSpace, height + insetSpace);
 		}
@@ -589,8 +589,8 @@ with -[ETLayoutItem setBoundingBox:]. */
 			/* In ETLabelPositionOutsideLeft/Right, the left edge inset is between 
 			   the image and the label margin but the final width is the same.
 			   The width computation below corresponds to ETLabelPositionInsideLeft. */
-			float width = imgWidth + _labelMargin + labelWidth;
-			float height = MAX(labelHeight, imgHeight);
+			CGFloat width = imgWidth + _labelMargin + labelWidth;
+			CGFloat height = MAX(labelHeight, imgHeight);
 
 			return NSMakeSize(width + insetSpace, height + insetSpace);
 		}
@@ -840,7 +840,7 @@ If the label position is not inside, the label area is simply ignored. */
 
 The returned value can be used as inset along the item frame edge rather than 
 the content bounds in subclasses. */
-- (float) edgeInset
+- (CGFloat) edgeInset
 {
 	return _edgeInset;
 }
@@ -848,7 +848,7 @@ the content bounds in subclasses. */
 /** Sets the inset margin along each item content bounds edge.
 
 See also -edgeInset. */
-- (void) setEdgeInset: (float)anInset
+- (void) setEdgeInset: (CGFloat)anInset
 {
 	_edgeInset = anInset;
 }

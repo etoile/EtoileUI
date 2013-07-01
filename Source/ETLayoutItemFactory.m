@@ -167,13 +167,13 @@ See also -beginRootObject. */
 }
 
 /** Returns the height applied to all the bar elements to be built. */
-- (float) currentBarElementHeight
+- (CGFloat) currentBarElementHeight
 {
 	return _currentBarElementHeight;
 }
 
 /** Sets the height to apply to all the bar elements to be built. */
-- (void) setCurrentBarElementHeight: (float)aHeight
+- (void) setCurrentBarElementHeight: (CGFloat)aHeight
 {
 	_currentBarElementHeight = aHeight;
 }
@@ -184,7 +184,7 @@ This bar height is set as the current bar element height when the receiver is
 initialized.
 
 This height is also identical to the standard toolbar height in Aqua. */
-- (float) defaultIconAndLabelBarHeight
+- (CGFloat) defaultIconAndLabelBarHeight
 {
 	return 53;
 
@@ -476,7 +476,7 @@ Many widget factory methods use a custom height, see -defaultWidgetFrameWithHeig
 }
 
 /** Returns the same rect than -defaultWidgetFrame but with a custom height. */
-- (NSRect) defaultWidgetFrameWithHeight: (float)aHeight
+- (NSRect) defaultWidgetFrameWithHeight: (CGFloat)aHeight
 {
 	NSRect frame = [self defaultWidgetFrame];
 	frame.size.height = aHeight;
@@ -503,7 +503,7 @@ although it is not one (it is more akin a bevel button without a label). */
 	return frame;
 }
 
-- (float) defaultButtonHeight
+- (CGFloat) defaultButtonHeight
 {
 #ifdef GNUSTEP
 	return 24;
@@ -512,7 +512,7 @@ although it is not one (it is more akin a bevel button without a label). */
 #endif
 }
 
-- (float) defaultCheckboxHeight
+- (CGFloat) defaultCheckboxHeight
 {
 #ifdef GNUSTEP
 	return 16;
@@ -521,12 +521,12 @@ although it is not one (it is more akin a bevel button without a label). */
 #endif
 }
 
-- (float) defaultRadioButtonHeight
+- (CGFloat) defaultRadioButtonHeight
 {
 	return [self defaultCheckboxHeight];
 }
 
-- (float) defaultPopUpMenuHeight
+- (CGFloat) defaultPopUpMenuHeight
 {
 #ifdef GNUSTEP
 	return 22;
@@ -535,7 +535,7 @@ although it is not one (it is more akin a bevel button without a label). */
 #endif
 }
 
-- (float) defaultProgressIndicatorHeight
+- (CGFloat) defaultProgressIndicatorHeight
 {
 #ifdef GNUSTEP
 	return 18;
@@ -544,7 +544,7 @@ although it is not one (it is more akin a bevel button without a label). */
 #endif
 }
 
-- (float) defaultSliderThickness
+- (CGFloat) defaultSliderThickness
 {
 #ifdef GNUSTEP
 	return 16;
@@ -553,7 +553,7 @@ although it is not one (it is more akin a bevel button without a label). */
 #endif
 }
 
-- (float) defaultStepperHeight
+- (CGFloat) defaultStepperHeight
 {
 #ifdef GNUSTEP
 	return 23;
@@ -562,7 +562,7 @@ although it is not one (it is more akin a bevel button without a label). */
 #endif
 }
 
-- (float) defaultTextFieldHeight
+- (CGFloat) defaultTextFieldHeight
 {
 #ifdef GNUSTEP
 	return 21;
@@ -571,7 +571,7 @@ although it is not one (it is more akin a bevel button without a label). */
 #endif
 }
 
-- (float) defaultLabelHeight
+- (CGFloat) defaultLabelHeight
 {
 #ifdef GNUSTEP
 	return 18;
@@ -580,7 +580,7 @@ although it is not one (it is more akin a bevel button without a label). */
 #endif
 }
 
-- (id) makeItemWithViewClass: (Class)class height: (float)aHeight
+- (id) makeItemWithViewClass: (Class)class height: (CGFloat)aHeight
 {
 	id view = AUTORELEASE([[class alloc] initWithFrame: [self defaultWidgetFrameWithHeight: aHeight]]);
 
@@ -821,10 +821,10 @@ value to 50. */
 	return item;
 }
 
-- (id) horizontalSliderWithWidth: (float)aWidth
-                        minValue: (float)min 
-                        maxValue: (float)max
-                    initialValue: (float)aValue
+- (id) horizontalSliderWithWidth: (CGFloat)aWidth
+                        minValue: (CGFloat)min 
+                        maxValue: (CGFloat)max
+                    initialValue: (CGFloat)aValue
                           target: (id)aTarget
                           action: (SEL)aSelector
                      forProperty: (NSString *)aKey
@@ -854,10 +854,10 @@ value to 50. */
 
 /** Returns a new layout item that uses a horizontally oriented NSSlider instance 
 as its view. */
-- (id) horizontalSliderWithWidth: (float)aWidth 
-                        minValue: (float)min 
-                        maxValue: (float)max
-                    initialValue: (float)aValue 
+- (id) horizontalSliderWithWidth: (CGFloat)aWidth 
+                        minValue: (CGFloat)min 
+                        maxValue: (CGFloat)max
+                    initialValue: (CGFloat)aValue 
                           target: (id)aTarget 
                           action: (SEL)aSelector
 {
@@ -867,9 +867,9 @@ as its view. */
 
 /** Returns a new layout item that uses a horizontally oriented NSSlider instance 
 as its view. */
-- (id) horizontalSliderWithWidth: (float)aWidth
-                        minValue: (float)min 
-                        maxValue: (float)max
+- (id) horizontalSliderWithWidth: (CGFloat)aWidth
+                        minValue: (CGFloat)min 
+                        maxValue: (CGFloat)max
                      forProperty: (NSString *)aKey
                          ofModel: (id)anObject
 {

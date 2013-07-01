@@ -135,9 +135,9 @@
 
 	// TODO: Migrate to CGFloat
 	ETPropertyDescription *borderMargin =
-		[ETPropertyDescription descriptionWithName: @"borderMargin" type: (id)@"float"];
+		[ETPropertyDescription descriptionWithName: @"borderMargin" type: (id)@"CGFloat"];
 	ETPropertyDescription *itemMargin =
-		[ETPropertyDescription descriptionWithName: @"itemMargin" type: (id)@"float"];
+		[ETPropertyDescription descriptionWithName: @"itemMargin" type: (id)@"CGFloat"];
 	
 	NSArray *transientProperties = [NSArray array];
 	NSArray *persistentProperties = A(borderMargin, itemMargin);

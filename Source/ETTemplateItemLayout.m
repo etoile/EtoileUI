@@ -381,7 +381,7 @@ Does nothing by default. */
 
 /* By default, returns 1 to prevent the positional layout to resize the items. 
 e.g. the icon layout does it in its own way by overriding -resizeLayoutItems:toScaleFactor:. */
-- (float) itemScaleFactor
+- (CGFloat) itemScaleFactor
 {
 
 	return ([self ignoresItemScaleFactor] ? 1.0 : [_layoutContext itemScaleFactor]);

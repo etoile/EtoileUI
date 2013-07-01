@@ -74,12 +74,12 @@ makes the label invisible. */
 {
 	@private
 	ETLabelPosition _labelPosition;
-	float _labelMargin;
+	CGFloat _labelMargin;
 	NSDictionary *_labelAttributes;
 	NSDictionary *_selectedLabelAttributes;
 	NSSize _maxLabelSize;
 	NSSize _maxImageSize;
-	float _edgeInset;
+	CGFloat _edgeInset;
 	NSRect _currentLabelRect;
 	NSRect _currentImageRect;
 }
@@ -113,8 +113,8 @@ makes the label invisible. */
 - (NSSize) maxLabelSize;
 - (ETLabelPosition) labelPosition;
 - (void) setLabelPosition: (ETLabelPosition)aPositionRule;
-- (float) labelMargin;
-- (void) setLabelMargin: (float)aMargin;
+- (CGFloat) labelMargin;
+- (void) setLabelMargin: (CGFloat)aMargin;
 - (NSDictionary *) labelAttributes;
 - (void) setLabelAttributes: (NSDictionary *)stringAttributes;
 - (NSDictionary *) selectedLabelAttributes;
@@ -145,8 +145,8 @@ makes the label invisible. */
 - (NSRect) rectForViewOfItem: (ETLayoutItem *)anItem
                withLabelRect: (NSRect)labelRect;
 
-- (float) edgeInset;
-- (void) setEdgeInset: (float)anInset;
+- (CGFloat) edgeInset;
+- (void) setEdgeInset: (CGFloat)anInset;
 
 - (NSSize) boundingSizeForItem: (ETLayoutItem *)anItem imageOrViewSize: (NSSize)imgSize;
  

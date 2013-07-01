@@ -92,10 +92,10 @@
 	ETPropertyDescription *subject = [ETPropertyDescription descriptionWithName: @"subject" type: (id)@"NSObject"];
 	ETPropertyDescription *style = [ETPropertyDescription descriptionWithName: @"style" type: (id)@"ETStyle"];
 	ETPropertyDescription *frame = [ETPropertyDescription descriptionWithName: @"frame" type: (id)@"NSRect"];
-	ETPropertyDescription *x = [ETPropertyDescription descriptionWithName: @"x" type: (id)@"float"];
-	ETPropertyDescription *y = [ETPropertyDescription descriptionWithName: @"y" type: (id)@"float"];
-	ETPropertyDescription *width = [ETPropertyDescription descriptionWithName: @"width" type: (id)@"float"];
-	ETPropertyDescription *height = [ETPropertyDescription descriptionWithName: @"height" type: (id)@"float"];
+	ETPropertyDescription *x = [ETPropertyDescription descriptionWithName: @"x" type: (id)@"CGFloat"];
+	ETPropertyDescription *y = [ETPropertyDescription descriptionWithName: @"y" type: (id)@"CGFloat"];
+	ETPropertyDescription *width = [ETPropertyDescription descriptionWithName: @"width" type: (id)@"CGFloat"];
+	ETPropertyDescription *height = [ETPropertyDescription descriptionWithName: @"height" type: (id)@"CGFloat"];
 	ETPropertyDescription *target = [ETPropertyDescription descriptionWithName: @"target" type: (id)@"NSObject"];
 	ETPropertyDescription *acceptsActions = [ETPropertyDescription descriptionWithName: @"acceptsActions" type: (id)@"BOOL"];
 	// TODO: We should persist the inspector but how... We should use a better type than NSObject.
@@ -197,7 +197,7 @@
 		[ETPropertyDescription descriptionWithName: @"shouldMutateRepresentedObject" type: (id)@"BOOL"];
 	[shouldMutateRepObject setDisplayName: @"Mutate Represented Object"];
 	ETPropertyDescription *itemScaleFactor = 
-		[ETPropertyDescription descriptionWithName: @"itemScaleFactor" type: (id)@"float"];
+		[ETPropertyDescription descriptionWithName: @"itemScaleFactor" type: (id)@"CGFloat"];
 	// NOTE: _wasViewHidden must be persisted. If YES at deserialization, we 
 	// unhide the item view.
 	ETPropertyDescription *wasViewHidden = [ETPropertyDescription descriptionWithName: @"wasViewHidden" type: (id)@"BOOL"];

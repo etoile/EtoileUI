@@ -149,7 +149,7 @@ a point expressed in the main item coordinates. The main item is the window cont
 	UKPointsEqual(NSMakePoint(3, 3), backendWindowLoc);
 	UKPointsNotEqual(backendWindowLoc, [evt locationInWindowContentItem]);
 	UKPointsNotEqual(backendWindowLoc, [evt locationInWindowItem]);
-	float windowItemLocY = [[self window] frame].size.height - backendWindowLoc.y; 
+	CGFloat windowItemLocY = [[self window] frame].size.height - backendWindowLoc.y; 
  	UKPointsEqual(NSMakePoint(backendWindowLoc.x, windowItemLocY), [evt locationInWindowItem]);
 
 	[mainItem setFlipped: NO]; /* For all the tests that follow */	
@@ -206,7 +206,7 @@ a point expressed in the main item coordinates. The main item is the window cont
 	// TODO: Use [[NSScreen mainScreen] visibleFrame]; on GNUstep once 
 	// improved as explained in -rootWindowFrame.
 	NSRect visibleFrame = [(ETWindowLayer *)[itemFactory windowGroup] rootWindowFrame];
-	float menuBarHeight = frame.size.height - (visibleFrame.size.height + visibleFrame.origin.y);
+	CGFloat menuBarHeight = frame.size.height - (visibleFrame.size.height + visibleFrame.origin.y);
 	ETEvent *evt = [self createEventAtScreenPoint: NSMakePoint(600, menuBarHeight) isFlipped: YES];
 
 	UKObjectsSame([itemFactory windowGroup], [tool hitTestWithEvent: evt]);
@@ -315,8 +315,8 @@ An F-script session is pasted at the file end to understand that more easily. */
 inside the content bounds. */
 - (void) testHitTestOutsideItemFrame
 {
-	float width = [mainItem width] + 20;
-	float height = [mainItem height] + 20;
+	CGFloat width = [mainItem width] + 20;
+	CGFloat height = [mainItem height] + 20;
 	ETLayoutItem *item1 = [itemFactory rectangleWithRect: NSInsetRect([mainItem bounds], -20, -20)];
 
 	[mainItem addItem: item1];

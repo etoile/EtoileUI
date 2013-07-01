@@ -2592,56 +2592,56 @@ Marks the parent item as needing a layout update. */
 
 /** Returns the current x coordinate associated with the receiver frame origin. 
 See also -frame. */       
-- (float) x
+- (CGFloat) x
 {
 	return [self origin].x;
 }
 
 /** Sets the current x coordinate associated with the receiver frame origin. 
 See also -setFrame:. */
-- (void) setX: (float)x
+- (void) setX: (CGFloat)x
 {
 	[self setOrigin: NSMakePoint(x, [self y])];
 }
 
 /** Returns the current y coordinate associated with the receiver frame origin. 
 See also -frame. */
-- (float) y
+- (CGFloat) y
 {
 	return [self origin].y;
 }
 
 /** Sets the current y coordinate associated with the receiver frame origin. 
 See also -setFrame:. */
-- (void) setY: (float)y
+- (void) setY: (CGFloat)y
 {
 	[self setOrigin: NSMakePoint([self x], y)];
 }
 
 /** Returns the current height associated with the receiver frame size. See also 
 -frame. */
-- (float) height
+- (CGFloat) height
 {
 	return [self size].height;
 }
 
 /** Sets the current height associated with the receiver frame size. See also 
 -setFrame:. */
-- (void) setHeight: (float)height
+- (void) setHeight: (CGFloat)height
 {
 	[self setSize: NSMakeSize([self width], height)];
 }
 
 /** Returns the current width associated with the receiver frame size. See also 
 -frame. */
-- (float) width
+- (CGFloat) width
 {
 	return [self size].width;
 }
 
 /** Sets the current width associated with the receiver frame size. See also 
 -setFrame:. */
-- (void) setWidth: (float)width
+- (void) setWidth: (CGFloat)width
 {
 	[self setSize: NSMakeSize(width, [self height])];
 }

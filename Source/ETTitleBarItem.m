@@ -91,9 +91,9 @@
 	[_titleBarView setAutoresizingMask: 
 		([self isFlipped] ? NSViewWidthSizable : NSViewMinYMargin | NSViewWidthSizable)];
 
-	float width = [[self supervisorView] frame].size.width;
-	float height = [[self supervisorView] frame].size.height;
-	float barHeight = [self titleBarHeight];
+	CGFloat width = [[self supervisorView] frame].size.width;
+	CGFloat height = [[self supervisorView] frame].size.height;
+	CGFloat barHeight = [self titleBarHeight];
 	NSRect contentFrame;
 	NSRect titleBarFrame;
 	

@@ -16,7 +16,7 @@
 #import "ETLineFragment.h"
 #import "ETCompatibility.h"
 
-float ETAlignmentHintNone = FLT_MIN;
+CGFloat ETAlignmentHintNone = FLT_MIN;
 
 
 @implementation ETComputedLayout
@@ -59,7 +59,7 @@ Returns YES. */
 /* Alignment and Margins */
 
 /** Returns the size of the inside margin along the layout context bounds. */
-- (float) borderMargin
+- (CGFloat) borderMargin
 {
 	return _borderMargin;
 }
@@ -68,7 +68,7 @@ Returns YES. */
 triggers a layout update.
 
 The presented content appears inset when a positive margin is set. */
-- (void) setBorderMargin: (float)aMargin
+- (void) setBorderMargin: (CGFloat)aMargin
 {
 	_borderMargin = aMargin;
 	[self renderAndInvalidateDisplay];
@@ -76,14 +76,14 @@ The presented content appears inset when a positive margin is set. */
 
 /** Sets the size of the margin around each item to be layouted and triggers a 
 layout update. */
-- (void) setItemMargin: (float)aMargin
+- (void) setItemMargin: (CGFloat)aMargin
 {
 	_itemMargin = aMargin;
 	[self renderAndInvalidateDisplay];
 }
 
 /** Returns the size of the margin around each item to be layouted. */
-- (float) itemMargin
+- (CGFloat) itemMargin
 {
 	return _itemMargin;
 }
@@ -115,7 +115,7 @@ layout update. */
 context left edge.
 
 See also -setHorizontalAlignmentGuidePosition: */
-- (float) horizontalAlignmentGuidePosition
+- (CGFloat) horizontalAlignmentGuidePosition
 {
 	return _horizontalAlignmentGuidePosition;
 }
@@ -128,7 +128,7 @@ the layouted items can be aligned. See -setHorizontalAlignment:.
 
 When -horizontalAlignment is not equal to ETHorizontalAlignmentGuided, this 
 guide is ignored by the layout computation.  */
-- (void) setHorizontalAlignmentGuidePosition: (float)aPosition
+- (void) setHorizontalAlignmentGuidePosition: (CGFloat)aPosition
 {
 	_horizontalAlignmentGuidePosition = aPosition;
 	[self renderAndInvalidateDisplay];
@@ -149,14 +149,14 @@ guide is ignored by the layout computation.  */
 	return [self usesAlignmentHint];
 }
 
-- (float) horizontalAlignmentGuidePositionForItems: (NSArray *)items
+- (CGFloat) horizontalAlignmentGuidePositionForItems: (NSArray *)items
 {
-	float guidePosition = ETAlignmentHintNone;
+	CGFloat guidePosition = ETAlignmentHintNone;
 	CGFloat maxCombinedBoundingWidth = 0;
 
 	for (ETLayoutItem *item in items)
 	{
-		float hint = ETAlignmentHintNone;
+		CGFloat hint = ETAlignmentHintNone;
 		CGFloat combinedBoundingWidth = 0;
 		
 		if ([[item layout] conformsToProtocol: @protocol(ETAlignmentHint)])
@@ -178,7 +178,7 @@ guide is ignored by the layout computation.  */
 	if ([self usesAlignmentHint] == NO)
 		return;
 
-	float guidePosition = [self horizontalAlignmentGuidePositionForItems: items];
+	CGFloat guidePosition = [self horizontalAlignmentGuidePositionForItems: items];
 
 	if (guidePosition == ETAlignmentHintNone)
 		return;
@@ -260,7 +260,7 @@ The parent is the layout context. */
 }
 
 /** Moves the item frame by the given delta. */
-- (void) translateOriginOfItem: (ETLayoutItem *)anItem byX: (float)dx Y: (float)dy
+- (void) translateOriginOfItem: (ETLayoutItem *)anItem byX: (CGFloat)dx Y: (CGFloat)dy
 {
 	NSRect itemFrame = [anItem frame];
 	[anItem setOrigin: NSMakePoint(itemFrame.origin.x + dx, itemFrame.origin.y + dy)];
@@ -274,8 +274,8 @@ bounding box). */
 	{
 		NSRect itemRect = [anItem convertRectToParent: [anItem boundingBox]];
 		NSPoint oldOrigin = itemRect.origin;
-		float dx = newOrigin.x - oldOrigin.x;
-		float dy = newOrigin.y - oldOrigin.y;
+		CGFloat dx = newOrigin.x - oldOrigin.x;
+		CGFloat dy = newOrigin.y - oldOrigin.y;
 
 		[self translateOriginOfItem: anItem byX: dx Y: dy];
 	}
@@ -489,23 +489,23 @@ the layout context flipping. For example:
 
 <example>
 ETLineFragment *line = [fragments firstObject];
-float totalMargin = ([self borderMargin] + [self itemMargin]) * 2;
-float contentHeight =  [line height] + totalMargin;
+CGFloat totalMargin = ([self borderMargin] + [self itemMargin]) * 2;
+CGFloat contentHeight =  [line height] + totalMargin;
 
 
 [line setOrigin: [self originOfFirstFragment: line
                             forContentHeight: contentHeight]];
 </example> */
 - (NSPoint) originOfFirstFragment: (id)aFragment 
-                 forContentHeight: (float)contentHeight
+                 forContentHeight: (CGFloat)contentHeight
 {
 	BOOL isFlipped = [_layoutContext isFlipped];
 	/* Was just reset and equal to the layout context height at this point */
-	float layoutHeight = [self layoutSize].height;
-	float itemMargin = [self itemMargin];
-	float borderMargin = [self borderMargin];
-	float lineY = borderMargin + itemMargin;
-	float fragmentHeight = [aFragment height];
+	CGFloat layoutHeight = [self layoutSize].height;
+	CGFloat itemMargin = [self itemMargin];
+	CGFloat borderMargin = [self borderMargin];
+	CGFloat lineY = borderMargin + itemMargin;
+	CGFloat fragmentHeight = [aFragment height];
 
 	/* The statement below looks simple but is very easy to break and hard to 
 	   get right.
@@ -568,14 +568,14 @@ How to interpret the separator end margin value is a subclass responsability.
 margin with the item margin to compute the space around each separator.
 
 When the separator is the space, the end margin has usually no visible effects. */
-- (void) setSeparatorItemEndMargin: (float)aMargin
+- (void) setSeparatorItemEndMargin: (CGFloat)aMargin
 {
 	_separatorItemEndMargin = aMargin;
 	[self renderAndInvalidateDisplay];
 }
 
 /** Returns the size trimmed at each separator item extremities. */
-- (float) separatorItemEndMargin
+- (CGFloat) separatorItemEndMargin
 {
 	return _separatorItemEndMargin;
 }

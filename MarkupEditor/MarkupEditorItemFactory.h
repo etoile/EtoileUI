@@ -19,7 +19,7 @@
 @interface MarkupEditorItemFactory : ETLayoutItemFactory
 
 - (ETLayoutItemGroup *) editorViewWithSize: (NSSize)aSize controller: (ETController *)aController;
-- (ETLayoutItemGroup *) toolbarWithWidth: (float)aWidth controller: (ETController *)aController;
+- (ETLayoutItemGroup *) toolbarWithWidth: (CGFloat)aWidth controller: (ETController *)aController;
 - (ETLayoutItemGroup *) editor;
 
 - (ETLayoutItemGroup *) workspaceWithControllerPrototype: (ETController *)aController;

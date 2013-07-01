@@ -767,7 +767,7 @@ it (this is subject to change though). */
 {	
 	ETDebugLog(@"Render layout items: %@", items);
 
-	float scale = [[self layoutContext] itemScaleFactor];
+	CGFloat scale = [[self layoutContext] itemScaleFactor];
 	NSSize oldProposedLayoutSize = _proposedLayoutSize;
 
 	[self resetLayoutSize];
@@ -841,7 +841,7 @@ Overrides this method to support a custom resizing policy bound to
  
 See also -[ETLayoutItemGroup itemScaleFactor] and 
 -[ETPositionalLayout resizeItems:toScaleFactor:]. */
-- (void) resizeItems: (NSArray *)items toScaleFactor: (float)factor
+- (void) resizeItems: (NSArray *)items toScaleFactor: (CGFloat)factor
 {
 
 }

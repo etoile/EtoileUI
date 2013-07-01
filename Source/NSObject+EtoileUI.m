@@ -360,7 +360,7 @@ conveniency. */
 		return NO;
 
 	[self addPropertyDescriptionWithName: newGetterName
-	                                type: @"float"
+	                                type: @"CGFloat"
 	                        inRepository: aRepository];
 	return newGetterName;
 }

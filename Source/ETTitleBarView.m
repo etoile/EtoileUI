@@ -125,7 +125,7 @@
 	NSColor *bottomBorderColor = [NSColor colorWithCalibratedWhite: 0.61 alpha: 1.0];
 #endif
 	NSGradient *gradient = AUTORELEASE([[NSGradient alloc] initWithStartingColor: startColor endingColor: endColor]);
-	float angle = ([self drawsGradientFlipped] ? 270 : 90);
+	CGFloat angle = ([self drawsGradientFlipped] ? 270 : 90);
 
 	[gradient drawInRect: rect angle: angle];
 

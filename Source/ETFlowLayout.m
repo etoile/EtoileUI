@@ -44,9 +44,9 @@
 Returns the height in which all the given fragments fits. 
 
 Border and item margins are included in the sum. */
-- (float) totalHeightForFragments: (NSArray *)fragments
+- (CGFloat) totalHeightForFragments: (NSArray *)fragments
 {
-	float totalHeight = [self borderMargin] + [self itemMargin];
+	CGFloat totalHeight = [self borderMargin] + [self itemMargin];
 
 	FOREACHI(fragments, fragment)
 	{
@@ -59,7 +59,7 @@ Border and item margins are included in the sum. */
 }
 
 - (NSPoint) nextOriginAfterFragment: (id)line 
-                             margin: (float)itemMargin 
+                             margin: (CGFloat)itemMargin 
                           isFlipped: (BOOL)isFlipped
 {
 	NSPoint nextOrigin = [line origin];
@@ -87,8 +87,8 @@ to the items, which are expected to be already broken into lines in layoutModel.
 		return NSZeroSize;
 
 	BOOL isFlipped = [[self layoutContext] isFlipped];
-	float itemMargin = [self itemMargin];
-	float contentHeight = [self totalHeightForFragments: layoutModel];
+	CGFloat itemMargin = [self itemMargin];
+	CGFloat contentHeight = [self totalHeightForFragments: layoutModel];
 	NSPoint lineOrigin = [self originOfFirstFragment: [layoutModel firstObject]
 	                                forContentHeight: contentHeight];
 
@@ -162,8 +162,8 @@ not every items have been inserted into it.
 When items is empty, returns an empty layout line. */
 - (ETLineFragment *) layoutFragmentWithSubsetOfItems: (NSArray *)items
 {
-	float layoutWidth = FLT_MAX;
-	float totalMargin = ([self itemMargin] + [self borderMargin]) * 2;
+	CGFloat layoutWidth = FLT_MAX;
+	CGFloat totalMargin = ([self itemMargin] + [self borderMargin]) * 2;
 
 	if ([self layoutSizeConstraintStyle] == ETSizeConstraintStyleHorizontal)
 	{
@@ -174,7 +174,7 @@ When items is empty, returns an empty layout line. */
 	                                                    itemMargin: [self itemMargin] 
 	                                                      maxWidth: layoutWidth];
 	NSArray *acceptedItems = [line fillWithItems: items];
-	float lineLength = [line length];
+	CGFloat lineLength = [line length];
 
 	// NOTE: Not really useful for now because we don't support filling the 
 	// layout horizontally, only vertical filling is in place.

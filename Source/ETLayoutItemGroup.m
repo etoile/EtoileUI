@@ -1050,7 +1050,7 @@ frame (see -usesFlexibleLayoutFrame). */
 /** Returns the scale factor applied to each item when the layout supports it.
 
 See also -setItemScaleFactor:. */
-- (float) itemScaleFactor
+- (CGFloat) itemScaleFactor
 {
 	return [[self primitiveValueForKey: kETItemScaleFactorProperty] floatValue];
 }
@@ -1063,7 +1063,7 @@ Updates the layout immediately unlike most methods.
 
 See -[ETLayout setItemSizeConstraintStyle:] and -[ETLayout setConstrainedItemSize:]
 to control more precisely how the items get resized per layout. */
-- (void) setItemScaleFactor: (float)aFactor
+- (void) setItemScaleFactor: (CGFloat)aFactor
 {
 	[self setPrimitiveValue: [NSNumber numberWithFloat: aFactor] forKey: kETItemScaleFactorProperty];
 	/* Don't use -setNeedsUpdateLayout, because this method is usually triggered

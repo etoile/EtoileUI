@@ -226,7 +226,7 @@ time. For example:
 - (void) registerDefaultFormatters
 {
 	NSArray *numberTypeNames = A(@"NSNumber", @"NSInteger", @"NSUInteger",
-		@"float", @"double", @"BOOL", @"Boolean", @"Number");
+		@"CGFloat", @"double", @"BOOL", @"Boolean", @"Number");
 
 	[self setFormatter: AUTORELEASE([ETObjectValueFormatter new])
 	           forType: [_repository descriptionForName: @"Object"]];
@@ -829,7 +829,7 @@ See also -setRenderedPropertyNames:. */
 
 - (BOOL)isNumberType: (ETEntityDescription *)aType
 {
-	return [S(@"NSInteger", @"NSUInteger", @"float", @"CGFloat") containsObject: [aType name]];
+	return [S(@"NSInteger", @"NSUInteger", @"CGFloat", @"CGFloat") containsObject: [aType name]];
 }
 
 - (BOOL)isPointType: (ETEntityDescription *)aType

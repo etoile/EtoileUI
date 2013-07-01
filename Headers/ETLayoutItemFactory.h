@@ -25,7 +25,7 @@ ETStyle, ETActionHandler;
 	ETStyle *_currentCoverStyle;
 	ETActionHandler *_currentActionHandler;
 	ETStyle *_currentBarElementStyle;
-	float _currentBarElementHeight;
+	CGFloat _currentBarElementHeight;
 }
 
 + (instancetype) factory;
@@ -43,9 +43,9 @@ ETStyle, ETActionHandler;
 
 - (ETStyle *) currentBarElementStyle;
 - (void) setCurrentBarElementStyle: (ETStyle *)aStyle;
-- (float) currentBarElementHeight;
-- (void) setCurrentBarElementHeight: (float)aHeight;
-- (float) defaultIconAndLabelBarHeight;
+- (CGFloat) currentBarElementHeight;
+- (void) setCurrentBarElementHeight: (CGFloat)aHeight;
+- (CGFloat) defaultIconAndLabelBarHeight;
 
 /* Basic Item Factory Methods */
 
@@ -95,15 +95,15 @@ ETStyle, ETActionHandler;
 - (id) progressIndicator;
 - (id) verticalSlider;
 - (id) horizontalSlider;
-- (id) horizontalSliderWithWidth: (float)aWidth 
-                        minValue: (float)min 
-                        maxValue: (float)max
-                    initialValue: (float)aValue 
+- (id) horizontalSliderWithWidth: (CGFloat)aWidth 
+                        minValue: (CGFloat)min 
+                        maxValue: (CGFloat)max
+                    initialValue: (CGFloat)aValue 
                           target: (id)aTarget 
                           action: (SEL)aSelector;
-- (id) horizontalSliderWithWidth: (float)aWidth
-                        minValue: (float)min 
-                        maxValue: (float)max
+- (id) horizontalSliderWithWidth: (CGFloat)aWidth
+                        minValue: (CGFloat)min 
+                        maxValue: (CGFloat)max
                      forProperty: (NSString *)aKey
                          ofModel: (id)anObject;
 - (id) stepper;

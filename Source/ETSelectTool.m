@@ -525,8 +525,8 @@ their intersection with the new selection rect. */
 {
 	_localLastDragLoc = aPoint;
 
-	float newWidth = _localLastDragLoc.x - _localStartDragLoc.x;
-	float newHeight = _localLastDragLoc.y -_localStartDragLoc.y;
+	CGFloat newWidth = _localLastDragLoc.x - _localStartDragLoc.x;
+	CGFloat newHeight = _localLastDragLoc.y -_localStartDragLoc.y;
 
 	[self resizeSelectionAreaToRect: NSMakeRect(_localStartDragLoc.x, 
 		_localStartDragLoc.y, newWidth, newHeight)];

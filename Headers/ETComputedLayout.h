@@ -17,10 +17,10 @@
 
 @class ETLayoutItem, ETLineFragment;
 
-extern float ETAlignmentHintNone;
+extern CGFloat ETAlignmentHintNone;
 
 @protocol ETAlignmentHint
-- (float) alignmentHintForLayout: (ETLayout *)aLayout;
+- (CGFloat) alignmentHintForLayout: (ETLayout *)aLayout;
 - (CGFloat) maxCombinedBoundingWidth;
 @end
 
@@ -70,29 +70,29 @@ In the rare case where more control is required, you might want to reimplement
 @interface ETComputedLayout : ETPositionalLayout <ETComputableLayout, ETLayoutFragmentOwner>
 {
 	@private
-	float _borderMargin;
-	float _itemMargin;
+	CGFloat _borderMargin;
+	CGFloat _itemMargin;
 	BOOL _autoresizesItemToFill;
 	ETLayoutHorizontalAlignment _horizontalAlignment;
-	float _horizontalAlignmentGuidePosition;
+	CGFloat _horizontalAlignmentGuidePosition;
 	BOOL _usesAlignmentHint;
 	ETLayoutItem *_separatorTemplateItem;
-	float _separatorItemEndMargin;
+	CGFloat _separatorItemEndMargin;
 	BOOL _computesItemRectFromBoundingBox;
 }
 
 /** @taskunit Alignment and Margins */
 
-- (float) borderMargin;
-- (void) setBorderMargin: (float)aMargin;
-- (void) setItemMargin: (float)aMargin;
-- (float) itemMargin;
+- (CGFloat) borderMargin;
+- (void) setBorderMargin: (CGFloat)aMargin;
+- (void) setItemMargin: (CGFloat)aMargin;
+- (CGFloat) itemMargin;
 - (BOOL) autoresizesItemToFill;
 - (void) setAutoresizesItemToFill: (BOOL)stretchToFill;
 - (ETLayoutHorizontalAlignment) horizontalAlignment;
 - (void) setHorizontalAligment: (ETLayoutHorizontalAlignment)anAlignment;
-- (float) horizontalAlignmentGuidePosition;
-- (void) setHorizontalAlignmentGuidePosition: (float)aPosition;
+- (CGFloat) horizontalAlignmentGuidePosition;
+- (void) setHorizontalAlignmentGuidePosition: (CGFloat)aPosition;
 - (BOOL) usesAlignmentHint;
 - (void) setUsesAlignmentHint: (BOOL)usesHint;
 
@@ -110,7 +110,7 @@ In the rare case where more control is required, you might want to reimplement
 - (ETLineFragment *) layoutFragmentWithSubsetOfItems: (NSArray *)unlayoutedItems;
 - (NSArray *) generateFragmentsForItems: (NSArray *)items;
 - (NSPoint) originOfFirstFragment: (id)aFragment 
-                 forContentHeight: (float)contentHeight;
+                 forContentHeight: (CGFloat)contentHeight;
 - (NSSize) computeLocationsForFragments: (NSArray *)layoutModel;
 
 /** @taskunit Flexible Items */
@@ -126,8 +126,8 @@ In the rare case where more control is required, you might want to reimplement
 
 - (void) setSeparatorTemplateItem: (ETLayoutItem *)separator;
 - (ETLayoutItem *) separatorTemplateItem;
-- (void) setSeparatorItemEndMargin: (float)aMargin;
-- (float) separatorItemEndMargin;
+- (void) setSeparatorItemEndMargin: (CGFloat)aMargin;
+- (CGFloat) separatorItemEndMargin;
 
 - (NSArray *) insertSeparatorsBetweenItems: (NSArray *)items;
 - (void) prepareSeparatorItem: (ETLayoutItem *)separator;

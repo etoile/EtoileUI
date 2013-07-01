@@ -104,7 +104,7 @@
 {    
     if (iconImage != nil) 
 	{
-		float imageHeight = cellFrame.size.height - ICON_INSET_VERT * 2.0;
+		CGFloat imageHeight = cellFrame.size.height - ICON_INSET_VERT * 2.0;
 		[iconImage setSize: NSMakeSize(imageHeight, imageHeight)];
 		
         NSSize	imageSize = [iconImage size];

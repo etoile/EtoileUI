@@ -227,7 +227,7 @@ when returns NO when the receiver manages the window title. */
 }
 
 /** Returns the height of the window title bar or zero when no title bar is used. */
-- (float) titleBarHeight
+- (CGFloat) titleBarHeight
 {
 	return [self decorationRect].size.height - [self contentRect].size.height;
 }
@@ -293,7 +293,7 @@ and make the necessary adjustments. */
 	   call back the current method and results in an endless recursion.
 	   -rootWindowFrame is expressed in screen base coordinates. */
 	NSRect windowLayerFrame = [windowLayer rootWindowFrame];
-	float y = rect.origin.y;
+	CGFloat y = rect.origin.y;
 	
 	if ([windowLayer isFlipped])
 	{
@@ -319,7 +319,7 @@ and make the necessary adjustments. */
 	   call back the current method and results in an endless recursion.
 	   -rootWindowFrame is expressed in screen base coordinates. */
 	NSRect windowLayerFrame = [windowLayer rootWindowFrame];
-	float y = windowFrame.origin.y;
+	CGFloat y = windowFrame.origin.y;
 	
 	y -= windowLayerFrame.origin.y;
 
