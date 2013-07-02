@@ -970,8 +970,8 @@ by NSObject+Model in EtoileFoundation. */
 		return;
 
 	//ETLog(@"Got object value %@ for %@", [[cell objectValueForObject: newValue] class], [newValue class]);
-
-	[(id <ETWidget>)aView setObjectValue: [cell objectValueForObject: newValue]];
+	
+	[(id <ETWidget>)aView setObjectValue: [(id <ETWidget>)aView objectValueForCurrentValue: newValue]];
 }
 
 /** Sets the model object which embeds the data to be displayed and represented 
@@ -3457,6 +3457,11 @@ See also -objectDidBeginEditing:. */
 	[[self firstResponderSharingArea] removeActiveFieldEditorItem];
 	[[[self controllerItem] controller] subjectDidEndEditingForItem: self property: aKey];
 	
+}
+
+- (NSString *) editedProperty
+{
+	return ([self valueKey] != nil ? [self valueKey] : kETValueProperty);
 }
 
 /** Returns self.

@@ -95,6 +95,36 @@
 	[self setObjectValue: [sender objectValue]];
 }
 
+- (id) objectValueForCurrentValue: (id)aValue
+{
+	if ([self view] != nil)
+	{
+		if ([[self view] isWidget] == NO)
+			return aValue;
+		
+		return [(id <ETWidget>)[self view] objectValueForCurrentValue: aValue];
+	}
+	else
+	{
+		return aValue;
+	}
+}
+
+- (id) currentValueForObjectValue: (id)aValue
+{
+	if ([self view] != nil)
+	{
+		if ([[self view] isWidget] == NO)
+			return aValue;
+		
+		return [(id <ETWidget>)[self view] currentValueForObjectValue: aValue];
+	}
+	else
+	{
+		return aValue;
+	}
+}
+
 - (id) formatter
 {
 	if ([self view] != nil)

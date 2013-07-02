@@ -11,12 +11,13 @@
 
 #import <Foundation/Foundation.h>
 #import <AppKit/AppKit.h>
+#import <EtoileUI/ETWidget.h>
 
 // TODO: Declare properties and work out all the default factory values to be 
 // used for cloning view-based items with EtoileUI. Only NSTextField is 
 // partially implemented for now.
 
-@interface NSControl (Etoile)
+@interface NSControl (Etoile) <ETWidget>
 
 - (BOOL) isWidget;
 

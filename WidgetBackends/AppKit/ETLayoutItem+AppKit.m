@@ -22,23 +22,6 @@
 	_isEditing = editing;
 }
 
-// TODO: isProcessingContinuousActionEvent
-
-// TODO: Remove once -valueKey returns the viewpoint name.
-- (NSString *) editedProperty
-{
-	NSString *valueKey = [self valueKey];
-
-	if (valueKey != nil)
-		return valueKey;
-
-	if ([[self representedObject] conformsToProtocol: @protocol(ETPropertyViewpoint)])
-	{
-		valueKey = [(id <ETPropertyViewpoint>)[self representedObject] name];
-	}
-	return (valueKey != nil ? valueKey : kETValueProperty);
-}
-
 - (void) controlTextDidBeginEditing: (NSNotification *)notif
 {
 	_isEditing = YES;

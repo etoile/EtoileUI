@@ -10,6 +10,7 @@
 #import <EtoileFoundation/NSObject+Model.h>
 #import <EtoileFoundation/Macros.h>
 #import "Controls+Etoile.h"
+#import "NSCell+EtoileUI.h"
 #import "NSView+Etoile.h"
 #import "NSImage+Etoile.h"
 #import "ETCompatibility.h"
@@ -42,6 +43,22 @@ terminology) on which actions should be dispatched. */
 	return viewCopy;
 }
 
+- (id) objectValueForCurrentValue: (id)aValue
+{
+		if ([self cell] == nil)
+			return aValue;
+		
+		return [[self cell] objectValueForCurrentValue: aValue];
+}
+
+- (id) currentValueForObjectValue: (id)aValue
+{
+	if ([self cell] == nil)
+		return aValue;
+
+	return [[self cell] currentValueForObjectValue: aValue];
+}
+
 /* Property Value Coding */
 
 - (NSArray *) propertyNames
@@ -56,6 +73,7 @@ terminology) on which actions should be dispatched. */
 	
 	return [[super propertyNames] arrayByAddingObjectsFromArray: properties];
 }
+
 @end
 
 		

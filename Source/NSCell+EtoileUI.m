@@ -33,6 +33,16 @@ Nil can be returned. */
 	return objectValue;
 }
 
+- (id) objectValueForCurrentValue: (id)aValue
+{
+	return [self objectValueForObject: aValue];
+}
+
+- (id) currentValueForObjectValue: (id)aValue
+{
+	return  aValue;
+}
+
 @end
 
 
@@ -44,6 +54,21 @@ Nil can be returned. */
 	// NOTE: We override NSCell implementation because NSImageCell type is 
 	// NSNullCellType on Mac OS X
 	return ([anObject isKindOfClass: [NSImage class]] ? anObject: nil);
+}
+
+@end
+
+
+@implementation NSPopUpButtonCell (EtoileUI)
+
+- (id) objectValueForCurrentValue: (id)aValue
+{
+	return [NSNumber numberWithInteger: [self indexOfItemWithRepresentedObject: aValue]];
+}
+
+- (id) currentValueForObjectValue: (id)aValue
+{
+	return [[self itemAtIndex: [aValue integerValue]] representedObject];
 }
 
 @end

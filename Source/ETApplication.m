@@ -21,6 +21,7 @@
 #import "ETPickboard.h"
 #import "ETLayoutItemFactory.h"
 #import "ETUIStateRestoration.h"
+#import "ETWidget.h"
 #import "ETWindowItem.h"
 #import "NSObject+EtoileUI.h"
 #import "NSView+Etoile.h"
@@ -994,17 +995,36 @@ represented object. */
 	ETLayoutItem *senderItem = [(ETView *)[sender superview] layoutItem];
 
 	/* Decorator items don't respond to -didChangeViewValue: */
-	if ([senderItem isLayoutItem] == NO)
+	if ([senderItem isLayoutItem] == NO || [sender conformsToProtocol: @protocol(ETWidget)] == NO)
 		return;
 
-	if ([sender respondsToSelector: @selector(objectValue)])
+	if ([[ETEventProcessor sharedInstance] beginContinuousActionsForItem: senderItem])
 	{
-		[senderItem didChangeViewValue: [sender objectValue]];
+		ETLog(@" === Begin processing continuous actions == ");
+		[senderItem subjectDidBeginEditingForProperty: [senderItem editedProperty]
+		                              fieldEditorItem: nil];
+	}
+
+	id value = [(id <ETWidget>)sender objectValue];
+	[senderItem didChangeViewValue: [(id <ETWidget>)sender currentValueForObjectValue: value]];
+
+	if ([[ETEventProcessor sharedInstance] endContinuousActionsForItem: senderItem])
+	{
+		[senderItem subjectDidEndEditingForProperty: [senderItem editedProperty]];
+		ETLog(@" === End processing continuous actions == ");
 	}
 }
 
 - (BOOL) sendAction: (SEL)aSelector to: (id)aTarget from: (id)sender
 {
+	/* Tell owning item about sender value changes to ensure 
+	   -subjectDidBeginEditingForProperty:fieldEditorItem: and 
+	   -subjectDidEndEditingForProperty: are called, even when the target or the
+	   action are nil.
+	   -[NSControl sendAction:to:] in GNUstep uses the same trick to propagate 
+	   value change for bindings. */
+	[self notifyOwnerItemOfSenderValueChange: sender];
+
 	id responder = [self targetForAction: aSelector to: aTarget from: sender];
 
 	if (responder == nil)
@@ -1031,7 +1051,6 @@ represented object. */
 	}
 
 	[inv invoke];
-	[self notifyOwnerItemOfSenderValueChange: sender];
 
 	return YES;
 }

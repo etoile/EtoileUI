@@ -1027,9 +1027,6 @@ See also -setRenderedPropertyNames:. */
 				[popUpView selectItemAtIndex: i];
 			}
 		}
-
-		[popUpView setTarget: [ETPopUpButtonTarget sharedInstance]];
-		[popUpView setAction: @selector(changeSelectedItemInPopUp:)];
 	
 		[[[item view] ifResponds] setEnabled: ([aPropertyDesc isReadOnly] == NO)];
 	}
@@ -1088,42 +1085,6 @@ See also -setRenderedPropertyNames:. */
 	}
 
 	[[[ETLayoutItemFactory factory] windowGroup] addItem: entityItem];
-}
-
-@end
-
-// NOTE: ETPopUpButtonTarget propagates the change, because KVO on
-// -[NSPopUpButton objectValue] doesn't work. If it was working, we could just
-// change -[ETLayoutItem didChangeViewValue: to call a method
-// -[NSCell valueForObjectValue:] which would be overriden in a
-// NSPopUpButtonCell category to return the menu item represented object based
-// on the selection index provided as the object value.
-@implementation ETPopUpButtonTarget
-
-static ETPopUpButtonTarget *sharedInstance = nil;
-
-+ (void) initialize
-{
-	if (self != [ETPopUpButtonTarget class])
-		return;
-
-	sharedInstance = [ETPopUpButtonTarget new];
-}
-
-+ (id) sharedInstance
-{
-	return sharedInstance;
-}
-
-- (IBAction) changeSelectedItemInPopUp: (id)sender
-{
-	ETLayoutItem *popUpItem = [sender owningItem];
-	ETAssert(popUpItem != nil);
-	// TODO: Move this logic to -[ETApplication sendAction:to:from:]
-	[popUpItem subjectDidBeginEditingForProperty: [(id)popUpItem editedProperty]
-	                             fieldEditorItem: nil];
-	[popUpItem didChangeViewValue: [[sender selectedItem] representedObject]];
-	[popUpItem subjectDidEndEditingForProperty: [(id)popUpItem editedProperty]];
 }
 
 @end

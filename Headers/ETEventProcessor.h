@@ -29,6 +29,8 @@
 /** @taskunit Converting Backend Event */
 
 - (BOOL) processEvent: (void *)backendEvent;
+- (BOOL) beginContinuousActionsForItem: (ETLayoutItem *)anItem;
+- (BOOL) endContinuousActionsForItem: (ETLayoutItem *)anItem;
 
 /** @taskunit Backend Window Activation */
 
@@ -86,6 +88,7 @@ return YES;
 	NSWindow *_initialKeyWindow;
 	id _initialFirstResponder;
 	BOOL _wasMouseDownProcessed;
+	BOOL _isProcessingContinuousActionEvents;
 }
 
 /** @taskunit Converting Backend Event */

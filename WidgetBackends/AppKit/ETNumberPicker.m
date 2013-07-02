@@ -169,6 +169,16 @@ terminology) on which actions should be dispatched. */
 	return [[self textField] objectValue];
 }
 
+- (id) currentValueForObjectValue: (id)aValue
+{
+	return aValue;
+}
+
+- (id) objectValueForCurrentValue: (id)aValue
+{
+	return aValue;
+}
+
 - (void) setObjectValue: (id)aValue
 {
 	[[self textField] setObjectValue: aValue];

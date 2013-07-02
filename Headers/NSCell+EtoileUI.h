@@ -16,6 +16,8 @@
 
 @interface NSCell (EtoileUI)
 - (id) objectValueForObject: (id)anObject;
+- (id) objectValueForCurrentValue: (id)aValue;
+- (id) currentValueForObjectValue: (id)aValue;
 @end
 
 

@@ -47,6 +47,7 @@ For other Nibs to be loaded, see ETNibOwner. */
 	@private
 	ETNibOwner *_nibOwner;
 	ETUIStateRestoration *_UIStateRestoration;
+	BOOL _wasProcessingContinuousActionEvents;
 }
 
 + (NSString *) typePrefix;

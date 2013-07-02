@@ -71,8 +71,8 @@ that contains this empty string as the new value. */
 
 		if ([self ignoresChangeForNewValue: newValue oldValue: oldValue])
 			return;
-	
-		[self didChangeViewValue: newValue];
+
+		[self didChangeViewValue: [(id <ETWidget>)[self view] currentValueForObjectValue: newValue]];
 	}
 	else /* isRepresentedObjectChange */
 	{

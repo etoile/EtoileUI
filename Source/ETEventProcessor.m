@@ -39,7 +39,8 @@ in use. */
 	return sharedInstance; 
 }
 
-/** Implements in concrete subclasses to turn each raw event emitted by the run 
+/** <override-subclass />
+Implements in concrete subclasses to turn each raw event emitted by the run
 loop of the widget backend into an EtoileUI-native event, then invoke the 
 related event method on the active tool with the new ETEvent object in 
 parameter.
@@ -48,6 +49,24 @@ The implementation is expected to return YES if anEvent should be dispatched by
 the widget backend itself, otherwise NO if only EtoileUI should be in charge of 
 displatching the event. */
 - (BOOL) processEvent: (void *)backendEvent
+{
+	return NO;
+}
+
+/** <override-subclass />
+Implements in concrete subclasses to tell whether the current processed
+event marks the beginning of an event sequence between a mouse down and mouse up 
+events for an item that sends continuous actions during such a sequence. */
+- (BOOL) beginContinuousActionsForItem: (ETLayoutItem *)anItem
+{
+	return NO;
+}
+
+/** <override-subclass />
+Implements in concrete subclasses to tell whether the current processed
+event marks the end of an event sequence between a mouse down and mouse up 
+events for an item that sends continuous actions during such a sequence. */
+- (BOOL) endContinuousActionsForItem: (ETLayoutItem *)anItem
 {
 	return NO;
 }
@@ -143,6 +162,35 @@ when the event has to be handled by the widget backend. */
 	}
 
 	return YES;
+}
+
+- (BOOL) beginContinuousActionsForItem: (ETLayoutItem *)anItem
+{
+	if ([[[anItem view] ifResponds] isContinuous] == NO)
+		return NO;
+
+	BOOL isAtBeginning = (_isProcessingContinuousActionEvents == NO && _wasMouseDownProcessed);
+
+	if (isAtBeginning)
+	{
+		_isProcessingContinuousActionEvents = YES;
+	}
+	return isAtBeginning;
+}
+
+- (BOOL) endContinuousActionsForItem: (ETLayoutItem *)anItem
+{
+	if ([[[anItem view] ifResponds] isContinuous] == NO)
+		return NO;
+
+	BOOL isAtEnd =
+		(_isProcessingContinuousActionEvents && [[NSApp currentEvent] type] == NSLeftMouseUp);
+
+	if (isAtEnd)
+	{
+		_isProcessingContinuousActionEvents = NO;
+	}
+	return isAtEnd;
 }
 
 - (BOOL) isMovingOrResizingWindow
