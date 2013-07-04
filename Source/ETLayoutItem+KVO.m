@@ -155,7 +155,7 @@ TODO: Move into ETLayoutItem entity description. */
 + (NSSet *) nonObservableProperties
 {
 	return S(@"usesWidgetView",	
-		@"enclosingDisplayView", "supervisorViewBackedAncestorItem", 
+		@"enclosingDisplayView", @"supervisorViewBackedAncestorItem",
 		@"windowBackedAncestorItem", @"supervisorView", 
 		@"ancestorItemForOpaqueLayout", @"properties", @"variableStorage", 
 		@"drawingFrame", @"windowItem", @"scrollableAreaItem", 
