@@ -93,11 +93,13 @@ static ETLayoutItemFactory *itemFactory = nil;
 {
 	id item = [itemFactory item];
 	id itemGroup = [itemFactory itemGroup];
-	
-	[itemGroup addItem: item];
+		
+	CREATE_AUTORELEASE_POOL(pool);
+
+    // Relationship cache may cause autoreleased references
+    [itemGroup addItem: item];
 	[itemGroup removeItem: item];
 
-	CREATE_AUTORELEASE_POOL(pool);
 	[[ETLayoutExecutor sharedInstance] removeItems: S(item, itemGroup)];
 	DESTROY(pool);
 
