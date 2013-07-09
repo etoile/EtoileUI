@@ -162,7 +162,7 @@ To do so, -canReload checks -isMutating. */
 
 	[self handleAttachItem: item];
 	/* For ETUndeterminedIndex, will use -addObject: */
-	[_layoutItems insertObject: item atIndex: index hint: nil];
+	[_items insertObject: item atIndex: index hint: nil];
 #ifdef COREOBJECT
 	if ([self isPersistent])
 	{
@@ -236,7 +236,7 @@ To do so, -canReload checks -isMutating. */
 
 	[self handleDetachItem: item];
 	/* For ETUndeterminedIndex, will use -removeObject: */
-	[_layoutItems removeObject: item atIndex: index hint: nil];
+	[_items removeObject: item atIndex: index hint: nil];
 	[self didChangeContentWithMoreComing: moreComing];
 
 	[self endCoalescingModelMutation];

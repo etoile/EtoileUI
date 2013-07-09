@@ -37,7 +37,7 @@
 
 /** @taskunit Properties */
 
-- (NSMapTable *) variableStorage;
+- (NSMutableDictionary *) variableStorage;
 #ifndef COREOBJECT
 - (id) primitiveValueForKey: (NSString *)key;
 - (void) setPrimitiveValue: (id)value forKey: (NSString *)key;

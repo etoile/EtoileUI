@@ -1383,7 +1383,11 @@ registered for the property.
 is registered for the property.*/
 - (ETItemValueTransformer *) valueTransformerForProperty: (NSString *)key
 {
-	return [[self primitiveValueForKey: @"valueTransformers"] objectForKey: key];
+	NSString *transformerName = [[self primitiveValueForKey: @"valueTransformers"] objectForKey: key];
+	ETItemValueTransformer *transformer =
+		[ETItemValueTransformer valueTransformerForName: transformerName];
+	ETAssert(transformer == nil || [transformer isKindOfClass: [ETItemValueTransformer class]]);
+	return transformer;
 }
 
 /** Registers the value transformer for the given property.
@@ -1405,7 +1409,8 @@ See also -valueTransformerForProperty:. */
 		transformers = [NSMutableDictionary dictionary];
 		[self setPrimitiveValue: transformers forKey: @"valueTransformers"];
 	}
-	[transformers setObject: aValueTransformer forKey: key];
+	ETAssert([ETItemValueTransformer valueTransformerForName: [aValueTransformer name]] == aValueTransformer);
+	[transformers setObject: [aValueTransformer name] forKey: key];
 }
 
 /** Returns YES, see [NSObject(EtoileUI) -isLayoutItem] */

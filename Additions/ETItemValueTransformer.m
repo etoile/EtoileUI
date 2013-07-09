@@ -57,11 +57,17 @@
 	                  forName: kETBooleanFromMaskValueTransformerName];
 }
 
+- (id) initWithName: (NSString *)aName;
+{
+	NILARG_EXCEPTION_TEST(aName);
+	SUPERINIT;
+	ASSIGN(_name, aName);
+	return self;
+}
+
 - (id) init
 {
-	SUPERINIT
-	ASSIGN(_name, _(@"Untitled"));
-	return self;
+	return [self initWithName: nil];
 }
 
 - (void) dealloc
@@ -72,6 +78,21 @@
 	DESTROY(_transformCode);
 	DESTROY(_reverseTransformCode);
 	[super dealloc];
+}
+
+- (void) setName: (NSString *)aName
+{
+	if ([[ETItemValueTransformer valueTransformerNames] containsObject: aName])
+	{
+		ETItemValueTransformer *registeredTransformer =
+			(id)[ETItemValueTransformer valueTransformerForName: _name];
+
+		INVALIDARG_EXCEPTION_TEST(aName, registeredTransformer == self);
+
+		[ETItemValueTransformer setValueTransformer: nil forName: aName];
+	}
+	ASSIGN(_name, aName);
+	[ETItemValueTransformer setValueTransformer: self forName: aName];
 }
 
 - (NSString *) displayName
@@ -112,9 +133,7 @@ NSString * const kETBooleanFromMaskValueTransformerName = @"kETBooleanFromMaskVa
 
 - (id) init
 {
-	SUPERINIT;
-	[self setName: kETBooleanFromMaskValueTransformerName];
-	return self;
+	return [super initWithName: kETBooleanFromMaskValueTransformerName];
 }
 
 - (id) transformedValue: (id)value

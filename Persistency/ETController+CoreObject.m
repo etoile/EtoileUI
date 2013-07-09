@@ -14,7 +14,6 @@
 #import <CoreObject/COObject.h>
 #import "ETController+CoreObject.h"
 
-
 @implementation ETController (CoreObject)
 
 - (void) becomePersistentInContext: (COPersistentRoot *)aContext
@@ -23,10 +22,12 @@
 		return;
 
 	[super becomePersistentInContext: aContext];
-
+	
 	// TODO: Leverage the model description rather than hardcoding the aspects
 	// TODO: Implement some strategy to recover in the case these aspects 
-	// are already used as embedded objects in another root object. 
+	// are already used as embedded objects in another root object.
+	ETAssert([_templates isPersistent] == NO || [_templates isRoot]);
+	[_templates becomePersistentInContext: aContext];
 	for (ETItemTemplate *template in [_templates objectEnumerator])
 	{
 		ETAssert([template isPersistent] == NO || [template isRoot]);
@@ -54,28 +55,6 @@
 	[self setFilterPredicate: [NSPredicate predicateWithFormat: aPredicateFormat]];
 }
 
-- (NSDictionary *) serializedTemplates
-{
-	NSMutableDictionary *templates = [NSMutableDictionary dictionary];
-
-	[_templates enumerateKeysAndObjectsUsingBlock: ^(id type, id template, BOOL *stop)
-	{
-		[templates setObject: template forKey: [type stringValue]];
-	}];
-	return templates;
-}
-
-- (void) setSerializedTemplates: (NSDictionary *)serializedTemplates
-{
-	RELEASE(_templates);
-	_templates = [NSMutableDictionary new];
-
-	[serializedTemplates enumerateKeysAndObjectsUsingBlock: ^(id UTIString, id template, BOOL *stop)
-	{
-		[_templates setObject: template forKey: [ETUTI typeWithString: UTIString]];
-	}];
-}
-
 - (NSArray *) serializedAllowedPickTypes
 {
 	return (id)[[_allowedPickTypes mappedCollection] stringValue];
@@ -90,29 +69,6 @@
 		[pickTypes addObject: [ETUTI typeWithString: UTIString]];
 	}
 	ASSIGNCOPY(_allowedPickTypes, pickTypes);
-}
-
-- (NSDictionary *) serializedAllowedDropTypes
-{
-	NSMutableDictionary *dropTypes = [NSMutableDictionary dictionary];
-	
-	[_allowedDropTypes enumerateKeysAndObjectsUsingBlock: ^(id targetUTI, id allowedUTI, BOOL *stop)
-	{
-		 [dropTypes setObject: [allowedUTI stringValue] forKey: [targetUTI stringValue]];
-	}];
-	return dropTypes;
-}
-
-- (void) setSerializedAllowedDropTypes: (NSDictionary *)serializedDropTypes
-{
-	RELEASE(_allowedDropTypes);
-	_allowedDropTypes = [NSMutableDictionary new];
-
-	[serializedDropTypes enumerateKeysAndObjectsUsingBlock: ^(id targetUTIString, id allowedUTIString, BOOL *stop)
-	{
-		[_allowedDropTypes setObject: [ETUTI typeWithString: targetUTIString]
-		                      forKey: [ETUTI typeWithString: allowedUTIString]];
-	}];
 }
 
 @end

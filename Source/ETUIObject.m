@@ -234,7 +234,7 @@ in ivars.
 Unless you write a subclass or reflection code, you should never need this 
 method, but use the property accessors or Property Value Coding methods to read 
 and write the receiver properties. */
-- (NSMapTable *) variableStorage
+- (NSMutableDictionary *) variableStorage
 {
 	return _variableStorage;
 }

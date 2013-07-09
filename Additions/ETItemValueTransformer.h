@@ -31,8 +31,26 @@ For use cases, see ETLayoutItem and -[ETLayoutItem valueTransformerForProperty:]
 	NSString *_reverseTransformCode;
 }
 
+/** @taskunit Initialization */
+
+/** Initializes, registers and returns a new value transformer for the given name.
+
+The returned value transformer is registered among 
++[NSValueTransformer valueTransformerNames].
+
+For a nil name, raises an NSInvalidArgumentException. */
+- (id) initWithName: (NSString *)aName;
+
 /** @taskunit Name */
 
+/** The name of the value transformer.
+
+-setName: unregisters the value transformer for the current name, then registers 
+it under the new name. See +[NSValueTransformer registerValueTransformer:forName:]. 
+If there is already a registered value transformer for the given name and it 
+isn't the same than the receiver, a NSInvalidArgumentException is raised.
+ 
+For a nil name, -setNames: raises a NSInvalidArgumentException. */
 @property (nonatomic, retain) NSString *name;
 @property (nonatomic, readonly) NSString *displayName;
 

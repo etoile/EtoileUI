@@ -148,30 +148,57 @@
 	return entity;
 }
 
+#pragma mark Viewpoint Integration for Editing Controller Properties
+#pragma mark -
+
 - (NSDictionary *) templates
 {
-	return _templates;
+	NSMutableDictionary *editableTemplates = [NSMutableDictionary dictionary];
+
+	[[_templates content] enumerateKeysAndObjectsUsingBlock: ^ (id UTIString, id itemTemplate, BOOL *stop)
+	{
+		[editableTemplates setObject: itemTemplate
+		                      forKey: [ETUTI typeWithString: UTIString]];
+	}];
+	return [editableTemplates copy];
 }
 
-- (void) setTemplates: (NSDictionary *)templates
+- (void) setTemplates: (NSDictionary *)editedTemplates
 {
 	[self willChangeValueForProperty: @"templates"];
-	RELEASE(_templates);
-	_templates = [templates mutableCopy];
+	[_templates removeAllObjects];
+
+	[editedTemplates enumerateKeysAndObjectsUsingBlock: ^ (id UTI, id itemTemplate, BOOL *stop)
+	{
+		[_templates setObject: itemTemplate
+		               forKey: [UTI stringValue]];
+	}];
 	[self didChangeValueForProperty: @"templates"];
 }
 
 - (NSDictionary *) allowedDropTypes
 {
-	return _allowedDropTypes;
+	NSMutableDictionary *editableDropTypes = [NSMutableDictionary dictionary];
+
+	[[_allowedDropTypes content] enumerateKeysAndObjectsUsingBlock: ^ (id targetUTIString, id UTIString,  BOOL *stop)
+	{
+		[editableDropTypes setObject: [ETUTI typeWithString: UTIString]
+		                      forKey: [ETUTI typeWithString: targetUTIString]];
+	}];
+	return [editableDropTypes copy];
 }
 
-- (void) setAllowedDropTypes: (NSDictionary *)allowedDropTypes
+- (void) setAllowedDropTypes: (NSDictionary *)editedDropTypes
 {
-	[self willChangeValueForProperty: @"allowedDropTypes"];
-	RELEASE(_allowedDropTypes);
-	_allowedDropTypes = [allowedDropTypes mutableCopy];
-	[self didChangeValueForProperty: @"allowedDropTypes"];
+	[self willChangeValueForProperty: @"templates"];
+	[_allowedDropTypes removeAllObjects];
+
+	[editedDropTypes enumerateKeysAndObjectsUsingBlock: ^ (id targetUTI, id UTI, BOOL *stop)
+	{
+		[_allowedDropTypes setObject: [UTI stringValue]
+		                      forKey: [targetUTI stringValue]];
+	}];
+	[self didChangeValueForProperty: @"templates"];
 }
 
 @end

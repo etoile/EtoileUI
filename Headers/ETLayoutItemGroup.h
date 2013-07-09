@@ -23,7 +23,7 @@
 @interface ETLayoutItemGroup : ETLayoutItem <ETLayoutingContext, ETWidgetLayoutingContext, ETItemSelection, ETCollection, ETCollectionMutation>
 {
 	@private
-	NSMutableArray *_layoutItems;
+	NSMutableArray *_items;
 	NSMutableArray *_sortedItems;
 	NSArray *_arrangedItems;
 	ETLayout *_layout;

@@ -10,6 +10,7 @@
 #import <EtoileFoundation/ETCollection+HOM.h>
 #import <EtoileFoundation/ETUTI.h>
 #import <EtoileFoundation/NSObject+Model.h>
+#import <CoreObject/CODictionary.h>
 #import "ETController.h"
 #import "ETItemTemplate.h"
 #import "ETLayoutItemBuilder.h"
@@ -61,11 +62,11 @@ You can also use it -init to create a controller. See -[ETNibOwner init]. */
 		return nil;
 
 	_observations = [[NSMutableSet alloc] init];
-	_templates = [[NSMutableDictionary alloc] init];
+	_templates = [[CODictionary alloc] init];
 	ASSIGN(_currentObjectType, kETTemplateObjectType);
 	[self setSortDescriptors: nil];
 	_allowedPickTypes = [[NSArray alloc] init];
-	_allowedDropTypes = [[NSMutableDictionary alloc] init];
+	_allowedDropTypes = [[CODictionary alloc] init];
 	_editedItems = [[NSMutableArray alloc] init];
 	_editableProperties = [[NSMutableArray alloc] init];
 	_automaticallyRearrangesObjects = YES;
@@ -441,13 +442,13 @@ The persistent object context is retained in the copy. */
 	ETController *newController = [super copyWithZone: aZone];
 
 	newController->_observations = [[NSMutableSet allocWithZone: aZone] init];
-	newController->_templates = [_templates mutableCopyWithZone: aZone];
+	newController->_templates = [_templates copyWithZone: aZone];
 	ASSIGN(newController->_currentObjectType, _currentObjectType);
 	ASSIGN(newController->_persistentObjectContext, _persistentObjectContext);
 	newController->_sortDescriptors = [_sortDescriptors mutableCopyWithZone: aZone];
 	newController->_filterPredicate = [_filterPredicate copyWithZone: aZone];
 	newController->_allowedPickTypes = [_allowedPickTypes mutableCopyWithZone: aZone];
-	newController->_allowedDropTypes = [_allowedDropTypes mutableCopyWithZone: aZone];
+	newController->_allowedDropTypes = [_allowedDropTypes copyWithZone: aZone];
 	newController->_editedItems = [[NSMutableArray allocWithZone: aZone] init];
 	newController->_editableProperties = [[NSMutableArray allocWithZone: aZone] init];
 	newController->_automaticallyRearrangesObjects = _automaticallyRearrangesObjects;
@@ -535,7 +536,7 @@ This lookup mechanism is named supercasting.
 See -newItemWithURL:ofType:options and ETItemTemplate. */
 - (ETItemTemplate *) templateForType: (ETUTI *)aUTI
 {
-	ETItemTemplate *template = [_templates objectForKey: aUTI];
+	ETItemTemplate *template = [_templates objectForKey: [aUTI stringValue]];
 
 	if (nil != template)
 		return template;
@@ -543,7 +544,7 @@ See -newItemWithURL:ofType:options and ETItemTemplate. */
 	/* Supercasting */
 	FOREACH([aUTI allSupertypes], supertype, ETUTI *)
 	{
-		template = [_templates objectForKey: supertype];
+		template = [_templates objectForKey: [supertype stringValue]];
 		if (nil != template)
 			break;
 	}
@@ -557,7 +558,7 @@ element type.
 See -newItemWithURL:ofType:options and ETItemTemplate. */
 - (void) setTemplate: (ETItemTemplate *)aTemplate forType: (ETUTI *)aUTI
 {
-	[_templates setObject: aTemplate forKey: aUTI];
+	[_templates setObject: aTemplate forKey: [aUTI stringValue]];
 	if ([self isPersistent])
 	{
 		[aTemplate becomePersistentInContext: [self persistentRoot]];
@@ -1137,7 +1138,7 @@ Returns YES by default. */
 
 - (void) setAllowedPickTypes: (NSArray *)UTIs
 {
-	NILARG_EXCEPTION_TEST(UTIs)
+	NILARG_EXCEPTION_TEST(UTIs);
 	ASSIGN(_allowedPickTypes, UTIs);
 }
 
@@ -1152,11 +1153,12 @@ too slow given that the method tends to be invoked repeatedly.
 
 - (NSArray *) allowedDropTypesForTargetType: (ETUTI *)aUTI
 {
-	NILARG_EXCEPTION_TEST(aUTI)
+	NILARG_EXCEPTION_TEST(aUTI);
 	NSMutableArray *matchedDropTypes = [NSMutableArray arrayWithCapacity: 100];
 	
-	FOREACH([_allowedDropTypes allKeys], targetType, ETUTI *)
+	for (NSString *UTIString in _allowedDropTypes)
 	{
+		ETUTI *targetType = [ETUTI typeWithString: UTIString];
 		if ([aUTI conformsToType: targetType])
 		{
 			[matchedDropTypes addObjectsFromArray: [_allowedDropTypes objectForKey: targetType]];
@@ -1168,9 +1170,10 @@ too slow given that the method tends to be invoked repeatedly.
 
 - (void) setAllowedDropTypes: (NSArray *)UTIs forTargetType: (ETUTI *)targetUTI
 {
-	NILARG_EXCEPTION_TEST(targetUTI)
-	NILARG_EXCEPTION_TEST(UTIs)
-	[_allowedDropTypes setObject: UTIs forKey: targetUTI];
+	NILARG_EXCEPTION_TEST(targetUTI);
+	NILARG_EXCEPTION_TEST(UTIs);
+	[_allowedDropTypes setObject: [[UTIs mappedCollection] stringValue]
+	                      forKey: [targetUTI stringValue]];
 }
 
 /* Editing */

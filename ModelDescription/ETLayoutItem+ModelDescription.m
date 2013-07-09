@@ -9,6 +9,7 @@
 #import <EtoileFoundation/EtoileFoundation.h>
 #import "ETLayoutItem.h"
 #import "ETLayoutItemGroup.h"
+#import "ETItemValueTransformer.h"
 
 @interface ETLayoutItem (ModelDescription)
 @end
@@ -148,13 +149,28 @@
 - (NSDictionary *) valueTransformers
 {
 	NSDictionary *transformers = [self primitiveValueForKey: @"valueTransformers"];
-	return (transformers != nil ? transformers : [NSDictionary dictionary]);
+	NSMutableDictionary *editableTransformers = [NSMutableDictionary dictionary];
+
+	[transformers enumerateKeysAndObjectsUsingBlock: ^ (id property, id transformerName,  BOOL *stop)
+	{
+		[editableTransformers setObject: [ETItemValueTransformer valueTransformerForName: transformerName]
+		                         forKey: property];
+	}];
+	return [editableTransformers copy];
 }
-			
-- (void) setValueTransformers: (NSDictionary *)transformers
+
+- (void) setValueTransformers: (NSDictionary *)editedTransformers
 {
 	[self willChangeValueForProperty: @"valueTransformers"];
-	[self setPrimitiveValue: transformers forKey: @"valueTransformers"];
+	NSMutableDictionary *transformers = [self primitiveValueForKey: @"valueTransformers"];;
+	[transformers removeAllObjects];
+
+	[editedTransformers enumerateKeysAndObjectsUsingBlock: ^ (id property, id transformer, BOOL *stop)
+	{
+		ETAssert([ETItemValueTransformer valueTransformerForName: [transformer name]] == transformer);
+		[transformers setObject: [transformer name]
+		                forKey: property];
+	}];
 	[self didChangeValueForProperty: @"valueTransformers"];
 }
 

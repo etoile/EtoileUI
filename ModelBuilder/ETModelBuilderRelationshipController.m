@@ -34,7 +34,8 @@
 
 + (ETItemValueTransformer *) newRelationshipValueTransformer
 {
-	ETItemValueTransformer *transformer = [ETItemValueTransformer new];
+	ETItemValueTransformer *transformer =
+		[[ETItemValueTransformer alloc] initWithName: @"ModelBuilderRelationship"];
 
 	[transformer setTransformBlock: ^id (id value, NSString *key, ETLayoutItem *item)
 	{

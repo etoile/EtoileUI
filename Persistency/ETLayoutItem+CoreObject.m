@@ -189,6 +189,11 @@
 	}
 }
 
+- (NSView *) serializedView
+{
+	return [self view];
+}
+
 - (void) setSerializedView: (NSView *)newView
 {
 	if (newView == nil)
@@ -284,7 +289,7 @@ since -serializedValueForProperty: doesn't use the direct ivar access. */
 	// TODO: Leverage the model description rather than hardcoding the aspects
 	// TODO: Implement some strategy to recover in the case these items or aspects
 	// are already used as embedded objects in another root object.
-	for (ETLayoutItem *item in _layoutItems)
+	for (ETLayoutItem *item in _items)
 	{
 		ETAssert([item isPersistent] == NO || [item isRoot]);
 		[item becomePersistentInContext: aContext];
@@ -298,8 +303,8 @@ since -serializedValueForProperty: doesn't use the direct ivar access. */
 
 - (void) setSerializedItems: (NSArray *)items
 {
-	DESTROY(_layoutItems);
-	_layoutItems = [items mutableCopy];
+	DESTROY(_items);
+	_items = [items mutableCopy];
 	for (ETLayoutItem *item in items)
 	{
 		item->_parentItem = self;

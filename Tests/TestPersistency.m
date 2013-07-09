@@ -130,7 +130,7 @@
 	[shape setAlphaValue: 0.4];
 	[shape setHidden: YES];
 
-	UKRectsEqual(rect, [[shape roundTripValueForProperty: @"bounds"] rectValue]);
+	UKRectsEqual(rect, [[shape roundTripValueForProperty: @"path"] bounds]);
 	// FIXME: KVC doesn't support selector boxing into NSValue
 	//UKTrue(sel_isEqual(@selector(resizedPathWithRect:), 
 	//	(SEL)[[shape roundTripValueForProperty: @"pathResizeSelector"] pointerValue]));

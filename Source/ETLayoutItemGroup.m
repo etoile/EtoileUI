@@ -74,7 +74,7 @@ NSString * const ETSourceDidUpdateNotification = @"ETSourceDidUpdateNotification
 	if (nil == self)
 		return nil;
 
-	_layoutItems = [[NSMutableArray alloc] init];
+	_items = [[NSMutableArray alloc] init];
 	_sortedItems = nil;
 	_arrangedItems = nil;
 
@@ -118,21 +118,21 @@ See also -isLayerItem. */
 	   children and make the memory management more complex to test in the tree
 	   structure since the returned enumerator is autoreleased and won't
 	   release the children before the autorelease pool is popped. */
-	int n = [_layoutItems count];
+	int n = [_items count];
 	for (int i = 0; i < n; i++)
 	{
-		ETLayoutItem *child = [_layoutItems objectAtIndex: i];
+		ETLayoutItem *child = [_items objectAtIndex: i];
 		/* We bypass -setParentItem: to be sure we won't be trigger a KVO
 		   notification that would retain/release us in a change dictionary. */
 		child->_parentItem = nil;
 	}
 	if (n > 0 && [[ETLayoutExecutor sharedInstance] isEmpty] == NO)
 	{
-		NSSet *itemSet = [[NSSet alloc] initWithArray: _layoutItems];
+		NSSet *itemSet = [[NSSet alloc] initWithArray: _items];
 		[(ETLayoutExecutor *)[ETLayoutExecutor sharedInstance] removeItems: itemSet];
 		RELEASE(itemSet);
 	}
-	DESTROY(_layoutItems);
+	DESTROY(_items);
 	/* Tear down the receiver as a source and represented object observer */
 	[[NSNotificationCenter defaultCenter] removeObserver: self];
 
@@ -169,7 +169,7 @@ The returned copy is mutable because ETLayoutItemGroup cannot be immutable. */
 	/* We copy all primitive ivars except _reloading and _changingSelection */
 
 	item->_doubleAction = _doubleAction;
-	item->_hasNewContent = ([item->_layoutItems isEmpty] == NO);
+	item->_hasNewContent = ([item->_items isEmpty] == NO);
 	item->_hasNewArrangement = YES; // FIXME: Copy the arranged items
 	item->_hasNewLayout = YES;
 	item->_shouldMutateRepresentedObject = _shouldMutateRepresentedObject;
@@ -180,7 +180,7 @@ The returned copy is mutable because ETLayoutItemGroup cannot be immutable. */
 	   to -deepCopyWithZone:, but we create an empty array in case we are not
 	   called by -deepCopyWithZone:. */
 
-	item->_layoutItems = [[NSMutableArray allocWithZone: zone] init];
+	item->_items = [[NSMutableArray allocWithZone: zone] init];
 
 	id source =  [self primitiveValueForKey: kETSourceProperty];
 	id sourceCopy = ([self usesRepresentedObjectAsProvider] ? (id)item : source);
@@ -233,14 +233,14 @@ The returned copy is mutable because ETLayoutItemGroup cannot be immutable. */
 
 	[aCopier beginCopyFromObject: self toObject: itemCopy];
 
-	DESTROY(itemCopy->_layoutItems); // TODO: a bit crude
+	DESTROY(itemCopy->_items); // TODO: a bit crude
 
 	/* Copy & Assign Children */
 
-	NSMutableArray *childrenCopy = [[NSMutableArray allocWithZone: zone] initWithCapacity: [_layoutItems count]];
+	NSMutableArray *childrenCopy = [[NSMutableArray allocWithZone: zone] initWithCapacity: [_items count]];
 	NSMapTable *objectRefsForCopy = [aCopier objectReferencesForCopy];
 
-	FOREACH(_layoutItems, child, ETLayoutItem *)
+	FOREACH(_items, child, ETLayoutItem *)
 	{
 		ETLayoutItem *childCopy = [child deepCopyWithCopier: aCopier];
 
@@ -250,7 +250,7 @@ The returned copy is mutable because ETLayoutItemGroup cannot be immutable. */
 	}
 	[childrenCopy makeObjectsPerformSelector: @selector(release)];
 
-	ASSIGN(itemCopy->_layoutItems, childrenCopy);
+	ASSIGN(itemCopy->_items, childrenCopy);
 	RELEASE(childrenCopy);
 
 	/* Finish Copy Layout and Controller */
@@ -698,14 +698,14 @@ See also -setSource:, -isBaseItem and -nextResponder. */
 /** Removes the child item at the given index in the receiver children. */
 - (void) removeItemAtIndex: (NSUInteger)index
 {
-	ETLayoutItem *item = [_layoutItems objectAtIndex: index];
+	ETLayoutItem *item = [_items objectAtIndex: index];
 	[self handleRemoveItem: item atIndex: index hint: nil moreComing: NO];
 }
 
 /** Returns the child item at the given index in the receiver children. */
 - (ETLayoutItem *) itemAtIndex: (NSInteger)index
 {
-	return [_layoutItems objectAtIndex: index];
+	return [_items objectAtIndex: index];
 }
 
 /** Returns the first receiver child item.
@@ -715,7 +715,7 @@ Shortcut method equivalent to [self itemAtIndex: 0].
 Similar to -firstObject method for collections (see ETCollection).*/
 - (ETLayoutItem *) firstItem
 {
-	return [_layoutItems firstObject];
+	return [_items firstObject];
 }
 
 /** Returns the last receiver child item.
@@ -725,7 +725,7 @@ Shortcut method equivalent to [self itemAtIndex: [self numberOfItems] - 1].
 Similar to -lastObject method for collections (see ETCollection).*/
 - (ETLayoutItem *) lastItem
 {
-	return [_layoutItems lastObject];
+	return [_items lastObject];
 }
 
 /** Adds the given the items to the receiver children. */
@@ -757,7 +757,7 @@ Similar to -lastObject method for collections (see ETCollection).*/
 /** Returns the index of the given child item in the receiver children. */
 - (NSInteger) indexOfItem: (id)item
 {
-	return [_layoutItems indexOfObject: item];
+	return [_items indexOfObject: item];
 }
 
 /** Returns whether the given item is a receiver child or not. */
@@ -769,13 +769,13 @@ Similar to -lastObject method for collections (see ETCollection).*/
 /** Returns how many child items the receiver includes. */
 - (NSInteger) numberOfItems
 {
-	return [_layoutItems count];
+	return [_items count];
 }
 
 /** Returns an autoreleased array which contains the receiver child items. */
 - (NSArray *) items
 {
-	return [NSArray arrayWithArray: _layoutItems];
+	return [NSArray arrayWithArray: _items];
 }
 
 /** Returns the descendant items, including the immediate children, that share
@@ -1542,7 +1542,7 @@ redisplayed. */
 	/* Create a new sort cache in case -setHasNewContent: invalidated it */
 	if (_sortedItems == nil)
 	{
-		_sortedItems = [_layoutItems mutableCopy];
+		_sortedItems = [_items mutableCopy];
 	}
 
 	NSArray *descriptors =
@@ -1560,7 +1560,7 @@ redisplayed. */
 	{
 		// NOTE: -arrangedItems returns a defensive copy, but it could be less
 		// expansive to make a single defensive copy here.
-		ASSIGN(_arrangedItems, _layoutItems);
+		ASSIGN(_arrangedItems, _items);
 		_sorted = NO;
 		_filtered = NO;
 		_hasNewArrangement = YES;
@@ -1600,7 +1600,7 @@ redisplayed. */
 
 - (void) filterWithPredicate: (NSPredicate *)predicate recursively: (BOOL)recursively
 {
-	NSArray *itemsToFilter = (_sorted ? _sortedItems : _layoutItems);
+	NSArray *itemsToFilter = (_sorted ? _sortedItems : _items);
 	BOOL hasValidPredicate = (predicate != nil);
 	NSMutableSet *itemsWithMatchingDescendants = [NSMutableSet set];
 
@@ -1674,7 +1674,7 @@ If the receiver has not been sorted or filtered yet, returns a nil array. */
 	}
 	else
 	{
-		return AUTORELEASE([_layoutItems copy]);
+		return AUTORELEASE([_items copy]);
 	}
 }
 
