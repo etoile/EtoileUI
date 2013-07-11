@@ -38,6 +38,7 @@
 	ETPropertyDescription *valueTransformers = [ETPropertyDescription descriptionWithName: @"valueTransformers" type: (id)@"ETItemValueTransformer"];
 	[valueTransformers setMultivalued: YES];
 	[valueTransformers setOrdered: NO];
+	[valueTransformers setKeyed: YES];
 	[valueTransformers setShowsItemDetails: YES];
 	[valueTransformers setDetailedPropertyNames: A(@"name", @"transformCode", @"reverseTransformCode")];
 	ETPropertyDescription *valueKey = [ETPropertyDescription descriptionWithName: @"valueKey" type: (id)@"NSString"];

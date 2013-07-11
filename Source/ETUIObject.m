@@ -25,16 +25,6 @@
 
 #ifdef COREOBJECT
 
-// FIXME: We probably shouldn't need to override the awake methods below.
-// The problem boils down to preventing the COObject implementation to 
-// instantiate multivalued collections behind our back. Perhaps rework 
-// ETLayoutItemGroup to let ETUIObject or COObject handle that.
-
-- (void) didCreate
-{
-
-}
-
 - (void) awakeFromFetch
 {
 

@@ -215,6 +215,7 @@
 		[ETPropertyDescription descriptionWithName: @"displayedProperties" type: (id)@"NSString"];
 	[displayedProperties setMultivalued: YES];
 	[displayedProperties setOrdered: YES];
+	[displayedProperties setDerived: YES];
 	ETPropertyDescription *editableProperties =
 		[ETPropertyDescription descriptionWithName: @"editableProperties" type: (id)@"BOOL"];
 	[editableProperties setMultivalued: YES];
