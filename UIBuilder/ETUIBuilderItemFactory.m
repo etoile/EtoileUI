@@ -12,7 +12,7 @@
 #import <EtoileFoundation/NSString+Etoile.h>
 #import <EtoileFoundation/Macros.h>
 #import <CoreObject/COEditingContext.h>
-#import <CoreObject/COSQLStore.h>
+#import <CoreObject/COSQLiteStore.h>
 #import <IconKit/IconKit.h>
 #import "ETUIBuilderItemFactory.h"
 #import "ETAspectCategory.h"
@@ -48,7 +48,7 @@
 - (id) init
 {
 	SUPERINIT;
-	COStore *store = AUTORELEASE([[COSQLStore alloc] initWithURL: [NSURL URLWithString: @"~/UIBuilderStore.sqlite"]]);
+	COSQLiteStore *store = AUTORELEASE([[COSQLiteStore alloc] initWithURL: [NSURL URLWithString: @"~/UIBuilderStore.store"]]);
 	_editingContext = [[COEditingContext alloc] initWithStore: store];
 	_renderer = [self newRenderer];
 	[_renderer setGroupingKeyPath: @"owner"];

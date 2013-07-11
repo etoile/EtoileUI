@@ -1385,7 +1385,7 @@ is registered for the property.*/
 {
 	NSString *transformerName = [[self primitiveValueForKey: @"valueTransformers"] objectForKey: key];
 	ETItemValueTransformer *transformer =
-		[ETItemValueTransformer valueTransformerForName: transformerName];
+		(id)[ETItemValueTransformer valueTransformerForName: transformerName];
 	ETAssert(transformer == nil || [transformer isKindOfClass: [ETItemValueTransformer class]]);
 	return transformer;
 }

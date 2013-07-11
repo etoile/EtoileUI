@@ -313,6 +313,7 @@ since -serializedValueForProperty: doesn't use the direct ivar access. */
 
 @end
 
+// TODO: Remove or update
 @implementation ETLayoutItemFactory (CoreObject)
 
 - (ETLayoutItemGroup *) compoundDocument
@@ -323,7 +324,7 @@ since -serializedValueForProperty: doesn't use the direct ivar access. */
 - (ETLayoutItemGroup *) compoundDocumentWithEditingContext: (COEditingContext *)aCtxt
 {
 	COEditingContext *ctxt = (aCtxt != nil ? aCtxt : [COEditingContext currentContext]);
-	return [ctxt insertObjectWithEntityName: @"ETCompoundDocument"];
+	return [[ctxt insertNewPersistentRootWithEntityName: @"ETCompoundDocument"] rootObject];
 }
 
 @end

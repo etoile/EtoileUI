@@ -20,7 +20,8 @@
 #import <CoreObject/COEditingContext.h>
 #import <CoreObject/COObject.h>
 #import <CoreObject/COPersistentRoot.h>
-#import <CoreObject/COSQLStore.h>
+#import <CoreObject/COSQLiteStore.h>
+#import <CoreObject/COSerialization.h>
 #import "EtoileUIProperties.h"
 #import "ETActionHandler.h"
 #import "ETBasicItemStyle.h"
@@ -89,7 +90,7 @@
 
 - (COEditingContext *) createContext
 {
-	COStore *store = [[COSQLStore alloc] initWithURL: [self storeURL]];
+	COSQLiteStore *store = [[COSQLiteStore alloc] initWithURL: [self storeURL]];
 	COEditingContext *context = [[COEditingContext alloc] initWithStore: store];
 	RELEASE(store);
 	return context;
@@ -105,7 +106,6 @@
 {
 	UKTrue([obj isPersistent]);
 	UKNotNil([obj entityDescription]);
-	UKTrue([obj isFault] == isFault);
 	//UKFalse([obj isRoot]);
 	UKFalse([obj isDamaged]);
 
