@@ -23,7 +23,7 @@
 #import "NSObject+EtoileUI.h"
 #import "ETCompatibility.h"
 #ifdef COREOBJECT
-#import <CoreObject/COCommitTrack.h>
+#import <CoreObject/COBranch.h>
 #import "CoreObjectUI.h"
 #endif
 
