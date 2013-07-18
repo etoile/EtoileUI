@@ -111,7 +111,7 @@
 
 	UKObjectsSame(ctxt, [[obj persistentRoot] parentContext]);
 	UKTrue([[ctxt loadedObjects] containsObject: obj]);
-	UKObjectsSame(obj, [ctxt objectWithUUID: [obj UUID]]);
+	UKObjectsSame(obj, [[obj persistentRoot] objectWithUUID: [obj UUID]]);
 }
 
 - (NSBezierPath *) resizedPathWithRect: (NSRect)rect
