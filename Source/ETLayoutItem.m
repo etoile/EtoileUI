@@ -170,6 +170,8 @@ See also -setView:, -setCoverStyle: and -setActionHandler:.  */
 	_styleGroup = [[ETStyleGroup alloc] init];
 	[self setCoverStyle: aStyle];
 	[self setActionHandler: aHandler];
+	// TODO: Use lazy allocation for the value transformer dictionary if possible
+	[self setPrimitiveValue: AUTORELEASE([CODictionary new]) forKey: @"valueTransformers"];
 
 	ASSIGN(_transform, [NSAffineTransform transform]);
 	 /* Will be overriden by -setView: when the view is not nil */
@@ -1403,12 +1405,6 @@ See also -valueTransformerForProperty:. */
 	NILARG_EXCEPTION_TEST(key);
 
 	NSMutableDictionary *transformers = [self primitiveValueForKey: @"valueTransformers"];
-
-	if (transformers == nil)
-	{
-		transformers = [NSMutableDictionary dictionary];
-		[self setPrimitiveValue: transformers forKey: @"valueTransformers"];
-	}
 	ETAssert([ETItemValueTransformer valueTransformerForName: [aValueTransformer name]] == aValueTransformer);
 	[transformers setObject: [aValueTransformer name] forKey: key];
 }

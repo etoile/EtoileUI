@@ -226,7 +226,6 @@
 	//UKObjectsEqual([NSColor redColor], [[item roundTripValueForProperty: @"coverStyle"] fillColor]);
 }
 
-#if 0
 - (void) testBasicItemPersistency
 {
 	[self recreateContext];
@@ -240,7 +239,8 @@
 	[itemFactory endRootObject];
 	[[itemFactory windowGroup] addItem: item];
 
-	NSSet *itemAndAspects = S(item, [item actionHandler], [item styleGroup], [item coverStyle]);
+	CODictionary *valueTransformers = [item primitiveValueForKey: @"valueTransformers"];
+	NSSet *itemAndAspects = S(item, [item actionHandler], [item styleGroup], [item coverStyle], valueTransformers);
 	ETUUID *uuid = [[ctxt insertNewPersistentRootWithRootObject: item] persistentRootUUID];
 
 	UKNotNil(uuid);
@@ -270,6 +270,7 @@
 	[[itemFactory windowGroup] removeItem: newItem];
 }
 
+#if 0
 - (ETLayoutItemGroup *) basicItemGroupWithRect: (NSRect)rect
 {
 	[itemFactory beginRootObject];

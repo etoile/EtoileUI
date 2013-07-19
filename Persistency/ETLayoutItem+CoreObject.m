@@ -13,6 +13,7 @@
 #import <CoreObject/COEditingContext.h>
 #import <CoreObject/COPersistentRoot.h>
 #import <CoreObject/COObject.h>
+#import <CoreObject/CODictionary.h>
 #import "ETLayoutItem+CoreObject.h"
 #import "EtoileUIProperties.h"
 #import "ETOutlineLayout.h"
@@ -57,6 +58,11 @@
 	[[self styleGroup] becomePersistentInContext: aContext];
 	ETAssert([[self actionHandler] isShared] || [[self actionHandler] isPersistent] == NO || [[self actionHandler] isRoot]);
 	[[self actionHandler] becomePersistentInContext: aContext];
+
+	CODictionary *valueTransformers = [self primitiveValueForKey: @"valueTransformers"];
+
+	ETAssert([valueTransformers isPersistent] == NO || [valueTransformers isRoot]);
+	[valueTransformers becomePersistentInContext: aContext];
 }
 
 #pragma mark UI Persistency
