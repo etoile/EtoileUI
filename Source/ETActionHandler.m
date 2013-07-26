@@ -49,18 +49,23 @@ Returns Nil by default. */
 
 static NSMutableDictionary *sharedActionHandlers = nil;
 
-+ (id) sharedInstance
+/** <override-never />
+Returns the shared instance that corresponds to the receiver class in the given 
+object graph context. */
++ (id) sharedInstanceForObjectGraphContext: (COObjectGraphContext *)aContext
 {
 	if (sharedActionHandlers == nil)
 		sharedActionHandlers = [[NSMutableDictionary alloc] init];
 
+	// TODO: Clear shared instance bound to a context not in use
 	NSString *className = NSStringFromClass(self);
-	id handler = [sharedActionHandlers objectForKey: className];
+	id key = (aContext != nil ? S(className, aContext) : S(className));
+	id handler = [sharedActionHandlers objectForKey: key];
+
 	if (handler == nil)
 	{
-		handler = AUTORELEASE([[self alloc] init]);
-		[sharedActionHandlers setObject: handler
-		                         forKey: className];
+		handler = AUTORELEASE([[self alloc] initWithObjectGraphContext: aContext]);
+		[sharedActionHandlers setObject: handler forKey: key];
 	}
 
 	ETAssert([handler isPersistent] == NO);
@@ -68,10 +73,9 @@ static NSMutableDictionary *sharedActionHandlers = nil;
 }
 
 /** Initializes and returns a new action handler. */
-- (id) init
+- (id) initWithObjectGraphContext: (COObjectGraphContext *)aContext
 {
-	SUPERINIT
-	return self;
+	return [super initWithObjectGraphContext: aContext];
 }
 
 - (void) dealloc
@@ -222,7 +226,8 @@ an action. See -beginEditingItem:property:inRect:. */
 		[fieldEditor setAllowsUndo: YES];
 
 		ASSIGN(_fieldEditorItem, [[ETLayoutItemFactory factory] itemWithView: fieldEditor]);
-		[_fieldEditorItem setCoverStyle: [ETFieldEditorItemStyle sharedInstance]];
+		[_fieldEditorItem setCoverStyle:
+			[ETFieldEditorItemStyle sharedInstanceForObjectGraphContext: [self objectGraphContext]]];
 	}
 
 	return _fieldEditorItem;

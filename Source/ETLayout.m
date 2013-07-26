@@ -224,7 +224,7 @@ constraint with -setItemSizeConstraint: and -setConstrainedItemSize:. */
 	_layoutContext = nil;
 	delegate = nil;
 	_tool = nil;
-	ASSIGN(_dropIndicator, [ETDropIndicator sharedInstance]);
+	ASSIGN(_dropIndicator, [ETDropIndicator sharedInstanceForObjectGraphContext: nil]);
 	_isRendering = NO;
 	_layoutSize = NSMakeSize(200, 200); /* Dummy value */
 	_proposedLayoutSize = ETNullSize;

@@ -77,7 +77,7 @@
 	item = [itemFactory item];
 	scrollableAreaItem = [ETScrollableAreaItem item];
 
-	[item setActionHandler: [ETFirstResponderActionHandler sharedInstance]];
+	[item setActionHandler: [ETFirstResponderActionHandler sharedInstanceForObjectGraphContext: [item objectGraphContext]]];
 	[item setDecoratorItem: scrollableAreaItem];
 
 	mainItem = [itemFactory itemGroupWithItems: A(item)];

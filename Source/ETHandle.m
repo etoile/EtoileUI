@@ -414,7 +414,7 @@ static ETBasicHandleStyle *sharedBasicHandleStyle = nil;
 }
 
 #define HANDLE(x) \
-	AUTORELEASE([[ETHandle alloc] initWithActionHandler: [x sharedInstance] \
+	AUTORELEASE([[ETHandle alloc] initWithActionHandler: [x sharedInstanceForObjectGraphContext: [self objectGraphContext]] \
 	                                  manipulatedObject: self])
 
 - (id) initWithActionHandler: (ETActionHandler *)aHandler 

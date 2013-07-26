@@ -53,7 +53,7 @@
 {
 	[super awakeFromFetch];
 
-	ASSIGN(_dropIndicator, [ETDropIndicator sharedInstance]);
+	ASSIGN(_dropIndicator, [ETDropIndicator sharedInstanceForObjectGraphContext: [self objectGraphContext]]);
 	_previousScaleFactor = 1.0;
 }
 

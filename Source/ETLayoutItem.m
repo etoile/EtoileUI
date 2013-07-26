@@ -140,8 +140,8 @@ The returned item will use +defaultItemRect as its frame. */
 - (id) init
 {
 	return [self initWithView: nil 
-	               coverStyle: [ETBasicItemStyle sharedInstance] 
-	            actionHandler: [ETActionHandler sharedInstance]];
+	               coverStyle: [ETBasicItemStyle sharedInstanceForObjectGraphContext: nil]
+	            actionHandler: [ETActionHandler sharedInstanceForObjectGraphContext: nil]];
 }
 
 /** <init />

@@ -144,7 +144,7 @@ See also -beginRootObject. */
 - (ETStyle *) currentCoverStyle
 {
 	if ([self isCreatingRootObject] == NO)
-		return [ETBasicItemStyle sharedInstance];
+		return [ETBasicItemStyle sharedInstanceForObjectGraphContext: [self objectGraphContext]];
 
 	if (_currentCoverStyle == nil)
 	{
@@ -159,7 +159,7 @@ See also -beginRootObject. */
 - (ETActionHandler *) currentActionHandler
 {
 	if ([self isCreatingRootObject] == NO)
-		return [ETActionHandler sharedInstance];
+		return [ETActionHandler sharedInstanceForObjectGraphContext: [self objectGraphContext]];
 
 	if (_currentActionHandler == nil)
 	{
@@ -283,7 +283,7 @@ shared style returned by -currentBarElementStyle.  */
 	}
 	if (needsButtonBehavior)
 	{
-		[anItem setActionHandler: [ETButtonItemActionHandler sharedInstance]];
+		[anItem setActionHandler: [ETButtonItemActionHandler sharedInstanceForObjectGraphContext: [self objectGraphContext]]];
 	}
 
 	// TODO: Might not work well if the button view has a title, because the 

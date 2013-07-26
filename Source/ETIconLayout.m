@@ -37,7 +37,7 @@ Initializes and returns a new icon layout. */
 
 	[self setTemplateItem: templateItem];
 	[templateItem setCoverStyle: iconStyle];
-	[templateItem setActionHandler: [ETIconAndLabelActionHandler sharedInstance]];
+	[templateItem setActionHandler: [ETIconAndLabelActionHandler sharedInstanceForObjectGraphContext: nil]];
 	/* Will delegate the icon/image rect computation to the icon style rather 
 	   than stretching it. */
 	[templateItem setContentAspect: ETContentAspectComputed];

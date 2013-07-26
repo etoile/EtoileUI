@@ -43,7 +43,7 @@ method will reuse the action handler to be set on every created items. */
 
 + (Class) styleClass;
 
-+ (id) sharedInstance;
++ (id) sharedInstanceForObjectGraphContext: (COObjectGraphContext *)aContext;
 
 /** @taskunit Aspect Sharing */
 

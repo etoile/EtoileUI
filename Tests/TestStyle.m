@@ -47,7 +47,7 @@ DEALLOC(DESTROY(itemFactory); DESTROY(item))
 
 - (void) testSharedInstance
 {
-	UKNotNil([ETBasicItemStyle sharedInstance]);
+	UKNotNil([ETBasicItemStyle sharedInstanceForObjectGraphContext: [itemFactory objectGraphContext]]);
 }
 
 - (void) testRectForViewBasic

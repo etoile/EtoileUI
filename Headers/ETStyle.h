@@ -44,31 +44,33 @@ and expect to be provided a layout item through -render:layoutItem:dirtyRect:. *
 	BOOL _isShared;
 }
 
+/** @taskunit Aspect Registration */
+
 + (void) registerAspects;
 + (void) registerStyle: (ETStyle *)aStyle;
 + (NSSet *) registeredStyles;
 + (NSSet *) registeredStyleClasses;
 
-/* Factory Method */
+/** @taskunit Factory Method */
 
-+ (id) sharedInstance;
++ (id) sharedInstanceForObjectGraphContext: (COObjectGraphContext *)aContext;
 
 /** @taskunit Aspect Sharing */
 
 - (BOOL) isShared;
 - (void) setIsShared: (BOOL)shared;
 
-/* Style Rendering */
+/** @taskunit Style Rendering */
 
 - (void) render: (NSMutableDictionary *)inputValues 
      layoutItem: (ETLayoutItem *)item 
       dirtyRect: (NSRect)dirtyRect;
 
-/* Drawing Primitives */
+/** @taskunit Drawing Primitives */
 	  
 - (void) drawSelectionIndicatorInRect: (NSRect)indicatorRect;
 
-/* Notifications */
+/** @taskunit Notifications */
 	  
 - (void) didChangeItemBounds: (NSRect)bounds;
 

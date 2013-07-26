@@ -1105,9 +1105,12 @@ means the dirty rect needs no adjustments. */
 	/* Use the display cache when there is one */
 	if (nil != _cachedDisplayImage)
 	{
-		[[ETBasicItemStyle sharedInstance] drawImage: _cachedDisplayImage
-		                                     flipped: [self isFlipped]
-		                                      inRect: drawingBox];
+		ETBasicItemStyle *basicItemStyle =
+			[ETBasicItemStyle sharedInstanceForObjectGraphContext: [self objectGraphContext]];
+		
+		[basicItemStyle drawImage: _cachedDisplayImage
+		                  flipped: [self isFlipped]
+		                   inRect: drawingBox];
 		return;
 	}
 
