@@ -56,6 +56,7 @@
 		[ETPropertyDescription descriptionWithName: @"templates" type: (id)@"ETItemTemplate"];
 	[templates setMultivalued: YES];
 	[templates setOrdered: NO];
+	[templates setKeyed: YES];
 	// TODO: Display 'key' as 'Target UTI' or 'UTI'
 	[templates setShowsItemDetails: YES];
 	[templates setDetailedPropertyNames: A(@"item", @"objectClass", @"entityName")];

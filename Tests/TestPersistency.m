@@ -270,7 +270,6 @@
 	[[itemFactory windowGroup] removeItem: newItem];
 }
 
-#if 0
 - (ETLayoutItemGroup *) basicItemGroupWithRect: (NSRect)rect
 {
 	[itemFactory beginRootObject];
@@ -298,6 +297,7 @@
 	UKTrue([[itemGroup roundTripValueForProperty: @"shouldMutateRepresentedObject"] boolValue]);
 }
 
+#if 0
 - (void) testBasicItemGroupPersistency
 {
 	[self recreateContext];
@@ -587,7 +587,7 @@
 
 	[ctxt commit];
 
-	//ETLog(@"Serialized layout: %@", [[itemGroup layout] serializedRepresentation]);
+	//ETLog(@"Serialized layout: %@", [[itemGroup layout] storeItem]);
 
 	[self recreateContext];
 
