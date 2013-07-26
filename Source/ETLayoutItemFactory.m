@@ -9,6 +9,7 @@
 #import <EtoileFoundation/Macros.h>
 #import <EtoileFoundation/ETMutableObjectViewpoint.h>
 #import <EtoileFoundation/NSObject+Model.h>
+#import <CoreObject/COObjectGraphContext.h>
 #import "ETLayoutItemFactory.h"
 #import "ETActionHandler.h"
 #import "ETAspectRepository.h"
@@ -40,25 +41,34 @@ static NSMapTable *factorySharedInstances = nil;
 Returns the shared instance that corresponds to the receiver class. */	
 + (id) factory
 {
+	return [self factoryWithObjectGraphContext: nil];
+}
+
++ (id) factoryWithObjectGraphContext: (COObjectGraphContext *)aContext
+{
 	if (factorySharedInstances == nil)
 	{
 		ASSIGN(factorySharedInstances, [NSMapTable mapTableWithStrongToStrongObjects]);
 	}
-
+	
 	ETLayoutItemFactory *factory = [factorySharedInstances  objectForKey: self];
-
+	
 	if (factory == nil)
 	{
-		factory = AUTORELEASE([[self alloc] init]);
+		factory = AUTORELEASE([[self alloc] initWithObjectGraphContext: aContext]);
 		[factorySharedInstances setObject: factory forKey: self];
 	}
-
+	else
+	{
+		ASSIGN(factory->_objectGraphContext, aContext);
+	}
 	return factory;
 }
 
-- (id) init
+- (id) initWithObjectGraphContext: (COObjectGraphContext *)aContext
 {
-	SUPERINIT
+	SUPERINIT;
+	ASSIGN(_objectGraphContext, aContext);
 	[self setCurrentBarElementStyle: [ETBasicItemStyle iconAndLabelBarElementStyle]];
 	[self setCurrentBarElementHeight: [self defaultIconAndLabelBarHeight]];
 	return self;
@@ -66,10 +76,16 @@ Returns the shared instance that corresponds to the receiver class. */
 
 - (void) dealloc
 {
+	DESTROY(_objectGraphContext);
 	DESTROY(_currentCoverStyle);
 	DESTROY(_currentActionHandler);
 	DESTROY(_currentBarElementStyle);
 	[super dealloc];
+}
+
+- (COObjectGraphContext *)objectGraphContext
+{
+	return _objectGraphContext;
 }
 
 /** Declares a new root object scope.

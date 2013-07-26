@@ -14,13 +14,14 @@
 #import <AppKit/AppKit.h>
 #import <EtoileFoundation/EtoileFoundation.h>
 
+@class COObjectGraphContext;
 @class ETLayoutItem, ETLayoutItemGroup, ETScrollableAreaItem, ETWindowItem, 
 ETStyle, ETActionHandler;
-
 
 @interface ETLayoutItemFactory : NSObject
 {
 	@private
+	COObjectGraphContext *_objectGraphContext;
 	BOOL _isCreatingRootObject;
 	ETStyle *_currentCoverStyle;
 	ETActionHandler *_currentActionHandler;
@@ -29,6 +30,11 @@ ETStyle, ETActionHandler;
 }
 
 + (instancetype) factory;
++ (instancetype) factoryWithObjectGraphContext: (COObjectGraphContext *)aContext;
+
+/** @taskunit Object Graph Context */
+
+- (COObjectGraphContext *) objectGraphContext;
 
 /** Aspect Sharing Boundaries and Persistency */
 
