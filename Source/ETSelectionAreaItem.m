@@ -19,13 +19,15 @@ dark gray outline, a light gray interior and an overall alpha value of 0.5. */
 - (id) initWithView: (NSView *)view 
          coverStyle: (ETStyle *)aStyle 
       actionHandler: (ETActionHandler *)aHandler
+ objectGraphContext: (COObjectGraphContext *)aContext
 {
 	/* Pass a nil cover style to suppress the default item style */
-	self = [super initWithView: view coverStyle: nil actionHandler: aHandler];
+	self = [super initWithView: view coverStyle: nil actionHandler: aHandler objectGraphContext: aContext];
 	if (self == nil)
 		return nil;
 	
-	ETShape *shape = [ETShape rectangleShapeWithRect: NSMakeRect(0, 0, 100, 50) objectGraphContext: nil];
+	ETShape *shape = [ETShape rectangleShapeWithRect: NSMakeRect(0, 0, 100, 50)
+	                              objectGraphContext: aContext];
 
 	[shape setStrokeColor: [NSColor darkGrayColor]];
 	[shape setFillColor: [NSColor lightGrayColor]];

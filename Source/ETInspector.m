@@ -49,8 +49,9 @@
 - (id) initWithView: (NSView *)view 
          coverStyle: (ETStyle *)aStyle 
       actionHandler: (ETActionHandler *)aHandler
+ objectGraphContext: (COObjectGraphContext *)aContext
 {
-	self = [super initWithView: view coverStyle: aStyle actionHandler: aHandler];
+	self = [super initWithView: view coverStyle: aStyle actionHandler: aHandler objectGraphContext: aContext];
 	
 	if (self != nil)
 	{

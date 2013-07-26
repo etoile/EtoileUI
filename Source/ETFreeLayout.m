@@ -182,7 +182,8 @@ subclasses (see -[ETLayout initWithLayoutView:]). */
 
 - (void) showHandlesForItem: (ETLayoutItem *)item
 {
-	ETHandleGroup *handleGroup = AUTORELEASE([[ETResizeRectangle alloc] initWithManipulatedObject: item]);
+	ETHandleGroup *handleGroup = AUTORELEASE([[ETResizeRectangle alloc]
+		initWithManipulatedObject: item objectGraphContext: [self objectGraphContext]]);
 		
 	[[self layerItem] addItem: handleGroup];
 	// FIXME: Should [handleGroup display]; and display should retrieve the 
@@ -224,7 +225,8 @@ subclasses (see -[ETLayout initWithLayoutView:]). */
 	{
 		if ([item isSelected])
 		{
-			ETHandleGroup *handleGroup = AUTORELEASE([[ETResizeRectangle alloc] initWithManipulatedObject: item]);
+			ETHandleGroup *handleGroup = AUTORELEASE([[ETResizeRectangle alloc]
+				initWithManipulatedObject: item objectGraphContext: [self objectGraphContext]]);
 			[[self layerItem] addItem: handleGroup];
 		}
 	}

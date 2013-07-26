@@ -69,8 +69,9 @@ NSString * const ETSourceDidUpdateNotification = @"ETSourceDidUpdateNotification
 - (id) initWithView: (NSView *)view
          coverStyle: (ETStyle *)aStyle
       actionHandler: (ETActionHandler *)aHandler
+ objectGraphContext: (COObjectGraphContext *)aContext
 {
-    self = [super initWithView: view coverStyle: aStyle actionHandler: aHandler];
+    self = [super initWithView: view coverStyle: aStyle actionHandler: aHandler objectGraphContext: aContext];
 	if (nil == self)
 		return nil;
 
@@ -97,7 +98,7 @@ See also -isLayerItem. */
 - (id) initAsLayerItem
 {
 	_isLayerItem = YES;
-	self = [self initWithView: nil coverStyle: nil actionHandler: nil];
+	self = [self initWithView: nil coverStyle: nil actionHandler: nil objectGraphContext: nil];
 	[[self layout] setAutoresizesItems: NO];
 	return self;
 }

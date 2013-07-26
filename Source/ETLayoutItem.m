@@ -137,11 +137,17 @@ rather than this method.
 Initializes and returns a layout item.
 
 The returned item will use +defaultItemRect as its frame. */
-- (id) init
+- (id) initWithObjectGraphContext: (COObjectGraphContext *)aContext
 {
 	return [self initWithView: nil 
 	               coverStyle: [ETBasicItemStyle sharedInstanceForObjectGraphContext: nil]
-	            actionHandler: [ETActionHandler sharedInstanceForObjectGraphContext: nil]];
+	            actionHandler: [ETActionHandler sharedInstanceForObjectGraphContext: nil]
+			objectGraphContext: aContext];
+}
+
+- (id) init
+{
+	return [self initWithObjectGraphContext: nil];
 }
 
 /** <init />
@@ -149,7 +155,7 @@ You must use -[ETLayoutItemFactory itemXXX] or
 -[ETLayoutItemFactory itemGroupXXX] methods rather than this method.
 
 Initializes and returns a layout item with the given view, cover style and 
-action handler. 
+action handler.
 
 Any of the arguments can be nil.
 
@@ -160,8 +166,11 @@ See also -setView:, -setCoverStyle: and -setActionHandler:.  */
 - (id) initWithView: (NSView *)view 
          coverStyle: (ETStyle *)aStyle 
       actionHandler: (ETActionHandler *)aHandler
+ objectGraphContext: (COObjectGraphContext *)aContext
 {
-    SUPERINIT
+    self = [super initWithObjectGraphContext: aContext];
+	if (self == nil)
+		return nil;
 
 	_defaultValues = [[NSMutableDictionary alloc] init];
 

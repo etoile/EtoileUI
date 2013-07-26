@@ -165,7 +165,7 @@ See also -beginRootObject. */
 
 	if (_currentActionHandler == nil)
 	{
-		_currentActionHandler = [[ETActionHandler alloc] init];
+		_currentActionHandler = [[ETActionHandler alloc] initWithObjectGraphContext: [self objectGraphContext]];
 	}
 	return _currentActionHandler;
 }
@@ -221,7 +221,8 @@ This height is also identical to the standard toolbar height in Aqua. */
 {
 	ETLayoutItem *item = AUTORELEASE([[ETLayoutItem alloc] initWithView: view
                                                              coverStyle: [self currentCoverStyle]
-	                                                      actionHandler: [self currentActionHandler]]);
+	                                                      actionHandler: [self currentActionHandler]
+	                                                 objectGraphContext: [self objectGraphContext]]);
 	[item setIcon: [NSImage imageNamed: @"leaf"]];
 	return item;
 }
@@ -309,7 +310,8 @@ shared style returned by -currentBarElementStyle.  */
 {
 	ETLayoutItemGroup *item = AUTORELEASE([[ETLayoutItemGroup alloc] initWithView: nil 
 	                                                                   coverStyle: [self currentCoverStyle]
-	                                                                actionHandler: [self currentActionHandler]]);
+	                                                                actionHandler: [self currentActionHandler]
+	                                                           objectGraphContext: [self objectGraphContext]]);
 	[item setIcon: [NSImage imageNamed: @"leaf-plant"]];
 	return item;
 }
@@ -371,7 +373,7 @@ when you request the grouping of several items. */
 - (ETLayoutItemGroup *) graphicsGroup
 {
 	ETLayoutItemGroup *itemGroup = [self itemGroup];
-	[itemGroup setCoverStyle: AUTORELEASE([[ETGraphicsGroupStyle alloc] init])];
+	[itemGroup setCoverStyle: AUTORELEASE([[ETGraphicsGroupStyle alloc] initWithObjectGraphContext: [self objectGraphContext]])];
 	[itemGroup setLayout: [ETFreeLayout layout]];
 	[itemGroup setIcon: [NSImage imageNamed: @"layers-group"]];
 	return itemGroup;
@@ -1096,7 +1098,7 @@ TODO: Finish to implement, the returned group is empty currently... */
 {
 	if (pickboardGroup == nil)
 	{
-		pickboardGroup = [[ETLayoutItemGroup alloc] init];
+		pickboardGroup = [[ETLayoutItemGroup alloc] initWithObjectGraphContext: [self objectGraphContext]];
 		[pickboardGroup setName: _(@"Pickboards")];
 	}
 	

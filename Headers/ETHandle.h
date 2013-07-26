@@ -17,6 +17,7 @@
 #import <EtoileUI/ETActionHandler.h>
 #import <EtoileUI/ETStyle.h>
 
+@class COObjectGraphContext;
 @class ETTool; 
 
 extern NSString *kETMediatedToolProperty; /** mediatedTool property */
@@ -67,7 +68,8 @@ the resize tool more straightforward to use for the user. */
 
 }
 
-- (id) initWithManipulatedObject: (id)aTarget;
+- (id) initWithManipulatedObject: (id)aTarget
+              objectGraphContext: (COObjectGraphContext *)aContext;
 
 - (ETHandle *) topLeftHandle;
 - (ETHandle *) topRightHandle;
@@ -124,7 +126,6 @@ the resize tool more straightforward to use for the user. */
 @end
 
 @interface ETBasicHandleStyle : ETStyle
-+ (id) sharedInstance;
 - (void) drawHandleInRect: (NSRect)rect;
 - (void) drawSelectionIndicatorInRect: (NSRect)indicatorRect;
 @end

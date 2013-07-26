@@ -36,7 +36,7 @@ environment. Also known as Shelf overlay. */
 {
 	if (systemPickboard == nil)
 	{
-		systemPickboard = [[ETPickboard alloc] init];
+		systemPickboard = [[ETPickboard alloc] initWithObjectGraphContext: nil];
 		[systemPickboard setName: _(@"Shelf")];
 	}
 
@@ -106,9 +106,12 @@ static ETPickboard *activePickboard = nil;
 }
 
 /** <init \> Initializes and returns a new pickboard. */
-- (id) init
+- (id) initWithObjectGraphContext: (COObjectGraphContext *)aContext
 {
-	SUPERINIT;
+	self = [super initWithObjectGraphContext: aContext];
+	if (self == nil)
+		return nil;
+
 	[self setFrame: PALETTE_FRAME];
 
 	_pickedObjects = [[NSMutableDictionary alloc] init];

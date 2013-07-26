@@ -28,9 +28,12 @@ when a layout other than ETWindowLayout is set on the receiver. */
 	return AUTORELEASE([[ETWindowItem alloc] initWithWindow: fullScreenWindow]);
 }
 
-- (id) init
+- (id) initWithObjectGraphContext: (COObjectGraphContext *)aContext
 {
-	SUPERINIT;
+	self = [super initWithObjectGraphContext: aContext];
+	if (self == nil)
+		return nil;
+
 	[self setFrame: [[NSScreen mainScreen] visibleFrame]];
 		
 	ASSIGN(_rootWindowItem, [self createRootWindowItem]);

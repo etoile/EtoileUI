@@ -7,6 +7,7 @@
  */
 
 #import <EtoileFoundation/Macros.h>
+#import <CoreObject/COObjectGraphContext.h>
 #import "ETHandle.h"
 #import "ETCompatibility.h"
 #import "ETGeometry.h"
@@ -19,19 +20,21 @@ NSString *kETManipulatedObjectProperty = @"manipulatedObject";
 - (id) initWithView: (NSView *)view 
          coverStyle: (ETStyle *)aStyle 
       actionHandler: (ETActionHandler *)aHandler
+ objectGraphContext:(COObjectGraphContext *)aContext
 {
 	return nil;
 }
 
 - (id) initWithActionHandler: (ETActionHandler *)aHandler 
            manipulatedObject: (id)aTarget
+          objectGraphContext: (COObjectGraphContext *)aContext
 {
 	/* Pass a nil cover style to suppress the default item style */
-	self = [super initWithView: nil coverStyle: nil actionHandler: aHandler];
+	self = [super initWithView: nil coverStyle: nil actionHandler: aHandler objectGraphContext: aContext];
 	if (self == nil)
 		return nil;
 
-	[self setStyle: [ETBasicHandleStyle sharedInstance]]; 
+	[self setStyle: [ETBasicHandleStyle sharedInstanceForObjectGraphContext: aContext]];
 	[self setManipulatedObject: aTarget];
 	[self setFlipped: YES];
 	//[super setFrame: NSMakeRect(-5, -5, 10, 10)];
@@ -321,16 +324,6 @@ NSString *kETManipulatedObjectProperty = @"manipulatedObject";
 
 @implementation ETBasicHandleStyle
 
-static ETBasicHandleStyle *sharedBasicHandleStyle = nil;
-
-+ (id) sharedInstance
-{
-	if (sharedBasicHandleStyle == nil)
-		sharedBasicHandleStyle = [[ETBasicHandleStyle alloc] init];
-		
-	return sharedBasicHandleStyle;
-}
-
 - (NSImage *) icon
 {
 	return [NSImage imageNamed: @"layer-select-point"];
@@ -409,16 +402,19 @@ static ETBasicHandleStyle *sharedBasicHandleStyle = nil;
 - (id) initWithView: (NSView *)view 
          coverStyle: (ETStyle *)aStyle 
       actionHandler: (ETActionHandler *)aHandler
+ objectGraphContext:(COObjectGraphContext *)aContext
 {
 	return nil;
 }
 
 #define HANDLE(x) \
-	AUTORELEASE([[ETHandle alloc] initWithActionHandler: [x sharedInstanceForObjectGraphContext: [self objectGraphContext]] \
-	                                  manipulatedObject: self])
+	AUTORELEASE([[ETHandle alloc] initWithActionHandler: [x sharedInstanceForObjectGraphContext: aContext] \
+	                                  manipulatedObject: self \
+                                     objectGraphContext: aContext])
 
 - (id) initWithActionHandler: (ETActionHandler *)aHandler 
            manipulatedObject: (id)aTarget
+          objectGraphContext: (COObjectGraphContext *)aContext
 {
 	NSArray *handles = A(HANDLE(ETTopLeftHandleActionHandler), 
                          HANDLE(ETTopRightHandleActionHandler),
@@ -428,10 +424,9 @@ static ETBasicHandleStyle *sharedBasicHandleStyle = nil;
                          HANDLE(ETRightHandleActionHandler),
                          HANDLE(ETTopHandleActionHandler),
                          HANDLE(ETBottomHandleActionHandler));
-	//NSArray *handles = A(HANDLE(ETTopLeftHandleActionHandler));
 
 	/* Pass a nil cover style to suppress the default item style */
-	self = [super initWithView: nil coverStyle: nil actionHandler: aHandler];
+	self = [super initWithView: nil coverStyle: nil actionHandler: aHandler objectGraphContext: aContext];
 	if (self == nil)
 		return nil;
 
@@ -589,9 +584,9 @@ or not. */
 
 @implementation ETResizeRectangle
 
-- (id) initWithManipulatedObject: (id)aTarget
+- (id) initWithManipulatedObject: (id)aTarget objectGraphContext: (COObjectGraphContext *)aContext
 {
-	return [super initWithActionHandler: nil manipulatedObject: aTarget];
+	return [super initWithActionHandler: nil manipulatedObject: aTarget objectGraphContext: aContext];
 }
 
 - (void) updateHandleLocations
