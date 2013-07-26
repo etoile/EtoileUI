@@ -40,22 +40,25 @@
 }
 
 /** Initializes and returns an empty style group. */
-- (id) init
+- (id) initWithObjectGraphContext: (COObjectGraphContext *)aContext
 {
-	return [self initWithCollection: nil];	
+	return [self initWithCollection: nil objectGraphContext: aContext];
 }
 
 /** Initializes and returns a style group that only contains a single style. */
-- (id) initWithStyle: (ETStyle *)aStyle
+- (id) initWithStyle: (ETStyle *)aStyle objectGraphContext: (COObjectGraphContext *)aContext
 {
-	return [self initWithCollection: A(aStyle)];	
+	return [self initWithCollection: A(aStyle) objectGraphContext: aContext];
 }
 
 /** <init />Initializes and returns a style group that contains all the styles 
 in the given style collection. */
-- (id) initWithCollection: (id <ETCollection>)styles
+- (id) initWithCollection: (id <ETCollection>)styles objectGraphContext: (COObjectGraphContext *)aContext
 {
-	SUPERINIT
+	self = [super initWithObjectGraphContext: aContext];
+	if (self == nil)
+		return nil;
+
 	[self setIsShared: NO];
 	if (styles != nil)
 	{

@@ -555,7 +555,10 @@ returned nil. */
 	if (isValidDrop)
 	{
 		ETAssert(indicator != nil);
-		[indicator initWithLocation: locRelativeToDropTarget hoveredItem: hoveredItem isDropTarget: dropOn];
+		[indicator initWithLocation: locRelativeToDropTarget
+		                hoveredItem: hoveredItem
+		               isDropTarget: dropOn
+		         objectGraphContext: [dropTarget objectGraphContext]];
 
 		[self insertDropIndicator: indicator forDropTarget: dropTarget];
 		[self redisplayDropIndicatorIfNeeded: indicator 

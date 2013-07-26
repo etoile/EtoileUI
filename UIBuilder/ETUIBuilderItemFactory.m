@@ -633,8 +633,10 @@
 	ETController *controller = AUTORELEASE([[ETController alloc] init]);
 	ETItemTemplate *template = [controller templateForType: [controller currentObjectType]];
 
-	[[template item] setActionHandler: [ETAspectTemplateActionHandler sharedInstance]];
-	[picker setActionHandler: [ETAspectTemplateActionHandler sharedInstance]];
+	[[template item] setActionHandler:
+	 	[ETAspectTemplateActionHandler sharedInstanceForObjectGraphContext: [self objectGraphContext]]];
+	[picker setActionHandler:
+	 	[ETAspectTemplateActionHandler sharedInstanceForObjectGraphContext: [self objectGraphContext]]];
 
 	[controller setAllowedPickTypes: A([ETUTI typeWithClass: [NSObject class]])];
 

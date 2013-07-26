@@ -26,7 +26,7 @@
 	SUPERINIT
 
 	ETLayoutItem *templateItem = [[ETLayoutItemFactory factory] item];;
-	ETBasicItemStyle *formStyle = AUTORELEASE([[ETBasicItemStyle alloc] init]);
+	ETBasicItemStyle *formStyle = AUTORELEASE([[ETBasicItemStyle alloc] initWithObjectGraphContext: nil]);
 
 	[self setTemplateItem: templateItem];
 	[formStyle setLabelPosition: ETLabelPositionOutsideLeft];

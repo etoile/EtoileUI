@@ -14,6 +14,7 @@
 #import <EtoileFoundation/ETCollection.h>
 #import <EtoileUI/ETStyle.h>
 
+@class COObjectGraphContext;
 @class ETLayoutItem;
 
 /** ETStyleGroup represents a collection of styles you want to render together. 
@@ -41,9 +42,9 @@ default they return NO for -isShared unlike ETStyle.  */
 
 /** @taskunit Initialization */
 
-- (id) init;
-- (id) initWithStyle: (ETStyle *)aStyle;
-- (id) initWithCollection: (id <ETCollection>)styles;
+- (id) initWithObjectGraphContext: (COObjectGraphContext *)aContext;
+- (id) initWithStyle: (ETStyle *)aStyle objectGraphContext: (COObjectGraphContext *)aContext;
+- (id) initWithCollection: (id <ETCollection>)styles objectGraphContext: (COObjectGraphContext *)aContext;
 
 /** @taskunit Style Collection */
 

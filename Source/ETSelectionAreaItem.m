@@ -25,7 +25,7 @@ dark gray outline, a light gray interior and an overall alpha value of 0.5. */
 	if (self == nil)
 		return nil;
 	
-	ETShape *shape = [ETShape rectangleShapeWithRect: NSMakeRect(0, 0, 100, 50)];
+	ETShape *shape = [ETShape rectangleShapeWithRect: NSMakeRect(0, 0, 100, 50) objectGraphContext: nil];
 
 	[shape setStrokeColor: [NSColor darkGrayColor]];
 	[shape setFillColor: [NSColor lightGrayColor]];

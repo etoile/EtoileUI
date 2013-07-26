@@ -15,6 +15,7 @@
 #import <EtoileUI/ETCompatibility.h>
 #import <EtoileUI/ETUIObject.h>
 
+@class COObjectGraphContext;
 @class ETLayoutItem;
 
 /** ETStyle is an abstract base class that represents a style element.
@@ -117,7 +118,8 @@ drop validation time. */
 
 - (id) initWithLocation: (NSPoint)dropLocation 
             hoveredItem: (ETLayoutItem *)hoveredItem
-           isDropTarget: (BOOL)dropOn;
+           isDropTarget: (BOOL)dropOn
+     objectGraphContext: (COObjectGraphContext *)aContext;
 
 - (CGFloat) thickness;
 - (NSColor *) color;
@@ -140,8 +142,8 @@ drop validation time. */
 	ETStyle *_content;
 	NSShadow *_shadow;
 }
-+ (id) shadowWithStyle: (ETStyle *)style;
-- (id) initWithStyle: (ETStyle *)style;
++ (id) shadowWithStyle: (ETStyle *)style objectGraphContext: (COObjectGraphContext *)aContext;
+- (id) initWithStyle: (ETStyle *)style objectGraphContext: (COObjectGraphContext *)aContext;
 
 @end
 
@@ -155,9 +157,9 @@ Warning: Unstable API. */
 	NSColor *_color;
 }
 
-+ (id) tintWithStyle: (ETStyle *)style color: (NSColor *)color;
-+ (id) tintWithStyle: (ETStyle *)style;
-- (id) initWithStyle: (ETStyle *)style;
++ (id) tintWithStyle: (ETStyle *)style color: (NSColor *)color objectGraphContext: (COObjectGraphContext *)aContext;
++ (id) tintWithStyle: (ETStyle *)style objectGraphContext: (COObjectGraphContext *)aContext;
+- (id) initWithStyle: (ETStyle *)style objectGraphContext: (COObjectGraphContext *)aContext;
 - (void) setColor: (NSColor *)color;
 - (NSColor *) color;
 
@@ -170,7 +172,7 @@ Warning: Unstable API. */
 	ETStyle *_content;
 }
 
-+ (id) speechWithStyle: (ETStyle *)style;
-- (id) initWithStyle: (ETStyle *)style;
++ (id) speechWithStyle: (ETStyle *)style objectGraphContext: (COObjectGraphContext *)aContext;
+- (id) initWithStyle: (ETStyle *)style objectGraphContext: (COObjectGraphContext *)aContext;
 
 @end

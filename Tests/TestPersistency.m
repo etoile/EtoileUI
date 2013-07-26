@@ -122,7 +122,7 @@
 - (void) testBasicShapeSerialization
 {
 	NSRect rect = NSMakeRect(50, 20, 400, 300);
-	ETShape *shape = [ETShape rectangleShapeWithRect: rect];
+	ETShape *shape = [ETShape rectangleShapeWithRect: rect objectGraphContext: nil];
 
 	[shape setPathResizeSelector: @selector(resizedPathWithRect:)];
 	[shape setFillColor: [NSColor redColor]];
@@ -144,7 +144,7 @@
 	[self recreateContext];
 
 	NSRect rect = NSMakeRect(50, 20, 400, 300);
-	ETShape *shape = [ETShape rectangleShapeWithRect: rect];
+	ETShape *shape = [ETShape rectangleShapeWithRect: rect objectGraphContext: nil];
 	ETUUID *uuid = [[ctxt insertNewPersistentRootWithRootObject: shape] persistentRootUUID];
 
 	UKNotNil(uuid);
@@ -210,7 +210,7 @@
 	ETLayoutItem *item = [itemFactory item];
 
 	[item setFrame: rect];
-	[item setCoverStyle: [ETShape rectangleShape]];
+	[item setCoverStyle: [ETShape rectangleShapeWithObjectGraphContext: nil]];
 	[[item coverStyle] setFillColor: [NSColor redColor]];
 
 	return item;

@@ -69,7 +69,9 @@ Returns the shared instance that corresponds to the receiver class. */
 {
 	SUPERINIT;
 	ASSIGN(_objectGraphContext, aContext);
-	[self setCurrentBarElementStyle: [ETBasicItemStyle iconAndLabelBarElementStyle]];
+	ETStyle *barElementStyle =
+		[ETBasicItemStyle iconAndLabelBarElementStyleWithObjectGraphContext: aContext];
+	[self setCurrentBarElementStyle: barElementStyle];
 	[self setCurrentBarElementHeight: [self defaultIconAndLabelBarHeight]];
 	return self;
 }
@@ -148,7 +150,7 @@ See also -beginRootObject. */
 
 	if (_currentCoverStyle == nil)
 	{
-		_currentCoverStyle = [[ETBasicItemStyle alloc] init];
+		_currentCoverStyle = [[ETBasicItemStyle alloc] initWithObjectGraphContext: [self objectGraphContext]];
 	}
 	return _currentCoverStyle;
 }
@@ -379,8 +381,8 @@ when you request the grouping of several items. */
 ETBarStyle as style and ETLineLayout as layout.
 
 Also resets the current bar element style to 
--[ETBasicItemStyle iconAndLabelBarElementStyle] to ensure new bar elements 
-share the same style.<br />
+-[ETBasicItemStyle iconAndLabelBarElementStyleWithObjectGraphContext:] to ensure 
+new bar elements share the same style.<br />
 And resets the current bar element height to the given size height.
 
 The returned bar has a flexible width and a fixed height. */
@@ -389,12 +391,14 @@ The returned bar has a flexible width and a fixed height. */
 	ETLayoutItemGroup *itemGroup = [self itemGroupWithFrame: ETMakeRect(NSZeroPoint, aSize)];
 	[itemGroup setAutoresizingMask: ETAutoresizingFlexibleWidth];
 	[itemGroup setLayout: [ETLineLayout layout]];
-	[self setCurrentBarElementStyle: [ETBasicItemStyle iconAndLabelBarElementStyle]];
+	ETStyle *barElementStyle =
+		[ETBasicItemStyle iconAndLabelBarElementStyleWithObjectGraphContext: [self objectGraphContext]];
+	[self setCurrentBarElementStyle: barElementStyle];
 	[self setCurrentBarElementHeight: aSize.height];
 	return itemGroup;
 }
 
-/** Returns a new layout item group including a collection browser and buttons 
+/** Returns a new layout item group including a collection browser and buttons
  to edit the collection content using actions such as <em>Add</em> and
 <em>Remove</em>.
  
@@ -1117,7 +1121,7 @@ and style. */
 bezier path. The shape is used as both the represented object and the style. */
 - (ETLayoutItem *) itemWithBezierPath: (NSBezierPath *)aPath
 {
-	return [self itemWithShape: [ETShape shapeWithBezierPath: aPath]
+	return [self itemWithShape: [ETShape shapeWithBezierPath: aPath objectGraphContext: [self objectGraphContext]]
 	                   inFrame: ETMakeRect(NSZeroPoint, [aPath bounds].size)];
 }
 
@@ -1125,8 +1129,9 @@ bezier path. The shape is used as both the represented object and the style. */
 width and height of the given rect. */
 - (ETLayoutItem *) rectangleWithRect: (NSRect)aRect
 {
-	ETLayoutItem *item = [self itemWithShape: [ETShape rectangleShapeWithRect: ETMakeRect(NSZeroPoint, aRect.size)] 
-	                                 inFrame: aRect];
+	ETShape *shape = [ETShape rectangleShapeWithRect: ETMakeRect(NSZeroPoint, aRect.size)
+	                              objectGraphContext: [self objectGraphContext]];
+	ETLayoutItem *item = [self itemWithShape: shape inFrame: aRect];
 	[item setIcon: [NSImage imageNamed: @"layer-shape"]];
 	return item;
 }
@@ -1142,8 +1147,9 @@ width and height of +[ETShape defaultShapeRect]. */
 width and height of the given rect. */
 - (ETLayoutItem *) ovalWithRect: (NSRect)aRect
 {
-	return [self itemWithShape: [ETShape ovalShapeWithRect: ETMakeRect(NSZeroPoint, aRect.size)]
-	                   inFrame: aRect];
+	ETShape *shape = [ETShape ovalShapeWithRect: ETMakeRect(NSZeroPoint, aRect.size)
+	                         objectGraphContext: [self objectGraphContext]];
+	return [self itemWithShape: shape inFrame: aRect];
 }
 
 /** Returns a new layout item which represents an oval shape that fits in the 

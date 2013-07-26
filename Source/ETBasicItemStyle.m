@@ -7,6 +7,7 @@
  */
 
 #import <EtoileFoundation/Macros.h>
+#import <CoreObject/COObjectGraphContext.h>
 #import "ETBasicItemStyle.h"
 #import "ETGeometry.h"
 #import "ETTool.h"
@@ -29,9 +30,9 @@ small system font size. */
 
 /** Returns a new autoreleased style that draws the item icon and its name as 
 a label underneath. */
-+ (ETBasicItemStyle *) iconAndLabelBarElementStyle
++ (ETBasicItemStyle *) iconAndLabelBarElementStyleWithObjectGraphContext: (COObjectGraphContext *)aContext
 {
-	ETBasicItemStyle *style = AUTORELEASE([[self alloc] init]);
+	ETBasicItemStyle *style = AUTORELEASE([[self alloc] initWithObjectGraphContext: aContext]);
 	[style setLabelPosition: ETLabelPositionInsideBottom];
 	[style setMaxImageSize: NSMakeSize(32, 32)];
 	[style setEdgeInset: 7];
@@ -40,8 +41,9 @@ a label underneath. */
 
 /** Returns a new autoreleased style with the given label position. */
 + (ETBasicItemStyle *) styleWithLabelPosition: (ETLabelPosition)aPositionRule
+                           objectGraphContext: (COObjectGraphContext *)aContext
 {
-	ETBasicItemStyle *style = AUTORELEASE([[self alloc] init]);
+	ETBasicItemStyle *style = AUTORELEASE([[self alloc] initWithObjectGraphContext: aContext]);
 	[style setLabelPosition: aPositionRule];
 	return style;
 }
@@ -49,9 +51,12 @@ a label underneath. */
 /** <init />
 Initializes and returns a new basic item style with no visible label, 
 no max image and label size and no edge inset. */
-- (id) init
+- (id) initWithObjectGraphContext: (COObjectGraphContext *)aContext
 {
-	SUPERINIT
+	self = [super initWithObjectGraphContext: aContext];
+	if (self == nil)
+		return nil;
+
 	[self setIsShared: YES];
 	_labelPosition = ETLabelPositionNone;
 	ASSIGN(_labelAttributes, [[self class] standardLabelAttributes]);

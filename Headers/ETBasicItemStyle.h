@@ -13,6 +13,7 @@
 #import <AppKit/AppKit.h>
 #import <EtoileUI/ETStyle.h>
 
+@class COObjectGraphContext;
 @class ETLayoutItem;
 
 /** Specifies the label position in the item drawing bounds as returned by 
@@ -86,8 +87,9 @@ makes the label invisible. */
 
 + (NSDictionary *) standardLabelAttributes;
 
-+ (ETBasicItemStyle *) iconAndLabelBarElementStyle;
-+ (ETBasicItemStyle *) styleWithLabelPosition: (ETLabelPosition)aPositionRule;
++ (ETBasicItemStyle *) iconAndLabelBarElementStyleWithObjectGraphContext: (COObjectGraphContext *)aContext;
++ (ETBasicItemStyle *) styleWithLabelPosition: (ETLabelPosition)aPositionRule
+                           objectGraphContext: (COObjectGraphContext *)aContext;
 
 - (NSRect) currentLabelRect;
 - (NSRect) currentImageRect;

@@ -39,13 +39,13 @@ returns NO unlike ETStyle. */
 + (NSRect) defaultShapeRect;
 + (void) setDefaultShapeRect: (NSRect)aRect;
 
-+ (ETShape *) shapeWithBezierPath: (NSBezierPath *)aPath;
-+ (ETShape *) rectangleShapeWithRect: (NSRect)aRect;
-+ (ETShape *) rectangleShape;
-+ (ETShape *) ovalShapeWithRect: (NSRect)aRect;
-+ (ETShape *) ovalShape;
++ (ETShape *) shapeWithBezierPath: (NSBezierPath *)aPath objectGraphContext: (COObjectGraphContext *)aContext;
++ (ETShape *) rectangleShapeWithRect: (NSRect)aRect objectGraphContext: (COObjectGraphContext *)aContext;
++ (ETShape *) rectangleShapeWithObjectGraphContext: (COObjectGraphContext *)aContext;
++ (ETShape *) ovalShapeWithRect: (NSRect)aRect objectGraphContext: (COObjectGraphContext *)aContext;
++ (ETShape *) ovalShapeWithObjectGraphContext: (COObjectGraphContext *)aContext;
 
-- (id) initWithBezierPath: (NSBezierPath *)aPath;
+- (id) initWithBezierPath: (NSBezierPath *)aPath objectGraphContext: (COObjectGraphContext *)aContext;
 
 - (BOOL) isShared;
 

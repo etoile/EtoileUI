@@ -46,47 +46,49 @@ static NSRect shapeFactoryRect = {{ 0, 0 }, { 150, 100 }};
 }
 
 /** Returns a custom shape based on the given bezier path. */
-+ (ETShape *) shapeWithBezierPath: (NSBezierPath *)aPath
++ (ETShape *) shapeWithBezierPath: (NSBezierPath *)aPath objectGraphContext: (COObjectGraphContext *)aContext
 {
-	return AUTORELEASE([[self alloc] initWithBezierPath: aPath]);
+	return AUTORELEASE([[self alloc] initWithBezierPath: aPath objectGraphContext: aContext]);
 }
 
 /** Returns a rectangular shape with the width and height of aRect. */
-+ (ETShape *) rectangleShapeWithRect: (NSRect)aRect
++ (ETShape *) rectangleShapeWithRect: (NSRect)aRect objectGraphContext: (COObjectGraphContext *)aContext
 {
 	NSBezierPath *path = [NSBezierPath bezierPathWithRect: aRect];
-	ETShape *shape = AUTORELEASE([[self alloc] initWithBezierPath: path]);
+	ETShape *shape = AUTORELEASE([[self alloc] initWithBezierPath: path objectGraphContext: aContext]);
 	[shape setPathResizeSelector: @selector(bezierPathWithRect:)];
 	[shape setIcon: [NSImage imageNamed: @"layer-shape"]];
 	return shape;
 }
 
 /** Returns a rectangular shape with the width and height of +shapeFactoryRect. */
-+ (ETShape *) rectangleShape
++ (ETShape *) rectangleShapeWithObjectGraphContext: (COObjectGraphContext *)aContext
 {
-	return [self rectangleShapeWithRect: [self defaultShapeRect]];
+	return [self rectangleShapeWithRect: [self defaultShapeRect] objectGraphContext: aContext];
 }
 
 /** Returns an oval shape that fits in the width and height of aRect. */
-+ (ETShape *) ovalShapeWithRect: (NSRect)aRect
++ (ETShape *) ovalShapeWithRect: (NSRect)aRect objectGraphContext: (COObjectGraphContext *)aContext
 {
 	NSBezierPath *path = [NSBezierPath bezierPathWithOvalInRect: aRect];
-	ETShape *shape = AUTORELEASE([[self alloc] initWithBezierPath: path]);
+	ETShape *shape = AUTORELEASE([[self alloc] initWithBezierPath: path objectGraphContext: aContext]);
 	[shape setPathResizeSelector: @selector(bezierPathWithOvalInRect:)];
 	[shape setIcon: [NSImage imageNamed: @"layer-shape-ellipse"]];
 	return shape;
 }
 
 /** Returns an oval shape that fits in the width and height of +shapeFactoryRect. */
-+ (ETShape *) ovalShape
++ (ETShape *) ovalShapeWithObjectGraphContext: (COObjectGraphContext *)aContext
 {
-	return [self ovalShapeWithRect: [self defaultShapeRect]];
+	return [self ovalShapeWithRect: [self defaultShapeRect] objectGraphContext: aContext];
 }
 
 /** Initializes and returns a new custom shape based on the given bezier path. */
-- (id) initWithBezierPath: (NSBezierPath *)aPath
+- (id) initWithBezierPath: (NSBezierPath *)aPath objectGraphContext: (COObjectGraphContext *)aContext
 {
-	SUPERINIT
+	self = [super initWithObjectGraphContext: aContext];
+	if (self == nil)
+		return nil;
 
 	ASSIGN(_icon, [NSImage imageNamed: @"layer-shape-curve"]);
 	[self setPath: aPath];
@@ -98,9 +100,9 @@ static NSRect shapeFactoryRect = {{ 0, 0 }, { 150, 100 }};
     return self;
 }
 
-- (id) init
+- (id) initWithObjectGraphContext: (COObjectGraphContext *)aContext
 {
-	return [self initWithBezierPath: nil];
+	return [self initWithBezierPath: nil objectGraphContext: aContext];
 }
 
 - (void) dealloc

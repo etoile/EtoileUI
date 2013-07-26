@@ -11,6 +11,7 @@
 #import <EtoileFoundation/ETCollection+HOM.h>
 #import <EtoileFoundation/ETModelDescriptionRepository.h>
 #import <EtoileFoundation/NSObject+Etoile.h>
+#import <CoreObject/COObjectGraphContext.h>
 #import "ETStyle.h"
 #import "ETAspectRepository.h"
 #import "ETGeometry.h"
@@ -64,7 +65,7 @@ See also [NSObject(ETAspectRegistration)]. */
 		if ([subclass isSubclassOfClass: [ETUIItem class]])	
 			continue;
 
-		[self registerStyle: AUTORELEASE([[subclass alloc] init])];
+		[self registerStyle: AUTORELEASE([[subclass alloc] initWithObjectGraphContext: nil])];
 	}
 }
 
@@ -295,8 +296,11 @@ See also -[ETLayoutItem contentBounds], -[ETLayoutItem size] and
 - (id) initWithLocation: (NSPoint)dropLocation 
             hoveredItem: (ETLayoutItem *)hoveredItem
            isDropTarget: (BOOL)dropOn
+     objectGraphContext: (COObjectGraphContext *)aContext
 {
-	SUPERINIT
+	self = [super initWithObjectGraphContext: aContext];
+	if (self == nil)
+		return nil;
 
 	_dropLocation = dropLocation;
 	ASSIGN(_hoveredItem, hoveredItem);
@@ -457,14 +461,17 @@ space.  */
 
 @implementation ETShadowStyle
 
-+ (id) shadowWithStyle: (ETStyle *)style
++ (id) shadowWithStyle: (ETStyle *)style objectGraphContext: (COObjectGraphContext *)aContext
 {
-	return [[[ETShadowStyle alloc] initWithStyle: style] autorelease];
+	return [[[ETShadowStyle alloc] initWithStyle: style objectGraphContext: aContext] autorelease];
 }
 
-- (id) initWithStyle: (ETStyle *)style
+- (id) initWithStyle: (ETStyle *)style objectGraphContext: (COObjectGraphContext *)aContext
 {
-	SUPERINIT;
+	self = [super initWithObjectGraphContext: aContext];
+	if (self == nil)
+		return nil;
+
 	ASSIGN(_content, style);
 	// FIXME: implement on GNUstep
 #ifndef GNUSTEP
@@ -506,21 +513,24 @@ space.  */
 
 @implementation ETTintStyle
 
-+ (id) tintWithStyle: (ETStyle *)style color: (NSColor *)color
++ (id) tintWithStyle: (ETStyle *)style color: (NSColor *)color objectGraphContext: (COObjectGraphContext *)aContext
 {
-	ETTintStyle *tint = [[[ETTintStyle alloc] initWithStyle: style] autorelease];
+	ETTintStyle *tint = [[[ETTintStyle alloc] initWithStyle: style objectGraphContext: aContext] autorelease];
 	[tint setColor: color];
 	return tint;
 }
 
-+ (id) tintWithStyle: (ETStyle *)style
++ (id) tintWithStyle: (ETStyle *)style objectGraphContext: (COObjectGraphContext *)aContext
 {
-	return [[[ETTintStyle alloc] initWithStyle: style] autorelease];
+	return [[[ETTintStyle alloc] initWithStyle: style objectGraphContext: aContext] autorelease];
 }
 
-- (id) initWithStyle: (ETStyle *)style
+- (id) initWithStyle: (ETStyle *)style objectGraphContext: (COObjectGraphContext *)aContext
 {
-	SUPERINIT;
+	self = [super initWithObjectGraphContext: aContext];
+	if (self == nil)
+		return nil;
+
 	ASSIGN(_content, style);
 	_color = [[NSColor colorWithDeviceRed:0.005 green:0.0 blue:0.01 alpha:0.7] retain];
 	return self;
@@ -615,14 +625,17 @@ space.  */
 }
 
 
-+ (id) speechWithStyle: (ETStyle *)style
++ (id) speechWithStyle: (ETStyle *)style objectGraphContext: (COObjectGraphContext *)aContext
 {
-	return [[[ETSpeechBubbleStyle alloc] initWithStyle: style] autorelease];
+	return [[[ETSpeechBubbleStyle alloc] initWithStyle: style objectGraphContext: aContext] autorelease];
 }
 
-- (id) initWithStyle: (ETStyle *)style
+- (id) initWithStyle: (ETStyle *)style objectGraphContext: (COObjectGraphContext *)aContext
 {
-	SUPERINIT;
+	self = [super initWithObjectGraphContext: aContext];
+	if (self == nil)
+		return nil;
+
 	ASSIGN(_content, style);
 	return self;
 }
