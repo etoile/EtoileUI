@@ -151,7 +151,9 @@ You can override -builder to customize the conversion. */
 	if (NO == hasNibNameEntry)
 		return;
 	
-	_nibOwner = [[ETNibOwner alloc] initWithNibName: nibName bundle: [NSBundle mainBundle]];
+	_nibOwner = [[ETNibOwner alloc] initWithNibName: nibName
+	                                         bundle: [NSBundle mainBundle]
+	                             objectGraphContext: nil];
 
 	BOOL nibLoadFailed = (NO == [_nibOwner loadNibWithOwner: ETApp]);
 

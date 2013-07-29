@@ -670,7 +670,8 @@ See also -setRenderedPropertyNames:. */
 	ETPropertyCollectionController *controller = (id)[browser controller];
 	ETAssert(controller != nil);
 	ETItemTemplate *template = [ETItemTemplate templateWithItem: [_itemFactory item]
-	                                                 entityName: [[aRelationshipDesc type] name]];
+	                                                 entityName: [[aRelationshipDesc type] name]
+	                                         objectGraphContext: nil];
 
 	[controller setTemplate: template forType: [controller currentObjectType]];
 	[controller setModelDescriptionRepository: [self repository]];

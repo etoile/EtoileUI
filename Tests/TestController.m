@@ -51,25 +51,33 @@
 - (void) setObjectClass: (Class)aClass
 {
 	id oldTemplate = [self templateForType: kETTemplateObjectType];
-	id newTemplate = [ETItemTemplate templateWithItem: [oldTemplate item] objectClass: aClass];
+	id newTemplate = [ETItemTemplate templateWithItem: [oldTemplate item]
+	                                      objectClass: aClass
+	                               objectGraphContext: [self objectGraphContext]];
 	[self setTemplate: newTemplate forType: kETTemplateObjectType];
 }
 - (void) setGroupClass: (Class)aClass
 {
 	id oldTemplate = [self templateForType: kETTemplateGroupType];
-	id newTemplate = [ETItemTemplate templateWithItem: [oldTemplate item] objectClass: aClass];
+	id newTemplate = [ETItemTemplate templateWithItem: [oldTemplate item]
+	                                      objectClass: aClass
+	                               objectGraphContext: [self objectGraphContext]];
 	[self setTemplate: newTemplate forType: kETTemplateGroupType];
 }
 - (void) setTemplateItem: (ETLayoutItem *)anItem
 {
 	id oldTemplate = [self templateForType: kETTemplateObjectType];
-	id newTemplate = [ETItemTemplate templateWithItem: anItem objectClass: [oldTemplate objectClass]];
+	id newTemplate = [ETItemTemplate templateWithItem: anItem
+	                                      objectClass: [oldTemplate objectClass]
+	                               objectGraphContext: [self objectGraphContext]];
 	[self setTemplate: newTemplate forType: kETTemplateObjectType];
 }
 - (void) setTemplateItemGroup: (ETLayoutItemGroup *)anItem
 {
 	id oldTemplate = [self templateForType: kETTemplateGroupType];
-	id newTemplate = [ETItemTemplate templateWithItem: anItem objectClass: [oldTemplate objectClass]];
+	id newTemplate = [ETItemTemplate templateWithItem: anItem
+	                                      objectClass: [oldTemplate objectClass]
+	                               objectGraphContext: [self objectGraphContext]];
 	[self setTemplate: newTemplate forType: kETTemplateGroupType];
 }
 @end

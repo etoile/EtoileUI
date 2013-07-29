@@ -55,9 +55,11 @@ Automatically registers basic templates for -currentObjectType and
 -currentGroupType. See -setTemplate:forType: and -templateForType:.
 
 You can also use it -init to create a controller. See -[ETNibOwner init]. */
-- (id) initWithNibName: (NSString *)aNibName bundle: (NSBundle *)aBundle
+- (id) initWithNibName: (NSString *)aNibName
+                bundle: (NSBundle *)aBundle
+    objectGraphContext: (COObjectGraphContext *)aContext
 {
-	self = [super initWithNibName: aNibName bundle: aBundle];
+	self = [super initWithNibName: aNibName bundle: aBundle objectGraphContext: aContext];
 	if (nil == self)
 		return nil;
 
@@ -77,11 +79,15 @@ You can also use it -init to create a controller. See -[ETNibOwner init]. */
 	   and -endRootObject pair in the framework user code, the controller can 
 	   become persistent because the template items use no shared aspects. */
 	ETLayoutItemFactory *itemFactory = [ETLayoutItemFactory factory];
+	ETItemTemplate *objectTemplate = [ETItemTemplate templateWithItem: [itemFactory item]
+	                                                      objectClass: Nil
+	                                               objectGraphContext: aContext];
+	ETItemTemplate *groupTemplate = [ETItemTemplate templateWithItem: [itemFactory itemGroup]
+	                                                     objectClass: Nil
+	                                              objectGraphContext: aContext];
 
-	[self setTemplate: [ETItemTemplate templateWithItem: [itemFactory item] objectClass: Nil]
-	          forType: [self currentObjectType]];
-	[self setTemplate: [ETItemTemplate templateWithItem: [itemFactory itemGroup] objectClass: Nil]
-	          forType: [self currentGroupType]];
+	[self setTemplate: objectTemplate forType: [self currentObjectType]];
+	[self setTemplate: groupTemplate forType: [self currentGroupType]];
 
 	return self;
 }

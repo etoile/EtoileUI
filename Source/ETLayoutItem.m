@@ -13,6 +13,7 @@
 #import <EtoileFoundation/NSObject+Model.h>
 #import <EtoileFoundation/ETUTI.h>
 #import <EtoileFoundation/Macros.h>
+#import <CoreObject/CODictionary.h>
 #import "ETLayoutItem.h"
 #import "ETActionHandler.h"
 #import "ETBasicItemStyle.h"

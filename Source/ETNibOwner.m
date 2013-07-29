@@ -11,6 +11,7 @@
 #import <EtoileFoundation/Macros.h>
 #import <EtoileFoundation/ETCollection.h>
 #import <EtoileFoundation/ETCollection+HOM.h>
+#import <CoreObject/COObjectGraphContext.h>
 #import "ETNibOwner.h"
 #import "NSObject+EtoileUI.h"
 #import "ETCompatibility.h"
@@ -26,9 +27,14 @@ The Nib name must not be a path. However it can be nil, but then -loadNib
 will look for a Nib whose name matches the receiver class name. See -nibName.
 
 The Nib bundle will be to be the main bundle if you pass nil. */
-- (id) initWithNibName: (NSString *)aNibName bundle: (NSBundle *)aBundle
+- (id) initWithNibName: (NSString *)aNibName
+                bundle: (NSBundle *)aBundle
+    objectGraphContext: (COObjectGraphContext *)aContext
 {
-	SUPERINIT;
+	self = [super initWithObjectGraphContext: aContext];
+	if (self == nil)
+		return nil;
+
 	ASSIGN(_nibBundle, aBundle);
 	ASSIGN(_nibName, aNibName);
 	_topLevelObjects = [[NSMutableArray alloc] init];
@@ -37,9 +43,9 @@ The Nib bundle will be to be the main bundle if you pass nil. */
 
 /** Initializes and returns a new Nib owner which uses the receiver class name 
 as the nib name to be found in the main bundle. */
-- (id) init
+- (id) initWithObjectGraphContext: (COObjectGraphContext *)aContext
 {
-	return [self initWithNibName: nil bundle: nil];
+	return [self initWithNibName: nil bundle: nil objectGraphContext: aContext];
 }
 
 - (void) dealloc

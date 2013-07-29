@@ -24,7 +24,8 @@
 {
 	NSBundle *bundle = [NSBundle bundleForClass: [self class]];
 	ETNibOwner *nibOwner = [[ETNibOwner alloc] initWithNibName: nibName
-		                                                bundle: bundle];
+		                                                bundle: bundle
+	                                        objectGraphContext: nil];
 	BOOL nibLoaded = [nibOwner loadNibWithOwner: self];
 	RELEASE(nibOwner);
 	return nibLoaded;

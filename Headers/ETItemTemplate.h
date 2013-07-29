@@ -16,7 +16,10 @@
 #ifdef COREOBJECT
 #import <CoreObject/COEditingContext.h>
 #endif
-@class ETLayoutItem, ETLayoutItemGroup, ETUTI;
+
+@class ETUTI;
+@class COObjectGraphContext;
+@class ETLayoutItem, ETLayoutItemGroup;
 
 @protocol ETDocumentCreation
 /** Initializes and returns a document for the given URL and options based on 
@@ -53,12 +56,17 @@ model initialization. */
 
 /** @taskunit Initialization */
 
-+ (id) templateWithItem: (ETLayoutItem *)anItem objectClass: (Class)aClass;
-+ (id) templateWithItem: (ETLayoutItem *)anItem entityName: (NSString *)anEntityName;
++ (id) templateWithItem: (ETLayoutItem *)anItem
+			objectClass: (Class)aClass
+     objectGraphContext: (COObjectGraphContext *)aContext;
++ (id) templateWithItem: (ETLayoutItem *)anItem
+             entityName: (NSString *)anEntityName
+     objectGraphContext: (COObjectGraphContext *)aContext;
 
 - (id) initWithItem: (ETLayoutItem *)anItem
         objectClass: (Class)aClass
-         entityName: (NSString *)anEntityName;
+         entityName: (NSString *)anEntityName
+ objectGraphContext: (COObjectGraphContext *)aContext;
 
 /** @taskunit Properties */
 

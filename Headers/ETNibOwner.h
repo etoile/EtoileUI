@@ -16,6 +16,8 @@
 #import <AppKit/AppKit.h>
 #import <EtoileUI/ETUIObject.h>
 
+@class COObjectGraphContext;
+
 /** You can use ETNibOwner or a subclass instance to easily load a nib, the 
 instance will be set as the File's Owner proxy, and when released it will 
 automatically release the Nib resources (e.g. the Nib top-level objects). 
@@ -85,8 +87,10 @@ would try to load the Nib file named "PreferencesPanel.nib". */
 	NSMutableArray *_topLevelObjects;
 }
 
-- (id) initWithNibName: (NSString *)aNibName bundle: (NSBundle *)aBundle;
-- (id) init;
+- (id) initWithNibName: (NSString *)aNibName
+                bundle: (NSBundle *)aBundle
+    objectGraphContext: (COObjectGraphContext *)aContext;
+- (id) initWithObjectGraphContext: (COObjectGraphContext *)aContext;
 
 - (NSString *) nibName;
 - (NSBundle *) nibBundle;

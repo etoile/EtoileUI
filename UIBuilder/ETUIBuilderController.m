@@ -34,9 +34,11 @@
 	imageValueTransformer = _imageValueTransformer,
 	typeValueTransformer = _typeValueTransformer;
 
-- (id) initWithNibName: (NSString *)aNibName bundle: (NSBundle *)aBundle
+- (id) initWithNibName: (NSString *)aNibName
+                bundle: (NSBundle *)aBundle
+    objectGraphContext: (COObjectGraphContext *)aContext
 {
-	self = [super initWithNibName: aNibName bundle: aBundle];
+	self = [super initWithNibName: aNibName bundle: aBundle objectGraphContext: aContext];
 	if (nil == self)
 		return nil;
 

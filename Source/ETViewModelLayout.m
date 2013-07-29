@@ -67,7 +67,8 @@
 {
 	NSBundle *etoileUIBundle = [NSBundle bundleForClass: [self class]];
 	ETNibOwner *nibOwner = [[ETNibOwner alloc] initWithNibName:  @"ViewModelPrototype" 
-	                                                    bundle: etoileUIBundle];
+	                                                    bundle: etoileUIBundle
+	                                        objectGraphContext: nil];
 	BOOL nibLoaded = [nibOwner loadNibWithOwner: self];
 
 	if (nibLoaded)

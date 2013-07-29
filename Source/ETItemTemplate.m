@@ -14,6 +14,7 @@
 #import <EtoileFoundation/ETUTI.h>
 #import <EtoileFoundation/NSObject+Model.h>
 #import <EtoileFoundation/NSObject+HOM.h>
+#import <CoreObject/COObjectGraphContext.h>
 #import "ETItemTemplate.h"
 #import "ETLayoutItem.h"
 #import "ETLayoutItemGroup.h"
@@ -25,16 +26,26 @@
 
 /** Returns a new autoreleased template based on the given item and 
 represented object class. */
-+ (id) templateWithItem: (ETLayoutItem *)anItem objectClass: (Class)aClass
++ (id) templateWithItem: (ETLayoutItem *)anItem
+            objectClass: (Class)aClass
+     objectGraphContext: (COObjectGraphContext *)aContext
 {
-	return AUTORELEASE([[self alloc] initWithItem: anItem objectClass: aClass entityName: nil]);
+	return AUTORELEASE([[self alloc] initWithItem: anItem
+	                                  objectClass: aClass
+	                                   entityName: nil
+	                           objectGraphContext: aContext]);
 }
 
 /** Returns a new autoreleased template based on the given item and 
 entity name for the represented object. */
-+ (id) templateWithItem: (ETLayoutItem *)anItem entityName: (NSString *)anEntityName
++ (id) templateWithItem: (ETLayoutItem *)anItem
+             entityName: (NSString *)anEntityName
+     objectGraphContext: (COObjectGraphContext *)aContext
 {
-	return AUTORELEASE([[self alloc] initWithItem: anItem objectClass: Nil entityName: anEntityName]);
+	return AUTORELEASE([[self alloc] initWithItem: anItem
+	                                  objectClass: Nil
+	                                   entityName: anEntityName
+	                           objectGraphContext: aContext]);
 }
 
 /** <init />
@@ -49,6 +60,7 @@ Raises an NSInvalidArgumentException if the item is nil. */
 - (id) initWithItem: (ETLayoutItem *)anItem
         objectClass: (Class)aClass
          entityName: (NSString *)anEntityName
+ objectGraphContext: (COObjectGraphContext *)aContext
 {
 	NILARG_EXCEPTION_TEST(anItem);
 
@@ -62,7 +74,10 @@ Raises an NSInvalidArgumentException if the item is nil. */
 		                    aClass, anEntityName];
 	}
 
-	SUPERINIT;
+	self = [super initWithObjectGraphContext: aContext];
+	if (self == nil)
+		return nil;
+
 	ASSIGN(_item, anItem);
 	ASSIGN(_objectClass, aClass);
 	ASSIGN(_entityName, anEntityName);
@@ -384,7 +399,7 @@ NSString * const kETTemplateOptionParentRepresentedObject = @"kETTemplateOptionP
 
 - (id) initWithURL: (NSURL *)aURL options: (NSDictionary *)options
 {
-	self = [self init];
+	self = [self initWithObjectGraphContext: nil];
 	if (self == nil)
 		return nil;
 
