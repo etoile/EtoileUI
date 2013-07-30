@@ -92,7 +92,7 @@
 
 - (void) testUpsizedItemForContentSizeLayout
 {
-	ETColumnLayout *layout = [ETColumnLayout layout];
+	ETColumnLayout *layout = [ETColumnLayout layoutWithObjectGraphContext: [itemGroup objectGraphContext]];
 	
 	[[layout positionalLayout] setIsContentSizeLayout: YES];
 	[itemGroup setLayout: layout];

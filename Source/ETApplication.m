@@ -447,7 +447,8 @@ See also -_buildMainMenuIfNeeded. */
 - (IBAction) changeWindowGroupLayout: (id)sender
 {
 	Class layoutClass = [sender representedObject];
-	[[[ETLayoutItemFactory factory] windowGroup] setLayout: [layoutClass layout]];
+	ETLayout *layout = [layoutClass layoutWithObjectGraphContext: nil];
+	[[[ETLayoutItemFactory factory] windowGroup] setLayout: layout];
 }
 
 - (NSMenu *) layoutMenuWithTitle: (NSString *)aTitle target: (id)aTarget action: (SEL)aSelector

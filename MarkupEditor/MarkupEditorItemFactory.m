@@ -52,8 +52,8 @@
 
 	[[detailLayout barItem] setLayout: [self editorViewLayoutOfClass: [ETOutlineLayout class]]];
 	[detailLayout setBarThickness: 150];
-	//[[detailLayout contentItem] setLayout: [ETTextEditorLayout layout]];
-	[[detailLayout contentItem] setLayout: [ETOutlineLayout layout]];
+	//[[detailLayout contentItem] setLayout: [ETTextEditorLayout layoutWithObjectGraphContext: [self objectGraphContext]]];
+	[[detailLayout contentItem] setLayout: [ETOutlineLayout layoutWithObjectGraphContext: [self objectGraphContext]]];
 
 	[layout setBarThickness: 400];
 	[[layout barItem] setLayout: [self editorViewLayoutOfClass: [ETOutlineLayout class]]];
@@ -94,7 +94,7 @@
 	[removeButtonItem sizeToFit];
 
 	[toolbar addItems: A(addButtonItem, removeButtonItem)];
-	[toolbar setLayout: [ETLineLayout layout]];
+	[toolbar setLayout: [ETLineLayout layoutWithObjectGraphContext: [self objectGraphContext]]];
 	[[toolbar layout] setItemMargin: 12];
 	[toolbar setAutoresizingMask: ETAutoresizingFlexibleWidth];
 
@@ -112,7 +112,7 @@
 
 	[editor setController: controller];
 	[editor setSize: NSMakeSize(width, height)];
-	[editor setLayout: [ETColumnLayout layout]];
+	[editor setLayout: [ETColumnLayout layoutWithObjectGraphContext: [self objectGraphContext]]];
 	[editor setAutoresizingMask: ETAutoresizingFlexibleWidth | ETAutoresizingFlexibleHeight];
 
 	return editor;
@@ -131,7 +131,7 @@
 	[[workspace layout] setBarPosition: ETPanePositionLeft];
 	[[workspace layout] setEnsuresContentFillsVisibleArea: YES];
 
-	//[[[workspace layout] barItem] setLayout: [ETFlowLayout layout]];
+	//[[[workspace layout] barItem] setLayout: [ETFlowLayout layoutWithObjectGraphContext: [self objectGraphContext]]];
 	[[[workspace layout] barItem] setController: controller];
 
 	return workspace;

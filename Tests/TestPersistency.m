@@ -574,7 +574,7 @@
 	ETLayoutItem *buttonItem = [itemFactory button];
 	ETLayoutItemGroup *itemGroup = [itemFactory itemGroupWithItems: A(item, buttonItem)];
 
-	[itemGroup setLayout: [ETFreeLayout layout]];
+	[itemGroup setLayout: [ETFreeLayout layoutWithObjectGraphContext: [itemFactory objectGraphContext]]];
 	[itemGroup setSelectionIndex: 1];
 
 	[itemFactory endRootObject];

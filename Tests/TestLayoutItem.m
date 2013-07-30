@@ -178,7 +178,7 @@ static ETLayoutItemFactory *itemFactory = nil;
 	ETLayoutItem* item = [itemFactory itemWithView: AUTORELEASE([[NSView alloc] init])];
 	ETLayoutItemGroup *parentItem = [itemFactory itemGroup];
 
-	[parentItem setLayout: [ETTableLayout layout]];
+	[parentItem setLayout: [ETTableLayout layoutWithObjectGraphContext: [parentItem objectGraphContext]]];
 	[parentItem addItem: item];
 
 	// FIXME: Probably update ETWidgetLayout to use -setVisibleItems:
@@ -188,7 +188,7 @@ static ETLayoutItemFactory *itemFactory = nil;
 	UKTrue([parentItem containsItem: item]);
 
 	/* Switch to non-opaque layout */
-	[parentItem setLayout: [ETFlowLayout layout]];
+	[parentItem setLayout: [ETFlowLayout layoutWithObjectGraphContext: [parentItem objectGraphContext]]];
 	[parentItem updateLayoutIfNeeded];
 
 	UKTrue([item isVisible]);
@@ -427,7 +427,7 @@ static ETLayoutItemFactory *itemFactory = nil;
 {
 	UKNil([self supervisorView]);
 	
-	ETTableLayout *layout = [ETTableLayout layout];
+	ETTableLayout *layout = [ETTableLayout layoutWithObjectGraphContext: [self objectGraphContext]];
 	[self setLayout: layout];
 	
 	UKNotNil([self supervisorView]);

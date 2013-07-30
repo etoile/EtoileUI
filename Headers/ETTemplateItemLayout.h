@@ -32,15 +32,16 @@ drawn inside a speech bubble and laid out vertically with some space around
 each one:
 
 <example>
-ETTemplateItemLayout *chatLayout = [ETTemplateItemLayout layout];
-ETLayoutItem *item = [[ETLayoutItemFactory factory] item];
-ETLayoutItemGroup *chatAreaItem = [[ETLayoutItemFactory factory] itemGroup];
-
+ETLayoutItemFactory *itemFactory = [ETLayoutItemFactory factoryWithObjectGraphContext: someContext];
+ETLayoutItem *item = [itemFactory item];
+ETLayoutItemGroup *chatAreaItem = [itemFactory itemGroup];
+ETTemplateItemLayout *chatLayout = [ETTemplateItemLayout layoutWithObjectGraphContext: someContext];
+ 
 [item setCoverStyle: nil]
-[item setStyle: [ETSpeechBubbleStyle style]];
+[item setStyle: [ETSpeechBubbleStyle styleWithObjectGraphContext: someContext]];
 [chatLayout setTemplateItem: item];
 [chatLayout setTemplateKeys: A(kETCoverStyleProperty, kETStyleProperty)];
-[chatLayout setPositionalLayout: [ETColumnLayout layout]];
+[chatLayout setPositionalLayout: [ETColumnLayout layoutWithObjectGraphContext: someContext];
 [[chatLayout positionalLayout] setItemMargin: 15];
 
 [chatAreaItem setLayout: chatLayout];

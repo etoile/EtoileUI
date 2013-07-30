@@ -41,7 +41,7 @@
 
 - (ETOutlineLayout *)defaultOutlineLayoutForInspector
 {
-	ETOutlineLayout *layout = [ETOutlineLayout layout];
+	ETOutlineLayout *layout = [ETOutlineLayout layoutWithObjectGraphContext: nil];
 	
 	[layout setDisplayedProperties: A(kETIconProperty, kETDisplayNameProperty, kETValueProperty)];
 	[[layout columnForProperty: kETDisplayNameProperty] setWidth: 250];
@@ -114,7 +114,7 @@
 	ETAssert([bottomBar autoresizingMask] & ETAutoresizingFlexibleWidth);
 
 	[editorItem addItems: A(entityItem, bottomBar)];
-	[editorItem setLayout: [ETColumnLayout layout]];
+	[editorItem setLayout: [ETColumnLayout layoutWithObjectGraphContext: nil]];
 	// FIXME: Implement horizontal alignment support
 	[[editorItem layout] setHorizontalAligment: ETLayoutHorizontalAlignmentRight];
 

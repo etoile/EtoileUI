@@ -177,7 +177,7 @@
 
 - (void) testFlexibleSeparatorInLineLayout
 {
-	[itemGroup setLayout: [ETLineLayout layout]];
+	[itemGroup setLayout: [ETLineLayout layoutWithObjectGraphContext: [itemGroup objectGraphContext]]];
 	[[itemGroup layout] setSeparatorTemplateItem: [itemFactory flexibleSpaceSeparator]];
 
 	ETLayoutItem *item = [itemFactory item];
@@ -202,7 +202,7 @@
 
 - (void) testLineLayout
 {
-	[itemGroup setLayout: [ETLineLayout layout]];
+	[itemGroup setLayout: [ETLineLayout layoutWithObjectGraphContext: [itemGroup objectGraphContext]]];
 
 	ETLayoutItem *item = [itemFactory item];
 	ETLayoutItem *textFieldItem = [itemFactory textField];
@@ -272,7 +272,7 @@
 
 - (void) testColumnLayout
 {
-	[itemGroup setLayout: [ETColumnLayout layout]];
+	[itemGroup setLayout: [ETColumnLayout layoutWithObjectGraphContext: [itemGroup objectGraphContext]]];
 
 	ETLayoutItem *item = [itemFactory item];
 	ETLayoutItem *textFieldItem = [itemFactory textField];
@@ -342,7 +342,7 @@
 
 - (void) testItemCopy
 {
-	[itemGroup setLayout: [ETColumnLayout layout]];
+	[itemGroup setLayout: [ETColumnLayout layoutWithObjectGraphContext: [itemGroup objectGraphContext]]];
 
 	ETLayoutItem *item = [itemFactory item];
 	NSRect itemFrame = [item frame];

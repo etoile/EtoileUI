@@ -42,7 +42,7 @@
 
 - (ETFormLayout *) createFormLayout
 {
-	ETFormLayout *layout = [ETFormLayout layout];
+	ETFormLayout *layout = [ETFormLayout layoutWithObjectGraphContext: nil];
 	
 	// NOTE: If you want a form organized on a line rather in a stack:
 	// [layout setPositionalLayout: [ETLineLayout layout]];
@@ -93,7 +93,7 @@
 
 	[itemGroup addItems: A(firstSectionItem, secondSectionItem)];
 
-	[itemGroup setLayout: [ETColumnLayout layout]];
+	[itemGroup setLayout: [ETColumnLayout layoutWithObjectGraphContext: [itemFactory objectGraphContext]]];
 	//[[itemGroup layout] setBorderMargin: 10];
 	[[itemGroup layout] setSeparatorItemEndMargin: 30];
 	[[itemGroup layout] setSeparatorTemplateItem: [itemFactory lineSeparator]];
@@ -159,7 +159,8 @@
 
 - (void) showFormGeneratedItemAndAspectEditors
 {
-	ETLayoutItem *layoutEntityItem = [[ETModelDescriptionRenderer renderer] renderObject: [ETTableLayout layout]];
+	ETLayoutItem *layoutEntityItem = [[ETModelDescriptionRenderer renderer]
+		renderObject: [ETTableLayout layoutWithObjectGraphContext: nil]];
 	[[[ETLayoutItemFactory factory] windowGroup] addItem: layoutEntityItem];
 	
 	ETLayoutItem *entityItem = [[ETModelDescriptionRenderer renderer] renderObject: layoutEntityItem];

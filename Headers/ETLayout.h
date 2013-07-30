@@ -15,6 +15,7 @@
 #import <EtoileUI/ETUIObject.h>
 #import <EtoileUI/ETResponder.h>
 
+@class COObjectGraphContext;
 @class ETDropIndicator, ETTool, ETLineFragment, ETLayoutItem, ETLayoutItemGroup, ETView;
 @class ETPositionalLayout;
 
@@ -195,7 +196,7 @@ Warning: This protocol is very much subject to change. */
 /** @taskunit Initialization */
 
 + (Class) layoutClassForLayoutView: (NSView *)layoutView;
-+ (id) layout;
++ (id) layoutWithObjectGraphContext: (COObjectGraphContext *)aContext;
 + (id) layoutWithLayoutView: (NSView *)view;
 - (id) initWithLayoutView: (NSView *)aView;
 

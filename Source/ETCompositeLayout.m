@@ -182,7 +182,7 @@ presentation item. */
 + (id) defaultPresentationProxyWithFrame: (NSRect)aRect
 {
 	ETLayoutItemGroup *presentationProxy = [[ETLayoutItemFactory factory] itemGroupWithFrame: aRect];
-	[presentationProxy setLayout: [ETOutlineLayout layout]];
+	[presentationProxy setLayout: [ETOutlineLayout layoutWithObjectGraphContext: [presentationProxy objectGraphContext]]];
 	[presentationProxy setAutoresizingMask: NSViewWidthSizable];
 	return presentationProxy;
 }

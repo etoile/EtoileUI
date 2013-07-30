@@ -374,7 +374,7 @@ when you request the grouping of several items. */
 {
 	ETLayoutItemGroup *itemGroup = [self itemGroup];
 	[itemGroup setCoverStyle: AUTORELEASE([[ETGraphicsGroupStyle alloc] initWithObjectGraphContext: [self objectGraphContext]])];
-	[itemGroup setLayout: [ETFreeLayout layout]];
+	[itemGroup setLayout: [ETFreeLayout layoutWithObjectGraphContext: [self objectGraphContext]]];
 	[itemGroup setIcon: [NSImage imageNamed: @"layers-group"]];
 	return itemGroup;
 }
@@ -392,7 +392,7 @@ The returned bar has a flexible width and a fixed height. */
 {
 	ETLayoutItemGroup *itemGroup = [self itemGroupWithFrame: ETMakeRect(NSZeroPoint, aSize)];
 	[itemGroup setAutoresizingMask: ETAutoresizingFlexibleWidth];
-	[itemGroup setLayout: [ETLineLayout layout]];
+	[itemGroup setLayout: [ETLineLayout layoutWithObjectGraphContext: [self objectGraphContext]]];
 	ETStyle *barElementStyle =
 		[ETBasicItemStyle iconAndLabelBarElementStyleWithObjectGraphContext: [self objectGraphContext]];
 	[self setCurrentBarElementStyle: barElementStyle];
@@ -472,7 +472,7 @@ The returned collection editor has a flexible width and a fixed height. */
 
 	[browser setIdentifier: @"browser"];
 	[browser setAutoresizingMask: ETAutoresizingFlexibleWidth];
-	[browser setLayout: [ETTableLayout layout]];
+	[browser setLayout: [ETTableLayout layoutWithObjectGraphContext: [self objectGraphContext]]];
 	[[browser layout] setAttachedTool: selectionTool];
 	[browser setHasVerticalScroller: YES];
 	[browser setRepresentedObject: aCollection];
@@ -480,7 +480,7 @@ The returned collection editor has a flexible width and a fixed height. */
 	[browser setController: aController];
 
 	[editor setIdentifier: @"collectionEditor"];
-	[editor setLayout: [ETColumnLayout layout]];
+	[editor setLayout: [ETColumnLayout layoutWithObjectGraphContext: [self objectGraphContext]]];
 
 	[editor addItems: A(browser, buttonBar)];
 
@@ -985,7 +985,7 @@ and a stepper on the right side. */
 	NSSize size = NSMakeSize(aWidth, [firstPicker boundingBox].size.height);
 	ETLayoutItemGroup *editor = [self itemGroupWithSize: size];
 
-	[editor setLayout: [ETLineLayout layout]];
+	[editor setLayout: [ETLineLayout layoutWithObjectGraphContext: [self objectGraphContext]]];
 	[[editor layout] setComputesItemRectFromBoundingBox: YES];
 	[editor addItems: A(firstPicker, secondPicker)];
 	[editor updateLayout];

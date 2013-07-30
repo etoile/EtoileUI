@@ -61,7 +61,7 @@ invalidate, display etc. */
 	ETLayoutItem *observedItem = [itemFactory item];
 	ETLayoutItemGroup *parentItem = [itemFactory itemGroupWithFrame: NSMakeRect(0, 0, 400, 300)];
 
-	[parentItem setLayout: [ETTableLayout layout]];
+	[parentItem setLayout: [ETTableLayout layoutWithObjectGraphContext: [itemFactory objectGraphContext]]];
 	[[parentItem layout] setDisplayedProperties: A(@"value")];
 	[item setRepresentedObject: [ETMutableObjectViewpoint viewpointWithName: @"actionHandler"
 	                                                      representedObject: observedItem]];

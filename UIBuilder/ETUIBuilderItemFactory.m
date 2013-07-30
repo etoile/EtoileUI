@@ -72,7 +72,7 @@
 
 - (ETLayout *) defaultMasterViewLayoutWithController: (ETUIBuilderController *)aController
 {
-	ETOutlineLayout *layout = [ETOutlineLayout layout];
+	ETOutlineLayout *layout = [ETOutlineLayout layoutWithObjectGraphContext: [self objectGraphContext]];
 
 	[layout setContentFont: [NSFont controlContentFontOfSize: [NSFont smallSystemFontSize]]];
 
@@ -178,7 +178,7 @@
 	[editor addItems: A(topBar, editorBody)];
 	[editor setIdentifier: @"editor"];
 	[editor setAutoresizingMask: ETAutoresizingFlexibleWidth | ETAutoresizingFlexibleHeight];
-	[editor setLayout: [ETColumnLayout layout]];
+	[editor setLayout: [ETColumnLayout layoutWithObjectGraphContext: [self objectGraphContext]]];
 	[editor setController: aController];
 
 	[aController setPersistentObjectContext: _editingContext];
@@ -212,17 +212,17 @@
 
 	[itemGroup setIdentifier: @"editorTopBar"];
 	[itemGroup setAutoresizingMask: ETAutoresizingFlexibleWidth];
-	[itemGroup setLayout: [ETLineLayout layout]];
+	[itemGroup setLayout: [ETLineLayout layoutWithObjectGraphContext: [self objectGraphContext]]];
 	[[itemGroup layout] setSeparatorTemplateItem: [self flexibleSpaceSeparator]];
 
-	[leftItemGroup setLayout: [ETLineLayout layout]];
+	[leftItemGroup setLayout: [ETLineLayout layoutWithObjectGraphContext: [self objectGraphContext]]];
 	[[leftItemGroup layout] setIsContentSizeLayout: YES];
 
 	[leftItemGroup addItems:
 		A([self barElementFromItem: runItem withLabel: _(@"Test")],
 		  [self barElementFromItem: exitItem withLabel: _(@"Stop UI Editing")])];	
 
-	[rightItemGroup setLayout: [ETLineLayout layout]];
+	[rightItemGroup setLayout: [ETLineLayout layoutWithObjectGraphContext: [self objectGraphContext]]];
 	[[rightItemGroup layout] setIsContentSizeLayout: YES];
 
 	[rightItemGroup addItems:
@@ -246,7 +246,7 @@
 
 	[body setIdentifier: @"editorBody"];
 	[body setAutoresizingMask: ETAutoresizingFlexibleWidth | ETAutoresizingFlexibleHeight];
-	[body setLayout: [ETLineLayout layout]];
+	[body setLayout: [ETLineLayout layoutWithObjectGraphContext: [self objectGraphContext]]];
 	[body addItems: A(picker, contentArea, inspectorBody)];
 
 	return body;
@@ -279,7 +279,7 @@
 	[inspector addItems: A(topBar, body)];
 	[inspector setIdentifier: @"inspector"];
 	[inspector setAutoresizingMask: ETAutoresizingFlexibleWidth | ETAutoresizingFlexibleHeight];
-	[inspector setLayout: [ETColumnLayout layout]];
+	[inspector setLayout: [ETColumnLayout layoutWithObjectGraphContext: [self objectGraphContext]]];
 	[inspector setController: aController];
 
 	[aController setPersistentObjectContext: _editingContext];
@@ -347,10 +347,10 @@
 
 	[itemGroup setIdentifier: @"inspectorTopBar"];
 	[itemGroup setAutoresizingMask: ETAutoresizingFlexibleWidth];
-	[itemGroup setLayout: [ETLineLayout layout]];
+	[itemGroup setLayout: [ETLineLayout layoutWithObjectGraphContext: [self objectGraphContext]]];
 	[[itemGroup layout] setSeparatorTemplateItem: [self flexibleSpaceSeparator]];
 
-	[rightItemGroup setLayout: [ETLineLayout layout]];
+	[rightItemGroup setLayout: [ETLineLayout layoutWithObjectGraphContext: [self objectGraphContext]]];
 	[[rightItemGroup layout] setIsContentSizeLayout: YES];
 
 	[rightItemGroup addItems:
@@ -380,7 +380,7 @@
 
 	[body setIdentifier: @"inspectorBody"];
 	[body setAutoresizingMask: ETAutoresizingFlexibleWidth | ETAutoresizingFlexibleHeight];
-	[body setLayout: [ETColumnLayout layout]];
+	[body setLayout: [ETColumnLayout layoutWithObjectGraphContext: [self objectGraphContext]]];
 	[body addItems: A(browser, basicInspector)];
 
 	return body;
@@ -427,7 +427,7 @@
 
 	[itemGroup setIdentifier: @"basicInspector"];
 	[itemGroup setAutoresizingMask: ETAutoresizingFlexibleWidth | ETAutoresizingFlexibleHeight];
-	[itemGroup setLayout: [ETColumnLayout layout]];
+	[itemGroup setLayout: [ETColumnLayout layoutWithObjectGraphContext: [self objectGraphContext]]];
 	[itemGroup addItems: A(header, pane)];
 
 	[aController setAspectInspectorItem: itemGroup];
@@ -478,7 +478,7 @@
                                             aspectName: (NSString *)anAspectName
 {
 	ETLayoutItemGroup *itemGroup = [self itemGroupWithSize: [self defaultBasicInspectorHeaderSize]];
-	ETFormLayout *formLayout = [ETFormLayout layout];
+	ETFormLayout *formLayout = [ETFormLayout layoutWithObjectGraphContext: [self objectGraphContext]];
 	ETLayoutItem *aspectPopUpItem = [self aspectPopUpWithController: aController
 	                                             selectedAspectName: anAspectName];
 	ETLayoutItem *typeFieldItem = [self typeFieldWithController: aController
@@ -549,7 +549,7 @@
 
 	[collectionEditor setWidth: [self defaultBasicInspectorSize].width];
 
-	ETColumnLayout *layout = [ETColumnLayout layout];
+	ETColumnLayout *layout = [ETColumnLayout layoutWithObjectGraphContext: [self objectGraphContext]];
 
 	[layout setHorizontalAligment: ETLayoutHorizontalAlignmentRight];
 	[renderer setEntityLayout: layout];
@@ -643,7 +643,7 @@
 	[picker setSize: NSMakeSize(300, [self defaultEditorBodySize].height)];
 	[picker setController: controller];
 	[picker setSource: picker];
-	[picker setLayout: [ETOutlineLayout layout]];
+	[picker setLayout: [ETOutlineLayout layoutWithObjectGraphContext: [self objectGraphContext]]];
 	[[picker layout] setAttachedTool: [self pickerTool]];
 	[[picker layout] setDisplayedProperties: A(kETIconProperty, kETDisplayNameProperty)];
 	[picker setHasVerticalScroller: YES];

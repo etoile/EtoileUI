@@ -84,8 +84,9 @@ to do, it is the default settings. Just create a ETFormLayout and assign it.
 For the second case (as seen in Xcode 4 inspector):
 
 <example>
-ETFormLayout *layout = [ETFormLayout layout];
-ETLayoutItemGroup *paneItem = [[ETLayoutItemFactory factory] itemGroup];
+ETLayoutItemFactory *itemFactory = [ETLayoutItemFactory factoryWithObjectGraphContext: someContext];
+ETLayoutItemGroup *paneItem = [itemFactory itemGroup];
+ETFormLayout *layout = [ETFormLayout layoutWithObjectGraphContext: someContext];
 
 [layout setAlignment: ETFormLayoutAlignmentLeft];
 [[layout templateItem] setAutoresizingMask: ETAutoresizingFlexibleWidth];
@@ -97,9 +98,10 @@ ETLayoutItemGroup *paneItem = [[ETLayoutItemFactory factory] itemGroup];
 For the third case:
 
 <example>
-ETFormLayout *layout = [ETFormLayout layout];
-ETLayoutItemGroup *paneItem = [[ETLayoutItemFactory factory] itemGroup];
-
+ETLayoutItemFactory *itemFactory = [ETLayoutItemFactory factoryWithObjectGraphContext: someContext];
+ETLayoutItemGroup *paneItem = [itemFactory itemGroup];
+ETFormLayout *layout = [ETFormLayout layoutWithObjectGraphContext: someContext];
+ 
 [layout setAlignment: ETFormLayoutAlignmentLeft];
 [[layout templateItem] setWidth: 250];
 [layout setTemplateKeys: [[layout templateKeys] arrayByAddingObject: kETWidthProperty]];

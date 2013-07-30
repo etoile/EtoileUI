@@ -839,7 +839,7 @@ the target item. */
 
 	NSRect unionFrame = ETUnionRectWithObjectsAndSelector(children, @selector(frame));
 	[newGroup setFrame: unionFrame];
-	[newGroup setLayout: [ETFreeLayout layout]];
+	[newGroup setLayout: [ETFreeLayout layoutWithObjectGraphContext: [newGroup objectGraphContext]]];
 
 	[targetItem addItem: newGroup];
 	[newGroup setSelected: YES]; // FIXME: ETFreeLayout doesn't detect selected before -addItem:

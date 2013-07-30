@@ -83,7 +83,7 @@ DEALLOC(DESTROY(itemFactory); DESTROY(item))
 	UKFalse([rootItem isFlipped]);
 	UKFalse([item isFlipped]);
 
-	[item setLayout: [ETFixedLayout layout]];
+	[item setLayout: [ETFixedLayout layoutWithObjectGraphContext: [item objectGraphContext]]];
 
 	UKFalse([rootItem isFlipped]);
 	UKTrue([item isFlipped]);
@@ -131,7 +131,7 @@ DEALLOC(DESTROY(itemFactory); DESTROY(item))
 
 	[item addItems: content];
 	[item setLayout: compositeLayout];
-	[item setLayout: [ETFixedLayout layout]];
+	[item setLayout: [ETFixedLayout layoutWithObjectGraphContext: [item objectGraphContext]]];
 
 	ETLayoutItemGroup *proxyItem = [compositeLayout firstPresentationItem];
 	// TODO: May be we should ensure that UKTrue([proxyItem isEmpty]);
@@ -170,7 +170,7 @@ DEALLOC(DESTROY(itemFactory); DESTROY(item))
 	[item setRepresentedObject: [self modelContent]];
 	[item setSource: item];
 	[item setLayout: compositeLayout];
-	[item setLayout: [ETFixedLayout layout]];
+	[item setLayout: [ETFixedLayout layoutWithObjectGraphContext: [item objectGraphContext]]];
 
 	ETLayoutItemGroup *proxyItem = [compositeLayout firstPresentationItem];
 	// TODO: May be we should ensure that UKTrue([proxyItem isEmpty]);
@@ -219,7 +219,7 @@ DEALLOC(DESTROY(itemFactory); DESTROY(item))
 
 	[item setSource: self];
 	[item setLayout: compositeLayout];
-	[item setLayout: [ETFixedLayout layout]];
+	[item setLayout: [ETFixedLayout layoutWithObjectGraphContext: [item objectGraphContext]]];
 
 	ETLayoutItemGroup *proxyItem = [compositeLayout firstPresentationItem];
 	// TODO: May be we should ensure that UKTrue([proxyItem isEmpty]);

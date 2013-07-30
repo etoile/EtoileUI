@@ -39,7 +39,7 @@ the receiver is set as the application's delegate in the nib. */
 
 	[photoViewItem setController: self];
 	[photoViewItem setSource: self];
-	[photoViewItem setLayout: [self configureLayout: [ETColumnLayout layout]]];
+	[photoViewItem setLayout: [self configureLayout: [ETColumnLayout layoutWithObjectGraphContext: [photoViewItem objectGraphContext]]]];
 	[photoViewItem setHasVerticalScroller: YES];
 	[photoViewItem setHasHorizontalScroller: YES];
 

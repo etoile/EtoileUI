@@ -122,7 +122,7 @@ to overriden by a third-party inspector. */
 	// TODO: Should be -itemGroupWithRepresentedObject: once ETLayoutItemGroup 
 	// is able to create a container as supervisor view by itself if needed.
 	ETLayoutItemGroup *item = [[ETLayoutItemFactory factory] itemGroup];
-	ETViewModelLayout *layout = [ETViewModelLayout layout];
+	ETViewModelLayout *layout = [ETViewModelLayout layoutWithObjectGraphContext: [item objectGraphContext]];
 
 	[item setRepresentedObject: self];
 	if ([self isLayoutItem])

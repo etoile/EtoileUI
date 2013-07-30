@@ -63,7 +63,7 @@ For a toolbar-like UI, use -[ETLayoutItemFactory horizontalBarWithSize:],
 Here is a ETIconLayout use case example:
 
 <example>
-ETIconLayout *layout = [ETIconLayout layout];
+ETIconLayout *layout = [ETIconLayout layoutWithObjectGraphContext: [itemGroup objectGraphContext]];
 [layout setIconSizeForScaleFactorUnit: NSMakeSize(128, 128)];
 [layout setMinIconSize: NSMakeSize(64, 64)];
 [itemGroup setLayout: layout];

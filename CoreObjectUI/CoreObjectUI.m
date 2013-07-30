@@ -140,7 +140,7 @@
 	[[(NSSearchField *)[searchFieldItem view] cell] setSendsSearchStringImmediately: YES];
 
 	[itemGroup setHeight: [self defaultIconAndLabelBarHeight]];
-	[itemGroup setLayout: [ETLineLayout layout]];
+	[itemGroup setLayout: [ETLineLayout layoutWithObjectGraphContext: [self objectGraphContext]]];
 	// FIXME: [[itemGroup layout] setSeparatorTemplateItem: [self flexibleSpaceSeparator]];
 	[itemGroup addItems: 
 		A([self barElementFromItem: undoItem withLabel: _(@"Undo")],
@@ -167,7 +167,7 @@
 {
 
 	ETLayoutItemGroup *browser = [[ETLayoutItemFactory factory] itemGroupWithRepresentedObject: trackOrRevs];
-	ETOutlineLayout *layout = [ETOutlineLayout layout];
+	ETOutlineLayout *layout = [ETOutlineLayout layoutWithObjectGraphContext: [self objectGraphContext]];
 
 	[layout setContentFont: [NSFont controlContentFontOfSize: [NSFont smallSystemFontSize]]];
 	[layout setDisplayedProperties: A(@"icon", @"revisionNumber", @"UUID", @"type", 
@@ -219,7 +219,7 @@
 	
 	[browser setName: (aTitle != nil ? aTitle : [self trackTitleForRepresentedObject: trackOrRevs])];
 	[browser setAutoresizingMask: ETAutoresizingFlexibleWidth | ETAutoresizingFlexibleHeight];
-	[browser setLayout: [ETColumnLayout layout]];
+	[browser setLayout: [ETColumnLayout layoutWithObjectGraphContext: [self objectGraphContext]]];
 
 	/* Resize subitems once the layout is set, otherwise their resizing masks  
 	   are interpreted based on ETFixedLayout semantics */ 

@@ -351,7 +351,7 @@ inside the content bounds. */
 	[mainItem setHasHorizontalScroller: YES];
 	// FIXME: The precondition won't work without a layout or if we move 
 	// -setLayout: before the two previous lines.
-	[mainItem setLayout: [ETLineLayout layout]];
+	[mainItem setLayout: [ETLineLayout layoutWithObjectGraphContext: [mainItem objectGraphContext]]];
 	[mainItem updateLayoutIfNeeded];
 
 	/* Precondition */
@@ -451,7 +451,7 @@ inside the content bounds. */
 {
 	SUPERINIT
 
-	[mainItem setLayout: [ETFreeLayout layout]];
+	[mainItem setLayout: [ETFreeLayout layoutWithObjectGraphContext: [mainItem objectGraphContext]]];
 	ASSIGN(tool, [[mainItem layout] attachedTool]);
 	ASSIGN(rootItem, [[mainItem layout] layerItem]);
 	ASSIGN(item1, [itemFactory rectangleWithRect: NSMakeRect(50, 30, 50, 30)]);

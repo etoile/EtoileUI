@@ -81,7 +81,7 @@
 
 - (ETLayout *)defaultMasterViewLayout
 {
-	ETOutlineLayout *layout = [ETOutlineLayout layout];
+	ETOutlineLayout *layout = [ETOutlineLayout layoutWithObjectGraphContext: [self objectGraphContext]];
 
 	[layout setContentFont: [NSFont controlContentFontOfSize: [NSFont smallSystemFontSize]]];
 
@@ -155,7 +155,7 @@
 	[masterViewItem setTarget: self];
 	[masterViewItem setSelectionIndex: 0];
 
-	[detailViewItem setLayout: [ETViewModelLayout layout]];
+	[detailViewItem setLayout: [ETViewModelLayout layoutWithObjectGraphContext: [detailViewItem objectGraphContext]]];
 	[(id)[detailViewItem layout] setShouldInspectRepresentedObjectAsView: YES];
 }
 
@@ -194,8 +194,9 @@
 - (IBAction) changeLayout: (id)sender
 {
 	Class layoutClass = [[sender selectedItem] representedObject];
-
-	[[[self selectedObject] ifResponds] setLayout: [layoutClass layout]];
+	ETLayout *layout =
+		[layoutClass layoutWithObjectGraphContext: [[self selectedObject] objectGraphContext]];
+	[[[self selectedObject] ifResponds] setLayout: layout];
 }
 
 - (IBAction) changeTool: (id)sender

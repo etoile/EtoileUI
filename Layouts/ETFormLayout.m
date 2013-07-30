@@ -34,7 +34,7 @@
 	[templateItem setCoverStyle: formStyle];
 
 	[self setTemplateKeys: A(@"coverStyle")];
-	[self setPositionalLayout: [ETColumnLayout layout]];
+	[self setPositionalLayout: [ETColumnLayout layoutWithObjectGraphContext: nil]];
 	[[self positionalLayout] setBorderMargin: 4];
 	[[self positionalLayout] setItemMargin: 4];
 

@@ -105,7 +105,7 @@ DEALLOC(DESTROY(itemFactory); DESTROY(item))
 
 	[itemGroup setAutoresizingMask: ETAutoresizingFlexibleWidth];
 	/* Trigger the supervisor view instantiation on -setLayoutView: */
-	[itemGroup setLayout: [ETTableLayout layout]];
+	[itemGroup setLayout: [ETTableLayout layoutWithObjectGraphContext: [itemGroup objectGraphContext]]];
 
 	UKIntsEqual(ETAutoresizingFlexibleWidth, [itemGroup autoresizingMask]);
 }

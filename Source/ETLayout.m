@@ -122,7 +122,7 @@ several prototypes might share the same class. */
 /* Factory Method */
 
 /** Returns a new autoreleased instance. */
-+ (id) layout
++ (id) layoutWithObjectGraphContext: (COObjectGraphContext *)aContext
 {
 	return AUTORELEASE([[[self class] alloc] init]);
 }

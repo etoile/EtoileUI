@@ -67,7 +67,7 @@
 	[item setName: @"Editor Layout as a Pluggable Aspect Example"];
 	[item setSource: item];
 	/* Let us simulate a live switch */
-	[item setLayout: [ETTableLayout layout]];
+	[item setLayout: [ETTableLayout layoutWithObjectGraphContext: [item objectGraphContext]]];
 
 	[[itemFactory windowGroup] addItem: item];
 

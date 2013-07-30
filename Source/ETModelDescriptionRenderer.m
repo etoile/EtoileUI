@@ -181,7 +181,7 @@ time. For example:
 	ETLayoutItemGroup *editor = [_itemFactory itemGroupWithSize: size];
 
 	[editor setIdentifier: @"rectEditor"];
-	[editor setLayout: [ETColumnLayout layout]];
+	[editor setLayout: [ETColumnLayout layoutWithObjectGraphContext: [editor objectGraphContext]]];
 	[editor addItems: A(pointEditor, sizeEditor)];
 
 	return editor;
@@ -302,7 +302,7 @@ time. For example:
 
 - (ETFormLayout *) defaultFormLayout
 {
-	return [ETFormLayout layout];
+	return [ETFormLayout layoutWithObjectGraphContext: nil];
 }
 
 - (id) prepareEntityLayout: (ETLayout *)aLayout
@@ -433,7 +433,7 @@ See also -setRenderedPropertyNames:. */
 
 - (ETLayout *) groupingLayout
 {
-	ETColumnLayout *layout = [ETColumnLayout layout];
+	ETColumnLayout *layout = [ETColumnLayout layoutWithObjectGraphContext: nil];
 	[layout setUsesAlignmentHint: YES];
 	// TODO: Should use -isContentSizeLayout instead of just YES
 	[layout setIsContentSizeLayout: YES];

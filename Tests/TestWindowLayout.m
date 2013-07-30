@@ -68,7 +68,7 @@
 
 - (void) testFreeLayout
 {
-	[windowGroup setLayout: [ETFreeLayout layout]];
+	[windowGroup setLayout: [ETFreeLayout layoutWithObjectGraphContext: [windowGroup objectGraphContext]]];
 
 	UKObjectKindOf([[windowGroup layout] attachedTool], ETSelectTool);
 	// FIXME: UKObjectsSame([ETTool activeTool], [[windowGroup layout] attachedTool]);
@@ -98,7 +98,7 @@
 	UKNotNil([windowGroup windowItem]);
 	UKTrue([rootWindow isVisible]);
 
-	[windowGroup setLayout: [ETWindowLayout layout]];
+	[windowGroup setLayout: [ETWindowLayout layoutWithObjectGraphContext: [windowGroup objectGraphContext]]];
 
 	UKNotNil([item windowItem]);
 	UKNotNil([itemGroup windowItem]);
@@ -110,12 +110,12 @@
 			 
 - (void) testSwitchBackToWindowLayoutFromFreeLayout
 {
-	[self checkSwitchBackToWindowLayoutFromLayout: [ETFreeLayout layout]];
+	[self checkSwitchBackToWindowLayoutFromLayout: [ETFreeLayout layoutWithObjectGraphContext: [windowGroup objectGraphContext]]];
 }
 			 
 - (void) testSwitchBackToWindowLayoutFromWidgetLayout
 {
-	[self checkSwitchBackToWindowLayoutFromLayout: [ETBrowserLayout layout]];
+	[self checkSwitchBackToWindowLayoutFromLayout: [ETBrowserLayout layoutWithObjectGraphContext: [windowGroup objectGraphContext]]];
 }
 
 @end

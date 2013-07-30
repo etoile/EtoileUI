@@ -38,7 +38,7 @@ when a layout other than ETWindowLayout is set on the receiver. */
 		
 	ASSIGN(_rootWindowItem, [self createRootWindowItem]);
 	_hiddenWindows = [[NSMutableArray alloc] init];
-	[self setLayout: [ETWindowLayout layout]];
+	[self setLayout: [ETWindowLayout layoutWithObjectGraphContext: aContext]];
 
 	return self;
 }

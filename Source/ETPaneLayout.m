@@ -63,7 +63,7 @@ If contentItem is nil, a default content item will be created. */
 		[self setBarItem: [[ETLayoutItemFactory factory] itemGroup]];
 	}
 	//[_barItem setAutoresizingMask: NSViewWidthSizable];
-	[_barItem setLayout: [ETTableLayout layout]];
+	[_barItem setLayout: [ETTableLayout layoutWithObjectGraphContext: [self objectGraphContext]]];
 	_barPosition = ETPanePositionTop;
 	_barThickness = 140;
 
@@ -644,8 +644,8 @@ the real items they currently represent. */
 	if (nil == self)
 		return nil;
 
-	[barItem setLayout: [ETOutlineLayout layout]];
-	[contentItem setLayout: [ETOutlineLayout layout]];
+	[barItem setLayout: [ETOutlineLayout layoutWithObjectGraphContext: nil]];
+	[contentItem setLayout: [ETOutlineLayout layoutWithObjectGraphContext: nil]];
 
 	return self;
 }
@@ -730,27 +730,27 @@ the real items they currently represent. */
 The bar item is the master view and the content item is the detail view. */
 + (ETPaneLayout *) masterDetailLayout
 {
-	return [ETMasterDetailPaneLayout layout];
+	return [ETMasterDetailPaneLayout layoutWithObjectGraphContext: nil];
 }
 
 /** Returns a new autoreleased pane selector layout.<br />
 The bar item is the master view and the content item is the content view. */
 + (ETPaneLayout *) masterContentLayout
 {
-	return [ETMasterContentPaneLayout layout];
+	return [ETMasterContentPaneLayout layoutWithObjectGraphContext: nil];
 }
 
 + (ETPaneLayout *) slideshowLayout
 {
-	ETPaneLayout *layout = [self layout]; // self is ETPaneLayout class here
+	ETPaneLayout *layout = [self layoutWithObjectGraphContext: nil]; // self is ETPaneLayout class here
 	[layout setBarPosition:	ETPanePositionNone];
 	return layout;
 }
 
 + (ETPaneLayout *) slideshowLayoutWithNavigationBar
 {
-	ETPaneLayout *layout = [self layout];
-	[[layout barItem] setLayout: [ETLineLayout layout]];
+	ETPaneLayout *layout = [self layoutWithObjectGraphContext: nil];
+	[[layout barItem] setLayout: [ETLineLayout layoutWithObjectGraphContext: nil]];
 	[[[layout barItem] layout] setAttachedTool: [ETSelectTool tool]];
 	[[layout barItem] setHasHorizontalScroller: YES];
 	return layout;
@@ -758,8 +758,8 @@ The bar item is the master view and the content item is the content view. */
 
 + (ETPaneLayout *) drillDownLayout
 {
-	ETPaneLayout *layout = [self layout];
-	[[layout barItem] setLayout: [ETBrowserLayout layout]];
+	ETPaneLayout *layout = [self layoutWithObjectGraphContext: nil];
+	[[layout barItem] setLayout: [ETBrowserLayout layoutWithObjectGraphContext: nil]];
 	[[[layout barItem] layout] setAttachedTool: [ETSelectTool tool]];
 	[layout setBarPosition: ETPanePositionLeft];
 	return layout;
@@ -767,13 +767,13 @@ The bar item is the master view and the content item is the content view. */
 
 + (ETPaneLayout *) paneNavigationLayout
 {
-	ETPaneLayout *layout = [self layout];
+	ETPaneLayout *layout = [self layoutWithObjectGraphContext: nil];
 	return layout;
 }
 
 + (ETPaneLayout *) wizardLayout
 {
-	ETPaneLayout *layout = [self layout];	
+	ETPaneLayout *layout = [self layoutWithObjectGraphContext: nil];
 	return layout;
 }
 

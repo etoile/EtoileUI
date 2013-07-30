@@ -68,11 +68,11 @@ the receiver is set as the application's delegate in the nib. */
 	[mainViewItem setDoubleAction: @selector(doubleClickInMainView:)];
 	[mainViewItem setHasVerticalScroller: YES];
 	[mainViewItem setHasHorizontalScroller: YES];
-	[mainViewItem setLayout: [self configureLayout: [ETIconLayout layout]]];
+	[mainViewItem setLayout: [self configureLayout: [ETIconLayout layoutWithObjectGraphContext: [mainViewItem objectGraphContext]]]];
 
 	/* Set up the path view UI */
 
-	[pathViewItem setLayout: [ETLineLayout layout]];
+	[pathViewItem setLayout: [ETLineLayout layoutWithObjectGraphContext: [pathViewItem objectGraphContext]]];
 	[[pathViewItem layout] setConstrainedItemSize: NSMakeSize(64, 64)];
 	[pathViewItem setSource: self];
 	[pathViewItem setTarget: self];
@@ -109,31 +109,31 @@ the receiver is set as the application's delegate in the nib. */
 	switch ([[sender selectedItem] tag])
 	{
 		case 0:
-			layout = [ETColumnLayout layout];
+			layout = [ETColumnLayout layoutWithObjectGraphContext: [mainViewItem objectGraphContext]];
 			break;
 		case 1:
-			layout = [ETLineLayout layout];
+			layout = [ETLineLayout layoutWithObjectGraphContext: [mainViewItem objectGraphContext]];
 			break;
 		case 2:
-			layout = [ETFlowLayout layout];
+			layout = [ETFlowLayout layoutWithObjectGraphContext: [mainViewItem objectGraphContext]];
 			break;
 		case 3:
-			layout = [ETTableLayout layout];
+			layout = [ETTableLayout layoutWithObjectGraphContext: [mainViewItem objectGraphContext]];
 			break;
 		case 4:
-			layout = [ETOutlineLayout layout];
+			layout = [ETOutlineLayout layoutWithObjectGraphContext: [mainViewItem objectGraphContext]];
 			break;
 		case 5:
-			layout = [ETBrowserLayout layout];
+			layout = [ETBrowserLayout layoutWithObjectGraphContext: [mainViewItem objectGraphContext]];
 			break;
 		case 6:
-			layout = [ETFreeLayout layout];
+			layout = [ETFreeLayout layoutWithObjectGraphContext: [mainViewItem objectGraphContext]];
 			break;
 		case 7:
-			layout = [ETIconLayout layout];
+			layout = [ETIconLayout layoutWithObjectGraphContext: [mainViewItem objectGraphContext]];
 			break;
 		case 8:
-			layout = [ETViewModelLayout layout];
+			layout = [ETViewModelLayout layoutWithObjectGraphContext: [mainViewItem objectGraphContext]];
 			break;
 		case 9:
 			layout = [ETPaneLayout masterDetailLayout];

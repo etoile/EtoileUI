@@ -79,7 +79,7 @@ NSString * const ETSourceDidUpdateNotification = @"ETSourceDidUpdateNotification
 	_sortedItems = nil;
 	_arrangedItems = nil;
 
-	[self assignLayout: [ETFixedLayout layout]];
+	[self assignLayout: [ETFixedLayout layoutWithObjectGraphContext: aContext]];
 	_hasNewLayout = NO;
 	_hasNewContent = NO; /* Private accessors in ETMutationHandler category */
 	_hasNewArrangement = NO;

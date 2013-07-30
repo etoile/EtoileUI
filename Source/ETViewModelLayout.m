@@ -27,7 +27,7 @@
 
 - (ETLayout *) defaultPropertyViewLayout
 {
-	ETOutlineLayout *layout = [ETOutlineLayout layout];
+	ETOutlineLayout *layout = [ETOutlineLayout layoutWithObjectGraphContext: [self objectGraphContext]];
 	
 	[layout setContentFont: [NSFont controlContentFontOfSize: [NSFont smallSystemFontSize]]];
 	[layout setDisplayName: @"Value" forProperty: @"value"];

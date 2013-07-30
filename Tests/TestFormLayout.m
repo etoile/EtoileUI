@@ -72,7 +72,7 @@
 	   smaller mainItem width. */
 	[textItem setName: @"Place"];
 	[mainItem addItem: textItem];
-	[mainItem setLayout: [ETFormLayout layout]];
+	[mainItem setLayout: [ETFormLayout layoutWithObjectGraphContext: [mainItem objectGraphContext]]];
 }
 
 - (NSUInteger) sizableViewMask

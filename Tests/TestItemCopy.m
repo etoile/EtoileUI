@@ -316,7 +316,7 @@ DEALLOC(DESTROY(itemFactory); DESTROY(item); DESTROY(itemGroup))
 	[itemGroup setDelegate: self];
 	[itemGroup setDoubleAction: @selector(boum:)];
 	
-	[itemGroup setLayout: [ETTableLayout layout]];
+	[itemGroup setLayout: [ETTableLayout layoutWithObjectGraphContext: [itemGroup objectGraphContext]]];
 
 	ETLayoutItemGroup *newItemGroup = [itemGroup copy];
 
@@ -362,7 +362,7 @@ DEALLOC(DESTROY(itemFactory); DESTROY(item); DESTROY(itemGroup))
 	[itemGroup addItem: item];
 	[itemGroup addItem: itemGroup1];
 
-	[itemGroup setLayout: [ETOutlineLayout layout]];
+	[itemGroup setLayout: [ETOutlineLayout layoutWithObjectGraphContext: [itemGroup objectGraphContext]]];
 
 	ETLayoutItemGroup *newItemGroup = [itemGroup deepCopy];
 
@@ -401,7 +401,7 @@ DEALLOC(DESTROY(itemFactory); DESTROY(item); DESTROY(itemGroup))
 
 	/* Layout view insertion doesn't call -handleAttachViewOfItem:, the 
 	   superview is nil until a layout update occurs. */
-	[itemGroup2 setLayout: [ETOutlineLayout layout]];
+	[itemGroup2 setLayout: [ETOutlineLayout layoutWithObjectGraphContext: [itemGroup2 objectGraphContext]]];
 	
 	/* We must update the layouts to mark the items as visible, otherwise 
 	   -setVisibleItems:forItems: in -deepCopy does not recreate the view hierarchy. */
@@ -444,7 +444,7 @@ DEALLOC(DESTROY(itemFactory); DESTROY(item); DESTROY(itemGroup))
 - (void) testIconLayoutCopy
 {
 	ETLayoutItemGroup *itemGroup1 = [itemFactory itemGroup];
-	ETIconLayout *layout = [ETIconLayout layout];
+	ETIconLayout *layout = [ETIconLayout layoutWithObjectGraphContext: [itemGroup objectGraphContext]];
 
 	[itemGroup addItem: item];
 	[itemGroup addItem: itemGroup1];

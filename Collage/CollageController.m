@@ -99,7 +99,7 @@
 	// base located in the bottom left.
 	//[mainItem setFlipped: NO];
 	[mainItem setSize: NSMakeSize(500, 400)];
-	[mainItem setLayout: [ETFreeLayout layout]];
+	[mainItem setLayout: [ETFreeLayout layoutWithObjectGraphContext: [itemFactory objectGraphContext]]];
 
 	/* Make mainItem visible by inserting it inside the window layer */
 
@@ -146,7 +146,7 @@
 
 	/* Give grid-like positions to items initially */
 
-	ETFlowLayout *flow = [ETFlowLayout layout];
+	ETFlowLayout *flow = [ETFlowLayout layoutWithObjectGraphContext: [itemFactory objectGraphContext]];
 	[flow setItemSizeConstraintStyle: ETSizeConstraintStyleNone];
 	[[mainItem layout] resetItemPersistentFramesWithLayout: flow];
 	
