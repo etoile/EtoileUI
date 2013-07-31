@@ -14,6 +14,7 @@
 #import <AppKit/AppKit.h>
 #import <EtoileUI/ETUIItem.h>
 
+@class COObjectGraphContext;
 @class ETLayoutItemGroup, ETView;
 
 
@@ -49,9 +50,10 @@ view, you must override -contentRect at least. You might also override
 	ETUIItem *_decoratedItem; // previous decorator (weak reference)
 }
 
-+ (id) item;
++ (id) itemWithObjectGraphContext: (COObjectGraphContext *)aContext;
 
-- (id) initWithSupervisorView: (ETView *)aSupervisorView;
+- (id) initWithSupervisorView: (ETView *)aSupervisorView
+           objectGraphContext: (COObjectGraphContext *)aContext;
 
 - (BOOL) usesWidgetView;
 

@@ -14,6 +14,8 @@
 #import <EtoileUI/ETDecoratorItem.h>
 #import <EtoileUI/ETView.h>
 
+@class COObjectGraphContext;
+
 /** A decorator which can be used to make content scrollable.
 
 With the AppKit widget backend, the underlying view is an NSScrollView object.
@@ -29,9 +31,11 @@ decorated item returns NO to -isFlipped. */
 	BOOL _ensuresContentFillsVisibleArea;
 }
 
-+ (ETScrollableAreaItem *) itemWithScrollView: (NSScrollView *)scrollView;
++ (ETScrollableAreaItem *) itemWithScrollView: (NSScrollView *)scrollView
+                           objectGraphContext: (COObjectGraphContext *)aContext;
 
-- (id) initWithScrollView: (NSScrollView *)aScrollView;
+- (id) initWithScrollView: (NSScrollView *)aScrollView
+       objectGraphContext: (COObjectGraphContext *)aContext;
 
 - (NSRect) visibleRect;
 - (NSRect) visibleContentRect;

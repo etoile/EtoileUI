@@ -63,8 +63,9 @@ gets bound.
 The returned item can be used as a decorator to wrap an existing layout item 
 into a scrollable area. */
 + (ETScrollableAreaItem *) itemWithScrollView: (NSScrollView *)scrollView
+                           objectGraphContext: (COObjectGraphContext *)aContext
 {
-	return AUTORELEASE([[self alloc] initWithScrollView: scrollView]);
+	return AUTORELEASE([[self alloc] initWithScrollView: scrollView objectGraphContext: aContext]);
 }
 
 - (NSScrollView *) scrollView
@@ -72,14 +73,17 @@ into a scrollable area. */
 	return (NSScrollView *)[[self supervisorView] wrappedView];
 }
 
-- (id) init
+- (id) initWithSupervisorView: (ETView *)aSupervisorView
+           objectGraphContext: (COObjectGraphContext *)aContext
 {
-	return [self initWithScrollView: nil];
+	return [self initWithScrollView: nil objectGraphContext: aContext];
 }
 
 - (id) initWithScrollView: (NSScrollView *)aScrollView
+       objectGraphContext: (COObjectGraphContext *)aContext
 {
-	self = [super initWithSupervisorView: AUTORELEASE([[ETView alloc] init])];
+	self = [super initWithSupervisorView: AUTORELEASE([[ETView alloc] init])
+	                  objectGraphContext: aContext];
 	if (nil == self)
 		return nil;
 
@@ -105,11 +109,6 @@ into a scrollable area. */
 	//ETLog(@"Scroll view %@", [self scrollView]);
 
 	return self;
-}
-
-- (id) initWithSupervisorView: (ETView *)aView
-{
-	return [self initWithScrollView: nil];
 }
 
 - (void) dealloc

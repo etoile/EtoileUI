@@ -370,7 +370,7 @@ See also -setRenderedPropertyNames:. */
 	[itemGroup setName: aName];
 	[itemGroup setIdentifier: [[aName lowercaseString] stringByAppendingString: @" (grouping)"]];
 	[itemGroup setLayout: [self prepareEntityLayout: [[[self entityLayout] copy] autorelease]]];
-	[itemGroup setDecoratorItem: [ETTitleBarItem item]];
+	[itemGroup setDecoratorItem: [ETTitleBarItem itemWithObjectGraphContext: [_itemFactory objectGraphContext]]];
 	return itemGroup;
 }
 

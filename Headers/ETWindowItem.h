@@ -15,6 +15,7 @@
 #import <EtoileUI/ETDecoratorItem.h>
 #import <EtoileUI/ETResponder.h>
 
+@class COObjectGraphContext;
 @class ETEvent;
 
 /** A decorator which can be used to put a layout item inside a window.
@@ -42,13 +43,15 @@ such as -performClose: are forwarded to the NSWindow. */
 
 /* Factory Methods */
 
-+ (ETWindowItem *) itemWithWindow: (NSWindow *)window;
-+ (ETWindowItem *) fullScreenItem;
-+ (ETWindowItem *) transparentFullScreenItem;
++ (ETWindowItem *) itemWithWindow: (NSWindow *)window
+               objectGraphContext: (COObjectGraphContext *)aContext;
++ (ETWindowItem *) fullScreenItemWithObjectGraphContext: (COObjectGraphContext *)aContext;
++ (ETWindowItem *) transparentFullScreenItemWithObjectGraphContext: (COObjectGraphContext *)aContext;
 
 /* Initialization */
 
-- (id) initWithWindow: (NSWindow *)window;
+- (id) initWithWindow: (NSWindow *)window
+   objectGraphContext: (COObjectGraphContext *)aContext;
 
 /* Main Accessors */
 

@@ -161,7 +161,8 @@ returns YES to -[ETWindowItem shouldKeepWindowFrame:].  */
 
 	if (isWindowDecorationNeeded)
 	{
-		windowDecorator = [ETWindowItem itemWithWindow: window];
+		windowDecorator = [ETWindowItem itemWithWindow: window
+		                            objectGraphContext: [itemFactory objectGraphContext]];
 		[windowDecorator setShouldKeepWindowFrame: YES];
 		[[item lastDecoratorItem] setDecoratorItem: windowDecorator];
 	}
@@ -210,7 +211,8 @@ of their view hierachy (-subviews returns an empty arrary). */
 	else if ([view isKindOfClass: [NSScrollView class]])
 	{
 		item = [self renderView: [view documentView]];
-		[item setDecoratorItem: [ETScrollableAreaItem itemWithScrollView: view]];
+		[item setDecoratorItem: [ETScrollableAreaItem itemWithScrollView: view
+		                                              objectGraphContext: [itemFactory objectGraphContext]]];
 	}
 	else if ([view isKindOfClass: [NSBox class]])
 	{

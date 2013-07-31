@@ -55,7 +55,7 @@
 + (ETDecoratorItem *) itemWithDummySupervisorView
 {
 	ETView *view = AUTORELEASE([[ETView alloc] init]);
-	return AUTORELEASE([[ETDecoratorItem alloc] initWithSupervisorView: view]);
+	return AUTORELEASE([[ETDecoratorItem alloc] initWithSupervisorView: view objectGraphContext: nil]);
 }
 
 @end
@@ -207,7 +207,7 @@ and -setAutoresizingMask: can potentially erase each other. */
 - (void) testAutoresizingMaskWithScrollableAreaItem
 {
 	[item setViewAndSync: [self textFieldWithAutoresizingMask: weirdMask]];
-	[item setDecoratorItem: [ETScrollableAreaItem item]];
+	[item setDecoratorItem: [ETScrollableAreaItem itemWithObjectGraphContext: [itemFactory objectGraphContext]]];
 
 	UKIntsEqual(weirdMask, [item autoresizingMask]);
 	UKIntsEqual(NSViewNotSizable, [[item supervisorView] autoresizingMask]);
@@ -338,7 +338,7 @@ and -setAutoresizingMask: can potentially erase each other. */
 
 - (void) testWindowDecoratorGeometry
 {
-	ETWindowItem *windowDecorator = [ETWindowItem item];
+	ETWindowItem *windowDecorator = [ETWindowItem itemWithObjectGraphContext: [itemFactory objectGraphContext]];
 	NSRect rect = [ETLayoutItem defaultItemRect];
 
 	[item setDecoratorItem: windowDecorator];
@@ -360,7 +360,8 @@ and -setAutoresizingMask: can potentially erase each other. */
 
 - (void) testScrollDecoratorGeometry
 {
-	ETScrollableAreaItem *scrollDecorator = [ETScrollableAreaItem item];
+	ETScrollableAreaItem *scrollDecorator =
+		[ETScrollableAreaItem itemWithObjectGraphContext: [itemFactory objectGraphContext]];
 	NSRect rect = [ETLayoutItem defaultItemRect];
 
 	[item setDecoratorItem: scrollDecorator];
@@ -387,7 +388,8 @@ and -setAutoresizingMask: can potentially erase each other. */
 
 - (void) testScrollDecoratorGeometryForDecorationRectResize
 {
-	ETScrollableAreaItem *scrollDecorator = [ETScrollableAreaItem item];
+	ETScrollableAreaItem *scrollDecorator =
+		[ETScrollableAreaItem itemWithObjectGraphContext: [itemFactory objectGraphContext]];
 	NSRect rect = NSMakeRect(0, 0, 1000, 3000);
 
 	[item setDecoratorItem: scrollDecorator];
@@ -407,7 +409,8 @@ and -setAutoresizingMask: can potentially erase each other. */
 
 - (void) testScrollDecoratorGeometryForScrollViewResize
 {
-	ETScrollableAreaItem *scrollDecorator = [ETScrollableAreaItem item];
+	ETScrollableAreaItem *scrollDecorator =
+		[ETScrollableAreaItem itemWithObjectGraphContext: [itemFactory objectGraphContext]];;
 	NSRect rect = NSMakeRect(0, 0, 1000, 3000);
 
 	[item setDecoratorItem: scrollDecorator];
@@ -430,7 +433,8 @@ and -setAutoresizingMask: can potentially erase each other. */
 
 - (void) testTitleBarGeometry
 {
-	ETTitleBarItem *titleBarItem = [ETTitleBarItem item];
+	ETTitleBarItem *titleBarItem =
+		[ETTitleBarItem itemWithObjectGraphContext: [itemFactory objectGraphContext]];
 	ETLayoutItemGroup *itemGroup = [itemFactory itemGroup];
 	NSRect rect = [ETLayoutItem defaultItemRect];// NSMakeRect(0, 0, 1000, 3000);
 
@@ -452,7 +456,8 @@ and -setAutoresizingMask: can potentially erase each other. */
 
 - (void) testTitleBarHitTest
 {
-	ETTitleBarItem *titleBarItem = [ETTitleBarItem item];
+	ETTitleBarItem *titleBarItem =
+		[ETTitleBarItem itemWithObjectGraphContext: [itemFactory objectGraphContext]];
 
 	// FIXME: Nil title exception if -setName: is not called.
 	[item setName: @"Untitled"];
@@ -464,7 +469,8 @@ and -setAutoresizingMask: can potentially erase each other. */
 
 - (void) testTitleBarGeometryForContentSizeLayout
 {
-	ETTitleBarItem *titleBarItem = [ETTitleBarItem item];
+	ETTitleBarItem *titleBarItem =
+		[ETTitleBarItem itemWithObjectGraphContext: [itemFactory objectGraphContext]];
 	ETLayoutItemGroup *itemGroup = [itemFactory itemGroup];
 	NSRect rect = [ETLayoutItem defaultItemRect];// NSMakeRect(0, 0, 1000, 3000);
 	
@@ -482,8 +488,10 @@ and -setAutoresizingMask: can potentially erase each other. */
 
 - (void) testTooManyDecoratorGeometry
 {
-	ETWindowItem *windowDecorator = [ETWindowItem item];
-	ETScrollableAreaItem *scrollDecorator = [ETScrollableAreaItem item];
+	ETWindowItem *windowDecorator =
+		[ETWindowItem itemWithObjectGraphContext: [itemFactory objectGraphContext]];
+	ETScrollableAreaItem *scrollDecorator =
+		[ETScrollableAreaItem itemWithObjectGraphContext: [itemFactory objectGraphContext]];
 	NSRect rect = [ETLayoutItem defaultItemRect];
 
 	[item setDecoratorItem: scrollDecorator];
@@ -604,7 +612,7 @@ supervisor view geometry (frame). */
 - (void) testSupervisorViewToDecoratedItemGeometrySynchronization
 {
 	[item setViewAndSync: AUTORELEASE([[NSSlider alloc] init])];
-	[item setDecoratorItem: [ETWindowItem item]];
+	[item setDecoratorItem: [ETWindowItem itemWithObjectGraphContext: [itemFactory objectGraphContext]]];
 
 	NSPoint oldPosition = [item position];
 	NSPoint oldOrigin = [item origin];
@@ -624,7 +632,7 @@ supervisor view geometry (frame). */
 - (void) testGeometrySynchronizationForDecoratorRemoval
 {
 	[item setViewAndSync: AUTORELEASE([[NSSlider alloc] init])];
-	[item setDecoratorItem: [ETWindowItem item]];
+	[item setDecoratorItem: [ETWindowItem itemWithObjectGraphContext: [itemFactory objectGraphContext]]];
 
 	NSRect newFrame = NSMakeRect(500, 700, 30, 40);
 	CGFloat titleBarHeight = [[item windowItem] titleBarHeight];

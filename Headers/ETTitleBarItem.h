@@ -16,6 +16,7 @@
 #import <EtoileUI/ETDecoratorItem.h>
 #import <EtoileUI/ETTitleBarView.h>
 
+@class COObjectGraphContext;
 @class ETView, ETUIItem;
 
 /** ETView also offers a customizable title bar. The title bar visibility can
@@ -44,8 +45,8 @@
 	CGFloat _expandedHeight;
 }
 
-- (id) initWithSupervisorView: (ETView *)supervisorView;
-- (id) init;
+- (id) initWithSupervisorView: (ETView *)aSupervisorView
+           objectGraphContext: (COObjectGraphContext *)aContext;
 
 - (CGFloat) titleBarHeight;
 - (void) tile;

@@ -47,7 +47,7 @@
 - (void) testWindowContentView
 {
 	ETLayoutItem *item = [itemFactory item];
-	id decorator = [ETWindowItem item];
+	id decorator = [ETWindowItem itemWithObjectGraphContext: [itemFactory objectGraphContext]];
 	
 	[item setDecoratorItem: decorator];
 	
@@ -67,7 +67,7 @@
 	[ETLayoutItem disablesAutolayout];
 	
 	ETLayoutItem *item = [itemFactory item];
-	id decorator = [ETWindowItem item];
+	id decorator = [ETWindowItem itemWithObjectGraphContext: [itemFactory objectGraphContext]];
 	
 	CREATE_AUTORELEASE_POOL(pool);
 	[item setDecoratorItem: decorator];
@@ -87,7 +87,7 @@
 	CREATE_AUTORELEASE_POOL(pool);
 
 	ETLayoutItem *item = [itemFactory item];
-	id decorator = [ETWindowItem item];
+	id decorator = [ETWindowItem itemWithObjectGraphContext: [itemFactory objectGraphContext]];
 
 	[item setName: @"Jupiter"];
 	[item setDecoratorItem: decorator];
@@ -110,8 +110,8 @@
 	CREATE_AUTORELEASE_POOL(pool);
 	
 	ETLayoutItem *item = [itemFactory item];
-	id decorator = [ETWindowItem item];
-	id innerDecorator = [ETScrollableAreaItem item];
+	id decorator = [ETWindowItem itemWithObjectGraphContext: [itemFactory objectGraphContext]];
+	id innerDecorator = [ETScrollableAreaItem itemWithObjectGraphContext: [itemFactory objectGraphContext]];
 	
 	[item setName: @"Jupiter"];
 	[innerDecorator setDecoratorItem: decorator];

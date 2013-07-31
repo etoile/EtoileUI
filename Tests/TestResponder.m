@@ -75,7 +75,7 @@
 - (void) prepareNewResponderChain
 {
 	item = [itemFactory item];
-	scrollableAreaItem = [ETScrollableAreaItem item];
+	scrollableAreaItem = [ETScrollableAreaItem itemWithObjectGraphContext: [itemFactory objectGraphContext]];
 
 	[item setActionHandler: [ETFirstResponderActionHandler sharedInstanceForObjectGraphContext: [item objectGraphContext]]];
 	[item setDecoratorItem: scrollableAreaItem];

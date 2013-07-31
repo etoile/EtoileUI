@@ -20,9 +20,11 @@
 
 @implementation ETTitleBarItem
 
-- (id) initWithSupervisorView: (ETView *)supervisorView
+- (id) initWithSupervisorView: (ETView *)aSupervisorView
+           objectGraphContext: (COObjectGraphContext *)aContext
 {
-	self = [super initWithSupervisorView: AUTORELEASE([[ETView alloc] init])];
+	self = [super initWithSupervisorView: AUTORELEASE([[ETView alloc] init])
+	                  objectGraphContext: aContext];
 	if (nil == self)
 	{
 		return nil;
@@ -37,11 +39,6 @@
 	[self tile];
 	
 	return self;
-}
-
-- (id) init
-{
-	return [self initWithSupervisorView: nil];
 }
 
 - (NSRect) contentRect

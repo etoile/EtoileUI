@@ -21,11 +21,11 @@
 
 /** Returns a new bordeless panel which can be used as a temporary root window 
 when a layout other than ETWindowLayout is set on the receiver. */
-- (ETWindowItem *) createRootWindowItem
+- (ETWindowItem *) createRootWindowItemWithObjectGraphContext: (COObjectGraphContext *)aContext
 {
 	ETFullScreenWindow *fullScreenWindow = AUTORELEASE([[ETFullScreenWindow alloc] init]);
 	[fullScreenWindow setLevel: NSNormalWindowLevel]; 
-	return AUTORELEASE([[ETWindowItem alloc] initWithWindow: fullScreenWindow]);
+	return AUTORELEASE([[ETWindowItem alloc] initWithWindow: fullScreenWindow objectGraphContext: aContext]);
 }
 
 - (id) initWithObjectGraphContext: (COObjectGraphContext *)aContext
@@ -36,7 +36,7 @@ when a layout other than ETWindowLayout is set on the receiver. */
 
 	[self setFrame: [[NSScreen mainScreen] visibleFrame]];
 		
-	ASSIGN(_rootWindowItem, [self createRootWindowItem]);
+	ASSIGN(_rootWindowItem, [self createRootWindowItemWithObjectGraphContext: aContext]);
 	_hiddenWindows = [[NSMutableArray alloc] init];
 	[self setLayout: [ETWindowLayout layoutWithObjectGraphContext: aContext]];
 
@@ -96,7 +96,8 @@ when a layout other than ETWindowLayout is set on the receiver. */
 	// refused by -setDecoratorItem: and hence never used. 
 	if ([[self layout] isKindOfClass: [ETWindowLayout class]])
 	{
-		[[item lastDecoratorItem] setDecoratorItem: [ETWindowItem item]];
+		[[item lastDecoratorItem] setDecoratorItem:
+		 	[ETWindowItem itemWithObjectGraphContext: [self objectGraphContext]]];
 	}
 	/* When the item has no parent item until now, the window is ordered out */
 	[[[item windowItem] window] makeKeyAndOrderFront: nil];
@@ -219,7 +220,7 @@ You should never call this method unless you write an ETWindowLayout subclass. *
 		/* Usually when the item wasn't present when ETWindowLayout was last used */
 		if (nil == windowItem)
 		{
-			windowItem = [ETWindowItem item];
+			windowItem = [ETWindowItem itemWithObjectGraphContext: [item objectGraphContext]];
 		}
 		[[item lastDecoratorItem] setDecoratorItem: windowItem];
 		[item setDefaultValue: nil forProperty: @"windowItem"];

@@ -308,7 +308,7 @@ static ETLayoutItemFactory *itemFactory = nil;
 {
 	id decorator1 = [ETDecoratorItem itemWithDummySupervisorView];
 	id decorator2 = [ETDecoratorItem itemWithDummySupervisorView];
-	id decorator3 = [ETWindowItem item];
+	id decorator3 = [ETWindowItem itemWithObjectGraphContext: [itemFactory objectGraphContext]];
 	
 	UKNil([self decoratorItem]);
 	

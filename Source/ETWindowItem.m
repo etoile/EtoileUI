@@ -33,8 +33,9 @@
 The returned item can be used as a decorator to wrap an existing layout item 
 into a window. */
 + (ETWindowItem *) itemWithWindow: (NSWindow *)window
+               objectGraphContext: (COObjectGraphContext *)aContext
 {
-	return AUTORELEASE([[self alloc] initWithWindow: window]);
+	return AUTORELEASE([[self alloc] initWithWindow: window objectGraphContext: aContext]);
 }
 
 /** Returns a new window item to which a fullscreen concrete window gets bound.
@@ -43,9 +44,10 @@ The returned item can be used as a decorator to make an existing layout item
 full screen. 
 
 The concrete window class used is [ETFullScreenWindow]. */
-+ (ETWindowItem *) fullScreenItem
++ (ETWindowItem *) fullScreenItemWithObjectGraphContext: (COObjectGraphContext *)aContext
 {
-	ETWindowItem *window = [self itemWithWindow: AUTORELEASE([[ETFullScreenWindow alloc] init])];
+	ETWindowItem *window = [self itemWithWindow: AUTORELEASE([[ETFullScreenWindow alloc] init])
+	                         objectGraphContext: aContext];
 	[window setShouldKeepWindowFrame: YES];
 	return window;
 }
@@ -57,12 +59,12 @@ The returned item can be used as a decorator to make an existing layout item
 full screen. 
  
 The concrete window class used is [ETFullScreenWindow]. */
-+ (ETWindowItem *) transparentFullScreenItem
++ (ETWindowItem *) transparentFullScreenItemWithObjectGraphContext: (COObjectGraphContext *)aContext
 {
 	NSWindow *window = AUTORELEASE([[ETFullScreenWindow alloc] init]);
 	[window setOpaque: NO];
 	[window setBackgroundColor: [NSColor clearColor]];
-	ETWindowItem *windowItem = [self itemWithWindow: window];
+	ETWindowItem *windowItem = [self itemWithWindow: window objectGraphContext: aContext];
 	[windowItem setShouldKeepWindowFrame: YES];
 	return windowItem;
 }
@@ -80,34 +82,33 @@ The widget window is inserted in the responder chain between the receiver and
 -[ETLayoutItemFactory windowGroup].
 
 If window is nil, the receiver creates a standard widget backend window. */
-- (id) initWithWindow: (NSWindow *)window
+- (id) initWithWindow: (NSWindow *)window objectGraphContext: (COObjectGraphContext *)aContext
 {
-	self = [super initWithSupervisorView: nil];
-	
-	if (self != nil)
+	self = [super initWithSupervisorView: nil objectGraphContext: aContext];
+	if (self == nil)
+		return nil;
+
+	if (window != nil)
 	{
-		if (window != nil)
-		{
-			ASSIGN(_itemWindow, window);
-		}
-		else
-		{
-			_itemWindow = [[NSWindow alloc] init];
-		}
-		// TODO: Would be better not to break the window delegate... May be 
-		// we should rather reimplement NSDraggingDestination protocol in 
-		// a NSWindow category. 
-		if ([_itemWindow delegate] != nil)
-		{
-			ETLog(@"WARNING: The window delegate %@ will be replaced by %@ "
-				"-initWithWindow:", [_itemWindow delegate], self);
-		}
-		[_itemWindow setDelegate: (id)self];
-		[_itemWindow setAcceptsMouseMovedEvents: YES];
-		[_itemWindow registerForDraggedTypes: A(ETLayoutItemPboardType)];
-		_usesCustomWindowTitle = ([self isUntitled] == NO);
-		_shouldKeepWindowFrame = NO;
+		ASSIGN(_itemWindow, window);
 	}
+	else
+	{
+		_itemWindow = [[NSWindow alloc] init];
+	}
+	// TODO: Would be better not to break the window delegate... May be 
+	// we should rather reimplement NSDraggingDestination protocol in 
+	// a NSWindow category. 
+	if ([_itemWindow delegate] != nil)
+	{
+		ETLog(@"WARNING: The window delegate %@ will be replaced by %@ "
+			"-initWithWindow:", [_itemWindow delegate], self);
+	}
+	[_itemWindow setDelegate: (id)self];
+	[_itemWindow setAcceptsMouseMovedEvents: YES];
+	[_itemWindow registerForDraggedTypes: A(ETLayoutItemPboardType)];
+	_usesCustomWindowTitle = ([self isUntitled] == NO);
+	_shouldKeepWindowFrame = NO;
 	
 	ETDebugLog(@"Init item %@ with window %@ %@ at %@", self, [_itemWindow title],
 		_itemWindow, NSStringFromRect([_itemWindow frame]));
@@ -115,14 +116,9 @@ If window is nil, the receiver creates a standard widget backend window. */
 	return self;
 }
 
-- (id) initWithSupervisorView: (ETView *)aView
+- (id) initWithSupervisorView: (ETView *)aView objectGraphContext: (COObjectGraphContext *)aContext
 {
-	return [self initWithWindow: nil];
-}
-
-- (id) init
-{
-	return [self initWithWindow: nil];
+	return [self initWithWindow: nil objectGraphContext: aContext];
 }
 
 - (void) dealloc
