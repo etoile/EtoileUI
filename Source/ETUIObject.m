@@ -11,6 +11,7 @@
 #import <EtoileFoundation/ETEntityDescription.h>
 #import <EtoileFoundation/ETModelDescriptionRepository.h>
 #import <EtoileFoundation/NSObject+Model.h>
+#import <CoreObject/COObjectGraphContext.h>
 #import "ETUIObject.h"
 #import "ETCompatibility.h"
 
@@ -21,6 +22,24 @@
 + (NSString *) typePrefix
 {
 	return @"ET";
+}
+
+static COObjectGraphContext *defaultObjectGraphContext = nil;
+
+/** <override-never />
+This method is only exposed to be used internally by CoreObject.
+
+Returns a transient object graph context that can be used for building a UI in 
+code.
+ 
+See +[ETLayoutItemFactory sharedInstance]. */
++ (COObjectGraphContext *) defaultTransientObjectGraphContext
+{
+	if (defaultObjectGraphContext == nil)
+	{
+		defaultObjectGraphContext = [COObjectGraphContext new];
+	}
+	return defaultObjectGraphContext;
 }
 
 #ifdef COREOBJECT

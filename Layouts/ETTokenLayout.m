@@ -46,7 +46,7 @@ Initializes and returns a new token layout. */
 
 	[self setTemplateItem: templateItem];
 	[templateItem setCoverStyle: tokenStyle];
-	[templateItem setActionHandler: [ETTokenActionHandler sharedInstanceForObjectGraphContext: nil]];
+	[templateItem setActionHandler: [ETTokenActionHandler sharedInstanceForObjectGraphContext: aContext]];
 	/* Will delegate the icon/image rect computation to the icon style rather 
 	   than stretching it. */
 	[templateItem setContentAspect: ETContentAspectComputed];

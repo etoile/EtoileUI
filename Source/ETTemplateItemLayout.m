@@ -41,7 +41,7 @@ returned instance (usually in a subclass initializer). */
 	if (self == nil)
 		return nil;
 	
-	[self setPositionalLayout: [ETFlowLayout layoutWithObjectGraphContext: nil]];
+	[self setPositionalLayout: [ETFlowLayout layoutWithObjectGraphContext: aContext]];
 	[(ETFlowLayout *)_positionalLayout setItemSizeConstraintStyle: ETSizeConstraintStyleNone];
 	_templateKeys = [[NSArray alloc] init];
 	_localBindings = [[NSMutableDictionary alloc] init];

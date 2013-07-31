@@ -36,7 +36,6 @@
 @implementation ETLayoutItemFactory
 
 static NSMapTable *factorySharedInstances = nil;
-static COObjectGraphContext *defaultObjectGraphContext = nil;
 
 /** <override-never />
 Returns a shared instance that instantiates new items in a transient object 
@@ -46,11 +45,7 @@ For each ETLayoutItemFactory subclass, returns a distinct shared instance.
 The object graph context remains the same accross all these shared instances. */
 + (id) factory
 {
-	if (defaultObjectGraphContext == nil)
-	{
-		defaultObjectGraphContext = [COObjectGraphContext new];
-	}
-	return [self factoryWithObjectGraphContext: defaultObjectGraphContext];
+	return [self factoryWithObjectGraphContext: [ETUIObject defaultTransientObjectGraphContext]];
 }
 
 /** <override-never />

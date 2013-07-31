@@ -195,7 +195,7 @@
 
 	id view = AUTORELEASE([DummyView new]);
 	id templateItem = AUTORELEASE([[ETLayoutItemGroup alloc]
-		initWithView: view coverStyle: nil actionHandler: nil objectGraphContext: nil]);
+		initWithView: view coverStyle: nil actionHandler: nil objectGraphContext: [controller objectGraphContext]]);
 	[controller setTemplateItemGroup: templateItem];
 	id newItemGroup = [controller makeItemGroup];
 	id newItemGroup2 = [controller makeItemGroup];

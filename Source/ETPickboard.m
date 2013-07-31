@@ -36,7 +36,8 @@ environment. Also known as Shelf overlay. */
 {
 	if (systemPickboard == nil)
 	{
-		systemPickboard = [[ETPickboard alloc] initWithObjectGraphContext: nil];
+		systemPickboard = [[ETPickboard alloc]
+			initWithObjectGraphContext: [self defaultTransientObjectGraphContext]];
 		[systemPickboard setName: _(@"Shelf")];
 	}
 

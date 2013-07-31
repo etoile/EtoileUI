@@ -671,7 +671,7 @@ See also -setRenderedPropertyNames:. */
 	ETAssert(controller != nil);
 	ETItemTemplate *template = [ETItemTemplate templateWithItem: [_itemFactory item]
 	                                                 entityName: [[aRelationshipDesc type] name]
-	                                         objectGraphContext: nil];
+	                                         objectGraphContext: [_itemFactory objectGraphContext]];
 
 	[controller setTemplate: template forType: [controller currentObjectType]];
 	[controller setModelDescriptionRepository: [self repository]];

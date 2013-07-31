@@ -27,8 +27,8 @@
 	if (self == nil)
 		return nil;
 
-	ETLayoutItem *templateItem = [[ETLayoutItemFactory factory] item];;
-	ETBasicItemStyle *formStyle = AUTORELEASE([[ETBasicItemStyle alloc] initWithObjectGraphContext: nil]);
+	ETLayoutItem *templateItem = [[ETLayoutItemFactory factoryWithObjectGraphContext: aContext] item];;
+	ETBasicItemStyle *formStyle = AUTORELEASE([[ETBasicItemStyle alloc] initWithObjectGraphContext: aContext]);
 
 	[self setTemplateItem: templateItem];
 	[formStyle setLabelPosition: ETLabelPositionOutsideLeft];
@@ -36,7 +36,7 @@
 	[templateItem setCoverStyle: formStyle];
 
 	[self setTemplateKeys: A(@"coverStyle")];
-	[self setPositionalLayout: [ETColumnLayout layoutWithObjectGraphContext: nil]];
+	[self setPositionalLayout: [ETColumnLayout layoutWithObjectGraphContext: aContext]];
 	[[self positionalLayout] setBorderMargin: 4];
 	[[self positionalLayout] setItemMargin: 4];
 

@@ -65,7 +65,8 @@ See also [NSObject(ETAspectRegistration)]. */
 		if ([subclass isSubclassOfClass: [ETUIItem class]])	
 			continue;
 
-		[self registerStyle: AUTORELEASE([[subclass alloc] initWithObjectGraphContext: nil])];
+		[self registerStyle: AUTORELEASE([[subclass alloc]
+			initWithObjectGraphContext: [self defaultTransientObjectGraphContext]])];
 	}
 }
 

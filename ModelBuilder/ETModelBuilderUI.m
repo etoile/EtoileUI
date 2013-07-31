@@ -114,7 +114,7 @@
 	ETAssert([bottomBar autoresizingMask] & ETAutoresizingFlexibleWidth);
 
 	[editorItem addItems: A(entityItem, bottomBar)];
-	[editorItem setLayout: [ETColumnLayout layoutWithObjectGraphContext: nil]];
+	[editorItem setLayout: [ETColumnLayout layoutWithObjectGraphContext: [itemFactory objectGraphContext]]];
 	// FIXME: Implement horizontal alignment support
 	[[editorItem layout] setHorizontalAligment: ETLayoutHorizontalAlignmentRight];
 

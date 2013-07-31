@@ -34,12 +34,14 @@ Initializes and returns a new icon layout. */
 	[self setAttachedTool: [ETSelectAndClickTool tool]];
 	[[self attachedTool] setShouldRemoveItemsAtPickTime: NO];
 
-	ETLayoutItem *templateItem = [[ETLayoutItemFactory factory] item];
-	ETIconAndLabelStyle *iconStyle = AUTORELEASE([[ETIconAndLabelStyle alloc] init]);
+	ETLayoutItem *templateItem =
+		[[ETLayoutItemFactory factoryWithObjectGraphContext: aContext] item];
+	ETIconAndLabelStyle *iconStyle =
+		AUTORELEASE([[ETIconAndLabelStyle alloc] initWithObjectGraphContext: aContext]);
 
 	[self setTemplateItem: templateItem];
 	[templateItem setCoverStyle: iconStyle];
-	[templateItem setActionHandler: [ETIconAndLabelActionHandler sharedInstanceForObjectGraphContext: nil]];
+	[templateItem setActionHandler: [ETIconAndLabelActionHandler sharedInstanceForObjectGraphContext: aContext]];
 	/* Will delegate the icon/image rect computation to the icon style rather 
 	   than stretching it. */
 	[templateItem setContentAspect: ETContentAspectComputed];

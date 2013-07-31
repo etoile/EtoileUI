@@ -56,6 +56,10 @@
 - (void) didChangeValueForProperty: (NSString *)aKey;
 #endif
 
+/** @taskunit Framework Private */
+
++ (COObjectGraphContext *) defaultTransientObjectGraphContext;
+
 @end
 
 

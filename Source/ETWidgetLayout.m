@@ -64,11 +64,12 @@ For the view classes listed below, the substitute classes are:
 }
 
 - (BOOL) loadNibNamed: (NSString *)nibName
+ inObjectGraphContext: (COObjectGraphContext *)aContext
 {
 	NSBundle *bundle = [NSBundle bundleForClass: [self class]];
 	ETNibOwner *nibOwner = [[ETNibOwner alloc] initWithNibName: nibName
 		                                                bundle: bundle
-	                                        objectGraphContext: nil];
+	                                        objectGraphContext: aContext];
 	BOOL nibLoaded = [nibOwner loadNibWithOwner: self];
 	RELEASE(nibOwner);
 	return nibLoaded;
@@ -121,7 +122,7 @@ a class cluster. */
 
 	BOOL usesLayoutViewInNib = (nil == aView && nil != [self nibName]);
 
-	if (usesLayoutViewInNib && [self loadNibNamed: [self nibName]] == NO)
+	if (usesLayoutViewInNib && [self loadNibNamed: [self nibName] inObjectGraphContext: aContext] == NO)
 	{
 		DESTROY(self);
 	}

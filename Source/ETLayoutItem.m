@@ -141,9 +141,9 @@ The returned item will use +defaultItemRect as its frame. */
 - (id) initWithObjectGraphContext: (COObjectGraphContext *)aContext
 {
 	return [self initWithView: nil 
-	               coverStyle: [ETBasicItemStyle sharedInstanceForObjectGraphContext: nil]
-	            actionHandler: [ETActionHandler sharedInstanceForObjectGraphContext: nil]
-			objectGraphContext: aContext];
+	               coverStyle: [ETBasicItemStyle sharedInstanceForObjectGraphContext: aContext]
+	            actionHandler: [ETActionHandler sharedInstanceForObjectGraphContext: aContext]
+	       objectGraphContext: aContext];
 }
 
 - (id) init

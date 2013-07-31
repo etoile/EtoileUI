@@ -14,6 +14,7 @@
 #import "ETGeometry.h"
 #import "ETTool.h"
 #import "ETLayoutExecutor.h"
+#import "ETLayoutItemFactory.h"
 #import "ETLayoutItemGroup.h"
 #import "ETPositionalLayout.h"
 #import "NSObject+EtoileUI.h"
@@ -57,10 +58,11 @@ See also NSObject(ETAspectRegistration). */
 		NSClassFromString(@"ETTextEditorLayout"));
 	NSArray *subclasses = [[self allSubclasses] arrayByRemovingObjectsInArray: skippedClasses];
 
-	FOREACH(subclasses, subclass, Class)
+	for (Class subclass in subclasses)
 	{
 		CREATE_AUTORELEASE_POOL(pool);
-		[self registerLayout: AUTORELEASE([[subclass alloc] init])];
+		[self registerLayout: AUTORELEASE([[subclass alloc]
+			initWithObjectGraphContext: [self defaultTransientObjectGraphContext]])];
 		DESTROY(pool);
 	}
 }
@@ -135,7 +137,7 @@ Returns a new ETLayout instance. */
 	_layoutContext = nil;
 	delegate = nil;
 	_tool = nil;
-	ASSIGN(_dropIndicator, [ETDropIndicator sharedInstanceForObjectGraphContext: nil]);
+	ASSIGN(_dropIndicator, [ETDropIndicator sharedInstanceForObjectGraphContext: aContext]);
 	_isRendering = NO;
 	_layoutSize = NSMakeSize(200, 200); /* Dummy value */
 	_proposedLayoutSize = ETNullSize;
