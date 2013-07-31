@@ -34,7 +34,7 @@ For the view classes listed below, the substitute classes are:
 </deflist> */
 + (Class) layoutClassForLayoutView: (NSView *)layoutView
 {
-	Class layoutClass = nil;
+	Class layoutClass = Nil;
 	NSView *view = layoutView;
 	
 	if ([layoutView isKindOfClass: [NSScrollView class]])
@@ -74,6 +74,22 @@ For the view classes listed below, the substitute classes are:
 	return nibLoaded;
 }
 
+- (id) subclassInstanceWithLayoutView: (NSView *)aView
+                   objectGraphContext: (COObjectGraphContext *)aContext
+{
+	if (aView == nil || [self isMemberOfClass: [ETWidgetLayout class]] == NO)
+		return self;
+
+	Class layoutClass = [[self class] layoutClassForLayoutView: aView];
+	ETAssert(layoutClass != Nil);
+
+	if ([self isMemberOfClass: layoutClass])
+		return self;
+	
+	return [[layoutClass allocWithZone: [self zone]] initWithLayoutView: aView
+	                                                 objectGraphContext: aContext];
+}
+
 /** <init /> 
 Returns a new ETLayout instance when the given view is nil, otherwise returns a 
 concrete subclass instance based on the view type.
@@ -82,38 +98,19 @@ e.g. If you pass an NSOutlineView, an ETOutlineLayout instance is returned, the
 substitution list in -layoutClassForLayoutView:. The instantiation behaves like 
 a class cluster. */
 - (id) initWithLayoutView: (NSView *)aView
+       objectGraphContext: (COObjectGraphContext *)aContext
 {
-	/* Class cluster initialization */
-	
-	/* ETWidgetLayout itself takes the placeholder object role. By removing the
-	   following if statement, concrete subclass would have the possibility
-	   to override the concrete subclass... No utility right now. */
-	if (aView != nil && [self isMemberOfClass: [ETWidgetLayout class]])
+	id oldInstance = self;
+	id newInstance = [self subclassInstanceWithLayoutView: aView
+	                                   objectGraphContext: aContext];
+
+	if (newInstance != oldInstance)
 	{
-		/* Find the concrete layout class to instantiate */
-		Class layoutClass = [[self class] layoutClassForLayoutView: aView];
-		
-		/* Eventually replaces the receiver by a new concrete instance */
-		if (layoutClass != Nil)
-		{
-			if ([self isMemberOfClass: layoutClass] == NO)
-			{
-				NSZone *zone = [self zone];
-				RELEASE(self);
-				self = [[layoutClass allocWithZone: zone] initWithLayoutView: aView];
-			}
-		}
-		else /* No matching layout class */
-		{
-			DESTROY(self);
-		}
-		
-		return self; /* Instance already initialized */
+		DESTROY(oldInstance);
+		return newInstance;
 	}
 
-	/* Concrete instance initialization */
-
-	self = [super initWithObjectGraphContext: nil];
+	self = [super initWithObjectGraphContext: aContext];
 	if (self == nil)
 		return nil;
 	
@@ -124,12 +121,9 @@ a class cluster. */
 
 	BOOL usesLayoutViewInNib = (nil == aView && nil != [self nibName]);
 
-	if (usesLayoutViewInNib) 
+	if (usesLayoutViewInNib && [self loadNibNamed: [self nibName]] == NO)
 	{
-		if ([self loadNibNamed: [self nibName]] == NO)
-		{
-			DESTROY(self);
-		}
+		DESTROY(self);
 	}
 	
 	return self;
@@ -137,7 +131,7 @@ a class cluster. */
 
 - (id) initWithObjectGraphContext: (COObjectGraphContext *)aContext
 {
-	return [self initWithLayoutView: nil];
+	return [self initWithLayoutView: nil objectGraphContext: aContext];
 }
 
 - (void) dealloc

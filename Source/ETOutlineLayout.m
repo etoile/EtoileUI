@@ -40,8 +40,9 @@
 }
 
 - (id) initWithLayoutView: (NSView *)aView
+       objectGraphContext: (COObjectGraphContext *)aContext
 {
-	self = [super initWithLayoutView: aView];
+	self = [super initWithLayoutView: aView objectGraphContext: aContext];
     if (nil == self)
 		return nil;
 

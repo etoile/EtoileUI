@@ -15,10 +15,11 @@
 
 @implementation ETTextEditorLayout
 
-- (ETLayout *) initWithLayoutView: (NSView *)view
+- (id) initWithLayoutView: (NSView *)aView
+       objectGraphContext: (COObjectGraphContext *)aContext
 {
-	self = [super initWithLayoutView: nil];
-	if (self == nil)
+	self = [super initWithLayoutView: aView objectGraphContext: aContext];
+    if (nil == self)
 		return nil;
 
 	NSTextView *editorView = [[NSTextView alloc] initWithFrame: EDITOR_FRAME];

@@ -1681,8 +1681,6 @@
 				606B98A40C0AF669000AAA85 /* Pane Layouts */,
 				60F3658E0D18651700FCFFDA /* ETViewModelLayout.h */,
 				60F3658F0D18651700FCFFDA /* ETViewModelLayout.m */,
-				60DEFD280D4E8482008B1038 /* ETTextEditorLayout.h */,
-				60DEFD290D4E8482008B1038 /* ETTextEditorLayout.m */,
 			);
 			name = "Composite Layouts";
 			sourceTree = "<group>";
@@ -1755,6 +1753,8 @@
 				609544AB0C0CE24D00068CBB /* ETBrowserLayout.m */,
 				605153B80C1993F900B5E0E5 /* FSBrowserCell.h */,
 				605153B90C1993F900B5E0E5 /* FSBrowserCell.m */,
+				60DEFD280D4E8482008B1038 /* ETTextEditorLayout.h */,
+				60DEFD290D4E8482008B1038 /* ETTextEditorLayout.m */,
 			);
 			name = "Widget Layouts";
 			sourceTree = "<group>";

@@ -15,6 +15,8 @@
 #import <AppKit/AppKit.h>
 #import <EtoileUI/ETLayout.h>
 
+@class COObjectGraphContext;
+
 /** Extensions to ETLayoutingContext protocol. */
 @protocol ETWidgetLayoutingContext
 /** See -[ETLayoutItemGroup itemAtIndexPath:]. */
@@ -41,7 +43,8 @@ hierarchy of the layout item tree. */
 /** @taskunit Initialization */
 
 + (Class) layoutClassForLayoutView: (NSView *)layoutView;
-- (id) initWithLayoutView: (NSView *)aView;
+- (id) initWithLayoutView: (NSView *)aView
+       objectGraphContext: (COObjectGraphContext *)aContext;
 
 /** @taskunit Attribute and Type Querying */
 
