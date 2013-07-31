@@ -45,9 +45,12 @@
 
 @synthesize editingContext = _editingContext;
 
-- (id) init
+- (id) initWithObjectGraphContext: (COObjectGraphContext *)aContext
 {
-	SUPERINIT;
+	self = [super initWithObjectGraphContext: aContext];
+	if (self == nil)
+		return nil;
+
 	COSQLiteStore *store = AUTORELEASE([[COSQLiteStore alloc] initWithURL: [NSURL URLWithString: @"~/UIBuilderStore.store"]]);
 	_editingContext = [[COEditingContext alloc] initWithStore: store];
 	_renderer = [self newRenderer];

@@ -29,8 +29,10 @@ ETStyle, ETActionHandler;
 	CGFloat _currentBarElementHeight;
 }
 
+/** @taskunit Initialization */
 + (instancetype) factory;
 + (instancetype) factoryWithObjectGraphContext: (COObjectGraphContext *)aContext;
+- (id) initWithObjectGraphContext: (COObjectGraphContext *)aContext;
 
 /** @taskunit Object Graph Context */
 

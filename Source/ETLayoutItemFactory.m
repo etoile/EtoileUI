@@ -36,14 +36,29 @@
 @implementation ETLayoutItemFactory
 
 static NSMapTable *factorySharedInstances = nil;
+static COObjectGraphContext *defaultObjectGraphContext = nil;
 
 /** <override-never />
-Returns the shared instance that corresponds to the receiver class. */	
+Returns a shared instance that instantiates new items in a transient object 
+graph context.
+
+For each ETLayoutItemFactory subclass, returns a distinct shared instance. 
+The object graph context remains the same accross all these shared instances. */
 + (id) factory
 {
-	return [self factoryWithObjectGraphContext: nil];
+	if (defaultObjectGraphContext == nil)
+	{
+		defaultObjectGraphContext = [COObjectGraphContext new];
+	}
+	return [self factoryWithObjectGraphContext: defaultObjectGraphContext];
 }
 
+/** <override-never />
+Returns a shared instance that instantiates new items in the given object graph 
+context.
+ 
+For each ETLayoutItemFactory subclass and object graph context combination, 
+returns a distinct shared instance. */
 + (id) factoryWithObjectGraphContext: (COObjectGraphContext *)aContext
 {
 	if (factorySharedInstances == nil)
@@ -51,7 +66,7 @@ Returns the shared instance that corresponds to the receiver class. */
 		ASSIGN(factorySharedInstances, [NSMapTable mapTableWithStrongToStrongObjects]);
 	}
 	
-	ETLayoutItemFactory *factory = [factorySharedInstances  objectForKey: self];
+	ETLayoutItemFactory *factory = [factorySharedInstances objectForKey: self];
 	
 	if (factory == nil)
 	{
@@ -65,8 +80,14 @@ Returns the shared instance that corresponds to the receiver class. */
 	return factory;
 }
 
+/** <init />
+Intializes and returns an item factory that instantiates new items in the given 
+object graph context.
+ 
+For a nil context, raises an NSInvalidArgumentException. */
 - (id) initWithObjectGraphContext: (COObjectGraphContext *)aContext
 {
+	NILARG_EXCEPTION_TEST(aContext);
 	SUPERINIT;
 	ASSIGN(_objectGraphContext, aContext);
 	ETStyle *barElementStyle =
@@ -74,6 +95,11 @@ Returns the shared instance that corresponds to the receiver class. */
 	[self setCurrentBarElementStyle: barElementStyle];
 	[self setCurrentBarElementHeight: [self defaultIconAndLabelBarHeight]];
 	return self;
+}
+
+- (id) init
+{
+	return [self initWithObjectGraphContext: nil];
 }
 
 - (void) dealloc
