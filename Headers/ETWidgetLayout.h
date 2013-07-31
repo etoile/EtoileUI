@@ -38,6 +38,11 @@ hierarchy of the layout item tree. */
 	BOOL _isChangingSelection;
 }
 
+/** @taskunit Initialization */
+
++ (Class) layoutClassForLayoutView: (NSView *)layoutView;
+- (id) initWithLayoutView: (NSView *)aView;
+
 /** @taskunit Attribute and Type Querying */
 
 - (BOOL) isWidget;

@@ -21,9 +21,11 @@
 
 @implementation ETFlowLayout
 
-- (id) init
+- (id) initWithObjectGraphContext: (COObjectGraphContext *)aContext
 {
-	SUPERINIT
+	self = [super initWithObjectGraphContext: aContext];
+	if (self == nil)
+		return nil;
 
 	/* Overriden default property values */
 	[self setConstrainedItemSize: DEFAULT_MAX_ITEM_SIZE];

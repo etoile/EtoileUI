@@ -21,9 +21,11 @@
 
 @implementation ETFormLayout
 
-- (id) init
+- (id) initWithObjectGraphContext: (COObjectGraphContext *)aContext
 {
-	SUPERINIT
+	self = [super initWithObjectGraphContext: aContext];
+	if (self == nil)
+		return nil;
 
 	ETLayoutItem *templateItem = [[ETLayoutItemFactory factory] item];;
 	ETBasicItemStyle *formStyle = AUTORELEASE([[ETBasicItemStyle alloc] initWithObjectGraphContext: nil]);

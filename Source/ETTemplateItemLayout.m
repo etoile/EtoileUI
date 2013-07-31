@@ -27,11 +27,6 @@
 
 @implementation ETTemplateItemLayout
 
-- (id) initWithLayoutView: (NSView *)aView
-{
-	return [self init];
-}
-
 /** <init />
 Initializes and return a new template item layout which uses a flow layout as 
 its positional layout. 
@@ -40,10 +35,10 @@ The positional layout item size contraint style is also set to none.
 
 You are responsible to specify a template item and the template keys on the 
 returned instance (usually in a subclass initializer). */ 
-- (id) init
+- (id) initWithObjectGraphContext: (COObjectGraphContext *)aContext
 {
-	self = [super initWithLayoutView: nil];
-	if (nil == self)
+	self = [super initWithObjectGraphContext: aContext];
+	if (self == nil)
 		return nil;
 	
 	[self setPositionalLayout: [ETFlowLayout layoutWithObjectGraphContext: nil]];

@@ -55,7 +55,7 @@
 
 - (void) testInitWithNibLayoutView
 {
-	ETTableLayout *layout = [ETTableLayout layoutWithLayoutView: nil];
+	ETTableLayout *layout = AUTORELEASE([[ETTableLayout alloc] initWithLayoutView: nil]);
 
 	UKNotNil([layout layoutView]);
 	UKObjectKindOf([layout tableView], ETTableView);
@@ -64,7 +64,7 @@
 - (void) testInitWithCustomLayoutView
 {
 	NSScrollView *layoutView = [self scrollingTableView];
-	ETTableLayout *layout = [ETTableLayout layoutWithLayoutView: layoutView];
+	ETTableLayout *layout = AUTORELEASE([[ETTableLayout alloc] initWithLayoutView: layoutView]);
 
 	UKObjectsEqual(layoutView, [layout layoutView]);
 	UKObjectKindOf([layout tableView], ETTableView);

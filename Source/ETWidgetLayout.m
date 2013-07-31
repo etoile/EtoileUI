@@ -11,14 +11,57 @@
 #import <EtoileFoundation/runtime.h>
 #import "ETWidgetLayout.h"
 #import "ETActionHandler.h"
+#import "ETBrowserLayout.h"
 #import "ETLayoutItem.h"
 #import "ETLayoutItem+Scrollable.h"
 #import "ETNibOwner.h"
+#import "ETTableLayout.h"
+#import "ETOutlineLayout.h"
 #import "NSView+Etoile.h"
 #import "ETCompatibility.h"
 
 
 @implementation ETWidgetLayout
+
+/** Returns the layout class to  instantiate in -initWithLayoutView: for the 
+given layout view.
+
+For the view classes listed below, the substitute classes are:
+<deflist>
+<term>NSOutlineView</term><desc>ETOutlineLayout</desc>
+<term>NSTableView</term><desc>ETTableLayout</desc>
+<term>NSBrowserView</term><desc>ETColumnBrowserLayout</desc>
+</deflist> */
++ (Class) layoutClassForLayoutView: (NSView *)layoutView
+{
+	Class layoutClass = nil;
+	NSView *view = layoutView;
+	
+	if ([layoutView isKindOfClass: [NSScrollView class]])
+		view = [(NSScrollView *)layoutView documentView];
+	
+	// NOTE: Outline test must be done before table test, otherwise table 
+	// layout is returned in both cases (NSOutlineView is subclass of 
+	// NSTableView)
+	if ([view isKindOfClass: [NSOutlineView class]])
+	{
+		layoutClass = [ETOutlineLayout class];
+	}
+	else if ([view isKindOfClass: [NSTableView class]])
+	{
+		layoutClass = [ETTableLayout class];
+	}
+	else if ([view isKindOfClass: [NSBrowser class]])
+	{
+		layoutClass = [ETBrowserLayout class];	
+	}
+	else
+	{
+		layoutClass = [ETWidgetLayout class];
+	}
+	
+	return layoutClass;
+}
 
 - (BOOL) loadNibNamed: (NSString *)nibName
 {
@@ -31,11 +74,53 @@
 	return nibLoaded;
 }
 
+/** <init /> 
+Returns a new ETLayout instance when the given view is nil, otherwise returns a 
+concrete subclass instance based on the view type.
+
+e.g. If you pass an NSOutlineView, an ETOutlineLayout instance is returned, the 
+substitution list in -layoutClassForLayoutView:. The instantiation behaves like 
+a class cluster. */
 - (id) initWithLayoutView: (NSView *)aView
 {
-	self = [super initWithLayoutView: aView];
-	if (nil == self) 
+	/* Class cluster initialization */
+	
+	/* ETWidgetLayout itself takes the placeholder object role. By removing the
+	   following if statement, concrete subclass would have the possibility
+	   to override the concrete subclass... No utility right now. */
+	if (aView != nil && [self isMemberOfClass: [ETWidgetLayout class]])
+	{
+		/* Find the concrete layout class to instantiate */
+		Class layoutClass = [[self class] layoutClassForLayoutView: aView];
+		
+		/* Eventually replaces the receiver by a new concrete instance */
+		if (layoutClass != Nil)
+		{
+			if ([self isMemberOfClass: layoutClass] == NO)
+			{
+				NSZone *zone = [self zone];
+				RELEASE(self);
+				self = [[layoutClass allocWithZone: zone] initWithLayoutView: aView];
+			}
+		}
+		else /* No matching layout class */
+		{
+			DESTROY(self);
+		}
+		
+		return self; /* Instance already initialized */
+	}
+
+	/* Concrete instance initialization */
+
+	self = [super initWithObjectGraphContext: nil];
+	if (self == nil)
 		return nil;
+	
+	if (aView != nil)
+	{
+		[self setLayoutView: aView];
+	}
 
 	BOOL usesLayoutViewInNib = (nil == aView && nil != [self nibName]);
 
@@ -46,7 +131,13 @@
 			DESTROY(self);
 		}
 	}
+	
 	return self;
+}
+
+- (id) initWithObjectGraphContext: (COObjectGraphContext *)aContext
+{
+	return [self initWithLayoutView: nil];
 }
 
 - (void) dealloc

@@ -20,23 +20,18 @@
 @implementation ETFreeLayout
 
 /** <init \> Initializes and returns a new layout without constraint on item size
-unlike ETLayout.
-
-The returned object is always an ETFreeLayout object if layoutView is nil. If a
-layout view is passed in parameter, the returned layout can be any ETLayout
-subclasses (see -[ETLayout initWithLayoutView:]). */
-- (id) initWithLayoutView: (NSView *)aView
+unlike ETPositionalLayout.  */
+- (id) initWithObjectGraphContext: (COObjectGraphContext *)aContext
 {
-	self = [super initWithLayoutView: aView];
-	
-	if (self != nil)
-	{
-		[self setAttachedTool: [ETSelectTool tool]];
-		[[self attachedTool] setShouldProduceTranslateActions: YES];
-		[self setItemSizeConstraintStyle: ETSizeConstraintStyleNone];
-		[[self layerItem] setActionHandler: nil];
-		[[self layerItem] setCoverStyle: nil];
-	}
+	self = [super initWithObjectGraphContext: aContext];
+	if (self == nil)
+		return nil;
+
+	[self setAttachedTool: [ETSelectTool tool]];
+	[[self attachedTool] setShouldProduceTranslateActions: YES];
+	[self setItemSizeConstraintStyle: ETSizeConstraintStyleNone];
+	[[self layerItem] setActionHandler: nil];
+	[[self layerItem] setCoverStyle: nil];
 	
 	return self;
 }

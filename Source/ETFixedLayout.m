@@ -16,9 +16,9 @@
 
 @implementation ETFixedLayout
 
-- (id) initWithLayoutView: (NSView *)aView
+- (id) initWithObjectGraphContext: (COObjectGraphContext *)aContext
 {
-	self = [super initWithLayoutView: aView];
+	self = [super initWithObjectGraphContext: aContext];
 	if (self == nil)
 		return nil;
 

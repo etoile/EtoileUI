@@ -195,10 +195,8 @@ Warning: This protocol is very much subject to change. */
 
 /** @taskunit Initialization */
 
-+ (Class) layoutClassForLayoutView: (NSView *)layoutView;
 + (id) layoutWithObjectGraphContext: (COObjectGraphContext *)aContext;
-+ (id) layoutWithLayoutView: (NSView *)view;
-- (id) initWithLayoutView: (NSView *)aView;
+- (id) initWithObjectGraphContext: (COObjectGraphContext *)aContext;
 
 /** @taskunit Copying */
 

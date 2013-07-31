@@ -22,18 +22,12 @@ Returns a new positional layout.
 The returned layout has both vertical and horizontal constraint on item size 
 enabled. The size constraint is set to 256 * 256 px. You can customize item size 
 constraint with -setItemSizeConstraint: and -setConstrainedItemSize:. */
-- (id) init
+- (id) initWithObjectGraphContext: (COObjectGraphContext *)aContext
 {
-	return [self initWithLayoutView: nil];
-}
-
-- (id) initWithLayoutView: (NSView *)aView
-{
-	NSParameterAssert(aView == nil);
-	self = [super initWithLayoutView: aView];
+	self = [super initWithObjectGraphContext: aContext];
 	if (self == nil)
 		return nil;
-	
+
 	_constrainedItemSize = NSMakeSize(256, 256); /* Default max item size */
 	/* By default both width and height must be equal or inferior to related _constrainedItemSize values */
 	_itemSizeConstraintStyle = ETSizeConstraintStyleNone;

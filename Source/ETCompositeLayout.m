@@ -63,8 +63,7 @@
   firstPresentationItem: (ETLayoutItemGroup *)targetItem
 
 {
-	self = [super initWithLayoutView: nil];
-
+	self = [super initWithObjectGraphContext: nil];
 	if (self == nil)
 		return nil;
 
@@ -79,6 +78,11 @@
 	[self setFirstPresentationItem: targetItem];
 
 	return self;
+}
+
+- (id) initWithObjectGraphContext: (COObjectGraphContext *)aContext
+{
+	return [self init];
 }
 
 DEALLOC(DESTROY(_rootItem); DESTROY(_targetItem));

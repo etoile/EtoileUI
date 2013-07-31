@@ -45,7 +45,7 @@ subclasses. */
 
 /** @taskunit Initialization */
 
-- (id) init;
+- (id) initWithObjectGraphContext: (COObjectGraphContext *)aContext;
 
 /** @taskunit Layout Size Control and Feedback */
 

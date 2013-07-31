@@ -15,10 +15,7 @@
 #import "ETTool.h"
 #import "ETLayoutExecutor.h"
 #import "ETLayoutItemGroup.h"
-#import "ETTableLayout.h"
-#import "ETOutlineLayout.h"
 #import "ETPositionalLayout.h"
-#import "ETBrowserLayout.h"
 #import "NSObject+EtoileUI.h"
 #import "NSView+Etoile.h"
 #import "ETCompatibility.h"
@@ -124,102 +121,16 @@ several prototypes might share the same class. */
 /** Returns a new autoreleased instance. */
 + (id) layoutWithObjectGraphContext: (COObjectGraphContext *)aContext
 {
-	return AUTORELEASE([[[self class] alloc] init]);
-}
-
-/** Returns a new autoreleased instance whose class matches the given layout 
-view.
-
-See -initWithLayoutView:. */
-+ (id) layoutWithLayoutView: (NSView *)layoutView
-{
-	return AUTORELEASE([[[self  class] alloc] initWithLayoutView: layoutView]);
-}
-
-/** Returns the layout class to  instantiate in -initWithLayoutView: for the 
-given layout view.
-
-For the view classes listed below, the substitute classes are:
-<deflist>
-<term>NSOutlineView</term><desc>ETOutlineLayout</desc>
-<term>NSTableView</term><desc>ETTableLayout</desc>
-<term>NSBrowserView</term><desc>ETColumnBrowserLayout</desc>
-</deflist> */
-+ (Class) layoutClassForLayoutView: (NSView *)layoutView
-{
-	Class layoutClass = nil;
-	NSView *view = layoutView;
-	
-	if ([layoutView isKindOfClass: [NSScrollView class]])
-		view = [(NSScrollView *)layoutView documentView];
-	
-	// NOTE: Outline test must be done before table test, otherwise table 
-	// layout is returned in both cases (NSOutlineView is subclass of 
-	// NSTableView)
-	if ([view isKindOfClass: [NSOutlineView class]])
-	{
-		layoutClass = [ETOutlineLayout class];
-	}
-	else if ([view isKindOfClass: [NSTableView class]])
-	{
-		layoutClass = [ETTableLayout class];
-	}
-	else if ([view isKindOfClass: [NSBrowser class]])
-	{
-		layoutClass = [ETBrowserLayout class];	
-	}
-	else
-	{
-		layoutClass = [ETLayout class];
-	}
-	
-	return layoutClass;
+	return AUTORELEASE([[[self class] alloc] initWithObjectGraphContext: aContext]);
 }
 
 /** <init /> 
-Returns a new ETLayout instance when the given view is nil, otherwise returns a 
-concrete subclass instance based on the view type.
-
-e.g. If you pass an NSOutlineView, an ETOutlineLayout instance is returned, the 
-substitution list in -layoutClassForLayoutView:. The instantiation behaves like 
-a class cluster.
-
-The returned layout has both vertical and horizontal constraint on item size 
-enabled. The size constraint is set to 256 * 256 px. You can customize item size 
-constraint with -setItemSizeConstraint: and -setConstrainedItemSize:. */
-- (id) initWithLayoutView: (NSView *)aView
+Returns a new ETLayout instance. */
+- (id) initWithObjectGraphContext: (COObjectGraphContext *)aContext
 {
-	SUPERINIT
-	
-	/* Class cluster initialization */
-	
-	/* ETLayout itself takes the placeholder object role. By removing the 
-	   following if statement, concrete subclass would have the possibility
-	   to override the concrete subclass... No utility right now. */
-	if (aView != nil && [self isMemberOfClass: [ETLayout class]])
-	{
-		/* Find the concrete layout class to instantiate */
-		Class layoutClass = [[self class] layoutClassForLayoutView: aView];
-		
-		/* Eventually replaces the receiver by a new concrete instance */
-		if (layoutClass != nil)
-		{
-			if ([self isMemberOfClass: layoutClass] == NO)
-			{
-				NSZone *zone = [self zone];
-				RELEASE(self);
-				self = [[layoutClass allocWithZone: zone] initWithLayoutView: aView];
-			}
-		}
-		else /* No matching layout class */
-		{
-			self = nil;
-		}
-		
-		return self; /* Instance already initialized */
-	}
-  
-	/* Concrete instance initialization */
+	self = [super initWithObjectGraphContext: aContext];
+	if (self == nil)
+		return nil;
 	
 	_layoutContext = nil;
 	delegate = nil;
@@ -232,17 +143,12 @@ constraint with -setItemSizeConstraint: and -setConstrainedItemSize:. */
 	 /* Will ensure -resizeItems:toScaleFactor: isn't called until the scale changes */
 	_previousScaleFactor = 1.0;
 
-	if (aView != nil)
-	{
-		[[self ifResponds] setLayoutView: aView];
-	}
-	
 	return self;
 }
 
 - (id) init
 {
-	return [self initWithLayoutView: nil];
+	return [self initWithObjectGraphContext: nil];
 }
 
 - (void) dealloc

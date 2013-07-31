@@ -22,9 +22,11 @@
 
 /** <init />
 Initializes and returns a new icon layout. */
-- (id) init
+- (id) initWithObjectGraphContext: (COObjectGraphContext *)aContext
 {
-	SUPERINIT
+	self = [super initWithObjectGraphContext: aContext];
+	if (self == nil)
+		return nil;
 	
 	_iconSizeForScaleFactorUnit = NSMakeSize(32, 32);
 	_minIconSize = NSMakeSize(16, 16);

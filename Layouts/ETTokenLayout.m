@@ -29,9 +29,11 @@
 
 /** <init />
 Initializes and returns a new token layout. */
-- (id) init
+- (id) initWithObjectGraphContext: (COObjectGraphContext *)aContext
 {
-	SUPERINIT
+	self = [super initWithObjectGraphContext: aContext];
+	if (self == nil)
+		return nil;
 	
 	_maxTokenWidth = [[self class] defaultMaxTokenWidth];
 

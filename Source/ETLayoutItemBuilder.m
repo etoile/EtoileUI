@@ -169,11 +169,11 @@ returns YES to -[ETWindowItem shouldKeepWindowFrame:].  */
 	return item;
 }
 
+// TODO: Move to ETWidgetLayout
 - (BOOL) canBuildWidgetLayoutWithView: (NSView *)aView
 {
-	return ([[ETLayout layoutClassForLayoutView: aView] isEqual: [ETLayout class]] == NO);
+	return ([[ETWidgetLayout layoutClassForLayoutView: aView] isEqual: [ETWidgetLayout class]] == NO);
 }
-
 
 - (id) renderViews: (NSArray *)views
 {
@@ -258,13 +258,13 @@ of their view hierachy (-subviews returns an empty arrary). */
 }
 
 /** Returns a new layout item group using the layout returned by
--[ETLayout layoutWithLayoutView:]. When no matching layout exists, nil is 
+-[ETWidgetLayout initWithLayoutView:]. When no matching layout exists, nil is 
 returned. */
 - (id) renderWidgetLayoutView: (NSView *)aView
 {
 	NSUInteger initialAutoresizing = (NSUInteger)[aView autoresizingMask];
 	NSRect initialFrame = [aView frame];
-	ETWidgetLayout *layout = [ETLayout layoutWithLayoutView: aView];
+	ETWidgetLayout *layout = AUTORELEASE([[ETWidgetLayout alloc] initWithLayoutView: aView]);
 	if (nil == layout)
 		return nil;
 
