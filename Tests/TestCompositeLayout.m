@@ -60,7 +60,9 @@ DEALLOC(DESTROY(itemFactory); DESTROY(item))
 
 - (ETCompositeLayout *) makeLayout
 {
-	ETLayoutItemGroup *proxy = [ETCompositeLayout defaultPresentationProxyWithFrame: [self proxyFrame]];
+	ETLayoutItemGroup *proxy =
+		[ETCompositeLayout defaultPresentationProxyWithFrame: [self proxyFrame]
+	                                      objectGraphContext: [itemFactory objectGraphContext]];
 	ETLayoutItemGroup *rootItem = [itemFactory itemGroup];
 
 	[rootItem setFlipped: NO]; /* We want to test how -isFlipped is sync */

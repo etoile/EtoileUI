@@ -182,9 +182,10 @@ presentation item. */
 /** Returns a new autoreleased presentation proxy which can be used as the first 
 presentation item. */
 + (id) defaultPresentationProxyWithFrame: (NSRect)aRect
+                      objectGraphContext: (COObjectGraphContext *)aContext
 {
-	ETLayoutItemGroup *presentationProxy = [[ETLayoutItemFactory factory] itemGroupWithFrame: aRect];
-	[presentationProxy setLayout: [ETOutlineLayout layoutWithObjectGraphContext: [presentationProxy objectGraphContext]]];
+	ETLayoutItemGroup *presentationProxy = [[ETLayoutItemFactory factoryWithObjectGraphContext: aContext] itemGroupWithFrame: aRect];
+	[presentationProxy setLayout: [ETOutlineLayout layoutWithObjectGraphContext: aContext]];
 	[presentationProxy setAutoresizingMask: NSViewWidthSizable];
 	return presentationProxy;
 }

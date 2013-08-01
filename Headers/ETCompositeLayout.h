@@ -67,7 +67,8 @@
 	ETLayoutItemGroup *_targetItem; /* a descendent of the root virtual node */
 }
 
-+ (id) defaultPresentationProxyWithFrame: (NSRect)aRect;
++ (id) defaultPresentationProxyWithFrame: (NSRect)aRect
+                      objectGraphContext: (COObjectGraphContext *)aContext;
 
 /* Initialization */
 
