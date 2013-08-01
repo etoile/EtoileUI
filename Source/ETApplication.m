@@ -48,7 +48,7 @@ Returns <em>ET</em>.
  
 Must be overriden to return the right prefix in subclasses, otherwise the 
 application initialization will abort to prevent 
-<code>[[ETAppbuilder] render: ETApp]</code> from returning nil later on.
+<code>[[ETApp builder] render: ETApp]</code> from returning nil later on.
  
 See +[NSObject typePrefix]. */
 + (NSString *) typePrefix
@@ -115,7 +115,7 @@ visible on screen when the launch is finished.
 By default, returns an ETEtoileUIBuilder instance. */
 - (ETLayoutItemBuilder *) builder
 {
-	return [ETEtoileUIBuilder builder];
+	return [ETEtoileUIBuilder builderWithObjectGraphContext: [ETUIObject defaultTransientObjectGraphContext]];
 }
 
 /** Converts the top-level objects of the main Nib into equivalent EtoileUI 
@@ -278,7 +278,7 @@ root item will be made available through -[ETApplication layoutItem]. */
 - (void) _buildLayoutItemTree
 {
 	return;
-	NSArray *items = [(ETLayoutItemBuilder *)[ETEtoileUIBuilder builder] render: self];
+	NSArray *items = [[self builder] render: self];
 	ETAssert(items != nil);
 	ETLayoutItemGroup *itemGroup = [[ETLayoutItemFactory factory] windowGroup];
 

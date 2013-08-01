@@ -9,8 +9,10 @@ the receiver is set as the application's delegate in the nib. */
 {
 	ETLayoutItemFactory *itemFactory = [ETLayoutItemFactory factory];
 	ETLayoutItem *paneItem = nil;
+	ETEtoileUIBuilder *builder =
+		[ETEtoileUIBuilder builderWithObjectGraphContext: [itemFactory objectGraphContext]];
 
-	paneItem = [[ETEtoileUIBuilder builder] renderView: paneView1];
+	paneItem = [builder renderView: paneView1];
 	[paneItem setName: @"Funky"];
 	[paneItem setIcon: [NSImage imageNamed: @"NSApplicationIcon"]];
 	[paneItem setImage: [NSImage imageNamed: @"NSApplicationIcon"]];
@@ -34,8 +36,11 @@ the receiver is set as the application's delegate in the nib. */
 	[paneItem setImage: [NSImage imageNamed: @"NSApplicationIcon"]];
 	[paneItemGroup addItem: paneItem];
 #endif
+	
+	ETPaneLayout *layout =
+		[ETPaneLayout masterDetailLayoutWithObjectGraphContext: [itemFactory objectGraphContext]];
 
-	[paneItemGroup setLayout: [ETPaneLayout masterDetailLayout]];
+	[paneItemGroup setLayout: layout];
 }
 
 - (IBAction) changeLayout: (id)sender
@@ -58,7 +63,7 @@ the receiver is set as the application's delegate in the nib. */
 			layoutClass = [ETTableLayout class];
 			break;
 		case 4:
-			layoutObject = [ETPaneLayout masterDetailLayout];
+			layoutObject = [ETPaneLayout masterDetailLayoutWithObjectGraphContext: nil];
 			break;
 		default:
 			NSLog(@"Unsupported layout or unknown popup menu selection");
@@ -66,7 +71,7 @@ the receiver is set as the application's delegate in the nib. */
 
 	if (layoutObject == nil)
 	{
-		layoutObject = AUTORELEASE([[layoutClass alloc] init]);
+		layoutObject = AUTORELEASE([[layoutClass alloc] initWithObjectGraphContext: nil]);
 	}
 	
 	/*[layoutObject setUsesConstrainedItemSize: YES];

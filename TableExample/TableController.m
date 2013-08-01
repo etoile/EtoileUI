@@ -112,10 +112,12 @@ TableController is set as the application's delegate in the nib.
 What -rebuildMainNib does, is similar to converting the AppKit view hierarchy 
 into a layout item tree with:
 
-ETEtoileUIBuilder *builder = [ETEtoileUIBuilder builder];
+ETLayoutItemFactory *itemFactory = [ETLayoutItemFactory factory];
+ETEtoileUIBuilder *builder = 
+	[ETEtoileUIBuilder builderWithObjectGraphContext: [itemFactory objectGraphContext]];
 NSWindow *window = [outlineView window];
 
-[[ETLayoutItemGroup windowGroup] addItem: [builder render: window]]; */
+[[itemFactory windowGroup] addItem: [builder render: window]]; */
 - (void) applicationWillFinishLaunching: (NSNotification *)notif
 {
 	/* Will turn the nib views and windows into layout item trees */

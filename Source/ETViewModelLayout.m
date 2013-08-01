@@ -75,7 +75,7 @@
 	{
 		NSView *topLevelView = [propertyView superview];
 
-		[self setRootItem: [[ETEtoileUIBuilder builder] renderView: topLevelView]];
+		[self setRootItem: [[ETEtoileUIBuilder builderWithObjectGraphContext: aContext] renderView: topLevelView]];
 
 		// TODO: Remove by using propertyViewItem as outlet
 		ASSIGN(propertyViewItem, [propertyView layoutItem]);

@@ -52,7 +52,8 @@
 	[item02 setSupervisorView: subview02];
 	[item02 addItem: [[ETLayoutItemFactory factory] itemWithView: subview020]];
 
-	ETLayoutItemGroup *rootItem = [[ETEtoileUIBuilder builder] renderView: view];
+	COObjectGraphContext *context = [[ETLayoutItemFactory factory] objectGraphContext];
+	ETLayoutItemGroup *rootItem = [[ETEtoileUIBuilder builderWithObjectGraphContext: context] renderView: view];
 	id itemForSubview0 = [rootItem itemAtIndex: 0];
 	id itemForSubview1 = [rootItem itemAtIndex: 1];
 	id itemForSubview00 = [itemForSubview0 itemAtIndex: 0];

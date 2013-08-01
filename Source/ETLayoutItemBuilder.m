@@ -9,6 +9,7 @@
 #import <EtoileFoundation/Macros.h>
 #import <EtoileFoundation/ETCollection+HOM.h>
 #import <EtoileFoundation/NSObject+DoubleDispatch.h>
+#import <CoreObject/COObjectGraphContext.h>
 #import "ETTemplateItemLayout.h"
 #import "ETLayoutItemBuilder.h"
 #import "ETLayoutItem.h"
@@ -27,17 +28,17 @@
 @implementation ETLayoutItemBuilder
 
 /** Returns a new autoreleased builder. */
-+ (id) builder
++ (id) builderWithObjectGraphContext: (COObjectGraphContext *)aContext
 {
-	return AUTORELEASE([[[self class] alloc] init]);
+	return AUTORELEASE([[[self class] alloc] initWithObjectGraphContext: aContext]);
 }
 
 /** <init />
 Initializes and returns the receiver builder. */
-- (id) init
+- (id) initWithObjectGraphContext: (COObjectGraphContext *)aContext
 {
 	SUPERINIT
-	ASSIGN(itemFactory, [ETLayoutItemFactory factory]);
+	ASSIGN(itemFactory, [ETLayoutItemFactory factoryWithObjectGraphContext: aContext]);
 	return self;
 }
 
@@ -63,9 +64,12 @@ Built method names follows the pattern <em>render</em> + <em>object type</em>. *
 
 @implementation ETEtoileUIBuilder
 
-- (id) init
+- (id) initWithObjectGraphContext: (COObjectGraphContext *)aContext
 {
-	SUPERINIT
+	self = [super initWithObjectGraphContext: aContext];
+	if (self == nil)
+		return nil;
+
 	_allowsWidgetLayout = YES;
 	return self;
 }

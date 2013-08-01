@@ -64,7 +64,8 @@ For example, ETController overrides -didLoadNib in a vein similar to:
 <example>
 - (void) didLoadNib
 {
-	[self rebuildTopLevelObjectsWithBuilder: [ETEtoileUIBuilder builder]];
+	[self rebuildTopLevelObjectsWithBuilder: 
+		[ETEtoileUIBuilder builderWithObjectGraphContext: [self objectGraphContext]]];
 }
 </example>
 

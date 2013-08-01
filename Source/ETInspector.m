@@ -129,7 +129,7 @@
 	// be assigned to self and this item discarded.
 	//id item = [[ETEtoileUIBuilder builder] renderWindow: window];
 	[[[ETLayoutItemFactory factory] windowGroup] addItem: 
-		[[ETEtoileUIBuilder builder] renderWindow: window]];
+		[[ETEtoileUIBuilder builderWithObjectGraphContext: [self objectGraphContext]] renderWindow: window]];
 
 	ASSIGN(masterViewItem, [itemGroupView layoutItem]);
 	ASSIGN(detailViewItem, [propertyView layoutItem]);

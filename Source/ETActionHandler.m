@@ -676,7 +676,8 @@ status, when others request it. */
 - (void) insertRectangle: (id)sender onItem: (ETLayoutItem *)item
 {
 	ETLayoutItemGroup *parent = ([item isGroup] ? (ETLayoutItemGroup *)item : [item parentItem]);
-	ETLayoutItemFactory *itemFactory = [ETLayoutItemFactory factory];
+	ETLayoutItemFactory *itemFactory =
+		[ETLayoutItemFactory factoryWithObjectGraphContext: [item objectGraphContext]];
 
 	[itemFactory setAspectProviderItem: parent];
 	[parent addItem: [itemFactory rectangle]];

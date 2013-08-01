@@ -78,7 +78,7 @@ You can also use it -init to create a controller. See -[ETNibOwner init]. */
 	/* If the controller instantiation is done inside the scope of a -beginRootObject 
 	   and -endRootObject pair in the framework user code, the controller can 
 	   become persistent because the template items use no shared aspects. */
-	ETLayoutItemFactory *itemFactory = [ETLayoutItemFactory factory];
+	ETLayoutItemFactory *itemFactory = [ETLayoutItemFactory factoryWithObjectGraphContext: aContext];
 	ETItemTemplate *objectTemplate = [ETItemTemplate templateWithItem: [itemFactory item]
 	                                                      objectClass: Nil
 	                                               objectGraphContext: aContext];
@@ -309,7 +309,7 @@ etc. to items when a nib is loaded.
 By default, returns an ETEtoileUIBuilder instance. */
 - (ETLayoutItemBuilder *) builder
 {
-	return [ETEtoileUIBuilder builder];
+	return [ETEtoileUIBuilder builderWithObjectGraphContext: [self objectGraphContext]];
 }
 
 /* Observation */

@@ -13,6 +13,7 @@
 #import <Foundation/Foundation.h>
 #import <AppKit/AppKit.h>
 
+@class COObjectGraphContext;
 @class ETLayoutItem, ETLayout, ETLayoutItemFactory;
 
 @interface ETLayoutItemBuilder : NSObject
@@ -20,7 +21,7 @@
 	ETLayoutItemFactory *itemFactory;
 }
 
-+ (id) builder;
++ (id) builderWithObjectGraphContext: (COObjectGraphContext *)aContext;
 
 - (id) render: (id)anObject;
 
