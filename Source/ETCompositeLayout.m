@@ -31,16 +31,12 @@
 
 @implementation ETCompositeLayout
 
-- (id) init
+- (id) initWithRootItem: (ETLayoutItemGroup *)rootItem
+     objectGraphContext: (COObjectGraphContext *)aContext
 {
-	return [self initWithRootItem: AUTORELEASE([[ETLayoutItemGroup alloc] init])
-	        firstPresentationItem: nil];
-}
-
-- (id) initWithRootItem: (ETLayoutItemGroup *)itemGroup
-{
-	return [self initWithRootItem: itemGroup 
-	        firstPresentationItem: [self firstDescendantGroupForItem: itemGroup]];
+	return [self initWithRootItem: rootItem
+	        firstPresentationItem: [self firstDescendantGroupForItem: rootItem]
+	           objectGraphContext: aContext];
 }
 
 - (ETLayoutItemGroup *) firstDescendantGroupForItem: (ETLayoutItemGroup *)itemGroup
@@ -61,9 +57,9 @@
 //- (id) initWithRootItem: (ETLayoutItemGroup *)itemGroup targetIndexPath: (NSIndexPath *)indexPath
 - (id) initWithRootItem: (ETLayoutItemGroup *)rootItem 
   firstPresentationItem: (ETLayoutItemGroup *)targetItem
-
+     objectGraphContext: (COObjectGraphContext *)aContext
 {
-	self = [super initWithObjectGraphContext: nil];
+	self = [super initWithObjectGraphContext: aContext];
 	if (self == nil)
 		return nil;
 
@@ -73,7 +69,7 @@
 	}
 	else
 	{
-		[self setRootItem: [[ETLayoutItemFactory factory] itemGroup]];
+		[self setRootItem: [[ETLayoutItemFactory factoryWithObjectGraphContext: aContext] itemGroup]];
 	}
 	[self setFirstPresentationItem: targetItem];
 
@@ -82,7 +78,9 @@
 
 - (id) initWithObjectGraphContext: (COObjectGraphContext *)aContext
 {
-	return [self init];
+	return [self initWithRootItem: AUTORELEASE([ETLayoutItemGroup new])
+	        firstPresentationItem: nil
+	           objectGraphContext: aContext];
 }
 
 DEALLOC(DESTROY(_rootItem); DESTROY(_targetItem));

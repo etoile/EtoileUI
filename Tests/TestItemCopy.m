@@ -476,7 +476,8 @@ DEALLOC(DESTROY(itemFactory); DESTROY(item); DESTROY(itemGroup))
 {
 	ETLayoutItemGroup *itemGroup1 = [itemFactory itemGroup];
 	ETLayoutItem *item1 = [itemFactory item];
-	ETPaneLayout *layout = [ETPaneLayout masterDetailLayout];
+	ETPaneLayout *layout =
+		[ETPaneLayout masterDetailLayoutWithObjectGraphContext: [itemFactory objectGraphContext]];
 
 	/* We set icons to prevent warnings by -visitedItemProxyForItem: */
 	[[A(item, item1, itemGroup1) mappedCollection] setIcon: [NSImage imageNamed: @"NSApplicationIcon"]];

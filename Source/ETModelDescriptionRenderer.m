@@ -302,7 +302,7 @@ time. For example:
 
 - (ETFormLayout *) defaultFormLayout
 {
-	return [ETFormLayout layoutWithObjectGraphContext: nil];
+	return [ETFormLayout layoutWithObjectGraphContext: [_itemFactory objectGraphContext]];
 }
 
 - (id) prepareEntityLayout: (ETLayout *)aLayout
@@ -433,7 +433,8 @@ See also -setRenderedPropertyNames:. */
 
 - (ETLayout *) groupingLayout
 {
-	ETColumnLayout *layout = [ETColumnLayout layoutWithObjectGraphContext: nil];
+	ETColumnLayout *layout =
+		[ETColumnLayout layoutWithObjectGraphContext: [_itemFactory objectGraphContext]];
 	[layout setUsesAlignmentHint: YES];
 	// TODO: Should use -isContentSizeLayout instead of just YES
 	[layout setIsContentSizeLayout: YES];

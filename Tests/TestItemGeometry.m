@@ -55,7 +55,8 @@
 + (ETDecoratorItem *) itemWithDummySupervisorView
 {
 	ETView *view = AUTORELEASE([[ETView alloc] init]);
-	return AUTORELEASE([[ETDecoratorItem alloc] initWithSupervisorView: view objectGraphContext: nil]);
+	return AUTORELEASE([[ETDecoratorItem alloc]
+		initWithSupervisorView: view objectGraphContext: [ETUIObject defaultTransientObjectGraphContext]]);
 }
 
 @end

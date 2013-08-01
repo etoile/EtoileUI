@@ -58,20 +58,22 @@ DEALLOC(DESTROY(itemFactory); DESTROY(item))
 	return NSMakeRect(0, 0, [item width] / 2, [item height] / 2);
 }
 
-- (ETCompositeLayout *) createLayout
+- (ETCompositeLayout *) makeLayout
 {
 	ETLayoutItemGroup *proxy = [ETCompositeLayout defaultPresentationProxyWithFrame: [self proxyFrame]];
 	ETLayoutItemGroup *rootItem = [itemFactory itemGroup];
 
 	[rootItem setFlipped: NO]; /* We want to test how -isFlipped is sync */
 
-	return AUTORELEASE([[ETCompositeLayout alloc] initWithRootItem: rootItem firstPresentationItem: proxy]);
+	return AUTORELEASE([[ETCompositeLayout alloc] initWithRootItem: rootItem
+	                                         firstPresentationItem: proxy
+	                                            objectGraphContext: [itemFactory objectGraphContext]]);
 }
 
 - (void) testSyncFlipped
 {
 	NSArray *content = A([itemFactory verticalSlider], [itemFactory oval], [itemFactory textField]);
-	ETCompositeLayout *compositeLayout = [self createLayout];
+	ETCompositeLayout *compositeLayout = [self makeLayout];
 	ETLayoutItemGroup *rootItem = [compositeLayout rootItem];
 
 	UKFalse([rootItem isFlipped]);
@@ -91,7 +93,7 @@ DEALLOC(DESTROY(itemFactory); DESTROY(item))
 
 - (void) testSetUpCompositeLayout
 {
-	ETCompositeLayout *layout = [self createLayout];
+	ETCompositeLayout *layout = [self makeLayout];
 	ETLayoutItemGroup *proxyItem = [layout firstPresentationItem];
 	ETTableLayout *proxyLayout = (ETTableLayout *)[proxyItem layout];
 	NSArray *content = A([itemFactory verticalSlider], [itemFactory oval], [itemFactory textField]);
@@ -112,7 +114,7 @@ DEALLOC(DESTROY(itemFactory); DESTROY(item))
 	NSArray *content = A([itemFactory verticalSlider], [itemFactory oval], [itemFactory textField]);
 
 	[item addItems: content];
-	[item setLayout: [self createLayout]];
+	[item setLayout: [self makeLayout]];
 
 	ETLayoutItemGroup *proxyItem = [(id)[item layout] firstPresentationItem];
 	UKObjectsEqual(proxyItem, [item firstItem]);
@@ -127,7 +129,7 @@ DEALLOC(DESTROY(itemFactory); DESTROY(item))
 - (void) testRestoreContextStateWithStaticItemTree
 {
 	NSArray *content = A([itemFactory verticalSlider], [itemFactory oval], [itemFactory textField]);
-	ETCompositeLayout *compositeLayout = [self createLayout];
+	ETCompositeLayout *compositeLayout = [self makeLayout];
 
 	[item addItems: content];
 	[item setLayout: compositeLayout];
@@ -151,7 +153,7 @@ DEALLOC(DESTROY(itemFactory); DESTROY(item))
 {
 	[item setRepresentedObject: [self modelContent]];
 	[item setSource: item];
-	[item setLayout: [self createLayout]];
+	[item setLayout: [self makeLayout]];
 
 	ETLayoutItemGroup *proxyItem = [(id)[item layout] firstPresentationItem];
 	UKObjectsEqual(proxyItem, [item firstItem]);
@@ -165,7 +167,7 @@ DEALLOC(DESTROY(itemFactory); DESTROY(item))
 
 - (void) testRestoreContextStateWithRepresentedObjectProvider
 {
-	ETCompositeLayout *compositeLayout = [self createLayout];
+	ETCompositeLayout *compositeLayout = [self makeLayout];
 
 	[item setRepresentedObject: [self modelContent]];
 	[item setSource: item];
@@ -199,7 +201,7 @@ DEALLOC(DESTROY(itemFactory); DESTROY(item))
 - (void) testPrepareNewContextStateWithSourceProvider
 {
 	[item setSource: self];
-	[item setLayout: [self createLayout]];
+	[item setLayout: [self makeLayout]];
 
 	ETLayoutItemGroup *proxyItem = [(id)[item layout] firstPresentationItem];
 	UKObjectsEqual(proxyItem, [item firstItem]);
@@ -215,7 +217,7 @@ DEALLOC(DESTROY(itemFactory); DESTROY(item))
 
 - (void) testRestoreContextStateWithSourceProvider
 {
-	ETCompositeLayout *compositeLayout = [self createLayout];
+	ETCompositeLayout *compositeLayout = [self makeLayout];
 
 	[item setSource: self];
 	[item setLayout: compositeLayout];
@@ -253,7 +255,7 @@ DEALLOC(DESTROY(itemFactory); DESTROY(item))
 	SUPERINIT
 
 	[[ETLayoutExecutor sharedInstance] removeAllItems];
-	ASSIGN(layout, [ETPaneLayout masterDetailLayout]);
+	ASSIGN(layout, [ETPaneLayout masterDetailLayoutWithObjectGraphContext: [itemFactory objectGraphContext]]);
 	barItem = [layout barItem]; /* layout will retains us */
 
 	return self;	

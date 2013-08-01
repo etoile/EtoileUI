@@ -71,9 +71,11 @@
 
 /* Initialization */
 
-- (id) initWithRootItem: (ETLayoutItemGroup *)itemGroup;
+- (id) initWithRootItem: (ETLayoutItemGroup *)itemGroup
+     objectGraphContext: (COObjectGraphContext *)aContext;
 - (id) initWithRootItem: (ETLayoutItemGroup *)rootItem 
-  firstPresentationItem: (ETLayoutItemGroup *)targetItem;
+  firstPresentationItem: (ETLayoutItemGroup *)targetItem
+     objectGraphContext: (COObjectGraphContext *)aContext;
 
 - (ETLayoutItemGroup *) rootItem;  
 - (void) setRootItem: (ETLayoutItemGroup *)anItem;

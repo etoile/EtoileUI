@@ -811,7 +811,8 @@ context and the tree rooted in -layerItem. */
 	   That's why we check -isLayerItem. */
 	if (_layerItem == nil && [_layoutContext isLayoutItem] && [_layoutContext isLayerItem] == NO)
 	{
-		_layerItem = [[ETLayoutItemGroup alloc] initAsLayerItem];
+		_layerItem = [[ETLayoutItemGroup alloc]
+			initAsLayerItemWithObjectGraphContext: [self objectGraphContext]];
 	}
 
 	/* When the layout context is a composite layout, the positional layout 

@@ -153,7 +153,7 @@ You can override -builder to customize the conversion. */
 	
 	_nibOwner = [[ETNibOwner alloc] initWithNibName: nibName
 	                                         bundle: [NSBundle mainBundle]
-	                             objectGraphContext: nil];
+	                             objectGraphContext: [ETUIObject defaultTransientObjectGraphContext]];
 
 	BOOL nibLoadFailed = (NO == [_nibOwner loadNibWithOwner: ETApp]);
 
@@ -447,7 +447,9 @@ See also -_buildMainMenuIfNeeded. */
 - (IBAction) changeWindowGroupLayout: (id)sender
 {
 	Class layoutClass = [sender representedObject];
-	ETLayout *layout = [layoutClass layoutWithObjectGraphContext: nil];
+	COObjectGraphContext *context = [ETUIObject defaultTransientObjectGraphContext];
+	ETLayout *layout = [layoutClass layoutWithObjectGraphContext: context];
+
 	[[[ETLayoutItemFactory factory] windowGroup] setLayout: layout];
 }
 

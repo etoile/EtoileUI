@@ -167,7 +167,7 @@
 - (void) handleDetachItem: (ETLayoutItem *)item;
 - (void) handleDetachViewOfItem: (ETLayoutItem *)item;
 - (void) didChangeSelection;
-- (id) initAsLayerItem;
+- (id) initAsLayerItemWithObjectGraphContext: (COObjectGraphContext *)aContext;
 - (BOOL) isLayerItem;
 
 /** @taskunit Deprecated */

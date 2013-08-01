@@ -55,8 +55,9 @@
 
 - (void) testInitWithNibLayoutView
 {
-	ETTableLayout *layout =
-		AUTORELEASE([[ETTableLayout alloc] initWithLayoutView: nil objectGraphContext: nil]);
+	COObjectGraphContext *context = [ETUIObject defaultTransientObjectGraphContext];
+	ETTableLayout *layout = AUTORELEASE([[ETTableLayout alloc]
+		initWithLayoutView: nil objectGraphContext: context]);
 
 	UKNotNil([layout layoutView]);
 	UKObjectKindOf([layout tableView], ETTableView);
@@ -65,8 +66,9 @@
 - (void) testInitWithCustomLayoutView
 {
 	NSScrollView *layoutView = [self scrollingTableView];
-	ETTableLayout *layout =
-		AUTORELEASE([[ETTableLayout alloc] initWithLayoutView: layoutView objectGraphContext: nil]);
+	COObjectGraphContext *context = [ETUIObject defaultTransientObjectGraphContext];
+	ETTableLayout *layout = AUTORELEASE([[ETTableLayout alloc]
+		initWithLayoutView: layoutView objectGraphContext: context]);
 
 	UKObjectsEqual(layoutView, [layout layoutView]);
 	UKObjectKindOf([layout tableView], ETTableView);

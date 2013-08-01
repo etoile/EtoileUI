@@ -30,20 +30,31 @@
 
 @implementation ETPaneLayout
 
-/** Returns a new autoreleased pane layout.<br />
-See -initWithBarItem:contentItem:. */
-+ (id) layoutWithBarItem: (ETLayoutItemGroup *)barItem contentItem: (ETLayoutItemGroup *)contentItem
+/** Returns a new autoreleased pane layout.
+
+See -initWithBarItem:contentItem:objectGraphContext:. */
++ (id) layoutWithBarItem: (ETLayoutItemGroup *)barItem
+             contentItem: (ETLayoutItemGroup *)contentItem
+      objectGraphContext: (COObjectGraphContext *)aContext
 {
-	return AUTORELEASE([[[self class] alloc] initWithBarItem: barItem contentItem: contentItem]);
+	return AUTORELEASE([[[self class] alloc] initWithBarItem: barItem
+	                                             contentItem: contentItem
+	                                      objectGraphContext: aContext]);
 }
 
 /** <init />Initializes and returns a new pane layout.
 
 If barItem is nil, a default bar item will be created.
 If contentItem is nil, a default content item will be created. */
-- (id) initWithBarItem: (ETLayoutItemGroup *)barItem contentItem: (ETLayoutItemGroup *)contentItem
+- (id) initWithBarItem: (ETLayoutItemGroup *)barItem
+           contentItem: (ETLayoutItemGroup *)contentItem
+    objectGraphContext: (COObjectGraphContext *)aContext
 {
-	SUPERINIT
+	self = [super initWithRootItem: AUTORELEASE([ETLayoutItemGroup new])
+	         firstPresentationItem: nil
+	            objectGraphContext: aContext];
+	if (self == nil)
+		return nil;
 
 	if (nil != contentItem)
 	{
@@ -51,7 +62,7 @@ If contentItem is nil, a default content item will be created. */
 	}
 	else
 	{
-		[self setContentItem: [[ETLayoutItemFactory factory] itemGroup]];
+		[self setContentItem: [[ETLayoutItemFactory factoryWithObjectGraphContext: aContext] itemGroup]];
 	}
 
 	if (nil != barItem)
@@ -60,10 +71,10 @@ If contentItem is nil, a default content item will be created. */
 	}
 	else
 	{
-		[self setBarItem: [[ETLayoutItemFactory factory] itemGroup]];
+		[self setBarItem: [[ETLayoutItemFactory factoryWithObjectGraphContext: aContext] itemGroup]];
 	}
 	//[_barItem setAutoresizingMask: NSViewWidthSizable];
-	[_barItem setLayout: [ETTableLayout layoutWithObjectGraphContext: [self objectGraphContext]]];
+	[_barItem setLayout: [ETTableLayout layoutWithObjectGraphContext: aContext]];
 	_barPosition = ETPanePositionTop;
 	_barThickness = 140;
 
@@ -73,9 +84,9 @@ If contentItem is nil, a default content item will be created. */
 }
 
 // TODO: Remove and clean the initialization chain in ETCompositeLayout class hierarchy.
-- (id) init
+- (id) initWithObjectGraphContext: (COObjectGraphContext *)aContext
 {
-	return [self initWithBarItem: nil contentItem: nil];
+	return [self initWithBarItem: nil contentItem: nil objectGraphContext: aContext];
 }
 
 - (void) dealloc
@@ -638,14 +649,16 @@ the real items they currently represent. */
 
 @implementation ETMasterContentPaneLayout
 
-- (id) initWithBarItem: (ETLayoutItemGroup *)barItem contentItem: (ETLayoutItemGroup *)contentItem
+- (id) initWithBarItem: (ETLayoutItemGroup *)barItem
+           contentItem: (ETLayoutItemGroup *)contentItem
+    objectGraphContext: (COObjectGraphContext *)aContext
 {
-	self = [super initWithBarItem: barItem contentItem: contentItem];
+	self = [super initWithBarItem: barItem contentItem: contentItem objectGraphContext: aContext];
 	if (nil == self)
 		return nil;
 
-	[barItem setLayout: [ETOutlineLayout layoutWithObjectGraphContext: nil]];
-	[contentItem setLayout: [ETOutlineLayout layoutWithObjectGraphContext: nil]];
+	[barItem setLayout: [ETOutlineLayout layoutWithObjectGraphContext: aContext]];
+	[contentItem setLayout: [ETOutlineLayout layoutWithObjectGraphContext: aContext]];
 
 	return self;
 }
@@ -728,52 +741,52 @@ the real items they currently represent. */
 
 /** Returns a new autoreleased pane selector layout.<br />
 The bar item is the master view and the content item is the detail view. */
-+ (ETPaneLayout *) masterDetailLayout
++ (ETPaneLayout *) masterDetailLayoutWithObjectGraphContext: (COObjectGraphContext *)aContext
 {
-	return [ETMasterDetailPaneLayout layoutWithObjectGraphContext: nil];
+	return [ETMasterDetailPaneLayout layoutWithObjectGraphContext: aContext];
 }
 
 /** Returns a new autoreleased pane selector layout.<br />
 The bar item is the master view and the content item is the content view. */
-+ (ETPaneLayout *) masterContentLayout
++ (ETPaneLayout *) masterContentLayoutWithObjectGraphContext: (COObjectGraphContext *)aContext
 {
-	return [ETMasterContentPaneLayout layoutWithObjectGraphContext: nil];
+	return [ETMasterContentPaneLayout layoutWithObjectGraphContext: aContext];
 }
 
-+ (ETPaneLayout *) slideshowLayout
++ (ETPaneLayout *) slideshowLayoutWithObjectGraphContext: (COObjectGraphContext *)aContext
 {
-	ETPaneLayout *layout = [self layoutWithObjectGraphContext: nil]; // self is ETPaneLayout class here
+	ETPaneLayout *layout = [self layoutWithObjectGraphContext: aContext]; // self is ETPaneLayout class here
 	[layout setBarPosition:	ETPanePositionNone];
 	return layout;
 }
 
-+ (ETPaneLayout *) slideshowLayoutWithNavigationBar
++ (ETPaneLayout *) slideshowLayoutWithNavigationBarWithObjectGraphContext: (COObjectGraphContext *)aContext
 {
-	ETPaneLayout *layout = [self layoutWithObjectGraphContext: nil];
-	[[layout barItem] setLayout: [ETLineLayout layoutWithObjectGraphContext: nil]];
+	ETPaneLayout *layout = [self layoutWithObjectGraphContext: aContext];
+	[[layout barItem] setLayout: [ETLineLayout layoutWithObjectGraphContext: aContext]];
 	[[[layout barItem] layout] setAttachedTool: [ETSelectTool tool]];
 	[[layout barItem] setHasHorizontalScroller: YES];
 	return layout;
 }
 
-+ (ETPaneLayout *) drillDownLayout
++ (ETPaneLayout *) drillDownLayoutWithObjectGraphContext: (COObjectGraphContext *)aContext
 {
-	ETPaneLayout *layout = [self layoutWithObjectGraphContext: nil];
-	[[layout barItem] setLayout: [ETBrowserLayout layoutWithObjectGraphContext: nil]];
+	ETPaneLayout *layout = [self layoutWithObjectGraphContext: aContext];
+	[[layout barItem] setLayout: [ETBrowserLayout layoutWithObjectGraphContext: aContext]];
 	[[[layout barItem] layout] setAttachedTool: [ETSelectTool tool]];
 	[layout setBarPosition: ETPanePositionLeft];
 	return layout;
 }
 
-+ (ETPaneLayout *) paneNavigationLayout
++ (ETPaneLayout *) paneNavigationLayoutWithObjectGraphContext: (COObjectGraphContext *)aContext
 {
-	ETPaneLayout *layout = [self layoutWithObjectGraphContext: nil];
+	ETPaneLayout *layout = [self layoutWithObjectGraphContext: aContext];
 	return layout;
 }
 
-+ (ETPaneLayout *) wizardLayout
++ (ETPaneLayout *) wizardLayoutWithObjectGraphContext: (COObjectGraphContext *)aContext
 {
-	ETPaneLayout *layout = [self layoutWithObjectGraphContext: nil];
+	ETPaneLayout *layout = [self layoutWithObjectGraphContext: aContext];
 	return layout;
 }
 

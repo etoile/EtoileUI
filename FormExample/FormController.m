@@ -40,9 +40,9 @@
 
 @implementation FormController
 
-- (ETFormLayout *) createFormLayout
+- (ETFormLayout *) makeFormLayoutWithObjectGraphContext: (COObjectGraphContext *)aContext
 {
-	ETFormLayout *layout = [ETFormLayout layoutWithObjectGraphContext: nil];
+	ETFormLayout *layout = [ETFormLayout layoutWithObjectGraphContext: aContext];
 	
 	// NOTE: If you want a form organized on a line rather in a stack:
 	// [layout setPositionalLayout: [ETLineLayout layout]];
@@ -83,12 +83,12 @@
 
 	[firstSectionItem addItem: textFieldItem];
 	[firstSectionItem setAutoresizingMask: ETAutoresizingFlexibleWidth];
-	[firstSectionItem setLayout: [self createFormLayout]];
+	[firstSectionItem setLayout: [self makeFormLayoutWithObjectGraphContext: [itemFactory objectGraphContext]]];
 	[firstSectionItem setIdentifier: @"section1"];
 
 	[secondSectionItem addItems: A(sliderItem, buttonItem)];
 	[secondSectionItem setAutoresizingMask: ETAutoresizingFlexibleWidth];
-	[secondSectionItem setLayout: [self createFormLayout]];
+	[secondSectionItem setLayout: [self makeFormLayoutWithObjectGraphContext: [itemFactory objectGraphContext]]];
 	[secondSectionItem setIdentifier: @"section2"];
 
 	[itemGroup addItems: A(firstSectionItem, secondSectionItem)];
@@ -145,7 +145,7 @@
 	//[textFieldItem setAutoresizingMask: NSViewHeightSizable | NSViewWidthSizable];
 
 	[itemGroup setFrame: NSMakeRect(0, 0, 500, 400)];
-	[itemGroup setLayout: [self createFormLayout]];
+	[itemGroup setLayout: [self makeFormLayoutWithObjectGraphContext: [itemFactory objectGraphContext]]];
 
 	[[itemFactory windowGroup] addItem: itemGroup];
 }
@@ -160,7 +160,7 @@
 - (void) showFormGeneratedItemAndAspectEditors
 {
 	ETLayoutItem *layoutEntityItem = [[ETModelDescriptionRenderer renderer]
-		renderObject: [ETTableLayout layoutWithObjectGraphContext: nil]];
+		renderObject: [ETTableLayout layoutWithObjectGraphContext: [[ETLayoutItemFactory factory] objectGraphContext]]];
 	[[[ETLayoutItemFactory factory] windowGroup] addItem: layoutEntityItem];
 	
 	ETLayoutItem *entityItem = [[ETModelDescriptionRenderer renderer] renderObject: layoutEntityItem];

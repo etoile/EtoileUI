@@ -95,10 +95,10 @@ NSString * const ETSourceDidUpdateNotification = @"ETSourceDidUpdateNotification
 You should never need to use this method.
 
 See also -isLayerItem. */
-- (id) initAsLayerItem
+- (id) initAsLayerItemWithObjectGraphContext: (COObjectGraphContext *)aContext
 {
 	_isLayerItem = YES;
-	self = [self initWithView: nil coverStyle: nil actionHandler: nil objectGraphContext: nil];
+	self = [self initWithView: nil coverStyle: nil actionHandler: nil objectGraphContext: aContext];
 	[[self layout] setAutoresizesItems: NO];
 	return self;
 }

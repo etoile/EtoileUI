@@ -63,12 +63,12 @@
 	[self switchDisplayMode: popup];
 }
 
-- (BOOL) loadNibAndPrepareUI
+- (BOOL) loadNibAndPrepareUIWithObjectGraphContext: (COObjectGraphContext *)aContext
 {
 	NSBundle *etoileUIBundle = [NSBundle bundleForClass: [self class]];
 	ETNibOwner *nibOwner = [[ETNibOwner alloc] initWithNibName:  @"ViewModelPrototype" 
 	                                                    bundle: etoileUIBundle
-	                                        objectGraphContext: nil];
+	                                        objectGraphContext: aContext];
 	BOOL nibLoaded = [nibOwner loadNibWithOwner: self];
 
 	if (nibLoaded)
@@ -89,15 +89,16 @@
 
 - (id) initWithRootItem: (ETLayoutItemGroup *)rootItem 
   firstPresentationItem: (ETLayoutItemGroup *)targetItem
+     objectGraphContext: (COObjectGraphContext *)aContext
 
 {
-	self = [super initWithRootItem: rootItem firstPresentationItem: nil];
+	self = [super initWithRootItem: rootItem firstPresentationItem: nil objectGraphContext: aContext];
 	if (self == nil)
 		return nil;
 
 	ASSIGN(_mirrorCache, [NSMapTable mapTableWithStrongToStrongObjects]);
 
-	BOOL nibLoaded = [self loadNibAndPrepareUI];
+	BOOL nibLoaded = [self loadNibAndPrepareUIWithObjectGraphContext: aContext];
 	
 	if (NO == nibLoaded)
 	{

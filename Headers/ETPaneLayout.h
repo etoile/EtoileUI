@@ -37,11 +37,16 @@ typedef enum {
 	BOOL _ensuresContentFillsVisibleArea;
 }
 
-+ (id) layoutWithBarItem: (ETLayoutItemGroup *)barItem contentItem: (ETLayoutItemGroup *)contentItem;
+/** @taskunit Initialization */
 
-- (id) initWithBarItem: (ETLayoutItemGroup *)barItem contentItem: (ETLayoutItemGroup *)contentItem;
++ (id) layoutWithBarItem: (ETLayoutItemGroup *)barItem
+             contentItem: (ETLayoutItemGroup *)contentItem
+      objectGraphContext: (COObjectGraphContext *)aContext;
+- (id) initWithBarItem: (ETLayoutItemGroup *)barItem
+           contentItem: (ETLayoutItemGroup *)contentItem
+    objectGraphContext: (COObjectGraphContext *)aContext;
 
-/* Navigation */
+/** @taskunit Navigation */
 
 - (BOOL) canGoBack;
 - (BOOL) canGoForward;
@@ -52,7 +57,7 @@ typedef enum {
 - (id) forwardItem;
 - (BOOL) goToItem: (ETLayoutItem *)item;
 
-/* Presentation */
+/** @taskunit Presentation */
 
 - (ETPanePosition) barPosition;
 - (void) setBarPosition: (ETPanePosition)position;
@@ -65,7 +70,7 @@ typedef enum {
 - (void) setEnsuresContentFillsVisibleArea: (BOOL)fill;
 - (void) tile;
 
-/* Navigation Behavior */
+/** @taskunit Navigation Behavior */
 
 - (id) beginVisitingItem: (ETLayoutItem *)tabItem;
 - (void) endVisitingItem: (ETLayoutItem *)tabItem;
@@ -76,12 +81,12 @@ typedef enum {
 
 @interface ETPaneLayout (Factory)
 
-+ (ETPaneLayout *) masterDetailLayout;
-+ (ETPaneLayout *) masterContentLayout;
-+ (ETPaneLayout *) slideshowLayout;
-+ (ETPaneLayout *) slideshowLayoutWithNavigationBar;
-+ (ETPaneLayout *) drillDownLayout;
-+ (ETPaneLayout *) paneNavigationLayout;
-+ (ETPaneLayout *) wizardLayout;
++ (ETPaneLayout *) masterDetailLayoutWithObjectGraphContext: (COObjectGraphContext *)aContext;
++ (ETPaneLayout *) masterContentLayoutWithObjectGraphContext: (COObjectGraphContext *)aContext;
++ (ETPaneLayout *) slideshowLayoutWithObjectGraphContext: (COObjectGraphContext *)aContext;
++ (ETPaneLayout *) slideshowLayoutWithNavigationBarWithObjectGraphContext: (COObjectGraphContext *)aContext;
++ (ETPaneLayout *) drillDownLayoutWithObjectGraphContext: (COObjectGraphContext *)aContext;
++ (ETPaneLayout *) paneNavigationLayoutWithObjectGraphContext: (COObjectGraphContext *)aContext;
++ (ETPaneLayout *) wizardLayoutWithObjectGraphContext: (COObjectGraphContext *)aContext;
 
 @end
