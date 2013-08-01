@@ -122,7 +122,8 @@
 - (void) testBasicShapeSerialization
 {
 	NSRect rect = NSMakeRect(50, 20, 400, 300);
-	ETShape *shape = [ETShape rectangleShapeWithRect: rect objectGraphContext: nil];
+	ETShape *shape = [ETShape rectangleShapeWithRect: rect
+								  objectGraphContext: [COObjectGraphContext objectGraphContext]];
 
 	[shape setPathResizeSelector: @selector(resizedPathWithRect:)];
 	[shape setFillColor: [NSColor redColor]];
