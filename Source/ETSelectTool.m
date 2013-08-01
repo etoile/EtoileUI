@@ -834,7 +834,9 @@ the target item. */
 - (IBAction) group: (id)sender
 {
 	ETLayoutItemGroup *targetItem = (ETLayoutItemGroup *)[self targetItem];
-	ETLayoutItemGroup *newGroup = [[ETLayoutItemFactory factory] graphicsGroup];
+	ETLayoutItemFactory *itemFactory =
+		[ETLayoutItemFactory factoryWithObjectGraphContext: [targetItem objectGraphContext]];
+	ETLayoutItemGroup *newGroup = [itemFactory graphicsGroup];
 	NSArray *children = [self selectedItems];
 
 	NSRect unionFrame = ETUnionRectWithObjectsAndSelector(children, @selector(frame));

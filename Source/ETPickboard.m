@@ -197,21 +197,23 @@ If pickObject is an ETPickCollection, returns an ETLayoutItemGroup, otherwise
 returns an ETLayoutItem. */
 - (ETLayoutItem *) pickboardItemWithObject: (id)pickObject metadata: (NSDictionary *)metadata
 {
+	ETLayoutItemFactory *itemFactory =
+		[ETLayoutItemFactory factoryWithObjectGraphContext: [self objectGraphContext]];
 	ETLayoutItem *item = nil;
 
 	if ([pickObject isKindOfClass: [ETPickCollection class]])
 	{
-		item = [[ETLayoutItemFactory factory] itemGroupWithRepresentedObject: pickObject];
+		item = [itemFactory itemGroupWithRepresentedObject: pickObject];
 
 		FOREACHI([pickObject contentArray], pickedElement)
 		{
-			ETLayoutItemGroup *childItem = [[ETLayoutItemFactory factory] itemGroupWithRepresentedObject: pickedElement];
+			ETLayoutItemGroup *childItem = [itemFactory itemGroupWithRepresentedObject: pickedElement];
 			[(ETLayoutItemGroup *)item addItem: childItem];
 		}
 	}
 	else
 	{
-		item = [[ETLayoutItemFactory factory] itemWithRepresentedObject: pickObject];	
+		item = [itemFactory itemWithRepresentedObject: pickObject];
 	}
 
 	[item setValue: metadata 

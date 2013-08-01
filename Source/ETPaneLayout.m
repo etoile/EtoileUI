@@ -575,7 +575,9 @@ By default, returns NO. */
 item that just got selected and moved into the content item. */
 - (ETLayoutItem *) visitedItemProxyWithItem: (ETLayoutItem *)paneItem
 {
-	ETLayoutItem *tabItem = [[ETLayoutItemFactory factory] itemWithRepresentedObject: paneItem];
+	ETLayoutItemFactory *itemFactory =
+		[ETLayoutItemFactory factoryWithObjectGraphContext: [self objectGraphContext]];
+	ETLayoutItem *tabItem = [itemFactory itemWithRepresentedObject: paneItem];
 	NSImage *img = [tabItem valueForProperty: @"icon"];
 
 	if (img == nil)

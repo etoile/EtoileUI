@@ -41,7 +41,7 @@ Initializes and returns a new token layout. */
 	[[self attachedTool] setShouldRemoveItemsAtPickTime: NO];
 	[[self attachedTool] setIgnoresBackgroundClick: NO];
 
-	ETLayoutItem *templateItem = [[ETLayoutItemFactory factory] item];
+	ETLayoutItem *templateItem = [[ETLayoutItemFactory factoryWithObjectGraphContext: aContext] item];
 	ETTokenStyle *tokenStyle = [ETTokenStyle new];
 
 	[self setTemplateItem: templateItem];
