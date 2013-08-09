@@ -13,11 +13,10 @@
 #import "ETLayoutItemFactory.h"
 #import "ETCompatibility.h"
 
-@interface ETPickboard (UnitKitTests) <UKTest>
+@interface ETPickboard (TestPickboard)
 @end
 
-
-@implementation ETPickboard (UnitKitTests)
+@implementation ETPickboard (TestPickboard)
 
 - (id) pushObject: (id)anObject
 {
@@ -29,118 +28,145 @@
 	return [self appendObject: anObject metadata: nil];
 }
 
+@end
+
+@interface TestPickboard : NSObject <UKTest>
+{
+	ETLayoutItemFactory *itemFactory;
+	ETPickboard *pickboard;
+}
+
+@end
+
+@implementation TestPickboard
+
+- (id) init
+{
+	SUPERINIT;
+	itemFactory = [ETLayoutItemFactory factory];
+	pickboard = [[ETPickboard alloc] initWithObjectGraphContext:
+		[ETUIObject defaultTransientObjectGraphContext]];
+	return self;
+}
+
+- (void) dealloc
+{
+	DESTROY(pickboard);
+	[super dealloc];
+}
+
 - (void) testPushObject
 {
 	id string = [NSString string];
 	id array = [NSArray array];
-	id item = [[ETLayoutItemFactory factory] item];
+	id item = [itemFactory item];
 	id pickRef = nil;
 	
-	pickRef = [self pushObject: string];
+	pickRef = [pickboard pushObject: string];
 	UKNotNil(pickRef);
-	UKIntsEqual(1, [self numberOfItems]);
-	UKObjectsSame(string, [[self itemAtIndex: 0] representedObject]);
+	UKIntsEqual(1, [pickboard numberOfItems]);
+	UKObjectsSame(string, [[pickboard itemAtIndex: 0] representedObject]);
 	
-	pickRef = [self pushObject: array];
+	pickRef = [pickboard pushObject: array];
 	UKNotNil(pickRef);
-	UKIntsEqual(2, [self numberOfItems]);
-	UKObjectsSame(array, [[self itemAtIndex: 0] representedObject]);
+	UKIntsEqual(2, [pickboard numberOfItems]);
+	UKObjectsSame(array, [[pickboard itemAtIndex: 0] representedObject]);
 	
-	pickRef = [self pushObject: item];
+	pickRef = [pickboard pushObject: item];
 	UKNotNil(pickRef);
-	UKIntsEqual(3, [self numberOfItems]);
-	UKObjectsNotSame(item, [self itemAtIndex: 0]);
-	UKObjectsSame(item, [[self itemAtIndex: 0] representedObject]);
+	UKIntsEqual(3, [pickboard numberOfItems]);
+	UKObjectsNotSame(item, [pickboard itemAtIndex: 0]);
+	UKObjectsSame(item, [[pickboard itemAtIndex: 0] representedObject]);
 	
-	UKIntsEqual(3, [[self allObjects] count]);
+	UKIntsEqual(3, [[pickboard allObjects] count]);
 }
 
 - (void) testPopObject
 {
 	id string = [NSString string];
 	id array = [NSArray array];
-	id item = [[ETLayoutItemFactory factory] item];
+	id item = [itemFactory item];
 	id pickRef = nil;
 	id object = nil;
 	
-	pickRef = [self pushObject: string];
-	pickRef = [self pushObject: array];
-	pickRef = [self appendObject: item];
+	pickRef = [pickboard pushObject: string];
+	pickRef = [pickboard pushObject: array];
+	pickRef = [pickboard appendObject: item];
 	
-	object = [self popObject];
+	object = [pickboard popObject];
 	UKNotNil(object);
 	UKObjectsSame(array, object);
-	UKIntsEqual(2, [self numberOfItems]);
+	UKIntsEqual(2, [pickboard numberOfItems]);
 
-	object = [self popObject];
+	object = [pickboard popObject];
 	UKNotNil(object);
 	UKObjectsSame(string, object);
-	UKIntsEqual(1, [self numberOfItems]);
+	UKIntsEqual(1, [pickboard numberOfItems]);
 	
-	object = [self popObject];
+	object = [pickboard popObject];
 	UKNotNil(pickRef);
 	UKObjectsSame(item, object);
-	UKIntsEqual(0, [self numberOfItems]);
+	UKIntsEqual(0, [pickboard numberOfItems]);
 	
-	object = [self popObject];
+	object = [pickboard popObject];
 	UKNil(object);
 	
-	UKIntsEqual(0, [[self allObjects] count]);
+	UKIntsEqual(0, [[pickboard allObjects] count]);
 }
 
 - (void) testAddObject
 {
 	id string = [NSString string];
 	id array = [NSArray array];
-	id item = [[ETLayoutItemFactory factory] item];
+	id item = [itemFactory item];
 	id pickRef = nil;
 	
-	pickRef = [self appendObject: string];
+	pickRef = [pickboard appendObject: string];
 	UKNotNil(pickRef);
-	UKIntsEqual(1, [self numberOfItems]);
-	UKObjectsSame(string, [[self itemAtIndex: 0] representedObject]);
+	UKIntsEqual(1, [pickboard numberOfItems]);
+	UKObjectsSame(string, [[pickboard itemAtIndex: 0] representedObject]);
 	
-	pickRef = [self appendObject: array];
+	pickRef = [pickboard appendObject: array];
 	UKNotNil(pickRef);
-	UKIntsEqual(2, [self numberOfItems]);
-	UKObjectsSame(array, [[self itemAtIndex: 1] representedObject]);
+	UKIntsEqual(2, [pickboard numberOfItems]);
+	UKObjectsSame(array, [[pickboard itemAtIndex: 1] representedObject]);
 	
-	pickRef = [self appendObject: item];
+	pickRef = [pickboard appendObject: item];
 	UKNotNil(pickRef);
-	UKIntsEqual(3, [self numberOfItems]);
-	UKObjectsNotSame(item, [self itemAtIndex: 2]);
-	UKObjectsSame(item, [[self itemAtIndex: 2] representedObject]);
+	UKIntsEqual(3, [pickboard numberOfItems]);
+	UKObjectsNotSame(item, [pickboard itemAtIndex: 2]);
+	UKObjectsSame(item, [[pickboard itemAtIndex: 2] representedObject]);
 	
-	UKIntsEqual(3, [[self allObjects] count]);
+	UKIntsEqual(3, [[pickboard allObjects] count]);
 }
 
 - (void) testRemoveObjectForPickboardRef
 {
 	id string = [NSString string];
 	id array = [NSArray array];
-	id item = [[ETLayoutItemFactory factory] item];
+	id item = [itemFactory item];
 	id pickRef1 = nil;
 	id pickRef2 = nil;
 	id pickRef3 = nil;
 	
-	pickRef1 = [self pushObject: string];
-	pickRef2 = [self pushObject: array];
-	pickRef3 = [self appendObject: item];
+	pickRef1 = [pickboard pushObject: string];
+	pickRef2 = [pickboard pushObject: array];
+	pickRef3 = [pickboard appendObject: item];
 	
-	[self removeObjectForPickboardRef: pickRef3];
-	UKFalse([[self allObjects] containsObject: item]);
-	UKIntsEqual(2, [[self allObjects] count]);
-	UKIntsEqual(2, [self numberOfItems]);
+	[pickboard removeObjectForPickboardRef: pickRef3];
+	UKFalse([[pickboard allObjects] containsObject: item]);
+	UKIntsEqual(2, [[pickboard allObjects] count]);
+	UKIntsEqual(2, [pickboard numberOfItems]);
 	
-	[self removeObjectForPickboardRef: pickRef2];
-	UKFalse([[self allObjects] containsObject: array]);
-	UKIntsEqual(1, [[self allObjects] count]);
-	UKIntsEqual(1, [self numberOfItems]);
+	[pickboard removeObjectForPickboardRef: pickRef2];
+	UKFalse([[pickboard allObjects] containsObject: array]);
+	UKIntsEqual(1, [[pickboard allObjects] count]);
+	UKIntsEqual(1, [pickboard numberOfItems]);
 	
-	[self removeObjectForPickboardRef: pickRef1];
-	UKFalse([[self allObjects] containsObject: string]);
-	UKIntsEqual(0, [[self allObjects] count]);
-	UKIntsEqual(0, [self numberOfItems]);
+	[pickboard removeObjectForPickboardRef: pickRef1];
+	UKFalse([[pickboard allObjects] containsObject: string]);
+	UKIntsEqual(0, [[pickboard allObjects] count]);
+	UKIntsEqual(0, [pickboard numberOfItems]);
 }
 
 @end

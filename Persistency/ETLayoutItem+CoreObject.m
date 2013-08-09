@@ -40,31 +40,6 @@
 	}
 }
 
-- (void) becomePersistentInContext: (COPersistentRoot *)aContext
-{
-	if ([self isPersistent])
-		return;
-
-	[super becomePersistentInContext: aContext];
-
-	//[[self representedObject] becomePersistentInContext: aContext];
-
-	// TODO: Leverage the model description rather than hardcoding the aspects
-	// TODO: Implement some strategy to recover in the case these aspects 
-	// are already used as embedded objects in another root object.
-	ETAssert([[self coverStyle] isShared] || [[self coverStyle] isPersistent] == NO || [[self coverStyle] isRoot]);
-	[[self coverStyle] becomePersistentInContext: aContext];
-	ETAssert([[self styleGroup] isPersistent] == NO || [[self styleGroup] isRoot]);
-	[[self styleGroup] becomePersistentInContext: aContext];
-	ETAssert([[self actionHandler] isShared] || [[self actionHandler] isPersistent] == NO || [[self actionHandler] isRoot]);
-	[[self actionHandler] becomePersistentInContext: aContext];
-
-	CODictionary *valueTransformers = [self primitiveValueForKey: @"valueTransformers"];
-
-	ETAssert([valueTransformers isPersistent] == NO || [valueTransformers isRoot]);
-	[valueTransformers becomePersistentInContext: aContext];
-}
-
 #pragma mark UI Persistency
 #pragma mark -
 
@@ -284,28 +259,6 @@ since -serializedValueForProperty: doesn't use the direct ivar access. */
 	}
 
 	return collectedItems;
-}
-
-- (void) becomePersistentInContext: (COPersistentRoot *)aContext
-{
-	if ([self isPersistent])
-		return;
-
-	[super becomePersistentInContext: aContext];
-
-	// TODO: Leverage the model description rather than hardcoding the aspects
-	// TODO: Implement some strategy to recover in the case these items or aspects
-	// are already used as embedded objects in another root object.
-	for (ETLayoutItem *item in _items)
-	{
-		ETAssert([item isPersistent] == NO || [item isRoot]);
-		[item becomePersistentInContext: aContext];
-	}
-	ETAssert([[self controller] isPersistent] == NO || [[self controller] isRoot]);
-	[[self controller] becomePersistentInContext: aContext];
-	// TODO: Move layout to ETLayoutItem once well supported
-	ETAssert([[self layout] isPersistent] == NO || [[self layout] isRoot]);
-	[[self layout] becomePersistentInContext: aContext];
 }
 
 - (void) setSerializedItems: (NSArray *)items

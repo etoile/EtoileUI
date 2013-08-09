@@ -23,7 +23,8 @@ static ETAspectRepository *mainRepo = nil;
 {
 	if (mainRepo == nil)
 	{
-		mainRepo = [[[self class] alloc] initWithName: _(@"Main")];
+		mainRepo = [[[self class] alloc] initWithName: _(@"Main")
+		                           objectGraphContext: [ETUIObject defaultTransientObjectGraphContext]];
 	}
 	return mainRepo;
 }

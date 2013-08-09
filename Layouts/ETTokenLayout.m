@@ -42,7 +42,7 @@ Initializes and returns a new token layout. */
 	[[self attachedTool] setIgnoresBackgroundClick: NO];
 
 	ETLayoutItem *templateItem = [[ETLayoutItemFactory factoryWithObjectGraphContext: aContext] item];
-	ETTokenStyle *tokenStyle = [ETTokenStyle new];
+	ETTokenStyle *tokenStyle = AUTORELEASE([[ETTokenStyle alloc] initWithObjectGraphContext: aContext]);
 
 	[self setTemplateItem: templateItem];
 	[templateItem setCoverStyle: tokenStyle];
@@ -232,9 +232,11 @@ The resizing isn't delegated to the positional layout unlike in ETTemplateItemLa
 	return [NSColor colorWithCalibratedRed: 0.5 green: 0.1 blue: 0.7 alpha: 0.8];
 }
 
-- (id) init
+- (id) initWithObjectGraphContext: (COObjectGraphContext *)aContext
 {
-	SUPERINIT
+	self = [super initWithObjectGraphContext: aContext];
+	if (self == nil)
+		return self;
 
 	ASSIGN(_tintColor, [[self class] defaultTintColor]);
 	[self setSelectedLabelAttributes: [[self class] defaultSelectedLabelAttributes]];

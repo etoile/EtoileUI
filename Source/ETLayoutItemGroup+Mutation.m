@@ -163,12 +163,6 @@ To do so, -canReload checks -isMutating. */
 	[self handleAttachItem: item];
 	/* For ETUndeterminedIndex, will use -addObject: */
 	[_items insertObject: item atIndex: index hint: nil];
-#ifdef COREOBJECT
-	if ([self isPersistent])
-	{
-		[item becomePersistentInContext: [self persistentRoot]];
-	}
-#endif
 	[self didChangeContentWithMoreComing: moreComing];
 
 	[self endCoalescingModelMutation];

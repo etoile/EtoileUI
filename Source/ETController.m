@@ -64,11 +64,11 @@ You can also use it -init to create a controller. See -[ETNibOwner init]. */
 		return nil;
 
 	_observations = [[NSMutableSet alloc] init];
-	_templates = [[CODictionary alloc] init];
+	_templates = [[CODictionary alloc] initWithObjectGraphContext: aContext];
 	ASSIGN(_currentObjectType, kETTemplateObjectType);
 	[self setSortDescriptors: nil];
 	_allowedPickTypes = [[NSArray alloc] init];
-	_allowedDropTypes = [[CODictionary alloc] init];
+	_allowedDropTypes = [[CODictionary alloc] initWithObjectGraphContext: aContext];
 	_editedItems = [[NSMutableArray alloc] init];
 	_editableProperties = [[NSMutableArray alloc] init];
 	_automaticallyRearrangesObjects = YES;
@@ -565,10 +565,6 @@ See -newItemWithURL:ofType:options and ETItemTemplate. */
 - (void) setTemplate: (ETItemTemplate *)aTemplate forType: (ETUTI *)aUTI
 {
 	[_templates setObject: aTemplate forKey: [aUTI stringValue]];
-	if ([self isPersistent])
-	{
-		[aTemplate becomePersistentInContext: [self persistentRoot]];
-	}
 }
 
 /** Returns the object that manages persistency.
@@ -1352,7 +1348,8 @@ registered for -currentObjectType and -currentGroupType. */
 		// NOTE: Must not be instantiated in +initialize otherwise several
 		// ETUIObject subclass instances are initialized before all the model
 		// descriptions are registered.
-		basicTemplateProvider = [[ETController alloc] init];
+		basicTemplateProvider = [[ETController alloc]
+			initWithObjectGraphContext: [ETUIObject defaultTransientObjectGraphContext]];
 	}
 	return basicTemplateProvider;
 }

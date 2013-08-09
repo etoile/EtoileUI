@@ -81,10 +81,10 @@
 	[item setDecoratorItem: scrollableAreaItem];
 
 	mainItem = [itemFactory itemGroupWithItems: A(item)];
-	controller = [ETController new];
+	controller = [[ETController alloc] initWithObjectGraphContext: [itemFactory objectGraphContext]];
 
 	[mainItem setController: controller];
-	[mainItem setActionHandler: AUTORELEASE([ETBipActionHandler new])];
+	[mainItem setActionHandler: [ETBipActionHandler sharedInstanceForObjectGraphContext: [itemFactory objectGraphContext]]];
 	
 	[[itemFactory windowGroup] addItem: mainItem];
 	

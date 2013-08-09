@@ -39,8 +39,7 @@
 	ASSIGN(itemFactory, [ETLayoutItemFactory factory]);
 	/* -[ETLayoutItemGroup windowGroup] instantiates the window group as below but just once. 
 	   To ignore state changes due to previous tests, we allocate a new ETWindowLayer directly. */
-	ASSIGN(windowGroup, [itemFactory windowGroup]);
-	windowGroup = [ETWindowLayer new];
+	windowGroup = [[ETWindowLayer alloc] initWithObjectGraphContext: [itemFactory objectGraphContext]];
 	ASSIGN(itemGroup, [itemFactory itemGroup]);
 	ASSIGN(item, [itemFactory item]);
 	return self;

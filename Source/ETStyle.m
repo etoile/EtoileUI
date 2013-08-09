@@ -93,11 +93,13 @@ Raises an invalid argument exception if aStyle class isn't a subclass of ETStyle
 
 	[stylePrototypes addObject: aStyle];
 
-	ETAspectCategory *category = [[ETAspectRepository mainRepository] aspectCategoryNamed: _(@"Style")];
+	ETAspectRepository *repo = [ETAspectRepository mainRepository];
+	ETAspectCategory *category = [repo aspectCategoryNamed: _(@"Style")];
 
 	if (category == nil)
 	{
-		category = [[ETAspectCategory alloc] initWithName: _(@"Style")];
+		category = [[ETAspectCategory alloc] initWithName: _(@"Style")
+		                               objectGraphContext: [repo objectGraphContext]];
 		[category setIcon: [NSImage imageNamed: @"layer-transparent"]];
 		[[ETAspectRepository mainRepository] addAspectCategory: category];
 	}

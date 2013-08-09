@@ -14,9 +14,4 @@
 @class COEditingContext, COObject;
 
 @interface ETLayout (CoreObject) 
-/**  This method is only exposed to be used internally by EtoileUI.
-
-Makes the receiver persistent by inserting it into the given persistent root as 
-described in -[COObject becomePersistentInContext:]. */
-- (void) becomePersistentInContext: (COPersistentRoot *)aContext;
 @end

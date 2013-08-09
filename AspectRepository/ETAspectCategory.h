@@ -51,9 +51,12 @@ invalid arguments. */
 
 /** @taskunit Initialization */
 
-- (id) initWithName: (NSString *)aName dictionary: (NSDictionary *)aDict;
-- (id) initWithName: (NSString *)aName;
-- (id) init;
+- (id) initWithName: (NSString *)aName
+		 dictionary: (NSDictionary *)aDict
+ objectGraphContext: (COObjectGraphContext *)aContext;
+- (id) initWithName: (NSString *)aName
+ objectGraphContext: (COObjectGraphContext *)aContext;
+- (id) initWithObjectGraphContext: (COObjectGraphContext *)aContext;
 
 /** @taskunit Basic Properties */
 

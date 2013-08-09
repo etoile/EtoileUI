@@ -226,7 +226,8 @@
 
 - (void) testSetLayoutItemWithoutInsertingView
 {
-	id theItem = AUTORELEASE([[ETLayoutItem alloc] init]);
+	id theItem = AUTORELEASE([[ETLayoutItem alloc]
+		initWithObjectGraphContext: [ETUIObject defaultTransientObjectGraphContext]]);
 	
 	[self setItemWithoutInsertingView: theItem];
 	

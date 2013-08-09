@@ -11,6 +11,7 @@
 #import <UnitKit/UnitKit.h>
 #import <EtoileFoundation/Macros.h>
 #import <EtoileFoundation/NSIndexPath+Etoile.h>
+#import <CoreObject/COObjectGraphContext.h>
 #import "ETController.h"
 #import "ETDecoratorItem.h"
 #import "ETGeometry.h"
@@ -48,7 +49,7 @@ static ETLayoutItemFactory *itemFactory = nil;
 
 - (id) initForTest
 {
-	self = [self init];
+	self = [self initWithObjectGraphContext: [ETUIObject defaultTransientObjectGraphContext]];
 	[[ETLayoutExecutor sharedInstance] removeAllItems];
 	itemFactory = [ETLayoutItemFactory factory];
 	return self;
@@ -83,6 +84,7 @@ static ETLayoutItemFactory *itemFactory = nil;
 	   to geometry initialization) */
 	CREATE_AUTORELEASE_POOL(pool);
 	[[ETLayoutExecutor sharedInstance] removeItems: S(item, itemGroup)];
+	[[itemFactory objectGraphContext] rollback];
 	DESTROY(pool);
 
 	UKIntsEqual(1, [item retainCount]);
@@ -101,6 +103,7 @@ static ETLayoutItemFactory *itemFactory = nil;
 	[itemGroup removeItem: item];
 
 	[[ETLayoutExecutor sharedInstance] removeItems: S(item, itemGroup)];
+	[[itemFactory objectGraphContext] rollback];
 	DESTROY(pool);
 
 	UKIntsEqual(1, [item retainCount]);
@@ -198,13 +201,19 @@ static ETLayoutItemFactory *itemFactory = nil;
 /* Verify that a parent item nullifies the weak references to itself on -dealloc. */
 - (void) testDeallocatedParentItem
 {
-	id item = [[ETLayoutItemGroup alloc] init];
-	id item0 = [[ETLayoutItemGroup alloc] init];
-	id item1 = [[ETLayoutItem alloc] init];
+	id item = [[ETLayoutItemGroup alloc]
+		initWithObjectGraphContext: [ETUIObject defaultTransientObjectGraphContext]];
+	id item0 = [[ETLayoutItemGroup alloc]
+		initWithObjectGraphContext: [ETUIObject defaultTransientObjectGraphContext]];
+	id item1 = [[ETLayoutItem alloc]
+		initWithObjectGraphContext: [ETUIObject defaultTransientObjectGraphContext]];
 
+	CREATE_AUTORELEASE_POOL(pool);
 	[item addItems: A(item0, item1)];
 	/* Required to get RELEASE(item) deallocates the item */
 	[[ETLayoutExecutor sharedInstance] removeItem: item];
+	[[item objectGraphContext] rollback];
+	DESTROY(pool);
 
 	RELEASE(item);
 	/* The next tests ensure the parent item was correctly reset to nil, 
@@ -376,7 +385,8 @@ static ETLayoutItemFactory *itemFactory = nil;
 {
 	UKNil([self supervisorView]);
 	
-	ETWindowItem *windowItem = AUTORELEASE([[ETWindowItem alloc] init]);
+	ETWindowItem *windowItem = AUTORELEASE([[ETWindowItem alloc]
+		initWithObjectGraphContext: [self objectGraphContext]]);
 	[self setDecoratorItem: windowItem];
 	
 	UKNotNil([self supervisorView]);
@@ -484,8 +494,10 @@ static ETLayoutItemFactory *itemFactory = nil;
 	[item110 setSelected: YES]; \
 	
 #define DEFINE_BASE_ITEMS_0_11 \
-	[item0 setController: AUTORELEASE([[ETController alloc] init])]; \
-	[item11 setController: AUTORELEASE([[ETController alloc] init])]; \
+	[item0 setController: AUTORELEASE([[ETController alloc] \
+		initWithObjectGraphContext: [itemFactory objectGraphContext]])]; \
+	[item11 setController: AUTORELEASE([[ETController alloc] \
+		initWithObjectGraphContext: [itemFactory objectGraphContext]])]; \
 
 - (void) testDescendantItemsSharingSameBaseItem
 {

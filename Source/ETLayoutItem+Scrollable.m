@@ -236,7 +236,8 @@ The scrollable area role can be embodied by:
 
 - (ETScrollableAreaItem *) createScrollableAreaItem
 {
-	ETScrollableAreaItem *decorator = [[ETScrollableAreaItem alloc] init];
+	ETScrollableAreaItem *decorator = [[ETScrollableAreaItem alloc]
+		initWithObjectGraphContext: [self objectGraphContext]];
 
 	NSParameterAssert([decorator hasVerticalScroller] == NO 
 		&& [decorator hasHorizontalScroller] == NO);

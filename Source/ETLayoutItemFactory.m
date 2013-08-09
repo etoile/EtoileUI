@@ -83,6 +83,7 @@ For a nil context, raises an NSInvalidArgumentException. */
 - (id) initWithObjectGraphContext: (COObjectGraphContext *)aContext
 {
 	NILARG_EXCEPTION_TEST(aContext);
+	INVALIDARG_EXCEPTION_TEST(aContext, [aContext isKindOfClass: [COObjectGraphContext class]]);
 	SUPERINIT;
 	ASSIGN(_objectGraphContext, aContext);
 	ETStyle *barElementStyle =
@@ -1102,7 +1103,8 @@ context or application. */
 {
 	if (windowLayer == nil)
 	{
-		windowLayer = [ETWindowLayer new];
+		windowLayer = [[ETWindowLayer alloc]
+			initWithObjectGraphContext: [ETUIObject defaultTransientObjectGraphContext]];
 		[windowLayer setName: _(@"Windows")];
 	}
 	
@@ -1231,11 +1233,13 @@ See separator related methods in [ETComputedLayout] and subclasses.*/
 + (void) registerAspects
 {
 	ETLayoutItemFactory *factory = [self factory];
-	ETAspectCategory *category = [[ETAspectRepository mainRepository] aspectCategoryNamed: _(@"Items")];
+	ETAspectRepository *repo = [ETAspectRepository mainRepository];
+	ETAspectCategory *category = [repo aspectCategoryNamed: _(@"Items")];
 
 	if (category == nil)
 	{
-		category = [[ETAspectCategory alloc] initWithName: _(@"Items")];
+		category = [[ETAspectCategory alloc] initWithName: _(@"Items")
+		                               objectGraphContext: [repo objectGraphContext]];
 		[category setIcon: [NSImage imageNamed: @"leaf-yellow"]];
 		[[ETAspectRepository mainRepository] addAspectCategory: category];
 	}

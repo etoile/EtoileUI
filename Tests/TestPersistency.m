@@ -19,6 +19,7 @@
 #import <EtoileFoundation/NSObject+Model.h>
 #import <CoreObject/COEditingContext.h>
 #import <CoreObject/COObject.h>
+#import <CoreObject/COObjectGraphContext.h>
 #import <CoreObject/COPersistentRoot.h>
 #import <CoreObject/COSQLiteStore.h>
 #import <CoreObject/COSerialization.h>
@@ -100,6 +101,7 @@
 {
 	DESTROY(ctxt);
 	ctxt = [self createContext];
+	ASSIGN(itemFactory, [ETLayoutItemFactory factoryWithObjectGraphContext: [COObjectGraphContext objectGraphContext]]);
 }
 
 - (void) checkValidityForNewPersistentObject: (COObject *)obj isFault: (BOOL)isFault
@@ -145,7 +147,8 @@
 	[self recreateContext];
 
 	NSRect rect = NSMakeRect(50, 20, 400, 300);
-	ETShape *shape = [ETShape rectangleShapeWithRect: rect objectGraphContext: nil];
+	ETShape *shape = [ETShape rectangleShapeWithRect: rect
+	                              objectGraphContext: [COObjectGraphContext objectGraphContext]];
 	ETUUID *uuid = [[ctxt insertNewPersistentRootWithRootObject: shape] persistentRootUUID];
 
 	UKNotNil(uuid);
@@ -168,7 +171,8 @@
 {
 	[self recreateContext];
 	
-	ETBasicItemStyle *style = [ETBasicItemStyle new];
+	ETBasicItemStyle *style = AUTORELEASE([[ETBasicItemStyle alloc]
+		initWithObjectGraphContext: [COObjectGraphContext objectGraphContext]]);
 	
 	[style setLabelPosition: ETLabelPositionInsideTop];
 	[style setLabelMargin: 5];
@@ -211,7 +215,7 @@
 	ETLayoutItem *item = [itemFactory item];
 
 	[item setFrame: rect];
-	[item setCoverStyle: [ETShape rectangleShapeWithObjectGraphContext: nil]];
+	[item setCoverStyle: [ETShape rectangleShapeWithObjectGraphContext: [itemFactory objectGraphContext]]];
 	[[item coverStyle] setFillColor: [NSColor redColor]];
 
 	return item;
@@ -277,7 +281,8 @@
 
 	ETLayoutItem *item = [self basicItemWithRect: NSMakeRect(10, 10, 50, 50)];
 	ETLayoutItemGroup *itemGroup = [itemFactory itemGroupWithItems: A(item)];
-	ETController *controller = AUTORELEASE([[ETController alloc] init]);
+	ETController *controller = AUTORELEASE([[ETController alloc]
+		initWithObjectGraphContext: [itemFactory objectGraphContext]]);
 
 	[itemGroup setFrame: rect];
 	[itemGroup setShouldMutateRepresentedObject: YES];

@@ -30,6 +30,9 @@
 
 - (id) init
 {
+	// TODO: Remove once ETTool is a COObject subclass
+	COObjectGraphContext *aContext = [ETUIObject defaultTransientObjectGraphContext];
+
 	SUPERINIT
 	[self setCursor: [NSCursor pointingHandCursor]];
 	/* We use the accessors to sync the layout if needed */
@@ -37,8 +40,8 @@
 	[self setAllowsEmptySelection: YES];
 	[self setShouldProduceTranslateActions: NO];
 	_removeItemsAtPickTime = YES;
-	_actionHandlerPrototype = [[ETActionHandler alloc] init];
-	_selectionAreaItem = [[ETSelectionAreaItem alloc] init];
+	_actionHandlerPrototype = [[ETActionHandler alloc] initWithObjectGraphContext: aContext];
+	_selectionAreaItem = [[ETSelectionAreaItem alloc] initWithObjectGraphContext: aContext];
 	return self;
 }
 

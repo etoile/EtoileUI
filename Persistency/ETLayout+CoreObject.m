@@ -25,20 +25,6 @@
 
 @implementation ETLayout (CoreObject)
 
-- (void) becomePersistentInContext: (COPersistentRoot *)aContext
-{
-	if ([self isPersistent])
-		return;
-
-	[super becomePersistentInContext: aContext];
-
-	// TODO: Leverage the model description rather than hardcoding the aspects
-	// TODO: Implement some strategy to recover in the case these aspects 
-	// are already used as embedded objects in another root object. 
-	//ETAssert([[self dropIndicator] isPersistent] == NO || [[self dropIndicator] isRoot]);
-	//[[self dropIndicator] becomePersistentInContext: aContext];
-}
-
 - (NSString *) serializedAttachedTool
 {
 	return NSStringFromClass([[self attachedTool] class]);

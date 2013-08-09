@@ -86,8 +86,8 @@
 	SUPERINIT
 	[[ETLayoutExecutor sharedInstance] removeAllItems];
 	ASSIGN(itemFactory, [ETLayoutItemFactory factory]);
-	item = [[ETLayoutItem alloc] init];
-	itemGroup = [[ETLayoutItemGroup alloc] init];
+	item = [[ETLayoutItem alloc] initWithObjectGraphContext: [itemFactory objectGraphContext]];
+	itemGroup = [[ETLayoutItemGroup alloc] initWithObjectGraphContext: [itemFactory objectGraphContext]];
 	return self;
 }
 
@@ -312,7 +312,7 @@ DEALLOC(DESTROY(itemFactory); DESTROY(item); DESTROY(itemGroup))
 	[itemGroup setDecoratorItem: [ETDecoratorItem itemWithDummySupervisorView]];
 
 	[itemGroup setSource: itemGroup];
-	[itemGroup setController: AUTORELEASE([[ETController alloc] init])];
+	[itemGroup setController: AUTORELEASE([[ETController alloc] initWithObjectGraphContext: [itemFactory objectGraphContext]])];
 	[itemGroup setDelegate: self];
 	[itemGroup setDoubleAction: @selector(boum:)];
 	

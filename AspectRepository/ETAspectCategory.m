@@ -44,9 +44,14 @@ entries.
 
 If the given name is nil, the string value of +anyType is set as the category 
 name. */
-- (id) initWithName: (NSString *)aName dictionary: (NSDictionary *)aDict
+- (id) initWithName: (NSString *)aName
+         dictionary: (NSDictionary *)aDict
+ objectGraphContext: (COObjectGraphContext *)aContext
 {
-	SUPERINIT;
+	self = [super initWithObjectGraphContext: aContext];
+	if (self == nil)
+		return nil;
+
 	if (nil == aDict)
 	{
 		_aspects = [[NSMutableArray alloc] init];
@@ -70,19 +75,19 @@ name. */
 
 /** Initializes and returns a new empty category.
 
-See -initWithName:dictionary:. */
+See -initWithName:dictionary:objectGraphContext:. */
 - (id) initWithName: (NSString *)aName
+ objectGraphContext: (COObjectGraphContext *)aContext
 {
-	return [self initWithName: aName dictionary: nil];
+	return [self initWithName: aName dictionary: nil objectGraphContext: aContext];
 }
-
 
 /** Initializes and returns a new empty category.
 
-See -initWithName:dictionary:. */
-- (id) init
+See -initWithName:dictionary:objectGraphContext:. */
+- (id) initWithObjectGraphContext: (COObjectGraphContext *)aContext
 {
-	return [self initWithName: nil dictionary: nil];
+	return [self initWithName: nil dictionary: nil objectGraphContext: nil];
 }
 
 - (void) dealloc

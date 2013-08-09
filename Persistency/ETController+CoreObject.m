@@ -16,25 +16,6 @@
 
 @implementation ETController (CoreObject)
 
-- (void) becomePersistentInContext: (COPersistentRoot *)aContext
-{
-	if ([self isPersistent])
-		return;
-
-	[super becomePersistentInContext: aContext];
-	
-	// TODO: Leverage the model description rather than hardcoding the aspects
-	// TODO: Implement some strategy to recover in the case these aspects 
-	// are already used as embedded objects in another root object.
-	ETAssert([_templates isPersistent] == NO || [_templates isRoot]);
-	[_templates becomePersistentInContext: aContext];
-	for (ETItemTemplate *template in [_templates objectEnumerator])
-	{
-		ETAssert([template isPersistent] == NO || [template isRoot]);
-		[template becomePersistentInContext: aContext];
-	}
-}
-
 - (NSString *) serializedCurrentObjectType
 {
 	return [_currentObjectType stringValue];
@@ -74,20 +55,6 @@
 @end
 
 @implementation ETItemTemplate (CoreObject)
-
-- (void) becomePersistentInContext: (COPersistentRoot *)aContext
-{
-	if ([self isPersistent])
-		return;
-	
-	[super becomePersistentInContext: aContext];
-	
-	// TODO: Leverage the model description rather than hardcoding the aspects
-	// TODO: Implement some strategy to recover in the case these aspects
-	// are already used as embedded objects in another root object.
-	ETAssert([[self item] isPersistent] == NO || [[self item] isRoot]);
-	[[self item] becomePersistentInContext: aContext];
-}
 
 - (NSString *) serializedObjectClass
 {

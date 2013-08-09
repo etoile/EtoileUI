@@ -101,7 +101,7 @@
 	[[ETLayoutExecutor sharedInstance] removeAllItems];
 	ASSIGN(itemFactory, [ETLayoutItemFactory factory]);
 	ASSIGN(content, [itemFactory itemGroup]);
-	controller = [[ETController alloc] init];
+	controller = [[ETController alloc] initWithObjectGraphContext: [itemFactory objectGraphContext]];
 
 	[content setController: controller];
 

@@ -50,7 +50,9 @@ If contentItem is nil, a default content item will be created. */
            contentItem: (ETLayoutItemGroup *)contentItem
     objectGraphContext: (COObjectGraphContext *)aContext
 {
-	self = [super initWithRootItem: AUTORELEASE([ETLayoutItemGroup new])
+	ETLayoutItemFactory *itemFactory = [ETLayoutItemFactory factoryWithObjectGraphContext: aContext];
+
+	self = [super initWithRootItem: [itemFactory itemGroup]
 	         firstPresentationItem: nil
 	            objectGraphContext: aContext];
 	if (self == nil)
@@ -62,7 +64,7 @@ If contentItem is nil, a default content item will be created. */
 	}
 	else
 	{
-		[self setContentItem: [[ETLayoutItemFactory factoryWithObjectGraphContext: aContext] itemGroup]];
+		[self setContentItem: [itemFactory itemGroup]];
 	}
 
 	if (nil != barItem)
@@ -71,7 +73,7 @@ If contentItem is nil, a default content item will be created. */
 	}
 	else
 	{
-		[self setBarItem: [[ETLayoutItemFactory factoryWithObjectGraphContext: aContext] itemGroup]];
+		[self setBarItem: [itemFactory itemGroup]];
 	}
 	//[_barItem setAutoresizingMask: NSViewWidthSizable];
 	[_barItem setLayout: [ETTableLayout layoutWithObjectGraphContext: aContext]];

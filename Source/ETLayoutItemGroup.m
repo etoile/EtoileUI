@@ -663,10 +663,6 @@ See also -setSource:, -isBaseItem and -nextResponder. */
 	[self setPrimitiveValue: aController forKey: kETControllerProperty];
 	[aController setContent: self];
 
-	if ([self isPersistent])
-	{
-		[aController becomePersistentInContext: [self persistentRoot]];
-	}
 	[self didChangeValueForProperty: kETControllerProperty];
 }
 
@@ -962,11 +958,6 @@ Marks the receiver as needing a layout update. */
 	[self assignLayout: layout];
 	[self didChangeLayout: oldLayout];
 	RELEASE(oldLayout);
-	if ([self isPersistent])
-	{
-		[layout becomePersistentInContext: [self persistentRoot]];
-	}
-
 	[self setNeedsLayoutUpdate];
 
 	[self didChangeValueForProperty: kETLayoutProperty];

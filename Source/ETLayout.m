@@ -90,11 +90,13 @@ Raises an invalid argument exception if aLayout class isn't a subclass of ETLayo
 
 	[layoutPrototypes addObject: aLayout];
 
-	ETAspectCategory *category = [[ETAspectRepository mainRepository] aspectCategoryNamed: _(@"Layout")];
+	ETAspectRepository *repo = [ETAspectRepository mainRepository];
+	ETAspectCategory *category = [repo aspectCategoryNamed: _(@"Layout")];
 
 	if (category == nil)
 	{
-		category = [[ETAspectCategory alloc] initWithName: _(@"Layout")];
+		category = [[ETAspectCategory alloc] initWithName: _(@"Layout")
+									   objectGraphContext: [repo objectGraphContext]];
 		[category setIcon: [NSImage imageNamed: @"layout-design"]];
 		[[ETAspectRepository mainRepository] addAspectCategory: category];
 	}
