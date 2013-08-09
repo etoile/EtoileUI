@@ -249,8 +249,8 @@
 	ETUUID *uuid = [[ctxt insertNewPersistentRootWithRootObject: item] persistentRootUUID];
 
 	UKNotNil(uuid);
-	UKObjectsEqual(itemAndAspects, [[item persistentRoot] insertedObjects]);
-	UKTrue([[[item persistentRoot] updatedObjects] isEmpty]);
+	UKObjectsEqual(itemAndAspects, [[item objectGraphContext] insertedObjects]);
+	UKTrue([[[item objectGraphContext] updatedObjects] isEmpty]);
 	UKFalse([[itemFactory windowGroup] isPersistent]);
 
 	[self checkValidityForNewPersistentObject: item isFault: NO];

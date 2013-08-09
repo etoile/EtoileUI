@@ -84,7 +84,7 @@ static ETLayoutItemFactory *itemFactory = nil;
 	   to geometry initialization) */
 	CREATE_AUTORELEASE_POOL(pool);
 	[[ETLayoutExecutor sharedInstance] removeItems: S(item, itemGroup)];
-	[[itemFactory objectGraphContext] rollback];
+	[[itemFactory objectGraphContext] discardAllChanges];
 	DESTROY(pool);
 
 	UKIntsEqual(1, [item retainCount]);
@@ -103,7 +103,7 @@ static ETLayoutItemFactory *itemFactory = nil;
 	[itemGroup removeItem: item];
 
 	[[ETLayoutExecutor sharedInstance] removeItems: S(item, itemGroup)];
-	[[itemFactory objectGraphContext] rollback];
+	[[itemFactory objectGraphContext] discardAllChanges];
 	DESTROY(pool);
 
 	UKIntsEqual(1, [item retainCount]);
@@ -212,7 +212,7 @@ static ETLayoutItemFactory *itemFactory = nil;
 	[item addItems: A(item0, item1)];
 	/* Required to get RELEASE(item) deallocates the item */
 	[[ETLayoutExecutor sharedInstance] removeItem: item];
-	[[item objectGraphContext] rollback];
+	[[item objectGraphContext] discardAllChanges];
 	DESTROY(pool);
 
 	RELEASE(item);

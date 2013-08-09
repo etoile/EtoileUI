@@ -10,7 +10,7 @@
 #import <AppKit/AppKit.h>
 #import <UnitKit/UnitKit.h>
 #import <EtoileFoundation/Macros.h>
-#import <CoreObject/COObjectGraphContext.h>>
+#import <CoreObject/COObjectGraphContext.h>
 #import "ETDecoratorItem.h"
 #import "ETGeometry.h"
 #import "ETLayoutItem.h"
@@ -73,7 +73,7 @@
 	CREATE_AUTORELEASE_POOL(pool);
 	[item setDecoratorItem: decorator];
 	[item setDecoratorItem: nil];
-	[[itemFactory objectGraphContext] rollback];
+	[[itemFactory objectGraphContext] discardAllChanges];
 	DESTROY(pool);
 	
 	UKIntsEqual(1, [decorator retainCount]);
