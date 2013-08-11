@@ -695,7 +695,7 @@ See also ETItemTemplate. */
 	{
 		if (counter > 0)
 		{
-			uniqueKey = [NSString stringWithFormat: @"%@ %lu", key, counter];
+			uniqueKey = [NSString stringWithFormat: @"%@ %lu", key, (unsigned long)counter];
 		}
 		// TODO: Remove the content call once -objectForKey: is included in ETKeyedCollection
 		isUsed = ([[aCollection content] objectForKey: uniqueKey] != nil);
