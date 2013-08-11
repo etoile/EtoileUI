@@ -41,20 +41,3 @@ When a compound document is collected, its subtree is not visited.<br />
 The receiver is not included in the returned set. */
 - (NSSet *) descendantCompoundDocuments;
 @end
-
-@interface ETLayoutItemFactory (CoreObject) 
-/** Creates a compound document in the current editing context.
-
-See +[ETLayoutItemGroup compoundDocumentWithEditingContext:] and 
-+[COEditingContext currentContext]. */
-- (ETLayoutItemGroup *) compoundDocument;
-/** Creates a compound document in the given editing context.
-
-A compound document is ETLayoutItemGroup instance bound to a ETCompoundDocument 
-entity description, inserted inside a COEditingContext and marked as a root 
-object.
-
-When added to a compound document, any descendant item and its subtree become 
-embedded core objects. */
-- (ETLayoutItemGroup *) compoundDocumentWithEditingContext: (COEditingContext *)aCtxt;
-@end
