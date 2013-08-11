@@ -29,7 +29,10 @@ application bundle, the specified class will be instantiated at launch time and
 sets as the application delegate. As an NSApplication-subclass delegate, it will 
 receive -applicationWillFinishLaunching: and any subsequent notifications. This 
 is available as a simple conveniency, when you don't want to rely on a main nib 
-file or write a custom main() function.
+file or write a custom main() function.<br />
+For initializing the principal controller, ETApplication tries to use 
+-initWithObjectGraphContext: and +[ETUIObject defaultTransientObjectGraphContext], 
+or -init if the former initializer is not supported.
 
 ETApplication manages the main Nib top-level objects and will release them when 
 the application is terminated.

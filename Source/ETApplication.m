@@ -262,8 +262,19 @@ The main controller is never released. */
 			className);
 		return;
 	}
+	
+	id delegate = [delegateClass alloc];
 
-	[self setDelegate: [[delegateClass alloc] init]];
+	if ([delegate respondsToSelector: @selector(initWithObjectGraphContext:)])
+	{
+		delegate = [delegate initWithObjectGraphContext:
+			[ETUIObject defaultTransientObjectGraphContext]];
+	}
+	else
+	{
+		delegate = [delegate init];
+	}
+	[self setDelegate: delegate];
 }
 
 /** Generates a single layout item tree for the whole application, by mapping
