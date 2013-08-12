@@ -15,6 +15,7 @@
 #import <EtoileFoundation/NSObject+Model.h>
 #import <EtoileFoundation/NSObject+HOM.h>
 #import <CoreObject/COObjectGraphContext.h>
+#import <CoreObject/NSObject+CoreObject.h>
 #import "ETItemTemplate.h"
 #import "ETLayoutItem.h"
 #import "ETLayoutItemGroup.h"
@@ -397,12 +398,29 @@ NSString * const kETTemplateOptionParentRepresentedObject = @"kETTemplateOptionP
 #ifdef COREOBJECT
 @implementation COObject (ETItemTemplate)
 
+- (COObjectGraphContext *) objectGraphContextForPersistentObjectContext: (id <COPersistentObjectContext>)context
+{
+	if ([context isEditingContext])
+	{
+		return [COObjectGraphContext objectGraphContext];
+	}
+	else if ([context isObjectGraphContext])
+	{
+		return [COObjectGraphContext objectGraphContext];
+	}
+	else if ([context respondsToSelector: @selector(objectGraphContext)])
+	{
+		return [(id)context objectGraphContext];
+	}
+	else
+	{
+		ETAssertUnreachable();
+	}
+	return nil;
+}
+
 - (id) initWithURL: (NSURL *)aURL options: (NSDictionary *)options
 {
-	self = [self initWithObjectGraphContext: nil];
-	if (self == nil)
-		return nil;
-
 	id <COPersistentObjectContext> context =
 		[options objectForKey: kETTemplateOptionPersistentObjectContext];
 	
@@ -411,17 +429,17 @@ NSString * const kETTemplateOptionParentRepresentedObject = @"kETTemplateOptionP
 		DESTROY(self);
 		return nil;
 	}
-	
-	BOOL isEditingContext =
-		[context respondsToSelector: @selector(insertNewPersistentRootWithRootObject:)];
-	
-	if (isEditingContext)
+
+	COObjectGraphContext *objectGraphContext =
+		[self objectGraphContextForPersistentObjectContext: context];
+
+	self = [self initWithObjectGraphContext: objectGraphContext];
+	if (self == nil)
+		return nil;
+
+	if ([context isEditingContext])
 	{
 		[(COEditingContext *)context insertNewPersistentRootWithRootObject: self];
-	}
-	else
-	{
-		[self becomePersistentInContext: (COPersistentRoot *)context];
 	}
 	return self;
 }
