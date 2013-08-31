@@ -94,6 +94,7 @@
 
 @end
 
+#if 0
 @implementation COTrackNode (EtoileUI)
 
 - (NSImage *) icon
@@ -102,7 +103,7 @@
 }
 
 @end
-
+#endif
 
 @implementation ETLayoutItemFactory (CoreObjectUI)
 
