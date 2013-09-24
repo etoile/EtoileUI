@@ -14,6 +14,8 @@
 #import <CoreObject/COObject.h>
 #import <CoreObject/COGroup.h>
 #import <CoreObject/COLibrary.h>
+#import <CoreObject/COPersistentRoot.h>
+#import <CoreObject/CORevision.h>
 #import <CoreObject/COTag.h>
 #import <CoreObject/COTrack.h>
 #import <IconKit/IconKit.h>
@@ -94,16 +96,23 @@
 
 @end
 
-#if 0
-@implementation COTrackNode (EtoileUI)
+@implementation CORevision (EtoileUI)
+
+- (COBranch *) branch
+{
+	COPersistentRoot *persistentRoot =
+		[[self editingContext] persistentRootForUUID: [self persistentRootUUID]];
+
+	return [persistentRoot branchForUUID: [self branchUUID]];
+}
 
 - (NSImage *) icon
 {
-	return ([self isEqual: [[self track] currentNode]] ? [NSImage imageNamed: @"status"] : nil);
+	return ([self isEqual: [[self branch] currentNode]] ? [NSImage imageNamed: @"status"] : nil);
 }
 
 @end
-#endif
+
 
 @implementation ETLayoutItemFactory (CoreObjectUI)
 
