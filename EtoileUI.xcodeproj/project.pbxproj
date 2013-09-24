@@ -687,20 +687,6 @@
 			remoteGlobalIDString = 60EF8E9C0C5E4D0600C97C41;
 			remoteInfo = EtoileUI;
 		};
-		60B83279164A5FF60083A192 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 6084048815415CB2002F91A1 /* CoreObject.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = 60988F15163B6B7A009C4F21;
-			remoteInfo = SQLClient;
-		};
-		60B8327B164A5FF60083A192 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 6084048815415CB2002F91A1 /* CoreObject.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = 6019B880163BFD8400D1986F;
-			remoteInfo = Performance;
-		};
 		60BB0008100A32BC001B2F37 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 29B97313FDCFA39411CA2CEA /* Project object */;
@@ -1696,8 +1682,6 @@
 			isa = PBXGroup;
 			children = (
 				6084048F15415CB2002F91A1 /* CoreObject.framework */,
-				60B8327A164A5FF60083A192 /* SQLClient.framework */,
-				60B8327C164A5FF60083A192 /* Performance.framework */,
 				6084049115415CB2002F91A1 /* Test */,
 				6084049315415CB2002F91A1 /* StoreTest */,
 				60C2100E16755264002E03AE /* BasicPersistence */,
@@ -2524,20 +2508,6 @@
 			fileType = "compiled.mach-o.executable";
 			path = StoreTest;
 			remoteRef = 6084049215415CB2002F91A1 /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-		60B8327A164A5FF60083A192 /* SQLClient.framework */ = {
-			isa = PBXReferenceProxy;
-			fileType = wrapper.framework;
-			path = SQLClient.framework;
-			remoteRef = 60B83279164A5FF60083A192 /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-		60B8327C164A5FF60083A192 /* Performance.framework */ = {
-			isa = PBXReferenceProxy;
-			fileType = wrapper.framework;
-			path = Performance.framework;
-			remoteRef = 60B8327B164A5FF60083A192 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
 		60C2100E16755264002E03AE /* BasicPersistence */ = {

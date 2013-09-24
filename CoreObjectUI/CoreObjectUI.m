@@ -171,8 +171,7 @@
 	ETOutlineLayout *layout = [ETOutlineLayout layoutWithObjectGraphContext: [self objectGraphContext]];
 
 	[layout setContentFont: [NSFont controlContentFontOfSize: [NSFont smallSystemFontSize]]];
-	[layout setDisplayedProperties: A(@"icon", @"revisionNumber", @"UUID", @"type", 
-		@"shortDescription", @"date", @"objectUUID", @"properties")];
+	[layout setDisplayedProperties: A(@"icon", @"UUID", @"type", @"shortDescription", @"date")];
 	[layout setDisplayName: @"Revision Number" forProperty: @"revisionNumber"];
 	[layout setDisplayName: @"Revision UUID" forProperty: @"UUID"];
 	[layout setDisplayName: @"Date" forProperty: @"date"];
@@ -199,7 +198,7 @@
 
 - (NSString *) trackTitleForRepresentedObject: (id)trackOrRevs
 {
-	if ([trackOrRevs isTrack])
+	if ([trackOrRevs conformsToProtocol: @protocol(COTrack)])
 	{
 		return [NSString stringWithFormat: _(@"%@ History"),[trackOrRevs displayName]];
 	}
@@ -213,7 +212,7 @@
                                                       title: (NSString *)aTitle
 {
 	/* We set the controller on the track view so it can access the track nodes */
-	ETController *controller = AUTORELEASE([[ETHistoryBrowserController alloc] init]);
+	ETController *controller = AUTORELEASE([[ETHistoryBrowserController alloc] initWithObjectGraphContext: [ETUIObject defaultTransientObjectGraphContext]]);
 	ETLayoutItemGroup *topBar = [self historyBrowserTopBarWithController: controller];
 	ETLayoutItemGroup *trackView = [self historyBrowserTrackViewWithRepresentedObject: trackOrRevs controller: controller];
 	ETLayoutItemGroup *browser = [self itemGroupWithItems: A(topBar, trackView)];
@@ -243,9 +242,9 @@
 
 - (IBAction) selectiveUndo: (id)sender
 {
-	COTrack *track = [[self content] representedObject];
+	id <COTrack> track = [[self content] representedObject];
 
-	for (COTrackNode *node in [self selectedTrackNodes])
+	for (id <COTrackNode> node in [self selectedTrackNodes])
 	{
 		[track undoNode: node];
 	}
@@ -253,20 +252,20 @@
 
 - (IBAction) moveBackTo: (id)sender
 {
-	COTrack *track = [[self content] representedObject];
-	[track undo];
+	id <COTrack> track = [[self content] representedObject];
+	// FIXME: [track undo];
 }
 
 - (IBAction) moveForwardTo: (id)sender
 {
-	COTrack *track = [[self content] representedObject];
-	[track redo];
+	id <COTrack> track = [[self content] representedObject];
+	// FIXME: [track redo];
 }
 
 - (IBAction) restoreTo: (id)sender
 {
-	COTrack *track = [[self content] representedObject];
-	COTrackNode *node = [[[[self content] selectedItems] firstObject] representedObject];
+	id <COTrack> track = [[self content] representedObject];
+	id <COTrackNode> node = [[[[self content] selectedItems] firstObject] representedObject];
 
 	if (node == nil)
 		return;
