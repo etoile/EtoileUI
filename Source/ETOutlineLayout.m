@@ -521,4 +521,17 @@ in a similar way. */
 	return (cell != nil ? cell : [super preparedCellAtColumn: column row: row]);
 }
 
+- (void) textDidEndEditing:(NSNotification *)aNotification
+{
+	/* Memorize the edited item since -textDidEndEditing: resets edited row and column */
+	ETLayoutItem *editedItem = [[self layoutOwner] editedItem];
+	NSString *editedProperty = [[self layoutOwner] editedProperty];
+
+	/* Will update the data source before we call -subjectDidEndEditingForProperty: */
+	[super textDidEndEditing: aNotification];
+
+	[[self layoutOwner] controlTextDidEndEditingForItem: editedItem
+	                                           property: editedProperty];
+}
+
 @end

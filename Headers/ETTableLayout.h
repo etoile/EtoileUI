@@ -84,6 +84,10 @@ descriptor bound to the widget table column will be used (and eventually created
 - (void) setBackendDragEvent: (NSEvent *)event;
 - (NSImage *) dragImage;
 - (NSCell *) preparedCellAtColumn: (NSInteger)column row: (NSInteger)row;
+- (ETLayoutItem *) editedItem;
+- (NSString *) editedProperty;
+- (void) controlTextDidEndEditingForItem: (ETLayoutItem *)editedItem
+                                property: (NSString *)editedProperty;
 
 @end
 

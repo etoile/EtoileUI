@@ -622,20 +622,27 @@ See [(ETColumnFragment)] protocol to customize the returned column. */
 
 - (void) controlTextDidBeginEditing: (NSNotification *)aNotification
 {
+	ETAssert([self editedItem] != nil);
 	[[self editedItem] setEditing: YES];
 	[[self editedItem] subjectDidBeginEditingForProperty: [self editedProperty]
 	                                     fieldEditorItem: nil];
 }
 
-- (void) controlTextDidEndEditing:(NSNotification *)aNotification
+// NOTE: Implementing -controlTextDidEndEditing: in ETTableLayout doesn't work,
+// because -[NSTableView textDidEndEditing:] tells the delegate before calling
+// -tableView:setObjectValue:forTableColumn:row:.
+- (void) controlTextDidEndEditingForItem: (ETLayoutItem *)editedItem
+                                property: (NSString *)editedProperty
 {
+	ETAssert(editedItem != nil);
+
 	/* If the user hasn't typed anything, just ignore the notification.
 	   See -[ETLayoutItem controlTextDidEndEditing:]. */
-	if ([[self editedItem] isEditing] == NO)
+	if ([editedItem isEditing] == NO)
 		return;
 
-	[[self editedItem] subjectDidEndEditingForProperty: [self editedProperty]];
-	[[self editedItem] setEditing: NO];
+	[editedItem subjectDidEndEditingForProperty: editedProperty];
+	[editedItem setEditing: NO];
 }
 
 /* Cocoa seems to contradict the documentation of -[NSTableView setDoubleAction:] 
@@ -1179,6 +1186,19 @@ Returns the cell to be used at the given column and row intersection in this lay
 {
 	NSCell *cell = [[self layoutOwner] preparedCellAtColumn: column row: row];
 	return (cell != nil ? cell : [super preparedCellAtColumn: column row: row]);
+}
+
+- (void) textDidEndEditing:(NSNotification *)aNotification
+{
+	/* Memorize the edited item since -textDidEndEditing: resets edited row and column */
+	ETLayoutItem *editedItem = [[self layoutOwner] editedItem];
+	NSString *editedProperty = [[self layoutOwner] editedProperty];
+
+	/* Will update the data source before we call -subjectDidEndEditingForProperty: */
+	[super textDidEndEditing: aNotification];
+
+	[[self layoutOwner] controlTextDidEndEditingForItem: editedItem
+	                                           property: editedProperty];
 }
 
 @end
