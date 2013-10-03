@@ -11,6 +11,8 @@
 #import <EtoileUI/ETController.h>
 #import <EtoileUI/ETLayoutItemFactory.h>
 
+@protocol COTrackNode;
+
 @interface COObject (CoreObjectUI)
 /** <override-dummy />
 Return additional menus for interacting with instances of the receiver class.
@@ -43,7 +45,8 @@ See -[ETLayoutItemFactory historyBrowserWithRepresentedObject:], the controller
 can be retrieved with -[ETLayoutItemGroup controller] on the returned item. */
 @interface ETHistoryBrowserController : ETController
 {
-
+	@private
+	id <COTrackNode> _currentNode;
 }
 
 /** @taskunit Actions */

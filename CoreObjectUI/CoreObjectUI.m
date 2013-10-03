@@ -11,6 +11,7 @@
 
 #ifdef COREOBJECT
 
+#import <CoreObject/COCommand.h>
 #import <CoreObject/COObject.h>
 #import <CoreObject/COGroup.h>
 #import <CoreObject/COLibrary.h>
@@ -24,6 +25,7 @@
 #import "ETColumnLayout.h"
 #import "ETLineLayout.h"
 #import "ETOutlineLayout.h"
+#include <objc/runtime.h>
 
 @interface COObject (EtoileUI)
 - (NSImage *) icon;
@@ -45,6 +47,15 @@
 - (NSImage *) icon;
 @end
 
+@interface CORevision (EtoileUI)
+- (NSImage *) icon;
+- (void) setIcon: (NSImage *)anIcon;
+@end
+
+@interface COCommand (EtoileUI)
+- (NSImage *) icon;
+- (void) setIcon: (NSImage *)anIcon;
+@end
 
 @implementation COObject (EtoileUI)
 
@@ -98,17 +109,28 @@
 
 @implementation CORevision (EtoileUI)
 
-- (COBranch *) branch
+- (NSImage *) icon
 {
-	COPersistentRoot *persistentRoot =
-		[[self editingContext] persistentRootForUUID: [self persistentRootUUID]];
-
-	return [persistentRoot branchForUUID: [self branchUUID]];
+	return objc_getAssociatedObject(self, @"icon");
 }
+
+- (void) setIcon: (NSImage *)anIcon
+{
+	objc_setAssociatedObject(self, @"icon", anIcon, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
+}
+
+@end
+
+@implementation COCommand (EtoileUI)
 
 - (NSImage *) icon
 {
-	return ([self isEqual: [[self branch] currentNode]] ? [NSImage imageNamed: @"status"] : nil);
+	return objc_getAssociatedObject(self, @"icon");
+}
+
+- (void) setIcon: (NSImage *)anIcon
+{
+	objc_setAssociatedObject(self, @"icon", anIcon, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
 }
 
 @end
@@ -244,6 +266,49 @@
 
 @implementation ETHistoryBrowserController
 
+- (COEditingContext *) editingContextForContent: (ETLayoutItemGroup *)anItem
+{
+	id <COTrack> track = [anItem representedObject];
+
+	// FIXME: Declare -editingContext as part of COTrack protocol
+	return [[(id)track ifResponds] editingContext];
+}
+
+- (void) updateIndicatorForNewCurrentNode: (id <COTrackNode>)newCurrentNode
+{
+	NSParameterAssert(newCurrentNode != nil);
+
+	[(id)_currentNode setIcon: nil];
+	ASSIGN(_currentNode, newCurrentNode);
+	[(id)_currentNode setIcon: [NSImage imageNamed: @"status"]];
+}
+
+- (void)editingContextDidCommit: (NSNotification *)notif
+{
+	id <COTrack> track = [[self content] representedObject];
+	[self updateIndicatorForNewCurrentNode: [track currentNode]];
+}
+
+- (void) setContent: (ETLayoutItemGroup *)anItem
+{
+	/*if ([self content] != nil)
+	{
+		[self stopObserveObject: [self editingContextForContent: [self content]]
+		    forNotificationName: COEditingContextDidCommitNotification];
+	}*/
+	[(id)_currentNode setIcon: nil];
+
+	[super setContent: anItem];
+
+	[self updateIndicatorForNewCurrentNode: [[anItem representedObject] currentNode]];
+	/*if (anItem != nil)
+	{
+		[self startObserveObject: [self editingContextForContent: anItem]
+		     forNotificationName: COEditingContextDidCommitNotification
+		                selector: @selector(editingContextDidCommit:)];
+	}*/
+}
+
 - (NSArray *) selectedTrackNodes
 {
 	return [[[[self content] selectedItems] mappedCollection] representedObject];
@@ -257,18 +322,33 @@
 	{
 		[track undoNode: node];
 	}
+	[self updateIndicatorForNewCurrentNode: [track currentNode]];
 }
 
 - (IBAction) moveBackTo: (id)sender
 {
 	id <COTrack> track = [[self content] representedObject];
-	// FIXME: [track undo];
+	id <COTrackNode> prevNode = [track nextNodeOnTrackFrom: [track currentNode]
+	                                             backwards: YES];
+	
+	if (prevNode == nil)
+		return;
+
+	[track setCurrentNode: prevNode];
+	[self updateIndicatorForNewCurrentNode: [track currentNode]];
 }
 
 - (IBAction) moveForwardTo: (id)sender
 {
 	id <COTrack> track = [[self content] representedObject];
-	// FIXME: [track redo];
+	id <COTrackNode> nextNode = [track nextNodeOnTrackFrom: [track currentNode]
+	                                             backwards: NO];
+	
+	if (nextNode == nil)
+		return;
+
+	[track setCurrentNode: nextNode];
+	[self updateIndicatorForNewCurrentNode: [track currentNode]];
 }
 
 - (IBAction) restoreTo: (id)sender
@@ -280,6 +360,7 @@
 		return;
 
 	[track setCurrentNode: node];
+	[self updateIndicatorForNewCurrentNode: [track currentNode]];
 }
 
 - (IBAction) open: (id)sender
