@@ -284,17 +284,15 @@
 
 - (IBAction) selectiveUndo: (id)sender
 {
-	id <COTrack> track = [[self content] representedObject];
-
 	for (id <COTrackNode> node in [self selectedTrackNodes])
 	{
-		[track undoNode: node];
+		[[self track] undoNode: node];
 	}
 }
 
 - (IBAction) moveBackTo: (id)sender
 {
-	id <COTrack> track = [[self content] representedObject];
+	id <COTrack> track = [self track];
 	id <COTrackNode> prevNode = [track nextNodeOnTrackFrom: [track currentNode]
 	                                             backwards: YES];
 	
@@ -306,7 +304,7 @@
 
 - (IBAction) moveForwardTo: (id)sender
 {
-	id <COTrack> track = [[self content] representedObject];
+	id <COTrack> track = [self track];
 	id <COTrackNode> nextNode = [track nextNodeOnTrackFrom: [track currentNode]
 	                                             backwards: NO];
 	
@@ -318,13 +316,16 @@
 
 - (IBAction) restoreTo: (id)sender
 {
-	id <COTrack> track = [[self content] representedObject];
-	id <COTrackNode> node = [[[[self content] selectedItems] firstObject] representedObject];
+	NSArray *selectedItems = [[self content] selectedItems];
+	// NOTE: For multiple selection, the action must be disabled in the UI
+	ETAssert([selectedItems count] == 1);
+
+	id <COTrackNode> node = [[selectedItems firstObject] representedObject];
 
 	if (node == nil)
 		return;
 
-	[track setCurrentNode: node];
+	[[self track] setCurrentNode: node];
 }
 
 - (IBAction) open: (id)sender
