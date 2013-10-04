@@ -61,7 +61,7 @@
 {
 	NILARG_EXCEPTION_TEST(aName);
 	SUPERINIT;
-	ASSIGN(_name, aName);
+	[self setName: aName];
 	return self;
 }
 
@@ -82,15 +82,34 @@
 
 - (void) setName: (NSString *)aName
 {
+	NILARG_EXCEPTION_TEST(aName);
+	
+	// TODO: Write test to ensure that -setName: lets us change the name under
+	// which a transformer is registered.
+
 	if ([[ETItemValueTransformer valueTransformerNames] containsObject: aName])
 	{
 		ETItemValueTransformer *registeredTransformer =
-			(id)[ETItemValueTransformer valueTransformerForName: _name];
+			(id)[ETItemValueTransformer valueTransformerForName: aName];
 
+		// TODO: Explain that a transformer cannot overwrite another transformer,
+		// and be registered twice using a new instance (see the API documentation).
 		INVALIDARG_EXCEPTION_TEST(aName, registeredTransformer == self);
 
 		[ETItemValueTransformer setValueTransformer: nil forName: aName];
 	}
+	if ([[ETItemValueTransformer valueTransformerNames] containsObject: _name])
+	{
+		ETItemValueTransformer *registeredTransformer =
+			(id)[ETItemValueTransformer valueTransformerForName: _name];
+		
+		// TODO: Explain that a transformer cannot overwrite another transformer,
+		// and be registered twice using a new instance (see the API documentation).
+		INVALIDARG_EXCEPTION_TEST(_name, registeredTransformer == self);
+
+		[ETItemValueTransformer setValueTransformer: nil forName: _name];
+	}
+
 	ASSIGN(_name, aName);
 	[ETItemValueTransformer setValueTransformer: self forName: aName];
 }
