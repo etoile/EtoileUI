@@ -45,8 +45,7 @@ See -[ETLayoutItemFactory historyBrowserWithRepresentedObject:], the controller
 can be retrieved with -[ETLayoutItemGroup controller] on the returned item. */
 @interface ETHistoryBrowserController : ETController
 {
-	@private
-	id <COTrackNode> _currentNode;
+
 }
 
 /** @taskunit Actions */

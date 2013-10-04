@@ -23,6 +23,7 @@
 #import "CoreObjectUI.h"
 #import "ETLayoutItemGroup.h"
 #import "ETColumnLayout.h"
+#import "ETItemValueTransformer.h"
 #import "ETLineLayout.h"
 #import "ETOutlineLayout.h"
 #include <objc/runtime.h>
@@ -45,16 +46,6 @@
 
 @interface COTagGroup (EtoileUI)
 - (NSImage *) icon;
-@end
-
-@interface CORevision (EtoileUI)
-- (NSImage *) icon;
-- (void) setIcon: (NSImage *)anIcon;
-@end
-
-@interface COCommand (EtoileUI)
-- (NSImage *) icon;
-- (void) setIcon: (NSImage *)anIcon;
 @end
 
 @implementation COObject (EtoileUI)
@@ -103,34 +94,6 @@
 - (NSImage *) icon
 {
 	return [NSImage imageNamed: @"tags-label"];
-}
-
-@end
-
-@implementation CORevision (EtoileUI)
-
-- (NSImage *) icon
-{
-	return objc_getAssociatedObject(self, @"icon");
-}
-
-- (void) setIcon: (NSImage *)anIcon
-{
-	objc_setAssociatedObject(self, @"icon", anIcon, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
-}
-
-@end
-
-@implementation COCommand (EtoileUI)
-
-- (NSImage *) icon
-{
-	return objc_getAssociatedObject(self, @"icon");
-}
-
-- (void) setIcon: (NSImage *)anIcon
-{
-	objc_setAssociatedObject(self, @"icon", anIcon, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
 }
 
 @end
@@ -266,47 +229,52 @@
 
 @implementation ETHistoryBrowserController
 
-- (COEditingContext *) editingContextForContent: (ETLayoutItemGroup *)anItem
+- (id) initWithNibName: (NSString *)aNibName
+                bundle: (NSBundle *)aBundle
+    objectGraphContext: (COObjectGraphContext *)aContext
 {
-	id <COTrack> track = [anItem representedObject];
+	self = [super initWithNibName: aNibName bundle: aBundle objectGraphContext: aContext];
+	if (nil == self)
+		return nil;
 
-	// FIXME: Declare -editingContext as part of COTrack protocol
-	return [[(id)track ifResponds] editingContext];
+	ETItemTemplate *template = [self templateForType: [self currentObjectType]];
+	ETItemTemplate *groupTemplate = [self templateForType: [self currentGroupType]];
+
+	[[template item] setValueTransformer: [self iconValueTransformer]
+	                         forProperty: @"icon"];
+	[[groupTemplate item] setValueTransformer: [self iconValueTransformer]
+	                              forProperty: @"icon"];
+
+	ETAssert([[[template item] copy] valueTransformerForProperty: @"icon"]
+		== [ETItemValueTransformer valueTransformerForName: @"HistoryBrowserIcon"]);
+
+	return self;
 }
 
-- (void) updateIndicatorForNewCurrentNode: (id <COTrackNode>)newCurrentNode
+- (id <COTrack>) track
 {
-	NSParameterAssert(newCurrentNode != nil);
-
-	[(id)_currentNode setIcon: nil];
-	ASSIGN(_currentNode, newCurrentNode);
-	[(id)_currentNode setIcon: [NSImage imageNamed: @"status"]];
+	return [[self content] representedObject];
 }
 
-- (void)editingContextDidCommit: (NSNotification *)notif
+- (ETItemValueTransformer *) iconValueTransformer
 {
-	id <COTrack> track = [[self content] representedObject];
-	[self updateIndicatorForNewCurrentNode: [track currentNode]];
-}
+	ETItemValueTransformer *transformer =
+		(id)[ETItemValueTransformer valueTransformerForName: @"HistoryBrowserIcon"];
+	
+	if (transformer != nil)
+		return transformer;
 
-- (void) setContent: (ETLayoutItemGroup *)anItem
-{
-	/*if ([self content] != nil)
+	transformer = AUTORELEASE([[ETItemValueTransformer alloc] initWithName: @"HistoryBrowserIcon"]);
+
+	[transformer setTransformBlock: ^id (id value, NSString *key, ETLayoutItem *item)
 	{
-		[self stopObserveObject: [self editingContextForContent: [self content]]
-		    forNotificationName: COEditingContextDidCommitNotification];
-	}*/
-	[(id)_currentNode setIcon: nil];
+		BOOL representsCurrentNode =
+			[[item representedObject] isEqual: [[self track] currentNode]];
 
-	[super setContent: anItem];
+		return (representsCurrentNode ? [NSImage imageNamed: @"status"] : nil);
+	}];
 
-	[self updateIndicatorForNewCurrentNode: [[anItem representedObject] currentNode]];
-	/*if (anItem != nil)
-	{
-		[self startObserveObject: [self editingContextForContent: anItem]
-		     forNotificationName: COEditingContextDidCommitNotification
-		                selector: @selector(editingContextDidCommit:)];
-	}*/
+	return transformer;
 }
 
 - (NSArray *) selectedTrackNodes
@@ -322,7 +290,6 @@
 	{
 		[track undoNode: node];
 	}
-	[self updateIndicatorForNewCurrentNode: [track currentNode]];
 }
 
 - (IBAction) moveBackTo: (id)sender
@@ -335,7 +302,6 @@
 		return;
 
 	[track setCurrentNode: prevNode];
-	[self updateIndicatorForNewCurrentNode: [track currentNode]];
 }
 
 - (IBAction) moveForwardTo: (id)sender
@@ -348,7 +314,6 @@
 		return;
 
 	[track setCurrentNode: nextNode];
-	[self updateIndicatorForNewCurrentNode: [track currentNode]];
 }
 
 - (IBAction) restoreTo: (id)sender
@@ -360,7 +325,6 @@
 		return;
 
 	[track setCurrentNode: node];
-	[self updateIndicatorForNewCurrentNode: [track currentNode]];
 }
 
 - (IBAction) open: (id)sender
