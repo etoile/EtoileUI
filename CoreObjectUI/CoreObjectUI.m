@@ -165,16 +165,16 @@
 	ETOutlineLayout *layout = [ETOutlineLayout layoutWithObjectGraphContext: [self objectGraphContext]];
 
 	[layout setContentFont: [NSFont controlContentFontOfSize: [NSFont smallSystemFontSize]]];
-	[layout setDisplayedProperties: A(@"icon", @"UUID", @"type", @"shortDescription", @"date")];
+	[layout setDisplayedProperties: A(@"icon", @"UUID", @"localizedTypeDescription", @"localizedShortDescription", @"date")];
 	[layout setDisplayName: @"Revision Number" forProperty: @"revisionNumber"];
 	[layout setDisplayName: @"Revision UUID" forProperty: @"UUID"];
 	[layout setDisplayName: @"Date" forProperty: @"date"];
-	[layout setDisplayName: @"Type" forProperty: @"type"];
-	[layout setDisplayName: @"Short Description" forProperty: @"shortDescription"];
+	[layout setDisplayName: @"Type" forProperty: @"localizedTypeDescription"];
+	[layout setDisplayName: @"Short Description" forProperty: @"localizedShortDescription"];
 	[layout setDisplayName: @"Object UUID" forProperty: @"objectUUID"];
 	[layout setDisplayName: @"Properties" forProperty: @"properties"];
 
-	[[layout columnForProperty: @"shortDescription"] setWidth: 200];
+	[[layout columnForProperty: @"localizedShortDescription"] setWidth: 200];
 	[[layout columnForProperty: @"properties"] setWidth: 200];
 	[[layout columnForProperty: @"date"] setWidth: 160];
 	[layout setFormatter: [self historyBrowserDateFormatter] forProperty: @"date"];
