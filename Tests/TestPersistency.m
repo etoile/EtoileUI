@@ -149,7 +149,7 @@
 	NSRect rect = NSMakeRect(50, 20, 400, 300);
 	ETShape *shape = [ETShape rectangleShapeWithRect: rect
 	                              objectGraphContext: [COObjectGraphContext objectGraphContext]];
-	ETUUID *uuid = [[ctxt insertNewPersistentRootWithRootObject: shape] persistentRootUUID];
+	ETUUID *uuid = [[ctxt insertNewPersistentRootWithRootObject: shape] UUID];
 
 	UKNotNil(uuid);
 
@@ -179,7 +179,7 @@
 	[style setMaxImageSize: NSMakeSize(50, 100)];
 	[style setEdgeInset: 10];
 
-	ETUUID *uuid = [[ctxt insertNewPersistentRootWithRootObject: style] persistentRootUUID];
+	ETUUID *uuid = [[ctxt insertNewPersistentRootWithRootObject: style] UUID];
 
 	UKNotNil(uuid);
 	
@@ -246,7 +246,7 @@
 
 	CODictionary *valueTransformers = [item primitiveValueForKey: @"valueTransformers"];
 	NSSet *itemAndAspects = S(item, [item actionHandler], [item styleGroup], [item coverStyle], valueTransformers);
-	ETUUID *uuid = [[ctxt insertNewPersistentRootWithRootObject: item] persistentRootUUID];
+	ETUUID *uuid = [[ctxt insertNewPersistentRootWithRootObject: item] UUID];
 
 	UKNotNil(uuid);
 	UKObjectsEqual(itemAndAspects, [[item objectGraphContext] insertedObjects]);
@@ -313,7 +313,7 @@
 	ETLayoutItem *item = [itemGroup firstItem];
 	ETController *controller = [itemGroup controller];
 
-	ETUUID *uuid = [[ctxt insertNewPersistentRootWithRootObject: itemGroup] persistentRootUUID];
+	ETUUID *uuid = [[ctxt insertNewPersistentRootWithRootObject: itemGroup] UUID];
 	
 	UKNotNil(uuid);
 
@@ -385,7 +385,7 @@
 	UKNotNil([sliderItem UUID]);
 	UKNotNil([itemGroup UUID]);
 
-	ETUUID *uuid = [[ctxt insertNewPersistentRootWithRootObject: itemGroup] persistentRootUUID];
+	ETUUID *uuid = [[ctxt insertNewPersistentRootWithRootObject: itemGroup] UUID];
 
 	[self checkValidityForNewPersistentObject: buttonItem isFault: NO];
 	[self checkValidityForNewPersistentObject: sliderItem isFault: NO];
@@ -441,7 +441,7 @@
 	UKNotNil([buttonItem UUID]);
 	UKNotNil([itemGroup UUID]);
 	
-	ETUUID *uuid = [[ctxt insertNewPersistentRootWithRootObject: itemGroup] persistentRootUUID];
+	ETUUID *uuid = [[ctxt insertNewPersistentRootWithRootObject: itemGroup] UUID];
 	
 	[self checkValidityForNewPersistentObject: buttonItem isFault: NO];
 	[self checkValidityForNewPersistentObject: itemGroup isFault: NO];
@@ -474,7 +474,7 @@
 	ETLayoutItemGroup *itemGroup = [self basicItemGroupWithRect: rect];
 	ETLayoutItem *item = [itemGroup firstItem];
 
-	[[ctxt insertNewPersistentRootWithRootObject: itemGroup] persistentRootUUID];
+	[[ctxt insertNewPersistentRootWithRootObject: itemGroup] UUID];
 	[ctxt commit];
 
 	// Create a rectangle and commit
@@ -529,7 +529,7 @@
 
 	[itemFactory endRootObject];
 
-	ETUUID *uuid = [[ctxt insertNewPersistentRootWithRootObject: itemGroup] persistentRootUUID];
+	ETUUID *uuid = [[ctxt insertNewPersistentRootWithRootObject: itemGroup] UUID];
 	
 	UKNotNil(uuid);
 	
@@ -585,7 +585,7 @@
 
 	[itemFactory endRootObject];
 
-	ETUUID *uuid = [[ctxt insertNewPersistentRootWithRootObject: itemGroup] persistentRootUUID];
+	ETUUID *uuid = [[ctxt insertNewPersistentRootWithRootObject: itemGroup] UUID];
 
 	[self checkValidityForNewPersistentObject: buttonItem isFault: NO];
 	[self checkValidityForNewPersistentObject: itemGroup isFault: NO];
