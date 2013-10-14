@@ -24,6 +24,7 @@
 #import "ETCompatibility.h"
 #ifdef COREOBJECT
 #import <CoreObject/COBranch.h>
+#import <CoreObject/COObjectGraphContext.h>
 #import "CoreObjectUI.h"
 #endif
 
@@ -323,8 +324,10 @@ See also [ETDocumentCreation] protocol. */
 	COObject *rootObject = [self activeItem];
 	ETLayoutItemFactory *itemFactory =
 		[ETLayoutItemFactory factoryWithObjectGraphContext: [self objectGraphContext]];
+	COBranch *branch = [[rootObject objectGraphContext] branch];
 	ETLayoutItemGroup *browser =
-		[itemFactory historyBrowserWithRepresentedObject: [rootObject branch] title: nil];
+		[itemFactory historyBrowserWithRepresentedObject: branch
+		                                           title: nil];
 
 	[[itemFactory windowGroup] addItem: browser];
 #endif
