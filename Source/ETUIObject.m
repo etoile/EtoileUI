@@ -15,6 +15,9 @@
 #import "ETUIObject.h"
 #import "ETCompatibility.h"
 
+@interface COObject ()
+- (id) copyWithZone: (NSZone *)aZone;
+@end
 
 @implementation ETUIObject
 
