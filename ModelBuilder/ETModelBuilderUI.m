@@ -132,7 +132,9 @@
 		// TODO: Show alert
 		ETAssertUnreachable();
 	}
-	return [[entityClass alloc] initWithEntityDescription: self];
+	// FIXME: Pass a valid object graph context by renaming -newInstance to
+	// -newInstanceWithObjectGraphContext:
+	return [[entityClass alloc] initWithEntityDescription: self objectGraphContext: nil];
 }
 
 - (void) instantiate: (id)sender
