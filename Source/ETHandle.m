@@ -45,24 +45,24 @@ NSString *kETManipulatedObjectProperty = @"manipulatedObject";
 
 - (ETTool *) mediatedTool
 {
-	return [self primitiveValueForKey: kETMediatedToolProperty];
+	return [self valueForVariableStorageKey: kETMediatedToolProperty];
 }
 
 - (void) setMediatedTool: (ETTool *)anTool
 {
-	[self setPrimitiveValue: anTool forKey: kETMediatedToolProperty];
+	[self setValue: anTool forVariableStorageKey: kETMediatedToolProperty];
 }
 
 /** Returns the object on which the receiver acts upon. */
 - (id) manipulatedObject
 {
-	return [self primitiveValueForKey: kETManipulatedObjectProperty];
+	return [self valueForVariableStorageKey: kETManipulatedObjectProperty];
 }
 
 /** Sets the object on which the receiver acts upon. */
 - (void) setManipulatedObject: (id)anObject
 {
-	[self setPrimitiveValue: anObject forKey: kETManipulatedObjectProperty];
+	[self setValue: anObject forVariableStorageKey: kETManipulatedObjectProperty];
 }
 
 @end
@@ -447,23 +447,23 @@ NSString *kETManipulatedObjectProperty = @"manipulatedObject";
 // in ETHandle
 - (ETTool *) mediatedTool
 {
-	return [self primitiveValueForKey: kETMediatedToolProperty];
+	return [self valueForVariableStorageKey: kETMediatedToolProperty];
 }
 
 - (void) setMediatedTool: (ETTool *)anTool
 {
-	[self setPrimitiveValue: anTool forKey: kETMediatedToolProperty];
+	[self setValue: anTool forVariableStorageKey: kETMediatedToolProperty];
 }
 #endif
 
 - (id) manipulatedObject
 {
-	return [self primitiveValueForKey: kETManipulatedObjectProperty];
+	return [self valueForVariableStorageKey: kETManipulatedObjectProperty];
 }
 
 - (void) setManipulatedObject: (id)anObject
 {
-	[self setPrimitiveValue: anObject forKey: kETManipulatedObjectProperty];
+	[self setValue: anObject forVariableStorageKey: kETManipulatedObjectProperty];
 	/* Better to avoid -setFrame: which would update the represented object frame. */
 	// FIXME: Ugly duplication with -setFrame:... 
 	//[self setFrame: [anObject frame]];
@@ -473,7 +473,7 @@ NSString *kETManipulatedObjectProperty = @"manipulatedObject";
 
 - (NSPoint) anchorPoint
 {
-	id manipulatedObject = [self primitiveValueForKey: kETManipulatedObjectProperty];
+	id manipulatedObject = [self valueForVariableStorageKey: kETManipulatedObjectProperty];
 
 	if (manipulatedObject == nil)
 		return NSZeroPoint;
@@ -483,12 +483,12 @@ NSString *kETManipulatedObjectProperty = @"manipulatedObject";
 
 - (void) setAnchorPoint: (NSPoint)anchor
 {
-	return [(ETLayoutItem *)[self primitiveValueForKey: kETManipulatedObjectProperty] setAnchorPoint: anchor];
+	return [(ETLayoutItem *)[self valueForVariableStorageKey: kETManipulatedObjectProperty] setAnchorPoint: anchor];
 }
 
 - (NSPoint) position
 {
-	id manipulatedObject = [self primitiveValueForKey: kETManipulatedObjectProperty];
+	id manipulatedObject = [self valueForVariableStorageKey: kETManipulatedObjectProperty];
 
 	if (manipulatedObject == nil)
 		return NSZeroPoint;
@@ -498,14 +498,14 @@ NSString *kETManipulatedObjectProperty = @"manipulatedObject";
 
 - (void) setPosition: (NSPoint)aPosition
 {
-	[(ETLayoutItem *)[self primitiveValueForKey: kETManipulatedObjectProperty] setPosition: aPosition];
+	[(ETLayoutItem *)[self valueForVariableStorageKey: kETManipulatedObjectProperty] setPosition: aPosition];
 	[self updateHandleLocations];
 }
 
 /** Returns the content bounds associated with the receiver. */
 - (NSRect) contentBounds
 {
-	id manipulatedObject = [self primitiveValueForKey: kETManipulatedObjectProperty];
+	id manipulatedObject = [self valueForVariableStorageKey: kETManipulatedObjectProperty];
 
 	if (manipulatedObject == nil)
 		return NSZeroRect;
@@ -518,14 +518,14 @@ NSString *kETManipulatedObjectProperty = @"manipulatedObject";
 - (void) setContentBounds: (NSRect)rect
 {
 	NSParameterAssert(rect.size.width >= 0 && rect.size.height >= 0);
-	NSRect manipulatedFrame = ETMakeRect([[self primitiveValueForKey: kETManipulatedObjectProperty] origin], rect.size);
-	[[self primitiveValueForKey: kETManipulatedObjectProperty] setFrame: manipulatedFrame];
+	NSRect manipulatedFrame = ETMakeRect([[self valueForVariableStorageKey: kETManipulatedObjectProperty] origin], rect.size);
+	[[self valueForVariableStorageKey: kETManipulatedObjectProperty] setFrame: manipulatedFrame];
 	[self updateHandleLocations];
 }
 
 - (NSRect) frame
 {
-	id manipulatedObject = [self primitiveValueForKey: kETManipulatedObjectProperty];
+	id manipulatedObject = [self valueForVariableStorageKey: kETManipulatedObjectProperty];
 
 	if (manipulatedObject == nil)
 		return NSZeroRect;
@@ -542,14 +542,14 @@ NSString *kETManipulatedObjectProperty = @"manipulatedObject";
 - (void) setFrame: (NSRect)frame
 {
 	NSParameterAssert(frame.size.width >= 0 && frame.size.height >= 0);
-	[[self primitiveValueForKey: kETManipulatedObjectProperty] setFrame: frame];
+	[[self valueForVariableStorageKey: kETManipulatedObjectProperty] setFrame: frame];
 	[self updateHandleLocations];
 }
 
 - (void) setBoundingBox: (NSRect)extent
 {
 	[super setBoundingBox: extent];
-	[[self primitiveValueForKey: kETManipulatedObjectProperty] setBoundingBox: extent];
+	[[self valueForVariableStorageKey: kETManipulatedObjectProperty] setBoundingBox: extent];
 }
 
 /** Marks both the receiver and its manipulated object as invalidated area 

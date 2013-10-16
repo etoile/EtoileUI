@@ -133,7 +133,7 @@
 	}
 	else
 	{
-		return [self primitiveValueForKey: @"formatter"];
+		return [self valueForVariableStorageKey: @"formatter"];
 	}
 }
 
@@ -151,7 +151,7 @@
 	else
 	{
 		[self willChangeValueForProperty: @"formatter"];
-		[self setPrimitiveValue: aFormatter forKey: @"formatter"];
+		[self setValue: aFormatter forVariableStorageKey: @"formatter"];
 		[self didChangeValueForProperty: @"formatter"];
 	}
 }
@@ -192,7 +192,7 @@
 	}
 	else
 	{
-		return [[self primitiveValueForKey: @"minValue"] doubleValue];
+		return [[self valueForVariableStorageKey: @"minValue"] doubleValue];
 	}
 }
 
@@ -205,7 +205,7 @@
 	else
 	{
 		[self willChangeValueForProperty: @"minValue"];
-		[self setPrimitiveValue: [NSNumber numberWithDouble: aValue] forKey: @"minValue"];
+		[self setValue: [NSNumber numberWithDouble: aValue] forVariableStorageKey: @"minValue"];
 		[self didChangeValueForProperty: @"minValue"];
 	}
 }
@@ -218,7 +218,7 @@
 	}
 	else
 	{
-		return [[self primitiveValueForKey: @"maxValue"] doubleValue];
+		return [[self valueForVariableStorageKey: @"maxValue"] doubleValue];
 	}
 }
 
@@ -231,7 +231,7 @@
 	else
 	{
 		[self willChangeValueForProperty: @"maxValue"];
-		[self setPrimitiveValue: [NSNumber numberWithDouble: aValue] forKey: @"maxValue"];
+		[self setValue: [NSNumber numberWithDouble: aValue] forVariableStorageKey: @"maxValue"];
 		[self didChangeValueForProperty: @"maxValue"];
 	}
 }

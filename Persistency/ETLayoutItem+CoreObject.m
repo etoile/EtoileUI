@@ -45,12 +45,12 @@
 
 - (NSString *) persistentUIName
 {
-	return [self primitiveValueForKey: @"persistentUIName"];
+	return [self valueForVariableStorageKey: @"persistentUIName"];
 }
 
 - (void) setPersistentUIName: (NSString *)aName
 {
-	[self setPrimitiveValue: aName forKey: @"persistentUIName"];
+	[self setValue: aName forVariableStorageKey: @"persistentUIName"];
 }
 
 - (ETLayoutItem *) persistentUIItem
@@ -84,7 +84,7 @@
 	
 	if ([self isRoot])
 	{
-		value = [self primitiveValueForKey: @"initialPosition"];
+		value = [self valueForVariableStorageKey: @"initialPosition"];
 	}
 	
 	return (value == nil ? [self valueForKey: kETPositionProperty] : value);
@@ -94,7 +94,7 @@
 {
 	if ([self isRoot])
 	{
-		[self setPrimitiveValue: aValue forKey: @"initialPosition"];
+		[self setValue: aValue forVariableStorageKey: @"initialPosition"];
 	}
 	[self setPosition: [aValue pointValue]];
 }
@@ -105,7 +105,7 @@
 
 	if ([self isRoot])
 	{
-		value = [self primitiveValueForKey: @"initialContentBounds"];
+		value = [self valueForVariableStorageKey: @"initialContentBounds"];
 	}
 
 	return (value == nil ? [self valueForKey: kETContentBoundsProperty] : value);
@@ -115,7 +115,7 @@
 {
 	if ([self isRoot])
 	{
-		[self setPrimitiveValue: aValue forKey: @"initialContentBounds"];
+		[self setValue: aValue forVariableStorageKey: @"initialContentBounds"];
 	}
 	[self setContentBounds: [aValue rectValue]];
 }

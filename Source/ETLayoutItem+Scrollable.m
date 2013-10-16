@@ -124,12 +124,12 @@ You should never need to call this method which is used internally. */
 
 - (void) cacheScrollableAreaItem: (ETScrollableAreaItem *)decorator
 {
-	[self setPrimitiveValue: decorator forKey: kETCachedScrollableAreaDecoratorItem];
+	[self setValue: decorator forVariableStorageKey: kETCachedScrollableAreaDecoratorItem];
 }
 
 - (ETScrollableAreaItem *) cachedScrollableAreaItem
 {
-	ETScrollableAreaItem *decorator = [self primitiveValueForKey: kETCachedScrollableAreaDecoratorItem];
+	ETScrollableAreaItem *decorator = [self valueForVariableStorageKey: kETCachedScrollableAreaDecoratorItem];
 
 	if (nil == decorator)
 	{

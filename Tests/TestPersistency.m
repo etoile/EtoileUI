@@ -242,11 +242,16 @@
 	[item setFrame: rect];
 
 	[itemFactory endRootObject];
-	[[itemFactory windowGroup] addItem: item];
 
-	CODictionary *valueTransformers = [item primitiveValueForKey: @"valueTransformers"];
+	CODictionary *valueTransformers = [item valueForVariableStorageKey: @"valueTransformers"];
 	NSSet *itemAndAspects = S(item, [item actionHandler], [item styleGroup], [item coverStyle], valueTransformers);
 	ETUUID *uuid = [[ctxt insertNewPersistentRootWithRootObject: item] UUID];
+
+	// NOTE: The item must be a root object (i.e. belong to a persistent root)
+	// to be inserted in the in the window group. Cross persistent root
+	// references must point to valid root objects (the item object graph
+	// context is initially transient and thereby without a root object).
+	[[itemFactory windowGroup] addItem: item];
 
 	UKNotNil(uuid);
 	UKObjectsEqual(itemAndAspects, [[item objectGraphContext] insertedObjects]);

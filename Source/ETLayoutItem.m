@@ -173,6 +173,8 @@ See also -setView:, -setCoverStyle: and -setActionHandler:.  */
 	if (self == nil)
 		return nil;
 
+	// NOTE: -[COObject newVariableStorage] instantiates the value transformers (CODictionary)
+
 	_defaultValues = [[NSMutableDictionary alloc] init];
 
 	_parentItem = nil;
@@ -180,9 +182,6 @@ See also -setView:, -setCoverStyle: and -setActionHandler:.  */
 	_styleGroup = [[ETStyleGroup alloc] initWithObjectGraphContext: aContext];
 	[self setCoverStyle: aStyle];
 	[self setActionHandler: aHandler];
-	// TODO: Use lazy allocation for the value transformer dictionary if possible
-	[self setPrimitiveValue: AUTORELEASE([[CODictionary alloc] initWithObjectGraphContext: aContext])
-	                 forKey: @"valueTransformers"];
 
 	ASSIGN(_transform, [NSAffineTransform transform]);
 	 /* Will be overriden by -setView: when the view is not nil */
@@ -323,7 +322,7 @@ Default values will be copied but not individually (shallow copy). */
 	item->_contentBounds = _contentBounds;
 	/* anchorPoint must be initialized before position but after contentBounds.
 	   position must be initialized after anchorPoint. */
-	[item setPrimitiveValue: [self primitiveValueForKey: kETAnchorPointProperty] forKey: kETAnchorPointProperty];
+	[item setValue: [self valueForVariableStorageKey: kETAnchorPointProperty] forVariableStorageKey: kETAnchorPointProperty];
 	item->_position = _position;
 	/* Will be overriden by -setView: when the view is not nil */	
 	item->_autoresizingMask = _autoresizingMask;
@@ -337,25 +336,25 @@ Default values will be copied but not individually (shallow copy). */
 
 	/* We copy all variables properties except kETTargetProperty */
 
-	id valueCopy = [[self primitiveValueForKey: kETValueProperty] copyWithZone: zone];
-	id valueTransformersCopy = [[self primitiveValueForKey: @"valueTransformers"] copyWithZone: zone];
-	id actionHandlerCopy = [self copyAspect: [self primitiveValueForKey: kETActionHandlerProperty] withCopier: aCopier];
+	id valueCopy = [[self valueForVariableStorageKey: kETValueProperty] copyWithZone: zone];
+	id valueTransformersCopy = [[self valueForVariableStorageKey: @"valueTransformers"] copyWithZone: zone];
+	id actionHandlerCopy = [self copyAspect: [self valueForVariableStorageKey: kETActionHandlerProperty] withCopier: aCopier];
 
-	[item setPrimitiveValue: valueCopy forKey: kETValueProperty];
-	[item setPrimitiveValue: valueTransformersCopy forKey: @"valueTransformers"];
-	[item setPrimitiveValue: actionHandlerCopy forKey: kETActionHandlerProperty];
+	[item setValue: valueCopy forVariableStorageKey: kETValueProperty];
+	[item setValue: valueTransformersCopy forVariableStorageKey: @"valueTransformers"];
+	[item setValue: actionHandlerCopy forVariableStorageKey: kETActionHandlerProperty];
 
 	RELEASE(valueCopy);
 	RELEASE(actionHandlerCopy);
 
-	[item setPrimitiveValue: [self primitiveValueForKey: kETDefaultFrameProperty] forKey:  kETDefaultFrameProperty];
-	[item setPrimitiveValue: [self primitiveValueForKey: kETNameProperty] forKey: kETNameProperty];
-	[item setPrimitiveValue: [self primitiveValueForKey: kETIdentifierProperty] forKey: kETIdentifierProperty];
-	[item setPrimitiveValue: [self primitiveValueForKey: kETImageProperty] forKey: kETImageProperty];
-	[item setPrimitiveValue: [self primitiveValueForKey: kETIconProperty] forKey: kETIconProperty];
-	[item setPrimitiveValue: [self primitiveValueForKey: kETValueKeyProperty] forKey: kETValueKeyProperty];
-	[item setPrimitiveValue: [self primitiveValueForKey: kETSubtypeProperty] forKey:  kETSubtypeProperty];
-	[item setPrimitiveValue: [self primitiveValueForKey: kETActionProperty] forKey: kETActionProperty];
+	[item setValue: [self valueForVariableStorageKey: kETDefaultFrameProperty] forVariableStorageKey:  kETDefaultFrameProperty];
+	[item setValue: [self valueForVariableStorageKey: kETNameProperty] forVariableStorageKey: kETNameProperty];
+	[item setValue: [self valueForVariableStorageKey: kETIdentifierProperty] forVariableStorageKey: kETIdentifierProperty];
+	[item setValue: [self valueForVariableStorageKey: kETImageProperty] forVariableStorageKey: kETImageProperty];
+	[item setValue: [self valueForVariableStorageKey: kETIconProperty] forVariableStorageKey: kETIconProperty];
+	[item setValue: [self valueForVariableStorageKey: kETValueKeyProperty] forVariableStorageKey: kETValueKeyProperty];
+	[item setValue: [self valueForVariableStorageKey: kETSubtypeProperty] forVariableStorageKey:  kETSubtypeProperty];
+	[item setValue: [self valueForVariableStorageKey: kETActionProperty] forVariableStorageKey: kETActionProperty];
 
 	/* We adjust targets and observers to reference equivalent objects in the object graph copy */
 
@@ -767,14 +766,14 @@ the index used by the parent item to reference the receiver. */
 The returned value can be nil or an empty string. */
 - (NSString *) identifier
 {
-	return [self primitiveValueForKey: kETIdentifierProperty];
+	return [self valueForVariableStorageKey: kETIdentifierProperty];
 }
 
 /** Sets the identifier associated with the layout item. */
 - (void) setIdentifier: (NSString *)anId
 {
 	[self willChangeValueForProperty: kETIdentifierProperty];	
-	[self setPrimitiveValue: anId forKey: kETIdentifierProperty];
+	[self setValue: anId forVariableStorageKey: kETIdentifierProperty];
 	[self didChangeValueForProperty: kETIdentifierProperty];	
 }
 
@@ -821,14 +820,14 @@ NSObject(Model) in EtoileFoundation. */
 The returned value can be nil or an empty string. */
 - (NSString *) name
 {
-	return [self primitiveValueForKey: kETNameProperty];
+	return [self valueForVariableStorageKey: kETNameProperty];
 }
 
 /** Sets the name associated with the layout item. */
 - (void) setName: (NSString *)name
 {
 	[self willChangeValueForProperty: kETNameProperty];
-	[self setPrimitiveValue: name forKey: kETNameProperty];
+	[self setValue: name forVariableStorageKey: kETNameProperty];
 	[self didChangeValueForProperty: kETNameProperty];	
 }
 
@@ -1266,14 +1265,14 @@ ETActionHandler objects without resorting to a widget from the backend). */
 - (id) valueForUndefinedKey: (NSString *)key
 {
 	//ETLog(@"NOTE: -valueForUndefinedKey: %@ called in %@", key, self);
-	return [self primitiveValueForKey: key]; /* May return nil */
+	return [self valueForVariableStorageKey: key]; /* May return nil */
 }
 
 - (void) setValue: (id)value forUndefinedKey: (NSString *)key
 {
 	//ETLog(@"NOTE: -setValue:forUndefinedKey: %@ called in %@", key, self);
 	[self willChangeValueForProperty: key];
-	[self setPrimitiveValue: value forKey: key];
+	[self setValue: value forVariableStorageKey: key];
 	[self didChangeValueForProperty: key];
 }
 
@@ -1392,7 +1391,7 @@ registered for the property.
 is registered for the property.*/
 - (ETItemValueTransformer *) valueTransformerForProperty: (NSString *)key
 {
-	NSString *transformerName = [[self primitiveValueForKey: @"valueTransformers"] objectForKey: key];
+	NSString *transformerName = [[self valueForVariableStorageKey: @"valueTransformers"] objectForKey: key];
 	ETItemValueTransformer *transformer =
 		(id)[ETItemValueTransformer valueTransformerForName: transformerName];
 	ETAssert(transformer == nil || [transformer isKindOfClass: [ETItemValueTransformer class]]);
@@ -1411,7 +1410,7 @@ See also -valueTransformerForProperty:. */
 {
 	NILARG_EXCEPTION_TEST(key);
 
-	NSMutableDictionary *transformers = [self primitiveValueForKey: @"valueTransformers"];
+	NSMutableDictionary *transformers = [self valueForVariableStorageKey: @"valueTransformers"];
 	ETAssert([ETItemValueTransformer valueTransformerForName: [aValueTransformer name]] == aValueTransformer);
 	[transformers setObject: [aValueTransformer name] forKey: key];
 }
@@ -1564,7 +1563,7 @@ when the receiver is a "pure UI object" without a represented object bound to it
 	/* Check type aggressively in case the user passes a string */
 	NSParameterAssert([aUTI isKindOfClass: [ETUTI class]]);
 	[self willChangeValueForProperty: kETSubtypeProperty];
-	[self setPrimitiveValue: aUTI forKey: kETSubtypeProperty];
+	[self setValue: aUTI forVariableStorageKey: kETSubtypeProperty];
 	[self didChangeValueForProperty: kETSubtypeProperty];
 }
 
@@ -1573,7 +1572,7 @@ when the receiver is a "pure UI object" without a represented object bound to it
 More explanations in -setSubtype. See also -type. */
 - (ETUTI *) subtype
 {
-	return [self primitiveValueForKey: kETSubtypeProperty];
+	return [self valueForVariableStorageKey: kETSubtypeProperty];
 }
 
 /* Returns the supervisor view associated with the receiver. The supervisor view 
@@ -1729,7 +1728,7 @@ You should never use this method unless you write an ETLayoutItem subclass. */
 /** Returns the layout associated with the receiver to present its content. */
 - (id) layout
 {
-	return [self primitiveValueForKey: kETLayoutProperty];
+	return [self valueForVariableStorageKey: kETLayoutProperty];
 }
 
 /** Sets the layout associated with the receiver to present its content.
@@ -1738,11 +1737,11 @@ Layout are not yet supported on ETLayoutItem instances, which this method is
 useless currently. */
 - (void) setLayout: (ETLayout *)aLayout
 {
-	ETLayout *oldLayout = [self primitiveValueForKey: kETLayoutProperty];
+	ETLayout *oldLayout = [self valueForVariableStorageKey: kETLayoutProperty];
 
 	RETAIN(oldLayout);
 	[self willChangeValueForProperty: kETLayoutProperty];
-	[self setPrimitiveValue: aLayout forKey: kETLayoutProperty];
+	[self setValue: aLayout forVariableStorageKey: kETLayoutProperty];
 	[self didChangeLayout: oldLayout];
 	[self didChangeValueForProperty: kETLayoutProperty];
 	RELEASE(oldLayout);
@@ -2370,7 +2369,7 @@ frame is returned by -frame in all cases, hence when ETFreeLayout is in use,
 {
 	// TODO: Find the best way to eventually allow the represented object to 
 	// provide and store the persistent frame.
-	NSValue *value = [self primitiveValueForKey: kETPersistentFrameProperty];
+	NSValue *value = [self valueForVariableStorageKey: kETPersistentFrameProperty];
 	
 	/* -rectValue wrongly returns random rect values when value is nil */
 	if (value == nil)
@@ -2383,7 +2382,7 @@ frame is returned by -frame in all cases, hence when ETFreeLayout is in use,
 - (void) setPersistentFrame: (NSRect) frame
 {
 	[self willChangeValueForProperty: kETPersistentFrameProperty];
-	[self setPrimitiveValue: [NSValue valueWithRect: frame] forKey: kETPersistentFrameProperty];
+	[self setValue: [NSValue valueWithRect: frame] forVariableStorageKey: kETPersistentFrameProperty];
 	[self didChangeValueForProperty: kETPersistentFrameProperty];
 }
 
@@ -2493,13 +2492,13 @@ By default, the anchor point is centered in the content bounds rectangle. See
 The item position is relative to the anchor point. See -position. */
 - (NSPoint) anchorPoint
 {
-	if ([self primitiveValueForKey: kETAnchorPointProperty] == nil)
+	if ([self valueForVariableStorageKey: kETAnchorPointProperty] == nil)
 	{
 		NSPoint anchor = [self centeredAnchorPoint];
-		[self setPrimitiveValue: [NSValue valueWithPoint: anchor] forKey: kETAnchorPointProperty];
+		[self setValue: [NSValue valueWithPoint: anchor] forVariableStorageKey: kETAnchorPointProperty];
 		return anchor;
 	}
-	return [[self primitiveValueForKey: kETAnchorPointProperty] pointValue];
+	return [[self valueForVariableStorageKey: kETAnchorPointProperty] pointValue];
 }
 
 /* Returns the center of the bounds rectangle in the receiver content coordinate 
@@ -2521,7 +2520,7 @@ anchor must be expressed in the receiver content coordinate space. */
 {
 	ETDebugLog(@"Set anchor point to %@ - %@", NSStringFromPoint(anchor), self);
 	[self willChangeValueForProperty: kETAnchorPointProperty];
-	[self setPrimitiveValue: [NSValue valueWithPoint: anchor] forKey: kETAnchorPointProperty];
+	[self setValue: [NSValue valueWithPoint: anchor] forVariableStorageKey: kETAnchorPointProperty];
 	[self didChangeValueForProperty: kETAnchorPointProperty];
 }
 
@@ -2879,7 +2878,7 @@ the receiver has no decorator. */
 /** Returns the default frame associated with the receiver. See -setDefaultFrame:. */
 - (NSRect) defaultFrame 
 {
-	NSValue *value = [self primitiveValueForKey: kETDefaultFrameProperty];
+	NSValue *value = [self valueForVariableStorageKey: kETDefaultFrameProperty];
 	
 	/* -rectValue wrongly returns random rect values when value is nil */
 	if (value == nil)
@@ -2897,7 +2896,7 @@ frame. */
 - (void) setDefaultFrame: (NSRect)frame
 {
 	[self willChangeValueForProperty: kETDefaultFrameProperty];
-	[self setPrimitiveValue: [NSValue valueWithRect: frame] forKey: kETDefaultFrameProperty];
+	[self setValue: [NSValue valueWithRect: frame] forVariableStorageKey: kETDefaultFrameProperty];
 	/* Update display view frame only if needed */
 	if (NSEqualRects(frame, [self frame]) == NO)
 	{
@@ -3017,7 +3016,7 @@ The returned image can be overriden by calling -setImage:.
 See also -icon. */
 - (NSImage *) image
 {
-	NSImage *img = [self primitiveValueForKey: kETImageProperty];
+	NSImage *img = [self valueForVariableStorageKey: kETImageProperty];
 	
 	if (img == nil && [[self value] isKindOfClass: [NSImage class]])
 		img = [self value];
@@ -3037,7 +3036,7 @@ image should not be expected to be nil. */
 - (void) setImage: (NSImage *)img
 {
 	[self willChangeValueForProperty: kETImageProperty];
-	[self setPrimitiveValue: img forKey: kETImageProperty];
+	[self setValue: img forVariableStorageKey: kETImageProperty];
 	[self didChangeValueForProperty: kETImageProperty];
 }
 
@@ -3062,7 +3061,7 @@ The returned image can be overriden by calling -setIcon:.
 -displayName methods. */
 - (NSImage *) icon
 {
-	NSImage *icon = [self primitiveValueForKey: kETIconProperty];
+	NSImage *icon = [self valueForVariableStorageKey: kETIconProperty];
 	
 	if (icon == nil)
 		icon = [self image];
@@ -3089,7 +3088,7 @@ should not be expected to be nil. */
 - (void) setIcon: (NSImage *)img
 {
 	[self willChangeValueForProperty: kETIconProperty];
-	[self setPrimitiveValue: img forKey: kETIconProperty];
+	[self setValue: img forVariableStorageKey: kETIconProperty];
 	[self didChangeValueForProperty: kETIconProperty];
 }
 
@@ -3193,14 +3192,14 @@ item backed either, returns nil. */
 know more about event handling in the layout item tree. */
 - (id) actionHandler
 {
-	return [self primitiveValueForKey: kETActionHandlerProperty];
+	return [self valueForVariableStorageKey: kETActionHandlerProperty];
 }
 
 /** Sets the action handler associated with the receiver. */
 - (void) setActionHandler: (id)anHandler
 {
 	[self willChangeValueForProperty: kETActionHandlerProperty];
-	[self setPrimitiveValue: anHandler forKey: kETActionHandlerProperty];
+	[self setValue: anHandler forVariableStorageKey: kETActionHandlerProperty];
 	[self didChangeValueForProperty: kETActionHandlerProperty];
 }
 
@@ -3209,7 +3208,7 @@ hit tests and action dispatch. By default, returns YES, otherwise NO when
 -actionsHandler returns nil. */
 - (BOOL) acceptsActions
 {
-	return ([self primitiveValueForKey: kETActionHandlerProperty] != nil);
+	return ([self valueForVariableStorageKey: kETActionHandlerProperty] != nil);
 }
 
 /** Controls the automatic enabling/disabling of UI elements (such as menu 
@@ -3276,7 +3275,7 @@ be sent by the UI element in the EtoileUI responder chain. */
 	SEL selector = [inv selector];
 	SEL twoParamSelector = NSSelectorFromString([NSStringFromSelector(selector) 
 		stringByAppendingString: @"onItem:"]);
-	id actionHandler = [self primitiveValueForKey: kETActionHandlerProperty];
+	id actionHandler = [self valueForVariableStorageKey: kETActionHandlerProperty];
 
 	if ([actionHandler respondsToSelector: twoParamSelector])
 	{
@@ -3312,7 +3311,7 @@ The target is not retained. */
 	[self willChangeValueForProperty: @"targetId"];
 	[self willChangeValueForProperty: kETTargetProperty];
 	
-	[self setPrimitiveValue: [NSValue valueWithNonretainedObject: aTarget] forKey: kETTargetProperty];
+	[self setValue: [NSValue valueWithNonretainedObject: aTarget] forVariableStorageKey: kETTargetProperty];
 
 	if ([[self view] isWidget])
 	{
@@ -3332,7 +3331,7 @@ The target is not retained. */
 	if (target != nil)
 		return target;
 
-	return [[self primitiveValueForKey: kETTargetProperty] nonretainedObjectValue];
+	return [[self valueForVariableStorageKey: kETTargetProperty] nonretainedObjectValue];
 }
 
 /** Sets the action that can be sent by the action handler associated with 
@@ -3346,7 +3345,7 @@ distinct. */
 	[self willChangeValueForProperty: @"UIBuilderAction"];
 
 	/* NULL and nil are the same, so a NULL selector removes any existing entry */
-	[self setPrimitiveValue: NSStringFromSelector(aSelector) forKey: kETActionProperty];
+	[self setValue: NSStringFromSelector(aSelector) forVariableStorageKey: kETActionProperty];
 
 	if ([[self view] isWidget])
 	{
@@ -3369,7 +3368,7 @@ See also -setAction:. */
 	if (sel != NULL)
 		return sel;
 
-	NSString *selString = [self primitiveValueForKey: kETActionProperty];
+	NSString *selString = [self valueForVariableStorageKey: kETActionProperty];
 
 	if (selString == nil)
 		return NULL;
@@ -3478,7 +3477,7 @@ returns nil.
 -[NSObject(EtoileUI) inspect:] will show this inspector, unless nil is returned. */
 - (id <ETInspector>) inspector
 {
-	id <ETInspector> inspector = [self primitiveValueForKey: kETInspectorProperty];
+	id <ETInspector> inspector = [self valueForVariableStorageKey: kETInspectorProperty];
 	[inspector setInspectedObjects: A(self)];
 	return inspector;
 }
@@ -3487,7 +3486,7 @@ returns nil.
 - (void) setInspector: (id <ETInspector>)inspector
 {
 	[self willChangeValueForProperty: kETInspectorProperty];
-	[self setPrimitiveValue: inspector forKey: kETInspectorProperty];
+	[self setValue: inspector forVariableStorageKey: kETInspectorProperty];
 	[self didChangeValueForProperty: kETInspectorProperty];
 }
 

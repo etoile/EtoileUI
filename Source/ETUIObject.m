@@ -252,13 +252,13 @@ and write the receiver properties. */
 }
 
 #ifndef COREOBJECT
-- (id)primitiveValueForKey: (NSString *)key
+- (id)valueForVariableStorageKey: (NSString *)key
 {
 	id value = [_variableStorage objectForKey: key];
 	return (value == [NSNull null] ? nil : value);
 }
 
-- (void) setPrimitiveValue: (id)value forKey: (NSString *)key
+- (void) setValue: (id)value forVariableStorageKey: (NSString *)key
 {
 	[_variableStorage setObject: (value == nil ? [NSNull null] : value)
 						 forKey: key];
