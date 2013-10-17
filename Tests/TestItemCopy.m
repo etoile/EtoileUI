@@ -95,14 +95,15 @@ DEALLOC(DESTROY(itemFactory); DESTROY(item); DESTROY(itemGroup))
 
 - (NSArray *) nonCheckablePropertiesForAnyObject
 {
+	ETModelDescriptionRepository *repo = [ETModelDescriptionRepository mainRepository];
 	NSArray *rootObjectProperties = [(NSObject *)AUTORELEASE([[NSObject alloc] init]) propertyNames];
-
-	// FIXME: Remove parentContainer and parentCollections 
-	rootObjectProperties = [rootObjectProperties arrayByAddingObjectsFromArray: 
-		A(@"revisionDescription", @"tagDescription", @"typeDescription", @"tags")];
+	NSArray *coreObjectProperties =
+		[[repo entityDescriptionForClass: [COObject class]] propertyDescriptionNames];
+	NSArray *excludedProperties =
+		[rootObjectProperties arrayByAddingObjectsFromArray: coreObjectProperties];
 	
-	return [rootObjectProperties arrayByRemovingObjectsInArray:
-		A(kETNameProperty, kETDisplayNameProperty, kETIconProperty)];
+	return [excludedProperties arrayByRemovingObjectsInArray:
+		A(kETNameProperty, kETDisplayNameProperty, kETIdentifierProperty, kETIconProperty)];
 }
 
 - (NSArray *) checkablePropertiesForItem: (ETUIItem *)anItem
