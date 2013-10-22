@@ -144,7 +144,7 @@
 		return;
 
 	/* The target might not be deserialized at this point, hence we look up the 
-	   target in -awakeFromFetch once the entire object graph has been deserialized */
+	   target in -awakeFromDeserialization once the entire object graph has been deserialized */
 	[_variableStorage setObject: anId forKey: @"targetId"];
 }
 
@@ -183,7 +183,7 @@
 
 	NSParameterAssert([newView superview] == nil);
 	/* The item geometry might not be deserialized at this point, hence we set 
-	   the view in -awakeFromFetch once the entire object graph has been deserialized */
+	   the view in -awakeFromDeserialization once the entire object graph has been deserialized */
 	[_variableStorage setObject: newView forKey: @"serializedView"];
 }
 
@@ -200,7 +200,7 @@ since -serializedValueForProperty: doesn't use the direct ivar access. */
 	[self setRepresentedObject: aRepObject];
 }
 
-- (void) awakeFromFetch
+- (void) awakeFromDeserialization
 {
 	// TODO: May be reset the bounding box if not persisted
 	//_boundingBox = ETNullRect;

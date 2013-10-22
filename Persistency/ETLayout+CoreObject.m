@@ -35,9 +35,9 @@
 	[self setAttachedTool: [NSClassFromString(aToolClassName) tool]];
 }
 
-- (void) awakeFromFetch
+- (void) awakeFromDeserialization
 {
-	[super awakeFromFetch];
+	[super awakeFromDeserialization];
 
 	ASSIGN(_dropIndicator, [ETDropIndicator sharedInstanceForObjectGraphContext: [self objectGraphContext]]);
 	_previousScaleFactor = 1.0;
@@ -72,7 +72,7 @@
 {
 	[super didLoad];
 
-	/* Must be executed once -awakeFromFetch has been called on subclasses such 
+	/* Must be executed once -awakeFromDeserialization has been called on subclasses such 
 	   as ETTableLayout, and the layout context is entirely deserialized and 
 	   awaken.
 	   Will call -[ETLayoutContext setLayoutView:]. */
@@ -100,11 +100,11 @@
 	return unusedColumns;
 }
 
-- (void) awakeFromFetch
+- (void) awakeFromDeserialization
 {
 	ETAssert([self layoutView] != nil);
 
-	[super awakeFromFetch];
+	[super awakeFromDeserialization];
 	
 	NSDictionary *deserializedPropertyColumns = RETAIN(_propertyColumns);
 

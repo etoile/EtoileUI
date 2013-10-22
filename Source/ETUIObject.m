@@ -58,7 +58,7 @@ See +[ETLayoutItemFactory sharedInstance]. */
 	return self;
 }
 
-- (void) awakeFromFetch
+- (void) awakeFromDeserialization
 {
 
 }
