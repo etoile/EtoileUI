@@ -47,17 +47,6 @@ See +[ETLayoutItemFactory sharedInstance]. */
 
 #ifdef COREOBJECT
 
-- (id) initWithObjectGraphContext: (COObjectGraphContext *)aContext
-{
-	self = [super initWithObjectGraphContext: aContext];
-	if (self == nil)
-		return nil;
-
-	_isShared = NO;
-
-	return self;
-}
-
 - (void) awakeFromDeserialization
 {
 
@@ -203,7 +192,7 @@ Can be overriden to return YES, a computed value or an ivar value. For example,
 see -[ETStyle setIsShared:]. */
 - (BOOL) isShared
 {
-	return [super isShared];
+	return NO;
 }
 
 /** <override-dummy />

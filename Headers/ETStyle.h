@@ -41,7 +41,8 @@ ETStyle objects are usually shared between multiple style groups
 and expect to be provided a layout item through -render:layoutItem:dirtyRect:. */
 @interface ETStyle : ETUIObject
 {
-
+	@private
+	BOOL _isShared;
 }
 
 /** @taskunit Aspect Registration */
