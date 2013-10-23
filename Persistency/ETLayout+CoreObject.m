@@ -47,9 +47,9 @@
 
 @implementation ETFreeLayout (CoreObject)
 
-- (void) didLoad
+- (void) didLoadObjectGraph
 {
-	[super didLoad];
+	[super didLoadObjectGraph];
 
 	//[self setAttachedTool: [ETSelectTool tool]];
 	[[[self attachedTool] ifResponds] setShouldProduceTranslateActions: YES];
@@ -68,9 +68,9 @@
 
 @implementation ETWidgetLayout (CoreObject)
 
-- (void) didLoad
+- (void) didLoadObjectGraph
 {
-	[super didLoad];
+	[super didLoadObjectGraph];
 
 	/* Must be executed once -awakeFromDeserialization has been called on subclasses such 
 	   as ETTableLayout, and the layout context is entirely deserialized and 

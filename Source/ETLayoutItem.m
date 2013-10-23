@@ -2860,8 +2860,8 @@ the receiver has no decorator. */
 	NSParameterAssert(NSContainsRect(extent, bounds) || bounds.size.width == 0 || bounds.size.height == 0);
 
 	/* Prevent damage notifications for CoreObject during object loading.
-	   For -[ETFreeLayout didLoad], -[ETHandleGroup setBoundingBox:] will call 
-	   -setBoundingBox: on manipulated persistent items. */
+	   For -[ETFreeLayout didLoadObjectGraph], -[ETHandleGroup setBoundingBox:]  
+	   will call -setBoundingBox: on manipulated persistent items. */
 	if (NSEqualRects(_boundingBox, extent))
 		return;
 

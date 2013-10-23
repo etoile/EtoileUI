@@ -223,10 +223,13 @@ since -serializedValueForProperty: doesn't use the direct ivar access. */
 	[_variableStorage removeObjectForKey: @"targetId"];
 }
 
-- (void)didReload
+- (void)didLoadObjectGraph
 {
-	[[self layout] didReload];
-	[self setNeedsDisplay: YES];
+	if ([self isRoot])
+	{
+		[[self layout] didReload];
+		[self setNeedsDisplay: YES];
+	}
 }
 
 @end
