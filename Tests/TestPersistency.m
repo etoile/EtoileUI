@@ -113,7 +113,7 @@
 
 	UKObjectsSame(ctxt, [[obj persistentRoot] parentContext]);
 	UKTrue([[ctxt loadedObjects] containsObject: obj]);
-	UKObjectsSame(obj, [[obj persistentRoot] objectWithUUID: [obj UUID]]);
+	UKObjectsSame(obj, [[obj persistentRoot] loadedObjectForUUID: [obj UUID]]);
 }
 
 - (NSBezierPath *) resizedPathWithRect: (NSRect)rect
@@ -330,8 +330,8 @@
 	[self recreateContext];
 
 	ETLayoutItemGroup *newItemGroup = [[ctxt persistentRootForUUID: uuid] rootObject];
-	ETLayoutItem *newItem = (id)[[newItemGroup persistentRoot] objectWithUUID: [item UUID]];
-	ETController *newController = (id)[[newItemGroup persistentRoot] objectWithUUID: [controller UUID]];
+	ETLayoutItem *newItem = (id)[[newItemGroup persistentRoot] loadedObjectWithUUID: [item UUID]];
+	ETController *newController = (id)[[newItemGroup persistentRoot] loadedObjectForUUID: [controller UUID]];
 
 	UKNotNil(newItemGroup);
 	UKObjectsNotSame(itemGroup, newItemGroup);
@@ -400,8 +400,8 @@
 	[self recreateContext];
 
 	ETLayoutItem *newItemGroup = (id)[[ctxt persistentRootForUUID: uuid] rootObject];
-	ETLayoutItem *newButtonItem = (id)[[newItemGroup persistentRoot] objectWithUUID: [buttonItem UUID]];
-	ETLayoutItem *newSliderItem = (id)[[newItemGroup persistentRoot] objectWithUUID: [sliderItem UUID]];
+	ETLayoutItem *newButtonItem = (id)[[newItemGroup persistentRoot] loadedObjectForUUID: [buttonItem UUID]];
+	ETLayoutItem *newSliderItem = (id)[[newItemGroup persistentRoot] loadedObjectForUUID: [sliderItem UUID]];
 
 	UKNotNil(newButtonItem);
 	UKObjectsNotSame(buttonItem, newButtonItem);
@@ -462,7 +462,7 @@
 	[self recreateContext];
 	
 	ETLayoutItem *newItemGroup = (id)[[ctxt persistentRootForUUID: uuid] rootObject];
-	ETLayoutItem *newButtonItem = (id)[[newItemGroup persistentRoot] objectWithUUID: [buttonItem UUID]];
+	ETLayoutItem *newButtonItem = (id)[[newItemGroup persistentRoot] loadedObjectForUUID: [buttonItem UUID]];
 	
 	UKRectsEqual(ETMakeRect(rect.origin, lastSize), [newButtonItem frame]);
 	UKRectsEqual(ETMakeRect(NSZeroPoint, lastSize), [[newButtonItem view] frame]);
@@ -545,7 +545,7 @@
 	[self recreateContext];
 	
 	ETLayoutItemGroup *newItemGroup = [[ctxt persistentRootForUUID: uuid] rootObject];
-	ETController *newController = (id)[[newItemGroup persistentRoot] objectWithUUID: [controller UUID]];
+	ETController *newController = (id)[[newItemGroup persistentRoot] loadedObjectForUUID: [controller UUID]];
 	ETItemTemplate *newObjectTemplate = [newController templateForType: URLType];
 	ETItemTemplate *newGroupTemplate = [newController templateForType: [newController currentGroupType]];
 
@@ -603,8 +603,8 @@
 	[self recreateContext];
 
 	ETLayoutItemGroup *newItemGroup = (id)[[ctxt persistentRootForUUID: uuid] rootObject];
-	ETLayoutItem *newItem = (id)[[newItemGroup persistentRoot] objectWithUUID: [item UUID]];
-	ETLayoutItem *newButtonItem = (id)[[newItemGroup persistentRoot] objectWithUUID: [buttonItem UUID]];
+	ETLayoutItem *newItem = (id)[[newItemGroup persistentRoot] loadedObjectForUUID: [item UUID]];
+	ETLayoutItem *newButtonItem = (id)[[newItemGroup persistentRoot] loadedObjectForUUID: [buttonItem UUID]];
 
 	UKTrue([newButtonItem isSelected]);
 	UKIntsEqual(1, [newItemGroup selectionIndex]);

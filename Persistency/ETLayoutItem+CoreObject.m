@@ -158,14 +158,14 @@
 	if (isViewTarget)
 	{
 		ETUUID *uuid = [ETUUID UUIDWithString: [targetId substringFromIndex: 1]];
-		ETLayoutItem *targetItem = (ETLayoutItem *)[[self persistentRoot] objectWithUUID: uuid];
+		ETLayoutItem *targetItem = (ETLayoutItem *)[[self persistentRoot] loadedObjectForUUID: uuid];
 
 		[self setTarget: [targetItem view]];
 	}
 	else
 	{
 		ETUUID *uuid = [ETUUID UUIDWithString: targetId];
-		ETLayoutItem *targetItem = (ETLayoutItem *)[[self persistentRoot] objectWithUUID: uuid];
+		ETLayoutItem *targetItem = (ETLayoutItem *)[[self persistentRoot] loadedObjectForUUID: uuid];
 
 		[self setTarget: targetItem];
 	}

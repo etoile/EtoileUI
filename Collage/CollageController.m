@@ -69,6 +69,7 @@
 - (id) UIStateRestoration: (ETUIStateRestoration *)restoration
           loadItemForUUID: (ETUUID *)aUUID
 {
+	// FIXME: Look up a persistent root UUID and return the root object probably
 	return [[[ETUIBuilderItemFactory factory] editingContext] objectWithUUID: aUUID]; 
 }
 
