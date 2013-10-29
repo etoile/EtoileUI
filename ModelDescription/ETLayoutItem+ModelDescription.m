@@ -112,6 +112,13 @@
 	ETPropertyDescription *minValue = [ETPropertyDescription descriptionWithName: @"minValue" type: (id)@"double"];
 	ETPropertyDescription *maxValue = [ETPropertyDescription descriptionWithName: @"maxValue" type: (id)@"double"];
 
+	/* Pickboard Related Properties */
+
+	// TODO: Turn into a persistent property (for pickboard persistency)
+	ETPropertyDescription *pickMetadata = [ETPropertyDescription descriptionWithName: @"pickMetadata" type: (id)@"NSObject"];
+	[pickMetadata setMultivalued: YES];
+	[pickMetadata setKeyed: YES];
+
 	/* Transient UI Builder Properties */
 
 	ETPropertyDescription *UIBuilderAction = [ETPropertyDescription descriptionWithName: @"UIBuilderAction" type: (id)@"SEL"];
@@ -135,7 +142,7 @@
 	NSArray *transientProperties = A(parentItem, baseItem, rootItem, indexPath,
 		isBaseItem, subject, style, frame, x, y, width, height, target, 
 		acceptsActions, inspector, subtype, title, objectValue, formatter,
-		minValue, maxValue, UIBuilderAction, attachedTool);
+		minValue, maxValue, pickMetadata, UIBuilderAction, attachedTool);
 
 	[entity setUIBuilderPropertyNames: (id)[[A(identifier, name, 
 		image, icon, valueKey, target, UIBuilderAction, 

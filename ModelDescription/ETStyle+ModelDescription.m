@@ -97,11 +97,18 @@
 		   @(ETLabelPositionInsideBottom), _(@"Inside Bottom"),
 		   @(ETLabelPositionOutsideBottom), _(@"Outside Bottom")) arrayRepresentation]];
 	ETPropertyDescription *labelMargin = [ETPropertyDescription descriptionWithName: @"labelMargin" type: (id)@"CGFloat"];
+	ETPropertyDescription *labelAttributes = [ETPropertyDescription descriptionWithName: @"labelAttributes" type: (id)@"NSObject"];
+	[labelAttributes setKeyed: YES];
+	[labelAttributes setMultivalued: YES];
+	ETPropertyDescription *selectedLabelAttributes = [ETPropertyDescription descriptionWithName: @"selectedLabelAttributes" type: (id)@"NSObject"];
+	[selectedLabelAttributes setKeyed: YES];
+	[selectedLabelAttributes setMultivalued: YES];
 	ETPropertyDescription *maxLabelSize = [ETPropertyDescription descriptionWithName: @"maxLabelSize" type: (id)@"NSSize"];
 	ETPropertyDescription *maxImageSize = [ETPropertyDescription descriptionWithName: @"maxImageSize" type: (id)@"NSSize"];
 	ETPropertyDescription *edgeInset = [ETPropertyDescription descriptionWithName: @"edgeInset" type: (id)@"CGFloat"];
 
-	NSArray *transientProperties = [NSArray array];
+	// FIXME: Make labelAttributes and selectedLabelAttributes persistent
+	NSArray *transientProperties = A(labelAttributes, selectedLabelAttributes);
 	NSArray *persistentProperties = A(labelPosition, labelMargin, maxLabelSize,
 		maxImageSize, edgeInset);
 
