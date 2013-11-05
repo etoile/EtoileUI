@@ -78,6 +78,30 @@
 #pragma mark Persistency Support
 #pragma mark -
 
+- (NSData *) serializedIcon
+{
+	NSImage *icon = [self valueForVariableStorageKey: kETIconProperty];
+	return (icon != nil ? [NSKeyedArchiver archivedDataWithRootObject: icon] : nil);
+}
+
+- (void) setSerializedIcon: (NSData *)anIconData
+{
+	NSImage *icon = (anIconData != nil ? [NSKeyedUnarchiver unarchiveObjectWithData: anIconData] : nil);
+	[self setValue: icon forVariableStorageKey: kETIconProperty];
+}
+
+- (NSData *) serializedImage
+{
+	NSImage *img = [self valueForVariableStorageKey: kETImageProperty];
+	return (img != nil ? [NSKeyedArchiver archivedDataWithRootObject: img] : nil);
+}
+
+- (void) setSerializedImage: (NSData *)anImageData
+{
+	NSImage *img = (anImageData != nil ? [NSKeyedUnarchiver unarchiveObjectWithData: anImageData] : nil);
+	[self setValue: img forVariableStorageKey: kETImageProperty];
+}
+
 - (NSValue *) serializedPosition
 {
 	id value = nil;
@@ -118,6 +142,17 @@
 		[self setValue: aValue forVariableStorageKey: @"initialContentBounds"];
 	}
 	[self setContentBounds: [aValue rectValue]];
+}
+
+/* The action selector is stored as a string in the variable storage */
+- (NSString *) serializedAction
+{
+	return [self valueForVariableStorageKey: kETActionProperty];
+}
+
+- (void) setSerializedAction: (NSString *)aSelString
+{
+	[self setValue: aSelString forVariableStorageKey: kETActionProperty];
 }
 
 - (NSString *) targetIdForTarget: (id)target
@@ -171,13 +206,16 @@
 	}
 }
 
-- (NSView *) serializedView
+- (NSData *) serializedView
 {
-	return [self view];
+	return ([self view] != nil ? [NSKeyedArchiver archivedDataWithRootObject: [self view]] : nil);
 }
 
-- (void) setSerializedView: (NSView *)newView
+- (void) setSerializedView: (NSData *)newViewData
 {
+	NSView *newView =
+		(newViewData != nil ? [NSKeyedUnarchiver unarchiveObjectWithData: newViewData] : nil);
+
 	if (newView == nil)
 		return;
 
@@ -194,9 +232,22 @@ since -serializedValueForProperty: doesn't use the direct ivar access. */
 	return [NSValue valueWithRect: _boundingBox];
 }
 
-/* Required to set up the KVO observation. */
-- (void) setSerializedRepresentedObject: (id)aRepObject
+- (void) setSerializedBoundingBox: (id)aBoundingBox
 {
+	_boundingBox = [aBoundingBox rectValue];
+}
+
+- (COObject *) serializedRepresentedObject
+{
+	BOOL isPersistent = ([_representedObject isKindOfClass: [COObject class]]
+		&& [(COObject *)_representedObject isPersistent]);
+	return (isPersistent ? _representedObject : nil);
+}
+
+/* Required to set up the KVO observation. */
+- (void) setSerializedRepresentedObject: (COObject *)aRepObject
+{
+	NSParameterAssert(aRepObject == nil || [aRepObject isKindOfClass: [COObject class]]);
 	[self setRepresentedObject: aRepObject];
 }
 

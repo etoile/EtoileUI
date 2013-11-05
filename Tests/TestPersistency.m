@@ -44,6 +44,20 @@
 #define UKPointsNotEqual(x, y) UKFalse(NSEqualPoints(x, y))
 #define UKSizesEqual(x, y) UKTrue(NSEqualSizes(x, y))
 
+@interface COObject (TestPersistency)
+- (id)roundTripValueForArchivedProperty: (NSString *)key;
+@end
+
+@implementation COObject (TestPersistency)
+
+- (id)roundTripValueForArchivedProperty: (NSString *)key
+{
+	NSData *data = [self roundTripValueForProperty: key];
+	return (data != nil ? [NSKeyedUnarchiver unarchiveObjectWithData: data] : data);
+}
+
+@end
+
 @interface TestPersistency : NSObject <UKTest>
 {
 	COEditingContext *ctxt;
@@ -133,12 +147,10 @@
 	[shape setAlphaValue: 0.4];
 	[shape setHidden: YES];
 
-	UKRectsEqual(rect, [[shape roundTripValueForProperty: @"path"] bounds]);
-	// FIXME: KVC doesn't support selector boxing into NSValue
-	//UKTrue(sel_isEqual(@selector(resizedPathWithRect:), 
-	//	(SEL)[[shape roundTripValueForProperty: @"pathResizeSelector"] pointerValue]));
-	UKObjectsEqual([NSColor redColor], [shape roundTripValueForProperty: @"fillColor"]);
-	UKNil([shape roundTripValueForProperty: @"strokeColor"]);
+	UKRectsEqual(rect, [[shape roundTripValueForArchivedProperty: @"path"] bounds]);
+	UKStringsEqual(@"resizedPathWithRect:", [shape roundTripValueForProperty: @"pathResizeSelector"]);
+	UKObjectsEqual([NSColor redColor], [shape roundTripValueForArchivedProperty: @"fillColor"]);
+	UKNil([shape roundTripValueForArchivedProperty: @"strokeColor"]);
 	UKTrue([[shape roundTripValueForProperty: @"hidden"] boolValue]);
 }
 
