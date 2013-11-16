@@ -143,8 +143,8 @@ time. For example:
 
 - (ETLayoutItemGroup *) collectionEditorTemplateItem
 {
-	ETPropertyCollectionController *controller =
-		AUTORELEASE([ETPropertyCollectionController new]);
+	ETPropertyCollectionController *controller = AUTORELEASE([[ETPropertyCollectionController alloc]
+		initWithObjectGraphContext: [_itemFactory objectGraphContext]]);
 	ETLayoutItemGroup *editor = [_itemFactory collectionEditorWithSize: [self defaultItemSize]
 							                         representedObject: [NSArray array]
 									                        controller: controller];

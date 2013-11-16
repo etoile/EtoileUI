@@ -991,7 +991,8 @@ and a stepper on the right side. */
 	ETLayoutItem *secondPicker = [self numberPickerWithWidth: aWidth / 2
 		minValue: 0 maxValue: CGFLOAT_MAX initialValue: 0
 		forProperty: aSecondKey ofModel: anObject];
-	ETBasicItemStyle *coverStyle = AUTORELEASE([ETBasicItemStyle new]);
+	ETBasicItemStyle *coverStyle =
+		AUTORELEASE([[ETBasicItemStyle alloc] initWithObjectGraphContext: _objectGraphContext]);
 
 	// FIXME: If no name is set, the number pickers are not visible
 	[firstPicker setName: _(@"1")];
