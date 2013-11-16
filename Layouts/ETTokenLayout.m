@@ -85,7 +85,7 @@ Initializes and returns a new token layout. */
 	[super setUp];
 
 	// FIXME: Should use a new ETLayout API that memorizes the context state
-	[(id)[self layoutContext] setActionHandler: AUTORELEASE([ETTokenBackgroundActionHandler new])];
+	[(id)[self layoutContext] setActionHandler: AUTORELEASE([[ETTokenBackgroundActionHandler alloc] initWithObjectGraphContext: [self objectGraphContext]])];
 }
 
 - (void) tearDown
