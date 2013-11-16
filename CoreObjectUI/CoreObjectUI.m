@@ -11,7 +11,7 @@
 
 #ifdef COREOBJECT
 
-#import <CoreObject/COCommand.h>
+#import <CoreObject/COBranch.h>
 #import <CoreObject/COObject.h>
 #import <CoreObject/COGroup.h>
 #import <CoreObject/COLibrary.h>
@@ -158,10 +158,10 @@
 	return formatter;
 }
 
-- (ETLayoutItemGroup *) historyBrowserTrackViewWithRepresentedObject: (id <ETCollection>)trackOrRevs controller: (id)aController
+- (ETLayoutItemGroup *) historyBrowserTrackViewWithRepresentedObject: (id <COTrack>)aTrack controller: (id)aController
 {
 
-	ETLayoutItemGroup *browser = [[ETLayoutItemFactory factory] itemGroupWithRepresentedObject: trackOrRevs];
+	ETLayoutItemGroup *browser = [[ETLayoutItemFactory factory] itemGroupWithRepresentedObject: aTrack];
 	ETOutlineLayout *layout = [ETOutlineLayout layoutWithObjectGraphContext: [self objectGraphContext]];
 
 	[layout setContentFont: [NSFont controlContentFontOfSize: [NSFont smallSystemFontSize]]];
@@ -190,28 +190,23 @@
 	return browser;
 }
 
-- (NSString *) trackTitleForRepresentedObject: (id)trackOrRevs
+- (NSString *) titleForTrack: (id <COTrack>)aTrack
 {
-	if ([trackOrRevs conformsToProtocol: @protocol(COTrack)])
-	{
-		return [NSString stringWithFormat: _(@"%@ History"),[trackOrRevs displayName]];
-	}
-	else
-	{
-		return _(@"Undetermined Revision or Track Node Collection");
-	}
+	NSString *trackName = ([aTrack isKindOfClass: [COBranch class]] ? [(NSObject *)aTrack displayName] : _(@"Undo"));
+
+	return [NSString stringWithFormat: _(@"%@ History"), trackName];
 }
 
-- (ETLayoutItemGroup *) historyBrowserWithRepresentedObject: (id <ETCollection>)trackOrRevs
+- (ETLayoutItemGroup *) historyBrowserWithRepresentedObject: (id <COTrack>)aTrack
                                                       title: (NSString *)aTitle
 {
 	/* We set the controller on the track view so it can access the track nodes */
 	ETController *controller = AUTORELEASE([[ETHistoryBrowserController alloc] initWithObjectGraphContext: [ETUIObject defaultTransientObjectGraphContext]]);
 	ETLayoutItemGroup *topBar = [self historyBrowserTopBarWithController: controller];
-	ETLayoutItemGroup *trackView = [self historyBrowserTrackViewWithRepresentedObject: trackOrRevs controller: controller];
+	ETLayoutItemGroup *trackView = [self historyBrowserTrackViewWithRepresentedObject: aTrack controller: controller];
 	ETLayoutItemGroup *browser = [self itemGroupWithItems: A(topBar, trackView)];
 	
-	[browser setName: (aTitle != nil ? aTitle : [self trackTitleForRepresentedObject: trackOrRevs])];
+	[browser setName: (aTitle != nil ? aTitle : [self titleForTrack: aTrack])];
 	[browser setAutoresizingMask: ETAutoresizingFlexibleWidth | ETAutoresizingFlexibleHeight];
 	[browser setLayout: [ETColumnLayout layoutWithObjectGraphContext: [self objectGraphContext]]];
 

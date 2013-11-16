@@ -35,7 +35,7 @@ By default, returns an empty array. */
 @interface ETLayoutItemFactory (CoreObjectUI) 
 /** Returns a new layout item group which shows the history provided by the 
 represented object, usually a CORevision object collection or a COTrack. */
-- (ETLayoutItemGroup *) historyBrowserWithRepresentedObject: (id <ETCollection>)trackOrRevs
+- (ETLayoutItemGroup *) historyBrowserWithRepresentedObject: (id <COTrack>)aTrack
                                                       title: (NSString *)aTitle;
 @end
 
