@@ -126,10 +126,10 @@
 		[ETPropertyDescription descriptionWithName: @"isEditing" type: (id)@"BOOL"];
 	[isEditing setReadOnly: YES];
 
-	NSArray *transientProperties = A(nibMainContent, builder, currentGroupType,
+	NSArray *transientProperties = A(content, nibMainContent, builder, currentGroupType,
 		nextResponder, defaultOptions, canMutate, isContentMutable,
 		insertionIndex, insertionIndexPath, additionIndexPath, isEditing);
-	NSArray *persistentProperties = A(content, templates, currentObjectType,
+	NSArray *persistentProperties = A(templates, currentObjectType,
 		clearsFilterPredicate, selectsInsertedObjects, sortDescriptors, filterPredicate,
 		automaticallyRearranges);
 	// FIXME: Using all persistent properties is not yet tested...
