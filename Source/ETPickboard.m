@@ -64,7 +64,7 @@ owner process ends. */
 {
 	if (localPickboard == nil)
 	{
-		localPickboard = [[ETPickboard alloc] init];
+		localPickboard = [[ETPickboard alloc] initWithObjectGraphContext: [ETUIObject defaultTransientObjectGraphContext]];
 		[localPickboard setName: _(@"Local Pickboard")];
 	}
 
