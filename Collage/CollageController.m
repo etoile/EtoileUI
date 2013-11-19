@@ -52,7 +52,8 @@
 
 	/* Open an inspector that allows us to easily switch the tool and the 
 	   layout in use */
-	[[itemFactory windowGroup] setController: [ETController new]];
+	[[itemFactory windowGroup] setController: AUTORELEASE([[ETController alloc]
+		initWithObjectGraphContext: [ETUIObject defaultTransientObjectGraphContext]])];
 	[[itemFactory windowGroup] inspectUI: nil];
 }
 
@@ -69,8 +70,7 @@
 - (id) UIStateRestoration: (ETUIStateRestoration *)restoration
           loadItemForUUID: (ETUUID *)aUUID
 {
-	// FIXME: Look up a persistent root UUID and return the root object probably
-	return [[[ETUIBuilderItemFactory factory] editingContext] objectWithUUID: aUUID]; 
+	return [[[[ETUIBuilderItemFactory factory] editingContext] persistentRootForUUID: aUUID] rootObject];
 }
 
 - (void) UIStateRestoration: (ETUIStateRestoration *)restoration

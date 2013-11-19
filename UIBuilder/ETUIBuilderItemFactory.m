@@ -12,6 +12,7 @@
 #import <EtoileFoundation/NSString+Etoile.h>
 #import <EtoileFoundation/Macros.h>
 #import <CoreObject/COEditingContext.h>
+#import <CoreObject/COObjectGraphContext.h>
 #import <CoreObject/COSQLiteStore.h>
 #import <IconKit/IconKit.h>
 #import "ETUIBuilderItemFactory.h"
@@ -393,7 +394,8 @@
                                controller: (id)aController
 {
 	ETLayoutItemGroup *itemGroup = [self itemGroupWithSize: [self defaultBrowserSize]];
-	ETUIBuilderBrowserController *browserController = AUTORELEASE([ETUIBuilderBrowserController new]);
+	ETUIBuilderBrowserController *browserController = AUTORELEASE([[ETUIBuilderBrowserController alloc]
+		initWithObjectGraphContext: [self objectGraphContext]]);
 	ETItemTemplate *objectTemplate = [browserController templateForType: [browserController currentObjectType]];
 	ETItemTemplate *groupTemplate = [browserController templateForType: [browserController currentGroupType]];
 
@@ -427,6 +429,10 @@
 	NSString *aspectKeyPath = @"self";
 	ETLayoutItemGroup *header = [self basicInspectorHeaderWithObject: anObject controller: aController aspectName: aspectKeyPath];
 	ETLayoutItemGroup *pane = [self basicInspectorContentWithObject: anObject controller: aController aspectName: aspectKeyPath];
+
+	NSLog(@"self: %@", [self objectGraphContext]);
+	NSLog(@"header: %@", [header objectGraphContext]);
+	NSLog(@"pane: %@", [pane objectGraphContext]);
 
 	[itemGroup setIdentifier: @"basicInspector"];
 	[itemGroup setAutoresizingMask: ETAutoresizingFlexibleWidth | ETAutoresizingFlexibleHeight];
@@ -662,8 +668,12 @@
 
 - (IBAction) inspectUI: (id)sender
 {
-	ETLayoutItemGroup *inspector = [[ETUIBuilderItemFactory factory]
-		inspectorWithObject: self controller: AUTORELEASE([ETUIBuilderController new])];
+	ETUIBuilderItemFactory *itemFactory =
+		[ETUIBuilderItemFactory factoryWithObjectGraphContext: [COObjectGraphContext objectGraphContext]];
+	ETUIBuilderController *controller = AUTORELEASE([[ETUIBuilderController alloc]
+		initWithObjectGraphContext: [itemFactory objectGraphContext]]);
+	ETLayoutItemGroup *inspector = [itemFactory inspectorWithObject: self
+	                                                     controller: controller];
 
 	[[[ETUIBuilderItemFactory factory] windowGroup] addItem: inspector];
 }

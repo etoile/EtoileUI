@@ -143,9 +143,9 @@
 
 	ETLog(@" === Turned %@ into a persistent UI === ", [persistentUIItem shortDescription]);
 
-	[(id)[self persistentObjectContext]
+	COPersistentRoot *persistentUI = [(id)[self persistentObjectContext]
 		insertNewPersistentRootWithRootObject: persistentUIItem];
-	[[ETApp UIStateRestoration] setPersistentItemUUID: [persistentUIItem UUID]
+	[[ETApp UIStateRestoration] setPersistentItemUUID: [persistentUI UUID]
 	                                          forName: [persistentUIItem persistentUIName]];
 }
 
