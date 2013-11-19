@@ -278,7 +278,7 @@ since -serializedValueForProperty: doesn't use the direct ivar access. */
 {
 	if ([self isRoot])
 	{
-		[[self layout] didReload];
+		[[self layout] didLoadObjectGraph];
 		[self setNeedsDisplay: YES];
 	}
 }
@@ -315,11 +315,22 @@ since -serializedValueForProperty: doesn't use the direct ivar access. */
 	return collectedItems;
 }
 
-- (void) setSerializedItems: (NSArray *)items
+- (NSString *) serializedDoubleAction
 {
-	DESTROY(_items);
-	_items = [items mutableCopy];
-	for (ETLayoutItem *item in items)
+	return NSStringFromSelector(_doubleAction);
+}
+
+- (void) setSerializedDoubleAction: (NSString *)aSelString
+{
+	_doubleAction = NSSelectorFromString(aSelString);
+}
+
+- (void) awakeFromDeserialization
+{
+	[super awakeFromDeserialization];
+
+	// FIXME: Remove once we use the relationship cache for ETLayoutItemGroup.items
+	for (ETLayoutItem *item in _items)
 	{
 		item->_parentItem = self;
 	}

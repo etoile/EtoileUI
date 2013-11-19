@@ -36,6 +36,28 @@
 	[self setFilterPredicate: [NSPredicate predicateWithFormat: aPredicateFormat]];
 }
 
+- (NSArray *) serializedSortDescriptors
+{
+	NSMutableArray *sortDescriptors =  [NSMutableArray array];
+
+	for (NSSortDescriptor *descriptor in _sortDescriptors)
+	{
+		[sortDescriptors addObject: [NSKeyedArchiver archivedDataWithRootObject: descriptor]];
+	}
+	return sortDescriptors;
+}
+
+- (void) setSerializedSortDescriptors: (NSArray *)serializedSortDescriptors
+{
+	NSMutableArray *sortDescriptors = [NSMutableArray array];
+
+	for (NSData *data in serializedSortDescriptors)
+	{
+		[sortDescriptors addObject: [NSKeyedUnarchiver unarchiveObjectWithData: data]];
+	}
+	ASSIGNCOPY(_sortDescriptors, sortDescriptors);
+}
+
 - (NSArray *) serializedAllowedPickTypes
 {
 	return (id)[[_allowedPickTypes mappedCollection] stringValue];
@@ -43,7 +65,7 @@
 
 - (void) setSerializedAllowedPickTypes: (NSArray *)serializedPickTypes
 {
-	NSMutableArray *pickTypes = [NSMutableArray new];
+	NSMutableArray *pickTypes = [NSMutableArray array];
 
 	for (NSString *UTIString in serializedPickTypes)
 	{

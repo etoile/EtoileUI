@@ -41,8 +41,6 @@
 	[context setOpposite: (id)@"ETLayoutItemGroup.layout"];
 	ETPropertyDescription *delegate = 
 		[ETPropertyDescription descriptionWithName: @"delegate" type: (id)@"NSObject"];
-	ETPropertyDescription *layoutView = 
-		[ETPropertyDescription descriptionWithName: @"layoutView" type: (id)@"NSView"];
 	ETPropertyDescription *attachedTool =
 		[ETPropertyDescription descriptionWithName: @"attachedTool" type: (id)@"ETTool"];
 	ETPropertyDescription *layerItem = 
@@ -66,8 +64,8 @@
 	// TODO: Support tool persistence... Rarely needed though.
 	// TODO: We need a direct ivar access to persist the layer item
 	// TODO: Evaluate whether we should support drop indicator persistence
-	NSArray *persistentProperties = A(attachedTool, context, delegate, layoutView,
-		layoutSize, usesCustomLayoutSize);
+	NSArray *persistentProperties = A(attachedTool, context, delegate, layoutSize,
+		usesCustomLayoutSize);
 
 	[entity setUIBuilderPropertyNames: (id)[[A(delegate, dropIndicator) mappedCollection] name]];
 

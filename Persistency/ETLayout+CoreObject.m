@@ -68,6 +68,21 @@
 
 @implementation ETWidgetLayout (CoreObject)
 
+- (NSData *) serializedLayoutView
+{
+	return (layoutView != nil ? [NSKeyedArchiver archivedDataWithRootObject: layoutView] : nil);
+}
+
+- (void) setSerializedLayoutView: (NSData *)newViewData
+{
+	NSView *newView =
+		(newViewData != nil ? [NSKeyedUnarchiver unarchiveObjectWithData: newViewData] : nil);
+
+	NSParameterAssert([newView superview] == nil);
+
+	ASSIGN(layoutView, newView);
+}
+
 - (void) didLoadObjectGraph
 {
 	[super didLoadObjectGraph];
