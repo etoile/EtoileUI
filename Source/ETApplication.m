@@ -699,7 +699,7 @@ menu bar, otherwise builds a new instance and returns it. */
 
 	[menu addItemWithTitle: _(@"Show Undo History")
 	                action: @selector(browseUndoHistory:)
-	         keyEquivalent: @""];
+	         keyEquivalent: @"u"];
 
 	[menu addItem: [NSMenuItem separatorItem]];
 
@@ -715,13 +715,17 @@ menu bar, otherwise builds a new instance and returns it. */
 	                action: @selector(paste:)
 	         keyEquivalent: @"v"];
 
+	[menu addItem: [NSMenuItem separatorItem]];
+
+	unichar deleteKey = NSDeleteCharacter;
+
 	[menu addItemWithTitle: _(@"Delete")
 	                action: @selector(delete:)
-	         keyEquivalent: @""];
+	         keyEquivalent: [NSString stringWithCharacters: &deleteKey length: 1]];
 
 	[menu addItemWithTitle: _(@"Duplicate")
 	                action: @selector(duplicate:)
-	         keyEquivalent: @""];
+	         keyEquivalent: @"d"];
 
 	[menu addItem: [NSMenuItem separatorItem]];
 
