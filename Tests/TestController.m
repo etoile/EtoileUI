@@ -82,6 +82,23 @@
 }
 @end
 
+@interface NoCurrentTypeController : ETController
+@end
+
+@implementation NoCurrentTypeController : ETController
+
+- (ETUTI *) currentObjectType
+{
+	return nil;
+}
+
+- (ETUTI *) currentGroupType;
+{
+	return nil;
+}
+
+@end
+
 @interface TestController : NSObject <UKTest>
 {
 	ETController *controller;
@@ -124,6 +141,15 @@
 - (void) testInit
 {
 	UKTrue([[controller content] isEmpty]);
+}
+
+- (void) testOverridenCurrentObjectOrGroupTypeReturningNil
+{
+	ETController *subclassedController = AUTORELEASE([[ETController alloc]
+		initWithObjectGraphContext: [COObjectGraphContext objectGraphContext]]);
+		
+	UKNotNil([subclassedController templateForType: kETTemplateObjectType]);
+	UKNotNil([subclassedController templateForType: kETTemplateGroupType]);
 }
 
 - (void) testNewObject

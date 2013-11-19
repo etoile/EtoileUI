@@ -89,8 +89,8 @@ You can also use it -init to create a controller. See -[ETNibOwner init]. */
 	                                                     objectClass: Nil
 	                                              objectGraphContext: aContext];
 
-	[self setTemplate: objectTemplate forType: [self currentObjectType]];
-	[self setTemplate: groupTemplate forType: [self currentGroupType]];
+	[self setTemplate: objectTemplate forType: kETTemplateObjectType];
+	[self setTemplate: groupTemplate forType: kETTemplateGroupType];
 
 	return self;
 }
@@ -504,6 +504,8 @@ To customize the copying in a subclass, you must override
 /** Returns the type of the template to be instantiated on -add: and -insert:.
  
 By default, returns kETTemplateObjectType.<br />
+
+Can be overriden to return a custom type based on a use case or a user setting.
 
 See also -setCurrentObjectType: and -setTemplate:forType:. */
 - (ETUTI *) currentObjectType
