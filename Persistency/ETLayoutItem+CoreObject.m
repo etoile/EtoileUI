@@ -325,6 +325,42 @@ since -serializedValueForProperty: doesn't use the direct ivar access. */
 	_doubleAction = NSSelectorFromString(aSelString);
 }
 
+- (COObject *) serializedSource
+{
+	id source = [self valueForVariableStorageKey: kETSourceProperty];
+	BOOL isPersistent = ([source isKindOfClass: [COObject class]]
+		&& [(COObject *)source isPersistent]);
+
+	NSAssert1(source == nil || isPersistent, @"ETLayoutItemGroup.source must "
+		"be a persistent COObject and not a transient one: %@", source);
+
+	return (isPersistent ? source : nil);
+}
+
+- (void) setSerializedSource: (COObject *)aSource
+{
+	NSParameterAssert(aSource == nil || [aSource isKindOfClass: [COObject class]]);
+	[self setValue: aSource forVariableStorageKey: @"delegate"];
+}
+
+- (COObject *) serializedDelegate
+{
+	id delegate = [self valueForVariableStorageKey: @"delegate"];
+	BOOL isPersistent = ([delegate isKindOfClass: [COObject class]]
+		&& [(COObject *)delegate isPersistent]);
+
+	NSAssert1(delegate == nil || isPersistent, @"ETLayoutItemGroup.delegate must "
+		"be a persistent COObject and not a transient one: %@", delegate);
+
+	return (isPersistent ? delegate : nil);
+}
+
+- (void) setSerializedDelegate: (COObject *)aDelegate
+{
+	NSParameterAssert(aDelegate == nil || [aDelegate isKindOfClass: [COObject class]]);
+	[self setValue: aDelegate forVariableStorageKey: @"delegate"];
+}
+
 - (void) awakeFromDeserialization
 {
 	[super awakeFromDeserialization];

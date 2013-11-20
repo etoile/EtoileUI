@@ -132,7 +132,7 @@
 	   Hmm, _scrollViewShow ought to be persisted. */
 
 	NSArray *persistentProperties = A(identifier, name, image, icon, 
-		repObject, valueTransformers, valueKey, value, view, styleGroup, coverStyle,
+		repObject, valueTransformers, valueKey, view, styleGroup, coverStyle,
 		actionHandler, action, targetId, contentBounds, position, anchorPoint, 
 		persistentFrame, autoresizing, contentAspect, boundingBox, defaultFrame,
 		flipped, selected, selectable, visible);
@@ -141,7 +141,7 @@
 	// override the entity description bound to ETLayoutItem (making possible 
 	// to redeclare these properties as persistent if no view is used).
 	NSArray *transientProperties = A(parentItem, baseItem, rootItem, indexPath,
-		isBaseItem, subject, style, frame, x, y, width, height, target, 
+		isBaseItem, value, subject, style, frame, x, y, width, height, target,
 		acceptsActions, inspector, subtype, title, objectValue, formatter,
 		minValue, maxValue, pickMetadata, UIBuilderAction, attachedTool);
 
