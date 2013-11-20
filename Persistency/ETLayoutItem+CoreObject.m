@@ -329,11 +329,19 @@ since -serializedValueForProperty: doesn't use the direct ivar access. */
 {
 	[super awakeFromDeserialization];
 
-	// FIXME: Remove once we use the relationship cache for ETLayoutItemGroup.items
+	// FIXME: Remove once we use the relationship cache
 	for (ETLayoutItem *item in _items)
 	{
 		item->_parentItem = self;
 	}
+}
+
+- (void) didLoadObjectGraph
+{
+	[super didLoadObjectGraph];
+
+	// FIXME: Remove once we use the relationship cache
+	[[self controller] setContent: self];
 }
 
 @end

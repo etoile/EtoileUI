@@ -74,6 +74,15 @@
 	ASSIGNCOPY(_allowedPickTypes, pickTypes);
 }
 
+- (void) didLoadObjectGraph
+{
+	// TODO: We probably want to recreate the observations here (but we need to
+	// declare them in the metamodel and serialize them). For now, it is the
+	// developer responsability to use serialization setters that call the
+	// setters using -stopObserveObjectForNotificationName: and
+	// -startObserveObject:forNotificationName:selector:
+}
+
 @end
 
 @implementation ETItemTemplate (CoreObject)

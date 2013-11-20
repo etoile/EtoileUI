@@ -320,7 +320,6 @@
 	UKTrue([[itemGroup roundTripValueForProperty: @"shouldMutateRepresentedObject"] boolValue]);
 }
 
-#if 0
 - (void) testBasicItemGroupPersistency
 {
 	[self recreateContext];
@@ -342,7 +341,7 @@
 	[self recreateContext];
 
 	ETLayoutItemGroup *newItemGroup = [[ctxt persistentRootForUUID: uuid] rootObject];
-	ETLayoutItem *newItem = (id)[[newItemGroup persistentRoot] loadedObjectWithUUID: [item UUID]];
+	ETLayoutItem *newItem = (id)[[newItemGroup persistentRoot] loadedObjectForUUID: [item UUID]];
 	ETController *newController = (id)[[newItemGroup persistentRoot] loadedObjectForUUID: [controller UUID]];
 
 	UKNotNil(newItemGroup);
@@ -370,6 +369,7 @@
 	[self checkValidityForNewPersistentObject: newController isFault: NO];
 }
 
+#if 0
 - (void) testViewRoundtrip
 {
 	ETLayoutItem *item = [itemFactory textField];
