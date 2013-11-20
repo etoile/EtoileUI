@@ -63,18 +63,17 @@
 	[super dealloc];
 }
 
-- (void) setContent: (ETLayoutItemGroup *)anItem
+- (void) didChangeContent: (ETLayoutItemGroup *)oldContent
+                toContent: (ETLayoutItemGroup *)newContent
 {
-	if ([self content] != nil)
+	if (oldContent != nil)
 	{
-		[self stopObserveObject: [[self content] itemForIdentifier: @"browser"]
+		[self stopObserveObject: [oldContent itemForIdentifier: @"browser"]
 		    forNotificationName: ETItemGroupSelectionDidChangeNotification];
 	}
-	[super setContent: anItem];
-
-	if (anItem != nil)
+	if (newContent != nil)
 	{
-		[self startObserveObject: [anItem itemForIdentifier: @"browser"]
+		[self startObserveObject: [newContent itemForIdentifier: @"browser"]
 		     forNotificationName: ETItemGroupSelectionDidChangeNotification
 		                selector: @selector(browserSelectionDidChange:)];
 	}

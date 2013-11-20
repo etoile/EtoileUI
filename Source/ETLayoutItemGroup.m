@@ -52,6 +52,10 @@ NSString * const ETSourceDidUpdateNotification = @"ETSourceDidUpdateNotification
        inContext: (id)ctxt;
 @end
 
+@interface  ETController (Private)
+- (void) setContent: (ETLayoutItemGroup *)aContent;
+@end
+
 
 @implementation ETLayoutItemGroup
 
@@ -660,8 +664,22 @@ See also -setSource:, -isBaseItem and -nextResponder. */
 {
 	[self willChangeValueForProperty: kETControllerProperty];
 
-	[self setValue: aController forVariableStorageKey: kETControllerProperty];
-	[aController setContent: self];
+	ETController *newController = aController;
+	ETLayoutItemGroup *newControllerOldContent = [newController content];
+	ETController *oldController = [self valueForVariableStorageKey: kETControllerProperty];
+
+	RETAIN(newControllerOldContent);
+	RETAIN(oldController);
+
+	[self setValue: newController forVariableStorageKey: kETControllerProperty];
+	// FIXME: Remove
+	[newController setContent: self];
+
+	[oldController didChangeContent: self toContent: nil];
+	[newController didChangeContent: newControllerOldContent toContent: self];
+
+	RELEASE(newControllerOldContent);
+	RELEASE(oldController);
 
 	[self didChangeValueForProperty: kETControllerProperty];
 }

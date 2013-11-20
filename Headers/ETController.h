@@ -76,7 +76,7 @@ objects as a collection distinct from the content. */
 {
 	@private
 	NSMutableSet *_observations;
-	IBOutlet ETLayoutItemGroup *content;
+	ETLayoutItemGroup *_content;
  	IBOutlet id nibMainContent;
 	CODictionary *_templates;
 	ETUTI *_currentObjectType;
@@ -96,8 +96,8 @@ objects as a collection distinct from the content. */
 }
 
 - (ETLayoutItemGroup *) content;
-- (void) setContent: (ETLayoutItemGroup *)anItem;
-- (NSArray *) trackedItemPropertyNames;
+- (void) didChangeContent: (ETLayoutItemGroup *)oldContent
+                toContent: (ETLayoutItemGroup *)newContent;
 
 /* Nib Support */
 
@@ -119,6 +119,7 @@ objects as a collection distinct from the content. */
 - (void) finishDeepCopy: (ETController *)newController 
                withZone: (NSZone *)aZone 
                 content: (ETLayoutItemGroup *)newContent;
+
 /* Templates */
 
 - (ETItemTemplate *) templateForType: (ETUTI *)aUTI;
