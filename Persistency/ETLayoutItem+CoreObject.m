@@ -193,14 +193,14 @@
 	if (isViewTarget)
 	{
 		ETUUID *uuid = [ETUUID UUIDWithString: [targetId substringFromIndex: 1]];
-		ETLayoutItem *targetItem = (ETLayoutItem *)[[self persistentRoot] loadedObjectForUUID: uuid];
+		ETLayoutItem *targetItem = (ETLayoutItem *)[[self objectGraphContext] loadedObjectForUUID: uuid];
 
 		[self setTarget: [targetItem view]];
 	}
 	else
 	{
 		ETUUID *uuid = [ETUUID UUIDWithString: targetId];
-		ETLayoutItem *targetItem = (ETLayoutItem *)[[self persistentRoot] loadedObjectForUUID: uuid];
+		ETLayoutItem *targetItem = (ETLayoutItem *)[[self objectGraphContext] loadedObjectForUUID: uuid];
 
 		[self setTarget: targetItem];
 	}
@@ -267,15 +267,15 @@ since -serializedValueForProperty: doesn't use the direct ivar access. */
 		[self setView: serializedView];
 	}
 	[_variableStorage removeObjectForKey: @"serializedView"];
-
-	/* Restore target and action on the receiver item or its view */
-
-	[self restoreTargetFromId: [_variableStorage objectForKey: @"targetId"]];
-	[_variableStorage removeObjectForKey: @"targetId"];
 }
 
 - (void)didLoadObjectGraph
 {
+	/* Restore target and action on the receiver item or its view */
+
+	[self restoreTargetFromId: [_variableStorage objectForKey: @"targetId"]];
+	[_variableStorage removeObjectForKey: @"targetId"];
+
 	if ([self isRoot])
 	{
 		[[self layout] didLoadObjectGraph];

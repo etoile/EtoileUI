@@ -369,11 +369,10 @@
 	[self checkValidityForNewPersistentObject: newController isFault: NO];
 }
 
-#if 0
 - (void) testViewRoundtrip
 {
 	ETLayoutItem *item = [itemFactory textField];
-	NSView *newView = [item roundTripValueForProperty: kETViewProperty];
+	NSView *newView = [item roundTripValueForArchivedProperty: kETViewProperty];
 
 	UKNil([newView superview]);
 }
@@ -437,6 +436,7 @@
 	[self checkValidityForNewPersistentObject: newItemGroup isFault: NO];
 }
 
+#if 0
 // TODO: Improve to test geometry issues more exhaustively and be less verbose
 - (void) testResizeWidgetItem
 {
