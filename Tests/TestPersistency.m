@@ -436,7 +436,6 @@
 	[self checkValidityForNewPersistentObject: newItemGroup isFault: NO];
 }
 
-#if 0
 // TODO: Improve to test geometry issues more exhaustively and be less verbose
 - (void) testResizeWidgetItem
 {
@@ -483,6 +482,7 @@
 	[self checkValidityForNewPersistentObject: newItemGroup isFault: NO];
 }
 
+#if 0
 - (void) testItemGroupUndoRedo
 {
 	[self recreateContext];
