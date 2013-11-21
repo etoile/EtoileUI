@@ -9,6 +9,7 @@
 #import <EtoileFoundation/NSInvocation+Etoile.h>
 #import <EtoileFoundation/Macros.h>
 #import "ETWindowItem.h"
+#import "ETController.h"
 #import "ETInstruments.h"
 #import "ETEvent.h"
 #import "ETGeometry.h"
@@ -522,6 +523,29 @@ This coordinate space includes the window decoration (titlebar etc.).  */
 }
 
 /* First Responder Sharing Area */
+
+- (void) prepareInitialFocusedItem
+{
+	ETAssert([ETTool activeTool] != nil);
+	
+	ETUIItem *item = [self firstDecoratedItem];
+
+	if ([item isLayoutItem] == NO &&[item isGroup] == NO)
+		return;
+
+	ETLayoutItem *initialFocusedItem =
+		[[(ETLayoutItemGroup *)item controller] initialFocusedItem];
+
+	[[ETTool activeTool] makeFirstResponder: (id)initialFocusedItem];
+	ETAssert([self focusedItem] == initialFocusedItem);
+}
+
+- (void) windowDidBecomeKey:(NSNotification *)notification
+{
+	/* -[NSWindow becomeKeyWindow] has just set up its initial first responder, 
+	  we override it */
+	[self prepareInitialFocusedItem];
+}
 
 - (ETLayoutItem *) focusedItem
 {

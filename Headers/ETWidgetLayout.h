@@ -74,6 +74,8 @@ hierarchy of the layout item tree. */
 - (ETLayoutItem *) doubleClickedItem;
 - (IBAction) doubleClick: (id)sender;
 
+- (id) responder;
+
 /** @taskunit Custom Widget Subclass */
 
 - (Class) widgetViewClass;

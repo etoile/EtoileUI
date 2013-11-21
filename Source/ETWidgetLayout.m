@@ -436,6 +436,16 @@ be called. */
 	[[(ETLayoutItemGroup *)[self layoutContext] actionHandler] handleDoubleClickItem: [self doubleClickedItem]];
 }
 
+/** <override-dummy />
+Returns the responder view inside the layout view.
+
+By default, if -layoutView returns a scroll view, returns the document view 
+inside the scroll view, otherwise returns the layout view. */
+- (id) responder
+{
+	return [self layoutViewWithoutScrollView];
+}
+
 #pragma mark Custom Widget Subclass
 #pragma mark -
 

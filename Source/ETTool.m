@@ -391,33 +391,35 @@ This method calls either -makeFirstKeyResponder: or -makeFirstMainResponder:. */
 
 - (BOOL) makeFirstResponder: (id)aResponder inWindow: (NSWindow *)aWindow
 {
+	id responder = ([aResponder isLayoutItem] ? [aResponder responder] : aResponder);
+
 	/* For becoming first responder, views must belong to a valid window but 
 	   there are no such constraints for tools and layout items. */
-	BOOL isResponderView = ([aResponder isView]);
+	BOOL isResponderView = ([responder isView]);
 
 	if (aWindow == nil)
 	{
 		if (isResponderView)
 		{
 			ETLog(@"WARNING: For becoming first responder, view %@ must be "
-			   "located in a window", aResponder);
+			   "located in a window", responder);
 		}
 		return NO;
 	}
-	if (isResponderView && [(NSView *)aResponder window] != aWindow)
+	if (isResponderView && [(NSView *)responder window] != aWindow)
 	{
 		ETLog(@"WARNING: For becoming first responder, view %@ must be "
-			   "located in key or main window", aResponder);
+			   "located in key or main window", responder);
 		return NO;
 	}
 
 	/* -[NSWindow makeFirstResponder:] calls -resignFirstResponder and 
 	   -becomeFirstResponder but not -acceptsFirstResponder according to Cocoa 
 	   API documentation (unlike GNUstep behavior). */
-	if (aResponder != nil && [aResponder acceptsFirstResponder] == NO)
+	if (responder != nil && [responder acceptsFirstResponder] == NO)
 		return NO;
 
-	BOOL isNowFirstResponder = [aWindow makeFirstResponder: aResponder];
+	BOOL isNowFirstResponder = [aWindow makeFirstResponder: responder];
 	/* We must retain the responder because -[NSWindow makeFirstResponder:] 
 	   doesn't do it (not so sure anymore). */
 	if (isNowFirstResponder)
@@ -426,10 +428,10 @@ This method calls either -makeFirstKeyResponder: or -makeFirstMainResponder:. */
 		{
 			[_firstMainResponder setNeedsDisplay: YES];
 		}
-		ASSIGN(_firstMainResponder, aResponder);
-		if ([aResponder isLayoutItem])
+		ASSIGN(_firstMainResponder, responder);
+		if ([responder isLayoutItem])
 		{
-			[aResponder setNeedsDisplay: YES];
+			[responder setNeedsDisplay: YES];
 		}
 	}
 

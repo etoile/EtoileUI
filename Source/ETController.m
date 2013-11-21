@@ -114,6 +114,7 @@ You can also use it -init to create a controller. See -[ETNibOwner init]. */
 	DESTROY(_templates);
 	DESTROY(_currentObjectType);
 	DESTROY(_persistentObjectContext);
+	DESTROY(_initialFocusedItem);
 	DESTROY(_sortDescriptors);
 	DESTROY(_filterPredicate);
 	DESTROY(_allowedPickTypes);
@@ -620,6 +621,45 @@ You can override this method in a subclass, although it should rarely be needed.
 - (id) nextResponder
 {
 	return [[self content] enclosingItem];
+}
+
+/** Returns the initial focused item.
+
+If the controller content is a first responder sharing area without a focused 
+item, and on the way to become visible, the content decorator item that conforms 
+to ETFirstResponderSharingArea protocol gives the focus to the initial focused 
+item.
+
+If the decorator item that represents the first responder sharing area is higher 
+in the item tree (not set on the controller content), the receiver initial 
+focused item is ignored.
+
+If the item is not a controller content descendant item, an 
+NSInternalInconsistencyException is raised.
+
+By default, returns nil. */
+- (ETLayoutItem *) initialFocusedItem
+{
+	if (_initialFocusedItem != nil
+	 && [[[self content] allDescendantItems] containsObject: _initialFocusedItem] == NO)
+	{
+		[NSException raise: NSInternalInconsistencyException
+		            format: @"Initial focused item %@ must be a content descendant item",
+					        _initialFocusedItem];
+	}
+	return _initialFocusedItem;
+}
+
+/** Sets the initial focused item.
+
+See -initialFocusedItem. */
+- (void) setInitialFocusedItem: (ETLayoutItem *)anItem
+{
+	// NOTE: We don't raise a NSInvalidArgumentException similar to the one in
+	// -initialFocusedItem, to let the user call -setInitialFocusedItem: without
+	// a content. Item factories use a top-down recursive UI construction, so 
+	// the content is not set until all the descendant items are built.
+	ASSIGN(_initialFocusedItem, anItem);
 }
 
 /* Insertion */

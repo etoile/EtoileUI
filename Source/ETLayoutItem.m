@@ -3463,6 +3463,30 @@ See also -objectDidBeginEditing:. */
 	return ([self valueKey] != nil ? [self valueKey] : kETValueProperty);
 }
 
+/** Returns the item, or a responder view inside it in case the item uses a 
+widget view (either provided by the layout or as a simple widget view).
+
+Used by -[ETTool makeFirstResponder:] to determine the real responder.
+
+If the receiver is returned, then first responder and focused item are one and 
+the same.
+
+See also -usesWidgetView. */
+- (id) responder
+{
+	if ([[self layout] isWidget])
+	{
+		return [[self layout] responder];
+	}
+	else if ([[self view] isWidget])
+	{
+		// FIXME: For a scroll view, returns the document view. Probably add
+		// -responder to NSScrollView and update -[ETWidgetLayout responder].
+		return [self view];
+	}
+	return self;
+}
+
 /** Returns self.
  
 See -[ETResponder focusedItem]. */

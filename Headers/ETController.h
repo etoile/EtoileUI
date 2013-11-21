@@ -81,6 +81,7 @@ objects as a collection distinct from the content. */
 	CODictionary *_templates;
 	ETUTI *_currentObjectType;
 	id <COPersistentObjectContext> _persistentObjectContext;
+	ETLayoutItem *_initialFocusedItem;
 	NSArray *_sortDescriptors;
 	NSPredicate *_filterPredicate;
 	NSArray *_allowedPickTypes;
@@ -142,6 +143,9 @@ objects as a collection distinct from the content. */
 - (void) remove: (id)sender;
 
 - (id) nextResponder;
+
+- (ETLayoutItem *) initialFocusedItem;
+- (void) setInitialFocusedItem: (ETLayoutItem *)anItem;
 
 /* Insertion */
 

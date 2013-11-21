@@ -68,6 +68,8 @@
 	// FIXME: Register a dummy class for the protocol COPersistentObjectContext
 	ETPropertyDescription *persistentObjectContext =
 		[ETPropertyDescription descriptionWithName: @"persistentObjectContext" type: (id)@"NSObject"];
+	ETPropertyDescription *initialFocusedItem =
+		[ETPropertyDescription descriptionWithName: @"initialFocusedItem" type: (id)@"ETLayoutItem"];
 	ETPropertyDescription *clearsFilterPredicate =
 		[ETPropertyDescription descriptionWithName: @"clearsFilterPredicateOnInsertion" type: (id)@"BOOL"];
 	ETPropertyDescription *selectsInsertedObjects =
@@ -129,7 +131,7 @@
 	NSArray *transientProperties = A(content, nibMainContent, builder, currentGroupType,
 		nextResponder, defaultOptions, canMutate, isContentMutable,
 		insertionIndex, insertionIndexPath, additionIndexPath, isEditing);
-	NSArray *persistentProperties = A(templates, currentObjectType,
+	NSArray *persistentProperties = A(templates, currentObjectType, initialFocusedItem, 
 		clearsFilterPredicate, selectsInsertedObjects, sortDescriptors, filterPredicate,
 		automaticallyRearranges);
 	// FIXME: Using all persistent properties is not yet tested...
