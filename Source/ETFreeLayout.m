@@ -178,7 +178,7 @@ unlike ETPositionalLayout.  */
 - (void) showHandlesForItem: (ETLayoutItem *)item
 {
 	ETHandleGroup *handleGroup = AUTORELEASE([[ETResizeRectangle alloc]
-		initWithManipulatedObject: item objectGraphContext: [self objectGraphContext]]);
+		initWithManipulatedObject: item objectGraphContext: [[self layerItem] objectGraphContext]]);
 		
 	[[self layerItem] addItem: handleGroup];
 	// FIXME: Should [handleGroup display]; and display should retrieve the 
@@ -221,7 +221,7 @@ unlike ETPositionalLayout.  */
 		if ([item isSelected])
 		{
 			ETHandleGroup *handleGroup = AUTORELEASE([[ETResizeRectangle alloc]
-				initWithManipulatedObject: item objectGraphContext: [self objectGraphContext]]);
+				initWithManipulatedObject: item objectGraphContext: [[self layerItem] objectGraphContext]]);
 			[[self layerItem] addItem: handleGroup];
 		}
 	}
