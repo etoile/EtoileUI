@@ -482,7 +482,6 @@
 	[self checkValidityForNewPersistentObject: newItemGroup isFault: NO];
 }
 
-#if 0
 - (void) testItemGroupUndoRedo
 {
 	[self recreateContext];
@@ -501,18 +500,17 @@
 
 	[self checkValidityForNewPersistentObject: rectItem isFault: NO];
 
-	[[itemGroup commitTrack] undo];
+	[[[itemGroup objectGraphContext] branch] undo];
 
 	UKIntsEqual(1, [itemGroup numberOfItems]);
 	UKObjectsSame([itemGroup lastItem], item);
 
-	[[itemGroup commitTrack] redo];
+	[[[itemGroup objectGraphContext] branch] redo];
 
 	UKIntsEqual(2, [itemGroup numberOfItems]);
 	UKObjectsNotSame([itemGroup lastItem], rectItem);
 	UKObjectsEqual([[itemGroup lastItem] UUID], [rectItem UUID]);
 }
-#endif
 
 - (void) testControllerPersistency
 {
