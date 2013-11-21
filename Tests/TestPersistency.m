@@ -586,7 +586,7 @@
 	UKNil([newGroupTemplate entityName]);
 
 	UKObjectsEqual(predicate, [newController filterPredicate]);
-	// FIXME: UKObjectsEqual(A(sortDescriptor1, sortDescriptor2), [newController sortDescriptors]);
+	UKObjectsEqual(A(sortDescriptor1, sortDescriptor2), [newController sortDescriptors]);
 	UKObjectsEqual(predicate, [newController filterPredicate]);
 
 	[self checkValidityForNewPersistentObject: newItemGroup isFault: NO];
