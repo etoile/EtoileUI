@@ -6,12 +6,9 @@
 	License:  Modified BSD (see COPYING)
  */
 
-#import <Foundation/Foundation.h>
-#import <AppKit/AppKit.h>
-#import <UnitKit/UnitKit.h>
-#import <EtoileFoundation/Macros.h>
 #import <EtoileFoundation/NSIndexPath+Etoile.h>
 #import <CoreObject/COObjectGraphContext.h>
+#import "TestCommon.h"
 #import "ETController.h"
 #import "ETDecoratorItem.h"
 #import "ETGeometry.h"
@@ -25,12 +22,6 @@
 #import "ETScrollableAreaItem.h"
 #import "ETTableLayout.h"
 #import "ETCompatibility.h"
-
-#define UKRectsEqual(x, y) UKTrue(NSEqualRects(x, y))
-#define UKRectsNotEqual(x, y) UKFalse(NSEqualRects(x, y))
-#define UKPointsEqual(x, y) UKTrue(NSEqualPoints(x, y))
-#define UKPointsNotEqual(x, y) UKFalse(NSEqualPoints(x, y))
-#define UKSizesEqual(x, y) UKTrue(NSEqualSizes(x, y))
 
 @interface ETDecoratorItem (TestItemGeometry)
 + (ETDecoratorItem *) itemWithDummySupervisorView;

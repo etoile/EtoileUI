@@ -6,21 +6,12 @@
     License:  Modified BSD (see COPYING)
  */
 
-
-#import <Foundation/Foundation.h>
 #import <Foundation/NSDebug.h>
-#import <AppKit/AppKit.h>
-#import <UnitKit/UnitKit.h>
+#import "TestCommon.h"
 #import "ETGeometry.h"
 #import "ETLayoutItem.h"
 #import "ETView.h"
 #import "ETCompatibility.h"
-
-#define UKRectsEqual(x, y) UKTrue(NSEqualRects(x, y))
-#define UKRectsNotEqual(x, y) UKFalse(NSEqualRects(x, y))
-#define UKPointsEqual(x, y) UKTrue(NSEqualPoints(x, y))
-#define UKPointsNotEqual(x, y) UKFalse(NSEqualPoints(x, y))
-#define UKSizesEqual(x, y) UKTrue(NSEqualSizes(x, y))
 
 @interface ETView (TestSupervisorView) <UKTest>
 @end

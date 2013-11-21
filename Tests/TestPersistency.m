@@ -11,10 +11,6 @@
 #ifdef COREOBJECT
 
 #import <objc/runtime.h>
-#import <Foundation/Foundation.h>
-#import <AppKit/AppKit.h>
-#import <UnitKit/UnitKit.h>
-#import <EtoileFoundation/Macros.h>
 #import <EtoileFoundation/ETViewpoint.h>
 #import <EtoileFoundation/NSObject+Model.h>
 #import <CoreObject/COEditingContext.h>
@@ -23,6 +19,7 @@
 #import <CoreObject/COPersistentRoot.h>
 #import <CoreObject/COSQLiteStore.h>
 #import <CoreObject/COSerialization.h>
+#import "TestCommon.h"
 #import "EtoileUIProperties.h"
 #import "ETActionHandler.h"
 #import "ETBasicItemStyle.h"
@@ -37,12 +34,6 @@
 #import "ETSelectTool.h"
 #import "ETStyle.h"
 #import "ETShape.h"
-
-#define UKRectsEqual(x, y) UKTrue(NSEqualRects(x, y))
-#define UKRectsNotEqual(x, y) UKFalse(NSEqualRects(x, y))
-#define UKPointsEqual(x, y) UKTrue(NSEqualPoints(x, y))
-#define UKPointsNotEqual(x, y) UKFalse(NSEqualPoints(x, y))
-#define UKSizesEqual(x, y) UKTrue(NSEqualSizes(x, y))
 
 @interface COObject (TestPersistency)
 - (id)roundTripValueForArchivedProperty: (NSString *)key;

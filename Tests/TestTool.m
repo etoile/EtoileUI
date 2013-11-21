@@ -8,10 +8,8 @@
 
 	License:  Modified BSD (see COPYING)
  */
- 
-#import <Foundation/Foundation.h>
-#import <AppKit/AppKit.h>
-#import <EtoileFoundation/Macros.h>
+
+#import "TestCommon.h"
 #import "ETApplication.h"
 #import "ETEvent.h"
 #import "ETFreeLayout.h"
@@ -27,15 +25,8 @@
 #import "ETLayoutItemFactory.h"
 #import "ETWindowItem.h"
 #import "ETCompatibility.h"
-#import <UnitKit/UnitKit.h>
 #define _ISOC99_SOURCE 
 #include <math.h>
-
-#define UKRectsEqual(x, y) UKTrue(NSEqualRects(x, y))
-#define UKRectsNotEqual(x, y) UKFalse(NSEqualRects(x, y))
-#define UKPointsEqual(x, y) UKTrue(NSEqualPoints(x, y))
-#define UKPointsNotEqual(x, y) UKFalse(NSEqualPoints(x, y))
-#define UKSizesEqual(x, y) UKTrue(NSEqualSizes(x, y))
 
 @interface ETLayoutItem (Private)
 - (NSRect) bounds;

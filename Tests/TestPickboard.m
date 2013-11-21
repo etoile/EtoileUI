@@ -6,9 +6,7 @@
 	License:  Modified BSD (see COPYING)
  */
  
-#import <Foundation/Foundation.h>
-#import <AppKit/AppKit.h>
-#import <UnitKit/UnitKit.h>
+#import "TestCommon.h"
 #import "ETPickboard.h"
 #import "ETLayoutItemFactory.h"
 #import "ETCompatibility.h"

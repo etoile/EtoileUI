@@ -6,14 +6,11 @@
     License:  Modified BSD (see COPYING)
  */
 
-#import <Foundation/Foundation.h>
-#import <AppKit/AppKit.h>
-#import <UnitKit/UnitKit.h>
 #import <EtoileFoundation/ETCollection+HOM.h>
 #import <EtoileFoundation/ETUTI.h>
-#import <EtoileFoundation/Macros.h>
 #import <EtoileFoundation/NSIndexPath+Etoile.h>
 #import <EtoileFoundation/NSObject+Model.h>
+#import "TestCommon.h"
 #import "ETController.h"
 #import "ETDecoratorItem.h"
 #import "ETFlowLayout.h"
@@ -33,7 +30,6 @@
 #import "ETWindowItem.h"
 #import "ETCompatibility.h"
 
-#define SA(x) [NSSet setWithArray: x]
 #define UKPropertiesEqual(a, b, property) \
 	printf("Test copy '%s'\n", [property UTF8String]); UKObjectsEqual(a, b); 
 // NOTE: We abuse UKObjectsSame() by using it to test boolean property equality

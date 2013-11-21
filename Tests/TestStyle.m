@@ -6,22 +6,12 @@
     License:  Modified BSD (see COPYING)
  */
 
-#import <Foundation/Foundation.h>
-#import <AppKit/AppKit.h>
-#import <UnitKit/UnitKit.h>
-#import <EtoileFoundation/Macros.h>
+#import "TestCommon.h"
 #import "ETBasicItemStyle.h"
 #import "ETLayoutExecutor.h"
 #import "ETLayoutItem.h"
 #import "ETLayoutItemFactory.h"
 #import "ETCompatibility.h"
-
-#define UKRectsEqual(x, y) UKTrue(NSEqualRects(x, y))
-#define UKRectsNotEqual(x, y) UKFalse(NSEqualRects(x, y))
-#define UKPointsEqual(x, y) UKTrue(NSEqualPoints(x, y))
-#define UKPointsNotEqual(x, y) UKFalse(NSEqualPoints(x, y))
-#define UKSizesEqual(x, y) UKTrue(NSEqualSizes(x, y))
-#define UKSizesNotEqual(x, y) UKFalse(NSEqualSizes(x, y))
 
 @interface TestStyle: NSObject <UKTest>
 {

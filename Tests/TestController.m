@@ -6,10 +6,8 @@
     License:  Modified BSD (see COPYING)
  */
 
- 
-#import <Foundation/Foundation.h>
-#import <AppKit/AppKit.h>
-#import <EtoileFoundation/Macros.h>
+#import <CoreObject/COObjectGraphContext.h>
+#import "TestCommon.h"
 #import "ETController.h"
 #import "EtoileUIProperties.h"
 #import "ETItemTemplate.h"
@@ -19,7 +17,6 @@
 #import "ETLayoutItemGroup+Mutation.h"
 #import "ETLayoutItemFactory.h"
 #import "ETCompatibility.h"
-#import <UnitKit/UnitKit.h>
 
 /* NSView subclass for testing the cloning of item templates */
 @interface DummyView : NSView { }
