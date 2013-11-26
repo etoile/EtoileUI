@@ -199,6 +199,12 @@ objects as a collection distinct from the content. */
 - (NSArray *) allEditedItems;
 - (NSArray *) allEditedProperties;
 
+/* Enabling and Disabling Items */
+
+- (NSSet *) validatableItems;
+- (void) validateItems;
+- (BOOL) validateItem: (ETLayoutItem *)anItem;
+
 /* Framework Private */
 
 + (id <ETTemplateProvider>) basicTemplateProvider;

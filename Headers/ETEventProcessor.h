@@ -29,6 +29,7 @@
 /** @taskunit Converting Backend Event */
 
 - (BOOL) processEvent: (void *)backendEvent;
+- (void) runUpdatePhases;
 - (BOOL) beginContinuousActionsForItem: (ETLayoutItem *)anItem;
 - (BOOL) endContinuousActionsForItem: (ETLayoutItem *)anItem;
 
@@ -80,6 +81,8 @@ return YES;
               sendEvent: (ETEvent *)anEvent 
                  toView: (NSView *)aView;
 @end
+
+extern NSString * const ETEventProcessorDidProcessEventNotification;
 
 
 @interface ETAppKitEventProcessor : ETEventProcessor

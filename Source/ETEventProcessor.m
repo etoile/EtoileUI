@@ -47,10 +47,36 @@ parameter.
 
 The implementation is expected to return YES if anEvent should be dispatched by 
 the widget backend itself, otherwise NO if only EtoileUI should be in charge of 
-displatching the event. */
+displatching the event.
+
+The implementation must also call -runUpdatePhases just before returning. */
 - (BOOL) processEvent: (void *)backendEvent
 {
 	return NO;
+}
+
+/** <override-never />
+Tells the receiver to run the update phases: 
+
+<list>
+<item>Item Validation (tell controllers to enable and disable items)</item>
+<item>Layout Update</item>
+<item>Display Update (not yet the case)</item>
+</list>
+
+A ETEventProcessorDidProcessEventNotification is posted just before the update 
+phases.
+
+See -processEvent:. */
+- (void) runUpdatePhases
+{
+	[[NSNotificationCenter defaultCenter]
+		postNotificationName: ETEventProcessorDidProcessEventNotification object: self];
+
+	if ([ETLayoutItem isAutolayoutEnabled])
+	{
+		[[ETLayoutExecutor sharedInstance] execute];
+	}
 }
 
 /** <override-subclass />
@@ -98,6 +124,9 @@ and handled by a widget view associated with item, and NO otherwise. */
 
 @end
 
+NSString * const ETEventProcessorDidProcessEventNotification =
+	@"ETEventProcessorDidProcessEventNotification";
+
 @interface NSWindow (GNUstepCocoaPrivate)
 // NOTE: This method is implemented on NSWindow, although the public API 
 // only exposes it at NSPanel level.
@@ -134,10 +163,7 @@ when the event has to be handled by the widget backend. */
 			break;
 	}
 
-	if ([ETLayoutItem isAutolayoutEnabled])
-	{
-		[[ETLayoutExecutor sharedInstance] execute];
-	}
+	[self runUpdatePhases];
 
 	return isHandled;
 }

@@ -12,6 +12,7 @@
 #import <EtoileFoundation/NSObject+Model.h>
 #import <CoreObject/CODictionary.h>
 #import "ETController.h"
+#import "ETEventProcessor.h"
 #import "ETItemTemplate.h"
 #import "ETLayoutItemBuilder.h"
 #import "ETLayoutItemFactory.h"
@@ -92,6 +93,12 @@ You can also use it -init to create a controller. See -[ETNibOwner init]. */
 	[self setTemplate: objectTemplate forType: kETTemplateObjectType];
 	[self setTemplate: groupTemplate forType: kETTemplateGroupType];
 
+	[[NSNotificationCenter defaultCenter]
+		addObserver: self
+	 	   selector: @selector(didProcessEvent:)
+		       name: ETEventProcessorDidProcessEventNotification
+		     object: nil];
+
 	return self;
 }
 
@@ -103,6 +110,7 @@ You can also use it -init to create a controller. See -[ETNibOwner init]. */
 	{
 		[notifCenter removeObserver: [observation objectForKey: @"object"]];
 	}
+	[[NSNotificationCenter defaultCenter] removeObserver: self];
 }
 
 - (void) dealloc
@@ -1331,6 +1339,65 @@ apply to -allEditedProperties in the same way. */
 - (NSArray *) allEditedProperties
 {
 	return AUTORELEASE([_editableProperties copy]);
+}
+
+/** <overidde-dummy />
+Returns the items to be validated by -validateItems.
+
+The returned items must be look using -[ETLayoutItemGroup itemForIdentifier:] or 
+a property set on your ETController subclass, but never using an index e.g. 
+-[ETLayoutItemGroup itemAtIndex:].
+
+The returned items must be limited to descendant items. For example, returning 
+an item such as <code>[[[controller content] parentItem] itemForIdentifier: someId]</code> 
+in another item tree part or an ancestor item is not supported. */
+- (NSSet *) validatableItems
+{
+	return [NSSet set];
+}
+
+/** Tells the receiver to enable and disable -validatableItems by using 
+-validateItem:.
+
+This method is automatically called by EtoileUI each time an event is processed, 
+so you should rarely to call it. See -[ETEventProcessor runUpdatePhases]. */
+- (void) validateItems
+{
+	for (ETLayoutItem *item in [self validatableItems])
+	{
+		[[[item view] ifResponds] setEnabled: [self validateItem: item]];
+	}
+}
+
+/** <override-dummy />
+Returns whether the item should be enabled or disabled now.
+
+Can be overriden to indicate enabled items among -validatableItems. Items must 
+be matched based on their identifier or their action. For unknow item, the 
+superclass implementation must be called. For example:
+
+<example>
+if ([[anItem identifier] isEqual: @"add"])
+{
+	return [self canAdd];
+}
+else if (sel_isEqual([anItem action], @selector(print:))
+{
+	return [self isContentPrintable];
+}
+else
+{
+	return [super validateItem: anItem];
+}
+</example> */
+- (BOOL) validateItem: (ETLayoutItem *)anItem
+{
+	return YES;
+}
+
+- (void) didProcessEvent: (NSNotification *)aNotif
+{
+	[self validateItems];
 }
 
 - (ETLayoutItem *) candidateFocusedItem
