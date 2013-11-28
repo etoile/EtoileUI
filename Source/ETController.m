@@ -10,7 +10,6 @@
 #import <EtoileFoundation/ETCollection+HOM.h>
 #import <EtoileFoundation/ETUTI.h>
 #import <EtoileFoundation/NSObject+Model.h>
-#import <CoreObject/CODictionary.h>
 #import "ETController.h"
 #import "ETEventProcessor.h"
 #import "ETItemTemplate.h"
@@ -68,11 +67,11 @@ You can also use it -init to create a controller. See -[ETNibOwner init]. */
 		return nil;
 
 	_observations = [[NSMutableSet alloc] init];
-	_templates = [[CODictionary alloc] initWithObjectGraphContext: aContext];
+	_templates = [[NSMutableDictionary alloc] init];
 	ASSIGN(_currentObjectType, kETTemplateObjectType);
 	[self setSortDescriptors: nil];
 	_allowedPickTypes = [[NSArray alloc] init];
-	_allowedDropTypes = [[CODictionary alloc] initWithObjectGraphContext: aContext];
+	_allowedDropTypes = [[NSMutableDictionary alloc] init];
 	_editedItems = [[NSMutableArray alloc] init];
 	_editableProperties = [[NSMutableArray alloc] init];
 	_automaticallyRearrangesObjects = YES;

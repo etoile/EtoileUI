@@ -15,7 +15,6 @@
 #import <EtoileUI/ETResponder.h>
 
 @protocol COPersistentObjectContext;
-@class CODictionary;
 @class ETItemTemplate, ETLayoutItem, ETLayoutItemBuilder, ETLayoutItemGroup, ETUTI;
 
 /** This protocol is only exposed to be used internally by EtoileUI.
@@ -78,14 +77,14 @@ objects as a collection distinct from the content. */
 	NSMutableSet *_observations;
 	ETLayoutItemGroup *_content;
  	IBOutlet id nibMainContent;
-	CODictionary *_templates;
+	NSMutableDictionary *_templates;
 	ETUTI *_currentObjectType;
 	id <COPersistentObjectContext> _persistentObjectContext;
 	ETLayoutItem *_initialFocusedItem;
 	NSArray *_sortDescriptors;
 	NSPredicate *_filterPredicate;
 	NSArray *_allowedPickTypes;
-	CODictionary *_allowedDropTypes; /* Allowed drop UTIs by drop target UTIs */
+	NSMutableDictionary *_allowedDropTypes; /* Allowed drop UTIs by drop target UTIs */
 	NSMutableArray *_editedItems;
 	NSMutableArray *_editableProperties;
 	BOOL _automaticallyRearrangesObjects;

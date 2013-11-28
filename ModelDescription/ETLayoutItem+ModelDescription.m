@@ -7,7 +7,6 @@
  */
 
 #import <EtoileFoundation/EtoileFoundation.h>
-#import <CoreObject/CODictionary.h>
 #import "ETLayoutItem.h"
 #import "ETLayoutItemGroup.h"
 #import "ETItemValueTransformer.h"
@@ -158,7 +157,7 @@
 
 - (NSDictionary *) valueTransformers
 {
-	CODictionary *transformers = [self valueForVariableStorageKey: @"valueTransformers"];
+	NSMutableDictionary *transformers = [self valueForVariableStorageKey: @"valueTransformers"];
 	NSMutableDictionary *editableTransformers = [NSMutableDictionary dictionary];
 
 	[[transformers content] enumerateKeysAndObjectsUsingBlock: ^ (id property, id transformerName,  BOOL *stop)
@@ -172,7 +171,7 @@
 - (void) setValueTransformers: (NSDictionary *)editedTransformers
 {
 	[self willChangeValueForProperty: @"valueTransformers"];
-	CODictionary *transformers = [self valueForVariableStorageKey: @"valueTransformers"];;
+	NSMutableDictionary *transformers = [self valueForVariableStorageKey: @"valueTransformers"];;
 	[transformers removeAllObjects];
 
 	[editedTransformers enumerateKeysAndObjectsUsingBlock: ^ (id property, id transformer, BOOL *stop)

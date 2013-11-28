@@ -246,8 +246,7 @@
 
 	[itemFactory endRootObject];
 
-	CODictionary *valueTransformers = [item valueForVariableStorageKey: @"valueTransformers"];
-	NSSet *itemAndAspects = S(item, [item actionHandler], [item styleGroup], [item coverStyle], valueTransformers);
+	NSSet *itemAndAspects = S(item, [item actionHandler], [item styleGroup], [item coverStyle]);
 	ETUUID *uuid = [[ctxt insertNewPersistentRootWithRootObject: item] UUID];
 
 	// NOTE: The item must be a root object (i.e. belong to a persistent root)
@@ -503,6 +502,7 @@
 	UKObjectsEqual([[itemGroup lastItem] UUID], [rectItem UUID]);
 }
 
+#if 0
 - (void) testControllerPersistency
 {
 	[self recreateContext];
@@ -581,6 +581,7 @@
 	[self checkValidityForNewPersistentObject: newItemGroup isFault: NO];
 	[self checkValidityForNewPersistentObject: newController isFault: NO];
 }
+#endif
 
 - (void) testFreeLayout
 {

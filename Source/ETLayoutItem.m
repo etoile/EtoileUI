@@ -13,7 +13,6 @@
 #import <EtoileFoundation/NSObject+Model.h>
 #import <EtoileFoundation/ETUTI.h>
 #import <EtoileFoundation/Macros.h>
-#import <CoreObject/CODictionary.h>
 #import "ETLayoutItem.h"
 #import "ETActionHandler.h"
 #import "ETBasicItemStyle.h"
@@ -173,7 +172,7 @@ See also -setView:, -setCoverStyle: and -setActionHandler:.  */
 	if (self == nil)
 		return nil;
 
-	// NOTE: -[COObject newVariableStorage] instantiates the value transformers (CODictionary)
+	// NOTE: -[COObject newVariableStorage] instantiates the value transformers
 
 	_defaultValues = [[NSMutableDictionary alloc] init];
 

@@ -13,7 +13,6 @@
 #import <CoreObject/COEditingContext.h>
 #import <CoreObject/COPersistentRoot.h>
 #import <CoreObject/COObject.h>
-#import <CoreObject/CODictionary.h>
 #import "ETLayoutItem+CoreObject.h"
 #import "EtoileUIProperties.h"
 #import "ETOutlineLayout.h"
