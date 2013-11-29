@@ -131,11 +131,11 @@
 	NSArray *transientProperties = A(content, nibMainContent, builder, currentGroupType,
 		nextResponder, defaultOptions, canMutate, isContentMutable,
 		insertionIndex, insertionIndexPath, additionIndexPath, isEditing);
-	NSArray *persistentProperties = A(currentObjectType, initialFocusedItem, 
+	NSArray *persistentProperties = A(templates, currentObjectType, initialFocusedItem,
 		clearsFilterPredicate, selectsInsertedObjects, sortDescriptors, filterPredicate,
 		automaticallyRearranges);
 	// FIXME: Using all persistent properties is not yet tested...
-	NSArray *futurePersistentProperties = A(persistentObjectContext, allowedPickTypes, allowedDropTypes, templates);
+	NSArray *futurePersistentProperties = A(persistentObjectContext, allowedPickTypes, allowedDropTypes);
 	
 	transientProperties = [transientProperties arrayByAddingObjectsFromArray: futurePersistentProperties];
 

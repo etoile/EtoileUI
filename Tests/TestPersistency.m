@@ -502,7 +502,6 @@
 	UKObjectsEqual([[itemGroup lastItem] UUID], [rectItem UUID]);
 }
 
-#if 0
 - (void) testControllerPersistency
 {
 	[self recreateContext];
@@ -581,7 +580,6 @@
 	[self checkValidityForNewPersistentObject: newItemGroup isFault: NO];
 	[self checkValidityForNewPersistentObject: newController isFault: NO];
 }
-#endif
 
 - (void) testFreeLayout
 {

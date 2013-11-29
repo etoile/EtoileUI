@@ -57,7 +57,7 @@
 {
 	[super awakeFromDeserialization];
 
-	ASSIGN(_dropIndicator, [ETDropIndicator sharedInstanceForObjectGraphContext: [self objectGraphContext]]);
+	ASSIGN(_dropIndicator, [ETDropIndicator sharedInstanceForObjectGraphContext: [ETUIObject defaultTransientObjectGraphContext]]);
 	_previousScaleFactor = 1.0;
 }
 

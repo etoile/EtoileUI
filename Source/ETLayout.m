@@ -139,7 +139,7 @@ Returns a new ETLayout instance. */
 	_layoutContext = nil;
 	delegate = nil;
 	_tool = nil;
-	ASSIGN(_dropIndicator, [ETDropIndicator sharedInstanceForObjectGraphContext: aContext]);
+	ASSIGN(_dropIndicator, [ETDropIndicator sharedInstanceForObjectGraphContext: [ETUIObject defaultTransientObjectGraphContext]]);
 	_isRendering = NO;
 	_layoutSize = NSMakeSize(200, 200); /* Dummy value */
 	_proposedLayoutSize = ETNullSize;
