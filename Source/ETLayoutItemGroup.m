@@ -79,7 +79,7 @@ NSString * const ETSourceDidUpdateNotification = @"ETSourceDidUpdateNotification
 	if (nil == self)
 		return nil;
 
-	_items = [[NSMutableOrderedSet alloc] init];
+	_items = [[NSMutableArray alloc] init];
 	_sortedItems = nil;
 	_arrangedItems = nil;
 
@@ -133,7 +133,7 @@ See also -isLayerItem. */
 	}
 	if (n > 0 && [[ETLayoutExecutor sharedInstance] isEmpty] == NO)
 	{
-		NSSet *itemSet = [[NSSet alloc] initWithSet: [_items set]];
+		NSSet *itemSet = [[NSSet alloc] initWithArray: _items];
 		[(ETLayoutExecutor *)[ETLayoutExecutor sharedInstance] removeItems: itemSet];
 		RELEASE(itemSet);
 	}
@@ -185,7 +185,7 @@ The returned copy is mutable because ETLayoutItemGroup cannot be immutable. */
 	   to -deepCopyWithZone:, but we create an empty array in case we are not
 	   called by -deepCopyWithZone:. */
 
-	item->_items = [[NSMutableOrderedSet allocWithZone: zone] init];
+	item->_items = [[NSMutableArray allocWithZone: zone] init];
 
 	id source =  [self valueForVariableStorageKey: kETSourceProperty];
 	id sourceCopy = ([self usesRepresentedObjectAsProvider] ? (id)item : source);
@@ -242,7 +242,7 @@ The returned copy is mutable because ETLayoutItemGroup cannot be immutable. */
 
 	/* Copy & Assign Children */
 
-	NSMutableOrderedSet *childrenCopy = [[NSMutableOrderedSet allocWithZone: zone] initWithCapacity: [_items count]];
+	NSMutableArray *childrenCopy = [[NSMutableArray allocWithZone: zone] initWithCapacity: [_items count]];
 	NSMapTable *objectRefsForCopy = [aCopier objectReferencesForCopy];
 
 	FOREACH(_items, child, ETLayoutItem *)
@@ -253,7 +253,7 @@ The returned copy is mutable because ETLayoutItemGroup cannot be immutable. */
 		childCopy->_parentItem = itemCopy; /* Weak reference */
 		[objectRefsForCopy setObject: childCopy forKey: child];
 	}
-	[[childrenCopy array] makeObjectsPerformSelector: @selector(release)];
+	[childrenCopy makeObjectsPerformSelector: @selector(release)];
 
 	ASSIGN(itemCopy->_items, childrenCopy);
 	RELEASE(childrenCopy);
@@ -790,7 +790,7 @@ Similar to -lastObject method for collections (see ETCollection).*/
 /** Returns an autoreleased array which contains the receiver child items. */
 - (NSArray *) items
 {
-	return [_items array];
+	return [NSArray arrayWithArray: _items];
 }
 
 /** Returns the descendant items, including the immediate children, that share
@@ -1555,7 +1555,7 @@ redisplayed. */
 	/* Create a new sort cache in case -setHasNewContent: invalidated it */
 	if (_sortedItems == nil)
 	{
-		_sortedItems = [[_items array] mutableCopy];
+		_sortedItems = [_items mutableCopy];
 	}
 
 	NSArray *descriptors =
@@ -1573,7 +1573,7 @@ redisplayed. */
 	{
 		// NOTE: -arrangedItems returns a defensive copy, but it could be less
 		// expansive to make a single defensive copy here.
-		ASSIGN(_arrangedItems, [_items array]);
+		ASSIGN(_arrangedItems, _items);
 		_sorted = NO;
 		_filtered = NO;
 		_hasNewArrangement = YES;
@@ -1613,7 +1613,7 @@ redisplayed. */
 
 - (void) filterWithPredicate: (NSPredicate *)predicate recursively: (BOOL)recursively
 {
-	NSArray *itemsToFilter = (_sorted ? _sortedItems : [_items array]);
+	NSArray *itemsToFilter = (_sorted ? _sortedItems : _items);
 	BOOL hasValidPredicate = (predicate != nil);
 	NSMutableSet *itemsWithMatchingDescendants = [NSMutableSet set];
 
@@ -1687,7 +1687,7 @@ If the receiver has not been sorted or filtered yet, returns a nil array. */
 	}
 	else
 	{
-		return AUTORELEASE([[_items array] copy]);
+		return AUTORELEASE([_items copy]);
 	}
 }
 
