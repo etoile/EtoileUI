@@ -28,8 +28,8 @@
 	/* Persistent Properties */
 
 	ETPropertyDescription *parentItem = [ETPropertyDescription descriptionWithName: @"parentItem" type: (id)@"ETLayoutItemGroup"];
-	[parentItem setIsContainer: YES];
 	[parentItem setOpposite: (id)@"ETLayoutItemGroup.items"];
+	[parentItem setDerived: YES];
 	ETPropertyDescription *identifier = [ETPropertyDescription descriptionWithName: @"identifier" type: (id)@"NSString"];
 	ETPropertyDescription *name = [ETPropertyDescription descriptionWithName: @"name" type: (id)@"NSString"];
 	ETPropertyDescription *image = [ETPropertyDescription descriptionWithName: @"image" type: (id)@"NSImage"];
