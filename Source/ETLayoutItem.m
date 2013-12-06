@@ -1411,7 +1411,18 @@ See also -valueTransformerForProperty:. */
 
 	NSMutableDictionary *transformers = [self valueForVariableStorageKey: @"valueTransformers"];
 	ETAssert([ETItemValueTransformer valueTransformerForName: [aValueTransformer name]] == aValueTransformer);
+	
+	[self willChangeValueForProperty: @"valueTransformers"
+	                       atIndexes: [NSIndexSet indexSet]
+	                     withObjects: A(aValueTransformer)
+	                    mutationKind: ETCollectionMutationKindInsertion];
+
 	[transformers setObject: [aValueTransformer name] forKey: key];
+
+	[self didChangeValueForProperty: @"valueTransformers"
+	                      atIndexes: [NSIndexSet indexSet]
+	                    withObjects: A(aValueTransformer)
+	                   mutationKind: ETCollectionMutationKindInsertion];
 }
 
 /** Returns YES, see [NSObject(EtoileUI) -isLayoutItem] */
