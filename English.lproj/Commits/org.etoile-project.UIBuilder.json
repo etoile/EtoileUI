@@ -1,0 +1,42 @@
+{
+    "types":
+	{
+		"renaming": "Object Renaming",
+		"creation": "Object Creation",
+		"deletion": "Object Deletion",
+		"copy": "Object Copy"
+	},
+
+	"descriptors":
+	{
+		"build-demo":
+		{
+			"type": "creation",
+			"shortDescription": "Created Initial Core Objects"
+		},
+
+		"rename":
+		{
+			"type": "renaming",
+		  	"shortDescription": "Renamed to %@"
+		},
+
+		"create":
+		{
+			"type": "creation",
+		  	"shortDescription": "Created New %@"
+		},
+
+		"delete":
+		{
+			"type": "deletion",
+			"shortDescription": "Deleted one or several objects"
+		},
+		
+		"duplicate":
+		{
+			"type": "copy",
+			"shortDescription": "Duplicate %@"
+		}
+	}
+}

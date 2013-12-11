@@ -13,6 +13,9 @@
 #import <EtoileFoundation/NSObject+Model.h>
 #import <CoreObject/COObjectGraphContext.h>
 #import "ETUIObject.h"
+#import "ETController.h"
+#import "ETLayoutItemGroup.h"
+#import "NSObject+EtoileUI.h"
 #import "ETCompatibility.h"
 
 @interface COObject ()
@@ -265,33 +268,45 @@ and write the receiver properties. */
 }
 #endif
 
+- (BOOL)commitWithIdentifier: (NSString *)aCommitDescriptorId
+{
+	return [self commitWithIdentifier: aCommitDescriptorId metadata: nil];
+}
+
 /** <override-never />
 Does nothing by default.
 
-If built with CoreObject support, commits changes in the editing context related 
-to the receiver root object, and returns the resulting revisions (the commit 
-involves all the root objects listed in -[COEditingContext changedObjects]).
+If built with CoreObject support, commits changes in the persistent root related 
+to the receiver root object.
 
 Will be called by ETActionHandler methods that make changes in response to the 
 user interaction. */
-- (NSArray *) commit
-{
-	return [self commitWithType: nil shortDescription: nil];
-}
-
-- (NSArray *)commitWithType: (NSString *)type
-           shortDescription: (NSString *)shortDescription
+- (BOOL)commitWithIdentifier: (NSString *)aCommitDescriptorId
+					metadata: (NSDictionary *)additionalMetadata
 {
 #ifdef COREOBJECT
 	if ([self isPersistent] == NO)
 		return nil;
 
-	COObject *rootObject = [self rootObject];
-	ETAssert(rootObject != nil);
-	ETAssert([rootObject persistentRoot] != nil);
-	return [[rootObject persistentRoot] commitWithType: type shortDescription: shortDescription];
+	id rootObject = [self rootObject];
+	COUndoTrack *undoTrack = nil;
+	
+	if ([rootObject isLayoutItem] && [rootObject isGroup])
+	{
+		// TODO: Formalize a bit more
+		undoTrack = [[[rootObject controllerItem] controller] undoTrack];
+	}
+
+	NSError *error = nil;
+	BOOL result = [[self persistentRoot] commitWithIdentifier: aCommitDescriptorId
+	                                                 metadata: additionalMetadata
+	                                                undoTrack: undoTrack
+	                                                    error: &error];
+	ETAssert(error == nil);
+
+	return result;
 #else
-	return nil;
+	return NO;
 #endif
 }
 

@@ -11,6 +11,7 @@
 #import "ETSelectTool.h"
 #import "ETApplication.h"
 #import "ETEvent.h"
+#import "EtoileUIProperties.h"
 #import "ETFreeLayout.h"
 #import "ETGeometry.h"
 #import "ETHandle.h"
@@ -868,7 +869,7 @@ the target item. */
 	// the layout, -setNeedsDisplay: is invoked on the target item then
 	[targetItem setNeedsDisplayInRect: NSUnionRect(unionFrame, [newGroup frame])];
 
-	[targetItem commitWithType: @"Item Regrouping" shortDescription: @"Group Items"];
+	[targetItem commitWithIdentifier: kETCommitItemUngroup];
 }
 
 /* Removes the given group from its parent item and moves its child item into 
@@ -940,7 +941,7 @@ target item. */
 	NSRect newUnionFrame = ETUnionRectWithObjectsAndSelector(inlinedItems, @selector(frame));
 	[targetItem setNeedsDisplayInRect: NSUnionRect(oldUnionFrame, newUnionFrame)];
 
-	[targetItem commitWithType: @"Item Regrouping" shortDescription: @"Ungroup Items"];
+	[targetItem commitWithIdentifier: kETCommitItemRegroup];
 }
 
 @end

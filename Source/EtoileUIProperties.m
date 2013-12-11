@@ -64,6 +64,9 @@ NSString * const kETWidthProperty = @"width";
 NSString * const kETXProperty = @"x";
 NSString * const kETYProperty = @"y";
 
+
+/* Pickboard Item Metadata */
+
 NSString * const kETPickMetadataWasUsedAsRepresentedObject = @"wasUsedAsRepresentedObject";
 NSString * const kETPickMetadataPickIndex = @"pickIndex";
 NSString * const kETPickMetadataDraggedItems = @"draggedItems";
@@ -71,3 +74,23 @@ NSString * const kETPickMetadataCurrentDraggedItem = @"currentDraggedItem";
 NSString * const  kETPickMetadataWereItemsRemoved = @"wereRemoved";
 
 NSString * const kETPickMetadataProperty = @"pickMetadata";
+
+
+/* Commit Descriptor Identifiers */
+
+NSString * const kETCommitItemInsert = @"org.etoile-project.EtoileUI.item-insert";
+NSString * const kETCommitRectangleInsert = @"org.etoile-project.EtoileUI.rectangle-insert";
+NSString * const kETCommitItemRemove = @"org.etoile-project.EtoileUI.item-remove";
+NSString * const kETCommitItemDuplicate = @"org.etoile-project.EtoileUI.item-duplicate";
+
+NSString * const kETCommitItemMove = @"org.etoile-project.EtoileUI.item-move";
+NSString * const kETCommitItemResize = @"org.etoile-project.EtoileUI.item-resize";
+NSString * const kETCommitItemReorder = @"org.etoile-project.EtoileUI.item-reorder";
+NSString * const kETCommitItemRegroup = @"org.etoile-project.EtoileUI.item-regroup";
+NSString * const kETCommitItemUngroup = @"org.etoile-project.EtoileUI.item-ungroup";
+NSString * const kETCommitItemSendToBack = @"org.etoile-project.EtoileUI.item-send-to-back";
+NSString * const kETCommitItemBringToFront = @"org.etoile-project.EtoileUI.item-bring-to-front";
+NSString * const kETCommitItemSendBackward = @"org.etoile-project.EtoileUI.item-send-backward";
+NSString * const kETCommitItemBringForward = @"org.etoile-project.EtoileUI.item-bring-forward";
+
+NSString * const kETCommitObjectDrop = @"org.etoile-project.EtoileUI.object-drop";

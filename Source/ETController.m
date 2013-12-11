@@ -554,6 +554,24 @@ a persistent root or the editing context could be returned. */
 	return _persistentObjectContext;
 }
 
+/** <override-dummy />
+Returns the undo track to record user actions in
+-[ETUIObject commitWithIdentifier:metadata:].
+
+By default, returns the parent controller undo track.<br />
+The parent controller is the controller attached to 
+<code>[[self content] controllerItem]</code>.
+ 
+Can be overriden to return the right undo track based on the circumstances. For 
+example, based on the current selection or active item, the main undo track 
+or some more specialized track (e.g. an Undo view) could be returned. */
+- (COUndoTrack *) undoTrack
+{
+	ETController *candidateController = [[[self content] controllerItem] controller];
+	
+	return (candidateController != self ? [candidateController undoTrack] : nil);
+}
+
 /** Sets the object that manages persistency.
  
 If the given object doesn't conform to the protocol, raises an 

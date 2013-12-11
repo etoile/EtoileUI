@@ -11,6 +11,7 @@
 #import <EtoileFoundation/NSObject+Model.h>
 #import <EtoileFoundation/NSString+Etoile.h>
 #import <EtoileFoundation/Macros.h>
+#import <CoreObject/COPersistentRoot.h>
 #import "ETLayoutItem+UIBuilder.h"
 #import "EtoileUIProperties.h"
 #import "ETController.h"
@@ -54,7 +55,7 @@
 	id repObject = [[NSClassFromString(aModel) new] autorelease];
 
 	[self setRepresentedObject: repObject];
-	[self commit];
+	[[self persistentRoot] commit];
 }
 
 - (NSString *)UIBuilderModel
@@ -80,7 +81,7 @@
 	ETController *controller = [[controllerClass new] autorelease];
 	
 	[(ETLayoutItemGroup *)self setController: controller];
-	[self commit];
+	[[self persistentRoot] commit];
 }
 
 - (NSString *)UIBuilderController

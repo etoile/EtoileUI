@@ -492,7 +492,7 @@ Overrides this method when you want to customize how double-click are handled. *
 
 - (void) endTranslateItem: (ETLayoutItem *)item
 {
-	[item commitWithType: @"Item Move" shortDescription: @"Translated Item"];
+	[item commitWithIdentifier: kETCommitItemMove];
 }
 
 /** <override-dummy />
@@ -682,7 +682,7 @@ status, when others request it. */
 	[itemFactory setAspectProviderItem: parent];
 	[parent addItem: [itemFactory rectangle]];
 	[itemFactory setAspectProviderItem: nil];
-	[item commitWithType: @"Item Insertion" shortDescription: @"Created Rectangle"];
+	[item commitWithIdentifier: kETCommitRectangleInsert];
 }
 
 - (void) sendBackward: (id)sender onItem: (ETLayoutItem *)item
@@ -699,7 +699,7 @@ status, when others request it. */
 	[parent insertItem: item atIndex: currentIndex - 1];
 	RELEASE(item);
 
-	[item commitWithType: @"Item Reordering" shortDescription: @"Sent Item backward"];
+	[item commitWithIdentifier: kETCommitItemSendBackward];
 }
 
 - (void) sendToBack: (id)sender onItem: (ETLayoutItem *)item
@@ -714,7 +714,7 @@ status, when others request it. */
 	[parent insertItem: item atIndex: 0];
 	RELEASE(item);
 
-	[item commitWithType: @"Item Reordering" shortDescription: @"Sent Item to the back"];
+	[item commitWithIdentifier: kETCommitItemSendToBack];
 }
 
 - (void) bringForward: (id)sender onItem: (ETLayoutItem *)item
@@ -731,7 +731,7 @@ status, when others request it. */
 	[parent insertItem: item atIndex: currentIndex + 1];
 	RELEASE(item);
 
-	[item commitWithType: @"Item Reordering" shortDescription: @"Bring Item forward"];
+	[item commitWithIdentifier: kETCommitItemBringForward];
 }
 
 - (void) bringToFront: (id)sender onItem: (ETLayoutItem *)item
@@ -746,7 +746,7 @@ status, when others request it. */
 	[parent addItem: item];
 	RELEASE(item);
 
-	[item commitWithType: @"Item Reordering" shortDescription: @"Bring Item to the front"];
+	[item commitWithIdentifier: kETCommitItemBringToFront];
 }
 
 /** Invokes -inspect: action on the given item.

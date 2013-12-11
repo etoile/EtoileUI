@@ -291,7 +291,7 @@ item groups and reacts to that appropriately. */
 - (void) commitDropOnItem: (ETLayoutItem *)dropTarget
 {
 	// TODO: Attempt to look up a short description from the metadata
-	[dropTarget commitWithType: @"Item Insertion" shortDescription: @"Drop object"];
+	[dropTarget commitWithIdentifier: kETCommitObjectDrop];
 }
 
 /** Inserts the dropped object at the given index in the drop target and 

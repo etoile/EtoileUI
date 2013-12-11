@@ -15,6 +15,7 @@
 #import <EtoileUI/ETResponder.h>
 
 @protocol COPersistentObjectContext;
+@class COUndoTrack;
 @class ETItemTemplate, ETLayoutItem, ETLayoutItemBuilder, ETLayoutItemGroup, ETUTI;
 
 /** This protocol is only exposed to be used internally by EtoileUI.
@@ -132,6 +133,7 @@ objects as a collection distinct from the content. */
 
 - (id <COPersistentObjectContext>) persistentObjectContext;
 - (void) setPersistentObjectContext: (id <COPersistentObjectContext>)aContext;
+- (COUndoTrack *) undoTrack;
 
 /* Actions */
 

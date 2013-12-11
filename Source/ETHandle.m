@@ -9,6 +9,7 @@
 #import <EtoileFoundation/Macros.h>
 #import <CoreObject/COObjectGraphContext.h>
 #import "ETHandle.h"
+#import "EtoileUIProperties.h"
 #import "ETCompatibility.h"
 #import "ETGeometry.h"
 
@@ -78,7 +79,7 @@ NSString *kETManipulatedObjectProperty = @"manipulatedObject";
 - (void) endTranslateItem: (ETHandle *)handle
 {
 	ETHandleGroup *handleGroup = [handle manipulatedObject];
-	[[handleGroup manipulatedObject] commitWithType: @"Handle Move" shortDescription: @"Resized item"];
+	[[handleGroup manipulatedObject] commitWithIdentifier: kETCommitItemResize];
 }
 
 @end

@@ -1,0 +1,75 @@
+{
+	"types":
+	{
+		"item-insertion": "Item Insertion",
+		"item-removal": "Item Removal",
+		"item-copy": "Item Copy",
+		"item-move": "Item Move",
+		"item-reordering": "Item Reordering",
+		"item-grouping": "Item Grouping",
+		"handle-move": "Handle Move"
+	},
+
+	"descriptors":
+	{
+		"rectangle-insert":
+		{
+			"type": "item-insertion",
+		  	"shortDescription": "Created Rectangle"
+		},
+		
+		"object-drop":
+		{
+			"type": "item-insertion",
+		  	"shortDescription": "Drop Object"
+		},
+
+		"item-move":
+		{
+			"type": "item-move",
+			"shortDescription": "Translated Item"
+		},
+		
+		"item-resize":
+		{
+			"type": "handle-move",
+		  	"shortDescription": "Resized Item"
+		},
+
+		"item-regroup":
+		{
+			"type": "item-grouping",
+		  	"shortDescription": "Group Items"
+		},
+		
+		"item-ungroup":
+		{
+			"type": "item-grouping",
+		  	"shortDescription": "Ungroup Items"
+		},
+
+		"item-send-to-back":
+		{
+			"type": "item-reordering",
+		  	"shortDescription": "Sent Item to the back"
+		},
+
+		"item-bring-to-front":
+		{
+			"type": "item-reordering",
+		  	"shortDescription": "Bring Item to the front"
+		},
+
+		"item-send-backward":
+		{
+			"type": "item-reordering",
+		  	"shortDescription": "Sent Item backward"
+		},
+
+		"item-bring-forward":
+		{
+			"type": "item-reordering",
+		  	"shortDescription": "Bring Item forward"
+		}
+	}
+}

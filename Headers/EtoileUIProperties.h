@@ -68,6 +68,7 @@ extern NSString * const kETWidthProperty; /** width property name */
 extern NSString * const kETXProperty; /** x property name */
 extern NSString * const kETYProperty; /** y property name */
 
+
 /* Pickboard Item Metadata */
 
 extern NSString * const kETPickMetadataWasUsedAsRepresentedObject; /** Boolean metadata property (optional).
@@ -97,3 +98,24 @@ See also -shouldRemoveItemsAtPickTime in ETTool subclasses that implements it su
 /* Private Pickboard Item Properties */
 
 extern NSString * const kETPickMetadataProperty; /** pickMetadata property name */
+
+
+/* Commit Descriptor Identifiers */
+
+extern NSString * const kETCommitItemInsert;
+extern NSString * const kETCommitRectangleInsert;
+extern NSString * const kETCommitItemRemove;
+extern NSString * const kETCommitItemDuplicate;
+
+// TODO: Add kETCommitItemMove/ResizeFromInspector
+extern NSString * const kETCommitItemMove;
+extern NSString * const kETCommitItemResize;
+extern NSString * const kETCommitItemReorder;
+extern NSString * const kETCommitItemRegroup;
+extern NSString * const kETCommitItemUngroup;
+extern NSString * const kETCommitItemSendToBack;
+extern NSString * const kETCommitItemBringToFront;
+extern NSString * const kETCommitItemSendBackward;
+extern NSString * const kETCommitItemBringForward;
+
+extern NSString * const kETCommitObjectDrop;

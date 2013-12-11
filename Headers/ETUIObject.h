@@ -45,9 +45,9 @@
 
 /** @taskunit Persistency */
 
-- (NSArray *) commit;
-- (NSArray *)commitWithType: (NSString *)type
-           shortDescription: (NSString *)shortDescription;
+- (BOOL)commitWithIdentifier: (NSString *)aCommitDescriptorId;
+- (BOOL)commitWithIdentifier: (NSString *)aCommitDescriptorId
+					metadata: (NSDictionary *)additionalMetadata;
 #ifndef COREOBJECT
 - (id) commitTrack;
 - (BOOL) isRoot;
