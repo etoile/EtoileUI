@@ -15,7 +15,7 @@
 #import <EtoileFoundation/NSObject+Model.h>
 #import <EtoileFoundation/NSObject+HOM.h>
 #import <CoreObject/COObjectGraphContext.h>
-#import <CoreObject/NSObject+CoreObject.h>
+#import <CoreObject/COPersistentObjectContext.h>
 #import "ETItemTemplate.h"
 #import "ETLayoutItem.h"
 #import "ETLayoutItemGroup.h"

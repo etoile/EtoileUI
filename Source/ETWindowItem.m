@@ -21,6 +21,7 @@
 #import "ETPickDropCoordinator.h"
 #import "ETCompatibility.h"
 #import "ETView.h"
+#import "NSObject+EtoileUI.h"
 #import "NSWindow+Etoile.h"
 
 #define NC [NSNotificationCenter defaultCenter]
