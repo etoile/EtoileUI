@@ -402,7 +402,12 @@
 - (ETItemValueTransformer *) newTypeValueTransformer
 {
 	ETItemValueTransformer *transformer =
-		[[ETItemValueTransformer alloc] initWithName: @"UIBuilderType"];
+		(id)[ETItemValueTransformer valueTransformerForName: @"UIBuilderType"];
+
+	if (transformer != nil)
+		return RETAIN(transformer);
+
+	transformer = [[ETItemValueTransformer alloc] initWithName: @"UIBuilderType"];
 
 	[transformer setTransformBlock: ^id (id value, NSString *key, ETLayoutItem *item)
 	{
@@ -442,7 +447,12 @@
 - (ETItemValueTransformer *) newRelationshipValueTransformer
 {
 	ETItemValueTransformer *transformer =
-		[[ETItemValueTransformer alloc] initWithName: @"UIBuilderRelationship"];
+		(id)[ETItemValueTransformer valueTransformerForName: @"UIBuilderRelationship"];
+
+	if (transformer != nil)
+		return RETAIN(transformer);
+
+	transformer = [[ETItemValueTransformer alloc] initWithName: @"UIBuilderRelationship"];
 
 	[transformer setTransformBlock: ^id (id value, NSString *key, ETLayoutItem *item)
 	{
@@ -487,7 +497,12 @@
 - (ETItemValueTransformer *) newImageValueTransformer
 {
 	ETItemValueTransformer *transformer =
-		[[ETItemValueTransformer alloc] initWithName: @"UIBuilderImage"];
+		(id)[ETItemValueTransformer valueTransformerForName: @"UIBuilderImage"];
+
+	if (transformer != nil)
+		return RETAIN(transformer);
+
+	transformer = [[ETItemValueTransformer alloc] initWithName: @"UIBuilderImage"];
 
 	[transformer setTransformBlock: ^id (id value, NSString *key, ETLayoutItem *item)
 	{

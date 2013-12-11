@@ -641,8 +641,10 @@
 
 - (ETLayoutItemGroup *) objectPicker
 {
-	ETLayoutItemGroup *picker = [self itemGroupWithRepresentedObject: [ETAspectRepository mainRepository]];
-	ETController *controller = AUTORELEASE([[ETController alloc] init]);
+	ETLayoutItemGroup *picker =
+		[self itemGroupWithRepresentedObject: [ETAspectRepository mainRepository]];
+	ETController *controller =
+		AUTORELEASE([[ETController alloc] initWithObjectGraphContext: [self objectGraphContext]]);
 	ETItemTemplate *template = [controller templateForType: [controller currentObjectType]];
 
 	[[template item] setActionHandler:
@@ -690,8 +692,11 @@
 - (IBAction) startEditingKeyWindowUI: (id)sender
 {
 	ETLayoutItem *editedItem = [[[ETTool activeTool] keyItem] windowBackedAncestorItem];
-	ETLayoutItemGroup *editor = [[ETUIBuilderItemFactory factory]
-		editorWithObject: editedItem controller: AUTORELEASE([ETUIBuilderController new])];
+	ETUIBuilderItemFactory *itemFactory = [ETUIBuilderItemFactory factory];
+	ETUIBuilderController *controller = AUTORELEASE([[ETUIBuilderController alloc]
+		initWithObjectGraphContext: [itemFactory objectGraphContext]]);
+	ETLayoutItemGroup *editor = [itemFactory editorWithObject: editedItem
+	                                               controller: controller];
 
 	[[[ETUIBuilderItemFactory factory] windowGroup] addItem: editor];
 }
