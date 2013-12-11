@@ -434,8 +434,8 @@
 	// serialization to replace NSMenuItem.representedObject by the
 	// COObject.UUID or nil, and vice-versa (as we just do for NSControl.target)
 	//NSLog(@"self: %@", [self objectGraphContext]);
-	NSLog(@"header: %@", [header objectGraphContext]);
-	NSLog(@"pane: %@", [pane objectGraphContext]);
+	//NSLog(@"header: %@", [header objectGraphContext]);
+	//NSLog(@"pane: %@", [pane objectGraphContext]);
 
 	[itemGroup setIdentifier: @"basicInspector"];
 	[itemGroup setAutoresizingMask: ETAutoresizingFlexibleWidth | ETAutoresizingFlexibleHeight];

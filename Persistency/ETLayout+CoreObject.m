@@ -133,6 +133,11 @@
 	return unusedColumns;
 }
 
+- (void) setSerializedPropertyColumns: (NSDictionary *)serializedColumns
+{
+	ASSIGN(_propertyColumns, serializedColumns);
+}
+
 - (void) awakeFromDeserialization
 {
 	ETAssert([self layoutView] != nil);
