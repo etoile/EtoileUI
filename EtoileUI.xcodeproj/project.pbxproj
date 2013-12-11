@@ -39,6 +39,7 @@
 		60073F7110075826007272E6 /* ETWebLayout.m in Sources */ = {isa = PBXBuildFile; fileRef = 60073F6F10075826007272E6 /* ETWebLayout.m */; };
 		60073F7810075DDC007272E6 /* ETXHTMLRenderContext.h in Headers */ = {isa = PBXBuildFile; fileRef = 60073F7610075DDC007272E6 /* ETXHTMLRenderContext.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		60073F7910075DDC007272E6 /* ETXHTMLRenderContext.m in Sources */ = {isa = PBXBuildFile; fileRef = 60073F7710075DDC007272E6 /* ETXHTMLRenderContext.m */; };
+		600F72E11858D99F00CB6AC5 /* CoreObject.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6084048F15415CB2002F91A1 /* CoreObject.framework */; };
 		601296A913C7482500980F16 /* ETController+ModelDescription.m in Sources */ = {isa = PBXBuildFile; fileRef = 601296A713C7482500980F16 /* ETController+ModelDescription.m */; };
 		601296AA13C7482500980F16 /* ETLayout+ModelDescription.m in Sources */ = {isa = PBXBuildFile; fileRef = 601296A813C7482500980F16 /* ETLayout+ModelDescription.m */; };
 		601296AB13C7482500980F16 /* ETController+ModelDescription.m in Sources */ = {isa = PBXBuildFile; fileRef = 601296A713C7482500980F16 /* ETController+ModelDescription.m */; };
@@ -831,6 +832,9 @@
 		60073F6F10075826007272E6 /* ETWebLayout.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ETWebLayout.m; path = ../EtoileWeb/ETWebLayout.m; sourceTree = SOURCE_ROOT; };
 		60073F7610075DDC007272E6 /* ETXHTMLRenderContext.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ETXHTMLRenderContext.h; path = ../EtoileWeb/ETXHTMLRenderContext.h; sourceTree = SOURCE_ROOT; };
 		60073F7710075DDC007272E6 /* ETXHTMLRenderContext.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ETXHTMLRenderContext.m; path = ../EtoileWeb/ETXHTMLRenderContext.m; sourceTree = SOURCE_ROOT; };
+		600F72E91858DAE400CB6AC5 /* NEWS */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = NEWS; sourceTree = "<group>"; };
+		600F72EA1858DAE400CB6AC5 /* README */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = README; sourceTree = "<group>"; };
+		600F72EB1858DAE400CB6AC5 /* TODO */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = TODO; sourceTree = "<group>"; };
 		601296A713C7482500980F16 /* ETController+ModelDescription.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = "ETController+ModelDescription.m"; path = "ModelDescription/ETController+ModelDescription.m"; sourceTree = "<group>"; };
 		601296A813C7482500980F16 /* ETLayout+ModelDescription.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = "ETLayout+ModelDescription.m"; path = "ModelDescription/ETLayout+ModelDescription.m"; sourceTree = "<group>"; };
 		601296AD13C7491100980F16 /* ETLayoutItem+ModelDescription.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = "ETLayoutItem+ModelDescription.m"; path = "ModelDescription/ETLayoutItem+ModelDescription.m"; sourceTree = "<group>"; };
@@ -1107,7 +1111,6 @@
 		60B6E2F513E4635D0087879C /* ETAspectCategory.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ETAspectCategory.m; path = AspectRepository/ETAspectCategory.m; sourceTree = "<group>"; };
 		60B6E2F613E4635D0087879C /* ETAspectRepository.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ETAspectRepository.h; path = AspectRepository/ETAspectRepository.h; sourceTree = "<group>"; };
 		60B6E2F713E4635D0087879C /* ETAspectRepository.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ETAspectRepository.m; path = AspectRepository/ETAspectRepository.m; sourceTree = "<group>"; };
-		60BB9F140EED2FD000D5E1A6 /* ChangeLog */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = ChangeLog; sourceTree = "<group>"; };
 		60BBFFB7100A31D8001B2F37 /* WebKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = WebKit.framework; path = /System/Library/Frameworks/WebKit.framework; sourceTree = "<absolute>"; };
 		60C06D8812F8533800E38E99 /* ETLayoutExecutor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ETLayoutExecutor.h; path = Headers/ETLayoutExecutor.h; sourceTree = "<group>"; };
 		60C06D8A12F8534900E38E99 /* ETLayoutExecutor.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ETLayoutExecutor.m; path = Source/ETLayoutExecutor.m; sourceTree = "<group>"; };
@@ -1300,6 +1303,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				600F72E11858D99F00CB6AC5 /* CoreObject.framework in Frameworks */,
 				6640BD1010A0C321008B7765 /* EtoileFoundation.framework in Frameworks */,
 				60EEB90A0F09459C00EBB632 /* EtoileUI.framework in Frameworks */,
 				60FB0AE513C3345A00C2AB94 /* Cocoa.framework in Frameworks */,
@@ -1378,7 +1382,9 @@
 				60D4704B14C5D25000129CD4 /* IconKit.xcodeproj */,
 				60BBFFB7100A31D8001B2F37 /* WebKit.framework */,
 				60264AA40FB72D4D00D8163F /* Carbon.framework */,
-				60BB9F140EED2FD000D5E1A6 /* ChangeLog */,
+				600F72E91858DAE400CB6AC5 /* NEWS */,
+				600F72EA1858DAE400CB6AC5 /* README */,
+				600F72EB1858DAE400CB6AC5 /* TODO */,
 				605D714D0CEC507E009ED244 /* EtoileUI */,
 				29B97315FDCFA39411CA2CEA /* Generic Headers & Sources */,
 				60073B1D10074A97007272E6 /* EtoileWeb */,

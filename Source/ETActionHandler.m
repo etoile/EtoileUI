@@ -68,7 +68,6 @@ object graph context. */
 		[sharedActionHandlers setObject: handler forKey: key];
 	}
 
-	ETAssert([handler isPersistent] == NO);
 	return handler;
 }
 
@@ -677,11 +676,9 @@ status, when others request it. */
 {
 	ETLayoutItemGroup *parent = ([item isGroup] ? (ETLayoutItemGroup *)item : [item parentItem]);
 	ETLayoutItemFactory *itemFactory =
-		[ETLayoutItemFactory factoryWithObjectGraphContext: [item objectGraphContext]];
+		[ETLayoutItemFactory factoryWithObjectGraphContext: [parent objectGraphContext]];
 
-	[itemFactory setAspectProviderItem: parent];
 	[parent addItem: [itemFactory rectangle]];
-	[itemFactory setAspectProviderItem: nil];
 	[item commitWithIdentifier: kETCommitRectangleInsert];
 }
 

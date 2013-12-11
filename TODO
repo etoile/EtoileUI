@@ -10,6 +10,10 @@ TODO
 	- Make persistency easier and safer
 
 	- Means the delegate is owned as any other aspect
+	
+- Fix popup-button serialization 
+
+	- We must extend view serialization to replace NSMenuItem.representedObject by the COObject.UUID or nil, and vice-versa (as we just do for NSControl.target)
 
 * Verify NSView hidden property doesn't cause a KVC error when read or written, it caused a crash in the object browser layout in the past.
 

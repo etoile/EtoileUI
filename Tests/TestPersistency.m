@@ -238,13 +238,9 @@
 {
 	[self recreateContext];
 
-	[itemFactory beginRootObject];
-
 	NSRect rect = NSMakeRect(50, 20, 400, 300);
 	ETLayoutItem *item = [itemFactory item];
 	[item setFrame: rect];
-
-	[itemFactory endRootObject];
 
 	NSSet *itemAndAspects = S(item, [item actionHandler], [item styleGroup], [item coverStyle]);
 	ETUUID *uuid = [[ctxt insertNewPersistentRootWithRootObject: item] UUID];
@@ -284,8 +280,6 @@
 
 - (ETLayoutItemGroup *) basicItemGroupWithRect: (NSRect)rect
 {
-	[itemFactory beginRootObject];
-
 	ETLayoutItem *item = [self basicItemWithRect: NSMakeRect(10, 10, 50, 50)];
 	ETLayoutItemGroup *itemGroup = [itemFactory itemGroupWithItems: A(item)];
 	ETController *controller = AUTORELEASE([[ETController alloc]
@@ -294,8 +288,6 @@
 	[itemGroup setFrame: rect];
 	[itemGroup setShouldMutateRepresentedObject: YES];
 	[itemGroup setController: controller];
-
-	[itemFactory endRootObject];
 
 	return itemGroup;
 }
@@ -372,8 +364,6 @@
 	[self recreateContext];
 
 	NSRect rect = NSMakeRect(50, 20, 400, 300);
-	
-	[itemFactory beginRootObject];
 
 	ETLayoutItem *sliderItem = [itemFactory horizontalSlider];
 	ETLayoutItem *buttonItem = [itemFactory buttonWithTitle: @"Picturesque" 
@@ -384,8 +374,6 @@
 	[[sliderItem view] setAction: @selector(close:)];
 	[[sliderItem view] setTarget: itemGroup];
 	[buttonItem setFrame: rect];
-	
-	[itemFactory endRootObject];
 
 	UKNotNil([buttonItem UUID]);
 	UKNotNil([sliderItem UUID]);
@@ -432,8 +420,6 @@
 	[self recreateContext];
 	
 	NSRect rect = NSMakeRect(50, 20, 400, 300);
-	
-	[itemFactory beginRootObject];
 
 	ETLayoutItem *buttonItem = [itemFactory buttonWithTitle: @"Picturesque"
 													 target: nil
@@ -441,8 +427,6 @@
 	ETLayoutItemGroup *itemGroup = [itemFactory itemGroupWithItem: buttonItem];
 	
 	[buttonItem setFrame: rect];
-	
-	[itemFactory endRootObject];
 	
 	UKNotNil([buttonItem UUID]);
 	UKNotNil([itemGroup UUID]);
@@ -506,8 +490,6 @@
 {
 	[self recreateContext];
 
-	[itemFactory beginRootObject];
-
 	ETLayoutItemGroup *itemGroup = [itemFactory itemGroup];
 	ETController *controller = AUTORELEASE([[ETController alloc]
 		initWithObjectGraphContext: [itemFactory objectGraphContext]]);
@@ -537,8 +519,6 @@
 
 	[controller setSortDescriptors: A(sortDescriptor1, sortDescriptor2)];
 	[controller setFilterPredicate: predicate];
-
-	[itemFactory endRootObject];
 
 	ETUUID *uuid = [[ctxt insertNewPersistentRootWithRootObject: itemGroup] UUID];
 	
@@ -584,8 +564,6 @@
 - (void) testFreeLayout
 {
 	[self recreateContext];
-	
-	[itemFactory beginRootObject];
 
 	ETLayoutItem *item = [self basicItemWithRect: NSMakeRect(10, 10, 50, 50)];
 	ETLayoutItem *buttonItem = [itemFactory button];
@@ -593,8 +571,6 @@
 
 	[itemGroup setLayout: [ETFreeLayout layoutWithObjectGraphContext: [itemFactory objectGraphContext]]];
 	[itemGroup setSelectionIndex: 1];
-
-	[itemFactory endRootObject];
 
 	ETUUID *uuid = [[ctxt insertNewPersistentRootWithRootObject: itemGroup] UUID];
 

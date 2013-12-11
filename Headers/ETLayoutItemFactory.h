@@ -22,14 +22,12 @@ ETStyle, ETActionHandler;
 {
 	@private
 	COObjectGraphContext *_objectGraphContext;
-	BOOL _isCreatingRootObject;
-	ETStyle *_currentCoverStyle;
-	ETActionHandler *_currentActionHandler;
 	ETStyle *_currentBarElementStyle;
 	CGFloat _currentBarElementHeight;
 }
 
 /** @taskunit Initialization */
+
 + (instancetype) factory;
 + (instancetype) factoryWithObjectGraphContext: (COObjectGraphContext *)aContext;
 - (id) initWithObjectGraphContext: (COObjectGraphContext *)aContext;
@@ -40,10 +38,6 @@ ETStyle, ETActionHandler;
 
 /** Aspect Sharing Boundaries and Persistency */
 
-- (void) beginRootObject;
-- (void) endRootObject;
-- (BOOL) isCreatingRootObject;
-- (void) setAspectProviderItem: (ETLayoutItem *)anItem;
 - (ETStyle *) currentCoverStyle;
 - (ETActionHandler *) currentActionHandler;
 

@@ -101,8 +101,6 @@ For a nil context, raises an NSInvalidArgumentException. */
 - (void) dealloc
 {
 	DESTROY(_objectGraphContext);
-	DESTROY(_currentCoverStyle);
-	DESTROY(_currentActionHandler);
 	DESTROY(_currentBarElementStyle);
 	[super dealloc];
 }
@@ -112,84 +110,20 @@ For a nil context, raises an NSInvalidArgumentException. */
 	return _objectGraphContext;
 }
 
-/** Declares a new root object scope.
+/** Returns the shared cover style in the current object graph context.
 
-Can be used to look up shared aspects to set on an item.
-
-For example, cover style or action handler are shared aspects usually.
-
-For each shared aspect, each root object should use its own instance. Aspects 
-should usually be shared within a root object graph, but not between several 
-root objects.<br />
-To share an aspect between several root objects, the aspect has to be turned 
-into a root object.
-
-When -isCreatingRootObject returns NO, you should use +sharedInstance on the 
-aspect class to get the shared aspect. See -currentCoverStyle and 
--currentActionHandler as examples. */
-- (void) beginRootObject
-{
-	NSAssert(_isCreatingRootObject == NO, @"You must call -endRootObject to declare a new root object now");
-	ETAssert(_currentCoverStyle == nil);
-	ETAssert(_currentActionHandler == nil);
-	_isCreatingRootObject = YES;
-}
-
-/** Ends the current root object scope.
-
-See -beginRootObject. */
-- (void) endRootObject
-{
-	_isCreatingRootObject = NO;
-	DESTROY(_currentCoverStyle);
-	DESTROY(_currentActionHandler);
-}
-
-/** Returns whether -beginRootObject has been called but not yet balanced by 
--endRootObject.
-
-By default, returns NO. */
-- (BOOL) isCreatingRootObject
-{
-	return _isCreatingRootObject;
-}
-
-/** Sets the item that provides the shared aspects for building bew objects. */
-- (void) setAspectProviderItem: (ETLayoutItem *)anItem
-{
-	ASSIGN(_currentCoverStyle, [anItem coverStyle]);
-	ASSIGN(_currentActionHandler, [anItem actionHandler]);
-	_isCreatingRootObject = (anItem != nil);
-}
-
-/** Returns the shared cover style in the current root object graph.
-
-See also -beginRootObject. */
+See also -currentActionHandler. */
 - (ETStyle *) currentCoverStyle
 {
-	if ([self isCreatingRootObject] == NO)
-		return [ETBasicItemStyle sharedInstanceForObjectGraphContext: [self objectGraphContext]];
-
-	if (_currentCoverStyle == nil)
-	{
-		_currentCoverStyle = [[ETBasicItemStyle alloc] initWithObjectGraphContext: [self objectGraphContext]];
-	}
-	return _currentCoverStyle;
+	return [ETBasicItemStyle sharedInstanceForObjectGraphContext: [self objectGraphContext]];
 }
 
-/** Returns the shared action handler in the current root object graph.
+/** Returns the shared action handler in the current object graph context.
 
-See also -beginRootObject. */
+See also -currentCoverStyle. */
 - (ETActionHandler *) currentActionHandler
 {
-	if ([self isCreatingRootObject] == NO)
-		return [ETActionHandler sharedInstanceForObjectGraphContext: [self objectGraphContext]];
-
-	if (_currentActionHandler == nil)
-	{
-		_currentActionHandler = [[ETActionHandler alloc] initWithObjectGraphContext: [self objectGraphContext]];
-	}
-	return _currentActionHandler;
+	return [ETActionHandler sharedInstanceForObjectGraphContext: [self objectGraphContext]];
 }
 
 /* Bar Building Settings */

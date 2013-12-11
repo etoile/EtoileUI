@@ -430,7 +430,10 @@
 	ETLayoutItemGroup *header = [self basicInspectorHeaderWithObject: anObject controller: aController aspectName: aspectKeyPath];
 	ETLayoutItemGroup *pane = [self basicInspectorContentWithObject: anObject controller: aController aspectName: aspectKeyPath];
 
-	NSLog(@"self: %@", [self objectGraphContext]);
+	// FIXME: Pop-up button serialization doesn't work. We must extend view
+	// serialization to replace NSMenuItem.representedObject by the
+	// COObject.UUID or nil, and vice-versa (as we just do for NSControl.target)
+	//NSLog(@"self: %@", [self objectGraphContext]);
 	NSLog(@"header: %@", [header objectGraphContext]);
 	NSLog(@"pane: %@", [pane objectGraphContext]);
 

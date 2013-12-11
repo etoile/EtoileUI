@@ -11,6 +11,7 @@
 #import <EtoileFoundation/NSObject+HOM.h>
 #import <EtoileFoundation/Macros.h>
 #import <CoreObject/COEditingContext.h>
+#import <CoreObject/COObjectGraphContext.h>
 #import <IconKit/IKIcon.h>
 #import "ETUIBuilderController.h"
 #import "ETApplication.h"
@@ -426,15 +427,11 @@
 		/* For instantiating an aspect such as a ETController, 
 		   that points to other aspects that can be shared instances (for 
 		   example the cover style of [ETItemTemplate item]) */
-		// FIXME: Won't work for other item factories (e.g. ETUIBuilderItemFactory)
-		// Introduce +beginRootObject that is replicated as -beginRootObject on
-		// all existing factories. An approach such as -[ETController initWithItemFactory:]
-		// doesn't sound really solid.
-		[[ETLayoutItemFactory factory] beginRootObject];
-		
-		aspect = (aspect != nil ? aspect : AUTORELEASE([NSClassFromString(value) new]));
-		
-		[[ETLayoutItemFactory factory] endRootObject];
+		if (aspect == nil)
+		{
+			aspect = AUTORELEASE([[NSClassFromString(value) alloc]
+				initWithObjectGraphContext: [COObjectGraphContext objectGraphContext]]);
+		}
 		
 		return aspect;
 	}];

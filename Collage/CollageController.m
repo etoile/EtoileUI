@@ -86,9 +86,8 @@
 
 - (ETLayoutItemGroup *) collageItem
 {
-	ETLayoutItemFactory *itemFactory = [ETLayoutItemFactory factory];
-	
-	[itemFactory beginRootObject];
+	ETLayoutItemFactory *itemFactory =
+		[ETLayoutItemFactory factoryWithObjectGraphContext: [COObjectGraphContext objectGraphContext]];
 
 	ETLayoutItemGroup *mainItem = [itemFactory itemGroup];
 	
@@ -150,8 +149,6 @@
 	ETFlowLayout *flow = [ETFlowLayout layoutWithObjectGraphContext: [itemFactory objectGraphContext]];
 	[flow setItemSizeConstraintStyle: ETSizeConstraintStyleNone];
 	[[mainItem layout] resetItemPersistentFramesWithLayout: flow];
-	
-	[itemFactory endRootObject];
 	
 	return mainItem;
 }
