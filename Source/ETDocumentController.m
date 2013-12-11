@@ -86,6 +86,16 @@ to open multiple instances of the same document (e.g. a web browser). */
 	return _numberOfUntitledDocuments;
 }
 
+- (NSDictionary *)defaultOptions
+{
+	NSMutableDictionary *options = AUTORELEASE([[super defaultOptions] mutableCopy]);
+
+	[options setObject: [NSNumber numberWithInteger: [self numberOfUntitledDocuments]]
+	            forKey: kETTemplateOptionNumberOfUntitledDocuments];
+
+	return AUTORELEASE([options copy]);
+}
+
 /** Returns a retained ETLayoutItem or ETLayoutItemGroup object that presents the 
 content at the given URL.
 
@@ -234,11 +244,9 @@ Will call -newInstanceWithURL:ofType:options: to create the new document.
 See also -currentObjectType. */
 - (IBAction) newDocument: (id)sender
 {
-	NSDictionary *options = D([NSNumber numberWithInteger: [self numberOfUntitledDocuments]], 
-		kETTemplateOptionNumberOfUntitledDocuments);
 	ETLayoutItem *item = AUTORELEASE([self newItemWithURL: nil 
 	                                               ofType: [self currentObjectType] 
-	                                              options: options]);
+	                                              options: [self defaultOptions]]);
 	[self insertItem: item atIndex: ETUndeterminedIndex];
 	_numberOfUntitledDocuments++;
 	[self didCreateDocumentItem: item];
