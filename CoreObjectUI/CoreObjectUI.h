@@ -11,7 +11,7 @@
 #import <EtoileUI/ETController.h>
 #import <EtoileUI/ETLayoutItemFactory.h>
 
-@protocol COTrackNode;
+@protocol COTrack, COTrackNode;
 
 @interface COObject (CoreObjectUI)
 /** <override-dummy />
