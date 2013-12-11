@@ -3,6 +3,14 @@ TODO
 
 # Open Issues
 
+- Write tests for -[ETController didChangeContent:toContent:]
+
+- Retain delegates for all ETUIObject subclasses
+
+	- Make persistency easier and safer
+
+	- Means the delegate is owned as any other aspect
+
 * Verify NSView hidden property doesn't cause a KVC error when read or written, it caused a crash in the object browser layout in the past.
 
 * Fix group and ungroup operations. That shouldn't be really hard. The only thing is to settle on a sensible semantic: where a new group is inserted and where the child items of a dismantled group are inserted. Inserting in the existing parent is probably the way to go, the insertion index (z-order) remains to be figured out. The only tricky thing will be to ensure we properly handle these operations on a mix of items with and without views, by reinserting views in the most adequate superview.
