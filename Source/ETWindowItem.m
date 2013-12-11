@@ -530,14 +530,14 @@ This coordinate space includes the window decoration (titlebar etc.).  */
 	
 	ETUIItem *item = [self firstDecoratedItem];
 
-	if ([item isLayoutItem] == NO &&[item isGroup] == NO)
+	if ([item isLayoutItem] == NO && [item isGroup] == NO)
 		return;
 
 	ETLayoutItem *initialFocusedItem =
 		[[(ETLayoutItemGroup *)item controller] initialFocusedItem];
 
 	[[ETTool activeTool] makeFirstResponder: (id)initialFocusedItem];
-	ETAssert([self focusedItem] == initialFocusedItem);
+	// FIXME: ETAssert([self focusedItem] == initialFocusedItem);
 }
 
 - (void) windowDidBecomeKey:(NSNotification *)notification
