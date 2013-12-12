@@ -53,25 +53,27 @@ Returns a shared instance that instantiates new items in the given object graph
 context.
  
 For each ETLayoutItemFactory subclass and object graph context combination, 
-returns a distinct shared instance. */
+returns a distinct shared instance.
+
+For a nil context, raises an NSInvalidArgumentException. */
 + (id) factoryWithObjectGraphContext: (COObjectGraphContext *)aContext
 {
+	NILARG_EXCEPTION_TEST(aContext);
+
 	if (factorySharedInstances == nil)
 	{
 		ASSIGN(factorySharedInstances, [NSMapTable mapTableWithStrongToStrongObjects]);
 	}
-	
-	ETLayoutItemFactory *factory = [factorySharedInstances objectForKey: self];
+
+	id key = S(self, aContext);
+	ETLayoutItemFactory *factory = [factorySharedInstances objectForKey: key];
 	
 	if (factory == nil)
 	{
 		factory = AUTORELEASE([[self alloc] initWithObjectGraphContext: aContext]);
-		[factorySharedInstances setObject: factory forKey: self];
+		[factorySharedInstances setObject: factory forKey: key];
 	}
-	else
-	{
-		ASSIGN(factory->_objectGraphContext, aContext);
-	}
+
 	return factory;
 }
 
@@ -86,9 +88,6 @@ For a nil context, raises an NSInvalidArgumentException. */
 	INVALIDARG_EXCEPTION_TEST(aContext, [aContext isKindOfClass: [COObjectGraphContext class]]);
 	SUPERINIT;
 	ASSIGN(_objectGraphContext, aContext);
-	ETStyle *barElementStyle =
-		[ETBasicItemStyle iconAndLabelBarElementStyleWithObjectGraphContext: aContext];
-	[self setCurrentBarElementStyle: barElementStyle];
 	[self setCurrentBarElementHeight: [self defaultIconAndLabelBarHeight]];
 	return self;
 }
@@ -128,13 +127,23 @@ See also -currentCoverStyle. */
 
 /* Bar Building Settings */
 
-/** Returns the style applied to all the bar elements to be built. */
+/** Returns the style applied to all the bar elements to be built.
+
+Never returns nil. */
 - (ETStyle *) currentBarElementStyle
 {
+	// NOTE: We create the bar element style lazily to avoid saving it in all persistent object graph contexts
+	if (_currentBarElementStyle == nil)
+	{
+		ASSIGN(_currentBarElementStyle, [ETBasicItemStyle
+			iconAndLabelBarElementStyleWithObjectGraphContext: [self objectGraphContext]]);
+	}
 	return _currentBarElementStyle;
 }
 
-/** Sets the style to apply to all the bar elements to be built. */
+/** Sets the style to apply to all the bar elements to be built.
+
+If set to nil, -currentBarElementStyle is reset to its initial style. */
 - (void) setCurrentBarElementStyle: (ETStyle *)aStyle
 {
 	ASSIGN(_currentBarElementStyle, aStyle);
