@@ -10,6 +10,7 @@
 #import <EtoileFoundation/ETMutableObjectViewpoint.h>
 #import <EtoileFoundation/NSObject+Model.h>
 #import <CoreObject/COObjectGraphContext.h>
+#import <IconKit/IconKit.h>
 #import "ETLayoutItemFactory.h"
 #import "ETActionHandler.h"
 #import "ETAspectRepository.h"
@@ -583,7 +584,9 @@ although it is not one (it is more akin a bevel button without a label). */
 }
 
 /** Returns a new layout item that uses a NSButton instance as its view, and 
-initializes this button with the given image, target and action. */
+initializes this button with the given image, target and action.
+
+See also -buttonWithIconNamed:target:action:.  */
 - (id) buttonWithImage: (NSImage *)anImage target: (id)aTarget action: (SEL)aSelector
 {
 	NSButton *buttonView = AUTORELEASE([[NSButton alloc] initWithFrame: [self defaultImageButtonFrame]]);
@@ -599,6 +602,18 @@ initializes this button with the given image, target and action. */
 	[item setIcon: [NSImage imageNamed: @"ui-button.png"]];
 	ETAssert([buttonView imagePosition] == NSImageOnly);
 	return item;
+}
+
+/** Returns a new layout item that uses a NSButton instance as its view, and 
+initializes this button with the given target, action and the image bound to the given icon name.
+
+The IconKit is used to looked up the icon image.
+
+See also -buttonWithImage:target:action:.  */
+- (ETLayoutItem *) buttonWithIconNamed: (NSString *)aName target: (id)aTarget action: (SEL)anAction
+{
+	NSImage *icon = [[IKIcon iconWithIdentifier: aName] image];
+	return [self buttonWithImage: icon target: aTarget action: anAction];
 }
 
 /** Returns a new layout item that uses a NSButton instance as its view, and 

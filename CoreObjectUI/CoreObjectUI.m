@@ -101,12 +101,6 @@
 
 @implementation ETLayoutItemFactory (CoreObjectUI)
 
-- (ETLayoutItem *) buttonWithIconNamed: (NSString *)aName target: (id)aTarget action: (SEL)anAction
-{
-	NSImage *icon = [[IKIcon iconWithIdentifier: aName] image];
-	return [self buttonWithImage: icon target: aTarget action: anAction];
-}
-
 - (ETLayoutItemGroup *) historyBrowserTopBarWithController: (id)aController
 {
 	ETLayoutItemGroup *itemGroup = [self itemGroup];

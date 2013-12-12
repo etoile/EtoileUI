@@ -117,6 +117,8 @@
 	                                                        action: NULL];
 
 	[mainItem addItem: [itemFactory horizontalSlider]];
+	ETAssert([mainItem objectGraphContext] == [[mainItem lastItem] objectGraphContext]);
+
 	[mainItem addItem: [itemFactory textField]];
 #if 0
 	[mainItem addItem: [itemFactory labelWithTitle: @"Hello World!"]];
@@ -150,6 +152,8 @@
 	[flow setItemSizeConstraintStyle: ETSizeConstraintStyleNone];
 	[[mainItem layout] resetItemPersistentFramesWithLayout: flow];
 	
+	//[[mainItem objectGraphContext] showGraph];
+
 	return mainItem;
 }
 

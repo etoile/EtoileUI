@@ -83,6 +83,7 @@ ETStyle, ETActionHandler;
 - (id) button;
 - (id) buttonWithTitle: (NSString *)aTitle target: (id)aTarget action: (SEL)aSelector;
 - (id) buttonWithImage: (NSImage *)anImage target: (id)aTarget action: (SEL)aSelector;
+- (ETLayoutItem *) buttonWithIconNamed: (NSString *)aName target: (id)aTarget action: (SEL)anAction;
 - (id) radioButton;
 - (id) checkboxWithLabel: (NSString *)aLabel 
                   target: (id)aTarget 

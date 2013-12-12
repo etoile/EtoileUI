@@ -68,12 +68,6 @@
 	[super dealloc];
 }
 
-- (ETLayoutItem *) buttonWithIconNamed: (NSString *)aName target: (id)aTarget action: (SEL)anAction
-{
-	NSImage *icon = [[IKIcon iconWithIdentifier: aName] image];
-	return [self buttonWithImage: icon target: aTarget action: anAction];
-}
-
 - (ETLayout *) defaultMasterViewLayoutWithController: (ETUIBuilderController *)aController
 {
 	ETOutlineLayout *layout = [ETOutlineLayout layoutWithObjectGraphContext: [self objectGraphContext]];
