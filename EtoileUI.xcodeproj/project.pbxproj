@@ -835,6 +835,7 @@
 		600F72E91858DAE400CB6AC5 /* NEWS */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = NEWS; sourceTree = "<group>"; };
 		600F72EA1858DAE400CB6AC5 /* README */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = README; sourceTree = "<group>"; };
 		600F72EB1858DAE400CB6AC5 /* TODO */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = TODO; sourceTree = "<group>"; };
+		600F73011859363600CB6AC5 /* SCRATCHPAD */ = {isa = PBXFileReference; lastKnownFileType = text; path = SCRATCHPAD; sourceTree = "<group>"; };
 		601296A713C7482500980F16 /* ETController+ModelDescription.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = "ETController+ModelDescription.m"; path = "ModelDescription/ETController+ModelDescription.m"; sourceTree = "<group>"; };
 		601296A813C7482500980F16 /* ETLayout+ModelDescription.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = "ETLayout+ModelDescription.m"; path = "ModelDescription/ETLayout+ModelDescription.m"; sourceTree = "<group>"; };
 		601296AD13C7491100980F16 /* ETLayoutItem+ModelDescription.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = "ETLayoutItem+ModelDescription.m"; path = "ModelDescription/ETLayoutItem+ModelDescription.m"; sourceTree = "<group>"; };
@@ -1385,6 +1386,7 @@
 				600F72E91858DAE400CB6AC5 /* NEWS */,
 				600F72EA1858DAE400CB6AC5 /* README */,
 				600F72EB1858DAE400CB6AC5 /* TODO */,
+				600F73011859363600CB6AC5 /* SCRATCHPAD */,
 				605D714D0CEC507E009ED244 /* EtoileUI */,
 				29B97315FDCFA39411CA2CEA /* Generic Headers & Sources */,
 				60073B1D10074A97007272E6 /* EtoileWeb */,

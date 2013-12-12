@@ -1,7 +1,8 @@
 TODO
 ====
 
-# Open Issues
+Open Issues
+-----------
 
 - Write tests for -[ETController didChangeContent:toContent:]
 
@@ -24,18 +25,14 @@ TODO
 	
 - Test +itemFactoryWithObjectGraphContext: and +sharedInstanceForObjectGraphContext:
 
-* Verify NSView hidden property doesn't cause a KVC error when read or written, it caused a crash in the object browser layout in the past.
+- Fix disabled assertion about initialFocusedItem in ETWindowItem
 
-* Fix group and ungroup operations. That shouldn't be really hard. The only thing is to settle on a sensible semantic: where a new group is inserted and where the child items of a dismantled group are inserted. Inserting in the existing parent is probably the way to go, the insertion index (z-order) remains to be figured out. The only tricky thing will be to ensure we properly handle these operations on a mix of items with and without views, by reinserting views in the most adequate superview.
 
-* Fix stack and unstack operations, they are currently broken. Documentation is probably missing in this area. Stack/Unstack operations are unrelated to the stack layout (we got a naming issue here), they allow to set a temporary layout on an item group, so that the child item becomes visible instead of the drawing or the view of the item group itself. For example, you set a table layout on a folder item, then the content of the folder appears 'exploded' as a table view rather than just an opaque folder icon. This feature gives a very generic implementation of Aperture-like stacks.
+Old Potential Issues
+--------------------
 
-* Write code to deal with shift modifier for extending or restricting the selection.
+- Verify NSView hidden property doesn't cause a KVC error when read or written, it caused a crash in the object browser layout in the past.
 
-* Check command modifier is correctly handled on adding or removing a single item to the selection.
-
-* Investigate the rewrite of -[ETLayoutItemGroup itemAtPath:] which might be buggy, so that it simply relies on existing methods:
-	return [self itemAtIndexPath: [self indexPathForPath: path]];
 
 # Basic Stuff
 
@@ -49,47 +46,11 @@ TODO
 
 # Refactoring
 
-* Rename -properties (first declared in NSObject+Model part of EtoileFoundation) to -propertyNames to eliminate collisions with other GNUstep/Cocoa classes
-
 * Patch NSBitmapImageRep to avoid method collision with -valueForProperty:, probably rely on posing a subclass or a category and method swizzling
-
-* Rename ETInspectorLayout to ETObjectInspectorLayout to match the naming of the dev-oriented object browser layout (ETObjectBrowserLayout). ETInspectorLayout is dev-oriented too and isn't thought to be subclassed.
-
-## Layout
-
-
-* Finish to rework ETFlowLayout, ETLineLayout and ETLineFragment in order to:
-	- implement a vertical flow algorithm
-	- ony request a minimal protocol for layouted objects: -x, -y, -width, -height, -setX:, -setY:, -setWidth:, setHeight: instead of the more complex one needed by a concrete layout that deals with ETLayoutItem instances (and the whole layout item tree machinery that encompass extra stuff like the event handling... for which the layout takes over in some cases).
-
-The inheritance rooted in ETLayout goes currently like that:
-	- ETFlowLayout
-		- ETLineLayout
-	- ETStackLayout
-
-After the refactoring it should be:
-	- ETFlowLayout
-	- ETLineLayout
-	- ETStackLayout
-
-ETLineFragment should now allow that to be done easily because a line fragment can be either horizontal or vertical and ETColumnLayout and ETLineLayout act as dumb shell classes around ETLineFragment and ETVerticalLineFragment (private subclass).
-
-My initial idea was to separate ETLayoutAlgorithm class tree of layout strategies:
-	- ETHorizontalFlowAlgorithm
-	- ETVerticalFlowAlgorithm
-For these two subclasses, you can specify how the overflow should be handled. In ETFlowLayout, the right Flow algorithm is selected depending on the value returned by -isVerticallyOriented. In a very-long term vision, these classes could be eventually be subclassed for implementing text layout algorithms (see Universal Polygons in STEPS first year report).
-So ETLineLayout results of using ETHorizontalFlowAlgorithm limited to a single line and the overflow hidden. Similarly ETStackLayout results of using ETVerticalFlowAlgorithm limited to a single column and the overflow hidden.
 
 
 # New Features
 
-* Implement sorting of child items accross EtoileUI. Sorting should be done directly on the layout item tree, unless a layout supports sorting as a presentation/browsing mode that shouldn't affect the underlying model. In such case, pick and drop would only be support on the item group by treating it as a non-ordered collection. This last behavior is typically what you want for a table/outline layout in an object/file manager. 
-
-By default, the sorting of the layout items should be non-recursive but a recursive variant must also be supported. ETController API should be extended to allow the possibility to provide a sort descriptor (see NSArrayController and NSTreeController for some inspiration). Finally, when sorting isn't just presentational, view-based layouts (such as ETOutlineLayout) should synchronize transparently each time sorting is changed either at the control level or directly on the layout item tree. 
-
-If the developer does the sorting directly on the model, it's probably reasonable to let him responsible of reloading the related layout item tree.
-
-A last open question... Do we need a delegate method such as -sortDescriptorsDidChange: for ETContainer?
 
 ## Drawing
 
@@ -134,8 +95,6 @@ ETPatternShape
 }
 
 Then an ETOverlayShelfLayout could be created as an ETFreeLayout subclass to encapsulate the default UI of the Shelf in a pluggable layout.
-
-## Write a PhotoManager
 
 
 # Long-term Experiments

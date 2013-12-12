@@ -352,3 +352,17 @@ TODO: Implement or rethink... */
 
 	return self;
 }
+
+
+Old Ideas
+---------
+
+## Layout
+
+For ETFlow/Line/ColumnLayout, my idea was to introduce layout strategie as a ETLayoutAlgorithm class tree:
+	- ETHorizontalFlowAlgorithm
+	- ETVerticalFlowAlgorithm
+For these two subclasses, you can specify how the overflow should be handled. In ETFlowLayout, the right Flow algorithm is selected depending on the value returned by -isVerticallyOriented. In a very-long term vision, these classes could be eventually be subclassed for implementing text layout algorithms (see Universal Polygons in STEPS first year report).
+So ETLineLayout results of using ETHorizontalFlowAlgorithm limited to a single line and the overflow hidden. Similarly ETColumnLayout results of using ETVerticalFlowAlgorithm limited to a single column and the overflow hidden.
+
+* Fix stack and unstack operations, they are currently broken. Documentation is probably missing in this area. Stack/Unstack operations are unrelated to the stack layout (we got a naming issue here), they allow to set a temporary layout on an item group, so that the child item becomes visible instead of the drawing or the view of the item group itself. For example, you set a table layout on a folder item, then the content of the folder appears 'exploded' as a table view rather than just an opaque folder icon. This feature gives a very generic implementation of Aperture-like stacks.
