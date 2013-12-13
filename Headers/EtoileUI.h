@@ -18,6 +18,10 @@
 #import <EtoileUI/ETUIStateRestoration.h>
 #import <EtoileUI/ETWidget.h>
 
+/* Item Factory Additions */
+
+#import <EtoileUI/ETLayoutItemFactory+UIPatternAdditions.h>
+
 /* Core Object */
 
 #ifdef COREOBJECT

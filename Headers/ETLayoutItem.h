@@ -387,6 +387,7 @@ and centers it. A strech is a scale that doesn't preserve the content proportion
 - (BOOL) usesFlexibleLayoutFrame;
 - (NSString *) editedProperty;
 - (id) responder;
+- (ETWindowItem *) provideWindowItem;
 
 @end
 

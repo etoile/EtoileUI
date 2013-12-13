@@ -1888,4 +1888,12 @@ invisible in the main layout item tree. */
 	return _isLayerItem;
 }
 
+/** Asks the delegate to provide a window item, otherwise returns a basic window item. */
+- (ETWindowItem *) provideWindowItem
+{
+	ETWindowItem *windowItem = [[[self delegate] ifResponds] provideWindowItemForItemGroup: self];
+	
+	return (windowItem != nil ? windowItem : [super provideWindowItem]);
+}
+
 @end

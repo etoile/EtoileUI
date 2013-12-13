@@ -96,11 +96,8 @@ when a layout other than ETWindowLayout is set on the receiver. */
 	// refused by -setDecoratorItem: and hence never used. 
 	if ([[self layout] isKindOfClass: [ETWindowLayout class]])
 	{
-		[[item lastDecoratorItem] setDecoratorItem:
-		 	[ETWindowItem itemWithObjectGraphContext: [self objectGraphContext]]];
+		[[item lastDecoratorItem] setDecoratorItem: [item provideWindowItem]];
 	}
-	/* When the item has no parent item until now, the window is ordered out */
-	[[[item windowItem] window] makeKeyAndOrderFront: nil];
 	RELEASE(item);
 }
 

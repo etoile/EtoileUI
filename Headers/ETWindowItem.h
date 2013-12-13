@@ -45,6 +45,7 @@ such as -performClose: are forwarded to the NSWindow. */
 
 + (ETWindowItem *) itemWithWindow: (NSWindow *)window
                objectGraphContext: (COObjectGraphContext *)aContext;
++ (ETWindowItem *) panelItemWithObjectGraphContext: (COObjectGraphContext *)aContext;
 + (ETWindowItem *) fullScreenItemWithObjectGraphContext: (COObjectGraphContext *)aContext;
 + (ETWindowItem *) transparentFullScreenItemWithObjectGraphContext: (COObjectGraphContext *)aContext;
 

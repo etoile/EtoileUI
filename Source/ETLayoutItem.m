@@ -3524,6 +3524,12 @@ returns nil.
 	[self didChangeValueForProperty: kETInspectorProperty];
 }
 
+/** Returns a basic window item. */
+- (ETWindowItem *) provideWindowItem
+{
+	return [ETWindowItem itemWithObjectGraphContext: [ETUIObject defaultTransientObjectGraphContext]];
+}
+
 /* Live Development */
 
 /** This feature is not yet implemented. */

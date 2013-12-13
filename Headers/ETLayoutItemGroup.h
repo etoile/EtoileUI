@@ -196,6 +196,7 @@ by the source object set with -[ETLayoutItemGroup setSource:]. */
 @interface NSObject (ETLayoutItemGroupDelegate)
 /** Delegate method that corresponds to ETItemGroupSelectionDidChangeNotification. */
 - (void) itemGroupSelectionDidChange: (NSNotification *)notif;
+- (ETWindowItem *) provideWindowItemForItemGroup: (ETLayoutItemGroup *)itemGroup;
 @end
 
 /** Notification posted by ETLayoutItemGroup and subclasses in reply to

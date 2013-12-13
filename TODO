@@ -43,6 +43,8 @@ Open Issues
 	
 	- Could need to add -didChangeActiveItem to ETDocumentController when the main window changes. We could possibly live without and just react to the key window change, and testing whether the main window is the same or not... e.g. the controller subclass would a lastActiveItem property or use some similar approach (ETDocumentController subclass could cache the inspector item of the active item as we do Worktable)
 
+- The object graph context in -provideWindowItem might have to change depending on how we implement ETWindowItem persistency
+
 
 Old Potential Issues
 --------------------

@@ -40,6 +40,19 @@ into a window. */
 	return AUTORELEASE([[self alloc] initWithWindow: window objectGraphContext: aContext]);
 }
 
+/** Returns a new window item to which a panel gets bound.
+
+A panel is a utility window with a small titlebar.<br />
+For the AppKit, the panel cannot become the main item (the behavior might vary in other backends).
+
+The concrete window class used is [NSPanel]. */
++ (ETWindowItem *) panelItemWithObjectGraphContext: (COObjectGraphContext *)aContext
+{
+	NSPanel *panel = AUTORELEASE([[NSPanel alloc] init]);
+	[panel setStyleMask: [panel styleMask] | NSUtilityWindowMask];
+	return [self itemWithWindow: panel objectGraphContext: aContext];
+}
+
 /** Returns a new window item to which a fullscreen concrete window gets bound.
 
 The returned item can be used as a decorator to make an existing layout item 
@@ -176,6 +189,11 @@ If window is nil, the receiver creates a standard widget backend window. */
 }
 
 /* Main Accessors */
+
+- (BOOL) isPanel
+{
+	return [_itemWindow isKindOfClass: [NSPanel class]];
+}
 
 /** Returns YES when the receiver window has no title, otherwise returns NO. */
 - (BOOL) isUntitled
@@ -398,7 +416,15 @@ and make the necessary adjustments. */
 	//if (parentView == nil)
 	//	return;
 
-	[_itemWindow makeKeyAndOrderFront: self];
+	/* For a panel item, don't make it key (prevent losing the focus in a document when an inspector is shown)  */
+	if ([self isPanel])
+	{
+		[_itemWindow orderFront: self];
+	}
+	else
+	{
+		[_itemWindow makeKeyAndOrderFront: self];
+	}
 	// NOTE: For a non-active application, -isMainWindow always returns NO.
 	ETAssert([NSApp isActive] == NO || [_itemWindow canBecomeMainWindow] == NO || [_itemWindow isMainWindow]);
 }
