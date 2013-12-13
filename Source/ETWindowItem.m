@@ -374,6 +374,8 @@ and make the necessary adjustments. */
 		      withKeyPath: kETDisplayNameProperty
 		          options: nil];
 	}
+	
+	[self postSelectionChangeNotificationInWindowGroup];
 }
 
 - (void) handleDecorateItem: (ETUIItem *)item 
@@ -551,14 +553,24 @@ This coordinate space includes the window decoration (titlebar etc.).  */
 	[self prepareInitialFocusedItem];
 }
 
-- (void) windowDidBecomeMain: (NSNotification *)notification
+- (void) postSelectionChangeNotificationInWindowGroup
 {
-	ETAssert([[self firstDecoratedItem] isLayoutItem]);
+	BOOL isDecorationUnderway = ([[self firstDecoratedItem] isLayoutItem] == NO);
+
+	/* When the main window status is resigned, we post nothing, we just let the new main window 
+	   posts the ETItemGroupSelectionDidChangeNotification */
+	if (isDecorationUnderway || [_itemWindow isMainWindow] == NO)
+		return;
 
 	ETLayoutItemGroup *windowGroup = [(ETLayoutItem *)[self firstDecoratedItem] parentItem];
 
 	/* Tell the window group to post a ETItemGroupSelectionDidChangeNotification */
 	[windowGroup setSelectionIndex: [windowGroup indexOfItem: [self firstDecoratedItem]]];
+}
+
+- (void) windowDidBecomeMain: (NSNotification *)notification
+{
+	[self postSelectionChangeNotificationInWindowGroup];
 }
 
 - (ETLayoutItem *) focusedItem
