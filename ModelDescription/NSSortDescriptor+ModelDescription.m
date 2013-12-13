@@ -70,18 +70,6 @@
 }
 @end
 
-#ifdef GNUSTEP
-@interface NSSortDescriptor (EtoileUI)
-+ (id) sortDescriptorWithKey: (NSString *)aKey ascending: (BOOL)ascending selector: (SEL)aSelector;
-@end
-
-@implementation NSSortDescriptor (EtoileUI)
-+ (id) sortDescriptorWithKey: (NSString *)aKey ascending: (BOOL)ascending selector: (SEL)aSelector
-{
-	return AUTORELEASE([[self alloc] initWithKey: aKey ascending: ascending selector: aSelector]);
-}
-@end
-#endif
 
 @implementation NSSortDescriptorMutableViewpointTrait
 
