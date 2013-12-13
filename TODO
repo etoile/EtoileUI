@@ -27,6 +27,22 @@ Open Issues
 
 - Fix disabled assertion about initialFocusedItem in ETWindowItem
 
+- Add -referenceURL to COPersistentRoot, COBranch and COObject as an equivalent to COPath but including the store URL
+
+	- Possible Format: coreobject://storeURL/?<persistentRootUUID>[/branchUUID[/objectUUID]] (the optional parts are encloded in [])
+	
+	- This referenceURL could be passed to -[ETDocumentController openItemWithURL:options:] and -[ETDocumentCreation initWithURL:options:]
+
+- Improve UnitKit to support making the test suite the frontmost application (and then enable -testActiveItemChanged)
+
+- Test that activating an application in background, results in the window group posting a  ETItemGroupSelectionDidChangeNotification
+
+- Determine whether we want the main or key window as representing the selected item in the window group
+
+	- The active item could represent the main window and the selected item the key window...
+	
+	- Could need to add -didChangeActiveItem to ETDocumentController when the main window changes. We could possibly live without and just react to the key window change, and testing whether the main window is the same or not... e.g. the controller subclass would a lastActiveItem property or use some similar approach (ETDocumentController subclass could cache the inspector item of the active item as we do Worktable)
+
 
 Old Potential Issues
 --------------------

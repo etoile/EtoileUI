@@ -392,10 +392,13 @@ and make the necessary adjustments. */
 	[self updateWindowFrameForDecoratedView: decoratedView];
 	[_itemWindow setContentView: (NSView *)decoratedView];	
 
-	if (parentView == nil)
-		return;
+	// FIXME: Figure out if we really need the line below (it breaks notifications for -testActiveItemChanged)
+	//if (parentView == nil)
+	//	return;
 
 	[_itemWindow makeKeyAndOrderFront: self];
+	// NOTE: For a non-active application, -isMainWindow always returns NO.
+	ETAssert([NSApp isActive] == NO || [_itemWindow canBecomeMainWindow] == NO || [_itemWindow isMainWindow]);
 }
 
 - (void) handleUndecorateItem: (ETUIItem *)item
@@ -541,11 +544,21 @@ This coordinate space includes the window decoration (titlebar etc.).  */
 	// FIXME: ETAssert([self focusedItem] == initialFocusedItem);
 }
 
-- (void) windowDidBecomeKey:(NSNotification *)notification
+- (void) windowDidBecomeKey: (NSNotification *)notification
 {
 	/* -[NSWindow becomeKeyWindow] has just set up its initial first responder, 
 	  we override it */
 	[self prepareInitialFocusedItem];
+}
+
+- (void) windowDidBecomeMain: (NSNotification *)notification
+{
+	ETAssert([[self firstDecoratedItem] isLayoutItem]);
+
+	ETLayoutItemGroup *windowGroup = [(ETLayoutItem *)[self firstDecoratedItem] parentItem];
+
+	/* Tell the window group to post a ETItemGroupSelectionDidChangeNotification */
+	[windowGroup setSelectionIndex: [windowGroup indexOfItem: [self firstDecoratedItem]]];
 }
 
 - (ETLayoutItem *) focusedItem

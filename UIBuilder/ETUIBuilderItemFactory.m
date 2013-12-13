@@ -192,6 +192,7 @@
 - (ETLayoutItemGroup *) editorTopBarWithController: (id)aController
 {
 	NSSize size = NSMakeSize([self defaultEditorSize].width, [self defaultIconAndLabelBarHeight]);
+	// TODO: Use -horizontalBarWithSize:
 	ETLayoutItemGroup *itemGroup = [self itemGroupWithSize: size];
 	ETLayoutItem *runItem = [self buttonWithIconNamed: @"media-playback-start"
 	                                           target: aController

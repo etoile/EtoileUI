@@ -23,6 +23,7 @@
 	ETLayoutItemGroup *windowGroup;
 	ETLayoutItemGroup *itemGroup;
 	ETLayoutItem *item;
+	ETLayoutItem *activeItem;
 }
 
 @end
@@ -69,6 +70,29 @@
 	UKObjectKindOf([[windowGroup layout] attachedTool], ETSelectTool);
 	// FIXME: UKObjectsSame([ETTool activeTool], [[windowGroup layout] attachedTool]);
 }
+
+- (void) itemGroupSelectionDidChange: (NSNotification *)notif
+{
+	activeItem = [[ETTool activeTool] mainItem];
+}
+
+// FIXME: Activating the test suite application doesn't work, it remains in background.
+/*- (void) testActiveItemChanged
+{
+	[NSApp activateIgnoringOtherApps: YES];
+	[windowGroup setDelegate: self];
+
+	[windowGroup addItem: [itemFactory item]];
+
+	UKObjectsSame(item, activeItem);
+
+	[windowGroup addItem: [itemFactory itemGroup]];
+	
+	UKObjectsSame(itemGroup, activeItem);
+	
+	[windowGroup setDelegate: nil];
+	[NSApp deactivate];
+}*/
 
 - (void) checkSwitchBackToWindowLayoutFromLayout: (ETLayout *)aLayout
 {

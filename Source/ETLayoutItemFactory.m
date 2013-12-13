@@ -359,6 +359,8 @@ The returned bar has a flexible width and a fixed height. */
 	ETLayoutItemGroup *itemGroup = [self itemGroupWithFrame: ETMakeRect(NSZeroPoint, aSize)];
 	[itemGroup setAutoresizingMask: ETAutoresizingFlexibleWidth];
 	[itemGroup setLayout: [ETLineLayout layoutWithObjectGraphContext: [self objectGraphContext]]];
+	// TODO: Draw a dark background once the item tree drawing works properly
+	//[itemGroup setStyle: [ETTintStyle tintWithStyle: nil color: [NSColor darkGrayColor] objectGraphContext: [self objectGraphContext]]];
 	ETStyle *barElementStyle =
 		[ETBasicItemStyle iconAndLabelBarElementStyleWithObjectGraphContext: [self objectGraphContext]];
 	[self setCurrentBarElementStyle: barElementStyle];
