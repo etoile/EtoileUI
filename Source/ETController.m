@@ -754,7 +754,7 @@ Extra options can be added to the returned dictionary. */
 #ifdef COREOBJECT
 	if ([self persistentObjectContext] != nil)
 	{
-		repo = [[[self persistentObjectContext] editingContext] modelRepository];
+		repo = [[[self persistentObjectContext] editingContext] modelDescriptionRepository];
 	}
 #endif
 	

@@ -529,7 +529,7 @@
 		// FIXME: Remove once ETTool is a persistent subclass of ETUIObject
 		ETTool *tool = [anObject valueForKey: anAspectName];
 		ETEntityDescription *entityDesc =
-			[[[self editingContext] modelRepository] entityDescriptionForClass: [tool class]];
+			[[[self editingContext] modelDescriptionRepository] entityDescriptionForClass: [tool class]];
 		return [entityDesc allUIBuilderPropertyNames];
 	}
 	return [[[anObject valueForKey: anAspectName] entityDescription] allUIBuilderPropertyNames];

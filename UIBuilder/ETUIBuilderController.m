@@ -577,7 +577,7 @@
 - (ETPropertyDescription *)propertyDescriptionForName: (NSString *)aName
                                            editedItem: (ETLayoutItem *)anItem
 {
-	ETModelDescriptionRepository *repo = [[[self persistentObjectContext] editingContext] modelRepository];
+	ETModelDescriptionRepository *repo = [[[self persistentObjectContext] editingContext] modelDescriptionRepository];
 	ETEntityDescription *entityDesc = [repo entityDescriptionForClass: [anItem subject]];
 	
 	return [entityDesc propertyDescriptionForName: aName];
