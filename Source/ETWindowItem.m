@@ -567,6 +567,14 @@ This coordinate space includes the window decoration (titlebar etc.).  */
 
 	ETLayoutItem *initialFocusedItem =
 		[[(ETLayoutItemGroup *)item controller] initialFocusedItem];
+	BOOL usesDefaultInitialFocusedItem = (initialFocusedItem == nil);
+
+	if (usesDefaultInitialFocusedItem)
+	{
+		initialFocusedItem = (ETLayoutItem *)item;
+	}
+
+	ETDebugLog(@"Prepare initial focused item %@", initialFocusedItem);
 
 	[[ETTool activeTool] makeFirstResponder: (id)initialFocusedItem];
 	// FIXME: ETAssert([self focusedItem] == initialFocusedItem);
@@ -653,7 +661,11 @@ doesn't become key unless the user clicks the titlebar or an editable widget). *
 	[[_oldFocusedItem editionCoordinator] didResignFocusedItem: _oldFocusedItem];
 	[[newFocusedItem editionCoordinator] didBecomeFocusedItem: newFocusedItem];
 
+	ETDebugLog(@"Changing focused item from %@ to %@", _oldFocusedItem, newFocusedItem);
+
 	ASSIGN(_oldFocusedItem, newFocusedItem);
+
+	ETAssert(_oldFocusedItem != nil);
 }
 
 /** Returns the item owning the field editor which has the first responder 
