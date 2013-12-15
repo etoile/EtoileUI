@@ -14,6 +14,7 @@ EtoileUI_LIBRARIES_DEPEND_UPON += -lm -lEtoileFoundation -lIconKit \
 
 export coreobject ?= yes
 
+EtoileUI_CPPFLAGS += -DGNUSTEP_MISSING_API_COMPATIBILITY
 ifeq ($(coreobject), yes)
   EtoileUI_LIBRARIES_DEPEND_UPON += -lCoreObject
   EtoileUI_CPP_FLAGS += -DCOREOBJECT
