@@ -45,6 +45,12 @@ Open Issues
 
 - The object graph context in -provideWindowItem might have to change depending on how we implement ETWindowItem persistency
 
+- Test that giving up key window status doesn't result in the initial focused item to be set next time the window becomes key
+
+- Add -[TestWindowItem testWindowInitialFocusedItemAndToolActivationOnBecomeKey]
+
+- Test synthesized enter and exit events
+
 
 Old Potential Issues
 --------------------

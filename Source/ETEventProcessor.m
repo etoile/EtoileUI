@@ -256,7 +256,7 @@ Returns YES when the event has been handled by EtoileUI. */
 	{
 		case NSMouseMoved:
 			[self processMouseMovedEvent: anEvent];
-			[ETTool updateCursorIfNeeded];
+			[ETTool updateCursorIfNeededForItem: [anEvent layoutItem]];
 			break;
 		case NSLeftMouseDown:
 			_wasMouseDownProcessed = YES;
@@ -337,7 +337,7 @@ is the root item which contains both A and D.
 	ETLayoutItem *hitItem = [[ETTool tool] hitTestWithEvent: anEvent];
 
 	//ETLog(@"Will process mouse move on %@ and hovered item stack\n %@", 
-	//	hitItem, [tool hoveredItemStack]);
+	//	hitItem, [tool hoveredItemStackForItem: hitItem]);
 
 	[anEvent setLayoutItem: hitItem];
 	/* We send move event before enter and exit events as AppKit does, we could 
@@ -350,7 +350,7 @@ is the root item which contains both A and D.
 	ETEvent *exitEvent = [self synthetizeMouseExitedEvent: anEvent];
 	ETEvent *enterEvent = [self synthetizeMouseEnteredEvent: anEvent];
 
-	NSParameterAssert([[tool hoveredItemStack] firstObject] == [tool hitItemForNil]);
+	NSParameterAssert([[ETTool hoveredItemStackForItem: hitItem] firstObject] == [tool hitItemForNil]);
 
 	/* Exit must be handled before enter because enter means the active 
 	   tool might change and the new one may have a very different
@@ -374,7 +374,7 @@ is the root item which contains both A and D.
 		[(ETTool *)[ETTool activeTool] mouseEntered: enterEvent];
 	}
 
-	//ETLog(@"Did process mouse move and hovered item stack\n %@", [tool hoveredItemStack]);
+	//ETLog(@"Did process mouse move and hovered item stack\n %@", [ETTool hoveredItemStackForItem: hitItem]);
 }
 
 /** Always calls -synthetizeMouseExitedEvent: first because the exited item 
@@ -388,23 +388,22 @@ also ensures the hovered item stack is valid. */
 	if (nil == [anEvent window])
 		return nil;
 
-	NSMutableArray *hoveredItemStack = [[ETTool activeTool] hoveredItemStack];
-
-	NSAssert([hoveredItemStack count] > 0, @"Hovered item stack must never be empty");
-
-	/* The previously hovered item will have already been popped by
+	/* The previously hovered item will have already been "popped" by
 	   -synthetizeMouseExitedEvent: when an item is exited. Which means 
 	   lastHoveredItem is usually not the previously hovered item but its parent. */
 	ETLayoutItem *hoveredItem = [anEvent layoutItem];
-	ETLayoutItem *lastHoveredItem = [hoveredItemStack lastObject];
+
+	NSAssert([[ETTool hoveredItemStackForItem: hoveredItem] count] > 0,
+		@"Hovered item stack must never be empty");
+
 	/* See -processMouseMovedEvent: illustation example in the method doc. */
-	BOOL onlyExit = (hoveredItem == lastHoveredItem);
+	BOOL onlyExit = (hoveredItem == _lastHoveredItem);
 	BOOL noEnter = onlyExit;
 	
 	if (noEnter)
 		return nil;
 
-	[hoveredItemStack addObject: hoveredItem];
+	ASSIGN(_lastHoveredItem, hoveredItem);
 	
 	ETDebugLog(@"Synthetize mouse enters item %@", hoveredItem);
 
@@ -417,36 +416,25 @@ also ensures the hovered item stack is valid. */
 	// TODO: See -synthetizeMouseEnteredEvent:
 	if (nil == [anEvent window])
 		return nil;
-	
-	ETTool *tool = [ETTool activeTool];
-	NSMutableArray *hoveredItemStack = [tool hoveredItemStack];
-
-	NSAssert([hoveredItemStack count] > 0, @"Hovered item stack must never be empty");
 
 	/* On an exit event, the hovered item is not the same than the last time
-	   this method was called. At code level...
-	   hoveredItem != [_hoveredItemStack lastObject] */
+	   this method was called. */
 	ETLayoutItem *hoveredItem = [anEvent layoutItem];
-	ETLayoutItem *lastHoveredItem = [hoveredItemStack lastObject];
+
+	NSAssert([[ETTool hoveredItemStackForItem: hoveredItem] count] > 0,
+		@"Hovered item stack must never be empty");
+
 	/* See -processMouseMovedEvent: illustation example in the method doc. */
-	BOOL noExit = (lastHoveredItem == hoveredItem || lastHoveredItem == (id)[hoveredItem parentItem]);
+	BOOL noExit = (_lastHoveredItem == hoveredItem || _lastHoveredItem == (id)[hoveredItem parentItem]);
 	
 	if (noExit)
 		return nil;
 
 	ETDebugLog(@"Synthetize mouse exits item %@", lastHoveredItem);
-	
-	/* Synthetize the event now, because lastHoveredItem might become invalid 
-	   with -removeLastObject:. */
-	ETEvent *exitEvent =  [ETEvent exitEventWithEvent: anEvent layoutItem: lastHoveredItem];
 
-	// NOTE: Equivalent to hoveredItem != [ETLayoutItem windowGroup]
-	BOOL notInsideRootItem = ([hoveredItemStack count] > 1);
-	if (notInsideRootItem)
-		[hoveredItemStack removeLastObject];
+	ETEvent *exitEvent =  [ETEvent exitEventWithEvent: anEvent layoutItem: _lastHoveredItem];
 
-	/* We have to cope with various border cases or lost events */
-	[tool rebuildHoveredItemStackIfNeededForEvent: anEvent];
+	ASSIGN(_lastHoveredItem, hoveredItem);
 
 	return exitEvent;
 }

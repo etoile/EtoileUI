@@ -46,7 +46,6 @@ double-click and deactivated on a mouse click outside of their layout boundaries
 @interface ETTool : NSResponder <NSCopying, ETResponder>
 {
 	@private
-	NSMutableArray *_hoveredItemStack; /* Lazily initialized, never access directly */
 	ETLayoutItem *_targetItem;
 	ETLayout *_layoutOwner;
 	NSCursor *_cursor;
@@ -69,13 +68,13 @@ double-click and deactivated on a mouse click outside of their layout boundaries
 /* Tool Activation */
 
 + (ETTool *) updateActiveToolWithEvent: (ETEvent *)anEvent;
-+ (void) updateCursorIfNeeded;
++ (void) updateCursorIfNeededForItem: (ETLayoutItem *)anItem;
 
 /* Factory Methods */
 
 + (id) activeTool;
 + (ETTool *) setActiveTool: (ETTool *)toolToActivate;
-+ (id) activatableTool;
++ (id) activatableToolForItem: (ETLayoutItem *)anItem;
 + (id) mainTool;
 + (void) setMainTool: (id)aTool;
 
@@ -153,9 +152,7 @@ double-click and deactivated on a mouse click outside of their layout boundaries
 
 /* Framework Private */
 
-- (NSMutableArray *) hoveredItemStack;
-- (ETTool *) lookUpToolInHoveredItemStack;
-- (void) rebuildHoveredItemStackIfNeededForEvent: (ETEvent *)anEvent;
++ (NSMutableArray *) hoveredItemStackForItem: (ETLayoutItem *)anItem;
 
 - (void) setLayoutOwner: (ETLayout *)aLayout;
 - (ETLayout *) layoutOwner;

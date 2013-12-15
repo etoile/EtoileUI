@@ -88,6 +88,7 @@ extern NSString * const ETEventProcessorDidProcessEventNotification;
 @interface ETAppKitEventProcessor : ETEventProcessor
 {
 	@private
+	ETLayoutItem *_lastHoveredItem;
 	NSWindow *_initialKeyWindow;
 	id _initialFirstResponder;
 	BOOL _wasMouseDownProcessed;

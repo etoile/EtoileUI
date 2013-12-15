@@ -32,7 +32,6 @@
 @interface ETTool (Private)
 - (BOOL) makeFirstResponder: (id)aResponder inWindow: (NSWindow *)aWindow;
 - (BOOL) performKeyEquivalent: (ETEvent *)anEvent;
-- (void) setHoveredItemStack: (NSMutableArray *)itemStack;
 @end
 
 
@@ -156,7 +155,7 @@ automatically activates tools in response to the user's click with
 {
 	/* -layoutOwner can be nil at this point e.g. for the default main tool or
 	   if the user sets a custom tool not bound to any layout.
-	   See also -lookUpToolInHoveredItemStack. */
+	   See also +activatableToolForItem: */
 	if ([[toolToActivate layoutOwner] isWidget])
 		 return activeTool;
 
@@ -169,9 +168,6 @@ automatically activates tools in response to the user's click with
 		return activeTool;
 
 	ETDebugLog(@"Update active tool to %@", toolToActivate);
-
-	[toolToActivate setHoveredItemStack: [toolToDeactivate hoveredItemStack]];
-	[toolToDeactivate setHoveredItemStack: nil]; /* To detect invalid item stack more easily */
 	
 	RETAIN(toolToDeactivate);
 	ASSIGN(activeTool, toolToActivate);
@@ -185,13 +181,45 @@ automatically activates tools in response to the user's click with
 	return toolToActivate;
 }
 
-/** Returns the tool attached to the hovered item through its layout.
+/** Looks up and returns the tool to be activated in the current hovered 
+item stack.
 
-This insturment will usually be activated if the hovered item is clicked (on 
-mouse down precisely). */
-+ (id) activatableTool
+The stack is traversed upwards to the root item. The traversal ends on the 
+first layout with a tool attached to it.
+
+The stack is never empty because the pointer never exits the root item which 
+covers the whole screen. 
+
+For a nil item, raises a NSInvalidArgumentException.
+
+You should rarely need to override this method. */
++ (ETTool *) activatableToolForItem: (ETLayoutItem *)anItem;
 {
-	return [[self activeTool] lookUpToolInHoveredItemStack];;
+	NILARG_EXCEPTION_TEST(anItem);
+	ETTool *foundTool = nil;
+
+	/* The last/top object is the tool at the lowest/deepest level in the item tree among the items in the stack */
+	for (ETLayoutItem *item in [[self hoveredItemStackForItem: anItem] reverseObjectEnumerator])
+	{
+		ETDebugLog(@"Look up tool at level %@ in hovered item stack", item);
+
+		/* The top item can be an ETLayoutItem instance */
+		if ([item isGroup] == NO)
+			continue;
+		
+		foundTool = [[item layout] attachedTool];
+
+		/* Don't activate tool bound to a widget layout (see also +setActiveTool:) */
+		if (foundTool != nil && [[foundTool layoutOwner] isWidget] == NO)
+			break;
+	}
+
+	// TODO: We could forbid setting a nil tool on the root item.
+	BOOL overRootItem = (foundTool == nil);
+
+	foundTool = (overRootItem ? [[self class] mainTool] : foundTool);
+	ETAssert(foundTool != nil);
+	return foundTool;
 }
 
 static ETTool *mainTool = nil;
@@ -224,17 +252,12 @@ See also -mainTool. */
 - (id) init
 {
 	SUPERINIT
-
-	_hoveredItemStack = nil; /* Lazily initialized */
 	[self setCursor: [NSCursor arrowCursor]];
-
 	return self;
 }
 
 - (void) dealloc
 {
-
-	DESTROY(_hoveredItemStack); 
 	DESTROY(_firstKeyResponder); 
 	DESTROY(_firstMainResponder);
 	// NOTE: _layoutOwner is a weak reference
@@ -494,9 +517,9 @@ Updates the cursor with the one provided by the activatable tool.
 
 You should never to call this method, only ETEventProcessor is expected to use 
 it. */
-+ (void) updateCursorIfNeeded
++ (void) updateCursorIfNeededForItem: (ETLayoutItem *)anItem
 {
-	[[(ETTool *)[self activatableTool] cursor] set];
+	[[(ETTool *)[self activatableToolForItem: anItem] cursor] set];
 }
 
 /** <override-never />
@@ -514,82 +537,27 @@ it. */
 		return activeTool;
 	}
 
-	ETTool *toolToActivate = [[ETTool activeTool] lookUpToolInHoveredItemStack];
+	ETTool *toolToActivate = [self activatableToolForItem: [anEvent layoutItem]];
 	return [self setActiveTool: toolToActivate];
 }
 
-/** Returns the hovered item stack that is used internally to:
-<list>
-<item>track enter and exit in each item</item>
-<item>look up the tool to activate</item>
-</list>
-ETEventProcessor uses it to synthetize enter/exit events.
+/* Returns the hovered item stack that is used to look up the tool to activate. See +activatableToolForItem:.
+
+The item at the top (index == count - 1) is the deepest descendant hovered by 
+the cursor, while the item at bottom is the highest ancestor in the item tree 
+(it is the root item, and always the window group currently).
+
+When the cursor is over a handle, the hovered item stack contains items that 
+don't belong to the item tree rooted in the window group. Handles, separators, 
+etc. belong to -[ETLayout layerItem] and layer items have their parent item set,
+but -[ETLayoutItemGroup items] never include a layer item.
 
 You should never need to use this method. */
-- (NSMutableArray *) hoveredItemStack
++ (NSArray *) hoveredItemStackForItem: (ETLayoutItem *)aHitItem
 {
-	/* We do a lazy initialization to eliminate an endless recursion when the 
-	   tool is initialized inside -[ETWindowLayout init] which is 
-	   initiated by -[ETLayoutItem windowGroup]. */
-	if (_hoveredItemStack == nil)
-		_hoveredItemStack = [[NSMutableArray alloc] initWithObjects: [self hitItemForNil], nil];
+	NSParameterAssert(aHitItem != nil);
 
-	NSParameterAssert([_hoveredItemStack firstObject] == [self hitItemForNil]);
-
-	return _hoveredItemStack;
-}
-
-- (void) setHoveredItemStack: (NSMutableArray *)itemStack
-{
-	NSParameterAssert(itemStack == nil || [itemStack firstObject] == [self hitItemForNil]);
-	ASSIGN(_hoveredItemStack, itemStack);
-}
-
-/** Looks up and returns the tool to be activated in the current hovered 
-item stack.
-
-The stack is traversed upwards to the root item. The traversal ends on the 
-first layout with an tool attached to it.
-
-The stack is never empty because the pointer never exits the root item which 
-covers the whole screen. 
-
-You should rarely need to override this method. */
-- (ETTool *) lookUpToolInHoveredItemStack
-{
-	ETTool *foundTool = nil;
-
-	/* The last/top object is the tool at the lowest/deepest level in the item tree */
-	for (ETLayoutItem *item in [[self hoveredItemStack] reverseObjectEnumerator])
-	{
-		ETDebugLog(@"Look up tool at level %@ in hovered item stack", item);
-
-		/* The top item can be an ETLayoutItem instance */
-		if ([item isGroup] == NO)
-			continue;
-		
-		foundTool = [[item layout] attachedTool];
-
-		/* Don't activate tool bound to a widget layout (see also +setActiveTool:) */
-		if (foundTool != nil && [[foundTool layoutOwner] isWidget] == NO)
-			break;
-	}
-
-	// TODO: We could forbid setting a nil tool on the root item.
-	BOOL overRootItem = (foundTool == nil);
-
-	foundTool = (overRootItem ? [[self class] mainTool] : foundTool);
-	ETAssert(foundTool != nil);
-	return foundTool;
-}
-
-// NOTE: The hovered items stack is rebuilt each time we enter a handle (because 
-// the root item in the layout is never present in the stack).
-- (void) rebuildHoveredItemStackUpToItem: (ETLayoutItem *)topItem
-{
-	NSParameterAssert(topItem != nil);
-
-	ETLayoutItem *item = topItem;
+	ETLayoutItem *item = aHitItem;
 	NSMutableArray *newStack = [NSMutableArray array];
 	
 	do
@@ -600,40 +568,13 @@ You should rarely need to override this method. */
 
 	// FIXME: Work around inspectors and other windows whose content view 
 	// has a layout item with no parent, when it should be a window layer child.
+	// We can probably remove this workaround now.
 	if ([newStack firstObject] != [[ETLayoutItemFactory factory] windowGroup])
 	{
 		[newStack insertObject: [[ETLayoutItemFactory factory] windowGroup] atIndex: 0];
 	}
 
-	[self setHoveredItemStack: newStack];
-
-	ETDebugLog(@" + Rebuilt hovered item stack\n %@", newStack);
-}
-
-- (void) rebuildHoveredItemStackIfNeededForEvent: (ETEvent *)anEvent
-{
-	ETLayoutItem *hoveredItem = [anEvent layoutItem];
-	ETLayoutItem *lastHoveredItemParent = [[self hoveredItemStack] lastObject];
-	
-	BOOL notMovedBackToParent = (lastHoveredItemParent != hoveredItem);
-	if (notMovedBackToParent)
-	{
-		/* If two child items are contiguous or overlap, then on exit we don't 
-		   traverse their parent area before moving into the other child item. 
-		   However their parent item must be the same, the contrary means we 
-		   have lost events or that the two child items are contiguous but 
-		   belong to two contiguous yet different parent items. In both cases, 
-		   we rebuild the hovered item stack rather than trying to cope with 
-		   such complex border cases.
-		   Fast movements, lost events and very tight nesting of items are our
-		   worst ennemies ;-) */
-		BOOL hasLostMoveEventsOrParentMismatch = (lastHoveredItemParent != [hoveredItem parentItem]);
-
-		 /* Hovered item stack (minus the item we just pop) does not match our 
-			event location. */
-		if (hasLostMoveEventsOrParentMismatch)
-			[self rebuildHoveredItemStackUpToItem: hoveredItem];
-	}
+	return newStack;
 }
 
 /** Sets the layout to which the tool is attached to.

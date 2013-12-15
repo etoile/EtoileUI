@@ -572,11 +572,39 @@ This coordinate space includes the window decoration (titlebar etc.).  */
 	// FIXME: ETAssert([self focusedItem] == initialFocusedItem);
 }
 
+/** When a window becomes key, we look up and activate a tool in the new key 
+window (this is done either by the event processor or this method).
+
+When it is due to a user click, the event processor does update the active tool 
+just before processing the mouse down (this updates the key window, and 
+-windowDidBecomeKey: can be called).
+
+When the window becomes key through another action than a click (e.g. a menu 
+action or at lauch), no mouse down event occurs, so we must update the active 
+tool here.
+ 
+For an utility window (e.g. an inspector or picker), the panel can appear 
+frontmost and yet the main window tool can still be the active tool (a panel 
+doesn't become key unless the user clicks the titlebar or an editable widget). */
 - (void) windowDidBecomeKey: (NSNotification *)notification
 {
-	/* -[NSWindow becomeKeyWindow] has just set up its initial first responder, 
-	  we override it */
-	[self prepareInitialFocusedItem];
+	BOOL isWindowVisibleForFirstTime = (_oldFocusedItem == nil);
+
+	if (isWindowVisibleForFirstTime)
+	{
+		/* -[NSWindow becomeKeyWindow] has just set up its initial first responder,
+	       we override it */
+		[self prepareInitialFocusedItem];
+	}
+	// TODO: Update the active tool if not yet activated by a mouse click in 
+	// the receiver window.
+	/*ETLayoutItem *windowBackedItemBoundToActiveTool =
+		[[[[ETTool activeTool] targetItem] windowBackedAncestorItem];
+
+	if ([[windowBackedItemBoundToActiveTool window] isEqual: self])
+		return;
+
+	[ETTool setActiveTool: [ETTool activatableToolForItem: [self focusedItem]];*/
 }
 
 - (void) postSelectionChangeNotificationInWindowGroup

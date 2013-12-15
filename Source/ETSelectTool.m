@@ -175,7 +175,7 @@ needed replicate other actions on each selected item. */
 }
 
 // TODO: Would be nice to merge with ETTool implementation.
-- (ETTool *) lookUpToolInHoveredItemStack
++ (ETTool *) activatableToolForItem: (ETLayoutItem *)anItem
 {
 	ETTool *foundTool = nil;
 	ETTool *parentTool = nil;
@@ -183,7 +183,7 @@ needed replicate other actions on each selected item. */
 	//ETLog(@"Begin look up in hovered item stack %@", [self hoveredItemStack]);
 
 	/* The last/top object is the tool at the lowest/deepest level in the item tree */
-	for (ETLayoutItem *item in [[self hoveredItemStack] reverseObjectEnumerator])
+	for (ETLayoutItem *item in [[[self class] hoveredItemStackForItem: anItem] reverseObjectEnumerator])
 	{
 		//ETLog(@"Look up tool at level %@ in hovered item stack", item);
 
