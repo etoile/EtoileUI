@@ -120,15 +120,21 @@ object. */
 static ETTool *activeTool = nil;
 
 /** Returns the active tool through which the events are dispatched in the 
-layout item tree. */
+layout item tree. 
+
+Unless +mainTool is returned, the returned tool target item is not nil. See 
+explanations in +mainTool. 
+
+See +setActiveTool:, -targetItem and -layoutOwner. */
 + (id) activeTool
 {
 	if (activeTool == nil)
 	{
-		[self setMainTool: [ETArrowTool tool]];
+		ASSIGN(mainTool, [ETArrowTool tool]);
 		ASSIGN(activeTool, [self mainTool]);
 	}
 
+	ETAssert([activeTool targetItem] != nil || [activeTool isEqual: [self mainTool]]);
 	return activeTool;
 }
 
@@ -148,11 +154,18 @@ If the tool has become active, returns the tool passed in argument, otherwise
 returns the previously active tool. A tool bound to an item that returns YES 
 to -[ETLayoutItem usesWidgetView] cannot become active.
 
+For a nil tool or tool not attached to a layout (the main tool puts aside), 
+raises an NSInvalidArgumentException.
+
 You should rarely need to invoke this method since EtoileUI usually 
 automatically activates tools in response to the user's click with 
 -updateActiveToolWithEvent:. */
 + (ETTool *) setActiveTool: (ETTool *)toolToActivate
 {
+	NILARG_EXCEPTION_TEST(toolToActivate);
+	INVALIDARG_EXCEPTION_TEST(toolToActivate,
+		[toolToActivate layoutOwner] != nil || [toolToActivate isEqual: [ETTool mainTool]]);
+
 	/* -layoutOwner can be nil at this point e.g. for the default main tool or
 	   if the user sets a custom tool not bound to any layout.
 	   See also +activatableToolForItem: */
@@ -162,7 +175,7 @@ automatically activates tools in response to the user's click with
 	/* Prevent the user to set a tool on an item using a widget view */
 	NSParameterAssert([[(id)[[toolToActivate layoutOwner] layoutContext] ifResponds] usesWidgetView] == NO);
 
-	ETTool *toolToDeactivate = [ETTool activeTool];
+	ETTool *toolToDeactivate = activeTool;
 
 	if ([toolToActivate isEqual: toolToDeactivate])
 		return activeTool;
@@ -224,11 +237,16 @@ You should rarely need to override this method. */
 
 static ETTool *mainTool = nil;
 
-/** Returns the tool to be used as active tool when no other 
-tools can be looked up and activated.
+/** Returns the tool to be used as active tool when no other tools can be looked 
+up and activated.
 
-The main tool is implicitly attached to the root item in the layout item 
-tree. */
+The main tool is not explicitly attached to the root item in the layout item 
+tree, since the window group bounds doesn't include the menu area, and we want 
+to process events in this area too.
+
+In the future, the root item should be an item that encloses the window group 
+area and the menu area (we could then state that +activeTool always return a 
+tool whose -layoutOwner is not nil). */
 + (id) mainTool
 {
 	return mainTool;
@@ -237,10 +255,24 @@ tree. */
 /** Sets the tool to be be used as active tool when no other 
 tools can be looked up and activated.
 
+For a nil tool, raises an NSInvalidArgumentException.
+
+If the main tool was the active tool, the active tool is changed too.
+
 See also -mainTool. */
 + (void) setMainTool: (id)aTool
 {
+	NILARG_EXCEPTION_TEST(aTool);
+
+	ETAssert([self activeTool] != nil);
+	BOOL wasPreviousMainToolActive = [[self activeTool] isEqual: mainTool];
+
 	ASSIGN(mainTool, aTool);
+
+	if (wasPreviousMainToolActive)
+	{
+		[self setActiveTool: mainTool];
+	}
 }
 
 /** Returns a new autoreleased tool instance. */
@@ -317,6 +349,9 @@ target item.
 By default, the target item is the item bound to the -ownerLayout. This bound 
 item is named the layout context in ETLayout.
 
+The target item can be nil, if -layoutOwner is nil, but not otherwise when the 
+the tool is not bound to a layout.
+
 See also -setTargetItem:. */
 - (ETLayoutItem *) targetItem
 {
@@ -325,6 +360,7 @@ See also -setTargetItem:. */
 	{
 		[self setTargetItem: (ETLayoutItem *)[[self layoutOwner] layoutContext]];
 	}
+	ETAssert(_targetItem != nil || [self layoutOwner] == nil);
 	return _targetItem;
 }
 

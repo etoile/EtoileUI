@@ -44,6 +44,7 @@
 	ETScrollableAreaItem *scrollableAreaItem;
 	ETWindowItem *windowItem;
 	ETController *controller;
+	ETTool *previousMainTool;
 	ETTool *previousActiveTool;
 }
 
@@ -54,18 +55,29 @@
 - (id) init
 {
 	SUPERINIT;
+
 	itemFactory = [ETLayoutItemFactory factory];
 	[self prepareNewResponderChain];
+
+	ASSIGN(previousMainTool, [ETTool mainTool]);
 	ASSIGN(previousActiveTool, [ETTool activeTool]);
-	[ETTool setActiveTool: [ETTestResponderTool tool]];
+	[ETTool setMainTool: [ETTestResponderTool tool]];
+	[ETTool setActiveTool: [ETTool mainTool]];
+	ETAssert(previousActiveTool != [ETTool activeTool]);
+
 	return self;
 }
 
 - (void) dealloc
 {
 	[[itemFactory windowGroup] removeItem: mainItem];
+	
+	[ETTool setMainTool: previousMainTool];
 	[ETTool setActiveTool: previousActiveTool];
+	ETAssert(previousActiveTool == [ETTool activeTool]);
+	DESTROY(previousMainTool);
 	DESTROY(previousActiveTool);
+
 	[super dealloc];
 }
 

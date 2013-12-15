@@ -604,15 +604,19 @@ doesn't become key unless the user clicks the titlebar or an editable widget). *
 	       we override it */
 		[self prepareInitialFocusedItem];
 	}
-	// TODO: Update the active tool if not yet activated by a mouse click in 
-	// the receiver window.
-	/*ETLayoutItem *windowBackedItemBoundToActiveTool =
-		[[[[ETTool activeTool] targetItem] windowBackedAncestorItem];
 
-	if ([[windowBackedItemBoundToActiveTool window] isEqual: self])
+	ETLayoutItem *targetItem = [[ETTool activeTool] targetItem];
+	ETLayoutItem *windowBackedItemBoundToActiveTool = [targetItem windowBackedAncestorItem];
+	BOOL isWindowGroupTargeted =
+		([targetItem isEqual: [[ETLayoutItemFactory factory] windowGroup]]);
+
+	ETAssert(windowBackedItemBoundToActiveTool != nil || isWindowGroupTargeted
+		|| [[ETTool activeTool] isEqual: [ETTool mainTool]]);
+
+	if ([[windowBackedItemBoundToActiveTool windowItem] isEqual: self])
 		return;
 
-	[ETTool setActiveTool: [ETTool activatableToolForItem: [self focusedItem]];*/
+	[ETTool setActiveTool: [ETTool activatableToolForItem: [self focusedItem]]];
 }
 
 - (void) postSelectionChangeNotificationInWindowGroup
