@@ -49,36 +49,3 @@ or just  calls -editionCoordinator on -nextResponder. */
 }
 
 @end
-
-
-@implementation  NSResponder (ETResponderSupportAdditions)
-
-- (ETLayoutItem *) candidateFocusedItem
-{
-	return nil;
-}
-
-@end
-
-// TODO: Move into AppKitWidgetBackend
-@interface NSText (ETResponderSupportAdditions)
-@end
-
-@implementation  NSText (ETResponderSupportAdditions)
-
-- (ETLayoutItem *) candidateFocusedItem
-{
-	if ([self isFieldEditor])
-	{
-		ETAssert([self delegate] != nil);
-	
-		/* The delegate is either a view (for a native widget such as a text 
-		   field or table view) or an action handler for other editable items 
-		   that implements editability using ETActionHandler API. */
-		return [(id)[self delegate] candidateFocusedItem];
-	}
-	return [self candidateFocusedItem];
-}
-
-@end
-

@@ -21,6 +21,7 @@
 #import "ETPickboard.h"
 #import "ETLayoutItemFactory.h"
 #import "ETUIStateRestoration.h"
+#import "ETUIItemIntegration.h"
 #import "ETWidget.h"
 #import "ETWindowItem.h"
 #import "NSObject+EtoileUI.h"

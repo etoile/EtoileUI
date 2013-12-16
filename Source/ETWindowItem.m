@@ -19,6 +19,7 @@
 #import "ETLayoutItemFactory.h"
 #import "EtoileUIProperties.h"
 #import "ETPickDropCoordinator.h"
+#import "ETResponderIntegration.h"
 #import "ETCompatibility.h"
 #import "ETView.h"
 #import "NSObject+EtoileUI.h"

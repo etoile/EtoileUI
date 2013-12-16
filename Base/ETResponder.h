@@ -127,8 +127,3 @@ to which the trait is applied. */
 - (id <ETEditionCoordinator>) editionCoordinator;
 
 @end
-
-// TODO: Move into AppKitWidgetBackend
-@interface NSResponder (ETResponderSupportAdditions)
-- (ETLayoutItem *) candidateFocusedItem;
-@end

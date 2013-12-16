@@ -19,16 +19,7 @@
 @interface NSView (Etoile) <NSCopying, ETCollection, ETCollectionMutation>
 + (void)_setUpEtoileUITraits;
 
-+ (NSRect) defaultFrame;
-
-- (id) init;
-- (BOOL) isWidget;
-- (BOOL) isSupervisorView;
 - (BOOL) isWindowContentView;
-
-- (id) owningItem;
-- (ETLayoutItem *) candidateFocusedItem;
-- (id) responder;
 
 /* Copying */
 
@@ -67,9 +58,3 @@
 #endif
 
 @end
-
-@interface NSScrollView (Etoile)
-- (BOOL) isWidget;
-- (id) responder;
-@end
-

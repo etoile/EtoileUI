@@ -31,16 +31,6 @@
 	[self applyTraitFromClass: [ETMutableCollectionTrait class]];
 }
 
-+ (NSRect) defaultFrame
-{
-	return NSMakeRect(0, 0, 100, 50);
-}
-
-- (id) init
-{
-	return [self initWithFrame: [[self class] defaultFrame]];
-}
-
 - (NSString *) description
 {
 	NSRect frame = [self frame];
@@ -56,58 +46,12 @@
 	return [[super description] stringByAppendingString: viewDesc];
 }
 
-/** Returns whether the receiver is a widget (or control in AppKit terminology) 
-on which actions should be dispatched.
-
-If you override this method to return YES, your subclass must implement the 
-methods listed in the ETWidget protocol.
-
-By default, returns NO. */
-- (BOOL) isWidget
-{
-	return NO;
-}
-
-/** Returns YES when the receiver is an ETView class or subclass instance, 
-otherwise returns NO. */
-- (BOOL) isSupervisorView
-{
-	return [self isKindOfClass: [ETView class]];
-}
-
 /** Returns whether the receiver is currently used as a window content view. */
 - (BOOL) isWindowContentView
 {
 	// NOTE: -window will be nil in -viewDidMoveToSuperview with
 	// [self isEqual: [[self window] contentView]];
 	return [[self superview] isKindOfClass: NSClassFromString(@"NSThemeFrame")];
-}
-
-
-/** Returns the item bound to the first supervisor view found in the view 
-ancestor hierarchy.
-
-The returned object is an ETUIItem or subclass instance. */
-- (id) owningItem
-{
-	return [[self superview] owningItem];
-}
-
-/** Returns the candidate focused item of -owingItem. */
-- (ETLayoutItem *) candidateFocusedItem
-{
-	return [self owningItem];
-}
-
-/** <override-dummy />
-Returns the item, or a responder subview inside the view.
-
-By default, returns -owingItem but can be overriden to return a custom subview.
-
-See also -[ETLayoutItem responder]. */
-- (id) responder
-{
-	return [self owningItem];
 }
 
 /* Copying */
@@ -425,32 +369,5 @@ also copied, in other words the new object is a deep copy of the receiver. */
 	[[self subviews] makeObjectsPerformSelector: @selector(viewWillDraw)];
 }
 #endif
-
-@end
-
-@implementation NSScrollView (Etoile)
-
-/** Returns YES to indicate that the receiver is a widget on which actions 
-should be dispatched. */
-- (BOOL) isWidget
-{
-	return YES;
-}
-
-/** <override-dummy />
-Returns the document view inside the scroll view.
-
-See also -[NSView responder]. */
-- (id) responder
-{
-	return [self documentView];
-}
-
-// FIXME: Quick hack to let us use a text view as an item view. 
-// See -setView:autoresizingMask:
-- (id) cell
-{
-	return nil;
-}
 
 @end

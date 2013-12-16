@@ -61,6 +61,12 @@
 		601455D50F9722B900268FD1 /* ETScrollableAreaItem.m in Sources */ = {isa = PBXBuildFile; fileRef = 6074CA4C0F814FD60081E438 /* ETScrollableAreaItem.m */; };
 		601455D60F9722B900268FD1 /* ETNibOwner.m in Sources */ = {isa = PBXBuildFile; fileRef = 60364A080E40A560003377E0 /* ETNibOwner.m */; };
 		601455D70F9722B900268FD1 /* ETDecoratorItem.m in Sources */ = {isa = PBXBuildFile; fileRef = 60330B5A0F7CEF3400A1E8C1 /* ETDecoratorItem.m */; };
+		60197785185F457700635BE2 /* ETResponderIntegration.h in Headers */ = {isa = PBXBuildFile; fileRef = 60197783185F457700635BE2 /* ETResponderIntegration.h */; };
+		60197786185F457700635BE2 /* ETResponderIntegration.m in Sources */ = {isa = PBXBuildFile; fileRef = 60197784185F457700635BE2 /* ETResponderIntegration.m */; };
+		60197791185F457B00635BE2 /* ETResponderIntegration.m in Sources */ = {isa = PBXBuildFile; fileRef = 60197784185F457700635BE2 /* ETResponderIntegration.m */; };
+		60197794185F480600635BE2 /* ETUIItemIntegration.h in Headers */ = {isa = PBXBuildFile; fileRef = 60197792185F480600635BE2 /* ETUIItemIntegration.h */; };
+		60197796185F480600635BE2 /* ETUIItemIntegration.m in Sources */ = {isa = PBXBuildFile; fileRef = 60197793185F480600635BE2 /* ETUIItemIntegration.m */; };
+		60197797185F480600635BE2 /* ETUIItemIntegration.m in Sources */ = {isa = PBXBuildFile; fileRef = 60197793185F480600635BE2 /* ETUIItemIntegration.m */; };
 		60264AA50FB72D4D00D8163F /* Carbon.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 60264AA40FB72D4D00D8163F /* Carbon.framework */; };
 		60264AA60FB72D4D00D8163F /* Carbon.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 60264AA40FB72D4D00D8163F /* Carbon.framework */; };
 		602F8B270CE1CA3E0042F6C0 /* ETCompatibility.h in Headers */ = {isa = PBXBuildFile; fileRef = 602F8B260CE1CA3E0042F6C0 /* ETCompatibility.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -848,6 +854,10 @@
 		601296D313C74C6100980F16 /* ETDecoratorItem+ModelDescription.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = "ETDecoratorItem+ModelDescription.m"; path = "ModelDescription/ETDecoratorItem+ModelDescription.m"; sourceTree = "<group>"; };
 		60141B1C0F9355DF00014507 /* ETWidgetLayout.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ETWidgetLayout.h; path = Headers/ETWidgetLayout.h; sourceTree = "<group>"; };
 		60141B1F0F9355EE00014507 /* ETWidgetLayout.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ETWidgetLayout.m; path = Source/ETWidgetLayout.m; sourceTree = "<group>"; };
+		60197783185F457700635BE2 /* ETResponderIntegration.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ETResponderIntegration.h; path = WidgetBackends/AppKit/ETResponderIntegration.h; sourceTree = "<group>"; };
+		60197784185F457700635BE2 /* ETResponderIntegration.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ETResponderIntegration.m; path = WidgetBackends/AppKit/ETResponderIntegration.m; sourceTree = "<group>"; };
+		60197792185F480600635BE2 /* ETUIItemIntegration.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ETUIItemIntegration.h; path = WidgetBackends/AppKit/ETUIItemIntegration.h; sourceTree = "<group>"; };
+		60197793185F480600635BE2 /* ETUIItemIntegration.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ETUIItemIntegration.m; path = WidgetBackends/AppKit/ETUIItemIntegration.m; sourceTree = "<group>"; };
 		6022404D1003DF14007D5D07 /* TestItemGeometry.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = TestItemGeometry.m; path = Tests/TestItemGeometry.m; sourceTree = "<group>"; };
 		602635E511AD413B007586E3 /* TestWidgetLayout.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = TestWidgetLayout.m; path = Tests/TestWidgetLayout.m; sourceTree = "<group>"; };
 		60264AA40FB72D4D00D8163F /* Carbon.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Carbon.framework; path = /System/Library/Frameworks/Carbon.framework; sourceTree = "<absolute>"; };
@@ -1605,6 +1615,10 @@
 				6063FD5C1744CD9300E4350E /* ETNumberPicker.m */,
 				6043D4C31756BFD8002103CC /* ETLayoutItem+AppKit.h */,
 				6043D4C41756BFD9002103CC /* ETLayoutItem+AppKit.m */,
+				60197783185F457700635BE2 /* ETResponderIntegration.h */,
+				60197784185F457700635BE2 /* ETResponderIntegration.m */,
+				60197792185F480600635BE2 /* ETUIItemIntegration.h */,
+				60197793185F480600635BE2 /* ETUIItemIntegration.m */,
 			);
 			name = AppKit;
 			sourceTree = "<group>";
@@ -2203,6 +2217,8 @@
 				607675FA176B10D6009FA5F2 /* ETModelBuilderUI.h in Headers */,
 				607676E5176DD411009FA5F2 /* ETUIBuilderBrowserController.h in Headers */,
 				60B9B686185B26B600ABDEA1 /* ETLayoutItemFactory+UIPatternAdditions.h in Headers */,
+				60197785185F457700635BE2 /* ETResponderIntegration.h in Headers */,
+				60197794185F480600635BE2 /* ETUIItemIntegration.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2978,6 +2994,8 @@
 				606DA5B7184F6F020097718E /* TestWindowLayout.m in Sources */,
 				606DA5B8184F6F020097718E /* TestWindowItem.m in Sources */,
 				60B9B689185B26B600ABDEA1 /* ETLayoutItemFactory+UIPatternAdditions.m in Sources */,
+				60197791185F457B00635BE2 /* ETResponderIntegration.m in Sources */,
+				60197797185F480600635BE2 /* ETUIItemIntegration.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -3169,6 +3187,8 @@
 				607676E7176DD411009FA5F2 /* ETUIBuilderBrowserController.m in Sources */,
 				60AA9B96177C524B001919C2 /* ETViewpoint+ModelDescription.m in Sources */,
 				60B9B688185B26B600ABDEA1 /* ETLayoutItemFactory+UIPatternAdditions.m in Sources */,
+				60197786185F457700635BE2 /* ETResponderIntegration.m in Sources */,
+				60197796185F480600635BE2 /* ETUIItemIntegration.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

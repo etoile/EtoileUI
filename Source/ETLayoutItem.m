@@ -31,6 +31,7 @@
 #import "ETTool.h"
 #import "ETView.h"
 #import "ETUIObject.h"
+#import "ETUIItemIntegration.h"
 #import "ETWidget.h"
 #import "ETWindowItem.h"
 #import "NSCell+EtoileUI.h"
