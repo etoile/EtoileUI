@@ -12,7 +12,6 @@
 #import <Foundation/Foundation.h>
 #import <AppKit/AppKit.h>
 #import <EtoileUI/ETDecoratorItem.h>
-#import <EtoileUI/ETView.h>
 
 @class COObjectGraphContext;
 

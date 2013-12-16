@@ -14,10 +14,9 @@
 #import <Foundation/Foundation.h>
 #import <AppKit/AppKit.h>
 #import <EtoileUI/ETDecoratorItem.h>
-#import <EtoileUI/ETTitleBarView.h>
 
 @class COObjectGraphContext;
-@class ETView, ETUIItem;
+@class ETView, ETUIItem, ETTitleBarView;
 
 /** ETView also offers a customizable title bar. The title bar visibility can
  always be turned on or off. By default, it's turned off. If you are in 

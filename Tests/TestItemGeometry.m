@@ -18,6 +18,7 @@
 #import "ETTableLayout.h"
 #import "ETTitleBarItem.h"
 #import "ETUIItem.h"
+#import "ETView.h"
 #import "ETWindowItem.h"
 #import "ETCompatibility.h"
 

@@ -13,6 +13,7 @@
 #import "ETLayoutItemGroup.h"
 #import "ETTitleBarView.h"
 #import "ETLayoutItemFactory.h"
+#import "ETView.h"
 #import "NSView+Etoile.h"
 #import "ETCompatibility.h"
 

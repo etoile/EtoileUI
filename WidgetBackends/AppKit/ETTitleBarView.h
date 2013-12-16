@@ -11,7 +11,6 @@
 
 #import <Foundation/Foundation.h>
 #import <AppKit/AppKit.h>
-#import <EtoileUI/ETView.h>
 
 @class ETLayoutItem, ETUIItem;
 

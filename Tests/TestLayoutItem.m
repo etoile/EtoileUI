@@ -21,6 +21,7 @@
 #import "ETFlowLayout.h"
 #import "ETScrollableAreaItem.h"
 #import "ETTableLayout.h"
+#import "ETView.h"
 #import "ETCompatibility.h"
 
 @interface ETDecoratorItem (TestItemGeometry)
