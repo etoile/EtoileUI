@@ -51,17 +51,7 @@ or just  calls -editionCoordinator on -nextResponder. */
 @end
 
 
-@implementation  NSResponder (ETResponderTrait)
-
-- (id <ETFirstResponderSharingArea>) firstResponderSharingArea
-{
-	return nil;
-}
-
-- (id <ETEditionCoordinator>) editionCoordinator
-{
-	return nil;
-}
+@implementation  NSResponder (ETResponderSupportAdditions)
 
 - (ETLayoutItem *) candidateFocusedItem
 {
@@ -71,10 +61,10 @@ or just  calls -editionCoordinator on -nextResponder. */
 @end
 
 // TODO: Move into AppKitWidgetBackend
-@interface NSText (ETResponder)
+@interface NSText (ETResponderSupportAdditions)
 @end
 
-@implementation  NSText (ETResponder)
+@implementation  NSText (ETResponderSupportAdditions)
 
 - (ETLayoutItem *) candidateFocusedItem
 {

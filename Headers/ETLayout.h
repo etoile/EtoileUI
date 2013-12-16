@@ -210,6 +210,7 @@ Warning: This protocol is very much subject to change. */
 - (id) attachedTool;
 - (void) didChangeAttachedTool: (ETTool *)oldTool
                         toTool: (ETTool *)newTool;
+- (id) responder;
 
 /** @taskunit Layout Context */
 

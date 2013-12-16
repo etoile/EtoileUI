@@ -172,6 +172,7 @@ needed replicate other actions on each selected item. */
 - (void) didBecomeActive
 {
 	[self makeFirstMainResponder: self];
+	//ETAssert([self firstMainResponder] == self);
 }
 
 // TODO: Would be nice to merge with ETTool implementation.
@@ -804,6 +805,12 @@ on the selection elements, when the receiver becomes the first responder. */
 - (id) nextResponder
 {
 	return [self targetItem];
+}
+
+/** Returns YES to indicate the select tool can be made first responder. */
+- (BOOL) acceptsFirstResponder
+{
+	return YES;
 }
 
 /** Forces the receiver as the first responder in the current key window, by 

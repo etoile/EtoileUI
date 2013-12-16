@@ -35,6 +35,7 @@
 #import "ETWindowItem.h"
 #import "NSCell+EtoileUI.h"
 #import "NSImage+Etoile.h"
+#import "NSObject+EtoileUI.h"
 #import "NSView+Etoile.h"
 #import "ETCompatibility.h"
 
@@ -3481,20 +3482,22 @@ Used by -[ETTool makeFirstResponder:] to determine the real responder.
 If the receiver is returned, then first responder and focused item are one and 
 the same.
 
-See also -usesWidgetView. */
+See also -usesWidgetView, -[ETLayout responder] and -[NSView responder]. */
 - (id) responder
 {
-	if ([[self layout] isWidget])
+	id responder = self;
+	
+	if ([self layout] != nil)
 	{
-		return [[self layout] responder];
+		responder = [[self layout] responder];
 	}
-	else if ([[self view] isWidget])
+	else if ([self view] != nil)
 	{
-		// FIXME: For a scroll view, returns the document view. Probably add
-		// -responder to NSScrollView and update -[ETWidgetLayout responder].
-		return [self view];
+		responder = [[self view] responder];
 	}
-	return self;
+	ETAssert(responder != nil);
+	ETAssert([responder isLayoutItem] || [responder isTool] || ([responder isView] && [self usesWidgetView]));
+	return responder;
 }
 
 /** Returns self.

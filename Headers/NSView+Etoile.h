@@ -27,9 +27,8 @@
 - (BOOL) isWindowContentView;
 
 - (id) owningItem;
-- (id <ETFirstResponderSharingArea>) firstResponderSharingArea;
-- (id <ETEditionCoordinator>) editionCoordinator;
 - (ETLayoutItem *) candidateFocusedItem;
+- (id) responder;
 
 /* Copying */
 
@@ -71,5 +70,6 @@
 
 @interface NSScrollView (Etoile)
 - (BOOL) isWidget;
+- (id) responder;
 @end
 

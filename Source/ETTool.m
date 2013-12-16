@@ -414,13 +414,14 @@ This method calls either -makeFirstKeyResponder: or -makeFirstMainResponder:. */
 {
 	NSWindow *window = nil;
 
+	// FIXME: Reduce the cases to the responder is nil and -firstResponderSharingArea
 	if (aResponder == nil)
 	{
 		window = [ETApp keyWindow];
 	}
-	if ([aResponder isLayoutItem])
+	if ([aResponder conformsToProtocol: @protocol(ETResponder)])
 	{
-		window = [[aResponder enclosingDisplayView] window];
+		window = [(ETWindowItem *)[aResponder firstResponderSharingArea] window];
 	}
 	else if ([aResponder isKindOfClass: [NSView class]])
 	{

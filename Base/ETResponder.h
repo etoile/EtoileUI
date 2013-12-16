@@ -129,5 +129,6 @@ to which the trait is applied. */
 @end
 
 // TODO: Move into AppKitWidgetBackend
-@interface NSResponder (ETResponderTrait) <ETResponder>
+@interface NSResponder (ETResponderSupportAdditions)
+- (ETLayoutItem *) candidateFocusedItem;
 @end

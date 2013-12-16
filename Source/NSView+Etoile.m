@@ -93,20 +93,19 @@ The returned object is an ETUIItem or subclass instance. */
 	return [[self superview] owningItem];
 }
 
-/** Returns the first responder sharing area of -owningItem. */
-- (id <ETFirstResponderSharingArea>) firstResponderSharingArea
-{
-	return [[self owningItem] firstResponderSharingArea];
-}
-
-/** Returns the edition coordinator of -owningItem. */
-- (id <ETEditionCoordinator>) editionCoordinator
-{
-	return [[self owningItem] editionCoordinator];
-}
-
 /** Returns the candidate focused item of -owingItem. */
 - (ETLayoutItem *) candidateFocusedItem
+{
+	return [self owningItem];
+}
+
+/** <override-dummy />
+Returns the item, or a responder subview inside the view.
+
+By default, returns -owingItem but can be overriden to return a custom subview.
+
+See also -[ETLayoutItem responder]. */
+- (id) responder
 {
 	return [self owningItem];
 }
@@ -436,6 +435,15 @@ should be dispatched. */
 - (BOOL) isWidget
 {
 	return YES;
+}
+
+/** <override-dummy />
+Returns the document view inside the scroll view.
+
+See also -[NSView responder]. */
+- (id) responder
+{
+	return [self documentView];
 }
 
 // FIXME: Quick hack to let us use a text view as an item view. 

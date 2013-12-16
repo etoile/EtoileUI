@@ -13,6 +13,7 @@
 #import "ETLayoutItem.h"
 #import "ETLayoutItemGroup.h"
 #import "ETLayoutItemFactory.h"
+#import "ETSelectTool.h"
 #import "ETScrollableAreaItem.h"
 #import "ETTool.h"
 #import "ETWindowItem.h"
@@ -113,6 +114,7 @@
 {
 	UKNotNil([ETTool activeTool]);
 
+	NSLog(@"Key %@ and main %@", [ETApp keyWindow], [ETApp mainWindow]);
 	[[ETTool activeTool] makeFirstResponder: (id)item];
 
 	UKObjectsSame(item, [[ETTool activeTool] firstMainResponder]);
@@ -148,6 +150,58 @@
 }
 
 // TODO: Test keyResponder and mainResponder distinction for ETTool
+
+- (void) testFocusedItemForWindowAsFirstResponder
+{
+	[[ETTool activeTool] makeFirstResponder: (id)[windowItem window]];
+	
+	UKObjectsEqual(mainItem, [windowItem focusedItem]);
+}
+
+/* For this test case, the select tool just as the first responder and not the active tool */
+- (void) testSelectToolAsFirstResponder
+{
+	[self prepareFirstResponder];
+
+	ETSelectTool *tool = [ETSelectTool tool];
+
+	[[mainItem layout] setAttachedTool: tool];
+
+	[[ETTool activeTool] makeFirstResponder: tool];
+	
+	UKObjectsEqual(tool, [[ETTool activeTool] firstMainResponder]);
+	UKObjectsEqual(mainItem, [windowItem focusedItem]);
+}
+
+- (void) testSelectToolAsActiveTool
+{
+	[self prepareFirstResponder];
+
+	ETSelectTool *tool = [ETSelectTool tool];
+
+	[[mainItem layout] setAttachedTool: tool];
+
+	[ETTool setActiveTool: tool];
+
+	UKObjectsEqual(tool, [ETTool activeTool]);
+	// FIXME: UKObjectsEqual(tool, [[ETTool activeTool] firstMainResponder]);
+	// FIXME: UKObjectsEqual(mainItem, [windowItem focusedItem]);
+}
+
+- (void) testWindowItemAsInvalidFirstResponder
+{
+	[[ETTool activeTool] makeFirstResponder: (id)windowItem];
+	
+	UKObjectsNotEqual(windowItem, [[ETTool activeTool] firstMainResponder]);
+}
+
+- (void) testScrollableAreaItemAsInvalidFirstResponder
+{
+	[[ETTool activeTool] makeFirstResponder: (id)scrollableAreaItem];
+	
+	UKObjectsNotEqual(scrollableAreaItem, [[ETTool activeTool] firstMainResponder]);
+
+}
 
 @end
 

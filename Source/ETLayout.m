@@ -311,6 +311,14 @@ The ancestor layout on which the tool was changed can be retrieved with
 	}
 }
 
+/** <override-dummy />
+Returns the tool attached to the layout, if it replies YES to 
+-acceptsFirstResponder, otherwise returns the layout context. */
+- (id) responder
+{
+	return ([[self attachedTool] acceptsFirstResponder] ? [self attachedTool] : [self layoutContext]);
+}
+
 /** <override-never />
 Sets the context where the layout should happen. 
 
