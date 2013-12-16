@@ -51,6 +51,8 @@ Open Issues
 
 - Test synthesized enter and exit events
 
+- Finish to rewrite the Object Inspector and do something about ETInspecting.h... discard or document
+
 
 Old Potential Issues
 --------------------

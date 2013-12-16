@@ -18,6 +18,7 @@
 - (ETLayoutItem *) candidateFocusedItem;
 @end
 
+
 /** @group AppKit Widget Backend
  
 @abstract Additions to integrate NSView and ETResponder. */
@@ -26,12 +27,14 @@
 - (id) responder;
 @end
 
+
 /** @group AppKit Widget Backend
  
 @abstract Additions to integrate NSText and ETResponder. */
 @interface NSText (ETResponderSupportAdditions)
 - (ETLayoutItem *) candidateFocusedItem;
 @end
+
 
 /** @group AppKit Widget Backend
  

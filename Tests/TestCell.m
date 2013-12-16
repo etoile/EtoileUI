@@ -14,7 +14,7 @@
 #import "ETLayoutItemFactory.h"
 #import "ETLayoutItemGroup.h"
 #import "ETTableLayout.h"
-#import "NSCell+EtoileUI.h"
+#import "ETUIItemCellIntegration.h"
 #import "ETCompatibility.h"
 
 @interface TestCell: NSObject <UKTest>

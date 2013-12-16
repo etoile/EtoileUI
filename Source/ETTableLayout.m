@@ -21,7 +21,7 @@
 #import "ETPickDropActionHandler.h"
 #import "ETPickDropCoordinator.h"
 #import "ETSelectTool.h"
-#import "NSCell+EtoileUI.h"
+#import "ETUIItemCellIntegration.h"
 #import "ETCompatibility.h"
 
 @interface NSTableColumn (Etoile) <ETColumnFragment>
