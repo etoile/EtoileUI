@@ -13,6 +13,8 @@
 #import <AppKit/AppKit.h>
 #import <EtoileUI/ETCompatibility.h>
 
+@class ETLayoutItem;
+
 @interface NSWindow (Etoile) <NSCopying>
 
 + (unsigned int) defaultStyleMask;
@@ -20,6 +22,8 @@
 - (id) init;
 - (id) initWithFrame: (NSRect)frame styleMask: (unsigned int)windowStyle;
 - (id) initWithContentRect: (NSRect)frame styleMask: (unsigned int)windowStyle;
+
+- (ETLayoutItem *) candidateFocusedItem;
 
 - (void) setFrameSizeFromTopLeft: (NSSize)size;
 - (void) setContentSizeFromTopLeft: (NSSize)size;

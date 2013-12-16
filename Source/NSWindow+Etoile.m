@@ -68,6 +68,12 @@ new object is a shallow copy of the receiver.*/
 	return windowCopy;
 }
 
+/** Returns the candidate focused item of the content view. */
+- (ETLayoutItem *) candidateFocusedItem
+{
+	return [[self contentView] candidateFocusedItem];
+}
+
 - (void) setFrameSizeFromTopLeft: (NSSize)size
 {
 	NSRect frameRect = ETMakeRect([self frame].origin, size);

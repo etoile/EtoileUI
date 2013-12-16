@@ -392,6 +392,18 @@ and make the necessary adjustments. */
 		      withKeyPath: kETDisplayNameProperty
 		          options: nil];
 	}
+
+	/* For a panel item, don't make it key (prevent losing the focus in a document when an inspector is shown)  */
+	if ([self isPanel])
+	{
+		[_itemWindow orderFront: self];
+	}
+	else
+	{
+		[_itemWindow makeKeyAndOrderFront: self];
+	}
+	// NOTE: For a non-active application, -isMainWindow always returns NO.
+	ETAssert([NSApp isActive] == NO || [_itemWindow canBecomeMainWindow] == NO || [_itemWindow isMainWindow]);
 	
 	[self postSelectionChangeNotificationInWindowGroup];
 }
@@ -415,18 +427,6 @@ and make the necessary adjustments. */
 	// FIXME: Figure out if we really need the line below (it breaks notifications for -testActiveItemChanged)
 	//if (parentView == nil)
 	//	return;
-
-	/* For a panel item, don't make it key (prevent losing the focus in a document when an inspector is shown)  */
-	if ([self isPanel])
-	{
-		[_itemWindow orderFront: self];
-	}
-	else
-	{
-		[_itemWindow makeKeyAndOrderFront: self];
-	}
-	// NOTE: For a non-active application, -isMainWindow always returns NO.
-	ETAssert([NSApp isActive] == NO || [_itemWindow canBecomeMainWindow] == NO || [_itemWindow isMainWindow]);
 }
 
 - (void) handleUndecorateItem: (ETUIItem *)item
@@ -574,10 +574,23 @@ This coordinate space includes the window decoration (titlebar etc.).  */
 		initialFocusedItem = (ETLayoutItem *)item;
 	}
 
-	ETDebugLog(@"Prepare initial focused item %@", initialFocusedItem);
+	ETLog(@"Prepare initial focused item %@", initialFocusedItem);
 
 	[[ETTool activeTool] makeFirstResponder: (id)initialFocusedItem];
 	// FIXME: ETAssert([self focusedItem] == initialFocusedItem);
+}
+
+- (ETLayoutItem *) windowBackedItemBoundToActiveTool
+{
+	ETLayoutItem *targetItem = [[ETTool activeTool] targetItem];
+	ETLayoutItem *windowBackedItemBoundToActiveTool = [targetItem windowBackedAncestorItem];
+	BOOL isWindowGroupTargeted =
+		([targetItem isEqual: [[ETLayoutItemFactory factory] windowGroup]]);
+
+	ETAssert(windowBackedItemBoundToActiveTool != nil || isWindowGroupTargeted
+		|| [[ETTool activeTool] isEqual: [ETTool mainTool]]);
+		
+	return windowBackedItemBoundToActiveTool;
 }
 
 /** When a window becomes key, we look up and activate a tool in the new key 
@@ -598,6 +611,8 @@ doesn't become key unless the user clicks the titlebar or an editable widget). *
 {
 	BOOL isWindowVisibleForFirstTime = (_oldFocusedItem == nil);
 
+	NSLog(@"Old focused Item %@", _oldFocusedItem);
+
 	if (isWindowVisibleForFirstTime)
 	{
 		/* -[NSWindow becomeKeyWindow] has just set up its initial first responder,
@@ -605,15 +620,8 @@ doesn't become key unless the user clicks the titlebar or an editable widget). *
 		[self prepareInitialFocusedItem];
 	}
 
-	ETLayoutItem *targetItem = [[ETTool activeTool] targetItem];
-	ETLayoutItem *windowBackedItemBoundToActiveTool = [targetItem windowBackedAncestorItem];
-	BOOL isWindowGroupTargeted =
-		([targetItem isEqual: [[ETLayoutItemFactory factory] windowGroup]]);
-
-	ETAssert(windowBackedItemBoundToActiveTool != nil || isWindowGroupTargeted
-		|| [[ETTool activeTool] isEqual: [ETTool mainTool]]);
-
-	if ([[windowBackedItemBoundToActiveTool windowItem] isEqual: self])
+	// TODO: Move the tool activation into -[ETTool makeFirstResponder:inWindow:]
+	if ([[[self windowBackedItemBoundToActiveTool] windowItem] isEqual: self])
 		return;
 
 	[ETTool setActiveTool: [ETTool activatableToolForItem: [self focusedItem]]];
