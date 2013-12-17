@@ -14,7 +14,7 @@
 #import "EtoileUIProperties.h"
 #import "ETUIItemIntegration.h"
 #import "ETWidget.h"
-#import "NSView+Etoile.h"
+#import "NSView+EtoileUI.h"
 
 
 @implementation ETLayoutItem (KVO)

@@ -9,7 +9,7 @@
 #import "TestCommon.h"
 #import "ETLayoutItemFactory.h"
 #import "ETLayoutItem.h"
-#import "NSView+Etoile.h"
+#import "NSView+EtoileUI.h"
 #import "ETCompatibility.h"
 
 @interface TestView : NSObject <UKTest>

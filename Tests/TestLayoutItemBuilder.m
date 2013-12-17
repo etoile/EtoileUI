@@ -13,7 +13,7 @@
 #import "ETLayoutItemFactory.h"
 #import "ETUIItemIntegration.h"
 #import "ETView.h"
-#import "NSView+Etoile.h"
+#import "NSView+EtoileUI.h"
 #import "ETCompatibility.h"
 
 @interface TestEtoileUIBuilder : NSObject <UKTest>

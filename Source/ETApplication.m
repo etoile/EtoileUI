@@ -25,8 +25,12 @@
 #import "ETWidget.h"
 #import "ETWindowItem.h"
 #import "NSObject+EtoileUI.h"
-#import "NSView+Etoile.h"
+#import "NSView+EtoileUI.h"
 #import "ETCompatibility.h"
+
+@interface NSView ()
++ (void)_setUpEtoileUITraits;
+@end
 
 @interface ETApplication (Private)
 - (void) _instantiateAppDelegateIfSpecified;

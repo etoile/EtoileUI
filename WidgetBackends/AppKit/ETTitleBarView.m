@@ -10,7 +10,7 @@
 
 #import <EtoileFoundation/Macros.h> 
 #import "ETTitleBarView.h"
-#import "NSView+Etoile.h"
+#import "NSView+EtoileUI.h"
 #import "ETCompatibility.h"
 
 #define TITLE_VIEW_TAG 0

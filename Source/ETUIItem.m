@@ -19,7 +19,7 @@
 #import "ETView.h"
 #import "ETWindowItem.h"
 #import "NSObject+EtoileUI.h"
-#import "NSView+Etoile.h"
+#import "NSView+EtoileUI.h"
 #import "ETCompatibility.h"
 
 #pragma GCC diagnostic ignored "-Wprotocol"

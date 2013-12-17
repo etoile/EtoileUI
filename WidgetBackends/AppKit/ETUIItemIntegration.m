@@ -13,7 +13,7 @@
 #import "ETUIItemCellIntegration.h"
 #import "ETView.h"
 #import "NSImage+Etoile.h"
-#import "NSView+Etoile.h"
+#import "NSView+EtoileUI.h"
 #import "ETCompatibility.h"
 
 

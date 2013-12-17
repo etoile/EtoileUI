@@ -14,7 +14,7 @@
 #import "ETTitleBarView.h"
 #import "ETLayoutItemFactory.h"
 #import "ETView.h"
-#import "NSView+Etoile.h"
+#import "NSView+EtoileUI.h"
 #import "ETCompatibility.h"
 
 #define NC [NSNotificationCenter defaultCenter]

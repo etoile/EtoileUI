@@ -26,7 +26,7 @@
 #import "ETLayoutItemFactory.h"
 #import "ETView.h"
 #import "NSObject+EtoileUI.h"
-#import "NSView+Etoile.h"
+#import "NSView+EtoileUI.h"
 #import "ETCompatibility.h"
 
 @interface ETInspector (EtoilePrivate)

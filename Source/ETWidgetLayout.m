@@ -17,7 +17,7 @@
 #import "ETNibOwner.h"
 #import "ETTableLayout.h"
 #import "ETOutlineLayout.h"
-#import "NSView+Etoile.h"
+#import "NSView+EtoileUI.h"
 #import "ETCompatibility.h"
 
 

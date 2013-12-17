@@ -21,7 +21,7 @@
 #import "ETLayoutExecutor.h"
 #import "EtoileUIProperties.h"
 #import "ETView.h"
-#import "NSView+Etoile.h"
+#import "NSView+EtoileUI.h"
 #import "ETCompatibility.h"
 
 #pragma GCC diagnostic ignored "-Wprotocol"

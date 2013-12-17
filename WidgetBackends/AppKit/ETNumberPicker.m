@@ -8,7 +8,7 @@
 
 #import <EtoileFoundation/Macros.h>
 #import "ETNumberPicker.h"
-#import "NSView+Etoile.h"
+#import "NSView+EtoileUI.h"
 
 static const NSInteger textFieldTag = 1;
 static const NSInteger stepperTag = 2;

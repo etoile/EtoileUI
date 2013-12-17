@@ -12,7 +12,7 @@
 #import "ETLayoutItem.h"
 #import "EtoileUIProperties.h"
 #import "ETUIItemIntegration.h"
-#import "NSView+Etoile.h"
+#import "NSView+EtoileUI.h"
 #import "ETCompatibility.h"
 
 // TODO: Update model description and test persistency for properties set on the item

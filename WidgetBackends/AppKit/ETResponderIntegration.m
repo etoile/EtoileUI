@@ -9,7 +9,7 @@
 #import <EtoileFoundation/Macros.h>
 #import "ETResponderIntegration.h"
 #import "ETUIItemIntegration.h"
-#import "NSView+Etoile.h"
+#import "NSView+EtoileUI.h"
 
 
 @implementation  NSResponder (ETResponderSupportAdditions)

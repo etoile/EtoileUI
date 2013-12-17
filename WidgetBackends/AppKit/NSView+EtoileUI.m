@@ -8,7 +8,7 @@
 
 #import <EtoileFoundation/NSObject+Trait.h>
 #import <EtoileFoundation/NSObject+Model.h>
-#import "NSView+Etoile.h"
+#import "NSView+EtoileUI.h"
 #import "ETResponder.h"
 #import "ETView.h"
 #import "ETWidget.h"
@@ -22,9 +22,9 @@
 
 @implementation NSView (Etoile)
 
-/* In a a category, we cannot use +initialize. We also cannot
-   use +load, as there is no guarantee any of the referenced
-   classes (except our base class) exists yet. */
+/* In a a category, we cannot use +initialize. We also cannot use +load, as 
+there is no guarantee any of the referenced classes (except our base class) 
+exists yet. */
 + (void) _setUpEtoileUITraits
 {
 	[self applyTraitFromClass: [ETCollectionTrait class]];
@@ -53,8 +53,6 @@
 	// [self isEqual: [[self window] contentView]];
 	return [[self superview] isKindOfClass: NSClassFromString(@"NSThemeFrame")];
 }
-
-/* Copying */
 
 /** Returns a view copy of the receiver. 
 
@@ -93,7 +91,7 @@ also copied, in other words the new object is a deep copy of the receiver. */
 	return RETAIN(viewCopy);
 }
 
-/* Collection Protocol */
+#pragma mark Collection Protocol -
 
 - (BOOL) isOrdered
 {
@@ -161,7 +159,7 @@ also copied, in other words the new object is a deep copy of the receiver. */
 	}	
 }
 
-/* Utility Methods */
+#pragma mark Frame Utility Methods -
 
 - (CGFloat) height
 {
@@ -212,12 +210,13 @@ also copied, in other words the new object is a deep copy of the receiver. */
 }
 
 /** Sets the size of the view without moving the top left point.
-	If the receiver has a superview, checks whether this superview is flipped or
-	not. If non-flipped coordinates are used, the frame origin is adjusted 
-	before calling -setFrameSize:, otherwise this method is equivalent to 
-	-setFrameSize:.
-	Be careful that calling this method with no receiver superview results in 
-	the view origin being altered. */
+	
+If the receiver has a superview, checks whether this superview is flipped or
+not. If non-flipped coordinates are used, the frame origin is adjusted before 
+calling -setFrameSize:, otherwise this method is equivalent to -setFrameSize:.
+
+Be careful that calling this method with no receiver superview results in the 
+view origin being altered. */
 - (void) setFrameSizeFromTopLeft: (NSSize)size
 {
 	NSView *superview = [self superview];
@@ -230,24 +229,26 @@ also copied, in other words the new object is a deep copy of the receiver. */
 }
 
 /** Sets the height of the view without moving the top left point.
-	If the receiver has a superview, checks whether this superview is flipped or
-	not. If non-flipped coordinates are used, the frame origin is adjusted 
-	before calling -setHeight:, otherwise this method is equivalent to 
-	-setHeight:.
-	Be careful that calling this method with no receiver superview results in 
-	the view origin being altered. */
+
+If the receiver has a superview, checks whether this superview is flipped or
+not. If non-flipped coordinates are used, the frame origin is adjusted before 
+calling -setHeight:, otherwise this method is equivalent to -setHeight:.
+	
+Be careful that calling this method with no receiver superview results in the 
+view origin being altered. */
 - (void) setHeightFromTopLeft: (int)height
 {
 	[self setFrameSizeFromTopLeft: NSMakeSize([self width], height)];
 }
 
 /** Returns the top left point of the view.
-	If the receiver has a superview, checks whether this superview is flipped or
-	not. If non-flipped coordinates are used, the frame origin is adjusted 
-	before returning the value, otherwise this method is equivalent to 
-	-frameOrigin.
-	Be careful that calling this method with no receiver superview results in 
-	a view origin different from -frameOrigin. */
+	
+If the receiver has a superview, checks whether this superview is flipped or
+not. If non-flipped coordinates are used, the frame origin is adjusted before 
+returning the value, otherwise this method is equivalent to -frameOrigin.
+
+Be careful that calling this method with no receiver superview results in a view 
+origin different from -frameOrigin. */
 - (NSPoint) topLeftPoint
 {
 	NSPoint topLeftPoint = [self frame].origin;
@@ -258,11 +259,10 @@ also copied, in other words the new object is a deep copy of the receiver. */
 	return topLeftPoint;
 }
 
-/** Sets the size of the view without moving the bottom left point.
-	If the receiver has a superview, checks whether this superview is flipped or
-	not. If flipped coordinates are used, the frame origin is adjusted 
-	before calling -setFrameSize:, otherwise this method is equivalent to 
-	-setFrameSize:. */
+/** Sets the size of the view without moving the bottom left point. If the 
+receiver has a superview, checks whether this superview is flipped or not. If 
+flipped coordinates are used, the frame origin is adjusted before calling 
+-setFrameSize:, otherwise this method is equivalent to -setFrameSize:. */
 - (void) setFrameSizeFromBottomLeft: (NSSize)size
 {
 	NSView *superview = [self superview];
@@ -275,20 +275,20 @@ also copied, in other words the new object is a deep copy of the receiver. */
 }
 
 /** Sets the height of the view without moving the bottom left point.
-	If the receiver has a superview, checks whether this superview is flipped or
-	not. If flipped coordinates are used, the frame origin is adjusted 
-	before calling -setHeight:, otherwise this method is equivalent to 
-	-setHeight:. */
+	
+If the receiver has a superview, checks whether this superview is flipped or 
+not. If flipped coordinates are used, the frame origin is adjusted before 
+calling -setHeight:, otherwise this method is equivalent to -setHeight:. */
 - (void) setHeightFromBottomLeft: (int)height
 {
 	[self setFrameSizeFromBottomLeft: NSMakeSize([self width], height)];
 }
 
 /** Returns the bottom left point of the view.
-	If the receiver has a superview, checks whether this superview is flipped or
-	not. If flipped coordinates are used, the frame origin is adjusted before
-	returning the value, otherwise this method is equivalent to 
-	-frameOrigin. */
+
+If the receiver has a superview, checks whether this superview is flipped or
+not. If flipped coordinates are used, the frame origin is adjusted before 
+returning the value, otherwise this method is equivalent to -frameOrigin. */
 - (NSPoint) bottomLeftPoint
 {
 	NSPoint bottomLeftPoint = [self frame].origin;
@@ -299,26 +299,7 @@ also copied, in other words the new object is a deep copy of the receiver. */
 	return bottomLeftPoint;
 }
 
-/* Property Value Coding */
-
-- (NSArray *) propertyNames
-{
-	// TODO: Expose more properties
-	NSArray *properties = [NSArray arrayWithObjects: @"x", @"y", @"width", 
-		@"height", @"superview", @"window", @"tag", @"hidden", 
-		@"autoresizingMask", @"autoresizesSubviews", @"subviews", @"flipped", 
-		@"frame", @"frameRotation", @"bounds", @"boundsRotation", @"isRotatedFromBase", 
-		@"isRotatedOrScaledFromBase", @"postsFrameChangedNotifications", 
-		@"postsBoundsChangedNotifications", @"enclosingScrollView", 
-		@"visibleRect", @"opaque", @"opaqueAncestor", @"needsDisplay", 
-		@"canDraw",  @"shouldDrawColor", @"widthAdjustLimit",
-		@"heightAdjustLimit", @"printJobTitle", @"mouseDownCanMoveWindow", 
-		@"needsPanelToBecomeKey", nil]; 
-	
-	return [[super propertyNames] arrayByAddingObjectsFromArray: properties];
-}
-
-/* Basic Properties */
+#pragma mark Generating an Image Representation -
 
 /** Returns an image snapshot of the receiver view. */
 - (NSImage *) snapshot 
@@ -331,6 +312,23 @@ also copied, in other words the new object is a deep copy of the receiver. */
 - (NSImage *) icon
 {
 	return [self snapshot];
+}
+
+// TODO: Remove (cause failures in TestItemCopy.m if removed currently)
+- (NSArray *) propertyNames
+{
+	NSArray *properties = [NSArray arrayWithObjects: @"x", @"y", @"width", 
+		@"height", @"superview", @"window", @"tag", @"hidden", 
+		@"autoresizingMask", @"autoresizesSubviews", @"subviews", @"flipped", 
+		@"frame", @"frameRotation", @"bounds", @"boundsRotation", @"isRotatedFromBase", 
+		@"isRotatedOrScaledFromBase", @"postsFrameChangedNotifications", 
+		@"postsBoundsChangedNotifications", @"enclosingScrollView", 
+		@"visibleRect", @"opaque", @"opaqueAncestor", @"needsDisplay", 
+		@"canDraw",  @"shouldDrawColor", @"widthAdjustLimit",
+		@"heightAdjustLimit", @"printJobTitle", @"mouseDownCanMoveWindow", 
+		@"needsPanelToBecomeKey", nil]; 
+	
+	return [[super propertyNames] arrayByAddingObjectsFromArray: properties];
 }
 
 #ifdef GNUSTEP

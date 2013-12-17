@@ -38,7 +38,7 @@
 #import "ETTool.h"
 #import "ETWidget.h"
 #import "NSObject+EtoileUI.h"
-#import "NSView+Etoile.h"
+#import "NSView+EtoileUI.h"
 #import "ETCompatibility.h"
 #include <math.h>
 

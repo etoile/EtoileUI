@@ -17,15 +17,12 @@
 @protocol ETFirstResponderSharingArea, ETEditionCoordinator;
 
 @interface NSView (Etoile) <NSCopying, ETCollection, ETCollectionMutation>
-+ (void)_setUpEtoileUITraits;
+
+/** @taskunit Type Querying */
 
 - (BOOL) isWindowContentView;
 
-/* Copying */
-
-- (id) copyWithZone: (NSZone *)zone;
-
-/* Frame Utility Methods */
+/** @taskunit Frame Utility Methods */
 
 - (CGFloat) height;
 - (CGFloat) width;
@@ -43,11 +40,7 @@
 - (void) setHeightFromBottomLeft: (int)height;
 - (NSPoint) bottomLeftPoint;
 
-/* Property Value Coding */
-
-- (NSArray *) propertyNames;
-
-/* Basic Properties */
+/** @taskunit Generating an Image Representation */
 
 - (NSImage *) snapshot;
 - (NSImage *) icon;

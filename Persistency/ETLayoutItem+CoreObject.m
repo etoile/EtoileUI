@@ -19,7 +19,7 @@
 #import "ETUIItemIntegration.h"
 #import "ETView.h"
 #import "NSObject+EtoileUI.h"
-#import "NSView+Etoile.h"
+#import "NSView+EtoileUI.h"
 
 
 @implementation ETLayoutItem (CoreObject) 

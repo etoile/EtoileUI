@@ -18,7 +18,7 @@
 #import "ETLayoutItem.h"
 #import "ETLayoutItemGroup.h"
 #import "ETLayoutItemFactory.h"
-#import "NSView+Etoile.h"
+#import "NSView+EtoileUI.h"
 #import "ETCompatibility.h"
 
 #define _layoutContext (id <ETLayoutingContext>)_layoutContext

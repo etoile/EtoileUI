@@ -13,7 +13,7 @@
 #import "ETLayoutItem.h"
 #import "ETUIItemIntegration.h"
 #import "NSObject+EtoileUI.h"
-#import "NSView+Etoile.h"
+#import "NSView+EtoileUI.h"
 #import "ETCompatibility.h"
 #import "ETFlowLayout.h"
 

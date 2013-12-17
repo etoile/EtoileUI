@@ -18,7 +18,7 @@
 #import "ETLayoutItemGroup.h"
 #import "ETPositionalLayout.h"
 #import "NSObject+EtoileUI.h"
-#import "NSView+Etoile.h"
+#import "NSView+EtoileUI.h"
 #import "ETCompatibility.h"
 
 @interface ETLayout (Private)

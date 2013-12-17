@@ -53,6 +53,14 @@ Open Issues
 
 - Finish to rewrite the Object Inspector and do something about ETInspecting.h... discard or document
 
+- Support dispatching actions on ETWindowItem or ETScrollableAreaItem. 
+
+	- To do so, add -[ETDecoratorItem (backend)Responder] that returns either the window or scroll view and in -[ETApp targetForAction:from:to:] checks each decorator present in the responder chain for this backend responder
+	
+	- Or just reimplement the actions supported by NSWindow and NSScrollView in each decorator item class (and forward the messages to their Appkit representations)
+	
+- Finish cleaning NSView+EtoileUI
+
 
 Old Potential Issues
 --------------------
@@ -60,11 +68,17 @@ Old Potential Issues
 - Verify NSView hidden property doesn't cause a KVC error when read or written, it caused a crash in the object browser layout in the past.
 
 
+GNUstep Things
+--------------
+
+- Implement NSBrowser keyed archiving on GNUstep (see NSView+EtoileUI)
+
+
 # Basic Stuff
 
 ## Properties 
 
-* Expose more properties for Foundation, AppKit, EtoileFoundation and EtoileUI classes.
+* Expose more properties for EtoileFoundation and EtoileUI classes.
 
 * Handle read-only properties in a sane way, usually when no setter is available. A method like -isReadOnlyProperty: (NSString *)propertyName should be added to NSObject+Model in EtoileFoundation; not really sure this is the best method name though. We also need to update CoreObject related classes to use this same mechanism.
 
