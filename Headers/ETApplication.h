@@ -10,7 +10,7 @@
 #import <Foundation/Foundation.h>
 #import <AppKit/AppKit.h>
 
-@class ETLayoutItemBuilder, ETLayoutItemGroup, ETNibOwner, ETUIStateRestoration;
+@class ETLayoutItemBuilder, ETLayoutItem, ETLayoutItemGroup, ETNibOwner, ETUIStateRestoration;
 
 #define ETApp (ETApplication *)[ETApplication sharedApplication]
 
@@ -55,20 +55,28 @@ For other Nibs to be loaded, see ETNibOwner. */
 
 + (NSString *) typePrefix;
 
-/** @taskunit UI State Restoration */
+/** @taskunit Preparing and Restoring Application State */
 
+- (void) setUp;
 - (ETUIStateRestoration *) UIStateRestoration;
+
+/** @taskunit Application Identity */
 
 - (NSString *) name;
 - (NSImage *) icon;
 
+/** @taskunit Accessing Item Tree */
+
 - (ETLayoutItemGroup *) layoutItem;
+- (ETLayoutItem *) keyItem;
+- (ETLayoutItem *) mainItem;
+
+/** @taskunit Generating Item Tree */
+
 - (ETLayoutItemBuilder *) builder;
 - (void) rebuildMainNib;
 
-- (void) setUp;
-
-/* Menu Factory */
+/** @taskunit Menu Factory */
 
 - (NSMenuItem *) developmentMenuItem;
 - (NSMenuItem *) documentMenuItem;
@@ -76,9 +84,10 @@ For other Nibs to be loaded, see ETNibOwner. */
 - (NSMenuItem *) insertMenuItem;
 - (NSMenuItem *) arrangeMenuItem;
 
-/* Actions */
+/** @taskunit Actions */
 
 - (id) targetForAction: (SEL)aSelector to: (id)aTarget from: (id)sender;
+
 - (IBAction) browseLayoutItemTree: (id)sender;
 - (IBAction) toggleFrameShown: (id)sender;
 - (IBAction) toggleBoundingBoxShown: (id)sender;

@@ -18,6 +18,9 @@
 If a class adopts this protocol, its instances represent UI areas that 
 coordinate the field editor use to ensure the first responder status is given to 
 a single object in each area.
+
+For a desktop environment using windows, the first responder sharing area 
+is a ETWindowItem (usually backed by a window provided by the widget backend).
  
 ETUIItem subclasses can implement this protocol. 
  

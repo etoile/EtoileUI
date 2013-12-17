@@ -578,7 +578,7 @@ This coordinate space includes the window decoration (titlebar etc.).  */
 
 	ETLog(@"Prepare initial focused item %@", initialFocusedItem);
 
-	[[ETTool activeTool] makeFirstResponder: (id)initialFocusedItem];
+	[self makeFirstResponder: (id)initialFocusedItem];
 	// FIXME: ETAssert([self focusedItem] == initialFocusedItem);
 }
 
@@ -622,7 +622,7 @@ doesn't become key unless the user clicks the titlebar or an editable widget). *
 		[self prepareInitialFocusedItem];
 	}
 
-	// TODO: Move the tool activation into -[ETTool makeFirstResponder:inWindow:]
+	// TODO: Move the tool activation into -makeFirstResponder:
 	if ([[[self windowBackedItemBoundToActiveTool] windowItem] isEqual: self])
 		return;
 
@@ -798,7 +798,7 @@ An NSInvalidArgumentException is raised when any given item is nil. */
 	   We have no dedicated tool and it is not very important because we 
 	   handle the raw events with a text widget provided by the widget backend. */
 	[ETTool setActiveTool: [ETTool tool]];
-	[[ETTool activeTool] makeFirstResponder: [editorItem view]];
+	[self makeFirstResponder: [editorItem view]];
 }
 
 /** Removes the item which provides text editing in the window.

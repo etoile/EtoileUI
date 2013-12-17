@@ -171,8 +171,8 @@ actions to be send, this way it can handle some actions by itself and when
 needed replicate other actions on each selected item. */
 - (void) didBecomeActive
 {
-	[self makeFirstMainResponder: self];
-	//ETAssert([self firstMainResponder] == self);
+	[[self firstResponderSharingArea] makeFirstResponder: self];
+	//ETAssert([[self firstResponderSharingArea] firstResponder] == self);
 }
 
 // TODO: Would be nice to merge with ETTool implementation.
@@ -328,7 +328,7 @@ returnedItemRelativePoint is a point in the window frame rect. */
 	/* Make ourself the first responder in case thos status was given to a widget 
 	   (e.g. a field editor) since the last event which was not delegated 
 	   with -tryActivateItem:withEvent: or -trySendEventToWidgetView: */
-	[self makeFirstKeyResponder: self];
+	[[self firstResponderSharingArea] makeFirstResponder: self];
 
 	ETLayoutItem *item = [self hitTestWithEvent: anEvent];
 	BOOL backgroundClick = ([item isEqual: [self targetItem]]);
@@ -424,7 +424,7 @@ be reactivated when we exit our owner layout. */
 - (void) keyDown: (ETEvent *)anEvent
 {
 	// FIXME: Is this exactly what we should do... My brain is tired.
-	if ([[self firstKeyResponder] isEqual: self] == NO)
+	if ([[[self firstResponderSharingArea] firstResponder] isEqual: self] == NO)
 	{
 		[super keyDown: anEvent];
 		return;
@@ -811,20 +811,6 @@ on the selection elements, when the receiver becomes the first responder. */
 - (BOOL) acceptsFirstResponder
 {
 	return YES;
-}
-
-/** Forces the receiver as the first responder in the current key window, by 
-ignoring aResponder. */
-- (BOOL) makeFirstKeyResponder: (id)aResponder
-{
-	return [super makeFirstKeyResponder: self];
-}
-
-/** Forces the receiver as the first responder in the current main window, by 
-ignoring aResponder. */
-- (BOOL) makeFirstMainResponder: (id)aResponder
-{
-	return [super makeFirstMainResponder: self];
 }
 
 /** Tells each item currently deselected in the target item to select itself. */

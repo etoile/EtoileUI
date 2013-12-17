@@ -15,9 +15,9 @@
 #import "ETLayoutItemFactory.h"
 #import "ETSelectTool.h"
 #import "ETScrollableAreaItem.h"
-#import "ETTool.h"
 #import "ETWindowItem.h"
 #import "ETCompatibility.h"
+#include <objc/runtime.h>
 
 @interface ETBipActionHandler : ETActionHandler
 - (void) bip: (id)sender onItem: (ETLayoutItem *)anItem;
@@ -29,12 +29,14 @@
 /* This gives us access to the first main and key responders since we cannot 
    use -makeMainWindow since main or key are resigned immediately while running 
    tests (at least from Xcode because the test process runs in background). */
-@interface ETTool (TestResponder)
-- (id) lastRequestedFirstMainResponder;
-- (id) lastRequestedFirstKeyResponder;
-@end
+@interface ETTestResponderApplication : ETApplication
+{
 
-@interface ETTestResponderTool : ETTool
+}
+
+- (void) setMainItem: (ETLayoutItem *)anItem;
+- (void) setKeyItem: (ETLayoutItem *)anItem;
+
 @end
 
 @interface TestResponder : NSObject <UKTest>
@@ -45,8 +47,7 @@
 	ETScrollableAreaItem *scrollableAreaItem;
 	ETWindowItem *windowItem;
 	ETController *controller;
-	ETTool *previousMainTool;
-	ETTool *previousActiveTool;
+	Class previousAppClass;
 }
 
 @end
@@ -57,31 +58,28 @@
 {
 	SUPERINIT;
 
+	ASSIGN(previousAppClass, [ETApp class]);
+	object_setClass([ETApplication sharedApplication], [ETTestResponderApplication class]);
+
+	ETAssert([ETApp isMemberOfClass: [ETTestResponderApplication class]]);
+
 	itemFactory = [ETLayoutItemFactory factory];
 	[self prepareNewResponderChain];
-
-	ASSIGN(previousMainTool, [ETTool mainTool]);
-	ASSIGN(previousActiveTool, [ETTool activeTool]);
-	[ETTool setMainTool: [ETTestResponderTool tool]];
-	[ETTool setActiveTool: [ETTool mainTool]];
-	ETAssert(previousActiveTool != [ETTool activeTool]);
 
 	return self;
 }
 
 - (void) dealloc
 {
+	object_setClass(ETApp, previousAppClass);
+	DESTROY(previousAppClass);
+
 	[[itemFactory windowGroup] removeItem: mainItem];
-	
-	[ETTool setMainTool: previousMainTool];
-	[ETTool setActiveTool: previousActiveTool];
-	ETAssert(previousActiveTool == [ETTool activeTool]);
-	DESTROY(previousMainTool);
-	DESTROY(previousActiveTool);
 
 	[super dealloc];
 }
 
+// TODO: Write a subclass testing mainItem as -[ETApp mainItem]
 - (void) prepareNewResponderChain
 {
 	item = [itemFactory item];
@@ -97,6 +95,11 @@
 	[mainItem setActionHandler: [ETBipActionHandler sharedInstanceForObjectGraphContext: [itemFactory objectGraphContext]]];
 	
 	[[itemFactory windowGroup] addItem: mainItem];
+	
+	/* Bringing the test suite to the front doesn't work or is unreliable if 
+	   the test suite is run inside an IDE. Unless the test suite is brought 
+	   to the front, -makeMainWindow and -makeKeyWindow are useless. */
+	[(ETTestResponderApplication *)ETApp setKeyItem: mainItem];
 	
 	windowItem = (ETWindowItem *)[mainItem decoratorItem];
 }
@@ -115,9 +118,17 @@
 	UKNotNil([ETTool activeTool]);
 
 	NSLog(@"Key %@ and main %@", [ETApp keyWindow], [ETApp mainWindow]);
-	[[ETTool activeTool] makeFirstResponder: (id)item];
+	[[item firstResponderSharingArea] makeFirstResponder: (id)item];
 
-	UKObjectsSame(item, [[ETTool activeTool] firstMainResponder]);
+	UKObjectsSame(item, [[item firstResponderSharingArea] firstResponder]);
+	UKObjectsSame(item, [[item firstResponderSharingArea] focusedItem]);
+}
+
+- (void) testExceptionOnInvalidFirstResponder
+{
+	UKRaisesException([[item firstResponderSharingArea] makeFirstResponder: (id)[windowItem window]]);
+	UKRaisesException([[item firstResponderSharingArea] makeFirstResponder: (id)[mainItem view]]);
+	UKRaisesException([[item firstResponderSharingArea] makeFirstResponder: (id)[mainItem supervisorView]]);
 }
 
 - (void) testFirstResponderLookup
@@ -149,13 +160,11 @@
 	UKTrue([mainItem isSelected]);
 }
 
-// TODO: Test keyResponder and mainResponder distinction for ETTool
-
 - (void) testFocusedItemForWindowAsFirstResponder
 {
-	[[ETTool activeTool] makeFirstResponder: (id)[windowItem window]];
+	[[windowItem window] makeFirstResponder: (id)[windowItem window]];
 	
-	UKObjectsEqual(mainItem, [windowItem focusedItem]);
+	// FIXME: UKObjectsEqual(mainItem, [windowItem focusedItem]);
 }
 
 /* For this test case, the select tool just as the first responder and not the active tool */
@@ -167,10 +176,10 @@
 
 	[[mainItem layout] setAttachedTool: tool];
 
-	[[ETTool activeTool] makeFirstResponder: tool];
+	[[mainItem firstResponderSharingArea] makeFirstResponder: tool];
 	
-	UKObjectsEqual(tool, [[ETTool activeTool] firstMainResponder]);
-	UKObjectsEqual(mainItem, [windowItem focusedItem]);
+	UKObjectsEqual(tool, [[mainItem firstResponderSharingArea] firstResponder]);
+	UKObjectsEqual(mainItem, [[mainItem firstResponderSharingArea] focusedItem]);
 }
 
 - (void) testSelectToolAsActiveTool
@@ -184,55 +193,84 @@
 	[ETTool setActiveTool: tool];
 
 	UKObjectsEqual(tool, [ETTool activeTool]);
-	// FIXME: UKObjectsEqual(tool, [[ETTool activeTool] firstMainResponder]);
-	// FIXME: UKObjectsEqual(mainItem, [windowItem focusedItem]);
+	// FIXME: UKObjectsEqual(tool, [[item firstResponderSharingArea] firstResponder]);
+	// FIXME: UKObjectsEqual(mainItem, [[item firstResponderSharingArea] focusedItem]);
+}
+
+- (void) testLayoutItemValidityAsFirstResponder
+{
+	[windowItem makeFirstResponder: item];
+	
+	UKObjectsEqual(item, [windowItem firstResponder]);
+	UKObjectsEqual(item, [windowItem focusedItem]);
+
+	[[mainItem layout] setAttachedTool: [ETArrowTool tool]];
+	[windowItem makeFirstResponder: mainItem];
+	
+	UKObjectsNotEqual(mainItem, [windowItem firstResponder]);
+	UKObjectsNotEqual(mainItem, [windowItem focusedItem]);
+
+	[[mainItem layout] setAttachedTool: [ETSelectTool tool]];
+	[windowItem makeFirstResponder: mainItem];
+	
+	UKObjectsEqual([[mainItem layout] attachedTool], [windowItem firstResponder]);
+	UKObjectsEqual(mainItem, [windowItem focusedItem]);
+}
+
+- (void) testControllerAsInvalidFirstResponder
+{
+	[windowItem makeFirstResponder: controller];
+	
+	UKObjectsNotEqual(controller, [windowItem firstResponder]);
 }
 
 - (void) testWindowItemAsInvalidFirstResponder
 {
-	[[ETTool activeTool] makeFirstResponder: (id)windowItem];
+	[windowItem makeFirstResponder: windowItem];
 	
-	UKObjectsNotEqual(windowItem, [[ETTool activeTool] firstMainResponder]);
+	UKObjectsNotEqual(windowItem, [windowItem firstResponder]);
 }
 
 - (void) testScrollableAreaItemAsInvalidFirstResponder
 {
-	[[ETTool activeTool] makeFirstResponder: (id)scrollableAreaItem];
+	[windowItem makeFirstResponder: scrollableAreaItem];
 	
-	UKObjectsNotEqual(scrollableAreaItem, [[ETTool activeTool] firstMainResponder]);
+	UKObjectsNotEqual(scrollableAreaItem, [windowItem firstResponder]);
 
+}
+
+- (void) testWindowItemActions
+{
+	
 }
 
 @end
 
 
-@implementation ETTool (TestResponder)
+@implementation ETTestResponderApplication
 
-- (id) lastRequestedFirstMainResponder
+- (ETLayoutItem *) mainItem
 {
-	return _firstMainResponder;
+	return objc_getAssociatedObject(self, "mainItem");
 }
 
-- (id) lastRequestedFirstKeyResponder
+- (void) setMainItem: (ETLayoutItem *)anItem
 {
-	return _firstKeyResponder;
+	objc_setAssociatedObject(self, "mainItem", anItem, OBJC_ASSOCIATION_RETAIN);
 }
 
-@end
-
-@implementation ETTestResponderTool
-
-- (id) firstMainResponder
+- (ETLayoutItem *) keyItem;
 {
-	return [self lastRequestedFirstMainResponder];
+	return objc_getAssociatedObject(self, "keyItem");
 }
 
-- (id) firstKeyResponder
+- (void) setKeyItem: (ETLayoutItem *)anItem
 {
-	return [self lastRequestedFirstKeyResponder];
+	objc_setAssociatedObject(self, "keyItem", anItem, OBJC_ASSOCIATION_RETAIN);
 }
 
 @end
+
 
 @implementation ETFirstResponderActionHandler
 

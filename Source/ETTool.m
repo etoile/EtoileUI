@@ -30,7 +30,6 @@
 #pragma GCC diagnostic ignored "-Wprotocol"
 
 @interface ETTool (Private)
-- (BOOL) makeFirstResponder: (id)aResponder inWindow: (NSWindow *)aWindow;
 - (BOOL) performKeyEquivalent: (ETEvent *)anEvent;
 @end
 
@@ -290,8 +289,6 @@ See also -mainTool. */
 
 - (void) dealloc
 {
-	DESTROY(_firstKeyResponder); 
-	DESTROY(_firstMainResponder);
 	// NOTE: _layoutOwner is a weak reference
 	if ([_targetItem isEqual: _layoutOwner] == NO) /* See -setTargetItem: */
 	{
@@ -311,7 +308,6 @@ See also -mainTool. */
 
 	/* NSCursor factory methods are shared instances */
 	ASSIGN(newTool->_cursor, _cursor);
-	newTool->_customActivation = _customActivation;
 
 	return newTool;
 }
@@ -404,143 +400,6 @@ See also -targetItem. */
 
 	if ([_targetItem isEqual: [self layoutOwner]])
 		RELEASE(_targetItem);
-}
-
-/** Sets the first responder window based on aResponder location in the layout 
-item tree.
-
-This method calls either -makeFirstKeyResponder: or -makeFirstMainResponder:. */
-- (BOOL) makeFirstResponder: (id)aResponder
-{
-	NSWindow *window = nil;
-
-	// FIXME: Reduce the cases to the responder is nil and -firstResponderSharingArea
-	if (aResponder == nil)
-	{
-		window = [ETApp keyWindow];
-	}
-	if ([aResponder conformsToProtocol: @protocol(ETResponder)])
-	{
-		window = [(ETWindowItem *)[aResponder firstResponderSharingArea] window];
-	}
-	else if ([aResponder isKindOfClass: [NSView class]])
-	{
-		window = [aResponder window];
-	}
-	else if ([aResponder isKindOfClass: [NSWindow class]])
-	{
-		window = aResponder;
-	}
-
-	ETDebugLog(@"Try make first responder: %@", aResponder);
-
-	return [self makeFirstResponder: aResponder inWindow: window];
-}
-
-/** Sets the first responder in the current key window. */
-- (BOOL) makeFirstKeyResponder: (id)aResponder
-{
-	return [self makeFirstResponder: aResponder inWindow: [ETApp keyWindow]];
-}
-
-/** Sets the first responder in the current main window. */
-- (BOOL) makeFirstMainResponder: (id)aResponder
-{
-	return [self makeFirstResponder: aResponder inWindow: [ETApp mainWindow]];
-}
-
-- (BOOL) makeFirstResponder: (id)aResponder inWindow: (NSWindow *)aWindow
-{
-	id responder = ([aResponder isLayoutItem] ? [aResponder responder] : aResponder);
-
-	/* For becoming first responder, views must belong to a valid window but 
-	   there are no such constraints for tools and layout items. */
-	BOOL isResponderView = ([responder isView]);
-
-	if (aWindow == nil)
-	{
-		if (isResponderView)
-		{
-			ETLog(@"WARNING: For becoming first responder, view %@ must be "
-			   "located in a window", responder);
-		}
-		return NO;
-	}
-	if (isResponderView && [(NSView *)responder window] != aWindow)
-	{
-		ETLog(@"WARNING: For becoming first responder, view %@ must be "
-			   "located in key or main window", responder);
-		return NO;
-	}
-
-	/* -[NSWindow makeFirstResponder:] calls -resignFirstResponder and 
-	   -becomeFirstResponder but not -acceptsFirstResponder according to Cocoa 
-	   API documentation (unlike GNUstep behavior). */
-	if (responder != nil && [responder acceptsFirstResponder] == NO)
-		return NO;
-
-	BOOL isNowFirstResponder = [aWindow makeFirstResponder: responder];
-	/* We must retain the responder because -[NSWindow makeFirstResponder:] 
-	   doesn't do it (not so sure anymore). */
-	if (isNowFirstResponder)
-	{
-		if ([_firstMainResponder isLayoutItem])
-		{
-			[_firstMainResponder setNeedsDisplay: YES];
-		}
-		ASSIGN(_firstMainResponder, responder);
-		if ([responder isLayoutItem])
-		{
-			[responder setNeedsDisplay: YES];
-		}
-	}
-
-	return isNowFirstResponder;
-}
-
-/** Returns the first responder in the current key window. */
-- (id) firstKeyResponder
-{
-	return [[ETApp keyWindow] firstResponder];
-}
-
-/** Returns the first responder in the current main window. */
-- (id) firstMainResponder
-{
-	return [[ETApp mainWindow] firstResponder];
-}
-
-- (BOOL) isFirstKeyResponderStillValid
-{
-	return ([[ETApp keyWindow] firstResponder] == [ETApp keyWindow]);
-}
-
-/** Returns the item which is decorated by the key window in the layout item tree.
-
-The key window can be retrieved through the decorator item with 
-[[[[ETTool activeTool] keyItem] windowItem] window]. */
-- (ETLayoutItem *) keyItem
-{
-	id contentView = [[ETApp keyWindow] contentView];
-
-	if ([contentView respondsToSelector: @selector(layoutItem)] == NO)
-		return nil;
-
-	return [contentView layoutItem];
-}
-
-/** Returns the item which is decorated by the main window in the layout item tree.
-
-The main window can be retrieved through the decorator item with 
-[[[[ETTool activeTool] mainItem] windowItem] window]. */
-- (ETLayoutItem *) mainItem
-{
-	id contentView = [[ETApp mainWindow] contentView];
-
-	if ([contentView respondsToSelector: @selector(layoutItem)] == NO)
-		return nil;
-
-	return [contentView layoutItem];
 }
 
 /* Returns nil or the candidate focused item from the target item. */
@@ -883,7 +742,7 @@ NO. */
 - (BOOL) tryActivateItem: (ETLayoutItem *)item withEvent: (ETEvent *)anEvent
 {
 	ETLayoutItem *itemToActivate = (item != nil ? item : (ETLayoutItem *)[[anEvent contentItem] firstDecoratedItem]);
-	BOOL isActivateEvent = (itemToActivate != [self keyItem]);
+	BOOL isActivateEvent = (itemToActivate != [ETApp keyItem]);
 
 	if (isActivateEvent)
 		[anEvent markAsDelivered];
@@ -980,7 +839,7 @@ NO. */
 
 - (BOOL) performKeyEquivalent: (ETEvent *)anEvent
 {
-	BOOL isHandled = [self performKeyEquivalent: anEvent inItem: [self keyItem]];
+	BOOL isHandled = [self performKeyEquivalent: anEvent inItem: [ETApp keyItem]];
 
 	if (isHandled)
 		return YES;
@@ -1030,12 +889,18 @@ NO. */
 
 - (void) keyDown: (ETEvent *)anEvent
 {
-	[self tryPerformKeyEquivalentAndSendKeyEvent: anEvent toResponder: [self firstKeyResponder]];
+	// FIXME: Don't retrieve the backend responder. The backend responder should
+	// be retrieved in -tryPerformKeyEquivalentAndSendKeyEvent:toResponder:
+	id firstResponder = [[[[ETApp keyItem] firstResponderSharingArea] window] firstResponder];
+	[self tryPerformKeyEquivalentAndSendKeyEvent: anEvent toResponder: firstResponder];
 }
 
 - (void) keyUp: (ETEvent *)anEvent
 {
-	[self tryPerformKeyEquivalentAndSendKeyEvent: anEvent toResponder: [self firstKeyResponder]];
+	// FIXME: Don't retrieve the backend responder. The backend responder should
+	// be retrieved in -tryPerformKeyEquivalentAndSendKeyEvent:toResponder:
+	id firstResponder = [[[[ETApp keyItem] firstResponderSharingArea] window] firstResponder];
+	[self tryPerformKeyEquivalentAndSendKeyEvent: anEvent toResponder: firstResponder];
 }
 
 /* Cursor */

@@ -15,6 +15,7 @@
 #import <CoreObject/COObject.h>
 #endif
 
+@class COObjectGraphContext;
 @class ETCopier;
 
 @interface ETUIObject : BASEOBJECT <NSCopying>

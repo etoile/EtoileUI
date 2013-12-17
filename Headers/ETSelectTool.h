@@ -121,8 +121,6 @@ to return NO.
 - (void) setActionHandlerPrototype: (id)aHandler;
 - (id) actionHandlerPrototype;
 - (id) actionHandler;
-- (BOOL) makeFirstKeyResponder: (id)aResponder;
-- (BOOL) makeFirstMainResponder: (id)aResponder;
 - (id) nextResponder;
 
 // TODO: Probably extract the actions handled by the select tool, which applies 

@@ -418,7 +418,7 @@ Overrides this method when you want to customize how simple click are handled. *
 - (void) handleClickItem: (ETLayoutItem *)item atPoint: (NSPoint)aPoint
 {
 	ETDebugLog(@"Click %@", item);
-	[[ETTool activeTool] makeFirstResponder: (id)item];
+	[[item firstResponderSharingArea] makeFirstResponder: (id)item];
 }
 
 /** <override-dummy />

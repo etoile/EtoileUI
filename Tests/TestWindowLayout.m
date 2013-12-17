@@ -73,7 +73,7 @@
 
 - (void) itemGroupSelectionDidChange: (NSNotification *)notif
 {
-	activeItem = [[ETTool activeTool] mainItem];
+	activeItem = [ETApp mainItem];
 }
 
 // FIXME: Activating the test suite application doesn't work, it remains in background.

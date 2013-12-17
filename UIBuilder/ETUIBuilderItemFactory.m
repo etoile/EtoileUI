@@ -686,7 +686,7 @@
 /** Starts the UI Builder to edit the key window UI. */
 - (IBAction) startEditingKeyWindowUI: (id)sender
 {
-	ETLayoutItem *editedItem = [[[ETTool activeTool] keyItem] windowBackedAncestorItem];
+	ETLayoutItem *editedItem = [ETApp keyItem];
 	ETUIBuilderItemFactory *itemFactory = [ETUIBuilderItemFactory factory];
 	ETUIBuilderController *controller = AUTORELEASE([[ETUIBuilderController alloc]
 		initWithObjectGraphContext: [itemFactory objectGraphContext]]);
@@ -699,7 +699,8 @@
 /** Stops the UI Builder that is editing the key window UI. */
 - (IBAction) stopEditingKeyWindowUI: (id)sender
 {
-	ETLayoutItemGroup *editor = [[[ETTool activeTool] keyItem] windowBackedAncestorItem];
+	ETLayoutItemGroup *editor = (id)[ETApp keyItem];
+	ETAssert([editor isGroup]);
 	ETLayoutItemGroup *contentArea = (ETLayoutItemGroup *)[editor itemForIdentifier: @"contentArea"];
 	ETAssert([contentArea numberOfItems] == 1);
 	ETLayoutItem *editedItem = [contentArea lastItem];
@@ -717,7 +718,7 @@
 /** Calls -inspectUI: on the item backed by the key window. */
 - (IBAction) inspectKeyWindowUI: (id)sender
 {
-	[[[[ETTool activeTool] keyItem] windowBackedAncestorItem] inspectUI: sender];
+	[[ETApp keyItem] inspectUI: sender];
 }
 
 @end

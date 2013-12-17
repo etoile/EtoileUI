@@ -3478,7 +3478,8 @@ See also -objectDidBeginEditing:. */
 /** Returns the item, or a responder view inside it in case the item uses a 
 widget view (either provided by the layout or as a simple widget view).
 
-Used by -[ETTool makeFirstResponder:] to determine the real responder.
+Used by -[ETFirstResponderSharingArea makeFirstResponder:] to determine the real 
+responder.
 
 If the receiver is returned, then first responder and focused item are one and 
 the same.

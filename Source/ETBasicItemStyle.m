@@ -157,7 +157,7 @@ DEALLOC(DESTROY(_labelAttributes); DESTROY(_selectedLabelAttributes));
 		[self drawSelectionIndicatorInRect: bounds];
 	}
 
-	if ([[[ETTool activeTool] firstKeyResponder] isEqual: item])
+	if ([[[item firstResponderSharingArea] firstResponder] isEqual: item])
 	{
 		[self drawFirstResponderIndicatorInRect: bounds];
 	}

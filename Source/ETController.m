@@ -1305,8 +1305,7 @@ retrieved through
 <code>[[self editedItem] firstResponderSharingArea] activeFieldEditorItem]</code>.*/
 - (id) editedItem
 {
-	ETLayoutItem *editedItem =
-		[[[[ETTool activeTool] keyItem] firstResponderSharingArea] editedItem];
+	ETLayoutItem *editedItem = [[self firstResponderSharingArea] editedItem];
 
 	return ([_editedItems containsObject: editedItem] ? editedItem : nil);
 }
@@ -1319,8 +1318,7 @@ You can use this method in action or delegate methods implemented in your
 controller subclass. */
 - (NSString *) editedProperty
 {
-	ETLayoutItem *editedItem =
-		[[[[ETTool activeTool] keyItem] firstResponderSharingArea] editedItem];
+	ETLayoutItem *editedItem = [[self firstResponderSharingArea] editedItem];
 
 	if ([_editedItems containsObject: editedItem] == NO)
 		return nil;

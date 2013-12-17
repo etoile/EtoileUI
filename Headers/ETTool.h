@@ -49,11 +49,6 @@ double-click and deactivated on a mouse click outside of their layout boundaries
 	ETLayoutItem *_targetItem;
 	ETLayout *_layoutOwner;
 	NSCursor *_cursor;
-	
-	id _firstKeyResponder; /** The last key responder set */
-	id _firstMainResponder; /** The last main responder set */
-
-	BOOL _customActivation; /* Not yet used... */
 }
 
 /* Registering Tools */
@@ -95,16 +90,6 @@ double-click and deactivated on a mouse click outside of their layout boundaries
 
 - (ETLayoutItem *) targetItem;
 - (void) setTargetItem: (ETLayoutItem *)anItem;
-
-/* Actions */
-
-- (BOOL) makeFirstResponder: (id)aResponder;
-- (BOOL) makeFirstKeyResponder: (id)aResponder;
-- (BOOL) makeFirstMainResponder: (id)aResponder;
-- (id) firstKeyResponder;
-- (id) firstMainResponder;
-- (ETLayoutItem *) keyItem;
-- (ETLayoutItem *) mainItem;
 
 /* Hit Test */
 

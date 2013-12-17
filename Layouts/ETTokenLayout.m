@@ -313,7 +313,7 @@ The resizing isn't delegated to the positional layout unlike in ETTemplateItemLa
 		         inRect: [self rectForLabel: itemLabel inFrame: bounds ofItem: item]];
 	}
 	
-	/*if ([[[ETTool activeTool] firstKeyResponder] isEqual: item])
+	/*if ([[[item firstResponderSharingArea] firstResponder] isEqual: item])
 	{
 		[self drawFirstResponderIndicatorInRect: bounds];
 	}*/

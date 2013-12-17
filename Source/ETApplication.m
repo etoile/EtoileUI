@@ -111,6 +111,42 @@ under the application control. */
 	return [[ETLayoutItemFactory factory] windowGroup];
 }
 
+/** Returns the item bound to the key first responder sharing area in the 
+layout item tree.
+
+If the main first responder sharing area is mapped to a window, 
+[[ETApp keyItem] firstResponderSharingArea] returns [[ETApp keyItem] windowItem] 
+(never use -windowItem directly to retrieve -firstResponderSharingArea).
+
+See ETFirstResponderSharingArea and ETWindowItem. */
+- (ETLayoutItem *) keyItem
+{
+	id contentView = [[ETApp keyWindow] contentView];
+
+	if ([contentView isSupervisorView] == NO)
+		return nil;
+
+	return [contentView layoutItem];
+}
+
+/** Returns the item bound to the main first responder sharing area in the 
+layout item tree.
+
+If the main first responder sharing area is mapped to a window, 
+[[ETApp mainItem] firstResponderSharingArea] returns [[ETApp mainItem] windowItem]
+(never use -windowItem directly to retrieve -firstResponderSharingArea).
+
+See ETFirstResponderSharingArea and ETWindowItem. */
+- (ETLayoutItem *) mainItem
+{
+	id contentView = [[ETApp mainWindow] contentView];
+
+	if ([contentView isSupervisorView] == NO)
+		return nil;
+
+	return [contentView layoutItem];
+}
+
 /** Returns the AppKit to EtoileUI builder that converts AppKit windows, views 
 etc. to items at launch time.
 
@@ -925,9 +961,8 @@ target directly. */
 
 - (id) targetInResponderChainForAction: (SEL)aSelector from: (id)sender
 {
-	ETTool *tool = [ETTool activeTool];
-	id firstKeyResponder = [tool firstKeyResponder];
-	id firstMainResponder = [tool firstMainResponder];
+	id firstKeyResponder = [[[self keyItem] firstResponderSharingArea] firstResponder];
+	id firstMainResponder = [[[self mainItem] firstResponderSharingArea] firstResponder];
 	BOOL keyAndMainIdentical = (firstKeyResponder == firstMainResponder);
 	id responder = [self targetForAction: aSelector 
 	                      firstResponder: firstKeyResponder 
@@ -965,16 +1000,6 @@ target directly. */
 	{
 		return [self delegate];
 	}
-
-	/* EtoileUI is not compatible with NSDocument architecture that's why 
-	   the next block is disabled. We keep it to remember where 
-	   NSDocumentControllercontroller is inserted in the responder chain.
-
-	if ([NSDocumentController isDocumentBasedApplication]
-	 && [[NSDocumentController sharedDocumentController] respondsToSelector: aSelector])
-    {
-		return [NSDocumentController sharedDocumentController];
-    } */
 
 	return nil;
 }
@@ -1189,7 +1214,7 @@ Any items that don't match the query is hidden until the search is cancelled. */
 The cut item is put on the active pickboard. */
 - (IBAction) cutWindow: (id)sender
 {
-	ETLayoutItem *item = [[[ETTool activeTool] keyItem] windowBackedAncestorItem];
+	ETLayoutItem *item = [self keyItem];
 
 	if (nil == item)
 		return;
@@ -1203,7 +1228,7 @@ The cut item is put on the active pickboard. */
 The copied item is put on the active pickboard. */
 - (IBAction) copyWindow: (id)sender
 {
-	ETLayoutItem *item = [[[ETTool activeTool] keyItem] windowBackedAncestorItem];
+	ETLayoutItem *item = [self keyItem];
 
 	if (nil == item)
 		return;
