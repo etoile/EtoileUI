@@ -11,6 +11,7 @@
 #import <EtoileUI/ETUIObject.h>
 
 @class ETLayoutItem;
+@protocol ETResponder;
 
 /** Protocol to declare an area where the first responder status is shared.
  
@@ -23,11 +24,39 @@ ETUIItem subclasses can implement this protocol.
 You shouldn't need to implement this protocol unless you implement a new 
 ETDecoratorItem subclass similar to ETWindowItem. */
 @protocol ETFirstResponderSharingArea <NSObject>
-/** Returns the item that currently has the focus from the user standpoint. */
+/** Returns the object thas the focus from the framework standpoint.
+
+See also -firstResponder and -focusedItem. */
+- (BOOL) makeFirstResponder: (id <ETResponder>)newResponder;
+/** Returns the object thas the focus from the framework standpoint.
+
+The first responder is the current responder where the action dispatch starts in 
+the EtoileUI responder chain.
+
+See -focusedItem and -makeFirstResponder:. */
+- (id <ETResponder>) firstResponder;
+/** Returns the item that currently has the focus from the user standpoint.
+
+For example, if you edit a text area, the first responder is -fieldEditorItem, 
+but the focused item is the edited text area item (usually -editedItem). 
+Another example would be, if an item group bound to a select tool is made the 
+first responder, it doesn't become the first responder but the focused item, 
+while the select tool becomes the first responder (the select tool next 
+responder will be the item group that owns it).
+
+For a focused item using a widget layout, -firstResponder and -focusedItem are 
+points to the same item group (the one owning the widget layout). Descendant 
+items that represent rows don't become focused items in this case.
+
+You can track focused item changes using ETEditionCoordinator protocol.
+
+See also -firstResponder. */
 - (ETLayoutItem *) focusedItem;
 /** Returns the item that serves as a field editor in the item tree presently.
 
-When no editing is underway, returns nil. */
+When no editing is underway, returns nil.
+
+See -firstResponder. */
 - (ETLayoutItem *) activeFieldEditorItem;
 /** Returns the item whose subject is currently edited.
 
@@ -83,7 +112,7 @@ A responder usually belongs to a responder chain through the object returned by
 In addition, a responder provides access to special objects coordinating 
 interaction among multiple UI objects present in their area. See
 -firstResponderSharingArea and -editionCoordinator. */
-@protocol ETResponder
+@protocol ETResponder <NSObject>
 
 /** @taskunit Responder Chain */
 

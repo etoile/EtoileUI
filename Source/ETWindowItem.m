@@ -20,6 +20,7 @@
 #import "EtoileUIProperties.h"
 #import "ETPickDropCoordinator.h"
 #import "ETResponderIntegration.h"
+#import "ETUIItem.h"
 #import "ETCompatibility.h"
 #import "ETView.h"
 #import "NSObject+EtoileUI.h"
@@ -648,9 +649,77 @@ doesn't become key unless the user clicks the titlebar or an editable widget). *
 	[self postSelectionChangeNotificationInWindowGroup];
 }
 
+#pragma mark - First Responder Sharing Area
+
+- (void)markResponderAsNeedingDisplay: (id <ETResponder>)responder
+{
+	if ([(id)responder isUIItem])
+	{
+		[[(ETUIItem *)responder firstDecoratedItem] setNeedsDisplay: YES];
+	}
+}
+
+/** Sets the first responder in the window.
+
+See also -firstResponder. */
+- (BOOL) makeFirstResponder: (id <ETResponder>)newResponder
+{
+	INVALIDARG_EXCEPTION_TEST(newResponder, [newResponder conformsToProtocol: @protocol(ETResponder)]);
+
+	ETDebugLog(@"Try make first responder: %@", newResponder);
+
+	// TODO: Access the additional responder for ETDecoratorItem too
+	id backendResponder =
+		([(id)newResponder isLayoutItem] ? [(ETLayoutItem *)newResponder responder] : newResponder);
+
+	/* -[NSWindow makeFirstResponder:] calls -resignFirstResponder and 
+	   -becomeFirstResponder but not -acceptsFirstResponder according to Cocoa 
+	   API documentation (unlike GNUstep behavior). */
+	if (backendResponder != nil && [backendResponder acceptsFirstResponder] == NO)
+		return NO;
+		
+	id <ETResponder> oldResponder = [self firstResponder];
+	BOOL isNowFirstResponder = [_itemWindow makeFirstResponder: backendResponder];
+
+	/* We must retain the responder because -[NSWindow makeFirstResponder:] 
+	   doesn't do it (not so sure anymore). */
+	if (isNowFirstResponder)
+	{
+		[self markResponderAsNeedingDisplay: oldResponder];
+		[self markResponderAsNeedingDisplay: newResponder];
+	}
+	ETAssert([(id)newResponder isLayoutItem] == NO || [self focusedItem] == newResponder);
+
+	return isNowFirstResponder;
+}
+
+/** Returns the first responder in the window.
+
+The first responder is the current responder where the action dispatch starts in 
+the EtoileUI responder chain.
+
+See ETResponder and -focusedItem. */
+- (id <ETResponder>) firstResponder
+{
+	// TODO: If the window is the first responder, could be better to return
+	// [self firstDecoratedItem] rathern than returning nil. This depends how
+	// we dispatch NSWindow actions in -[ETApp targetForAction:from:to:].
+	id backendFirstResponder = [_itemWindow firstResponder];
+	BOOL isEtoileUIResponder = [backendFirstResponder conformsToProtocol: @protocol(ETResponder)];
+
+	return (isEtoileUIResponder ? backendFirstResponder : [backendFirstResponder candidateFocusedItem]);
+}
+
+/** Returns the focused item in the window.
+
+The focused item can be the first responder or some previous responder higher 
+in the EtoileUI responder chain. 
+
+More explanations and examples in -[ETResponder focusedItem].
+
+See -firstResponder. */
 - (ETLayoutItem *) focusedItem
 {
-	// NOTE: NSResponder conforms to ETResponder (see ETResponder.m)
 	return [[_itemWindow firstResponder] candidateFocusedItem];
 }
 

@@ -231,6 +231,14 @@ the aspect repository. */
 #endif
 }
 
+/** Returns whether the receiver is a UI item.
+
+See also ETUIItem, -[NSObject(EtoileUI) isLayoutItem] and -[ETUIItem isDecoratorItem]. */
+- (BOOL) isUIItem
+{
+	return NO;
+}
+
 /** Returns YES if the receiver is an ETLayoutItem class or subclass instance, 
 otherwise returns NO. */
 - (BOOL) isLayoutItem

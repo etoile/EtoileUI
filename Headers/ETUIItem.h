@@ -103,6 +103,10 @@ You must never subclass ETUIItem. ETUIItem ivars must be considered private. */
 - (void) didDecorateItem: (ETUIItem *)item;
 - (void) didUndecorateItem: (ETUIItem *)item;
 
+/* @taskunit Basic Type Querying */
+
+- (BOOL) isUIItem;
+
 /** @taskunit Decoration Type Querying */
 
 - (BOOL) isDecoratorItem;

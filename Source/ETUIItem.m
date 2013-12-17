@@ -447,6 +447,14 @@ Returns the decoration rect associated with the receiver. */
 	
 }
 
+/** Returns YES.
+
+See -[NSObject(EtoileUI) isUIItem]. */
+- (BOOL) isUIItem
+{
+	return YES;
+}
+
 /** Returns whether the receiver is a decorator item.
 
 See ETDecoratorItem and also -[NSObject(EtoileUI) isLayoutItem]. */

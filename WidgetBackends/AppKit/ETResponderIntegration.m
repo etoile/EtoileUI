@@ -24,7 +24,6 @@
 
 @implementation  NSView (ETResponderSupportAdditions)
 
-
 /** Returns the candidate focused item of -owingItem. */
 - (ETLayoutItem *) candidateFocusedItem
 {

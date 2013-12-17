@@ -64,6 +64,7 @@
 
 /* Event Dispatch */
 
+- (BOOL) isUIItem;
 - (BOOL) isLayoutItem;
 - (BOOL) isLayout;
 - (BOOL) isTool;

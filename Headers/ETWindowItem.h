@@ -41,7 +41,7 @@ such as -performClose: are forwarded to the NSWindow. */
 	ETLayoutItem *_oldFocusedItem;
 }
 
-/* Factory Methods */
+/** @taskunit Factory Methods */
 
 + (ETWindowItem *) itemWithWindow: (NSWindow *)window
                objectGraphContext: (COObjectGraphContext *)aContext;
@@ -49,12 +49,12 @@ such as -performClose: are forwarded to the NSWindow. */
 + (ETWindowItem *) fullScreenItemWithObjectGraphContext: (COObjectGraphContext *)aContext;
 + (ETWindowItem *) transparentFullScreenItemWithObjectGraphContext: (COObjectGraphContext *)aContext;
 
-/* Initialization */
+/** @taskunit Initialization */
 
 - (id) initWithWindow: (NSWindow *)window
    objectGraphContext: (COObjectGraphContext *)aContext;
 
-/* Main Accessors */
+/** @taskunit Main Accessors */
 
 - (NSWindow *) window;
 - (BOOL) usesCustomWindowTitle;
@@ -63,7 +63,7 @@ such as -performClose: are forwarded to the NSWindow. */
 - (void) setShouldKeepWindowFrame: (BOOL)shouldKeepWindowFrame;
 - (CGFloat) titleBarHeight;
 
-/* Customized Decorator Methods */
+/** @taskunit Customized Decorator Methods */
 
 - (NSView *) view;
 - (NSRect) decorationRect;
@@ -71,8 +71,10 @@ such as -performClose: are forwarded to the NSWindow. */
 - (BOOL) acceptsDecoratorItem: (ETDecoratorItem *)item;
 - (BOOL) canDecorateItem: (id)item;
 
-/* First Responder Sharing Area */
+/** @taskunit First Responder Sharing Area */
 
+- (BOOL) makeFirstResponder: (id <ETResponder>)aResponder;
+- (id <ETResponder>) firstResponder;
 - (ETLayoutItem *) focusedItem;
 - (ETLayoutItem *) activeFieldEditorItem;
 - (ETLayoutItem *) editedItem;
@@ -87,7 +89,7 @@ such as -performClose: are forwarded to the NSWindow. */
 - (IBAction) performMiniaturize:(id)sender;
 - (IBAction) performZoom:(id)sender;
 
-/* Framework Private */
+/** @taskunit Framework Private */
 
 + (NSRect) convertRectToWidgetBackendScreenBase: (NSRect)rect;
 + (NSRect) convertRectFromWidgetBackendScreenBase: (NSRect)windowFrame;
