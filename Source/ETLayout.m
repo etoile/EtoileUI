@@ -10,6 +10,7 @@
 #import <EtoileFoundation/ETCollection+HOM.h>
 #import <EtoileFoundation/NSObject+Etoile.h>
 #import "ETLayout.h"
+#import "ETApplication.h"
 #import "ETAspectRepository.h"
 #import "ETGeometry.h"
 #import "ETTool.h"
@@ -157,9 +158,8 @@ Returns a new ETLayout instance. */
 
 - (void) dealloc
 {
-	/* Neither layout context and delegate have to be retained. 
-	   The layout context is our owner and retains us. */
-	
+	ETAssert([_tool isEqual: [ETTool activeTool]] == NO);
+
 	/* If the layoutOwner weak reference is not reset, passing this tool to 
 	   +[ETTool setActiveTool:] can cause a crash. */
 	[_tool setLayoutOwner: nil];
@@ -258,11 +258,20 @@ To customize the copying in a subclass, you must override
 The tool set becomes the receiver owner. See -[ETTool layoutOwner].
 
 If the previously attached tool was the active tool, the new one 
-becomes the active tool. See -[ETTool setActiveTool:].
+becomes the active tool (the receiver must be present in the item tree bound to 
+-[ETApplication layoutItem], otherwise nothing happens). See -[ETTool setActiveTool:].
+
+If the layout context is not a layout item (e.g. the receiver is a secondary 
+layout), raises a NSInvalidArgumentException.
 
 Also invokes -didChangeAttachedTool:toTool:.  */
 - (void) setAttachedTool: (ETTool *)newTool
 {
+	if ([self layoutContext] != nil)
+	{
+		INVALIDARG_EXCEPTION_TEST(newTool, [(id)[self layoutContext] isLayoutItem]);
+	}
+
 	[self willChangeValueForProperty: @"attachedTool"];
 
 	if ([newTool isEqual: _tool] == NO)
@@ -273,7 +282,8 @@ Also invokes -didChangeAttachedTool:toTool:.  */
 	ASSIGN(_tool, newTool);
 	[newTool setLayoutOwner: self];
 
-	if ([oldTool isEqual: [ETTool activeTool]])
+	if ([oldTool isEqual: [ETTool activeTool]]
+		&& [[(ETLayoutItem *)[self layoutContext] rootItem] isEqual: [ETApp layoutItem]])
 	{
 		[ETTool setActiveTool: newTool];
 	}
@@ -328,10 +338,17 @@ arrange the layout items in a specific style and order.
 You must override -setUp and/or -tearDown to react to a layout change and not 
 this method.
 
+If a tool is attached, the layout context must be a layout item, otherwise a 
+NSInvalidArgumentException is raised.
+
 The layout context is expected to retain its layout, hence the receiver doesn't 
 retain the given context. */
 - (void) setLayoutContext: (id <ETLayoutingContext>)context
 {
+	if (context != nil)
+	{
+		INVALIDARG_EXCEPTION_TEST(context, [self attachedTool] == nil || [(id)context isLayoutItem]);
+	}
 	ETDebugLog(@"Modify layout context from %@ to %@ in %@", _layoutContext, context, self);
 
 	if (context == nil)

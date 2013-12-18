@@ -34,9 +34,11 @@
 	if ([[entity name] isEqual: [ETTool className]] == NO)
 		return entity;
 
+
+	ETPropertyDescription *layoutOwner = [ETPropertyDescription descriptionWithName: @"layoutOwner" type: (id)@"ETLayout"];
 	ETPropertyDescription *cursorName = [ETPropertyDescription descriptionWithName: @"cursorName" type: (id)@"NSString"];
 
-	NSArray *persistentProperties = A(cursorName);
+	NSArray *persistentProperties = A(layoutOwner, cursorName);
 
 	[[persistentProperties mappedCollection] setPersistent: YES];
 

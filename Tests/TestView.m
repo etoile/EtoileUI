@@ -12,7 +12,7 @@
 #import "NSView+EtoileUI.h"
 #import "ETCompatibility.h"
 
-@interface TestView : NSObject <UKTest>
+@interface TestView : TestCommon <UKTest>
 @end
 
 @implementation TestView

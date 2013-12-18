@@ -1724,7 +1724,10 @@ You should never use this method unless you write an ETLayoutItem subclass. */
 			newTool = [ETTool mainTool];
 		}
 		[ETTool setActiveTool: newTool];
+		
+		ETAssert(newTool == [ETTool mainTool] || [newTool layoutOwner] == [self layout]);
 	}
+	ETAssert([oldTool layoutOwner] != [self layout]);
 
 	/* Notify the interested parties about the layout change */
 	NSNotification *notif = [NSNotification 

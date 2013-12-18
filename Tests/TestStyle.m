@@ -13,7 +13,7 @@
 #import "ETLayoutItemFactory.h"
 #import "ETCompatibility.h"
 
-@interface TestStyle: NSObject <UKTest>
+@interface TestStyle: TestCommon <UKTest>
 {
 	ETLayoutItemFactory *itemFactory;
 	ETLayoutItem *item;

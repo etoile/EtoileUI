@@ -16,7 +16,7 @@
 #import "NSView+EtoileUI.h"
 #import "ETCompatibility.h"
 
-@interface TestEtoileUIBuilder : NSObject <UKTest>
+@interface TestEtoileUIBuilder : TestCommon <UKTest>
 @end
 
 /* NSView subclass for testing -renderView */

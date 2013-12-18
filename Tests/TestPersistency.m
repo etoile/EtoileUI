@@ -49,7 +49,7 @@
 
 @end
 
-@interface TestPersistency : NSObject <UKTest>
+@interface TestPersistency : TestCommon <UKTest>
 {
 	COEditingContext *ctxt;
 	ETLayoutItemFactory *itemFactory;

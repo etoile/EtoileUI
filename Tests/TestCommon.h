@@ -32,3 +32,12 @@
 @property (nonatomic, copy) NSDictionary *emails;
 @property (nonatomic, retain) NSArray *groupNames;
 @end
+
+@class ETTool;
+
+@interface TestCommon : NSObject
+{
+	ETTool *previousActiveTool;
+}
+
+@end

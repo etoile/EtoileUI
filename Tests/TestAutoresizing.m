@@ -19,7 +19,7 @@
 #import "ETUIItem.h"
 #include <objc/runtime.h>
 
-@interface TestAutoresizing : NSObject <UKTest>
+@interface TestAutoresizing : TestCommon <UKTest>
 {
 	ETLayoutItemFactory *itemFactory;
 	ETLayoutItemGroup *itemGroup;

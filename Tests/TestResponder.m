@@ -39,7 +39,7 @@
 
 @end
 
-@interface TestResponder : NSObject <UKTest>
+@interface TestResponder : TestCommon <UKTest>
 {
 	ETLayoutItemFactory *itemFactory;
 	ETLayoutItem *item;
@@ -188,6 +188,7 @@
 
 	ETSelectTool *tool = [ETSelectTool tool];
 
+	
 	[[mainItem layout] setAttachedTool: tool];
 
 	[ETTool setActiveTool: tool];

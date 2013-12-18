@@ -17,7 +17,7 @@
 #import "ETSelectTool.h"
 #import "ETWindowItem.h"
 
-@interface TestWindowLayout : NSObject <UKTest>
+@interface TestWindowLayout : TestCommon <UKTest>
 {
 	ETLayoutItemFactory *itemFactory;
 	ETLayoutItemGroup *windowGroup;

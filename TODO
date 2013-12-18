@@ -63,6 +63,8 @@ Open Issues
 
 - Don't use NSCursor in ETTool, but add -[ETEventProcessor setCurrentCursorFromName:] or something similar
 
+- Test -[ETTool targetItem] is reset in -[ETLayoutItem didChangeLayout:]
+
 
 Old Potential Issues
 --------------------

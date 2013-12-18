@@ -21,7 +21,7 @@
 #import "ETLayoutItemFactory.h"
 #import "ETCompatibility.h"
 
-@interface TestCompositeLayout : NSObject <UKTest>
+@interface TestCompositeLayout : TestCommon <UKTest>
 {
 	ETLayoutItemFactory *itemFactory;
 	ETLayoutItemGroup *item;

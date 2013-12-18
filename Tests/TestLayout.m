@@ -61,7 +61,7 @@
 @end
 
 
-@interface TestPositionalLayout : NSObject <UKTest>
+@interface TestPositionalLayout : TestCommon <UKTest>
 {
 	ETLayoutItemFactory *itemFactory;
 	ETLayoutItemGroup *itemGroup;

@@ -17,7 +17,7 @@
 #import "ETUIItemCellIntegration.h"
 #import "ETCompatibility.h"
 
-@interface TestCell: NSObject <UKTest>
+@interface TestCell: TestCommon <UKTest>
 {
 	ETLayoutItemFactory *itemFactory;
 	ETLayoutItem *item;

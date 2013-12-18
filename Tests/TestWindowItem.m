@@ -18,7 +18,7 @@
 #import "ETScrollableAreaItem.h"
 #import "ETCompatibility.h"
 
-@interface TestWindowItem : NSObject <UKTest>
+@interface TestWindowItem : TestCommon <UKTest>
 {
 	ETLayoutItemFactory *itemFactory;
 }

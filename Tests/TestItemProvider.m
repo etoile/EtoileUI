@@ -12,7 +12,7 @@
 #import "ETLayoutItemFactory.h"
 #import "ETLayoutItem.h"
 
-@interface TestItemProvider : NSObject <UKTest>
+@interface TestItemProvider : TestCommon <UKTest>
 {
 	ETLayoutItemFactory *itemFactory;
 	ETLayoutItemGroup *itemGroup;

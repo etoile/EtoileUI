@@ -278,7 +278,6 @@ returnedItemRelativePoint is a point in the window frame rect. */
 
 - (void) setTargetItem: (id)anItem
 {
-	NSAssert(anItem != nil, @"");
 	[super setTargetItem: anItem];
 	[anItem setSelected: NO];
 	// NOTE: Mandatory to erase the handles that might have been removed
@@ -479,7 +478,7 @@ be reactivated when we exit our owner layout. */
 - (void) endEditingInsideSelection
 {
 	ETDebugLog(@"Restore original target of tool %@ to item %@", self, [[self layoutOwner] layoutContext]);
-	[self setTargetItem: (ETLayoutItem *)[[self layoutOwner] layoutContext]];
+	[self setTargetItem: nil];
 }
 
 /** Shows the selection area item in the layout. */

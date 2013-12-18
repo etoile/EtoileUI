@@ -71,6 +71,7 @@ See +[NSObject typePrefix]. */
 
 - (void) dealloc
 {
+	DESTROY(_rootItem);
 	DESTROY(_nibOwner);
 	DESTROY(_UIStateRestoration);
 	[super dealloc];
@@ -108,7 +109,7 @@ The method returns a local root item which is usually the window group or layer
 under the application control. */
 - (ETLayoutItemGroup *) layoutItem
 {
-	return [[ETLayoutItemFactory factory] windowGroup];
+	return _rootItem;
 }
 
 /** Returns the item bound to the key first responder sharing area in the 
@@ -248,6 +249,7 @@ See also -finishLaunching which is called after -run is invoked. */
 	//RECREATE_AUTORELEASE_POOL(pool);
 	[self _instantiateAppDelegateIfSpecified];
 	[self _loadMainNib];
+	ASSIGN(_rootItem, [[ETLayoutItemFactory factory] windowGroup]);
 	DESTROY(pool);
 }
 

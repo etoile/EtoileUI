@@ -8,6 +8,7 @@
 
 #import <EtoileFoundation/NSObject+Model.h>
 #import "TestCommon.h"
+#import "ETTool.h"
 
 @implementation Person
 
@@ -34,6 +35,25 @@
 {
 	return [[super propertyNames]
 			arrayByAddingObjectsFromArray: A(@"name", @"emails", @"groupNames")];
+}
+
+@end
+
+
+@implementation TestCommon : NSObject
+
+- (id) init
+{
+	SUPERINIT;
+	ASSIGN(previousActiveTool, [ETTool activeTool]);
+	return self;
+}
+
+- (void) dealloc
+{
+	[ETTool setActiveTool: previousActiveTool];
+	DESTROY(previousActiveTool);
+	[super dealloc];
 }
 
 @end

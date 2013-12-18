@@ -109,7 +109,7 @@ several prototypes might share the same class. */
 
 /** Shows a palette which lists all the registered tools. 
 
-The palette is a layout item whose represented object is the ETTool class 
+The palette is a layout item whose represented object is the ETTool class
 object. */
 + (void) show: (id)sender
 {
@@ -134,6 +134,25 @@ See +setActiveTool:, -targetItem and -layoutOwner. */
 	}
 
 	ETAssert([activeTool targetItem] != nil || [activeTool isEqual: [self mainTool]]);
+
+	// TODO: If an item is detached in the item tree, and the active tool is
+	// bound to a descendant item, we could update the active tool using:
+	//
+	// if ([detachedItem isAncestorOfItem: itemOwningActiveTool])
+	// {
+	//   [[ETTool setActiveTool: [ETTool activatableToolForItem: [detachedItem parentItem]]
+	// }
+	//
+	// We could put this code in -[ETLayout setUp], -[ETLayout tearDown],
+	// -[ETLayoutItemGrup handleDetachItem:] or -[ETLayoutItemGrup handleDetachItem:].
+	BOOL mustHaveValidLayoutOwner = (activeTool != mainTool);
+
+	if (mustHaveValidLayoutOwner)
+	{
+		NSAssert([(id)[[activeTool layoutOwner] layoutContext] rootItem] == [ETApp layoutItem],
+			@"The active tool must remain rooted in the main item tree (the application UI presently in use)");
+	}
+
 	return activeTool;
 }
 
@@ -371,13 +390,16 @@ the tool is not bound to a layout.
 See also -setTargetItem:. */
 - (ETLayoutItem *) targetItem
 {
-	// TODO: Would be better to observe an ETLayoutContextDidChangeNotification 
-	if (_targetItem == nil && [(id)[[self layoutOwner] layoutContext] isLayoutItem])
+	ETLayoutItem *targetItem = _targetItem;
+
+	if (_targetItem == nil)
 	{
-		[self setTargetItem: (ETLayoutItem *)[[self layoutOwner] layoutContext]];
+		[self validateLayoutOwner: [self layoutOwner]];
+		targetItem = (ETLayoutItem *)[[self layoutOwner] layoutContext];
 	}
-	ETAssert(_targetItem != nil || [self layoutOwner] == nil);
-	return _targetItem;
+
+	ETAssert(targetItem != nil || [self layoutOwner] == nil);
+	return targetItem;
 }
 
 /** Sets the layout item on which the receiver is currently acting.
@@ -394,32 +416,31 @@ stroke started with the mouse down event).
 
 You easily set a target item by overriding -hitTestWithEvent:inItem:.
 
+If the target item is the same than the layout owner, raises 
+NSInvalidArgumentException. To reset the the target item to the layout owner, 
+pass nil.
+
+The target item is reset on -[ETLayout setAttachedTool:].
+
 See also -targetItem. */
 - (void) setTargetItem: (ETLayoutItem *)anItem
 {
-	/* To avoid a retain cycle, we handle specially the case where the target 
-	   item is the layout context which owns the layout which owns us 
-	   (aka -ownerLayout).
-	   
-	   Here is what the ownership chain looks like with...
-	   x --> y : x owns/retains y
-	   
-	   layout context --> layout --> tool
+	/* To prevent a retain cycle in the diagram below, we prevent _targetItem
+	   and [_layoutOwner layoutContext] to point to the same object.
+
+	   layout context ---> layout ---> tool
 	         |                           |
 			 v                           |
-		child/target item <---------------
+	   child/target item <----------------
 		
-		We first check that _targetItem and anItem are not the same, otherwise 
-		RELEASE(_targetItem) would result in an extra release.
+	    If the targetItem is set to nil, -targetItem returns -layoutOwner.
 	 */
+	INVALIDARG_EXCEPTION_TEST(anItem, anItem == nil || anItem != (id)[[self layoutOwner] layoutContext]);
+
 	if ([anItem isEqual: _targetItem])
 		return;
 
 	ASSIGN(_targetItem, anItem);
-
-
-	if ([_targetItem isEqual: [self layoutOwner]])
-		RELEASE(_targetItem);
 }
 
 /* Returns nil or the candidate focused item from the target item. */
@@ -493,14 +514,27 @@ You should never need to use this method. */
 	return newStack;
 }
 
+- (void) validateLayoutOwner: (ETLayout *)aLayout
+{
+	if ([aLayout layoutContext] != nil && [(id)[aLayout layoutContext] isLayoutItem] == NO)
+	{
+		[NSException raise: NSInternalInconsistencyException
+		            format: @"You cannot have a tool attached to a secondary layout "
+					         "(usually a computed layout set on some other layout)"];
+	}
+}
+
 /** Sets the layout to which the tool is attached to.
 
-aLayout has ownership over the receiver, so it won't be retained. */
+aLayout has ownership over the receiver, so it won't be retained.
+
+Changing the layout owner resets -targetItem to return 
+<code>[[self layoutOwner] layoutContext]</code>. */
 - (void) setLayoutOwner: (ETLayout *)aLayout
 {
+	[self validateLayoutOwner: aLayout];
 	_layoutOwner = aLayout;
-	if ([(id)[aLayout layoutContext] isLayoutItem])
-		[self setTargetItem: (ETLayoutItem *)[aLayout layoutContext]];
+	[self setTargetItem: nil];
 }
 
 /** Returns the layout to which the tool is attached to. */

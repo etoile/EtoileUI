@@ -96,7 +96,7 @@
 
 @end
 
-@interface TestController : NSObject <UKTest>
+@interface TestController : TestCommon <UKTest>
 {
 	ETController *controller;
 	ETLayoutItemGroup *content;

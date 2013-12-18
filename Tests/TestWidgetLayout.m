@@ -11,7 +11,7 @@
 #import "ETTableLayout.h"
 #import "ETCompatibility.h"
 
-@interface TestWidgetLayout : NSObject <UKTest>
+@interface TestWidgetLayout : TestCommon <UKTest>
 {
 
 }

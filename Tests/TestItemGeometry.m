@@ -52,7 +52,7 @@
 
 @end
 
-@interface TestItemGeometry : NSObject <UKTest>
+@interface TestItemGeometry : TestCommon <UKTest>
 {
 	ETLayoutItemFactory *itemFactory;
 	ETLayoutItem *item;

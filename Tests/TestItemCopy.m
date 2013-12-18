@@ -66,7 +66,7 @@
 }
 @end
 
-@interface TestItemCopy: NSObject <UKTest>
+@interface TestItemCopy: TestCommon <UKTest>
 {
 	ETLayoutItemFactory *itemFactory;
 	ETLayoutItem *item;

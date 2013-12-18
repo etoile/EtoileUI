@@ -28,7 +28,7 @@
 
 @end
 
-@interface TestPickboard : NSObject <UKTest>
+@interface TestPickboard : TestCommon <UKTest>
 {
 	ETLayoutItemFactory *itemFactory;
 	ETPickboard *pickboard;

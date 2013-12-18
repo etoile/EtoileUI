@@ -15,7 +15,7 @@
 #import "ETWidget.h"
 #import "EtoileUIProperties.h"
 
-@interface TestItemValue : NSObject <UKTest>
+@interface TestItemValue : TestCommon <UKTest>
 {
 	ETLayoutItemFactory *itemFactory;
 	ETLayoutItemGroup *itemGroup;

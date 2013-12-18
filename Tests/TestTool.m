@@ -32,14 +32,14 @@
 - (NSRect) bounds;
 @end
 
-@interface TestTool : NSObject <UKTest>
+@interface TestTool : TestCommon <UKTest>
 {
 	ETTool *tool;
 }
 
 @end
 
-@interface BasicEventTest : NSObject <UKTest>
+@interface BasicEventTest : TestCommon <UKTest>
 {
 	ETLayoutItemGroup *mainItem;
 	ETTool *tool;
@@ -64,6 +64,19 @@
 {
 	DESTROY(tool);
 	[super dealloc];
+}
+
+- (void) testBasicTool
+{
+	UKDoesNotRaiseException([tool layoutOwner]);
+	UKDoesNotRaiseException([tool targetItem]);
+}
+
+- (void) testDefaultActiveTool
+{
+	UKDoesNotRaiseException([ETTool activeTool]);
+	UKDoesNotRaiseException([[ETTool activeTool] layoutOwner]);
+	UKDoesNotRaiseException([[ETTool activeTool] targetItem]);
 }
 
 - (void) testLookUpArrowCursor
@@ -508,7 +521,14 @@ inside the content bounds. */
 	return self;
 }
 
-DEALLOC(DESTROY(rootItem); DESTROY(item1); DESTROY(item2); DESTROY(item21))
+- (void) dealloc
+{
+	DESTROY(rootItem);
+	DESTROY(item1);
+	DESTROY(item2);
+	DESTROY(item21);
+	[super dealloc];
+}
 
 - (void) testFreeLayoutInit
 {

@@ -15,7 +15,7 @@
 #import "ETLayoutItemGroup.h"
 #import "ETCompatibility.h"
 
-@interface TestFormLayout : NSObject <UKTest>
+@interface TestFormLayout : TestCommon <UKTest>
 {
 	ETLayoutItemFactory *itemFactory;
 	ETLayoutItemGroup *mainItem;
