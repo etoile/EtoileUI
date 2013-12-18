@@ -61,6 +61,8 @@ Open Issues
 	
 - Finish cleaning NSView+EtoileUI
 
+- -[ETTool cursor] should be -[ETTool cursorImage], and we should let the AppKit widget backend turns it into a NSCursor
+
 
 Old Potential Issues
 --------------------

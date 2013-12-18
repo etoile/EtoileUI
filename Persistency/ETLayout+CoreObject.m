@@ -25,16 +25,6 @@
 
 @implementation ETLayout (CoreObject)
 
-- (NSString *) serializedAttachedTool
-{
-	return NSStringFromClass([[self attachedTool] class]);
-}
-
-- (void) setSerializedAttachedTool: (NSString *)aToolClassName
-{
-	[self setAttachedTool: [NSClassFromString(aToolClassName) tool]];
-}
-
 - (COObject *) serializedDelegate
 {
 	BOOL isPersistent = ([delegate isKindOfClass: [COObject class]]

@@ -29,12 +29,12 @@
 
 @implementation ETSelectTool
 
-- (id) init
+- (id) initWithObjectGraphContext: (COObjectGraphContext *)aContext
 {
-	// TODO: Remove once ETTool is a COObject subclass
-	COObjectGraphContext *aContext = [ETUIObject defaultTransientObjectGraphContext];
+	self = [super initWithObjectGraphContext: aContext];
+	if (self == nil)
+		return nil;
 
-	SUPERINIT
 	[self setCursor: [NSCursor pointingHandCursor]];
 	/* We use the accessors to sync the layout if needed */
 	[self setAllowsMultipleSelection: YES];
@@ -48,17 +48,23 @@
 
 DEALLOC(DESTROY(_actionHandlerPrototype); DESTROY(_selectionAreaItem));
 
-- (id) copyWithZone: (NSZone *)aZone
+- (id) copyWithCopier: (ETCopier *)aCopier
 {
-	ETSelectTool *newTool = [super copyWithZone: aZone];
+	ETSelectTool *newTool = [super copyWithCopier: aCopier];
+
+	if ([aCopier isAliasedCopy])
+		return newTool;
+
+	[aCopier beginCopyFromObject: self toObject: newTool];
 
 	[newTool setAllowsEmptySelection: [self allowsEmptySelection]];
 	[newTool setAllowsMultipleSelection: [self allowsMultipleSelection]];
 	newTool->_removeItemsAtPickTime = _removeItemsAtPickTime;
 	newTool->_forcesItemPick = _forcesItemPick;
 	ASSIGN(newTool->_actionHandlerPrototype, _actionHandlerPrototype);
-	newTool->_selectionAreaItem = [_selectionAreaItem copyWithZone: aZone];
+	newTool->_selectionAreaItem = [_selectionAreaItem copyWithZone: [aCopier zone]];
 
+	[aCopier endCopy];
 	return newTool;
 }
 

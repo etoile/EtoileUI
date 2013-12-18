@@ -285,6 +285,8 @@
 		608EBAF3100D22AB00B36FAB /* OutlinePrototype.nib in Resources */ = {isa = PBXBuildFile; fileRef = 608EBAE6100D22AB00B36FAB /* OutlinePrototype.nib */; };
 		608EBAF4100D22AB00B36FAB /* TablePrototype.nib in Resources */ = {isa = PBXBuildFile; fileRef = 608EBAE8100D22AB00B36FAB /* TablePrototype.nib */; };
 		608EBAF5100D22AB00B36FAB /* ViewModelPrototype.nib in Resources */ = {isa = PBXBuildFile; fileRef = 608EBAEA100D22AB00B36FAB /* ViewModelPrototype.nib */; };
+		60908DE6186195DC00E44F24 /* ETTool+ModelDescription.m in Sources */ = {isa = PBXBuildFile; fileRef = 60908DE5186195DC00E44F24 /* ETTool+ModelDescription.m */; };
+		60908DE7186195DC00E44F24 /* ETTool+ModelDescription.m in Sources */ = {isa = PBXBuildFile; fileRef = 60908DE5186195DC00E44F24 /* ETTool+ModelDescription.m */; };
 		609097990CAEBC32009CAD27 /* NSObject+EtoileUI.h in Headers */ = {isa = PBXBuildFile; fileRef = 609097970CAEBC32009CAD27 /* NSObject+EtoileUI.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		6090979A0CAEBC32009CAD27 /* NSObject+EtoileUI.m in Sources */ = {isa = PBXBuildFile; fileRef = 609097980CAEBC32009CAD27 /* NSObject+EtoileUI.m */; };
 		60909CD90CB2DAB3009CAD27 /* TableController.m in Sources */ = {isa = PBXBuildFile; fileRef = 60909CD80CB2DAB3009CAD27 /* TableController.m */; };
@@ -1000,6 +1002,7 @@
 		608EBAE7100D22AB00B36FAB /* English */ = {isa = PBXFileReference; lastKnownFileType = wrapper.nib; name = English; path = English.lproj/OutlinePrototype.nib; sourceTree = "<group>"; };
 		608EBAE9100D22AB00B36FAB /* English */ = {isa = PBXFileReference; lastKnownFileType = wrapper.nib; name = English; path = English.lproj/TablePrototype.nib; sourceTree = "<group>"; };
 		608EBAEB100D22AB00B36FAB /* English */ = {isa = PBXFileReference; lastKnownFileType = wrapper.nib; name = English; path = English.lproj/ViewModelPrototype.nib; sourceTree = "<group>"; };
+		60908DE5186195DC00E44F24 /* ETTool+ModelDescription.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = "ETTool+ModelDescription.m"; path = "ModelDescription/ETTool+ModelDescription.m"; sourceTree = "<group>"; };
 		609097010CADC366009CAD27 /* PhotoViewExample-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = "PhotoViewExample-Info.plist"; path = "PhotoViewExample/PhotoViewExample-Info.plist"; sourceTree = "<group>"; };
 		609097970CAEBC32009CAD27 /* NSObject+EtoileUI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "NSObject+EtoileUI.h"; path = "Headers/NSObject+EtoileUI.h"; sourceTree = "<group>"; };
 		609097980CAEBC32009CAD27 /* NSObject+EtoileUI.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = "NSObject+EtoileUI.m"; path = "Source/NSObject+EtoileUI.m"; sourceTree = "<group>"; };
@@ -1510,6 +1513,7 @@
 				60A6586013B0EFEF000A6EB6 /* ETStyle+ModelDescription.m */,
 				601296A813C7482500980F16 /* ETLayout+ModelDescription.m */,
 				601296A713C7482500980F16 /* ETController+ModelDescription.m */,
+				60908DE5186195DC00E44F24 /* ETTool+ModelDescription.m */,
 				603D7D0913D363BA007AABE2 /* ETActionHandler+ModelDescription.m */,
 				609DE83F1761C86900F486FD /* NSSortDescriptor+ModelDescription.m */,
 				609DE8421761D0C000F486FD /* ETUTI+ModelDescription.m */,
@@ -2987,6 +2991,7 @@
 				601977A3185F61C600635BE2 /* ETView.m in Sources */,
 				601977A9185F6B4B00635BE2 /* ETUIItemCellIntegration.m in Sources */,
 				601977C0186050F200635BE2 /* NSView+EtoileUI.m in Sources */,
+				60908DE7186195DC00E44F24 /* ETTool+ModelDescription.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -3179,6 +3184,7 @@
 				601977A2185F61C600635BE2 /* ETView.m in Sources */,
 				601977A8185F6B4B00635BE2 /* ETUIItemCellIntegration.m in Sources */,
 				601977BF18604E3700635BE2 /* NSView+EtoileUI.m in Sources */,
+				60908DE6186195DC00E44F24 /* ETTool+ModelDescription.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

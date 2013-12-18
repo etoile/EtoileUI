@@ -148,18 +148,29 @@ The drag request can be handled with
 
 DEALLOC(DESTROY(_draggedItem))
 
-- (id) init
+- (id) initWithObjectGraphContext: (COObjectGraphContext *)aContext
 {
-	SUPERINIT
+	self = [super initWithObjectGraphContext: aContext];
+	if (self == nil)
+		return nil;
+
 	[self setCursor: [NSCursor openHandCursor]];
 	_isTranslateMode = YES;
 	return self;
 }
 
-- (id) copyWithZone: (NSZone *)aZone
+- (id) copyWithCopier: (ETCopier *)aCopier
 {
-	ETMoveTool *newTool = [super copyWithZone: aZone];
+	ETMoveTool *newTool = [super copyWithCopier: aCopier];
+
+	if ([aCopier isAliasedCopy])
+		return newTool;
+
+	[aCopier beginCopyFromObject: self toObject: newTool];
+
 	newTool->_isTranslateMode = _isTranslateMode;
+
+	[aCopier endCopy];
 	return newTool;
 }
 
@@ -189,10 +200,9 @@ actions in reaction to a drag event.
 See also -shouldProduceTranslateActions. */
 - (void) setShouldProduceTranslateActions: (BOOL)translate
 {
+
 	_isTranslateMode = translate;
 }
-
-// NOTE: We don't need to override -copyWithZone:
 
 /* Passes events only to the decorator items bound to the target item.
 

@@ -60,7 +60,7 @@ See also NSObject(ETAspectRegistration). */
 
 	FOREACH([self allSubclasses], subclass, Class)
 	{
-		[self registerTool: AUTORELEASE([[subclass alloc] init])];
+		[self registerTool: AUTORELEASE([[subclass alloc] initWithObjectGraphContext: [ETUIObject defaultTransientObjectGraphContext]])];
 	}
 }
 
@@ -277,12 +277,15 @@ See also -mainTool. */
 /** Returns a new autoreleased tool instance. */
 + (id) tool
 {
-	return AUTORELEASE([[self alloc] init]);
+	return AUTORELEASE([[self alloc] initWithObjectGraphContext: [ETUIObject defaultTransientObjectGraphContext]]);
 }
 
-- (id) init
+- (id) initWithObjectGraphContext: (COObjectGraphContext *)aContext
 {
-	SUPERINIT
+	self = [super initWithObjectGraphContext: aContext];
+	if (self == nil)
+		return nil;
+
 	[self setCursor: [NSCursor arrowCursor]];
 	return self;
 }
@@ -299,17 +302,34 @@ See also -mainTool. */
 	[super dealloc];
 }
 
-- (id) copyWithZone: (NSZone *)aZone
+- (id) copyWithCopier: (ETCopier *)aCopier
 {
-	ETTool *newTool = [[[self class] allocWithZone: aZone] init];
+	ETTool *newTool = [super copyWithCopier: aCopier];
 
-	// NOTE: For now, we don't copy any NSResponder property such as 
-	// -nextResponder or -menu.
+	if ([aCopier isAliasedCopy])
+		return newTool;
+
+	[aCopier beginCopyFromObject: self toObject: newTool];
 
 	/* NSCursor factory methods are shared instances */
 	ASSIGN(newTool->_cursor, _cursor);
+	// FIXME: Copy layoutOwner and targetItem
 
+	[aCopier endCopy];
 	return newTool;
+}
+
+- (BOOL) respondsToSelector: (SEL)aSelector
+{
+	if ([super respondsToSelector: aSelector])
+		return YES;
+	
+	return [[ETActionHandler sharedFallbackResponder] respondsToSelector: aSelector];
+}
+
+- (id) forwardingTargetForSelector:(SEL)aSelector
+{
+	return [ETActionHandler sharedFallbackResponder];
 }
 
 /** Returns YES. */

@@ -18,9 +18,12 @@
 
 /** Initializes and returns a new paint bucket tool which is set up with orange 
 as stroke color and brown as fill color. */
-- (id) init
+- (id) initWithObjectGraphContext: (COObjectGraphContext *)aContext
 {
-	SUPERINIT
+	self = [super initWithObjectGraphContext: aContext];
+	if (self == nil)
+		return nil;
+
 	ASSIGN(_strokeColor, [NSColor orangeColor]);
 	ASSIGN(_fillColor, [NSColor brownColor]);
 	return self;
@@ -33,12 +36,20 @@ as stroke color and brown as fill color. */
     [super dealloc];
 }
 
-- (id) copyWithZone: (NSZone *)aZone
+- (id) copyWithCopier: (ETCopier *)aCopier
 {
-	ETPaintBucketTool *newTool = [super copyWithZone: aZone];
-	newTool->_fillColor = [_fillColor copyWithZone: aZone];
-	newTool->_strokeColor = [_strokeColor copyWithZone: aZone];
+	ETPaintBucketTool *newTool = [super copyWithCopier: aCopier];
+
+	if ([aCopier isAliasedCopy])
+		return newTool;
+
+	[aCopier beginCopyFromObject: self toObject: newTool];
+
+	newTool->_fillColor = [_fillColor copyWithZone: [aCopier zone]];
+	newTool->_strokeColor = [_strokeColor copyWithZone: [aCopier zone]];
 	newTool->_paintMode = _paintMode;
+
+	[aCopier endCopy];
 	return newTool;
 }
 
@@ -51,7 +62,9 @@ as stroke color and brown as fill color. */
 /** Sets the fill color associated with the receiver. */
 - (void) setFillColor: (NSColor *)color
 {
+	[self willChangeValueForProperty: @"fillColor"];
 	ASSIGNCOPY(_fillColor, color);
+	[self didChangeValueForProperty: @"fillColor"];
 }
 
 /** Returns the stroke color associated with the receiver. */
@@ -63,7 +76,9 @@ as stroke color and brown as fill color. */
 /** Sets the stroke color associated with the receiver. */
 - (void) setStrokeColor: (NSColor *)color
 {
+	[self willChangeValueForProperty: @"strokeColor"];
 	ASSIGNCOPY(_strokeColor, color);
+	[self didChangeValueForProperty: @"strokeColor"];
 }
 
 /** Returns the paint action produced by the receiver, either stroke or fill. */
@@ -75,7 +90,9 @@ as stroke color and brown as fill color. */
 /** Sets the paint action produced by the receiver, either stroke or fill. */
 - (void) setPaintMode: (ETPaintMode)aMode
 {
+	[self willChangeValueForProperty: @"paintMode"];
 	_paintMode = aMode;
+	[self didChangeValueForProperty: @"paintMode"];
 }
 
 /* Outside of the boundaries doesn't count because the parent tool will 

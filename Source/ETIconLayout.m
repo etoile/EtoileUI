@@ -339,9 +339,12 @@ the given indicator rect. */
 
 @implementation ETSelectAndClickTool
 
-- (id) init
+- (id) initWithObjectGraphContext: (COObjectGraphContext *)aContext
 {
-	SUPERINIT;
+	self = [super initWithObjectGraphContext: aContext];
+	if (self == nil)
+		return nil;
+
 	_ignoresBackgroundClick = YES;
 	return self;
 }
@@ -353,7 +356,9 @@ the given indicator rect. */
 
 - (void) setIgnoresBackgroundClick: (BOOL)noBackgroundClick
 {
+	[self willChangeValueForProperty: @"ignoresBackgroundClick"];
 	_ignoresBackgroundClick = noBackgroundClick;
+	[self didChangeValueForProperty: @"ignoresBackgroundClick"];
 }
 
 - (void) handleClickWithEvent: (ETEvent *)anEvent

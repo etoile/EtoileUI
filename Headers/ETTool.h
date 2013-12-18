@@ -13,7 +13,9 @@
 #import <Foundation/Foundation.h>
 #import <AppKit/AppKit.h>
 #import <EtoileUI/ETResponder.h>
+#import <EtoileUI/ETUIObject.h>
 
+@class COObjectGraphContext;
 @class ETEvent, ETLayoutItem, ETLayoutItemGroup, ETLayout;
 
 /** Action Handlers are bound to layout items.
@@ -43,7 +45,7 @@ deactivated on mouse exit. However some intruments such as ETSelectTool
 implement a custom policy: the tools of child layouts are activated on 
 double-click and deactivated on a mouse click outside of their layout boundaries
 (see -setDeactivateOn:). */
-@interface ETTool : NSResponder <NSCopying, ETResponder>
+@interface ETTool : ETUIObject <ETResponder>
 {
 	@private
 	ETLayoutItem *_targetItem;
@@ -51,7 +53,7 @@ double-click and deactivated on a mouse click outside of their layout boundaries
 	NSCursor *_cursor;
 }
 
-/* Registering Tools */
+/** @taskunit Registering Tools */
 
 + (void) registerAspects;
 + (void) registerTool: (ETTool *)anTool;
@@ -60,12 +62,12 @@ double-click and deactivated on a mouse click outside of their layout boundaries
 
 + (void) show: (id)sender;
 
-/* Tool Activation */
+/** @taskunit Tool Activation */
 
 + (ETTool *) updateActiveToolWithEvent: (ETEvent *)anEvent;
 + (void) updateCursorIfNeededForItem: (ETLayoutItem *)anItem;
 
-/* Factory Methods */
+/** @taskunit Factory Methods */
 
 + (id) activeTool;
 + (ETTool *) setActiveTool: (ETTool *)toolToActivate;
@@ -75,15 +77,15 @@ double-click and deactivated on a mouse click outside of their layout boundaries
 
 + (id) tool;
 
-/* Initialization */
+/** @taskunit Initialization */
 
-- (id) init;
+- (id) initWithObjectGraphContext: (COObjectGraphContext *)aContext;
 
-- (id) copyWithZone: (NSZone *)aZone;
+/** @taskunit Type Querying */
 
 - (BOOL) isTool;
 
-/* Activation Hooks */
+/** @taskunit Activation Hooks */
 
 - (void) didBecomeActive;
 - (void) didBecomeInactive;
@@ -91,7 +93,7 @@ double-click and deactivated on a mouse click outside of their layout boundaries
 - (ETLayoutItem *) targetItem;
 - (void) setTargetItem: (ETLayoutItem *)anItem;
 
-/* Hit Test */
+/** @taskunit Hit Test */
 
 - (ETLayoutItem *) hitItemForNil;
 - (ETLayoutItem *) hitTestWithEvent: (ETEvent *)anEvent;
@@ -107,7 +109,7 @@ double-click and deactivated on a mouse click outside of their layout boundaries
 				        inItem: (ETLayoutItem *)anItem
 				   wasReplaced: (BOOL)wasItemReplaced;
 
-/* Events */
+/** @taskunit Handling Events */
 
 - (BOOL) tryActivateItem: (ETLayoutItem *)item withEvent: (ETEvent *)anEvent;
 - (void) trySendEventToWidgetView: (ETEvent *)anEvent;
@@ -126,16 +128,16 @@ double-click and deactivated on a mouse click outside of their layout boundaries
 - (void) keyDown: (ETEvent *)anEvent;
 - (void) keyUp: (ETEvent *)anEvent;
 
-/* Cursor */
+/** @taskunit Cursor */
 
 - (void) setCursor: (NSCursor *)aCursor;
 - (NSCursor *) cursor;
 
-/* UI Utility */
+/** @taskunit UI Utility */
 
 - (NSMenu *) menuRepresentation;
 
-/* Framework Private */
+/** @taskunit Framework Private */
 
 + (NSMutableArray *) hoveredItemStackForItem: (ETLayoutItem *)anItem;
 
