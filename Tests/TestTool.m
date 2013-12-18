@@ -32,6 +32,13 @@
 - (NSRect) bounds;
 @end
 
+@interface TestTool : NSObject <UKTest>
+{
+	ETTool *tool;
+}
+
+@end
+
 @interface BasicEventTest : NSObject <UKTest>
 {
 	ETLayoutItemGroup *mainItem;
@@ -43,6 +50,44 @@
 
 #define WIN_WIDTH 300
 #define WIN_HEIGHT 200
+
+@implementation TestTool
+
+- (id) init
+{
+	SUPERINIT;
+	ASSIGN(tool, [ETTool tool]);
+	return self;
+}
+
+- (void) dealloc
+{
+	DESTROY(tool);
+	[super dealloc];
+}
+
+- (void) testLookUpArrowCursor
+{
+	[tool setCursorName: kETToolCursorNameArrow];
+	
+	UKObjectsEqual([NSCursor arrowCursor], [tool cursor]);
+}
+
+- (void) testLookUpOpenHandCursor
+{
+	[tool setCursorName: kETToolCursorNameOpenHand];
+	
+	UKObjectsEqual([NSCursor openHandCursor], [tool cursor]);
+}
+
+- (void) testLookUpPointingHandCursor
+{
+	[tool setCursorName: kETToolCursorNamePointingHand];
+	
+	UKObjectsEqual([NSCursor pointingHandCursor], [tool cursor]);
+}
+
+@end
 
 /* Verify that AppKit does not check whether the content view uses flipped 
 coordinates or not to set the event location in the window. */

@@ -154,7 +154,7 @@ DEALLOC(DESTROY(_draggedItem))
 	if (self == nil)
 		return nil;
 
-	[self setCursor: [NSCursor openHandCursor]];
+	[self setCursorName: kETToolCursorNameOpenHand];
 	_isTranslateMode = YES;
 	return self;
 }

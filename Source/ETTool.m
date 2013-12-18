@@ -286,7 +286,7 @@ See also -mainTool. */
 	if (self == nil)
 		return nil;
 
-	[self setCursor: [NSCursor arrowCursor]];
+	[self setCursorName: kETToolCursorNameArrow];
 	return self;
 }
 
@@ -297,7 +297,7 @@ See also -mainTool. */
 	{
 		DESTROY(_targetItem);
 	}
-	DESTROY(_cursor);
+	DESTROY(_cursorName);
 
 	[super dealloc];
 }
@@ -312,7 +312,7 @@ See also -mainTool. */
 	[aCopier beginCopyFromObject: self toObject: newTool];
 
 	/* NSCursor factory methods are shared instances */
-	ASSIGN(newTool->_cursor, _cursor);
+	ASSIGN(newTool->_cursorName, _cursorName);
 	// FIXME: Copy layoutOwner and targetItem
 
 	[aCopier endCopy];
@@ -925,17 +925,37 @@ NO. */
 
 /* Cursor */
 
-/** Sets the cursor that represents the receiver, and which replaces the 
-current cursor when the receiver is the activatable tool. */
-- (void) setCursor: (NSCursor *)aCursor
+/** Sets the name of the cursor that represents the receiver.
+
+This name is used to look up the cursor replacing the previous active tool 
+cursor, when the receiver becomes activated. */
+- (void) setCursorName: (NSString *)aName
 {
-	ASSIGN(_cursor, aCursor);
+	[self willChangeValueForProperty: @"cursorName"];
+	ASSIGN(_cursorName, aName);
+	[self didChangeValueForProperty: @"cursorName"];
 }
+
+/** Returns the name of the cursor that represents the receiver.
+
+See also -setCursor:. */
+- (NSString *) cursorName
+{
+	return _cursorName;
+}
+
 
 /** Returns the cursor that represents the receiver. */
 - (NSCursor *) cursor
 {
-	return _cursor;
+	SEL factoryMethodSel = NSSelectorFromString([self cursorName]);
+
+	if ([NSCursor respondsToSelector: factoryMethodSel] == NO)
+	{
+		[NSException raise: NSInternalInconsistencyException
+		            format: @"Unsupported cursor name %@", [self cursorName]];
+	}
+	return [NSCursor performSelector: factoryMethodSel];
 }
 
 /* UI Utility */
@@ -947,3 +967,7 @@ current cursor when the receiver is the activatable tool. */
 }
 
 @end
+
+NSString * const kETToolCursorNameArrow = @"arrowCursor";
+NSString * const kETToolCursorNameOpenHand = @"openHandCursor";
+NSString * const kETToolCursorNamePointingHand = @"pointingHandCursor";

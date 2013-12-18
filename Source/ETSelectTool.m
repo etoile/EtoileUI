@@ -35,7 +35,7 @@
 	if (self == nil)
 		return nil;
 
-	[self setCursor: [NSCursor pointingHandCursor]];
+	[self setCursorName: kETToolCursorNamePointingHand];
 	/* We use the accessors to sync the layout if needed */
 	[self setAllowsMultipleSelection: YES];
 	[self setAllowsEmptySelection: YES];

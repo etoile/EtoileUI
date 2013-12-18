@@ -50,7 +50,7 @@ double-click and deactivated on a mouse click outside of their layout boundaries
 	@private
 	ETLayoutItem *_targetItem;
 	ETLayout *_layoutOwner;
-	NSCursor *_cursor;
+	NSString *_cursorName;
 }
 
 /** @taskunit Registering Tools */
@@ -130,8 +130,8 @@ double-click and deactivated on a mouse click outside of their layout boundaries
 
 /** @taskunit Cursor */
 
-- (void) setCursor: (NSCursor *)aCursor;
-- (NSCursor *) cursor;
+- (NSString *) cursorName;
+- (void) setCursorName: (NSString *)aName;
 
 /** @taskunit UI Utility */
 
@@ -140,9 +140,9 @@ double-click and deactivated on a mouse click outside of their layout boundaries
 /** @taskunit Framework Private */
 
 + (NSMutableArray *) hoveredItemStackForItem: (ETLayoutItem *)anItem;
-
 - (void) setLayoutOwner: (ETLayout *)aLayout;
 - (ETLayout *) layoutOwner;
+- (NSCursor *) cursor;
 
 // FIXME: Remove... clang complains about -[NSResponder performKeyEquivalent:] 
 // whose argument is NSEvent * and misses the declaration in the private category.
@@ -150,3 +150,7 @@ double-click and deactivated on a mouse click outside of their layout boundaries
 - (BOOL) performKeyEquivalent: (ETEvent *)anEvent;
 
 @end
+
+extern NSString * const kETToolCursorNameArrow;
+extern NSString * const kETToolCursorNameOpenHand;
+extern NSString * const kETToolCursorNamePointingHand;

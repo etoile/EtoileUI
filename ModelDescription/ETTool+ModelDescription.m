@@ -34,9 +34,9 @@
 	if ([[entity name] isEqual: [ETTool className]] == NO)
 		return entity;
 
-	ETPropertyDescription *cursor = [ETPropertyDescription descriptionWithName: @"cursor" type: (id)@"NSCursor"];
+	ETPropertyDescription *cursorName = [ETPropertyDescription descriptionWithName: @"cursorName" type: (id)@"NSString"];
 
-	NSArray *persistentProperties = A(cursor);
+	NSArray *persistentProperties = A(cursorName);
 
 	[[persistentProperties mappedCollection] setPersistent: YES];
 
