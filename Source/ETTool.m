@@ -149,7 +149,7 @@ See +setActiveTool:, -targetItem and -layoutOwner. */
 
 	if (mustHaveValidLayoutOwner)
 	{
-		NSAssert([(id)[[activeTool layoutOwner] layoutContext] rootItem] == [ETApp layoutItem],
+		NSAssert([(id)[[activeTool layoutOwner] layoutContext] rootItem] == [ETApp rootItem],
 			@"The active tool must remain rooted in the main item tree (the application UI presently in use)");
 	}
 

@@ -22,6 +22,7 @@
 #import "ETLayoutItemFactory.h"
 #import "ETUIStateRestoration.h"
 #import "ETUIItemIntegration.h"
+#import "ETView.h"
 #import "ETWidget.h"
 #import "ETWindowItem.h"
 #import "NSObject+EtoileUI.h"
@@ -107,7 +108,7 @@ See +[NSObject typePrefix]. */
 
 The method returns a local root item which is usually the window group or layer
 under the application control. */
-- (ETLayoutItemGroup *) layoutItem
+- (ETLayoutItemGroup *) rootItem
 {
 	return _rootItem;
 }
@@ -179,7 +180,7 @@ You can override -builder to customize the conversion. */
 
 		if (isVisibleAtLaunchTime)
 		{
-			[[self layoutItem] addItem: topLevelItem];
+			[[self rootItem] addItem: topLevelItem];
 		}
 	}
 }
@@ -1124,7 +1125,7 @@ See also [ ETLayoutItem +setShowsFrame: ].  */
 {
 	[ETLayoutItem setShowsFrame: ![ETLayoutItem showsFrame]];
 	[sender setState: [ETLayoutItem showsFrame]];
-	FOREACH([[self layoutItem] items], item, ETLayoutItem *)
+	FOREACH([[self rootItem] items], item, ETLayoutItem *)
 	{
 		[item setNeedsDisplay: YES];
 	}
@@ -1137,7 +1138,7 @@ See also [ETLayoutItem +setShowsBoundingBox: ]. */
 {
 	[ETLayoutItem setShowsBoundingBox: ![ETLayoutItem showsBoundingBox]];
 	[sender setState: [ETLayoutItem showsBoundingBox]];
-	FOREACH([[self layoutItem] items], item, ETLayoutItem *)
+	FOREACH([[self rootItem] items], item, ETLayoutItem *)
 	{
 		[item setNeedsDisplay: YES];
 	}
@@ -1171,12 +1172,12 @@ utilities related to debugging, introspection etc. */
 - (IBAction) didChangeVisualSearchString: (id)sender
 {
 	NSString *searchString = [sender stringValue];
-	ETController *controller = [[self layoutItem] controller];
+	ETController *controller = [[self rootItem] controller];
 
 	if  (nil == controller)
 	{
-		[[self layoutItem] setController: AUTORELEASE([[ETController alloc] init])];
-		controller = [[self layoutItem] controller];
+		[[self rootItem] setController: AUTORELEASE([[ETController alloc] init])];
+		controller = [[self rootItem] controller];
 	}
 
 	if ([searchString isEqual: @""])
@@ -1185,7 +1186,7 @@ utilities related to debugging, introspection etc. */
 	}
 	else
 	{
-		ETLayoutItem *searchItem = [[[self layoutItem] items] 
+		ETLayoutItem *searchItem = [[[self rootItem] items] 
 			firstObjectMatchingValue: @"visualSearch" forKey: kETIdentifierProperty];
 
 		// FIXME: The search panel is not filtered out here because 

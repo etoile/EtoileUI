@@ -283,7 +283,7 @@ Also invokes -didChangeAttachedTool:toTool:.  */
 	[newTool setLayoutOwner: self];
 
 	if ([oldTool isEqual: [ETTool activeTool]]
-		&& [[(ETLayoutItem *)[self layoutContext] rootItem] isEqual: [ETApp layoutItem]])
+		&& [[(ETLayoutItem *)[self layoutContext] rootItem] isEqual: [ETApp rootItem]])
 	{
 		[ETTool setActiveTool: newTool];
 	}

@@ -712,7 +712,7 @@
 /** Calls -inspectUI: on the root item.  */
 - (IBAction) inspectWindowGroupUI: (id)sender
 {
-	[[self layoutItem] inspectUI: sender];
+	[[self rootItem] inspectUI: sender];
 }
 
 /** Calls -inspectUI: on the item backed by the key window. */

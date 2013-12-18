@@ -68,7 +68,7 @@ For other Nibs to be loaded, see ETNibOwner. */
 
 /** @taskunit Accessing Item Tree */
 
-- (ETLayoutItemGroup *) layoutItem;
+- (ETLayoutItemGroup *) rootItem;
 - (ETLayoutItem *) keyItem;
 - (ETLayoutItem *) mainItem;
 
