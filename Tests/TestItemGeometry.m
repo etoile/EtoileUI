@@ -54,7 +54,6 @@
 
 @interface TestItemGeometry : TestCommon <UKTest>
 {
-	ETLayoutItemFactory *itemFactory;
 	ETLayoutItem *item;
 }
 
@@ -66,7 +65,6 @@
 {
 	SUPERINIT
 	[[ETLayoutExecutor sharedInstance] removeAllItems];
-	ASSIGN(itemFactory, [ETLayoutItemFactory factory]);
 	ASSIGN(item, [itemFactory item]);
 	return self;
 }

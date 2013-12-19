@@ -49,7 +49,6 @@
 {
 	ETLayoutItemGroup *mainItem;
 	ETTool *tool;
-	ETLayoutItemFactory *itemFactory;
 }
 
 @end
@@ -248,7 +247,6 @@ coordinates or not to set the event location in the window. */
 	SUPERINIT
 
 	[[ETLayoutExecutor sharedInstance] removeAllItems];
-	ASSIGN(itemFactory, [ETLayoutItemFactory factory]);
 	ASSIGN(mainItem, [itemFactory itemGroup]);
 	[mainItem setFrame: NSMakeRect(0, 0, WIN_WIDTH, WIN_HEIGHT)];
 	[[itemFactory windowGroup] addItem: mainItem];
@@ -260,8 +258,7 @@ coordinates or not to set the event location in the window. */
 - (void) dealloc
 {
 	[[itemFactory windowGroup] removeItem: mainItem];
-	DESTROY(mainItem);
-	DESTROY(itemFactory); 
+	DESTROY(mainItem); 
 	DESTROY(tool);
 	[super dealloc];
 }

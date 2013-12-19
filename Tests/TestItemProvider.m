@@ -14,7 +14,6 @@
 
 @interface TestItemProvider : TestCommon <UKTest>
 {
-	ETLayoutItemFactory *itemFactory;
 	ETLayoutItemGroup *itemGroup;
 }
 
@@ -26,14 +25,12 @@
 - (id) init
 {
 	SUPERINIT
-	ASSIGN(itemFactory, [ETLayoutItemFactory factory]);
 	ASSIGN(itemGroup, [itemFactory itemGroup]);
 	return self;
 }
 
 - (void) dealloc
 {
-	DESTROY(itemFactory);
 	DESTROY(itemGroup);
 	[super dealloc];
 }

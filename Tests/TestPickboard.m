@@ -30,7 +30,6 @@
 
 @interface TestPickboard : TestCommon <UKTest>
 {
-	ETLayoutItemFactory *itemFactory;
 	ETPickboard *pickboard;
 }
 

@@ -100,7 +100,6 @@
 {
 	ETController *controller;
 	ETLayoutItemGroup *content;
-	ETLayoutItemFactory *itemFactory;
 }
 
 @end
@@ -113,7 +112,6 @@
 	SUPERINIT
 
 	[[ETLayoutExecutor sharedInstance] removeAllItems];
-	ASSIGN(itemFactory, [ETLayoutItemFactory factory]);
 	ASSIGN(content, [itemFactory itemGroup]);
 	controller = [[ETController alloc] initWithObjectGraphContext: [itemFactory objectGraphContext]];
 
@@ -126,7 +124,6 @@
 {
 	DESTROY(content);
 	DESTROY(controller);
-	DESTROY(itemFactory);
 	[super dealloc];
 }
 

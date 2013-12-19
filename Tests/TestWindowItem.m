@@ -20,7 +20,6 @@
 
 @interface TestWindowItem : TestCommon <UKTest>
 {
-	ETLayoutItemFactory *itemFactory;
 }
 
 @end

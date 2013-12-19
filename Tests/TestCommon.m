@@ -45,12 +45,14 @@
 - (id) init
 {
 	SUPERINIT;
+	ASSIGN(itemFactory, [ETLayoutItemFactory factory]);
 	ASSIGN(previousActiveTool, [ETTool activeTool]);
 	return self;
 }
 
 - (void) dealloc
 {
+	DESTROY(itemFactory);
 	[ETTool setActiveTool: previousActiveTool];
 	DESTROY(previousActiveTool);
 	[super dealloc];

@@ -10,6 +10,7 @@
 #import <AppKit/AppKit.h>
 #import <UnitKit/UnitKit.h>
 #import <EtoileFoundation/Macros.h>
+#import "ETLayoutItemFactory.h"
 
 #define SA(x) [NSSet setWithArray: x]
 
@@ -37,6 +38,7 @@
 
 @interface TestCommon : NSObject
 {
+	ETLayoutItemFactory *itemFactory;
 	ETTool *previousActiveTool;
 }
 

@@ -23,7 +23,6 @@
 
 @interface TestCompositeLayout : TestCommon <UKTest>
 {
-	ETLayoutItemFactory *itemFactory;
 	ETLayoutItemGroup *item;
 }
 
@@ -36,7 +35,6 @@
 {
 	SUPERINIT
 	[[ETLayoutExecutor sharedInstance] removeAllItems];
-	ASSIGN(itemFactory, [ETLayoutItemFactory factory]);
 	ASSIGN(item, [itemFactory itemGroup]);
 	return self;
 }

@@ -68,7 +68,6 @@
 
 @interface TestItemCopy: TestCommon <UKTest>
 {
-	ETLayoutItemFactory *itemFactory;
 	ETLayoutItem *item;
 	ETLayoutItemGroup *itemGroup;
 }
@@ -81,7 +80,6 @@
 {
 	SUPERINIT
 	[[ETLayoutExecutor sharedInstance] removeAllItems];
-	ASSIGN(itemFactory, [ETLayoutItemFactory factory]);
 	item = [[ETLayoutItem alloc] initWithObjectGraphContext: [itemFactory objectGraphContext]];
 	itemGroup = [[ETLayoutItemGroup alloc] initWithObjectGraphContext: [itemFactory objectGraphContext]];
 	return self;

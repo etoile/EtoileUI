@@ -19,7 +19,6 @@
 
 @interface TestCell: TestCommon <UKTest>
 {
-	ETLayoutItemFactory *itemFactory;
 	ETLayoutItem *item;
 }
 
@@ -30,7 +29,6 @@
 - (id) init
 {
 	SUPERINIT
-	ASSIGN(itemFactory, [ETLayoutItemFactory factory]);
 	ASSIGN(item, [itemFactory item]);
 	return self;
 }

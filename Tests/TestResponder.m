@@ -41,7 +41,6 @@
 
 @interface TestResponder : TestCommon <UKTest>
 {
-	ETLayoutItemFactory *itemFactory;
 	ETLayoutItem *item;
 	ETLayoutItemGroup *mainItem;
 	ETScrollableAreaItem *scrollableAreaItem;

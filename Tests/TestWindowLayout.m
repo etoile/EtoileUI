@@ -19,7 +19,6 @@
 
 @interface TestWindowLayout : TestCommon <UKTest>
 {
-	ETLayoutItemFactory *itemFactory;
 	ETLayoutItemGroup *windowGroup;
 	ETLayoutItemGroup *itemGroup;
 	ETLayoutItem *item;
@@ -34,7 +33,6 @@
 - (id) init
 {
 	SUPERINIT
-	ASSIGN(itemFactory, [ETLayoutItemFactory factory]);
 	/* -[ETLayoutItemGroup windowGroup] instantiates the window group as below but just once. 
 	   To ignore state changes due to previous tests, we allocate a new ETWindowLayer directly. */
 	windowGroup = [[ETWindowLayer alloc] initWithObjectGraphContext: [itemFactory objectGraphContext]];
@@ -45,7 +43,6 @@
 
 - (void) dealloc
 {
-	DESTROY(itemFactory);
 	DESTROY(windowGroup);
 	DESTROY(itemGroup);
 	DESTROY(item);

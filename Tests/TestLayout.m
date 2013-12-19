@@ -63,7 +63,6 @@
 
 @interface TestPositionalLayout : TestCommon <UKTest>
 {
-	ETLayoutItemFactory *itemFactory;
 	ETLayoutItemGroup *itemGroup;
 	ETLayoutItem *item;
 }
@@ -76,7 +75,6 @@
 {
 	[[ETLayoutExecutor sharedInstance] removeAllItems];
 	SUPERINIT
-	ASSIGN(itemFactory, [ETLayoutItemFactory factory]);
 	ASSIGN(itemGroup, [itemFactory itemGroup]);
 	ASSIGN(item, [itemFactory item]);
 	return self;
@@ -84,7 +82,6 @@
 
 - (void) dealloc
 {
-	DESTROY(itemFactory);
 	DESTROY(itemGroup);
 	DESTROY(item);
 	[super dealloc];

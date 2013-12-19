@@ -17,7 +17,6 @@
 
 @interface TestItemValue : TestCommon <UKTest>
 {
-	ETLayoutItemFactory *itemFactory;
 	ETLayoutItemGroup *itemGroup;
 	ETLayoutItem *item;
 	Person *person;
@@ -30,7 +29,6 @@
 - (id) init
 {
 	SUPERINIT
-	ASSIGN(itemFactory, [ETLayoutItemFactory factory]);
 	ASSIGN(item, [itemFactory item]);
 	ASSIGN(itemGroup, [itemFactory itemGroup]);
 	person = [Person new];
@@ -39,7 +37,6 @@
 
 - (void) dealloc
 {
-	DESTROY(itemFactory);
 	DESTROY(item);
 	DESTROY(itemGroup);
 	DESTROY(person);

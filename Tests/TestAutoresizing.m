@@ -21,7 +21,6 @@
 
 @interface TestAutoresizing : TestCommon <UKTest>
 {
-	ETLayoutItemFactory *itemFactory;
 	ETLayoutItemGroup *itemGroup;
 }
 
@@ -52,7 +51,6 @@
 	ETAssert(NSEqualRects(NSMakeRect(0, 0, 50, 50), [ETLayoutItem defaultItemRect]));
 
 	[[ETLayoutExecutor sharedInstance] removeAllItems];
-	ASSIGN(itemFactory, [ETLayoutItemFactory factory]);
 	ASSIGN(itemGroup, [itemFactory itemGroupWithFrame: NSMakeRect(0, 0, 500, 400)]);
 	ETAssert([[itemGroup layout] isKindOfClass: [ETFixedLayout class]]);
 	return self;
@@ -63,7 +61,6 @@
 	[self exchangeDefaultItemRectImplementations];
 	ETAssert(NSEqualRects(NSMakeRect(0, 0, 50, 50), [ETLayoutItem defaultItemRect]) == NO);
 
-	DESTROY(itemFactory);
 	DESTROY(itemGroup);
 	[super dealloc];
 }

@@ -17,7 +17,6 @@
 
 @interface TestFormLayout : TestCommon <UKTest>
 {
-	ETLayoutItemFactory *itemFactory;
 	ETLayoutItemGroup *mainItem;
 	ETLayoutItem *textItem;
 	NSString *placeName;
@@ -30,7 +29,6 @@
 - (id) init
 {
 	SUPERINIT;
-	ASSIGN(itemFactory, [ETLayoutItemFactory factory]);
 	ASSIGN(mainItem, [itemFactory itemGroup]);
 	[self prepareMainItemAsForm];
 	ASSIGN(placeName, @"Kyoto");
@@ -39,7 +37,6 @@
 
 - (void) dealloc
 {
-	DESTROY(itemFactory);
 	DESTROY(mainItem);
 	DESTROY(textItem);
 	DESTROY(placeName);
