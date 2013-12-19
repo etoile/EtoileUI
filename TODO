@@ -65,6 +65,8 @@ Open Issues
 
 - Test -[ETTool targetItem] is reset in -[ETLayoutItem didChangeLayout:]
 
+- Hide NSApplication as an AppKit widget backend implementation detail (ETApplication superclass should be NSObject)
+
 
 Old Potential Issues
 --------------------

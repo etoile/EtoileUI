@@ -133,6 +133,7 @@ See +setActiveTool:, -targetItem and -layoutOwner. */
 		ASSIGN(activeTool, [self mainTool]);
 	}
 
+#if 0
 	ETAssert([activeTool targetItem] != nil || [activeTool isEqual: [self mainTool]]);
 
 	// TODO: If an item is detached in the item tree, and the active tool is
@@ -152,6 +153,7 @@ See +setActiveTool:, -targetItem and -layoutOwner. */
 		NSAssert([(id)[[activeTool layoutOwner] layoutContext] rootItem] == [ETApp rootItem],
 			@"The active tool must remain rooted in the main item tree (the application UI presently in use)");
 	}
+#endif
 
 	return activeTool;
 }
@@ -175,14 +177,21 @@ to -[ETLayoutItem usesWidgetView] cannot become active.
 For a nil tool or tool not attached to a layout (the main tool puts aside), 
 raises an NSInvalidArgumentException.
 
+For a tool not attached to the item tree rooted in -[ETApplication rootItem], 
+raises an NSInvalidArgumentException.
+
 You should rarely need to invoke this method since EtoileUI usually 
 automatically activates tools in response to the user's click with 
 -updateActiveToolWithEvent:. */
 + (ETTool *) setActiveTool: (ETTool *)toolToActivate
 {
 	NILARG_EXCEPTION_TEST(toolToActivate);
-	INVALIDARG_EXCEPTION_TEST(toolToActivate,
-		[toolToActivate layoutOwner] != nil || [toolToActivate isEqual: [ETTool mainTool]]);
+	if ([toolToActivate isEqual: [ETTool mainTool]] == NO)
+	{
+		INVALIDARG_EXCEPTION_TEST(toolToActivate, [toolToActivate layoutOwner]);
+		INVALIDARG_EXCEPTION_TEST(toolToActivate,
+			[[[toolToActivate targetItem] rootItem] isEqual: [ETApp rootItem]]);
+	}
 
 	/* -layoutOwner can be nil at this point e.g. for the default main tool or
 	   if the user sets a custom tool not bound to any layout.

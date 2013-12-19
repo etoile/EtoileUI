@@ -253,6 +253,14 @@ To customize the copying in a subclass, you must override
 	return _tool;
 }
 
+- (ETTool *) proposedActiveToolForNewTool: (ETTool *)newTool
+{
+	if (newTool != nil)
+		return newTool;
+		
+	return [ETTool activatableToolForItem: (ETLayoutItem *)[self layoutContext]];
+}
+
 /** Sets the tool or tool bound to the receiver. 
 
 The tool set becomes the receiver owner. See -[ETTool layoutOwner].
@@ -261,12 +269,16 @@ If the previously attached tool was the active tool, the new one
 becomes the active tool (the receiver must be present in the item tree bound to 
 -[ETApplication layoutItem], otherwise nothing happens). See -[ETTool setActiveTool:].
 
+If the tool is already attached to another layout, raises an 
+NSInvalidArgumentException.
+
 If the layout context is not a layout item (e.g. the receiver is a secondary 
 layout), raises a NSInvalidArgumentException.
 
 Also invokes -didChangeAttachedTool:toTool:.  */
 - (void) setAttachedTool: (ETTool *)newTool
 {
+	INVALIDARG_EXCEPTION_TEST(newTool, [newTool layoutOwner] == nil);
 	if ([self layoutContext] != nil)
 	{
 		INVALIDARG_EXCEPTION_TEST(newTool, [(id)[self layoutContext] isLayoutItem]);
@@ -282,10 +294,9 @@ Also invokes -didChangeAttachedTool:toTool:.  */
 	ASSIGN(_tool, newTool);
 	[newTool setLayoutOwner: self];
 
-	if ([oldTool isEqual: [ETTool activeTool]]
-		&& [[(ETLayoutItem *)[self layoutContext] rootItem] isEqual: [ETApp rootItem]])
+	if ([oldTool isEqual: [ETTool activeTool]])
 	{
-		[ETTool setActiveTool: newTool];
+		[ETTool setActiveTool: [self proposedActiveToolForNewTool: newTool]];
 	}
 
 	[self didChangeValueForProperty: @"attachedTool"];
