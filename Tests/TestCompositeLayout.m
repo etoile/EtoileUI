@@ -33,8 +33,7 @@
 
 - (id) init
 {
-	SUPERINIT
-	[[ETLayoutExecutor sharedInstance] removeAllItems];
+	SUPERINIT;
 	ASSIGN(item, [itemFactory itemGroup]);
 	return self;
 }
@@ -242,12 +241,9 @@ DEALLOC(DESTROY(itemFactory); DESTROY(item))
 
 - (id) init
 {
-	SUPERINIT
-
-	[[ETLayoutExecutor sharedInstance] removeAllItems];
+	SUPERINIT;
 	ASSIGN(layout, [ETPaneLayout masterDetailLayoutWithObjectGraphContext: [itemFactory objectGraphContext]]);
 	barItem = [layout barItem]; /* layout will retains us */
-
 	return self;	
 }
 

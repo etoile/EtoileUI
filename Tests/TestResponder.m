@@ -62,7 +62,6 @@
 
 	ETAssert([ETApp isMemberOfClass: [ETTestResponderApplication class]]);
 
-	itemFactory = [ETLayoutItemFactory factory];
 	[self prepareNewResponderChain];
 
 	return self;

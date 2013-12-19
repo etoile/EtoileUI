@@ -24,8 +24,7 @@
 
 - (id) init
 {
-	SUPERINIT
-	[[ETLayoutExecutor sharedInstance] removeAllItems];
+	SUPERINIT;
 	ASSIGN(item, [itemFactory item]);
 	[item setFrame: NSMakeRect(100, 50, 300, 200)];
 	return self;

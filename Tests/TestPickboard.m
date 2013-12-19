@@ -40,7 +40,6 @@
 - (id) init
 {
 	SUPERINIT;
-	itemFactory = [ETLayoutItemFactory factory];
 	pickboard = [[ETPickboard alloc] initWithObjectGraphContext:
 		[ETUIObject defaultTransientObjectGraphContext]];
 	return self;

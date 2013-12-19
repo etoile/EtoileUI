@@ -73,8 +73,7 @@
 
 - (id) init
 {
-	[[ETLayoutExecutor sharedInstance] removeAllItems];
-	SUPERINIT
+	SUPERINIT;
 	ASSIGN(itemGroup, [itemFactory itemGroup]);
 	ASSIGN(item, [itemFactory item]);
 	return self;

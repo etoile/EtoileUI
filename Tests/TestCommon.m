@@ -8,6 +8,7 @@
 
 #import <EtoileFoundation/NSObject+Model.h>
 #import "TestCommon.h"
+#import "ETLayoutExecutor.h"
 #import "ETTool.h"
 
 @implementation Person
@@ -45,6 +46,7 @@
 - (id) init
 {
 	SUPERINIT;
+	[[ETLayoutExecutor sharedInstance] removeAllItems];
 	ASSIGN(itemFactory, [ETLayoutItemFactory factory]);
 	ASSIGN(previousActiveTool, [ETTool activeTool]);
 	return self;

@@ -109,14 +109,10 @@
 
 - (id) init
 {
-	SUPERINIT
-
-	[[ETLayoutExecutor sharedInstance] removeAllItems];
+	SUPERINIT;
 	ASSIGN(content, [itemFactory itemGroup]);
 	controller = [[ETController alloc] initWithObjectGraphContext: [itemFactory objectGraphContext]];
-
 	[content setController: controller];
-
 	return self;
 }
 

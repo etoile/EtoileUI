@@ -26,14 +26,6 @@
 
 @implementation TestWindowItem
 
-- (id) init
-{
-	SUPERINIT;
-	[[ETLayoutExecutor sharedInstance] removeAllItems];
-	itemFactory = [ETLayoutItemFactory factory];
-	return self;
-}
-
 - (void) testWindowContentView
 {
 	ETLayoutItem *item = [itemFactory item];

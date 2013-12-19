@@ -78,8 +78,7 @@
 
 - (id) init
 {
-	SUPERINIT
-	[[ETLayoutExecutor sharedInstance] removeAllItems];
+	SUPERINIT;
 	item = [[ETLayoutItem alloc] initWithObjectGraphContext: [itemFactory objectGraphContext]];
 	itemGroup = [[ETLayoutItemGroup alloc] initWithObjectGraphContext: [itemFactory objectGraphContext]];
 	return self;

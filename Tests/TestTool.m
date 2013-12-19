@@ -246,7 +246,6 @@ coordinates or not to set the event location in the window. */
 {
 	SUPERINIT
 
-	[[ETLayoutExecutor sharedInstance] removeAllItems];
 	ASSIGN(mainItem, [itemFactory itemGroup]);
 	[mainItem setFrame: NSMakeRect(0, 0, WIN_WIDTH, WIN_HEIGHT)];
 	[[itemFactory windowGroup] addItem: mainItem];
