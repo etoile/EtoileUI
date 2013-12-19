@@ -321,13 +321,8 @@ See also -mainTool. */
 
 - (void) dealloc
 {
-	// NOTE: _layoutOwner is a weak reference
-	if ([_targetItem isEqual: _layoutOwner] == NO) /* See -setTargetItem: */
-	{
-		DESTROY(_targetItem);
-	}
+	DESTROY(_targetItem);
 	DESTROY(_cursorName);
-
 	[super dealloc];
 }
 
@@ -394,8 +389,8 @@ target item.
 By default, the target item is the item bound to the -ownerLayout. This bound 
 item is named the layout context in ETLayout.
 
-The target item can be nil, if -layoutOwner is nil, but not otherwise when the 
-the tool is not bound to a layout.
+The target item can be nil, when the tool is not bound to a layout, or when 
+this layout is not bound to an item (as a layout context).
 
 See also -setTargetItem:. */
 - (ETLayoutItem *) targetItem
@@ -408,7 +403,7 @@ See also -setTargetItem:. */
 		targetItem = (ETLayoutItem *)[[self layoutOwner] layoutContext];
 	}
 
-	ETAssert(targetItem != nil || [self layoutOwner] == nil);
+	ETAssert(targetItem != nil || [[self layoutOwner] layoutContext] == nil);
 	return targetItem;
 }
 
@@ -534,23 +529,15 @@ You should never need to use this method. */
 	}
 }
 
-/** Sets the layout to which the tool is attached to.
+/** Returns the layout to which the tool is attached to. 
 
 aLayout has ownership over the receiver, so it won't be retained.
 
 Changing the layout owner resets -targetItem to return 
 <code>[[self layoutOwner] layoutContext]</code>. */
-- (void) setLayoutOwner: (ETLayout *)aLayout
-{
-	[self validateLayoutOwner: aLayout];
-	_layoutOwner = aLayout;
-	[self setTargetItem: nil];
-}
-
-/** Returns the layout to which the tool is attached to. */
 - (ETLayout *) layoutOwner
 {
-	return _layoutOwner;
+	return [self valueForVariableStorageKey: @"layoutOwner"];
 }
 
 /** <override-dummy />

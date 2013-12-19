@@ -49,7 +49,6 @@ double-click and deactivated on a mouse click outside of their layout boundaries
 {
 	@private
 	ETLayoutItem *_targetItem;
-	ETLayout *_layoutOwner;
 	NSString *_cursorName;
 }
 
@@ -140,7 +139,7 @@ double-click and deactivated on a mouse click outside of their layout boundaries
 /** @taskunit Framework Private */
 
 + (NSMutableArray *) hoveredItemStackForItem: (ETLayoutItem *)anItem;
-- (void) setLayoutOwner: (ETLayout *)aLayout;
+- (void) validateLayoutOwner: (ETLayout *)aLayout;
 - (ETLayout *) layoutOwner;
 - (NSCursor *) cursor;
 

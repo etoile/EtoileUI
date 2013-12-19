@@ -28,6 +28,12 @@
 - (BOOL) isLayoutViewInUse;
 @end
 
+@interface COObject (RelationshipCache)
+- (void) updateCachedOutgoingRelationshipsForOldValue: (id)oldVal
+                                             newValue: (id)newVal
+                            ofPropertyWithDescription: (ETPropertyDescription *)aProperty;
+@end
+
 
 @implementation ETLayout
 
@@ -160,9 +166,6 @@ Returns a new ETLayout instance. */
 {
 	ETAssert([_attachedTool isEqual: [ETTool activeTool]] == NO);
 
-	/* If the layoutOwner weak reference is not reset, passing this tool to 
-	   +[ETTool setActiveTool:] can cause a crash. */
-	[_attachedTool setLayoutOwner: nil];
 	DESTROY(_attachedTool);
 	DESTROY(_layerItem);
 	DESTROY(_dropIndicator);
@@ -190,7 +193,12 @@ tool copy. */
 	newLayout->_layerItem = [_layerItem copyWithZone: aZone];
 	newLayout->_dropIndicator = RETAIN(_dropIndicator);
 	newLayout->_attachedTool = [_attachedTool copyWithZone: aZone];
-	[newLayout->_attachedTool setLayoutOwner: newLayout];
+	/* Update ETTool.layoutOwner inverse relationship */
+	ETPropertyDescription *propertyDesc =
+		[[newLayout entityDescription] propertyDescriptionForName: @"attachedTool"];
+    [newLayout updateCachedOutgoingRelationshipsForOldValue: nil
+	                                               newValue: newLayout->_attachedTool
+                                  ofPropertyWithDescription: propertyDesc];
 	newLayout->_layoutSize = _layoutSize;
 	/* Must be copied to ensure autoresizing receives a correct old size */
 	newLayout->_proposedLayoutSize = _proposedLayoutSize;
@@ -284,22 +292,28 @@ Also invokes -didChangeAttachedTool:toTool:.  */
 		INVALIDARG_EXCEPTION_TEST(newTool, [(id)[self layoutContext] isLayoutItem]);
 	}
 
-	[self willChangeValueForProperty: @"attachedTool"];
+	if (_attachedTool == newTool)
+		return;
 
-	if ([newTool isEqual: _attachedTool] == NO)
-		[_attachedTool setLayoutOwner: nil];
-		
 	ETTool *oldTool = RETAIN(_attachedTool);
 
+	[newTool validateLayoutOwner: self];
+	[self willChangeValueForProperty: @"attachedTool"];
+	/* Reset target item previously set for another layout */
+	[newTool setTargetItem: nil];
 	ASSIGN(_attachedTool, newTool);
-	[newTool setLayoutOwner: self];
+	/* Will update ETTool.layoutOwner inverse relationship */
+	[self didChangeValueForProperty: @"attachedTool"];
 
+	ETAssert(newTool == nil
+		|| ([newTool layoutOwner] == self && [newTool targetItem] == (id)[self layoutContext]));
+
+	// NOTE: The remaining code requires ETTool.layoutOwner to be set, so we
+	// execute it last
 	if ([oldTool isEqual: [ETTool activeTool]])
 	{
 		[ETTool setActiveTool: [self proposedActiveToolForNewTool: newTool]];
 	}
-
-	[self didChangeValueForProperty: @"attachedTool"];
 	[self didChangeAttachedTool: oldTool  toTool: newTool];
 
 	RELEASE(oldTool);
