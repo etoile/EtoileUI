@@ -11,6 +11,7 @@
 #import <UnitKit/UnitKit.h>
 #import <EtoileFoundation/Macros.h>
 #import "ETLayoutItemFactory.h"
+#import "ETTool.h"
 
 #define SA(x) [NSSet setWithArray: x]
 
@@ -34,6 +35,7 @@
 @property (nonatomic, retain) NSArray *groupNames;
 @end
 
+
 @class ETTool;
 
 @interface TestCommon : NSObject
@@ -42,4 +44,9 @@
 	ETTool *previousActiveTool;
 }
 
+@end
+
+
+@interface ETTool (ETToolTestAdditions)
++ (id) tool;
 @end

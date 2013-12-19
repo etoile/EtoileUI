@@ -374,7 +374,8 @@
 	// -contentAreaItem rather than -documentContentItem
 	if (beginTestUI)
 	{
-		[[[self documentContentItem] layout] setAttachedTool: [ETArrowTool tool]];
+		[[[self documentContentItem] layout] setAttachedTool:
+			[ETArrowTool toolWithObjectGraphContext: [[self documentContentItem] objectGraphContext]]];
 	
 		[sender setIcon: [[IKIcon iconWithIdentifier: @"media-playback-stop"] image]];
 		[sender setTitle: _(@"Stop Test")];
@@ -382,7 +383,8 @@
 	}
 	else /* end test UI */
 	{
-		ETSelectTool *editionTool = [ETSelectTool tool];
+		ETSelectTool *editionTool = [ETSelectTool toolWithObjectGraphContext:
+			[[self documentContentItem] objectGraphContext]];
 		
 		// NOTE: See -[ETFreeLayout init]
 		[editionTool setShouldProduceTranslateActions: YES];

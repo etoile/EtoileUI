@@ -334,7 +334,9 @@ is the root item which contains both A and D.
 - (void) processMouseMovedEvent: (ETEvent *)anEvent
 {
 	ETTool *tool = [ETTool activeTool];
-	ETLayoutItem *hitItem = [[ETTool tool] hitTestWithEvent: anEvent];
+	ETLayoutItem *hitItem =
+		[[ETTool toolWithObjectGraphContext: [ETUIObject defaultTransientObjectGraphContext]]
+			hitTestWithEvent: anEvent];
 
 	//ETLog(@"Will process mouse move on %@ and hovered item stack\n %@", 
 	//	hitItem, [tool hoveredItemStackForItem: hitItem]);

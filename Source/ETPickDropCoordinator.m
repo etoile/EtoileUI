@@ -399,12 +399,19 @@ reponsible to pop the object from the pickboard.  */
 	[self reset];
 }
 
+- (ETLayoutItem *) hitTestWithEvent: (ETEvent *)event
+{
+	ETTool *tool =
+		[ETTool toolWithObjectGraphContext: [ETUIObject defaultTransientObjectGraphContext]];
+	return [tool hitTestWithEvent: event];
+}
+
 /* Returns the window layer when the drag is exiting a window without 
 entering a new one. */
 - (ETLayoutItem *) dropTargetForDrag: (id <NSDraggingInfo>)dragInfo
 {
 	ETEvent *event = ETEVENT([NSApp currentEvent], dragInfo, ETDragPickingMask);
-	ETLayoutItem *dropTarget = [[ETTool tool] hitTestWithEvent: event];
+	ETLayoutItem *dropTarget = [self hitTestWithEvent: event];
 
 	// FIXME: We should receive the dragged item as an argument, otherwise 
 	// the next line might returns nil in case this item has already been 
@@ -523,7 +530,7 @@ returned nil. */
               withDropTarget: (ETLayoutItem *)dropTarget
 {
 	ETEvent *dragEvent = ETEVENT([NSApp currentEvent], dragInfo, ETDragPickingMask);
-	ETLayoutItem *hoveredItem = [[ETTool tool] hitTestWithEvent: dragEvent];
+	ETLayoutItem *hoveredItem = [self hitTestWithEvent: dragEvent];
 	BOOL dropOn = [hoveredItem isEqual: dropTarget];
 	NSPoint locRelativeToDropTarget = [dragEvent locationInLayoutItem];
 
@@ -572,7 +579,7 @@ returned nil. */
 
 - (ETLayoutItem *) hitTest: (id <NSDraggingInfo>)dragInfo
 {
-	return [[ETTool tool] hitTestWithEvent: 
+	return [self hitTestWithEvent:
 		ETEVENT([NSApp currentEvent], dragInfo, ETDragPickingMask)];
 }
 

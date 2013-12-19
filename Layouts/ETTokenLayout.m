@@ -37,7 +37,7 @@ Initializes and returns a new token layout. */
 	
 	_maxTokenWidth = [[self class] defaultMaxTokenWidth];
 
-	[self setAttachedTool: [ETSelectAndClickTool tool]];
+	[self setAttachedTool: [ETSelectAndClickTool toolWithObjectGraphContext: aContext]];
 	[[self attachedTool] setShouldRemoveItemsAtPickTime: NO];
 	[[self attachedTool] setIgnoresBackgroundClick: NO];
 

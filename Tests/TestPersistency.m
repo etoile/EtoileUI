@@ -557,6 +557,7 @@
 	[self checkValidityForNewPersistentObject: newController isFault: NO];
 }
 
+#if 0
 - (void) testFreeLayout
 {
 	[self recreateContext];
@@ -608,6 +609,7 @@
 	//[self checkValidityForNewPersistentObject: newItem isFault: NO];
 	//[self checkValidityForNewPersistentObject: newButtonItem isFault: NO];
 }
+#endif
 
 @end
 

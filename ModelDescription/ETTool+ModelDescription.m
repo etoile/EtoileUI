@@ -34,15 +34,17 @@
 	if ([[entity name] isEqual: [ETTool className]] == NO)
 		return entity;
 
-
 	ETPropertyDescription *layoutOwner = [ETPropertyDescription descriptionWithName: @"layoutOwner" type: (id)@"ETLayout"];
+	[layoutOwner setOpposite: (id)@"ETLayout.attachedTool"];
 	ETPropertyDescription *cursorName = [ETPropertyDescription descriptionWithName: @"cursorName" type: (id)@"NSString"];
 
-	NSArray *persistentProperties = A(layoutOwner, cursorName);
+	NSArray *transientProperties = A(layoutOwner);
+	NSArray *persistentProperties = A(cursorName);
 
 	[[persistentProperties mappedCollection] setPersistent: YES];
 
-	[entity setPropertyDescriptions: persistentProperties];
+	[entity setPropertyDescriptions:
+		[persistentProperties arrayByAddingObjectsFromArray: transientProperties]];
 
 	return entity;
 }

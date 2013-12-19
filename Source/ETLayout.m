@@ -139,7 +139,7 @@ Returns a new ETLayout instance. */
 	
 	_layoutContext = nil;
 	delegate = nil;
-	_tool = nil;
+	_attachedTool = nil;
 	ASSIGN(_dropIndicator, [ETDropIndicator sharedInstanceForObjectGraphContext: [ETUIObject defaultTransientObjectGraphContext]]);
 	_isRendering = NO;
 	_layoutSize = NSMakeSize(200, 200); /* Dummy value */
@@ -158,12 +158,12 @@ Returns a new ETLayout instance. */
 
 - (void) dealloc
 {
-	ETAssert([_tool isEqual: [ETTool activeTool]] == NO);
+	ETAssert([_attachedTool isEqual: [ETTool activeTool]] == NO);
 
 	/* If the layoutOwner weak reference is not reset, passing this tool to 
 	   +[ETTool setActiveTool:] can cause a crash. */
-	[_tool setLayoutOwner: nil];
-	DESTROY(_tool);
+	[_attachedTool setLayoutOwner: nil];
+	DESTROY(_attachedTool);
 	DESTROY(_layerItem);
 	DESTROY(_dropIndicator);
 
@@ -189,8 +189,8 @@ tool copy. */
 	newLayout->delegate = delegate;
 	newLayout->_layerItem = [_layerItem copyWithZone: aZone];
 	newLayout->_dropIndicator = RETAIN(_dropIndicator);
-	newLayout->_tool = [_tool copyWithZone: aZone];
-	[newLayout->_tool setLayoutOwner: newLayout];
+	newLayout->_attachedTool = [_attachedTool copyWithZone: aZone];
+	[newLayout->_attachedTool setLayoutOwner: newLayout];
 	newLayout->_layoutSize = _layoutSize;
 	/* Must be copied to ensure autoresizing receives a correct old size */
 	newLayout->_proposedLayoutSize = _proposedLayoutSize;
@@ -249,8 +249,8 @@ To customize the copying in a subclass, you must override
 /** Returns the tool or tool bound to the receiver. */
 - (id) attachedTool
 {
-	ETAssert(_tool == nil || [_tool layoutOwner] == self);
-	return _tool;
+	ETAssert(_attachedTool == nil || [_attachedTool layoutOwner] == self);
+	return _attachedTool;
 }
 
 - (ETTool *) proposedActiveToolForNewTool: (ETTool *)newTool
@@ -286,12 +286,12 @@ Also invokes -didChangeAttachedTool:toTool:.  */
 
 	[self willChangeValueForProperty: @"attachedTool"];
 
-	if ([newTool isEqual: _tool] == NO)
-		[_tool setLayoutOwner: nil];
+	if ([newTool isEqual: _attachedTool] == NO)
+		[_attachedTool setLayoutOwner: nil];
 		
-	ETTool *oldTool = RETAIN(_tool);
+	ETTool *oldTool = RETAIN(_attachedTool);
 
-	ASSIGN(_tool, newTool);
+	ASSIGN(_attachedTool, newTool);
 	[newTool setLayoutOwner: self];
 
 	if ([oldTool isEqual: [ETTool activeTool]])

@@ -797,7 +797,8 @@ An NSInvalidArgumentException is raised when any given item is nil. */
 	/* Start to delegate text editing events to the text view with a basic tool.
 	   We have no dedicated tool and it is not very important because we 
 	   handle the raw events with a text widget provided by the widget backend. */
-	[ETTool setActiveTool: [ETTool tool]];
+	[ETTool setActiveTool:
+		[ETTool toolWithObjectGraphContext: [ETUIObject defaultTransientObjectGraphContext]]];
 	[self makeFirstResponder: [editorItem view]];
 }
 

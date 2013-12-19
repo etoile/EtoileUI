@@ -20,7 +20,7 @@ burden involved by a data source. */
 	ETLayoutItemGroup *tableItem2 = [leftTableAreaView layoutItem];
 	ETTableLayout *tableLayout2 = [ETTableLayout layoutWithObjectGraphContext: [itemFactory objectGraphContext]];
 	NSArray *visibleColumnIds = [NSArray arrayWithObjects: @"displayName", @"intensity", nil];
-	ETSelectTool *tool = [ETSelectTool tool];
+	ETSelectTool *tool = [ETSelectTool toolWithObjectGraphContext: [tableLayout2 objectGraphContext]];
 
 	[tool setAllowsMultipleSelection: YES];
 	[tool setAllowsEmptySelection: NO];
@@ -90,7 +90,8 @@ burden involved by a data source. */
 	[[outlineItem layout] setStyle: imgViewItem forProperty: @""];
 	/* icon and displayName are the properties visible by default */
 	[[outlineItem layout] setEditable: YES forProperty: @"displayName"];
-	[[outlineItem layout] setAttachedTool: [ETSelectTool tool]];
+	[[outlineItem layout] setAttachedTool:
+		[ETSelectTool toolWithObjectGraphContext: [outlineItem objectGraphContext]]];
 	[[[outlineItem layout] attachedTool] setAllowsMultipleSelection: YES];
 	[[[outlineItem layout] attachedTool] setForcesItemPick: YES];
 

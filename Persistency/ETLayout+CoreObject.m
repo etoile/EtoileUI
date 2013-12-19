@@ -59,7 +59,7 @@
 {
 	[super didLoadObjectGraph];
 
-	//[self setAttachedTool: [ETSelectTool tool]];
+	//[self setAttachedTool: [ETSelectTool toolWithObjectGraphContext: [self objectGraphContext]]];
 	[[[self attachedTool] ifResponds] setShouldProduceTranslateActions: YES];
 	[[self layerItem] setActionHandler: nil];
 	[[self layerItem] setCoverStyle: nil];

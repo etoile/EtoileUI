@@ -31,7 +31,7 @@ Initializes and returns a new icon layout. */
 	_iconSizeForScaleFactorUnit = NSMakeSize(32, 32);
 	_minIconSize = NSMakeSize(16, 16);
 
-	[self setAttachedTool: [ETSelectAndClickTool tool]];
+	[self setAttachedTool: [ETSelectAndClickTool toolWithObjectGraphContext: aContext]];
 	[[self attachedTool] setShouldRemoveItemsAtPickTime: NO];
 
 	ETLayoutItem *templateItem =

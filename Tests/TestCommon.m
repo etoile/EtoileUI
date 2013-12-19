@@ -61,3 +61,13 @@
 }
 
 @end
+
+
+@implementation ETTool (ETToolTestAdditions)
+
++ (id) tool
+{
+	return [self toolWithObjectGraphContext: [ETUIObject defaultTransientObjectGraphContext]];
+}
+
+@end

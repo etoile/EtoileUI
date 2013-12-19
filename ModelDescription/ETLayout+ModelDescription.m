@@ -43,6 +43,7 @@
 		[ETPropertyDescription descriptionWithName: @"delegate" type: (id)@"NSObject"];
 	ETPropertyDescription *attachedTool =
 		[ETPropertyDescription descriptionWithName: @"attachedTool" type: (id)@"ETTool"];
+	[attachedTool setOpposite: (id)@"ETTool.layoutOwner"];
 	ETPropertyDescription *layerItem = 
 		[ETPropertyDescription descriptionWithName: @"layerItem" type: (id)@"ETLayoutItemGroup"];
 	ETPropertyDescription *dropIndicator = 
@@ -61,7 +62,6 @@
 	   _tool, _dropIndicator, _isRendering */
 	NSArray *transientProperties = A(dropIndicator, layerItem);
 
-	// TODO: Support tool persistence... Rarely needed though.
 	// TODO: We need a direct ivar access to persist the layer item
 	// TODO: Evaluate whether we should support drop indicator persistence
 	NSArray *persistentProperties = A(attachedTool, context, delegate, layoutSize,

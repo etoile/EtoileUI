@@ -79,6 +79,8 @@ GNUstep Things
 
 - Implement NSBrowser keyed archiving on GNUstep (see NSView+EtoileUI)
 
+- Add -preparedCellAtColumn:row: to GNUstep (see TestCell)
+
 
 # Basic Stuff
 

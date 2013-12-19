@@ -129,7 +129,8 @@ See +setActiveTool:, -targetItem and -layoutOwner. */
 {
 	if (activeTool == nil)
 	{
-		ASSIGN(mainTool, [ETArrowTool tool]);
+		ASSIGN(mainTool, [ETArrowTool toolWithObjectGraphContext:
+			[ETUIObject defaultTransientObjectGraphContext]]);
 		ASSIGN(activeTool, [self mainTool]);
 	}
 
@@ -303,9 +304,9 @@ See also -mainTool. */
 }
 
 /** Returns a new autoreleased tool instance. */
-+ (id) tool
++ (id) toolWithObjectGraphContext: (COObjectGraphContext *)aContext;
 {
-	return AUTORELEASE([[self alloc] initWithObjectGraphContext: [ETUIObject defaultTransientObjectGraphContext]]);
+	return AUTORELEASE([[self alloc] initWithObjectGraphContext: aContext]);
 }
 
 - (id) initWithObjectGraphContext: (COObjectGraphContext *)aContext

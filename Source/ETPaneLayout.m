@@ -80,7 +80,7 @@ If contentItem is nil, a default content item will be created. */
 	_barPosition = ETPanePositionTop;
 	_barThickness = 140;
 
-	[[_barItem layout] setAttachedTool: [ETSelectTool tool]];
+	[[_barItem layout] setAttachedTool: [ETSelectTool toolWithObjectGraphContext: aContext]];
 
 	return self;
 }
@@ -768,7 +768,7 @@ The bar item is the master view and the content item is the content view. */
 {
 	ETPaneLayout *layout = [self layoutWithObjectGraphContext: aContext];
 	[[layout barItem] setLayout: [ETLineLayout layoutWithObjectGraphContext: aContext]];
-	[[[layout barItem] layout] setAttachedTool: [ETSelectTool tool]];
+	[[[layout barItem] layout] setAttachedTool: [ETSelectTool toolWithObjectGraphContext: aContext]];
 	[[layout barItem] setHasHorizontalScroller: YES];
 	return layout;
 }
@@ -777,7 +777,7 @@ The bar item is the master view and the content item is the content view. */
 {
 	ETPaneLayout *layout = [self layoutWithObjectGraphContext: aContext];
 	[[layout barItem] setLayout: [ETBrowserLayout layoutWithObjectGraphContext: aContext]];
-	[[[layout barItem] layout] setAttachedTool: [ETSelectTool tool]];
+	[[[layout barItem] layout] setAttachedTool: [ETSelectTool toolWithObjectGraphContext: aContext]];
 	[layout setBarPosition: ETPanePositionLeft];
 	return layout;
 }

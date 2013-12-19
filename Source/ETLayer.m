@@ -234,7 +234,7 @@ You should never call this method unless you write an ETWindowLayout subclass. *
 	if (self == nil)
 		return nil;
 
-	[self setAttachedTool: [ETArrowTool tool]];
+	[self setAttachedTool: [ETArrowTool toolWithObjectGraphContext: aContext]];
 
 	return self;
 }

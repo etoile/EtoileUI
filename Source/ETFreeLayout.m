@@ -27,7 +27,7 @@ unlike ETPositionalLayout.  */
 	if (self == nil)
 		return nil;
 
-	[self setAttachedTool: [ETSelectTool tool]];
+	[self setAttachedTool: [ETSelectTool toolWithObjectGraphContext: aContext]];
 	[[self attachedTool] setShouldProduceTranslateActions: YES];
 	[self setItemSizeConstraintStyle: ETSizeConstraintStyleNone];
 	[[self layerItem] setActionHandler: nil];

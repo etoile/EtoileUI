@@ -625,7 +625,7 @@
 
 - (ETTool *) pickerTool
 {
-	ETSelectTool *tool = [ETSelectTool tool];
+	ETSelectTool *tool = [ETSelectTool toolWithObjectGraphContext: [self objectGraphContext]];
 	
 	[tool setAllowsMultipleSelection: YES];
 	[tool setAllowsEmptySelection: NO];

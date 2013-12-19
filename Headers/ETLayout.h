@@ -173,7 +173,7 @@ Warning: This protocol is very much subject to change. */
 
 	@private
 	IBOutlet id delegate; /* Weak reference */
-	ETTool *_tool;
+	ETTool *_attachedTool;
 	ETLayoutItemGroup *_layerItem; /* Lazily initialized */
 	ETDropIndicator *_dropIndicator;
 
@@ -300,5 +300,6 @@ Warning: This protocol is very much subject to change. */
 /** @taskunit Framework Private */
 
 - (void) render: (BOOL)isNewContent;
+
 
 @end

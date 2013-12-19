@@ -429,7 +429,7 @@ The returned collection editor has a flexible width and a fixed height. */
 	ETLayoutItemGroup *buttonBar = [self horizontalBarWithSize: NSMakeSize(aSize.width, [plusButton height])];
 	NSRect browserFrame = NSMakeRect(0, 0, aSize.width, aSize.height - [plusButton height]);
 	ETLayoutItemGroup *browser = [self itemGroupWithFrame: browserFrame];
-	ETSelectTool *selectionTool = [ETSelectTool tool];
+	ETSelectTool *selectionTool = [ETSelectTool toolWithObjectGraphContext: [self objectGraphContext]];
 
 	[selectionTool setAllowsMultipleSelection: YES];
 

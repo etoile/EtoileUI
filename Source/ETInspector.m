@@ -204,7 +204,7 @@
 	Class toolClass = [[sender selectedItem] representedObject];
 	
 	[[(ETLayoutItem *)[[self selectedObject] ifResponds] layout] 
-		setAttachedTool: [toolClass tool]];
+		setAttachedTool: [toolClass toolWithObjectGraphContext: [self objectGraphContext]]];
 }
 
 - (NSArray *) inspectedObjects

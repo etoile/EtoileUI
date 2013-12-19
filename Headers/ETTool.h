@@ -75,7 +75,7 @@ double-click and deactivated on a mouse click outside of their layout boundaries
 + (id) mainTool;
 + (void) setMainTool: (id)aTool;
 
-+ (id) tool;
++ (id) toolWithObjectGraphContext: (COObjectGraphContext *)aContext;
 
 /** @taskunit Initialization */
 
