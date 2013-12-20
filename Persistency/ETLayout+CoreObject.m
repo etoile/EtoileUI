@@ -63,6 +63,9 @@
 	[[[self attachedTool] ifResponds] setShouldProduceTranslateActions: YES];
 	[[self layerItem] setActionHandler: nil];
 	[[self layerItem] setCoverStyle: nil];
+
+	if ([self layoutContext] == nil)
+		return;
 	
 	/* Because the layer item is recreated, it must be installed too (see -[ETLayout setUp]) */
 	[self mapLayerItemIntoLayoutContext];

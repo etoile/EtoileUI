@@ -557,7 +557,6 @@
 	[self checkValidityForNewPersistentObject: newController isFault: NO];
 }
 
-#if 0
 - (void) testFreeLayout
 {
 	[self recreateContext];
@@ -592,8 +591,7 @@
 	UKNil([[newItemGroup layout] handleGroupForItem: newItem]);
 	UKIntsEqual(1, [[[newItemGroup layout] layerItem] numberOfItems]);
 
-	// FIXME: Serialize and deserialize the tool correctly
-	/*UKObjectKindOf([[newItemGroup layout] attachedTool], ETSelectTool);
+	UKObjectKindOf([[newItemGroup layout] attachedTool], ETSelectTool);
 	UKTrue([[[newItemGroup layout] attachedTool] shouldProduceTranslateActions]);
 
 	[[[newItemGroup layout] attachedTool] makeSingleSelectionWithItem: newItem];
@@ -602,14 +600,29 @@
 	UKIntsEqual(0, [newItemGroup selectionIndex]);
 	UKNil([[newItemGroup layout] handleGroupForItem: newButtonItem]);
 	UKNotNil([[newItemGroup layout] handleGroupForItem: newItem]);
-	UKIntsEqual(1, [[[newItemGroup layout] layerItem] numberOfItems]);*/
+	UKIntsEqual(1, [[[newItemGroup layout] layerItem] numberOfItems]);
 
 	// FIXME: the bounding box is damaged due to the selection
 	//[self checkValidityForNewPersistentObject: newItemGroup isFault: NO];
 	//[self checkValidityForNewPersistentObject: newItem isFault: NO];
 	//[self checkValidityForNewPersistentObject: newButtonItem isFault: NO];
 }
-#endif
+
+- (void) testFreeLayoutAsPersistentRoot
+{
+	[self recreateContext];
+	
+	ETLayout *layout = [ETFreeLayout layoutWithObjectGraphContext: [itemFactory objectGraphContext]];
+	/*ETTool *tool = [ETTool toolWithObjectGraphContext: [itemFactory objectGraphContext]];
+
+	[layout setAttachedTool: tool];*/
+
+	ETUUID *uuid = [[ctxt insertNewPersistentRootWithRootObject: layout] UUID];
+	
+	[ctxt commit];
+	
+	// TODO: Test layout recreation in new context
+}
 
 @end
 
