@@ -155,7 +155,7 @@ DEALLOC(DESTROY(_draggedItem))
 		return nil;
 
 	[self setCursorName: kETToolCursorNameOpenHand];
-	_isTranslateMode = YES;
+	_shouldProduceTranslateActions = YES;
 	return self;
 }
 
@@ -168,7 +168,7 @@ DEALLOC(DESTROY(_draggedItem))
 
 	[aCopier beginCopyFromObject: self toObject: newTool];
 
-	newTool->_isTranslateMode = _isTranslateMode;
+	newTool->_shouldProduceTranslateActions = _shouldProduceTranslateActions;
 
 	[aCopier endCopy];
 	return newTool;
@@ -191,7 +191,7 @@ allowed.
 By default, returns YES. */
 - (BOOL) shouldProduceTranslateActions
 {
-	return (_isTranslateMode && [[[self targetItem] layout] isComputedLayout] == NO);
+	return (_shouldProduceTranslateActions && [[[self targetItem] layout] isComputedLayout] == NO);
 }
 
 /** Sets whether the receiver should produce translate actions rather than drag 
@@ -201,7 +201,7 @@ See also -shouldProduceTranslateActions. */
 - (void) setShouldProduceTranslateActions: (BOOL)translate
 {
 
-	_isTranslateMode = translate;
+	_shouldProduceTranslateActions = translate;
 }
 
 /* Passes events only to the decorator items bound to the target item.
@@ -292,7 +292,7 @@ Might return nil. */
 coordinate space. */
 - (void) beginTranslateItem: (ETLayoutItem *)item atPoint: (NSPoint)aPoint
 {
-	ETAssert(_isTranslateMode);
+	ETAssert(_shouldProduceTranslateActions);
 	ASSIGN(_draggedItem, item);
 	_dragStartLoc = aPoint;
 	_lastDragLoc = _dragStartLoc;
@@ -323,7 +323,7 @@ acting upon.
 This method can be overriden to alter the broadcast. */
 - (void) translateByDelta: (NSSize)aDelta
 {
-	ETAssert(_isTranslateMode);
+	ETAssert(_shouldProduceTranslateActions);
 	[[_draggedItem actionHandler] handleTranslateItem: _draggedItem 
                                               byDelta: aDelta];
 	// TODO: Post translate notification
@@ -341,14 +341,14 @@ This method can be overriden to alter the broadcast. */
 {
 	[[_draggedItem actionHandler] endTranslateItem: _draggedItem];
 
-	ETAssert(_isTranslateMode);
+	ETAssert(_shouldProduceTranslateActions);
 	[self clearMoveState];
 }
 
 /** Returns whether an item is currently translated by the receiver. */
 - (BOOL) isTranslating
 {
-	return (_draggedItem != nil && _isTranslateMode);
+	return (_draggedItem != nil && _shouldProduceTranslateActions);
 }
 
 /* Drag Action Producer */
@@ -375,7 +375,7 @@ This method can be overriden to alter the broadcast. */
 /** Returns whether an item is currently dragged by the receiver. */
 - (BOOL) isDragging
 {
-	return (_draggedItem != nil && _isTranslateMode == NO);
+	return (_draggedItem != nil && _shouldProduceTranslateActions == NO);
 }
 
 /** Returns the action handler of the item currently dragged if a drag session 

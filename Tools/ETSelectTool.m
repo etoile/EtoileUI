@@ -41,7 +41,8 @@
 	[self setAllowsEmptySelection: YES];
 	[self setShouldProduceTranslateActions: NO];
 	_removeItemsAtPickTime = YES;
-	_actionHandlerPrototype = [[ETActionHandler alloc] initWithObjectGraphContext: aContext];
+	_actionHandlerPrototype = [[ETActionHandler alloc]
+		initWithObjectGraphContext: [ETUIObject defaultTransientObjectGraphContext]];
 	_selectionAreaItem = [[ETSelectionAreaItem alloc] initWithObjectGraphContext: aContext];
 	return self;
 }

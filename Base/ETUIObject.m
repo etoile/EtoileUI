@@ -181,11 +181,6 @@ static ETCopier *copier = nil;
 	return [copier objectReferencesForCopy];
 }
 
-- (NSString *) description
-{
-	return [self primitiveDescription];
-}
-
 /** <override-dummy />
 Returns whether the receiver can be shared between several owners.
 

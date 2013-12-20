@@ -87,7 +87,7 @@ move, translate and drag behaviors. */
 	ETLayoutItem *_draggedItem;
 	NSPoint _dragStartLoc; 	/** Expressed in the screen base with non-flipped coordinates */
 	NSPoint _lastDragLoc;  /** Expressed in the screen base with non-flipped coordinates */
-	BOOL _isTranslateMode;
+	BOOL _shouldProduceTranslateActions;
 }
 
 - (BOOL) shouldProduceTranslateActions;

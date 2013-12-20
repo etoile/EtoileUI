@@ -543,6 +543,9 @@
 		60EA33A518646CB6001ED909 /* ETLayoutExecutor.h in Headers */ = {isa = PBXBuildFile; fileRef = 60EA33A318646CB6001ED909 /* ETLayoutExecutor.h */; };
 		60EA33A718646CB6001ED909 /* ETLayoutExecutor.m in Sources */ = {isa = PBXBuildFile; fileRef = 60EA33A418646CB6001ED909 /* ETLayoutExecutor.m */; };
 		60EA33A818646CB6001ED909 /* ETLayoutExecutor.m in Sources */ = {isa = PBXBuildFile; fileRef = 60EA33A418646CB6001ED909 /* ETLayoutExecutor.m */; };
+		60EA33AB1864A6AF001ED909 /* ETTool+CoreObject.h in Headers */ = {isa = PBXBuildFile; fileRef = 60EA33A91864A6AF001ED909 /* ETTool+CoreObject.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		60EA33AC1864A6AF001ED909 /* ETTool+CoreObject.h in Headers */ = {isa = PBXBuildFile; fileRef = 60EA33A91864A6AF001ED909 /* ETTool+CoreObject.h */; };
+		60EA33AD1864A6AF001ED909 /* ETTool+CoreObject.m in Sources */ = {isa = PBXBuildFile; fileRef = 60EA33AA1864A6AF001ED909 /* ETTool+CoreObject.m */; };
 		60ED8C871857EC4E006E6219 /* ETDocumentEditorItemFactory.m in Sources */ = {isa = PBXBuildFile; fileRef = 60ED8C861857EC4E006E6219 /* ETDocumentEditorItemFactory.m */; };
 		60ED8CAA18586BE9006E6219 /* Commits in Resources */ = {isa = PBXBuildFile; fileRef = 60ED8CA818586BE9006E6219 /* Commits */; };
 		60ED8CAD18586CA8006E6219 /* ETDocumentEditorConstants.m in Sources */ = {isa = PBXBuildFile; fileRef = 60ED8CAC18586CA8006E6219 /* ETDocumentEditorConstants.m */; };
@@ -1186,6 +1189,8 @@
 		60E7BD20107E7B3F00E7C0F2 /* TestStyle.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = TestStyle.m; path = Tests/TestStyle.m; sourceTree = "<group>"; };
 		60EA33A318646CB6001ED909 /* ETLayoutExecutor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ETLayoutExecutor.h; path = Layouts/ETLayoutExecutor.h; sourceTree = "<group>"; };
 		60EA33A418646CB6001ED909 /* ETLayoutExecutor.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ETLayoutExecutor.m; path = Layouts/ETLayoutExecutor.m; sourceTree = "<group>"; };
+		60EA33A91864A6AF001ED909 /* ETTool+CoreObject.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "ETTool+CoreObject.h"; path = "Persistency/ETTool+CoreObject.h"; sourceTree = "<group>"; };
+		60EA33AA1864A6AF001ED909 /* ETTool+CoreObject.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = "ETTool+CoreObject.m"; path = "Persistency/ETTool+CoreObject.m"; sourceTree = "<group>"; };
 		60ED8C851857EC4E006E6219 /* ETDocumentEditorItemFactory.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ETDocumentEditorItemFactory.h; path = ../../Services/Private/Worktable/ETDocumentEditorItemFactory.h; sourceTree = "<group>"; };
 		60ED8C861857EC4E006E6219 /* ETDocumentEditorItemFactory.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ETDocumentEditorItemFactory.m; path = ../../Services/Private/Worktable/ETDocumentEditorItemFactory.m; sourceTree = "<group>"; };
 		60ED8CA918586BE9006E6219 /* English */ = {isa = PBXFileReference; lastKnownFileType = folder; name = English; path = ../../Services/Private/Worktable/English.lproj/Commits; sourceTree = "<group>"; };
@@ -1867,6 +1872,8 @@
 				60A54C1113D2273F00261FDC /* ETLayout+CoreObject.m */,
 				6035ACC013D59C27005B2280 /* ETStyle+CoreObject.h */,
 				6035ACBF13D59C27005B2280 /* ETStyle+CoreObject.m */,
+				60EA33A91864A6AF001ED909 /* ETTool+CoreObject.h */,
+				60EA33AA1864A6AF001ED909 /* ETTool+CoreObject.m */,
 			);
 			name = Persistency;
 			sourceTree = "<group>";
@@ -2121,6 +2128,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				607676E6176DD411009FA5F2 /* ETUIBuilderBrowserController.h in Headers */,
+				60EA33AC1864A6AF001ED909 /* ETTool+CoreObject.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2239,6 +2247,7 @@
 				60BBFECD18646A10006A495E /* ETWidgetLayout.h in Headers */,
 				60BBFED118646A10006A495E /* FSBrowserCell.h in Headers */,
 				60EA33A518646CB6001ED909 /* ETLayoutExecutor.h in Headers */,
+				60EA33AB1864A6AF001ED909 /* ETTool+CoreObject.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -3209,6 +3218,7 @@
 				60BBFECF18646A10006A495E /* ETWidgetLayout.m in Sources */,
 				60BBFED318646A10006A495E /* FSBrowserCell.m in Sources */,
 				60EA33A718646CB6001ED909 /* ETLayoutExecutor.m in Sources */,
+				60EA33AD1864A6AF001ED909 /* ETTool+CoreObject.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
