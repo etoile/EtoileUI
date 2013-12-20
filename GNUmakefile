@@ -29,7 +29,7 @@ endif
 
 EtoileUI_HEADER_FILES_DIR = Headers
 
-OTHER_HEADER_DIRS = Additions Base WidgetBackends/AppKit ItemFactoryAdditions Layouts Tools AspectRepository ModelBuilder CoreObjectUI Persistency UIBuilder
+OTHER_HEADER_DIRS = Additions Base WidgetBackends WidgetBackends/AppKit ActionHandlers ItemFactoryAdditions Layouts Tools AspectRepository ModelBuilder CoreObjectUI Persistency UIBuilder
 
 EtoileUI_HEADER_FILES = $(notdir $(wildcard Headers/*.h))
 
@@ -38,6 +38,8 @@ EtoileUI_OBJC_FILES += $(wildcard Source/*.m)
 EtoileUI_OBJC_FILES += $(wildcard Additions/*.m)
 
 EtoileUI_OBJC_FILES += $(wildcard Base/*.m)
+
+EtoileUI_OBJC_FILES += $(wildcard ActionHandlers/*.m)
 
 EtoileUI_OBJC_FILES += $(wildcard ItemFactoryAdditions/*.m)
 
@@ -50,6 +52,8 @@ EtoileUI_OBJC_FILES += $(wildcard AspectRepository/*.m)
 EtoileUI_OBJC_FILES += $(wildcard ModelBuilder/*.m)
 
 EtoileUI_OBJC_FILES += $(wildcard UIBuilder/*.m)
+
+EtoileUI_OBJC_FILES += $(wildcard WidgetBackends/*.m)
 
 EtoileUI_OBJC_FILES += $(wildcard WidgetBackends/AppKit/*.m)
 
