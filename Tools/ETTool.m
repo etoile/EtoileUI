@@ -12,6 +12,7 @@
 #import <EtoileFoundation/NSObject+Model.h>
 #import <EtoileFoundation/Macros.h>
 #import "ETTool.h"
+#import "ETArrowTool.h"
 #import "ETEvent.h"
 #import "ETEventProcessor.h"
 #import "ETGeometry.h"
@@ -20,7 +21,6 @@
 #import "ETLayoutItemGroup.h"
 #import "ETLayoutItemFactory.h"
 #import "ETApplication.h"
-#import "ETInstruments.h"
 #import "ETLayout.h"
 #import "ETView.h"
 #import "ETWindowItem.h"

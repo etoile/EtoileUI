@@ -13,7 +13,7 @@
 
 #import <Foundation/Foundation.h>
 #import <AppKit/AppKit.h>
-#import <EtoileUI/ETInstruments.h>
+#import <EtoileUI/ETMoveTool.h>
 
 @class ETEvent, ETLayoutItem, ETLayoutItemGroup, ETLayout, ETSelectionAreaItem;
 
