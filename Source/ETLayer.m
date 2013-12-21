@@ -10,7 +10,7 @@
 #import "ETLayer.h"
 #import "ETApplication.h"
 #import "ETDecoratorItem.h"
-#import "ETInstruments.h"
+#import "ETArrowTool.h"
 #import "ETLayoutItemFactory.h"
 #import "ETWindowItem.h"
 #import "NSWindow+Etoile.h"

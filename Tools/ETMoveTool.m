@@ -11,9 +11,7 @@
 #import "ETApplication.h"
 #import "ETEvent.h"
 #import "ETEventProcessor.h"
-#import "ETFreeLayout.h"
 #import "ETGeometry.h"
-#import "ETHandle.h"
 #import "ETActionHandler.h"
 #import "ETLayoutItem.h"
 #import "ETLayoutItemGroup.h"
@@ -22,9 +20,6 @@
 #import "ETPickDropCoordinator.h"
 #import "ETSelectTool.h" /* For Pick and Drop Integration */
 #import "ETCompatibility.h"
-
-#define SELECTION_BY_RANGE_KEY_MASK NSShiftKeyMask
-#define SELECTION_BY_ONE_KEY_MASK NSCommandKeyMask
 
 @implementation ETMoveTool
 
@@ -62,6 +57,8 @@ DEALLOC(DESTROY(_draggedItem))
 	[self clearMoveState];
 }
 
+#pragma mark Interaction Settings -
+
 /** Returns whether the receiver should produce translate actions rather than 
 drag actions in reaction to a drag event.<br />
 When the owner layout doesn't allow translate actions, returns NO and any value 
@@ -85,6 +82,8 @@ See also -shouldProduceTranslateActions. */
 
 	_shouldProduceTranslateActions = translate;
 }
+
+#pragma mark Event Handlers -
 
 /* Passes events only to the decorator items bound to the target item.
 
@@ -156,6 +155,8 @@ when they are expected to. */
 	}
 }
 
+#pragma mark Interaction Status -
+
 /** Returns whether an item is currently translated or dragged by the receiver. */
 - (BOOL) isMoving
 {
@@ -169,6 +170,8 @@ Might return nil. */
 {
 	return _draggedItem;
 }
+
+#pragma mark Translate Action Producer -
 
 /** Begins a translation with an item item at a given point in the target item 
 coordinate space. */
@@ -233,7 +236,7 @@ This method can be overriden to alter the broadcast. */
 	return (_draggedItem != nil && _shouldProduceTranslateActions);
 }
 
-/* Drag Action Producer */
+#pragma mark Drag Action Producer -
 
 - (void) beginDragItem: (ETLayoutItem *)item withEvent: (ETEvent *)anEvent
 {
@@ -259,6 +262,8 @@ This method can be overriden to alter the broadcast. */
 {
 	return (_draggedItem != nil && _shouldProduceTranslateActions == NO);
 }
+
+#pragma mark Targeted Action Handler -
 
 /** Returns the action handler of the item currently dragged if a drag session 
 is underway, otherwise returns nil.

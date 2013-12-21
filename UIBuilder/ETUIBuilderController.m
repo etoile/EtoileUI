@@ -15,6 +15,7 @@
 #import <IconKit/IKIcon.h>
 #import "ETUIBuilderController.h"
 #import "ETApplication.h"
+#import "ETArrowTool.h"
 #import "ETAspectRepository.h"
 #import "ETItemValueTransformer.h"
 #import "ETLayoutItem.h"

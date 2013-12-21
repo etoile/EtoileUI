@@ -1,8 +1,4 @@
-/** <title>ETTool</title>
-
-	<abstract>An tool represents an interaction mode to handle and 
-	dispatch events turned into actions in the layout item tree .</abstract>
- 
+/**
 	Copyright (C) 2008 Quentin Mathe
  
 	Author:  Quentin Mathe <qmathe@club-internet.fr>
@@ -16,7 +12,9 @@
 
 @class ETEvent, ETLayoutItem;
 
-/* A basic ETTool subclass which can be used to translate a single layout 
+/** @group Tools
+
+@abstract A basic ETTool subclass which can be used to translate a single layout 
 item at a time.
 
 ETMoveTool doesn't support real dragging in the sense you can only translate a 
@@ -29,21 +27,29 @@ move, translate and drag behaviors. */
 {
 	@private
 	ETLayoutItem *_draggedItem;
-	NSPoint _dragStartLoc; 	/** Expressed in the screen base with non-flipped coordinates */
-	NSPoint _lastDragLoc;  /** Expressed in the screen base with non-flipped coordinates */
+	/** Expressed in the screen base with non-flipped coordinates */
+	NSPoint _dragStartLoc;
+	/** Expressed in the screen base with non-flipped coordinates */	
+	NSPoint _lastDragLoc; 
 	BOOL _shouldProduceTranslateActions;
 }
+
+/** @taskunit Interaction Settings */
 
 - (BOOL) shouldProduceTranslateActions;
 - (void) setShouldProduceTranslateActions: (BOOL)translate;
 
+/** @taskunit Event Handlers */
+
 - (void) mouseUp: (ETEvent *)anEvent;
 - (void) mouseDragged: (ETEvent *)anEvent;
+
+/** @taskunit Interaction Status */
 
 - (BOOL) isMoving;
 - (id) movedItem;
 
-/* Translate Action Producer */
+/** @taskunit Translate Action Producer */
 
 - (void) beginTranslateItem: (ETLayoutItem *)item atPoint: (NSPoint)aPoint;
 - (void) translateToPoint: (NSPoint)eventLoc;
@@ -51,14 +57,14 @@ move, translate and drag behaviors. */
 - (void) endTranslate;
 - (BOOL) isTranslating;
 
-/* Drag Action Producer */
+/** @taskunit Drag Action Producer */
 
 - (void) beginDragItem: (ETLayoutItem *)item withEvent: (ETEvent *)anEvent;
 - (void) endDrag;
 - (BOOL) isDragging;
 
+/** @taskunit Targeted Action Handler */
+
 - (id) actionHandler;
 
 @end
-
-//extern NSString *ETMoveToolTranslateNotification;

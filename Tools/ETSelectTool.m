@@ -69,12 +69,7 @@ DEALLOC(DESTROY(_actionHandlerPrototype); DESTROY(_selectionAreaItem));
 	return newTool;
 }
 
-- (void) didBecomeInactive
-{
-	[super didBecomeInactive];
-	/* Clear all the select tool state */
-	[self endSelectingArea];
-}
+#pragma mark Selection Settings -
 
 /** Returns whether the tool can be used to select several items among the 
 children of the target item. */
@@ -105,6 +100,25 @@ the target item. */
 	_emptySelectionAllowed = empty;
 	[[[self layoutOwner] ifResponds] syncLayoutViewWithTool: self];
 }
+
+/** Returns the selection area item. By default, it returns an 
+ETSelectionAreaItem object which uses a rectangular shape to draw a selection 
+rectangle. */
+- (ETSelectionAreaItem *) selectionAreaItem
+{
+	return _selectionAreaItem;
+}
+
+/** Sets the selection area item.
+
+You can set a customized ETSelectionAreaItem object if you don't want to use 
+the default selection rectangle. */
+- (void) setSelectionAreaItem: (ETSelectionAreaItem *)anItem
+{
+	ASSIGN(_selectionAreaItem, anItem);
+}
+
+#pragma mark Pick and Drop Settings -
 
 /** Returns whether the dragged items should be removed immediately when they 
 get picked.
@@ -138,40 +152,7 @@ their represented objects. */
 	_forcesItemPick = forceItemPick;
 }
 
-/** Returns the selection area item. By default, it returns an 
-ETSelectionAreaItem object which uses a rectangular shape to draw a selection 
-rectangle. */
-- (ETSelectionAreaItem *) selectionAreaItem
-{
-	return _selectionAreaItem;
-}
-
-/** Sets the selection area item.
-
-You can set a customized ETSelectionAreaItem object if you don't want to use 
-the default selection rectangle. */
-- (void) setSelectionAreaItem: (ETSelectionAreaItem *)anItem
-{
-	ASSIGN(_selectionAreaItem, anItem);
-}
-
-/** Returns whether a rubber band selection is underway with the receiver. */
-- (BOOL) isSelectingArea
-{
-	return (_newSelectionAreaUnderway);
-}
-
-/** Returns the selected items in the target item. */
-- (NSArray *) selectedItems
-{
-	// TODO: Should return controller selection if available
-
-	/* Let the target item layout returns a custom selection. 
-	   ETOutlineLayout would return a hierarchical selection. This way, we can 
-	   make the tool compatible with such view-based layout.
-	   NOTE: not in used presently. */
-	return [(ETLayoutItemGroup *)[self targetItem] selectedItemsInLayout];
-}
+#pragma mark Overriden Basic Support -
 
 /** Forces the receiver as the first responder in order it intercepts all 
 actions to be send, this way it can handle some actions by itself and when 
@@ -181,6 +162,23 @@ needed replicate other actions on each selected item. */
 	[[self firstResponderSharingArea] makeFirstResponder: self];
 	//ETAssert([[self firstResponderSharingArea] firstResponder] == self);
 }
+
+- (void) didBecomeInactive
+{
+	[super didBecomeInactive];
+	/* Clear all the select tool state */
+	[self endSelectingArea];
+}
+
+- (void) setTargetItem: (id)anItem
+{
+	[super setTargetItem: anItem];
+	[anItem setSelected: NO];
+	// NOTE: Mandatory to erase the handles that might have been removed
+	[(ETLayoutItem *)[[self layoutOwner] layoutContext] setNeedsDisplay: YES];
+}
+
+#pragma mark Overriden Hit Test Support -
 
 // TODO: Would be nice to merge with ETTool implementation.
 + (ETTool *) activatableToolForItem: (ETLayoutItem *)anItem
@@ -277,13 +275,7 @@ returnedItemRelativePoint is a point in the window frame rect. */
 	return anItem;
 }
 
-- (void) setTargetItem: (id)anItem
-{
-	[super setTargetItem: anItem];
-	[anItem setSelected: NO];
-	// NOTE: Mandatory to erase the handles that might have been removed
-	[(ETLayoutItem *)[[self layoutOwner] layoutContext] setNeedsDisplay: YES];
-}
+#pragma mark Event Handlers -
 
 - (void) mouseDragged: (ETEvent *)anEvent
 {
@@ -410,23 +402,6 @@ be reactivated when we exit our owner layout. */
 	}
 }
 
-- (void) translateByDelta: (NSSize)aDelta
-{
-	if ([[self movedItem] isKindOfClass: [ETHandle class]])
-	{
-		[super translateByDelta: aDelta];
-	}
-	else
-	{
-		FOREACH([self selectedItems], item, ETLayoutItem *)
-		{
-			[[item actionHandler] handleTranslateItem: item 
-			                                  byDelta: aDelta];
-		}
-	}
-	// TODO: Post translate notification
-}
-
 - (void) keyDown: (ETEvent *)anEvent
 {
 	// FIXME: Is this exactly what we should do... My brain is tired.
@@ -459,28 +434,77 @@ be reactivated when we exit our owner layout. */
 	}
 }
 
+- (void) mouseEntered: (ETEvent *)anEvent
+{
+	/* Don't redo the hit test done in -_mouseMoved. */
+	[[[anEvent layoutItem] actionHandler] handleEnterItem: [anEvent layoutItem]];
+}
+
+- (void) mouseExited: (ETEvent *)anEvent
+{
+	/* Don't redo the hit test done in -_mouseMoved. */
+	[[[anEvent layoutItem] actionHandler] handleExitItem: [anEvent layoutItem]];
+}
+
+- (void) mouseEnteredChild: (ETEvent *)anEvent
+{
+	ETLayoutItem *item = [anEvent layoutItem];
+
+	[[[item parentItem] actionHandler] handleEnterChildItem: item];
+}
+
+- (void) mouseExitedChild: (ETEvent *)anEvent
+{
+	ETLayoutItem *item = [anEvent layoutItem];
+
+	[[[item parentItem] actionHandler] handleExitChildItem: item];
+}
+
 - (void) insertNewLine: (id)sender
 {
 	[self beginEditingInsideSelection];
 }
 
-/* If the selection consists of a single item, makes it the target item. */
-- (void) beginEditingInsideSelection
+#pragma mark Interaction Status -
+
+/** Returns whether a rubber band selection is underway with the receiver. */
+- (BOOL) isSelectingArea
 {
-	NSArray *selectedItems = [self selectedItems];
-	if ([selectedItems count] == 1)
-	{
-		ETDebugLog(@"Retarget tool %@ to item %@", self, [selectedItems firstObject]);
-		[self setTargetItem: [selectedItems firstObject]];
-	}
+	return (_newSelectionAreaUnderway);
 }
 
-/** Restores the original target item. */
-- (void) endEditingInsideSelection
+/** Returns the selected items in the target item. */
+- (NSArray *) selectedItems
 {
-	ETDebugLog(@"Restore original target of tool %@ to item %@", self, [[self layoutOwner] layoutContext]);
-	[self setTargetItem: nil];
+	// TODO: Should return controller selection if available
+
+	/* Let the target item layout returns a custom selection. 
+	   ETOutlineLayout would return a hierarchical selection. This way, we can 
+	   make the tool compatible with such view-based layout.
+	   NOTE: not in used presently. */
+	return [(ETLayoutItemGroup *)[self targetItem] selectedItemsInLayout];
 }
+
+#pragma mark Translate Action Producer -
+
+- (void) translateByDelta: (NSSize)aDelta
+{
+	if ([[self movedItem] isKindOfClass: [ETHandle class]])
+	{
+		[super translateByDelta: aDelta];
+	}
+	else
+	{
+		FOREACH([self selectedItems], item, ETLayoutItem *)
+		{
+			[[item actionHandler] handleTranslateItem: item 
+			                                  byDelta: aDelta];
+		}
+	}
+	// TODO: Post translate notification
+}
+
+#pragma mark Selection Area Support -
 
 /** Shows the selection area item in the layout. */
 - (void) beginSelectingAreaAtPoint: (NSPoint)aPoint
@@ -559,31 +583,27 @@ their intersection with the new selection rect. */
 	[[self targetItem] displayIfNeeded];
 }
 
-- (void) mouseEntered: (ETEvent *)anEvent
+#pragma mark Nested Interaction Support
+
+/* If the selection consists of a single item, makes it the target item. */
+- (void) beginEditingInsideSelection
 {
-	/* Don't redo the hit test done in -_mouseMoved. */
-	[[[anEvent layoutItem] actionHandler] handleEnterItem: [anEvent layoutItem]];
+	NSArray *selectedItems = [self selectedItems];
+	if ([selectedItems count] == 1)
+	{
+		ETDebugLog(@"Retarget tool %@ to item %@", self, [selectedItems firstObject]);
+		[self setTargetItem: [selectedItems firstObject]];
+	}
 }
 
-- (void) mouseExited: (ETEvent *)anEvent
+/** Restores the original target item. */
+- (void) endEditingInsideSelection
 {
-	/* Don't redo the hit test done in -_mouseMoved. */
-	[[[anEvent layoutItem] actionHandler] handleExitItem: [anEvent layoutItem]];
+	ETDebugLog(@"Restore original target of tool %@ to item %@", self, [[self layoutOwner] layoutContext]);
+	[self setTargetItem: nil];
 }
 
-- (void) mouseEnteredChild: (ETEvent *)anEvent
-{
-	ETLayoutItem *item = [anEvent layoutItem];
-
-	[[[item parentItem] actionHandler] handleEnterChildItem: item];
-}
-
-- (void) mouseExitedChild: (ETEvent *)anEvent
-{
-	ETLayoutItem *item = [anEvent layoutItem];
-
-	[[[item parentItem] actionHandler] handleExitChildItem: item];
-}
+#pragma mark Extending or Reducing Selection -
 
 /** Alters the current selection based on the layout item attached to anEvent 
 and the modifier keys. */
@@ -631,7 +651,6 @@ and the modifier keys. */
 		[self makeSingleSelectionWithItem: item];
 	}
 }
-
 
 /** Selects every items whose index as element in the target item are greater 
 than the first selection index and lower than the index of the given item.
@@ -725,6 +744,8 @@ item will be selected. */
 	}
 }
 
+#pragma mark Targeted Action Handler -
+
 /** Sets the action handler used to check the actions that can sent to 
 selected items. */
 - (void) setActionHandlerPrototype: (id)aHandler
@@ -762,18 +783,12 @@ on the selection elements, when the receiver becomes the first responder. */
 	if ([_actionHandlerPrototype respondsToSelector: twoParamSelector])
 		return YES;
 
-	/*if ([_actionHandlerPrototype respondsToSelector: aSelector])
-		return YES;*/
-
 	return NO;
 }
 
 - (NSMethodSignature *) methodSignatureForSelector: (SEL)aSelector
 {
 	NSMethodSignature *sig = [super methodSignatureForSelector: aSelector];
-
-	/*if (sig == nil)
-		[_actionHandlerPrototype methodSignatureForSelector: aSelector];*/
 
 	if (sig == nil)
 	{
@@ -818,6 +833,8 @@ on the selection elements, when the receiver becomes the first responder. */
 {
 	return YES;
 }
+
+#pragma mark Additional Tool Actions -
 
 /** Tells each item currently deselected in the target item to select itself. */
 - (IBAction) selectAll: (id)sender

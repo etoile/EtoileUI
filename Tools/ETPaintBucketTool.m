@@ -53,6 +53,8 @@ as stroke color and brown as fill color. */
 	return newTool;
 }
 
+#pragma mark Interaction Settings -
+
 /** Returns the fill color associated with the receiver. */
 - (NSColor *) fillColor
 {
@@ -95,6 +97,8 @@ as stroke color and brown as fill color. */
 	[self didChangeValueForProperty: @"paintMode"];
 }
 
+#pragma mark Event Handlers -
+
 /* Outside of the boundaries doesn't count because the parent tool will 
 be reactivated when we exit our owner layout. */
 - (void) mouseUp: (ETEvent *)anEvent
@@ -113,6 +117,8 @@ be reactivated when we exit our owner layout. */
 		[actionHandler handleStrokeItem: item withColor: [self strokeColor]];
 	}
 }
+
+#pragma mark UI Utility -
 
 - (NSMenu *) menuRepresentation
 {
@@ -140,6 +146,8 @@ be reactivated when we exit our owner layout. */
 
 	return menu;
 }
+
+#pragma mark Settings related Actions -
 
 - (void) changePaintMode: (id)sender
 {

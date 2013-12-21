@@ -11,7 +11,7 @@
 
 #import "TestCommon.h"
 #import "ETApplication.h"
-#import "ETInstruments.h"
+#import "ETArrowTool.h"
 #import "ETEvent.h"
 #import "ETFreeLayout.h"
 #import "ETGeometry.h"

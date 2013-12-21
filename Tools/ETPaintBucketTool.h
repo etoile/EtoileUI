@@ -1,8 +1,4 @@
-/** <title>ETPaintBucketTool</title>
-
-	<abstract>An tool class which implements the well-known paint bucket 
-	tool present in many graphics-oriented applications.</abstract>
- 
+/**
 	Copyright (C) 2008 Quentin Mathe
  
 	Author:  Quentin Mathe <qmathe@club-internet.fr>
@@ -14,14 +10,16 @@
 #import <AppKit/AppKit.h>
 #import <EtoileUI/ETTool.h>
 
-
 typedef enum _ETPaintMode
 {
 	ETPaintModeFill,
 	ETPaintModeStroke
 } ETPaintMode;
 
-/** An ETTool subclass that implements the very classic paint bucket tool.
+/** @group Tools
+
+@abstract An tool class which implements the well-known paint bucket tool 
+present in many graphics-oriented applications.
 
 TODO: Implement tolerance option. */
 @interface ETPaintBucketTool : ETTool
@@ -32,6 +30,8 @@ TODO: Implement tolerance option. */
 	ETPaintMode _paintMode;
 }
 
+/** @taskunit Interaction Settings */
+
 - (NSColor *) fillColor;
 - (void) setFillColor: (NSColor *)color;
 - (NSColor *) strokeColor;
@@ -39,6 +39,8 @@ TODO: Implement tolerance option. */
 // NOTE: May be better named paintAction with ETStrokePaintAction...
 - (ETPaintMode) paintMode;
 - (void) setPaintMode: (ETPaintMode)aMode;
+
+/** @taskunit Settings related Actions */
 
 - (void) changePaintMode: (id)sender;
 - (void) changeColor: (id)sender;

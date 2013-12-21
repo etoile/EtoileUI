@@ -1,8 +1,4 @@
-/** <title>ETTool</title>
-
-	<abstract>An tool represents an interaction mode to handle and 
-	dispatch events turned into actions in the layout item tree .</abstract>
- 
+/**
 	Copyright (C) 2008 Quentin Mathe
  
 	Author:  Quentin Mathe <qmathe@club-internet.fr>
@@ -14,10 +10,12 @@
 #import <AppKit/AppKit.h>
 #import <EtoileUI/ETTool.h>
 
-@class ETEvent, ETLayoutItem, ETLayoutItemGroup, ETLayout, ETSelectionAreaItem;
+@class ETEvent, ETLayoutItem;
 @protocol ETKeyInputAction, ETTouchAction;
 
-/** The actions which can be produced by ETArrowTool. */
+/** @group Tools
+
+@abstract The actions which can be produced by ETArrowTool. */
 @protocol ETArrowToolActionConsumer
 - (void) handleClickItem: (ETLayoutItem *)item atPoint: (NSPoint)aPoint;
 - (void) handleDoubleClickItem: (ETLayoutItem *)item;
@@ -34,7 +32,9 @@
 - (void) handleEndTouch: (id <ETTouchAction>)aTouch onItem: (ETLayoutItem *)item;
 @end
 
-/** A basic ETTool subclass which provides common UI interaction and can 
+/** @group Tools
+
+@abstract A basic ETTool subclass which provides common UI interaction and can
 be used to click, double-click, pick and drop layout items.
 
 ETArrowTool produce the actions listed in ETArrowToolActionConsumer protocol.<br />
@@ -62,9 +62,12 @@ ETSelectTool is attached to ETIconLayout and ETFreeLayout by default. */
 @interface ETArrowTool : ETTool
 {
 	@private
-	ETLayoutItem *_firstTouchedItem; /* The item initially touched on mouse down */
+	 /** The item initially touched on mouse down */
+	ETLayoutItem *_firstTouchedItem;
 	BOOL _isTrackingTouch;
 }
+
+/** @taskunit Event Handlers */
 
 - (void) mouseDown: (ETEvent *)anEvent;
 - (void) mouseUp: (ETEvent *)anEvent;

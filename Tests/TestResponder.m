@@ -9,6 +9,7 @@
 #import "TestCommon.h"
 #import "ETActionHandler.h"
 #import "ETApplication.h"
+#import "ETArrowTool.h"
 #import "ETController.h"
 #import "ETLayoutItem.h"
 #import "ETLayoutItemGroup.h"

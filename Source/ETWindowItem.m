@@ -10,7 +10,6 @@
 #import <EtoileFoundation/Macros.h>
 #import "ETWindowItem.h"
 #import "ETController.h"
-#import "ETInstruments.h"
 #import "ETEvent.h"
 #import "ETGeometry.h"
 #import "ETLayer.h"
@@ -20,6 +19,7 @@
 #import "EtoileUIProperties.h"
 #import "ETPickDropCoordinator.h"
 #import "ETResponderIntegration.h"
+#import "ETTool.h"
 #import "ETUIItem.h"
 #import "ETCompatibility.h"
 #import "ETView.h"

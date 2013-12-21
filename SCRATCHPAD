@@ -30,6 +30,30 @@
 
 == Random API ideas ==
 
+// TODO: Implement
+//- (void) didBecomeActive: (ETTool *)prevTool;
+// or
+/*- (void) willBecomeActive
+{
+	ETTool *activeTool = [ETTool activeTool];
+	BOOL isToolReplacement = ([activeTool isSelectTool] && [[activeTool layoutOwner] isEqual: [self layoutOwner]]);
+	
+	if (isToolReplacement)
+		[self setAllowedDragUTIs: [activeTool allowedDragUTIs]];
+}*/
+// or rather take the values from the controller when attaching the tool for the first time. or cache a select tool prototype in the controller? Well need a general mechanism to store tool prototypes anyway…
+// -[ETController setPrototype: forToolClass:]?
+
+// TODO: Inspection and ETSelectTool
+/* Returns inspector based on selection unlike ETLayoutItem.
+
+If a custom inspector hasn't been set by calling -setInspector:, the inspector 
+set on the base item is retrieved. If the option/alt modifier key is pressed, 
+a copy of the inspector is returned rather reusing the existing instance as 
+usual. This facility allows to easily inspect two items with two distinct 
+inspectors, even if these layout items belong to the same base item. At UI level, 
+the user can press the option/alt key when choosing Inspect in a menu. */
+
 /** ETlayoutItem has no delegate but rather used the delegate of the closest 
 	container ancestor.
 	Implements this method if you set values in aggregate views or cells. For

@@ -1,9 +1,4 @@
-/** <title>ETSelectTool</title>
-
-	<abstract>An tool class which provides rich and customizable selection 
-	logic. ETSelectTool encapsulates selection behavior to make it 
-	reusable and uniform accross ETLayout subclasses.</abstract>
-
+/**
 	Copyright (C) 2009 Quentin Mathe
  
 	Author:  Quentin Mathe <qmathe@club-internet.fr>
@@ -15,9 +10,15 @@
 #import <AppKit/AppKit.h>
 #import <EtoileUI/ETMoveTool.h>
 
-@class ETEvent, ETLayoutItem, ETLayoutItemGroup, ETLayout, ETSelectionAreaItem;
+@class ETSelectionAreaItem;
 
-/** Attached by default to ETFreeLayout
+/** @group Tools
+
+@abstract An tool class which provides rich and customizable selection logic. 
+ETSelectTool encapsulates selection behavior to make it reusable and uniform 
+accross ETLayout subclasses.
+
+Attached by default to ETFreeLayout.
 
 The selection is stored directly in the layout item tree, each item has a 
 selected property. This property is used by the item style to draw selection
@@ -65,50 +66,59 @@ to return NO.
 	BOOL _emptySelectionAllowed;
 	BOOL _removeItemsAtPickTime;
 	BOOL _forcesItemPick;
-	BOOL _newSelectionAreaUnderway; // NOTE: May be move up to ETArrowTool
-	NSPoint _localStartDragLoc; /** Expressed in hit/background item base with non-flipped coordinates */
-	NSPoint _localLastDragLoc; /** Expressed in hit/background item base with non-flipped coordinates */
+	// NOTE: May be move up to ETArrowTool
+	BOOL _newSelectionAreaUnderway;
+	/** Expressed in hit/background item base with non-flipped coordinates */
+	NSPoint _localStartDragLoc;
+	/** Expressed in hit/background item base with non-flipped coordinates */
+	NSPoint _localLastDragLoc;
 }
 
-// TODO: Implement
-//- (void) didBecomeActive: (ETTool *)prevTool;
-// or
-/*- (void) willBecomeActive
-{
-	ETTool *activeTool = [ETTool activeTool];
-	BOOL isToolReplacement = ([activeTool isSelectTool] && [[activeTool layoutOwner] isEqual: [self layoutOwner]]);
-	
-	if (isToolReplacement)
-		[self setAllowedDragUTIs: [activeTool allowedDragUTIs]];
-}*/
-// or rather take the values from the controller when attaching the tool for the first time. or cache a select tool prototype in the controller? Well need a general mechanism to store tool prototypes anyway…
-// -[ETController setPrototype: forToolClass:]?
+// TODO: Decide whether we should support...
+//- (ETMoveAction) shouldProduceMoveAction;
+//- (void) setShouldProduceMoveAction: (ETMoveAction)actionType;
 
-// NOTE: May be we should alternatively allow the controller to specify the 
-// following properties...
+/** @taskunit Selection Settings */
+
 - (BOOL) allowsMultipleSelection;
 - (void) setAllowsMultipleSelection: (BOOL)multiple;
 - (BOOL) allowsEmptySelection;
 - (void) setAllowsEmptySelection: (BOOL)empty;
+- (ETSelectionAreaItem *) selectionAreaItem;
+- (void) setSelectionAreaItem: (ETSelectionAreaItem *)anItem;
+
+/** @taskunit Pick and Drop Settings */
+
 - (BOOL) shouldRemoveItemsAtPickTime;
 - (void) setShouldRemoveItemsAtPickTime: (BOOL)flag;
 - (BOOL) forcesItemPick;
 - (void) setForcesItemPick: (BOOL)forceItemPick;
-//- (ETMoveAction) shouldProduceMoveAction;
-//- (void) setShouldProduceMoveAction: (ETMoveAction)actionType;
 
-- (ETSelectionAreaItem *) selectionAreaItem;
-- (void) setSelectionAreaItem: (ETSelectionAreaItem *)anItem;
-- (BOOL) isSelectingArea;
-- (void) beginSelectingAreaAtPoint: (NSPoint)aPoint;
-- (void) resizeSelectionAreaToPoint: (NSPoint)aPoint;
-- (void) endSelectingArea;
+/** @taskunit Event Handlers */
 
 - (void) mouseDragged: (ETEvent *)anEvent;
 - (void) mouseUp: (ETEvent *)anEvent;
+- (void) keyDown: (ETEvent *)anEvent;
 - (void) insertNewLine: (id)sender;
+
+/** @taskunit Selection Status */
+
+- (NSArray *) selectedItems;
+- (BOOL) isSelectingArea;
+
+/** @taskunit Selection Area Support */
+
+- (void) beginSelectingAreaAtPoint: (NSPoint)aPoint;
+- (void) resizeSelectionAreaToRect: (NSRect)aRect;
+- (void) resizeSelectionAreaToPoint: (NSPoint)aPoint;
+- (void) endSelectingArea;
+
+/** @taskunit Nested Interaction Support */
+
 - (void) beginEditingInsideSelection;
 - (void) endEditingInsideSelection;
+
+/** @taskunit Extending or Reducing Selection */
 
 - (void) alterSelectionWithEvent: (ETEvent *)anEvent;
 - (void) extendSelectionToItem: (ETLayoutItem *)item;
@@ -118,10 +128,14 @@ to return NO.
 - (void) makeSingleSelectionWithItem: (ETLayoutItem *)item;
 - (void) deselectAllWithItem: (ETLayoutItem *)item;
 
+/** @taskunit Targeted Action Handler */
+
 - (void) setActionHandlerPrototype: (id)aHandler;
 - (id) actionHandlerPrototype;
 - (id) actionHandler;
 - (id) nextResponder;
+
+/** @taskunit Additional Tool Actions */
 
 // TODO: Probably extract the actions handled by the select tool, which applies 
 // to multiple items at a time, into a stanalone class or a category at least.
@@ -131,13 +145,3 @@ to return NO.
 - (IBAction) ungroup: (id)sender;
 
 @end
-
-// TODO: Inspection and ETSelectTool
-/* Returns inspector based on selection unlike ETLayoutItem.
-
-If a custom inspector hasn't been set by calling -setInspector:, the inspector 
-set on the base item is retrieved. If the option/alt modifier key is pressed, 
-a copy of the inspector is returned rather reusing the existing instance as 
-usual. This facility allows to easily inspect two items with two distinct 
-inspectors, even if these layout items belong to the same base item. At UI level, 
-the user can press the option/alt key when choosing Inspect in a menu. */

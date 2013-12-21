@@ -10,21 +10,14 @@
 #import "ETArrowTool.h"
 #import "ETApplication.h"
 #import "ETEvent.h"
-#import "ETEventProcessor.h"
-#import "ETFreeLayout.h"
-#import "ETGeometry.h"
-#import "ETHandle.h"
 #import "ETActionHandler.h"
 #import "ETLayoutItem.h"
 #import "ETLayoutItemGroup.h"
 #import "ETLayout.h"
 #import "ETPickDropActionHandler.h"
 #import "ETPickDropCoordinator.h"
-#import "ETSelectTool.h" /* For Pick and Drop Integration */
+#import "ETSelectTool.h"
 #import "ETCompatibility.h"
-
-#define SELECTION_BY_RANGE_KEY_MASK NSShiftKeyMask
-#define SELECTION_BY_ONE_KEY_MASK NSCommandKeyMask
 
 @implementation ETArrowTool
 

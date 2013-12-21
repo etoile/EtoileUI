@@ -67,6 +67,14 @@ Open Issues
 
 - Hide NSApplication as an AppKit widget backend implementation detail (ETApplication superclass should be NSObject)
 
+- Decide whether to implement ETMoveToolTranslateNotification
+
+- Formalize a bit more the action consumer protocols
+
+	- May be add -[ETool producedActionProtocols] or -[ETTool actionConsumerProtocols]
+	
+- Finis cleaning ETSelectTool
+
 
 Testing
 -------

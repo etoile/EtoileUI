@@ -82,7 +82,8 @@
 
 /* Tools */
 
-#import <EtoileUI/ETInstruments.h>
+#import <EtoileUI/ETArrowTool.h>
+#import <EtoileUI/ETMoveTool.h>
 #import <EtoileUI/ETTool.h>
 #import <EtoileUI/ETPaintBucketTool.h>
 #import <EtoileUI/ETSelectTool.h>

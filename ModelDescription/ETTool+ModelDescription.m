@@ -9,7 +9,7 @@
 #import <EtoileFoundation/EtoileFoundation.h>
 #import "ETTool.h"
 #import "ETIconLayout.h"
-#import "ETInstruments.h"
+#import "ETMoveTool.h"
 #import "ETPaintBucketTool.h"
 #import "ETSelectTool.h"
 
