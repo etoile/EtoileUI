@@ -34,6 +34,10 @@
 - (NSRect) bounds;
 @end
 
+@interface ETLayoutItem (UndefinedActions)
+- (void) insertRectangle: (id)sender;
+@end
+
 @interface TestTool : TestCommon <UKTest>
 {
 	ETTool *tool;
@@ -234,6 +238,22 @@
 	[tool setCursorName: kETToolCursorNamePointingHand];
 	
 	UKObjectsEqual([NSCursor pointingHandCursor], [tool cursor]);
+}
+
+- (void) testRespondsToForwardedActionsForSelectTool
+{
+	UKTrue([[ETSelectTool tool] respondsToSelector: @selector(insertRectangle:)]);
+	// TODO: Put the -scrollWheel: test in AppKit Widget backend tests
+	UKTrue([[ETSelectTool tool] respondsToSelector: @selector(scrollWheel:)]);
+	UKFalse([[ETSelectTool tool] respondsToSelector: @selector(addItem:)]);
+}
+
+- (void) testActionsForwardingForSelectTool
+{
+	UKDoesNotRaiseException([[ETSelectTool tool] insertRectangle: nil]);
+	// TODO: Put the -scrollWheel: test in AppKit Widget backend tests
+	UKDoesNotRaiseException([[ETSelectTool tool] scrollWheel: nil]);
+	UKRaisesException([[ETSelectTool tool] addItem: nil]);
 }
 
 @end

@@ -68,6 +68,20 @@ Open Issues
 - Hide NSApplication as an AppKit widget backend implementation detail (ETApplication superclass should be NSObject)
 
 
+Testing
+-------
+
+- Add ETResponder related tests exercising message forwarding to -actionHandler and -sharedFallbackResponder
+
+	- e.g. [tool responderToSelector: @selector(insertRectangle:)] and [tool insertRectangle:]
+	
+	- e.g. [tool responderToSelector: @selector(scrollWheel:)] and [tool scrollWheel:]
+	
+	- test the various ETUIObject subclasses
+	
+	- provide a -respondsToSelector: and -forwardingSelectorForTarget: implementations in ETResponderTrait
+
+
 Old Potential Issues
 --------------------
 

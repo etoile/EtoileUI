@@ -351,9 +351,16 @@ See also -mainTool. */
 	return [[ETActionHandler sharedFallbackResponder] respondsToSelector: aSelector];
 }
 
-- (id) forwardingTargetForSelector:(SEL)aSelector
+- (id) forwardingTargetForSelector: (SEL)aSelector
 {
-	return [ETActionHandler sharedFallbackResponder];
+	if ([[ETActionHandler sharedFallbackResponder] respondsToSelector: aSelector])
+	{
+		return [ETActionHandler sharedFallbackResponder];
+	}
+	else
+	{
+		return [super forwardingTargetForSelector: aSelector];
+	}
 }
 
 /** Returns YES. */
