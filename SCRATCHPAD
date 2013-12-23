@@ -30,6 +30,20 @@
 
 == Random API ideas ==
 
+// TODO: For each document set the editor tool. Eventually offer a 
+// delegate method either through ETTool or ETDocumentManager to give 
+// more control over this...
++ (void) setEditorTool: (id)anTool
+{
+	//[documentLayout setAttachedTool: anTool];
+}
+
+// TODO: Think about...
++ (void) setEditorTargetItems: (NSArray *)items
+{
+
+}
+
 // TODO: Implement
 //- (void) didBecomeActive: (ETTool *)prevTool;
 // or

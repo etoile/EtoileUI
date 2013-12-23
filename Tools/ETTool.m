@@ -44,6 +44,8 @@
 	[self applyTraitFromClass: [ETResponderTrait class]];
 }
 
+#pragma mark Registering Tools -
+
 static NSMutableSet *toolPrototypes = nil;
 
 /** Registers a prototype for every ETTool subclasses.
@@ -107,14 +109,115 @@ several prototypes might share the same class. */
 	return (NSSet *)[[toolPrototypes mappedCollection] class];
 }
 
-/** Shows a palette which lists all the registered tools. 
+#pragma mark Tool Activation -
 
-The palette is a layout item whose represented object is the ETTool class
-object. */
-+ (void) show: (id)sender
+/** <override-never />
+Updates the cursor with the one provided by the activatable tool.
+
+You should never to call this method, only ETEventProcessor is expected to use 
+it. */
++ (void) updateCursorIfNeededForItem: (ETLayoutItem *)anItem
 {
-	// FIXME: Implement
+	[[(ETTool *)[self activatableToolForItem: anItem] cursor] set];
 }
+
+/** <override-never />
+Updates the active tool with a new one looked up in the active tool 
+hovered item stack, and returns the resulting active tool.
+
+You should never to call this method, only ETEventProcessor is expected to use 
+it. */
++ (ETTool *) updateActiveToolWithEvent: (ETEvent *)anEvent
+{
+	BOOL isFieldEditorEvent = ([[anEvent windowItem] hitTestFieldEditorWithEvent: anEvent] != nil);
+
+	if (isFieldEditorEvent)
+	{
+		return activeTool;
+	}
+
+	ETTool *toolToActivate = [self activatableToolForItem: [anEvent layoutItem]];
+	return [self setActiveTool: toolToActivate];
+}
+
+/* Returns the hovered item stack that is used to look up the tool to activate. See +activatableToolForItem:.
+
+The item at the top (index == count - 1) is the deepest descendant hovered by 
+the cursor, while the item at bottom is the highest ancestor in the item tree 
+(it is the root item, and always the window group currently).
+
+When the cursor is over a handle, the hovered item stack contains items that 
+don't belong to the item tree rooted in the window group. Handles, separators, 
+etc. belong to -[ETLayout layerItem] and layer items have their parent item set,
+but -[ETLayoutItemGroup items] never include a layer item.
+
+You should never need to use this method. */
++ (NSArray *) hoveredItemStackForItem: (ETLayoutItem *)aHitItem
+{
+	NSParameterAssert(aHitItem != nil);
+
+	ETLayoutItem *item = aHitItem;
+	NSMutableArray *newStack = [NSMutableArray array];
+	
+	do
+	{
+		[newStack insertObject: item atIndex: 0];
+		item = [item parentItem];
+	} while (item != nil);
+
+	// FIXME: Work around inspectors and other windows whose content view 
+	// has a layout item with no parent, when it should be a window layer child.
+	// We can probably remove this workaround now.
+	if ([newStack firstObject] != [[ETLayoutItemFactory factory] windowGroup])
+	{
+		[newStack insertObject: [[ETLayoutItemFactory factory] windowGroup] atIndex: 0];
+	}
+
+	return newStack;
+}
+
+/** Looks up and returns the tool to be activated in the current hovered 
+item stack.
+
+The stack is traversed upwards to the root item. The traversal ends on the 
+first layout with a tool attached to it.
+
+The stack is never empty because the pointer never exits the root item which 
+covers the whole screen. 
+
+For a nil item, raises a NSInvalidArgumentException.
+
+You should rarely need to override this method. */
++ (ETTool *) activatableToolForItem: (ETLayoutItem *)anItem;
+{
+	NILARG_EXCEPTION_TEST(anItem);
+	ETTool *foundTool = nil;
+
+	/* The last/top object is the tool at the lowest/deepest level in the item tree among the items in the stack */
+	for (ETLayoutItem *item in [[self hoveredItemStackForItem: anItem] reverseObjectEnumerator])
+	{
+		ETDebugLog(@"Look up tool at level %@ in hovered item stack", item);
+
+		/* The top item can be an ETLayoutItem instance */
+		if ([item isGroup] == NO)
+			continue;
+		
+		foundTool = [[item layout] attachedTool];
+
+		/* Don't activate tool bound to a widget layout (see also +setActiveTool:) */
+		if ([[self activeTool] shouldActivateTool: foundTool attachedToItem: item])
+			break;
+	}
+
+	// TODO: We could forbid setting a nil tool on the root item.
+	BOOL overRootItem = (foundTool == nil);
+
+	foundTool = (overRootItem ? [[self class] mainTool] : foundTool);
+	ETAssert(foundTool != nil);
+	return foundTool;
+}
+
+#pragma mark Active and Main Tools -
 
 static ETTool *activeTool = nil;
 
@@ -222,47 +325,6 @@ automatically activates tools in response to the user's click with
 	return toolToActivate;
 }
 
-/** Looks up and returns the tool to be activated in the current hovered 
-item stack.
-
-The stack is traversed upwards to the root item. The traversal ends on the 
-first layout with a tool attached to it.
-
-The stack is never empty because the pointer never exits the root item which 
-covers the whole screen. 
-
-For a nil item, raises a NSInvalidArgumentException.
-
-You should rarely need to override this method. */
-+ (ETTool *) activatableToolForItem: (ETLayoutItem *)anItem;
-{
-	NILARG_EXCEPTION_TEST(anItem);
-	ETTool *foundTool = nil;
-
-	/* The last/top object is the tool at the lowest/deepest level in the item tree among the items in the stack */
-	for (ETLayoutItem *item in [[self hoveredItemStackForItem: anItem] reverseObjectEnumerator])
-	{
-		ETDebugLog(@"Look up tool at level %@ in hovered item stack", item);
-
-		/* The top item can be an ETLayoutItem instance */
-		if ([item isGroup] == NO)
-			continue;
-		
-		foundTool = [[item layout] attachedTool];
-
-		/* Don't activate tool bound to a widget layout (see also +setActiveTool:) */
-		if ([[self activeTool] shouldActivateTool: foundTool attachedToItem: item])
-			break;
-	}
-
-	// TODO: We could forbid setting a nil tool on the root item.
-	BOOL overRootItem = (foundTool == nil);
-
-	foundTool = (overRootItem ? [[self class] mainTool] : foundTool);
-	ETAssert(foundTool != nil);
-	return foundTool;
-}
-
 static ETTool *mainTool = nil;
 
 /** Returns the tool to be used as active tool when no other tools can be looked 
@@ -302,6 +364,8 @@ See also -mainTool. */
 		[self setActiveTool: mainTool];
 	}
 }
+
+#pragma mark Initialization -
 
 /** Returns a new autoreleased tool instance. */
 + (id) toolWithObjectGraphContext: (COObjectGraphContext *)aContext;
@@ -363,25 +427,19 @@ See also -mainTool. */
 	}
 }
 
+/* Returns nil or the candidate focused item from the target item. */
+- (ETLayoutItem *) candidateFocusedItem
+{
+	return [[self nextResponder] candidateFocusedItem];
+}
+
 /** Returns YES. */
 - (BOOL) isTool
 {
 	return YES;
 }
 
-// TODO: For each document set the editor tool. Eventually offer a 
-// delegate method either through ETTool or ETDocumentManager to give 
-// more control over this...
-+ (void) setEditorTool: (id)anTool
-{
-	//[documentLayout setAttachedTool: anTool];
-}
-
-// TODO: Think about...
-+ (void) setEditorTargetItems: (NSArray *)items
-{
-
-}
+#pragma mark Targeted Item -
 
 /** Returns the layout item on which the receiver is currently acting.
 
@@ -460,77 +518,6 @@ See also -targetItem. */
 	ASSIGN(_targetItem, anItem);
 }
 
-/* Returns nil or the candidate focused item from the target item. */
-- (ETLayoutItem *) candidateFocusedItem
-{
-	return [[self nextResponder] candidateFocusedItem];
-}
-
-/** <override-never />
-Updates the cursor with the one provided by the activatable tool.
-
-You should never to call this method, only ETEventProcessor is expected to use 
-it. */
-+ (void) updateCursorIfNeededForItem: (ETLayoutItem *)anItem
-{
-	[[(ETTool *)[self activatableToolForItem: anItem] cursor] set];
-}
-
-/** <override-never />
-Updates the active tool with a new one looked up in the active tool 
-hovered item stack, and returns the resulting active tool.
-
-You should never to call this method, only ETEventProcessor is expected to use 
-it. */
-+ (ETTool *) updateActiveToolWithEvent: (ETEvent *)anEvent
-{
-	BOOL isFieldEditorEvent = ([[anEvent windowItem] hitTestFieldEditorWithEvent: anEvent] != nil);
-
-	if (isFieldEditorEvent)
-	{
-		return activeTool;
-	}
-
-	ETTool *toolToActivate = [self activatableToolForItem: [anEvent layoutItem]];
-	return [self setActiveTool: toolToActivate];
-}
-
-/* Returns the hovered item stack that is used to look up the tool to activate. See +activatableToolForItem:.
-
-The item at the top (index == count - 1) is the deepest descendant hovered by 
-the cursor, while the item at bottom is the highest ancestor in the item tree 
-(it is the root item, and always the window group currently).
-
-When the cursor is over a handle, the hovered item stack contains items that 
-don't belong to the item tree rooted in the window group. Handles, separators, 
-etc. belong to -[ETLayout layerItem] and layer items have their parent item set,
-but -[ETLayoutItemGroup items] never include a layer item.
-
-You should never need to use this method. */
-+ (NSArray *) hoveredItemStackForItem: (ETLayoutItem *)aHitItem
-{
-	NSParameterAssert(aHitItem != nil);
-
-	ETLayoutItem *item = aHitItem;
-	NSMutableArray *newStack = [NSMutableArray array];
-	
-	do
-	{
-		[newStack insertObject: item atIndex: 0];
-		item = [item parentItem];
-	} while (item != nil);
-
-	// FIXME: Work around inspectors and other windows whose content view 
-	// has a layout item with no parent, when it should be a window layer child.
-	// We can probably remove this workaround now.
-	if ([newStack firstObject] != [[ETLayoutItemFactory factory] windowGroup])
-	{
-		[newStack insertObject: [[ETLayoutItemFactory factory] windowGroup] atIndex: 0];
-	}
-
-	return newStack;
-}
-
 - (void) validateLayoutOwner: (ETLayout *)aLayout
 {
 	if ([aLayout layoutContext] != nil && [(id)[aLayout layoutContext] isLayoutItem] == NO)
@@ -552,17 +539,7 @@ Changing the layout owner resets -targetItem to return
 	return [self valueForVariableStorageKey: @"layoutOwner"];
 }
 
-/** <override-dummy />
-Returns whether the tool should considered activatable by 
-+activatableToolForItem:.
-
-You must call the superclass implementation if you override this method, and 
-test whether the superclass implementation returns NO, and return NO in this case.  */
-- (BOOL) shouldActivateTool: (ETTool *)foundTool attachedToItem: (ETLayoutItem *)anItem
-{
-	/* Don't activate tool bound to a widget layout (see also +setActiveTool:) */
-	return (foundTool != nil && [[foundTool layoutOwner] isWidget] == NO);
-}
+#pragma mark Activation Hooks -
 
 /** <override-dummy />
 Called when the tool becomes active, usually when the pointer enters in an
@@ -587,6 +564,20 @@ You must call the superclass implementation if you override this method. */
 {
 	ETDebugLog(@"Tool %@ did become inactive", self);
 }
+
+/** <override-dummy />
+Returns whether the tool should considered activatable by 
++activatableToolForItem:.
+
+You must call the superclass implementation if you override this method, and 
+test whether the superclass implementation returns NO, and return NO in this case.  */
+- (BOOL) shouldActivateTool: (ETTool *)foundTool attachedToItem: (ETLayoutItem *)anItem
+{
+	/* Don't activate tool bound to a widget layout (see also +setActiveTool:) */
+	return (foundTool != nil && [[foundTool layoutOwner] isWidget] == NO);
+}
+
+#pragma Hit Test -
 
 /** Returns the root item that -hitTestWithEvent: is expected to return when 
 the mouse is not within in a window area. For now, return -windowGroup as 
@@ -804,6 +795,8 @@ NO. */
 	return (wasItemReplaced == NO);
 }
 
+#pragma mark Event Handlers Requests -
+
 - (void) trySendEventToWidgetView: (ETEvent *)anEvent
 {
 	ETLayoutItem *item = [self hitTestWithEvent: anEvent];
@@ -835,6 +828,79 @@ NO. */
 	[windowItem removeActiveFieldEditorItem];
 	return YES;
 }
+
+
+- (BOOL) performKeyEquivalent: (ETEvent *)anEvent inItem: (ETLayoutItem *)item
+{
+	if ([[item actionHandler] handleKeyEquivalent: anEvent onItem: item]
+		|| [[item view] performKeyEquivalent: (NSEvent *)[anEvent backendEvent]])
+	{
+		return YES;
+	}
+
+	if ([item isGroup] == NO)
+		return NO;
+
+	FOREACH([(ETLayoutItemGroup *)item items], childItem, ETLayoutItem *)
+	{
+		if ([self performKeyEquivalent: anEvent inItem: childItem])
+			return YES;
+	}
+
+	return NO;
+}
+
+- (BOOL) performKeyEquivalent: (ETEvent *)anEvent
+{
+	BOOL isHandled = [self performKeyEquivalent: anEvent inItem: [ETApp keyItem]];
+
+	if (isHandled)
+		return YES;
+
+	return [[ETApp mainMenu] performKeyEquivalent: (NSEvent *)[anEvent backendEvent]];
+}
+
+- (void) tryPerformKeyEquivalentAndSendKeyEvent: (ETEvent *)anEvent toResponder: (id)aResponder
+{
+	NSEventType type = [anEvent type]; // FIXME: Should be ETEventType
+
+	if (type != NSKeyDown && type != NSKeyUp)
+		return;
+
+	if ([self performKeyEquivalent: anEvent])
+		return;
+
+	/* When the responder is tool, we are usually invoked by [ETTool keyDown/Up:].
+	   We only got the key equivalent to check, because the event has already 
+	   been dispatched on the tool. */
+	if ([aResponder isTool])
+		return;
+
+	if ([aResponder isLayoutItem])
+	{
+		if (type == NSKeyDown)
+		{
+			[[aResponder actionHandler] handleKeyDown: anEvent onItem: aResponder];
+		}
+		else
+		{
+			[[aResponder actionHandler] handleKeyUp: anEvent onItem: aResponder];
+		}
+	}
+	else /* For views and other AppKit responders */
+	{
+		if (type == NSKeyDown)
+		{
+			[aResponder keyDown: (NSEvent *)[anEvent backendEvent]];
+		}
+		else
+		{
+			[aResponder keyUp: (NSEvent *)[anEvent backendEvent]];
+		}
+	}
+}
+
+#pragma mark Event Handlers -
 
 - (void) mouseDown: (ETEvent *)anEvent
 {
@@ -891,77 +957,6 @@ NO. */
 	[[[item parentItem] actionHandler] handleExitChildItem: item];
 }
 
-- (BOOL) performKeyEquivalent: (ETEvent *)anEvent inItem: (ETLayoutItem *)item
-{
-	if ([[item actionHandler] handleKeyEquivalent: anEvent onItem: item]
-		|| [[item view] performKeyEquivalent: (NSEvent *)[anEvent backendEvent]])
-	{
-		return YES;
-	}
-
-	if ([item isGroup] == NO)
-		return NO;
-
-	FOREACH([(ETLayoutItemGroup *)item items], childItem, ETLayoutItem *)
-	{
-		if ([self performKeyEquivalent: anEvent inItem: childItem])
-			return YES;
-	}
-
-	return NO;
-}
-
-
-- (BOOL) performKeyEquivalent: (ETEvent *)anEvent
-{
-	BOOL isHandled = [self performKeyEquivalent: anEvent inItem: [ETApp keyItem]];
-
-	if (isHandled)
-		return YES;
-
-	return [[ETApp mainMenu] performKeyEquivalent: (NSEvent *)[anEvent backendEvent]];
-}
-
-- (void) tryPerformKeyEquivalentAndSendKeyEvent: (ETEvent *)anEvent toResponder: (id)aResponder
-{
-	NSEventType type = [anEvent type]; // FIXME: Should be ETEventType
-
-	if (type != NSKeyDown && type != NSKeyUp)
-		return;
-
-	if ([self performKeyEquivalent: anEvent])
-		return;
-
-	/* When the responder is tool, we are usually invoked by [ETTool keyDown/Up:].
-	   We only got the key equivalent to check, because the event has already 
-	   been dispatched on the tool. */
-	if ([aResponder isTool])
-		return;
-
-	if ([aResponder isLayoutItem])
-	{
-		if (type == NSKeyDown)
-		{
-			[[aResponder actionHandler] handleKeyDown: anEvent onItem: aResponder];
-		}
-		else
-		{
-			[[aResponder actionHandler] handleKeyUp: anEvent onItem: aResponder];
-		}
-	}
-	else /* For views and other AppKit responders */
-	{
-		if (type == NSKeyDown)
-		{
-			[aResponder keyDown: (NSEvent *)[anEvent backendEvent]];
-		}
-		else
-		{
-			[aResponder keyUp: (NSEvent *)[anEvent backendEvent]];
-		}
-	}
-}
-
 - (void) keyDown: (ETEvent *)anEvent
 {
 	// FIXME: Don't retrieve the backend responder. The backend responder should
@@ -978,7 +973,7 @@ NO. */
 	[self tryPerformKeyEquivalentAndSendKeyEvent: anEvent toResponder: firstResponder];
 }
 
-/* Cursor */
+#pragma mark Cursor -
 
 /** Sets the name of the cursor that represents the receiver.
 
@@ -1013,7 +1008,16 @@ See also -setCursor:. */
 	return [NSCursor performSelector: factoryMethodSel];
 }
 
-/* UI Utility */
+#pragma mark UI Utility -
+
+/** Shows a palette which lists all the registered tools. 
+
+The palette is a layout item whose represented object is the ETTool class
+object. */
++ (void) show: (id)sender
+{
+	// FIXME: Implement
+}
 
 /** Returns a menu that can be used to configure the receiver behavior. */
 - (NSMenu *) menuRepresentation

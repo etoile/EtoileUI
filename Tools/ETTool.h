@@ -1,8 +1,4 @@
-/** <title>ETTool</title>
-
-	<abstract>An tool represents an interaction mode to handle and 
-	dispatch events turned into actions in the layout item tree .</abstract>
-
+/**
 	Copyright (C) 2008 Quentin Mathe
 
 	Author:  Quentin Mathe <qmathe@club-internet.fr>
@@ -18,8 +14,12 @@
 @class COObjectGraphContext;
 @class ETEvent, ETLayoutItem, ETLayoutItemGroup, ETLayout;
 
-/** Action Handlers are bound to layout items.
-    Tool are bound to layouts.
+/** @group Tools
+
+@abstract A tool represents an interaction mode to handle and dispatch events 
+turned into actions in the layout item tree.
+
+Action Handlers are bound to layout items. Tool are bound to layouts.
 
 A main tool is set by default for the entire layout item tree. This main 
 tool is an ETArrowTool instance attached the root item layout. 
@@ -59,39 +59,39 @@ double-click and deactivated on a mouse click outside of their layout boundaries
 + (NSSet *) registeredTools;
 + (NSSet *) registeredToolClasses;
 
-+ (void) show: (id)sender;
-
 /** @taskunit Tool Activation */
 
 + (ETTool *) updateActiveToolWithEvent: (ETEvent *)anEvent;
 + (void) updateCursorIfNeededForItem: (ETLayoutItem *)anItem;
++ (id) activatableToolForItem: (ETLayoutItem *)anItem;
 
-/** @taskunit Factory Methods */
+/** @taskunit Active and Main Tools */
 
 + (id) activeTool;
 + (ETTool *) setActiveTool: (ETTool *)toolToActivate;
-+ (id) activatableToolForItem: (ETLayoutItem *)anItem;
 + (id) mainTool;
 + (void) setMainTool: (id)aTool;
 
-+ (id) toolWithObjectGraphContext: (COObjectGraphContext *)aContext;
-
 /** @taskunit Initialization */
 
++ (id) toolWithObjectGraphContext: (COObjectGraphContext *)aContext;
 - (id) initWithObjectGraphContext: (COObjectGraphContext *)aContext;
 
 /** @taskunit Type Querying */
 
 - (BOOL) isTool;
 
+/** @taskunit Targeted Item */
+
+- (ETLayoutItem *) targetItem;
+- (void) setTargetItem: (ETLayoutItem *)anItem;
+
 /** @taskunit Activation Hooks */
 
 - (void) didBecomeActive;
 - (void) didBecomeInactive;
-- (BOOL) shouldActivateTool: (ETTool *)foundTool attachedToItem: (ETLayoutItem *)anItem;
-
-- (ETLayoutItem *) targetItem;
-- (void) setTargetItem: (ETLayoutItem *)anItem;
+- (BOOL) shouldActivateTool: (ETTool *)foundTool
+             attachedToItem: (ETLayoutItem *)anItem;
 
 /** @taskunit Hit Test */
 
@@ -109,13 +109,15 @@ double-click and deactivated on a mouse click outside of their layout boundaries
 				        inItem: (ETLayoutItem *)anItem
 				   wasReplaced: (BOOL)wasItemReplaced;
 
-/** @taskunit Handling Events */
+/** @taskunit Event Handler Requests */
 
 - (BOOL) tryActivateItem: (ETLayoutItem *)item withEvent: (ETEvent *)anEvent;
 - (void) trySendEventToWidgetView: (ETEvent *)anEvent;
 - (BOOL) tryRemoveFieldEditorItemWithEvent: (ETEvent *)anEvent;
 - (void) tryPerformKeyEquivalentAndSendKeyEvent: (ETEvent *)anEvent 
                                     toResponder: (id)aResponder;
+
+/** @taskunit Event Handlers */
 
 - (void) mouseDown: (ETEvent *)anEvent;
 - (void) mouseUp: (ETEvent *)anEvent;
@@ -135,6 +137,7 @@ double-click and deactivated on a mouse click outside of their layout boundaries
 
 /** @taskunit UI Utility */
 
++ (void) show: (id)sender;
 - (NSMenu *) menuRepresentation;
 
 /** @taskunit Framework Private */
