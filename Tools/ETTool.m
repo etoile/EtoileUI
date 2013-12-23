@@ -577,7 +577,7 @@ test whether the superclass implementation returns NO, and return NO in this cas
 	return (foundTool != nil && [[foundTool layoutOwner] isWidget] == NO);
 }
 
-#pragma Hit Test -
+#pragma mark Hit Test -
 
 /** Returns the root item that -hitTestWithEvent: is expected to return when 
 the mouse is not within in a window area. For now, return -windowGroup as 
@@ -828,7 +828,6 @@ NO. */
 	[windowItem removeActiveFieldEditorItem];
 	return YES;
 }
-
 
 - (BOOL) performKeyEquivalent: (ETEvent *)anEvent inItem: (ETLayoutItem *)item
 {

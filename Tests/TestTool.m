@@ -49,16 +49,6 @@
 
 @end
 
-@interface BasicEventTest : TestCommon <UKTest>
-{
-	ETLayoutItemGroup *mainItem;
-	id tool;
-}
-
-@end
-
-#define WIN_WIDTH 300
-#define WIN_HEIGHT 200
 
 @implementation TestTool
 
@@ -258,85 +248,10 @@
 
 @end
 
-/* Verify that AppKit does not check whether the content view uses flipped 
-coordinates or not to set the event location in the window. */
-@implementation BasicEventTest
+@interface TestHitTest : TestEvent <UKTest>
+@end
 
-- (id) init
-{
-	SUPERINIT
-
-	ASSIGN(mainItem, [itemFactory itemGroup]);
-	[mainItem setFrame: NSMakeRect(0, 0, WIN_WIDTH, WIN_HEIGHT)];
-	[[itemFactory windowGroup] addItem: mainItem];
-	ASSIGN(tool, [ETTool tool]);
-
-	return self;
-}
-
-- (void) dealloc
-{
-	[[itemFactory windowGroup] removeItem: mainItem];
-	DESTROY(mainItem); 
-	DESTROY(tool);
-	[super dealloc];
-}
-
-- (NSWindow *) window
-{
-	return [[mainItem windowItem] window];
-}
-
-- (ETEvent *) createEventAtPoint: (NSPoint)loc clickCount: (NSUInteger)clickCount inWindow: (NSWindow *)win
-{
-	NSParameterAssert(loc.x != NAN && loc.y != NAN);
-	NSEvent *backendEvent = [NSEvent mouseEventWithType: NSLeftMouseDown
-	                                           location: loc
-	                                      modifierFlags: 0 
-	                                          timestamp: [NSDate timeIntervalSinceReferenceDate]
-	                                       windowNumber: [win windowNumber]
-	                                            context: [NSGraphicsContext currentContext] 
-	                                        eventNumber: 0
-                                             clickCount: clickCount
-	                                           pressure: 0.0];
-	
-	UKObjectsSame(win, [backendEvent window]); /* Paranoid check */
-
-	return ETEVENT(backendEvent, nil, ETNonePickingMask);
-}
-
-- (ETEvent *) createEventAtContentPoint: (NSPoint)loc clickCount: (NSUInteger)clickCount inWindow: (NSWindow *)win
-{
-	NSPoint p = loc;
-
-	if (win != nil)
-	{
-		/* -convertPoint:toView: takes cares to flip p properly by checking it 
-		   the content view vs the window */
-		p = [[win contentView] convertPoint: p toView: nil];
-	}	
-
-	return [self createEventAtPoint: p clickCount: clickCount inWindow: win];
-}
-
-- (ETEvent *) createEventAtScreenPoint: (NSPoint)loc isFlipped: (BOOL)flip
-{
-	NSPoint p = loc;
-
-	if (flip)
-	{
-		p.y = [[NSScreen mainScreen] frame].size.height - p.y;
-	}
-
-	return [self createEventAtPoint: p clickCount: 1 inWindow: nil];
-}
-
-/* 
- * Use EVT() to create an event with a point expressed in the main item
- * coordinates. The main item is the window content. 
- */
-#define CLICK_EVT(x, y, clicks) (id)[self createEventAtContentPoint: NSMakePoint(x, y) clickCount: clicks inWindow: [self window]]
-#define EVT(x, y) CLICK_EVT(x, y, 1)
+@implementation TestHitTest
 
 - (void) testLocationInWindow
 {
@@ -638,7 +553,7 @@ inside the content bounds. */
 @end
 
 
-@interface ETFreeLayoutEventTest : BasicEventTest
+@interface ETFreeLayoutEventTest : TestEvent <UKTest>
 {
 	ETLayoutItemGroup *rootItem;
 	ETLayoutItem *item1;

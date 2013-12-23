@@ -61,8 +61,6 @@ Open Issues
 	
 - Finish cleaning NSView+EtoileUI
 
-- Don't use NSCursor in ETTool, but add -[ETEventProcessor setCurrentCursorFromName:] or something similar
-
 - Test -[ETTool targetItem] is reset in -[ETLayoutItem didChangeLayout:]
 
 - Hide NSApplication as an AppKit widget backend implementation detail (ETApplication superclass should be NSObject)
@@ -73,11 +71,15 @@ Open Issues
 
 	- May be add -[ETool producedActionProtocols] or -[ETTool actionConsumerProtocols]
 	
-- Finis cleaning ETSelectTool
+- Finish cleaning ETSelectTool
+
+- Finish cleaning ETTool
+
+	- Enable commented out assertions in +activeTool (see TestTool)
+	
+	- Rewrite -performKeyEquivalent: methods (should use -[ETLayoutItem responder] and the recursive propagation in the item tree looks dubious)
 
 - Implement TestPersistentFreeLayout (TestFreeLayout suclass whose item tree is reloaded from a persistent context) and TestFreeLayoutPersistency (e.g. -[ETTestPersistency testFreeLayout])
-
-- isActivatableToolForItem
 
 - Implement textArea using NSTextContainer as its represented object and drawing glyphs using NSLayoutManager
 

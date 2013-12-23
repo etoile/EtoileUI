@@ -46,6 +46,19 @@
 
 @end
 
+/** Use EVT() to create an event with a point expressed in the main item coordinates. 
+The main item is the window content. */
+#define CLICK_EVT(x, y, clicks) (id)[self createEventAtContentPoint: NSMakePoint(x, y) clickCount: clicks inWindow: [self window]]
+#define EVT(x, y) CLICK_EVT(x, y, 1)
+
+@interface TestEvent : TestCommon
+{
+	ETLayoutItemGroup *mainItem;
+	id tool;
+}
+
+@end
+
 
 @interface ETTool (ETToolTestAdditions)
 + (id) tool;
