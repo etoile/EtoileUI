@@ -52,7 +52,7 @@
 @interface BasicEventTest : TestCommon <UKTest>
 {
 	ETLayoutItemGroup *mainItem;
-	ETTool *tool;
+	id tool;
 }
 
 @end
@@ -287,7 +287,7 @@ coordinates or not to set the event location in the window. */
 	return [[mainItem windowItem] window];
 }
 
-- (ETEvent *) createEventAtPoint: (NSPoint)loc inWindow: (NSWindow *)win
+- (ETEvent *) createEventAtPoint: (NSPoint)loc clickCount: (NSUInteger)clickCount inWindow: (NSWindow *)win
 {
 	NSParameterAssert(loc.x != NAN && loc.y != NAN);
 	NSEvent *backendEvent = [NSEvent mouseEventWithType: NSLeftMouseDown
@@ -297,7 +297,7 @@ coordinates or not to set the event location in the window. */
 	                                       windowNumber: [win windowNumber]
 	                                            context: [NSGraphicsContext currentContext] 
 	                                        eventNumber: 0
-                                             clickCount: 1 
+                                             clickCount: clickCount
 	                                           pressure: 0.0];
 	
 	UKObjectsSame(win, [backendEvent window]); /* Paranoid check */
@@ -305,7 +305,7 @@ coordinates or not to set the event location in the window. */
 	return ETEVENT(backendEvent, nil, ETNonePickingMask);
 }
 
-- (ETEvent *) createEventAtContentPoint: (NSPoint)loc inWindow: (NSWindow *)win
+- (ETEvent *) createEventAtContentPoint: (NSPoint)loc clickCount: (NSUInteger)clickCount inWindow: (NSWindow *)win
 {
 	NSPoint p = loc;
 
@@ -316,7 +316,7 @@ coordinates or not to set the event location in the window. */
 		p = [[win contentView] convertPoint: p toView: nil];
 	}	
 
-	return [self createEventAtPoint: p inWindow: win];
+	return [self createEventAtPoint: p clickCount: clickCount inWindow: win];
 }
 
 - (ETEvent *) createEventAtScreenPoint: (NSPoint)loc isFlipped: (BOOL)flip
@@ -328,18 +328,19 @@ coordinates or not to set the event location in the window. */
 		p.y = [[NSScreen mainScreen] frame].size.height - p.y;
 	}
 
-	return [self createEventAtPoint: p inWindow: nil];
+	return [self createEventAtPoint: p clickCount: 1 inWindow: nil];
 }
 
-/* Uses EVT, MAKE_EVENT or MAKE_EVENT_IN if you want to create an event with 
-a point expressed in the main item coordinates. The main item is the window content. */
-#define MAKE_EVENT_IN(p1, w) [self createEventAtContentPoint: p1 inWindow: w]
-#define MAKE_EVENT(p2) MAKE_EVENT_IN(p2, [self window])
-#define EVT(x, y) MAKE_EVENT(NSMakePoint(x, y))
+/* 
+ * Use EVT() to create an event with a point expressed in the main item
+ * coordinates. The main item is the window content. 
+ */
+#define CLICK_EVT(x, y, clicks) (id)[self createEventAtContentPoint: NSMakePoint(x, y) clickCount: clicks inWindow: [self window]]
+#define EVT(x, y) CLICK_EVT(x, y, 1)
 
 - (void) testLocationInWindow
 {
-	ETEvent *evt = [self createEventAtPoint: NSMakePoint(3, 3) inWindow: [self window]];
+	ETEvent *evt = [self createEventAtPoint: NSMakePoint(3, 3) clickCount: 1 inWindow: [self window]];
 	NSEvent *backendEvt = (NSEvent *)[evt backendEvent];
 	NSPoint backendWindowLoc = [backendEvt locationInWindow];
 
@@ -366,7 +367,7 @@ a point expressed in the main item coordinates. The main item is the window cont
 
 - (void) testCreateEventAtContentPoint
 {
-	ETEvent *evt = [self createEventAtContentPoint: NSZeroPoint inWindow: [self window]];
+	ETEvent *evt = [self createEventAtContentPoint: NSZeroPoint clickCount: 1 inWindow: [self window]];
 	ETWindowItem *windowItem = [mainItem windowItem]; 
 
 	UKPointsEqual(NSZeroPoint, [evt locationInWindowContentItem]);
@@ -384,7 +385,7 @@ a point expressed in the main item coordinates. The main item is the window cont
 - (void) testHitTest
 {
 
-	ETEvent *evtWithoutWindow = [self createEventAtPoint: NSZeroPoint inWindow: nil];
+	ETEvent *evtWithoutWindow = [self createEventAtPoint: NSZeroPoint clickCount: 1 inWindow: nil];
 	/* Because -locationInWindowContentItem and -locationInWindowItem will 
 	   automatically convert/correct -locationInWindow when the content view
 	   uses flipped coordinates, we have to express the event point in 
@@ -668,8 +669,7 @@ inside the content bounds. */
 	[mainItem addItem: item1];
 	[item2 addItem: item21]; /* Test methods insert item2 as they want */
 
-	/* For handle creation on selection change, we must run -[ETFreeLayout updateKVOForItems:] */
-	[mainItem updateLayoutIfNeeded];
+	[self updateObservedItemsInTree];
 
 	return self;
 }
@@ -681,6 +681,12 @@ inside the content bounds. */
 	DESTROY(item2);
 	DESTROY(item21);
 	[super dealloc];
+}
+
+/* For handle creation on selection change, we must run -[ETFreeLayout updateKVOForItems:] */
+- (void) updateObservedItemsInTree
+{
+	[mainItem updateLayoutIfNeeded];
 }
 
 - (void) testFreeLayoutInit
@@ -698,10 +704,25 @@ inside the content bounds. */
 	UKIntsEqual(0, [rootItem numberOfItems]);	
 }
 
+- (void) testShowAndHideHandlesForAddedItem
+{
+	[mainItem addItem: item2];
+	[self updateObservedItemsInTree];
+
+	[item2 setSelected: YES];
+
+	UKIntsEqual(1, [rootItem numberOfItems]);
+	[item2 setSelected: NO];
+	UKIntsEqual(0, [rootItem numberOfItems]);	
+}
+
 - (void) testShowAndHideHandlesInTree
 {
 	[item1 setSelected: YES];
+
 	[mainItem addItem: item2];
+	[self updateObservedItemsInTree];
+
 	[item2 setSelected: YES];
 	[item21 setSelected: YES];
 
@@ -741,12 +762,11 @@ inside the content bounds. */
 - (void) testHitTestHandleInTree
 {
 	[mainItem addItem: item2];
+	[self updateObservedItemsInTree];
 
 	[item1 setSelected: YES];
 	[item2 setSelected: YES];
 	[item21 setSelected: YES];
-
-	[mainItem updateLayoutIfNeeded];
 
 	UKIntsEqual(2, [rootItem numberOfItems]);
 
@@ -767,6 +787,168 @@ inside the content bounds. */
 	[mainItem setFlipped: NO];
 	// FIXME: Work that out...
 	//[self testHitTestHandleInTree];
+}
+
+- (void) testActiveToolAsActivatableTool
+{
+	[mainItem addItem: item2];
+	[self updateObservedItemsInTree];
+
+	[[item2 layout] setAttachedTool: nil];
+
+	ETEvent *event = EVT(20, 20);
+	ETTool *basicTool =
+		[ETTool toolWithObjectGraphContext: [ETUIObject defaultTransientObjectGraphContext]];
+
+	// TODO: Do the hit test in the EVT() macro
+	[basicTool hitTestWithEvent: event];
+	
+	UKObjectsEqual(item21, [event layoutItem]);
+
+	[ETTool updateActiveToolWithEvent: event];
+
+	UKObjectsEqual(tool, [ETTool activeTool]);
+}
+
+- (void) testNonActivatableNestedTools
+{
+	[mainItem addItem: item2];
+	[self updateObservedItemsInTree];
+	
+	[[item2 layout] setAttachedTool: [ETSelectTool tool]];
+	
+	ETEvent *event = EVT(20, 20);
+	ETTool *basicTool =
+		[ETTool toolWithObjectGraphContext: [ETUIObject defaultTransientObjectGraphContext]];
+
+	// TODO: Do the hit test in the EVT() macro
+	[basicTool hitTestWithEvent: event];
+	
+	UKObjectsEqual(item21, [event layoutItem]);
+	
+	[ETTool updateActiveToolWithEvent: event];
+
+	UKObjectsEqual(tool, [ETTool activeTool]);
+}
+
+- (void) testHitTestNonEditableNestedItems
+{
+	[mainItem addItem: item2];
+	[self updateObservedItemsInTree];
+
+	[tool mouseUp: EVT(20, 20)];
+
+	UKFalse([item1 isSelected]);
+	UKTrue([item2 isSelected]);
+	UKFalse([item21 isSelected]);
+	UKIntsEqual(1, [rootItem numberOfItems]);
+	UKIntsEqual(0, [[[item2 layout] layerItem] numberOfItems]);
+}
+
+- (void) testNestedEditing
+{
+	[mainItem addItem: item2];
+	[self updateObservedItemsInTree];
+
+	UKObjectsEqual(mainItem, [tool targetItem]);
+
+	/* Begin nested editing (on double click inside the nested area) */
+
+	[tool mouseUp: CLICK_EVT(20, 20, 2)];
+
+	UKObjectsEqual(tool, [ETTool activeTool]);
+	UKObjectsEqual(item2, [tool targetItem]);
+	UKFalse([mainItem isSelected]);
+	UKFalse([item1 isSelected]);
+	UKFalse([item2 isSelected]);
+	UKFalse([item21 isSelected]);
+	UKIntsEqual(0, [rootItem numberOfItems]);
+	UKIntsEqual(0, [[[item2 layout] layerItem] numberOfItems]);
+	
+	/* Click on the nested area background */
+
+	[tool mouseUp: CLICK_EVT(5, 5, 1)];
+
+	UKObjectsEqual(tool, [ETTool activeTool]);
+	UKObjectsEqual(item2, [tool targetItem]);
+	UKFalse([mainItem isSelected]);
+	UKFalse([item1 isSelected]);
+	UKFalse([item2 isSelected]);
+	UKFalse([item21 isSelected]);
+	UKIntsEqual(0, [rootItem numberOfItems]);
+	UKIntsEqual(0, [[[item2 layout] layerItem] numberOfItems]);
+
+	/* Click on a nested area item */
+
+	[tool mouseUp: CLICK_EVT(20, 20, 1)];
+
+	UKObjectsEqual(tool, [ETTool activeTool]);
+	UKObjectsEqual(item2, [tool targetItem]);
+	UKFalse([mainItem isSelected]);
+	UKFalse([item1 isSelected]);
+	UKFalse([item2 isSelected]);
+	UKTrue([item21 isSelected]);
+	UKIntsEqual(0, [rootItem numberOfItems]);
+	UKIntsEqual(1, [[[item2 layout] layerItem] numberOfItems]);
+
+	/* End nested editing (on clicked outside the nested area) */
+	
+	[tool mouseUp: CLICK_EVT(120, 70, 1)];
+
+	UKObjectsEqual(tool, [ETTool activeTool]);
+	UKObjectsEqual(mainItem, [tool targetItem]);
+	UKFalse([mainItem isSelected]);
+	UKFalse([item1 isSelected]);
+	UKFalse([item2 isSelected]);
+	UKTrue([item21 isSelected]);
+	UKIntsEqual(0, [rootItem numberOfItems]);
+	UKIntsEqual(1, [[[item2 layout] layerItem] numberOfItems]);
+}
+
+- (void) testSelectAll
+{
+	[mainItem addItem: item2];
+	[self updateObservedItemsInTree];
+
+	[tool selectAll: self];
+
+	UKObjectsEqual(A(item1, item2), [mainItem selectedItems]);
+	UKIntsEqual(2, [rootItem numberOfItems]);
+	UKIntsEqual(0, [[[item2 layout] layerItem] numberOfItems]);
+	UKObjectsEqual(mainItem, [tool targetItem]);
+}
+
+- (void) testGroupAndUngroup
+{
+	[mainItem addItem: item2];
+	[self updateObservedItemsInTree];
+
+	[item1 setSelected: YES];
+	[item2 setSelected: YES];
+
+	[tool group: self];
+
+	ETLayoutItemGroup *newItem = (ETLayoutItemGroup *)[mainItem firstItem];
+	
+	RETAIN(newItem);
+
+	UKObjectsEqual(A(newItem), [mainItem items]);
+	UKObjectsEqual(A(item1, item2), [newItem items]);
+	UKIntsEqual(1, [rootItem numberOfItems]);
+	UKIntsEqual(0, [[[newItem layout] layerItem] numberOfItems]);
+	UKIntsEqual(0, [[[item2 layout] layerItem] numberOfItems]);
+	UKObjectsEqual(mainItem, [tool targetItem]);
+	
+	[tool ungroup: self];
+
+	UKObjectsEqual(S(item1, item2), SA([mainItem items]));
+	UKNil([newItem parentItem]);
+	UKIntsEqual(2, [rootItem numberOfItems]);
+	UKIntsEqual(0, [[[item2 layout] layerItem] numberOfItems]);
+	// FIXME: UKObjectsEqual(A(item1, item2), [mainItem selectedItems]);
+	UKObjectsEqual(mainItem, [tool targetItem]);
+
+	RELEASE(newItem);
 }
 
 @end

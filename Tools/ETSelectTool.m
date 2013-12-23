@@ -180,40 +180,14 @@ needed replicate other actions on each selected item. */
 
 #pragma mark Overriden Hit Test Support -
 
-// TODO: Would be nice to merge with ETTool implementation.
-+ (ETTool *) activatableToolForItem: (ETLayoutItem *)anItem
+/* Prevent nested tool activation. */
+- (BOOL) shouldActivateTool: (ETTool *)foundTool attachedToItem: (ETLayoutItem *)anItem
 {
-	ETTool *foundTool = nil;
-	ETTool *parentTool = nil;
+	ETLayoutItem *owningItem = (ETLayoutItem *)[[self layoutOwner] layoutContext];
+	BOOL isNestedTool =
+		([owningItem isGroup] && [(ETLayoutItemGroup *)owningItem isDescendantItem: anItem]);
 
-	//ETLog(@"Begin look up in hovered item stack %@", [self hoveredItemStack]);
-
-	/* The last/top object is the tool at the lowest/deepest level in the item tree */
-	for (ETLayoutItem *item in [[[self class] hoveredItemStackForItem: anItem] reverseObjectEnumerator])
-	{
-		//ETLog(@"Look up tool at level %@ in hovered item stack", item);
-
-		/* The top item can be an ETLayoutItem instance */
-		if ([item isGroup] == NO)
-			continue;
-		
-		//ETLog(@" ---> Found tool %@", [[item layout] attachedTool]);
-		
-		foundTool = [[item layout] attachedTool];
-		parentTool = [[[item parentItem] layout] attachedTool];
-
-		/* Don't activate tool bound to a widget layout (see also +setActiveTool:) 
-		   and prevent nested tool activation. */
-		if (foundTool != nil && [[foundTool layoutOwner] isWidget] == NO
-		 && [[parentTool class] isEqual: [self class]] == NO)
-		{
-			break;
-		}
-	}
-
-	// TODO: We could forbid setting a nil tool on the root item.
-	BOOL overRootItem = (foundTool == nil);
-	return (overRootItem ? [[self class] mainTool] : foundTool);
+	return ([super shouldActivateTool: foundTool attachedToItem: anItem] && isNestedTool == NO);
 }
 
 /* When the hit test is inside the target item, we customize it to restrict it 
@@ -348,25 +322,23 @@ returnedItemRelativePoint is a point in the window frame rect. */
 {
 	ETLayoutItem *item = [self hitTestWithEvent: anEvent];
 	
-	// NOTE: May be replace next line by ([[item layout] isEqual: [self layoutOwner]);
 	BOOL backgroundClick = ([item isEqual: [self targetItem]]);
 	BOOL isDoubleClick = ([(NSEvent *)[anEvent backendEvent] clickCount] == 2);
 	BOOL doubleClickEditableChild = ([item isGroup] && isDoubleClick);
 	// NOTE: We must cast -targetItem returned object otherwise -containsItem: 
-	// might wrongly be evaluted to YES. Alternatively -targetItem return 
-	// type could be overriden, but our local and explicit cast is harder to break.
+	// might wrongly be evaluted to YES.
 	BOOL clickOutsideOfEditedChild = (backgroundClick == NO 
 		&& [(ETLayoutItemGroup *)[self targetItem] containsItem: item] == NO);
 
 	if (doubleClickEditableChild)
 	{
-		[self beginEditingInsideSelection];
+		[self beginEditingInsideItemGroup: (ETLayoutItemGroup *)item];
 	}
 	else if (clickOutsideOfEditedChild)
 	{
-		[self endEditingInsideSelection];
+		[self endEditingInsideItemGroup];
 	}
-	else
+	else if (backgroundClick == NO)
 	{
 		/* Normally -alterSelectionWithEvent: is expected to return immediately 
 		   because the event is a not a mouse down. However subclasses might 
@@ -421,7 +393,7 @@ be reactivated when we exit our owner layout. */
 		}
 		else if ([chars characterAtIndex: 0] == NSDeleteCharacter)
 		{
-			[self endEditingInsideSelection];
+			[self endEditingInsideItemGroup];
 		}
 		else
 		{
@@ -462,7 +434,10 @@ be reactivated when we exit our owner layout. */
 
 - (void) insertNewLine: (id)sender
 {
-	[self beginEditingInsideSelection];
+	if ([[self selectedItems] count] > 1)
+		return;
+
+	[self beginEditingInsideItemGroup: [[self selectedItems] firstObject]];
 }
 
 #pragma mark Interaction Status -
@@ -585,19 +560,14 @@ their intersection with the new selection rect. */
 
 #pragma mark Nested Interaction Support
 
-/* If the selection consists of a single item, makes it the target item. */
-- (void) beginEditingInsideSelection
+- (void) beginEditingInsideItemGroup: (ETLayoutItemGroup *)anItem
 {
-	NSArray *selectedItems = [self selectedItems];
-	if ([selectedItems count] == 1)
-	{
-		ETDebugLog(@"Retarget tool %@ to item %@", self, [selectedItems firstObject]);
-		[self setTargetItem: [selectedItems firstObject]];
-	}
+	ETDebugLog(@"Retarget tool %@ to item %@", self, anItem);
+	[self setTargetItem: anItem];
 }
 
 /** Restores the original target item. */
-- (void) endEditingInsideSelection
+- (void) endEditingInsideItemGroup
 {
 	ETDebugLog(@"Restore original target of tool %@ to item %@", self, [[self layoutOwner] layoutContext]);
 	[self setTargetItem: nil];
@@ -877,6 +847,7 @@ the target item. */
 		[item setSelected: NO];
 		[newGroup addItem: item];
 	}
+	ETAssert([self targetItem] == targetItem);
 
 	/* We use -updateLayout rather than -setNeedsUpdateLayout to ensure the 
 	   CoreObject commit record the latest item positions and sizes (but not sure it's important). */

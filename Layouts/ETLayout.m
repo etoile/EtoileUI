@@ -323,8 +323,16 @@ Also invokes -didChangeAttachedTool:toTool:.  */
 Tells the receiver the attached tool owned by an ancestor layout (or itself) 
 has changed. This tool may or may not be active.
 
+Will be called by -setAttachedTool: and -renderWithItems:isNewContent: (if there 
+is some new content). So this means tool changes are reported even for 
+-[ETLayoutItemGroup setLayout:] or ETLayoutItemGroup content mutation.
+
 You can override this method in subclasses to adjust the receiver layout to the 
 new tool that can now be used to interact with the presented content. 
+
+You must correctly handle cases where the old tool and the new tool are nil. 
+For changes reported by -renderWithItems:isNewContent, the old tool is always 
+reported as nil.
 
 By default, propagates the message recursively in the layout item tree through 
 the layout context arranged items.
@@ -712,7 +720,8 @@ To explictly update the layout, just uses -[ETLayoutItemGroup updateLayout]. */
 /** <override-dummy />
 Renders the layout.<br />
 This is a skeleton implementation which only invokes -resetLayoutSize:, 
--resizeItems:forNewLayoutSize:oldSize: and -resizeLayoutItems:toScaleFactor:.
+-resizeItems:forNewLayoutSize:oldSize:, -resizeLayoutItems:toScaleFactor: and 
+-didChangeAttachedTool:toTool:.
 
 You can reuse this implementation in your subclass or not.
 
@@ -752,6 +761,11 @@ it (this is subject to change though). */
 	{
 		[self resizeItems: items toScaleFactor: scale];
 		_previousScaleFactor = scale;
+	}
+	if (isNewContent && [(id)[self layoutContext] isLayoutItem])
+	{
+		[self didChangeAttachedTool: nil
+		                     toTool: [ETTool activatableToolForItem: (ETLayoutItem *)[self layoutContext]]];
 	}
 }
 

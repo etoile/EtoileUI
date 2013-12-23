@@ -341,6 +341,7 @@ when you request the grouping of several items. */
 	ETLayoutItemGroup *itemGroup = [self itemGroup];
 	[itemGroup setCoverStyle: AUTORELEASE([[ETGraphicsGroupStyle alloc] initWithObjectGraphContext: [self objectGraphContext]])];
 	[itemGroup setLayout: [ETFreeLayout layoutWithObjectGraphContext: [self objectGraphContext]]];
+	[[itemGroup layout] setAttachedTool: nil];
 	[itemGroup setIcon: [NSImage imageNamed: @"layers-group"]];
 	return itemGroup;
 }

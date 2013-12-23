@@ -88,6 +88,7 @@ double-click and deactivated on a mouse click outside of their layout boundaries
 
 - (void) didBecomeActive;
 - (void) didBecomeInactive;
+- (BOOL) shouldActivateTool: (ETTool *)foundTool attachedToItem: (ETLayoutItem *)anItem;
 
 - (ETLayoutItem *) targetItem;
 - (void) setTargetItem: (ETLayoutItem *)anItem;

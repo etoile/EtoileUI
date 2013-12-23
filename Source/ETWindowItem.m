@@ -640,8 +640,11 @@ doesn't become key unless the user clicks the titlebar or an editable widget). *
 
 	ETLayoutItemGroup *windowGroup = [(ETLayoutItem *)[self firstDecoratedItem] parentItem];
 
-	/* Tell the window group to post a ETItemGroupSelectionDidChangeNotification */
-	[windowGroup setSelectionIndex: [windowGroup indexOfItem: [self firstDecoratedItem]]];
+	/* Tell the window group to post a ETItemGroupSelectionDidChangeNotification 
+	   (don't use -setSelectionIndex: to prevent discarding the entire selection 
+	   state in the item tree) */
+	[windowGroup didChangeSelection];
+	// TODO: Decide if we call -setSelected: (test ETFreeLayout cautiously in Collage if we do so)
 }
 
 - (void) windowDidBecomeMain: (NSNotification *)notification

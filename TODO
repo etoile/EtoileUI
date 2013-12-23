@@ -75,6 +75,12 @@ Open Issues
 	
 - Finis cleaning ETSelectTool
 
+- Implement TestPersistentFreeLayout (TestFreeLayout suclass whose item tree is reloaded from a persistent context) and TestFreeLayoutPersistency (e.g. -[ETTestPersistency testFreeLayout])
+
+- isActivatableToolForItem
+
+- Implement textArea using NSTextContainer as its represented object and drawing glyphs using NSLayoutManager
+
 
 Testing
 -------
@@ -89,6 +95,9 @@ Testing
 	
 	- provide a -respondsToSelector: and -forwardingSelectorForTarget: implementations in ETResponderTrait
 
+- Could test explicitly -didChangeAttachedTool:toTool: is called on -setLayout:
+
+	- For now, we just rely on _areHandlesHidden update in -testNestedEditing (changing _areHandlesHidden to NO allows the handles to be shown for the selected nested item)
 
 Old Potential Issues
 --------------------

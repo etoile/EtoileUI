@@ -76,8 +76,8 @@ unlike ETPositionalLayout.  */
 	return [super attachedTool];
 }
 
-- (void) didChangeAttachedTool: (ETTool *)oldTool 
-                        toTool: (ETTool*)newTool
+- (void) didChangeAttachedTool: (ETTool *)oldTool
+                        toTool: (ETTool *)newTool
 {
 	NSParameterAssert(oldTool != newTool);
 

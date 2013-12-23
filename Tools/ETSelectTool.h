@@ -115,8 +115,8 @@ to return NO.
 
 /** @taskunit Nested Interaction Support */
 
-- (void) beginEditingInsideSelection;
-- (void) endEditingInsideSelection;
+- (void) beginEditingInsideItemGroup: (ETLayoutItemGroup *)anItem;
+- (void) endEditingInsideItemGroup;
 
 /** @taskunit Extending or Reducing Selection */
 

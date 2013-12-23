@@ -251,7 +251,7 @@ You should rarely need to override this method. */
 		foundTool = [[item layout] attachedTool];
 
 		/* Don't activate tool bound to a widget layout (see also +setActiveTool:) */
-		if (foundTool != nil && [[foundTool layoutOwner] isWidget] == NO)
+		if ([[self activeTool] shouldActivateTool: foundTool attachedToItem: item])
 			break;
 	}
 
@@ -428,9 +428,9 @@ stroke started with the mouse down event).
 
 You easily set a target item by overriding -hitTestWithEvent:inItem:.
 
-If the target item is the same than the layout owner, raises 
-NSInvalidArgumentException. To reset the the target item to the layout owner, 
-pass nil.
+If the target item is the same than the item owning the tool, or is not a 
+descendant item, raises NSInvalidArgumentException. To reset the the target item 
+to the item owning the tool, pass nil.
 
 The target item is reset on -[ETLayout setAttachedTool:].
 
@@ -447,7 +447,12 @@ See also -targetItem. */
 		
 	    If the targetItem is set to nil, -targetItem returns -layoutOwner.
 	 */
-	INVALIDARG_EXCEPTION_TEST(anItem, anItem == nil || anItem != (id)[[self layoutOwner] layoutContext]);
+	if (anItem != nil)
+	{
+		INVALIDARG_EXCEPTION_TEST(anItem, anItem != (id)[[self layoutOwner] layoutContext]);
+		INVALIDARG_EXCEPTION_TEST(anItem, [(id)[[self layoutOwner] layoutContext] isDescendantItem: anItem]);
+	}
+	//ETLog(@"Change target item to %@ in %@", anItem, self);
 
 	if ([anItem isEqual: _targetItem])
 		return;
@@ -545,6 +550,18 @@ Changing the layout owner resets -targetItem to return
 - (ETLayout *) layoutOwner
 {
 	return [self valueForVariableStorageKey: @"layoutOwner"];
+}
+
+/** <override-dummy />
+Returns whether the tool should considered activatable by 
++activatableToolForItem:.
+
+You must call the superclass implementation if you override this method, and 
+test whether the superclass implementation returns NO, and return NO in this case.  */
+- (BOOL) shouldActivateTool: (ETTool *)foundTool attachedToItem: (ETLayoutItem *)anItem
+{
+	/* Don't activate tool bound to a widget layout (see also +setActiveTool:) */
+	return (foundTool != nil && [[foundTool layoutOwner] isWidget] == NO);
 }
 
 /** <override-dummy />
