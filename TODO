@@ -100,6 +100,10 @@ Testing
 - Could test explicitly -didChangeAttachedTool:toTool: is called on -setLayout:
 
 	- For now, we just rely on _areHandlesHidden update in -testNestedEditing (changing _areHandlesHidden to NO allows the handles to be shown for the selected nested item)
+	
+- Clean TestHitTest
+
+- Don't expose NSWindow in TestCommon
 
 Old Potential Issues
 --------------------

@@ -61,6 +61,7 @@ The main item is the window content. */
 - (ETEvent *) createEventAtPoint: (NSPoint)loc clickCount: (NSUInteger)clickCount inWindow: (NSWindow *)win;
 - (ETEvent *) createEventAtContentPoint: (NSPoint)loc clickCount: (NSUInteger)clickCount inWindow: (NSWindow *)win;
 - (NSWindow *) window;
+- (ETEvent *) createEventAtScreenPoint: (NSPoint)loc isFlipped: (BOOL)flip;
 
 @end
 

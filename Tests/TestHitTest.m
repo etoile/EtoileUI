@@ -77,7 +77,6 @@
 	UKPointsNotEqual(p2, [[[self window] contentView] convertPoint: p1 toView: nil]);
 } 
 
-
 - (void) testHitTest
 {
 

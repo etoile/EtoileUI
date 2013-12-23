@@ -22,10 +22,8 @@
 - (void) insertRectangle: (id)sender;
 @end
 
-@interface TestTool : TestCommon <UKTest>
+@interface TestTool : TestEvent <UKTest>
 {
-	ETTool *tool;
-	ETLayoutItemGroup *mainItem;
 	ETLayoutItemGroup *otherItem;
 	ETIconLayout *iconLayout;
 	ETLineLayout *lineLayout;
@@ -39,8 +37,6 @@
 - (id) init
 {
 	SUPERINIT;
-	ASSIGN(tool, [ETTool tool]);
-	ASSIGN(mainItem, [[ETLayoutItemFactory factory] itemGroup]);
 	ASSIGN(otherItem, [[ETLayoutItemFactory factory] itemGroup]);
 	ASSIGN(iconLayout,
 		[ETIconLayout layoutWithObjectGraphContext: [ETUIObject defaultTransientObjectGraphContext]]);
@@ -51,8 +47,6 @@
 
 - (void) dealloc
 {
-	DESTROY(tool);
-	DESTROY(mainItem);
 	DESTROY(otherItem);
 	DESTROY(iconLayout);
 	DESTROY(lineLayout);
@@ -76,12 +70,8 @@
 {
 	[[mainItem layout] setAttachedTool: tool];
 	
-	[[ETApp rootItem] addItem: mainItem];
-	
 	UKDoesNotRaiseException([ETTool setActiveTool: tool]);
 	UKObjectsEqual(tool, [ETTool activeTool]);
-	
-	[[ETApp rootItem] removeItem: mainItem];
 }
 
 - (void) testExceptionOnActivatingToolWithoutLayout
@@ -96,6 +86,7 @@
 
 - (void) testExceptionOnActivatingToolNotBoundToApplicationRootItemDescendant
 {
+	[mainItem removeFromParent];
 	[[mainItem layout] setAttachedTool: tool];
 	
 	UKRaisesException([ETTool setActiveTool: tool]);
@@ -141,21 +132,15 @@
 {
 	ETTool *otherTool = [ETArrowTool tool];
 
-	[[ETApp rootItem] addItem: mainItem];
-
 	[[mainItem layout] setAttachedTool: tool];
 	[ETTool setActiveTool: tool];
 	[[mainItem layout] setAttachedTool: otherTool];
 	
 	UKObjectsEqual(otherTool, [ETTool activeTool]);
-	
-	[[ETApp rootItem] removeItem: mainItem];
 }
 
 - (void) testDetachToolReplacingActiveTool
 {
-	[[ETApp rootItem] addItem: mainItem];
-
 	[[mainItem layout] setAttachedTool: tool];
 	[ETTool setActiveTool: tool];
 	[[mainItem layout] setAttachedTool: nil];
@@ -165,8 +150,6 @@
 	// Probably set no tool in ETWindowLayout initializer, and just let the
 	// main tool be activated.
 	UKObjectsEqual([[[mainItem parentItem] layout] attachedTool], [ETTool activeTool]);
-	
-	[[ETApp rootItem] removeItem: mainItem];
 }
 
 - (void) testNoExceptionOnAttachingToolToUnusedLayout
