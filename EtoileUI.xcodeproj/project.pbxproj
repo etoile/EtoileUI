@@ -201,6 +201,8 @@
 		608A5DC310231D500086F4B3 /* ETLayoutItem+KVO.m in Sources */ = {isa = PBXBuildFile; fileRef = 608A5DC110231D500086F4B3 /* ETLayoutItem+KVO.m */; };
 		608A5E931023216F0086F4B3 /* EtoileUIProperties.h in Headers */ = {isa = PBXBuildFile; fileRef = 608A5E921023216F0086F4B3 /* EtoileUIProperties.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		608A612D102378580086F4B3 /* EtoileUIProperties.m in Sources */ = {isa = PBXBuildFile; fileRef = 608A612C102378580086F4B3 /* EtoileUIProperties.m */; };
+		608B01AC1868A79600D1A573 /* TestFreeLayout.m in Sources */ = {isa = PBXBuildFile; fileRef = 608B01AA1868A79500D1A573 /* TestFreeLayout.m */; };
+		608B01AD1868A79600D1A573 /* TestHitTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 608B01AB1868A79600D1A573 /* TestHitTest.m */; };
 		608EBAEC100D22AB00B36FAB /* BrowserPrototype.nib in Resources */ = {isa = PBXBuildFile; fileRef = 608EBAE2100D22AB00B36FAB /* BrowserPrototype.nib */; };
 		608EBAED100D22AB00B36FAB /* Inspector.nib in Resources */ = {isa = PBXBuildFile; fileRef = 608EBAE4100D22AB00B36FAB /* Inspector.nib */; };
 		608EBAEE100D22AB00B36FAB /* OutlinePrototype.nib in Resources */ = {isa = PBXBuildFile; fileRef = 608EBAE6100D22AB00B36FAB /* OutlinePrototype.nib */; };
@@ -957,6 +959,8 @@
 		608A5DC110231D500086F4B3 /* ETLayoutItem+KVO.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = "ETLayoutItem+KVO.m"; path = "Source/ETLayoutItem+KVO.m"; sourceTree = "<group>"; };
 		608A5E921023216F0086F4B3 /* EtoileUIProperties.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = EtoileUIProperties.h; path = Headers/EtoileUIProperties.h; sourceTree = "<group>"; };
 		608A612C102378580086F4B3 /* EtoileUIProperties.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = EtoileUIProperties.m; path = Source/EtoileUIProperties.m; sourceTree = "<group>"; };
+		608B01AA1868A79500D1A573 /* TestFreeLayout.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = TestFreeLayout.m; path = Tests/TestFreeLayout.m; sourceTree = "<group>"; };
+		608B01AB1868A79600D1A573 /* TestHitTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = TestHitTest.m; path = Tests/TestHitTest.m; sourceTree = "<group>"; };
 		608EBAE3100D22AB00B36FAB /* English */ = {isa = PBXFileReference; lastKnownFileType = wrapper.nib; name = English; path = English.lproj/BrowserPrototype.nib; sourceTree = "<group>"; };
 		608EBAE5100D22AB00B36FAB /* English */ = {isa = PBXFileReference; lastKnownFileType = wrapper.nib; name = English; path = English.lproj/Inspector.nib; sourceTree = "<group>"; };
 		608EBAE7100D22AB00B36FAB /* English */ = {isa = PBXFileReference; lastKnownFileType = wrapper.nib; name = English; path = English.lproj/OutlinePrototype.nib; sourceTree = "<group>"; };
@@ -1472,7 +1476,9 @@
 				60D88883115E651000D7A8AA /* TestCell.m */,
 				60C76C6710136D0A0073C381 /* TestCompositeLayout.m */,
 				609F5B5916CA9E8800683BD9 /* TestController.m */,
+				608B01AA1868A79500D1A573 /* TestFreeLayout.m */,
 				605F354A17172DF600E9355A /* TestFormLayout.m */,
+				608B01AB1868A79600D1A573 /* TestHitTest.m */,
 				6067EB591046B4E600C39086 /* TestItemCopy.m */,
 				6022404D1003DF14007D5D07 /* TestItemGeometry.m */,
 				609F5B6716CD412900683BD9 /* TestItemProvider.m */,
@@ -3034,6 +3040,8 @@
 				60BBFED418646A10006A495E /* FSBrowserCell.m in Sources */,
 				60EA33A818646CB6001ED909 /* ETLayoutExecutor.m in Sources */,
 				60EA33B41865EE74001ED909 /* ETMoveTool.m in Sources */,
+				608B01AC1868A79600D1A573 /* TestFreeLayout.m in Sources */,
+				608B01AD1868A79600D1A573 /* TestHitTest.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
