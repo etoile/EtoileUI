@@ -51,7 +51,6 @@ The concrete window class used is [NSPanel]. */
 + (ETWindowItem *) panelItemWithObjectGraphContext: (COObjectGraphContext *)aContext
 {
 	NSPanel *panel = AUTORELEASE([[NSPanel alloc] init]);
-	[panel setStyleMask: [panel styleMask] | NSUtilityWindowMask];
 	return [self itemWithWindow: panel objectGraphContext: aContext];
 }
 

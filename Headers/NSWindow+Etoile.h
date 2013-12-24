@@ -17,11 +17,11 @@
 
 @interface NSWindow (Etoile) <NSCopying>
 
-+ (unsigned int) defaultStyleMask;
++ (NSUInteger) defaultStyleMask;
 
 - (id) init;
-- (id) initWithFrame: (NSRect)frame styleMask: (unsigned int)windowStyle;
-- (id) initWithContentRect: (NSRect)frame styleMask: (unsigned int)windowStyle;
+- (id) initWithFrame: (NSRect)frame styleMask: (NSUInteger)windowStyle;
+- (id) initWithContentRect: (NSRect)frame styleMask: (NSUInteger)windowStyle;
 
 - (ETLayoutItem *) candidateFocusedItem;
 
@@ -52,4 +52,9 @@
 - (id) init;
 - (BOOL) canBecomeKeyWindow;
 
+@end
+
+
+@interface NSPanel (EtoileUI)
++ (NSUInteger) defaultStyleMask;
 @end

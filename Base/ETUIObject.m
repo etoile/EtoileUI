@@ -281,7 +281,7 @@ user interaction. */
 {
 #ifdef COREOBJECT
 	if ([self isPersistent] == NO)
-		return nil;
+		return NO;
 
 	id rootObject = [self rootObject];
 	COUndoTrack *undoTrack = nil;

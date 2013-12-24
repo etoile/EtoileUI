@@ -128,7 +128,7 @@
 
 - (void) setSerializedPropertyColumns: (NSDictionary *)serializedColumns
 {
-	ASSIGN(_propertyColumns, serializedColumns);
+	ASSIGN(_propertyColumns, AUTORELEASE([serializedColumns mutableCopy]));
 }
 
 - (void) awakeFromDeserialization

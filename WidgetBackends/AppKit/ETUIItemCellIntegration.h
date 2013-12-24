@@ -19,9 +19,11 @@
 - (id) objectValueForObject: (id)anObject;
 - (id) objectValueForCurrentValue: (id)aValue;
 - (id) currentValueForObjectValue: (id)aValue;
+#ifndef GNUSTEP
 // NOTE: We might need to make the same changes to NSControl.
 - (void) willChangeValueForKey: (NSString *)aKey;
 - (void) didChangeValueForKey: (NSString *)aKey;
+#endif
 @end
 
 

@@ -14,7 +14,7 @@
 
 @implementation NSWindow (Etoile)
 
-+ (unsigned int) defaultStyleMask
++ (NSUInteger) defaultStyleMask
 {
 	return (NSTitledWindowMask | NSClosableWindowMask | NSResizableWindowMask 
 		| NSMiniaturizableWindowMask);
@@ -31,7 +31,7 @@
 							   defer: NO];
 }
 
-- (id) initWithFrame: (NSRect)frame styleMask: (unsigned int)windowStyle
+- (id) initWithFrame: (NSRect)frame styleMask: (NSUInteger)windowStyle
 {
 	NSRect contentRect = [NSWindow contentRectForFrameRect: frame 
 	                                             styleMask: windowStyle];
@@ -41,7 +41,7 @@
 							   defer: NO];
 }
 
-- (id) initWithContentRect: (NSRect)rect styleMask: (unsigned int)windowStyle
+- (id) initWithContentRect: (NSRect)rect styleMask: (NSUInteger)windowStyle
 {
 	return [self initWithContentRect: rect
 					       styleMask: windowStyle
@@ -220,3 +220,13 @@ NSWindow implementation. */
 
 @end
 
+
+@implementation NSPanel (EtoileUI)
+
++ (NSUInteger) defaultStyleMask
+{
+	NSUInteger styleMask = [super defaultStyleMask];
+	return (styleMask | NSUtilityWindowMask);
+}
+
+@end
