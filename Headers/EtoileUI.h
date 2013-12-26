@@ -19,6 +19,10 @@
 #import <EtoileUI/NSObject+EtoileUI.h>
 #import <EtoileUI/ETObjectValueFormatter.h>
 
+/* Graphics Backend */
+
+#import <EtoileUI/ETGraphicsBackend.h>
+
 /* Base */
 
 #import <EtoileUI/ETApplication.h>

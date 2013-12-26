@@ -6,6 +6,7 @@
 	License: Modified BSD (see COPYING)
  */
 
+#import <AppKit/NSView.h>
 #import "NSImage+Etoile.h"
 #import "NSWindow+Etoile.h"
 #import "ETCompatibility.h"

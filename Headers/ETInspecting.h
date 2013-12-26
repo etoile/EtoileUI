@@ -33,6 +33,10 @@
 	THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#import <Foundation/Foundation.h>
+
+@class NSPanel, NSWindow;
+
 /** If you want to write your own inspector class from scratch instead of using
 	ETInspector, you must adopt this protocol. This ensures the inspector can
 	be passed through EtoileUI and managed by it transparently. */

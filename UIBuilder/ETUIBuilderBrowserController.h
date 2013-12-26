@@ -7,7 +7,7 @@
  */
 
 #import <Foundation/Foundation.h>
-#import <AppKit/AppKit.h>
+#import <EtoileUI/ETGraphicsBackend.h>
 #import <EtoileUI/ETController.h>
 
 @class ETAspectRepository, ETItemValueTransformer, ETUIBuilderController;

@@ -10,7 +10,7 @@
  */
 
 #import <Foundation/Foundation.h>
-#import <AppKit/AppKit.h>
+#import <AppKit/NSView.h>
 
 @class ETLayoutItem, ETUIItem;
 

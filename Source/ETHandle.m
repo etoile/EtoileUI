@@ -23,6 +23,7 @@ NSString *kETManipulatedObjectProperty = @"manipulatedObject";
       actionHandler: (ETActionHandler *)aHandler
  objectGraphContext:(COObjectGraphContext *)aContext
 {
+	[self doesNotRecognizeSelector: _cmd];
 	return nil;
 }
 

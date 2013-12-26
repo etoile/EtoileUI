@@ -11,7 +11,6 @@
  */
 
 #import <Foundation/Foundation.h>
-#import <AppKit/AppKit.h>
 #import <EtoileUI/ETLayoutItem.h>
 #import <EtoileUI/ETLayout.h>
 #import <EtoileUI/ETInspecting.h>

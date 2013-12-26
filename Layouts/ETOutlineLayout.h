@@ -11,7 +11,8 @@
  */
 
 #import <Foundation/Foundation.h>
-#import <AppKit/AppKit.h>
+// FIXME: Don't expose NSOutlineView in the public API.
+#import <AppKit/NSOutlineView.h>
 #import <EtoileUI/ETTableLayout.h>
 
 /** See [ETTableLayout] API to customize ETOutlineLayout look and behavior. */

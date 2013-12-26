@@ -11,9 +11,11 @@
  */
 
 #import <Foundation/Foundation.h>
-#import <AppKit/AppKit.h>
 #import <EtoileFoundation/ETInstanceVariableMirror.h>
 #import <EtoileUI/ETCompositeLayout.h>
+
+// FIXME: Don't expose ETView in the public API.
+@class ETVIew;
 
 /** See -setDisplayMode:. */
 typedef enum _ETLayoutDisplayMode {

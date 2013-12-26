@@ -389,6 +389,7 @@
 		60B9B686185B26B600ABDEA1 /* ETLayoutItemFactory+UIPatternAdditions.h in Headers */ = {isa = PBXBuildFile; fileRef = 60B9B684185B26B500ABDEA1 /* ETLayoutItemFactory+UIPatternAdditions.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		60B9B688185B26B600ABDEA1 /* ETLayoutItemFactory+UIPatternAdditions.m in Sources */ = {isa = PBXBuildFile; fileRef = 60B9B685185B26B600ABDEA1 /* ETLayoutItemFactory+UIPatternAdditions.m */; };
 		60B9B689185B26B600ABDEA1 /* ETLayoutItemFactory+UIPatternAdditions.m in Sources */ = {isa = PBXBuildFile; fileRef = 60B9B685185B26B600ABDEA1 /* ETLayoutItemFactory+UIPatternAdditions.m */; };
+		60BA538F1869ECC1003CE1D0 /* ETGraphicsBackend.h in Headers */ = {isa = PBXBuildFile; fileRef = 60BA538E1869ECC1003CE1D0 /* ETGraphicsBackend.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		60BB000E100A32C8001B2F37 /* EtoileWeb.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 60073C2910074B39007272E6 /* EtoileWeb.framework */; };
 		60BBFDE418645483006A495E /* ETArrowTool.h in Headers */ = {isa = PBXBuildFile; fileRef = 60BBFDDC18645483006A495E /* ETArrowTool.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		60BBFDE618645483006A495E /* ETArrowTool.m in Sources */ = {isa = PBXBuildFile; fileRef = 60BBFDDD18645483006A495E /* ETArrowTool.m */; };
@@ -1084,6 +1085,7 @@
 		60B6E2F713E4635D0087879C /* ETAspectRepository.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ETAspectRepository.m; path = AspectRepository/ETAspectRepository.m; sourceTree = "<group>"; };
 		60B9B684185B26B500ABDEA1 /* ETLayoutItemFactory+UIPatternAdditions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "ETLayoutItemFactory+UIPatternAdditions.h"; path = "ItemFactoryAdditions/ETLayoutItemFactory+UIPatternAdditions.h"; sourceTree = "<group>"; };
 		60B9B685185B26B600ABDEA1 /* ETLayoutItemFactory+UIPatternAdditions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = "ETLayoutItemFactory+UIPatternAdditions.m"; path = "ItemFactoryAdditions/ETLayoutItemFactory+UIPatternAdditions.m"; sourceTree = "<group>"; };
+		60BA538E1869ECC1003CE1D0 /* ETGraphicsBackend.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ETGraphicsBackend.h; path = GraphicsBackend/ETGraphicsBackend.h; sourceTree = "<group>"; };
 		60BBFDDC18645483006A495E /* ETArrowTool.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ETArrowTool.h; path = Tools/ETArrowTool.h; sourceTree = "<group>"; };
 		60BBFDDD18645483006A495E /* ETArrowTool.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ETArrowTool.m; path = Tools/ETArrowTool.m; sourceTree = "<group>"; };
 		60BBFDDE18645483006A495E /* ETPaintBucketTool.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ETPaintBucketTool.h; path = Tools/ETPaintBucketTool.h; sourceTree = "<group>"; };
@@ -1572,24 +1574,25 @@
 			isa = PBXGroup;
 			children = (
 				600243CE0CD134C40023182D /* Tests */,
-				60D46FCF14C5CDCB00129CD4 /* CoreObjectUI */,
-				60A54AC113D0822700261FDC /* Persistency */,
 				601296B013C7495000980F16 /* Model Descriptions */,
-				29B97317FDCFA39411CA2CEA /* Resources */,
+				60A54AC113D0822700261FDC /* Persistency */,
+				60BA537F1869EB95003CE1D0 /* Graphics Backend */,
 				6063FD591744CD5100E4350E /* Widget Backends */,
 				605F347F17158F4100E9355A /* Base */,
 				6074CA560F8151380081E438 /* Decorator Items */,
-				60E7D63E0F9A032A007AEAA6 /* Action Handlers */,
 				609548D10C0E300F00068CBB /* Layout Items */,
 				609548D30C0E30D500068CBB /* Layouts */,
 				607FBAE30FE002F000960039 /* Mediators & Controllers */,
 				607FBAD90FE0020200960039 /* Styles & Shapes */,
+				60E7D63E0F9A032A007AEAA6 /* Action Handlers */,
 				60BBFDD118645464006A495E /* Tools */,
 				607FBAE40FE0032A00960039 /* Tree Transforms */,
 				60B6E30013E463670087879C /* Aspect Repository */,
+				60D46FCF14C5CDCB00129CD4 /* CoreObjectUI */,
 				607675F2176B0F16009FA5F2 /* Model Builder */,
 				60D25600172EC992004062CF /* UI Builder */,
 				609548D40C0E313A00068CBB /* Utility & Extensions */,
+				29B97317FDCFA39411CA2CEA /* Resources */,
 				607FBAE00FE0024700960039 /* Deprecated (or soon to be) */,
 			);
 			name = EtoileUI;
@@ -1898,6 +1901,14 @@
 				60B6E2F713E4635D0087879C /* ETAspectRepository.m */,
 			);
 			name = "Aspect Repository";
+			sourceTree = "<group>";
+		};
+		60BA537F1869EB95003CE1D0 /* Graphics Backend */ = {
+			isa = PBXGroup;
+			children = (
+				60BA538E1869ECC1003CE1D0 /* ETGraphicsBackend.h */,
+			);
+			name = "Graphics Backend";
 			sourceTree = "<group>";
 		};
 		60BBFDD118645464006A495E /* Tools */ = {
@@ -2262,6 +2273,7 @@
 				60EA33A518646CB6001ED909 /* ETLayoutExecutor.h in Headers */,
 				60EA33AB1864A6AF001ED909 /* ETTool+CoreObject.h in Headers */,
 				60EA33B11865EE74001ED909 /* ETMoveTool.h in Headers */,
+				60BA538F1869ECC1003CE1D0 /* ETGraphicsBackend.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -3640,8 +3652,10 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ARCHS = "$(NATIVE_ARCH_ACTUAL)";
+				COPY_PHASE_STRIP = NO;
 				GCC_C_LANGUAGE_STANDARD = c99;
 				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = "ETDebugAssertionEnabled=1";
 				MACOSX_DEPLOYMENT_TARGET = 10.6;
 				OTHER_CFLAGS = "-DCOREOBJECT";
 				SDKROOT = macosx;

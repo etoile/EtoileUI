@@ -10,7 +10,8 @@
  */
 
 #import <Foundation/Foundation.h>
-#import <AppKit/AppKit.h>
+#import <AppKit/NSWindow.h>
+#import <AppKit/NSPanel.h>
 #import <EtoileUI/ETCompatibility.h>
 
 @class ETLayoutItem;

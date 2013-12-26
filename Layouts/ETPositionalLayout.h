@@ -7,7 +7,7 @@
  */
 
 #import <Foundation/Foundation.h>
-#import <AppKit/AppKit.h>
+#import <EtoileUI/ETGraphicsBackend.h>
 #import <EtoileUI/ETLayout.h>
 
 // NOTE: May be this should be turned into a mask

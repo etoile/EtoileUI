@@ -9,8 +9,8 @@
  */
 
 #import <Foundation/Foundation.h>
-#import <AppKit/AppKit.h>
 #import <EtoileFoundation/ETCollection.h>
+#import <EtoileUI/ETGraphicsBackend.h>
 #import <EtoileUI/ETUIObject.h>
 
 /** @group Aspect Repository

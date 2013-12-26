@@ -11,7 +11,6 @@
  */
 
 #import <Foundation/Foundation.h>
-#import <AppKit/AppKit.h>
 #import <EtoileUI/ETComputedLayout.h>
 
 /** See [ETComputedLayout] API to customize ETColumnLayout look and behavior. */

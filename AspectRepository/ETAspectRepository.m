@@ -7,7 +7,6 @@
  */
 
 #import <Foundation/Foundation.h>
-#import <AppKit/AppKit.h>
 #import "ETAspectRepository.h"
 #import "EtoileUIProperties.h"
 #import "ETPickDropCoordinator.h"

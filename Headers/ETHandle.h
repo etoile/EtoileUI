@@ -11,7 +11,7 @@
  */
 
 #import <Foundation/Foundation.h>
-#import <AppKit/AppKit.h>
+#import <EtoileUI/ETGraphicsBackend.h>
 #import <EtoileUI/ETLayoutItem.h>
 #import <EtoileUI/ETLayoutItemGroup.h>
 #import <EtoileUI/ETActionHandler.h>
@@ -37,6 +37,10 @@ EtHandle mediatedTool property. */
  {
  
  }
+
+- (id) initWithActionHandler: (ETActionHandler *)aHandler 
+           manipulatedObject: (id)aTarget
+          objectGraphContext: (COObjectGraphContext *)aContext;
  
  - (ETTool *) mediatedTool;
  - (void) setMediatedTool: (ETTool *)anTool;

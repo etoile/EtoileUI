@@ -12,7 +12,7 @@
  */
 
 #import <Foundation/Foundation.h>
-#import <AppKit/AppKit.h>
+#import <EtoileUI/ETGraphicsBackend.h>
 #import <EtoileUI/ETInspecting.h>
 #import <EtoileUI/ETFragment.h>
 #import <EtoileUI/ETUIItem.h>

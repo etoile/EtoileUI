@@ -10,7 +10,7 @@
  */
 
 #import <Foundation/Foundation.h>
-#import <AppKit/AppKit.h>
+#import <EtoileUI/ETGraphicsBackend.h>
 #import <EtoileUI/ETLayoutItem.h>
 
 /** The null point which is not equal to NSZeroPoint. It can be returned 

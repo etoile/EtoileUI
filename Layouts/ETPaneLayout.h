@@ -10,7 +10,7 @@
  */
 
 #import <Foundation/Foundation.h>
-#import <AppKit/AppKit.h>
+#import <EtoileUI/ETGraphicsBackend.h>
 #import <EtoileUI/ETCompositeLayout.h>
 
 @class ETLayoutItemGroup;

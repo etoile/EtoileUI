@@ -11,8 +11,10 @@
  */
 
 #import <Foundation/Foundation.h>
-#import <AppKit/AppKit.h>
 #import <EtoileUI/ETWidgetLayout.h>
+
+// FIXME: Don't expose NSTextView in the public API.
+@class NSTextView;
 
 /** Widely unfinished layout that allows to view and potentially edit a layout 
 item tree through a text representation. */

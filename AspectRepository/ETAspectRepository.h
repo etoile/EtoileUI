@@ -9,7 +9,7 @@
  */
 
 #import <Foundation/Foundation.h>
-#import <AppKit/AppKit.h>
+#import <EtoileUI/ETGraphicsBackend.h>
 #import <EtoileUI/ETAspectCategory.h>
 #import <EtoileUI/ETActionHandler.h>
 

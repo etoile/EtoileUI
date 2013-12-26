@@ -11,8 +11,11 @@
  */
 
 #import <Foundation/Foundation.h>
-#import <AppKit/AppKit.h>
+#import <AppKit/NSEvent.h>
 
+// FIXME: Don't expose NSDraggingInfo, NSEvent and NSWindow in the public API.
+@protocol NSDraggingInfo;
+@class NSWindow;
 @class ETLayoutItem, ETUIItem, ETWindowItem;
 
 // WARNING: API a bit unstable.

@@ -10,7 +10,9 @@
  */
 
 #import <Foundation/Foundation.h>
-#import <AppKit/AppKit.h>
+#import <AppKit/NSImage.h>
+
+@class NSView;
 
 @interface NSImage (Etoile)
 - (NSImage *) initWithView: (NSView *)view fromRect: (NSRect)rect;

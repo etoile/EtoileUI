@@ -8,7 +8,10 @@
  */
  
 #import <Foundation/Foundation.h>
-#import <AppKit/AppKit.h>
+// FIXME: Don't expose NSMenuItem and NSApplication in the public API.
+#import <AppKit/NSApplication.h>
+#import <AppKit/NSMenu.h>
+#import <AppKit/NSMenuItem.h>
 
 @class ETLayoutItemBuilder, ETLayoutItem, ETLayoutItemGroup, ETNibOwner, ETUIStateRestoration;
 

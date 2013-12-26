@@ -10,7 +10,6 @@
  */
 
 #import <Foundation/Foundation.h>
-#import <AppKit/AppKit.h>
 #import <EtoileUI/ETLayoutItem.h>
 
 /** ETSelectionAreaItem is a layout item which can be used to represent any 

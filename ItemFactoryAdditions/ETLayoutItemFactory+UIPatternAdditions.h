@@ -7,7 +7,7 @@
  */
 
 #import <Foundation/Foundation.h>
-#import <AppKit/AppKit.h>
+#import <EtoileUI/ETGraphicsBackend.h>
 #import <EtoileFoundation/EtoileFoundation.h>
 #import <EtoileUI/ETLayoutItemFactory.h>
 

@@ -42,7 +42,7 @@
  OTHERWISE, EVEN IF APPLE HAS BEEN ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
-#import <EtoileUI/FSBrowserCell.h>
+#import "FSBrowserCell.h"
 #import <math.h>
 
 

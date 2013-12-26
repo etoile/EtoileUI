@@ -7,8 +7,10 @@
  */
 
 #import <Foundation/Foundation.h>
-#import <AppKit/AppKit.h>
+#import <EtoileUI/ETGraphicsBackend.h>
 
+// FIXME: Don't expose NSActionCell in the public API
+@class NSActionCell;
 
 /** @group Base
 @abstract Widget Proxy Protocol

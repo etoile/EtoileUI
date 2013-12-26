@@ -9,7 +9,7 @@
  */
 
 #import <Foundation/Foundation.h>
-#import <AppKit/AppKit.h>
+#import <EtoileUI/ETGraphicsBackend.h>
 #import <EtoileUI/ETTemplateItemLayout.h>
 
 /** Describes how the form is horizontally positioned inside the layout 

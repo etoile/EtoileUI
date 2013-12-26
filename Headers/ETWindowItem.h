@@ -11,10 +11,11 @@
  */
 
 #import <Foundation/Foundation.h>
-#import <AppKit/AppKit.h>
 #import <EtoileUI/ETDecoratorItem.h>
 #import <EtoileUI/ETResponder.h>
 
+// FIXME: Don't expose NSWindow in the public API.
+@class NSWindow;
 @class COObjectGraphContext;
 @class ETEvent;
 

@@ -10,7 +10,7 @@
  */
 
 #import <Foundation/Foundation.h>
-#import <AppKit/AppKit.h>
+#import <EtoileUI/ETGraphicsBackend.h>
 #import <EtoileUI/ETFragment.h>
 
 /** A line fragment is a collection of fragments to be layouted either 

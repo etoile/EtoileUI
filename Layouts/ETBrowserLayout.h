@@ -7,8 +7,10 @@
  */
 
 #import <Foundation/Foundation.h>
-#import <AppKit/AppKit.h>
 #import <EtoileUI/ETWidgetLayout.h>
+
+// FIXME: Don't expose NSBrowser in the public API.
+@class NSBrowser;
 
 
 @interface ETBrowserLayout : ETWidgetLayout

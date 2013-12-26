@@ -11,8 +11,9 @@
  */
 
 #import <Foundation/Foundation.h>
-#import <AppKit/AppKit.h>
 
+// FIXME: Don't expose NSView and NSWindow in the public API.
+@class NSView, NSWindow;
 @class ETEvent, ETUIItem, ETLayoutItem;
 
 /** The active tool handles the dispatch in the layout item tree. */

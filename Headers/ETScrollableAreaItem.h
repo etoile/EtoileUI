@@ -10,10 +10,11 @@
  */
 
 #import <Foundation/Foundation.h>
-#import <AppKit/AppKit.h>
 #import <EtoileUI/ETDecoratorItem.h>
 
 @class COObjectGraphContext;
+// FIXME: Don't expose NSScrollView in the public API.
+@class NSScrollView;
 
 /** A decorator which can be used to make content scrollable.
 

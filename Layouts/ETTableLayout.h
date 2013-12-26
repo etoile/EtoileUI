@@ -11,7 +11,8 @@
  */
 
 #import <Foundation/Foundation.h>
-#import <AppKit/AppKit.h>
+// FIXME: Don't expose NSTableView in the public API.
+#import <AppKit/NSOutlineView.h>
 #import <EtoileUI/ETWidgetLayout.h>
 #import <EtoileUI/ETFragment.h>
 
