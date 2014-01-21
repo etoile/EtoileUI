@@ -22,7 +22,7 @@
 + (NSString *) aspectName;
 @end
 
-@interface ETLayout (UnitKitTests) <UKTest>
+@interface TestLayout : NSObject <UKTest>
 @end
 
 /* Dummy class for testing */
@@ -35,25 +35,25 @@
 @end
 
 
-@implementation ETLayout (UnitKitTests)
+@implementation TestLayout
 
-+ (void) testDisplayName
+- (void) testDisplayName
 {
-	UKStringsEqual(@"Layout", [self displayName]);
+	UKStringsEqual(@"Layout", [ETLayout displayName]);
 	UKStringsEqual(@"Table Layout", [ETTableLayout displayName]);
 	UKStringsEqual(@"Bird Table Bird Bird", [WXYBirdTableBirdBird displayName]);
 }
 
-+ (void) testStripClassName
+- (void) testStripClassName
 {
-	UKStringsEqual(@"Layout", [self stripClassName]);
+	UKStringsEqual(@"Layout", [ETLayout stripClassName]);
 	UKStringsEqual(@"Table", [ETTableLayout stripClassName]);
 	UKStringsEqual(@"BirdTableBird", [WXYBirdTableBirdBird stripClassName]);
 }
 
-+ (void) testAspectName
+- (void) testAspectName
 {
-	UKStringsEqual(@"layout", [self aspectName]);
+	UKStringsEqual(@"layout", [ETLayout aspectName]);
 	UKStringsEqual(@"table", [ETTableLayout aspectName]);
 	UKStringsEqual(@"birdTableBird", [WXYBirdTableBirdBird aspectName]);
 }

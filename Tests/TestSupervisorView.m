@@ -13,15 +13,26 @@
 #import "ETView.h"
 #import "ETCompatibility.h"
 
-@interface ETView (TestSupervisorView) <UKTest>
+@interface TestSupervisorView : TestCommon <UKTest>
+{
+	ETView *supervisorView;
+}
 @end
 
 
-@implementation ETView (TestSupervisorView)
+@implementation TestSupervisorView
 
-- (id) initForTest
+- (id) init
 {
-	return [self initWithFrame: NSMakeRect(0, 0, 50, 50)];
+	SUPERINIT;
+	supervisorView = [[ETView alloc] initWithFrame: NSMakeRect(0, 0, 50, 50)];
+	return self;
+}
+
+- (void) dealloc
+{
+	DESTROY(supervisorView);
+	[super dealloc];
 }
 
 #if 0
@@ -191,27 +202,27 @@
 
 - (void) checkContentView: (NSView *)contentView
 {
-	UKRectsEqual(ETMakeRect(NSZeroPoint, [self frame].size), [contentView frame]);
-	UKObjectsEqual(self, [contentView superview]);
+	UKRectsEqual(ETMakeRect(NSZeroPoint, [supervisorView frame].size), [contentView frame]);
+	UKObjectsEqual(supervisorView, [contentView superview]);
 
-	[self setFrame: NSZeroRect];
+	[supervisorView setFrame: NSZeroRect];
 	UKRectsEqual(NSZeroRect, [contentView frame]);	
 	
-	[self setFrame: NSMakeRect(1000, -1000, 1000, 2000)];
+	[supervisorView setFrame: NSMakeRect(1000, -1000, 1000, 2000)];
 	UKRectsEqual(NSMakeRect(0, 0, 1000, 2000), [contentView frame]);	
 }
 
 - (void) testSetTemporaryView
 {
 	id contentView = [self dummyView];
-	[self setTemporaryView: contentView];
+	[supervisorView setTemporaryView: contentView];
 	[self checkContentView: contentView];
 }
 
 - (void) testSetWrappedView
 {
 	id contentView = [self dummyView];
-	[self setWrappedView: contentView];
+	[supervisorView setWrappedView: contentView];
 	[self checkContentView: contentView];
 }
 
@@ -220,10 +231,10 @@
 	id theItem = AUTORELEASE([[ETLayoutItem alloc]
 		initWithObjectGraphContext: [ETUIObject defaultTransientObjectGraphContext]]);
 	
-	[self setItemWithoutInsertingView: theItem];
+	[supervisorView setItemWithoutInsertingView: theItem];
 	
-	UKNotNil([self layoutItem]);
-	UKObjectsSame(theItem, [self layoutItem]);
+	UKNotNil([supervisorView layoutItem]);
+	UKObjectsSame(theItem, [supervisorView layoutItem]);
 	UKNil([theItem view]);
 }
 

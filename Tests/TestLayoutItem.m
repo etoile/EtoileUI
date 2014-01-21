@@ -30,45 +30,21 @@
 
 static ETLayoutItemFactory *itemFactory = nil;
 
-@interface ETLayoutItem (UnitKitTests) <UKTest>
+@interface TestItem : TestCommon <UKTest>
 @end
 
-@interface ETLayoutItemGroup (UnitKitTests) <UKTest>
+@interface TestItemGroup : TestCommon <UKTest>
+{
+	ETLayoutItemGroup *item;
+}
+
 @end
 
 
 @implementation ETLayoutItem (UnitKitTests)
 
-- (id) initForTest
-{
-	self = [self initWithObjectGraphContext: [ETUIObject defaultTransientObjectGraphContext]];
-	[[ETLayoutExecutor sharedInstance] removeAllItems];
-	itemFactory = [ETLayoutItemFactory factory];
-	return self;
-}
-
-/*- (void) buildTestTree
-{
-	id item1 = [itemFactory item];
-	id item11 = [itemFactory item];
-	id item12 = [itemFactory item];
-	id item2 = [itemFactory item];
-	id item21 = [itemFactory item];
-	id item22 = [itemFactory item];
-	id item221 = [itemFactory item];
-	
-	[self addItem: item1];
-	[item1 addItem: item11];
-	[item1 addItem: item12];
-	[self addItem: item2];
-	[item2 addItem: item21];	
-	[item2 addItem: item22];
-	[item22 addItem: item221];
-}*/
-
 - (void) testRetainCountForItemCreation
 {
-
 	id item = [itemFactory item];
 	id itemGroup = [itemFactory itemGroup];
 
@@ -87,15 +63,16 @@ static ETLayoutItemFactory *itemFactory = nil;
 {
 	id item = [itemFactory item];
 	id itemGroup = [itemFactory itemGroup];
-		
+
+    /* Relationship cache may cause autoreleased references */
 	CREATE_AUTORELEASE_POOL(pool);
 
-    // Relationship cache may cause autoreleased references
     [itemGroup addItem: item];
 	[itemGroup removeItem: item];
 
 	[[ETLayoutExecutor sharedInstance] removeItems: S(item, itemGroup)];
 	[[itemFactory objectGraphContext] discardAllChanges];
+
 	DESTROY(pool);
 
 	UKIntsEqual(1, [item retainCount]);
@@ -231,7 +208,7 @@ static ETLayoutItemFactory *itemFactory = nil;
 	id item0 = [itemFactory itemGroup];
 	id item00 = [itemFactory item];
 	id item1 = [itemFactory itemGroup];
-	id item10 = self;
+	id item10 = [itemFactory item];
 	id item11 = [itemFactory itemGroup];
 	id item110 = [itemFactory item];
 	
@@ -250,8 +227,9 @@ static ETLayoutItemFactory *itemFactory = nil;
 	id indexPath11 = [indexPath1 indexPathByAddingIndex: 1];
 	id indexPath110 = [indexPath11 indexPathByAddingIndex: 0];
 
-	UKObjectsEqual(emptyIndexPath, [self indexPathForItem: self]);
-	UKNil([self indexPathForItem: nil]); /* Root item based index path */
+	UKObjectsEqual(emptyIndexPath, [item10 indexPathForItem: self]);
+	/* nil represents the root item in the receiver item tree */
+	UKNil([item10 indexPathForItem: nil]);
 
 	UKNil([item0 indexPathForItem: item]);	
 	UKObjectsEqual(indexPath0, [item indexPathForItem: item0]);
@@ -271,7 +249,7 @@ static ETLayoutItemFactory *itemFactory = nil;
 	id item0 = [itemFactory itemGroup];
 	id item00 = [itemFactory item];
 	id item1 = [itemFactory itemGroup];
-	id item10 = self;
+	id item10 = [itemFactory item];
 	id item11 = [itemFactory itemGroup];
 	id item110 = [itemFactory item];
 	
@@ -290,8 +268,9 @@ static ETLayoutItemFactory *itemFactory = nil;
 	id indexPath11 = [indexPath1 indexPathByAddingIndex: 1];
 	id indexPath110 = [indexPath11 indexPathByAddingIndex: 0];
 
-	UKObjectsEqual(emptyIndexPath, [self indexPathFromItem: self]);
-	UKObjectsEqual(indexPath10, [self indexPathFromItem: nil]); /* Root item based index path */
+	UKObjectsEqual(emptyIndexPath, [item10 indexPathFromItem: item10]);
+	/* nil represents the root item in the receiver item tree */
+	UKObjectsEqual(indexPath10, [item10 indexPathFromItem: nil]);
 
 	UKNil([item indexPathFromItem: item0]);	
 	UKObjectsEqual(indexPath0, [item0 indexPathFromItem: item]);
@@ -307,14 +286,15 @@ static ETLayoutItemFactory *itemFactory = nil;
 
 - (void) testSetDecoratorItem
 {
+	id item = [itemFactory item];
 	id decorator1 = [ETDecoratorItem itemWithDummySupervisorView];
 	id decorator2 = [ETDecoratorItem itemWithDummySupervisorView];
 	id decorator3 = [ETWindowItem itemWithObjectGraphContext: [itemFactory objectGraphContext]];
 	
-	UKNil([self decoratorItem]);
+	UKNil([item decoratorItem]);
 	
-	[self setDecoratorItem: decorator1];
-	UKObjectsEqual(decorator1, [self decoratorItem]);
+	[item setDecoratorItem: decorator1];
+	UKObjectsEqual(decorator1, [item decoratorItem]);
 	
 	[decorator1 setDecoratorItem: decorator2];
 	UKObjectsEqual(decorator2, [decorator1 decoratorItem]);
@@ -325,68 +305,74 @@ static ETLayoutItemFactory *itemFactory = nil;
 
 - (void) testLastDecoratorItem
 {
+	id item = [itemFactory item];
 	id decorator1 = [ETDecoratorItem itemWithDummySupervisorView];
 	id decorator2 = [ETDecoratorItem itemWithDummySupervisorView];
 	
-	UKObjectsEqual(self, [self lastDecoratorItem]);
+	UKObjectsEqual(item, [item lastDecoratorItem]);
 	
-	[self setDecoratorItem: decorator1];
-	UKObjectsEqual(decorator1, [self lastDecoratorItem]);
+	[item setDecoratorItem: decorator1];
+	UKObjectsEqual(decorator1, [item lastDecoratorItem]);
 	[decorator1 setDecoratorItem: decorator2];
-	UKObjectsEqual(decorator2, [self lastDecoratorItem]);
+	UKObjectsEqual(decorator2, [item lastDecoratorItem]);
 	UKObjectsEqual(decorator2, [decorator1 lastDecoratorItem]);
 	UKObjectsEqual(decorator2, [decorator2 lastDecoratorItem]);
 }
 
 - (void) testFirstDecoratedItem
 {
+	id item = [itemFactory item];
 	id decorator1 = [ETDecoratorItem itemWithDummySupervisorView];
 	id decorator2 = [ETDecoratorItem itemWithDummySupervisorView];
 	
-	UKObjectsEqual(self, [self firstDecoratedItem]);
+	UKObjectsEqual(item, [item firstDecoratedItem]);
 	
-	[decorator1 setDecoratedItem: self];
-	UKObjectsEqual(self, [decorator1 firstDecoratedItem]);
+	[decorator1 setDecoratedItem: item];
+	UKObjectsEqual(item, [decorator1 firstDecoratedItem]);
 	[decorator2 setDecoratedItem: decorator1];
-	UKObjectsEqual(self,  [decorator2 firstDecoratedItem]);
-	UKObjectsEqual(self, [decorator1 firstDecoratedItem]);
-	UKObjectsEqual(self, [self firstDecoratedItem]);
+	UKObjectsEqual(item,  [decorator2 firstDecoratedItem]);
+	UKObjectsEqual(item, [decorator1 firstDecoratedItem]);
+	UKObjectsEqual(item, [item firstDecoratedItem]);
 }
 
 - (void) testSupervisorView
 {
+	id item = [itemFactory item];
 	id view1 = AUTORELEASE([[NSView alloc] initWithFrame: NSMakeRect(0, 0, 100, 50)]);
 	id view2 = AUTORELEASE([[ETView alloc] initWithFrame: NSMakeRect(-50, 0, 100, 200)]);
 
-	UKNil([self supervisorView]);
+	UKNil([item supervisorView]);
 	
-	[self setView: view1]; /* -setView: creates the supervisor view if needed */
-	UKObjectKindOf([self supervisorView], ETView);
-	UKObjectsEqual(view1, [self view]);
-	UKObjectsEqual(view1, [[self supervisorView] wrappedView]);
-	UKObjectsEqual(self, [[self supervisorView] layoutItem]);
+	[item setView: view1]; /* -setView: creates the supervisor view if needed */
+	UKObjectKindOf([item supervisorView], ETView);
+	UKObjectsEqual(view1, [item view]);
+	UKObjectsEqual(view1, [[item supervisorView] wrappedView]);
+	UKObjectsEqual(item, [[item supervisorView] layoutItem]);
 
-	[self setSupervisorView: view2];
-	UKObjectsEqual(view2, [self supervisorView]);
-	UKObjectsEqual(self, [[self supervisorView] layoutItem]);
-	UKRectsEqual(NSMakeRect(-50, 0, 100, 200), [[self supervisorView] frame]);
-	UKRectsEqual(NSMakeRect(-50, 0, 100, 200), [self frame]);
+	[item setSupervisorView: view2];
+	UKObjectsEqual(view2, [item supervisorView]);
+	UKObjectsEqual(item, [[item supervisorView] layoutItem]);
+	UKRectsEqual(NSMakeRect(-50, 0, 100, 200), [[item supervisorView] frame]);
+	UKRectsEqual(NSMakeRect(-50, 0, 100, 200), [item frame]);
 }
 
 - (void) testSupervisorViewInsertionByDecorator
 {
-	UKNil([self supervisorView]);
+	id item = [itemFactory item];
+
+	UKNil([item supervisorView]);
 	
 	ETWindowItem *windowItem = AUTORELEASE([[ETWindowItem alloc]
-		initWithObjectGraphContext: [self objectGraphContext]]);
-	[self setDecoratorItem: windowItem];
+		initWithObjectGraphContext: [item objectGraphContext]]);
+	[item setDecoratorItem: windowItem];
 	
-	UKNotNil([self supervisorView]);
-	UKObjectsEqual([[windowItem window] contentView], [self supervisorView]);
+	UKNotNil([item supervisorView]);
+	UKObjectsEqual([[windowItem window] contentView], [item supervisorView]);
 }
 
 - (void) testHandleDecorateItemInView
 {
+	id item = [itemFactory item];
 	id parentView = AUTORELEASE([[ETView alloc] initWithFrame: NSMakeRect(0, 0, 100, 50)]);
 	ETLayoutItemGroup *parent = [itemFactory itemGroup];
 	id mySupervisorView = AUTORELEASE([[ETView alloc] initWithFrame: NSMakeRect(0, 0, 100, 50)]);
@@ -394,16 +380,16 @@ static ETLayoutItemFactory *itemFactory = nil;
 	id decorator1 = [ETDecoratorItem itemWithDummySupervisorView]; //[itemFactory itemWithView: supervisorView1];
 
 	[parent setSupervisorView: parentView];
-	[parent addItem: self];
+	[parent addItem: item];
 	
-	[self setSupervisorView: mySupervisorView];
+	[item setSupervisorView: mySupervisorView];
 	[decorator1 setSupervisorView: supervisorView1];
-	[decorator1 handleDecorateItem: self supervisorView: mySupervisorView inView: parentView];
-	UKNotNil([[self supervisorView] superview]);
+	[decorator1 handleDecorateItem: item supervisorView: mySupervisorView inView: parentView];
+	UKNotNil([[item supervisorView] superview]);
 	/* Next line is valid with ETView instance as [decorator supervisorView] but 
 	   might not with ETView subclasses (not valid with ETScrollView instance
 	   to take an example) */
-	UKObjectsEqual([[self supervisorView] superview], [decorator1 supervisorView]);
+	UKObjectsEqual([[item supervisorView] superview], [decorator1 supervisorView]);
 	
 	UKObjectsEqual([[decorator1 supervisorView] superview], [parent supervisorView]);
 	UKNil([[parent supervisorView] wrappedView]);
@@ -413,38 +399,51 @@ static ETLayoutItemFactory *itemFactory = nil;
 
 #import "ETTableLayout.h"
 
-@implementation ETLayoutItemGroup (UnitKitTests)
+@implementation TestItemGroup
+
+- (id) init
+{
+	SUPERINIT;
+	ASSIGN(item, [itemFactory itemGroup]);
+	return self;
+}
+
+- (void) dealloc
+{
+	DESTROY(item);
+	[super dealloc];
+}
 
 - (void) testSetSource
 {
-	UKTrue([self isEmpty]);
+	UKTrue([item isEmpty]);
 
-	[self addItem: [itemFactory item]];
-	[self setSource: nil];
+	[item addItem: [itemFactory item]];
+	[item setSource: nil];
 
-	UKFalse([self isEmpty]);
+	UKFalse([item isEmpty]);
 }
 
 - (void) testSupervisorViewInsertionByLayoutView
 {
-	UKNil([self supervisorView]);
+	UKNil([item supervisorView]);
 	
-	ETTableLayout *layout = [ETTableLayout layoutWithObjectGraphContext: [self objectGraphContext]];
-	[self setLayout: layout];
+	ETTableLayout *layout = [ETTableLayout layoutWithObjectGraphContext: [item objectGraphContext]];
+	[item setLayout: layout];
 	
-	UKNotNil([self supervisorView]);
-	UKTrue([[[self supervisorView] subviews] containsObject: [layout layoutView]]);
+	UKNotNil([item supervisorView]);
+	UKTrue([[[item supervisorView] subviews] containsObject: [layout layoutView]]);
 }
 
 - (void) testSupervisorViewInsertionByChild
 {
-	UKNil([self supervisorView]);
+	UKNil([item supervisorView]);
 	
 	ETLayoutItem *textFieldItem = [itemFactory textField];
-	[self addItem: textFieldItem];
+	[item addItem: textFieldItem];
 	
-	UKNotNil([self supervisorView]);
-	UKTrue([[[self supervisorView] subviews] containsObject: [textFieldItem supervisorView]]);
+	UKNotNil([item supervisorView]);
+	UKTrue([[[item supervisorView] subviews] containsObject: [textFieldItem supervisorView]]);
 }
 
 - (void) testSupervisorViewInsertionByDescendant
@@ -452,14 +451,14 @@ static ETLayoutItemFactory *itemFactory = nil;
 	ETLayoutItemGroup *intermediateParent = [itemFactory itemGroup];
 	ETLayoutItem *textFieldItem = [itemFactory textField];
 
-	UKNil([self supervisorView]);
+	UKNil([item supervisorView]);
 	UKNil([intermediateParent supervisorView]);
 
-	[self addItem: intermediateParent];
+	[item addItem: intermediateParent];
 	[intermediateParent addItem: textFieldItem];
 	
-	UKNotNil([self supervisorView]);
-	UKTrue([[[self supervisorView] subviews] containsObject: [intermediateParent supervisorView]]);
+	UKNotNil([item supervisorView]);
+	UKTrue([[[item supervisorView] subviews] containsObject: [intermediateParent supervisorView]]);
 }
 	
 #define BUILD_TEST_TREE \
@@ -471,16 +470,16 @@ static ETLayoutItemFactory *itemFactory = nil;
 	id item11 = [itemFactory itemGroup]; \
 	id item110 = [itemFactory item]; \
 	\
-	[self addItem: item0]; \
+	[item addItem: item0]; \
 	[item0 addItem: item00]; \
 	[item0 addItem: item01]; \
-	[self addItem: item1]; \
+	[item addItem: item1]; \
 	[item1 addItem: item10]; \
 	[item1 addItem: item11]; \
 	[item11 addItem: item110]; \
 	
-#define BUILD_SELECTION_TEST_TREE_self_0_10_110 BUILD_TEST_TREE \
-	[self setSelected: YES]; \
+#define BUILD_SELECTION_TEST_TREE_item_0_10_110 BUILD_TEST_TREE \
+	[item setSelected: YES]; \
 	[item0 setSelected: YES]; \
 	[item10 setSelected: YES]; \
 	[item110 setSelected: YES]; \
@@ -496,7 +495,7 @@ static ETLayoutItemFactory *itemFactory = nil;
 	BUILD_TEST_TREE
 	DEFINE_BASE_ITEMS_0_11
 	
-	NSArray *items = [self descendantItemsSharingSameBaseItem];
+	NSArray *items = [item descendantItemsSharingSameBaseItem];
 
 	UKIntsEqual(4, [items count]);	
 	UKTrue([items containsObject: item0]);
@@ -510,9 +509,9 @@ static ETLayoutItemFactory *itemFactory = nil;
 
 - (void) testSelectionIndexPaths
 {
-	BUILD_SELECTION_TEST_TREE_self_0_10_110
+	BUILD_SELECTION_TEST_TREE_item_0_10_110
 
-	NSArray *indexPaths = [self selectionIndexPaths];
+	NSArray *indexPaths = [item selectionIndexPaths];
 	
 	UKIntsEqual(3, [indexPaths count]);
 	UKTrue([indexPaths containsObject: [item0 indexPath]]);
@@ -522,7 +521,7 @@ static ETLayoutItemFactory *itemFactory = nil;
 	[item0 setSelected: NO];	
 	[item10 setSelected: NO];
 	[item01 setSelected: YES];
-	indexPaths = [self selectionIndexPaths];
+	indexPaths = [item selectionIndexPaths];
 	
 	UKIntsEqual(2, [indexPaths count]);
 	UKTrue([indexPaths containsObject: [item01 indexPath]]);
@@ -542,17 +541,17 @@ static ETLayoutItemFactory *itemFactory = nil;
 	id indexPath110 = [indexPath11 indexPathByAddingIndex: 0];
 		
 	indexPaths = [NSMutableArray arrayWithObjects: indexPath0, indexPath00, indexPath110, nil];
-	[self setSelectionIndexPaths: indexPaths];
+	[item setSelectionIndexPaths: indexPaths];
 	
 	UKTrue([item0 isSelected]);
 	UKTrue([item00 isSelected]);
 	UKTrue([item110 isSelected]);
 	UKFalse([item11 isSelected]);
-	UKIntsEqual(3, [[self selectionIndexPaths] count]);
+	UKIntsEqual(3, [[item selectionIndexPaths] count]);
 
 	[item110 setSelected: NO]; /* Test -setSelected: -setSelectionIndexPaths: interaction */
 	indexPaths = [NSMutableArray arrayWithObjects: indexPath00, indexPath10, indexPath11, indexPath110, nil];
-	[self setSelectionIndexPaths: indexPaths];
+	[item setSelectionIndexPaths: indexPaths];
 
 	UKFalse([item0 isSelected]);
 	UKFalse([item1 isSelected]);	
@@ -560,22 +559,22 @@ static ETLayoutItemFactory *itemFactory = nil;
 	UKTrue([item10 isSelected]);
 	UKTrue([item11 isSelected]);
 	UKTrue([item110 isSelected]);
-	UKIntsEqual(4, [[self selectionIndexPaths] count]);
+	UKIntsEqual(4, [[item selectionIndexPaths] count]);
 }
 
 - (void) testSelectedItems
 {
-	BUILD_SELECTION_TEST_TREE_self_0_10_110
+	BUILD_SELECTION_TEST_TREE_item_0_10_110
 	
 	id item2 = [itemFactory item];
 	
-	[self addItem: item2];
+	[item addItem: item2];
 	[item2 setSelected: YES];
 	
-	NSArray *selectedItems = [self selectedItems];
+	NSArray *selectedItems = [item selectedItems];
 
 	UKIntsEqual(2, [selectedItems count]);	
-	UKIntsEqual([[self selectionIndexPaths] count], [selectedItems count] + 2);
+	UKIntsEqual([[item selectionIndexPaths] count], [selectedItems count] + 2);
 	UKTrue([selectedItems containsObject: item0]);
 	UKFalse([selectedItems containsObject: item10]);
 	UKFalse([selectedItems containsObject: item110]);
