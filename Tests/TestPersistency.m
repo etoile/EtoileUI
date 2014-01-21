@@ -14,8 +14,10 @@
 #import <EtoileFoundation/ETViewpoint.h>
 #import <EtoileFoundation/NSObject+Model.h>
 #import <CoreObject/COEditingContext.h>
+#import <CoreObject/COEditingContext+Debugging.h>
 #import <CoreObject/COObject.h>
 #import <CoreObject/COObjectGraphContext.h>
+#import <CoreObject/COObjectGraphContext+Debugging.h>
 #import <CoreObject/COPersistentRoot.h>
 #import <CoreObject/COSQLiteStore.h>
 #import <CoreObject/COSerialization.h>
@@ -248,7 +250,7 @@
 	[[itemFactory windowGroup] addItem: item];
 
 	UKNotNil(uuid);
-	UKObjectsEqual(itemAndAspects, [[item objectGraphContext] insertedObjects]);
+	UKObjectsEqual(itemAndAspects, SA([[item objectGraphContext] insertedObjects]));
 	UKTrue([[[item objectGraphContext] updatedObjects] isEmpty]);
 	UKFalse([[itemFactory windowGroup] isPersistent]);
 
