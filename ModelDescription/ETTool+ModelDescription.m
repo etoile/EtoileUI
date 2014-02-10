@@ -42,6 +42,7 @@
 
 	ETPropertyDescription *layoutOwner =
 		[ETPropertyDescription descriptionWithName: @"layoutOwner" type: (id)@"ETLayout"];
+	[layoutOwner setDerived: YES];
 	[layoutOwner setOpposite: (id)@"ETLayout.attachedTool"];
 	ETPropertyDescription *cursorName =
 		[ETPropertyDescription descriptionWithName: @"cursorName" type: (id)@"NSString"];

@@ -169,6 +169,7 @@ Warning: This protocol is very much subject to change. */
 
 @interface ETLayout : ETUIObject <NSCopying>
 {
+	@public
 	id _layoutContext; /* Weak reference */
 
 	@private

@@ -51,6 +51,7 @@
 
 	ETPropertyDescription *content = 
 		[ETPropertyDescription descriptionWithName: @"content" type: (id)@"ETLayoutItemGroup"];
+	[content setDerived: YES];
 	[content setOpposite: (id)@"ETLayoutItemGroup.controller"];
 	ETPropertyDescription *templates =
 		[ETPropertyDescription descriptionWithName: @"templates" type: (id)@"ETItemTemplate"];

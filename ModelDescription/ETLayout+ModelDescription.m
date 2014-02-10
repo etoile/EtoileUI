@@ -38,6 +38,7 @@
 	// TODO: Type should be ETLayoutItem
 	ETPropertyDescription *context = 
 		[ETPropertyDescription descriptionWithName: @"layoutContext" type: (id)@"ETLayoutItemGroup"];
+	[context setDerived: YES];
 	[context setOpposite: (id)@"ETLayoutItemGroup.layout"];
 	ETPropertyDescription *delegate = 
 		[ETPropertyDescription descriptionWithName: @"delegate" type: (id)@"NSObject"];
@@ -60,11 +61,11 @@
 
 	/* Transient properties
 	   _tool, _dropIndicator, _isRendering */
-	NSArray *transientProperties = A(dropIndicator, layerItem);
+	NSArray *transientProperties = A(context, dropIndicator, layerItem);
 
 	// TODO: We need a direct ivar access to persist the layer item
 	// TODO: Evaluate whether we should support drop indicator persistence
-	NSArray *persistentProperties = A(attachedTool, context, delegate, layoutSize,
+	NSArray *persistentProperties = A(attachedTool, delegate, layoutSize,
 		usesCustomLayoutSize);
 
 	[entity setUIBuilderPropertyNames: (id)[[A(delegate, dropIndicator) mappedCollection] name]];

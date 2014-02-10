@@ -27,6 +27,7 @@
 	// TODO: Type should be ETLayoutItem
 	ETPropertyDescription *decoratedItem = 
 		[ETPropertyDescription descriptionWithName: @"decoratedItem" type: (id)@"ETUIItem"];
+	[decoratedItem setDerived: YES];
 	[decoratedItem setOpposite: (id)@"ETUIItem.decoratorItem"];
 
 	/* Transient properties
