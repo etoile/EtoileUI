@@ -249,6 +249,14 @@ and write the receiver properties. */
 	return _variableStorage;
 }
 
+// TODO: Remove once shared instances don't get garbage collected on
+// -[COObjectGraphContext discardAllChanges], or when -discardAllChanges is not
+// called on the default transient object graph context in the test suite.
+- (void) checkIsNotRemovedFromContext
+{
+
+}
+
 #ifndef COREOBJECT
 - (id)valueForVariableStorageKey: (NSString *)key
 {

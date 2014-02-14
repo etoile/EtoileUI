@@ -473,6 +473,9 @@ Default values will be copied but not individually (shallow copy). */
 
 - (NSString *) description
 {
+	if ([self isZombie])
+		return [super description];
+
 	NSString *desc = [self primitiveDescription];
 
 #ifdef DETAILED_DESCRIPTION	
