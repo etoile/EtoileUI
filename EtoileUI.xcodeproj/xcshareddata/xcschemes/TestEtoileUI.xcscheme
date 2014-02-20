@@ -35,7 +35,7 @@
             BlueprintIdentifier = "AE923B2B05C3B1CE00549058"
             BuildableName = "ukrun"
             BlueprintName = "ukrun"
-            ReferencedContainer = "container:../UnitKit/Source/UnitKit.xcodeproj">
+            ReferencedContainer = "container:../UnitKit/UnitKit.xcodeproj">
          </BuildableReference>
       </MacroExpansion>
    </TestAction>
@@ -54,7 +54,7 @@
             BlueprintIdentifier = "AE923B2B05C3B1CE00549058"
             BuildableName = "ukrun"
             BlueprintName = "ukrun"
-            ReferencedContainer = "container:../UnitKit/Source/UnitKit.xcodeproj">
+            ReferencedContainer = "container:../UnitKit/UnitKit.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
       <CommandLineArguments>
