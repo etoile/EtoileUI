@@ -8,6 +8,7 @@
 
 #import <EtoileFoundation/NSObject+Model.h>
 #import "TestCommon.h"
+#import "ETApplication.h"
 #import "ETEvent.h"
 #import "ETLayoutItemFactory.h"
 #import "ETLayoutItemGroup.h"
@@ -46,6 +47,31 @@
 
 
 @implementation TestCommon : NSObject
+
+/* Does a set up similar to ETApplicationMain().
+
+GNUstep doesn't take care of calling -[NSApp sharedApplication] if your code 
+doesn't. Unlike Cocoa, it just raises an exception if you try to create a window.
+
+First we must create the app object, because on Mac OS X in 
+UKTestClasseNamesFromBundle(), we have -bundleForClass: that invokes 
+class_respondsToSelector() which results in +initialize being called and 
++[NSWindowBinder initialize] has the bad idea to use +sharedApplication. When no 
+app object is available yet, an NSApplication instance will be created rather 
+than the subclass instance we might want. */
++ (void) willRunTestSuite
+{
+	id app = [ETApplication sharedApplication];
+
+	ETAssert([app isKindOfClass: [ETApplication class]]);
+	
+	[app setUp];
+}
+
++ (void) didRunTestSuite
+{
+
+}
 
 - (id) init
 {
