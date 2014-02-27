@@ -1573,7 +1573,7 @@
 			children = (
 				604846B918B6C32A006E4EDC /* UnitKit.framework */,
 				604846BB18B6C32A006E4EDC /* ukrun */,
-				604846BD18B6C32A006E4EDC /* UnitKitTests.bundle */,
+				604846BD18B6C32A006E4EDC /* TestUnitKit.bundle */,
 				604846BF18B6C32A006E4EDC /* TestBundle.bundle */,
 				604846C118B6C32A006E4EDC /* TestFramework.framework */,
 				604846C318B6C32A006E4EDC /* libUnitKit.a */,
@@ -2471,6 +2471,7 @@
 				60EEB8FE0F09457C00EBB632 /* Resources */,
 				60EEB8FF0F09457C00EBB632 /* Sources */,
 				60EEB9000F09457C00EBB632 /* Frameworks */,
+				6048479A18BEBA55006E4EDC /* ShellScript */,
 			);
 			buildRules = (
 			);
@@ -2614,10 +2615,10 @@
 			remoteRef = 604846BA18B6C32A006E4EDC /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
-		604846BD18B6C32A006E4EDC /* UnitKitTests.bundle */ = {
+		604846BD18B6C32A006E4EDC /* TestUnitKit.bundle */ = {
 			isa = PBXReferenceProxy;
 			fileType = wrapper.cfbundle;
-			path = UnitKitTests.bundle;
+			path = TestUnitKit.bundle;
 			remoteRef = 604846BC18B6C32A006E4EDC /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
@@ -2975,7 +2976,20 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/bash;
-			shellScript = "";
+			shellScript = "# Derived from: https://github.com/gh-unit/gh-unit/blob/master/Scripts/RunTests.sh\n\n# If we aren't running from the command line, then exit\nif [ \"$TEST_AUTORUN\" = \"\" ]; then\nexit 0\nfi\n\nexport DYLD_FRAMEWORK_PATH=\"$CONFIGURATION_BUILD_DIR\"\nukrun -q $TARGET_BUILD_DIR/$WRAPPER_NAME\nRETVAL=$?\n\nexit $RETVAL";
+		};
+		6048479A18BEBA55006E4EDC /* ShellScript */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "# Derived from: https://github.com/gh-unit/gh-unit/blob/master/Scripts/RunTests.sh\n\n# If we aren't running from the command line, then exit\nif [ \"$TEST_AUTORUN\" = \"\" ]; then\nexit 0\nfi\n\nexport DYLD_FRAMEWORK_PATH=\"$CONFIGURATION_BUILD_DIR\"\n$TARGET_BUILD_DIR/$EXECUTABLE_PATH\nRETVAL=$?\n\nexit $RETVAL";
 		};
 /* End PBXShellScriptBuildPhase section */
 
