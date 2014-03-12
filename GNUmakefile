@@ -25,6 +25,7 @@ endif
 ifeq ($(test), yes)
   BUNDLE_NAME = $(FRAMEWORK_NAME)
   EtoileUI_LDFLAGS += -lUnitKit $(EtoileUI_LIBRARIES_DEPEND_UPON)
+  EtoileUI_PRINCIPAL_CLASS = TestCommon
 endif
 
 EtoileUI_HEADER_FILES_DIR = Headers
