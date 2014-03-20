@@ -539,8 +539,8 @@
 
 	UKObjectsEqual(URLType, [newController currentObjectType]);
 	UKObjectsEqual([controller currentGroupType], [newController currentGroupType]);
-	UKObjectsEqual(objectTemplate, newObjectTemplate);
-	UKObjectsEqual(groupTemplate, newGroupTemplate);
+	UKObjectsEqual([objectTemplate UUID], [newObjectTemplate UUID]);
+	UKObjectsEqual([groupTemplate UUID], [newGroupTemplate UUID]);
 
 	UKObjectKindOf([[newObjectTemplate item] view], NSTextField);
 	UKNil([newObjectTemplate objectClass]);
