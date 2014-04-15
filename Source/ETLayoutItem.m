@@ -1395,9 +1395,7 @@ registered for the property.
 is registered for the property.*/
 - (ETItemValueTransformer *) valueTransformerForProperty: (NSString *)key
 {
-	NSString *transformerName = [[self valueForVariableStorageKey: @"valueTransformers"] objectForKey: key];
-	ETItemValueTransformer *transformer =
-		(id)[ETItemValueTransformer valueTransformerForName: transformerName];
+	ETItemValueTransformer *transformer = [[self valueForVariableStorageKey: @"valueTransformers"] objectForKey: key];
 	ETAssert(transformer == nil || [transformer isKindOfClass: [ETItemValueTransformer class]]);
 	return transformer;
 }
@@ -1422,7 +1420,7 @@ See also -valueTransformerForProperty:. */
 	                     withObjects: A(aValueTransformer)
 	                    mutationKind: ETCollectionMutationKindInsertion];
 
-	[transformers setObject: [aValueTransformer name] forKey: key];
+	[transformers setObject: aValueTransformer forKey: key];
 
 	[self didChangeValueForProperty: @"valueTransformers"
 	                      atIndexes: [NSIndexSet indexSet]

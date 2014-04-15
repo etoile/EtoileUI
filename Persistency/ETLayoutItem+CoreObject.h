@@ -7,6 +7,7 @@
  */
 
 #import <Foundation/Foundation.h>
+#import <EtoileUI/ETCollectionToPersistentCollection.h>
 #import <EtoileUI/ETLayoutItem.h>
 #import <EtoileUI/ETLayoutItemGroup.h>
 #import <EtoileUI/ETLayoutItemFactory.h>
@@ -40,4 +41,8 @@ The owning compound document is an ancestor item. */
 When a compound document is collected, its subtree is not visited.<br />
 The receiver is not included in the returned set. */
 - (NSSet *) descendantCompoundDocuments;
+@end
+
+
+@interface ETValueTransformersToPersistentDictionary : ETCollectionToPersistentCollection
 @end

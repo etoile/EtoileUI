@@ -30,7 +30,7 @@ endif
 
 EtoileUI_HEADER_FILES_DIR = Headers
 
-OTHER_HEADER_DIRS = Additions Base GraphicsBackend WidgetBackends WidgetBackends/AppKit ActionHandlers ItemFactoryAdditions Layouts Styles Tools AspectRepository ModelBuilder CoreObjectUI Persistency UIBuilder
+OTHER_HEADER_DIRS = Additions Base GraphicsBackend WidgetBackends WidgetBackends/AppKit ActionHandlers ItemFactoryAdditions Layouts Styles Tools AspectRepository ModelBuilder CoreObjectUI Persistency Persistency/ValueTransformers UIBuilder
 
 EtoileUI_HEADER_FILES = $(notdir $(wildcard Headers/*.h))
 
@@ -66,6 +66,7 @@ EtoileUI_OBJC_FILES += $(wildcard CoreObjectUI/*.m)
 EtoileUI_OBJC_FILES += $(wildcard ModelDescription/*.m)
 
 EtoileUI_OBJC_FILES += $(wildcard Persistency/*.m)
+EtoileUI_OBJC_FILES += $(wildcard Persistency/ValueTransformers/*.m)
 endif
 
 ifeq ($(test), yes)

@@ -42,6 +42,8 @@
 		601455D50F9722B900268FD1 /* ETScrollableAreaItem.m in Sources */ = {isa = PBXBuildFile; fileRef = 6074CA4C0F814FD60081E438 /* ETScrollableAreaItem.m */; };
 		601455D60F9722B900268FD1 /* ETNibOwner.m in Sources */ = {isa = PBXBuildFile; fileRef = 60364A080E40A560003377E0 /* ETNibOwner.m */; };
 		601455D70F9722B900268FD1 /* ETDecoratorItem.m in Sources */ = {isa = PBXBuildFile; fileRef = 60330B5A0F7CEF3400A1E8C1 /* ETDecoratorItem.m */; };
+		6017384118FDA25600088042 /* ETItemValueTransformerToString.m in Sources */ = {isa = PBXBuildFile; fileRef = 608E631918FD9CD8005FB6C7 /* ETItemValueTransformerToString.m */; };
+		6017384218FDA25900088042 /* ETCollectionToPersistentCollection.m in Sources */ = {isa = PBXBuildFile; fileRef = 608E631718FD9CD8005FB6C7 /* ETCollectionToPersistentCollection.m */; };
 		60197785185F457700635BE2 /* ETResponderIntegration.h in Headers */ = {isa = PBXBuildFile; fileRef = 60197783185F457700635BE2 /* ETResponderIntegration.h */; };
 		60197786185F457700635BE2 /* ETResponderIntegration.m in Sources */ = {isa = PBXBuildFile; fileRef = 60197784185F457700635BE2 /* ETResponderIntegration.m */; };
 		60197791185F457B00635BE2 /* ETResponderIntegration.m in Sources */ = {isa = PBXBuildFile; fileRef = 60197784185F457700635BE2 /* ETResponderIntegration.m */; };
@@ -203,6 +205,10 @@
 		608A612D102378580086F4B3 /* EtoileUIProperties.m in Sources */ = {isa = PBXBuildFile; fileRef = 608A612C102378580086F4B3 /* EtoileUIProperties.m */; };
 		608B01AC1868A79600D1A573 /* TestFreeLayout.m in Sources */ = {isa = PBXBuildFile; fileRef = 608B01AA1868A79500D1A573 /* TestFreeLayout.m */; };
 		608B01AD1868A79600D1A573 /* TestHitTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 608B01AB1868A79600D1A573 /* TestHitTest.m */; };
+		608E631A18FD9CD8005FB6C7 /* ETCollectionToPersistentCollection.h in Headers */ = {isa = PBXBuildFile; fileRef = 608E631618FD9CD8005FB6C7 /* ETCollectionToPersistentCollection.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		608E631B18FD9CD8005FB6C7 /* ETCollectionToPersistentCollection.m in Sources */ = {isa = PBXBuildFile; fileRef = 608E631718FD9CD8005FB6C7 /* ETCollectionToPersistentCollection.m */; };
+		608E631C18FD9CD8005FB6C7 /* ETItemValueTransformerToString.h in Headers */ = {isa = PBXBuildFile; fileRef = 608E631818FD9CD8005FB6C7 /* ETItemValueTransformerToString.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		608E631D18FD9CD8005FB6C7 /* ETItemValueTransformerToString.m in Sources */ = {isa = PBXBuildFile; fileRef = 608E631918FD9CD8005FB6C7 /* ETItemValueTransformerToString.m */; };
 		608EBAEC100D22AB00B36FAB /* BrowserPrototype.nib in Resources */ = {isa = PBXBuildFile; fileRef = 608EBAE2100D22AB00B36FAB /* BrowserPrototype.nib */; };
 		608EBAED100D22AB00B36FAB /* Inspector.nib in Resources */ = {isa = PBXBuildFile; fileRef = 608EBAE4100D22AB00B36FAB /* Inspector.nib */; };
 		608EBAEE100D22AB00B36FAB /* OutlinePrototype.nib in Resources */ = {isa = PBXBuildFile; fileRef = 608EBAE6100D22AB00B36FAB /* OutlinePrototype.nib */; };
@@ -626,13 +632,6 @@
 			remoteGlobalIDString = 602E12AE18B3A10E004F171B;
 			remoteInfo = "EtoileFoundation (iOS)";
 		};
-		6048469F18B6C314006E4EDC /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 6640BC2710A0C1B0008B7765 /* EtoileFoundation.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = 602E13A818B3A836004F171B;
-			remoteInfo = "PlugInExample (iOS)";
-		};
 		604846B818B6C32A006E4EDC /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 6037730616B8010D00B7EEB5 /* UnitKit.xcodeproj */;
@@ -723,6 +722,13 @@
 			proxyType = 1;
 			remoteGlobalIDString = 6686BDAB12592BDA0065DE1A;
 			remoteInfo = CoreObject;
+		};
+		608E630D18FD9CC6005FB6C7 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 6640BC2710A0C1B0008B7765 /* EtoileFoundation.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 609A557718C209FE0096927F;
+			remoteInfo = "TestEtoileFoundation (iOS)";
 		};
 		60909D5E0CB30484009CAD27 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -990,6 +996,10 @@
 		608A612C102378580086F4B3 /* EtoileUIProperties.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = EtoileUIProperties.m; path = Source/EtoileUIProperties.m; sourceTree = "<group>"; };
 		608B01AA1868A79500D1A573 /* TestFreeLayout.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = TestFreeLayout.m; path = Tests/TestFreeLayout.m; sourceTree = "<group>"; };
 		608B01AB1868A79600D1A573 /* TestHitTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = TestHitTest.m; path = Tests/TestHitTest.m; sourceTree = "<group>"; };
+		608E631618FD9CD8005FB6C7 /* ETCollectionToPersistentCollection.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ETCollectionToPersistentCollection.h; path = Persistency/ValueTransformers/ETCollectionToPersistentCollection.h; sourceTree = "<group>"; };
+		608E631718FD9CD8005FB6C7 /* ETCollectionToPersistentCollection.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ETCollectionToPersistentCollection.m; path = Persistency/ValueTransformers/ETCollectionToPersistentCollection.m; sourceTree = "<group>"; };
+		608E631818FD9CD8005FB6C7 /* ETItemValueTransformerToString.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ETItemValueTransformerToString.h; path = Persistency/ValueTransformers/ETItemValueTransformerToString.h; sourceTree = "<group>"; };
+		608E631918FD9CD8005FB6C7 /* ETItemValueTransformerToString.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ETItemValueTransformerToString.m; path = Persistency/ValueTransformers/ETItemValueTransformerToString.m; sourceTree = "<group>"; };
 		608EBAE3100D22AB00B36FAB /* English */ = {isa = PBXFileReference; lastKnownFileType = wrapper.nib; name = English; path = English.lproj/BrowserPrototype.nib; sourceTree = "<group>"; };
 		608EBAE5100D22AB00B36FAB /* English */ = {isa = PBXFileReference; lastKnownFileType = wrapper.nib; name = English; path = English.lproj/Inspector.nib; sourceTree = "<group>"; };
 		608EBAE7100D22AB00B36FAB /* English */ = {isa = PBXFileReference; lastKnownFileType = wrapper.nib; name = English; path = English.lproj/OutlinePrototype.nib; sourceTree = "<group>"; };
@@ -1783,6 +1793,17 @@
 			name = Products;
 			sourceTree = "<group>";
 		};
+		608E630518FD9CC5005FB6C7 /* Value Transformers */ = {
+			isa = PBXGroup;
+			children = (
+				608E631618FD9CD8005FB6C7 /* ETCollectionToPersistentCollection.h */,
+				608E631718FD9CD8005FB6C7 /* ETCollectionToPersistentCollection.m */,
+				608E631818FD9CD8005FB6C7 /* ETItemValueTransformerToString.h */,
+				608E631918FD9CD8005FB6C7 /* ETItemValueTransformerToString.m */,
+			);
+			name = "Value Transformers";
+			sourceTree = "<group>";
+		};
 		60928D4C12EDE9950091A3D1 /* Markup Editor */ = {
 			isa = PBXGroup;
 			children = (
@@ -1918,6 +1939,7 @@
 				6035ACBF13D59C27005B2280 /* ETStyle+CoreObject.m */,
 				60EA33A91864A6AF001ED909 /* ETTool+CoreObject.h */,
 				60EA33AA1864A6AF001ED909 /* ETTool+CoreObject.m */,
+				608E630518FD9CC5005FB6C7 /* Value Transformers */,
 			);
 			name = Persistency;
 			sourceTree = "<group>";
@@ -2171,7 +2193,7 @@
 				6640BC3510A0C1B0008B7765 /* TestEtoileFoundation.bundle */,
 				6023544A15B86AA600CA49D0 /* PlugInExample.plugin */,
 				6048469E18B6C314006E4EDC /* libEtoileFoundation.a */,
-				604846A018B6C314006E4EDC /* PlugInExample.plugin */,
+				608E630E18FD9CC6005FB6C7 /* TestEtoileFoundation.app */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -2306,6 +2328,8 @@
 				60EA33AB1864A6AF001ED909 /* ETTool+CoreObject.h in Headers */,
 				60EA33B11865EE74001ED909 /* ETMoveTool.h in Headers */,
 				60BA538F1869ECC1003CE1D0 /* ETGraphicsBackend.h in Headers */,
+				608E631A18FD9CD8005FB6C7 /* ETCollectionToPersistentCollection.h in Headers */,
+				608E631C18FD9CD8005FB6C7 /* ETItemValueTransformerToString.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2594,13 +2618,6 @@
 			remoteRef = 6048469D18B6C314006E4EDC /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
-		604846A018B6C314006E4EDC /* PlugInExample.plugin */ = {
-			isa = PBXReferenceProxy;
-			fileType = wrapper.cfbundle;
-			path = PlugInExample.plugin;
-			remoteRef = 6048469F18B6C314006E4EDC /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
 		604846B918B6C32A006E4EDC /* UnitKit.framework */ = {
 			isa = PBXReferenceProxy;
 			fileType = wrapper.framework;
@@ -2662,6 +2679,13 @@
 			fileType = "compiled.mach-o.executable";
 			path = Test;
 			remoteRef = 6084049015415CB2002F91A1 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		608E630E18FD9CC6005FB6C7 /* TestEtoileFoundation.app */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.application;
+			path = TestEtoileFoundation.app;
+			remoteRef = 608E630D18FD9CC6005FB6C7 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
 		60C2100E16755264002E03AE /* BasicPersistence */ = {
@@ -3128,6 +3152,8 @@
 				60EA33B41865EE74001ED909 /* ETMoveTool.m in Sources */,
 				608B01AC1868A79600D1A573 /* TestFreeLayout.m in Sources */,
 				608B01AD1868A79600D1A573 /* TestHitTest.m in Sources */,
+				6017384118FDA25600088042 /* ETItemValueTransformerToString.m in Sources */,
+				6017384218FDA25900088042 /* ETCollectionToPersistentCollection.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -3323,6 +3349,8 @@
 				60EA33A718646CB6001ED909 /* ETLayoutExecutor.m in Sources */,
 				60EA33AD1864A6AF001ED909 /* ETTool+CoreObject.m in Sources */,
 				60EA33B31865EE74001ED909 /* ETMoveTool.m in Sources */,
+				608E631B18FD9CD8005FB6C7 /* ETCollectionToPersistentCollection.m in Sources */,
+				608E631D18FD9CD8005FB6C7 /* ETItemValueTransformerToString.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

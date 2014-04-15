@@ -14,6 +14,7 @@
 #import <CoreObject/COPersistentRoot.h>
 #import <CoreObject/COObject.h>
 #import "ETLayoutItem+CoreObject.h"
+#import "ETCollectionToPersistentCollection.h"
 #import "EtoileUIProperties.h"
 #import "ETOutlineLayout.h"
 #import "ETUIItemIntegration.h"
@@ -379,6 +380,16 @@ since -serializedValueForProperty: doesn't use the direct ivar access. */
 
 	// FIXME: Remove once we use the relationship cache
 	[[self controller] setContent: self];
+}
+
+@end
+
+
+@implementation ETValueTransformersToPersistentDictionary
+
+- (NSString *) valueTransformerName
+{
+	return @"ETItemValueTransformerToString";
 }
 
 @end

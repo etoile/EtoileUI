@@ -39,6 +39,8 @@
 	[valueTransformers setMultivalued: YES];
 	[valueTransformers setOrdered: NO];
 	[valueTransformers setKeyed: YES];
+	[valueTransformers setValueTransformerName: @"ETValueTransformersToPersistentDictionary"];
+	[valueTransformers setPersistentTypeName: @"NSString"];
 	[valueTransformers setShowsItemDetails: YES];
 	[valueTransformers setDetailedPropertyNames: A(@"name", @"transformCode", @"reverseTransformCode")];
 	ETPropertyDescription *valueKey = [ETPropertyDescription descriptionWithName: @"valueKey" type: (id)@"NSString"];
@@ -157,29 +159,13 @@
 
 - (NSDictionary *) valueTransformers
 {
-	NSMutableDictionary *transformers = [self valueForVariableStorageKey: @"valueTransformers"];
-	NSMutableDictionary *editableTransformers = [NSMutableDictionary dictionary];
-
-	[[transformers content] enumerateKeysAndObjectsUsingBlock: ^ (id property, id transformerName,  BOOL *stop)
-	{
-		[editableTransformers setObject: [ETItemValueTransformer valueTransformerForName: transformerName]
-		                         forKey: property];
-	}];
-	return [editableTransformers copy];
+	return [self valueForVariableStorageKey: @"valueTransformers"];
 }
 
 - (void) setValueTransformers: (NSDictionary *)editedTransformers
 {
 	[self willChangeValueForProperty: @"valueTransformers"];
-	NSMutableDictionary *transformers = [self valueForVariableStorageKey: @"valueTransformers"];;
-	[transformers removeAllObjects];
-
-	[editedTransformers enumerateKeysAndObjectsUsingBlock: ^ (id property, id transformer, BOOL *stop)
-	{
-		ETAssert([ETItemValueTransformer valueTransformerForName: [transformer name]] == transformer);
-		[transformers setObject: [transformer name]
-		                forKey: property];
-	}];
+	[self setValue: editedTransformers forVariableStorageKey: @"valueTransformers"];
 	[self didChangeValueForProperty: @"valueTransformers"];
 }
 
