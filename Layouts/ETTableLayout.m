@@ -754,9 +754,7 @@ given row/column intersection.  */
 	   on the characterics of the property. */
 	if (value == nil)
 		return;
-	
-	// TODO: We should call -objectWithObjectValue: in a way symetric to
-	// objectValueForObject: in -tableView:objectValueForTableColumn:row:.
+
 	[item setValue: value forProperty: [self propertyForColumn: column]];
 }
 
