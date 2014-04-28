@@ -6,6 +6,7 @@
 	License: Modified BSD (see COPYING)
  */
 
+#import "ETCollectionToPersistentCollection.h"
 #import "ETCompatibility.h"
 
 
