@@ -19,6 +19,7 @@
 #import "ETApplication.h"
 #import "ETView.h"
 #import "ETWindowItem.h"
+#import "ETWidgetBackend.h"
 #import "ETCompatibility.h"
 
 @implementation ETEventProcessor

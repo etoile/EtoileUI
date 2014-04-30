@@ -11,6 +11,7 @@
 
 #import <Foundation/Foundation.h>
 #import <EtoileUI/ETGraphicsBackend.h>
+#import <EtoileUI/ETWidgetBackend.h>
 #import <EtoileUI/ETActionHandler.h>
 
 @class ETUTI;

@@ -20,6 +20,8 @@
 #import "ETTableLayout.h"
 #import "ETOutlineLayout.h"
 #import "ETTool.h"
+// FIXME: Move related code to the Appkit widget backend (perhaps in a category)
+#import "ETWidgetBackend.h" 
 #import "NSObject+EtoileUI.h"
 #import "ETCompatibility.h"
 #ifdef COREOBJECT

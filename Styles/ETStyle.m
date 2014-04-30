@@ -17,6 +17,8 @@
 #import "ETGeometry.h"
 #import "ETLayoutItem.h"
 #import "EtoileUIProperties.h"
+// FIXME: Add -concat to the Appkit graphics backend
+#import "ETWidgetBackend.h"
 #import "NSObject+EtoileUI.h"
 #ifdef COREOBJECT
 #import <CoreObject/COEditingContext.h>

@@ -16,6 +16,8 @@
 #import "ETLayoutItem.h"
 #import "ETLayoutItemFactory.h"
 #import "ETLayoutItemGroup.h"
+// FIXME: Add font attribute constants to the Appkit graphics backend
+#import "ETWidgetBackend.h"
 #import "ETCompatibility.h"
 
 

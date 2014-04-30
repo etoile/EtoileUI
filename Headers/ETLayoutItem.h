@@ -21,7 +21,7 @@
 @class ETItemValueTransformer, ETView, ETLayout, ETLayoutItemGroup,
 ETDecoratorItem, ETScrollableAreaItem, ETWindowItem, ETActionHandler, ETStyleGroup;
 @class ETCopier;
-@protocol ETInspector, ETWidget;
+@protocol ETInspector, ETWidget, NSValidatedUserInterfaceItem;
 
 /** Describes how the item is resized when its parent item is resized.
 

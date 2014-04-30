@@ -13,6 +13,8 @@
 #import "ETWidgetLayout.h"
 #import "ETTableLayout.h"
 #import "ETOutlineLayout.h"
+// FIXME: Move related code to the Appkit widget backend (perhaps in a category)
+#import "ETWidgetBackend.h"
 
 // NOTE: ETFixedLayout, ETFreeLayout uses ETLayout model description
 @interface ETLayout (ModelDescription)

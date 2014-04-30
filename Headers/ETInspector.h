@@ -14,6 +14,7 @@
 #import <EtoileUI/ETLayoutItem.h>
 #import <EtoileUI/ETLayout.h>
 #import <EtoileUI/ETInspecting.h>
+#import <EtoileUI/ETWidgetBackend.h>
 
 @class ETView;
 

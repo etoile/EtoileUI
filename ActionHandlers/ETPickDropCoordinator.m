@@ -31,6 +31,8 @@
 #import "ETSelectTool.h" /* For -shouldRemoveItemsAtPickTime */
 #import "ETStyle.h"
 #import "ETStyleGroup.h"
+// FIXME: Move related code to the Appkit widget backend (perhaps in a subclass or category)
+#import "ETWidgetBackend.h"
 #import "ETCompatibility.h"
 
 @interface ETPickDropCoordinator (Private)

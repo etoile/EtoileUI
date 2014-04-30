@@ -13,6 +13,8 @@
 #import "ETArrowTool.h"
 #import "ETLayoutItemFactory.h"
 #import "ETWindowItem.h"
+// FIXME: Move related code to the Appkit widget backend (perhaps in a category or subclass)
+#import "ETWidgetBackend.h"
 #import "NSWindow+Etoile.h"
 #import "ETCompatibility.h"
 

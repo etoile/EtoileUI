@@ -13,6 +13,8 @@
 #import <EtoileFoundation/ETCollection+HOM.h>
 #import <CoreObject/COObjectGraphContext.h>
 #import "ETNibOwner.h"
+// FIXME: Move related code to the Appkit widget backend (perhaps turn ETNibOwner into a trait)
+#import "ETWidgetBackend.h"
 #import "NSObject+EtoileUI.h"
 #import "ETCompatibility.h"
 

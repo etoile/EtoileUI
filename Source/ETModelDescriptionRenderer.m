@@ -32,6 +32,8 @@
 #import "EtoileUIProperties.h"
 #import "ETTitleBarItem.h"
 #import "ETOutlineLayout.h"
+// FIXME: Move related code to the Appkit widget backend (perhaps in a category)
+#import "ETWidgetBackend.h"
 #import "NSObject+EtoileUI.h"
 #import "NSView+EtoileUI.h"
 #import "ETCompatibility.h"

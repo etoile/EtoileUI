@@ -8,6 +8,8 @@
 
 #import "ETTextEditorLayout.h"
 #import "ETLayoutItem.h"
+// FIXME: Move related code to the Appkit widget backend (perhaps in a subclass or category)
+#import "ETWidgetBackend.h"
 #import "ETCompatibility.h"
 
 #define EDITOR_FRAME NSMakeRect(200, 200, 600, 300)

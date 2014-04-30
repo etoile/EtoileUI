@@ -13,6 +13,7 @@
 #import <Foundation/Foundation.h>
 #import <EtoileFoundation/ETInstanceVariableMirror.h>
 #import <EtoileUI/ETCompositeLayout.h>
+#import <EtoileUI/ETWidgetBackend.h>
 
 // FIXME: Don't expose ETView in the public API.
 @class ETVIew;

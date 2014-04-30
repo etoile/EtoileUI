@@ -14,6 +14,8 @@
 #import "ETLayoutItemGroup.h"
 #import "ETLayoutItem.h"
 #import "EtoileUIProperties.h"
+// FIXME: Move related code to the Appkit graphics backend
+#import "ETWidgetBackend.h"
 #import "ETCompatibility.h"
 
 

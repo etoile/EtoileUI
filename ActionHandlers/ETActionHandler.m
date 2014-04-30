@@ -23,6 +23,8 @@
 #import "ETResponder.h"
 #import "EtoileUIProperties.h"
 #import "ETWidget.h"
+// FIXME: Move related code to the Appkit widget backend (perhaps in a category)
+#import "ETWidgetBackend.h"
 #import "NSObject+EtoileUI.h"
 #import "ETCompatibility.h"
 

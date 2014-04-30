@@ -15,6 +15,8 @@
 #import "ETLayoutItem.h"
 #import "ETLayoutItemFactory.h"
 #import "EtoileUIProperties.h"
+// FIXME: Add -sizeWithAttributes: or similar to the AppKit graphics backend
+#import "ETWidgetBackend.h"
 #import "ETCompatibility.h"
 
 

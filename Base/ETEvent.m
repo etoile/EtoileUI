@@ -18,6 +18,7 @@
 #import "ETWindowItem.h"
 #import "NSView+EtoileUI.h"
 #import "NSWindow+Etoile.h"
+#import "ETWidgetBackend.h"
 #import "ETCompatibility.h"
 
 static const int ETUntypedEvent = 0;

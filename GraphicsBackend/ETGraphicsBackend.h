@@ -13,3 +13,4 @@
 #import <AppKit/NSGradient.h>
 #import <AppKit/NSImage.h>
 #import <AppKit/NSTextContainer.h>
+#import <AppKit/NSShadow.h>

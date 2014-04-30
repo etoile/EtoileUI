@@ -8,6 +8,7 @@
 
 #import "NSWindow+Etoile.h"
 #import "ETGeometry.h"
+#import "ETWidgetBackend.h"
 #import "ETCompatibility.h"
 
 #define WINDOW_CONTENT_RECT NSMakeRect(200, 200, 600, 300)

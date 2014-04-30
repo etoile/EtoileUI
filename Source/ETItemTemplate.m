@@ -19,6 +19,8 @@
 #import "ETItemTemplate.h"
 #import "ETLayoutItem.h"
 #import "ETLayoutItemGroup.h"
+// FIXME: Move related code to the Appkit widget backend (perhaps in a category)
+#import "ETWidgetBackend.h"
 #import "NSObject+EtoileUI.h"
 #import "ETCompatibility.h"
 

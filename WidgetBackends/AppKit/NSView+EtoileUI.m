@@ -13,6 +13,7 @@
 #import "ETView.h"
 #import "ETWidget.h"
 #import "NSImage+Etoile.h"
+#import "ETWidgetBackend.h"
 #import "ETCompatibility.h"
 
 #pragma GCC diagnostic ignored "-Wprotocol"

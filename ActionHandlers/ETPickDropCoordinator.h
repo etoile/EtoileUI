@@ -13,6 +13,8 @@
 #import <Foundation/Foundation.h>
 #import <EtoileUI/ETGraphicsBackend.h>
 #import <EtoileUI/ETLayoutItem.h>
+// FIXME: Move related code to the Appkit widget backend (perhaps in a subclass or category)
+#import <EtoileUI/ETWidgetBackend.h>
 
 @class ETEvent;
 

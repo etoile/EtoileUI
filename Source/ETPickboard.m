@@ -15,6 +15,8 @@
 #import "ETLayoutItem.h"
 #import "ETLayoutItemFactory.h"
 #import "ETOutlineLayout.h"
+// FIXME: Move related code to the Appkit widget backend (perhaps in a category)
+#import "ETWidgetBackend.h"
 #import "ETWindowItem.h"
 #import "ETCompatibility.h"
 
