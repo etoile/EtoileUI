@@ -227,6 +227,7 @@
 		60909D620CB304C7009CAD27 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1058C7A1FEA54F0111CA2CBB /* Cocoa.framework */; };
 		60909D630CB304C9009CAD27 /* EtoileUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 60EF8E9D0C5E4D0600C97C41 /* EtoileUI.framework */; };
 		60909D660CB304D9009CAD27 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 29B97316FDCFA39411CA2CEA /* main.m */; };
+		6091D98E1913FDB800AA84B5 /* ETWidgetBackend.h in Headers */ = {isa = PBXBuildFile; fileRef = 6091D98D1913FDB800AA84B5 /* ETWidgetBackend.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		60928D5112EDE9EA0091A3D1 /* MarkupEditorItemFactory.m in Sources */ = {isa = PBXBuildFile; fileRef = 60928D4D12EDE9EA0091A3D1 /* MarkupEditorItemFactory.m */; };
 		60928D5212EDE9EA0091A3D1 /* AppController.m in Sources */ = {isa = PBXBuildFile; fileRef = 60928D4F12EDE9EA0091A3D1 /* AppController.m */; };
 		609DE8401761C86900F486FD /* NSSortDescriptor+ModelDescription.m in Sources */ = {isa = PBXBuildFile; fileRef = 609DE83F1761C86900F486FD /* NSSortDescriptor+ModelDescription.m */; };
@@ -1013,6 +1014,7 @@
 		60909CCB0CB2DA43009CAD27 /* TableExample-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = "TableExample-Info.plist"; path = "TableExample/TableExample-Info.plist"; sourceTree = "<group>"; };
 		60909CD70CB2DAB3009CAD27 /* TableController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TableController.h; path = TableExample/TableController.h; sourceTree = "<group>"; };
 		60909CD80CB2DAB3009CAD27 /* TableController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = TableController.m; path = TableExample/TableController.m; sourceTree = "<group>"; };
+		6091D98D1913FDB800AA84B5 /* ETWidgetBackend.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ETWidgetBackend.h; path = WidgetBackends/ETWidgetBackend.h; sourceTree = "<group>"; };
 		60928D4D12EDE9EA0091A3D1 /* MarkupEditorItemFactory.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = MarkupEditorItemFactory.m; path = MarkupEditor/MarkupEditorItemFactory.m; sourceTree = "<group>"; };
 		60928D4E12EDE9EA0091A3D1 /* MarkupEditorItemFactory.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MarkupEditorItemFactory.h; path = MarkupEditor/MarkupEditorItemFactory.h; sourceTree = "<group>"; };
 		60928D4F12EDE9EA0091A3D1 /* AppController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = AppController.m; path = MarkupEditor/AppController.m; sourceTree = "<group>"; };
@@ -1663,6 +1665,7 @@
 		6063FD591744CD5100E4350E /* Widget Backends */ = {
 			isa = PBXGroup;
 			children = (
+				6091D98D1913FDB800AA84B5 /* ETWidgetBackend.h */,
 				60BBFE2118645708006A495E /* ETEventProcessor.h */,
 				60BBFE2218645708006A495E /* ETEventProcessor.m */,
 				6063FD5A1744CD6B00E4350E /* AppKit */,
@@ -2330,6 +2333,7 @@
 				60BA538F1869ECC1003CE1D0 /* ETGraphicsBackend.h in Headers */,
 				608E631A18FD9CD8005FB6C7 /* ETCollectionToPersistentCollection.h in Headers */,
 				608E631C18FD9CD8005FB6C7 /* ETItemValueTransformerToString.h in Headers */,
+				6091D98E1913FDB800AA84B5 /* ETWidgetBackend.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
