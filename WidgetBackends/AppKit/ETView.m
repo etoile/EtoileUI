@@ -8,6 +8,7 @@
 
 #import <EtoileFoundation/Macros.h> 
 #import <EtoileFoundation/NSObject+Model.h>
+#import <EtoileFoundation/runtime.h>
 #import "ETView.h"
 #import "ETDecoratorItem.h"
 #import "ETLayoutItem.h"
@@ -17,13 +18,46 @@
 #import "ETCompatibility.h"
 #import "ETFlowLayout.h"
 
-#define NC [NSNotificationCenter defaultCenter]
+static void ETSwizzleMethod(Class class, SEL originalSelector, SEL swizzledSelector)
+{
+	/* The original method in the target class or some superclass */
+	Method originalMethod = class_getInstanceMethod(class, originalSelector);
+	Method swizzledMethod = class_getInstanceMethod(class, swizzledSelector);
+
+	/* If the original method is in a superclass, add the new implementation 
+	   under the original method name to the target class. */
+	BOOL isOriginalMethodFromSuperclass = class_addMethod(class, originalSelector,
+		method_getImplementation(swizzledMethod), method_getTypeEncoding(swizzledMethod));
+
+	if (isOriginalMethodFromSuperclass)
+	{
+		/* Replace the swizzled method implementation with the implementation 
+		   of the superclass method we override in the target class. */
+		class_replaceMethod(class, swizzledSelector,
+			method_getImplementation(originalMethod), method_getTypeEncoding(originalMethod));
+	}
+	else
+	{
+        method_exchangeImplementations(originalMethod, swizzledMethod);
+	}
+}
 
 #ifndef GNUSTEP
-@interface NSView (CocoaPrivate)
-- (void) _recursiveDisplayAllDirtyWithLockFocus: (BOOL)lockFocus visRect: (NSRect)aRect;
-- (void) _recursiveDisplayRectIfNeededIgnoringOpacity: (NSRect)aRect 
-	isVisibleRect: (BOOL)isVisibleRect rectIsVisibleRectForView: (BOOL)isRectForView topView: (BOOL)isTopView;
+@interface NSView (ETViewAdditions)
+@end
+
+@implementation NSView (ETViewAdditions)
+
++ (void) load
+{
+	//ETSwizzleMethod(self, @selector(canDraw), @selector(EtoileUI_canDraw));
+}
+
+- (BOOL) EtoileUI_canDraw
+{
+	return ([[self superview] EtoileUI_canDraw] ? [self EtoileUI_canDraw] : NO);
+}
+
 @end
 #endif
 
@@ -95,7 +129,7 @@ See also -[ETUIItem supervisorView]. */
 
 - (void) dealloc
 {
-	[NC removeObserver: self];
+	[[NSNotificationCenter defaultCenter] removeObserver: self];
 
 	// NOTE: item (our owner) and _temporaryView are weak references
 	DESTROY(_wrappedView);
@@ -408,6 +442,9 @@ implemented behavior. */
 
 		}
 	}
+	/* Ensure that NSView subclass don't override -canDraw without calling the 
+	   superclass implementation, to be sure our swizzled implementation is called. */
+	ETAssert(view == nil || [view canDraw] == NO);
 	
 	/* Ensure the resizing of all subviews is handled automatically if needed */
 	[self setAutoresizesSubviews: (view != nil)];
@@ -556,28 +593,32 @@ NSAssert1(size.width >= 0 && size.height >= 0, @"For a supervisor view, the " \
 
 #endif
 
-/* INTERLEAVED_DRAWING must always be enabled. 
-   You might want to disable it for debugging how the control of the drawing is 
-   handed by ETView to the layout item tree.
-   
-   With INTERLEAVED_DRAWING, the drawing of the layout item follows the drawing
-   of the view its represents and all related subviews. This view is called the 
-   supervisor view and is an ETView instance. The supervisor view can embed a 
-   subview that is returned by -[ETLayoutItem view] and -[ETView wrappedView].
-   Hence the layout item is able to draw its style (border, selection indicators 
-   etc.) on top of the wrapped view.
+- (BOOL) canDraw
+{
+	//NSLog(@" === Can draw %i in %@ ===", ([[self window] contentView] == self), self);
 
-   Without INTERLEAVED_DRAWING, the drawing of the layout item only occurs 
-   within -drawRect: and precedes the drawing of the view its represents and all 
-   related subviews. Thereby the drawing of the style of an item will be covered 
-   by the drawing of its view. If the item has no view, the issue doesn't exist. 
-   This view is a subview of our closest ancestor view where the item style is 
-   drawn through -drawRect:, but a superview -drawRect: is followed by the 
-   -drawRect: of subviews, that's why the item style cannot be drawn properly 
-   in such cases. */
-#define INTERLEAVED_DRAWING 1
+	if ([[self window] contentView] == self)
+		return [super canDraw];
 
-#ifndef INTERLEAVED_DRAWING
+	return NO;
+}
+
+
+
+/* For Mac OS X, returning NO with -canDraw doesn't prevent subviews from being 
+drawn unlike GNUstep (or Cocotron), it just causes -drawRect: to be skipped. */
+/*- (NSRect) visibleRect
+{
+	if ([[self window] contentView] == self)
+		return [super visibleRect];
+
+	return NSZeroRect;
+}*/
+
+- (BOOL) isDrawing
+{
+	return _isDrawing;
+}
 
 /** Now we must let layout items handles their custom drawing through their 
 style object. For example, by default an item with or without a view has a style 
@@ -589,57 +630,19 @@ view that plays a role similar to cell.
 Layout items are smart enough to avoid drawing their view when they have one. */
 - (void) drawRect: (NSRect)rect
 {
+	_isDrawing = YES;
 	[super drawRect: rect];
+	
+	// FIXME: We should pass the correct dirty rect
+	//NSRect adjustedDirtyRect = [self adjustedDirtyRectWithRect: _rectToRedraw];
 
+	[[NSBezierPath bezierPathWithRect: NSZeroRect] setClip];
+	[NSGraphicsContext saveGraphicsState];
 	/* We always composite the rendering chain on top of each view -drawRect: 
 	   drawing sequence (triggered by display-like methods). */
 	[item render: nil dirtyRect: rect inContext: nil];
-}
-
-#else
-
-- (void) drawRect: (NSRect)rect
-{
-	// NOTE: Rounding error prevents the assertion below to work
-	//ETAssert(NSEqualRects(rect, _rectToRedraw));
-}
-
-#ifdef GNUSTEP
-- (void) displayIfNeeded
-{
-	//ETLog(@"-displayIfNeeded");
-	[super displayIfNeeded];
-}
-#endif
-
-- (void) displayIfNeededInRect:(NSRect)aRect
-{
-	//ETLog(@"-displayIfNeededInRect:");
-	[super displayIfNeededInRect: aRect];
-}
-
-- (void) displayIfNeededInRectIgnoringOpacity:(NSRect)aRect
-{
-	//ETLog(@"-displayIfNeededInRectIgnoringOpacity:");
-	[super displayIfNeededInRectIgnoringOpacity: aRect];
-}
-
-- (void) display
-{	
-	//ETLog(@"-display");
-	[super display];
-}
-
-- (void) displayRect:(NSRect)aRect
-{
-	//ETLog(@"-displayRect:");
-	[super displayRect: aRect];
-}
-
-- (void) displayRectIgnoringOpacity:(NSRect)aRect
-{
-	//ETLog(@"-displayRectIgnoringOpacity:");
-	[super displayRectIgnoringOpacity: aRect];
+	[NSGraphicsContext restoreGraphicsState];
+	_isDrawing = NO;
 }
 
 - (NSRect) dirtyRect
@@ -691,130 +694,6 @@ Layout items are smart enough to avoid drawing their view when they have one. */
 	                           inParentView: (ETView *)parentView];
 }
 
-#ifdef GNUSTEP
-
-/* Main and canonical method which is used to take control of the drawing on 
-GNUstep and pass it to the layout item tree as needed. */
-- (void) displayRectIgnoringOpacity: (NSRect)aRect 
-                          inContext: (NSGraphicsContext *)context
-{
-	//ETLog(@"-displayRectIgnoringOpacity:inContext:");
-
-	if ([self canDraw] == NO)
-		return;
-
-	// FIXME: We cannot call -getRectsBeingDrawn:count: now on GNUstep (crash with libobjc2)
-	//[self viewWillDraw];
-	[super displayRectIgnoringOpacity: aRect inContext: context];
-	
-	if ([self lockFocusIfCanDrawInContext: context] == NO)
-		return;
-
-	// FIXME: Use...
-	//NSRect adjustedDirtyRect = [self adjustedDirtyRectWithRect: aRect];
-
-	[item render: nil dirtyRect: aRect inContext: nil];
-	[self unlockFocus];
-}
-
-#else
-
-- (BOOL) lockFocusInRect: (NSRect)rectToRedraw
-{
-	BOOL lockFocus = [self lockFocusIfCanDraw];
-	NSRectClip(rectToRedraw);
-	return lockFocus;
-}
-
-// NOTE: Very often NSView instance which has been sent a display message will 
-// call this method on its subviews. These subviews will do the same with their own 
-// subviews. Here is the other method often used in the same way:
-//_recursiveDisplayRectIfNeededIgnoringOpacity:isVisibleRect:rectIsVisibleRectForView:topView:
-// The previous method usually follows the message on next line:
-//_displayRectIgnoringOpacity:isVisibleRect:rectIsVisibleRectForView:
-
-/* First canonical method which is used to take control of the drawing on 
-Cocoa and pass it to the layout item tree as needed. 
-
-visibleRect is the same than [self visibleRect]. */
-- (void) _recursiveDisplayAllDirtyWithLockFocus: (BOOL)lockFocus visRect: (NSRect)visibleRect
-{
-	ETDebugLog(@"-_recursiveDisplayAllDirtyWithLockFocus:visRect: %@", self);
-
-	if (NSEqualRects(visibleRect, NSZeroRect))
-		return;
-
-	[super _recursiveDisplayAllDirtyWithLockFocus: lockFocus visRect: visibleRect];
-
-	/* Most of the time, the focus isn't locked */
-	if ([self lockFocusInRect: _rectToRedraw])
-	{
-		NSRect adjustedDirtyRect = [self adjustedDirtyRectWithRect: _rectToRedraw];
-
-		[item render: nil dirtyRect: adjustedDirtyRect inContext: nil];
-		[self unlockFocus];
-		[[self window] flushWindow];
-	}
-
-	_wasJustRedrawn = YES;
-}
-
-/* Second canonical method which is used to take control of the drawing on 
-Cocoa and pass it to the layout item tree as needed. */
-- (void) _recursiveDisplayRectIfNeededIgnoringOpacity: (NSRect)aRect 
-	isVisibleRect: (BOOL)isVisibleRect rectIsVisibleRectForView: (BOOL)isRectForView topView: (BOOL)isTopView
-{
-	_wasJustRedrawn = NO;
-
-	[super _recursiveDisplayRectIfNeededIgnoringOpacity: aRect 
-		isVisibleRect: isVisibleRect rectIsVisibleRectForView: isRectForView topView: isTopView];
-
-	ETDebugLog(@"-_recursiveDisplayRectIfNeededIgnoringOpacity:XXX %@ %@", self, NSStringFromRect(aRect));
-	
-	/* From what I have observed, _recursiveDisplayAllDirtyXXX was only called 
-	   when isVisibleRect and isRectForView are both NO, or when live resize 
-	   was underway (in that case the invalidated area was the entire view).
-	   If we don't make the check below _recursiveDisplayAllDirtyXXX  will draw 
-	   and this method will then draw another time in the same view/receiver with 
-	   with -render:dirtyRect:inContext:. 
-	   The next line works pretty well... 
-	   BOOL needsRedraw = (isRectForView && [self needsDisplay] && [self inLiveResize]);
-	   ... but we rather use the _wasJustRedrawn flag which is a safer way to 
-	   check whether _recursiveDisplayAllDirtyXXX was called by the call to 
-	   super at the beginning of this method or not.
-	   isVisibleRect seems to be YES when -displayXXX was used but NO when 
-	   -displayIfNeededXXX was. */
-	BOOL needsRedraw = (isRectForView && [self needsDisplay] && _wasJustRedrawn == NO);
-
-	if (needsRedraw && [self lockFocusInRect: _rectToRedraw])
-	{
-		NSRect adjustedDirtyRect = [self adjustedDirtyRectWithRect: _rectToRedraw];
-
-		[item render: nil dirtyRect: adjustedDirtyRect inContext: nil];
-		[self unlockFocus];
-		[[self window] flushWindow];
-	}
-
-	_wasJustRedrawn = NO;
-}
-
-- (void) _recursiveDisplayRectIfNeededIgnoringOpacity: (NSRect)aRect 
-	inContext: (NSGraphicsContext *)ctxt topView: (BOOL)isTopView
-{
-	ASSERT_FAIL(@"This method is never called based on our tests... As it "
-		"clearly got called now, we need to find out why and override it properly.");
-}
-
-- (void) _lightWeightRecursiveDisplayInRect: (NSRect)aRect
-{
-	ASSERT_FAIL(@"This method is never called based on our tests... As it "
-		"clearly got called now, we need to find out why and override it properly.");
-}
-
-#endif
-
-#endif /* INTERLEAVED_DRAWING */
-
 /* Intercept and Discard Events */
 
 - (void) mouseDown: (NSEvent *)theEvent { }
@@ -849,5 +728,38 @@ Cocoa and pass it to the layout item tree as needed. */
 - (void) touchesEndedWithEvent: (NSEvent *)event { }
 - (void) touchesCancelledWithEvent: (NSEvent *)event { }
 #endif
+
+@end
+
+@interface NSButton (Drawing)
+@end
+
+@implementation  NSButton (Drawing)
+
+- (BOOL) canDraw
+{
+	if ([[self superview] isKindOfClass: [ETView class]] == NO)
+		return YES;
+
+	NSLog(@" === Can draw %i in %@ ===", [[self superview] isDrawing], self);
+
+	return [[self superview] isDrawing];
+}
+
+- (void) drawRect:(NSRect)dirtyRect
+{
+	[super drawRect: dirtyRect];
+
+	if ([[self superview] isKindOfClass: [ETView class]] == NO)
+		return;
+
+	ETAssert([[[self superview] superview] isDrawing]);
+
+	if ([ETLayoutItem isAutolayoutEnabled])
+		return;
+
+	[[[NSColor yellowColor] colorWithAlphaComponent: 0.3] setFill];
+	[NSBezierPath fillRect: [self bounds]];
+}
 
 @end

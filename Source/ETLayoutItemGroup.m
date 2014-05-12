@@ -1209,7 +1209,7 @@ You should never need to call this method directly. */
 	// NOTE: On GNUstep unlike Cocoa, a nil item  will alter the coordinates
 	// when concat/invert is executed. For example, in -render:dirtyRect:inContext:
 	// a nil item can be returned by -[ETLayout layerItem].
-	BOOL shouldDrawItem = (item != nil && [item displayView] == nil);
+	BOOL shouldDrawItem = (item != nil);
 
 	if (shouldDrawItem == NO)
 		return;
@@ -1222,13 +1222,8 @@ You should never need to call this method directly. */
 
 	NSAffineTransform *transform = [NSAffineTransform transform];
 
-	/* Modify coordinate matrix when the layout item doesn't use a view for
-	   drawing. */
-	if ([item supervisorView] == nil)
-	{
-		/* Translate */
-		[transform translateXBy: [item x] yBy: [item y]];
-	}
+	/* Translate */
+	[transform translateXBy: [item x] yBy: [item y]];
 	/* Flip if needed */
 	if ([self isFlipped] != [item isFlipped]) /* != [NSGraphicContext/renderView isFlipped] */
 	{

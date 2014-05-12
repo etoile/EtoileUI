@@ -1942,6 +1942,26 @@ The returned rect is the visible content bounds. */
 	NSFrameRectWithWidth([self bounds], 3.0);
 }
 
+- (void) drawViewWithDirtyRect: (NSRect)aRect
+{
+	if ([self view] == nil)
+		return;
+
+	NSAffineTransform *xform = [NSAffineTransform transform];
+	[xform scaleXBy: 1.0 yBy: -1.0];
+	[xform translateXBy: 0 yBy: -[self height]];
+	[xform concat];
+	
+	NSRect viewDirtyRect = [[self view] convertRect: aRect fromView: [self supervisorView]];
+	viewDirtyRect = NSIntersectionRect(viewDirtyRect, [[self view] bounds]);
+
+	[[self view] displayRectIgnoringOpacity: viewDirtyRect
+								  inContext: [NSGraphicsContext currentContext]];
+
+	[xform invert];
+	[xform concat];
+}
+
 /** <override-dummy />
 Renders or draws the receiver in the given rendering context. 
 
@@ -1985,6 +2005,8 @@ now, the context is nil and must be ignored.  */
 	BOOL reponsibleToDrawCoverStyle = (nil == _decoratorItem);
 
 	[[self styleGroup] render: inputValues layoutItem: self dirtyRect: dirtyRect];
+
+	[self drawViewWithDirtyRect: dirtyRect];
 
 	/* When we have no decorator, the cover style is rendered here, otherwise the 
 	   last decorator renders it (see -[ETDecoratorItem render:dirtyRect:inContext:). */
@@ -2038,7 +2060,7 @@ owned by it.
 
 To handle the display, an ancestor view is looked up and the rect to refresh is 
 converted into this ancestor coordinate space. Precisely both the lookup and the 
-conversion are handled by 
+conversion are handled by
 -convertDisplayRect:toAncestorDisplayView:rootView:parentItem:.
 
 If the receiver has a display view, this view will be asked to draw by itself.  */

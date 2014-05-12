@@ -58,6 +58,7 @@ next EtoileUI release. */
 	BOOL _wasJustRedrawn;
 #endif
 	NSRect _rectToRedraw;
+	BOOL _isDrawing;
 }
 
 - (SEL) defaultItemFactorySelector;
@@ -74,6 +75,7 @@ next EtoileUI release. */
 - (void) setItemWithoutInsertingView: (ETUIItem *)item;
 - (BOOL) isFlipped;
 - (void) setFlipped: (BOOL)flag;
+- (BOOL) isDrawing;
 
 /* Embbeded Views */
 

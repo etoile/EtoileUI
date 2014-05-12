@@ -565,7 +565,7 @@ This coordinate space includes the window decoration (titlebar etc.).  */
 	
 	ETUIItem *item = [self firstDecoratedItem];
 
-	if ([item isLayoutItem] == NO && [item isGroup] == NO)
+	if ([item isLayoutItem] == NO || [item isGroup] == NO)
 		return;
 
 	ETLayoutItem *initialFocusedItem =

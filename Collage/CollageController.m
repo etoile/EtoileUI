@@ -37,8 +37,8 @@
 - (void) prepareUI
 {
 	ETLayoutItemFactory *itemFactory = [ETLayoutItemFactory factory];
-	ETLayoutItem *collageItem =
-		[[ETApp UIStateRestoration] provideItemForName: [self collagePersistentUIName]];
+	ETLayoutItem *collageItem = [self collageItem];
+		//[[ETApp UIStateRestoration] provideItemForName: [self collagePersistentUIName]];
 
 	/* Show the main collage item (restored from the CoreObject store if the UI 
 	   has been edited in a previous application use) */
@@ -48,13 +48,13 @@
 	//[[itemFactory windowGroup] addItem: [[self collageItem] deepCopy]];
 
 	/* Put a simple slider in a window */
-	[[itemFactory windowGroup] addItem: [itemFactory horizontalSlider]];
+	//[[itemFactory windowGroup] addItem: [itemFactory horizontalSlider]];
 
 	/* Open an inspector that allows us to easily switch the tool and the 
 	   layout in use */
 	[[itemFactory windowGroup] setController: AUTORELEASE([[ETController alloc]
 		initWithObjectGraphContext: [ETUIObject defaultTransientObjectGraphContext]])];
-	[[itemFactory windowGroup] inspectUI: nil];
+	//[[itemFactory windowGroup] inspectUI: nil];
 }
 
 - (id) UIStateRestoration: (ETUIStateRestoration *)restoration
@@ -115,30 +115,38 @@
 	                                            representedObjects: nil 
 	                                                        target: nil
 	                                                        action: NULL];
-
+#if 0
 	[mainItem addItem: [itemFactory horizontalSlider]];
+
 	ETAssert([mainItem objectGraphContext] == [[mainItem lastItem] objectGraphContext]);
 
 	[mainItem addItem: [itemFactory textField]];
-#if 0
 	[mainItem addItem: [itemFactory labelWithTitle: @"Hello World!"]];
+#endif
+	[mainItem addItem: [itemFactory numberPicker]];
 	[mainItem addItem: [itemFactory button]];
 	[[mainItem lastItem] setSize: NSMakeSize(200, 150)];
+
 	//[[mainItem lastItem] setDecoratorItem: [ETTitleBarItem item]];
 	[mainItem addItem: [itemFactory rectangle]];
+#if 0
 	//[[mainItem lastItem] setDecoratorItem: [ETTitleBarItem item]];
 	[mainItem addItem: [itemFactory oval]];
+
 	[mainItem addItem: [itemFactory barElementFromItem: [itemFactory button] 
 	                                         withLabel: @"Useless"]];
 	[mainItem addItem: [itemFactory barElementFromItem: imageItem
 	                                         withLabel: @"Useless"]];
 	[mainItem addItem: [itemFactory barElementFromItem: buttonItem
 	                                         withLabel: @"Useful"]];
+#endif
 	[mainItem addItem: [itemFactory barElementFromItem: popUpItem
 	                                         withLabel: @"Hm"]];
+#if 0
 	/* Selection rubber-band is a layout item too, which means we can use it 
 	   in the same way than other shape-based items... */
-	[mainItem addItem: AUTORELEASE([[ETSelectionAreaItem alloc] init])];
+	[mainItem addItem: AUTORELEASE([[ETSelectionAreaItem alloc]
+		initWithObjectGraphContext: [ETUIObject defaultTransientObjectGraphContext]])];
 #endif
 	/* ... A less useless use case would be to replace the shape bound to it or 
 	   alter its shape as below. */
