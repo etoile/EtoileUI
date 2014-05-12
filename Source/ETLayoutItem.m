@@ -1944,19 +1944,25 @@ The returned rect is the visible content bounds. */
 
 - (void) drawViewWithDirtyRect: (NSRect)aRect
 {
-	if ([self view] == nil)
+	NSView *view = [self view];
+
+	if (view == nil)
 		return;
 
 	NSAffineTransform *xform = [NSAffineTransform transform];
+	[xform translateXBy: [view x] yBy: [view y]];
+	// NOTE: -displayRectIgnoringOpacity: flips the drawing context, at least 
+	// if the view return YES to -isFlipped, and just doesn't check whether the
+	// superview or current graphics context returns YES to -isFlipped.
 	[xform scaleXBy: 1.0 yBy: -1.0];
-	[xform translateXBy: 0 yBy: -[self height]];
+	[xform translateXBy: 0 yBy: -[view height]];
 	[xform concat];
 	
-	NSRect viewDirtyRect = [[self view] convertRect: aRect fromView: [self supervisorView]];
-	viewDirtyRect = NSIntersectionRect(viewDirtyRect, [[self view] bounds]);
+	NSRect viewDirtyRect = [view convertRect: aRect fromView: [self supervisorView]];
+	viewDirtyRect = NSIntersectionRect(viewDirtyRect, [view bounds]);
 
-	[[self view] displayRectIgnoringOpacity: viewDirtyRect
-								  inContext: [NSGraphicsContext currentContext]];
+	[view displayRectIgnoringOpacity: viewDirtyRect
+	                       inContext: [NSGraphicsContext currentContext]];
 
 	[xform invert];
 	[xform concat];
