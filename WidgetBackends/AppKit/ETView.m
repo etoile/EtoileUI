@@ -44,18 +44,41 @@ static void ETSwizzleMethod(Class class, SEL originalSelector, SEL swizzledSelec
 
 #ifndef GNUSTEP
 @interface NSView (ETViewAdditions)
+- (BOOL) isSupervisorViewBacked;
 @end
 
 @implementation NSView (ETViewAdditions)
 
 + (void) load
 {
-	//ETSwizzleMethod(self, @selector(canDraw), @selector(EtoileUI_canDraw));
+	ETSwizzleMethod(self, @selector(canDraw), @selector(EtoileUI_canDraw));
 }
+
+/** Returns YES for supervisor descendant views, but NO for supervisor view 
+themselves. */
+- (BOOL) isSupervisorViewBacked
+{
+	NSView *view = self;
+
+	while (view != nil)
+	{
+		if ([view isSupervisorView])
+			return YES;
+			
+		view = [view superview];
+	}
+	return NO;
+}
+
+//- canDrawAppKitPrimitive
 
 - (BOOL) EtoileUI_canDraw
 {
-	return ([[self superview] EtoileUI_canDraw] ? [self EtoileUI_canDraw] : NO);
+	if ((self != [[self window] contentView]) && [self isSupervisorViewBacked])
+	{
+		return NO;
+	}
+	return [self EtoileUI_canDraw];
 }
 
 @end
@@ -593,6 +616,7 @@ NSAssert1(size.width >= 0 && size.height >= 0, @"For a supervisor view, the " \
 
 #endif
 
+#ifdef GNUSTEP
 - (BOOL) canDraw
 {
 	//NSLog(@" === Can draw %i in %@ ===", ([[self window] contentView] == self), self);
@@ -602,8 +626,7 @@ NSAssert1(size.width >= 0 && size.height >= 0, @"For a supervisor view, the " \
 
 	return NO;
 }
-
-
+#endif
 
 /* For Mac OS X, returning NO with -canDraw doesn't prevent subviews from being 
 drawn unlike GNUstep (or Cocotron), it just causes -drawRect: to be skipped. */
@@ -736,6 +759,7 @@ Layout items are smart enough to avoid drawing their view when they have one. */
 
 @implementation  NSButton (Drawing)
 
+#if 0
 - (BOOL) canDraw
 {
 	if ([[self superview] isKindOfClass: [ETView class]] == NO)
@@ -745,8 +769,9 @@ Layout items are smart enough to avoid drawing their view when they have one. */
 
 	return [[self superview] isDrawing];
 }
+#endif
 
-- (void) drawRect:(NSRect)dirtyRect
+/*- (void) drawRect:(NSRect)dirtyRect
 {
 	[super drawRect: dirtyRect];
 
@@ -760,6 +785,7 @@ Layout items are smart enough to avoid drawing their view when they have one. */
 
 	[[[NSColor yellowColor] colorWithAlphaComponent: 0.3] setFill];
 	[NSBezierPath fillRect: [self bounds]];
-}
+}*/
+
 
 @end
