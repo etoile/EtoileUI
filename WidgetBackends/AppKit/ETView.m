@@ -18,78 +18,10 @@
 #import "ETCompatibility.h"
 #import "ETFlowLayout.h"
 
-static void ETSwizzleMethod(Class class, SEL originalSelector, SEL swizzledSelector)
-{
-	/* The original method in the target class or some superclass */
-	Method originalMethod = class_getInstanceMethod(class, originalSelector);
-	Method swizzledMethod = class_getInstanceMethod(class, swizzledSelector);
-
-	/* If the original method is in a superclass, add the new implementation 
-	   under the original method name to the target class. */
-	BOOL isOriginalMethodFromSuperclass = class_addMethod(class, originalSelector,
-		method_getImplementation(swizzledMethod), method_getTypeEncoding(swizzledMethod));
-
-	if (isOriginalMethodFromSuperclass)
-	{
-		/* Replace the swizzled method implementation with the implementation 
-		   of the superclass method we override in the target class. */
-		class_replaceMethod(class, swizzledSelector,
-			method_getImplementation(originalMethod), method_getTypeEncoding(originalMethod));
-	}
-	else
-	{
-        method_exchangeImplementations(originalMethod, swizzledMethod);
-	}
-}
-
-#ifndef GNUSTEP
-@interface NSView (ETViewAdditions)
-- (BOOL) isSupervisorViewBacked;
-@end
-
-@implementation NSView (ETViewAdditions)
-
-+ (void) load
-{
-	ETSwizzleMethod(self, @selector(canDraw), @selector(EtoileUI_canDraw));
-}
-
-/** Returns YES for supervisor descendant views, but NO for supervisor view 
-themselves. */
-- (BOOL) isSupervisorViewBacked
-{
-	NSView *view = self;
-
-	while (view != nil)
-	{
-		if ([view isSupervisorView])
-			return YES;
-			
-		view = [view superview];
-	}
-	return NO;
-}
-
-//- canDrawAppKitPrimitive
-
-- (BOOL) EtoileUI_canDraw
-{
-	if ((self != [[self window] contentView]) && [self isSupervisorViewBacked])
-	{
-		return NO;
-	}
-	return [self EtoileUI_canDraw];
-}
-
-@end
-#endif
-
-@interface ETView (Private)
-- (void) setContentView: (NSView *)view temporary: (BOOL)temporary;
-@end
-
 
 @implementation ETView
+
+#pragma mark - Initialization
 
 /** Returns the ETLayoutItemFactory selector that creates an item which matches the 
 receiver expectations.
@@ -195,6 +127,8 @@ A temporary view set on the receiver won't be copied. */
 	return viewCopy;
 }
 
+#pragma mark Basic Properties -
+
 - (NSArray *) propertyNames
 {
 	NSArray *properties = A(@"item", @"wrappedView", @"temporaryView", 
@@ -243,8 +177,6 @@ A temporary view set on the receiver won't be copied. */
 	//ETLog(@"%@ accepts first responder", self);
 	return YES;
 }
-
-/* Basic Accessors */
 
 - (id) owningItem
 {
@@ -308,7 +240,7 @@ You can revert to non-flipped coordinates by passing NO to this method. */
 #endif
 }
 
-/* Embbeded Views */
+#pragma mark Embbeded Views -
 
 /* When a temporary view is just removed and the wrapped view is reinserted, 
 isTemporary is NO and the code below takes care to resize the wrapped view 
@@ -502,7 +434,7 @@ See also -[ETActionHandler inspectItem:onItem:]. */
 	[item inspect: sender];
 }
 
-/* Overriden NSView methods */
+#pragma mark Sizing
 
 #ifndef GNUSTEP
 #define CHECKSIZE(size) \
@@ -591,133 +523,7 @@ NSAssert1(size.width >= 0 && size.height >= 0, @"For a supervisor view, the " \
 }
 #endif
 
-/* Rendering Tree */
-
-#ifdef DEBUG_DRAWING
-
-- (void) drawInvalidatedAreaWithRect: (NSRect)needsDisplayRect
-{
-	if ([self lockFocusIfCanDraw] == NO)
-	{
-		ETLog(@"WARNING: Cannot draw invalidated area %@ in %@", 
-			NSStringFromRect(needsDisplayRect), self);
-		return;	
-	}
-	[[[NSColor redColor] colorWithAlphaComponent: 0.2] set];
-	[NSBezierPath fillRect: needsDisplayRect];
-	[self unlockFocus];
-}
-
-- (void) setNeedsDisplayInRect: (NSRect)dirtyRect
-{
-	//[self displayRect: dirtyRect];
-	[self drawInvalidatedAreaWithRect: dirtyRect];
-}
-
-#endif
-
-#ifdef GNUSTEP
-- (BOOL) canDraw
-{
-	//NSLog(@" === Can draw %i in %@ ===", ([[self window] contentView] == self), self);
-
-	if ([[self window] contentView] == self)
-		return [super canDraw];
-
-	return NO;
-}
-#endif
-
-/* For Mac OS X, returning NO with -canDraw doesn't prevent subviews from being 
-drawn unlike GNUstep (or Cocotron), it just causes -drawRect: to be skipped. */
-/*- (NSRect) visibleRect
-{
-	if ([[self window] contentView] == self)
-		return [super visibleRect];
-
-	return NSZeroRect;
-}*/
-
-- (BOOL) isDrawing
-{
-	return _isDrawing;
-}
-
-/** Now we must let layout items handles their custom drawing through their 
-style object. For example, by default an item with or without a view has a style 
-to draw its selection state. 
-
-In addition, this style implements the logic to draw layout items without 
-view that plays a role similar to cell.
-
-Layout items are smart enough to avoid drawing their view when they have one. */
-- (void) drawRect: (NSRect)rect
-{
-	_isDrawing = YES;
-	[super drawRect: rect];
-	
-	// FIXME: We should pass the correct dirty rect
-	//NSRect adjustedDirtyRect = [self adjustedDirtyRectWithRect: _rectToRedraw];
-
-	[[NSBezierPath bezierPathWithRect: NSZeroRect] setClip];
-	[NSGraphicsContext saveGraphicsState];
-	/* We always composite the rendering chain on top of each view -drawRect: 
-	   drawing sequence (triggered by display-like methods). */
-	[item render: nil dirtyRect: rect inContext: nil];
-	[NSGraphicsContext restoreGraphicsState];
-	_isDrawing = NO;
-}
-
-- (NSRect) dirtyRect
-{
-	return _rectToRedraw;
-}
-
-- (void) viewWillDraw
-{
-	const NSRect *rects = NULL;
-	NSInteger nbOfRects = 0;
-	
-	_rectToRedraw = NSZeroRect;
-
-	[self getRectsBeingDrawn: &rects count: &nbOfRects];
-
-	for (int i = 0; i < nbOfRects; i++)
-	{
-		_rectToRedraw = NSUnionRect(_rectToRedraw, rects[i]);
-	}
-	//ETLog(@"Rect to redraw %@ for %@", NSStringFromRect(_rectToRedraw), self);
-
-	[super viewWillDraw];
-}
-
-- (NSRect) coverStyleDirtyRectForItem: (ETLayoutItem *)anItem 
-                         inParentView: (ETView *)parentView
-{
-	NSParameterAssert([anItem isLayoutItem]);
-
-	NSRect parentDirtyRect = [self convertRect: [parentView dirtyRect] 
-	                                  fromView: parentView];
-	return NSIntersectionRect(parentDirtyRect, [anItem drawingBox]);
-}
-
-- (NSRect) adjustedDirtyRectWithRect: (NSRect)dirtyRect
-{
-	BOOL shouldDrawCoverStyle = ([item decoratorItem] == nil);
-
-	if (NO == shouldDrawCoverStyle)
-		return dirtyRect;
-
-	NSView *parentView = [self superview];
-
-	if (NO == [parentView isSupervisorView])
-		return dirtyRect;
-
-	return [self coverStyleDirtyRectForItem: [item firstDecoratedItem] 
-	                           inParentView: (ETView *)parentView];
-}
-
-/* Intercept and Discard Events */
+#pragma mark Intercepted Events -
 
 - (void) mouseDown: (NSEvent *)theEvent { }
 - (void) rightMouseDown: (NSEvent *)theEvent { }
@@ -754,38 +560,133 @@ Layout items are smart enough to avoid drawing their view when they have one. */
 
 @end
 
-@interface NSButton (Drawing)
+#pragma mark Drawing -
+
+#ifndef GNUSTEP
+static void ETSwizzleMethod(Class class, SEL originalSelector, SEL swizzledSelector)
+{
+	/* The original method in the target class or some superclass */
+	Method originalMethod = class_getInstanceMethod(class, originalSelector);
+	Method swizzledMethod = class_getInstanceMethod(class, swizzledSelector);
+
+	/* If the original method is in a superclass, add the new implementation 
+	   under the original method name to the target class. */
+	BOOL isOriginalMethodFromSuperclass = class_addMethod(class, originalSelector,
+		method_getImplementation(swizzledMethod), method_getTypeEncoding(swizzledMethod));
+
+	if (isOriginalMethodFromSuperclass)
+	{
+		/* Replace the swizzled method implementation with the implementation 
+		   of the superclass method we override in the target class. */
+		class_replaceMethod(class, swizzledSelector,
+			method_getImplementation(originalMethod), method_getTypeEncoding(originalMethod));
+	}
+	else
+	{
+        method_exchangeImplementations(originalMethod, swizzledMethod);
+	}
+}
+
+
+@interface NSView (ETViewAdditions)
+- (BOOL) isSupervisorViewBacked;
 @end
 
-@implementation  NSButton (Drawing)
+@implementation NSView (ETViewAdditions)
 
-#if 0
++ (void) load
+{
+	ETSwizzleMethod(self, @selector(canDraw), @selector(EtoileUI_canDraw));
+}
+
+/* Returns YES for supervisor descendant views, but NO for supervisor view 
+themselves. */
+- (BOOL) isSupervisorViewBacked
+{
+	NSView *view = self;
+
+	while (view != nil)
+	{
+		if ([view isSupervisorView])
+			return YES;
+			
+		view = [view superview];
+	}
+	return NO;
+}
+
+// TODO: Use -canDrawAppKitPrimitive as the original implementation name
+- (BOOL) EtoileUI_canDraw
+{
+	if ((self != [[self window] contentView]) && [self isSupervisorViewBacked])
+	{
+		return NO;
+	}
+	return [self EtoileUI_canDraw];
+}
+
+@end
+
+#else
+
+@implementation ETAppKitDrawingIntegration
+
+/* For Mac OS X, returning NO with -canDraw doesn't prevent subviews from being 
+drawn unlike GNUstep (or Cocotron), it just causes -drawRect: to be skipped. */
 - (BOOL) canDraw
 {
-	if ([[self superview] isKindOfClass: [ETView class]] == NO)
-		return YES;
+	if ([[self window] contentView] == self)
+		return [super canDraw];
 
-	NSLog(@" === Can draw %i in %@ ===", [[self superview] isDrawing], self);
+	return NO;
+}
 
-	return [[self superview] isDrawing];
+@end
+
+#endif
+
+@implementation ETView (ETAppKitDrawingIntegration)
+
+#ifdef DEBUG_DRAWING
+- (void) drawInvalidatedAreaWithRect: (NSRect)needsDisplayRect
+{
+	if ([self lockFocusIfCanDraw] == NO)
+	{
+		ETLog(@"WARNING: Cannot draw invalidated area %@ in %@", 
+			NSStringFromRect(needsDisplayRect), self);
+		return;	
+	}
+	[[[NSColor redColor] colorWithAlphaComponent: 0.2] set];
+	[NSBezierPath fillRect: needsDisplayRect];
+	[self unlockFocus];
+}
+
+- (void) setNeedsDisplayInRect: (NSRect)dirtyRect
+{
+	//[self displayRect: dirtyRect];
+	[self drawInvalidatedAreaWithRect: dirtyRect];
 }
 #endif
 
-/*- (void) drawRect:(NSRect)dirtyRect
+/* For debugging, tells us whether the receiver is drawing the item tree backed 
+by it. */
+- (BOOL) isDrawing
 {
-	[super drawRect: dirtyRect];
+	return _isDrawing;
+}
 
-	if ([[self superview] isKindOfClass: [ETView class]] == NO)
-		return;
+/* Draws the item tree bound backed by the supervisor view. 
 
-	ETAssert([[[self superview] superview] isDrawing]);
-
-	if ([ETLayoutItem isAutolayoutEnabled])
-		return;
-
-	[[[NSColor yellowColor] colorWithAlphaComponent: 0.3] setFill];
-	[NSBezierPath fillRect: [self bounds]];
-}*/
-
+ETLayoutItem and ETDecorator both draw the subviews, that belong to their 
+supervisor view, with -displayRectIgnoringOpacity:inContext:. */
+- (void) drawRect: (NSRect)rect
+{
+	_isDrawing = YES;
+	[[NSBezierPath bezierPathWithRect: NSZeroRect] setClip];
+	[NSGraphicsContext saveGraphicsState];
+	[item render: nil dirtyRect: rect inContext: nil];
+	[NSGraphicsContext restoreGraphicsState];
+	_isDrawing = NO;
+}
 
 @end
