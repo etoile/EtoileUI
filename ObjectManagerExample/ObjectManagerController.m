@@ -25,11 +25,30 @@ NSString *myFileUTIString = @"org.etoile.ObjectManagerExample.file";
 static NSFileManager *fileManager = nil;
 static NSString *filePathProperty = @"filePath";
 
+- (void) declareAdditionalItemProperties
+{
+	ETEntityDescription *itemEntity = [[ETModelDescriptionRepository mainRepository]
+		entityDescriptionForClass: [ETLayoutItem class]];
+	ETPropertyDescription *filePath =
+		[ETPropertyDescription descriptionWithName: @"filePath" type: (id)@"NSString"];
+	ETPropertyDescription *fileSize =
+		[ETPropertyDescription descriptionWithName: @"fileSize" type: (id)@"NSUInteger"];
+	ETPropertyDescription *fileType =
+		[ETPropertyDescription descriptionWithName: @"fileType" type: (id)@"NSString"];
+	
+	[itemEntity addPropertyDescription: filePath];
+	[itemEntity addPropertyDescription: fileSize];
+	[itemEntity addPropertyDescription: fileType];
+}
+
 /* Invoked when the application is going to finish its launch because 
 the receiver is set as the application's delegate in the nib. */
 - (void) applicationWillFinishLaunching: (NSNotification *)notif
 {
 	fileManager = [NSFileManager defaultManager];
+
+	/* Declare properties such as ETLayoutItem.filePath in the metamodel */
+	[self declareAdditionalItemProperties];
 
 	/* Will turn the nib views and windows into layout item trees */
 	[ETApp rebuildMainNib];
@@ -48,7 +67,7 @@ the receiver is set as the application's delegate in the nib. */
 	ETUTI *myFileUTI = [ETUTI typeWithString: myFileUTIString];
 	ETUTI *myFolderUTI = [ETUTI typeWithString: myFolderUTIString];
 
-	controller = AUTORELEASE([[ETController alloc] init]);
+	controller = AUTORELEASE([[ETController alloc] initWithObjectGraphContext: [mainViewItem objectGraphContext]]);
 	[controller setAllowedPickTypes: A(myFileUTI, myFolderUTI)];
 	[controller setAllowedDropTypes: A(myFileUTI, myFolderUTI) 
 	                  forTargetType: myFolderUTI];
@@ -133,10 +152,7 @@ the receiver is set as the application's delegate in the nib. */
 			layout = [ETIconLayout layoutWithObjectGraphContext: [mainViewItem objectGraphContext]];
 			break;
 		case 8:
-			layout = [ETViewModelLayout layoutWithObjectGraphContext: [mainViewItem objectGraphContext]];
-			break;
-		case 9:
-			layout = [ETPaneLayout masterDetailLayout];
+			layout = [ETPaneLayout masterDetailLayoutWithObjectGraphContext: [mainViewItem objectGraphContext]];
 			break;
 		default:
 			NSLog(@"Unsupported layout or unknown popup menu selection");
