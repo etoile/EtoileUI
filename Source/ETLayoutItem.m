@@ -147,9 +147,13 @@ The returned item will use +defaultItemRect as its frame. */
 	       objectGraphContext: aContext];
 }
 
+/* Falls back on a transient object graph context to support items as top-level 
+objects in a Nib.
+
+Beside this Nib support, this initializer must never be called directly. */
 - (id) init
 {
-	return [self initWithObjectGraphContext: nil];
+	return [self initWithObjectGraphContext: [ETUIObject defaultTransientObjectGraphContext]];
 }
 
 /** <init />
@@ -1728,7 +1732,7 @@ You should never use this method unless you write an ETLayoutItem subclass. */
 		
 		ETAssert(newTool == [ETTool mainTool] || [newTool layoutOwner] == [self layout]);
 	}
-	ETAssert([oldTool layoutOwner] != [self layout]);
+	ETAssert(oldTool == nil || [oldTool layoutOwner] != [self layout]);
 
 	/* Notify the interested parties about the layout change */
 	NSNotification *notif = [NSNotification 
