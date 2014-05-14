@@ -6,6 +6,7 @@
 //  Copyright 2007 __MyCompanyName__. All rights reserved.
 //
 
+#import <EtoileUI/ETViewModelLayout.h>
 #import "ObjectManagerController.h"
 
 @interface NSObject (EtoileUINSAlertWorkaround)
@@ -152,6 +153,9 @@ the receiver is set as the application's delegate in the nib. */
 			layout = [ETIconLayout layoutWithObjectGraphContext: [mainViewItem objectGraphContext]];
 			break;
 		case 8:
+			layout = [ETViewModelLayout layoutWithObjectGraphContext: [mainViewItem objectGraphContext]];
+			break;
+		case 9:
 			layout = [ETPaneLayout masterDetailLayoutWithObjectGraphContext: [mainViewItem objectGraphContext]];
 			break;
 		default:
