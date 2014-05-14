@@ -107,6 +107,16 @@ burden involved by a data source. */
 	[outlineItem setIdentifier: @"bottomLeftOutline"];
 }
 
+- (void) declareAdditionalItemProperties
+{
+	ETEntityDescription *itemEntity = [[ETModelDescriptionRepository mainRepository]
+		entityDescriptionForClass: [ETLayoutItem class]];
+	ETPropertyDescription *intensity =
+		[ETPropertyDescription descriptionWithName: @"intensity" type: (id)@"double"];
+
+	[itemEntity addPropertyDescription: intensity];
+}
+
 /* Invoked when the application is going to finish its launch because 
 TableController is set as the application's delegate in the nib. 
 
@@ -121,6 +131,9 @@ NSWindow *window = [outlineView window];
 [[itemFactory windowGroup] addItem: [builder render: window]]; */
 - (void) applicationWillFinishLaunching: (NSNotification *)notif
 {
+	/* Declare properties such as ETLayoutItem.intensity in the metamodel */
+	[self declareAdditionalItemProperties];
+
 	/* Will turn the nib views and windows into layout item trees */
 	[ETApp rebuildMainNib];
 
