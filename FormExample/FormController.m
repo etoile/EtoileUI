@@ -196,14 +196,14 @@
 
 @synthesize title, releaseDate, runningTime;
 
-static ETEntityDescription *movieEntityDesc = nil;
-
 + (ETEntityDescription *) newEntityDescription
 {
-	if (nil != movieEntityDesc)
-		return movieEntityDesc;
-
-	movieEntityDesc = [[ETEntityDescription alloc] initWithName: @"Movie"];
+	ETEntityDescription *entity = [self newBasicEntityDescription];
+	
+	// For subclasses that don't override -newEntityDescription, we must not add
+	// the property descriptions that we will inherit through the parent
+	if ([[entity name] isEqual: [Movie className]] == NO)
+		return entity;
 
 	ETPropertyDescription *title = [ETPropertyDescription descriptionWithName: @"title" type: (id)@"NSString"];
 
@@ -219,9 +219,9 @@ static ETEntityDescription *movieEntityDesc = nil;
 	[runningTimeRole setMaximum: 2010];
 	[runningTime setRole: runningTimeRole];
 
-	[movieEntityDesc setPropertyDescriptions: A(title, runningTime)];
+	[entity setPropertyDescriptions: A(title, runningTime)];
 
-	return movieEntityDesc;
+	return entity;
 }
 
 + (Movie *) movie
