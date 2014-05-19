@@ -11,6 +11,7 @@
 #import <AppKit/NSBezierPath.h>
 #import <AppKit/NSFont.h>
 #import <AppKit/NSGradient.h>
+#import <AppKit/NSGraphicsContext.h>
 #import <AppKit/NSImage.h>
 #import <AppKit/NSTextContainer.h>
 #import <AppKit/NSShadow.h>
