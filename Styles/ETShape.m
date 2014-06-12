@@ -114,32 +114,6 @@ static NSRect shapeFactoryRect = {{ 0, 0 }, { 150, 100 }};
     [super dealloc];
 }
 
-/** Returns a copy of the receiver shape.
-
-The copied shape is never hidden, even when the receiver was.
-
-See also -[ETUIObject copyWithZone:copier:isAliasedCopy:]. */
-- (id) copyWithCopier: (ETCopier *)aCopier 
-{
-	ETShape *newShape = [super copyWithCopier: aCopier];
-
-	if ([aCopier isAliasedCopy])
-		return newShape;
-
-	NSZone *zone = [aCopier zone];
-
-	[aCopier beginCopyFromObject: self toObject: newShape];
-
-	newShape->_icon = RETAIN(_icon);
-	newShape->_path = [_path copyWithZone: zone];
-	newShape->_fillColor = [_fillColor copyWithZone: zone];
-	newShape->_strokeColor = [_strokeColor copyWithZone: zone];
-	newShape->_alphaValue = _alphaValue;
-	newShape->_resizeSelector = _resizeSelector;
-
-	[aCopier endCopy];
-	return newShape;
-}
 
 - (NSImage *) icon
 {

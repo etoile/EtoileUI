@@ -120,7 +120,7 @@
 	/* Prepare the form UI now (don't wait the layout executor) */
 	[mainItem updateLayout];
 	
-	ETLayoutItemGroup *mainItemCopy = [mainItem deepCopy];
+	ETLayoutItemGroup *mainItemCopy = [mainItem copy];
 	ETLayoutItem *textItemCopy = [mainItemCopy lastItem];
 	ETLayoutItem *templateItem = [[mainItem layout] templateItem];
 	ETLayoutItem *templateItemCopy = [[mainItemCopy layout] templateItem];

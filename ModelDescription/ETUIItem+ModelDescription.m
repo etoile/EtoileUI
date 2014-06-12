@@ -45,6 +45,8 @@
 	
 	/* Transient ivars: 	
 	   _supervisorView */
+	
+	// TODO: [decoratorItem setPersistent: YES];
 
 	[entity setPropertyDescriptions: A(supervisorView, decoratorItem, decoratedItem, 
 		firstDecoratedItem, lastDecoratorItem, decorationRect, isDecoratorItem, 

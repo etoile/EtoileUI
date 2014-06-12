@@ -7,9 +7,6 @@
  */
 
 #import "ETCompatibility.h"
-
-#ifdef COREOBJECT
-
 #import <objc/runtime.h>
 #import <EtoileFoundation/ETViewpoint.h>
 #import <EtoileFoundation/NSObject+Model.h>
@@ -627,5 +624,3 @@
 }
 
 @end
-
-#endif

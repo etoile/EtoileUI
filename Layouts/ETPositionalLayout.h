@@ -16,7 +16,7 @@ rendering.
 
 When the constraint is not ETSizeConstraintStyleNone, the item autoresizing 
 provided by -[ETLayoutItem autoresizingMask] won't be respected. */
-typedef enum _ETSizeConstraintStyle 
+typedef enum : NSUInteger
 {
 /** The items are not resized but let as is. */
 	ETSizeConstraintStyleNone,

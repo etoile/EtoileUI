@@ -7,9 +7,6 @@
  */
 
 #import "ETCompatibility.h"
-
-#ifdef COREOBJECT
-
 #import <CoreObject/COEditingContext.h>
 #import <CoreObject/COObject.h>
 #import "ETController+CoreObject.h"
@@ -102,5 +99,3 @@
 }
 
 @end
-
-#endif

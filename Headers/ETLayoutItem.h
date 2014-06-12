@@ -20,7 +20,6 @@
 @class ETUTI;
 @class ETItemValueTransformer, ETView, ETLayout, ETLayoutItemGroup,
 ETDecoratorItem, ETScrollableAreaItem, ETWindowItem, ETActionHandler, ETStyleGroup;
-@class ETCopier;
 @protocol ETInspector, ETWidget, NSValidatedUserInterfaceItem;
 
 /** Describes how the item is resized when its parent item is resized.
@@ -161,8 +160,6 @@ and centers it. A strech is a scale that doesn't preserve the content proportion
 
 - (void) stopKVOObservation;
 - (void) stopKVOObservationIfNeeded;
-- (id) deepCopy;
-- (id) deepCopyWithCopier: (ETCopier *)aCopier;
 
 /** @taskunit Description */
 

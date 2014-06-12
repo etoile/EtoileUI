@@ -10,7 +10,7 @@
 #import <EtoileUI/ETGraphicsBackend.h>
 #import <EtoileUI/ETTool.h>
 
-typedef enum _ETPaintMode
+typedef enum : NSUInteger
 {
 	ETPaintModeFill,
 	ETPaintModeStroke

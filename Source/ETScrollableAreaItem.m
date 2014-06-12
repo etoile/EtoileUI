@@ -119,6 +119,8 @@ into a scrollable area. */
 	[super dealloc];
 }
 
+#if 0
+
 - (id) copyWithCopier: (ETCopier *)aCopier
 {
 	ETScrollableAreaItem *newItem = [super copyWithCopier: aCopier];
@@ -133,6 +135,8 @@ into a scrollable area. */
 
 	return newItem;
 }
+
+#endif
 
 /** Ensures the content fills the clip view area when the latter is resized, 
 usually through its enclosing scroll view getting resized. */

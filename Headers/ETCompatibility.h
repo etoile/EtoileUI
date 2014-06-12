@@ -33,14 +33,6 @@
 	ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
 	THE POSSIBILITY OF SUCH DAMAGE.
  */
- 
-/* CoreObject Support */
-
-#ifdef COREOBJECT
-#  define BASEOBJECT COObject
-#else
-#  define BASEOBJECT NSObject
-#endif
 
 /* How we get GNUstep.h */
 

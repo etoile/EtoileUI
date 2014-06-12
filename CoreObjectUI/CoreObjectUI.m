@@ -8,9 +8,6 @@
 
 
 #import "ETCompatibility.h"
-
-#ifdef COREOBJECT
-
 #import <CoreObject/COBranch.h>
 #import <CoreObject/COObject.h>
 #import <CoreObject/COGroup.h>
@@ -323,5 +320,3 @@
 }
 
 @end
-
-#endif

@@ -268,6 +268,8 @@ every subclass that overrides -dealloc. */
     [super dealloc];
 }
 
+#if 0
+
 - (id) copyAspect: (ETUIObject *)anAspect withCopier: (ETCopier *)aCopier
 {
 	id newAspect = nil;
@@ -474,6 +476,8 @@ Default values will be copied but not individually (shallow copy). */
 {
 	return YES;
 }
+
+#endif
 
 - (NSString *) description
 {

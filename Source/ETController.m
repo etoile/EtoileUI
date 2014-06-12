@@ -751,12 +751,10 @@ Extra options can be added to the returned dictionary. */
 	NSMutableDictionary *options = [NSMutableDictionary dictionary];
 	ETModelDescriptionRepository *repo = [ETModelDescriptionRepository mainRepository];
 
-#ifdef COREOBJECT
 	if ([self persistentObjectContext] != nil)
 	{
 		repo = [[[self persistentObjectContext] editingContext] modelDescriptionRepository];
 	}
-#endif
 	
 	id representedObject = [[self content] representedObject];
 

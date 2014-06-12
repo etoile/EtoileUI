@@ -77,37 +77,6 @@ in the given style collection. */
 	[super dealloc];
 }
 
-- (id) copyWithCopier: (ETCopier *)aCopier
-{
-	ETStyleGroup *newStyleGroup = [super copyWithCopier: aCopier ];
-
-	if ([aCopier isAliasedCopy])
-		return newStyleGroup;
-
-	[aCopier beginCopyFromObject: self toObject: newStyleGroup];
-	BOOL isNewRoot = [aCopier isNewRoot];
-
-	newStyleGroup->_styles = [[NSMutableArray alloc] initWithCapacity: [_styles count]];
-
-	for (ETStyle *style in _styles)
-	{
-		ETStyle *newStyle = nil;
-
-		if ([style isRoot] || (isNewRoot == NO && [style isShared]))
-		{
-			newStyle = style;
-		}
-		else
-		{
-			newStyle = [style copyWithCopier: aCopier];
-		}
-		[newStyleGroup->_styles addObject: newStyle];
-	}
-
-	[aCopier endCopy];
-	return newStyleGroup;
-}
-
 - (NSImage *) icon
 {
 	return [NSImage imageNamed: @"layers-stack"];

@@ -7,9 +7,6 @@
  */
 
 #import "ETCompatibility.h"
-
-#ifdef COREOBJECT
-
 #import <CoreObject/COEditingContext.h>
 #import <CoreObject/COObject.h>
 #import "ETLayout+CoreObject.h"
@@ -94,15 +91,19 @@
 	ASSIGN(layoutView, newView);
 }
 
+
+/* For reloading the widget view, -[ETLayoutItem didLoadObjectGraph] could call 
+-setNeedsLayoutUpdate. However we must ensure -setUp is called prior to the 
+layout update, so calling -updateLayout in -[ETLayoutItemGroup didLoadObjectGraph] 
+is not an option. */
 - (void) didLoadObjectGraph
 {
 	[super didLoadObjectGraph];
 
-	/* Must be executed once -awakeFromDeserialization has been called on subclasses such 
-	   as ETTableLayout, and the layout context is entirely deserialized and 
-	   awaken.
-	   Will call -[ETLayoutContext setLayoutView:]. */
+	/*  Will call -[ETLayoutContext setLayoutView:] */
 	[self setUp];
+	/* Force the content to get reloaded in the widget view */
+	[(ETLayoutItemGroup *)[self layoutContext] updateLayout];
 }
 
 @end
@@ -163,5 +164,3 @@
 }
 
 @end
-
-#endif

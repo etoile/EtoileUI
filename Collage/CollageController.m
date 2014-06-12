@@ -45,7 +45,7 @@
 	[[itemFactory windowGroup] addItem: collageItem];
 	
 	/* Clone the collage item */
-	//[[itemFactory windowGroup] addItem: [[self collageItem] deepCopy]];
+	//[[itemFactory windowGroup] addItem: [[self collageItem] copy]];
 
 	/* Put a simple slider in a window */
 	[[itemFactory windowGroup] addItem: [itemFactory horizontalSlider]];

@@ -36,21 +36,6 @@ DEALLOC(DESTROY(_draggedItem))
 	return self;
 }
 
-- (id) copyWithCopier: (ETCopier *)aCopier
-{
-	ETMoveTool *newTool = [super copyWithCopier: aCopier];
-
-	if ([aCopier isAliasedCopy])
-		return newTool;
-
-	[aCopier beginCopyFromObject: self toObject: newTool];
-
-	newTool->_shouldProduceTranslateActions = _shouldProduceTranslateActions;
-
-	[aCopier endCopy];
-	return newTool;
-}
-
 - (void) didBecomeInactive
 {
 	[super didBecomeInactive];

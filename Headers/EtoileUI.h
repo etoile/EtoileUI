@@ -118,9 +118,7 @@
 
 /* Core Object */
 
-#ifdef COREOBJECT
 #import <EtoileUI/ETLayoutItem+CoreObject.h>
-#endif
 
 /* UI Builder */
 

@@ -70,27 +70,6 @@ no max image and label size and no edge inset. */
 
 DEALLOC(DESTROY(_labelAttributes); DESTROY(_selectedLabelAttributes));
 
-- (id) copyWithCopier: (ETCopier *)aCopier 
-{
-	ETBasicItemStyle *newStyle = [super copyWithCopier: aCopier];
-
-	if ([aCopier isAliasedCopy])
-		return newStyle;
-
-	[aCopier beginCopyFromObject: self toObject: newStyle];
-
-	newStyle->_labelAttributes = [_labelAttributes copyWithZone: [aCopier zone]];
-	newStyle->_selectedLabelAttributes = [_selectedLabelAttributes copyWithZone: [aCopier zone]];
-	newStyle->_labelPosition = _labelPosition;
-	newStyle->_labelMargin = _labelMargin;
-	newStyle->_maxLabelSize = _maxLabelSize;
-	newStyle->_maxImageSize = _maxImageSize;
-	newStyle->_edgeInset = _edgeInset;
-
-	[aCopier endCopy];
-	return newStyle;
-}
-
 - (NSImage *) icon
 {
 	return [NSImage imageNamed: @"leaf"];

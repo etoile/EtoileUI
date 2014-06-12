@@ -12,6 +12,8 @@
 #import "ETPositionalLayout.h"
 #import "ETWidgetLayout.h"
 #import "ETTableLayout.h"
+#import "ETTemplateItemLayout.h"
+#import "ETTokenLayout.h"
 #import "ETOutlineLayout.h"
 // FIXME: Move related code to the Appkit widget backend (perhaps in a category)
 #import "ETWidgetBackend.h"
@@ -25,6 +27,13 @@
 
 @interface ETComputedLayout (ModelDescription)
 @end
+
+@interface ETTemplateItemLayout (ModelDescription)
+@end
+
+@interface ETTokenLayout (ModelDescription)
+@end
+
 
 @implementation ETLayout (ModelDescription)
 
@@ -211,6 +220,7 @@
 	ETPropertyDescription *propertyColumns =
 		[ETPropertyDescription descriptionWithName: @"propertyColumns" type: (id)@"NSTableColumn"];
 	[propertyColumns setMultivalued: YES];
+	[propertyColumns setKeyed: YES];
 	[propertyColumns setReadOnly: YES];
 	ETPropertyDescription *displayedProperties =
 		[ETPropertyDescription descriptionWithName: @"displayedProperties" type: (id)@"NSString"];
@@ -241,6 +251,8 @@
 		[ETPropertyDescription descriptionWithName: @"sortable" type: (id)@"BOOL"];
 	ETPropertyDescription *contentFont =
 		[ETPropertyDescription descriptionWithName: @"contentFont" type: (id)@"NSFont"];
+	[contentFont setValueTransformerName: @"COObjectToArchivedData"];
+	[contentFont setPersistentTypeName: @"NSData"];
 
 	// FIXME: NSArray *transientProperties = A(displayedProperties, editableProperties,
 	//	formatters, styles, columns, sortable, contentFont);
@@ -279,6 +291,80 @@ so -propertyColumns is never used unless the user inspects the object. */
 		[formatters setObject: formatterViewpoint forKey: property];
 	}
 	return AUTORELEASE([formatters copy]);
+}
+
+@end
+
+
+@implementation ETTemplateItemLayout (ModelDescription)
+
+
++ (ETEntityDescription *) newEntityDescription
+{
+	ETEntityDescription *entity = [self newBasicEntityDescription];
+	
+	// For subclasses that don't override -newEntityDescription, we must not add
+	// the property descriptions that we will inherit through the parent
+	if ([[entity name] isEqual: [ETTemplateItemLayout className]] == NO)
+		return entity;
+
+	// FIXME: Register the correct type for the protocol ETPositionalLayout
+	ETPropertyDescription *positionalLayout =
+		[ETPropertyDescription descriptionWithName: @"positionalLayout" type: (id)@"ETLayout"];
+	ETPropertyDescription *templateItem =
+		[ETPropertyDescription descriptionWithName: @"templateItem" type: (id)@"ETLayoutItem"];
+	ETPropertyDescription *templateKeys =
+		[ETPropertyDescription descriptionWithName: @"templateKeys" type: (id)@"NSString"];
+	[templateKeys setMultivalued: YES];
+	[templateKeys setOrdered: NO];
+	ETPropertyDescription *localBindings =
+		[ETPropertyDescription descriptionWithName: @"localBindings" type: (id)@"NSString"];
+	[localBindings setMultivalued: YES];
+	[localBindings setOrdered: NO];
+	[localBindings setKeyed: YES];
+
+	NSArray *persistentProperties = A(positionalLayout, templateItem, templateKeys, localBindings);
+	
+	[entity setUIBuilderPropertyNames: (id)[[persistentProperties mappedCollection] name]];
+	
+	[[persistentProperties mappedCollection] setPersistent: YES];
+	[entity setPropertyDescriptions: persistentProperties];
+	
+	return entity;
+}
+
+@end
+
+
+@implementation ETTokenLayout (ModelDescription)
+
+
++ (ETEntityDescription *) newEntityDescription
+{
+	ETEntityDescription *entity = [self newBasicEntityDescription];
+	
+	// For subclasses that don't override -newEntityDescription, we must not add
+	// the property descriptions that we will inherit through the parent
+	if ([[entity name] isEqual: [ETTokenLayout className]] == NO)
+		return entity;
+
+	ETPropertyDescription *editedProperty =
+		[ETPropertyDescription descriptionWithName: @"editedProperty" type: (id)@"NSString"];
+	ETPropertyDescription *itemLabelFont =
+		[ETPropertyDescription descriptionWithName: @"itemLabelFont" type: (id)@"NSFont"];
+	[itemLabelFont setValueTransformerName: @"COObjectToArchivedData"];
+	[itemLabelFont setPersistentTypeName: @"NSData"];
+	ETPropertyDescription *maxTokenWidth =
+		[ETPropertyDescription descriptionWithName: @"maxTokenWidth" type: (id)@"CGFloat"];
+
+	NSArray *persistentProperties = A(editedProperty, itemLabelFont, maxTokenWidth);
+	
+	[entity setUIBuilderPropertyNames: (id)[[persistentProperties mappedCollection] name]];
+	
+	[[persistentProperties mappedCollection] setPersistent: YES];
+	[entity setPropertyDescriptions: persistentProperties];
+	
+	return entity;
 }
 
 @end

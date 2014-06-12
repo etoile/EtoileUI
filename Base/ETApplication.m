@@ -1236,7 +1236,7 @@ The copied item is put on the active pickboard. */
 	if (nil == item)
 		return;
 
-	[[ETPickboard activePickboard] pushObject: AUTORELEASE([item deepCopy]) metadata: nil];
+	[[ETPickboard activePickboard] pushObject: AUTORELEASE([item copy]) metadata: nil];
 }
 
 /** Paste the current item on the active pickbord into the window group.
@@ -1250,7 +1250,7 @@ See -[ETLayoutItemFactory windowGroup]. */
 	if (nil == item)
 		return;
 
-	[[itemFactory windowGroup] addItem: AUTORELEASE([item deepCopy])];
+	[[itemFactory windowGroup] addItem: AUTORELEASE([item copy])];
 }
 
 @end

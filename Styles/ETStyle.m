@@ -20,9 +20,7 @@
 // FIXME: Add -concat to the Appkit graphics backend
 #import "ETWidgetBackend.h"
 #import "NSObject+EtoileUI.h"
-#ifdef COREOBJECT
 #import <CoreObject/COEditingContext.h>
-#endif
 
 @implementation ETStyle
 
@@ -156,21 +154,6 @@ object graph context. */
 
 	_isShared = YES;
 	return self;
-}
-
-- (id) copyWithCopier: (ETCopier *)aCopier
-{
-	ETStyle *newStyle = [super copyWithCopier: aCopier];
-
-	if ([aCopier isAliasedCopy])
-		return newStyle;
-
-	[aCopier beginCopyFromObject: self toObject: newStyle];
-
-	newStyle->_isShared = _isShared;
-
-	[aCopier endCopy];
-	return newStyle;
 }
 
 - (NSImage *) icon

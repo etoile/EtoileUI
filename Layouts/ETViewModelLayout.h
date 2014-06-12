@@ -19,7 +19,7 @@
 @class ETVIew;
 
 /** See -setDisplayMode:. */
-typedef enum _ETLayoutDisplayMode {
+typedef enum : NSUInteger {
 	ETLayoutDisplayModeViewProperties = 1,
 	ETLayoutDisplayModeViewContent = 2,
 	ETLayoutDisplayModeViewObject = 3,

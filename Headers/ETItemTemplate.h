@@ -13,9 +13,7 @@
 #import <EtoileUI/ETGraphicsBackend.h>
 #import <EtoileUI/ETController.h>
 #import <EtoileUI/ETCompatibility.h>
-#ifdef COREOBJECT
 #import <CoreObject/COEditingContext.h>
-#endif
 
 @class ETUTI;
 @class COObjectGraphContext;
@@ -99,7 +97,6 @@ extern NSString * const kETTemplateOptionModelDescriptionRepository;
 extern NSString * const kETTemplateOptionKeyValuePairKey;
 extern NSString * const kETTemplateOptionParentRepresentedObject;
 
-#ifdef COREOBJECT
 /** COObject category to implement ETDocumentCreation and integrate COObject 
 instantiation into ETItemTemplate. */
 @interface COObject (ETItemTemplate) <ETDocumentCreation>
@@ -112,4 +109,3 @@ new persistent root) or as a inner object into the context.
 If the options contains no custom context, does the same than -init. */
 - (id) initWithURL: (NSURL *)aURL options: (NSDictionary *)options;
 @end
-#endif

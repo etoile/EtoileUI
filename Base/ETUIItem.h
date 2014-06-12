@@ -19,7 +19,7 @@
 
 /** Enum used internally by EtoileUI to synchronize supervisor view and item 
 properties. */
-typedef enum 
+typedef enum : NSUInteger
 {
 	ETSyncSupervisorViewToItem,
 	ETSyncSupervisorViewFromItem

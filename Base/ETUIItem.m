@@ -93,6 +93,8 @@ By default, returns NO. */
 }
 #endif
 
+#if 0
+
 - (id) copyWithCopier: (ETCopier *)aCopier
 {
 	ETUIItem *newItem = [super copyWithCopier: aCopier];
@@ -128,6 +130,8 @@ By default, returns NO. */
 
 	return newItem;
 }
+
+#endif
 
 /* <override-dummy /> 
 Returns whether the receiver uses flipped coordinates.

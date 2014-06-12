@@ -392,23 +392,6 @@ See also -mainTool. */
 	[super dealloc];
 }
 
-- (id) copyWithCopier: (ETCopier *)aCopier
-{
-	ETTool *newTool = [super copyWithCopier: aCopier];
-
-	if ([aCopier isAliasedCopy])
-		return newTool;
-
-	[aCopier beginCopyFromObject: self toObject: newTool];
-
-	/* NSCursor factory methods are shared instances */
-	ASSIGN(newTool->_cursorName, _cursorName);
-	// FIXME: Copy layoutOwner and targetItem
-
-	[aCopier endCopy];
-	return newTool;
-}
-
 - (BOOL) respondsToSelector: (SEL)aSelector
 {
 	if ([super respondsToSelector: aSelector])

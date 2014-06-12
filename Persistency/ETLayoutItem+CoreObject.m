@@ -7,12 +7,10 @@
  */
 
 #import "ETCompatibility.h"
-
-#ifdef COREOBJECT
-
 #import <CoreObject/COEditingContext.h>
 #import <CoreObject/COPersistentRoot.h>
 #import <CoreObject/COObject.h>
+#import <CoreObject/COSerialization.h>
 #import "ETLayoutItem+CoreObject.h"
 #import "ETCollectionToPersistentCollection.h"
 #import "EtoileUIProperties.h"
@@ -133,7 +131,7 @@
 		value = [self valueForVariableStorageKey: @"initialContentBounds"];
 	}
 
-	return (value == nil ? [self valueForKey: kETContentBoundsProperty] : value);
+	return (value == nil ? [NSValue valueWithRect: _contentBounds] : value);
 }
 
 - (void) setSerializedContentBounds: (NSValue *)aValue
@@ -142,7 +140,7 @@
 	{
 		[self setValue: aValue forVariableStorageKey: @"initialContentBounds"];
 	}
-	[self setContentBounds: [aValue rectValue]];
+	_contentBounds = [aValue rectValue];
 }
 
 /* The action selector is stored as a string in the variable storage */
@@ -158,7 +156,7 @@
 
 - (NSString *) targetIdForTarget: (id)target
 {
-	if ([target isLayoutItem])
+	if ([target isKindOfClass: [COObject class]])
 	{
 		return [[target UUID] stringValue];
 	}
@@ -201,9 +199,9 @@
 	else
 	{
 		ETUUID *uuid = [ETUUID UUIDWithString: targetId];
-		ETLayoutItem *targetItem = (ETLayoutItem *)[[self objectGraphContext] loadedObjectForUUID: uuid];
+		COObject *target = [[self objectGraphContext] loadedObjectForUUID: uuid];
 
-		[self setTarget: targetItem];
+		[self setTarget: target];
 	}
 }
 
@@ -238,18 +236,64 @@ since -serializedValueForProperty: doesn't use the direct ivar access. */
 	_boundingBox = [aBoundingBox rectValue];
 }
 
-- (COObject *) serializedRepresentedObject
+- (ETLayoutItem *) sourceItem
 {
-	BOOL isPersistent = ([_representedObject isKindOfClass: [COObject class]]
-		&& [(COObject *)_representedObject isPersistent]);
-	return (isPersistent ? _representedObject : nil);
+	return ([[self ifResponds] source] != nil ? self : [[self parentItem] sourceItem]);
 }
 
-/* Required to set up the KVO observation. */
-- (void) setSerializedRepresentedObject: (COObject *)aRepObject
+- (BOOL) isSourceItem
 {
-	NSParameterAssert(aRepObject == nil || [aRepObject isKindOfClass: [COObject class]]);
-	[self setRepresentedObject: aRepObject];
+	// TODO: Remove the last part once the base item cannot represent a controller item
+	return ([self baseItem] == self && [self source] != nil);
+}
+
+- (BOOL) shouldSerializeForeignRepresentedObject: (id)anObject
+{
+	ETLayoutItem *sourceItem = [self sourceItem];
+
+	return (sourceItem == nil || sourceItem == self);
+}
+
+- (NSString *) serializedRepresentedObject
+{
+	id object = [self representedObject];
+	id ref = nil;
+	
+	if ([object isKindOfClass: [COObject class]])
+	{
+		ref = [self serializedReferenceForObject: object];
+	}
+	else if ([self shouldSerializeForeignRepresentedObject: object])
+	{
+		ref = [self serializedRepresentationForObject: object];
+	}
+
+	return [self serializedValueForWeakTypedReference: ref];
+}
+
+- (ETPropertyDescription *) propertyDescriptionForRepresentedObject
+{
+	return [[self entityDescription] propertyDescriptionForName: kETRepresentedObjectProperty];
+}
+
+- (void) setSerializedRepresentedObject: (NSString *)value
+{
+	id ref = [self weakTypedReferenceForSerializedValue: value];
+	id object = nil;
+
+	if ([self isCoreObjectReference: ref])
+	{
+		return [self objectForSerializedReference: ref
+		                      propertyDescription: [self propertyDescriptionForRepresentedObject]];
+	}
+	else
+	{
+		// TODO: -initWithSerializationRepresentation:
+		object = ref;
+	}
+
+	/* Setter required to set up the KVO observation */
+	[self setRepresentedObject: object];
 }
 
 - (void) awakeFromDeserialization
@@ -277,11 +321,17 @@ since -serializedValueForProperty: doesn't use the direct ivar access. */
 	[self restoreTargetFromId: [_variableStorage objectForKey: @"targetId"]];
 	[_variableStorage removeObjectForKey: @"targetId"];
 
+	if ([self isVisible] && [[[self parentItem] layout] isOpaque] == NO)
+	{
+		[[self parentItem] handleAttachViewOfItem: self];
+	}
+
 	if ([self isRoot])
 	{
 		[[self layout] didLoadObjectGraph];
 		[self setNeedsDisplay: YES];
 	}
+	// TODO: Perhaps just force -setNeedsLayoutUpdate
 }
 
 @end
@@ -326,45 +376,15 @@ since -serializedValueForProperty: doesn't use the direct ivar access. */
 	_doubleAction = NSSelectorFromString(aSelString);
 }
 
-- (COObject *) serializedSource
-{
-	id source = [self valueForVariableStorageKey: kETSourceProperty];
-	BOOL isPersistent = ([source isKindOfClass: [COObject class]]
-		&& [(COObject *)source isPersistent]);
-
-	NSAssert1(source == nil || isPersistent, @"ETLayoutItemGroup.source must "
-		"be a persistent COObject and not a transient one: %@", source);
-
-	return (isPersistent ? source : nil);
-}
-
-- (void) setSerializedSource: (COObject *)aSource
-{
-	NSParameterAssert(aSource == nil || [aSource isKindOfClass: [COObject class]]);
-	[self setValue: aSource forVariableStorageKey: @"delegate"];
-}
-
-- (COObject *) serializedDelegate
-{
-	id delegate = [self valueForVariableStorageKey: @"delegate"];
-	BOOL isPersistent = ([delegate isKindOfClass: [COObject class]]
-		&& [(COObject *)delegate isPersistent]);
-
-	NSAssert1(delegate == nil || isPersistent, @"ETLayoutItemGroup.delegate must "
-		"be a persistent COObject and not a transient one: %@", delegate);
-
-	return (isPersistent ? delegate : nil);
-}
-
-- (void) setSerializedDelegate: (COObject *)aDelegate
-{
-	NSParameterAssert(aDelegate == nil || [aDelegate isKindOfClass: [COObject class]]);
-	[self setValue: aDelegate forVariableStorageKey: @"delegate"];
-}
-
 - (void) awakeFromDeserialization
 {
 	[super awakeFromDeserialization];
+
+	_hasNewContent = ([_items isEmpty] == NO);
+	_hasNewArrangement = YES;
+	_hasNewLayout = YES;
+	_sorted = NO;
+	_filtered = NO;
 
 	// FIXME: Remove once we use the relationship cache
 	for (ETLayoutItem *item in _items)
@@ -393,5 +413,3 @@ since -serializedValueForProperty: doesn't use the direct ivar access. */
 }
 
 @end
-
-#endif

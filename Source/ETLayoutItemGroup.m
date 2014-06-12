@@ -33,7 +33,6 @@ NSString * const ETItemGroupSelectionDidChangeNotification = @"ETItemGroupSelect
 NSString * const ETSourceDidUpdateNotification = @"ETSourceDidUpdateNotification";
 
 @interface ETLayoutItem (SubclassVisibility)
-- (id) copyWithCopier: (ETCopier *)aCopier isDeep: (BOOL)isDeepCopy;
 - (ETView *) setUpSupervisorViewWithFrame: (NSRect)aFrame;
 - (Class)viewpointClassForProperty: (NSString *)aProperty ofObject: (id)anObject;
 @end
@@ -150,6 +149,8 @@ See also -isLayerItem. */
 {
 	return YES;
 }
+
+#if 0
 
 /** Returns a copy of the receiver.
 
@@ -294,6 +295,8 @@ The returned copy is mutable because ETLayoutItemGroup cannot be immutable. */
 
 	return itemCopy;
 }
+
+#endif
 
 /** Returns YES. An ETLayoutItemGroup is always a group and a collection by
 default. */
@@ -627,7 +630,7 @@ Marks the receiver as needing a layout update. */
 /** Returns the delegate associated with the receiver.
 
 See also -setDelegate:. */
-- (id) delegate
+- (COObject *) delegate
 {
 	return [self valueForVariableStorageKey: kETDelegateProperty];
 }
@@ -640,7 +643,7 @@ be ignored.
 The delegate is retained, unlike what Cocoa/GNUstep usually do.<br />
 The delegate is owned by the item and treated as a pluggable aspect to be
 released when the item is deallocated.  */
-- (void) setDelegate: (id)delegate
+- (void) setDelegate: (COObject *)delegate
 {
 	[self setValue: delegate forVariableStorageKey: kETDelegateProperty];
 }

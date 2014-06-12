@@ -121,7 +121,7 @@ CoreObject. */
 - (IBAction) browseUndoHistory: (id)sender;
 @end
 
-enum 
+enum : NSInteger
 {
 	ETDevelopmentMenuTag = 30000,
 	ETDocumentMenuTag,

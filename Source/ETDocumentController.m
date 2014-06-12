@@ -24,11 +24,9 @@
 #import "ETWidgetBackend.h" 
 #import "NSObject+EtoileUI.h"
 #import "ETCompatibility.h"
-#ifdef COREOBJECT
 #import <CoreObject/COBranch.h>
 #import <CoreObject/COObjectGraphContext.h>
 #import "CoreObjectUI.h"
-#endif
 
 @implementation ETDocumentController
 
@@ -330,7 +328,6 @@ See also [ETDocumentCreation] protocol. */
 
 - (IBAction) browseDocumentHistory: (id)sender
 {
-#ifdef COREOBJECT
 	COObject *rootObject = [self activeItem];
 	ETLayoutItemFactory *itemFactory =
 		[ETLayoutItemFactory factoryWithObjectGraphContext: [self objectGraphContext]];
@@ -340,7 +337,6 @@ See also [ETDocumentCreation] protocol. */
 		                                           title: nil];
 
 	[[itemFactory windowGroup] addItem: browser];
-#endif
 }
 
 - (IBAction) close: (id)sender

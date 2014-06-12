@@ -181,7 +181,7 @@ Can be overriden in subclasses. */
 - (ETLayoutItem *) newItemWithRepresentedObject: (id)anObject options: (NSDictionary *)options
 {
 	NSIndexPath *contentIndexPath = [[self contentItem] indexPathFromItem: [self item]];
-	id newItem = [[self item] deepCopy];
+	id newItem = [[self item] copy];
 	ETLayoutItem *newContentItem = ([newItem isGroup] ? [newItem itemAtIndexPath: contentIndexPath] : newItem);
 
 	/* We don't set the object as model when it is nil, so any existing value 
@@ -397,7 +397,6 @@ NSString * const kETTemplateOptionModelDescriptionRepository = @"kETTemplateOpti
 NSString * const kETTemplateOptionKeyValuePairKey = @"kETTemplateOptionKeyValuePairKey";
 NSString * const kETTemplateOptionParentRepresentedObject = @"kETTemplateOptionParentRepresentedObject";
 
-#ifdef COREOBJECT
 @implementation COObject (ETItemTemplate)
 
 - (COObjectGraphContext *) objectGraphContextForPersistentObjectContext: (id <COPersistentObjectContext>)context
@@ -447,4 +446,3 @@ NSString * const kETTemplateOptionParentRepresentedObject = @"kETTemplateOptionP
 }
 
 @end
-#endif

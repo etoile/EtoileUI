@@ -82,8 +82,9 @@
 	ETPropertyDescription *selected = [ETPropertyDescription descriptionWithName: @"selected" type: (id)@"BOOL"];
 	ETPropertyDescription *selectable = [ETPropertyDescription descriptionWithName: @"selectable" type: (id)@"BOOL"];
 	ETPropertyDescription *visible = [ETPropertyDescription descriptionWithName: @"visible" type: (id)@"BOOL"];
-	// TODO: The subtype UTI is declared transient because we have to work out how to persist ETUTI.
 	ETPropertyDescription *subtype = [ETPropertyDescription descriptionWithName: @"subtype" type: (id)@"ETUTI"];
+	[subtype setValueTransformerName: @"ETUTIToString"];
+	[subtype setPersistentTypeName: @"NSString"];
 
 	/* Transient Properties */
 
@@ -136,14 +137,14 @@
 		repObject, valueTransformers, valueKey, view, styleGroup, coverStyle,
 		actionHandler, action, targetId, contentBounds, position, anchorPoint, 
 		persistentFrame, autoresizing, contentAspect, boundingBox, defaultFrame,
-		flipped, selected, selectable, visible);
+		flipped, selected, selectable, visible, subtype);
 	// TODO: title, objectValue, formatter, minValue and maxValue should
 	// be declared among the persistent properties or we should support to
 	// override the entity description bound to ETLayoutItem (making possible 
 	// to redeclare these properties as persistent if no view is used).
 	NSArray *transientProperties = A(parentItem, baseItem, rootItem, indexPath,
 		isBaseItem, value, subject, style, frame, x, y, width, height, target,
-		acceptsActions, inspector, subtype, title, objectValue, formatter,
+		acceptsActions, inspector, title, objectValue, formatter,
 		minValue, maxValue, pickMetadata, UIBuilderAction, attachedTool);
 
 	[entity setUIBuilderPropertyNames: (id)[[A(identifier, name, 
@@ -196,8 +197,8 @@
 	ETPropertyDescription *layout = [ETPropertyDescription descriptionWithName: @"layout" type: (id)@"ETLayout"];
 	[layout setOpposite: (id)@"ETLayout.layoutContext"];
 
-	ETPropertyDescription *source = [ETPropertyDescription descriptionWithName: @"source" type: (id)@"NSObject"];
-	ETPropertyDescription *delegate = [ETPropertyDescription descriptionWithName: @"delegate" type: (id)@"NSObject"];
+	ETPropertyDescription *source = [ETPropertyDescription descriptionWithName: @"source" type: (id)@"COObject"];
+	ETPropertyDescription *delegate = [ETPropertyDescription descriptionWithName: @"delegate" type: (id)@"COObject"];
 
 	ETPropertyDescription *controller = [ETPropertyDescription descriptionWithName: @"controller" type: (id)@"ETController"];
 	[controller setOpposite: (id)@"ETController.content"];

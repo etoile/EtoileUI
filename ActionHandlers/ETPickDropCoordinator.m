@@ -891,16 +891,9 @@ Both methods called -handleDragEnd:forItem: on the drop target item. */
 	}
 	else if (op & NSDragOperationCopy)
 	{
-		if ([droppedObject respondsToSelector: @selector(deepCopy)])
-		{
-			object = [droppedObject deepCopy];
-		}
-		else
-		{
-			// TODO: Should we just let -copy raises its exception abruptly if 
-			// the object cannot be copied...
-			object = [droppedObject copy];
-		}
+		// TODO: Should we just let -copy raises its exception abruptly if 
+		// the object cannot be copied...
+		object = [droppedObject copy];
 
 		if (*aHint != nil)
 		{

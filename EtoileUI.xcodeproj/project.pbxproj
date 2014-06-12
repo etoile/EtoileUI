@@ -104,6 +104,12 @@
 		605F0D870C0F4049003AE3E6 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 29B97316FDCFA39411CA2CEA /* main.m */; };
 		605F0D8E0C0F4049003AE3E6 /* ObjectManagerController.m in Sources */ = {isa = PBXBuildFile; fileRef = 605F0CC30C0F3F8F003AE3E6 /* ObjectManagerController.m */; };
 		605F0E360C0F5310003AE3E6 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1058C7A1FEA54F0111CA2CBB /* Cocoa.framework */; };
+		6061F4CE1945ADE7008637A7 /* ETUTIToString.h in Headers */ = {isa = PBXBuildFile; fileRef = 6061F4CC1945ADE7008637A7 /* ETUTIToString.h */; };
+		6061F4CF1945ADE7008637A7 /* ETUTIToString.m in Sources */ = {isa = PBXBuildFile; fileRef = 6061F4CD1945ADE7008637A7 /* ETUTIToString.m */; };
+		6061F4DE1945ADFB008637A7 /* ETCollectionToPersistentCollection.h in Headers */ = {isa = PBXBuildFile; fileRef = 608E631618FD9CD8005FB6C7 /* ETCollectionToPersistentCollection.h */; };
+		6061F4DF1945ADFB008637A7 /* ETItemValueTransformerToString.h in Headers */ = {isa = PBXBuildFile; fileRef = 608E631818FD9CD8005FB6C7 /* ETItemValueTransformerToString.h */; };
+		6061F4E01945ADFB008637A7 /* ETUTIToString.h in Headers */ = {isa = PBXBuildFile; fileRef = 6061F4CC1945ADE7008637A7 /* ETUTIToString.h */; };
+		6061F4E11945ADFB008637A7 /* ETUTIToString.m in Sources */ = {isa = PBXBuildFile; fileRef = 6061F4CD1945ADE7008637A7 /* ETUTIToString.m */; };
 		6063FD5D1744CD9300E4350E /* ETNumberPicker.h in Headers */ = {isa = PBXBuildFile; fileRef = 6063FD5B1744CD9300E4350E /* ETNumberPicker.h */; settings = {ATTRIBUTES = (); }; };
 		6063FD5E1744CD9300E4350E /* ETNumberPicker.m in Sources */ = {isa = PBXBuildFile; fileRef = 6063FD5C1744CD9300E4350E /* ETNumberPicker.m */; };
 		6063FD5F1744CD9B00E4350E /* ETNumberPicker.m in Sources */ = {isa = PBXBuildFile; fileRef = 6063FD5C1744CD9300E4350E /* ETNumberPicker.m */; };
@@ -954,6 +960,8 @@
 		605F0CCC0C0F400D003AE3E6 /* ObjectManagerExample-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = "ObjectManagerExample-Info.plist"; path = "ObjectManagerExample/ObjectManagerExample-Info.plist"; sourceTree = "<group>"; };
 		605F354A17172DF600E9355A /* TestFormLayout.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = TestFormLayout.m; path = Tests/TestFormLayout.m; sourceTree = "<group>"; };
 		605F354C1717305500E9355A /* TestCommon.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = TestCommon.h; path = Tests/TestCommon.h; sourceTree = "<group>"; };
+		6061F4CC1945ADE7008637A7 /* ETUTIToString.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ETUTIToString.h; path = Persistency/ValueTransformers/ETUTIToString.h; sourceTree = "<group>"; };
+		6061F4CD1945ADE7008637A7 /* ETUTIToString.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ETUTIToString.m; path = Persistency/ValueTransformers/ETUTIToString.m; sourceTree = "<group>"; };
 		6063FD5B1744CD9300E4350E /* ETNumberPicker.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ETNumberPicker.h; path = WidgetBackends/AppKit/ETNumberPicker.h; sourceTree = "<group>"; };
 		6063FD5C1744CD9300E4350E /* ETNumberPicker.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ETNumberPicker.m; path = WidgetBackends/AppKit/ETNumberPicker.m; sourceTree = "<group>"; };
 		6067EB591046B4E600C39086 /* TestItemCopy.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = TestItemCopy.m; path = Tests/TestItemCopy.m; sourceTree = "<group>"; };
@@ -997,6 +1005,8 @@
 		608A612C102378580086F4B3 /* EtoileUIProperties.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = EtoileUIProperties.m; path = Source/EtoileUIProperties.m; sourceTree = "<group>"; };
 		608B01AA1868A79500D1A573 /* TestFreeLayout.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = TestFreeLayout.m; path = Tests/TestFreeLayout.m; sourceTree = "<group>"; };
 		608B01AB1868A79600D1A573 /* TestHitTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = TestHitTest.m; path = Tests/TestHitTest.m; sourceTree = "<group>"; };
+		608D25F8192BC69B00BB7461 /* ETWeakTypedObjectToData.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ETWeakTypedObjectToData.h; path = Persistency/ValueTransformers/ETWeakTypedObjectToData.h; sourceTree = "<group>"; };
+		608D25F9192BC69C00BB7461 /* ETWeakTypedObjectToData.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ETWeakTypedObjectToData.m; path = Persistency/ValueTransformers/ETWeakTypedObjectToData.m; sourceTree = "<group>"; };
 		608E631618FD9CD8005FB6C7 /* ETCollectionToPersistentCollection.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ETCollectionToPersistentCollection.h; path = Persistency/ValueTransformers/ETCollectionToPersistentCollection.h; sourceTree = "<group>"; };
 		608E631718FD9CD8005FB6C7 /* ETCollectionToPersistentCollection.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ETCollectionToPersistentCollection.m; path = Persistency/ValueTransformers/ETCollectionToPersistentCollection.m; sourceTree = "<group>"; };
 		608E631818FD9CD8005FB6C7 /* ETItemValueTransformerToString.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ETItemValueTransformerToString.h; path = Persistency/ValueTransformers/ETItemValueTransformerToString.h; sourceTree = "<group>"; };
@@ -1803,6 +1813,10 @@
 				608E631718FD9CD8005FB6C7 /* ETCollectionToPersistentCollection.m */,
 				608E631818FD9CD8005FB6C7 /* ETItemValueTransformerToString.h */,
 				608E631918FD9CD8005FB6C7 /* ETItemValueTransformerToString.m */,
+				6061F4CC1945ADE7008637A7 /* ETUTIToString.h */,
+				6061F4CD1945ADE7008637A7 /* ETUTIToString.m */,
+				608D25F8192BC69B00BB7461 /* ETWeakTypedObjectToData.h */,
+				608D25F9192BC69C00BB7461 /* ETWeakTypedObjectToData.m */,
 			);
 			name = "Value Transformers";
 			sourceTree = "<group>";
@@ -2208,8 +2222,11 @@
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				6061F4DF1945ADFB008637A7 /* ETItemValueTransformerToString.h in Headers */,
 				607676E6176DD411009FA5F2 /* ETUIBuilderBrowserController.h in Headers */,
+				6061F4E01945ADFB008637A7 /* ETUTIToString.h in Headers */,
 				60EA33AC1864A6AF001ED909 /* ETTool+CoreObject.h in Headers */,
+				6061F4DE1945ADFB008637A7 /* ETCollectionToPersistentCollection.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2236,6 +2253,7 @@
 				60EF8EA80C5E4D8500C97C41 /* ETLayoutItem.h in Headers */,
 				60EF8EA90C5E4D8500C97C41 /* ETLayoutItemGroup.h in Headers */,
 				60EF8EAA0C5E4D8500C97C41 /* ETLayer.h in Headers */,
+				6061F4CE1945ADE7008637A7 /* ETUTIToString.h in Headers */,
 				60EF8EB10C5E4D8500C97C41 /* ETLineFragment.h in Headers */,
 				60EF8EB20C5E4D8500C97C41 /* EtoileUI.h in Headers */,
 				60599A760C772129007F225E /* ETInspector.h in Headers */,
@@ -3095,6 +3113,7 @@
 				606DA5AE184F6F020097718E /* TestLayoutItemBuilder.m in Sources */,
 				606DA5AF184F6F020097718E /* TestPersistency.m in Sources */,
 				606DA5B0184F6F020097718E /* TestPickboard.m in Sources */,
+				6061F4E11945ADFB008637A7 /* ETUTIToString.m in Sources */,
 				606DA5B1184F6F020097718E /* TestResponder.m in Sources */,
 				606DA5B2184F6F020097718E /* TestStyle.m in Sources */,
 				606DA5B3184F6F020097718E /* TestSupervisorView.m in Sources */,
@@ -3271,6 +3290,7 @@
 				60FDA9A40FE58F590009686A /* ETSelectionAreaItem.m in Sources */,
 				608A5DC210231D500086F4B3 /* ETLayoutItem+KVO.m in Sources */,
 				608A612D102378580086F4B3 /* EtoileUIProperties.m in Sources */,
+				6061F4CF1945ADE7008637A7 /* ETUTIToString.m in Sources */,
 				66B74128103CB008008AF5B1 /* ETTitleBarItem.m in Sources */,
 				6627F70E127E75B300E06946 /* ETItemTemplate.m in Sources */,
 				6627F70F127E75B300E06946 /* ETDocumentController.m in Sources */,

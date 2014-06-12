@@ -166,6 +166,8 @@ If window is nil, the receiver creates a standard widget backend window. */
 	[super dealloc];
 }
 
+#if 0
+
 - (NSInvocation *) initInvocationForCopyWithZone: (NSZone *)aZone
 {
 	NSWindow *windowCopy = [_itemWindow copyWithZone: aZone];
@@ -190,6 +192,8 @@ If window is nil, the receiver creates a standard widget backend window. */
 
 	return newItem;
 }
+
+#endif
 
 /* Main Accessors */
 

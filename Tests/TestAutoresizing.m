@@ -348,7 +348,7 @@
 	
 	[itemGroup setWidth: [itemGroup width] + 100];
 
-	ETLayoutItemGroup *newItemGroup = [itemGroup deepCopy];
+	ETLayoutItemGroup *newItemGroup = [itemGroup copy];
 	ETLayoutItem *newItem = [newItemGroup firstItem];
 
 	UKTrue([newItemGroup needsLayoutUpdate]);

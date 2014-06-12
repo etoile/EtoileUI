@@ -62,6 +62,8 @@ returned instance (usually in a subclass initializer). */
 	[super dealloc];
 }
 
+#if 0
+
 - (id) copyWithZone: (NSZone *)aZone layoutContext: (id <ETLayoutingContext>)ctxt
 {
 	ETTemplateItemLayout *layoutCopy = [super copyWithZone: aZone layoutContext: ctxt];
@@ -94,6 +96,8 @@ returned instance (usually in a subclass initializer). */
 		[_renderedItems addObject: itemCopy];
 	}
 }
+
+#endif
 
 /** Returns the template item whose property values are used to override the 
 equivalent values on every item that gets layouted. 

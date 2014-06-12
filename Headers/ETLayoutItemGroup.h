@@ -92,8 +92,8 @@
  
 /** @taskunit Controller and Delegate */
 
-- (id) delegate;
-- (void) setDelegate: (id)delegate;
+- (COObject *) delegate;
+- (void) setDelegate: (COObject *)delegate;
 - (ETController *) controller;
 - (void) setController: (ETController *)aController;
 
