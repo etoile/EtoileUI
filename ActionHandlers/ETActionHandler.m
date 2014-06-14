@@ -49,30 +49,6 @@ Returns Nil by default. */
 	return Nil;
 }
 
-static NSMutableDictionary *sharedActionHandlers = nil;
-
-/** <override-never />
-Returns the shared instance that corresponds to the receiver class in the given 
-object graph context. */
-+ (id) sharedInstanceForObjectGraphContext: (COObjectGraphContext *)aContext
-{
-	if (sharedActionHandlers == nil)
-		sharedActionHandlers = [[NSMutableDictionary alloc] init];
-
-	// TODO: Clear shared instance bound to a context not in use
-	NSString *className = NSStringFromClass(self);
-	id key = (aContext != nil ? S(className, aContext) : S(className));
-	id handler = [sharedActionHandlers objectForKey: key];
-
-	if (handler == nil)
-	{
-		handler = AUTORELEASE([[self alloc] initWithObjectGraphContext: aContext]);
-		[sharedActionHandlers setObject: handler forKey: key];
-	}
-
-	return handler;
-}
-
 /** Initializes and returns a new action handler. */
 - (id) initWithObjectGraphContext: (COObjectGraphContext *)aContext
 {

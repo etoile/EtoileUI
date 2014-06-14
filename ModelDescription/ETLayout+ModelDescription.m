@@ -13,6 +13,7 @@
 #import "ETWidgetLayout.h"
 #import "ETTableLayout.h"
 #import "ETTemplateItemLayout.h"
+#import "ETIconLayout.h"
 #import "ETTokenLayout.h"
 #import "ETOutlineLayout.h"
 // FIXME: Move related code to the Appkit widget backend (perhaps in a category)
@@ -29,6 +30,9 @@
 @end
 
 @interface ETTemplateItemLayout (ModelDescription)
+@end
+
+@interface ETIconLayout (ModelDescription)
 @end
 
 @interface ETTokenLayout (ModelDescription)
@@ -64,20 +68,18 @@
 	// NOTE: layoutSize is not transient, it is usually computed but can be customized
 	ETPropertyDescription *layoutSize = 
 		[ETPropertyDescription descriptionWithName: @"layoutSize" type: (id)@"NSSize"];
+    ETPropertyDescription *proposedLayoutSize =
+    	[ETPropertyDescription descriptionWithName: @"proposedLayoutSize" type: (id)@"NSSize"];
 	ETPropertyDescription *usesCustomLayoutSize =
 		[ETPropertyDescription descriptionWithName: @"usesCustomLayoutSize" type: (id)@"BOOL"];	
-
+	// NOTE: We don't persist _previousScaleFactor, it's an optimization.
+	// See -[ETPositionalLayout resizeItems:toScaleFactor:].
 
 	// TODO: Declare the numerous derived (implicitly transient) properties we have 
 
-	/* Transient properties
-	   _tool, _dropIndicator, _isRendering */
 	NSArray *transientProperties = A(context, dropIndicator, layerItem);
-
-	// TODO: We need a direct ivar access to persist the layer item
-	// TODO: Evaluate whether we should support drop indicator persistence
 	NSArray *persistentProperties = A(attachedTool, delegate, layoutSize,
-		usesCustomLayoutSize);
+		proposedLayoutSize, usesCustomLayoutSize);
 
 	[entity setUIBuilderPropertyNames: (id)[[A(delegate, dropIndicator) mappedCollection] name]];
 
@@ -102,6 +104,10 @@
 	if ([[entity name] isEqual: [ETPositionalLayout className]] == NO)
 		return entity;
 
+	ETPropertyDescription *contextLayout =
+		[ETPropertyDescription descriptionWithName: @"contextLayout" type: (id)@"ETTemplateItemLayout"];
+	[contextLayout setDerived: YES];
+	[contextLayout setOpposite: (id)@"ETTemplateItemLayout.positionalLayout"];
 	ETPropertyDescription *isContentSizeLayout =
 		[ETPropertyDescription descriptionWithName: @"isContentSizeLayout" type: (id)@"BOOL"];
 	ETPropertyDescription *constrainedItemSize =
@@ -115,7 +121,7 @@
 		   @(ETSizeConstraintStyleHorizontal), _(@"Horizontal"),
 		   @(ETSizeConstraintStyleVerticalHorizontal), _(@"Vertical and Horizontal")) arrayRepresentation]];
 
-	NSArray *transientProperties = [NSArray array];
+	NSArray *transientProperties = A(contextLayout);
 	NSArray *persistentProperties = A(isContentSizeLayout,
 		constrainedItemSize, itemSizeConstraintStyle);
 
@@ -143,17 +149,29 @@
 	if ([[entity name] isEqual: [ETComputedLayout className]] == NO)
 		return entity;
 
-	// TODO: Migrate to CGFloat
 	ETPropertyDescription *borderMargin =
 		[ETPropertyDescription descriptionWithName: @"borderMargin" type: (id)@"CGFloat"];
 	ETPropertyDescription *itemMargin =
 		[ETPropertyDescription descriptionWithName: @"itemMargin" type: (id)@"CGFloat"];
+	ETPropertyDescription *autoresizesItemToFill =
+		[ETPropertyDescription descriptionWithName: @"autoresizesItemToFill" type: (id)@"BOOL"];
+	ETPropertyDescription *horizontalAlignment =
+		[ETPropertyDescription descriptionWithName: @"horizontalAlignment" type: (id)@"NSUInteger"];
+	ETPropertyDescription *horizontalAligmentGuide =
+		[ETPropertyDescription descriptionWithName: @"horizontalAlignmentGuidePosition" type: (id)@"CGFloat"];
+	ETPropertyDescription *separatorTemplateItem =
+		[ETPropertyDescription descriptionWithName: @"separatorTemplateItem" type: (id)@"ETLayoutItem"];
+	ETPropertyDescription *separatorItemEndMargin =
+		[ETPropertyDescription descriptionWithName: @"separatorItemEndMargin" type: (id)@"CGFloat"];
 	
 	NSArray *transientProperties = [NSArray array];
-	NSArray *persistentProperties = A(borderMargin, itemMargin);
+	NSArray *persistentProperties = A(borderMargin, itemMargin, autoresizesItemToFill,
+		horizontalAlignment, horizontalAligmentGuide, separatorTemplateItem, separatorItemEndMargin);
 	
-	[entity setUIBuilderPropertyNames: (id)[[A(borderMargin, itemMargin) mappedCollection] name]];
-	
+	[entity setUIBuilderPropertyNames: (id)[[A(borderMargin, itemMargin,
+		autoresizesItemToFill, horizontalAlignment, horizontalAligmentGuide,
+		separatorTemplateItem, separatorItemEndMargin) mappedCollection] name]];
+
 	[[persistentProperties mappedCollection] setPersistent: YES];
 	[entity setPropertyDescriptions:
 	 	[persistentProperties arrayByAddingObjectsFromArray: transientProperties]];
@@ -308,22 +326,60 @@ so -propertyColumns is never used unless the user inspects the object. */
 	if ([[entity name] isEqual: [ETTemplateItemLayout className]] == NO)
 		return entity;
 
-	// FIXME: Register the correct type for the protocol ETPositionalLayout
 	ETPropertyDescription *positionalLayout =
-		[ETPropertyDescription descriptionWithName: @"positionalLayout" type: (id)@"ETLayout"];
+		[ETPropertyDescription descriptionWithName: @"positionalLayout" type: (id)@"ETPositionalLayout"];
+	[positionalLayout setOpposite: (id)@"ETPositionalLayout.contextLayout"];
 	ETPropertyDescription *templateItem =
 		[ETPropertyDescription descriptionWithName: @"templateItem" type: (id)@"ETLayoutItem"];
 	ETPropertyDescription *templateKeys =
 		[ETPropertyDescription descriptionWithName: @"templateKeys" type: (id)@"NSString"];
 	[templateKeys setMultivalued: YES];
-	[templateKeys setOrdered: NO];
+	[templateKeys setOrdered: YES];
 	ETPropertyDescription *localBindings =
 		[ETPropertyDescription descriptionWithName: @"localBindings" type: (id)@"NSString"];
 	[localBindings setMultivalued: YES];
 	[localBindings setOrdered: NO];
 	[localBindings setKeyed: YES];
+	ETPropertyDescription *renderedItems =
+		[ETPropertyDescription descriptionWithName: @"renderedItems" type: (id)@"ETLayoutItem"];
+	[renderedItems setMultivalued: YES];
+	[renderedItems setOrdered: NO];
 
-	NSArray *persistentProperties = A(positionalLayout, templateItem, templateKeys, localBindings);
+	NSArray *persistentProperties = A(positionalLayout, templateItem,
+		templateKeys, localBindings, renderedItems);
+	
+	[entity setUIBuilderPropertyNames: (id)[[persistentProperties mappedCollection] name]];
+	
+	[[persistentProperties mappedCollection] setPersistent: YES];
+	[entity setPropertyDescriptions: persistentProperties];
+	
+	return entity;
+}
+
+@end
+
+
+@implementation ETIconLayout (ModelDescription)
+
++ (ETEntityDescription *) newEntityDescription
+{
+	ETEntityDescription *entity = [self newBasicEntityDescription];
+	
+	// For subclasses that don't override -newEntityDescription, we must not add
+	// the property descriptions that we will inherit through the parent
+	if ([[entity name] isEqual: [ETIconLayout className]] == NO)
+		return entity;
+
+	ETPropertyDescription *itemLabelFont =
+		[ETPropertyDescription descriptionWithName: @"itemLabelFont" type: (id)@"NSFont"];
+	[itemLabelFont setValueTransformerName: @"COObjectToArchivedData"];
+	[itemLabelFont setPersistentTypeName: @"NSData"];
+	ETPropertyDescription *iconSizeForScaleFactorUnit =
+		[ETPropertyDescription descriptionWithName: @"iconSizeForScaleFactorUnit" type: (id)@"NSSize"];
+	ETPropertyDescription *minIconSize =
+		[ETPropertyDescription descriptionWithName: @"minIconSize" type: (id)@"NSSize"];
+
+	NSArray *persistentProperties = A(itemLabelFont, iconSizeForScaleFactorUnit, minIconSize);
 	
 	[entity setUIBuilderPropertyNames: (id)[[persistentProperties mappedCollection] name]];
 	
@@ -337,7 +393,6 @@ so -propertyColumns is never used unless the user inspects the object. */
 
 
 @implementation ETTokenLayout (ModelDescription)
-
 
 + (ETEntityDescription *) newEntityDescription
 {

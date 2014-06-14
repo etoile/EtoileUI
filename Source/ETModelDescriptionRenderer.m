@@ -596,7 +596,7 @@ See also -setRenderedPropertyNames:. */
 	}
 	[item setName: [self labelForPropertyDescription: aPropertyDesc]];
 
-	return item;
+	return AUTORELEASE(item);
 }
 
 - (id) renderPropertyDescription: (ETPropertyDescription *)aDescription
@@ -811,7 +811,7 @@ See also -setRenderedPropertyNames:. */
 		}
 	}
 
-	return item;
+	return RETAIN(item);
 }
 
 - (NSString *) templateIdentifierForPropertyDescription: (ETPropertyDescription *)aPropertyDesc
@@ -1044,7 +1044,7 @@ See also -setRenderedPropertyNames:. */
 {
 	ETLayoutItem *templateItem = [self templateItemForPropertyDescription: aPropertyDesc];
 	ETAssert(templateItem != nil);
-	ETLayoutItem *item = AUTORELEASE([templateItem copy]);
+	ETLayoutItem *item = [templateItem copy];
 
 	[item setRepresentedObject: [ETMutableObjectViewpoint viewpointWithName: [aPropertyDesc name]
 													      representedObject: anObject]];

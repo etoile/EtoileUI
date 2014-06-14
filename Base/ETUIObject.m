@@ -51,6 +51,52 @@ See +[ETLayoutItemFactory sharedInstance]. */
 	return defaultObjectGraphContext;
 }
 
+static NSMutableDictionary *sharedInstanceUUIDs = nil;
+
++ (ETUUID *) sharedInstanceUUIDForObjectGraphContext: (COObjectGraphContext *)aContext
+{
+	// TODO: For a persistent context, return the UUID in the persistent root metadata.
+	// TODO: Clear shared instance bound to a context not in use.
+
+	if (sharedInstanceUUIDs == nil)
+		sharedInstanceUUIDs = [[NSMutableDictionary alloc] init];
+
+	NSString *className = NSStringFromClass(self);
+	id key = (aContext != nil ? S(className, aContext) : S(className));
+	ETUUID *uuid = [sharedInstanceUUIDs objectForKey: key];
+
+	if (uuid == nil)
+	{
+		uuid = [ETUUID UUID];
+		[sharedInstanceUUIDs setObject: uuid forKey: key];
+	}
+
+	return uuid;
+}
+
+/** <override-never />
+Returns the shared instance that corresponds to the receiver class in the given 
+object graph context.
+
+ETStyle and ETActionHandler subclasses support shared instances. For other 
+ETUIObject subclasses, other initialization means  should be used (e.g. 
+ETLayoutItemFactory or the dedicated initializers). */
++ (id) sharedInstanceForObjectGraphContext: (COObjectGraphContext *)aContext
+{
+	ETUUID *permanentUUID = [self sharedInstanceUUIDForObjectGraphContext: aContext];
+	ETUIObject *object = [aContext loadedObjectForUUID: permanentUUID];
+
+	if (object != nil)
+		return object;
+
+	ETEntityDescription *entity =
+		[[aContext modelDescriptionRepository] entityDescriptionForClass: self];
+
+	return [[self alloc] initWithEntityDescription: entity
+	                                          UUID: permanentUUID
+	                            objectGraphContext: aContext];
+}
+
 - (void) awakeFromDeserialization
 {
 
@@ -63,7 +109,7 @@ See +[ETLayoutItemFactory sharedInstance]. */
 	                                                          fromGraph: [self objectGraphContext]
 	                                                            toGraph: aDestination];
 
-	return [[self objectGraphContext] loadedObjectForUUID: newItemUUID];
+	return RETAIN([[self objectGraphContext] loadedObjectForUUID: newItemUUID]);
 }
 
 /** Calls -copyToObjectGraphContext: with the receiver object graph context.

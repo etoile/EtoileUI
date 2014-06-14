@@ -10,6 +10,8 @@
 #import <AppKit/AppKit.h>
 #import <UnitKit/UnitKit.h>
 #import <EtoileFoundation/Macros.h>
+#import "ETDecoratorItem.h"
+#import "ETLayoutItem.h"
 #import "ETLayoutItemFactory.h"
 #import "ETTool.h"
 
@@ -68,4 +70,13 @@ The main item is the window content. */
 
 @interface ETTool (ETToolTestAdditions)
 + (id) tool;
+@end
+
+@interface ETLayoutItem (ETLayoutItemTestAdditions)
+/** For test, patch the framework implementation. */
++ (NSRect) defaultItemRect;
+@end
+
+@interface ETDecoratorItem (ETDecoratorTestAdditions)
++ (ETDecoratorItem *) itemWithDummySupervisorView;
 @end

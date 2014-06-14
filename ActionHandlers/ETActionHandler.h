@@ -32,7 +32,12 @@ to the layout item  and not just the style object as the base class does.
 For an ETActionHandler subclass, you usually use a single shared instance 
 accross all the layout items to which it is bound. To do so, a possibility 
 is to write a factory method to build your layout items, this factory 
-method will reuse the action handler to be set on every created items. */
+method will reuse the action handler to be set on every created items.
+
+@section Initialization
+
+For new instances, you should usually use +sharedInstanceForObjectGraphContex: 
+rather than -initWithObjectGraphContext:. */
 @interface ETActionHandler : ETUIObject
 {
 	@private
@@ -42,8 +47,6 @@ method will reuse the action handler to be set on every created items. */
 }
 
 + (Class) styleClass;
-
-+ (id) sharedInstanceForObjectGraphContext: (COObjectGraphContext *)aContext;
 
 /** @taskunit Aspect Sharing */
 

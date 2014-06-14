@@ -494,9 +494,9 @@ See also ETCollectionDidUpdateNotification.*/
 	// NOTE: If needed, we could introduce a overridable method 
 	// -[ETController templateProviderFallback] (or -templateProvider that 
 	// returns self) that makes possible to reuse parent controller templates.
-	if (nil == provider)
+	if (nil == provider || [provider objectGraphContext] != [self objectGraphContext])
 	{
-		provider = [ETController basicTemplateProvider];
+		provider = [ETController basicTemplateProviderForObjectGraphContext: [self objectGraphContext]];
 	}
 	return provider;
 }

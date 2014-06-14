@@ -29,7 +29,7 @@ context.
 
 The horizontal aligment computation takes in account all the margins previously 
 specified on the layout. */
-typedef enum
+typedef enum : NSUInteger 
 {
 	ETLayoutHorizontalAlignmentCenter,
 /** Centers the content horizontally in the layout context. */

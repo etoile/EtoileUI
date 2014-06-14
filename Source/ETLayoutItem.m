@@ -487,9 +487,9 @@ Default values will be copied but not individually (shallow copy). */
 	NSString *desc = [self primitiveDescription];
 
 #ifdef DETAILED_DESCRIPTION	
-	desc = [@"<" stringByAppendingFormat: @"%@ id: %@, ipath: %@, "
+	desc = [@"<" stringByAppendingFormat: @"%@ id: %@, "
 		@"selected: %d, repobject: %@ view: %@ frame %@>", desc, 
-		[self identifier], [self indexPath], [self isSelected], 
+		[self identifier], [self isSelected],
 		[[self representedObject] primitiveDescription], [self view], 
 		NSStringFromRect([self frame])];
 #else

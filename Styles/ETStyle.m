@@ -40,7 +40,6 @@
 }
 
 static NSMutableSet *stylePrototypes = nil;
-static NSMapTable *styleSharedInstances = nil;
 
 /** Registers a prototype for every ETStyle subclasses.
 
@@ -121,29 +120,6 @@ several prototypes might share the same class. */
 + (NSSet *) registeredStyleClasses
 {
 	return (NSSet *)[[[self registeredStyles] mappedCollection] class];
-}
-
-/** <override-never />
-Returns the shared instance that corresponds to the receiver class in the given 
-object graph context. */
-+ (id) sharedInstanceForObjectGraphContext: (COObjectGraphContext *)aContext
-{
-	if (styleSharedInstances == nil)
-	{
-		ASSIGN(styleSharedInstances, [NSMapTable mapTableWithStrongToStrongObjects]);
-	}
-
-	// TODO: Clear shared instance bound to a context not in use
-	id key = (aContext != nil ? S(self, aContext) : S(self));
-	ETStyle *style = [styleSharedInstances  objectForKey: key];
-
-	if (style == nil)
-	{
-		style = AUTORELEASE([[self alloc] initWithObjectGraphContext: aContext]);
-		[styleSharedInstances setObject: style forKey: key];
-	}
-
-	return style;
 }
 
 - (id) initWithObjectGraphContext: (COObjectGraphContext *)aContext

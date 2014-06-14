@@ -20,6 +20,10 @@
 
 }
 
+/** @taskunit Factory Method */
+
++ (id) sharedInstanceForObjectGraphContext: (COObjectGraphContext *)aContext;
+
 /** @taskunit Aspect Sharing */
 
 - (BOOL) isShared;

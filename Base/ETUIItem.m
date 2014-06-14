@@ -78,6 +78,7 @@ By default, returns NO. */
 - (id) retain
 {
 	NSIncrementExtraRefCount(self);
+	//NSLog(@"Retain %@ %i", [self primitiveDescription], [self retainCount]);
 	return self;
 }
 
@@ -89,7 +90,10 @@ By default, returns NO. */
 - (oneway void) release
 {
 	if (NSDecrementExtraRefCountWasZero(self))
+	{
+		//NSLog(@"Release %@ %i", [self primitiveDescription], [self retainCount]);
 		[self dealloc];
+	}
 }
 #endif
 

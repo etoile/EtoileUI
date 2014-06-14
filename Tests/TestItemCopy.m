@@ -51,10 +51,6 @@
 }
 @end
 
-@interface ETDecoratorItem (TestItemGeometry)
-+ (ETDecoratorItem *) itemWithDummySupervisorView;
-@end
-
 @interface ETLayoutItem (TestItemCopy)
 - (BOOL) isNotVisible;
 @end
@@ -445,7 +441,6 @@ DEALLOC(DESTROY(itemFactory); DESTROY(item); DESTROY(itemGroup))
 	RELEASE(newItemGroup);
 }
 
-#if 0
 // NOTE: Test ETTemplateItemLayout copying at the same time.
 - (void) testIconLayoutCopy
 {
@@ -477,6 +472,7 @@ DEALLOC(DESTROY(itemFactory); DESTROY(item); DESTROY(itemGroup))
 	RELEASE(newItemGroup);
 }
 
+#if 0
 // NOTE: Test ETCompositeLayout and ETPaneLayout copying at the same time.
 - (void) testMasterDetailPaneLayoutCopy
 {

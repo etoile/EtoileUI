@@ -112,6 +112,7 @@
 	UKStringsEqual(@"Vancouver", [[textItem view] stringValue]);
 }
 
+#if 0
 - (void) testCopy
 {
 	[textItem setRepresentedObject:
@@ -148,5 +149,6 @@
 	[self setPlaceName: @"Vancouver"];
 	UKStringsEqual(@"Vancouver", [[textItemCopy view] stringValue]);
 }
+#endif
 
 @end

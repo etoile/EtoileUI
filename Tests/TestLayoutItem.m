@@ -24,12 +24,6 @@
 #import "ETView.h"
 #import "ETCompatibility.h"
 
-@interface ETDecoratorItem (TestItemGeometry)
-+ (ETDecoratorItem *) itemWithDummySupervisorView;
-@end
-
-static ETLayoutItemFactory *itemFactory = nil;
-
 @interface TestItem : TestCommon <UKTest>
 @end
 
@@ -41,7 +35,7 @@ static ETLayoutItemFactory *itemFactory = nil;
 @end
 
 
-@implementation ETLayoutItem (UnitKitTests)
+@implementation TestItem
 
 - (void) testRetainCountForItemCreation
 {
@@ -227,7 +221,9 @@ static ETLayoutItemFactory *itemFactory = nil;
 	id indexPath11 = [indexPath1 indexPathByAddingIndex: 1];
 	id indexPath110 = [indexPath11 indexPathByAddingIndex: 0];
 
-	UKObjectsEqual(emptyIndexPath, [item10 indexPathForItem: self]);
+	UKObjectsEqual(emptyIndexPath, [item10 indexPathForItem: item10]);
+	UKNil([item10 indexPathForItem: [itemFactory item]]);
+	UKNil([[itemFactory item] indexPathForItem: item10]);
 	/* nil represents the root item in the receiver item tree */
 	UKNil([item10 indexPathForItem: nil]);
 

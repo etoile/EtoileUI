@@ -83,6 +83,8 @@ Open Issues
 
 - Implement textArea using NSTextContainer as its represented object and drawing glyphs using NSLayoutManager
 
+- Pass the controller object graph context to -newItemWithRepresentedObject:options:
+
 
 Testing
 -------
@@ -104,6 +106,18 @@ Testing
 - Clean TestHitTest
 
 - Don't expose NSWindow in TestCommon
+
+- Check -indexPathForItem: documentation and tests
+
+	- UKNil([item10 indexPathForItem: [itemFactory item]]);
+	- UKNil([[itemFactory item] indexPathForItem: item10]);
+
+
+Documentation
+-------------
+
+- Update -itemWithObject:isValue: doc
+
 
 Old Potential Issues
 --------------------

@@ -7,6 +7,7 @@
  */
 
 #import <EtoileFoundation/Macros.h>
+#import <EtoileFoundation/NSObject+Model.h>
 #import "ETFixedLayout.h"
 #import "ETGeometry.h"
 #import "ETLayoutExecutor.h"
@@ -75,8 +76,8 @@ geometry and not computed by the receiver. */
     forNewLayoutSize: (NSSize)newLayoutSize
              oldSize: (NSSize)oldLayoutSize
 {
-	//NSLog(@"Resize items for new layout size %@ old size %@",
-	//	NSStringFromSize(newLayoutSize), NSStringFromSize(oldLayoutSize));
+	//NSLog(@"Resize items for new layout size %@ old size %@ of %@",
+	//	NSStringFromSize(newLayoutSize), NSStringFromSize(oldLayoutSize), [[self layoutContext] primitiveDescription]);
 
 	/* For a collapsed ETTitleBarItem, the decorated item content bounds is set zero */
 	BOOL collapsing = NSEqualSizes(NSZeroSize, newLayoutSize);

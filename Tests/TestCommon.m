@@ -7,6 +7,7 @@
  */
 
 #import <EtoileFoundation/NSObject+Model.h>
+#import <CoreObject/COObjectGraphContext.h>
 #import "TestCommon.h"
 #import "ETApplication.h"
 #import "ETEvent.h"
@@ -76,14 +77,21 @@ than the subclass instance we might want. */
 - (id) init
 {
 	SUPERINIT;
+	// NOTE: For now, ETApp registers aspects in the aspect repository with
+	// the +defaultTransientObjectGraphContext rather than creating an object
+	// graph context just for the repository and its aspects.
 	[[ETLayoutExecutor sharedInstance] removeAllItems];
+	[[ETUIObject defaultTransientObjectGraphContext] discardAllChanges];
 	ASSIGN(itemFactory, [ETLayoutItemFactory factory]);
+	ETAssert([[itemFactory objectGraphContext] hasChanges] == NO);
 	ASSIGN(previousActiveTool, [ETTool activeTool]);
 	return self;
 }
 
 - (void) dealloc
 {
+	[[ETLayoutExecutor sharedInstance] removeAllItems];
+	[[itemFactory objectGraphContext] discardAllChanges];
 	DESTROY(itemFactory);
 	[ETTool setActiveTool: previousActiveTool];
 	DESTROY(previousActiveTool);
@@ -177,6 +185,27 @@ coordinates or not to set the event location in the window. */
 + (id) tool
 {
 	return [self toolWithObjectGraphContext: [ETUIObject defaultTransientObjectGraphContext]];
+}
+
+@end
+
+@implementation ETLayoutItem (ETLayoutItemTestAdditions)
+
++ (NSRect) defaultItemRect
+{
+	return NSMakeRect(100, 50, 300, 250);
+}
+
+@end
+
+@implementation ETDecoratorItem (ETDecoratorTestAdditions)
+
+/* For test, patch the framework implementation. */
++ (ETDecoratorItem *) itemWithDummySupervisorView
+{
+	ETView *view = AUTORELEASE([[ETView alloc] init]);
+	return AUTORELEASE([[ETDecoratorItem alloc]
+		initWithSupervisorView: view objectGraphContext: [ETUIObject defaultTransientObjectGraphContext]]);
 }
 
 @end

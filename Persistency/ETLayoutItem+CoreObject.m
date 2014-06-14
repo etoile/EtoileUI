@@ -331,7 +331,12 @@ since -serializedValueForProperty: doesn't use the direct ivar access. */
 		[[self layout] didLoadObjectGraph];
 		[self setNeedsDisplay: YES];
 	}
-	// TODO: Perhaps just force -setNeedsLayoutUpdate
+    // TODO: Decide whether we want to persist 'needsLayoutUpdate' to minimize updates
+    /* For autoresizing among other things.
+         We cannot just call -updateLayoutRecursively:, it would mean sending
+         -copy to an item group would prevent items, added between the copy
+         message and the layout execution, to be autoresized. */
+    [self setNeedsLayoutUpdate];
 }
 
 @end

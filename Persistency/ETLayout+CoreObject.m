@@ -48,12 +48,38 @@
 	_previousScaleFactor = 1.0;
 }
 
+
+/** Maps the layer item into the context. 
+ 
+Can be overriden, but -setUp or -tearDown must never be called in this method, 
+to avoid doing changes previously recorded in the object graph on 
+-[ETLayoutItem setLayout:] or similar.
+
+If -setUp was called, calling -[ETLayout resetLayoutSize] would break autoresizing,
+-[ETWidgetLayout setUpLayoutView] wouldn't work without a layout context, or
+-[ETCompositeLayout save/prepareInitialContextState:] would mess up the context, 
+etc.
+ 
+When overriding this method, the subclasses must call the superclass
+implementation first usually, and the subclass implementation must contain 
+the -setUp logic, that makes sense when deserializing an already set up layout 
+or a layout without a context. */
+- (void) didLoadObjectGraph
+{
+    _layoutContext = [self valueForVariableStorageKey: @"layoutContext"];
+    if (_layoutContext != nil)
+    {
+    	[self mapLayerItemIntoLayoutContext];
+    }
+}
+
 @end
 
 @implementation ETFreeLayout (CoreObject)
 
 - (void) didLoadObjectGraph
 {
+    /* Will call -mapLayerItemIntoLayoutContext to recreate the layer item */
 	[super didLoadObjectGraph];
 
 	//[self setAttachedTool: [ETSelectTool toolWithObjectGraphContext: [self objectGraphContext]]];
@@ -63,9 +89,6 @@
 
 	if ([self layoutContext] == nil)
 		return;
-	
-	/* Because the layer item is recreated, it must be installed too (see -[ETLayout setUp]) */
-	[self mapLayerItemIntoLayoutContext];
 
 	/* Rebuild the handles to manipulate the item copies and not their originals */
 	[self updateKVOForItems: [_layoutContext arrangedItems]];
@@ -100,8 +123,7 @@ is not an option. */
 {
 	[super didLoadObjectGraph];
 
-	/*  Will call -[ETLayoutContext setLayoutView:] */
-	[self setUp];
+    [[self layoutContext] setLayoutView: [self layoutView]];
 	/* Force the content to get reloaded in the widget view */
 	[(ETLayoutItemGroup *)[self layoutContext] updateLayout];
 }
@@ -160,6 +182,19 @@ is not an option. */
 			[_propertyColumns setObject: [deserializedPropertyColumns objectForKey: key]
 			                     forKey: key];
 		}
+	}
+}
+
+@end
+
+@implementation ETTemplateItemLayout (CoreObject)
+
+- (void) didLoadObjectGraph
+{
+	for (ETLayoutItem *item in _renderedItems)
+	{
+		ETAssert([item parentItem] == [self layoutContext]);
+		[self setUpKVOForItem: item];
 	}
 }
 

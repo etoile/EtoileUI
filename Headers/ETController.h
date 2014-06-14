@@ -20,8 +20,10 @@
 
 /** This protocol is only exposed to be used internally by EtoileUI.
 
-See +[ETController basicTemplateProvider]. */
+See +[ETController basicTemplateProviderForObjectGraphContext:]. */
 @protocol ETTemplateProvider <NSObject>
+/** See -[ETUIObject objectGraphContext]. */
+- (COObjectGraphContext *) objectGraphContext;
 /** See -[ETController templateForType:]. */
 - (ETItemTemplate *) templateForType: (ETUTI *)aUTI;
 /** See -[ETController currentObjectType:]. */
@@ -208,7 +210,7 @@ objects as a collection distinct from the content. */
 
 /* Framework Private */
 
-+ (id <ETTemplateProvider>) basicTemplateProvider;
++ (id <ETTemplateProvider>) basicTemplateProviderForObjectGraphContext: (COObjectGraphContext *)aContext;
 
 @end
 

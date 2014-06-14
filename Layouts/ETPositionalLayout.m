@@ -54,6 +54,13 @@ tool copy. */
 	return newLayout;
 }
 
+- (id <ETLayoutingContext>) layoutContext
+{
+	id <ETLayoutingContext> context = [self valueForVariableStorageKey: @"contextLayout"];
+
+	return (context != nil ? context : [super layoutContext]);
+}
+
 /** Sets whether the layout context can be resized, when its current size is 
 not enough to let the layout present the items in its own way. 
 

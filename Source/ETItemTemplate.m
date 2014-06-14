@@ -181,7 +181,8 @@ Can be overriden in subclasses. */
 - (ETLayoutItem *) newItemWithRepresentedObject: (id)anObject options: (NSDictionary *)options
 {
 	NSIndexPath *contentIndexPath = [[self contentItem] indexPathFromItem: [self item]];
-	id newItem = [[self item] copy];
+	// FIXME: We should pass the controller object graph context.
+	id newItem = [[self item] copyToObjectGraphContext: [self objectGraphContext]];
 	ETLayoutItem *newContentItem = ([newItem isGroup] ? [newItem itemAtIndexPath: contentIndexPath] : newItem);
 
 	/* We don't set the object as model when it is nil, so any existing value 

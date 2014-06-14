@@ -38,7 +38,12 @@ This method is usually called indirectly like that:
 
 ETStyle objects are usually shared between multiple style groups 
 (or other owners) . Thereby they don't know on which UI areas they are applied 
-and expect to be provided a layout item through -render:layoutItem:dirtyRect:. */
+and expect to be provided a layout item through -render:layoutItem:dirtyRect:.
+
+@section Initialization
+
+For new instances, you should usually use +sharedInstanceForObjectGraphContex: 
+rather than -initWithObjectGraphContext:.  */
 @interface ETStyle : ETUIObject
 {
 	@private
@@ -51,10 +56,6 @@ and expect to be provided a layout item through -render:layoutItem:dirtyRect:. *
 + (void) registerStyle: (ETStyle *)aStyle;
 + (NSSet *) registeredStyles;
 + (NSSet *) registeredStyleClasses;
-
-/** @taskunit Factory Method */
-
-+ (id) sharedInstanceForObjectGraphContext: (COObjectGraphContext *)aContext;
 
 /** @taskunit Aspect Sharing */
 

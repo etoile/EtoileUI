@@ -1420,23 +1420,16 @@ else
 
 /* Framework Private */
 
-static ETController *basicTemplateProvider = nil;
-
 /** This method is only exposed to be used internally by EtoileUI. 
 
 Returns a shared and immutable template provider in which basic templates are 
 registered for -currentObjectType and -currentGroupType. */
-+ (id <ETTemplateProvider>) basicTemplateProvider
++ (id <ETTemplateProvider>) basicTemplateProviderForObjectGraphContext: (COObjectGraphContext *)aContext
 {
-	if (basicTemplateProvider == nil)
-	{
-		// NOTE: Must not be instantiated in +initialize otherwise several
-		// ETUIObject subclass instances are initialized before all the model
-		// descriptions are registered.
-		basicTemplateProvider = [[ETController alloc]
-			initWithObjectGraphContext: [ETUIObject defaultTransientObjectGraphContext]];
-	}
-	return basicTemplateProvider;
+	// NOTE: Must not be instantiated in +initialize otherwise several
+	// ETUIObject subclass instances are initialized before all the model
+	// descriptions are registered.
+	return [self sharedInstanceForObjectGraphContext: aContext];
 }
 
 @end

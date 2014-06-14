@@ -26,32 +26,6 @@
 - (void) setViewAndSync: (NSView *)newView;
 @end
 
-@implementation ETLayoutItem (TestItemGeometry)
-
-/* For test, patch the framework implementation. */
-+ (NSRect) defaultItemRect
-{
-	return NSMakeRect(100, 50, 300, 250);
-}
-
-@end
-
-@interface ETDecoratorItem (TestItemGeometry)
-+ (ETDecoratorItem *) itemWithDummySupervisorView;
-@end
-
-@implementation ETDecoratorItem (TestItemGeometry)
-
-/* For test, patch the framework implementation. */
-+ (ETDecoratorItem *) itemWithDummySupervisorView
-{
-	ETView *view = AUTORELEASE([[ETView alloc] init]);
-	return AUTORELEASE([[ETDecoratorItem alloc]
-		initWithSupervisorView: view objectGraphContext: [ETUIObject defaultTransientObjectGraphContext]]);
-}
-
-@end
-
 @interface TestItemGeometry : TestCommon <UKTest>
 {
 	ETLayoutItem *item;
