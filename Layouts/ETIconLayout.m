@@ -160,7 +160,7 @@ to trigger the resizing before ETTemplateItemLayout hands the items to the
 positional layout. */
 - (void) willRenderItems: (NSArray *)items isNewContent: (BOOL)isNewContent
 {
-	CGFloat scale = [_layoutContext itemScaleFactor];
+	CGFloat scale = [[self layoutContext] itemScaleFactor];
 	if (isNewContent || scale != _previousScaleFactor)
 	{
 		[self resizeItems: items toScaleFactor: scale];
@@ -180,10 +180,10 @@ value becomes the image size used to compute to the new item size.
 The resizing isn't delegated to the positional layout unlike in ETTemplateItemLayout. */
 - (void) resizeItems: (NSArray *)items toScaleFactor: (CGFloat)factor
 {
-	id <ETFirstResponderSharingArea> responderArea = [_layoutContext firstResponderSharingArea];
+	id <ETFirstResponderSharingArea> responderArea = [[self layoutContext] firstResponderSharingArea];
 
 	/* We use -arrangedItems in case we receive only a subset to resize (not true currently) */
-	if ([[_layoutContext arrangedItems] containsObject: [responderArea editedItem]])
+	if ([[[self layoutContext] arrangedItems] containsObject: [responderArea editedItem]])
 	{
 		[responderArea removeActiveFieldEditorItem];
 	}

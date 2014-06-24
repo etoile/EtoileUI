@@ -195,7 +195,7 @@
 
 	// TODO: Move to ETLayoutItem and update ETLayout description as necessary
 	ETPropertyDescription *layout = [ETPropertyDescription descriptionWithName: @"layout" type: (id)@"ETLayout"];
-	[layout setOpposite: (id)@"ETLayout.layoutContext"];
+	[layout setOpposite: (id)@"ETLayout.contextItem"];
 
 	ETPropertyDescription *source = [ETPropertyDescription descriptionWithName: @"source" type: (id)@"COObject"];
 	ETPropertyDescription *delegate = [ETPropertyDescription descriptionWithName: @"delegate" type: (id)@"COObject"];

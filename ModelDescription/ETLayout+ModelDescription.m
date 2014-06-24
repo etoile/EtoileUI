@@ -50,11 +50,10 @@
 	if ([[entity name] isEqual: [ETLayout className]] == NO) 
 		return entity;
 
-	// TODO: Type should be ETLayoutItem
-	ETPropertyDescription *context = 
-		[ETPropertyDescription descriptionWithName: @"layoutContext" type: (id)@"ETLayoutItemGroup"];
-	[context setDerived: YES];
-	[context setOpposite: (id)@"ETLayoutItemGroup.layout"];
+    ETPropertyDescription *contextItem =
+        [ETPropertyDescription descriptionWithName: @"contextItem" type: (id)@"ETLayoutItemGroup"];
+    [contextItem setDerived: YES];
+    [contextItem setOpposite: (id)@"ETLayoutItemGroup.layout"];
 	ETPropertyDescription *delegate = 
 		[ETPropertyDescription descriptionWithName: @"delegate" type: (id)@"NSObject"];
 	ETPropertyDescription *attachedTool =
@@ -77,7 +76,7 @@
 
 	// TODO: Declare the numerous derived (implicitly transient) properties we have 
 
-	NSArray *transientProperties = A(context, dropIndicator, layerItem);
+	NSArray *transientProperties = A(contextItem, dropIndicator, layerItem);
 	NSArray *persistentProperties = A(attachedTool, delegate, layoutSize,
 		proposedLayoutSize, usesCustomLayoutSize);
 
@@ -102,9 +101,10 @@
 	// For subclasses that don't override -newEntityDescription, we must not add
 	// the property descriptions that we will inherit through the parent
 	if ([[entity name] isEqual: [ETPositionalLayout className]] == NO)
-		return entity;
+        return entity;
+    
 
-	ETPropertyDescription *contextLayout =
+    ETPropertyDescription *contextLayout =
 		[ETPropertyDescription descriptionWithName: @"contextLayout" type: (id)@"ETTemplateItemLayout"];
 	[contextLayout setDerived: YES];
 	[contextLayout setOpposite: (id)@"ETTemplateItemLayout.positionalLayout"];

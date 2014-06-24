@@ -23,7 +23,6 @@ CGFloat ETAlignmentHintNone = FLT_MIN;
 
 /* Ugly hacks to shut down the compiler, so it doesn't complain that inherited 
    methods also declared by ETPositionaLayout aren't implemented */
-- (void) setLayoutContext: (id <ETLayoutingContext>)context { return [super setLayoutContext: context]; }
 - (id <ETLayoutingContext>) layoutContext { return [super layoutContext]; }
 - (ETLayoutItem *) itemAtLocation: (NSPoint)location { return [super itemAtLocation: location]; }
 
@@ -499,7 +498,7 @@ CGFloat contentHeight =  [line height] + totalMargin;
 - (NSPoint) originOfFirstFragment: (id)aFragment 
                  forContentHeight: (CGFloat)contentHeight
 {
-	BOOL isFlipped = [_layoutContext isFlipped];
+	BOOL isFlipped = [[self layoutContext] isFlipped];
 	/* Was just reset and equal to the layout context height at this point */
 	CGFloat layoutHeight = [self layoutSize].height;
 	CGFloat itemMargin = [self itemMargin];
@@ -512,10 +511,10 @@ CGFloat contentHeight =  [line height] + totalMargin;
 	   If you ever edit it, please use PhotoViewExample to test the 4 cases 
 	   exhaustively (resizing the layout context and varying item count, margin 
 	   and scaling):
-	   - [_layoutContext isFlipped] + [_layoutContext decoratorItem] == nil
-	   - [_layoutContext isFlipped] + [_layoutContext decoratorItem] == scrollable area
-	   - [_layoutContext isFlipped] == NO + [_layoutContext decoratorItem] == nil
-	   - [_layoutContext isFlipped] == NO + [_layoutContext decoratorItem] == scrollable area */
+	   - [[self layoutContext] isFlipped] + [[self layoutContext] decoratorItem] == nil
+	   - [[self layoutContext] isFlipped] + [[self layoutContext] decoratorItem] == scrollable area
+	   - [[self layoutContext] isFlipped] == NO + [[self layoutContext] decoratorItem] == nil
+	   - [[self layoutContext] isFlipped] == NO + [[self layoutContext] decoratorItem] == scrollable area */
 	if (isFlipped == NO)
 	{
 		if ([self isContentSizeLayout] && contentHeight > layoutHeight)

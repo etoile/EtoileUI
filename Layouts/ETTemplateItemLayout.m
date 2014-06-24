@@ -23,7 +23,6 @@
 #import "NSView+EtoileUI.h"
 #import "ETCompatibility.h"
 
-#define _layoutContext (id <ETLayoutingContext>)_layoutContext
 #pragma GCC diagnostic ignored "-Wprotocol"
 
 
@@ -87,10 +86,10 @@ returned instance (usually in a subclass initializer). */
 	FOREACH(layoutOriginal->_renderedItems, item, ETLayoutItem *)
 	{
 		// FIXME: Declare -objectReferencesForCopy in the layouting context protocol
-		ETLayoutItem *itemCopy = [[(id)_layoutContext objectReferencesForCopy] objectForKey: item];
+		ETLayoutItem *itemCopy = [[(id)[self layoutContext] objectReferencesForCopy] objectForKey: item];
 	
 		NSParameterAssert(itemCopy != nil);
-		NSParameterAssert([itemCopy parentItem] == _layoutContext);
+		NSParameterAssert([itemCopy parentItem] == [self layoutContext]);
 
 		[self setUpKVOForItem: itemCopy];
 		[_renderedItems addObject: itemCopy];
@@ -198,8 +197,10 @@ original items which are replaced by the layout. */
 
 - (void) setPositionalLayout: (id <ETComputableLayout>)layout
 {
-	[layout setLayoutContext: self];
+    [layout validateLayoutContext: self];
+    [self willChangeValueForProperty: @"positionalLayout"];
 	ASSIGN(_positionalLayout, layout);
+    [self didChangeValueForProperty: @"positionalLayout"];
 }
 
 /* Subclass Hooks */
@@ -340,33 +341,33 @@ Does nothing by default. */
 
 - (NSArray *) items
 {
-	return [_layoutContext items];
+	return [[self layoutContext] items];
 }
 
 - (NSArray *) arrangedItems
 {
-	return [_layoutContext arrangedItems];
+	return [[self layoutContext] arrangedItems];
 }
 
 - (NSArray *) visibleItems
 {
-	return [_layoutContext visibleItems];
+	return [[self layoutContext] visibleItems];
 }
 
 - (void) setVisibleItems: (NSArray *)visibleItems
 {
-	[_layoutContext setVisibleItems: visibleItems];
+	[[self layoutContext] setVisibleItems: visibleItems];
 }
 
 - (NSSize) size
 {
-	return [_layoutContext size];
+	return [[self layoutContext] size];
 }
 
 - (void) setSize: (NSSize)size
 {
 	[self setLayoutSize: size]; /* To sync the layer item geometry */
-	[_layoutContext setSize: size];
+	[[self layoutContext] setSize: size];
 }
 
 - (void) setLayoutView: (NSView *)aLayoutView
@@ -377,7 +378,7 @@ Does nothing by default. */
 - (NSView *) view
 {
  // FIXME: Remove this cast and solve this properly
-	return [(ETLayoutItem *)_layoutContext view];
+	return [(ETLayoutItem *)[self layoutContext] view];
 }
 
 /* By default, returns 1 to prevent the positional layout to resize the items. 
@@ -385,33 +386,33 @@ e.g. the icon layout does it in its own way by overriding -resizeLayoutItems:toS
 - (CGFloat) itemScaleFactor
 {
 
-	return ([self ignoresItemScaleFactor] ? 1.0 : [_layoutContext itemScaleFactor]);
+	return ([self ignoresItemScaleFactor] ? 1.0 : [[self layoutContext] itemScaleFactor]);
 }
 
 - (NSSize) visibleContentSize
 {
-	return [_layoutContext visibleContentSize];
+	return [[self layoutContext] visibleContentSize];
 }
 
 - (void) setContentSize: (NSSize)size;
 {
 	[self setLayoutSize: size]; /* To sync the layer item geometry */
-	[_layoutContext setContentSize: size];
+	[[self layoutContext] setContentSize: size];
 }
 
 - (BOOL) isScrollable
 {
-	return [_layoutContext isScrollable];
+	return [[self layoutContext] isScrollable];
 }
 
 - (void) setNeedsDisplay: (BOOL)now
 {
-	return [_layoutContext setNeedsDisplay: now];
+	return [[self layoutContext] setNeedsDisplay: now];
 }
 
 - (BOOL) isFlipped
 {
-	return [_layoutContext isFlipped];
+	return [[self layoutContext] isFlipped];
 }
 
 - (BOOL) isChangingSelection

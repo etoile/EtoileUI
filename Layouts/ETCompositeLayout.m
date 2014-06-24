@@ -24,12 +24,19 @@
 #import "ETLayoutItemFactory.h"
 #import "ETCompatibility.h"
 
+
 @interface ETCompositeLayout (Private)
+- (ETLayoutItemGroup *) layoutContext;
 - (ETLayoutItemGroup *) firstDescendantGroupForItem: (ETLayoutItemGroup *)itemGroup;
 @end
 
 
 @implementation ETCompositeLayout
+
+- (ETLayoutItemGroup *) layoutContext
+{
+    return (ETLayoutItemGroup *)[super layoutContext];
+}
 
 - (id) initWithRootItem: (ETLayoutItemGroup *)rootItem
      objectGraphContext: (COObjectGraphContext *)aContext
@@ -125,7 +132,7 @@ You must not call this method when the layout is currently in use, otherwise
 an NSInternalInconsistencyException will be raised. */
 - (void) setRootItem: (ETLayoutItemGroup *)anItem
 {
-	NSParameterAssert(_layoutContext == nil);
+	NSParameterAssert([self layoutContext] == nil);
 
 	[self setFirstPresentationItem: nil];
 	[anItem setActionHandler: nil];
@@ -143,9 +150,9 @@ The holder item is either:
 </list> */
 - (ETLayoutItemGroup *) holderItem
 {
-	BOOL isLayoutActive = (_layoutContext != nil);
+	BOOL isLayoutActive = ([self layoutContext] != nil);
 	// FIXME: Ugly cast
-	return isLayoutActive ? (ETLayoutItemGroup *)_layoutContext : [self rootItem];
+	return isLayoutActive ? (ETLayoutItemGroup *)[self layoutContext] : [self rootItem];
 }
 
 /** Returns the layout item to which the layout context content can be routed. */
@@ -256,25 +263,25 @@ in -handleAddXXX which will then invoke [[B representedObject] addObject: bla]. 
 {
 	if ([properties containsObject: @"items"])
 	{
-		[_layoutContext setDefaultValue: [_layoutContext items] 
+		[[self layoutContext] setDefaultValue: [[self layoutContext] items] 
 		                    forProperty: @"items"];
 	}
 	if ([properties containsObject: kETSourceProperty] 
-	 && [_layoutContext source] != nil)
+	 && [[self layoutContext] source] != nil)
 	{
-		[_layoutContext setDefaultValue: [_layoutContext source] 
+		[[self layoutContext] setDefaultValue: [[self layoutContext] source] 
 							forProperty: kETSourceProperty];
 	}
 	if ([properties containsObject: kETRepresentedObjectProperty] 
-	 && [_layoutContext representedObject] != nil)
+	 && [[self layoutContext] representedObject] != nil)
 	{
-		[_layoutContext setDefaultValue: [_layoutContext representedObject] 
+		[[self layoutContext] setDefaultValue: [[self layoutContext] representedObject] 
 							forProperty: kETRepresentedObjectProperty];
 	}
 	if ([properties containsObject: kETFlippedProperty])
 	{
-		BOOL isFlipped = [_layoutContext isFlipped];
-		[_layoutContext setDefaultValue: [NSNumber numberWithBool: isFlipped] 
+		BOOL isFlipped = [[self layoutContext] isFlipped];
+		[[self layoutContext] setDefaultValue: [NSNumber numberWithBool: isFlipped] 
 	                        forProperty: kETFlippedProperty];
 	}
 }
@@ -284,16 +291,16 @@ in -handleAddXXX which will then invoke [[B representedObject] addObject: bla]. 
 	if ([self firstPresentationItem] != nil)
 	{
 		[self makeItemStatic: [self firstPresentationItem]];
-		[self moveContentFromItem: _layoutContext toItem: [self firstPresentationItem]];
+		[self moveContentFromItem: [self layoutContext] toItem: [self firstPresentationItem]];
 	}
 	else
 	{
-		[self makeItemStatic: _layoutContext];
+		[self makeItemStatic: [self layoutContext]];
 	}
 
-	[[self rootItem] setSize: [_layoutContext size]];
-	[_layoutContext setFlipped: [[self rootItem] isFlipped]];	
-	[self moveContentFromItem: [self rootItem] toItem: _layoutContext];
+	[[self rootItem] setSize: [[self layoutContext] size]];
+	[[self layoutContext] setFlipped: [[self rootItem] isFlipped]];	
+	[self moveContentFromItem: [self rootItem] toItem: [self layoutContext]];
 }
 
 - (NSMutableSet *) initialStateProperties
@@ -316,31 +323,31 @@ in -handleAddXXX which will then invoke [[B representedObject] addObject: bla]. 
 {
 	if ([properties containsObject: @"items"])
 	{
-		[_layoutContext addItems: [_layoutContext defaultValueForProperty: @"items"]];
+		[[self layoutContext] addItems: [[self layoutContext] defaultValueForProperty: @"items"]];
 	} 
 	if ([properties containsObject: kETSourceProperty])
 	{
-		[_layoutContext setSource: [_layoutContext defaultValueForProperty: kETSourceProperty]];
+		[[self layoutContext] setSource: [[self layoutContext] defaultValueForProperty: kETSourceProperty]];
 	}
 	if ([properties containsObject: kETRepresentedObjectProperty])
 	{
-		[_layoutContext setRepresentedObject: [_layoutContext defaultValueForProperty: kETRepresentedObjectProperty]];
+		[[self layoutContext] setRepresentedObject: [[self layoutContext] defaultValueForProperty: kETRepresentedObjectProperty]];
 	}
 	if ([properties containsObject: kETFlippedProperty])
 	{
-		[_layoutContext setFlipped: 
-			[[_layoutContext defaultValueForProperty: kETFlippedProperty] boolValue]];	
+		[[self layoutContext] setFlipped: 
+			[[[self layoutContext] defaultValueForProperty: kETFlippedProperty] boolValue]];	
 	}
 }
 
 - (void) restoreContextState
 {
-	[self moveContentFromItem: _layoutContext toItem: [self rootItem]];
+	[self moveContentFromItem: [self layoutContext] toItem: [self rootItem]];
 
 	if ([self firstPresentationItem] == nil)
 		return;
 
-	[self moveContentFromItem: [self firstPresentationItem] toItem: _layoutContext];
+	[self moveContentFromItem: [self firstPresentationItem] toItem: [self layoutContext]];
 	/* We keep the represented path base on the layout context in 
 	   -prepareNewContextState (-makeItemStatic: lets the property as is), hence 
 	   the previous line won't nullify it on the presentation proxy. 
@@ -377,14 +384,14 @@ the copying support in ETLayoutItemGroup and ETCompositeLayout/ETLayout). */
 	   context states get both restored). */
 	if ([self isContentRouted] == NO)
 	{
-		NSArray *initialItemTree = [layoutOriginal->_layoutContext defaultValueForProperty: @"items"];
-		NSArray *initialItemTreeAlias = [_layoutContext defaultValueForProperty: @"items"];
+		NSArray *initialItemTree = [layoutOriginal->[self layoutContext] defaultValueForProperty: @"items"];
+		NSArray *initialItemTreeAlias = [[self layoutContext] defaultValueForProperty: @"items"];
 
 		NSParameterAssert([initialItemTree isEqual: initialItemTreeAlias]);
 
 		// FIXME: Pass the current copier
 		NSArray *initialItemTreeCopy = [[initialItemTree mappedCollection] deepCopyWithCopier: [ETCopier copier]];			
-		[_layoutContext setDefaultValue: initialItemTreeCopy
+		[[self layoutContext] setDefaultValue: initialItemTreeCopy
 		                    forProperty: @"items"];
 		RELEASE(initialItemTree);
 	}
@@ -402,7 +409,7 @@ the copying support in ETLayoutItemGroup and ETCompositeLayout/ETLayout). */
 
 	[self prepareNewContextState];
 
-	[_layoutContext setVisibleItems: [_layoutContext items]];
+	[[self layoutContext] setVisibleItems: [[self layoutContext] items]];
 }
 
 - (void) tearDown
@@ -412,7 +419,7 @@ the copying support in ETLayoutItemGroup and ETCompositeLayout/ETLayout). */
 	[self restoreContextState];
 	[self restoreInitialContextState: [self initialStateProperties]];
 
-	[_layoutContext setVisibleItems: [_layoutContext items]];
+	[[self layoutContext] setVisibleItems: [[self layoutContext] items]];
 }
 
 - (void) renderWithItems: (NSArray *)items isNewContent: (BOOL)isNewContent

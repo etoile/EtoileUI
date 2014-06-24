@@ -84,8 +84,8 @@ NSString * const ETSourceDidUpdateNotification = @"ETSourceDidUpdateNotification
 	_sortedItems = nil;
 	_arrangedItems = nil;
 
-	[self assignLayout: [ETFixedLayout layoutWithObjectGraphContext: aContext]];
-	_hasNewLayout = NO;
+	[self setLayout: [ETFixedLayout layoutWithObjectGraphContext: aContext]];
+	//_hasNewLayout = NO;
 	_hasNewContent = NO; /* Private accessors in ETMutationHandler category */
 	_hasNewArrangement = NO;
 	[self setValue: [NSNumber numberWithFloat: 1.0] forVariableStorageKey: kETItemScaleFactorProperty];
@@ -954,18 +954,6 @@ Marks the receiver as needing a layout update. */
 	return _layout;
 }
 
-- (void) assignLayout: (ETLayout *)aLayout
-{
-	[_layout setLayoutContext: nil]; /* Ensures -[ETLayout tearDown] is called */
-	ASSIGN(_layout, aLayout);
-	/* We must remove the item views, otherwise they might remain visible as
-	   subviews (think ETBrowserLayout on GNUstep which has transparent areas),
-	   because view-based layout won't call -setVisibleItems: in -renderWithItems:XXX:. */
-	[self setVisibleItems: [NSArray array]];
-	[self setHasNewLayout: YES];
-	[aLayout setLayoutContext: self];
-}
-
 /** Sets the layout associated with the receiver to present its content. */
 - (void) setLayout: (ETLayout *)layout
 {
@@ -978,12 +966,26 @@ Marks the receiver as needing a layout update. */
 
 	[self willChangeValueForProperty: kETLayoutProperty];
 
-	[self assignLayout: layout];
-	[self didChangeLayout: oldLayout];
-	RELEASE(oldLayout);
-	[self setNeedsLayoutUpdate];
+    [_layout tearDown];
+    ASSIGN(_layout, layout);
+    /* We must remove the item views, otherwise they might remain visible as
+       subviews (think ETBrowserLayout on GNUstep which has transparent areas),
+       because view-based layout won't call -setVisibleItems: in -renderWithItems:XXX:. */
+    [self setVisibleItems: [NSArray array]];
+    [self setHasNewLayout: YES];
+    // TODO: May be safer to restore the default frame here rather than relying
+    // on the next layout update and -resizeItems:toScaleFactor:...
+    //[[self items] makeObjectsPerformSelector: @selector(restoreDefaultFrame)];
 
+    /* Will update ETLayout.layoutContext inverse relationship */
 	[self didChangeValueForProperty: kETLayoutProperty];
+
+    // NOTE: The remaining code requires ETLayout.layoutContext to be set, so we
+    // execute it last
+    [_layout setUp];
+    [self didChangeLayout: oldLayout];
+    RELEASE(oldLayout);
+    [self setNeedsLayoutUpdate];
 }
 
 /** Attempts to reload the children items from the source and updates the layout

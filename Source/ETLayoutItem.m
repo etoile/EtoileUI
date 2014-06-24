@@ -3547,6 +3547,11 @@ returns nil.
 	return [ETWindowItem itemWithObjectGraphContext: [ETUIObject defaultTransientObjectGraphContext]];
 }
 
+- (BOOL) isLayerItem
+{
+    return NO;
+}
+
 /* Live Development */
 
 /** This feature is not yet implemented. */

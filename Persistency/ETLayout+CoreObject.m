@@ -66,8 +66,7 @@ the -setUp logic, that makes sense when deserializing an already set up layout
 or a layout without a context. */
 - (void) didLoadObjectGraph
 {
-    _layoutContext = [self valueForVariableStorageKey: @"layoutContext"];
-    if (_layoutContext != nil)
+    if ([self layoutContext] != nil)
     {
     	[self mapLayerItemIntoLayoutContext];
     }
@@ -91,8 +90,8 @@ or a layout without a context. */
 		return;
 
 	/* Rebuild the handles to manipulate the item copies and not their originals */
-	[self updateKVOForItems: [_layoutContext arrangedItems]];
-	[self buildHandlesForItems: [_layoutContext arrangedItems]];
+	[self updateKVOForItems: [[self layoutContext] arrangedItems]];
+	[self buildHandlesForItems: [[self layoutContext] arrangedItems]];
 }
 
 @end

@@ -396,7 +396,6 @@ since -serializedValueForProperty: doesn't use the direct ivar access. */
 	{
 		item->_parentItem = self;
 	}
-	_layout->_layoutContext = self;
 }
 
 - (void) didLoadObjectGraph

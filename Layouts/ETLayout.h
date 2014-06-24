@@ -143,7 +143,7 @@ Warning: This protocol is very much subject to change. */
 /** See -[ETLayout copyWithZone:layoutContext:]. */
 - (id) copyWithZone: (NSZone *)aZone layoutContext: (id <ETLayoutingContext>)newContext;
 /** See -[ETLayout setLayoutContext:]. */
-- (void) setLayoutContext: (id <ETLayoutingContext>)context;
+- (void) validateLayoutContext: (id <ETLayoutingContext>)context;
 /** See -[ETLayout layoutContext:]. */
 - (id <ETLayoutingContext>) layoutContext;
 /** See -[ETComputedLayout setBorderMargin:]. */
@@ -169,9 +169,6 @@ Warning: This protocol is very much subject to change. */
 
 @interface ETLayout : ETUIObject <NSCopying>
 {
-	@public
-	id _layoutContext; /* Weak reference */
-
 	@private
 	IBOutlet id delegate; /* Weak reference */
 	ETTool *_attachedTool;
@@ -301,6 +298,8 @@ Warning: This protocol is very much subject to change. */
 /** @taskunit Framework Private */
 
 - (void) render: (BOOL)isNewContent;
+- (void) validateLayoutContext: (id <ETLayoutingContext>)context;
 
+@property (nonatomic, readonly) ETLayoutItemGroup *contextItem;
 
 @end

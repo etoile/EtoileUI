@@ -37,6 +37,8 @@
 
 @implementation ETLayout
 
+@dynamic contextItem;
+
 static NSMutableSet *layoutPrototypes = nil;
 
 /** Registers a prototype for every ETLayout subclasses.
@@ -143,7 +145,6 @@ Returns a new ETLayout instance. */
 	if (self == nil)
 		return nil;
 	
-	_layoutContext = nil;
 	delegate = nil;
 	_attachedTool = nil;
 	ASSIGN(_dropIndicator, [ETDropIndicator sharedInstanceForObjectGraphContext: [ETUIObject defaultTransientObjectGraphContext]]);
@@ -186,10 +187,10 @@ tool copy. */
 {
 	ETLayout *newLayout = [super copyWithZone: aZone];
 
-	/* We copy all ivars except _layoutContext and _isRendering */
+	/* We copy all ivars except [self layoutContext] and _isRendering */
 
-	newLayout->_layoutContext = ctxt;
-	newLayout->delegate = delegate;
+	//newLayout->[self layoutContext] = ctxt;
+	//newLayout->delegate = delegate;
 	newLayout->_layerItem = [_layerItem copyWithZone: aZone];
 	newLayout->_dropIndicator = RETAIN(_dropIndicator);
 	newLayout->_attachedTool = [_attachedTool copyWithZone: aZone];
@@ -221,7 +222,7 @@ You can call the superclass implementation or not. */
 - (void) setUpCopyWithZone: (NSZone *)aZone
                   original: (ETLayout *)layoutOriginal
 {
-	NSParameterAssert(_layoutContext != nil);
+	NSParameterAssert([self layoutContext] != nil);
 	[self setUp];
 	// TODO: Implement -setUpCopyWithZone:original: in subclasses or change
 	// -setUp to -setUp: (BOOL)resetLayoutSize.
@@ -347,7 +348,7 @@ The ancestor layout on which the tool was changed can be retrieved with
 - (void) didChangeAttachedTool: (ETTool *)oldTool
                         toTool: (ETTool *)newTool
 {
-	FOREACH([_layoutContext arrangedItems], item, ETLayoutItem *)
+	FOREACH([[self layoutContext] arrangedItems], item, ETLayoutItem *)
 	{
 		[[item layout] didChangeAttachedTool: oldTool
 		                              toTool: newTool];
@@ -363,7 +364,7 @@ Returns the tool attached to the layout, if it replies YES to
 }
 
 /** <override-never />
-Sets the context where the layout should happen. 
+Validates the context where the layout should happen. 
 
 When a layout context is set, with the next layout update the receiver will 
 arrange the layout items in a specific style and order.
@@ -376,32 +377,19 @@ NSInvalidArgumentException is raised.
 
 The layout context is expected to retain its layout, hence the receiver doesn't 
 retain the given context. */
-- (void) setLayoutContext: (id <ETLayoutingContext>)context
+- (void) validateLayoutContext: (id <ETLayoutingContext>)context
 {
 	if (context != nil)
 	{
 		INVALIDARG_EXCEPTION_TEST(context, [self attachedTool] == nil || [(id)context isLayoutItem]);
 	}
-	ETDebugLog(@"Modify layout context from %@ to %@ in %@", _layoutContext, context, self);
-
-	if (context == nil)
-		[self tearDown];
-
-	// NOTE: Avoids retain cycle by weak referencing the context
-	_layoutContext = context;
-
-	if (context != nil)
-		[self setUp];
-
-	// TODO: May be safer to restore the default frame here rather than relying 
-	// on the next layout update and -resizeItems:toScaleFactor:... 
-	//[[_layoutContext items] makeObjectsPerformSelector: @selector(restoreDefaultFrame)];
+	ETDebugLog(@"Modify layout context from %@ to %@ in %@", [self layoutContext], context, self);
 }
 
 /** Returns the context where the layout happens. */
 - (id <ETLayoutingContext>) layoutContext
 {
-	return _layoutContext;
+    return [self contextItem];
 }
 
 /** <override-dummy />Overrides if your subclass requires extra cleanup when the 
@@ -413,7 +401,7 @@ The layout context hasn't yet been touched when this method is called.
 You must call the superclass implementation if you override this method. */
 - (void) tearDown
 {
-	NSParameterAssert(_layoutContext != nil);
+	NSParameterAssert([self layoutContext] != nil);
 	[self unmapLayerItemFromLayoutContext];
 }
 
@@ -426,7 +414,7 @@ The new layout context has been set when this method is called.
 You must call the superclass implementation if you override this method. */
 - (void) setUp
 {
-	NSParameterAssert(_layoutContext != nil);
+	NSParameterAssert([self layoutContext] != nil);
 	/* Reset the layout size to ensure -resizeItems:forNewLayoutSize:oldSize: 
 	   receives a valid old size (neither zero or computed for a previous layout context). */
 	[self resetLayoutSize];
@@ -546,7 +534,7 @@ See also -isScrollable and ETLayoutItem(Scrollable). */
 	container size is altered. */
 - (BOOL) isAllContentVisible
 {
-	return ([[_layoutContext visibleItems] count] == [[_layoutContext items] count]);
+	return ([[[self layoutContext] visibleItems] count] == [[[self layoutContext] items] count]);
 }
 
 /** By default layout size is precisely matching frame size of the container to 
@@ -634,13 +622,13 @@ See also -setDelegate:. */
 /** Returns whether -renderXXX methods can be invoked now. */
 - (BOOL) canRender
 {
-	BOOL hasValidContext = (_layoutContext != nil);
+	BOOL hasValidContext = ([self layoutContext] != nil);
 
 	/* When the layout context is a layout */
-	if (hasValidContext && [_layoutContext isLayoutItem] == NO)
+	if (hasValidContext && [(id)[self layoutContext] isLayoutItem] == NO)
 	{
-		ETAssert([_layoutContext isComposite]);
-		hasValidContext = ([_layoutContext layoutContext] != nil);
+		ETAssert([(ETLayout *)[self layoutContext] isComposite]);
+		hasValidContext = ([(ETLayout *)[self layoutContext] layoutContext] != nil);
 	}
 
 	return (hasValidContext && [self isRendering] == NO);
@@ -660,7 +648,7 @@ returns YES. When NO is returned, wait until it returns YES.  */
 
 	   Don't use -ifResponds to support testing item creation retain count 
 	   easily (see TestLayoutItem.m). */
-	return (_isRendering || ([_layoutContext isLayout] && [(ETLayout *)_layoutContext isRendering]));
+	return (_isRendering || ([(id)[self layoutContext] isLayout] && [(ETLayout *)[self layoutContext] isRendering]));
 }
 
 /** This method is only exposed to be used internally by EtoileUI.
@@ -683,7 +671,7 @@ transparently.<br />
 To explictly update the layout, just uses -[ETLayoutItemGroup updateLayout]. */
 - (void) render: (BOOL)isNewContent
 {
-	if (_layoutContext == nil)
+	if ([self layoutContext] == nil)
 	{
 		ETLog(@"WARNING: Missing layout context in %@... Won't render.", self);
 	}
@@ -692,7 +680,7 @@ To explictly update the layout, just uses -[ETLayoutItemGroup updateLayout]. */
 		return;
 
 	_isRendering = YES;
-	[self renderWithItems: [_layoutContext arrangedItems] isNewContent: isNewContent];
+	[self renderWithItems: [[self layoutContext] arrangedItems] isNewContent: isNewContent];
 	_isRendering = NO;
 }
 
@@ -875,7 +863,7 @@ context and the tree rooted in -layerItem. */
 	   -[ETFixedLayout setLayoutContext:]
 	   -[ETLayoutItemGroup init]
 	   That's why we check -isLayerItem. */
-	if (_layerItem == nil && [_layoutContext isLayoutItem] && [_layoutContext isLayerItem] == NO)
+	if (_layerItem == nil && [(id)[self layoutContext] isLayoutItem] && [(ETLayoutItem *)[self layoutContext] isLayerItem] == NO)
 	{
 		_layerItem = [[ETLayoutItemGroup alloc]
 			initAsLayerItemWithObjectGraphContext: [ETUIObject defaultTransientObjectGraphContext]];
@@ -883,9 +871,9 @@ context and the tree rooted in -layerItem. */
 
 	/* When the layout context is a composite layout, the positional layout 
 	   reuses its layer item */
-	if (_layoutContext != nil && [_layoutContext isLayoutItem] == NO)
+	if ([self layoutContext] != nil && [(id)[self layoutContext] isLayoutItem] == NO)
 	{
-		return [_layoutContext layerItem];
+		return [(ETLayout *)[self layoutContext] layerItem];
 	}
 
 	return _layerItem;
@@ -916,7 +904,7 @@ to be identical to the layout context. */
 
 - (void) mapLayerItemIntoLayoutContext
 {
-	NSParameterAssert(nil != _layoutContext);
+	NSParameterAssert(nil != [self layoutContext]);
 
 	if ([self layerItem] == nil)
 		return;
@@ -931,10 +919,6 @@ to be identical to the layout context. */
 	if ([layoutContext isLayoutItem])
 	{
 		[[self layerItem] setParentItem: layoutContext];
-	}
-	else /* For layout composition, when the layout context is a layout */
-	{
-		[[self layerItem] setParentItem: [layoutContext rootItem]];
 	}
 
 	[self syncLayerItemGeometryWithSize: [layoutContext visibleContentSize]];
@@ -1018,7 +1002,7 @@ The location must be expressed in the layout context coordinates.<br />
 If the given point doesn't lie inside the layout size, nil is returned. */
 - (ETLayoutItem *) itemAtLocation: (NSPoint)location
 {
-	FOREACH([_layoutContext visibleItems], item, ETLayoutItem *)
+	FOREACH([[self layoutContext] visibleItems], item, ETLayoutItem *)
 	{
 		if (NSPointInRect(location, [item frame]))
 				return item;
@@ -1048,7 +1032,7 @@ If the given item is nil, an NSInvalidArgumentException will be raised. */
 {
 	NILARG_EXCEPTION_TEST(item);
 
-	if (nil == _layoutContext)
+	if (nil == [self layoutContext])
 		return ETNullRect;
 
 	return [item frame];

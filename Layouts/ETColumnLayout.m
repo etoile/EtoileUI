@@ -38,7 +38,7 @@
 	ETLineFragment *line = [ETLineFragment verticalLineWithOwner: self 
 	                                                  itemMargin: [self itemMargin]
 	                                                   maxHeight: layoutHeight 
-	                                                   isFlipped: [_layoutContext isFlipped]];
+	                                                   isFlipped: [[self layoutContext] isFlipped]];
 	NSArray *acceptedItems = [line fillWithItems: unlayoutedItems];
 
 	if ([acceptedItems isEmpty])

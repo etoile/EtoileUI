@@ -16,6 +16,8 @@
 
 @implementation ETPositionalLayout
 
+@dynamic contextLayout;
+
 /** <init /> 
 Returns a new positional layout.
 
@@ -54,11 +56,12 @@ tool copy. */
 	return newLayout;
 }
 
+/** Returns the context where the layout happens. */
 - (id <ETLayoutingContext>) layoutContext
 {
-	id <ETLayoutingContext> context = [self valueForVariableStorageKey: @"contextLayout"];
+    ETLayoutItemGroup *contextItem = [self contextItem];
 
-	return (context != nil ? context : [super layoutContext]);
+    return (contextItem != nil ? contextItem : [self contextLayout]);
 }
 
 /** Sets whether the layout context can be resized, when its current size is 
@@ -94,7 +97,7 @@ When a scrollable area item decorates the layout context, -isContentSizeLayout
 always returns YES. */
 - (BOOL) isContentSizeLayout
 {
-	if ([_layoutContext isScrollable])
+	if ([[self layoutContext] isScrollable])
 		return YES;
 
 	return _isContentSizeLayout;

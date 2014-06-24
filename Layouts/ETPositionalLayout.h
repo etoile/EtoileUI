@@ -60,4 +60,8 @@ subclasses. */
 - (NSSize) constrainedItemSize;
 - (void) resizeItems: (NSArray *)items toScaleFactor: (CGFloat)factor;
 
+/** @taskunit Framework Private */
+
+@property (nonatomic, readonly) ETLayout *contextLayout;
+
 @end

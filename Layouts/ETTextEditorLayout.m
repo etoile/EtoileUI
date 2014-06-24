@@ -48,7 +48,7 @@
 {
 	if ([self textRepresentationIncludesLayoutContext])
 	{
-		return [_layoutContext stringValue];
+		return [[self layoutContext] stringValue];
 	}
 	else
 	{

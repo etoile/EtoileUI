@@ -57,8 +57,8 @@ unlike ETPositionalLayout.  */
 
 	/* Rebuild the handles to manipulate the item copies and not their originals */
 	// TODO: May be avoid to copy the original handles in -copyWithZone:layoutContext:
-	[self updateKVOForItems: [_layoutContext arrangedItems]];
-	[self buildHandlesForItems: [_layoutContext arrangedItems]];
+	[self updateKVOForItems: [[self layoutContext] arrangedItems]];
+	[self buildHandlesForItems: [[self layoutContext] arrangedItems]];
 }
 
 - (NSImage *) icon

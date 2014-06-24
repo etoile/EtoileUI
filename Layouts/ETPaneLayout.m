@@ -186,7 +186,7 @@ bar item width, otherwise sets the bar item height.  */
 - (void) tile
 {
 	/* With no layout context, rootSize is zero and the item sizes can be negative. */
-	if (nil == _layoutContext)
+	if (nil == [self layoutContext])
 		return;
 
 	// FIXME: Handle the next line in a more transparent way in ETLayout

@@ -187,7 +187,7 @@
 	
 	if (isRootItem)
 	{
-		nbOfItems = [[_layoutContext arrangedItems] count];
+		nbOfItems = [[[self layoutContext] arrangedItems] count];
 
 		/* First time. Useful when the layout context is browsed or 
 		   inspected without having been loaded and displayed yet. 
@@ -195,8 +195,8 @@
 		   care of loading the items of the layout context. */
 		if (nbOfItems == 0)
 		{
-			[(ETLayoutItemGroup *)_layoutContext reloadIfNeeded];
-			nbOfItems = [[_layoutContext arrangedItems] count];
+			[(ETLayoutItemGroup *)[self layoutContext] reloadIfNeeded];
+			nbOfItems = [[[self layoutContext] arrangedItems] count];
 		}
 	}
 	else if ([item isGroup]) 
@@ -223,7 +223,7 @@
 	
 	if (isRootItem)
 	{
-		childItem = [[_layoutContext arrangedItems] objectAtIndex: rowIndex];
+		childItem = [[[self layoutContext] arrangedItems] objectAtIndex: rowIndex];
 	}
 	else if ([item isGroup])
 	{
@@ -275,11 +275,11 @@
 - (BOOL) outlineView: (NSOutlineView *)outlineView 
 	acceptDrop: (id < NSDraggingInfo >)info item: (id)item childIndex: (int)index
 {
-    ETDebugLog(@"Accept drop in %@", _layoutContext);
+    ETDebugLog(@"Accept drop in %@", [self layoutContext]);
 
 	NSDictionary *metadata = [[ETPickboard localPickboard] firstObjectMetadata];
 	id droppedObject = [[ETPickboard localPickboard] popObjectAsPickCollection: YES];
-	ETLayoutItem *dropTarget = (item != nil ? item : _layoutContext);
+	ETLayoutItem *dropTarget = (item != nil ? item : [self layoutContext]);
 
 	return [[dropTarget actionHandler] handleDropCollection: droppedObject
 	                                               metadata: metadata
@@ -293,10 +293,10 @@
                    proposedItem: (id)item 
              proposedChildIndex: (int)index
 {
-	ETLayoutItem *dropTarget = (item != nil ? item : _layoutContext);
+	ETLayoutItem *dropTarget = (item != nil ? item : [self layoutContext]);
 
     ETDebugLog(@"Validate drop item %@ at %ld with dragging source %@ in %@", [item primitiveDescription],
-		(long)index, [[info draggingSource] primitiveDescription], [_layoutContext primitiveDescription]);
+		(long)index, [[info draggingSource] primitiveDescription], [[self layoutContext] primitiveDescription]);
 	
 	id draggedObject = [[ETPickboard localPickboard] firstObject];
 	NSInteger dropIndex = index;
@@ -321,7 +321,7 @@
 	{
 		id dropItem = validDropTarget;
 
-		if ([validDropTarget isEqual: _layoutContext])
+		if ([validDropTarget isEqual: [self layoutContext]])
 		{
 			dropItem = nil;
 		}
