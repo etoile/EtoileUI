@@ -55,6 +55,8 @@ NSString *ETLayoutItemLayoutDidChangeNotification = @"ETLayoutItemLayoutDidChang
 
 @implementation ETLayoutItem
 
+@dynamic parentItem;
+
 static BOOL showsBoundingBox = NO;
 static BOOL showsFrame = NO;
 
@@ -182,8 +184,6 @@ See also -setView:, -setCoverStyle: and -setActionHandler:.  */
 
 	_defaultValues = [[NSMutableDictionary alloc] init];
 
-	_parentItem = nil;
-
 	_styleGroup = [[ETStyleGroup alloc] initWithObjectGraphContext: aContext];
 	[self setCoverStyle: aStyle];
 	[self setActionHandler: aHandler];
@@ -263,7 +263,6 @@ every subclass that overrides -dealloc. */
 	DESTROY(_coverStyle);
 	DESTROY(_representedObject);
 	DESTROY(_transform);
-	_parentItem = nil; /* weak reference */
 
     [super dealloc];
 }
@@ -515,9 +514,9 @@ This method never returns nil. The returned value is equal to self when the
 receiver has no parent item. */
 - (id) rootItem
 {
-	if (_parentItem != nil)
+	if ([self parentItem] != nil)
 	{
-		return [_parentItem rootItem];	
+		return [[self parentItem] rootItem];	
 	}
 	else
 	{
@@ -556,13 +555,13 @@ Hence -[[[ETLayoutItem alloc] init] baseItem] returns nil. */
 	}
 	else
 	{
-		return [_parentItem baseItem];
+		return [[self parentItem] baseItem];
 	}
 }
 
 - (ETLayoutItemGroup *) controllerItem
 {
-	return [_parentItem controllerItem];
+	return [[self parentItem] controllerItem];
 }
 
 /** Returns whether the receiver is a base item or not.
@@ -576,14 +575,7 @@ By default, returns NO. */
 	return NO;
 }
 
-/** Returns the layout item group to which the receiver belongs to. 
-
-For the root item, returns nil. */
-- (ETLayoutItemGroup *) parentItem
-{
-	return _parentItem;
-}
-
+#if 0
 /** Sets the layout item group to which the receiver belongs to. 
 
 If the given parent is nil, the receiver becomes a root item. 
@@ -594,12 +586,13 @@ to manipulate the item collection that belongs to the parent. */
 - (void) setParentItem: (ETLayoutItemGroup *)parent
 {
 	//ETDebugLog(@"For item %@ with supervisor view %@, modify the parent item from "
-	//	"%@ to %@", self, [self supervisorView], _parentItem, parent, self);
+	//	"%@ to %@", self, [self supervisorView], [self parentItem], parent, self);
 	NSParameterAssert(parent != self);
 	[self willChangeValueForKey: kETParentItemProperty];
-	_parentItem = parent;
+	[self parentItem] = parent;
 	[self didChangeValueForKey: kETParentItemProperty];
 }
+#endif
 
 /** Detaches the receiver from the item group it belongs to.
 
@@ -607,12 +600,12 @@ You are in charge of retaining the receiver, otherwise it could be deallocated
 if no other objects retains it. */
 - (void) removeFromParent
 {
-	if (_parentItem != nil)
+	if ([self parentItem] != nil)
 	{
 		/* -removeItem: will release us, so to be sure we won't deallocated 
 		   right now we use retain/autorelease */
 		RETAIN(self);
-		[_parentItem removeItem: self];
+		[[self parentItem] removeItem: self];
 		AUTORELEASE(self);
 	}
 }
@@ -626,9 +619,9 @@ The receiver itself can be returned. */
 	if ([self displayView] != nil)
 		return self;
 
-	if (_parentItem != nil)
+	if ([self parentItem] != nil)
 	{
-		return [_parentItem supervisorViewBackedAncestorItem];
+		return [[self parentItem] supervisorViewBackedAncestorItem];
 	}
 	else
 	{
@@ -648,9 +641,9 @@ The receiver display view itself can be returned. */
 	if (displayView != nil)
 		return displayView;
 
-	if (_parentItem != nil)
+	if ([self parentItem] != nil)
 	{
-		return [_parentItem enclosingDisplayView];
+		return [[self parentItem] enclosingDisplayView];
 	}
 	else
 	{
@@ -697,13 +690,13 @@ If the given item is equal to self, the resulting index path is a blank one
 	if (item == nil && self == [self rootItem])
 		baseItemReached = YES;
 	
-	if (_parentItem != nil && item != self)
+	if ([self parentItem] != nil && item != self)
 	{
-		indexPath = [_parentItem indexPathFromItem: item];
+		indexPath = [[self parentItem] indexPathFromItem: item];
 		if (indexPath != nil)
 		{
 			indexPath = [indexPath indexPathByAddingIndex: 
-				[(ETLayoutItemGroup *)_parentItem indexOfItem: (id)self]];
+				[(ETLayoutItemGroup *)[self parentItem] indexOfItem: (id)self]];
 		}
 	}
 	else if (baseItemReached)
@@ -754,14 +747,14 @@ the index used by the parent item to reference the receiver. */
 	/* When the parent item uses a dictionary as represented object, try to 
 	   return the key that corresponds to the receiver */
 
-	id parentRepObject = [_parentItem representedObject];
+	id parentRepObject = [[self parentItem] representedObject];
 		
 	/* -identifierAtIndex: is implemented by some classes like NSDictionary */
 	if ([parentRepObject isCollection] && [parentRepObject isEmpty] == NO
 	 && [parentRepObject respondsToSelector: @selector(identifierAtIndex:)]
-	 && [_parentItem usesRepresentedObjectAsProvider])
+	 && [[self parentItem] usesRepresentedObjectAsProvider])
 	{
-		NSInteger index = [_parentItem indexOfItem: self];
+		NSInteger index = [[self parentItem] indexOfItem: self];
 		if (index != NSNotFound)
 		{
 			return [parentRepObject identifierAtIndex: index];
@@ -770,7 +763,7 @@ the index used by the parent item to reference the receiver. */
 
 	/* Otherwise returns item index */
 
-	return [NSString stringWithFormat: @"%ld", (long)[(ETLayoutItemGroup *)_parentItem indexOfItem: (id)self]];
+	return [NSString stringWithFormat: @"%ld", (long)[(ETLayoutItemGroup *)[self parentItem] indexOfItem: (id)self]];
 }
 
 /** Returns the identifier associated with the layout item.
@@ -1530,12 +1523,12 @@ the previous layout in use. */
 	_visible = visible;
 	if (visible)
 	{
-		[_parentItem handleAttachViewOfItem: self];
+		[[self parentItem] handleAttachViewOfItem: self];
 		ETDebugLog(@"Inserted view at %@", NSStringFromRect([self frame]));
 	}
 	else
 	{
-		[_parentItem handleDetachViewOfItem: self];
+		[[self parentItem] handleDetachViewOfItem: self];
 		ETDebugLog(@"Removed view at %@", NSStringFromRect([self frame]));
 	}
 	[self willChangeValueForProperty: kETVisibleProperty];
@@ -1639,11 +1632,11 @@ See also -supervisorView:. */
 	[super setSupervisorView: aSupervisorView sync: syncDirection];
 
 	BOOL noDecorator = (_decoratorItem == nil);
-	BOOL hasParent = (_parentItem != nil);
+	BOOL hasParent = ([self parentItem] != nil);
 	
 	if (noDecorator && hasParent)
 	{
-		[_parentItem handleAttachViewOfItem: self];
+		[[self parentItem] handleAttachViewOfItem: self];
 	}
 }
 
@@ -2036,7 +2029,7 @@ More explanations in -display. */
 	NSRect displayRect = [[self firstDecoratedItem] convertDisplayRect: dirtyRect 
 	                        toAncestorDisplayView: &displayView
 							rootView: [[[self enclosingDisplayView] window] contentView]
-							parentItem: _parentItem];
+							parentItem: [self parentItem]];
 
 	[displayView setNeedsDisplayInRect: displayRect];
 }
@@ -2071,7 +2064,7 @@ More explanations in -display. */
 	NSRect displayRect = [[self firstDecoratedItem] convertDisplayRect: dirtyRect
 	                        toAncestorDisplayView: &displayView
 							rootView: [[[self enclosingDisplayView] window] contentView]
-							parentItem: _parentItem];
+							parentItem: [self parentItem]];
 	[displayView displayRect: displayRect];
 }
 
@@ -2180,7 +2173,7 @@ equivalent to rect parameter expressed in the receiver coordinate space. */
 	NSRect rectToTranslate = rect;
 	NSRect rectInParent = rect;
 
-	if ([self isFlipped] != [_parentItem isFlipped])
+	if ([self isFlipped] != [[self parentItem] isFlipped])
 	{
 		rectToTranslate.origin.y = [self height] - rect.origin.y - rect.size.height;
 	}
@@ -2210,7 +2203,7 @@ rect parameter expressed in the parent item content coordinate space. */
 	rectInReceiver.origin.x = rect.origin.x - [self x];
 	rectInReceiver.origin.y = rect.origin.y - [self y];
 
-	if ([self isFlipped] != [_parentItem isFlipped])
+	if ([self isFlipped] != [[self parentItem] isFlipped])
 	{
 		rectInReceiver.origin.y = [self height] - rectInReceiver.origin.y - rectInReceiver.size.height;
 	}
@@ -2234,17 +2227,17 @@ In case the receiver is not a descendent or ancestor is nil, returns a null rect
 	if (self == ancestor)
 		return rect;
 
-	if (ETIsNullRect(rect) || ancestor == nil || _parentItem == nil)
+	if (ETIsNullRect(rect) || ancestor == nil || [self parentItem] == nil)
 		return ETNullRect;
 
 	NSRect newRect = rect;
 
-	if (_parentItem != ancestor)
+	if ([self parentItem] != ancestor)
 	{
-		newRect = [_parentItem convertRect: rect fromItem: ancestor];
+		newRect = [[self parentItem] convertRect: rect fromItem: ancestor];
 	}
 
-	return [self convertRectFromParent: [_parentItem convertRectToContent: newRect]];
+	return [self convertRectFromParent: [[self parentItem] convertRectToContent: newRect]];
 }
 
 /** Returns a rect expressed in ancestor coordinate space equivalent to rect 
@@ -2253,7 +2246,7 @@ parameter expressed in the receiver coordinate space.
 In case the receiver is not a descendent or ancestor is nil, returns a null rect. */
 - (NSRect) convertRect: (NSRect)rect toItem: (ETLayoutItemGroup *)ancestor
 {
-	if (ETIsNullRect(rect) || _parentItem == nil || ancestor == nil)
+	if (ETIsNullRect(rect) || [self parentItem] == nil || ancestor == nil)
 		return ETNullRect;
 
 	NSRect newRect = rect;
@@ -2329,7 +2322,7 @@ parent item content coordinate space.
 This method checks whether the parent item is flipped or not. */
 - (BOOL) containsPoint: (NSPoint)point
 {
-	return NSMouseInRect(point, [self frame], [_parentItem isFlipped]);
+	return NSMouseInRect(point, [self frame], [[self parentItem] isFlipped]);
 }
 
 /** Returns whether a point expressed in the receiver coordinate space is inside 
@@ -2412,7 +2405,7 @@ frame is returned by -frame in all cases, hence when ETFreeLayout is in use,
 
 - (void) updatePersistentGeometryIfNeeded
 {
-	ETLayout *parentLayout = [_parentItem layout];
+	ETLayout *parentLayout = [[self parentItem] layout];
 
 	if ([parentLayout isPositional] && [parentLayout isComputedLayout] == NO)
 		[self setPersistentFrame: [self frame]];
@@ -2601,7 +2594,7 @@ Marks the parent item as needing a layout update. */
 	}
 
 	[self updatePersistentGeometryIfNeeded];
-	[_parentItem setNeedsLayoutUpdate];
+	[[self parentItem] setNeedsLayoutUpdate];
 	[self didChangeValueForEmbeddingProperty: kETPositionProperty];
 }
 
@@ -2748,7 +2741,7 @@ the receiver has no decorator.  */
 	[self setNeedsLayoutUpdate];
 	if (_decoratorItem == nil)
 	{
-		[_parentItem setNeedsLayoutUpdate];
+		[[self parentItem] setNeedsLayoutUpdate];
 	}
 	[self didChangeValueForEmbeddingProperty: kETContentBoundsProperty];
 }
@@ -2815,7 +2808,7 @@ the receiver has no decorator. */
 	[self setNeedsLayoutUpdate];
 	if (_decoratorItem == nil)
 	{
-		[_parentItem setNeedsLayoutUpdate];
+		[[self parentItem] setNeedsLayoutUpdate];
 	}
 	[self didChangeValueForProperty: kETTransformProperty];
 }
@@ -2894,7 +2887,7 @@ the receiver has no decorator. */
 	[self setNeedsLayoutUpdate];
 	if (_decoratorItem == nil)
 	{
-		[_parentItem setNeedsLayoutUpdate];
+		[[self parentItem] setNeedsLayoutUpdate];
 	}
 	[self didChangeValueForProperty: kETBoundingBoxProperty];
 }
@@ -2988,7 +2981,7 @@ TODO: Autoresizing mask isn't yet supported when the receiver has no view. */
 	[self setNeedsLayoutUpdate];
 	if (_decoratorItem == nil)
 	{
-		[_parentItem setNeedsLayoutUpdate];
+		[[self parentItem] setNeedsLayoutUpdate];
 	}
 
 	[self didChangeValueForProperty: kETAutoresizingMaskProperty];

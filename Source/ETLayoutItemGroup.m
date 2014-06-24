@@ -119,20 +119,7 @@ See also -isLayerItem. */
 	   have to worry about nullifying weak references their element might have. */
 	DESTROY(_arrangedItems);
 	DESTROY(_sortedItems);
-	/* We now nullify the weak references our children hold.
-	   We don't use FOREACH to avoid -objectEnumerator which would retain the
-	   children and make the memory management more complex to test in the tree
-	   structure since the returned enumerator is autoreleased and won't
-	   release the children before the autorelease pool is popped. */
-	int n = [_items count];
-	for (int i = 0; i < n; i++)
-	{
-		ETLayoutItem *child = [_items objectAtIndex: i];
-		/* We bypass -setParentItem: to be sure we won't be trigger a KVO
-		   notification that would retain/release us in a change dictionary. */
-		child->_parentItem = nil;
-	}
-	if (n > 0 && [[ETLayoutExecutor sharedInstance] isEmpty] == NO)
+	if ([_items isEmpty] == NO && [[ETLayoutExecutor sharedInstance] isEmpty] == NO)
 	{
 		NSSet *itemSet = [[NSSet alloc] initWithArray: _items];
 		[(ETLayoutExecutor *)[ETLayoutExecutor sharedInstance] removeItems: itemSet];
@@ -388,7 +375,7 @@ See also -handleDetachViewOfItem: and -[ETUItem displayView]. */
 	if (noViewToAttach)
 		return;
 
-	BOOL isAlreadyAttached = [[itemDisplayView superview] isEqual: [_parentItem supervisorView]];
+	BOOL isAlreadyAttached = [[itemDisplayView superview] isEqual: [[self parentItem] supervisorView]];
 
 	/* We don't want to change the subview ordering when we simply switch
 	   the visibility */
@@ -691,7 +678,7 @@ See also -setSource:, -isBaseItem and -nextResponder. */
 
 - (ETLayoutItemGroup *) controllerItem
 {
-	return ([self controller] != nil ? self : [_parentItem controllerItem]);
+	return ([self controller] != nil ? self : [[self parentItem] controllerItem]);
 }
 
 /** Adds the given item to the receiver children. */

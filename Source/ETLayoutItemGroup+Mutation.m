@@ -137,7 +137,12 @@ To do so, -canReload checks -isMutating. */
 	return ([[self baseItem] shouldMutateRepresentedObject] && [anObject isMutableCollection]);
 }
 
-- (void) handleInsertItem: (ETLayoutItem *)item 
+- (NSIndexSet *) insertionIndexesForIndex: (NSUInteger)index
+{
+    return (index == ETUndeterminedIndex ? INDEXSET([self numberOfItems]) : INDEXSET(index));
+}
+
+- (void) handleInsertItem: (ETLayoutItem *)item
                   atIndex: (NSUInteger)index 
                      hint: (id)hint 
                moreComing: (BOOL)moreComing
@@ -151,6 +156,10 @@ To do so, -canReload checks -isMutating. */
 		return;
 	}
 
+    [self willChangeValueForProperty: @"items"
+                           atIndexes: [self insertionIndexesForIndex: index]
+                         withObjects: A(item)
+                        mutationKind: ETCollectionMutationKindInsertion];
 	_mutating = YES;
 
 	if ([self isReloading] == NO)
@@ -168,6 +177,10 @@ To do so, -canReload checks -isMutating. */
 	[self endCoalescingModelMutation];
 
 	_mutating = NO;
+    [self didChangeValueForProperty: @"items"
+                          atIndexes: [self insertionIndexesForIndex: index]
+                        withObjects: A(item)
+                       mutationKind: ETCollectionMutationKindInsertion];
 }
 
 - (void) mutateRepresentedObjectForInsertedItem: (ETLayoutItem *)item 
@@ -205,6 +218,19 @@ To do so, -canReload checks -isMutating. */
 	[parentCollection insertObject: insertedValue atIndex: index hint: hint];
 }
 
+- (NSIndexSet *) removalIndexesForItem: (ETLayoutItem *)item atIndex: (NSUInteger)index
+{
+    NSUInteger removalIndex = index;
+
+    if (removalIndex == ETUndeterminedIndex)
+    {
+        ETAssert(item != nil);
+        removalIndex = [_items indexOfObject: item];
+        ETAssert(removalIndex != NSNotFound);
+    }
+    return INDEXSET(removalIndex);
+}
+
 - (void) handleRemoveItem: (ETLayoutItem *)item
                   atIndex: (NSUInteger)index 
                      hint: (id)hint 
@@ -217,6 +243,14 @@ To do so, -canReload checks -isMutating. */
 	if ([[item parentItem] isEqual: self] == NO)
 		return;
 
+    // FIXME: For batch mutation, the indexes are invalid, because we don't
+    // snapshot the item collection.
+    NSIndexSet *indexes = [self removalIndexesForItem: item atIndex: index];
+
+    [self willChangeValueForProperty: @"items"
+                           atIndexes: indexes
+                         withObjects: A(item)
+                        mutationKind: ETCollectionMutationKindRemoval];
 	_mutating = YES;
 
 	/* Take note that -reload calls -removeAllItems. 
@@ -236,6 +270,10 @@ To do so, -canReload checks -isMutating. */
 	[self endCoalescingModelMutation];
 
 	_mutating = NO;
+    [self didChangeValueForProperty: @"items"
+                          atIndexes: indexes
+                        withObjects: A(item)
+                       mutationKind: ETCollectionMutationKindRemoval];
 }
 
 - (void) mutateRepresentedObjectForRemovedItem: (ETLayoutItem *)item

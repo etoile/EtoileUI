@@ -29,9 +29,9 @@
 	{
 		return (ETLayoutItemGroup *)self;
 	}
-	else if (_parentItem != nil)
+	else if ([self parentItem] != nil)
 	{
-		return [_parentItem parentItem];	
+		return [[self parentItem] parentItem];	
 	}
 	else
 	{
@@ -60,7 +60,7 @@
 	}
 	else
 	{
-		return [_parentItem parentItem];
+		return [[self parentItem] parentItem];
 	}
 }
 
@@ -390,12 +390,6 @@ since -serializedValueForProperty: doesn't use the direct ivar access. */
 	_hasNewLayout = YES;
 	_sorted = NO;
 	_filtered = NO;
-
-	// FIXME: Remove once we use the relationship cache
-	for (ETLayoutItem *item in _items)
-	{
-		item->_parentItem = self;
-	}
 }
 
 - (void) didLoadObjectGraph

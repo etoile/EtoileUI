@@ -110,10 +110,6 @@ and centers it. A strech is a scale that doesn't preserve the content proportion
 	// in an external dictionary.
 	@private
 	NSMutableDictionary *_defaultValues;
-
-	@protected
-	ETLayoutItemGroup *_parentItem;
-	@private
 	id _representedObject;
 	ETStyleGroup *_styleGroup;
 	ETStyle *_coverStyle;
@@ -171,9 +167,13 @@ and centers it. A strech is a scale that doesn't preserve the content proportion
 - (ETLayoutItemGroup *) controllerItem;
 - (ETLayoutItemGroup *) baseItem;
 - (BOOL) isBaseItem;
-- (ETLayoutItemGroup *) parentItem;
-- (void) setParentItem: (ETLayoutItemGroup *)parent;
-- (void ) removeFromParent;
+
+/** Returns the layout item group to which the receiver belongs to.
+ 
+For the root item, returns nil. */
+@property (nonatomic, readonly) ETLayoutItemGroup *parentItem;
+
+- (void) removeFromParent;
 - (ETView *) enclosingDisplayView;
 - (ETLayoutItem *) supervisorViewBackedAncestorItem;
 - (id) windowBackedAncestorItem;
