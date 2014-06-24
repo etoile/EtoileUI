@@ -85,6 +85,11 @@ Open Issues
 
 - Pass the controller object graph context to -newItemWithRepresentedObject:options:
 
+- Decide whether -parentItem or -enclosingItem should return -hostItem
+
+    - in the current implementation, -parentItem returns -hostItem to prevent rewriting geometry conversion methods to support both -parentItem and -hostItem
+    - returning -hostItem with -enclosingItem rather than -parentItem is probably cleaner... but this will impact geometry conversion, action propagation in the responder chain, and redisplay.
+
 
 Testing
 -------

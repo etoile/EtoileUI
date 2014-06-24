@@ -800,7 +800,7 @@ An NSInvalidArgumentException is raised when any given item is nil. */
 	   and -items are front-to-back.
 	   -trySendEventToWidgetView: delivers the events to the field editor view. */
 	[[[self window] contentView] addSubview: [editorItem supervisorView]];
-	[editorItem setParentItem: [self firstDecoratedItem]];
+	[editorItem setHostItem: [self firstDecoratedItem]];
 
 	/* Start to delegate text editing events to the text view with a basic tool.
 	   We have no dedicated tool and it is not very important because we 

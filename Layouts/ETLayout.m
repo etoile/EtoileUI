@@ -918,7 +918,7 @@ to be identical to the layout context. */
 	   main layout item tree. */
 	if ([layoutContext isLayoutItem])
 	{
-		[[self layerItem] setParentItem: layoutContext];
+		[[self layerItem] setHostItem: layoutContext];
 	}
 
 	[self syncLayerItemGeometryWithSize: [layoutContext visibleContentSize]];
@@ -926,7 +926,7 @@ to be identical to the layout context. */
 
 - (void) unmapLayerItemFromLayoutContext
 {
-	[[self layerItem] setParentItem: nil];
+	[[self layerItem] setHostItem: nil];
 }
 
 /** <override-dummy />

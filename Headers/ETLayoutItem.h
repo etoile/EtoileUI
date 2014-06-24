@@ -168,9 +168,11 @@ and centers it. A strech is a scale that doesn't preserve the content proportion
 - (ETLayoutItemGroup *) baseItem;
 - (BOOL) isBaseItem;
 
-/** Returns the layout item group to which the receiver belongs to.
+/** The item group to which the receiver belongs to.
  
-For the root item, returns nil. */
+For the root item, returns nil.
+
+If a host item is set, returns -hostItem. */
 @property (nonatomic, readonly) ETLayoutItemGroup *parentItem;
 
 - (void) removeFromParent;
@@ -386,6 +388,17 @@ For the root item, returns nil. */
 - (id) responder;
 - (ETWindowItem *) provideWindowItem;
 - (BOOL) isLayerItem;
+
+/** The foster parent.
+
+The receiver returns the host item as -parentItem, but doesn't appear in the 
+children of the host item.
+ 
+-[ETLayout layerItem] and -[ETFirstResponderSharingArea activeFieldEditorItem] 
+are connected to the item tree with -hostItem.
+ 
+See also -addItem: and -parentItem. */
+@property (nonatomic, retain) ETLayoutItemGroup *hostItem;
 
 @end
 

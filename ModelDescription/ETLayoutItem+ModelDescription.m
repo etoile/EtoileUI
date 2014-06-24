@@ -30,6 +30,7 @@
 	ETPropertyDescription *parentItem = [ETPropertyDescription descriptionWithName: @"parentItem" type: (id)@"ETLayoutItemGroup"];
 	[parentItem setOpposite: (id)@"ETLayoutItemGroup.items"];
 	[parentItem setDerived: YES];
+    ETPropertyDescription *hostItem = [ETPropertyDescription descriptionWithName: @"hostItem" type: (id)@"ETLayoutItemGroup"];
 	ETPropertyDescription *identifier = [ETPropertyDescription descriptionWithName: @"identifier" type: (id)@"NSString"];
 	ETPropertyDescription *name = [ETPropertyDescription descriptionWithName: @"name" type: (id)@"NSString"];
 	ETPropertyDescription *image = [ETPropertyDescription descriptionWithName: @"image" type: (id)@"NSImage"];
@@ -142,7 +143,7 @@
 	// be declared among the persistent properties or we should support to
 	// override the entity description bound to ETLayoutItem (making possible 
 	// to redeclare these properties as persistent if no view is used).
-	NSArray *transientProperties = A(parentItem, baseItem, rootItem, indexPath,
+	NSArray *transientProperties = A(parentItem, hostItem, baseItem, rootItem, indexPath,
 		isBaseItem, value, subject, style, frame, x, y, width, height, target,
 		acceptsActions, inspector, title, objectValue, formatter,
 		minValue, maxValue, pickMetadata, UIBuilderAction, attachedTool);

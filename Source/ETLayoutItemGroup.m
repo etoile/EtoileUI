@@ -422,7 +422,6 @@ Symetric method to -handleDetachItem: */
 	{
 		[[item parentItem] removeItem: item];
 	}
-	[item setParentItem: self];
 	RELEASE(item);
 	[self handleAttachViewOfItem: item];
 }
@@ -438,7 +437,6 @@ You must always call the superclass implementation.
 Symetric method to -handleAttachItem: */
 - (void) handleDetachItem: (ETLayoutItem *)item
 {
-	[item setParentItem: nil];
 	[self handleDetachViewOfItem: item];
 }
 

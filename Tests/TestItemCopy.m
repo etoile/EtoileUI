@@ -122,7 +122,7 @@ DEALLOC(DESTROY(itemFactory); DESTROY(item); DESTROY(itemGroup))
 
 - (NSArray *) basicNilItemProperties
 {
-	return  A(kETBaseItemProperty, kETRootItemProperty, kETIdentifierProperty, 
+	return  A(@"hostItem", kETBaseItemProperty, kETRootItemProperty, kETIdentifierProperty,
 		kETValueProperty, kETValueKeyProperty, kETStyleProperty, @"targetId",
 		kETInspectorProperty, @"title", @"formatter", @"attachedTool");
 }

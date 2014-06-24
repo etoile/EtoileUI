@@ -55,7 +55,7 @@ NSString *ETLayoutItemLayoutDidChangeNotification = @"ETLayoutItemLayoutDidChang
 
 @implementation ETLayoutItem
 
-@dynamic parentItem;
+@dynamic hostItem;
 
 static BOOL showsBoundingBox = NO;
 static BOOL showsFrame = NO;
@@ -575,24 +575,12 @@ By default, returns NO. */
 	return NO;
 }
 
-#if 0
-/** Sets the layout item group to which the receiver belongs to. 
-
-If the given parent is nil, the receiver becomes a root item. 
-
-You must never call this method directly, unless you write a subclass.<br />
-To change the parent, use -addItem:, -removeFromParent and other similar methods 
-to manipulate the item collection that belongs to the parent. */
-- (void) setParentItem: (ETLayoutItemGroup *)parent
+- (ETLayoutItemGroup *) parentItem
 {
-	//ETDebugLog(@"For item %@ with supervisor view %@, modify the parent item from "
-	//	"%@ to %@", self, [self supervisorView], [self parentItem], parent, self);
-	NSParameterAssert(parent != self);
-	[self willChangeValueForKey: kETParentItemProperty];
-	[self parentItem] = parent;
-	[self didChangeValueForKey: kETParentItemProperty];
+    ETLayoutItemGroup *parent = [self valueForVariableStorageKey: kETParentItemProperty];
+
+    return (parent != nil ? parent : [self hostItem]);
 }
-#endif
 
 /** Detaches the receiver from the item group it belongs to.
 
@@ -3543,6 +3531,20 @@ returns nil.
 - (BOOL) isLayerItem
 {
     return NO;
+}
+
+- (void) setHostItem: (ETLayoutItemGroup *)host
+{
+    INVALIDARG_EXCEPTION_TEST(host, host != self);
+    if ([self valueForVariableStorageKey: kETParentItemProperty] != nil)
+    {
+        [NSException raise: NSInternalInconsistencyException
+                    format: @"The receiver must have no parent to set a host item."];
+    }
+    
+    [self willChangeValueForProperty: @"hostItem"];
+    [self setValue: host forVariableStorageKey: @"hostItem"];
+    [self didChangeValueForProperty: @"hostItem"];
 }
 
 /* Live Development */
