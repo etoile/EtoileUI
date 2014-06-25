@@ -36,6 +36,7 @@
 
 /** @taskunit Serialization */
 
+- (BOOL) isCoreObjectReference: (id)value;
 - (id) serializedRepresentationForObject: (id)anObject;
 - (NSString *) serializedValueForWeakTypedReference: (id)value;
 - (id) weakTypedReferenceForSerializedValue: (NSString *)value;

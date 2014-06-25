@@ -283,8 +283,8 @@ since -serializedValueForProperty: doesn't use the direct ivar access. */
 
 	if ([self isCoreObjectReference: ref])
 	{
-		return [self objectForSerializedReference: ref
-		                      propertyDescription: [self propertyDescriptionForRepresentedObject]];
+		object = [self objectForSerializedReference: ref
+		                        propertyDescription: [self propertyDescriptionForRepresentedObject]];
 	}
 	else
 	{

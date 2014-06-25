@@ -18,6 +18,7 @@
 #import "ETModelBuilderRelationshipController.h"
 #import "ETModelDescriptionRenderer.h"
 #import "EtoileUIProperties.h"
+#import "ETObjectValueFormatter.h"
 #import "ETOutlineLayout.h"
 #import "ETCompatibility.h"
 
@@ -50,7 +51,7 @@
 	return layout;
 }
 
-- (ETModelDescriptionRenderer *) rendererWithController: (ETController *)aController
+- (ETModelDescriptionRenderer *) rendererWithController: (ETModelBuilderController *)aController
 {
 	ETModelDescriptionRenderer *renderer = [ETModelDescriptionRenderer renderer];
 	ETItemValueTransformer *transformer = [ETModelBuilderController newRelationshipValueTransformer];
@@ -65,7 +66,7 @@
 
 	[renderer setValueTransformer: transformer forType: metaEntityDesc];
 	[renderer setValueTransformer: transformer forType: metaPropertyEntityDesc];
-	[[renderer formatterForType: rootEntityDesc] setDelegate: aController];
+	[(ETObjectValueFormatter *)[renderer formatterForType: rootEntityDesc] setDelegate: aController];
 
 	return renderer;
 }
