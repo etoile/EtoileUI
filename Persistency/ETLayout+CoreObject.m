@@ -198,3 +198,22 @@ is not an option. */
 }
 
 @end
+
+@implementation ETCompositeLayout (CoreObject)
+@end
+
+@implementation ETPaneLayout (CoreObject)
+
+- (void) didLoadObjectGraph
+{
+    [super didLoadObjectGraph];
+
+	/* Replicate the observer set up in -setBarItem: */
+	[[NSNotificationCenter defaultCenter] 
+		   addObserver: self
+	          selector: @selector(itemGroupSelectionDidChange:)
+		          name: ETItemGroupSelectionDidChangeNotification 
+			    object: _barItem];
+}
+
+@end

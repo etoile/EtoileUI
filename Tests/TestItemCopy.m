@@ -472,7 +472,6 @@ DEALLOC(DESTROY(itemFactory); DESTROY(item); DESTROY(itemGroup))
 	RELEASE(newItemGroup);
 }
 
-#if 0
 // NOTE: Test ETCompositeLayout and ETPaneLayout copying at the same time.
 - (void) testMasterDetailPaneLayoutCopy
 {
@@ -508,7 +507,9 @@ DEALLOC(DESTROY(itemFactory); DESTROY(item); DESTROY(itemGroup))
 
 	/* Fairly similar to -[TestPaneLayout testSetUpLayout/testUpdateLayout] */
 	UKIntsEqual(3, [[layoutCopy barItem] numberOfItems]);
-	UKObjectsEqual([[layoutCopy contentItem] firstItem], [[[layoutCopy barItem] firstItem] representedObject]);
+	// FIXME: ETLayoutItem.representedObject doesn't support object substitution
+    // based on the COCopier mapping.
+    //UKObjectsEqual([[layoutCopy contentItem] firstItem], [[[layoutCopy barItem] firstItem] representedObject]);
 	UKStringsEqual(@"Hilarity", [[[layoutCopy barItem] itemAtIndex: 1] name]);
 	UKIntsEqual(1, [[layoutCopy contentItem] numberOfItems]);
 	UKStringsEqual(@"Ubiquity", [[[layoutCopy contentItem] firstItem] name]);
@@ -516,6 +517,6 @@ DEALLOC(DESTROY(itemFactory); DESTROY(item); DESTROY(itemGroup))
 
 	RELEASE(newItemGroup);
 }
-#endif
+
 @end
 

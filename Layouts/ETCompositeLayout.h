@@ -64,7 +64,7 @@
 {
 	@private
 	ETLayoutItemGroup *_rootItem;
-	ETLayoutItemGroup *_targetItem; /* a descendent of the root virtual node */
+	ETLayoutItemGroup *_firstPresentationItem; /* a descendent of the root virtual node */
 }
 
 + (id) defaultPresentationProxyWithFrame: (NSRect)aRect

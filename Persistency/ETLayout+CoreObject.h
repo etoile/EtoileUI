@@ -8,9 +8,11 @@
 
 #import <Foundation/Foundation.h>
 #import <EtoileUI/ETLayout.h>
+#import <EtoileUI/ETCompositeLayout.h>
 #import <EtoileUI/ETFreeLayout.h>
 #import <EtoileUI/ETTemplateItemLayout.h>
 #import <EtoileUI/ETTableLayout.h>
+#import <EtoileUI/ETPaneLayout.h>
 
 @class COEditingContext, COObject;
 
@@ -18,4 +20,10 @@
 @end
 
 @interface ETTemplateItemLayout (CoreObject)
+@end
+
+@interface ETCompositeLayout (CoreObject)
+@end
+
+@interface ETPaneLayout (CoreObject)
 @end

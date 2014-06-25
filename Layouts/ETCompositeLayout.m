@@ -90,7 +90,7 @@
 	           objectGraphContext: aContext];
 }
 
-DEALLOC(DESTROY(_rootItem); DESTROY(_targetItem));
+DEALLOC(DESTROY(_rootItem); DESTROY(_firstPresentationItem));
 
 - (id) copyWithZone: (NSZone *)aZone layoutContext: (id <ETLayoutingContext>)ctxt
 {
@@ -158,7 +158,7 @@ The holder item is either:
 /** Returns the layout item to which the layout context content can be routed. */
 - (id) firstPresentationItem
 {
-	return _targetItem;
+	return _firstPresentationItem;
 }
 
 /** Sets the layout item to which the layout context content can be routed. 
@@ -176,7 +176,7 @@ Both represented object and source will be reset to nil on the given item. */
 		[[self proposedParentItemForFirstPresentationItem] addItem: targetItem];
 	}
 
-	ASSIGN(_targetItem, targetItem);
+	ASSIGN(_firstPresentationItem, targetItem);
 }
 
 /** Returns whether the receiver routes the layout context content to the first 
