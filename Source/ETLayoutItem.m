@@ -46,7 +46,6 @@ NSString *ETLayoutItemLayoutDidChangeNotification = @"ETLayoutItemLayoutDidChang
 #define DETAILED_DESCRIPTION
 
 @interface ETLayoutItem (Private) <ETWidget>
-- (NSString *) defaultIdentifier;
 - (void) setViewAndSync: (NSView *)newView;
 - (NSRect) bounds;
 - (void) setBoundsSize: (NSSize)size;
@@ -719,39 +718,6 @@ This method is equivalent to [[self rootItem] indexPathForItem: self]. */
 {
 	// TODO: Test whether it is worth to optimize or not
 	return [[self rootItem] indexPathForItem: self];
-}
-
-/* By default, returns the name.
-
-If -name returns nil or an empty string, the identifier is a string made of 
-the index used by the parent item to reference the receiver. */
-- (NSString *) defaultIdentifier
-{
-	if ([[self name] length] > 0)
-	{
-		return [self name];
-	}
-	
-	/* When the parent item uses a dictionary as represented object, try to 
-	   return the key that corresponds to the receiver */
-
-	id parentRepObject = [[self parentItem] representedObject];
-		
-	/* -identifierAtIndex: is implemented by some classes like NSDictionary */
-	if ([parentRepObject isCollection] && [parentRepObject isEmpty] == NO
-	 && [parentRepObject respondsToSelector: @selector(identifierAtIndex:)]
-	 && [[self parentItem] usesRepresentedObjectAsProvider])
-	{
-		NSInteger index = [[self parentItem] indexOfItem: self];
-		if (index != NSNotFound)
-		{
-			return [parentRepObject identifierAtIndex: index];
-		}
-	}
-
-	/* Otherwise returns item index */
-
-	return [NSString stringWithFormat: @"%ld", (long)[(ETLayoutItemGroup *)[self parentItem] indexOfItem: (id)self]];
 }
 
 /** Returns the identifier associated with the layout item.
