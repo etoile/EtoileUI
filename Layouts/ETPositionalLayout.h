@@ -10,6 +10,8 @@
 #import <EtoileUI/ETGraphicsBackend.h>
 #import <EtoileUI/ETLayout.h>
 
+@class ETTemplateItemLayout;
+
 // NOTE: May be this should be turned into a mask
 /** Describes how the layouted items are resized at the beginning of the layout 
 rendering.
@@ -62,6 +64,6 @@ subclasses. */
 
 /** @taskunit Framework Private */
 
-@property (nonatomic, readonly) ETLayout *contextLayout;
+@property (nonatomic, readonly) ETTemplateItemLayout *contextLayout;
 
 @end

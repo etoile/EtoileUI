@@ -15,6 +15,7 @@
 #import "ETLayoutItemGroup.h"
 #import "ETLayoutExecutor.h"
 #import "ETTool.h"
+#import "ETView.h"
 #import "ETWindowItem.h"
 
 @implementation Person

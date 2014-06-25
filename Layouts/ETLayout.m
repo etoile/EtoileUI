@@ -855,12 +855,10 @@ context and the tree rooted in -layerItem. */
 	   -[ETFixedLayout layerItem]
 	   -[ETFixedLayout mapLayerItemInLayoutContext]
 	   -[ETFixedLayout setUp]
-	   -[ETFixedLayout setLayoutContext:]
 	   -[ETLayoutItemGroup init]
 	   -[ETFixedLayout layerItem]
 	   -[ETFixedLayout mapLayerItemInLayoutContext]
 	   -[ETFixedLayout setUp]
-	   -[ETFixedLayout setLayoutContext:]
 	   -[ETLayoutItemGroup init]
 	   That's why we check -isLayerItem. */
 	if (_layerItem == nil && [(id)[self layoutContext] isLayoutItem] && [(ETLayoutItem *)[self layoutContext] isLayerItem] == NO)

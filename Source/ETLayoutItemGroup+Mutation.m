@@ -415,47 +415,41 @@ This method is only invoked if the receiver item bound to the represented object
 is an item group. */
 - (NSArray *) itemsFromRepresentedObject
 {
-	NSMutableArray *items = nil;
-	id representedObject = [self representedObject];
-	
-	if ([representedObject isCollection])
-	{
-		id collection = representedObject;
+	if ([[self representedObject] isCollection] == NO)
+        return [NSArray array];
 
-		/* Project the collection to get represented objects for future children */
-		if ([collection isKeyed] || [collection isKindOfClass: [ETCollectionViewpoint class]])
-		{
-			// NOTE: This section must remains in sync with -[ETItemTemplate newItemWithURL:options:]
-			if ([collection respondsToSelector: @selector(viewpointArray)])
-			{
-				collection = [collection viewpointArray];
-			}
-			else
-			{
-				collection = [collection arrayRepresentation];
-			}
-		}
-		ETAssert([representedObject count] == [collection count]);
+    NSMutableArray *items = nil;
+    id collection = [self representedObject];
 
-		items = [NSMutableArray arrayWithCapacity: [collection count]];
+    /* Project the collection to get represented objects for future children */
+    if ([collection isKeyed] || [collection isKindOfClass: [ETCollectionViewpoint class]])
+    {
+        // NOTE: This section must remains in sync with -[ETItemTemplate newItemWithURL:options:]
+        if ([collection respondsToSelector: @selector(viewpointArray)])
+        {
+            collection = [collection viewpointArray];
+        }
+        else
+        {
+            collection = [collection arrayRepresentation];
+        }
+    }
+    ETAssert([[self representedObject] count] == [collection count]);
 
-		/* Don't enumerate the collection directly. For keyed collections, this 
-		   is critical since the enumeration applies to the keys or key-value 
-		   pairs (ETAspectCategory and ETAspectRepository whose -content is a 
-		   key-value pair array). Enumerating key-value pairs rather than 
-		   the keyed collection values is supported but must be decided at 
-		   projection time (see above). */
-		for (id object in [collection objectEnumerator])
-		{
-			[items addObject: [self itemWithObject: object isValue: NO]];
-			// NOTE: Would it be a good idea to use...
-			//[self handleAddItem: [self itemWithObject: object isValue: NO]];
-		}
-	}
-	else
-	{
-		items = [NSArray array];
-	}
+    items = [NSMutableArray arrayWithCapacity: [collection count]];
+
+    /* Don't enumerate the collection directly. For keyed collections, this 
+       is critical since the enumeration applies to the keys or key-value 
+       pairs (ETAspectCategory and ETAspectRepository whose -content is a 
+       key-value pair array). Enumerating key-value pairs rather than 
+       the keyed collection values is supported but must be decided at 
+       projection time (see above). */
+    for (id object in [collection objectEnumerator])
+    {
+        [items addObject: [self itemWithObject: object isValue: NO]];
+        // NOTE: Would it be a good idea to use...
+        //[self handleAddItem: [self itemWithObject: object isValue: NO]];
+    }
 	
 	return items;
 }

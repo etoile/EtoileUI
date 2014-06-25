@@ -142,7 +142,7 @@ Warning: This protocol is very much subject to change. */
 - (BOOL) isContentSizeLayout;
 /** See -[ETLayout copyWithZone:layoutContext:]. */
 - (id) copyWithZone: (NSZone *)aZone layoutContext: (id <ETLayoutingContext>)newContext;
-/** See -[ETLayout setLayoutContext:]. */
+/** See -[ETLayout validateLayoutContext:]. */
 - (void) validateLayoutContext: (id <ETLayoutingContext>)context;
 /** See -[ETLayout layoutContext:]. */
 - (id <ETLayoutingContext>) layoutContext;
@@ -212,7 +212,6 @@ Warning: This protocol is very much subject to change. */
 
 /** @taskunit Layout Context */
 
-- (void) setLayoutContext: (id <ETLayoutingContext>)context;
 - (id <ETLayoutingContext>) layoutContext;
 - (void) tearDown;
 - (void) setUp;

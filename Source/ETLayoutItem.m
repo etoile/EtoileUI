@@ -45,6 +45,10 @@ NSString *ETLayoutItemLayoutDidChangeNotification = @"ETLayoutItemLayoutDidChang
 
 #define DETAILED_DESCRIPTION
 
+@interface NSView (NSControlSubclassNotifications)
+- (void) setDelegate: (id)aDelegate;
+@end
+
 @interface ETLayoutItem (Private) <ETWidget>
 - (void) setViewAndSync: (NSView *)newView;
 - (NSRect) bounds;
@@ -1156,7 +1160,8 @@ The view is an NSView class or subclass instance. See -setView:. */
 		                                forKeyPath: @"state"
 		                                   options: options
 		                                   context: NULL];
-		[[newView ifResponds] setDelegate: self];
+        /* For text editing notifications posted by NSControl subclasses such as NSTextField */
+		[(NSView *)[newView ifResponds] setDelegate: self];
 	}
 
 	[self didChangeValueForProperty: kETViewProperty];

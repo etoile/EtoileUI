@@ -12,6 +12,8 @@
 #import "ETPositionalLayout.h"
 #import "ETGeometry.h"
 #import "ETLayoutItem.h"
+#import "ETLayoutItemGroup.h"
+#import "ETTemplateItemLayout.h"
 #import "ETCompatibility.h"
 
 @implementation ETPositionalLayout

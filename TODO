@@ -90,7 +90,13 @@ Open Issues
     - in the current implementation, -parentItem returns -hostItem to prevent rewriting geometry conversion methods to support both -parentItem and -hostItem
     - returning -hostItem with -enclosingItem rather than -parentItem is probably cleaner... but this will impact geometry conversion, action propagation in the responder chain, and redisplay.
 
+- The type of ETPositionalLayout.contextLayout should be ETLayout <ETLayoutingContext>
 
+    - if we support, multiple inheritance in the metamodel, this would be easy
+    - or we need to introduce another ETLayout subclass such as ETMainLayout that conforms to ETLayoutingContext, and declares a 'positionalLayout' property
+    - for now, we use ETTemplateItemLayout to match the metamodel
+
+    
 Testing
 -------
 
