@@ -21,7 +21,7 @@
 #import "NSObject+EtoileUI.h"
 #import "ETCompatibility.h"
 
-@interface COObject ()
+@interface ETUIObject ()
 - (id) copyWithZone: (NSZone *)aZone;
 @end
 
@@ -97,11 +97,6 @@ ETLayoutItemFactory or the dedicated initializers). */
 	                            objectGraphContext: aContext];
 }
 
-- (void) awakeFromDeserialization
-{
-
-}
-
 - (id) copyToObjectGraphContext: (COObjectGraphContext *)aDestination
 {
 	NILARG_EXCEPTION_TEST(aDestination);
@@ -120,77 +115,6 @@ The zone argument is currently ignored. */
 	return [self copyToObjectGraphContext: [self objectGraphContext]];
 }
 
-#if 0
-
-/** <override-dummy />
-
-Returns a copy of the receiver.
-
-You must pass a non-null isAliasedCopy pointer. On return, the boolean value 
-will identicate whether a new object was allocated or an alias was returned.<br />
-When copying a object graph, if a ETUIObject instance has been copied at least 
-one time, then subsequent -copyWithZone: invocations return this copy rather 
-than allocating a new object, and isAliasedCopy is set to YES. 
-
-This method is ETUIObject designated copier. Subclasses that want to extend 
-the copying support must invoke it instead of -copyWithZone:.
-
-A subclass can provide a new designated copier API, but the implementation must 
-invoke -copyWithZone:isAliasedCopy: on the superclass.<br />
-Designated copier overriding rules are identical to the designated initializer 
-rules.
-
-All ETUIObject subclasses must write their copier method in a way that 
-precisely matches the template shown below:
-
-<example>
-// isAliasedCopy is the argument the copy method receives
-id newObject = [super copyWithZone: aZone isAliasedCopy: isAliasedCopy];
-
-if (*isAliasedCopy)
-	return newObject;
-
-[self beginCopy];
-// Code
-[self endCopy];
-
-return newObject;
-</example>
-
-You must insert no code before -beginCopy and after -endCopy.
-
-Between -beginCopy and -endCopy, you can use -currentCopyNode and 
--objectReferencesForCopy. */
-- (id) copyWithCopier: (ETCopier *)aCopier
-{
-	/* Return aliased copy */
-
-	id refInCopy = [aCopier lookUpAliasedCopyForObject: self];
-
-
-	if (refInCopy != nil)
-		return refInCopy;
-
-	/* Or create a copy */
-
-	ETUIObject *newObject = [aCopier allocCopyForObject: self];
-	NSInvocation *initInvocation = [self initInvocationForCopyWithZone: [aCopier zone]];
-
-	[aCopier beginCopyFromObject: self toObject: newObject];
-
-	if (nil != initInvocation)
-	{
-		[initInvocation invokeWithTarget: newObject];
-		[initInvocation getReturnValue: &newObject];
-	}
-
-	[aCopier endCopy];
-
-	return newObject;
-}
-
-#endif
-
 /** <override-dummy />
 Returns whether the receiver can be shared between several owners.
 
@@ -201,23 +125,6 @@ see -[ETStyle setIsShared:]. */
 - (BOOL) isShared
 {
 	return NO;
-}
-
-/** <override-dummy />
-Returns the initializer invocation used by -copyWithZone: to create a new 
-instance. 
-
-This method returns nil. You can override it to return a custom invocation and 
-in this way shares complex initialization logic between -copyWithZone: and 
-the designated initializer in a subclass.
- 
-e.g. if you return an invocation like -initWithWindow: aWindow. 
--copyWithZone: will automatically set the target to be the copy allocated with 
-<code>[[[self class] allocWithZone: aZone]</code> and then initializes the copy 
-by invoking the invocation. */
-- (NSInvocation *) initInvocationForCopyWithZone: (NSZone *)aZone
-{
-	return nil;
 }
 
 // FIXME: Horrible hack to return -[NSObject(Model) propertyNames] rather than 
@@ -239,17 +146,6 @@ by invoking the invocation. */
 		arrayByAddingObjectsFromArray: [[self entityDescription] allPropertyDescriptionNames]];
 }
 
-/** Returns a dictionary representation of every property/value pairs not stored 
-in ivars.
- 
-Unless you write a subclass or reflection code, you should never need this 
-method, but use the property accessors or Property Value Coding methods to read 
-and write the receiver properties. */
-- (NSMutableDictionary *) variableStorage
-{
-	return _variableStorage;
-}
-
 // TODO: Remove once shared instances don't get garbage collected on
 // -[COObjectGraphContext discardAllChanges], or when -discardAllChanges is not
 // called on the default transient object graph context in the test suite.
@@ -258,9 +154,10 @@ and write the receiver properties. */
 
 }
 
-- (ETEntityDescription *)persistentEntityDescription
+// FIXME: Remove
+- (void) awakeFromDeserialization
 {
-	return  [[[self objectGraphContext] modelDescriptionRepository] descriptionForName: @"COObject"];
+    
 }
 
 - (BOOL) isCoreObjectReference: (id)value

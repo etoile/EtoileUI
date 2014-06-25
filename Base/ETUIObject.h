@@ -32,7 +32,6 @@
 
 - (id) copyToObjectGraphContext: (COObjectGraphContext *)aContext;
 - (id) copyWithZone: (NSZone *)aZone;
-- (NSInvocation *) initInvocationForCopyWithZone: (NSZone *)aZone;
 
 /** @taskunit Serialization */
 
