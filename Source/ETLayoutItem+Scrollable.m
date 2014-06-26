@@ -234,7 +234,7 @@ The scrollable area role can be embodied by:
 	}
 }
 
-- (ETScrollableAreaItem *) createScrollableAreaItem
+- (ETScrollableAreaItem *) createScrollableAreaItem NS_RETURNS_RETAINED
 {
 	ETScrollableAreaItem *decorator = [[ETScrollableAreaItem alloc]
 		initWithObjectGraphContext: [self objectGraphContext]];

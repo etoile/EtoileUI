@@ -114,7 +114,6 @@ drop validation time. */
 	ETLayoutItem *_hoveredItem;
 	BOOL _dropOn;
 	NSRect _prevInsertionIndicatorRect;
-	NSRect _lastIndicatorRect;
 }
 
 - (id) initWithLocation: (NSPoint)dropLocation 

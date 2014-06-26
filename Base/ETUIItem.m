@@ -61,14 +61,18 @@ By default, returns NO. */
 
 - (void) dealloc
 {
-	if (_decoratorItem != nil)
-	{
-		 /* Unset the decorated item weak reference on the decorator side */
-		[self setDecoratorItem: nil];
-	}
 	DESTROY(supervisorView);
-
 	[super dealloc];
+}
+
+- (void) willDiscard
+{
+    if (_decoratorItem != nil)
+    {
+        /* Unset the decorated item weak reference on the decorator side */
+        [self setDecoratorItem: nil];
+    }
+    [super willDiscard];
 }
 
 // NOTE: Mac OS X doesn't always update the ref count returned by 

@@ -1038,7 +1038,7 @@ the content rather than -[ETLayoutItemGroup insertObject:atIndex:].  */
 
 	if ([self selectsInsertedObjects])
 	{
-		[[self content] setSelectionIndexPaths: A(anIndexPath)];
+		[[self content] setSelectionIndexPaths: A(selectionIndexPath)];
 	}
 }
 

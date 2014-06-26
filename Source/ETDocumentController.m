@@ -113,7 +113,7 @@ opened.
 The returned object is retained.
 
 Raises a NSInvalidArgumentException if the given URL is nil. */
-- (ETLayoutItem *) openItemWithURL: (NSURL *)aURL options: (NSDictionary *)options
+- (ETLayoutItem *) openItemWithURL: (NSURL *)aURL options: (NSDictionary *)options NS_RETURNS_RETAINED
 {
 	NILARG_EXCEPTION_TEST(aURL); 
 
@@ -121,7 +121,7 @@ Raises a NSInvalidArgumentException if the given URL is nil. */
 	 && NO == [[self itemsForURL: aURL] isEmpty])
 	{
 			ETAssert(1 == [[self itemsForURL: aURL] count]);
-			return [[self itemsForURL: aURL] firstObject];
+			return RETAIN([[self itemsForURL: aURL] firstObject]);
 	}
 
 	ETUTI *type = [[self class] typeForURL: aURL];

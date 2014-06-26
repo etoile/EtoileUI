@@ -661,7 +661,7 @@ See also -setRenderedPropertyNames:. */
 - (ETLayoutItemGroup *) editorForRelationshipDescription: (ETPropertyDescription *)aRelationshipDesc
                                                 ofObject: (id)anObject
 {
-	ETLayoutItemGroup *editor = [[self templateItemForIdentifier: @"collectionEditor"] copy];
+	ETLayoutItemGroup *editor = AUTORELEASE([[self templateItemForIdentifier: @"collectionEditor"] copy]);
 	ETLayoutItemGroup *browser = (id)[editor itemForIdentifier: @"browser"];
 	ETAssert(browser != nil);
 	

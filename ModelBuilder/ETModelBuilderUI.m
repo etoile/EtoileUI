@@ -54,7 +54,8 @@
 - (ETModelDescriptionRenderer *) rendererWithController: (ETModelBuilderController *)aController
 {
 	ETModelDescriptionRenderer *renderer = [ETModelDescriptionRenderer renderer];
-	ETItemValueTransformer *transformer = [ETModelBuilderController newRelationshipValueTransformer];
+	ETItemValueTransformer *transformer =
+        AUTORELEASE([ETModelBuilderController newRelationshipValueTransformer]);
 	ETEntityDescription *metaEntityDesc =
 		[[self repository] entityDescriptionForClass: [ETEntityDescription class]];
 	ETEntityDescription *metaPropertyEntityDesc =

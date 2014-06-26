@@ -140,6 +140,7 @@ is not an option. */
 	{
 		NSTableColumn *column = ([tableView tableColumnWithIdentifier: key]);
 
+        // FIXME: Should be 'column == nil'
 		if (column != nil)
 			continue;
 

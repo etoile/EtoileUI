@@ -297,6 +297,7 @@ See also -newItemWithRepresentedObject:options:. */
 	{
 		newInstance = [newInstance init];
 	}
+    AUTORELEASE(newInstance);
 	id parentObject = [options objectForKey: kETTemplateOptionParentRepresentedObject];
 	id value = [self mutableObjectForRepresentedObject: newInstance
 									   ofParentCollection: parentObject options: options];

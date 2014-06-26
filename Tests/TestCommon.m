@@ -85,7 +85,6 @@ than the subclass instance we might want. */
 	[[ETUIObject defaultTransientObjectGraphContext] discardAllChanges];
 	ASSIGN(itemFactory, [ETLayoutItemFactory factory]);
 	ETAssert([[itemFactory objectGraphContext] hasChanges] == NO);
-	ASSIGN(previousActiveTool, [ETTool activeTool]);
 	return self;
 }
 
@@ -94,8 +93,6 @@ than the subclass instance we might want. */
 	[[ETLayoutExecutor sharedInstance] removeAllItems];
 	[[itemFactory objectGraphContext] discardAllChanges];
 	DESTROY(itemFactory);
-	[ETTool setActiveTool: previousActiveTool];
-	DESTROY(previousActiveTool);
 	[super dealloc];
 }
 

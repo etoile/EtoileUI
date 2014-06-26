@@ -43,7 +43,6 @@
 @interface TestCommon : NSObject
 {
 	ETLayoutItemFactory *itemFactory;
-	ETTool *previousActiveTool;
 }
 
 @end

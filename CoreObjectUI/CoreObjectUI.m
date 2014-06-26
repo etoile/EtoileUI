@@ -231,7 +231,7 @@
 	[[groupTemplate item] setValueTransformer: [self iconValueTransformer]
 	                              forProperty: @"icon"];
 
-	ETAssert([[[template item] copy] valueTransformerForProperty: @"icon"]
+	ETAssert([AUTORELEASE([[template item] copy]) valueTransformerForProperty: @"icon"]
 		== [ETItemValueTransformer valueTransformerForName: @"HistoryBrowserIcon"]);
 
 	return self;

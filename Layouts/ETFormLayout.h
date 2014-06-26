@@ -116,7 +116,6 @@ width remain flexible in case the UI is resized later. */
 {
 	@private
 	ETFormLayoutAlignment _alignment;
-	CGFloat highestLabelWidth;
 	CGFloat _currentMaxLabelWidth;
 	CGFloat _currentMaxItemWidth;
 }

@@ -89,7 +89,7 @@
 	[super dealloc];
 }
 
-- (COEditingContext *) createContext
+- (COEditingContext *) createContext NS_RETURNS_RETAINED
 {
 	COSQLiteStore *store = [[COSQLiteStore alloc] initWithURL: [self storeURL]];
 	COEditingContext *context = [[COEditingContext alloc] initWithStore: store];

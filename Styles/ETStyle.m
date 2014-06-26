@@ -97,8 +97,8 @@ Raises an invalid argument exception if aStyle class isn't a subclass of ETStyle
 
 	if (category == nil)
 	{
-		category = [[ETAspectCategory alloc] initWithName: _(@"Style")
-		                               objectGraphContext: [repo objectGraphContext]];
+		category = AUTORELEASE([[ETAspectCategory alloc] initWithName: _(@"Style")
+		                                           objectGraphContext: [repo objectGraphContext]]);
 		[category setIcon: [NSImage imageNamed: @"layer-transparent"]];
 		[[ETAspectRepository mainRepository] addAspectCategory: category];
 	}

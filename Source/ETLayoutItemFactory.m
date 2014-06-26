@@ -1057,20 +1057,12 @@ to set no represented object on a menu entry. */
 
 /* Special Group Access Methods */
 
-static ETLayoutItemGroup *windowLayer = nil;
-
 /** Returns the item group representing all windows in the current work 
 context or application. */
 - (ETLayoutItemGroup *) windowGroup
 {
-	if (windowLayer == nil)
-	{
-		windowLayer = [[ETWindowLayer alloc]
-			initWithObjectGraphContext: [ETUIObject defaultTransientObjectGraphContext]];
-		[windowLayer setName: _(@"Windows")];
-	}
-	
-	return windowLayer;
+    return [ETWindowLayer sharedInstanceForObjectGraphContext:
+        [ETUIObject defaultTransientObjectGraphContext]];
 }
 
 static ETLayoutItemGroup *pickboardGroup = nil;
@@ -1200,8 +1192,8 @@ See separator related methods in [ETComputedLayout] and subclasses.*/
 
 	if (category == nil)
 	{
-		category = [[ETAspectCategory alloc] initWithName: _(@"Items")
-		                               objectGraphContext: [repo objectGraphContext]];
+		category = AUTORELEASE([[ETAspectCategory alloc] initWithName: _(@"Items")
+		                                           objectGraphContext: [repo objectGraphContext]]);
 		[category setIcon: [NSImage imageNamed: @"leaf-yellow"]];
 		[[ETAspectRepository mainRepository] addAspectCategory: category];
 	}

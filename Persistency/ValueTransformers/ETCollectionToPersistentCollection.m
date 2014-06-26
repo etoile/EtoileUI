@@ -95,7 +95,7 @@ static ETIdentityValueTransformer *identityTransformer = nil;
 	NSValueTransformer *keyTransformer = [self keyTransformer];
 	NSValueTransformer *valueTransformer = [self valueTransformer];
 	id serializedCollection =
-		[[[collection mutableClass] alloc] initWithCapacity: [collection count]];
+		AUTORELEASE([[[collection mutableClass] alloc] initWithCapacity: [collection count]]);
 
 	if (keyTransformer != nil)
 	{
@@ -124,7 +124,7 @@ static ETIdentityValueTransformer *identityTransformer = nil;
 	NSValueTransformer *keyTransformer = [self keyTransformer];
 	NSValueTransformer *valueTransformer = [self valueTransformer];
 	id collection =
-		[[[serializedCollection mutableClass] alloc] initWithCapacity: [serializedCollection count]];
+		AUTORELEASE([[[serializedCollection mutableClass] alloc] initWithCapacity: [serializedCollection count]]);
 
 	if (keyTransformer != nil)
 	{

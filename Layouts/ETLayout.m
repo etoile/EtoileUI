@@ -9,6 +9,7 @@
 #import <EtoileFoundation/Macros.h>
 #import <EtoileFoundation/ETCollection+HOM.h>
 #import <EtoileFoundation/NSObject+Etoile.h>
+#import <COreObject/COObjectGraphContext.h>
 #import "ETLayout.h"
 #import "ETApplication.h"
 #import "ETAspectRepository.h"
@@ -104,8 +105,8 @@ Raises an invalid argument exception if aLayout class isn't a subclass of ETLayo
 
 	if (category == nil)
 	{
-		category = [[ETAspectCategory alloc] initWithName: _(@"Layout")
-									   objectGraphContext: [repo objectGraphContext]];
+		category = AUTORELEASE([[ETAspectCategory alloc] initWithName: _(@"Layout")
+									               objectGraphContext: [repo objectGraphContext]]);
 		[category setIcon: [NSImage imageNamed: @"layout-design"]];
 		[[ETAspectRepository mainRepository] addAspectCategory: category];
 	}
@@ -165,7 +166,14 @@ Returns a new ETLayout instance. */
 
 - (void) dealloc
 {
-	ETAssert([_attachedTool isEqual: [ETTool activeTool]] == NO);
+    // TODO: If the attached tool is active, we should tell ETTool class about
+    // it, and switch the active tool (if the default transient object graph
+    // context is not currently discarding all its changes).
+    if ([[[self objectGraphContext] loadedObjects] isEmpty] == NO)
+    {
+        // NOTE: At this point, the attached tool is unloaded.
+        ETAssert([[_attachedTool UUID] isEqual: [ETTool activeToolUUID]] == NO);
+    }
 
 	DESTROY(_attachedTool);
 	DESTROY(_layerItem);

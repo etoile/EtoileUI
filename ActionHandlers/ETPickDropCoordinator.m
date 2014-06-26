@@ -893,7 +893,7 @@ Both methods called -handleDragEnd:forItem: on the drop target item. */
 	{
 		// TODO: Should we just let -copy raises its exception abruptly if 
 		// the object cannot be copied...
-		object = [droppedObject copy];
+		object = AUTORELEASE([droppedObject copy]);
 
 		if (*aHint != nil)
 		{

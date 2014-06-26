@@ -142,6 +142,7 @@ double-click and deactivated on a mouse click outside of their layout boundaries
 
 /** @taskunit Framework Private */
 
++ (ETUUID *) activeToolUUID;
 + (NSMutableArray *) hoveredItemStackForItem: (ETLayoutItem *)anItem;
 - (void) validateLayoutOwner: (ETLayout *)aLayout;
 - (ETLayout *) layoutOwner;

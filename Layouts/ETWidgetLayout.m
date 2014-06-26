@@ -78,7 +78,7 @@ For the view classes listed below, the substitute classes are:
 }
 
 - (id) subclassInstanceWithLayoutView: (NSView *)aView
-                   objectGraphContext: (COObjectGraphContext *)aContext
+                   objectGraphContext: (COObjectGraphContext *)aContext NS_RETURNS_RETAINED
 {
 	if (aView == nil || [self isMemberOfClass: [ETWidgetLayout class]] == NO)
 		return self;

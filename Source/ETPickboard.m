@@ -106,7 +106,7 @@ static ETPickboard *activePickboard = nil;
 	/* Moves the object browser into to the window layer
 	   NOTE: The window item will be released on close. */
 	ETWindowItem *windowItem =
-		[[ETWindowItem alloc] initWithObjectGraphContext: [self objectGraphContext]];
+		AUTORELEASE([[ETWindowItem alloc] initWithObjectGraphContext: [self objectGraphContext]]);
 	[[self lastDecoratorItem] setDecoratorItem: windowItem];
 }
 

@@ -92,9 +92,9 @@ ETLayoutItemFactory or the dedicated initializers). */
 	ETEntityDescription *entity =
 		[[aContext modelDescriptionRepository] entityDescriptionForClass: self];
 
-	return [[self alloc] initWithEntityDescription: entity
-	                                          UUID: permanentUUID
-	                            objectGraphContext: aContext];
+	return AUTORELEASE([[self alloc] initWithEntityDescription: entity
+	                                                      UUID: permanentUUID
+	                                        objectGraphContext: aContext]);
 }
 
 - (id) copyToObjectGraphContext: (COObjectGraphContext *)aDestination
@@ -254,13 +254,6 @@ user interaction. */
 	ETAssert(error == nil);
 
 	return result;
-}
-
-// FIXME: COObject relationship consistency is disabled because it doesn't
-// work on a collection accessor that return immutable copies.
-- (void) updateRelationshipConsistencyForProperty: (NSString *)key oldValue: (id)oldValue
-{
-	
 }
 
 @end

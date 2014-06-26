@@ -163,7 +163,7 @@ original items which are replaced by the layout. */
 {
 	BOOL shouldCopyValue = ([templateValue conformsToProtocol: @protocol(NSCopying)] 
 		|| [templateValue conformsToProtocol: @protocol(NSMutableCopying)]);
-	id newValue = (shouldCopyValue ? [templateValue copy] : templateValue);
+	id newValue = (shouldCopyValue ? AUTORELEASE([templateValue copy]) : templateValue);
 
 	[anItem setValue: newValue forKey: aKey];
 }

@@ -164,7 +164,7 @@
 		[editableTemplates setObject: itemTemplate
 		                      forKey: [ETUTI typeWithString: UTIString]];
 	}];
-	return [editableTemplates copy];
+	return AUTORELEASE([editableTemplates copy]);
 }
 
 - (void) setTemplates: (NSDictionary *)editedTemplates
@@ -189,7 +189,7 @@
 		[editableDropTypes setObject: [ETUTI typeWithString: UTIString]
 		                      forKey: [ETUTI typeWithString: targetUTIString]];
 	}];
-	return [editableDropTypes copy];
+	return AUTORELEASE([editableDropTypes copy]);
 }
 
 - (void) setAllowedDropTypes: (NSDictionary *)editedDropTypes

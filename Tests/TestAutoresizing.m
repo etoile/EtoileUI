@@ -66,7 +66,7 @@
 
 - (void) testItemAutoresizingMaskFromView
 {
-	NSView *view = [[NSView alloc] initWithFrame: NSMakeRect(20, 40, 100, 200)];
+	NSView *view = AUTORELEASE([[NSView alloc] initWithFrame: NSMakeRect(20, 40, 100, 200)]);
 	[view setAutoresizingMask: NSViewMinYMargin | NSViewHeightSizable];
 	ETLayoutItem *item = [itemFactory itemWithView: view];
 
@@ -348,7 +348,7 @@
 	
 	[itemGroup setWidth: [itemGroup width] + 100];
 
-	ETLayoutItemGroup *newItemGroup = [itemGroup copy];
+	ETLayoutItemGroup *newItemGroup = AUTORELEASE([itemGroup copy]);
 	ETLayoutItem *newItem = [newItemGroup firstItem];
 
 	UKTrue([newItemGroup needsLayoutUpdate]);
