@@ -662,8 +662,6 @@ See also -setSource:, -isBaseItem and -nextResponder. */
 	RETAIN(oldController);
 
 	[self setValue: newController forVariableStorageKey: kETControllerProperty];
-	// FIXME: Remove
-	[newController setContent: self];
 
 	[oldController didChangeContent: self toContent: nil];
 	[newController didChangeContent: newControllerOldContent toContent: self];

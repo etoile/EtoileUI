@@ -395,9 +395,6 @@ since -serializedValueForProperty: doesn't use the direct ivar access. */
 - (void) didLoadObjectGraph
 {
 	[super didLoadObjectGraph];
-
-	// FIXME: Remove once we use the relationship cache
-	[[self controller] setContent: self];
 }
 
 @end

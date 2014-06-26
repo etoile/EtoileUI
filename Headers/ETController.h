@@ -78,7 +78,6 @@ objects as a collection distinct from the content. */
 {
 	@private
 	NSMutableSet *_observations;
-	ETLayoutItemGroup *_content;
  	IBOutlet id nibMainContent;
 	NSMutableDictionary *_templates;
 	ETUTI *_currentObjectType;

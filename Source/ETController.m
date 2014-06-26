@@ -268,16 +268,10 @@ For example:
 }
 </example>
 
-See also -setContent:, -[ETLayoutItemGroup controller] and -nextResponder.*/
+See also -[ETLayoutItemGroup controller] and -nextResponder.*/
 - (ETLayoutItemGroup *) content
 {
-	// FIXME: Use return [self valueForVariableStorageKey: @"content"];
-	return _content;
-}
-
-- (void) setContent: (ETLayoutItemGroup *)aContent
-{
-	_content = aContent;
+	return [self valueForVariableStorageKey: @"content"];
 }
 
 /** <override-dummy />
@@ -301,7 +295,9 @@ if (newContent != nil)
 		 forNotificationName: ETItemGroupSelectionDidChangeNotification
 					selector: @selector(browserSelectionDidChange:)];
 }
-</example> */
+</example>
+ 
+You must not access -content directly in this method. */
 - (void) didChangeContent: (ETLayoutItemGroup *)oldContent
                 toContent: (ETLayoutItemGroup *)newContent
 {
@@ -450,7 +446,7 @@ The persistent object context is retained in the copy. */
                withZone: (NSZone *)aZone
                 content: (ETLayoutItemGroup *)newContent
 {
-	newController->_content = newContent; /* Weak reference */
+	//newController->_content = newContent; /* Weak reference */
 
 	[self setUpObserversForCopy: newController content: newContent];
 }

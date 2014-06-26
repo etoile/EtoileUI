@@ -148,12 +148,11 @@
 
 	/* Test model class */
 
-	[controller setObjectClass: [NSDate class]];
+	[controller setObjectClass: [ETUUID class]];
 	id newObject = [controller makeObject];
 	id newObject2 = [controller makeObject];
 
-	UKObjectKindOf(newObject, NSDate);
-	// newObject2 is created with -alloc and -init, thereby returns two different dates in time.
+	UKObjectKindOf(newObject, ETUUID);
 	UKObjectsNotEqual(newObject2, newObject); 
 
 	/* Test item template */
@@ -173,8 +172,7 @@
 
 	/* Test with object class */
 
-	UKObjectKindOf([newItem representedObject], NSDate);
-	// newObject2 is created with -alloc and -init and not -copy
+	UKObjectKindOf([newItem representedObject], ETUUID);
 	UKObjectsNotEqual([newItem2 representedObject], [newItem representedObject]);
 
 	/* Test without object class */
