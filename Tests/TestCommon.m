@@ -83,6 +83,7 @@ than the subclass instance we might want. */
 	// graph context just for the repository and its aspects.
 	[[ETLayoutExecutor sharedInstance] removeAllItems];
 	[[ETUIObject defaultTransientObjectGraphContext] discardAllChanges];
+    [ETUIObject clearRecordedDeallocations];
 	ASSIGN(itemFactory, [ETLayoutItemFactory factory]);
 	ETAssert([[itemFactory objectGraphContext] hasChanges] == NO);
 	return self;
@@ -92,6 +93,7 @@ than the subclass instance we might want. */
 {
 	[[ETLayoutExecutor sharedInstance] removeAllItems];
 	[[itemFactory objectGraphContext] discardAllChanges];
+    [ETUIObject clearRecordedDeallocations];
 	DESTROY(itemFactory);
 	[super dealloc];
 }
@@ -173,6 +175,31 @@ coordinates or not to set the event location in the window. */
 	}
 
 	return [self createEventAtPoint: p clickCount: 1 inWindow: nil];
+}
+
+@end
+
+@implementation ETUIObject (ETUIObjectTestAdditions)
+
+static NSMutableSet *deallocatedObjectUUIDs = nil;
+
+- (void) recordDeallocation
+{
+    if (deallocatedObjectUUIDs == nil)
+    {
+        deallocatedObjectUUIDs = [NSMutableSet new];
+    }
+    [deallocatedObjectUUIDs addObject: [self UUID]];
+}
+
++ (void) clearRecordedDeallocations
+{
+    [deallocatedObjectUUIDs removeAllObjects];
+}
+
++ (BOOL) isObjectDeallocatedForUUID: (ETUUID *)aUUID
+{
+    return [deallocatedObjectUUIDs containsObject: aUUID];
 }
 
 @end

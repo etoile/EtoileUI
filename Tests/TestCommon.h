@@ -67,6 +67,12 @@ The main item is the window content. */
 @end
 
 
+@interface ETUIObject (ETUIObjectTestAdditions)
+- (void) recordDeallocation;
++ (void) clearRecordedDeallocations;
++ (BOOL) isObjectDeallocatedForUUID: (ETUUID *)aUUID;
+@end
+
 @interface ETTool (ETToolTestAdditions)
 + (id) tool;
 @end

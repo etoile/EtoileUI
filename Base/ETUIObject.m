@@ -21,6 +21,10 @@
 #import "NSObject+EtoileUI.h"
 #import "ETCompatibility.h"
 
+@interface ETUIObject (ETUIObjectTestAdditions)
+- (void) recordDeallocation;
+@end
+
 @interface ETUIObject ()
 - (id) copyWithZone: (NSZone *)aZone;
 @end
@@ -97,6 +101,15 @@ ETLayoutItemFactory or the dedicated initializers). */
 	                                        objectGraphContext: aContext]);
 }
 
+- (void) dealloc
+{
+    if ([self respondsToSelector: @selector(recordDeallocation)])
+    {
+        [self recordDeallocation];
+    }
+    [super dealloc];
+}
+
 - (id) copyToObjectGraphContext: (COObjectGraphContext *)aDestination
 {
 	NILARG_EXCEPTION_TEST(aDestination);
@@ -149,10 +162,10 @@ see -[ETStyle setIsShared:]. */
 // TODO: Remove once shared instances don't get garbage collected on
 // -[COObjectGraphContext discardAllChanges], or when -discardAllChanges is not
 // called on the default transient object graph context in the test suite.
-- (void) checkIsNotRemovedFromContext
+/*- (void) checkIsNotRemovedFromContext
 {
 
-}
+}*/
 
 // FIXME: Remove
 - (void) awakeFromDeserialization
