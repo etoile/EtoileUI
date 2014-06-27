@@ -147,10 +147,16 @@
 		return entity;
 
 	ETPropertyDescription *path = [ETPropertyDescription descriptionWithName: @"path" type: (id)@"NSBezierPath"];
+    [path setValueTransformerName: @"COObjectToArchivedData"];
+    [path setPersistentTypeName: @"NSData"];
 	ETPropertyDescription *bounds = [ETPropertyDescription descriptionWithName: @"bounds" type: (id)@"NSRect"];
 	ETPropertyDescription *pathResizeSel = [ETPropertyDescription descriptionWithName: @"pathResizeSelector" type: (id)@"SEL"];
 	ETPropertyDescription *fillColor = [ETPropertyDescription descriptionWithName: @"fillColor" type: (id)@"NSColor"];
+    [fillColor setValueTransformerName: @"COColorToHTMLString"];
+    [fillColor setPersistentTypeName: @"NSString"];
 	ETPropertyDescription *strokeColor = [ETPropertyDescription descriptionWithName: @"strokeColor" type: (id)@"NSColor"];
+    [strokeColor setValueTransformerName: @"COColorToHTMLString"];
+    [strokeColor setPersistentTypeName: @"NSString"];
 	ETPropertyDescription *alpha = [ETPropertyDescription descriptionWithName: @"alphaValue" type: (id)@"CGFloat"];
 	ETPropertyDescription *hidden = [ETPropertyDescription descriptionWithName: @"hidden" type: (id)@"BOOL"];
 
@@ -182,7 +188,7 @@
 
 	ETPropertyDescription *tintColor =
 		[ETPropertyDescription descriptionWithName: @"tintColor" type: (id)@"NSColor"];
-	[tintColor setValueTransformerName: @"COColorToHTMLstring"];
+	[tintColor setValueTransformerName: @"COColorToHTMLString"];
 	[tintColor setPersistentTypeName: @"NSString"];
 
 	[entity setUIBuilderPropertyNames: A([tintColor name])];

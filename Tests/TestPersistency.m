@@ -133,10 +133,10 @@
 	[shape setAlphaValue: 0.4];
 	[shape setHidden: YES];
 
-	UKRectsEqual(rect, [[shape roundTripValueForArchivedProperty: @"path"] bounds]);
+	UKRectsEqual(rect, [[shape roundTripValueForProperty: @"path"] bounds]);
 	UKStringsEqual(@"resizedPathWithRect:", [shape roundTripValueForProperty: @"pathResizeSelector"]);
-	UKObjectsEqual([NSColor redColor], [shape roundTripValueForArchivedProperty: @"fillColor"]);
-	UKNil([shape roundTripValueForArchivedProperty: @"strokeColor"]);
+	UKObjectsEqual([NSColor redColor], [shape roundTripValueForProperty: @"fillColor"]);
+	UKNil([shape roundTripValueForProperty: @"strokeColor"]);
 	UKTrue([[shape roundTripValueForProperty: @"hidden"] boolValue]);
 }
 
