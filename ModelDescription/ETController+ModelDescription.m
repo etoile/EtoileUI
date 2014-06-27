@@ -63,6 +63,8 @@
 	[templates setDetailedPropertyNames: A(@"item", @"objectClass", @"entityName")];
 	ETPropertyDescription *currentObjectType =
 		[ETPropertyDescription descriptionWithName: @"currentObjectType" type: (id)@"ETUTI"];
+    [currentObjectType setValueTransformerName: @"ETUTIToString"];
+    [currentObjectType setPersistentTypeName: @"NSString"];
 	ETPropertyDescription *currentGroupType =
 		[ETPropertyDescription descriptionWithName: @"currentGroupType" type: (id)@"ETUTI"];
 	[currentGroupType setReadOnly: YES];
@@ -82,6 +84,8 @@
 	[sortDescriptors setDetailedPropertyNames: A(@"key", @"ascending", @"selectorString")];
 	ETPropertyDescription *filterPredicate =
 		[ETPropertyDescription descriptionWithName: @"filterPredicate" type: (id)@"NSPredicate"];
+    [filterPredicate setValueTransformerName: @"ETPredicateToString"];
+    [filterPredicate setPersistentTypeName: @"NSString"];
 	ETPropertyDescription *automaticallyRearranges =
 		[ETPropertyDescription descriptionWithName: @"automaticallyRearrangesObjects" type: (id)@"BOOL"];
 	ETPropertyDescription *allowedPickTypes =

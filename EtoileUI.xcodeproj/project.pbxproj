@@ -516,6 +516,9 @@
 		60C4F5871742406600AA10F8 /* ETUIBuilderController.h in Headers */ = {isa = PBXBuildFile; fileRef = 60C4F5851742406600AA10F8 /* ETUIBuilderController.h */; };
 		60C4F5881742406600AA10F8 /* ETUIBuilderController.m in Sources */ = {isa = PBXBuildFile; fileRef = 60C4F5861742406600AA10F8 /* ETUIBuilderController.m */; };
 		60C4F5891742406A00AA10F8 /* ETUIBuilderController.m in Sources */ = {isa = PBXBuildFile; fileRef = 60C4F5861742406600AA10F8 /* ETUIBuilderController.m */; };
+		60C81CF5195DA16F00AEEC68 /* ETPredicateToString.h in Headers */ = {isa = PBXBuildFile; fileRef = 60C81CF3195DA16F00AEEC68 /* ETPredicateToString.h */; };
+		60C81CF7195DA16F00AEEC68 /* ETPredicateToString.m in Sources */ = {isa = PBXBuildFile; fileRef = 60C81CF4195DA16F00AEEC68 /* ETPredicateToString.m */; };
+		60C81CF8195DA16F00AEEC68 /* ETPredicateToString.m in Sources */ = {isa = PBXBuildFile; fileRef = 60C81CF4195DA16F00AEEC68 /* ETPredicateToString.m */; };
 		60CF709C0D4257DB00B4CA3D /* ETWindowItem.h in Headers */ = {isa = PBXBuildFile; fileRef = 60CF6C7A0D3F6ECF00B4CA3D /* ETWindowItem.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		60CF709D0D4257DB00B4CA3D /* ETWindowItem.m in Sources */ = {isa = PBXBuildFile; fileRef = 60CF6C7B0D3F6ECF00B4CA3D /* ETWindowItem.m */; };
 		60CF717D0D42E75300B4CA3D /* ETLayoutItemGroup+Mutation.h in Headers */ = {isa = PBXBuildFile; fileRef = 60CF717B0D42E75300B4CA3D /* ETLayoutItemGroup+Mutation.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -1226,6 +1229,8 @@
 		60C4F5851742406600AA10F8 /* ETUIBuilderController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ETUIBuilderController.h; path = UIBuilder/ETUIBuilderController.h; sourceTree = "<group>"; };
 		60C4F5861742406600AA10F8 /* ETUIBuilderController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ETUIBuilderController.m; path = UIBuilder/ETUIBuilderController.m; sourceTree = "<group>"; };
 		60C76C6710136D0A0073C381 /* TestCompositeLayout.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = TestCompositeLayout.m; path = Tests/TestCompositeLayout.m; sourceTree = "<group>"; };
+		60C81CF3195DA16F00AEEC68 /* ETPredicateToString.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ETPredicateToString.h; path = Persistency/ValueTransformers/ETPredicateToString.h; sourceTree = "<group>"; };
+		60C81CF4195DA16F00AEEC68 /* ETPredicateToString.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ETPredicateToString.m; path = Persistency/ValueTransformers/ETPredicateToString.m; sourceTree = "<group>"; };
 		60CA73860C494B22009D9B02 /* COPYING */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = COPYING; sourceTree = "<group>"; };
 		60CF6C7A0D3F6ECF00B4CA3D /* ETWindowItem.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ETWindowItem.h; path = Headers/ETWindowItem.h; sourceTree = "<group>"; };
 		60CF6C7B0D3F6ECF00B4CA3D /* ETWindowItem.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ETWindowItem.m; path = Source/ETWindowItem.m; sourceTree = "<group>"; };
@@ -1815,6 +1820,8 @@
 				608E631918FD9CD8005FB6C7 /* ETItemValueTransformerToString.m */,
 				6061F4CC1945ADE7008637A7 /* ETUTIToString.h */,
 				6061F4CD1945ADE7008637A7 /* ETUTIToString.m */,
+				60C81CF3195DA16F00AEEC68 /* ETPredicateToString.h */,
+				60C81CF4195DA16F00AEEC68 /* ETPredicateToString.m */,
 				608D25F8192BC69B00BB7461 /* ETWeakTypedObjectToData.h */,
 				608D25F9192BC69C00BB7461 /* ETWeakTypedObjectToData.m */,
 			);
@@ -2336,6 +2343,7 @@
 				60BBFEA518646A10006A495E /* ETLayout.h in Headers */,
 				60BBFEA918646A10006A495E /* ETLineLayout.h in Headers */,
 				60BBFEAD18646A10006A495E /* ETOutlineLayout.h in Headers */,
+				60C81CF5195DA16F00AEEC68 /* ETPredicateToString.h in Headers */,
 				60BBFEB118646A10006A495E /* ETPaneLayout.h in Headers */,
 				60BBFEB518646A10006A495E /* ETPositionalLayout.h in Headers */,
 				60BBFEB918646A10006A495E /* ETTableLayout.h in Headers */,
@@ -3132,6 +3140,7 @@
 				60BBFE0A18645684006A495E /* ETEvent.m in Sources */,
 				60D3028A194BCBDF006BA5A9 /* TestFormLayout.m in Sources */,
 				60BBFE1018645684006A495E /* ETResponder.m in Sources */,
+				60C81CF8195DA16F00AEEC68 /* ETPredicateToString.m in Sources */,
 				60BBFE1418645684006A495E /* ETUIItem.m in Sources */,
 				60BBFE1818645684006A495E /* ETUIObject.m in Sources */,
 				60BBFE1C18645684006A495E /* ETUIStateRestoration.m in Sources */,
@@ -3306,6 +3315,7 @@
 				603D7D0A13D363BA007AABE2 /* ETActionHandler+ModelDescription.m in Sources */,
 				6035ACC113D59C27005B2280 /* ETStyle+CoreObject.m in Sources */,
 				60B6E2F913E4635D0087879C /* ETAspectCategory.m in Sources */,
+				60C81CF7195DA16F00AEEC68 /* ETPredicateToString.m in Sources */,
 				60B6E2FB13E4635D0087879C /* ETAspectRepository.m in Sources */,
 				60D46FD314C5CDE900129CD4 /* CoreObjectUI.m in Sources */,
 				6037760816BD846900B7EEB5 /* ETLayoutItem+UIBuilder.m in Sources */,

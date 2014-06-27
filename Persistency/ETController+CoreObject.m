@@ -13,26 +13,6 @@
 
 @implementation ETController (CoreObject)
 
-- (NSString *) serializedCurrentObjectType
-{
-	return [_currentObjectType stringValue];
-}
-
-- (void) setSerializedCurrentObjectType: (NSString *)aUTIString
-{
-	ASSIGN(_currentObjectType, [ETUTI typeWithString: aUTIString]);
-}
-
-- (NSString *) serializedFilterPredicate
-{
-	return [[self filterPredicate] predicateFormat];
-}
-
-- (void) setSerializedFilterPredicate: (NSString *)aPredicateFormat
-{
-	[self setFilterPredicate: [NSPredicate predicateWithFormat: aPredicateFormat]];
-}
-
 - (NSArray *) serializedSortDescriptors
 {
 	NSMutableArray *sortDescriptors =  [NSMutableArray array];
