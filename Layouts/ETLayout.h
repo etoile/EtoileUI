@@ -170,7 +170,6 @@ Warning: This protocol is very much subject to change. */
 @interface ETLayout : ETUIObject <NSCopying>
 {
 	@private
-	IBOutlet id delegate; /* Weak reference */
 	ETTool *_attachedTool;
 	ETLayoutItemGroup *_layerItem; /* Lazily initialized */
 	ETDropIndicator *_dropIndicator;
@@ -235,11 +234,6 @@ Warning: This protocol is very much subject to change. */
 - (NSSize) layoutSize;
 - (BOOL) isAllContentVisible;
 - (ETPositionalLayout *) positionalLayout;
-
-/** @taskunit Delegate */
-
-- (void) setDelegate: (id)aDelegate;
-- (id) delegate;
 
 /** @taskunit Requesting Internal Layout Updates */
 

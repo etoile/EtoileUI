@@ -255,8 +255,6 @@ See also -[ETLayoutItem contentBounds], -[ETLayoutItem size] and
 	return @"DropIndicator";
 }
 
-// NOTE: -copyWithZone: implementation can be omitted, the ivars are transient.
-
 - (id) initWithLocation: (NSPoint)dropLocation 
             hoveredItem: (ETLayoutItem *)hoveredItem
            isDropTarget: (BOOL)dropOn

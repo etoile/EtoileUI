@@ -145,8 +145,7 @@ Returns a new ETLayout instance. */
 	self = [super initWithObjectGraphContext: aContext];
 	if (self == nil)
 		return nil;
-	
-	delegate = nil;
+
 	_attachedTool = nil;
 	ASSIGN(_dropIndicator, [ETDropIndicator sharedInstanceForObjectGraphContext: [ETUIObject defaultTransientObjectGraphContext]]);
 	_isRendering = NO;
@@ -606,25 +605,6 @@ See ETPositionalLayout and -[ETPositionalLayout positionalLayout]. */
 - (ETPositionalLayout *) positionalLayout
 {
 	return nil;
-}
-
-/** Sets the delegate.
-
-The delegate is not retained.
-
-Not used presently. */
-- (void) setDelegate: (id)aDelegate
-{
-	delegate = aDelegate;
-	[self renderAndInvalidateDisplay];
-}
-
-/** Returns the delegate. 
-
-See also -setDelegate:. */
-- (id) delegate
-{
-	return delegate;
 }
 
 /** Returns whether -renderXXX methods can be invoked now. */

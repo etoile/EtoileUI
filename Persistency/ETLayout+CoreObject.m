@@ -22,24 +22,6 @@
 
 @implementation ETLayout (CoreObject)
 
-- (COObject *) serializedDelegate
-{
-	BOOL isPersistent = ([delegate isKindOfClass: [COObject class]]
-		&& [(COObject *)delegate isPersistent]);
-
-	NSAssert1(delegate == nil || isPersistent, @"ETLayoutItemGroup.delegate must "
-		"be a persistent COObject and not a transient one: %@", delegate);
-
-	return (isPersistent ? delegate : nil);
-}
-
-- (void) setSerializedDelegate: (COObject *)aDelegate
-{
-	NSParameterAssert(aDelegate == nil || [aDelegate isKindOfClass: [COObject class]]);
-	// FIXME: Delegate should be retained in EtoileUI surely.
-	delegate = aDelegate;
-}
-
 - (void) awakeFromDeserialization
 {
 	[super awakeFromDeserialization];

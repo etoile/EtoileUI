@@ -17,6 +17,8 @@
 
 @implementation ETTextEditorLayout
 
+@dynamic delegate;
+
 - (id) initWithLayoutView: (NSView *)aView
        objectGraphContext: (COObjectGraphContext *)aContext
 {

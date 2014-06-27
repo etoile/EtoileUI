@@ -62,8 +62,6 @@
         [ETPropertyDescription descriptionWithName: @"contextItem" type: (id)@"ETLayoutItemGroup"];
     [contextItem setDerived: YES];
     [contextItem setOpposite: (id)@"ETLayoutItemGroup.layout"];
-	ETPropertyDescription *delegate = 
-		[ETPropertyDescription descriptionWithName: @"delegate" type: (id)@"NSObject"];
 	ETPropertyDescription *attachedTool =
 		[ETPropertyDescription descriptionWithName: @"attachedTool" type: (id)@"ETTool"];
 	[attachedTool setOpposite: (id)@"ETTool.layoutOwner"];
@@ -85,10 +83,10 @@
 	// TODO: Declare the numerous derived (implicitly transient) properties we have 
 
 	NSArray *transientProperties = A(contextItem, dropIndicator, layerItem);
-	NSArray *persistentProperties = A(attachedTool, delegate, layoutSize,
-		proposedLayoutSize, usesCustomLayoutSize);
+	NSArray *persistentProperties = A(attachedTool, layoutSize,
+        proposedLayoutSize, usesCustomLayoutSize);
 
-	[entity setUIBuilderPropertyNames: (id)[[A(delegate, dropIndicator) mappedCollection] name]];
+	[entity setUIBuilderPropertyNames: (id)[[A(dropIndicator) mappedCollection] name]];
 
 	[[persistentProperties mappedCollection] setPersistent: YES];
 	[entity setPropertyDescriptions: 
