@@ -63,19 +63,4 @@
 @end
 
 @implementation ETItemTemplate (CoreObject)
-
-- (NSString *) serializedObjectClass
-{
-	return NSStringFromClass([self objectClass]);
-}
-
-- (void) setSerializedObjectClass: (NSString *)aClassName
-{
-	if (aClassName == nil)
-		return;
-
-	ASSIGN(_objectClass, NSClassFromString(aClassName));
-	ETAssert(_objectClass != Nil);
-}
-
 @end

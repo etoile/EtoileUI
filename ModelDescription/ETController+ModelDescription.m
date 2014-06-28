@@ -230,6 +230,8 @@
 	ETPropertyDescription *objectClass =
 		[ETPropertyDescription descriptionWithName: @"objectClass" type: (id)@"NSObject"];
 	[objectClass setReadOnly: YES];
+    [objectClass setValueTransformerName: @"COClassToString"];
+    [objectClass setPersistentTypeName: @"NSString"];
 	ETPropertyDescription *entityName =
 		[ETPropertyDescription descriptionWithName: @"entityName" type: (id)@"NSString"];
 	[entityName setReadOnly: YES];
