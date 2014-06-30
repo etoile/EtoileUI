@@ -98,9 +98,10 @@
     [allowedPickTypes setPersistentTypeName: @"NSString"];
 	[allowedPickTypes setDetailedPropertyNames: A(@"stringValue", @"classValue")];
 	ETPropertyDescription *allowedDropTypes =
-		[ETPropertyDescription descriptionWithName: @"allowedDropTypes" type: (id)@"ETUTI"];
+		[ETPropertyDescription descriptionWithName: @"allowedDropTypes" type: (id)@"ETUTITuple"];
 	[allowedDropTypes setMultivalued: YES];
 	[allowedDropTypes setOrdered: NO];
+    [allowedDropTypes setKeyed: YES];
 	// TODO: Display 'key' as 'Target UTI'
 	[allowedDropTypes setDetailedPropertyNames: A(@"stringValue", @"classValue")];
 
@@ -142,9 +143,9 @@
 		insertionIndex, insertionIndexPath, additionIndexPath, isEditing);
 	NSArray *persistentProperties = A(templates, currentObjectType, initialFocusedItem,
 		clearsFilterPredicate, selectsInsertedObjects, sortDescriptors, filterPredicate,
-		automaticallyRearranges);
+		automaticallyRearranges, allowedPickTypes, allowedDropTypes);
 	// FIXME: Using all persistent properties is not yet tested...
-	NSArray *futurePersistentProperties = A(persistentObjectContext, allowedPickTypes, allowedDropTypes);
+	NSArray *futurePersistentProperties = A(persistentObjectContext);
 	
 	transientProperties = [transientProperties arrayByAddingObjectsFromArray: futurePersistentProperties];
 
@@ -188,13 +189,15 @@
 	[self didChangeValueForProperty: @"templates"];
 }
 
+// TODO: For the UI, 'allowedDropTypes' accessors should expose a ETKeyValuePair array.
+
 - (NSDictionary *) allowedDropTypes
 {
 	NSMutableDictionary *editableDropTypes = [NSMutableDictionary dictionary];
 
-	[[_allowedDropTypes content] enumerateKeysAndObjectsUsingBlock: ^ (id targetUTIString, id UTIString,  BOOL *stop)
+	[[_allowedDropTypes content] enumerateKeysAndObjectsUsingBlock: ^ (id targetUTIString, id UTIs,  BOOL *stop)
 	{
-		[editableDropTypes setObject: [ETUTI typeWithString: UTIString]
+		[editableDropTypes setObject: UTIs
 		                      forKey: [ETUTI typeWithString: targetUTIString]];
 	}];
 	return AUTORELEASE([editableDropTypes copy]);
@@ -202,15 +205,15 @@
 
 - (void) setAllowedDropTypes: (NSDictionary *)editedDropTypes
 {
-	[self willChangeValueForProperty: @"templates"];
+	[self willChangeValueForProperty: @"allowedDropTypes"];
 	[_allowedDropTypes removeAllObjects];
 
-	[editedDropTypes enumerateKeysAndObjectsUsingBlock: ^ (id targetUTI, id UTI, BOOL *stop)
+	[editedDropTypes enumerateKeysAndObjectsUsingBlock: ^ (id targetUTI, id UTIs, BOOL *stop)
 	{
-		[_allowedDropTypes setObject: [UTI stringValue]
+		[_allowedDropTypes setObject: UTIs
 		                      forKey: [targetUTI stringValue]];
 	}];
-	[self didChangeValueForProperty: @"templates"];
+	[self didChangeValueForProperty: @"allowedDropTypes"];
 }
 
 @end

@@ -11,6 +11,7 @@
 #import <EtoileFoundation/ETUTI.h>
 #import <EtoileFoundation/NSObject+Model.h>
 #import "ETController.h"
+#import "ETUTITuple.h"
 #import "ETEventProcessor.h"
 #import "ETItemTemplate.h"
 #import "ETLayoutItemBuilder.h"
@@ -1165,7 +1166,18 @@ Returns YES by default. */
 - (void) setAllowedPickTypes: (NSArray *)UTIs
 {
 	NILARG_EXCEPTION_TEST(UTIs);
+
+    [self willChangeValueForProperty: @"allowedPickTypes"
+                           atIndexes: [NSIndexSet indexSet]
+                         withObjects: A(UTIs)
+                        mutationKind: ETCollectionMutationKindReplacement];
+
 	ASSIGN(_allowedPickTypes, UTIs);
+
+    [self didChangeValueForProperty: @"allowedPickTypes"
+                           atIndexes: [NSIndexSet indexSet]
+                         withObjects: A(UTIs)
+                        mutationKind: ETCollectionMutationKindReplacement];
 }
 
 /* -allowedDropTypesForTargetType: can be rewritten with HOM. Not sure it won't
@@ -1182,12 +1194,15 @@ too slow given that the method tends to be invoked repeatedly.
 	NILARG_EXCEPTION_TEST(aUTI);
 	NSMutableArray *matchedDropTypes = [NSMutableArray arrayWithCapacity: 100];
 	
-	for (NSString *UTIString in _allowedDropTypes)
+	for (NSString *target in _allowedDropTypes)
 	{
-		ETUTI *targetType = [ETUTI typeWithString: UTIString];
+		ETUTI *targetType = [ETUTI typeWithString: target];
+
 		if ([aUTI conformsToType: targetType])
 		{
-			[matchedDropTypes addObjectsFromArray: [_allowedDropTypes objectForKey: targetType]];
+            ETUTITuple *UTITuple = [_allowedDropTypes objectForKey: target];
+
+			[matchedDropTypes addObjectsFromArray: [UTITuple content]];
 		}
 	}
 
@@ -1198,8 +1213,27 @@ too slow given that the method tends to be invoked repeatedly.
 {
 	NILARG_EXCEPTION_TEST(targetUTI);
 	NILARG_EXCEPTION_TEST(UTIs);
-	[_allowedDropTypes setObject: [[UTIs mappedCollection] stringValue]
-	                      forKey: [targetUTI stringValue]];
+
+    [self willChangeValueForProperty: @"allowedDropTypes"
+                           atIndexes: [NSIndexSet indexSet]
+                         withObjects: A(UTIs)
+                        mutationKind: ETCollectionMutationKindReplacement];
+
+	ETUTITuple *UTITuples = [_allowedDropTypes objectForKey: [targetUTI stringValue]];
+
+    if (UTITuples == nil)
+    {
+        UTITuples = [[ETUTITuple alloc] initWithObjectGraphContext: [self objectGraphContext]];
+    }
+    [UTITuples setContent: UTIs];
+
+    [_allowedDropTypes setObject: UTITuples
+                          forKey: [targetUTI stringValue]];
+
+    [self didChangeValueForProperty: @"allowedDropTypes"
+                          atIndexes: [NSIndexSet indexSet]
+                        withObjects: A(UTIs)
+                       mutationKind: ETCollectionMutationKindReplacement];
 }
 
 /* Editing */

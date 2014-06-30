@@ -141,4 +141,19 @@
     }];
 }
 
+- (void) testPickAndDropTypes
+{
+	[controller setAllowedPickTypes: A([self URLType])];
+	[controller setAllowedDropTypes: A([self URLType]) forTargetType: [controller currentGroupType]];
+
+    [self checkWithExistingAndNewRootObject: itemGroup
+                                    inBlock: ^(COObjectGraphContext *context, BOOL isNew, BOOL isCopy)
+    {
+        ETController *newController = [context loadedObjectForUUID: [controller UUID]];
+ 
+        UKObjectsEqual(A([self URLType]), [newController allowedPickTypes]);
+        UKObjectsEqual(A([self URLType]), [newController allowedDropTypesForTargetType: [newController currentGroupType]]);
+    }];
+}
+
 @end
