@@ -81,6 +81,8 @@
 		[ETPropertyDescription descriptionWithName: @"sortDescriptors" type: (id)@"NSSortDescriptor"];
 	[sortDescriptors setMultivalued: YES];
 	[sortDescriptors setOrdered: YES];
+    [sortDescriptors setValueTransformerName: @"COObjectToArchivedData"];
+    [sortDescriptors setPersistentTypeName: @"NSData"];
 	[sortDescriptors setDetailedPropertyNames: A(@"key", @"ascending", @"selectorString")];
 	ETPropertyDescription *filterPredicate =
 		[ETPropertyDescription descriptionWithName: @"filterPredicate" type: (id)@"NSPredicate"];
@@ -92,6 +94,8 @@
 		[ETPropertyDescription descriptionWithName: @"allowedPickTypes" type: (id)@"ETUTI"];
 	[allowedPickTypes setMultivalued: YES];
 	[allowedPickTypes setOrdered: YES];
+    [allowedPickTypes setValueTransformerName: @"ETUTIToString"];
+    [allowedPickTypes setPersistentTypeName: @"NSString"];
 	[allowedPickTypes setDetailedPropertyNames: A(@"stringValue", @"classValue")];
 	ETPropertyDescription *allowedDropTypes =
 		[ETPropertyDescription descriptionWithName: @"allowedDropTypes" type: (id)@"ETUTI"];

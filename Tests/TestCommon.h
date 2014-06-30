@@ -10,8 +10,18 @@
 #import <AppKit/AppKit.h>
 #import <UnitKit/UnitKit.h>
 #import <EtoileFoundation/Macros.h>
+#import <EtoileFoundation/NSObject+Model.h>
+#import <CoreObject/COEditingContext.h>
+#import <CoreObject/COEditingContext+Debugging.h>
+#import <CoreObject/COObject.h>
+#import <CoreObject/COObjectGraphContext.h>
+#import <CoreObject/COObjectGraphContext+Debugging.h>
+#import <CoreObject/COPersistentRoot.h>
+#import <CoreObject/COSQLiteStore.h>
+#import <CoreObject/COSerialization.h>
 #import "ETDecoratorItem.h"
 #import "ETLayoutItem.h"
+#import "ETLayoutItemGroup.h"
 #import "ETLayoutItemFactory.h"
 #import "ETTool.h"
 
@@ -44,6 +54,11 @@
 {
 	ETLayoutItemFactory *itemFactory;
 }
+
+- (void) checkWithExistingAndNewRootObject: (COObject *)rootObject 
+                                   inBlock: (void (^)(COObjectGraphContext *context, BOOL isNew, BOOL isCopy))block;
+- (void) checkWithExistingAndNewContext: (COObjectGraphContext *)existingContext
+                                inBlock: (void (^)(COObjectGraphContext *context, BOOL isNew, BOOL isCopy))block;
 
 @end
 

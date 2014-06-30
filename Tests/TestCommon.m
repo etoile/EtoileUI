@@ -78,14 +78,20 @@ than the subclass instance we might want. */
 - (id) init
 {
 	SUPERINIT;
+
+    /* Delete existing db file in case -dealloc didn't run */
+    [self deleteStore];
+
 	// NOTE: For now, ETApp registers aspects in the aspect repository with
 	// the +defaultTransientObjectGraphContext rather than creating an object
 	// graph context just for the repository and its aspects.
 	[[ETLayoutExecutor sharedInstance] removeAllItems];
 	[[ETUIObject defaultTransientObjectGraphContext] discardAllChanges];
     [ETUIObject clearRecordedDeallocations];
+
 	ASSIGN(itemFactory, [ETLayoutItemFactory factory]);
 	ETAssert([[itemFactory objectGraphContext] hasChanges] == NO);
+
 	return self;
 }
 
@@ -94,8 +100,80 @@ than the subclass instance we might want. */
 	[[ETLayoutExecutor sharedInstance] removeAllItems];
 	[[itemFactory objectGraphContext] discardAllChanges];
     [ETUIObject clearRecordedDeallocations];
+
 	DESTROY(itemFactory);
+
+    [self deleteStore];
 	[super dealloc];
+}
+
+- (NSURL *)storeURL
+{
+	return [NSURL fileURLWithPath: [@"~/TestEtoileUIStore.store" stringByExpandingTildeInPath]];
+}
+
+- (void)deleteStore
+{
+	if ([[NSFileManager defaultManager] fileExistsAtPath: [[self storeURL] path]] == NO)
+		return;
+	
+	NSError *error = nil;
+	[[NSFileManager defaultManager] removeItemAtPath: [[self storeURL] path]
+	                                           error: &error];
+	ETAssert(error == nil);
+}
+
+- (void) checkWithExistingAndNewRootObject: (COObject *)rootObject 
+                                   inBlock: (void (^)(COObjectGraphContext *context, BOOL isNew, BOOL isCopy))block
+{
+    if ([rootObject rootObject] == nil)
+    {
+        [[rootObject objectGraphContext] setRootObject: rootObject];
+    }
+    ETAssert([rootObject isRoot]);
+    [self checkWithExistingAndNewContext: [rootObject objectGraphContext]
+                                 inBlock: block];
+}
+
+- (void) checkWithExistingAndNewContext: (COObjectGraphContext *)existingContext
+                                inBlock: (void (^)(COObjectGraphContext *context, BOOL isNewContext, BOOL isCopy))block
+
+{
+    /* Run the tests in the existing context */
+
+    block(existingContext, NO, NO);
+
+    /* Commit the object graph, reload it in a new context and run the tests */
+
+    COEditingContext *editingContext = [COEditingContext contextWithURL: [self storeURL]];
+    COPersistentRoot *persistentRoot =
+        [editingContext insertNewPersistentRootWithRootObject: [existingContext rootObject]];
+   
+    ETAssert([editingContext commit]);
+
+    COEditingContext *newEditingContext = [COEditingContext contextWithURL: [self storeURL]];
+    COPersistentRoot *newPersistentRoot =
+        [newEditingContext persistentRootForUUID: [persistentRoot UUID]];
+
+    block([newPersistentRoot objectGraphContext], YES, NO);
+    
+    /* Copy the object graph into the existing context and run the tests */
+
+    [[existingContext rootObject] copyToObjectGraphContext: existingContext];
+    
+    block(existingContext, NO, YES);
+
+    /* Copy the object graph into a new context and run the tests */
+
+    // FIXME: Fix COCopier to handle non-composite refs (aka cross persistent
+    // root refs) if the source is a transient object graph context.
+#if 0
+    COObjectGraphContext *copyContext = [COObjectGraphContext objectGraphContext];
+
+    [[existingContext rootObject] copyToObjectGraphContext: copyContext];
+
+    block(copyContext, YES, YES);
+#endif
 }
 
 @end
