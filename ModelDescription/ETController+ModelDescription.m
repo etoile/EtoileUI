@@ -53,6 +53,12 @@
 		[ETPropertyDescription descriptionWithName: @"content" type: (id)@"ETLayoutItemGroup"];
 	[content setDerived: YES];
 	[content setOpposite: (id)@"ETLayoutItemGroup.controller"];
+    ETPropertyDescription *observations =
+        [ETPropertyDescription descriptionWithName: @"observations" type: (id)@"NSDictionary"];
+    [observations setMultivalued: YES];
+    [observations setOrdered: NO];
+    [observations setValueTransformerName: @"COObjectToArchivedData"];
+    [observations setPersistentTypeName: @"NSData"];
 	ETPropertyDescription *templates =
 		[ETPropertyDescription descriptionWithName: @"templates" type: (id)@"ETItemTemplate"];
 	[templates setMultivalued: YES];
@@ -141,7 +147,7 @@
 	NSArray *transientProperties = A(content, nibMainContent, builder, currentGroupType,
 		nextResponder, defaultOptions, canMutate, isContentMutable,
 		insertionIndex, insertionIndexPath, additionIndexPath, isEditing);
-	NSArray *persistentProperties = A(templates, currentObjectType, initialFocusedItem,
+	NSArray *persistentProperties = A(observations, templates, currentObjectType, initialFocusedItem,
 		clearsFilterPredicate, selectsInsertedObjects, sortDescriptors, filterPredicate,
 		automaticallyRearranges, allowedPickTypes, allowedDropTypes);
 	// FIXME: Using all persistent properties is not yet tested...

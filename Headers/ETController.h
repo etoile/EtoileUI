@@ -110,17 +110,10 @@ objects as a collection distinct from the content. */
 
 /* Observation */
 
-- (void) startObserveObject: (id)anObject
+- (void) startObserveObject: (COObject *)anObject
         forNotificationName: (NSString *)aName 
                    selector: (SEL)aSelector;
-- (void) stopObserveObject: (id)anObject forNotificationName: (NSString *)aName;
-
-/* Copying */
-
-- (id) copyWithZone: (NSZone *)aZone content: (ETLayoutItemGroup *)newContent;
-- (void) finishDeepCopy: (ETController *)newController 
-               withZone: (NSZone *)aZone 
-                content: (ETLayoutItemGroup *)newContent;
+- (void) stopObserveObject: (COObject *)anObject forNotificationName: (NSString *)aName;
 
 /* Templates */
 

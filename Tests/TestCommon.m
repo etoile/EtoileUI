@@ -124,24 +124,19 @@ than the subclass instance we might want. */
 }
 
 - (void) checkWithExistingAndNewRootObject: (COObject *)rootObject 
-                                   inBlock: (void (^)(COObjectGraphContext *context, BOOL isNew, BOOL isCopy))block
+                                   inBlock: (void (^)(id rootObject, BOOL isNew, BOOL isCopy))block
 {
     if ([rootObject rootObject] == nil)
     {
         [[rootObject objectGraphContext] setRootObject: rootObject];
     }
     ETAssert([rootObject isRoot]);
-    [self checkWithExistingAndNewContext: [rootObject objectGraphContext]
-                                 inBlock: block];
-}
+    
+    COObjectGraphContext *existingContext = [rootObject objectGraphContext];
 
-- (void) checkWithExistingAndNewContext: (COObjectGraphContext *)existingContext
-                                inBlock: (void (^)(COObjectGraphContext *context, BOOL isNewContext, BOOL isCopy))block
-
-{
     /* Run the tests in the existing context */
 
-    block(existingContext, NO, NO);
+    block(rootObject, NO, NO);
 
     /* Commit the object graph, reload it in a new context and run the tests */
 
@@ -155,13 +150,16 @@ than the subclass instance we might want. */
     COPersistentRoot *newPersistentRoot =
         [newEditingContext persistentRootForUUID: [persistentRoot UUID]];
 
-    block([newPersistentRoot objectGraphContext], YES, NO);
+    block([newPersistentRoot rootObject], YES, NO);
     
     /* Copy the object graph into the existing context and run the tests */
 
-    [[existingContext rootObject] copyToObjectGraphContext: existingContext];
-    
-    block(existingContext, NO, YES);
+    COObject *rootObjectCopy =
+        [[existingContext rootObject] copyToObjectGraphContext: existingContext];
+
+    ETAssert([[rootObjectCopy UUID] isEqual: [rootObject UUID]] == NO);
+
+    block(rootObjectCopy, NO, YES);
 
     /* Copy the object graph into a new context and run the tests */
 
@@ -172,7 +170,7 @@ than the subclass instance we might want. */
 
     [[existingContext rootObject] copyToObjectGraphContext: copyContext];
 
-    block(copyContext, YES, YES);
+    block([copyContext rootObject], YES, YES);
 #endif
 }
 

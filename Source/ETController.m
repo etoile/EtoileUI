@@ -328,13 +328,14 @@ Pass nil as the notification name, if you want to receive all notifications
 posted by the observed object.
 
 The observed object must not be nil. */ 
-- (void) startObserveObject: (id)anObject
+- (void) startObserveObject: (COObject *)anObject
         forNotificationName: (NSString *)aName 
                    selector: (SEL)aSelector
 {
 	NILARG_EXCEPTION_TEST(anObject);
+    id name = (id)(aName == nil ? [NSNull null] :  aName);
 
-	[_observations addObject: D(anObject, @"object", aName, @"name",  
+	[_observations addObject: D(anObject, @"object", name, @"name",
 		NSStringFromSelector(aSelector), @"selector")];
 
 	[[NSNotificationCenter defaultCenter] addObserver: self
@@ -350,7 +351,7 @@ Pass nil as the notification name, if you want to stop to receive any
 notification posted by the observed object.
 
 The observed object must not be nil. */ 
-- (void) stopObserveObject: (id)anObject forNotificationName: (NSString *)aName 
+- (void) stopObserveObject: (COObject *)anObject forNotificationName: (NSString *)aName
 {
 	NILARG_EXCEPTION_TEST(anObject);
 
@@ -365,6 +366,7 @@ The observed object must not be nil. */
 			continue;
 
 		id name = [observation objectForKey: @"name"];
+        name = ([name isEqual: [NSNull null]] ? nil : name);
 
 		if ([name isEqual: aName] || removeAll)
 		{
@@ -372,96 +374,6 @@ The observed object must not be nil. */
 			[notifCenter removeObserver: self name: aName object: anObject];
 		}
 	}
-}
-
-- (void) setUpObserversForCopy: (ETController *)controllerCopy content: (ETLayoutItemGroup *)contentCopy
-{
-	FOREACH(_observations, observation, NSDictionary *)
-	{ 
-		id observedObject = [observation objectForKey: @"object"];
-
-		NSParameterAssert(observedObject != nil);
-
-		if ([observedObject isLayoutItem])
-		{
-			if (contentCopy != nil)
-			{
-				NSIndexPath *indexPath = [[self content] indexPathForItem: observedObject];
-				observedObject = [[controllerCopy content] itemAtIndexPath: indexPath];
-			}
-			else
-			{
-				observedObject = nil;
-			}
-		}
-
-		BOOL observedObjectUnresolved = (nil ==  observedObject);
-
-		if (observedObjectUnresolved)
-			continue;
-
-		[controllerCopy startObserveObject: observedObject
-		               forNotificationName: [observation objectForKey: @"name"]
-		                          selector: NSSelectorFromString([observation objectForKey: @"selector"])];
-	}
-}
-
-/** Returns a receiver copy which uses the given content.
-
-This method is ETController designated copier. Subclasses that want to extend 
-the copying support must invoke it instead of -copyWithZone:.
- 
-The persistent object context is retained in the copy. */
-- (id) copyWithZone: (NSZone *)aZone content: (ETLayoutItemGroup *)newContent
-{
-	ETController *newController = [super copyWithZone: aZone];
-
-	newController->_observations = [[NSMutableSet allocWithZone: aZone] init];
-	newController->_templates = [_templates copyWithZone: aZone];
-	ASSIGN(newController->_currentObjectType, _currentObjectType);
-	ASSIGN(newController->_persistentObjectContext, _persistentObjectContext);
-	newController->_sortDescriptors = [_sortDescriptors mutableCopyWithZone: aZone];
-	newController->_filterPredicate = [_filterPredicate copyWithZone: aZone];
-	newController->_allowedPickTypes = [_allowedPickTypes mutableCopyWithZone: aZone];
-	newController->_allowedDropTypes = [_allowedDropTypes copyWithZone: aZone];
-	newController->_editedItems = [[NSMutableArray allocWithZone: aZone] init];
-	newController->_editableProperties = [[NSMutableArray allocWithZone: aZone] init];
-	newController->_automaticallyRearrangesObjects = _automaticallyRearrangesObjects;
-	newController->_hasNewSortDescriptors = (NO == [_sortDescriptors isEmpty]);
-	newController->_hasNewFilterPredicate = (nil != _filterPredicate);
-	newController->_hasNewContent = NO;
-	newController->_clearsFilterPredicateOnInsertion = _clearsFilterPredicateOnInsertion;
-	newController->_selectsInsertedObjects = _selectsInsertedObjects;
-
-	 /* When the copy was initially requested by -[ETLayoutItemGroup copyWithZone:], 
-       -finishCopy: will be called back when the item copy is done. */
-	if (nil == newContent)
-	{
-		[self finishDeepCopy: newController withZone: aZone content: newContent];
-	}
-
-	return newController;
-}
-
-- (void) finishDeepCopy: (ETController *)newController 
-               withZone: (NSZone *)aZone
-                content: (ETLayoutItemGroup *)newContent
-{
-	//newController->_content = newContent; /* Weak reference */
-
-	[self setUpObserversForCopy: newController content: newContent];
-}
-
-/** Returns a receiver copy with a nil content.
-
-You can set the returned controller content indirectly with 
--[ETLayoutItemGroup setController:].
-
-To customize the copying in a subclass, you must override 
--copyWithZone:content:. */
-- (id) copyWithZone: (NSZone *)aZone
-{
-	return [self copyWithZone: aZone content: nil];
 }
 
 /* Templates */

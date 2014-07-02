@@ -9,17 +9,70 @@
 #import "ETCompatibility.h"
 #import <CoreObject/COEditingContext.h>
 #import <CoreObject/COObject.h>
+#import <CoreObject/COObjectGraphContext.h>
 #import "ETController+CoreObject.h"
 
 @implementation ETController (CoreObject)
 
+- (NSSet *) serializedObservations
+{
+    ETAssert(_observations != nil);
+    NSSet *obs = [_observations mappedCollectionWithBlock: ^ (NSDictionary *observation)
+    {
+        ETUUID *observedUUID = [[observation objectForKey: @"object"] UUID];
+        ETAssert(observedUUID != nil);
+
+        return [observation dictionaryByAddingEntriesFromDictionary:
+                D([observedUUID stringValue], @"object")];
+    }];
+    return obs;
+ }
+
+- (void) setSerializedObservations: (NSSet *)serializedObservations
+{
+    RELEASE(_observations);
+    _observations = [serializedObservations mutableCopy];
+}
+
+- (void) finishDeserializingObservations
+{
+    [_observations mapWithBlock: ^ (NSDictionary *observation)
+    {
+        ETUUID *observedUUID = [ETUUID UUIDWithString: [observation objectForKey: @"object"]];
+        COObject *observedObject = [[self objectGraphContext] loadedObjectForUUID: observedUUID];
+    
+        return [observation dictionaryByAddingEntriesFromDictionary: D(observedObject, @"object")];
+    }];
+}
+
+- (void) recreateObservations
+{
+    [self finishDeserializingObservations];
+
+    for (NSDictionary *observation in _observations)
+    {
+        NSString *name = [observation objectForKey: @"name"];
+        name = ([name isEqual: [NSNull null]] ? nil : name);
+        SEL selector = NSSelectorFromString([observation objectForKey: @"selector"]);
+        COObject *object = [observation objectForKey: @"object"];
+
+        [[NSNotificationCenter defaultCenter] addObserver: self
+                                                 selector: selector
+                                                     name: name
+	                                               object: object];
+    }
+}
+
+- (void) awakeFromDeserialization
+{
+    _hasNewSortDescriptors = (NO == [_sortDescriptors isEmpty]);
+    _hasNewFilterPredicate = (nil != _filterPredicate);
+    _hasNewContent = NO;
+}
+
 - (void) didLoadObjectGraph
 {
-	// TODO: We probably want to recreate the observations here (but we need to
-	// declare them in the metamodel and serialize them). For now, it is the
-	// developer responsability to use serialization setters that call the
-	// setters using -stopObserveObjectForNotificationName: and
-	// -startObserveObject:forNotificationName:selector:
+    [self recreateObservations];
 }
 
 @end

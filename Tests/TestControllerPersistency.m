@@ -12,6 +12,29 @@
 #import "ETItemTemplate.h"
 #import "ETCompatibility.h"
 
+@interface CustomController : ETController
+{
+    @public
+    BOOL firstItemSelectionChanged;
+    BOOL notificationPosted;
+}
+
+@end
+
+@implementation CustomController
+
+- (void) firstItemSelectionDidChange: (NSNotification *)notif
+{
+    firstItemSelectionChanged = YES;
+}
+
+- (void) didPostNotification: (NSNotification *)notif
+{
+    notificationPosted = YES;
+}
+
+@end
+
 @interface TestControllerPersistency : TestCommon <UKTest>
 {
     ETLayoutItemGroup *itemGroup;
@@ -28,7 +51,7 @@
     ASSIGN(itemFactory, [ETLayoutItemFactory factoryWithObjectGraphContext:
         [COObjectGraphContext objectGraphContext]]);
 
-	controller = [[ETController alloc] initWithObjectGraphContext: [itemFactory objectGraphContext]];
+	controller = [[CustomController alloc] initWithObjectGraphContext: [itemFactory objectGraphContext]];
 	ASSIGN(itemGroup, [itemFactory itemGroup]);
 
     [itemGroup setShouldMutateRepresentedObject: YES];
@@ -49,13 +72,13 @@
 - (void) testContentRelationship
 {
     [self checkWithExistingAndNewRootObject: itemGroup
-                                    inBlock: ^(COObjectGraphContext *context, BOOL isNew, BOOL isCopy)
+                                    inBlock: ^(ETLayoutItemGroup *newItemGroup, BOOL isNew, BOOL isCopy)
     {
-        ETLayoutItemGroup *newItemGroup = [context loadedObjectForUUID: [itemGroup UUID]];
-        ETController *newController = [context loadedObjectForUUID: [controller UUID]];
+        ETController *newController = [newItemGroup controller];
+
+        UKValidateLoadedObjects(newController, controller);
 
         UKNotNil(newController);
-        UKObjectsEqual(newController, [newItemGroup controller]);
         UKObjectsEqual(newItemGroup, [newController content]);
     }];
 }
@@ -96,9 +119,9 @@
     [self prepareTemplates];
 
     [self checkWithExistingAndNewRootObject: itemGroup
-                                    inBlock: ^(COObjectGraphContext *context, BOOL isNew, BOOL isCopy)
+                                    inBlock: ^(ETLayoutItemGroup *newItemGroup, BOOL isNew, BOOL isCopy)
     {
-        ETController *newController = [context loadedObjectForUUID: [controller UUID]];
+        ETController *newController = [newItemGroup controller];
         ETItemTemplate *newObjectTemplate = [newController templateForType: [newController currentObjectType]];
         ETItemTemplate *newGroupTemplate = [newController templateForType: [newController currentGroupType]];
 
@@ -130,9 +153,9 @@
 	[controller setFilterPredicate: predicate];
 
     [self checkWithExistingAndNewRootObject: itemGroup
-                                    inBlock: ^(COObjectGraphContext *context, BOOL isNew, BOOL isCopy)
+                                    inBlock: ^(ETLayoutItemGroup *newItemGroup, BOOL isNew, BOOL isCopy)
     {
-        ETController *newController = [context loadedObjectForUUID: [controller UUID]];
+        ETController *newController = [newItemGroup controller];
  
         UKObjectsEqual(predicate, [newController filterPredicate]);
         UKObjectsEqual(A(sortDescriptor1, sortDescriptor2), [newController sortDescriptors]);
@@ -147,12 +170,40 @@
 	[controller setAllowedDropTypes: A([self URLType]) forTargetType: [controller currentGroupType]];
 
     [self checkWithExistingAndNewRootObject: itemGroup
-                                    inBlock: ^(COObjectGraphContext *context, BOOL isNew, BOOL isCopy)
+                                    inBlock: ^(ETLayoutItemGroup *newItemGroup, BOOL isNew, BOOL isCopy)
     {
-        ETController *newController = [context loadedObjectForUUID: [controller UUID]];
+        ETController *newController = [newItemGroup controller];
  
         UKObjectsEqual(A([self URLType]), [newController allowedPickTypes]);
         UKObjectsEqual(A([self URLType]), [newController allowedDropTypesForTargetType: [newController currentGroupType]]);
+    }];
+}
+
+- (void) testObservations
+{
+    [itemGroup addItem: [itemFactory itemGroup]];
+    [(ETLayoutItemGroup *)[itemGroup firstItem] addItem: [itemFactory item]];
+
+    [controller startObserveObject: [itemGroup firstItem]
+               forNotificationName: ETItemGroupSelectionDidChangeNotification
+                          selector: @selector(firstItemSelectionDidChange:)];
+    [controller startObserveObject: itemGroup
+               forNotificationName: nil
+                          selector: @selector(didPostNotification:)];
+
+    [self checkWithExistingAndNewRootObject: itemGroup
+                                    inBlock: ^(ETLayoutItemGroup *newItemGroup, BOOL isNew, BOOL isCopy)
+    {
+        CustomController *newController = (CustomController *)[newItemGroup controller];
+
+        [(ETLayoutItemGroup *)[newItemGroup firstItem] setSelectionIndex: 0];
+        
+        UKTrue(newController->firstItemSelectionChanged);
+        UKFalse(newController->notificationPosted);
+    
+        [newItemGroup setSelectionIndex: 0];
+
+        UKTrue(newController->notificationPosted);
     }];
 }
 

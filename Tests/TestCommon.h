@@ -34,6 +34,21 @@
 #define UKSizesEqual(x, y) UKTrue(NSEqualSizes(x, y))
 #define UKSizesNotEqual(x, y) UKFalse(NSEqualSizes(x, y))
 
+#define UKObjectUUIDsEqual(a, b) UKObjectsEqual([a UUID], [b UUID])
+
+/** Test macro to be used in the block passed to 
+-[TestCommon checkWithExistingAndNewRootObject:inBlock:]. */
+#define UKValidateLoadedObjects(newObject, oldObject) \
+    COObjectGraphContext *context = [newObject objectGraphContext]; \
+    if (isCopy && isNew == NO) \
+    { \
+        UKObjectsNotEqual(newObject, [context loadedObjectForUUID: [oldObject UUID]]); \
+    } \
+    else \
+    { \
+        UKObjectsEqual(newObject, [context loadedObjectForUUID: [oldObject UUID]]); \
+    }
+
 /* A simple model object for testing purpose */
 @interface Person : NSObject
 {
@@ -56,9 +71,7 @@
 }
 
 - (void) checkWithExistingAndNewRootObject: (COObject *)rootObject 
-                                   inBlock: (void (^)(COObjectGraphContext *context, BOOL isNew, BOOL isCopy))block;
-- (void) checkWithExistingAndNewContext: (COObjectGraphContext *)existingContext
-                                inBlock: (void (^)(COObjectGraphContext *context, BOOL isNew, BOOL isCopy))block;
+                                   inBlock: (void (^)(id rootObject, BOOL isNew, BOOL isCopy))block;
 
 @end
 
