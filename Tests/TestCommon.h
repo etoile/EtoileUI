@@ -70,6 +70,8 @@
 	ETLayoutItemFactory *itemFactory;
 }
 
+- (NSURL *) storeURL;
+
 - (void) checkWithExistingAndNewRootObject: (COObject *)rootObject 
                                    inBlock: (void (^)(id rootObject, BOOL isNew, BOOL isCopy))block;
 

@@ -6,6 +6,7 @@
     License:  Modified BSD (see COPYING)
  */
 
+#import <CoreObject/COBranch.h>
 #import "TestCommon.h"
 #import "EtoileUIProperties.h"
 #import "ETController.h"
@@ -156,6 +157,78 @@
     }];
 
 }
+
+- (void) testEditingContextAsPersistentObjectContext
+{
+    COEditingContext *editingContext = [COEditingContext contextWithURL: [self storeURL]];
+
+    [controller setPersistentObjectContext: editingContext];
+
+    [self checkWithExistingAndNewRootObject: itemGroup
+                                    inBlock: ^(ETLayoutItemGroup *newItemGroup, BOOL isNew, BOOL isCopy)
+    {
+        ETController *newController = [newItemGroup controller];
+
+        if (isNew == NO && isCopy == NO)
+            return;
+        
+        ETAssert([[[editingContext store] UUID] isEqual: [[[newController editingContext] store] UUID]]);
+
+        UKNil([newController persistentObjectContext]);
+    }];
+}
+
+- (void) testObjectGraphContextOfTrackingBranchAsPersistentObjectContext
+{
+    COEditingContext *editingContext = [COEditingContext contextWithURL: [self storeURL]];
+    COPersistentRoot *editedPersistentRoot =
+        [editingContext insertNewPersistentRootWithEntityName: @"COContainer"];
+    ETAssert([editedPersistentRoot commit]);
+
+    [controller setPersistentObjectContext: [editedPersistentRoot objectGraphContext]];
+
+    [self checkWithExistingAndNewRootObject: itemGroup
+                                    inBlock: ^(ETLayoutItemGroup *newItemGroup, BOOL isNew, BOOL isCopy)
+    {
+        ETController *newController = [newItemGroup controller];
+        COPersistentRoot *newEditedPersistentRoot =
+            [[newController editingContext] persistentRootForUUID: [editedPersistentRoot UUID]];
+
+        if (isNew == NO && isCopy == NO)
+            return;
+
+        UKObjectsSame([newEditedPersistentRoot objectGraphContext], [newController persistentObjectContext]);
+    }];
+}
+
+- (void) testObjectGraphContextOfNonTrackingBranchAsPersistentObjectContext
+{
+    COEditingContext *editingContext = [COEditingContext contextWithURL: [self storeURL]];
+    COPersistentRoot *editedPersistentRoot =
+        [editingContext insertNewPersistentRootWithEntityName: @"COContainer"];
+    ETAssert([editedPersistentRoot commit]);
+
+    COBranch *editedBranch =
+        [[editedPersistentRoot currentBranch] makeBranchWithLabel: @"Test"];
+    ETAssert([editedPersistentRoot commit]);
+
+    [controller setPersistentObjectContext: [editedBranch objectGraphContext]];
+
+    [self checkWithExistingAndNewRootObject: itemGroup
+                                    inBlock: ^(ETLayoutItemGroup *newItemGroup, BOOL isNew, BOOL isCopy)
+    {
+        ETController *newController = [newItemGroup controller];
+        COPersistentRoot *newEditedPersistentRoot =
+            [[newController editingContext] persistentRootForUUID: [editedPersistentRoot UUID]];
+        COBranch *newEditedBranch = [newEditedPersistentRoot branchForUUID: [editedBranch UUID]];
+    
+        if (isNew == NO && isCopy == NO)
+            return;
+
+        UKObjectsSame([newEditedBranch objectGraphContext], [newController persistentObjectContext]);
+    }];
+}
+
 - (void) testSortDescriptorsAndFilterPredicate
 {
 	NSSortDescriptor *sortDescriptor1 =

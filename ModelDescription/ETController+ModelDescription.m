@@ -78,6 +78,7 @@
 	// FIXME: Register a dummy class for the protocol COPersistentObjectContext
 	ETPropertyDescription *persistentObjectContext =
 		[ETPropertyDescription descriptionWithName: @"persistentObjectContext" type: (id)@"NSObject"];
+    [persistentObjectContext setPersistentTypeName: @"NSString"];
 	ETPropertyDescription *initialFocusedItem =
 		[ETPropertyDescription descriptionWithName: @"initialFocusedItem" type: (id)@"ETLayoutItem"];
 	ETPropertyDescription *clearsFilterPredicate =
@@ -144,17 +145,25 @@
 	ETPropertyDescription *isEditing =
 		[ETPropertyDescription descriptionWithName: @"isEditing" type: (id)@"BOOL"];
 	[isEditing setReadOnly: YES];
+    ETPropertyDescription *editedItems =
+        [ETPropertyDescription descriptionWithName: @"editedItems" type: (id)@"ETLayoutItem"];
+    [editedItems setMultivalued: YES];
+    [editedItems setOrdered: YES];
+    [editedItems setReadOnly: YES];
+    ETPropertyDescription *editedProperties =
+        [ETPropertyDescription descriptionWithName: @"editedProperties" type: (id)@"NSArray"];
+    [editedProperties setMultivalued: YES];
+    [editedProperties setOrdered: YES];
+    [editedProperties setReadOnly: YES];
 
-	NSArray *transientProperties = A(content, nibMainContent, builder, currentGroupType,
-		nextResponder, defaultOptions, canMutate, isContentMutable,
-		insertionIndex, insertionIndexPath, additionIndexPath, isEditing);
-	NSArray *persistentProperties = A(observations, templates, currentObjectType, initialFocusedItem,
-		clearsFilterPredicate, selectsInsertedObjects, sortDescriptors, filterPredicate,
-		automaticallyRearranges, allowedPickTypes, allowedDropTypes);
-	// FIXME: Using all persistent properties is not yet tested...
-	NSArray *futurePersistentProperties = A(persistentObjectContext);
-	
-	transientProperties = [transientProperties arrayByAddingObjectsFromArray: futurePersistentProperties];
+	NSArray *transientProperties = A(content, nibMainContent, builder,
+        currentGroupType, nextResponder, defaultOptions, canMutate, isContentMutable,
+		insertionIndex, insertionIndexPath, additionIndexPath, isEditing,
+        editedItems, editedProperties);
+	NSArray *persistentProperties = A(observations, templates, currentObjectType,
+        initialFocusedItem, persistentObjectContext, clearsFilterPredicate,
+        selectsInsertedObjects, sortDescriptors, filterPredicate,
+        automaticallyRearranges, allowedPickTypes, allowedDropTypes);
 
 	[entity setUIBuilderPropertyNames: (id)[[A(templates, currentObjectType,
 		currentGroupType, persistentObjectContext, clearsFilterPredicate,

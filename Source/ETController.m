@@ -492,12 +492,21 @@ or some more specialized track (e.g. an Undo view) could be returned. */
  
 If the given object doesn't conform to the protocol, raises an 
 NSInvalidArgumentException.
+ 
+If the controller is persistent and this property points to a persistent 
+COObjectGraphContext, then this property is persisted. In all other cases, 
+the property is set to nil, when the receiver is reloaded.
 
 See -persistentObjectContext for more details. */
 - (void) setPersistentObjectContext: (id <COPersistentObjectContext>)aContext
 {
-	INVALIDARG_EXCEPTION_TEST(aContext, [(id <NSObject>)aContext conformsToProtocol: NSProtocolFromString(@"COPersistentObjectContext")]);
+    if (aContext != nil)
+    {
+        INVALIDARG_EXCEPTION_TEST(aContext, [(id <NSObject>)aContext conformsToProtocol: NSProtocolFromString(@"COPersistentObjectContext")]);
+    }
+    [self willChangeValueForProperty: @"persistentObjectContext"];
 	ASSIGN(_persistentObjectContext, aContext);
+    [self didChangeValueForProperty: @"persistentObjectContext"];
 }
 
 /** Creates a new object by calling -newItemWithURL:ofType:options: and adds it to the content. */
