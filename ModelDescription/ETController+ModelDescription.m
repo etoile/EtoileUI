@@ -32,6 +32,7 @@
 
 @end
 
+
 @interface ETCompositePropertyDescription : ETPropertyDescription
 @end
 
@@ -233,6 +234,7 @@
 }
 
 @end
+
 
 @interface ETItemTemplate (ModelDescription)
 @end

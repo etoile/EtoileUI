@@ -151,6 +151,7 @@
     [path setPersistentTypeName: @"NSData"];
 	ETPropertyDescription *bounds = [ETPropertyDescription descriptionWithName: @"bounds" type: (id)@"NSRect"];
 	ETPropertyDescription *pathResizeSel = [ETPropertyDescription descriptionWithName: @"pathResizeSelector" type: (id)@"SEL"];
+    [pathResizeSel setPersistentTypeName: @"NSString"];
 	ETPropertyDescription *fillColor = [ETPropertyDescription descriptionWithName: @"fillColor" type: (id)@"NSColor"];
     [fillColor setValueTransformerName: @"COColorToHTMLString"];
     [fillColor setPersistentTypeName: @"NSString"];

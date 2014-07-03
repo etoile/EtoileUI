@@ -7,12 +7,9 @@
  */
 
 #import "ETCompatibility.h"
-#import <CoreObject/COEditingContext.h>
-#import <CoreObject/COObject.h>
-#import "ETStyle+CoreObject.h"
+#import "ETShape.h"
 
-
-@implementation ETStyleGroup (CoreObject)
+@interface ETShape (CoreObject)
 @end
 
 @implementation ETShape (CoreObject)

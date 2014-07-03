@@ -7,17 +7,16 @@
  */
 
 #import "ETCompatibility.h"
-#import <CoreObject/COEditingContext.h>
-#import <CoreObject/COObject.h>
-#import "ETLayout+CoreObject.h"
+#import "ETCompositeLayout.h"
+#import "ETFreeLayout.h"
+#import "ETLayout.h"
 #import "ETLayoutItemGroup.h"
-#import "ETSelectTool.h"
+#import "ETPaneLayout.h"
 #import "ETTableLayout.h"
+#import "ETTemplateItemLayout.h"
+#import "ETSelectTool.h"
 
-@interface ETFreeLayout (CoreObject)
-@end
-
-@interface ETTableLayout (CoreObject)
+@interface ETLayout (CoreObject)
 @end
 
 @implementation ETLayout (CoreObject)
@@ -29,7 +28,6 @@
 	ASSIGN(_dropIndicator, [ETDropIndicator sharedInstanceForObjectGraphContext: [ETUIObject defaultTransientObjectGraphContext]]);
 	_previousScaleFactor = 1.0;
 }
-
 
 /** Maps the layer item into the context. 
  
@@ -56,6 +54,10 @@ or a layout without a context. */
 
 @end
 
+
+@interface ETFreeLayout (CoreObject)
+@end
+
 @implementation ETFreeLayout (CoreObject)
 
 - (void) didLoadObjectGraph
@@ -76,6 +78,10 @@ or a layout without a context. */
 	[self buildHandlesForItems: [[self layoutContext] arrangedItems]];
 }
 
+@end
+
+
+@interface ETWidgetLayout (CoreObject)
 @end
 
 @implementation ETWidgetLayout (CoreObject)
@@ -109,6 +115,10 @@ is not an option. */
 	[(ETLayoutItemGroup *)[self layoutContext] updateLayout];
 }
 
+@end
+
+
+@interface ETTableLayout (CoreObject)
 @end
 
 @implementation ETTableLayout (CoreObject)
@@ -169,6 +179,10 @@ is not an option. */
 
 @end
 
+
+@interface ETTemplateItemLayout (CoreObject)
+@end
+
 @implementation ETTemplateItemLayout (CoreObject)
 
 - (void) didLoadObjectGraph
@@ -182,7 +196,15 @@ is not an option. */
 
 @end
 
+
+@interface ETCompositeLayout (CoreObject)
+@end
+
 @implementation ETCompositeLayout (CoreObject)
+@end
+
+
+@interface ETPaneLayout (CoreObject)
 @end
 
 @implementation ETPaneLayout (CoreObject)

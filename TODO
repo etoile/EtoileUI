@@ -95,8 +95,17 @@ Open Issues
     - if we support, multiple inheritance in the metamodel, this would be easy
     - or we need to introduce another ETLayout subclass such as ETMainLayout that conforms to ETLayoutingContext, and declares a 'positionalLayout' property
     - for now, we use ETTemplateItemLayout to match the metamodel
-
     
+- Move the Nib support out of EtoileUI core
+
+    - For ETNibOwner, don't compile it if the AppKit is not the widget backend (or turn it into an optional trait)
+    - For ETController, move the Nib support into a category
+
+- Persistency support missing for:
+
+    - ETTintStyle, ETShadowStyle, ETSpeechBubbleStyle
+
+
 Testing
 -------
 

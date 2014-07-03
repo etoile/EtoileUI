@@ -8,12 +8,15 @@
 
 #import "ETCompatibility.h"
 #import <CoreObject/COEditingContext.h>
-#import <CoreObject/COObject.h>
 #import <CoreObject/COObjectGraphContext.h>
 #import <CoreObject/COPersistentRoot.h>
 #import <CoreObject/COSQLiteStore.h>
-#import "ETController+CoreObject.h"
+#import "ETController.h"
+#import "ETItemTemplate.h"
 #import "ETObservation.h"
+
+@interface ETController (CoreObject)
+@end
 
 @implementation ETController (CoreObject)
 
@@ -94,6 +97,10 @@
     [self recreateObservations];
 }
 
+@end
+
+
+@interface ETItemTemplate (CoreObject)
 @end
 
 @implementation ETItemTemplate (CoreObject)

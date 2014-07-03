@@ -74,7 +74,7 @@ layout item instead of using the one declared in the controller bound to the con
 
 ETController directly sorts object of the content and doesn't maintain arranged 
 objects as a collection distinct from the content. */
-@interface ETController : ETNibOwner <NSCopying, ETTemplateProvider, ETResponder>
+@interface ETController : ETNibOwner <ETTemplateProvider, ETResponder>
 {
 	@private
 	NSMutableSet *_observations;

@@ -28,10 +28,6 @@
 
 #pragma GCC diagnostic ignored "-Wprotocol"
 
-@interface COObject ()
-- (id) copyWithZone: (NSZone *)aZone;
-@end
-
 @implementation ETController
 
 + (void) initialize
