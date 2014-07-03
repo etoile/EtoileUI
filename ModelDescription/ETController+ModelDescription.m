@@ -32,6 +32,9 @@
 
 @end
 
+@interface ETCompositePropertyDescription : ETPropertyDescription
+@end
+
 // NOTE: ETDocumentController uses ETController model description
 @interface ETController (ModelDescription)
 @end
@@ -54,11 +57,9 @@
 	[content setDerived: YES];
 	[content setOpposite: (id)@"ETLayoutItemGroup.controller"];
     ETPropertyDescription *observations =
-        [ETPropertyDescription descriptionWithName: @"observations" type: (id)@"NSDictionary"];
+        [ETCompositePropertyDescription descriptionWithName: @"observations" type: (id)@"ETObservation"];
     [observations setMultivalued: YES];
     [observations setOrdered: NO];
-    [observations setValueTransformerName: @"COObjectToArchivedData"];
-    [observations setPersistentTypeName: @"NSData"];
 	ETPropertyDescription *templates =
 		[ETPropertyDescription descriptionWithName: @"templates" type: (id)@"ETItemTemplate"];
 	[templates setMultivalued: YES];

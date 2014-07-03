@@ -19,6 +19,7 @@
 #import "ETLayoutItemGroup+Mutation.h"
 #import "ETLayoutItemGroup.h"
 #import "ETLayoutItem.h"
+#import "ETObservation.h"
 #import "ETPickDropActionHandler.h" /* For ETUndeterminedIndex */
 #import "ETResponder.h"
 #import "ETTool.h" /* For -editedItem */
@@ -106,17 +107,20 @@ You can also use it -init to create a controller. See -[ETNibOwner init]. */
 {
 	NSNotificationCenter *notifCenter = [NSNotificationCenter defaultCenter];
 
-	FOREACH(_observations, observation, NSDictionary *)
+	FOREACH(_observations, observation, ETObservation *)
 	{
-		[notifCenter removeObserver: [observation objectForKey: @"object"]];
+		[notifCenter removeObserver: [observation object]];
 	}
 	[[NSNotificationCenter defaultCenter] removeObserver: self];
 }
 
+- (void) willDiscard
+{
+    [self stopObservation];
+}
+
 - (void) dealloc
 {
-	[self stopObservation];
-
 	DESTROY(_observations);
 	DESTROY(nibMainContent);
 	DESTROY(_templates);
@@ -327,16 +331,22 @@ when the observed object posts a notification whose name matches aName.
 Pass nil as the notification name, if you want to receive all notifications 
 posted by the observed object.
 
-The observed object must not be nil. */ 
+The observed object must not be nil, the selector must not be NULL either. */
 - (void) startObserveObject: (COObject *)anObject
         forNotificationName: (NSString *)aName 
                    selector: (SEL)aSelector
 {
 	NILARG_EXCEPTION_TEST(anObject);
-    id name = (id)(aName == nil ? [NSNull null] :  aName);
+    INVALIDARG_EXCEPTION_TEST(aSelector, aSelector != NULL);
 
-	[_observations addObject: D(anObject, @"object", name, @"name",
-		NSStringFromSelector(aSelector), @"selector")];
+    ETObservation *observation = AUTORELEASE([[ETObservation alloc]
+        initWithObjectGraphContext: [self objectGraphContext]]);
+
+    [observation setObject: anObject];
+    [observation setName: aName];
+    [observation setSelector: aSelector];
+
+	[_observations addObject: observation];
 
 	[[NSNotificationCenter defaultCenter] addObserver: self
 	                                         selector: aSelector
@@ -358,17 +368,14 @@ The observed object must not be nil. */
 	NSNotificationCenter *notifCenter = [NSNotificationCenter defaultCenter];
 	BOOL removeAll = (nil == aName);
 
-	FOREACH([NSSet setWithSet: _observations], observation, NSDictionary *)
+	FOREACH([NSSet setWithSet: _observations], observation, ETObservation *)
 	{
-		id object = [observation objectForKey: @"object"];
+		COObject *object = [observation object];
 
 		if (object != anObject)
 			continue;
 
-		id name = [observation objectForKey: @"name"];
-        name = ([name isEqual: [NSNull null]] ? nil : name);
-
-		if ([name isEqual: aName] || removeAll)
+		if ([[observation name] isEqual: aName] || removeAll)
 		{
 			[_observations removeObject: observation];
 			[notifCenter removeObserver: self name: aName object: anObject];
