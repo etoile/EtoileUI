@@ -141,6 +141,21 @@
     }];
 }
 
+- (void) testInitialFocusedItem
+{
+    [itemGroup addItem: [itemFactory item]];
+    [controller setInitialFocusedItem: [itemGroup firstItem]];
+
+    [self checkWithExistingAndNewRootObject: itemGroup
+                                    inBlock: ^(ETLayoutItemGroup *newItemGroup, BOOL isNew, BOOL isCopy)
+    {
+        ETController *newController = [newItemGroup controller];
+        ETLayoutItem *newInitialFocusedItem = [newController initialFocusedItem];
+
+        UKObjectsEqual([newItemGroup firstItem], newInitialFocusedItem);
+    }];
+
+}
 - (void) testSortDescriptorsAndFilterPredicate
 {
 	NSSortDescriptor *sortDescriptor1 =
