@@ -90,6 +90,8 @@
 		6043D4C51756BFDD002103CC /* ETLayoutItem+AppKit.h in Headers */ = {isa = PBXBuildFile; fileRef = 6043D4C31756BFD8002103CC /* ETLayoutItem+AppKit.h */; };
 		6043D4C61756BFDD002103CC /* ETLayoutItem+AppKit.m in Sources */ = {isa = PBXBuildFile; fileRef = 6043D4C41756BFD9002103CC /* ETLayoutItem+AppKit.m */; };
 		604846C618B6C345006E4EDC /* UnitKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 604846B918B6C32A006E4EDC /* UnitKit.framework */; };
+		605270851966B34D00B280A4 /* TestFreeLayoutPersistency.m in Sources */ = {isa = PBXBuildFile; fileRef = 605270841966B34D00B280A4 /* TestFreeLayoutPersistency.m */; };
+		605270891966C08400B280A4 /* TestStylePersistency.m in Sources */ = {isa = PBXBuildFile; fileRef = 605270881966C08400B280A4 /* TestStylePersistency.m */; };
 		605480600FA2271500048283 /* ETController.h in Headers */ = {isa = PBXBuildFile; fileRef = 60CF6C800D3F739000B4CA3D /* ETController.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		60599A760C772129007F225E /* ETInspector.h in Headers */ = {isa = PBXBuildFile; fileRef = 60599A740C772129007F225E /* ETInspector.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		60599A770C772129007F225E /* ETInspector.m in Sources */ = {isa = PBXBuildFile; fileRef = 60599A750C772129007F225E /* ETInspector.m */; };
@@ -948,6 +950,8 @@
 		6043D1B0174E27D3002103CC /* TestCommon.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = TestCommon.m; path = Tests/TestCommon.m; sourceTree = "<group>"; };
 		6043D4C31756BFD8002103CC /* ETLayoutItem+AppKit.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "ETLayoutItem+AppKit.h"; path = "WidgetBackends/AppKit/ETLayoutItem+AppKit.h"; sourceTree = "<group>"; };
 		6043D4C41756BFD9002103CC /* ETLayoutItem+AppKit.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = "ETLayoutItem+AppKit.m"; path = "WidgetBackends/AppKit/ETLayoutItem+AppKit.m"; sourceTree = "<group>"; };
+		605270841966B34D00B280A4 /* TestFreeLayoutPersistency.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = TestFreeLayoutPersistency.m; path = Tests/TestFreeLayoutPersistency.m; sourceTree = "<group>"; };
+		605270881966C08400B280A4 /* TestStylePersistency.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = TestStylePersistency.m; path = Tests/TestStylePersistency.m; sourceTree = "<group>"; };
 		60539D940C240A7B006C57EC /* PaneExample.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = PaneExample.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		60539D960C240A7B006C57EC /* PaneExample-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = "PaneExample-Info.plist"; path = "PaneExample/PaneExample-Info.plist"; sourceTree = "<group>"; };
 		60599A740C772129007F225E /* ETInspector.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ETInspector.h; path = Headers/ETInspector.h; sourceTree = "<group>"; };
@@ -1538,6 +1542,7 @@
 				609F5B5916CA9E8800683BD9 /* TestController.m */,
 				60C81D381960A81700AEEC68 /* TestControllerPersistency.m */,
 				608B01AA1868A79500D1A573 /* TestFreeLayout.m */,
+				605270841966B34D00B280A4 /* TestFreeLayoutPersistency.m */,
 				605F354A17172DF600E9355A /* TestFormLayout.m */,
 				608B01AB1868A79600D1A573 /* TestHitTest.m */,
 				6067EB591046B4E600C39086 /* TestItemCopy.m */,
@@ -1551,6 +1556,7 @@
 				609F5B5D16CA9E8800683BD9 /* TestPickboard.m */,
 				602EA7A11712CFAC00D499A9 /* TestResponder.m */,
 				60E7BD20107E7B3F00E7C0F2 /* TestStyle.m */,
+				605270881966C08400B280A4 /* TestStylePersistency.m */,
 				609F5B5E16CA9E8800683BD9 /* TestSupervisorView.m */,
 				609F5B5F16CA9E8800683BD9 /* TestTool.m */,
 				60A7927D171B803600348EC7 /* TestView.m */,
@@ -3122,6 +3128,7 @@
 				60D25606172ECA59004062CF /* ETUIBuilderItemFactory.m in Sources */,
 				60C4F5891742406A00AA10F8 /* ETUIBuilderController.m in Sources */,
 				60D30285194BCB04006BA5A9 /* TestItemCopy.m in Sources */,
+				605270851966B34D00B280A4 /* TestFreeLayoutPersistency.m in Sources */,
 				60D3028B194BCBE5006BA5A9 /* TestCompositeLayout.m in Sources */,
 				6063FD5F1744CD9B00E4350E /* ETNumberPicker.m in Sources */,
 				6043D08D174C2C35002103CC /* ETObjectValueFormatter.m in Sources */,
@@ -3133,6 +3140,7 @@
 				607676E8176DD411009FA5F2 /* ETUIBuilderBrowserController.m in Sources */,
 				60AA9B97177C524F001919C2 /* ETViewpoint+ModelDescription.m in Sources */,
 				6061F4E11945ADFB008637A7 /* ETUTIToString.m in Sources */,
+				605270891966C08400B280A4 /* TestStylePersistency.m in Sources */,
 				60B9B689185B26B600ABDEA1 /* ETLayoutItemFactory+UIPatternAdditions.m in Sources */,
 				60197791185F457B00635BE2 /* ETResponderIntegration.m in Sources */,
 				60197797185F480600635BE2 /* ETUIItemIntegration.m in Sources */,
