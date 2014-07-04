@@ -58,16 +58,6 @@ as the nib name to be found in the main bundle. */
 	[super dealloc];
 }
 
-/*- (void) copyWithZone: (NSZone *)aZone
-{
-	ETController *newNibOwner = [[[self class] allocWithZone: aZone] init];
-
-	ASSIGN(newNibOwner->_nibBundle, _nibBundle);
-	ASSIGN(newNibOwner->_nibName, _nibName);
-
-	return newNibOwner;
-}*/
-
 - (BOOL) isNibLoaded
 {
 	return ([_topLevelObjects isEmpty] == NO);

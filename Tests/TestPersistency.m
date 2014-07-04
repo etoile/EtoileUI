@@ -78,8 +78,6 @@
 	SUPERINIT;
 	/* Delete existing db file in case -dealloc didn't run */
 	[self deleteStore];
-	/* Just to ensure COREOBJECT preprocessor macro gives us the correct base class (see ETUIObject.h) */
-	ETAssert([[[ETUIObject class] superclass] isEqual: [COObject class]]);
 	return self;
 }
 

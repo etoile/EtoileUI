@@ -105,6 +105,10 @@ Open Issues
 
     - ETTintStyle, ETShadowStyle, ETSpeechBubbleStyle
 
+- Don't set the icon directly in ETShape, but turn it into a derived property and add -shapeKind. 
+
+    - ETShape.icon would then be computed based on an internal dictionary that maps kind string constants to images.
+
 
 Testing
 -------
