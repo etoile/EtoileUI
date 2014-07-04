@@ -75,6 +75,8 @@
 - (void) checkWithExistingAndNewRootObject: (COObject *)rootObject 
                                    inBlock: (void (^)(id rootObject, BOOL isNew, BOOL isCopy))block;
 
+- (ETLayoutItem *) basicItemWithRect: (NSRect)rect;
+
 @end
 
 

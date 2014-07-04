@@ -14,6 +14,7 @@
 #import "ETLayoutItemFactory.h"
 #import "ETLayoutItemGroup.h"
 #import "ETLayoutExecutor.h"
+#import "ETShape.h"
 #import "ETTool.h"
 #import "ETView.h"
 #import "ETWindowItem.h"
@@ -172,6 +173,17 @@ than the subclass instance we might want. */
 
     block([copyContext rootObject], YES, YES);
 #endif
+}
+
+- (ETLayoutItem *) basicItemWithRect: (NSRect)rect
+{
+	ETLayoutItem *item = [itemFactory item];
+
+	[item setFrame: rect];
+	[item setCoverStyle: [ETShape rectangleShapeWithObjectGraphContext: [itemFactory objectGraphContext]]];
+	[[item coverStyle] setFillColor: [NSColor redColor]];
+
+	return item;
 }
 
 @end
