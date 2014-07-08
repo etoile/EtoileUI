@@ -160,8 +160,6 @@
 
 - (void) testEditingContextAsPersistentObjectContext
 {
-    COEditingContext *editingContext = [COEditingContext contextWithURL: [self storeURL]];
-
     [controller setPersistentObjectContext: editingContext];
 
     [self checkWithExistingAndNewRootObject: itemGroup
@@ -180,7 +178,6 @@
 
 - (void) testObjectGraphContextOfTrackingBranchAsPersistentObjectContext
 {
-    COEditingContext *editingContext = [COEditingContext contextWithURL: [self storeURL]];
     COPersistentRoot *editedPersistentRoot =
         [editingContext insertNewPersistentRootWithEntityName: @"COContainer"];
     ETAssert([editedPersistentRoot commit]);
@@ -203,7 +200,6 @@
 
 - (void) testObjectGraphContextOfNonTrackingBranchAsPersistentObjectContext
 {
-    COEditingContext *editingContext = [COEditingContext contextWithURL: [self storeURL]];
     COPersistentRoot *editedPersistentRoot =
         [editingContext insertNewPersistentRootWithEntityName: @"COContainer"];
     ETAssert([editedPersistentRoot commit]);
