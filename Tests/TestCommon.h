@@ -35,18 +35,18 @@
 #define UKSizesNotEqual(x, y) UKFalse(NSEqualSizes(x, y))
 
 #define UKObjectUUIDsEqual(a, b) UKObjectsEqual([a UUID], [b UUID])
+#define UKCollectionUUIDsEqual(a, b) UKObjectsEqual([[a mappedCollection] UUID], [[b mappedCollection] UUID])
 
 /** Test macro to be used in the block passed to 
 -[TestCommon checkWithExistingAndNewRootObject:inBlock:]. */
 #define UKValidateLoadedObjects(newObject, oldObject) \
-    COObjectGraphContext *context = [newObject objectGraphContext]; \
     if (isCopy && isNew == NO) \
     { \
-        UKObjectsNotEqual(newObject, [context loadedObjectForUUID: [oldObject UUID]]); \
+        UKObjectsNotEqual(newObject, [[newObject objectGraphContext] loadedObjectForUUID: [oldObject UUID]]); \
     } \
     else \
     { \
-        UKObjectsEqual(newObject, [context loadedObjectForUUID: [oldObject UUID]]); \
+        UKObjectsEqual(newObject, [[newObject objectGraphContext] loadedObjectForUUID: [oldObject UUID]]); \
     }
 
 /* A simple model object for testing purpose */
@@ -67,6 +67,7 @@
 
 @interface TestCommon : NSObject
 {
+    COEditingContext *editingContext;
 	ETLayoutItemFactory *itemFactory;
 }
 

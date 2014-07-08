@@ -82,6 +82,7 @@ than the subclass instance we might want. */
 
     /* Delete existing db file in case -dealloc didn't run */
     [self deleteStore];
+    ASSIGN(editingContext, [COEditingContext contextWithURL: [self storeURL]]);
 
 	// NOTE: For now, ETApp registers aspects in the aspect repository with
 	// the +defaultTransientObjectGraphContext rather than creating an object
@@ -105,6 +106,8 @@ than the subclass instance we might want. */
 	DESTROY(itemFactory);
 
     [self deleteStore];
+    DESTROY(editingContext);
+
 	[super dealloc];
 }
 
@@ -124,6 +127,20 @@ than the subclass instance we might want. */
 	ETAssert(error == nil);
 }
 
+#if 0
+- (void) checkValidityForNewPersistentObject: (COObject *)obj isFault: (BOOL)isFault
+{
+	UKTrue([obj isPersistent]);
+	UKNotNil([obj entityDescription]);
+	//UKFalse([obj isRoot]);
+	// FIXME: UKFalse([obj isDamaged]);
+
+	UKObjectsSame(ctxt, [[obj persistentRoot] parentContext]);
+	UKTrue([[ctxt loadedObjects] containsObject: obj]);
+	UKObjectsSame(obj, [[obj persistentRoot] loadedObjectForUUID: [obj UUID]]);
+}
+#endif
+
 - (void) checkWithExistingAndNewRootObject: (COObject *)rootObject 
                                    inBlock: (void (^)(id rootObject, BOOL isNew, BOOL isCopy))block
 {
@@ -141,10 +158,21 @@ than the subclass instance we might want. */
 
     /* Commit the object graph, reload it in a new context and run the tests */
 
-    COEditingContext *editingContext = [COEditingContext contextWithURL: [self storeURL]];
-    COPersistentRoot *persistentRoot =
-        [editingContext insertNewPersistentRootWithRootObject: [existingContext rootObject]];
-   
+    COPersistentRoot *persistentRoot = nil;
+    
+    if ([rootObject persistentRoot] != nil)
+    {
+        /* For multiple commits with -checkWithExistingAndNewRootObject:inBlock: */
+        persistentRoot = [rootObject persistentRoot];
+    }
+    else
+    {
+        persistentRoot = [editingContext
+            insertNewPersistentRootWithRootObject: [existingContext rootObject]];
+    }
+    ETAssert(persistentRoot != nil);
+    ETAssert([editingContext hasChanges]);
+
     ETAssert([editingContext commit]);
 
     COEditingContext *newEditingContext = [COEditingContext contextWithURL: [self storeURL]];

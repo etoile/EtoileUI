@@ -550,7 +550,7 @@
 		60D30286194BCB08006BA5A9 /* TestItemGeometry.m in Sources */ = {isa = PBXBuildFile; fileRef = 6022404D1003DF14007D5D07 /* TestItemGeometry.m */; };
 		60D30287194BCB3F006BA5A9 /* TestWindowItem.m in Sources */ = {isa = PBXBuildFile; fileRef = 609C01E2170C34F300D01AAB /* TestWindowItem.m */; };
 		60D30288194BCB42006BA5A9 /* TestWindowLayout.m in Sources */ = {isa = PBXBuildFile; fileRef = 6037769216BE7BA900B7EEB5 /* TestWindowLayout.m */; };
-		60D30289194BCBD5006BA5A9 /* TestPersistency.m in Sources */ = {isa = PBXBuildFile; fileRef = 60FB0BF913C509A700C2AB94 /* TestPersistency.m */; };
+		60D30289194BCBD5006BA5A9 /* TestItemPersistency.m in Sources */ = {isa = PBXBuildFile; fileRef = 60FB0BF913C509A700C2AB94 /* TestItemPersistency.m */; };
 		60D3028A194BCBDF006BA5A9 /* TestFormLayout.m in Sources */ = {isa = PBXBuildFile; fileRef = 605F354A17172DF600E9355A /* TestFormLayout.m */; };
 		60D3028B194BCBE5006BA5A9 /* TestCompositeLayout.m in Sources */ = {isa = PBXBuildFile; fileRef = 60C76C6710136D0A0073C381 /* TestCompositeLayout.m */; };
 		60D46FD214C5CDE900129CD4 /* CoreObjectUI.h in Headers */ = {isa = PBXBuildFile; fileRef = 60D46FD014C5CDE900129CD4 /* CoreObjectUI.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -1281,7 +1281,7 @@
 		60F363F80D183BB400FCFFDA /* NSImage+Etoile.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = "NSImage+Etoile.m"; path = "Source/NSImage+Etoile.m"; sourceTree = "<group>"; };
 		60F8C9C80F8DF19B0069FA6C /* ETHandle.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ETHandle.h; path = Headers/ETHandle.h; sourceTree = "<group>"; };
 		60F8C9CB0F8DF1AB0069FA6C /* ETHandle.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ETHandle.m; path = Source/ETHandle.m; sourceTree = "<group>"; };
-		60FB0BF913C509A700C2AB94 /* TestPersistency.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = TestPersistency.m; path = Tests/TestPersistency.m; sourceTree = "<group>"; };
+		60FB0BF913C509A700C2AB94 /* TestItemPersistency.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = TestItemPersistency.m; path = Tests/TestItemPersistency.m; sourceTree = "<group>"; };
 		60FC2925105C112D008D2EFF /* FormExample.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = FormExample.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		60FC2927105C112D008D2EFF /* FormExample-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = "FormExample-Info.plist"; path = "FormExample/FormExample-Info.plist"; sourceTree = "<group>"; };
 		60FC29E3105C118A008D2EFF /* FormController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FormController.h; path = FormExample/FormController.h; sourceTree = "<group>"; };
@@ -1552,7 +1552,7 @@
 				609F5B5A16CA9E8800683BD9 /* TestLayout.m */,
 				609F5B5B16CA9E8800683BD9 /* TestLayoutItem.m */,
 				609F5B5C16CA9E8800683BD9 /* TestLayoutItemBuilder.m */,
-				60FB0BF913C509A700C2AB94 /* TestPersistency.m */,
+				60FB0BF913C509A700C2AB94 /* TestItemPersistency.m */,
 				609F5B5D16CA9E8800683BD9 /* TestPickboard.m */,
 				602EA7A11712CFAC00D499A9 /* TestResponder.m */,
 				60E7BD20107E7B3F00E7C0F2 /* TestStyle.m */,
@@ -3098,7 +3098,7 @@
 				6077C1820F9802E1006CB3F5 /* NSImage+Etoile.m in Sources */,
 				60D30288194BCB42006BA5A9 /* TestWindowLayout.m in Sources */,
 				6000978F0FAB479500622E5D /* ETModelDescriptionRenderer.m in Sources */,
-				60D30289194BCBD5006BA5A9 /* TestPersistency.m in Sources */,
+				60D30289194BCBD5006BA5A9 /* TestItemPersistency.m in Sources */,
 				607FBAFA0FE005E900960039 /* ETLayoutItemFactory.m in Sources */,
 				60FDA9A30FE58F590009686A /* ETSelectionAreaItem.m in Sources */,
 				60D30283194BCAFA006BA5A9 /* TestFreeLayout.m in Sources */,
