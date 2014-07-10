@@ -284,6 +284,7 @@ since -serializedValueForProperty: doesn't use the direct ivar access. */
 	if ([self isCoreObjectReference: ref])
 	{
 		object = [self objectForSerializedReference: ref
+											 ofType: kCOTypeReference
 		                        propertyDescription: [self propertyDescriptionForRepresentedObject]];
 	}
 	else
