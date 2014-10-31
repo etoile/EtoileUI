@@ -724,6 +724,27 @@
 			remoteGlobalIDString = 6686BDAB12592BDA0065DE1A;
 			remoteInfo = CoreObject;
 		};
+		608B3F6419FFA41200304809 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 6084048815415CB2002F91A1 /* CoreObject.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 60E08C6219792BEA00D1B7AD;
+			remoteInfo = "CoreObject (iOS)";
+		};
+		608B3F6619FFA41200304809 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 6084048815415CB2002F91A1 /* CoreObject.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 60F91E9D197D1B8F009F47D7;
+			remoteInfo = "TestCoreObject (iOS)";
+		};
+		608B3F6819FFA41200304809 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 6084048815415CB2002F91A1 /* CoreObject.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 6002E28E197FD90300AC9150;
+			remoteInfo = "BasicPersistence (iOS)";
+		};
 		608E630D18FD9CC6005FB6C7 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 6640BC2710A0C1B0008B7765 /* EtoileFoundation.xcodeproj */;
@@ -1792,6 +1813,9 @@
 				6084049115415CB2002F91A1 /* Test */,
 				60DD6A921845171F0094D57B /* BenchmarkCoreObject */,
 				60C2100E16755264002E03AE /* BasicPersistence */,
+				608B3F6519FFA41200304809 /* libCoreObject.a */,
+				608B3F6719FFA41200304809 /* TestCoreObject.app */,
+				608B3F6919FFA41200304809 /* BasicPersistence.app */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -2683,6 +2707,27 @@
 			fileType = "compiled.mach-o.executable";
 			path = Test;
 			remoteRef = 6084049015415CB2002F91A1 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		608B3F6519FFA41200304809 /* libCoreObject.a */ = {
+			isa = PBXReferenceProxy;
+			fileType = archive.ar;
+			path = libCoreObject.a;
+			remoteRef = 608B3F6419FFA41200304809 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		608B3F6719FFA41200304809 /* TestCoreObject.app */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.application;
+			path = TestCoreObject.app;
+			remoteRef = 608B3F6619FFA41200304809 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		608B3F6919FFA41200304809 /* BasicPersistence.app */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.application;
+			path = BasicPersistence.app;
+			remoteRef = 608B3F6819FFA41200304809 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
 		608E630E18FD9CC6005FB6C7 /* TestEtoileFoundation.app */ = {
