@@ -50,6 +50,13 @@ a label underneath. */
 	return style;
 }
 
+// TODO: Remove once labelAttributes and _selectedLabelAttributes are made persistent
+- (void)prepareInitialTransientState
+{
+	ASSIGN(_labelAttributes, [[self class] standardLabelAttributes]);
+	_selectedLabelAttributes = [NSDictionary new];
+}
+
 /** <init />
 Initializes and returns a new basic item style with no visible label, 
 no max image and label size and no edge inset. */
@@ -61,7 +68,7 @@ no max image and label size and no edge inset. */
 
 	[self setIsShared: YES];
 	_labelPosition = ETLabelPositionNone;
-	ASSIGN(_labelAttributes, [[self class] standardLabelAttributes]);
+	[self prepareInitialTransientState];
 	_maxImageSize = ETNullSize;
 	_maxLabelSize = ETNullSize;
 	_edgeInset = 0;
@@ -391,7 +398,7 @@ See also -labelAttributesForDrawingItem:. */
 
 /** Returns the string attributes used to draw the label for a selected item.
 
-By default, returns nil to indicate no custom attributes are set.
+By default, returns en empty dictionary to indicate no custom attributes are set.
  
 See also -labelAttributesForDrawingItem:. */
 - (NSDictionary *) selectedLabelAttributes

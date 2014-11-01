@@ -7,7 +7,25 @@
  */
 
 #import "ETCompatibility.h"
+#import "ETBasicItemStyle.h"
 #import "ETShape.h"
+
+@interface ETBasicItemStyle ()
+- (void) prepareInitialTransientState;
+@end
+
+@interface ETBasicItemStyle (CoreObject)
+@end
+
+@implementation ETBasicItemStyle (CoreObject)
+
+- (void) awakeFromDeserialization
+{
+	[super awakeFromDeserialization];
+	[self prepareInitialTransientState];
+}
+
+@end
 
 @interface ETShape (CoreObject)
 @end
