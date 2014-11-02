@@ -179,12 +179,6 @@ see -[ETStyle setIsShared:]. */
 
 }*/
 
-// FIXME: Remove
-- (void) awakeFromDeserialization
-{
-    
-}
-
 - (BOOL) isCoreObjectReference: (id)value
 {
 	return ([value isKindOfClass: [ETUUID class]] || [value isKindOfClass: [COPath class]]);
