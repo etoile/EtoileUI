@@ -47,6 +47,15 @@
 	}
 }
 
+- (void)prepareTransientState
+{
+	_editedItems = [[NSMutableArray alloc] init];
+	_editableProperties = [[NSMutableArray alloc] init];
+	_hasNewSortDescriptors = (NO == [_sortDescriptors isEmpty]);
+	_hasNewFilterPredicate = (nil != _filterPredicate);
+	_hasNewContent = NO;
+}
+
 /** <init />
 Initializes and returns a new controller which automatically rearrange objects.
 
@@ -70,8 +79,6 @@ You can also use it -init to create a controller. See -[ETNibOwner init]. */
 	[self setSortDescriptors: nil];
 	_allowedPickTypes = [[NSArray alloc] init];
 	_allowedDropTypes = [[NSMutableDictionary alloc] init];
-	_editedItems = [[NSMutableArray alloc] init];
-	_editableProperties = [[NSMutableArray alloc] init];
 	_automaticallyRearrangesObjects = YES;
 	_clearsFilterPredicateOnInsertion = YES;
 	_selectsInsertedObjects = YES;
@@ -89,6 +96,8 @@ You can also use it -init to create a controller. See -[ETNibOwner init]. */
 
 	[self setTemplate: objectTemplate forType: kETTemplateObjectType];
 	[self setTemplate: groupTemplate forType: kETTemplateGroupType];
+
+	[self prepareTransientState];
 
 	[[NSNotificationCenter defaultCenter]
 		addObserver: self

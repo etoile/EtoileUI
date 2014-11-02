@@ -299,6 +299,8 @@ since -serializedValueForProperty: doesn't use the direct ivar access. */
 
 - (void) awakeFromDeserialization
 {
+	[super awakeFromDeserialization];
+
 	// TODO: May be reset the bounding box if not persisted
 	//_boundingBox = ETNullRect;
 	
@@ -317,6 +319,8 @@ since -serializedValueForProperty: doesn't use the direct ivar access. */
 
 - (void)didLoadObjectGraph
 {
+	[super didLoadObjectGraph];
+
 	/* Restore target and action on the receiver item or its view */
 
 	[self restoreTargetFromId: [_variableStorage objectForKey: @"targetId"]];

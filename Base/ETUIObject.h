@@ -49,6 +49,7 @@
 /** @taskunit Framework Private */
 
 + (COObjectGraphContext *) defaultTransientObjectGraphContext;
+- (void)prepareTransientState;
 
 @end
 

@@ -10,10 +10,6 @@
 #import "ETBasicItemStyle.h"
 #import "ETShape.h"
 
-@interface ETBasicItemStyle ()
-- (void) prepareInitialTransientState;
-@end
-
 @interface ETBasicItemStyle (CoreObject)
 @end
 
@@ -22,10 +18,11 @@
 - (void) awakeFromDeserialization
 {
 	[super awakeFromDeserialization];
-	[self prepareInitialTransientState];
+	[self prepareTransientState];
 }
 
 @end
+
 
 @interface ETShape (CoreObject)
 @end

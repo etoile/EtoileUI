@@ -87,13 +87,13 @@
 
 - (void) awakeFromDeserialization
 {
-    _hasNewSortDescriptors = (NO == [_sortDescriptors isEmpty]);
-    _hasNewFilterPredicate = (nil != _filterPredicate);
-    _hasNewContent = NO;
+	[super awakeFromDeserialization];
+	[self prepareTransientState];
 }
 
 - (void) didLoadObjectGraph
 {
+	[super didLoadObjectGraph];
     [self recreateObservations];
 }
 

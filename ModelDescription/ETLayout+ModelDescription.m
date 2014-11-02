@@ -264,6 +264,7 @@
 	ETPropertyDescription *formatters =
 		[ETPropertyDescription descriptionWithName: @"formatters" type: (id)@"NSFormatter"];
 	[formatters setMultivalued: YES];
+	[formatters setKeyed: YES];
 	/* The collection is immutable because you cannot declare new properties by 
 	   editing it. You must edit 'displayedProperties' to do so instead. 
 	   However the formatter objects themselves are mutable, but editing doesn't 

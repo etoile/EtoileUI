@@ -46,6 +46,8 @@ the -setUp logic, that makes sense when deserializing an already set up layout
 or a layout without a context. */
 - (void) didLoadObjectGraph
 {
+	[super didLoadObjectGraph];
+
     if ([self layoutContext] != nil)
     {
     	[self mapLayerItemIntoLayoutContext];
@@ -187,6 +189,8 @@ is not an option. */
 
 - (void) didLoadObjectGraph
 {
+	[super didLoadObjectGraph];
+
 	for (ETLayoutItem *item in _renderedItems)
 	{
 		ETAssert([item parentItem] == [self layoutContext]);

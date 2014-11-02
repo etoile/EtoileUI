@@ -109,6 +109,7 @@ Open Issues
 
     - ETShape.icon would then be computed based on an internal dictionary that maps kind string constants to images.
 
+- Fix -numberOfUntitledDocuments to be computed on demand rather than storing in an ivar (the count is wrong once documents get renamed and this doesn't play well with persistence)
 
 Testing
 -------

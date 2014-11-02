@@ -100,6 +100,18 @@ ETLayoutItemFactory or the dedicated initializers). */
 	                                                      UUID: permanentUUID
 	                                        objectGraphContext: aContext]);
 }
+/** <override-dummy />
+Does nothing by default, but can be overriden to recreate the transient state
+in a way valid for both the designated initializer and -awakeFromDeserialization.
+ 
+If you override it, it's the subclass responsability to call it in 
+-awakeFromDeserialization and the initializer. 
+ 
+You must never call the superclass implementation. */
+- (void)prepareTransientState
+{
+	
+}
 
 - (void) dealloc
 {

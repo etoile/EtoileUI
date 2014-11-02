@@ -51,7 +51,7 @@ a label underneath. */
 }
 
 // TODO: Remove once labelAttributes and _selectedLabelAttributes are made persistent
-- (void)prepareInitialTransientState
+- (void)prepareTransientState
 {
 	ASSIGN(_labelAttributes, [[self class] standardLabelAttributes]);
 	_selectedLabelAttributes = [NSDictionary new];
@@ -68,7 +68,7 @@ no max image and label size and no edge inset. */
 
 	[self setIsShared: YES];
 	_labelPosition = ETLabelPositionNone;
-	[self prepareInitialTransientState];
+	[self prepareTransientState];
 	_maxImageSize = ETNullSize;
 	_maxLabelSize = ETNullSize;
 	_edgeInset = 0;

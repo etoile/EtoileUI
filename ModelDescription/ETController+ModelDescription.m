@@ -126,6 +126,7 @@
 	ETPropertyDescription *defaultOptions =
 		[ETPropertyDescription descriptionWithName: @"defaultOptions" type: (id)@"NSObject"];
 	[defaultOptions setMultivalued: YES];
+	[defaultOptions setKeyed: YES];
 	[defaultOptions setOrdered: NO];
 	[defaultOptions setReadOnly: YES];
 	ETPropertyDescription *canMutate =

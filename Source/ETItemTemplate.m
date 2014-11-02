@@ -332,7 +332,7 @@ See also -newItemWithRepresentedObject:options:. */
 	else
 	{
 		// TODO: Return compound document UTI
-		return nil;
+		return [NSArray array];
 	}
 }
 
