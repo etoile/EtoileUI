@@ -75,7 +75,7 @@
 	ETPropertyDescription *movedItem =
 		[ETPropertyDescription descriptionWithName: @"movedItem" type: (id)@"ETLayoutItem"];
 	ETPropertyDescription *shouldProduceTranslate =
-		[ETPropertyDescription descriptionWithName: @"shouldProducteTranslateActions" type: (id)@"BOOL"];
+		[ETPropertyDescription descriptionWithName: @"shouldProduceTranslateActions" type: (id)@"BOOL"];
 	[shouldProduceTranslate setPersistent: YES];
 
 	[entity setPropertyDescriptions: A(movedItem, shouldProduceTranslate)];

@@ -62,8 +62,6 @@ or a layout without a context. */
     /* Will call -mapLayerItemIntoLayoutContext to recreate the layer item */
 	[super didLoadObjectGraph];
 
-	//[self setAttachedTool: [ETSelectTool toolWithObjectGraphContext: [self objectGraphContext]]];
-	[[[self attachedTool] ifResponds] setShouldProduceTranslateActions: YES];
 	[[self layerItem] setActionHandler: nil];
 	[[self layerItem] setCoverStyle: nil];
 
@@ -71,8 +69,19 @@ or a layout without a context. */
 		return;
 
 	/* Rebuild the handles to manipulate the item copies and not their originals */
+	ETTool *activatableTool = [ETTool activatableToolForItem: [self contextItem]];
+
 	[self updateKVOForItems: [[self layoutContext] arrangedItems]];
-	[self buildHandlesForItems: [[self layoutContext] arrangedItems]];
+
+	if ([self showsHandlesForTool: activatableTool])
+	{
+		[self buildHandlesForItems: [[self layoutContext] arrangedItems]];
+		_areHandlesHidden = NO;
+	}
+	else
+	{
+		_areHandlesHidden = YES;
+	}
 }
 
 @end

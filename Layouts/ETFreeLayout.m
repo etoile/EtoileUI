@@ -43,24 +43,6 @@ unlike ETPositionalLayout.  */
 	[super dealloc];
 }
 
-- (id) copyWithZone: (NSZone *)aZone layoutContext: (id <ETLayoutingContext>)ctxt
-{
-	ETFreeLayout *newLayout = [super copyWithZone: aZone layoutContext: ctxt];
-	newLayout->_areHandlesHidden = _areHandlesHidden;
-	return newLayout;
-}
-
-- (void) setUpCopyWithZone: (NSZone *)aZone original: (ETLayout *)layoutOriginal
-{
-	/* Only to set the parent item, we don't need to synchronize the geometry */
-	[self mapLayerItemIntoLayoutContext];
-
-	/* Rebuild the handles to manipulate the item copies and not their originals */
-	// TODO: May be avoid to copy the original handles in -copyWithZone:layoutContext:
-	[self updateKVOForItems: [[self layoutContext] arrangedItems]];
-	[self buildHandlesForItems: [[self layoutContext] arrangedItems]];
-}
-
 - (NSImage *) icon
 {
 	return [NSImage imageNamed: @"zone--pencil.png"];
