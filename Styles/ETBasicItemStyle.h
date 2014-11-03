@@ -1,7 +1,4 @@
-/**	<title>ETBasicItemStyle</title>
-
-	<abstract>Very generic style class to draw layout items.</abstract>
-
+/**
 	Copyright (C) 2007 Quentin Mathe
 
 	Author:  Quentin Mathe <qmathe@club-internet.fr>
@@ -16,7 +13,7 @@
 @class COObjectGraphContext;
 @class ETLayoutItem;
 
-/** Specifies the label position in the item drawing bounds as returned by 
+/** Specifies the label position in the item drawing bounds as returned by
 -[ETLayoutItem drawingForStyle:] with the style to be drawn as argument.
 
 See -setLabelPosition: and -labelPosition: */
@@ -56,7 +53,9 @@ on the outer side. */
 	ETLabelPositionOutsideBottom
 } ETLabelPosition;
 
-/** ETBasicItemStyle is a very generic style that knows how to draw:
+/** @abstract Very generic style class to draw layout items.
+ 
+ETBasicItemStyle is a very generic style that knows how to draw:
 <list> 
 <item>various basic ETLayoutItem properties when available (such as name, image 
 etc.),</item>

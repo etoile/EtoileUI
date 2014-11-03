@@ -59,9 +59,13 @@
 /* Styles */
 
 #import <EtoileUI/ETBasicItemStyle.h>
+#import <EtoileUI/ETDropIndicator.h>
 #import <EtoileUI/ETShape.h>
 #import <EtoileUI/ETStyle.h>
 #import <EtoileUI/ETStyleGroup.h>
+#import <EtoileUI/ETShadowStyle.h>
+#import <EtoileUI/ETSpeechBubbleStyle.h>
+#import <EtoileUI/ETTintStyle.h>
 
 /* Layouts */
 

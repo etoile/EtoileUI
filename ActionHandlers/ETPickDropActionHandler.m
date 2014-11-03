@@ -15,6 +15,7 @@
 #import <EtoileFoundation/NSObject+Model.h>
 #import "ETPickDropActionHandler.h"
 #import "ETController.h"
+#import "ETDropIndicator.h"
 #import "ETEvent.h"
 #import "ETGeometry.h"
 #import "ETTool.h"
@@ -25,7 +26,6 @@
 #import "ETPickboard.h"
 #import "ETPickDropCoordinator.h"
 #import "ETSelectTool.h" /* For -shouldRemoveItemsAtPickTime */
-#import "ETStyle.h"
 #import "ETCompatibility.h"
 
 #define SELECTION_BY_RANGE_KEY_MASK NSShiftKeyMask

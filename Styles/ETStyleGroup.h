@@ -1,7 +1,4 @@
-/**	<title>ETStyleGroup</title>
-
-	<abstract>A collection of ETStyle objects to be drawn in a given order.</abstract>
-
+/**
 	Copyright (C) 2009 Quentin Mathe
 
 	Author:  Quentin Mathe <qmathe@club-internet.fr>
@@ -17,7 +14,9 @@
 @class COObjectGraphContext;
 @class ETLayoutItem;
 
-/** ETStyleGroup represents a collection of styles you want to render together. 
+/** @abstract A collection of ETStyle objects to be drawn in a given order.
+ 
+ETStyleGroup represents a collection of styles you want to render together.
 With a style group, several style aspects can be attached to a layout item with 
 -[ETLayoutItem setStyleGroup:] and rendered in a precise order. 
 

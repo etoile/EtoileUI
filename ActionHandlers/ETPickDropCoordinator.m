@@ -17,6 +17,7 @@
 #import <EtoileFoundation/NSObject+Model.h>
 #import <EtoileFoundation/NSMapTable+Etoile.h>
 #import "ETPickDropCoordinator.h"
+#import "ETDropIndicator.h"
 #import "ETEvent.h"
 #import "ETGeometry.h"
 #import "EtoileUIProperties.h"
@@ -29,7 +30,6 @@
 #import "ETPickboard.h"
 #import "ETPickDropActionHandler.h"
 #import "ETSelectTool.h" /* For -shouldRemoveItemsAtPickTime */
-#import "ETStyle.h"
 #import "ETStyleGroup.h"
 // FIXME: Move related code to the Appkit widget backend (perhaps in a subclass or category)
 #import "ETWidgetBackend.h"

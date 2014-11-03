@@ -1,8 +1,4 @@
-/**	<title>ETStyle</title>
-
-	<abstract>Base class to implement pluggable styles as subclasses and make 
-	possible UI styling at runtime.</abstract>
-
+/**
 	Copyright (C) 2007 Quentin Mathe
 
 	Author:  Quentin Mathe <qmathe@club-internet.fr>
@@ -18,7 +14,10 @@
 @class COObjectGraphContext;
 @class ETLayoutItem;
 
-/** ETStyle is an abstract base class that represents a style element.
+/** @abstract Base class to implement pluggable styles as subclasses and make
+ possible UI styling at runtime.
+ 
+ETStyle is an abstract base class that represents a style element.
 
 EtoileUI pluggable styles are usually written by subclassing ETStyle.
 
@@ -75,104 +74,5 @@ rather than -initWithObjectGraphContext:.  */
 /** @taskunit Notifications */
 	  
 - (void) didChangeItemBounds: (NSRect)bounds;
-
-@end
-
-// TODO: Support bottom and top indicator position
-/** The drop indicator positions which can computed by [ETDropIndicator].
-
-Based on the drop indicator position, the indicator drawing will vary. e.g. bar 
-or rectangle. */
-typedef enum
-{
-	ETIndicatorPositionNone, /** No visible indicator. */
-	ETIndicatorPositionOn, /** Drop on indicator. */
-	ETIndicatorPositionLeft, /** Left bar indicator. */
-	ETIndicatorPositionRight /** Right bar indicator. */
-} ETIndicatorPosition;
-
-/** Draws a drop insertion bar.
-
-ETDropIndicator is usually inserted and removed into the style group of the 
-item group targeted by a drop validation. [ETPickDropCoordinator] manages that 
-transparently.
-
-You can subclass this class to use a custom color and/or thickness or even draw 
-something else e.g. a circle, an image etc. You can override 
--[ETStyle render:layoutItem:dirtyRect:] if needed, and -currentIndicatorRect 
-if you want to draw outside of the vertical indicator rect area.<br />
-Warning: Subclassing is untested, surely require changes to the class and 
-better documention.<br />
-
-Finally a new drop indicator instantiated with -init can be used with 
--[ETLayout setDropIndicator:], [ETPickDropCoordinator] will retrieve it at 
-drop validation time. */
-@interface ETDropIndicator : ETStyle
-{
-	@private
-	NSPoint _dropLocation;
-	ETLayoutItem *_hoveredItem;
-	BOOL _dropOn;
-	NSRect _prevInsertionIndicatorRect;
-}
-
-- (id) initWithLocation: (NSPoint)dropLocation 
-            hoveredItem: (ETLayoutItem *)hoveredItem
-           isDropTarget: (BOOL)dropOn
-     objectGraphContext: (COObjectGraphContext *)aContext;
-
-- (CGFloat) thickness;
-- (NSColor *) color;
-
-- (void) drawVerticalInsertionIndicatorInRect: (NSRect)indicatorRect;
-- (void) drawRectangularInsertionIndicatorInRect: (NSRect)indicatorRect;
-- (NSRect) previousIndicatorRect;
-- (NSRect) currentIndicatorRect;
-
-- (ETIndicatorPosition) indicatorPosition;
-+ (ETIndicatorPosition) indicatorPositionForPoint: (NSPoint)dropPoint
-                                    nearItemFrame: (NSRect)itemRect;
-
-@end
-
-/** Draws a shadow. */
-@interface ETShadowStyle : ETStyle
-{
-	@private
-	ETStyle *_content;
-	NSShadow *_shadow;
-}
-+ (id) shadowWithStyle: (ETStyle *)style objectGraphContext: (COObjectGraphContext *)aContext;
-- (id) initWithStyle: (ETStyle *)style objectGraphContext: (COObjectGraphContext *)aContext;
-
-@end
-
-/** Draws an existing style tinted with a color.
-
-Warning: Unstable API. */
-@interface ETTintStyle : ETStyle
-{
-	@private
-	ETStyle *_content;
-	NSColor *_color;
-}
-
-+ (id) tintWithStyle: (ETStyle *)style color: (NSColor *)color objectGraphContext: (COObjectGraphContext *)aContext;
-+ (id) tintWithStyle: (ETStyle *)style objectGraphContext: (COObjectGraphContext *)aContext;
-- (id) initWithStyle: (ETStyle *)style objectGraphContext: (COObjectGraphContext *)aContext;
-- (void) setColor: (NSColor *)color;
-- (NSColor *) color;
-
-@end
-
-/** Draws a speech bubble around the item to which this style is applied. */
-@interface ETSpeechBubbleStyle : ETStyle
-{
-	@private
-	ETStyle *_content;
-}
-
-+ (id) speechWithStyle: (ETStyle *)style objectGraphContext: (COObjectGraphContext *)aContext;
-- (id) initWithStyle: (ETStyle *)style objectGraphContext: (COObjectGraphContext *)aContext;
 
 @end

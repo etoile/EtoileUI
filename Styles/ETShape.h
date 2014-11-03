@@ -1,9 +1,4 @@
-/** <title>ETShape</title>
-
-	<abstract>An ETStyle subclass used to represent arbitrary shapes. These 
-	shapes can be primitives such as rectangles, oval etc., or more complex 
-	shapes that embed or combine text, image, shadow, mask etc.</abstract>
- 
+/**
 	Copyright (C) 2007 Quentin Mathe
 	Author:  Quentin Mathe <qmathe@club-internet.fr>
 	Date:  July 2007
@@ -14,9 +9,11 @@
 #import <EtoileUI/ETGraphicsBackend.h>
 #import <EtoileUI/ETStyle.h>
 
-// WARNING: Unstable API
+/** @abstract An ETStyle subclass used to represent arbitrary shapes. These 
+shapes can be primitives such as rectangles, oval etc., or more complex shapes 
+that embed or combine text, image, shadow, mask etc.
 
-/** ETShape instances are model objects. As such they are never manipulated 
+ETShape instances are model objects. As such they are never manipulated
 directly by a layout, but ETLayout subclasses interact with them indirectly 
 through layout items. A shape is made of a path and optional style and transform. U
 nlike NSBezierPath instances, they support boolean operations (will probably 
