@@ -38,26 +38,6 @@ constraint with -setItemSizeConstraint: and -setConstrainedItemSize:. */
 	return self;
 }
 
-/** <override-dummy />
-Returns a copy of the receiver.<br />
-The given context which might be nil will be set as the layout context on the copy.
-
-This method is ETLayout designated copier. Subclasses that want to extend 
-the copying support must invoke it instead of -copyWithZone:.
-
-Subclasses must be aware that this method calls -setAttachedTool: with an 
-tool copy. */ 
-- (id) copyWithZone: (NSZone *)aZone layoutContext: (id <ETLayoutingContext>)ctxt
-{
-	ETPositionalLayout *newLayout = [super copyWithZone: aZone layoutContext: ctxt];
-
-	newLayout->_constrainedItemSize = _constrainedItemSize;
-	newLayout->_itemSizeConstraintStyle = _itemSizeConstraintStyle;
-	newLayout->_isContentSizeLayout  = _isContentSizeLayout;
-
-	return newLayout;
-}
-
 /** Returns the context where the layout happens. */
 - (id <ETLayoutingContext>) layoutContext
 {
@@ -86,8 +66,10 @@ See also -isContentSizeLayout:. */
 - (void) setIsContentSizeLayout: (BOOL)flag
 {
 	//ETDebugLog(@"-setContentSizeLayout");
+	[self willChangeValueForProperty: @"isContentSizeLayout"];
 	_isContentSizeLayout = flag;
 	[self resetLayoutSize];
+	[self didChangeValueForProperty: @"isContentSizeLayout"];
 }
 
 /** Returns whether the layout context can be resized, when its current size is 
@@ -118,7 +100,9 @@ See -[ETLayout positionalLayout]. */
 See ETSizeConstraintStyle enum. */
 - (void) setItemSizeConstraintStyle: (ETSizeConstraintStyle)constraint
 {
+	[self willChangeValueForProperty: @"itemSizeConstraintStyle"];
 	_itemSizeConstraintStyle = constraint;
+	[self didChangeValueForProperty: @"itemSizeConstraintStyle"];
 }
 
 /** Returns how the item is resized based on the constrained item size.
@@ -138,7 +122,9 @@ Whether the width, the height or both are resized is controlled by
 See also setItemSizeConstraintStyle: and -resizeLayoutItems:toScaleFactor:. */
 - (void) setConstrainedItemSize: (NSSize)size
 {
+	[self willChangeValueForProperty: @"constrainedItemSize"];
 	_constrainedItemSize = size;
+	[self didChangeValueForProperty: @"constrainedItemSize"];
 }
 
 /** Returns the width and/or height to which the items should be resized when 

@@ -23,17 +23,8 @@
 	if (self == nil)
 		return nil;
 
-	_autoresizesItem = YES;
+	_autoresizesItems = YES;
 	return self;
-}
-
-- (id) copyWithZone: (NSZone *)aZone layoutContext: (id <ETLayoutingContext>)ctxt
-{
-	ETFixedLayout *newLayout = [super copyWithZone: aZone layoutContext: ctxt];
-
-	newLayout->_autoresizesItem = _autoresizesItem;
-
-	return newLayout;
 }
 
 - (NSImage *) icon
@@ -141,12 +132,14 @@ geometry and not computed by the receiver. */
 
 - (BOOL) autoresizesItems
 {
-	return _autoresizesItem;
+	return _autoresizesItems;
 }
 
 - (void) setAutoresizesItems: (BOOL)autoresize
 {
-	_autoresizesItem = autoresize;
+	[self willChangeValueForProperty: @"autoresizesItems"];
+	_autoresizesItems = autoresize;
+	[self didChangeValueForProperty: @"autoresizesItems"];
 }
 
 /** Synchronizes the frames of every layout items provided by the layout 

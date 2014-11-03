@@ -9,6 +9,8 @@
 #import "TestCommon.h"
 #import "ETLayout.h"
 #import "ETDropIndicator.h"
+#import "ETFixedLayout.h"
+#import "ETPositionalLayout.h"
 #import "ETCompatibility.h"
 
 @interface ETLayout (Private)
@@ -41,12 +43,17 @@
     ETLayoutItemGroup *itemGroup;
     ETLayoutItem *item;
     ETLayoutItem *buttonItem;
-    ETLayout *layout;
+    id layout;
 }
 
 @end
 
 @implementation TestLayoutPersistency
+
+- (Class) layoutClass
+{
+	return [ETLayout class];
+}
 
 - (id) init
 {
@@ -54,7 +61,7 @@
     ASSIGN(itemFactory, [ETLayoutItemFactory factoryWithObjectGraphContext:
         [COObjectGraphContext objectGraphContext]]);
 
-	layout = [[ETLayout alloc] initWithObjectGraphContext: [itemFactory objectGraphContext]];
+	layout = [[[self layoutClass] alloc] initWithObjectGraphContext: [itemFactory objectGraphContext]];
 
     ASSIGN(item, [self basicItemWithRect: NSMakeRect(10, 10, 50, 50)]);
     ASSIGN(buttonItem, [itemFactory button]);
@@ -147,6 +154,162 @@
 			UKObjectsSame(indicator, newIndicator);
 		}
         UKObjectKindOf(newIndicator, ETCustomDropIndicator);
+    }];
+}
+
+@end
+
+
+@interface TestPositionalLayoutPersistency : TestLayoutPersistency
+@end
+
+@implementation TestPositionalLayoutPersistency
+
+- (Class) layoutClass
+{
+	return [ETPositionalLayout class];
+}
+
+- (void) testItemConstraints
+{
+	[layout setConstrainedItemSize: NSMakeSize(24, 48)];
+	[layout setItemSizeConstraintStyle: ETSizeConstraintStyleHorizontal];
+	[itemGroup updateLayout];
+
+    [self checkWithExistingAndNewRootObject: itemGroup
+                                    inBlock: ^(ETLayoutItemGroup *newItemGroup, BOOL isNew, BOOL isCopy)
+    {
+		ETLayoutItem *newItem = [newItemGroup firstItem];
+		ETLayoutItem *newButtonItem = [newItemGroup lastItem];
+
+		UKSizesEqual(NSMakeSize(24, [newItem height]), [newItem size]);
+		UKSizesEqual(NSMakeSize(24, [newButtonItem height]), [newButtonItem size]);
+    }];
+}
+
+- (void) testIsContentSizeLayout
+{
+	[layout setIsContentSizeLayout: YES];
+
+    [self checkWithExistingAndNewRootObject: itemGroup
+                                    inBlock: ^(ETLayoutItemGroup *newItemGroup, BOOL isNew, BOOL isCopy)
+    {
+		UKTrue([[newItemGroup layout] isContentSizeLayout]);
+    }];
+}
+
+@end
+
+
+@interface TestFixedLayoutPersistency : TestLayoutPersistency
+@end
+
+@implementation TestFixedLayoutPersistency
+
+- (Class) layoutClass
+{
+	return [ETFixedLayout class];
+}
+
+- (void) testAutoresizesItemsDisabled
+{
+	NSSize buttonSize = [buttonItem size];
+
+	[layout setAutoresizesItems: NO];
+	[item setAutoresizingMask: ETAutoresizingFlexibleWidth];
+
+	[itemGroup setSize: NSMakeSize(1000, 2000)];
+	[itemGroup updateLayout];
+
+    [self checkWithExistingAndNewRootObject: itemGroup
+                                    inBlock: ^(ETLayoutItemGroup *newItemGroup, BOOL isNew, BOOL isCopy)
+    {
+		ETFixedLayout *newLayout = [newItemGroup layout];
+		ETLayoutItem *newItem = [newItemGroup firstItem];
+		ETLayoutItem *newButtonItem = [newItemGroup lastItem];
+
+		UKFalse([newLayout autoresizesItems]);
+		UKSizesEqual(NSMakeSize(50, 50), [newItem size]);
+		UKSizesEqual(buttonSize, [newButtonItem size]);
+    }];
+}
+
+- (void) testAutoresizesItemsEnabled
+{
+	NSSize buttonSize = [buttonItem size];
+
+	[layout setAutoresizesItems: YES];
+	[item setAutoresizingMask: ETAutoresizingFlexibleWidth];
+
+	[itemGroup setSize: NSMakeSize(1000, 2000)];
+	[itemGroup updateLayout];
+
+    [self checkWithExistingAndNewRootObject: itemGroup
+                                    inBlock: ^(ETLayoutItemGroup *newItemGroup, BOOL isNew, BOOL isCopy)
+    {
+		ETFixedLayout *newLayout = [newItemGroup layout];
+		ETLayoutItem *newItem = [newItemGroup firstItem];
+		ETLayoutItem *newButtonItem = [newItemGroup lastItem];
+	
+		UKTrue([newLayout autoresizesItems]);
+		UKTrue(50 < [newItemGroup width]);
+		UKIntsEqual(50, [newItem height]);
+		UKSizesEqual(buttonSize, [newButtonItem size]);
+    }];
+}
+
+
+- (void) testItemConstraints
+{
+	NSSize buttonSize = [buttonItem size];
+
+	[layout setAutoresizesItems: NO];
+	[layout setConstrainedItemSize: NSMakeSize(24, 48)];
+	[layout setItemSizeConstraintStyle: ETSizeConstraintStyleHorizontal];
+	[item setAutoresizingMask: ETAutoresizingFlexibleWidth | ETAutoresizingFlexibleHeight];
+
+	[itemGroup setSize: NSMakeSize(1000, 2000)];
+	[itemGroup updateLayout];
+
+    [self checkWithExistingAndNewRootObject: itemGroup
+                                    inBlock: ^(ETLayoutItemGroup *newItemGroup, BOOL isNew, BOOL isCopy)
+    {
+		ETLayoutItem *newItem = [newItemGroup firstItem];
+		ETLayoutItem *newButtonItem = [newItemGroup lastItem];
+
+		UKIntsEqual(24, [newItem width]);
+		UKTrue(50 > [newItem height]);
+		UKIntsEqual(24, [newButtonItem width]);
+		UKTrue(buttonSize.height > [newButtonItem height]);
+    }];
+}
+
+- (void) testItemConstraintsOverrideAutoresizesItems
+{
+	NSSize buttonSize = [buttonItem size];
+
+	[layout setAutoresizesItems: YES];
+	[layout setConstrainedItemSize: NSMakeSize(24, 48)];
+	[layout setItemSizeConstraintStyle: ETSizeConstraintStyleHorizontal];
+	[item setAutoresizingMask: ETAutoresizingFlexibleWidth | ETAutoresizingFlexibleHeight];
+
+	[itemGroup setSize: NSMakeSize(1000, 2000)];
+	[itemGroup updateLayout];
+
+    [self checkWithExistingAndNewRootObject: itemGroup
+                                    inBlock: ^(ETLayoutItemGroup *newItemGroup, BOOL isNew, BOOL isCopy)
+    {
+		ETLayoutItem *newItem = [newItemGroup firstItem];
+		ETLayoutItem *newButtonItem = [newItemGroup lastItem];
+
+		// For the height, no autoresizing occurs, but the height is resized by
+		// the item constraints although there is no constraint on it.
+		// This is done to ensure the item aspect ratio (that relates width and
+		// height) remains the same even when the width is constrained.
+		UKIntsEqual(24, [newItem width]);
+		UKTrue(50 > [newItem height]);
+		UKIntsEqual(24, [newButtonItem width]);
+		UKTrue(buttonSize.height > [newButtonItem height]);
     }];
 }
 

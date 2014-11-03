@@ -18,7 +18,7 @@
 @interface ETFixedLayout : ETPositionalLayout
 {
 	@private
-	BOOL _autoresizesItem;
+	BOOL _autoresizesItems;
 }
 
 /** @taskunit Type Querying */

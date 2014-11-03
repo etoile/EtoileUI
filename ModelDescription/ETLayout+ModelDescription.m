@@ -10,6 +10,7 @@
 #import "ETLayout.h"
 #import "ETCompositeLayout.h"
 #import "ETComputedLayout.h"
+#import "ETFixedLayout.h"
 #import "ETPositionalLayout.h"
 #import "ETWidgetLayout.h"
 #import "ETTableLayout.h"
@@ -26,6 +27,9 @@
 @end
 
 @interface ETPositionalLayout (ModelDescription)
+@end
+
+@interface ETFixedLayout (ModelDescription)
 @end
 
 @interface ETComputedLayout (ModelDescription)
@@ -139,6 +143,29 @@
 		[persistentProperties arrayByAddingObjectsFromArray: transientProperties]];
 	
 	return entity;
+}
+
+@end
+
+
+@implementation ETFixedLayout (ModelDescription)
+
++ (ETEntityDescription *) newEntityDescription
+{
+    ETEntityDescription *entity = [self newBasicEntityDescription];
+    
+    // For subclasses that don't override -newEntityDescription, we must not add
+    // the property descriptions that we will inherit through the parent
+    if ([[entity name] isEqual: [ETFixedLayout className]] == NO)
+        return entity;
+    
+    ETPropertyDescription *autoresizesItems =
+        [ETPropertyDescription descriptionWithName: @"autoresizesItems" type: (id)@"BOOL"];
+	[autoresizesItems setPersistent: YES];
+
+    [entity setPropertyDescriptions: A(autoresizesItems)];
+    
+    return entity;
 }
 
 @end

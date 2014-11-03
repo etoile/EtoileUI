@@ -511,8 +511,10 @@ in.You can restrict the layout size to your personal needs by
 - (void) setLayoutSize: (NSSize)size
 {
 	//ETDebugLog(@"-setLayoutSize");
+	[self willChangeValueForProperty: @"layoutSize"];
 	_layoutSize = size;
 	[self syncLayerItemGeometryWithSize: size];
+	[self didChangeValueForProperty: @"layoutSize"];
 }
 
 /** Returns the last computed layout size.
@@ -984,7 +986,9 @@ Sets the drop indicator style that should be drawn to indicate hovered
 items which are valid drop targets. */
 - (void) setDropIndicator: (ETDropIndicator *)aStyle
 {
+	[self willChangeValueForProperty: @"dropIndicator"];
 	ASSIGN(_dropIndicator, aStyle);
+	[self didChangeValueForProperty: @"dropIndicator"];
 }
 
 /** <override-dummy />
