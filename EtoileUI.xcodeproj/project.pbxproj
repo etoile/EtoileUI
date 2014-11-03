@@ -158,6 +158,7 @@
 		6077D2071729EC3F009CE93C /* ETTitleBarItem.m in Sources */ = {isa = PBXBuildFile; fileRef = 66B74126103CB008008AF5B1 /* ETTitleBarItem.m */; };
 		60793A50105C125A005E4F39 /* EtoileUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 60EF8E9D0C5E4D0600C97C41 /* EtoileUI.framework */; };
 		60793AC5105C1263005E4F39 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 29B97316FDCFA39411CA2CEA /* main.m */; };
+		607CFDF61A077A2B00A48537 /* TestLayoutPersistency.m in Sources */ = {isa = PBXBuildFile; fileRef = 607CFDF51A077A2B00A48537 /* TestLayoutPersistency.m */; };
 		607F5F020F005A8E00A8CD0C /* ETGeometry.h in Headers */ = {isa = PBXBuildFile; fileRef = 607F5F000F005A8E00A8CD0C /* ETGeometry.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		607F5F070F005C5100A8CD0C /* ETGeometry.m in Sources */ = {isa = PBXBuildFile; fileRef = 607F5F060F005C5100A8CD0C /* ETGeometry.m */; };
 		607F5F080F005C5100A8CD0C /* ETGeometry.m in Sources */ = {isa = PBXBuildFile; fileRef = 607F5F060F005C5100A8CD0C /* ETGeometry.m */; };
@@ -1028,6 +1029,7 @@
 		607676E4176DD40F009FA5F2 /* ETUIBuilderBrowserController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ETUIBuilderBrowserController.m; path = UIBuilder/ETUIBuilderBrowserController.m; sourceTree = "<group>"; };
 		6077C1660F9801C5006CB3F5 /* ETLayoutItem+Scrollable.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "ETLayoutItem+Scrollable.h"; path = "Headers/ETLayoutItem+Scrollable.h"; sourceTree = "<group>"; };
 		6077C16A0F9801DA006CB3F5 /* ETLayoutItem+Scrollable.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = "ETLayoutItem+Scrollable.m"; path = "Source/ETLayoutItem+Scrollable.m"; sourceTree = "<group>"; };
+		607CFDF51A077A2B00A48537 /* TestLayoutPersistency.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = TestLayoutPersistency.m; path = Tests/TestLayoutPersistency.m; sourceTree = "<group>"; };
 		607DF9A91732C33200C8CB30 /* TestAutoresizing.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = TestAutoresizing.m; path = Tests/TestAutoresizing.m; sourceTree = "<group>"; };
 		607F5F000F005A8E00A8CD0C /* ETGeometry.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ETGeometry.h; path = Headers/ETGeometry.h; sourceTree = "<group>"; };
 		607F5F060F005C5100A8CD0C /* ETGeometry.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ETGeometry.m; path = Source/ETGeometry.m; sourceTree = "<group>"; };
@@ -1588,12 +1590,13 @@
 				608B01AB1868A79600D1A573 /* TestHitTest.m */,
 				6067EB591046B4E600C39086 /* TestItemCopy.m */,
 				6022404D1003DF14007D5D07 /* TestItemGeometry.m */,
+				60FB0BF913C509A700C2AB94 /* TestItemPersistency.m */,
 				609F5B6716CD412900683BD9 /* TestItemProvider.m */,
 				6043D1AE174E26B5002103CC /* TestItemValue.m */,
 				609F5B5A16CA9E8800683BD9 /* TestLayout.m */,
+				607CFDF51A077A2B00A48537 /* TestLayoutPersistency.m */,
 				609F5B5B16CA9E8800683BD9 /* TestLayoutItem.m */,
 				609F5B5C16CA9E8800683BD9 /* TestLayoutItemBuilder.m */,
-				60FB0BF913C509A700C2AB94 /* TestItemPersistency.m */,
 				609F5B5D16CA9E8800683BD9 /* TestPickboard.m */,
 				602EA7A11712CFAC00D499A9 /* TestResponder.m */,
 				60E7BD20107E7B3F00E7C0F2 /* TestStyle.m */,
@@ -3233,6 +3236,7 @@
 				60BBFDE718645483006A495E /* ETArrowTool.m in Sources */,
 				60BBFDEB18645483006A495E /* ETPaintBucketTool.m in Sources */,
 				60D30281194BCABA006BA5A9 /* TestView.m in Sources */,
+				607CFDF61A077A2B00A48537 /* TestLayoutPersistency.m in Sources */,
 				60BBFDEF18645483006A495E /* ETSelectTool.m in Sources */,
 				60BBFDF318645483006A495E /* ETTool.m in Sources */,
 				60BBFE0618645684006A495E /* ETApplication.m in Sources */,

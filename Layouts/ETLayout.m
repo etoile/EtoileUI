@@ -13,6 +13,7 @@
 #import "ETLayout.h"
 #import "ETApplication.h"
 #import "ETAspectRepository.h"
+#import "ETDropIndicator.h"
 #import "ETGeometry.h"
 #import "ETTool.h"
 #import "ETLayoutExecutor.h"
@@ -147,7 +148,7 @@ Returns a new ETLayout instance. */
 		return nil;
 
 	_attachedTool = nil;
-	ASSIGN(_dropIndicator, [ETDropIndicator sharedInstanceForObjectGraphContext: [ETUIObject defaultTransientObjectGraphContext]]);
+	ASSIGN(_dropIndicator, [ETDropIndicator sharedInstanceForObjectGraphContext: aContext]);
 	_isRendering = NO;
 	_layoutSize = NSMakeSize(200, 200); /* Dummy value */
 	_proposedLayoutSize = ETNullSize;
@@ -179,77 +180,6 @@ Returns a new ETLayout instance. */
 	DESTROY(_dropIndicator);
 
 	[super dealloc];
-}
-
-/** <override-dummy />
-Returns a copy of the receiver.<br />
-The given context which might be nil will be set as the layout context on the copy.
-
-This method is ETLayout designated copier. Subclasses that want to extend 
-the copying support must invoke it instead of -copyWithZone:.
-
-Subclasses must be aware that this method calls -setAttachedTool: with an 
-tool copy. */ 
-- (id) copyWithZone: (NSZone *)aZone layoutContext: (id <ETLayoutingContext>)ctxt
-{
-	ETLayout *newLayout = [super copyWithZone: aZone];
-
-	/* We copy all ivars except [self layoutContext] and _isRendering */
-
-	//newLayout->[self layoutContext] = ctxt;
-	//newLayout->delegate = delegate;
-	newLayout->_layerItem = [_layerItem copyWithZone: aZone];
-	newLayout->_dropIndicator = RETAIN(_dropIndicator);
-	newLayout->_attachedTool = [_attachedTool copyWithZone: aZone];
-	/* Update ETTool.layoutOwner inverse relationship */
-	ETPropertyDescription *propertyDesc =
-		[[newLayout entityDescription] propertyDescriptionForName: @"attachedTool"];
-    [newLayout updateCachedOutgoingRelationshipsForOldValue: nil
-	                                               newValue: newLayout->_attachedTool
-                                  ofPropertyWithDescription: propertyDesc];
-	newLayout->_layoutSize = _layoutSize;
-	/* Must be copied to ensure autoresizing receives a correct old size */
-	newLayout->_proposedLayoutSize = _proposedLayoutSize;
-	newLayout->_usesCustomLayoutSize = _usesCustomLayoutSize;
-	newLayout->_previousScaleFactor = _previousScaleFactor;
-
-	return newLayout;
-}
-
-/** <override-dummy />
-Overrides to set up the receiver when it is the copy and has just been assigned 
-to its layout context.<br />
-At that point, the item tree owned by the layout context has been fully copied, 
-and object references that belongs to the original can now be resolved to their 
-equivalent in the tree copy (or object graph copy to be precise).
-
-The default implementation calls -setUp.
-
-You can call the superclass implementation or not. */
-- (void) setUpCopyWithZone: (NSZone *)aZone
-                  original: (ETLayout *)layoutOriginal
-{
-	NSParameterAssert([self layoutContext] != nil);
-	[self setUp];
-	// TODO: Implement -setUpCopyWithZone:original: in subclasses or change
-	// -setUp to -setUp: (BOOL)resetLayoutSize.
-	_layoutSize = layoutOriginal->_layoutSize;
-	_proposedLayoutSize = layoutOriginal ->_layoutSize;
-}
-
-/** <override-never />
-Returns a copy of the receiver.
-
-The layout context in the copy is nil.
-
-Subclasses must be aware that this method calls -setAttachedTool: with an 
-tool copy.
-
-To customize the copying in a subclass, you must override 
--copyWithZone:layoutContext:. */ 
-- (id) copyWithZone: (NSZone *)aZone
-{
-	return [self copyWithZone: aZone layoutContext: nil];
 }
 
 - (BOOL) isLayout

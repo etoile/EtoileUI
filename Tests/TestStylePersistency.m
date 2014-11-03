@@ -43,7 +43,7 @@
 	[self checkWithExistingAndNewRootObject: style
                                     inBlock: ^(ETBasicItemStyle *newStyle, BOOL isNew, BOOL isCopy)
     {
-        UKValidateLoadedObjects(newStyle, style);
+        UKValidateLoadedObjects(newStyle, style, NO);
 
         UKIntsEqual(ETLabelPositionInsideTop, [newStyle labelPosition]);
         UKIntsEqual(5, [newStyle labelMargin]);
@@ -89,7 +89,7 @@
 	[self checkWithExistingAndNewRootObject: shape
                                     inBlock: ^(ETShape *newShape, BOOL isNew, BOOL isCopy)
     {
-        UKValidateLoadedObjects(newShape, shape);
+        UKValidateLoadedObjects(newShape, shape, NO);
         UKRectsEqual(rect, [newShape bounds]);
     }];
 }

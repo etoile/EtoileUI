@@ -8,6 +8,7 @@
 
 #import "ETCompatibility.h"
 #import "ETCompositeLayout.h"
+#import "ETDropIndicator.h"
 #import "ETFreeLayout.h"
 #import "ETLayout.h"
 #import "ETLayoutItemGroup.h"
@@ -20,14 +21,6 @@
 @end
 
 @implementation ETLayout (CoreObject)
-
-- (void) awakeFromDeserialization
-{
-	[super awakeFromDeserialization];
-
-	ASSIGN(_dropIndicator, [ETDropIndicator sharedInstanceForObjectGraphContext: [ETUIObject defaultTransientObjectGraphContext]]);
-	_previousScaleFactor = 1.0;
-}
 
 /** Maps the layer item into the context. 
  
@@ -47,6 +40,8 @@ or a layout without a context. */
 - (void) didLoadObjectGraph
 {
 	[super didLoadObjectGraph];
+
+	_previousScaleFactor = ([self layoutContext] != nil ? [[self layoutContext] itemScaleFactor] : 1.0);
 
     if ([self layoutContext] != nil)
     {

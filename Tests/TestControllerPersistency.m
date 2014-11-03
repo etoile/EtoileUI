@@ -77,7 +77,7 @@
     {
         ETController *newController = [newItemGroup controller];
 
-        UKValidateLoadedObjects(newController, controller);
+        UKValidateLoadedObjects(newController, controller, NO);
 
         UKNotNil(newController);
         UKObjectsEqual(newItemGroup, [newController content]);

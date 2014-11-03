@@ -167,6 +167,9 @@ Warning: This protocol is very much subject to change. */
 - (void) renderWithItems: (NSArray *)items isNewContent: (BOOL)isNewContent;
 @end
 
+/** @section Copying
+ 
+For a copy, -attachedTool is copied. */
 @interface ETLayout : ETUIObject <NSCopying>
 {
 	@private
@@ -194,12 +197,6 @@ Warning: This protocol is very much subject to change. */
 
 + (id) layoutWithObjectGraphContext: (COObjectGraphContext *)aContext;
 - (id) initWithObjectGraphContext: (COObjectGraphContext *)aContext;
-
-/** @taskunit Copying */
-
-- (id) copyWithZone: (NSZone *)aZone layoutContext: (id <ETLayoutingContext>)newContext;
-- (void) setUpCopyWithZone: (NSZone *)aZone 
-                  original: (ETLayout *)layoutOriginal;
 
 /** @taskunit Attached Tool */
 

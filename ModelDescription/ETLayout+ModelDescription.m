@@ -82,9 +82,9 @@
 
 	// TODO: Declare the numerous derived (implicitly transient) properties we have 
 
-	NSArray *transientProperties = A(contextItem, dropIndicator, layerItem);
+	NSArray *transientProperties = A(contextItem, layerItem);
 	NSArray *persistentProperties = A(attachedTool, layoutSize,
-        proposedLayoutSize, usesCustomLayoutSize);
+        proposedLayoutSize, usesCustomLayoutSize, dropIndicator);
 
 	[entity setUIBuilderPropertyNames: (id)[[A(dropIndicator) mappedCollection] name]];
 

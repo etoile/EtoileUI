@@ -112,7 +112,7 @@
 - (void) testInsertedObjects
 {
     NSSet *itemAndAspects = S(item, [item actionHandler], [item styleGroup], [item coverStyle],
-        itemGroup, [itemGroup styleGroup], [itemGroup layout]);
+        itemGroup, [itemGroup styleGroup], [itemGroup layout], [[itemGroup layout] dropIndicator]);
     COObjectGraphContext *oldContext = [item objectGraphContext];
 
     UKObjectsEqual(itemAndAspects, SA([oldContext insertedObjects]));
@@ -149,7 +149,7 @@
     {
         UKFalse([[itemFactory windowGroup] isPersistent]);
 
-        UKValidateLoadedObjects(newItem, item);
+        UKValidateLoadedObjects(newItem, item, NO);
         
         UKRectsEqual([item contentBounds], [newItem contentBounds]);
         UKPointsEqual([item position], [newItem position]);
@@ -188,9 +188,9 @@
         ETLayoutItem *newItem = [newItemGroup firstItem];
         ETController *newController = [newItemGroup controller];
 
-        UKValidateLoadedObjects(newItemGroup, itemGroup);
-        UKValidateLoadedObjects(newItem, item);
-        UKValidateLoadedObjects(newController, controller);
+        UKValidateLoadedObjects(newItemGroup, itemGroup, NO);
+        UKValidateLoadedObjects(newItem, item, NO);
+        UKValidateLoadedObjects(newController, controller, NO);
 
         UKRectsEqual([itemGroup contentBounds], [newItemGroup contentBounds]);
         UKPointsEqual([itemGroup position], [newItemGroup position]);
@@ -236,8 +236,8 @@
         ETLayoutItem *newSliderItem = [newItemGroup itemAtIndex: 1];
         ETLayoutItem *newButtonItem = [newItemGroup lastItem];
 
-        UKValidateLoadedObjects(newButtonItem, buttonItem);
-        UKValidateLoadedObjects(newSliderItem, sliderItem);
+        UKValidateLoadedObjects(newButtonItem, buttonItem, NO);
+        UKValidateLoadedObjects(newSliderItem, sliderItem, NO);
     
         UKObjectKindOf([newButtonItem view], NSButton);
         UKRectsEqual(rect, [newButtonItem frame]);

@@ -37,12 +37,19 @@
 #define UKObjectUUIDsEqual(a, b) UKObjectsEqual([a UUID], [b UUID])
 #define UKCollectionUUIDsEqual(a, b) UKObjectsEqual([[a mappedCollection] UUID], [[b mappedCollection] UUID])
 
-/** Test macro to be used in the block passed to 
+/** Test macro to be used in the block passed to
 -[TestCommon checkWithExistingAndNewRootObject:inBlock:]. */
-#define UKValidateLoadedObjects(newObject, oldObject) \
+#define UKValidateLoadedObjects(newObject, oldObject, aliased) \
     if (isCopy && isNew == NO) \
     { \
-        UKObjectsNotEqual(newObject, [[newObject objectGraphContext] loadedObjectForUUID: [oldObject UUID]]); \
+		if (aliased) \
+		{ \
+			UKObjectsSame(newObject, [[newObject objectGraphContext] loadedObjectForUUID: [oldObject UUID]]); \
+		} \
+		else \
+		{ \
+        	UKObjectsNotEqual(newObject, [[newObject objectGraphContext] loadedObjectForUUID: [oldObject UUID]]); \
+		} \
     } \
     else \
     { \

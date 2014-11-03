@@ -62,7 +62,7 @@
     {
         ETFreeLayout *newLayout = [newItemGroup layout];
 
-        UKValidateLoadedObjects(newLayout, layout);
+        UKValidateLoadedObjects(newLayout, layout, NO);
 
         UKNotNil(newLayout);
         UKObjectsEqual(newItemGroup, [newLayout layoutContext]);
@@ -77,7 +77,7 @@
         ETFreeLayout *newLayout = [newItemGroup layout];
         ETSelectTool *newTool = [newLayout attachedTool];
 
-        UKValidateLoadedObjects(newTool, [layout attachedTool]);
+        UKValidateLoadedObjects(newTool, [layout attachedTool], NO);
 
         UKObjectKindOf(newTool, ETSelectTool);
         UKTrue([newTool shouldProduceTranslateActions]);
