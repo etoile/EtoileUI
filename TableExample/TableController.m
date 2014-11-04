@@ -17,7 +17,7 @@ burden involved by a data source. */
 - (void) setUpTopLeftTableItem
 {
 	ETLayoutItemFactory *itemFactory = [ETLayoutItemFactory factory];
-	ETLayoutItemGroup *tableItem2 = [leftTableAreaView layoutItem];
+	ETLayoutItemGroup *tableItem2 = (ETLayoutItemGroup *)[leftTableAreaView layoutItem];
 	ETTableLayout *tableLayout2 = [ETTableLayout layoutWithObjectGraphContext: [itemFactory objectGraphContext]];
 	NSArray *visibleColumnIds = [NSArray arrayWithObjects: @"displayName", @"intensity", nil];
 	ETSelectTool *tool = [ETSelectTool toolWithObjectGraphContext: [tableLayout2 objectGraphContext]];
@@ -61,7 +61,7 @@ burden involved by a data source. */
 - (void) setUpTopRightTableItem
 {
 	ETLayoutItemFactory *itemFactory = [ETLayoutItemFactory factory];
-	ETLayoutItemGroup *tableItem = [rightTableAreaView layoutItem];
+	ETLayoutItemGroup *tableItem = (ETLayoutItemGroup *)[rightTableAreaView layoutItem];
 
 	[tableItem setLayout: [ETTableLayout layoutWithObjectGraphContext: [itemFactory objectGraphContext]]];
 

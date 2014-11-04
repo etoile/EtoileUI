@@ -47,7 +47,7 @@
 		60197785185F457700635BE2 /* ETResponderIntegration.h in Headers */ = {isa = PBXBuildFile; fileRef = 60197783185F457700635BE2 /* ETResponderIntegration.h */; };
 		60197786185F457700635BE2 /* ETResponderIntegration.m in Sources */ = {isa = PBXBuildFile; fileRef = 60197784185F457700635BE2 /* ETResponderIntegration.m */; };
 		60197791185F457B00635BE2 /* ETResponderIntegration.m in Sources */ = {isa = PBXBuildFile; fileRef = 60197784185F457700635BE2 /* ETResponderIntegration.m */; };
-		60197794185F480600635BE2 /* ETUIItemIntegration.h in Headers */ = {isa = PBXBuildFile; fileRef = 60197792185F480600635BE2 /* ETUIItemIntegration.h */; };
+		60197794185F480600635BE2 /* ETUIItemIntegration.h in Headers */ = {isa = PBXBuildFile; fileRef = 60197792185F480600635BE2 /* ETUIItemIntegration.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		60197796185F480600635BE2 /* ETUIItemIntegration.m in Sources */ = {isa = PBXBuildFile; fileRef = 60197793185F480600635BE2 /* ETUIItemIntegration.m */; };
 		60197797185F480600635BE2 /* ETUIItemIntegration.m in Sources */ = {isa = PBXBuildFile; fileRef = 60197793185F480600635BE2 /* ETUIItemIntegration.m */; };
 		6019779C185F61C600635BE2 /* ETTitleBarView.h in Headers */ = {isa = PBXBuildFile; fileRef = 60197798185F61C600635BE2 /* ETTitleBarView.h */; };
