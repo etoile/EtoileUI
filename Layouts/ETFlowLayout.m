@@ -209,6 +209,7 @@ supported. If you use them, the receiver resets ETSizeConstraintStyleHorizontal
 default value. */
 - (void) setLayoutSizeConstraintStyle: (ETSizeConstraintStyle)constraint
 {
+	[self willChangeValueForProperty: @"layoutSizeConstraintStyle"];
 	if (constraint == ETSizeConstraintStyleHorizontal 
 	 || constraint == ETSizeConstraintStyleVertical)
 	{ 
@@ -218,6 +219,8 @@ default value. */
 	{
 		_layoutConstraint = ETSizeConstraintStyleHorizontal;
 	}
+	[self renderAndInvalidateDisplay];
+	[self didChangeValueForProperty: @"layoutSizeConstraintStyle"];
 }
 
 /** Returns the constraint applied on the layout which are only valid when 
@@ -232,13 +235,16 @@ Default value is ETSizeConstraintStyleHorizontal. */
 /** Not yet implemented */
 - (BOOL) usesGrid
 {
-	return _grid;
+	return _usesGrid;
 }
 
 /** Not yet implemented */
 - (void) setUsesGrid: (BOOL)constraint
 {
-	_grid = constraint;
+	[self willChangeValueForProperty: @"usesGrid"];
+	_usesGrid = constraint;
+	[self renderAndInvalidateDisplay];
+	[self didChangeValueForProperty: @"usesGrid"];
 }
 
 @end

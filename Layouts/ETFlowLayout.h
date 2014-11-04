@@ -28,15 +28,15 @@ ETComputedLayout:
 {
 	@private
 	ETSizeConstraintStyle _layoutConstraint;
-	BOOL _grid;
+	BOOL _usesGrid;
 }
 
-/* Flow Constraining and Streching */
+/** @taskunit Flow Constraining and Streching */
 
 - (void) setLayoutSizeConstraintStyle: (ETSizeConstraintStyle)constraint;
 - (ETSizeConstraintStyle) layoutSizeConstraintStyle;
 
-/* Additions */
+/** @taskunit Additions */
 
 - (BOOL) usesGrid;
 - (void) setUsesGrid: (BOOL)constraint;
