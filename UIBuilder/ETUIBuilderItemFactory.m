@@ -558,7 +558,7 @@
 
 	ETColumnLayout *layout = [ETColumnLayout layoutWithObjectGraphContext: [self objectGraphContext]];
 
-	[layout setHorizontalAligment: ETLayoutHorizontalAlignmentRight];
+	[layout setHorizontalAlignment: ETLayoutHorizontalAlignmentRight];
 	[renderer setEntityLayout: layout];
 
 	return renderer;

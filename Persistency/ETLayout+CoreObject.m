@@ -46,6 +46,7 @@ or a layout without a context. */
     if ([self layoutContext] != nil)
     {
     	[self mapLayerItemIntoLayoutContext];
+		[self syncLayerItemGeometryWithSize: _layoutSize];
     }
 }
 

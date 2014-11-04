@@ -90,7 +90,7 @@ In the rare case where more control is required, you might want to reimplement
 - (BOOL) autoresizesItemToFill;
 - (void) setAutoresizesItemToFill: (BOOL)stretchToFill;
 - (ETLayoutHorizontalAlignment) horizontalAlignment;
-- (void) setHorizontalAligment: (ETLayoutHorizontalAlignment)anAlignment;
+- (void) setHorizontalAlignment: (ETLayoutHorizontalAlignment)anAlignment;
 - (CGFloat) horizontalAlignmentGuidePosition;
 - (void) setHorizontalAlignmentGuidePosition: (CGFloat)aPosition;
 - (BOOL) usesAlignmentHint;

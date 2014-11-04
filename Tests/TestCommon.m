@@ -208,6 +208,9 @@ than the subclass instance we might want. */
 	ETLayoutItem *item = [itemFactory item];
 
 	[item setFrame: rect];
+	// FIXME: Ugly hack to get -itemScaleFactor applied correctly
+	// For example, see -[TestColumnLayoutPersistency testLayoutGeometry]
+	[item setDefaultFrame: rect];
 	[item setCoverStyle: [ETShape rectangleShapeWithObjectGraphContext: [itemFactory objectGraphContext]]];
 	[[item coverStyle] setFillColor: [NSColor redColor]];
 
@@ -350,3 +353,18 @@ static NSMutableSet *deallocatedObjectUUIDs = nil;
 }
 
 @end
+
+@implementation ETLayout (ETLayoutTestAdditions)
+
+- (NSSize) proposedLayoutSize
+{
+	return _proposedLayoutSize;
+}
+
+- (CGFloat) previousScaleFactor
+{
+	return _previousScaleFactor;
+}
+
+@end
+

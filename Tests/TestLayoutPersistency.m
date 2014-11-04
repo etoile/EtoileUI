@@ -13,40 +13,12 @@
 #import "ETPositionalLayout.h"
 #import "ETCompatibility.h"
 
-@interface ETLayout (Private)
-- (NSSize) proposedLayoutSize;
-@end
-
-@implementation ETLayout (Private)
-
-- (NSSize) proposedLayoutSize
-{
-	return _proposedLayoutSize;
-}
-
-- (CGFloat) previousScaleFactor
-{
-	return _previousScaleFactor;
-}
-
-@end
-
 @interface ETCustomDropIndicator : ETDropIndicator
 @end
 
 @implementation ETCustomDropIndicator
 @end
 
-
-@interface TestLayoutPersistency : TestCommon <UKTest>
-{
-    ETLayoutItemGroup *itemGroup;
-    ETLayoutItem *item;
-    ETLayoutItem *buttonItem;
-    id layout;
-}
-
-@end
 
 @implementation TestLayoutPersistency
 

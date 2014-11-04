@@ -20,6 +20,7 @@
 #import <CoreObject/COSQLiteStore.h>
 #import <CoreObject/COSerialization.h>
 #import "ETDecoratorItem.h"
+#import "ETLayoutExecutor.h"
 #import "ETLayoutItem.h"
 #import "ETLayoutItemGroup.h"
 #import "ETLayoutItemFactory.h"
@@ -107,6 +108,19 @@ The main item is the window content. */
 @end
 
 
+@interface TestLayoutPersistency : TestCommon <UKTest>
+{
+	ETLayoutItemGroup *itemGroup;
+	ETLayoutItem *item;
+	ETLayoutItem *buttonItem;
+	id layout;
+}
+
+- (Class) layoutClass;
+
+@end
+
+
 @interface ETUIObject (ETUIObjectTestAdditions)
 - (void) recordDeallocation;
 + (void) clearRecordedDeallocations;
@@ -124,4 +138,9 @@ The main item is the window content. */
 
 @interface ETDecoratorItem (ETDecoratorTestAdditions)
 + (ETDecoratorItem *) itemWithDummySupervisorView;
+@end
+
+@interface ETLayout (ETLayoutTestAdditions)
+- (NSSize) proposedLayoutSize;
+- (CGFloat) previousScaleFactor;
 @end

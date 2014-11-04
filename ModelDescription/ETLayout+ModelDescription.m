@@ -192,6 +192,10 @@
 		[ETPropertyDescription descriptionWithName: @"horizontalAlignment" type: (id)@"NSUInteger"];
 	ETPropertyDescription *horizontalAligmentGuide =
 		[ETPropertyDescription descriptionWithName: @"horizontalAlignmentGuidePosition" type: (id)@"CGFloat"];
+	ETPropertyDescription *computesItemRectFromBoundingBox =
+		[ETPropertyDescription descriptionWithName: @"computesItemRectFromBoundingBox" type: (id)@"BOOL"];
+	ETPropertyDescription *usesAlignmentHint =
+		[ETPropertyDescription descriptionWithName: @"usesAlignmentHint" type: (id)@"BOOL"];
 	ETPropertyDescription *separatorTemplateItem =
 		[ETPropertyDescription descriptionWithName: @"separatorTemplateItem" type: (id)@"ETLayoutItem"];
 	ETPropertyDescription *separatorItemEndMargin =
@@ -199,7 +203,8 @@
 	
 	NSArray *transientProperties = [NSArray array];
 	NSArray *persistentProperties = A(borderMargin, itemMargin, autoresizesItemToFill,
-		horizontalAlignment, horizontalAligmentGuide, separatorTemplateItem, separatorItemEndMargin);
+		horizontalAlignment, horizontalAligmentGuide, computesItemRectFromBoundingBox,
+		usesAlignmentHint, separatorTemplateItem, separatorItemEndMargin);
 	
 	[entity setUIBuilderPropertyNames: (id)[[A(borderMargin, itemMargin,
 		autoresizesItemToFill, horizontalAlignment, horizontalAligmentGuide,

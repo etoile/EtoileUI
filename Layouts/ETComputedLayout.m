@@ -32,22 +32,6 @@ CGFloat ETAlignmentHintNone = FLT_MIN;
 	[super dealloc];
 }
 
-- (id) copyWithZone: (NSZone *)aZone layoutContext: (id <ETLayoutingContext>)ctxt
-{
-	ETComputedLayout *newLayout = [super copyWithZone: aZone layoutContext: ctxt];
-
-	newLayout->_borderMargin = _borderMargin;
-	newLayout->_itemMargin = _itemMargin;
-	newLayout->_autoresizesItemToFill = _autoresizesItemToFill;
-	newLayout->_horizontalAlignment = _horizontalAlignment;
-	newLayout->_horizontalAlignmentGuidePosition = _horizontalAlignmentGuidePosition;
-	newLayout->_computesItemRectFromBoundingBox = _computesItemRectFromBoundingBox;
-	newLayout->_separatorTemplateItem = [_separatorTemplateItem copyWithZone: aZone];
-	newLayout->_separatorItemEndMargin = _separatorItemEndMargin;
-
-	return newLayout;
-}
-
 /** <override-never /> 
 Returns YES. */
 - (BOOL) isComputedLayout
@@ -69,16 +53,20 @@ triggers a layout update.
 The presented content appears inset when a positive margin is set. */
 - (void) setBorderMargin: (CGFloat)aMargin
 {
+	[self willChangeValueForProperty: @"borderMargin"];
 	_borderMargin = aMargin;
 	[self renderAndInvalidateDisplay];
+	[self didChangeValueForProperty: @"borderMargin"];
 }
 
 /** Sets the size of the margin around each item to be layouted and triggers a 
 layout update. */
 - (void) setItemMargin: (CGFloat)aMargin
 {
+	[self willChangeValueForProperty: @"itemMargin"];
 	_itemMargin = aMargin;
 	[self renderAndInvalidateDisplay];
+	[self didChangeValueForProperty: @"itemMargin"];
 }
 
 /** Returns the size of the margin around each item to be layouted. */
@@ -94,7 +82,10 @@ layout update. */
 
 - (void) setAutoresizesItemToFill: (BOOL)stretchToFill
 {
+	[self willChangeValueForProperty: @"autoresizesItemToFill"];
 	_autoresizesItemToFill = stretchToFill;
+	[self renderAndInvalidateDisplay];
+	[self didChangeValueForProperty: @"autoresizesItemToFill"];
 }
 
 /** Returns the content horizontal alignment in the layout context area. */
@@ -104,10 +95,12 @@ layout update. */
 }
 
 /** Sets the content horizontal alignment in the layout context area. */
-- (void) setHorizontalAligment: (ETLayoutHorizontalAlignment)anAlignment
+- (void) setHorizontalAlignment: (ETLayoutHorizontalAlignment)anAlignment
 {
+	[self willChangeValueForProperty: @"horizontalAlignment"];
 	_horizontalAlignment = anAlignment;
 	[self renderAndInvalidateDisplay];
+	[self didChangeValueForProperty: @"horizontalAlignment"];
 }
 
 /** Returns the horizontal alignment guide 'x' coordinate relative to the layout 
@@ -129,8 +122,10 @@ When -horizontalAlignment is not equal to ETHorizontalAlignmentGuided, this
 guide is ignored by the layout computation.  */
 - (void) setHorizontalAlignmentGuidePosition: (CGFloat)aPosition
 {
+	[self willChangeValueForProperty: @"horizontalAlignmentGuidePosition"];
 	_horizontalAlignmentGuidePosition = aPosition;
 	[self renderAndInvalidateDisplay];
+	[self didChangeValueForProperty: @"horizontalAlignmentGuidePosition"];
 }
 
 - (BOOL) usesAlignmentHint
@@ -140,7 +135,10 @@ guide is ignored by the layout computation.  */
 
 - (void) setUsesAlignmentHint: (BOOL)usesHint
 {
+	[self willChangeValueForProperty: @"usesAlignmentHint"];
 	_usesAlignmentHint = usesHint;
+	[self renderAndInvalidateDisplay];
+	[self didChangeValueForProperty: @"usesAlignmentHint"];
 }
 
 - (BOOL) isLayoutExecutionItemDependent
@@ -222,7 +220,10 @@ guide is ignored by the layout computation.  */
 	   If a recursive update is underway, the items will be automatically 
 	   unscheduled when reached by the recursive traversal (just before  
 	   -updateLayoutRecursively: returns for each item). */
-	[[ETLayoutExecutor sharedInstance] addItems: items];
+	for (ETLayoutItem *item in items)
+	{
+		[[ETLayoutExecutor sharedInstance] addItem: item];
+	}
 }
 
 /* Layout Computation */
@@ -238,7 +239,10 @@ that will be used to compute the layout. */
 that will be used to compute the layout. */
 - (void) setComputesItemRectFromBoundingBox: (BOOL)usesBoundingBox
 {
+	[self willChangeValueForProperty: @"computesItemRectFromBoundingBox"];
 	_computesItemRectFromBoundingBox = usesBoundingBox;
+	[self renderAndInvalidateDisplay];
+	[self didChangeValueForProperty: @"computesItemRectFromBoundingBox"];
 }
 
 /** <override-dummy />
@@ -546,8 +550,10 @@ rectangle that encloses the items and include border and item margins. */
 /** Sets the separator item to be drawn between each layouted item. */
 - (void) setSeparatorTemplateItem: (ETLayoutItem *)separator
 {
+	[self willChangeValueForProperty: @"separatorTemplateItem"];
 	ASSIGN(_separatorTemplateItem, separator);
 	[self renderAndInvalidateDisplay];
+	[self didChangeValueForProperty: @"separatorTemplateItem"];
 }
 
 /** Returns the separator item to be drawn between each layouted item. */			
@@ -569,8 +575,10 @@ margin with the item margin to compute the space around each separator.
 When the separator is the space, the end margin has usually no visible effects. */
 - (void) setSeparatorItemEndMargin: (CGFloat)aMargin
 {
+	[self willChangeValueForProperty: @"separatorItemEndMargin"];
 	_separatorItemEndMargin = aMargin;
 	[self renderAndInvalidateDisplay];
+	[self didChangeValueForProperty: @"separatorItemEndMargin"];
 }
 
 /** Returns the size trimmed at each separator item extremities. */

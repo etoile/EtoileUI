@@ -118,7 +118,7 @@
 	[editorItem addItems: A(entityItem, bottomBar)];
 	[editorItem setLayout: [ETColumnLayout layoutWithObjectGraphContext: [itemFactory objectGraphContext]]];
 	// FIXME: Implement horizontal alignment support
-	[[editorItem layout] setHorizontalAligment: ETLayoutHorizontalAlignmentRight];
+	[[editorItem layout] setHorizontalAlignment: ETLayoutHorizontalAlignmentRight];
 
 	return editorItem;
 }

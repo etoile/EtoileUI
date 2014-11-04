@@ -102,6 +102,7 @@ See ETSizeConstraintStyle enum. */
 {
 	[self willChangeValueForProperty: @"itemSizeConstraintStyle"];
 	_itemSizeConstraintStyle = constraint;
+	[self renderAndInvalidateDisplay];
 	[self didChangeValueForProperty: @"itemSizeConstraintStyle"];
 }
 
@@ -124,6 +125,7 @@ See also setItemSizeConstraintStyle: and -resizeLayoutItems:toScaleFactor:. */
 {
 	[self willChangeValueForProperty: @"constrainedItemSize"];
 	_constrainedItemSize = size;
+	[self renderAndInvalidateDisplay];
 	[self didChangeValueForProperty: @"constrainedItemSize"];
 }
 
@@ -161,9 +163,6 @@ respect the autoresizing mask returned by -[ETLayoutItem autoresizingMask],
 otherwise it won't. */
 - (void) resizeItems: (NSArray *)items toScaleFactor: (CGFloat)factor
 {
-	if ([self itemSizeConstraintStyle] == ETSizeConstraintStyleNone)
-		return;
-
 	for (ETLayoutItem *item in items)
 	{
 		/* Scaling is always computed from item default frame rather than
