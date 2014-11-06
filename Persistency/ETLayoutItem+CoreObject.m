@@ -301,6 +301,17 @@ since -serializedValueForProperty: doesn't use the direct ivar access. */
 	[self setRepresentedObject: object];
 }
 
+- (void) setStoreItem: (COItem *)storeItem
+{
+	/* Unapply state changes related the layout, usually during -[ETLayout setUp],
+	   to support switching to a new layout (if the store item contains another 
+	   UUID reference for the layout relationship) */
+	[[self layout] tearDown];
+	/* Will remove the existing incoming relationships ETLayout.contextItem and
+	   ETLayout.contextLayout, usually accessed in -tearDown just before. */
+	[super setStoreItem: storeItem];
+}
+
 - (void) awakeFromDeserialization
 {
 	[super awakeFromDeserialization];
