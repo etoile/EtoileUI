@@ -312,7 +312,7 @@
 	[contentFont setPersistentTypeName: @"NSData"];
 
 	// FIXME: NSArray *transientProperties = A(displayedProperties, editableProperties,
-	//	formatters, styles, columns, sortable, contentFont);
+	//	formatters, styles);
 	NSArray *transientProperties = A(displayedProperties, formatters);
 	NSArray *persistentProperties = A(propertyColumns, sortable, contentFont);
 	

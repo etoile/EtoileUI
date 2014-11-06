@@ -82,7 +82,7 @@ Raises an exception if the bundle or the Nib itself cannot be found. */
 
     BOOL nibLoaded = [[self nibBundle] loadNibFile: [self nibName]
 	                             externalNameTable: nibContext
-	                                      withZone: [self zone]];
+	                                      withZone: nil];
 
     if (nibLoaded == NO) 
 	{

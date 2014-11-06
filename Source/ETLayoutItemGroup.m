@@ -965,7 +965,7 @@ Marks the receiver as needing a layout update. */
 
     // NOTE: The remaining code requires ETLayout.layoutContext to be set, so we
     // execute it last
-    [_layout setUp];
+	[_layout setUp: NO];
     [self didChangeLayout: oldLayout];
     RELEASE(oldLayout);
     [self setNeedsLayoutUpdate];

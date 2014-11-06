@@ -251,9 +251,9 @@ when they get deallocated. */
 	}*/
 }
 
-- (void) setUp
+- (void) setUp: (BOOL)isDeserialization
 {
-	[super setUp];
+	[super setUp: isDeserialization];
 	[(ETLayout *)[self positionalLayout] resetLayoutSize];
 }
 

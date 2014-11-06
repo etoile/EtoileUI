@@ -80,8 +80,11 @@
         ETLayout *newLayout = [newItemGroup layout];
 
 		UKTrue([layout usesCustomLayoutSize] == [newLayout usesCustomLayoutSize]);
-		UKTrue(5.0 == [newLayout previousScaleFactor]);
-
+		if ([newLayout isWidget] == NO)
+		{
+			UKTrue(5.0 == [newLayout previousScaleFactor]);
+		}
+	
 		UKSizesEqual([itemGroup visibleContentSize], [newLayout layoutSize]);
         UKSizesEqual([itemGroup visibleContentSize], [newLayout proposedLayoutSize]);
 		

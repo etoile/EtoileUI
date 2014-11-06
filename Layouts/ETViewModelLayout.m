@@ -124,9 +124,9 @@ The initial flipping will be automatically restored by
 
 /* Reloads and updates the property view layout when ETViewModelLayout becomes 
 active. */
-- (void) setUp
+- (void) setUp: (BOOL)isDeserialization
 {
-	[super setUp];
+	[super setUp: isDeserialization];
 	[self setDisplayMode: ETLayoutDisplayModeViewProperties];
 }
 

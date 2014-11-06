@@ -18,9 +18,18 @@
 #import "ETSelectTool.h"
 
 @interface ETLayout (CoreObject)
+- (void) setUpForDeserialization;
 @end
 
 @implementation ETLayout (CoreObject)
+
+- (void) setUpForDeserialization
+{
+	if (_isSetUp)
+		return;
+
+	[self setUp: YES];
+}
 
 /** Maps the layer item into the context. 
  
@@ -43,11 +52,12 @@ or a layout without a context. */
 
 	_previousScaleFactor = ([self layoutContext] != nil ? [[self layoutContext] itemScaleFactor] : 1.0);
 
-    if ([self layoutContext] != nil)
-    {
-    	[self mapLayerItemIntoLayoutContext];
-		[self syncLayerItemGeometryWithSize: _layoutSize];
-    }
+    if ([self layoutContext] == nil)
+		return;
+
+	[self setUpForDeserialization];
+	// FIXME: Could be removed if we don't persist the layout size
+	[self syncLayerItemGeometryWithSize: _layoutSize];
 }
 
 @end
@@ -117,7 +127,9 @@ is not an option. */
 {
 	[super didLoadObjectGraph];
 
-    [[self layoutContext] setLayoutView: [self layoutView]];
+	if ([self layoutContext] == nil)
+		return;
+
 	/* Force the content to get reloaded in the widget view */
 	[(ETLayoutItemGroup *)[self layoutContext] updateLayout];
 }
@@ -137,12 +149,15 @@ is not an option. */
 
 	for (NSString *key in _propertyColumns)
 	{
-		NSTableColumn *column = ([tableView tableColumnWithIdentifier: key]);
+		NSTableColumn *column =  [_propertyColumns objectForKey: key];
+		BOOL isUsed = ([tableView tableColumnWithIdentifier: key] != nil);
 
-        // FIXME: Should be 'column == nil'
-		if (column != nil)
+		if (isUsed)
+		{
+			ETAssert(column == [tableView tableColumnWithIdentifier: key]);
 			continue;
-
+		}
+		
 		[unusedColumns setObject: column forKey: key];
 	}
 	return unusedColumns;
@@ -161,13 +176,15 @@ is not an option. */
 	
 	NSDictionary *deserializedPropertyColumns = RETAIN(_propertyColumns);
 
-	/* The deserialized layout view is set on the ivar by 
-	   -[COObject setSerializedValue:forProperty:] but -setLayoutView: is used 
-	   as an intializer so we must call it to initialize the layout object.
+	/* The table view is deserialized in layoutView ivar by CoreObject, but
+	   the internal state related to the table view can only recreated by 
+	   -setLayoutView:.
 	   We cannot implement -setSerializedLayoutView: because -setLayoutView: 
 	   depends on _propertyColumns and overwrites it. */
 	[self setLayoutView: [self layoutView]];
-	ETAssert([[_propertyColumns allValues] containsCollection: [self allTableColumns]]);
+
+	ETAssert([[_propertyColumns allValues] isEqual: [[self tableView] tableColumns]]);
+	ETAssert([[_propertyColumns allValues] isEqual: [self allTableColumns]]);
 	ETAssert(_sortable);
 
 	/* Finish to populate _propertyColumns to take in account it can contain 

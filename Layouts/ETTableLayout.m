@@ -58,23 +58,6 @@
 	[super dealloc];
 }
 
-- (id) copyWithZone: (NSZone *)aZone layoutContext: (id <ETLayoutingContext>)ctxt
-{
-	ETTableLayout *newLayout = [super copyWithZone: aZone layoutContext: ctxt];
-	NSParameterAssert([newLayout tableView] != [self tableView]);
-
-	/* Will initialize several ivars in the layout copy */
-	[newLayout setLayoutView: [newLayout layoutView]];
-	newLayout->_contentFont = [_contentFont copyWithZone: aZone];
-	newLayout->_sortable = _sortable;
-
-	/* The target points on a random object since the original object (the 
-	   receiver) was not archived by - [NSViewView copyWithZone:]. */
-	[[newLayout tableView] setTarget: newLayout];
-
-	return newLayout;
-}
-
 - (void) awakeFromNib
 {
 	/* Finish to initialize attributes that cannot be set in the nib/gorm and 
@@ -183,6 +166,9 @@ The property names are used as the column identifiers.
 Will raise an NSInvalidArgumentException when the properties array is nil. */
 - (void) setDisplayedProperties: (NSArray *)properties
 {
+	[self willChangeValueForProperty: @"displayedProperties"];
+	[self willChangeValueForProperty: @"layoutView"];
+	[self willChangeValueForProperty: @"propertyColumns"];
 	ETDebugLog(@"Set displayed properties %@ of layout %@", properties, self);
 
 	NILARG_EXCEPTION_TEST(properties);
@@ -229,6 +215,9 @@ Will raise an NSInvalidArgumentException when the properties array is nil. */
 
 		isFirstColumn = NO;
 	}
+	[self didChangeValueForProperty: @"propertyColumns"];
+	[self didChangeValueForProperty: @"layoutView"];
+	[self didChangeValueForProperty: @"displayedProperties"];
 }
 
 - (void) _updateDisplayedPropertiesFromSource: (id)aSource
@@ -255,8 +244,12 @@ Will raise an NSInvalidArgumentException when the properties array is nil. */
 property display name should usually be passed as argument. */
 - (void) setDisplayName: (NSString *)displayName forProperty: (NSString *)property
 {
+	[self willChangeValueForProperty: @"layoutView"];
+	[self willChangeValueForProperty: @"propertyColumns"];
 	NSTableColumn *column = [self tableColumnWithIdentifierAndCreateIfAbsent: property];
 	[[column headerCell] setStringValue: displayName];
+	[self didChangeValueForProperty: @"propertyColumns"];
+	[self didChangeValueForProperty: @"layoutView"];
 }
 
 // NOTE: Gorm doesn't create editable data cell by default unlike IB and 
@@ -275,13 +268,17 @@ By default, columns are not editable and NO is returned. */
 /** Sets whether the column associated with the given property is editable. */
 - (void) setEditable: (BOOL)flag forProperty: (NSString *)property
 {
+	[self willChangeValueForProperty: @"layoutView"];
+	[self willChangeValueForProperty: @"propertyColumns"];
 	NSTableColumn *column = [self tableColumnWithIdentifierAndCreateIfAbsent: property];
 	ETAssert(nil != column);
 	/* A table view cell can be edited only if both [column isEditable] and 
 	   [[column dataCell] isEditable] returns YES.
 	   -[NSTableColumn isEditable] takes priority over the cell editability. */
 	[[column dataCell] setEditable: flag];
-	[column setEditable: flag];	
+	[column setEditable: flag];
+	[self didChangeValueForProperty: @"propertyColumns"];
+	[self didChangeValueForProperty: @"layoutView"];
 }
 
 /** Returns the formatter of the column associated with the given property.
@@ -298,6 +295,8 @@ The object value returned by -valueForProperty: on each item must be compatible
 with the formatter, otherwise the outcome of the formatting is unknown. */
 - (void) setFormatter: (NSFormatter *)aFormatter forProperty: (NSString *)property
 {
+	[self willChangeValueForProperty: @"layoutView"];
+	[self willChangeValueForProperty: @"propertyColumns"];
 	NSTableColumn *column = [self tableColumnWithIdentifierAndCreateIfAbsent: property];
 	ETAssert(nil != column);
 	/* We must reset the value, since on Mac OS X a new NSTextFieldCell is 
@@ -305,6 +304,8 @@ with the formatter, otherwise the outcome of the formatting is unknown. */
 	   NSString as its input value. */
 	[[column dataCell] setObjectValue: nil];
 	[[column dataCell] setFormatter: aFormatter];
+	[self didChangeValueForProperty: @"propertyColumns"];
+	[self didChangeValueForProperty: @"layoutView"];
 }
 
 /** Returns the data cell of the column associated with the given property, but 
@@ -325,6 +326,8 @@ NOTE: The documented behavior is subject to further changes in future to become
 more widget backend agnostic. */
 - (void) setStyle: (id)style forProperty: (NSString *)property
 {
+	[self willChangeValueForProperty: @"layoutView"];
+	[self willChangeValueForProperty: @"propertyColumns"];
 	NSTableColumn *column = [self tableColumnWithIdentifierAndCreateIfAbsent: property];
 	NSCell *cell = nil;
 
@@ -338,12 +341,16 @@ more widget backend agnostic. */
 		// different for Cocoa).
 		[column setEditable: [cell isEditable]];
 	}
+	[self didChangeValueForProperty: @"propertyColumns"];
+	[self didChangeValueForProperty: @"layoutView"];
 }
 
 /** Sets whether the columns can be sorted by clicking on their headers. */
 - (void) setSortable: (BOOL)isSortable
 {
+	[self willChangeValueForProperty: @"sortable"];
 	_sortable = isSortable;
+	[self didChangeValueForProperty: @"sortable"];
 }
 
 /** Returns whether the columns can be sorted by clicking on their headers.
@@ -368,11 +375,15 @@ This overrides any specific font you might have set individually on colums
 returned by -allTableColumns. */
 - (void) setContentFont: (NSFont *)aFont
 {
+	[self willChangeValueForProperty: @"contentFont"];
+	[self willChangeValueForProperty: @"layoutView"];
 	ASSIGN(_contentFont, aFont);
 	FOREACH([self allTableColumns], column, NSTableColumn *)
 	{
 		[[column dataCell] setFont: _contentFont];
 	}
+	[self didChangeValueForProperty: @"layoutView"];
+	[self didChangeValueForProperty: @"contentFont"];
 }
 
 #define SA(x) [NSSet setWithArray: x]

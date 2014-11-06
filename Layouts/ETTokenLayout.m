@@ -69,9 +69,9 @@ Initializes and returns a new token layout. */
 	[super dealloc];
 }
 
-- (void) setUp
+- (void) setUp: (BOOL)isDeserialization
 {
-	[super setUp];
+	[super setUp: isDeserialization];
 
 	// FIXME: Should use a new ETLayout API that memorizes the context state
 	[(id)[self layoutContext] setActionHandler: AUTORELEASE([[ETTokenBackgroundActionHandler alloc] initWithObjectGraphContext: [self objectGraphContext]])];

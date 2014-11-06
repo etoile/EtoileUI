@@ -401,11 +401,17 @@ the copying support in ETLayoutItemGroup and ETCompositeLayout/ETLayout). */
 
 #endif
 
-- (void) setUp
+- (void) setUp: (BOOL)isDeserialization
 {
+	if (isDeserialization)
+	{
+		[super setUp: isDeserialization];
+		return;
+	}
+
 	[self saveInitialContextState: [self initialStateProperties]];
 
-	[super setUp];
+	[super setUp: isDeserialization];
 
 	[self prepareNewContextState];
 

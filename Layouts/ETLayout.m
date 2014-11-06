@@ -349,13 +349,19 @@ and starts to be used and visible).
 The new layout context has been set when this method is called.
 
 You must call the superclass implementation if you override this method. */
-- (void) setUp
+- (void) setUp: (BOOL)isDeserialization
 {
 	NSParameterAssert([self layoutContext] != nil);
+
+	_isSetUp = YES;
+	[self mapLayerItemIntoLayoutContext];
+
+	if (isDeserialization)
+		return;
+
 	/* Reset the layout size to ensure -resizeItems:forNewLayoutSize:oldSize: 
 	   receives a valid old size (neither zero or computed for a previous layout context). */
 	[self resetLayoutSize];
-	[self mapLayerItemIntoLayoutContext];
 }
 
 // NOTE: -isSemantic will be a public method when its role has become clearer.

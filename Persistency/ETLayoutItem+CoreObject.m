@@ -20,6 +20,10 @@
 #import "NSObject+EtoileUI.h"
 #import "NSView+EtoileUI.h"
 
+@interface ETLayout (CoreObject)
+- (void) setUpForDeserialization;
+@end
+
 
 @implementation ETLayoutItem (CoreObject) 
 
@@ -331,11 +335,9 @@ since -serializedValueForProperty: doesn't use the direct ivar access. */
 		[[self parentItem] handleAttachViewOfItem: self];
 	}
 
-	if ([self isRoot])
-	{
-		[[self layout] didLoadObjectGraph];
-		[self setNeedsDisplay: YES];
-	}
+	[[self layout] setUpForDeserialization];
+
+	[self setNeedsDisplay: YES];
     // TODO: Decide whether we want to persist 'needsLayoutUpdate' to minimize updates
     /* For autoresizing among other things.
          We cannot just call -updateLayoutRecursively:, it would mean sending

@@ -177,6 +177,7 @@ For a copy, -attachedTool is copied. */
 	ETLayoutItemGroup *_layerItem; /* Lazily initialized */
 	ETDropIndicator *_dropIndicator;
 
+	BOOL _isSetUp;
 	BOOL _isRendering;
 	/* Layout and Content Size in Scrollview */
 	NSSize _layoutSize;
@@ -210,7 +211,7 @@ For a copy, -attachedTool is copied. */
 
 - (id <ETLayoutingContext>) layoutContext;
 - (void) tearDown;
-- (void) setUp;
+- (void) setUp: (BOOL)isDeserialization;
 
 /** @taskunit Type Querying */
 

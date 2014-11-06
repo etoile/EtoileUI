@@ -47,9 +47,9 @@ geometry and not computed by the receiver. */
 }
 
 /** Loads the persistent geometry of every item that belong to the layout context. */
-- (void) setUp
+- (void) setUp: (BOOL)isDeserialization
 {
-	[super setUp];
+	[super setUp: isDeserialization];
 	/* Frame must be set to persistent frame before -resizeItems:toScale: is 
 	   called by -renderWithLayoutItems:isNewContent:, otherwise the scaling 
 	   is computed based on the frame computed by the last layout in use which 
