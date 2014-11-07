@@ -17,19 +17,7 @@
 #import "ETTemplateItemLayout.h"
 #import "ETSelectTool.h"
 
-@interface ETLayout (CoreObject)
-- (void) setUpForDeserialization;
-@end
-
 @implementation ETLayout (CoreObject)
-
-- (void) setUpForDeserialization
-{
-	if (_isSetUp)
-		return;
-
-	[self setUp: YES];
-}
 
 /** Maps the layer item into the context. 
  
@@ -54,10 +42,6 @@ or a layout without a context. */
 
     if ([self layoutContext] == nil)
 		return;
-
-	[self setUpForDeserialization];
-	// FIXME: Could be removed if we don't persist the layout size
-	[self syncLayerItemGeometryWithSize: _layoutSize];
 }
 
 @end
@@ -130,6 +114,7 @@ is not an option. */
 	if ([self layoutContext] == nil)
 		return;
 
+	[self setUpLayoutView];
 	/* Force the content to get reloaded in the widget view */
 	[(ETLayoutItemGroup *)[self layoutContext] updateLayout];
 }

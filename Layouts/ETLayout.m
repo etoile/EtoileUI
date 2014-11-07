@@ -339,19 +339,29 @@ You must call the superclass implementation if you override this method. */
 - (void) tearDown
 {
 	NSParameterAssert([self layoutContext] != nil);
+	ETAssert(_isSetUp);
+
 	[self unmapLayerItemFromLayoutContext];
+	_isSetUp = NO;
 }
 
-/** <override-dummy />Overrides if your subclass requires extra transformation 
-when the layout context is switched to the receiver (it becomes the new layout 
-and starts to be used and visible).
+/** <override-dummy />Overrides if your subclass requires long-term or immediate 
+adjustments when the layout context is switched to the receiver (it becomes the 
+new layout and starts to be used and visible).
 
 The new layout context has been set when this method is called.
+ 
+Don't override this method, unless you want to apply changes to the internal
+state that will hold until -tearDown, or cannot wait until 
+-renderWithItems:isNewContent:.
+
+You must not touch the layout context state or some other external state.
 
 You must call the superclass implementation if you override this method. */
 - (void) setUp: (BOOL)isDeserialization
 {
 	NSParameterAssert([self layoutContext] != nil);
+	ETAssert(_isSetUp == NO);
 
 	_isSetUp = YES;
 	[self mapLayerItemIntoLayoutContext];
@@ -359,7 +369,7 @@ You must call the superclass implementation if you override this method. */
 	if (isDeserialization)
 		return;
 
-	/* Reset the layout size to ensure -resizeItems:forNewLayoutSize:oldSize: 
+	/* Reset the layout size to ensure -resizeItems:forNewLayoutSize:oldSize:
 	   receives a valid old size (neither zero or computed for a previous layout context). */
 	[self resetLayoutSize];
 }

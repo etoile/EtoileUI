@@ -20,11 +20,6 @@
 #import "NSObject+EtoileUI.h"
 #import "NSView+EtoileUI.h"
 
-@interface ETLayout (CoreObject)
-- (void) setUpForDeserialization;
-@end
-
-
 @implementation ETLayoutItem (CoreObject) 
 
 - (ETLayoutItemGroup *) compoundDocument
@@ -346,7 +341,10 @@ since -serializedValueForProperty: doesn't use the direct ivar access. */
 		[[self parentItem] handleAttachViewOfItem: self];
 	}
 
-	[[self layout] setUpForDeserialization];
+	//[[self ifResponds] setVisibleItems: [NSArray array]];
+	[[self layout] setUp: YES];
+	// FIXME: Could be removed if we don't persist the layout size
+	[[self layout] syncLayerItemGeometryWithSize: [[self layout] layoutSize]];
 
 	[self setNeedsDisplay: YES];
     // TODO: Decide whether we want to persist 'needsLayoutUpdate' to minimize updates
