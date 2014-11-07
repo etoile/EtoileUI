@@ -158,11 +158,11 @@ usually through its enclosing scroll view getting resized. */
 	[[decoratedItem supervisorView] setFrame: 
 		ETMakeRect([[decoratedItem supervisorView] frame].origin, [self visibleContentRect].size)];
 
-	if ([decoratedItem isLayoutItem])
+	if ([decoratedItem isLayoutItem] && [decoratedItem isGroup])
 	{
 		/* Will call back -decoratedItemRectChanged: when the layout is done and 
 		   the new layout size was set on our decorated item with -setContentSize:. */
-		[(ETLayoutItem *)decoratedItem updateLayout];
+		[(ETLayoutItemGroup *)decoratedItem updateLayout];
 	}
 }
 

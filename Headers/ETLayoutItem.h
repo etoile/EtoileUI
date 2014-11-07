@@ -179,6 +179,7 @@ If a host item is set, returns -hostItem. */
 - (ETView *) enclosingDisplayView;
 - (ETLayoutItem *) supervisorViewBackedAncestorItem;
 - (id) windowBackedAncestorItem;
+- (ETLayoutItemGroup *) ancestorItemForOpaqueLayout;
 
 - (NSIndexPath *) indexPathFromItem: (ETLayoutItem *)item;
 - (NSIndexPath *) indexPathForItem: (ETLayoutItem *)item;
@@ -243,16 +244,6 @@ If a host item is set, returns -hostItem. */
 - (ETUTI *) subtype;
 
 /* Layouting & Rendering Chain */
-
-- (id) layout;
-- (void) setLayout: (ETLayout *)layout;
-- (ETLayoutItem *) ancestorItemForOpaqueLayout;
-- (void) didChangeLayout: (ETLayout *)oldLayout;
-- (void) updateLayout;
-- (void) updateLayoutRecursively: (BOOL)recursively;
-- (void) updateLayoutIfNeeded;
-- (BOOL) needsLayoutUpdate;
-- (void) setNeedsLayoutUpdate;
 
 - (NSRect) drawingBoundsForStyle: (ETStyle *)aStyle;
 - (void) render: (NSMutableDictionary *)inputValues 
@@ -384,6 +375,9 @@ If a host item is set, returns -hostItem. */
 - (NSRect) contentDrawingBox;
 - (NSRect) visibleContentBounds;
 - (BOOL) usesFlexibleLayoutFrame;
+- (id) layout;
+- (void) updateLayoutRecursively: (BOOL)recursively;
+- (void) setNeedsLayoutUpdate;
 - (NSString *) editedProperty;
 - (id) responder;
 - (ETWindowItem *) provideWindowItem;

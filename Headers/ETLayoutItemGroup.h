@@ -101,8 +101,12 @@
 
 - (id) layout;
 - (void) setLayout: (ETLayout *)layout;
+- (void) didChangeLayout: (ETLayout *)oldLayout;
 - (void) updateLayout;
 - (void) updateLayoutRecursively: (BOOL)recursively;
+- (void) updateLayoutIfNeeded;
+- (BOOL) needsLayoutUpdate;
+- (void) setNeedsLayoutUpdate;
 
 /** @taskunit Item Scaling */
 

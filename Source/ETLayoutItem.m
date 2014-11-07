@@ -1658,77 +1658,12 @@ To retrieve the enclosing window item, use
 	return windowDecorator;
 }
 
-/** <override-never />
-Tells the receiver the layout has been changed and it should post 
-ETLayoutItemLayoutDidChangeNotification. 
-
-This method tries to notify the delegate that might exist with subclasses 
-e.g. ETLayoutItemGroup.
-
-You should never use this method unless you write an ETLayoutItem subclass. */
-- (void) didChangeLayout: (ETLayout *)oldLayout
-{
-	[[self layout] syncLayoutViewWithItem: self];
-	[self updateScrollableAreaItemVisibility];
-
-	/* We must not let the tool attached to the old layout remain active, 
-	   otherwise the layout can be deallocated and this tool remains with an 
-	   invalid -layoutOwner. */
-	ETTool *oldTool = [oldLayout attachedTool];
-
-	if ([oldTool isEqual: [ETTool activeTool]])
-	{
-		ETTool *newTool = [[self layout] attachedTool];
-
-		if (newTool == nil)
-		{
-			newTool = [ETTool mainTool];
-		}
-		[ETTool setActiveTool: newTool];
-		
-		ETAssert(newTool == [ETTool mainTool] || [newTool layoutOwner] == [self layout]);
-	}
-	ETAssert(oldTool == nil || [oldTool layoutOwner] != [self layout]);
-
-	/* Notify the interested parties about the layout change */
-	NSNotification *notif = [NSNotification 
-		notificationWithName: ETLayoutItemLayoutDidChangeNotification object: self];
-	id delegate = [self valueForKey: kETDelegateProperty];
-
-	if ([delegate respondsToSelector: @selector(layoutDidChange:)])
-		[delegate layoutDidChange: notif];
-	
-	[[NSNotificationCenter defaultCenter] postNotification: notif];
-}
-
-/** Returns the layout associated with the receiver to present its content. */
-- (id) layout
-{
-	return [self valueForVariableStorageKey: kETLayoutProperty];
-}
-
-/** Sets the layout associated with the receiver to present its content.
-
-Layout are not yet supported on ETLayoutItem instances, which this method is 
-useless currently. */
-- (void) setLayout: (ETLayout *)aLayout
-{
-	ETLayout *oldLayout = [self valueForVariableStorageKey: kETLayoutProperty];
-
-	RETAIN(oldLayout);
-	[self willChangeValueForProperty: kETLayoutProperty];
-	[self setValue: aLayout forVariableStorageKey: kETLayoutProperty];
-	[self didChangeLayout: oldLayout];
-	[self didChangeValueForProperty: kETLayoutProperty];
-	RELEASE(oldLayout);
-}
-
 /** Returns the topmost ancestor layout item, including itself, whose layout 
 returns YES to -isOpaque (see ETLayout). If none is found, returns self. */
-- (ETLayoutItem *) ancestorItemForOpaqueLayout
+- (ETLayoutItemGroup *) ancestorItemForOpaqueLayout
 {
-	ETLayoutItem *parent = self;
-	ETLayoutItem *lastFoundOpaqueAncestor = self;
+	ETLayoutItemGroup *parent = ([self isGroup] ? (ETLayoutItemGroup *)self : [self parentItem]);
+	ETLayoutItemGroup *lastFoundOpaqueAncestor = parent;
 
 	while (parent != nil)
 	{
@@ -1739,51 +1674,6 @@ returns YES to -isOpaque (see ETLayout). If none is found, returns self. */
 	}
 
 	return lastFoundOpaqueAncestor;
-}
-
-/** <override-dummy />
-Forces the layout to be recomputed to take in account geometry and content 
-related changes since the last layout update.
-
-This method is not yet implemented.<br />
-See also -[ETLayoutItemGroup updateLayout].  */
-- (void) updateLayout
-{
-	// TODO: Implement
-}
-
-- (void) updateLayoutRecursively: (BOOL)recursively
-{
-	[[ETLayoutExecutor sharedInstance] removeItem: (id)self];
-}
-
-/** Updates the layouts, previously marked with -setNeedsLayoutUpdate, in the 
-entire item tree.
-
-For ETLayoutItemGroup, won't be limited to the item subtree. */
-- (void) updateLayoutIfNeeded
-{
-	[[ETLayoutExecutor sharedInstance] execute];
-}
-
-/** Returns whether the layout is going to be updated in the interval between 
-the current and the  next event. */
-- (BOOL) needsLayoutUpdate
-{
-	return [[ETLayoutExecutor sharedInstance] containsItem: self];
-}
-
-/** Marks the receiver to have its layout updated and be redisplayed in the 
-interval between the current and the next event.
-
-See also +disablesAutolayout. */
-- (void) setNeedsLayoutUpdate
-{
-	if ([ETLayoutItem isAutolayoutEnabled] == NO || _isDeallocating)
-		return;
-
-	[[ETLayoutExecutor sharedInstance] addItem: (id)self];
-	[self setNeedsDisplay: YES];
 }
 
 static inline NSRect DrawingBoundsInWindowItem(ETWindowItem *windowItem)
@@ -2433,6 +2323,40 @@ See -[ETLayoutItemGroup usesFlexibleLayoutFrame]. */
 - (BOOL) usesFlexibleLayoutFrame
 {
 	return NO;
+}
+
+/** <override-dummy />
+This method is only exposed to be used internally by EtoileUI.
+ 
+Returns nil.
+ 
+See -[ETLayoutItemGroup layout]. */
+- (id) layout
+{
+	return nil;
+}
+
+/** <override-dummy />
+This method is only exposed to be used internally by EtoileUI.
+ 
+Does nothing.
+ 
+See -[ETLayoutItemGroup updateLayoutRecursively:]. */
+- (void) updateLayoutRecursively: (BOOL)recursively
+{
+	[[ETLayoutExecutor sharedInstance] removeItem: (id)self];
+}
+
+/** <override-dummy />
+This method is only exposed to be used internally by EtoileUI.
+ 
+Marks the receiver to be redisplayed in the interval between the current and
+the next event.
+
+See -[ETLayoutItemGroup setNeedsLayoutUpdate]. */
+- (void) setNeedsLayoutUpdate
+{
+	[self setNeedsDisplay: YES];
 }
 
 /** Returns the current origin associated with the receiver frame. See also -frame. */

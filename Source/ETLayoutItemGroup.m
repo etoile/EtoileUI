@@ -20,6 +20,7 @@
 #import "ETLayoutItem+Scrollable.h"
 #import "ETLayoutExecutor.h"
 #import "EtoileUIProperties.h"
+#import "ETTool.h"
 #import "ETView.h"
 // FIXME: Add -concat to the Appkit graphics backend
 #import "ETWidgetBackend.h"
@@ -931,6 +932,49 @@ Marks the receiver as needing a layout update. */
 
 - (void) setHasNewLayout: (BOOL)flag { _hasNewLayout = flag; }
 
+/** <override-never />
+Tells the receiver the layout has been changed and it should post 
+ETLayoutItemLayoutDidChangeNotification. 
+
+This method tries to notify the delegate that might exist with subclasses 
+e.g. ETLayoutItemGroup.
+
+You should never use this method unless you write an ETLayoutItem subclass. */
+- (void) didChangeLayout: (ETLayout *)oldLayout
+{
+	[[self layout] syncLayoutViewWithItem: self];
+	[self updateScrollableAreaItemVisibility];
+
+	/* We must not let the tool attached to the old layout remain active, 
+	   otherwise the layout can be deallocated and this tool remains with an 
+	   invalid -layoutOwner. */
+	ETTool *oldTool = [oldLayout attachedTool];
+
+	if ([oldTool isEqual: [ETTool activeTool]])
+	{
+		ETTool *newTool = [[self layout] attachedTool];
+
+		if (newTool == nil)
+		{
+			newTool = [ETTool mainTool];
+		}
+		[ETTool setActiveTool: newTool];
+		
+		ETAssert(newTool == [ETTool mainTool] || [newTool layoutOwner] == [self layout]);
+	}
+	ETAssert(oldTool == nil || [oldTool layoutOwner] != [self layout]);
+
+	/* Notify the interested parties about the layout change */
+	NSNotification *notif = [NSNotification 
+		notificationWithName: ETLayoutItemLayoutDidChangeNotification object: self];
+	id delegate = [self valueForKey: kETDelegateProperty];
+
+	if ([delegate respondsToSelector: @selector(layoutDidChange:)])
+		[delegate layoutDidChange: notif];
+	
+	[[NSNotificationCenter defaultCenter] postNotification: notif];
+}
+
 /** Returns the layout associated with the receiver to present its content. */
 - (id) layout
 {
@@ -981,6 +1025,9 @@ by asking the first ancestor item with an opaque layout to do so. */
 
 /** Updates recursively each layout in the item tree owned by the receiver.
 
+Will force the layout to be recomputed to take in account geometry and content
+related changes since the last layout update.
+ 
 See -updateLayoutRecursively:. */
 - (void) updateLayout
 {
@@ -999,7 +1046,6 @@ A bottom-up update is used because a parent layout computation might depend on
 child item properties. For example, an item can use a layout which touches its
 frame (see -usesFlexibleLayoutFrame). */
 - (void) updateLayoutRecursively: (BOOL)recursively
-
 {
 	if ([self layout] == nil)
 		return;
@@ -1043,6 +1089,35 @@ frame (see -usesFlexibleLayoutFrame). */
 - (BOOL) canUpdateLayout
 {
 	return ([self isReloading] == NO && [[self layout] isRendering] == NO);
+}
+
+/** Updates the layouts, previously marked with -setNeedsLayoutUpdate, in the 
+entire item tree.
+
+The update won't be limited to the item subtree. */
+- (void) updateLayoutIfNeeded
+{
+	[[ETLayoutExecutor sharedInstance] execute];
+}
+
+/** Returns whether the layout is going to be updated in the interval between 
+the current and the  next event. */
+- (BOOL) needsLayoutUpdate
+{
+	return [[ETLayoutExecutor sharedInstance] containsItem: self];
+}
+
+/** Marks the receiver to have its layout updated and be redisplayed in the 
+interval between the current and the next event.
+
+See also +disablesAutolayout. */
+- (void) setNeedsLayoutUpdate
+{
+	if ([ETLayoutItem isAutolayoutEnabled] == NO || _isDeallocating)
+		return;
+
+	[[ETLayoutExecutor sharedInstance] addItem: (id)self];
+	[self setNeedsDisplay: YES];
 }
 
 /* Item scaling */
