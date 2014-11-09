@@ -341,11 +341,6 @@ since -serializedValueForProperty: doesn't use the direct ivar access. */
 		[[self parentItem] handleAttachViewOfItem: self];
 	}
 
-	//[[self ifResponds] setVisibleItems: [NSArray array]];
-	[[self layout] setUp: YES];
-	// FIXME: Could be removed if we don't persist the layout size
-	[[self layout] syncLayerItemGeometryWithSize: [[self layout] layoutSize]];
-
 	[self setNeedsDisplay: YES];
     // TODO: Decide whether we want to persist 'needsLayoutUpdate' to minimize updates
     /* For autoresizing among other things.
@@ -411,6 +406,11 @@ since -serializedValueForProperty: doesn't use the direct ivar access. */
 - (void) didLoadObjectGraph
 {
 	[super didLoadObjectGraph];
+	
+	//[[self ifResponds] setVisibleItems: [NSArray array]];
+	[[self layout] setUp: YES];
+	// FIXME: Could be removed if we don't persist the layout size
+	[[self layout] syncLayerItemGeometryWithSize: [[self layout] layoutSize]];
 }
 
 @end
