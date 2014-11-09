@@ -222,7 +222,10 @@ guide is ignored by the layout computation.  */
 	   -updateLayoutRecursively: returns for each item). */
 	for (ETLayoutItem *item in items)
 	{
-		[[ETLayoutExecutor sharedInstance] addItem: item];
+		if ([item isGroup] == NO)
+			continue;
+
+		[[ETLayoutExecutor sharedInstance] addItem: (id)item];
 	}
 }
 
@@ -350,6 +353,11 @@ bounding box). */
 		                           forCurrentLayoutSize: newLayoutSize
                                   numberOfFlexibleItems: count
 		                                  inMaxAreaSize: maxSize]];
+		didResize = YES;
+		
+		if ([flexibleItem isGroup] == NO)
+			continue;
+
 		/* For a non-recursive update, the resize must trigger a layout update. 
 		   Layout updates are bracketed inside +disableAutolayout and
 		   +enableAutolayout. As a result, -setNeedsLayoutUpdate is disabled.
@@ -357,7 +365,7 @@ bounding box). */
 		   unscheduled when reached by the recursive traversal (just before  
 		   -updateLayoutRecursively: returns for this item). */
 		[[ETLayoutExecutor sharedInstance] addItem: (id)flexibleItem];
-		didResize = YES;
+
 	}
 	return didResize;
 }

@@ -1116,7 +1116,7 @@ See also +disablesAutolayout. */
 	if ([ETLayoutItem isAutolayoutEnabled] == NO || _isDeallocating)
 		return;
 
-	[[ETLayoutExecutor sharedInstance] addItem: (id)self];
+	[[ETLayoutExecutor sharedInstance] addItem: self];
 	[self setNeedsDisplay: YES];
 }
 

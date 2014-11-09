@@ -11,7 +11,6 @@
 #import <EtoileFoundation/ETCollection+HOM.h>
 #import <EtoileFoundation/NSObject+HOM.h>
 #import "ETLayoutExecutor.h"
-#import "ETLayoutItem.h"
 #import "ETLayoutItemGroup.h"
 #import "ETLayoutItemGroup+Mutation.h"
 #import "ETLayout.h"
@@ -54,15 +53,16 @@ Initializes and returns a new layout executor. */
 
 /** Schedules the given item to have its layout updated when the control returns 
 to the run loop (in other words when the current event has been handled). */
-- (void) addItem: (ETLayoutItem *)anItem
+- (void) addItem: (ETLayoutItemGroup *)anItem
 {
+	NSParameterAssert([anItem isKindOfClass: [ETLayoutItemGroup class]]);
 	[_scheduledItems addObject: anItem];
 }
 
 /** Unschedules the given item as needing a layout update.
 
 See also -addItem:. */
-- (void) removeItem: (ETLayoutItem *)anItem
+- (void) removeItem: (ETLayoutItemGroup *)anItem
 {
 	[_scheduledItems removeObject: anItem];
 }
@@ -83,7 +83,7 @@ See also -removeItem: and -addItem:. */
 
 /** Returns whether the item is scheduled to have its layout updated when 
 the control returns to the run loop. */
-- (BOOL) containsItem: (ETLayoutItem *)anItem
+- (BOOL) containsItem: (ETLayoutItemGroup *)anItem
 {
 	return [_scheduledItems containsObject: anItem];
 }
@@ -95,7 +95,7 @@ the control returns to the run loop. */
 }
 
 /** Returns whether the parent layout depends on the given item layout result. */
-- (BOOL) isFlexibleItem: (ETLayoutItem *)anItem
+- (BOOL) isFlexibleItem: (ETLayoutItemGroup *)anItem
 {
 	return ([anItem usesFlexibleLayoutFrame] || [[[anItem parentItem] layout] isLayoutExecutionItemDependent]);
 }
@@ -104,7 +104,7 @@ the control returns to the run loop. */
 their layout updated before their parent item if the latter is flexible.
 
 A flexible item is a item which returns YES to -isFlexibleItem:. */
-- (void) insertItem: (ETLayoutItem *)anItem 
+- (void) insertItem: (ETLayoutItemGroup *)anItem 
 inFlexibleItemQueue: (NSMutableArray *)flexibleItemQueue
 {
 	RETAIN(anItem);
@@ -114,7 +114,7 @@ inFlexibleItemQueue: (NSMutableArray *)flexibleItemQueue
 
 	for (int i = 0; i < nbOfQueuedItems; i++)
 	{
-		ETLayoutItem *queuedItem = [flexibleItemQueue objectAtIndex: i];
+		ETLayoutItemGroup *queuedItem = [flexibleItemQueue objectAtIndex: i];
 		/* The item to insert is a valid predecessor of the queued item.
 
 		   Note: [[queuedItem parentItem] isEqual: anItem] would mean anItem 
@@ -183,16 +183,10 @@ We let the descendant item marked as having new content, although most widget
 layouts won't use that. Future layout updates involving non-opaque layouts on 
 this item will reset hasNewContent (the layout update extra work due to 
 hasNewContent is going to be minimal). */
-- (void)updateHasNewContentForOpaqueItem: (ETLayoutItem *)opaqueItem
-                          descendantItem: (ETLayoutItem *)item
+- (void)updateHasNewContentForOpaqueItem: (ETLayoutItemGroup *)opaqueItem
+                          descendantItem: (ETLayoutItemGroup *)item
 {
-	if ([opaqueItem isGroup] == NO || [item isGroup] == NO)
-		return;
-
-	BOOL hasNewContent = ([(ETLayoutItemGroup *)opaqueItem hasNewContent]
-		|| [(ETLayoutItemGroup *)item hasNewContent]);
-
-	[(ETLayoutItemGroup *)opaqueItem setHasNewContent: hasNewContent];
+	[opaqueItem setHasNewContent: ([opaqueItem hasNewContent] || [item hasNewContent])];
 }
 
 /** Reorders the dirty items and marks additional items as dirty to respect the 
@@ -206,8 +200,8 @@ layout update constraints, then tells the reordered items to update their layout
 
 	while ([dirtyItems count] > 0)
 	{
-		ETLayoutItem *item = [dirtyItems anyObject];
-		ETLayoutItem *opaqueItem = [item ancestorItemForOpaqueLayout];
+		ETLayoutItemGroup *item = [dirtyItems anyObject];
+		ETLayoutItemGroup *opaqueItem = [item ancestorItemForOpaqueLayout];
 		BOOL hasOpaqueAncestorItem = (opaqueItem != item && opaqueItem != nil);
 
 		if (hasOpaqueAncestorItem)

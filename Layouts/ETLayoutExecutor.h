@@ -11,7 +11,7 @@
 #import <Foundation/Foundation.h>
 #import <EtoileUI/ETGraphicsBackend.h>
 
-@class ETLayoutItem;
+@class ETLayoutItemGroup;
 
 
 @interface ETLayoutExecutor : NSObject
@@ -26,11 +26,11 @@
 
 /** @taskunit Scheduling Items */
 
-- (void) addItem: (ETLayoutItem *)anItem;
-- (void) removeItem: (ETLayoutItem *)anItem;
+- (void) addItem: (ETLayoutItemGroup *)anItem;
+- (void) removeItem: (ETLayoutItemGroup *)anItem;
 - (void) removeItems: (NSSet *)items;
 - (void) removeAllItems;
-- (BOOL) containsItem: (ETLayoutItem *)anItem;
+- (BOOL) containsItem: (ETLayoutItemGroup *)anItem;
 - (BOOL) isEmpty;
 
 /** @taskunit Executing Layout Updates */

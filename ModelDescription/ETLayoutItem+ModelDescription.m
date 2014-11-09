@@ -195,7 +195,6 @@
 	[items setOrdered: YES];
 	[items setOpposite: (id)@"ETLayoutItem.parentItem"];
 
-	// TODO: Move to ETLayoutItem and update ETLayout description as necessary
 	ETPropertyDescription *layout = [ETPropertyDescription descriptionWithName: @"layout" type: (id)@"ETLayout"];
 	[layout setOpposite: (id)@"ETLayout.contextItem"];
 

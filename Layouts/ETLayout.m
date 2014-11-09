@@ -833,7 +833,7 @@ to be identical to the layout context. */
 
 	/* Autolayout is disabled during a layout change or update, so we mark 
 	  -layerItem as requiring a layout update (-setNeedsLayoutUpdate won't work). */
-	[[ETLayoutExecutor sharedInstance] addItem: (id)[self layerItem]];
+	[[ETLayoutExecutor sharedInstance] addItem: [self layerItem]];
 }
 
 - (void) mapLayerItemIntoLayoutContext

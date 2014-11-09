@@ -124,6 +124,10 @@ geometry and not computed by the receiver. */
 	NSRect roundedFrame = NSIntegralRect(frame);
 
 	[anItem setFrame: roundedFrame];
+	
+	if ([anItem isGroup] == NO)
+		return;
+
 	/* For a non-recursive update, the resize must trigger a layout update.
 	   Layout updates are bracketed inside +disableAutolayout and
 	   +enableAutolayout. As a result, -setNeedsLayoutUpdate is disabled. */
