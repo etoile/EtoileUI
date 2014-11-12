@@ -47,7 +47,6 @@
     {
         ETLayout *newLayout = [newItemGroup layout];
 
-		UKTrue([layout usesCustomLayoutSize] == [newLayout usesCustomLayoutSize]);
 		UKTrue(2.0 == [newLayout previousScaleFactor]);
 		
 		CGFloat layoutHeight =

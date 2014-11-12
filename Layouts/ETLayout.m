@@ -152,7 +152,6 @@ Returns a new ETLayout instance. */
 	_isRendering = NO;
 	_layoutSize = NSMakeSize(200, 200); /* Dummy value */
 	_proposedLayoutSize = ETNullSize;
-	_usesCustomLayoutSize = NO;
 	 /* Will ensure -resizeItems:toScaleFactor: isn't called until the scale changes */
 	_previousScaleFactor = 1.0;
 
@@ -490,29 +489,6 @@ See also -isScrollable and ETLayoutItem(Scrollable). */
 	return ([[[self layoutContext] visibleItems] count] == [[[self layoutContext] items] count]);
 }
 
-/** By default layout size is precisely matching frame size of the container to 
-	which the receiver is bound to.
-	When the container uses a scroll view, layout size is set the mininal size 
-	which encloses all the layout item frames once they have been layouted. 
-	This size is the maximal layout size you can compute for the receiver with 
-	the content provided by the container.
-	Whether the layout size is computed in horizontal, vertical direction or 
-	both depends of layout kind, settings of the layout and finally scroller 
-	visibility in related container.
-	If you call -setUsesCustomLayoutSize:, the layout size won't be adjusted anymore by
-	the layout and container together until you delegate it again by calling
-	-setUsesCustomLayoutSize: with NO as parameter. */ 
-- (void) setUsesCustomLayoutSize: (BOOL)flag
-{
-	_usesCustomLayoutSize = flag;
-}
-
-/** Returns whether a custom area size where the layout should be rendered. */
-- (BOOL) usesCustomLayoutSize
-{
-	return _usesCustomLayoutSize;
-}
-
 /** Sets the newly computed layout size.
 
 Many layouts compute the extent necessary to present the items in their own way. 
@@ -620,24 +596,19 @@ To explictly update the layout, just uses -[ETLayoutItemGroup updateLayout]. */
 	_isRendering = NO;
 }
 
-/** Sets the layout size to the unlayouted content size of the layout context,
-    unless -usesCustomLayoutSize returns YES. In this last case, the layout size 
-	isn't modified. 
-    You call this method to reset the layout size to a value that should be used 
-	as a basis to compute the layout. By default, the implementation considers 
-	the layout of the content (layout items) should be computed within the 
-	boundaries of the layout context size.
-	If the layout context is enclosed inside a scroll view, this method will 
-	take it in account. */
+/** Sets the layout size to match the current content size of the layout context.
+
+You call this method to reset the layout size to a value that should be used
+as a basis to compute the layout. By default, the items are laid out within the 
+boundaries of -[ETLayoutingContext visibleContentSize].
+
+If the layout context is a scrollable area, this method will take it in account. */
 - (void) resetLayoutSize
 {
 	/* We always set the layout size which should be used to compute the 
 	   layout unless a custom layout has been set by calling -setLayoutSize:
 	   before -render. */
-	if ([self usesCustomLayoutSize] == NO)
-	{
-		[self setLayoutSize: [[self layoutContext] visibleContentSize]];
-	}
+	[self setLayoutSize: [[self layoutContext] visibleContentSize]];
 	_proposedLayoutSize = [self layoutSize];
 }
 

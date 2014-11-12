@@ -79,7 +79,6 @@
     {
         ETLayout *newLayout = [newItemGroup layout];
 
-		UKTrue([layout usesCustomLayoutSize] == [newLayout usesCustomLayoutSize]);
 		if ([newLayout isWidget] == NO)
 		{
 			UKTrue(5.0 == [newLayout previousScaleFactor]);

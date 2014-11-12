@@ -167,8 +167,21 @@ Warning: This protocol is very much subject to change. */
 - (void) renderWithItems: (NSArray *)items isNewContent: (BOOL)isNewContent;
 @end
 
-/** @section Copying
- 
+/** @section Layout Size
+
+By default, the layout size is precisely matching the context to which the 
+receiver is bound to, based on -[ETLayoutingContext visibleContentSize].
+
+When the context is a scrollable area, the layout size is set to the mininal 
+size which encloses all the items once -renderWithItems:isNewContent: has been 
+run.
+
+Whether the layout size is computed in horizontal, vertical direction or both
+is up to subclasses such as ETComputedLayout, which take in account scroller 
+visibility too.
+
+@section Copying
+
 For a copy, -attachedTool is copied. */
 @interface ETLayout : ETUIObject <NSCopying>
 {
@@ -182,7 +195,6 @@ For a copy, -attachedTool is copied. */
 	/* Layout and Content Size in Scrollview */
 	NSSize _layoutSize;
 	NSSize _proposedLayoutSize;
-	BOOL _usesCustomLayoutSize;
 	@protected
 	CGFloat _previousScaleFactor; // TODO: Remove
 }
@@ -226,8 +238,6 @@ For a copy, -attachedTool is copied. */
 
 /** @taskunit Layout Size Control and Feedback */
 
-- (void) setUsesCustomLayoutSize: (BOOL)flag;
-- (BOOL) usesCustomLayoutSize;
 - (void) setLayoutSize: (NSSize)size;
 - (NSSize) layoutSize;
 - (BOOL) isAllContentVisible;

@@ -79,8 +79,6 @@
 		[ETPropertyDescription descriptionWithName: @"layoutSize" type: (id)@"NSSize"];
     ETPropertyDescription *proposedLayoutSize =
     	[ETPropertyDescription descriptionWithName: @"proposedLayoutSize" type: (id)@"NSSize"];
-	ETPropertyDescription *usesCustomLayoutSize =
-		[ETPropertyDescription descriptionWithName: @"usesCustomLayoutSize" type: (id)@"BOOL"];	
 	// NOTE: We don't persist _previousScaleFactor, it's an optimization.
 	// See -[ETPositionalLayout resizeItems:toScaleFactor:].
 
@@ -88,7 +86,7 @@
 
 	NSArray *transientProperties = A(contextItem, layerItem);
 	NSArray *persistentProperties = A(attachedTool, layoutSize,
-        proposedLayoutSize, usesCustomLayoutSize, dropIndicator);
+        proposedLayoutSize, dropIndicator);
 
 	[entity setUIBuilderPropertyNames: (id)[[A(dropIndicator) mappedCollection] name]];
 
