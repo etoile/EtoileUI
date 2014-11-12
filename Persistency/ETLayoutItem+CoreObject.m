@@ -296,17 +296,6 @@ since -serializedValueForProperty: doesn't use the direct ivar access. */
 	[self setRepresentedObject: object];
 }
 
-- (void) setStoreItem: (COItem *)storeItem
-{
-	/* Unapply state changes related the layout, usually during -[ETLayout setUp],
-	   to support switching to a new layout (if the store item contains another 
-	   UUID reference for the layout relationship) */
-	[[self layout] tearDown];
-	/* Will remove the existing incoming relationships ETLayout.contextItem and
-	   ETLayout.contextLayout, usually accessed in -tearDown just before. */
-	[super setStoreItem: storeItem];
-}
-
 - (void) awakeFromDeserialization
 {
 	[super awakeFromDeserialization];
@@ -342,12 +331,6 @@ since -serializedValueForProperty: doesn't use the direct ivar access. */
 	}
 
 	[self setNeedsDisplay: YES];
-    // TODO: Decide whether we want to persist 'needsLayoutUpdate' to minimize updates
-    /* For autoresizing among other things.
-         We cannot just call -updateLayoutRecursively:, it would mean sending
-         -copy to an item group would prevent items, added between the copy
-         message and the layout execution, to be autoresized. */
-    [self setNeedsLayoutUpdate];
 }
 
 @end
@@ -403,14 +386,35 @@ since -serializedValueForProperty: doesn't use the direct ivar access. */
 	_filtered = NO;
 }
 
+- (void) willLoadObjectGraph
+{
+	[super willLoadObjectGraph];
+
+	/* Unapply external state changes related to the layout, usually during 
+	   -[ETLayout setUp], to support switching to a new layout (if the store 
+	   item contains another UUID reference for the layout relationship) */
+	[self setLayout: nil];
+}
+
+- (void) restoreLayoutFromDeserialization
+{
+	[self setVisibleItems: [NSArray array]];
+	[_layout setUp: YES];
+	// NOTE: Could be removed if we don't persist the layout size
+	[_layout syncLayerItemGeometryWithSize: [_layout layoutSize]];
+	[self didChangeLayout: nil];
+
+    /* For autoresizing among other things.
+	   We cannot just call -updateLayoutRecursively:, it would mean sending
+	   -copy to an item group would prevent items, added between the copy
+	   message and the layout execution, to be autoresized. */
+    [self setNeedsLayoutUpdate];
+}
+
 - (void) didLoadObjectGraph
 {
 	[super didLoadObjectGraph];
-	
-	//[[self ifResponds] setVisibleItems: [NSArray array]];
-	[[self layout] setUp: YES];
-	// FIXME: Could be removed if we don't persist the layout size
-	[[self layout] syncLayerItemGeometryWithSize: [[self layout] layoutSize]];
+	[self restoreLayoutFromDeserialization];
 }
 
 @end

@@ -31,6 +31,10 @@
 
 - (void) didPostNotification: (NSNotification *)notif
 {
+	/* Filter out other notifications such as ETLayoutItemLayoutDidChangeNotification */
+	if ([[notif name] isEqual: ETItemGroupSelectionDidChangeNotification] == NO)
+		return;
+
     notificationPosted = YES;
 }
 

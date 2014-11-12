@@ -418,6 +418,8 @@ DEALLOC(DESTROY(itemFactory); DESTROY(item); DESTROY(itemGroup))
 
 	ETOutlineLayout *layoutCopy = (ETOutlineLayout *)[[newItemGroup itemAtIndex: 2] layout];
 	UKIntsEqual(1, [[layoutCopy outlineView] numberOfRows]);
+	
+	[[ETLayoutExecutor sharedInstance] execute];
 
 	UKNotNil([newItemGroup supervisorView]);
 	UKNil([[newItemGroup itemAtIndex: 1] supervisorView]);
