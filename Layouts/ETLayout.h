@@ -44,8 +44,6 @@ ETLayout. */
 - (NSArray *) arrangedItems;
 /** See -[ETLayoutItem size]. */
 - (NSSize) size;
-/** See -[ETLayoutItem setSize:]. */
-- (void) setSize: (NSSize)size;
 /** See -[ETLayoutItemGroup setLayoutView:]. */
 - (void) setLayoutView: (NSView *)aView;
 /** See -[ETLayoutItem setNeedsDislay:]. */
@@ -155,7 +153,7 @@ Warning: This protocol is very much subject to change. */
 /** See -[ETComputedLayout setHorizontalAlignmentGuidePosition:]. */
 - (void) setHorizontalAlignmentGuidePosition: (CGFloat)aPosition;
 /** See -[ETLayout renderWithItems:isNewContent:]. */
-- (void) renderWithItems: (NSArray *)items isNewContent: (BOOL)isNewContent;
+- (NSSize) renderWithItems: (NSArray *)items isNewContent: (BOOL)isNewContent;
 /** See -[ETLayout itemAtLocation:]. */
 - (ETLayoutItem *) itemAtLocation: (NSPoint)loc;
 @end
@@ -164,7 +162,7 @@ Warning: This protocol is very much subject to change. */
 @protocol ETCompositeLayout
 - (id <ETComputableLayout>) positionalLayout;
 - (void) setPositionalLayout: (id <ETComputableLayout>)layout;
-- (void) renderWithItems: (NSArray *)items isNewContent: (BOOL)isNewContent;
+- (NSSize) renderWithItems: (NSArray *)items isNewContent: (BOOL)isNewContent;
 @end
 
 /** @section Layout Size
@@ -238,8 +236,8 @@ For a copy, -attachedTool is copied. */
 
 /** @taskunit Layout Size Control and Feedback */
 
-- (void) setLayoutSize: (NSSize)size;
 - (NSSize) layoutSize;
+- (BOOL) isContentSizeLayout;
 - (BOOL) isAllContentVisible;
 - (ETPositionalLayout *) positionalLayout;
 
@@ -251,7 +249,7 @@ For a copy, -attachedTool is copied. */
 
 /** @taskunit Layouting */
 
-- (void) renderWithItems: (NSArray *)items isNewContent: (BOOL)isNewContent;
+- (NSSize) renderWithItems: (NSArray *)items isNewContent: (BOOL)isNewContent;
 - (NSSize) resetLayoutSize;
 - (void) resizeItems: (NSArray *)items
     forNewLayoutSize: (NSSize)newLayoutSize
@@ -298,6 +296,7 @@ For a copy, -attachedTool is copied. */
 
 /** @taskunit Framework Private */
 
+- (void) setLayoutSize: (NSSize)size;
 - (void) render: (BOOL)isNewContent;
 - (void) validateLayoutContext: (id <ETLayoutingContext>)context;
 

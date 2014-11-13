@@ -501,9 +501,10 @@ By default, returns NO. */
 
 /* Layouting */
 
-- (void) renderWithItems: (NSArray *)items isNewContent: (BOOL)isNewContent
+- (NSSize) renderWithItems: (NSArray *)items isNewContent: (BOOL)isNewContent
 {
 	[self tile];
+	return [self layoutSize];
 }
 
 @end
@@ -633,7 +634,7 @@ the real items they currently represent. */
 	return YES;
 }
 
-- (void) renderWithItems: (NSArray *)items isNewContent: (BOOL)isNewContent
+- (NSSize) renderWithItems: (NSArray *)items isNewContent: (BOOL)isNewContent
 {
 	[self tile];
 	if (isNewContent)
@@ -644,6 +645,7 @@ the real items they currently represent. */
 	    have been updated, so the content item size can be use to compute 
 		position and resize the current item. */
 	[self tileContent];
+	return [self layoutSize];
 }
 
 @end
@@ -729,13 +731,14 @@ the real items they currently represent. */
 	return YES;
 }
 
-- (void) renderWithItems: (NSArray *)items isNewContent: (BOOL)isNewContent
+- (NSSize) renderWithItems: (NSArray *)items isNewContent: (BOOL)isNewContent
 {
 	if (isNewContent)
 	{
 		[self goToItem: [[self barItem] firstItem]];
 	}
 	[self tile];
+	return [self layoutSize];
 }
 
 @end

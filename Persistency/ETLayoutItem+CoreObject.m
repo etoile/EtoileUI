@@ -402,10 +402,17 @@ since -serializedValueForProperty: doesn't use the direct ivar access. */
 	[_layout setUp: YES];
 	[self didChangeLayout: nil];
 
-    /* For autoresizing among other things.
-	   We cannot just call -updateLayoutRecursively:, it would mean sending
-	   -copy to an item group would prevent items, added between the copy
-	   message and the layout execution, to be autoresized. */
+    /* For autoresizing and reloading layout view content in ETWidgetLayout.
+
+	   We cannot just call -updateLayoutRecursively:, there are two reasons:
+
+	   - the layout transient state might not be entirely recreated, when both
+		 the layout and its context gets reloaded at the same time
+		 (-didLoadObjectGraph could have been sent to the context and not yet to
+		 the layout).
+	   - it would mean sending -copy to an item group would prevent items,
+	     added between the copy message and the layout execution, to be
+	     autoresized. */
     [self setNeedsLayoutUpdate];
 }
 

@@ -57,10 +57,11 @@ geometry and not computed by the receiver. */
 	[self loadPersistentFramesForItems: [[self layoutContext] items]];
 }
 
-- (void) renderWithItems: (NSArray *)items isNewContent: (BOOL)isNewContent
+- (NSSize) renderWithItems: (NSArray *)items isNewContent: (BOOL)isNewContent
 {
 	[super renderWithItems: items isNewContent: isNewContent];
 	[[self layoutContext] setVisibleItems: items];
+	return [self layoutSize];
 }
 
 - (void) resizeItems: (NSArray *)items

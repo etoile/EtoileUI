@@ -104,6 +104,6 @@ possible and how to use ETTemplateItemLayout. */
 
 /* Layouting */
 
-- (void) renderWithItems: (NSArray *)items isNewContent: (BOOL)isNewContent;
+- (NSSize) renderWithItems: (NSArray *)items isNewContent: (BOOL)isNewContent;
 
 @end

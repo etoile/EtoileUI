@@ -135,7 +135,7 @@ is not an option. */
 
 	[self setUpLayoutView];
 	/* Force the content to get reloaded in the widget view */
-	[(ETLayoutItemGroup *)[self layoutContext] updateLayout];
+	[(ETLayoutItemGroup *)[self layoutContext] setNeedsLayoutUpdate];
 }
 
 @end

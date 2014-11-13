@@ -494,7 +494,7 @@ See [(ETColumnFragment)] protocol to customize the returned column. */
 
 /* Layouting */
 
-- (void) renderWithItems: (NSArray *)items isNewContent: (BOOL)isNewContent
+- (NSSize) renderWithItems: (NSArray *)items isNewContent: (BOOL)isNewContent
 {
 	if ([[self layoutContext] supervisorView] == nil)
 	{
@@ -516,6 +516,7 @@ See [(ETColumnFragment)] protocol to customize the returned column. */
 		[[self tableView] reloadData];
 		[[self tableView] setNeedsDisplay: YES]; // FIXME: -updateLayout redisplay should be enough
 	}
+	return [self layoutSize];
 }
 
 - (void) resizeItems: (NSArray *)items toScaleFactor: (CGFloat)factor

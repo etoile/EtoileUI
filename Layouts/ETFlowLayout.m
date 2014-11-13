@@ -176,15 +176,6 @@ When items is empty, returns an empty layout line. */
 	                                                    itemMargin: [self itemMargin] 
 	                                                      maxWidth: layoutWidth];
 	NSArray *acceptedItems = [line fillWithItems: items];
-	CGFloat lineLength = [line length];
-
-	// NOTE: Not really useful for now because we don't support filling the 
-	// layout horizontally, only vertical filling is in place.
-	// We only touch the layout size height in -computeItemLocationsForLayoutModel:
-	if ([self isContentSizeLayout] && [self layoutSize].width < lineLength)
-	{
-		[self setLayoutSize: NSMakeSize(lineLength + totalMargin, [self layoutSize].height)];
-	}
 
 	if ([acceptedItems isEmpty])
 		return nil;
@@ -198,8 +189,9 @@ on a layout item embbeded in a scroll view.
 
 By passing ETSizeConstraintStyleVertical, the layout will try to fill the 
 limited height (provided by -layoutSize) with as many lines of equal width as 
-possible. In this case, layout width and line width are stretched.
-
+possible. In this case, layout width and line width are stretched. For now,
+ETSizeConstraintStyleVertical support is not implemented.
+ 
 By passing ETSizeConstraintStyleHorizontal, the layout will try to fill the 
 unlimited height with as many lines of equally limited width (returned
 by -layoutSize) as needed. In this case, only layout height is stretched. 

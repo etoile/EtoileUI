@@ -478,6 +478,15 @@ See also -isScrollable and ETLayoutItem(Scrollable). */
 	return NO;
 }
 
+/** <override-dummy />
+See -[ETPositionalLayout isContentSizeLayout].
+ 
+By default, returns NO. */
+- (BOOL) isContentSizeLayout
+{
+	return NO;
+}
+
 /** Returns YES if all layout items are visible in the bounds of the related 
 	container once the layout has been computed, otherwise returns NO when
 	the layout has run out of space.
@@ -592,7 +601,18 @@ To explictly update the layout, just uses -[ETLayoutItemGroup updateLayout]. */
 		return;
 
 	_isRendering = YES;
-	[self renderWithItems: [[self layoutContext] arrangedItems] isNewContent: isNewContent];
+	[self setLayoutSize: [self renderWithItems: [[self layoutContext] arrangedItems]
+	                              isNewContent: isNewContent]];
+
+	/* Adjust layout context size (e.g. when it is embedded in a scroll view) */
+	if ([self isContentSizeLayout])
+	{
+		[[self layoutContext] setContentSize: [self layoutSize]];
+		ETDebugLog(@"Layout size is %@ with layout context size %@ and clip view size %@", 
+			NSStringFromSize([self layoutSize]), 
+			NSStringFromSize([[self layoutContext] size]), 
+			NSStringFromSize([[self layoutContext] visibleContentSize]));
+	}
 	_isRendering = NO;
 }
 
@@ -637,7 +657,7 @@ Any layout item which belongs to the layout context, but not present in the item
 array argument, can be ignored in the layout logic implemented by subclasses.<br />
 This optimization is not yet used and a subclass is not required to comply to 
 it (this is subject to change though). */
-- (void) renderWithItems: (NSArray *)items isNewContent: (BOOL)isNewContent
+- (NSSize) renderWithItems: (NSArray *)items isNewContent: (BOOL)isNewContent
 {	
 	ETDebugLog(@"Render layout items: %@", items);
 
@@ -672,6 +692,7 @@ it (this is subject to change though). */
 		[self didChangeAttachedTool: nil
 		                     toTool: [ETTool activatableToolForItem: (ETLayoutItem *)[self layoutContext]]];
 	}
+	return [self layoutSize];
 }
 
 /** <override-never />

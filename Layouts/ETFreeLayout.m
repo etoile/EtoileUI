@@ -246,7 +246,7 @@ layout context, based on the rules or policy of the given layout. */
 	RELEASE(self);
 }
 
-- (void) renderWithItems: (NSArray *)items isNewContent: (BOOL)isNewContent
+- (NSSize) renderWithItems: (NSArray *)items isNewContent: (BOOL)isNewContent
 {
 	[super renderWithItems: items isNewContent: isNewContent];
 	if (isNewContent)
@@ -254,6 +254,7 @@ layout context, based on the rules or policy of the given layout. */
 		[self updateKVOForItems: items];
 		[self buildHandlesForItems: items];
 	}
+	return [self layoutSize];
 }
 
 #if 0

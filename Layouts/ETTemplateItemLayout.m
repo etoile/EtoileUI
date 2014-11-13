@@ -319,7 +319,7 @@ Does nothing by default. */
 
 /* Layouting */
 
-- (void) renderWithItems: (NSArray *)items isNewContent: (BOOL)isNewContent
+- (NSSize) renderWithItems: (NSArray *)items isNewContent: (BOOL)isNewContent
 {
 	if (isNewContent)
 	{
@@ -334,7 +334,13 @@ Does nothing by default. */
 	[self willRenderItems: items isNewContent: isNewContent];
 	/* Visibility of replaced and replacement items is handled in 
 	   -setVisibleItems: */
-	[[self positionalLayout] renderWithItems: items isNewContent: isNewContent];
+	return [[self positionalLayout] renderWithItems: items isNewContent: isNewContent];
+}
+
+/* Used by -[ETLayout render:] to resize the context. */
+- (BOOL) isContentSizeLayout
+{
+	return [[self positionalLayout] isContentSizeLayout];
 }
 
 /* Layouting Context Protocol (used by our positional layout delegate) */
@@ -362,12 +368,6 @@ Does nothing by default. */
 - (NSSize) size
 {
 	return [[self layoutContext] size];
-}
-
-- (void) setSize: (NSSize)size
-{
-	[self setLayoutSize: size]; /* To sync the layer item geometry */
-	[[self layoutContext] setSize: size];
 }
 
 - (void) setLayoutView: (NSView *)aLayoutView

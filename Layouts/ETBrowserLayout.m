@@ -93,7 +93,7 @@
 
 /* Layouting */
 
-- (void) renderWithItems: (NSArray *)items isNewContent: (BOOL)isNewContent
+- (NSSize) renderWithItems: (NSArray *)items isNewContent: (BOOL)isNewContent
 {
 	NSBrowser *browserView = [self browser];
 	
@@ -165,6 +165,8 @@
 			              inColumn: [browserView lastColumn]];
 		}
 	}
+
+	return [self layoutSize];
 }
 
 - (void) resizeItems: (NSArray *)items toScaleFactor: (CGFloat)factor

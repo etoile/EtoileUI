@@ -403,7 +403,7 @@ If flexible separators are used, before -adjustSeparatorItemsForLayoutSize: we h
 
 Finally once the layout is computed, this method set the layout item visibility 
 by calling -setVisibleItems: on the layout context. */
-- (void) renderWithItems: (NSArray *)items isNewContent: (BOOL)isNewContent
+- (NSSize) renderWithItems: (NSArray *)items isNewContent: (BOOL)isNewContent
 {
 	//NSLog(@" === UPDATE LAYOUT - %@ === ", [[self itemForLayoutContext] identifier]);
 
@@ -436,20 +436,9 @@ by calling -setVisibleItems: on the layout context. */
 	}
 
 	[self adjustSeparatorItemsForLayoutSize: newLayoutSize];
-	// TODO: We should return this value rather than void
-	[self setLayoutSize: newLayoutSize];
-	
-	/* Adjust layout context size (e.g. when it is embedded in a scroll view) */
-	if ([self isContentSizeLayout])
-	{
-		[[self layoutContext] setContentSize: [self layoutSize]];
-		ETDebugLog(@"Layout size is %@ with layout context size %@ and clip view size %@", 
-			NSStringFromSize([self layoutSize]), 
-			NSStringFromSize([[self layoutContext] size]), 
-			NSStringFromSize([[self layoutContext] visibleContentSize]));
-	}
 
 	[[self layoutContext] setVisibleItems: usedItems];
+	return newLayoutSize;
 }
 
 /* Fragment-based Layout */

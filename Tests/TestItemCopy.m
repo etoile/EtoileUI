@@ -373,6 +373,8 @@ DEALLOC(DESTROY(itemFactory); DESTROY(item); DESTROY(itemGroup))
 	UKObjectsEqual([NSIndexPath indexPathWithIndex: 0], [[newItemGroup itemAtIndex: 0] indexPath]);
 	UKObjectsEqual([NSIndexPath indexPathWithIndex: 1], [[newItemGroup itemAtIndex: 1] indexPath]);
 
+	[[ETLayoutExecutor sharedInstance] execute];
+
 	UKIntsEqual(2, [[(ETOutlineLayout *)[newItemGroup layout] outlineView] numberOfRows]);
 
 	RELEASE(newItemGroup);
@@ -417,9 +419,10 @@ DEALLOC(DESTROY(itemFactory); DESTROY(item); DESTROY(itemGroup))
 	UKIntsEqual(0, [(id)[newItemGroup itemAtIndexPath: IPATH(@"2.0")] numberOfItems]);
 
 	ETOutlineLayout *layoutCopy = (ETOutlineLayout *)[[newItemGroup itemAtIndex: 2] layout];
-	UKIntsEqual(1, [[layoutCopy outlineView] numberOfRows]);
-	
+
 	[[ETLayoutExecutor sharedInstance] execute];
+
+	UKIntsEqual(1, [[layoutCopy outlineView] numberOfRows]);
 
 	UKNotNil([newItemGroup supervisorView]);
 	UKNil([[newItemGroup itemAtIndex: 1] supervisorView]);

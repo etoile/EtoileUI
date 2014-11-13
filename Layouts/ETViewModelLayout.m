@@ -296,7 +296,7 @@ being returned. */
 }
 
 // FIXME: Remove
-- (void) renderWithItems: (NSArray *)items isNewContent: (BOOL)isNewContent
+- (NSSize) renderWithItems: (NSArray *)items isNewContent: (BOOL)isNewContent
 {
 	if ([propertyViewItem canReload])
 	{
@@ -306,6 +306,7 @@ being returned. */
 	{
 		[propertyViewItem updateLayout];
 	}
+	return [self layoutSize];
 }
 
 /** Returns the active display mode. */ 
