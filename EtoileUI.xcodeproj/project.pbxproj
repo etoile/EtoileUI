@@ -397,7 +397,6 @@
 		60B9B688185B26B600ABDEA1 /* ETLayoutItemFactory+UIPatternAdditions.m in Sources */ = {isa = PBXBuildFile; fileRef = 60B9B685185B26B600ABDEA1 /* ETLayoutItemFactory+UIPatternAdditions.m */; };
 		60B9B689185B26B600ABDEA1 /* ETLayoutItemFactory+UIPatternAdditions.m in Sources */ = {isa = PBXBuildFile; fileRef = 60B9B685185B26B600ABDEA1 /* ETLayoutItemFactory+UIPatternAdditions.m */; };
 		60BA538F1869ECC1003CE1D0 /* ETGraphicsBackend.h in Headers */ = {isa = PBXBuildFile; fileRef = 60BA538E1869ECC1003CE1D0 /* ETGraphicsBackend.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		60BB000E100A32C8001B2F37 /* EtoileWeb.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 60073C2910074B39007272E6 /* EtoileWeb.framework */; };
 		60BBFDE418645483006A495E /* ETArrowTool.h in Headers */ = {isa = PBXBuildFile; fileRef = 60BBFDDC18645483006A495E /* ETArrowTool.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		60BBFDE618645483006A495E /* ETArrowTool.m in Sources */ = {isa = PBXBuildFile; fileRef = 60BBFDDD18645483006A495E /* ETArrowTool.m */; };
 		60BBFDE718645483006A495E /* ETArrowTool.m in Sources */ = {isa = PBXBuildFile; fileRef = 60BBFDDD18645483006A495E /* ETArrowTool.m */; };
@@ -786,13 +785,6 @@
 			proxyType = 1;
 			remoteGlobalIDString = 60EF8E9C0C5E4D0600C97C41;
 			remoteInfo = EtoileUI;
-		};
-		60BB0008100A32BC001B2F37 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 29B97313FDCFA39411CA2CEA /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = 60073C2810074B39007272E6;
-			remoteInfo = EtoileWeb;
 		};
 		60C2100D16755264002E03AE /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -1416,7 +1408,6 @@
 			files = (
 				6640BD1A10A0C34E008B7765 /* EtoileFoundation.framework in Frameworks */,
 				60F714130C5E7DA8002CA8AA /* EtoileUI.framework in Frameworks */,
-				60BB000E100A32C8001B2F37 /* EtoileWeb.framework in Frameworks */,
 				606B9C5E0C0B18A3000AAA85 /* Cocoa.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -2555,7 +2546,6 @@
 			);
 			dependencies = (
 				60F714300C5E7DB2002CA8AA /* PBXTargetDependency */,
-				60BB0009100A32BC001B2F37 /* PBXTargetDependency */,
 			);
 			name = PhotoViewExample;
 			productName = ContainerExample;
@@ -3548,11 +3538,6 @@
 			isa = PBXTargetDependency;
 			target = 60EF8E9C0C5E4D0600C97C41 /* EtoileUI */;
 			targetProxy = 60909D5E0CB30484009CAD27 /* PBXContainerItemProxy */;
-		};
-		60BB0009100A32BC001B2F37 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = 60073C2810074B39007272E6 /* EtoileWeb */;
-			targetProxy = 60BB0008100A32BC001B2F37 /* PBXContainerItemProxy */;
 		};
 		60CF74380D449B6E00B4CA3D /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
