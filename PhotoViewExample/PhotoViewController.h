@@ -100,3 +100,13 @@ is shown in MarkupEditorExample. */
 - (NSImageView *) imageViewForImage: (NSImage *)image;
 
 @end
+
+
+@interface PhotoAsset : NSObject
+@property (nonatomic, readonly) NSImage *icon;
+@property (nonatomic, retain) NSImage *image;
+@property (nonatomic, retain) NSString *name;
+@property (nonatomic, readonly) NSSize size;
+@property (nonatomic, retain) NSString *type;
+@property (nonatomic, retain) NSDate *modificationDate;
+@end
