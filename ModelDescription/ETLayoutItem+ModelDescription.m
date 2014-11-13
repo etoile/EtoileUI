@@ -40,7 +40,7 @@
 	[valueTransformers setMultivalued: YES];
 	[valueTransformers setOrdered: NO];
 	[valueTransformers setKeyed: YES];
-	[valueTransformers setValueTransformerName: @"ETValueTransformersToPersistentDictionary"];
+	[valueTransformers setValueTransformerName: @"ETItemValueTransformerToString"];
 	[valueTransformers setPersistentTypeName: @"NSString"];
 	[valueTransformers setShowsItemDetails: YES];
 	[valueTransformers setDetailedPropertyNames: A(@"name", @"transformCode", @"reverseTransformCode")];
