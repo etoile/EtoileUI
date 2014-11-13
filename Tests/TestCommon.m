@@ -356,9 +356,9 @@ static NSMutableSet *deallocatedObjectUUIDs = nil;
 
 @implementation ETLayout (ETLayoutTestAdditions)
 
-- (NSSize) proposedLayoutSize
+- (NSSize) oldProposedLayoutSize
 {
-	return _proposedLayoutSize;
+	return _oldProposedLayoutSize;
 }
 
 - (CGFloat) previousScaleFactor

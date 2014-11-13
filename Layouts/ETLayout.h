@@ -194,7 +194,7 @@ For a copy, -attachedTool is copied. */
 	BOOL _isRendering;
 	/* Layout and Content Size in Scrollview */
 	NSSize _layoutSize;
-	NSSize _proposedLayoutSize;
+	NSSize _oldProposedLayoutSize;
 	@protected
 	CGFloat _previousScaleFactor; // TODO: Remove
 }
@@ -252,7 +252,7 @@ For a copy, -attachedTool is copied. */
 /** @taskunit Layouting */
 
 - (void) renderWithItems: (NSArray *)items isNewContent: (BOOL)isNewContent;
-- (void) resetLayoutSize;
+- (NSSize) resetLayoutSize;
 - (void) resizeItems: (NSArray *)items
     forNewLayoutSize: (NSSize)newLayoutSize
              oldSize: (NSSize)oldLayoutSize;
@@ -301,6 +301,7 @@ For a copy, -attachedTool is copied. */
 - (void) render: (BOOL)isNewContent;
 - (void) validateLayoutContext: (id <ETLayoutingContext>)context;
 
+@property (nonatomic, readonly) NSSize proposedLayoutSize;
 @property (nonatomic, readonly) ETLayoutItemGroup *contextItem;
 
 @end

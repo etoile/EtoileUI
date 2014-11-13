@@ -77,16 +77,16 @@
 	// NOTE: layoutSize is not transient, it is usually computed but can be customized
 	ETPropertyDescription *layoutSize = 
 		[ETPropertyDescription descriptionWithName: @"layoutSize" type: (id)@"NSSize"];
-    ETPropertyDescription *proposedLayoutSize =
-    	[ETPropertyDescription descriptionWithName: @"proposedLayoutSize" type: (id)@"NSSize"];
+    ETPropertyDescription *oldProposedLayoutSize =
+    	[ETPropertyDescription descriptionWithName: @"oldProposedLayoutSize" type: (id)@"NSSize"];
 	// NOTE: We don't persist _previousScaleFactor, it's an optimization.
 	// See -[ETPositionalLayout resizeItems:toScaleFactor:].
 
 	// TODO: Declare the numerous derived (implicitly transient) properties we have 
 
-	NSArray *transientProperties = A(contextItem, layerItem);
-	NSArray *persistentProperties = A(attachedTool, layoutSize,
-        proposedLayoutSize, dropIndicator);
+	NSArray *transientProperties = A(contextItem, layerItem, layoutSize);
+	NSArray *persistentProperties = A(attachedTool, oldProposedLayoutSize,
+		dropIndicator);
 
 	[entity setUIBuilderPropertyNames: (id)[[A(dropIndicator) mappedCollection] name]];
 

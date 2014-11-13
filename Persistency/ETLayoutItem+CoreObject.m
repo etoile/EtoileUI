@@ -400,8 +400,6 @@ since -serializedValueForProperty: doesn't use the direct ivar access. */
 {
 	[self setVisibleItems: [NSArray array]];
 	[_layout setUp: YES];
-	// NOTE: Could be removed if we don't persist the layout size
-	[_layout syncLayerItemGeometryWithSize: [_layout layoutSize]];
 	[self didChangeLayout: nil];
 
     /* For autoresizing among other things.

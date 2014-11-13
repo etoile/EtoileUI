@@ -10,6 +10,7 @@
 #import "ETCompositeLayout.h"
 #import "ETDropIndicator.h"
 #import "ETFreeLayout.h"
+#import "ETGeometry.h"
 #import "ETLayout.h"
 #import "ETLayoutItemGroup.h"
 #import "ETPaneLayout.h"
@@ -18,6 +19,19 @@
 #import "ETSelectTool.h"
 
 @implementation ETLayout (CoreObject)
+
+- (NSValue *) serializedOldProposedLayoutSize
+{
+	if (NSEqualSizes(_oldProposedLayoutSize, [self proposedLayoutSize]))
+		return [NSValue valueWithSize: ETNullSize];
+ 
+	return [NSValue valueWithSize: _oldProposedLayoutSize];
+}
+
+- (void) setSerializedOldProposedLayoutSize: (NSValue *)aValue
+{
+	_oldProposedLayoutSize = [aValue sizeValue];
+}
 
 /** Maps the layer item into the context. 
  
@@ -38,6 +52,11 @@ or a layout without a context. */
 {
 	[super didLoadObjectGraph];
 
+	if (NSEqualSizes(_oldProposedLayoutSize, ETNullSize))
+	{
+		_oldProposedLayoutSize = [self proposedLayoutSize];
+	}
+	_layoutSize = [self proposedLayoutSize];
 	_previousScaleFactor = ([self layoutContext] != nil ? [[self layoutContext] itemScaleFactor] : 1.0);
 
     if ([self layoutContext] == nil)

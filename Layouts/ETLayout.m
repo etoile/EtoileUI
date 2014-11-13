@@ -150,8 +150,8 @@ Returns a new ETLayout instance. */
 	_attachedTool = nil;
 	ASSIGN(_dropIndicator, [ETDropIndicator sharedInstanceForObjectGraphContext: aContext]);
 	_isRendering = NO;
-	_layoutSize = NSMakeSize(200, 200); /* Dummy value */
-	_proposedLayoutSize = ETNullSize;
+	_layoutSize = ETNullSize;
+	_oldProposedLayoutSize = ETNullSize;
 	 /* Will ensure -resizeItems:toScaleFactor: isn't called until the scale changes */
 	_previousScaleFactor = 1.0;
 
@@ -596,20 +596,30 @@ To explictly update the layout, just uses -[ETLayoutItemGroup updateLayout]. */
 	_isRendering = NO;
 }
 
-/** Sets the layout size to match the current content size of the layout context.
+- (NSSize) proposedLayoutSize
+{
+	return [[self layoutContext] visibleContentSize];
+}
+
+/** Sets the layout size to match the current content size of the layout context,
+and returns the old layout size.
 
 You call this method to reset the layout size to a value that should be used
 as a basis to compute the layout. By default, the items are laid out within the 
 boundaries of -[ETLayoutingContext visibleContentSize].
 
 If the layout context is a scrollable area, this method will take it in account. */
-- (void) resetLayoutSize
+- (NSSize) resetLayoutSize
 {
+	NSSize oldLayoutSize = _oldProposedLayoutSize;
+	NSSize newLayoutSize = [self proposedLayoutSize];
+
 	/* We always set the layout size which should be used to compute the 
-	   layout unless a custom layout has been set by calling -setLayoutSize:
-	   before -render. */
-	[self setLayoutSize: [[self layoutContext] visibleContentSize]];
-	_proposedLayoutSize = [self layoutSize];
+	   layout unless a custom layout size is set later. */
+	[self setLayoutSize: newLayoutSize];
+	_oldProposedLayoutSize = newLayoutSize;
+
+	return oldLayoutSize;
 }
 
 /** <override-dummy />
@@ -632,14 +642,14 @@ it (this is subject to change though). */
 	ETDebugLog(@"Render layout items: %@", items);
 
 	CGFloat scale = [[self layoutContext] itemScaleFactor];
-	NSSize oldProposedLayoutSize = _proposedLayoutSize;
+	NSSize oldLayoutSize = [self resetLayoutSize];
+	ETAssert(NSEqualSizes(oldLayoutSize, ETNullSize) == NO);
 
-	[self resetLayoutSize];
 	if ([(ETPositionalLayout *)[self ifResponds] isContentSizeLayout] == NO)
 	{
 		[self resizeItems: items
 		 forNewLayoutSize: [self layoutSize]
-		          oldSize: oldProposedLayoutSize];
+		          oldSize: oldLayoutSize];
 	}
 	// TODO: This is a welcome optimization that avoids unecessary computations, 
 	// however this shouldn't be mandatory. Currently this is used as a

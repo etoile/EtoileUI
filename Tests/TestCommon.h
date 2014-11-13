@@ -20,6 +20,7 @@
 #import <CoreObject/COSQLiteStore.h>
 #import <CoreObject/COSerialization.h>
 #import "ETDecoratorItem.h"
+#import "ETGeometry.h"
 #import "ETLayoutExecutor.h"
 #import "ETLayoutItem.h"
 #import "ETLayoutItemGroup.h"
@@ -141,6 +142,6 @@ The main item is the window content. */
 @end
 
 @interface ETLayout (ETLayoutTestAdditions)
-- (NSSize) proposedLayoutSize;
+- (NSSize) oldProposedLayoutSize;
 - (CGFloat) previousScaleFactor;
 @end

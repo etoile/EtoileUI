@@ -48,13 +48,21 @@
         ETLayout *newLayout = [newItemGroup layout];
 
 		UKTrue(2.0 == [newLayout previousScaleFactor]);
-		
+
+		/* Final layout size is smaller than the initial visible content size */
 		CGFloat layoutHeight =
 			20 + 10 + itemSize.height * 2 + 10 + buttonSize.height * 2 + 10 + 20;
 		CGFloat layoutWidth =
 			20 + 10 + MAX(itemSize.width, buttonSize.width) * 2 + 10 + 20;
 		NSSize layoutSize = NSMakeSize(layoutWidth, layoutHeight);
-
+		BOOL recomputesLayoutSize = (isNew || isCopy);
+	
+		if (recomputesLayoutSize)
+		{
+			/* For the copy case, don't update the original item tree with ETLayoutExecutor */
+			[newItemGroup updateLayout];
+		}
+	
 		UKSizesEqual(layoutSize, [newLayout layoutSize]);
         UKSizesNotEqual(layoutSize, [newLayout proposedLayoutSize]);
 		UKSizesNotEqual(layoutSize, [itemGroup visibleContentSize]);
