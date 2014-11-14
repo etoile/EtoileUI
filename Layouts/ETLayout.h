@@ -138,8 +138,6 @@ Warning: This protocol is very much subject to change. */
 - (void) setIsContentSizeLayout: (BOOL)flag;
 /** See -[ETPositionalLayout isContentSizeLayout]. */
 - (BOOL) isContentSizeLayout;
-/** See -[ETLayout copyWithZone:layoutContext:]. */
-- (id) copyWithZone: (NSZone *)aZone layoutContext: (id <ETLayoutingContext>)newContext;
 /** See -[ETLayout validateLayoutContext:]. */
 - (void) validateLayoutContext: (id <ETLayoutingContext>)context;
 /** See -[ETLayout layoutContext:]. */
