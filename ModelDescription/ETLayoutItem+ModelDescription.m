@@ -34,7 +34,11 @@
 	ETPropertyDescription *identifier = [ETPropertyDescription descriptionWithName: @"identifier" type: (id)@"NSString"];
 	ETPropertyDescription *name = [ETPropertyDescription descriptionWithName: @"name" type: (id)@"NSString"];
 	ETPropertyDescription *image = [ETPropertyDescription descriptionWithName: @"image" type: (id)@"NSImage"];
+	[image setValueTransformerName: @"COObjectToArchivedData"];
+	[image setPersistentTypeName: @"NSData"];
 	ETPropertyDescription *icon = [ETPropertyDescription descriptionWithName: @"icon" type: (id)@"NSImage"];
+	[icon setValueTransformerName: @"COObjectToArchivedData"];
+	[icon setPersistentTypeName: @"NSData"];
 	ETPropertyDescription *repObject = [ETPropertyDescription descriptionWithName: @"representedObject" type: (id)@"NSObject"];
 	ETPropertyDescription *valueTransformers = [ETPropertyDescription descriptionWithName: @"valueTransformers" type: (id)@"ETItemValueTransformer"];
 	[valueTransformers setMultivalued: YES];

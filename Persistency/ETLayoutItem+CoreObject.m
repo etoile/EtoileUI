@@ -76,30 +76,6 @@
 #pragma mark Persistency Support
 #pragma mark -
 
-- (NSData *) serializedIcon
-{
-	NSImage *icon = [self valueForVariableStorageKey: kETIconProperty];
-	return (icon != nil ? [NSKeyedArchiver archivedDataWithRootObject: icon] : nil);
-}
-
-- (void) setSerializedIcon: (NSData *)anIconData
-{
-	NSImage *icon = (anIconData != nil ? [NSKeyedUnarchiver unarchiveObjectWithData: anIconData] : nil);
-	[self setValue: icon forVariableStorageKey: kETIconProperty];
-}
-
-- (NSData *) serializedImage
-{
-	NSImage *img = [self valueForVariableStorageKey: kETImageProperty];
-	return (img != nil ? [NSKeyedArchiver archivedDataWithRootObject: img] : nil);
-}
-
-- (void) setSerializedImage: (NSData *)anImageData
-{
-	NSImage *img = (anImageData != nil ? [NSKeyedUnarchiver unarchiveObjectWithData: anImageData] : nil);
-	[self setValue: img forVariableStorageKey: kETImageProperty];
-}
-
 - (NSValue *) serializedPosition
 {
 	id value = nil;

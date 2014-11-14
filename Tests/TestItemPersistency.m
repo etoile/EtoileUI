@@ -207,6 +207,22 @@
     }];
 }
 
+- (void) testImageItem
+{
+	NSImage *image = [NSImage imageNamed: @"box"];
+	NSImage *icon = [NSImage imageNamed: @"pin"];
+
+	[item setImage: image];
+	[item setIcon: icon];
+	
+	[self checkWithExistingAndNewRootObject: item
+									inBlock: ^ (ETLayoutItem *newItem, BOOL isNew, BOOL isCopy)
+	 {
+		 UKObjectsEqual([image TIFFRepresentation], [[newItem image] TIFFRepresentation]);
+		 UKObjectsEqual([icon TIFFRepresentation], [[newItem icon] TIFFRepresentation]);
+	 }];
+}
+
 - (void) testViewRoundtrip
 {
 	ETLayoutItem *textFieldItem = [itemFactory textField];
