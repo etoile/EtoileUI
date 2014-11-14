@@ -85,7 +85,7 @@ object graph context.
 ETStyle and ETActionHandler subclasses support shared instances. For other 
 ETUIObject subclasses, other initialization means  should be used (e.g. 
 ETLayoutItemFactory or the dedicated initializers). */
-+ (id) sharedInstanceForObjectGraphContext: (COObjectGraphContext *)aContext
++ (instancetype) sharedInstanceForObjectGraphContext: (COObjectGraphContext *)aContext
 {
 	ETUUID *permanentUUID = [self sharedInstanceUUIDForObjectGraphContext: aContext];
 	ETUIObject *object = [aContext loadedObjectForUUID: permanentUUID];

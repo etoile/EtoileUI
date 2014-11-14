@@ -28,7 +28,7 @@ static ETEventProcessor *sharedInstance = nil;
 
 /** Returns the event processor that corresponds to the widget backend currently 
 in use. */
-+ (id) sharedInstance
++ (instancetype) sharedInstance
 {
 	if (sharedInstance == nil)
 	{

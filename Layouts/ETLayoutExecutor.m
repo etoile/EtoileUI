@@ -31,7 +31,7 @@ static ETLayoutExecutor *sharedInstance = nil;
 }
 
 /** Returns the shared layout executor. */
-+ (id) sharedInstance
++ (instancetype) sharedInstance
 {
 	return sharedInstance;
 }

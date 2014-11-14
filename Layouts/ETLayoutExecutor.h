@@ -22,7 +22,7 @@
 
 /** @taskunit Singleton Access */
 
-+ (id) sharedInstance;
++ (instancetype) sharedInstance;
 
 /** @taskunit Scheduling Items */
 

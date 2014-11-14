@@ -70,7 +70,7 @@
 static ETPickDropCoordinator *sharedInstance = nil;
 
 /** Returns the default pick and drop coordinator. */
-+ (id) sharedInstance
++ (instancetype) sharedInstance
 {
 	if (nil == sharedInstance)
 	{
@@ -81,7 +81,7 @@ static ETPickDropCoordinator *sharedInstance = nil;
 
 /** Returns the default pick and drop coordinator reinitialized with a new 
 event. */
-+ (id) sharedInstanceWithEvent: (ETEvent *)anEvent
++ (instancetype) sharedInstanceWithEvent: (ETEvent *)anEvent
 {
 	if (sharedInstance == nil)
 	{

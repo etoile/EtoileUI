@@ -22,7 +22,7 @@
 
 /** @taskunit Factory Method */
 
-+ (id) sharedInstanceForObjectGraphContext: (COObjectGraphContext *)aContext;
++ (instancetype) sharedInstanceForObjectGraphContext: (COObjectGraphContext *)aContext;
 
 /** @taskunit Aspect Sharing */
 

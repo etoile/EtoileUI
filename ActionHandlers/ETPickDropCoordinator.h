@@ -44,8 +44,8 @@
 	NSUInteger _insertionShift;
 }
 
-+ (id) sharedInstance;
-+ (id) sharedInstanceWithEvent: (ETEvent *)anEvent;
++ (instancetype) sharedInstance;
++ (instancetype) sharedInstanceWithEvent: (ETEvent *)anEvent;
 + (unsigned int) forceEnablePickAndDropModifier;
 
 - (void) beginDragItem: (ETLayoutItem *)item

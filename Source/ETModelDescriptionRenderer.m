@@ -39,7 +39,7 @@
 #import "ETCompatibility.h"
 
 @interface ETPopUpButtonTarget : NSObject
-+ (id) sharedInstance;
++ (instancetype) sharedInstance;
 @end
 
 @implementation ETModelDescriptionRenderer
