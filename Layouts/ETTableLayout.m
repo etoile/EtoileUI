@@ -500,7 +500,7 @@ See [(ETColumnFragment)] protocol to customize the returned column. */
 	{
 		ETLog(@"WARNING: Layout context %@ must have a supervisor view otherwise "
 			@"view-based layout %@ cannot be set", [self layoutContext], self);
-		return;
+		return [self layoutSize];
 	}
 
 	[self resizeItems: items 

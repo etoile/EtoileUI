@@ -156,7 +156,7 @@
 		}
 
 		if (isMultipleSelection == NO)
-			return;
+			return [self layoutSize];
 		
 		/* Finally recreates the multiple selection */
 		for (ETLayoutItem *item in selectedItems)

@@ -78,10 +78,10 @@
 
 	BOOL containsText = [self prepareTextView];
 
-	if (containsText)
-		return;
-
-	[[self textView] setString: [self textRepresentationFromItems: items]];
+	if (containsText == NO)
+	{
+		[[self textView] setString: [self textRepresentationFromItems: items]];
+	}
 	return [self layoutSize];
 }
 
