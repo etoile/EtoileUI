@@ -388,7 +388,7 @@
 	return [[ETPickDropCoordinator sharedInstance] ignoreModifierKeysWhileDragging];
 }
 
-- (unsigned int) draggingSourceOperationMaskForLocal: (BOOL)isLocal
+- (NSDragOperation) draggingSourceOperationMaskForLocal: (BOOL)isLocal
 {
 	return [(ETPickDropCoordinator *)[ETPickDropCoordinator sharedInstance] draggingSourceOperationMaskForLocal: isLocal];
 }

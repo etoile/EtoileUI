@@ -1121,7 +1121,7 @@ Returns the cell to be used at the given column and row intersection in this lay
 	return [[ETPickDropCoordinator sharedInstance] ignoreModifierKeysWhileDragging];
 }
 
-- (unsigned int) draggingSourceOperationMaskForLocal: (BOOL)isLocal
+- (NSDragOperation) draggingSourceOperationMaskForLocal: (BOOL)isLocal
 {
 	return [(ETPickDropCoordinator *)[ETPickDropCoordinator sharedInstance] draggingSourceOperationMaskForLocal: isLocal];
 }

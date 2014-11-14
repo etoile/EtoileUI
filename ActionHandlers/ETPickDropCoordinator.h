@@ -64,7 +64,7 @@
 
 - (ETLayoutItem *) dragSource;
 - (unsigned int) dragModifierFlags;
-- (unsigned int) dragOperationMaskForDestinationItem: (ETLayoutItem *)item;
+- (NSDragOperation) dragOperationMaskForDestinationItem: (ETLayoutItem *)item;
 - (NSPoint) dragLocationInDestinationItem: (ETLayoutItem *)item;
 
 /* Drop Insertion */

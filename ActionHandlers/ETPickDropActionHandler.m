@@ -373,8 +373,8 @@ drop occurs in another application, or sometimes on a native widget without
 EtoileUI pick and drop integration (e.g. from a table layout to a text view).
 
 By default, returns NSDragOperationEvery. */
-- (unsigned int) dragOperationMaskForDestinationItem: (ETLayoutItem *)item
-                                         coordinator: (ETPickDropCoordinator *)aPickCoordinator
+- (NSDragOperation) dragOperationMaskForDestinationItem: (ETLayoutItem *)item
+                                            coordinator: (ETPickDropCoordinator *)aPickCoordinator
 {
 	// NOTE: Cocoa uses NSDragOperationCopy | NSDragOperationLink | NSDragOperationGeneric | NSDragOperationPrivate
 	return NSDragOperationEvery;

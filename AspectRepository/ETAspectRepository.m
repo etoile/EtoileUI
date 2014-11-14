@@ -76,8 +76,8 @@ repository is the item group represented object). */
 
 @implementation ETAspectTemplateActionHandler
 
-- (unsigned int) dragOperationMaskForDestinationItem: (ETLayoutItem *)item
-                                         coordinator: (ETPickDropCoordinator *)aPickCoordinator
+- (NSDragOperation) dragOperationMaskForDestinationItem: (ETLayoutItem *)item
+                                            coordinator: (ETPickDropCoordinator *)aPickCoordinator
 {
 	BOOL isDragInsideSource = (item != nil && [[item baseItem] isEqual: [aPickCoordinator dragSource]]);
 	

@@ -40,7 +40,7 @@
 - (void) reset;
 
 - (BOOL) ignoreModifierKeysWhileDragging;
-- (unsigned int) draggingSourceOperationMaskForLocal: (BOOL)isLocal;
+- (NSDragOperation) draggingSourceOperationMaskForLocal: (BOOL)isLocal;
 - (void) draggedImage: (NSImage *)anImage beganAt: (NSPoint)aPoint;
 - (void) draggedImage: (NSImage *)draggedImage movedTo: (NSPoint)screenPoint;
 - (void) draggedImage: (NSImage *)anImage
@@ -298,7 +298,7 @@ and the modifiers currently pressed if
 
 The aforementioned methods return values can be altered with their related 
 setters in the ETActionHandler bound to the drag source. */
-- (unsigned int) dragOperationMaskForDestinationItem: (ETLayoutItem *)item
+- (NSDragOperation) dragOperationMaskForDestinationItem: (ETLayoutItem *)item
 {
 	// TODO: Could need to be tweaked when pick and drop is forced or enabled 
 	// for all items
@@ -355,7 +355,7 @@ pick and drop, or when the drop target is located in another process.
 
 For example, ETTableLayout and ETOutlineLayout might call back this method in 
 the cases described above. */
-- (unsigned int) draggingSourceOperationMaskForLocal: (BOOL)isLocal
+- (NSDragOperation) draggingSourceOperationMaskForLocal: (BOOL)isLocal
 {
 	// NOTE: Don't use -dragInfo, because the NSDraggingInfo object won't exist  
 	// yet the first time this method is called

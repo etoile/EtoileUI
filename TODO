@@ -111,6 +111,9 @@ Open Issues
 
 - Fix -numberOfUntitledDocuments to be computed on demand rather than storing in an ivar (the count is wrong once documents get renamed and this doesn't play well with persistence)
 
+- Declare our own pick and drop operation mask rather than using NSDragOperation
+
+
 Testing
 -------
 
