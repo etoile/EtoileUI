@@ -207,7 +207,7 @@
     }];
 }
 
-- (void) testImageItem
+- (void) testItemImages
 {
 	NSImage *image = [NSImage imageNamed: @"box"];
 	NSImage *icon = [NSImage imageNamed: @"pin"];
@@ -217,10 +217,53 @@
 	
 	[self checkWithExistingAndNewRootObject: item
 									inBlock: ^ (ETLayoutItem *newItem, BOOL isNew, BOOL isCopy)
-	 {
-		 UKObjectsEqual([image TIFFRepresentation], [[newItem image] TIFFRepresentation]);
-		 UKObjectsEqual([icon TIFFRepresentation], [[newItem icon] TIFFRepresentation]);
-	 }];
+	{
+		UKObjectsEqual([image TIFFRepresentation], [[newItem image] TIFFRepresentation]);
+		UKObjectsEqual([icon TIFFRepresentation], [[newItem icon] TIFFRepresentation]);
+	}];
+}
+
+- (void) testItemActions
+{
+	[item setTarget: itemGroup];
+	[item setAction: @selector(print:)];
+	[itemGroup setTarget: item];
+	[itemGroup setAction: @selector(open:)];
+	[itemGroup setDoubleAction: @selector(close:)];
+	
+	[self checkWithExistingAndNewRootObject: itemGroup
+									inBlock: ^ (ETLayoutItemGroup *newItemGroup, BOOL isNew, BOOL isCopy)
+	{
+		ETLayoutItem *newItem = [newItemGroup firstItem];
+
+		UKObjectsEqual(newItemGroup, [newItem target]);
+        UKTrue(sel_isEqual(@selector(print:), [newItem action]));
+		UKObjectsEqual(newItem, [newItemGroup target]);
+		UKTrue(sel_isEqual(@selector(open:), [newItemGroup action]));
+		UKTrue(sel_isEqual(@selector(close:), [newItemGroup doubleAction]));
+	}];
+}
+
+/* For more target/action tests with:
+   - view as target
+   - view as target/action holder
+   See -testWidgetItemPersistency. */
+- (void) testItemActionWithViewAsTarget
+{
+	NSView *view = AUTORELEASE([NSView new]);
+
+	[item setView: view];
+	[itemGroup setTarget: view];
+	[itemGroup setAction: @selector(open:)];
+	
+	[self checkWithExistingAndNewRootObject: itemGroup
+									inBlock: ^ (ETLayoutItemGroup *newItemGroup, BOOL isNew, BOOL isCopy)
+	{
+		ETLayoutItem *newItem = [newItemGroup firstItem];
+
+		UKObjectsEqual([newItem view], [newItemGroup target]);
+		UKTrue(sel_isEqual(@selector(open:), [newItemGroup action]));
+	}];
 }
 
 - (void) testViewRoundtrip

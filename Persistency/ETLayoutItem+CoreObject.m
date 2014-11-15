@@ -129,55 +129,74 @@
 	[self setValue: aSelString forVariableStorageKey: kETActionProperty];
 }
 
-- (NSString *) targetIdForTarget: (id)target
+- (COObject *) serializedPersistentTarget
 {
+	id target = [self valueForVariableStorageKey: kETTargetProperty];
+
+	if ([[self view] isWidget])
+	{
+		target = [[self view] target];
+	}
+
+	/* When the target is a view, the serialization occurs in -serializedPersistentTargetOwner */
+	if ([target isView])
+		return nil;
+
+	ETAssert(target == nil || [target isKindOfClass: [COObject class]]);
+	return target;
+}
+
+/** In -awakeFromDeserialization, we reset the target on ETLayoutItem.target and
+ETLayoutItem.view.target. */
+- (void) setSerializedPersistentTarget: (COObject *)aTarget
+{
+	[self setValue: aTarget forVariableStorageKey: @"persistentTarget"];
+}
+
+- (ETLayoutItem *) serializedPersistentTargetOwner
+{
+	id target = [self valueForVariableStorageKey: kETTargetProperty];
+
+	if ([[self view] isWidget])
+	{
+		target = [[self view] target];
+	}
+
+	/* When the target is a COObject, the serialization occurs in -serializedPersistentTarget */
 	if ([target isKindOfClass: [COObject class]])
-	{
-		return [[target UUID] stringValue];
-	}
-	else if ([target isView])
-	{
-		return [@"_" stringByAppendingString: [[[target owningItem] UUID] stringValue]];
-	}
-	return nil;
+		return nil;
+
+	ETAssert(target == nil || ([target isView] && [target owningItem] != nil));
+	return [target owningItem];
 }
 
-- (NSString *) serializedTargetId
+- (void) setSerializedPersistentTargetOwner: (ETLayoutItem *)aTarget
 {
-	return [self targetIdForTarget: [self target]];
+	[self setValue: aTarget forVariableStorageKey: @"persistentTargetOwner"];
 }
 
-- (void) setSerializedTargetId: (NSString *)anId
+- (void) restoreTargetFromDeserialization
 {
-	if (anId == nil)
-		return;
+	id target = [self valueForVariableStorageKey: @"persistentTarget"];
 
-	/* The target might not be deserialized at this point, hence we look up the 
-	   target in -awakeFromDeserialization once the entire object graph has been deserialized */
-	[_variableStorage setObject: anId forKey: @"targetId"];
-}
-
-- (void) restoreTargetFromId: (NSString *)targetId
-{
-	if ([targetId isString] == NO)
-		return;
-
-	BOOL isViewTarget = [targetId hasPrefix: @"_"];
-
-	if (isViewTarget)
+	if (target == nil)
 	{
-		ETUUID *uuid = [ETUUID UUIDWithString: [targetId substringFromIndex: 1]];
-		ETLayoutItem *targetItem = (ETLayoutItem *)[[self objectGraphContext] loadedObjectForUUID: uuid];
+		ETLayoutItem *targetOwner = [self valueForVariableStorageKey: @"persistentTargetOwner"];
 
-		[self setTarget: [targetItem view]];
+		target = [targetOwner view];
 	}
-	else
+
+	/** For ETLayoutItem.target, -will/didChangeValueForProperty: is not needed,
+	    it is a unidirectional relationship not present in the relationship cache. */
+	[self setValue: target forVariableStorageKey: kETTargetProperty];
+
+	if ([[self view] isWidget])
 	{
-		ETUUID *uuid = [ETUUID UUIDWithString: targetId];
-		COObject *target = [[self objectGraphContext] loadedObjectForUUID: uuid];
-
-		[self setTarget: target];
+		[[self view] setTarget: target];
 	}
+	
+	[self setValue: nil forVariableStorageKey: @"persistentTarget"];
+	[self setValue: nil forVariableStorageKey: @"persistentTargetOwner"];
 }
 
 - (NSData *) serializedView
@@ -296,10 +315,7 @@ since -serializedValueForProperty: doesn't use the direct ivar access. */
 {
 	[super didLoadObjectGraph];
 
-	/* Restore target and action on the receiver item or its view */
-
-	[self restoreTargetFromId: [_variableStorage objectForKey: @"targetId"]];
-	[_variableStorage removeObjectForKey: @"targetId"];
+	[self restoreTargetFromDeserialization];
 
 	if ([self isVisible] && [[[self parentItem] layout] isOpaque] == NO)
 	{

@@ -123,7 +123,7 @@ DEALLOC(DESTROY(itemFactory); DESTROY(item); DESTROY(itemGroup))
 - (NSArray *) basicNilItemProperties
 {
 	return  A(@"hostItem", kETBaseItemProperty, kETRootItemProperty, kETIdentifierProperty,
-		kETValueProperty, kETValueKeyProperty, kETStyleProperty, @"targetId",
+		kETValueProperty, kETValueKeyProperty, kETStyleProperty, @"persistentTarget", @"persistentTargetOwner",
 		kETInspectorProperty, @"title", @"formatter", @"attachedTool");
 }
 
@@ -142,7 +142,7 @@ DEALLOC(DESTROY(itemFactory); DESTROY(item); DESTROY(itemGroup))
 		kETDecoratedItemProperty, @"firstDecoratedItem", @"lastDecoratorItem", 
 		@"enclosingItem", @"supervisorView", kETViewProperty, kETNextResponderProperty, 
 		kETParentItemProperty, kETRootItemProperty, kETStyleGroupProperty, kETLayoutProperty,
-		kETCoverStyleProperty, kETActionHandlerProperty);
+		kETCoverStyleProperty, kETActionHandlerProperty, kETTargetProperty);
 }
 
 - (NSArray *) identicalItemProperties
@@ -195,9 +195,9 @@ DEALLOC(DESTROY(itemFactory); DESTROY(item); DESTROY(itemGroup))
 	[item setRepresentedObject: [NSSet set]];
 	[item setSubtype: [ETUTI typeWithClass: [NSSet class]]];
 	// NOTE: -UIBuilderTarget and -UIBuilderAction still returns nil and NULL
+	[item setView: AUTORELEASE([[NSButton alloc] init])];
 	[item setTarget: item];
 	[item setAction: @selector(wibble:)];
-	[item setView: AUTORELEASE([[NSButton alloc] init])];
 	[item setDecoratorItem: [ETDecoratorItem itemWithDummySupervisorView]];
 	//[[item decoratorItem] setDecoratorItem: [ETWindowItem item]];
 
@@ -248,7 +248,7 @@ DEALLOC(DESTROY(itemFactory); DESTROY(item); DESTROY(itemGroup))
 - (NSArray *) nonEqualItemGroupProperties
 {
 	return [[self nonEqualItemProperties] arrayByAddingObjectsFromArray:
-		A(@"items", kETControllerProperty, kETDelegateProperty)];
+		A(@"items", kETControllerProperty, kETDelegateProperty, kETTargetProperty)];
 }
 
 - (void) testBasicItemGroupCopy
@@ -302,12 +302,12 @@ DEALLOC(DESTROY(itemFactory); DESTROY(item); DESTROY(itemGroup))
 
 	[itemGroup setName: @"Whatever"];
 	[itemGroup setImage: [NSImage imageNamed: @"NSApplicationIcon"]];
-	[itemGroup setIcon: [[NSWorkspace sharedWorkspace] iconForFile: @"/"]];
+	//[itemGroup setIcon: [[NSWorkspace sharedWorkspace] iconForFile: @"/"]];
 	[itemGroup setRepresentedObject: [NSSet set]];
 	[itemGroup setSubtype: [ETUTI typeWithClass: [NSSet class]]];
+	[itemGroup setView: AUTORELEASE([[NSButton alloc] init])];
 	[itemGroup setTarget: controller];
 	[itemGroup setAction: @selector(wibble:)];
-	[itemGroup setView: AUTORELEASE([[NSButton alloc] init])];
 	[itemGroup setDecoratorItem: [ETDecoratorItem itemWithDummySupervisorView]];
 
 	[itemGroup setSource: itemGroup];

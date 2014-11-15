@@ -1190,7 +1190,10 @@ the default frame and frame to match this view frame. */
 }
 
 /** Sets the view associated with the receiver. This view is commonly a widget 
-provided by the widget backend. */
+provided by the widget backend.
+
+If a view is set, the target and action set on the receiver are lost, see
+-target and -action. */
 - (void) setView: (NSView *)newView
 {
 	[self setView: newView autoresizingMask: [self autoresizingMaskForContentAspect: [self contentAspect]]];
@@ -3200,44 +3203,64 @@ be sent by the UI element in the EtoileUI responder chain. */
 }
 /** Sets the target to which actions should be sent.
 
-The target is not retained. */
+The target is retained and potential cycles are managed by COObjectGraphContext.
+ 
+If a view that conforms to ETWidget protocol is set, updates the target set on 
+the view.
+ 
+The target must be a COObject or a view returned by -[ETLayoutItem view],
+otherwise an NSInvalidArgumentException is raised.
+
+See also -target and -setView:. */
 - (void) setTarget: (id)aTarget
 {
+	INVALIDARG_EXCEPTION_TEST(aTarget, [aTarget isKindOfClass: [COObject class]]
+		|| ([aTarget isView] && [aTarget owningItem] != nil));
 	// NOTE: For missing value transformation
 	NSParameterAssert([aTarget isKindOfClass: [NSString class]] == NO);
 
-	/* For target persistency, we mark targetId as updated (see ETLayoutItem+CoreObject) */
-	[self willChangeValueForProperty: @"targetId"];
-	[self willChangeValueForProperty: kETTargetProperty];
-	
-	[self setValue: [NSValue valueWithNonretainedObject: aTarget] forVariableStorageKey: kETTargetProperty];
+	/* When the target is not a COObject, persistentTargetOwner	tracks the item
+	   that owns this target. */
 
+	[self willChangeValueForProperty: kETTargetProperty];
+	[self willChangeValueForProperty: @"persistentTarget"];
+	[self willChangeValueForProperty: @"persistentTargetOwner"];
+
+	[self setValue: aTarget forVariableStorageKey: kETTargetProperty];
 	if ([[self view] isWidget])
 	{
-		[[self view] setTarget: aTarget];
+		
+		[(id <ETWidget>)[self view] setTarget: aTarget];
+
 	}
 	[[self layout] syncLayoutViewWithItem: self];
 
+	[self didChangeValueForProperty: @"persistentTargetOwner"];
+	[self didChangeValueForProperty: @"persistentTarget"];
 	[self didChangeValueForProperty: kETTargetProperty];
-	[self didChangeValueForProperty: @"targetId"];
 }
 
-/** Returns the target to which actions should be sent. */
+/** Returns the target to which actions should be sent.
+ 
+If a view that conforms to ETWidget protocol is set, returns the target set on 
+the view.
+ 
+See also -setTarget:. */
 - (id) target
 {
-	id target = ([[self view] isWidget] ? [[self view] target] : nil);
-	
-	if (target != nil)
-		return target;
+	if ([[self view] isWidget])
+		return [(id <ETWidget>)[self view] target];
 
-	return [[self valueForVariableStorageKey: kETTargetProperty] nonretainedObjectValue];
+	return [self valueForVariableStorageKey: kETTargetProperty];
 }
 
 /** Sets the action that can be sent by the action handler associated with 
 the receiver.
 
-This won't alter the action set on the receiver view, both are completely 
-distinct. */
+If a view that conforms to ETWidget protocol is set, updates the action set on
+the view.
+ 
+See also -action and -setView:. */
 - (void) setAction: (SEL)aSelector
 {
 	[self willChangeValueForProperty: kETActionProperty];
@@ -3259,13 +3282,14 @@ distinct. */
 /** Returns the action that can be sent by the action handler associated with 
 the receiver. 
 
+If a view that conforms to ETWidget protocol is set, returns the action set on
+the view.
+
 See also -setAction:. */
 - (SEL) action
 {
-	SEL sel = ([[self view] isWidget] ? [(id <ETWidget>)[self view] action] : NULL);
-
-	if (sel != NULL)
-		return sel;
+	if ([[self view] isWidget])
+		return [(id <ETWidget>)[self view] action];
 
 	NSString *selString = [self valueForVariableStorageKey: kETActionProperty];
 

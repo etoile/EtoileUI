@@ -57,9 +57,12 @@
 	ETPropertyDescription *coverStyle = [ETPropertyDescription descriptionWithName: @"coverStyle" type: (id)@"ETStyle"];
 	ETPropertyDescription *actionHandler = [ETPropertyDescription descriptionWithName: @"actionHandler" type: (id)@"ETActionHandler"];
 	ETPropertyDescription *action = [ETPropertyDescription descriptionWithName: @"action" type: (id)@"SEL"];
-	/* We persist a target id rather than the raw target, because we have no 
-	   way to uniquely identify objects which are not items such as views */
-	ETPropertyDescription *targetId = [ETPropertyDescription descriptionWithName: @"targetId" type: (id)@"NSString"];
+	[action setPersistentTypeName: @"NSString"];
+	/* We persist two distinct target references rather than the raw target, 
+	   because we have no way to uniquely identify objects which are not items 
+	   such as views */
+	ETPropertyDescription *persistentTarget = [ETPropertyDescription descriptionWithName: @"persistentTarget" type: (id)@"COObject"];
+	ETPropertyDescription *persistentTargetOwner = [ETPropertyDescription descriptionWithName: @"persistentTargetOwner" type: (id)@"ETLayoutItem"];
 	ETPropertyDescription *contentBounds = [ETPropertyDescription descriptionWithName: @"contentBounds" type: (id)@"NSRect"];
 	ETPropertyDescription *position = [ETPropertyDescription descriptionWithName: @"position" type: (id)@"NSPoint"];
 	ETPropertyDescription *anchorPoint = [ETPropertyDescription descriptionWithName: @"anchorPoint" type: (id)@"NSPoint"];
@@ -141,9 +144,10 @@
 
 	NSArray *persistentProperties = A(identifier, name, image, icon, 
 		repObject, valueTransformers, valueKey, view, styleGroup, coverStyle,
-		actionHandler, action, targetId, contentBounds, position, anchorPoint, 
-		persistentFrame, autoresizing, contentAspect, boundingBox, defaultFrame,
-		flipped, selected, selectable, visible, subtype);
+		actionHandler, action, persistentTarget, persistentTargetOwner,
+		contentBounds, position, anchorPoint, persistentFrame, autoresizing,
+		contentAspect, boundingBox, defaultFrame, flipped, selected, selectable,
+		visible, subtype);
 	// TODO: title, objectValue, formatter, minValue and maxValue should
 	// be declared among the persistent properties or we should support to
 	// override the entity description bound to ETLayoutItem (making possible 
