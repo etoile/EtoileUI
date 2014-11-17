@@ -185,7 +185,6 @@ See also -setView:, -setCoverStyle: and -setActionHandler:.  */
 	// NOTE: -[COObject newVariableStorage] instantiates the value transformers
 
 	_defaultValues = [[NSMutableDictionary alloc] init];
-
 	_styleGroup = [[ETStyleGroup alloc] initWithObjectGraphContext: aContext];
 	[self setCoverStyle: aStyle];
 	[self setActionHandler: aHandler];
@@ -257,9 +256,12 @@ You must call -stopKVOObservationIfNeeded right at the beginning of -dealloc in
 every subclass that overrides -dealloc. */
 - (void) dealloc
 {
+	ETAssert(_deserializationState == nil || [_deserializationState isEmpty]);
+
 	_isDeallocating = YES;
 	[self stopKVOObservationIfNeeded];
 
+	DESTROY(_deserializationState);
 	DESTROY(_defaultValues);
 	DESTROY(_styleGroup);
 	DESTROY(_coverStyle);

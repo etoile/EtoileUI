@@ -233,7 +233,8 @@ ETLayoutItem.view.target. */
 	NSParameterAssert([newView superview] == nil);
 	/* The item geometry might not be deserialized at this point, hence we set 
 	   the view in -awakeFromDeserialization once the entire object graph has been deserialized */
-	[_variableStorage setObject: newView forKey: @"serializedView"];
+	[_deserializationState setObject: newView
+	                          forKey: kETViewProperty];
 }
 
 /** We use -setView: to recreate supervisorView which is transient and set up
@@ -242,13 +243,13 @@ the state and object value observers.
 Will involve a unnecessary -syncView:withRepresentedObject: call. */
 - (void) restoreViewFromDeserialization
 {
-	NSView *serializedView = [_variableStorage objectForKey: @"serializedView"];
+	NSView *serializedView = [_deserializationState objectForKey: kETViewProperty];
 
 	if (serializedView != nil)
 	{
 		[self setView: serializedView];
 	}
-	[_variableStorage removeObjectForKey: @"serializedView"];
+	[_deserializationState removeObjectForKey: kETViewProperty];
 }
 
 - (void) restoreViewHierarchyFromDeserialization
@@ -332,7 +333,10 @@ static NSString *representedUnorderedAttributeKey = @"representedUnorderedAttrib
 
 - (void) setSerializedRepresentedObjectKey: (NSString *)aKey
 {
-	[self setValue: aKey forVariableStorageKey: @"representedObjectKey"];
+	if (aKey == nil)
+		return;
+
+	[_deserializationState setObject: aKey forKey: @"representedObjectKey"];
 }
 
 #pragma mark Represented Attribute Persistency Support
@@ -364,8 +368,8 @@ static NSString *representedUnorderedAttributeKey = @"representedUnorderedAttrib
 		return;
 
 	ETAssert([self isSerializablePrimitiveValue: aValue]);
-	[_variableStorage setValue: aValue
-	                    forKey: representedAttributeKey];
+	[_deserializationState setObject: aValue
+	                          forKey: representedAttributeKey];
 }
 
 - (NSArray *) representedOrderedAttribute
@@ -399,8 +403,8 @@ static NSString *representedUnorderedAttributeKey = @"representedUnorderedAttrib
 {
 	ETAssert([aValue isKindOfClass: [NSArray class]]);
 	ETAssert([aValue isEmpty] || [self isSerializableAttributeCollection: aValue]);
-	[self setValue: aValue
-	      forVariableStorageKey: representedOrderedAttributeKey];
+	[_deserializationState setObject: aValue
+	                          forKey: representedOrderedAttributeKey];
 }
 
 - (NSSet *) representedUnorderedAttribute
@@ -434,8 +438,8 @@ static NSString *representedUnorderedAttributeKey = @"representedUnorderedAttrib
 {
 	ETAssert([aValue isKindOfClass: [NSSet class]]);
 	ETAssert([aValue isEmpty] || [self isSerializableAttributeCollection: aValue]);
-	[self setValue: aValue
-	      forVariableStorageKey: representedUnorderedAttributeKey];
+	[_deserializationState setObject: aValue
+	                          forKey: representedUnorderedAttributeKey];
 }
 
 #pragma mark Represented Relationship Persistency Support
@@ -467,8 +471,8 @@ static NSString *representedUnorderedAttributeKey = @"representedUnorderedAttrib
 		return;
 
 	ETAssert([aValue isKindOfClass: [COObject class]]);
-	[_variableStorage setValue: aValue
-	                    forKey: representedRelationshipKey];
+	[_deserializationState setObject: aValue
+	                          forKey: representedRelationshipKey];
 }
 
 - (NSArray *) representedOrderedRelationship
@@ -502,8 +506,8 @@ static NSString *representedUnorderedAttributeKey = @"representedUnorderedAttrib
 {
 	ETAssert([aValue isKindOfClass: [NSArray class]]);
 	ETAssert([aValue isEmpty] || [self isSerializableRelationshipCollection: aValue]);
-	[self setValue: aValue
-	      forVariableStorageKey: representedOrderedRelationshipKey];
+	[_deserializationState setObject: aValue
+	                          forKey: representedOrderedRelationshipKey];
 }
 
 - (NSSet *) representedUnorderedRelationship
@@ -537,17 +541,22 @@ static NSString *representedUnorderedAttributeKey = @"representedUnorderedAttrib
 {
 	ETAssert([aValue isKindOfClass: [NSSet class]]);
 	ETAssert([aValue isEmpty] || [self isSerializableRelationshipCollection: aValue]);
-	[self setValue: aValue
-	      forVariableStorageKey: representedUnorderedRelationshipKey];
+	[_deserializationState setObject: aValue
+	                          forKey: representedUnorderedRelationshipKey];
 }
 
 - (void) restoreRepresentedObjectFromDeserialization
 {
-	NSString *key = [self valueForVariableStorageKey: @"representedObjectKey"];
-	id object = [self valueForVariableStorageKey: key];
+	NSString *key = [_deserializationState objectForKey: @"representedObjectKey"];
+	id object = [_deserializationState objectForKey: key];
 
 	/* Setter required to set up the KVO observation */
 	[self setRepresentedObject: object];
+	
+	[_deserializationState removeObjectsForKeys: A(@"representedObjectKey",
+		representedAttributeKey, representedRelationshipKey,
+		representedOrderedAttributeKey, representedOrderedRelationshipKey,
+		representedUnorderedAttributeKey, representedUnorderedRelationshipKey)];
 }
 
 #pragma mark Loading Notifications
@@ -572,6 +581,22 @@ static NSString *representedUnorderedAttributeKey = @"representedUnorderedAttrib
 	[self restoreViewHierarchyFromDeserialization];
 
 	[self setNeedsDisplay: YES];
+}
+
+#pragma mark Serialization State Management
+#pragma mark -
+
+/** We cannot allocate the deserialization state in the initializer, since this 
+step is skipped when loading an item not present in memory. */
+- (void) setStoreItem: (COItem *)storeItem
+{
+	if (_deserializationState == nil)
+	{
+		_deserializationState = [NSMutableDictionary new];
+	}
+	ETAssert([_deserializationState isEmpty]);
+
+	[super setStoreItem: storeItem];
 }
 
 @end
