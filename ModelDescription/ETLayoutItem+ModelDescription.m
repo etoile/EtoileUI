@@ -39,7 +39,21 @@
 	ETPropertyDescription *icon = [ETPropertyDescription descriptionWithName: @"icon" type: (id)@"NSImage"];
 	[icon setValueTransformerName: @"COObjectToArchivedData"];
 	[icon setPersistentTypeName: @"NSData"];
-	ETPropertyDescription *repObject = [ETPropertyDescription descriptionWithName: @"representedObject" type: (id)@"NSObject"];
+	ETPropertyDescription *representedObjectKey = [ETPropertyDescription descriptionWithName: @"representedObjectKey" type: (id)@"NSString"];
+	ETPropertyDescription *representedAttribute = [ETPropertyDescription descriptionWithName: @"representedAttribute" type: (id)@"NSObject"];
+	ETPropertyDescription *representedOrderedAttribute = [ETPropertyDescription descriptionWithName: @"representedOrderedAttribute" type: (id)@"NSObject"];
+	[representedOrderedAttribute setMultivalued: YES];
+	[representedOrderedAttribute setOrdered: YES];
+	ETPropertyDescription *representedUnorderedAttribute = [ETPropertyDescription descriptionWithName: @"representedUnorderedAttribute" type: (id)@"NSObject"];
+	[representedUnorderedAttribute setMultivalued: YES];
+	[representedUnorderedAttribute setOrdered: NO];
+	ETPropertyDescription *representedRelationship = [ETPropertyDescription descriptionWithName: @"representedRelationship" type: (id)@"COObject"];
+	ETPropertyDescription *representedOrderedRelationship = [ETPropertyDescription descriptionWithName: @"representedOrderedRelationship" type: (id)@"COObject"];
+	[representedOrderedRelationship setMultivalued: YES];
+	[representedOrderedRelationship setOrdered: YES];
+	ETPropertyDescription *representedUnorderedRelationship = [ETPropertyDescription descriptionWithName: @"representedUnorderedRelationship" type: (id)@"COObject"];
+	[representedUnorderedRelationship setMultivalued: YES];
+	[representedUnorderedRelationship setOrdered: NO];
 	ETPropertyDescription *valueTransformers = [ETPropertyDescription descriptionWithName: @"valueTransformers" type: (id)@"ETItemValueTransformer"];
 	[valueTransformers setMultivalued: YES];
 	[valueTransformers setOrdered: NO];
@@ -100,6 +114,7 @@
 	// TODO: Declare -UTI in the transient properties (or rather at NSObject level)...
 	// TODO: More transient properties could be declared. For example scrollableAreaItem etc. 
 
+	ETPropertyDescription *repObject = [ETPropertyDescription descriptionWithName: @"representedObject" type: (id)@"NSObject"];
 	ETPropertyDescription *baseItem = [ETPropertyDescription descriptionWithName: @"baseItem" type: (id)@"ETLayoutItemGroup"];
 	ETPropertyDescription *rootItem = [ETPropertyDescription descriptionWithName: @"rootItem" type: (id)@"ETLayoutItemGroup"];
 	ETPropertyDescription *indexPath = [ETPropertyDescription descriptionWithName: @"indexPath" type: (id)@"NSIndexPath"];
@@ -142,8 +157,10 @@
 	   
 	   Hmm, _scrollViewShow ought to be persisted. */
 
-	NSArray *persistentProperties = A(identifier, name, image, icon, 
-		repObject, valueTransformers, valueKey, view, styleGroup, coverStyle,
+	NSArray *persistentProperties = A(identifier, name, image, icon, representedObjectKey, 
+		representedAttribute, representedOrderedAttribute, representedUnorderedAttribute,
+		representedRelationship, representedOrderedRelationship, representedUnorderedRelationship,
+		valueTransformers, valueKey, view, styleGroup, coverStyle,
 		actionHandler, action, persistentTarget, persistentTargetOwner,
 		contentBounds, position, anchorPoint, persistentFrame, autoresizing,
 		contentAspect, boundingBox, defaultFrame, flipped, selected, selectable,
@@ -153,7 +170,7 @@
 	// override the entity description bound to ETLayoutItem (making possible 
 	// to redeclare these properties as persistent if no view is used).
 	NSArray *transientProperties = A(parentItem, hostItem, baseItem, rootItem, indexPath,
-		isBaseItem, value, subject, style, frame, x, y, width, height, target,
+		isBaseItem, repObject, value, subject, style, frame, x, y, width, height, target,
 		acceptsActions, inspector, title, objectValue, formatter,
 		minValue, maxValue, pickMetadata, UIBuilderAction, attachedTool);
 

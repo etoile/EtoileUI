@@ -123,15 +123,16 @@ DEALLOC(DESTROY(itemFactory); DESTROY(item); DESTROY(itemGroup))
 - (NSArray *) basicNilItemProperties
 {
 	return  A(@"hostItem", kETBaseItemProperty, kETRootItemProperty, kETIdentifierProperty,
-		kETValueProperty, kETValueKeyProperty, kETStyleProperty, @"persistentTarget", @"persistentTargetOwner",
+		@"representedAttribute", @"representedRelationship", kETValueProperty, kETValueKeyProperty,
+		kETStyleProperty, @"persistentTarget", @"persistentTargetOwner",
 		kETInspectorProperty, @"title", @"formatter", @"attachedTool");
 }
 
 - (NSArray *) defaultNilItemProperties
 {
-	return [A(kETNameProperty, kETIconProperty,  kETImageProperty, 
-		kETRepresentedObjectProperty, kETSubjectProperty, kETSubtypeProperty, 
-		kETActionProperty, kETTargetProperty, @"UIBuilderAction")
+	return [A(kETNameProperty, kETIconProperty,  kETImageProperty,
+		kETRepresentedObjectProperty, @"representedObjectKey", kETSubjectProperty,
+		kETSubtypeProperty, kETActionProperty, kETTargetProperty, @"UIBuilderAction")
 			arrayByAddingObjectsFromArray: [self basicNilItemProperties]];
 }
 

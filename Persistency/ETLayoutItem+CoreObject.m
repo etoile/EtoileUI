@@ -73,7 +73,7 @@
 	_isEditingUI = editing;
 }
 
-#pragma mark Persistency Support
+#pragma mark Geometry Persistency Support
 #pragma mark -
 
 - (NSValue *) serializedPosition
@@ -117,6 +117,21 @@
 	}
 	_contentBounds = [aValue rectValue];
 }
+
+/* Required otherwise the bounds returned by -boundingBox might be serialized 
+since -serializedValueForProperty: doesn't use the direct ivar access. */
+- (id) serializedBoundingBox
+{
+	return [NSValue valueWithRect: _boundingBox];
+}
+
+- (void) setSerializedBoundingBox: (id)aBoundingBox
+{
+	_boundingBox = [aBoundingBox rectValue];
+}
+
+#pragma mark Target/Action Persistency Support
+#pragma mark -
 
 /* The action selector is stored as a string in the variable storage */
 - (NSString *) serializedAction
@@ -199,6 +214,9 @@ ETLayoutItem.view.target. */
 	[self setValue: nil forVariableStorageKey: @"persistentTargetOwner"];
 }
 
+#pragma mark View Persistency Support
+#pragma mark -
+
 - (NSData *) serializedView
 {
 	return ([self view] != nil ? [NSKeyedArchiver archivedDataWithRootObject: [self view]] : nil);
@@ -218,17 +236,31 @@ ETLayoutItem.view.target. */
 	[_variableStorage setObject: newView forKey: @"serializedView"];
 }
 
-/* Required otherwise the bounds returned by -boundingBox might be serialized 
-since -serializedValueForProperty: doesn't use the direct ivar access. */
-- (id) serializedBoundingBox
+/** We use -setView: to recreate supervisorView which is transient and set up
+the state and object value observers.
+ 
+Will involve a unnecessary -syncView:withRepresentedObject: call. */
+- (void) restoreViewFromDeserialization
 {
-	return [NSValue valueWithRect: _boundingBox];
+	NSView *serializedView = [_variableStorage objectForKey: @"serializedView"];
+
+	if (serializedView != nil)
+	{
+		[self setView: serializedView];
+	}
+	[_variableStorage removeObjectForKey: @"serializedView"];
 }
 
-- (void) setSerializedBoundingBox: (id)aBoundingBox
+- (void) restoreViewHierarchyFromDeserialization
 {
-	_boundingBox = [aBoundingBox rectValue];
+	if ([self isVisible] && [[[self parentItem] layout] isOpaque] == NO)
+	{
+		[[self parentItem] handleAttachViewOfItem: self];
+	}
 }
+
+#pragma mark Represented Object Persistency Support
+#pragma mark -
 
 - (ETLayoutItem *) sourceItem
 {
@@ -241,55 +273,285 @@ since -serializedValueForProperty: doesn't use the direct ivar access. */
 	return ([self baseItem] == self && [self source] != nil);
 }
 
-- (BOOL) shouldSerializeForeignRepresentedObject: (id)anObject
+- (BOOL) isSerializableRelationshipCollection: (id <ETCollection>)aCollection
 {
-	ETLayoutItem *sourceItem = [self sourceItem];
-
-	return (sourceItem == nil || sourceItem == self);
+	return [[[aCollection objectEnumerator] nextObject] isKindOfClass: [COObject class]];
 }
 
-- (NSString *) serializedRepresentedObject
+- (BOOL) isSerializableAttributeCollection: (id <ETCollection>)aCollection
 {
-	id object = [self representedObject];
-	id ref = nil;
+	return [self isSerializablePrimitiveValue: [[aCollection objectEnumerator] nextObject]];
+}
+
+static NSString *representedRelationshipKey = @"representedRelationship";
+static NSString *representedAttributeKey = @"representedAttribute";
+static NSString *representedOrderedRelationshipKey = @"representedOrderedRelationship";
+static NSString *representedOrderedAttributeKey = @"representedOrderedAttribute";
+static NSString *representedUnorderedRelationshipKey = @"representedUnorderedRelationship";
+static NSString *representedUnorderedAttributeKey = @"representedUnorderedAttribute";
+
+- (NSString *) representedObjectKey
+{
+	if ([_representedObject isKindOfClass: [COObject class]])
+	{
+		return representedRelationshipKey;
+	}
+	else if ([_representedObject isKindOfClass: [NSArray class]])
+	{
+		if ([_representedObject isEmpty] || [self isSerializableRelationshipCollection: _representedObject])
+		{
+			return representedOrderedRelationshipKey;
+		}
+		else if ([self isSerializableAttributeCollection: _representedObject])
+		{
+			return representedOrderedAttributeKey;
+		}
+	}
+	else if ([_representedObject isKindOfClass: [NSSet class]])
+	{
+		if ([_representedObject isEmpty] || [self isSerializableRelationshipCollection: _representedObject])
+		{
+			return representedUnorderedRelationshipKey;
+		}
+		else if ([self isSerializableAttributeCollection: _representedObject])
+		{
+			return representedUnorderedAttributeKey;
+		}
+	}
+	else if ([self isSerializablePrimitiveValue: _representedObject])
+	{
+		return representedAttributeKey;
+	}
+	return nil;
+}
+
+- (NSString *) serializedRepresentedObjectKey
+{
+	return [self representedObjectKey];
+}
+
+- (void) setSerializedRepresentedObjectKey: (NSString *)aKey
+{
+	[self setValue: aKey forVariableStorageKey: @"representedObjectKey"];
+}
+
+#pragma mark Represented Attribute Persistency Support
+#pragma mark -
+
+- (NSObject *) representedAttribute
+{
+	return ([self isSerializablePrimitiveValue: _representedObject] ? _representedObject : nil);
+}
+
+- (void) setRepresentedAttribute: (NSObject *)aValue
+{
+	ETAssert(aValue == nil || [self isSerializablePrimitiveValue: aValue]);
+
+	if ([[self representedObjectKey] isEqualToString: representedAttributeKey] == NO)
+		return;
 	
-	if ([object isKindOfClass: [COObject class]])
-	{
-		ref = [self serializedReferenceForObject: object];
-	}
-	else if ([self shouldSerializeForeignRepresentedObject: object])
-	{
-		ref = [self serializedRepresentationForObject: object];
-	}
-
-	return [self serializedValueForWeakTypedReference: ref];
+	[self setRepresentedObject: aValue];
 }
 
-- (ETPropertyDescription *) propertyDescriptionForRepresentedObject
+- (NSObject *) serializedRepresentedAttribute
 {
-	return [[self entityDescription] propertyDescriptionForName: kETRepresentedObjectProperty];
+	return [self representedAttribute];
 }
 
-- (void) setSerializedRepresentedObject: (NSString *)value
+- (void) setSerializedRepresentedAttribute: (NSObject *)aValue
 {
-	id ref = [self weakTypedReferenceForSerializedValue: value];
-	id object = nil;
+	if (aValue == nil)
+		return;
 
-	if ([self isCoreObjectReference: ref])
+	ETAssert([self isSerializablePrimitiveValue: aValue]);
+	[_variableStorage setValue: aValue
+	                    forKey: representedAttributeKey];
+}
+
+- (NSArray *) representedOrderedAttribute
+{
+	BOOL isArray = [_representedObject isKindOfClass: [NSArray class]];
+
+	if (isArray && [self isSerializableAttributeCollection: _representedObject])
 	{
-		object = [self objectForSerializedReference: ref
-											 ofType: kCOTypeReference
-		                        propertyDescription: [self propertyDescriptionForRepresentedObject]];
+		return _representedObject;
 	}
-	else
+	return [NSArray array];
+}
+
+- (void) setRepresentedOrderedAttribute: (NSArray *)aValue
+{
+	ETAssert([aValue isKindOfClass: [NSArray class]]);
+	ETAssert([aValue isEmpty] || [self isSerializableAttributeCollection: aValue]);
+
+	if ([[self representedObjectKey] isEqualToString: representedOrderedAttributeKey] == NO)
+		return;
+
+	[self setRepresentedObject: aValue];
+}
+
+- (NSArray *) serializedRepresentedOrderedAttribute
+{
+	return [self representedOrderedAttribute];
+}
+
+- (void) setSerializedRepresentedOrderedAttribute: (NSArray *)aValue
+{
+	ETAssert([aValue isKindOfClass: [NSArray class]]);
+	ETAssert([aValue isEmpty] || [self isSerializableAttributeCollection: aValue]);
+	[self setValue: aValue
+	      forVariableStorageKey: representedOrderedAttributeKey];
+}
+
+- (NSSet *) representedUnorderedAttribute
+{
+	BOOL isSet = [_representedObject isKindOfClass: [NSSet class]];
+	
+	if (isSet && [self isSerializableRelationshipCollection: _representedObject])
 	{
-		// TODO: -initWithSerializationRepresentation:
-		object = ref;
+		return _representedObject;
 	}
+	return [NSSet set];
+}
+
+- (void) setRepresentedUnorderedAttribute: (NSSet *)aValue
+{
+	ETAssert([aValue isKindOfClass: [NSSet class]]);
+	ETAssert([aValue isEmpty] || [self isSerializableAttributeCollection: aValue]);
+
+	if ([[self representedObjectKey] isEqualToString: representedUnorderedAttributeKey] == NO)
+		return;
+
+	[self setRepresentedObject: aValue];
+}
+
+- (NSSet *) serializedRepresentedUnorderedAttribute
+{
+	return [self representedUnorderedAttribute];
+}
+
+- (void) setSerializedRepresentedUnorderedAttribute: (NSSet *)aValue
+{
+	ETAssert([aValue isKindOfClass: [NSSet class]]);
+	ETAssert([aValue isEmpty] || [self isSerializableAttributeCollection: aValue]);
+	[self setValue: aValue
+	      forVariableStorageKey: representedUnorderedAttributeKey];
+}
+
+#pragma mark Represented Relationship Persistency Support
+#pragma mark -
+
+- (COObject *) representedRelationship
+{
+	return ([_representedObject isKindOfClass: [COObject class]] ? _representedObject : nil);
+}
+
+- (void) setRepresentedRelationship: (COObject *)aValue
+{
+	ETAssert(aValue == nil || [aValue isKindOfClass: [COObject class]]);
+
+	if ([[self representedObjectKey] isEqualToString: representedRelationshipKey] == NO)
+		return;
+	
+	[self setRepresentedObject: aValue];
+}
+
+- (COObject *) serializedRepresentedRelationship
+{
+	return [self representedRelationship];
+}
+
+- (void) setSerializedRepresentedRelationship: (COObject *)aValue
+{
+	if (aValue == nil)
+		return;
+
+	ETAssert([aValue isKindOfClass: [COObject class]]);
+	[_variableStorage setValue: aValue
+	                    forKey: representedRelationshipKey];
+}
+
+- (NSArray *) representedOrderedRelationship
+{
+	BOOL isArray = [_representedObject isKindOfClass: [NSArray class]];
+
+	if (isArray && [self isSerializableRelationshipCollection: _representedObject])
+	{
+		return _representedObject;
+	}
+  return [NSArray array];
+}
+
+- (void) setRepresentedOrderedRelationship: (NSArray *)aValue
+{
+	ETAssert([aValue isKindOfClass: [NSArray class]]);
+	ETAssert([aValue isEmpty] || [self isSerializableRelationshipCollection: aValue]);
+	
+	if ([[self representedObjectKey] isEqualToString: representedOrderedRelationshipKey] == NO)
+		return;
+
+	[self setRepresentedObject: aValue];
+}
+
+- (NSArray *) serializedRepresentedOrderedRelationship
+{
+	return [self representedOrderedRelationship];
+}
+
+- (void) setSerializedRepresentedOrderedRelationship: (NSArray *)aValue
+{
+	ETAssert([aValue isKindOfClass: [NSArray class]]);
+	ETAssert([aValue isEmpty] || [self isSerializableRelationshipCollection: aValue]);
+	[self setValue: aValue
+	      forVariableStorageKey: representedOrderedRelationshipKey];
+}
+
+- (NSSet *) representedUnorderedRelationship
+{
+	BOOL isSet = [_representedObject isKindOfClass: [NSSet class]];
+
+	if (isSet && [self isSerializableRelationshipCollection: _representedObject])
+	{
+		return _representedObject;
+	}
+	return [NSSet set];
+}
+
+- (void) setRepresentedUnorderedRelationship: (NSSet *)aValue
+{
+	ETAssert([aValue isKindOfClass: [NSSet class]]);
+	ETAssert([aValue isEmpty] || [self isSerializableRelationshipCollection: aValue]);
+
+	if ([[self representedObjectKey] isEqualToString: representedUnorderedRelationshipKey] == NO)
+		return;
+	
+	[self setRepresentedObject: aValue];
+}
+
+- (NSSet *) serializedRepresentedUnorderedRelationship
+{
+	return [self representedUnorderedRelationship];
+}
+
+- (void) setSerializedRepresentedUnorderedRelationship: (NSSet *)aValue
+{
+	ETAssert([aValue isKindOfClass: [NSSet class]]);
+	ETAssert([aValue isEmpty] || [self isSerializableRelationshipCollection: aValue]);
+	[self setValue: aValue
+	      forVariableStorageKey: representedUnorderedRelationshipKey];
+}
+
+- (void) restoreRepresentedObjectFromDeserialization
+{
+	NSString *key = [self valueForVariableStorageKey: @"representedObjectKey"];
+	id object = [self valueForVariableStorageKey: key];
 
 	/* Setter required to set up the KVO observation */
 	[self setRepresentedObject: object];
 }
+
+#pragma mark Loading Notifications
+#pragma mark -
 
 - (void) awakeFromDeserialization
 {
@@ -298,17 +560,8 @@ since -serializedValueForProperty: doesn't use the direct ivar access. */
 	// TODO: May be reset the bounding box if not persisted
 	//_boundingBox = ETNullRect;
 	
-	/* We use -setView: to recreate supervisorView which is transient and set
-	   up the state and object value observers.
-	 
-	   Will involve a unnecessary -syncView:withRepresentedObject: call. */
-	NSView *serializedView = [_variableStorage objectForKey: @"serializedView"];
-
-	if (serializedView != nil)
-	{
-		[self setView: serializedView];
-	}
-	[_variableStorage removeObjectForKey: @"serializedView"];
+	[self restoreViewFromDeserialization];
+	[self restoreRepresentedObjectFromDeserialization];
 }
 
 - (void)didLoadObjectGraph
@@ -316,11 +569,7 @@ since -serializedValueForProperty: doesn't use the direct ivar access. */
 	[super didLoadObjectGraph];
 
 	[self restoreTargetFromDeserialization];
-
-	if ([self isVisible] && [[[self parentItem] layout] isOpaque] == NO)
-	{
-		[[self parentItem] handleAttachViewOfItem: self];
-	}
+	[self restoreViewHierarchyFromDeserialization];
 
 	[self setNeedsDisplay: YES];
 }
