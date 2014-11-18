@@ -11,6 +11,7 @@
 #import "EtoileUIProperties.h"
 #import "ETBasicItemStyle.h"
 #import "ETShape.h"
+#import "ETStyleGroup.h"
 #import "ETCompatibility.h"
 
 @interface TestStylePersistency : TestCommon <UKTest>
@@ -28,6 +29,47 @@
     ASSIGN(itemFactory, [ETLayoutItemFactory factoryWithObjectGraphContext:
         [COObjectGraphContext objectGraphContext]]);
 	return self;
+}
+
+
+- (void) testSharedStyle
+{
+	ETLayoutItem *item = [itemFactory item];
+	ETLayoutItemGroup *itemGroup = [itemFactory itemGroupWithItem: item];
+	ETStyle *style = [[ETStyle alloc] initWithObjectGraphContext: [itemGroup objectGraphContext]];
+	ETStyle *sharedStyle = [[ETStyle alloc] initWithObjectGraphContext: [itemGroup objectGraphContext]];
+
+	[[itemGroup styleGroup] addStyle: style];
+	[[item styleGroup] addStyle: sharedStyle];
+
+	[itemGroup setCoverStyle: style];
+	[item setCoverStyle: sharedStyle];
+
+	[sharedStyle setIsShared: NO];
+
+	[self checkWithExistingAndNewRootObject: itemGroup
+                                    inBlock: ^(ETLayoutItemGroup *newItemGroup, BOOL isNew, BOOL isCopy)
+    {
+		ETLayoutItem *newItem = [newItemGroup firstItem];
+		ETStyle *newStyle = [newItemGroup coverStyle];
+		ETStyle *newSharedStyle = [newItem coverStyle];
+
+        UKValidateLoadedObjects(newStyle, style, YES);
+		UKValidateLoadedObjects(newSharedStyle, sharedStyle, NO);
+
+		UKObjectsSame([[newItemGroup styleGroup] firstStyle], newStyle);
+		UKObjectsSame([[newItem styleGroup] firstStyle], newSharedStyle);
+
+		UKObjectUUIDsEqual(newStyle, style);
+		if (isCopy)
+		{
+			UKObjectUUIDsNotEqual(newSharedStyle, sharedStyle);
+		}
+		else
+		{
+			UKObjectUUIDsEqual(newSharedStyle, sharedStyle);
+		}
+    }];
 }
 
 - (void) testBasicItemStyle

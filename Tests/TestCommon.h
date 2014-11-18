@@ -38,6 +38,7 @@
 #define UKSizesNotEqual(x, y) UKFalse(NSEqualSizes(x, y))
 
 #define UKObjectUUIDsEqual(a, b) UKObjectsEqual([a UUID], [b UUID])
+#define UKObjectUUIDsNotEqual(a, b) UKObjectsNotEqual([a UUID], [b UUID])
 #define UKCollectionUUIDsEqual(a, b) UKObjectsEqual([[a mappedCollection] UUID], [[b mappedCollection] UUID])
 
 /** Test macro to be used in the block passed to
@@ -47,15 +48,18 @@
     { \
 		if (aliased) \
 		{ \
+			UKObjectUUIDsEqual(newObject, oldObject); \
 			UKObjectsSame(newObject, [[newObject objectGraphContext] loadedObjectForUUID: [oldObject UUID]]); \
 		} \
 		else \
 		{ \
+			UKObjectUUIDsNotEqual(newObject, oldObject); \
         	UKObjectsNotEqual(newObject, [[newObject objectGraphContext] loadedObjectForUUID: [oldObject UUID]]); \
 		} \
     } \
     else \
     { \
+		UKObjectUUIDsEqual(newObject, oldObject); \
         UKObjectsEqual(newObject, [[newObject objectGraphContext] loadedObjectForUUID: [oldObject UUID]]); \
     }
 

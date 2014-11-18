@@ -39,7 +39,9 @@
 	if ([[entity name] isEqual: [ETStyle className]] == NO) 
 		return entity;
 
+	/* We overwrite COObject.isShared to be read/write */
 	ETPropertyDescription *isShared = [ETPropertyDescription descriptionWithName: @"isShared" type: (id)@"BOOL"];
+	[isShared setPersistent: YES];
 
 	[entity setUIBuilderPropertyNames: A([isShared name])];
 

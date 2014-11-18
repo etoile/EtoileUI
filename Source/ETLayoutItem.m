@@ -274,26 +274,6 @@ every subclass that overrides -dealloc. */
 
 #if 0
 
-- (id) copyAspect: (ETUIObject *)anAspect withCopier: (ETCopier *)aCopier
-{
-	id newAspect = nil;
-
-	if ([anAspect isShared])
-	{
-		newAspect = RETAIN([[aCopier objectReferencesForCopy] objectForKey: anAspect]);
-
-		if (newAspect == nil)
-		{
-			newAspect = [anAspect copyWithCopier: aCopier];
-		}
-	}
-	else
-	{
-			newAspect = [anAspect copyWithCopier: aCopier];
-	}
-	return newAspect;
-}
-
 /** Returns a shallow copy of the receiver without copying the view, the styles, 
 	the represented object and the children items if the receiver is an 
 	ETLayoutItemGroup related classes. 
