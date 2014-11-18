@@ -495,29 +495,6 @@
 	[item0 setSelected: YES]; \
 	[item10 setSelected: YES]; \
 	[item110 setSelected: YES]; \
-	
-#define DEFINE_BASE_ITEMS_0_11 \
-	[item0 setController: AUTORELEASE([[ETController alloc] \
-		initWithObjectGraphContext: [itemFactory objectGraphContext]])]; \
-	[item11 setController: AUTORELEASE([[ETController alloc] \
-		initWithObjectGraphContext: [itemFactory objectGraphContext]])]; \
-
-- (void) testDescendantItemsSharingSameBaseItem
-{
-	BUILD_TEST_TREE
-	DEFINE_BASE_ITEMS_0_11
-	
-	NSArray *items = [item descendantItemsSharingSameBaseItem];
-
-	UKIntsEqual(4, [items count]);	
-	UKTrue([items containsObject: item0]);
-	UKFalse([items containsObject: item00]);
-	UKFalse([items containsObject: item01]);
-	UKTrue([items containsObject: item1]);
-	UKTrue([items containsObject: item10]);
-	UKTrue([items containsObject: item11]);
-	UKFalse([items containsObject: item110]);
-}
 
 - (void) testSelectionIndexPaths
 {

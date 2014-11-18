@@ -30,6 +30,12 @@
 
 == Random API ideas ==
 
+/* ETLayoutItem Live Development */
+
+- (void) beginEditingUI;
+/*- (BOOL) isEditingUI;
+- (void) commitEditingUI;*/
+
 // TODO: For each document set the editor tool. Eventually offer a 
 // delegate method either through ETTool or ETDocumentManager to give 
 // more control over this...

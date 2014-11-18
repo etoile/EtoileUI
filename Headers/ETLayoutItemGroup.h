@@ -74,7 +74,6 @@
 
 /** @taskunit Accessing Descendant Items */
 
-- (NSArray *) descendantItemsSharingSameBaseItem;
 - (NSArray *) allDescendantItems;
 - (BOOL) isDescendantItem: (ETLayoutItem *)anItem;
 

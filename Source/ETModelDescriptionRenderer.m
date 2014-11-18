@@ -151,7 +151,7 @@ time. For example:
 							                         representedObject: [NSArray array]
 									                        controller: controller];
 	NSFont *smallFont = [NSFont controlContentFontOfSize: [NSFont smallSystemFontSize]];
-	[[[[editor itemForIdentifier: @"browser"] layout] ifResponds] setContentFont: smallFont];
+	[[[(ETLayoutItemGroup *)[editor itemForIdentifier: @"browser"] layout] ifResponds] setContentFont: smallFont];
 	return editor;
 }
 

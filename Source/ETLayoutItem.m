@@ -22,6 +22,7 @@
 #import "ETItemValueTransformer.h"
 #import "ETLayoutItemGroup.h"
 #import "ETLayoutItem+KVO.h"
+#import "ETLayoutItem+Private.h"
 #import "ETLayoutItem+Scrollable.h"
 #import "ETLayoutExecutor.h"
 #import "ETPositionalLayout.h"
@@ -713,16 +714,6 @@ If the given item is equal to self, the resulting index path is an blank one
 - (NSIndexPath *) indexPathForItem: (ETLayoutItem *)item
 {
 	return [item indexPathFromItem: self];
-}
-
-/** Returns the receiver absolute index path by collecting the index of each
-parent item until the root item is reached (when -parentItem returns nil). 
-
-This method is equivalent to [[self rootItem] indexPathForItem: self]. */
-- (NSIndexPath *) indexPath
-{
-	// TODO: Test whether it is worth to optimize or not
-	return [[self rootItem] indexPathForItem: self];
 }
 
 /** Returns the identifier associated with the layout item.
@@ -2330,8 +2321,6 @@ See -[ETLayoutItemGroup usesFlexibleLayoutFrame]. */
 }
 
 /** <override-dummy />
-This method is only exposed to be used internally by EtoileUI.
- 
 Returns nil.
  
 See -[ETLayoutItemGroup layout]. */

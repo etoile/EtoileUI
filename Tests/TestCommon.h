@@ -23,6 +23,7 @@
 #import "ETGeometry.h"
 #import "ETLayoutExecutor.h"
 #import "ETLayoutItem.h"
+#import "ETLayoutItem+Private.h"
 #import "ETLayoutItemGroup.h"
 #import "ETLayoutItemFactory.h"
 #import "ETTool.h"
@@ -135,6 +136,7 @@ The main item is the window content. */
 @interface ETLayoutItem (ETLayoutItemTestAdditions)
 /** For test, patch the framework implementation. */
 + (NSRect) defaultItemRect;
+- (NSIndexPath *) indexPath;
 @end
 
 @interface ETDecoratorItem (ETDecoratorTestAdditions)

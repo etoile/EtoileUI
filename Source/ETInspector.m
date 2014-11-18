@@ -19,6 +19,7 @@
 #import "ETController.h"
 #import "ETTool.h"
 #import "ETViewModelLayout.h"
+#import "ETLayoutItem+Private.h"
 #import "ETLayoutItem+UIBuilder.h"
 #import "ETLayoutItemGroup.h"
 #import "ETOutlineLayout.h"

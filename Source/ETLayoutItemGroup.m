@@ -17,6 +17,7 @@
 #import "ETController.h"
 #import "ETFixedLayout.h"
 #import "ETLayoutItemGroup+Mutation.h"
+#import "ETLayoutItem+Private.h"
 #import "ETLayoutItem+Scrollable.h"
 #import "ETLayoutExecutor.h"
 #import "EtoileUIProperties.h"
@@ -780,38 +781,6 @@ Similar to -lastObject method for collections (see ETCollection).*/
 - (NSArray *) items
 {
 	return [NSArray arrayWithArray: _items];
-}
-
-/** Returns the descendant items, including the immediate children, that share
-the same base item than the receiver.
-
-An item is said to be under the control of an item group, when you can traverse
-the branch leading to the item without crossing a base item. An item group
-becomes a base item when a represented path base is set, in other words when
--representedPathBase doesn't return nil. See also -isBaseItem.
-
-This method collects every item in the layout item subtree (excluding the
-receiver) by doing a preorder traversal, the resulting collection is a flat list
-of every item in the tree.
-
-If you are interested by collecting descendant items in another traversal order,
-you have to implement your own version of this method. */
-- (NSArray *) descendantItemsSharingSameBaseItem
-{
-	// TODO: This code is probably quite slow by being written in a recursive
-	// style and allocating/resizing many arrays instead of using a single
-	// linked list. Test whether optimization are needed or not really...
-	NSMutableArray *collectedItems = [NSMutableArray array];
-
-	FOREACHI([self items], item)
-	{
-		[collectedItems addObject: item];
-
-		if ([item isGroup] && [item isBaseItem] == NO)
-			[collectedItems addObjectsFromArray: [item descendantItemsSharingSameBaseItem]];
-	}
-
-	return collectedItems;
 }
 
 /** Returns all descendant items of the receiver, including immediate children.

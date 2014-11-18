@@ -11,6 +11,7 @@
 #import <EtoileFoundation/ETCollection+HOM.h>
 #import <EtoileFoundation/NSObject+HOM.h>
 #import "ETLayoutExecutor.h"
+#import "ETLayoutItem+Private.h"
 #import "ETLayoutItemGroup.h"
 #import "ETLayoutItemGroup+Mutation.h"
 #import "ETLayout.h"

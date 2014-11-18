@@ -13,6 +13,7 @@
 #import "ETPickboard.h"
 #import "EtoileUIProperties.h"
 #import "ETLayoutItem.h"
+#import "ETLayoutItem+Private.h"
 #import "ETLayoutItemFactory.h"
 #import "ETOutlineLayout.h"
 // FIXME: Move related code to the Appkit widget backend (perhaps in a category)

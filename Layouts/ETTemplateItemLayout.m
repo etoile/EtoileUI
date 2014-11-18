@@ -16,6 +16,7 @@
 #import "ETFlowLayout.h"
 #import "ETGeometry.h"
 #import "ETLayoutItem.h"
+#import "ETLayoutItem+Private.h"
 #import "ETLayoutItemGroup.h"
 #import "ETLayoutItemFactory.h"
 // FIXME: Move related code to the Appkit widget backend (perhaps in a category)

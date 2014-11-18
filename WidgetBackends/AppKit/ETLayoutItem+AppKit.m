@@ -8,6 +8,7 @@
 
 #import <EtoileFoundation/Macros.h>
 #import "ETLayoutItem+AppKit.h"
+#import "ETLayoutItem+Private.h"
 #import "EtoileUIProperties.h"
 
 @implementation ETLayoutItem (ETAppKitWidgetBackend)

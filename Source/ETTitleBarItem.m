@@ -10,6 +10,7 @@
 #import "NSObject+EtoileUI.h"
 #import "ETTitleBarItem.h"
 #import "ETLayoutItem.h"
+#import "ETLayoutItem+Private.h"
 #import "ETLayoutItemGroup.h"
 #import "ETTitleBarView.h"
 #import "ETLayoutItemFactory.h"

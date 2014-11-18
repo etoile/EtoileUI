@@ -15,6 +15,7 @@
 #import "EtoileUIProperties.h"
 #import "ETEventProcessor.h"
 #import "ETTool.h"
+#import "ETLayoutItem+Private.h"
 #import "ETLayoutItemGroup.h"
 #import "ETLayoutItemBuilder.h"
 #import "ETNibOwner.h"

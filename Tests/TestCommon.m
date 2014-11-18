@@ -340,6 +340,16 @@ static NSMutableSet *deallocatedObjectUUIDs = nil;
 	return NSMakeRect(100, 50, 300, 250);
 }
 
+/** Returns the receiver absolute index path by collecting the index of each
+parent item until the root item is reached (when -parentItem returns nil). 
+
+This method is equivalent to [[self rootItem] indexPathForItem: self]. */
+- (NSIndexPath *) indexPath
+{
+	// TODO: Test whether it is worth to optimize or not
+	return [[self rootItem] indexPathForItem: self];
+}
+
 @end
 
 @implementation ETDecoratorItem (ETDecoratorTestAdditions)

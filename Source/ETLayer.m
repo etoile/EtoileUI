@@ -11,6 +11,7 @@
 #import "ETApplication.h"
 #import "ETDecoratorItem.h"
 #import "ETArrowTool.h"
+#import "ETLayoutItem+Private.h"
 #import "ETLayoutItemFactory.h"
 #import "ETWindowItem.h"
 // FIXME: Move related code to the Appkit widget backend (perhaps in a category or subclass)

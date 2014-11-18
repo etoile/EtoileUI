@@ -14,6 +14,7 @@
 #import "ETGeometry.h"
 #import "ETLayer.h"
 #import "ETLayoutItem.h"
+#import "ETLayoutItem+Private.h"
 #import "ETLayoutItemGroup.h"
 #import "ETLayoutItemFactory.h"
 #import "EtoileUIProperties.h"

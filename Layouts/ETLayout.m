@@ -17,6 +17,7 @@
 #import "ETGeometry.h"
 #import "ETTool.h"
 #import "ETLayoutExecutor.h"
+#import "ETLayoutItem+Private.h"
 #import "ETLayoutItemFactory.h"
 #import "ETLayoutItemGroup.h"
 #import "ETPositionalLayout.h"

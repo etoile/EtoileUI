@@ -117,7 +117,6 @@
 	ETPropertyDescription *repObject = [ETPropertyDescription descriptionWithName: @"representedObject" type: (id)@"NSObject"];
 	ETPropertyDescription *baseItem = [ETPropertyDescription descriptionWithName: @"baseItem" type: (id)@"ETLayoutItemGroup"];
 	ETPropertyDescription *rootItem = [ETPropertyDescription descriptionWithName: @"rootItem" type: (id)@"ETLayoutItemGroup"];
-	ETPropertyDescription *indexPath = [ETPropertyDescription descriptionWithName: @"indexPath" type: (id)@"NSIndexPath"];
 	ETPropertyDescription *isBaseItem = [ETPropertyDescription descriptionWithName: @"isBaseItem" type: (id)@"BOOL"];
 	ETPropertyDescription *subject = [ETPropertyDescription descriptionWithName: @"subject" type: (id)@"NSObject"];
 	ETPropertyDescription *style = [ETPropertyDescription descriptionWithName: @"style" type: (id)@"ETStyle"];
@@ -169,7 +168,7 @@
 	// be declared among the persistent properties or we should support to
 	// override the entity description bound to ETLayoutItem (making possible 
 	// to redeclare these properties as persistent if no view is used).
-	NSArray *transientProperties = A(parentItem, hostItem, baseItem, rootItem, indexPath,
+	NSArray *transientProperties = A(parentItem, hostItem, baseItem, rootItem,
 		isBaseItem, repObject, value, subject, style, frame, x, y, width, height, target,
 		acceptsActions, inspector, title, objectValue, formatter,
 		minValue, maxValue, pickMetadata, UIBuilderAction, attachedTool);
@@ -245,7 +244,7 @@
 	ETPropertyDescription *doubleClickedItem = [ETPropertyDescription descriptionWithName: @"doubleClickedItem" type: (id)@"ETLayoutItem"];
 
 	// TODO: Declare the numerous derived (implicitly transient) properties we have 
-	// descendantItemsSharingSameBaseItem, allDescendantItems, firstItem, 
+	// allDescendantItems, firstItem, 
 	// lastItem, numberOfItems, canReload, canUpdateLayout, layoutView, 
 	// visibleItems, visibleContentSize, selectionIndex, 
 	// selectionIndexes, selectionIndexPaths, selectedItems, selectedInLayout, 

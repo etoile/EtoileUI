@@ -138,6 +138,8 @@ and centers it. A strech is a scale that doesn't preserve the content proportion
 	BOOL _isDeallocating;
 }
 
+/** @taskunit Debugging */
+
 + (BOOL) showsBoundingBox;
 + (void) setShowsBoundingBox: (BOOL)shows;
 + (BOOL) showsFrame;
@@ -149,26 +151,26 @@ and centers it. A strech is a scale that doesn't preserve the content proportion
 + (void) enablesAutolayout;
 + (void) disablesAutolayout;
 
-/* Initialization */
+/** @taskunit Initialization */
 
 - (id) initWithView: (NSView *)view 
          coverStyle: (ETStyle *)aStyle 
       actionHandler: (ETActionHandler *)aHandler
  objectGraphContext: (COObjectGraphContext *)aContext;
 
-- (void) stopKVOObservation;
-- (void) stopKVOObservationIfNeeded;
-
 /** @taskunit Description */
 
 - (NSString *) shortDescription;
 
-/* Layout Item Tree */
+/** @taskunit Navigating the Item Tree */
 
 - (id) rootItem;
 - (ETLayoutItemGroup *) controllerItem;
 - (ETLayoutItemGroup *) baseItem;
-- (BOOL) isBaseItem;
+- (NSIndexPath *) indexPathFromItem: (ETLayoutItem *)item;
+- (NSIndexPath *) indexPathForItem: (ETLayoutItem *)item;
+
+/** @taskunit Parent Item */
 
 /** The item group to which the receiver belongs to.
  
@@ -178,16 +180,13 @@ If a host item is set, returns -hostItem. */
 @property (nonatomic, readonly) ETLayoutItemGroup *parentItem;
 
 - (void) removeFromParent;
-- (ETView *) enclosingDisplayView;
-- (ETLayoutItem *) supervisorViewBackedAncestorItem;
+
+/** @taskunit Other Ancestor Items */
+
 - (id) windowBackedAncestorItem;
 - (ETLayoutItemGroup *) ancestorItemForOpaqueLayout;
 
-- (NSIndexPath *) indexPathFromItem: (ETLayoutItem *)item;
-- (NSIndexPath *) indexPathForItem: (ETLayoutItem *)item;
-- (NSIndexPath *) indexPath;
-
-/* Main Accessors */
+/** @taskunit Name and Identifier */
 
 - (NSString *) identifier;
 - (void) setIdentifier: (NSString *)anId;
@@ -196,31 +195,33 @@ If a host item is set, returns -hostItem. */
 - (NSString *) displayName;
 - (void) setDisplayName: (NSString *)aName;
 
-/* Display Element */
-
-- (id) valueKey;
-- (void) setValueKey: (NSString *)aValue;
-- (id) value;
-- (void) setValue: (id)value;
+/** @taskunit Native Widget */
 
 - (id) view;
 - (void) setView: (NSView *)newView;
 - (BOOL) usesWidgetView;
 - (id <ETWidget>) widget;
 
+/** @taskunit Image and Icon */
+
 - (NSImage *) image;
 - (void) setImage: (NSImage *)img;
 - (NSImage *) icon;
 - (void) setIcon: (NSImage *)icon;
 - (NSImage *) snapshotFromRect: (NSRect)aRect;
-- (void) drawRect: (NSRect)aRect;
 
-/* Model Access */
+/** @taskunit Presented Model */
 
 - (id) representedObject;
 - (void) setRepresentedObject: (id)modelObject;
 - (id) subject;
 - (BOOL) isMetaItem;
+- (id) valueKey;
+- (void) setValueKey: (NSString *)aValue;
+- (id) value;
+- (void) setValue: (id)value;
+
+/** @taskunit Property-Value Coding */
 
 - (BOOL) requiresKeyValueCodingForAccessingProperties;
 - (id) valueForProperty: (NSString *)key;
@@ -229,10 +230,13 @@ If a host item is set, returns -hostItem. */
 - (void) setValueTransformer: (ETItemValueTransformer *)aValueTransformer
                  forProperty: (NSString *)key;
 
+/** @taskunit Type Querying */
+
 - (BOOL) isLayoutItem;
 - (BOOL) isGroup;
+- (BOOL) isBaseItem;
 
-/* Utility Accessors */
+/** @taskunit Selection and Visibility */
 
 - (void) setSelected: (BOOL)selected;
 - (BOOL) isSelected;
@@ -241,16 +245,21 @@ If a host item is set, returns -hostItem. */
 - (void) setVisible: (BOOL)visible;
 - (BOOL) isVisible;
 
+/** @taskunit Attached UTIs */
+
 - (ETUTI *) UTI;
 - (void) setSubtype: (ETUTI *)aUTI;
 - (ETUTI *) subtype;
 
-/* Layouting & Rendering Chain */
+/** @taskunit Drawing */
 
 - (NSRect) drawingBoundsForStyle: (ETStyle *)aStyle;
 - (void) render: (NSMutableDictionary *)inputValues 
       dirtyRect: (NSRect)dirtyRect 
       inContext: (id)ctxt;
+
+/** @task Styles */
+
 - (ETStyleGroup *) styleGroup;
 - (void) setStyleGroup: (ETStyleGroup *)aStyle;
 - (id) style;
@@ -258,17 +267,15 @@ If a host item is set, returns -hostItem. */
 - (id) coverStyle;
 - (void) setCoverStyle: (ETStyle *)aStyle;
 
+/** @taskunit Display Update */
+
 - (void) setNeedsDisplay: (BOOL)flag;
 - (void) setNeedsDisplayInRect: (NSRect)dirtyRect;
 - (void) display;
 - (void) displayRect: (NSRect)dirtyRect;
 - (void) displayIfNeeded;
-- (void) refreshIfNeeded;
 
-- (void) setDefaultValue: (id)aValue forProperty: (NSString *)key;
-- (id) defaultValueForProperty: (NSString *)key;
-
-/* Geometry */
+/** @taskunit Outer Geometry Conversion in Item Tree */
 
 - (NSRect) convertRectToParent: (NSRect)rect;
 - (NSRect) convertRectFromParent: (NSRect)rect;
@@ -276,23 +283,21 @@ If a host item is set, returns -hostItem. */
 - (NSPoint) convertPointFromParent: (NSPoint)point;
 - (NSRect) convertRect: (NSRect)rect fromItem: (ETLayoutItemGroup *)ancestor;
 - (NSRect) convertRect: (NSRect)rect toItem: (ETLayoutItemGroup *)ancestor;
+
+/** @taskunit Inner/Outer Geometry Conversion and Hit Test */
+ 
+- (NSRect) convertRectFromContent: (NSRect)rect;
+- (NSRect) convertRectToContent: (NSRect)rect;
+- (NSPoint) convertPointToContent: (NSPoint)aPoint;
 - (BOOL) containsPoint: (NSPoint)point;
 - (BOOL) pointInside: (NSPoint)point useBoundingBox: (BOOL)extended;
-- (BOOL) isFlipped;
-- (void) setFlipped: (BOOL)flip;
 
-/* Decoration (see ETUTIItem) */
-
-- (ETView *) supervisorView;
-- (void) setSupervisorView: (ETView *)aSupervisorView sync: (ETSyncSupervisorView)syncDirection;
+/** @taskunit Decorator Items */
 
 - (ETScrollableAreaItem *) scrollableAreaItem;
 - (ETWindowItem *) windowItem;
 
-/* Sizing */
-
-- (NSRect) persistentFrame;
-- (void) setPersistentFrame: (NSRect) frame;
+/** @taskunit Outer Geometry */
 
 - (NSRect) frame;
 - (void) setFrame: (NSRect)rect;
@@ -313,20 +318,28 @@ If a host item is set, returns -hostItem. */
 - (CGFloat) width;
 - (void) setWidth: (CGFloat)width;
 
-- (NSRect) contentBounds;
-- (void) setContentBounds: (NSRect)rect;
-- (void) setContentSize: (NSSize)size;
-- (NSRect) convertRectFromContent: (NSRect)rect;
-- (NSRect) convertRectToContent: (NSRect)rect;
-- (NSPoint) convertPointToContent: (NSPoint)aPoint;
-- (void) setTransform: (NSAffineTransform *)aTransform;
-- (NSAffineTransform *) transform;
+/** @taskunit Adjusting Hit Test and Display Area */
 
 - (NSRect) boundingBox;
 - (void) setBoundingBox: (NSRect)extent;
-- (NSRect) defaultFrame;
-- (void) setDefaultFrame: (NSRect)frame;
-- (void) restoreDefaultFrame;
+
+/** @taskunit Inner Geometry  */
+
+- (NSRect) contentBounds;
+- (void) setContentBounds: (NSRect)rect;
+- (void) setContentSize: (NSSize)size;
+- (void) setTransform: (NSAffineTransform *)aTransform;
+- (NSAffineTransform *) transform;
+- (BOOL) isFlipped;
+- (void) setFlipped: (BOOL)flip;
+
+/** @taskunit Fixed Geometry */
+
+- (NSRect) persistentFrame;
+- (void) setPersistentFrame: (NSRect) frame;
+
+/** @taskunit Autoresizing and Content Aspect */
+
 - (ETAutoresizing) autoresizingMask;
 - (void) setAutoresizingMask: (ETAutoresizing)mask;
 - (ETContentAspect) contentAspect;
@@ -340,7 +353,7 @@ If a host item is set, returns -hostItem. */
 
 - (BOOL) matchesPredicate: (NSPredicate *)aPredicate;
 
-/* Events & Actions */
+/** @taskunit Actions */
 
 - (id) actionHandler;
 - (void) setActionHandler: (id)anHandler;
@@ -350,10 +363,8 @@ If a host item is set, returns -hostItem. */
 - (id) target;
 - (void) setAction: (SEL)aSelector;
 - (SEL) action;
-- (void) didChangeViewValue: (id)newValue;
-- (void) didChangeRepresentedObjectValue: (id)newValue;
 
-/* Editing */
+/** @taskunit Editing */
 
 - (void) beginEditing;
 - (void) discardEditing;
@@ -362,39 +373,14 @@ If a host item is set, returns -hostItem. */
                            fieldEditorItem: (ETLayoutItem *)aFieldEditorItem;
 - (void) subjectDidEndEditingForProperty: (NSString *)aKey;
 
+/** @taskunit API Conveniency */
+
+- (id) layout;
+
+/** @taskunit Deprecated */
+
 - (id <ETInspector>) inspector;
 - (void) setInspector: (id <ETInspector>)inspector;
-
-/* Live Development */
-
-- (void) beginEditingUI;
-/*- (BOOL) isEditingUI;
-- (void) commitEditingUI;*/
-
-/* Framework Private */
-
-- (NSRect) drawingBox;
-- (NSRect) contentDrawingBox;
-- (NSRect) visibleContentBounds;
-- (BOOL) usesFlexibleLayoutFrame;
-- (id) layout;
-- (void) updateLayoutRecursively: (BOOL)recursively;
-- (void) setNeedsLayoutUpdate;
-- (NSString *) editedProperty;
-- (id) responder;
-- (ETWindowItem *) provideWindowItem;
-- (BOOL) isLayerItem;
-
-/** The foster parent.
-
-The receiver returns the host item as -parentItem, but doesn't appear in the 
-children of the host item.
- 
--[ETLayout layerItem] and -[ETFirstResponderSharingArea activeFieldEditorItem] 
-are connected to the item tree with -hostItem.
- 
-See also -addItem: and -parentItem. */
-@property (nonatomic, retain) ETLayoutItemGroup *hostItem;
 
 @end
 

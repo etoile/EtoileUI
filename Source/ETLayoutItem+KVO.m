@@ -10,6 +10,7 @@
 #import <EtoileFoundation/NSObject+Model.h>
 #import <EtoileFoundation/Macros.h>
 #import "ETLayoutItem+KVO.h"
+#import "ETLayoutItem+Private.h"
 #import "ETLayoutItemGroup.h"
 #import "EtoileUIProperties.h"
 #import "ETUIItemIntegration.h"
