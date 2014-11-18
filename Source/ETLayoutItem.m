@@ -161,6 +161,11 @@ Beside this Nib support, this initializer must never be called directly. */
 	return [self initWithObjectGraphContext: [ETUIObject defaultTransientObjectGraphContext]];
 }
 
+- (void) prepareTransientState
+{
+	_defaultValues = [[NSMutableDictionary alloc] init];
+}
+
 /** <init />
 You must use -[ETLayoutItemFactory itemXXX] or 
 -[ETLayoutItemFactory itemGroupXXX] methods rather than this method.
@@ -183,9 +188,9 @@ See also -setView:, -setCoverStyle: and -setActionHandler:.  */
 	if (self == nil)
 		return nil;
 
-	// NOTE: -[COObject newVariableStorage] instantiates the value transformers
+	[self prepareTransientState];
 
-	_defaultValues = [[NSMutableDictionary alloc] init];
+	// NOTE: -[COObject newVariableStorage] instantiates the value transformers
 	_styleGroup = [[ETStyleGroup alloc] initWithObjectGraphContext: aContext];
 	[self setCoverStyle: aStyle];
 	[self setActionHandler: aHandler];
@@ -271,197 +276,6 @@ every subclass that overrides -dealloc. */
 
     [super dealloc];
 }
-
-#if 0
-
-/** Returns a shallow copy of the receiver without copying the view, the styles, 
-	the represented object and the children items if the receiver is an 
-	ETLayoutItemGroup related classes. 
-	Take note that a deep copy of the decorators is created and no view 
-	reference is kept, -view will return nil for the copied item.
-	TODO: Implement decorators copying that is currently missing.
-	
-Default values will be copied but not individually (shallow copy). */
-- (id) copyWithCopier: (ETCopier *)aCopier isDeep: (BOOL)isDeepCopy
-{
-	ETLayoutItem *item = [super copyWithCopier: aCopier];
-
-	if ([aCopier isAliasedCopy])
-		return item;
-
-	NSZone *zone = [aCopier zone];
-
-	[aCopier beginCopyFromObject: self toObject: item];
-
-	item->_defaultValues = [_defaultValues mutableCopyWithZone: zone];
-
-	// NOTE: Geometry synchronization logic in setters such as setFlippedView: 
-	// and -setAutoresizingMask: is not required to make a copy, because all 
-	// the related objects (supervisor view, decorator etc.) are in a valid and 
-	// well synchronized state at copy time.
-	// -[ETUIItem copyWithZone:] copies the supervisor view and its subviews
-	
-	/* We copy all object ivars except _parentItem */
-
-	/* We set the style in the copy by copying the style group */
-	item->_styleGroup = [_styleGroup copyWithCopier: aCopier];
-	item->_coverStyle = [self copyAspect: _coverStyle withCopier: aCopier];
-	item->_transform = [_transform copyWithZone: zone];
-
-	/* We copy every primitive ivars except _isSyncingSupervisorViewGeometry */
-
-	item->_contentBounds = _contentBounds;
-	/* anchorPoint must be initialized before position but after contentBounds.
-	   position must be initialized after anchorPoint. */
-	[item setValue: [self valueForVariableStorageKey: kETAnchorPointProperty] forVariableStorageKey: kETAnchorPointProperty];
-	item->_position = _position;
-	/* Will be overriden by -setView: when the view is not nil */	
-	item->_autoresizingMask = _autoresizingMask;
-	item->_boundingBox = _boundingBox;
-	item->_flipped = _flipped;
-	item->_selectable = _selectable;
-	item->_selected = _selected;
-	item->_visible = _visible;
-	item->_contentAspect = _contentAspect;
-	item->_scrollViewShown = _scrollViewShown;
-
-	/* We copy all variables properties except kETTargetProperty */
-
-	id valueCopy = [[self valueForVariableStorageKey: kETValueProperty] copyWithZone: zone];
-	id valueTransformersCopy = [[self valueForVariableStorageKey: @"valueTransformers"] copyWithZone: zone];
-	id actionHandlerCopy = [self copyAspect: [self valueForVariableStorageKey: kETActionHandlerProperty] withCopier: aCopier];
-
-	[item setValue: valueCopy forVariableStorageKey: kETValueProperty];
-	[item setValue: valueTransformersCopy forVariableStorageKey: @"valueTransformers"];
-	[item setValue: actionHandlerCopy forVariableStorageKey: kETActionHandlerProperty];
-
-	RELEASE(valueCopy);
-	RELEASE(actionHandlerCopy);
-
-	[item setValue: [self valueForVariableStorageKey: kETDefaultFrameProperty] forVariableStorageKey:  kETDefaultFrameProperty];
-	[item setValue: [self valueForVariableStorageKey: kETNameProperty] forVariableStorageKey: kETNameProperty];
-	[item setValue: [self valueForVariableStorageKey: kETIdentifierProperty] forVariableStorageKey: kETIdentifierProperty];
-	[item setValue: [self valueForVariableStorageKey: kETImageProperty] forVariableStorageKey: kETImageProperty];
-	[item setValue: [self valueForVariableStorageKey: kETIconProperty] forVariableStorageKey: kETIconProperty];
-	[item setValue: [self valueForVariableStorageKey: kETValueKeyProperty] forVariableStorageKey: kETValueKeyProperty];
-	[item setValue: [self valueForVariableStorageKey: kETSubtypeProperty] forVariableStorageKey:  kETSubtypeProperty];
-	[item setValue: [self valueForVariableStorageKey: kETActionProperty] forVariableStorageKey: kETActionProperty];
-
-	/* We adjust targets and observers to reference equivalent objects in the object graph copy */
-
-	NSView *viewCopy = [item->supervisorView wrappedView];
-	// NOTE: -objectForKey: returns nil when the key is nil.
-	id target = [self target];
-	id targetCopy = [[aCopier objectReferencesForCopy] objectForKey: target];
-	id viewTarget = [[[self view] ifResponds] target];
-	id viewTargetCopy = [[aCopier objectReferencesForCopy] objectForKey: viewTarget];
-
-	if (nil == targetCopy)
-	{
-		targetCopy = target;
-	} 
-	if (nil == viewTargetCopy)
-	{
-		viewTargetCopy = viewTarget;
-	}
-	[[viewCopy ifResponds] setTarget: viewTargetCopy];
-	[item setTarget: targetCopy];
-
-	if ([viewCopy isWidget]) /* See -setView:autoresizingMask and keep in sync */
-	{
-		NSUInteger options = (NSKeyValueObservingOptionOld | NSKeyValueObservingOptionNew);
-
-		[[(id <ETWidget>)viewCopy cell] addObserver: item
-		                                 forKeyPath: @"objectValue"
-		                                    options: options
-		                                    context: NULL];
-		[[(id <ETWidget>)viewCopy cell] addObserver: item
-		                                 forKeyPath: @"state"
-		                                    options: options
-		                                    context: NULL];
-		[[viewCopy ifResponds] setDelegate: item];
-	}
-
-	/* We copy the represented object last in case it holds a reference on 
-	   another aspect (e.g. shape items use the same shape object in 'style' 
-	   and 'representedObject' properties) */
-
-	 /* Will set up the observer */
-	[item setRepresentedObject: [aCopier objectReferenceInCopyForObject: [self representedObject]]];
-
-	[aCopier endCopy];
-	
-	if ([self needsLayoutUpdate])
-	{
-		/* For autoresizing among other things. 
-		   We cannot just call -updateLayoutRecursively:, it would mean sending 
-		   -copy to an item group would prevent items, added between the copy 
-		   message and the layout execution, to be autoresized. */
-		[item setNeedsLayoutUpdate];
-	}
-
-	return item;
-}
-
-- (id) copyWithCopier: (ETCopier *)aCopier 
-{
-	return [self copyWithCopier: aCopier isDeep: NO];
-}
-
-/** Must never be called in a subclass. */
-- (id) deepCopy
-{
-	return [self deepCopyWithCopier: [ETCopier copier]];
-}
-
-/** Returns a deep copy of the receiver by copying the view and all its 
-	subview hierarchy, the styles, the decorators, the represented object and 
-	all the descendant children items if the receiver is an ETLayoutItemGroup r
-	elated classes. 
-	All copied collections are mutable (styles, decorators, representedObject, 
-	children items). 
-	TODO: Implement styles copying that is currently missing (decorators too in 
-	-copyWithZone:). */
-- (id) deepCopyWithCopier: (ETCopier *)aCopier
-{
-	ETLayoutItem *item = [self copyWithCopier: aCopier isDeep: YES];
-
-#if 0
-	id repObjectCopy = nil;
-
-	// TODO: We probably want to handle different kind of copies on the model. 
-	// For example, with values objects a shallow copy of an array is a bad 
-	// idea, so would be a deep copy for an array of entity objects.
-	// A good solution may be to override -copyWithZone: and/or 
-	// -mutableCopyWithZone: in collection classes to map each 
-	// element based on its model description to a particular copy operation:
-	// - value object -> copy
-	// - entity object -> don't copy 
-	// In this way, we could handle copy in a more meaningful way without having 
-	// to decide between only the two crude copy styles deep and shallow. To 
-	// achieve we need a model description (metamodel) framework like Magritte.
-	// We still need to decide what should the default between shallow and deep 
-	// for the represented object (model) when no model description is available.
-	if ([[self representedObject] conformsToProtocol: @protocol(NSMutableCopying)])
-	{
-		repObjectCopy = [[self representedObject] mutableCopy];
-	}
-	else if ([[self representedObject] conformsToProtocol: @protocol(NSCopying)])
-	{
-		repObjectCopy = [[self representedObject] copy];
-	}
-	[item setRepresentedObject: AUTORELEASE(repObjectCopy)];
-#endif
-
-	return item;
-}
-
-- (BOOL) isCopyNode
-{
-	return YES;
-}
-
-#endif
 
 - (NSString *) description
 {

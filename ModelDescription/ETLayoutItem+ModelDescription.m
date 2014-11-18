@@ -63,6 +63,7 @@
 	[valueTransformers setShowsItemDetails: YES];
 	[valueTransformers setDetailedPropertyNames: A(@"name", @"transformCode", @"reverseTransformCode")];
 	ETPropertyDescription *valueKey = [ETPropertyDescription descriptionWithName: @"valueKey" type: (id)@"NSString"];
+	[valueKey setDerived: YES];
 	ETPropertyDescription *value = [ETPropertyDescription descriptionWithName: @"value" type: (id)@"NSObject"];
 	[value setDerived: YES];
 	ETPropertyDescription *view = [ETPropertyDescription descriptionWithName: @"view" type: (id)@"NSView"];
@@ -108,6 +109,7 @@
 	ETPropertyDescription *subtype = [ETPropertyDescription descriptionWithName: @"subtype" type: (id)@"ETUTI"];
 	[subtype setValueTransformerName: @"ETUTIToString"];
 	[subtype setPersistentTypeName: @"NSString"];
+	ETPropertyDescription *scrollable = [ETPropertyDescription descriptionWithName: @"scrollable" type: (id)@"BOOL"];
 
 	/* Transient Properties */
 
@@ -151,25 +153,20 @@
 	[UIBuilderAction setDisplayName: @"Action"];
 	ETPropertyDescription *attachedTool = [ETPropertyDescription descriptionWithName: @"attachedTool" type: (id)@"ETTool"];
 
-	/* Transient ivars: 	
-	   _isSyncingSupervisorViewGeometry, _scrollViewShown, _wasKVOStopped
-	   
-	   Hmm, _scrollViewShow ought to be persisted. */
-
 	NSArray *persistentProperties = A(identifier, name, image, icon, representedObjectKey, 
 		representedAttribute, representedOrderedAttribute, representedUnorderedAttribute,
 		representedRelationship, representedOrderedRelationship, representedUnorderedRelationship,
-		valueTransformers, valueKey, view, styleGroup, coverStyle,
+		valueTransformers, view, styleGroup, coverStyle,
 		actionHandler, action, persistentTarget, persistentTargetOwner,
 		contentBounds, position, anchorPoint, persistentFrame, autoresizing,
 		contentAspect, boundingBox, defaultFrame, flipped, selected, selectable,
-		visible, subtype);
+		visible, subtype, scrollable);
 	// TODO: title, objectValue, formatter, minValue and maxValue should
 	// be declared among the persistent properties or we should support to
 	// override the entity description bound to ETLayoutItem (making possible 
 	// to redeclare these properties as persistent if no view is used).
 	NSArray *transientProperties = A(parentItem, hostItem, baseItem, rootItem,
-		isBaseItem, repObject, value, subject, style, frame, x, y, width, height, target,
+		isBaseItem, repObject, valueKey, value, subject, style, frame, x, y, width, height, target,
 		acceptsActions, inspector, title, objectValue, formatter,
 		minValue, maxValue, pickMetadata, UIBuilderAction, attachedTool);
 

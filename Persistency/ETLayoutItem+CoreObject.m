@@ -13,6 +13,7 @@
 #import <CoreObject/COSerialization.h>
 #import "ETLayoutItem+CoreObject.h"
 #import "ETCollectionToPersistentCollection.h"
+#import "ETLayoutItem+Private.h"
 #import "EtoileUIProperties.h"
 #import "ETOutlineLayout.h"
 #import "ETUIItemIntegration.h"
@@ -568,7 +569,8 @@ static NSString *representedUnorderedAttributeKey = @"representedUnorderedAttrib
 
 	// TODO: May be reset the bounding box if not persisted
 	//_boundingBox = ETNullRect;
-	
+	[self prepareTransientState];
+
 	[self restoreViewFromDeserialization];
 	[self restoreRepresentedObjectFromDeserialization];
 }

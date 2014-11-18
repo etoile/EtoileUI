@@ -266,6 +266,11 @@
 	}];
 }
 
+- (void) testValueTransformers
+{
+	// TODO: Write
+}
+
 - (void) testViewRoundtrip
 {
 	ETLayoutItem *textFieldItem = [itemFactory textField];
@@ -312,6 +317,39 @@
         UKTrue(sel_isEqual(@selector(close:), [[newSliderItem view] action]));
     }];
 }
+
+// FIXME: When serializing a number is supported for representedObject, turn on
+#if 0
+- (void) testWidgetAssociationToRepresentedObject
+{
+	ETLayoutItem *sliderItem = [itemFactory horizontalSlider];
+
+	[sliderItem setRepresentedObject: @(5)];
+
+    [self checkWithExistingAndNewRootObject: item
+                                    inBlock: ^ (ETLayoutItem* newSliderItem, BOOL isNew, BOOL isCopy)
+    {
+        UKValidateLoadedObjects(newSliderItem, sliderItem, NO);
+
+		UKObjectsSame(newSliderItem, [[newSliderItem view] delegate]);
+		UKObjectsEqual(@(5), [newSliderItem representedObject]);
+		UKObjectsEqual(@(5), [newSliderItem value]);
+		UKObjectsEqual(@(5), [[newSliderItem view] objectValue]);
+
+		[newSliderItem setRepresentedObject: @(10)];
+		
+		UKObjectsEqual(@(10), [newSliderItem representedObject]);
+		UKObjectsEqual(@(10), [newSliderItem value]);
+		UKObjectsEqual(@(10), [[newSliderItem view] objectValue]);
+		
+		[[newSliderItem view] setIntegerValue: 15];
+
+		UKObjectsEqual(@(15), [newSliderItem representedObject]);
+		UKObjectsEqual(@(15), [newSliderItem value]);
+		UKObjectsEqual(@(15), [[newSliderItem view] objectValue]);
+    }];
+}
+#endif
 
 // TODO: Improve to test geometry issues more exhaustively and be less verbose
 - (void) testResizeWidgetItem

@@ -12,6 +12,10 @@
 @abstract Framework Private Additions to ETLayoutItem */
 @interface ETLayoutItem ()
 
+/** @taskunit Initialization */
+
+- (void) prepareTransientState;
+
 /** @taskunit KVO Control */
 
 - (void) stopKVOObservation;
