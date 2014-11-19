@@ -266,13 +266,12 @@ Will involve a unnecessary -syncView:withRepresentedObject: call. */
 
 - (ETLayoutItem *) sourceItem
 {
-	return ([[self ifResponds] source] != nil ? self : [[self parentItem] sourceItem]);
+	return ([self isSourceItem] ? self : [[self parentItem] sourceItem]);
 }
 
 - (BOOL) isSourceItem
 {
-	// TODO: Remove the last part once the base item cannot represent a controller item
-	return ([self baseItem] == self && [self source] != nil);
+	return ([self isBaseItem] && [self source] != nil);
 }
 
 - (BOOL) isSerializableRelationshipCollection: (id <ETCollection>)aCollection
@@ -637,6 +636,20 @@ step is skipped when loading an item not present in memory. */
 
 #pragma mark Source Persistency Support
 #pragma mark -
+
+- (NSArray *) serializedItems
+{
+	return ([self sourceItem] == nil ? _items : [NSArray array]);
+}
+
+- (void) setSerializedItems: (NSArray *)items
+{
+	[self willChangeValueForProperty: @"items"];
+	DESTROY(_items);
+	_items = [items mutableCopy];
+	/* Update the relationship cache */
+	[self didChangeValueForProperty: @"items"];
+}
 
 - (COObject *) serializedSource
 {
