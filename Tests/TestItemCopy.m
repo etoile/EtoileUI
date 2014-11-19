@@ -20,7 +20,6 @@
 #import "ETLayoutItemGroup.h"
 #import "ETLayoutExecutor.h"
 #import "EtoileUIProperties.h"
-#import "ETPaneLayout.h"
 #import "ETScrollableAreaItem.h"
 #import "ETTableLayout.h"
 #import "ETTemplateItemLayout.h"
@@ -125,7 +124,7 @@ DEALLOC(DESTROY(itemFactory); DESTROY(item); DESTROY(itemGroup))
 	return  A(@"hostItem", @"controllerItem", kETBaseItemProperty, kETRootItemProperty, kETIdentifierProperty,
 		@"representedAttribute", @"representedRelationship", kETValueProperty, kETValueKeyProperty,
 		kETStyleProperty, @"persistentTarget", @"persistentTargetOwner",
-		kETInspectorProperty, @"title", @"formatter", @"attachedTool");
+		@"title", @"formatter", @"attachedTool");
 }
 
 - (NSArray *) defaultNilItemProperties
@@ -478,6 +477,7 @@ DEALLOC(DESTROY(itemFactory); DESTROY(item); DESTROY(itemGroup))
 	RELEASE(newItemGroup);
 }
 
+#if 0
 // NOTE: Test ETCompositeLayout and ETPaneLayout copying at the same time.
 - (void) testMasterDetailPaneLayoutCopy
 {
@@ -523,6 +523,7 @@ DEALLOC(DESTROY(itemFactory); DESTROY(item); DESTROY(itemGroup))
 
 	RELEASE(newItemGroup);
 }
+#endif
 
 @end
 

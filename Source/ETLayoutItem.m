@@ -18,7 +18,6 @@
 #import "ETBasicItemStyle.h"
 #import "ETController.h"
 #import "ETGeometry.h"
-#import "ETInspector.h"
 #import "ETItemValueTransformer.h"
 #import "ETLayoutItemGroup.h"
 #import "ETLayoutItem+KVO.h"
@@ -745,11 +744,6 @@ The item view is also synchronized with the object value of the given represente
 object when the view is a widget. */
 - (void) setRepresentedObject: (id)modelObject
 {
-	// TODO: Because ETCompositeLayout uses -setRepresentedObject: in its set up, 
-	// we cannot do it in this way...
-	//NSAssert([[self layout] isKindOfClass: NSClassFromString(@"ETCompositeLayout")] == NO, 
-	//	@"The represented object must not be changed when a ETCompositeLayout is in use");
-
 	id oldObject = _representedObject;
 
 	_isSettingRepresentedObject = YES;
@@ -3204,25 +3198,6 @@ See -[ETResponder focusedItem]. */
 - (ETLayoutItem *) candidateFocusedItem
 {
 	return self;
-}
-
-/** Returns the custom inspector associated with the receiver. By default, 
-returns nil.
-
--[NSObject(EtoileUI) inspect:] will show this inspector, unless nil is returned. */
-- (id <ETInspector>) inspector
-{
-	id <ETInspector> inspector = [self valueForVariableStorageKey: kETInspectorProperty];
-	[inspector setInspectedObjects: A(self)];
-	return inspector;
-}
-
-/** Sets the custom inspector associated with the receiver. */
-- (void) setInspector: (id <ETInspector>)inspector
-{
-	[self willChangeValueForProperty: kETInspectorProperty];
-	[self setValue: inspector forVariableStorageKey: kETInspectorProperty];
-	[self didChangeValueForProperty: kETInspectorProperty];
 }
 
 /** Returns a basic window item. */

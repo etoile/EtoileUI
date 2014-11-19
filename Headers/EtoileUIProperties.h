@@ -36,8 +36,6 @@ extern NSString * const kETHeightProperty; /** height property name */
 extern NSString * const kETIconProperty; /** icon property name */
 extern NSString * const kETIdentifierProperty; /** identifier property name */
 extern NSString * const kETImageProperty; /** image property name */
-extern NSString * const kETIndexPathProperty; /** indexPath property name */
-extern NSString * const kETInspectorProperty; /** inspector property name */
 extern NSString * const kETIsBaseItemProperty; /** isBaseItem property name */
 extern NSString * const kETIsMetaItemProperty; /** isMetaItem property name */
 extern NSString * const kETItemScaleFactorProperty; /** itemScaleFactor property name */

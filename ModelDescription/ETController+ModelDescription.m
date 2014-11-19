@@ -36,6 +36,16 @@
 @interface ETCompositePropertyDescription : ETPropertyDescription
 @end
 
+@implementation ETCompositePropertyDescription
+
+- (BOOL) isComposite
+{
+	return YES;
+}
+
+@end
+
+
 // NOTE: ETDocumentController uses ETController model description
 @interface ETController (ModelDescription)
 @end

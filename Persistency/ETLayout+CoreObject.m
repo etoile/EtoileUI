@@ -7,13 +7,11 @@
  */
 
 #import "ETCompatibility.h"
-#import "ETCompositeLayout.h"
 #import "ETDropIndicator.h"
 #import "ETFreeLayout.h"
 #import "ETGeometry.h"
 #import "ETLayout.h"
 #import "ETLayoutItemGroup.h"
-#import "ETPaneLayout.h"
 #import "ETTableLayout.h"
 #import "ETTemplateItemLayout.h"
 #import "ETSelectTool.h"
@@ -40,9 +38,7 @@ to avoid doing changes previously recorded in the object graph on
 -[ETLayoutItem setLayout:] or similar.
 
 If -setUp was called, calling -[ETLayout resetLayoutSize] would break autoresizing,
--[ETWidgetLayout setUpLayoutView] wouldn't work without a layout context, or
--[ETCompositeLayout save/prepareInitialContextState:] would mess up the context, 
-etc.
+-[ETWidgetLayout setUpLayoutView] wouldn't work without a layout context, etc.
  
 When overriding this method, the subclasses must call the superclass
 implementation first usually, and the subclass implementation must contain 
@@ -222,33 +218,6 @@ is not an option. */
 		ETAssert([item parentItem] == [self layoutContext]);
 		[self setUpKVOForItem: item];
 	}
-}
-
-@end
-
-
-@interface ETCompositeLayout (CoreObject)
-@end
-
-@implementation ETCompositeLayout (CoreObject)
-@end
-
-
-@interface ETPaneLayout (CoreObject)
-@end
-
-@implementation ETPaneLayout (CoreObject)
-
-- (void) didLoadObjectGraph
-{
-    [super didLoadObjectGraph];
-
-	/* Replicate the observer set up in -setBarItem: */
-	[[NSNotificationCenter defaultCenter] 
-		   addObserver: self
-	          selector: @selector(itemGroupSelectionDidChange:)
-		          name: ETItemGroupSelectionDidChangeNotification 
-			    object: _barItem];
 }
 
 @end

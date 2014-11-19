@@ -12,7 +12,6 @@
 #import <Foundation/Foundation.h>
 #import <EtoileUI/ETGraphicsBackend.h>
 #import <EtoileFoundation/ETKeyValuePair.h>
-#import <EtoileUI/ETInspecting.h>
 
 @class ETModelDescriptionRepository;
 
@@ -83,9 +82,6 @@
 
 @end
 
-@interface NSObject (ETInspector) <ETObjectInspection>
-- (id <ETInspector>) inspector;
-@end
 
 /** See NSObject+Model in EtoileFoudation */
 @interface NSImage (EtoileModel)

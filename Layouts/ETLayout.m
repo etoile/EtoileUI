@@ -56,17 +56,11 @@ See also NSObject(ETAspectRegistration). */
 {
 	ASSIGN(layoutPrototypes, [NSMutableSet set]);
 
-	NSArray *skippedClasses = A(NSClassFromString(@"ETWidgetLayout"), 
-		NSClassFromString(@"ETInspectorLayout"), 
+	NSArray *skippedClasses = A(NSClassFromString(@"ETWidgetLayout"),  
 		NSClassFromString(@"ETWindowLayout"), 
-		NSClassFromString(@"ETTemplateItemLayout"), 
-		NSClassFromString(@"ETCompositeLayout"),
-		NSClassFromString(@"ETPaneLayout"),
+		NSClassFromString(@"ETTemplateItemLayout"),
 		NSClassFromString(@"ETComputedLayout"),
-		NSClassFromString(@"ETMasterDetailPaneLayout"),
-		NSClassFromString(@"ETMasterContentPaneLayout"),
 		NSClassFromString(@"ETFormLayout"),
-		NSClassFromString(@"ETViewModelLayout"),
 		NSClassFromString(@"ETTextEditorLayout"));
 	NSArray *subclasses = [[self allSubclasses] arrayByRemovingObjectsInArray: skippedClasses];
 

@@ -442,11 +442,6 @@ Marks the receiver as needing a layout update. */
 	if ([self valueForVariableStorageKey: kETSourceProperty] == source)
 		return;
 
-	// TODO: Because ETCompositeLayout uses -setSource: in its set up, we cannot
-	// do it in this way...
-	//NSAssert([[self layout] isKindOfClass: NSClassFromString(@"ETCompositeLayout")] == NO,
-	//	@"The source must not be changed when a ETCompositeLayout is in use");
-
 	[[NSNotificationCenter defaultCenter]
 		removeObserver: self
 		          name: ETSourceDidUpdateNotification

@@ -30,6 +30,18 @@
 
 == Random API ideas ==
 
+@interface NSObject (ETInspector) <ETObjectInspection>
+- (id <ETInspector>) inspector;
+@end
+
+/** Returns the custom inspector associated with the receiver. By default,
+returns nil.
+
+-[NSObject(EtoileUI) inspect:] will show this inspector, unless nil is returned. */
+- (id <ETInspector>) inspector;
+/** Sets the custom inspector associated with the receiver. */
+- (void) setInspector: (id <ETInspector>)inspector;
+
 /* ETLayoutItem Live Development */
 
 - (void) beginEditingUI;

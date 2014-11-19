@@ -35,8 +35,7 @@
 		kETAutoresizingMaskProperty, kETContentAspectProperty, kETTransformProperty, kETBoundingBoxProperty, 
 		kETDefaultFrameProperty, kETPersistentFrameProperty, 
 		kETImageProperty, kETIconProperty, 
-		kETActionProperty, kETTargetProperty, 
-		kETInspectorProperty);
+		kETActionProperty, kETTargetProperty);
 
     if ([manuallyNotifiedProperties containsObject: theKey]) 
 	{
@@ -187,7 +186,7 @@ incorrectly reentered. */
 - (NSSet *) observableKeyPaths
 {
 	return S(kETRootItemProperty, kETBaseItemProperty, kETIsBaseItemProperty, 
-		kETControllerItemProperty, kETParentItemProperty, kETIndexPathProperty, 
+		kETControllerItemProperty, kETParentItemProperty,
 		kETIdentifierProperty, kETNameProperty, kETDisplayNameProperty, 
 		kETValueProperty, kETViewProperty, kETImageProperty, kETIconProperty, 
 		kETRepresentedObjectProperty, kETSubjectProperty,  kETSelectedProperty, kETSelectableProperty, 
@@ -212,7 +211,7 @@ affected. */
 		kETXProperty, kETYProperty, kETWidthProperty, kETHeightProperty,
 		@"positionX", @"positionY");
 	NSSet *parentDependentKeys = S(kETRootItemProperty, kETIsBaseItemProperty, 
-		kETBaseItemProperty, kETControllerItemProperty, kETIndexPathProperty);
+		kETBaseItemProperty, kETControllerItemProperty);
 	NSSet *nameDependentKeys = S(kETDisplayNameProperty);
 	NSMutableSet *triggerKeys = [NSMutableSet set];
 	

@@ -15,8 +15,6 @@
 #import "ETLayoutItemGroup.h"
 #import "ETLayoutItemFactory.h"
 #import "ETModelDescriptionRenderer.h"
-#import "ETInspector.h"
-#import "ETViewModelLayout.h"
 #import "ETCompatibility.h"
 #include <objc/runtime.h>
 
@@ -95,6 +93,7 @@ third-party inspector. By inspecting a third-party inspector, you can easily
 revert it or bring back the basic inspector. */
 - (IBAction) inspect: (id)sender
 {
+#if 0
 	id <ETInspector> inspector = nil;
 
 	if ([self conformsToProtocol: @protocol(ETObjectInspection)])
@@ -106,6 +105,7 @@ revert it or bring back the basic inspector. */
 	ETDebugLog(@"inspect %@", self);
 	[inspector setInspectedObjects: A(self)];
 	[[inspector panel] makeKeyAndOrderFront: self];
+#endif
 }
 
 /** Shows a developer-centric inspector based on ETViewModelLayout which 
@@ -119,7 +119,8 @@ Unlike the inspector shown by -inspect:, this built-in inspector is not expected
 to overriden by a third-party inspector. */
 - (IBAction) explore: (id)sender
 {
-	// TODO: Should be -itemGroupWithRepresentedObject: once ETLayoutItemGroup 
+#if 0
+	// TODO: Should be -itemGroupWithRepresentedObject: once ETLayoutItemGroup
 	// is able to create a container as supervisor view by itself if needed.
 	ETLayoutItemGroup *item = [[ETLayoutItemFactory factory] itemGroup];
 	ETViewModelLayout *layout = [ETViewModelLayout layoutWithObjectGraphContext: [item objectGraphContext]];
@@ -138,6 +139,7 @@ to overriden by a third-party inspector. */
 	[item setName: [NSString stringWithFormat: _(@"Explorer %@"), [self primitiveDescription]]];
 	[item setSize: NSMakeSize(350, 500)];
 	[[[ETLayoutItemFactory factory] windowGroup] addItem: item];
+#endif
 }
 
 /** Shows a source code editor to view or edit receiver class source code.

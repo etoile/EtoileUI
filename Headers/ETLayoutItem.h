@@ -13,14 +13,13 @@
 
 #import <Foundation/Foundation.h>
 #import <EtoileUI/ETGraphicsBackend.h>
-#import <EtoileUI/ETInspecting.h>
 #import <EtoileUI/ETFragment.h>
 #import <EtoileUI/ETUIItem.h>
 
 @class ETUTI;
 @class ETItemValueTransformer, ETView, ETLayout, ETLayoutItemGroup,
 ETDecoratorItem, ETScrollableAreaItem, ETWindowItem, ETActionHandler, ETStyleGroup;
-@protocol ETInspector, ETWidget, NSValidatedUserInterfaceItem;
+@protocol ETWidget, NSValidatedUserInterfaceItem;
 
 /** Describes how the item is resized when its parent item is resized.
 
@@ -104,7 +103,7 @@ and centers it. A strech is a scale that doesn't preserve the content proportion
 } ETContentAspect;
 
 /** You must never subclass ETLayoutItem. */
-@interface ETLayoutItem : ETUIItem <ETObjectInspection, ETFragment>
+@interface ETLayoutItem : ETUIItem <ETFragment>
 {
 	@protected
 	NSMutableDictionary *_deserializationState;
@@ -376,11 +375,6 @@ If a host item is set, returns -hostItem. */
 /** @taskunit API Conveniency */
 
 - (id) layout;
-
-/** @taskunit Deprecated */
-
-- (id <ETInspector>) inspector;
-- (void) setInspector: (id <ETInspector>)inspector;
 
 @end
 
