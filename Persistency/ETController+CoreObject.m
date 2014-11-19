@@ -95,6 +95,16 @@
 {
 	[super didLoadObjectGraph];
     [self recreateObservations];
+	/* At this point, the item tree should be ready to be sorted and filtered.
+	   For the items and their aspects, the current property values are ready, 
+	   further -didLoadObjectGraph calls won't alter the persistent state 
+	   (we normally evaluate sort descriptors and predicates against properties 
+	   derived from this persistent state).
+	   For example, finishing to set up a layout touches some internal transient 
+	   state that doesn't matter.
+	   If a reload is planned, executing the realoading will call -setContent:, 
+	   and trigger -rearrangeObjects once more. */
+	[self rearrangeObjects];
 }
 
 @end

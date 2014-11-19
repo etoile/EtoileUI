@@ -248,7 +248,9 @@
         UKObjectsEqual(predicate, [newController filterPredicate]);
         UKObjectsEqual(A(sortDescriptor1, sortDescriptor2), [newController sortDescriptors]);
         UKObjectsEqual(predicate, [newController filterPredicate]);
-         
+		
+		UKTrue([newItemGroup isSorted]);
+		UKTrue([newItemGroup isFiltered]);
     }];
 }
 

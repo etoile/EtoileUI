@@ -1068,8 +1068,8 @@ the default one based on
 		// and in ETTableLayout there is a crash because the table view still
 		// presents -item rather than -arrangedItems. Wierdly we also lost
 		// the focus in the search field.
-		//[[self content] setNeedsLayoutUpdate];
-		[[self content] updateLayoutRecursively: YES];
+		[[self content] setNeedsLayoutUpdate];
+		//[[self content] updateLayoutRecursively: YES];
 	}
 }
 
