@@ -605,6 +605,8 @@ step is skipped when loading an item not present in memory. */
 
 @implementation ETLayoutItemGroup (CoreObject)
 
+#pragma mark Compound Document Additions
+
 - (BOOL) isCompoundDocument
 {
 	// TODO: We probably should have -isRootObject check -isPersistent
@@ -633,6 +635,28 @@ step is skipped when loading an item not present in memory. */
 	return collectedItems;
 }
 
+#pragma mark Source Persistency Support
+#pragma mark -
+
+- (COObject *) serializedSource
+{
+	id source = [self valueForVariableStorageKey: kETSourceProperty];
+
+	return ([source isKindOfClass: [COObject class]] ? source : nil);
+}
+
+- (void) setSerializedSource: (COObject *)aSource
+{
+	if (aSource == nil)
+		return;
+
+	[_deserializationState setObject: aSource
+	                          forKey: kETSourceProperty];
+}
+
+#pragma mark Action Persistency Support
+#pragma mark -
+
 - (NSString *) serializedDoubleAction
 {
 	return NSStringFromSelector(_doubleAction);
@@ -642,6 +666,9 @@ step is skipped when loading an item not present in memory. */
 {
 	_doubleAction = NSSelectorFromString(aSelString);
 }
+
+#pragma mark Loading Notifications
+#pragma mark -
 
 - (void) awakeFromDeserialization
 {
@@ -684,10 +711,17 @@ step is skipped when loading an item not present in memory. */
     [self setNeedsLayoutUpdate];
 }
 
+- (void) restoreSourceFromDeserialization
+{
+	[self setSource: [_deserializationState objectForKey: kETSourceProperty]];
+	[_deserializationState removeObjectForKey: kETSourceProperty];
+}
+
 - (void) didLoadObjectGraph
 {
 	[super didLoadObjectGraph];
 	[self restoreLayoutFromDeserialization];
+	[self restoreSourceFromDeserialization];
 }
 
 @end

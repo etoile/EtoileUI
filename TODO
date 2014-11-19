@@ -140,6 +140,12 @@ Testing
 	- UKNil([item10 indexPathForItem: [itemFactory item]]);
 	- UKNil([[itemFactory item] indexPathForItem: item10]);
 
+- Write ETLayoutItem.source persistency tests (including its interaction with layout update, sorting and filtering)
+
+- Write ETLayoutItem.valueTransformer persistency tests
+
+- Support viewpoint persistency
+
 
 Documentation
 -------------

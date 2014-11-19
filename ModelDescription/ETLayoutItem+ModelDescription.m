@@ -219,7 +219,8 @@
 	ETPropertyDescription *layout = [ETPropertyDescription descriptionWithName: @"layout" type: (id)@"ETLayout"];
 	[layout setOpposite: (id)@"ETLayout.contextItem"];
 
-	ETPropertyDescription *source = [ETPropertyDescription descriptionWithName: @"source" type: (id)@"COObject"];
+	ETPropertyDescription *source = [ETPropertyDescription descriptionWithName: @"source" type: (id)@"NSObject"];
+	[source setPersistentTypeName: @"COObject"];
 	ETPropertyDescription *delegate = [ETPropertyDescription descriptionWithName: @"delegate" type: (id)@"COObject"];
 
 	ETPropertyDescription *controller = [ETPropertyDescription descriptionWithName: @"controller" type: (id)@"ETController"];
