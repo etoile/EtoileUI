@@ -73,12 +73,6 @@ You must never subclass ETUIItem. ETUIItem ivars must be considered private. */
 - (void) setSupervisorView: (ETView *)aView;
 - (ETView *) displayView;
 
-/** @taskunit UI Editing */
-
-- (void) beginEditingUI;
-/*- (BOOL) isEditingUI;
-- (void) commitEditingUI;*/
-
 /** @taskunit Drawing */
 
 - (void) render: (NSMutableDictionary *)inputValues 

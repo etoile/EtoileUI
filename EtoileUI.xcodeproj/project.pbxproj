@@ -558,6 +558,8 @@
 		60D752921964B89A002B26F5 /* ETObservation.h in Headers */ = {isa = PBXBuildFile; fileRef = 60D752901964B89A002B26F5 /* ETObservation.h */; };
 		60D752931964B89A002B26F5 /* ETObservation.m in Sources */ = {isa = PBXBuildFile; fileRef = 60D752911964B89A002B26F5 /* ETObservation.m */; };
 		60D752A21964B8AE002B26F5 /* ETObservation.m in Sources */ = {isa = PBXBuildFile; fileRef = 60D752911964B89A002B26F5 /* ETObservation.m */; };
+		60D92A961A1D11EE00240678 /* ETDecoratorItem+CoreObject.m in Sources */ = {isa = PBXBuildFile; fileRef = 60D92A951A1D11EE00240678 /* ETDecoratorItem+CoreObject.m */; };
+		60D92A971A1D11EE00240678 /* ETDecoratorItem+CoreObject.m in Sources */ = {isa = PBXBuildFile; fileRef = 60D92A951A1D11EE00240678 /* ETDecoratorItem+CoreObject.m */; };
 		60D9368A12837B9C007EFDCE /* ETDocumentController.m in Sources */ = {isa = PBXBuildFile; fileRef = 6627F70D127E75B300E06946 /* ETDocumentController.m */; };
 		60D9368B12837B9C007EFDCE /* ETItemTemplate.m in Sources */ = {isa = PBXBuildFile; fileRef = 6627F70C127E75B300E06946 /* ETItemTemplate.m */; };
 		60DAC87D100774F4007F143A /* ETLayoutXHTMLRenderer.h in Headers */ = {isa = PBXBuildFile; fileRef = 60DAC87B100774F4007F143A /* ETLayoutXHTMLRenderer.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -1267,6 +1269,7 @@
 		60D752901964B89A002B26F5 /* ETObservation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ETObservation.h; path = Persistency/Model/ETObservation.h; sourceTree = "<group>"; };
 		60D752911964B89A002B26F5 /* ETObservation.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ETObservation.m; path = Persistency/Model/ETObservation.m; sourceTree = "<group>"; };
 		60D88883115E651000D7A8AA /* TestCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = TestCell.m; path = Tests/TestCell.m; sourceTree = "<group>"; };
+		60D92A951A1D11EE00240678 /* ETDecoratorItem+CoreObject.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = "ETDecoratorItem+CoreObject.m"; path = "Persistency/ETDecoratorItem+CoreObject.m"; sourceTree = "<group>"; };
 		60DAC87B100774F4007F143A /* ETLayoutXHTMLRenderer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ETLayoutXHTMLRenderer.h; path = ../EtoileWeb/ETLayoutXHTMLRenderer.h; sourceTree = SOURCE_ROOT; };
 		60DAC87C100774F4007F143A /* ETLayoutXHTMLRenderer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ETLayoutXHTMLRenderer.m; path = ../EtoileWeb/ETLayoutXHTMLRenderer.m; sourceTree = SOURCE_ROOT; };
 		60E7BD20107E7B3F00E7C0F2 /* TestStyle.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = TestStyle.m; path = Tests/TestStyle.m; sourceTree = "<group>"; };
@@ -1968,6 +1971,7 @@
 		60A54AC113D0822700261FDC /* Persistency */ = {
 			isa = PBXGroup;
 			children = (
+				60D92A951A1D11EE00240678 /* ETDecoratorItem+CoreObject.m */,
 				60A6584313B0DD2A000A6EB6 /* ETLayoutItem+CoreObject.h */,
 				60A6584413B0DD2A000A6EB6 /* ETLayoutItem+CoreObject.m */,
 				60A54AC213D0824F00261FDC /* ETController+CoreObject.m */,
@@ -3129,6 +3133,7 @@
 				60A6584613B0DD2A000A6EB6 /* ETLayoutItem+CoreObject.m in Sources */,
 				60D30277194B6A61006BA5A9 /* TestAutoresizing.m in Sources */,
 				608CEF9B194B1D28008976C3 /* TestCommon.m in Sources */,
+				60D92A971A1D11EE00240678 /* ETDecoratorItem+CoreObject.m in Sources */,
 				60A6586113B0EFEF000A6EB6 /* ETStyle+ModelDescription.m in Sources */,
 				601296A913C7482500980F16 /* ETController+ModelDescription.m in Sources */,
 				601296AA13C7482500980F16 /* ETLayout+ModelDescription.m in Sources */,
@@ -3358,6 +3363,7 @@
 				60A54C1313D2273F00261FDC /* ETLayout+CoreObject.m in Sources */,
 				602E08311A06F13E00FB8FF4 /* ETShadowStyle.m in Sources */,
 				603D7D0A13D363BA007AABE2 /* ETActionHandler+ModelDescription.m in Sources */,
+				60D92A961A1D11EE00240678 /* ETDecoratorItem+CoreObject.m in Sources */,
 				6035ACC113D59C27005B2280 /* ETStyle+CoreObject.m in Sources */,
 				60B6E2F913E4635D0087879C /* ETAspectCategory.m in Sources */,
 				60C81CF7195DA16F00AEEC68 /* ETPredicateToString.m in Sources */,

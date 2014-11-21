@@ -86,8 +86,6 @@
 	ETPropertyDescription *boundingBox = [ETPropertyDescription descriptionWithName: @"boundingBox" type: (id)@"NSRect"];
 	// TODO: What should we do with _defaultValues?
 	ETPropertyDescription *defaultFrame = [ETPropertyDescription descriptionWithName: @"defaultFrame" type: (id)@"NSRect"];
-	// TODO: We should move flipped to ETUIItem. We need to override it though 
-	// not to be read-only, because ETLayoutItem introduces -setFlipped:.
 	ETPropertyDescription *flipped = [ETPropertyDescription descriptionWithName: @"flipped" type: (id)@"BOOL"];
 	ETPropertyDescription *selected = [ETPropertyDescription descriptionWithName: @"selected" type: (id)@"BOOL"];
 	ETPropertyDescription *selectable = [ETPropertyDescription descriptionWithName: @"selectable" type: (id)@"BOOL"];
@@ -116,6 +114,9 @@
 	[representedUnorderedRelationship setOrdered: NO];
 
 	/* Transient Properties */
+
+	/* We declare only the transient properties that matters for a UI builder or 
+	   document editor, because viewing or editing them in an inspector is useful. */
 
 	// TODO: Declare -UTI in the transient properties (or rather at NSObject level)...
 

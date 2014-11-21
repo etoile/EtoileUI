@@ -90,6 +90,27 @@ The concrete window class used is [ETFullScreenWindow]. */
 
 /* Initialization */
 
+- (void) prepareTransientState
+{
+	ETAssert(_itemWindow != nil);
+
+	// TODO: Would be better not to break the window delegate... May be 
+	// we should rather reimplement NSDraggingDestination protocol in 
+	// a NSWindow category. 
+	if ([_itemWindow delegate] != nil)
+	{
+		ETLog(@"WARNING: The window delegate %@ will be replaced by %@ "
+			"-initWithWindow:", [_itemWindow delegate], self);
+	}
+	[_itemWindow setDelegate: (id)self];
+	[_itemWindow setAcceptsMouseMovedEvents: YES];
+	[_itemWindow registerForDraggedTypes: A(ETLayoutItemPboardType)];
+	_usesCustomWindowTitle = ([self isUntitled] == NO);
+	
+	ETDebugLog(@"Init item %@ with window %@ %@ at %@", self, [_itemWindow title],
+		_itemWindow, NSStringFromRect([_itemWindow frame]));
+}
+
 /** <init />
 Initializes and returns a new window decorator with a hard window (provided by 
 the widget backend). 
@@ -115,23 +136,10 @@ If window is nil, the receiver creates a standard widget backend window. */
 	{
 		_itemWindow = [[NSWindow alloc] init];
 	}
-	// TODO: Would be better not to break the window delegate... May be 
-	// we should rather reimplement NSDraggingDestination protocol in 
-	// a NSWindow category. 
-	if ([_itemWindow delegate] != nil)
-	{
-		ETLog(@"WARNING: The window delegate %@ will be replaced by %@ "
-			"-initWithWindow:", [_itemWindow delegate], self);
-	}
-	[_itemWindow setDelegate: (id)self];
-	[_itemWindow setAcceptsMouseMovedEvents: YES];
-	[_itemWindow registerForDraggedTypes: A(ETLayoutItemPboardType)];
-	_usesCustomWindowTitle = ([self isUntitled] == NO);
 	_shouldKeepWindowFrame = NO;
 	
-	ETDebugLog(@"Init item %@ with window %@ %@ at %@", self, [_itemWindow title],
-		_itemWindow, NSStringFromRect([_itemWindow frame]));
-	
+	[self prepareTransientState];
+
 	return self;
 }
 
@@ -166,35 +174,6 @@ If window is nil, the receiver creates a standard widget backend window. */
 
 	[super dealloc];
 }
-
-#if 0
-
-- (NSInvocation *) initInvocationForCopyWithZone: (NSZone *)aZone
-{
-	NSWindow *windowCopy = [_itemWindow copyWithZone: aZone];
-	NSInvocation *inv = [NSInvocation invocationWithTarget: self
-	                                              selector: @selector(initWithWindow:)
-                                                 arguments: A(windowCopy)];
-	RELEASE(windowCopy); // NOTE: We don't autorelease to simplify debugging.
-	return inv;
-}
-
-- (id) copyWithCopier: (ETCopier *)aCopier
-{
-	ETWindowItem *newItem = [super copyWithCopier: aCopier];
-
-	if ([aCopier isAliasedCopy])
-		return newItem;
-
-	// NOTE: The copying logic is largely handled with -initWithInvocationForCopyWithZone:
-
-	newItem->_shouldKeepWindowFrame = _shouldKeepWindowFrame;
-	newItem->_flipped = _flipped; // Probably not necessary
-
-	return newItem;
-}
-
-#endif
 
 /* Main Accessors */
 

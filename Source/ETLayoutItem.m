@@ -774,6 +774,9 @@ object when the view is a widget. */
 	_isSettingRepresentedObject = NO;
 }
 
+/* This method is never called once a decorator is set (setting it triggers 
+the supervisor view creation), except when an object graph loading is underway, 
+see -[ETLayoutItem awakeFromDeserialization]. */
 - (ETView *) setUpSupervisorViewWithFrame: (NSRect)aFrame 
 {
 	if (supervisorView != nil)
@@ -3223,21 +3226,6 @@ See -[ETResponder focusedItem]. */
     [self willChangeValueForProperty: @"hostItem"];
     [self setValue: host forVariableStorageKey: @"hostItem"];
     [self didChangeValueForProperty: @"hostItem"];
-}
-
-/* Live Development */
-
-/** This feature is not yet implemented. */
-- (void) beginEditingUI
-{
-	id view = [self supervisorView];
-	
-	/* Notify to view */
-	if (view != nil && [view respondsToSelector: @selector(beginEditingUI)])
-		[view beginEditingUI];
-
-	/* Notify decorator item chain */
-	[[self decoratorItem] beginEditingUI];
 }
 
 - (void) willChangeValueForEmbeddingProperty: (NSString *)aKey

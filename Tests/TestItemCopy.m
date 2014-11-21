@@ -198,7 +198,7 @@ DEALLOC(DESTROY(itemFactory); DESTROY(item); DESTROY(itemGroup))
 	[item setView: AUTORELEASE([[NSButton alloc] init])];
 	[item setTarget: item];
 	[item setAction: @selector(wibble:)];
-	[item setDecoratorItem: [ETDecoratorItem itemWithDummySupervisorView]];
+	//[item setDecoratorItem: [ETDecoratorItem itemWithDummySupervisorView]];
 	//[[item decoratorItem] setDecoratorItem: [ETWindowItem item]];
 
 	NSArray *properties = [self checkablePropertiesForItem: item];
@@ -211,6 +211,7 @@ DEALLOC(DESTROY(itemFactory); DESTROY(item); DESTROY(itemGroup))
 
 	ETLayoutItem *newItem = [item copy];
 	// FIXME: Implement decorator serialization
+	[item setDecoratorItem: [ETDecoratorItem itemWithDummySupervisorView]];
 	[newItem setDecoratorItem: [ETDecoratorItem itemWithDummySupervisorView]];
 	
 	FOREACH(equalProperties, property, NSString *)
@@ -308,7 +309,7 @@ DEALLOC(DESTROY(itemFactory); DESTROY(item); DESTROY(itemGroup))
 	[itemGroup setView: AUTORELEASE([[NSButton alloc] init])];
 	[itemGroup setTarget: controller];
 	[itemGroup setAction: @selector(wibble:)];
-	[itemGroup setDecoratorItem: [ETDecoratorItem itemWithDummySupervisorView]];
+	//[itemGroup setDecoratorItem: [ETDecoratorItem itemWithDummySupervisorView]];
 
 	[itemGroup setSource: itemGroup];
 	[itemGroup setController: controller];
@@ -319,6 +320,7 @@ DEALLOC(DESTROY(itemFactory); DESTROY(item); DESTROY(itemGroup))
 
 	ETLayoutItemGroup *newItemGroup = [itemGroup copy];
 	// FIXME: Implement decorator serialization
+	[itemGroup setDecoratorItem: [ETDecoratorItem itemWithDummySupervisorView]];
 	[newItemGroup setDecoratorItem: [ETDecoratorItem itemWithDummySupervisorView]];
 
 	NSArray *properties = [self checkablePropertiesForItem: itemGroup];

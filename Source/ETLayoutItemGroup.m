@@ -1749,17 +1749,6 @@ Returns whether the frame can be resized by the layout bound to the receiver. */
 	return ([[_layout positionalLayout] isContentSizeLayout] && [self isScrollable] == NO);
 }
 
-/* Live Development */
-
-- (void) beginEditingUI
-{
-	/* Notify view and decorator item chain */
-	[super beginEditingUI];
-
-	/* Notify children */
-	[[self items] makeObjectsPerformSelector: @selector(beginEditingUI)];
-}
-
 /* Framework Private */
 
 /** Returns whether the receiver is a layer item encaspulated in a layout and

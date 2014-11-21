@@ -272,14 +272,6 @@ needs some special redisplay policy. */
 
 }
 
-/** <override-subclass />
-
-To be implemented... */
-- (void) beginEditingUI
-{
-
-}
-
 /** Returns the item that decorates the receiver.
 
 From the returned item viewpoint, the receiver is the decorated item. */

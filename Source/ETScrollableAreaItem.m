@@ -81,6 +81,14 @@ into a scrollable area. */
 	return [self initWithScrollView: nil objectGraphContext: aContext];
 }
 
+- (void) prepareTransientState
+{
+	[[NSNotificationCenter defaultCenter] addObserver: self
+	                                         selector: @selector(clipViewFrameDidChange:)
+	                                             name: NSViewFrameDidChangeNotification
+	                                           object: [self supervisorView]];
+}
+
 - (id) initWithScrollView: (NSScrollView *)aScrollView
        objectGraphContext: (COObjectGraphContext *)aContext
 {
@@ -108,6 +116,8 @@ into a scrollable area. */
 	NSParameterAssert([scrollView superview] != nil);
 	NSParameterAssert([scrollView autoresizingMask] == sizableMask);
 
+	[self prepareTransientState];
+
 	//ETLog(@"Scroll view %@", [self scrollView]);
 
 	return self;
@@ -118,25 +128,6 @@ into a scrollable area. */
 	[[NSNotificationCenter defaultCenter] removeObserver: self];
 	[super dealloc];
 }
-
-#if 0
-
-- (id) copyWithCopier: (ETCopier *)aCopier
-{
-	ETScrollableAreaItem *newItem = [super copyWithCopier: aCopier];
-
-	if ([aCopier isAliasedCopy])
-		return newItem;
-
-	// NOTE: May be we shouldn't copy this mask when the copy was started on the 
-	// receiver and not on a decorated item.
-	newItem->_oldDecoratedItemAutoresizingMask = _oldDecoratedItemAutoresizingMask;
-	newItem->_ensuresContentFillsVisibleArea = _ensuresContentFillsVisibleArea;
-
-	return newItem;
-}
-
-#endif
 
 /** Ensures the content fills the clip view area when the latter is resized, 
 usually through its enclosing scroll view getting resized. */
@@ -168,18 +159,9 @@ usually through its enclosing scroll view getting resized. */
 
 - (void) saveAndOverrideAutoresizingMaskOfDecoratedItem: (ETUIItem *)item
 {
-	// FIXME: Move -addObserver: in the initializer once ETScrollView 
-	// initializer isn't used externally and won't overwrite the decorator 
-	// supervisor view. Presently ETScrollView and ETScrollableAreaItem 
-	// initializers invokes each other in a very ugly way and can overwrite 
-	// their state.
 #ifdef GNUSTEP /* Required with GNUstep prior to trunk r28465 */
 	[[self supervisorView] setPostsFrameChangedNotifications: YES];
 #endif
-	[[NSNotificationCenter defaultCenter] addObserver: self
-	                                         selector: @selector(clipViewFrameDidChange:)
-	                                             name: NSViewFrameDidChangeNotification
-	                                           object: [self supervisorView]];
 
 	[[[self lastDecoratorItem] supervisorView] setAutoresizingMask: 
 		[[item supervisorView] autoresizingMask]];
