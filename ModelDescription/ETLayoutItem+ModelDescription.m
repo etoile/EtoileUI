@@ -234,6 +234,7 @@
 	[controller setOpposite: (id)@"ETController.content"];
 	ETPropertyDescription *doubleAction = 
 		[ETPropertyDescription descriptionWithName: @"doubleAction" type: (id)@"SEL"];
+	[doubleAction setPersistentTypeName: @"NSString"];
 	ETPropertyDescription *shouldMutateRepObject = 
 		[ETPropertyDescription descriptionWithName: @"shouldMutateRepresentedObject" type: (id)@"BOOL"];
 	[shouldMutateRepObject setDisplayName: @"Mutate Represented Object"];

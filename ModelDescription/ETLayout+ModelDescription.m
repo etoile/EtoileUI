@@ -226,6 +226,7 @@
 	[nibName setReadOnly: YES];
 	ETPropertyDescription *layoutView =
 		[ETPropertyDescription descriptionWithName: @"layoutView" type: (id)@"NSView"];
+	[layoutView setPersistentTypeName: @"NSData"];
 	ETPropertyDescription *selectionIndexPaths =
 		[ETPropertyDescription descriptionWithName: @"selectionIndexPaths" type: (id)@"NSIndexPath"];
 	[selectionIndexPaths setMultivalued: YES];
