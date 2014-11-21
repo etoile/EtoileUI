@@ -35,7 +35,7 @@ NSString * const ETItemGroupSelectionDidChangeNotification = @"ETItemGroupSelect
 NSString * const ETSourceDidUpdateNotification = @"ETSourceDidUpdateNotification";
 
 @interface ETLayoutItem (SubclassVisibility)
-- (ETView *) setUpSupervisorViewWithFrame: (NSRect)aFrame;
+- (ETView *) setUpSupervisorView;
 - (Class)viewpointClassForProperty: (NSString *)aProperty ofObject: (id)anObject;
 @end
 
@@ -242,7 +242,7 @@ See also -handleDetachViewOfItem: and -[ETUItem displayView]. */
 	   TODO: Probably make more explicit the nil layout check. */
 	if ([[self layout] isOpaque] == NO)
 	{
-		[[self setUpSupervisorViewWithFrame: [self frame]] addSubview: itemDisplayView];
+		[[self setUpSupervisorView] addSubview: itemDisplayView];
 	}
 }
 
@@ -1723,7 +1723,7 @@ See -[ETController nextResponder]. */
 
 	if (aView != nil)
 	{
-		[self setUpSupervisorViewWithFrame: [self frame]];
+		[self setUpSupervisorView];
 	}
 	NSAssert(nil == superview || [superview isEqual: supervisorView],
 		@"A layout view should never have another superview than the layout "

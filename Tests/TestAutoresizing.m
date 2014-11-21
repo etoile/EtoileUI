@@ -51,7 +51,9 @@
 	ETAssert(NSEqualRects(NSMakeRect(0, 0, 50, 50), [ETLayoutItem defaultItemRect]));
 
 	ASSIGN(itemGroup, [itemFactory itemGroupWithFrame: NSMakeRect(0, 0, 500, 400)]);
+
 	ETAssert([[itemGroup layout] isKindOfClass: [ETFixedLayout class]]);
+	ETAssert([[itemGroup supervisorView] autoresizesSubviews] == NO);
 	return self;
 }
 
@@ -306,6 +308,8 @@
 	UKRectsEqual(textFieldFrame, [textFieldItem frame]);
 	UKRectsEqual(textViewFrame, [textViewItem frame]);
 	UKRectsEqual(otherItemFrame, [otherItem frame]);
+
+	UKFalse([[itemGroup supervisorView] autoresizesSubviews]);
 
 	[itemGroup setSize: NSMakeSize(700, 600)];
 	[itemGroup updateLayout];

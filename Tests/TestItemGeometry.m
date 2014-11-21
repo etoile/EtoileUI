@@ -50,11 +50,12 @@ DEALLOC(DESTROY(itemFactory); DESTROY(item))
 
 	[item setAutoresizingMask: ETAutoresizingFlexibleWidth];
 
-	NSRect frame = NSMakeRect(-300, 20, 500, 50);
 	NSRect initialItemFrame = [item frame];
 	unsigned int initialAutoresizing = [item autoresizingMask];
 
-	ETView *view = AUTORELEASE([[ETView alloc] initWithFrame: frame item: item]);
+	ETView *view = AUTORELEASE([[ETView alloc] init]);
+	
+	[item setSupervisorView: view sync: ETSyncSupervisorViewFromItem];
 
 	UKRectsEqual(initialItemFrame, [view frame]);
 	UKRectsEqual(initialItemFrame, [item frame]);

@@ -13,6 +13,7 @@
 #import <EtoileFoundation/NSObject+Model.h>
 #import <EtoileFoundation/ETUTI.h>
 #import <EtoileFoundation/Macros.h>
+#import <CoreObject/COObjectGraphContext.h>
 #import "ETLayoutItem.h"
 #import "ETActionHandler.h"
 #import "ETBasicItemStyle.h"
@@ -777,14 +778,13 @@ object when the view is a widget. */
 /* This method is never called once a decorator is set (setting it triggers 
 the supervisor view creation), except when an object graph loading is underway, 
 see -[ETLayoutItem awakeFromDeserialization]. */
-- (ETView *) setUpSupervisorViewWithFrame: (NSRect)aFrame 
+- (ETView *) setUpSupervisorView
 {
 	if (supervisorView != nil)
 		return supervisorView;
 
-	/* Will call back -setSupervisorView:sync: which retains the view */
-	supervisorView = [[ETView alloc] initWithFrame: aFrame item: self];
-	RELEASE(supervisorView);
+	[self setSupervisorView: AUTORELEASE([ETView new])
+	                   sync: ETSyncSupervisorViewFromItem];
 	return supervisorView;
 }
 
@@ -921,7 +921,7 @@ The view is an NSView class or subclass instance. See -setView:. */
 	/* Insert a supervisor view if needed and adjust the new view autoresizing behavior */
 	if (nil != newView)
 	{
-		[self setUpSupervisorViewWithFrame: [self frame]];
+		[self setUpSupervisorView];
 		NSParameterAssert(NSEqualSizes([self contentBounds].size, [supervisorView frame].size));
 
 		[newView setAutoresizingMask: autoresizing];
@@ -963,7 +963,7 @@ the default frame and frame to match this view frame. */
 		// supervisor view.
 		NSRect newViewFrame = [newView frame];
 
-		[self setUpSupervisorViewWithFrame: newViewFrame];
+		[self setUpSupervisorView];
 		NSParameterAssert(nil != [self supervisorView]);
 
 		[self setContentAspect: ETContentAspectStretchToFill];
@@ -1370,11 +1370,17 @@ See also -supervisorView:. */
 		else /* ETSyncSupervisorViewFromItem */
 		{
 			[aSupervisorView setFrame: [self frame]];
+			/* This autoresizing mask won't be used, see -[ETView initWithFrame:],
+			   unless a decorator is set, that resizes the supervisor view to
+			   resize the item. */
 			[aSupervisorView setAutoresizingMask: [self autoresizingMask]];
 		}
 	}
 
 	[super setSupervisorView: aSupervisorView sync: syncDirection];
+
+	if ([[self objectGraphContext] isLoading])
+		return;
 
 	BOOL noDecorator = (_decoratorItem == nil);
 	BOOL hasParent = ([self parentItem] != nil);
@@ -1391,7 +1397,7 @@ See also -supervisorView:. */
 	BOOL needsInsertSupervisorView = (decorator != nil);
 	if (needsInsertSupervisorView)
 	{
-		[self setUpSupervisorViewWithFrame: [self frame]];
+		[self setUpSupervisorView];
 	}
 	[super setDecoratorItem: decorator];
 }

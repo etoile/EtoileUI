@@ -62,8 +62,6 @@ next EtoileUI release. */
 
 - (SEL) defaultItemFactorySelector;
 
-- (id) initWithFrame: (NSRect)rect item: (ETUIItem *)item;
-
 - (NSArray *) propertyNames;
 
 /* Basic Accessors */

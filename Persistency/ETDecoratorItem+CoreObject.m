@@ -34,18 +34,13 @@
 
 @implementation ETDecoratorItem (CoreObject)
 
-/** See -[UIItem setSupervisorView:syncDirection:]. */
 - (void) prepareTransientSupervisorView
 {
 	if ([self acceptsDecoratorItem: nil] == NO)
 		return;
 
-	DESTROY(supervisorView);
-	supervisorView = [ETView new];
-
-	 /* isFlipped is also sync in -setFlipped: (see subclasses) */
-	[supervisorView setFlipped: [self isFlipped]];
-	[supervisorView setItemWithoutInsertingView: self];
+	[self setSupervisorView: AUTORELEASE([ETView new])
+	                   sync: ETSyncSupervisorViewFromItem];
 }
 
 - (void) willLoadObjectGraph

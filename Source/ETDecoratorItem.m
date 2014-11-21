@@ -349,9 +349,7 @@ implementation returns the same. */
 {
 	if ([self supervisorView] == nil)
 	{
-		NSRect newViewFrame = (newView != nil ? [newView frame] : NSZeroRect);
-		ETView *wrapperView = [[ETView alloc] initWithFrame: newViewFrame 
-												 item: self];
+		ETView *wrapperView = [ETView new];
 		[self setSupervisorView: wrapperView];
 		RELEASE(wrapperView);
 	}

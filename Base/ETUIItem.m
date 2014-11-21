@@ -8,6 +8,7 @@
 
 #import <EtoileFoundation/Macros.h>
 #import <EtoileFoundation/NSObject+Model.h>
+#import <CoreObject/COObjectGraphContext.h>
 #import "ETUIItem.h"
 #import "ETDecoratorItem.h"
 #import "ETGeometry.h"
@@ -173,12 +174,17 @@ also ETView. */
 You should never need to call this method.
 
 See also -supervisorView:. */
-- (void) setSupervisorView: (ETView *)aSupervisorView sync: (ETSyncSupervisorView)syncDirection
+- (void) setSupervisorView: (ETView *)aSupervisorView
+                      sync: (ETSyncSupervisorView)syncDirection
+					
 {
 	 /* isFlipped is also sync in -setFlipped: (see subclasses) */
 	[aSupervisorView setFlipped: [self isFlipped]];
 	[aSupervisorView setItemWithoutInsertingView: self];
 	ASSIGN(supervisorView, aSupervisorView);
+
+	if ([[self objectGraphContext] isLoading])
+		return;
 
 	BOOL hasDecorator = (_decoratorItem != nil);
 	if (hasDecorator)
