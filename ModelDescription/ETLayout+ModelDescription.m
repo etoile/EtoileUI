@@ -376,12 +376,14 @@ so -propertyColumns is never used unless the user inspects the object. */
 	[renderedItems setOrdered: NO];
 
 	NSArray *persistentProperties = A(positionalLayout, templateItem,
-		templateKeys, localBindings, renderedItems);
+		templateKeys, localBindings);
+	NSArray *transientProperties = A(renderedItems);
 	
 	[entity setUIBuilderPropertyNames: (id)[[persistentProperties mappedCollection] name]];
 	
 	[[persistentProperties mappedCollection] setPersistent: YES];
-	[entity setPropertyDescriptions: persistentProperties];
+	[entity setPropertyDescriptions:
+	 	[persistentProperties arrayByAddingObjectsFromArray: transientProperties]];
 	
 	return entity;
 }

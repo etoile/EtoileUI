@@ -465,6 +465,9 @@ DEALLOC(DESTROY(itemFactory); DESTROY(item); DESTROY(itemGroup))
 	UKObjectKindOf([layoutCopy positionalLayout], ETFlowLayout);
 	UKNotNil([layoutCopy templateItem]);
 	UKObjectsEqual([layout templateKeys], [layoutCopy templateKeys]);
+
+	[itemGroup updateLayoutIfNeeded];
+
 	UKObjectsEqual(S([newItemGroup firstItem], [newItemGroup lastItem]), [layoutCopy renderedItems]);
 
 	UKIntsEqual(2, [newItemGroup numberOfItems]);

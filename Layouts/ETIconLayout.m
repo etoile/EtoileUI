@@ -59,17 +59,6 @@ Initializes and returns a new icon layout. */
 
 DEALLOC(DESTROY(_itemLabelFont))
 
-- (id) copyWithZone: (NSZone *)aZone layoutContext: (id <ETLayoutingContext>)ctxt
-{
-	ETIconLayout *layoutCopy = 	[super copyWithZone: aZone layoutContext: ctxt];
-	
-	layoutCopy->_itemLabelFont = [_itemLabelFont copyWithZone: aZone];
-	layoutCopy->_iconSizeForScaleFactorUnit = _iconSizeForScaleFactorUnit;
-	layoutCopy->_minIconSize = _minIconSize;
-
-	return layoutCopy;
-}
-
 - (NSImage *) icon
 {
 	return [NSImage imageNamed: @"picture--pencil.png"];
@@ -113,6 +102,7 @@ DEALLOC(DESTROY(_itemLabelFont))
 - (void) setItemTitleFont: (NSFont *)font
 {
 	ASSIGN(_itemLabelFont, font);
+	[self renderAndInvalidateDisplay];
 }
 
 /** Returns the icon size used when the scale factor is equal to 1. 
@@ -133,7 +123,10 @@ scale factor changed.
 See also -iconSizeForScaleFactorUnit. */
 - (void) setIconSizeForScaleFactorUnit: (NSSize)aSize
 {
+	[self willChangeValueForProperty: @"iconSizeForScaleFactorUnit"];
 	_iconSizeForScaleFactorUnit = aSize;
+	[self renderAndInvalidateDisplay];
+	[self didChangeValueForProperty: @"iconSizeForScaleFactorUnit"];
 }
 
 /** Returns the mininum icon size allowed.
@@ -151,7 +144,10 @@ See also -resizeLayoutItems:toScaleFactor:. */
 See also -minIconSize. */
 - (void) setMinIconSize: (NSSize)aSize
 {
+	[self willChangeValueForProperty: @"minIconSize"];
 	_minIconSize = aSize;
+	[self renderAndInvalidateDisplay];
+	[self didChangeValueForProperty: @"minIconSize"];
 }
 
 /* -[ETTemplateLayout renderLayoutItems:isNewContent:] doesn't invoke 

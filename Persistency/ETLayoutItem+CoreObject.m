@@ -21,6 +21,11 @@
 #import "NSObject+EtoileUI.h"
 #import "NSView+EtoileUI.h"
 
+@interface COObject (COSerializationPrivate)
+- (id) serializedValueForPropertyDescription: (ETPropertyDescription *)aPropertyDesc;
+- (void) setSerializedValue: (id)aValue forPropertyDescription: (ETPropertyDescription *)aPropertyDesc;
+@end
+
 @implementation ETLayoutItem (CoreObject) 
 
 - (ETLayoutItemGroup *) compoundDocument
@@ -72,6 +77,56 @@
 - (void) setEditingUI: (BOOL)editing
 {
 	_isEditingUI = editing;
+}
+
+
+#pragma mark Initial Values Persistency
+#pragma mark -
+
+/** We need no special cases to return -action and -doubleAction, since they
+are memorized as strings in the initial values.
+
+For view, persistentTarget and persistentTargetOwner, serialization accessors 
+and loading notifications will access or update the initial values directly. */
+- (BOOL) shouldSerializeInitialValueForProperty: (NSString *)aProperty
+{
+	// TODO: We could support -source and -representedObject, rather than
+	// not supporting them with ETTemplateItemLayout.
+	if ([aProperty isEqualToString: kETViewProperty]
+	 || [aProperty isEqualToString: @"persistentTarget"]
+	 || [aProperty isEqualToString: @"persistentTargetOwner"])
+	{
+		return NO;
+	}
+
+	return [_defaultValues containsKey: aProperty];
+}
+
+- (id) serializedValueForPropertyDescription: (ETPropertyDescription *)aPropertyDesc
+{
+	if ([self shouldSerializeInitialValueForProperty: [aPropertyDesc name]])
+	{
+		return [self initialValueForProperty: [aPropertyDesc name]];
+	}
+	else
+	{
+		return [super serializedValueForPropertyDescription: aPropertyDesc];
+	}
+}
+
+- (void) setSerializedValue: (id)aValue
+     forPropertyDescription: (ETPropertyDescription *)aPropertyDesc
+{
+	if ([self shouldSerializeInitialValueForProperty: [aPropertyDesc name]])
+	{
+		[self setInitialValue: aValue
+				  forProperty: [aPropertyDesc name]];
+	}
+	else
+	{
+		[super setSerializedValue: aValue
+	       forPropertyDescription: aPropertyDesc];
+	}
 }
 
 #pragma mark Geometry Persistency Support
@@ -220,7 +275,19 @@ ETLayoutItem.view.target. */
 
 - (NSData *) serializedView
 {
-	return ([self view] != nil ? [NSKeyedArchiver archivedDataWithRootObject: [self view]] : nil);
+	NSView *view = nil;
+
+	if ([_defaultValues containsKey: kETViewProperty])
+	{
+		view = [self initialValueForProperty: kETViewProperty];
+
+	}
+	else
+	{
+		view = [self view];
+	}
+
+	return (view != nil ? [NSKeyedArchiver archivedDataWithRootObject: view] : nil);
 }
 
 - (void) setSerializedView: (NSData *)newViewData
@@ -246,7 +313,15 @@ Will involve a unnecessary -syncView:withRepresentedObject: call. */
 {
 	NSView *serializedView = [_deserializationState objectForKey: kETViewProperty];
 
-	if (serializedView != nil)
+	if (serializedView == nil)
+		return;
+
+	if ([_defaultValues containsKey: kETViewProperty])
+	{
+		[self setInitialValue: serializedView
+		          forProperty: kETViewProperty];
+	}
+	else
 	{
 		[self setView: serializedView];
 	}
@@ -562,6 +637,7 @@ static NSString *representedUnorderedAttributeKey = @"representedUnorderedAttrib
 #pragma mark Loading Notifications
 #pragma mark -
 
+
 - (void) awakeFromDeserialization
 {
 	[super awakeFromDeserialization];
@@ -569,6 +645,16 @@ static NSString *representedUnorderedAttributeKey = @"representedUnorderedAttrib
 	// TODO: May be reset the bounding box if not persisted
 	//_boundingBox = ETNullRect;
 	[self prepareTransientState];
+	/* We ensure the supervisor view geometry (flipped, frame and autoresizing) 
+	   is synchronized with the receiver, since item geometry can change with 
+	   deserialization.
+
+	   We don't implement -willLoadObjectGraph to discard the supervisor view
+	   and recreate it kater in -restoreViewFromDeserialization or
+	   -restoreLayoutFromDeserialization, since -[ETLayoutItemGroup willLoadObjectGraph] 
+	   can call -[ETLayoutItemGroup setVisibleItems:] by tearing down the layout, 
+	   and wrongly recreate some item supervisor views in this way. */
+	[self syncSupervisorViewGeometry: ETSyncSupervisorViewFromItem];
 
 	[self restoreViewFromDeserialization];
 	[self restoreRepresentedObjectFromDeserialization];
@@ -699,7 +785,7 @@ step is skipped when loading an item not present in memory. */
 	[super willLoadObjectGraph];
 
 	/* Unapply external state changes related to the layout, usually during 
-	   -[ETLayout setUp], to support switching to a new layout (if the store 
+	   -[ETLayout setUp:], to support switching to a new layout (if the store 
 	   item contains another UUID reference for the layout relationship) */
 	[self setLayout: nil];
 }

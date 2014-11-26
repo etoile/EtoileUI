@@ -27,6 +27,7 @@
 #import "ETLayoutItemGroup.h"
 #import "ETLayoutItemFactory.h"
 #import "ETTool.h"
+#import "ETUIObject.h"
 
 #define SA(x) [NSSet setWithArray: x]
 

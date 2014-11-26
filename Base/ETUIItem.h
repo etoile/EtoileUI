@@ -121,6 +121,7 @@ You must never subclass ETUIItem. ETUIItem ivars must be considered private. */
 /** @taskunit Framework Private */
 
 - (BOOL) shouldSyncSupervisorViewGeometry;
+- (void) syncSupervisorViewGeometry: (ETSyncSupervisorView)syncDirection;
 - (NSRect) convertDisplayRect: (NSRect)rect 
         toAncestorDisplayView: (NSView **)aView 
                      rootView: (NSView *)topView

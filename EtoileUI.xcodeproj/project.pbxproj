@@ -531,6 +531,7 @@
 		60D25603172ECA44004062CF /* ETUIBuilderItemFactory.h in Headers */ = {isa = PBXBuildFile; fileRef = 60D25601172ECA44004062CF /* ETUIBuilderItemFactory.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		60D25604172ECA44004062CF /* ETUIBuilderItemFactory.m in Sources */ = {isa = PBXBuildFile; fileRef = 60D25602172ECA44004062CF /* ETUIBuilderItemFactory.m */; };
 		60D25606172ECA59004062CF /* ETUIBuilderItemFactory.m in Sources */ = {isa = PBXBuildFile; fileRef = 60D25602172ECA44004062CF /* ETUIBuilderItemFactory.m */; };
+		60D289DD1A2323100026A253 /* TestTemplateItemLayoutPersistency.m in Sources */ = {isa = PBXBuildFile; fileRef = 60D289DC1A2323100026A253 /* TestTemplateItemLayoutPersistency.m */; };
 		60D30277194B6A61006BA5A9 /* TestAutoresizing.m in Sources */ = {isa = PBXBuildFile; fileRef = 607DF9A91732C33200C8CB30 /* TestAutoresizing.m */; };
 		60D30278194B75A8006BA5A9 /* TestLayout.m in Sources */ = {isa = PBXBuildFile; fileRef = 609F5B5A16CA9E8800683BD9 /* TestLayout.m */; };
 		60D30279194B75B1006BA5A9 /* TestWidgetLayout.m in Sources */ = {isa = PBXBuildFile; fileRef = 602635E511AD413B007586E3 /* TestWidgetLayout.m */; };
@@ -549,7 +550,7 @@
 		60D30287194BCB3F006BA5A9 /* TestWindowItem.m in Sources */ = {isa = PBXBuildFile; fileRef = 609C01E2170C34F300D01AAB /* TestWindowItem.m */; };
 		60D30288194BCB42006BA5A9 /* TestWindowLayout.m in Sources */ = {isa = PBXBuildFile; fileRef = 6037769216BE7BA900B7EEB5 /* TestWindowLayout.m */; };
 		60D30289194BCBD5006BA5A9 /* TestItemPersistency.m in Sources */ = {isa = PBXBuildFile; fileRef = 60FB0BF913C509A700C2AB94 /* TestItemPersistency.m */; };
-		60D3028A194BCBDF006BA5A9 /* TestFormLayout.m in Sources */ = {isa = PBXBuildFile; fileRef = 605F354A17172DF600E9355A /* TestFormLayout.m */; };
+		60D3028A194BCBDF006BA5A9 /* TestFormLayoutPersistency.m in Sources */ = {isa = PBXBuildFile; fileRef = 605F354A17172DF600E9355A /* TestFormLayoutPersistency.m */; };
 		60D46FD214C5CDE900129CD4 /* CoreObjectUI.h in Headers */ = {isa = PBXBuildFile; fileRef = 60D46FD014C5CDE900129CD4 /* CoreObjectUI.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		60D46FD314C5CDE900129CD4 /* CoreObjectUI.m in Sources */ = {isa = PBXBuildFile; fileRef = 60D46FD114C5CDE900129CD4 /* CoreObjectUI.m */; };
 		60D46FD514C5CDE900129CD4 /* CoreObjectUI.m in Sources */ = {isa = PBXBuildFile; fileRef = 60D46FD114C5CDE900129CD4 /* CoreObjectUI.m */; };
@@ -984,7 +985,7 @@
 		605F0CC30C0F3F8F003AE3E6 /* ObjectManagerController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ObjectManagerController.m; path = ObjectManagerExample/ObjectManagerController.m; sourceTree = "<group>"; };
 		605F0CCA0C0F400D003AE3E6 /* ObjectManagerExample.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = ObjectManagerExample.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		605F0CCC0C0F400D003AE3E6 /* ObjectManagerExample-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = "ObjectManagerExample-Info.plist"; path = "ObjectManagerExample/ObjectManagerExample-Info.plist"; sourceTree = "<group>"; };
-		605F354A17172DF600E9355A /* TestFormLayout.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = TestFormLayout.m; path = Tests/TestFormLayout.m; sourceTree = "<group>"; };
+		605F354A17172DF600E9355A /* TestFormLayoutPersistency.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = TestFormLayoutPersistency.m; path = Tests/TestFormLayoutPersistency.m; sourceTree = "<group>"; };
 		605F354C1717305500E9355A /* TestCommon.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = TestCommon.h; path = Tests/TestCommon.h; sourceTree = "<group>"; };
 		6061F4CC1945ADE7008637A7 /* ETUTIToString.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ETUTIToString.h; path = Persistency/ValueTransformers/ETUTIToString.h; sourceTree = "<group>"; };
 		6061F4CD1945ADE7008637A7 /* ETUTIToString.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ETUTIToString.m; path = Persistency/ValueTransformers/ETUTIToString.m; sourceTree = "<group>"; };
@@ -1263,6 +1264,7 @@
 		60CF743A0D449B9500B4CA3D /* MarkupEditorController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = MarkupEditorController.m; path = MarkupEditor/MarkupEditorController.m; sourceTree = "<group>"; };
 		60D25601172ECA44004062CF /* ETUIBuilderItemFactory.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ETUIBuilderItemFactory.h; path = UIBuilder/ETUIBuilderItemFactory.h; sourceTree = "<group>"; };
 		60D25602172ECA44004062CF /* ETUIBuilderItemFactory.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ETUIBuilderItemFactory.m; path = UIBuilder/ETUIBuilderItemFactory.m; sourceTree = "<group>"; };
+		60D289DC1A2323100026A253 /* TestTemplateItemLayoutPersistency.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = TestTemplateItemLayoutPersistency.m; path = Tests/TestTemplateItemLayoutPersistency.m; sourceTree = "<group>"; };
 		60D46FD014C5CDE900129CD4 /* CoreObjectUI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CoreObjectUI.h; path = CoreObjectUI/CoreObjectUI.h; sourceTree = "<group>"; };
 		60D46FD114C5CDE900129CD4 /* CoreObjectUI.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = CoreObjectUI.m; path = CoreObjectUI/CoreObjectUI.m; sourceTree = "<group>"; };
 		60D4704B14C5D25000129CD4 /* IconKit.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = IconKit.xcodeproj; path = ../IconKit/IconKit.xcodeproj; sourceTree = SOURCE_ROOT; };
@@ -1554,7 +1556,7 @@
 				60C81D381960A81700AEEC68 /* TestControllerPersistency.m */,
 				608B01AA1868A79500D1A573 /* TestFreeLayout.m */,
 				605270841966B34D00B280A4 /* TestFreeLayoutPersistency.m */,
-				605F354A17172DF600E9355A /* TestFormLayout.m */,
+				605F354A17172DF600E9355A /* TestFormLayoutPersistency.m */,
 				608B01AB1868A79600D1A573 /* TestHitTest.m */,
 				6067EB591046B4E600C39086 /* TestItemCopy.m */,
 				6022404D1003DF14007D5D07 /* TestItemGeometry.m */,
@@ -1571,6 +1573,7 @@
 				605270881966C08400B280A4 /* TestStylePersistency.m */,
 				609F5B5E16CA9E8800683BD9 /* TestSupervisorView.m */,
 				6070FD421A09243200A567CB /* TestTableLayoutPersistency.m */,
+				60D289DC1A2323100026A253 /* TestTemplateItemLayoutPersistency.m */,
 				609F5B5F16CA9E8800683BD9 /* TestTool.m */,
 				60A7927D171B803600348EC7 /* TestView.m */,
 				602635E511AD413B007586E3 /* TestWidgetLayout.m */,
@@ -3154,6 +3157,7 @@
 				6037760916BD846900B7EEB5 /* ETLayoutItem+UIBuilder.m in Sources */,
 				6077D2071729EC3F009CE93C /* ETTitleBarItem.m in Sources */,
 				60D25606172ECA59004062CF /* ETUIBuilderItemFactory.m in Sources */,
+				60D289DD1A2323100026A253 /* TestTemplateItemLayoutPersistency.m in Sources */,
 				60C4F5891742406A00AA10F8 /* ETUIBuilderController.m in Sources */,
 				60D30285194BCB04006BA5A9 /* TestItemCopy.m in Sources */,
 				605270851966B34D00B280A4 /* TestFreeLayoutPersistency.m in Sources */,
@@ -3187,7 +3191,7 @@
 				60BBFDF318645483006A495E /* ETTool.m in Sources */,
 				60BBFE0618645684006A495E /* ETApplication.m in Sources */,
 				60BBFE0A18645684006A495E /* ETEvent.m in Sources */,
-				60D3028A194BCBDF006BA5A9 /* TestFormLayout.m in Sources */,
+				60D3028A194BCBDF006BA5A9 /* TestFormLayoutPersistency.m in Sources */,
 				60BBFE1018645684006A495E /* ETResponder.m in Sources */,
 				60C81CF8195DA16F00AEEC68 /* ETPredicateToString.m in Sources */,
 				60BBFE1418645684006A495E /* ETUIItem.m in Sources */,

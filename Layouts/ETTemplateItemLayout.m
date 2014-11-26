@@ -29,6 +29,13 @@
 
 @implementation ETTemplateItemLayout
 
+- (void) prepareTransientState
+{
+	ASSIGN(_renderedItems, [NSMutableSet set]);
+	ASSIGN(_renderedTemplateKeys, [NSArray array]);
+	_needsPrepareItems = YES;
+}
+
 /** <init />
 Initializes and return a new template item layout which uses a flow layout as 
 its positional layout. 
@@ -47,7 +54,7 @@ returned instance (usually in a subclass initializer). */
 	[(ETFlowLayout *)_positionalLayout setItemSizeConstraintStyle: ETSizeConstraintStyleNone];
 	_templateKeys = [[NSArray alloc] init];
 	_localBindings = [[NSMutableDictionary alloc] init];
-	_renderedItems = [[NSMutableSet alloc] init];
+	[self prepareTransientState];
 
 	return self;
 }
@@ -59,45 +66,9 @@ returned instance (usually in a subclass initializer). */
 	DESTROY(_templateKeys);
 	DESTROY(_localBindings);
 	DESTROY(_renderedItems);
+	DESTROY(_renderedTemplateKeys);
 	[super dealloc];
 }
-
-#if 0
-
-- (id) copyWithZone: (NSZone *)aZone layoutContext: (id <ETLayoutingContext>)ctxt
-{
-	ETTemplateItemLayout *layoutCopy = [super copyWithZone: aZone layoutContext: ctxt];
-
-	layoutCopy->_positionalLayout = [(ETLayout *)_positionalLayout copyWithZone: aZone layoutContext: layoutCopy];
-	// FIXME: Pass the current copier
-	layoutCopy->_templateItem = [_templateItem deepCopyWithCopier: [ETCopier copier]];
-	layoutCopy->_templateKeys = [_templateKeys copyWithZone: aZone];
-	layoutCopy->_localBindings = [_localBindings mutableCopyWithZone: aZone];
-	/* Rendered items are set up in -setUpCopyWithZone:original: */
-
-	return layoutCopy;
-}
-
-- (void) setUpCopyWithZone: (NSZone *)aZone 
-                  original: (ETTemplateItemLayout *)layoutOriginal
-{
-	_renderedItems = [[NSMutableSet allocWithZone: aZone] 
-		initWithCapacity: [layoutOriginal->_renderedItems count]];
-
-	FOREACH(layoutOriginal->_renderedItems, item, ETLayoutItem *)
-	{
-		// FIXME: Declare -objectReferencesForCopy in the layouting context protocol
-		ETLayoutItem *itemCopy = [[(id)[self layoutContext] objectReferencesForCopy] objectForKey: item];
-	
-		NSParameterAssert(itemCopy != nil);
-		NSParameterAssert([itemCopy parentItem] == [self layoutContext]);
-
-		[self setUpKVOForItem: itemCopy];
-		[_renderedItems addObject: itemCopy];
-	}
-}
-
-#endif
 
 /** Returns the template item whose property values are used to override the 
 equivalent values on every item that gets layouted. 
@@ -115,11 +86,17 @@ equivalent values on every item that gets layouted.
 
 A layouted item property will have its value replaced only when this property 
 is listed in the template keys.
+ 
+This setter doesn't call -renderAndInvalidateDisplay to prevent compatibility
+issues with -templateKeys.
 
 See -setTemplateKeys:. */
 - (void) setTemplateItem: (ETLayoutItem *)item
 {
+	[self willChangeValueForProperty: @"templateItem"];
 	ASSIGN(_templateItem, item);
+	_needsPrepareItems = YES;
+	[self didChangeValueForProperty: @"templateItem"];
 }
 
 /** Returns the properties whose value should replaced, on every item that get 
@@ -139,10 +116,16 @@ layouted, with the value provided by the template item.
 Those overriden properties will be restored to their original values when the 
 layout is torn down.
 
+This setter doesn't call -renderAndInvalidateDisplay to prevent compatibility
+issues with -templateItem.
+ 
 See -setTemplateItem:. */
 - (void) setTemplateKeys: (NSArray *)keys
 {
+	[self willChangeValueForProperty: @"templateKeys"];
 	ASSIGN(_templateKeys, keys);
+	_needsPrepareItems = YES;
+	[self didChangeValueForProperty: @"templateKeys"];
 }
 
 - (void) bindTemplateItemKeyPath: (NSString *)templateKeyPath 
@@ -158,15 +141,12 @@ original items which are replaced by the layout. */
 	[_localBindings removeAllObjects];
 }
 
+
 - (void) setUpTemplateElementWithNewValue: (id)templateValue
                                    forKey: (NSString *)aKey
                                    inItem: (ETLayoutItem *)anItem
 {
-	BOOL shouldCopyValue = ([templateValue conformsToProtocol: @protocol(NSCopying)] 
-		|| [templateValue conformsToProtocol: @protocol(NSMutableCopying)]);
-	id newValue = (shouldCopyValue ? AUTORELEASE([templateValue copy]) : templateValue);
-
-	[anItem setValue: newValue forKey: aKey];
+	[anItem setValue: templateValue forKey: aKey];
 }
 
 - (void) setUpTemplateElementsForItem: (ETLayoutItem *)item
@@ -182,7 +162,7 @@ original items which are replaced by the layout. */
 		[item setDefaultValue: (nil != value ? value : (id)[NSNull null]) 
 		          forProperty: key];
 
-		[self setUpTemplateElementWithNewValue: [_templateItem valueForKey: key]
+		[self setUpTemplateElementWithNewValue: [_templateItem copyValueForProperty: key]
 		                                forKey: key
 		                                inItem: item];
 
@@ -199,9 +179,20 @@ original items which are replaced by the layout. */
 - (void) setPositionalLayout: (id <ETComputableLayout>)layout
 {
     [layout validateLayoutContext: self];
+
     [self willChangeValueForProperty: @"positionalLayout"];
+	[_positionalLayout tearDown];
 	ASSIGN(_positionalLayout, layout);
     [self didChangeValueForProperty: @"positionalLayout"];
+
+	// NOTE: The remaining code requires ETLayout.layoutContext to be set, so we
+	// execute it last
+	[layout setUp: NO];
+
+	if (layout == nil)
+		return;
+
+	[self renderAndInvalidateDisplay];
 }
 
 /* Subclass Hooks */
@@ -255,6 +246,10 @@ when they get deallocated. */
 - (void) setUp: (BOOL)isDeserialization
 {
 	[super setUp: isDeserialization];
+
+	if (isDeserialization)
+		return;
+
 	[(ETLayout *)[self positionalLayout] resetLayoutSize];
 }
 
@@ -281,6 +276,9 @@ by the value returned by the template item. */
 	{
 		[self setUpTemplateElementsForItem: item];
 	}
+
+	ASSIGN(_renderedTemplateKeys, _templateKeys);
+	_needsPrepareItems = NO;
 }
 
 /** Restores all the items which were rendered since the layout was set up to 
@@ -292,7 +290,7 @@ their initial state. */
 		/* Equivalent to [item setVisible: NO] */
 		[[item displayView] removeFromSuperview];
 
-		FOREACH(_templateKeys, key, NSString *)
+		FOREACH(_renderedTemplateKeys, key, NSString *)
 		{
 			id restoredValue = [item defaultValueForProperty: key];
 
@@ -322,7 +320,7 @@ Does nothing by default. */
 
 - (NSSize) renderWithItems: (NSArray *)items isNewContent: (BOOL)isNewContent
 {
-	if (isNewContent)
+	if (isNewContent || _needsPrepareItems)
 	{
 		[self prepareNewItems: items];
 	}

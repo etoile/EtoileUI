@@ -72,6 +72,8 @@ possible and how to use ETTemplateItemLayout. */
 	NSMutableDictionary *_localBindings;
 	/* All the items that got rendered since the layout has been set up */
 	NSMutableSet *_renderedItems;
+	NSArray *_renderedTemplateKeys;
+	BOOL _needsPrepareItems;
 }
 
 - (ETLayoutItem *) templateItem;

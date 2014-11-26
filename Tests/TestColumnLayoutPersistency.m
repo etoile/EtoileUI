@@ -32,6 +32,11 @@
 	return self;
 }
 
+- (BOOL) computesLayout
+{
+	return YES;
+}
+
 - (void) testLayoutGeometry
 {
 	NSSize itemSize = [item size];
@@ -47,7 +52,7 @@
     {
         ETLayout *newLayout = [newItemGroup layout];
 
-		UKTrue(2.0 == [newLayout previousScaleFactor]);
+		UKIntsEqual(2.0, [newLayout previousScaleFactor]);
 
 		/* Final layout size is smaller than the initial visible content size */
 		CGFloat layoutHeight =
@@ -167,7 +172,7 @@
                                     inBlock: ^(ETLayoutItemGroup *newItemGroup, BOOL isNew, BOOL isCopy)
     {
 		// Will ensure the separators are recreated by executing the layout
-		// update scheduled in -didLoadObjectGraph
+		// update scheduled in -[ETLayoutItemGroup didLoadObjectGraph]
 		[[ETLayoutExecutor sharedInstance] execute];
 
 		ETComputedLayout *newLayout = [newItemGroup layout];

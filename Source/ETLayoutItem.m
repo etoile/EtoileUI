@@ -526,36 +526,28 @@ The returned value can be nil or an empty string. */
 	[self didChangeValueForProperty: kETIdentifierProperty];	
 }
 
-/** Returns the display name associated with the receiver. See also 
-NSObject(Model) in EtoileFoundation. */
+/** Returns -name when a name is set, otherwise the display name of the
+represented object, and in last resort a succinct description of the item.
+ 
+See also NSObject(Model) in EtoileFoundation. */
 - (NSString *) displayName
 {
 	id name = [self name];
 	
-	if (name == nil)
+	if (name != nil)
 	{
-		if ([self view] != nil)
-		{
-			name = [[self view] description];
-		}
-		else if ([self value] != nil)
-		{
-			name = [[self value] stringValue];
-		}
-		else if ([self representedObject] != nil)
-		{
-			/* Makes possible to keep an identical display name between an 
-			   item and all derived meta items (independently of their meta 
-			   levels). */
-			name = [[self representedObject] displayName];
-		}
-		else
-		{
-			name = [super displayName];
-		}
+		return name;
 	}
-		
-	return name;
+	else if ([self representedObject] != nil)
+	{
+		/* Makes possible to keep an identical display name between an item and 
+		   all derived meta items (independently of their meta levels). */
+		return [[self representedObject] displayName];
+	}
+	else
+	{
+		return [self primitiveDescription];
+	}
 }
 
 /** Sets the name associated with the receiver with -setName:. */
@@ -1347,6 +1339,29 @@ also ETView. */
 	return supervisorView;
 }
 
+- (void) syncSupervisorViewGeometry: (ETSyncSupervisorView)syncDirection
+{
+	// TODO: Perhaps raise an exception
+	if (supervisorView == nil)
+		return;
+
+	[super syncSupervisorViewGeometry: syncDirection];
+
+	if (ETSyncSupervisorViewToItem == syncDirection)
+	{
+		[self setFrame: [supervisorView frame]];
+		[self setAutoresizingMask: [supervisorView autoresizingMask]];
+	}
+	else /* ETSyncSupervisorViewFromItem */
+	{
+		[supervisorView setFrame: [self frame]];
+		/* This autoresizing mask won't be used, see -[ETView initWithFrame:],
+		   unless a decorator is set, that resizes the supervisor view to
+		   resize the item. */
+		[supervisorView setAutoresizingMask: [self autoresizingMask]];
+	}
+}
+
 /** Sets the supervisor view associated with the receiver. 
 
 You should never need to call this method.
@@ -1360,23 +1375,6 @@ Throws an exception when item parameter is nil.
 See also -supervisorView:. */
 - (void) setSupervisorView: (ETView *)aSupervisorView sync: (ETSyncSupervisorView)syncDirection
 {
-	if (nil != aSupervisorView)
-	{
-		if (ETSyncSupervisorViewToItem == syncDirection)
-		{
-			[self setFrame: [aSupervisorView frame]];
-			[self setAutoresizingMask: [aSupervisorView autoresizingMask]];
-		}
-		else /* ETSyncSupervisorViewFromItem */
-		{
-			[aSupervisorView setFrame: [self frame]];
-			/* This autoresizing mask won't be used, see -[ETView initWithFrame:],
-			   unless a decorator is set, that resizes the supervisor view to
-			   resize the item. */
-			[aSupervisorView setAutoresizingMask: [self autoresizingMask]];
-		}
-	}
-
 	[super setSupervisorView: aSupervisorView sync: syncDirection];
 
 	if ([[self objectGraphContext] isLoading])
@@ -1805,6 +1803,25 @@ If the given style is nil, the style group becomes empty. */
 	return [_defaultValues objectForKey: key];
 }
 
+- (void) setInitialValue: (id)aValue forProperty: (NSString *)key
+{
+	[_defaultValues setObject: (aValue != nil ? aValue : [NSNull null])
+	                   forKey: key];
+}
+
+- (id) initialValueForProperty: (NSString *)key
+{
+	id value = [_defaultValues objectForKey: key];
+	return ([value isEqual: [NSNull null]] ? nil : value);
+}
+
+- (id) removeInitialValueForProperty: (NSString *)key
+{
+	id value = [_defaultValues objectForKey: key];
+	[_defaultValues removeObjectForKey: key];
+	return value;
+}
+
 /* Geometry */
 
 /** Returns a rect expressed in the parent item content coordinate space 
@@ -1906,25 +1923,9 @@ In case the receiver is not a descendent or ancestor is nil, returns a null rect
 content. 
  
 The returned value will be taken in account in methods related to geometry, 
-event handling and drawing. If you want to alter the flipping, you must use 
--setFlipped: and never alter the supervisor view directly with 
--[ETView setFlipped:].  */
+event handling and drawing. */
 - (BOOL) isFlipped
 {
-	// TODO: Review ETLayoutItem hierarchy to be sure flipped coordinates are 
-	// well supported.
-	if (supervisorView != nil)
-	{
-		// TODO: Enable later...
-		/*if (_flipped != [supervisorView isFlipped])
-		{
-			ETLog(@"WARNING: -isFlipped doesn't match between the layout item "
-				"%@ and its supervisor view %@... You may have wrongly called "
-				"-setFlipped: on the supervisor view.", supervisorView, self);
-		}*/
-		return [supervisorView isFlipped];
-	}
-
 	return _flipped;
 }
 

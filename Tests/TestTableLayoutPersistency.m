@@ -21,6 +21,12 @@
 	return [ETTableLayout class];
 }
 
+- (CGFloat) previousScaleFactorForLayout: (id)newLayout
+{
+	// ETTableLayout doesn't use _previousItemScaleFactor
+	return [[newLayout layoutContext] itemScaleFactor];
+}
+
 - (void) testSelectionAttributes
 {
 	ETSelectTool *tool = [ETSelectTool toolWithObjectGraphContext: [layout objectGraphContext]];

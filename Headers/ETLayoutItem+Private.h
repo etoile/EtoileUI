@@ -26,6 +26,10 @@
 - (void) setDefaultValue: (id)aValue forProperty: (NSString *)key;
 - (id) defaultValueForProperty: (NSString *)key;
 
+- (void) setInitialValue: (id)aValue forProperty: (NSString *)key;
+- (id) initialValueForProperty: (NSString *)key;
+- (id) removeInitialValueForProperty: (NSString *)key;
+
 /** @taskunit View Integration */
 
 - (ETView *) supervisorView;

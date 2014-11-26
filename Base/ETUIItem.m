@@ -164,6 +164,14 @@ also ETView. */
 	return supervisorView;
 }
 
+- (void) syncSupervisorViewGeometry: (ETSyncSupervisorView)syncDirection
+{
+	// TODO: Perhaps support syncDirection here
+
+	/* isFlipped is also sync in -setFlipped: (see subclasses) */
+	[supervisorView setFlipped: [self isFlipped]];
+}
+
 // TODO: Would be better to only allow -setSupervisorView: to be called once 
 // and prevents supervisorView replacement. Presently developers must not 
 // overlook this possibility when they write a subclass, otherwise weird issues 
@@ -178,10 +186,9 @@ See also -supervisorView:. */
                       sync: (ETSyncSupervisorView)syncDirection
 					
 {
-	 /* isFlipped is also sync in -setFlipped: (see subclasses) */
-	[aSupervisorView setFlipped: [self isFlipped]];
 	[aSupervisorView setItemWithoutInsertingView: self];
 	ASSIGN(supervisorView, aSupervisorView);
+	[self syncSupervisorViewGeometry: syncDirection];
 
 	if ([[self objectGraphContext] isLoading])
 		return;

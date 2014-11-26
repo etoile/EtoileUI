@@ -209,15 +209,43 @@ is not an option. */
 
 @implementation ETTemplateItemLayout (CoreObject)
 
-- (void) didLoadObjectGraph
-{
-	[super didLoadObjectGraph];
+#pragma mark Loading Notifications
+#pragma mark -
 
+- (void) awakeFromDeserialization
+{
+	[super awakeFromDeserialization];
+	[self prepareTransientState];
+}
+
+- (void) willLoadObjectGraph
+{
+	[super willLoadObjectGraph];
+
+	/* Unapply external state changes related to the layout, usually during 
+	   -[ETLayout setUp:], to support switching to a new layout (if the store 
+	   item contains another UUID reference for the layout relationship) */
+	[self setPositionalLayout: nil];
+}
+
+- (void) restoreLayoutFromDeserialization
+{
+	[_positionalLayout setUp: YES];
+
+	// TODO: Remove
 	for (ETLayoutItem *item in _renderedItems)
 	{
 		ETAssert([item parentItem] == [self layoutContext]);
 		[self setUpKVOForItem: item];
 	}
+
+    [[self contextItem] setNeedsLayoutUpdate];
+}
+
+- (void) didLoadObjectGraph
+{
+	[super didLoadObjectGraph];
+	[self restoreLayoutFromDeserialization];
 }
 
 @end

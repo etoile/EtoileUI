@@ -140,6 +140,35 @@ The zone argument is currently ignored. */
 	return [self copyToObjectGraphContext: [self objectGraphContext]];
 }
 
+/** Returns a copied or aliased value based on the copy semantics attached to 
+this property/value pair.
+ 
+The metamodel provides the copy semantics with
+-[ETPropertyDescription isAttribute], -[ETPropertyDescription isRelationship] 
+and -[ETPropertyDescription isComposite].
+ 
+For an attribute or non-composite relationship, returns a value copy.
+ 
+Moreover the metamodel copy semantics can be overriden by -[COObject isShared].
+ 
+See also ETModelElementDescription. */
+- (id) copyValueForProperty: (NSString *)aProperty
+{
+	ETPropertyDescription *propertyDesc =
+		[[self entityDescription] propertyDescriptionForName: aProperty];
+	INVALIDARG_EXCEPTION_TEST(aProperty, propertyDesc != nil);
+	id value = [self valueForKey: aProperty];
+
+	if ([propertyDesc isAttribute] || [propertyDesc isComposite] || [[value ifResponds] isShared] == NO)
+	{
+		return [value copy];
+	}
+	else
+	{
+		return value;
+	}
+}
+
 /** <override-dummy />
 Returns whether the receiver can be shared between several owners.
 

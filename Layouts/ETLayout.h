@@ -134,6 +134,10 @@ described in ETComputedLayout description must conform to this prococol.
 
 Warning: This protocol is very much subject to change. */
 @protocol ETComputableLayout <NSObject>
+/** See -[ETLayout tearDown]. */
+- (void) tearDown;
+/** See -[ETLayout setUp:]. */
+- (void) setUp: (BOOL)isDeserialization;
 /** See -[ETPositionalLayout setIsContentSizeLayout]. */
 - (void) setIsContentSizeLayout: (BOOL)flag;
 /** See -[ETPositionalLayout isContentSizeLayout]. */

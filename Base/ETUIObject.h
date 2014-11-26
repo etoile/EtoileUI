@@ -32,6 +32,7 @@
 
 - (id) copyToObjectGraphContext: (COObjectGraphContext *)aContext;
 - (id) copyWithZone: (NSZone *)aZone;
+- (id) copyValueForProperty: (NSString *)aProperty;
 
 /** @taskunit Serialization */
 

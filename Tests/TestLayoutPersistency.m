@@ -27,6 +27,16 @@
 	return [ETLayout class];
 }
 
+- (BOOL) computesLayout
+{
+	return NO;
+}
+
+- (CGFloat) previousScaleFactorForLayout: (id)newLayout
+{
+	return [newLayout previousScaleFactor];
+}
+
 - (id) init
 {
 	SUPERINIT;
@@ -52,7 +62,7 @@
 {
 	DESTROY(itemGroup);
 	DESTROY(item);
-	DESTROY(buttonItem);
+	//DESTROY(buttonItem);
 	DESTROY(layout);
 	[super dealloc];
 }
@@ -79,17 +89,17 @@
     {
         ETLayout *newLayout = [newItemGroup layout];
 
-		if ([newLayout isWidget] == NO)
-		{
-			UKTrue(5.0 == [newLayout previousScaleFactor]);
-		}
+		UKIntsEqual(5.0, [self previousScaleFactorForLayout: newLayout]);
+		
+		NSSize layoutSize =
+			([self computesLayout] ? [newLayout layoutSize] : [itemGroup visibleContentSize]);
 	
-		UKSizesEqual([itemGroup visibleContentSize], [newLayout layoutSize]);
+		UKSizesEqual(layoutSize, [newLayout layoutSize]);
         UKSizesEqual([itemGroup visibleContentSize], [newLayout proposedLayoutSize]);
 		
 		ETLayoutItemGroup *newLayerItem = [newLayout layerItem];
 		
-		UKSizesEqual([itemGroup visibleContentSize], [newLayerItem size]);
+		UKSizesEqual(layoutSize, [newLayerItem size]);
 		UKTrue([itemGroup isFlipped] == [[newLayout layerItem] isFlipped]);
     }];
 }
