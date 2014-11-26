@@ -72,12 +72,15 @@ the receiver is set as the application's delegate in the nib. */
     [op setAllowsMultipleSelection: YES];
     [op setCanCreateDirectories: YES];
     // TODO: Specify image file types... [op setAllowedFileTypes: nil];
-    
+
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
     [op beginSheetForDirectory: nil file: nil types: nil 
                 modalForWindow: [photoView window] 
                  modalDelegate: self 
                 didEndSelector: @selector(selectPicturesPanelDidEnd:returnCode:contextInfo:)
                    contextInfo: nil];
+#pragma clang pop
 }
 
 - (IBAction) changeLayout: (id)sender
@@ -217,8 +220,9 @@ UI level for a photo viewer. */
 	
 	[images removeAllObjects];
     
-    FOREACH([panel filenames], path, NSString *)
+    FOREACH([panel URLs], URL, NSURL *)
     {
+		NSString *path = [URL path];
         NSImage *image = AUTORELEASE([[NSImage alloc] initWithContentsOfFile: path]);
 		
 		if (image == nil)
