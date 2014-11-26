@@ -47,15 +47,6 @@
 	return self;
 }
 
-- (id) copyWithZone: (NSZone *)aZone layoutContext: (id <ETLayoutingContext>)ctxt
-{
-	ETFormLayout *layoutCopy = [super copyWithZone: aZone layoutContext: ctxt];
-
-	layoutCopy->_alignment = _alignment;
-
-	return layoutCopy;
-}
-
 - (NSImage *) icon
 {
 	return [NSImage imageNamed: @"ui-scroll-pane-form"];

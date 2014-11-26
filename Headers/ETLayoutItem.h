@@ -75,7 +75,7 @@ how they should draw the properties they retrieve through the layout item.
 
 Some content aspects won't be applied to a view because they cannot be 
 translated into an autoresizing mask. */
-typedef enum
+typedef enum : NSUInteger
 {
 	ETContentAspectNone, 
 /** Lets the content as is. */

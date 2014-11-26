@@ -14,6 +14,7 @@
 #import "ETWidgetLayout.h"
 #import "ETTableLayout.h"
 #import "ETTemplateItemLayout.h"
+#import "ETFormLayout.h"
 #import "ETIconLayout.h"
 #import "ETTokenLayout.h"
 #import "ETOutlineLayout.h"
@@ -34,6 +35,9 @@
 @end
 
 @interface ETTemplateItemLayout (ModelDescription)
+@end
+
+@interface ETFormLayout (ModelDescription)
 @end
 
 @interface ETIconLayout (ModelDescription)
@@ -378,6 +382,38 @@ so -propertyColumns is never used unless the user inspects the object. */
 	NSArray *persistentProperties = A(positionalLayout, templateItem,
 		templateKeys, localBindings);
 	NSArray *transientProperties = A(renderedItems);
+	
+	[entity setUIBuilderPropertyNames: (id)[[persistentProperties mappedCollection] name]];
+	
+	[[persistentProperties mappedCollection] setPersistent: YES];
+	[entity setPropertyDescriptions:
+	 	[persistentProperties arrayByAddingObjectsFromArray: transientProperties]];
+	
+	return entity;
+}
+
+@end
+
+
+@implementation ETFormLayout (ModelDescription)
+
++ (ETEntityDescription *) newEntityDescription
+{
+	ETEntityDescription *entity = [self newBasicEntityDescription];
+	
+	// For subclasses that don't override -newEntityDescription, we must not add
+	// the property descriptions that we will inherit through the parent
+	if ([[entity name] isEqual: [ETFormLayout className]] == NO)
+		return entity;
+
+	ETPropertyDescription *alignment =
+		[ETPropertyDescription descriptionWithName: @"alignment" type: (id)@"NSUInteger"];
+	ETPropertyDescription *itemLabelFont =
+		[ETPropertyDescription descriptionWithName: @"itemLabelFont" type: (id)@"NSFont"];
+	[itemLabelFont setDerived: YES];
+	
+	NSArray *persistentProperties = A(alignment);
+	NSArray *transientProperties = A(itemLabelFont);
 	
 	[entity setUIBuilderPropertyNames: (id)[[persistentProperties mappedCollection] name]];
 	

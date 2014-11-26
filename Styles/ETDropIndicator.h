@@ -19,7 +19,7 @@
 
 Based on the drop indicator position, the indicator drawing will vary. e.g. bar 
 or rectangle. */
-typedef enum
+typedef enum : NSUInteger
 {
 	ETIndicatorPositionNone, /** No visible indicator. */
 	ETIndicatorPositionOn, /** Drop on indicator. */

@@ -17,7 +17,7 @@
 -[ETLayoutItem drawingForStyle:] with the style to be drawn as argument.
 
 See -setLabelPosition: and -labelPosition: */
-typedef enum
+typedef enum : NSUInteger
 {
 /** Don't draw the label. */
 	ETLabelPositionNone, 
