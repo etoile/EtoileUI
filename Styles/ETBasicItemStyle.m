@@ -175,7 +175,10 @@ means you can safely use it when overriding other drawing methods. */
 - (void) drawImage: (NSImage *)itemImage flipped: (BOOL)itemFlipped inRect: (NSRect)aRect
 {
 	//ETLog(@"Drawing image %@ %@ flipped %d in view %@", itemImage, NSStringFromRect(aRect), [itemImage isFlipped], [NSView focusView]);
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
 	BOOL flipMismatch = (itemFlipped && (itemFlipped != [itemImage isFlipped]));
+#pragma clang diagnostic pop
 	NSAffineTransform *xform = nil;
 
 	if (flipMismatch)

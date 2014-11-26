@@ -982,7 +982,7 @@ NO. */
 {
 	// FIXME: Don't retrieve the backend responder. The backend responder should
 	// be retrieved in -tryPerformKeyEquivalentAndSendKeyEvent:toResponder:
-	id firstResponder = [[[[ETApp keyItem] firstResponderSharingArea] window] firstResponder];
+	id firstResponder = [[(id)[[ETApp keyItem] firstResponderSharingArea] window] firstResponder];
 	[self tryPerformKeyEquivalentAndSendKeyEvent: anEvent toResponder: firstResponder];
 }
 
@@ -990,7 +990,7 @@ NO. */
 {
 	// FIXME: Don't retrieve the backend responder. The backend responder should
 	// be retrieved in -tryPerformKeyEquivalentAndSendKeyEvent:toResponder:
-	id firstResponder = [[[[ETApp keyItem] firstResponderSharingArea] window] firstResponder];
+	id firstResponder = [[(id)[[ETApp keyItem] firstResponderSharingArea] window] firstResponder];
 	[self tryPerformKeyEquivalentAndSendKeyEvent: anEvent toResponder: firstResponder];
 }
 

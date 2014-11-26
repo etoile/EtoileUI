@@ -144,7 +144,10 @@
 		NSRectFill(highlightRect);
 		
 		// Blit the image.
-        [iconImage compositeToPoint:imageFrame.origin operation:NSCompositeSourceOver];
+        [iconImage drawAtPoint:imageFrame.origin
+					  fromRect:NSZeroRect
+					 operation:NSCompositeSourceOver
+					  fraction:1.0];
 		
 		// Have NSBrowser kindly draw the text part, since it knows how to do that for us, no need to re-invent what it knows how to do.
 		[super drawInteriorWithFrame:textFrame inView:controlView];

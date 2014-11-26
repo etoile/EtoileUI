@@ -50,7 +50,7 @@
 {
 	if ([self textRepresentationIncludesLayoutContext])
 	{
-		return [[self layoutContext] stringValue];
+		return [(id)[self layoutContext] stringValue];
 	}
 	else
 	{

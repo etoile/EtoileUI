@@ -80,7 +80,7 @@ the receiver is set as the application's delegate in the nib. */
                  modalDelegate: self 
                 didEndSelector: @selector(selectPicturesPanelDidEnd:returnCode:contextInfo:)
                    contextInfo: nil];
-#pragma clang pop
+#pragma clang diagnostic pop
 }
 
 - (IBAction) changeLayout: (id)sender
