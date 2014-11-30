@@ -571,13 +571,12 @@ The touch location related to this item can be retrieved with
 /* Select Actions */
 
 /** Returns whether item can be selected or not. 
-
-By default returns YES, except when the item is a base item, then returns NO. */
+ 
+By default, returns YES. */
 - (BOOL) canSelect: (ETLayoutItem *)item
 {
-	//if ([item isBaseItem])
-	//	return NO;
-
+	// TODO: Perhaps adopt a behavior similar to 'By default returns YES, except
+	// when the item is a controller item, then returns NO.'
 	return YES;
 }
 

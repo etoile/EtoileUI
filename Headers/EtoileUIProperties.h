@@ -17,7 +17,7 @@ extern NSString * const kETActionHandlerProperty; /** actionHandler property nam
 extern NSString * const kETActionProperty; /** actionHandler property name */
 extern NSString * const kETAnchorPointProperty; /** anchorPoint property name */
 extern NSString * const kETAutoresizingMaskProperty; /** autoresizingMask property name */
-extern NSString * const kETBaseItemProperty; /** baseItem property name */
+extern NSString * const kETSourceItemProperty; /** sourceItem property name */
 extern NSString * const kETBoundingBoxProperty; /** boudingBox property name */
 extern NSString * const kETContentAspectProperty; /** contentAspect property name */
 extern NSString * const kETContentBoundsProperty; /** contentBounds property name */
@@ -36,7 +36,6 @@ extern NSString * const kETHeightProperty; /** height property name */
 extern NSString * const kETIconProperty; /** icon property name */
 extern NSString * const kETIdentifierProperty; /** identifier property name */
 extern NSString * const kETImageProperty; /** image property name */
-extern NSString * const kETIsBaseItemProperty; /** isBaseItem property name */
 extern NSString * const kETIsMetaItemProperty; /** isMetaItem property name */
 extern NSString * const kETItemScaleFactorProperty; /** itemScaleFactor property name */
 extern NSString * const kETLayoutProperty; /** layout property name */

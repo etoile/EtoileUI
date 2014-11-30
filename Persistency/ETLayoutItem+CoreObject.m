@@ -339,16 +339,6 @@ Will involve a unnecessary -syncView:withRepresentedObject: call. */
 #pragma mark Represented Object Persistency Support
 #pragma mark -
 
-- (ETLayoutItem *) sourceItem
-{
-	return ([self isSourceItem] ? self : [[self parentItem] sourceItem]);
-}
-
-- (BOOL) isSourceItem
-{
-	return ([self isBaseItem] && [self source] != nil);
-}
-
 - (BOOL) isSerializableRelationshipCollection: (id <ETCollection>)aCollection
 {
 	return [[[aCollection objectEnumerator] nextObject] isKindOfClass: [COObject class]];

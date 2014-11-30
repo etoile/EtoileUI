@@ -134,7 +134,7 @@ To do so, -canReload checks -isMutating. */
 
 - (BOOL) isValidMutationForRepresentedObject: (id)anObject
 {
-	return ([[self baseItem] shouldMutateRepresentedObject] && [anObject isMutableCollection]);
+	return ([[self sourceItem] shouldMutateRepresentedObject] && [anObject isMutableCollection]);
 }
 
 - (NSIndexSet *) insertionIndexesForIndex: (NSUInteger)index
@@ -378,16 +378,16 @@ item, it is used as a represented object bound to the returned item. */
 
 - (NSArray *) itemsFromSourceWithIndexProtocol
 {
-	ETLayoutItemGroup *baseItem = [self baseItem];
-	int nbOfItems = [[baseItem source] baseItem: baseItem 
-	                   numberOfItemsInItemGroup: self];
+	ETLayoutItemGroup *sourceItem = [self sourceItem];
+	int nbOfItems = [[sourceItem source] baseItem: sourceItem
+	                     numberOfItemsInItemGroup: self];
 	NSMutableArray *itemsFromSource = [NSMutableArray arrayWithCapacity: nbOfItems];
 
 	for (int i = 0; i < nbOfItems; i++)
 	{
-		ETLayoutItem *item = [[baseItem source] baseItem: baseItem 
-		                                     itemAtIndex: i 
-		                                     inItemGroup: self];
+		ETLayoutItem *item = [[sourceItem source] baseItem: sourceItem
+		                                       itemAtIndex: i
+		                                       inItemGroup: self];
 		
 		if (item != nil)
 		{
@@ -397,7 +397,7 @@ item, it is used as a represented object bound to the returned item. */
 		{
 			[NSException raise: @"ETInvalidReturnValueException" 
 				format: @"Item at index %i in %@ returned by source %@ must not be "
-				@"nil", i, self, [baseItem source]];
+				@"nil", i, self, [sourceItem source]];
 		}
 	}
 	[self didChangeContentWithMoreComing: NO];
@@ -463,14 +463,14 @@ Returns 2 when the represented object is expected to provide the content
 (through the collection protocol). */
 - (int) checkSourceProtocolConformance
 {
-	id source = [[self baseItem] source];
+	id source = [[self sourceItem] source];
 
 	/* We test the receiver source to support that item groups returned by 
 	   -baseItem:itemAtIndex:inItemGroup: can provide their content with 
 	   -itemsFromRepresentedObject. 
 	   In this case -itemsFromRepresentedObject has priority over 
 	   -itemsFromSourceWithIndexProtocol. */ 
-	if ([source isEqual: [self baseItem]] || [[self source] isEqual: self])
+	if ([source isEqual: [self sourceItem]] || [[self source] isEqual: self])
 	{
 		return 2;
 	}

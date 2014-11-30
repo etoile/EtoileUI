@@ -79,9 +79,10 @@ repository is the item group represented object). */
 - (NSDragOperation) dragOperationMaskForDestinationItem: (ETLayoutItem *)item
                                             coordinator: (ETPickDropCoordinator *)aPickCoordinator
 {
-	BOOL isDragInsideSource = (item != nil && [[item baseItem] isEqual: [aPickCoordinator dragSource]]);
+	BOOL isDragInsideSourceArea = (item != nil
+		&& [[item controllerItem] isEqual: [[aPickCoordinator dragSource] controllerItem]]);
 	
-	if (isDragInsideSource)
+	if (isDragInsideSourceArea)
 	{
 		return NSDragOperationMove;
 	}

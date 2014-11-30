@@ -651,6 +651,7 @@
 
 	[picker setSize: NSMakeSize(300, [self defaultEditorBodySize].height)];
 	[picker setController: controller];
+	
 	[picker setSource: picker];
 	[picker setLayout: [ETOutlineLayout layoutWithObjectGraphContext: [self objectGraphContext]]];
 	[[picker layout] setAttachedTool: [self pickerTool]];

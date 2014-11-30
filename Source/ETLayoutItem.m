@@ -323,55 +323,49 @@ receiver has no parent item. */
 	}
 }
 
-/** Returns the layout item group which controls the receiver.<br />
-An item group is said to be base item that controls its descendant items when 
-its represented path base is neither nil nor a blank value (see 
--hasValidRepresentedPathBase).
+/** Returns the first ancestor item group which is bound to a source object.
 
-For every descendant item under its control, the base item will drive:
+For the entire item subtree under its control (until a descendant becomes
+another source item), the source item will drive the model access either through:
+
 <list>
-<item>pick and drop validation</item>
-<item>source access</item>
+<item>each descendant item represented object with the collection protocols</item>
+<item>the source protocol and the source object directly</item>
 </list>
-Various delegate-like methods use the base item as their main argument.
 
-All descendant items are controlled by the receiver base item until a descendant 
-becomes a new base item (by providing a represented path base).<br /> 
-See also -representedPathBase, -representedPath, -[ETLayoutItemGroup source] 
-and related setter methods.
+An item group is automatically turned into a source item, when you set a source, 
+see -[ETLayoutItemGroup setSource:].
 
-An item group is automatically turned into a base item, when you set a source 
-or a controller (see -[ETLayoutItemGroup setController:]).
-
-This method will return nil when the receiver isn't a base item or has no 
-ancestor which is a base item.<br />
-Hence -[[[ETLayoutItem alloc] init] baseItem] returns nil. */
-- (ETLayoutItemGroup *) baseItem
+This method will return nil when the receiver isn't a source item or has no
+ancestor which is a source item.
+ 
+See also -source and -controllerItem. */
+- (ETLayoutItemGroup *) sourceItem
 {
-	if ([self isBaseItem])
-	{
-		return (ETLayoutItemGroup *)self;
-	}
-	else
-	{
-		return [[self parentItem] baseItem];
-	}
+	return [[self parentItem] sourceItem];
 }
 
+/** Returns the first ancestor item group which is bound to a controller.
+
+For the entire item subtree under its control (until a descendant becomes
+another source item), the controller will drive:
+ 
+<list>
+<item>pick and drop validation</item>
+<item>sorting</item>
+<item>filtering</item>
+</list>
+
+An item group is automatically turned into a controller item, when you set a
+a controller, see -[ETLayoutItemGroup setController:].
+
+This method will return nil when the receiver isn't a controller item or has no
+ancestor which is a controller item.
+
+See ETController and ETPickAndDropActionHandler. */
 - (ETLayoutItemGroup *) controllerItem
 {
 	return [[self parentItem] controllerItem];
-}
-
-/** Returns whether the receiver is a base item or not.
-
-To be a base item the receiver must have a source or a controller set. 
-See -[ETLayoutItemGroup setSource:] and -[ETLayoutItemGroup setController:].
-
-By default, returns NO. */
-- (BOOL) isBaseItem
-{
-	return NO;
 }
 
 - (ETLayoutItemGroup *) parentItem

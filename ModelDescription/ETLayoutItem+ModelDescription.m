@@ -123,10 +123,8 @@
 	ETPropertyDescription *repObject = [ETPropertyDescription descriptionWithName: @"representedObject" type: (id)@"NSObject"];
 	ETPropertyDescription *controllerItem = [ETPropertyDescription descriptionWithName: @"controllerItem" type: (id)@"ETLayoutItemGroup"];
 	[controllerItem setReadOnly: YES];
-	ETPropertyDescription *baseItem = [ETPropertyDescription descriptionWithName: @"baseItem" type: (id)@"ETLayoutItemGroup"];
-	[baseItem setReadOnly: YES];
-	ETPropertyDescription *isBaseItem = [ETPropertyDescription descriptionWithName: @"isBaseItem" type: (id)@"BOOL"];
-	[isBaseItem setReadOnly: YES];
+	ETPropertyDescription *sourceItem = [ETPropertyDescription descriptionWithName: @"sourceItem" type: (id)@"ETLayoutItemGroup"];
+	[sourceItem setReadOnly: YES];
 	ETPropertyDescription *isMetaItem = [ETPropertyDescription descriptionWithName: @"isMetaItem" type: (id)@"BOOL"];
 	[isMetaItem setReadOnly: YES];
 	ETPropertyDescription *style = [ETPropertyDescription descriptionWithName: @"style" type: (id)@"ETStyle"];
@@ -172,8 +170,8 @@
 	// be declared among the persistent properties or we should support to
 	// override the entity description bound to ETLayoutItem (making possible 
 	// to redeclare these properties as persistent if no view is used).
-	NSArray *derivedProperties = A(parentItem, hostItem, controllerItem, baseItem,
-		isBaseItem, isMetaItem, repObject, valueKey, value, style, frame, x, y,
+	NSArray *derivedProperties = A(parentItem, hostItem, controllerItem, sourceItem,
+		isMetaItem, repObject, valueKey, value, style, frame, x, y,
 		width, height, target, hasVerticalScroller, hasHorizontalScroller);
 	NSArray *transientProperties = [derivedProperties arrayByAddingObjectsFromArray:
 		A(title, objectValue, formatter, minValue, maxValue, pickMetadata,

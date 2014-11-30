@@ -165,7 +165,7 @@ and centers it. A strech is a scale that doesn't preserve the content proportion
 
 - (id) rootItem;
 - (ETLayoutItemGroup *) controllerItem;
-- (ETLayoutItemGroup *) baseItem;
+- (ETLayoutItemGroup *) sourceItem;
 - (NSIndexPath *) indexPathFromItem: (ETLayoutItem *)item;
 - (NSIndexPath *) indexPathForItem: (ETLayoutItem *)item;
 
@@ -233,7 +233,6 @@ If a host item is set, returns -hostItem. */
 
 - (BOOL) isLayoutItem;
 - (BOOL) isGroup;
-- (BOOL) isBaseItem;
 
 /** @taskunit Selection and Visibility */
 

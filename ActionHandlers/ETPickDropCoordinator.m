@@ -955,10 +955,10 @@ argument exception is raised. */
 		&& [[itemGroup actionHandler] boxingForcedForDroppedItem: insertedObject 
 		                                                metadata: metadata]);
 
-	BOOL sameBaseItemForSourceAndDestination = 
-		[[itemGroup baseItem] isEqual: [[self dragSource] baseItem]];
+	BOOL sameSourceItemForSourceAndDestination =
+		[[itemGroup sourceItem] isEqual: [[self dragSource] sourceItem]];
 
-	if (sameBaseItemForSourceAndDestination)
+	if (sameSourceItemForSourceAndDestination)
 	{
 		NSMapTable *draggedItems = [metadata objectForKey: kETPickMetadataDraggedItems];
 		BOOL isDrag = (draggedItems != nil);

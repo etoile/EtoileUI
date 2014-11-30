@@ -185,7 +185,7 @@ too. At this point, the parent item retain count is zero and -dealloc will be
 incorrectly reentered. */
 - (NSSet *) observableKeyPaths
 {
-	return S(kETRootItemProperty, kETBaseItemProperty, kETIsBaseItemProperty, 
+	return S(kETRootItemProperty, kETSourceItemProperty,
 		kETControllerItemProperty, kETParentItemProperty,
 		kETIdentifierProperty, kETNameProperty, kETDisplayNameProperty, 
 		kETValueProperty, kETViewProperty, kETImageProperty, kETIconProperty, 
@@ -210,8 +210,8 @@ affected. */
 	NSSet *geometryDependentKeys = S(kETViewProperty, kETFrameProperty, 
 		kETXProperty, kETYProperty, kETWidthProperty, kETHeightProperty,
 		@"positionX", @"positionY");
-	NSSet *parentDependentKeys = S(kETRootItemProperty, kETIsBaseItemProperty, 
-		kETBaseItemProperty, kETControllerItemProperty);
+	NSSet *parentDependentKeys = S(kETRootItemProperty, kETSourceItemProperty,
+		kETControllerItemProperty);
 	NSSet *nameDependentKeys = S(kETDisplayNameProperty);
 	NSMutableSet *triggerKeys = [NSMutableSet set];
 	

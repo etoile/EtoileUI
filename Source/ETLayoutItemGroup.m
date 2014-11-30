@@ -372,7 +372,7 @@ itself. The code would be something like <example>
 [itemGroupsetSource: itemGroup]</example>. */
 - (BOOL) usesRepresentedObjectAsProvider
 {
-	return ([[[self baseItem] source] isEqual: [self baseItem]]);
+	return ([[[self sourceItem] source] isEqual: [self sourceItem]]);
 }
 
 /** Returns the source which provides the content presented by the receiver.
@@ -383,11 +383,6 @@ object, then this method returns nil. */
 - (id) source
 {
 	return [self valueForVariableStorageKey: kETSourceProperty];
-}
-
-- (BOOL) isBaseItem
-{
-	return ([self source] != nil || [self controller] != nil);
 }
 
 /** Sets the source which provides the content displayed by the receiver. A
@@ -461,6 +456,11 @@ Marks the receiver as needing a layout update. */
 	}
 }
 
+- (ETLayoutItemGroup *) sourceItem
+{
+	return ([self source] != nil ? (ETLayoutItemGroup *)self : [[self parentItem] sourceItem]);
+}
+
 /** Returns the delegate associated with the receiver.
 
 See also -setDelegate:. */
@@ -498,7 +498,7 @@ with the receiver item tree.
 When the given controller is not nil, it is inserted as the next responder and
 the receiver becomes both a base item and the controller content.
 
-See also -setSource:, -isBaseItem and -nextResponder. */
+See also -setSource:, -controllerItem and -nextResponder. */
 - (void) setController: (ETController *)aController
 {
 	[self willChangeValueForProperty: kETControllerProperty];
@@ -678,7 +678,7 @@ This method is a lot more efficient than using -allDescendantItems e.g.
 /** Returns whether the receiver can be reloaded presently with -reload. */
 - (BOOL) canReload
 {
-	BOOL hasSource = ([[self baseItem] source] != nil);
+	BOOL hasSource = ([[self sourceItem] source] != nil);
 
 	return (hasSource && [self isReloading] == NO && [self isMutating] == NO);
 }
@@ -729,16 +729,16 @@ Which means -isFiltered and -isSorted will both return NO.
 Marks the receiver as needing a layout update. */
 - (void) reload
 {
-	BOOL hasSource = ([[self baseItem] source] != nil);
+	BOOL hasSource = ([[self sourceItem] source] != nil);
 
 	if (hasSource)
 	{
-		[self tryReloadWithSource: [[self baseItem] source]];
+		[self tryReloadWithSource: [[self sourceItem] source]];
 	}
 	else
 	{
 		ETLog(@"WARNING: Impossible to reload %@ because the base item miss "
-			@"a source %@", self, [[self baseItem] source]);
+			@"a source %@", self, [[self sourceItem] source]);
 	}
 }
 
