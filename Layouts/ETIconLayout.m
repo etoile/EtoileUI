@@ -59,17 +59,6 @@ Initializes and returns a new icon layout. */
 
 DEALLOC(DESTROY(_itemLabelFont))
 
-- (id) copyWithZone: (NSZone *)aZone layoutContext: (id <ETLayoutingContext>)ctxt
-{
-	ETIconLayout *layoutCopy = 	[super copyWithZone: aZone layoutContext: ctxt];
-	
-	layoutCopy->_itemLabelFont = [_itemLabelFont copyWithZone: aZone];
-	layoutCopy->_iconSizeForScaleFactorUnit = _iconSizeForScaleFactorUnit;
-	layoutCopy->_minIconSize = _minIconSize;
-
-	return layoutCopy;
-}
-
 - (NSImage *) icon
 {
 	return [NSImage imageNamed: @"picture--pencil.png"];
@@ -113,6 +102,7 @@ DEALLOC(DESTROY(_itemLabelFont))
 - (void) setItemTitleFont: (NSFont *)font
 {
 	ASSIGN(_itemLabelFont, font);
+	[self renderAndInvalidateDisplay];
 }
 
 /** Returns the icon size used when the scale factor is equal to 1. 
@@ -133,7 +123,10 @@ scale factor changed.
 See also -iconSizeForScaleFactorUnit. */
 - (void) setIconSizeForScaleFactorUnit: (NSSize)aSize
 {
+	[self willChangeValueForProperty: @"iconSizeForScaleFactorUnit"];
 	_iconSizeForScaleFactorUnit = aSize;
+	[self renderAndInvalidateDisplay];
+	[self didChangeValueForProperty: @"iconSizeForScaleFactorUnit"];
 }
 
 /** Returns the mininum icon size allowed.
@@ -151,7 +144,10 @@ See also -resizeLayoutItems:toScaleFactor:. */
 See also -minIconSize. */
 - (void) setMinIconSize: (NSSize)aSize
 {
+	[self willChangeValueForProperty: @"minIconSize"];
 	_minIconSize = aSize;
+	[self renderAndInvalidateDisplay];
+	[self didChangeValueForProperty: @"minIconSize"];
 }
 
 /* -[ETTemplateLayout renderLayoutItems:isNewContent:] doesn't invoke 
@@ -160,7 +156,7 @@ to trigger the resizing before ETTemplateItemLayout hands the items to the
 positional layout. */
 - (void) willRenderItems: (NSArray *)items isNewContent: (BOOL)isNewContent
 {
-	CGFloat scale = [_layoutContext itemScaleFactor];
+	CGFloat scale = [[self layoutContext] itemScaleFactor];
 	if (isNewContent || scale != _previousScaleFactor)
 	{
 		[self resizeItems: items toScaleFactor: scale];
@@ -180,10 +176,10 @@ value becomes the image size used to compute to the new item size.
 The resizing isn't delegated to the positional layout unlike in ETTemplateItemLayout. */
 - (void) resizeItems: (NSArray *)items toScaleFactor: (CGFloat)factor
 {
-	id <ETFirstResponderSharingArea> responderArea = [_layoutContext firstResponderSharingArea];
+	id <ETFirstResponderSharingArea> responderArea = [[self layoutContext] firstResponderSharingArea];
 
 	/* We use -arrangedItems in case we receive only a subset to resize (not true currently) */
-	if ([[_layoutContext arrangedItems] containsObject: [responderArea editedItem]])
+	if ([[[self layoutContext] arrangedItems] containsObject: [responderArea editedItem]])
 	{
 		[responderArea removeActiveFieldEditorItem];
 	}

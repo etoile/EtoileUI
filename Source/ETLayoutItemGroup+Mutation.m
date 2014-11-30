@@ -134,10 +134,15 @@ To do so, -canReload checks -isMutating. */
 
 - (BOOL) isValidMutationForRepresentedObject: (id)anObject
 {
-	return ([[self baseItem] shouldMutateRepresentedObject] && [anObject isMutableCollection]);
+	return ([[self sourceItem] shouldMutateRepresentedObject] && [anObject isMutableCollection]);
 }
 
-- (void) handleInsertItem: (ETLayoutItem *)item 
+- (NSIndexSet *) insertionIndexesForIndex: (NSUInteger)index
+{
+    return (index == ETUndeterminedIndex ? INDEXSET([self numberOfItems]) : INDEXSET(index));
+}
+
+- (void) handleInsertItem: (ETLayoutItem *)item
                   atIndex: (NSUInteger)index 
                      hint: (id)hint 
                moreComing: (BOOL)moreComing
@@ -151,6 +156,10 @@ To do so, -canReload checks -isMutating. */
 		return;
 	}
 
+    [self willChangeValueForProperty: @"items"
+                           atIndexes: [self insertionIndexesForIndex: index]
+                         withObjects: A(item)
+                        mutationKind: ETCollectionMutationKindInsertion];
 	_mutating = YES;
 
 	if ([self isReloading] == NO)
@@ -168,6 +177,10 @@ To do so, -canReload checks -isMutating. */
 	[self endCoalescingModelMutation];
 
 	_mutating = NO;
+    [self didChangeValueForProperty: @"items"
+                          atIndexes: [self insertionIndexesForIndex: index]
+                        withObjects: A(item)
+                       mutationKind: ETCollectionMutationKindInsertion];
 }
 
 - (void) mutateRepresentedObjectForInsertedItem: (ETLayoutItem *)item 
@@ -205,6 +218,19 @@ To do so, -canReload checks -isMutating. */
 	[parentCollection insertObject: insertedValue atIndex: index hint: hint];
 }
 
+- (NSIndexSet *) removalIndexesForItem: (ETLayoutItem *)item atIndex: (NSUInteger)index
+{
+    NSUInteger removalIndex = index;
+
+    if (removalIndex == ETUndeterminedIndex)
+    {
+        ETAssert(item != nil);
+        removalIndex = [_items indexOfObject: item];
+        ETAssert(removalIndex != NSNotFound);
+    }
+    return INDEXSET(removalIndex);
+}
+
 - (void) handleRemoveItem: (ETLayoutItem *)item
                   atIndex: (NSUInteger)index 
                      hint: (id)hint 
@@ -217,6 +243,14 @@ To do so, -canReload checks -isMutating. */
 	if ([[item parentItem] isEqual: self] == NO)
 		return;
 
+    // FIXME: For batch mutation, the indexes are invalid, because we don't
+    // snapshot the item collection.
+    NSIndexSet *indexes = [self removalIndexesForItem: item atIndex: index];
+
+    [self willChangeValueForProperty: @"items"
+                           atIndexes: indexes
+                         withObjects: A(item)
+                        mutationKind: ETCollectionMutationKindRemoval];
 	_mutating = YES;
 
 	/* Take note that -reload calls -removeAllItems. 
@@ -236,6 +270,10 @@ To do so, -canReload checks -isMutating. */
 	[self endCoalescingModelMutation];
 
 	_mutating = NO;
+    [self didChangeValueForProperty: @"items"
+                          atIndexes: indexes
+                        withObjects: A(item)
+                       mutationKind: ETCollectionMutationKindRemoval];
 }
 
 - (void) mutateRepresentedObjectForRemovedItem: (ETLayoutItem *)item
@@ -340,16 +378,16 @@ item, it is used as a represented object bound to the returned item. */
 
 - (NSArray *) itemsFromSourceWithIndexProtocol
 {
-	ETLayoutItemGroup *baseItem = [self baseItem];
-	int nbOfItems = [[baseItem source] baseItem: baseItem 
-	                   numberOfItemsInItemGroup: self];
+	ETLayoutItemGroup *sourceItem = [self sourceItem];
+	int nbOfItems = [[sourceItem source] baseItem: sourceItem
+	                     numberOfItemsInItemGroup: self];
 	NSMutableArray *itemsFromSource = [NSMutableArray arrayWithCapacity: nbOfItems];
 
 	for (int i = 0; i < nbOfItems; i++)
 	{
-		ETLayoutItem *item = [[baseItem source] baseItem: baseItem 
-		                                     itemAtIndex: i 
-		                                     inItemGroup: self];
+		ETLayoutItem *item = [[sourceItem source] baseItem: sourceItem
+		                                       itemAtIndex: i
+		                                       inItemGroup: self];
 		
 		if (item != nil)
 		{
@@ -359,7 +397,7 @@ item, it is used as a represented object bound to the returned item. */
 		{
 			[NSException raise: @"ETInvalidReturnValueException" 
 				format: @"Item at index %i in %@ returned by source %@ must not be "
-				@"nil", i, self, [baseItem source]];
+				@"nil", i, self, [sourceItem source]];
 		}
 	}
 	[self didChangeContentWithMoreComing: NO];
@@ -377,47 +415,41 @@ This method is only invoked if the receiver item bound to the represented object
 is an item group. */
 - (NSArray *) itemsFromRepresentedObject
 {
-	NSMutableArray *items = nil;
-	id representedObject = [self representedObject];
-	
-	if ([representedObject isCollection])
-	{
-		id collection = representedObject;
+	if ([[self representedObject] isCollection] == NO)
+        return [NSArray array];
 
-		/* Project the collection to get represented objects for future children */
-		if ([collection isKeyed] || [collection isKindOfClass: [ETCollectionViewpoint class]])
-		{
-			// NOTE: This section must remains in sync with -[ETItemTemplate newItemWithURL:options:]
-			if ([collection respondsToSelector: @selector(viewpointArray)])
-			{
-				collection = [collection viewpointArray];
-			}
-			else
-			{
-				collection = [collection arrayRepresentation];
-			}
-		}
-		ETAssert([representedObject count] == [collection count]);
+    NSMutableArray *items = nil;
+    id collection = [self representedObject];
 
-		items = [NSMutableArray arrayWithCapacity: [collection count]];
+    /* Project the collection to get represented objects for future children */
+    if ([collection isKeyed] || [collection isKindOfClass: [ETCollectionViewpoint class]])
+    {
+        // NOTE: This section must remains in sync with -[ETItemTemplate newItemWithURL:options:]
+        if ([collection respondsToSelector: @selector(viewpointArray)])
+        {
+            collection = [collection viewpointArray];
+        }
+        else
+        {
+            collection = [collection arrayRepresentation];
+        }
+    }
+    ETAssert([[self representedObject] count] == [collection count]);
 
-		/* Don't enumerate the collection directly. For keyed collections, this 
-		   is critical since the enumeration applies to the keys or key-value 
-		   pairs (ETAspectCategory and ETAspectRepository whose -content is a 
-		   key-value pair array). Enumerating key-value pairs rather than 
-		   the keyed collection values is supported but must be decided at 
-		   projection time (see above). */
-		for (id object in [collection objectEnumerator])
-		{
-			[items addObject: [self itemWithObject: object isValue: NO]];
-			// NOTE: Would it be a good idea to use...
-			//[self handleAddItem: [self itemWithObject: object isValue: NO]];
-		}
-	}
-	else
-	{
-		items = [NSArray array];
-	}
+    items = [NSMutableArray arrayWithCapacity: [collection count]];
+
+    /* Don't enumerate the collection directly. For keyed collections, this 
+       is critical since the enumeration applies to the keys or key-value 
+       pairs (ETAspectCategory and ETAspectRepository whose -content is a 
+       key-value pair array). Enumerating key-value pairs rather than 
+       the keyed collection values is supported but must be decided at 
+       projection time (see above). */
+    for (id object in [collection objectEnumerator])
+    {
+        [items addObject: [self itemWithObject: object isValue: NO]];
+        // NOTE: Would it be a good idea to use...
+        //[self handleAddItem: [self itemWithObject: object isValue: NO]];
+    }
 	
 	return items;
 }
@@ -431,14 +463,14 @@ Returns 2 when the represented object is expected to provide the content
 (through the collection protocol). */
 - (int) checkSourceProtocolConformance
 {
-	id source = [[self baseItem] source];
+	id source = [[self sourceItem] source];
 
 	/* We test the receiver source to support that item groups returned by 
 	   -baseItem:itemAtIndex:inItemGroup: can provide their content with 
 	   -itemsFromRepresentedObject. 
 	   In this case -itemsFromRepresentedObject has priority over 
 	   -itemsFromSourceWithIndexProtocol. */ 
-	if ([source isEqual: [self baseItem]] || [[self source] isEqual: self])
+	if ([source isEqual: [self sourceItem]] || [[self source] isEqual: self])
 	{
 		return 2;
 	}
@@ -494,9 +526,9 @@ See also ETCollectionDidUpdateNotification.*/
 	// NOTE: If needed, we could introduce a overridable method 
 	// -[ETController templateProviderFallback] (or -templateProvider that 
 	// returns self) that makes possible to reuse parent controller templates.
-	if (nil == provider)
+	if (nil == provider || [provider objectGraphContext] != [self objectGraphContext])
 	{
-		provider = [ETController basicTemplateProvider];
+		provider = [ETController basicTemplateProviderForObjectGraphContext: [self objectGraphContext]];
 	}
 	return provider;
 }

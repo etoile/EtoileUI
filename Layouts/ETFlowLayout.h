@@ -23,20 +23,26 @@ ETComputedLayout:
 <item>itemSizeConstraintStyle to apply to width and height</item> 
 <item>constrainedItemSize to a 256 * 256 px size</item>
 <item>itemMargin to a 15 px border</item>
-</list> */
+</list>
+ 
+For now, -layoutSizeConstraintStyle only supports 
+ETSizeConstraintStyleHorizontal which means items are laid out into horizontal
+lines inside the content height. This height is unlimited if -isContentSizeLayout
+returns YES, otherwise the content height will match the proposed layout size 
+(see -layoutSize). */
 @interface ETFlowLayout : ETComputedLayout 
 {
 	@private
 	ETSizeConstraintStyle _layoutConstraint;
-	BOOL _grid;
+	BOOL _usesGrid;
 }
 
-/* Flow Constraining and Streching */
+/** @taskunit Flow Constraining and Streching */
 
 - (void) setLayoutSizeConstraintStyle: (ETSizeConstraintStyle)constraint;
 - (ETSizeConstraintStyle) layoutSizeConstraintStyle;
 
-/* Additions */
+/** @taskunit Additions */
 
 - (BOOL) usesGrid;
 - (void) setUsesGrid: (BOOL)constraint;

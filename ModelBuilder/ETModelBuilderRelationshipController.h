@@ -9,6 +9,7 @@
 #import <Foundation/Foundation.h>
 #import <EtoileUI/ETGraphicsBackend.h>
 #import <EtoileUI/ETModelDescriptionRenderer.h>
+#import <EtoileUI/ETObjectValueFormatter.h>
 
 @class ETModelDescriptionRepository;
 @class ETItemValueTransformer;
@@ -17,7 +18,7 @@
 - (ETModelDescriptionRepository *) repository;
 @end
 
-@interface ETModelBuilderController : ETController <ETModelBuilderEditionCoordinator>
+@interface ETModelBuilderController : ETController <ETModelBuilderEditionCoordinator, ETObjectValueFormatterDelegate>
 {
 	@private
 	ETItemValueTransformer *_relationshipValueTransformer;

@@ -39,7 +39,7 @@
 #import "ETCompatibility.h"
 
 @interface ETPopUpButtonTarget : NSObject
-+ (id) sharedInstance;
++ (instancetype) sharedInstance;
 @end
 
 @implementation ETModelDescriptionRenderer
@@ -151,7 +151,7 @@ time. For example:
 							                         representedObject: [NSArray array]
 									                        controller: controller];
 	NSFont *smallFont = [NSFont controlContentFontOfSize: [NSFont smallSystemFontSize]];
-	[[[[editor itemForIdentifier: @"browser"] layout] ifResponds] setContentFont: smallFont];
+	[[[(ETLayoutItemGroup *)[editor itemForIdentifier: @"browser"] layout] ifResponds] setContentFont: smallFont];
 	return editor;
 }
 
@@ -596,7 +596,7 @@ See also -setRenderedPropertyNames:. */
 	}
 	[item setName: [self labelForPropertyDescription: aPropertyDesc]];
 
-	return item;
+	return AUTORELEASE(item);
 }
 
 - (id) renderPropertyDescription: (ETPropertyDescription *)aDescription
@@ -661,7 +661,7 @@ See also -setRenderedPropertyNames:. */
 - (ETLayoutItemGroup *) editorForRelationshipDescription: (ETPropertyDescription *)aRelationshipDesc
                                                 ofObject: (id)anObject
 {
-	ETLayoutItemGroup *editor = [[self templateItemForIdentifier: @"collectionEditor"] deepCopy];
+	ETLayoutItemGroup *editor = AUTORELEASE([[self templateItemForIdentifier: @"collectionEditor"] copy]);
 	ETLayoutItemGroup *browser = (id)[editor itemForIdentifier: @"browser"];
 	ETAssert(browser != nil);
 	
@@ -811,7 +811,7 @@ See also -setRenderedPropertyNames:. */
 		}
 	}
 
-	return item;
+	return RETAIN(item);
 }
 
 - (NSString *) templateIdentifierForPropertyDescription: (ETPropertyDescription *)aPropertyDesc
@@ -1044,7 +1044,7 @@ See also -setRenderedPropertyNames:. */
 {
 	ETLayoutItem *templateItem = [self templateItemForPropertyDescription: aPropertyDesc];
 	ETAssert(templateItem != nil);
-	ETLayoutItem *item = AUTORELEASE([templateItem deepCopy]);
+	ETLayoutItem *item = [templateItem copy];
 
 	[item setRepresentedObject: [ETMutableObjectViewpoint viewpointWithName: [aPropertyDesc name]
 													      representedObject: anObject]];

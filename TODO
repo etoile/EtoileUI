@@ -83,6 +83,36 @@ Open Issues
 
 - Implement textArea using NSTextContainer as its represented object and drawing glyphs using NSLayoutManager
 
+- Pass the controller object graph context to -newItemWithRepresentedObject:options:
+
+- Decide whether -parentItem or -enclosingItem should return -hostItem
+
+    - in the current implementation, -parentItem returns -hostItem to prevent rewriting geometry conversion methods to support both -parentItem and -hostItem
+    - returning -hostItem with -enclosingItem rather than -parentItem is probably cleaner... but this will impact geometry conversion, action propagation in the responder chain, and redisplay.
+
+- The type of ETPositionalLayout.contextLayout should be ETLayout <ETLayoutingContext>
+
+    - if we support, multiple inheritance in the metamodel, this would be easy
+    - or we need to introduce another ETLayout subclass such as ETMainLayout that conforms to ETLayoutingContext, and declares a 'positionalLayout' property
+    - for now, we use ETTemplateItemLayout to match the metamodel
+    
+- Move the Nib support out of EtoileUI core
+
+    - For ETNibOwner, don't compile it if the AppKit is not the widget backend (or turn it into an optional trait)
+    - For ETController, move the Nib support into a category
+
+- Persistency support missing for:
+
+    - ETTintStyle, ETShadowStyle, ETSpeechBubbleStyle
+
+- Don't set the icon directly in ETShape, but turn it into a derived property and add -shapeKind. 
+
+    - ETShape.icon would then be computed based on an internal dictionary that maps kind string constants to images.
+
+- Fix -numberOfUntitledDocuments to be computed on demand rather than storing in an ivar (the count is wrong once documents get renamed and this doesn't play well with persistence)
+
+- Declare our own pick and drop operation mask rather than using NSDragOperation
+
 
 Testing
 -------
@@ -104,6 +134,26 @@ Testing
 - Clean TestHitTest
 
 - Don't expose NSWindow in TestCommon
+
+- Check -indexPathForItem: documentation and tests
+
+	- UKNil([item10 indexPathForItem: [itemFactory item]]);
+	- UKNil([[itemFactory item] indexPathForItem: item10]);
+
+- Write ETLayoutItem.source persistency tests (including its interaction with layout update, sorting and filtering)
+
+- Write ETLayoutItem.valueTransformer persistency tests
+
+- Support viewpoint persistency
+
+- Finish tool class hierarchy persistency
+
+
+Documentation
+-------------
+
+- Update -itemWithObject:isValue: doc
+
 
 Old Potential Issues
 --------------------

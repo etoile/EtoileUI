@@ -6,14 +6,19 @@
 	License:  Modified BSD (see COPYING)
  */
  
- #import "PhotoViewController.h"
+#import "PhotoViewController.h"
+#import <EtoileUI/ETUIItemIntegration.h>
 
+#define USE_IMG_VIEW
 
 @implementation PhotoViewController
 
 - (id) init
 {
-	SUPERINIT
+	self = [super initWithObjectGraphContext: [ETUIObject defaultTransientObjectGraphContext]];
+	if (self == nil)
+		return nil;
+
 	images = [[NSMutableArray alloc] init];
 	return self;
 }
@@ -39,7 +44,8 @@ the receiver is set as the application's delegate in the nib. */
 
 	[photoViewItem setController: self];
 	[photoViewItem setSource: self];
-	[photoViewItem setLayout: [self configureLayout: [ETColumnLayout layoutWithObjectGraphContext: [photoViewItem objectGraphContext]]]];
+	[photoViewItem setLayout: [self configureLayout:
+		[ETColumnLayout layoutWithObjectGraphContext: [photoViewItem objectGraphContext]]]];
 	[photoViewItem setHasVerticalScroller: YES];
 	[photoViewItem setHasHorizontalScroller: YES];
 
@@ -66,12 +72,15 @@ the receiver is set as the application's delegate in the nib. */
     [op setAllowsMultipleSelection: YES];
     [op setCanCreateDirectories: YES];
     // TODO: Specify image file types... [op setAllowedFileTypes: nil];
-    
+
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
     [op beginSheetForDirectory: nil file: nil types: nil 
                 modalForWindow: [photoView window] 
                  modalDelegate: self 
                 didEndSelector: @selector(selectPicturesPanelDidEnd:returnCode:contextInfo:)
                    contextInfo: nil];
+#pragma clang diagnostic pop
 }
 
 - (IBAction) changeLayout: (id)sender
@@ -99,7 +108,8 @@ the receiver is set as the application's delegate in the nib. */
 			ETLog(@"Unsupported layout or unknown popup menu selection");
 	}
 	
-	id layoutObject = AUTORELEASE([[layoutClass alloc] init]);
+	id layoutObject = AUTORELEASE([[layoutClass alloc]
+		initWithObjectGraphContext: [photoViewItem objectGraphContext]]);
 
 	[photoViewItem setLayout: [self configureLayout: layoutObject]];
 }
@@ -118,9 +128,9 @@ UI level for a photo viewer. */
 
 		[layoutObject setDisplayName: @"" forProperty: @"icon"];
 		[layoutObject setDisplayName: @"Name" forProperty: @"name"];
-		[layoutObject setDisplayName: @"Type" forProperty: @"imgType"];
+		[layoutObject setDisplayName: @"Type" forProperty: @"type"];
 		[layoutObject setDisplayName: @"Size" forProperty: @"size"];
-		[layoutObject setDisplayName: @"Modification Date" forProperty: @"modificationdate"];
+		[layoutObject setDisplayName: @"Modification Date" forProperty: @"modificationDate"];
 	}
 	if ([layoutObject isKindOfClass: [ETComputedLayout class]])
 	{
@@ -210,8 +220,9 @@ UI level for a photo viewer. */
 	
 	[images removeAllObjects];
     
-    FOREACH([panel filenames], path, NSString *)
+    FOREACH([panel URLs], URL, NSURL *)
     {
+		NSString *path = [URL path];
         NSImage *image = AUTORELEASE([[NSImage alloc] initWithContentsOfFile: path]);
 		
 		if (image == nil)
@@ -247,6 +258,28 @@ UI level for a photo viewer. */
     [photoViewItem reloadAndUpdateLayout];
 }
 
+- (PhotoAsset *)photoAssetWithImage: (NSImage *)img
+{
+	PhotoAsset *asset = AUTORELEASE([PhotoAsset new]);
+	NSString *appName = nil;
+	NSString *type = nil;
+	
+	[[NSWorkspace sharedWorkspace] getInfoForFile: [img name]
+	                                  application: &appName
+	                                         type: &type];
+
+	NSDictionary *info =
+		[[NSFileManager defaultManager] attributesOfItemAtPath: [img name]
+	                                                     error: NULL];
+	
+	[asset setName: [[img name] lastPathComponent]];
+	[asset setModificationDate: [info objectForKey: NSFileModificationDate]];
+	[asset setType: type];
+	[asset setImage: img];
+
+	return asset;
+}
+
 /* When no source is set, this method is called by -selectPicturePanelDidEnd:XXX 
 to build layout items and adds them to the photo view directly.
 
@@ -264,7 +297,8 @@ protocol methods. */
 	
 	FOREACH(images, img, NSImage *)
 	{
-		ETLayoutItem *item = [[ETLayoutItemFactory factory] itemWithView: [self imageViewForImage: img]];
+		ETLayoutItem *item =
+			[[ETLayoutItemFactory factory] itemWithView: [self imageViewForImage: img]];
 
 		 /* Use the image as the item model
 		 
@@ -272,21 +306,19 @@ protocol methods. */
 			-setName: etc.) won't be visible at the UI level, because property 
 			values are retrieved through -[ETLayoutItem valueForProperty:] which 
 			only looks them up on the represented object when one is set. */
-		[item setRepresentedObject: img];
+		[item setRepresentedObject: [self photoAssetWithImage: img]];
 
 		[imageItems addObject: item];
 	}
-	
-	[photoViewItem removeAllItems]; /* Remove all the items added previously */
+
+	/* Remove all the items added previously */
+	[photoViewItem removeAllItems];
 	[photoViewItem addItems: imageItems];
 }
 
 - (NSImageView *) imageViewForImage: (NSImage *)image
 {
 #ifdef USE_IMG_VIEW
-	return nil;
-#endif
-
 	if (image == nil)
 		return nil;
 
@@ -296,6 +328,9 @@ protocol methods. */
 	[view setImage: image];
 
 	return view;
+#else
+	return nil;
+#endif
 }
 
 /* ETLayoutItemGroup Source Protocol as a variant to -setUpLayoutItemsDirectly. 
@@ -317,29 +352,46 @@ protocol methods. */
                 inItemGroup: (ETLayoutItemGroup *)itemGroup
 {
 	NSImage *img = [images objectAtIndex: index];
-	ETLayoutItem *imageItem = [[ETLayoutItemFactory factory] itemWithView: [self imageViewForImage: img]];
-	NSWorkspace *wk = [NSWorkspace sharedWorkspace];
-	NSString *appName = nil;
-	NSString *type = nil;
+	ETLayoutItem *imageItem =
+		[[ETLayoutItemFactory factory] itemWithView: [self imageViewForImage: img]];
 
-	[wk getInfoForFile: [img name] application: &appName type: &type];
-
-	/* We can set property values on the layout item itself, because no 
-	   represented object has been set and -[ETLayoutItem valueForProperty:] 
-	   will thus look them up in the item. */
-	[imageItem setName: [[img name] lastPathComponent]];
-	[imageItem setIcon: [wk iconForFile: [img name]] ];		
-	[imageItem setValue: type forProperty: @"imgType"];
-	[imageItem setSubtype: [ETUTI typeWithString: @"public.image"]];
-	
 	//ETLog(@"Returns %@ as item in %@", imageItem, baseItem);
+
+	[imageItem setRepresentedObject: [self photoAssetWithImage: img]];
+	[imageItem setSubtype: [ETUTI typeWithString: @"public.image"]];
 
 	return imageItem;
 }
 
 - (NSArray *) displayedItemPropertiesInItemGroup: (ETLayoutItemGroup *)baseItem
 {
-	return A(@"icon", @"name", @"size", @"imgType", @"modificationdate");
+	return A(@"icon", @"name", @"size", @"type", @"modificationDate");
+}
+
+@end
+
+
+@implementation PhotoAsset
+
+- (NSArray *) propertyNames
+{
+	return [[super propertyNames]
+		arrayByAddingObjectsFromArray: A(@"name", @"size", @"type", @"modificationDate")];
+}
+
+/* -[ETBasicItemStyle imageForItem:] returns -icon and not -image by default, 
+because all objects implement -icon, see -[NSObject icon].
+ 
+You could override -[ETBasicItemStyle imageForItem:] to return -image in a 
+subclass, but it's easier to just override -icon in PhotoAsset here. */
+- (NSImage *) icon
+{
+	return [self image];
+}
+
+- (NSSize) size
+{
+	return [[self image] size];
 }
 
 @end

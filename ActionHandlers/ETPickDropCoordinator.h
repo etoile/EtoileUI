@@ -44,8 +44,8 @@
 	NSUInteger _insertionShift;
 }
 
-+ (id) sharedInstance;
-+ (id) sharedInstanceWithEvent: (ETEvent *)anEvent;
++ (instancetype) sharedInstance;
++ (instancetype) sharedInstanceWithEvent: (ETEvent *)anEvent;
 + (unsigned int) forceEnablePickAndDropModifier;
 
 - (void) beginDragItem: (ETLayoutItem *)item
@@ -64,7 +64,7 @@
 
 - (ETLayoutItem *) dragSource;
 - (unsigned int) dragModifierFlags;
-- (unsigned int) dragOperationMaskForDestinationItem: (ETLayoutItem *)item;
+- (NSDragOperation) dragOperationMaskForDestinationItem: (ETLayoutItem *)item;
 - (NSPoint) dragLocationInDestinationItem: (ETLayoutItem *)item;
 
 /* Drop Insertion */

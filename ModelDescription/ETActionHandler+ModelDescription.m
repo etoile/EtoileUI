@@ -8,9 +8,14 @@
 
 #import <EtoileFoundation/EtoileFoundation.h>
 #import "ETActionHandler.h"
+#import "ETTokenLayout.h"
 
 @interface ETActionHandler (ModelDescription)
 @end
+
+@interface ETTokenActionHandler (ModelDescription)
+@end
+
 
 @implementation ETActionHandler (ModelDescription)
 
@@ -31,6 +36,31 @@
 	[entity setUIBuilderPropertyNames: A([fieldEditorItem name])];
 
 	[entity setPropertyDescriptions: A(fieldEditorItem)];
+
+	return entity;
+}
+
+@end
+
+
+@implementation ETTokenActionHandler (ModelDescription)
+
++ (ETEntityDescription *) newEntityDescription
+{
+	ETEntityDescription *entity = [self newBasicEntityDescription];
+
+	// For subclasses that don't override -newEntityDescription, we must not add 
+	// the property descriptions that we will inherit through the parent
+	if ([[entity name] isEqual: [ETTokenActionHandler className]] == NO)
+		return entity;
+
+	ETPropertyDescription *editedProperty =
+		[ETPropertyDescription descriptionWithName: @"editedProperty" type: (id)@"NSString"];
+
+	[entity setUIBuilderPropertyNames: A([editedProperty name])];
+
+	[editedProperty setPersistent: YES];
+	[entity setPropertyDescriptions: A(editedProperty)];
 
 	return entity;
 }

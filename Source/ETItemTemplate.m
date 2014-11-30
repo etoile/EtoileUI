@@ -181,7 +181,8 @@ Can be overriden in subclasses. */
 - (ETLayoutItem *) newItemWithRepresentedObject: (id)anObject options: (NSDictionary *)options
 {
 	NSIndexPath *contentIndexPath = [[self contentItem] indexPathFromItem: [self item]];
-	id newItem = [[self item] deepCopy];
+	// FIXME: We should pass the controller object graph context.
+	id newItem = [[self item] copyToObjectGraphContext: [self objectGraphContext]];
 	ETLayoutItem *newContentItem = ([newItem isGroup] ? [newItem itemAtIndexPath: contentIndexPath] : newItem);
 
 	/* We don't set the object as model when it is nil, so any existing value 
@@ -296,6 +297,7 @@ See also -newItemWithRepresentedObject:options:. */
 	{
 		newInstance = [newInstance init];
 	}
+    AUTORELEASE(newInstance);
 	id parentObject = [options objectForKey: kETTemplateOptionParentRepresentedObject];
 	id value = [self mutableObjectForRepresentedObject: newInstance
 									   ofParentCollection: parentObject options: options];
@@ -330,7 +332,7 @@ See also -newItemWithRepresentedObject:options:. */
 	else
 	{
 		// TODO: Return compound document UTI
-		return nil;
+		return [NSArray array];
 	}
 }
 
@@ -397,7 +399,6 @@ NSString * const kETTemplateOptionModelDescriptionRepository = @"kETTemplateOpti
 NSString * const kETTemplateOptionKeyValuePairKey = @"kETTemplateOptionKeyValuePairKey";
 NSString * const kETTemplateOptionParentRepresentedObject = @"kETTemplateOptionParentRepresentedObject";
 
-#ifdef COREOBJECT
 @implementation COObject (ETItemTemplate)
 
 - (COObjectGraphContext *) objectGraphContextForPersistentObjectContext: (id <COPersistentObjectContext>)context
@@ -447,4 +448,3 @@ NSString * const kETTemplateOptionParentRepresentedObject = @"kETTemplateOptionP
 }
 
 @end
-#endif

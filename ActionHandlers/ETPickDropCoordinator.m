@@ -17,6 +17,7 @@
 #import <EtoileFoundation/NSObject+Model.h>
 #import <EtoileFoundation/NSMapTable+Etoile.h>
 #import "ETPickDropCoordinator.h"
+#import "ETDropIndicator.h"
 #import "ETEvent.h"
 #import "ETGeometry.h"
 #import "EtoileUIProperties.h"
@@ -29,7 +30,6 @@
 #import "ETPickboard.h"
 #import "ETPickDropActionHandler.h"
 #import "ETSelectTool.h" /* For -shouldRemoveItemsAtPickTime */
-#import "ETStyle.h"
 #import "ETStyleGroup.h"
 // FIXME: Move related code to the Appkit widget backend (perhaps in a subclass or category)
 #import "ETWidgetBackend.h"
@@ -40,7 +40,7 @@
 - (void) reset;
 
 - (BOOL) ignoreModifierKeysWhileDragging;
-- (unsigned int) draggingSourceOperationMaskForLocal: (BOOL)isLocal;
+- (NSDragOperation) draggingSourceOperationMaskForLocal: (BOOL)isLocal;
 - (void) draggedImage: (NSImage *)anImage beganAt: (NSPoint)aPoint;
 - (void) draggedImage: (NSImage *)draggedImage movedTo: (NSPoint)screenPoint;
 - (void) draggedImage: (NSImage *)anImage
@@ -70,7 +70,7 @@
 static ETPickDropCoordinator *sharedInstance = nil;
 
 /** Returns the default pick and drop coordinator. */
-+ (id) sharedInstance
++ (instancetype) sharedInstance
 {
 	if (nil == sharedInstance)
 	{
@@ -81,7 +81,7 @@ static ETPickDropCoordinator *sharedInstance = nil;
 
 /** Returns the default pick and drop coordinator reinitialized with a new 
 event. */
-+ (id) sharedInstanceWithEvent: (ETEvent *)anEvent
++ (instancetype) sharedInstanceWithEvent: (ETEvent *)anEvent
 {
 	if (sharedInstance == nil)
 	{
@@ -298,7 +298,7 @@ and the modifiers currently pressed if
 
 The aforementioned methods return values can be altered with their related 
 setters in the ETActionHandler bound to the drag source. */
-- (unsigned int) dragOperationMaskForDestinationItem: (ETLayoutItem *)item
+- (NSDragOperation) dragOperationMaskForDestinationItem: (ETLayoutItem *)item
 {
 	// TODO: Could need to be tweaked when pick and drop is forced or enabled 
 	// for all items
@@ -355,7 +355,7 @@ pick and drop, or when the drop target is located in another process.
 
 For example, ETTableLayout and ETOutlineLayout might call back this method in 
 the cases described above. */
-- (unsigned int) draggingSourceOperationMaskForLocal: (BOOL)isLocal
+- (NSDragOperation) draggingSourceOperationMaskForLocal: (BOOL)isLocal
 {
 	// NOTE: Don't use -dragInfo, because the NSDraggingInfo object won't exist  
 	// yet the first time this method is called
@@ -891,16 +891,9 @@ Both methods called -handleDragEnd:forItem: on the drop target item. */
 	}
 	else if (op & NSDragOperationCopy)
 	{
-		if ([droppedObject respondsToSelector: @selector(deepCopy)])
-		{
-			object = [droppedObject deepCopy];
-		}
-		else
-		{
-			// TODO: Should we just let -copy raises its exception abruptly if 
-			// the object cannot be copied...
-			object = [droppedObject copy];
-		}
+		// TODO: Should we just let -copy raises its exception abruptly if 
+		// the object cannot be copied...
+		object = AUTORELEASE([droppedObject copy]);
 
 		if (*aHint != nil)
 		{
@@ -962,10 +955,10 @@ argument exception is raised. */
 		&& [[itemGroup actionHandler] boxingForcedForDroppedItem: insertedObject 
 		                                                metadata: metadata]);
 
-	BOOL sameBaseItemForSourceAndDestination = 
-		[[itemGroup baseItem] isEqual: [[self dragSource] baseItem]];
+	BOOL sameSourceItemForSourceAndDestination =
+		[[itemGroup sourceItem] isEqual: [[self dragSource] sourceItem]];
 
-	if (sameBaseItemForSourceAndDestination)
+	if (sameSourceItemForSourceAndDestination)
 	{
 		NSMapTable *draggedItems = [metadata objectForKey: kETPickMetadataDraggedItems];
 		BOOL isDrag = (draggedItems != nil);

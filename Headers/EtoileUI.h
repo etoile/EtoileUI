@@ -59,15 +59,18 @@
 /* Styles */
 
 #import <EtoileUI/ETBasicItemStyle.h>
+#import <EtoileUI/ETDropIndicator.h>
 #import <EtoileUI/ETShape.h>
 #import <EtoileUI/ETStyle.h>
 #import <EtoileUI/ETStyleGroup.h>
+#import <EtoileUI/ETShadowStyle.h>
+#import <EtoileUI/ETSpeechBubbleStyle.h>
+#import <EtoileUI/ETTintStyle.h>
 
 /* Layouts */
 
 #import <EtoileUI/ETBrowserLayout.h>
 #import <EtoileUI/ETColumnLayout.h>
-#import <EtoileUI/ETCompositeLayout.h>
 #import <EtoileUI/ETComputedLayout.h>
 #import <EtoileUI/ETFixedLayout.h>
 #import <EtoileUI/ETFlowLayout.h>
@@ -77,7 +80,6 @@
 #import <EtoileUI/ETLayout.h>
 #import <EtoileUI/ETLineLayout.h>
 #import <EtoileUI/ETOutlineLayout.h>
-#import <EtoileUI/ETPaneLayout.h>
 #import <EtoileUI/ETPositionalLayout.h>
 #import <EtoileUI/ETTableLayout.h>
 #import <EtoileUI/ETTemplateItemLayout.h>
@@ -118,9 +120,7 @@
 
 /* Core Object */
 
-#ifdef COREOBJECT
 #import <EtoileUI/ETLayoutItem+CoreObject.h>
-#endif
 
 /* UI Builder */
 

@@ -11,8 +11,21 @@
 #import "ETStyle.h"
 #import "ETStyleGroup.h"
 #import "ETShape.h"
+#import "ETTokenLayout.h"
 
 @interface ETStyle (ModelDescrition)
+@end
+
+@interface ETStyleGroup (ModelDescrition)
+@end
+
+@interface ETBasicItemStyle (ModelDescrition)
+@end
+
+@interface ETShape (ModelDescrition)
+@end
+
+@interface ETTokenStyle (ModelDescrition)
 @end
 
 @implementation ETStyle (ModelDescription)
@@ -26,7 +39,9 @@
 	if ([[entity name] isEqual: [ETStyle className]] == NO) 
 		return entity;
 
+	/* We overwrite COObject.isShared to be read/write */
 	ETPropertyDescription *isShared = [ETPropertyDescription descriptionWithName: @"isShared" type: (id)@"BOOL"];
+	[isShared setPersistent: YES];
 
 	[entity setUIBuilderPropertyNames: A([isShared name])];
 
@@ -37,8 +52,6 @@
 
 @end
 
-@interface ETStyleGroup (ModelDescrition)
-@end
 
 @implementation ETStyleGroup (ModelDescription)
 
@@ -67,8 +80,6 @@
 
 @end
 
-@interface ETBasicItemStyle (ModelDescrition)
-@end
 
 @implementation ETBasicItemStyle (ModelDescription)
 
@@ -125,8 +136,6 @@
 
 @end
 
-@interface ETShape (ModelDescrition)
-@end
 
 @implementation ETShape (ModelDescription)
 
@@ -140,10 +149,17 @@
 		return entity;
 
 	ETPropertyDescription *path = [ETPropertyDescription descriptionWithName: @"path" type: (id)@"NSBezierPath"];
+    [path setValueTransformerName: @"COObjectToArchivedData"];
+    [path setPersistentTypeName: @"NSData"];
 	ETPropertyDescription *bounds = [ETPropertyDescription descriptionWithName: @"bounds" type: (id)@"NSRect"];
 	ETPropertyDescription *pathResizeSel = [ETPropertyDescription descriptionWithName: @"pathResizeSelector" type: (id)@"SEL"];
+    [pathResizeSel setPersistentTypeName: @"NSString"];
 	ETPropertyDescription *fillColor = [ETPropertyDescription descriptionWithName: @"fillColor" type: (id)@"NSColor"];
+    [fillColor setValueTransformerName: @"COColorToHTMLString"];
+    [fillColor setPersistentTypeName: @"NSString"];
 	ETPropertyDescription *strokeColor = [ETPropertyDescription descriptionWithName: @"strokeColor" type: (id)@"NSColor"];
+    [strokeColor setValueTransformerName: @"COColorToHTMLString"];
+    [strokeColor setPersistentTypeName: @"NSString"];
 	ETPropertyDescription *alpha = [ETPropertyDescription descriptionWithName: @"alphaValue" type: (id)@"CGFloat"];
 	ETPropertyDescription *hidden = [ETPropertyDescription descriptionWithName: @"hidden" type: (id)@"BOOL"];
 
@@ -156,6 +172,33 @@
 	[[persistentProperties mappedCollection] setPersistent: YES];
 	[entity setPropertyDescriptions: [persistentProperties arrayByAddingObjectsFromArray: transientProperties]];
 
+	return entity;
+}
+
+@end
+
+
+@implementation ETTokenStyle (ModelDescription)
+
++ (ETEntityDescription *) newEntityDescription
+{
+	ETEntityDescription *entity = [self newBasicEntityDescription];
+	
+	// For subclasses that don't override -newEntityDescription, we must not add
+	// the property descriptions that we will inherit through the parent
+	if ([[entity name] isEqual: [ETTokenStyle className]] == NO)
+		return entity;
+
+	ETPropertyDescription *tintColor =
+		[ETPropertyDescription descriptionWithName: @"tintColor" type: (id)@"NSColor"];
+	[tintColor setValueTransformerName: @"COColorToHTMLString"];
+	[tintColor setPersistentTypeName: @"NSString"];
+
+	[entity setUIBuilderPropertyNames: A([tintColor name])];
+	
+	[tintColor setPersistent: YES];
+	[entity setPropertyDescriptions: A(tintColor)];
+	
 	return entity;
 }
 

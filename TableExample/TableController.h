@@ -12,7 +12,7 @@
 #import <Foundation/Foundation.h>
 #import <AppKit/AppKit.h>
 #import <EtoileUI/EtoileUI.h>
-
+#import <EtoileUI/ETUIItemIntegration.h>
 
 @interface TableController : NSObject
 {

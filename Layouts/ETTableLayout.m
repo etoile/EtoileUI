@@ -15,6 +15,7 @@
 #import "ETGeometry.h"
 #import "ETLayoutItem.h"
 #import "ETLayoutItem+AppKit.h"
+#import "ETLayoutItemGroup.h"
 #import "EtoileUIProperties.h"
 #import "ETEvent.h"
 #import "ETPickboard.h"
@@ -30,13 +31,18 @@
 /* Private Interface */
 
 @interface ETTableLayout (Private)
+- (ETLayoutItemGroup *) layoutContext;
 - (void) _updateDisplayedPropertiesFromSource;
 @end
 
 #define DEFAULT_ROW_HEIGHT 16
 
-
 @implementation ETTableLayout
+
+- (ETLayoutItemGroup *) layoutContext
+{
+    return (ETLayoutItemGroup *)[super layoutContext];
+}
 
 - (NSString *) nibName
 {
@@ -50,23 +56,6 @@
 	DESTROY(_currentSortDescriptors);
 	DESTROY(_contentFont);
 	[super dealloc];
-}
-
-- (id) copyWithZone: (NSZone *)aZone layoutContext: (id <ETLayoutingContext>)ctxt
-{
-	ETTableLayout *newLayout = [super copyWithZone: aZone layoutContext: ctxt];
-	NSParameterAssert([newLayout tableView] != [self tableView]);
-
-	/* Will initialize several ivars in the layout copy */
-	[newLayout setLayoutView: [newLayout layoutView]];
-	newLayout->_contentFont = [_contentFont copyWithZone: aZone];
-	newLayout->_sortable = _sortable;
-
-	/* The target points on a random object since the original object (the 
-	   receiver) was not archived by - [NSViewView copyWithZone:]. */
-	[[newLayout tableView] setTarget: newLayout];
-
-	return newLayout;
 }
 
 - (void) awakeFromNib
@@ -177,6 +166,9 @@ The property names are used as the column identifiers.
 Will raise an NSInvalidArgumentException when the properties array is nil. */
 - (void) setDisplayedProperties: (NSArray *)properties
 {
+	[self willChangeValueForProperty: @"displayedProperties"];
+	[self willChangeValueForProperty: @"layoutView"];
+	[self willChangeValueForProperty: @"propertyColumns"];
 	ETDebugLog(@"Set displayed properties %@ of layout %@", properties, self);
 
 	NILARG_EXCEPTION_TEST(properties);
@@ -223,6 +215,9 @@ Will raise an NSInvalidArgumentException when the properties array is nil. */
 
 		isFirstColumn = NO;
 	}
+	[self didChangeValueForProperty: @"propertyColumns"];
+	[self didChangeValueForProperty: @"layoutView"];
+	[self didChangeValueForProperty: @"displayedProperties"];
 }
 
 - (void) _updateDisplayedPropertiesFromSource: (id)aSource
@@ -231,7 +226,7 @@ Will raise an NSInvalidArgumentException when the properties array is nil. */
 		return;
 
 	NSArray *properties = [[aSource ifResponds] 
-		displayedItemPropertiesInItemGroup: _layoutContext];
+		displayedItemPropertiesInItemGroup: (ETLayoutItemGroup *)[self layoutContext]];
 
 	if (nil == properties)
 		return;
@@ -249,8 +244,12 @@ Will raise an NSInvalidArgumentException when the properties array is nil. */
 property display name should usually be passed as argument. */
 - (void) setDisplayName: (NSString *)displayName forProperty: (NSString *)property
 {
+	[self willChangeValueForProperty: @"layoutView"];
+	[self willChangeValueForProperty: @"propertyColumns"];
 	NSTableColumn *column = [self tableColumnWithIdentifierAndCreateIfAbsent: property];
 	[[column headerCell] setStringValue: displayName];
+	[self didChangeValueForProperty: @"propertyColumns"];
+	[self didChangeValueForProperty: @"layoutView"];
 }
 
 // NOTE: Gorm doesn't create editable data cell by default unlike IB and 
@@ -269,13 +268,17 @@ By default, columns are not editable and NO is returned. */
 /** Sets whether the column associated with the given property is editable. */
 - (void) setEditable: (BOOL)flag forProperty: (NSString *)property
 {
+	[self willChangeValueForProperty: @"layoutView"];
+	[self willChangeValueForProperty: @"propertyColumns"];
 	NSTableColumn *column = [self tableColumnWithIdentifierAndCreateIfAbsent: property];
 	ETAssert(nil != column);
 	/* A table view cell can be edited only if both [column isEditable] and 
 	   [[column dataCell] isEditable] returns YES.
 	   -[NSTableColumn isEditable] takes priority over the cell editability. */
 	[[column dataCell] setEditable: flag];
-	[column setEditable: flag];	
+	[column setEditable: flag];
+	[self didChangeValueForProperty: @"propertyColumns"];
+	[self didChangeValueForProperty: @"layoutView"];
 }
 
 /** Returns the formatter of the column associated with the given property.
@@ -292,6 +295,8 @@ The object value returned by -valueForProperty: on each item must be compatible
 with the formatter, otherwise the outcome of the formatting is unknown. */
 - (void) setFormatter: (NSFormatter *)aFormatter forProperty: (NSString *)property
 {
+	[self willChangeValueForProperty: @"layoutView"];
+	[self willChangeValueForProperty: @"propertyColumns"];
 	NSTableColumn *column = [self tableColumnWithIdentifierAndCreateIfAbsent: property];
 	ETAssert(nil != column);
 	/* We must reset the value, since on Mac OS X a new NSTextFieldCell is 
@@ -299,6 +304,8 @@ with the formatter, otherwise the outcome of the formatting is unknown. */
 	   NSString as its input value. */
 	[[column dataCell] setObjectValue: nil];
 	[[column dataCell] setFormatter: aFormatter];
+	[self didChangeValueForProperty: @"propertyColumns"];
+	[self didChangeValueForProperty: @"layoutView"];
 }
 
 /** Returns the data cell of the column associated with the given property, but 
@@ -319,6 +326,8 @@ NOTE: The documented behavior is subject to further changes in future to become
 more widget backend agnostic. */
 - (void) setStyle: (id)style forProperty: (NSString *)property
 {
+	[self willChangeValueForProperty: @"layoutView"];
+	[self willChangeValueForProperty: @"propertyColumns"];
 	NSTableColumn *column = [self tableColumnWithIdentifierAndCreateIfAbsent: property];
 	NSCell *cell = nil;
 
@@ -332,12 +341,16 @@ more widget backend agnostic. */
 		// different for Cocoa).
 		[column setEditable: [cell isEditable]];
 	}
+	[self didChangeValueForProperty: @"propertyColumns"];
+	[self didChangeValueForProperty: @"layoutView"];
 }
 
 /** Sets whether the columns can be sorted by clicking on their headers. */
 - (void) setSortable: (BOOL)isSortable
 {
+	[self willChangeValueForProperty: @"sortable"];
 	_sortable = isSortable;
+	[self didChangeValueForProperty: @"sortable"];
 }
 
 /** Returns whether the columns can be sorted by clicking on their headers.
@@ -362,11 +375,15 @@ This overrides any specific font you might have set individually on colums
 returned by -allTableColumns. */
 - (void) setContentFont: (NSFont *)aFont
 {
+	[self willChangeValueForProperty: @"contentFont"];
+	[self willChangeValueForProperty: @"layoutView"];
 	ASSIGN(_contentFont, aFont);
 	FOREACH([self allTableColumns], column, NSTableColumn *)
 	{
 		[[column dataCell] setFont: _contentFont];
 	}
+	[self didChangeValueForProperty: @"layoutView"];
+	[self didChangeValueForProperty: @"contentFont"];
 }
 
 #define SA(x) [NSSet setWithArray: x]
@@ -477,28 +494,29 @@ See [(ETColumnFragment)] protocol to customize the returned column. */
 
 /* Layouting */
 
-- (void) renderWithItems: (NSArray *)items isNewContent: (BOOL)isNewContent
+- (NSSize) renderWithItems: (NSArray *)items isNewContent: (BOOL)isNewContent
 {
-	if ([_layoutContext supervisorView] == nil)
+	if ([[self layoutContext] supervisorView] == nil)
 	{
 		ETLog(@"WARNING: Layout context %@ must have a supervisor view otherwise "
-			@"view-based layout %@ cannot be set", _layoutContext, self);
-		return;
+			@"view-based layout %@ cannot be set", [self layoutContext], self);
+		return [self layoutSize];
 	}
 
 	[self resizeItems: items 
-	    toScaleFactor: [_layoutContext itemScaleFactor]];
+	    toScaleFactor: [[self layoutContext] itemScaleFactor]];
 
 	/* Only reload from the data source if the layout item tree visible in the 
 	   table/outline view has been mutated */
 	if (isNewContent)
 	{
-		id source = [[_layoutContext ifResponds] source];
+		id source = [[[self layoutContext] ifResponds] source];
 		[self _updateDisplayedPropertiesFromSource: source];
 
 		[[self tableView] reloadData];
 		[[self tableView] setNeedsDisplay: YES]; // FIXME: -updateLayout redisplay should be enough
 	}
+	return [self layoutSize];
 }
 
 - (void) resizeItems: (NSArray *)items toScaleFactor: (CGFloat)factor
@@ -519,14 +537,14 @@ See [(ETColumnFragment)] protocol to customize the returned column. */
 	int row = [[self tableView] rowAtPoint: location];
 	
 	if (-1 != row)
-		return [[_layoutContext arrangedItems] objectAtIndex: row];
+		return [[[self layoutContext] arrangedItems] objectAtIndex: row];
 	
 	return nil;
 }
 
 - (NSRect) displayRectOfItem: (ETLayoutItem *)item
 {
-	int row = [[_layoutContext arrangedItems] indexOfObject: item];
+	int row = [[[self layoutContext] arrangedItems] indexOfObject: item];
 	return [[self tableView] rectOfRow: row];
 }
 
@@ -538,7 +556,7 @@ See [(ETColumnFragment)] protocol to customize the returned column. */
 
 - (void) selectionDidChangeInLayoutContext: (id <ETItemSelection>)aSelection
 {
-	BOOL tableViewNotYetReloaded = [_layoutContext needsLayoutUpdate];
+	BOOL tableViewNotYetReloaded = [[self layoutContext] needsLayoutUpdate];
 
 	/* When the new content is not visible yet in the table view
 
@@ -555,7 +573,7 @@ See [(ETColumnFragment)] protocol to customize the returned column. */
 {
 	NSIndexSet *indexes = [[self tableView] selectedRowIndexes];
 	NSEnumerator *indexEnumerator = [indexes objectEnumerator];
-	NSArray *items = [_layoutContext arrangedItems];
+	NSArray *items = [[self layoutContext] arrangedItems];
 	NSMutableArray *selectedItems = 
 		[NSMutableArray arrayWithCapacity: [indexes count]];
 	
@@ -607,7 +625,7 @@ See [(ETColumnFragment)] protocol to customize the returned column. */
 
 - (ETLayoutItem *) itemAtRow: (int)rowIndex
 {
-	return [[_layoutContext arrangedItems] objectAtIndex: rowIndex];
+	return [[[self layoutContext] arrangedItems] objectAtIndex: rowIndex];
 }
 
 - (ETLayoutItem *) editedItem
@@ -676,7 +694,7 @@ See [(ETColumnFragment)] protocol to customize the returned column. */
 
 - (NSInteger) numberOfRowsInTableView: (NSTableView *)tv
 {
-	NSArray *layoutItems = [_layoutContext arrangedItems];
+	NSArray *layoutItems = [[self layoutContext] arrangedItems];
 	
 	ETDebugLog(@"Returns %lu as number of items in table view %@", (unsigned long)[layoutItems count], [tv primitiveDescription]);
 	
@@ -717,7 +735,7 @@ compatible with the cell used at the given row/column intersection.  */
 - (id) tableView: (NSTableView *)tv 
 	objectValueForTableColumn: (NSTableColumn *)column row: (NSInteger)rowIndex
 {
-	NSArray *items = [_layoutContext arrangedItems];
+	NSArray *items = [[self layoutContext] arrangedItems];
 	
 	if (rowIndex >= [items count])
 	{
@@ -761,7 +779,7 @@ given row/column intersection.  */
 - (void) tableView: (NSTableView *)tv 
 	setObjectValue: (id)value forTableColumn: (NSTableColumn *)column row: (NSInteger)rowIndex
 {
-	NSArray *items = [_layoutContext arrangedItems];
+	NSArray *items = [[self layoutContext] arrangedItems];
 	
 	if (rowIndex >= [items count])
 	{
@@ -822,7 +840,7 @@ Note: For now, private method. */
 	   -reloadData called back.
 	   The problem is less critical for ETOutlineLayout because data source 
 	   and delegate methods receives an item in argument rather than a row index. */
-	ETAssert([tv numberOfRows] == [[_layoutContext arrangedItems] count]);
+	ETAssert([tv numberOfRows] == [[[self layoutContext] arrangedItems] count]);
 
 	return result;
 }
@@ -838,16 +856,16 @@ Note: For now, private method. */
 	// have varied over time in this regard.
 	NSInteger positiveRow = (row != -1 ? row : ETUndeterminedIndex);
 	ETAssert(positiveRow >= 0);
-	ETLayoutItem *dropTarget = (ETLayoutItem *)_layoutContext;
+	ETLayoutItem *dropTarget = (ETLayoutItem *)[self layoutContext];
 
 	if (ETUndeterminedIndex != positiveRow && NSTableViewDropOn == op)
 	{
-		dropTarget = [[_layoutContext arrangedItems] objectAtIndex: positiveRow];
+		dropTarget = [[[self layoutContext] arrangedItems] objectAtIndex: positiveRow];
 	}
 
 	ETDebugLog(@"TABLE - Validate drop at %ld on %@ with dragging source %@ in %@ drag mask %lu drop op %lu",
 		(long)row, [dropTarget primitiveDescription], [[info draggingSource] primitiveDescription],
-		[_layoutContext primitiveDescription], (unsigned long)[info draggingSourceOperationMask], (unsigned long)op);
+		[[self layoutContext] primitiveDescription], (unsigned long)[info draggingSourceOperationMask], (unsigned long)op);
 	
 	id draggedObject = [[ETPickboard localPickboard] firstObject];
 	NSInteger dropIndex = (NSTableViewDropAbove == op ? positiveRow : ETUndeterminedIndex);
@@ -874,7 +892,7 @@ Note: For now, private method. */
 		NSInteger dropOp;
 		NSInteger dropRow;
 
-		if ([validDropTarget isEqual: _layoutContext])
+		if ([validDropTarget isEqual: [self layoutContext]])
 		{
 			dropOp = (ETUndeterminedIndex == dropIndex ? NSTableViewDropOn : NSTableViewDropAbove);
 			dropRow = (ETUndeterminedIndex == dropIndex ? -1 : dropIndex);
@@ -882,11 +900,11 @@ Note: For now, private method. */
 		else
 		{
 			dropOp = NSTableViewDropOn;
-			dropRow = [[_layoutContext arrangedItems] indexOfObject: validDropTarget];
+			dropRow = [[[self layoutContext] arrangedItems] indexOfObject: validDropTarget];
 
 			if (ETUndeterminedIndex == dropRow)
 			{
-				ETLog(@"WARNING: Drop target %@ doesn't belong to %@", validDropTarget, _layoutContext);
+				ETLog(@"WARNING: Drop target %@ doesn't belong to %@", validDropTarget, [self layoutContext]);
 				return NSDragOperationNone;
 			}
 		}
@@ -906,7 +924,7 @@ Note: For now, private method. */
      dropOperation: (NSTableViewDropOperation)op
 {
 	ETDebugLog(@"TABLE - Accept drop at %ld in %@ drag mask %lu drop op %lu", (long)row,
-		[_layoutContext primitiveDescription], (unsigned long)[info draggingSourceOperationMask],
+		[[self layoutContext] primitiveDescription], (unsigned long)[info draggingSourceOperationMask],
 		(unsigned long)op);
 
 	// NOTE: Use positiveRow in this method and never the original row value.
@@ -915,7 +933,7 @@ Note: For now, private method. */
 	ETAssert(positiveRow >= 0);
 	NSDictionary *metadata = [[ETPickboard localPickboard] firstObjectMetadata];
 	id droppedObject = [[ETPickboard localPickboard] popObjectAsPickCollection: YES];
-	ETLayoutItemGroup *dropTarget = _layoutContext;
+	ETLayoutItemGroup *dropTarget = [self layoutContext];
 	
 	if (positiveRow != ETUndeterminedIndex && op == NSTableViewDropOn)
 	{
@@ -966,7 +984,7 @@ The current sort descriptors are collected as explained in the class description
 	if ([self isSortable] == NO)
 		return;
 
-	ETController *controller = [[_layoutContext controllerItem] controller];
+	ETController *controller = [[[self layoutContext] controllerItem] controller];
 	NSArray *sortDescriptors = [controller sortDescriptors];
 
 	if (nil == sortDescriptors)
@@ -983,10 +1001,10 @@ The current sort descriptors are collected as explained in the class description
 
 	/* Will call back -customSortDescriptorsWithSortDescriptors: which returns 
 	   the new real sort descriptors. */
-	[_layoutContext sortWithSortDescriptors: sortDescriptors recursively: recursively];
+	[[self layoutContext] sortWithSortDescriptors: sortDescriptors recursively: recursively];
 	if (isFiltered)
 	{
-		[_layoutContext filterWithPredicate: [controller filterPredicate] recursively: recursively];
+		[[self layoutContext] filterWithPredicate: [controller filterPredicate] recursively: recursively];
 	}
 	[[self tableView] reloadData];
 }
@@ -1003,7 +1021,7 @@ this delegate method. When -setSortDescriptors: returns, the table view calls
 - (ETLayoutItem *) doubleClickedItem
 {
 	NSTableView *tv = [self tableView];
-	NSArray *layoutItems = [_layoutContext arrangedItems];
+	NSArray *layoutItems = [[self layoutContext] arrangedItems];
 
 	ETAssert([tv clickedRow] != -1);
 
@@ -1103,7 +1121,7 @@ Returns the cell to be used at the given column and row intersection in this lay
 	return [[ETPickDropCoordinator sharedInstance] ignoreModifierKeysWhileDragging];
 }
 
-- (unsigned int) draggingSourceOperationMaskForLocal: (BOOL)isLocal
+- (NSDragOperation) draggingSourceOperationMaskForLocal: (BOOL)isLocal
 {
 	return [(ETPickDropCoordinator *)[ETPickDropCoordinator sharedInstance] draggingSourceOperationMaskForLocal: isLocal];
 }

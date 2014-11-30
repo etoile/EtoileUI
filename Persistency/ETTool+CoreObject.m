@@ -7,14 +7,11 @@
  */
 
 #import "ETCompatibility.h"
-
-#ifdef COREOBJECT
-
-#import <CoreObject/COEditingContext.h>
-#import <CoreObject/COObject.h>
-#import "ETTool+CoreObject.h"
 #import "ETActionHandler.h"
+#import "ETSelectTool.h"
 
+@interface ETSelectTool (CoreObject)
+@end
 
 @implementation ETSelectTool (CoreObject)
 
@@ -29,5 +26,3 @@
 }
 
 @end
-
-#endif

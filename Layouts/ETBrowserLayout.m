@@ -93,7 +93,7 @@
 
 /* Layouting */
 
-- (void) renderWithItems: (NSArray *)items isNewContent: (BOOL)isNewContent
+- (NSSize) renderWithItems: (NSArray *)items isNewContent: (BOOL)isNewContent
 {
 	NSBrowser *browserView = [self browser];
 	
@@ -156,7 +156,7 @@
 		}
 
 		if (isMultipleSelection == NO)
-			return;
+			return [self layoutSize];
 		
 		/* Finally recreates the multiple selection */
 		for (ETLayoutItem *item in selectedItems)
@@ -165,6 +165,8 @@
 			              inColumn: [browserView lastColumn]];
 		}
 	}
+
+	return [self layoutSize];
 }
 
 - (void) resizeItems: (NSArray *)items toScaleFactor: (CGFloat)factor
@@ -252,7 +254,7 @@ related NSBrowser methods are called. */
 	[self browserSelectionDidChange];
 
 	ETDebugLog(@"Cell selection did change to %@ in layout view %@ of %@", 
-		[self selectionIndexPaths], [self layoutView], _layoutContext);
+		[self selectionIndexPaths], [self layoutView], [self layoutContext]);
 	
 	return YES;
 }
@@ -267,7 +269,7 @@ related NSBrowser methods are called. */
 	[self browserSelectionDidChange];
 
 	ETDebugLog(@"Row selection did change to %@ in layout view %@ of %@", 
-		[self selectionIndexPaths], [self layoutView], _layoutContext);
+		[self selectionIndexPaths], [self layoutView], [self layoutContext]);
 	
 	return YES;
 }
@@ -281,7 +283,8 @@ related NSBrowser methods are called. */
 
 	if (isFirstColumn)
 	{
-		item = _layoutContext;
+        // FIXME: Support ETLayoutItem as context.
+		item = (ETLayoutItemGroup *)[self layoutContext];
 	}
 	else
 	{
@@ -316,7 +319,7 @@ related NSBrowser methods are called. */
 	
 	if (isFirstColumn)
 	{
-		item = _layoutContext;
+		item = (ETLayoutItemGroup *)[self layoutContext];
 	}
 	else
 	{

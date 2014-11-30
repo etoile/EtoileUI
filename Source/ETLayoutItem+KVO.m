@@ -10,6 +10,7 @@
 #import <EtoileFoundation/NSObject+Model.h>
 #import <EtoileFoundation/Macros.h>
 #import "ETLayoutItem+KVO.h"
+#import "ETLayoutItem+Private.h"
 #import "ETLayoutItemGroup.h"
 #import "EtoileUIProperties.h"
 #import "ETUIItemIntegration.h"
@@ -34,8 +35,7 @@
 		kETAutoresizingMaskProperty, kETContentAspectProperty, kETTransformProperty, kETBoundingBoxProperty, 
 		kETDefaultFrameProperty, kETPersistentFrameProperty, 
 		kETImageProperty, kETIconProperty, 
-		kETActionProperty, kETTargetProperty, 
-		kETInspectorProperty);
+		kETActionProperty, kETTargetProperty);
 
     if ([manuallyNotifiedProperties containsObject: theKey]) 
 	{
@@ -185,8 +185,8 @@ too. At this point, the parent item retain count is zero and -dealloc will be
 incorrectly reentered. */
 - (NSSet *) observableKeyPaths
 {
-	return S(kETRootItemProperty, kETBaseItemProperty, kETIsBaseItemProperty, 
-		kETControllerItemProperty, kETParentItemProperty, kETIndexPathProperty, 
+	return S(kETRootItemProperty, kETSourceItemProperty,
+		kETControllerItemProperty, kETParentItemProperty,
 		kETIdentifierProperty, kETNameProperty, kETDisplayNameProperty, 
 		kETValueProperty, kETViewProperty, kETImageProperty, kETIconProperty, 
 		kETRepresentedObjectProperty, kETSubjectProperty,  kETSelectedProperty, kETSelectableProperty, 
@@ -210,8 +210,8 @@ affected. */
 	NSSet *geometryDependentKeys = S(kETViewProperty, kETFrameProperty, 
 		kETXProperty, kETYProperty, kETWidthProperty, kETHeightProperty,
 		@"positionX", @"positionY");
-	NSSet *parentDependentKeys = S(kETRootItemProperty, kETIsBaseItemProperty, 
-		kETBaseItemProperty, kETControllerItemProperty, kETIndexPathProperty);
+	NSSet *parentDependentKeys = S(kETRootItemProperty, kETSourceItemProperty,
+		kETControllerItemProperty);
 	NSSet *nameDependentKeys = S(kETDisplayNameProperty);
 	NSMutableSet *triggerKeys = [NSMutableSet set];
 	

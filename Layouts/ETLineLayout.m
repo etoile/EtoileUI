@@ -162,6 +162,10 @@ given layout area size. */
 					 newLayoutSize.height, oldLayoutSize.height);
 		
 		[item setHeight: frame.size.height];
+		
+		if ([item isGroup] == NO)
+			continue;
+
 		/* For a non-recursive update, the resize must trigger a layout update. 
 		   Layout updates are bracketed inside +disableAutolayout and
 		   +enableAutolayout. As a result, -setNeedsLayoutUpdate is disabled.

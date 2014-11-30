@@ -7,28 +7,27 @@
  */
 
 #import "ETCompatibility.h"
+#import "ETBasicItemStyle.h"
+#import "ETShape.h"
 
-#ifdef COREOBJECT
+@interface ETBasicItemStyle (CoreObject)
+@end
 
-#import <CoreObject/COEditingContext.h>
-#import <CoreObject/COObject.h>
-#import "ETStyle+CoreObject.h"
+@implementation ETBasicItemStyle (CoreObject)
+
+- (void) awakeFromDeserialization
+{
+	[super awakeFromDeserialization];
+	[self prepareTransientState];
+}
+
+@end
 
 
-@implementation ETStyleGroup (CoreObject)
+@interface ETShape (CoreObject)
 @end
 
 @implementation ETShape (CoreObject)
-
-- (NSData *) serializedPath
-{
-	return (_path != nil ? [NSKeyedArchiver archivedDataWithRootObject: _path] : nil);
-}
-
-- (void) setSerializedPath: (NSData *)aBezierPathData
-{
-	ASSIGN(_path, [NSKeyedUnarchiver unarchiveObjectWithData: aBezierPathData]);
-}
 
 - (NSString *) serializedPathResizeSelector
 {
@@ -40,26 +39,4 @@
 	_resizeSelector = NSSelectorFromString(aSelString);
 }
 
-- (NSData *) serializedFillColor
-{
-	return (_fillColor != nil ? [NSKeyedArchiver archivedDataWithRootObject: _fillColor] : nil);;
-}
-
-- (void) setSerializedFillColor: (NSData *)aColorData
-{
-	ASSIGN(_fillColor, [NSKeyedUnarchiver unarchiveObjectWithData: aColorData]);
-}
-
-- (NSData *) serializedStrokeColor
-{
-	return (_strokeColor != nil ? [NSKeyedArchiver archivedDataWithRootObject: _strokeColor] : nil);;
-}
-
-- (void) setSerializedStrokeColor: (NSData *)aColorData
-{
-	ASSIGN(_strokeColor, [NSKeyedUnarchiver unarchiveObjectWithData: aColorData]);
-}
-
 @end
-
-#endif

@@ -32,6 +32,20 @@
 
 @end
 
+
+@interface ETCompositePropertyDescription : ETPropertyDescription
+@end
+
+@implementation ETCompositePropertyDescription
+
+- (BOOL) isComposite
+{
+	return YES;
+}
+
+@end
+
+
 // NOTE: ETDocumentController uses ETController model description
 @interface ETController (ModelDescription)
 @end
@@ -53,6 +67,10 @@
 		[ETPropertyDescription descriptionWithName: @"content" type: (id)@"ETLayoutItemGroup"];
 	[content setDerived: YES];
 	[content setOpposite: (id)@"ETLayoutItemGroup.controller"];
+    ETPropertyDescription *observations =
+        [ETCompositePropertyDescription descriptionWithName: @"observations" type: (id)@"ETObservation"];
+    [observations setMultivalued: YES];
+    [observations setOrdered: NO];
 	ETPropertyDescription *templates =
 		[ETPropertyDescription descriptionWithName: @"templates" type: (id)@"ETItemTemplate"];
 	[templates setMultivalued: YES];
@@ -63,12 +81,15 @@
 	[templates setDetailedPropertyNames: A(@"item", @"objectClass", @"entityName")];
 	ETPropertyDescription *currentObjectType =
 		[ETPropertyDescription descriptionWithName: @"currentObjectType" type: (id)@"ETUTI"];
+    [currentObjectType setValueTransformerName: @"ETUTIToString"];
+    [currentObjectType setPersistentTypeName: @"NSString"];
 	ETPropertyDescription *currentGroupType =
 		[ETPropertyDescription descriptionWithName: @"currentGroupType" type: (id)@"ETUTI"];
 	[currentGroupType setReadOnly: YES];
 	// FIXME: Register a dummy class for the protocol COPersistentObjectContext
 	ETPropertyDescription *persistentObjectContext =
 		[ETPropertyDescription descriptionWithName: @"persistentObjectContext" type: (id)@"NSObject"];
+    [persistentObjectContext setPersistentTypeName: @"NSString"];
 	ETPropertyDescription *initialFocusedItem =
 		[ETPropertyDescription descriptionWithName: @"initialFocusedItem" type: (id)@"ETLayoutItem"];
 	ETPropertyDescription *clearsFilterPredicate =
@@ -79,20 +100,27 @@
 		[ETPropertyDescription descriptionWithName: @"sortDescriptors" type: (id)@"NSSortDescriptor"];
 	[sortDescriptors setMultivalued: YES];
 	[sortDescriptors setOrdered: YES];
+    [sortDescriptors setValueTransformerName: @"COObjectToArchivedData"];
+    [sortDescriptors setPersistentTypeName: @"NSData"];
 	[sortDescriptors setDetailedPropertyNames: A(@"key", @"ascending", @"selectorString")];
 	ETPropertyDescription *filterPredicate =
 		[ETPropertyDescription descriptionWithName: @"filterPredicate" type: (id)@"NSPredicate"];
+    [filterPredicate setValueTransformerName: @"ETPredicateToString"];
+    [filterPredicate setPersistentTypeName: @"NSString"];
 	ETPropertyDescription *automaticallyRearranges =
 		[ETPropertyDescription descriptionWithName: @"automaticallyRearrangesObjects" type: (id)@"BOOL"];
 	ETPropertyDescription *allowedPickTypes =
 		[ETPropertyDescription descriptionWithName: @"allowedPickTypes" type: (id)@"ETUTI"];
 	[allowedPickTypes setMultivalued: YES];
 	[allowedPickTypes setOrdered: YES];
+    [allowedPickTypes setValueTransformerName: @"ETUTIToString"];
+    [allowedPickTypes setPersistentTypeName: @"NSString"];
 	[allowedPickTypes setDetailedPropertyNames: A(@"stringValue", @"classValue")];
 	ETPropertyDescription *allowedDropTypes =
-		[ETPropertyDescription descriptionWithName: @"allowedDropTypes" type: (id)@"ETUTI"];
+		[ETPropertyDescription descriptionWithName: @"allowedDropTypes" type: (id)@"ETUTITuple"];
 	[allowedDropTypes setMultivalued: YES];
 	[allowedDropTypes setOrdered: NO];
+    [allowedDropTypes setKeyed: YES];
 	// TODO: Display 'key' as 'Target UTI'
 	[allowedDropTypes setDetailedPropertyNames: A(@"stringValue", @"classValue")];
 
@@ -108,6 +136,7 @@
 	ETPropertyDescription *defaultOptions =
 		[ETPropertyDescription descriptionWithName: @"defaultOptions" type: (id)@"NSObject"];
 	[defaultOptions setMultivalued: YES];
+	[defaultOptions setKeyed: YES];
 	[defaultOptions setOrdered: NO];
 	[defaultOptions setReadOnly: YES];
 	ETPropertyDescription *canMutate =
@@ -128,17 +157,25 @@
 	ETPropertyDescription *isEditing =
 		[ETPropertyDescription descriptionWithName: @"isEditing" type: (id)@"BOOL"];
 	[isEditing setReadOnly: YES];
+    ETPropertyDescription *editedItems =
+        [ETPropertyDescription descriptionWithName: @"editedItems" type: (id)@"ETLayoutItem"];
+    [editedItems setMultivalued: YES];
+    [editedItems setOrdered: YES];
+    [editedItems setReadOnly: YES];
+    ETPropertyDescription *editedProperties =
+        [ETPropertyDescription descriptionWithName: @"editedProperties" type: (id)@"NSArray"];
+    [editedProperties setMultivalued: YES];
+    [editedProperties setOrdered: YES];
+    [editedProperties setReadOnly: YES];
 
-	NSArray *transientProperties = A(content, nibMainContent, builder, currentGroupType,
-		nextResponder, defaultOptions, canMutate, isContentMutable,
-		insertionIndex, insertionIndexPath, additionIndexPath, isEditing);
-	NSArray *persistentProperties = A(templates, currentObjectType, initialFocusedItem,
-		clearsFilterPredicate, selectsInsertedObjects, sortDescriptors, filterPredicate,
-		automaticallyRearranges);
-	// FIXME: Using all persistent properties is not yet tested...
-	NSArray *futurePersistentProperties = A(persistentObjectContext, allowedPickTypes, allowedDropTypes);
-	
-	transientProperties = [transientProperties arrayByAddingObjectsFromArray: futurePersistentProperties];
+	NSArray *transientProperties = A(content, nibMainContent, builder,
+        currentGroupType, nextResponder, defaultOptions, canMutate, isContentMutable,
+		insertionIndex, insertionIndexPath, additionIndexPath, isEditing,
+        editedItems, editedProperties);
+	NSArray *persistentProperties = A(observations, templates, currentObjectType,
+        initialFocusedItem, persistentObjectContext, clearsFilterPredicate,
+        selectsInsertedObjects, sortDescriptors, filterPredicate,
+        automaticallyRearranges, allowedPickTypes, allowedDropTypes);
 
 	[entity setUIBuilderPropertyNames: (id)[[A(templates, currentObjectType,
 		currentGroupType, persistentObjectContext, clearsFilterPredicate,
@@ -164,7 +201,7 @@
 		[editableTemplates setObject: itemTemplate
 		                      forKey: [ETUTI typeWithString: UTIString]];
 	}];
-	return [editableTemplates copy];
+	return AUTORELEASE([editableTemplates copy]);
 }
 
 - (void) setTemplates: (NSDictionary *)editedTemplates
@@ -180,32 +217,35 @@
 	[self didChangeValueForProperty: @"templates"];
 }
 
+// TODO: For the UI, 'allowedDropTypes' accessors should expose a ETKeyValuePair array.
+
 - (NSDictionary *) allowedDropTypes
 {
 	NSMutableDictionary *editableDropTypes = [NSMutableDictionary dictionary];
 
-	[[_allowedDropTypes content] enumerateKeysAndObjectsUsingBlock: ^ (id targetUTIString, id UTIString,  BOOL *stop)
+	[[_allowedDropTypes content] enumerateKeysAndObjectsUsingBlock: ^ (id targetUTIString, id UTIs,  BOOL *stop)
 	{
-		[editableDropTypes setObject: [ETUTI typeWithString: UTIString]
+		[editableDropTypes setObject: UTIs
 		                      forKey: [ETUTI typeWithString: targetUTIString]];
 	}];
-	return [editableDropTypes copy];
+	return AUTORELEASE([editableDropTypes copy]);
 }
 
 - (void) setAllowedDropTypes: (NSDictionary *)editedDropTypes
 {
-	[self willChangeValueForProperty: @"templates"];
+	[self willChangeValueForProperty: @"allowedDropTypes"];
 	[_allowedDropTypes removeAllObjects];
 
-	[editedDropTypes enumerateKeysAndObjectsUsingBlock: ^ (id targetUTI, id UTI, BOOL *stop)
+	[editedDropTypes enumerateKeysAndObjectsUsingBlock: ^ (id targetUTI, id UTIs, BOOL *stop)
 	{
-		[_allowedDropTypes setObject: [UTI stringValue]
+		[_allowedDropTypes setObject: UTIs
 		                      forKey: [targetUTI stringValue]];
 	}];
-	[self didChangeValueForProperty: @"templates"];
+	[self didChangeValueForProperty: @"allowedDropTypes"];
 }
 
 @end
+
 
 @interface ETItemTemplate (ModelDescription)
 @end
@@ -226,6 +266,8 @@
 	ETPropertyDescription *objectClass =
 		[ETPropertyDescription descriptionWithName: @"objectClass" type: (id)@"NSObject"];
 	[objectClass setReadOnly: YES];
+    [objectClass setValueTransformerName: @"COClassToString"];
+    [objectClass setPersistentTypeName: @"NSString"];
 	ETPropertyDescription *entityName =
 		[ETPropertyDescription descriptionWithName: @"entityName" type: (id)@"NSString"];
 	[entityName setReadOnly: YES];

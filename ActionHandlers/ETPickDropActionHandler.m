@@ -15,6 +15,7 @@
 #import <EtoileFoundation/NSObject+Model.h>
 #import "ETPickDropActionHandler.h"
 #import "ETController.h"
+#import "ETDropIndicator.h"
 #import "ETEvent.h"
 #import "ETGeometry.h"
 #import "ETTool.h"
@@ -25,7 +26,6 @@
 #import "ETPickboard.h"
 #import "ETPickDropCoordinator.h"
 #import "ETSelectTool.h" /* For -shouldRemoveItemsAtPickTime */
-#import "ETStyle.h"
 #import "ETCompatibility.h"
 
 #define SELECTION_BY_RANGE_KEY_MASK NSShiftKeyMask
@@ -142,7 +142,7 @@ selection, we don't put the selected items on the pickboard. */
 		
 		if (pickingMask & ETCopyPickingMask)
 		{
-			pickedObject  = AUTORELEASE([pickedObject deepCopy]);
+			pickedObject  = AUTORELEASE([pickedObject copy]);
 		}
 
 		[pickedObjects addObject: pickedObject];
@@ -364,18 +364,27 @@ The destination item is usally the drop target, if
 -handleDropObject:onItem:atIndex:coordinator: doesn't insert the dropped object 
 elsewhere.
 
-You can use it to easily detect a local drop (a drag that begins and ends in the 
-drag source). If <code>[[item baseItem] isEqual: [aPickCoordinator dragSource]]</code> 
-evaluates to YES, then it is a local drop.
+You can use it to easily detect a local drop (a drag that begins and ends in the
+drag source or the area enclosing it). If <code>[item isEqual: [aPickCoordinator dragSource]]</code>
+evaluates to YES, then it is a local drop into the drag source.
+
+For an item tree acting as a single drag source or destination area, when this 
+item tree contains the drag source, a local drop is possible (outside the drag 
+source, or inside as discussed previously). You can attach a controller to the
+item that owns this item tree. In this way the item tree becomes a bounded area, and
+<code>[[item controllerItem] isEqual: [[aPickCoordinator dragSource] controllerItem]</code>
+will tell whether it's local drop or not.
 
 Take note that the destination item is the hint. It can be nil when the 
 drop occurs in another application, or sometimes on a native widget without 
 EtoileUI pick and drop integration (e.g. from a table layout to a text view).
 
 By default, returns NSDragOperationEvery. */
-- (unsigned int) dragOperationMaskForDestinationItem: (ETLayoutItem *)item
-                                         coordinator: (ETPickDropCoordinator *)aPickCoordinator
+- (NSDragOperation) dragOperationMaskForDestinationItem: (ETLayoutItem *)item
+                                            coordinator: (ETPickDropCoordinator *)aPickCoordinator
 {
+	// TODO: Perhaps adopt ETAspectTemplateActionHandler behavior
+
 	// NOTE: Cocoa uses NSDragOperationCopy | NSDragOperationLink | NSDragOperationGeneric | NSDragOperationPrivate
 	return NSDragOperationEvery;
 }
@@ -506,14 +515,14 @@ This method is not called for a destination inside a ETWidgetLayout. */
 item of the given item. */
 - (NSArray *) allowedPickTypesForItem: (ETLayoutItem *)item
 {
-	return [[[item baseItem] valueForProperty: kETControllerProperty] allowedPickTypes];
+	return [[[item controllerItem] valueForProperty: kETControllerProperty] allowedPickTypes];
 }
 
 /** Returns the allowed drop UTIs specified in the controller bound to the base 
 item of the given item. */
 - (NSArray *) allowedDropTypesForItem: (ETLayoutItem *)item
 {
-	ETController *controller = [[item baseItem] valueForProperty: kETControllerProperty];
+	ETController *controller = [[item controllerItem] valueForProperty: kETControllerProperty];
 	ETUTI *uti = nil;
 
 	if ([item representedObject] != nil)
@@ -647,7 +656,7 @@ choosing 'Copy' in the 'Edit' menu. */
 
 	ETEvent *event = ETEVENT([NSApp currentEvent], nil, ETCopyPickingMask);
 
-	[self handlePickItem: AUTORELEASE([[self pickedItemForTargetItem: item] deepCopy])
+	[self handlePickItem: AUTORELEASE([[self pickedItemForTargetItem: item] copy])
 	       forceItemPick: [[[ETTool activeTool] ifResponds] forcesItemPick]
 	shouldRemoveItemsNow: NO
 	         coordinator: [ETPickDropCoordinator sharedInstanceWithEvent: event]];
@@ -665,7 +674,7 @@ choosing 'Paste' in the 'Edit' menu. */
 	ETLog(@"Paste receives in %@", self);
 
 	ETEvent *event = ETEVENT([NSApp currentEvent], nil, ETPastePickingMask);
-	id pastedObject = AUTORELEASE([[[ETPickboard localPickboard] firstObject] deepCopy]);
+	id pastedObject = AUTORELEASE([[[ETPickboard localPickboard] firstObject] copy]);
 
 	[self handleDropCollection: pastedObject
 	                  metadata: [[ETPickboard localPickboard] firstObjectMetadata]
@@ -689,7 +698,7 @@ choosing 'Cut' in the 'Edit' menu. */
 
 	ETEvent *event = ETEVENT([NSApp currentEvent], nil, ETCutPickingMask);
 		
-	[self handlePickItem: AUTORELEASE([[self pickedItemForTargetItem: item] deepCopy])
+	[self handlePickItem: AUTORELEASE([[self pickedItemForTargetItem: item] copy])
 	       forceItemPick: [[[ETTool activeTool] ifResponds] forcesItemPick]
 	shouldRemoveItemsNow: YES
 	         coordinator: [ETPickDropCoordinator sharedInstanceWithEvent: event]];

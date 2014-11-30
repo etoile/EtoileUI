@@ -51,10 +51,8 @@ For other Nibs to be loaded, see ETNibOwner. */
 @interface ETApplication : NSApplication 
 {
 	@private
-	ETLayoutItemGroup *_rootItem;
 	ETNibOwner *_nibOwner;
 	ETUIStateRestoration *_UIStateRestoration;
-	BOOL _wasProcessingContinuousActionEvents;
 }
 
 + (NSString *) typePrefix;
@@ -121,7 +119,7 @@ CoreObject. */
 - (IBAction) browseUndoHistory: (id)sender;
 @end
 
-enum 
+enum : NSInteger
 {
 	ETDevelopmentMenuTag = 30000,
 	ETDocumentMenuTag,

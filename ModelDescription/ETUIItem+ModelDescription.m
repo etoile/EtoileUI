@@ -23,33 +23,32 @@
 	if ([[entity name] isEqual: [ETUIItem className]] == NO) 
 		return entity;
 
+	/* We declare only the transient properties that matters for a UI builder or 
+	   document editor, because viewing or editing them in an inspector is useful. */
 
-	// FIXME: For now, ETLayoutItem description declares flipped
-
+	ETPropertyDescription *usesWidgetView = [ETPropertyDescription descriptionWithName: @"usesWidgetView" type: (id)@"BOOL"];
+	ETPropertyDescription *flipped = [ETPropertyDescription descriptionWithName: @"flipped" type: (id)@"BOOL"];
 	ETPropertyDescription *supervisorView = [ETPropertyDescription descriptionWithName: @"supervisorView" type: (id)@"NSView"];
 	ETPropertyDescription *decoratorItem = [ETPropertyDescription descriptionWithName: @"decoratorItem" type: (id)@"ETUIItem"];
 	[decoratorItem setOpposite: (id)@"ETDecoratorItem.decoratedItem"];
 	ETPropertyDescription *decoratedItem = [ETPropertyDescription descriptionWithName: @"decoratedItem" type: (id)@"ETUIItem"];
 	ETPropertyDescription *firstDecoratedItem = [ETPropertyDescription descriptionWithName: @"firstDecoratedItem" type: (id)@"ETUIItem"];
-	// FIXME: The type should be ETDecoratorItem
-	ETPropertyDescription *lastDecoratorItem = [ETPropertyDescription descriptionWithName: @"lastDecoratorItem" type: (id)@"ETUIItem"];
+	ETPropertyDescription *lastDecoratorItem = [ETPropertyDescription descriptionWithName: @"lastDecoratorItem" type: (id)@"ETDecoratorItem"];
 	ETPropertyDescription *decorationRect = [ETPropertyDescription descriptionWithName: @"decorationRect" type: (id)@"NSRect"];
-	ETPropertyDescription *isDecoratorItem = [ETPropertyDescription descriptionWithName: @"isDecoratorItem" type: (id)@"BOOL"];
-	ETPropertyDescription *isWindowItem = [ETPropertyDescription descriptionWithName: @"isWindowItem" type: (id)@"BOOL"];
-	ETPropertyDescription *isScrollableAreaItem = [ETPropertyDescription descriptionWithName: @"isScrollableAreaItem" type: (id)@"BOOL"];
 	ETPropertyDescription *enclosingItem = [ETPropertyDescription descriptionWithName: @"enclosingItem" type: (id)@"ETUIItem"];
 	ETPropertyDescription *nextResponder = [ETPropertyDescription descriptionWithName: @"nextResponder" type: (id)@"NSObject"];
-	ETPropertyDescription *shouldSyncSupervisorViewGeometry = [ETPropertyDescription descriptionWithName: @"shouldSyncSupervisorView" type: (id)@"BOOL"];
-	ETPropertyDescription *usesWidgetView = [ETPropertyDescription descriptionWithName: @"usesWidgetView" type: (id)@"BOOL"];
-	// TODO: We could include -displayView in the transient properties
 	
-	/* Transient ivars: 	
-	   _supervisorView */
+	[decoratorItem setPersistent: YES];
 
-	[entity setPropertyDescriptions: A(supervisorView, decoratorItem, decoratedItem, 
-		firstDecoratedItem, lastDecoratorItem, decorationRect, isDecoratorItem, 
-		isWindowItem, isScrollableAreaItem, enclosingItem, nextResponder, 
-		shouldSyncSupervisorViewGeometry, usesWidgetView)];
+	NSArray *derivedProperties = A(usesWidgetView, flipped, decoratedItem,
+		firstDecoratedItem, lastDecoratorItem, decorationRect, enclosingItem,
+		nextResponder);
+
+	[[derivedProperties mappedCollection] setDerived: YES];
+	[[derivedProperties mappedCollection] setReadOnly: YES];
+
+	[entity setPropertyDescriptions: [A(supervisorView, decoratorItem)
+		arrayByAddingObjectsFromArray: derivedProperties]];
 
 	return entity;
 }

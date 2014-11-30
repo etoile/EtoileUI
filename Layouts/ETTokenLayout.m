@@ -69,20 +69,9 @@ Initializes and returns a new token layout. */
 	[super dealloc];
 }
 
-- (id) copyWithZone: (NSZone *)aZone layoutContext: (id <ETLayoutingContext>)ctxt
+- (void) setUp: (BOOL)isDeserialization
 {
-	ETTokenLayout *layoutCopy = [super copyWithZone: aZone layoutContext: ctxt];
-
-	layoutCopy->_editedProperty = [_editedProperty copyWithZone: aZone];
-	layoutCopy->_itemLabelFont = [_itemLabelFont copyWithZone: aZone];
-	layoutCopy->_maxTokenWidth = _maxTokenWidth;
-
-	return layoutCopy;
-}
-
-- (void) setUp
-{
-	[super setUp];
+	[super setUp: isDeserialization];
 
 	// FIXME: Should use a new ETLayout API that memorizes the context state
 	[(id)[self layoutContext] setActionHandler: AUTORELEASE([[ETTokenBackgroundActionHandler alloc] initWithObjectGraphContext: [self objectGraphContext]])];
@@ -143,7 +132,7 @@ to trigger the resizing before ETTemplateItemLayout hands the items to the
 positional layout. */
 - (void) willRenderItems: (NSArray *)items isNewContent: (BOOL)isNewContent
 {
-	CGFloat scale = [_layoutContext itemScaleFactor];
+	CGFloat scale = [[self layoutContext] itemScaleFactor];
 	if (isNewContent || scale != _previousScaleFactor)
 	{
 		[self resizeItems: items toScaleFactor: scale];
@@ -187,10 +176,10 @@ becomes the token width.
 The resizing isn't delegated to the positional layout unlike in ETTemplateItemLayout. */
 - (void) resizeItems: (NSArray *)items toScaleFactor: (CGFloat)factor
 {
-	id <ETFirstResponderSharingArea> responderArea = [_layoutContext firstResponderSharingArea];
+	id <ETFirstResponderSharingArea> responderArea = [[self layoutContext] firstResponderSharingArea];
 
 	/* We use -arrangedItems in case we receive only a subset to resize (not true currently) */
-	if ([[_layoutContext arrangedItems] containsObject: [responderArea editedItem]])
+	if ([[[self layoutContext] arrangedItems] containsObject: [responderArea editedItem]])
 	{
 		[responderArea removeActiveFieldEditorItem];
 	}
@@ -256,21 +245,6 @@ The resizing isn't delegated to the positional layout unlike in ETTemplateItemLa
 {
 	DESTROY(_tintColor);
 	[super dealloc];
-}
-
-- (id) copyWithCopier: (ETCopier *)aCopier
-{
-	ETTokenStyle *newStyle = [super copyWithCopier: aCopier];
-	
-	if ([aCopier isAliasedCopy])
-		return newStyle;
-	
-	[aCopier beginCopyFromObject: self toObject: newStyle];
-	
-	newStyle->_tintColor = [_tintColor copyWithZone: [aCopier zone]];
-
-	[aCopier endCopy];
-	return newStyle;
 }
 
 - (NSImage *) icon
@@ -367,21 +341,6 @@ The resizing isn't delegated to the positional layout unlike in ETTemplateItemLa
 {
 	DESTROY(_editedProperty);
 	[super dealloc];
-}
-
-- (id) copyWithCopier: (ETCopier *)aCopier
-{
-	ETTokenActionHandler *newHandler = [super copyWithCopier: aCopier];
-	
-	if ([aCopier isAliasedCopy])
-		return newHandler;
-	
-	[aCopier beginCopyFromObject: self toObject: newHandler];
-	
-	newHandler->_editedProperty = RETAIN(_editedProperty);
-	
-	[aCopier endCopy];
-	return newHandler;
 }
 
 - (NSFont *) defaultFieldEditorFont

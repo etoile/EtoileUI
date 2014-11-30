@@ -16,6 +16,7 @@
 #import "ETFlowLayout.h"
 #import "ETGeometry.h"
 #import "ETLayoutItem.h"
+#import "ETLayoutItem+Private.h"
 #import "ETLayoutItemGroup.h"
 #import "ETLayoutItemFactory.h"
 // FIXME: Move related code to the Appkit widget backend (perhaps in a category)
@@ -23,11 +24,17 @@
 #import "NSView+EtoileUI.h"
 #import "ETCompatibility.h"
 
-#define _layoutContext (id <ETLayoutingContext>)_layoutContext
 #pragma GCC diagnostic ignored "-Wprotocol"
 
 
 @implementation ETTemplateItemLayout
+
+- (void) prepareTransientState
+{
+	ASSIGN(_renderedItems, [NSMutableSet set]);
+	ASSIGN(_renderedTemplateKeys, [NSArray array]);
+	_needsPrepareItems = YES;
+}
 
 /** <init />
 Initializes and return a new template item layout which uses a flow layout as 
@@ -47,7 +54,7 @@ returned instance (usually in a subclass initializer). */
 	[(ETFlowLayout *)_positionalLayout setItemSizeConstraintStyle: ETSizeConstraintStyleNone];
 	_templateKeys = [[NSArray alloc] init];
 	_localBindings = [[NSMutableDictionary alloc] init];
-	_renderedItems = [[NSMutableSet alloc] init];
+	[self prepareTransientState];
 
 	return self;
 }
@@ -59,40 +66,8 @@ returned instance (usually in a subclass initializer). */
 	DESTROY(_templateKeys);
 	DESTROY(_localBindings);
 	DESTROY(_renderedItems);
+	DESTROY(_renderedTemplateKeys);
 	[super dealloc];
-}
-
-- (id) copyWithZone: (NSZone *)aZone layoutContext: (id <ETLayoutingContext>)ctxt
-{
-	ETTemplateItemLayout *layoutCopy = [super copyWithZone: aZone layoutContext: ctxt];
-
-	layoutCopy->_positionalLayout = [(ETLayout *)_positionalLayout copyWithZone: aZone layoutContext: layoutCopy];
-	// FIXME: Pass the current copier
-	layoutCopy->_templateItem = [_templateItem deepCopyWithCopier: [ETCopier copier]];
-	layoutCopy->_templateKeys = [_templateKeys copyWithZone: aZone];
-	layoutCopy->_localBindings = [_localBindings mutableCopyWithZone: aZone];
-	/* Rendered items are set up in -setUpCopyWithZone:original: */
-
-	return layoutCopy;
-}
-
-- (void) setUpCopyWithZone: (NSZone *)aZone 
-                  original: (ETTemplateItemLayout *)layoutOriginal
-{
-	_renderedItems = [[NSMutableSet allocWithZone: aZone] 
-		initWithCapacity: [layoutOriginal->_renderedItems count]];
-
-	FOREACH(layoutOriginal->_renderedItems, item, ETLayoutItem *)
-	{
-		// FIXME: Declare -objectReferencesForCopy in the layouting context protocol
-		ETLayoutItem *itemCopy = [[(id)_layoutContext objectReferencesForCopy] objectForKey: item];
-	
-		NSParameterAssert(itemCopy != nil);
-		NSParameterAssert([itemCopy parentItem] == _layoutContext);
-
-		[self setUpKVOForItem: itemCopy];
-		[_renderedItems addObject: itemCopy];
-	}
 }
 
 /** Returns the template item whose property values are used to override the 
@@ -111,11 +86,17 @@ equivalent values on every item that gets layouted.
 
 A layouted item property will have its value replaced only when this property 
 is listed in the template keys.
+ 
+This setter doesn't call -renderAndInvalidateDisplay to prevent compatibility
+issues with -templateKeys.
 
 See -setTemplateKeys:. */
 - (void) setTemplateItem: (ETLayoutItem *)item
 {
+	[self willChangeValueForProperty: @"templateItem"];
 	ASSIGN(_templateItem, item);
+	_needsPrepareItems = YES;
+	[self didChangeValueForProperty: @"templateItem"];
 }
 
 /** Returns the properties whose value should replaced, on every item that get 
@@ -135,10 +116,16 @@ layouted, with the value provided by the template item.
 Those overriden properties will be restored to their original values when the 
 layout is torn down.
 
+This setter doesn't call -renderAndInvalidateDisplay to prevent compatibility
+issues with -templateItem.
+ 
 See -setTemplateItem:. */
 - (void) setTemplateKeys: (NSArray *)keys
 {
+	[self willChangeValueForProperty: @"templateKeys"];
 	ASSIGN(_templateKeys, keys);
+	_needsPrepareItems = YES;
+	[self didChangeValueForProperty: @"templateKeys"];
 }
 
 - (void) bindTemplateItemKeyPath: (NSString *)templateKeyPath 
@@ -154,15 +141,12 @@ original items which are replaced by the layout. */
 	[_localBindings removeAllObjects];
 }
 
+
 - (void) setUpTemplateElementWithNewValue: (id)templateValue
                                    forKey: (NSString *)aKey
                                    inItem: (ETLayoutItem *)anItem
 {
-	BOOL shouldCopyValue = ([templateValue conformsToProtocol: @protocol(NSCopying)] 
-		|| [templateValue conformsToProtocol: @protocol(NSMutableCopying)]);
-	id newValue = (shouldCopyValue ? [templateValue copy] : templateValue);
-
-	[anItem setValue: newValue forKey: aKey];
+	[anItem setValue: templateValue forKey: aKey];
 }
 
 - (void) setUpTemplateElementsForItem: (ETLayoutItem *)item
@@ -178,7 +162,7 @@ original items which are replaced by the layout. */
 		[item setDefaultValue: (nil != value ? value : (id)[NSNull null]) 
 		          forProperty: key];
 
-		[self setUpTemplateElementWithNewValue: [_templateItem valueForKey: key]
+		[self setUpTemplateElementWithNewValue: [_templateItem copyValueForProperty: key]
 		                                forKey: key
 		                                inItem: item];
 
@@ -194,8 +178,21 @@ original items which are replaced by the layout. */
 
 - (void) setPositionalLayout: (id <ETComputableLayout>)layout
 {
-	[layout setLayoutContext: self];
+    [layout validateLayoutContext: self];
+
+    [self willChangeValueForProperty: @"positionalLayout"];
+	[_positionalLayout tearDown];
 	ASSIGN(_positionalLayout, layout);
+    [self didChangeValueForProperty: @"positionalLayout"];
+
+	// NOTE: The remaining code requires ETLayout.layoutContext to be set, so we
+	// execute it last
+	[layout setUp: NO];
+
+	if (layout == nil)
+		return;
+
+	[self renderAndInvalidateDisplay];
 }
 
 /* Subclass Hooks */
@@ -246,9 +243,13 @@ when they get deallocated. */
 	}*/
 }
 
-- (void) setUp
+- (void) setUp: (BOOL)isDeserialization
 {
-	[super setUp];
+	[super setUp: isDeserialization];
+
+	if (isDeserialization)
+		return;
+
 	[(ETLayout *)[self positionalLayout] resetLayoutSize];
 }
 
@@ -275,6 +276,9 @@ by the value returned by the template item. */
 	{
 		[self setUpTemplateElementsForItem: item];
 	}
+
+	ASSIGN(_renderedTemplateKeys, _templateKeys);
+	_needsPrepareItems = NO;
 }
 
 /** Restores all the items which were rendered since the layout was set up to 
@@ -286,7 +290,7 @@ their initial state. */
 		/* Equivalent to [item setVisible: NO] */
 		[[item displayView] removeFromSuperview];
 
-		FOREACH(_templateKeys, key, NSString *)
+		FOREACH(_renderedTemplateKeys, key, NSString *)
 		{
 			id restoredValue = [item defaultValueForProperty: key];
 
@@ -314,9 +318,9 @@ Does nothing by default. */
 
 /* Layouting */
 
-- (void) renderWithItems: (NSArray *)items isNewContent: (BOOL)isNewContent
+- (NSSize) renderWithItems: (NSArray *)items isNewContent: (BOOL)isNewContent
 {
-	if (isNewContent)
+	if (isNewContent || _needsPrepareItems)
 	{
 		[self prepareNewItems: items];
 	}
@@ -329,40 +333,40 @@ Does nothing by default. */
 	[self willRenderItems: items isNewContent: isNewContent];
 	/* Visibility of replaced and replacement items is handled in 
 	   -setVisibleItems: */
-	[[self positionalLayout] renderWithItems: items isNewContent: isNewContent];
+	return [[self positionalLayout] renderWithItems: items isNewContent: isNewContent];
+}
+
+/* Used by -[ETLayout render:] to resize the context. */
+- (BOOL) isContentSizeLayout
+{
+	return [[self positionalLayout] isContentSizeLayout];
 }
 
 /* Layouting Context Protocol (used by our positional layout delegate) */
 
 - (NSArray *) items
 {
-	return [_layoutContext items];
+	return [[self layoutContext] items];
 }
 
 - (NSArray *) arrangedItems
 {
-	return [_layoutContext arrangedItems];
+	return [[self layoutContext] arrangedItems];
 }
 
 - (NSArray *) visibleItems
 {
-	return [_layoutContext visibleItems];
+	return [[self layoutContext] visibleItems];
 }
 
 - (void) setVisibleItems: (NSArray *)visibleItems
 {
-	[_layoutContext setVisibleItems: visibleItems];
+	[[self layoutContext] setVisibleItems: visibleItems];
 }
 
 - (NSSize) size
 {
-	return [_layoutContext size];
-}
-
-- (void) setSize: (NSSize)size
-{
-	[self setLayoutSize: size]; /* To sync the layer item geometry */
-	[_layoutContext setSize: size];
+	return [[self layoutContext] size];
 }
 
 - (void) setLayoutView: (NSView *)aLayoutView
@@ -373,7 +377,7 @@ Does nothing by default. */
 - (NSView *) view
 {
  // FIXME: Remove this cast and solve this properly
-	return [(ETLayoutItem *)_layoutContext view];
+	return [(ETLayoutItem *)[self layoutContext] view];
 }
 
 /* By default, returns 1 to prevent the positional layout to resize the items. 
@@ -381,33 +385,33 @@ e.g. the icon layout does it in its own way by overriding -resizeLayoutItems:toS
 - (CGFloat) itemScaleFactor
 {
 
-	return ([self ignoresItemScaleFactor] ? 1.0 : [_layoutContext itemScaleFactor]);
+	return ([self ignoresItemScaleFactor] ? 1.0 : [[self layoutContext] itemScaleFactor]);
 }
 
 - (NSSize) visibleContentSize
 {
-	return [_layoutContext visibleContentSize];
+	return [[self layoutContext] visibleContentSize];
 }
 
 - (void) setContentSize: (NSSize)size;
 {
 	[self setLayoutSize: size]; /* To sync the layer item geometry */
-	[_layoutContext setContentSize: size];
+	[[self layoutContext] setContentSize: size];
 }
 
 - (BOOL) isScrollable
 {
-	return [_layoutContext isScrollable];
+	return [[self layoutContext] isScrollable];
 }
 
 - (void) setNeedsDisplay: (BOOL)now
 {
-	return [_layoutContext setNeedsDisplay: now];
+	return [[self layoutContext] setNeedsDisplay: now];
 }
 
 - (BOOL) isFlipped
 {
-	return [_layoutContext isFlipped];
+	return [[self layoutContext] isFlipped];
 }
 
 - (BOOL) isChangingSelection

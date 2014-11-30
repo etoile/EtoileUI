@@ -14,6 +14,7 @@
 #import "ETGeometry.h"
 #import "ETSelectTool.h"
 #import "ETLayoutItem.h"
+#import "ETLayoutItem+Private.h"
 #import "ETLayoutItem+Scrollable.h"
 #import "ETLayoutItemGroup.h"
 #import "ETLineLayout.h"
@@ -186,7 +187,7 @@ bar item width, otherwise sets the bar item height.  */
 - (void) tile
 {
 	/* With no layout context, rootSize is zero and the item sizes can be negative. */
-	if (nil == _layoutContext)
+	if (nil == [self layoutContext])
 		return;
 
 	// FIXME: Handle the next line in a more transparent way in ETLayout
@@ -501,9 +502,10 @@ By default, returns NO. */
 
 /* Layouting */
 
-- (void) renderWithItems: (NSArray *)items isNewContent: (BOOL)isNewContent
+- (NSSize) renderWithItems: (NSArray *)items isNewContent: (BOOL)isNewContent
 {
 	[self tile];
+	return [self layoutSize];
 }
 
 @end
@@ -633,7 +635,7 @@ the real items they currently represent. */
 	return YES;
 }
 
-- (void) renderWithItems: (NSArray *)items isNewContent: (BOOL)isNewContent
+- (NSSize) renderWithItems: (NSArray *)items isNewContent: (BOOL)isNewContent
 {
 	[self tile];
 	if (isNewContent)
@@ -644,6 +646,7 @@ the real items they currently represent. */
 	    have been updated, so the content item size can be use to compute 
 		position and resize the current item. */
 	[self tileContent];
+	return [self layoutSize];
 }
 
 @end
@@ -729,13 +732,14 @@ the real items they currently represent. */
 	return YES;
 }
 
-- (void) renderWithItems: (NSArray *)items isNewContent: (BOOL)isNewContent
+- (NSSize) renderWithItems: (NSArray *)items isNewContent: (BOOL)isNewContent
 {
 	if (isNewContent)
 	{
 		[self goToItem: [[self barItem] firstItem]];
 	}
 	[self tile];
+	return [self layoutSize];
 }
 
 @end

@@ -44,8 +44,6 @@ ETLayout. */
 - (NSArray *) arrangedItems;
 /** See -[ETLayoutItem size]. */
 - (NSSize) size;
-/** See -[ETLayoutItem setSize:]. */
-- (void) setSize: (NSSize)size;
 /** See -[ETLayoutItemGroup setLayoutView:]. */
 - (void) setLayoutView: (NSView *)aView;
 /** See -[ETLayoutItem setNeedsDislay:]. */
@@ -136,14 +134,16 @@ described in ETComputedLayout description must conform to this prococol.
 
 Warning: This protocol is very much subject to change. */
 @protocol ETComputableLayout <NSObject>
+/** See -[ETLayout tearDown]. */
+- (void) tearDown;
+/** See -[ETLayout setUp:]. */
+- (void) setUp: (BOOL)isDeserialization;
 /** See -[ETPositionalLayout setIsContentSizeLayout]. */
 - (void) setIsContentSizeLayout: (BOOL)flag;
 /** See -[ETPositionalLayout isContentSizeLayout]. */
 - (BOOL) isContentSizeLayout;
-/** See -[ETLayout copyWithZone:layoutContext:]. */
-- (id) copyWithZone: (NSZone *)aZone layoutContext: (id <ETLayoutingContext>)newContext;
-/** See -[ETLayout setLayoutContext:]. */
-- (void) setLayoutContext: (id <ETLayoutingContext>)context;
+/** See -[ETLayout validateLayoutContext:]. */
+- (void) validateLayoutContext: (id <ETLayoutingContext>)context;
 /** See -[ETLayout layoutContext:]. */
 - (id <ETLayoutingContext>) layoutContext;
 /** See -[ETComputedLayout setBorderMargin:]. */
@@ -155,7 +155,7 @@ Warning: This protocol is very much subject to change. */
 /** See -[ETComputedLayout setHorizontalAlignmentGuidePosition:]. */
 - (void) setHorizontalAlignmentGuidePosition: (CGFloat)aPosition;
 /** See -[ETLayout renderWithItems:isNewContent:]. */
-- (void) renderWithItems: (NSArray *)items isNewContent: (BOOL)isNewContent;
+- (NSSize) renderWithItems: (NSArray *)items isNewContent: (BOOL)isNewContent;
 /** See -[ETLayout itemAtLocation:]. */
 - (ETLayoutItem *) itemAtLocation: (NSPoint)loc;
 @end
@@ -164,25 +164,37 @@ Warning: This protocol is very much subject to change. */
 @protocol ETCompositeLayout
 - (id <ETComputableLayout>) positionalLayout;
 - (void) setPositionalLayout: (id <ETComputableLayout>)layout;
-- (void) renderWithItems: (NSArray *)items isNewContent: (BOOL)isNewContent;
+- (NSSize) renderWithItems: (NSArray *)items isNewContent: (BOOL)isNewContent;
 @end
 
+/** @section Layout Size
+
+By default, the layout size is precisely matching the context to which the 
+receiver is bound to, based on -[ETLayoutingContext visibleContentSize].
+
+When the context is a scrollable area, the layout size is set to the mininal 
+size which encloses all the items once -renderWithItems:isNewContent: has been 
+run.
+
+Whether the layout size is computed in horizontal, vertical direction or both
+is up to subclasses such as ETComputedLayout, which take in account scroller 
+visibility too.
+
+@section Copying
+
+For a copy, -attachedTool is copied. */
 @interface ETLayout : ETUIObject <NSCopying>
 {
-	@public
-	id _layoutContext; /* Weak reference */
-
 	@private
-	IBOutlet id delegate; /* Weak reference */
 	ETTool *_attachedTool;
 	ETLayoutItemGroup *_layerItem; /* Lazily initialized */
 	ETDropIndicator *_dropIndicator;
 
+	BOOL _isSetUp;
 	BOOL _isRendering;
 	/* Layout and Content Size in Scrollview */
 	NSSize _layoutSize;
-	NSSize _proposedLayoutSize;
-	BOOL _usesCustomLayoutSize;
+	NSSize _oldProposedLayoutSize;
 	@protected
 	CGFloat _previousScaleFactor; // TODO: Remove
 }
@@ -199,12 +211,6 @@ Warning: This protocol is very much subject to change. */
 + (id) layoutWithObjectGraphContext: (COObjectGraphContext *)aContext;
 - (id) initWithObjectGraphContext: (COObjectGraphContext *)aContext;
 
-/** @taskunit Copying */
-
-- (id) copyWithZone: (NSZone *)aZone layoutContext: (id <ETLayoutingContext>)newContext;
-- (void) setUpCopyWithZone: (NSZone *)aZone 
-                  original: (ETLayout *)layoutOriginal;
-
 /** @taskunit Attached Tool */
 
 - (void) setAttachedTool: (ETTool *)newTool;
@@ -215,10 +221,9 @@ Warning: This protocol is very much subject to change. */
 
 /** @taskunit Layout Context */
 
-- (void) setLayoutContext: (id <ETLayoutingContext>)context;
 - (id <ETLayoutingContext>) layoutContext;
 - (void) tearDown;
-- (void) setUp;
+- (void) setUp: (BOOL)isDeserialization;
 
 /** @taskunit Type Querying */
 
@@ -233,17 +238,10 @@ Warning: This protocol is very much subject to change. */
 
 /** @taskunit Layout Size Control and Feedback */
 
-- (void) setUsesCustomLayoutSize: (BOOL)flag;
-- (BOOL) usesCustomLayoutSize;
-- (void) setLayoutSize: (NSSize)size;
 - (NSSize) layoutSize;
+- (BOOL) isContentSizeLayout;
 - (BOOL) isAllContentVisible;
 - (ETPositionalLayout *) positionalLayout;
-
-/** @taskunit Delegate */
-
-- (void) setDelegate: (id)aDelegate;
-- (id) delegate;
 
 /** @taskunit Requesting Internal Layout Updates */
 
@@ -253,8 +251,8 @@ Warning: This protocol is very much subject to change. */
 
 /** @taskunit Layouting */
 
-- (void) renderWithItems: (NSArray *)items isNewContent: (BOOL)isNewContent;
-- (void) resetLayoutSize;
+- (NSSize) renderWithItems: (NSArray *)items isNewContent: (BOOL)isNewContent;
+- (NSSize) resetLayoutSize;
 - (void) resizeItems: (NSArray *)items
     forNewLayoutSize: (NSSize)newLayoutSize
              oldSize: (NSSize)oldLayoutSize;
@@ -300,7 +298,11 @@ Warning: This protocol is very much subject to change. */
 
 /** @taskunit Framework Private */
 
+- (void) setLayoutSize: (NSSize)size;
 - (void) render: (BOOL)isNewContent;
+- (void) validateLayoutContext: (id <ETLayoutingContext>)context;
 
+@property (nonatomic, readonly) NSSize proposedLayoutSize;
+@property (nonatomic, readonly) ETLayoutItemGroup *contextItem;
 
 @end

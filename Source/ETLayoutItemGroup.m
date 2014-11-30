@@ -17,9 +17,11 @@
 #import "ETController.h"
 #import "ETFixedLayout.h"
 #import "ETLayoutItemGroup+Mutation.h"
+#import "ETLayoutItem+Private.h"
 #import "ETLayoutItem+Scrollable.h"
 #import "ETLayoutExecutor.h"
 #import "EtoileUIProperties.h"
+#import "ETTool.h"
 #import "ETView.h"
 // FIXME: Add -concat to the Appkit graphics backend
 #import "ETWidgetBackend.h"
@@ -33,8 +35,7 @@ NSString * const ETItemGroupSelectionDidChangeNotification = @"ETItemGroupSelect
 NSString * const ETSourceDidUpdateNotification = @"ETSourceDidUpdateNotification";
 
 @interface ETLayoutItem (SubclassVisibility)
-- (id) copyWithCopier: (ETCopier *)aCopier isDeep: (BOOL)isDeepCopy;
-- (ETView *) setUpSupervisorViewWithFrame: (NSRect)aFrame;
+- (ETView *) setUpSupervisorView;
 - (Class)viewpointClassForProperty: (NSString *)aProperty ofObject: (id)anObject;
 @end
 
@@ -85,8 +86,8 @@ NSString * const ETSourceDidUpdateNotification = @"ETSourceDidUpdateNotification
 	_sortedItems = nil;
 	_arrangedItems = nil;
 
-	[self assignLayout: [ETFixedLayout layoutWithObjectGraphContext: aContext]];
-	_hasNewLayout = NO;
+	[self setLayout: [ETFixedLayout layoutWithObjectGraphContext: aContext]];
+	//_hasNewLayout = NO;
 	_hasNewContent = NO; /* Private accessors in ETMutationHandler category */
 	_hasNewArrangement = NO;
 	[self setValue: [NSNumber numberWithFloat: 1.0] forVariableStorageKey: kETItemScaleFactorProperty];
@@ -120,20 +121,7 @@ See also -isLayerItem. */
 	   have to worry about nullifying weak references their element might have. */
 	DESTROY(_arrangedItems);
 	DESTROY(_sortedItems);
-	/* We now nullify the weak references our children hold.
-	   We don't use FOREACH to avoid -objectEnumerator which would retain the
-	   children and make the memory management more complex to test in the tree
-	   structure since the returned enumerator is autoreleased and won't
-	   release the children before the autorelease pool is popped. */
-	int n = [_items count];
-	for (int i = 0; i < n; i++)
-	{
-		ETLayoutItem *child = [_items objectAtIndex: i];
-		/* We bypass -setParentItem: to be sure we won't be trigger a KVO
-		   notification that would retain/release us in a change dictionary. */
-		child->_parentItem = nil;
-	}
-	if (n > 0 && [[ETLayoutExecutor sharedInstance] isEmpty] == NO)
+	if ([_items isEmpty] == NO && [[ETLayoutExecutor sharedInstance] isEmpty] == NO)
 	{
 		NSSet *itemSet = [[NSSet alloc] initWithArray: _items];
 		[(ETLayoutExecutor *)[ETLayoutExecutor sharedInstance] removeItems: itemSet];
@@ -149,150 +137,6 @@ See also -isLayerItem. */
 - (BOOL)validateProposedFirstResponder:(NSResponder *)responder forEvent:(NSEvent *)event
 {
 	return YES;
-}
-
-/** Returns a copy of the receiver.
-
-The layout and its tool are always copied (they cannot be shared).
-
-The returned copy is mutable because ETLayoutItemGroup cannot be immutable. */
-- (id) copyWithCopier: (ETCopier *)aCopier isDeep: (BOOL)isDeepCopy
-{
-	ETLayoutItemGroup *item = [super copyWithCopier: aCopier isDeep: isDeepCopy];
-
-	if ([aCopier isAliasedCopy])
-		return item;
-
-	NSZone *zone = [aCopier zone];
-
-	[aCopier beginCopyFromObject: self toObject: item];
-
-	item->_layout = [_layout copyWithZone: zone layoutContext: item];
-	if (NO == isDeepCopy)
-	{
-		[item->_layout setUpCopyWithZone: zone original: _layout];
-	}
-
-	/* We copy all primitive ivars except _reloading and _changingSelection */
-
-	item->_doubleAction = _doubleAction;
-	item->_hasNewContent = ([item->_items isEmpty] == NO);
-	item->_hasNewArrangement = YES; // FIXME: Copy the arranged items
-	item->_hasNewLayout = YES;
-	item->_shouldMutateRepresentedObject = _shouldMutateRepresentedObject;
-	item->_sorted = _sorted;
-	item->_filtered = _filtered;
-
-	/* We copy all object ivars except _layoutItems whose copying is delegated
-	   to -deepCopyWithZone:, but we create an empty array in case we are not
-	   called by -deepCopyWithZone:. */
-
-	item->_items = [[NSMutableArray allocWithZone: zone] init];
-
-	id source =  [self valueForVariableStorageKey: kETSourceProperty];
-	id sourceCopy = ([self usesRepresentedObjectAsProvider] ? (id)item : source);
-
-	[item setValue: sourceCopy forVariableStorageKey: kETSourceProperty];
-	/* Set up an observer as -setSource: does */
-	[[NSNotificationCenter defaultCenter]
-		   addObserver: item
-	          selector: @selector(sourceDidUpdate:)
-		          name: ETSourceDidUpdateNotification
-			    object: sourceCopy];
-
-	ETController *controller = [self valueForVariableStorageKey: kETControllerProperty];
-	ETLayoutItemGroup *contentCopy = (isDeepCopy ? (ETLayoutItemGroup *)nil : item);
-	ETController *controllerCopy = [controller copyWithZone: zone content: contentCopy];
-
-	if (nil != controllerCopy)
-	{
-		[[aCopier objectReferencesForCopy] setObject: controllerCopy forKey: controller];
-	}
-	[item setValue: controllerCopy forVariableStorageKey: kETControllerProperty];
-	RELEASE(controllerCopy);
-
-	/* We copy all variables properties */
-
-	id delegate = [self valueForVariableStorageKey: kETDelegateProperty];
-	id delegateCopy = [[aCopier objectReferencesForCopy] objectForKey: delegate];
-
-	if (nil == delegateCopy)
-	{
-		delegateCopy = delegate;
-	}
-
-	[item setValue: [self valueForVariableStorageKey: kETItemScaleFactorProperty] forVariableStorageKey: kETItemScaleFactorProperty];
-	[item setValue: delegateCopy forVariableStorageKey: kETDelegateProperty];
-
-	[aCopier endCopy];
-
-	return item;
-}
-
-- (id) deepCopyWithCopier: (ETCopier *)aCopier
-{
-	ETLayoutItemGroup *itemCopy = [self copyWithCopier: aCopier isDeep: YES];
-
-	if ([aCopier isAliasedCopy])
-		return itemCopy;
-
-	NSZone *zone = NSDefaultMallocZone();
-
-	[aCopier beginCopyFromObject: self toObject: itemCopy];
-
-	DESTROY(itemCopy->_items); // TODO: a bit crude
-
-	/* Copy & Assign Children */
-
-	NSMutableArray *childrenCopy = [[NSMutableArray allocWithZone: zone] initWithCapacity: [_items count]];
-	NSMapTable *objectRefsForCopy = [aCopier objectReferencesForCopy];
-
-	FOREACH(_items, child, ETLayoutItem *)
-	{
-		ETLayoutItem *childCopy = [child deepCopyWithCopier: aCopier];
-
-		[childrenCopy addObject: childCopy];
-		childCopy->_parentItem = itemCopy; /* Weak reference */
-		[objectRefsForCopy setObject: childCopy forKey: child];
-	}
-	[childrenCopy makeObjectsPerformSelector: @selector(release)];
-
-	ASSIGN(itemCopy->_items, childrenCopy);
-	RELEASE(childrenCopy);
-
-	/* Finish Copy Layout and Controller */
-
-	[itemCopy->_layout setUpCopyWithZone: zone original: _layout];
-
-	ETController *controller = [self valueForVariableStorageKey: kETControllerProperty];
-	ETController *controllerCopy = [itemCopy valueForVariableStorageKey: kETControllerProperty];
-
-	[controller finishDeepCopy: controllerCopy withZone: zone content: itemCopy];
-
-	/* We need to update the layout to have the content reloaded in widget layouts
-	   Which means the item copy will then receive a layout update even in case
-	   the receiver had received none until now.  */
-	if ([[itemCopy layout] isWidget])
-	{
-		[itemCopy updateLayout]; // FIXME: Should use [itemCopy setNeedsLayoutUpdate];
-	}
-	else if ([[itemCopy layout] isOpaque] == NO) /* We don't need a true layout update */
-	{
-		for (ETLayoutItem *childCopy in childrenCopy)
-		{
-			if ([childCopy isVisible] == NO)
-				continue;
-
-			[itemCopy handleAttachViewOfItem: childCopy];
-		}
-	}
-
-	[aCopier endCopy]; /* Reset the context if the copy started with us */
-
-	//ETLog(@"Make deep copy %@ + %@ of %@ + %@ at depth %i", itemCopy,
-	//	[itemCopy controller], self, [self controller], copyDepth);
-
-	return itemCopy;
 }
 
 /** Returns YES. An ETLayoutItemGroup is always a group and a collection by
@@ -385,7 +229,7 @@ See also -handleDetachViewOfItem: and -[ETUItem displayView]. */
 	if (noViewToAttach)
 		return;
 
-	BOOL isAlreadyAttached = [[itemDisplayView superview] isEqual: [_parentItem supervisorView]];
+	BOOL isAlreadyAttached = [[itemDisplayView superview] isEqual: [[self parentItem] supervisorView]];
 
 	/* We don't want to change the subview ordering when we simply switch
 	   the visibility */
@@ -398,7 +242,7 @@ See also -handleDetachViewOfItem: and -[ETUItem displayView]. */
 	   TODO: Probably make more explicit the nil layout check. */
 	if ([[self layout] isOpaque] == NO)
 	{
-		[[self setUpSupervisorViewWithFrame: [self frame]] addSubview: itemDisplayView];
+		[[self setUpSupervisorView] addSubview: itemDisplayView];
 	}
 }
 
@@ -432,7 +276,6 @@ Symetric method to -handleDetachItem: */
 	{
 		[[item parentItem] removeItem: item];
 	}
-	[item setParentItem: self];
 	RELEASE(item);
 	[self handleAttachViewOfItem: item];
 }
@@ -448,7 +291,6 @@ You must always call the superclass implementation.
 Symetric method to -handleAttachItem: */
 - (void) handleDetachItem: (ETLayoutItem *)item
 {
-	[item setParentItem: nil];
 	[self handleDetachViewOfItem: item];
 }
 
@@ -530,7 +372,7 @@ itself. The code would be something like <example>
 [itemGroupsetSource: itemGroup]</example>. */
 - (BOOL) usesRepresentedObjectAsProvider
 {
-	return ([[[self baseItem] source] isEqual: [self baseItem]]);
+	return ([[[self sourceItem] source] isEqual: [self sourceItem]]);
 }
 
 /** Returns the source which provides the content presented by the receiver.
@@ -541,11 +383,6 @@ object, then this method returns nil. */
 - (id) source
 {
 	return [self valueForVariableStorageKey: kETSourceProperty];
-}
-
-- (BOOL) isBaseItem
-{
-	return ([self source] != nil || [self controller] != nil);
 }
 
 /** Sets the source which provides the content displayed by the receiver. A
@@ -600,11 +437,6 @@ Marks the receiver as needing a layout update. */
 	if ([self valueForVariableStorageKey: kETSourceProperty] == source)
 		return;
 
-	// TODO: Because ETCompositeLayout uses -setSource: in its set up, we cannot
-	// do it in this way...
-	//NSAssert([[self layout] isKindOfClass: NSClassFromString(@"ETCompositeLayout")] == NO,
-	//	@"The source must not be changed when a ETCompositeLayout is in use");
-
 	[[NSNotificationCenter defaultCenter]
 		removeObserver: self
 		          name: ETSourceDidUpdateNotification
@@ -624,10 +456,15 @@ Marks the receiver as needing a layout update. */
 	}
 }
 
+- (ETLayoutItemGroup *) sourceItem
+{
+	return ([self source] != nil ? (ETLayoutItemGroup *)self : [[self parentItem] sourceItem]);
+}
+
 /** Returns the delegate associated with the receiver.
 
 See also -setDelegate:. */
-- (id) delegate
+- (COObject *) delegate
 {
 	return [self valueForVariableStorageKey: kETDelegateProperty];
 }
@@ -640,7 +477,7 @@ be ignored.
 The delegate is retained, unlike what Cocoa/GNUstep usually do.<br />
 The delegate is owned by the item and treated as a pluggable aspect to be
 released when the item is deallocated.  */
-- (void) setDelegate: (id)delegate
+- (void) setDelegate: (COObject *)delegate
 {
 	[self setValue: delegate forVariableStorageKey: kETDelegateProperty];
 }
@@ -661,7 +498,7 @@ with the receiver item tree.
 When the given controller is not nil, it is inserted as the next responder and
 the receiver becomes both a base item and the controller content.
 
-See also -setSource:, -isBaseItem and -nextResponder. */
+See also -setSource:, -controllerItem and -nextResponder. */
 - (void) setController: (ETController *)aController
 {
 	[self willChangeValueForProperty: kETControllerProperty];
@@ -674,8 +511,6 @@ See also -setSource:, -isBaseItem and -nextResponder. */
 	RETAIN(oldController);
 
 	[self setValue: newController forVariableStorageKey: kETControllerProperty];
-	// FIXME: Remove
-	[newController setContent: self];
 
 	[oldController didChangeContent: self toContent: nil];
 	[newController didChangeContent: newControllerOldContent toContent: self];
@@ -688,7 +523,7 @@ See also -setSource:, -isBaseItem and -nextResponder. */
 
 - (ETLayoutItemGroup *) controllerItem
 {
-	return ([self controller] != nil ? self : [_parentItem controllerItem]);
+	return ([self controller] != nil ? self : [[self parentItem] controllerItem]);
 }
 
 /** Adds the given item to the receiver children. */
@@ -795,38 +630,6 @@ Similar to -lastObject method for collections (see ETCollection).*/
 	return [NSArray arrayWithArray: _items];
 }
 
-/** Returns the descendant items, including the immediate children, that share
-the same base item than the receiver.
-
-An item is said to be under the control of an item group, when you can traverse
-the branch leading to the item without crossing a base item. An item group
-becomes a base item when a represented path base is set, in other words when
--representedPathBase doesn't return nil. See also -isBaseItem.
-
-This method collects every item in the layout item subtree (excluding the
-receiver) by doing a preorder traversal, the resulting collection is a flat list
-of every item in the tree.
-
-If you are interested by collecting descendant items in another traversal order,
-you have to implement your own version of this method. */
-- (NSArray *) descendantItemsSharingSameBaseItem
-{
-	// TODO: This code is probably quite slow by being written in a recursive
-	// style and allocating/resizing many arrays instead of using a single
-	// linked list. Test whether optimization are needed or not really...
-	NSMutableArray *collectedItems = [NSMutableArray array];
-
-	FOREACHI([self items], item)
-	{
-		[collectedItems addObject: item];
-
-		if ([item isGroup] && [item isBaseItem] == NO)
-			[collectedItems addObjectsFromArray: [item descendantItemsSharingSameBaseItem]];
-	}
-
-	return collectedItems;
-}
-
 /** Returns all descendant items of the receiver, including immediate children.
 
 This method collects every item in the layout item subtree (excluding the
@@ -875,7 +678,7 @@ This method is a lot more efficient than using -allDescendantItems e.g.
 /** Returns whether the receiver can be reloaded presently with -reload. */
 - (BOOL) canReload
 {
-	BOOL hasSource = ([[self baseItem] source] != nil);
+	BOOL hasSource = ([[self sourceItem] source] != nil);
 
 	return (hasSource && [self isReloading] == NO && [self isMutating] == NO);
 }
@@ -926,16 +729,16 @@ Which means -isFiltered and -isSorted will both return NO.
 Marks the receiver as needing a layout update. */
 - (void) reload
 {
-	BOOL hasSource = ([[self baseItem] source] != nil);
+	BOOL hasSource = ([[self sourceItem] source] != nil);
 
 	if (hasSource)
 	{
-		[self tryReloadWithSource: [[self baseItem] source]];
+		[self tryReloadWithSource: [[self sourceItem] source]];
 	}
 	else
 	{
 		ETLog(@"WARNING: Impossible to reload %@ because the base item miss "
-			@"a source %@", self, [[self baseItem] source]);
+			@"a source %@", self, [[self sourceItem] source]);
 	}
 }
 
@@ -945,22 +748,53 @@ Marks the receiver as needing a layout update. */
 
 - (void) setHasNewLayout: (BOOL)flag { _hasNewLayout = flag; }
 
+/** <override-never />
+Tells the receiver the layout has been changed and it should post 
+ETLayoutItemLayoutDidChangeNotification. 
+
+This method tries to notify the delegate that might exist with subclasses 
+e.g. ETLayoutItemGroup.
+
+You should never use this method unless you write an ETLayoutItem subclass. */
+- (void) didChangeLayout: (ETLayout *)oldLayout
+{
+	[[self layout] syncLayoutViewWithItem: self];
+	[self updateScrollableAreaItemVisibility];
+
+	/* We must not let the tool attached to the old layout remain active, 
+	   otherwise the layout can be deallocated and this tool remains with an 
+	   invalid -layoutOwner. */
+	ETTool *oldTool = [oldLayout attachedTool];
+
+	if ([oldTool isEqual: [ETTool activeTool]])
+	{
+		ETTool *newTool = [[self layout] attachedTool];
+
+		if (newTool == nil)
+		{
+			newTool = [ETTool mainTool];
+		}
+		[ETTool setActiveTool: newTool];
+		
+		ETAssert(newTool == [ETTool mainTool] || [newTool layoutOwner] == [self layout]);
+	}
+	ETAssert(oldTool == nil || [oldTool layoutOwner] != [self layout]);
+
+	/* Notify the interested parties about the layout change */
+	NSNotification *notif = [NSNotification 
+		notificationWithName: ETLayoutItemLayoutDidChangeNotification object: self];
+	id delegate = [self valueForKey: kETDelegateProperty];
+
+	if ([delegate respondsToSelector: @selector(layoutDidChange:)])
+		[delegate layoutDidChange: notif];
+	
+	[[NSNotificationCenter defaultCenter] postNotification: notif];
+}
+
 /** Returns the layout associated with the receiver to present its content. */
 - (id) layout
 {
 	return _layout;
-}
-
-- (void) assignLayout: (ETLayout *)aLayout
-{
-	[_layout setLayoutContext: nil]; /* Ensures -[ETLayout tearDown] is called */
-	ASSIGN(_layout, aLayout);
-	/* We must remove the item views, otherwise they might remain visible as
-	   subviews (think ETBrowserLayout on GNUstep which has transparent areas),
-	   because view-based layout won't call -setVisibleItems: in -renderWithItems:XXX:. */
-	[self setVisibleItems: [NSArray array]];
-	[self setHasNewLayout: YES];
-	[aLayout setLayoutContext: self];
 }
 
 /** Sets the layout associated with the receiver to present its content. */
@@ -975,12 +809,26 @@ Marks the receiver as needing a layout update. */
 
 	[self willChangeValueForProperty: kETLayoutProperty];
 
-	[self assignLayout: layout];
-	[self didChangeLayout: oldLayout];
-	RELEASE(oldLayout);
-	[self setNeedsLayoutUpdate];
+    [_layout tearDown];
+    ASSIGN(_layout, layout);
+    /* We must remove the item views, otherwise they might remain visible as
+       subviews (think ETBrowserLayout on GNUstep which has transparent areas),
+       because view-based layout won't call -setVisibleItems: in -renderWithItems:XXX:. */
+    [self setVisibleItems: [NSArray array]];
+    [self setHasNewLayout: YES];
+    // TODO: May be safer to restore the default frame here rather than relying
+    // on the next layout update and -resizeItems:toScaleFactor:...
+    //[[self items] makeObjectsPerformSelector: @selector(restoreDefaultFrame)];
 
+    /* Will update ETLayout.layoutContext inverse relationship */
 	[self didChangeValueForProperty: kETLayoutProperty];
+
+    // NOTE: The remaining code requires ETLayout.layoutContext to be set, so we
+    // execute it last
+	[_layout setUp: NO];
+    [self didChangeLayout: oldLayout];
+    RELEASE(oldLayout);
+    [self setNeedsLayoutUpdate];
 }
 
 /** Attempts to reload the children items from the source and updates the layout
@@ -993,6 +841,9 @@ by asking the first ancestor item with an opaque layout to do so. */
 
 /** Updates recursively each layout in the item tree owned by the receiver.
 
+Will force the layout to be recomputed to take in account geometry and content
+related changes since the last layout update.
+ 
 See -updateLayoutRecursively:. */
 - (void) updateLayout
 {
@@ -1011,7 +862,6 @@ A bottom-up update is used because a parent layout computation might depend on
 child item properties. For example, an item can use a layout which touches its
 frame (see -usesFlexibleLayoutFrame). */
 - (void) updateLayoutRecursively: (BOOL)recursively
-
 {
 	if ([self layout] == nil)
 		return;
@@ -1055,6 +905,35 @@ frame (see -usesFlexibleLayoutFrame). */
 - (BOOL) canUpdateLayout
 {
 	return ([self isReloading] == NO && [[self layout] isRendering] == NO);
+}
+
+/** Updates the layouts, previously marked with -setNeedsLayoutUpdate, in the 
+entire item tree.
+
+The update won't be limited to the item subtree. */
+- (void) updateLayoutIfNeeded
+{
+	[[ETLayoutExecutor sharedInstance] execute];
+}
+
+/** Returns whether the layout is going to be updated in the interval between 
+the current and the  next event. */
+- (BOOL) needsLayoutUpdate
+{
+	return [[ETLayoutExecutor sharedInstance] containsItem: self];
+}
+
+/** Marks the receiver to have its layout updated and be redisplayed in the 
+interval between the current and the next event.
+
+See also +disablesAutolayout. */
+- (void) setNeedsLayoutUpdate
+{
+	if ([ETLayoutItem isAutolayoutEnabled] == NO || _isDeallocating)
+		return;
+
+	[[ETLayoutExecutor sharedInstance] addItem: self];
+	[self setNeedsDisplay: YES];
 }
 
 /* Item scaling */
@@ -1844,7 +1723,7 @@ See -[ETController nextResponder]. */
 
 	if (aView != nil)
 	{
-		[self setUpSupervisorViewWithFrame: [self frame]];
+		[self setUpSupervisorView];
 	}
 	NSAssert(nil == superview || [superview isEqual: supervisorView],
 		@"A layout view should never have another superview than the layout "
@@ -1868,17 +1747,6 @@ Returns whether the frame can be resized by the layout bound to the receiver. */
 - (BOOL) usesFlexibleLayoutFrame
 {
 	return ([[_layout positionalLayout] isContentSizeLayout] && [self isScrollable] == NO);
-}
-
-/* Live Development */
-
-- (void) beginEditingUI
-{
-	/* Notify view and decorator item chain */
-	[super beginEditingUI];
-
-	/* Notify children */
-	[[self items] makeObjectsPerformSelector: @selector(beginEditingUI)];
 }
 
 /* Framework Private */

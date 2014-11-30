@@ -13,6 +13,7 @@
 #import "ETPickboard.h"
 #import "EtoileUIProperties.h"
 #import "ETLayoutItem.h"
+#import "ETLayoutItem+Private.h"
 #import "ETLayoutItemFactory.h"
 #import "ETOutlineLayout.h"
 // FIXME: Move related code to the Appkit widget backend (perhaps in a category)
@@ -106,7 +107,7 @@ static ETPickboard *activePickboard = nil;
 	/* Moves the object browser into to the window layer
 	   NOTE: The window item will be released on close. */
 	ETWindowItem *windowItem =
-		[[ETWindowItem alloc] initWithObjectGraphContext: [self objectGraphContext]];
+		AUTORELEASE([[ETWindowItem alloc] initWithObjectGraphContext: [self objectGraphContext]]);
 	[[self lastDecoratorItem] setDecoratorItem: windowItem];
 }
 

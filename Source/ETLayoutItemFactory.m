@@ -1057,20 +1057,12 @@ to set no represented object on a menu entry. */
 
 /* Special Group Access Methods */
 
-static ETLayoutItemGroup *windowLayer = nil;
-
 /** Returns the item group representing all windows in the current work 
 context or application. */
 - (ETLayoutItemGroup *) windowGroup
 {
-	if (windowLayer == nil)
-	{
-		windowLayer = [[ETWindowLayer alloc]
-			initWithObjectGraphContext: [ETUIObject defaultTransientObjectGraphContext]];
-		[windowLayer setName: _(@"Windows")];
-	}
-	
-	return windowLayer;
+    return [ETWindowLayer sharedInstanceForObjectGraphContext:
+        [ETUIObject defaultTransientObjectGraphContext]];
 }
 
 static ETLayoutItemGroup *pickboardGroup = nil;
@@ -1151,27 +1143,31 @@ width and height of +[ETShape defaultShapeRect]. */
 
 /** Returns a new layout item that uses a NSBox instance as its view.
 
-The returned separator is initially an horizontal line, but by resizing with a 
-height greater than its width, it becomes a vertical line. */
+The returned separator is initially an horizontal line, but by resizing with a
+height greater than its width, it becomes a vertical line.
+ 
+The separator identifier is kETLineSeparatorItemIdentifier.
+ 
+See separator related methods in [ETComputedLayout] and subclasses. */
 - (ETLayoutItem *) lineSeparator
 {
 	NSBox *separatorView = AUTORELEASE([[NSBox alloc] initWithFrame: NSMakeRect(0, 0, 50, kETLineSeparatorMinimumSize)]);
 	[separatorView setBoxType: NSBoxSeparator];
 	ETLayoutItem *item = [self itemWithView: separatorView];
-	[item setName: kETLineSeparatorItemIdentifier];
+	[item setIdentifier: kETLineSeparatorItemIdentifier];
 	return item;
 }
 
 /** Returns a new layout item whose size can be adjusted by a computed layout 
 based on the layout size and a minimum space size.
 
-The returned separator name is kETSpaceItemIdentitifier.
+The separator identifier is kETSpaceItemIdentitifier.
 
 See separator related methods in [ETComputedLayout] and subclasses. */
 - (ETLayoutItem *) spaceSeparator
 {
 	ETLayoutItem *item = [self item];
-	[item setName: kETSpaceSeparatorItemIdentifier];
+	[item setIdentifier: kETSpaceSeparatorItemIdentifier];
 	return item;
 }
 
@@ -1181,7 +1177,7 @@ based on the layout size and the available space.
 A flexible space item can be shrinked to a zero size unlike the -spaceSeparator 
 item.
 
-The returned separator identifier is kETFlexibleSpaceItemIdentitifier.
+The separator identifier is kETFlexibleSpaceItemIdentitifier.
 
 See separator related methods in [ETComputedLayout] and subclasses.*/
 - (ETLayoutItem *) flexibleSpaceSeparator
@@ -1200,8 +1196,8 @@ See separator related methods in [ETComputedLayout] and subclasses.*/
 
 	if (category == nil)
 	{
-		category = [[ETAspectCategory alloc] initWithName: _(@"Items")
-		                               objectGraphContext: [repo objectGraphContext]];
+		category = AUTORELEASE([[ETAspectCategory alloc] initWithName: _(@"Items")
+		                                           objectGraphContext: [repo objectGraphContext]]);
 		[category setIcon: [NSImage imageNamed: @"leaf-yellow"]];
 		[[ETAspectRepository mainRepository] addAspectCategory: category];
 	}

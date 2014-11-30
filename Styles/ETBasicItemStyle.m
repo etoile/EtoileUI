@@ -50,6 +50,13 @@ a label underneath. */
 	return style;
 }
 
+// TODO: Remove once labelAttributes and _selectedLabelAttributes are made persistent
+- (void)prepareTransientState
+{
+	ASSIGN(_labelAttributes, [[self class] standardLabelAttributes]);
+	_selectedLabelAttributes = [NSDictionary new];
+}
+
 /** <init />
 Initializes and returns a new basic item style with no visible label, 
 no max image and label size and no edge inset. */
@@ -61,7 +68,7 @@ no max image and label size and no edge inset. */
 
 	[self setIsShared: YES];
 	_labelPosition = ETLabelPositionNone;
-	ASSIGN(_labelAttributes, [[self class] standardLabelAttributes]);
+	[self prepareTransientState];
 	_maxImageSize = ETNullSize;
 	_maxLabelSize = ETNullSize;
 	_edgeInset = 0;
@@ -69,27 +76,6 @@ no max image and label size and no edge inset. */
 }
 
 DEALLOC(DESTROY(_labelAttributes); DESTROY(_selectedLabelAttributes));
-
-- (id) copyWithCopier: (ETCopier *)aCopier 
-{
-	ETBasicItemStyle *newStyle = [super copyWithCopier: aCopier];
-
-	if ([aCopier isAliasedCopy])
-		return newStyle;
-
-	[aCopier beginCopyFromObject: self toObject: newStyle];
-
-	newStyle->_labelAttributes = [_labelAttributes copyWithZone: [aCopier zone]];
-	newStyle->_selectedLabelAttributes = [_selectedLabelAttributes copyWithZone: [aCopier zone]];
-	newStyle->_labelPosition = _labelPosition;
-	newStyle->_labelMargin = _labelMargin;
-	newStyle->_maxLabelSize = _maxLabelSize;
-	newStyle->_maxImageSize = _maxImageSize;
-	newStyle->_edgeInset = _edgeInset;
-
-	[aCopier endCopy];
-	return newStyle;
-}
 
 - (NSImage *) icon
 {
@@ -189,7 +175,10 @@ means you can safely use it when overriding other drawing methods. */
 - (void) drawImage: (NSImage *)itemImage flipped: (BOOL)itemFlipped inRect: (NSRect)aRect
 {
 	//ETLog(@"Drawing image %@ %@ flipped %d in view %@", itemImage, NSStringFromRect(aRect), [itemImage isFlipped], [NSView focusView]);
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
 	BOOL flipMismatch = (itemFlipped && (itemFlipped != [itemImage isFlipped]));
+#pragma clang diagnostic pop
 	NSAffineTransform *xform = nil;
 
 	if (flipMismatch)
@@ -412,7 +401,7 @@ See also -labelAttributesForDrawingItem:. */
 
 /** Returns the string attributes used to draw the label for a selected item.
 
-By default, returns nil to indicate no custom attributes are set.
+By default, returns en empty dictionary to indicate no custom attributes are set.
  
 See also -labelAttributesForDrawingItem:. */
 - (NSDictionary *) selectedLabelAttributes

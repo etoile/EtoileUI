@@ -19,7 +19,7 @@
 
 /** Enum used internally by EtoileUI to synchronize supervisor view and item 
 properties. */
-typedef enum 
+typedef enum : NSUInteger
 {
 	ETSyncSupervisorViewToItem,
 	ETSyncSupervisorViewFromItem
@@ -73,12 +73,6 @@ You must never subclass ETUIItem. ETUIItem ivars must be considered private. */
 - (void) setSupervisorView: (ETView *)aView;
 - (ETView *) displayView;
 
-/** @taskunit UI Editing */
-
-- (void) beginEditingUI;
-/*- (BOOL) isEditingUI;
-- (void) commitEditingUI;*/
-
 /** @taskunit Drawing */
 
 - (void) render: (NSMutableDictionary *)inputValues 
@@ -127,6 +121,7 @@ You must never subclass ETUIItem. ETUIItem ivars must be considered private. */
 /** @taskunit Framework Private */
 
 - (BOOL) shouldSyncSupervisorViewGeometry;
+- (void) syncSupervisorViewGeometry: (ETSyncSupervisorView)syncDirection;
 - (NSRect) convertDisplayRect: (NSRect)rect 
         toAncestorDisplayView: (NSView **)aView 
                      rootView: (NSView *)topView

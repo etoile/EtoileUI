@@ -17,6 +17,7 @@
 #import "ETNibOwner.h"
 #import "ETTableLayout.h"
 #import "ETOutlineLayout.h"
+#import "ETSelectTool.h"
 // FIXME: Move related code to the Appkit widget backend (perhaps in a category)
 #import "ETWidgetBackend.h"
 #import "NSView+EtoileUI.h"
@@ -78,7 +79,7 @@ For the view classes listed below, the substitute classes are:
 }
 
 - (id) subclassInstanceWithLayoutView: (NSView *)aView
-                   objectGraphContext: (COObjectGraphContext *)aContext
+                   objectGraphContext: (COObjectGraphContext *)aContext NS_RETURNS_RETAINED
 {
 	if (aView == nil || [self isMemberOfClass: [ETWidgetLayout class]] == NO)
 		return self;
@@ -143,23 +144,9 @@ a class cluster. */
 	[super dealloc];
 }
 
-- (id) copyWithZone: (NSZone *)aZone layoutContext: (id <ETLayoutingContext>)ctxt
+- (void) setUp: (BOOL)isDeserialization
 {
-	ETWidgetLayout *newLayout = [super copyWithZone: aZone layoutContext: ctxt];
-	newLayout->layoutView = [layoutView copyWithZone: aZone];
-	return newLayout;
-}
-
-- (void) setUpCopyWithZone: (NSZone *)aZone
-                  original: (ETLayout *)layoutOriginal
-{
-	[super setUpCopyWithZone: aZone original: layoutOriginal];
-	[self syncLayoutViewWithTool: [self attachedTool]];
-}
-
-- (void) setUp
-{
-	[super setUp];
+	[super setUp: isDeserialization];
 	[self setUpLayoutView];
 }
 
@@ -223,8 +210,10 @@ Returns nil by default. */
 
 - (void) setLayoutView: (NSView *)aView
 {
+	[self willChangeValueForProperty: @"layoutView"];
 	ASSIGN(layoutView, aView);
 	[layoutView removeFromSuperview];
+	[self didChangeValueForProperty: @"layoutView"];
 }
 
 - (NSView *) layoutView
@@ -318,21 +307,20 @@ context is modified and needs to be mirrored on the widget view. */
 This method is called on a regular basis each time the active tool changes 
 and its settings need to be mirrored on the widget view.
 
-When the given tool is nil, -allowsEmptySelection is reset to YES and 
--allowsMultipleSelection to NO. */
-- (void) syncLayoutViewWithTool: (ETTool *)anTool
+When the given tool is nil or other than ETSelectTool, -allowsEmptySelection is
+reset to YES and -allowsMultipleSelection to NO. */
+- (void) syncLayoutViewWithTool: (ETTool *)aTool
 {
 	NSParameterAssert([self layoutView] != nil);
+	BOOL allowsEmptySelection = YES;
+	BOOL allowsMultipleSelection = NO;
 
-	BOOL allowsEmptySelection = [[self attachedTool] allowsEmptySelection];
-	BOOL allowsMultipleSelection = [[self attachedTool] allowsMultipleSelection];
-
-	if (nil == anTool)
+	if ([aTool isKindOfClass: [ETSelectTool class]])
 	{
-		allowsEmptySelection = YES;
-		allowsMultipleSelection = NO;
+		allowsEmptySelection = [(ETSelectTool *)aTool allowsEmptySelection];
+		allowsMultipleSelection = [(ETSelectTool *)aTool allowsMultipleSelection];
 	}
-	
+
 	NSView *widgetView = [self layoutViewWithoutScrollView];
 
 	[[widgetView ifResponds] setAllowsEmptySelection: allowsEmptySelection];

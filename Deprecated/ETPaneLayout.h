@@ -16,7 +16,7 @@
 @class ETLayoutItemGroup;
 
 
-typedef enum {
+typedef enum : NSUInteger {
 	ETPanePositionNone,
 	ETPanePositionTop,
 	ETPanePositionBottom,

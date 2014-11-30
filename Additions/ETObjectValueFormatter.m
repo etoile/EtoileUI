@@ -45,7 +45,7 @@ returns NO to indicate the user must continue the editing (hitting the return ke
 doesn't abort the editing). */
 - (BOOL) getObjectValue: (id *)anObject forString: (NSString *)aString errorDescription: (NSString **)error
 {
-	NSString *string = [aString copy];
+	NSString *string = AUTORELEASE([aString copy]);
 
 	if (string == nil)
 		return NO;

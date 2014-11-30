@@ -23,7 +23,6 @@ CGFloat ETAlignmentHintNone = FLT_MIN;
 
 /* Ugly hacks to shut down the compiler, so it doesn't complain that inherited 
    methods also declared by ETPositionaLayout aren't implemented */
-- (void) setLayoutContext: (id <ETLayoutingContext>)context { return [super setLayoutContext: context]; }
 - (id <ETLayoutingContext>) layoutContext { return [super layoutContext]; }
 - (ETLayoutItem *) itemAtLocation: (NSPoint)location { return [super itemAtLocation: location]; }
 
@@ -31,22 +30,6 @@ CGFloat ETAlignmentHintNone = FLT_MIN;
 {
 	DESTROY(_separatorTemplateItem);
 	[super dealloc];
-}
-
-- (id) copyWithZone: (NSZone *)aZone layoutContext: (id <ETLayoutingContext>)ctxt
-{
-	ETComputedLayout *newLayout = [super copyWithZone: aZone layoutContext: ctxt];
-
-	newLayout->_borderMargin = _borderMargin;
-	newLayout->_itemMargin = _itemMargin;
-	newLayout->_autoresizesItemToFill = _autoresizesItemToFill;
-	newLayout->_horizontalAlignment = _horizontalAlignment;
-	newLayout->_horizontalAlignmentGuidePosition = _horizontalAlignmentGuidePosition;
-	newLayout->_computesItemRectFromBoundingBox = _computesItemRectFromBoundingBox;
-	newLayout->_separatorTemplateItem = [_separatorTemplateItem copyWithZone: aZone];
-	newLayout->_separatorItemEndMargin = _separatorItemEndMargin;
-
-	return newLayout;
 }
 
 /** <override-never /> 
@@ -70,16 +53,20 @@ triggers a layout update.
 The presented content appears inset when a positive margin is set. */
 - (void) setBorderMargin: (CGFloat)aMargin
 {
+	[self willChangeValueForProperty: @"borderMargin"];
 	_borderMargin = aMargin;
 	[self renderAndInvalidateDisplay];
+	[self didChangeValueForProperty: @"borderMargin"];
 }
 
 /** Sets the size of the margin around each item to be layouted and triggers a 
 layout update. */
 - (void) setItemMargin: (CGFloat)aMargin
 {
+	[self willChangeValueForProperty: @"itemMargin"];
 	_itemMargin = aMargin;
 	[self renderAndInvalidateDisplay];
+	[self didChangeValueForProperty: @"itemMargin"];
 }
 
 /** Returns the size of the margin around each item to be layouted. */
@@ -95,7 +82,10 @@ layout update. */
 
 - (void) setAutoresizesItemToFill: (BOOL)stretchToFill
 {
+	[self willChangeValueForProperty: @"autoresizesItemToFill"];
 	_autoresizesItemToFill = stretchToFill;
+	[self renderAndInvalidateDisplay];
+	[self didChangeValueForProperty: @"autoresizesItemToFill"];
 }
 
 /** Returns the content horizontal alignment in the layout context area. */
@@ -105,10 +95,12 @@ layout update. */
 }
 
 /** Sets the content horizontal alignment in the layout context area. */
-- (void) setHorizontalAligment: (ETLayoutHorizontalAlignment)anAlignment
+- (void) setHorizontalAlignment: (ETLayoutHorizontalAlignment)anAlignment
 {
+	[self willChangeValueForProperty: @"horizontalAlignment"];
 	_horizontalAlignment = anAlignment;
 	[self renderAndInvalidateDisplay];
+	[self didChangeValueForProperty: @"horizontalAlignment"];
 }
 
 /** Returns the horizontal alignment guide 'x' coordinate relative to the layout 
@@ -130,8 +122,10 @@ When -horizontalAlignment is not equal to ETHorizontalAlignmentGuided, this
 guide is ignored by the layout computation.  */
 - (void) setHorizontalAlignmentGuidePosition: (CGFloat)aPosition
 {
+	[self willChangeValueForProperty: @"horizontalAlignmentGuidePosition"];
 	_horizontalAlignmentGuidePosition = aPosition;
 	[self renderAndInvalidateDisplay];
+	[self didChangeValueForProperty: @"horizontalAlignmentGuidePosition"];
 }
 
 - (BOOL) usesAlignmentHint
@@ -141,7 +135,10 @@ guide is ignored by the layout computation.  */
 
 - (void) setUsesAlignmentHint: (BOOL)usesHint
 {
+	[self willChangeValueForProperty: @"usesAlignmentHint"];
 	_usesAlignmentHint = usesHint;
+	[self renderAndInvalidateDisplay];
+	[self didChangeValueForProperty: @"usesAlignmentHint"];
 }
 
 - (BOOL) isLayoutExecutionItemDependent
@@ -223,7 +220,13 @@ guide is ignored by the layout computation.  */
 	   If a recursive update is underway, the items will be automatically 
 	   unscheduled when reached by the recursive traversal (just before  
 	   -updateLayoutRecursively: returns for each item). */
-	[[ETLayoutExecutor sharedInstance] addItems: items];
+	for (ETLayoutItem *item in items)
+	{
+		if ([item isGroup] == NO)
+			continue;
+
+		[[ETLayoutExecutor sharedInstance] addItem: (id)item];
+	}
 }
 
 /* Layout Computation */
@@ -239,7 +242,10 @@ that will be used to compute the layout. */
 that will be used to compute the layout. */
 - (void) setComputesItemRectFromBoundingBox: (BOOL)usesBoundingBox
 {
+	[self willChangeValueForProperty: @"computesItemRectFromBoundingBox"];
 	_computesItemRectFromBoundingBox = usesBoundingBox;
+	[self renderAndInvalidateDisplay];
+	[self didChangeValueForProperty: @"computesItemRectFromBoundingBox"];
 }
 
 /** <override-dummy />
@@ -347,6 +353,11 @@ bounding box). */
 		                           forCurrentLayoutSize: newLayoutSize
                                   numberOfFlexibleItems: count
 		                                  inMaxAreaSize: maxSize]];
+		didResize = YES;
+		
+		if ([flexibleItem isGroup] == NO)
+			continue;
+
 		/* For a non-recursive update, the resize must trigger a layout update. 
 		   Layout updates are bracketed inside +disableAutolayout and
 		   +enableAutolayout. As a result, -setNeedsLayoutUpdate is disabled.
@@ -354,7 +365,7 @@ bounding box). */
 		   unscheduled when reached by the recursive traversal (just before  
 		   -updateLayoutRecursively: returns for this item). */
 		[[ETLayoutExecutor sharedInstance] addItem: (id)flexibleItem];
-		didResize = YES;
+
 	}
 	return didResize;
 }
@@ -392,7 +403,7 @@ If flexible separators are used, before -adjustSeparatorItemsForLayoutSize: we h
 
 Finally once the layout is computed, this method set the layout item visibility 
 by calling -setVisibleItems: on the layout context. */
-- (void) renderWithItems: (NSArray *)items isNewContent: (BOOL)isNewContent
+- (NSSize) renderWithItems: (NSArray *)items isNewContent: (BOOL)isNewContent
 {
 	//NSLog(@" === UPDATE LAYOUT - %@ === ", [[self itemForLayoutContext] identifier]);
 
@@ -425,20 +436,9 @@ by calling -setVisibleItems: on the layout context. */
 	}
 
 	[self adjustSeparatorItemsForLayoutSize: newLayoutSize];
-	// TODO: We should return this value rather than void
-	[self setLayoutSize: newLayoutSize];
-	
-	/* Adjust layout context size (e.g. when it is embedded in a scroll view) */
-	if ([self isContentSizeLayout])
-	{
-		[[self layoutContext] setContentSize: [self layoutSize]];
-		ETDebugLog(@"Layout size is %@ with layout context size %@ and clip view size %@", 
-			NSStringFromSize([self layoutSize]), 
-			NSStringFromSize([[self layoutContext] size]), 
-			NSStringFromSize([[self layoutContext] visibleContentSize]));
-	}
 
 	[[self layoutContext] setVisibleItems: usedItems];
+	return newLayoutSize;
 }
 
 /* Fragment-based Layout */
@@ -499,7 +499,7 @@ CGFloat contentHeight =  [line height] + totalMargin;
 - (NSPoint) originOfFirstFragment: (id)aFragment 
                  forContentHeight: (CGFloat)contentHeight
 {
-	BOOL isFlipped = [_layoutContext isFlipped];
+	BOOL isFlipped = [[self layoutContext] isFlipped];
 	/* Was just reset and equal to the layout context height at this point */
 	CGFloat layoutHeight = [self layoutSize].height;
 	CGFloat itemMargin = [self itemMargin];
@@ -512,10 +512,10 @@ CGFloat contentHeight =  [line height] + totalMargin;
 	   If you ever edit it, please use PhotoViewExample to test the 4 cases 
 	   exhaustively (resizing the layout context and varying item count, margin 
 	   and scaling):
-	   - [_layoutContext isFlipped] + [_layoutContext decoratorItem] == nil
-	   - [_layoutContext isFlipped] + [_layoutContext decoratorItem] == scrollable area
-	   - [_layoutContext isFlipped] == NO + [_layoutContext decoratorItem] == nil
-	   - [_layoutContext isFlipped] == NO + [_layoutContext decoratorItem] == scrollable area */
+	   - [[self layoutContext] isFlipped] + [[self layoutContext] decoratorItem] == nil
+	   - [[self layoutContext] isFlipped] + [[self layoutContext] decoratorItem] == scrollable area
+	   - [[self layoutContext] isFlipped] == NO + [[self layoutContext] decoratorItem] == nil
+	   - [[self layoutContext] isFlipped] == NO + [[self layoutContext] decoratorItem] == scrollable area */
 	if (isFlipped == NO)
 	{
 		if ([self isContentSizeLayout] && contentHeight > layoutHeight)
@@ -547,8 +547,10 @@ rectangle that encloses the items and include border and item margins. */
 /** Sets the separator item to be drawn between each layouted item. */
 - (void) setSeparatorTemplateItem: (ETLayoutItem *)separator
 {
+	[self willChangeValueForProperty: @"separatorTemplateItem"];
 	ASSIGN(_separatorTemplateItem, separator);
 	[self renderAndInvalidateDisplay];
+	[self didChangeValueForProperty: @"separatorTemplateItem"];
 }
 
 /** Returns the separator item to be drawn between each layouted item. */			
@@ -570,8 +572,10 @@ margin with the item margin to compute the space around each separator.
 When the separator is the space, the end margin has usually no visible effects. */
 - (void) setSeparatorItemEndMargin: (CGFloat)aMargin
 {
+	[self willChangeValueForProperty: @"separatorItemEndMargin"];
 	_separatorItemEndMargin = aMargin;
 	[self renderAndInvalidateDisplay];
+	[self didChangeValueForProperty: @"separatorItemEndMargin"];
 }
 
 /** Returns the size trimmed at each separator item extremities. */

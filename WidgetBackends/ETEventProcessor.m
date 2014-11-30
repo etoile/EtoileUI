@@ -28,7 +28,7 @@ static ETEventProcessor *sharedInstance = nil;
 
 /** Returns the event processor that corresponds to the widget backend currently 
 in use. */
-+ (id) sharedInstance
++ (instancetype) sharedInstance
 {
 	if (sharedInstance == nil)
 	{
@@ -278,11 +278,15 @@ Returns YES when the event has been handled by EtoileUI. */
 			   not check that, a drag is initiated on the content item. */
 			if ([self isMovingOrResizingWindow])
 			{
+                RELEASE(initialActiveTool);
+                RELEASE(windowItem);
 				return NO;
 			}
 			[activeTool mouseDragged: anEvent];
 			break;
 		default:
+            RELEASE(initialActiveTool);
+            RELEASE(windowItem);
 			return NO;
 	}
 

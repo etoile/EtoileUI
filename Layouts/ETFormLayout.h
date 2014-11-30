@@ -20,7 +20,7 @@ ETLayoutHorizontalAlignmentGuided, in order to right align the labels at the
 left of the guide, and to left align the views at the right of the guide. 
 Which means we cannot use the positional layout to control how the whole content 
 is aligned. */
-typedef enum
+typedef enum : NSUInteger
 {
 	ETFormLayoutAlignmentCenter,
 /** Centers the content horizontally in the layout context.
@@ -116,7 +116,6 @@ width remain flexible in case the UI is resized later. */
 {
 	@private
 	ETFormLayoutAlignment _alignment;
-	CGFloat highestLabelWidth;
 	CGFloat _currentMaxLabelWidth;
 	CGFloat _currentMaxItemWidth;
 }

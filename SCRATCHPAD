@@ -30,6 +30,47 @@
 
 == Random API ideas ==
 
+@interface NSObject (ETInspector) <ETObjectInspection>
+- (id <ETInspector>) inspector;
+@end
+
+/** Returns the custom inspector associated with the receiver. By default,
+returns nil.
+
+-[NSObject(EtoileUI) inspect:] will show this inspector, unless nil is returned. */
+- (id <ETInspector>) inspector;
+/** Sets the custom inspector associated with the receiver. */
+- (void) setInspector: (id <ETInspector>)inspector;
+
+/* ETLayoutItem/Group Live Development */
+
+/* Live Development */
+
+/** This feature is not yet implemented. */
+- (void) beginEditingUI
+{
+	id view = [self supervisorView];
+
+	/* Notify to view */
+	if (view != nil && [view respondsToSelector: @selector(beginEditingUI)])
+		[view beginEditingUI];
+
+	/* Notify decorator item chain */
+	[[self decoratorItem] beginEditingUI];
+}
+
+- (void) beginEditingUI
+{
+	/* Notify view and decorator item chain */
+	[super beginEditingUI];
+
+	/* Notify children */
+	[[self items] makeObjectsPerformSelector: @selector(beginEditingUI)];
+}
+
+/*- (BOOL) isEditingUI;
+- (void) commitEditingUI;*/
+
 // TODO: For each document set the editor tool. Eventually offer a 
 // delegate method either through ETTool or ETDocumentManager to give 
 // more control over this...
@@ -390,6 +431,45 @@ TODO: Implement or rethink... */
 
 	return self;
 }
+
+
+== Free Layout Ideas ==
+
+// TODO: If we want to allow the source to handle the item locations manually,
+// the following methods have to be added back to ETFreeLayout. Take note 
+// that vectorLoc could be an NSPoint initially. The benefit of using a vector 
+// would be simplify the support of a 2.5D behavior (simulating 3D with 2D 
+// transforms).
+// I'm not yet sure that's the best way to let the developer implement 
+// positional constraint. May be this could be implemented in a 'positional 
+// constraint layer/handler' that the developer sets on its ETFreeLayout 
+// instance, this might be better if the contraint logic tends to be large. By 
+// doing so, we could eventually provide more ready-to-use logic that simplifies 
+// the developer task.
+// For 2.5D or 3D, we could add more properties to ETLayoutItem in CoreAnimation 
+// spirit. For example, a zPosition property and a orientationVector property. 
+// Think more about that...
+// -itemGroup:locationForItem: should be called in -itemAtLocation:. If no
+// source exists, -itemAtLocation must run exactly as it is now and requests the 
+// item location to super.
+// -itemGroup:setLocation:forItem: should be called in 
+// -handleDrop:forItem:layout: or similar.
+// -itemGroup:acceptLocation:forItem: may be needed in 
+// -handleDrag:forItem:layout: to give feedback about positional constraints to 
+// the user.
+#if 0
+/* Overriden method to delegate it to the layout item group data source. */
+- (ETVector *) itemGroup: (ETLayoutItemGroup *)itemGroup locationForItem: (ETLayoutItem *)item
+{
+	return [[itemGroup source] itemGroup: itemGroup locationForItem: item];
+}
+
+/* Overriden method to delegate it to the layout item group data source. */
+- (void) itemGroup: (ETLayoutItemGroup *)itemGroup setLocation: (ETVector *)vectorLoc forItem: (ETLayoutItem *)item
+{
+	[[itemGroup source] itemGroup: itemGroup setLocation: vectorLoc forItem: item];
+}
+#endif
 
 
 Old Ideas

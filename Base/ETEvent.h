@@ -46,7 +46,7 @@ stylus, one or multiple fingers etc. */
 /** These constants allows to encode the pick and drop combinations that 
 characterize drag/drop vs copy/cut/paste in EtoileUI. Read -setPickingMask: for 
 the details. */
-enum {
+enum : NSUInteger {
 	ETNonePickingMask = 0,
 	ETPickPickingMask = 2,
 	ETCopyPickingMask = 4,

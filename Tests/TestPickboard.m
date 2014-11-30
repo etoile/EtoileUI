@@ -82,12 +82,11 @@
 	id string = [NSString string];
 	id array = [NSArray array];
 	id item = [itemFactory item];
-	id pickRef = nil;
 	id object = nil;
 	
-	pickRef = [pickboard pushObject: string];
-	pickRef = [pickboard pushObject: array];
-	pickRef = [pickboard appendObject: item];
+	UKNotNil([pickboard pushObject: string]);
+	UKNotNil([pickboard pushObject: array]);
+	UKNotNil([pickboard appendObject: item]);
 	
 	object = [pickboard popObject];
 	UKNotNil(object);
@@ -100,7 +99,7 @@
 	UKIntsEqual(1, [pickboard numberOfItems]);
 	
 	object = [pickboard popObject];
-	UKNotNil(pickRef);
+	UKNotNil(object);
 	UKObjectsSame(item, object);
 	UKIntsEqual(0, [pickboard numberOfItems]);
 	

@@ -12,9 +12,14 @@
 #import "ETPositionalLayout.h"
 #import "ETGeometry.h"
 #import "ETLayoutItem.h"
+#import "ETLayoutItem+Private.h"
+#import "ETLayoutItemGroup.h"
+#import "ETTemplateItemLayout.h"
 #import "ETCompatibility.h"
 
 @implementation ETPositionalLayout
+
+@dynamic contextLayout;
 
 /** <init /> 
 Returns a new positional layout.
@@ -34,24 +39,12 @@ constraint with -setItemSizeConstraint: and -setConstrainedItemSize:. */
 	return self;
 }
 
-/** <override-dummy />
-Returns a copy of the receiver.<br />
-The given context which might be nil will be set as the layout context on the copy.
-
-This method is ETLayout designated copier. Subclasses that want to extend 
-the copying support must invoke it instead of -copyWithZone:.
-
-Subclasses must be aware that this method calls -setAttachedTool: with an 
-tool copy. */ 
-- (id) copyWithZone: (NSZone *)aZone layoutContext: (id <ETLayoutingContext>)ctxt
+/** Returns the context where the layout happens. */
+- (id <ETLayoutingContext>) layoutContext
 {
-	ETPositionalLayout *newLayout = [super copyWithZone: aZone layoutContext: ctxt];
+    ETLayoutItemGroup *contextItem = [self contextItem];
 
-	newLayout->_constrainedItemSize = _constrainedItemSize;
-	newLayout->_itemSizeConstraintStyle = _itemSizeConstraintStyle;
-	newLayout->_isContentSizeLayout  = _isContentSizeLayout;
-
-	return newLayout;
+    return (contextItem != nil ? contextItem : [self contextLayout]);
 }
 
 /** Sets whether the layout context can be resized, when its current size is 
@@ -74,8 +67,10 @@ See also -isContentSizeLayout:. */
 - (void) setIsContentSizeLayout: (BOOL)flag
 {
 	//ETDebugLog(@"-setContentSizeLayout");
+	[self willChangeValueForProperty: @"isContentSizeLayout"];
 	_isContentSizeLayout = flag;
 	[self resetLayoutSize];
+	[self didChangeValueForProperty: @"isContentSizeLayout"];
 }
 
 /** Returns whether the layout context can be resized, when its current size is 
@@ -87,7 +82,7 @@ When a scrollable area item decorates the layout context, -isContentSizeLayout
 always returns YES. */
 - (BOOL) isContentSizeLayout
 {
-	if ([_layoutContext isScrollable])
+	if ([[self layoutContext] isScrollable])
 		return YES;
 
 	return _isContentSizeLayout;
@@ -106,7 +101,10 @@ See -[ETLayout positionalLayout]. */
 See ETSizeConstraintStyle enum. */
 - (void) setItemSizeConstraintStyle: (ETSizeConstraintStyle)constraint
 {
+	[self willChangeValueForProperty: @"itemSizeConstraintStyle"];
 	_itemSizeConstraintStyle = constraint;
+	[self renderAndInvalidateDisplay];
+	[self didChangeValueForProperty: @"itemSizeConstraintStyle"];
 }
 
 /** Returns how the item is resized based on the constrained item size.
@@ -126,7 +124,10 @@ Whether the width, the height or both are resized is controlled by
 See also setItemSizeConstraintStyle: and -resizeLayoutItems:toScaleFactor:. */
 - (void) setConstrainedItemSize: (NSSize)size
 {
+	[self willChangeValueForProperty: @"constrainedItemSize"];
 	_constrainedItemSize = size;
+	[self renderAndInvalidateDisplay];
+	[self didChangeValueForProperty: @"constrainedItemSize"];
 }
 
 /** Returns the width and/or height to which the items should be resized when 
@@ -163,9 +164,6 @@ respect the autoresizing mask returned by -[ETLayoutItem autoresizingMask],
 otherwise it won't. */
 - (void) resizeItems: (NSArray *)items toScaleFactor: (CGFloat)factor
 {
-	if ([self itemSizeConstraintStyle] == ETSizeConstraintStyleNone)
-		return;
-
 	for (ETLayoutItem *item in items)
 	{
 		/* Scaling is always computed from item default frame rather than

@@ -8,6 +8,7 @@
 
 #import <EtoileFoundation/Macros.h>
 #import <EtoileFoundation/NSObject+Model.h>
+#import <CoreObject/COObjectGraphContext.h>
 #import "ETUIItem.h"
 #import "ETDecoratorItem.h"
 #import "ETGeometry.h"
@@ -61,14 +62,18 @@ By default, returns NO. */
 
 - (void) dealloc
 {
-	if (_decoratorItem != nil)
-	{
-		 /* Unset the decorated item weak reference on the decorator side */
-		[self setDecoratorItem: nil];
-	}
 	DESTROY(supervisorView);
-
 	[super dealloc];
+}
+
+- (void) willDiscard
+{
+    if (_decoratorItem != nil)
+    {
+        /* Unset the decorated item weak reference on the decorator side */
+        [self setDecoratorItem: nil];
+    }
+    [super willDiscard];
 }
 
 // NOTE: Mac OS X doesn't always update the ref count returned by 
@@ -78,6 +83,7 @@ By default, returns NO. */
 - (id) retain
 {
 	NSIncrementExtraRefCount(self);
+	//NSLog(@"Retain %@ %i", [self primitiveDescription], [self retainCount]);
 	return self;
 }
 
@@ -89,45 +95,12 @@ By default, returns NO. */
 - (oneway void) release
 {
 	if (NSDecrementExtraRefCountWasZero(self))
+	{
+		//NSLog(@"Release %@ %i", [self primitiveDescription], [self retainCount]);
 		[self dealloc];
+	}
 }
 #endif
-
-- (id) copyWithCopier: (ETCopier *)aCopier
-{
-	ETUIItem *newItem = [super copyWithCopier: aCopier];
-
-	if ([aCopier isAliasedCopy])
-		return newItem;
-
-	NSZone *zone = [aCopier zone];
-	ETDecoratorItem *decorator = _decoratorItem;
-
-	[aCopier beginCopyFromObject: self toObject: newItem];
-
-	// NOTE: For debugging, RETAIN...RELEASE code can be uncommented to 
-	// destructure the decoration chain on copy.
-	//RETAIN(decorator);
-	//[self setDecoratorItem: nil];
-
-	newItem->supervisorView = [supervisorView copyWithZone: zone];
-	[newItem->supervisorView setItemWithoutInsertingView: newItem];
-
-	// NOTE: The decorator set up below must mirror -setDecoratorItem:.
-	ETDecoratorItem *decoratorCopy = [decorator copyWithCopier: aCopier];
-	[decoratorCopy handleDecorateItem: newItem 
-	                   supervisorView: [newItem supervisorView] 
-	                           inView: nil];
-	[decoratorCopy setDecoratedItem: newItem];
-	newItem->_decoratorItem = decoratorCopy;
-
-	//[self setDecoratorItem: decorator];
-	//RELEASE(decorator);
-
-	[aCopier endCopy];
-
-	return newItem;
-}
 
 /* <override-dummy /> 
 Returns whether the receiver uses flipped coordinates.
@@ -151,6 +124,14 @@ also ETView. */
 	return supervisorView;
 }
 
+- (void) syncSupervisorViewGeometry: (ETSyncSupervisorView)syncDirection
+{
+	// TODO: Perhaps support syncDirection here
+
+	/* isFlipped is also sync in -setFlipped: (see subclasses) */
+	[supervisorView setFlipped: [self isFlipped]];
+}
+
 // TODO: Would be better to only allow -setSupervisorView: to be called once 
 // and prevents supervisorView replacement. Presently developers must not 
 // overlook this possibility when they write a subclass, otherwise weird issues 
@@ -161,12 +142,16 @@ also ETView. */
 You should never need to call this method.
 
 See also -supervisorView:. */
-- (void) setSupervisorView: (ETView *)aSupervisorView sync: (ETSyncSupervisorView)syncDirection
+- (void) setSupervisorView: (ETView *)aSupervisorView
+                      sync: (ETSyncSupervisorView)syncDirection
+					
 {
-	 /* isFlipped is also sync in -setFlipped: (see subclasses) */
-	[aSupervisorView setFlipped: [self isFlipped]];
 	[aSupervisorView setItemWithoutInsertingView: self];
 	ASSIGN(supervisorView, aSupervisorView);
+	[self syncSupervisorViewGeometry: syncDirection];
+
+	if ([[self objectGraphContext] isLoading])
+		return;
 
 	BOOL hasDecorator = (_decoratorItem != nil);
 	if (hasDecorator)
@@ -256,14 +241,6 @@ needs some special redisplay policy. */
 - (void) render: (NSMutableDictionary *)inputValues 
       dirtyRect: (NSRect)dirtyRect 
       inContext: (id)ctxt
-{
-
-}
-
-/** <override-subclass />
-
-To be implemented... */
-- (void) beginEditingUI
 {
 
 }

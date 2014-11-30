@@ -36,23 +36,6 @@ as stroke color and brown as fill color. */
     [super dealloc];
 }
 
-- (id) copyWithCopier: (ETCopier *)aCopier
-{
-	ETPaintBucketTool *newTool = [super copyWithCopier: aCopier];
-
-	if ([aCopier isAliasedCopy])
-		return newTool;
-
-	[aCopier beginCopyFromObject: self toObject: newTool];
-
-	newTool->_fillColor = [_fillColor copyWithZone: [aCopier zone]];
-	newTool->_strokeColor = [_strokeColor copyWithZone: [aCopier zone]];
-	newTool->_paintMode = _paintMode;
-
-	[aCopier endCopy];
-	return newTool;
-}
-
 #pragma mark Interaction Settings -
 
 /** Returns the fill color associated with the receiver. */

@@ -13,22 +13,22 @@
 #import <EtoileFoundation/NSObject+Model.h>
 #import <EtoileFoundation/ETUTI.h>
 #import <EtoileFoundation/Macros.h>
+#import <CoreObject/COObjectGraphContext.h>
 #import "ETLayoutItem.h"
 #import "ETActionHandler.h"
 #import "ETBasicItemStyle.h"
 #import "ETController.h"
 #import "ETGeometry.h"
-#import "ETInspector.h"
 #import "ETItemValueTransformer.h"
 #import "ETLayoutItemGroup.h"
 #import "ETLayoutItem+KVO.h"
+#import "ETLayoutItem+Private.h"
 #import "ETLayoutItem+Scrollable.h"
 #import "ETLayoutExecutor.h"
 #import "ETPositionalLayout.h"
 #import "EtoileUIProperties.h"
 #import "ETScrollableAreaItem.h"
 #import "ETStyleGroup.h"
-#import "ETTool.h"
 #import "ETView.h"
 #import "ETUIObject.h"
 #import "ETUIItemIntegration.h"
@@ -45,8 +45,11 @@ NSString *ETLayoutItemLayoutDidChangeNotification = @"ETLayoutItemLayoutDidChang
 
 #define DETAILED_DESCRIPTION
 
+@interface NSView (NSControlSubclassNotifications)
+- (void) setDelegate: (id)aDelegate;
+@end
+
 @interface ETLayoutItem (Private) <ETWidget>
-- (NSString *) defaultIdentifier;
 - (void) setViewAndSync: (NSView *)newView;
 - (NSRect) bounds;
 - (void) setBoundsSize: (NSSize)size;
@@ -54,6 +57,8 @@ NSString *ETLayoutItemLayoutDidChangeNotification = @"ETLayoutItemLayoutDidChang
 @end
 
 @implementation ETLayoutItem
+
+@dynamic hostItem;
 
 static BOOL showsBoundingBox = NO;
 static BOOL showsFrame = NO;
@@ -156,6 +161,11 @@ Beside this Nib support, this initializer must never be called directly. */
 	return [self initWithObjectGraphContext: [ETUIObject defaultTransientObjectGraphContext]];
 }
 
+- (void) prepareTransientState
+{
+	_defaultValues = [[NSMutableDictionary alloc] init];
+}
+
 /** <init />
 You must use -[ETLayoutItemFactory itemXXX] or 
 -[ETLayoutItemFactory itemGroupXXX] methods rather than this method.
@@ -178,12 +188,9 @@ See also -setView:, -setCoverStyle: and -setActionHandler:.  */
 	if (self == nil)
 		return nil;
 
+	[self prepareTransientState];
+
 	// NOTE: -[COObject newVariableStorage] instantiates the value transformers
-
-	_defaultValues = [[NSMutableDictionary alloc] init];
-
-	_parentItem = nil;
-
 	_styleGroup = [[ETStyleGroup alloc] initWithObjectGraphContext: aContext];
 	[self setCoverStyle: aStyle];
 	[self setActionHandler: aHandler];
@@ -255,224 +262,19 @@ You must call -stopKVOObservationIfNeeded right at the beginning of -dealloc in
 every subclass that overrides -dealloc. */
 - (void) dealloc
 {
+	ETAssert(_deserializationState == nil || [_deserializationState isEmpty]);
+
 	_isDeallocating = YES;
 	[self stopKVOObservationIfNeeded];
 
+	DESTROY(_deserializationState);
 	DESTROY(_defaultValues);
 	DESTROY(_styleGroup);
 	DESTROY(_coverStyle);
 	DESTROY(_representedObject);
 	DESTROY(_transform);
-	_parentItem = nil; /* weak reference */
 
     [super dealloc];
-}
-
-- (id) copyAspect: (ETUIObject *)anAspect withCopier: (ETCopier *)aCopier
-{
-	id newAspect = nil;
-
-	if ([anAspect isShared])
-	{
-		newAspect = RETAIN([[aCopier objectReferencesForCopy] objectForKey: anAspect]);
-
-		if (newAspect == nil)
-		{
-			newAspect = [anAspect copyWithCopier: aCopier];
-		}
-	}
-	else
-	{
-			newAspect = [anAspect copyWithCopier: aCopier];
-	}
-	return newAspect;
-}
-
-/** Returns a shallow copy of the receiver without copying the view, the styles, 
-	the represented object and the children items if the receiver is an 
-	ETLayoutItemGroup related classes. 
-	Take note that a deep copy of the decorators is created and no view 
-	reference is kept, -view will return nil for the copied item.
-	TODO: Implement decorators copying that is currently missing.
-	
-Default values will be copied but not individually (shallow copy). */
-- (id) copyWithCopier: (ETCopier *)aCopier isDeep: (BOOL)isDeepCopy
-{
-	ETLayoutItem *item = [super copyWithCopier: aCopier];
-
-	if ([aCopier isAliasedCopy])
-		return item;
-
-	NSZone *zone = [aCopier zone];
-
-	[aCopier beginCopyFromObject: self toObject: item];
-
-	item->_defaultValues = [_defaultValues mutableCopyWithZone: zone];
-
-	// NOTE: Geometry synchronization logic in setters such as setFlippedView: 
-	// and -setAutoresizingMask: is not required to make a copy, because all 
-	// the related objects (supervisor view, decorator etc.) are in a valid and 
-	// well synchronized state at copy time.
-	// -[ETUIItem copyWithZone:] copies the supervisor view and its subviews
-	
-	/* We copy all object ivars except _parentItem */
-
-	/* We set the style in the copy by copying the style group */
-	item->_styleGroup = [_styleGroup copyWithCopier: aCopier];
-	item->_coverStyle = [self copyAspect: _coverStyle withCopier: aCopier];
-	item->_transform = [_transform copyWithZone: zone];
-
-	/* We copy every primitive ivars except _isSyncingSupervisorViewGeometry */
-
-	item->_contentBounds = _contentBounds;
-	/* anchorPoint must be initialized before position but after contentBounds.
-	   position must be initialized after anchorPoint. */
-	[item setValue: [self valueForVariableStorageKey: kETAnchorPointProperty] forVariableStorageKey: kETAnchorPointProperty];
-	item->_position = _position;
-	/* Will be overriden by -setView: when the view is not nil */	
-	item->_autoresizingMask = _autoresizingMask;
-	item->_boundingBox = _boundingBox;
-	item->_flipped = _flipped;
-	item->_selectable = _selectable;
-	item->_selected = _selected;
-	item->_visible = _visible;
-	item->_contentAspect = _contentAspect;
-	item->_scrollViewShown = _scrollViewShown;
-
-	/* We copy all variables properties except kETTargetProperty */
-
-	id valueCopy = [[self valueForVariableStorageKey: kETValueProperty] copyWithZone: zone];
-	id valueTransformersCopy = [[self valueForVariableStorageKey: @"valueTransformers"] copyWithZone: zone];
-	id actionHandlerCopy = [self copyAspect: [self valueForVariableStorageKey: kETActionHandlerProperty] withCopier: aCopier];
-
-	[item setValue: valueCopy forVariableStorageKey: kETValueProperty];
-	[item setValue: valueTransformersCopy forVariableStorageKey: @"valueTransformers"];
-	[item setValue: actionHandlerCopy forVariableStorageKey: kETActionHandlerProperty];
-
-	RELEASE(valueCopy);
-	RELEASE(actionHandlerCopy);
-
-	[item setValue: [self valueForVariableStorageKey: kETDefaultFrameProperty] forVariableStorageKey:  kETDefaultFrameProperty];
-	[item setValue: [self valueForVariableStorageKey: kETNameProperty] forVariableStorageKey: kETNameProperty];
-	[item setValue: [self valueForVariableStorageKey: kETIdentifierProperty] forVariableStorageKey: kETIdentifierProperty];
-	[item setValue: [self valueForVariableStorageKey: kETImageProperty] forVariableStorageKey: kETImageProperty];
-	[item setValue: [self valueForVariableStorageKey: kETIconProperty] forVariableStorageKey: kETIconProperty];
-	[item setValue: [self valueForVariableStorageKey: kETValueKeyProperty] forVariableStorageKey: kETValueKeyProperty];
-	[item setValue: [self valueForVariableStorageKey: kETSubtypeProperty] forVariableStorageKey:  kETSubtypeProperty];
-	[item setValue: [self valueForVariableStorageKey: kETActionProperty] forVariableStorageKey: kETActionProperty];
-
-	/* We adjust targets and observers to reference equivalent objects in the object graph copy */
-
-	NSView *viewCopy = [item->supervisorView wrappedView];
-	// NOTE: -objectForKey: returns nil when the key is nil.
-	id target = [self target];
-	id targetCopy = [[aCopier objectReferencesForCopy] objectForKey: target];
-	id viewTarget = [[[self view] ifResponds] target];
-	id viewTargetCopy = [[aCopier objectReferencesForCopy] objectForKey: viewTarget];
-
-	if (nil == targetCopy)
-	{
-		targetCopy = target;
-	} 
-	if (nil == viewTargetCopy)
-	{
-		viewTargetCopy = viewTarget;
-	}
-	[[viewCopy ifResponds] setTarget: viewTargetCopy];
-	[item setTarget: targetCopy];
-
-	if ([viewCopy isWidget]) /* See -setView:autoresizingMask and keep in sync */
-	{
-		NSUInteger options = (NSKeyValueObservingOptionOld | NSKeyValueObservingOptionNew);
-
-		[[(id <ETWidget>)viewCopy cell] addObserver: item
-		                                 forKeyPath: @"objectValue"
-		                                    options: options
-		                                    context: NULL];
-		[[(id <ETWidget>)viewCopy cell] addObserver: item
-		                                 forKeyPath: @"state"
-		                                    options: options
-		                                    context: NULL];
-		[[viewCopy ifResponds] setDelegate: item];
-	}
-
-	/* We copy the represented object last in case it holds a reference on 
-	   another aspect (e.g. shape items use the same shape object in 'style' 
-	   and 'representedObject' properties) */
-
-	 /* Will set up the observer */
-	[item setRepresentedObject: [aCopier objectReferenceInCopyForObject: [self representedObject]]];
-
-	[aCopier endCopy];
-	
-	if ([self needsLayoutUpdate])
-	{
-		/* For autoresizing among other things. 
-		   We cannot just call -updateLayoutRecursively:, it would mean sending 
-		   -copy to an item group would prevent items, added between the copy 
-		   message and the layout execution, to be autoresized. */
-		[item setNeedsLayoutUpdate];
-	}
-
-	return item;
-}
-
-- (id) copyWithCopier: (ETCopier *)aCopier 
-{
-	return [self copyWithCopier: aCopier isDeep: NO];
-}
-
-/** Must never be called in a subclass. */
-- (id) deepCopy
-{
-	return [self deepCopyWithCopier: [ETCopier copier]];
-}
-
-/** Returns a deep copy of the receiver by copying the view and all its 
-	subview hierarchy, the styles, the decorators, the represented object and 
-	all the descendant children items if the receiver is an ETLayoutItemGroup r
-	elated classes. 
-	All copied collections are mutable (styles, decorators, representedObject, 
-	children items). 
-	TODO: Implement styles copying that is currently missing (decorators too in 
-	-copyWithZone:). */
-- (id) deepCopyWithCopier: (ETCopier *)aCopier
-{
-	ETLayoutItem *item = [self copyWithCopier: aCopier isDeep: YES];
-
-#if 0
-	id repObjectCopy = nil;
-
-	// TODO: We probably want to handle different kind of copies on the model. 
-	// For example, with values objects a shallow copy of an array is a bad 
-	// idea, so would be a deep copy for an array of entity objects.
-	// A good solution may be to override -copyWithZone: and/or 
-	// -mutableCopyWithZone: in collection classes to map each 
-	// element based on its model description to a particular copy operation:
-	// - value object -> copy
-	// - entity object -> don't copy 
-	// In this way, we could handle copy in a more meaningful way without having 
-	// to decide between only the two crude copy styles deep and shallow. To 
-	// achieve we need a model description (metamodel) framework like Magritte.
-	// We still need to decide what should the default between shallow and deep 
-	// for the represented object (model) when no model description is available.
-	if ([[self representedObject] conformsToProtocol: @protocol(NSMutableCopying)])
-	{
-		repObjectCopy = [[self representedObject] mutableCopy];
-	}
-	else if ([[self representedObject] conformsToProtocol: @protocol(NSCopying)])
-	{
-		repObjectCopy = [[self representedObject] copy];
-	}
-	[item setRepresentedObject: AUTORELEASE(repObjectCopy)];
-#endif
-
-	return item;
-}
-
-- (BOOL) isCopyNode
-{
-	return YES;
 }
 
 - (NSString *) description
@@ -511,9 +313,9 @@ This method never returns nil. The returned value is equal to self when the
 receiver has no parent item. */
 - (id) rootItem
 {
-	if (_parentItem != nil)
+	if ([self parentItem] != nil)
 	{
-		return [_parentItem rootItem];	
+		return [[self parentItem] rootItem];	
 	}
 	else
 	{
@@ -521,80 +323,56 @@ receiver has no parent item. */
 	}
 }
 
-/** Returns the layout item group which controls the receiver.<br />
-An item group is said to be base item that controls its descendant items when 
-its represented path base is neither nil nor a blank value (see 
--hasValidRepresentedPathBase).
+/** Returns the first ancestor item group which is bound to a source object.
 
-For every descendant item under its control, the base item will drive:
+For the entire item subtree under its control (until a descendant becomes
+another source item), the source item will drive the model access either through:
+
+<list>
+<item>each descendant item represented object with the collection protocols</item>
+<item>the source protocol and the source object directly</item>
+</list>
+
+An item group is automatically turned into a source item, when you set a source, 
+see -[ETLayoutItemGroup setSource:].
+
+This method will return nil when the receiver isn't a source item or has no
+ancestor which is a source item.
+ 
+See also -source and -controllerItem. */
+- (ETLayoutItemGroup *) sourceItem
+{
+	return [[self parentItem] sourceItem];
+}
+
+/** Returns the first ancestor item group which is bound to a controller.
+
+For the entire item subtree under its control (until a descendant becomes
+another source item), the controller will drive:
+ 
 <list>
 <item>pick and drop validation</item>
-<item>source access</item>
+<item>sorting</item>
+<item>filtering</item>
 </list>
-Various delegate-like methods use the base item as their main argument.
 
-All descendant items are controlled by the receiver base item until a descendant 
-becomes a new base item (by providing a represented path base).<br /> 
-See also -representedPathBase, -representedPath, -[ETLayoutItemGroup source] 
-and related setter methods.
+An item group is automatically turned into a controller item, when you set a
+a controller, see -[ETLayoutItemGroup setController:].
 
-An item group is automatically turned into a base item, when you set a source 
-or a controller (see -[ETLayoutItemGroup setController:]).
+This method will return nil when the receiver isn't a controller item or has no
+ancestor which is a controller item.
 
-This method will return nil when the receiver isn't a base item or has no 
-ancestor which is a base item.<br />
-Hence -[[[ETLayoutItem alloc] init] baseItem] returns nil. */
-- (ETLayoutItemGroup *) baseItem
-{
-	if ([self isBaseItem])
-	{
-		return (ETLayoutItemGroup *)self;
-	}
-	else
-	{
-		return [_parentItem baseItem];
-	}
-}
-
+See ETController and ETPickAndDropActionHandler. */
 - (ETLayoutItemGroup *) controllerItem
 {
-	return [_parentItem controllerItem];
+	return [[self parentItem] controllerItem];
 }
 
-/** Returns whether the receiver is a base item or not.
-
-To be a base item the receiver must have a source or a controller set. 
-See -[ETLayoutItemGroup setSource:] and -[ETLayoutItemGroup setController:].
-
-By default, returns NO. */
-- (BOOL) isBaseItem
-{
-	return NO;
-}
-
-/** Returns the layout item group to which the receiver belongs to. 
-
-For the root item, returns nil. */
 - (ETLayoutItemGroup *) parentItem
 {
-	return _parentItem;
-}
+    ETLayoutItemGroup *parent = [self valueForVariableStorageKey: kETParentItemProperty];
 
-/** Sets the layout item group to which the receiver belongs to. 
-
-If the given parent is nil, the receiver becomes a root item. 
-
-You must never call this method directly, unless you write a subclass.<br />
-To change the parent, use -addItem:, -removeFromParent and other similar methods 
-to manipulate the item collection that belongs to the parent. */
-- (void) setParentItem: (ETLayoutItemGroup *)parent
-{
-	//ETDebugLog(@"For item %@ with supervisor view %@, modify the parent item from "
-	//	"%@ to %@", self, [self supervisorView], _parentItem, parent, self);
-	NSParameterAssert(parent != self);
-	[self willChangeValueForKey: kETParentItemProperty];
-	_parentItem = parent;
-	[self didChangeValueForKey: kETParentItemProperty];
+    return (parent != nil ? parent : [self hostItem]);
 }
 
 /** Detaches the receiver from the item group it belongs to.
@@ -603,12 +381,12 @@ You are in charge of retaining the receiver, otherwise it could be deallocated
 if no other objects retains it. */
 - (void) removeFromParent
 {
-	if (_parentItem != nil)
+	if ([self parentItem] != nil)
 	{
 		/* -removeItem: will release us, so to be sure we won't deallocated 
 		   right now we use retain/autorelease */
 		RETAIN(self);
-		[_parentItem removeItem: self];
+		[[self parentItem] removeItem: self];
 		AUTORELEASE(self);
 	}
 }
@@ -622,9 +400,9 @@ The receiver itself can be returned. */
 	if ([self displayView] != nil)
 		return self;
 
-	if (_parentItem != nil)
+	if ([self parentItem] != nil)
 	{
-		return [_parentItem supervisorViewBackedAncestorItem];
+		return [[self parentItem] supervisorViewBackedAncestorItem];
 	}
 	else
 	{
@@ -644,9 +422,9 @@ The receiver display view itself can be returned. */
 	if (displayView != nil)
 		return displayView;
 
-	if (_parentItem != nil)
+	if ([self parentItem] != nil)
 	{
-		return [_parentItem enclosingDisplayView];
+		return [[self parentItem] enclosingDisplayView];
 	}
 	else
 	{
@@ -693,13 +471,13 @@ If the given item is equal to self, the resulting index path is a blank one
 	if (item == nil && self == [self rootItem])
 		baseItemReached = YES;
 	
-	if (_parentItem != nil && item != self)
+	if ([self parentItem] != nil && item != self)
 	{
-		indexPath = [_parentItem indexPathFromItem: item];
+		indexPath = [[self parentItem] indexPathFromItem: item];
 		if (indexPath != nil)
 		{
 			indexPath = [indexPath indexPathByAddingIndex: 
-				[(ETLayoutItemGroup *)_parentItem indexOfItem: (id)self]];
+				[(ETLayoutItemGroup *)[self parentItem] indexOfItem: (id)self]];
 		}
 	}
 	else if (baseItemReached)
@@ -726,49 +504,6 @@ If the given item is equal to self, the resulting index path is an blank one
 	return [item indexPathFromItem: self];
 }
 
-/** Returns the receiver absolute index path by collecting the index of each
-parent item until the root item is reached (when -parentItem returns nil). 
-
-This method is equivalent to [[self rootItem] indexPathForItem: self]. */
-- (NSIndexPath *) indexPath
-{
-	// TODO: Test whether it is worth to optimize or not
-	return [[self rootItem] indexPathForItem: self];
-}
-
-/* By default, returns the name.
-
-If -name returns nil or an empty string, the identifier is a string made of 
-the index used by the parent item to reference the receiver. */
-- (NSString *) defaultIdentifier
-{
-	if ([[self name] length] > 0)
-	{
-		return [self name];
-	}
-	
-	/* When the parent item uses a dictionary as represented object, try to 
-	   return the key that corresponds to the receiver */
-
-	id parentRepObject = [_parentItem representedObject];
-		
-	/* -identifierAtIndex: is implemented by some classes like NSDictionary */
-	if ([parentRepObject isCollection] && [parentRepObject isEmpty] == NO
-	 && [parentRepObject respondsToSelector: @selector(identifierAtIndex:)]
-	 && [_parentItem usesRepresentedObjectAsProvider])
-	{
-		NSInteger index = [_parentItem indexOfItem: self];
-		if (index != NSNotFound)
-		{
-			return [parentRepObject identifierAtIndex: index];
-		}
-	}
-
-	/* Otherwise returns item index */
-
-	return [NSString stringWithFormat: @"%ld", (long)[(ETLayoutItemGroup *)_parentItem indexOfItem: (id)self]];
-}
-
 /** Returns the identifier associated with the layout item.
 
 The returned value can be nil or an empty string. */
@@ -785,36 +520,28 @@ The returned value can be nil or an empty string. */
 	[self didChangeValueForProperty: kETIdentifierProperty];	
 }
 
-/** Returns the display name associated with the receiver. See also 
-NSObject(Model) in EtoileFoundation. */
+/** Returns -name when a name is set, otherwise the display name of the
+represented object, and in last resort a succinct description of the item.
+ 
+See also NSObject(Model) in EtoileFoundation. */
 - (NSString *) displayName
 {
 	id name = [self name];
 	
-	if (name == nil)
+	if (name != nil)
 	{
-		if ([self view] != nil)
-		{
-			name = [[self view] description];
-		}
-		else if ([self value] != nil)
-		{
-			name = [[self value] stringValue];
-		}
-		else if ([self representedObject] != nil)
-		{
-			/* Makes possible to keep an identical display name between an 
-			   item and all derived meta items (independently of their meta 
-			   levels). */
-			name = [[self representedObject] displayName];
-		}
-		else
-		{
-			name = [super displayName];
-		}
+		return name;
 	}
-		
-	return name;
+	else if ([self representedObject] != nil)
+	{
+		/* Makes possible to keep an identical display name between an item and 
+		   all derived meta items (independently of their meta levels). */
+		return [[self representedObject] displayName];
+	}
+	else
+	{
+		return [self primitiveDescription];
+	}
 }
 
 /** Sets the name associated with the receiver with -setName:. */
@@ -1004,11 +731,6 @@ The item view is also synchronized with the object value of the given represente
 object when the view is a widget. */
 - (void) setRepresentedObject: (id)modelObject
 {
-	// TODO: Because ETCompositeLayout uses -setRepresentedObject: in its set up, 
-	// we cannot do it in this way...
-	//NSAssert([[self layout] isKindOfClass: NSClassFromString(@"ETCompositeLayout")] == NO, 
-	//	@"The represented object must not be changed when a ETCompositeLayout is in use");
-
 	id oldObject = _representedObject;
 
 	_isSettingRepresentedObject = YES;
@@ -1039,14 +761,16 @@ object when the view is a widget. */
 	_isSettingRepresentedObject = NO;
 }
 
-- (ETView *) setUpSupervisorViewWithFrame: (NSRect)aFrame 
+/* This method is never called once a decorator is set (setting it triggers 
+the supervisor view creation), except when an object graph loading is underway, 
+see -[ETLayoutItem awakeFromDeserialization]. */
+- (ETView *) setUpSupervisorView
 {
 	if (supervisorView != nil)
 		return supervisorView;
 
-	/* Will call back -setSupervisorView:sync: which retains the view */
-	supervisorView = [[ETView alloc] initWithFrame: aFrame item: self];
-	RELEASE(supervisorView);
+	[self setSupervisorView: AUTORELEASE([ETView new])
+	                   sync: ETSyncSupervisorViewFromItem];
 	return supervisorView;
 }
 
@@ -1183,7 +907,7 @@ The view is an NSView class or subclass instance. See -setView:. */
 	/* Insert a supervisor view if needed and adjust the new view autoresizing behavior */
 	if (nil != newView)
 	{
-		[self setUpSupervisorViewWithFrame: [self frame]];
+		[self setUpSupervisorView];
 		NSParameterAssert(NSEqualSizes([self contentBounds].size, [supervisorView frame].size));
 
 		[newView setAutoresizingMask: autoresizing];
@@ -1205,7 +929,8 @@ The view is an NSView class or subclass instance. See -setView:. */
 		                                forKeyPath: @"state"
 		                                   options: options
 		                                   context: NULL];
-		[[newView ifResponds] setDelegate: self];
+        /* For text editing notifications posted by NSControl subclasses such as NSTextField */
+		[(NSView *)[newView ifResponds] setDelegate: self];
 	}
 
 	[self didChangeValueForProperty: kETViewProperty];
@@ -1224,7 +949,7 @@ the default frame and frame to match this view frame. */
 		// supervisor view.
 		NSRect newViewFrame = [newView frame];
 
-		[self setUpSupervisorViewWithFrame: newViewFrame];
+		[self setUpSupervisorView];
 		NSParameterAssert(nil != [self supervisorView]);
 
 		[self setContentAspect: ETContentAspectStretchToFill];
@@ -1235,7 +960,10 @@ the default frame and frame to match this view frame. */
 }
 
 /** Sets the view associated with the receiver. This view is commonly a widget 
-provided by the widget backend. */
+provided by the widget backend.
+
+If a view is set, the target and action set on the receiver are lost, see
+-target and -action. */
 - (void) setView: (NSView *)newView
 {
 	[self setView: newView autoresizingMask: [self autoresizingMaskForContentAspect: [self contentAspect]]];
@@ -1526,12 +1254,12 @@ the previous layout in use. */
 	_visible = visible;
 	if (visible)
 	{
-		[_parentItem handleAttachViewOfItem: self];
+		[[self parentItem] handleAttachViewOfItem: self];
 		ETDebugLog(@"Inserted view at %@", NSStringFromRect([self frame]));
 	}
 	else
 	{
-		[_parentItem handleDetachViewOfItem: self];
+		[[self parentItem] handleDetachViewOfItem: self];
 		ETDebugLog(@"Removed view at %@", NSStringFromRect([self frame]));
 	}
 	[self willChangeValueForProperty: kETVisibleProperty];
@@ -1605,6 +1333,29 @@ also ETView. */
 	return supervisorView;
 }
 
+- (void) syncSupervisorViewGeometry: (ETSyncSupervisorView)syncDirection
+{
+	// TODO: Perhaps raise an exception
+	if (supervisorView == nil)
+		return;
+
+	[super syncSupervisorViewGeometry: syncDirection];
+
+	if (ETSyncSupervisorViewToItem == syncDirection)
+	{
+		[self setFrame: [supervisorView frame]];
+		[self setAutoresizingMask: [supervisorView autoresizingMask]];
+	}
+	else /* ETSyncSupervisorViewFromItem */
+	{
+		[supervisorView setFrame: [self frame]];
+		/* This autoresizing mask won't be used, see -[ETView initWithFrame:],
+		   unless a decorator is set, that resizes the supervisor view to
+		   resize the item. */
+		[supervisorView setAutoresizingMask: [self autoresizingMask]];
+	}
+}
+
 /** Sets the supervisor view associated with the receiver. 
 
 You should never need to call this method.
@@ -1618,28 +1369,17 @@ Throws an exception when item parameter is nil.
 See also -supervisorView:. */
 - (void) setSupervisorView: (ETView *)aSupervisorView sync: (ETSyncSupervisorView)syncDirection
 {
-	if (nil != aSupervisorView)
-	{
-		if (ETSyncSupervisorViewToItem == syncDirection)
-		{
-			[self setFrame: [aSupervisorView frame]];
-			[self setAutoresizingMask: [aSupervisorView autoresizingMask]];
-		}
-		else /* ETSyncSupervisorViewFromItem */
-		{
-			[aSupervisorView setFrame: [self frame]];
-			[aSupervisorView setAutoresizingMask: [self autoresizingMask]];
-		}
-	}
-
 	[super setSupervisorView: aSupervisorView sync: syncDirection];
 
+	if ([[self objectGraphContext] isLoading])
+		return;
+
 	BOOL noDecorator = (_decoratorItem == nil);
-	BOOL hasParent = (_parentItem != nil);
+	BOOL hasParent = ([self parentItem] != nil);
 	
 	if (noDecorator && hasParent)
 	{
-		[_parentItem handleAttachViewOfItem: self];
+		[[self parentItem] handleAttachViewOfItem: self];
 	}
 }
 
@@ -1649,7 +1389,7 @@ See also -supervisorView:. */
 	BOOL needsInsertSupervisorView = (decorator != nil);
 	if (needsInsertSupervisorView)
 	{
-		[self setUpSupervisorViewWithFrame: [self frame]];
+		[self setUpSupervisorView];
 	}
 	[super setDecoratorItem: decorator];
 }
@@ -1702,77 +1442,12 @@ To retrieve the enclosing window item, use
 	return windowDecorator;
 }
 
-/** <override-never />
-Tells the receiver the layout has been changed and it should post 
-ETLayoutItemLayoutDidChangeNotification. 
-
-This method tries to notify the delegate that might exist with subclasses 
-e.g. ETLayoutItemGroup.
-
-You should never use this method unless you write an ETLayoutItem subclass. */
-- (void) didChangeLayout: (ETLayout *)oldLayout
-{
-	[[self layout] syncLayoutViewWithItem: self];
-	[self updateScrollableAreaItemVisibility];
-
-	/* We must not let the tool attached to the old layout remain active, 
-	   otherwise the layout can be deallocated and this tool remains with an 
-	   invalid -layoutOwner. */
-	ETTool *oldTool = [oldLayout attachedTool];
-
-	if ([oldTool isEqual: [ETTool activeTool]])
-	{
-		ETTool *newTool = [[self layout] attachedTool];
-
-		if (newTool == nil)
-		{
-			newTool = [ETTool mainTool];
-		}
-		[ETTool setActiveTool: newTool];
-		
-		ETAssert(newTool == [ETTool mainTool] || [newTool layoutOwner] == [self layout]);
-	}
-	ETAssert(oldTool == nil || [oldTool layoutOwner] != [self layout]);
-
-	/* Notify the interested parties about the layout change */
-	NSNotification *notif = [NSNotification 
-		notificationWithName: ETLayoutItemLayoutDidChangeNotification object: self];
-	id delegate = [self valueForKey: kETDelegateProperty];
-
-	if ([delegate respondsToSelector: @selector(layoutDidChange:)])
-		[delegate layoutDidChange: notif];
-	
-	[[NSNotificationCenter defaultCenter] postNotification: notif];
-}
-
-/** Returns the layout associated with the receiver to present its content. */
-- (id) layout
-{
-	return [self valueForVariableStorageKey: kETLayoutProperty];
-}
-
-/** Sets the layout associated with the receiver to present its content.
-
-Layout are not yet supported on ETLayoutItem instances, which this method is 
-useless currently. */
-- (void) setLayout: (ETLayout *)aLayout
-{
-	ETLayout *oldLayout = [self valueForVariableStorageKey: kETLayoutProperty];
-
-	RETAIN(oldLayout);
-	[self willChangeValueForProperty: kETLayoutProperty];
-	[self setValue: aLayout forVariableStorageKey: kETLayoutProperty];
-	[self didChangeLayout: oldLayout];
-	[self didChangeValueForProperty: kETLayoutProperty];
-	RELEASE(oldLayout);
-}
-
 /** Returns the topmost ancestor layout item, including itself, whose layout 
 returns YES to -isOpaque (see ETLayout). If none is found, returns self. */
-- (ETLayoutItem *) ancestorItemForOpaqueLayout
+- (ETLayoutItemGroup *) ancestorItemForOpaqueLayout
 {
-	ETLayoutItem *parent = self;
-	ETLayoutItem *lastFoundOpaqueAncestor = self;
+	ETLayoutItemGroup *parent = ([self isGroup] ? (ETLayoutItemGroup *)self : [self parentItem]);
+	ETLayoutItemGroup *lastFoundOpaqueAncestor = parent;
 
 	while (parent != nil)
 	{
@@ -1783,51 +1458,6 @@ returns YES to -isOpaque (see ETLayout). If none is found, returns self. */
 	}
 
 	return lastFoundOpaqueAncestor;
-}
-
-/** <override-dummy />
-Forces the layout to be recomputed to take in account geometry and content 
-related changes since the last layout update.
-
-This method is not yet implemented.<br />
-See also -[ETLayoutItemGroup updateLayout].  */
-- (void) updateLayout
-{
-	// TODO: Implement
-}
-
-- (void) updateLayoutRecursively: (BOOL)recursively
-{
-	[[ETLayoutExecutor sharedInstance] removeItem: (id)self];
-}
-
-/** Updates the layouts, previously marked with -setNeedsLayoutUpdate, in the 
-entire item tree.
-
-For ETLayoutItemGroup, won't be limited to the item subtree. */
-- (void) updateLayoutIfNeeded
-{
-	[[ETLayoutExecutor sharedInstance] execute];
-}
-
-/** Returns whether the layout is going to be updated in the interval between 
-the current and the  next event. */
-- (BOOL) needsLayoutUpdate
-{
-	return [[ETLayoutExecutor sharedInstance] containsItem: self];
-}
-
-/** Marks the receiver to have its layout updated and be redisplayed in the 
-interval between the current and the next event.
-
-See also +disablesAutolayout. */
-- (void) setNeedsLayoutUpdate
-{
-	if ([ETLayoutItem isAutolayoutEnabled] == NO || _isDeallocating)
-		return;
-
-	[[ETLayoutExecutor sharedInstance] addItem: (id)self];
-	[self setNeedsDisplay: YES];
 }
 
 static inline NSRect DrawingBoundsInWindowItem(ETWindowItem *windowItem)
@@ -2032,7 +1662,7 @@ More explanations in -display. */
 	NSRect displayRect = [[self firstDecoratedItem] convertDisplayRect: dirtyRect 
 	                        toAncestorDisplayView: &displayView
 							rootView: [[[self enclosingDisplayView] window] contentView]
-							parentItem: _parentItem];
+							parentItem: [self parentItem]];
 
 	[displayView setNeedsDisplayInRect: displayRect];
 }
@@ -2067,7 +1697,7 @@ More explanations in -display. */
 	NSRect displayRect = [[self firstDecoratedItem] convertDisplayRect: dirtyRect
 	                        toAncestorDisplayView: &displayView
 							rootView: [[[self enclosingDisplayView] window] contentView]
-							parentItem: _parentItem];
+							parentItem: [self parentItem]];
 	[displayView displayRect: displayRect];
 }
 
@@ -2167,6 +1797,25 @@ If the given style is nil, the style group becomes empty. */
 	return [_defaultValues objectForKey: key];
 }
 
+- (void) setInitialValue: (id)aValue forProperty: (NSString *)key
+{
+	[_defaultValues setObject: (aValue != nil ? aValue : [NSNull null])
+	                   forKey: key];
+}
+
+- (id) initialValueForProperty: (NSString *)key
+{
+	id value = [_defaultValues objectForKey: key];
+	return ([value isEqual: [NSNull null]] ? nil : value);
+}
+
+- (id) removeInitialValueForProperty: (NSString *)key
+{
+	id value = [_defaultValues objectForKey: key];
+	[_defaultValues removeObjectForKey: key];
+	return value;
+}
+
 /* Geometry */
 
 /** Returns a rect expressed in the parent item content coordinate space 
@@ -2176,7 +1825,7 @@ equivalent to rect parameter expressed in the receiver coordinate space. */
 	NSRect rectToTranslate = rect;
 	NSRect rectInParent = rect;
 
-	if ([self isFlipped] != [_parentItem isFlipped])
+	if ([self isFlipped] != [[self parentItem] isFlipped])
 	{
 		rectToTranslate.origin.y = [self height] - rect.origin.y - rect.size.height;
 	}
@@ -2206,7 +1855,7 @@ rect parameter expressed in the parent item content coordinate space. */
 	rectInReceiver.origin.x = rect.origin.x - [self x];
 	rectInReceiver.origin.y = rect.origin.y - [self y];
 
-	if ([self isFlipped] != [_parentItem isFlipped])
+	if ([self isFlipped] != [[self parentItem] isFlipped])
 	{
 		rectInReceiver.origin.y = [self height] - rectInReceiver.origin.y - rectInReceiver.size.height;
 	}
@@ -2230,17 +1879,17 @@ In case the receiver is not a descendent or ancestor is nil, returns a null rect
 	if (self == ancestor)
 		return rect;
 
-	if (ETIsNullRect(rect) || ancestor == nil || _parentItem == nil)
+	if (ETIsNullRect(rect) || ancestor == nil || [self parentItem] == nil)
 		return ETNullRect;
 
 	NSRect newRect = rect;
 
-	if (_parentItem != ancestor)
+	if ([self parentItem] != ancestor)
 	{
-		newRect = [_parentItem convertRect: rect fromItem: ancestor];
+		newRect = [[self parentItem] convertRect: rect fromItem: ancestor];
 	}
 
-	return [self convertRectFromParent: [_parentItem convertRectToContent: newRect]];
+	return [self convertRectFromParent: [[self parentItem] convertRectToContent: newRect]];
 }
 
 /** Returns a rect expressed in ancestor coordinate space equivalent to rect 
@@ -2249,7 +1898,7 @@ parameter expressed in the receiver coordinate space.
 In case the receiver is not a descendent or ancestor is nil, returns a null rect. */
 - (NSRect) convertRect: (NSRect)rect toItem: (ETLayoutItemGroup *)ancestor
 {
-	if (ETIsNullRect(rect) || _parentItem == nil || ancestor == nil)
+	if (ETIsNullRect(rect) || [self parentItem] == nil || ancestor == nil)
 		return ETNullRect;
 
 	NSRect newRect = rect;
@@ -2268,25 +1917,9 @@ In case the receiver is not a descendent or ancestor is nil, returns a null rect
 content. 
  
 The returned value will be taken in account in methods related to geometry, 
-event handling and drawing. If you want to alter the flipping, you must use 
--setFlipped: and never alter the supervisor view directly with 
--[ETView setFlipped:].  */
+event handling and drawing. */
 - (BOOL) isFlipped
 {
-	// TODO: Review ETLayoutItem hierarchy to be sure flipped coordinates are 
-	// well supported.
-	if (supervisorView != nil)
-	{
-		// TODO: Enable later...
-		/*if (_flipped != [supervisorView isFlipped])
-		{
-			ETLog(@"WARNING: -isFlipped doesn't match between the layout item "
-				"%@ and its supervisor view %@... You may have wrongly called "
-				"-setFlipped: on the supervisor view.", supervisorView, self);
-		}*/
-		return [supervisorView isFlipped];
-	}
-
 	return _flipped;
 }
 
@@ -2325,7 +1958,7 @@ parent item content coordinate space.
 This method checks whether the parent item is flipped or not. */
 - (BOOL) containsPoint: (NSPoint)point
 {
-	return NSMouseInRect(point, [self frame], [_parentItem isFlipped]);
+	return NSMouseInRect(point, [self frame], [[self parentItem] isFlipped]);
 }
 
 /** Returns whether a point expressed in the receiver coordinate space is inside 
@@ -2408,7 +2041,7 @@ frame is returned by -frame in all cases, hence when ETFreeLayout is in use,
 
 - (void) updatePersistentGeometryIfNeeded
 {
-	ETLayout *parentLayout = [_parentItem layout];
+	ETLayout *parentLayout = [[self parentItem] layout];
 
 	if ([parentLayout isPositional] && [parentLayout isComputedLayout] == NO)
 		[self setPersistentFrame: [self frame]];
@@ -2477,6 +2110,38 @@ See -[ETLayoutItemGroup usesFlexibleLayoutFrame]. */
 - (BOOL) usesFlexibleLayoutFrame
 {
 	return NO;
+}
+
+/** <override-dummy />
+Returns nil.
+ 
+See -[ETLayoutItemGroup layout]. */
+- (id) layout
+{
+	return nil;
+}
+
+/** <override-dummy />
+This method is only exposed to be used internally by EtoileUI.
+ 
+Does nothing.
+ 
+See -[ETLayoutItemGroup updateLayoutRecursively:]. */
+- (void) updateLayoutRecursively: (BOOL)recursively
+{
+	[[ETLayoutExecutor sharedInstance] removeItem: (id)self];
+}
+
+/** <override-dummy />
+This method is only exposed to be used internally by EtoileUI.
+ 
+Marks the receiver to be redisplayed in the interval between the current and
+the next event.
+
+See -[ETLayoutItemGroup setNeedsLayoutUpdate]. */
+- (void) setNeedsLayoutUpdate
+{
+	[self setNeedsDisplay: YES];
 }
 
 /** Returns the current origin associated with the receiver frame. See also -frame. */
@@ -2597,7 +2262,7 @@ Marks the parent item as needing a layout update. */
 	}
 
 	[self updatePersistentGeometryIfNeeded];
-	[_parentItem setNeedsLayoutUpdate];
+	[[self parentItem] setNeedsLayoutUpdate];
 	[self didChangeValueForEmbeddingProperty: kETPositionProperty];
 }
 
@@ -2744,7 +2409,7 @@ the receiver has no decorator.  */
 	[self setNeedsLayoutUpdate];
 	if (_decoratorItem == nil)
 	{
-		[_parentItem setNeedsLayoutUpdate];
+		[[self parentItem] setNeedsLayoutUpdate];
 	}
 	[self didChangeValueForEmbeddingProperty: kETContentBoundsProperty];
 }
@@ -2811,7 +2476,7 @@ the receiver has no decorator. */
 	[self setNeedsLayoutUpdate];
 	if (_decoratorItem == nil)
 	{
-		[_parentItem setNeedsLayoutUpdate];
+		[[self parentItem] setNeedsLayoutUpdate];
 	}
 	[self didChangeValueForProperty: kETTransformProperty];
 }
@@ -2890,7 +2555,7 @@ the receiver has no decorator. */
 	[self setNeedsLayoutUpdate];
 	if (_decoratorItem == nil)
 	{
-		[_parentItem setNeedsLayoutUpdate];
+		[[self parentItem] setNeedsLayoutUpdate];
 	}
 	[self didChangeValueForProperty: kETBoundingBoxProperty];
 }
@@ -2984,7 +2649,7 @@ TODO: Autoresizing mask isn't yet supported when the receiver has no view. */
 	[self setNeedsLayoutUpdate];
 	if (_decoratorItem == nil)
 	{
-		[_parentItem setNeedsLayoutUpdate];
+		[[self parentItem] setNeedsLayoutUpdate];
 	}
 
 	[self didChangeValueForProperty: kETAutoresizingMaskProperty];
@@ -3321,44 +2986,64 @@ be sent by the UI element in the EtoileUI responder chain. */
 }
 /** Sets the target to which actions should be sent.
 
-The target is not retained. */
+The target is retained and potential cycles are managed by COObjectGraphContext.
+ 
+If a view that conforms to ETWidget protocol is set, updates the target set on 
+the view.
+ 
+The target must be a COObject or a view returned by -[ETLayoutItem view],
+otherwise an NSInvalidArgumentException is raised.
+
+See also -target and -setView:. */
 - (void) setTarget: (id)aTarget
 {
+	INVALIDARG_EXCEPTION_TEST(aTarget, [aTarget isKindOfClass: [COObject class]]
+		|| ([aTarget isView] && [aTarget owningItem] != nil));
 	// NOTE: For missing value transformation
 	NSParameterAssert([aTarget isKindOfClass: [NSString class]] == NO);
 
-	/* For target persistency, we mark targetId as updated (see ETLayoutItem+CoreObject) */
-	[self willChangeValueForProperty: @"targetId"];
-	[self willChangeValueForProperty: kETTargetProperty];
-	
-	[self setValue: [NSValue valueWithNonretainedObject: aTarget] forVariableStorageKey: kETTargetProperty];
+	/* When the target is not a COObject, persistentTargetOwner	tracks the item
+	   that owns this target. */
 
+	[self willChangeValueForProperty: kETTargetProperty];
+	[self willChangeValueForProperty: @"persistentTarget"];
+	[self willChangeValueForProperty: @"persistentTargetOwner"];
+
+	[self setValue: aTarget forVariableStorageKey: kETTargetProperty];
 	if ([[self view] isWidget])
 	{
-		[[self view] setTarget: aTarget];
+		
+		[(id <ETWidget>)[self view] setTarget: aTarget];
+
 	}
 	[[self layout] syncLayoutViewWithItem: self];
 
+	[self didChangeValueForProperty: @"persistentTargetOwner"];
+	[self didChangeValueForProperty: @"persistentTarget"];
 	[self didChangeValueForProperty: kETTargetProperty];
-	[self didChangeValueForProperty: @"targetId"];
 }
 
-/** Returns the target to which actions should be sent. */
+/** Returns the target to which actions should be sent.
+ 
+If a view that conforms to ETWidget protocol is set, returns the target set on 
+the view.
+ 
+See also -setTarget:. */
 - (id) target
 {
-	id target = ([[self view] isWidget] ? [[self view] target] : nil);
-	
-	if (target != nil)
-		return target;
+	if ([[self view] isWidget])
+		return [(id <ETWidget>)[self view] target];
 
-	return [[self valueForVariableStorageKey: kETTargetProperty] nonretainedObjectValue];
+	return [self valueForVariableStorageKey: kETTargetProperty];
 }
 
 /** Sets the action that can be sent by the action handler associated with 
 the receiver.
 
-This won't alter the action set on the receiver view, both are completely 
-distinct. */
+If a view that conforms to ETWidget protocol is set, updates the action set on
+the view.
+ 
+See also -action and -setView:. */
 - (void) setAction: (SEL)aSelector
 {
 	[self willChangeValueForProperty: kETActionProperty];
@@ -3380,13 +3065,14 @@ distinct. */
 /** Returns the action that can be sent by the action handler associated with 
 the receiver. 
 
+If a view that conforms to ETWidget protocol is set, returns the action set on
+the view.
+
 See also -setAction:. */
 - (SEL) action
 {
-	SEL sel = ([[self view] isWidget] ? [(id <ETWidget>)[self view] action] : NULL);
-
-	if (sel != NULL)
-		return sel;
+	if ([[self view] isWidget])
+		return [(id <ETWidget>)[self view] action];
 
 	NSString *selString = [self valueForVariableStorageKey: kETActionProperty];
 
@@ -3518,44 +3204,29 @@ See -[ETResponder focusedItem]. */
 	return self;
 }
 
-/** Returns the custom inspector associated with the receiver. By default, 
-returns nil.
-
--[NSObject(EtoileUI) inspect:] will show this inspector, unless nil is returned. */
-- (id <ETInspector>) inspector
-{
-	id <ETInspector> inspector = [self valueForVariableStorageKey: kETInspectorProperty];
-	[inspector setInspectedObjects: A(self)];
-	return inspector;
-}
-
-/** Sets the custom inspector associated with the receiver. */
-- (void) setInspector: (id <ETInspector>)inspector
-{
-	[self willChangeValueForProperty: kETInspectorProperty];
-	[self setValue: inspector forVariableStorageKey: kETInspectorProperty];
-	[self didChangeValueForProperty: kETInspectorProperty];
-}
-
 /** Returns a basic window item. */
 - (ETWindowItem *) provideWindowItem
 {
 	return [ETWindowItem itemWithObjectGraphContext: [ETUIObject defaultTransientObjectGraphContext]];
 }
 
-/* Live Development */
-
-/** This feature is not yet implemented. */
-- (void) beginEditingUI
+- (BOOL) isLayerItem
 {
-	id view = [self supervisorView];
-	
-	/* Notify to view */
-	if (view != nil && [view respondsToSelector: @selector(beginEditingUI)])
-		[view beginEditingUI];
+    return NO;
+}
 
-	/* Notify decorator item chain */
-	[[self decoratorItem] beginEditingUI];
+- (void) setHostItem: (ETLayoutItemGroup *)host
+{
+    INVALIDARG_EXCEPTION_TEST(host, host != self);
+    if ([self valueForVariableStorageKey: kETParentItemProperty] != nil)
+    {
+        [NSException raise: NSInternalInconsistencyException
+                    format: @"The receiver must have no parent to set a host item."];
+    }
+    
+    [self willChangeValueForProperty: @"hostItem"];
+    [self setValue: host forVariableStorageKey: @"hostItem"];
+    [self didChangeValueForProperty: @"hostItem"];
 }
 
 - (void) willChangeValueForEmbeddingProperty: (NSString *)aKey

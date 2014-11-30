@@ -15,6 +15,7 @@
 #import "EtoileUIProperties.h"
 #import "ETEventProcessor.h"
 #import "ETTool.h"
+#import "ETLayoutItem+Private.h"
 #import "ETLayoutItemGroup.h"
 #import "ETLayoutItemBuilder.h"
 #import "ETNibOwner.h"
@@ -72,7 +73,6 @@ See +[NSObject typePrefix]. */
 
 - (void) dealloc
 {
-	DESTROY(_rootItem);
 	DESTROY(_nibOwner);
 	DESTROY(_UIStateRestoration);
 	[super dealloc];
@@ -110,7 +110,7 @@ The method returns a local root item which is usually the window group or layer
 under the application control. */
 - (ETLayoutItemGroup *) rootItem
 {
-	return _rootItem;
+    return [[ETLayoutItemFactory factory] windowGroup];
 }
 
 /** Returns the item bound to the key first responder sharing area in the 
@@ -250,7 +250,6 @@ See also -finishLaunching which is called after -run is invoked. */
 	//RECREATE_AUTORELEASE_POOL(pool);
 	[self _instantiateAppDelegateIfSpecified];
 	[self _loadMainNib];
-	ASSIGN(_rootItem, [[ETLayoutItemFactory factory] windowGroup]);
 	DESTROY(pool);
 }
 
@@ -1236,7 +1235,7 @@ The copied item is put on the active pickboard. */
 	if (nil == item)
 		return;
 
-	[[ETPickboard activePickboard] pushObject: AUTORELEASE([item deepCopy]) metadata: nil];
+	[[ETPickboard activePickboard] pushObject: AUTORELEASE([item copy]) metadata: nil];
 }
 
 /** Paste the current item on the active pickbord into the window group.
@@ -1250,7 +1249,7 @@ See -[ETLayoutItemFactory windowGroup]. */
 	if (nil == item)
 		return;
 
-	[[itemFactory windowGroup] addItem: AUTORELEASE([item deepCopy])];
+	[[itemFactory windowGroup] addItem: AUTORELEASE([item copy])];
 }
 
 @end
@@ -1285,7 +1284,6 @@ int ETApplicationMain(int argc, const char **argv)
 	[app setUp];
 	[app run];
 
-	DESTROY(app);
 	DESTROY(pool);
 
 	return 0;

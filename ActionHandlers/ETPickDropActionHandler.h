@@ -65,8 +65,8 @@
                 onItem: (ETLayoutItem *)dropTarget
            coordinator: (ETPickDropCoordinator *)aPickCoordinator;
 
-- (unsigned int) dragOperationMaskForDestinationItem: (ETLayoutItem *)item
-                                         coordinator: (ETPickDropCoordinator *)aPickCoordinator;
+- (NSDragOperation) dragOperationMaskForDestinationItem: (ETLayoutItem *)item
+                                            coordinator: (ETPickDropCoordinator *)aPickCoordinator;
 
 - (BOOL) boxingForcedForDroppedItem: (ETLayoutItem *)droppedItem 
                            metadata: (NSDictionary *)metadata;

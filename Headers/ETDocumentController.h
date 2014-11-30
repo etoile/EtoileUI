@@ -49,7 +49,7 @@ integration etc.) without having to resort to another API. */
 
 /** @taskunit Insertion */
 
-- (ETLayoutItem *) openItemWithURL: (NSURL *)aURL options: (NSDictionary *)options;
+- (ETLayoutItem *) openItemWithURL: (NSURL *)aURL options: (NSDictionary *)options NS_RETURNS_RETAINED;
 - (BOOL) allowsMultipleInstancesForURL: (NSURL *)aURL;
 
 /** @taskunit Type Determination */

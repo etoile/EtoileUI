@@ -38,7 +38,7 @@
 	ETLineFragment *line = [ETLineFragment verticalLineWithOwner: self 
 	                                                  itemMargin: [self itemMargin]
 	                                                   maxHeight: layoutHeight 
-	                                                   isFlipped: [_layoutContext isFlipped]];
+	                                                   isFlipped: [[self layoutContext] isFlipped]];
 	NSArray *acceptedItems = [line fillWithItems: unlayoutedItems];
 
 	if ([acceptedItems isEmpty])
@@ -161,7 +161,11 @@ static const CGFloat undeterminedWidth = 10;
 					 newLayoutSize.width, oldLayoutSize.width);
 		
 		[item setWidth: frame.size.width];
-		/* For a non-recursive update, the resize must trigger a layout update. 
+
+		if ([item isGroup] == NO)
+			continue;
+
+		/* For a non-recursive update, the resize must trigger a layout update.
 		   Layout updates are bracketed inside +disableAutolayout and
 		   +enableAutolayout. As a result, -setNeedsLayoutUpdate is disabled.
 		   If a recursive update is underway, the item will be automatically 

@@ -43,24 +43,6 @@ unlike ETPositionalLayout.  */
 	[super dealloc];
 }
 
-- (id) copyWithZone: (NSZone *)aZone layoutContext: (id <ETLayoutingContext>)ctxt
-{
-	ETFreeLayout *newLayout = [super copyWithZone: aZone layoutContext: ctxt];
-	newLayout->_areHandlesHidden = _areHandlesHidden;
-	return newLayout;
-}
-
-- (void) setUpCopyWithZone: (NSZone *)aZone original: (ETLayout *)layoutOriginal
-{
-	/* Only to set the parent item, we don't need to synchronize the geometry */
-	[self mapLayerItemIntoLayoutContext];
-
-	/* Rebuild the handles to manipulate the item copies and not their originals */
-	// TODO: May be avoid to copy the original handles in -copyWithZone:layoutContext:
-	[self updateKVOForItems: [_layoutContext arrangedItems]];
-	[self buildHandlesForItems: [_layoutContext arrangedItems]];
-}
-
 - (NSImage *) icon
 {
 	return [NSImage imageNamed: @"zone--pencil.png"];
@@ -264,7 +246,7 @@ layout context, based on the rules or policy of the given layout. */
 	RELEASE(self);
 }
 
-- (void) renderWithItems: (NSArray *)items isNewContent: (BOOL)isNewContent
+- (NSSize) renderWithItems: (NSArray *)items isNewContent: (BOOL)isNewContent
 {
 	[super renderWithItems: items isNewContent: isNewContent];
 	if (isNewContent)
@@ -272,6 +254,7 @@ layout context, based on the rules or policy of the given layout. */
 		[self updateKVOForItems: items];
 		[self buildHandlesForItems: items];
 	}
+	return [self layoutSize];
 }
 
 #if 0
@@ -302,39 +285,3 @@ layout context, based on the rules or policy of the given layout. */
 }
 
 @end
-
-// TODO: If we want to allow the source to handle the item locations manually,
-// the following methods have to be added back to ETFreeLayout. Take note 
-// that vectorLoc could be an NSPoint initially. The benefit of using a vector 
-// would be simplify the support of a 2.5D behavior (simulating 3D with 2D 
-// transforms).
-// I'm not yet sure that's the best way to let the developer implement 
-// positional constraint. May be this could be implemented in a 'positional 
-// constraint layer/handler' that the developer sets on its ETFreeLayout 
-// instance, this might be better if the contraint logic tends to be large. By 
-// doing so, we could eventually provide more ready-to-use logic that simplifies 
-// the developer task.
-// For 2.5D or 3D, we could add more properties to ETLayoutItem in CoreAnimation 
-// spirit. For example, a zPosition property and a orientationVector property. 
-// Think more about that...
-// -itemGroup:locationForItem: should be called in -itemAtLocation:. If no
-// source exists, -itemAtLocation must run exactly as it is now and requests the 
-// item location to super.
-// -itemGroup:setLocation:forItem: should be called in 
-// -handleDrop:forItem:layout: or similar.
-// -itemGroup:acceptLocation:forItem: may be needed in 
-// -handleDrag:forItem:layout: to give feedback about positional constraints to 
-// the user.
-#if 0
-/* Overriden method to delegate it to the layout item group data source. */
-- (ETVector *) itemGroup: (ETLayoutItemGroup *)itemGroup locationForItem: (ETLayoutItem *)item
-{
-	return [[itemGroup source] itemGroup: itemGroup locationForItem: item];
-}
-
-/* Overriden method to delegate it to the layout item group data source. */
-- (void) itemGroup: (ETLayoutItemGroup *)itemGroup setLocation: (ETVector *)vectorLoc forItem: (ETLayoutItem *)item
-{
-	[[itemGroup source] itemGroup: itemGroup setLocation: vectorLoc forItem: item];
-}
-#endif

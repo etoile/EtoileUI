@@ -49,26 +49,6 @@
 
 DEALLOC(DESTROY(_actionHandlerPrototype); DESTROY(_selectionAreaItem));
 
-- (id) copyWithCopier: (ETCopier *)aCopier
-{
-	ETSelectTool *newTool = [super copyWithCopier: aCopier];
-
-	if ([aCopier isAliasedCopy])
-		return newTool;
-
-	[aCopier beginCopyFromObject: self toObject: newTool];
-
-	[newTool setAllowsEmptySelection: [self allowsEmptySelection]];
-	[newTool setAllowsMultipleSelection: [self allowsMultipleSelection]];
-	newTool->_removeItemsAtPickTime = _removeItemsAtPickTime;
-	newTool->_forcesItemPick = _forcesItemPick;
-	ASSIGN(newTool->_actionHandlerPrototype, _actionHandlerPrototype);
-	newTool->_selectionAreaItem = [_selectionAreaItem copyWithZone: [aCopier zone]];
-
-	[aCopier endCopy];
-	return newTool;
-}
-
 #pragma mark Selection Settings -
 
 /** Returns whether the tool can be used to select several items among the 

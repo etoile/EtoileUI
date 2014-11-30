@@ -11,12 +11,17 @@
 #import "ETApplication.h"
 #import "ETDecoratorItem.h"
 #import "ETArrowTool.h"
+#import "ETLayoutItem+Private.h"
 #import "ETLayoutItemFactory.h"
 #import "ETWindowItem.h"
 // FIXME: Move related code to the Appkit widget backend (perhaps in a category or subclass)
 #import "ETWidgetBackend.h"
 #import "NSWindow+Etoile.h"
 #import "ETCompatibility.h"
+
+@interface COObject (Private)
+- (void) markAsRemovedFromContext;
+@end
 
 
 @implementation ETWindowLayer
@@ -36,8 +41,9 @@ when a layout other than ETWindowLayout is set on the receiver. */
 	if (self == nil)
 		return nil;
 
+    [self setName: _(@"Windows")];
 	[self setFrame: [[NSScreen mainScreen] visibleFrame]];
-		
+
 	ASSIGN(_rootWindowItem, [self createRootWindowItemWithObjectGraphContext: aContext]);
 	_hiddenWindows = [[NSMutableArray alloc] init];
 	[self setLayout: [ETWindowLayout layoutWithObjectGraphContext: aContext]];
@@ -51,6 +57,11 @@ when a layout other than ETWindowLayout is set on the receiver. */
 	DESTROY(_rootWindowItem); 
 	DESTROY(_hiddenWindows);
 	[super dealloc];
+}
+
+- (void) markAsRemovedFromContext
+{
+    [super markAsRemovedFromContext];
 }
 
 - (void) handleAttachViewOfItem: (ETLayoutItem *)item

@@ -10,13 +10,15 @@
 #import <EtoileUI/ETGraphicsBackend.h>
 #import <EtoileUI/ETLayout.h>
 
+@class ETTemplateItemLayout;
+
 // NOTE: May be this should be turned into a mask
 /** Describes how the layouted items are resized at the beginning of the layout 
 rendering.
 
 When the constraint is not ETSizeConstraintStyleNone, the item autoresizing 
 provided by -[ETLayoutItem autoresizingMask] won't be respected. */
-typedef enum _ETSizeConstraintStyle 
+typedef enum : NSUInteger
 {
 /** The items are not resized but let as is. */
 	ETSizeConstraintStyleNone,
@@ -59,5 +61,9 @@ subclasses. */
 - (void) setConstrainedItemSize: (NSSize)size;
 - (NSSize) constrainedItemSize;
 - (void) resizeItems: (NSArray *)items toScaleFactor: (CGFloat)factor;
+
+/** @taskunit Framework Private */
+
+@property (nonatomic, readonly) ETTemplateItemLayout *contextLayout;
 
 @end

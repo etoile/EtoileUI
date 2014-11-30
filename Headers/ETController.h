@@ -20,8 +20,10 @@
 
 /** This protocol is only exposed to be used internally by EtoileUI.
 
-See +[ETController basicTemplateProvider]. */
+See +[ETController basicTemplateProviderForObjectGraphContext:]. */
 @protocol ETTemplateProvider <NSObject>
+/** See -[ETUIObject objectGraphContext]. */
+- (COObjectGraphContext *) objectGraphContext;
 /** See -[ETController templateForType:]. */
 - (ETItemTemplate *) templateForType: (ETUTI *)aUTI;
 /** See -[ETController currentObjectType:]. */
@@ -72,11 +74,10 @@ layout item instead of using the one declared in the controller bound to the con
 
 ETController directly sorts object of the content and doesn't maintain arranged 
 objects as a collection distinct from the content. */
-@interface ETController : ETNibOwner <NSCopying, ETTemplateProvider, ETResponder>
+@interface ETController : ETNibOwner <ETTemplateProvider, ETResponder>
 {
 	@private
 	NSMutableSet *_observations;
-	ETLayoutItemGroup *_content;
  	IBOutlet id nibMainContent;
 	NSMutableDictionary *_templates;
 	ETUTI *_currentObjectType;
@@ -109,17 +110,10 @@ objects as a collection distinct from the content. */
 
 /* Observation */
 
-- (void) startObserveObject: (id)anObject
+- (void) startObserveObject: (COObject *)anObject
         forNotificationName: (NSString *)aName 
                    selector: (SEL)aSelector;
-- (void) stopObserveObject: (id)anObject forNotificationName: (NSString *)aName;
-
-/* Copying */
-
-- (id) copyWithZone: (NSZone *)aZone content: (ETLayoutItemGroup *)newContent;
-- (void) finishDeepCopy: (ETController *)newController 
-               withZone: (NSZone *)aZone 
-                content: (ETLayoutItemGroup *)newContent;
+- (void) stopObserveObject: (COObject *)anObject forNotificationName: (NSString *)aName;
 
 /* Templates */
 
@@ -208,7 +202,7 @@ objects as a collection distinct from the content. */
 
 /* Framework Private */
 
-+ (id <ETTemplateProvider>) basicTemplateProvider;
++ (id <ETTemplateProvider>) basicTemplateProviderForObjectGraphContext: (COObjectGraphContext *)aContext;
 
 @end
 

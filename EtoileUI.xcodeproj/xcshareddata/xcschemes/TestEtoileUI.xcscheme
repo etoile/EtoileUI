@@ -63,6 +63,10 @@
             isEnabled = "YES">
          </CommandLineArgument>
          <CommandLineArgument
+            argument = "-c TestStyle|TestItem.+"
+            isEnabled = "NO">
+         </CommandLineArgument>
+         <CommandLineArgument
             argument = "$TARGET_BUILD_DIR/TestEtoileUI.bundle"
             isEnabled = "YES">
          </CommandLineArgument>
@@ -89,8 +93,17 @@
       shouldUseLaunchSchemeArgsEnv = "YES"
       savedToolIdentifier = ""
       useCustomWorkingDirectory = "NO"
-      buildConfiguration = "Release"
+      buildConfiguration = "Debug"
       debugDocumentVersioning = "YES">
+      <BuildableProductRunnable>
+         <BuildableReference
+            BuildableIdentifier = "primary"
+            BlueprintIdentifier = "AE923B2B05C3B1CE00549058"
+            BuildableName = "ukrun"
+            BlueprintName = "ukrun"
+            ReferencedContainer = "container:../UnitKit/UnitKit.xcodeproj">
+         </BuildableReference>
+      </BuildableProductRunnable>
    </ProfileAction>
    <AnalyzeAction
       buildConfiguration = "Debug">

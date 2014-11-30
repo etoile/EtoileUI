@@ -18,6 +18,7 @@
 #import "ETModelBuilderRelationshipController.h"
 #import "ETModelDescriptionRenderer.h"
 #import "EtoileUIProperties.h"
+#import "ETObjectValueFormatter.h"
 #import "ETOutlineLayout.h"
 #import "ETCompatibility.h"
 
@@ -50,10 +51,11 @@
 	return layout;
 }
 
-- (ETModelDescriptionRenderer *) rendererWithController: (ETController *)aController
+- (ETModelDescriptionRenderer *) rendererWithController: (ETModelBuilderController *)aController
 {
 	ETModelDescriptionRenderer *renderer = [ETModelDescriptionRenderer renderer];
-	ETItemValueTransformer *transformer = [ETModelBuilderController newRelationshipValueTransformer];
+	ETItemValueTransformer *transformer =
+        AUTORELEASE([ETModelBuilderController newRelationshipValueTransformer]);
 	ETEntityDescription *metaEntityDesc =
 		[[self repository] entityDescriptionForClass: [ETEntityDescription class]];
 	ETEntityDescription *metaPropertyEntityDesc =
@@ -65,7 +67,7 @@
 
 	[renderer setValueTransformer: transformer forType: metaEntityDesc];
 	[renderer setValueTransformer: transformer forType: metaPropertyEntityDesc];
-	[[renderer formatterForType: rootEntityDesc] setDelegate: aController];
+	[(ETObjectValueFormatter *)[renderer formatterForType: rootEntityDesc] setDelegate: aController];
 
 	return renderer;
 }
@@ -116,7 +118,7 @@
 	[editorItem addItems: A(entityItem, bottomBar)];
 	[editorItem setLayout: [ETColumnLayout layoutWithObjectGraphContext: [itemFactory objectGraphContext]]];
 	// FIXME: Implement horizontal alignment support
-	[[editorItem layout] setHorizontalAligment: ETLayoutHorizontalAlignmentRight];
+	[[editorItem layout] setHorizontalAlignment: ETLayoutHorizontalAlignmentRight];
 
 	return editorItem;
 }

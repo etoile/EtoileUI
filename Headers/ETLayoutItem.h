@@ -13,15 +13,13 @@
 
 #import <Foundation/Foundation.h>
 #import <EtoileUI/ETGraphicsBackend.h>
-#import <EtoileUI/ETInspecting.h>
 #import <EtoileUI/ETFragment.h>
 #import <EtoileUI/ETUIItem.h>
 
 @class ETUTI;
 @class ETItemValueTransformer, ETView, ETLayout, ETLayoutItemGroup,
 ETDecoratorItem, ETScrollableAreaItem, ETWindowItem, ETActionHandler, ETStyleGroup;
-@class ETCopier;
-@protocol ETInspector, ETWidget, NSValidatedUserInterfaceItem;
+@protocol ETWidget, NSValidatedUserInterfaceItem;
 
 /** Describes how the item is resized when its parent item is resized.
 
@@ -77,7 +75,7 @@ how they should draw the properties they retrieve through the layout item.
 
 Some content aspects won't be applied to a view because they cannot be 
 translated into an autoresizing mask. */
-typedef enum
+typedef enum : NSUInteger
 {
 	ETContentAspectNone, 
 /** Lets the content as is. */
@@ -105,16 +103,14 @@ and centers it. A strech is a scale that doesn't preserve the content proportion
 } ETContentAspect;
 
 /** You must never subclass ETLayoutItem. */
-@interface ETLayoutItem : ETUIItem <ETObjectInspection, ETFragment>
+@interface ETLayoutItem : ETUIItem <ETFragment>
 {
+	@protected
+	NSMutableDictionary *_deserializationState;
 	// TODO: Merge into _variableStorage or store the default values per object 
 	// in an external dictionary.
 	@private
 	NSMutableDictionary *_defaultValues;
-
-	@protected
-	ETLayoutItemGroup *_parentItem;
-	@private
 	id _representedObject;
 	ETStyleGroup *_styleGroup;
 	ETStyle *_coverStyle;
@@ -131,7 +127,7 @@ and centers it. A strech is a scale that doesn't preserve the content proportion
 	BOOL _selectable;
 	BOOL _visible;
 	BOOL _isSyncingSupervisorViewGeometry;
-	BOOL _scrollViewShown; /* Used by ETLayoutItem+Scrollable */
+	BOOL _scrollable; /* Used by ETLayoutItem+Scrollable */
 	BOOL _wasKVOStopped;
 	BOOL _isSettingRepresentedObject;
 	BOOL _isSyncingViewValue;
@@ -140,6 +136,8 @@ and centers it. A strech is a scale that doesn't preserve the content proportion
 	@protected
 	BOOL _isDeallocating;
 }
+
+/** @taskunit Debugging */
 
 + (BOOL) showsBoundingBox;
 + (void) setShowsBoundingBox: (BOOL)shows;
@@ -152,40 +150,42 @@ and centers it. A strech is a scale that doesn't preserve the content proportion
 + (void) enablesAutolayout;
 + (void) disablesAutolayout;
 
-/* Initialization */
+/** @taskunit Initialization */
 
 - (id) initWithView: (NSView *)view 
          coverStyle: (ETStyle *)aStyle 
       actionHandler: (ETActionHandler *)aHandler
  objectGraphContext: (COObjectGraphContext *)aContext;
 
-- (void) stopKVOObservation;
-- (void) stopKVOObservationIfNeeded;
-- (id) deepCopy;
-- (id) deepCopyWithCopier: (ETCopier *)aCopier;
-
 /** @taskunit Description */
 
 - (NSString *) shortDescription;
 
-/* Layout Item Tree */
+/** @taskunit Navigating the Item Tree */
 
 - (id) rootItem;
 - (ETLayoutItemGroup *) controllerItem;
-- (ETLayoutItemGroup *) baseItem;
-- (BOOL) isBaseItem;
-- (ETLayoutItemGroup *) parentItem;
-- (void) setParentItem: (ETLayoutItemGroup *)parent;
-- (void ) removeFromParent;
-- (ETView *) enclosingDisplayView;
-- (ETLayoutItem *) supervisorViewBackedAncestorItem;
-- (id) windowBackedAncestorItem;
-
+- (ETLayoutItemGroup *) sourceItem;
 - (NSIndexPath *) indexPathFromItem: (ETLayoutItem *)item;
 - (NSIndexPath *) indexPathForItem: (ETLayoutItem *)item;
-- (NSIndexPath *) indexPath;
 
-/* Main Accessors */
+/** @taskunit Parent Item */
+
+/** The item group to which the receiver belongs to.
+ 
+For the root item, returns nil.
+
+If a host item is set, returns -hostItem. */
+@property (nonatomic, readonly) ETLayoutItemGroup *parentItem;
+
+- (void) removeFromParent;
+
+/** @taskunit Other Ancestor Items */
+
+- (id) windowBackedAncestorItem;
+- (ETLayoutItemGroup *) ancestorItemForOpaqueLayout;
+
+/** @taskunit Name and Identifier */
 
 - (NSString *) identifier;
 - (void) setIdentifier: (NSString *)anId;
@@ -194,31 +194,33 @@ and centers it. A strech is a scale that doesn't preserve the content proportion
 - (NSString *) displayName;
 - (void) setDisplayName: (NSString *)aName;
 
-/* Display Element */
-
-- (id) valueKey;
-- (void) setValueKey: (NSString *)aValue;
-- (id) value;
-- (void) setValue: (id)value;
+/** @taskunit Native Widget */
 
 - (id) view;
 - (void) setView: (NSView *)newView;
 - (BOOL) usesWidgetView;
 - (id <ETWidget>) widget;
 
+/** @taskunit Image and Icon */
+
 - (NSImage *) image;
 - (void) setImage: (NSImage *)img;
 - (NSImage *) icon;
 - (void) setIcon: (NSImage *)icon;
 - (NSImage *) snapshotFromRect: (NSRect)aRect;
-- (void) drawRect: (NSRect)aRect;
 
-/* Model Access */
+/** @taskunit Presented Model */
 
 - (id) representedObject;
 - (void) setRepresentedObject: (id)modelObject;
 - (id) subject;
 - (BOOL) isMetaItem;
+- (id) valueKey;
+- (void) setValueKey: (NSString *)aValue;
+- (id) value;
+- (void) setValue: (id)value;
+
+/** @taskunit Property-Value Coding */
 
 - (BOOL) requiresKeyValueCodingForAccessingProperties;
 - (id) valueForProperty: (NSString *)key;
@@ -227,10 +229,12 @@ and centers it. A strech is a scale that doesn't preserve the content proportion
 - (void) setValueTransformer: (ETItemValueTransformer *)aValueTransformer
                  forProperty: (NSString *)key;
 
+/** @taskunit Type Querying */
+
 - (BOOL) isLayoutItem;
 - (BOOL) isGroup;
 
-/* Utility Accessors */
+/** @taskunit Selection and Visibility */
 
 - (void) setSelected: (BOOL)selected;
 - (BOOL) isSelected;
@@ -239,26 +243,21 @@ and centers it. A strech is a scale that doesn't preserve the content proportion
 - (void) setVisible: (BOOL)visible;
 - (BOOL) isVisible;
 
+/** @taskunit Attached UTIs */
+
 - (ETUTI *) UTI;
 - (void) setSubtype: (ETUTI *)aUTI;
 - (ETUTI *) subtype;
 
-/* Layouting & Rendering Chain */
-
-- (id) layout;
-- (void) setLayout: (ETLayout *)layout;
-- (ETLayoutItem *) ancestorItemForOpaqueLayout;
-- (void) didChangeLayout: (ETLayout *)oldLayout;
-- (void) updateLayout;
-- (void) updateLayoutRecursively: (BOOL)recursively;
-- (void) updateLayoutIfNeeded;
-- (BOOL) needsLayoutUpdate;
-- (void) setNeedsLayoutUpdate;
+/** @taskunit Drawing */
 
 - (NSRect) drawingBoundsForStyle: (ETStyle *)aStyle;
 - (void) render: (NSMutableDictionary *)inputValues 
       dirtyRect: (NSRect)dirtyRect 
       inContext: (id)ctxt;
+
+/** @task Styles */
+
 - (ETStyleGroup *) styleGroup;
 - (void) setStyleGroup: (ETStyleGroup *)aStyle;
 - (id) style;
@@ -266,17 +265,15 @@ and centers it. A strech is a scale that doesn't preserve the content proportion
 - (id) coverStyle;
 - (void) setCoverStyle: (ETStyle *)aStyle;
 
+/** @taskunit Display Update */
+
 - (void) setNeedsDisplay: (BOOL)flag;
 - (void) setNeedsDisplayInRect: (NSRect)dirtyRect;
 - (void) display;
 - (void) displayRect: (NSRect)dirtyRect;
 - (void) displayIfNeeded;
-- (void) refreshIfNeeded;
 
-- (void) setDefaultValue: (id)aValue forProperty: (NSString *)key;
-- (id) defaultValueForProperty: (NSString *)key;
-
-/* Geometry */
+/** @taskunit Outer Geometry Conversion in Item Tree */
 
 - (NSRect) convertRectToParent: (NSRect)rect;
 - (NSRect) convertRectFromParent: (NSRect)rect;
@@ -284,23 +281,21 @@ and centers it. A strech is a scale that doesn't preserve the content proportion
 - (NSPoint) convertPointFromParent: (NSPoint)point;
 - (NSRect) convertRect: (NSRect)rect fromItem: (ETLayoutItemGroup *)ancestor;
 - (NSRect) convertRect: (NSRect)rect toItem: (ETLayoutItemGroup *)ancestor;
+
+/** @taskunit Inner/Outer Geometry Conversion and Hit Test */
+ 
+- (NSRect) convertRectFromContent: (NSRect)rect;
+- (NSRect) convertRectToContent: (NSRect)rect;
+- (NSPoint) convertPointToContent: (NSPoint)aPoint;
 - (BOOL) containsPoint: (NSPoint)point;
 - (BOOL) pointInside: (NSPoint)point useBoundingBox: (BOOL)extended;
-- (BOOL) isFlipped;
-- (void) setFlipped: (BOOL)flip;
 
-/* Decoration (see ETUTIItem) */
-
-- (ETView *) supervisorView;
-- (void) setSupervisorView: (ETView *)aSupervisorView sync: (ETSyncSupervisorView)syncDirection;
+/** @taskunit Decorator Items */
 
 - (ETScrollableAreaItem *) scrollableAreaItem;
 - (ETWindowItem *) windowItem;
 
-/* Sizing */
-
-- (NSRect) persistentFrame;
-- (void) setPersistentFrame: (NSRect) frame;
+/** @taskunit Outer Geometry */
 
 - (NSRect) frame;
 - (void) setFrame: (NSRect)rect;
@@ -321,20 +316,28 @@ and centers it. A strech is a scale that doesn't preserve the content proportion
 - (CGFloat) width;
 - (void) setWidth: (CGFloat)width;
 
-- (NSRect) contentBounds;
-- (void) setContentBounds: (NSRect)rect;
-- (void) setContentSize: (NSSize)size;
-- (NSRect) convertRectFromContent: (NSRect)rect;
-- (NSRect) convertRectToContent: (NSRect)rect;
-- (NSPoint) convertPointToContent: (NSPoint)aPoint;
-- (void) setTransform: (NSAffineTransform *)aTransform;
-- (NSAffineTransform *) transform;
+/** @taskunit Adjusting Hit Test and Display Area */
 
 - (NSRect) boundingBox;
 - (void) setBoundingBox: (NSRect)extent;
-- (NSRect) defaultFrame;
-- (void) setDefaultFrame: (NSRect)frame;
-- (void) restoreDefaultFrame;
+
+/** @taskunit Inner Geometry  */
+
+- (NSRect) contentBounds;
+- (void) setContentBounds: (NSRect)rect;
+- (void) setContentSize: (NSSize)size;
+- (void) setTransform: (NSAffineTransform *)aTransform;
+- (NSAffineTransform *) transform;
+- (BOOL) isFlipped;
+- (void) setFlipped: (BOOL)flip;
+
+/** @taskunit Fixed Geometry */
+
+- (NSRect) persistentFrame;
+- (void) setPersistentFrame: (NSRect) frame;
+
+/** @taskunit Autoresizing and Content Aspect */
+
 - (ETAutoresizing) autoresizingMask;
 - (void) setAutoresizingMask: (ETAutoresizing)mask;
 - (ETContentAspect) contentAspect;
@@ -348,7 +351,7 @@ and centers it. A strech is a scale that doesn't preserve the content proportion
 
 - (BOOL) matchesPredicate: (NSPredicate *)aPredicate;
 
-/* Events & Actions */
+/** @taskunit Actions */
 
 - (id) actionHandler;
 - (void) setActionHandler: (id)anHandler;
@@ -358,10 +361,8 @@ and centers it. A strech is a scale that doesn't preserve the content proportion
 - (id) target;
 - (void) setAction: (SEL)aSelector;
 - (SEL) action;
-- (void) didChangeViewValue: (id)newValue;
-- (void) didChangeRepresentedObjectValue: (id)newValue;
 
-/* Editing */
+/** @taskunit Editing */
 
 - (void) beginEditing;
 - (void) discardEditing;
@@ -370,24 +371,9 @@ and centers it. A strech is a scale that doesn't preserve the content proportion
                            fieldEditorItem: (ETLayoutItem *)aFieldEditorItem;
 - (void) subjectDidEndEditingForProperty: (NSString *)aKey;
 
-- (id <ETInspector>) inspector;
-- (void) setInspector: (id <ETInspector>)inspector;
+/** @taskunit API Conveniency */
 
-/* Live Development */
-
-- (void) beginEditingUI;
-/*- (BOOL) isEditingUI;
-- (void) commitEditingUI;*/
-
-/* Framework Private */
-
-- (NSRect) drawingBox;
-- (NSRect) contentDrawingBox;
-- (NSRect) visibleContentBounds;
-- (BOOL) usesFlexibleLayoutFrame;
-- (NSString *) editedProperty;
-- (id) responder;
-- (ETWindowItem *) provideWindowItem;
+- (id) layout;
 
 @end
 

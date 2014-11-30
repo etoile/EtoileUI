@@ -51,7 +51,9 @@
 	ETAssert(NSEqualRects(NSMakeRect(0, 0, 50, 50), [ETLayoutItem defaultItemRect]));
 
 	ASSIGN(itemGroup, [itemFactory itemGroupWithFrame: NSMakeRect(0, 0, 500, 400)]);
+
 	ETAssert([[itemGroup layout] isKindOfClass: [ETFixedLayout class]]);
+	ETAssert([[itemGroup supervisorView] autoresizesSubviews] == NO);
 	return self;
 }
 
@@ -66,7 +68,7 @@
 
 - (void) testItemAutoresizingMaskFromView
 {
-	NSView *view = [[NSView alloc] initWithFrame: NSMakeRect(20, 40, 100, 200)];
+	NSView *view = AUTORELEASE([[NSView alloc] initWithFrame: NSMakeRect(20, 40, 100, 200)]);
 	[view setAutoresizingMask: NSViewMinYMargin | NSViewHeightSizable];
 	ETLayoutItem *item = [itemFactory itemWithView: view];
 
@@ -307,6 +309,8 @@
 	UKRectsEqual(textViewFrame, [textViewItem frame]);
 	UKRectsEqual(otherItemFrame, [otherItem frame]);
 
+	UKFalse([[itemGroup supervisorView] autoresizesSubviews]);
+
 	[itemGroup setSize: NSMakeSize(700, 600)];
 	[itemGroup updateLayout];
 
@@ -348,7 +352,7 @@
 	
 	[itemGroup setWidth: [itemGroup width] + 100];
 
-	ETLayoutItemGroup *newItemGroup = [itemGroup deepCopy];
+	ETLayoutItemGroup *newItemGroup = AUTORELEASE([itemGroup copy]);
 	ETLayoutItem *newItem = [newItemGroup firstItem];
 
 	UKTrue([newItemGroup needsLayoutUpdate]);

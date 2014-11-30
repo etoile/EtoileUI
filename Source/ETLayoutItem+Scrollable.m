@@ -7,6 +7,7 @@
  */
 
 #import <EtoileFoundation/Macros.h>
+#import "ETLayoutItem+Private.h"
 #import "ETLayoutItem+Scrollable.h"
 #import "ETLayout.h"
 #import "ETPositionalLayout.h"
@@ -197,7 +198,7 @@ synchronize those layouts with it every time a setting changed.  */
 See -setScrollable:. */
 - (BOOL) isScrollable
 {
-	return _scrollViewShown;
+	return _scrollable;
 }
 
 /** Sets wether the receiver content is enclosed in a scrollable area.
@@ -212,10 +213,10 @@ The scrollable area role can be embodied by:
 </list> */
 - (void) setScrollable: (BOOL)scrollable
 {
-	if (_scrollViewShown == scrollable)
+	if (_scrollable == scrollable)
 		return;
 	
-	_scrollViewShown = scrollable;
+	_scrollable = scrollable;
 
 	if ([[self layout] hasScrollers])
 	{
@@ -234,7 +235,7 @@ The scrollable area role can be embodied by:
 	}
 }
 
-- (ETScrollableAreaItem *) createScrollableAreaItem
+- (ETScrollableAreaItem *) createScrollableAreaItem NS_RETURNS_RETAINED
 {
 	ETScrollableAreaItem *decorator = [[ETScrollableAreaItem alloc]
 		initWithObjectGraphContext: [self objectGraphContext]];

@@ -11,20 +11,18 @@
 #import <Foundation/Foundation.h>
 #import <EtoileUI/ETGraphicsBackend.h>
 #import <EtoileUI/ETCompatibility.h>
-#ifdef COREOBJECT
 #import <CoreObject/COObject.h>
-#endif
 
 @class COObjectGraphContext;
-@class ETCopier;
 
-@interface ETUIObject : BASEOBJECT <NSCopying>
+@interface ETUIObject : COObject <NSCopying>
 {
-	@protected
-#ifndef COREOBJECT
-	NSMapTable *_variableStorage;
-#endif
+
 }
+
+/** @taskunit Factory Method */
+
++ (instancetype) sharedInstanceForObjectGraphContext: (COObjectGraphContext *)aContext;
 
 /** @taskunit Aspect Sharing */
 
@@ -32,96 +30,32 @@
 
 /** @taskunit Copying */
 
-- (id) copyWithCopier: (ETCopier *)aCopier;
+- (id) copyToObjectGraphContext: (COObjectGraphContext *)aContext;
 - (id) copyWithZone: (NSZone *)aZone;
-- (NSInvocation *) initInvocationForCopyWithZone: (NSZone *)aZone;
+- (id) copyValueForProperty: (NSString *)aProperty;
 
-/** @taskunit Properties */
+/** @taskunit Serialization */
 
-- (NSMutableDictionary *) variableStorage;
-#ifndef COREOBJECT
-- (id) valueForVariableStorageKey: (NSString *)key;
-- (void) setValue: (id)value forVariableStorageKey: (NSString *)key;
-#endif
+- (BOOL) isCoreObjectReference: (id)value;
+- (id) serializedRepresentationForObject: (id)anObject;
+- (NSString *) serializedValueForWeakTypedReference: (id)value;
+- (id) weakTypedReferenceForSerializedValue: (NSString *)value;
 
 /** @taskunit Persistency */
 
 - (BOOL)commitWithIdentifier: (NSString *)aCommitDescriptorId;
 - (BOOL)commitWithIdentifier: (NSString *)aCommitDescriptorId
 					metadata: (NSDictionary *)additionalMetadata;
-#ifndef COREOBJECT
-- (id) commitTrack;
-- (BOOL) isRoot;
-- (BOOL) isPersistent;
-- (void) willChangeValueForProperty: (NSString *)aKey;
-- (void) didChangeValueForProperty: (NSString *)aKey;
-#endif
 
 /** @taskunit Framework Private */
 
 + (COObjectGraphContext *) defaultTransientObjectGraphContext;
+- (void)prepareTransientState;
 
 @end
 
 
-@protocol ETCopierNode
-- (BOOL) isCopyNode;
-@end
-
-/** A copier is a single use object. Each time, you start an object graph copy 
-with -copyWithCopier, you must pass a new copier. */
-@interface ETCopier : NSObject
-{
-	id destinationRootObject;
-	id sourceRootObject;
-	NSMutableArray *currentNewNodeStack;
-	NSMutableArray *currentNodeStack;
-	NSMutableArray *currentObjectStack; /* The objects being copied in the source object graph */
-	NSMutableSet *currentAliasedCopies;
-	id lastCopiedObject;
-	NSMapTable *objectRefsForCopy;
-}
-
-/** @taskunit Initialization */
-
-+ (id) copier;
-+ (id) copierWithNewRoot;
-+ (id) copierWithDestinationRootObject: (id)aRootObject;
-- (id) initWithDestinationRootObject: (id)aRootObject;
-
-/** @taskunit Copy Allocation */
-
-- (id) allocCopyForObject: (id)anObject;
-- (id) lookUpAliasedCopyForObject: (id)anObject;
-- (BOOL) isAliasedCopy;
-
-/** @taskunit Copy Control */
-
-- (void) beginCopyFromObject: (id)anObject toObject: (id)newObject;
-- (void) endCopy;
-
-/** @taskunit Current Copy Area */
-
-- (id) currentNode;
-- (id) currentNewNode;
-
-/** @taskunit Root Object Graphs */
-
-- (id) destinationRootObject;
-- (id) sourceRootObject;
-- (BOOL) isNewRoot;
-
-/** @taskunit Reference Mapping Between Object Graphs */
-
-- (NSMapTable *) objectReferencesForCopy;
-- (id) objectReferenceInCopyForObject: (id)anObject;
-
-/** @taskunit Zone */
-
-- (NSZone *) zone;
-
-/** @taskunit Framework Private */
-
-- (void) setSourceRootObject: (id)aRootObject;
-
+@protocol COForeignObjectSerialization <NSObject>
+- (id) initWithSerializedRepresentation;
+- (id) serializedRepresentation;
 @end

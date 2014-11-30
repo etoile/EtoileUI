@@ -17,6 +17,8 @@
 
 @implementation ETTextEditorLayout
 
+@dynamic delegate;
+
 - (id) initWithLayoutView: (NSView *)aView
        objectGraphContext: (COObjectGraphContext *)aContext
 {
@@ -48,7 +50,7 @@
 {
 	if ([self textRepresentationIncludesLayoutContext])
 	{
-		return [_layoutContext stringValue];
+		return [(id)[self layoutContext] stringValue];
 	}
 	else
 	{
@@ -62,7 +64,7 @@
 	return [[[self delegate] ifResponds] layout: self prepareTextView: [self textView]];
 }
 
-- (void) renderWithItems: (NSArray *)items isNewContent: (BOOL)isNewContent
+- (NSSize) renderWithItems: (NSArray *)items isNewContent: (BOOL)isNewContent
 {
 	// FIXME: Even when the context content/collection isn't mutated, the 
 	// text content might have changed in one or several nodes. Which means 
@@ -76,10 +78,11 @@
 
 	BOOL containsText = [self prepareTextView];
 
-	if (containsText)
-		return;
-
-	[[self textView] setString: [self textRepresentationFromItems: items]];
+	if (containsText == NO)
+	{
+		[[self textView] setString: [self textRepresentationFromItems: items]];
+	}
+	return [self layoutSize];
 }
 
 /** Returns whether the layout context or its content receives -stringValue. */

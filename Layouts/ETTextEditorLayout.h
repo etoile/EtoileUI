@@ -27,6 +27,13 @@ item tree through a text representation. */
 - (BOOL) textRepresentationIncludesLayoutContext;
 - (void) setTextRepresentationIncludesLayoutContext: (BOOL)flag;
 
+/** The delegate, usually a ETController object.
+ 
+The delegate is owned by the receiver. You can create retain cycles, because the 
+object graph context retains all the inner objects and releases them as necessary
+each time it runs a GC phase. */
+@property (nonatomic, retain) COObject *delegate;
+
 @end
 
 @interface NSObject (ETTextEditorLayoutDelegate)

@@ -24,11 +24,9 @@
 #import "ETWidgetBackend.h" 
 #import "NSObject+EtoileUI.h"
 #import "ETCompatibility.h"
-#ifdef COREOBJECT
 #import <CoreObject/COBranch.h>
 #import <CoreObject/COObjectGraphContext.h>
 #import "CoreObjectUI.h"
-#endif
 
 @implementation ETDocumentController
 
@@ -115,7 +113,7 @@ opened.
 The returned object is retained.
 
 Raises a NSInvalidArgumentException if the given URL is nil. */
-- (ETLayoutItem *) openItemWithURL: (NSURL *)aURL options: (NSDictionary *)options
+- (ETLayoutItem *) openItemWithURL: (NSURL *)aURL options: (NSDictionary *)options NS_RETURNS_RETAINED
 {
 	NILARG_EXCEPTION_TEST(aURL); 
 
@@ -123,7 +121,7 @@ Raises a NSInvalidArgumentException if the given URL is nil. */
 	 && NO == [[self itemsForURL: aURL] isEmpty])
 	{
 			ETAssert(1 == [[self itemsForURL: aURL] count]);
-			return [[self itemsForURL: aURL] firstObject];
+			return RETAIN([[self itemsForURL: aURL] firstObject]);
 	}
 
 	ETUTI *type = [[self class] typeForURL: aURL];
@@ -330,7 +328,6 @@ See also [ETDocumentCreation] protocol. */
 
 - (IBAction) browseDocumentHistory: (id)sender
 {
-#ifdef COREOBJECT
 	COObject *rootObject = [self activeItem];
 	ETLayoutItemFactory *itemFactory =
 		[ETLayoutItemFactory factoryWithObjectGraphContext: [self objectGraphContext]];
@@ -340,7 +337,6 @@ See also [ETDocumentCreation] protocol. */
 		                                           title: nil];
 
 	[[itemFactory windowGroup] addItem: browser];
-#endif
 }
 
 - (IBAction) close: (id)sender

@@ -25,7 +25,7 @@
 
 /** @taskunit Initialization */
 
-+ (id) sharedInstance;
++ (instancetype) sharedInstance;
 
 /** @taskunit Converting Backend Event */
 

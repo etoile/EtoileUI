@@ -7,74 +7,97 @@
  */
 
 #import "ETCompatibility.h"
-
-#ifdef COREOBJECT
-
-#import <CoreObject/COEditingContext.h>
-#import <CoreObject/COObject.h>
-#import "ETLayout+CoreObject.h"
+#import "ETDropIndicator.h"
+#import "ETFreeLayout.h"
+#import "ETGeometry.h"
+#import "ETLayout.h"
 #import "ETLayoutItemGroup.h"
-#import "ETSelectTool.h"
 #import "ETTableLayout.h"
-
-@interface ETFreeLayout (CoreObject)
-@end
-
-@interface ETTableLayout (CoreObject)
-@end
+#import "ETTemplateItemLayout.h"
+#import "ETSelectTool.h"
 
 @implementation ETLayout (CoreObject)
 
-- (COObject *) serializedDelegate
+- (NSValue *) serializedOldProposedLayoutSize
 {
-	BOOL isPersistent = ([delegate isKindOfClass: [COObject class]]
-		&& [(COObject *)delegate isPersistent]);
-
-	NSAssert1(delegate == nil || isPersistent, @"ETLayoutItemGroup.delegate must "
-		"be a persistent COObject and not a transient one: %@", delegate);
-
-	return (isPersistent ? delegate : nil);
+	if (NSEqualSizes(_oldProposedLayoutSize, [self proposedLayoutSize]))
+		return [NSValue valueWithSize: ETNullSize];
+ 
+	return [NSValue valueWithSize: _oldProposedLayoutSize];
 }
 
-- (void) setSerializedDelegate: (COObject *)aDelegate
+- (void) setSerializedOldProposedLayoutSize: (NSValue *)aValue
 {
-	NSParameterAssert(aDelegate == nil || [aDelegate isKindOfClass: [COObject class]]);
-	// FIXME: Delegate should be retained in EtoileUI surely.
-	delegate = aDelegate;
+	_oldProposedLayoutSize = [aValue sizeValue];
 }
 
-- (void) awakeFromDeserialization
-{
-	[super awakeFromDeserialization];
+/** Maps the layer item into the context. 
+ 
+Can be overriden, but -setUp or -tearDown must never be called in this method, 
+to avoid doing changes previously recorded in the object graph on 
+-[ETLayoutItem setLayout:] or similar.
 
-	ASSIGN(_dropIndicator, [ETDropIndicator sharedInstanceForObjectGraphContext: [ETUIObject defaultTransientObjectGraphContext]]);
-	_previousScaleFactor = 1.0;
+If -setUp was called, calling -[ETLayout resetLayoutSize] would break autoresizing,
+-[ETWidgetLayout setUpLayoutView] wouldn't work without a layout context, etc.
+ 
+When overriding this method, the subclasses must call the superclass
+implementation first usually, and the subclass implementation must contain 
+the -setUp logic, that makes sense when deserializing an already set up layout 
+or a layout without a context. */
+- (void) didLoadObjectGraph
+{
+	[super didLoadObjectGraph];
+
+	if (NSEqualSizes(_oldProposedLayoutSize, ETNullSize))
+	{
+		_oldProposedLayoutSize = [self proposedLayoutSize];
+	}
+	_layoutSize = [self proposedLayoutSize];
+	_previousScaleFactor = ([self layoutContext] != nil ? [[self layoutContext] itemScaleFactor] : 1.0);
+
+    if ([self layoutContext] == nil)
+		return;
 }
 
+@end
+
+
+@interface ETFreeLayout (CoreObject)
 @end
 
 @implementation ETFreeLayout (CoreObject)
 
 - (void) didLoadObjectGraph
 {
+    /* Will call -mapLayerItemIntoLayoutContext to recreate the layer item */
 	[super didLoadObjectGraph];
 
-	//[self setAttachedTool: [ETSelectTool toolWithObjectGraphContext: [self objectGraphContext]]];
-	[[[self attachedTool] ifResponds] setShouldProduceTranslateActions: YES];
 	[[self layerItem] setActionHandler: nil];
 	[[self layerItem] setCoverStyle: nil];
 
 	if ([self layoutContext] == nil)
 		return;
-	
-	/* Because the layer item is recreated, it must be installed too (see -[ETLayout setUp]) */
-	[self mapLayerItemIntoLayoutContext];
 
 	/* Rebuild the handles to manipulate the item copies and not their originals */
-	[self updateKVOForItems: [_layoutContext arrangedItems]];
-	[self buildHandlesForItems: [_layoutContext arrangedItems]];
+	ETTool *activatableTool = [ETTool activatableToolForItem: [self contextItem]];
+
+	[self updateKVOForItems: [[self layoutContext] arrangedItems]];
+
+	if ([self showsHandlesForTool: activatableTool])
+	{
+		[self buildHandlesForItems: [[self layoutContext] arrangedItems]];
+		_areHandlesHidden = NO;
+	}
+	else
+	{
+		_areHandlesHidden = YES;
+	}
 }
 
+@end
+
+
+@interface ETWidgetLayout (CoreObject)
 @end
 
 @implementation ETWidgetLayout (CoreObject)
@@ -94,17 +117,27 @@
 	ASSIGN(layoutView, newView);
 }
 
+
+/* For reloading the widget view, -[ETLayoutItem didLoadObjectGraph] could call 
+-setNeedsLayoutUpdate. However we must ensure -setUp is called prior to the 
+layout update, so calling -updateLayout in -[ETLayoutItemGroup didLoadObjectGraph] 
+is not an option. */
 - (void) didLoadObjectGraph
 {
 	[super didLoadObjectGraph];
 
-	/* Must be executed once -awakeFromDeserialization has been called on subclasses such 
-	   as ETTableLayout, and the layout context is entirely deserialized and 
-	   awaken.
-	   Will call -[ETLayoutContext setLayoutView:]. */
-	[self setUp];
+	if ([self layoutContext] == nil)
+		return;
+
+	[self setUpLayoutView];
+	/* Force the content to get reloaded in the widget view */
+	[(ETLayoutItemGroup *)[self layoutContext] setNeedsLayoutUpdate];
 }
 
+@end
+
+
+@interface ETTableLayout (CoreObject)
 @end
 
 @implementation ETTableLayout (CoreObject)
@@ -116,11 +149,15 @@
 
 	for (NSString *key in _propertyColumns)
 	{
-		NSTableColumn *column = ([tableView tableColumnWithIdentifier: key]);
+		NSTableColumn *column =  [_propertyColumns objectForKey: key];
+		BOOL isUsed = ([tableView tableColumnWithIdentifier: key] != nil);
 
-		if (column != nil)
+		if (isUsed)
+		{
+			ETAssert(column == [tableView tableColumnWithIdentifier: key]);
 			continue;
-
+		}
+		
 		[unusedColumns setObject: column forKey: key];
 	}
 	return unusedColumns;
@@ -139,13 +176,15 @@
 	
 	NSDictionary *deserializedPropertyColumns = RETAIN(_propertyColumns);
 
-	/* The deserialized layout view is set on the ivar by 
-	   -[COObject setSerializedValue:forProperty:] but -setLayoutView: is used 
-	   as an intializer so we must call it to initialize the layout object.
+	/* The table view is deserialized in layoutView ivar by CoreObject, but
+	   the internal state related to the table view can only recreated by 
+	   -setLayoutView:.
 	   We cannot implement -setSerializedLayoutView: because -setLayoutView: 
 	   depends on _propertyColumns and overwrites it. */
 	[self setLayoutView: [self layoutView]];
-	ETAssert([[_propertyColumns allValues] containsCollection: [self allTableColumns]]);
+
+	ETAssert([[_propertyColumns allValues] isEqual: [[self tableView] tableColumns]]);
+	ETAssert([[_propertyColumns allValues] isEqual: [self allTableColumns]]);
 	ETAssert(_sortable);
 
 	/* Finish to populate _propertyColumns to take in account it can contain 
@@ -164,4 +203,49 @@
 
 @end
 
-#endif
+
+@interface ETTemplateItemLayout (CoreObject)
+@end
+
+@implementation ETTemplateItemLayout (CoreObject)
+
+#pragma mark Loading Notifications
+#pragma mark -
+
+- (void) awakeFromDeserialization
+{
+	[super awakeFromDeserialization];
+	[self prepareTransientState];
+}
+
+- (void) willLoadObjectGraph
+{
+	[super willLoadObjectGraph];
+
+	/* Unapply external state changes related to the layout, usually during 
+	   -[ETLayout setUp:], to support switching to a new layout (if the store 
+	   item contains another UUID reference for the layout relationship) */
+	[self setPositionalLayout: nil];
+}
+
+- (void) restoreLayoutFromDeserialization
+{
+	[_positionalLayout setUp: YES];
+
+	// TODO: Remove
+	for (ETLayoutItem *item in _renderedItems)
+	{
+		ETAssert([item parentItem] == [self layoutContext]);
+		[self setUpKVOForItem: item];
+	}
+
+    [[self contextItem] setNeedsLayoutUpdate];
+}
+
+- (void) didLoadObjectGraph
+{
+	[super didLoadObjectGraph];
+	[self restoreLayoutFromDeserialization];
+}
+
+@end

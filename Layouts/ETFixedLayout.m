@@ -7,6 +7,7 @@
  */
 
 #import <EtoileFoundation/Macros.h>
+#import <EtoileFoundation/NSObject+Model.h>
 #import "ETFixedLayout.h"
 #import "ETGeometry.h"
 #import "ETLayoutExecutor.h"
@@ -22,17 +23,8 @@
 	if (self == nil)
 		return nil;
 
-	_autoresizesItem = YES;
+	_autoresizesItems = YES;
 	return self;
-}
-
-- (id) copyWithZone: (NSZone *)aZone layoutContext: (id <ETLayoutingContext>)ctxt
-{
-	ETFixedLayout *newLayout = [super copyWithZone: aZone layoutContext: ctxt];
-
-	newLayout->_autoresizesItem = _autoresizesItem;
-
-	return newLayout;
 }
 
 - (NSImage *) icon
@@ -55,9 +47,9 @@ geometry and not computed by the receiver. */
 }
 
 /** Loads the persistent geometry of every item that belong to the layout context. */
-- (void) setUp
+- (void) setUp: (BOOL)isDeserialization
 {
-	[super setUp];
+	[super setUp: isDeserialization];
 	/* Frame must be set to persistent frame before -resizeItems:toScale: is 
 	   called by -renderWithLayoutItems:isNewContent:, otherwise the scaling 
 	   is computed based on the frame computed by the last layout in use which 
@@ -65,18 +57,19 @@ geometry and not computed by the receiver. */
 	[self loadPersistentFramesForItems: [[self layoutContext] items]];
 }
 
-- (void) renderWithItems: (NSArray *)items isNewContent: (BOOL)isNewContent
+- (NSSize) renderWithItems: (NSArray *)items isNewContent: (BOOL)isNewContent
 {
 	[super renderWithItems: items isNewContent: isNewContent];
 	[[self layoutContext] setVisibleItems: items];
+	return [self layoutSize];
 }
 
 - (void) resizeItems: (NSArray *)items
     forNewLayoutSize: (NSSize)newLayoutSize
              oldSize: (NSSize)oldLayoutSize
 {
-	//NSLog(@"Resize items for new layout size %@ old size %@",
-	//	NSStringFromSize(newLayoutSize), NSStringFromSize(oldLayoutSize));
+	//NSLog(@"Resize items for new layout size %@ old size %@ of %@",
+	//	NSStringFromSize(newLayoutSize), NSStringFromSize(oldLayoutSize), [[self layoutContext] primitiveDescription]);
 
 	/* For a collapsed ETTitleBarItem, the decorated item content bounds is set zero */
 	BOOL collapsing = NSEqualSizes(NSZeroSize, newLayoutSize);
@@ -132,6 +125,10 @@ geometry and not computed by the receiver. */
 	NSRect roundedFrame = NSIntegralRect(frame);
 
 	[anItem setFrame: roundedFrame];
+	
+	if ([anItem isGroup] == NO)
+		return;
+
 	/* For a non-recursive update, the resize must trigger a layout update.
 	   Layout updates are bracketed inside +disableAutolayout and
 	   +enableAutolayout. As a result, -setNeedsLayoutUpdate is disabled. */
@@ -140,12 +137,14 @@ geometry and not computed by the receiver. */
 
 - (BOOL) autoresizesItems
 {
-	return _autoresizesItem;
+	return _autoresizesItems;
 }
 
 - (void) setAutoresizesItems: (BOOL)autoresize
 {
-	_autoresizesItem = autoresize;
+	[self willChangeValueForProperty: @"autoresizesItems"];
+	_autoresizesItems = autoresize;
+	[self didChangeValueForProperty: @"autoresizesItems"];
 }
 
 /** Synchronizes the frames of every layout items provided by the layout 

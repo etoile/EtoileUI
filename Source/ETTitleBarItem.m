@@ -10,6 +10,7 @@
 #import "NSObject+EtoileUI.h"
 #import "ETTitleBarItem.h"
 #import "ETLayoutItem.h"
+#import "ETLayoutItem+Private.h"
 #import "ETLayoutItemGroup.h"
 #import "ETTitleBarView.h"
 #import "ETLayoutItemFactory.h"
@@ -21,23 +22,29 @@
 
 @implementation ETTitleBarItem
 
-- (id) initWithSupervisorView: (ETView *)aSupervisorView
-           objectGraphContext: (COObjectGraphContext *)aContext
+- (void) prepareTransientState
 {
-	self = [super initWithSupervisorView: AUTORELEASE([[ETView alloc] init])
-	                  objectGraphContext: aContext];
-	if (nil == self)
-	{
-		return nil;
-	}
-	
-	_titleBarView = AUTORELEASE([[ETTitleBarView alloc] init]);
+	ETAssert([self supervisorView] != nil);
+	ETAssert(_titleBarView != nil);
+
 	[[self supervisorView] addSubview: _titleBarView];
 	[[self supervisorView] setAutoresizesSubviews: YES];
 	[_titleBarView setTarget: self];
 	[_titleBarView setAction: @selector(toggleExpanded:)];
 	
 	[self tile];
+}
+
+- (id) initWithSupervisorView: (ETView *)aSupervisorView
+           objectGraphContext: (COObjectGraphContext *)aContext
+{
+	self = [super initWithSupervisorView: AUTORELEASE([[ETView alloc] init])
+	                  objectGraphContext: aContext];
+	if (nil == self)
+		return nil;
+
+	_titleBarView = AUTORELEASE([[ETTitleBarView alloc] init]);
+	[self prepareTransientState];
 	
 	return self;
 }

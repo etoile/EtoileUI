@@ -75,7 +75,7 @@
 	ETPropertyDescription *movedItem =
 		[ETPropertyDescription descriptionWithName: @"movedItem" type: (id)@"ETLayoutItem"];
 	ETPropertyDescription *shouldProduceTranslate =
-		[ETPropertyDescription descriptionWithName: @"shouldProducteTranslateActions" type: (id)@"BOOL"];
+		[ETPropertyDescription descriptionWithName: @"shouldProduceTranslateActions" type: (id)@"BOOL"];
 	[shouldProduceTranslate setPersistent: YES];
 
 	[entity setPropertyDescriptions: A(movedItem, shouldProduceTranslate)];
@@ -163,8 +163,10 @@
 		[ETPropertyDescription descriptionWithName: @"fillColor" type: (id)@"NSColor"];
 	ETPropertyDescription *strokeColor =
 		[ETPropertyDescription descriptionWithName: @"strokeColor" type: (id)@"NSColor"];
+	ETPropertyDescription *paintMode =
+		[ETPropertyDescription descriptionWithName: @"paintMode" type: (id)@"NSUInteger"];
 
-	NSArray *persistentProperties = A(fillColor, strokeColor);
+	NSArray *persistentProperties = A(fillColor, strokeColor, paintMode);
 	
 	[[persistentProperties mappedCollection] setPersistent: YES];
 

@@ -558,7 +558,7 @@
 
 	ETColumnLayout *layout = [ETColumnLayout layoutWithObjectGraphContext: [self objectGraphContext]];
 
-	[layout setHorizontalAligment: ETLayoutHorizontalAlignmentRight];
+	[layout setHorizontalAlignment: ETLayoutHorizontalAlignmentRight];
 	[renderer setEntityLayout: layout];
 
 	return renderer;
@@ -651,6 +651,7 @@
 
 	[picker setSize: NSMakeSize(300, [self defaultEditorBodySize].height)];
 	[picker setController: controller];
+	
 	[picker setSource: picker];
 	[picker setLayout: [ETOutlineLayout layoutWithObjectGraphContext: [self objectGraphContext]]];
 	[[picker layout] setAttachedTool: [self pickerTool]];

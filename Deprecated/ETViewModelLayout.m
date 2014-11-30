@@ -12,6 +12,7 @@
 #import <EtoileFoundation/NSObject+Model.h>
 #import "ETViewModelLayout.h"
 #import "ETLayoutItemBuilder.h"
+#import "ETLayoutItem+Private.h"
 #import "ETLayoutItem+Scrollable.h"
 #import "ETLayoutItemGroup.h"
 #import "ETNibOwner.h"
@@ -119,14 +120,14 @@ The initial flipping will be automatically restored by
 	[super prepareNewContextState];
 
 	// FIXME: NSParameterAssert([[self rootItem] isFlipped] == NO);
-	[_layoutContext setFlipped: NO];
+	[[self layoutContext] setFlipped: NO];
 }
 
 /* Reloads and updates the property view layout when ETViewModelLayout becomes 
 active. */
-- (void) setUp
+- (void) setUp: (BOOL)isDeserialization
 {
-	[super setUp];
+	[super setUp: isDeserialization];
 	[self setDisplayMode: ETLayoutDisplayModeViewProperties];
 }
 
@@ -155,7 +156,7 @@ inspected as model. */
 
 - (id) modelForInspectedItem: (id)anItem
 {
-	if ([self shouldInspectItself] == NO && [anItem isEqual: _layoutContext])
+	if ([self shouldInspectItself] == NO && [anItem isEqual: [self layoutContext]])
 	{
 		return [anItem defaultValueForProperty: kETRepresentedObjectProperty];
 	}
@@ -173,7 +174,7 @@ applied to it, otherwise returns its current children. */
 	if ([anItem isGroup] == NO)
 		return nil;
 
-	if ([self shouldInspectItself] == NO && [anItem isEqual: _layoutContext])
+	if ([self shouldInspectItself] == NO && [anItem isEqual: [self layoutContext]])
 	{
 		NSArray *initialChildren = [anItem defaultValueForProperty: @"items"];
 		NSParameterAssert(nil != initialChildren);
@@ -296,7 +297,7 @@ being returned. */
 }
 
 // FIXME: Remove
-- (void) renderWithItems: (NSArray *)items isNewContent: (BOOL)isNewContent
+- (NSSize) renderWithItems: (NSArray *)items isNewContent: (BOOL)isNewContent
 {
 	if ([propertyViewItem canReload])
 	{
@@ -306,6 +307,7 @@ being returned. */
 	{
 		[propertyViewItem updateLayout];
 	}
+	return [self layoutSize];
 }
 
 /** Returns the active display mode. */ 

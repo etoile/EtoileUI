@@ -74,7 +74,6 @@
 
 /** @taskunit Accessing Descendant Items */
 
-- (NSArray *) descendantItemsSharingSameBaseItem;
 - (NSArray *) allDescendantItems;
 - (BOOL) isDescendantItem: (ETLayoutItem *)anItem;
 
@@ -92,8 +91,8 @@
  
 /** @taskunit Controller and Delegate */
 
-- (id) delegate;
-- (void) setDelegate: (id)delegate;
+- (COObject *) delegate;
+- (void) setDelegate: (COObject *)delegate;
 - (ETController *) controller;
 - (void) setController: (ETController *)aController;
 
@@ -101,8 +100,12 @@
 
 - (id) layout;
 - (void) setLayout: (ETLayout *)layout;
+- (void) didChangeLayout: (ETLayout *)oldLayout;
 - (void) updateLayout;
 - (void) updateLayoutRecursively: (BOOL)recursively;
+- (void) updateLayoutIfNeeded;
+- (BOOL) needsLayoutUpdate;
+- (void) setNeedsLayoutUpdate;
 
 /** @taskunit Item Scaling */
 

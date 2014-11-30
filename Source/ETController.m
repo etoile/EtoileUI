@@ -11,6 +11,7 @@
 #import <EtoileFoundation/ETUTI.h>
 #import <EtoileFoundation/NSObject+Model.h>
 #import "ETController.h"
+#import "ETUTITuple.h"
 #import "ETEventProcessor.h"
 #import "ETItemTemplate.h"
 #import "ETLayoutItemBuilder.h"
@@ -18,6 +19,7 @@
 #import "ETLayoutItemGroup+Mutation.h"
 #import "ETLayoutItemGroup.h"
 #import "ETLayoutItem.h"
+#import "ETObservation.h"
 #import "ETPickDropActionHandler.h" /* For ETUndeterminedIndex */
 #import "ETResponder.h"
 #import "ETTool.h" /* For -editedItem */
@@ -25,10 +27,6 @@
 #import "ETCompatibility.h"
 
 #pragma GCC diagnostic ignored "-Wprotocol"
-
-@interface COObject ()
-- (id) copyWithZone: (NSZone *)aZone;
-@end
 
 @implementation ETController
 
@@ -47,6 +45,15 @@
 		                                    supertypeStrings: [NSArray array]
 		                                            typeTags: nil];
 	}
+}
+
+- (void)prepareTransientState
+{
+	_editedItems = [[NSMutableArray alloc] init];
+	_editableProperties = [[NSMutableArray alloc] init];
+	_hasNewSortDescriptors = (NO == [_sortDescriptors isEmpty]);
+	_hasNewFilterPredicate = (nil != _filterPredicate);
+	_hasNewContent = NO;
 }
 
 /** <init />
@@ -72,8 +79,6 @@ You can also use it -init to create a controller. See -[ETNibOwner init]. */
 	[self setSortDescriptors: nil];
 	_allowedPickTypes = [[NSArray alloc] init];
 	_allowedDropTypes = [[NSMutableDictionary alloc] init];
-	_editedItems = [[NSMutableArray alloc] init];
-	_editableProperties = [[NSMutableArray alloc] init];
 	_automaticallyRearrangesObjects = YES;
 	_clearsFilterPredicateOnInsertion = YES;
 	_selectsInsertedObjects = YES;
@@ -92,6 +97,8 @@ You can also use it -init to create a controller. See -[ETNibOwner init]. */
 	[self setTemplate: objectTemplate forType: kETTemplateObjectType];
 	[self setTemplate: groupTemplate forType: kETTemplateGroupType];
 
+	[self prepareTransientState];
+
 	[[NSNotificationCenter defaultCenter]
 		addObserver: self
 	 	   selector: @selector(didProcessEvent:)
@@ -105,17 +112,20 @@ You can also use it -init to create a controller. See -[ETNibOwner init]. */
 {
 	NSNotificationCenter *notifCenter = [NSNotificationCenter defaultCenter];
 
-	FOREACH(_observations, observation, NSDictionary *)
+	FOREACH(_observations, observation, ETObservation *)
 	{
-		[notifCenter removeObserver: [observation objectForKey: @"object"]];
+		[notifCenter removeObserver: [observation object]];
 	}
 	[[NSNotificationCenter defaultCenter] removeObserver: self];
 }
 
+- (void) willDiscard
+{
+    [self stopObservation];
+}
+
 - (void) dealloc
 {
-	[self stopObservation];
-
 	DESTROY(_observations);
 	DESTROY(nibMainContent);
 	DESTROY(_templates);
@@ -268,16 +278,10 @@ For example:
 }
 </example>
 
-See also -setContent:, -[ETLayoutItemGroup controller] and -nextResponder.*/
+See also -[ETLayoutItemGroup controller] and -nextResponder.*/
 - (ETLayoutItemGroup *) content
 {
-	// FIXME: Use return [self valueForVariableStorageKey: @"content"];
-	return _content;
-}
-
-- (void) setContent: (ETLayoutItemGroup *)aContent
-{
-	_content = aContent;
+	return [self valueForVariableStorageKey: @"content"];
 }
 
 /** <override-dummy />
@@ -301,7 +305,9 @@ if (newContent != nil)
 		 forNotificationName: ETItemGroupSelectionDidChangeNotification
 					selector: @selector(browserSelectionDidChange:)];
 }
-</example> */
+</example>
+ 
+You must not access -content directly in this method. */
 - (void) didChangeContent: (ETLayoutItemGroup *)oldContent
                 toContent: (ETLayoutItemGroup *)newContent
 {
@@ -330,15 +336,22 @@ when the observed object posts a notification whose name matches aName.
 Pass nil as the notification name, if you want to receive all notifications 
 posted by the observed object.
 
-The observed object must not be nil. */ 
-- (void) startObserveObject: (id)anObject
+The observed object must not be nil, the selector must not be NULL either. */
+- (void) startObserveObject: (COObject *)anObject
         forNotificationName: (NSString *)aName 
                    selector: (SEL)aSelector
 {
 	NILARG_EXCEPTION_TEST(anObject);
+    INVALIDARG_EXCEPTION_TEST(aSelector, aSelector != NULL);
 
-	[_observations addObject: D(anObject, @"object", aName, @"name",  
-		NSStringFromSelector(aSelector), @"selector")];
+    ETObservation *observation = AUTORELEASE([[ETObservation alloc]
+        initWithObjectGraphContext: [self objectGraphContext]]);
+
+    [observation setObject: anObject];
+    [observation setName: aName];
+    [observation setSelector: aSelector];
+
+	[_observations addObject: observation];
 
 	[[NSNotificationCenter defaultCenter] addObserver: self
 	                                         selector: aSelector
@@ -353,118 +366,26 @@ Pass nil as the notification name, if you want to stop to receive any
 notification posted by the observed object.
 
 The observed object must not be nil. */ 
-- (void) stopObserveObject: (id)anObject forNotificationName: (NSString *)aName 
+- (void) stopObserveObject: (COObject *)anObject forNotificationName: (NSString *)aName
 {
 	NILARG_EXCEPTION_TEST(anObject);
 
 	NSNotificationCenter *notifCenter = [NSNotificationCenter defaultCenter];
 	BOOL removeAll = (nil == aName);
 
-	FOREACH([NSSet setWithSet: _observations], observation, NSDictionary *)
+	FOREACH([NSSet setWithSet: _observations], observation, ETObservation *)
 	{
-		id object = [observation objectForKey: @"object"];
+		COObject *object = [observation object];
 
 		if (object != anObject)
 			continue;
 
-		id name = [observation objectForKey: @"name"];
-
-		if ([name isEqual: aName] || removeAll)
+		if ([[observation name] isEqual: aName] || removeAll)
 		{
 			[_observations removeObject: observation];
 			[notifCenter removeObserver: self name: aName object: anObject];
 		}
 	}
-}
-
-- (void) setUpObserversForCopy: (ETController *)controllerCopy content: (ETLayoutItemGroup *)contentCopy
-{
-	FOREACH(_observations, observation, NSDictionary *)
-	{ 
-		id observedObject = [observation objectForKey: @"object"];
-
-		NSParameterAssert(observedObject != nil);
-
-		if ([observedObject isLayoutItem])
-		{
-			if (contentCopy != nil)
-			{
-				NSIndexPath *indexPath = [[self content] indexPathForItem: observedObject];
-				observedObject = [[controllerCopy content] itemAtIndexPath: indexPath];
-			}
-			else
-			{
-				observedObject = nil;
-			}
-		}
-
-		BOOL observedObjectUnresolved = (nil ==  observedObject);
-
-		if (observedObjectUnresolved)
-			continue;
-
-		[controllerCopy startObserveObject: observedObject
-		               forNotificationName: [observation objectForKey: @"name"]
-		                          selector: NSSelectorFromString([observation objectForKey: @"selector"])];
-	}
-}
-
-/** Returns a receiver copy which uses the given content.
-
-This method is ETController designated copier. Subclasses that want to extend 
-the copying support must invoke it instead of -copyWithZone:.
- 
-The persistent object context is retained in the copy. */
-- (id) copyWithZone: (NSZone *)aZone content: (ETLayoutItemGroup *)newContent
-{
-	ETController *newController = [super copyWithZone: aZone];
-
-	newController->_observations = [[NSMutableSet allocWithZone: aZone] init];
-	newController->_templates = [_templates copyWithZone: aZone];
-	ASSIGN(newController->_currentObjectType, _currentObjectType);
-	ASSIGN(newController->_persistentObjectContext, _persistentObjectContext);
-	newController->_sortDescriptors = [_sortDescriptors mutableCopyWithZone: aZone];
-	newController->_filterPredicate = [_filterPredicate copyWithZone: aZone];
-	newController->_allowedPickTypes = [_allowedPickTypes mutableCopyWithZone: aZone];
-	newController->_allowedDropTypes = [_allowedDropTypes copyWithZone: aZone];
-	newController->_editedItems = [[NSMutableArray allocWithZone: aZone] init];
-	newController->_editableProperties = [[NSMutableArray allocWithZone: aZone] init];
-	newController->_automaticallyRearrangesObjects = _automaticallyRearrangesObjects;
-	newController->_hasNewSortDescriptors = (NO == [_sortDescriptors isEmpty]);
-	newController->_hasNewFilterPredicate = (nil != _filterPredicate);
-	newController->_hasNewContent = NO;
-	newController->_clearsFilterPredicateOnInsertion = _clearsFilterPredicateOnInsertion;
-	newController->_selectsInsertedObjects = _selectsInsertedObjects;
-
-	 /* When the copy was initially requested by -[ETLayoutItemGroup copyWithZone:], 
-       -finishCopy: will be called back when the item copy is done. */
-	if (nil == newContent)
-	{
-		[self finishDeepCopy: newController withZone: aZone content: newContent];
-	}
-
-	return newController;
-}
-
-- (void) finishDeepCopy: (ETController *)newController 
-               withZone: (NSZone *)aZone
-                content: (ETLayoutItemGroup *)newContent
-{
-	newController->_content = newContent; /* Weak reference */
-
-	[self setUpObserversForCopy: newController content: newContent];
-}
-
-/** Returns a receiver copy with a nil content.
-
-You can set the returned controller content indirectly with 
--[ETLayoutItemGroup setController:].
-
-To customize the copying in a subclass, you must override 
--copyWithZone:content:. */
-- (id) copyWithZone: (NSZone *)aZone
-{
-	return [self copyWithZone: aZone content: nil];
 }
 
 /* Templates */
@@ -576,12 +497,21 @@ or some more specialized track (e.g. an Undo view) could be returned. */
  
 If the given object doesn't conform to the protocol, raises an 
 NSInvalidArgumentException.
+ 
+If the controller is persistent and this property points to a persistent 
+COObjectGraphContext, then this property is persisted. In all other cases, 
+the property is set to nil, when the receiver is reloaded.
 
 See -persistentObjectContext for more details. */
 - (void) setPersistentObjectContext: (id <COPersistentObjectContext>)aContext
 {
-	INVALIDARG_EXCEPTION_TEST(aContext, [(id <NSObject>)aContext conformsToProtocol: NSProtocolFromString(@"COPersistentObjectContext")]);
+    if (aContext != nil)
+    {
+        INVALIDARG_EXCEPTION_TEST(aContext, [(id <NSObject>)aContext conformsToProtocol: NSProtocolFromString(@"COPersistentObjectContext")]);
+    }
+    [self willChangeValueForProperty: @"persistentObjectContext"];
 	ASSIGN(_persistentObjectContext, aContext);
+    [self didChangeValueForProperty: @"persistentObjectContext"];
 }
 
 /** Creates a new object by calling -newItemWithURL:ofType:options: and adds it to the content. */
@@ -751,12 +681,10 @@ Extra options can be added to the returned dictionary. */
 	NSMutableDictionary *options = [NSMutableDictionary dictionary];
 	ETModelDescriptionRepository *repo = [ETModelDescriptionRepository mainRepository];
 
-#ifdef COREOBJECT
 	if ([self persistentObjectContext] != nil)
 	{
 		repo = [[[self persistentObjectContext] editingContext] modelDescriptionRepository];
 	}
-#endif
 	
 	id representedObject = [[self content] representedObject];
 
@@ -1040,7 +968,7 @@ the content rather than -[ETLayoutItemGroup insertObject:atIndex:].  */
 
 	if ([self selectsInsertedObjects])
 	{
-		[[self content] setSelectionIndexPaths: A(anIndexPath)];
+		[[self content] setSelectionIndexPaths: A(selectionIndexPath)];
 	}
 }
 
@@ -1140,8 +1068,8 @@ the default one based on
 		// and in ETTableLayout there is a crash because the table view still
 		// presents -item rather than -arrangedItems. Wierdly we also lost
 		// the focus in the search field.
-		//[[self content] setNeedsLayoutUpdate];
-		[[self content] updateLayoutRecursively: YES];
+		[[self content] setNeedsLayoutUpdate];
+		//[[self content] updateLayoutRecursively: YES];
 	}
 }
 
@@ -1171,7 +1099,18 @@ Returns YES by default. */
 - (void) setAllowedPickTypes: (NSArray *)UTIs
 {
 	NILARG_EXCEPTION_TEST(UTIs);
+
+    [self willChangeValueForProperty: @"allowedPickTypes"
+                           atIndexes: [NSIndexSet indexSet]
+                         withObjects: A(UTIs)
+                        mutationKind: ETCollectionMutationKindReplacement];
+
 	ASSIGN(_allowedPickTypes, UTIs);
+
+    [self didChangeValueForProperty: @"allowedPickTypes"
+                           atIndexes: [NSIndexSet indexSet]
+                         withObjects: A(UTIs)
+                        mutationKind: ETCollectionMutationKindReplacement];
 }
 
 /* -allowedDropTypesForTargetType: can be rewritten with HOM. Not sure it won't
@@ -1188,12 +1127,15 @@ too slow given that the method tends to be invoked repeatedly.
 	NILARG_EXCEPTION_TEST(aUTI);
 	NSMutableArray *matchedDropTypes = [NSMutableArray arrayWithCapacity: 100];
 	
-	for (NSString *UTIString in _allowedDropTypes)
+	for (NSString *target in _allowedDropTypes)
 	{
-		ETUTI *targetType = [ETUTI typeWithString: UTIString];
+		ETUTI *targetType = [ETUTI typeWithString: target];
+
 		if ([aUTI conformsToType: targetType])
 		{
-			[matchedDropTypes addObjectsFromArray: [_allowedDropTypes objectForKey: targetType]];
+            ETUTITuple *UTITuple = [_allowedDropTypes objectForKey: target];
+
+			[matchedDropTypes addObjectsFromArray: [UTITuple content]];
 		}
 	}
 
@@ -1204,8 +1146,27 @@ too slow given that the method tends to be invoked repeatedly.
 {
 	NILARG_EXCEPTION_TEST(targetUTI);
 	NILARG_EXCEPTION_TEST(UTIs);
-	[_allowedDropTypes setObject: [[UTIs mappedCollection] stringValue]
-	                      forKey: [targetUTI stringValue]];
+
+    [self willChangeValueForProperty: @"allowedDropTypes"
+                           atIndexes: [NSIndexSet indexSet]
+                         withObjects: A(UTIs)
+                        mutationKind: ETCollectionMutationKindReplacement];
+
+	ETUTITuple *UTITuples = [_allowedDropTypes objectForKey: [targetUTI stringValue]];
+
+    if (UTITuples == nil)
+    {
+        UTITuples = [[ETUTITuple alloc] initWithObjectGraphContext: [self objectGraphContext]];
+    }
+    [UTITuples setContent: UTIs];
+
+    [_allowedDropTypes setObject: UTITuples
+                          forKey: [targetUTI stringValue]];
+
+    [self didChangeValueForProperty: @"allowedDropTypes"
+                          atIndexes: [NSIndexSet indexSet]
+                        withObjects: A(UTIs)
+                       mutationKind: ETCollectionMutationKindReplacement];
 }
 
 /* Editing */
@@ -1422,23 +1383,16 @@ else
 
 /* Framework Private */
 
-static ETController *basicTemplateProvider = nil;
-
 /** This method is only exposed to be used internally by EtoileUI. 
 
 Returns a shared and immutable template provider in which basic templates are 
 registered for -currentObjectType and -currentGroupType. */
-+ (id <ETTemplateProvider>) basicTemplateProvider
++ (id <ETTemplateProvider>) basicTemplateProviderForObjectGraphContext: (COObjectGraphContext *)aContext
 {
-	if (basicTemplateProvider == nil)
-	{
-		// NOTE: Must not be instantiated in +initialize otherwise several
-		// ETUIObject subclass instances are initialized before all the model
-		// descriptions are registered.
-		basicTemplateProvider = [[ETController alloc]
-			initWithObjectGraphContext: [ETUIObject defaultTransientObjectGraphContext]];
-	}
-	return basicTemplateProvider;
+	// NOTE: Must not be instantiated in +initialize otherwise several
+	// ETUIObject subclass instances are initialized before all the model
+	// descriptions are registered.
+	return [self sharedInstanceForObjectGraphContext: aContext];
 }
 
 @end

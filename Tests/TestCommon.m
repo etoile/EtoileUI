@@ -7,13 +7,16 @@
  */
 
 #import <EtoileFoundation/NSObject+Model.h>
+#import <CoreObject/COObjectGraphContext.h>
 #import "TestCommon.h"
 #import "ETApplication.h"
 #import "ETEvent.h"
 #import "ETLayoutItemFactory.h"
 #import "ETLayoutItemGroup.h"
 #import "ETLayoutExecutor.h"
+#import "ETShape.h"
 #import "ETTool.h"
+#import "ETView.h"
 #import "ETWindowItem.h"
 
 @implementation Person
@@ -76,18 +79,142 @@ than the subclass instance we might want. */
 - (id) init
 {
 	SUPERINIT;
+
+    /* Delete existing db file in case -dealloc didn't run */
+    [self deleteStore];
+    ASSIGN(editingContext, [COEditingContext contextWithURL: [self storeURL]]);
+
+	// NOTE: For now, ETApp registers aspects in the aspect repository with
+	// the +defaultTransientObjectGraphContext rather than creating an object
+	// graph context just for the repository and its aspects.
 	[[ETLayoutExecutor sharedInstance] removeAllItems];
+	[[ETUIObject defaultTransientObjectGraphContext] discardAllChanges];
+    [ETUIObject clearRecordedDeallocations];
+
 	ASSIGN(itemFactory, [ETLayoutItemFactory factory]);
-	ASSIGN(previousActiveTool, [ETTool activeTool]);
+	ETAssert([[itemFactory objectGraphContext] hasChanges] == NO);
+
 	return self;
 }
 
 - (void) dealloc
 {
+	[[ETLayoutExecutor sharedInstance] removeAllItems];
+	[[itemFactory objectGraphContext] discardAllChanges];
+    [ETUIObject clearRecordedDeallocations];
+
 	DESTROY(itemFactory);
-	[ETTool setActiveTool: previousActiveTool];
-	DESTROY(previousActiveTool);
+
+    [self deleteStore];
+    DESTROY(editingContext);
+
 	[super dealloc];
+}
+
+- (NSURL *)storeURL
+{
+	return [NSURL fileURLWithPath: [@"~/TestEtoileUIStore.store" stringByExpandingTildeInPath]];
+}
+
+- (void)deleteStore
+{
+	if ([[NSFileManager defaultManager] fileExistsAtPath: [[self storeURL] path]] == NO)
+		return;
+	
+	NSError *error = nil;
+	[[NSFileManager defaultManager] removeItemAtPath: [[self storeURL] path]
+	                                           error: &error];
+	ETAssert(error == nil);
+}
+
+#if 0
+- (void) checkValidityForNewPersistentObject: (COObject *)obj isFault: (BOOL)isFault
+{
+	UKTrue([obj isPersistent]);
+	UKNotNil([obj entityDescription]);
+	//UKFalse([obj isRoot]);
+	// FIXME: UKFalse([obj isDamaged]);
+
+	UKObjectsSame(ctxt, [[obj persistentRoot] parentContext]);
+	UKTrue([[ctxt loadedObjects] containsObject: obj]);
+	UKObjectsSame(obj, [[obj persistentRoot] loadedObjectForUUID: [obj UUID]]);
+}
+#endif
+
+- (void) checkWithExistingAndNewRootObject: (COObject *)rootObject 
+                                   inBlock: (void (^)(id rootObject, BOOL isNew, BOOL isCopy))block
+{
+    if ([rootObject rootObject] == nil)
+    {
+        [[rootObject objectGraphContext] setRootObject: rootObject];
+    }
+    ETAssert([rootObject isRoot]);
+    
+    COObjectGraphContext *existingContext = [rootObject objectGraphContext];
+
+    /* Run the tests in the existing context */
+
+    block(rootObject, NO, NO);
+
+    /* Commit the object graph, reload it in a new context and run the tests */
+
+    COPersistentRoot *persistentRoot = nil;
+    
+    if ([rootObject persistentRoot] != nil)
+    {
+        /* For multiple commits with -checkWithExistingAndNewRootObject:inBlock: */
+        persistentRoot = [rootObject persistentRoot];
+    }
+    else
+    {
+        persistentRoot = [editingContext
+            insertNewPersistentRootWithRootObject: [existingContext rootObject]];
+    }
+    ETAssert(persistentRoot != nil);
+    ETAssert([editingContext hasChanges]);
+
+    ETAssert([editingContext commit]);
+
+    COEditingContext *newEditingContext = [COEditingContext contextWithURL: [self storeURL]];
+    COPersistentRoot *newPersistentRoot =
+        [newEditingContext persistentRootForUUID: [persistentRoot UUID]];
+
+    block([newPersistentRoot rootObject], YES, NO);
+    
+    /* Copy the object graph into the existing context and run the tests */
+
+    COObject *rootObjectCopy =
+        [[existingContext rootObject] copyToObjectGraphContext: existingContext];
+
+    ETAssert([[rootObjectCopy UUID] isEqual: [rootObject UUID]] == NO);
+
+    block(rootObjectCopy, NO, YES);
+
+    /* Copy the object graph into a new context and run the tests */
+
+    // FIXME: Fix COCopier to handle non-composite refs (aka cross persistent
+    // root refs) if the source is a transient object graph context.
+#if 0
+    COObjectGraphContext *copyContext = [COObjectGraphContext objectGraphContext];
+
+    [[existingContext rootObject] copyToObjectGraphContext: copyContext];
+
+    block([copyContext rootObject], YES, YES);
+#endif
+}
+
+- (ETLayoutItem *) basicItemWithRect: (NSRect)rect
+{
+	ETLayoutItem *item = [itemFactory item];
+
+	[item setFrame: rect];
+	// FIXME: Ugly hack to get -itemScaleFactor applied correctly
+	// For example, see -[TestColumnLayoutPersistency testLayoutGeometry]
+	[item setDefaultFrame: rect];
+	[item setCoverStyle: [ETShape rectangleShapeWithObjectGraphContext: [itemFactory objectGraphContext]]];
+	[[item coverStyle] setFillColor: [NSColor redColor]];
+
+	return item;
 }
 
 @end
@@ -171,6 +298,31 @@ coordinates or not to set the event location in the window. */
 
 @end
 
+@implementation ETUIObject (ETUIObjectTestAdditions)
+
+static NSMutableSet *deallocatedObjectUUIDs = nil;
+
+- (void) recordDeallocation
+{
+    if (deallocatedObjectUUIDs == nil)
+    {
+        deallocatedObjectUUIDs = [NSMutableSet new];
+    }
+    [deallocatedObjectUUIDs addObject: [self UUID]];
+}
+
++ (void) clearRecordedDeallocations
+{
+    [deallocatedObjectUUIDs removeAllObjects];
+}
+
++ (BOOL) isObjectDeallocatedForUUID: (ETUUID *)aUUID
+{
+    return [deallocatedObjectUUIDs containsObject: aUUID];
+}
+
+@end
+
 
 @implementation ETTool (ETToolTestAdditions)
 
@@ -180,3 +332,49 @@ coordinates or not to set the event location in the window. */
 }
 
 @end
+
+@implementation ETLayoutItem (ETLayoutItemTestAdditions)
+
++ (NSRect) defaultItemRect
+{
+	return NSMakeRect(100, 50, 300, 250);
+}
+
+/** Returns the receiver absolute index path by collecting the index of each
+parent item until the root item is reached (when -parentItem returns nil). 
+
+This method is equivalent to [[self rootItem] indexPathForItem: self]. */
+- (NSIndexPath *) indexPath
+{
+	// TODO: Test whether it is worth to optimize or not
+	return [[self rootItem] indexPathForItem: self];
+}
+
+@end
+
+@implementation ETDecoratorItem (ETDecoratorTestAdditions)
+
+/* For test, patch the framework implementation. */
++ (ETDecoratorItem *) itemWithDummySupervisorView
+{
+	ETView *view = AUTORELEASE([[ETView alloc] init]);
+	return AUTORELEASE([[ETDecoratorItem alloc]
+		initWithSupervisorView: view objectGraphContext: [ETUIObject defaultTransientObjectGraphContext]]);
+}
+
+@end
+
+@implementation ETLayout (ETLayoutTestAdditions)
+
+- (NSSize) oldProposedLayoutSize
+{
+	return _oldProposedLayoutSize;
+}
+
+- (CGFloat) previousScaleFactor
+{
+	return _previousScaleFactor;
+}
+
+@end
+

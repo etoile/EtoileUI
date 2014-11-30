@@ -11,6 +11,7 @@
 #import "ETView.h"
 #import "ETDecoratorItem.h"
 #import "ETLayoutItem.h"
+#import "ETLayoutItem+Private.h"
 #import "ETUIItemIntegration.h"
 #import "NSObject+EtoileUI.h"
 #import "NSView+EtoileUI.h"
@@ -43,31 +44,24 @@ By default, returns 'itemGroup'. */
 	return @selector(itemGroup);
 }
 
-- (id) initWithFrame: (NSRect)frame
-{
-	return [self initWithFrame: frame item: nil];
-}
-
 /** <init /> 
-Initializes and returns a supervisor view instance that is bound to the given 
-item.
+Initializes and returns a supervisor view.
 
 You should never need to use this method which uses internally by EtoileUI.
-
-When the item is not nil, the given frame is ignored and the item frame and 
-autoresizing mask are set on the view.
+ 
+The frame argument can be ignored.
 
 See also -[ETUIItem supervisorView]. */
-- (id) initWithFrame: (NSRect)frame item: (ETUIItem *)anItem
+- (id) initWithFrame: (NSRect)frame
 {
 	self = [super initWithFrame: frame];
 	if (nil == self)
 		return nil;
 
-	/* Will call back -setItemWithoutInsertingView: */
-	[anItem setSupervisorView: self sync: ETSyncSupervisorViewFromItem];
+	/* For a leaf item, autoresizesSubviews is NO, unless a view is set.
+	   For a group item, autoresizesSubviews is NO, unless a layout view is set.
+	   We update the view autoresizing policy in -setContentView:isTemporary:. */
 	[self setAutoresizesSubviews: NO];
-
 	return self;
 }
 

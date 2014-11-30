@@ -47,15 +47,6 @@
 	return self;
 }
 
-- (id) copyWithZone: (NSZone *)aZone layoutContext: (id <ETLayoutingContext>)ctxt
-{
-	ETFormLayout *layoutCopy = [super copyWithZone: aZone layoutContext: ctxt];
-
-	layoutCopy->_alignment = _alignment;
-
-	return layoutCopy;
-}
-
 - (NSImage *) icon
 {
 	return [NSImage imageNamed: @"ui-scroll-pane-form"];
@@ -73,7 +64,10 @@
 
 - (void) setAlignment: (ETFormLayoutAlignment)alignment
 {
+	[self willChangeValueForProperty: @"alignment"];
 	_alignment = alignment;
+	[self renderAndInvalidateDisplay];
+	[self didChangeValueForProperty: @"alignment"];
 }
 
 - (NSFont *) itemLabelFont
@@ -96,10 +90,13 @@
 	if (attributes == nil)
 		return;
 
+	[self willChangeValueForProperty: @"itemLabelFont"];
 	[attributes setObject: [aFont fontName] forKey: NSFontAttributeName];
 	[attributes setObject: [NSNumber numberWithFloat: [aFont pointSize]] forKey: NSFontSizeAttribute];
 
 	[[[self templateItem] coverStyle] setLabelAttributes: attributes];
+	[self renderAndInvalidateDisplay];
+	[self didChangeValueForProperty: @"itemLabelFont"];
 }
 
 /* -[ETTemplateLayout renderLayoutItems:isNewContent:] doesn't invoke 

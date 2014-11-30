@@ -7,100 +7,111 @@
  */
 
 #import "ETCompatibility.h"
-
-#ifdef COREOBJECT
-
 #import <CoreObject/COEditingContext.h>
-#import <CoreObject/COObject.h>
-#import "ETController+CoreObject.h"
+#import <CoreObject/COObjectGraphContext.h>
+#import <CoreObject/COPersistentRoot.h>
+#import <CoreObject/COSQLiteStore.h>
+#import "ETController.h"
+#import "ETItemTemplate.h"
+#import "ETObservation.h"
+
+@interface ETController (CoreObject)
+@end
 
 @implementation ETController (CoreObject)
 
-- (NSString *) serializedCurrentObjectType
+- (COPersistentRoot *) editedPersistentRoot
 {
-	return [_currentObjectType stringValue];
+    if ([_persistentObjectContext isObjectGraphContext] == NO)
+        return nil;
+
+    return [(COObjectGraphContext *)_persistentObjectContext persistentRoot];
 }
 
-- (void) setSerializedCurrentObjectType: (NSString *)aUTIString
+- (COBranch *) editedBranch
 {
-	ASSIGN(_currentObjectType, [ETUTI typeWithString: aUTIString]);
+    if ([_persistentObjectContext isObjectGraphContext] == NO)
+        return nil;
+    
+    return [(COObjectGraphContext *)_persistentObjectContext branch];
 }
 
-- (NSString *) serializedFilterPredicate
+- (NSString *) serializedPersistentObjectContext
 {
-	return [[self filterPredicate] predicateFormat];
+    BOOL isTrackingCurrentBranch =
+        ([[self editedPersistentRoot] objectGraphContext] == _persistentObjectContext);
+    ETUUID *UUID = [[self editedBranch] UUID];
+
+    if (isTrackingCurrentBranch)
+    {
+        UUID = [[self editedPersistentRoot] UUID];
+    }
+    return [UUID stringValue];
 }
 
-- (void) setSerializedFilterPredicate: (NSString *)aPredicateFormat
+- (void) setSerializedPersistentObjectContext: (NSString *)aUUIDString
 {
-	[self setFilterPredicate: [NSPredicate predicateWithFormat: aPredicateFormat]];
+    if (aUUIDString == nil)
+        return;
+
+    ETUUID *UUID = [ETUUID UUIDWithString: aUUIDString];
+    COPersistentRoot *persistentRoot =
+        [[self editingContext] persistentRootForUUID: UUID];
+
+    if (persistentRoot != nil)
+    {
+        ASSIGN(_persistentObjectContext, [persistentRoot objectGraphContext]);
+        return;
+    }
+
+    COSQLiteStore *store = [[self editingContext] store];
+    
+    persistentRoot = [[self editingContext]
+        persistentRootForUUID: [store persistentRootUUIDForBranchUUID: UUID]];
+
+    COBranch *branch = [persistentRoot branchForUUID: UUID];
+
+    ASSIGN(_persistentObjectContext, [branch objectGraphContext]);
 }
 
-- (NSArray *) serializedSortDescriptors
+- (void) recreateObservations
 {
-	NSMutableArray *sortDescriptors =  [NSMutableArray array];
-
-	for (NSSortDescriptor *descriptor in _sortDescriptors)
-	{
-		[sortDescriptors addObject: [NSKeyedArchiver archivedDataWithRootObject: descriptor]];
-	}
-	return sortDescriptors;
+    for (ETObservation *observation in _observations)
+    {
+        [[NSNotificationCenter defaultCenter] addObserver: self
+                                                 selector: [observation selector]
+                                                     name: [observation name]
+	                                               object: [observation object]];
+    }
 }
 
-- (void) setSerializedSortDescriptors: (NSArray *)serializedSortDescriptors
+- (void) awakeFromDeserialization
 {
-	NSMutableArray *sortDescriptors = [NSMutableArray array];
-
-	for (NSData *data in serializedSortDescriptors)
-	{
-		[sortDescriptors addObject: [NSKeyedUnarchiver unarchiveObjectWithData: data]];
-	}
-	ASSIGNCOPY(_sortDescriptors, sortDescriptors);
-}
-
-- (NSArray *) serializedAllowedPickTypes
-{
-	return (id)[[_allowedPickTypes mappedCollection] stringValue];
-}
-
-- (void) setSerializedAllowedPickTypes: (NSArray *)serializedPickTypes
-{
-	NSMutableArray *pickTypes = [NSMutableArray array];
-
-	for (NSString *UTIString in serializedPickTypes)
-	{
-		[pickTypes addObject: [ETUTI typeWithString: UTIString]];
-	}
-	ASSIGNCOPY(_allowedPickTypes, pickTypes);
+	[super awakeFromDeserialization];
+	[self prepareTransientState];
 }
 
 - (void) didLoadObjectGraph
 {
-	// TODO: We probably want to recreate the observations here (but we need to
-	// declare them in the metamodel and serialize them). For now, it is the
-	// developer responsability to use serialization setters that call the
-	// setters using -stopObserveObjectForNotificationName: and
-	// -startObserveObject:forNotificationName:selector:
+	[super didLoadObjectGraph];
+    [self recreateObservations];
+	/* At this point, the item tree should be ready to be sorted and filtered.
+	   For the items and their aspects, the current property values are ready, 
+	   further -didLoadObjectGraph calls won't alter the persistent state 
+	   (we normally evaluate sort descriptors and predicates against properties 
+	   derived from this persistent state).
+	   For example, finishing to set up a layout touches some internal transient 
+	   state that doesn't matter.
+	   If a reload is planned, executing the realoading will call -setContent:, 
+	   and trigger -rearrangeObjects once more. */
+	[self rearrangeObjects];
 }
 
+@end
+
+
+@interface ETItemTemplate (CoreObject)
 @end
 
 @implementation ETItemTemplate (CoreObject)
-
-- (NSString *) serializedObjectClass
-{
-	return NSStringFromClass([self objectClass]);
-}
-
-- (void) setSerializedObjectClass: (NSString *)aClassName
-{
-	if (aClassName == nil)
-		return;
-
-	ASSIGN(_objectClass, NSClassFromString(aClassName));
-	ETAssert(_objectClass != Nil);
-}
-
 @end
-
-#endif

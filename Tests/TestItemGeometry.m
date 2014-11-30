@@ -26,32 +26,6 @@
 - (void) setViewAndSync: (NSView *)newView;
 @end
 
-@implementation ETLayoutItem (TestItemGeometry)
-
-/* For test, patch the framework implementation. */
-+ (NSRect) defaultItemRect
-{
-	return NSMakeRect(100, 50, 300, 250);
-}
-
-@end
-
-@interface ETDecoratorItem (TestItemGeometry)
-+ (ETDecoratorItem *) itemWithDummySupervisorView;
-@end
-
-@implementation ETDecoratorItem (TestItemGeometry)
-
-/* For test, patch the framework implementation. */
-+ (ETDecoratorItem *) itemWithDummySupervisorView
-{
-	ETView *view = AUTORELEASE([[ETView alloc] init]);
-	return AUTORELEASE([[ETDecoratorItem alloc]
-		initWithSupervisorView: view objectGraphContext: [ETUIObject defaultTransientObjectGraphContext]]);
-}
-
-@end
-
 @interface TestItemGeometry : TestCommon <UKTest>
 {
 	ETLayoutItem *item;
@@ -76,11 +50,12 @@ DEALLOC(DESTROY(itemFactory); DESTROY(item))
 
 	[item setAutoresizingMask: ETAutoresizingFlexibleWidth];
 
-	NSRect frame = NSMakeRect(-300, 20, 500, 50);
 	NSRect initialItemFrame = [item frame];
 	unsigned int initialAutoresizing = [item autoresizingMask];
 
-	ETView *view = AUTORELEASE([[ETView alloc] initWithFrame: frame item: item]);
+	ETView *view = AUTORELEASE([[ETView alloc] init]);
+	
+	[item setSupervisorView: view sync: ETSyncSupervisorViewFromItem];
 
 	UKRectsEqual(initialItemFrame, [view frame]);
 	UKRectsEqual(initialItemFrame, [item frame]);

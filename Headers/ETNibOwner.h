@@ -80,7 +80,7 @@ automatically loads the Nib file which is named just like the concrete
 ETNibOwner subclass it is an instance of.<br />
 For example, a direct instance of the ETNibOwner subclass "PreferencesPanel"
 would try to load the Nib file named "PreferencesPanel.nib". */
-@interface ETNibOwner : ETUIObject //<NSCopying>
+@interface ETNibOwner : ETUIObject
 {
 	@private
 	NSString *_nibName;

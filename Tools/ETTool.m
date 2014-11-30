@@ -11,6 +11,7 @@
 #import <EtoileFoundation/NSObject+HOM.h>
 #import <EtoileFoundation/NSObject+Model.h>
 #import <EtoileFoundation/Macros.h>
+#import <CoreObject/COObjectGraphContext.h>
 #import "ETTool.h"
 #import "ETArrowTool.h"
 #import "ETEvent.h"
@@ -38,12 +39,20 @@
 
 @implementation ETTool
 
+static ETUUID *initialToolUUID = nil;
+static ETUUID *activeToolUUID = nil;
+static ETUUID *mainToolUUID = nil;
+
 + (void) initialize
 {
 	if (self != [ETTool class])
 		return;
 	
 	[self applyTraitFromClass: [ETResponderTrait class]];
+
+    initialToolUUID = [ETUUID new];
+    mainToolUUID = [initialToolUUID copy];
+    activeToolUUID = [initialToolUUID copy];
 }
 
 #pragma mark Registering Tools -
@@ -135,7 +144,7 @@ it. */
 
 	if (isFieldEditorEvent)
 	{
-		return activeTool;
+		return [self activeTool];
 	}
 
 	ETTool *toolToActivate = [self activatableToolForItem: [anEvent layoutItem]];
@@ -221,7 +230,36 @@ You should rarely need to override this method. */
 
 #pragma mark Active and Main Tools -
 
-static ETTool *activeTool = nil;
++ (ETTool *) toolForUUID: (ETUUID *)aToolUUID
+      objectGraphContext: (COObjectGraphContext *)context
+{
+    ETTool *tool = [context loadedObjectForUUID: aToolUUID];
+        
+    if (tool != nil)
+        return tool;
+
+    /* For recreating the initial tools, between tests in the test suite */
+    if ([mainToolUUID isEqual: initialToolUUID] == NO || [activeToolUUID isEqual: initialToolUUID] == NO)
+    {
+        ASSIGN(mainToolUUID, initialToolUUID);
+        ASSIGN(activeToolUUID, initialToolUUID);
+    }
+    ETEntityDescription *entity =
+        [[context modelDescriptionRepository] entityDescriptionForClass: [ETArrowTool class]];
+        
+    return AUTORELEASE([[ETArrowTool alloc] initWithEntityDescription: entity
+                                                                 UUID: initialToolUUID
+                                                   objectGraphContext: context]);
+}
+
+/** Returns the last active tool UUID, even if the active tool has been unloaded. 
+
+This can be used to check the active tool identity when objects get discarded, 
+without recreating it by calling +activeTool. */
++ (ETUUID *) activeToolUUID
+{
+    return activeToolUUID;
+}
 
 /** Returns the active tool through which the events are dispatched in the 
 layout item tree. 
@@ -232,12 +270,8 @@ explanations in +mainTool.
 See +setActiveTool:, -targetItem and -layoutOwner. */
 + (id) activeTool
 {
-	if (activeTool == nil)
-	{
-		ASSIGN(mainTool, [ETArrowTool toolWithObjectGraphContext:
-			[ETUIObject defaultTransientObjectGraphContext]]);
-		ASSIGN(activeTool, [self mainTool]);
-	}
+    ETTool *activeTool = [self toolForUUID: activeToolUUID
+                        objectGraphContext: [ETUIObject defaultTransientObjectGraphContext]];
 
 #if 0
 	ETAssert([activeTool targetItem] != nil || [activeTool isEqual: [self mainTool]]);
@@ -303,20 +337,20 @@ automatically activates tools in response to the user's click with
 	   if the user sets a custom tool not bound to any layout.
 	   See also +activatableToolForItem: */
 	if ([[toolToActivate layoutOwner] isWidget])
-		 return activeTool;
+		 return [self activeTool];
 
 	/* Prevent the user to set a tool on an item using a widget view */
 	NSParameterAssert([[(id)[[toolToActivate layoutOwner] layoutContext] ifResponds] usesWidgetView] == NO);
 
-	ETTool *toolToDeactivate = activeTool;
+	ETTool *toolToDeactivate = [self activeTool];
 
 	if ([toolToActivate isEqual: toolToDeactivate])
-		return activeTool;
+		return [self activeTool];
 
 	ETDebugLog(@"Update active tool to %@", toolToActivate);
 	
 	RETAIN(toolToDeactivate);
-	ASSIGN(activeTool, toolToActivate);
+	ASSIGN(activeToolUUID, [toolToActivate UUID]);
 
 	[toolToDeactivate didBecomeInactive];
 	[toolToActivate didBecomeActive];
@@ -326,8 +360,6 @@ automatically activates tools in response to the user's click with
 	RELEASE(toolToDeactivate);
 	return toolToActivate;
 }
-
-static ETTool *mainTool = nil;
 
 /** Returns the tool to be used as active tool when no other tools can be looked 
 up and activated.
@@ -341,13 +373,16 @@ area and the menu area (we could then state that +activeTool always return a
 tool whose -layoutOwner is not nil). */
 + (id) mainTool
 {
-	return mainTool;
+    return [self toolForUUID: mainToolUUID
+          objectGraphContext: [ETUIObject defaultTransientObjectGraphContext]];
 }
 
-/** Sets the tool to be be used as active tool when no other 
-tools can be looked up and activated.
+/** Sets the tool to be be used as active tool, when no other tools can be 
+looked up and activated.
 
-For a nil tool, raises an NSInvalidArgumentException.
+For a nil tool or a tool that doesn't belong to 
+-[ETUIObject defaultTransientObjectGraphContext], raises an 
+NSInvalidArgumentException.
 
 If the main tool was the active tool, the active tool is changed too.
 
@@ -355,15 +390,17 @@ See also -mainTool. */
 + (void) setMainTool: (id)aTool
 {
 	NILARG_EXCEPTION_TEST(aTool);
+    INVALIDARG_EXCEPTION_TEST(aTool,
+        [aTool objectGraphContext] == [ETUIObject defaultTransientObjectGraphContext]);
 
 	ETAssert([self activeTool] != nil);
-	BOOL wasPreviousMainToolActive = [[self activeTool] isEqual: mainTool];
+	BOOL wasPreviousMainToolActive = [[self activeTool] isEqual: [self mainTool]];
 
-	ASSIGN(mainTool, aTool);
+	ASSIGN(mainToolUUID, [aTool UUID]);
 
 	if (wasPreviousMainToolActive)
 	{
-		[self setActiveTool: mainTool];
+		[self setActiveTool: [self mainTool]];
 	}
 }
 
@@ -390,23 +427,6 @@ See also -mainTool. */
 	DESTROY(_targetItem);
 	DESTROY(_cursorName);
 	[super dealloc];
-}
-
-- (id) copyWithCopier: (ETCopier *)aCopier
-{
-	ETTool *newTool = [super copyWithCopier: aCopier];
-
-	if ([aCopier isAliasedCopy])
-		return newTool;
-
-	[aCopier beginCopyFromObject: self toObject: newTool];
-
-	/* NSCursor factory methods are shared instances */
-	ASSIGN(newTool->_cursorName, _cursorName);
-	// FIXME: Copy layoutOwner and targetItem
-
-	[aCopier endCopy];
-	return newTool;
 }
 
 - (BOOL) respondsToSelector: (SEL)aSelector
@@ -962,7 +982,7 @@ NO. */
 {
 	// FIXME: Don't retrieve the backend responder. The backend responder should
 	// be retrieved in -tryPerformKeyEquivalentAndSendKeyEvent:toResponder:
-	id firstResponder = [[[[ETApp keyItem] firstResponderSharingArea] window] firstResponder];
+	id firstResponder = [[(id)[[ETApp keyItem] firstResponderSharingArea] window] firstResponder];
 	[self tryPerformKeyEquivalentAndSendKeyEvent: anEvent toResponder: firstResponder];
 }
 
@@ -970,7 +990,7 @@ NO. */
 {
 	// FIXME: Don't retrieve the backend responder. The backend responder should
 	// be retrieved in -tryPerformKeyEquivalentAndSendKeyEvent:toResponder:
-	id firstResponder = [[[[ETApp keyItem] firstResponderSharingArea] window] firstResponder];
+	id firstResponder = [[(id)[[ETApp keyItem] firstResponderSharingArea] window] firstResponder];
 	[self tryPerformKeyEquivalentAndSendKeyEvent: anEvent toResponder: firstResponder];
 }
 
