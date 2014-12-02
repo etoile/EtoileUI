@@ -19,6 +19,10 @@
 #import "ETView.h"
 #import "ETWindowItem.h"
 
+@interface ETTool ()
++ (void) resetTools;
+@end
+
 @implementation Person
 
 @synthesize name = _name, emails = _emails, groupNames = _groupNames;
@@ -89,6 +93,7 @@ than the subclass instance we might want. */
 	// graph context just for the repository and its aspects.
 	[[ETLayoutExecutor sharedInstance] removeAllItems];
 	[[ETUIObject defaultTransientObjectGraphContext] discardAllChanges];
+	[ETTool resetTools];
     [ETUIObject clearRecordedDeallocations];
 
 	ASSIGN(itemFactory, [ETLayoutItemFactory factory]);
@@ -101,6 +106,7 @@ than the subclass instance we might want. */
 {
 	[[ETLayoutExecutor sharedInstance] removeAllItems];
 	[[itemFactory objectGraphContext] discardAllChanges];
+	[ETTool resetTools];
     [ETUIObject clearRecordedDeallocations];
 
 	DESTROY(itemFactory);

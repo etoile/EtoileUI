@@ -40,8 +40,9 @@
 @implementation ETTool
 
 static ETUUID *initialToolUUID = nil;
-static ETUUID *activeToolUUID = nil;
 static ETUUID *mainToolUUID = nil;
+static ETUUID *activeToolUUID = nil;
+static COObjectGraphContext *activeToolContext = nil;
 
 + (void) initialize
 {
@@ -53,6 +54,17 @@ static ETUUID *mainToolUUID = nil;
     initialToolUUID = [ETUUID new];
     mainToolUUID = [initialToolUUID copy];
     activeToolUUID = [initialToolUUID copy];
+}
+
+/** For recreating the initial tools, between tests in the test suite. */
++ (void) resetTools
+{
+    if ([mainToolUUID isEqual: initialToolUUID] && [activeToolUUID isEqual: initialToolUUID])
+		return;
+
+	ASSIGN(mainToolUUID, initialToolUUID);
+	ASSIGN(activeToolUUID, initialToolUUID);
+	DESTROY(activeToolContext);
 }
 
 #pragma mark Registering Tools -
@@ -231,24 +243,20 @@ You should rarely need to override this method. */
 #pragma mark Active and Main Tools -
 
 + (ETTool *) toolForUUID: (ETUUID *)aToolUUID
-      objectGraphContext: (COObjectGraphContext *)context
+      objectGraphContext: (COObjectGraphContext *)aContext
 {
+	COObjectGraphContext *context =
+		(aContext != nil ? aContext : [ETUIObject defaultTransientObjectGraphContext]);
     ETTool *tool = [context loadedObjectForUUID: aToolUUID];
         
-    if (tool != nil)
+	if (tool != nil || [aToolUUID isEqual: mainToolUUID] == NO)
         return tool;
 
-    /* For recreating the initial tools, between tests in the test suite */
-    if ([mainToolUUID isEqual: initialToolUUID] == NO || [activeToolUUID isEqual: initialToolUUID] == NO)
-    {
-        ASSIGN(mainToolUUID, initialToolUUID);
-        ASSIGN(activeToolUUID, initialToolUUID);
-    }
     ETEntityDescription *entity =
         [[context modelDescriptionRepository] entityDescriptionForClass: [ETArrowTool class]];
         
     return AUTORELEASE([[ETArrowTool alloc] initWithEntityDescription: entity
-                                                                 UUID: initialToolUUID
+                                                                 UUID: aToolUUID
                                                    objectGraphContext: context]);
 }
 
@@ -263,6 +271,8 @@ without recreating it by calling +activeTool. */
 
 /** Returns the active tool through which the events are dispatched in the 
 layout item tree. 
+ 
+By default, returns the mail tool.
 
 Unless +mainTool is returned, the returned tool target item is not nil. See 
 explanations in +mainTool. 
@@ -271,7 +281,7 @@ See +setActiveTool:, -targetItem and -layoutOwner. */
 + (id) activeTool
 {
     ETTool *activeTool = [self toolForUUID: activeToolUUID
-                        objectGraphContext: [ETUIObject defaultTransientObjectGraphContext]];
+                        objectGraphContext: activeToolContext];
 
 #if 0
 	ETAssert([activeTool targetItem] != nil || [activeTool isEqual: [self mainTool]]);
@@ -351,6 +361,7 @@ automatically activates tools in response to the user's click with
 	
 	RETAIN(toolToDeactivate);
 	ASSIGN(activeToolUUID, [toolToActivate UUID]);
+	ASSIGN(activeToolContext, [toolToActivate objectGraphContext]);
 
 	[toolToDeactivate didBecomeInactive];
 	[toolToActivate didBecomeActive];
@@ -367,6 +378,8 @@ up and activated.
 The main tool is not explicitly attached to the root item in the layout item 
 tree, since the window group bounds doesn't include the menu area, and we want 
 to process events in this area too.
+
+This tool is never persistent.
 
 In the future, the root item should be an item that encloses the window group 
 area and the menu area (we could then state that +activeTool always return a 
