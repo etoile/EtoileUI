@@ -26,6 +26,8 @@
 
 @interface ETTableLayout (PackageVisibility)
 - (void) tableViewSelectionDidChange: (NSNotification *)notif;
+- (CGFloat) tableView: (NSTableView *)tableView
+		  heightOfRow: (NSInteger)row;
 - (BOOL) tableView: (NSTableView *)tableView isGroupRow: (NSInteger)row;
 - (BOOL) tableView: (NSTableView *)tableView shouldSelectRow: (NSInteger)row;
 - (BOOL) tableView:(NSTableView *)aTableView shouldEditTableColumn: (NSTableColumn *)aTableColumn row: (NSInteger)row;
@@ -161,6 +163,12 @@
 - (ETLayoutItem *) itemAtRow: (int)rowIndex
 {
 	return [[self outlineView] itemAtRow: rowIndex];
+}
+
+- (CGFloat) outlineView: (NSOutlineView *)outlineView
+      heightOfRowByItem: (id)item
+{
+	return [self tableView: outlineView heightOfRow: [outlineView rowForItem: item]];
 }
 
 - (BOOL) outlineView: (NSOutlineView *)outlineView isGroupItem: (id)item

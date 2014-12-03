@@ -587,7 +587,26 @@ See [(ETColumnFragment)] protocol to customize the returned column. */
 
 - (void) tableViewSelectionDidChange: (NSNotification *)notif
 {
+	/* For some reason, when we implement -outlineView:heightOfRowByItem:,
+	   -resizeItems:toScaleFactor: starts to trigger selection change on Mac OS X. */
+	if ([self isRendering])
+		return;
+
 	[self didChangeSelectionInLayoutView];
+}
+
+- (CGFloat) tableView: (NSTableView *)tableView
+          heightOfRow: (NSInteger)row
+{
+	ETLayoutItemGroup *parent = [[self itemAtRow: row] parentItem];
+	
+	if (parent != [self layoutContext]
+	 && [parent itemScaleFactor] != [[self layoutContext] itemScaleFactor])
+	{
+		return DEFAULT_ROW_HEIGHT * [parent itemScaleFactor];
+	}
+	
+	return [tableView rowHeight];
 }
 
 - (BOOL) tableView: (NSTableView *)tableView isGroupRow: (NSInteger)rowIndex
