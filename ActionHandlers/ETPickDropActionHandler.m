@@ -612,7 +612,6 @@ When the dropped object is a pick collection, each element type is checked with
                 onItem: (ETLayoutItem *)dropTarget
            coordinator: (ETPickDropCoordinator *)aPickCoordinator
 {
-	return YES;
 	if ([droppedObject isEqual: dropTarget])
 		return NO;
 
